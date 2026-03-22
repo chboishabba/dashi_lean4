@@ -1,0 +1,16 @@
+name = "DashiPerf"
+version = "0.1.0"
+defaultTargets = ["dashiperf"]
+
+[[lean_lib]]
+name = "DashiPerf"
+
+[[lean_exe]]
+name = "dashiperf"
+root = "Main"
+
+[[lean_lib]]
+name = "MoonshineFractran"
+
+[[lean_lib]]
+name = "MoonshineEarn"

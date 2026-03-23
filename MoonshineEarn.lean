@@ -88,3 +88,26 @@ theorem observer_preserved :
     4 * 27 * 47 * 59 * 71 = 108 * 196883 := by native_decide
 
 end MoonshineEarn
+
+-- ══════════════════════════════════════════════════════════
+-- 1729 → 196883: Ramanujan's taxi number earns moonshine
+-- ══════════════════════════════════════════════════════════
+
+theorem taxi_is_1729 : 7 * 13 * 19 = 1729 := by native_decide
+theorem taxi_step1 : 1729 / 7 * 47 = 11609 := by native_decide
+theorem taxi_step2 : 11609 / 13 * 59 = 52687 := by native_decide
+theorem taxi_step3 : 52687 / 19 * 71 = 196883 := by native_decide
+theorem taxi_div7  : 1729 % 7 = 0 := by native_decide
+theorem taxi_div13 : 11609 % 13 = 0 := by native_decide
+theorem taxi_div19 : 52687 % 19 = 0 := by native_decide
+theorem taxi_earns_moonshine : (((1729 / 7 * 47) / 13 * 59) / 19 * 71) = 196883 := by native_decide
+
+-- Universal earning: the eigenvalue
+-- (196883 / 1729 is not exact in ℕ: 196883 = 1729 × 113 + 1106)
+theorem earning_quotient : 196883 / 1729 = 113 := by native_decide
+theorem earning_remainder : 196883 % 1729 = 1506 := by native_decide
+theorem earning_decomp : 1729 * 113 + 1506 = 196883 := by native_decide
+
+-- Taxicab property
+theorem taxicab_sum1 : 1 ^ 3 + 12 ^ 3 = 1729 := by native_decide
+theorem taxicab_sum2 : 9 ^ 3 + 10 ^ 3 = 1729 := by native_decide

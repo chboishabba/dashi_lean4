@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="720" viewBox="0 0 720 720" role="img" aria-labelledby="title desc">
+  <title id="title">Tunnel form constant</title>
+  <desc id="desc">Lean: m=0 log-polar ring fronts; sources: dashi_lean4/DASHI/Klüver's Form Constants_aristotle/FormConstantGeometry.lean; dashi_agda/Ontology/Brain/BrainVisualFormConstantSurface.agda</desc>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#182033"/>
+      <stop offset="72%" stop-color="#0b1020"/>
+      <stop offset="100%" stop-color="#05070d"/>
+    </radialGradient>
+    <filter id="soft-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg)"/>
+  <g transform="translate(0 20)">
+    <circle cx="360" cy="356" r="5" fill="none" stroke="#60a5fa" stroke-width="0.8" opacity="0.18" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="7.98" fill="none" stroke="#60a5fa" stroke-width="0.96" opacity="0.22" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="15.04" fill="none" stroke="#60a5fa" stroke-width="1.11" opacity="0.27" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="25.41" fill="none" stroke="#60a5fa" stroke-width="1.27" opacity="0.31" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="38.76" fill="none" stroke="#60a5fa" stroke-width="1.43" opacity="0.36" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="54.89" fill="none" stroke="#60a5fa" stroke-width="1.59" opacity="0.4" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="73.65" fill="none" stroke="#60a5fa" stroke-width="1.74" opacity="0.45" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="94.9" fill="none" stroke="#60a5fa" stroke-width="1.9" opacity="0.49" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="118.57" fill="none" stroke="#60a5fa" stroke-width="2.06" opacity="0.53" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="144.57" fill="none" stroke="#60a5fa" stroke-width="2.21" opacity="0.58" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="172.83" fill="none" stroke="#60a5fa" stroke-width="2.37" opacity="0.62" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="203.29" fill="none" stroke="#60a5fa" stroke-width="2.53" opacity="0.67" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="235.9" fill="none" stroke="#60a5fa" stroke-width="2.69" opacity="0.71" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="270.62" fill="none" stroke="#60a5fa" stroke-width="2.84" opacity="0.76" filter="url(#soft-glow)"/>
+    <circle cx="360" cy="356" r="307.4" fill="none" stroke="#60a5fa" stroke-width="3" opacity="0.8" filter="url(#soft-glow)"/>
+    <line x1="368" y1="356" x2="670.4" y2="356" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="367.85" y1="357.56" x2="664.44" y2="416.56" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="367.39" y1="359.06" x2="646.77" y2="474.78" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="366.65" y1="360.44" x2="618.09" y2="528.45" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="365.66" y1="361.66" x2="579.49" y2="575.49" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="364.44" y1="362.65" x2="532.45" y2="614.09" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="363.06" y1="363.39" x2="478.78" y2="642.77" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="361.56" y1="363.85" x2="420.56" y2="660.44" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="360" y1="364" x2="360" y2="666.4" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="358.44" y1="363.85" x2="299.44" y2="660.44" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="356.94" y1="363.39" x2="241.22" y2="642.77" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="355.56" y1="362.65" x2="187.55" y2="614.09" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="354.34" y1="361.66" x2="140.51" y2="575.49" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="353.35" y1="360.44" x2="101.91" y2="528.45" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="352.61" y1="359.06" x2="73.23" y2="474.78" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="352.15" y1="357.56" x2="55.56" y2="416.56" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="352" y1="356" x2="49.6" y2="356" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="352.15" y1="354.44" x2="55.56" y2="295.44" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="352.61" y1="352.94" x2="73.23" y2="237.22" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="353.35" y1="351.56" x2="101.91" y2="183.55" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="354.34" y1="350.34" x2="140.51" y2="136.51" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="355.56" y1="349.35" x2="187.55" y2="97.91" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="356.94" y1="348.61" x2="241.22" y2="69.23" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="358.44" y1="348.15" x2="299.44" y2="51.56" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="360" y1="348" x2="360" y2="45.6" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="361.56" y1="348.15" x2="420.56" y2="51.56" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="363.06" y1="348.61" x2="478.78" y2="69.23" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="364.44" y1="349.35" x2="532.45" y2="97.91" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="365.66" y1="350.34" x2="579.49" y2="136.51" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="366.65" y1="351.56" x2="618.09" y2="183.55" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="367.39" y1="352.94" x2="646.77" y2="237.22" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <line x1="367.85" y1="354.44" x2="664.44" y2="295.44" stroke="#93c5fd" stroke-width="0.7" opacity="0.24"/>
+    <circle cx="360" cy="356" r="10" fill="#dbeafe" opacity="0.85"/>
+  </g>
+  <text x="28" y="672" fill="#e5eefc" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700">Tunnel</text>
+  <text x="28" y="698" fill="#9aa8bf" font-family="Inter, Arial, sans-serif" font-size="13">Lean: m=0 log-polar ring fronts</text>
+</svg>

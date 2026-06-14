@@ -496,22 +496,22 @@
 
     const presets = {
       cobweb: {
-        accent: [227, 178, 60], openLoop: false, radialRing: 0,
+        accent: [227, 178, 60], radialRing: 0,
         f: 2.25, m: 0, c: 1.2, k0: 4.2, phase: .1, contrast: .86,
         radialScale: 1.1, angularSectors: 12, drift: .18, noise: .08
       },
       lattice: {
-        accent: [66, 200, 183], openLoop: false, radialRing: 5,
+        accent: [66, 200, 183], radialRing: 5,
         f: 1.15, m: 0, c: .9, k0: 7.6, phase: .22, contrast: .82,
         radialScale: 1.0, angularSectors: 6, drift: .12, noise: .04
       },
       tunnel: {
-        accent: [108, 167, 255], openLoop: true, radialRing: 0,
+        accent: [108, 167, 255], radialRing: 0,
         f: 3.1, m: 0, c: .7, k0: 3.6, phase: .0, contrast: .91,
         radialScale: 1.35, angularSectors: 16, drift: .24, noise: .05
       },
       spiral: {
-        accent: [240, 118, 168], openLoop: true, radialRing: 5,
+        accent: [240, 118, 168], radialRing: 5,
         f: 1.45, m: 3, c: .8, k0: 4.8, phase: .18, contrast: .9,
         radialScale: 1.18, angularSectors: 9, drift: .2, noise: .05
       }
@@ -580,6 +580,7 @@
       const p = presets[name];
       state.preset = name;
       Object.assign(state, p);
+      state.active = name === "tunnel" || name === "spiral";
       updateControls();
       render();
     }
@@ -685,7 +686,7 @@
         }
         v /= 6;
       } else {
-        v = Math.cos(tau * (state.f * radial + state.m * theta / tau + phase));
+        v = Math.cos(tau * (state.f * radial + state.m * theta + phase));
       }
       if (state.brightnessGradient) v *= .72 + .28 * (1 - y);
       if (state.diffuseConfidenceField) v *= .68 + .32 * Math.exp(-1.8 * r * r);
@@ -734,6 +735,7 @@
       ctx.translate(cx, cy);
       ctx.strokeStyle = "rgba(231,236,232,.26)";
       ctx.lineWidth = 1;
+      const unitRadius = radius / .86;
       const sectors = Math.max(3, Math.round(state.angularSectors));
       for (let i = 0; i < sectors; i++) {
         const a = i * tau / sectors + state.phase * .2;
@@ -748,20 +750,41 @@
         ctx.arc(0, 0, r, 0, tau);
         ctx.stroke();
       }
-      if (state.preset === "spiral" || state.mode === "contours") {
-        const color = `rgb(${presets[state.preset].accent.join(",")})`;
-        for (let arm = 0; arm < Math.max(2, Math.min(8, state.m + 3)); arm++) {
-          const pts = [];
-          const phase = arm * tau / Math.max(2, state.m + 3);
-          for (let i = 0; i < 500; i++) {
-            const th = i * .035;
-            const r = 4 * Math.exp((state.c + th * .11) / Math.max(.35, state.f)) * state.radialScale;
-            if (r > radius) break;
-            pts.push([Math.cos(th + phase) * r, Math.sin(th + phase) * r]);
+      const color = `rgb(${presets[state.preset].accent.join(",")})`;
+      const f = Math.max(.05, Math.abs(state.f));
+      if (Math.round(state.m) === 0) {
+        for (let n = -5; n <= 5; n++) {
+          const logR = (state.c + n) / f;
+          const screenR = (Math.exp(logR) - .045) / (2.7 * state.radialScale) * unitRadius;
+          if (screenR > 3 && screenR < radius * 1.25) {
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.globalAlpha = .22 + .045 * (n + 5);
+            ctx.arc(0, 0, screenR, 0, tau);
+            ctx.stroke();
           }
-          linePath(pts.map(([x, y]) => [x, y]), color, 1.5, .78);
+        }
+      } else if (state.preset === "spiral" || state.mode === "contours") {
+        const wraps = Math.max(1, Math.min(6, Math.abs(Math.round(state.m))));
+        for (let arm = 0; arm < wraps; arm++) {
+          const pts = [];
+          const level = state.c + arm / wraps;
+          for (let i = 0; i < 920; i++) {
+            const theta = -tau * 2.2 + i * (tau * 4.4 / 919);
+            const logR = (level - state.m * theta) / f;
+            const screenR = (Math.exp(logR) - .045) / (2.7 * state.radialScale) * unitRadius;
+            if (screenR > 2 && screenR < radius * 1.18) {
+              pts.push([Math.cos(theta) * screenR, Math.sin(theta) * screenR]);
+            } else if (pts.length > 1) {
+              linePath(pts.splice(0), color, 1.5, .78);
+            } else {
+              pts.length = 0;
+            }
+          }
+          linePath(pts, color, 1.5, .78);
         }
       }
+      ctx.globalAlpha = 1;
       ctx.restore();
     }
 
@@ -873,15 +896,15 @@
 
     function updateReadout() {
       const p = presets[state.preset];
-      const derived = classify(p.openLoop, p.radialRing);
+      const derived = classify(state.active, p.radialRing);
       readoutTitle.textContent = `${derived} / ${state.mode === "m6" ? "M6 lattice" : state.mode === "retino" ? "retino-cortical" : state.mode}`;
-      readoutGeometry.textContent = `openLoop=${p.openLoop}, radialRing=${p.radialRing > 0 ? ">0" : "0"}, angularSector=${Math.round(state.angularSectors)}, active=${state.active}`;
+      readoutGeometry.textContent = `openLoop=${state.active}, radialRing=${p.radialRing > 0 ? ">0" : "0"}, angularSector=${Math.round(state.angularSectors)}`;
       if (state.mode === "m6") {
         readoutEquation.textContent = "Σ cos(k_j · x + φ_j), j=0..5, k_j=k0(cos(jπ/3), sin(jπ/3))";
       } else if (state.mode === "retino") {
         readoutEquation.textContent = "(u,v)=(log r,θ), cortical plane wave paired with retinal pullback";
       } else {
-        readoutEquation.textContent = "cos(2π(f log r + mθ + phase)); fronts r=exp((c-mθ)/f)";
+        readoutEquation.textContent = "cos(2π(f log r + mθ + phase)); fronts r=exp((c+n-mθ)/f)";
       }
     }
 

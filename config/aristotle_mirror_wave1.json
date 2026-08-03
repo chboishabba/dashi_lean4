@@ -1,0 +1,51 @@
+{
+  "schema": "dashi-aristotle-lean-mirror-wave-v1",
+  "wave_id": "wave1",
+  "agda_root": "/home/c/Documents/code/dashi_agda",
+  "lean_baseline": "/home/c/Documents/code/dashi_lean4",
+  "helper_scripts": [
+    "/home/c/Documents/code/dashi_agda/scripts/agda_import_cone.py",
+    "/home/c/Documents/code/dashi_agda/scripts/agda_surface_estimate.py",
+    "/home/c/Documents/code/dashi_agda/scripts/agda_target_frontier.py"
+  ],
+  "lanes": [
+    {
+      "id": "foundations",
+      "claim": "Mirror selected missing Core surfaces into Lean4.",
+      "targets": [
+        "DASHI/Core/ComparisonLawCore.agda",
+        "DASHI/Core/ContextIndexedEncoding.agda",
+        "DASHI/Analysis/FiniteOperatorReductionCore.agda"
+      ]
+    },
+    {
+      "id": "algebra",
+      "claim": "Mirror selected missing algebra, Clifford, and finite-cover surfaces.",
+      "targets": [
+        "DASHI/Algebra/ConstructiveClifford.agda",
+        "DASHI/Algebra/ContinuousSpin31LorentzCover.agda",
+        "DASHI/Algebra/FiniteQuaternionStrictCover.agda"
+      ]
+    },
+    {
+      "id": "analysis",
+      "claim": "Mirror selected missing constructive analysis leaf surfaces.",
+      "targets": [
+        "DASHI/Analysis/CanonicalRationalMetric.agda",
+        "DASHI/Analysis/ConcreteComplex.agda",
+        "DASHI/Analysis/ConstructiveIntermediateValue.agda"
+      ]
+    },
+    {
+      "id": "physics",
+      "claim": "Mirror lightweight Yang-Mills support and inventory surfaces without touching promotion gates.",
+      "targets": [
+        "DASHI/Physics/YangMills/YMSupportGraphDistance.agda",
+        "DASHI/Physics/YangMills/P01P33ProofSurfaces.agda",
+        "DASHI/Physics/YangMills/ArithmeticLemmaQueue.agda",
+        "DASHI/Physics/YangMills/ProofTargetSurface.agda",
+        "DASHI/Physics/YangMills/YMSourceAuthoritySurface.agda"
+      ]
+    }
+  ]
+}

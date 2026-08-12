@@ -1,16 +1,19 @@
-name = "DashiPerf"
-version = "0.1.0"
-defaultTargets = ["dashiperf"]
+name = "RequestProject"
+defaultTargets = ["THE-ERIKSSON-PROGRAMME", "monster", "ym-mass-gap-lean-verification"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.28.0"
 
 [[lean_lib]]
-name = "DashiPerf"
-
-[[lean_exe]]
-name = "dashiperf"
-root = "Main"
+name = "THE-ERIKSSON-PROGRAMME"
+globs = ["THE-ERIKSSON-PROGRAMME.+"]
 
 [[lean_lib]]
-name = "MoonshineFractran"
+name = "monster"
+globs = ["monster.+"]
 
 [[lean_lib]]
-name = "MoonshineEarn"
+name = "ym-mass-gap-lean-verification"
+globs = ["ym-mass-gap-lean-verification.+"]

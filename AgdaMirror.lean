@@ -93,6 +93,10 @@ import AgdaMirror.TypedResidualBasisDecomposition
 import AgdaMirror.ConstraintAlgebraClosure
 import AgdaMirror.MonsterGroups
 import AgdaMirror.MonsterVectors
+import AgdaMirror.Core
+import AgdaMirror.Algebra
+import AgdaMirror.Analysis
+import AgdaMirror.Physics.YangMills
 
 /-!
 # `AgdaMirror`: Lean transcriptions of the non-NS/YM root Agda modules

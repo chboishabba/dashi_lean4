@@ -1,0 +1,183 @@
+import RequestProject.Epistemic.Surfaces
+
+/-!
+# View-indexed evidence: layers × slices
+
+A claim imported from a knowledge base is evaluated in a *view*: a statement
+layer (`Wikidata.StatementLayer`) together with a slice criterion
+(`Wikidata.StatementFilter`).  The two coordinates behave completely differently,
+and that is the content of this file:
+
+* **the layer coordinate is inert** for class facts — `positive_check_atLayer`:
+  a subclass or instance check returns the same answer at the full and the truthy
+  layer, because the truthy projection is conservative;
+* **the slice coordinate is directional** — `viewClaim_transfers_up`: support
+  obtained in a finer (more restrictive, more trustworthy) slice is support in
+  every coarser one, while `view_support_does_not_transfer_down` shows the
+  converse fails.
+
+So "which layer did you read?" is not an epistemic question, and "which slice did
+you trust?" always is.
+-/
+
+namespace Epistemic
+
+open Wikidata
+
+/-- A view of a knowledge base: a statement layer, and a slice criterion. -/
+structure View where
+  layer : StatementLayer
+  keep : StatementFilter
+
+namespace View
+
+/-- The knowledge base as seen through a view. -/
+def apply (v : View) (kb : KB) : KB := atLayer (restrict kb v.keep) v.layer
+
+/-- The view that hides nothing. -/
+def whole : View := ⟨StatementLayer.full, fun _ => true⟩
+
+@[simp] theorem apply_whole (kb : KB) : whole.apply kb = kb := by
+  simp [apply, whole]
+
+/-- Views are ordered by refinement of their slice criteria. -/
+def Refines (v w : View) : Prop := Wikidata.Refines v.keep w.keep
+
+theorem refines_whole (v : View) : v.Refines whole := refines_true v.keep
+
+theorem refines_refl (v : View) : v.Refines v := Wikidata.Refines.refl v.keep
+
+theorem refines_trans {u v w : View} (h₁ : u.Refines v) (h₂ : v.Refines w) : u.Refines w :=
+  Wikidata.Refines.trans h₁ h₂
+
+/-- On a knowledge base with no rank distinctions, the layer coordinate does
+nothing at all. -/
+theorem apply_eq_restrict_of_allNormal {kb : KB} (hnormal : AllNormal kb) (v : View) :
+    v.apply kb = restrict kb v.keep := by
+  cases hv : v.layer with
+  | full => simp [apply, hv]
+  | truthy => simp [apply, hv, truthyLayer_of_allNormal (allNormal_restrict hnormal v.keep)]
+
+theorem apply_subset_of_refines {v w : View} (h : v.Refines w) (kb : KB)
+    (hnormal : AllNormal kb) : (v.apply kb).statements ⊆ (w.apply kb).statements := by
+  rw [apply_eq_restrict_of_allNormal hnormal, apply_eq_restrict_of_allNormal hnormal]
+  exact restrict_subset_of_refines h kb
+
+theorem allNormal_apply {kb : KB} (hnormal : AllNormal kb) (v : View) :
+    AllNormal (v.apply kb) := by
+  rw [apply_eq_restrict_of_allNormal hnormal]
+  exact allNormal_restrict hnormal v.keep
+
+end View
+
+/-! ## The layer coordinate is inert for class facts -/
+
+namespace ClassClaim
+
+/-- The claims that only grow with the knowledge base: subclass and instance
+facts.  Disjointness, union and validity are *not* monotone, and are excluded. -/
+def Positive : ClassClaim → Prop
+  | subclass _ _ => True
+  | instanceOf _ _ => True
+  | _ => False
+
+/-- **Layer independence.**  A positive class claim gets the same answer at both
+statement layers. -/
+theorem positive_check_atLayer {cl : ClassClaim} (hpos : cl.Positive) (kb : KB)
+    (l : StatementLayer) : cl.check (atLayer kb l) = cl.check kb := by
+  cases l with
+  | full => rfl
+  | truthy =>
+      cases cl with
+      | subclass a b => exact isSubclassOf_truthyLayer kb a b
+      | instanceOf x c => exact isInstanceOf_truthyLayer kb x c
+      | unionOf c ms => exact absurd hpos (by simp [Positive])
+      | intersectionOf c ms => exact absurd hpos (by simp [Positive])
+      | disjointUnionOf c ms => exact absurd hpos (by simp [Positive])
+      | disjointWith c d => exact absurd hpos (by simp [Positive])
+      | validKB => exact absurd hpos (by simp [Positive])
+
+/-- **Monotonicity.**  A positive class claim survives enlarging the statement
+list. -/
+theorem holds_mono_of_positive {cl : ClassClaim} (hpos : cl.Positive) {kb₁ kb₂ : KB}
+    (hsub : kb₁.statements ⊆ kb₂.statements) (hnormal : AllNormal kb₂) (h : cl.Holds kb₁) :
+    cl.Holds kb₂ := by
+  cases cl with
+  | subclass a b => exact subclassOf_mono hsub hnormal h
+  | instanceOf x c => exact instanceOf_mono hsub hnormal h
+  | unionOf c ms => exact absurd hpos (by simp [Positive])
+  | intersectionOf c ms => exact absurd hpos (by simp [Positive])
+  | disjointUnionOf c ms => exact absurd hpos (by simp [Positive])
+  | disjointWith c d => exact absurd hpos (by simp [Positive])
+  | validKB => exact absurd hpos (by simp [Positive])
+
+end ClassClaim
+
+/-! ## View-indexed evidence -/
+
+/-- Evidence for a class claim, evaluated view by view, carrying its source
+references. -/
+def viewClaim (kb : KB) (cl : ClassClaim) (sourceMatched : Bool) (refs : List String) :
+    ScopedClaim View where
+  stateAt := fun v => receiptState sourceMatched (cl.check (v.apply kb))
+  references := refs
+
+@[simp] theorem viewClaim_stateAt (kb : KB) (cl : ClassClaim) (m : Bool) (refs : List String)
+    (v : View) : (viewClaim kb cl m refs).stateAt v = receiptState m (cl.check (v.apply kb)) := rfl
+
+@[simp] theorem viewClaim_references (kb : KB) (cl : ClassClaim) (m : Bool)
+    (refs : List String) : (viewClaim kb cl m refs).references = refs := rfl
+
+/-- Support in a view is backed by the claim holding in that view. -/
+theorem holds_of_view_supported {kb : KB} {cl : ClassClaim} {m : Bool} {refs : List String}
+    {v : View} (h : (viewClaim kb cl m refs).stateAt v = Trit.supported) :
+    cl.Holds (v.apply kb) := by
+  rw [viewClaim_stateAt, receiptState_eq_supported_iff] at h
+  exact (ClassClaim.check_iff _ cl).1 h.2
+
+/-- **Evidence transfers up the refinement order.**  Support for a positive class
+claim in a finer view is support in every coarser view. -/
+theorem viewClaim_transfers_up {kb : KB} {cl : ClassClaim} {m : Bool} {refs : List String}
+    {v w : View} (hpos : cl.Positive) (hnormal : AllNormal kb) (hvw : v.Refines w)
+    (h : (viewClaim kb cl m refs).stateAt v = Trit.supported) :
+    (viewClaim kb cl m refs).stateAt w = Trit.supported := by
+  have hm : m = true := by
+    rw [viewClaim_stateAt, receiptState_eq_supported_iff] at h
+    exact h.1
+  have hholds : cl.Holds (w.apply kb) :=
+    ClassClaim.holds_mono_of_positive hpos (View.apply_subset_of_refines hvw kb hnormal)
+      (View.allNormal_apply hnormal w) (holds_of_view_supported h)
+  rw [viewClaim_stateAt, receiptState_eq_supported_iff]
+  exact ⟨hm, (ClassClaim.check_iff _ cl).2 hholds⟩
+
+/-- In particular, support anywhere is support in the whole knowledge base. -/
+theorem viewClaim_transfers_to_whole {kb : KB} {cl : ClassClaim} {m : Bool} {refs : List String}
+    {v : View} (hpos : cl.Positive) (hnormal : AllNormal kb)
+    (h : (viewClaim kb cl m refs).stateAt v = Trit.supported) :
+    (viewClaim kb cl m refs).stateAt View.whole = Trit.supported :=
+  viewClaim_transfers_up hpos hnormal (View.refines_whole v) h
+
+/-- The layer coordinate never changes the evidence for a positive claim. -/
+theorem viewClaim_layer_irrelevant (kb : KB) (cl : ClassClaim) (hpos : cl.Positive) (m : Bool)
+    (refs : List String) (f : StatementFilter) :
+    (viewClaim kb cl m refs).stateAt ⟨StatementLayer.truthy, f⟩ =
+      (viewClaim kb cl m refs).stateAt ⟨StatementLayer.full, f⟩ := by
+  simp only [viewClaim_stateAt, View.apply]
+  rw [ClassClaim.positive_check_atLayer hpos (restrict kb f) StatementLayer.truthy,
+    ClassClaim.positive_check_atLayer hpos (restrict kb f) StatementLayer.full]
+
+/-- **Support does not transfer down.**  Evidence for the whole knowledge base
+grants a narrower slice nothing. -/
+theorem view_support_does_not_transfer_down :
+    ∃ (kb : KB) (cl : ClassClaim) (v : View),
+      (viewClaim kb cl true []).stateAt View.whole = Trit.supported ∧
+        (viewClaim kb cl true []).stateAt v ≠ Trit.supported := by
+  refine ⟨⟨[⟨1⟩, ⟨2⟩], [⟨⟨1⟩, P279, ⟨2⟩, Rank.normal⟩]⟩, ClassClaim.subclass ⟨1⟩ ⟨2⟩,
+    ⟨StatementLayer.full, fun _ => false⟩, by decide, by decide⟩
+
+/-- Restricting to a view never manufactures a refutation. -/
+theorem viewClaim_ne_contradicted (kb : KB) (cl : ClassClaim) (m : Bool) (refs : List String)
+    (v : View) : (viewClaim kb cl m refs).stateAt v ≠ Trit.contradicted :=
+  receiptState_ne_contradicted _ _
+
+end Epistemic

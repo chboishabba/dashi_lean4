@@ -1,0 +1,458 @@
+
+=== [DEFINITION] AristotleExporter.elabExportCmd ===
+Type / Statement:
+Lean.Elab.Command.CommandElab
+Proof / Definition:
+fun stx =>
+  have __discr := stx;
+  if __discr.isOfKind `AristotleExporter.exportCmd = true then
+    have __discr_1 := __discr.getArg 0;
+    have __discr_2 := __discr.getArg 1;
+    bif false || __discr_2.isOfKind `ident then
+      have __discr_3 := __discr.getArg 2;
+      have yes := fun x dir =>
+        have target := { raw := __discr_2 };
+        Lean.Elab.Command.liftTermElabM
+          (have cfg :=
+            match dir with
+            | some d => { outputDir := { toString := d.getString } }
+            | none => { };
+          liftM (AristotleExporter.runExport target.getId cfg));
+      if __discr_3.isNone = true then yes () none
+      else
+        have __discr_4 := __discr_3;
+        if __discr_4.matchesNull 2 = true then
+          have __discr_5 := __discr_4.getArg 0;
+          have __discr_6 := __discr_4.getArg 1;
+          bif false || __discr_6.isOfKind `str then
+            have dir := { raw := __discr_6 };
+            yes () (some dir)
+          else
+            have __discr_7 := __discr_4.getArg 1;
+            have __discr := __discr.getArg 2;
+            Lean.Elab.throwUnsupportedSyntax
+        else
+          have __discr_5 := __discr_3;
+          have __discr := __discr.getArg 2;
+          Lean.Elab.throwUnsupportedSyntax
+    else
+      have __discr_3 := __discr.getArg 1;
+      have __discr := __discr.getArg 2;
+      Lean.Elab.throwUnsupportedSyntax
+  else
+    have __discr := stx;
+    Lean.Elab.throwUnsupportedSyntax
+====================================================
+
+=== [INDUCTIVE] AristotleExporter.ExportConfig ===
+Type / Statement:
+Type
+Proof / Definition: [primitive — axiom or core declaration]
+====================================================
+
+=== [DEFINITION] AristotleExporter.elabExportCmd.match_1 ===
+Type / Statement:
+(motive : Option (Lean.TSyntax `str) → Sort u_1) →
+  (dir : Option (Lean.TSyntax `str)) → ((d : Lean.TSyntax `str) → motive (some d)) → (Unit → motive none) → motive dir
+Proof / Definition:
+fun motive dir h_1 h_2 => Option.casesOn dir (h_2 ()) fun val => h_1 val
+====================================================
+
+=== [CONSTRUCTOR] AristotleExporter.ExportConfig.mk ===
+Type / Statement:
+Nat → Nat → System.FilePath → List String → List String → Bool → AristotleExporter.ExportConfig
+Proof / Definition: [primitive — axiom or core declaration]
+====================================================
+
+=== [DEFINITION] AristotleExporter.runExport ===
+Type / Statement:
+Lean.Name → optParam AristotleExporter.ExportConfig { } → Lean.MetaM Unit
+Proof / Definition:
+fun targetName cfg => do
+  let env ← Lean.getEnv
+  have projectModules : List String :=
+    if cfg.projectModules.isEmpty = true then
+      match AristotleExporter.declModule env targetName with
+      | some m => [m.getRoot.toString]
+      | none => []
+    else cfg.projectModules
+  let st ← AristotleExporter.exportTopDown targetName cfg projectModules
+  let __discr ← liftM (AristotleExporter.writeChunks st.projectBlocks cfg "notebook_lm_part" 1 cfg.maxFiles)
+  match __discr with
+    | (projReport, projFiles) => do
+      let frontierBlocks ← AristotleExporter.formatFrontier st.frontier
+      have remaining : Nat := cfg.maxFiles - projFiles
+      have __do_jp : String × Nat → Lean.MetaM Unit := fun __discr =>
+        match __discr with
+        | (frontReport, frontFiles) =>
+          have projRootStr := ", ".intercalate projectModules;
+          have summary :=
+            toString "[AristotleExporter] target `" ++ toString targetName ++ toString "`\n" ++
+                  (toString "  project modules   : [" ++ toString projRootStr ++ toString "]\n") ++
+                (toString "  project partition : " ++ toString st.projectBlocks.size ++ toString " declaration(s), " ++
+                    toString projFiles ++
+                  toString " file(s)\n") ++
+              if cfg.expandBoundary = true then "  core library     : expanded inline (expandBoundary := true)\n"
+              else
+                toString "  core library     : " ++ toString st.frontier.size ++
+                      toString " frontier declaration(s), " ++
+                    toString frontFiles ++
+                  toString " file(s)\n";
+          Lean.logInfo
+            ((Lean.MessageData.ofFormat ∘ Std.format) summary ++ (Lean.MessageData.ofFormat ∘ Std.format) projReport ++
+              (Lean.MessageData.ofFormat ∘ Std.format) frontReport)
+      if cfg.expandBoundary = true then do
+          let y ← pure ("", 0)
+          __do_jp y
+        else do
+          let y ← liftM (AristotleExporter.writeChunks frontierBlocks cfg "core_library_part" 1 remaining)
+          __do_jp y
+====================================================
+
+=== [DEFINITION] AristotleExporter.ExportConfig.projectModules ===
+Type / Statement:
+AristotleExporter.ExportConfig → List String
+Proof / Definition:
+fun self => self.4
+====================================================
+
+=== [DEFINITION] AristotleExporter.formatFrontier.match_3 ===
+Type / Statement:
+(motive : Option Lean.Name → Sort u_1) →
+  (x : Option Lean.Name) → ((m : Lean.Name) → motive (some m)) → (Unit → motive none) → motive x
+Proof / Definition:
+fun motive x h_1 h_2 => Option.casesOn x (h_2 ()) fun val => h_1 val
+====================================================
+
+=== [DEFINITION] AristotleExporter.declModule ===
+Type / Statement:
+Lean.Environment → Lean.Name → Option Lean.Name
+Proof / Definition:
+fun env name => Option.map (fun idx => env.header.moduleNames[idx.toNat]!) (env.getModuleIdxFor? name)
+====================================================
+
+=== [INDUCTIVE] AristotleExporter.TraverseState ===
+Type / Statement:
+Type
+Proof / Definition: [primitive — axiom or core declaration]
+====================================================
+
+=== [DEFINITION] AristotleExporter.exportTopDown ===
+Type / Statement:
+Lean.Name → AristotleExporter.ExportConfig → List String → Lean.MetaM AristotleExporter.TraverseState
+Proof / Definition:
+fun targetName cfg projectModules => do
+  let env ← Lean.getEnv
+  match env.find? targetName with
+    | some info0 => do
+      let __discr ← (AristotleExporter.exportTopDown.visit cfg projectModules info0).run { }
+      match __discr with
+        | (fst, st) => pure st
+    | x =>
+      pure
+        {
+          projectBlocks :=
+            #[toString "-- Error: identifier `" ++ toString targetName ++ toString "` not found in environment."] }
+====================================================
+
+=== [DEFINITION] AristotleExporter.exportTopDown.visit.match_6 ===
+Type / Statement:
+(motive : Option Lean.ConstantInfo → Sort u_1) →
+  (x : Option Lean.ConstantInfo) →
+    ((depInfo : Lean.ConstantInfo) → motive (some depInfo)) → ((x : Option Lean.ConstantInfo) → motive x) → motive x
+Proof / Definition:
+fun motive x h_1 h_2 => AristotleExporter.exportTopDown.visit._sparseCasesOn_3 x (fun val => h_1 val) fun h => h_2 x
+====================================================
+
+=== [DEFINITION] AristotleExporter.exportTopDown.visit._sparseCasesOn_3 ===
+Type / Statement:
+{α : Type u} →
+  {motive : Option α → Sort u_1} →
+    (t : Option α) → ((val : α) → motive (some val)) → (Nat.hasNotBit 2 t.ctorIdx → motive t) → motive t
+Proof / Definition:
+fun {α} {motive} t some =>
+  Option.rec (motive := fun t => (Nat.hasNotBit 2 t.ctorIdx → motive t) → motive t) (fun «else» => «else» ⋯)
+    (fun val «else» => some val) t
+====================================================
+
+=== [OPAQUE] AristotleExporter.exportTopDown.visit ===
+Type / Statement:
+AristotleExporter.ExportConfig →
+  List String → Lean.ConstantInfo → StateT AristotleExporter.TraverseState Lean.MetaM Unit
+Proof / Definition: [primitive — axiom or core declaration]
+====================================================
+
+=== [CONSTRUCTOR] AristotleExporter.TraverseState.mk ===
+Type / Statement:
+Array Lean.Name → Array String → Array Lean.Name → AristotleExporter.TraverseState
+Proof / Definition: [primitive — axiom or core declaration]
+====================================================
+
+=== [DEFINITION] AristotleExporter.exportTopDown.match_1 ===
+Type / Statement:
+(motive : Unit × AristotleExporter.TraverseState → Sort u_1) →
+  (__discr : Unit × AristotleExporter.TraverseState) →
+    ((fst : Unit) → (st : AristotleExporter.TraverseState) → motive (fst, st)) → motive __discr
+Proof / Definition:
+fun motive __discr h_1 => Prod.casesOn __discr fun fst snd => h_1 fst snd
+====================================================
+
+=== [DEFINITION] AristotleExporter.writeChunks ===
+Type / Statement:
+Array String → AristotleExporter.ExportConfig → String → Nat → Nat → IO (String × Nat)
+Proof / Definition:
+fun blocks cfg filePrefix startIdx budget =>
+  have __do_jp := fun y => do
+    IO.FS.createDirAll cfg.outputDir
+    have filesWritten : Nat := 0
+    have wc : Nat := 0
+    have buf : String := ""
+    have report : String := ""
+    have truncated : Bool := false
+    let r ←
+      forIn blocks ⟨buf, filesWritten, report, truncated, wc⟩ fun block r =>
+          have buf := r.fst;
+          have x := r.snd;
+          have filesWritten := x.fst;
+          have x := x.snd;
+          have report := x.fst;
+          have x := x.snd;
+          have truncated := x.fst;
+          have wc := x.snd;
+          have cw := AristotleExporter.estimateWords block;
+          have __do_jp := fun buf filesWritten report truncated wc y =>
+            have buf := buf ++ block;
+            have wc := wc + cw;
+            do
+            pure PUnit.unit
+            pure (ForInStep.yield ⟨buf, filesWritten, report, truncated, wc⟩);
+          if (decide (wc > 0) && decide (wc + cw > cfg.maxWordsPerFile)) = true then
+            have fname :=
+              cfg.outputDir /
+                {
+                  toString :=
+                    toString filePrefix ++ toString "_" ++ toString (startIdx + filesWritten) ++ toString ".txt" };
+            do
+            IO.FS.writeFile fname buf
+            have report : String :=
+              report ++ (toString "  wrote " ++ toString fname ++ toString " (~" ++ toString wc ++ toString " words)\n")
+            have filesWritten : Nat := filesWritten + 1
+            have buf : String := ""
+            have wc : Nat := 0
+            if filesWritten ≥ budget then
+                have truncated := true;
+                pure (ForInStep.done ⟨buf, filesWritten, report, truncated, wc⟩)
+              else do
+                let y ← pure PUnit.unit
+                __do_jp buf filesWritten report truncated wc y
+          else do
+            let y ← pure PUnit.unit
+            __do_jp buf filesWritten report truncated wc y
+    match r with
+      | ⟨buf, filesWritten, report, truncated, wc⟩ =>
+        have __do_jp := fun filesWritten report y =>
+          have __do_jp := fun report y => pure (report, filesWritten);
+          if truncated = true then
+            have report :=
+              report ++
+                (toString "  WARNING: reached file budget for '" ++ toString filePrefix ++
+                  toString "'; remaining blocks truncated.\n");
+            do
+            let y ← pure PUnit.unit
+            __do_jp report y
+          else do
+            let y ← pure PUnit.unit
+            __do_jp report y;
+        if (!truncated && !buf.isEmpty && decide (filesWritten < budget)) = true then
+          have fname :=
+            cfg.outputDir /
+              {
+                toString :=
+                  toString filePrefix ++ toString "_" ++ toString (startIdx + filesWritten) ++ toString ".txt" };
+          do
+          IO.FS.writeFile fname buf
+          have report : String :=
+            report ++ (toString "  wrote " ++ toString fname ++ toString " (~" ++ toString wc ++ toString " words)\n")
+          have filesWritten : Nat := filesWritten + 1
+          let y ← pure PUnit.unit
+          __do_jp filesWritten report y
+        else do
+          let y ← pure PUnit.unit
+          __do_jp filesWritten report y;
+  if (budget == 0) = true then
+    have __do_jp := fun y =>
+      pure (toString "  WARNING: no file budget left; " ++ toString blocks.size ++ toString " block(s) dropped.\n", 0);
+    if blocks.isEmpty = true then pure ("", 0)
+    else do
+      let y ← pure PUnit.unit
+      __do_jp y
+  else do
+    let y ← pure PUnit.unit
+    __do_jp y
+====================================================
+
+=== [DEFINITION] AristotleExporter.ExportConfig.outputDir ===
+Type / Statement:
+AristotleExporter.ExportConfig → System.FilePath
+Proof / Definition:
+fun self => self.3
+====================================================
+
+=== [DEFINITION] AristotleExporter.estimateWords ===
+Type / Statement:
+String → Nat
+Proof / Definition:
+fun s =>
+  (String.foldl
+      (fun x c =>
+        match x with
+        | (acc, inWord) =>
+          if c.isWhitespace = true then (acc, false) else (if inWord = true then acc else acc + 1, true))
+      (0, false) s).fst
+====================================================
+
+=== [DEFINITION] AristotleExporter.estimateWords.match_1 ===
+Type / Statement:
+(motive : Nat × Bool → Sort u_1) → (x : Nat × Bool) → ((acc : Nat) → (inWord : Bool) → motive (acc, inWord)) → motive x
+Proof / Definition:
+fun motive x h_1 => Prod.casesOn x fun fst snd => h_1 fst snd
+====================================================
+
+=== [DEFINITION] AristotleExporter.ExportConfig.maxWordsPerFile ===
+Type / Statement:
+AristotleExporter.ExportConfig → Nat
+Proof / Definition:
+fun self => self.1
+====================================================
+
+=== [DEFINITION] AristotleExporter.writeChunks.match_1 ===
+Type / Statement:
+(motive : MProd String (MProd Nat (MProd String (MProd Bool Nat))) → Sort u_1) →
+  (r : MProd String (MProd Nat (MProd String (MProd Bool Nat)))) →
+    ((buf : String) →
+        (filesWritten : Nat) →
+          (report : String) → (truncated : Bool) → (wc : Nat) → motive ⟨buf, filesWritten, report, truncated, wc⟩) →
+      motive r
+Proof / Definition:
+fun motive r h_1 =>
+  MProd.casesOn r fun fst snd =>
+    MProd.casesOn snd fun fst_1 snd =>
+      MProd.casesOn snd fun fst_2 snd => MProd.casesOn snd fun fst_3 snd => h_1 fst fst_1 fst_2 fst_3 snd
+====================================================
+
+=== [DEFINITION] AristotleExporter.TraverseState.projectBlocks ===
+Type / Statement:
+AristotleExporter.TraverseState → Array String
+Proof / Definition:
+fun self => self.2
+====================================================
+
+=== [DEFINITION] AristotleExporter.ExportConfig.maxFiles ===
+Type / Statement:
+AristotleExporter.ExportConfig → Nat
+Proof / Definition:
+fun self => self.2
+====================================================
+
+=== [DEFINITION] AristotleExporter.runExport.match_1 ===
+Type / Statement:
+(motive : String × Nat → Sort u_1) →
+  (__discr : String × Nat) →
+    ((frontReport : String) → (frontFiles : Nat) → motive (frontReport, frontFiles)) → motive __discr
+Proof / Definition:
+fun motive __discr h_1 => Prod.casesOn __discr fun fst snd => h_1 fst snd
+====================================================
+
+=== [DEFINITION] AristotleExporter.formatFrontier ===
+Type / Statement:
+Array Lean.Name → Lean.MetaM (Array String)
+Proof / Definition:
+fun frontier => do
+  let env ← Lean.getEnv
+  have sorted : Array Lean.Name := frontier.qsort fun a b => decide (a.toString < b.toString)
+  have blocks : Array String := #[]
+  let r ←
+    forIn sorted blocks fun name r =>
+        have blocks := r;
+        match env.find? name with
+        | some info => do
+          let typeFmt ← Lean.Meta.ppExpr info.type
+          have modStr : String :=
+            match AristotleExporter.declModule env name with
+            | some m => m.toString
+            | none => "<local>"
+          have blocks : Array String :=
+            blocks.push
+              (toString "\n--- [FRONTIER · " ++ toString (AristotleExporter.kindTag info) ++ toString "] " ++
+                          toString name ++
+                        toString "  (from " ++
+                      toString modStr ++
+                    toString ") ---\nStatement:\n" ++
+                  toString typeFmt ++
+                toString "\n")
+          pure PUnit.unit
+          pure (ForInStep.yield blocks)
+        | none =>
+          have blocks := blocks.push (toString "\n--- [FRONTIER] " ++ toString name ++ toString " (not found) ---\n");
+          do
+          pure PUnit.unit
+          pure (ForInStep.yield blocks)
+  have blocks : Array String := r
+  pure blocks
+====================================================
+
+=== [DEFINITION] AristotleExporter.formatFrontier.match_1 ===
+Type / Statement:
+(motive : Option Lean.ConstantInfo → Sort u_1) →
+  (x : Option Lean.ConstantInfo) → ((info : Lean.ConstantInfo) → motive (some info)) → (Unit → motive none) → motive x
+Proof / Definition:
+fun motive x h_1 h_2 => Option.casesOn x (h_2 ()) fun val => h_1 val
+====================================================
+
+=== [DEFINITION] AristotleExporter.kindTag ===
+Type / Statement:
+Lean.ConstantInfo → String
+Proof / Definition:
+fun x =>
+  match x with
+  | Lean.ConstantInfo.axiomInfo val => "AXIOM"
+  | Lean.ConstantInfo.thmInfo val => "THEOREM"
+  | Lean.ConstantInfo.defnInfo val => "DEFINITION"
+  | Lean.ConstantInfo.opaqueInfo val => "OPAQUE"
+  | Lean.ConstantInfo.ctorInfo val => "CONSTRUCTOR"
+  | Lean.ConstantInfo.inductInfo val => "INDUCTIVE"
+  | Lean.ConstantInfo.recInfo val => "RECURSOR"
+  | Lean.ConstantInfo.quotInfo val => "QUOT"
+====================================================
+
+=== [DEFINITION] AristotleExporter.kindTag.match_1 ===
+Type / Statement:
+(motive : Lean.ConstantInfo → Sort u_1) →
+  (x : Lean.ConstantInfo) →
+    ((val : Lean.AxiomVal) → motive (Lean.ConstantInfo.axiomInfo val)) →
+      ((val : Lean.TheoremVal) → motive (Lean.ConstantInfo.thmInfo val)) →
+        ((val : Lean.DefinitionVal) → motive (Lean.ConstantInfo.defnInfo val)) →
+          ((val : Lean.OpaqueVal) → motive (Lean.ConstantInfo.opaqueInfo val)) →
+            ((val : Lean.ConstructorVal) → motive (Lean.ConstantInfo.ctorInfo val)) →
+              ((val : Lean.InductiveVal) → motive (Lean.ConstantInfo.inductInfo val)) →
+                ((val : Lean.RecursorVal) → motive (Lean.ConstantInfo.recInfo val)) →
+                  ((val : Lean.QuotVal) → motive (Lean.ConstantInfo.quotInfo val)) → motive x
+Proof / Definition:
+fun motive x h_1 h_2 h_3 h_4 h_5 h_6 h_7 h_8 =>
+  Lean.ConstantInfo.casesOn x (fun val => h_1 val) (fun val => h_3 val) (fun val => h_2 val) (fun val => h_4 val)
+    (fun val => h_8 val) (fun val => h_6 val) (fun val => h_5 val) fun val => h_7 val
+====================================================
+
+=== [DEFINITION] AristotleExporter.TraverseState.frontier ===
+Type / Statement:
+AristotleExporter.TraverseState → Array Lean.Name
+Proof / Definition:
+fun self => self.3
+====================================================
+
+=== [DEFINITION] AristotleExporter.ExportConfig.expandBoundary ===
+Type / Statement:
+AristotleExporter.ExportConfig → Bool
+Proof / Definition:
+fun self => self.6
+====================================================

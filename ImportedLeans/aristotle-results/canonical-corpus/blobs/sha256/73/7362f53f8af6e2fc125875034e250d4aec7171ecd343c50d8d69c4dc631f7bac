@@ -1,0 +1,30 @@
+# Page 6 — Class: deprecated
+
+At least one member is `@[deprecated]`; we flag which, and what it points to. These are the cleanest *genuine* user-side duplicates — a rename that left both names alive.
+
+**Group 83** — fp `105629709`, 2 members (identical; struct-equal).
+
+Statement: `∀ {R : Type u_3} [inst : CommRing R], Quaternion.im 1 = 0`
+
+- `Quaternion.im_one` — head `rfl`
+- `Quaternion.one_im` _[@[deprecated]]_ — head `const Quaternion.im_one  (proof = the renamed lemma)`
+
+**Group 185** — fp `250002412`, 2 members (identical; struct-equal).
+
+Statement: `{R : Type u_5} → [Ring R] → Cubic R → R`
+
+- `Cubic.disc` _[@[deprecated]]_ — head `const Cubic.discr  (def = the renamed def)`
+- `Cubic.discr` — head `HAdd.hAdd  (the actual discriminant expression)`
+
+**Group 217** — fp `288151278`, 2 members (identical; struct-equal).
+
+Statement: `∀ {X : Type u_2} [inst : PseudoEMetricSpace X] [inst_1 : One X], Metric.ediam 1 = 0`
+
+- `Metric.ediam_one` — head `Metric.ediam_singleton`
+- `EMetric.diam_one` _[@[deprecated]]_ — head `const Metric.ediam_one  (proof = the renamed lemma)`
+
+- Group 83: `Quaternion.one_im` is `@[deprecated]`; its proof is `const Quaternion.im_one` — the new name.
+- Group 185: `Cubic.disc` is `@[deprecated]`; its body is `const Cubic.discr`.
+- Group 217: `EMetric.diam_one` is `@[deprecated]`; its proof is `const Metric.ediam_one`.
+
+In every case the deprecated member's proof term is *literally the surviving declaration*, so the deprecation arrow is visible directly in the proof head.

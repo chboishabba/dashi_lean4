@@ -1,0 +1,387 @@
+module DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact where
+
+------------------------------------------------------------------------
+-- ROW A, SUMMABILITY MECHANISM:
+--   POSITIVE INVERSE-SQUARE (BETA) MARGIN  ==>  CUBIC COUPLING DRIFT
+--   ==>  CUTOFF-INDEPENDENT SUM OF CUBES
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- CONTEXT.  Row A of docs/ym/YangMillsClayFourFrozenResearchLemmas.md needs a
+-- cutoff-uniform contraction constant q < 1 for the cumulative, history
+-- dependent beta law of the tuned (shooting) trajectory.  Asking for
+-- exponential forgetting of a *marginal* coupling is not physical; what the
+-- flow actually supplies is a positive margin in the inverse-square variable
+--
+--     u_j = g_j^{-2},      u_j - u_{j+1} >= b_*  >  0,
+--
+-- which is exactly the statement that each renormalisation step advances the
+-- running inverse coupling by a definite amount.  This module proves what
+-- that margin buys in the coupling variable itself.
+--
+-- WHAT IS PROVED.
+--
+--   (1) LOCAL CUBIC DRIFT.  If 0 < a <= b, if u_a a^2 = 1 and u_b b^2 = 1
+--       (i.e. u = g^{-2}, written multiplicatively so that no division and no
+--       reciprocal API is involved), and if b_* <= u_a - u_b, then
+--
+--            b_* a^3  <=  2 (b - a),     equivalently   (b_*/2) a^3 <= b - a.
+--
+--       Proof: clearing the inverse squares gives b_* a^2 b^2 <= (b-a)(b+a);
+--       multiplying by a and using a(a+b) <= 2 b^2 (valid because a <= b)
+--       gives b_* a^3 b^2 <= 2(b-a) b^2, and b^2 > 0 cancels.
+--
+--   (2) EXACT FINITE TELESCOPE.  Along a monotone, positive coupling sequence
+--       carrying that margin on every shell below a finite cutoff,
+--
+--            b_* sum_{j<K} g_j^3  <=  2 (g_K - g_0),
+--
+--       and hence, inside a small-coupling tube g_K - g_0 <= gamma,
+--
+--            b_* sum_{j<K} g_j^3  <=  2 gamma        (uniformly in K).
+--
+-- WHY THIS IS THE RIGHT MECHANISM.  If the literal beta law has a uniform
+-- coupling derivative |d beta_j / d g| <= L, then in the shooting variable
+-- u = g^{-2} one has |dg/du| = g^3/2, so |d beta_j / d u| <= (L/2) g_j^3, and
+-- (2) bounds the *cumulative* sensitivity by L gamma / b_* uniformly in the
+-- cutoff.  Row A's contraction gate is therefore the numerical inequality
+-- L gamma < b_*; that consequence is drawn in
+-- `DASHI.Physics.YangMills.BalabanYM4ShootingSensitivityFromCubicDriftExact`.
+--
+-- WHAT IS *NOT* PROVED.  Neither b_* > 0 for the literal constrained Gaussian
+-- determinant nor the uniform derivative bound L is established here; both
+-- remain open analytic inputs, row A stays open, and the frozen research
+-- count stays at 4.
+--
+-- Exact rational arithmetic throughout: no postulate, no hole, no receipt.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+import Data.Nat.Base as ℕ
+import Data.Nat.Properties as ℕP
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; _/_; nonNegative; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Constants and elementary sign helpers
+------------------------------------------------------------------------
+
+twoℚ halfℚ : ℚ
+twoℚ = + 2 / 1
+halfℚ = + 1 / 2
+
+halfTwo : halfℚ * twoℚ ≡ 1ℚ
+halfTwo = refl
+
+mul-nonNeg : ∀ {x y} → 0ℚ ≤ x → 0ℚ ≤ y → 0ℚ ≤ x * y
+mul-nonNeg {x} {y} 0≤x 0≤y =
+  subst (λ z → z ≤ x * y) (ℚP.*-zeroʳ x)
+    (ℚP.*-monoˡ-≤-nonNeg x {{nonNegative 0≤x}} 0≤y)
+
+mul-pos : ∀ {x y} → 0ℚ < x → 0ℚ < y → 0ℚ < x * y
+mul-pos {x} {y} 0<x 0<y =
+  subst (λ z → z < x * y) (ℚP.*-zeroʳ x)
+    (ℚP.*-monoʳ-<-pos x {{positive 0<x}} 0<y)
+
+nonneg-difference : ∀ {p q} → p ≤ q → 0ℚ ≤ q - p
+nonneg-difference {p} {q} p≤q =
+  subst (λ z → z ≤ q - p) (ℚP.+-inverseʳ p) (ℚP.+-monoˡ-≤ (- p) p≤q)
+
+scaleˡ-nonNeg : ∀ {c x y} → 0ℚ ≤ c → x ≤ y → c * x ≤ c * y
+scaleˡ-nonNeg {c} 0≤c x≤y = ℚP.*-monoˡ-≤-nonNeg c {{nonNegative 0≤c}} x≤y
+
+scaleʳ-nonNeg : ∀ {c x y} → 0ℚ ≤ c → x ≤ y → x * c ≤ y * c
+scaleʳ-nonNeg {c} 0≤c x≤y = ℚP.*-monoʳ-≤-nonNeg c {{nonNegative 0≤c}} x≤y
+
+transport-≤ : ∀ {x y u v : ℚ} → x ≡ y → u ≡ v → x ≤ u → y ≤ v
+transport-≤ refl refl le = le
+
+------------------------------------------------------------------------
+-- (1) Local cubic drift from an inverse-square margin
+------------------------------------------------------------------------
+
+-- `ua * (a * a) ≡ 1ℚ` is the literal statement u_a = a^{-2}, written without
+-- division so that the whole argument is polynomial identities plus order.
+
+clearedInverseSquareMargin :
+  ∀ {m a b} (ua ub : ℚ) →
+  0ℚ ≤ a → 0ℚ ≤ b →
+  ua * (a * a) ≡ 1ℚ → ub * (b * b) ≡ 1ℚ →
+  m ≤ ua - ub →
+  m * ((a * a) * (b * b)) ≤ (b - a) * (b + a)
+clearedInverseSquareMargin {m} {a} {b} ua ub 0≤a 0≤b relA relB margin =
+  subst (λ z → m * ((a * a) * (b * b)) ≤ z) evaluate
+    (scaleʳ-nonNeg
+      (mul-nonNeg (mul-nonNeg 0≤a 0≤a) (mul-nonNeg 0≤b 0≤b))
+      margin)
+  where
+    expand :
+      (ua - ub) * ((a * a) * (b * b))
+        ≡ (ua * (a * a)) * (b * b) - (ub * (b * b)) * (a * a)
+    expand =
+      solve 4
+        (λ x y p q →
+          (x :- y) :* ((p :* p) :* (q :* q))
+            := (x :* (p :* p)) :* (q :* q) :- (y :* (q :* q)) :* (p :* p))
+        refl ua ub a b
+
+    collapse : 1ℚ * (b * b) - 1ℚ * (a * a) ≡ (b - a) * (b + a)
+    collapse =
+      solve 2
+        (λ p q → con 1ℚ :* (q :* q) :- con 1ℚ :* (p :* p) := (q :- p) :* (q :+ p))
+        refl a b
+
+    evaluate : (ua - ub) * ((a * a) * (b * b)) ≡ (b - a) * (b + a)
+    evaluate =
+      trans expand
+        (trans (cong₂ (λ x y → x * (b * b) - y * (a * a)) relA relB) collapse)
+
+-- a (a + b) <= 2 b^2 whenever 0 <= a <= b: the elementary inequality that
+-- turns the cleared margin into a *cubic* lower bound on the drift.
+quadraticComparison :
+  ∀ {a b} → 0ℚ ≤ a → a ≤ b → a * (b + a) ≤ twoℚ * (b * b)
+quadraticComparison {a} {b} 0≤a a≤b =
+  transport-≤ (sym split) (sym double) (ℚP.+-mono-≤ ab≤bb aa≤bb)
+  where
+    0≤b : 0ℚ ≤ b
+    0≤b = ℚP.≤-trans 0≤a a≤b
+
+    ab≤bb : a * b ≤ b * b
+    ab≤bb = scaleʳ-nonNeg 0≤b a≤b
+
+    aa≤bb : a * a ≤ b * b
+    aa≤bb = ℚP.≤-trans (scaleˡ-nonNeg 0≤a a≤b) ab≤bb
+
+    split : a * (b + a) ≡ a * b + a * a
+    split = solve 2 (λ p q → p :* (q :+ p) := p :* q :+ p :* p) refl a b
+
+    double : twoℚ * (b * b) ≡ b * b + b * b
+    double = solve 1 (λ q → con twoℚ :* (q :* q) := q :* q :+ q :* q) refl b
+
+cubicDriftStep :
+  ∀ {m a b} (ua ub : ℚ) →
+  0ℚ < a → a ≤ b →
+  ua * (a * a) ≡ 1ℚ → ub * (b * b) ≡ 1ℚ →
+  m ≤ ua - ub →
+  m * (a * a * a) ≤ twoℚ * (b - a)
+cubicDriftStep {m} {a} {b} ua ub 0<a a≤b relA relB margin =
+  ℚP.*-cancelʳ-≤-pos (b * b) {{positive (mul-pos 0<b 0<b)}}
+    (transport-≤ leftShape rightShape chained)
+  where
+    0≤a : 0ℚ ≤ a
+    0≤a = ℚP.<⇒≤ 0<a
+
+    0<b : 0ℚ < b
+    0<b = ℚP.<-≤-trans 0<a a≤b
+
+    0≤b : 0ℚ ≤ b
+    0≤b = ℚP.<⇒≤ 0<b
+
+    cleared : m * ((a * a) * (b * b)) ≤ (b - a) * (b + a)
+    cleared = clearedInverseSquareMargin ua ub 0≤a 0≤b relA relB margin
+
+    timesA : (m * ((a * a) * (b * b))) * a ≤ ((b - a) * (b + a)) * a
+    timesA = scaleʳ-nonNeg 0≤a cleared
+
+    regroup : ((b - a) * (b + a)) * a ≡ (b - a) * (a * (b + a))
+    regroup = solve 3 (λ p q r → ((q :- p) :* (q :+ p)) :* p := (q :- p) :* (p :* (q :+ p)))
+      refl a b a
+
+    quadratic : (b - a) * (a * (b + a)) ≤ (b - a) * (twoℚ * (b * b))
+    quadratic =
+      scaleˡ-nonNeg (nonneg-difference a≤b) (quadraticComparison 0≤a a≤b)
+
+    chained : (m * ((a * a) * (b * b))) * a ≤ (b - a) * (twoℚ * (b * b))
+    chained =
+      ℚP.≤-trans timesA
+        (ℚP.≤-trans (ℚP.≤-reflexive regroup) quadratic)
+
+    leftShape : (m * ((a * a) * (b * b))) * a ≡ (m * (a * a * a)) * (b * b)
+    leftShape =
+      solve 3
+        (λ x p q → (x :* ((p :* p) :* (q :* q))) :* p := (x :* (p :* p :* p)) :* (q :* q))
+        refl m a b
+
+    rightShape : (b - a) * (twoℚ * (b * b)) ≡ (twoℚ * (b - a)) * (b * b)
+    rightShape =
+      solve 2
+        (λ p q → (q :- p) :* (con twoℚ :* (q :* q)) := (con twoℚ :* (q :- p)) :* (q :* q))
+        refl a b
+
+cubicDriftStepHalved :
+  ∀ {m a b} (ua ub : ℚ) →
+  0ℚ < a → a ≤ b →
+  ua * (a * a) ≡ 1ℚ → ub * (b * b) ≡ 1ℚ →
+  m ≤ ua - ub →
+  halfℚ * (m * (a * a * a)) ≤ b - a
+cubicDriftStepHalved {m} {a} {b} ua ub 0<a a≤b relA relB margin =
+  subst (λ z → halfℚ * (m * (a * a * a)) ≤ z) cancelHalf
+    (scaleˡ-nonNeg (ℚP.nonNegative⁻¹ halfℚ)
+      (cubicDriftStep ua ub 0<a a≤b relA relB margin))
+  where
+    cancelHalf : halfℚ * (twoℚ * (b - a)) ≡ b - a
+    cancelHalf =
+      solve 2
+        (λ p q → con halfℚ :* (con twoℚ :* (q :- p)) := q :- p)
+        refl a b
+
+------------------------------------------------------------------------
+-- (2) Exact finite telescope along the flow, up to a finite cutoff
+------------------------------------------------------------------------
+
+-- IMPORTANT SCOPE REMARK.  The margin is imposed only on the *finite* range
+-- j < cutoff, and that is not a technical convenience: a positive margin
+-- u_j - u_{j+1} >= b_* > 0 imposed on *all* j would force u_j < 0 eventually,
+-- contradicting u_j = g_j^{-2} > 0.  Physically this is the statement that a
+-- flow with a definite inverse-coupling step per shell can only run for
+-- finitely many shells before leaving the small-coupling tube; the content of
+-- the telescope below is exactly that the sum of cubes stays bounded by the
+-- tube width, uniformly in how many shells are available.
+
+sumCubes : (Nat → ℚ) → Nat → ℚ
+sumCubes g zero = 0ℚ
+sumCubes g (suc n) = sumCubes g n + (g n * g n * g n)
+
+record InverseSquareMarginFlow (cutoff : Nat) : Set where
+  field
+    marginConstant : ℚ                     -- b_*
+    coupling inverseSquare : Nat → ℚ       -- g_j and u_j = g_j^{-2}
+    couplingPositive : ∀ j → 0ℚ < coupling j
+    inverseSquareRelation :
+      ∀ j → inverseSquare j * (coupling j * coupling j) ≡ 1ℚ
+    couplingMonotone : ∀ j → coupling j ≤ coupling (suc j)
+    marginStep :
+      ∀ j → j ℕ.< cutoff →
+      marginConstant ≤ inverseSquare j - inverseSquare (suc j)
+
+module Flow {cutoff : Nat} (flow : InverseSquareMarginFlow cutoff) where
+
+  open InverseSquareMarginFlow flow
+
+  stepDrift :
+    ∀ j → j ℕ.< cutoff →
+    marginConstant * (coupling j * coupling j * coupling j)
+      ≤ twoℚ * (coupling (suc j) - coupling j)
+  stepDrift j j<cutoff =
+    cubicDriftStep (inverseSquare j) (inverseSquare (suc j))
+      (couplingPositive j) (couplingMonotone j)
+      (inverseSquareRelation j) (inverseSquareRelation (suc j))
+      (marginStep j j<cutoff)
+
+  -- EXACT TELESCOPE:  b_* sum_{j<K} g_j^3  <=  2 (g_K - g_0)  for K <= cutoff.
+  cubicTelescope :
+    ∀ K → K ℕ.≤ cutoff →
+    marginConstant * sumCubes coupling K ≤ twoℚ * (coupling K - coupling 0)
+  cubicTelescope zero _ =
+    ℚP.≤-reflexive
+      (trans (ℚP.*-zeroʳ marginConstant)
+        (sym (trans (cong (twoℚ *_) (ℚP.+-inverseʳ (coupling 0)))
+                    (ℚP.*-zeroʳ twoℚ))))
+  cubicTelescope (suc n) sucn≤cutoff =
+    subst (λ z → z ≤ twoℚ * (coupling (suc n) - coupling 0)) (sym distributeStep)
+      (subst (λ z → marginConstant * sumCubes coupling n
+                    + marginConstant * (coupling n * coupling n * coupling n) ≤ z)
+        recombine
+        (ℚP.+-mono-≤
+          (cubicTelescope n (ℕP.<⇒≤ sucn≤cutoff))
+          (stepDrift n sucn≤cutoff)))
+    where
+      distributeStep :
+        marginConstant * (sumCubes coupling n + (coupling n * coupling n * coupling n))
+          ≡ marginConstant * sumCubes coupling n
+            + marginConstant * (coupling n * coupling n * coupling n)
+      distributeStep =
+        ℚP.*-distribˡ-+ marginConstant (sumCubes coupling n)
+          (coupling n * coupling n * coupling n)
+
+      recombine :
+        twoℚ * (coupling n - coupling 0) + twoℚ * (coupling (suc n) - coupling n)
+          ≡ twoℚ * (coupling (suc n) - coupling 0)
+      recombine =
+        solve 3
+          (λ x y z → con twoℚ :* (y :- x) :+ con twoℚ :* (z :- y)
+                       := con twoℚ :* (z :- x))
+          refl (coupling 0) (coupling n) (coupling (suc n))
+
+  -- Inside a small-coupling tube the sum of cubes is bounded with a constant
+  -- that does not depend on how many shells the flow actually runs for.
+  cubicSumInTube :
+    ∀ {tubeWidth} →
+    (∀ K → coupling K - coupling 0 ≤ tubeWidth) →
+    ∀ K → K ℕ.≤ cutoff →
+    marginConstant * sumCubes coupling K ≤ twoℚ * tubeWidth
+  cubicSumInTube tube K K≤cutoff =
+    ℚP.≤-trans (cubicTelescope K K≤cutoff)
+      (scaleˡ-nonNeg (ℚP.nonNegative⁻¹ twoℚ) (tube K))
+
+------------------------------------------------------------------------
+-- (3) Non-vacuity: an explicit flow with a strictly positive margin
+------------------------------------------------------------------------
+
+-- g_0 = 1/2  (u_0 = 4),  g_j = 1 (u_j = 1) for j >= 1, margin b_* = 3.
+
+module PositiveMarginWitness where
+
+  witnessCoupling witnessInverseSquare : Nat → ℚ
+  witnessCoupling zero = + 1 / 2
+  witnessCoupling (suc _) = 1ℚ
+  witnessInverseSquare zero = + 4 / 1
+  witnessInverseSquare (suc _) = 1ℚ
+
+  witnessMargin : ℚ
+  witnessMargin = + 3 / 1
+
+  witnessMarginPositive : 0ℚ < witnessMargin
+  witnessMarginPositive = toWitness {a? = 0ℚ ℚP.<? witnessMargin} _
+
+  witnessFlow : InverseSquareMarginFlow 1
+  witnessFlow = record
+    { marginConstant = witnessMargin
+    ; coupling = witnessCoupling
+    ; inverseSquare = witnessInverseSquare
+    ; couplingPositive = positive?
+    ; inverseSquareRelation = relation
+    ; couplingMonotone = monotone
+    ; marginStep = margin
+    }
+    where
+      positive? : ∀ j → 0ℚ < witnessCoupling j
+      positive? zero = toWitness {a? = 0ℚ ℚP.<? (+ 1 / 2)} _
+      positive? (suc _) = toWitness {a? = 0ℚ ℚP.<? 1ℚ} _
+
+      relation :
+        ∀ j → witnessInverseSquare j * (witnessCoupling j * witnessCoupling j) ≡ 1ℚ
+      relation zero = refl
+      relation (suc _) = refl
+
+      monotone : ∀ j → witnessCoupling j ≤ witnessCoupling (suc j)
+      monotone zero = toWitness {a? = (+ 1 / 2) ℚP.≤? 1ℚ} _
+      monotone (suc _) = ℚP.≤-refl
+
+      margin :
+        ∀ j → j ℕ.< 1 →
+        witnessMargin ≤ witnessInverseSquare j - witnessInverseSquare (suc j)
+      margin zero _ = toWitness {a? = witnessMargin ℚP.≤? ((+ 4 / 1) - 1ℚ)} _
+      margin (suc _) (ℕ.s≤s ())
+
+  open Flow witnessFlow
+
+  -- 3 * (1/2)^3 = 3/8 <= 2 * (1 - 1/2) = 1.
+  witnessTelescope :
+    witnessMargin * sumCubes witnessCoupling 1
+      ≤ twoℚ * (witnessCoupling 1 - witnessCoupling 0)
+  witnessTelescope = cubicTelescope 1 ℕP.≤-refl

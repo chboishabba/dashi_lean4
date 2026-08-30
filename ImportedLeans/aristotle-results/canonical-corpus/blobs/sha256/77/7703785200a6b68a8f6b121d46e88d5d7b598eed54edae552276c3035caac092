@@ -1,0 +1,512 @@
+
+--- [FRONTIER · DEFINITION] Applicative.toPure  (from Init.Prelude) ---
+Statement:
+{f : Type u → Type v} → [self : Applicative f] → Pure f
+
+--- [FRONTIER · INDUCTIVE] Array  (from Init.Prelude) ---
+Statement:
+Type u → Type u
+
+--- [FRONTIER · DEFINITION] Array.instForIn'InferInstanceMembershipOfMonad  (from Init.Data.Array.Basic) ---
+Statement:
+{α : Type u} → {m : Type u_1 → Type u_2} → [Monad m] → ForIn' m (Array α) α inferInstance
+
+--- [FRONTIER · DEFINITION] Array.instGetElem?NatLtSize  (from Init.GetElem) ---
+Statement:
+{α : Type u_1} → GetElem? (Array α) Nat α fun xs i => i < xs.size
+
+--- [FRONTIER · DEFINITION] Array.instMembership  (from Init.Data.Array.Basic) ---
+Statement:
+{α : Type u} → Membership α (Array α)
+
+--- [FRONTIER · DEFINITION] Array.isEmpty  (from Init.Data.Array.Basic) ---
+Statement:
+{α : Type u} → Array α → Bool
+
+--- [FRONTIER · DEFINITION] Array.push  (from Init.Prelude) ---
+Statement:
+{α : Type u} → Array α → α → Array α
+
+--- [FRONTIER · DEFINITION] Array.qsort  (from Init.Data.Array.QSort.Basic) ---
+Statement:
+{α : Type u_1} →
+  (as : Array α) → autoParam (α → α → Bool) Array.qsort._auto_1 → optParam Nat 0 → optParam Nat (as.size - 1) → Array α
+
+--- [FRONTIER · DEFINITION] Array.size  (from Init.Prelude) ---
+Statement:
+{α : Type u} → Array α → Nat
+
+--- [FRONTIER · DEFINITION] BEq.beq  (from Init.Prelude) ---
+Statement:
+{α : Type u} → [self : BEq α] → α → α → Bool
+
+--- [FRONTIER · DEFINITION] Bind.bind  (from Init.Prelude) ---
+Statement:
+{m : Type u → Type v} → [self : Bind m] → {α β : Type u} → m α → (α → m β) → m β
+
+--- [FRONTIER · INDUCTIVE] Bool  (from Init.Prelude) ---
+Statement:
+Type
+
+--- [FRONTIER · DEFINITION] Bool.and  (from Init.Prelude) ---
+Statement:
+Bool → Bool → Bool
+
+--- [FRONTIER · CONSTRUCTOR] Bool.false  (from Init.Prelude) ---
+Statement:
+Bool
+
+--- [FRONTIER · DEFINITION] Bool.not  (from Init.Prelude) ---
+Statement:
+Bool → Bool
+
+--- [FRONTIER · DEFINITION] Bool.or  (from Init.Prelude) ---
+Statement:
+Bool → Bool → Bool
+
+--- [FRONTIER · CONSTRUCTOR] Bool.true  (from Init.Prelude) ---
+Statement:
+Bool
+
+--- [FRONTIER · INDUCTIVE] Char  (from Init.Prelude) ---
+Statement:
+Type
+
+--- [FRONTIER · DEFINITION] Char.isWhitespace  (from Init.Data.Char.Basic) ---
+Statement:
+Char → Bool
+
+--- [FRONTIER · DEFINITION] Decidable.decide  (from Init.Prelude) ---
+Statement:
+(p : Prop) → [h : Decidable p] → Bool
+
+--- [FRONTIER · DEFINITION] EIO  (from Init.System.IO) ---
+Statement:
+Type → Type → Type
+
+--- [FRONTIER · INDUCTIVE] Eq  (from Init.Prelude) ---
+Statement:
+{α : Sort u_1} → α → α → Prop
+
+--- [FRONTIER · CONSTRUCTOR] Eq.refl  (from Init.Prelude) ---
+Statement:
+∀ {α : Sort u_1} (a : α), a = a
+
+--- [FRONTIER · DEFINITION] ForIn.forIn  (from Init.Core) ---
+Statement:
+{m : Type u₁ → Type u₂} →
+  {ρ : Type u} →
+    {α : outParam (Type v)} → [self : ForIn m ρ α] → {β : Type u₁} → ρ → β → (α → β → m (ForInStep β)) → m β
+
+--- [FRONTIER · INDUCTIVE] ForInStep  (from Init.Core) ---
+Statement:
+Type u → Type u
+
+--- [FRONTIER · CONSTRUCTOR] ForInStep.done  (from Init.Core) ---
+Statement:
+{α : Type u} → α → ForInStep α
+
+--- [FRONTIER · CONSTRUCTOR] ForInStep.yield  (from Init.Core) ---
+Statement:
+{α : Type u} → α → ForInStep α
+
+--- [FRONTIER · DEFINITION] Function.comp  (from Init.Prelude) ---
+Statement:
+{α : Sort u} → {β : Sort v} → {δ : Sort w} → (β → δ) → (α → β) → α → δ
+
+--- [FRONTIER · DEFINITION] GE.ge  (from Init.Prelude) ---
+Statement:
+{α : Type u} → [LE α] → α → α → Prop
+
+--- [FRONTIER · DEFINITION] GT.gt  (from Init.Prelude) ---
+Statement:
+{α : Type u} → [LT α] → α → α → Prop
+
+--- [FRONTIER · DEFINITION] GetElem?.getElem!  (from Init.GetElem) ---
+Statement:
+{coll : Type u} →
+  {idx : Type v} →
+    {elem : outParam (Type w)} →
+      {valid : outParam (coll → idx → Prop)} →
+        [self : GetElem? coll idx elem valid] → [Inhabited elem] → coll → idx → elem
+
+--- [FRONTIER · DEFINITION] HAdd.hAdd  (from Init.Prelude) ---
+Statement:
+{α : Type u} → {β : Type v} → {γ : outParam (Type w)} → [self : HAdd α β γ] → α → β → γ
+
+--- [FRONTIER · DEFINITION] HAppend.hAppend  (from Init.Prelude) ---
+Statement:
+{α : Type u} → {β : Type v} → {γ : outParam (Type w)} → [self : HAppend α β γ] → α → β → γ
+
+--- [FRONTIER · DEFINITION] HDiv.hDiv  (from Init.Prelude) ---
+Statement:
+{α : Type u} → {β : Type v} → {γ : outParam (Type w)} → [self : HDiv α β γ] → α → β → γ
+
+--- [FRONTIER · DEFINITION] HSub.hSub  (from Init.Prelude) ---
+Statement:
+{α : Type u} → {β : Type v} → {γ : outParam (Type w)} → [self : HSub α β γ] → α → β → γ
+
+--- [FRONTIER · DEFINITION] IO  (from Init.System.IO) ---
+Statement:
+Type → Type
+
+--- [FRONTIER · INDUCTIVE] IO.Error  (from Init.System.IOError) ---
+Statement:
+Type
+
+--- [FRONTIER · OPAQUE] IO.FS.createDirAll  (from Init.System.IO) ---
+Statement:
+System.FilePath → IO Unit
+
+--- [FRONTIER · DEFINITION] IO.FS.writeFile  (from Init.System.IO) ---
+Statement:
+System.FilePath → String → IO Unit
+
+--- [FRONTIER · DEFINITION] IO.RealWorld  (from Init.System.IO) ---
+Statement:
+Type
+
+--- [FRONTIER · DEFINITION] LT.lt  (from Init.Prelude) ---
+Statement:
+{α : Type u} → [self : LT α] → α → α → Prop
+
+--- [FRONTIER · INDUCTIVE] List  (from Init.Prelude) ---
+Statement:
+Type u → Type u
+
+--- [FRONTIER · CONSTRUCTOR] List.cons  (from Init.Prelude) ---
+Statement:
+{α : Type u} → α → List α → List α
+
+--- [FRONTIER · DEFINITION] List.isEmpty  (from Init.Data.List.Basic) ---
+Statement:
+{α : Type u} → List α → Bool
+
+--- [FRONTIER · CONSTRUCTOR] List.nil  (from Init.Prelude) ---
+Statement:
+{α : Type u} → List α
+
+--- [FRONTIER · DEFINITION] List.toArray  (from Init.Prelude) ---
+Statement:
+{α : Type u_1} → List α → Array α
+
+--- [FRONTIER · INDUCTIVE] MProd  (from Init.Prelude) ---
+Statement:
+Type u → Type u → Type u
+
+--- [FRONTIER · DEFINITION] MProd.casesOn  (from Init.Prelude) ---
+Statement:
+{α β : Type u} →
+  {motive : MProd α β → Sort u_1} → (t : MProd α β) → ((fst : α) → (snd : β) → motive ⟨fst, snd⟩) → motive t
+
+--- [FRONTIER · DEFINITION] MProd.fst  (from Init.Prelude) ---
+Statement:
+{α β : Type u} → MProd α β → α
+
+--- [FRONTIER · CONSTRUCTOR] MProd.mk  (from Init.Prelude) ---
+Statement:
+{α β : Type u} → α → β → MProd α β
+
+--- [FRONTIER · DEFINITION] MProd.snd  (from Init.Prelude) ---
+Statement:
+{α β : Type u} → MProd α β → β
+
+--- [FRONTIER · INDUCTIVE] Membership  (from Init.Prelude) ---
+Statement:
+outParam (Type u) → Type v → Type (max u v)
+
+--- [FRONTIER · DEFINITION] Monad.toApplicative  (from Init.Prelude) ---
+Statement:
+{m : Type u → Type v} → [self : Monad m] → Applicative m
+
+--- [FRONTIER · DEFINITION] Monad.toBind  (from Init.Prelude) ---
+Statement:
+{m : Type u → Type v} → [self : Monad m] → Bind m
+
+--- [FRONTIER · INDUCTIVE] Nat  (from Init.Prelude) ---
+Statement:
+Type
+
+--- [FRONTIER · DEFINITION] Nat.decLe  (from Init.Prelude) ---
+Statement:
+(n m : Nat) → Decidable (n ≤ m)
+
+--- [FRONTIER · DEFINITION] Nat.decLt  (from Init.Prelude) ---
+Statement:
+(n m : Nat) → Decidable (n < m)
+
+--- [FRONTIER · DEFINITION] Nat.hasNotBit  (from Init.Data.Nat.Bitwise.Basic) ---
+Statement:
+Nat → Nat → Prop
+
+--- [FRONTIER · DEFINITION] Nat.land  (from Init.Data.Nat.Bitwise.Basic) ---
+Statement:
+Nat → Nat → Nat
+
+--- [FRONTIER · THEOREM] Nat.ne_of_beq_eq_false  (from Init.Prelude) ---
+Statement:
+∀ {n m : Nat}, n.beq m = false → ¬n = m
+
+--- [FRONTIER · DEFINITION] Nat.shiftRight  (from Init.Data.Nat.Bitwise.Basic) ---
+Statement:
+Nat → Nat → Nat
+
+--- [FRONTIER · DEFINITION] OfNat.ofNat  (from Init.Prelude) ---
+Statement:
+{α : Type u} → (x : Nat) → [self : OfNat α x] → α
+
+--- [FRONTIER · INDUCTIVE] Option  (from Init.Prelude) ---
+Statement:
+Type u → Type u
+
+--- [FRONTIER · DEFINITION] Option.casesOn  (from Init.Prelude) ---
+Statement:
+{α : Type u} →
+  {motive : Option α → Sort u_1} → (t : Option α) → motive none → ((val : α) → motive (some val)) → motive t
+
+--- [FRONTIER · DEFINITION] Option.ctorIdx  (from Init.Prelude) ---
+Statement:
+{α : Type u} → Option α → Nat
+
+--- [FRONTIER · DEFINITION] Option.map  (from Init.Prelude) ---
+Statement:
+{α : Type u_1} → {β : Type u_2} → (α → β) → Option α → Option β
+
+--- [FRONTIER · CONSTRUCTOR] Option.none  (from Init.Prelude) ---
+Statement:
+{α : Type u} → Option α
+
+--- [FRONTIER · RECURSOR] Option.rec  (from Init.Prelude) ---
+Statement:
+{α : Type u} →
+  {motive : Option α → Sort u_1} → motive none → ((val : α) → motive (some val)) → (t : Option α) → motive t
+
+--- [FRONTIER · CONSTRUCTOR] Option.some  (from Init.Prelude) ---
+Statement:
+{α : Type u} → α → Option α
+
+--- [FRONTIER · INDUCTIVE] PUnit  (from Init.Prelude) ---
+Statement:
+Sort u
+
+--- [FRONTIER · CONSTRUCTOR] PUnit.unit  (from Init.Prelude) ---
+Statement:
+PUnit
+
+--- [FRONTIER · INDUCTIVE] Prod  (from Init.Prelude) ---
+Statement:
+Type u → Type v → Type (max u v)
+
+--- [FRONTIER · DEFINITION] Prod.casesOn  (from Init.Prelude) ---
+Statement:
+{α : Type u} →
+  {β : Type v} → {motive : α × β → Sort u_1} → (t : α × β) → ((fst : α) → (snd : β) → motive (fst, snd)) → motive t
+
+--- [FRONTIER · DEFINITION] Prod.fst  (from Init.Prelude) ---
+Statement:
+{α : Type u} → {β : Type v} → α × β → α
+
+--- [FRONTIER · CONSTRUCTOR] Prod.mk  (from Init.Prelude) ---
+Statement:
+{α : Type u} → {β : Type v} → α → β → α × β
+
+--- [FRONTIER · DEFINITION] Pure.pure  (from Init.Prelude) ---
+Statement:
+{f : Type u → Type v} → [self : Pure f] → {α : Type u} → α → f α
+
+--- [FRONTIER · DEFINITION] ReaderT  (from Init.Prelude) ---
+Statement:
+Type u → (Type u → Type v) → Type u → Type (max u v)
+
+--- [FRONTIER · DEFINITION] ReaderT.instApplicativeOfMonad  (from Init.Prelude) ---
+Statement:
+{ρ : Type u} → {m : Type u → Type v} → [Monad m] → Applicative (ReaderT ρ m)
+
+--- [FRONTIER · DEFINITION] ReaderT.instMonadLift  (from Init.Prelude) ---
+Statement:
+{ρ : Type u} → {m : Type u → Type v} → MonadLift m (ReaderT ρ m)
+
+--- [FRONTIER · DEFINITION] StateRefT'  (from Init.Control.StateRef) ---
+Statement:
+Type → Type → (Type → Type) → Type → Type
+
+--- [FRONTIER · DEFINITION] StateRefT'.instMonad  (from Init.Control.StateRef) ---
+Statement:
+{ω σ : Type} → {m : Type → Type} → [Monad m] → Monad (StateRefT' ω σ m)
+
+--- [FRONTIER · DEFINITION] StateRefT'.instMonadLift  (from Init.Control.StateRef) ---
+Statement:
+{ω σ : Type} → {m : Type → Type} → MonadLift m (StateRefT' ω σ m)
+
+--- [FRONTIER · DEFINITION] StateT  (from Init.Control.State) ---
+Statement:
+Type u → (Type u → Type v) → Type u → Type (max u v)
+
+--- [FRONTIER · DEFINITION] StateT.run  (from Init.Control.State) ---
+Statement:
+{σ : Type u} → {m : Type u → Type v} → {α : Type u} → StateT σ m α → σ → m (α × σ)
+
+--- [FRONTIER · INDUCTIVE] Std.Format  (from Init.Data.Format.Basic) ---
+Statement:
+Type
+
+--- [FRONTIER · DEFINITION] Std.ToFormat.format  (from Init.Data.Format.Basic) ---
+Statement:
+{α : Type u} → [self : Std.ToFormat α] → α → Std.Format
+
+--- [FRONTIER · DEFINITION] Std.instToFormatString  (from Init.Data.Format.Basic) ---
+Statement:
+Std.ToFormat String
+
+--- [FRONTIER · INDUCTIVE] String  (from Init.Prelude) ---
+Statement:
+Type
+
+--- [FRONTIER · DEFINITION] String.decidableLT  (from Init.Data.String.Basic) ---
+Statement:
+(s₁ s₂ : String) → Decidable (s₁ < s₂)
+
+--- [FRONTIER · DEFINITION] String.foldl  (from Init.Data.String.Search) ---
+Statement:
+{α : Type u} → (α → Char → α) → α → String → α
+
+--- [FRONTIER · DEFINITION] String.instLT  (from Init.Data.String.Basic) ---
+Statement:
+LT String
+
+--- [FRONTIER · DEFINITION] String.intercalate  (from Init.Data.String.Defs) ---
+Statement:
+String → List String → String
+
+--- [FRONTIER · DEFINITION] String.isEmpty  (from Init.Data.String.Defs) ---
+Statement:
+String → Bool
+
+--- [FRONTIER · INDUCTIVE] System.FilePath  (from Init.System.FilePath) ---
+Statement:
+Type
+
+--- [FRONTIER · DEFINITION] System.FilePath.instDiv  (from Init.System.FilePath) ---
+Statement:
+Div System.FilePath
+
+--- [FRONTIER · CONSTRUCTOR] System.FilePath.mk  (from Init.System.FilePath) ---
+Statement:
+String → System.FilePath
+
+--- [FRONTIER · DEFINITION] System.instToStringFilePath  (from Init.System.FilePath) ---
+Statement:
+ToString System.FilePath
+
+--- [FRONTIER · DEFINITION] ToString.toString  (from Init.Data.ToString.Basic) ---
+Statement:
+{α : Type u} → [self : ToString α] → α → String
+
+--- [FRONTIER · DEFINITION] Unit  (from Init.Prelude) ---
+Statement:
+Type
+
+--- [FRONTIER · DEFINITION] Unit.unit  (from Init.Prelude) ---
+Statement:
+Unit
+
+--- [FRONTIER · DEFINITION] cond  (from Init.Prelude) ---
+Statement:
+{α : Sort u} → Bool → α → α → α
+
+--- [FRONTIER · DEFINITION] inferInstance  (from Init.Prelude) ---
+Statement:
+{α : Sort u} → [i : α] → α
+
+--- [FRONTIER · DEFINITION] instAddNat  (from Init.Prelude) ---
+Statement:
+Add Nat
+
+--- [FRONTIER · DEFINITION] instAppendString  (from Init.Data.String.Defs) ---
+Statement:
+Append String
+
+--- [FRONTIER · DEFINITION] instBEqOfDecidableEq  (from Init.Prelude) ---
+Statement:
+{α : Type u_1} → [DecidableEq α] → BEq α
+
+--- [FRONTIER · DEFINITION] instDecidableEqBool  (from Init.Prelude) ---
+Statement:
+DecidableEq Bool
+
+--- [FRONTIER · DEFINITION] instDecidableEqNat  (from Init.Prelude) ---
+Statement:
+DecidableEq Nat
+
+--- [FRONTIER · DEFINITION] instForInOfForIn'  (from Init.Control.Basic) ---
+Statement:
+{m : Type u_1 → Type u_2} → {ρ : Type u_3} → {α : Type u_4} → {d : Membership α ρ} → [ForIn' m ρ α d] → ForIn m ρ α
+
+--- [FRONTIER · DEFINITION] instHAdd  (from Init.Prelude) ---
+Statement:
+{α : Type u_1} → [Add α] → HAdd α α α
+
+--- [FRONTIER · DEFINITION] instHAppendOfAppend  (from Init.Prelude) ---
+Statement:
+{α : Type u_1} → [Append α] → HAppend α α α
+
+--- [FRONTIER · DEFINITION] instHDiv  (from Init.Prelude) ---
+Statement:
+{α : Type u_1} → [Div α] → HDiv α α α
+
+--- [FRONTIER · DEFINITION] instHSub  (from Init.Prelude) ---
+Statement:
+{α : Type u_1} → [Sub α] → HSub α α α
+
+--- [FRONTIER · DEFINITION] instLENat  (from Init.Prelude) ---
+Statement:
+LE Nat
+
+--- [FRONTIER · DEFINITION] instLTNat  (from Init.Prelude) ---
+Statement:
+LT Nat
+
+--- [FRONTIER · DEFINITION] instMonadEIO  (from Init.System.IO) ---
+Statement:
+{ε : Type} → Monad (EIO ε)
+
+--- [FRONTIER · DEFINITION] instMonadLiftT  (from Init.Prelude) ---
+Statement:
+(m : Type u_1 → Type u_2) → MonadLiftT m m
+
+--- [FRONTIER · DEFINITION] instMonadLiftTOfMonadLift  (from Init.Prelude) ---
+Statement:
+(m : Type u_1 → Type u_2) →
+  (n : Type u_1 → Type u_3) → (o : Type u_1 → Type u_4) → [MonadLift n o] → [MonadLiftT m n] → MonadLiftT m o
+
+--- [FRONTIER · DEFINITION] instOfNatNat  (from Init.Prelude) ---
+Statement:
+(n : Nat) → OfNat Nat n
+
+--- [FRONTIER · DEFINITION] instSubNat  (from Init.Prelude) ---
+Statement:
+Sub Nat
+
+--- [FRONTIER · DEFINITION] instToStringFormat  (from Init.Data.ToString.Basic) ---
+Statement:
+ToString Std.Format
+
+--- [FRONTIER · DEFINITION] instToStringNat  (from Init.Data.ToString.Basic) ---
+Statement:
+ToString Nat
+
+--- [FRONTIER · DEFINITION] instToStringString  (from Init.Data.ToString.Basic) ---
+Statement:
+ToString String
+
+--- [FRONTIER · DEFINITION] ite  (from Init.Prelude) ---
+Statement:
+{α : Sort u} → (c : Prop) → [h : Decidable c] → α → α → α
+
+--- [FRONTIER · DEFINITION] liftM  (from Init.Prelude) ---
+Statement:
+{m : Type u_1 → Type u_2} → {n : Type u_1 → Type u_3} → [self : MonadLiftT m n] → {α : Type u_1} → m α → n α
+
+--- [FRONTIER · DEFINITION] optParam  (from Init.Prelude) ---
+Statement:
+(α : Sort u) → α → Sort u

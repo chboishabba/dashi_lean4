@@ -1,0 +1,451 @@
+module DASHI.Physics.YangMills.BalabanYM4LiteralKKTBackgroundReversalEvenExact where
+
+------------------------------------------------------------------------
+-- ROW A1b: BACKGROUND REVERSAL PARITY KILLS THE FIRST KKT TAYLOR
+--          COEFFICIENT, AND THE SECOND-VARIATION CRITERION COLLAPSES TO
+--          A SINGLE COEFFICIENT
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  (The background-field constrained minimisation
+-- whose bordered KKT system is being differentiated.)
+--
+-- Roger W. Cottle, "Manifestations of the Schur complement", Linear Algebra
+-- and its Applications 8 (1974), 189--211.
+-- DOI: 10.1016/0024-3795(74)90066-4.  (Bordered determinants; the congruence
+-- invariance used below.)
+--
+-- WHERE THIS SITS
+--
+-- `BalabanYM4SignNormalizedBorderedKKTSecondVariationExact` proves the
+-- convention-independent second-variation criterion for the sign-normalised
+-- bordered determinant
+--
+--     d(eps)  =  (-1)^m det M(eps)  =  d_0 + d_1 eps + d_2 eps^2 + d_3 eps^3 ,
+--     S''(0)  =  (d_1^2 - 2 d_0 d_2) / (2 d_0^2) ,        d_0 > 0 ,
+--
+-- and leaves the physical coefficients (d_0, d_1, d_2) to be computed from the
+-- literal background data.  That is a large bordered-determinant expansion.
+--
+-- WHAT THIS MODULE ADDS
+--
+-- The identity background of the Bałaban step is stationary under background
+-- reversal, and the reversal is implemented on the KKT system by a
+-- determinant-preserving congruence.  This module proves that mechanism
+-- exactly, in the repository's own coordinates, and draws the consequences:
+--
+--   (1) `reversalCongruence` : the bordered determinant of the 2-dimensional
+--       one-constraint carrier is invariant under the reflection congruence
+--       P = diag(1,-1) of the ambient space,
+--
+--           det M(a, -b, c, q1, -q2)  =  det M(a, b, c, q1, q2) ,
+--
+--       the coordinate form of  det (P^T M P) = (det P)^2 det M.
+--
+--   (2) `ReversalSymmetricBackground` / `detEven` : if the affine family is
+--       *reversal covariant* -- the diagonal blocks Delta_11, Delta_22 and the
+--       constraint component Q_1 even in eps, the off-diagonal block Delta_12
+--       and the constraint component Q_2 odd in eps, which is exactly the
+--       statement that eps -> -eps is transported by the congruence P -- then
+--
+--           det M(-eps)  =  det M(eps)      for every eps,
+--
+--       so the sign-normalised d is an even function.
+--
+--   (3) `EvenCubic` : *any* cubic family with an even value function has
+--       d_1 = 0 and d_3 = 0.  No limits are involved: the evaluations at
+--       eps = 1 and eps = 2 already force it, exactly.
+--
+--   (4) `EvenCriterion` : with d_1 = 0 and d_0 > 0 the invariant criterion
+--       collapses to a sign test on one coefficient,
+--
+--           S''(0) > 0   <==>   d_2 < 0 ,
+--
+--       proved in both directions, together with the cleared collapse of the
+--       value itself,
+--
+--           S''(0) * d_0  =  - d_2       (i.e. S''(0) = -d_2/d_0).
+--
+-- So the remaining Row A1b obligation is *one* second Taylor coefficient of
+-- the physical bordered determinant, not three, and the criterion applied to
+-- it is a sign test rather than a quadratic inequality.
+--
+-- WHAT IS *NOT* PROVED.  That the literal Bałaban background family is
+-- reversal covariant in the above sense is an input: `ReversalSymmetricBackground`
+-- is a hypothesis record whose five entries still have to be identified with
+-- the physical background data, and no numerical value of d_2 is computed
+-- here.  Row A stays open; the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _/_; 1/_; _≤_; _<_; NonZero; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Data.Product.Base using (_×_; _,_)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; mul-pos)
+open import DASHI.Physics.YangMills.BalabanYM4BorderedKKTDeterminantExact
+  using (adjugateForm2; borderedMatrixDeterminant2; borderedDeterminant2)
+open import DASHI.Physics.YangMills.BalabanYM4ConstrainedGaussianFixedAmbientSecondVariationExact
+  using (AffineKKTFamily; module Family)
+open import DASHI.Physics.YangMills.BalabanYM4SignNormalizedBorderedKKTSecondVariationExact
+  using (signNormalized; module SignNormalizedFamily; module SignNormalizedCriterion)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Two elementary rational facts
+------------------------------------------------------------------------
+
+-- exact cancellation of a nonzero factor
+cancelMulʳ : ∀ (x y c : ℚ) .{{_ : NonZero c}} → x * c ≡ y * c → x ≡ y
+cancelMulʳ x y c eq =
+  trans (sym (unit x)) (trans (cong (_* (1/ c)) eq) (unit y))
+  where
+    unit : ∀ z → (z * c) * (1/ c) ≡ z
+    unit z =
+      trans (ℚP.*-assoc z c (1/ c))
+        (trans (cong (z *_) (ℚP.*-inverseʳ c)) (ℚP.*-identityʳ z))
+
+twoNonZero : NonZero twoℚ
+twoNonZero = ℚ.≢-nonZero {p = twoℚ} (λ ())
+
+threeNonZero : NonZero (+ 3 / 1)
+threeNonZero = ℚ.≢-nonZero {p = + 3 / 1} (λ ())
+
+-- from  2 x = 0  conclude  x = 0  (applied to the odd part of an even family)
+halveZero : ∀ (x : ℚ) → twoℚ * x ≡ 0ℚ → x ≡ 0ℚ
+halveZero x eq =
+  cancelMulʳ x 0ℚ twoℚ {{twoNonZero}}
+    (trans (ℚP.*-comm x twoℚ) (trans eq (sym (ℚP.*-zeroˡ twoℚ))))
+
+-- congruence of the bordered determinant in all five entries
+borderedCong :
+  ∀ {a a′ b b′ c c′ p p′ q q′ : ℚ} →
+  a ≡ a′ → b ≡ b′ → c ≡ c′ → p ≡ p′ → q ≡ q′ →
+  borderedMatrixDeterminant2 a b c p q ≡ borderedMatrixDeterminant2 a′ b′ c′ p′ q′
+borderedCong refl refl refl refl refl = refl
+
+------------------------------------------------------------------------
+-- (1) THE REVERSAL CONGRUENCE
+--
+-- Conjugating the ambient 2-space by the reflection P = diag(1,-1) sends
+--
+--     Delta = [[a,b],[b,c]]  |-->  [[a,-b],[-b,c]] ,
+--     Q     = (q1,q2)        |-->  (q1,-q2) ,
+--
+-- and leaves the bordered determinant unchanged: the bordered matrix
+-- transforms by the congruence diag(P,1)^T M diag(P,1), whose determinant
+-- factor is (det P)^2 = 1.
+------------------------------------------------------------------------
+
+reversalCongruence :
+  ∀ a b c q₁ q₂ →
+  borderedMatrixDeterminant2 a (- b) c q₁ (- q₂)
+    ≡ borderedMatrixDeterminant2 a b c q₁ q₂
+reversalCongruence a b c q₁ q₂ =
+  trans (borderedDeterminant2 a (- b) c q₁ (- q₂))
+    (trans
+      (cong -_
+        (solve 5
+          (λ A B C P R →
+            C :* (P :* P) :- con twoℚ :* ((:- B) :* (P :* (:- R)))
+              :+ A :* ((:- R) :* (:- R))
+              := C :* (P :* P) :- con twoℚ :* (B :* (P :* R))
+                   :+ A :* (R :* R))
+          refl a b c q₁ q₂))
+      (sym (borderedDeterminant2 a b c q₁ q₂)))
+
+------------------------------------------------------------------------
+-- (2) REVERSAL-COVARIANT AFFINE FAMILIES
+--
+-- "The identity background is stationary under background reversal, and the
+-- reversal is transported by a determinant-preserving congruence" reads, on
+-- the affine family, exactly:
+--
+--     Delta_11, Delta_22, Q_1   even in eps      (no linear part),
+--     Delta_12, Q_2             odd  in eps      (no constant part).
+------------------------------------------------------------------------
+
+record ReversalSymmetricBackground : Set where
+  field
+    -- even entries: Delta_11(eps) = a, Delta_22(eps) = c, Q_1(eps) = p
+    a c p : ℚ
+    -- odd entries: Delta_12(eps) = eps * b, Q_2(eps) = eps * r
+    b r : ℚ
+
+module Reversal (Bg : ReversalSymmetricBackground) where
+
+  open ReversalSymmetricBackground Bg public
+
+  family : AffineKKTFamily
+  family = record
+    { a₀ = a ; a₁ = 0ℚ
+    ; b₀ = 0ℚ ; b₁ = b
+    ; c₀ = c ; c₁ = 0ℚ
+    ; p₀ = p ; p₁ = 0ℚ
+    ; r₀ = 0ℚ ; r₁ = r
+    }
+
+  open SignNormalizedFamily family public
+
+  ----------------------------------------------------------------------
+  -- the five entries at -eps are the P-congruates of the entries at eps
+  ----------------------------------------------------------------------
+
+  evenEntry₁₁ : ∀ ε → Δ₁₁ (- ε) ≡ Δ₁₁ ε
+  evenEntry₁₁ ε =
+    solve 2 (λ A E → A :+ (:- E) :* con 0ℚ := A :+ E :* con 0ℚ) refl a ε
+
+  oddEntry₁₂ : ∀ ε → Δ₁₂ (- ε) ≡ - Δ₁₂ ε
+  oddEntry₁₂ ε =
+    solve 2 (λ B E → con 0ℚ :+ (:- E) :* B := :- (con 0ℚ :+ E :* B)) refl b ε
+
+  evenEntry₂₂ : ∀ ε → Δ₂₂ (- ε) ≡ Δ₂₂ ε
+  evenEntry₂₂ ε =
+    solve 2 (λ C E → C :+ (:- E) :* con 0ℚ := C :+ E :* con 0ℚ) refl c ε
+
+  evenConstraint₁ : ∀ ε → Q₁ (- ε) ≡ Q₁ ε
+  evenConstraint₁ ε =
+    solve 2 (λ P E → P :+ (:- E) :* con 0ℚ := P :+ E :* con 0ℚ) refl p ε
+
+  oddConstraint₂ : ∀ ε → Q₂ (- ε) ≡ - Q₂ ε
+  oddConstraint₂ ε =
+    solve 2 (λ R E → con 0ℚ :+ (:- E) :* R := :- (con 0ℚ :+ E :* R)) refl r ε
+
+  detEven : ∀ ε → detM (- ε) ≡ detM ε
+  detEven ε =
+    trans
+      (borderedCong (evenEntry₁₁ ε) (oddEntry₁₂ ε) (evenEntry₂₂ ε)
+        (evenConstraint₁ ε) (oddConstraint₂ ε))
+      (reversalCongruence (Δ₁₁ ε) (Δ₁₂ ε) (Δ₂₂ ε) (Q₁ ε) (Q₂ ε))
+
+  dEven : ∀ ε → d (- ε) ≡ d ε
+  dEven ε = cong (signNormalized 1) (detEven ε)
+
+------------------------------------------------------------------------
+-- (3) AN EVEN CUBIC HAS NO ODD COEFFICIENTS
+--
+-- Purely algebraic, and exact: two evaluations suffice.
+------------------------------------------------------------------------
+
+module EvenCubic
+  (d : ℚ → ℚ) (d₀ d₁ d₂ d₃ : ℚ)
+  (expansion : ∀ ε → d ε ≡ d₀ + ε * d₁ + (ε * ε) * d₂ + (ε * (ε * ε)) * d₃)
+  (even : ∀ ε → d (- ε) ≡ d ε)
+  where
+
+  -- d(eps) - d(-eps) = 2 (eps d_1 + eps^3 d_3), and the left side vanishes
+  oddPartVanishes : ∀ ε → ε * d₁ + (ε * (ε * ε)) * d₃ ≡ 0ℚ
+  oddPartVanishes ε =
+    halveZero (ε * d₁ + (ε * (ε * ε)) * d₃)
+      (trans (sym expand)
+        (trans (cong (_- d (- ε)) (sym (even ε))) (ℚP.+-inverseʳ (d (- ε)))))
+    where
+      expand : d ε - d (- ε) ≡ twoℚ * (ε * d₁ + (ε * (ε * ε)) * d₃)
+      expand =
+        trans (cong₂ _-_ (expansion ε) (expansion (- ε)))
+          (solve 5
+            (λ D₀ D₁ D₂ D₃ E →
+              (D₀ :+ E :* D₁ :+ (E :* E) :* D₂ :+ (E :* (E :* E)) :* D₃)
+                :- (D₀ :+ (:- E) :* D₁ :+ ((:- E) :* (:- E)) :* D₂
+                      :+ ((:- E) :* ((:- E) :* (:- E))) :* D₃)
+                := con twoℚ :* (E :* D₁ :+ (E :* (E :* E)) :* D₃))
+            refl d₀ d₁ d₂ d₃ ε)
+
+  -- eps = 1 :  d_1 + d_3 = 0
+  atOne : d₁ + d₃ ≡ 0ℚ
+  atOne =
+    trans
+      (sym (solve 2
+        (λ X Y → con 1ℚ :* X :+ (con 1ℚ :* (con 1ℚ :* con 1ℚ)) :* Y := X :+ Y)
+        refl d₁ d₃))
+      (oddPartVanishes 1ℚ)
+
+  -- eps = 2 :  2 (d_1 + 4 d_3) = 0, hence d_1 + 4 d_3 = 0
+  atTwo : d₁ + (+ 4 / 1) * d₃ ≡ 0ℚ
+  atTwo =
+    halveZero (d₁ + (+ 4 / 1) * d₃)
+      (trans
+        (sym (solve 2
+          (λ X Y →
+            con twoℚ :* X :+ (con twoℚ :* (con twoℚ :* con twoℚ)) :* Y
+              := con twoℚ :* (X :+ con (+ 4 / 1) :* Y))
+          refl d₁ d₃))
+        (oddPartVanishes twoℚ))
+
+  cubicCoefficientVanishes : d₃ ≡ 0ℚ
+  cubicCoefficientVanishes =
+    cancelMulʳ d₃ 0ℚ (+ 3 / 1) {{threeNonZero}}
+      (trans difference (sym (ℚP.*-zeroˡ (+ 3 / 1))))
+    where
+      difference : d₃ * (+ 3 / 1) ≡ 0ℚ
+      difference =
+        trans
+          (solve 2
+            (λ X Y → Y :* con (+ 3 / 1)
+                       := (X :+ con (+ 4 / 1) :* Y) :- (X :+ Y))
+            refl d₁ d₃)
+          (trans (cong₂ _-_ atTwo atOne) (ℚP.+-inverseʳ 0ℚ))
+
+  linearCoefficientVanishes : d₁ ≡ 0ℚ
+  linearCoefficientVanishes =
+    trans (sym (ℚP.+-identityʳ d₁))
+      (trans (cong (_+_ d₁) (sym cubicCoefficientVanishes)) atOne)
+
+------------------------------------------------------------------------
+-- (4) THE COLLAPSED CRITERION:  S''(0) > 0  <==>  d_2 < 0
+------------------------------------------------------------------------
+
+module EvenCriterion (d₀ d₂ : ℚ) (d₀pos : 0ℚ < d₀) where
+
+  open SignNormalizedCriterion d₀ 0ℚ d₂ d₀pos public
+
+  -- with d_1 = 0 the cleared numerator is exactly  -2 d_0 d_2
+  clearedIsMinusTwice : cleared ≡ - (twoℚ * (d₀ * d₂))
+  clearedIsMinusTwice =
+    solve 2
+      (λ X Y → con 0ℚ :* con 0ℚ :- con twoℚ :* (X :* Y)
+                 := :- (con twoℚ :* (X :* Y)))
+      refl d₀ d₂
+
+  ----------------------------------------------------------------------
+  -- the sign test, in both directions
+  ----------------------------------------------------------------------
+
+  0<2 : 0ℚ < twoℚ
+  0<2 = toWitness {a? = 0ℚ ℚP.<? twoℚ} _
+
+  conditionFromNegative : d₂ < 0ℚ → Condition
+  conditionFromNegative d₂neg =
+    subst (twoℚ * (d₀ * d₂) <_) (sym (ℚP.*-zeroʳ 0ℚ)) product<0
+    where
+      inner : d₀ * d₂ < 0ℚ
+      inner =
+        subst (d₀ * d₂ <_) (ℚP.*-zeroʳ d₀)
+          (ℚP.*-monoʳ-<-pos d₀ {{positive d₀pos}} d₂neg)
+
+      product<0 : twoℚ * (d₀ * d₂) < 0ℚ
+      product<0 =
+        subst (twoℚ * (d₀ * d₂) <_) (ℚP.*-zeroʳ twoℚ)
+          (ℚP.*-monoʳ-<-pos twoℚ {{positive 0<2}} inner)
+
+  negativeFromCondition : Condition → d₂ < 0ℚ
+  negativeFromCondition cond =
+    ℚP.*-cancelˡ-<-nonNeg d₀ {{ℚP.pos⇒nonNeg d₀ {{positive d₀pos}}}}
+      (subst (d₀ * d₂ <_) (sym (ℚP.*-zeroʳ d₀)) inner)
+    where
+      product<0 : twoℚ * (d₀ * d₂) < 0ℚ
+      product<0 = subst (twoℚ * (d₀ * d₂) <_) (ℚP.*-zeroʳ 0ℚ) cond
+
+      inner : d₀ * d₂ < 0ℚ
+      inner =
+        ℚP.*-cancelˡ-<-nonNeg twoℚ
+          {{ℚP.pos⇒nonNeg twoℚ {{positive 0<2}}}}
+          (subst (twoℚ * (d₀ * d₂) <_) (sym (ℚP.*-zeroʳ twoℚ)) product<0)
+
+  ----------------------------------------------------------------------
+  -- and the value itself collapses:  S''(0) d_0 = -d_2
+  ----------------------------------------------------------------------
+
+  module Collapse (H : ℚ) (defining : H * (twoℚ * (d₀ * d₀)) ≡ cleared) where
+
+    secondVariationCollapsed : H * d₀ ≡ - d₂
+    secondVariationCollapsed =
+      cancelMulʳ (H * d₀) (- d₂) (twoℚ * d₀)
+        {{ℚP.pos⇒nonZero (twoℚ * d₀) {{positive (mul-pos 0<2 d₀pos)}}}}
+        (trans
+          (solve 2
+            (λ Hh D → (Hh :* D) :* (con twoℚ :* D)
+                        := Hh :* (con twoℚ :* (D :* D)))
+            refl H d₀)
+          (trans defining
+            (trans clearedIsMinusTwice
+              (solve 2
+                (λ D₀ D₂ → :- (con twoℚ :* (D₀ :* D₂))
+                             := (:- D₂) :* (con twoℚ :* D₀))
+                refl d₀ d₂))))
+
+    positiveFromNegativeCoefficient : d₂ < 0ℚ → 0ℚ < H
+    positiveFromNegativeCoefficient d₂neg =
+      Value.secondVariationPositive H defining (conditionFromNegative d₂neg)
+
+    negativeCoefficientFromPositive : Condition → d₂ < 0ℚ
+    negativeCoefficientFromPositive = negativeFromCondition
+
+    signTest : (d₂ < 0ℚ → 0ℚ < H) × (Condition → d₂ < 0ℚ)
+    signTest = positiveFromNegativeCoefficient , negativeFromCondition
+
+------------------------------------------------------------------------
+-- (5) THE STEPS COMPOSED ON A REVERSAL-COVARIANT FAMILY
+------------------------------------------------------------------------
+
+module ReversalCriterion
+  (Bg : ReversalSymmetricBackground)
+  (d₀pos : 0ℚ < Reversal.d₀ Bg)
+  where
+
+  open Reversal Bg public
+
+  module Odd = EvenCubic d d₀ d₁ d₂ d₃ signNormalizedExpansion dEven
+
+  linearCoefficientZero : d₁ ≡ 0ℚ
+  linearCoefficientZero = Odd.linearCoefficientVanishes
+
+  cubicCoefficientZero : d₃ ≡ 0ℚ
+  cubicCoefficientZero = Odd.cubicCoefficientVanishes
+
+  open EvenCriterion d₀ d₂ d₀pos public
+
+------------------------------------------------------------------------
+-- (6) NON-VACUITY
+--
+-- a = 1, c = 1, p = 1, b = 2, r = 1:
+--   d_0 = c p^2 = 1 > 0,  d_1 = 0,  d_2 = 2 b p r - a r^2 = -3 < 0,  d_3 = 0,
+-- so S''(0) = -d_2/d_0 = 3 > 0.
+------------------------------------------------------------------------
+
+sampleBackground : ReversalSymmetricBackground
+sampleBackground = record { a = 1ℚ ; c = 1ℚ ; p = 1ℚ ; b = + 2 / 1 ; r = 1ℚ }
+
+module Sample = Reversal sampleBackground
+
+sampleD₀ : Sample.d₀ ≡ 1ℚ
+sampleD₀ = refl
+
+sampleD₂ : Sample.d₂ ≡ - (+ 3 / 1)
+sampleD₂ = refl
+
+sampleD₀Positive : 0ℚ < Sample.d₀
+sampleD₀Positive = toWitness {a? = 0ℚ ℚP.<? Sample.d₀} _
+
+module SampleCriterion = ReversalCriterion sampleBackground sampleD₀Positive
+
+sampleLinearVanishes : Sample.d₁ ≡ 0ℚ
+sampleLinearVanishes = SampleCriterion.linearCoefficientZero
+
+sampleCubicVanishes : Sample.d₃ ≡ 0ℚ
+sampleCubicVanishes = SampleCriterion.cubicCoefficientZero
+
+-- S''(0) = 3 satisfies the defining cleared relation, collapses to -d_2/d_0,
+-- and is positive exactly because d_2 < 0.
+module SampleValue = SampleCriterion.Collapse (+ 3 / 1) refl
+
+sampleCollapse : (+ 3 / 1) * Sample.d₀ ≡ - Sample.d₂
+sampleCollapse = SampleValue.secondVariationCollapsed
+
+sampleSecondVariationPositive : 0ℚ < (+ 3 / 1)
+sampleSecondVariationPositive =
+  SampleValue.positiveFromNegativeCoefficient
+    (toWitness {a? = Sample.d₂ ℚP.<? 0ℚ} _)

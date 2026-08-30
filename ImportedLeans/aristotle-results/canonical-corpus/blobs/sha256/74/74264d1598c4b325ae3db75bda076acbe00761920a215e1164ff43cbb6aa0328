@@ -1,0 +1,170 @@
+# G14 — the source-normalization decision, computed
+
+**The Riemann Hypothesis is not proved.**  Nothing was weakened and nothing was
+assumed: `RiemannHypothesisFor`, `RiemannHypothesis` and every earlier statement
+are untouched; there is no `sorry`/`admit`, no `axiom`, no postulate, no Boolean
+receipt, no numerical evidence and no `@[implemented_by]` in any Lean source of
+this cycle.  `lake build RiemannAnalytic` succeeds (8098 jobs) and
+`#print axioms` on every new theorem returns only
+`[propext, Classical.choice, Quot.sound]`.
+
+The instruction for this cycle was: *stop improving the prime estimate;
+substitute the actual definitions and compute the source normalization ratio;
+and run the deterministic log-frequency pigeonhole experiment.*  Both were done,
+and both produced definite answers.
+
+---
+
+## New modules (both imported by `RiemannAnalytic.lean`)
+
+| Module | Content |
+| --- | --- |
+| `RiemannAnalytic/SourceNormalization.lean` | the literal anchored prime observable, its exact two-sided scale, the `α²`-carrying compensated bound in both directions, and the decision theorems |
+| `RiemannAnalytic/LogFrequencyPigeonhole.lean` | the deterministic log-frequency pigeonhole cut, and the proof that it cannot supply the missing factor |
+
+---
+
+## 1. The literal prime side, computed exactly
+
+Write the literal anchored prime observable of the cosh-twisted von Mangoldt
+weights `w_α(n) = Λ(n)cosh(2α log n)` on `[1,N]`,
+
+```
+𝒜_N(α,t) = ∑_{n,m ≤ N} w_α(n) w_α(m) (1 − cos(t(log n − log m))),
+```
+
+and its compensated form `𝒟_N(α,t) = 𝒜_N(α,t) − 𝒜_N(0,t)`.
+
+* `pairForm_le_logVar`, `pairForm_ge_logVar_of_small_phase` (general weights):
+  `½t²V ≤ 𝒜 ≤ t²V`, `V` the weighted log-variance, the lower bound needing only
+  `|t Δλ| ≤ 1`.
+* `zetaAnchoredPrimeForm_two_sided` (literal weights, `N ≥ 10⁹`, `|α| < 1/2`,
+  `|t| log N ≤ 1`):
+
+```
+t² S₀² / (2·10⁷)  ≤  𝒜_N(α,t)  ≤  15000 t² S₀².
+```
+
+  **The prime side carries no hidden small factor.**  No rearrangement,
+  decomposition or cutoff can prove a bound below `t²S₀²/(2·10⁷)`.
+
+* `zetaCompensatedPrimeForm_le_twisted` / `zetaCompensatedPrimeForm_le`:
+  the baseline subtraction gains exactly the factor `α²`,
+
+```
+𝒟_N(α,t)  ≤  8 (log N)² α² · 𝒜_N(α,t)  ≤  120000 (log N)² α² t² S₀².
+```
+
+* `zetaCompensatedPrimeForm_ge` (new, the matching lower bound):
+
+```
+10⁻¹⁴ α² t² ψ(N)²  ≤  𝒟_N(α,t)          (|t| log N ≤ 1, N ≥ 10⁹).
+```
+
+  Proof: `cosh x cosh y − 1 ≥ (x²+y²)/2 ≥ α²(λₙ−λₘ)²`, the diagonal Taylor
+  kernel bound `1 − cos x ≥ x²/4`, then Cauchy–Schwarz on pairs against the G13
+  variance lower bound.
+
+So the compensated prime observable is pinned to `α²t²S₀²` from **both** sides.
+
+## 2. The decision, and what it forces
+
+`offLineZero_excluded_of_sourceNormalization` (and its `sourceRatio` form): given
+
+* the still-unproved source identification `D_{ρ,H} ≤ C_src·𝒟_N(α,t)`,
+* the geometric Gram floor `cL⁶α² ≤ D_{ρ,H}`,
+* `120000 (log N)² · C_src t² S₀² < cL⁶`,
+
+the off-line displacement is **exactly** zero.  The displacement `α` cancels
+between the compensated prime bound and the floor: the surviving condition is a
+pure comparison of constants, exactly as predicted.
+
+The negative half is now also a theorem:
+
+* `primeBudget_not_contractive`: if the defect is of the geometric size
+  `D ≤ K L⁶α²` and `K L⁶ ≤ C_src·10⁻¹⁴ t² ψ(N)²`, then `D ≤ C_src·𝒟_N(α,t)` —
+  the prime term alone is at least the whole defect, so `η ≥ 1` and no
+  contraction can be extracted.
+
+And the ratio itself has now been evaluated, in the route's own normalization
+`L = log N`:
+
+* `sourceNormalization_forced_scale`: the contraction condition implies
+
+```
+C_src · t² · N  <  3c.
+```
+
+* `contraction_condition_fails_of_fixed_normalization`: consequently, for any
+  fixed `C_src > 0` and `t ≠ 0` the condition already fails at the explicit
+  threshold `N ≥ 3c/(C_src t²)`.
+
+**Answer to the question posed.**  `C_src S₀²/L⁶` does not tend to `0` and is
+not a constant for any fixed normalization: it diverges like `C_src t²N²/L⁴`.
+The route therefore survives *only* if the literal identification produces a
+source normalization of order `1/N ≍ 1/S₀` (up to the `L⁴` slack) — i.e. only if
+the explicit-formula step divides the prime term by the prime mass itself.  That
+is not a statement about prime distribution any more; it is a statement about
+the still-unproved identification, and it is now quantitative: the required
+factor is `C_src ≲ (log N)⁴/(t² N²)` (weakened above to the clean
+`C_src < 3c/(t²N)`).
+
+## 3. The log-frequency pigeonhole experiment: result
+
+* **Deterministic half — true and proved.**  `exists_thin_logFrequency_shell`:
+  for any nonnegative pair weights and any family of `J` log-frequency cutoffs,
+  some shell carries incremental mass at most `1/J` of the total pair mass.
+* **Analytic half — false, and the failure is proved.**  A thin shell is not a
+  thin tail.  `farMass_ge_of_logVar`: if the log-variance is at least `κ` times
+  the squared mass and all separations are at most `W`, then at *every* cutoff
+  `Δ ≤ √κ` the far mass is at least `κ/W²` times the squared mass.  Literally
+  (`zetaFarMass_ge`, using G13's `κ = 10⁻⁷`, `W = log N`):
+
+```
+10⁻⁷ S₀² / (log N)²  ≤  farMass_N(α, Δ)         for every Δ ≤ 10⁻⁴.
+```
+
+* `zeta_nearFar_strictly_worse_than_global`: in the deep small-phase regime
+  `t²(log N)² < 1/(15000·10⁷)` the far term alone already exceeds the
+  unconditional global bound `15000t²S₀²`.  The near/far selection is therefore
+  strictly worse than doing nothing there, and — by
+  `zetaAnchoredPrimeForm_ge` — it can never do better than the global bound
+  anywhere.
+
+The cross-domain architecture (baseline subtraction → transverse second
+difference → near/far split → relative contraction) is thus fully instantiated
+in this tree; the arrow that fails for RH is the near/far one, for a proved
+arithmetic reason, and no hypothesis from any other domain was imported.
+
+---
+
+## Status of the milestones
+
+| Milestone | Status |
+| --- | --- |
+| 1. `literalCompensatedAnchorIdentity` | **open — still the first unproved theorem** |
+| 2. literal explicit-formula / prime identity | open (depends on 1) |
+| 3. exact source-normalization formula | the *prime factor* is now computed exactly (two-sided); the source constant `C_src` itself still awaits milestone 1 |
+| 4. normalization-vs-`L⁶` comparison | **proved as a dichotomy**: `offLineZero_excluded_of_sourceNormalization` (positive), `primeBudget_not_contractive` and `sourceNormalization_forced_scale` (negative) |
+| 5. relative tail / mixed / gamma-pole-endpoint bounds | open |
+| 6. total strict contraction / high-zero theorem | abstractly proved (`riemannHypothesis_of_relative_parts`), not instantiated |
+| 7. bounded-height zero theorem | open |
+| 8. literal RH combination | wrapper proved (`riemannHypothesis_of_relative_contraction`), premises open |
+
+## The first unproved theorem, stated exactly
+
+Unchanged from G12/G13:
+
+> **`literalCompensatedAnchorIdentity`.**  For an actual zero
+> `ρ = 1/2 + α + iγ` of `completedRiemannZeta` and the actual source local
+> matrix at height `T` and window `H`, the literal anchored Gram defect
+> `D_{ρ,H}` equals the baseline-subtracted anchored observable
+> `𝒜_H(α) − 𝒜_H(0) + R_zero(ρ,T,H)`, with `R_zero = 0` or
+> `|R_zero| ≤ η_zero·D_{ρ,H}`, `η_zero → 0`, every object being the literal
+> source object `γ_ρ, τ_k, φ̂, m_ρ, A_H`.
+
+What G14 adds is that this theorem now has a **numerical target**: the
+identification must produce `C_src ≲ 1/(t²N)`.  If it does, the decision theorem
+closes the high-zero case immediately; if it does not, `primeBudget_not_contractive`
+shows the anchored second-moment route cannot establish the Riemann Hypothesis.
+No claim about the Riemann Hypothesis is made.

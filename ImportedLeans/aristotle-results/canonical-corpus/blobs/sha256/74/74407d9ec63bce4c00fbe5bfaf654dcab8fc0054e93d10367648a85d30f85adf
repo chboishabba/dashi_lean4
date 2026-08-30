@@ -1,0 +1,110 @@
+# MonsterBitmap — the Monster–Moonshine bitmap pipeline as a Lean 4 spec
+
+`RequestProject/MonsterBitmap.lean` is a precise, **`sorry`-free, axiom-free** Lean 4
+specification of the transform that folds a number into the Monster's irreducible
+representations, weaves it through the j-function, runs a CRT step, and renders a
+194×100 bitmap.
+
+## The pipeline
+
+```
+  N : ℕ
+   │
+   ▼  Stage 1 — fold into each of the 194 Monster irreps
+        fold N i        = N mod dim(irrep_i)
+   │
+   ▼  for each of the first 100 j-expansion levels n:
+        weave n i       = multiplicity of irrep i in the decomposition of c(n)
+        active SSPs      = supersingular primes dividing dim(irrep_i), gated on weave ≠ 0
+   │
+   ▼  Stages 2–3 — CRT recombination over the active SSP moduli
+        crtPosition N i n = fold N i mod (∏ active primes)
+   │
+   ▼  Stage 4 — normalize to a byte
+        pixelValue N i n = min 255 (crtPosition · 255 / max 1 (modulus − 1))
+   │
+   ▼  194 × 100 bitmap  (monsterBitmap N), flattened by `encode`
+```
+
+## What is real data vs. what is a modelling choice
+
+| Object | Realisation |
+|---|---|
+| `irrepDim` | the 194 Monster irrep degrees, reused from `Irrep170.monsterIrrepDegrees` (OEIS A001379) |
+| `jCoeff` | the first 100 j-coefficients, reused from `Moonshine.t1Coeffs` (verified against the power series in `JExpansion`) |
+| `sspPrimes` | the 15 prime divisors of `|𝕄|` = `{2,3,5,7,11,13,17,19,23,29,31,41,47,59,71}` |
+| `sspVal` | genuine p-adic valuation `(dim i).factorization (p j)` — computed, not tabulated |
+| `weave` | a **concrete decomposition witness** (greedy decomposition of `c(n)` into irrep degrees) |
+| `crtPosition` | exact CRT solution; since every active congruence is `x ≡ fold (mod p)`, it is `fold mod (∏ p)` |
+
+The greedy `weave` is exact because the trivial representation has degree `1`, so the
+moonshine decomposition identity `c(n) = Σᵢ weave(n,i)·dim(i)` holds and is proved. For
+the head term it coincides with the classical identity `196884 = 1 + 196883`; for larger
+`n` it is one valid non-negative decomposition, not necessarily the canonical
+character-table multiplicity (the head ones are in `Moonshine.moonshine_c1 … c5`).
+
+## Proved properties (all standard axioms only)
+
+- `weave_decomposition` — `Σᵢ weave(n,i)·dim(i) = jCoeff n` for every `n < 100`.
+- `jDecomp_c1` — `c(1)` decomposes as `1·χ₀(1) + 1·χ₁(1) = 1 + 196883 = 196884`.
+- `irrepDim_pos`, `fold_lt`, `fold_zero` — folds are well-defined residues.
+- `crt_correct` — `crtPosition` is congruent to `fold` modulo every active SSP prime.
+- `crt_bound` — `crtPosition < cellModulus`.
+- `cellModulus_pos`, `sspPrimes_pos`, `sspPrimes_prime`.
+- `bitmap_periodic` — the bitmap is invariant under shifting `N` by `lcm` of all irrep dims.
+- `crt_separates` — distinct folds stay distinct at the CRT level (the honest separation).
+
+## A note on separation
+
+The draft also proposed `bitmap_separates` (distinct folds ⇒ distinct pixels). That is
+**false in general**: the final normalization compresses a residue range that can far
+exceed 256 down to one byte, so distinct folds routinely collapse to the same pixel.
+The file documents this and proves the true statement one stage earlier, at the CRT
+level (`crt_separates`).
+
+## Why the animation only "lights up" on some frames (dark vs light)
+
+The flip-book in `atlas_bitmap.svg` cycles the input over
+`N = [1, 42, 1729, 196884, 8675309, 1000000007]`, but only the **last three** frames
+visibly light up; the first three stay essentially black. This is not a bug — it is
+exactly what the pipeline computes.
+
+Each drawn (active) cell `(i, n)` has a pixel intensity
+
+```
+v = ((N mod dim_i) mod modulus_i) · 255 / (modulus_i − 1)
+```
+
+where `modulus_i` is the product of the supersingular primes dividing the irrep
+dimension `dim_i` (its CRT modulus). Two facts make small `N` dark:
+
+1. The irrep dimensions `dim_i` are enormous (the smallest nontrivial one is
+   `196883 = 47·59·71`), so for a small input `N`, `N mod dim_i = N` — the fold never
+   wraps; it just sits at `N`.
+2. Every active cell has `modulus_i ≥ 257`. So for small `N` the residue
+   `N mod modulus_i` is a tiny fraction of the modulus, and after scaling by
+   `255 / (modulus_i − 1)` it rounds down to `0` — pure black (`heat 0`, the darkest
+   indigo).
+
+Concretely (verified by `#eval`), the count of visibly-lit cells (intensity ≥ 32 of
+255) per frame is:
+
+| N | lit cells | peak intensity |
+|---|-----------|----------------|
+| 1 | 0 | 0 |
+| 42 | 0 | 0 |
+| 1729 | 0 | 3 |
+| 196884 | 29 | 148 |
+| 8675309 | 222 | 207 |
+| 1000000007 | 499 | 232 |
+
+So **dark = the input barely moves from the origin inside that cell's CRT ring**, and
+**light = the input's residue fills a large fraction of the ring**. The picture is
+really measuring *how far `N` travels* through each irrep's supersingular-prime
+modulus; only inputs on the scale of the Monster's irrep dimensions can light it up.
+
+The committed SVG now states this on-canvas: a purple two-line caption explains the
+dark/light rule, and a frame-synced readout next to the `N = …` label shows the
+live lit-cell count (`0 … too dark to see` on the small frames, rising to `499` on the
+largest). The lit *support* (which cells are ever drawn) is fixed by the moonshine
+weave; only the colours breathe with `N`.

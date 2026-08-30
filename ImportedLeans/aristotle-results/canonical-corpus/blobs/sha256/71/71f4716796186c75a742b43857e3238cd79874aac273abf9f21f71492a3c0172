@@ -1,0 +1,1200 @@
+import Integration.SewingTaxonomy
+import Integration.EpistemicTrit
+import Integration.DNAMarginTrit
+import Integration.EducationGates
+import Integration.ObserverPlurality
+import Integration.GovernanceAgency
+import Integration.ChemistryKernelSocket
+import AgdaMirror.LoomRelationAlgebra
+import Integration.ChemistryReachability
+import Integration.TernaryHubClosure
+import Integration.CoordinateSufficiency
+import Integration.ApproximateTower
+import Integration.KernelRenormalisation
+import Integration.NeuralObservation
+import Integration.StatefulTransducer
+import Integration.CellDynamics
+import Integration.HolonomySocket
+import Integration.ContextIndexedRole
+import Integration.SelectiveDecision
+import Integration.CounterfactualEffect
+import Integration.ParetoOutcome
+import Integration.ReachabilityBarrier
+import Integration.Marginalisation
+import Integration.DeclaredCarrier
+import Integration.LevelIIWelds
+
+/-!
+# The sewing registry: the cross-domain pass of this round, machine-checked
+
+`Integration.Registry` is the four-level global map.  This file is its
+sewing-round counterpart: every row is an `Integration.SewingTaxonomy.SewnRow`,
+so it carries
+
+* the **owner** in the small TOE owner set that consumes the surface,
+* the **consumer** surface itself,
+* a **classified relation** in one of the seven classes, *with the Lean witness
+  the class demands* — an `exactInstance` row cannot be filed without a
+  `Transport`, a `negativeResult` row cannot be filed without a refutation, an
+  `openSocket` row cannot be filed without a proof of underdetermination, and a
+  `candidateBridge` row cannot be filed without the proved implication,
+* and full **provenance**: module path, PR/ref, ancestry, source-vs-mirror
+  status, validation status on each side, and the claim boundary.
+
+## The meta-theorems
+
+* `no_row_claims_agda_typechecked` — **no row claims an Agda typecheck.**  No
+  Agda checker was run in this environment, and the registry is proved to say
+  so, row by row.
+* `every_row_has_boundary` — every row carries a non-empty claim boundary.
+* `no_branch_only_rows` — no row is sourced from a PR head: the PR_HEADS
+  surfaces named in the handoff are not present in this tree (see
+  `PR_HEADS_STATUS.md`), so no row may cite one.
+* `kinds_exercised` — which of the seven classes this round actually exercises.
+* `exact_rows_are_equivalences` — every `exactInstance` row yields an actual
+  equivalence of carriers, extracted from the row.
+
+## Scope
+
+No row mentions Yang–Mills or Navier–Stokes material.  No row asserts a
+physical, biological, neural, educational, institutional, chemical or
+theory-of-everything claim: every carrier appearing in a witness is a finite
+label type, a `Bool`-valued record, `ZMod 3`, `ℚ` or `ℝ`.
+-/
+
+set_option maxRecDepth 10000
+
+namespace Integration.SewingRegistry
+
+open Integration.SewingTaxonomy
+open Integration.Levels
+
+/-! ## Provenance helpers -/
+
+/-- Provenance for a surface that lives in the tracked tree, mirrored into Lean,
+with no Agda checker result. -/
+def tracked (path : String) (ancestry : List String) (boundary : String) : Provenance where
+  modulePath := path
+  prRef := none
+  ancestry := ancestry
+  surface := .agdaMirror
+  agda := .agdaNotChecked
+  lean := .leanBuilt
+  claimBoundary := boundary
+
+/-- Provenance for Lean text *about* an Agda surface that it does not
+transcribe (a finite model, say). -/
+def about (path : String) (ancestry : List String) (boundary : String) : Provenance where
+  modulePath := path
+  prRef := none
+  ancestry := ancestry
+  surface := .leanAboutAgda
+  agda := .agdaNotChecked
+  lean := .leanBuilt
+  claimBoundary := boundary
+
+/-! ## The rows -/
+
+/-- The cross-domain rows established in this sewing round. -/
+noncomputable def sewingRegistry : List SewnRow :=
+  [ -- 1. Ontology → ternary hub
+    { owner := "Integration.TernaryHub (balanced ZMod 3 coordinate)"
+      consumer := "DASHI.Ontology.EpistemicTrit.EpistemicTrit"
+      relation := .exactInstance Integration.Ontology.epistemicHub
+      prov := tracked "Agda/DASHI/Ontology/EpistemicTrit.agda"
+        ["Integration.TernaryHub", "Synthesis.ToneCore"]
+        "Three-element label type; `supported`/`contradicted` are constructor \
+         names, not epistemic states.  The Agda module declares the polarity \
+         nowhere: the involution swapping the determinate states is supplied \
+         here." }
+  , -- 2. Ontology: the shared carrier does not carry the algebra
+    { owner := "Integration.TernaryHub"
+      consumer := "DASHI.Ontology.EpistemicTrit._⊗ₑ_"
+      relation := .negativeResult
+        (∀ x y : Integration.Ontology.EpistemicTrit,
+          Integration.Ontology.balEpistemic (Integration.Ontology.agree x y) =
+            Integration.Ontology.balEpistemic x + Integration.Ontology.balEpistemic y)
+        Integration.Ontology.agree_not_add
+      prov := tracked "Agda/DASHI/Ontology/EpistemicTrit.agda"
+        ["Integration.Ontology.epistemicHub"]
+        "Refutes only that consensus is *addition* in the hub coordinate; \
+         `agree_not_mul` and `agree_no_identity` are the companion negatives." }
+  , -- 3. Ontology: binary forcing breaks polarity
+    { owner := "Integration.EquivarianceObstruction"
+      consumer := "DASHI.Ontology.EpistemicTrit.forceUnresolvedToAccept / …ToReject"
+      relation := .negativeResult
+        (∃ f : Integration.Ontology.EpistemicTrit → Bool,
+          ∀ x, f (Integration.Ontology.polarity x) = ! f x)
+        Integration.Ontology.no_polarity_equivariant_forcing
+      prov := tracked "Agda/DASHI/Ontology/EpistemicTrit.agda"
+        ["Integration.EquivarianceObstruction.no_equivariant_map_of_fixed_to_free"]
+        "A statement about maps into `Bool`; it says nothing about decision \
+         procedures, policy, or evidence handling." }
+  , -- 4. Biology/DNA → ternary hub
+    { owner := "Integration.TernaryHub (balanced ZMod 3 coordinate)"
+      consumer := "DASHI.Biology.DNAChemistryTritQuotientBridge.ChemistryMargin"
+      relation := .exactInstance Integration.DNAMarginTrit.marginHub
+      prov := tracked "Agda/DASHI/Biology/DNAChemistryTritQuotientBridge.agda"
+        ["DASHI.Foundations.SSPTritCarrier", "Integration.TernaryHub"]
+        "Exact for the *induced* involution: the Agda module supplies the two \
+         round-trips but no involution on `ChemistryMargin`.  No claim about \
+         DNA, nucleotides or base identity." }
+  , -- 5. Biology/DNA: the ternary quotient cannot index the fibre
+    { owner := "Integration.TernaryHub"
+      consumer := "DASHI.Biology.DNAChemistryTritQuotientBridge.AdmissibleFibreArity"
+      relation := .negativeResult
+        (∃ f : Integration.DNAMarginTrit.AdmissibleFibreArity →
+            Integration.DNAMarginTrit.ChemistryMargin, Function.Injective f)
+        Integration.DNAMarginTrit.no_injection_arity_to_margin
+      prov := tracked "Agda/DASHI/Biology/DNAChemistryTritQuotientBridge.agda"
+        ["Integration.DNAMarginTrit.marginHub"]
+        "A cardinality fact about two label types; it is the checkable content \
+         of the module's own `ternaryRequiredAtEveryStep = false`." }
+  , -- 6. Biology/DNA: the sheet record's flags are free
+    { owner := "Integration.Levels.Socket"
+      consumer := "DASHI.Biology.DNAChemistryTritQuotientBridge.ChemistrySheetTrit"
+      relation := .openSocket
+        (∃ s t : Integration.DNAMarginTrit.ChemistrySheetTrit Unit Unit,
+          s.margin = t.margin ∧
+            s.isCompleteChemistryCoordinate ≠ t.isCompleteChemistryCoordinate)
+        Integration.DNAMarginTrit.sheetFlags_underdetermined
+      prov := tracked "Agda/DASHI/Biology/DNAChemistryTritQuotientBridge.agda"
+        ["Integration.DNAMarginTrit.sheetTrit_redundant"]
+        "`isCompleteChemistryCoordinate` is a free `Bool`; the row records that \
+         it constrains nothing, not that the coordinate is incomplete." }
+  , -- 7. Education: gates are conjunctive
+    { owner := "Integration.EducationGates (product/validity)"
+      consumer := "DASHI.Education.RelationalEducationGateAlgebra.ValidEducationRelation"
+      relation := .negativeResult
+        (Nonempty (Integration.EducationGates.ValidEducationRelation
+          Integration.EducationGates.sixOfSeven))
+        (fun h => Integration.EducationGates.sixOfSeven_no_witness.false h.some)
+      prov := tracked "Agda/DASHI/Education/RelationalEducationGateAlgebra.agda"
+        ["Integration.EducationGates.isEmpty_of_gate_empty"]
+        "Seven abstract carrier types; nothing about education.  The row \
+         refutes aggregation-by-count, on a carrier assignment we choose." }
+  , -- 8. Education: metric governance is fail-closed
+    { owner := "Integration.Levels.Boundary"
+      consumer := "DASHI.Education.RelationalEducationGateAlgebra.EducationMetricGovernance"
+      relation := .negativeResult
+        (∃ m : Integration.EducationGates.EducationMetricGovernance,
+          m.surveyEqualsVoice = true)
+        (by rintro ⟨m, hm⟩; rw [m.surveyEqualsVoiceIsFalse] at hm; exact Bool.noConfusion hm)
+      prov := tracked "Agda/DASHI/Education/RelationalEducationGateAlgebra.agda"
+        ["Integration.EducationGates.metric_governance_fail_closed"]
+        "The record cannot be inhabited with the flag `true`.  This is a fact \
+         about the record, not about surveys or voice." }
+  , -- 9. Education: the rate record is a presentation, not a value
+    { owner := "Integration.Levels.Boundary"
+      consumer := "DASHI.Education.RelationalEducationGateAlgebra.FiniteRate"
+      relation := .negativeResult
+        (Function.Injective Integration.EducationGates.value)
+        Integration.EducationGates.rate_value_not_injective
+      prov := tracked "Agda/DASHI/Education/RelationalEducationGateAlgebra.agda"
+        ["Integration.EducationGates.value_multiplyRate"]
+        "About `ℕ × ℕ` presentations of rationals; no empirical rate is \
+         asserted." }
+  , -- 10. Education: the rounded overlap square, approximate with a bound
+    { owner := "Integration.ApproximateIntertwiner (certified-approximate tier)"
+      consumer := "DASHI.Education.RelationalEducationGateAlgebra.expectedIndependentOverlap"
+      relation := .approximateInstance (by infer_instance)
+        Integration.EducationGates.overlapCount (fun n => n + 1)
+        (fun x => x + 21 / 10000) 1 Integration.EducationGates.overlapCount_approx
+      prov := about "Lean/Integration/EducationGates.lean"
+        ["DASHI.Education.RelationalEducationGateAlgebra.multiplyRate"]
+        "The rate `21/10000` is the Agda module's own constant, used only as an \
+         arithmetic input; `1` is the rounding bound, not an empirical error." }
+  , -- 11. Alice Brown / biology: observer incomparability
+    { owner := "Integration.LeastSufficient (Refines)"
+      consumer := "DASHI.Biology.ParentAllyshipMultiObserverBridge (childVoiceRemainsDistinct)"
+      relation := .negativeResult
+        (Integration.LeastSufficient.Refines Integration.ObserverPlurality.student
+          Integration.ObserverPlurality.parentAlly)
+        Integration.ObserverPlurality.student_parent_incomparable.1
+      prov := about "Lean/Integration/ObserverPlurality.lean"
+        ["Agda/DASHI/Biology/ParentAllyshipMultiObserverBridge.agda",
+         "Agda/DASHI/Biology/AliceBrownCorpusLoom.agda",
+         "Agda/DASHI/Governance/AliceBrownInstitutionalAgencyChoiceBridgeExact.agda"]
+        "Proved on an explicit finite model of the record *shape*: the carrier \
+         is `Bool × Bool × Bool` and the observers are coordinate projections. \
+         It is not a statement about the corpus's own projections, which are \
+         not maps at all (row 12), nor about students, parents or institutions." }
+  , -- 12. Alice Brown: the projection record is a label
+    { owner := "Integration.Levels.Socket"
+      consumer := "DASHI.Biology.ParentAllyshipMultiObserverBridge.ObserverProjection"
+      relation := .openSocket
+        (Nonempty (Integration.ObserverPlurality.ObserverProjection ≃
+          (Integration.ObserverPlurality.ObserverFibre × String)))
+        ⟨Integration.ObserverPlurality.projectionRecordIsLabel⟩
+      prov := tracked "Agda/DASHI/Biology/ParentAllyshipMultiObserverBridge.agda"
+        ["Integration.ObserverPlurality.projectionRecordIsLabel"]
+        "The record has no field denoting a map out of any carrier, so its \
+         three pinned `Bool` flags cannot constrain any projection." }
+  , -- 13. Governance: declared emptiness carries no information
+    { owner := "Integration.Levels.Socket"
+      consumer :=
+        "DASHI.Governance.AliceBrownInstitutionalAgencyChoiceBridgeExact.FormalOptionPromotesAgency"
+      relation := .openSocket
+        (∀ Q : Prop, Integration.GovernanceAgency.PromotionRoute → Q)
+        Integration.GovernanceAgency.emptyPromotion_proves_everything
+      prov := tracked
+        "Agda/DASHI/Governance/AliceBrownInstitutionalAgencyChoiceBridgeExact.agda"
+        ["Integration.GovernanceAgency.promotionRoute_isEmpty"]
+        "The empty promotion type refutes nothing: an inhabitant would prove \
+         every proposition.  Filing it as evidence would be inferring a theorem \
+         from a constructor name." }
+  , -- 14. Governance: the agency surface is genuinely underdetermined
+    { owner := "Integration.LeastSufficient (Refines)"
+      consumer :=
+        "DASHI.Governance.AliceBrownInstitutionalAgencyChoiceBridgeExact.InstitutionalAgencySurface"
+      relation := .negativeResult
+        (Integration.LeastSufficient.Refines
+          (fun s : Integration.GovernanceAgency.InstitutionalAgencySurface =>
+            s.formalOptionPresented)
+          (fun s : Integration.GovernanceAgency.InstitutionalAgencySurface =>
+            s.effectivelyAccessible))
+        Integration.GovernanceAgency.agency_not_determined_by_formalOption
+      prov := tracked
+        "Agda/DASHI/Governance/AliceBrownInstitutionalAgencyChoiceBridgeExact.agda"
+        ["Integration.ObserverPlurality.not_refines_of_collapse"]
+        "A statement about two `Bool` fields of a five-`Bool` record; no \
+         institutional claim." }
+  , -- 15. Chemistry: the kernel is fail-closed
+    { owner := "Integration.Levels.Boundary"
+      consumer := "DASHI.Chemistry.TransitionKernel.ChemistryTransitionKernel"
+      relation := .negativeResult
+        (∃ k : Integration.ChemistryKernelSocket.ChemistryTransitionKernel Unit,
+          k.wetLabValidationAccepted = true)
+        (by rintro ⟨k, hk⟩; rw [k.wetLabValidationAcceptedIsFalse] at hk
+            exact Bool.noConfusion hk)
+      prov := tracked "Agda/DASHI/Chemistry/TransitionKernel.agda" []
+        "The four pinned flags are the module's only formal content; the row \
+         says the record cannot assert measurement or validation, not that \
+         chemistry has been modelled." }
+  , -- 16. Chemistry: reachability flags are open sockets
+    { owner := "Integration.Levels.Socket"
+      consumer := "DASHI.Chemistry.TransitionKernel.ReachabilityProblem.goalReachable"
+      relation := .openSocket
+        (∃ p q : Integration.ChemistryKernelSocket.ReachabilityProblem Unit,
+          p.transitionSystem = q.transitionSystem ∧ p.goalReachable ≠ q.goalReachable)
+        (Integration.ChemistryKernelSocket.goalReachable_underdetermined ())
+      prov := tracked "Agda/DASHI/Chemistry/TransitionKernel.agda" []
+        "The flag is a free `Bool`; the row records underdetermination, not \
+         unreachability." }
+  , -- 17. Chemistry: the candidate bridge that would close the socket
+    { owner := "Integration.SewingTaxonomy (candidateBridge)"
+      consumer := "DASHI.Chemistry.TransitionKernel.ReachabilityProblem"
+      relation := .candidateBridge
+        (Integration.ChemistryKernelSocket.FlagSound (S := Unit) (fun _ => true)
+          (fun _ => True))
+        (∀ p q : Integration.ChemistryKernelSocket.ReachabilityProblem Unit,
+          p.transitionSystem = q.transitionSystem → p.goalReachable = q.goalReachable)
+        (fun h p q hs =>
+          Integration.ChemistryKernelSocket.flag_determined_of_sound h trivial trivial hs)
+      prov := about "Lean/Integration/ChemistryKernelSocket.lean"
+        ["Integration.ChemistryKernelSocket.goalReachable_underdetermined"]
+        "The implication is proved in general.  The hypothesis `FlagSound` is \
+         **no longer undischarged**: \
+         `Integration.ChemistryReachability.chemistryFlagSound` supplies an \
+         inhabitant for a concrete four-state graph and a proved reachability \
+         procedure, and `chemistryFlag_determined` is the resulting \
+         determination.  `flagSound_not_automatic` still shows the hypothesis \
+         is not free in general, so the class stays `candidateBridge` for the \
+         abstract carrier." }
+  , -- 18. Education ↔ chemistry: a shared shape, and no map
+    { owner := "Integration.SewingTaxonomy (structuralAnalogue)"
+      consumer := "fail-closed authority records across the education and chemistry lanes"
+      relation := .structuralAnalogue
+        (fun T => ∃ flag : T → Bool, ∀ t, flag t = false)
+        Integration.EducationGates.EducationMetricGovernance
+        (Integration.ChemistryKernelSocket.ChemistryTransitionKernel Unit)
+        ⟨fun m => m.surveyEqualsVoice, fun m => m.surveyEqualsVoiceIsFalse⟩
+        ⟨fun k => k.wetLabValidationAccepted, fun k => k.wetLabValidationAcceptedIsFalse⟩
+      prov := about "Lean/Integration/SewingRegistry.lean"
+        ["Integration.EducationGates.metric_governance_fail_closed",
+         "Integration.ChemistryKernelSocket.kernel_fail_closed"]
+        "Deliberately the weakest class: the two lanes exhibit the same \
+         fail-closed shape, and **no map between them is claimed or exists in \
+         the corpus**.  This row must not be read as an identification." }
+  , -- 19. Loom relation algebra: the root classifier as a finite shadow
+    { owner := "Integration.SewingTaxonomy (finiteShadow)"
+      consumer := "LoomRelationAlgebra.relationRootFor"
+      relation := .finiteShadow inferInstance AgdaMirror.Loom.relationRootFor
+        AgdaMirror.Loom.relationRootFor_surjective
+      prov := tracked "Agda/LoomRelationAlgebra.agda"
+        ["Cuisine.LoomBridge", "Integration.Refinement"]
+        "Nine relation labels onto four coarse roots.  Surjective, so the root \
+         enumeration is a faithful image; **not** injective \
+         (`relationRootFor_not_injective`), so no inverse is claimed and the \
+         row is a shadow rather than an identification.  Both carriers are \
+         finite label types; nothing about affidavits or legal sufficiency is \
+         asserted." }
+  , -- 20. Loom: relation type does not determine promotion
+    { owner := "Integration.SewingTaxonomy (negativeResult)"
+      consumer := "LoomRelationAlgebra.LoomRelationAlgebra.separatesRelationFromPromotion"
+      relation := .negativeResult
+        (∀ r s : AgdaMirror.Loom.LoomTypedRelation,
+          r.relationType = s.relationType → r.promotionState = s.promotionState)
+        (by
+          intro h
+          obtain ⟨r, s, ht, hp⟩ :=
+            AgdaMirror.Loom.promotion_not_determined_by_relationType
+          exact hp (h r s ht))
+      prov := tracked "Agda/LoomRelationAlgebra.agda"
+        ["AgdaMirror.Loom.promotion_not_determined_by_relationType"]
+        "The Agda record pins a `Bool` flag `separatesRelationFromPromotion` to \
+         `true`.  This row is that flag's content as a refutation: promotion is \
+         not a function of the relation type.  It says nothing about when \
+         promotion *should* occur." }
+  , -- 21. Loom: evidence status is an open socket
+    { owner := "Integration.Levels.Socket"
+      consumer := "LoomRelationAlgebra.LoomTypedRelation.evidenceStatus"
+      relation := .openSocket
+        (∃ r s : AgdaMirror.Loom.LoomTypedRelation,
+          r.relationType = s.relationType ∧ r.evidenceStatus ≠ s.evidenceStatus)
+        AgdaMirror.Loom.evidence_not_determined_by_relationType
+      prov := tracked "Agda/LoomRelationAlgebra.agda"
+        ["AgdaMirror.Loom.typedRelationEquiv"]
+        "`typedRelationEquiv` shows the declared root and bucket fields are \
+         redundant, so a typed relation is its type plus evidence, promotion \
+         and a note.  Of those, evidence status is unconstrained by the corpus: \
+         the socket records underdetermination, not a defect." }
+  , -- 22. Chemistry: a genuine non-reachability witness
+    { owner := "Integration.SewingTaxonomy (negativeResult)"
+      consumer := "Integration.ChemistryReachability.cstep"
+      relation := .negativeResult
+        (Relation.ReflTransGen
+          (Integration.ChemistryReachability.stepRel Integration.ChemistryReachability.cstep) 0 3)
+        Integration.ChemistryReachability.cstep_not_reaches_three
+      prov := about "Lean/Integration/ChemistryReachability.lean"
+        ["Integration.ChemistryReachability.reachB_complete_of_fixpoint",
+         "Integration.ChemistryReachability.cstepSaturates"]
+        "A four-element state type and a `Bool` step relation.  The isolated \
+         state is provably not reachable — a proof of non-reachability, not an \
+         unset flag.  `reachability` and `transition system` are used in their \
+         graph-theoretic sense; no chemical claim is made." }
+  , -- 23. Chemistry: the class restriction on the discharged bridge is load-bearing
+    { owner := "Integration.SewingTaxonomy (negativeResult)"
+      consumer := "Integration.ChemistryReachability.CorrectlyPopulated"
+      relation := .negativeResult
+        (∀ p q : Integration.ChemistryKernelSocket.ReachabilityProblem
+            (Integration.ChemistryReachability.FiniteTS (Fin 4)),
+          p.transitionSystem = q.transitionSystem → p.goalReachable = q.goalReachable)
+        (by
+          intro h
+          obtain ⟨p, q, hs, -, -, hne⟩ :=
+            Integration.ChemistryReachability.correctness_restriction_is_needed
+          exact hne (h p q hs))
+      prov := about "Lean/Integration/ChemistryReachability.lean"
+        ["Integration.ChemistryKernelSocket.flag_determined_of_sound",
+         "Integration.ChemistryReachability.chemistryFlagSound"]
+        "Discharging the bridge does **not** close the socket in general: over \
+         the very same transition system an incorrectly populated problem \
+         carries the opposite flag.  The determination holds exactly on the \
+         correctly-populated class and nowhere wider." }
+  , -- 24. The ternary hub, closed: no balanced coordinate is unique
+    { owner := "Integration.TernaryHub (balanced ZMod 3 coordinate)"
+      consumer := "every three-element DASHI carrier with a declared involution"
+      relation := .negativeResult
+        (∀ t u : Transport Integration.Ontology.EpistemicTrit (ZMod 3)
+            Integration.Ontology.polarity Integration.TernaryHub.zneg, ∀ x, t.map x = u.map x)
+        (Integration.TernaryHubClosure.ternaryHub_not_unique
+          Integration.TernaryHubClosure.epistemicTrit_balancedInvolution)
+      prov := about "Lean/Integration/TernaryHubClosure.lean"
+        ["Integration.TernaryHubClosure.ternaryHub_of_involution",
+         "Integration.TernaryHubClosure.ternaryHub_two_coordinates"]
+        "`ternaryHub_of_involution` makes every three-element carrier with a \
+         self-inverse map having a single fixed point an automatic instance of \
+         the hub, so the eight hand-written rows become corollaries.  This row \
+         records the accompanying negative: the balanced coordinate is **not** \
+         unique — it is determined only up to an overall sign.  Carriers are \
+         three-element label types." }
+  , -- 25. Core: approximate multiscale naturality, as the certified-approximate tier
+    { owner := "Integration.StructureMorphism / Integration.MultiscaleDescent"
+      consumer := "DASHI.Core.ApproximateMultiscaleNaturality (ApproximateKernelTower)"
+      relation := .approximateInstance (by infer_instance)
+        Integration.MultiscaleDescent.coarse Integration.MultiscaleDescent.swap2 id 1
+        Integration.ApproximateTower.defect_approx_at_one
+      prov := about "Lean/Integration/ApproximateTower.lean"
+        ["Agda/DASHI/Core/ApproximateMultiscaleNaturality.agda",
+         "Integration.ApproximateIntertwiner.approx_comp",
+         "Integration.MultiscaleDescent.LawTower"]
+        "The Agda module is the direct ancestor: metric per level, pointwise \
+         commutation error, exact-as-zero-approximate, and a **two-stage** \
+         accumulation.  `Integration.ApproximateTower.approx_descends_projTo` \
+         generalises that to all `n` stages.  The `1` here is the range of a \
+         two-valued readout, not an empirical error bar, and no tower is \
+         claimed to describe a physical system." }
+  , -- 26. And the accompanying negative: approximate is strictly weaker than exact
+    { owner := "Integration.MultiscaleDescent (NoEffectiveLaw)"
+      consumer := "DASHI.Core.ApproximateMultiscaleNaturality (commutationError)"
+      relation := .negativeResult
+        (∃ F : ℝ → ℝ, ∀ x : Bool × Bool,
+          Integration.MultiscaleDescent.coarse (Integration.MultiscaleDescent.swap2 x)
+            = F (Integration.MultiscaleDescent.coarse x))
+        Integration.MultiscaleDescent.defect_no_effective_law_at_one
+      prov := about "Lean/Integration/ApproximateTower.lean"
+        ["Integration.MultiscaleDescent.defect_lower_bound"]
+        "At the very level where an approximate square at error `1` exists, no \
+         exact coarse law exists at all, and every candidate has defect at \
+         least `1/2` somewhere.  So a finite error bound is a genuine \
+         intermediate certificate and never an exactness claim." }
+  , -- 27. Threshold renormalisation: exact descent does not preserve locality
+    { owner := "Integration.StructureMorphism (Exact) vs Integration.LocalRealisation"
+      consumer := "DASHI.Core.ThresholdKernelRenormalisation.LocalityPreserving"
+      relation := .negativeResult
+        (Integration.KernelRenormalisation.LocalityPreserving
+          Integration.KernelRenormalisation.pooling)
+        (fun h => Integration.KernelRenormalisation.not_both _
+          ⟨h, Integration.KernelRenormalisation.pooling_destroys_locality⟩)
+      prov := about "Lean/Integration/KernelRenormalisation.lean"
+        ["Agda/DASHI/Core/ThresholdKernelRenormalisation.agda",
+         "Integration.KernelRenormalisation.pooling_commutes"]
+        "The Agda declaration `localityPreservationIsNotKernelCommutation` has \
+         type `LocalityPreserving → LocalityPreserving` and is the identity, so \
+         the corpus names this separation without proving it.  Here the pooling \
+         coarse-graining commutes exactly and provably destroys locality.  \
+         Carriers are a two-element and a one-element type with Boolean states; \
+         no renormalisation group is modelled." }
+  , -- 28. …and preserving locality gives no coarse law at all
+    { owner := "Integration.StructureMorphism (Exact)"
+      consumer := "DASHI.Core.ThresholdKernelRenormalisation.CommutesExactly"
+      relation := .negativeResult
+        (∃ F : (Bool → Bool) → (Bool → Bool), ∀ s,
+          Integration.KernelRenormalisation.forgetful.state
+            (Integration.KernelRenormalisation.forgetful.fineLaw s)
+            = F (Integration.KernelRenormalisation.forgetful.state s))
+        Integration.KernelRenormalisation.forgetful_no_coarse_law
+      prov := about "Lean/Integration/KernelRenormalisation.lean"
+        ["Integration.KernelRenormalisation.descent_and_locality_independent"]
+        "The converse half of the independence: the node map is the identity, \
+         so locality is preserved, yet no coarse law reproduces the fine one.  \
+         The two certificates are therefore logically independent." }
+  , -- 29. Neural/fMRI: the coarse projection does not determine the fine relational quantity
+    { owner := "Integration.CoordinateSufficiency (Determines)"
+      consumer := "DASHI.Biology.NeuralRepresentationLaplacianExact.fmriLikeObservation"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines
+          Integration.NeuralObservation.fmriLikeObservation
+          Integration.NeuralObservation.laplacianVariation)
+        Integration.NeuralObservation.variation_not_determined
+      prov := tracked "Agda/DASHI/Biology/NeuralRepresentationLaplacianExact.agda"
+        ["Integration.CoordinateSufficiency.not_determines_of_collision",
+         "Integration.ObserverBundle.pullbackDist_self_of_collision"]
+        "One of the few corpus modules supplying an actual projection rather \
+         than a `Bool` flag.  `fmriLikeObservation` is a two-component sum of \
+         three natural numbers and `laplacianVariation` a sum of truncated \
+         differences: neither is a model of imaging or of a graph Laplacian \
+         spectrum, and no neural claim is made." }
+  , -- 30. Neural/fMRI: no effective law on the coarse observation
+    { owner := "Integration.MultiscaleDescent (NoEffectiveLaw)"
+      consumer := "DASHI.Biology.NeuralRepresentationLaplacianExact.activationUpdate"
+      relation := .negativeResult
+        (∃ F : Integration.NeuralObservation.CoarseRegionalObservation →
+            Integration.NeuralObservation.CoarseRegionalObservation,
+          ∀ x, Integration.NeuralObservation.fmriLikeObservation
+              (Integration.NeuralObservation.activationUpdate .recurrent x)
+            = F (Integration.NeuralObservation.fmriLikeObservation x))
+        Integration.NeuralObservation.neural_no_effective_law
+      prov := tracked "Agda/DASHI/Biology/NeuralRepresentationLaplacianExact.agda"
+        ["Integration.NeuralObservation.no_effective_transport",
+         "Integration.ObserverBundle.not_measured_of_collision"]
+        "The strongest available negative: not that a chosen coarse law fails, \
+         but that none exists.  It is a statement about this projection and \
+         this update on three natural-number coordinates." }
+  , -- 31. Ternary motif: the coarse observation does not determine the phase label
+    { owner := "Integration.ObserverBundle / Integration.DescentLevel"
+      consumer := "DASHI.Biology.TernaryMotifNeuralObservationQuotientExact"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines
+          Integration.NeuralObservation.phaseObservation
+          Integration.NeuralObservation.motifOfTrit)
+        Integration.NeuralObservation.phase_not_determined.1
+      prov := tracked "Agda/DASHI/Biology/TernaryMotifNeuralObservationQuotientExact.agda"
+        ["Integration.NeuralObservation.phase_collision",
+         "Integration.NeuralObservation.phase_information_destroyed_not_absent"]
+        "The motif labelling is injective on the three phases, so the \
+         information is present upstream and destroyed by the projection rather \
+         than absent to begin with.  `MotifState` is a five-element label type; \
+         no visual, perceptual or neural claim is made." }
+  , -- 32. Stateful transducer → field-controlled dynamics: the adapter
+    { owner := "Integration.FieldControlledDynamics (FieldControlled)"
+      consumer := "DASHI.Biology.StateDependentMultiplexTransducer.StatefulTransducer"
+      relation := .candidateBridge
+        (∃ (T : Integration.StatefulTransducer.Transducer) (i : T.Input) (s : T.State)
+          (m m' : T.Modulator),
+            Integration.StatefulTransducer.runState T i s m ≠
+              Integration.StatefulTransducer.runState T i s m')
+        (∃ (T : Integration.StatefulTransducer.Transducer) (i : T.Input) (s : T.State)
+          (m m' : T.Modulator),
+            (Integration.StatefulTransducer.toFieldControlled T i).effStep m s
+                (Integration.StatefulTransducer.runState T i s m) ∧
+              ¬ (Integration.StatefulTransducer.toFieldControlled T i).effStep m' s
+                (Integration.StatefulTransducer.runState T i s m))
+        (by
+          rintro ⟨T, i, s, m, m', h⟩
+          exact ⟨T, i, s, m, m',
+            Integration.StatefulTransducer.field_changes_successor_of_split T i s m m' h⟩)
+      prov := about "Lean/Integration/StatefulTransducer.lean"
+        ["Agda/DASHI/Biology/StateDependentMultiplexTransducer.agda",
+         "Integration.FieldControlledDynamics.field_changes_successor"]
+        "The adapter is general: at a fixed input token a transducer is a \
+         field-controlled system with the modulator as background field.  The \
+         hypothesis — that some modulator pair splits the successor state — is \
+         what each transducer must supply; the corpus's own Boolean instance \
+         supplies it (`canonical_field_separation`), and an unmodulated \
+         transducer would not.  This gives the owner its first corpus-derived \
+         consumer besides its synthetic four-state witness." }
+  , -- 33. …and the output is not a function of the input token
+    { owner := "Integration.CoordinateSufficiency (FactorsOn)"
+      consumer := "DASHI.Biology.StateDependentMultiplexTransducer.canonicalBoolTransducer"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.FactorsOn (A := fun _ : Fin 3 => Bool) {0}
+          Integration.StatefulTransducer.canonicalOutput)
+        Integration.StatefulTransducer.canonical_output_not_input_only
+      prov := about "Lean/Integration/StatefulTransducer.lean"
+        ["Integration.StatefulTransducer.canonical_output_all_essential",
+         "Integration.CoordinateSufficiency.essential_mem_of_factorsOn"]
+        "All three coordinates — input, prior state, modulator — are essential, \
+         so the output factors through no projection forgetting one of them.  \
+         The Agda module's informal point, discharged by the generic coordinate \
+         theorem.  The carrier is `Bool`; nothing about neurons is asserted." }
+  , -- 34. Quantitative state dynamics: the pending magnitude is a residual
+    { owner := "Integration.ResidualTaxonomy / Integration.CoordinateSufficiency"
+      consumer := "DASHI.Biology.QuantitativeStateDynamics.quantitativeStep"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines
+          (fun c : Integration.StatefulTransducer.CellState => c.regime)
+          (fun c => (Integration.StatefulTransducer.quantitativeStep true c).1))
+        Integration.StatefulTransducer.pending_is_a_residual
+      prov := tracked "Agda/DASHI/Biology/QuantitativeStateDynamics.agda"
+        ["Integration.StatefulTransducer.delayed_store_then_release"]
+        "The visible label (the regime) is not a sufficient description of the \
+         effective law: a stored magnitude, deposited on one step and released \
+         on the next, separates two states with the same regime.  Magnitudes \
+         are natural numbers, not voltages." }
+  , -- 35. Bioelectric network: the update is not a function of the state alone
+    { owner := "Integration.FieldControlledDynamics (FieldControlled)"
+      consumer := "DASHI.Biology.Cell.BioelectricNetwork.update"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.FactorsOn (A := fun _ : Fin 5 => Bool) {4}
+          Integration.CellDynamics.updateOfCoords)
+        Integration.CellDynamics.update_not_state_only
+      prov := tracked "Agda/DASHI/Biology/Cell/BioelectricNetwork.agda"
+        ["Integration.CellDynamics.update_all_coordinates_essential",
+         "Integration.CellDynamics.BioelectricNetwork.toFieldControlled"]
+        "The record's five-argument update is exactly the field-controlled \
+         shape `x' = F(x, φ)`, and each of the four control channels is \
+         essential.  The instance is the corpus's own Boolean one; no \
+         bioelectric, chemical or mechanical claim is made." }
+  , -- 36. Bioelectric pattern projection: no effective pattern dynamics
+    { owner := "Integration.ObserverBundle / Integration.MultiscaleDescent"
+      consumer := "DASHI.Biology.Cell.BioelectricNetwork.BioelectricPatternProjection"
+      relation := .negativeResult
+        (∃ F : Bool → Bool, ∀ s : Bool × Bool,
+          Integration.CellDynamics.observePattern
+              (Integration.CellDynamics.patternNetwork.stepAt
+                Integration.CellDynamics.chemOn s)
+            = F (Integration.CellDynamics.observePattern s))
+        Integration.CellDynamics.pattern_no_effective_law
+      prov := about "Lean/Integration/CellDynamics.lean"
+        ["Integration.CellDynamics.pattern_collision"]
+        "Two states with the same observed pattern are driven to states with \
+         different patterns, so the pattern layer supports no dynamics of its \
+         own.  This is the observation layer the Agda record declares, with an \
+         explicit two-node carrier supplied here." }
+  , -- 37. Cell state attractor: the attractor class is not a semantic identity
+    { owner := "Integration.FieldControlledDynamics (Fixed / Basin / Cycle)"
+      consumer := "DASHI.Biology.Cell.CellStateAttractor"
+      relation := .negativeResult
+        (Function.Injective Integration.CellDynamics.cellPhenotype)
+        Integration.CellDynamics.phenotype_not_injective
+      prov := tracked "Agda/DASHI/Biology/Cell/CellStateAttractor.agda"
+        ["Integration.CellDynamics.attractor_not_identity",
+         "Integration.CellDynamics.basin_forward_invariant",
+         "Integration.CellDynamics.attractor_depends_on_environment"]
+        "The Agda record demands `forwardInvariant` of its inhabitants; here it \
+         is a theorem about the owner's `Basin` for basins of fixed points.  \
+         This row records the module's own boundary as a proof: two distinct \
+         states share a basin and a phenotype, so neither determines the state. \
+         The carrier is `Fin 4`; no cell type is modelled." }
+  , -- 38. Reaction–diffusion mode selection: the witness record constrains nothing
+    { owner := "Integration.Levels.Socket"
+      consumer := "DASHI.Biology.Morphogenesis.ReactionDiffusionModeSelection"
+      relation := .openSocket
+        (Nonempty Integration.CellDynamics.ModeSelectionWitness)
+        Integration.CellDynamics.modeSelection_trivially_inhabited
+      prov := tracked "Agda/DASHI/Biology/Morphogenesis/ReactionDiffusionModeSelection.agda"
+        ["Integration.CellDynamics.ModeSelectionWitness"]
+        "Every condition of the module — local excitation, lateral inhibition, \
+         finite-wavelength instability, symmetry compatibility — is an \
+         uninterpreted field supplied by the inhabitant, so the witness record \
+         is inhabited by trivial data.  Reading an inhabitant as evidence of a \
+         Turing instability would be unsupported.  The row is a socket, not a \
+         refutation of pattern formation." }
+  , -- 39. Holonomy reference frame: an open socket for the commutator owner
+    { owner := "Integration.CommutatorObservability"
+      consumer := "DASHI.Biology.Levin.HolonomyReferenceFrameBoundary"
+      relation := .openSocket
+        (∃ w v : Integration.HolonomySocket.ReferenceFrameChangeWitness,
+          w.path = v.path ∧ w.observableActionChanged ≠ v.observableActionChanged)
+        Integration.HolonomySocket.flags_underdetermined
+      prov := tracked "Agda/DASHI/Biology/Levin/HolonomyReferenceFrameBoundary.agda"
+        ["Integration.HolonomySocket.defect_can_be_invisible",
+         "Integration.CommutatorObservability.cubie_hidden_order"]
+        "The module defines no transport map and proves no loop holonomy, so it \
+         must not be promoted to an instance.  The exact obligation is stated \
+         in `Integration.HolonomySocket`: exhibit a loop transport with \
+         `T x ≠ x`, then say what the observer does with it — and \
+         `defect_can_be_invisible` shows those are two different obligations." }
+  , -- 40. Intersectional non-factorability: the corpus's own generic owner
+    { owner := "Integration.CoordinateSufficiency (Determines)"
+      consumer := "DASHI.Core.IntersectionalNonFactorability"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines
+          Integration.ContextIndexedRole.flatProjection
+          Integration.ContextIndexedRole.relationalOutcome)
+        Integration.ContextIndexedRole.flat_reweighting_cannot_repair
+      prov := tracked "Agda/DASHI/Core/IntersectionalNonFactorability.agda"
+        ["Integration.ContextIndexedRole.factorsThrough_iff_determines",
+         "Integration.ContextIndexedRole.not_determines_of_downstream"]
+        "This corpus module is already domain-neutral, and \
+         `factorsThrough_iff_determines` proves its `FactorsThrough` record is \
+         inhabited exactly when the Lean owner's `Determines` holds: the two \
+         are the same notion, so the lanes supply witnesses rather than \
+         re-deriving the theory.  The carriers are two- and one-element label \
+         types.  No social, legal or demographic claim is made; the Agda \
+         module's own header says the same." }
+  , -- 41. Context elimination fails
+    { owner := "Integration.ContextIndexedRole (ContextEliminable)"
+      consumer := "context-indexed role assignments across the corpus"
+      relation := .negativeResult
+        (Integration.ContextIndexedRole.ContextEliminable
+          Integration.ContextIndexedRole.roleIn)
+        Integration.ContextIndexedRole.role_not_context_free
+      prov := about "Lean/Integration/ContextIndexedRole.lean"
+        ["Agda/DASHI/Biology/Core/ContextIndexedSystem.agda",
+         "Integration.ContextIndexedRole.context_not_eliminable_of_split"]
+        "A role assignment indexed by a frame need not come from any frame-free \
+         assignment; eliminability is exactly non-essentiality of the frame \
+         coordinate.  The instance is two frames and one entity, both `Bool`." }
+  , -- 42. Only the full coordinate set is sufficient
+    { owner := "Integration.CoordinateSufficiency (FactorsOn / essentialSet)"
+      consumer := "product-state consumers across the corpus"
+      relation := .negativeResult
+        (∃ S : Set (Fin 5), S ≠ Set.univ ∧
+          Integration.CoordinateSufficiency.FactorsOn (A := fun _ : Fin 5 => Bool) S
+            Integration.ContextIndexedRole.realizedAccess)
+        (by
+          rintro ⟨S, hS, hfac⟩
+          exact hS ((Integration.ContextIndexedRole.access_only_full_is_sufficient S).mp hfac))
+      prov := about "Lean/Integration/ContextIndexedRole.lean"
+        ["Integration.CoordinateSufficiency.factorsOn_iff_essentialSet_subset",
+         "Integration.CoordinateSufficiency.factorsOn_essentialSet"]
+        "On a finite index the sufficient coordinate sets are exactly those \
+         containing every essential coordinate, so a consumer with all five \
+         essential admits no proper sufficient subset.  \
+         `essentialSet_not_sufficient_infinite` records that finiteness of the \
+         index is load-bearing." }
+  , -- 43. Coordinate dependence is not interaction
+    { owner := "Integration.CoordinateSufficiency (Separable)"
+      consumer := "additive readings of multi-axis consumers"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Separable
+          Integration.ContextIndexedRole.accessValue)
+        Integration.ContextIndexedRole.access_pair_not_separable
+      prov := about "Lean/Integration/CoordinateSufficiency.lean"
+        ["Integration.CoordinateSufficiency.separable_rectangle",
+         "Integration.CoordinateSufficiency.dependence_ne_interaction"]
+        "`dependence_ne_interaction` separates the two notions in one \
+         statement: a consumer can depend on both coordinates and still \
+         decompose additively, while this one cannot decompose at all.  The \
+         codomain is `ℤ`; no effect size is asserted." }
+  , -- 44. Aggregation: no statistic of any sample size reopens a collided fibre
+    { owner := "Integration.CoordinateSufficiency (aggregation)"
+      consumer := "DASHI.Biology.NeuralRepresentationLaplacianExact.fmriLikeObservation"
+      relation := .candidateBridge
+        (¬ Function.Injective Integration.NeuralObservation.fmriLikeObservation)
+        (∃ p q : Integration.NeuralObservation.PopulationActivation, p ≠ q ∧
+          ∀ (n : ℕ) (Z : Type)
+            (T : (Fin n → Integration.NeuralObservation.CoarseRegionalObservation) → Z),
+            T (fun _ => Integration.NeuralObservation.fmriLikeObservation p)
+              = T (fun _ => Integration.NeuralObservation.fmriLikeObservation q))
+        Integration.CoordinateSufficiency.aggregation_destroys_distinction
+      prov := about "Lean/Integration/CoordinateSufficiency.lean"
+        ["Integration.NeuralObservation.fmri_collision",
+         "Integration.CoordinateSufficiency.no_sample_statistic_separates"]
+        "The hypothesis is what each lane supplies — a non-injective \
+         observation — and this one is supplied by the corpus's own collision.  \
+         The conclusion is deterministic: repeated observation of the two \
+         states produces identical data, so every statistic of every sample \
+         size agrees on them.  It says nothing about estimation error, noise or \
+         convergence, and is not a claim about any study." }
+  , -- 45. The compiled action does not determine the belief
+    { owner := "Integration.SelectiveDecision (Verdict / resolve)"
+      consumer := "DASHI.Control.LearnedAbstentionBoundary.compileDecision"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines
+          Integration.SelectiveDecision.compileDecision
+          Integration.SelectiveDecision.Decision.direction)
+        Integration.SelectiveDecision.action_does_not_determine_direction
+      prov := tracked "Agda/DASHI/Control/LearnedAbstentionBoundary.agda"
+        ["Integration.SelectiveDecision.abstention_compiles_to_hold",
+         "Integration.CoordinateSufficiency.not_determines_of_collision"]
+        "The Agda module proves that abstention compiles to `hold`; the \
+         consequence — that the executed action then carries no information \
+         about the direction — is proved here and not there.  The carriers are \
+         a three-element direction type, a four-element action type and \
+         `Bool`; nothing is asserted about trading or control." }
+  , -- 46. Closing exposure is not a decision value
+    { owner := "Integration.SelectiveDecision (resolve)"
+      consumer := "DASHI.Control.LearnedAbstentionBoundary.Action.flatten"
+      relation := .negativeResult
+        (∃ d : Integration.SelectiveDecision.Decision,
+          Integration.SelectiveDecision.compileDecision d
+            = Integration.SelectiveDecision.Action.flatten)
+        (by rintro ⟨d, hd⟩; exact Integration.SelectiveDecision.compile_never_flattens d hd)
+      prov := tracked "Agda/DASHI/Control/LearnedAbstentionBoundary.agda"
+        ["Integration.SelectiveDecision.compile_never_flattens"]
+        "The Agda module says in prose that closing exposure cannot be \
+         produced by `compileDecision`; this row is that statement, proved.  \
+         It is a fact about a four-element label type." }
+  , -- 47. The corpus's severity thresholds leave no abstention region
+    { owner := "Integration.SelectiveDecision (gated)"
+      consumer := "DASHI.Physics.SeverityMapping.safeThresholdᵣ / brokenThresholdᵣ"
+      relation := .negativeResult
+        (∃ s, Integration.SelectiveDecision.gated
+          Integration.SelectiveDecision.corpusSafeThreshold
+          Integration.SelectiveDecision.corpusBrokenThreshold s
+            = Integration.SelectiveDecision.Verdict.abstain)
+        Integration.SelectiveDecision.corpus_thresholds_admit_no_abstention
+      prov := about "Lean/Integration/SelectiveDecision.lean"
+        ["Integration.SelectiveDecision.abstention_is_reachable_iff"]
+        "The two numerals `3` and `4` are read from the Agda module; the gated \
+         rule is the Lean reading of a safe/broken threshold pair and is not \
+         claimed to be the Agda module's own decision procedure, which it does \
+         not define.  With adjacent thresholds the three-valued vocabulary \
+         carries a two-valued rule." }
+  , -- 48. The severity clamp is an aggregation collision
+    { owner := "Integration.CoordinateSufficiency (aggregation)"
+      consumer := "DASHI.Physics.SeverityMapping.clamp9"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines
+          Integration.SelectiveDecision.clamp9 (fun n : ℕ => n))
+        Integration.SelectiveDecision.clamp9_not_determines
+      prov := tracked "Agda/DASHI/Physics/SeverityMapping.agda"
+        ["Integration.SelectiveDecision.clamp9_collides"]
+        "`clamp9` is `min · 9`; every severity of nine or more reports the same \
+         code.  No physical, safety or monitoring claim is made, and the row \
+         says nothing about the tail-count function the Agda module feeds it." }
+  , -- 49. An intervention label does not determine its effect
+    { owner := "Integration.CounterfactualEffect"
+      consumer := "DASHI.Education.EarlyLearningCounterfactualHeterogeneityExact.interventionProjection"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines
+          Integration.CounterfactualEffect.interventionProjection
+          Integration.CounterfactualEffect.counterfactualRelativeEffect)
+        Integration.CounterfactualEffect.intervention_label_cannot_determine_effect
+      prov := tracked "Agda/DASHI/Education/EarlyLearningCounterfactualHeterogeneityExact.agda"
+        ["Agda/DASHI/Core/IntersectionalNonFactorability.agda",
+         "Integration.ContextIndexedRole.factorsThrough_iff_determines"]
+        "The Lean effect function is defined by constructor patterns on the \
+         hidden coordinate.  The Agda clauses are written against two defined \
+         names rather than constructors; no Agda checker was run here, so \
+         nothing is claimed about whether the Agda text elaborates.  The \
+         carriers are one-, two- and two-element label types and no population \
+         quantity appears." }
+  , -- 50. Nor do the two observed coordinates together
+    { owner := "Integration.CoordinateSufficiency (essential coordinates)"
+      consumer := "DASHI.Education.EarlyLearningCounterfactualHeterogeneityExact.SituatedExposure"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines
+          (fun e : Integration.CounterfactualEffect.SituatedExposure =>
+            (e.intervention, e.observedPosition))
+          Integration.CounterfactualEffect.counterfactualRelativeEffect)
+        Integration.CounterfactualEffect.effect_essential_set.2
+      prov := about "Lean/Integration/CounterfactualEffect.lean"
+        ["Integration.CounterfactualEffect.counterfactual_determines_effect"]
+        "The positive half is also proved: the hidden coordinate alone is \
+         sufficient, so it is the unique essential coordinate of this \
+         consumer.  That is a statement about a two-element label type." }
+  , -- 51. A subgroup label does not determine an individual effect
+    { owner := "Integration.CoordinateSufficiency (Determines)"
+      consumer := "DASHI.Education.EarlyLearningCounterfactualHeterogeneityExact.observedGroupProjection"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines
+          Integration.CounterfactualEffect.observedGroupProjection
+          Integration.CounterfactualEffect.withinGroupEffect)
+        Integration.CounterfactualEffect.observed_group_cannot_determine_individual_effect
+      prov := tracked "Agda/DASHI/Education/EarlyLearningCounterfactualHeterogeneityExact.agda"
+        ["Integration.CounterfactualEffect.constant_observation_determines_only_constants"]
+        "The projection is constant, so the failure is the general one: a \
+         constant observation determines only constant consumers.  Two-element \
+         carriers; no claim about any group." }
+  , -- 52. Pareto dominance is not total
+    { owner := "Integration.ParetoOutcome (Dominates)"
+      consumer := "DASHI.Environment.ParetoPlanning.Dominates"
+      relation := .negativeResult
+        (Integration.ParetoOutcome.Dominates
+            (Integration.ParetoOutcome.pair 0 2) (Integration.ParetoOutcome.pair 2 0) ∨
+          Integration.ParetoOutcome.Dominates
+            (Integration.ParetoOutcome.pair 2 0) (Integration.ParetoOutcome.pair 0 2))
+        (fun h => h.elim Integration.ParetoOutcome.incomparable_pair.1
+          Integration.ParetoOutcome.incomparable_pair.2)
+      prov := tracked "Agda/DASHI/Environment/ParetoPlanning.agda"
+        ["Integration.ParetoOutcome.dominates_irrefl",
+         "Integration.ParetoOutcome.dominates_asymm",
+         "Integration.ParetoOutcome.dominates_trans"]
+        "The Agda module defines the relation and proves nothing about it; the \
+         order properties and the incomparable pair are proved here.  The \
+         scores are `ℕ` and the string fields of the Agda record are dropped." }
+  , -- 53. A scalar total does not determine the outcome vector
+    { owner := "Integration.CoordinateSufficiency (aggregation)"
+      consumer := "weighted-total readings of DASHI.Environment.ParetoPlanning objectives"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines
+          Integration.ParetoOutcome.total
+          (fun a : Integration.ParetoOutcome.Outcome 2 => a 0))
+        Integration.ParetoOutcome.total_not_determines_outcome
+      prov := about "Lean/Integration/ParetoOutcome.lean"
+        ["Integration.ParetoOutcome.scalarisation_invents_order"]
+        "`scalarisation_invents_order` is the sharper half: the total strictly \
+         orders a pair the dominance relation leaves incomparable in both \
+         directions.  Two objectives, both minimised, values in `ℕ`." }
+  , -- 54. The Pareto boundary record is a socket
+    { owner := "Integration.Levels (Socket)"
+      consumer := "DASHI.Environment.ParetoPlanning.SelectionSeparationBoundary"
+      relation := .openSocket
+        (∃ p q : Integration.ParetoOutcome.SelectionSeparationBoundary,
+          p.mdlSelectsExplanationOrModelComplexity
+              = q.mdlSelectsExplanationOrModelComplexity ∧
+            p.paretoSelectsAmongAdmissiblePlans = q.paretoSelectsAmongAdmissiblePlans ∧
+              p.weightsDoNotEraseReportedTradeoffs ≠ q.weightsDoNotEraseReportedTradeoffs)
+        Integration.ParetoOutcome.separation_flags_underdetermined
+      prov := tracked "Agda/DASHI/Environment/ParetoPlanning.agda"
+        ["Integration.ParetoOutcome.scalarisation_invents_order"]
+        "The five fields are free `Bool`s, so the canonical all-`true` \
+         inhabitant is a declaration.  In particular the field asserting that \
+         weights do not erase reported tradeoffs is not supported by anything \
+         in the module." }
+  , -- 55. Unreachability is relative to the declared action language
+    { owner := "Integration.ReachabilityBarrier"
+      consumer := "DASHI.Core.AdmissibleReachability.Reachable"
+      relation := .negativeResult
+        (Integration.ReachabilityBarrier.Reachable
+            (Integration.ReachabilityBarrier.counter
+              Integration.ReachabilityBarrier.coarseLanguage) 0 3 ↔
+          Integration.ReachabilityBarrier.Reachable
+            (Integration.ReachabilityBarrier.counter
+              Integration.ReachabilityBarrier.fullLanguage) 0 3)
+        (fun h => Integration.ReachabilityBarrier.barrier_is_language_relative.1
+          (h.mpr Integration.ReachabilityBarrier.barrier_is_language_relative.2))
+      prov := tracked "Agda/DASHI/Core/AdmissibleReachability.agda"
+        ["Agda/DASHI/Core/TypedDependencyCore.agda",
+         "Integration.ReachabilityBarrier.not_reachable_of_invariant"]
+        "The Agda module defines `Reachable` and `Executes` and proves \
+         `executesImpliesReachable`; it never asks what unreachability means.  \
+         The witness is a counter on `ℕ` with two actions, and no claim is \
+         made about capability, planning or development." }
+  , -- 56. Enlarging the action language only adds reachable pairs
+    { owner := "Integration.ReachabilityBarrier (monotonicity)"
+      consumer := "DASHI.Core.AdmissibleReachability.Executes"
+      relation := .candidateBridge
+        (∀ x a, (Integration.ReachabilityBarrier.counter
+            Integration.ReachabilityBarrier.coarseLanguage).Precondition x a →
+          (Integration.ReachabilityBarrier.counter
+            Integration.ReachabilityBarrier.fullLanguage).Precondition x a)
+        (∀ x y, Integration.ReachabilityBarrier.Reachable
+            (Integration.ReachabilityBarrier.counter
+              Integration.ReachabilityBarrier.coarseLanguage) x y →
+          Integration.ReachabilityBarrier.Reachable
+            (Integration.ReachabilityBarrier.counter
+              Integration.ReachabilityBarrier.fullLanguage) x y)
+        (fun h _ _ hr =>
+          Integration.ReachabilityBarrier.reachable_of_weaker_precondition h
+            (fun _ _ _ hp => hp) hr)
+      prov := about "Lean/Integration/ReachabilityBarrier.lean"
+        ["Integration.ReachabilityBarrier.unreachability_never_survives_extension"]
+        "The hypothesis is the language inclusion, which each lane must supply \
+         for its own two systems; here it is discharged by \
+         `coarse_subset_full`, which is why the general form is filed as the \
+         bridge and the instance as row 55." }
+  , -- 57. A reversal between marginals is a proof of interaction
+    { owner := "Integration.CoordinateSufficiency (Separable)"
+      consumer := "marginal readings of two-coordinate consumers across the corpus"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Separable Integration.Marginalisation.parityQ)
+        Integration.Marginalisation.parityQ_not_separable
+      prov := about "Lean/Integration/Marginalisation.lean"
+        ["Integration.Marginalisation.separable_contrast_weight_invariant",
+         "Integration.Marginalisation.reversal_implies_interaction"]
+        "For a separable consumer the coordinate contrast is the same under \
+         every convex weighting of the other coordinate; a reversal therefore \
+         refutes separability.  The carriers are `Bool` and `ℚ`, and no \
+         probability space, sample or estimator appears." }
+  , -- 58. Per-stratum dominance does not survive pooling
+    { owner := "Integration.Marginalisation"
+      consumer := "pooled comparisons downstream of a stratified aggregate"
+      relation := .negativeResult
+        (Integration.Marginalisation.rateB Integration.Marginalisation.stratum₁
+            < Integration.Marginalisation.rateA Integration.Marginalisation.stratum₁ →
+          Integration.Marginalisation.rateB Integration.Marginalisation.stratum₂
+            < Integration.Marginalisation.rateA Integration.Marginalisation.stratum₂ →
+          Integration.Marginalisation.pooledB
+              Integration.Marginalisation.stratum₁ Integration.Marginalisation.stratum₂
+            ≤ Integration.Marginalisation.pooledA
+              Integration.Marginalisation.stratum₁ Integration.Marginalisation.stratum₂)
+        (fun h => absurd
+          (h Integration.Marginalisation.pooled_reversal.1
+            Integration.Marginalisation.pooled_reversal.2.1)
+          (not_le.mpr Integration.Marginalisation.pooled_reversal.2.2))
+      prov := about "Lean/Integration/Marginalisation.lean"
+        ["Integration.Marginalisation.pooling_weights_differ",
+         "Integration.Marginalisation.common_weights_no_reversal"]
+        "The mechanism is proved as well: the two pooled numbers average the \
+         same stratum rates against different weightings, and with a common \
+         weighting no reversal is possible.  The counts are explicit integers \
+         and are not data about anything." }
+  , -- 59. Completeness is relative to the declared carrier
+    { owner := "Integration.DeclaredCarrier"
+      consumer := "the corpus atlases' coverage disclaimers"
+      relation := .negativeResult
+        (Integration.DeclaredCarrier.ExhaustiveOn
+          Integration.DeclaredCarrier.sample (fun _ : ℕ => True))
+        Integration.DeclaredCarrier.sample_not_exhaustive_ambient
+      prov := about "Lean/Integration/DeclaredCarrier.lean"
+        ["Agda/DASHI/Culture/Cuisine/CuisineKnowledgeSourceAtlas.agda",
+         "Agda/DASHI/Governance/RevolutionarySourceAtlas.agda",
+         "Integration.DeclaredCarrier.universal_of_exhaustive"]
+        "The two atlases disclaim exhaustive coverage in prose; this row is the \
+         theorem behind the disclaimer, on a two-element enumeration of `ℕ`.  \
+         No statement is made about either atlas's contents." }
+  , -- 60. An observer sufficient on the declared carrier need not be sufficient globally
+    { owner := "Integration.DeclaredCarrier (DeterminesOn)"
+      consumer := "model-internal completeness claims"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines
+          (fun n : ℕ => n % 2) (fun n : ℕ => n))
+        Integration.DeclaredCarrier.determinesOn_not_determines.2
+      prov := about "Lean/Integration/DeclaredCarrier.lean"
+        ["Integration.DeclaredCarrier.determinesOn_of_determines"]
+        "The positive half is proved alongside it: parity *is* sufficient on \
+         the declared two-element carrier.  So internal completeness and \
+         global completeness are different properties, and only the first is \
+         established by an internal argument." }
+  , -- 61. Reconstruction adequacy is consumer-indexed, not absolute
+    { owner := "Integration.RealisationAdequacy (AdequateFor)"
+      consumer := "DASHI.Core.IntersectionalNonFactorability (flattening as a realisation)"
+      relation := .negativeResult
+        (Integration.RealisationAdequacy.AdequateFor
+          Integration.LevelIIWelds.flatteningPipeline
+          Integration.LevelIIWelds.relationalConsumer)
+        Integration.LevelIIWelds.weld_reconstruction_instance.2
+      prov := about "Lean/Integration/LevelIIWelds.lean"
+        ["Integration.ContextIndexedRole.flat_reweighting_cannot_repair",
+         "Integration.RealisationAdequacy.adequateFor_not_transfers"]
+        "The positive half is proved alongside it: the same flattening is \
+         adequate for the consumer that asks only for the label.  So the row \
+         refutes adequacy *for one consumer*, and asserts nothing about the \
+         reconstruction as such." }
+  , -- 62. Mediator adequacy: the bridge a provisioning lane would discharge
+    { owner := "Integration.RealisationAdequacy (RealisationAdequate)"
+      consumer := "mediation/provisioning surfaces named in the handoff"
+      relation := .candidateBridge
+        (∃ (P : Integration.RealisationAdequacy.Pipeline ℕ ℕ ℕ)
+            (c : Integration.RealisationAdequacy.ConsumerSpec ℕ ℕ),
+          Nonempty (Integration.FactorisationCollision.Collision P.state c.demand))
+        (∃ (P : Integration.RealisationAdequacy.Pipeline ℕ ℕ ℕ)
+            (c : Integration.RealisationAdequacy.ConsumerSpec ℕ ℕ),
+          ¬ Integration.RealisationAdequacy.RealisationAdequate P c)
+        (fun h => by
+          obtain ⟨P, c, ⟨w⟩⟩ := h
+          exact ⟨P, c, w.not_determines⟩)
+      prov := about "Lean/Integration/LevelIIWelds.lean"
+        ["Integration.LevelIIWelds.weld_mediator_bridge",
+         "Integration.LevelIIWelds.weld_mediator_instance"]
+        "No provisioning surface exists in this tree, so the hypothesis is not \
+         discharged from the corpus: the row is a bridge.  An in-tree instance \
+         of the same shape (a compiled decision as mediator) is proved \
+         separately and is what row 66 cites." }
+  , -- 63. Threshold and trajectory comparisons: the interaction bridge
+    { owner := "Integration.SeparabilityContrast (contrast reversal)"
+      consumer := "threshold-distance and trajectory surfaces named in the handoff"
+      relation := .candidateBridge
+        (∃ C : Bool → Bool → ℚ,
+          0 < Integration.SeparabilityContrast.contrast C
+              Integration.SeparabilityContrast.atTrue true false ∧
+            Integration.SeparabilityContrast.contrast C
+              Integration.SeparabilityContrast.atFalse true false < 0)
+        (∃ C : Bool → Bool → ℚ, ¬ Integration.CoordinateSufficiency.Separable C)
+        (fun h => by
+          obtain ⟨C, hpos, hneg⟩ := h
+          exact ⟨C, Integration.LevelIIWelds.weld_threshold_bridge hpos hneg⟩)
+      prov := about "Lean/Integration/SeparabilityContrast.lean"
+        ["Integration.SeparabilityContrast.separable_contrast_invariant",
+         "Integration.SeparabilityContrast.thresholdInstance",
+         "Integration.Marginalisation.reversal_implies_interaction"]
+        "The hypothesis is the lane's datum: two weightings of the second \
+         coordinate under which the first-coordinate contrast changes sign.  \
+         Two in-tree witnesses of that shape are proved (a trajectory pair and \
+         an indicator product); no corpus surface supplies one." }
+  , -- 64. The hidden coordinate is essential: coordinate deletion, owned once
+    { owner := "Integration.FactorisationCollision (Collision.ofEssential)"
+      consumer := "DASHI early-learning / counterfactual exposure records"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines
+          (Integration.FactorisationCollision.deleteCoord
+            (A := fun _ : Fin 2 => Bool) 1)
+          Integration.LevelIIWelds.effectOfCoords)
+        Integration.LevelIIWelds.weld_hidden_deletion
+      prov := about "Lean/Integration/LevelIIWelds.lean"
+        ["Integration.CounterfactualEffect.counterfactual_determines_effect",
+         "Integration.FactorisationCollision.nonempty_collision_of_essential"]
+        "The re-coordinatisation of the corpus record onto a two-coordinate \
+         Boolean product is proved surjective, so the encoding drops nothing; \
+         the intervention-label carrier has one element.  The positive half — \
+         the hidden coordinate alone determines the effect — is the corpus \
+         module's, and is cited, not re-proved." }
+  , -- 65. Scalarisation: the total does not determine the objective vector
+    { owner := "Integration.FactorisationCollision (scalarisation family)"
+      consumer := "DASHI Pareto planning surfaces"
+      relation := .negativeResult
+        (Integration.CoordinateSufficiency.Determines Integration.ParetoOutcome.total
+          (fun a : Integration.ParetoOutcome.Outcome 2 => a 0))
+        Integration.LevelIIWelds.weld_pareto_scalarisation.1
+      prov := about "Lean/Integration/LevelIIWelds.lean"
+        ["Integration.FactorisationCollision.scalarCollision",
+         "Integration.LevelIIWelds.weld_scalar_descent_is_not_dominance"]
+        "The owner proves the collision for *every* weight vector, so no choice \
+         of weights repairs it; the row's witness is the corpus's unweighted \
+         total.  The non-descent half is separate: a strict decrease of the \
+         total is exhibited between two Pareto-incomparable outcomes." }
+  , -- 66. The compiled action is not invertible
+    { owner := "Integration.FactorisationCollision (Collision.projection_not_injective)"
+      consumer := "DASHI.Applications selective-decision compilation"
+      relation := .negativeResult
+        (Function.Injective Integration.SelectiveDecision.compileDecision)
+        Integration.LevelIIWelds.weld_action_not_invertible
+      prov := about "Lean/Integration/LevelIIWelds.lean"
+        ["Integration.SelectiveDecision.action_does_not_determine_direction",
+         "Integration.LevelIIWelds.weld_mediator_instance"]
+        "Row 45 states the same failure in the corpus's own vocabulary; this \
+         row is the reduction of it to the collision owner, together with the \
+         mediator form: no reading of the action recovers the direction." }
+  , -- 67. Atlases: exhaustiveness evidence, not a coverage flag
+    { owner := "Integration.RealisationAdequacy (Exhaustive)"
+      consumer := "the corpus atlases' coverage disclaimers"
+      relation := .candidateBridge
+        (∃ l : List ℕ, Integration.DeclaredCarrier.ExhaustiveOn l (fun _ => True))
+        (∃ l : List ℕ,
+          Nonempty (Integration.RealisationAdequacy.Exhaustive (fun x : ℕ => x ∈ l)))
+        (fun h => by
+          obtain ⟨l, hl⟩ := h
+          exact ⟨l, ⟨Integration.LevelIIWelds.exhaustiveOfList hl⟩⟩)
+      prov := about "Lean/Integration/LevelIIWelds.lean"
+        ["Integration.DeclaredCarrier.universal_of_exhaustive",
+         "Integration.RealisationAdequacy.adequate_of_adequateOn_exhaustive"]
+        "The hypothesis is exhaustiveness of the enumeration *of the ambient \
+         type*, which the atlases decline to claim.  Rows 59 and 60 are the \
+         negatives that make this bridge the only route." }
+  , -- 68. Unreachability transports nowhere, in general
+    { owner := "Integration.LanguageReachability (ReachableIn)"
+      consumer := "DASHI.Core.AdmissibleReachability.Reachable"
+      relation := .negativeResult
+        (∀ (S : Integration.ReachabilityBarrier.ActionSystem ℕ Bool)
+            (L₁ L₂ : Bool → Prop), (∀ a, L₁ a → L₂ a) → ∀ x y,
+          ¬ Integration.LanguageReachability.ReachableIn S L₁ x y →
+            ¬ Integration.LanguageReachability.ReachableIn S L₂ x y)
+        Integration.LevelIIWelds.weld_unreachability_negative
+      prov := about "Lean/Integration/LanguageReachability.lean"
+        ["Integration.LevelIIWelds.weld_counter_is_language_indexed",
+         "Integration.LanguageReachability.reachableIn_mono"]
+        "The corpus's counter system under a declared language is proved equal \
+         to the owner's language-indexed reachability, so rows 55 and 56 are \
+         instances of this owner.  The row refutes the general transfer of \
+         unreachability; the positive transfer of reachability is proved." }
+  , -- 69. A coverage flag constrains nothing
+    { owner := "Integration.RealisationAdequacy (CoverageDeclaration)"
+      consumer := "Bool coverage/exhaustiveness fields across the corpus"
+      relation := .openSocket
+        (∃ d : Integration.RealisationAdequacy.CoverageDeclaration ℕ,
+          d.claimsExhaustive = true ∧
+            ¬ Nonempty (Integration.RealisationAdequacy.Exhaustive d.carrier))
+        Integration.RealisationAdequacy.flag_does_not_give_exhaustive
+      prov := about "Lean/Integration/RealisationAdequacy.lean"
+        ["Integration.DeclaredCarrier.exhaustion_flag_is_free",
+         "Integration.RealisationAdequacy.upgrade_needs_evidence_not_a_flag"]
+        "The socket is the field, not the artefact: a `Bool` asserting \
+         exhaustive coverage is compatible with a carrier that is not \
+         exhaustive, so setting it is a declaration and never evidence." }
+  ]
+
+/-! ## Meta-theorems -/
+
+/-- **No row claims an Agda typecheck.**  No Agda checker was run here. -/
+theorem no_row_claims_agda_typechecked :
+    ∀ r ∈ sewingRegistry, r.claimsAgdaTypechecked = false := by
+  have h : sewingRegistry.all (fun r => !r.claimsAgdaTypechecked) = true := rfl
+  intro r hr
+  simpa using List.all_eq_true.mp h r hr
+
+/-- Every row carries a non-empty claim boundary. -/
+theorem every_row_has_boundary : ∀ r ∈ sewingRegistry, r.hasBoundary = true := by
+  have h : sewingRegistry.all (fun r => r.hasBoundary) = true := rfl
+  intro r hr
+  simpa using List.all_eq_true.mp h r hr
+
+/-- **No row is sourced from a PR head.**  The PR_HEADS surfaces named in the
+handoff are not present in this tree, so none may be cited as provenance. -/
+theorem no_branch_only_rows : ∀ r ∈ sewingRegistry, r.branchOnly = false := by
+  have h : sewingRegistry.all (fun r => !r.branchOnly) = true := rfl
+  intro r hr
+  simpa using List.all_eq_true.mp h r hr
+
+/-- Every row's Lean side is in a build target. -/
+theorem every_row_lean_built : ∀ r ∈ sewingRegistry, r.prov.lean = .leanBuilt := by
+  have h : sewingRegistry.all (fun r => decide (r.prov.lean = .leanBuilt)) = true := rfl
+  intro r hr
+  simpa using List.all_eq_true.mp h r hr
+
+/-- The machine-checked census: the number of rows of each class.  Every count
+quoted anywhere in this repository is this function evaluated by the compiler,
+not a hand-maintained number. -/
+noncomputable def kindCensus (k : Kind) : ℕ := (sewingRegistry.filter (fun r => r.kind == k)).length
+
+/-- The classes this round exercises, and their counts. -/
+theorem kinds_exercised :
+    kindCensus .exactInstance = 2 ∧
+    kindCensus .approximateInstance = 2 ∧
+    kindCensus .finiteShadow = 1 ∧
+    kindCensus .structuralAnalogue = 1 ∧
+    kindCensus .candidateBridge = 7 ∧
+    kindCensus .negativeResult = 47 ∧
+    kindCensus .openSocket = 9 :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- The registry has sixty-nine rows. -/
+theorem registry_length : sewingRegistry.length = 69 := rfl
+
+/-- **The census is complete**: the seven class counts sum to the number of
+rows, so no row escapes classification and no row is counted twice. -/
+theorem census_total :
+    kindCensus .exactInstance + kindCensus .approximateInstance +
+        kindCensus .finiteShadow + kindCensus .structuralAnalogue +
+        kindCensus .candidateBridge + kindCensus .negativeResult +
+        kindCensus .openSocket = sewingRegistry.length := rfl
+
+/-- Negatives and deliberately open obligations remain the majority of the
+registry. -/
+theorem negatives_and_sockets_dominate :
+    (sewingRegistry.filter
+      (fun r => r.kind == .negativeResult || r.kind == .openSocket)).length = 56 := rfl
+
+/-- And the majority is proved as such, rather than asserted by a count: more
+than half of the registry is refutations and sockets. -/
+theorem negatives_and_sockets_majority :
+    2 * (sewingRegistry.filter
+      (fun r => r.kind == .negativeResult || r.kind == .openSocket)).length >
+        sewingRegistry.length := by decide
+
+end Integration.SewingRegistry

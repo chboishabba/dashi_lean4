@@ -1,0 +1,352 @@
+module DASHI.Physics.YangMills.BalabanA1RescaledConstrainedGaussianScaleUniformFloorExact where
+
+------------------------------------------------------------------------
+-- ROW A1, NORMALISATION HALF:  THE RESCALED CONSTRAINED GAUSSIAN NORM,
+--   AND A PROOF THAT IT IS FORCED.
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.  Generation of Effective Actions in a Small Field
+-- Approximation and a Coupling Constant Renormalization in Four Dimensions",
+-- Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  Source locators: the block-spin normalisation of
+-- the fluctuation field in Sections 2--3, and the constrained Gaussian
+-- integral of Section 4.
+--
+-- Tadeusz Bałaban, "Large Field Renormalization II", Communications in
+-- Mathematical Physics 122 (1989), 355--392.  DOI: 10.1007/BF01238433.
+-- Relationship: the scale-uniform small-field regime the floor must survive.
+--
+-- WHAT THIS MODULE ADDS.
+--
+-- Addendum J.4 of the obstruction report (module
+-- `BalabanA1ReferenceCoercivityScaleUniformityExact`) established a NEGATIVE
+-- fact: the repository's A1 surface fixes the reference coercivity constant
+-- proportional to the running coupling,
+--
+--       cReference_j  =  gamma * beta_j ,
+--
+-- and under asymptotic freedom `beta_j` contracts, so in the UNRESCALED
+-- (dimensionful) tangent norm no scale-uniform positive floor can exist.  That
+-- module closed with the sentence "naming that norm, and the constants in it,
+-- is the remaining A1 analysis".  This module does the naming, and proves that
+-- the naming is not a matter of taste.
+--
+-- 1.  THE NORM.  The rescaled (dimensionless) squared fluctuation norm is the
+--     coupling-weighted one,
+--
+--       ||x||^2_{j,rescaled}  =  weight_j * ||x||^2 ,
+--
+--     with `weight_j` the SAME block-spin/coupling normalisation that appears
+--     in `cReference_j`.  `couplingScaledIsUniformAfterRescaling` proves that
+--     in this norm the literal coupling-scaled coercivity hypothesis is
+--     *exactly* a scale-uniform floor with the scale-independent constant
+--     `gamma`, and `uniformRescaledFloorIsCouplingScaled` proves the converse,
+--     so the two statements are equivalent, not merely comparable.
+--
+-- 2.  THE PERTURBATION BUDGET SURVIVES THE RESCALING.  A RELATIVE budget
+--     `penalty <= theta * cReference_j * ||x||^2` is, in the rescaled norm,
+--     `penalty <= (theta*gamma) * ||x||^2_{j,rescaled}`: the ratio `theta` is
+--     rescaling invariant.  `rescaledRelativeCoercivity` therefore delivers
+--     the full constrained Hessian floor `(1-theta)*gamma`, uniform in the
+--     scale -- the mechanism of `BalabanRelativeHessianCoercivity`, now with a
+--     constant that does not contract.
+--
+-- 3.  THE NORM IS FORCED, NOT CHOSEN.  This is the substantive part.  Suppose
+--     the literal pairing is two-sidedly comparable to the coupling weight at
+--     one witness state with positive norm,
+--
+--       (gamma * weight_j) ||x||^2  <=  <x, H_j x>  <=  (Gamma * weight_j) ||x||^2 ,
+--
+--     and suppose some other weight family `w_j` is proposed.  Then
+--
+--       * a scale-uniform positive floor `c` in the `w`-norm forces
+--         `c * w_j <= Gamma * weight_j`   (`admissibleWeightBelowCouplingWeight`),
+--       * a scale-uniform finite ceiling `C` in the `w`-norm forces
+--         `gamma * weight_j <= C * w_j`   (`admissibleWeightAboveCouplingWeight`).
+--
+--     So any admissible rescaling weight is comparable to the coupling weight
+--     from both sides (`rescalingWeightIsForced`): up to fixed constants there
+--     is exactly one dimensionless norm in which A1 can be stated.  This rules
+--     out repairing J.4 by any other choice of normalisation.
+--
+-- 4.  THE CONTRAST, ON ONE MODEL.  `Model` below is a one-dimensional exact
+--     rational instance with dyadic weight `weight_j = 2^{-j}`.  On literally
+--     the same data:
+--       * `modelNoUnrescaledFloorAboveOneThousandth` -- no floor above 1/1000
+--         in the unrescaled norm (the J.4 phenomenon), and
+--       * `modelRescaledUniformFloor` -- floor 1 at every scale in the
+--         rescaled norm.
+--     So the failure is a property of the norm, not of the physics.
+--
+-- 5.  IT FITS THE EXISTING SURFACE.  `RelativeHessianCoercivityData` carries a
+--     scale-free `normSq : State -> Bound`.  `pairedNormSq` shows the rescaled
+--     norm is expressible there exactly when the state carries its own scale,
+--     and `pairedScaleUniformFloor` inhabits the scale-free coercivity shape
+--     with one scale-independent constant.
+--
+-- WHAT THIS IS NOT.  It does not produce `gamma`, `Gamma` or `weight_j` for
+-- Yang-Mills: the literal Wilson + reduced Faddeev-Popov + Haar constrained
+-- Hessian is still the physical leaf, and Row A stays open.  What it removes
+-- is the normalisation ambiguity that J.4 exposed: the target inequality
+-- `c_ref >= c_0 > 0` now has a unique meaning.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat)
+open import Agda.Builtin.Unit using (⊤; tt)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Empty using (⊥)
+open import Data.Integer.Base using (+_)
+open import Data.Product using (_×_; _,_; proj₁; proj₂)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _-_; _*_; -_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst; subst₂)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact using (pow)
+
+------------------------------------------------------------------------
+-- 0.  Two arithmetic helpers (the standard library has no additive
+--     cancellation lemma for the rational order).
+------------------------------------------------------------------------
+
++-cancelʳ-≤ : ∀ {a b : ℚ} (c : ℚ) → a + c ≤ b + c → a ≤ b
++-cancelʳ-≤ {a} {b} c hyp =
+  subst₂ _≤_ (collapse a) (collapse b)
+    (ℚP.+-mono-≤ hyp ℚP.≤-refl)
+  where
+    collapse : ∀ z → (z + c) + (- c) ≡ z
+    collapse z =
+      trans (ℚP.+-assoc z c (- c))
+        (trans (cong (λ w → z + w) (ℚP.+-inverseʳ c)) (ℚP.+-identityʳ z))
+
+-- ((1-θ)*γ)*n + (θ*γ)*n = γ*n, without a ring solver.
+splitScaledNorm : ∀ (θ γ n : ℚ) → ((1ℚ - θ) * γ) * n + ((θ * γ) * n) ≡ γ * n
+splitScaledNorm θ γ n =
+  trans (sym (ℚP.*-distribʳ-+ n ((1ℚ - θ) * γ) (θ * γ)))
+    (cong (_* n)
+      (trans (sym (ℚP.*-distribʳ-+ γ (1ℚ - θ) θ))
+        (trans
+          (cong (_* γ)
+            (trans (ℚP.+-assoc 1ℚ (- θ) θ)
+              (trans (cong (λ w → 1ℚ + w) (ℚP.+-inverseˡ θ)) (ℚP.+-identityʳ 1ℚ))))
+          (ℚP.*-identityˡ γ))))
+
+------------------------------------------------------------------------
+-- 1.  The rescaled norm, and the equivalence of the two readings
+------------------------------------------------------------------------
+
+module Rescaling
+  (State : Set)
+  (pairing : Nat → State → ℚ)      -- <x, H_j x>, the constrained Gaussian form
+  (normSq : State → ℚ)             -- the unrescaled (dimensionful) ||x||^2
+  (weight : Nat → ℚ)               -- the block-spin / coupling normalisation
+  (Tangent : Nat → State → Set)    -- the gauge-fixed constrained tangent space
+  where
+
+  -- THE NORM.  This is the object J.4 asked to be named.
+  rescaledNormSq : Nat → State → ℚ
+  rescaledNormSq j x = weight j * normSq x
+
+  -- The literal, coupling-scaled hypothesis, as the current A1 surface states
+  -- it: the reference constant carries the running coupling.
+  CouplingScaledCoercivity : ℚ → Set
+  CouplingScaledCoercivity γ =
+    ∀ j x → Tangent j x → (γ * weight j) * normSq x ≤ pairing j x
+
+  -- A scale-uniform floor, stated in the rescaled norm.
+  ScaleUniformRescaledFloor : ℚ → Set
+  ScaleUniformRescaledFloor c =
+    ∀ j x → Tangent j x → c * rescaledNormSq j x ≤ pairing j x
+
+  couplingScaledIsUniformAfterRescaling :
+    ∀ γ → CouplingScaledCoercivity γ → ScaleUniformRescaledFloor γ
+  couplingScaledIsUniformAfterRescaling γ hyp j x tangent =
+    subst (_≤ pairing j x) (ℚP.*-assoc γ (weight j) (normSq x)) (hyp j x tangent)
+
+  uniformRescaledFloorIsCouplingScaled :
+    ∀ γ → ScaleUniformRescaledFloor γ → CouplingScaledCoercivity γ
+  uniformRescaledFloorIsCouplingScaled γ hyp j x tangent =
+    subst (_≤ pairing j x) (sym (ℚP.*-assoc γ (weight j) (normSq x)))
+      (hyp j x tangent)
+
+------------------------------------------------------------------------
+-- 2.  The relative perturbation budget is rescaling invariant, so the
+--     full constrained Hessian floor is scale uniform too.
+------------------------------------------------------------------------
+
+  -- A relative penalty, read in the rescaled norm, keeps the same ratio θ.
+  relativePenaltyIsRescalingInvariant :
+    ∀ θ γ (penalty : Nat → State → ℚ) →
+    (∀ j x → Tangent j x → penalty j x ≤ (θ * (γ * weight j)) * normSq x) →
+    ∀ j x → Tangent j x → penalty j x ≤ (θ * γ) * rescaledNormSq j x
+  relativePenaltyIsRescalingInvariant θ γ penalty hyp j x tangent =
+    subst (penalty j x ≤_) reassociate (hyp j x tangent)
+    where
+      reassociate :
+        (θ * (γ * weight j)) * normSq x ≡ (θ * γ) * rescaledNormSq j x
+      reassociate =
+        trans (cong (_* normSq x) (sym (ℚP.*-assoc θ γ (weight j))))
+          (ℚP.*-assoc (θ * γ) (weight j) (normSq x))
+
+  -- The mechanism of `BalabanRelativeHessianCoercivity`, in the rescaled norm:
+  -- reference floor γ minus a relative budget θ gives the full Hessian the
+  -- SCALE-INDEPENDENT floor (1-θ)γ.
+  rescaledRelativeCoercivity :
+    ∀ γ θ (full penalty : Nat → State → ℚ) →
+    ScaleUniformRescaledFloor γ →
+    (∀ j x → Tangent j x → pairing j x ≤ full j x + penalty j x) →
+    (∀ j x → Tangent j x → penalty j x ≤ (θ * γ) * rescaledNormSq j x) →
+    ∀ j x → Tangent j x →
+      ((1ℚ - θ) * γ) * rescaledNormSq j x ≤ full j x
+  rescaledRelativeCoercivity γ θ full penalty floor dominated relative j x tangent =
+    +-cancelʳ-≤ ((θ * γ) * rescaledNormSq j x)
+      (subst (_≤ full j x + ((θ * γ) * rescaledNormSq j x))
+        (sym (splitScaledNorm θ γ (rescaledNormSq j x)))
+        (ℚP.≤-trans (floor j x tangent)
+          (ℚP.≤-trans (dominated j x tangent)
+            (ℚP.+-monoʳ-≤ (full j x) (relative j x tangent)))))
+
+------------------------------------------------------------------------
+-- 3.  THE RESCALING WEIGHT IS FORCED BY THE PHYSICS
+------------------------------------------------------------------------
+
+  -- Suppose a candidate weight family `w` carries a scale-uniform positive
+  -- floor `c` for the same pairing, and the pairing has the coupling-scaled
+  -- ceiling `Γ` at a witness state of positive norm.  Then `w` cannot exceed
+  -- the coupling weight by more than the fixed factor Γ/c.
+  admissibleWeightBelowCouplingWeight :
+    ∀ (w : Nat → ℚ) (c Γ : ℚ) (x : State) → 0ℚ < normSq x →
+    (∀ j → c * (w j * normSq x) ≤ pairing j x) →
+    (∀ j → pairing j x ≤ (Γ * weight j) * normSq x) →
+    ∀ j → c * w j ≤ Γ * weight j
+  admissibleWeightBelowCouplingWeight w c Γ x 0<n floor ceiling j =
+    ℚP.*-cancelʳ-≤-pos (normSq x) {{ℚ.positive 0<n}}
+      (subst (_≤ (Γ * weight j) * normSq x)
+        (sym (ℚP.*-assoc c (w j) (normSq x)))
+        (ℚP.≤-trans (floor j) (ceiling j)))
+
+  -- Dually: a scale-uniform finite ceiling `C` in the `w`-norm, against the
+  -- coupling-scaled floor `γ`, forces `w` to be at least a fixed fraction of
+  -- the coupling weight.
+  admissibleWeightAboveCouplingWeight :
+    ∀ (w : Nat → ℚ) (C γ : ℚ) (x : State) → 0ℚ < normSq x →
+    (∀ j → (γ * weight j) * normSq x ≤ pairing j x) →
+    (∀ j → pairing j x ≤ C * (w j * normSq x)) →
+    ∀ j → γ * weight j ≤ C * w j
+  admissibleWeightAboveCouplingWeight w C γ x 0<n floor ceiling j =
+    ℚP.*-cancelʳ-≤-pos (normSq x) {{ℚ.positive 0<n}}
+      (subst ((γ * weight j) * normSq x ≤_)
+        (sym (ℚP.*-assoc C (w j) (normSq x)))
+        (ℚP.≤-trans (floor j) (ceiling j)))
+
+  -- Both sides at once: every admissible dimensionless norm is comparable to
+  -- the coupling-weighted one.  This is the uniqueness statement A1 needs.
+  rescalingWeightIsForced :
+    ∀ (w : Nat → ℚ) (c C γ Γ : ℚ) (x : State) → 0ℚ < normSq x →
+    (∀ j → (γ * weight j) * normSq x ≤ pairing j x) →
+    (∀ j → pairing j x ≤ (Γ * weight j) * normSq x) →
+    (∀ j → c * (w j * normSq x) ≤ pairing j x) →
+    (∀ j → pairing j x ≤ C * (w j * normSq x)) →
+    ∀ j → (γ * weight j ≤ C * w j) × (c * w j ≤ Γ * weight j)
+  rescalingWeightIsForced w c C γ Γ x 0<n floorγ ceilingΓ floorc ceilingC j =
+    admissibleWeightAboveCouplingWeight w C γ x 0<n floorγ ceilingC j ,
+    admissibleWeightBelowCouplingWeight w c Γ x 0<n floorc ceilingΓ j
+
+------------------------------------------------------------------------
+-- 4.  The existing scale-free record shape, satisfied by carrying the scale
+------------------------------------------------------------------------
+
+  -- `RelativeHessianCoercivityData` has `normSq : State -> Bound` with no
+  -- scale index, so the rescaled norm lives there only on states that know
+  -- their own scale.  On those, one scale-independent constant works.
+  PairedState : Set
+  PairedState = Nat × State
+
+  pairedNormSq : PairedState → ℚ
+  pairedNormSq p = rescaledNormSq (proj₁ p) (proj₂ p)
+
+  pairedPairing : PairedState → ℚ
+  pairedPairing p = pairing (proj₁ p) (proj₂ p)
+
+  pairedScaleUniformFloor :
+    ∀ γ → ScaleUniformRescaledFloor γ →
+    ∀ p → Tangent (proj₁ p) (proj₂ p) →
+    γ * pairedNormSq p ≤ pairedPairing p
+  pairedScaleUniformFloor γ floor p tangent = floor (proj₁ p) (proj₂ p) tangent
+
+------------------------------------------------------------------------
+-- 5.  ONE MODEL, TWO NORMS:  the J.4 failure and its rescaled repair
+------------------------------------------------------------------------
+
+module Model where
+
+  -- One-dimensional exact rational model with the dyadic coupling weight.
+  dyadicWeight : Nat → ℚ
+  dyadicWeight j = pow (+ 1 / 2) j
+
+  modelNormSq : ℚ → ℚ
+  modelNormSq x = x * x
+
+  -- <x, H_j x> = weight_j ||x||^2 : the coupling-scaled Gaussian form.
+  modelPairing : Nat → ℚ → ℚ
+  modelPairing j x = dyadicWeight j * modelNormSq x
+
+  ModelTangent : Nat → ℚ → Set
+  ModelTangent _ _ = ⊤
+
+  open Rescaling ℚ modelPairing modelNormSq dyadicWeight ModelTangent public
+
+  -- In the RESCALED norm the floor is 1 at every scale (with equality).
+  modelRescaledUniformFloor : ScaleUniformRescaledFloor 1ℚ
+  modelRescaledUniformFloor j x _ =
+    ℚP.≤-reflexive (ℚP.*-identityˡ (dyadicWeight j * modelNormSq x))
+
+  -- In the UNRESCALED norm no floor above 1/1000 survives: at scale 10 the
+  -- pairing at the unit state is 1/1024.  (This is the J.4 phenomenon, on the
+  -- very same data as above.)
+  modelPairingAtScaleTen : modelPairing 10 1ℚ < (+ 1 / 1000) * modelNormSq 1ℚ
+  modelPairingAtScaleTen =
+    toWitness {a? = (modelPairing 10 1ℚ) ℚP.<? ((+ 1 / 1000) * modelNormSq 1ℚ)} _
+
+  modelNoUnrescaledFloorAboveOneThousandth :
+    (∀ j → (+ 1 / 1000) * modelNormSq 1ℚ ≤ modelPairing j 1ℚ) → ⊥
+  modelNoUnrescaledFloorAboveOneThousandth floor =
+    ℚP.<-irrefl refl (ℚP.≤-<-trans (floor 10) modelPairingAtScaleTen)
+
+  -- The two facts are about one family of forms and one physical trajectory;
+  -- only the norm differs.  So "the reference coercivity constant contracts"
+  -- is a statement about the dimensionful norm, and carries no information
+  -- about the dimensionless one.
+  sameDataBothNorms :
+    ScaleUniformRescaledFloor 1ℚ
+    × ((∀ j → (+ 1 / 1000) * modelNormSq 1ℚ ≤ modelPairing j 1ℚ) → ⊥)
+  sameDataBothNorms =
+    modelRescaledUniformFloor , modelNoUnrescaledFloorAboveOneThousandth
+
+------------------------------------------------------------------------
+-- 6.  Proof levels
+------------------------------------------------------------------------
+
+-- The identification of the rescaled norm, the invariance of the relative
+-- budget, the scale-uniform full-Hessian floor, the two-sided forcing of the
+-- rescaling weight and the one-model contrast are all machine checked.
+rescaledNormIdentificationLevel : ProofLevel
+rescaledNormIdentificationLevel = machineChecked
+
+rescalingWeightForcedLevel : ProofLevel
+rescalingWeightForcedLevel = machineChecked
+
+-- STILL OPEN (Row A physical leaf).  The literal values of `gamma`, `Gamma`
+-- and `weight_j` for the constrained Wilson + reduced Faddeev-Popov + Haar
+-- Gaussian form: i.e. `c_ref >= c_0 > 0` in the norm named here, uniformly in
+-- cutoff, volume, scale and patch regime.
+literalRescaledReferenceConstantsLevel : ProofLevel
+literalRescaledReferenceConstantsLevel = conditional

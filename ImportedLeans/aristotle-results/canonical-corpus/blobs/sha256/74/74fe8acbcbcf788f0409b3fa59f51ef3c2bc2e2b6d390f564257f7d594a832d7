@@ -1,0 +1,536 @@
+module DASHI.Physics.YangMills.BalabanYM4GramWedgeIdentityGeneralExact where
+
+------------------------------------------------------------------------
+-- EXACT GRAM / WEDGE ALGEBRA IN ARBITRARY FINITE DIMENSION
+--
+-- WHY THIS MODULE EXISTS.  `BalabanYM4GramWedgeIdentityExact` established the
+-- parallel/transverse (Gram) architecture on an explicit THREE-dimensional
+-- rational carrier.  That was enough to fix the shape of the argument, but it
+-- is the wrong carrier for Yang-Mills: the constrained-Gaussian fluctuation
+-- space of Row A1b, the marked-source coordinate space of Row B and the
+-- tangent space of Row C are all high dimensional, and a reader is entitled to
+-- object that a three-dimensional identity is a toy.
+--
+-- This module removes that objection.  Every statement of the three-
+-- dimensional core is reproved on `Vec ℚ n` for an ARBITRARY n, with no
+-- dimension-dependent step:
+--
+--   * `lagrangeIdentity`     G(a,b) = sum over all index pairs i<j of the
+--                            squared 2x2 minors (a_i b_j - a_j b_i)^2.
+--                            Proved by induction on the dimension, via the
+--                            exact expansion `crossSumExpand`.
+--   * `gramNonNeg`           Cauchy-Schwarz in Q^n, exactly, as a corollary.
+--   * `gramLowerBoundMinor`  EVERY single squared minor is a lower bound for
+--                            the Gram determinant -- for arbitrary distinct
+--                            indices i, j, not merely for the first two
+--                            coordinates.  This is the general form of the
+--                            non-collinearity certificate.
+--   * `projectionIdentity`   |s b - t a|^2 = s * G(a,b) with s = |a|^2,
+--                            t = <a,b>: the transverse residual and the Gram
+--                            surplus are the same number up to |a|^2.
+--   * `residualOrthogonal`   the residual is exactly orthogonal to a.
+--   * `gramDichotomy`        the quantitative alternative: either the
+--                            transverse residual is coercive with constant
+--                            |a|^2 * delta, or the pair is delta-nearly
+--                            collinear.
+--
+-- The projection identity is *not* proved componentwise here: it is derived
+-- from genuine bilinearity of the inner product (`dot-scaleˡ`, `dot-subˡ`,
+-- `dot-comm`), so the argument is the coordinate-free one and would transfer
+-- verbatim to any inner-product space.
+--
+-- `dot-ofVec3` / `gram-ofVec3` pin the general carrier to the existing
+-- three-dimensional one, so the Row A1b, Row C and A<->B consumers built on
+-- `BalabanYM4GramWedgeIdentityExact` are instances of the general theory
+-- rather than a separate development.
+--
+-- WHAT THIS IS NOT.  Nothing here is a Yang-Mills theorem, and nothing here
+-- closes a row.  It is the shared exact-arithmetic core, now in the right
+-- generality.  The frozen research count (4) is untouched: what the physical
+-- rows still need is an identification of the literal Yang-Mills second
+-- variation / marked functional / Hessian with objects of this shape, and
+-- that identification is exactly what remains open.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Empty using (⊥-elim)
+open import Relation.Nullary.Decidable using (toWitness)
+open import Data.Nat.Base using (ℕ; zero; suc)
+import Data.Fin.Base as Fin
+open Fin using (Fin)
+
+open import Data.Integer.Base using (+_)
+open import Data.Sum.Base using (_⊎_; inj₁; inj₂)
+open import Data.Vec.Base using (Vec; []; _∷_; lookup)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.Definitions using (tri<; tri≈; tri>)
+open import Relation.Binary.PropositionalEquality
+  using (_≢_; sym; trans; cong; cong₂; subst)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (mul-nonNeg; mul-pos; transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4GramWedgeIdentityExact
+  using (square-nonNeg; square-pos; sum-nonNeg; sum-posˡ; sum-posʳ)
+import DASHI.Physics.YangMills.BalabanYM4GramWedgeIdentityExact as V3
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Small order helpers
+------------------------------------------------------------------------
+
+le-add-nonNegʳ : ∀ {x y : ℚ} → 0ℚ ≤ y → x ≤ x + y
+le-add-nonNegʳ {x} {y} 0≤y =
+  subst (_≤ x + y) (ℚP.+-identityʳ x) (ℚP.+-mono-≤ (ℚP.≤-refl {x}) 0≤y)
+
+le-add-nonNegˡ : ∀ {x y : ℚ} → 0ℚ ≤ x → y ≤ x + y
+le-add-nonNegˡ {x} {y} 0≤x =
+  subst (_≤ x + y) (ℚP.+-identityˡ y) (ℚP.+-mono-≤ 0≤x (ℚP.≤-refl {y}))
+
+-- If a sum of two nonnegative rationals vanishes, each summand vanishes.
+sum-zeroˡ : ∀ {x y : ℚ} → 0ℚ ≤ x → 0ℚ ≤ y → x + y ≡ 0ℚ → x ≡ 0ℚ
+sum-zeroˡ {x} {y} 0≤x 0≤y sum≡0 =
+  ℚP.≤-antisym (subst (x ≤_) sum≡0 (le-add-nonNegʳ 0≤y)) 0≤x
+
+sum-zeroʳ : ∀ {x y : ℚ} → 0ℚ ≤ x → 0ℚ ≤ y → x + y ≡ 0ℚ → y ≡ 0ℚ
+sum-zeroʳ {x} {y} 0≤x 0≤y sum≡0 =
+  ℚP.≤-antisym (subst (y ≤_) sum≡0 (le-add-nonNegˡ 0≤x)) 0≤y
+
+square-zero⇒zero : ∀ {x : ℚ} → x * x ≡ 0ℚ → x ≡ 0ℚ
+square-zero⇒zero {x} sq≡0 with ℚP.<-cmp 0ℚ x
+... | tri< 0<x _ _ =
+      ⊥-elim (ℚP.<-irrefl (sym sq≡0) (square-pos (inj₁ 0<x)))
+... | tri≈ _ 0≡x _ = sym 0≡x
+... | tri> _ _ x<0 =
+      ⊥-elim (ℚP.<-irrefl (sym sq≡0) (square-pos (inj₂ x<0)))
+
+------------------------------------------------------------------------
+-- The carrier: n-dimensional rational vectors
+------------------------------------------------------------------------
+
+dot : ∀ {n} → Vec ℚ n → Vec ℚ n → ℚ
+dot []       []       = 0ℚ
+dot (x ∷ xs) (y ∷ ys) = x * y + dot xs ys
+
+normSq : ∀ {n} → Vec ℚ n → ℚ
+normSq a = dot a a
+
+scaleV : ∀ {n} → ℚ → Vec ℚ n → Vec ℚ n
+scaleV c []       = []
+scaleV c (x ∷ xs) = c * x ∷ scaleV c xs
+
+subV : ∀ {n} → Vec ℚ n → Vec ℚ n → Vec ℚ n
+subV []       []       = []
+subV (x ∷ xs) (y ∷ ys) = (x - y) ∷ subV xs ys
+
+------------------------------------------------------------------------
+-- Bilinearity and symmetry of the inner product
+------------------------------------------------------------------------
+
+dot-comm : ∀ {n} (a b : Vec ℚ n) → dot a b ≡ dot b a
+dot-comm []       []       = refl
+dot-comm (x ∷ xs) (y ∷ ys) = cong₂ _+_ (ℚP.*-comm x y) (dot-comm xs ys)
+
+dot-scaleˡ : ∀ {n} (c : ℚ) (a b : Vec ℚ n) → dot (scaleV c a) b ≡ c * dot a b
+dot-scaleˡ c []       []       = sym (ℚP.*-zeroʳ c)
+dot-scaleˡ c (x ∷ xs) (y ∷ ys) =
+  trans (cong (λ z → (c * x) * y + z) (dot-scaleˡ c xs ys))
+        (solve 4
+          (λ C X Y D → (C :* X) :* Y :+ C :* D := C :* (X :* Y :+ D))
+          refl c x y (dot xs ys))
+
+dot-subˡ : ∀ {n} (a b c : Vec ℚ n) → dot (subV a b) c ≡ dot a c - dot b c
+dot-subˡ []       []       []       = sym (ℚP.+-inverseʳ 0ℚ)
+dot-subˡ (x ∷ xs) (y ∷ ys) (z ∷ zs) =
+  trans (cong (λ w → (x - y) * z + w) (dot-subˡ xs ys zs))
+        (solve 5
+          (λ X Y Z P Q →
+            (X :- Y) :* Z :+ (P :- Q) := (X :* Z :+ P) :- (Y :* Z :+ Q))
+          refl x y z (dot xs zs) (dot ys zs))
+
+dot-scaleʳ : ∀ {n} (c : ℚ) (a b : Vec ℚ n) → dot a (scaleV c b) ≡ c * dot a b
+dot-scaleʳ c a b =
+  trans (dot-comm a (scaleV c b))
+        (trans (dot-scaleˡ c b a) (cong (c *_) (dot-comm b a)))
+
+dot-subʳ : ∀ {n} (a b c : Vec ℚ n) → dot a (subV b c) ≡ dot a b - dot a c
+dot-subʳ a b c =
+  trans (dot-comm a (subV b c))
+        (trans (dot-subˡ b c a) (cong₂ _-_ (dot-comm b a) (dot-comm c a)))
+
+dot-scale-scale :
+  ∀ {n} (c d : ℚ) (a b : Vec ℚ n) →
+  dot (scaleV c a) (scaleV d b) ≡ c * (d * dot a b)
+dot-scale-scale c d a b =
+  trans (dot-scaleˡ c a (scaleV d b)) (cong (c *_) (dot-scaleʳ d a b))
+
+------------------------------------------------------------------------
+-- The Gram determinant
+------------------------------------------------------------------------
+
+-- G(a,b) = |a|^2 |b|^2 - <a,b>^2.
+gram : ∀ {n} → Vec ℚ n → Vec ℚ n → ℚ
+gram a b = normSq a * normSq b - dot a b * dot a b
+
+gram-comm : ∀ {n} (a b : Vec ℚ n) → gram a b ≡ gram b a
+gram-comm a b =
+  cong₂ _-_ (ℚP.*-comm (normSq a) (normSq b))
+            (cong (λ z → z * z) (dot-comm a b))
+
+------------------------------------------------------------------------
+-- Lagrange's identity in dimension n
+------------------------------------------------------------------------
+
+-- crossSum x y as bs = sum over j of (x * bs_j - as_j * y)^2, i.e. the
+-- contribution of all minors that involve the distinguished coordinate.
+crossSum : ∀ {n} → ℚ → ℚ → Vec ℚ n → Vec ℚ n → ℚ
+crossSum x y []       []       = 0ℚ
+crossSum x y (a ∷ as) (b ∷ bs) =
+  (x * b - a * y) * (x * b - a * y) + crossSum x y as bs
+
+-- lagrangeSum a b = sum over i<j of the squared 2x2 minors.
+lagrangeSum : ∀ {n} → Vec ℚ n → Vec ℚ n → ℚ
+lagrangeSum []       []       = 0ℚ
+lagrangeSum (x ∷ as) (y ∷ bs) = crossSum x y as bs + lagrangeSum as bs
+
+crossSumExpand :
+  ∀ {n} (x y : ℚ) (as bs : Vec ℚ n) →
+  crossSum x y as bs
+    ≡ (x * x) * normSq bs - ((x * y) * dot as bs + (x * y) * dot as bs)
+        + (y * y) * normSq as
+crossSumExpand x y [] [] =
+  sym (trans (cong₂ _+_
+               (cong₂ _-_ (ℚP.*-zeroʳ (x * x))
+                          (cong₂ _+_ (ℚP.*-zeroʳ (x * y)) (ℚP.*-zeroʳ (x * y))))
+               (ℚP.*-zeroʳ (y * y)))
+             (trans (cong (λ z → 0ℚ - z + 0ℚ) (ℚP.+-identityʳ 0ℚ))
+                    (trans (cong (λ z → z + 0ℚ) (ℚP.+-inverseʳ 0ℚ))
+                           (ℚP.+-identityʳ 0ℚ))))
+crossSumExpand x y (a ∷ as) (b ∷ bs) =
+  trans (cong (λ z → (x * b - a * y) * (x * b - a * y) + z)
+              (crossSumExpand x y as bs))
+        (solve 7
+          (λ X Y A B NA NB D →
+            (X :* B :- A :* Y) :* (X :* B :- A :* Y)
+              :+ ((X :* X) :* NB :- ((X :* Y) :* D :+ (X :* Y) :* D)
+                    :+ (Y :* Y) :* NA)
+            := (X :* X) :* (B :* B :+ NB)
+                 :- ((X :* Y) :* (A :* B :+ D) :+ (X :* Y) :* (A :* B :+ D))
+                 :+ (Y :* Y) :* (A :* A :+ NA))
+          refl x y a b (normSq as) (normSq bs) (dot as bs))
+
+lagrangeIdentity : ∀ {n} (a b : Vec ℚ n) → gram a b ≡ lagrangeSum a b
+lagrangeIdentity [] [] = ℚP.+-inverseʳ (0ℚ * 0ℚ)
+lagrangeIdentity (x ∷ as) (y ∷ bs) =
+  trans ringStep
+        (sym (cong₂ _+_ (crossSumExpand x y as bs)
+                        (sym (lagrangeIdentity as bs))))
+  where
+    ringStep :
+      gram (x ∷ as) (y ∷ bs)
+        ≡ ((x * x) * normSq bs
+             - ((x * y) * dot as bs + (x * y) * dot as bs)
+             + (y * y) * normSq as)
+          + gram as bs
+    ringStep =
+      solve 5
+        (λ X Y NA NB D →
+          (X :* X :+ NA) :* (Y :* Y :+ NB)
+            :- (X :* Y :+ D) :* (X :* Y :+ D)
+          := ((X :* X) :* NB :- ((X :* Y) :* D :+ (X :* Y) :* D)
+                :+ (Y :* Y) :* NA)
+               :+ (NA :* NB :- D :* D))
+        refl x y (normSq as) (normSq bs) (dot as bs)
+
+------------------------------------------------------------------------
+-- Nonnegativity: Cauchy-Schwarz in Q^n, exactly
+------------------------------------------------------------------------
+
+crossSum-nonNeg : ∀ {n} (x y : ℚ) (as bs : Vec ℚ n) → 0ℚ ≤ crossSum x y as bs
+crossSum-nonNeg x y []       []       = ℚP.≤-refl
+crossSum-nonNeg x y (a ∷ as) (b ∷ bs) =
+  sum-nonNeg (square-nonNeg (x * b - a * y)) (crossSum-nonNeg x y as bs)
+
+lagrangeSum-nonNeg : ∀ {n} (a b : Vec ℚ n) → 0ℚ ≤ lagrangeSum a b
+lagrangeSum-nonNeg []       []       = ℚP.≤-refl
+lagrangeSum-nonNeg (x ∷ as) (y ∷ bs) =
+  sum-nonNeg (crossSum-nonNeg x y as bs) (lagrangeSum-nonNeg as bs)
+
+gramNonNeg : ∀ {n} (a b : Vec ℚ n) → 0ℚ ≤ gram a b
+gramNonNeg a b =
+  subst (0ℚ ≤_) (sym (lagrangeIdentity a b)) (lagrangeSum-nonNeg a b)
+
+normSq-nonNeg : ∀ {n} (a : Vec ℚ n) → 0ℚ ≤ normSq a
+normSq-nonNeg []       = ℚP.≤-refl
+normSq-nonNeg (x ∷ xs) = sum-nonNeg (square-nonNeg x) (normSq-nonNeg xs)
+
+------------------------------------------------------------------------
+-- Every squared minor is a lower bound for the Gram determinant
+------------------------------------------------------------------------
+
+crossSum-lookupBound :
+  ∀ {n} (x y : ℚ) (as bs : Vec ℚ n) (j : Fin n) →
+  let m = x * lookup bs j - lookup as j * y
+  in m * m ≤ crossSum x y as bs
+crossSum-lookupBound x y (a ∷ as) (b ∷ bs) Fin.zero =
+  le-add-nonNegʳ (crossSum-nonNeg x y as bs)
+crossSum-lookupBound x y (a ∷ as) (b ∷ bs) (Fin.suc j) =
+  ℚP.≤-trans (crossSum-lookupBound x y as bs j)
+             (le-add-nonNegˡ (square-nonNeg (x * b - a * y)))
+
+-- The general non-collinearity certificate: for ANY two distinct indices, the
+-- squared 2x2 minor built from them is dominated by the Gram determinant.
+gramLowerBoundMinor :
+  ∀ {n} (a b : Vec ℚ n) (i j : Fin n) → i ≢ j →
+  let m = lookup a i * lookup b j - lookup a j * lookup b i
+  in m * m ≤ gram a b
+gramLowerBoundMinor {suc n} (x ∷ as) (y ∷ bs) Fin.zero Fin.zero i≢j =
+  ⊥-elim (i≢j refl)
+gramLowerBoundMinor {suc n} (x ∷ as) (y ∷ bs) Fin.zero (Fin.suc j) _ = bound
+  where
+    bound :
+      (x * lookup bs j - lookup as j * y) * (x * lookup bs j - lookup as j * y)
+        ≤ gram (x ∷ as) (y ∷ bs)
+    bound =
+      transport-≤ refl (sym (lagrangeIdentity (x ∷ as) (y ∷ bs)))
+        (ℚP.≤-trans (crossSum-lookupBound x y as bs j)
+                    (le-add-nonNegʳ (lagrangeSum-nonNeg as bs)))
+gramLowerBoundMinor {suc n} (x ∷ as) (y ∷ bs) (Fin.suc i) Fin.zero _ =
+  transport-≤ flip refl bound
+  where
+    bound :
+      (x * lookup bs i - lookup as i * y) * (x * lookup bs i - lookup as i * y)
+        ≤ gram (x ∷ as) (y ∷ bs)
+    bound =
+      transport-≤ refl (sym (lagrangeIdentity (x ∷ as) (y ∷ bs)))
+        (ℚP.≤-trans (crossSum-lookupBound x y as bs i)
+                    (le-add-nonNegʳ (lagrangeSum-nonNeg as bs)))
+
+    flip :
+      (x * lookup bs i - lookup as i * y) * (x * lookup bs i - lookup as i * y)
+        ≡ (lookup as i * y - x * lookup bs i)
+            * (lookup as i * y - x * lookup bs i)
+    flip =
+      solve 4
+        (λ X Y A B →
+          (X :* B :- A :* Y) :* (X :* B :- A :* Y)
+            := (A :* Y :- X :* B) :* (A :* Y :- X :* B))
+        refl x y (lookup as i) (lookup bs i)
+gramLowerBoundMinor {suc n} (x ∷ as) (y ∷ bs) (Fin.suc i) (Fin.suc j) i≢j =
+  transport-≤ refl (sym (lagrangeIdentity (x ∷ as) (y ∷ bs)))
+    (ℚP.≤-trans
+      (transport-≤ refl (lagrangeIdentity as bs)
+        (gramLowerBoundMinor as bs i j (λ eq → i≢j (cong Fin.suc eq))))
+      (le-add-nonNegˡ (crossSum-nonNeg x y as bs)))
+
+-- Strict positivity from a single nonvanishing minor.
+gramPositiveFromMinor :
+  ∀ {n} (a b : Vec ℚ n) (i j : Fin n) → i ≢ j →
+  let m = lookup a i * lookup b j - lookup a j * lookup b i
+  in (0ℚ < m ⊎ m < 0ℚ) → 0ℚ < gram a b
+gramPositiveFromMinor a b i j i≢j m≠0 =
+  ℚP.<-≤-trans (square-pos m≠0) (gramLowerBoundMinor a b i j i≢j)
+
+------------------------------------------------------------------------
+-- The transverse residual and the exact projection identity
+------------------------------------------------------------------------
+
+-- W(a,b) = |a|^2 b - <a,b> a.
+transverseResidual : ∀ {n} → Vec ℚ n → Vec ℚ n → Vec ℚ n
+transverseResidual a b = subV (scaleV (normSq a) b) (scaleV (dot a b) a)
+
+residualOrthogonal :
+  ∀ {n} (a b : Vec ℚ n) → dot a (transverseResidual a b) ≡ 0ℚ
+residualOrthogonal a b =
+  trans (dot-subʳ a (scaleV (normSq a) b) (scaleV (dot a b) a))
+        (trans (cong₂ _-_ (dot-scaleʳ (normSq a) a b)
+                          (dot-scaleʳ (dot a b) a a))
+               (solve 2 (λ S T → S :* T :- T :* S := con 0ℚ)
+                        refl (normSq a) (dot a b)))
+
+-- |W|^2 = |a|^2 * G(a,b).  Derived from bilinearity, not componentwise.
+projectionIdentity :
+  ∀ {n} (a b : Vec ℚ n) →
+  normSq (transverseResidual a b) ≡ normSq a * gram a b
+projectionIdentity a b = trans expand ring
+  where
+    s = normSq a
+    t = dot a b
+    u = normSq b
+    X = scaleV s b
+    Y = scaleV t a
+    W = transverseResidual a b
+
+    step₁ : dot W W ≡ dot X W - dot Y W
+    step₁ = dot-subˡ X Y W
+
+    step₂ : dot X W ≡ dot X X - dot X Y
+    step₂ = dot-subʳ X X Y
+
+    step₃ : dot Y W ≡ dot Y X - dot Y Y
+    step₃ = dot-subʳ Y X Y
+
+    xx : dot X X ≡ s * (s * u)
+    xx = dot-scale-scale s s b b
+
+    xy : dot X Y ≡ s * (t * dot b a)
+    xy = dot-scale-scale s t b a
+
+    yx : dot Y X ≡ t * (s * dot a b)
+    yx = dot-scale-scale t s a b
+
+    yy : dot Y Y ≡ t * (t * normSq a)
+    yy = dot-scale-scale t t a a
+
+    expand :
+      dot W W
+        ≡ (s * (s * u) - s * (t * t)) - (t * (s * t) - t * (t * s))
+    expand =
+      trans step₁
+        (cong₂ _-_
+          (trans step₂
+            (cong₂ _-_ xx (trans xy (cong (λ z → s * (t * z)) (dot-comm b a)))))
+          (trans step₃ (cong₂ _-_ yx yy)))
+
+    ring :
+      ((s * (s * u) - s * (t * t)) - (t * (s * t) - t * (t * s)))
+        ≡ s * (s * u - t * t)
+    ring =
+      solve 3
+        (λ S T U →
+          ((S :* (S :* U) :- S :* (T :* T)) :- (T :* (S :* T) :- T :* (T :* S)))
+            := S :* (S :* U :- T :* T))
+        refl s t u
+
+------------------------------------------------------------------------
+-- The quantitative dichotomy, in arbitrary dimension
+------------------------------------------------------------------------
+
+data GramDichotomy {n : ℕ} (a b : Vec ℚ n) (delta : ℚ) : Set where
+  transverseCoercive :
+    delta ≤ gram a b →
+    normSq a * delta ≤ normSq (transverseResidual a b) →
+    GramDichotomy a b delta
+  nearlyCollinear :
+    gram a b < delta →
+    normSq (transverseResidual a b) < normSq a * delta ⊎ normSq a ≡ 0ℚ →
+    GramDichotomy a b delta
+
+gramDichotomy :
+  ∀ {n} (a b : Vec ℚ n) (delta : ℚ) → GramDichotomy a b delta
+gramDichotomy a b delta with ℚP.<-cmp (gram a b) delta
+... | tri< g<d _ _ = nearlyCollinear g<d residualSmall
+  where
+    residualSmall :
+      normSq (transverseResidual a b) < normSq a * delta ⊎ normSq a ≡ 0ℚ
+    residualSmall with ℚP.<-cmp 0ℚ (normSq a)
+    ... | tri< 0<s _ _ =
+          inj₁ (subst (_< normSq a * delta) (sym (projectionIdentity a b))
+                 (ℚP.*-monoʳ-<-pos (normSq a) {{ℚ.positive 0<s}} g<d))
+    ... | tri≈ _ 0≡s _ = inj₂ (sym 0≡s)
+    ... | tri> _ _ s<0 =
+          inj₂ (ℚP.≤-antisym (ℚP.<⇒≤ s<0) (normSq-nonNeg a))
+... | tri≈ _ g≡d _ =
+  transverseCoercive (ℚP.≤-reflexive (sym g≡d))
+    (ℚP.≤-reflexive
+      (sym (trans (projectionIdentity a b) (cong (normSq a *_) g≡d))))
+... | tri> _ _ d<g =
+  transverseCoercive (ℚP.<⇒≤ d<g)
+    (transport-≤ refl (sym (projectionIdentity a b))
+      (ℚP.*-monoˡ-≤-nonNeg (normSq a) {{ℚ.nonNegative (normSq-nonNeg a)}}
+        (ℚP.<⇒≤ d<g)))
+
+-- A nonzero transverse residual is itself a non-collinearity certificate,
+-- with no reference to coordinates at all.
+gramPositiveFromResidual :
+  ∀ {n} (a b : Vec ℚ n) →
+  0ℚ < normSq a →
+  0ℚ < normSq (transverseResidual a b) →
+  0ℚ < gram a b
+gramPositiveFromResidual a b 0<s 0<W with ℚP.<-cmp 0ℚ (gram a b)
+... | tri< 0<g _ _ = 0<g
+... | tri≈ _ 0≡g _ =
+      ⊥-elim (ℚP.<-irrefl (sym contradiction) 0<W)
+  where
+    contradiction : normSq (transverseResidual a b) ≡ 0ℚ
+    contradiction =
+      trans (projectionIdentity a b)
+        (trans (cong (normSq a *_) (sym 0≡g)) (ℚP.*-zeroʳ (normSq a)))
+... | tri> _ _ g<0 = ⊥-elim (ℚP.<-irrefl refl (ℚP.<-≤-trans g<0 (gramNonNeg a b)))
+
+------------------------------------------------------------------------
+-- Degenerate directions: a null vector pairs trivially
+------------------------------------------------------------------------
+
+normSq≡0⇒dot≡0 :
+  ∀ {n} (a b : Vec ℚ n) → normSq a ≡ 0ℚ → dot a b ≡ 0ℚ
+normSq≡0⇒dot≡0 []       []       _  = refl
+normSq≡0⇒dot≡0 (x ∷ xs) (y ∷ ys) eq =
+  trans (cong₂ _+_ (cong (_* y) x≡0) (normSq≡0⇒dot≡0 xs ys tail≡0))
+        (trans (cong (_+ 0ℚ) (ℚP.*-zeroˡ y)) (ℚP.+-identityʳ 0ℚ))
+  where
+    x≡0 : x ≡ 0ℚ
+    x≡0 = square-zero⇒zero
+            (sum-zeroˡ (square-nonNeg x) (normSq-nonNeg xs) eq)
+
+    tail≡0 : normSq xs ≡ 0ℚ
+    tail≡0 = sum-zeroʳ (square-nonNeg x) (normSq-nonNeg xs) eq
+
+gram-null : ∀ {n} (a b : Vec ℚ n) → normSq a ≡ 0ℚ → gram a b ≡ 0ℚ
+gram-null a b eq =
+  trans (cong₂ _-_ (trans (cong (_* normSq b) eq) (ℚP.*-zeroˡ (normSq b)))
+                   (cong (λ z → z * z) (normSq≡0⇒dot≡0 a b eq)))
+        (trans (cong (λ z → 0ℚ - z) (ℚP.*-zeroˡ 0ℚ)) (ℚP.+-inverseʳ 0ℚ))
+
+------------------------------------------------------------------------
+-- The three-dimensional core is the instance n = 3
+------------------------------------------------------------------------
+
+ofVec3 : V3.Vec3 → Vec ℚ 3
+ofVec3 a = V3.v₁ a ∷ V3.v₂ a ∷ V3.v₃ a ∷ []
+
+dot-ofVec3 : ∀ a b → dot (ofVec3 a) (ofVec3 b) ≡ V3.dot a b
+dot-ofVec3 a b =
+  cong (λ z → V3.v₁ a * V3.v₁ b + z)
+    (cong (λ z → V3.v₂ a * V3.v₂ b + z) (ℚP.+-identityʳ (V3.v₃ a * V3.v₃ b)))
+
+normSq-ofVec3 : ∀ a → normSq (ofVec3 a) ≡ V3.normSq a
+normSq-ofVec3 a = dot-ofVec3 a a
+
+gram-ofVec3 : ∀ a b → gram (ofVec3 a) (ofVec3 b) ≡ V3.gram a b
+gram-ofVec3 a b =
+  cong₂ _-_ (cong₂ _*_ (normSq-ofVec3 a) (normSq-ofVec3 b))
+            (cong (λ z → z * z) (dot-ofVec3 a b))
+
+------------------------------------------------------------------------
+-- Non-vacuity in a dimension strictly beyond the three-dimensional core
+------------------------------------------------------------------------
+
+u₁ u₂ u₃ : Vec ℚ 5
+u₁ = (+ 1 / 1) ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ []
+u₂ = 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ (+ 1 / 1) ∷ []
+u₃ = (+ 3 / 1) ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ []
+
+-- Orthonormal pair in dimension five: Gram surplus exactly 1, certified by a
+-- minor spanning the first and the LAST coordinate.
+fiveDimOrthogonalWitness : gram u₁ u₂ ≡ + 1 / 1
+fiveDimOrthogonalWitness = refl
+
+fiveDimMinorCertificate : 0ℚ < gram u₁ u₂
+fiveDimMinorCertificate =
+  gramPositiveFromMinor u₁ u₂ Fin.zero
+    (Fin.suc (Fin.suc (Fin.suc (Fin.suc Fin.zero))))
+    (λ ()) (inj₁ (toWitness {a? = 0ℚ ℚP.<? (+ 1 / 1)} _))
+
+-- Collinear pair: Gram surplus exactly 0 and residual exactly 0.
+fiveDimCollinearWitness : gram u₁ u₃ ≡ 0ℚ
+fiveDimCollinearWitness = refl
+
+fiveDimCollinearResidual : normSq (transverseResidual u₁ u₃) ≡ 0ℚ
+fiveDimCollinearResidual = refl

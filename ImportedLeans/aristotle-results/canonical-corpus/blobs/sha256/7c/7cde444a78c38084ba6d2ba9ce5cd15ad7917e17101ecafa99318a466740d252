@@ -1,0 +1,115 @@
+# Row A1: the literal source package, assembled and separated (Lean lane)
+
+This round works the sharpened Row A1 dependency graph
+
+    literal seagull sign
+  + uniform Gaussian floor
+  + one-step history response
+  + finite-g interaction debt
+
+on the Lean side, in `RequestProject/YangMills/`.  Nothing here closes Row A1,
+no row is proved, and the frozen research count is unchanged at **4**.  What is
+new is that the four literal source data are now a single machine-checked
+package, the two separate conditional obligations are now formally *proved to be
+separate*, and one of them is reduced to a strictly weaker, directly checkable
+datum.
+
+## 1. The package and its assembly (`A1SourcePackage.lean`)
+
+`A1LiteralSource` bundles exactly the four data:
+
+1. the split `β_j = βZ_j + βInt_j` with a history-response kernel for the
+   Gaussian part;
+2. the uniform Gaussian floor `βZ_j(g_ref) ≥ b_Z`;
+3. the finite-`g` interaction debt `|βInt_j(g)| ≤ C_int g_j^ρ`, `ρ ≥ 0`, along a
+   trajectory with `0 ≤ g_j ≤ γ`;
+4. the chain identification `R_{j,k} = A_j ∏_{i=k}^{j−1} J_i` with `|A_j| ≤ C_R`
+   and `|J_i| ≤ θ < 1`, over a history displacement budget `B`.
+
+`A1_literal_lower_bound` proves, from those data alone,
+
+    β_j(g) ≥ b_− = b_Z − C_int γ^ρ − C_R B θ/(1−θ)
+
+for every shell index `j`, uniformly (no dependence on the number of scales, the
+volume, or the cutoff), and `A1_literal_beta_pos` gives `β_j(g) > 0` whenever
+`b_− > 0`.  Two supporting results feed it:
+
+* `historyDebt_of_oneStepSources` — item (4) in its literal one-step form.  Only
+  the head factor `A_j` and the one-step effective-coupling factors `J_i` are
+  used; no whole-state contraction is assumed anywhere.
+* `interactionBound_of_couplingBound` — item (3) at a coupling bounded by `γ`
+  gives the uniform interaction debt `C_int γ^ρ`.
+
+`witnessSource` is an explicit inhabitant with genuinely nonzero interaction part
+and genuinely nonzero history-response kernel and `b_− > 0`, so the assembly is
+not vacuous.
+
+## 2. The separation: a sign is not a floor
+
+`paramagnetic_sign_not_uniform_floor` and
+`paramagneticFamily_betaTrace_tendsto_zero` exhibit an explicit family of literal
+instances, each of which satisfies the *full* paramagnetic sign criterion — Gram
+propagator `G = CᵀC`, symmetric first variation, negative semidefinite second
+variation, and a bubble the propagator does not annihilate — and each of which
+therefore has a strictly positive one-loop coefficient, while the coefficients
+tend to `0`.
+
+So "positive at every finite instance" is strictly weaker than
+`βZ_j ≥ b_Z > 0`.  Items (1) and (2) are provably distinct obligations, and the
+Agda-side decision to keep
+
+    cmp109LiteralParamagneticSeagullSignLevel == conditional
+    cmp109LiteralUniformGaussianFloorLevel    == conditional
+
+as *separate* conditional source levels is now backed by a theorem, not by
+caution alone.
+
+## 3. Item (2) reduced to a checkable datum (`UniformGaussianFloor.lean`)
+
+The bubble is a Frobenius norm: for `G = CᵀC` and symmetric `V`,
+
+    Tr(G V G V) = Σ_{a,b} M_{ab}²,   M = C V Cᵀ  (`bubble_eq_frobenius`).
+
+The sign argument uses only `M ≠ 0`; every individual entry gives a
+*quantitative* bound.  Hence:
+
+* `betaTrace_ge_entry_sq` — `β ≥ ½ M_{ab}²` for a paramagnetic second variation;
+* `brillouinSum_ge_entry_sq` — the same for the finite Brillouin sum, using one
+  momentum only (the others contribute nonnegatively);
+* `uniformGaussianFloor_of_entryBound` / `gaussianFloor_of_entryBound` — a
+  scale-indexed family of literal paramagnetic instances with one entry of the
+  reduced bubble kernel of modulus at least `c > 0` *uniformly in the scale* has
+  `βZ_j ≥ c²/2` uniformly, i.e. `b_Z = c²/2`, delivered in exactly the field
+  shape the package consumes.
+
+This does not assert that the literal Bałaban bubble kernel has such an entry.
+It replaces the abstract obligation "a uniform floor `b_Z`" by the concrete one
+"one entry of `C V Cᵀ` is uniformly bounded away from zero", and supplies the
+constant explicitly.
+
+## 4. What item (4) really needs (`HistoryDebtCriteria.lean`)
+
+* `historyDebt_of_summableKernel` and `A1_lower_bound_of_summableKernel` — the
+  contraction rate is not what the margin consumes: uniform summability
+  `Σ_{k<j} |R_{j,k}| ≤ D` already gives the debt `D·B` and the margin
+  `b_Z − C_int γ^ρ − D·B`.  `summableKernel_of_geometric` exhibits the geometric
+  datum as the case `D = C_R θ/(1−θ)`.  A source extraction that yields
+  summability without a rate therefore still closes A1b.
+* `marginalChain_debt_unbounded` — but the contraction cannot simply be dropped:
+  if the one-step factors are *marginal* (`J_i = 1`) and the head does not vanish
+  (`|A_j| ≥ c > 0`), then `Σ_{k<j} |R_{j,k}| = j·|A_j| ≥ jc` exceeds every
+  constant, so no uniform history debt exists.  The datum `|J_i| ≤ θ < 1`, or
+  some genuine summability replacing it, is load-bearing.
+
+## Status
+
+All results above compile in the Lean lane with no `sorry`, no `axiom`, and
+`#print axioms` reporting only `propext, Classical.choice, Quot.sound`.  They are
+cross-prover evidence for the Agda-side source ledger, **not** Agda kernel
+receipts, and no physical theorem is promoted on their basis.  The two literal
+extractions that would actually close A1 — a uniformly nonvanishing bubble entry
+(or any other uniform floor `b_Z`) for the literal Bałaban Gaussian, and the
+one-step factors `A_j, J_i` of Bałaban's actual effective-coupling map with
+`|J_i| ≤ θ < 1` — remain open.
+
+**Scoreboard: `A, B, C, D` open, frozen research count `4`.**

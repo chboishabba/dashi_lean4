@@ -1,0 +1,240 @@
+module DASHI.Physics.YangMills.BalabanYM4MarkedSourceSplitToCauchyConsumersExact where
+
+------------------------------------------------------------------------
+-- ROW B: THE REFORMULATED (SPLIT) TARGET FEEDS EVERY CAUCHY CONSUMER
+--
+-- WHY THIS MODULE EXISTS.  `BalabanYM4MarkedSourceMarginalTransverseSplitExact`
+-- replaces the blunt Row B target
+--
+--     |H_X(J)| <= A0 exp(-kappa d(X))     for the WHOLE marked functional
+--
+-- by the split target
+--
+--     H_X = H_X^marginal + H_X^transverse,
+--     finitely many retained marginal coordinates, bounded, no decay demanded;
+--     geometric decay demanded of the transverse kernel ONLY,
+--
+-- and shows that the blunt target is actually refuted by a marginal channel
+-- with a floor.  What was missing is the other half of the argument: that the
+-- weaker split target is still STRONG ENOUGH for the downstream consumers.
+-- Row B exists to feed Cauchy differentiation (Hessian, composite operators,
+-- stress tensor, OPE), so a reformulation that lost that would be worthless.
+--
+-- This module supplies that half.  From a `MarkedSourceSplit` alone it derives
+--
+--   * `uniformCoefficientBound`        |H_d| <= marginalBound + headEnergy,
+--                                      uniformly in d -- the marginal channel
+--                                      contributes a constant, not a divergence;
+--   * `beyondRetainedIsTransverse`     for every d at or beyond the retained
+--                                      window, |H_d| <= headEnergy * ratio^d:
+--                                      the geometric tail is carried entirely
+--                                      by the irrelevant channel, exactly as
+--                                      the RG eigenvalue classification says it
+--                                      should be;
+--   * `tubePackageFromSplit`           an actual `CauchyTubePackage` built from
+--                                      the split, for any tube radius gamma < 1
+--                                      with closing caps;
+--   * `markedFunctionSup`,
+--     `markedDerivativeSup`            hence the function and derivative
+--                                      majorant bounds on the tube -- i.e. the
+--                                      Cauchy differentiation consumers -- with
+--                                      constants that do not depend on the
+--                                      number of scales.
+--
+-- The moral is the one the reformulation was aimed at: projecting out the
+-- finitely many source-native relevant/marginal coordinates costs the consumers
+-- nothing, because they only ever needed a uniform coefficient sup on a tube,
+-- and a finite marginal sector plus a geometrically decaying transverse kernel
+-- supplies one.
+--
+-- WHAT THIS IS NOT.  This does not close Row B.  Inhabiting `MarkedSourceSplit`
+-- for the literal CMP116/119 differentiated marked source family -- i.e.
+-- exhibiting the projection onto the source-native marginal coordinates and
+-- proving geometric decay of the resulting transverse kernel -- is the physical
+-- content of Row B and remains open.  The frozen research count (4) is
+-- untouched.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+import Data.Nat.Base as ℕ
+import Data.Nat.Properties as ℕP
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.Definitions using (tri<; tri≈; tri>)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact
+  using (pow; pow-nonneg; pow-below-one; nonNegProduct; 0≤1ℚ)
+open import DASHI.Physics.YangMills.BalabanYM4MarkedSourceMarginalTransverseSplitExact
+  using ( MarkedSourceSplit; H; marg; perp; splits; retained; marginalBound
+        ; marginalNonNeg; marginalOnRetained; marginalVanishes
+        ; headEnergy; ratio; headNonNeg; ratioNonNeg; ratioBelowOne
+        ; witnessSplit)
+open import DASHI.Physics.YangMills.BalabanYM4CauchyTubeAnalyticPackageExact
+  using (CauchyTubePackage; module Tube)
+import DASHI.Physics.YangMills.BalabanYM4GeometricMajorantSeriesExact as GM
+
+------------------------------------------------------------------------
+-- The marginal channel is bounded everywhere, not merely on its window
+------------------------------------------------------------------------
+
+marginalBoundEverywhere :
+  ∀ (S : MarkedSourceSplit) d → ∣ marg S d ∣ ≤ marginalBound S
+marginalBoundEverywhere S d with ℕP.<-cmp d (retained S)
+... | tri< d<r _ _ = marginalOnRetained S d d<r
+... | tri≈ _ d≡r _ =
+      subst (_≤ marginalBound S)
+        (sym (cong ∣_∣ (marginalVanishes S d (ℕP.≤-reflexive (sym d≡r)))))
+        (marginalNonNeg S)
+... | tri> _ _ r<d =
+      subst (_≤ marginalBound S)
+        (sym (cong ∣_∣ (marginalVanishes S d (ℕP.<⇒≤ r<d))))
+        (marginalNonNeg S)
+
+------------------------------------------------------------------------
+-- The transverse channel is bounded by its head energy
+------------------------------------------------------------------------
+
+transverseBoundEverywhere :
+  ∀ (S : MarkedSourceSplit) d → ∣ perp S d ∣ ≤ headEnergy S
+transverseBoundEverywhere S d =
+  ℚP.≤-trans (MarkedSourceSplit.transverseDecay S d)
+    (subst (headEnergy S * pow (ratio S) d ≤_)
+      (ℚP.*-identityʳ (headEnergy S))
+      (ℚP.*-monoˡ-≤-nonNeg (headEnergy S)
+        {{ℚ.nonNegative (headNonNeg S)}}
+        (pow-below-one (ratio S) (ratioNonNeg S) (ratioBelowOne S) d)))
+
+------------------------------------------------------------------------
+-- The uniform coefficient bound
+------------------------------------------------------------------------
+
+uniformCoefficientBound :
+  ∀ (S : MarkedSourceSplit) d →
+  ∣ H S d ∣ ≤ marginalBound S + headEnergy S
+uniformCoefficientBound S d =
+  ℚP.≤-trans
+    (subst (λ z → ∣ z ∣ ≤ ∣ marg S d ∣ + ∣ perp S d ∣) (sym (splits S d))
+      (ℚP.∣p+q∣≤∣p∣+∣q∣ (marg S d) (perp S d)))
+    (ℚP.+-mono-≤ (marginalBoundEverywhere S d) (transverseBoundEverywhere S d))
+
+coeffSupNonNeg :
+  ∀ (S : MarkedSourceSplit) → 0ℚ ≤ marginalBound S + headEnergy S
+coeffSupNonNeg S =
+  subst (_≤ marginalBound S + headEnergy S) (ℚP.+-identityˡ 0ℚ)
+    (ℚP.+-mono-≤ (marginalNonNeg S) (headNonNeg S))
+
+------------------------------------------------------------------------
+-- Beyond the retained window the tail is purely transverse
+------------------------------------------------------------------------
+
+-- This is the exact statement of "only the localized irrelevant channel gets
+-- the geometric tail": at and beyond the finitely many retained marginal
+-- coordinates the WHOLE marked functional decays geometrically.
+beyondRetainedIsTransverse :
+  ∀ (S : MarkedSourceSplit) d → retained S ℕ.≤ d →
+  ∣ H S d ∣ ≤ headEnergy S * pow (ratio S) d
+beyondRetainedIsTransverse S d r≤d =
+  subst (λ z → ∣ z ∣ ≤ headEnergy S * pow (ratio S) d) (sym isTransverse)
+    (MarkedSourceSplit.transverseDecay S d)
+  where
+    isTransverse : H S d ≡ perp S d
+    isTransverse =
+      trans (splits S d)
+        (trans (cong (_+ perp S d) (marginalVanishes S d r≤d))
+               (ℚP.+-identityˡ (perp S d)))
+
+------------------------------------------------------------------------
+-- The Cauchy tube package built from the split
+------------------------------------------------------------------------
+
+tubePackageFromSplit :
+  (S : MarkedSourceSplit) (gam Tcap Scap : ℚ) →
+  0ℚ ≤ gam →
+  0ℚ < 1ℚ - gam →
+  1ℚ ≤ (1ℚ - gam) * Tcap →
+  Tcap ≤ (1ℚ - gam) * Scap →
+  CauchyTubePackage
+tubePackageFromSplit S gam Tcap Scap 0≤g g<1 geoCap arithCap = record
+  { tubeRadius        = gam
+  ; tubeRatio         = gam
+  ; coeffSup          = marginalBound S + headEnergy S
+  ; geoCapValue       = Tcap
+  ; arithCapValue     = Scap
+  ; coeffAbs          = λ d → ∣ H S d ∣
+  ; tubeRadiusNonNeg  = 0≤g
+  ; tubeRatioNonNeg   = 0≤g
+  ; tubeRatioBelowOne = g<1
+  ; coeffSupNonNeg    = coeffSupNonNeg S
+  ; coeffAbsNonNeg    = λ d → ℚP.0≤∣p∣ (H S d)
+  ; cauchyCoefficientBound = λ d →
+      ℚP.*-monoʳ-≤-nonNeg (GM.pow gam d)
+        {{ℚ.nonNegative (GM.pow-nonNeg 0≤g d)}}
+        (uniformCoefficientBound S d)
+  ; geoCapClosing     = geoCap
+  ; arithCapClosing   = arithCap
+  }
+
+module Consumers
+  (S : MarkedSourceSplit) (gam Tcap Scap : ℚ)
+  (0≤g : 0ℚ ≤ gam) (g<1 : 0ℚ < 1ℚ - gam)
+  (geoCap : 1ℚ ≤ (1ℚ - gam) * Tcap)
+  (arithCap : Tcap ≤ (1ℚ - gam) * Scap)
+  where
+
+  package : CauchyTubePackage
+  package = tubePackageFromSplit S gam Tcap Scap 0≤g g<1 geoCap arithCap
+
+  open Tube package public
+
+  -- The function majorant of the marked generating functional on the tube is
+  -- bounded by a constant independent of the number of scales.
+  markedFunctionSup :
+    ∀ {g} → 0ℚ ≤ g → g ≤ gam → ∀ N → seriesMajorant g N ≤ functionSup
+  markedFunctionSup = seriesMajorantBound
+
+  -- and so is the derivative majorant: Cauchy differentiation survives the
+  -- projection onto the marginal coordinates.
+  markedDerivativeSup :
+    ∀ {M1 g} → 0ℚ < gam → 0ℚ ≤ g → g ≤ gam →
+    scaledDerivativeSup ≤ gam * M1 →
+    ∀ N → derivativeMajorant g N ≤ M1
+  markedDerivativeSup = derivativeSupFromCap
+
+------------------------------------------------------------------------
+-- Non-vacuity: the witness split feeds the consumers
+------------------------------------------------------------------------
+
+-- gamma = 1/2 gives theta = 1/2, and Tcap = 2, Scap = 4 close.
+witGam witTcap witScap : ℚ
+witGam  = + 1 / 2
+witTcap = + 2 / 1
+witScap = + 4 / 1
+
+witGamNonNeg : 0ℚ ≤ witGam
+witGamNonNeg = toWitness {a? = 0ℚ ℚP.≤? witGam} _
+
+witGamBelowOne : 0ℚ < 1ℚ - witGam
+witGamBelowOne = toWitness {a? = 0ℚ ℚP.<? (1ℚ - witGam)} _
+
+witGeoCap : 1ℚ ≤ (1ℚ - witGam) * witTcap
+witGeoCap = toWitness {a? = 1ℚ ℚP.≤? ((1ℚ - witGam) * witTcap)} _
+
+witArithCap : witTcap ≤ (1ℚ - witGam) * witScap
+witArithCap = toWitness {a? = witTcap ℚP.≤? ((1ℚ - witGam) * witScap)} _
+
+module WitnessConsumers =
+  Consumers witnessSplit witGam witTcap witScap
+    witGamNonNeg witGamBelowOne witGeoCap witArithCap
+
+-- The uniform function sup obtained for the witness split, explicitly.
+witnessFunctionSup :
+  ∀ N → WitnessConsumers.seriesMajorant witGam N ≤ WitnessConsumers.functionSup
+witnessFunctionSup = WitnessConsumers.markedFunctionSup witGamNonNeg ℚP.≤-refl

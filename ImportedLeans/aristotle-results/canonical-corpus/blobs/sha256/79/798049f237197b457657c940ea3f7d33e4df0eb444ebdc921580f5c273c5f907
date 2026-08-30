@@ -1,0 +1,89 @@
+# G21 parity-minor chain — machine-checked Lean status
+
+All statements below are proved in Lean 4 with Mathlib, build clean under
+`lake build RiemannAnalytic`, contain no `sorry`/`admit`/`axiom`/`postulate`,
+use no Boolean receipts and no numerical evidence, and depend only on the
+standard axioms `propext`, `Classical.choice`, `Quot.sound` (verified with
+`#print axioms`).
+
+Modules (all imported by the aggregate `RiemannAnalytic.lean`):
+
+| file | content |
+| --- | --- |
+| `RiemannAnalytic/HyperbolicTP2.lean` | atomic hyperbolic inequalities and strict TP₂ |
+| `RiemannAnalytic/StrictKernelMomentRatio.lean` | generic TP₂ → strict moment cross-product; continuum parity determinants |
+| `RiemannAnalytic/OddTaylorDeterminant.lean` | odd finite-radius transfer |
+| `RiemannAnalytic/EvenTaylorDeterminant.lean` | even finite-radius transfer |
+| `RiemannAnalytic/ParityMinorAssembly.lean` | even + odd assembly, two-height discrimination |
+| `RiemannAnalytic/PoleQuotientTransversality.lean` | symmetric four-sample transversality |
+| `RiemannAnalytic/ActualZetaHeightSeparation.lean` | strict height separation for actual off-line zeta zeros; capstone |
+
+## The ledger, link by link
+
+| link | status | Lean name |
+| --- | --- | --- |
+| `sinh(2x) > 2x`, i.e. `x < sinh x cosh x` for `x > 0` | **PROVED** | `HyperbolicTP2.self_lt_sinh_mul_cosh` |
+| `x ↦ x coth x` strictly increasing on `(0,∞)` | **PROVED** | `HyperbolicTP2.strictMonoOn_xcoth` |
+| `u ↦ sinh(pu)/sinh(au)` strictly increasing (`0 < a < p`) | **PROVED** | `HyperbolicTP2.strictMonoOn_sinhRatio` |
+| strict TP₂ of `sinh`: `sinh(pv) sinh(au) > sinh(pu) sinh(av)` | **PROVED** | `HyperbolicTP2.sinh_strictTP2` |
+| strict TP₂ of `cosh` (product-to-sum route, no calculus) | **PROVED** | `HyperbolicTP2.cosh_strictTP2` |
+| generic strict TP₂ + positive nondegenerate measure + increasing score ⟹ strict moment cross-product | **PROVED** | `StrictKernelMomentRatio.strict_moment_cross_pos` |
+| continuum odd margin `Δ_odd = N₁(a)N₃(p) − N₃(a)N₁(p) > 0` | **PROVED** | `StrictKernelMomentRatio.oddMomentDeterminant_strictPos` |
+| orientation `N₃(a)N₁(p) − N₁(a)N₃(p) < 0` | **PROVED** | `StrictKernelMomentRatio.oddMomentDeterminant_strictNegative` |
+| continuum even margin `M₂(a)M₀(p) − M₀(a)M₂(p) < 0` | **PROVED** | `StrictKernelMomentRatio.evenMomentDeterminant_strictNegative` |
+| `\|sin x − (x − x³/6)\| ≤ x⁵/120` for `x ≥ 0` | **PROVED** | `OddTaylorDeterminant.abs_sin_sub_taylor3` |
+| `\|cos x − (1 − x²/2)\| ≤ x⁴/24` for `x ≥ 0` | **PROVED** | `EvenTaylorDeterminant.abs_cos_sub_taylor2` |
+| support domination `N(k+j) ≤ Lʲ N k`, `M(k+j) ≤ Lʲ M k` | **PROVED** | `OddTaylorDeterminant.oddMoment_le_of_support`, `EvenTaylorDeterminant.evenMoment_le_of_support` |
+| exact truncated odd determinant `= −r⁴ Δ_odd` | **PROVED** | `OddTaylorDeterminant.oddTruncatedDeterminant_eq` |
+| exact truncated even determinant `= −(3/2) r² Δ_even` | **PROVED** | `EvenTaylorDeterminant.evenTruncatedDeterminant_eq` |
+| exact determinant-level remainder identity | **PROVED** | `OddTaylorDeterminant.oddDeterminant_sub_truncated_eq` |
+| relative-margin sign transfer, odd | **PROVED** | `OddTaylorDeterminant.sign_transfer` |
+| relative-margin sign transfer, even | **PROVED** | `EvenTaylorDeterminant.even_sign_transfer` |
+| actual odd finite-radius minor `< 0` | **PROVED** | `OddTaylorDeterminant.oddFiniteRadiusDeterminant_neg` |
+| actual even finite-radius minor `< 0` | **PROVED** | `EvenTaylorDeterminant.evenFiniteRadiusDeterminant_neg` |
+| explicit small-radius threshold (odd / even) | **PROVED** | `exists_radius_oddFiniteRadiusDeterminant_neg`, `exists_radius_evenFiniteRadiusDeterminant_neg` |
+| even + odd assembly at a common radius | **PROVED** | `ParityMinorAssembly.exists_radius_both_parity_minors_neg` |
+| two-height discrimination in both channels | **PROVED** | `ParityMinorAssembly.parity_responses_linearly_independent` |
+| pole-quotient transversality (4 samples − 2 nuisance = 2 transverse) | **PROVED** | `PoleQuotientTransversality.pole_quotient_transversality` |
+| zero response outside the pole span | **PROVED** | `PoleQuotientTransversality.zero_response_not_in_pole_span` |
+| strict height separation `0 < \|Re ρ − 1/2\| < 1/2` for an actual off-line zero | **PROVED** | `ActualZetaHeightSeparation.offline_zero_strict_height_separation` |
+| capstone at `a = \|Re ρ − 1/2\|`, `p = 1/2` | **PROVED** | `ActualZetaHeightSeparation.offline_zero_parity_transversality` |
+
+## What is deliberately **not** claimed
+
+* **The Riemann Hypothesis is not proved.**  Nothing above weakens or discharges
+  `RiemannHypothesisFor`.  The chain establishes a *transversality/discrimination*
+  property of the symmetric sampling map, not a contradiction with the existence
+  of an off-line zero.
+* The prime-side estimate is untouched: no `Λ(m)Λ(n)` double sum is derived,
+  estimated, or assumed.
+* The explicit-formula bridge — identifying `evenResponse`/`oddResponse` with the
+  literal Weil pole evaluations `h(i/2) + h(-i/2)` and with the companion's
+  zero-side sampling functional — is **open**.  In the Lean development the
+  heights `a` and `p` are parameters, tied to `|Re ρ − 1/2|` and `1/2` only in
+  the capstone's *statement*, not through a proved explicit formula.
+* "Literal Weil pole evaluations" and "PNT/prime-counting deterministic main
+  mode" remain distinct; nothing here conflates them.
+* No claim is made about a unique underlying "origin" of a zero: the results are
+  phrased as observer/transversality statements only.
+
+## Shape of the analytic argument
+
+The odd sector runs
+`sinh(2x) > 2x` → `x coth x` strictly increasing → `sinh(pu)/sinh(au)` strictly
+increasing → strict TP₂ of `sinh` → (symmetrized double integral over
+`{0 < u < v < L}`, every factor of one sign) → strict continuum margin `Δ_odd > 0`.
+
+The even sector avoids calculus entirely: product-to-sum plus the ordered algebra
+`(pv − au)² − (pu − av)² = (p² − a²)(v² − u²) > 0` and monotonicity of `cosh` on
+the positive axis give strict TP₂ of `cosh` directly.
+
+The finite-radius stage is engineered as a *relative-margin* theorem: the exact
+truncated determinant is computed in closed form, the determinant error is
+expressed by the exact identity
+`det A − det T = T_{a1}E_{p2} + E_{a1}T_{p2} + E_{a1}E_{p2} − T_{a2}E_{p1}
+ − E_{a2}T_{p1} − E_{a2}E_{p1}`,
+and each of the six terms is bounded by an explicit fraction of a common budget
+`Z`, with the fractions summing to at most `1` and `Z < S` supplied by the
+continuum margin.  No four independent entrywise approximations are combined in a
+loose triangle inequality.

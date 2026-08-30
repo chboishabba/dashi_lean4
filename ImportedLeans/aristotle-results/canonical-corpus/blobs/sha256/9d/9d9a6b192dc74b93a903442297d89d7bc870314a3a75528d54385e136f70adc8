@@ -1,0 +1,171 @@
+# G3 Gram-defect cycle: what was tested and what came out
+
+All statements below are machine-checked Lean 4 / Mathlib theorems in the
+`RiemannAnalytic` library (`lake build RiemannAnalytic` is clean; no `sorry`,
+no `admit`, no `axiom`, no Boolean receipt, no numerical evidence; the only
+axioms used are `propext`, `Classical.choice`, `Quot.sound`).  Nothing about
+`RiemannHypothesisFor` was weakened, and **no proof of the Riemann Hypothesis
+is claimed**.
+
+## 0. The correction is right, and it is now proved
+
+The pair-block algebra is exactly as stated:
+
+* `pairBlock_frobSq` — `‖2m(aaᵀ − bbᵀ)‖_F² = 4m²(A² + B² − 2C²)`;
+* `pairBlock_gramDecomposition` — `= 4m²(A − B)² + 8m²(AB − C²)`;
+* `gramDefect_nonneg` — `0 ≤ AB − C²` (Cauchy–Schwarz).
+
+The extra nonnegative channel is the **Gram determinant** `ΔGram = AB − C²`,
+not `AB`.  And the warning is literally true:
+
+* `imagEnergy_pos_not_sufficient` — there are coordinate vectors with `B > 0`
+  and `ΔGram = 0`.
+
+So a lower bound on the retained imaginary energy is *strictly weaker* than a
+positive Frobenius surplus.  This is now a theorem, not an observation.
+
+## 1. Does the finite pair block have a coercive Gram surplus?  **Yes.**
+
+For the *one-sided* window `0 ≤ k < d` the source actually uses, the answer is
+affirmative and unconditional — but not for the reason the tail-correlation
+sketch suggests.  The one-sided window **contains the central grid point**
+`k = 0`, and for a real even taper the central sample `φ̂(−iα)` is *real*
+(`gridSample_zero_im`).  That coordinate is a direction in which the real
+vector `a` is nonzero and the imaginary vector `b` vanishes — exactly the
+angular separation the Gram determinant measures.  Splitting off that
+coordinate and applying Cauchy–Schwarz to the rest gives
+
+* `gramDefect_ge_head_sq_mul` — if `b₀ = 0` then `AB − C² ≥ a₀²·B`,
+* `finiteGridGramDefect_ge` — hence `ΔGram(d) ≥ (Re φ̂(−iα))² · B_d`,
+
+with **no** hypothesis on the correlation `C_d`.  No tail estimate for `C_d` is
+needed (and none is claimed: for a one-sided window the `±k` cancellation that
+makes `C_∞ = 0` is genuinely absent, so `C_d` is *not* expected to be small —
+the head coordinate replaces that route entirely).
+
+Feeding in the two existing bounds — the plateau bound
+`(Re φ̂(−iα))² ≥ 4a²` and the quantitative lattice tail for `B` — gives the
+explicit floors
+
+* `finiteGridGramDefectLower` —
+  `ΔGram(m+1) ≥ 4a²·((L/4)·taperExcess φ α − C_φ(α)²/(h²m))`,
+* `finiteGridGramDefect_source_floor` (source regime `a ≥ 3L/8`) —
+  `ΔGram(m+1) ≥ (9/16)L²·((9/512)L⁴α² − C_φ(α)²/(h²m))`,
+* `finiteGridGramDefect_pos` — strictly positive for `α ≠ 0` once the window is
+  long enough to absorb the tail,
+* `oneSidedTransverseSurplus_source_floor` — the corresponding `8m'²·ΔGram`
+  floor for the pair block.
+
+So `c_Gram(T, α) ≳ α²` on the actual finite window: **the mechanism survives**.
+(The symmetric-window variant, where the cross entry vanishes identically, is
+in `WindowGram.lean`; the new results do not need it.)
+
+## 2. The literal `A`-matrix expansion
+
+`frobSq_pairFamily_expand` proves, for a finite family of pair blocks,
+
+```
+‖A‖_F² = diagBaselineSum + diagGramSum + offDiagInterference
+```
+
+with `diagGramSum = 8 ∑_ρ m_ρ²(A_ρB_ρ − C_ρ²)` and every other term literally
+defined — nothing is *named* a critical baseline.  Because the diagonal
+baselines are squares,
+
+* `diagGramSum_le_of_offDiag_bound` — `D_diag ≤ ‖A‖_F² + E_off`,
+* `diagGramSum_le_transport` — with `A = G − E`,
+  `D_diag ≤ 2‖G‖_F² + 2‖E‖_F² + E_off`,
+* `diagGramSum_le_prime` — with `‖G‖_F² ≤ M₂ + E_prime`,
+  `D_diag ≤ 2M₂ + 2E_prime + 2‖E‖_F² + E_off`.
+
+These are exact inequalities between real numbers.  No counterfactual
+"criticalized" zero configuration is used anywhere, in line with the concern
+that such a configuration need not be a zeta configuration at all.
+
+## 3. Frobenius excess versus the rank–trace functional
+
+`pairBlock_trace` gives `tr Q = 2m(A − B)`, and
+
+`rankTrace_pairBlock` —
+`c·tr Q − ‖Q‖_F² = 2mc(A − B) − 4m²(A − B)² − 8m²(AB − C²)`.
+
+So the Gram defect enters the rank–trace observable with the **opposite** sign
+to its sign in the raw Frobenius square:
+
+* `frobSq_ge_of_gramDefect_lower` — a Gram lower bound pushes `F₁ = ‖·‖_F²` up;
+* `rankTrace_le_of_gramDefect_lower` — the same bound pushes
+  `F₂ = c·tr − ‖·‖_F²` down;
+* `rankTrace_pairFamily` — the whole-family identity, in which `D_diag` is
+  *subtracted*.
+
+Conclusion for the programme: `F₂` does not carry the defect as a positive
+signal; an upper bound on `F₂` gives no upper bound on `D_diag`.  If the
+rank–trace combination is used to cancel the prime main term, the inequality
+must be run in the opposite direction from the Frobenius-excess route.
+
+## 4. Transverse-Lipschitz `Im Φ` bound, and a quadratic envelope
+
+The predicted joint estimate is proved:
+
+`abs_im_PhiExt_le_transverse_decay` —
+`|Im Φ_ψ(x + iy)| ≤ |y|·K_ψ/|x|` for `|y| ≤ 1`, `|y|R ≤ 1`, `x ≠ 0`, with the
+explicit constant `K_ψ = 2∫|ψ'(u)||u|du + ∫|ψ(u)|e^{|u|}du`.
+
+The proof is the mechanism anticipated: `Im Φ_ψ` vanishes identically on the
+real axis for even `ψ`, so `Im Φ_ψ(x+iy) = Im Φ_{g_y}(x)` for the lifted taper
+`g_y(t) = ψ(t)(e^{yt} − 1)`, which is again a `C¹` taper whose derivative has
+`L¹` mass `O(|y|)`; horizontal decay of `Φ_{g_y}` supplies the `1/|x|`.
+
+Consequence (`mixedInterference_envelope_quadratic`): for a `δ`-separated
+family with transverse parts at most `y`,
+
+```
+∑_σ (Im Φ(w_σ))² ≤ 2 y² K² / δ².
+```
+
+This is **quadratic** in the offset, replacing the previous linear envelope, so
+the interference and the Gram defect are now of the *same* order in `α` and the
+competition is decided by constants alone:
+
+`gramDefect_beats_interference` — if `2K²/δ² < (81/16384)L⁶` (an `α`-independent
+inequality) and the window absorbs the lattice tail, then for every `α ≠ 0` the
+total interference is strictly below the target's own Gram defect.
+
+## 5. Detectability radius
+
+`abs_offset_le_gramDetectRadius` / `zero_in_gram_tube` — given any upper bound
+`E` for the Gram defect, `|α| ≤ √(E/((81/16384)L⁶))`, i.e. a hypothetical zero
+lies in an explicit tube around the critical line; the tube shrinks to the line
+when the relative budget `E(T)/L(T)⁶ → 0`
+(`gramDetectRadius_tendsto_zero`, `zero_on_line_of_gram_budget_zero`).
+
+## 6. What is still missing (unchanged, and unproved)
+
+The first genuinely unproved input remains the **prime side**: an upper bound
+for `‖G‖_F²` (or for the assembled zero-side square) in terms of an explicit
+main term plus an error, for the actual zeros of `ζ`.  That needs the explicit
+formula and prime second-moment estimates, which are present neither in this
+project nor in Mathlib.  Also hypotheses, not theorems, in the statements
+above:
+
+* the `δ`-separation of the zero ordinates and the constant inequality
+  `2K²/δ² < (81/16384)L⁶`;
+* the window/tail condition `C_φ(α)²/(h²m) ≤ (9/1024)L⁴α²`;
+* the error budget `E` in the detectability statements.
+
+Until an unconditional prime-side bound exists, no statement here implies the
+Riemann Hypothesis, and none is asserted to.
+
+## 7. Localization, in ratio form
+
+`interference_le_ratio_mul_gramDefect` — under the same hypotheses, the total
+mixed interference is at most `η · ΔGram` with
+
+```
+η = 32768 K² / (81 δ² L⁶),
+```
+
+which is **free of `α`**.  So localization is not a matter of cancelling powers
+of the transverse offset (there are none left to cancel): it is exactly the
+task of driving this one explicit constant below `1`, by enlarging `L` relative
+to the taper constant `K` and the ordinate separation `δ`.

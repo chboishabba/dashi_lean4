@@ -1,0 +1,203 @@
+{-# OPTIONS --without-K --safe #-}
+
+------------------------------------------------------------------------
+-- A constructed finite-volume lattice gauge measure, with proved gauge
+-- invariance, for the compact abelian structure group U(1).
+--
+-- SCOPE, STATED UP FRONT.  This module does *not* touch the Clay problem.
+-- The Jaffe-Witten statement requires a compact *simple* nonabelian group
+-- (SU(N), N >= 2); U(1) is abelian, its lattice theory is not asymptotically
+-- free and it has no mass gap in the relevant sense.  Nothing here is
+-- evidence for any Yang-Mills claim, and no promotion flag is touched.
+--
+-- What it does do is remove, in the one case where the group theory is
+-- available constructively, the *base* obstruction recorded in
+-- `docs/ym/YangMillsClayObstructionReport.md`, section 4: the repository has
+-- no proved inhabitant of a normalized invariant integral for any group, so
+-- step L1 (the finite-volume lattice measure, a product of normalized Haar
+-- measures over the links) cannot be built at all.  Over the Bishop reals we
+-- now have such a measure for U(1)^links: constructed, normalized, positive,
+-- monotone, and invariant under the lattice gauge group.
+--
+-- Everything is proved; there is no postulate, receipt, authority import or
+-- opaque field in this module or in anything it depends on.
+------------------------------------------------------------------------
+
+module DASHI.Physics.YangMills.BishopU1LatticeHaarMeasure where
+
+open import Data.Nat as ℕ using (ℕ; zero; suc)
+open import Data.Fin as Fin using (Fin)
+open import Data.Vec as Vec using (Vec; []; _∷_; lookup; tabulate)
+open import Data.Product using (_,_; _×_)
+open import Data.Unit using (⊤; tt)
+
+open import Real
+open import RealProperties
+open import Sequence
+open import DASHI.Analysis.BishopRiemannIntegral
+open import DASHI.Analysis.BishopTorusHaar
+open import DASHI.Analysis.BishopTorusReflection
+open import DASHI.Analysis.BishopTorusLinearity
+
+------------------------------------------------------------------------
+-- Constant observables are periodic in every coordinate.
+
+constVecPeriodic : ∀ {n} (c : ℝ) → VecPeriodic {n} (λ _ → c)
+constVecPeriodic {zero}  c = tt
+constVecPeriodic {suc n} c = (λ _ → constVecPeriodic c) , (λ _ _ → ≃-refl)
+
+------------------------------------------------------------------------
+-- A finite lattice, given by its links and their endpoints.
+
+record FiniteLatticeGraph : Set where
+  field
+    sites links : ℕ
+    src tgt     : Fin links → Fin sites
+
+module _ (Λ : FiniteLatticeGraph) where
+  open FiniteLatticeGraph Λ
+
+  -- A gauge field assigns an angle to every link (U(1) written additively as
+  -- R/Z), a gauge transformation assigns an angle to every site.
+
+  Config : Set
+  Config = Vec ℝ links
+
+  GaugeParam : Set
+  GaugeParam = Vec ℝ sites
+
+  -- The gauge group acts on configurations by the translation
+  --     A(ℓ)  ↦  A(ℓ) + θ(src ℓ) - θ(tgt ℓ).
+
+  gaugeShift : GaugeParam → Config
+  gaugeShift θ = tabulate (λ ℓ → lookup θ (src ℓ) - lookup θ (tgt ℓ))
+
+  gaugeAct : Config → GaugeParam → Config
+  gaugeAct v θ = shiftVec v (gaugeShift θ)
+
+  ------------------------------------------------------------------------
+  -- Observables: uniformly continuous functions of the link angles that are
+  -- periodic in every link angle, i.e. functions on U(1)^links.
+
+  record Observable : Set where
+    field
+      obs : Config → ℝ
+      mod : VecModulus obs
+      per : VecPeriodic obs
+
+  open Observable
+
+  -- The lattice measure: the product of the Haar measures of the links.
+
+  expectation : Observable → ℝ
+  expectation O = torusIntegral (obs O) (mod O)
+
+  ------------------------------------------------------------------------
+  -- The gauge group acts on observables ...
+
+  gaugeTransform : Observable → GaugeParam → Observable
+  gaugeTransform O θ = record
+    { obs = λ v → obs O (gaugeAct v θ)
+    ; mod = shiftVecModulus (obs O) (mod O) (gaugeShift θ)
+    ; per = shiftVecPeriodic (obs O) (mod O) (per O) (gaugeShift θ)
+    }
+
+  -- ... and the measure is invariant under that action.
+
+  gaugeInvariance : ∀ (O : Observable) (θ : GaugeParam) →
+    expectation (gaugeTransform O θ) ≃ expectation O
+  gaugeInvariance O θ =
+    torus-invariant-canonical (obs O) (mod O) (per O) (gaugeShift θ)
+
+  ------------------------------------------------------------------------
+  -- The measure is a normalized positive functional.
+
+  constObservable : ℝ → Observable
+  constObservable c = record
+    { obs = λ _ → c
+    ; mod = constVecModulus {links} c
+    ; per = constVecPeriodic {links} c
+    }
+
+  partitionNormalisation : expectation (constObservable 1ℝ) ≃ 1ℝ
+  partitionNormalisation = torusIntegral-const {links} 1ℝ (constVecModulus {links} 1ℝ)
+
+  expectation-const : ∀ c → expectation (constObservable c) ≃ c
+  expectation-const c = torusIntegral-const {links} c (constVecModulus {links} c)
+
+  expectation-positive : ∀ (O : Observable) →
+    (∀ v → 0ℝ ≤ obs O v) → 0ℝ ≤ expectation O
+  expectation-positive O h = torusIntegral-nonNeg (obs O) (mod O) h
+
+  expectation-monotone : ∀ (O P : Observable) →
+    (∀ v → obs O v ≤ obs P v) → expectation O ≤ expectation P
+  expectation-monotone O P h =
+    torusIntegral-mono (obs O) (obs P) (mod O) (mod P) h
+
+  ------------------------------------------------------------------------
+  -- Observables form a vector space and the measure is linear on it.
+
+  addObservable : Observable → Observable → Observable
+  addObservable O P = record
+    { obs = λ v → obs O v + obs P v
+    ; mod = sumVecModulus (obs O) (obs P) (mod O) (mod P)
+    ; per = sumVecPeriodic (obs O) (obs P) (per O) (per P)
+    }
+
+  scaleObservable : ℝ → Observable → Observable
+  scaleObservable c O = record
+    { obs = λ v → c * obs O v
+    ; mod = scaleVecModulus c (obs O) (mod O)
+    ; per = scaleVecPeriodic c (obs O) (per O)
+    }
+
+  expectation-add : ∀ (O P : Observable) →
+    expectation (addObservable O P) ≃ expectation O + expectation P
+  expectation-add O P = torusIntegral-add (obs O) (obs P) (mod O) (mod P)
+    (sumVecModulus (obs O) (obs P) (mod O) (mod P))
+
+  expectation-scale : ∀ (c : ℝ) (O : Observable) →
+    expectation (scaleObservable c O) ≃ c * expectation O
+  expectation-scale c O = torusIntegral-scale c (obs O) (mod O)
+    (scaleVecModulus c (obs O) (mod O))
+
+  ------------------------------------------------------------------------
+  -- Reversing the orientation of every link inverts every link variable;
+  -- the measure is invariant under this too (unimodularity).
+
+  reverseOrientation : Observable → Observable
+  reverseOrientation O = record
+    { obs = λ v → obs O (negVec v)
+    ; mod = negVecModulus (obs O) (mod O)
+    ; per = negVecPeriodic (obs O) (mod O) (per O)
+    }
+
+  orientationInvariance : ∀ (O : Observable) →
+    expectation (reverseOrientation O) ≃ expectation O
+  orientationInvariance O = torus-reflect-canonical (obs O) (mod O) (per O)
+
+  ------------------------------------------------------------------------
+  -- Packaged as a specification with a proved inhabitant.
+
+  record LatticeGaugeMeasure : Set where
+    field
+      ⟨_⟩          : Observable → ℝ
+      normalized   : ⟨ constObservable 1ℝ ⟩ ≃ 1ℝ
+      positive     : ∀ O → (∀ v → 0ℝ ≤ obs O v) → 0ℝ ≤ ⟨ O ⟩
+      monotone     : ∀ O P → (∀ v → obs O v ≤ obs P v) → ⟨ O ⟩ ≤ ⟨ P ⟩
+      additive     : ∀ O P → ⟨ addObservable O P ⟩ ≃ ⟨ O ⟩ + ⟨ P ⟩
+      homogeneous  : ∀ c O → ⟨ scaleObservable c O ⟩ ≃ c * ⟨ O ⟩
+      gaugeInvar   : ∀ O θ → ⟨ gaugeTransform O θ ⟩ ≃ ⟨ O ⟩
+      orientInvar  : ∀ O → ⟨ reverseOrientation O ⟩ ≃ ⟨ O ⟩
+
+  u1LatticeGaugeMeasure : LatticeGaugeMeasure
+  u1LatticeGaugeMeasure = record
+    { ⟨_⟩        = expectation
+    ; normalized = partitionNormalisation
+    ; positive   = expectation-positive
+    ; monotone   = expectation-monotone
+    ; additive   = expectation-add
+    ; homogeneous = expectation-scale
+    ; gaugeInvar = gaugeInvariance
+    ; orientInvar = orientationInvariance
+    }

@@ -1,0 +1,7 @@
+name = "monster-zk-lattice"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[[r2_buckets]]
+binding = "LATTICE_DATA"
+bucket_name = "monster-zk-lattice"

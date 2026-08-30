@@ -1,0 +1,155 @@
+module DASHI.Physics.YangMills.BalabanYM4LinearInteractionBetaMarginExact where
+
+------------------------------------------------------------------------
+-- ROW A, SHELL-LOCAL SIGN MECHANISM:
+--   LINEAR (O(g)) INTERACTION BETA  +  SMALL-COUPLING TUBE
+--   ==>  UNIFORM POSITIVE PER-SHELL BETA MARGIN
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- After linearising the constraint and performing the literal source
+-- rescaling B = g_k B', the interaction in (2.13) vanishes at g_k = 0, and the
+-- explicit P^(k) piece of Section 3 is bounded by a quadratic polynomial in
+-- the fluctuation field whose coefficients are O(g_k).  The source therefore
+-- supports the *linear* interaction exponent rho = 1 for that lane, i.e. a
+-- per-shell estimate of the shape
+--
+--     beta_{Int,j}  >=  - C g_{j-1}.
+--
+-- WHY THIS MODULE, AND NOT THE GEOMETRIC HISTORY BUDGET.
+--
+-- `DASHI.Physics.YangMills.YMCumulativeBetaMarginExact` closes row A's prefix
+-- inequality from a *summable* coupling history, i.e. from a uniform bound on
+-- sum_j g_j.  On an asymptotically free, marginal trajectory the coupling
+-- decays only logarithmically in the scale, so sum_j g_j is NOT uniformly
+-- bounded in the cutoff, and that route is the wrong physical mechanism if
+-- the interaction really starts at O(g).  The correct shell-local statement
+-- needs no summability at all: it needs only that the trajectory stays inside
+-- the small-coupling tube g_{j-1} <= gamma.  That is what is proved here:
+--
+--     beta_{Z,j} >= b_-,   beta_{Int,j} >= - C g_{j-1},   g_{j-1} <= gamma
+--   ==>  beta_j  >=  b_- - C gamma,
+--
+-- so row A's sign condition reduces to the single small-coupling test
+--
+--     C gamma  <  b_- .
+--
+-- WHAT IS *NOT* PROVED HERE.  The two analytic inputs
+--   (i)  b_- > 0 for the identity-background Hessian of the actual
+--        constrained Gaussian normalisation, and
+--   (ii) the uniform differentiated constant C in |beta_{Int,j}| <= C g_{j-1}
+--        on the same literal trajectory,
+-- are open.  Row A therefore stays open and the frozen research count stays
+-- at 4 (docs/ym/YangMillsClayFourFrozenResearchLemmas.md).
+--
+-- Everything below is exact rational arithmetic: no postulate, no hole, no
+-- Boolean receipt, no imported authority.  Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; nonNegative)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Small arithmetic helpers (all standard, all exact)
+------------------------------------------------------------------------
+
+scale-nonNeg : ∀ {c x y} → 0ℚ ≤ c → x ≤ y → c * x ≤ c * y
+scale-nonNeg {c} 0≤c x≤y = ℚP.*-monoˡ-≤-nonNeg c {{nonNegative 0≤c}} x≤y
+
+positive-difference : ∀ {p q} → p < q → 0ℚ < q - p
+positive-difference {p} {q} p<q =
+  subst (λ z → z < q - p) (ℚP.+-inverseʳ p) (ℚP.+-monoˡ-< (- p) p<q)
+
+sum₀ : (Nat → ℚ) → Nat → ℚ
+sum₀ f zero = 0ℚ
+sum₀ f (suc n) = sum₀ f n + f n
+
+natToℚ : Nat → ℚ
+natToℚ zero = 0ℚ
+natToℚ (suc n) = natToℚ n + 1ℚ
+
+------------------------------------------------------------------------
+-- The literal shell-local hypotheses
+------------------------------------------------------------------------
+
+-- `priorCoupling j` is the coupling g_{j-1} entering shell j, i.e. the
+-- coupling at which the interaction of the j-th renormalisation step is
+-- evaluated; `betaGauss j` is the constrained-Gaussian (determinant) part of
+-- beta_j and `betaInt j` its interaction part.
+
+record ShellLinearInteractionData : Set where
+  field
+    gaussianFloor    : ℚ   -- b_-
+    interactionSlope : ℚ   -- C
+    couplingCap      : ℚ   -- gamma
+    beta betaGauss betaInt priorCoupling : Nat → ℚ
+
+    betaDecomposition : ∀ j → beta j ≡ betaGauss j + betaInt j
+    gaussianLower     : ∀ j → gaussianFloor ≤ betaGauss j
+    -- the CMP109 linear interaction estimate, in its one-sided form
+    interactionLinearLower :
+      ∀ j → - (interactionSlope * priorCoupling j) ≤ betaInt j
+    slopeNonNegative         : 0ℚ ≤ interactionSlope
+    priorCouplingNonNegative : ∀ j → 0ℚ ≤ priorCoupling j
+    -- the small-coupling tube; no summability of the history is assumed
+    priorCouplingCapped      : ∀ j → priorCoupling j ≤ couplingCap
+
+module Shell (d : ShellLinearInteractionData) where
+
+  open ShellLinearInteractionData d
+
+  shellMargin : ℚ
+  shellMargin = gaussianFloor - interactionSlope * couplingCap
+
+  -- The interaction cannot push beta below the tube-uniform margin.
+  interactionLowerAtCap :
+    ∀ j → - (interactionSlope * couplingCap) ≤ betaInt j
+  interactionLowerAtCap j =
+    ℚP.≤-trans
+      (ℚP.neg-antimono-≤
+        (scale-nonNeg slopeNonNegative (priorCouplingCapped j)))
+      (interactionLinearLower j)
+
+  -- MAIN SHELL ESTIMATE:  beta_j >= b_- - C gamma.
+  shellBetaLower : ∀ j → shellMargin ≤ beta j
+  shellBetaLower j =
+    subst (λ b → shellMargin ≤ b) (sym (betaDecomposition j))
+      (ℚP.+-mono-≤ (gaussianLower j) (interactionLowerAtCap j))
+
+  -- The single small-coupling gate  C gamma < b_-  makes every shell strictly
+  -- asymptotically free in the repository's sign convention.
+  shellMarginPositive :
+    interactionSlope * couplingCap < gaussianFloor → 0ℚ < shellMargin
+  shellMarginPositive lt = positive-difference lt
+
+  shellBetaPositive :
+    interactionSlope * couplingCap < gaussianFloor → ∀ j → 0ℚ < beta j
+  shellBetaPositive lt j =
+    ℚP.<-≤-trans (shellMarginPositive lt) (shellBetaLower j)
+
+  -- Finite prefixes inherit the margin with no dependence on prefix length.
+  prefixBetaLower : ∀ K → natToℚ K * shellMargin ≤ sum₀ beta K
+  prefixBetaLower zero =
+    ℚP.≤-reflexive (ℚP.*-zeroˡ shellMargin)
+  prefixBetaLower (suc n) =
+    subst (λ x → x ≤ sum₀ beta n + beta n)
+      (sym distributeStep)
+      (ℚP.+-mono-≤ (prefixBetaLower n) (shellBetaLower n))
+    where
+      distributeStep :
+        (natToℚ n + 1ℚ) * shellMargin ≡ natToℚ n * shellMargin + shellMargin
+      distributeStep =
+        solve 2
+          (λ x m → (x :+ con 1ℚ) :* m := (x :* m) :+ m)
+          refl (natToℚ n) shellMargin

@@ -1,0 +1,660 @@
+module DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopNearFarEstimateExact where
+
+------------------------------------------------------------------------
+-- ROW A1a:  THE NEAR/FAR NEGATIVE-MASS ESTIMATE FOR THE LITERAL ONE-LOOP
+--   REMAINDER, AND ITS ASSEMBLY INTO THE CANCELLATION-PRESERVING GATE.
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  Beta extraction (5.36)--(5.42).
+--
+-- Ludwig D. Faddeev and Victor N. Popov, "Feynman Diagrams for the
+-- Yang--Mills Field", Physics Letters B 25 (1967), 29--30.
+-- DOI: 10.1016/0370-2693(67)90067-6.
+--
+-- WHAT THIS MODULE ADDS.
+--
+-- The four-orbit gate consumes a bound on the negative part of the single
+-- (4,6,4,1)-weighted combination
+--
+--     D(p) = 4 d1(p) + 6 d2(p) + 4 d3(p) + d4(p)
+--
+-- of the literal joint Wilson + reduced Faddeev--Popov + Haar density over
+-- the Brillouin cell.  A *uniform* bound on D is not available and is not
+-- needed: the hard region is exactly where the lattice propagator
+-- denominators are small, and it is small.  This module implements the split
+--
+--     B  =  B_near(delta)  union  B_far(delta),      B_near(delta) = { p : p^2 <= delta } ,
+--
+-- and proves the assembly
+--
+--     R_local = R_near + R_far ,
+--     R_near >= - measureNear * eps_near ,
+--     R_far  >= - measureFar  * eps_far
+--   ==>
+--     R_local >= - ( measureNear * eps_near + measureFar * eps_far ) ,
+--
+-- with the two half-estimates supplied by *different* tools, which is the
+-- whole point of the split:
+--
+--   * near:  `BalabanCMP109LiteralWardCompensatedNearQuotientExact`.  The
+--     transversality zero of the numerator is factored out *before* absolute
+--     values are taken and cancelled against the propagator zero, giving a
+--     bound `eps_near = m / c` that does not mention `delta` at all.  The
+--     region's contribution is then small because its *measure* is small.
+--
+--   * far:  `BalabanCMP109LiteralOneLoopAbsoluteBoundCalculusExact`.  There
+--     the denominator has the explicit positive floor `delta`, so the generic
+--     rational absolute-bound calculus applies, with `eps_far` of order
+--     `1 / delta`.
+--
+-- WHAT IS PROVED HERE (ordinary theorems; the cell functional is only ever
+-- assumed to be a positive linear functional, i.e. a measure):
+--
+--   * `measureAdditivity` -- the two region measures really do add up to the
+--     cell measure.  Derived, not assumed.
+--   * `nearFarLower` -- the assembly above, from region-restricted pointwise
+--     bounds only.  Neither half-hypothesis says anything about the other
+--     region.
+--   * `splitMajorantIntegral` and
+--     `literalJointRegularRemainderNearFar` -- the near/far budget delivered
+--     in exactly the form
+--     `BalabanYM4CancellationPreservingFourOrbitGateExact`'s integrated
+--     negative-part consumer takes, by building the two-valued majorant
+--     `eps_near` on the near region, `eps_far` off it, and computing its cell
+--     integral.  So the gate is fed literally, not by analogy.
+--   * Section 4 -- the `delta` optimisation, machine-checked on the
+--     repository's own SU(2) numbers (cell measure 1/16, shell budget 11/12):
+--     with the Ward-compensated near bound 6 of the near-quotient module, the
+--     near measure law `measureNear(delta) <= delta^2` and the far bound
+--     `1/delta`, the split passes at `delta = 1/6` with total 13/24 < 11/12,
+--     and fails at `delta = 1/2` and at `delta = 1/16`.  Section 4c records
+--     the negative statement that makes the near/far split necessary: with no
+--     near estimate at all the far-only budget `(1/16)/delta` exceeds the
+--     shell budget for every `delta <= 1/16`, and diverges as `delta -> 0`,
+--     so there is no admissible `delta` on the generic route.
+--
+-- WHAT IS STILL OPEN, and named rather than hidden:
+--
+--   (i)  the literal transverse cofactor of the joint numerator and a bound
+--        `m` on it, plus the same-zero denominator comparison constant `c`
+--        (the hypotheses of the near-quotient module);
+--   (ii) the far-region atom bound table on `{ p^2 >= delta }`;
+--   (iii) the geometric near-measure law `measureNear(delta) <= k delta^2`,
+--        which needs the constructive two-sided comparison
+--        `c_- |p|^2 <= p^2 <= c_+ |p|^2` on a small ball.  It enters here as
+--        an explicit numerical hypothesis of section 4, never as a theorem.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Data.Bool.Base using (Bool; true; false; if_then_else_)
+open import Data.Integer.Base using (+_)
+open import Data.Product using (_×_; _,_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _≤_; _<_; _/_; nonNegative)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (_≡_; refl; sym; trans; subst; cong; cong₂)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.YangMills.BalabanCMP109VacuumPolarizationHypercubicSourceSymmetryExact
+  as SourceSymmetry
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonGhostHaarWeightedFourOrbitExact
+  as Joint
+import DASHI.Physics.YangMills.BalabanYM4CancellationPreservingFourOrbitGateExact
+  as Gate
+
+------------------------------------------------------------------------
+-- 1.  A CELL FUNCTIONAL SPLIT INTO A NEAR AND A FAR PART
+--
+-- `nearIndicator` is the characteristic function of `B_near(delta)`.  The two
+-- partial functionals are monotone only against comparisons that hold on
+-- *their own* region -- that is what makes them region functionals -- and
+-- their values on constants are the two region measures.
+------------------------------------------------------------------------
+
+module NearFarCellSplit
+  (Point : Set)
+  (nearIndicator : Point → Bool)
+  (integral integralNear integralFar : (Point → ℚ) → ℚ)
+  (integralSplit :
+     ∀ (f : Point → ℚ) → integral f ≡ integralNear f + integralFar f)
+  (integralNearMono :
+     ∀ (f g : Point → ℚ) →
+     (∀ p → nearIndicator p ≡ true → f p ≤ g p) →
+     integralNear f ≤ integralNear g)
+  (integralFarMono :
+     ∀ (f g : Point → ℚ) →
+     (∀ p → nearIndicator p ≡ false → f p ≤ g p) →
+     integralFar f ≤ integralFar g)
+  (measureNear measureFar : ℚ)
+  (integralNearConstant :
+     ∀ (c : ℚ) → integralNear (λ _ → c) ≡ measureNear * c)
+  (integralFarConstant :
+     ∀ (c : ℚ) → integralFar (λ _ → c) ≡ measureFar * c)
+  (cellMeasure : ℚ)
+  (integralConstant : ∀ (c : ℚ) → integral (λ _ → c) ≡ cellMeasure * c)
+  where
+
+  ------------------------------------------------------------------
+  -- 1a.  The two region measures add up to the cell measure
+  ------------------------------------------------------------------
+
+  measureAdditivity : cellMeasure ≡ measureNear + measureFar
+  measureAdditivity =
+    trans (sym (ℚP.*-identityʳ cellMeasure))
+      (trans (sym (integralConstant 1ℚ))
+        (trans (integralSplit (λ _ → 1ℚ))
+          (trans (cong₂ _+_ (integralNearConstant 1ℚ) (integralFarConstant 1ℚ))
+            (cong₂ _+_ (ℚP.*-identityʳ measureNear)
+              (ℚP.*-identityʳ measureFar)))))
+
+  ------------------------------------------------------------------
+  -- 1b.  Each region contributes at least minus (its measure) times
+  --      (its own negative bound)
+  ------------------------------------------------------------------
+
+  nearRegionLower :
+    ∀ (density : Point → ℚ) (εNear : ℚ) →
+    (∀ p → nearIndicator p ≡ true → (- εNear) ≤ density p) →
+    (- (measureNear * εNear)) ≤ integralNear density
+  nearRegionLower density εNear lower =
+    subst (_≤ integralNear density)
+      (trans (integralNearConstant (- εNear))
+        (sym (ℚP.neg-distribʳ-* measureNear εNear)))
+      (integralNearMono (λ _ → - εNear) density lower)
+
+  farRegionLower :
+    ∀ (density : Point → ℚ) (εFar : ℚ) →
+    (∀ p → nearIndicator p ≡ false → (- εFar) ≤ density p) →
+    (- (measureFar * εFar)) ≤ integralFar density
+  farRegionLower density εFar lower =
+    subst (_≤ integralFar density)
+      (trans (integralFarConstant (- εFar))
+        (sym (ℚP.neg-distribʳ-* measureFar εFar)))
+      (integralFarMono (λ _ → - εFar) density lower)
+
+  ------------------------------------------------------------------
+  -- 1c.  THE NEAR/FAR ASSEMBLY
+  ------------------------------------------------------------------
+
+  splitBudget : ℚ → ℚ → ℚ
+  splitBudget εNear εFar = measureNear * εNear + measureFar * εFar
+
+  nearFarLower :
+    ∀ (density : Point → ℚ) (εNear εFar : ℚ) →
+    (∀ p → nearIndicator p ≡ true → (- εNear) ≤ density p) →
+    (∀ p → nearIndicator p ≡ false → (- εFar) ≤ density p) →
+    (- splitBudget εNear εFar) ≤ integral density
+  nearFarLower density εNear εFar nearLower farLower =
+    subst₂ _≤_
+      (sym (ℚP.neg-distrib-+ (measureNear * εNear) (measureFar * εFar)))
+      (sym (integralSplit density))
+      (ℚP.+-mono-≤
+        (nearRegionLower density εNear nearLower)
+        (farRegionLower density εFar farLower))
+    where
+      subst₂ : ∀ {A : Set} (R : A → A → Set) {a a' b b' : A} →
+               a ≡ a' → b ≡ b' → R a b → R a' b'
+      subst₂ R refl refl r = r
+
+  ------------------------------------------------------------------
+  -- 1d.  The two-valued majorant, and its exact cell integral
+  --
+  -- This is the object the gate's integrated negative-part consumer wants:
+  -- one function on the whole cell dominating the negative part of the
+  -- density, whose integral is the split budget.
+  ------------------------------------------------------------------
+
+  splitMajorant : ℚ → ℚ → Point → ℚ
+  splitMajorant εNear εFar p = if nearIndicator p then εNear else εFar
+
+  splitMajorantDominates :
+    ∀ (density : Point → ℚ) (εNear εFar : ℚ) →
+    (∀ p → nearIndicator p ≡ true → (- εNear) ≤ density p) →
+    (∀ p → nearIndicator p ≡ false → (- εFar) ≤ density p) →
+    ∀ p → (- splitMajorant εNear εFar p) ≤ density p
+  splitMajorantDominates density εNear εFar nearLower farLower p
+    with nearIndicator p in indicator
+  ... | true = nearLower p indicator
+  ... | false = farLower p indicator
+
+  splitMajorantIntegral :
+    ∀ (εNear εFar : ℚ) →
+    integral (splitMajorant εNear εFar) ≤ splitBudget εNear εFar
+  splitMajorantIntegral εNear εFar =
+    subst (_≤ splitBudget εNear εFar) (sym (integralSplit _))
+      (ℚP.+-mono-≤ nearPart farPart)
+    where
+      nearPart : integralNear (splitMajorant εNear εFar) ≤ measureNear * εNear
+      nearPart =
+        subst (integralNear (splitMajorant εNear εFar) ≤_)
+          (integralNearConstant εNear)
+          (integralNearMono (splitMajorant εNear εFar) (λ _ → εNear)
+            (λ p indicator →
+              ℚP.≤-reflexive (cong (λ b → if b then εNear else εFar) indicator)))
+
+      farPart : integralFar (splitMajorant εNear εFar) ≤ measureFar * εFar
+      farPart =
+        subst (integralFar (splitMajorant εNear εFar) ≤_)
+          (integralFarConstant εFar)
+          (integralFarMono (splitMajorant εNear εFar) (λ _ → εFar)
+            (λ p indicator →
+              ℚP.≤-reflexive (cong (λ b → if b then εNear else εFar) indicator)))
+
+------------------------------------------------------------------------
+-- 2.  FEEDING THE CANCELLATION-PRESERVING GATE
+--
+-- Same parameters as section 1, plus the linearity the gate itself needs of
+-- the *whole-cell* functional.  Nothing here is a new interface: the
+-- conclusion is the gate's own conclusion about the literal joint
+-- Wilson + reduced Faddeev--Popov + Haar regular remainder.
+------------------------------------------------------------------------
+
+module NearFarGate
+  (Point : Set)
+  (nearIndicator : Point → Bool)
+  (integral integralNear integralFar : (Point → ℚ) → ℚ)
+  (integralSplit :
+     ∀ (f : Point → ℚ) → integral f ≡ integralNear f + integralFar f)
+  (integralNearMono :
+     ∀ (f g : Point → ℚ) →
+     (∀ p → nearIndicator p ≡ true → f p ≤ g p) →
+     integralNear f ≤ integralNear g)
+  (integralFarMono :
+     ∀ (f g : Point → ℚ) →
+     (∀ p → nearIndicator p ≡ false → f p ≤ g p) →
+     integralFar f ≤ integralFar g)
+  (measureNear measureFar : ℚ)
+  (integralNearConstant :
+     ∀ (c : ℚ) → integralNear (λ _ → c) ≡ measureNear * c)
+  (integralFarConstant :
+     ∀ (c : ℚ) → integralFar (λ _ → c) ≡ measureFar * c)
+  (integralMono :
+     ∀ (f g : Point → ℚ) → (∀ p → f p ≤ g p) → integral f ≤ integral g)
+  (integralAdd :
+     ∀ (f g : Point → ℚ) →
+     integral (λ p → f p + g p) ≡ integral f + integral g)
+  (integralScale :
+     ∀ (c : ℚ) (f : Point → ℚ) → integral (λ p → c * f p) ≡ c * integral f)
+  (integralNegation :
+     ∀ (f : Point → ℚ) → integral (λ p → - f p) ≡ - integral f)
+  (cellMeasure : ℚ)
+  (integralConstant : ∀ (c : ℚ) → integral (λ _ → c) ≡ cellMeasure * c)
+  where
+
+  open NearFarCellSplit Point nearIndicator integral integralNear integralFar
+    integralSplit integralNearMono integralFarMono measureNear measureFar
+    integralNearConstant integralFarConstant cellMeasure integralConstant
+    public
+
+  module GateConsumer =
+    Gate.NegativePartCombinedCellIntegral Point integral integralMono
+      integralAdd integralScale integralNegation cellMeasure integralConstant
+
+  -- THE ROW A1a TARGET, IN ITS NEAR/FAR FORM.
+  --
+  -- Hypotheses: the four literal orbit representative values are the cell
+  -- integrals of four densities; on the near region the (4,6,4,1)-weighted
+  -- combination is bounded below by -eps_near (Ward-compensated, no floor);
+  -- off it by -eps_far (denominator floor).  Conclusion: the literal joint
+  -- regular remainder is bounded below by minus the split budget.
+  literalJointRegularRemainderNearFar :
+    ∀ {wilson ghost haar : Joint.CellScalar}
+      (wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson)
+      (ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost)
+      (haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar)
+      (d₁ d₂ d₃ d₄ : Point → ℚ) (εNear εFar : ℚ) →
+    Joint.jointOne wilson ghost haar ≡ integral d₁ →
+    Joint.jointTwo wilson ghost haar ≡ integral d₂ →
+    Joint.jointThree wilson ghost haar ≡ integral d₃ →
+    Joint.jointFour wilson ghost haar ≡ integral d₄ →
+    (∀ p → nearIndicator p ≡ true →
+       (- εNear) ≤ GateConsumer.combined d₁ d₂ d₃ d₄ p) →
+    (∀ p → nearIndicator p ≡ false →
+       (- εFar) ≤ GateConsumer.combined d₁ d₂ d₃ d₄ p) →
+    (- splitBudget εNear εFar)
+      ≤ Joint.jointRegularRemainder wilson ghost haar
+  literalJointRegularRemainderNearFar
+      wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄ εNear εFar
+      e₁ e₂ e₃ e₄ nearLower farLower =
+    GateConsumer.literalJointRegularRemainderFromCombinedNegativePartBudget
+      wilsonSymmetry ghostSymmetry haarSymmetry
+      d₁ d₂ d₃ d₄ (splitMajorant εNear εFar) (splitBudget εNear εFar)
+      e₁ e₂ e₃ e₄
+      (splitMajorantDominates (GateConsumer.combined d₁ d₂ d₃ d₄)
+        εNear εFar nearLower farLower)
+      (splitMajorantIntegral εNear εFar)
+
+  -- And the shell radius it produces is admissible as soon as the split
+  -- budget is inside the Row A1 shell budget.
+  literalJointRegularRemainderInsideBudget :
+    ∀ {wilson ghost haar : Joint.CellScalar}
+      (wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson)
+      (ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost)
+      (haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar)
+      (d₁ d₂ d₃ d₄ : Point → ℚ) (εNear εFar shellBudget : ℚ) →
+    Joint.jointOne wilson ghost haar ≡ integral d₁ →
+    Joint.jointTwo wilson ghost haar ≡ integral d₂ →
+    Joint.jointThree wilson ghost haar ≡ integral d₃ →
+    Joint.jointFour wilson ghost haar ≡ integral d₄ →
+    (∀ p → nearIndicator p ≡ true →
+       (- εNear) ≤ GateConsumer.combined d₁ d₂ d₃ d₄ p) →
+    (∀ p → nearIndicator p ≡ false →
+       (- εFar) ≤ GateConsumer.combined d₁ d₂ d₃ d₄ p) →
+    splitBudget εNear εFar ≤ shellBudget →
+    (- shellBudget) ≤ Joint.jointRegularRemainder wilson ghost haar
+  literalJointRegularRemainderInsideBudget
+      wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄
+      εNear εFar shellBudget e₁ e₂ e₃ e₄ nearLower farLower inside =
+    ℚP.≤-trans (ℚP.neg-antimono-≤ inside)
+      (literalJointRegularRemainderNearFar
+        wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄ εNear εFar
+        e₁ e₂ e₃ e₄ nearLower farLower)
+
+------------------------------------------------------------------------
+-- 2b.  A CONCRETE NON-VACUOUS INSTANCE OF THE SPLIT
+--
+-- Two-point cell: one near point and one far point, each of measure 1/32, so
+-- the cell measure is the repository's own 1/16.  Every parameter of section
+-- 2 is discharged, so the near/far theorems above are not vacuous.
+------------------------------------------------------------------------
+
+twoPointHalfMeasure : ℚ
+twoPointHalfMeasure = + 1 / 32
+
+twoPointNearIndicator : Bool → Bool
+twoPointNearIndicator b = b
+
+twoPointNear twoPointFar twoPointIntegral : (Bool → ℚ) → ℚ
+twoPointNear f = twoPointHalfMeasure * f true
+twoPointFar f = twoPointHalfMeasure * f false
+twoPointIntegral f = twoPointNear f + twoPointFar f
+
+twoPointSplit :
+  ∀ (f : Bool → ℚ) → twoPointIntegral f ≡ twoPointNear f + twoPointFar f
+twoPointSplit f = refl
+
+halfMeasureNonNegative : 0ℚ ≤ twoPointHalfMeasure
+halfMeasureNonNegative = toWitness {a? = 0ℚ ℚP.≤? twoPointHalfMeasure} _
+
+twoPointNearMono :
+  ∀ (f g : Bool → ℚ) →
+  (∀ p → twoPointNearIndicator p ≡ true → f p ≤ g p) →
+  twoPointNear f ≤ twoPointNear g
+twoPointNearMono f g le =
+  ℚP.*-monoˡ-≤-nonNeg twoPointHalfMeasure
+    {{nonNegative halfMeasureNonNegative}} (le true refl)
+
+twoPointFarMono :
+  ∀ (f g : Bool → ℚ) →
+  (∀ p → twoPointNearIndicator p ≡ false → f p ≤ g p) →
+  twoPointFar f ≤ twoPointFar g
+twoPointFarMono f g le =
+  ℚP.*-monoˡ-≤-nonNeg twoPointHalfMeasure
+    {{nonNegative halfMeasureNonNegative}} (le false refl)
+
+twoPointNearConstant :
+  ∀ (c : ℚ) → twoPointNear (λ _ → c) ≡ twoPointHalfMeasure * c
+twoPointNearConstant c = refl
+
+twoPointFarConstant :
+  ∀ (c : ℚ) → twoPointFar (λ _ → c) ≡ twoPointHalfMeasure * c
+twoPointFarConstant c = refl
+
+twoPointMono :
+  ∀ (f g : Bool → ℚ) → (∀ p → f p ≤ g p) → twoPointIntegral f ≤ twoPointIntegral g
+twoPointMono f g le =
+  ℚP.+-mono-≤
+    (twoPointNearMono f g (λ p _ → le p))
+    (twoPointFarMono f g (λ p _ → le p))
+
+twoPointAdd :
+  ∀ (f g : Bool → ℚ) →
+  twoPointIntegral (λ p → f p + g p) ≡ twoPointIntegral f + twoPointIntegral g
+twoPointAdd f g =
+  trans
+    (cong₂ _+_
+      (ℚP.*-distribˡ-+ twoPointHalfMeasure (f true) (g true))
+      (ℚP.*-distribˡ-+ twoPointHalfMeasure (f false) (g false)))
+    (regroup (twoPointNear f) (twoPointNear g) (twoPointFar f) (twoPointFar g))
+  where
+    regroup : ∀ (a b c d : ℚ) → (a + b) + (c + d) ≡ (a + c) + (b + d)
+    regroup a b c d =
+      trans (ℚP.+-assoc a b (c + d))
+        (trans
+          (cong (λ w → a + w)
+            (trans (sym (ℚP.+-assoc b c d))
+              (trans (cong (_+ d) (ℚP.+-comm b c)) (ℚP.+-assoc c b d))))
+          (sym (ℚP.+-assoc a c (b + d))))
+
+twoPointScale :
+  ∀ (c : ℚ) (f : Bool → ℚ) →
+  twoPointIntegral (λ p → c * f p) ≡ c * twoPointIntegral f
+twoPointScale c f =
+  trans (cong₂ _+_ (swap (f true)) (swap (f false)))
+    (sym (ℚP.*-distribˡ-+ c (twoPointNear f) (twoPointFar f)))
+  where
+    swap : ∀ (x : ℚ) → twoPointHalfMeasure * (c * x) ≡ c * (twoPointHalfMeasure * x)
+    swap x =
+      trans (sym (ℚP.*-assoc twoPointHalfMeasure c x))
+        (trans (cong (_* x) (ℚP.*-comm twoPointHalfMeasure c))
+          (ℚP.*-assoc c twoPointHalfMeasure x))
+
+twoPointNegation :
+  ∀ (f : Bool → ℚ) → twoPointIntegral (λ p → - f p) ≡ - twoPointIntegral f
+twoPointNegation f =
+  trans
+    (cong₂ _+_
+      (sym (ℚP.neg-distribʳ-* twoPointHalfMeasure (f true)))
+      (sym (ℚP.neg-distribʳ-* twoPointHalfMeasure (f false))))
+    (sym (ℚP.neg-distrib-+ (twoPointNear f) (twoPointFar f)))
+
+twoPointConstant :
+  ∀ (c : ℚ) → twoPointIntegral (λ _ → c) ≡ Gate.cubeCellMeasure * c
+twoPointConstant c =
+  sym (ℚP.*-distribʳ-+ c twoPointHalfMeasure twoPointHalfMeasure)
+
+module TwoPointNearFar =
+  NearFarGate Bool twoPointNearIndicator
+    twoPointIntegral twoPointNear twoPointFar twoPointSplit
+    twoPointNearMono twoPointFarMono
+    twoPointHalfMeasure twoPointHalfMeasure
+    twoPointNearConstant twoPointFarConstant
+    twoPointMono twoPointAdd twoPointScale twoPointNegation
+    Gate.cubeCellMeasure twoPointConstant
+
+-- The derived measure additivity, on the instance: 1/32 + 1/32 = 1/16.
+twoPointMeasureAdditivity :
+  Gate.cubeCellMeasure ≡ twoPointHalfMeasure + twoPointHalfMeasure
+twoPointMeasureAdditivity = TwoPointNearFar.measureAdditivity
+
+------------------------------------------------------------------------
+-- 3.  MONOTONICITY OF THE SPLIT BUDGET IN ITS FOUR ARGUMENTS
+--
+-- The physical estimates come as *upper* bounds on the two region measures
+-- and the two region sup norms; the budget must therefore be monotone in all
+-- four, which it is, for nonnegative data.
+------------------------------------------------------------------------
+
+budgetMonotone :
+  ∀ (mN mN' mF mF' eN eN' eF eF' : ℚ) →
+  0ℚ ≤ mN → 0ℚ ≤ mF → 0ℚ ≤ eN' → 0ℚ ≤ eF' →
+  mN ≤ mN' → mF ≤ mF' → eN ≤ eN' → eF ≤ eF' →
+  mN * eN + mF * eF ≤ mN' * eN' + mF' * eF'
+budgetMonotone mN mN' mF mF' eN eN' eF eF' 0≤mN 0≤mF 0≤eN' 0≤eF'
+    mN≤mN' mF≤mF' eN≤eN' eF≤eF' =
+  ℚP.+-mono-≤
+    (ℚP.≤-trans
+      (ℚP.*-monoˡ-≤-nonNeg mN {{nonNegative 0≤mN}} eN≤eN')
+      (ℚP.*-monoʳ-≤-nonNeg eN' {{nonNegative 0≤eN'}} mN≤mN'))
+    (ℚP.≤-trans
+      (ℚP.*-monoˡ-≤-nonNeg mF {{nonNegative 0≤mF}} eF≤eF')
+      (ℚP.*-monoʳ-≤-nonNeg eF' {{nonNegative 0≤eF'}} mF≤mF'))
+
+------------------------------------------------------------------------
+-- 4.  THE DELTA OPTIMISATION ON THE REPOSITORY'S OWN SU(2) NUMBERS
+--
+-- Cube cell measure 1/16 and Row A1 shell budget 11/12 at C_A = 2, both
+-- taken from `BalabanYM4CancellationPreservingFourOrbitGateExact`.
+--
+-- Model inputs, each an explicit numerical hypothesis, not a theorem:
+--
+--   * near sup norm     eps_near = 6         -- the Ward-compensated bound of
+--                                              `...WardCompensatedNearQuotientExact`
+--                                              section 4 (cofactor 3, same-zero
+--                                              constant 1/2).  Independent of delta.
+--   * near measure law  measureNear(delta) <= delta^2   -- SUPERSEDED: the
+--                                              successor module
+--                                              `...BoxNearFarOptimisationExact`
+--                                              takes the near region to be a
+--                                              coordinate box, whose measure is
+--                                              an exact product, and needs no
+--                                              geometric containment law at all
+--                                            -- geometric containment of
+--                                              { p^2 <= delta } in a ball of
+--                                              radius of order sqrt(delta),
+--                                              still open (section 5).
+--   * far sup norm      eps_far(delta) = 1/delta
+--                                            -- the generic quotient bound at
+--                                              denominator floor delta.
+--   * far measure       measureFar <= 1/16   -- at most the whole cell.
+------------------------------------------------------------------------
+
+shellBudgetSU2 : ℚ
+shellBudgetSU2 = Gate.cubeCellMeasure * Gate.cancellationCubeThreshold  -- 11/12
+
+shellBudgetSU2Value : shellBudgetSU2 ≡ + 11 / 12
+shellBudgetSU2Value = refl
+
+compensatedNearSup : ℚ
+compensatedNearSup = + 6 / 1
+
+-- The model budget at split parameter delta, with the two laws above:
+--     delta^2 * eps_near   +   (1/16) * (1/delta) .
+modelBudget : ℚ → ℚ → ℚ
+modelBudget δ recipδ =
+  (δ * δ) * compensatedNearSup + Gate.cubeCellMeasure * recipδ
+
+------------------------------------------------------------------------
+-- 4a.  delta = 1/6 passes, with room to spare
+------------------------------------------------------------------------
+
+deltaSix recipSix : ℚ
+deltaSix = + 1 / 6
+recipSix = + 6 / 1
+
+recipSixIsInverse : deltaSix * recipSix ≡ 1ℚ
+recipSixIsInverse = refl
+
+modelBudgetAtSix : modelBudget deltaSix recipSix ≡ + 13 / 24
+modelBudgetAtSix = refl
+
+modelBudgetAtSixPasses : modelBudget deltaSix recipSix < shellBudgetSU2
+modelBudgetAtSixPasses =
+  toWitness {a? = modelBudget deltaSix recipSix ℚP.<? shellBudgetSU2} _
+
+------------------------------------------------------------------------
+-- 4b.  Both ends of the optimisation really do fail, so the passing
+--      choice is a genuine optimisation and not an artefact
+------------------------------------------------------------------------
+
+deltaHalf recipHalf deltaSixteenth recipSixteenth : ℚ
+deltaHalf = + 1 / 2
+recipHalf = + 2 / 1
+deltaSixteenth = + 1 / 16
+recipSixteenth = + 16 / 1
+
+-- Too large a near region: the near term alone overruns the budget.
+modelBudgetAtHalfFails : shellBudgetSU2 < modelBudget deltaHalf recipHalf
+modelBudgetAtHalfFails =
+  toWitness {a? = shellBudgetSU2 ℚP.<? modelBudget deltaHalf recipHalf} _
+
+-- Too small a near region: the far denominator floor collapses and the far
+-- term overruns the budget.
+modelBudgetAtSixteenthFails :
+  shellBudgetSU2 < modelBudget deltaSixteenth recipSixteenth
+modelBudgetAtSixteenthFails =
+  toWitness
+    {a? = shellBudgetSU2 ℚP.<? modelBudget deltaSixteenth recipSixteenth} _
+
+-- A finer optimum than 1/6 exists; 1/5 also passes and 1/6 is better.
+deltaFifth recipFifth : ℚ
+deltaFifth = + 1 / 5
+recipFifth = + 5 / 1
+
+modelBudgetAtFifthPasses : modelBudget deltaFifth recipFifth < shellBudgetSU2
+modelBudgetAtFifthPasses =
+  toWitness {a? = modelBudget deltaFifth recipFifth ℚP.<? shellBudgetSU2} _
+
+modelBudgetSixBeatsFifth :
+  modelBudget deltaSix recipSix < modelBudget deltaFifth recipFifth
+modelBudgetSixBeatsFifth =
+  toWitness
+    {a? = modelBudget deltaSix recipSix ℚP.<? modelBudget deltaFifth recipFifth} _
+
+------------------------------------------------------------------------
+-- 4c.  WHY THE SPLIT IS NECESSARY:  THE GENERIC ROUTE HAS NO ADMISSIBLE
+--      DELTA
+--
+-- Drop the Ward compensation.  Then the near region carries no finite bound
+-- at all -- its denominators have no positive floor -- so the only way to
+-- cover the cell generically is to shrink the near region away, i.e. to send
+-- delta to 0 with the far bound 1/delta.  The far term alone,
+-- (1/16) * (1/delta), already exceeds the shell budget from delta = 1/16
+-- downwards, and grows without bound.
+------------------------------------------------------------------------
+
+farOnlyBudget : ℚ → ℚ
+farOnlyBudget recipδ = Gate.cubeCellMeasure * recipδ
+
+farOnlyAtSixteenthFails : shellBudgetSU2 < farOnlyBudget recipSixteenth
+farOnlyAtSixteenthFails =
+  toWitness {a? = shellBudgetSU2 ℚP.<? farOnlyBudget recipSixteenth} _
+
+farOnlyAtHundredthFails : shellBudgetSU2 < farOnlyBudget (+ 100 / 1)
+farOnlyAtHundredthFails =
+  toWitness {a? = shellBudgetSU2 ℚP.<? farOnlyBudget (+ 100 / 1)} _
+
+farOnlyAtThousandthFails : shellBudgetSU2 < farOnlyBudget (+ 1000 / 1)
+farOnlyAtThousandthFails =
+  toWitness {a? = shellBudgetSU2 ℚP.<? farOnlyBudget (+ 1000 / 1)} _
+
+-- Monotone divergence, so no smaller delta can rescue it.
+farOnlyDiverges :
+  ∀ (r r' : ℚ) → 0ℚ ≤ r → r ≤ r' → farOnlyBudget r ≤ farOnlyBudget r'
+farOnlyDiverges r r' 0≤r r≤r' =
+  ℚP.*-monoˡ-≤-nonNeg Gate.cubeCellMeasure
+    {{nonNegative (toWitness {a? = 0ℚ ℚP.≤? Gate.cubeCellMeasure} _)}} r≤r'
+
+------------------------------------------------------------------------
+-- 5.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: the region measure additivity, the two region lower
+-- bounds, the near/far assembly, the two-valued majorant and its integral,
+-- the literal feed of the cancellation-preserving gate, budget monotonicity
+-- and the whole SU(2) delta-optimisation table.
+nearFarAssemblyLevel : ProofLevel
+nearFarAssemblyLevel = machineChecked
+
+nearFarGateFeedLevel : ProofLevel
+nearFarGateFeedLevel = machineChecked
+
+deltaOptimisationArithmeticLevel : ProofLevel
+deltaOptimisationArithmeticLevel = machineChecked
+
+-- STILL OPEN: the literal transverse cofactor and its bound; the far-region
+-- atom bound table; and the geometric near-measure law
+-- `measureNear(delta) <= k delta^2`, which needs the constructive comparison
+-- `c_- |p|^2 <= p^2 <= c_+ |p|^2` on a small ball.
+literalRegionInputsLevel : ProofLevel
+literalRegionInputsLevel = conditional
+
+nearMeasureGeometricLawLevel : ProofLevel
+nearMeasureGeometricLawLevel = conditional

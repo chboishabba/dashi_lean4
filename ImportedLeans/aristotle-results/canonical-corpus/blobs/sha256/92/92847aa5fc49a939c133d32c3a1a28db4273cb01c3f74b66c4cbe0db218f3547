@@ -1,0 +1,86 @@
+import Integration.Levels
+import Integration.TernaryHub
+import Integration.Base369Group
+import Integration.Address
+import Integration.ClopenBalls
+import Integration.ReceiptSocket
+import Integration.Refinement
+import Integration.MonsterFifteen
+import Integration.CognitionSupervoxel
+import Integration.UltrametricCensus
+import Integration.Registry
+import Integration.RiemannReflection
+import Integration.RiemannStrip
+import Integration.RiemannSubstrate
+import Integration.RiemannXiSymmetry
+import Integration.RiemannDomain
+import Integration.AxiomAudit
+
+/-!
+# The DASHI integration / TOE spine
+
+A single small spine that carries the corpus-wide cross-domain pass, rather than
+a collection of per-domain reports.  Reading order:
+
+1. `Integration.Levels` — the four-level classification (vocabulary, stored
+   record dependency, shared implementation type, proved transport) as a Lean
+   datatype, together with `Transport`, `NoTransport`, `Boundary` and `Socket`.
+   Evidence constructors determine the level, so no row can be filed above the
+   level it has a witness for.
+2. `Integration.TernaryHub` — the corpus's six ternary carriers (`Trit`, the
+   `Base369` tone, `Digit369`, the SSP trit carrier, the codec `TritCode`, the
+   loom's `BTBranch`) are one object with one balanced coordinate, forced up to
+   sign; every supplied polarity map becomes negation.
+3. `Integration.Base369Group` — the 3/6/9 layer as finite cyclic groups: the
+   loom's `projection2x3` realised as `ℤ/6 ≅ ℤ/2 × ℤ/3`, and the proof that the
+   nonary layer is *not* two ternary layers.
+4. `Integration.Address` — the prefix ultrametric on digit addresses, developed
+   once for an arbitrary alphabet, with the codec-to-369 isometry.
+5. `Integration.ClopenBalls` — supervoxel/clopen refinement: prefix balls are
+   open and closed, refinement is exactly containment, no ball is atomic, and
+   the corpus's clopen-authority record is a contentless socket.
+6. `Integration.ReceiptSocket` — the archetypal receipt record and the exact
+   sense in which it constrains nothing, plus the strengthened record that does.
+7. `Integration.Refinement` — the corpus's never-instantiated refinement-system
+   record, inhabited twice (dialectic loom, ternary addresses).
+8. `Integration.MonsterFifteen` — the 15-prime mask ultrametric *is* the
+   depth-15 prefix geometry, and the hyperfabric support map is a non-expansive
+   but non-isometric, non-injective, non-homomorphic coarsening onto it.
+9. `Integration.CognitionSupervoxel` — a cognition domain instance at the
+   supervoxel junction: the phase-enriched trit, its constraint system, the
+   proof that the "public zero" is not atomic (a `Bool` placeholder in the
+   source), and the polarity-equivariance of the cognition observable.
+10. `Integration.UltrametricCensus` — every live instance of the corpus's
+   `Ultrametric` record is the same prefix geometry pulled back along a map,
+   with one exception (the `Monster` walk distance) that provably is not.
+11. `Integration.Registry` — the checked global registry: positive rows with
+   their evidence, negative rows with their refutations, sockets with their
+   underdetermination proofs.
+12. `Integration.RiemannReflection`, `Integration.RiemannStrip`,
+   `Integration.RiemannSubstrate`, `Integration.RiemannXiSymmetry` — the RH/zeta
+   *analytic* lane brought into the
+   same vocabulary: the lane's reflection and three-phase carriers as hub
+   transports, the critical line as the fixed locus of the lane's involution
+   with the displacement as the kernel's transverse coordinate, and the analytic
+   substrate tower classified as a socket (both truth values of its own
+   `RiemannHypothesisFor` occur among its inhabitants).  `RiemannXiSymmetry`
+   adds the rational critical-plane `QCoord` with its three involutions, the
+   injective evaluation `qToC` into `ℂ` that intertwines all three, and the
+   xi-zero-symmetry and Hilbert–Pólya interfaces, both shown to be sockets.
+13. `Integration.RiemannDomain` — the analytic domain's rows, boundaries and
+   sockets, plus the checked summary bundle.  No statement about the Riemann
+   zeta function, its zeros or the Riemann hypothesis is made anywhere.
+14. `Integration.AxiomAudit` — `#print axioms` for every headline result.
+
+Provenance: `Lean/AgdaMirror/*` are hand-transcribed Lean mirrors of named Agda
+modules; the Agda sources are read-only here (no Agda toolchain is available in
+this environment, so no Agda file is claimed to have been rechecked).  Every
+statement in this spine is a Lean statement about Lean definitions.
+
+Scope: no Yang–Mills or Navier–Stokes material is imported or referenced.  No
+physical, empirical, Monster-group, moonshine, vertex-algebra, unitarity or
+Riemann-hypothesis claim is made.  Outside the analytic lane (items 12–13) every
+carrier is finite and every distance is a natural number; inside it the carriers
+are `ℝ` and `ℂ` as sets with involutions, and no analytic hypothesis is
+discharged.
+-/

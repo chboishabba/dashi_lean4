@@ -1,0 +1,140 @@
+# Row A1: the literal bubble entry, the interaction debt, and the summability datum
+
+**Status: Row A1 is not closed. The frozen research count stays at 4.**
+Everything reported here compiles (`lake build` green, 8063 jobs), contains no
+`sorry`, no `axiom`, no `native_decide` and no unsafe pragma, and `#print axioms`
+on every new theorem reports only `propext, Classical.choice, Quot.sound`.
+
+There is no Agda tool-chain in this working copy and the Agda modules of the
+open draft are not present here, so nothing below is promoted on the strength of
+the Agda side; the Lean development is cross-prover evidence only.
+
+## The three A1 source quantities, after this round
+
+The margin is unchanged:
+
+    b_Z − C_int·γ^ρ − D·B > 0.
+
+### 1. `b_Z` — the Gaussian floor: now *one scalar entry of the first variation*
+
+`RequestProject/YangMills/TransverseBubbleEntry.lean`.
+
+The previous round reduced the floor to "one entry of the reduced bubble kernel
+`M = C V Cᵀ` is bounded away from zero, uniformly in the scale", with
+`b_Z = c²/2`.  It did not say which entry, at which momentum, nor how `c`
+relates to anything one could read off a source.  That is now computed exactly
+for the project's own literal lattice constrained symbol
+`G(p) = (1/p̂²)(1 − p̂p̂ᵀ/p̂²)`, `p̂_μ = 2 sin(π p_μ)`.
+
+* `transverseProjector_conj_diag` / `transverseProjector_conj_block`: if the
+  momentum has vanishing components in the directions `μ`, `ν`, then the
+  transverse projector is the identity there, so `(P V P)_{μν} = V_{μν}`.
+* `latticeReducedBubble_diag`: therefore, **exactly**,
+
+      M_{μμ}(p) = V_{μμ}(p) / p̂²        whenever p̂_μ = 0.
+
+  No approximation, no near/far split, no Brillouin integral.
+* `phatSq_le_twelve_of_component_zero`: on such a momentum `p̂² ≤ 12`
+  unconditionally, because the *lattice* momentum is bounded.  Hence
+  `|M_{μμ}| ≥ |V_{μμ}|/12` uniformly in the momentum, the volume and the cutoff.
+  The infrared denominator cannot spoil the bound, because the direction used is
+  transverse, not the small one.
+* `cornerMomentum = (0, 1/2, 0, 0)` — lattice momentum `π` in one direction, a
+  momentum of every even torus at every scale — has `p̂² = 4` exactly, so
+  `M_{00} = V_{00}/4` and `latticeUniformFloor_corner` gives
+
+      b_Z = v²/32,        v := inf_j |V_j(0,0)| at the corner momentum.
+
+* `latticeBrillouinFloor_corner`: the same for the *full Brillouin sum*, which is
+  the faithful shape of `βZ_j`.  Only the corner momentum is used for the lower
+  bound; the paramagnetic sign makes every other momentum contribute
+  nonnegatively.  So no control of the rest of the Brillouin zone is needed.
+* `latticeBetaTrace_corner_block`: the weakest version, using the whole `3×3`
+  transverse block `{0,2,3}` rather than a single entry:
+  `β ≥ (∑_{μ,ν∈{0,2,3}} V_{μν}²)/32`.
+
+**What is still missing here:** a value (or a uniform lower bound) for
+`V_{00}` of Bałaban's literal constrained fluctuation operator at the corner
+momentum.  That single number is the entire remaining A1a obligation on the
+Gaussian side, together with the already-separated paramagnetic sign datum
+`S_j = −W_jᵀW_j`.
+
+### 2. `C_int` — the finite-`g` interaction debt: derived from a Cauchy majorant
+
+`RequestProject/YangMills/InteractionDebt.lean`.
+
+The nonlinear part of the shell coefficient is a power series in the running
+coupling starting at order `ρ`.  From a geometric (Cauchy) majorant on its
+coefficients, `|a_{j,m}| ≤ A·K^m`, uniformly in the scale, on a trajectory with
+`0 ≤ g_j ≤ γ` and `Kγ < 1`, `interactionDebt_of_geometricMajorant` and
+`uniformInteractionDebt_of_geometricMajorant` prove
+
+      |βInt_j| ≤ (A/(1 − Kγ))·g_j^ρ,        C_int = A/(1 − Kγ).
+
+`interactionDebt_truncated` covers a source that supplies finitely many orders
+plus a remainder budget.  `interactionDebt_diverges_at_radius` is the boundary
+test: at `Kγ = 1` the majorant is not summable, so the smallness hypothesis is
+load-bearing.
+
+**What is still missing here:** the pair `(A, K)` for the literal nonlinear
+fluctuation term.
+
+### 3. `D` — the history debt: three producers of uniform summability
+
+`RequestProject/YangMills/HistorySummabilityCriteria.lean`.
+
+The margin-facing requirement is `sup_j ∑_{k<j}|R_{j,k}| ≤ D`.  Besides the
+geometric chain already recorded (`D = C_R θ/(1−θ)`), the following strictly
+weaker data suffice:
+
+* `summableKernel_of_summableProfile` — any nonnegative summable profile
+  `|R_{j,k}| ≤ w(j−k)` gives `D = ∑' m, w(m+1)`.  No rate, no chain structure.
+* `summableKernel_of_averageContraction` — only the *products*
+  `∏_{i∈[k,j)} J_i` need to contract geometrically; individual one-step factors
+  may exceed `1`.
+* `prodBound_of_logExcess` — such a product bound follows from
+  `|J_i| ≤ θ·exp(d_i)` with summable excess `∑_i d_i ≤ Δ`, giving `Λ = e^Δ`.  A
+  chain that is only asymptotically contracting, and marginal or expanding at
+  finitely many scales, still produces the datum.
+
+The negative result of the previous round is unchanged and remains load-bearing:
+marginal factors `J_i = 1` with a non-vanishing head make the debt unbounded.
+
+## The assembled statement
+
+`RequestProject/YangMills/A1ReducedMargin.lean`.
+
+* `reducedMargin v A K γ D B ρ = v²/32 − (A/(1−Kγ))·γ^ρ − D·B`.
+* `A1_reduced_lower_bound_of_floor` — the margin from an abstract Gaussian floor
+  plus the two debt data.
+* `A1_reduced_lower_bound_brillouin` — the faithful version: `βZ_j` is the finite
+  Brillouin sum over the rescaled lattice momenta, and the only quantitative
+  Gaussian datum is `|V_j(q₀)(0,0)| ≥ v` at the corner momentum.
+* `A1_reduced_lower_bound`, `A1_reduced_lower_bound_block` — the single-momentum
+  and transverse-block variants.
+* `A1_reduced_beta_pos` — strict positivity of every shell coefficient once the
+  margin is positive; uniform in the scale, the number of scales, the volume and
+  the cutoff.
+* `A1_reduced_margin_pos_iff`, `A1_reduced_margin_pos_of_smallCoupling` — the
+  literal numerical inequality in the form in which it will be checked.
+* `A1_reduced_margin_example` — the inequality is satisfiable:
+  `v = 1, A = 1, K = 1, γ = 1/10, ρ = 2, D = 1/100, B = 1/100` gives margin
+  `1/32 − 1/90 − 1/10000 > 0`.
+* `A1ResidualObligation` and `A1_of_residualObligation` — the whole residual A1
+  obligation as a single predicate, together with the proof that inhabiting it
+  closes the row; `A1ResidualObligation_nonvacuous` exhibits an inhabitant, so
+  the predicate is consistent.
+
+## Honest obstruction
+
+The first unresolved item is unchanged in kind and sharper in shape: the literal
+first background variation `V` of Bałaban's constrained fluctuation operator,
+evaluated at the corner lattice momentum, and its diagonal entry `V_{00}`.  The
+primary source text is not retrievable in this environment, and writing a
+formula for `V` from memory and attributing it to a source would be fabricated
+provenance, so it was not done.  The same applies to the Cauchy pair `(A, K)`
+and to the one-step factors of the literal effective-coupling map.
+
+What changed this round is that all three obligations are now *scalar* and
+*local*: one matrix entry at one explicit momentum, one Cauchy pair, one
+summability bound.  Everything downstream of them is machine-checked.

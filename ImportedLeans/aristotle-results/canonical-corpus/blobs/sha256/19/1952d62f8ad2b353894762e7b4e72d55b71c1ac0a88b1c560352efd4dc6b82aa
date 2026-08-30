@@ -1,0 +1,91 @@
+# Explaining the "pages", and re-paging to get different views
+
+This note (a) explains the animation in plain language, and (b) shows the new
+views I made by changing the **paging**. Everything here is backed by theorems
+that build in the project (`RequestProject/QRepage.lean`), so the page numbers
+below are machine-checked, not hand-waving.
+
+## 1. The plain-English version
+
+Think of the animation as a **flip-book**.
+
+- The j-function has a list of whole-number coefficients:
+  `c(1)=744, c(2)=196884, c(3)=21493760, …`. There are 15 special "Monster
+  primes": `2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 47, 59, 71`.
+- **Each page of the flip-book picks one coefficient.** On that page we draw one
+  dot for every Monster prime that **divides** the chosen coefficient. More
+  prime divisors → more dots spread around the sphere.
+- If a coefficient happens to be divisible by **none** of the 15 Monster primes,
+  there are **no dots to spread**, so the whole picture **collapses to a single
+  point**. That single flat frame is the "collapse".
+
+So the animation is literally: flip through coefficients, and watch the dot
+pattern breathe in and out as the number of prime divisors goes up and down
+(it ranges from 0 to 6).
+
+## 2. The one thing you can't change
+
+There is exactly **one** coefficient in the whole window we draw
+(`c(1) … c(118)`) that is divisible by none of the Monster primes:
+
+> `c(71) = 278775024890624328476718493296348769305198947`.
+
+That is the *only* coefficient that produces a collapse. (Proved earlier; see
+`COLLAPSE_AT_70.md`.) So no matter how we re-page, we can't invent new collapses
+or remove this one's *existence* — we can only **move where it shows up**, or
+arrange the paging so we **skip over it entirely**.
+
+## 3. "Paging" = how a page number maps to a coefficient
+
+The only rule connecting *page number* to *which coefficient it reads* is a small
+function I call the **paging function** `coeffIdx`. The original animation uses
+
+> page `n` reads coefficient `c(n+1)`,
+
+which is why the collapse (coefficient `c(71)`) shows up on **page 70**.
+Change that function and the same data re-paginates into a different flip-book.
+
+## 4. The new views (yes — we can switch it up)
+
+I added five pagings. Each writes its own SVG and each collapse page is proved
+with `native_decide`:
+
+| view | paging rule | collapse page | what changed |
+|------|-------------|---------------|--------------|
+| **base** | page `n` → `c(n+1)` | page **70** | the original |
+| **late** | start 14 coefficients later | page **56** | the collapse slides earlier in the flip-book |
+| **reverse** | play coefficients backwards | page **47** | the collapse appears from the other side |
+| **even** | only even-power coefficients | page **35** | `c(71)` is in this view, so the collapse survives, compressed |
+| **odd** | only odd-power coefficients | **none** | `c(71)` is an *even* page, so this view never reads it — **the collapse disappears entirely** |
+
+The "odd" view is the most striking demonstration of your question: by paging
+only through odd powers, the single collapse is simply never visited, so the
+animation never flatlines. That's the proved statement
+`QRepage.repage_odd_nocollapse`.
+
+Generated files:
+
+- `atlas_repage_late.svg`
+- `atlas_repage_reverse.svg`
+- `atlas_repage_even.svg`
+- `atlas_repage_odd.svg`
+
+(The original is still `atlas_qdeform.svg`.)
+
+## 5. Where each claim is proved
+
+In `RequestProject/QRepage.lean`:
+
+- `repage_base_collapse`, `repage_late_collapse`, `repage_reverse_collapse`,
+  `repage_even_collapse` — the collapse page for each view.
+- `repage_late_unique`, `repage_reverse_unique`, `repage_even_unique` — that page
+  is the *only* collapse in that view.
+- `repage_odd_nocollapse` / `repage_odd_unique` — the odd view has **no** collapse.
+- `repage_max_count` — every view still tops out at 6 available primes per page.
+
+## 6. Want a different paging?
+
+Any rule of the form "page `n` reads coefficient number `f(n)`" works. Tell me a
+rule (e.g. "every 3rd coefficient", "a zoom window around page 70", "skip the
+multiples of 5") and I can add it as one more view with its collapse page proved
+the same way.

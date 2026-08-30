@@ -1,0 +1,20 @@
+# Page 3 — Class: alias
+
+Two names, one namespace delta, **identical proof term**. The split shows the two homes of the same fact; the proof head is the same on both sides.
+
+**Group 0** — fp `5707331`, 3 members (syntax delta; struct-equal).
+- `_private.Lean.Meta.LazyDiscrTree.0.Lean.Meta.LazyDiscrTree.getChildNgen.match_1`
+    `(motive : NameGenerator × NameGenerator → Sort u_1) → (x : NameGenerator × NameGenerator) → ((cngen ngen : NameGenerator) → motive (cngen, ngen)) → mo …`
+- `_private.Mathlib.Lean.Meta.RefinedDiscrTree.0.Lean.Meta.RefinedDiscrTree.findImportMatches.match_3`
+    `(motive : NameGenerator × NameGenerator → Sort u_1) → (x : NameGenerator × NameGenerator) → ((cNGen ngen : NameGenerator) → motive (cNGen, ngen)) → mo …`
+- `_private.Mathlib.Lean.Meta.RefinedDiscrTree.Initialize.0.Lean.Meta.RefinedDiscrTree.getChildNgen.match_1`
+    `(motive : NameGenerator × NameGenerator → Sort u_1) → (x : NameGenerator × NameGenerator) → ((cngen ngen : NameGenerator) → motive (cngen, ngen)) → mo …`
+
+**Group 131** — fp `174121000`, 2 members (identical; struct-equal).
+
+Statement: `∀ {R : Type u} [inst : LinearOrder R] (x y : Tropical R), max x y = Tropical.trop (max (Tropical.untrop x) (Tropical.untrop y))`
+
+- `Tropical.trop_sup_def` — head `rfl`
+- `Tropical.trop_max_def` — head `rfl`
+
+Group 0 is also a *spelling* delta: `cngen` vs `cNGen` in the binder names — same fingerprint, different source text. Group 131 (`trop_sup_def` / `trop_max_def`) are both literally `rfl`: two names for one defeq fact.

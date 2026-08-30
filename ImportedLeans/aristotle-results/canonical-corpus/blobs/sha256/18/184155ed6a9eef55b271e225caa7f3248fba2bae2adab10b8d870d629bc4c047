@@ -1,0 +1,166 @@
+# Row A1 — the trace-log route: what is now proved, and what still blocks closure
+
+This note records the round that replaced the "construct a global scalar `Π(p)`
+and bound it near and far" plan by the shorter route
+
+```
+Â(U)  →  D² log det Â  →  Ward-constrained finite trace  →  Fourier scalar  →  β Z_j
+```
+
+Everything below is Lean 4 / Mathlib, in `RequestProject/YangMills/`, builds with
+`lake build`, contains no `sorry`, no `axiom`, no unsafe pragma, and
+`#print axioms` on each top-level theorem reports only
+`propext, Classical.choice, Quot.sound`.
+
+## 1. What was proved this round
+
+### `TraceLogHessian.lean` — the reusable substrate
+
+* `hasDerivAt_det_one_add_smul` — `d/dt det(1 + t·M)|₀ = Tr M`, transported from
+  the polynomial identity `Matrix.derivative_det_one_add_X_smul`.
+* `hasDerivAt_log_det_affine` — Jacobi's formula on an affine line:
+  `d/dt log det(M + t·N)|₀ = Tr(M⁻¹N)` for nonsingular `M`.
+* `inv_affine_eq` — the exact resolvent identity
+  `(A + s·B)⁻¹ = A⁻¹ − s·((A + s·B)⁻¹ B A⁻¹)`.
+* `hasDerivAt_trace_inv_affine` — `d/ds Tr((A+s·B)⁻¹(C+s·D))|₀`, proved from the
+  resolvent identity and continuity of the matrix inverse.
+* **`logDet_secondVariation`** — for the second-order jet
+  `A(s,t) = A + s·B + t·C + (s·t)·D` with `A` nonsingular,
+
+  ```
+  ∂_s ∂_t log det A(s,t)|₀ = Tr(A⁻¹ D) − Tr(A⁻¹ B A⁻¹ C).
+  ```
+
+* **`gaussianHessian_eq_betaTrace`** — with `log Z = −½ log det Â + c`,
+
+  ```
+  ∂_s ∂_t log Z |₀ = ½ Tr(G V₁ G V₂) − ½ Tr(G S),   G = A⁻¹,
+  ```
+
+  i.e. bubble minus seagull, with the signs produced by the Gaussian
+  normalisation rather than imposed. No norm on matrices and no hypothesis
+  beyond nonsingularity is used; nothing is Yang–Mills specific, so the same
+  object is available to any later Hessian consumer.
+
+### `ConstrainedPropagator.lean` — cancel first, bound later
+
+* `constrainedPropagator` — the literal Schur-projected propagator
+  `G = G̃ − G̃ Qᵀ (Q G̃ Qᵀ)⁻¹ Q G̃`.
+* `constrainedPropagator_left_annihilates`, `..._right_annihilates` —
+  `Q G = 0` and `G Qᵀ = 0`, from invertibility of the reduced block alone.
+* **`betaTrace_eq_zero_of_longitudinal`** / `constrainedPropagator_ward` — if the
+  first and second variations are longitudinal (in the image of `Qᵀ`, which is
+  what a pure-gauge background variation gives), the bubble-minus-seagull
+  functional vanishes identically, for *any* second direction. Transversality is
+  therefore structural, before any momentum expansion.
+
+### `BetaProjection.lean` — the second jet ignores the irrelevant remainder
+
+* `mixedD`, `mixedMomentumD` — the mixed second derivative at the origin, and the
+  beta projection `∂_{p_μ}∂_{p_ν}(0)` on the two-dimensional slice.
+* `mixedD_eq_zero_of_sq_factor_left/right` — a factor vanishing at the origin to
+  order ≥ 2 in either variable kills the mixed derivative.
+* **`betaProjection_kills_thirdOrder`** — with `a + b = 3` lattice-derivative
+  factors distributed over the two differentiated directions, the projection is
+  zero (pigeonhole: one variable carries at least two factors).
+* `mixedMomentumD_eq_zero_of_offSlice_factor` — a factor in a third direction
+  vanishes identically on the slice, so it is annihilated too.
+* `mixedMomentumD_eq_zero_of_thirdOrder` — the same for the literal lattice
+  factor `p̂ = 2 sin(π x)` of `LatticeMomentum`.
+* `mixedD_const_mul`, `mixedD_add` and the differentiability helpers, so the
+  projection can be applied to a decomposition term by term.
+
+### `BrillouinReduction.lean` — one scalar momentum sum
+
+* `conj_diagonal_mul`, `trace_conj_diagonal` over an arbitrary field.
+* **`betaTrace_brillouin`** — with all operators diagonalised by the same Fourier
+  transform with symbols `g, v₁, v₂, s`,
+
+  ```
+  ½ Tr(G V₁ G V₂) − ½ Tr(G S) = ∑_q ( ½ g(q)² v₁(q) v₂(q) − ½ g(q) s(q) ).
+  ```
+
+### `CMP109BetaChain.lean` — the weld
+
+* **`gaussianHessian_brillouin`** — the Gaussian Hessian of a Fourier-diagonalised
+  constrained operator jet *equals* that explicit scalar Brillouin sum.
+* **`beta_readoff_of_thirdOrder_remainder`** and its literal form
+  **`beta_readoff_thirdOrder`** — for `Π = β·M + R` with `R` third order in
+  lattice derivatives on the slice,
+
+  ```
+  ∂_{p_μ}∂_{p_ν} Π (0) = β · ∂_{p_μ}∂_{p_ν} M (0),
+  ```
+
+  with no hypothesis on `R` away from `p = 0`.
+
+### `CMP109BetaChainChecks.lean` — non-vacuity and sharpness
+
+* `hessian_instance_nonzero` — the Hessian identity returns the nonzero value `1`
+  on an explicit 2×2 instance.
+* `mixedD_secondOrder_ne_zero` — a *second*-order term projects to `4π² ≠ 0`, so
+  `a + b = 3` is load-bearing and the annihilation theorem is not an artefact.
+* `ward_instance_nontrivial`, `ward_instance_nonzero_longitudinal` — an actual
+  constraint with invertible reduced block, nonzero constrained propagator, and
+  the Ward cancellation applied to a nonzero longitudinal variation.
+* `readoff_instance` — a polarisation with a genuine nonzero third-order
+  remainder whose projection is exactly `β · 4π²`.
+
+### `BetaHistoryResponse.lean` — Row A1b in source-facing form
+
+* `HasHistoryResponse`, `HasResponseDecay` — the coefficient responds to the
+  whole coupling history through the kernel `R_{j,k} = ∂β_j/∂g_k`.
+* `responseSum_le` — `∑_{k<j} θ^{j−k} ≤ θ/(1−θ)` uniformly in `j`.
+* **`historyResponse_bound`** — geometric response decay gives the uniform
+  history debt `C·B·θ/(1−θ)`, uniform in the shell index, hence in the number of
+  scales, the volume and the cutoff.
+* `beta_pos_of_historyResponse` — the positivity gate on a history.
+* `historyResponse_nonvacuous` — the hypotheses are met by an actual coefficient
+  family; `no_decay_no_budget` — at `θ = 1` the debt exceeds every constant, so
+  the decay hypothesis cannot be dropped.
+
+## 2. The binary question, answered honestly
+
+> Can `β Z_j` be obtained from one constrained finite trace without ever proving
+> global `Π(p)` bounds?
+
+**Architecturally, yes; numerically, not yet — and not in this environment.**
+
+* The projection provably needs only the `p = 0` second jet
+  (`beta_readoff_thirdOrder`), and the irrelevant remainder is provably invisible
+  to it. So global control of the polarisation over the whole Brillouin zone is
+  *not* logically required to determine the coefficient.
+* The Gaussian Hessian provably equals one explicit scalar momentum sum
+  (`gaussianHessian_brillouin`). So the analytic object to evaluate is a single
+  scalar, not three guessed diagrams.
+* What is *not* available is the literal constrained operator `Â^{(j)}(U)`:
+  without it there are no literal `V_μ`, `S_{μν}`, no literal symbols
+  `g, v₁, v₂, s`, and therefore no number. No external source text was
+  retrievable in this environment, and no formula was invented and attributed to
+  a source; doing so would be fabricated provenance.
+
+Consequently the near/far apparatus (`NearFarRegions`, `TransverseFormFactor`,
+`ShellBudget`, `A1aClosure`, `RadiusRobustness`) is **not deleted**. It remains
+the second gate, to be used if a later positivity or stability step genuinely
+consumes full momentum control.
+
+## 3. Status of the leaf count
+
+Unchanged. **No Clay leaf is closed by this round**, and nothing here proves
+existence or a mass gap for four-dimensional Yang–Mills. The first blocking item
+is unchanged in kind and sharper in form:
+
+> **A1a.** Construct the literal constrained fluctuation operator of the
+> renormalisation-group step, its two background variations `V_μ`, `S_{μν}`, and
+> the symbols of their Fourier diagonalisation. Everything downstream of those
+> four objects — Hessian, Ward cancellation, Brillouin reduction, beta read-off —
+> is now machine-checked.
+>
+> **A1b.** Compute the literal response kernel `R_{j,k} = ∂β_j/∂g_k` of the
+> renormalisation-group map and exhibit constants `C`, `θ < 1` with
+> `|R_{j,k}| ≤ C θ^{j−k}`, uniform in cutoff, volume and scale. Everything a
+> bound of that shape buys is now machine-checked.
+
+Also, as before: `11/24 · C_A` is a convention constant in this repository, not a
+derived lattice one-loop computation. None of the new theorems introduces or
+depends on it.

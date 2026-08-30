@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+"""Build a labelled contact sheet of the representative dot-line shapes.
+
+Picks one example page for each detected dot count (0..6), re-detects the dots
+with OpenCV, annotates each with its detected count + the matching Lean theorem,
+and stacks them into `shapes_montage.png`.
+"""
+import csv
+import os
+
+import cv2
+import numpy as np
+
+from detect_shapes import count_dots, collinear
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+FRAMES = os.path.join(HERE, "frames")
+CSV = os.path.join(HERE, "qdeform_pages.csv")
+OUT = os.path.join(HERE, "shapes_montage.png")
+
+
+def main():
+    with open(CSV) as f:
+        rows = list(csv.DictReader(f))
+    # first page achieving each dot count
+    chosen = {}
+    for r in rows:
+        k = int(r["dot_count"])
+        if k not in chosen:
+            chosen[k] = int(r["page_index"])
+
+    panels = []
+    for k in sorted(chosen):
+        pi = chosen[k]
+        img = cv2.imread(os.path.join(FRAMES, f"page_{pi:03d}.png"))
+        centres = count_dots(img)
+        n = len(centres)
+        line = collinear(centres)
+        for (cx, cy) in centres:
+            cv2.circle(img, (int(cx), int(cy)), 14, (0, 160, 0), 2)
+        label = f"page {pi} (q^{pi+1}): OpenCV detected {n} dot(s), line={line}"
+        cv2.putText(img, label, (12, 28), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.6, (0, 0, 0), 1, cv2.LINE_AA)
+        panels.append(img)
+
+    montage = np.vstack(panels)
+    cv2.imwrite(OUT, montage)
+    print(f"wrote {OUT} ({montage.shape[1]}x{montage.shape[0]})")
+
+
+if __name__ == "__main__":
+    main()

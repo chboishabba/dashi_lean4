@@ -1,0 +1,42 @@
+# Workbook data extraction
+
+`see if you can extract the needed data from this workbook`
+
+## What "the workbook" was
+
+The uploaded archive `6664fe08-…-aristotle (5).tar.gz` is a bundle of earlier
+Aristotle outputs. Its `RequestProject/Main.lean` and `RequestProject/FullTable.lean`
+hold the genuine numeric dataset of interest: the per-prime breakdown of the
+McKay–Thompson class 1A coefficients (the modular `j`-function, OEIS A000521)
+against the 15 supersingular primes dividing the order of the Monster `|𝕄|`.
+
+The current project did not yet contain this trace data, so it was the natural
+thing to extract.
+
+## Where it landed
+
+`RequestProject/WorkbookData.lean` (namespace `WorkbookData`). It is a
+*verified* extraction: every piece of data is re-checked from the transcribed
+values with `native_decide`/`decide`, not merely copied. The file builds as part
+of the default target with no `sorry` and only the allowed axioms
+(`propext`, `Lean.ofReduceBool`, `Lean.trustCompiler`).
+
+## What was extracted and verified
+
+* `ORDER` — the 15 supersingular primes `[2,3,5,7,11,13,17,19,23,29,31,41,47,59,71]`
+  (`ORDER_length`, `ORDER_prime`).
+* `rows` — for each of the first 7 `j`-coefficients, the exponent vector over
+  `ORDER` (`rows_shape`, `rows_coeffs` confirming the coefficients
+  `1, 744, 196884, 21493760, 864299970, 20245856256, 333202640600`).
+* `temp` / `total` — the per-row running product and accumulated grand total
+  (`temp_values`, `total_eq = 98220881625283513136530`).
+* `literalTable` — the full 105-row × 8-column trace table, with
+  `genTable` reconstructing it from `ORDER` and `rows`. `full_table_eq_generated`
+  proves the reconstruction equals the literal table cell-for-cell; the
+  supporting checks `literalTable_length`, `full_table_power_column`,
+  `full_table_first_column`, and `full_table_running_product_*` verify the
+  column invariants and the link back to `temp`.
+* Tie-in to the dual atlas — `dualAtlas_bases_in_ORDER` (the dual atlas's six
+  structured prime bases are the first six entries of `ORDER`) and
+  `monsterOrder_from_ORDER` (reconstructing `|𝕄|` from `ORDER` with the exponent
+  vector `[46,20,9,6,2,3,1,…,1]`).

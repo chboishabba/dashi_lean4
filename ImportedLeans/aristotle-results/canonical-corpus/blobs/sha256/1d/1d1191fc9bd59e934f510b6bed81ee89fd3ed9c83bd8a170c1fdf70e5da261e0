@@ -1,0 +1,502 @@
+{
+ "totalDecls": 120000,
+ "groups": 3436,
+ "byProofSemantics": {
+  "alias": 1671,
+  "independent": 1266,
+  "unknown": 353,
+  "deprecated": 124,
+  "rfl-variant": 22
+ },
+ "classes": {
+  "alias": {
+   "description": "Two (or more) names, often one namespace apart, carrying the **identical proof term** \u2014 one is a copy/alias of another. Look for `alias`, `abbrev`, or `theorem X := Y` patterns.",
+   "exemplars": [
+    {
+     "groupId": 0,
+     "fingerprint": 5707331,
+     "proofTag": "alias",
+     "size": 3,
+     "syntaxIdentical": false,
+     "structurallyEqual": true,
+     "members": [
+      {
+       "name": "_private.Lean.Meta.LazyDiscrTree.0.Lean.Meta.LazyDiscrTree.getChildNgen.match_1",
+       "namespace": "_private.Lean.Meta.LazyDiscrTree.0.Lean.Meta.LazyDiscrTree.getChildNgen",
+       "baseName": "match_1",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": null,
+       "statement": "(motive : NameGenerator \u00d7 NameGenerator \u2192 Sort u_1) \u2192 (x : NameGenerator \u00d7 NameGenerator) \u2192 ((cngen ngen : NameGenerator) \u2192 motive (cngen, ngen)) \u2192 motive x"
+      },
+      {
+       "name": "_private.Mathlib.Lean.Meta.RefinedDiscrTree.0.Lean.Meta.RefinedDiscrTree.findImportMatches.match_3",
+       "namespace": "_private.Mathlib.Lean.Meta.RefinedDiscrTree.0.Lean.Meta.RefinedDiscrTree.findImportMatches",
+       "baseName": "match_3",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": null,
+       "statement": "(motive : NameGenerator \u00d7 NameGenerator \u2192 Sort u_1) \u2192 (x : NameGenerator \u00d7 NameGenerator) \u2192 ((cNGen ngen : NameGenerator) \u2192 motive (cNGen, ngen)) \u2192 motive x"
+      },
+      {
+       "name": "_private.Mathlib.Lean.Meta.RefinedDiscrTree.Initialize.0.Lean.Meta.RefinedDiscrTree.getChildNgen.match_1",
+       "namespace": "_private.Mathlib.Lean.Meta.RefinedDiscrTree.Initialize.0.Lean.Meta.RefinedDiscrTree.getChildNgen",
+       "baseName": "match_1",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": null,
+       "statement": "(motive : NameGenerator \u00d7 NameGenerator \u2192 Sort u_1) \u2192 (x : NameGenerator \u00d7 NameGenerator) \u2192 ((cngen ngen : NameGenerator) \u2192 motive (cngen, ngen)) \u2192 motive x"
+      }
+     ]
+    },
+    {
+     "groupId": 131,
+     "fingerprint": 174121000,
+     "proofTag": "alias",
+     "size": 2,
+     "syntaxIdentical": true,
+     "structurallyEqual": true,
+     "members": [
+      {
+       "name": "Tropical.trop_sup_def",
+       "namespace": "Tropical",
+       "baseName": "trop_sup_def",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": "rfl",
+       "statement": "\u2200 {R : Type u} [inst : LinearOrder R] (x y : Tropical R), max x y = Tropical.trop (max (Tropical.untrop x) (Tropical.untrop y))"
+      },
+      {
+       "name": "Tropical.trop_max_def",
+       "namespace": "Tropical",
+       "baseName": "trop_max_def",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": "rfl",
+       "statement": "\u2200 {R : Type u} [inst : LinearOrder R] (x y : Tropical R), max x y = Tropical.trop (max (Tropical.untrop x) (Tropical.untrop y))"
+      }
+     ]
+    }
+   ]
+  },
+  "independent": {
+   "description": "Same statement fingerprint, **distinct proof trees** \u2014 the most mathematically interesting class. We show the two proof-term heads side by side.",
+   "exemplars": [
+    {
+     "groupId": 70,
+     "fingerprint": 94490458,
+     "proofTag": "independent",
+     "size": 2,
+     "syntaxIdentical": false,
+     "structurallyEqual": true,
+     "members": [
+      {
+       "name": "Nat.pow_lt_pow_right",
+       "namespace": "Nat",
+       "baseName": "pow_lt_pow_right",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": "Iff.mpr",
+       "statement": "\u2200 {a m n : \u2115}, 1 < a \u2192 m < n \u2192 a ^ m < a ^ n"
+      },
+      {
+       "name": "Nat.pow_lt_pow_of_lt",
+       "namespace": "Nat",
+       "baseName": "pow_lt_pow_of_lt",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": "Exists.casesOn  (Nat.exists_eq_add_of_lt + Nat.mul_lt_mul_of_lt_of_le ...)",
+       "statement": "\u2200 {a n m : \u2115}, 1 < a \u2192 n < m \u2192 a ^ n < a ^ m"
+      }
+     ]
+    },
+    {
+     "groupId": 197,
+     "fingerprint": 264411993,
+     "proofTag": "independent",
+     "size": 2,
+     "syntaxIdentical": true,
+     "structurallyEqual": true,
+     "members": [
+      {
+       "name": "IsCompact.finite_cover_balls",
+       "namespace": "IsCompact",
+       "baseName": "finite_cover_balls",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": "const finite_cover_balls_of_compact  (proof = the other lemma)",
+       "statement": "\u2200 {X : Type u_2} [inst : PseudoMetricSpace X] {s : Set X}, IsCompact s \u2192 \u2200 {e : \u211d}, 0 < e \u2192 \u2203 t \u2286 s, t.Finite \u2227 s \u2286 \u22c3 x \u2208 t, Metric.ball x e"
+      },
+      {
+       "name": "finite_cover_balls_of_compact",
+       "namespace": "",
+       "baseName": "finite_cover_balls_of_compact",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": "finite_cover_balls_of_compact.match_1_1 (case split)",
+       "statement": "\u2200 {X : Type u_2} [inst : PseudoMetricSpace X] {s : Set X}, IsCompact s \u2192 \u2200 {e : \u211d}, 0 < e \u2192 \u2203 t \u2286 s, t.Finite \u2227 s \u2286 \u22c3 x \u2208 t, Metric.ball x e"
+      }
+     ]
+    }
+   ]
+  },
+  "rfl-variant": {
+   "description": "One member's proof is `Eq.refl`/`rfl`/`trivial`, the other is **elaborated**. We surface the elaborated proof head.",
+   "exemplars": [
+    {
+     "groupId": 839,
+     "fingerprint": 1052001627,
+     "proofTag": "rfl-variant",
+     "size": 2,
+     "syntaxIdentical": false,
+     "structurallyEqual": true,
+     "members": [
+      {
+       "name": "Nat.zero_mul",
+       "namespace": "Nat",
+       "baseName": "zero_mul",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": "Nat.brecOn  (structural recursion / elaborated)",
+       "statement": "\u2200 (n : \u2115), 0 * n = 0"
+      },
+      {
+       "name": "_private.Lean.Compiler.LCNF.Simp.ConstantFold.0.Lean.Compiler.LCNF.Simp.ConstantFold.arithmeticFolders._proof_18",
+       "namespace": "_private.Lean.Compiler.LCNF.Simp.ConstantFold.0.Lean.Compiler.LCNF.Simp.ConstantFold.arithmeticFolders",
+       "baseName": "_proof_18",
+       "isRfl": true,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": null,
+       "statement": "\u2200 (a : \u2115), 0 * a = 0"
+      }
+     ]
+    },
+    {
+     "groupId": 3074,
+     "fingerprint": 3846370601,
+     "proofTag": "rfl-variant",
+     "size": 4,
+     "syntaxIdentical": true,
+     "structurallyEqual": true,
+     "members": [
+      {
+       "name": "Lean.Parser.interpolatedStrNoAntiquot",
+       "namespace": "Lean.Parser",
+       "baseName": "interpolatedStrNoAntiquot",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": null,
+       "statement": "Parser.Parser \u2192 Parser.Parser"
+      },
+      {
+       "name": "Lean.Parser.ppDedent",
+       "namespace": "Lean.Parser",
+       "baseName": "ppDedent",
+       "isRfl": true,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": null,
+       "statement": "Parser.Parser \u2192 Parser.Parser"
+      },
+      {
+       "name": "Lean.Parser.withPositionAfterLinebreak",
+       "namespace": "Lean.Parser",
+       "baseName": "withPositionAfterLinebreak",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": null,
+       "statement": "Parser.Parser \u2192 Parser.Parser"
+      },
+      {
+       "name": "Lean.Parser.manyNoAntiquot",
+       "namespace": "Lean.Parser",
+       "baseName": "manyNoAntiquot",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": null,
+       "statement": "Parser.Parser \u2192 Parser.Parser"
+      }
+     ]
+    }
+   ]
+  },
+  "deprecated": {
+   "description": "At least one member carries `@[deprecated]`. We flag which one, and what it points to.",
+   "exemplars": [
+    {
+     "groupId": 83,
+     "fingerprint": 105629709,
+     "proofTag": "deprecated",
+     "size": 2,
+     "syntaxIdentical": true,
+     "structurallyEqual": true,
+     "members": [
+      {
+       "name": "Quaternion.im_one",
+       "namespace": "Quaternion",
+       "baseName": "im_one",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": "rfl",
+       "statement": "\u2200 {R : Type u_3} [inst : CommRing R], Quaternion.im 1 = 0"
+      },
+      {
+       "name": "Quaternion.one_im",
+       "namespace": "Quaternion",
+       "baseName": "one_im",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": true,
+       "proofHead": "const Quaternion.im_one  (proof = the renamed lemma)",
+       "statement": "\u2200 {R : Type u_3} [inst : CommRing R], Quaternion.im 1 = 0"
+      }
+     ]
+    },
+    {
+     "groupId": 185,
+     "fingerprint": 250002412,
+     "proofTag": "deprecated",
+     "size": 2,
+     "syntaxIdentical": true,
+     "structurallyEqual": true,
+     "members": [
+      {
+       "name": "Cubic.disc",
+       "namespace": "Cubic",
+       "baseName": "disc",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": true,
+       "proofHead": "const Cubic.discr  (def = the renamed def)",
+       "statement": "{R : Type u_5} \u2192 [Ring R] \u2192 Cubic R \u2192 R"
+      },
+      {
+       "name": "Cubic.discr",
+       "namespace": "Cubic",
+       "baseName": "discr",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": "HAdd.hAdd  (the actual discriminant expression)",
+       "statement": "{R : Type u_5} \u2192 [Ring R] \u2192 Cubic R \u2192 R"
+      }
+     ]
+    },
+    {
+     "groupId": 217,
+     "fingerprint": 288151278,
+     "proofTag": "deprecated",
+     "size": 2,
+     "syntaxIdentical": true,
+     "structurallyEqual": true,
+     "members": [
+      {
+       "name": "Metric.ediam_one",
+       "namespace": "Metric",
+       "baseName": "ediam_one",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": "Metric.ediam_singleton",
+       "statement": "\u2200 {X : Type u_2} [inst : PseudoEMetricSpace X] [inst_1 : One X], Metric.ediam 1 = 0"
+      },
+      {
+       "name": "EMetric.diam_one",
+       "namespace": "EMetric",
+       "baseName": "diam_one",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": true,
+       "proofHead": "const Metric.ediam_one  (proof = the renamed lemma)",
+       "statement": "\u2200 {X : Type u_2} [inst : PseudoEMetricSpace X] [inst_1 : One X], Metric.ediam 1 = 0"
+      }
+     ]
+    }
+   ]
+  },
+  "unknown": {
+   "description": "At least one member exposes **no proof value** (axiom / opaque / constructor / structural). We show the declaration kinds.",
+   "exemplars": [
+    {
+     "groupId": 45,
+     "fingerprint": 54431828,
+     "proofTag": "unknown",
+     "size": 2,
+     "syntaxIdentical": true,
+     "structurallyEqual": true,
+     "members": [
+      {
+       "name": "Lean.Level.param",
+       "namespace": "Lean.Level",
+       "baseName": "param",
+       "isRfl": false,
+       "hasValue": false,
+       "deprecated": false,
+       "proofHead": "<no value> (constructor)",
+       "statement": "Name \u2192 Level"
+      },
+      {
+       "name": "Lean.mkLevelParam",
+       "namespace": "Lean",
+       "baseName": "mkLevelParam",
+       "isRfl": false,
+       "hasValue": true,
+       "deprecated": false,
+       "proofHead": "lam -> Lean.Level.param  (thin wrapper)",
+       "statement": "Name \u2192 Level"
+      }
+     ]
+    },
+    {
+     "groupId": 252,
+     "fingerprint": 332782343,
+     "proofTag": "unknown",
+     "size": 2,
+     "syntaxIdentical": true,
+     "structurallyEqual": true,
+     "members": [
+      {
+       "name": "Lean.Elab.DefKind.abbrev",
+       "namespace": "Lean.Elab.DefKind",
+       "baseName": "abbrev",
+       "isRfl": false,
+       "hasValue": false,
+       "deprecated": false,
+       "proofHead": "<no value> (constructor)",
+       "statement": "DefKind"
+      },
+      {
+       "name": "Lean.Elab.DefKind.theorem",
+       "namespace": "Lean.Elab.DefKind",
+       "baseName": "theorem",
+       "isRfl": false,
+       "hasValue": false,
+       "deprecated": false,
+       "proofHead": "<no value> (constructor)",
+       "statement": "DefKind"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "hashOnlyCollisions": [
+  {
+   "groupId": 841,
+   "fingerprint": 1053078126,
+   "proofTag": "independent",
+   "size": 2,
+   "syntaxIdentical": false,
+   "structurallyEqual": false,
+   "members": [
+    {
+     "name": "CategoryTheory.Adjunction.leftAdjointUniq_hom_counit",
+     "namespace": "CategoryTheory.Adjunction",
+     "baseName": "leftAdjointUniq_hom_counit",
+     "isRfl": false,
+     "hasValue": true,
+     "deprecated": false,
+     "proofHead": "CategoryTheory.NatTrans.ext'",
+     "statement": "\u2200 {C : Type u_1} {D : Type u_2} [inst : CategoryTheory.Category.{v_1, u_1} C] [inst_1 : CategoryTheory.Category.{v_2, u_2} D] {F F' : CategoryTheory.Functor C D} {G : CategoryTheory.Functor D C} (adj1 : F \u22a3 G) (adj2 : F' \u22a3 G), CategoryTheory.CategoryStruct.comp (G.whiskerLeft (adj1.leftAdjointUniq adj2).hom) adj2.counit = adj1.counit"
+    },
+    {
+     "name": "NFA._sizeOf_1",
+     "namespace": "NFA",
+     "baseName": "_sizeOf_1",
+     "isRfl": false,
+     "hasValue": true,
+     "deprecated": false,
+     "proofHead": "NFA.rec  (auto sizeOf)",
+     "statement": "{\u03b1 : Type u} \u2192 {\u03c3 : Type v} \u2192 [SizeOf \u03b1] \u2192 [SizeOf \u03c3] \u2192 NFA \u03b1 \u03c3 \u2192 \u2115"
+    }
+   ]
+  },
+  {
+   "groupId": 2936,
+   "fingerprint": 3676478579,
+   "proofTag": "independent",
+   "size": 2,
+   "syntaxIdentical": false,
+   "structurallyEqual": false,
+   "members": [
+    {
+     "name": "Qq.Impl.mkIsDefEqResult",
+     "namespace": "Qq.Impl",
+     "baseName": "mkIsDefEqResult",
+     "isRfl": false,
+     "hasValue": true,
+     "deprecated": false,
+     "proofHead": null,
+     "statement": "Bool \u2192 (decls : List Qq.Impl.PatVarDecl) \u2192 have a := Qq.Impl.mkIsDefEqType decls; Q(\u00ab$a\u00bb)"
+    },
+    {
+     "name": "Qq.Impl.mkIsDefEqResult._unsafe_rec",
+     "namespace": "Qq.Impl.mkIsDefEqResult",
+     "baseName": "_unsafe_rec",
+     "isRfl": false,
+     "hasValue": true,
+     "deprecated": false,
+     "proofHead": null,
+     "statement": "Bool \u2192 (decls : List Qq.Impl.PatVarDecl) \u2192 let a := Qq.Impl.mkIsDefEqType decls; let mkIsDefEqType_1 := Qq.Impl.mkIsDefEqType decls; Q(\u00ab$mkIsDefEqType_1\u00bb)"
+    }
+   ]
+  },
+  {
+   "groupId": 3181,
+   "fingerprint": 3962485042,
+   "proofTag": "independent",
+   "size": 2,
+   "syntaxIdentical": false,
+   "structurallyEqual": false,
+   "members": [
+    {
+     "name": "Mathlib.Tactic.FieldSimp.qNF.split",
+     "namespace": "Mathlib.Tactic.FieldSimp.qNF",
+     "baseName": "split",
+     "isRfl": false,
+     "hasValue": true,
+     "deprecated": false,
+     "proofHead": null,
+     "statement": "{v : Level} \u2192 {M : Q(Type v)} \u2192 (iM : Q(CommGroupWithZero \u00ab$M\u00bb)) \u2192 (l : Mathlib.Tactic.FieldSimp.qNF M) \u2192 MetaM ((l_n : Mathlib.Tactic.FieldSimp.qNF M) \u00d7 (l_d : Mathlib.Tactic.FieldSimp.qNF M) \u00d7 have a := l_d.toNF; have a_1 := l_n.toNF; have a_2 := l.toNF; Q(\u00ab$a_2\u00bb.eval = \u00ab$a_1\u00bb.eval / \u00ab$a\u00bb.eval))"
+    },
+    {
+     "name": "Mathlib.Tactic.FieldSimp.qNF.split._unsafe_rec",
+     "namespace": "Mathlib.Tactic.FieldSimp.qNF.split",
+     "baseName": "_unsafe_rec",
+     "isRfl": false,
+     "hasValue": true,
+     "deprecated": false,
+     "proofHead": null,
+     "statement": "{v : Level} \u2192 {M : Q(Type v)} \u2192 (iM : Q(CommGroupWithZero \u00ab$M\u00bb)) \u2192 (l : Mathlib.Tactic.FieldSimp.qNF M) \u2192 MetaM ((l_n : Mathlib.Tactic.FieldSimp.qNF M) \u00d7 (l_d : Mathlib.Tactic.FieldSimp.qNF M) \u00d7 let a := l_d.toNF; let a_1 := l_n.toNF; let a_2 := l.toNF; let foldr_1 := List.foldr (fun x l => match x with | ((a, x), snd) => q((\u00ab$a\u00bb, \u00ab$x\u00bb) ::\u1d63 \u00ab$l\u00bb)) q([]) l; let foldr_2 := List.foldr (fun x l => mat \u2026"
+    }
+   ]
+  }
+ ],
+ "note": "A 'duplicate group' is a set of declarations whose statement type-fingerprint info.type.hash collides. structurallyEqual=false marks a true hash collision of genuinely different statements.",
+ "userAuthoredDuplicates": {
+  "count": 560,
+  "byProofSemantics": {
+   "independent": 344,
+   "unknown": 113,
+   "deprecated": 91,
+   "alias": 11,
+   "rfl-variant": 1
+  },
+  "note": "Groups where every member name is free of Lean's auto-generated markers (match_/_simp_/_private/.rec/.mk/_default/\u2026). For Prop-valued members the shared type IS the shared statement (genuine duplicate propositions); for plain defs a shared type signature is not by itself a duplicate."
+ }
+}

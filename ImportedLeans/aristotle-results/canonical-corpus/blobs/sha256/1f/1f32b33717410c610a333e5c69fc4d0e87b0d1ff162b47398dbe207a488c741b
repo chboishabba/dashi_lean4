@@ -1,0 +1,322 @@
+# Summary of changes for run 9d57033f-1d66-4cbc-8173-3a037b2cb6b0
+## What I did this session
+
+Continuing the Navier–Stokes lane, I completed the in-flight space-time budget and then worked through the remaining items on your shortest-path list (steps 4 and 5), plus the bridge they exposed. Everything below builds, is free of `sorry`, and uses only the standard axioms (`propext`, `Classical.choice`, `Quot.sound`).
+
+### 1. Space-time form of the weight-aware budget (finished the in-flight file)
+`RequestProject/NavierStokes/GaussianSpacetimeBudget.lean` — `ClayNS.gaussian_weighted_spacetime_budget`. The C54 instantaneous inequality integrated over a window `[t₀,t₁]`, with the fundamental theorem of calculus turning the first term exactly into the increment of the Gaussian-weighted mass `M(t₁) − M(t₀)`. This is the shape the De Giorgi machinery consumes.
+
+### 2. The scale-invariant choice `a = κR²` (your step 4)
+`RequestProject/NavierStokes/ScaleInvariantWeightChoice.lean`.
+- `gwSource_scaleInvariant_eq` — the **exact** expansion of the budget source at `a = κR²`: it is `R·K₁(κ) + R²·K₂(κ) + R³·K₃(κ)`, every coefficient independent of `R`. There is **no constant term and no `a⁻¹`**: the source carries a strictly positive scaling dimension, exactly what a dyadic tail argument needs, and no outward-rescaling failure is being hidden.
+- `gwSource_scaleInvariant_le` — packaged as `source ≤ R·K(κ)` for `0 < R ≤ 1`.
+- `gaussianGradientWeightedAbsorption_scaleInvariant` — the budget itself at that weight: apart from the coercivity-paired level-measure term, the entire right-hand side is `≤ R·K(κ)`.
+
+### 3. The A-anchor (your step 5)
+`RequestProject/NavierStokes/ScaleAnchor.lean`.
+- `gram_anchor_lower_bound` — the exact analogue of the zeta anchor inequality you asked for: with an anchor mode `e` of weighted mass `≤ 1` satisfying `⟨e,Λu⟩_Γ = 0` and `⟨e,u⟩_Γ = a₀`, one gets **`AB − C² ≥ a₀²B`**. The mechanism is that the anchor sees all of the profile and none of its scaling derivative, so no multiple `cΛu` approximates `u` to weighted distance below `a₀`, and the Gram determinant is exactly that squared distance times `B`. It is unconditional (weighted Cauchy–Schwarz on the pair `(e, u − cΛu)`).
+- `scaleGramDefect_anchor_lower_bound` — the same for the parabolic scaling generator `Λ`.
+- `scale_defect_ge_transverse` — the complementary form `Δ ≥ c·‖P_⊥Λu‖²_Γ`.
+- `gramA_ge_of_lower_bound_on_set` — the record-point normalization supplying the constant `c`.
+- `scaleGram_anchored_dichotomy` — the dichotomy made quantitative: on the near-self-similar branch the anchor forces `‖Λu‖²_Γ < ε·A/a₀²`.
+
+### 4. The unweighting bridge (exposed by step 4)
+`RequestProject/NavierStokes/GaussianUnweighting.lean`. Since `ψ(s) = sin(πs)²/π² ≤ s²` (`tgProfile_le_sq`), the torus Gaussian dominates the Euclidean one, so `Φ_a ≥ exp(−ρ²/(4a))` on the ball of radius `ρ`. At fixed physical radius with `a → 0` that constant degenerates — precisely why that limit is the wrong one — whereas at `a = κR²`, `ρ = R` it is the **dimensionless** `exp(−1/(4κ))`, independent of `R`. Hence `setIntegral_le_gaussianWeighted_scaleInvariant`: `∫_S f ≤ exp(1/(4κ))·∫_S Φ f`, uniformly across scales.
+
+### Documentation
+`docs/ns-clay-contract/gaussian-fisher-tranche-C53-C55.md` now carries a "Follow-up tranche" section describing all four files and stating precisely what is still open.
+
+## Honest status
+
+The literal Clay periodic Navier–Stokes regularity target is **not** proved, and I have not weakened it, added axioms, or pivoted to an audit-only result.
+
+- On **C**: the `a⁻¹K₀` obstruction and the `1/δ` smoothing-annulus loss are gone (C53–C55, proved in the previous session), the budget is now available in space-time form, the source has a positive scaling dimension at `a = κR²`, and the unweighting constant is `R`-independent. The parabolic `L^{10/3}` embedding was already proved in the project (`ClayNS.parabolic_gain_of_caccioppoli`). **The first unresolved obligation** is the compact-support matching: that embedding is stated for compactly supported truncations on `ℝ³`, while the weighted budget lives on the periodic cell against a strictly positive Gaussian. Producing a cut-off truncation of the increment density that is compactly supported in the concentration ball *and* obeys the sup-in-time `L²` and total-dissipation bounds with level-independent constants is the next theorem.
+- On **A**: the anchor inequality is unconditional, but its hypotheses `⟨e,ΛU⟩_Γ = 0`, `⟨e,U⟩_Γ = a₀ ≠ 0` are inputs. *Producing* such an anchor mode for the actual Navier–Stokes rescaling remains open.
+
+On the Agda side: the repository you pointed at is the same tree present here. Its `DASHI/Physics/YangMills/Balaban*` and `ClaySupportingPolymerCounting` material is postulate-free but finite and rational (finite weighted Schur, finite dyadic tail, defect telescope, finite-cardinality pigeonhole). It contains none of C53/C54/C55 nor the anchor theorem, confirming those were genuinely new; I proved them in the Lean carrier, where the analysis lives, rather than re-proving the abstract machinery.
+
+# Summary of changes for run 5efb6388-d4ae-4a29-85bc-c0cf1baf3935
+The `ConcentratedAdjointWeightGate` frontier item is now fully resolved, and the C48–C52 tranche is complete. Everything below compiles in the project (whole-library build clean) with no `sorry`, no postulates, and no axioms beyond `propext`, `Classical.choice`, `Quot.sound`.
+
+## The key correction, and the definitive resolution
+
+Your instinct that the exact gate should be replaced rather than satisfied is right — and it is now a *theorem*, not a judgement call.
+
+`ClayNS.not_concentratedAdjointWeightGate_of_lt_one` (`RequestProject/NavierStokes/ConcentratedWeightNoGo.lean`) proves the original gate **false** for every `θ < 1` and every `ν > 0`. The argument uses nothing beyond the gate's own hypotheses:
+
+- the cell mass of an exact adjoint weight is a constant of the motion (`cellInt_adjoint_weight_const`) — advection and diffusion are both spatial divergences of periodic fields;
+- the adjoint equation is a transported quadratic with viscosity `−ν`, so `d/dt ∫Φ² = +2ν∫|∇Φ|²` (`hasDerivAt_adjointWeightEnergy`): the `L²` variance *grows*;
+- Poincaré on the cell converts this into `Var′ ≥ (2ν/3)·Var`, while the gate's own gradient bound `|∂_jΦ| ≤ G` caps `Var ≤ 9G²`;
+- a bounded solution of `Var′ ≥ cVar` with `c > 0` vanishes (`eq_zero_of_bounded_of_deriv_ge`), so `Φ(t,·)` is spatially constant (`adjoint_weight_eq_cell_mean`) and its concentration ratio is exactly `1`.
+
+So on the torus, an exact adjoint weight with a bounded gradient is necessarily flat: there was never a `θ < 1` witness to find. The original statement is left untouched in `FrontierGatesAdjoint.lean` with a cross-reference comment; it is used nowhere.
+
+## The replacement, and the tranche
+
+Following the corrections in your note (the Gaussian is *not* an exact adjoint witness; and the exactly-caloric kernel is not globally smooth), the weight used is the smooth, exactly `ℤ³`-periodic torus analogue `Φ_a(x) = exp(−Σ_j ψ(x_j−x₀_j)/(4a))` with `ψ(s) = sin(πs)²/π²` and `a = ντ` — no periodization error at all, so no `O(e^{−cL²/ντ})` tail to carry.
+
+- **C48** `adjointOp_torusGauss` / `abs_adjointOp_torusGauss_le`: the residual is exactly `−U_h·∇Φ − νΔΦ`. Because the static weight is not backward-caloric, there is an honest extra viscous defect `ν∫|ΔΦ| = O(ν√(ντ))` beyond the `O(ντ)` you predicted; it also vanishes.
+- **C49** closed-form cell budgets: mass `O(a^{3/2})`, gradient `≤ 2·(…)² = O(a)` (proved sharply by an exact FTC/telescoping argument, matching your `16πντ`), Laplacian `O(a^{1/2})`, and the full residual `≤ 6π³A·a + νC·√a`.
+- `GaussianApproximateAdjointWeightGate` and `gaussianApproximateAdjointWeightGate_holds`: the replacement gate, proved to hold at *every* positive tolerance simultaneously in concentration, gradient and residual — so `θ < 1` holds with room to spare.
+- **C50** `gaussian_adjoint_modulus_caccioppoli` (and its Caccioppoli form): the weighted balance, with `E_adjoint ≤ Bbeta·(A·6π³a + ν·C·√a) → 0`.
+- **C51** `gaussian_adjoint_caccioppoli_linear_budget`: unconditional, fully explicit constants. The audit confirms your reading — the pressure contribution is *weighted* (`3B·G_p` against a weighted integral) and is not an obstruction.
+- **C52** both halves. Positive: `cellInt_torusGauss_ge` gives `8e^{−3/4}a^{3/2} ≤ ∫Φ_a`, matching the upper bound in order, so the ratio is *exactly* of order `a^{3/2}` and the weight is a genuine detector.
+
+## The no-go, and where the frontier now sits
+
+`gaussian_gradient_term_blows_up` records the negative half precisely. In the linear budget the sole *unweighted* term is `9AB²·(1/(4πa))·K₀`, where `K₀ = ∫_cell β′(q)` carries no weight. Concentrating harder amplifies it by exactly `a^{-1}`: if `K₀` is bounded below by any positive number, that term exceeds any prescribed bound for all small `a`. So concentration alone cannot close the budget, and `GaussianModulusDefectPropagation` is recorded as a statement but deliberately **not** proved (and assumed nowhere).
+
+The surviving frontier is therefore sharper than before: not the weight construction, and not pressure, but an estimate for the unweighted level-set quantity `K₀` — the smoothing-annulus remainder.
+
+New files: `SeparableWeight.lean`, `TorusGaussianWeight.lean`, `TorusGaussianIntegrals.lean`, `GaussianApproximateAdjoint.lean`, `GaussianAdjointCaccioppoli.lean`, `GaussianLinearBudgetAudit.lean`, `GaussianDetector.lean`, `ConcentratedWeightNoGo.lean` (all under `RequestProject/NavierStokes/`). The Properties table has been updated to reflect the final status of each deliverable.
+
+# Summary of changes for run 36408662-9505-4508-93f8-6791e5fedf45
+I continued the modulus ("switch the De Giorgi variable from `q = ½|δ_hu|²` to `r = |δ_hu|`") programme. Everything below is proved in Lean with no `sorry`, no postulates, and axioms limited to `propext`, `Classical.choice`, `Quot.sound`; the whole project builds (`lake build RequestProject`, 8091 jobs). All work is committed and pushed.
+
+**1. The level-set (profile) form of the cancellation — new file `RequestProject/NavierStokes/ModulusLevelSplit.lean`.**
+The earlier tranche cancelled the marginal radial stretching channel for the single entropy `β(q) = r_ε`. I generalized it to an arbitrary smooth profile `ζ`, with entropy `β(q) = ζ(r_ε)` and weight `W = ζ'(r_ε)/r_ε`. The key identity is `β'' + β'/r_ε² = ζ''(r_ε)/r_ε²`, so the marginal channel is governed by the **second derivative of the profile alone**:
+- `increment_modulus_profile_split` — exact divergence + transverse pairing + a residual carrying the factor `ζ''(r_ε)`;
+- `increment_modulus_profile_cancellation_of_flat` — wherever `ζ''(r_ε) = 0` the radial channel cancels identically. Since the De Giorgi truncation `ζ_λ(r) = r − λ` is affine on the active set, the cancellation is unchanged by the truncation constant; for a smoothed truncation the residual is confined to the level annulus `λ < r < λ+δ` rather than the whole level set;
+- `modulusEps_profile_transverse_absorption` and `modulusEps_profile_cell_budget` — the integrated budget `∫ (ζ'(r_ε)/r_ε)·δ_hu·(δ_hu·∇)u ≤ (ν/2)∫ ζ'(r_ε)T_ε + (1/2ν)∫ ζ'(r_ε)|u|² + ∫|Res_ζ|`, needing only `ζ' ≥ 0`, and collapsing to the previously proved modulus budget when `ζ = id`.
+
+**2. The transverse surplus *is* the viscous coercivity — new file `RequestProject/NavierStokes/ModulusViscousCoercivity.lean`.**
+Previously `T_ε = |∇δ_hu|² − |∇r_ε|²` appeared only as an upper bound on the transverse stretching remainder. I proved it is exactly what the viscous term produces in the modulus variable: from `Δq = |∇δ_hu|² + δ_hu·Δδ_hu` and `Δq = |∇r_ε|² + r_ε·Δr_ε` one gets the pointwise identity `r_ε^{-1}(δ_hu·Δδ_hu) = Δr_ε − T_ε/r_ε` and, on the torus, `∫_cell r_ε^{-1}(δ_hu·Δδ_hu) = −∫_cell T_ε/r_ε`. Combined with the budget this gives `modulusEps_viscous_dominates_stretching`: the viscous transverse coercivity absorbs the entire stretching source with a fixed fraction (a half) to spare, uniformly in ε, leaving only a term linear in `r_ε`. This is the precise sense in which the modulus geometry avoids the lossy estimate `|wᵀSw| ≤ |S||w|²`.
+
+**3. Audit of the adjoint defect-weight gate (`FrontierGatesAdjoint.lean`).**
+Re-reading the pre-existing `AdjointDefectWeightGate` showed that it is *not* an obstruction: the constant weight `Φ ≡ 1` solves the backward adjoint transport–diffusion equation exactly, is nonnegative, periodic, has vanishing gradient and is positive everywhere. I proved this (`adjointDefectWeightGate_const`), so the budget conditional on it now holds unconditionally — but only in its global, unlocalized form, which is not what the De Giorgi argument consumes. I therefore recorded the genuine remaining obligation as a separate, honestly stated gate: `ConcentratedAdjointWeightGate nu theta`, adding the requirement that the weight's cell mass be at most `θ` times its value at the defect point, together with `concentratedAdjointWeightGate_one` showing the constant weight realizes `θ = 1` exactly. The whole remaining content is the strict inequality `θ < 1`. The file's header text was updated accordingly; the original gate statement is preserved.
+
+**4. Documentation.** `docs/ns-clay-contract/modulus-gram-tranche.md` now records all of the above in result tables, together with an explicit list of what is still open.
+
+**What is still not closed.** The Clay periodic Navier–Stokes target is not reached. On the C side the remaining obligations are the adjoint-weighted *time-derivative* identity in the modulus variable (including the pressure pairing), the De Giorgi recurrence run on `(r − λ)_+` rather than on `q`, and the limit `ε ↓ 0`; the concentration gate `θ < 1` above is the sharpened form of the weight obligation. On the A side, the `GaussianScaleGramDichotomy` proved earlier remains unconditional but does not exclude the near-self-similar branch. I have not weakened any target statement, added any axiom, or relied on any placeholder.
+
+# Summary of changes for run 85cd71e1-8ec0-43ee-bf8d-f35a1a91bc9b
+## What I did this session
+
+I continued the Navier–Stokes lane, completing the tranche of lemmas requested and pushing the C-side experiment through to a closed (conditional) budget. The whole project builds (`lake build RequestProject`, 8084 jobs, success), contains **no `sorry`, no postulates, no `axiom` declarations and no `@[implemented_by]`**, and the new headline theorems depend only on `propext`, `Classical.choice`, `Quot.sound`.
+
+**Honest status: the Clay periodic Navier–Stokes regularity target is NOT proved.** Two frontier obligations remain, and they are now stated precisely and machine-readably rather than assumed.
+
+### The requested experiment, and its answer
+
+The instruction was to derive the adjoint-weighted truncation identity and *inspect* the `wᵀS(U)w` term before bounding it by `|S||w|²`. The answer is affirmative: it does admit a further divergence/commutator representation. With the De Giorgi weight `W = Φβ′(q)`,
+
+`W·wᵀS(U)w = div(W(u·w)w) − (u·w)(w·∇W) − W·Σ u_a w_j ∂_j w_a`,
+
+and the non-divergence remainder is controlled using **only amplitude bounds** `|u_a| ≤ A`, `|w_a| ≤ B` — no bound on `∇u`, no critical `L^{5/2}` norm of the strain. Crucially the remainder is **linear** in the truncation data (a level-set measure plus a first power of `v_k`), not the *sublinear* `Y_k^{3/5}` produced by a generic critical strain bound.
+
+### New this session
+
+- `RequestProject/NavierStokes/IncrementStretchingTransfer.lean` — completed with the integrated (periodic-cell) form `increment_stretching_transfer_cell_budget`: the transfer flux divergence integrates away, so the whole weighted stretching source is bounded by the linear budget.
+- `RequestProject/NavierStokes/AdjointCaccioppoliClosure.lean` (new) — `adjoint_caccioppoli_linear_budget`, which assembles the adjoint-weight identity (whole localization bill cancels) with the stretching commutator and the pressure amplitude bound into one cell-integrated inequality: both good terms retained with positive coefficients on the left, and every source on the right linear in the truncation data. Also `contDiff_incrBetaLocFlux`, `spacePeriodic_incrBetaLocFlux`, and reusable `cellInt_split5/6` helpers.
+- `RequestProject/NavierStokes/FrontierGatesAdjoint.lean` (new) — the two exact remaining C-side inputs as `Prop`s (never axioms): `AdjointDefectWeightGate` (existence of a nonnegative backward-adjoint weight, bounded gradient, positive at the defect point — the positivity is what excludes the trivial zero weight) and `IncrementStretchingDepletionGate` (level-set exponent `3/10 + θ`, `θ > 0`), together with two *proved* links: `adjoint_caccioppoli_budget_of_weight_gate` (the weight gate is the only thing between the development and a defect-centred budget) and `incrementStretchingDepletion_exponent_zero` (the `θ = 0` case is exactly the proved critical Hölder estimate, so the gate's entire content is `θ > 0`).
+- `docs/ns-clay-contract/ns-adjoint-transfer-and-log-defect-round44.md` (new) — a full write-up of the round: the critical Hölder triple and the sublinear no-go, the adjoint-weight cancellation, the stretching commutator, the A-side coarse-grained resolution dichotomy, why the geometrically weighted telescope cannot supply the missing almost-monotonicity, the identified logarithmic defect density, and the precise frontier.
+
+### Earlier in the session (also verified building, sorry-free)
+
+`CoarseGrainedResolution.lean` (A-res `Q_∇(u;r) ≤ 2Q_∇(U^ℓ;r)+2Q_∇(u−U^ℓ;r)`, the resolved-dissipation / subfilter-gradient dichotomy with no signed detector, and the telescope weight cut), `IncrementStretchingCritical.lean` (the exact critical Hölder triple `1/(5/2)+1/(10/3)+1/(10/3)=1`, the (C-S) estimate, and the sublinear-recurrence no-go), `AdjointLocalizedIncrement.lean` (sharp convex-composition identity, the adjoint operator, the identity in which the entire cutoff bill cancels, and the exact residual cost of an approximate weight), and `BackwardKernelFluxDefect.lean` (the defect density identified rather than postulated, almost-monotonicity with no sign hypothesis on the flux, and the reduction of `A_dyn` to the uniform logarithmic bound).
+
+### The frontier, precisely
+
+- **A\***: the exact scale-derivative identity (A-HK) and the uniform logarithmic bound `∫ [flux]_+/(r·𝒟(r)) dr ≤ C`. Everything downstream of it is proved.
+- **C\***: either the adjoint defect-weight gate or the stretching depletion gate (`θ > 0`), plus the smallness that launches the De Giorgi recurrence and the scale-invariance requirement recorded in `RescalingAudit.lean`.
+
+The alternative branch — scale-uniform smallness of the critical `L^{5/2}` strain norm — is deliberately not assumed anywhere. Nothing from the external coarse-graining framework is used as an input; the note records why its weighted telescope does not close the A-side interval.
+
+All work is committed and pushed.
+
+# Summary of changes for run 0378f7b5-2d2b-40aa-b1e2-6074c147ad72
+## What I did this round
+
+I worked the three named analytic lemmas in the requested order (C₁ → C₂ → A₁), plus the rescaling correctness condition. Everything below compiles in `lake build RequestProject` with no `sorry`, no postulates, no axioms, and only the standard three axioms in `#print axioms`.
+
+### C₁ — the pressure pairing: delivered
+`RequestProject/NavierStokes/IncrementPressureAbsorption.lean` proves
+`|∫ Φβ'(q)(δ_h u·∇δ_h p)| ≤ ην∫Φβ''(q)|∇q|² + (D²B/4ην)·Osc + DGK·√Osc`, with `Osc = 12A²∫|∇u|²`, supported by `CellShift.lean`, `CellL2.lean`, `PressureL2Oscillation.lean`. Gauge freedom (subtracting a constant from the pressure increment) is proved, not assumed.
+
+**One substitution, flagged.** The requested BMO + John–Nirenberg input is replaced by an elementary and fully proved *periodic L² pressure-oscillation* estimate (energy-testing `−Δp = ∂ᵢ∂ⱼ(uᵢuⱼ)` plus the cell Poincaré inequality). L² is what the Young absorption actually consumes, and no BMO/John–Nirenberg theory exists to cite.
+
+### C₂ — the De Giorgi recurrence: delivered, and its remaining input narrowed
+`RequestProject/NavierStokes/DeGiorgiRecurrence.lean` proves, for the **actual** dyadic level sequence `k_n = k_∞(1−2^{-n})` and the actual level-set energies of a bounded measurable density,
+`Y_{n+1} ≤ (C_S^{3/5}4^{2/5}k_∞^{-4/5})·(4^{7/5})ⁿ·Y_n^{1+2/5}` — exactly the hypothesis of the already-proved `deGiorgi_fast_convergence`, with the three-dimensional parabolic exponent `α = 2/5`. The Chebyshev measure estimate and the Hölder step (conjugate pair `(5/3, 5/2)`) are proved separately.
+
+`RequestProject/NavierStokes/ParabolicGain.lean` then proves the `L^{10/3}` gain that was the recurrence's hypothesis: the 3-D Sobolev bound `‖v‖_{L⁶} ≤ C‖∇v‖_{L²}`, the Hölder interpolation `∫|v|^{10/3} ≤ (∫|v|⁶)^{1/3}(∫v²)^{2/3}`, their combination, the space-time form, and finally `parabolic_gain_of_caccioppoli`: from a single Caccioppoli budget `K` bounding both the sup-in-time L² mass and the total dissipation, `∫∫|v|^{10/3} ≤ C²K^{5/3}`. With `K = 4ⁿYₙ` that is literally the recurrence's `hEmb`, with `C_S = C²`. So the missing C-side input is no longer the embedding — it is the localized Caccioppoli budget for the truncated increment density.
+
+### The rescaling audit: the correctness condition is now a theorem
+`RequestProject/NavierStokes/RescalingAudit.lean` settles the concern you flagged. The KNSŠ class `‖U‖_∞ ≤ 1` is closed under inward rescaling but **not** outward (`unitNormClass_not_rescaling_closed`), so it may not be fed to the unit-step reduction. Sharper: `exists_nonconstant_of_smallScale_contraction` exhibits a normalized field that contracts at *every* scale `R ≤ 1`, for arbitrary `θ ∈ (0,1]` and arbitrary `σ`, and is not constant on the ancient region. A De Giorgi improvement at one fixed unit cylinder therefore cannot close ancient Liouville; the improvement must be genuinely scale-invariant.
+
+### A₁ — template step proved, lemma still open
+`RequestProject/NavierStokes/CriticalGradientMonotonicity.lean` works with the actual `Q_∇(r) = r⁻¹∫_{t₀−r²}^{t₀}∫_{B_r}|∇u|²` and proves the exact identity `r·Q_∇'(r) = E'(r) − Q_∇(r)`, where `E` is the un-normalized cylinder dissipation — radial-boundary and bottom-time terms are collected into `E'`, nothing discarded. Consequently the target bound `r·Q_∇' ≤ r·D·Q_∇` is proved **equivalent** to the dissipation-growth bound `E'(r) ≤ (1+rD(r))Q_∇(r)`, which feeds the existing almost-monotonicity theorem. I also quantified the residual gap: the only bound on `∫D` available from size information is `(E(b)−E(a))/(a·ε)`, and at the cascade endpoints `a = 1/M`, `b ≍ M^{-2/3}` that quantity equals `M^{1/3}` and diverges (`naive_defect_bound_degenerates`). So the size-only route provably fails, by exactly the ratio of the two cascade scales.
+
+## Honest status
+
+The literal Clay periodic target `ClayNS.ClayPeriodicTargetB` is **not proved**. The first unresolved obligations, precisely:
+
+1. **A₁** — the dissipation-growth bound `E'(r) ≤ (1+rD(r))Q_∇(r)` with `∫_{1/M}^{M^{-2/3}}D ≤ E_*` uniform along the singular sequence. It now has an exact equivalent formulation and a proved no-go for the naive estimate, but the Navier–Stokes cancellation itself is not derived.
+2. The localized Caccioppoli budget `K = 4ⁿYₙ` for the truncated increment density — now the only missing input of the De Giorgi recurrence.
+3. A scale-invariant formulation of the oscillation improvement, as forced by the audit theorem.
+
+`docs/ns-clay-contract/ns-three-lemma-tranche-round43.md` records all of this in detail. `ARISTOTLE_SUMMARY.md` was not edited.
+
+
+# Summary of changes for run 96a6c58c-abe5-4853-a558-e36b9592d409
+Continued the Navier–Stokes lane on the re-scoped frontier `A_cascade + C_localDG`, working entirely in the Lean carrier. Everything below compiles as part of the full project build (`RequestProject`, 8069 jobs, no warnings), contains no `sorry`, and uses only Lean/Mathlib's three standard axioms (`propext`, `Classical.choice`, `Quot.sound`). Nothing was weakened, axiomatized, or replaced by a conditional bridge, and no earlier user-provided material was deleted.
+
+**A-side (the one-dyadic-step calculation you asked for)**
+
+- `RequestProject/NavierStokes/OneStepDyadicNoGo.lean` — the decisive negative answer to the prior question. For every radius `r > 0` and every prescribed level `ε > 0` there is an explicit nonnegative continuous time-independent density (a bump supported in the annulus `13r/16 ≤ |y| ≤ 15r/16`) with `Q_∇(r) = ε` and `Q_∇(r/2) = 0` exactly. Consequently any gain function `Ψ` valid for all such densities satisfies `Ψ(ε) ≤ 0` for every `ε > 0`. So no one-step defect-persistence inequality can be obtained by measure-theoretic or geometric means: it must consume the Navier–Stokes evolution.
+- `RequestProject/NavierStokes/FrequencyAlmostMonotone.lean` — the Almgren/Poon route in the perturbed form that a nonlinear equation can actually deliver. From `r·H'(r) ≤ (p + r·D(r))·H(r)` with `D ≥ 0` and primitive `Φ`, we get `H(a)/a^p ≥ e^{-(Φ(b)-Φ(a))}·H(b)/b^p`. Two calibration facts follow, both proved: the loss is a *single* factor `e^{-E}` that does not compound over the `≍ (1/3)log₂ M` dyadic steps (so a uniformly bounded total defect closes the cascade with an `M`-independent constant and yields the `A_dyn` gate), while a strictly supercritical exponent still gives `(a/b)^p ≍ M^{-p/3} → 0`. A discrete multiplicative companion (`Q(n+1) ≥ (1-δₙ)Q(n)` with `∑δₙ ≤ 1/2`) is proved as well.
+
+**C-side (local De Giorgi for `q = ½|δ_h u|²`)**
+
+- `RequestProject/NavierStokes/IncrementLevelSetEnergy.lean` — the integrated level-set energy inequality over the periodic cell: both structural terms vanish exactly (Laplacian as a divergence of a periodic field; transport as `div(β(q)·u(·+h))` by incompressibility of the shifted velocity), leaving `d/dt ∫β(q) ≤ ∫β'(q)·(source)` simultaneously for all smooth convex `β`, plus its potential form with coefficient `6K`.
+- `RequestProject/NavierStokes/IncrementLocalizedLevelSet.lean` — the localized (cutoff) Caccioppoli version that the iteration actually consumes: `∂_t(Φβ(q)) + div(Φβ(q)u(·+h) − ν(Φ∇β(q) − β(q)∇Φ)) ≤ ∇Φ·(β(q)u(·+h)) + νβ(q)ΔΦ + Φβ'(q)·(source)`, with potential form. The same file proves the structural half of `C_a`: with weight `W = Φβ'(q)` the pressure source equals a divergence minus pairings of `δ_h p` with `∇Φ` and with `β''(q)∇q` only — the pressure is never paired with `q` itself, so no global pressure bound is required, only its oscillation where `∇Φ ≠ 0`.
+
+**Bookkeeping**
+
+- `RequestProject/NavierStokes/OpenGates.lean` (the machine-readable open-gate audit) now imports and cites all of the above.
+- `docs/ns-clay-contract/cascade-and-frequency.md` records the verdict table, the new kinematic no-go, the almost-monotonicity calibration, and the updated `C_localDG` status.
+
+**Status.** The literal periodic Clay target `ClayNS.ClayPeriodicTargetB` is **not** proved. The first unresolved obligations are, precisely: (A) an almost-monotonicity formula for `r ↦ Q_∇(u; x, t, r)` with total defect bounded uniformly along the singular sequence, between the energy scale `M^{-2/3}` and the velocity scale `M^{-1}` — everything around it (step count, shape criterion, frequency mechanism, scaling consistency, reduction to `A_dyn`, and the proof that no kinematic route exists) is now proved; and (C) the quantitative half of `C_a` (a Calderón–Zygmund/BMO bound on the pressure oscillation on the support of `∇Φ`) together with `C_c`, i.e. feeding the localized inequality into the already-proved `deGiorgi_fast_convergence` / `holeFilling_iteration` engines to obtain unit-scale oscillation decay.
+
+All work is committed and pushed.
+
+# Summary of changes for run 2b52e8ec-c1d4-4db2-8e2f-6ad5312ef6fd
+I carried out the two calculations you singled out — the localized Kármán–Howarth derivation and the test of the strong-minimum shortcut — and formalized both. Everything below is machine-checked Lean; the whole project builds (`lake build RequestProject`, 8052 jobs) with no `sorry`, no postulates and no added axioms (`#print axioms` on each headline result reports only `propext`, `Classical.choice`, `Quot.sound`).
+
+**C_loc: the localized Kármán–Howarth identity is now proved** (`RequestProject/NavierStokes/KarmanHowarth.lean`, `ClayNS.localized_karman_howarth`). For a smooth periodic solution and a smooth time-independent periodic cutoff Φ, exactly:
+
+∂_t S₂ + ∇_h·F₃ = −2ν∫Φ|∇_x δ_h u|² + 2∫∇Φ·F + 2ν∫qΔΦ − 2∫q(δ_h u·∇Φ),  q = ½|δ_h u|², F = q·u(·+h) + δ_h p·δ_h u.
+
+No absolute values are taken anywhere. The dissipation is manifestly nonpositive; the pressure occurs **only** paired with ∇Φ (no interior pressure term); every other error carries a derivative of Φ. Supporting results: the cutoff-weighted increment energy balance, `divH_strFlux_eq` (∇_h·F₃ = 2∫Φ δ_h u·(δ_h u·∇)u + 2∫Φ δ_h u·∇q, using incompressibility at the shifted point), and `wTransport_eq_neg_wCutoffTransport` (since δ_h u is divergence free, the interior transport term is itself a cutoff error).
+
+**The intermediate-scale criterion is now explicit** (`KarmanHowarthCutoffError.lean`): `abs_khError_le` gives |E_cutoff + E_pressure| ≤ 6·G·K_F + 2|ν|·K_q·H + 6·G·K_q·K_w with G ≥ |∇Φ|, H ≥ |ΔΦ|. So "errors vanish on 1 ≪ R_k ≪ M_k" reduces exactly to sup|∇Φ_R|, sup|ΔΦ_R| → 0 with uniformly bounded increment, increment flux and increment pressure. The limiting case Φ ≡ 1 gives the exact homogeneous Kármán–Howarth–Monin equation on the cell, ∂_tS₂ + ∇_h·F₃ = −2ν∫|∇_x δ_h u|² (`karman_howarth_torus`).
+
+**The hoped-for shortcut does not work, and I proved why.** Two obstructions, both formalized:
+- At h = 0 the balance is vacuous: ∂_tS₂(0)=0, ∇_h·F₃(0)=0, and 2νΔ_hS₂(0) = 4ν∫Φ|∇u|² is exactly cancelled by the dissipation source, so the two sides reduce to 0 = 0.
+- The sign makes S₂ a *sub*solution, ∂_tS + ∇_h·(bS) − 2νΔ_hS ≤ 0, which is the wrong side for a minimum principle. `parabolic_strong_minimum_no_go` (`StrongMinimumNoGo.lean`) exhibits, for every ν ≥ 0, the smooth nonnegative stationary witness S(h) = h₀² with zero drift: it satisfies the subsolution inequality, vanishes at h = 0, and is not identically zero. So C_DG must be a genuine oscillation-decay/Harnack argument for subsolutions, not a one-line strong maximum principle.
+
+**A_dyn:** `DynamicDefectReduction.lean` states the gate exactly (`DynamicVelocityScaleDefect`) and closes the scaling bookkeeping in both directions — the gate yields a uniform unit-scale defect for the rescaled fields, and its exact contrapositive says that if the velocity-scale gradient energy tends to zero the rescaled unit cylinders are asymptotically gradient-flat. No part of A_dyn is scaling bookkeeping any more; what remains is purely dynamical.
+
+**Status of the Clay target: not established.** Per your instruction to name the first unresolved theorem precisely, it is A_dyn: for a first singular time T < ∞ with M_k = ‖u(t_k)‖_∞ → ∞, there exist c, ε > 0 and points x_k with Q_∇(u; x_k, t_k, c/M_k) ≥ ε — i.e. the singular dynamics push the CKN defect down to the velocity scale r ≍ M_k⁻¹. The second is the remaining half of C_loc: a cutoff and field family on the expanding tori for which the proved error bound actually tends to zero at an intermediate scale, together with a nonnegative localized structure defect that still sees the unit-scale oscillation. A full write-up is in `docs/ns-clay-contract/localized-karman-howarth.md`.
+
+All work is committed and pushed.
+
+# Summary of changes for run 8ea75d2d-e7ad-457b-9e6b-516aa5dcfe8e
+## What I did
+
+I picked up the A/C frontier and executed the specific next step you identified: taking the **increment carrier** all the way through the localized `L²` calculation, including pressure cancellation, and then determining exactly what the surviving stretching term costs. Everything below is new Lean 4 + Mathlib material that builds under `lake build RequestProject`, contains no `sorry`, no `axiom`, no `postulate`, and was checked with `#print axioms` to use only `propext`, `Classical.choice`, `Quot.sound`. All work is committed and pushed, and the Properties table is updated.
+
+### First: I verified the existing tranche rather than assuming it
+`BlowupOscillation.lean`, `ScaleInvariantGradientEnergy.lean`, `AncientOscillationContraction.lean`, `LocalizedPoincare.lean` and `Increments.lean` are present in this project and build clean. In particular `oscOn_ge_of_uniform_limit` (B), `eq_zero_of_geometric_contraction` and `ancient_constant_of_oscillation_contraction` (D), `contraction_of_unit_step` (the reduction of C to one unit-scale estimate) and `clay_blowup_route_contradiction` all compile sorry-free with only the three standard axioms. Nothing in the project has a `sorry`.
+
+### New: `RequestProject/NavierStokes/IncrementLocalEnergy.lean` (pointwise)
+- **Advective cancellation** (`incr_transport_divergence`) and **pressure cancellation** (`incr_pressure_divergence`, from `divg_incrVec`: the increment is divergence free): both terms are pure divergences, so the pressure produces *no* interior term.
+- **The exact local energy identity** (`increment_local_energy_identity`): `∂_t q + div(q·u(·+h) + δ_h p·δ_h u) = ν(Δq − |∇δ_h u|²) − δ_h u·(δ_h u·∇)u`, `q = ½|δ_h u|²`. So the only interior obstruction is the stretching term — the answer to the question you posed is affirmative.
+- **Localized by a cutoff** (`increment_localized_energy_identity`), with every `Φ`-derivative displayed, and its quantitative form `increment_localized_dissipation_le`.
+- **Structure of the obstruction**: `incrStretch_eq_strain` — only the *strain* (symmetric part of `∇u`) appears, the vorticity part cancels identically; `incrStretch_abs_le` — `|stretching| ≤ 3K|δ_h u|²` for an entrywise gradient bound `K`.
+- **Derivative transfer** (`incrStretch_divergence_transfer`): for divergence-free `u`, `δ_h u·(δ_h u·∇)u = div((u·δ_h u)δ_h u) − ∑ u_a δ_h u_j ∂_j δ_h u_a`. Up to one more flux the derivative sits on the increment, so **no bound on `∇u` is needed at all**. With Young (`incrTransfer_abs_le`) this gives the amplitude form `∂_t q + div(F + (u·δ_h u)δ_h u) ≤ νΔq − (ν/2)|∇δ_h u|² + (|u|²/ν)q` (`increment_local_energy_amplitude_le`).
+
+### New: `RequestProject/NavierStokes/IncrementEnergyPeriodic.lean` (integrated on the cell)
+- `cellInt_divg_eq_zero`, `cellInt_lap_eq_zero`, then the **increment energy balance** `d/dt ∫½|δ_h u|² = −ν∫|∇δ_h u|² − ∫δ_h u·(δ_h u·∇)u` (`hasDerivAt_incrEnergy`).
+- `incrStretchInt_eq_neg_transferInt`: after integration the stretching term is exactly the transferred term, so it never requires `∇u`.
+- `deriv_incrEnergy_le_of_amplitude` and `incrEnergy_le_exp`: with `|u| ≤ A`, `d/dt ∫½|δ_h u|² ≤ −(ν/2)∫|∇δ_h u|² + (A²/ν)∫½|δ_h u|²`, hence `∫½|δ_h u(t)|² ≤ e^{(A²/ν)(t−s)}∫½|δ_h u(s)|²` — the `L²` modulus of continuity of a smooth periodic solution grows at most at the rate `A²/ν`, with no gradient hypothesis.
+
+### Where this leaves the frontier (recorded in `docs/ns-clay-contract/increment-local-energy.md`)
+The mechanism question is settled: the increment carrier does remove pressure and transport from the interior and converts the cubic obstruction into an amplitude-controlled one, strictly better than absolute-value flux estimates. The surviving competition at scale `R` is the damping `ν/R²` against the coefficient `A²/ν`, i.e. `1` against `(AR/ν)²`: a one-step gain follows exactly when the local Reynolds number is small, and nothing downstream of these identities removes that condition. So this pass does **not** close either frontier item — A (the dynamical velocity-scale defect) and C (the unit-scale oscillation improvement for the normalized ancient class) remain open, and for a normalized bounded ancient limit the ratio above is `O(1)` at unit scale. The literal Clay periodic target `ClayNS.ClayPeriodicTargetB` is not proved and nothing was weakened, axiomatized, or replaced by a conditional bridge.
+
+
+# Summary of changes for run e90026dc-014a-4665-a634-12443c8d5888
+I worked the revised blow-up route (defect R1 + oscillation rigidity R2) in Lean 4 + Mathlib. Everything added builds under `lake build RequestProject`, contains no `sorry`, no `axiom`/`postulate`, and every theorem was checked with `#print axioms` to use only `propext`, `Classical.choice`, `Quot.sound`. All work is committed and pushed; the Properties table is up to date.
+
+New files (all in `RequestProject/NavierStokes/`):
+
+**`BlowupOscillation.lean` — the defect and the KNSŠ scale bookkeeping (§1–§4, target B)**
+- `oscOn` (oscillation = diameter of the image) with its Galilean invariance `oscOn_add_const` and vanishing on constants.
+- `oscOn_blowupSpace`: the exact identity `osc_{B_R} u_M = M⁻¹ · osc_{B_{R/M}(x₀)} u`, and `oscOn_blowupSpace_ge_iff`: the unit-scale defect is **equivalent** to the physical inequality `osc_{B_{R/M}(x₀)} u ≥ c·M`. So R1-osc is reduced, with no loss, to an original-scale statement.
+- `flatMax_iff` and `tendsto_blowup_sub_center_of_flat`: the "asymptotically flat velocity maximum" scenario is exactly the vanishing of the rescaled oscillation, and on a flat maximum the rescaled fields converge to their own centre value uniformly on balls.
+- `one_le_norm_fderiv_blowupSpace_iff`: the derivative scaling audit (`‖∇u_M‖ = M⁻²‖∇u‖`, so a derivative normalization costs `M²` while an oscillation one costs `M`), plus `oscOn_ge_of_fderiv_lower` and `oscOn_blowup_ge_of_gradient_defect`: from `‖∇u(x₀)e‖ ≥ c₁M²` and a Lipschitz (Hessian-type) bound `C M³` on `B_{ρ/M}(x₀)` one gets the **scale-independent** defect `osc_{B_ρ} u_M ≥ c₁²/(4C)`. This closes the caveat of §4.
+- `oscOn_ge_of_uniform_limit` (**target B**): the oscillation is 2-Lipschitz for the uniform distance, so a defect survives uniform limits.
+- `blowupSpace_periodic`: the rescaled fields are `Mℤ³`-periodic (the expanding-lattice/decompactification statement of §8).
+
+**`ScaleInvariantGradientEnergy.lean` — `Q_∇` (§5–§6)**
+- `integral_ball_comp_blowup` (spatial change of variables, Jacobian `M⁻³`), `QgradCyl_blowupDensity`: exact scale invariance `Q_∇(rescaled;0,0,1) = Q_∇(original;x₀,t₀,M⁻¹)`, `gradDensity_blowupSpace` (the density of the rescaled velocity is the rescaled density), `QgradCyl_of_density_zero`, and `unit_scale_defect_of_velocity_scale_defect`.
+
+**`AncientOscillationContraction.lean` — rigidity (§17–§18, targets C, D)**
+- `eq_zero_of_geometric_contraction` (**target D**) and `ancient_constant_of_oscillation_contraction`: a bounded field on `ℝ³×(−∞,0]` with `osc_{Q_{θR}} U ≤ (1−σ) osc_{Q_R} U` is constant there.
+- `oscCyl_parRescale` and `contraction_of_unit_step`: for a class closed under the parabolic rescaling, the contraction at all scales follows from a **single** unit-scale improvement — item C is one estimate, not a family.
+- `clay_blowup_route_contradiction`: the §18 graph assembled — physical velocity-scale defect (A) + uniform convergence to the ancient limit (B) + oscillation contraction (C) ⇒ ⊥, with A and C as explicit hypotheses.
+- `false_of_unit_normalized_constant_with_vanishing_ball_average` (§8: a vanishing large-scale mean upgrades "constant" to "zero" and contradicts `|U(0,0)|=1`) and `poincare_rate_mul_backward_lifetime` (§10, formalized: `λ·A = 4π²t/L²` is independent of `M` — no free damping from ancientness at this scaling).
+
+**`LocalizedPoincare.lean` (§12–§13)** — `scaledCube_poincare`: `∫_{Q_L}(g−⟨g⟩)² ≤ 3L² ∑_i ∫_{Q_L}(∂_i g)²`, derived from the unit-cell inequality by the change of variables `x = x₀+Ly` (`integral_scaledCube`, `parD_comp_scale`). This is the coercivity half of the localized `D_R' + (c/R²)D_R ≤ error_R` argument.
+
+**`Increments.lean` (§15)** — `increment_transport`: the exact increment equation `∂_t δ_h u + (u(·+h)·∇)δ_h u = −(δ_h u·∇)u − ∇δ_h p + νΔδ_h u`, derived from the momentum equation via `shift_momentum`/`shift_incompressible`; `spatially_constant_iff_shift_eq`.
+
+**Status — the Clay target is not proved, and nothing is claimed beyond what compiles.** After these reductions the route has exactly two unresolved theorems, recorded in `docs/ns-clay-contract/revised-blowup-route.md`:
+1. **A (`SingularScaleVelocityScaleMatching`)** — that a first singular time forces a constant-excluding defect *at the velocity scale* `r ≍ 1/‖u(t)‖_∞`, in either the oscillation form `osc_{B_{R/M_k}(x_k)} u(t_k) ≥ cM_k` or the form `Q_∇(u;x_k,t_k,c/M_k) ≥ ε₀`. All scaling bookkeeping and reductions are proved; the analytic input is not.
+2. **C** — the scale-independent oscillation contraction for the ancient blow-up class, equivalently the single unit-scale improvement; the localized Poincaré inequality is now available, what is missing is the flux/pressure control of §13–§14.
+B and D are proved. The §9 question (whether the vanishing box mean is inherited by the local limit) also remains open, and the note records why. The only unconditional rigidity theorem in the development is still the periodic (torus) Liouville theorem from the earlier pass.
+
+# Summary of changes for run f5770529-8334-4b8a-8128-e30d1dba7034
+## What I did this session
+
+I continued the Navier–Stokes lane along the ancient-solution / Liouville route you specified, and completed the piece of it that is genuinely provable from the constructive material in this development: **the Liouville rigidity theorem in the periodic (torus) setting**, in full, with no `sorry`, no postulates, and no axioms beyond Lean/Mathlib's standard three (`propext`, `Classical.choice`, `Quot.sound`).
+
+### New, fully proved results
+
+In `RequestProject/NavierStokes/AncientLiouville.lean` (new file, builds clean):
+
+- `ClayNS.meanComp_eq` — the cell mean of each velocity component of a smooth periodic zero-force solution is **independent of time** (pressure gradient and Laplacian are exact derivatives of periodic functions; the advective term is a spatial divergence by incompressibility).
+- `ClayNS.devHalf` / `ClayNS.devEnergy` and the identity `∫_cell |V − m|² = 2E(t) − |m|²`.
+- `ClayNS.devHalf_le_enstrophy` — Poincaré coercivity `D ≤ 3·enstrophy`, from the cell Poincaré inequality.
+- `ClayNS.exp_devHalf_antitone` — `e^{(2ν/3)t}·D(t)` is nonincreasing (the Lyapunov functional).
+- `ClayNS.devHalf_exp_decay` — forward-in-time by-product: `D(t) ≤ e^{−(2ν/3)(t−s)} D(s)`, explicit exponential relaxation to the mean flow.
+- `ClayNS.ancient_periodic_liouville` — **a smooth ℤ³-periodic Navier–Stokes solution with ν > 0 defined for all times and with bounded cell energy is a constant vector field.**
+- `ClayNS.ancient_periodic_liouville_of_norm_le` — the same conclusion from the literature's sup-norm hypothesis `‖V‖_∞ ≤ K`.
+
+The supporting Poincaré inequality `ClayNS.cellInt_poincare` in `RequestProject/NavierStokes/Poincare.lean` (proved from scratch: coordinate-averaging telescope + 1D Cauchy–Schwarz + FTC) was verified and is also `sorry`-free; I also cleared its remaining linter warnings, so the whole project now builds with no errors and no warnings.
+
+### Honest status of R1 and R2
+
+I wrote `docs/ns-clay-contract/liouville-route.md` recording precisely what is and is not closed. In short:
+
+- **R2 (whole-space bounded-ancient Liouville) is not closed.** The theorem proved here is the torus case. The single ingredient that makes it work — the Poincaré inequality, i.e. the spectral gap of the Laplacian on a compact cell — is exactly what fails on ℝ³, where the infimum of the spectrum is 0 and no such inequality holds. Since the KNSŠ extraction rescales parabolically about the singular point (the period of the rescaled solution tends to ∞), the limits it produces live on ℝ³, so the torus theorem does not apply to them.
+- **R1 (extraction of a *nonconstant* bounded ancient limit) is not closed either**, in the strengthened form the route needs; upgrading "nonzero" to "nonconstant" via a derivative or oscillation normalization is not carried out here.
+
+So the first unresolved theorem on this route is R1 in its strengthened form, and the first unambiguously frontier obligation is R2. No part of the Clay target is claimed to be closed by this work, and nothing was weakened, axiomatized, or replaced by a conditional bridge.
+
+The note also records the literature you flagged (KNSŠ 2009; Seregin 2012; Lei arXiv:1701.00868; arXiv:1911.01571), including the observation that the ℝ²×𝕋¹ result relies on axisymmetry and a swirl bound, neither of which is available in the unrestricted 𝕋³ setting, and its compact direction is one rather than three.
+
+All work is committed and pushed; the Properties table has been updated with the new definitions and theorems and their verified statuses.
+
+# Summary of changes for run fad0f0e4-1dbd-4549-ae83-e11ca3fb1aeb
+## What I did this session
+
+I continued the Navier–Stokes lane, working entirely in Lean 4 + Mathlib against the analytic (real-number, Fréchet-derivative) statement of the periodic Clay problem already in `RequestProject/NavierStokes/ClayPeriodic.lean`. Everything added builds under `lake build RequestProject`, contains no `sorry`, no `axiom`, no `postulate`, and every theorem was checked with `#print axioms` to depend only on `propext`, `Classical.choice`, `Quot.sound`.
+
+### New results
+
+**Uniqueness** (`RequestProject/NavierStokes/Uniqueness.lean`)
+- `difference_transport` — the difference `w = u − v` of two solutions satisfies `∂_t w_a + (u·∇)w_a = −(w·∇)v_a − ∂_a(p−q) + νΔw_a`.
+- `difference_energy_zero` — energy method + Grönwall: if the data agree and `∇v` is bounded, the cell energy of `w` vanishes for all `t ≥ 0` (this completes the three gaps that were open in this proof at the start of the session).
+- `velocity_eq_of_same_datum` — hence the two velocity fields agree at every point of space.
+
+**Cell-vanishing bridge** (`RequestProject/NavierStokes/CellVanishing.lean`)
+- `eq_zero_of_cellInt_eq_zero` — a continuous, nonnegative, periodic field with vanishing cell integral vanishes identically (vanishing on the closed cell, plus invariance under the full lattice `ℤ³`). This is what upgrades energy-norm statements to pointwise ones.
+
+**Continuation** (`RequestProject/NavierStokes/Continuation.lean`)
+- `enstrophy_gronwall_integral` — the time-integrated BKM/Serrin-type bound `enstrophy(t) ≤ enstrophy(0)·exp(6∫₀ᵗ M)` for a continuous time-dependent gradient bound `M(s)`; `enstrophy_production_le` was generalised to a time-local hypothesis to support it.
+
+**Enstrophy = dissipation** (`RequestProject/NavierStokes/EnstrophyDissipation.lean`)
+- `cellInt_gradSq_eq_two_enstrophy` — `∫_cell |∇u|² = 2∫_cell ½|ω|²` for smooth periodic divergence-free fields, via the pointwise identity `|ω|² = ∑(∂_p u_q)² − ∑(∂_p u_q)(∂_q u_p)` and `cellInt_cross_gradient_eq_zero` (the cross term is `div((u·∇)u)` and integrates away).
+- `energy_balance_enstrophy` (`d/dt E = −2ν·enstrophy`) and `energy_enstrophy_integral` (`E(t) + 2ν∫₀ᵗ enstrophy = E(0)`).
+
+**An exact non-constant witness** (`RequestProject/NavierStokes/ExactSolution.lean`)
+- `isNSSolution_shearWave` — `u(t,x) = e^{−4π²νt} sin(2πx₃) e₁`, `p = 0` is an exact global smooth `ℤ³`-periodic solution for every viscosity, with `admissibleDatum_shearWave` for its datum and `shearWave_ne_const` recording non-constancy. This strengthens the previous non-vacuity check, which only exhibited constant fields.
+
+### Documentation
+
+`docs/ns-clay-contract/closure-audit.md` now has a §7 listing all the constructive material added across this and the preceding pass, with an explicit "what this does not close" subsection.
+
+### Status of the Clay target — not proved
+
+The literal periodic Clay target (`ClayNS.ClayPeriodicTargetB`) is **not** proved, and no machine-checkable proof of it is returned. The verdict of §3 of the audit is unchanged: the first unresolved theorem is still the inhabitation of the global-existence field (`infiniteMaximalTime`) of the physical-solution reduction. In particular, none of the work above supplies global existence, the cutoff-uniform nine-owner absorption bound with `delta_NS > 0`, a non-circular high-high estimate, `theta` preservation, or the shell/Galerkin and Archimedean limits. The continuation estimates I added are explicitly **conditional** on a velocity-gradient bound, which is exactly the quantity that would have to be produced. What the session did was replace further placeholders by genuine derivations and move the development from pointwise identities to the global (integrated) balances at which the ladder's estimates are actually stated.

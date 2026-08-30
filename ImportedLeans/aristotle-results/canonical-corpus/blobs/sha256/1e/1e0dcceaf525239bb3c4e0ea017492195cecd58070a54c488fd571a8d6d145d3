@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(CDPATH= cd -- "$script_dir/.." && pwd)"
+output_dir="$repo_root/logs"
+output_file="$output_dir/stale_consumer_audit.tsv"
+tmp_file="$(mktemp "${TMPDIR:-/tmp}/stale_consumer_audit.XXXXXX")"
+trap 'rm -f "$tmp_file"' EXIT
+
+facts=(
+  enstrophyPassageClosed
+  vorticityControlClosed
+  lInfinityVorticityControlClosed
+  globalRegularityClosed
+  uniformBKMVorticityControlClosed
+  globalSmoothRegularityProved
+  localKPSumBelowOneProved
+  strictAbsorptionControlPromoted
+  uniformVolumeKPProved
+  balabanRGTransferProved
+  actualPolymerActivitySupplied
+  balabanH3aContinuumIntakeClosed
+  h3bVacuumProjectorContinuity
+  noSpectralPollution
+  osThermoLimit
+  wightmanReconstruction
+  operatorConvergenceRateExplicit
+  uniformMassGapConstructed
+  continuumYangMillsConstructed
+  continuumUniquenessConstructed
+  ymL3TightnessConstructed
+  fullTightnessConstructed
+  brstGaugeFixedOS3Closed
+  ghostGradedSignClosed
+  continuumGribovResolved
+  gate3DensityOfCarrierCoreProved
+  gate3MoscoRecoveryProved
+  gate3NoSpectralPollutionProved
+  gate3MassShellBridgeProved
+  gate3UniformSeparationProved
+)
+
+mkdir -p "$output_dir"
+printf 'field\tfile\tline\tmatched_text\n' > "$output_file"
+
+for fact in "${facts[@]}"; do
+  while IFS= read -r raw; do
+    file="${raw%%:*}"
+    rest="${raw#*:}"
+    line="${rest%%:*}"
+    text="${rest#*:}"
+    file="${file#./}"
+    text="${text//$'\t'/ }"
+    printf '%s\t%s\t%s\t%s\n' "$fact" "$file" "$line" "$text" >> "$tmp_file"
+  done < <(
+    cd "$repo_root" &&
+      rg -n -F -H --no-heading --color=never --glob '*.agda' -- "$fact" . || true
+  )
+done
+
+if [[ -s "$tmp_file" ]]; then
+  LC_ALL=C sort -t$'\t' -k1,1 -k2,2 -k3,3n -k4,4 "$tmp_file" >> "$output_file"
+fi
+
+match_count=0
+if [[ -s "$tmp_file" ]]; then
+  match_count="$(wc -l < "$tmp_file")"
+fi
+
+agda_count="$(cd "$repo_root" && rg --files -g '*.agda' | wc -l | tr -d '[:space:]')"
+printf 'Audited %d facts across %s Agda files; wrote %s matches to %s\n' \
+  "${#facts[@]}" "$agda_count" "$match_count" "${output_file#"$repo_root"/}"

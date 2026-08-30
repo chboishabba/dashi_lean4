@@ -1,0 +1,291 @@
+import Integration.Levels
+import Integration.TernaryHub
+import Integration.Base369Group
+import Integration.Address
+import Integration.ClopenBalls
+import Integration.ReceiptSocket
+import Integration.Refinement
+import Integration.MonsterFifteen
+import Integration.CognitionSupervoxel
+import Integration.UltrametricCensus
+import Integration.PhaseQuotient
+import Integration.SSPWeave
+import Integration.ObserverQuotient
+import Integration.PolarResidual
+import Integration.ResidualQuotient
+import Integration.SymmetryReduction
+import Integration.StructuredObserver
+import Integration.ObserverTower
+import Integration.ObserverDescent
+import Integration.GaugeReduction
+import Integration.EquivariantChannel
+import Integration.GaugeObserver
+import Integration.GaugeSU2
+import Integration.GaugeSSP
+import Integration.DescentLevel
+import Integration.EnumInvariance
+import Integration.GaugePreimage
+import Integration.LeastSufficient
+import Integration.OrbitResidual
+import Integration.CertificatePays
+import Integration.CertificateFormula
+import Integration.SSPThreshold
+import Integration.ApproximateIntertwiner
+import Integration.StructureMorphism
+import Integration.PhaseGaugeU1
+import Integration.CertifiedMargin
+import Integration.MultiscaleDescent
+import Integration.CommutatorObservability
+import Integration.PathTransport
+import Integration.ResidualTaxonomy
+import Integration.SewingTaxonomy
+import Integration.SewingRegistry
+import Integration.EpistemicTrit
+import Integration.DNAMarginTrit
+import Integration.EducationGates
+import Integration.ObserverPlurality
+import Integration.GovernanceAgency
+import Integration.ChemistryKernelSocket
+import Integration.ChemistryReachability
+import Integration.TernaryHubClosure
+import Integration.EquivarianceObstruction
+import Integration.LocalRealisation
+import Integration.FieldControlledDynamics
+import Integration.ObserverBundle
+import Integration.ContrastBoundary
+import Integration.ConsumerGauge
+import Integration.PhysicsInstances
+import Integration.Registry
+import Integration.RiemannReflection
+import Integration.RiemannStrip
+import Integration.RiemannSubstrate
+import Integration.RiemannXiSymmetry
+import Integration.RiemannDomain
+import Integration.AxiomAudit
+
+/-!
+# The DASHI integration / TOE spine
+
+A single small spine that carries the corpus-wide cross-domain pass, rather than
+a collection of per-domain reports.  Reading order:
+
+1. `Integration.Levels` — the four-level classification (vocabulary, stored
+   record dependency, shared implementation type, proved transport) as a Lean
+   datatype, together with `Transport`, `NoTransport`, `Boundary` and `Socket`.
+   Evidence constructors determine the level, so no row can be filed above the
+   level it has a witness for.
+2. `Integration.TernaryHub` — the corpus's six ternary carriers (`Trit`, the
+   `Base369` tone, `Digit369`, the SSP trit carrier, the codec `TritCode`, the
+   loom's `BTBranch`) are one object with one balanced coordinate, forced up to
+   sign; every supplied polarity map becomes negation.
+3. `Integration.Base369Group` — the 3/6/9 layer as finite cyclic groups: the
+   loom's `projection2x3` realised as `ℤ/6 ≅ ℤ/2 × ℤ/3`, and the proof that the
+   nonary layer is *not* two ternary layers.
+4. `Integration.Address` — the prefix ultrametric on digit addresses, developed
+   once for an arbitrary alphabet, with the codec-to-369 isometry.
+5. `Integration.ClopenBalls` — supervoxel/clopen refinement: prefix balls are
+   open and closed, refinement is exactly containment, no ball is atomic, and
+   the corpus's clopen-authority record is a contentless socket.
+6. `Integration.ReceiptSocket` — the archetypal receipt record and the exact
+   sense in which it constrains nothing, plus the strengthened record that does.
+7. `Integration.Refinement` — the corpus's never-instantiated refinement-system
+   record, inhabited twice (dialectic loom, ternary addresses).
+8. `Integration.MonsterFifteen` — the 15-prime mask ultrametric *is* the
+   depth-15 prefix geometry, and the hyperfabric support map is a non-expansive
+   but non-isometric, non-injective, non-homomorphic coarsening onto it.
+9. `Integration.CognitionSupervoxel` — a cognition domain instance at the
+   supervoxel junction: the phase-enriched trit, its constraint system, the
+   proof that the "public zero" is not atomic (a `Bool` placeholder in the
+   source), and the polarity-equivariance of the cognition observable.
+10. `Integration.UltrametricCensus` — every live instance of the corpus's
+   `Ultrametric` record is the same prefix geometry pulled back along a map,
+   with one exception (the `Monster` walk distance) that provably is not.
+11. `Integration.PhaseQuotient` — the corpus's nine-state carrier as the orbit
+   space of a free `C₃` action on the 27 ternary endomorphism codes, its chart
+   onto the `Base369` nonary labels, the *transported* exponent-three algebra
+   those labels then carry, and the proof that the address carrier does not
+   determine the algebra.  Also the two-origin dichotomy for `triXor`: additive
+   in the native index chart, affine in the polarity-compatible balanced chart.
+12. `Integration.SSPWeave` — the SSP orientation monoid, its `ℤ/2` quotient, and
+   the functorial transport `T_{q∘p} = T_q ∘ T_p` on lane states, whose carrier
+   is the ternary hub: the algebra the 15-lane layer does preserve.
+13. `Integration.ObserverQuotient` — what the Boolean observer keeps (the
+   symmetry action, uniquely descending) and what it forgets (the sign, and any
+   binary law at all), plus the signed relational defect layer on which the
+   preserved algebra lives.
+14. `Integration.PolarResidual` — the residual-bearing 9 → 6 projection as an
+   exact `9 ≃ 6 + 3` equivalence, with the impossibility of a direct retraction.
+15. `Integration.ResidualQuotient` — the "coarse state + retained residual
+   reopens the rich state" pattern as one structure, with the polar projection
+   and the magnitude observer as proved instances, and one lemma explaining why
+   the residual is never removable.
+16. `Integration.SymmetryReduction` — "symmetry reduction" as a typed
+   obligation: `EquivariantQuotient` bundles an action on each layer with the
+   commuting square `π (g · x) = ḡ · π x`.  Inhabited by the free `C₃`
+   27 → 9 phase reduction, by the polarity/magnitude observer, and by one
+   instance with nontrivial induced action; and the native-chart support
+   observer is shown to admit no such structure at all.
+17. `Integration.GaugeReduction`, `Integration.EquivariantChannel`,
+   `Integration.GaugeObserver` — "symmetry reduction" split into its two
+   genuinely different cases.  Quotienting by the *whole* group forces the
+   induced action to be trivial (`coarse_action_trivial_of_orbit`); a
+   `GaugeReduction` for a subgroup `H` of `G` with quotient `Q = G/H` instead
+   removes a redundancy and leaves `Q` acting, with `redundant_iff_gauge`
+   showing the invisible symmetries are exactly `H`.  `EqObserverBuild` supplies
+   the transverse channel in that case, where the surviving symmetry moves every
+   class, and `gauge_welded_theorem` states all the conclusions at once.
+18. `Integration.GaugeSU2`, `Integration.GaugeSSP` — the two instances: the
+   finite axis-lift lane with the deck `C₂` quotiented and the axis rotation
+   `C₃` surviving, and the SSP nine-cell lane with the depth wheel `C₃`
+   quotiented and the polarity flip `C₂` surviving.  Each carries the positive
+   transverse certificate.  No claim that these finite carriers are Lie groups,
+   and no analytic content, is made.
+19. `Integration.DescentLevel` — towers of observers and the *coarsest*
+   observation at which an invariant is still a function of the observed state,
+   proved unique and computed on the axis lane (`axis_coarsest_sufficient`).
+20. `Integration.EnumInvariance` — the certificate is presentation free: any two
+   enumerations of the carrier give the same number, because the mean is
+   permutation invariant and the transverse coordinates are merely permuted.
+   `det_gram_reindex` is the family-level counterpart.
+21. `Integration.CertificateFormula` — the certificate in closed form: it equals
+   `(n+3)(m − m²/n) − (1 − m/n)²` for a carrier of size `n` and a class of size
+   `m`, so it distinguishes exactly those states whose classes differ in size.
+22. `Integration.SSPThreshold` — the SSP lane's observational threshold: the
+   gauge weld's own channel gives a constant certificate and no threshold, the
+   zero-detecting channel gives the two values `212/9`, `215/9` and the
+   threshold `k = 1`.
+23. `Integration.GaugePreimage` — composite gauge redundancy promoted to
+   subgroup data: the preimage subgroup `quot⁻¹(K)`, its normality, and the
+   composition law `(G/H)/K ≅ G/quot⁻¹(K)` in the form
+   `compGaugeQuotient_exact`, with `compGaugeExact_redundant_iff` identifying
+   the invisible symmetries with exactly that subgroup.
+24. `Integration.LeastSufficient` — sufficiency and refinement: the invariant is
+   the least informative sufficient observer, the tower notion is that notion
+   level by level, and a bounded-horizon variant separates "last sufficient
+   layer before loss" from "coarsest sufficient observation available".
+25. `Integration.OrbitResidual` — how much a symmetry quotient must hide: the
+   residual is injective on fibres, hence has at least `[G : Stab x]` states.
+26. `Integration.CertificatePays` — when a positive certificate controls
+   something: a certificate budget is a defect budget, with the honest negative
+   counterpart that a bounded weighted aggregate does not bound a local defect.
+27. `Integration.ApproximateIntertwiner` — exact, certified-approximate and
+   unverified squares kept apart, with additive error under composition and
+   iteration.
+28. `Integration.StructureMorphism` — the single owner of the commuting square.
+   `Exact` (definitionally the intertwiner), the exact/approximate/unverified
+   tiering, the transport an exact square buys (trajectories, fixed points,
+   finite reachability, with the honest forward-only gate), the `Sound`
+   quotient-transport tier with `sound_iff_factors`, the group-indexed `Gauge`
+   tier, and `structure_morphism_unification` exhibiting the
+   representation-compatibility, intertwiner, quotient-soundness and
+   gauge-reduction lanes as instances of one predicate.
+29. `Integration.PhaseGaugeU1` — the first non-finite gauge instance: a global
+   `U(1)` phase on a complex inner product space.  The norm and the whole
+   Hermitian form are invariant (so any Gram-built certificate is), the state
+   and any linear channel are equivariant, the raw phase coordinate is
+   sensitive; the modulus is a *complete* invariant of the orbit; modulus plus
+   retained phase reopens the state and the residual is not removable; and the
+   whole thing is a `GaugeReduction` with an exact gauge datum.
+30. `Integration.CertifiedMargin` — "certificate beats defect" as one theorem:
+   the margin `G ≥ g, B ≤ b, b < g ⟹ G − B > 0`, the dimensionless relative
+   defect with its contraction gate and its architecture-level no-go, the two
+   asymptotic regimes, compensation before estimation (a reflection symmetry
+   forces the first order at the reference to vanish, so the compensated defect
+   is of strictly higher order), and the proof that a source-normalisation
+   coefficient can move one and the same structural inequality across the gate.
+31. `Integration.MultiscaleDescent` — law descent through a tower of
+   coarsenings: descent at a level *is* the exact square, descent composes and
+   carries trajectories, errors add along the tower, and the strongest negative
+   `NoEffectiveLaw` (no coarse operator whatsoever closes the square) is
+   realised on a three-level instance together with a `1/2` lower bound on the
+   defect of every candidate effective law.
+32. `Integration.CommutatorObservability` — fine noncommutativity with coarse
+   flatness: an observer can erase path order.  The generic pattern, the
+   positive control showing coarse flatness alone is cheap, an explicit
+   four-state carrier realising both halves, and the *coarsest sufficient
+   observation* for the commutator defect on that carrier, computed exactly.
+33. `Integration.PathTransport` — the shared path substrate: paths as the
+   reflexive-transitive closure of a step relation, transport along a
+   simulation, the deterministic case identified with `Reaches`, the **monotone
+   obstruction** to reverse reachability, and the AND/OR (hypergraph) proof
+   system as a specialisation whose provability transports along a simulation.
+34. `Integration.ResidualTaxonomy` — five typed classes of residual
+   (reconstructive, trajectory, contrastive, ambiguity, combinatorial), each
+   with the law that distinguishes it, plus the separations showing they are not
+   one type with five names.
+35. `Integration.EquivarianceObstruction` — an equivariant equivalence forces
+   fixed-point sets, stabilizers, orbits and the period spectrum to agree, so a
+   free action is never equivariantly equivalent to one with a fixed point.  The
+   instance uses two three-element carriers, making the point that the
+   obstruction is orbit structure and not cardinality.
+36. `Integration.LocalRealisation` — semantic reduction is not computational
+   locality: plans with identical semantics have unbounded exposure, so a
+   locality certificate is separate data and cannot be manufactured from
+   extensional agreement.
+37. `Integration.FieldControlledDynamics` — a fixed substrate with a background
+   field: same state and different field give different successors, the same
+   structural edge is effective under one field and not the other, and
+   reachability inherits the dependence.  Plus the attractor vocabulary (fixed
+   points, basins, cycles), eventual periodicity on a finite carrier, and three
+   qualitative attractor classes on one carrier.
+38. `Integration.ObserverBundle` — base, fibre, transport and measurement: the
+   measurement square as the exact square of the owner, the failure case where
+   no downstream transport closes it, and the measured pseudodistance, which is
+   zero on distinct states whenever the measurement collides.
+39. `Integration.ContrastBoundary` — increments as a discrete derivative (they
+   telescope, and the present state does not determine them), and two-boundary
+   conditioning, where the admissible intermediate set depends on both
+   boundaries and is a function of neither alone.
+40. `Integration.ConsumerGauge` — the three classes of readout of a symmetric
+   state (invariant, equivariant, gauge-sensitive), with the orbit-quotient
+   universal property, and the three classes realised simultaneously on the
+   nine-cell SSP lane.
+41. `Integration.Registry` — the checked global registry: positive rows with
+   their evidence, negative rows with their refutations, sockets with their
+   underdetermination proofs.
+42. `Integration.RiemannReflection`, `Integration.RiemannStrip`,
+   `Integration.RiemannSubstrate`, `Integration.RiemannXiSymmetry` — the RH/zeta
+   *analytic* lane brought into the
+   same vocabulary: the lane's reflection and three-phase carriers as hub
+   transports, the critical line as the fixed locus of the lane's involution
+   with the displacement as the kernel's transverse coordinate, and the analytic
+   substrate tower classified as a socket (both truth values of its own
+   `RiemannHypothesisFor` occur among its inhabitants).  `RiemannXiSymmetry`
+   adds the rational critical-plane `QCoord` with its three involutions, the
+   injective evaluation `qToC` into `ℂ` that intertwines all three, and the
+   xi-zero-symmetry and Hilbert–Pólya interfaces, both shown to be sockets.
+43. `Integration.RiemannDomain` — the analytic domain's rows, boundaries and
+   sockets, plus the checked summary bundle.  No statement about the Riemann
+   zeta function, its zeros or the Riemann hypothesis is made anywhere.
+44. `Integration.SewingTaxonomy`, `Integration.SewingRegistry` — the sewing
+   round's seven-class relation taxonomy (`exactInstance`,
+   `approximateInstance`, `finiteShadow`, `structuralAnalogue`,
+   `candidateBridge`, `negativeResult`, `openSocket`), each constructor carrying
+   the Lean witness it demands, together with provenance (module path, PR/ref,
+   ancestry, source-vs-mirror, per-language validation, claim boundary) and the
+   eighteen-row registry with its meta-theorems — including that no row claims
+   an Agda typecheck and no row is sourced from a PR head.
+45. `Integration.EpistemicTrit`, `Integration.DNAMarginTrit` — two further
+   carriers joining the ternary hub (the ontology lane's epistemic trit and the
+   biology lane's DNA-chemistry margin), each with the negatives that come with
+   them.
+46. `Integration.EducationGates`, `Integration.ObserverPlurality`,
+   `Integration.GovernanceAgency`, `Integration.ChemistryKernelSocket` — the
+   education, Alice Brown multi-observer, governance and chemistry surfaces:
+   conjunctive gates, observer incomparability against
+   `Integration.LeastSufficient`, fail-closed authority records, and the
+   underdetermination witnesses for their `Bool` sockets.
+47. `Integration.AxiomAudit` — `#print axioms` for every headline result.
+
+Provenance: `Lean/AgdaMirror/*` are hand-transcribed Lean mirrors of named Agda
+modules; the Agda sources are read-only here (no Agda toolchain is available in
+this environment, so no Agda file is claimed to have been rechecked).  Every
+statement in this spine is a Lean statement about Lean definitions.
+
+Scope: no Yang–Mills or Navier–Stokes material is imported or referenced.  No
+physical, empirical, Monster-group, moonshine, vertex-algebra, unitarity or
+Riemann-hypothesis claim is made.  Outside the analytic lane (items 18–19) every
+carrier is finite and every distance is a natural number; inside it the carriers
+are `ℝ` and `ℂ` as sets with involutions, and no analytic hypothesis is
+discharged.
+-/

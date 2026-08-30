@@ -1,0 +1,76 @@
+{
+  "method": "hecke_resonance",
+  "primes": [
+    2,
+    3,
+    5,
+    7,
+    11,
+    13,
+    17,
+    19,
+    23,
+    29,
+    31,
+    41,
+    47,
+    59,
+    71
+  ],
+  "shards": {
+    "2": {
+      "ast": 1,
+      "bytecode": 10,
+      "output": 21,
+      "total": 32
+    },
+    "3": {
+      "ast": 1,
+      "bytecode": 3,
+      "output": 7,
+      "total": 11
+    },
+    "5": {
+      "ast": 0,
+      "bytecode": 4,
+      "output": 7,
+      "total": 11
+    },
+    "7": {
+      "ast": 0,
+      "bytecode": 0,
+      "output": 1,
+      "total": 1
+    },
+    "11": {
+      "ast": 1,
+      "bytecode": 0,
+      "output": 0,
+      "total": 1
+    },
+    "13": {
+      "ast": 0,
+      "bytecode": 1,
+      "output": 0,
+      "total": 1
+    },
+    "17": {
+      "ast": 0,
+      "bytecode": 0,
+      "output": 1,
+      "total": 1
+    },
+    "47": {
+      "ast": 0,
+      "bytecode": 0,
+      "output": 1,
+      "total": 1
+    },
+    "71": {
+      "ast": 4,
+      "bytecode": 3,
+      "output": 20,
+      "total": 27
+    }
+  }
+}

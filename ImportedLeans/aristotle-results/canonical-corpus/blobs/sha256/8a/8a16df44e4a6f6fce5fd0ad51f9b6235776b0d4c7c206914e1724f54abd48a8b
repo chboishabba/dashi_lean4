@@ -1,0 +1,175 @@
+module DASHI.Physics.YangMills.YMRowBToRowCQuadraticDebtCompositionExact where
+
+------------------------------------------------------------------------
+-- B --> C:  ONE ROW-B INHABITANT PAYS ROW C'S TEMPORAL DEBT.
+--
+-- Two facts are now separately machine-checked in this tree:
+--
+--   * `BalabanYM4MarkedTransverseDecayFromOneStepRGExact.Weld` derives, from
+--     the repository's own one-step RG owner, the geometric decay of the
+--     transverse (irrelevant) marked coordinate along one trajectory:
+--
+--         transverseNorm j  <=  A r^j .
+--
+--   * `YMRowCScaleTimeHessianDebtIntegralGateExact` shows that a per-scale
+--     Hessian debt `eta_j` integrates to a cutoff-uniform Heat/Doob debt iff it
+--     beats the parabolic time dilation `w_j = w_0 tau^j`, `tau = L^2`; the
+--     gate for a rate `rho` is `rho tau < 1`.
+--
+-- This module composes them across the single physical hypothesis that links
+-- the two rows:
+--
+--         eta_j  <=  K * (transverseNorm j)^2 ,                        (Q)
+--
+-- i.e. the negative part of the Hessian at scale j is controlled QUADRATICALLY
+-- by the transverse/irrelevant amplitude at that scale.  (Q) is not new
+-- algebra: it is the shape the repository's existing coercivity owners already
+-- produce, where a positive reference block absorbs a mixing penalty and only
+-- the residual `mixing^2 / coercivity` can be negative -- see
+-- `BalabanRelativeHessianCoercivity` and `BalabanClayT3UniformFluctuationSchurExact`,
+-- which own that mechanism.  Nothing of it is re-formalized here; (Q) enters as
+-- one named hypothesis with the constant `K` the physical estimate must supply.
+--
+-- The payoff is the quadratic gain in the gate.  Feeding a row-B rate `r`
+-- through (Q) gives a row-C rate `r^2`, so the admissible window is
+--
+--         r^2 tau < 1        instead of        r tau < 1 ,
+--
+-- i.e. for block size L the requirement on the row-B contraction rate relaxes
+-- from `r < L^{-2}` to `r < L^{-1}`.
+--
+-- `rowBDecayGivesRowCDebtBudget` is the composition as a standalone theorem;
+-- `Compose.rowCDebtBudgetFromOneStepRG` is the same statement applied to the
+-- literal row-B weld, so that the object whose debt is bounded is the SAME
+-- trajectory coordinate the RG owner produces -- the hypothesis consumed there
+-- is `Weld.transverseGeometricDecay` itself, not a restatement of it.
+--
+-- WHAT THIS IS NOT.  Rows B and C both remain open, and the frozen research
+-- count stays at 4.  The open obligations are unchanged and are now exactly
+-- four named constants plus two identifications: `rho, S, sigma, A` for the
+-- literal CMP116/CMP119 marked family (row B), the constant `K` in (Q) on the
+-- literal effective density, and the same-density identification of the
+-- discrete-RG Hessian floor with the Heat/Doob potential's (row C).
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat as Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Rational.Base as ℚ using (ℚ; 0ℚ; 1ℚ; _+_; _*_; _≤_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong)
+
+open import DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact
+  using (nonNegProduct; prefixSum; pow; pow-nonneg)
+open import DASHI.Physics.YangMills.YMRowCScaleTimeHessianDebtIntegralGateExact
+  using (debtIntegral; dilatedDebtBudget; mulExchange; pow-mul)
+
+import DASHI.Physics.YangMills.BalabanYM4MarkedTransverseDecayFromOneStepRGExact
+  as BW
+import DASHI.Physics.YangMills.BalabanSU2OneStepRGTheorem as RG
+
+------------------------------------------------------------------------
+-- Squaring a geometric bound
+------------------------------------------------------------------------
+
+squareMono :
+  ∀ a b → 0ℚ ≤ a → a ≤ b → a * a ≤ b * b
+squareMono a b 0≤a a≤b =
+  ℚP.≤-trans
+    (ℚP.*-monoʳ-≤-nonNeg a {{ℚ.nonNegative 0≤a}} a≤b)
+    (ℚP.*-monoˡ-≤-nonNeg b {{ℚ.nonNegative (ℚP.≤-trans 0≤a a≤b)}} a≤b)
+
+geometricSquare :
+  ∀ (e : Nat → ℚ) (A r : ℚ) →
+  0ℚ ≤ A → 0ℚ ≤ r →
+  (∀ j → 0ℚ ≤ e j) →
+  (∀ j → e j ≤ A * pow r j) →
+  ∀ j → e j * e j ≤ (A * A) * pow (r * r) j
+geometricSquare e A r 0≤A 0≤r 0≤e bound j =
+  ℚP.≤-trans
+    (squareMono (e j) (A * pow r j) (0≤e j) (bound j))
+    (ℚP.≤-reflexive
+      (trans (mulExchange A (pow r j) A (pow r j))
+             (cong ((A * A) *_) (pow-mul r r j))))
+
+------------------------------------------------------------------------
+-- THE COMPOSITION
+------------------------------------------------------------------------
+
+rowBDecayGivesRowCDebtBudget :
+  ∀ (e η : Nat → ℚ) (A r K w₀ τ B : ℚ) →
+  0ℚ ≤ A → 0ℚ ≤ r → 0ℚ ≤ K → 0ℚ ≤ w₀ → 0ℚ ≤ τ → 0ℚ ≤ B →
+  (∀ j → 0ℚ ≤ e j) →
+  (∀ j → e j ≤ A * pow r j) →                       -- row B
+  (∀ j → 0ℚ ≤ η j) →
+  (∀ j → η j ≤ K * (e j * e j)) →                   -- hypothesis (Q)
+  (r * r) * τ ≤ 1ℚ →                                -- the quadratic gate
+  (w₀ * (K * (A * A))) + ((r * r) * τ) * B ≤ B →
+  ∀ k n → debtIntegral (λ j → w₀ * pow τ j) η k n ≤ B
+rowBDecayGivesRowCDebtBudget e η A r K w₀ τ B
+  0≤A 0≤r 0≤K 0≤w₀ 0≤τ 0≤B 0≤e decay 0≤η quadratic gate closes =
+  dilatedDebtBudget η w₀ τ (K * (A * A)) (r * r) B
+    0≤w₀ 0≤τ
+    (nonNegProduct K (A * A) 0≤K (nonNegProduct A A 0≤A 0≤A))
+    (nonNegProduct r r 0≤r 0≤r)
+    0≤η debtRate gate 0≤B closes
+  where
+    debtRate : ∀ j → η j ≤ (K * (A * A)) * pow (r * r) j
+    debtRate j =
+      ℚP.≤-trans (quadratic j)
+        (ℚP.≤-trans
+          (ℚP.*-monoˡ-≤-nonNeg K {{ℚ.nonNegative 0≤K}}
+            (geometricSquare e A r 0≤A 0≤r 0≤e decay j))
+          (ℚP.≤-reflexive (sym (ℚP.*-assoc K (A * A) (pow (r * r) j)))))
+
+------------------------------------------------------------------------
+-- THE SAME-OBJECT APPLICATION.
+--
+-- The row-B hypothesis consumed below is literally `Weld.transverseGeometricDecay`
+-- of the one-step RG owner, so the quantity whose Heat/Doob debt is bounded is
+-- the trajectory's own transverse coordinate.
+------------------------------------------------------------------------
+
+module Compose
+  {Coupling Irrelevant Vacuum EffectiveAction : Set}
+  (chain : Nat → RG.OneStepRGTheorem Coupling Irrelevant Vacuum EffectiveAction ℚ)
+  (chainComposes : ∀ j → RG.input (chain (suc j)) ≡ RG.output (chain j))
+  (norm : Irrelevant → ℚ)
+  (normNonNeg : ∀ x → 0ℚ ≤ norm x)
+  (ρ σ r S A : ℚ)
+  (0≤ρ : 0ℚ ≤ ρ) (0≤σ : 0ℚ ≤ σ) (σ≤r : σ ≤ r) (0≤S : 0ℚ ≤ S) (0≤A : 0ℚ ≤ A)
+  (normSubadditive : ∀ j x y →
+     norm (RG.irrelevantAdd (chain j) x y) ≤ norm x + norm y)
+  (linearStepContracts : ∀ j x →
+     norm (RG.irrelevantLinearStep (chain j) x) ≤ ρ * norm x)
+  (remainderGeometric : ∀ j →
+     norm (RG.irrelevantRemainder (chain j)
+             (RG.coupling (RG.input (chain j)))
+             (RG.irrelevant (RG.input (chain j))))
+       ≤ S * pow σ j)
+  (headBounded : norm (RG.irrelevant (RG.input (chain 0))) ≤ A)
+  (rgBudgetCloses : ρ * A + S ≤ r * A)
+  where
+
+  open BW.Weld chain chainComposes norm normNonNeg ρ σ r S A
+       0≤ρ 0≤σ σ≤r 0≤S 0≤A
+       normSubadditive linearStepContracts remainderGeometric
+       headBounded rgBudgetCloses
+    using (transverseNorm; transverseGeometricDecay; irrelevantAt)
+
+  rowCDebtBudgetFromOneStepRG :
+    ∀ (η : Nat → ℚ) (K w₀ τ B : ℚ) →
+    0ℚ ≤ K → 0ℚ ≤ w₀ → 0ℚ ≤ τ → 0ℚ ≤ B →
+    (∀ j → 0ℚ ≤ η j) →
+    (∀ j → η j ≤ K * (transverseNorm j * transverseNorm j)) →
+    (r * r) * τ ≤ 1ℚ →
+    (w₀ * (K * (A * A))) + ((r * r) * τ) * B ≤ B →
+    ∀ k n → debtIntegral (λ j → w₀ * pow τ j) η k n ≤ B
+  rowCDebtBudgetFromOneStepRG η K w₀ τ B 0≤K 0≤w₀ 0≤τ 0≤B 0≤η quadratic gate closes =
+    rowBDecayGivesRowCDebtBudget transverseNorm η A r K w₀ τ B
+      0≤A (ℚP.≤-trans 0≤σ σ≤r) 0≤K 0≤w₀ 0≤τ 0≤B
+      (λ j → normNonNeg (irrelevantAt j))
+      transverseGeometricDecay
+      0≤η quadratic gate closes

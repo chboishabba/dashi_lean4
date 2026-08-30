@@ -1,0 +1,226 @@
+# G15 — the source coefficient: the literal Weil normalization, and the verdict of the gate
+
+**The Riemann Hypothesis is not proved.**  Nothing was weakened and nothing was
+assumed: `RiemannHypothesisFor`, `RiemannHypothesis`, `CompletedRiemannHypothesis`
+and every earlier statement are untouched; there is no `sorry`/`admit`, no
+`axiom`, no postulate, no Boolean receipt, no numerical evidence and no
+`@[implemented_by]` in any Lean source of this cycle.  `lake build
+RiemannAnalytic` succeeds (8099 jobs) and `#print axioms` on every new theorem
+returns only `[propext, Classical.choice, Quot.sound]`.
+
+The instruction for this cycle was: *stop doing abstract prime-distribution work,
+and resolve the literal source coefficient — compute `C_src` and decide the gate
+green / amber / red.*  This report states exactly what was decided, exactly what
+was proved, and exactly what remains open.
+
+---
+
+## New module
+
+| Module | Content |
+| --- | --- |
+| `RiemannAnalytic/SourceCoefficient.lean` | the literal Weil (explicit-formula) prime weight and its two-sided mass; the tapered Weil mass; the polylogarithmic verdict of the normalization gate; the explicit numerical threshold for `C_src`; scale invariance; `literalSourceNormalizationDecision` |
+| `RiemannAnalytic/SchurEliminationDefect.lean` | elimination residue = normalized transverse Gram defect, floor transport to the Schur-effective observable, and the effect of the Schur pivot on the gate |
+
+Both are imported by the aggregate `RiemannAnalytic.lean`.
+
+---
+
+## 1.  The archimedean normalization is not the missing factor
+
+The prime term of the *literal* explicit formula is not `Λ(n)`; it is
+`Λ(n) n^{-1/2} φ̂(log n)`.  G14 computed the prime side with the route's raw
+weight `Λ(n)cosh(2α log n)`.  This cycle introduces the literal Weil weight
+
+```
+w^W_α(n) = Λ(n) · n^{-1/2} · cosh(2α log n)
+```
+
+(`weilWeight`, `weilMass`), and pins its mass two-sidedly:
+
+* `tiltedMass_upper_of_neg_tilt` — **new estimate**, extending the tilted-mass
+  upper bound to *negative* tilts, which the Weil normalization requires:
+
+```
+∑_{n ≤ N} Λ(n) n^v  ≤  809 · N^{1+v}          for every v ≥ −1/2.
+```
+
+  (Proof: the pointwise split `1 ≤ x²` versus `n^v ≤ e^{1/2}N^v` within one
+  `e`-fold of the top frequency, against the dyadic centered estimate
+  `tiltedCentered_le` and Chebyshev's `ψ(x) ≤ 5.4x`.)
+
+* `weilMass_two_sided` —
+
+```
+N^{1/2+2|α|} / 32  ≤  S₀^W(α)  ≤  809 · N^{1/2+2|α|}      (N ≥ 10⁸, |α| < 1/2).
+```
+
+So passing from `Λ(n)` to `Λ(n)n^{-1/2}` costs **exactly one power of `N`** in
+`S₀²` (from `N²` to `N`), and nothing more.  The factor of `1/N` that G14 showed
+the route needs is therefore *not* supplied by the archimedean normalization of
+the explicit formula, even though that normalization is exactly one power of `N`
+in size: the requirement moves down by the same amount (see §3).
+
+## 2.  The verdict: red for every polylogarithmic source coefficient
+
+The central new theorem is
+
+* `gate_fails_of_polylog_loss` — if, after allowing an arbitrary
+  polylogarithmic loss `(log N)^A`, the gate quantity `C_src t² S²` is still at
+  least `κ√N`, then the G14 contraction condition
+
+```
+120000 (log N)² · C_src t² S²  <  c (log N)⁶
+```
+
+  is **false**, subject only to the explicit constant comparison
+  `c (2(A+4))^{A+4} ≤ 120000 κ`.  The engine is the elementary but quantitative
+  `log_pow_le_mul_sqrt`: `(log N)^k ≤ (2k)^k √N`.
+
+Its two instantiations are the verdict:
+
+* `contraction_condition_fails_of_polylog_normalization` (raw normalization) and
+* `weil_contraction_condition_fails_of_polylog_normalization` (literal Weil
+  normalization):
+
+> if `C_src ≥ κ (log N)^{-A}` for **any** fixed `κ > 0` and **any** fixed
+> exponent `A`, the gate fails.
+
+G14 had proved this only for a *fixed* coefficient (`A = 0`).  The strengthening
+matters, because it removes the last generic escape: a source identification
+whose coefficient saves only logarithms — which is what any explicit-formula
+bookkeeping produces — cannot pass the gate.  **Only a coefficient carrying a
+genuine power of `N` can.**
+
+The taper is covered too:
+
+* `taperedWeilMass`, `taperedWeilMass_lower_of_polyDecay` — if the taper
+  transform obeys `|φ̂(u)| ≥ κ_φ(1+u)^{-B}` along the prime frequencies
+  `u = log n ∈ [0, log N]`, the tapered Weil prime mass is still the full Weil
+  mass up to `κ_φ(1+log N)^{-B}`;
+* `taperedWeil_gate_fails_of_polyDecay` — hence the gate fails for **every**
+  taper whose transform decays only polynomially, i.e. for every taper of finite
+  smoothness or compact support, which is the class the whole tree's Gram floor
+  is proved for.
+
+This locates the binary decision precisely: the gate could only be green for a
+taper whose transform decays *exponentially* at rate `> 1/2 + 2|α|` along
+`u = log n`, uniformly for `|α| < 1/2` — i.e. for a taper analytic in a strip of
+half-width `> 3/2`, which is incompatible with the compact support and plateau
+hypotheses under which `finiteGridGramDefect_source_floor` proves the `L⁶` floor.
+(That incompatibility is *not* proved here; it is stated as the next thing to
+prove if the branch is to be revisited.)
+
+## 3.  The number the gate demands, computed
+
+* `sourceCoefficient_threshold` (raw) and `weil_sourceCoefficient_threshold`
+  (literal Weil) solve the gate for `C_src`:
+
+```
+raw :   C_src · t² · N^{2+4|α|}  <  1024 c (log N)⁴ / 120000,
+Weil:   C_src · t² · N^{1+4|α|}  <  1024 c (log N)⁴ / 120000,
+```
+
+i.e. in the literal Weil normalization
+
+```
+C_src · t² · N  <  0.0086 · c (log N)⁴ · N^{-4|α|}.
+```
+
+That is the explicit closed form of the `C_src ≲ 1/(t²N)` of G14, with every
+constant and the whole `α`-dependence exposed, and it is the answer to the
+question "compute `C_src t² N`": the gate demands that it be smaller than
+`0.0086 c (log N)⁴ N^{-4|α|}`, hence in particular that it tend to `0`.
+
+Two structural facts close the remaining loopholes around that number:
+
+* `gate_invariant_under_common_rescaling` — the gate is **scale-free**: a common
+  rescaling of the taper multiplies both the anchored defect (hence `C_src`) and
+  the Gram floor constant `c` by the same positive factor and leaves the
+  condition unchanged.  So the gate cannot be passed by renormalizing the source.
+* §2 — and it cannot be passed by any polylogarithmic saving either.
+
+## 4.  The first fallback branch, evaluated
+
+The suggested fallback — replace the raw anchored principal block by an exact
+Schur-effective anchored observable — is now on a precise footing:
+
+* `eliminationResidue_eq_gramDefect_div` — **elimination residue = normalized
+  transverse Gram defect**: `b·b − (a·b)²/(a·a) = ΔGram(a,b)/(a·a)`.  The
+  anchored transverse defect is exactly the residue of eliminating the other
+  direction, up to the normalization by the eliminated energy.
+* `eliminationResidue_ge_of_gramDefect_floor` — floor transport: `F ≤ ΔGram` and
+  `a·a ≤ E` give `F/E ≤` residue.
+* `eliminationResidue_le_transverse` and `schurEffective_gate_fails_of_polylog`
+  — but the pivot **cannot help the gate**: eliminating a direction can only
+  lower the observable (the scalar form of `schur_form_le_compression_form`), so
+  it can only lower the floor; and dividing the floor constant by an energy
+  `E ≥ 1` is the same as multiplying `C_src` by `E`, which leaves a
+  polylogarithmic coefficient polylogarithmic.  The red branch therefore
+  triggers for the Schur-effective observable exactly as it does for the raw
+  one.
+
+The gauge branch is already covered by `PhaseGauge.lean` (the Hermitian channel
+and every Hermitian anchored minor are invariant under a coordinatewise unit
+phase gauge, the bilinear channel is equivariant, and the argument is
+gauge-sensitive); nothing there changes the size of the prime side either.
+
+## 5.  The decision theorem
+
+`literalSourceNormalizationDecision` packages the go/no-go statement.  Given the
+(still unproved) source identification `D ≤ C_src · 𝒟_N(α,t)` and the Gram floor
+`c(log N)⁶α² ≤ D`:
+
+* **green branch** — if the gate holds, then `α = 0` outright
+  (`offLineZero_excluded_of_sourceNormalization`);
+* **red branch** — if `κ ≤ C_src (log N)^A`, then, subject to the explicit
+  constant comparison, the gate is **false**, so the green branch is
+  unavailable and G14's `primeBudget_not_contractive` applies: the prime term
+  alone exhausts the whole defect and no contraction can be extracted.
+
+The two branches are exhaustive for every coefficient that is not smaller than
+every negative power of `log N`.
+
+**Assessment.**  On the evidence now proved, the anchored second-moment branch
+is red *unless* the still-unproved identification supplies a source coefficient
+carrying a genuine power of `N` — a factor `N^{-1-4|α|}` in the literal Weil
+normalization.  No explicit-formula bookkeeping known to this programme produces
+such a factor, and §2 shows no logarithmic refinement can substitute for it.
+This is an assessment, not a theorem: what is a theorem is the pair
+(green branch, red branch) above, and the fact that the red branch triggers for
+every polylogarithmic coefficient and every polynomially-decaying taper.
+
+---
+
+## Status of the milestones
+
+| Milestone | Status |
+| --- | --- |
+| 1. `literalCompensatedAnchorExplicitFormula` (the identity, with `C_src` exposed) | **open — still the first unproved theorem** |
+| 2. `literalSourceNormalizationDecision` | **proved as a dichotomy**, with the red branch now covering all polylogarithmic coefficients and all polynomially-decaying tapers; the explicit numerical threshold for `C_src` is computed in both normalizations |
+| 3. `literalPrimeRelativeContraction` | open (assembly, conditional on 1–2 being green) |
+| 4. relative tail / mixed / gamma-pole-endpoint bounds | open |
+| 5. high-zero strict contraction | abstractly proved (`riemannHypothesis_of_relative_parts`), not instantiated |
+| 6. bounded-height zero certificate | open |
+| 7. literal RH closure | wrapper proved (`riemannHypothesis_of_relative_contraction`), premises open |
+
+## The first unproved theorem, stated exactly
+
+Unchanged from G12–G14, and now with a fully explicit numerical target:
+
+> **`literalCompensatedAnchorExplicitFormula`.**  For an actual zero
+> `ρ = 1/2 + α + iγ` of `completedRiemannZeta` and the actual source local matrix
+> at height `T` and window `H`, the literal anchored Gram defect `D_{ρ,H}` equals
+> `C_src(T,H,ρ) · 𝒟^{prime}_N(α,t) + R_zero + R_EF`, with every object the
+> literal source object `γ_ρ, τ_k, h = 2π/L, X = e^L, φ̂, m_ρ, A_H` and the exact
+> explicit-formula normalization, and with `C_src` given in closed form.
+
+G15 adds that this theorem must produce
+
+```
+C_src · t² · N^{1+4|α|}  <  1024 c (log N)⁴ / 120000
+```
+
+in the literal Weil normalization, and that no polylogarithmic `C_src`, no taper
+of polynomial transform decay, and no renormalization of the taper can achieve
+it.  No claim about the Riemann Hypothesis is made.

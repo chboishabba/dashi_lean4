@@ -1,0 +1,153 @@
+# G19 — normalization is invisible, the linear transverse residual exists, and the literal prime interface is cosine-only
+
+**The Riemann Hypothesis is not proved.**  Nothing was weakened and nothing was
+assumed: `RiemannHypothesisFor`, `RiemannHypothesis`, `CompletedRiemannHypothesis`
+and every earlier statement are untouched; there is no `sorry`/`admit`, no
+`axiom`, no postulate, no Boolean receipt, no numerical evidence and no
+`@[implemented_by]` in any Lean source.  `lake build RiemannAnalytic` succeeds
+(8105 jobs, no warnings from project sources) and `#print axioms` on every new
+theorem returns only `[propext, Classical.choice, Quot.sound]`.
+
+All new material is in the single new module
+`RiemannAnalytic/NormalizedTransverseResidual.lean`, wired into the aggregate
+`RiemannAnalytic.lean`.  The Riemann–Weil explicit formula is, as before, *not*
+proved and *not* postulated: it is the explicit hypothesis `WeilExplicitFormula`
+over literal zero data, carried in the statement of every theorem that uses it.
+
+---
+
+## 1.  Hard stop on the naïve normalized quotient — exact, no asymptotics
+
+`relativeGate_invariant_under_positive_normalization`: for `g > 0`,
+
+```
+P/g ≤ η·(D/g)  ↔  P ≤ η·D,        P/g < D/g  ↔  P < D,
+```
+
+and `gateRatio_invariant_under_positive_normalization`: `(P/g)/(D/g) = P/D`.
+
+Instantiating `g = G₀₀` (the anchor energy):
+
+* `literalNormalizedGateRatio_eq` — the normalized gate ratio **is** the G18 gate
+  ratio, as a number;
+* `literalNormalizedSourceRatioDecision` — hence `Ξ_norm ≥ t²N^{1/4}/(10¹⁰c)`
+  verbatim;
+* `literalNormalizedAnchorGateFails` — the contraction condition with both sides
+  divided by `G₀₀` is false whenever the raw one is.
+
+So replacing the raw anchored defect `D_raw` by the scalar Schur complement
+`D_tr = D_raw/G₀₀` while dividing the transported prime side by the same `G₀₀`
+changes nothing at all.  The proposed "normalized anchor" lane is **red by exact
+ratio invariance**, and the four-lemma programme built on it would only have
+rediscovered this.
+
+## 2.  The linear transverse witness on the zero side does exist
+
+The project already contains the exact identity
+`wedgeSq x w = ‖x‖²‖P_{x^⊥}w‖²` (`wedgeSq_eq_normSq_mul_transverseSq`).  Hence
+`transverseResidual_source_lowerBound`: from the source floor
+`c L⁶α² ≤ D_raw` and the anchor bound `‖x‖² ≤ C_u L²`,
+
+```
+‖P_{x^⊥}w‖ ≥ √(c/C_u)·L²·|α|.
+```
+
+This is the **unsquared** off-line witness, one degree in the prime data, and it
+matches the degree of the explicit-formula transport.
+
+## 3.  The literal transport of the residual is linear and exact
+
+`weilGridResidualPrimeSum` is the prime side of the residual combination
+`v − βu`; `weilGridResidualPrimeSum_eq` identifies it with
+`P_N(φ,x_v) − β P_N(φ,x_u)`, and
+`literalTransverseResidualPrimeIdentity` transports it *before* any norm or
+majorization:
+
+```
+m_ρ(φ̂(z_ρ+x_v) − β φ̂(z_ρ+x_u))
+  = −(P_N(φ,x_v) − β P_N(φ,x_u)) + (A_v − β A_u) − (R_v − β R_u),
+```
+
+with coefficients `c_n = cos(x_v log n) − β cos(x_u log n)`.  No new explicit
+formula is needed: this is linearity of the G18 identity in the test function.
+
+## 4.  The phase audit — the decisive structural finding
+
+`weilPrimeTerm_gridTest_eq_cos_sub_sin` computes the literal prime term of the
+grid family for an **arbitrary real taper** supported in `[-L,L]` (evenness is
+not needed for the exact truncation):
+
+```
+P(g_x) = C_N(φ,x) − i·S_N(φ,x),
+C_N(φ,x) = ∑_{n≤N} Λ(n)n^{-1/2}(φ(ℓ_n)+φ(−ℓ_n)) cos(x ℓ_n),
+S_N(φ,x) = ∑_{n≤N} Λ(n)n^{-1/2}(φ(ℓ_n)−φ(−ℓ_n)) sin(x ℓ_n).
+```
+
+Consequences, all proved:
+
+* `weilGridSinSum_eq_oddPart` — the sine (phase) channel is carried **exactly by
+  the odd part of the taper**;
+* `weilGridSinSum_eq_zero_of_even`, `weilGridCosSum_of_even` — for the real even
+  taper the Gram floor demands, the phase channel is **identically zero** and the
+  transport reduces to the G18 cosine sum;
+* `weilGridPrimeSum_neg`, `weilGridPrimeSum_antisymmetric_part_eq_zero` — the
+  transport is an even function of the grid frequency; its antisymmetric part
+  vanishes identically, so the antisymmetric difference carries no signal;
+* `weilGridSinSum_abs_le` — even after giving the taper an odd part, the phase
+  channel is capped by `B·∑_{n≤N}Λ(n)n^{-1/2}`, the same `N^{1/2}` scale.
+
+So the answer to the sharpest question of this cycle is: **the present literal
+interface has projected the sine coordinate away** for an even taper, and
+restoring it does not by itself change the scale — any gain must come from
+cancellation inside the sum.
+
+## 5.  The decision of the linear lane
+
+Trivial size: `weilGridResidualPrimeSum_trivial_upperBound` —
+`|residual| ≤ 1618(1+|β|)N^{1/2}` for the plateau taper.
+
+Lower bound without cancellation: `weilGridResidualPrimeSum_lowerBound` — if
+`c_n ≥ κ > 0` on `n ≤ N` then `|residual| ≥ κN^{1/2}/16`.
+
+Verdict (`linearTransverseGateDecision`, `linearTransverseGateDecision_tendsto`):
+for the plateau taper, `0 < L ≤ log N`, `0 < |α| ≤ 1/2` and uncancelled
+coefficients,
+
+```
+Ξ_lin = |P_N(φ,x_v) − β P_N(φ,x_u)| / (c_r L²|α|)  ≥  κ N^{1/4}/(1000 c_r)  →  ∞.
+```
+
+The hypothesis is met at the degenerate anchor `x_u = x_v = 0`, `β < 1`, with
+`κ = 1 − β` (`linearTransverseGate_fails_at_degenerate_anchor`), so this is not
+vacuous.  Conversely `linearTransverseGate_requires_sqrt_cancellation`: closing
+the gate would force the residual to be smaller than its own trivial size by the
+factor `(log N)²/N^{1/2}` — square-root cancellation in a literal von Mangoldt
+sum, i.e. an input of the same strength as the conclusion.
+
+Of the three possible outcomes the reading is the third: **`Ξ_lin → ∞`** at the
+level of the literal identity.  The improvement over G18 is real but not
+sufficient: passing from the quadratic observable to the linear residual removes
+one factor of prime mass (`N` → `N^{1/2}` against a `(log N)²` floor instead of
+`N` against `(log N)⁶`), yet the remaining mismatch is still a full power of `N`.
+
+## 6.  Where the programme stands
+
+Proved successively by this development, all as theorems and none as
+assumptions: global `e₂` fails by dimension; the local raw anchor fails by prime
+mass; compensation cannot create contraction generically; literal twisted primes
+have `Θ(1)` relative variance; taper manipulation cannot supply the missing
+exponential scale; the pointwise top-window floor is false; raw Schur
+compression cannot fix normalization; **normalization by the anchor energy is
+exactly invisible to the relative gate**; and **the linear transverse residual,
+while of the right degree, is transported by a cosine-only prime interface whose
+uncancelled size still exceeds the geometric floor by `N^{1/4}`.**
+
+The first unproved theorem of the programme remains the Riemann–Weil explicit
+formula itself (`WeilExplicitFormula`), which Mathlib does not contain and which
+this development carries as an explicit hypothesis rather than assuming.  No
+Gram-type gate is currently open: any continuation must supply genuine
+cancellation in a literal prime sum, not a rescaling, a compression or a
+normalization of the present observables.
+
+Documentation: this file and a G19 section appended to `RIEMANN_LEAN_STATUS.md`;
+`ARISTOTLE_SUMMARY.md` was not edited.

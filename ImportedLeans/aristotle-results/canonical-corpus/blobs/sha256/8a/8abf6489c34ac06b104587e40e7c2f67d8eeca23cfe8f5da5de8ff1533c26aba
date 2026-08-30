@@ -1,0 +1,48 @@
+name: Yang-Mills Clay highest-alpha round 27
+
+on:
+  pull_request:
+    branches:
+      - 'agent/ym-clay-alpha-round26-physical-scale-uniformity'
+    paths:
+      - 'DASHI/Physics/YangMills/BalabanP33WilsonAtomSignedPerturbationExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33PhysicalWilsonIncidenceExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33PhysicalWilsonSignedGlobalExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33PhysicalWilsonLocalToSharpDefectExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33PeriodicDivergenceUpperExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33PhysicalBackgroundGaugeSignedLowerExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33PhysicalBackgroundGaugeParameterizedYoungExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33PhysicalBackgroundGaugeResidualExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33PhysicalTerminalHessianCoercivityExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33SelectedBackgroundFiniteCoercivityExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33CubicShellSeriesExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33PhysicalInfiniteDiscountedLossExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33InverseLinkRadiusDoesNotImplyWLocalExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanClayHighestAlphaRound27Validation.agda'
+      - 'scripts/check_yang_mills_clay_highest_alpha_round27.sh'
+      - '.github/workflows/yang-mills-clay-highest-alpha-round27.yml'
+  workflow_dispatch:
+
+
+concurrency:
+  group: dashi-global-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  focused-agda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      AGDA_JOBS: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: cachix/install-nix-action@v27
+      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - name: Check signed Wilson, carrier bridges, terminal Hessian, no-go and tails
+        run: nix develop --command bash scripts/check_yang_mills_clay_highest_alpha_round27.sh

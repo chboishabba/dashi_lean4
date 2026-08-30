@@ -1,0 +1,245 @@
+module DASHI.Physics.YangMills.BalabanYM4GeometricMajorantSeriesExact where
+
+------------------------------------------------------------------------
+-- ROW A, ANALYTIC PRODUCER LANE:
+--   EXACT GEOMETRIC AND ARITHMETIC-GEOMETRIC MAJORANT SERIES
+--
+-- PURPOSE.  Row A's remaining content is analytic, not algebraic: one needs
+-- a *uniform derivative package* for the literal interaction correction of
+-- the Bałaban step on the small-coupling tube,
+--
+--     beta_Int(g) = g F(g),    sup |F| <= M0,    sup |F'| <= M1,
+--
+-- because that single package produces both of row A's numerical constants
+-- (C = M0 for the sign gate, and the interaction part of the coupling
+-- derivative L = ... + M0 + gamma M1 for the tuning gate).  The standard way
+-- to *produce* such a package from one analytic bound is a Cauchy estimate on
+-- a slightly larger disc: if the coefficients satisfy the polydisc bound
+-- |a_n| R^n <= M0 then, on |g| <= gamma < R and with theta = gamma / R,
+--
+--     sum_n |a_n| gamma^n        <= M0 sum_n theta^n         = M0 / (1 - theta),
+--     sum_n (n+1)|a_{n+1}| g^n   <= (M0/gamma) theta sum_n (n+1) theta^n
+--                                 = (M0/gamma) theta / (1 - theta)^2 .
+--
+-- Both majorants are governed by the two elementary series
+--
+--     T_N(x) = sum_{n<N} x^n           and      S_N(x) = sum_{n<N} (n+1) x^n .
+--
+-- This module proves, in exact rational arithmetic and with no division at
+-- all, the two finite identities that control them,
+--
+--     (1 - x) T_N(x) + x^N          = 1,
+--     (1 - x) S_N(x) + N x^N        = T_N(x),
+--
+-- and the resulting *cutoff-uniform* caps
+--
+--     T_N(x) <= Tcap    whenever  1    <= (1 - x) Tcap,
+--     S_N(x) <= Scap    whenever  Tcap <= (1 - x) Scap,
+--
+-- for every truncation N.  Uniformity in N is the point: a bound that holds
+-- for all partial sums of a nonnegative majorant bounds the sum of any
+-- convergent realisation, so these caps are legitimate sup bounds on the tube
+-- without any completeness or limit machinery.
+--
+-- The caps are stated multiplicatively (`1 <= (1-x) Tcap` rather than
+-- `Tcap = 1/(1-x)`) so that the whole file is polynomial identities plus
+-- order, hence fully decidable and division-free; the intended instantiations
+-- are Tcap = R/(R-gamma) and Scap = R^2/(R-gamma)^2.
+--
+-- WHAT IS NOT PROVED HERE.  Nothing about Yang-Mills: this is the majorant
+-- engine that the analytic producer consumes.  Row A stays open and the
+-- frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; nonNegative; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Elementary helpers (sign and monotonicity)
+------------------------------------------------------------------------
+
+mul-nonNeg : ∀ {x y} → 0ℚ ≤ x → 0ℚ ≤ y → 0ℚ ≤ x * y
+mul-nonNeg {x} {y} 0≤x 0≤y =
+  subst (λ z → z ≤ x * y) (ℚP.*-zeroʳ x)
+    (ℚP.*-monoˡ-≤-nonNeg x {{nonNegative 0≤x}} 0≤y)
+
+scaleˡ-nonNeg : ∀ {c x y} → 0ℚ ≤ c → x ≤ y → c * x ≤ c * y
+scaleˡ-nonNeg {c} 0≤c x≤y = ℚP.*-monoˡ-≤-nonNeg c {{nonNegative 0≤c}} x≤y
+
+scaleʳ-nonNeg : ∀ {c x y} → 0ℚ ≤ c → x ≤ y → x * c ≤ y * c
+scaleʳ-nonNeg {c} 0≤c x≤y = ℚP.*-monoʳ-≤-nonNeg c {{nonNegative 0≤c}} x≤y
+
+mul-mono-nonNeg : ∀ {p q r s} → 0ℚ ≤ p → 0ℚ ≤ r → p ≤ q → r ≤ s → p * r ≤ q * s
+mul-mono-nonNeg {p} {q} {r} {s} 0≤p 0≤r p≤q r≤s =
+  ℚP.≤-trans (scaleˡ-nonNeg 0≤p r≤s) (scaleʳ-nonNeg (ℚP.≤-trans 0≤r r≤s) p≤q)
+
+------------------------------------------------------------------------
+-- Finite sums, powers, and the natural-number embedding
+------------------------------------------------------------------------
+
+sum₀ : (Nat → ℚ) → Nat → ℚ
+sum₀ f zero = 0ℚ
+sum₀ f (suc n) = sum₀ f n + f n
+
+sum₀-mono : ∀ {f h} → (∀ n → f n ≤ h n) → ∀ N → sum₀ f N ≤ sum₀ h N
+sum₀-mono f≤h zero = ℚP.≤-refl
+sum₀-mono {f} {h} f≤h (suc n) =
+  ℚP.+-mono-≤ (sum₀-mono f≤h n) (f≤h n)
+
+sum₀-nonNeg : ∀ {f} → (∀ n → 0ℚ ≤ f n) → ∀ N → 0ℚ ≤ sum₀ f N
+sum₀-nonNeg {f} 0≤f zero = ℚP.≤-refl
+sum₀-nonNeg {f} 0≤f (suc n) =
+  subst (λ z → z ≤ sum₀ f n + f n) (ℚP.+-identityˡ 0ℚ)
+    (ℚP.+-mono-≤ (sum₀-nonNeg 0≤f n) (0≤f n))
+
+sum₀-scaleˡ : ∀ (c : ℚ) (f : Nat → ℚ) N → sum₀ (λ n → c * f n) N ≡ c * sum₀ f N
+sum₀-scaleˡ c f zero = sym (ℚP.*-zeroʳ c)
+sum₀-scaleˡ c f (suc n) =
+  trans (cong (_+ c * f n) (sum₀-scaleˡ c f n))
+        (sym (ℚP.*-distribˡ-+ c (sum₀ f n) (f n)))
+
+pow : ℚ → Nat → ℚ
+pow x zero = 1ℚ
+pow x (suc n) = x * pow x n
+
+natℚ : Nat → ℚ
+natℚ zero = 0ℚ
+natℚ (suc n) = 1ℚ + natℚ n
+
+natℚ-nonNeg : ∀ n → 0ℚ ≤ natℚ n
+natℚ-nonNeg zero = ℚP.≤-refl
+natℚ-nonNeg (suc n) =
+  subst (λ z → z ≤ 1ℚ + natℚ n) (ℚP.+-identityˡ 0ℚ)
+    (ℚP.+-mono-≤ (ℚP.nonNegative⁻¹ 1ℚ) (natℚ-nonNeg n))
+
+pow-nonNeg : ∀ {x} → 0ℚ ≤ x → ∀ n → 0ℚ ≤ pow x n
+pow-nonNeg 0≤x zero = ℚP.nonNegative⁻¹ 1ℚ
+pow-nonNeg {x} 0≤x (suc n) = mul-nonNeg 0≤x (pow-nonNeg 0≤x n)
+
+pow-mono : ∀ {x y} → 0ℚ ≤ x → x ≤ y → ∀ n → pow x n ≤ pow y n
+pow-mono 0≤x x≤y zero = ℚP.≤-refl
+pow-mono {x} {y} 0≤x x≤y (suc n) =
+  mul-mono-nonNeg 0≤x (pow-nonNeg 0≤x n) x≤y (pow-mono 0≤x x≤y n)
+
+------------------------------------------------------------------------
+-- The two majorant series
+------------------------------------------------------------------------
+
+-- T_N(x) = sum_{n<N} x^n
+geoSum : ℚ → Nat → ℚ
+geoSum x = sum₀ (pow x)
+
+-- S_N(x) = sum_{n<N} (n+1) x^n
+arithGeoSum : ℚ → Nat → ℚ
+arithGeoSum x = sum₀ (λ n → natℚ (suc n) * pow x n)
+
+geoSum-nonNeg : ∀ {x} → 0ℚ ≤ x → ∀ N → 0ℚ ≤ geoSum x N
+geoSum-nonNeg 0≤x = sum₀-nonNeg (pow-nonNeg 0≤x)
+
+arithGeoSum-nonNeg : ∀ {x} → 0ℚ ≤ x → ∀ N → 0ℚ ≤ arithGeoSum x N
+arithGeoSum-nonNeg {x} 0≤x =
+  sum₀-nonNeg (λ n → mul-nonNeg (natℚ-nonNeg (suc n)) (pow-nonNeg 0≤x n))
+
+------------------------------------------------------------------------
+-- The two exact finite identities
+------------------------------------------------------------------------
+
+-- (1 - x) T_N(x) + x^N = 1
+geoIdentity : ∀ x N → (1ℚ - x) * geoSum x N + pow x N ≡ 1ℚ
+geoIdentity x zero =
+  solve 1 (λ y → (con 1ℚ :- y) :* con 0ℚ :+ con 1ℚ := con 1ℚ) refl x
+geoIdentity x (suc n) =
+  trans (step x (geoSum x n) (pow x n)) (geoIdentity x n)
+  where
+    step : ∀ y t p → (1ℚ - y) * (t + p) + y * p ≡ (1ℚ - y) * t + p
+    step =
+      solve 3
+        (λ y t p → (con 1ℚ :- y) :* (t :+ p) :+ y :* p := (con 1ℚ :- y) :* t :+ p)
+        refl
+
+-- (1 - x) S_N(x) + N x^N = T_N(x)
+arithGeoIdentity :
+  ∀ x N → (1ℚ - x) * arithGeoSum x N + natℚ N * pow x N ≡ geoSum x N
+arithGeoIdentity x zero =
+  solve 1 (λ y → (con 1ℚ :- y) :* con 0ℚ :+ con 0ℚ :* con 1ℚ := con 0ℚ) refl x
+arithGeoIdentity x (suc n) =
+  trans (step x (arithGeoSum x n) (pow x n) (natℚ n))
+        (cong (_+ pow x n) (arithGeoIdentity x n))
+  where
+    step :
+      ∀ y s p m →
+      (1ℚ - y) * (s + (1ℚ + m) * p) + (1ℚ + m) * (y * p)
+        ≡ ((1ℚ - y) * s + m * p) + p
+    step =
+      solve 4
+        (λ y s p m →
+          (con 1ℚ :- y) :* (s :+ (con 1ℚ :+ m) :* p) :+ (con 1ℚ :+ m) :* (y :* p)
+            := ((con 1ℚ :- y) :* s :+ m :* p) :+ p)
+        refl
+
+------------------------------------------------------------------------
+-- Cutoff-uniform bounds and caps
+------------------------------------------------------------------------
+
+moveRight : ∀ (a p : ℚ) → a + p ≡ 1ℚ → a ≡ 1ℚ - p
+moveRight a p eq =
+  trans (sym (cancel a p)) (cong (_- p) eq)
+  where
+    cancel : ∀ u v → (u + v) - v ≡ u
+    cancel = solve 2 (λ u v → (u :+ v) :- v := u) refl
+
+moveRightGen : ∀ (a p t : ℚ) → a + p ≡ t → a ≡ t - p
+moveRightGen a p t eq =
+  trans (sym (cancel a p)) (cong (_- p) eq)
+  where
+    cancel : ∀ u v → (u + v) - v ≡ u
+    cancel = solve 2 (λ u v → (u :+ v) :- v := u) refl
+
+subtract-nonNeg-≤ : ∀ {t p : ℚ} → 0ℚ ≤ p → t - p ≤ t
+subtract-nonNeg-≤ {t} {p} 0≤p =
+  subst (λ z → t - p ≤ z) (ℚP.+-identityʳ t)
+    (ℚP.+-monoʳ-≤ t (ℚP.neg-antimono-≤ 0≤p))
+
+-- (1 - x) T_N(x) <= 1, uniformly in N
+geoTimesBound : ∀ {x} → 0ℚ ≤ x → ∀ N → (1ℚ - x) * geoSum x N ≤ 1ℚ
+geoTimesBound {x} 0≤x N =
+  subst (λ z → z ≤ 1ℚ) (sym (moveRight _ (pow x N) (geoIdentity x N)))
+    (subtract-nonNeg-≤ (pow-nonNeg 0≤x N))
+
+-- (1 - x) S_N(x) <= T_N(x), uniformly in N
+arithGeoTimesBound :
+  ∀ {x} → 0ℚ ≤ x → ∀ N → (1ℚ - x) * arithGeoSum x N ≤ geoSum x N
+arithGeoTimesBound {x} 0≤x N =
+  subst (λ z → z ≤ geoSum x N)
+    (sym (moveRightGen _ (natℚ N * pow x N) (geoSum x N) (arithGeoIdentity x N)))
+    (subtract-nonNeg-≤ (mul-nonNeg (natℚ-nonNeg N) (pow-nonNeg 0≤x N)))
+
+-- CAP 1: any Tcap with 1 <= (1-x) Tcap dominates every truncation.
+geoCap :
+  ∀ {x Tcap} → 0ℚ ≤ x → 0ℚ < 1ℚ - x → 1ℚ ≤ (1ℚ - x) * Tcap →
+  ∀ N → geoSum x N ≤ Tcap
+geoCap {x} {Tcap} 0≤x 0<1-x cap N =
+  ℚP.*-cancelˡ-≤-pos (1ℚ - x) {{positive 0<1-x}}
+    (ℚP.≤-trans (geoTimesBound 0≤x N) cap)
+
+-- CAP 2: any Scap with Tcap <= (1-x) Scap dominates every truncation of S,
+-- given that Tcap already dominates the geometric truncations.
+arithGeoCap :
+  ∀ {x Tcap Scap} → 0ℚ ≤ x → 0ℚ < 1ℚ - x →
+  1ℚ ≤ (1ℚ - x) * Tcap → Tcap ≤ (1ℚ - x) * Scap →
+  ∀ N → arithGeoSum x N ≤ Scap
+arithGeoCap {x} {Tcap} {Scap} 0≤x 0<1-x capT capS N =
+  ℚP.*-cancelˡ-≤-pos (1ℚ - x) {{positive 0<1-x}}
+    (ℚP.≤-trans (arithGeoTimesBound 0≤x N)
+      (ℚP.≤-trans (geoCap 0≤x 0<1-x capT N) capS))

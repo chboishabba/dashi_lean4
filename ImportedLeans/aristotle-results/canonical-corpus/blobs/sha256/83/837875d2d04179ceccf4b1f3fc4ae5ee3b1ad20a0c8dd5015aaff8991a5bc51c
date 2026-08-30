@@ -1,0 +1,19 @@
+# Page 7 — Class: unknown
+
+At least one member exposes **no proof value** — an axiom, opaque, structure constructor, or other structural decl. We show the declaration kinds.
+
+**Group 45** — fp `54431828`, 2 members (identical; struct-equal).
+
+Statement: `Name → Level`
+
+- `Lean.Level.param` _[no-value]_ — head `<no value> (constructor)`
+- `Lean.mkLevelParam` — head `lam -> Lean.Level.param  (thin wrapper)`
+
+**Group 252** — fp `332782343`, 2 members (identical; struct-equal).
+
+Statement: `DefKind`
+
+- `Lean.Elab.DefKind.abbrev` _[no-value]_ — head `<no value> (constructor)`
+- `Lean.Elab.DefKind.theorem` _[no-value]_ — head `<no value> (constructor)`
+
+Group 45: `Lean.Level.param` is a **constructor** (`Name → Level`, no value) while `Lean.mkLevelParam` is a **def** wrapping it — same type, one has a body, one does not. Group 252: `DefKind.abbrev` and `DefKind.theorem` are two **constructors** of the same inductive, so both share the type `DefKind` with no proof value to compare. `unknown` is the honest 'cannot inspect the derivation' bucket.

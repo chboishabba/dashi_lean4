@@ -1,0 +1,230 @@
+# Literal Riemann Hypothesis programme — audit and status
+
+**Bottom line: no machine-checked proof of the Riemann Hypothesis was produced.**
+The programme remains blocked at the critical-A Frobenius / prime-main-term
+alignment step, stated exactly in §5 below. Everything reported as verified in
+§3 and §4 has been checked by an actual Agda run and an actual `lake build`, is
+free of `postulate`, `axiom`, `sorry`, `admit`, `{-# TERMINATING #-}` pragmas,
+Boolean receipts, and numerical evidence, and uses only the standard Lean
+axioms `propext`, `Classical.choice`, `Quot.sound`.
+
+---
+
+## 1. Audit of the two newly committed modules
+
+Both modules **failed to typecheck as committed**. They were repaired without
+weakening any statement; the repairs are the substance of the audit.
+
+### `DASHI/Analysis/RiemannG3SourceTransportExact.agda`
+
+Defects found:
+
+* uses of an operator `_|>_` that is not defined or imported anywhere in the
+  bundle;
+* a `cancelLeft` step whose implicit arguments do not unify (the equation
+  supplied has the addend on the wrong side);
+* three links of the transport chain assert `+`-associativity in the wrong
+  direction, so the chain does not compose.
+
+Repairs: added a `sucInjective` helper, replaced the `_|>_` pipeline by an
+explicit eleven-step chain `step1 … step11`, and fixed the associativity
+orientations. The module now typechecks.
+
+**Content characterisation.** `G3SourceTransportLedger`,
+`retainedExcessWithinCombinedSourceError` and the surrounding development are
+*Nat-level bookkeeping identities*: every quantity is a `ℕ`, and every theorem
+is an equation or `≤` between sums of those naturals. They are correct as
+arithmetic, but they carry no analytic information about ζ, primes, or
+Frobenius data. The producer interfaces are records of abstract `Set`s (see
+§5), so nothing in the module constrains an actual analytic object.
+
+### `DASHI/Analysis/RiemannCenteredGridRetentionExact.agda`
+
+Defect found: the `rewrite` chain used to justify `fullRewrite` is not a valid
+proof — the rewritten goal is not the stated one.
+
+Repairs: added `+-assoc`, `+-comm`, `doubleShuffle`, `timesTwo`, `timesFour`
+and `centeredEnergyNormalization`, and replaced the `rewrite` by an explicit
+term-mode proof. The module now typechecks.
+
+**Content characterisation.** As above: `CenteredImaginaryGridLedger`,
+`centeredTailDominationImpliesRetention` and `producerCenteredFiniteRetention`
+are `ℕ`-valued ledger statements with `Set`-valued placeholder producers. The
+retention statement is a genuine (and genuinely proved) arithmetic implication,
+but on abstract counters, not on transverse energies of an actual taper.
+
+---
+
+## 2. Wiring completed
+
+* `DASHI/EverythingRiemannReflectionOrbitDefect2026.agda` and
+  `DASHI/Analysis/ZetaTheoremSurface.agda` now import both new modules.
+* `scripts/check_riemann_reflection_orbit_defect_2026.sh` lists both files in
+  `sources`, carries `require_pattern` markers for
+  `CenteredImaginaryGridLedger`, `centeredTailDominationImpliesRetention`,
+  `producerCenteredFiniteRetention`, `G3SourceTransportLedger`,
+  `retainedExcessWithinCombinedSourceError`, `G3RemainingAlignment`, and for
+  the aggregate/surface entries; its dead invocation was replaced by a
+  `targets=(…)` array with a real Agda run. It exits 0.
+* A new toolchain-portable aggregate `DASHI/EverythingRiemannTrancheCheckable.agda`
+  collects the whole tranche and typechecks.
+
+**Known gap, not introduced by this work.** `DASHI/Analysis/ZetaTheoremSurface.agda`
+cannot be checked in this snapshot: its transitive import
+`DASHI/Analysis/RiemannPrimePowerArithmetic.agda` requires the module
+`Ontology.GodelLattice`, whose source is absent from the bundle. The
+checkable aggregate is the tranche minus that one surface file.
+
+Beyond that file, all 25 tranche modules typecheck individually and via the
+aggregate.
+
+---
+
+## 3. Analytic obligations discharged at literal strength (Lean 4 / Mathlib)
+
+These are in the new `RiemannAnalytic/` library, over the genuine real and
+complex numbers — not over `ℕ` ledgers, and not over abstract `Set`s.
+
+Write `Φ(z) = ∫_ℝ φ(t) e^{-i z t} dt` (`PhiExt`) and, for a centred grid of
+spacing `h` and transverse offset `α`, `gridSample φ h α k = Φ(k h - i α)`.
+
+### (a) Complex bilinear Poisson extension for the real-even taper — **proved**
+
+* `RiemannAnalytic.PhiExt_even`, `PhiExt_conj`, `PhiExt_conj_even`:
+  for a real, even, integrable taper, `Φ(conj z) = conj (Φ z)` and `Φ(-z) = Φ(z)`.
+* `RiemannAnalytic.gridSample_neg_eq_conj`, `gridSample_im_neg`,
+  `gridSample_im_sq_neg`, `gridSample_zero_im`: the exact conjugation/reflection
+  symmetries of the centred grid samples, including that the transverse channel
+  vanishes identically at `α = 0`.
+
+### (b) One-sided lattice-tail / finite-retention theorem — **proved**
+
+* `RiemannAnalytic.twoSided_eq_two_mul_oneSided`, `oneSided_split`,
+  `finite_retention`, `finite_retention_pos`: the abstract one-sided tail lemma
+  over `ℝ`, with tsum's over `ℤ` and honest summability hypotheses.
+* `RiemannAnalytic.gridFiniteRetention`: the retention theorem for the
+  transverse energy `transverseEnergy φ h α k = (Im (gridSample φ h α k))²` of a
+  real even taper, given tail domination.
+* `RiemannAnalytic.gauss_finite_retention`: for the explicit Gaussian taper the
+  tail-domination hypothesis is **discharged**, not assumed. If `h ≠ 0` and
+  `sin(hα) ≠ 0`, then some finite one-sided window carries strictly positive
+  transverse energy and at least a quarter of the whole two-sided transverse
+  energy. Supporting closed forms: `gridSample_gauss_im`,
+  `transverseEnergy_gauss`, `summable_transverseEnergy_gauss`.
+
+### (c) Summable complex-Φ mixed-kernel envelope — **proved**
+
+* `RiemannAnalytic.PhiExt_gaussTaper`: the closed form
+  `Φ(z) = (2π)^{1/2} e^{-z²/2}` for the Gaussian taper, obtained from the
+  complex Gaussian integral (no numerics).
+* `RiemannAnalytic.norm_gridSample_gaussTaper`: the exact modulus of each grid
+  sample.
+* `RiemannAnalytic.summable_gaussEnvelope`,
+  `summable_norm_gridSample_gaussTaper`,
+  `mixedKernel_gaussTaper_summable`: the mixed kernel
+  `mixedKernel φ h α (j,k) = gridSample φ h α j * conj (gridSample φ h α k)`
+  is absolutely summable over `ℤ × ℤ` for the Gaussian taper.
+
+### Additional verified reduction: the literal RH statement layer
+
+`RiemannAnalytic/LiteralStatement.lean` works with Mathlib's genuine
+`riemannZeta`, `completedRiemannZeta` and Mathlib's own literal
+`RiemannHypothesis`. Proved:
+
+* `completedZeta_ne_zero_of_one_le_re`, `completedZeta_ne_zero_of_re_le_zero`,
+  `completedZeta_zero_mem_strip` — every zero of `Λ` lies in the open critical
+  strip `0 < Re s < 1`;
+* `completedZeta_zero_reflect` — the zero set of `Λ` is `s ↦ 1-s` symmetric;
+* `riemannHypothesis_iff_completed` — Mathlib's literal `RiemannHypothesis` is
+  **equivalent** to `CompletedRiemannHypothesis`;
+* `riemannHypothesis_iff_no_completed_zero_right` — and equivalent to the purely
+  one-sided statement `∀ s, Λ s = 0 → Re s ≤ 1/2`.
+
+Neither side of these equivalences is assumed anywhere; only the equivalences
+are proved.
+
+---
+
+## 4. What is *not* connected
+
+`RiemannHypothesisFor` in `DASHI/Analysis/RiemannAnalyticSubstrate.agda` is
+
+```agda
+RiemannHypothesisFor : AnalyticSubstrate → Set
+RiemannHypothesisFor analytic =
+  (s : ComplexAnalyticCarrier.Complex (AnalyticSubstrate.carrier analytic)) →
+  CompletedRiemannZeta.nontrivialZero (AnalyticSubstrate.completed analytic) s →
+  CompletedRiemannZeta.criticalLine  (AnalyticSubstrate.completed analytic) s
+```
+
+It has not been weakened. But it is *parametric*: `Complex`, `nontrivialZero`
+and `criticalLine` are fields of records, i.e. arbitrary sets and arbitrary
+predicates. **No `AnalyticSubstrate` instance for the actual Riemann zeta
+function exists anywhere in the bundle**, and none is constructible from the
+`ℕ`-ledger tranche. Consequently an inhabitant of `RiemannHypothesisFor A`
+for the tranche's own schematic `A` would not be the Riemann Hypothesis, and no
+such inhabitant is claimed here either.
+
+The Lean side (§3) *is* about the genuine ζ, which is why the literal statement
+layer was added: it fixes what a real endgame must terminate in.
+
+---
+
+## 5. First unproved theorem, stated exactly
+
+The first obligation on the critical path that is **not** proved is
+obligation (d), critical-A Frobenius versus prime-main-term alignment,
+including the source A-to-G error transport. In the source it is exactly
+
+```agda
+-- DASHI/Analysis/RiemannG3SourceTransportExact.agda, lines 227–235
+record G3RemainingAlignment (owned : G3SourceOwnedTransport) : Set₁ where
+  field
+    CriticalFiniteABaseline           : Set
+    RetainedDefectInsideAFrobenius    : Set
+    CriticalBaselineEqualsPrimeMain   : Set
+
+    criticalFiniteABaseline           : CriticalFiniteABaseline
+    retainedDefectInsideAFrobenius    : RetainedDefectInsideAFrobenius
+    criticalBaselineEqualsPrimeMain   : CriticalBaselineEqualsPrimeMain
+```
+
+This is a record of three **abstract `Set`s together with assumed inhabitants**.
+It states nothing and proves nothing: any three types with any three elements
+inhabit it. No instance of `G3RemainingAlignment` is constructed for zeta data,
+and none can be, because the mathematical content it is standing in for is
+
+1. `criticalFiniteABaseline` — a finite-A archimedean/critical baseline for the
+   Weil quadratic form, i.e. an explicit-formula evaluation at the tapered test
+   function with a two-sided bound on the archimedean term;
+2. `retainedDefectInsideAFrobenius` — the statement that the retained transverse
+   defect of §3(b) is dominated by the Frobenius (zero-side) contribution at
+   critical A, which requires a second-moment bound on the zero side;
+3. `criticalBaselineEqualsPrimeMain` — the identification of that baseline with
+   the prime main term `∑_{p,m} (log p) p^{-m/2} φ̂(m log p)`.
+
+All three require the **Weil/Riemann explicit formula for ζ** together with
+prime-side second-moment estimates. Neither exists in this bundle nor in
+Mathlib: Mathlib has `riemannZeta`, its functional equation, and nonvanishing on
+`Re s ≥ 1`, but no explicit formula and no Weil quadratic form.
+
+The next unproved obligation after (d) is (e), valid localisation/amplification
+with bounded-height closure, in
+`DASHI/Analysis/RiemannHermitianLocalizationAmplificationExact.agda`: as
+committed (and as repaired) its localisation and amplification statements are
+again `ℕ`-ledger identities, and the bounded-height closure step depends on (d).
+
+---
+
+## 6. Reproduction
+
+```sh
+# Agda tranche (Agda 2.6.4.3 + agda-stdlib 2.1)
+LC_ALL=C.UTF-8 agda --no-libraries -i . -i DCHoTT-Agda -i cubical \
+  -i /usr/share/agda-stdlib/src -WnoUnsupportedIndexedMatch \
+  DASHI/EverythingRiemannTrancheCheckable.agda
+LC_ALL=C.UTF-8 bash scripts/check_riemann_reflection_orbit_defect_2026.sh   # exits 0
+
+# Lean analytic layer (Lean 4.28.0 + Mathlib v4.28.0)
+lake build RiemannAnalytic
+```

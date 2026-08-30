@@ -1,0 +1,364 @@
+module DASHI.Physics.YangMills.BalabanYM4ConstrainedGaussianFixedAmbientSecondVariationExact where
+
+------------------------------------------------------------------------
+-- ROW A1: THE SECOND VARIATION OF THE CONSTRAINED-GAUSSIAN
+--         LOG-DETERMINANT, COMPUTED ON THE FIXED AMBIENT SPACE
+--
+-- WHY THIS MODULE EXISTS
+--
+-- The Bałaban background-field normalisation of the constrained Gaussian is
+--
+--     -1/2 log | det M(U) | ,        M(U) = [ Δ(U)  Q(U)* ]
+--                                            [ Q(U)   0    ] ,
+--
+-- and Row A1 needs the *sign* of its second variation along the background
+-- family.  The naive route differentiates a Gaussian normalisation written on
+-- ker Q(U); that kernel moves with U, so the derivative acquires a spurious
+-- moving-basis term.  The bordered/KKT presentation avoids this entirely: M(U)
+-- lives on the *fixed* ambient space, and its determinant is a polynomial in
+-- the entries of Δ(U) and Q(U).
+--
+-- WHAT IS PROVED HERE, EXACTLY
+--
+-- For an affine background family in the deformation parameter ε,
+--
+--     Δ(ε) = Δ₀ + ε Δ₁ ,      Q(ε) = Q₀ + ε Q₁ ,
+--
+-- on the two-dimensional ambient carrier with one constraint, this module
+-- proves the *exact cubic expansion*
+--
+--     det M(ε)  =  k₀ + k₁ ε + k₂ ε² + k₃ ε³ ,
+--
+-- with k₀,k₁,k₂,k₃ written out explicitly in the ten entries
+-- a₀,a₁,b₀,b₁,c₀,c₁,p₀,p₁,r₀,r₁ — no kernel basis anywhere.  Hence the first
+-- and second derivatives of det M at ε = 0 are k₁ and 2k₂.
+--
+-- Writing  f(ε) = det M(ε)  and  S(ε) = -1/2 log|f(ε)| , the exact identity
+--
+--     S''  =  -1/2 · ( f'' f - (f')² ) / f²
+--
+-- gives at ε = 0 the *cleared* relation
+--
+--     S''(0) · 2 k₀²  =  k₁² - 2 k₂ k₀ .
+--
+-- The module takes that cleared relation as the defining property of the
+-- number S''(0) (so nothing about logarithms is assumed beyond their standard
+-- second-derivative formula, applied to the numbers at hand) and proves:
+--
+--   * `clearedFloor`             :  S''(0) · 2k₀²  ≥  2 k₂ (-k₀) ,
+--   * `secondVariationNonNeg`    :  k₂ ≥ 0  and  k₀ < 0  ⟹  S''(0) ≥ 0 ,
+--   * `secondVariationPositive`  :  k₂ > 0  and  k₀ < 0  ⟹  S''(0) > 0 ,
+--
+-- The criterion is stated for abstract Taylor data (k₀,k₁,k₂) in the module
+-- `SecondVariationCriterion`, so it applies verbatim in any ambient dimension
+-- in which those three coefficients can be computed; the cubic expansion above
+-- supplies them for ambient dimension 2 with one constraint.
+--
+-- The hypothesis k₀ < 0 is not extra: it is exactly
+-- `borderedDeterminantNegative` for a positive definite Δ₀ with Q₀ ≠ 0, which
+-- is already proved in `BalabanYM4BorderedKKTDeterminantExact`.
+--
+-- CONSEQUENCE FOR ROW A1.  On the fixed ambient space the positivity of the
+-- constrained-Gaussian contribution to the shell coefficient β_Z is reduced to
+-- the sign of the *single* rational number k₂ — the ε² coefficient of the
+-- bordered determinant, an explicit polynomial in the background data.  There
+-- is no moving-kernel derivative left to control.
+--
+-- WHAT IS *NOT* PROVED.  The identification of Δ₀,Δ₁,Q₀,Q₁ with the literal
+-- Wilson + reduced Faddeev-Popov + Haar background data of the repository, and
+-- the resulting numerical sign of k₂, are not established here; nor is the
+-- ambient dimension general.  Row A stays open and the frozen research count
+-- stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; _/_; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; mul-pos; scaleˡ-nonNeg; scaleʳ-nonNeg; transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4BorderedKKTDeterminantExact
+  using ( adjugateForm2; borderedMatrixDeterminant2; borderedDeterminant2
+        ; square-nonNeg)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Small helpers
+------------------------------------------------------------------------
+
+respˡ : ∀ {x y u : ℚ} → x ≡ y → x ≤ u → y ≤ u
+respˡ e le = transport-≤ e refl le
+
+respʳ : ∀ {x u v : ℚ} → u ≡ v → x ≤ u → x ≤ v
+respʳ e le = transport-≤ refl e le
+
+-- from a positive product with a positive right factor, the left factor is positive
+posFromProductʳ : ∀ {x y : ℚ} → 0ℚ < y → 0ℚ < x * y → 0ℚ < x
+posFromProductʳ {x} {y} 0<y 0<xy =
+  ℚP.*-cancelʳ-<-nonNeg y {{ℚ.nonNegative (ℚP.<⇒≤ 0<y)}}
+    (subst (_< x * y) (sym (ℚP.*-zeroˡ y)) 0<xy)
+
+-- from a nonnegative product with a positive right factor, the left factor is nonnegative
+nonNegFromProductʳ : ∀ {x y : ℚ} → 0ℚ < y → 0ℚ ≤ x * y → 0ℚ ≤ x
+nonNegFromProductʳ {x} {y} 0<y 0≤xy =
+  ℚP.*-cancelʳ-≤-pos y {{ℚ.positive 0<y}}
+    (subst (_≤ x * y) (sym (ℚP.*-zeroˡ y)) 0≤xy)
+
+------------------------------------------------------------------------
+-- The affine background family on the fixed ambient carrier
+------------------------------------------------------------------------
+
+-- Δ(ε) = [[a₀+εa₁, b₀+εb₁],[b₀+εb₁, c₀+εc₁]] symmetric,
+-- Q(ε) = (p₀+εp₁, r₀+εr₁) a single constraint row.
+record AffineKKTFamily : Set where
+  field
+    a₀ a₁ b₀ b₁ c₀ c₁ p₀ p₁ r₀ r₁ : ℚ
+
+module Family (F : AffineKKTFamily) where
+
+  open AffineKKTFamily F public
+
+  Δ₁₁ Δ₁₂ Δ₂₂ Q₁ Q₂ : ℚ → ℚ
+  Δ₁₁ ε = a₀ + ε * a₁
+  Δ₁₂ ε = b₀ + ε * b₁
+  Δ₂₂ ε = c₀ + ε * c₁
+  Q₁  ε = p₀ + ε * p₁
+  Q₂  ε = r₀ + ε * r₁
+
+  -- the bordered KKT determinant along the family
+  detM : ℚ → ℚ
+  detM ε = borderedMatrixDeterminant2 (Δ₁₁ ε) (Δ₁₂ ε) (Δ₂₂ ε) (Q₁ ε) (Q₂ ε)
+
+  ------------------------------------------------------------------
+  -- The four Taylor coefficients, written out in the background data
+  ------------------------------------------------------------------
+
+  k₀ k₁ k₂ k₃ : ℚ
+
+  k₀ = - (c₀ * (p₀ * p₀) - twoℚ * (b₀ * (p₀ * r₀)) + a₀ * (r₀ * r₀))
+
+  k₁ = - ( c₁ * (p₀ * p₀) + twoℚ * (c₀ * (p₀ * p₁))
+             - twoℚ * (b₁ * (p₀ * r₀) + b₀ * (p₁ * r₀) + b₀ * (p₀ * r₁))
+             + a₁ * (r₀ * r₀) + twoℚ * (a₀ * (r₀ * r₁)) )
+
+  k₂ = - ( twoℚ * (c₁ * (p₀ * p₁)) + c₀ * (p₁ * p₁)
+             - twoℚ * (b₁ * (p₁ * r₀) + b₁ * (p₀ * r₁) + b₀ * (p₁ * r₁))
+             + twoℚ * (a₁ * (r₀ * r₁)) + a₀ * (r₁ * r₁) )
+
+  k₃ = - (c₁ * (p₁ * p₁) - twoℚ * (b₁ * (p₁ * r₁)) + a₁ * (r₁ * r₁))
+
+  ------------------------------------------------------------------
+  -- (1) THE EXACT CUBIC EXPANSION OF THE BORDERED DETERMINANT
+  ------------------------------------------------------------------
+
+  determinantExpansion :
+    ∀ ε → detM ε ≡ k₀ + ε * k₁ + (ε * ε) * k₂ + (ε * (ε * ε)) * k₃
+  determinantExpansion ε =
+    trans (borderedDeterminant2 (Δ₁₁ ε) (Δ₁₂ ε) (Δ₂₂ ε) (Q₁ ε) (Q₂ ε))
+      (solve 11
+        (λ A₀ A₁ B₀ B₁ C₀ C₁ P₀ P₁ R₀ R₁ E →
+          :- ((C₀ :+ E :* C₁) :* ((P₀ :+ E :* P₁) :* (P₀ :+ E :* P₁))
+                :- con twoℚ :* ((B₀ :+ E :* B₁)
+                     :* ((P₀ :+ E :* P₁) :* (R₀ :+ E :* R₁)))
+                :+ (A₀ :+ E :* A₁) :* ((R₀ :+ E :* R₁) :* (R₀ :+ E :* R₁)))
+            := (:- (C₀ :* (P₀ :* P₀) :- con twoℚ :* (B₀ :* (P₀ :* R₀))
+                      :+ A₀ :* (R₀ :* R₀)))
+                 :+ E :* (:- (C₁ :* (P₀ :* P₀) :+ con twoℚ :* (C₀ :* (P₀ :* P₁))
+                                :- con twoℚ :* (B₁ :* (P₀ :* R₀)
+                                     :+ B₀ :* (P₁ :* R₀) :+ B₀ :* (P₀ :* R₁))
+                                :+ A₁ :* (R₀ :* R₀)
+                                :+ con twoℚ :* (A₀ :* (R₀ :* R₁))))
+                 :+ (E :* E)
+                      :* (:- (con twoℚ :* (C₁ :* (P₀ :* P₁)) :+ C₀ :* (P₁ :* P₁)
+                                :- con twoℚ :* (B₁ :* (P₁ :* R₀)
+                                     :+ B₁ :* (P₀ :* R₁) :+ B₀ :* (P₁ :* R₁))
+                                :+ con twoℚ :* (A₁ :* (R₀ :* R₁))
+                                :+ A₀ :* (R₁ :* R₁)))
+                 :+ (E :* (E :* E))
+                      :* (:- (C₁ :* (P₁ :* P₁)
+                                :- con twoℚ :* (B₁ :* (P₁ :* R₁))
+                                :+ A₁ :* (R₁ :* R₁))))
+        refl a₀ a₁ b₀ b₁ c₀ c₁ p₀ p₁ r₀ r₁ ε)
+
+  -- the value and the two derivatives at ε = 0, read off from the expansion
+  determinantAtZero : detM 0ℚ ≡ k₀
+  determinantAtZero =
+    trans (determinantExpansion 0ℚ)
+      (solve 4
+        (λ K₀ K₁ K₂ K₃ →
+          K₀ :+ con 0ℚ :* K₁ :+ (con 0ℚ :* con 0ℚ) :* K₂
+            :+ (con 0ℚ :* (con 0ℚ :* con 0ℚ)) :* K₃
+            := K₀)
+        refl k₀ k₁ k₂ k₃)
+
+  ------------------------------------------------------------------
+  -- (2) THE CLEARED SECOND VARIATION OF  S = -1/2 log|det M|
+  --
+  --   S'' = -1/2 (f'' f - (f')²)/f² ,  f(0)=k₀, f'(0)=k₁, f''(0)=2k₂ ,
+  --   so   S''(0) · 2 k₀²  =  k₁² - 2 k₂ k₀ .
+  --
+  -- The criterion itself is dimension-independent, so it is proved once and
+  -- for all in `SecondVariationCriterion` below and merely instantiated here.
+  ------------------------------------------------------------------
+
+  secondVariationCleared : ℚ
+  secondVariationCleared = k₁ * k₁ - twoℚ * (k₂ * k₀)
+
+module SecondVariationCriterion (k₀ k₁ k₂ : ℚ) where
+
+  -- S''(0) · 2 k₀²
+  cleared : ℚ
+  cleared = k₁ * k₁ - twoℚ * (k₂ * k₀)
+
+  -- S''(0) ≥ k₂/(-k₀), in cleared form
+  clearedFloor : twoℚ * (k₂ * (- k₀)) ≤ cleared
+  clearedFloor =
+    respˡ rewrite₁
+      (respʳ rewrite₂
+        (ℚP.+-monoˡ-≤ (twoℚ * (k₂ * (- k₀))) (square-nonNeg k₁)))
+    where
+      rewrite₁ : 0ℚ + twoℚ * (k₂ * (- k₀)) ≡ twoℚ * (k₂ * (- k₀))
+      rewrite₁ = ℚP.+-identityˡ (twoℚ * (k₂ * (- k₀)))
+
+      rewrite₂ : k₁ * k₁ + twoℚ * (k₂ * (- k₀)) ≡ cleared
+      rewrite₂ =
+        solve 3
+          (λ X Y Z → X :* X :+ con twoℚ :* (Y :* (:- Z))
+                       := X :* X :- con twoℚ :* (Y :* Z))
+          refl k₁ k₂ k₀
+
+  clearedPositive : 0ℚ < k₂ → k₀ < 0ℚ → 0ℚ < cleared
+  clearedPositive 0<k₂ k₀<0 =
+    ℚP.<-≤-trans
+      (mul-pos (toWitness {a? = 0ℚ ℚP.<? twoℚ} _)
+        (mul-pos 0<k₂ (ℚP.neg-antimono-< k₀<0)))
+      clearedFloor
+
+  clearedNonNeg : 0ℚ ≤ k₂ → k₀ < 0ℚ → 0ℚ ≤ cleared
+  clearedNonNeg 0≤k₂ k₀<0 =
+    ℚP.≤-trans
+      (ℚP.≤-trans
+        (ℚP.≤-reflexive (sym (ℚP.*-zeroʳ twoℚ)))
+        (scaleˡ-nonNeg (toWitness {a? = 0ℚ ℚP.≤? twoℚ} _)
+          (ℚP.≤-trans (ℚP.≤-reflexive (sym (ℚP.*-zeroʳ k₂)))
+            (scaleˡ-nonNeg 0≤k₂ (ℚP.<⇒≤ (ℚP.neg-antimono-< k₀<0))))))
+      clearedFloor
+
+  ------------------------------------------------------------------
+  -- The statement about the actual second derivative
+  --
+  -- `H` is the second variation of the constrained-Gaussian action
+  -- S = -1/2 log|det M| at ε = 0, characterised by the cleared relation it
+  -- must satisfy.  No property of the logarithm beyond that relation is used.
+  ------------------------------------------------------------------
+
+  module Value
+    (H : ℚ)
+    (k₀<0 : k₀ < 0ℚ)
+    (defining : H * (twoℚ * (k₀ * k₀)) ≡ cleared)
+    where
+
+    denominatorPositive : 0ℚ < twoℚ * (k₀ * k₀)
+    denominatorPositive =
+      mul-pos (toWitness {a? = 0ℚ ℚP.<? twoℚ} _)
+        (ℚP.<-respʳ-≡ (sym negSquare)
+          (mul-pos (ℚP.neg-antimono-< k₀<0) (ℚP.neg-antimono-< k₀<0)))
+      where
+        negSquare : k₀ * k₀ ≡ (- k₀) * (- k₀)
+        negSquare = solve 1 (λ X → X :* X := (:- X) :* (:- X)) refl k₀
+
+    -- the constrained-Gaussian second variation is nonnegative as soon as the
+    -- ε² coefficient of the bordered determinant is
+    secondVariationNonNeg : 0ℚ ≤ k₂ → 0ℚ ≤ H
+    secondVariationNonNeg 0≤k₂ =
+      nonNegFromProductʳ denominatorPositive
+        (respʳ (sym defining) (clearedNonNeg 0≤k₂ k₀<0))
+
+    -- and strictly positive as soon as that coefficient is
+    secondVariationPositive : 0ℚ < k₂ → 0ℚ < H
+    secondVariationPositive 0<k₂ =
+      posFromProductʳ denominatorPositive
+        (ℚP.<-respʳ-≡ (sym defining) (clearedPositive 0<k₂ k₀<0))
+
+------------------------------------------------------------------------
+-- NON-VACUITY: both branches are realised on a positive definite Delta_0
+------------------------------------------------------------------------
+
+-- (a) Δ₀ = [[2,1],[1,2]] (positive definite), Δ₁ = [[0,1],[1,0]],
+--     Q₀ = (1,0), Q₁ = (0,1).  Then k₀ = -2 < 0 and k₂ = 0, so the
+--     nonnegativity branch applies and the constrained-Gaussian second
+--     variation is ≥ 0.
+sampleFamily : AffineKKTFamily
+sampleFamily = record
+  { a₀ = + 2 / 1 ; a₁ = 0ℚ
+  ; b₀ = 1ℚ      ; b₁ = 1ℚ
+  ; c₀ = + 2 / 1 ; c₁ = 0ℚ
+  ; p₀ = 1ℚ      ; p₁ = 0ℚ
+  ; r₀ = 0ℚ      ; r₁ = 1ℚ
+  }
+
+module SampleFamily = Family sampleFamily
+module SampleCriterion =
+  SecondVariationCriterion SampleFamily.k₀ SampleFamily.k₁ SampleFamily.k₂
+
+sampleK₀ : SampleFamily.k₀ ≡ - (+ 2 / 1)
+sampleK₀ = refl
+
+sampleK₀Negative : SampleFamily.k₀ < 0ℚ
+sampleK₀Negative = toWitness {a? = SampleFamily.k₀ ℚP.<? 0ℚ} _
+
+sampleK₂NonNeg : 0ℚ ≤ SampleFamily.k₂
+sampleK₂NonNeg = toWitness {a? = 0ℚ ℚP.≤? SampleFamily.k₂} _
+
+sampleClearedNonNeg : 0ℚ ≤ SampleCriterion.cleared
+sampleClearedNonNeg =
+  SampleCriterion.clearedNonNeg sampleK₂NonNeg sampleK₀Negative
+
+-- (b) Δ₀ = I (positive definite), Δ₁ = [[0,2],[2,0]], Q₀ = (1,0), Q₁ = (0,1).
+--     Then k₀ = -1 < 0 and k₂ = 2·2 - 1 = 3 > 0, so the strict branch applies
+--     and the constrained-Gaussian second variation is > 0.  This is the shape
+--     Row A1 needs: a strictly positive shell contribution obtained purely
+--     from fixed-ambient data.
+strictFamily : AffineKKTFamily
+strictFamily = record
+  { a₀ = 1ℚ      ; a₁ = 0ℚ
+  ; b₀ = 0ℚ      ; b₁ = + 2 / 1
+  ; c₀ = 1ℚ      ; c₁ = 0ℚ
+  ; p₀ = 1ℚ      ; p₁ = 0ℚ
+  ; r₀ = 0ℚ      ; r₁ = 1ℚ
+  }
+
+module StrictFamily = Family strictFamily
+module StrictCriterion =
+  SecondVariationCriterion StrictFamily.k₀ StrictFamily.k₁ StrictFamily.k₂
+
+strictK₀Negative : StrictFamily.k₀ < 0ℚ
+strictK₀Negative = toWitness {a? = StrictFamily.k₀ ℚP.<? 0ℚ} _
+
+strictK₂Positive : 0ℚ < StrictFamily.k₂
+strictK₂Positive = toWitness {a? = 0ℚ ℚP.<? StrictFamily.k₂} _
+
+strictK₂Value : StrictFamily.k₂ ≡ + 3 / 1
+strictK₂Value = refl
+
+strictClearedPositive : 0ℚ < StrictCriterion.cleared
+strictClearedPositive =
+  StrictCriterion.clearedPositive strictK₂Positive strictK₀Negative
+
+-- the actual second variation at the strict instance: k₀ = -1, k₁ = 0, k₂ = 3,
+-- so  S''(0) · 2k₀² = k₁² - 2k₂k₀ = 6  and  S''(0) = 3 > 0.
+module StrictSecondVariation =
+  StrictCriterion.Value (+ 3 / 1) strictK₀Negative refl
+
+strictSecondVariationPositive : 0ℚ < (+ 3 / 1)
+strictSecondVariationPositive =
+  StrictSecondVariation.secondVariationPositive strictK₂Positive

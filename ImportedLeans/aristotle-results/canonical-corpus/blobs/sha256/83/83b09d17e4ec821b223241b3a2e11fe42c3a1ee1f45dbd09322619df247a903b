@@ -1,0 +1,205 @@
+module DASHI.Physics.YangMills.BalabanYM4RGScaleGramDichotomyExact where
+
+------------------------------------------------------------------------
+-- A <-> B BRIDGE:  THE RG-SCALE GRAM DICHOTOMY
+--
+-- IDEA.  Let `X_j` be the state at RG scale `j` and let
+--
+--     R'_j  =  D R_j  -  P_marginal D R_j
+--
+-- be the linearised RG step with its marginal component projected out, so
+-- `Y_j = R'_j X_j` is the *irrelevant/transverse* image of the state.  Form
+-- the scale Gram defect
+--
+--     Delta_j  =  |X_j|^2 |Y_j|^2  -  <X_j, Y_j>^2 .
+--
+-- Because of the exact projection identity proved in
+-- `BalabanYM4GramWedgeIdentityExact`,
+--
+--     | |X|^2 Y - <X,Y> X |^2  =  |X|^2 * Delta ,
+--
+-- the defect measures exactly the part of the RG image that is NOT parallel
+-- to the state, i.e. the genuinely transverse RG motion.  This gives a
+-- quantitative dichotomy at every scale, with a prescribed threshold `delta`:
+--
+--     Delta_j >= delta   ==>  transverse RG motion is coercive at scale j,
+--                             with residual  |W_j|^2 >= |X_j|^2 delta ;
+--     Delta_j <  delta   ==>  the state is delta-nearly self-similar at scale
+--                             j: its RG image lies within  |X_j|^2 delta  of
+--                             the line through X_j, i.e. of the
+--                             finite-dimensional marginal manifold.
+--
+-- WHAT IS PROVED HERE.
+--
+--   * `residualBoundFromGram` / `residualCoercivityFromGram` : the two branch
+--     conclusions, as exact division-free inequalities.
+--   * `scaleDichotomy` : over any finite window of scales, EITHER some scale
+--     carries a Gram surplus at least `delta` (with its named index and its
+--     coercive residual bound), OR every scale in the window is
+--     `delta`-nearly marginal.  This is a decidable case split on exact
+--     rationals, not an excluded-middle appeal.
+--   * `coerciveBranchFeedsRowAFloor` : in the first branch, if the regular
+--     remainder radius at that scale is strictly below `delta`, the Row A1b
+--     Gram decomposition (`BalabanYM4ConstrainedGaussianGaugeTransverseGramDecompositionExact`)
+--     converts the surplus into a strictly positive second-variation floor
+--     `delta - rho`.  So the two branches feed the two rows: coercive scales
+--     feed row A's positive Gaussian margin; near-marginal scales are exactly
+--     the regime in which Balaban's stable-trajectory theory is strongest and
+--     in which row B's marginal projection (see
+--     `BalabanYM4MarkedSourceMarginalTransverseSplitExact`) is the right
+--     formulation.
+--
+-- WHAT IS NOT PROVED.  Nothing here evaluates `D R_j` for the literal Balaban
+-- step, produces the marginal projector, or supplies a threshold `delta` for
+-- the physical trajectory.  No row is closed and the frozen research count
+-- stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat as Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Sum.Base using (_⊎_; inj₁; inj₂)
+open import Data.Product.Base using (_×_; _,_)
+open import Data.Integer.Base using (+_)
+import Data.Nat.Base as ℕ
+open import Data.Nat.Base using (z≤n; s≤s)
+import Data.Nat.Properties as ℕP
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.Definitions using (tri<; tri≈; tri>)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4GramWedgeIdentityExact
+  using ( Vec3; vec3; dot; normSq; normSq-nonNeg; gram; gramNonNeg
+        ; transverseResidual; projectionIdentity)
+
+------------------------------------------------------------------------
+-- The two branch estimates
+------------------------------------------------------------------------
+
+-- Near-marginal branch: a small Gram defect bounds the transverse residual.
+residualBoundFromGram :
+  ∀ a b delta → gram a b ≤ delta →
+  normSq (transverseResidual a b) ≤ normSq a * delta
+residualBoundFromGram a b delta small =
+  transport-≤ (sym (projectionIdentity a b)) refl
+    (ℚP.*-monoˡ-≤-nonNeg (normSq a) {{ℚ.nonNegative (normSq-nonNeg a)}} small)
+
+-- Coercive branch: a Gram surplus forces a transverse residual.
+residualCoercivityFromGram :
+  ∀ a b delta → delta ≤ gram a b →
+  normSq a * delta ≤ normSq (transverseResidual a b)
+residualCoercivityFromGram a b delta big =
+  transport-≤ refl (sym (projectionIdentity a b))
+    (ℚP.*-monoˡ-≤-nonNeg (normSq a) {{ℚ.nonNegative (normSq-nonNeg a)}} big)
+
+------------------------------------------------------------------------
+-- The dichotomy over a finite window of scales
+------------------------------------------------------------------------
+
+data ScaleDichotomy (X Y : Nat → Vec3) (delta : ℚ) (n : Nat) : Set where
+  coerciveScale :
+    (j : Nat) → j ℕ.< n →
+    delta ≤ gram (X j) (Y j) →
+    normSq (X j) * delta ≤ normSq (transverseResidual (X j) (Y j)) →
+    ScaleDichotomy X Y delta n
+  nearMarginalWindow :
+    (∀ j → j ℕ.< n → gram (X j) (Y j) < delta) →
+    ScaleDichotomy X Y delta n
+
+scaleDichotomy :
+  ∀ (X Y : Nat → Vec3) delta n → ScaleDichotomy X Y delta n
+scaleDichotomy X Y delta zero = nearMarginalWindow (λ j ())
+scaleDichotomy X Y delta (suc n) with scaleDichotomy X Y delta n
+... | coerciveScale j j<n big coercive =
+      coerciveScale j (ℕP.m<n⇒m<1+n j<n) big coercive
+... | nearMarginalWindow small with ℚP.<-cmp (gram (X n) (Y n)) delta
+...   | tri< g<d _ _ = nearMarginalWindow extend
+        where
+          extend : ∀ j → j ℕ.< suc n → gram (X j) (Y j) < delta
+          extend j j<sn with ℕP.m<1+n⇒m<n∨m≡n j<sn
+          ... | inj₁ j<n  = small j j<n
+          ... | inj₂ refl = g<d
+...   | tri≈ _ g≡d _ =
+        coerciveScale n (ℕP.n<1+n n) (ℚP.≤-reflexive (sym g≡d))
+          (residualCoercivityFromGram (X n) (Y n) delta
+            (ℚP.≤-reflexive (sym g≡d)))
+...   | tri> _ _ d<g =
+        coerciveScale n (ℕP.n<1+n n) (ℚP.<⇒≤ d<g)
+          (residualCoercivityFromGram (X n) (Y n) delta (ℚP.<⇒≤ d<g))
+
+-- In the near-marginal branch every scale of the window has its RG image
+-- within |X_j|^2 delta of the line through the state: the trajectory hugs the
+-- finite-dimensional marginal manifold, quantitatively.
+nearMarginalResiduals :
+  ∀ (X Y : Nat → Vec3) delta n →
+  (∀ j → j ℕ.< n → gram (X j) (Y j) < delta) →
+  ∀ j → j ℕ.< n →
+  normSq (transverseResidual (X j) (Y j)) ≤ normSq (X j) * delta
+nearMarginalResiduals X Y delta n small j j<n =
+  residualBoundFromGram (X j) (Y j) delta (ℚP.<⇒≤ (small j j<n))
+
+------------------------------------------------------------------------
+-- The coercive branch feeds Row A's positive floor
+------------------------------------------------------------------------
+
+-- If at a coercive scale the regular remainder radius is strictly below the
+-- threshold, the Gram surplus becomes a strictly positive second-variation
+-- floor `delta - rho` — the Row A1b conclusion, obtained from the RG-scale
+-- dichotomy rather than from a determinant expansion.
+coerciveBranchFeedsRowAFloor :
+  ∀ (a b : Vec3) delta rho remainder secondVariation →
+  delta ≤ gram a b →
+  secondVariation ≡ 0ℚ + gram a b + remainder →
+  - rho ≤ remainder →
+  rho < delta →
+  (delta - rho ≤ secondVariation) × (0ℚ < delta - rho)
+coerciveBranchFeedsRowAFloor a b delta rho remainder secondVariation
+                            big split lower radiusSmall =
+  floor , positiveGap
+  where
+    expand : secondVariation ≡ gram a b + remainder
+    expand =
+      trans split (cong (_+ remainder) (ℚP.+-identityˡ (gram a b)))
+
+    floor : delta - rho ≤ secondVariation
+    floor =
+      transport-≤ refl (sym expand)
+        (ℚP.+-mono-≤ big lower)
+
+    positiveGap : 0ℚ < delta - rho
+    positiveGap =
+      subst (_< delta - rho) (ℚP.+-inverseʳ rho)
+        (ℚP.+-monoˡ-< (- rho) radiusSmall)
+
+------------------------------------------------------------------------
+-- Non-vacuity: both branches occur
+------------------------------------------------------------------------
+
+-- A two-scale window whose first scale is exactly marginal (image parallel to
+-- the state, Gram defect 0) and whose second scale is transverse (defect 1).
+sampleX sampleY : Nat → Vec3
+sampleX _ = vec3 (+ 1 / 1) 0ℚ 0ℚ
+sampleY zero    = vec3 (+ 2 / 1) 0ℚ 0ℚ     -- parallel: purely marginal motion
+sampleY (suc _) = vec3 0ℚ (+ 1 / 1) 0ℚ     -- orthogonal: transverse motion
+
+sampleMarginalScale : gram (sampleX 0) (sampleY 0) ≡ 0ℚ
+sampleMarginalScale = refl
+
+sampleTransverseScale : gram (sampleX 1) (sampleY 1) ≡ + 1 / 1
+sampleTransverseScale = refl
+
+-- At threshold 1/2 the window of length 2 lands in the coercive branch, at the
+-- second scale.
+sampleDichotomy : ScaleDichotomy sampleX sampleY (+ 1 / 2) 2
+sampleDichotomy = scaleDichotomy sampleX sampleY (+ 1 / 2) 2
+
+-- and the window of length 1 lands in the near-marginal branch.
+sampleNearMarginal : ScaleDichotomy sampleX sampleY (+ 1 / 2) 1
+sampleNearMarginal = scaleDichotomy sampleX sampleY (+ 1 / 2) 1

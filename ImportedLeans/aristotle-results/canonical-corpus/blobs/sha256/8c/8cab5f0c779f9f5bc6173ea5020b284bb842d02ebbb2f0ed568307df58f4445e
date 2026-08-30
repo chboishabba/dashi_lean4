@@ -1,0 +1,141 @@
+# G11 — relative (twisted) normalization of the compensated observable
+
+This cycle attacks the question G10 left open: can the compensated anchored
+observable
+
+    𝒟(α) = 𝒜(α) − 𝒜(0),   w_n(α) = w_n·cosh(2αλ_n),
+
+be bounded by `Cα²·(something)` with a constant that does **not** degrade like
+`e^{2AΛ}` across the strip `0 < |α| < 1/2`?
+
+Everything below is machine-checked in
+`RiemannAnalytic/TwistedNormalization.lean` (wired into `RiemannAnalytic.lean`),
+with no postulate, axiom, `sorry`/`admit`, Boolean receipt, imported authority
+or numerical evidence.  `#print axioms` on every theorem returns
+`[propext, Classical.choice, Quot.sound]`.  `RiemannHypothesisFor` is untouched
+and **the Riemann Hypothesis is not proved.**
+
+## 1. The exact algebra of the twist (no Taylor bounds)
+
+* `cosh_sub_one_eq_two_sinh_sq` — `cosh x − 1 = 2 sinh²(x/2)`.
+* `coshWeight_sub_eq_sinh_sq` — `w_n(α) − w_n = 2 w_n sinh²(αλ_n)`: the
+  compensated weight is *identically* quadratic in the transverse twist.
+* `coshProd_sub_one_eq_sinh_sq` —
+  `cosh(2x)cosh(2y) − 1 = 2sinh²x + 2sinh²y + 4sinh²x sinh²y`.
+* `compensatedMinor_sinh_identity` — the compensated observable written exactly
+  in that form, term by term, with no remainder.
+
+## 2. The relative normalization, exactly
+
+* `compensatedMinor_sech_identity` — the decisive reformulation:
+
+      𝒟(α) = ∑_{n,m} [1 − sech(2αλ_n)sech(2αλ_m)] · W_n(α)W_m(α)K(λ_n−λ_m).
+
+  The compensated observable *is* the twisted mass weighted by the normalized
+  distortion `1 − sech·sech`, which is bounded by `1` uniformly instead of
+  growing exponentially.  This is the object the relative endgame should
+  estimate, not `(cosh(2αλ) − 1)/𝒜(0)`.
+
+## 3. The exponential loss is an artefact of the untwisted baseline
+
+* `cosh_sub_one_le_sq_mul_cosh` — `cosh x − 1 ≤ x²·cosh x`, i.e.
+  `1 − sech x ≤ x²`: absolute constant, no exponential.
+* `coshProd_sub_one_le_twisted` — the pair version
+  `cosh x cosh y − 1 ≤ (x²+y²)cosh x cosh y`.
+* `compensatedMinor_le_twisted_moment` — kept **inside the sum**:
+  `𝒟(α) ≤ 4α²·M(α)`, `M(α)` the twisted second-moment form
+  (`twistedMomentForm`), with no supremum in `λ` taken and no restriction on
+  `α`.
+* `compensatedMinor_le_twisted_uniform` — **the headline positive result**:
+
+      𝒟(α) ≤ 8Λ²α²·𝒜(α)      for every real α,
+
+  a constant polynomial in the log-frequency range and **independent of `α`**,
+  in particular uniform on the whole strip `0 < |α| < 1/2`.
+* `compensatedMinor_le_twisted_varForm` — the relative variance inequality
+  `𝒟(α) ≤ 8Λ²α²·s²·Var_{w(α)}(λ)` against the **twisted** variance `𝒱_α`.
+* `compensatedMinor_le_of_meanSquare` — the supremum `Λ²` is not what the
+  estimate needs: only the kernel-weighted **mean square** log-frequency `Q`
+  enters, giving `𝒟(α) ≤ 4Qα²·𝒜(α)`.
+* `compensatedMinor_le_of_pointwise_distortion`,
+  `compensatedMinor_le_bounded_twist`, `bounded_twist_factor_lt_one` — the sharp
+  pointwise criterion, and `𝒟(α) ≤ (1 − sech²(2|α|Λ))·𝒜(α)` with a factor
+  strictly below `1` for every finite twist (but tending to `1` exponentially).
+* `twisted_relative_factor_le_half` — in the reciprocal regime `|α|Λ ≤ 1/4` the
+  twisted relative factor is `≤ 1/2`.
+* `offLineTarget_excluded_of_twisted_contraction` — the wiring into the G10
+  endgame: geometric floor `cL⁶α² ≤ D`, `D ≤ 𝒟(α)`, `𝒜(α) ≤ D` and
+  `8Λ²α² < 1` force `α = 0` exactly.  (The two hypotheses linking the literal
+  zero-side defect `D` to the model observables are **not** established at the
+  zeta source; that is where the remaining content sits.)
+
+## 4. Two obstruction theorems (proved negative)
+
+Both are proved on an explicit two-frequency configuration `d = 2`,
+`w = (1,1)`, `λ = (0,Λ)`, `s = π/Λ`, `α = 1/4`, where
+`𝒜(0) = 4`, `𝒜(α) = 4cosh(Λ/2)`, `𝒟(α) = 4(cosh(Λ/2) − 1)`,
+`s²Var_w(λ) = π²`.
+
+* `no_uniform_untwisted_alpha_constant` — **there is no constant `C`** with
+
+      𝒟(α) ≤ C·α²·s²·Var_w(λ)
+
+  uniformly over nonnegative weights, log-frequencies and `|α| < 1/2`.  So the
+  proposed target `compensatedMinor_source_uniformAlpha` is **false at that
+  generality**: against the untwisted baseline the `e^{cΛ}` degradation of
+  `compensatedMinor_cosh_le` is genuine and not an artefact of the proof.  A
+  full-strip statement must use arithmetic structure of the log-prime
+  frequencies, or bound their range.
+
+* `no_uniform_twisted_contraction` — **there is no `η < 1`** with
+  `𝒟(α) ≤ η·𝒜(α)` uniformly over arbitrary finite frequency sets either: the
+  ratio is exactly `1 − sech(2αΛ)` there and tends to `1`.  So the factor `1` of
+  `compensatedMinor_le_twisted_mass` is sharp, and *no universal relative
+  contraction theorem exists* on arbitrary positive weights.  The gain must come
+  from bounded twist `|α|Λ = O(1)` — where the polynomial factor `8Λ²α²` is
+  available — or from the distribution of the prime frequencies.
+
+## 5. What this settles, and what it does not
+
+Settled, in the direction the cycle asked for: the exponential catastrophe *was*
+caused by normalizing against the wrong (untwisted) baseline; with the twisted
+normalization the constant is polynomial and `α`-uniform.  The exact algebra is
+`sinh²`-based with no Taylor remainder, and the minimal quantity the arithmetic
+input has to control is the **kernel-weighted mean square log-frequency** under
+the twisted weights, not a supremum.
+
+Settled in the negative: the diagnostic test proposed for arbitrary finite
+frequency configurations **fails**.  Neither the untwisted `Cα²s²Var` bound nor a
+universal relative contraction `η < 1` can hold for arbitrary positive weights.
+Consequently the residual two-regime issue is intrinsic to the hyperbolic
+weights, and the remaining route must supply either `|α|·Λ = O(1)` from an
+independent unconditional theorem or genuine prime-distribution input.
+
+Not settled: everything at the literal zeta source.  In particular
+`literalCompensatedAnchorIdentity`, `literalCoshWeightPrimeRepresentation`,
+`localizedLogVariancePrimeBound` and `primeRelativeAnchoredBudget` remain
+unproved, and so does `OffLineDetectabilityContradiction`.
+
+## First unproved theorem (exact)
+
+> There exist admissible source parameters `H = H(T)` and a function
+> `η_prime(T,H) → 0` such that for every off-line target `ρ` of height `T`,
+> `E_prime,loc(ρ,T,H) ≤ η_prime(T,H)·D_{ρ,H}`, where `D_{ρ,H}` is the literal
+> anchored zero-side defect.  Equivalently, at the literal source, an anchored
+> compensated prime bound `𝒫_H(α,T) − 𝒫_H(0,T) ≤ Cδ(T)²α²L⁶` with `δ(T) → 0`,
+> uniform for `0 < |α| < 1/2`.
+
+By §4 this cannot be obtained from the weight algebra alone; it needs the actual
+log-prime frequency distribution.  No claim about the Riemann Hypothesis is
+made.
+
+## Appendix — assembled block budget
+
+* `varForm_le_block` — the weight-level block bound `Var_w(λ) ≤ (∑w)²ℓ²`.
+* `compensatedMinor_le_twisted_block` — combining it with the twisted relative
+  bound gives the assembled `α²`-carrying budget
+
+      𝒟(α) ≤ 8Λ²α²·s²·(∑ w(α))²ℓ²,
+
+  in which the localization gain is carried by the log-block length `ℓ` and the
+  constant contains no exponential in `α`.

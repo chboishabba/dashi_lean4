@@ -1,0 +1,291 @@
+import Integration.Registry
+import Integration.ObserverTower
+import Integration.ObserverDescent
+import Integration.StructuredObserver
+import Integration.PhysicsInstances
+import Integration.ResidualQuotient
+import Integration.RiemannDomain
+import Integration.GaugeObserver
+import Integration.GaugeSU2
+import Integration.GaugeSSP
+import Integration.DescentLevel
+
+/-!
+# Axiom audit for the integration spine
+
+Building this module prints the axiom dependencies of every headline result of
+the `Integration` spine.  Each one uses only the standard Lean/Mathlib axioms
+(`propext`, `Classical.choice`, `Quot.sound`); none uses `sorry`, a project
+axiom, or `Lean.ofReduceBool` — in particular there is no `native_decide`
+anywhere in the spine.
+-/
+
+-- Levels
+#print axioms Integration.Levels.BridgeLevel.rank_injective
+#print axioms Integration.Levels.NoTransport.elim
+
+-- Ternary hub
+#print axioms Integration.TernaryHub.ternaryHub
+#print axioms Integration.TernaryHub.bal_unique_up_to_sign
+#print axioms Integration.TernaryHub.balTone_triXor_affine
+#print axioms Integration.TernaryHub.balTone_triXor_ne_add
+#print axioms Integration.TernaryHub.trit369_inv
+
+-- Base369 group layer
+#print axioms Integration.Base369Group.hexSplit_xor
+#print axioms Integration.Base369Group.hexSplit_surjective
+#print axioms Integration.Base369Group.nonary_not_ternary_square
+#print axioms Integration.Base369Group.zmod9_not_add_equiv_sq
+#print axioms Integration.Base369Group.nonary_extension_nonsplit
+#print axioms Integration.Base369Group.base369_carrier_cards
+
+-- Address geometry
+#print axioms Integration.Address.agree_ge_iff
+#print axioms Integration.Address.Addr.ultrametric
+#print axioms Integration.Address.Addr.dist_eq_zero_iff
+#print axioms Integration.Address.Addr.dist_map
+#print axioms Integration.Address.Addr.dist_mono_map
+#print axioms Integration.Address.kernelIsometry
+#print axioms Integration.Address.kernelIsometry_inv
+
+-- Clopen balls / supervoxel refinement
+#print axioms Integration.ClopenBalls.member_iff_dist_le
+#print axioms Integration.ClopenBalls.ball_open
+#print axioms Integration.ClopenBalls.ball_closed
+#print axioms Integration.ClopenBalls.refinement_iff_subset
+#print axioms Integration.ClopenBalls.no_atomic_ball
+#print axioms Integration.ClopenBalls.ternaryAddressBallSystem
+#print axioms Integration.ClopenBalls.authorityContentless
+
+-- Receipt socket
+#print axioms Integration.ReceiptSocket.alignment_unconstrained
+#print axioms Integration.ReceiptSocket.aligned_forced
+
+-- Refinement systems
+#print axioms Integration.Refinement.loomRefinement
+#print axioms Integration.Refinement.loom_project_coherent
+#print axioms Integration.Refinement.loom_root_not_product
+#print axioms Integration.Refinement.addressRefinement
+
+-- Monster 15-prime junction
+#print axioms Integration.MonsterFifteen.lcpLen_ofFn
+#print axioms Integration.MonsterFifteen.dSSP_eq_dist
+#print axioms Integration.MonsterFifteen.USSP_d_eq_dist
+#print axioms Integration.MonsterFifteen.fabric369_isometry
+#print axioms Integration.MonsterFifteen.support_nonexpansive
+#print axioms Integration.MonsterFifteen.support_not_isometry
+#print axioms Integration.MonsterFifteen.support_not_injective
+#print axioms Integration.MonsterFifteen.monster_ternary_junction
+
+-- Cognition domain instance
+#print axioms Integration.CognitionSupervoxel.phase3Transport
+#print axioms Integration.CognitionSupervoxel.observeTrit_flip
+#print axioms Integration.CognitionSupervoxel.observeTrit_surjective
+#print axioms Integration.CognitionSupervoxel.observeTrit_not_injective
+#print axioms Integration.CognitionSupervoxel.publicZero_not_atomic
+#print axioms Integration.CognitionSupervoxel.boundaryContentless
+#print axioms Integration.CognitionSupervoxel.cognition_supervoxel_junction
+
+-- Ultrametric census
+#print axioms Integration.UltrametricCensus.d15_eq_prefix
+#print axioms Integration.UltrametricCensus.dSafety_eq_prefix
+#print axioms Integration.UltrametricCensus.walk_not_prefix
+#print axioms Integration.UltrametricCensus.walk_not_mask15
+#print axioms Integration.UltrametricCensus.ultrametric_census
+
+-- The analytic (RH/zeta) domain
+#print axioms Integration.RiemannReflection.centredPolarTransport
+#print axioms Integration.RiemannReflection.sideTrit_reflect
+#print axioms Integration.RiemannReflection.c3Transport
+#print axioms Integration.RiemannReflection.phaseC_invert
+#print axioms Integration.RiemannReflection.phaseC_sum
+#print axioms Integration.RiemannReflection.c3_not_equiv_centred
+#print axioms Integration.RiemannReflection.role_fibres_not_equiv
+#print axioms Integration.RiemannStrip.critReflect_fixed_iff
+#print axioms Integration.RiemannStrip.stripC2_swap
+#print axioms Integration.RiemannStrip.stripTrit_critReflect
+#print axioms Integration.RiemannStrip.modelDisplacement_injective
+#print axioms Integration.RiemannStrip.stripSymmetry_not_equiv_trit
+#print axioms Integration.RiemannSubstrate.substrate_does_not_constrain_rh
+#print axioms Integration.RiemannXiSymmetry.criticalLine_iff_fixed
+#print axioms Integration.RiemannXiSymmetry.qToC_injective
+#print axioms Integration.RiemannXiSymmetry.qToC_criticalLine_iff
+#print axioms Integration.RiemannXiSymmetry.xiZeroSymmetry_is_socket
+#print axioms Integration.RiemannXiSymmetry.hilbertPolya_is_socket
+#print axioms Integration.RiemannXiSymmetry.stage_card
+#print axioms Integration.RiemannDomain.analyticEntries_levels
+#print axioms Integration.RiemannDomain.analyticDomain
+
+-- Phase quotient: 27/C₃ = 9, the transported nonary algebra, the chart dichotomy
+#print axioms Integration.PhaseQuotient.phaseEquiv
+#print axioms Integration.PhaseQuotient.quotient_eq_iff_orbit
+#print axioms Integration.PhaseQuotient.rotateOutputCode_ne
+#print axioms Integration.PhaseQuotient.phaseZModEquiv_add
+#print axioms Integration.PhaseQuotient.nonary_two_algebras
+#print axioms Integration.PhaseQuotient.q9_nonary_group_iso_impossible
+#print axioms Integration.PhaseQuotient.triXor_chart_dichotomy
+
+-- The lawful SSP weave
+#print axioms Integration.SSPWeave.compose_assoc
+#print axioms Integration.SSPWeave.not_a_group
+#print axioms Integration.SSPWeave.orientationSign_hom
+#print axioms Integration.SSPWeave.transportSSP_comp
+#print axioms Integration.SSPWeave.laneStateHub
+#print axioms Integration.SSPWeave.laneBal_action
+#print axioms Integration.SSPWeave.ssp_weave_preservation
+
+-- Observer quotient: what the Boolean layer keeps and what it forgets
+#print axioms Integration.ObserverQuotient.polarPresence_orbit
+#print axioms Integration.ObserverQuotient.polarPresence_equivariant
+#print axioms Integration.ObserverQuotient.laneAction_descends
+#print axioms Integration.ObserverQuotient.no_equivariant_section
+#print axioms Integration.ObserverQuotient.support_no_descent
+#print axioms Integration.ObserverQuotient.polarPresence_no_descent
+#print axioms Integration.ObserverQuotient.support_not_polarity_invariant
+#print axioms Integration.ObserverQuotient.polarPresenceMask_nonexpansive
+#print axioms Integration.ObserverQuotient.orientation_swap
+#print axioms Integration.ObserverQuotient.defectOrientationHub
+#print axioms Integration.ObserverQuotient.defectToFibreOrientation_equiv
+#print axioms Integration.ObserverQuotient.observer_loss_summary
+
+-- The residual-bearing 9 → 6 projection
+#print axioms Integration.PolarResidual.polarEquiv
+#print axioms Integration.PolarResidual.no_retraction_to_polar
+#print axioms Integration.PolarResidual.project_preserves_phase
+#print axioms Integration.PolarResidual.polarTransport
+#print axioms Integration.PolarResidual.kernelTritHub
+#print axioms Integration.PolarResidual.polar_residual_summary
+
+-- Residual-bearing quotients as one structure
+#print axioms Integration.Residual.card_le
+#print axioms Integration.Residual.residual_not_subsingleton
+#print axioms Integration.Residual.polarQuotient
+#print axioms Integration.Residual.signQuotient
+#print axioms Integration.Residual.residual_quotient_instances
+
+-- Symmetry reduction as a typed obligation
+#print axioms Integration.SymmetryReduction.orbit_invariant
+#print axioms Integration.SymmetryReduction.phaseReduction
+#print axioms Integration.SymmetryReduction.polarReduction
+#print axioms Integration.SymmetryReduction.laneReduction
+#print axioms Integration.SymmetryReduction.support_no_equivariant_action
+#print axioms Integration.SymmetryReduction.support_not_a_reduction
+#print axioms Integration.SymmetryReduction.symmetry_reduction_summary
+
+-- The weld: symmetry-resolved observers (Spine geometry × Integration transport)
+#print axioms Integration.StructuredObserver.FixedIsometryRep.fluct_map
+#print axioms Integration.StructuredObserver.FixedIsometryRep.area2_map
+#print axioms Integration.StructuredObserver.SymmetryResolvedObserver.nondegeneracy_pos
+#print axioms Integration.StructuredObserver.SymmetryResolvedObserver.nondegeneracy_invariant
+#print axioms Integration.StructuredObserver.SymmetryResolvedObserver.symmetry_resolved_theorem
+#print axioms Integration.StructuredObserver.kernelReduction
+#print axioms Integration.StructuredObserver.kernelReduction_action_nontrivial
+#print axioms Integration.StructuredObserver.ssp369Observer
+#print axioms Integration.StructuredObserver.ssp369_theorem
+#print axioms Integration.StructuredObserver.ssp369_residual_nontrivial
+#print axioms Integration.StructuredObserver.polar6_no_equivariant_action
+#print axioms Integration.StructuredObserver.polarResultReduction
+#print axioms Integration.StructuredObserver.equivariant_reduction_plus_residual
+
+-- The order-three instance, and its identification with the spine's ℝ[C₃]
+#print axioms Integration.StructuredObserver.actWheel_order_three
+#print axioms Integration.StructuredObserver.wheelReduction
+#print axioms Integration.StructuredObserver.wheelObserver
+#print axioms Integration.StructuredObserver.wheel_theorem
+#print axioms Integration.StructuredObserver.phaseEmbed_rot
+#print axioms Integration.StructuredObserver.wheel_no_invariant_line
+#print axioms Integration.StructuredObserver.wheel_c3_summary
+
+-- Towers: the hierarchy composes
+#print axioms Integration.ObserverTower.compQuotient
+#print axioms Integration.ObserverTower.towerOf
+#print axioms Integration.ObserverTower.tower_nondegeneracy
+#print axioms Integration.ObserverTower.tower_theorem
+#print axioms Integration.ObserverTower.tower_card_bound
+#print axioms Integration.ObserverTower.magnitudeStep
+#print axioms Integration.ObserverTower.magnitudeStep_proper
+#print axioms Integration.ObserverTower.sspTower
+#print axioms Integration.ObserverTower.sspTower_theorem
+#print axioms Integration.ObserverTower.sspTower_cards
+#print axioms Integration.ObserverTower.sspTower_residual_grows
+
+-- Descent of the transverse certificate to the visible layer
+#print axioms Integration.ObserverDescent.nondegeneracy_descends
+#print axioms Integration.ObserverDescent.certificate_is_coarse_observable
+#print axioms Integration.ObserverDescent.wheel_orbitFibred
+#print axioms Integration.ObserverDescent.wheel_certificate_descends
+#print axioms Integration.ObserverDescent.ssp369_not_orbit_fibred
+
+-- Finite physics lanes as instances of the welded schema
+#print axioms Integration.Physics369.axisLiftDoubleCover
+#print axioms Integration.Physics369.axisLiftObserver
+#print axioms Integration.Physics369.axisLift_theorem
+#print axioms Integration.Physics369.axisLift_residual_nontrivial
+#print axioms Integration.Physics369.matrixSlotNonary
+#print axioms Integration.Physics369.matrixSlot_no_canonical_phase_cell
+#print axioms Integration.Physics369.stage3NonaryChart
+#print axioms Integration.Physics369.stage3SixChart
+#print axioms Integration.Physics369.nsStage3Observer
+#print axioms Integration.Physics369.nsStage3_theorem
+#print axioms Integration.Physics369.physics_actions_factor_through_sign
+#print axioms Integration.Physics369.physics_instances_summary
+
+-- The registry itself
+#print axioms Integration.Registry.registry
+#print axioms Integration.Registry.registry_levels
+#print axioms Integration.Registry.boundaries
+#print axioms Integration.Registry.sockets
+
+-- Gauge reduction: quotient the redundancy, keep the effective symmetry
+#print axioms Integration.Gauge.GaugeReduction.gauge_invariant
+#print axioms Integration.Gauge.GaugeReduction.toEquivariantQuotient
+#print axioms Integration.Gauge.GaugeReduction.coarse_action_trivial_of_orbit
+#print axioms Integration.Gauge.GaugeReduction.effective_not_orbit_quotient
+#print axioms Integration.Gauge.GaugeReduction.redundant_iff_gauge
+#print axioms Integration.Gauge.GaugeReduction.compGauge
+#print axioms Integration.Gauge.GaugeReduction.compGauge_invisible_of_mid_gauge
+#print axioms Integration.Gauge.GaugeReduction.compGauge_redundant_iff
+#print axioms Integration.Gauge.GaugeReduction.residual_nontrivial_of_card
+
+-- Equivariant transverse channels
+#print axioms Integration.EquivariantChannel.EqObserverBuild.channelVec_equivariant
+#print axioms Integration.EquivariantChannel.EqObserverBuild.toObserver
+
+-- The welded gauge theorem and its finite SU(2)-pattern instance
+#print axioms Integration.GaugeObserver.gauge_welded_theorem
+#print axioms Integration.GaugeSU2.gaugeDatum_exact
+#print axioms Integration.GaugeSU2.su2GaugeReduction
+#print axioms Integration.GaugeSU2.su2_effective
+#print axioms Integration.GaugeSU2.su2_not_orbit_quotient
+#print axioms Integration.GaugeSU2.su2_redundant_iff_gauge
+#print axioms Integration.GaugeSU2.sheet_is_deck_transformation
+#print axioms Integration.GaugeSU2.su2GaugeObserver
+#print axioms Integration.GaugeSU2.su2_gauge_theorem
+#print axioms Integration.GaugeSU2.su2_welded
+
+-- Descent levels: the coarsest sufficient observation
+#print axioms Integration.DescentLevel.LayerTower.factorsAt_of_le
+#print axioms Integration.DescentLevel.LayerTower.factorsAt_iff_fibre
+#print axioms Integration.DescentLevel.LayerTower.coarsest_unique
+#print axioms Integration.DescentLevel.LayerTower.exists_coarsest
+#print axioms Integration.DescentLevel.factorsAt_one_of_orbitFibred
+#print axioms Integration.DescentLevel.cert_mid
+#print axioms Integration.DescentLevel.cert_high
+#print axioms Integration.DescentLevel.cert_factorsAt_one
+#print axioms Integration.DescentLevel.cert_not_factorsAt_two
+#print axioms Integration.DescentLevel.axis_coarsest_sufficient
+#print axioms Integration.DescentLevel.axis_coarsest_unique
+#print axioms Integration.DescentLevel.factorsAt_all_of_transitive
+#print axioms Integration.DescentLevel.su2_cert_constant
+#print axioms Integration.DescentLevel.su2_cert_factorsAt
+#print axioms Integration.DescentLevel.su2_no_coarsest
+
+-- The SSP lane as a gauge reduction
+#print axioms Integration.GaugeSSP.sspDatum_exact
+#print axioms Integration.GaugeSSP.sspGaugeReduction
+#print axioms Integration.GaugeSSP.ssp_effective
+#print axioms Integration.GaugeSSP.ssp_redundant_iff_gauge
+#print axioms Integration.GaugeSSP.wheel_vs_gauge
+#print axioms Integration.GaugeSSP.sspGaugeObserver
+#print axioms Integration.GaugeSSP.ssp_gauge_theorem
+#print axioms Integration.GaugeSSP.ssp_welded

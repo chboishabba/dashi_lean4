@@ -1,0 +1,9 @@
+{
+  "totalDeclarations": 708152,
+  "distinctSingleDigests": 625475,
+  "distinctMultiScores": 693219,
+  "numHashes": 4,
+  "scoreSpaceBits": 96,
+  "arrowField": { "a": 5, "b": 11, "p": 97 },
+  "fieldIsPermutation": true
+}

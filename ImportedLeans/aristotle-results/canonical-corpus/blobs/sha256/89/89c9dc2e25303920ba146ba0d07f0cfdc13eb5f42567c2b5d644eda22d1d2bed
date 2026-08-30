@@ -1,0 +1,47 @@
+module ScratchUpper where
+
+open import Data.Integer.Base using (+_)
+open import Data.Fin.Base using (zero)
+open import Data.Vec.Base using (_∷_; [])
+open import Data.Rational.Base as ℚN using (ℚ) renaming (_/_ to _//_)
+open import Relation.Binary.PropositionalEquality using (refl)
+
+import Real as BishopReal
+import DASHI.Foundations.BishopNormalisedRationalRingSolverExact as QSolver
+open QSolver using (Expr; Κ; Ι; _⊕_; _⊗_; _⊖_; prove; ⟦_⟧;
+                    normalFormSideCondition)
+
+t : Expr ℚ 1
+t = Ι zero
+
+one squareE cubeE fourthE powFour powFive powSix : Expr ℚ 1
+one = Κ (+ 1 // 1)
+squareE = t ⊗ t
+cubeE = squareE ⊗ t
+fourthE = squareE ⊗ squareE
+powFour = one ⊗ t ⊗ t ⊗ t ⊗ t
+powFive = one ⊗ t ⊗ t ⊗ t ⊗ t ⊗ t
+powSix = one ⊗ t ⊗ t ⊗ t ⊗ t ⊗ t ⊗ t
+
+lhsTree rhsTree : Expr ℚ 1
+lhsTree =
+  let sineCubic = Κ (+ 1 // 6) ⊗ cubeE
+      sineQuintic = Κ (+ 1 // 120) ⊗ powFive
+      cosineQuadratic = Κ (+ 1 // 2) ⊗ squareE
+      cosineQuartic = Κ (+ 1 // 24) ⊗ powFour
+      cosineSextic = Κ (+ 1 // 720) ⊗ powSix
+      quinticUpper = (t ⊖ sineCubic) ⊕ sineQuintic
+      sexticLower = (one ⊖ cosineQuadratic) ⊕ (cosineQuartic ⊖ cosineSextic)
+      upperEnvelope =
+        (quinticUpper ⊕ quinticUpper) ⊖ (t ⊗ (one ⊕ sexticLower))
+  in (Κ (+ 1 // 3) ⊗ (squareE ⊗ (t ⊖ sineCubic))) ⊖ upperEnvelope
+rhsTree =
+  cubeE ⊗ (Κ (+ 1831 // 11520)
+    ⊕ ((Κ (+ 11 // 360) ⊗ (Κ (+ 1 // 4) ⊖ squareE))
+      ⊕ (Κ (+ 1 // 720) ⊗ (Κ (+ 1 // 16) ⊖ fourthE))))
+
+upperAtTree : ∀ (value : BishopReal.ℝ) →
+  BishopReal._≃_ (⟦ lhsTree ⟧ (value ∷ [])) (⟦ rhsTree ⟧ (value ∷ []))
+upperAtTree value =
+  prove (value ∷ []) lhsTree rhsTree
+    (normalFormSideCondition lhsTree rhsTree refl (value ∷ []))

@@ -1,0 +1,200 @@
+module DASHI.Physics.YangMills.YMRowATunedTrajectoryContractExact where
+
+------------------------------------------------------------------------
+-- ROW A, COMPLETION CONTRACT:
+--   WHAT AN "A IS SOLVED" CLAIM HAS TO INHABIT
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- Tadeusz Bałaban, "Large field renormalization. II. Localization,
+-- exponentiation, and bounds for the R operation", Communications in
+-- Mathematical Physics 122 (1989), 355--392.  DOI: 10.1007/BF01238433.
+--
+-- WHY THIS MODULE EXISTS.  Row A of
+-- docs/ym/YangMillsClayFourFrozenResearchLemmas.md was previously recorded in
+-- a form that is simultaneously too weak in one direction and too strong in
+-- another.
+--
+--   TOO WEAK.  A positive cumulative beta average does not, by itself,
+--   construct Bałaban's tuned trajectory.  The same history-dependent
+--   dynamics must additionally *land* in the prescribed nonzero physical
+--   coupling window at the terminal scale while staying inside the
+--   small-coupling tube.  Theorem `slopeAndTubeDoNotImplyWindow` below proves
+--   this is a real gap and not a stylistic one: there is a family satisfying
+--   the tube constraint and the terminal-tail slope for which the terminal
+--   window fails.  So the slope condition alone can never be accepted as a
+--   completion of row A.
+--
+--   TOO STRONG.  Demanding the positive slope on *every* internal subinterval
+--   is more than the source argument needs; what is needed are the terminal
+--   tails, i.e. the blocks ending at the cutoff K, while smallness from the
+--   bare end is handled by the existing one-sided prefix bound.  The contract
+--   below therefore quantifies the slope over terminal tails only.
+--
+-- WHAT IS PROVED HERE.  (i) the contract implies the uniform terminal margin
+-- that the downstream chain consumes; (ii) the slope-plus-tube conditions are
+-- strictly weaker than the contract.  Nothing here proves row A: no literal
+-- constrained Gaussian determinant, no interaction estimate and no tuned
+-- trajectory is constructed, and the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc) renaming (_+_ to _+ℕ_)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Product.Base using (_×_; _,_; Σ; ∃)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Negation using (¬_)
+open import Relation.Nullary.Decidable using (toWitness; toWitnessFalse)
+
+open import DASHI.Physics.YangMills.BalabanYM4LinearInteractionBetaMarginExact
+  using (natToℚ)
+
+------------------------------------------------------------------------
+-- Blocks of shells
+------------------------------------------------------------------------
+
+-- `blockSum f k n` is  sum_{i<n} f (k + i):  the block of n consecutive
+-- shells starting at k.  A *terminal tail* of the cutoff-K trajectory is the
+-- block with k + n = K.
+
+blockSum : (Nat → ℚ) → Nat → Nat → ℚ
+blockSum f k zero = 0ℚ
+blockSum f k (suc n) = blockSum f k n + f (k +ℕ n)
+
+------------------------------------------------------------------------
+-- The contract
+------------------------------------------------------------------------
+
+-- `coupling K j` and `betaOf K j` are the coupling and beta increment of the
+-- shell j of the trajectory constructed for cutoff K; all constants are
+-- required to be independent of K, which is the uniformity the continuum
+-- limit needs.
+
+record TunedTrajectoryContract : Set where
+  field
+    tubeWidth targetLow targetHigh marginConstant : ℚ
+    coupling betaOf : Nat → Nat → ℚ
+
+    marginPositive    : 0ℚ < marginConstant
+    targetLowPositive : 0ℚ < targetLow           -- a *nonzero* physical coupling
+    tubePositive      : ∀ K j → 0ℚ < coupling K j
+    tubeSmallness     : ∀ K j → coupling K j ≤ tubeWidth   -- CMP122 small field
+
+    -- terminal tails only: blocks that end at the cutoff
+    terminalTailSlope :
+      ∀ K k n → k +ℕ n ≡ K →
+      marginConstant * natToℚ n ≤ blockSum (betaOf K) k n
+
+    -- the trajectory must hit the prescribed physical coupling window
+    terminalWindowLow  : ∀ K → targetLow ≤ coupling K K
+    terminalWindowHigh : ∀ K → coupling K K ≤ targetHigh
+
+module Contract (c : TunedTrajectoryContract) where
+
+  open TunedTrajectoryContract c
+
+  -- The downstream consumer's uniform terminal margin is the k = 0 case.
+  uniformTerminalMargin :
+    ∀ K → marginConstant * natToℚ K ≤ blockSum (betaOf K) 0 K
+  uniformTerminalMargin K = terminalTailSlope K 0 K refl
+
+------------------------------------------------------------------------
+-- The slope condition alone is strictly weaker than the contract
+------------------------------------------------------------------------
+
+-- A family that survives in the tube and has a uniformly positive terminal
+-- tail slope, yet whose terminal coupling is pinned far below any prescribed
+-- physical window: g = 1/1000 on every shell, beta = 1 on every shell.
+
+module SlopeWithoutWindow where
+
+  flatCoupling flatBeta : Nat → Nat → ℚ
+  flatCoupling _ _ = + 1 / 1000
+  flatBeta _ _ = 1ℚ
+
+  flatTube : ℚ
+  flatTube = + 1 / 1000
+
+  blockSumOfOnes : ∀ k n → blockSum (flatBeta 0) k n ≡ natToℚ n
+  blockSumOfOnes k zero = refl
+  blockSumOfOnes k (suc n) = cong (_+ 1ℚ) (blockSumOfOnes k n)
+
+  slope : ∀ K k n → k +ℕ n ≡ K → 1ℚ * natToℚ n ≤ blockSum (flatBeta K) k n
+  slope K k n _ =
+    ℚP.≤-reflexive (trans (ℚP.*-identityˡ (natToℚ n)) (sym (blockSumOfOnes k n)))
+
+  positivity : ∀ K j → 0ℚ < flatCoupling K j
+  positivity _ _ = toWitness {a? = 0ℚ ℚP.<? (+ 1 / 1000)} _
+
+  smallness : ∀ K j → flatCoupling K j ≤ flatTube
+  smallness _ _ = ℚP.≤-refl
+
+  -- The prescribed physical window of the source construction is a *nonzero*
+  -- coupling interval; take, say, targetLow = 1/2.
+  prescribedTargetLow : ℚ
+  prescribedTargetLow = + 1 / 2
+
+  windowFails : ∀ K → ¬ (prescribedTargetLow ≤ flatCoupling K K)
+  windowFails K =
+    toWitnessFalse {a? = prescribedTargetLow ℚP.≤? (+ 1 / 1000)} _
+
+-- Positive terminal-tail slope plus small-field survival does NOT deliver the
+-- tuned trajectory: there is a family with both properties whose terminal
+-- coupling misses the prescribed nonzero window.
+SlopeInsufficiency : Set
+SlopeInsufficiency =
+  ∃ λ (coupling : Nat → Nat → ℚ) →
+  ∃ λ (betaOf : Nat → Nat → ℚ) →
+    ((∀ K j → 0ℚ < coupling K j)
+      × (∀ K j → coupling K j ≤ SlopeWithoutWindow.flatTube))
+    × (∀ K k n → k +ℕ n ≡ K → 1ℚ * natToℚ n ≤ blockSum (betaOf K) k n)
+    × (∀ K → ¬ (SlopeWithoutWindow.prescribedTargetLow ≤ coupling K K))
+
+slopeAndTubeDoNotImplyWindow : SlopeInsufficiency
+slopeAndTubeDoNotImplyWindow =
+  SlopeWithoutWindow.flatCoupling
+    , SlopeWithoutWindow.flatBeta
+    , (SlopeWithoutWindow.positivity , SlopeWithoutWindow.smallness)
+    , SlopeWithoutWindow.slope
+    , SlopeWithoutWindow.windowFails
+
+------------------------------------------------------------------------
+-- Consistency check for the contract itself
+------------------------------------------------------------------------
+
+-- The contract must be strong enough to be worth inhabiting and weak enough
+-- to be inhabitable at all.  The following abstract inhabitant checks the
+-- latter, and NOTHING else: it is a constant sequence, it says nothing about
+-- Yang-Mills, and it is emphatically not a proof of row A.  Row A asks for
+-- this contract with `coupling` and `betaOf` supplied by the literal Bałaban
+-- trajectory of the constrained Gaussian/interaction RG map, and that
+-- identification is exactly what remains open.
+
+module ContractConsistency where
+
+  constantContract : TunedTrajectoryContract
+  constantContract = record
+    { tubeWidth = + 1 / 2
+    ; targetLow = + 1 / 2
+    ; targetHigh = + 1 / 2
+    ; marginConstant = 1ℚ
+    ; coupling = λ _ _ → + 1 / 2
+    ; betaOf = λ _ _ → 1ℚ
+    ; marginPositive = toWitness {a? = 0ℚ ℚP.<? 1ℚ} _
+    ; targetLowPositive = toWitness {a? = 0ℚ ℚP.<? (+ 1 / 2)} _
+    ; tubePositive = λ _ _ → toWitness {a? = 0ℚ ℚP.<? (+ 1 / 2)} _
+    ; tubeSmallness = λ _ _ → ℚP.≤-refl
+    ; terminalTailSlope = λ K k n eq → SlopeWithoutWindow.slope K k n eq
+    ; terminalWindowLow = λ _ → ℚP.≤-refl
+    ; terminalWindowHigh = λ _ → ℚP.≤-refl
+    }

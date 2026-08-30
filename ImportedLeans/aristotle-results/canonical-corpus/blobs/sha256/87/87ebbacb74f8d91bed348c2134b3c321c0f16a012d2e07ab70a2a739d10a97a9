@@ -1,0 +1,281 @@
+module DASHI.Physics.YangMills.YMRowCScaleTimeHessianDebtIntegralGateExact where
+
+------------------------------------------------------------------------
+-- ROW C, TEMPORAL HALF:  WHAT A DISCRETE-RG HESSIAN FLOOR HAS TO BEAT
+--   BEFORE IT CAN BE A FINITE HEAT/DOOB DEBT ON THE SAME DENSITY.
+--
+-- ROW C (docs/ym/YangMillsClayFourFrozenResearchLemmas.md) asks, on the actual
+-- finite-volume Yang--Mills effective density  u_t = H_t(e^{-V_0}),
+-- V_t = -log u_t , for a cutoff/volume-uniform Hessian debt
+--
+--     Hess V_t >= - eta_N(t) g ,      sup_N  int_0^infinity eta_N(t) dt < infinity ,
+--
+-- consumed by `RicciReserveHessianDebtData` in
+-- `DASHI.Physics.YangMills.CompactLieHeatDoobRicciReserveDebtExact`, which turns
+-- `Ric >= rho g` and `int eta <= M` into `gamma_LSI >= rho e^{-2M} > 0`.
+--
+-- WHAT THE DISCRETE RG ACTUALLY PRODUCES.  Every estimate in the Balaban lane
+-- is indexed by an RG SCALE j, not by heat time: a shell bound, a polymer
+-- contraction, a marked-source decay.  Passing from "per scale" to "per unit
+-- heat time" is not free, because the block-spin scale j occupies an interval
+-- of heat time whose width DILATES with j.  With block size L the parabolic
+-- correspondence is  t_j ~ L^{2j} , so the j-th interval has width
+--
+--     w_j = w_0 tau^j ,      tau = L^2 > 1 .
+--
+-- Since eta is constant on each RG interval, its integral over the first n
+-- intervals starting at scale k is EXACTLY the finite sum
+--
+--     int eta  =  sum_{j=k}^{k+n-1}  w_j eta_j ,
+--
+-- so no approximation enters, and the question of row C's temporal half becomes
+-- an exact rational one: for which per-scale debt rates is that sum bounded
+-- uniformly in n (equivalently, in the cutoff)?
+--
+-- THE GATE.  This module proves the answer, in the division-free budget form
+-- the repository uses everywhere:
+--
+--   * `dilatedDebtBudget` — if `eta_j <= E_0 rho^j` and `w_j = w_0 tau^j` then
+--     every prefix of the debt integral is bounded by any `B` closing
+--
+--         w_0 E_0 + (rho tau) B <= B ,
+--
+--     which requires `rho tau < 1`, i.e.  rho < L^{-2} .  The bound depends on
+--     neither the starting scale nor the number of scales, so it is exactly the
+--     `sup_N int_0^infinity eta_N < infinity` that row C consumes -- PROVIDED
+--     the four constants `w_0, E_0, rho, tau` are themselves N-independent,
+--     which is the physical obligation and is NOT proved here.
+--
+--   * `squaredRateDebtBudget` — if the per-scale debt decays at the SQUARED
+--     rate `eta_j <= D_0 (rho^2)^j`, the gate relaxes to `rho^2 tau < 1`, i.e.
+--     rho < L^{-1} .  Whether the physical debt rate is `rho^j` or `rho^{2j}`
+--     therefore decides row C's temporal half over a whole factor of L in the
+--     admissible contraction rate.  Concretely for L = 2 and rho = 1/3, both
+--     branches are machine-checked here:  `linearRateGateFailsAtL2` (the linear
+--     rate gives `rho tau = 4/3 >= 1`, the summand never decays, and any
+--     claimed budget `B` caps the number of admissible scales by `B`), against
+--     `squaredRateBudgetAtL2` (the squared rate gives `rho^2 tau = 4/9`, and
+--     every prefix of the debt integral is below the explicit constant 2).
+--
+--   * `debtFloorCapsScaleWindow` — the converse, and the falsifiability clause:
+--     a debt integrand with ANY positive floor `c` forces `c * n <= B` for every
+--     admissible `n`, so a claimed uniform budget `B` is a claim that at most
+--     `B / c` RG scales contribute.  A per-scale debt that does not beat the
+--     time dilation cannot be repaired by a better constant.
+--
+-- WHAT THIS IS NOT.  This does not close row C, and no row's status changes;
+-- the frozen research count stays at 4.  What remains open is precisely what
+-- the header of the row says: (i) the SAME-DENSITY identification -- that the
+-- discrete RG Hessian/coercivity data at scale j is a Hessian floor for the
+-- literal Heat/Doob potential V_t of the same Gibbs density on the j-th heat
+-- interval, and (ii) cutoff- and volume-uniform values of the four constants
+-- above.  This module supplies the exact arithmetic bridge sitting between
+-- those two obligations and `RicciReserveHessianDebtData`, and it makes the
+-- numerical gate `rho tau < 1` explicit, so the physical estimate can be
+-- falsified by a rate that fails it.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat as Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ using (ℚ; 0ℚ; 1ℚ; _+_; _*_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact
+  using ( natToℚ; nonNegProduct; 0≤1ℚ
+        ; prefixSum; prefixSum-mono; prefixSum-lowerConst
+        ; pow; pow-nonneg; geometricEnergyPrefixBound)
+
+------------------------------------------------------------------------
+-- Rational arithmetic used below
+------------------------------------------------------------------------
+
+mulExchange : ∀ a b c d → (a * b) * (c * d) ≡ (a * c) * (b * d)
+mulExchange a b c d =
+  trans (ℚP.*-assoc a b (c * d))
+  (trans (cong (a *_) (sym (ℚP.*-assoc b c d)))
+  (trans (cong (λ z → a * (z * d)) (ℚP.*-comm b c))
+  (trans (cong (a *_) (ℚP.*-assoc c b d))
+         (sym (ℚP.*-assoc a c (b * d))))))
+
+pow-mul : ∀ a b j → pow a j * pow b j ≡ pow (a * b) j
+pow-mul a b zero = ℚP.*-identityˡ 1ℚ
+pow-mul a b (suc j) =
+  trans (mulExchange a (pow a j) b (pow b j))
+        (cong ((a * b) *_) (pow-mul a b j))
+
+pow-above-one : ∀ r → 1ℚ ≤ r → ∀ j → 1ℚ ≤ pow r j
+pow-above-one r 1≤r zero = ℚP.≤-refl
+pow-above-one r 1≤r (suc j) =
+  ℚP.≤-trans
+    (subst (_≤ r * 1ℚ) (ℚP.*-identityʳ 1ℚ)
+      (ℚP.*-monoʳ-≤-nonNeg 1ℚ {{ℚ.nonNegative 0≤1ℚ}} 1≤r))
+    (ℚP.*-monoˡ-≤-nonNeg r {{ℚ.nonNegative (ℚP.≤-trans 0≤1ℚ 1≤r)}}
+      (pow-above-one r 1≤r j))
+
+------------------------------------------------------------------------
+-- The debt integral over the RG time partition.
+--
+-- `debtIntegral w eta k n` is the integral of the step function that equals
+-- `eta j` on the j-th RG heat interval, over the n intervals starting at scale
+-- k.  Because the integrand is constant on each interval this is an identity,
+-- not a quadrature approximation.
+------------------------------------------------------------------------
+
+debtIntegral : (Nat → ℚ) → (Nat → ℚ) → Nat → Nat → ℚ
+debtIntegral w η = prefixSum (λ j → w j * η j)
+
+------------------------------------------------------------------------
+-- THE GATE:  geometric per-scale debt against geometric time dilation.
+------------------------------------------------------------------------
+
+dilatedDebtBudget :
+  ∀ (η : Nat → ℚ) (w₀ τ E₀ ρ B : ℚ) →
+  0ℚ ≤ w₀ → 0ℚ ≤ τ → 0ℚ ≤ E₀ → 0ℚ ≤ ρ →
+  (∀ j → 0ℚ ≤ η j) →
+  (∀ j → η j ≤ E₀ * pow ρ j) →
+  ρ * τ ≤ 1ℚ → 0ℚ ≤ B → (w₀ * E₀) + (ρ * τ) * B ≤ B →
+  ∀ k n → debtIntegral (λ j → w₀ * pow τ j) η k n ≤ B
+dilatedDebtBudget η w₀ τ E₀ ρ B 0≤w₀ 0≤τ 0≤E₀ 0≤ρ ηNonNeg ηBound ρτ≤1 0≤B closes =
+  geometricEnergyPrefixBound
+    (λ j → (w₀ * pow τ j) * η j) (w₀ * E₀) (ρ * τ) B
+    (nonNegProduct w₀ E₀ 0≤w₀ 0≤E₀)
+    (nonNegProduct ρ τ 0≤ρ 0≤τ)
+    ρτ≤1 0≤B closes
+    (λ j → nonNegProduct (w₀ * pow τ j) (η j)
+             (nonNegProduct w₀ (pow τ j) 0≤w₀ (pow-nonneg τ 0≤τ j))
+             (ηNonNeg j))
+    summandBound
+  where
+    summandBound :
+      ∀ j → (w₀ * pow τ j) * η j ≤ (w₀ * E₀) * pow (ρ * τ) j
+    summandBound j =
+      ℚP.≤-trans
+        (ℚP.*-monoˡ-≤-nonNeg (w₀ * pow τ j)
+          {{ℚ.nonNegative (nonNegProduct w₀ (pow τ j) 0≤w₀ (pow-nonneg τ 0≤τ j))}}
+          (ηBound j))
+        (ℚP.≤-reflexive
+          (trans (mulExchange w₀ (pow τ j) E₀ (pow ρ j))
+            (cong ((w₀ * E₀) *_)
+              (trans (ℚP.*-comm (pow τ j) (pow ρ j)) (pow-mul ρ τ j)))))
+
+-- The same statement for a per-scale debt decaying at the squared rate, which
+-- is what a debt produced by a QUADRATIC (mixing-squared) mechanism gives.  The
+-- gate is then `rho^2 tau < 1` rather than `rho tau < 1`.
+squaredRateDebtBudget :
+  ∀ (η : Nat → ℚ) (w₀ τ D₀ ρ B : ℚ) →
+  0ℚ ≤ w₀ → 0ℚ ≤ τ → 0ℚ ≤ D₀ → 0ℚ ≤ ρ →
+  (∀ j → 0ℚ ≤ η j) →
+  (∀ j → η j ≤ D₀ * pow (ρ * ρ) j) →
+  (ρ * ρ) * τ ≤ 1ℚ → 0ℚ ≤ B → (w₀ * D₀) + ((ρ * ρ) * τ) * B ≤ B →
+  ∀ k n → debtIntegral (λ j → w₀ * pow τ j) η k n ≤ B
+squaredRateDebtBudget η w₀ τ D₀ ρ B 0≤w₀ 0≤τ 0≤D₀ 0≤ρ =
+  dilatedDebtBudget η w₀ τ D₀ (ρ * ρ) B 0≤w₀ 0≤τ 0≤D₀
+    (nonNegProduct ρ ρ 0≤ρ 0≤ρ)
+
+------------------------------------------------------------------------
+-- FALSIFIABILITY:  a debt integrand with a positive floor caps the number of
+-- RG scales that any claimed uniform budget can accommodate.
+------------------------------------------------------------------------
+
+debtFloorCapsScaleWindow :
+  ∀ (f : Nat → ℚ) (c B : ℚ) →
+  (∀ j → c ≤ f j) →
+  ∀ k n → prefixSum f k n ≤ B → c * natToℚ n ≤ B
+debtFloorCapsScaleWindow f c B floor k n bounded =
+  ℚP.≤-trans (prefixSum-lowerConst f c floor k n) bounded
+
+-- If the per-scale debt does not decay faster than the time dilation grows,
+-- the debt integrand has a positive floor.
+undilatedDebtHasFloor :
+  ∀ (η : Nat → ℚ) (w₀ τ e₀ ρ : ℚ) →
+  0ℚ ≤ w₀ → 0ℚ ≤ e₀ → 0ℚ ≤ ρ → 0ℚ ≤ τ →
+  (∀ j → e₀ * pow ρ j ≤ η j) →
+  1ℚ ≤ ρ * τ →
+  ∀ j → w₀ * e₀ ≤ (w₀ * pow τ j) * η j
+undilatedDebtHasFloor η w₀ τ e₀ ρ 0≤w₀ 0≤e₀ 0≤ρ 0≤τ ηFloor 1≤ρτ j =
+  ℚP.≤-trans
+    (ℚP.≤-trans
+      (ℚP.≤-reflexive (sym (ℚP.*-identityʳ (w₀ * e₀))))
+      (ℚP.*-monoˡ-≤-nonNeg (w₀ * e₀)
+        {{ℚ.nonNegative (nonNegProduct w₀ e₀ 0≤w₀ 0≤e₀)}}
+        (pow-above-one (ρ * τ) 1≤ρτ j)))
+    (ℚP.≤-trans
+      (ℚP.≤-reflexive expand)
+      (ℚP.*-monoˡ-≤-nonNeg (w₀ * pow τ j)
+        {{ℚ.nonNegative (nonNegProduct w₀ (pow τ j) 0≤w₀ (pow-nonneg τ 0≤τ j))}}
+        (ηFloor j)))
+  where
+    expand : (w₀ * e₀) * pow (ρ * τ) j ≡ (w₀ * pow τ j) * (e₀ * pow ρ j)
+    expand =
+      trans
+        (cong ((w₀ * e₀) *_)
+          (trans (sym (pow-mul ρ τ j)) (ℚP.*-comm (pow ρ j) (pow τ j))))
+        (mulExchange w₀ e₀ (pow τ j) (pow ρ j))
+
+------------------------------------------------------------------------
+-- THE L = 2 ARITHMETIC.  tau = L^2 = 4.  Take rho = 1/3.
+------------------------------------------------------------------------
+
+blockDilationL2 : ℚ
+blockDilationL2 = + 4 / 1
+
+testRate : ℚ
+testRate = + 1 / 3
+
+-- Linear branch:  rho tau = 4/3 >= 1.  The debt integrand then has the floor
+-- w_0 e_0, so by `debtFloorCapsScaleWindow` a claimed uniform budget B admits
+-- at most  B / (w_0 e_0)  scales:  there is no uniform debt bound.
+linearRateGateFailsAtL2 : 1ℚ ≤ testRate * blockDilationL2
+linearRateGateFailsAtL2 =
+  toWitness {a? = 1ℚ ℚP.≤? (testRate * blockDilationL2)} _
+
+linearRateScaleWindowCapAtL2 :
+  ∀ (η : Nat → ℚ) (w₀ e₀ B : ℚ) →
+  0ℚ ≤ w₀ → 0ℚ ≤ e₀ →
+  (∀ j → e₀ * pow testRate j ≤ η j) →
+  ∀ k n →
+  debtIntegral (λ j → w₀ * pow blockDilationL2 j) η k n ≤ B →
+  (w₀ * e₀) * natToℚ n ≤ B
+linearRateScaleWindowCapAtL2 η w₀ e₀ B 0≤w₀ 0≤e₀ ηFloor k n bounded =
+  debtFloorCapsScaleWindow
+    (λ j → (w₀ * pow blockDilationL2 j) * η j) (w₀ * e₀) B
+    (undilatedDebtHasFloor η w₀ blockDilationL2 e₀ testRate
+      0≤w₀ 0≤e₀
+      (toWitness {a? = 0ℚ ℚP.≤? testRate} _)
+      (toWitness {a? = 0ℚ ℚP.≤? blockDilationL2} _)
+      ηFloor linearRateGateFailsAtL2)
+    k n bounded
+
+-- Squared branch:  rho^2 tau = 4/9 < 1.  With w_0 = E_0 = 1 the budget closes
+-- at B = 2, since 1 + (4/9)*2 = 17/9 <= 2, and every prefix of the debt
+-- integral -- at every starting scale, for every number of scales -- is at
+-- most 2.
+squaredRateGateHoldsAtL2 : (testRate * testRate) * blockDilationL2 < 1ℚ
+squaredRateGateHoldsAtL2 =
+  toWitness {a? = ((testRate * testRate) * blockDilationL2) ℚP.<? 1ℚ} _
+
+squaredRateBudgetAtL2 :
+  ∀ (η : Nat → ℚ) →
+  (∀ j → 0ℚ ≤ η j) →
+  (∀ j → η j ≤ 1ℚ * pow (testRate * testRate) j) →
+  ∀ k n → debtIntegral (λ j → 1ℚ * pow blockDilationL2 j) η k n ≤ + 2 / 1
+squaredRateBudgetAtL2 η ηNonNeg ηBound =
+  squaredRateDebtBudget η 1ℚ blockDilationL2 1ℚ testRate (+ 2 / 1)
+    0≤1ℚ
+    (toWitness {a? = 0ℚ ℚP.≤? blockDilationL2} _)
+    0≤1ℚ
+    (toWitness {a? = 0ℚ ℚP.≤? testRate} _)
+    ηNonNeg ηBound
+    (toWitness
+      {a? = ((testRate * testRate) * blockDilationL2) ℚP.≤? 1ℚ} _)
+    (toWitness {a? = 0ℚ ℚP.≤? (+ 2 / 1)} _)
+    (toWitness
+      {a? = ((1ℚ * 1ℚ)
+              + ((testRate * testRate) * blockDilationL2) * (+ 2 / 1))
+            ℚP.≤? (+ 2 / 1)} _)

@@ -1,0 +1,355 @@
+module DASHI.Physics.YangMills.BalabanYM4SharpenedLiteralRowA1PositiveBetaExact where
+
+------------------------------------------------------------------------
+-- ROW A1 (LEMMA 1), STEPS 6 AND 7:  THE SHARPENED LITERAL STATEMENT,
+--   END TO END, AND ITS WELD INTO THE SOURCE TRAJECTORY COMPILER.
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I. ...", Communications in Mathematical Physics 109 (1987),
+-- 249--301.  DOI: 10.1007/BF01215223.  Locators: Euclidean covariance
+-- (5.6),(5.7); beta extraction (5.36)--(5.42); end of Sect. 5 for the
+-- dependence of beta_j on all preceding effective couplings.
+--
+-- WHAT THIS MODULE IS.
+--
+-- `BalabanYM4LiteralWilsonFPHaarPositiveBetaExact.LiteralRowA1` assembles
+--
+--     beta_j = (11/24) C_A + R_j + sum_{d<n} Delta_{d,j}
+--            >= (11/24) C_A - 15 * cellMeasure * epsilon - C gamma / 2 > 0
+--
+-- from two hypotheses that are both stronger than the argument needs:
+--
+--   (i) a SEPARATE lower bound -epsilon on each of the four orbit densities,
+--       which discards the (4,6,4,1) cancellation and pays the factor 15;
+--  (ii) per-shell influence increments dominated by the SPECIFIC profile
+--       2^-(d+2), which forces a one-step RG contraction factor kappa <= 1/2.
+--
+-- `BalabanYM4CancellationPreservingFourOrbitGateExact` removes (i) and
+-- `BalabanYM4GeneralSummableHistoryBudgetPositiveBetaExact` removes (ii).
+-- This module runs the whole Row A1 chain on the two weakened hypotheses at
+-- once, so the literal statement now reads
+--
+--     beta_j = (11/24) C_A + R_j + sum_{d<n} Delta_{d,j}
+--            >= b_-(G) = (11/24) C_A - cellMeasure * epsilon - K gamma * B
+--            >  0 ,        1 + kappa * B = B ,   any kappa in [0,1) ,
+--
+-- uniformly in the shell index j, the length n of the preceding
+-- small-coupling history, the volume and the cutoff, with the group entering
+-- only through C_A(G) > 0; and it is welded to the source-normalized coupling
+-- recurrence, giving linear growth of the inverse coupling towards the
+-- ultraviolet at rate b_-(G).
+--
+-- WHAT IS STILL OPEN.  Exactly the same two physical leaves as before, in
+-- their weakened form, and nothing here supplies either:
+--
+--   (A) the literal momentum-space joint Wilson + reduced Faddeev-Popov +
+--       Haar density of the CMP109 background-field vacuum polarisation,
+--       together with a bound on the negative part of its (4,6,4,1)-weighted
+--       COMBINATION, uniform in cutoff, volume and scale;
+--   (B) SOME cutoff- and volume-uniform one-step contraction factor
+--       kappa < 1 for the literal Balaban RG map, plus Lipschitz dependence
+--       of the literal shell coefficient on the effective-coupling state.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Data.Integer.Base using (+_)
+open import Data.Product using (_×_; _,_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (cong; sym; trans; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.YangMills.BalabanYM4SU2RegularOrbitBetaFloorExact as Floor
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonFPHaarPositiveBetaExact
+  as RowA1
+import DASHI.Physics.YangMills.BalabanYM4CancellationPreservingFourOrbitGateExact
+  as Canc
+import DASHI.Physics.YangMills.BalabanYM4GeneralSummableHistoryBudgetPositiveBetaExact
+  as Gen
+import DASHI.Physics.YangMills.BalabanYM4SourceNormalizedCouplingRecurrenceExact
+  as Flow
+import DASHI.Physics.YangMills.BalabanPhysicalBlockFibreSumsExact as Sums
+
+------------------------------------------------------------------------
+-- 1.  THE SHARPENED LITERAL ROW A1 CHAIN
+------------------------------------------------------------------------
+
+module SharpenedLiteralRowA1
+  (Point : Set)
+  (integral : (Point → ℚ) → ℚ)
+  (integralMono :
+     ∀ (f g : Point → ℚ) → (∀ p → f p ≤ g p) → integral f ≤ integral g)
+  (integralAdd :
+     ∀ (f g : Point → ℚ) →
+     integral (λ p → f p + g p) ≡ integral f + integral g)
+  (integralScale :
+     ∀ (c : ℚ) (f : Point → ℚ) → integral (λ p → c * f p) ≡ c * integral f)
+  (cellMeasure : ℚ)
+  (integralConstant : ∀ (c : ℚ) → integral (λ _ → c) ≡ cellMeasure * c)
+  where
+
+  open Canc.LinearCellIntegral Point integral integralMono
+    integralAdd integralScale cellMeasure integralConstant public
+
+  -- The assembled data.  The local radius is cellMeasure * epsilon -- NOT
+  -- 15 * cellMeasure * epsilon -- and the history profile is kappa^d for an
+  -- arbitrary kappa in [0,1), through its budget B with 1 + kappa B = B.
+  sharpenedRowA1Data :
+    ∀ (casimir influence κ budget ε : ℚ) →
+      0ℚ ≤ influence → 0ℚ ≤ κ → 0ℚ ≤ budget → 1ℚ + κ * budget ≡ budget →
+      (shells : Nat → ShellCombinedDensity ε)
+      (increment : Nat → Nat → ℚ) →
+      (∀ j d → (- (influence * Gen.geometric κ d)) ≤ increment j d) →
+      halfWidth ε + influence * budget
+        < RowA1.universalBetaCoefficient casimir →
+    Gen.SummableHistoryPositiveBetaData
+  sharpenedRowA1Data casimir influence κ budget ε
+      influenceNonNeg κnn budgetNonNeg fix shells increment
+      incrementBound numericalGate =
+    Gen.geometricHistoryPositiveBetaData
+      casimir (halfWidth ε) influence κ budget
+      influenceNonNeg κnn budgetNonNeg fix
+      (λ j _ → shellRegularRemainder (shells j))
+      increment
+      (λ j _ → shellRegularRemainderLower (shells j))
+      incrementBound
+      numericalGate
+
+  -- The assembled shell beta is LITERALLY the universal coefficient plus the
+  -- literal normalized regular remainder of the joint Wilson + reduced
+  -- Faddeev-Popov + Haar evaluator plus the summed history increments.
+  sharpenedBetaIsLiteral :
+    ∀ (casimir influence κ budget ε : ℚ)
+      (influenceNonNeg : 0ℚ ≤ influence) (κnn : 0ℚ ≤ κ)
+      (budgetNonNeg : 0ℚ ≤ budget) (fix : 1ℚ + κ * budget ≡ budget)
+      (shells : Nat → ShellCombinedDensity ε)
+      (increment : Nat → Nat → ℚ)
+      (incrementBound :
+         ∀ j d → (- (influence * Gen.geometric κ d)) ≤ increment j d)
+      (numericalGate : halfWidth ε + influence * budget
+                         < RowA1.universalBetaCoefficient casimir)
+      j n →
+    Gen.beta
+      (sharpenedRowA1Data casimir influence κ budget ε
+        influenceNonNeg κnn budgetNonNeg fix shells increment
+        incrementBound numericalGate) j n
+    ≡ RowA1.universalBetaCoefficient casimir
+        + (shellRegularRemainder (shells j)
+            + Gen.incrementSum (increment j) n)
+  sharpenedBetaIsLiteral _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ = refl
+
+  -- ...and it is bounded below by b_-(G) > 0, uniformly in j and n.
+  sharpenedPositiveBeta :
+    ∀ (casimir influence κ budget ε : ℚ)
+      (influenceNonNeg : 0ℚ ≤ influence) (κnn : 0ℚ ≤ κ)
+      (budgetNonNeg : 0ℚ ≤ budget) (fix : 1ℚ + κ * budget ≡ budget)
+      (shells : Nat → ShellCombinedDensity ε)
+      (increment : Nat → Nat → ℚ)
+      (incrementBound :
+         ∀ j d → (- (influence * Gen.geometric κ d)) ≤ increment j d)
+      (numericalGate : halfWidth ε + influence * budget
+                         < RowA1.universalBetaCoefficient casimir)
+      j n →
+    (0ℚ < Gen.generalBetaFloor
+            (sharpenedRowA1Data casimir influence κ budget ε
+              influenceNonNeg κnn budgetNonNeg fix shells increment
+              incrementBound numericalGate))
+    × (Gen.generalBetaFloor
+         (sharpenedRowA1Data casimir influence κ budget ε
+           influenceNonNeg κnn budgetNonNeg fix shells increment
+           incrementBound numericalGate)
+       ≤ RowA1.universalBetaCoefficient casimir
+           + (shellRegularRemainder (shells j)
+               + Gen.incrementSum (increment j) n))
+  sharpenedPositiveBeta casimir influence κ budget ε
+      influenceNonNeg κnn budgetNonNeg fix shells increment
+      incrementBound numericalGate j n =
+    Gen.generalBetaFloorPositive assembled
+    , Gen.generalBetaAboveFloor assembled j n
+    where
+      assembled = sharpenedRowA1Data casimir influence κ budget ε
+        influenceNonNeg κnn budgetNonNeg fix shells increment
+        incrementBound numericalGate
+
+------------------------------------------------------------------------
+-- 2.  THE WELD INTO THE SOURCE-NORMALIZED TRAJECTORY COMPILER
+--
+-- The consumer of Row A1 is the recurrence
+--     inverseCoupling_d = inverseCoupling_{d+1} + beta_{d+1} .
+-- A uniform positive shell beta is exactly the input its enclosure record
+-- wants; the telescope then gives linear ultraviolet growth of the inverse
+-- coupling, i.e. the small-coupling history the CMP119/CMP122 machinery
+-- consumes.  The shell beta at trajectory depth d is the shell beta with a
+-- preceding history of exactly d scales, so no history length is fixed.
+------------------------------------------------------------------------
+
+sharpenedBetaTrajectoryEnclosure :
+  ∀ (dataSet : Gen.SummableHistoryPositiveBetaData)
+    (trajectory : Flow.SourceNormalizedCouplingTrajectory)
+    (betaCeiling : ℚ) →
+  (∀ depth → Flow.beta trajectory (suc depth) ≡ Gen.beta dataSet depth depth) →
+  (∀ depth → Flow.beta trajectory (suc depth) ≤ betaCeiling) →
+  Flow.UniformBetaEnclosure trajectory
+sharpenedBetaTrajectoryEnclosure dataSet trajectory betaCeiling matches ceiling =
+  record
+    { betaLower = Gen.generalBetaFloor dataSet
+    ; betaUpper = betaCeiling
+    ; betaLowerNonnegative = ℚP.<⇒≤ (Gen.generalBetaFloorPositive dataSet)
+    ; betaLowerBelow = λ depth →
+        subst (Gen.generalBetaFloor dataSet ≤_) (sym (matches depth))
+          (Gen.generalBetaAboveFloor dataSet depth depth)
+    ; betaBelowUpper = ceiling
+    }
+
+sharpenedLinearInverseCouplingGrowth :
+  ∀ (dataSet : Gen.SummableHistoryPositiveBetaData)
+    (trajectory : Flow.SourceNormalizedCouplingTrajectory)
+    (betaCeiling : ℚ)
+    (matches :
+       ∀ depth → Flow.beta trajectory (suc depth) ≡ Gen.beta dataSet depth depth)
+    (ceiling : ∀ depth → Flow.beta trajectory (suc depth) ≤ betaCeiling) →
+  ∀ depth →
+  Sums.natAsRational depth * Gen.generalBetaFloor dataSet
+      + Flow.inverseCoupling trajectory depth
+  ≤ Flow.inverseCoupling trajectory 0
+sharpenedLinearInverseCouplingGrowth
+    dataSet trajectory betaCeiling matches ceiling depth =
+  subst
+    (λ target → Sums.natAsRational depth * Gen.generalBetaFloor dataSet
+                  + Flow.inverseCoupling trajectory depth ≤ target)
+    (sym telescope)
+    (subst
+      (λ target → Sums.natAsRational depth * Gen.generalBetaFloor dataSet
+                    + Flow.inverseCoupling trajectory depth ≤ target)
+      (ℚP.+-comm (Flow.betaPartial (Flow.beta trajectory) depth)
+                 (Flow.inverseCoupling trajectory depth))
+      (ℚP.+-monoˡ-≤ (Flow.inverseCoupling trajectory depth) partialLower))
+  where
+    enclosure = sharpenedBetaTrajectoryEnclosure
+      dataSet trajectory betaCeiling matches ceiling
+
+    partialLower :
+      Sums.natAsRational depth * Gen.generalBetaFloor dataSet
+      ≤ Flow.betaPartial (Flow.beta trajectory) depth
+    partialLower = Flow.betaPartialLower enclosure depth
+
+    telescope :
+      Flow.inverseCoupling trajectory 0
+      ≡ Flow.inverseCoupling trajectory depth
+          + Flow.betaPartial (Flow.beta trajectory) depth
+    telescope = Flow.sourceRecurrenceTelescope trajectory depth
+
+------------------------------------------------------------------------
+-- 3.  A BUDGET THAT THE EARLIER STATEMENT COULD NOT REACH
+--
+-- SU(2) (C_A = 2, universal coefficient 11/12) on the normalized cube
+-- (cellMeasure 1/16), with
+--
+--     epsilon = 5      (negative sup norm of the COMBINED joint density),
+--     kappa   = 3/4    (one-step contraction factor),
+--     K gamma = 1/20 ,  budget B = 4  (since 1 + (3/4)*4 = 4).
+--
+-- Gate:  (1/16)*5 + (1/20)*4  =  5/16 + 1/5  =  41/80  <  11/12 .
+-- Floor: b_- = 11/12 - 5/16 - 1/5 = 97/240 > 0.
+--
+-- Neither hypothesis is admissible for the earlier statement: it would charge
+-- 15 * 5/16 = 75/16 = 4.6875 for the orbit half alone, far above 11/12, and
+-- it cannot accept kappa = 3/4 > 1/2 at all.
+------------------------------------------------------------------------
+
+sampleEpsilon sampleKappa sampleBudget sampleInfluence : ℚ
+sampleEpsilon = + 5 / 1
+sampleKappa = + 3 / 4
+sampleBudget = + 4 / 1
+sampleInfluence = + 1 / 20
+
+sampleLocalRadius : ℚ
+sampleLocalRadius = Canc.cubeCellMeasure * sampleEpsilon        -- 5/16
+
+sampleLocalRadiusValue : sampleLocalRadius ≡ + 5 / 16
+sampleLocalRadiusValue = refl
+
+sampleBudgetFixedPoint : 1ℚ + sampleKappa * sampleBudget ≡ sampleBudget
+sampleBudgetFixedPoint = refl
+
+sampleGate :
+  sampleLocalRadius + sampleInfluence * sampleBudget
+  < RowA1.universalBetaCoefficient Floor.su2AdjointCasimir
+sampleGate =
+  toWitness
+    {a? = (sampleLocalRadius + sampleInfluence * sampleBudget)
+            ℚP.<? RowA1.universalBetaCoefficient Floor.su2AdjointCasimir}
+    _
+
+-- The same epsilon is far outside the reach of the per-orbit gate.
+sampleFailsPerOrbitGate :
+  RowA1.universalBetaCoefficient Floor.su2AdjointCasimir
+  < RowA1.fifteen * sampleLocalRadius
+sampleFailsPerOrbitGate =
+  toWitness
+    {a? = RowA1.universalBetaCoefficient Floor.su2AdjointCasimir
+            ℚP.<? RowA1.fifteen * sampleLocalRadius}
+    _
+
+-- ...and the contraction factor is outside the reach of the 2^-(d+2) profile.
+sampleKappaAboveHalf : RowA1.half < sampleKappa
+sampleKappaAboveHalf = toWitness {a? = RowA1.half ℚP.<? sampleKappa} _
+
+sampleIncrement : Nat → Nat → ℚ
+sampleIncrement _ d = - (sampleInfluence * Gen.geometric sampleKappa d)
+
+sampleLocalRemainder : Nat → Nat → ℚ
+sampleLocalRemainder _ _ = - sampleLocalRadius
+
+sampleData : Gen.SummableHistoryPositiveBetaData
+sampleData =
+  Gen.geometricHistoryPositiveBetaData
+    Floor.su2AdjointCasimir sampleLocalRadius sampleInfluence
+    sampleKappa sampleBudget
+    (toWitness {a? = 0ℚ ℚP.≤? sampleInfluence} _)
+    (toWitness {a? = 0ℚ ℚP.≤? sampleKappa} _)
+    (toWitness {a? = 0ℚ ℚP.≤? sampleBudget} _)
+    sampleBudgetFixedPoint
+    sampleLocalRemainder sampleIncrement
+    (λ _ _ → ℚP.≤-refl)
+    (λ _ _ → ℚP.≤-refl)
+    sampleGate
+
+sampleFloorValue : Gen.generalBetaFloor sampleData ≡ + 97 / 240
+sampleFloorValue = refl
+
+samplePositiveBeta : ∀ j n → 0ℚ < Gen.beta sampleData j n
+samplePositiveBeta = Gen.generalBetaPositive sampleData
+
+------------------------------------------------------------------------
+-- 4.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: the sharpened Row A1 chain on the two weakened
+-- hypotheses, its literal decomposition, its uniform positive floor, and the
+-- weld into the source-normalized trajectory telescope.
+sharpenedRowA1ChainLevel : ProofLevel
+sharpenedRowA1ChainLevel = machineChecked
+
+sharpenedTrajectoryWeldLevel : ProofLevel
+sharpenedTrajectoryWeldLevel = machineChecked
+
+-- STILL OPEN, physical leaf (A): the literal momentum-space joint density and
+-- a bound on the negative part of its (4,6,4,1)-weighted combination.
+literalCombinedJointDensityLevel : ProofLevel
+literalCombinedJointDensityLevel = conditional
+
+-- STILL OPEN, physical leaf (B): a cutoff- and volume-uniform one-step
+-- contraction factor kappa < 1 for the literal Balaban RG map, with Lipschitz
+-- dependence of the literal shell coefficient.
+literalContractionFactorLevel : ProofLevel
+literalContractionFactorLevel = conditional

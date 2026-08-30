@@ -1,0 +1,156 @@
+# G18 — the literal source identity is computed, and the gate is **red**
+
+**The Riemann Hypothesis is not proved.**  Nothing was weakened and nothing was
+assumed: `RiemannHypothesisFor`, `RiemannHypothesis`, `CompletedRiemannHypothesis`
+and every earlier statement are untouched; there is no `sorry`/`admit`, no
+`axiom`, no postulate, no Boolean receipt, no numerical evidence and no
+`@[implemented_by]` in any Lean source.  `lake build RiemannAnalytic` succeeds
+(8104 jobs, no warnings from project sources) and `#print axioms` on every new
+theorem returns only `[propext, Classical.choice, Quot.sound]`.
+
+This cycle followed the narrow brief exactly: no new taper, prime,
+spectral-window, observer or asymptotic theorem was added.  All new material is
+in the single new module `RiemannAnalytic/LiteralSourceIdentity.lean`, wired
+into the aggregate `RiemannAnalytic.lean`.
+
+---
+
+## 1.  `literalCompensatedAnchorExplicitFormula` — the identity, unfolded
+
+The test family is the actual grid family
+
+```
+g_x(u) = φ(u) e^{-i x u},        x = k h,   h = 2π/L,
+```
+
+and the transform convention is the literal one used throughout the project,
+
+```
+ĝ(z) = ∫ g(u) e^{-i z u} du         (PhiExtC; PhiExt on real test functions),
+```
+
+no `2π` in the exponent and no `(2π)^{-1/2}` prefactor.  Proved:
+
+* `PhiExtC_gridTest` — `ĝ_x(z) = φ̂(z + x)`: the transform of the grid test
+  function **is** the grid sample.  This is where `h` (hence `L`) enters and
+  nowhere else.
+* `weilPrimeTerm_gridTest_eq_finite` — the prime side of the explicit formula
+  for `g_x`,
+  `P(g) = ∑_n Λ(n) n^{-1/2}(g(log n) + g(−log n))`, collapses **exactly** to the
+  finite sum
+
+  ```
+  P_N(φ, x) = 2 ∑_{n ≤ N} Λ(n) n^{-1/2} φ(log n) cos(x log n),
+  ```
+
+  for a real even taper supported in `[-L, L]` and any `N` with `e^L < N + 1`.
+  This is where `X = e^L` and `N` enter, and nowhere else: no tail is discarded
+  and no `X^{-1/2}` appears.
+* `literalCompensatedAnchorExplicitFormula` — isolating one zero
+  `ρ = Z.zeros j₀` in the zero sum gives the exact identity
+
+  ```
+  m_ρ · φ̂(z_ρ + x)  =  − P_N(φ, x)  +  R_EF  −  R_zero,
+  ```
+
+  `z_ρ = −i(ρ − ½)` the Weil coordinate, `R_EF` the archimedean/pole value of
+  the same test function, `R_zero = ∑_{j ≠ j₀} m_j φ̂(z_j + x)`.
+
+Every occurrence of `L`, `h`, `X`, `N`, `φ̂`, `τ_k = kh` and `m_ρ` is displayed.
+**The coefficient of the prime term is the absolute constant `1`.**  There is no
+`N^{-1}`, no `L^{-1}`, no `X^{-1/2}` and no Fourier factor on the prime side.
+
+The Riemann–Weil formula itself is *not* proved — Mathlib has no explicit
+formula — and it is *not* postulated: it is the explicit hypothesis
+`WeilExplicitFormula`, carried in the statement of every theorem that uses it,
+over literal zero data (`ZeroData`: an enumeration of genuine zeros of Mathlib's
+`completedRiemannZeta` with positive multiplicities).  Its hypotheses are
+consistent (`weilExplicitFormula_consistent`), so the identity is not vacuous.
+
+## 2.  `literalSourceCoefficient_eq` — the coefficient in closed form
+
+For the plateau taper the Gram floor demands (`φ(log n) = 1` for `n ≤ N`):
+
+```
+P_N(φ, 0) = 2 ∑_{n ≤ N} Λ(n) n^{-1/2} = 2 S₀^W(0),          (literalSourceCoefficient_eq)
+N^{1/2}/16 ≤ P_N(φ, 0) ≤ 1618 N^{1/2}.                      (literalSourceCoefficient_bounds)
+```
+
+Hence the coefficient the gate consumes,
+`C_src = P_N(φ,0)/S₀^W(α)²`, satisfies
+
+```
+C_src · S₀^W(α)² = 2 S₀^W(0) ≍ N^{1/2},        i.e.   C_src ≍ N^{-1/2-4|α|}.
+```
+
+**The literal Weil normalization supplies exactly the square root of the
+required suppression.**  The gate needs `C_src ≲ N^{-1-4|α|}(log N)^4`
+(`weil_sourceCoefficient_threshold`); it gets `N^{-1/2-4|α|}`.  The deficit is a
+full power `N^{1/2}`, not a matter of constants.
+
+## 3.  `literalSourceRatioDecision` — the verdict
+
+With `Ξ(N,α) = 120000 C_src t² N^{1+4|α|} / (1024 c (log N)^4)`:
+
+```
+Ξ(N,α) ≥ t² N^{1/4} / (10¹⁰ c)        for all N ≥ 10⁸, |α| < 1/2,
+```
+
+and for every target `M` there is a threshold beyond which `Ξ ≥ M` for **every**
+`|α| < 1/2` and every plateau taper (`literalSourceRatioDecision_tendsto`).  The
+`α`-dependence cancels exactly.  Of the three possible outcomes this is the
+third: `Ξ → ∞`.
+
+In the gate's own terms (`literalRawAnchorGateFails`,
+`literalRawAnchorGateFails_of_large`): the contraction condition
+
+```
+120000 (log N)² · C_src t² S₀^W(α)²  <  c (log N)⁶
+```
+
+is **false** as soon as `c (log N)^4 ≤ 7500 t² N^{1/2}`, in particular as soon as
+`9c/t² ≤ N^{1/4}`.
+
+**Gate: red.**  The raw-anchor architecture cannot close.
+
+## 4.  The Schur lane, decided immediately
+
+The brief said: if the gate is red, pivot to the Schur-effective calculation and
+ask only whether the effective coefficient satisfies `C_Schur t² N = O(1)`.  It
+does not, and the reason is already available in the project: eliminating hidden
+directions can only *lower* the observable
+(`eliminationResidue_le_transverse`), i.e. it replaces `C_src` by `E·C_src` with
+`E ≥ 1`.  Hence
+
+* `literalSchurSourceNormalizationDecision` — `E · Ξ(N,α) ≥ t² N^{1/4}/(10¹⁰ c)`;
+* `literalSchurGateFails` — the contraction condition is false for `E·C_src` too.
+
+So the Schur pivot is not the missing normalization, and by the brief's own
+criterion that branch stops here as well.
+
+## 5.  What this means for the programme
+
+The central question — *does the literal Weil/Gram identification contain the
+required `1/N` normalization?* — now has a proved answer: **it contains
+`N^{-1/2}`, not `N^{-1}`.**  Two structural remarks:
+
+* The deficit is exactly one factor of the prime mass `S₀^W ≍ N^{1/2+2|α|}`.
+  The route's observable is *quadratic* in the prime data while the literal
+  explicit-formula transport of the anchor is *linear* in it.  Passing to the
+  Weil quadratic form (`g = f ⋆ f̃`) does not change the verdict: the prime term
+  is then `∑ Λ(n) n^{-1/2}(f⋆f̃)(log n)`, still a single power of the prime
+  mass, up to taper normalizations that are polylogarithmic in `N`.
+* Consequently no rescaling of the taper, no window length, no multiplicity and
+  no elimination of hidden variables can repair the gate: all of those are
+  polylogarithmic in `N` (or, for the Schur pivot, of the wrong sign).  What
+  would be needed is a transport whose prime coefficient carries a genuine
+  extra `N^{-1/2}` — i.e. a fundamentally different identification, not a
+  sharper estimate inside the present one.
+
+The first unproved theorem of the programme,
+`literalCompensatedAnchorExplicitFormula`, is now proved (modulo the explicitly
+carried Riemann–Weil hypothesis), and the branch it was gating is closed by a
+proved negative computation rather than left open.
+
+Documentation: this file and a G18 section appended to `RIEMANN_LEAN_STATUS.md`;
+`ARISTOTLE_SUMMARY.md` was not edited.

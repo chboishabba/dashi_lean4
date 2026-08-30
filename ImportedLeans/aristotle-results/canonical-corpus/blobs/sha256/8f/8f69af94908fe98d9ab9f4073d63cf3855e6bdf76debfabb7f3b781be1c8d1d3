@@ -1,0 +1,61 @@
+{
+  "report": "dualatlas",
+  "corpora": [
+  {
+    "corpus": "itself",
+    "total": 232,
+    "cogBuckets": 86,
+    "triadBuckets": 20,
+    "harmBuckets": 5,
+    "cogWins": 231,
+    "triadWins": 1,
+    "harmWins": 0,
+    "cogWinsRel": 55,
+    "triadWinsRel": 98,
+    "harmWinsRel": 79,
+    "harm": {"trivector": 143, "muse5": 24, "heptad7": 30, "hemispheres11": 20, "recursion13": 15}
+  },
+  {
+    "corpus": "mathlib",
+    "total": 504719,
+    "cogBuckets": 92,
+    "triadBuckets": 20,
+    "harmBuckets": 5,
+    "cogWins": 504719,
+    "triadWins": 0,
+    "harmWins": 0,
+    "cogWinsRel": 156991,
+    "triadWinsRel": 134330,
+    "harmWinsRel": 213398,
+    "harm": {"trivector": 291321, "muse5": 71529, "heptad7": 60054, "hemispheres11": 43046, "recursion13": 38769}
+  },
+  {
+    "corpus": "batteries",
+    "total": 9602,
+    "cogBuckets": 92,
+    "triadBuckets": 20,
+    "harmBuckets": 5,
+    "cogWins": 9602,
+    "triadWins": 0,
+    "harmWins": 0,
+    "cogWinsRel": 2754,
+    "triadWinsRel": 2844,
+    "harmWinsRel": 4004,
+    "harm": {"trivector": 5598, "muse5": 1313, "heptad7": 1108, "hemispheres11": 848, "recursion13": 735}
+  },
+  {
+    "corpus": "lean4",
+    "total": 183878,
+    "cogBuckets": 92,
+    "triadBuckets": 20,
+    "harmBuckets": 5,
+    "cogWins": 183878,
+    "triadWins": 0,
+    "harmWins": 0,
+    "cogWinsRel": 58468,
+    "triadWinsRel": 45209,
+    "harmWinsRel": 80201,
+    "harm": {"trivector": 103677, "muse5": 28751, "heptad7": 21219, "hemispheres11": 16603, "recursion13": 13628}
+  }
+  ]
+}

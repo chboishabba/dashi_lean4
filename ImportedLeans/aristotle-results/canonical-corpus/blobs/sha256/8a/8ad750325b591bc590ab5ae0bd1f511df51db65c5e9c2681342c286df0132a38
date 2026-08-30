@@ -1,0 +1,176 @@
+# Row A1 — corrected route: positive-volume patch, five-channel quartic debt, localized memory
+
+Date: 2026-08-27.  Lean side of the repository (`RequestProject/YangMills/`).
+Full `lake build` green (8072 jobs); no `sorry`, no `axiom`, no unsafe pragma;
+`#print axioms` reports only `propext, Classical.choice, Quot.sound` on every new
+theorem.  **No Clay leaf is closed; the frozen research count stays at 4.**
+There is no Agda tool-chain in this working copy, so nothing here is promoted on
+the strength of an Agda build — these are cross-prover results.
+
+## 1. The single-corner witness is disqualified — proved, not asserted
+
+`WilsonCubicVertex.lean` writes down the literal Wilson three-gluon vertex in the
+project's normalisation (physical momentum `2πx`, half-momentum `πx`):
+
+    Γ_{αβγ}(x,y,z) = δ_{αβ} sin(π(x_γ−y_γ)) cos(π z_α) + cyclic.
+
+* `wilsonCubic_allEqual` — the all-equal Lorentz component vanishes *identically*
+  in all three momenta (a trigonometric identity, not an approximation).  A
+  collapsed scalar called `V_{00}` therefore cannot be the all-equal component;
+  the background Lorentz index must remain visible.
+* `wilsonCubic_bgZero_diag_corner_eq_zero` — at background momentum `0`, loop
+  momenta `(q,−q)` and any Brillouin-boundary momentum (every normalised
+  component in `{0,1/2}`, i.e. physical `0` or `π`), *every* component with the
+  two fluctuation indices equal vanishes, for every background index.  The
+  project's corner momentum `q = (0,1/2,0,0)` is such a point
+  (`wilsonCubic_bgZero_diag_projectCorner_eq_zero`).
+* `wilsonCubic_bgZero_diag_quarter_eq_one` — at normalised momentum `1/4`
+  (physical `π/2`) the same component equals `1`, and it is continuous in the
+  momentum, so the nonzero value survives on a neighbourhood.
+
+`SingleModeWeight.lean` adds the independent, volume-side reason:
+
+* `multiplicity_ge_of_uniform_floor` — a floor `b` on a normalised mode average
+  with integrand bounded by `M` forces the contributing mode set to have at
+  least `(b/M)·|Λ|` elements;
+* `average_le_of_bounded_multiplicity`, `no_uniform_floor_of_bounded_support` —
+  a support of fixed cardinality gives an average tending to `0`, so no positive
+  floor survives the infinite-volume limit.
+
+## 2. The corrected route: one positive-volume patch, a sign elsewhere
+
+`PositivePatchEnclosure.lean` (literal Lebesgue integrals on `[0,1/2]^4`):
+
+* `setIntegral_ge_patch` — patch lower bound plus complement sign gives
+  `∫_Ω f ≥ vol(P)·c`: the patch enters with its **volume**;
+* `patch_lowerContribution_le` — the enclosure ("lower sum") shape
+  `vol(P)·c − err ≤ ∫_Ω f`;
+* `nullPatch_lowerContribution_nonpos` — a measure-zero patch contributes
+  `−err ≤ 0`, whatever the integrand value on it;
+* `quarterSlab_volume`, `quarterSlab_volume_real` — the candidate patch (slab of
+  half-width `δ` around normalised momentum `1/4`) has volume exactly `δ/4`;
+* `cellIntegral_ge_quarterSlab`, `cellIntegral_pos_of_quarterSlab` — the
+  resulting floor `(δ/4)·c > 0`.
+
+`PatchGaussianFloor.lean` runs this on the project's own one-loop integrand:
+
+* `phatSq_ne_zero_of_mem_puncturedCell` — on the cell, `p̂²` vanishes only at the
+  single momentum `q = 0`, a null set (`setIntegral_puncturedCell`);
+* `latticeCellFloor_of_patchEntry` — with the paramagnetic sign datum
+  (`Vᵀ = V`, `S = −WᵀW`) the integrand is nonnegative on the whole punctured
+  cell (no near/far analysis), and one entry bound `|M_j(q)_{00}| ≥ c` on the
+  patch gives the floor `(δ/4)·(c²/2)`;
+* `A1_from_patchFloor` — the whole Row A1 lower bound, end to end, from that
+  patch datum.
+
+### 2a. The cheapest nonzero positive patch, computed
+
+`QuarterPatchLowerBound.lean` turns the pointwise value at normalised momentum
+`1/4` into a patch statement: on the slab of half-width `1/8` around `1/4` —
+volume exactly `1/32` — the Wilson cubic component `Γ_{μμρ}(q,−q,0)` stays above
+`√2/2` for every `μ ≠ ρ` (`wilsonCubicBgZero_diag_ge_on_quarterSlab`), giving the
+patch floor `(1/32)·(√2/2) = √2/64`.  If the reduced bubble entry inherits that
+bound on the same slab, the Gaussian coefficient is at least the explicit number
+`1/128` (`latticeCellFloor_quarterSlab_eighth`).  This is conditional on the
+entry bound; it is not asserted for the constrained variation, which also
+contains the averaging and projection pieces.
+
+`PositivePatchChecks.lean` records the adversarial tests: an integrand with a
+patch of measure `1` on which it is at least `1` but with ambient integral `−9`
+(so the complement sign cannot be dropped), and the one-point patch on the
+momentum cell contributing nothing.
+
+## 3. Two generic debt parameters replaced by physical producers
+
+`FiveChannelQuartic.lean`: the nonlinear remainder splits into the five physical
+channels (determinant, interaction, chart, gauge, localization) and
+
+* `betaInt_ge_of_channelMajorants` — channelwise fourth-order majorants
+  `|ch_k(g)| ≤ c_k g^4` give `βInt(g) ≥ −C_β g^4`, `C_β = ∑_k c_k`;
+* `betaInt_ge_on_trajectory` — along `0 ≤ g ≤ γ` this is the uniform debt
+  `C_β γ⁴`, i.e. `ρ = 4` with no Cauchy pair `(A,K)`;
+* `channel_majorant_load_bearing` — bounding four of the five channels never
+  suffices.
+
+`LocalizedHistoryMemory.lean`:
+
+* `irrelevantMemory_sum_le`, `irrelevantMemory_le_CH_half` — a scale-local
+  majorant `|R^{irr}_{j,k}| ≤ C_loc γ θ^{j−k}` gives `H_irr ≤ C_H γ/2` with
+  `C_H = 2C_loc θ/(1−θ)`, uniformly in the history length;
+* `marginalMemory_unbounded` — the marginal component is explicitly **not**
+  assumed to forget: a non-decaying memory contributes `j·a` at shell `j`;
+* `totalMemory_le_of_split` — the total is controlled only once the marginal
+  part is controlled too, which is why the marginal bound `H_marg` appears
+  explicitly in the margin below.
+
+## 4. The corrected margin
+
+`A1CorrectedMargin.lean`:
+
+    correctedMargin = b_patch − C_β γ⁴ − (C_H γ/2 + H_marg)·B
+
+* `A1_corrected_lower_bound` — every shell coefficient obeys
+  `β_j(g) ≥ correctedMargin`, uniformly in the shell index, the number of
+  scales, the volume and the cutoff;
+* `A1_corrected_beta_pos` — positive margin ⟹ strict positivity;
+* `correctedMargin_promptForm` — with no marginal memory and a unit displacement
+  budget this is exactly `b_patch − C_β γ⁴ − C_H γ/2`;
+* `correctedMargin_pos_iff`, `correctedMargin_example` — the closing condition
+  in checkable form, and an admissible tuple;
+* `A1_corrected_nonvacuous` — the whole hypothesis package is inhabited by an
+  explicit family with a nonzero quartic interaction remainder and a nonzero
+  history response, so the assembly is not vacuous.
+
+## 5. The constrained first variation keeps all its indices
+
+`FirstVariationDecomposition.lean` fixes `V_constrained = W + Q + R` (Wilson
+Hessian variation, averaging-operator variation, gauge/constrained projection
+variation) as a fully index-resolved symbol
+`V_{αβ;ρ}^{ab;c}(q)`, and proves:
+
+* `wilsonPiece_allEqual_zero`, `wilsonPiece_diag_corner_zero` — the `W` piece
+  vanishes on the all-equal component and on the whole diagonal at corner
+  momenta;
+* `component_ne_zero_imp` — a nonzero component of `V` forces one of `W,Q,R` to
+  be nonzero there;
+* `wilsonPiece_positive_but_total_zero` — an explicit `V` whose `W` piece is
+  strictly positive at a momentum while `W+Q+R` vanishes there: the `Q` and `R`
+  variations may not be assumed to vanish;
+* `patchBound_of_wilson_and_remainder` — the correct compiler: a lower bound `c`
+  on `W` over the patch plus a bound `e` on `|Q|+|R|` there gives `c − e` for
+  `V`, which is exactly what the patch enclosure consumes.
+
+## 6. Audit: a "universal coefficient" field is not a derivation
+
+`UniversalCoefficientCircularity.lean` models a carrier with the field
+`infraredCoefficient = universalColorCoefficient` and proves:
+
+* `coefficient_of_universalField` — the value follows *from the field*;
+* `universalField_uninformative` — every integrand can be carried with every
+  value, so the field constrains nothing about the literal integrand;
+* `coefficient_not_determined_by_integrand`,
+  `universalField_consistent_with_zero_integrand` — the coefficient is not a
+  function of the integrand, and a value such as `11/12` is consistent with an
+  identically vanishing integrand;
+* `coefficient_determined_of_derived` — the contrast: a coefficient equal to a
+  fixed functional of the integrand *is* determined.  That is the shape a
+  genuine extraction must have.
+
+Accordingly, no theorem in this development uses such a carrier as an input to
+the Gaussian floor.
+
+## 7. What is still missing (honest status)
+
+Nothing here asserts, for Bałaban's construction, any of:
+
+1. the literal constrained first variation `V = W + Q + R` (in particular the
+   literal mixed Lorentz/colour component and its momentum dependence);
+2. a strict lower bound `c > 0` for one such component — equivalently for one
+   entry of the reduced bubble kernel — on a positive-volume momentum patch;
+3. the numerical channel coefficients `c_k` that give `C_β`;
+4. explicit localization constants `(C_loc, θ)` giving a numerical `C_H`, and a
+   bound `H_marg` on the marginal memory.
+
+Items 1–4 are source data.  Everything downstream of them is machine-checked
+here.  Row A1 is not closed, no Clay leaf is closed, and no value of any beta
+coefficient is derived or asserted.

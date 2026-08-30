@@ -1,0 +1,223 @@
+# Survey & classification of the non-NS/YM root Agda modules
+
+This document surveys the repository's **root-level** Agda modules (the 40 `*.agda`
+files in the project root), which are *outside* the Yang–Mills / Navier–Stokes
+"closure" stack already mirrored in the `ClayClosure` Lean library. Each module is
+classified as **genuine provable content** or **structural scaffolding**, and its
+Lean-mirror status is recorded.
+
+The mirrors live in `AgdaMirror/` and are wired into the `AgdaMirror` Lean library
+target (see `lakefile.toml`). Everything marked *proved* below genuinely compiles
+and is axiom-clean (every theorem depends only on the permitted kernel axioms
+`propext`, `Classical.choice`, `Quot.sound` — most depend on none or only
+`propext`). No `sorry`, no `axiom`, no `@[implemented_by]`, no vacuous restatement.
+
+## Honesty boundary
+
+Agda `postulate`s are *assumptions*, not theorems. They are **never** transcribed
+as Lean `axiom`s. Instead the assumed carriers/laws become explicit parameters and
+structure fields (honest hypotheses), exactly as the existing closure files treat
+their deep open inputs. Where the underlying claim is in fact genuinely provable
+(e.g. the 3-adic identity, `ℤ/6` von Neumann regularity, no-infinite-descent),
+it is *proved* rather than assumed — turning that scaffolding into genuine content.
+
+## Genuine provable content — formalized and proved in Lean
+
+| Agda module | Lean mirror | Content proved |
+|---|---|---|
+| `Moonshine.agda` | `AgdaMirror/Moonshine.lean` | `196884 = 47·59·71 + 1`, `196883` rep-dim, McKay `+1`, `j`-fixed witness |
+| `MoonshineEarn.agda` | `AgdaMirror/MoonshineEarn.lean` | FRACTRAN earn-chain `7,11,23 → 47,59,71`; residues mod the trivector primes |
+| `JFixedPoint.agda` | `AgdaMirror/JFixedPoint.lean` | `Observation`/`contract`; **generalised** `stack_converges` for *all* depths (Agda only checks finitely many) |
+| `CRTPeriod.agda` | `AgdaMirror/CRTPeriod.lean` | digit function periodic with period `71·59·47` (`period_thm`) |
+| `CRTJFixedPointBridge.agda` | `AgdaMirror/CRTJFixedPointBridge.lean` | ties CRT period to the `j`-fixed contraction at `period + 1 = 196884` |
+| `MonsterOntos.agda` | `AgdaMirror/MonsterOntos.lean` | 15 supersingular primes `SSP`, `toNat`, injectivity, derived `DecidableEq` |
+| `UFTC_Lattice.agda` | `AgdaMirror/UFTC_Lattice.lean` | severity join-semilattice (idem/comm/assoc/mono), `Code` XOR monotonicity |
+| `TenfoldBridges.agda` | `AgdaMirror/TenfoldBridges.lean` | `topoClass = n % 10`, `Bridge`, symmetry preserves bridges |
+| `Base369.agda` | `AgdaMirror/Base369.lean` | cyclic `ℤ/3, ℤ/6, ℤ/9` universes: spin/closed XOR agreement, rotation order, identities, ternary associativity |
+| `Overflow.agda` | `AgdaMirror/Overflow.lean` | custom strict order `Prec`, comparison soundness lemmas, `enforce` classifier and its correctness |
+| `LogicTlurey.agda` | `AgdaMirror/LogicTlurey.lean` | dialectical `Stage`s, `stageTrace` length, `next` order-4, trace periodicity, triadic tone semantics |
+| `SWAR_Equivalence.agda` | `AgdaMirror/SWAR.lean` | **genuine conditional**: from the bundled `SWARCorrect` laws, derive correctness of `swarXOR` on packed vectors |
+
+## Structural scaffolding — faithfully transcribed (honesty preserved)
+
+| Agda module | Lean mirror | Notes |
+|---|---|---|
+| `Ultrametric.agda` | `AgdaMirror/Ultrametric.lean` | pure definition (record → structure), axiom-clean |
+| `Contraction.agda` | `AgdaMirror/Contraction.lean` | contraction records; note the everywhere-strict version is unsatisfiable over `ℕ`-distance (documented) |
+| `FixedPoint.agda` | `AgdaMirror/FixedPoint.lean` | mirrors `UniqueFixed`; additionally **proves** fixed-point uniqueness from strict contraction on distinct points |
+| `AntiFascistSystem.agda` | `AgdaMirror/Scaffolding.lean` | postulated entropy laws → honest hypothesis bundle (`AntiFascistLaws`) |
+| `FascisticSystem.agda` | `AgdaMirror/Scaffolding.lean` | abstract contraction operator → honest bundle; `Attractor`/`iterate` defined |
+| `MaassRestoration.agda` | `AgdaMirror/Scaffolding.lean` | restoration / normal-form records |
+| `ActionMonotonicity.agda` | `AgdaMirror/Scaffolding.lean` | monotone-action record (`MonotoneAction`) |
+| `PrimeRoles.agda` | `AgdaMirror/Scaffolding.lean` | `roleOf` total function + `CompletionLaw`; **proved** that an inhabited type admits no completion law |
+| `HGSA_Fixpoints.agda` | `AgdaMirror/Scaffolding.lean` | the postulated `NatNoInfiniteDescent` is **proved** (corrected: requires an inhabitant) |
+| `ThreeAdic_Attractor.agda` | `AgdaMirror/Scaffolding.lean` | postulates replaced by a **proof**: `3x = x − 1 ⇒ x = −1/2` over `ℚ` |
+| `Z6_RegularInverse.agda` | `AgdaMirror/Scaffolding.lean` | postulates replaced by a **proof**: every `a : ℤ/6` is von Neumann regular |
+
+## Surveyed, not mirrored (lower-value scaffolding / data tables / tests)
+
+These are genuine-but-tabular or test/harness/auto-generated modules. They are
+classified here for completeness; mirroring them adds little beyond re-checking
+data tables by `rfl`/`decide` and was deliberately left out of scope.
+
+- `ClaimReconciliationObjectLattice.agda`, `ClassificationDiscoveryLattice.agda`,
+  `LargerObjectClassificationLattice.agda`, `LoomRelationAlgebra.agda`,
+  `ITIRPNFAssessment.agda`, `DialecticalJourneyLoom.agda` — string/list
+  "object-lattice" tables with `refl` equality checks (genuine but tabular).
+- `DASHI_Tests.agda`, `Fascism_Tests.agda`, `CounterexampleHarness.agda` — test
+  harnesses (some `postulate` test fixtures): scaffolding.
+- `PerfHistory.agda` — auto-generated performance-history data: scaffolding.
+- `MonsterState.agda`, `MonsterGroups.agda`, `MonsterVectors.agda`,
+  `MonsterSpec.agda`, `MonsterConformance.agda`, `MonsterTraceCounts.agda` —
+  walk-state definitions and conformance hooks built on `postulate`d
+  implementations/encodings: scaffolding (definitional).
+- `FascisticContractionBridge.agda`, `CRTJFixedPointBridge.agda` (the latter is
+  mirrored) — bridges over the above.
+
+The supporting `MonsterOntos` carrier needed by `PrimeRoles` is mirrored, so the
+`roleOf` function and `CompletionLaw` results are fully machine-checked.
+
+## Continuation — beyond the root level: `Monster/` and `DASHI/` subdirectory mirrors
+
+Extending the survey past the root-level modules, the following genuine content
+from the project subdirectories is now mirrored and fully proved in Lean
+(no `sorry`, axiom-clean, only the permitted kernel axioms).
+
+| Agda module(s) | Lean mirror | Content proved |
+|---|---|---|
+| `Monster/Mask.agda`, `Monster/Ultrametric.agda` (= `MUltrametric`), `Monster/Step.agda`, `Monster/Trace.agda`, `Monster/TraceSound.agda`, `Monster/Projection.agda`, `MonsterState.agda` | `AgdaMirror/MonsterWalk.lean` | mask algebra (`flipMask` involution), deterministic `step`/`choose`/`iterate`, the orbit trace and its step-soundness (`stepOK_orbit`, genuinely proved — left abstract in Agda), the first-difference distance `dMask` with `id_zero` and the postulated **`symMask` proved** (`dMask_symm`); the postulated **`ultraMask` disproved** (`dMask_ultratriangle_false`, genuinely false), so `UMask` takes the ultratriangle law as an honest hypothesis; `uniqueFixedProj` |
+| `LoomRelationAlgebra.agda` | `AgdaMirror/LoomRelationAlgebra.lean` | affidavit-style finite relation algebra: total root/bucket classifiers, the `LoomTypedRelation` record with its derivation proofs, and the canonical algebra with all `refl` enumeration laws discharged; promotion-separation boundary preserved |
+| `DASHI/Arithmetic/NatBoolEquality.agda`, `DASHI/Arithmetic/VpDepth.agda` | `AgdaMirror/DASHIValuation.lean` | boolean `natEq` soundness; the bounded `p`-adic valuation `vpDepth` with `minNat`, fuel-monotonicity (`vpDepth_monotone`), plateau-stability (`vpDepth_stable_step`), and the **ultrametric valuation theorem** `v_p(x+y) = min(v_p x, v_p y)` when `v_p x ≠ v_p y` (`vpDepth_add_min_unequal`) |
+| `DASHI/Algebra/Trit.agda`, `DASHI/Algebra/BalancedTernary.agda`, `DASHI/Algebra/SixfoldLogic.agda`, `DASHI/Algebra/MonsterMask15.agda` | `AgdaMirror/DASHIAlgebra.lean` | balanced-ternary negation involutions; the six-position `Stage6` carrier with `next6` of order 6 and its `rotateHex`-equivariant tone map (reusing `Base369`); the length-15 mask with pointwise-AND identity/idempotence/commutativity/associativity laws |
+| `DASHI/Algebra/StageQuotient.agda` | `AgdaMirror/StageQuotient.lean` | the tone quotient `q = stageTone : Stage → TriTruth` (reusing `LogicTlurey`/`Base369`): surjectivity onto the three tones, `overflow` collapse, `rotateTri`-equivariance on `seed`/`counter`/`resonance`, and the genuine **equivariance-seam failure** on `overflow` (`overflow_equivariance_fails`) |
+
+These mirror modules are wired into the `AgdaMirror` library via
+`AgdaMirror.lean`.  As before, the honesty discipline is strict: Agda
+`postulate`s are never transcribed as Lean `axiom`s — where the underlying claim
+is genuinely true it is *proved* (e.g. `dMask_symm`, the whole `vpDepth` theory),
+where it is genuinely false it is *disproved* (`dMask_ultratriangle_false`,
+`overflow_equivariance_fails`), and where it remains a genuine assumption it is
+taken as an explicit hypothesis (the ultratriangle law in `UMask`).
+
+## Continuation — twelve further subdirectory mirrors
+
+Extending the survey again, the following twelve additional genuine modules are
+now mirrored and fully proved in Lean (no `sorry`, axiom-clean, only the
+permitted kernel axioms). They are wired into the `AgdaMirror` library via
+`AgdaMirror.lean`.
+
+| Agda module | Lean mirror | Content proved |
+|---|---|---|
+| `DASHI/Algebra/TritTriTruthBridge.agda` | `AgdaMirror/TritBridge.lean` | `Trit ↔ TriTruth` isomorphism (`toFrom`/`fromTo`), rotation/XOR equivariance, induced `tritXor` left-identity and associativity; the genuine reflection-vs-rotation and reflection-vs-XOR-homomorphism *distinctions* preserved as real `≠` disproofs |
+| `DASHI/Algebra/Trit/HalfTrit.agda` | `AgdaMirror/HalfTrit.lean` | the five-position half-trit carrier, sign-flip involution, forgetful embed to `Trit` with both collapses proved and genuine **non-injectivity** (`embedTrit_not_injective`); embed commutes with negation |
+| `DASHI/Algebra/TetralemmaBridge.agda` | `AgdaMirror/TetralemmaBridge.lean` | four-position tetralemma alignment of `Stage`/`TriTruth`/`ResidualLevel`; `stageTone` factors through the position; tone→residual never hits `contradiction` (`triResidual_excludes_contradiction`, `stageResidualTone_excludes_contradiction`) |
+| `DASHI/Arithmetic/CoprimeLayer.agda` | `AgdaMirror/CoprimeLayer.lean` | distinct coprime bases give coprime prime powers (`distinctPrimePowersCoprime`); coprime divisors multiply (`coprimeProductDivides`); packaged over any tracked carrier |
+| `DASHI/Arithmetic/DeltaGrowth.agda` | `AgdaMirror/DeltaGrowth.lean` | the constructive divisibility core `p ^ (vpDepth fuel p n) ∣ n` (`vpDepth_power_divides`) and monotone power-divisibility; the Agda `logNat`/`deltaGrowthBound` *postulates* are deliberately **not** transcribed |
+| `DASHI/Core/OperatorTypes.agda` | `AgdaMirror/OperatorTypes.lean` | the `Invertible`/`Projection`/`Regularizer` predicates and `OpClass` tag; the identity is shown to satisfy all three |
+| `DASHI/Algebra/ProjectionVsInvertible.agda` | `AgdaMirror/ProjectionVsInvertible.lean` | the genuine theorem: a projection that is also invertible is the identity (`projection_invertible_identity`), hence not nontrivial |
+| `DASHI/Algebra/UnitaryVsCollapse.agda` | `AgdaMirror/UnitaryVsCollapse.lean` | in an inhabited system with `ℕ`-energy, strict collapse on every step is impossible (`no_global_strict_collapse`), reusing the no-infinite-descent lemma |
+| `DASHI/Algebra/MonsterUltrametric15.agda`, `MonsterProjection15.agda` | `AgdaMirror/MonsterProjection15.lean` | the *genuine* length-15 mask ultrametric `dMask = len − lcpLen` assembled into an `AgdaMirror.Ultrametric` instance `UMask15` (the `lcpLen` ultratriangle genuinely **holds** here, unlike the first-difference distance in `MonsterWalk`); `dMask x y = 0 → x = y` on equal-length masks; the constant projection is strictly contractive on distinct masks (`proj_contractive`) |
+| `DASHI/Arithmetic/ValuationLemmas.agda`, `VpAddUnequal.agda` | `AgdaMirror/ValuationLemmas.lean` | the active-wall valuation lemmas: local specialisation of the ultrametric valuation theorem (`vp_add_min_unequal`), defect nonnegativity, and the off-wall collapse `deltaAt = 0` (`offWallZero`) |
+| `DASHI/Algebra/Quantum/ProjectionOrthogonality.agda` | `AgdaMirror/ProjectionOrthogonality.lean` | abstract orthogonal-projection interface (carrier/inner/subtraction as honest fields), with the identity + trivial inner product as a witnessing model |
+| `DASHI/Algebra/Quantum/DimensionFixedPoint.agda` | `AgdaMirror/DimensionFixedPoint.lean` | abstract holographic dimension interface (bound + stability as honest hypotheses), `Bulk`/`Boundary`, and the genuine extraction that every stable fixed-point dimension is `4` (`stableDim_eq_four`) |
+
+As throughout, the honesty discipline is strict: Agda `postulate`s are never
+transcribed as Lean `axiom`s. Genuinely true facts are *proved*, genuinely false
+ones *disproved* (e.g. `embedTrit_not_injective`), and abstract assumed carriers
+become explicit structure fields / hypotheses. Every theorem above depends only
+on the permitted kernel axioms `propext`, `Classical.choice`, `Quot.sound`
+(several depend on none or only `propext`).
+
+## Continuation — twenty-four further subdirectory mirrors (scope doubled again)
+
+Extending the survey once more, the following **twenty-four** additional genuine
+modules are now mirrored and fully proved in Lean (no `sorry`, axiom-clean, only
+the permitted kernel axioms — most depend on none or only `propext`/`Quot.sound`).
+They are wired into the `AgdaMirror` library via `AgdaMirror.lean`.
+
+| Agda module | Lean mirror | Content proved |
+|---|---|---|
+| `DASHI/Core/KernelMonoid.agda` | `AgdaMirror/KernelMonoid.lean` | the endomorphism (`Kernel`) monoid: composition, identity, and the pointwise associativity / left-/right-unit laws |
+| `DASHI/Algebra/OperatorMonoidClosed.agda` | `AgdaMirror/OperatorMonoidClosed.lean` | the free monoid `Gen K` generated by a seed operator; closure under composition is the literal `gen_comp` constructor; one-point state subsingleton |
+| `DASHI/Core/LensKernel.agda` | `AgdaMirror/LensKernel.lean` | the `Lens`/`LensInvariant`/`Preorder`/`LensMonotone` interface, with genuine witnesses: every lens is invariant and monotone under the identity kernel |
+| `DASHI/Energy/Core.agda`, `DASHI/Energy/TranslationInvariantMetric.agda` | `AgdaMirror/EnergyMetric.lean` | the `Preorder`/`EnergySpace`/`Endo`/`AddGroup`/`TI` interfaces, with a genuine `ℤ` witness: `d x y = |x - y|` is translation invariant |
+| `DASHI/Physics/RealTernaryCarrier.agda` | `AgdaMirror/RealTernaryCarrier.lean` | the ternary carrier with pointwise sign inversion `invVec`, its genuine involution, and `zeroVec` fixedness (reusing `Trit.inv` from `DASHIAlgebra`) |
+| `DASHI/Algebra/PhysicsSignature.agda` | `AgdaMirror/PhysicsSignature.lean` | the 15-bit `Sig15` signature, `State`, the per-prime `Lens`, the `scan` assembler, and the all-true/all-false scan lemmas (reusing `MonsterOntos.SSP`) |
+| `DASHI/Algebra/GaugeGroupContract.agda` | `AgdaMirror/GaugeGroupContract.lean` | the `Gauge`/`Emergence`/`UniquenessClaim` contract (uniqueness an honest field), with the constant-SM witness satisfying it |
+| `DASHI/Algebra/QuantumInterface.agda` | `AgdaMirror/QuantumInterface.lean` | the abstract `QuantumSys` (invertible evolution + idempotent measurement + measure), inhabited by a genuine `Unit` witness |
+| `DASHI/Algebra/Quantum/Measurement.agda` | `AgdaMirror/QuantumMeasurement.lean` | the genuine theorem that a measurement (nontrivial projection) cannot be invertible (reusing `ProjectionVsInvertible`) |
+| `DASHI/Algebra/Clifford/UniversalProperty.agda` | `AgdaMirror/CliffordUniversalProperty.lean` | the `CliffordData`/`CliffordUP`/`CliffordAxioms` interface (anti-commutation an honest field), with a trivial-algebra witness satisfying the axioms |
+| `DASHI/Algebra/Quantum/Unitary.agda` | `AgdaMirror/QuantumUnitary.lean` | the `ComplexAxioms`/`InnerProductSpace`/`Unitary` interface, with the identity-on-trivial-inner-product unitary witness |
+| `DASHI/Algebra/Quantum/SpinEmergence.agda` | `AgdaMirror/SpinEmergence.lean` | the abstract `SpinEmergenceAxioms` bundle (quadratic form, Clifford/spin carriers, double cover) inhabited by a genuine trivial witness |
+| `DASHI/Core/UniversalOperatorBasis.agda` (join part) | `AgdaMirror/JoinSurface.lean` | the `JoinSurface` semilattice, `JoinPreserving`, `DualOrderSymmetry`, with genuine `Bool` witnesses (`or` join, identity preservation, `not` dual) |
+| `DASHI/Arithmetic/VpTrue.agda` | `AgdaMirror/VpTrue.lean` | the fuel-free `vpTrue` and genuine fuel-plateau transport/iteration lemmas; the Agda `vp-depth-adequate` *postulate* is shown **genuinely false** (`vpDepth_adequate_false`) |
+| `DASHI/Algebra/Quantum/UVFiniteness.agda` | `AgdaMirror/UVFiniteness.lean` | the genuine theorem that any bounded-dimension family is finite-mode (the bound is the witness) |
+| `DASHI/Algebra/Quantum/CCRFromProjection.agda` | `AgdaMirror/CCRFromProjection.lean` | the `CCRData`/`Weyl`/`ProjectionWeylAxioms` interface and `stone_vn` packaging, with a trivial witness satisfying all Weyl/projection axioms |
+| `DASHI/Algebra/Quantum/ConstraintClosure.agda` | `AgdaMirror/ConstraintClosure.lean` | the constraint-bracket `Closure`, proved for any total bracket (its own value witnesses closure) |
+| `DASHI/Core/DashiMarkov.agda` | `AgdaMirror/DashiMarkov.lean` | the `JoinedState`/`Transition`/`Sufficiency`/`DASHIMarkov`/`MarkovCompatibility` core, with genuine witnesses (identity-history sufficiency, deterministic kernel realization) |
+| `DASHI/Algebra/CCR.agda` | `AgdaMirror/AlgebraCCR.lean` | the operator `Op` algebra: composition associativity, the commutator, and the self-commutator-vanishing identity for a diagonal-vanishing difference |
+| `DASHI/Algebra/Quantum/NoGlobalAttractor.agda` | `AgdaMirror/NoGlobalAttractor.lean` | `iterate`/`EventuallyConst`/`GlobalAttractor`; the postulated theorem is **not** assumed — instead the genuine concrete instance is proved: the identity has a global attractor iff its carrier is a subsingleton, so two distinct points give none |
+| `DASHI/Algebra/Quantum/SignatureDerivation.agda` | `AgdaMirror/SignatureDerivation.lean` | the causal-signature axiom bundle is shown **genuinely unsatisfiable** over `ℕ` (degree-two homogeneity forces `F ≡ 0`, contradicting cone-monotonicity) — a real disproof, `no_signature_derivation` |
+| `DASHI/Algebra/PhysicsConformance.agda` | `AgdaMirror/PhysicsConformance.lean` | the `ConformsOn` finite-list conformance predicate, with the genuine reflexivity and pointwise-equality transfer lemmas |
+| `DASHI/Foundations/QuotientSetoidSurface.agda` | `AgdaMirror/QuotientSetoidSurface.lean` | the setoid-quotient surface (`SetoidSurface`/`SetoidQuotientSurface`/norm descent + β), upgraded with a **genuine witness from Lean's real `Quotient`** so soundness, the recursor and all β-rules are *proved*, not assumed |
+| `DASHI/Core/AuthorityBoundary.agda` | `AgdaMirror/AuthorityBoundary.lean` | the kind-indexed `AuthorityBoundary` receipt with its kind-match invariant and `CitationAuthorityNoArtifact`, with a genuine citation-only witness |
+
+As throughout, the honesty discipline is strict: Agda `postulate`s are never
+transcribed as Lean `axiom`s. Genuinely true facts are *proved*, genuinely false
+or unsatisfiable ones *disproved* (`vpDepth_adequate_false`,
+`no_signature_derivation`, `id_no_global_attractor`), abstract assumed carriers
+become explicit structure fields / hypotheses, and where Lean has a real
+construction (the `Quotient` witness) the assumed surface is upgraded to a proved
+one. Every declaration above depends only on the permitted kernel axioms
+`propext`, `Classical.choice`, `Quot.sound`.
+
+---
+
+## Continuation: Tier A arithmetic carrier cluster + Tier B algebra/quantum bundles
+
+This round added 24 further machine-checked modules (all build under
+`lake build AgdaMirror`; no `sorry`/`admit`/`axiom`/`postulate`; only the
+permitted kernel axioms).
+
+Tier A — the arithmetic carrier / pressure-refinement seam over the 15-prime carrier:
+- `Vec15Inference`, `Vec15Robust` — the inference (decision/CI/test) and robust
+  (IQR fences, Tukey/Hampel masks, winsorisation, trimmed mean, MAD) surfaces on
+  top of `Vec15Order`/`Vec15Descriptive`, with the genuine interval-validity /
+  interval-consistency lemmas and the constant/zero-carrier collapse lemmas.
+- `NormalizeAddNonexpansive`, `NormalizeAddSumPreservation` — non-expansiveness
+  of the carry step on the p-adic agreement surface, and the observable
+  sum / p-adic valuation invariance of the step.
+- `TrackedCoprimeTable`, `ArithmeticCoprimeLayer` — distinct tracked bases are
+  coprime (15×15 table by decision) and distinct tracked prime powers are coprime.
+- `ArithmeticDeltaGrowth` — the delta-power divisibility `p^δ_p ∣ x+y` and the
+  nonzero size bound (the Agda `logNat`/`deltaGrowthBound` postulates kept as an
+  honest record field).
+- `VpAddUnequal` — the add-unequal valuation corollary over the tracked carrier.
+- `DeltaInteraction`, `KPrimeInteraction` — one/two-lane and k-prime
+  interaction identities (distinct-lane product divisibility, list-level
+  threshold⊆support subset).
+- `GlobalPressure` — the wall-filtered pressure with the genuine
+  `wallDeltaAt ≡ deltaAt` collapse and `totalPressure ≡ wallPressure`
+  (the prime-profile-stats postulates of the bridge are NOT transcribed).
+- `CancellationPressureFromCanonical`, `CancellationPressureRefinement` — the
+  canonical ⇒ bounded chains over the carry-resolution state model.
+- `PrimeIndexedPressure` — the carrier sum/projection laws; the
+  `primeIndexedPressure-factor` postulate is recorded as an explicit hypothesis,
+  never assumed.
+
+Tier B — algebra / quantum bundles with real theorems or witnesses:
+- `UniversalOperatorBasis` — the generated-kernel composition monoid laws and the
+  `generated_agrees_with_stack` derivation.
+- `TypedResidualBasisDecomposition` — the TRBD protocol with the genuine promotion
+  decision lemmas.
+- `ConstraintAlgebraClosure` — the constraint Lie-algebra closure interface with a
+  trivial-algebra witness satisfying the Dirac closure.
+- `TreeCCR` — the tree-CCR refinement interface with a binary-tree witness.
+- `DimensionFixedPointInstance` — a concrete instance feeding `stableDim_eq_four`.
+- `SpinFromEvenClifford` — the Spin double-cover interface with an inhabited model.
+- `MoonshineBridge` — `period + 1 = 196884 = contract(unitObs)`.
+- `Q` — the canonical rational numeral layer with rational identities.
+
+Tier D — data carriers:
+- `MonsterGroups`, `MonsterVectors` — group-count and conformance-vector carriers
+  over the walk `State`, with genuine length/positivity laws.

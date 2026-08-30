@@ -1,0 +1,5 @@
+corpus,cog_argmax_bucket,cog_peaks,triad_argmax,triad_peaks,harm_argmax_code,harm_decreasing,trivector_dominant
+itself,78,15,13,5,0,0,1
+mathlib,48,11,3,6,0,1,1
+batteries,56,20,15,3,0,1,1
+lean4,35,1,17,5,0,1,1

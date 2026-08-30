@@ -1,0 +1,251 @@
+module DASHI.Physics.YangMills.BalabanYM4ShootingContractionIterationExact where
+
+------------------------------------------------------------------------
+-- ROW A, WHAT THE CONTRACTION CONSTANT IS *FOR*:
+--   q < 1  ==>  UNIQUENESS OF THE TUNED INITIAL CONDITION
+--               AND AN EXPLICIT CAUCHY MODULUS FOR THE SHOOTING ITERATION
+--
+-- CONTEXT.  `BalabanYM4AnalyticPackageGateClosureExact` produces, from one
+-- analytic package and the two numerical gates, a cutoff-uniform contraction
+-- constant
+--
+--     q  =  L gamma_tube / b_*  <  1
+--
+-- for the shooting map of the ultraviolet trajectory (tune the initial
+-- inverse coupling so that the flow stays in the tube).  A contraction
+-- constant is not the end of the story: what the construction needs is that
+-- the tuned initial condition exists, is unique, and is approached at a
+-- controlled rate.  This module proves the two halves that require no
+-- completeness:
+--
+--   (1) UNIQUENESS.  A q-contraction has at most one fixed point.
+--
+--   (2) EXPLICIT CAUCHY MODULUS.  For the iteration x_{n+1} = T x_n,
+--
+--           |x_{n+1} - x_n|        <=  q^n |x_1 - x_0| ,
+--           |x_{m+n} - x_n|        <=  q^n Tcap |x_1 - x_0|
+--
+--       for every m, with Tcap any cap satisfying 1 <= (1-q) Tcap (that is,
+--       Tcap = 1/(1-q)), reusing the geometric majorant of
+--       `BalabanYM4GeometricMajorantSeriesExact`.  Both estimates are
+--       uniform in the cutoff because q is.
+--
+--   (3) STABILITY.  |T^n x - y| <= q^n |x - y| at any fixed point y, i.e. the
+--       tuned trajectory is approached geometrically from any start.
+--
+-- WHAT IS NOT PROVED.  Existence of the fixed point: over the rationals a
+-- Cauchy iteration need not converge, and the existence step is exactly the
+-- completeness step (constructively, the Cauchy modulus above *is* the datum
+-- defining the limit as a real number).  Also unproved, as before, are the
+-- analytic producers behind q itself.  Row A stays open and the frozen
+-- research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc; _+_)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _*_; -_; _-_; _≤_; _<_; ∣_∣; nonNegative; positive)
+  renaming (_+_ to _+ℚ_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+
+open import DASHI.Physics.YangMills.BalabanYM4GeometricMajorantSeriesExact
+  using ( pow; pow-nonNeg; geoSum; geoCap; mul-nonNeg
+        ; scaleˡ-nonNeg; scaleʳ-nonNeg; mul-mono-nonNeg)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Absolute-value helpers
+------------------------------------------------------------------------
+
+absTriangleVia : ∀ a b c → ∣ a - c ∣ ≤ ∣ a - b ∣ +ℚ ∣ b - c ∣
+absTriangleVia a b c =
+  subst (λ z → ∣ z ∣ ≤ ∣ a - b ∣ +ℚ ∣ b - c ∣) split
+    (ℚP.∣p+q∣≤∣p∣+∣q∣ (a - b) (b - c))
+  where
+    split : (a - b) +ℚ (b - c) ≡ a - c
+    split = solve 3 (λ x y z → (x :- y) :+ (y :- z) := x :- z) refl a b c
+
+absSelf : ∀ a → ∣ a - a ∣ ≡ 0ℚ
+absSelf a = cong ∣_∣ (solve 1 (λ x → x :- x := con 0ℚ) refl a)
+
+absZero⇒equal : ∀ {a b} → ∣ a - b ∣ ≡ 0ℚ → a ≡ b
+absZero⇒equal {a} {b} eq =
+  trans (sym (restore a b)) (trans (cong (_+ℚ b) (ℚP.∣p∣≡0⇒p≡0 (a - b) eq))
+    (ℚP.+-identityˡ b))
+  where
+    restore : ∀ x y → (x - y) +ℚ y ≡ x
+    restore = solve 2 (λ x y → (x :- y) :+ y := x) refl
+
+powAdd : ∀ x m n → pow x (m + n) ≡ pow x m * pow x n
+powAdd x zero n = sym (ℚP.*-identityˡ (pow x n))
+powAdd x (suc m) n =
+  trans (cong (x *_) (powAdd x m n))
+    (sym (ℚP.*-assoc x (pow x m) (pow x n)))
+
+------------------------------------------------------------------------
+-- Contractions on the rationals
+------------------------------------------------------------------------
+
+record RationalContraction : Set where
+  field
+    ratio : ℚ                        -- q
+    map   : ℚ → ℚ                    -- T
+    ratioNonNeg  : 0ℚ ≤ ratio
+    ratioBelowOne : 0ℚ < 1ℚ - ratio
+    lipschitz : ∀ x y → ∣ map x - map y ∣ ≤ ratio * ∣ x - y ∣
+
+module Iteration (c : RationalContraction) where
+
+  open RationalContraction c
+
+  iterate : Nat → ℚ → ℚ
+  iterate zero x = x
+  iterate (suc n) x = map (iterate n x)
+
+  iterateShift : ∀ n x → iterate n (map x) ≡ iterate (suc n) x
+  iterateShift zero x = refl
+  iterateShift (suc n) x = cong map (iterateShift n x)
+
+  ----------------------------------------------------------------
+  -- (1) uniqueness
+  ----------------------------------------------------------------
+
+  uniqueFixedPoint : ∀ {x y} → map x ≡ x → map y ≡ y → x ≡ y
+  uniqueFixedPoint {x} {y} fx fy = absZero⇒equal distanceZero
+    where
+      contracted : ∣ x - y ∣ ≤ ratio * ∣ x - y ∣
+      contracted =
+        subst (λ z → z ≤ ratio * ∣ x - y ∣)
+          (cong₂-sub fx fy)
+          (lipschitz x y)
+        where
+          cong₂-sub : map x ≡ x → map y ≡ y → ∣ map x - map y ∣ ≡ ∣ x - y ∣
+          cong₂-sub refl refl = refl
+
+      shifted : (1ℚ - ratio) * ∣ x - y ∣ ≤ (1ℚ - ratio) * 0ℚ
+      shifted =
+        subst₂
+          (sym (expandLeft ratio ∣ x - y ∣))
+          (sym (ℚP.*-zeroʳ (1ℚ - ratio)))
+          (subst (λ z → z ≤ 0ℚ) (sym (moveShape ratio ∣ x - y ∣))
+            (subst (λ z → ∣ x - y ∣ - ratio * ∣ x - y ∣ ≤ z)
+              (ℚP.+-inverseʳ (ratio * ∣ x - y ∣))
+              (ℚP.+-monoˡ-≤ (- (ratio * ∣ x - y ∣)) contracted)))
+        where
+          subst₂ : ∀ {p q r s : ℚ} → p ≡ q → r ≡ s → p ≤ r → q ≤ s
+          subst₂ refl refl le = le
+
+          expandLeft : ∀ r z → (1ℚ - r) * z ≡ z - r * z
+          expandLeft = solve 2 (λ r z → (con 1ℚ :- r) :* z := z :- r :* z) refl
+
+          moveShape : ∀ r z → z - r * z ≡ z - r * z
+          moveShape _ _ = refl
+
+      distanceZero : ∣ x - y ∣ ≡ 0ℚ
+      distanceZero =
+        ℚP.≤-antisym
+          (ℚP.*-cancelˡ-≤-pos (1ℚ - ratio) {{positive ratioBelowOne}} shifted)
+          (ℚP.0≤∣p∣ (x - y))
+
+  ----------------------------------------------------------------
+  -- (2) geometric decay of the steps, and the Cauchy modulus
+  ----------------------------------------------------------------
+
+  iterateContraction :
+    ∀ n x y → ∣ iterate n x - iterate n y ∣ ≤ pow ratio n * ∣ x - y ∣
+  iterateContraction zero x y =
+    ℚP.≤-reflexive (sym (ℚP.*-identityˡ ∣ x - y ∣))
+  iterateContraction (suc n) x y =
+    ℚP.≤-trans
+      (lipschitz (iterate n x) (iterate n y))
+      (subst (λ z → ratio * (pow ratio n * ∣ x - y ∣) ≤ z)
+        (sym (ℚP.*-assoc ratio (pow ratio n) ∣ x - y ∣))
+        (scaleˡ-nonNeg ratioNonNeg (iterateContraction n x y)))
+
+  stepGap : ℚ → ℚ
+  stepGap x = ∣ map x - x ∣
+
+  stepDecay :
+    ∀ n x → ∣ iterate (suc n) x - iterate n x ∣ ≤ pow ratio n * stepGap x
+  stepDecay n x =
+    subst (λ z → ∣ z - iterate n x ∣ ≤ pow ratio n * stepGap x)
+      (iterateShift n x)
+      (iterateContraction n (map x) x)
+
+  -- |x_{m+n} - x_n| <= q^n (sum_{i<m} q^i) |x_1 - x_0|
+  cauchyPrefix :
+    ∀ m n x →
+    ∣ iterate (m + n) x - iterate n x ∣
+      ≤ (pow ratio n * geoSum ratio m) * stepGap x
+  cauchyPrefix zero n x =
+    ℚP.≤-reflexive
+      (trans (absSelf (iterate n x)) (sym zeroShape))
+    where
+      zeroShape : (pow ratio n * 0ℚ) * stepGap x ≡ 0ℚ
+      zeroShape =
+        trans (cong (_* stepGap x) (ℚP.*-zeroʳ (pow ratio n)))
+          (ℚP.*-zeroˡ (stepGap x))
+  cauchyPrefix (suc m) n x =
+    ℚP.≤-trans
+      (absTriangleVia (iterate (suc (m + n)) x) (iterate (m + n) x)
+        (iterate n x))
+      (subst (λ z → z ≤ (pow ratio n * geoSum ratio (suc m)) * stepGap x)
+        (sym regroup)
+        (ℚP.≤-reflexive refl))
+    where
+      headBound :
+        ∣ iterate (suc (m + n)) x - iterate (m + n) x ∣
+          ≤ (pow ratio n * pow ratio m) * stepGap x
+      headBound =
+        subst (λ z → ∣ iterate (suc (m + n)) x - iterate (m + n) x ∣
+                       ≤ z * stepGap x)
+          (trans (powAdd ratio m n) (ℚP.*-comm (pow ratio m) (pow ratio n)))
+          (stepDecay (m + n) x)
+
+      tailBound :
+        ∣ iterate (m + n) x - iterate n x ∣
+          ≤ (pow ratio n * geoSum ratio m) * stepGap x
+      tailBound = cauchyPrefix m n x
+
+      regroup :
+        (pow ratio n * geoSum ratio (suc m)) * stepGap x
+          ≡ (pow ratio n * pow ratio m) * stepGap x
+            +ℚ (pow ratio n * geoSum ratio m) * stepGap x
+      regroup =
+        solve 4
+          (λ p t s d → (p :* (t :+ s)) :* d
+                         := (p :* s) :* d :+ (p :* t) :* d)
+          refl (pow ratio n) (geoSum ratio m) (pow ratio m) (stepGap x)
+
+  -- the cutoff-uniform Cauchy modulus, with Tcap = 1/(1-q)
+  cauchyModulus :
+    ∀ {cap} → 1ℚ ≤ (1ℚ - ratio) * cap →
+    ∀ m n x →
+    ∣ iterate (m + n) x - iterate n x ∣
+      ≤ (pow ratio n * cap) * stepGap x
+  cauchyModulus {cap} capClosing m n x =
+    ℚP.≤-trans (cauchyPrefix m n x)
+      (scaleʳ-nonNeg (ℚP.0≤∣p∣ (map x - x))
+        (scaleˡ-nonNeg (pow-nonNeg ratioNonNeg n)
+          (geoCap ratioNonNeg ratioBelowOne capClosing m)))
+
+  ----------------------------------------------------------------
+  -- (3) geometric approach to the tuned point
+  ----------------------------------------------------------------
+
+  fixedPointStability :
+    ∀ {y} → map y ≡ y → ∀ n x → ∣ iterate n x - y ∣ ≤ pow ratio n * ∣ x - y ∣
+  fixedPointStability {y} fy n x =
+    subst (λ z → ∣ iterate n x - z ∣ ≤ pow ratio n * ∣ x - y ∣)
+      (iterateFixed n)
+      (iterateContraction n x y)
+    where
+      iterateFixed : ∀ k → iterate k y ≡ y
+      iterateFixed zero = refl
+      iterateFixed (suc k) = trans (cong map (iterateFixed k)) fy

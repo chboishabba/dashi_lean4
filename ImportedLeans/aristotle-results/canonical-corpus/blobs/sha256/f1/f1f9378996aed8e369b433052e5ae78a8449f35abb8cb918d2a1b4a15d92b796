@@ -1,0 +1,220 @@
+import Integration.DescentLevel
+
+/-!
+# Sufficiency, the least sufficient observer, and bounded towers
+
+`Integration.DescentLevel` measures an invariant against a *given* tower of
+observers: `CoarsestSufficient T c k` says the invariant is a function of the
+level-`k` observation but not of the level-`(k+1)` one.  That is a statement
+about one chosen hierarchy.  The intrinsic notion behind it is order-theoretic
+and hierarchy-free: an observer is **sufficient** for an invariant when the
+invariant is constant on its fibres, sufficiency is exactly the ability to
+compute the invariant, and among all sufficient observers there is a least
+informative one — the invariant itself.
+
+This file proves that intrinsic layer and connects it to the tower layer.
+
+* `Sufficient o c` — `c` is constant on the fibres of `o`;
+* `Refines o o'` — `o` determines `o'`, i.e. `o'` factors through `o`;
+* `sufficient_iff_refines` — an observer is sufficient for `c` exactly when it
+  refines the canonical observer `c : X → ℝ`;
+* `canonical_sufficient`, `canonical_least` — the canonical observer is
+  sufficient, and every sufficient observer refines it: it is **least
+  informative among all sufficient observers**;
+* `refines_trans`, `sufficient_of_refines` — sufficiency is upward closed along
+  refinement, so the sufficient observers form an up-set;
+* `factorsAt_iff_sufficient` — the tower notion is the intrinsic notion applied
+  to `projTo k`;
+* `coarsest_iff_last_refining` — hence `CoarsestSufficient T c k` says exactly
+  that level `k` is the last level of the tower still refining the canonical
+  least sufficient observer.  This is the promised relation between the
+  tower-relative statement and the intrinsic order-theoretic one.
+
+The file also settles a terminology point.  `CoarsestSufficient` is
+`FactorsAt k ∧ ¬ FactorsAt (k+1)`: the *last sufficient layer before the
+invariant is lost*.  If a tower is only examined up to a finite horizon, and the
+invariant survives to that horizon, there is no failing successor and yet the
+horizon layer is intuitively the coarsest sufficient observation available.
+
+* `CoarsestSufficientBelow T c N k` — the bounded notion: `k ≤ N`, the invariant
+  factors at `k`, and no level `m ≤ N` factoring is coarser;
+* `exists_coarsestBelow`, `coarsestBelow_unique` — it always exists below any
+  horizon and is unique;
+* `coarsest_of_coarsestBelow` — if the bounded answer is strictly below the
+  horizon, it *is* a genuine loss point, so the two notions agree there;
+* `coarsestBelow_of_coarsest` — conversely a loss point below the horizon is the
+  bounded answer.
+
+Finally the axis lane is placed in the bounded framework as well
+(`axis_coarsestBelow`), and the transitive gauge lane is shown to have the
+bounded answer `N` for every horizon (`su2_coarsestBelow`) even though it has no
+loss point at all — which is exactly the situation the bounded notion exists to
+describe.
+-/
+
+namespace Integration.LeastSufficient
+
+open Integration.DescentLevel
+open Integration.DescentLevel.LayerTower
+
+/-! ## Sufficiency and refinement -/
+
+variable {X Y Z : Type}
+
+/-- An observer is **sufficient** for an invariant when the invariant is constant
+on its fibres — equivalently, when the invariant can be computed from what the
+observer reports. -/
+def Sufficient (o : X → Y) (c : X → ℝ) : Prop := ∀ x y, o x = o y → c x = c y
+
+/-- `o` **refines** `o'` when everything `o'` reports can be computed from what
+`o` reports: `o` is at least as informative. -/
+def Refines (o : X → Y) (o' : X → Z) : Prop := ∃ f : Y → Z, ∀ x, o' x = f (o x)
+
+theorem refines_refl (o : X → Y) : Refines o o := ⟨id, fun _ => rfl⟩
+
+theorem refines_trans {o : X → Y} {o' : X → Z} {W : Type} {o'' : X → W}
+    (h : Refines o o') (h' : Refines o' o'') : Refines o o'' := by
+  obtain ⟨f, hf⟩ := h
+  obtain ⟨g, hg⟩ := h'
+  exact ⟨g ∘ f, fun x => by rw [hg x, hf x]; rfl⟩
+
+/-- **Sufficiency is refinement of the canonical observer.**  The invariant `c`,
+read as an observer `X → ℝ`, is the yardstick: an observer is sufficient for `c`
+exactly when it determines `c`. -/
+theorem sufficient_iff_refines (o : X → Y) (c : X → ℝ) : Sufficient o c ↔ Refines o c := by
+  classical
+  constructor
+  · intro h
+    refine ⟨fun y => if hy : ∃ x, o x = y then c hy.choose else 0, fun x => ?_⟩
+    have hex : ∃ x', o x' = o x := ⟨x, rfl⟩
+    show c x = if hy : ∃ x', o x' = o x then c hy.choose else 0
+    rw [dif_pos hex]
+    exact (h _ _ hex.choose_spec).symm
+  · rintro ⟨f, hf⟩ x y hxy
+    rw [hf x, hf y, hxy]
+
+/-- The canonical observer for an invariant is the invariant itself, and it is
+sufficient. -/
+theorem canonical_sufficient (c : X → ℝ) : Sufficient c c := fun _ _ h => h
+
+/-- **The canonical observer is least informative among the sufficient ones.**
+Every observer sufficient for `c` determines `c`; so `c` sits at the bottom of
+the information order restricted to sufficient observers. -/
+theorem canonical_least (o : X → Y) (c : X → ℝ) (h : Sufficient o c) : Refines o c :=
+  (sufficient_iff_refines o c).mp h
+
+/-- Sufficiency is inherited by more informative observers. -/
+theorem sufficient_of_refines {o : X → Y} {o' : X → Z} {c : X → ℝ} (h : Refines o o')
+    (h' : Sufficient o' c) : Sufficient o c :=
+  (sufficient_iff_refines o c).mpr (refines_trans h ((sufficient_iff_refines o' c).mp h'))
+
+/-! ## The tower notion is the intrinsic notion, level by level -/
+
+/-- Factoring at a level is sufficiency of that level's observation. -/
+theorem factorsAt_iff_sufficient (T : LayerTower) (c : T.Layer 0 → ℝ) (k : ℕ) :
+    T.FactorsAt c k ↔ Sufficient (T.projTo k) c :=
+  T.factorsAt_iff_fibre c k
+
+/-- **The tower-relative statement, read intrinsically.**  A level is the
+coarsest sufficient one exactly when its observation still refines the canonical
+least sufficient observer while the next one no longer does. -/
+theorem coarsest_iff_last_refining (T : LayerTower) (c : T.Layer 0 → ℝ) (k : ℕ) :
+    T.CoarsestSufficient c k ↔
+      (Refines (T.projTo k) c ∧ ¬ Refines (T.projTo (k + 1)) c) := by
+  constructor
+  · rintro ⟨h1, h2⟩
+    exact ⟨(sufficient_iff_refines _ c).mp ((factorsAt_iff_sufficient T c k).mp h1),
+      fun hr => h2 ((factorsAt_iff_sufficient T c (k + 1)).mpr
+        ((sufficient_iff_refines _ c).mpr hr))⟩
+  · rintro ⟨h1, h2⟩
+    exact ⟨(factorsAt_iff_sufficient T c k).mpr ((sufficient_iff_refines _ c).mpr h1),
+      fun hf => h2 ((sufficient_iff_refines _ c).mp
+        ((factorsAt_iff_sufficient T c (k + 1)).mp hf))⟩
+
+/-! ## Bounded towers: coarsest sufficient below a horizon -/
+
+/-- The **bounded** notion: below the horizon `N`, level `k` is sufficient and no
+sufficient level below the horizon is coarser.  Unlike `CoarsestSufficient` this
+does not require the invariant ever to be lost. -/
+def CoarsestSufficientBelow (T : LayerTower) (c : T.Layer 0 → ℝ) (N k : ℕ) : Prop :=
+  k ≤ N ∧ T.FactorsAt c k ∧ ∀ m, m ≤ N → T.FactorsAt c m → m ≤ k
+
+/-- Below any horizon the bounded answer exists. -/
+theorem exists_coarsestBelow (T : LayerTower) (c : T.Layer 0 → ℝ) (N : ℕ) :
+    ∃ k, CoarsestSufficientBelow T c N k := by
+  classical
+  refine ⟨Nat.findGreatest (T.FactorsAt c) N, Nat.findGreatest_le N, ?_, ?_⟩
+  · exact Nat.findGreatest_spec (Nat.zero_le N) (T.factorsAt_zero c)
+  · exact fun m hm hf => Nat.le_findGreatest hm hf
+
+/-- And it is unique. -/
+theorem coarsestBelow_unique (T : LayerTower) (c : T.Layer 0 → ℝ) {N k m : ℕ}
+    (hk : CoarsestSufficientBelow T c N k) (hm : CoarsestSufficientBelow T c N m) : k = m :=
+  le_antisymm (hm.2.2 k hk.1 hk.2.1) (hk.2.2 m hm.1 hm.2.1)
+
+/-- **The two notions agree away from the horizon.**  If the bounded answer is
+strictly below the horizon then the invariant really is lost at the next level,
+so that level is a genuine last-sufficient-before-loss point. -/
+theorem coarsest_of_coarsestBelow (T : LayerTower) (c : T.Layer 0 → ℝ) {N k : ℕ}
+    (h : CoarsestSufficientBelow T c N k) (hlt : k < N) : T.CoarsestSufficient c k := by
+  refine ⟨h.2.1, fun hf => ?_⟩
+  have := h.2.2 (k + 1) hlt hf
+  omega
+
+/-- Conversely a loss point below the horizon is the bounded answer. -/
+theorem coarsestBelow_of_coarsest (T : LayerTower) (c : T.Layer 0 → ℝ) {N k : ℕ}
+    (h : T.CoarsestSufficient c k) (hk : k ≤ N) : CoarsestSufficientBelow T c N k := by
+  refine ⟨hk, h.1, fun m _ hm => ?_⟩
+  by_contra hlt
+  push_neg at hlt
+  exact h.2 (T.factorsAt_of_le c hlt hm)
+
+/-! ## When a tower layer *is* the global least sufficient observer -/
+
+/-- Two observers are **equivalent** when each determines the other. -/
+def Equivalent (o : X → Y) (o' : X → Z) : Prop := Refines o o' ∧ Refines o' o
+
+theorem equivalent_symm {o : X → Y} {o' : X → Z} (h : Equivalent o o') : Equivalent o' o :=
+  ⟨h.2, h.1⟩
+
+/-- Equivalence with the canonical observer is sufficiency plus the converse
+factorisation. -/
+theorem equivalent_canonical_iff (o : X → Y) (c : X → ℝ) :
+    Equivalent o c ↔ (Sufficient o c ∧ Refines c o) :=
+  and_congr (sufficient_iff_refines o c).symm Iff.rfl
+
+/-- **The tower answer is the global answer, when the canonical observer occurs
+in the tower.**  If the coarsest sufficient layer also carries no more
+information than the invariant itself, then that layer is equivalent to the
+canonical least sufficient observer: the tower-relative notion has found the
+intrinsic one. -/
+theorem coarsest_equivalent_canonical (T : LayerTower) (c : T.Layer 0 → ℝ) {k : ℕ}
+    (hk : T.CoarsestSufficient c k) (hback : Refines c (T.projTo k)) :
+    Equivalent (T.projTo k) c :=
+  ⟨((coarsest_iff_last_refining T c k).mp hk).1, hback⟩
+
+/-- **And when it does not.**  Without that hypothesis the coarsest sufficient
+layer is strictly more informative than the invariant: it is the coarsest layer
+*of this tower* that retains the invariant, not the least sufficient observer in
+the information order. -/
+theorem coarsest_strictly_finer (T : LayerTower) (c : T.Layer 0 → ℝ) {k : ℕ}
+    (hk : T.CoarsestSufficient c k) (hno : ¬ Refines c (T.projTo k)) :
+    Refines (T.projTo k) c ∧ ¬ Equivalent (T.projTo k) c :=
+  ⟨((coarsest_iff_last_refining T c k).mp hk).1, fun h => hno h.2⟩
+
+/-! ## The two lanes in the bounded framework -/
+
+/-- The axis lane: for every horizon at least one, the bounded answer is the
+three-axis layer — the same number the unbounded notion gives. -/
+theorem axis_coarsestBelow (N : ℕ) (hN : 1 ≤ N) :
+    CoarsestSufficientBelow axisTower highObserver.nondegeneracy N 1 :=
+  coarsestBelow_of_coarsest _ _ axis_coarsest_sufficient hN
+
+/-- The transitive gauge lane: its certificate is never lost, so it has no
+last-sufficient-before-loss level at all (`su2_no_coarsest`); the bounded answer
+is simply the horizon.  This is exactly the case the bounded notion is for. -/
+theorem su2_coarsestBelow (N : ℕ) :
+    CoarsestSufficientBelow su2Tower GaugeSU2.su2GaugeObserver.nondegeneracy N N :=
+  ⟨le_refl N, su2_cert_factorsAt N, fun _ hm _ => hm⟩
+
+end Integration.LeastSufficient

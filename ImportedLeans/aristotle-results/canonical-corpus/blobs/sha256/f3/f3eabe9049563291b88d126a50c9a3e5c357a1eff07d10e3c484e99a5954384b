@@ -1,0 +1,406 @@
+module DASHI.Physics.YangMills.BalabanCMP109LiteralStaticGaussianDynamicInteractionSplitExact where
+
+------------------------------------------------------------------------
+-- ROW A3b: THE STATIC-GAUSSIAN / DYNAMIC-INTERACTION BETA SPLIT
+--          ALONG THE RUNNING TRAJECTORY  (no hidden chain-rule term)
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.  Generation of Effective Actions in a Small Field Approximation
+-- and a Coupling Constant Renormalization in Four Dimensions",
+-- Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  (Localised effective actions, the beta function
+-- and the recursive running coupling; the Gaussian normalisation of the
+-- fluctuation integral after the source rescaling.)
+--
+-- WHY THIS MODULE EXISTS
+--
+-- `BalabanYM4GaussianNormalisationCouplingIndependenceExact` proves
+--
+--     d/dg beta_Z (g, U)  =  0        at *fixed* backgrounds U,
+--
+-- from the change-of-variables law of the Gaussian normalisation.  Row A3 then
+-- uses `L_Z = 0`, i.e. `L_total = L_sharp`.  But the object that Row A actually
+-- differentiates is the beta function *along the running trajectory*
+-- g |-> (g, U(g)), and for that object the chain rule reads
+--
+--     d/dg beta_Z(g, U(g))  =  (partial_g beta_Z)  +  D_U beta_Z [U'(g)] .
+--
+-- The fixed-background theorem kills only the first term.  Using `L_Z = 0`
+-- for the trajectory is therefore legitimate only once the second term is
+-- shown to vanish as well.
+--
+-- WHAT THIS MODULE PROVES
+--
+--   (1) `chainRuleDecomposition` : the exact, limit-free decomposition of an
+--       increment of the along-trajectory Gaussian beta into its
+--       fixed-background part and its background-transport part.
+--
+--   (2) `partialCouplingTermVanishes` : the fixed-background part is
+--       identically zero -- *derived*, from the change-of-variables law
+--       already in the repository, for every increment and every background.
+--
+--   (3) `StaticGaussianTrajectory` / `backgroundTransportVanishes` : the
+--       background-transport part is zero exactly when the source rescaling
+--       makes the Gaussian log-ratio the same number at every point of the
+--       trajectory.  That single hypothesis is isolated as the record field
+--       `rescaledStatic`; nothing else in the module assumes anything about
+--       the trajectory.
+--
+--   (4) `betaZAlongConstant`, `incrementsAgree`, `derivativeIsInteraction` :
+--       under (2)+(3),
+--
+--           beta_j(g) = beta_Z + beta_Int,j(g)   with beta_Z a literal constant,
+--           d/dg beta_j  =  d/dg beta_Int,j ,
+--
+--       the conclusion Row A3b asks for, with `IsDerivative` the exact affine
+--       characterisation (no limits are used or needed).
+--
+--   (5) `gaussianDerivativeAlongIsZero` and `rowAGaussianCapIsZero` : the
+--       along-trajectory Gaussian coupling derivative is *the* number 0, so
+--       the Row-A total-sensitivity package may take `L_Z = 0` and
+--       `L_total = L_sharp` on the trajectory, not merely at fixed
+--       backgrounds.
+--
+--   (6) `hiddenChainRuleWitness` : sharpness.  An explicit rational
+--       normalisation satisfying the equal-dimension scaling law (so
+--       `partial_g beta_Z = 0` holds) but whose *trajectory* moves the
+--       background, for which the total derivative is nonzero.  So (3) is
+--       load-bearing and the warning above is not hypothetical.
+--
+-- WHAT IS *NOT* PROVED.  That the literal CMP109 Gaussian normalisation,
+-- after the source rescaling, is static along the Bałaban trajectory is an
+-- input (`rescaledStatic`); this module reduces Row A3b to that one source
+-- identification and shows nothing else is missing.  Row A stays open; the
+-- frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _/_; _≤_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst)
+open import Relation.Nullary using (¬_)
+
+open import DASHI.Physics.YangMills.BalabanYM4TotalBetaCouplingSensitivityExact
+  using (TotalBetaSensitivityData; module Total)
+open import DASHI.Physics.YangMills.BalabanYM4GaussianNormalisationCouplingIndependenceExact
+  using (GaussianNormalisation; module Normalisation; TwoBackgrounds; bgU; bgV)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- The exact affine characterisation of a derivative
+--
+-- `IsDerivative f g D` says every increment of f at g is D times the step.
+-- For the functions occurring below (a constant plus the interaction beta)
+-- this is the derivative on the nose, with no limit machinery.
+------------------------------------------------------------------------
+
+IsDerivative : (ℚ → ℚ) → ℚ → ℚ → Set
+IsDerivative f g D = ∀ h → f (g + h) - f g ≡ D * h
+
+derivativeUnique :
+  ∀ {f g D D′} → IsDerivative f g D → IsDerivative f g D′ → D ≡ D′
+derivativeUnique {f} {g} {D} {D′} p q =
+  trans (sym (ℚP.*-identityʳ D))
+    (trans (sym (p 1ℚ)) (trans (q 1ℚ) (ℚP.*-identityʳ D′)))
+
+------------------------------------------------------------------------
+-- The running trajectory of a Gaussian normalisation
+------------------------------------------------------------------------
+
+record StaticGaussianTrajectory {Bg : Set} (G : GaussianNormalisation Bg) : Set where
+  open Normalisation G using (logRatio; reference)
+  field
+    kappa        : ℚ            -- the step normalisation of the convention
+    coarse fine  : ℚ → Bg       -- the running backgrounds U(g), V(g)
+    betaInt      : ℚ → ℚ        -- the interaction part of the shell beta
+
+    -- THE ONE SOURCE INPUT: after the rescaling, the Gaussian log-ratio is the
+    -- same number at every point of the trajectory.
+    rescaledStatic :
+      ∀ g g′ → logRatio reference (coarse g) (fine g)
+                 ≡ logRatio reference (coarse g′) (fine g′)
+
+module Trajectory {Bg : Set} {G : GaussianNormalisation Bg}
+  (T : StaticGaussianTrajectory G) where
+
+  open Normalisation G public
+  open StaticGaussianTrajectory T public
+
+  ----------------------------------------------------------------------
+  -- the two beta pieces along the trajectory
+  ----------------------------------------------------------------------
+
+  betaZAlong : ℚ → ℚ
+  betaZAlong g = betaZ kappa g (coarse g) (fine g)
+
+  betaAlong : ℚ → ℚ
+  betaAlong g = betaZAlong g + betaInt g
+
+  ----------------------------------------------------------------------
+  -- (1) THE CHAIN-RULE DECOMPOSITION OF AN INCREMENT
+  --
+  --   beta_Z(g+h, U(g+h)) - beta_Z(g, U(g))
+  --     = [ beta_Z(g+h, U(g))   - beta_Z(g, U(g))   ]    (fixed background)
+  --     + [ beta_Z(g+h, U(g+h)) - beta_Z(g+h, U(g)) ]    (background transport)
+  ----------------------------------------------------------------------
+
+  partialCouplingTerm : ℚ → ℚ → ℚ
+  partialCouplingTerm g h =
+    betaZ kappa (g + h) (coarse g) (fine g) - betaZ kappa g (coarse g) (fine g)
+
+  backgroundTransportTerm : ℚ → ℚ → ℚ
+  backgroundTransportTerm g h =
+    betaZ kappa (g + h) (coarse (g + h)) (fine (g + h))
+      - betaZ kappa (g + h) (coarse g) (fine g)
+
+  chainRuleDecomposition :
+    ∀ g h → betaZAlong (g + h) - betaZAlong g
+              ≡ partialCouplingTerm g h + backgroundTransportTerm g h
+  chainRuleDecomposition g h =
+    solve 3
+      (λ X Y Z → X :- Z := (Y :- Z) :+ (X :- Y))
+      refl
+      (betaZ kappa (g + h) (coarse (g + h)) (fine (g + h)))
+      (betaZ kappa (g + h) (coarse g) (fine g))
+      (betaZ kappa g (coarse g) (fine g))
+
+  ----------------------------------------------------------------------
+  -- (2) THE FIXED-BACKGROUND TERM VANISHES -- derived, not assumed
+  ----------------------------------------------------------------------
+
+  partialCouplingTermVanishes : ∀ g h → partialCouplingTerm g h ≡ 0ℚ
+  partialCouplingTermVanishes g h =
+    betaZIncrementVanishes kappa g h (coarse g) (fine g)
+
+  ----------------------------------------------------------------------
+  -- (3) THE BACKGROUND-TRANSPORT TERM VANISHES UNDER THE STATIC HYPOTHESIS
+  ----------------------------------------------------------------------
+
+  betaZAtAnyCoupling :
+    ∀ g g′ → betaZ kappa g (coarse g) (fine g)
+               ≡ betaZ kappa g′ (coarse g′) (fine g′)
+  betaZAtAnyCoupling g g′ =
+    trans (betaZCouplingIndependent kappa g reference (coarse g) (fine g))
+      (trans (cong (kappa *_) (rescaledStatic g g′))
+        (betaZCouplingIndependent kappa reference g′ (coarse g′) (fine g′)))
+
+  backgroundTransportVanishes :
+    ∀ g h → backgroundTransportTerm g h ≡ 0ℚ
+  backgroundTransportVanishes g h =
+    trans
+      (cong (_- betaZ kappa (g + h) (coarse g) (fine g))
+        (trans (betaZAtAnyCoupling (g + h) g)
+          (betaZCouplingIndependent kappa g (g + h) (coarse g) (fine g))))
+      (ℚP.+-inverseʳ (betaZ kappa (g + h) (coarse g) (fine g)))
+
+  ----------------------------------------------------------------------
+  -- (4) HENCE beta_Z IS A LITERAL CONSTANT ALONG THE TRAJECTORY, AND ALL
+  --     THE g-DEPENDENCE OF beta SITS IN beta_Int
+  ----------------------------------------------------------------------
+
+  betaZAlongConstant : ∀ g g′ → betaZAlong g ≡ betaZAlong g′
+  betaZAlongConstant = betaZAtAnyCoupling
+
+  incrementsAgree :
+    ∀ g h → betaAlong (g + h) - betaAlong g ≡ betaInt (g + h) - betaInt g
+  incrementsAgree g h =
+    trans
+      (cong (_- betaAlong g)
+        (cong (_+ betaInt (g + h)) (betaZAlongConstant (g + h) g)))
+      (solve 3
+        (λ Z I₁ I₀ → (Z :+ I₁) :- (Z :+ I₀) := I₁ :- I₀)
+        refl (betaZAlong g) (betaInt (g + h)) (betaInt g))
+
+  derivativeIsInteraction :
+    ∀ g D → IsDerivative betaAlong g D → IsDerivative betaInt g D
+  derivativeIsInteraction g D isDeriv h =
+    trans (sym (incrementsAgree g h)) (isDeriv h)
+
+  interactionDerivativeIsTotal :
+    ∀ g D → IsDerivative betaInt g D → IsDerivative betaAlong g D
+  interactionDerivativeIsTotal g D isDeriv h =
+    trans (incrementsAgree g h) (isDeriv h)
+
+  -- the displayed conclusion:  d/dg beta_j  =  d/dg beta_Int,j
+  totalAndInteractionDerivativesAgree :
+    ∀ g D D′ → IsDerivative betaAlong g D → IsDerivative betaInt g D′ → D ≡ D′
+  totalAndInteractionDerivativesAgree g D D′ total interaction =
+    derivativeUnique {betaInt} {g} (derivativeIsInteraction g D total) interaction
+
+  ----------------------------------------------------------------------
+  -- (5) L_Z = 0 ON THE TRAJECTORY
+  ----------------------------------------------------------------------
+
+  gaussianDerivativeAlongIsZero :
+    ∀ g D → IsDerivative betaZAlong g D → D ≡ 0ℚ
+  gaussianDerivativeAlongIsZero g D isDeriv =
+    trans (sym (ℚP.*-identityʳ D))
+      (trans (sym (isDeriv 1ℚ))
+        (trans
+          (cong (_- betaZAlong g) (betaZAlongConstant (g + 1ℚ) g))
+          (ℚP.+-inverseʳ (betaZAlong g))))
+
+  zeroIsTheGaussianDerivativeAlong : ∀ g → IsDerivative betaZAlong g 0ℚ
+  zeroIsTheGaussianDerivativeAlong g h =
+    trans (cong (_- betaZAlong g) (betaZAlongConstant (g + h) g))
+      (trans (ℚP.+-inverseʳ (betaZAlong g)) (sym (ℚP.*-zeroˡ h)))
+
+  rowAGaussianCapIsZero :
+    ∀ g D → IsDerivative betaZAlong g D → ∣ D ∣ ≤ 0ℚ
+  rowAGaussianCapIsZero g D isDeriv =
+    subst (λ z → ∣ z ∣ ≤ 0ℚ) (sym (gaussianDerivativeAlongIsZero g D isDeriv))
+      ℚP.≤-refl
+
+------------------------------------------------------------------------
+-- FEEDING THE ROW-A TOTAL-SENSITIVITY PACKAGE FROM TRAJECTORY DATA
+--
+-- The repository's `RowAGaussianVanishing` consumes fixed-background
+-- derivative witnesses.  This is its trajectory form: the shell Gaussian
+-- derivative is the derivative of the *along-trajectory* function, and it is
+-- still zero, so `L_total = L_int` remains available.
+------------------------------------------------------------------------
+
+module RowATrajectoryGaussianVanishing
+  {Bg : Set} {G : GaussianNormalisation Bg}
+  (T : StaticGaussianTrajectory G)
+  (d : TotalBetaSensitivityData)
+  (isDerivative :
+    ∀ j → IsDerivative (Trajectory.betaZAlong T)
+            (TotalBetaSensitivityData.coupling d j)
+            (TotalBetaSensitivityData.betaZDerivative d j))
+  where
+
+  open Trajectory T using (gaussianDerivativeAlongIsZero)
+
+  gaussianVanishes :
+    ∀ j → TotalBetaSensitivityData.betaZDerivative d j ≡ 0ℚ
+  gaussianVanishes j =
+    gaussianDerivativeAlongIsZero
+      (TotalBetaSensitivityData.coupling d j)
+      (TotalBetaSensitivityData.betaZDerivative d j)
+      (isDerivative j)
+
+  open Total d using (module GaussianCouplingIndependent)
+  open GaussianCouplingIndependent gaussianVanishes public
+    using (derivativeIsInteraction; derivativeBoundIsInteraction;
+           sensitivityCubicInteraction)
+
+------------------------------------------------------------------------
+-- NON-VACUITY: a static trajectory with a genuinely running background
+------------------------------------------------------------------------
+
+-- log Z(g,U) = 2 g + c_U with c_bgU = 3/5, c_bgV = 1/4: the equal-dimension
+-- scaling law holds, and the two backgrounds have different field parts, so
+-- the Gaussian ratio is the nonzero constant 7/20.
+staticWitnessNormalisation : GaussianNormalisation TwoBackgrounds
+staticWitnessNormalisation = record
+  { dim       = 1ℚ + 1ℚ
+  ; reference = 0ℚ
+  ; logScale  = λ g → g
+  ; logZ      = λ { g bgU → (1ℚ + 1ℚ) * g + (+ 3 / 5)
+                  ; g bgV → (1ℚ + 1ℚ) * g + (+ 1 / 4) }
+  ; changeOfVariables = λ
+      { g bgU → solve 1 (λ x → (con 1ℚ :+ con 1ℚ) :* x :+ con (+ 3 / 5)
+                               := (con 1ℚ :+ con 1ℚ) :* (x :- con 0ℚ)
+                                    :+ ((con 1ℚ :+ con 1ℚ) :* con 0ℚ
+                                          :+ con (+ 3 / 5))) refl g
+      ; g bgV → solve 1 (λ x → (con 1ℚ :+ con 1ℚ) :* x :+ con (+ 1 / 4)
+                               := (con 1ℚ :+ con 1ℚ) :* (x :- con 0ℚ)
+                                    :+ ((con 1ℚ :+ con 1ℚ) :* con 0ℚ
+                                          :+ con (+ 1 / 4))) refl g
+      }
+  }
+
+-- the trajectory keeps the pair (U,V) at the same *ratio* while the
+-- interaction part genuinely runs
+staticWitness : StaticGaussianTrajectory staticWitnessNormalisation
+staticWitness = record
+  { kappa   = 1ℚ
+  ; coarse  = λ _ → bgU
+  ; fine    = λ _ → bgV
+  ; betaInt = λ g → g * g
+  ; rescaledStatic = λ _ _ → refl
+  }
+
+module StaticWitness = Trajectory staticWitness
+
+-- beta_Z is the constant 7/20 at every coupling ...
+witnessBetaZValue : StaticWitness.betaZAlong (+ 5 / 3) ≡ + 7 / 20
+witnessBetaZValue = refl
+
+witnessBetaZConstant :
+  ∀ g → StaticWitness.betaZAlong g ≡ StaticWitness.betaZAlong 0ℚ
+witnessBetaZConstant g = StaticWitness.betaZAlongConstant g 0ℚ
+
+-- ... while the total beta genuinely moves, entirely through beta_Int
+witnessTotalMoves : ¬ (StaticWitness.betaAlong 1ℚ ≡ StaticWitness.betaAlong 0ℚ)
+witnessTotalMoves ()
+
+------------------------------------------------------------------------
+-- SHARPNESS: WITHOUT `rescaledStatic` THERE *IS* A HIDDEN CHAIN-RULE TERM
+--
+-- Same normalisation law shape, but now the trajectory swaps the pair of
+-- backgrounds at g = 0 and g = 1.  The fixed-background derivative still
+-- vanishes; the along-trajectory increment does not.
+------------------------------------------------------------------------
+
+-- log Z(g, bgU) = 2g + 1, log Z(g, bgV) = 2g, so the ratio is the constant 1
+-- at fixed backgrounds, but reversing the pair changes its sign.
+hiddenChainRuleNormalisation : GaussianNormalisation TwoBackgrounds
+hiddenChainRuleNormalisation = record
+  { dim       = 1ℚ + 1ℚ
+  ; reference = 0ℚ
+  ; logScale  = λ g → g
+  ; logZ      = λ { g bgU → (1ℚ + 1ℚ) * g + 1ℚ
+                  ; g bgV → (1ℚ + 1ℚ) * g }
+  ; changeOfVariables = λ
+      { g bgU → solve 1 (λ x → (con 1ℚ :+ con 1ℚ) :* x :+ con 1ℚ
+                               := (con 1ℚ :+ con 1ℚ) :* (x :- con 0ℚ)
+                                    :+ ((con 1ℚ :+ con 1ℚ) :* con 0ℚ
+                                          :+ con 1ℚ)) refl g
+      ; g bgV → solve 1 (λ x → (con 1ℚ :+ con 1ℚ) :* x
+                               := (con 1ℚ :+ con 1ℚ) :* (x :- con 0ℚ)
+                                    :+ (con 1ℚ :+ con 1ℚ) :* con 0ℚ) refl g
+      }
+  }
+
+module Hidden = Normalisation hiddenChainRuleNormalisation
+
+-- the *fixed-background* coupling derivative is zero, as the repository proves
+hiddenFixedBackgroundDerivativeZero :
+  ∀ g D → Hidden.IsCouplingDerivative 1ℚ g D bgU bgV → D ≡ 0ℚ
+hiddenFixedBackgroundDerivativeZero g D =
+  Hidden.gaussianDerivativeIsZero 1ℚ g D bgU bgV
+
+-- but along the reversing trajectory the Gaussian beta is +1 at g = 0 and
+-- -1 at g = 1: the background-transport term is 2, not 0.
+hiddenTrajectoryBetaZ : ℚ → ℚ
+hiddenTrajectoryBetaZ g = Hidden.betaZ 1ℚ g bgU bgV
+
+hiddenReversedTrajectoryBetaZ : ℚ → ℚ
+hiddenReversedTrajectoryBetaZ g = Hidden.betaZ 1ℚ g bgV bgU
+
+hiddenChainRuleWitness :
+  hiddenTrajectoryBetaZ 0ℚ - hiddenReversedTrajectoryBetaZ 1ℚ ≡ 1ℚ + 1ℚ
+hiddenChainRuleWitness = refl
+
+hiddenTransportDoesNotVanish :
+  ¬ (hiddenTrajectoryBetaZ 0ℚ ≡ hiddenReversedTrajectoryBetaZ 1ℚ)
+hiddenTransportDoesNotVanish eq = twoIsNotZero
+  (trans (sym hiddenChainRuleWitness)
+    (trans (cong (_- hiddenReversedTrajectoryBetaZ 1ℚ) eq)
+      (ℚP.+-inverseʳ (hiddenReversedTrajectoryBetaZ 1ℚ))))
+  where
+    twoIsNotZero : ¬ (1ℚ + 1ℚ ≡ 0ℚ)
+    twoIsNotZero ()

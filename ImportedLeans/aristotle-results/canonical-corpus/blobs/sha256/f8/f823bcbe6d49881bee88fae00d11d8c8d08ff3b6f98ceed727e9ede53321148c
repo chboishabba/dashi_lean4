@@ -1,0 +1,270 @@
+module DASHI.Physics.YangMills.BalabanYM4ConstrainedGaussianGaugeTransverseGramDecompositionExact where
+
+------------------------------------------------------------------------
+-- ROW A1b:  GAUGE (PARALLEL) + TRANSVERSE GRAM DECOMPOSITION OF THE
+--   CONSTRAINED-GAUSSIAN SECOND VARIATION
+--
+-- THE ROUTE THIS REPLACES.  `BalabanYM4ConstrainedGaussianFixedAmbientSecondVariationExact`
+-- reduces the sign of the constrained-Gaussian shell contribution to the sign
+-- of ONE Taylor coefficient `k_2` of the bordered (KKT) determinant, and
+-- `BalabanYM4SignNormalizedBorderedKKTSecondVariationExact` gives the
+-- sign-normalised criterion `d_1^2 > 2 d_0 d_2`.  Getting `b_- > 0` that way
+-- means expanding a literal determinant and proving the sign of the resulting
+-- rational number.
+--
+-- THE ROUTE PROVED HERE.  Split the fluctuation of the literal background into
+-- a gauge/marginal part and a constrained (physical, transverse) part,
+--
+--     delta U  =  delta U_par  +  delta U_perp ,
+--
+-- which is the native background-field decomposition, and ask instead for the
+-- SHAPE
+--
+--     D^2 S (delta U, delta U)
+--        =  D^2 S_par                       (gauge / marginal channel)
+--         + G(a,b)                          (transverse Gram form)
+--         + R ,                             (regular remainder)
+--
+--     G(a,b) = |a|^2 |b|^2 - <a,b>^2 = |a ^ b|^2 .
+--
+-- If the gauge/marginal channel cancels exactly — which is what invariance of
+-- the constrained Gaussian along the orbit/normalisation directions gives —
+-- then the sign question is answered WITHOUT any determinant expansion:
+--
+--   * `gramPartNonNeg` : the transverse piece is nonnegative for free
+--     (Lagrange's identity, `BalabanYM4GramWedgeIdentityExact`);
+--   * `nonCollinearityCertificate` : it is STRICTLY positive as soon as one
+--     wedge minor of the transverse pair is nonzero.  This is the sharper
+--     statement: occupation of the transverse sector is not enough, the Gram
+--     defect certifies non-collinearity, with the quantitative margin
+--     `|a ^ b|^2`;
+--   * `secondVariationFloor` / `positiveSecondVariation` : with
+--     `margin <= G(a,b)` and `|R| <= rho < margin`, the second variation is at
+--     least `margin - rho > 0`, which is exactly Row A's `b_-` in the form the
+--     downstream gates consume.
+--
+-- AND THE BRIDGE BACK TO THE DETERMINANT ROUTE.  `GramShapedCoefficient` shows
+-- the two routes are compatible: if the epsilon^2 coefficient `k_2` of the
+-- bordered determinant is itself of Gram shape in the transverse data, then
+-- `0 <= k_2` holds automatically, and the fixed-ambient criterion delivers
+-- `S''(0) >= 0` — strictly positive under non-collinearity — with no sign
+-- computation at all.
+--
+-- WHAT IS STILL INPUT (so Row A stays OPEN).
+--
+--   (i)   that the literal Wilson + reduced Faddeev-Popov + Haar second
+--         variation admits the displayed three-term decomposition with the
+--         given transverse pair (a,b);
+--   (ii)  the exact cancellation of the gauge/marginal channel for the
+--         constrained (not the unconstrained) Gaussian;
+--   (iii) the non-collinearity margin `margin <= G(a,b)`;
+--   (iv)  the remainder enclosure `|R| <= rho` (the twelve numbers counted in
+--         `BalabanYM4FourOrbitRegularRemainderBudgetExact`).
+--
+-- None of (i)-(iv) is supplied here.  No row is closed and the frozen research
+-- count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Sum.Base using (_⊎_; inj₁; inj₂)
+open import Data.Product.Base using (_×_; _,_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; mul-nonNeg; mul-pos; nonneg-difference; transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4GramWedgeIdentityExact
+  using ( Vec3; vec3; v₁; v₂; v₃; dot; normSq; gram; wedge₁₂; wedge₁₃; wedge₂₃
+        ; lagrangeIdentity; gramNonNeg; gramPositive; wedgeNormSq)
+open import DASHI.Physics.YangMills.BalabanYM4InteractionCauchyPackageToRowAConstantsExact
+  using (abs-bound-lower)
+import DASHI.Physics.YangMills.BalabanYM4ConstrainedGaussianFixedAmbientSecondVariationExact
+  as Fixed
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- The decomposition
+------------------------------------------------------------------------
+
+record GaugeTransverseGramDecomposition : Set where
+  field
+    -- The second variation of the constrained-Gaussian action in the chosen
+    -- background direction, and its three channels.
+    secondVariation parallelPart gramPart remainder : ℚ
+
+    -- The transverse pair whose Gram determinant is the transverse channel.
+    transverseA transverseB : Vec3
+
+    -- (i) the decomposition itself
+    decomposes : secondVariation ≡ parallelPart + gramPart + remainder
+
+    -- (ii) exact cancellation of the gauge/marginal channel
+    parallelCancels : parallelPart ≡ 0ℚ
+
+    -- (iii) the transverse channel is a Gram determinant
+    gramShape : gramPart ≡ gram transverseA transverseB
+
+    -- (iv) the regular remainder enclosure
+    remainderRadius : ℚ
+    remainderBound : ∣ remainder ∣ ≤ remainderRadius
+
+open GaugeTransverseGramDecomposition public
+
+module Decomposition (D : GaugeTransverseGramDecomposition) where
+
+  -- The transverse channel is nonnegative for free.
+  gramPartNonNeg : 0ℚ ≤ gramPart D
+  gramPartNonNeg =
+    subst (0ℚ ≤_) (sym (gramShape D))
+      (gramNonNeg (transverseA D) (transverseB D))
+
+  -- and strictly positive exactly when the transverse pair is non-collinear.
+  nonCollinearityCertificate :
+    (0ℚ < wedge₁₂ (transverseA D) (transverseB D)
+       ⊎ wedge₁₂ (transverseA D) (transverseB D) < 0ℚ)
+      ⊎ (0ℚ < wedge₁₃ (transverseA D) (transverseB D)
+           ⊎ wedge₁₃ (transverseA D) (transverseB D) < 0ℚ)
+      ⊎ (0ℚ < wedge₂₃ (transverseA D) (transverseB D)
+           ⊎ wedge₂₃ (transverseA D) (transverseB D) < 0ℚ) →
+    0ℚ < gramPart D
+  nonCollinearityCertificate w≠0 =
+    subst (0ℚ <_) (sym (gramShape D))
+      (gramPositive (transverseA D) (transverseB D) w≠0)
+
+  -- The whole second variation is the transverse surplus minus the remainder
+  -- radius: the gauge/marginal channel has been removed exactly.
+  secondVariationFloor :
+    gram (transverseA D) (transverseB D) - remainderRadius D
+      ≤ secondVariation D
+  secondVariationFloor =
+    transport-≤ refl (sym expand)
+      (ℚP.+-monoʳ-≤ (gram (transverseA D) (transverseB D))
+        (abs-bound-lower (remainderBound D)))
+    where
+      expand :
+        secondVariation D
+          ≡ gram (transverseA D) (transverseB D) + remainder D
+      expand =
+        trans (decomposes D)
+          (trans
+            (cong (λ z → z + gramPart D + remainder D) (parallelCancels D))
+            (trans
+              (cong (λ z → 0ℚ + z + remainder D) (gramShape D))
+              (cong (_+ remainder D)
+                (ℚP.+-identityˡ (gram (transverseA D) (transverseB D))))))
+
+  -- Row A's b_- in the form the downstream gates consume: a strictly positive
+  -- floor produced by a transverse Gram margin exceeding the remainder radius.
+  positiveSecondVariation :
+    ∀ margin →
+    margin ≤ gram (transverseA D) (transverseB D) →
+    remainderRadius D < margin →
+    (margin - remainderRadius D ≤ secondVariation D)
+      × (0ℚ < margin - remainderRadius D)
+  positiveSecondVariation margin marginBelowGram radiusSmall =
+    ℚP.≤-trans (ℚP.+-monoˡ-≤ (- remainderRadius D) marginBelowGram)
+      secondVariationFloor
+    , positiveGap
+    where
+      positiveGap : 0ℚ < margin - remainderRadius D
+      positiveGap =
+        subst (_< margin - remainderRadius D)
+          (ℚP.+-inverseʳ (remainderRadius D))
+          (ℚP.+-monoˡ-< (- remainderRadius D) radiusSmall)
+
+------------------------------------------------------------------------
+-- Bridge: a Gram-shaped determinant coefficient settles the sign
+------------------------------------------------------------------------
+
+-- If the epsilon^2 coefficient of the bordered determinant is a Gram
+-- determinant of the transverse data, then the fixed-ambient criterion gives
+-- the sign of the constrained-Gaussian second variation with no determinant
+-- arithmetic.
+module GramShapedCoefficient
+  (k₀ k₁ k₂ : ℚ) (a b : Vec3) (shape : k₂ ≡ gram a b)
+  where
+
+  coefficientNonNeg : 0ℚ ≤ k₂
+  coefficientNonNeg = subst (0ℚ ≤_) (sym shape) (gramNonNeg a b)
+
+  coefficientPositive :
+    (0ℚ < wedge₁₂ a b ⊎ wedge₁₂ a b < 0ℚ)
+      ⊎ (0ℚ < wedge₁₃ a b ⊎ wedge₁₃ a b < 0ℚ)
+      ⊎ (0ℚ < wedge₂₃ a b ⊎ wedge₂₃ a b < 0ℚ) →
+    0ℚ < k₂
+  coefficientPositive w≠0 = subst (0ℚ <_) (sym shape) (gramPositive a b w≠0)
+
+  module Consequence
+    (H : ℚ) (k₀<0 : k₀ < 0ℚ)
+    (defining :
+      H * (twoℚ * (k₀ * k₀))
+        ≡ Fixed.SecondVariationCriterion.cleared k₀ k₁ k₂)
+    where
+
+    private
+      module V = Fixed.SecondVariationCriterion.Value k₀ k₁ k₂ H k₀<0 defining
+
+    secondVariationNonNeg : 0ℚ ≤ H
+    secondVariationNonNeg = V.secondVariationNonNeg coefficientNonNeg
+
+    secondVariationPositive :
+      (0ℚ < wedge₁₂ a b ⊎ wedge₁₂ a b < 0ℚ)
+        ⊎ (0ℚ < wedge₁₃ a b ⊎ wedge₁₃ a b < 0ℚ)
+        ⊎ (0ℚ < wedge₂₃ a b ⊎ wedge₂₃ a b < 0ℚ) →
+      0ℚ < H
+    secondVariationPositive w≠0 =
+      V.secondVariationPositive (coefficientPositive w≠0)
+
+------------------------------------------------------------------------
+-- Non-vacuity
+------------------------------------------------------------------------
+
+-- An orthonormal transverse pair with Gram surplus 1 and a remainder radius
+-- 1/2: the decomposition is inhabited, with a strictly positive floor 1/2.
+witnessA witnessB : Vec3
+witnessA = vec3 (+ 1 / 1) 0ℚ 0ℚ
+witnessB = vec3 0ℚ (+ 1 / 1) 0ℚ
+
+witnessGram : gram witnessA witnessB ≡ + 1 / 1
+witnessGram = refl
+
+witnessDecomposition : GaugeTransverseGramDecomposition
+witnessDecomposition = record
+  { secondVariation = (+ 1 / 1) + (- (+ 1 / 4))
+  ; parallelPart    = 0ℚ
+  ; gramPart        = + 1 / 1
+  ; remainder       = - (+ 1 / 4)
+  ; transverseA     = witnessA
+  ; transverseB     = witnessB
+  ; decomposes      = refl
+  ; parallelCancels = refl
+  ; gramShape       = refl
+  ; remainderRadius = + 1 / 2
+  ; remainderBound  =
+      toWitness {a? = ∣ - (+ 1 / 4) ∣ ℚP.≤? (+ 1 / 2)} _
+  }
+
+-- With margin 1 and radius 1/2 the Gram route delivers the floor 1/2 > 0.
+witnessFloor :
+  (((+ 1 / 1) - (+ 1 / 2)) ≤ secondVariation witnessDecomposition)
+    × (0ℚ < (+ 1 / 1) - (+ 1 / 2))
+witnessFloor =
+  Decomposition.positiveSecondVariation witnessDecomposition (+ 1 / 1)
+    ℚP.≤-refl
+    (toWitness {a? = (+ 1 / 2) ℚP.<? (+ 1 / 1)} _)
+
+-- The certificate is a non-collinearity statement, not merely positivity:
+-- the (1,2) minor of the witness pair is 1, nonzero.
+witnessNonCollinear : 0ℚ < gramPart witnessDecomposition
+witnessNonCollinear =
+  Decomposition.nonCollinearityCertificate witnessDecomposition
+    (inj₁ (inj₁ (toWitness {a? = 0ℚ ℚP.<? wedge₁₂ witnessA witnessB} _)))

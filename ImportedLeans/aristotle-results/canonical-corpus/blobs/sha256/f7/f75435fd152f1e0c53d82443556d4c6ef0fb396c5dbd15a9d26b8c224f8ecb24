@@ -1,0 +1,324 @@
+module DASHI.Physics.YangMills.BalabanYM4TotalBetaCouplingSensitivityExact where
+
+------------------------------------------------------------------------
+-- ROW A3: THE *TOTAL* BETA COUPLING SENSITIVITY
+--         (GAUSSIAN CONTRIBUTION INCLUDED)
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Balaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHY THIS MODULE EXISTS
+--
+-- The shooting gate of `BalabanYM4ShootingSensitivityFromCubicDriftExact`,
+-- as composed in `BalabanYM4RowAGateCompositionExact`, consumes a *generic*
+-- uniform derivative bound `L` controlling the sensitivity of the full
+-- cumulative beta history.  The sharp Cauchy package
+-- (`BalabanYM4InteractionMixedCouplingDerivativeSharpGateExact`) produces
+--
+--     | d beta_Int,j / d g |  <=  L_sharp
+--
+-- for the *interaction* term only.  Since the shell beta splits as
+--
+--     beta_j  =  beta_{Z,j} + beta_{Int,j} ,
+--
+-- feeding `L_sharp` into the shooting gate is only legitimate if the Gaussian
+-- contribution to the coupling sensitivity is separately controlled.  This
+-- module supplies exactly that missing composition step, in both of the
+-- admissible forms:
+--
+--   (a) `totalDerivativeBound`   :  |d beta_j / d g|  <=  L_Z + L_int ,
+--       from the split and the two one-sided bounds; and
+--
+--   (b) `GaussianCouplingIndependent.derivativeBoundIsInteraction` :
+--       if the Gaussian contribution is literally coupling independent in the
+--       chosen normalisation, i.e.  d beta_{Z,j} / d g = 0, then
+--       |d beta_j / d g| <= L_int and no L_Z is needed at all.
+--
+-- Both are then transported to the shooting variable u = g^{-2}, where
+-- |dg/du| = g^3/2, giving the cubic sensitivity estimate the shooting gate
+-- consumes:
+--
+--     |d beta_j / d u|  <=  (L_total / 2) g_j^3 ,      L_total = L_Z + L_int
+--                                                      (or L_int in case (b)),
+--
+-- and the composed corollary `RowATotalTuning` closes the cutoff-uniform
+-- contraction with the *total* constant, under the gate
+--
+--     L_total * gamma_tube  <  b_- - C gamma .
+--
+-- WHAT IS *NOT* PROVED.  Neither L_Z nor the vanishing of d beta_Z / d g is
+-- established for the literal Balaban normalisation; this module fixes the
+-- composition and states precisely which of the two facts the source analysis
+-- must supply.  Row A stays open and the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+import Data.Nat.Base as ℕ
+import Data.Nat.Properties as ℕP
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _/_; _≤_; _<_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4LinearInteractionBetaMarginExact
+  using (ShellLinearInteractionData; sum₀)
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; halfℚ; mul-nonNeg; scaleˡ-nonNeg; scaleʳ-nonNeg; transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4RowAGateCompositionExact
+  as RowA using (RowAGateData; module Gates)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- The split coupling-derivative data
+------------------------------------------------------------------------
+
+-- All derivatives are with respect to the coupling g; `sensitivity` is the
+-- sensitivity in the shooting variable u = g^{-2}, related by |dg/du| = g^3/2.
+record TotalBetaSensitivityData : Set where
+  field
+    gaussianDerivativeCap    : ℚ            -- L_Z
+    interactionDerivativeCap : ℚ            -- L_int  (e.g. L_sharp)
+    coupling                 : Nat → ℚ      -- g_j
+    betaZDerivative          : Nat → ℚ      -- d beta_{Z,j} / d g
+    betaIntDerivative        : Nat → ℚ      -- d beta_{Int,j} / d g
+    betaDerivative           : Nat → ℚ      -- d beta_j / d g
+    sensitivity              : Nat → ℚ      -- |d beta_j / d u|
+
+    gaussianCapNonNeg    : 0ℚ ≤ gaussianDerivativeCap
+    interactionCapNonNeg : 0ℚ ≤ interactionDerivativeCap
+    couplingNonNeg       : ∀ j → 0ℚ ≤ coupling j
+
+    -- beta_j = beta_{Z,j} + beta_{Int,j}, differentiated in g
+    derivativeSplit :
+      ∀ j → betaDerivative j ≡ betaZDerivative j + betaIntDerivative j
+    gaussianDerivativeBound :
+      ∀ j → ∣ betaZDerivative j ∣ ≤ gaussianDerivativeCap
+    interactionDerivativeBound :
+      ∀ j → ∣ betaIntDerivative j ∣ ≤ interactionDerivativeCap
+    -- the change of variables u = g^{-2}
+    sensitivityFromCouplingDerivative :
+      ∀ j → sensitivity j
+            ≤ (halfℚ * ∣ betaDerivative j ∣)
+                * (coupling j * coupling j * coupling j)
+
+module Total (d : TotalBetaSensitivityData) where
+
+  open TotalBetaSensitivityData d public
+
+  -- L_total = L_Z + L_int
+  totalCap : ℚ
+  totalCap = gaussianDerivativeCap + interactionDerivativeCap
+
+  totalCapNonNeg : 0ℚ ≤ totalCap
+  totalCapNonNeg =
+    transport-≤ (ℚP.+-identityˡ 0ℚ) refl
+      (ℚP.+-mono-≤ gaussianCapNonNeg interactionCapNonNeg)
+
+  cubeNonNeg : ∀ j → 0ℚ ≤ coupling j * coupling j * coupling j
+  cubeNonNeg j =
+    mul-nonNeg (mul-nonNeg (couplingNonNeg j) (couplingNonNeg j))
+      (couplingNonNeg j)
+
+  ------------------------------------------------------------------
+  -- (a) THE TOTAL DERIVATIVE BOUND:  |d beta_j / d g| <= L_Z + L_int
+  ------------------------------------------------------------------
+
+  totalDerivativeBound : ∀ j → ∣ betaDerivative j ∣ ≤ totalCap
+  totalDerivativeBound j =
+    ℚP.≤-trans
+      (transport-≤ (cong ∣_∣ (sym (derivativeSplit j))) refl
+        (ℚP.∣p+q∣≤∣p∣+∣q∣ (betaZDerivative j) (betaIntDerivative j)))
+      (ℚP.+-mono-≤ (gaussianDerivativeBound j) (interactionDerivativeBound j))
+
+  -- the cubic sensitivity estimate the shooting gate consumes, with L_total
+  sensitivityCubicTotal :
+    ∀ j → sensitivity j
+          ≤ (halfℚ * totalCap) * (coupling j * coupling j * coupling j)
+  sensitivityCubicTotal j =
+    ℚP.≤-trans (sensitivityFromCouplingDerivative j)
+      (scaleʳ-nonNeg (cubeNonNeg j)
+        (scaleˡ-nonNeg (toWitness {a? = 0ℚ ℚP.≤? halfℚ} _)
+          (totalDerivativeBound j)))
+
+  ------------------------------------------------------------------
+  -- (b) THE COUPLING-INDEPENDENT GAUSSIAN BRANCH:  L_total = L_int
+  ------------------------------------------------------------------
+
+  module GaussianCouplingIndependent
+    (gaussianVanishes : ∀ j → betaZDerivative j ≡ 0ℚ)
+    where
+
+    derivativeIsInteraction : ∀ j → betaDerivative j ≡ betaIntDerivative j
+    derivativeIsInteraction j =
+      trans (derivativeSplit j)
+        (trans (cong (_+ betaIntDerivative j) (gaussianVanishes j))
+          (ℚP.+-identityˡ (betaIntDerivative j)))
+
+    derivativeBoundIsInteraction :
+      ∀ j → ∣ betaDerivative j ∣ ≤ interactionDerivativeCap
+    derivativeBoundIsInteraction j =
+      transport-≤ (cong ∣_∣ (sym (derivativeIsInteraction j))) refl
+        (interactionDerivativeBound j)
+
+    sensitivityCubicInteraction :
+      ∀ j → sensitivity j
+            ≤ (halfℚ * interactionDerivativeCap)
+                * (coupling j * coupling j * coupling j)
+    sensitivityCubicInteraction j =
+      ℚP.≤-trans (sensitivityFromCouplingDerivative j)
+        (scaleʳ-nonNeg (cubeNonNeg j)
+          (scaleˡ-nonNeg (toWitness {a? = 0ℚ ℚP.≤? halfℚ} _)
+            (derivativeBoundIsInteraction j)))
+
+------------------------------------------------------------------------
+-- COMPOSITION WITH THE ROW-A GATES, USING THE TOTAL CONSTANT
+------------------------------------------------------------------------
+
+module RowATotalTuning
+  {cutoff : Nat}
+  (gate : RowAGateData cutoff)
+  (d : TotalBetaSensitivityData)
+  (sameCoupling :
+    TotalBetaSensitivityData.coupling d ≡ RowAGateData.coupling gate)
+  where
+
+  open Gates gate
+  open Total d using (totalCap; totalCapNonNeg; sensitivityCubicTotal)
+
+  sensitivityOnGateCoupling :
+    ∀ j → TotalBetaSensitivityData.sensitivity d j
+          ≤ (halfℚ * totalCap)
+              * (RowAGateData.coupling gate j * RowAGateData.coupling gate j
+                   * RowAGateData.coupling gate j)
+  sensitivityOnGateCoupling j =
+    subst
+      (λ g → TotalBetaSensitivityData.sensitivity d j
+               ≤ (halfℚ * totalCap) * (g j * g j * g j))
+      sameCoupling
+      (sensitivityCubicTotal j)
+
+  -- GATE 2 with the total constant:  (L_Z + L_int) gamma_tube < b_- - C gamma
+  module Closed
+    (contractionGate :
+      totalCap * RowAGateData.tubeWidth gate < betaMargin)
+    where
+
+    open Tuning totalCap totalCapNonNeg
+      (TotalBetaSensitivityData.sensitivity d)
+      sensitivityOnGateCoupling
+      contractionGate
+      public
+
+------------------------------------------------------------------------
+-- NON-VACUITY
+------------------------------------------------------------------------
+
+-- A one-shell instance with a genuinely nonzero Gaussian derivative:
+-- L_Z = 1/2, L_int = 1/2, so L_total = 1, and the total gate 1 * (1/2) < 2
+-- still closes on the witness data of `BalabanYM4RowAGateCompositionExact`.
+
+module TotalWitness where
+
+  open RowA.BothGatesWitness
+    using (witnessCoupling; witnessGateData)
+
+  witnessSensitivity : Nat → ℚ
+  witnessSensitivity j =
+    (halfℚ * ∣ 1ℚ ∣)
+      * (witnessCoupling j * witnessCoupling j * witnessCoupling j)
+
+  witnessData : TotalBetaSensitivityData
+  witnessData = record
+    { gaussianDerivativeCap = + 1 / 2
+    ; interactionDerivativeCap = + 1 / 2
+    ; coupling = witnessCoupling
+    ; betaZDerivative = λ _ → + 1 / 2
+    ; betaIntDerivative = λ _ → + 1 / 2
+    ; betaDerivative = λ _ → 1ℚ
+    ; sensitivity = witnessSensitivity
+    ; gaussianCapNonNeg = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+    ; interactionCapNonNeg = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+    ; couplingNonNeg = couplingNonNeg?
+    ; derivativeSplit = λ _ → refl
+    ; gaussianDerivativeBound = λ _ → ℚP.≤-refl
+    ; interactionDerivativeBound = λ _ → ℚP.≤-refl
+    ; sensitivityFromCouplingDerivative = λ _ → ℚP.≤-refl
+    }
+    where
+      couplingNonNeg? : ∀ j → 0ℚ ≤ witnessCoupling j
+      couplingNonNeg? zero = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+      couplingNonNeg? (suc _) = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+
+  module WitnessTuning =
+    RowATotalTuning witnessGateData witnessData refl
+
+  witnessTotalCap : Total.totalCap witnessData ≡ 1ℚ
+  witnessTotalCap = refl
+
+  module WitnessClosed =
+    WitnessTuning.Closed
+      (toWitness
+        {a? = (Total.totalCap witnessData * (+ 1 / 2))
+                ℚP.<? Gates.betaMargin witnessGateData} _)
+
+  -- the cumulative shooting sensitivity is below one with the TOTAL constant
+  witnessBelowOne : sum₀ witnessSensitivity 1 < 1ℚ
+  witnessBelowOne = WitnessClosed.cumulativeSensitivityBelowOne 1 ℕP.≤-refl
+
+-- The coupling-independent branch, exercised: with d beta_Z/d g = 0 the total
+-- constant collapses to L_int and no L_Z enters the cubic sensitivity bound.
+
+module GaussianFreeWitness where
+
+  open RowA.BothGatesWitness using (witnessCoupling)
+
+  freeSensitivity : Nat → ℚ
+  freeSensitivity j =
+    (halfℚ * ∣ 1ℚ ∣)
+      * (witnessCoupling j * witnessCoupling j * witnessCoupling j)
+
+  freeData : TotalBetaSensitivityData
+  freeData = record
+    { gaussianDerivativeCap = 0ℚ
+    ; interactionDerivativeCap = 1ℚ
+    ; coupling = witnessCoupling
+    ; betaZDerivative = λ _ → 0ℚ
+    ; betaIntDerivative = λ _ → 1ℚ
+    ; betaDerivative = λ _ → 1ℚ
+    ; sensitivity = freeSensitivity
+    ; gaussianCapNonNeg = ℚP.≤-refl
+    ; interactionCapNonNeg = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+    ; couplingNonNeg = couplingNonNeg?
+    ; derivativeSplit = λ _ → refl
+    ; gaussianDerivativeBound = λ _ → ℚP.≤-refl
+    ; interactionDerivativeBound = λ _ → ℚP.≤-refl
+    ; sensitivityFromCouplingDerivative = λ _ → ℚP.≤-refl
+    }
+    where
+      couplingNonNeg? : ∀ j → 0ℚ ≤ witnessCoupling j
+      couplingNonNeg? zero = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+      couplingNonNeg? (suc _) = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+
+  module FreeTotal = Total freeData
+  module FreeBranch = FreeTotal.GaussianCouplingIndependent (λ _ → refl)
+
+  -- the interaction cap alone controls the total coupling sensitivity
+  freeDerivativeBound : ∀ j → ∣ 1ℚ ∣ ≤ 1ℚ
+  freeDerivativeBound = FreeBranch.derivativeBoundIsInteraction
+
+  freeSensitivityCubic :
+    ∀ j → freeSensitivity j
+          ≤ (halfℚ * 1ℚ)
+              * (witnessCoupling j * witnessCoupling j * witnessCoupling j)
+  freeSensitivityCubic = FreeBranch.sensitivityCubicInteraction

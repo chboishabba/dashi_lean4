@@ -1,0 +1,203 @@
+module DASHI.Physics.YangMills.BalabanYM4DeterminantBetaLowerAlgebraExact where
+
+------------------------------------------------------------------------
+-- ROW A, ALGEBRAIC CHANNEL:
+--   THE *LOWER* HALF OF THE DETERMINANT-TO-BETA ALGEBRA
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- CONTEXT.  `DASHI.Physics.YangMills.BalabanIntervalDeterminantAlgebra` owns
+-- the cumulative determinant identity
+--
+--     sum_{j=k+1}^{k+n} beta_j
+--       = (D_{k+n} - D_k) + sum_{j} C_j + sum_{j} I_j,
+--
+-- where D is the endpoint (log-determinant) sequence, C the explicit
+-- correction/Jacobian term and I the interaction term, and it transports
+-- *upper* component bounds into the prefix majorant that keeps the running
+-- coupling small.  An asymptotic-freedom sign proof needs the opposite
+-- transport, which this module supplies:
+--
+--     L_D(k,n) <= D_{k+n} - D_k,   L_C(k,n) <= sum C_j,   L_I(k,n) <= sum I_j
+--   ==>  L_D(k,n) + L_C(k,n) + L_I(k,n)  <=  sum_{j=k+1}^{k+n} beta_j .
+--
+-- This is deliberately a different channel from the old upper smallness
+-- budget: the upper bounds cannot produce a positive lower bound on the beta
+-- sum, and the lower bounds cannot produce the small-coupling majorant.
+--
+-- DIFFERENCE FROM THE EXISTING LANE.  The module cited above is stated over
+-- `DASHI.Foundations.RealAnalysisAxioms`, whose reals are *postulated*, so it
+-- cannot be checked with `--safe`.  Everything here is exact rational
+-- arithmetic and passes `agda --safe`: no postulate, no hole, no receipt.
+--
+-- WHAT IS *NOT* PROVED.  The analytic inputs L_D, L_C, L_I for the literal
+-- constrained Gaussian determinant of the Yang-Mills RG step are not
+-- established anywhere; this module is the algebra that consumes them.  Row A
+-- stays open and the frozen research count stays at 4.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc; _+_)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Rational.Base as ℚ using (ℚ; 0ℚ; _≤_)
+  renaming (_+_ to _+ℚ_; _-_ to _-ℚ_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Interval sums:  shells k+1, ..., k+n
+------------------------------------------------------------------------
+
+intervalSum : (Nat → ℚ) → Nat → Nat → ℚ
+intervalSum f k zero = 0ℚ
+intervalSum f k (suc n) = intervalSum f k n +ℚ f (suc (n + k))
+
+intervalSumPointwiseAdd :
+  (total left right : Nat → ℚ) →
+  (∀ j → total (suc j) ≡ left (suc j) +ℚ right (suc j)) →
+  ∀ k n →
+  intervalSum total k n ≡ intervalSum left k n +ℚ intervalSum right k n
+intervalSumPointwiseAdd total left right pointwise k zero = refl
+intervalSumPointwiseAdd total left right pointwise k (suc n) =
+  trans (cong (intervalSum total k n +ℚ_) (pointwise (n + k)))
+    (trans
+      (cong (_+ℚ (left (suc (n + k)) +ℚ right (suc (n + k))))
+        (intervalSumPointwiseAdd total left right pointwise k n))
+      (rearrange (intervalSum left k n) (intervalSum right k n)
+        (left (suc (n + k))) (right (suc (n + k)))))
+  where
+    rearrange :
+      ∀ a b c d → (a +ℚ b) +ℚ (c +ℚ d) ≡ (a +ℚ c) +ℚ (b +ℚ d)
+    rearrange a b c d =
+      solve 4 (λ p q r s → (p :+ q) :+ (r :+ s) := (p :+ r) :+ (q :+ s))
+        refl a b c d
+
+------------------------------------------------------------------------
+-- Endpoint (log-determinant) increments telescope on every interval
+------------------------------------------------------------------------
+
+endpointShell : (Nat → ℚ) → Nat → ℚ
+endpointShell endpoint zero = 0ℚ
+endpointShell endpoint (suc j) = endpoint (suc j) -ℚ endpoint j
+
+endpointIntervalTelescopes :
+  (endpoint : Nat → ℚ) →
+  ∀ k n → intervalSum (endpointShell endpoint) k n ≡ endpoint (n + k) -ℚ endpoint k
+endpointIntervalTelescopes endpoint k zero =
+  sym (ℚP.+-inverseʳ (endpoint k))
+endpointIntervalTelescopes endpoint k (suc n) =
+  trans
+    (cong (_+ℚ (endpoint (suc (n + k)) -ℚ endpoint (n + k)))
+      (endpointIntervalTelescopes endpoint k n))
+    (collapse (endpoint k) (endpoint (n + k)) (endpoint (suc (n + k))))
+  where
+    collapse : ∀ a b c → (b -ℚ a) +ℚ (c -ℚ b) ≡ c -ℚ a
+    collapse a b c =
+      solve 3 (λ p q r → (q :- p) :+ (r :- q) := r :- p) refl a b c
+
+gaussianIntervalTelescopes :
+  (gaussian correction endpoint : Nat → ℚ) →
+  (∀ j → gaussian (suc j) ≡ (endpoint (suc j) -ℚ endpoint j) +ℚ correction (suc j)) →
+  ∀ k n →
+  intervalSum gaussian k n
+    ≡ (endpoint (n + k) -ℚ endpoint k) +ℚ intervalSum correction k n
+gaussianIntervalTelescopes gaussian correction endpoint shellDecomposition k n =
+  trans
+    (intervalSumPointwiseAdd gaussian (endpointShell endpoint) correction
+      shellDecomposition k n)
+    (cong (_+ℚ intervalSum correction k n)
+      (endpointIntervalTelescopes endpoint k n))
+
+------------------------------------------------------------------------
+-- The cumulative beta identity
+------------------------------------------------------------------------
+
+betaIntervalEquality :
+  (beta gaussian correction interaction endpoint : Nat → ℚ) →
+  (∀ j → beta (suc j) ≡ gaussian (suc j) +ℚ interaction (suc j)) →
+  (∀ j → gaussian (suc j) ≡ (endpoint (suc j) -ℚ endpoint j) +ℚ correction (suc j)) →
+  ∀ k n →
+  intervalSum beta k n
+    ≡ ((endpoint (n + k) -ℚ endpoint k) +ℚ intervalSum correction k n)
+      +ℚ intervalSum interaction k n
+betaIntervalEquality
+  beta gaussian correction interaction endpoint
+  totalBeta shellDecomposition k n =
+  trans
+    (intervalSumPointwiseAdd beta gaussian interaction totalBeta k n)
+    (cong (_+ℚ intervalSum interaction k n)
+      (gaussianIntervalTelescopes gaussian correction endpoint
+        shellDecomposition k n))
+
+------------------------------------------------------------------------
+-- THE LOWER HALF:  componentwise lower bounds give a beta-sum lower bound
+------------------------------------------------------------------------
+
+combineIntervalLowerBounds :
+  ∀ {endpointTerm correctionTerm interactionTerm
+     endpointLower correctionLower interactionLower} →
+  endpointLower ≤ endpointTerm →
+  correctionLower ≤ correctionTerm →
+  interactionLower ≤ interactionTerm →
+  (endpointLower +ℚ correctionLower) +ℚ interactionLower
+    ≤ (endpointTerm +ℚ correctionTerm) +ℚ interactionTerm
+combineIntervalLowerBounds endpointBound correctionBound interactionBound =
+  ℚP.+-mono-≤ (ℚP.+-mono-≤ endpointBound correctionBound) interactionBound
+
+-- L_D(k,n) + L_C(k,n) + L_I(k,n)  <=  sum_{j=k+1}^{k+n} beta_j
+betaIntervalLowerBound :
+  (beta gaussian correction interaction endpoint : Nat → ℚ) →
+  (∀ j → beta (suc j) ≡ gaussian (suc j) +ℚ interaction (suc j)) →
+  (∀ j → gaussian (suc j) ≡ (endpoint (suc j) -ℚ endpoint j) +ℚ correction (suc j)) →
+  (endpointLower correctionLower interactionLower : Nat → Nat → ℚ) →
+  (∀ k n → endpointLower k n ≤ endpoint (n + k) -ℚ endpoint k) →
+  (∀ k n → correctionLower k n ≤ intervalSum correction k n) →
+  (∀ k n → interactionLower k n ≤ intervalSum interaction k n) →
+  ∀ k n →
+  (endpointLower k n +ℚ correctionLower k n) +ℚ interactionLower k n
+    ≤ intervalSum beta k n
+betaIntervalLowerBound
+  beta gaussian correction interaction endpoint
+  totalBeta shellDecomposition
+  endpointLower correctionLower interactionLower
+  endpointBound correctionBound interactionBound k n =
+  subst
+    (λ z → (endpointLower k n +ℚ correctionLower k n) +ℚ interactionLower k n ≤ z)
+    (sym (betaIntervalEquality beta gaussian correction interaction endpoint
+           totalBeta shellDecomposition k n))
+    (combineIntervalLowerBounds
+      (endpointBound k n) (correctionBound k n) (interactionBound k n))
+
+------------------------------------------------------------------------
+-- The matching upper half, for symmetry of the two channels
+------------------------------------------------------------------------
+
+betaIntervalUpperBound :
+  (beta gaussian correction interaction endpoint : Nat → ℚ) →
+  (∀ j → beta (suc j) ≡ gaussian (suc j) +ℚ interaction (suc j)) →
+  (∀ j → gaussian (suc j) ≡ (endpoint (suc j) -ℚ endpoint j) +ℚ correction (suc j)) →
+  (endpointUpper correctionUpper interactionUpper : Nat → Nat → ℚ) →
+  (∀ k n → endpoint (n + k) -ℚ endpoint k ≤ endpointUpper k n) →
+  (∀ k n → intervalSum correction k n ≤ correctionUpper k n) →
+  (∀ k n → intervalSum interaction k n ≤ interactionUpper k n) →
+  ∀ k n →
+  intervalSum beta k n
+    ≤ (endpointUpper k n +ℚ correctionUpper k n) +ℚ interactionUpper k n
+betaIntervalUpperBound
+  beta gaussian correction interaction endpoint
+  totalBeta shellDecomposition
+  endpointUpper correctionUpper interactionUpper
+  endpointBound correctionBound interactionBound k n =
+  subst
+    (λ z → z ≤ (endpointUpper k n +ℚ correctionUpper k n) +ℚ interactionUpper k n)
+    (sym (betaIntervalEquality beta gaussian correction interaction endpoint
+           totalBeta shellDecomposition k n))
+    (ℚP.+-mono-≤
+      (ℚP.+-mono-≤ (endpointBound k n) (correctionBound k n))
+      (interactionBound k n))

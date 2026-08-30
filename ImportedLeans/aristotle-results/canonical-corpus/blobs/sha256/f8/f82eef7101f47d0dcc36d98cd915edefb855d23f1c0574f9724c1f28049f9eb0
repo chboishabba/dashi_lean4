@@ -1,0 +1,261 @@
+module DASHI.Physics.YangMills.BalabanYM4RGScaleGramDichotomyGeneralExact where
+
+------------------------------------------------------------------------
+-- A <-> B: THE RG-SCALE GRAM DICHOTOMY IN ARBITRARY DIMENSION,
+--          AND WHAT EACH BRANCH ACTUALLY BUYS
+--
+-- `BalabanYM4RGScaleGramDichotomyExact` states the dichotomy on a three-
+-- dimensional carrier and shows that the coercive branch feeds Row A1b's
+-- positive floor.  Two things were missing:
+--
+--   (1) the carrier -- the linearised Balaban step acts on a high-dimensional
+--       coordinate space, not on Q^3;
+--   (2) the OTHER branch.  A dichotomy is only a bridge between Row A and
+--       Row B if the near-marginal branch buys something for Row B.
+--
+-- This module supplies both.  Over `Vec ℚ n` for arbitrary n it proves the
+-- decidable dichotomy
+--
+--     either some scale j of the window has Gram defect
+--         Delta_j = |X_j|^2 |Y_j|^2 - <X_j, Y_j>^2  >=  delta
+--         (coercive transverse RG motion), or every scale of the window has
+--         Delta_j < delta (the trajectory hugs the finite-dimensional marginal
+--         manifold),
+--
+-- and then:
+--
+--   * `coerciveBranchFeedsRowAFloor`
+--         a coercive scale, together with a remainder enclosure strictly below
+--         the threshold, is exactly Row A1b's strictly positive second
+--         variation floor delta - rho.
+--
+--   * `nearMarginalSuppliesRetainedBound`
+--         a near-marginal window, together with a uniform bound Smax on the
+--         state norms, gives a UNIFORM CONSTANT bound  Smax * delta  on the
+--         transverse defect at every scale of the window.  That is precisely
+--         the shape of Row B's `marginalOnRetained` hypothesis: the scales of
+--         a near-marginal window may legitimately be carried as retained
+--         marginal coordinates, with a constant budget and no decay demanded
+--         of them.
+--
+--   * `nearMarginalWindowIsRetainable`
+--         the same statement packaged as the pair of conditions Row B's
+--         marginal channel asks for -- bounded on the window, and (for a
+--         family truncated past the window) vanishing beyond it.
+--
+-- So the two rows are not unrelated: whichever branch of the dichotomy a
+-- window falls into, it hands the corresponding row its hypothesis.
+--
+-- WHAT THIS IS NOT.  Nothing here evaluates the literal linearised Balaban
+-- step, nor supplies the threshold delta, nor the state-norm bound Smax, for
+-- the literal Yang-Mills RG.  Those are the open physical inputs.  No row is
+-- closed and the frozen research count (4) is untouched.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Sum.Base using (_⊎_; inj₁; inj₂)
+open import Data.Product.Base using (_×_; _,_)
+open import Data.Integer.Base using (+_)
+open import Data.Vec.Base using (Vec; []; _∷_)
+import Data.Nat.Base as ℕ
+import Data.Nat.Properties as ℕP
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.Definitions using (tri<; tri≈; tri>)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4GramWedgeIdentityGeneralExact
+  using ( dot; normSq; normSq-nonNeg; gram; gramNonNeg
+        ; transverseResidual; projectionIdentity)
+
+------------------------------------------------------------------------
+-- The two branch estimates
+------------------------------------------------------------------------
+
+-- Near-marginal branch: a small Gram defect bounds the transverse residual.
+residualBoundFromGram :
+  ∀ {n} (a b : Vec ℚ n) delta → gram a b ≤ delta →
+  normSq (transverseResidual a b) ≤ normSq a * delta
+residualBoundFromGram a b delta small =
+  transport-≤ (sym (projectionIdentity a b)) refl
+    (ℚP.*-monoˡ-≤-nonNeg (normSq a) {{ℚ.nonNegative (normSq-nonNeg a)}} small)
+
+-- Coercive branch: a Gram surplus forces a transverse residual.
+residualCoercivityFromGram :
+  ∀ {n} (a b : Vec ℚ n) delta → delta ≤ gram a b →
+  normSq a * delta ≤ normSq (transverseResidual a b)
+residualCoercivityFromGram a b delta big =
+  transport-≤ refl (sym (projectionIdentity a b))
+    (ℚP.*-monoˡ-≤-nonNeg (normSq a) {{ℚ.nonNegative (normSq-nonNeg a)}} big)
+
+------------------------------------------------------------------------
+-- The dichotomy over a finite window of scales
+------------------------------------------------------------------------
+
+data ScaleDichotomy {n : Nat} (X Y : Nat → Vec ℚ n) (delta : ℚ) (w : Nat)
+     : Set where
+  coerciveScale :
+    (j : Nat) → j ℕ.< w →
+    delta ≤ gram (X j) (Y j) →
+    normSq (X j) * delta ≤ normSq (transverseResidual (X j) (Y j)) →
+    ScaleDichotomy X Y delta w
+  nearMarginalWindow :
+    (∀ j → j ℕ.< w → gram (X j) (Y j) < delta) →
+    ScaleDichotomy X Y delta w
+
+scaleDichotomy :
+  ∀ {n} (X Y : Nat → Vec ℚ n) delta w → ScaleDichotomy X Y delta w
+scaleDichotomy X Y delta zero = nearMarginalWindow (λ j ())
+scaleDichotomy X Y delta (suc w) with scaleDichotomy X Y delta w
+... | coerciveScale j j<w big coercive =
+      coerciveScale j (ℕP.m<n⇒m<1+n j<w) big coercive
+... | nearMarginalWindow small with ℚP.<-cmp (gram (X w) (Y w)) delta
+...   | tri< g<d _ _ = nearMarginalWindow extend
+        where
+          extend : ∀ j → j ℕ.< suc w → gram (X j) (Y j) < delta
+          extend j j<sw with ℕP.m<1+n⇒m<n∨m≡n j<sw
+          ... | inj₁ j<w  = small j j<w
+          ... | inj₂ refl = g<d
+...   | tri≈ _ g≡d _ =
+        coerciveScale w (ℕP.n<1+n w) (ℚP.≤-reflexive (sym g≡d))
+          (residualCoercivityFromGram (X w) (Y w) delta
+            (ℚP.≤-reflexive (sym g≡d)))
+...   | tri> _ _ d<g =
+        coerciveScale w (ℕP.n<1+n w) (ℚP.<⇒≤ d<g)
+          (residualCoercivityFromGram (X w) (Y w) delta (ℚP.<⇒≤ d<g))
+
+------------------------------------------------------------------------
+-- The coercive branch feeds Row A's positive floor
+------------------------------------------------------------------------
+
+coerciveBranchFeedsRowAFloor :
+  ∀ {n} (a b : Vec ℚ n) delta rho remainder secondVariation →
+  delta ≤ gram a b →
+  secondVariation ≡ 0ℚ + gram a b + remainder →
+  - rho ≤ remainder →
+  rho < delta →
+  (delta - rho ≤ secondVariation) × (0ℚ < delta - rho)
+coerciveBranchFeedsRowAFloor a b delta rho remainder secondVariation
+                            big split lower radiusSmall =
+  floor , positiveGap
+  where
+    expand : secondVariation ≡ gram a b + remainder
+    expand = trans split (cong (λ z → z + remainder) (ℚP.+-identityˡ (gram a b)))
+
+    floor : delta - rho ≤ secondVariation
+    floor = transport-≤ refl (sym expand) (ℚP.+-mono-≤ big lower)
+
+    positiveGap : 0ℚ < delta - rho
+    positiveGap =
+      subst (λ z → z < delta - rho) (ℚP.+-inverseʳ rho)
+        (ℚP.+-monoˡ-< (- rho) radiusSmall)
+
+------------------------------------------------------------------------
+-- The near-marginal branch feeds Row B's retained marginal channel
+------------------------------------------------------------------------
+
+-- Every scale of a near-marginal window has its transverse defect bounded by
+-- the SINGLE constant Smax * delta.  No decay is claimed, and none is needed:
+-- this is exactly the budget Row B's marginal channel is allowed.
+nearMarginalSuppliesRetainedBound :
+  ∀ {n} (X Y : Nat → Vec ℚ n) delta Smax w →
+  0ℚ ≤ delta →
+  (∀ j → j ℕ.< w → gram (X j) (Y j) < delta) →
+  (∀ j → j ℕ.< w → normSq (X j) ≤ Smax) →
+  ∀ j → j ℕ.< w →
+    ∣ normSq (transverseResidual (X j) (Y j)) ∣ ≤ Smax * delta
+nearMarginalSuppliesRetainedBound X Y delta Smax w 0≤delta small stateBound j j<w =
+  subst (λ z → z ≤ Smax * delta)
+    (sym (ℚP.0≤p⇒∣p∣≡p (normSq-nonNeg (transverseResidual (X j) (Y j)))))
+    (ℚP.≤-trans
+      (residualBoundFromGram (X j) (Y j) delta (ℚP.<⇒≤ (small j j<w)))
+      (ℚP.*-monoʳ-≤-nonNeg delta {{ℚ.nonNegative 0≤delta}} (stateBound j j<w)))
+
+-- Packaged as the two conditions Row B's marginal channel asks of a retained
+-- family: bounded on the window, and vanishing beyond it.  The family here is
+-- the transverse defect truncated past the window.
+truncatedDefect :
+  ∀ {n} (X Y : Nat → Vec ℚ n) → Nat → Nat → ℚ
+truncatedDefect X Y zero    _       = 0ℚ
+truncatedDefect X Y (suc w) zero    =
+  normSq (transverseResidual (X zero) (Y zero))
+truncatedDefect X Y (suc w) (suc j) =
+  truncatedDefect (λ i → X (suc i)) (λ i → Y (suc i)) w j
+
+truncatedDefectVanishes :
+  ∀ {n} (X Y : Nat → Vec ℚ n) w j → w ℕ.≤ j → truncatedDefect X Y w j ≡ 0ℚ
+truncatedDefectVanishes X Y zero    j       _         = refl
+truncatedDefectVanishes X Y (suc w) (suc j) (ℕ.s≤s p) =
+  truncatedDefectVanishes (λ i → X (suc i)) (λ i → Y (suc i)) w j p
+
+truncatedDefectOnWindow :
+  ∀ {n} (X Y : Nat → Vec ℚ n) w j → j ℕ.< w →
+  truncatedDefect X Y w j ≡ normSq (transverseResidual (X j) (Y j))
+truncatedDefectOnWindow X Y (suc w) zero    _         = refl
+truncatedDefectOnWindow X Y (suc w) (suc j) (ℕ.s≤s p) =
+  truncatedDefectOnWindow (λ i → X (suc i)) (λ i → Y (suc i)) w j p
+
+-- THE A <-> B BRIDGE.  A near-marginal window supplies a family that satisfies
+-- both of Row B's marginal-channel hypotheses, with `retained = w` and
+-- `marginalBound = Smax * delta`.
+nearMarginalWindowIsRetainable :
+  ∀ {n} (X Y : Nat → Vec ℚ n) delta Smax w →
+  0ℚ ≤ delta →
+  (∀ j → j ℕ.< w → gram (X j) (Y j) < delta) →
+  (∀ j → j ℕ.< w → normSq (X j) ≤ Smax) →
+  (∀ j → j ℕ.< w → ∣ truncatedDefect X Y w j ∣ ≤ Smax * delta)
+    × (∀ j → w ℕ.≤ j → truncatedDefect X Y w j ≡ 0ℚ)
+nearMarginalWindowIsRetainable X Y delta Smax w 0≤delta small stateBound =
+  (λ j j<w →
+     subst (λ z → ∣ z ∣ ≤ Smax * delta)
+       (sym (truncatedDefectOnWindow X Y w j j<w))
+       (nearMarginalSuppliesRetainedBound X Y delta Smax w 0≤delta small
+          stateBound j j<w))
+  , truncatedDefectVanishes X Y w
+
+------------------------------------------------------------------------
+-- Non-vacuity: both branches occur, in dimension five
+------------------------------------------------------------------------
+
+sampleX sampleY : Nat → Vec ℚ 5
+sampleX _ = (+ 1 / 1) ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ []
+-- scale 0: image parallel to the state -- purely marginal RG motion
+sampleY zero    = (+ 2 / 1) ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ []
+-- scale 1 and beyond: image in the LAST coordinate -- transverse motion
+sampleY (suc _) = 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ (+ 1 / 1) ∷ []
+
+sampleMarginalScale : gram (sampleX 0) (sampleY 0) ≡ 0ℚ
+sampleMarginalScale = refl
+
+sampleTransverseScale : gram (sampleX 1) (sampleY 1) ≡ + 1 / 1
+sampleTransverseScale = refl
+
+-- The window of length 2 lands in the coercive branch (at scale 1) ...
+sampleDichotomy : ScaleDichotomy sampleX sampleY (+ 1 / 2) 2
+sampleDichotomy = scaleDichotomy sampleX sampleY (+ 1 / 2) 2
+
+-- ... and the window of length 1 lands in the near-marginal branch.
+sampleNearMarginal : ScaleDichotomy sampleX sampleY (+ 1 / 2) 1
+sampleNearMarginal = scaleDichotomy sampleX sampleY (+ 1 / 2) 1
+
+-- On that one-scale near-marginal window the defect family is retainable, with
+-- budget Smax * delta = 1 * 1/2.
+sampleRetainable :
+  (∀ j → j ℕ.< 1 →
+     ∣ truncatedDefect sampleX sampleY 1 j ∣ ≤ (+ 1 / 1) * (+ 1 / 2))
+    × (∀ j → 1 ℕ.≤ j → truncatedDefect sampleX sampleY 1 j ≡ 0ℚ)
+sampleRetainable =
+  nearMarginalWindowIsRetainable sampleX sampleY (+ 1 / 2) (+ 1 / 1) 1
+    (toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _)
+    (λ { zero _ → toWitness {a? = gram (sampleX 0) (sampleY 0) ℚP.<? (+ 1 / 2)} _
+       ; (suc j) (ℕ.s≤s ()) })
+    (λ { zero _ → toWitness {a? = normSq (sampleX 0) ℚP.≤? (+ 1 / 1)} _
+       ; (suc j) (ℕ.s≤s ()) })

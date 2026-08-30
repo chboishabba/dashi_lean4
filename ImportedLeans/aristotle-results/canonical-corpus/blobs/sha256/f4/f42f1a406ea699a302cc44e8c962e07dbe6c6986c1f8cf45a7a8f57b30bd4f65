@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Build a locally patched copy of agda-stdlib 2.1 for checking DASHI sources
+# with Agda 2.6.4.3.
+#
+# The DASHI sources are written against agda-stdlib master.  A small number of
+# names used by DASHI are absent from the 2.1 release: this script copies 2.1
+# to a scratch tree and appends the proofs in vendor/stdlib-compat/patches to
+# the corresponding standard-library modules.  Everything appended is proved,
+# nothing is postulated.
+#
+# Usage:
+#   SRC=/usr/share/agda-stdlib DEST=/tmp/stdlib-dashi scripts/make_patched_stdlib.sh
+#
+# Then register DEST/standard-library.agda-lib in ~/.agda/libraries and check
+# with, e.g.
+#   agda --safe -i vendor/stdlib-compat DASHI/Physics/YangMills/<Module>.agda
+# (the -i supplies Data.Rational.Tactic.RingSolver, also absent from 2.1).
+set -euo pipefail
+
+SRC="${SRC:-/usr/share/agda-stdlib}"
+DEST="${DEST:-/tmp/stdlib-dashi}"
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+rm -rf "$DEST"
+cp -r "$SRC" "$DEST"
+rm -rf "$DEST/_build"
+chmod -R u+w "$DEST"
+
+cat "$HERE/vendor/stdlib-compat/patches/Data.Rational.Properties.append" \
+  >> "$DEST/src/Data/Rational/Properties.agda"
+
+echo "patched standard library written to $DEST"

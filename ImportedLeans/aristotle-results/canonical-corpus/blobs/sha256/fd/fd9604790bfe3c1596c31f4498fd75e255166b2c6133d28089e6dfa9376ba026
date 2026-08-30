@@ -1,0 +1,372 @@
+module DASHI.Physics.YangMills.BalabanYM4GaussianNormalisationCouplingIndependenceExact where
+
+------------------------------------------------------------------------
+-- ROW A3b: THE GAUSSIAN CONTRIBUTION TO THE COUPLING SENSITIVITY OF BETA
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Balaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  (The block-spin Gaussian integral, its
+-- normalisation, and the rescaling of the fluctuation field.)
+--
+-- Tadeusz Balaban, "Large field renormalization. II. Localization,
+-- exponentiation, and bounds for the R operation", Communications in
+-- Mathematical Physics 122 (1989), 355--392.  DOI: 10.1007/BF01238434.
+--
+-- THE PROBLEM THIS MODULE SOLVES
+--
+-- `BalabanYM4TotalBetaCouplingSensitivityExact` splits the coupling derivative
+-- of the cumulative beta increment as
+--
+--     d beta_j / dg  =  d beta_{Z,j} / dg  +  d beta_{Int,j} / dg
+--
+-- and bounds the total by L_Z + L_int.  The sharp interaction package supplies
+-- L_int = L_sharp.  It carries the Gaussian cap L_Z as an *input*, and offers a
+-- branch `GaussianCouplingIndependent` which assumes `d beta_{Z,j}/dg = 0`.
+-- What was missing is a *derivation* of that vanishing, rather than an
+-- assumption of it.  This module supplies one.
+--
+-- THE DERIVATION
+--
+-- The Gaussian contribution at a step is, by definition, the log of a *ratio*
+-- of block-spin Gaussian normalisations at two backgrounds on one and the same
+-- fluctuation space,
+--
+--     beta_{Z}(g)  =  kappa ( log Z(g, U_ref)  -  log Z(g, U) ) .
+--
+-- The coupling enters the fluctuation integral only as the overall factor
+-- 1/g^2 in front of the quadratic form, so the linear change of variables
+-- phi = (g/g0) psi turns Z(g, U) into Z(g0, U) times the Jacobian of that
+-- substitution.  The Jacobian is (g/g0)^{dim}, where `dim` is the dimension of
+-- the fluctuation space -- a number fixed by the lattice, the block structure
+-- and the gauge-fixing constraints, and *the same for every background field*,
+-- because for every background one integrates over the very same vector space.
+-- In log form this is the scaling law
+--
+--     log Z(g, U)  =  dim (logScale g - logScale g0)  +  log Z(g0, U)      (*)
+--
+-- with a coefficient `dim` that does not mention U.  Subtracting (*) at the two
+-- backgrounds, the whole g-dependent term cancels identically, so beta_Z is a
+-- constant function of g, all of its difference quotients vanish, and its
+-- derivative is 0.  Hence L_Z may be taken to be 0 and
+--
+--     L_total  =  L_int  =  L_sharp .
+--
+-- WHAT IS ASSUMED, AND WHY IT IS NOT THE CONCLUSION IN DISGUISE
+--
+-- The one input is the scaling law (*).  Its content is the field-independence
+-- of the exponent `dim`, and this module makes that load-bearing rather than
+-- decorative: `backgroundDependentDimensionBreaksIndependence` and the explicit
+-- rational witness `mismatchWitness` exhibit a normalisation obeying a scaling
+-- law with a *background-dependent* exponent whose beta_Z has a nonzero
+-- difference quotient.  So the theorem is not vacuous and the hypothesis is not
+-- free: it is exactly the statement that the two Gaussian integrals are taken
+-- over the same space.
+--
+-- WHAT IS *NOT* PROVED.  That the repository's literal block-spin Gaussian
+-- normalisation satisfies (*) with the lattice-combinatorial `dim` is an
+-- input here, as is the fact that the Row-A beta split is the ratio split used
+-- above.  Row A stays open and the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _/_; _≤_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary using (¬_)
+
+open import DASHI.Physics.YangMills.BalabanYM4TotalBetaCouplingSensitivityExact
+  using (TotalBetaSensitivityData; module Total)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- (0) THE SCALING LAW FOR THE BLOCK-SPIN GAUSSIAN NORMALISATION
+--
+-- `Bg` is the type of background configurations; `logZ g U` is the logarithm
+-- of the Gaussian normalisation at coupling g and background U; `logScale` is
+-- the logarithm of the coupling scale (in the physical reading logScale g =
+-- log g); `dim` is the dimension of the fluctuation space.
+--
+-- The single field `changeOfVariables` is the substitution phi = (g/g0) psi.
+-- Note what it does *not* allow: `dim` is a field of the record, not a
+-- function of the background, so the same exponent serves every U.
+------------------------------------------------------------------------
+
+record GaussianNormalisation (Bg : Set) : Set where
+  field
+    dim         : ℚ            -- dimension of the fluctuation space
+    reference   : ℚ            -- the reference coupling g0
+    logScale    : ℚ → ℚ        -- log of the coupling scale
+    logZ        : ℚ → Bg → ℚ   -- log of the Gaussian normalisation
+
+    changeOfVariables :
+      ∀ g U → logZ g U
+              ≡ dim * (logScale g - logScale reference) + logZ reference U
+
+module Normalisation {Bg : Set} (G : GaussianNormalisation Bg) where
+
+  open GaussianNormalisation G public
+
+  ----------------------------------------------------------------------
+  -- (1) THE RATIO OF TWO NORMALISATIONS DOES NOT SEE THE COUPLING
+  ----------------------------------------------------------------------
+
+  logRatio : ℚ → Bg → Bg → ℚ
+  logRatio g U V = logZ g U - logZ g V
+
+  -- the g-dependent Jacobian term cancels between the two backgrounds
+  logRatioAtReference :
+    ∀ g U V → logRatio g U V ≡ logRatio reference U V
+  logRatioAtReference g U V =
+    trans (cong₂ _-_ (changeOfVariables g U) (changeOfVariables g V)) cancel
+    where
+      open import Relation.Binary.PropositionalEquality using (cong₂)
+
+      J : ℚ
+      J = dim * (logScale g - logScale reference)
+
+      cancel :
+        (J + logZ reference U) - (J + logZ reference V)
+          ≡ logZ reference U - logZ reference V
+      cancel =
+        solve 3
+          (λ Jj Uu Vv → (Jj :+ Uu) :- (Jj :+ Vv) := Uu :- Vv)
+          refl J (logZ reference U) (logZ reference V)
+
+  logRatioCouplingIndependent :
+    ∀ g g′ U V → logRatio g U V ≡ logRatio g′ U V
+  logRatioCouplingIndependent g g′ U V =
+    trans (logRatioAtReference g U V) (sym (logRatioAtReference g′ U V))
+
+  ----------------------------------------------------------------------
+  -- (2) THE GAUSSIAN BETA CONTRIBUTION IS A CONSTANT FUNCTION OF g
+  --
+  -- `kappa` is whatever step normalisation the Row-A convention uses; nothing
+  -- below depends on its value, only on its being coupling-independent.
+  ----------------------------------------------------------------------
+
+  betaZ : ℚ → ℚ → Bg → Bg → ℚ
+  betaZ kappa g U V = kappa * logRatio g U V
+
+  betaZCouplingIndependent :
+    ∀ kappa g g′ U V → betaZ kappa g U V ≡ betaZ kappa g′ U V
+  betaZCouplingIndependent kappa g g′ U V =
+    cong (kappa *_) (logRatioCouplingIndependent g g′ U V)
+
+  -- every increment of beta_Z in the coupling vanishes identically
+  betaZIncrementVanishes :
+    ∀ kappa g h U V → betaZ kappa (g + h) U V - betaZ kappa g U V ≡ 0ℚ
+  betaZIncrementVanishes kappa g h U V =
+    trans (cong (_- betaZ kappa g U V)
+             (betaZCouplingIndependent kappa (g + h) g U V))
+      (ℚP.+-inverseʳ (betaZ kappa g U V))
+
+  ----------------------------------------------------------------------
+  -- (3) HENCE THE COUPLING DERIVATIVE OF beta_Z IS ZERO
+  --
+  -- `IsCouplingDerivative D` is the exact affine characterisation: D is the
+  -- coupling derivative of beta_Z at g when every increment is D times the
+  -- step.  (For a constant function this is the derivative on the nose, with
+  -- no limit needed, which is why the statement can be exact and rational.)
+  ----------------------------------------------------------------------
+
+  IsCouplingDerivative : ℚ → ℚ → ℚ → Bg → Bg → Set
+  IsCouplingDerivative kappa g D U V =
+    ∀ h → betaZ kappa (g + h) U V - betaZ kappa g U V ≡ D * h
+
+  gaussianDerivativeIsZero :
+    ∀ kappa g D U V → IsCouplingDerivative kappa g D U V → D ≡ 0ℚ
+  gaussianDerivativeIsZero kappa g D U V isDeriv =
+    trans (sym (ℚP.*-identityʳ D))
+      (trans (sym (isDeriv 1ℚ)) (betaZIncrementVanishes kappa g 1ℚ U V))
+
+  -- and the vanishing derivative really is a derivative: 0 satisfies the
+  -- characterisation, so the statement above is a uniqueness result, not an
+  -- empty implication
+  zeroIsTheCouplingDerivative :
+    ∀ kappa g U V → IsCouplingDerivative kappa g 0ℚ U V
+  zeroIsTheCouplingDerivative kappa g U V h =
+    trans (betaZIncrementVanishes kappa g h U V) (sym (ℚP.*-zeroˡ h))
+
+  -- consequently the Gaussian cap may be taken to be zero
+  gaussianCapZero :
+    ∀ kappa g D U V → IsCouplingDerivative kappa g D U V → ∣ D ∣ ≤ 0ℚ
+  gaussianCapZero kappa g D U V isDeriv =
+    subst (λ z → ∣ z ∣ ≤ 0ℚ) (sym (gaussianDerivativeIsZero kappa g D U V isDeriv))
+      ℚP.≤-refl
+
+------------------------------------------------------------------------
+-- (4) SHARPNESS: THE FIELD-INDEPENDENCE OF THE EXPONENT IS LOAD-BEARING
+--
+-- If the two Gaussian integrals were taken over spaces of different dimension
+-- -- i.e. if the exponent in the scaling law depended on the background -- the
+-- cancellation would fail and beta_Z would move with the coupling.  The
+-- following records that failure quantitatively, so that the hypothesis of
+-- `GaussianNormalisation` is seen to carry real content.
+------------------------------------------------------------------------
+
+record SplitDimensionNormalisation (Bg : Set) : Set where
+  field
+    dimOf       : Bg → ℚ       -- a *background-dependent* exponent
+    reference   : ℚ
+    logScale    : ℚ → ℚ
+    logZ        : ℚ → Bg → ℚ
+
+    changeOfVariables :
+      ∀ g U → logZ g U
+              ≡ dimOf U * (logScale g - logScale reference) + logZ reference U
+
+module SplitDimension {Bg : Set} (G : SplitDimensionNormalisation Bg) where
+
+  open SplitDimensionNormalisation G public
+
+  logRatio : ℚ → Bg → Bg → ℚ
+  logRatio g U V = logZ g U - logZ g V
+
+  -- the residual drift is exactly (dim U - dim V) times the change of scale
+  ratioDrift :
+    ∀ g U V →
+    logRatio g U V - logRatio reference U V
+      ≡ (dimOf U - dimOf V) * (logScale g - logScale reference)
+  ratioDrift g U V =
+    trans (cong (_- logRatio reference U V)
+             (cong₂ _-_ (changeOfVariables g U) (changeOfVariables g V)))
+      (solve 5
+        (λ Du Dv Ss Zu Zv →
+           ((Du :* Ss :+ Zu) :- (Dv :* Ss :+ Zv)) :- (Zu :- Zv)
+           := (Du :- Dv) :* Ss)
+        refl (dimOf U) (dimOf V) (logScale g - logScale reference)
+        (logZ reference U) (logZ reference V))
+    where
+      open import Relation.Binary.PropositionalEquality using (cong₂)
+
+------------------------------------------------------------------------
+-- (5) A CONCRETE RATIONAL WITNESS FOR THE SHARPNESS CLAIM
+--
+-- Two backgrounds, exponents 2 and 1, logScale the identity, reference 0.
+-- Then beta_Z (with kappa = 1) moves by exactly the change of coupling.
+------------------------------------------------------------------------
+
+data TwoBackgrounds : Set where
+  bgU bgV : TwoBackgrounds
+
+mismatchWitness : SplitDimensionNormalisation TwoBackgrounds
+mismatchWitness = record
+  { dimOf     = λ { bgU → 1ℚ + 1ℚ ; bgV → 1ℚ }
+  ; reference = 0ℚ
+  ; logScale  = λ g → g
+  ; logZ      = λ { g bgU → (1ℚ + 1ℚ) * g ; g bgV → g }
+  ; changeOfVariables = λ
+      { g bgU → solve 1 (λ x → (con 1ℚ :+ con 1ℚ) :* x
+                               := (con 1ℚ :+ con 1ℚ) :* (x :- con 0ℚ)
+                                    :+ (con 1ℚ :+ con 1ℚ) :* con 0ℚ) refl g
+      ; g bgV → solve 1 (λ x → x := con 1ℚ :* (x :- con 0ℚ) :+ con 1ℚ :* con 0ℚ)
+                        refl g
+      }
+  }
+
+module Mismatch = SplitDimension mismatchWitness
+
+-- at coupling 1 the ratio has already drifted by 1: no coupling-independence
+mismatchDrift :
+  Mismatch.logRatio 1ℚ bgU bgV - Mismatch.logRatio 0ℚ bgU bgV ≡ 1ℚ
+mismatchDrift = refl
+
+backgroundDependentDimensionBreaksIndependence :
+  ¬ (Mismatch.logRatio 1ℚ bgU bgV ≡ Mismatch.logRatio 0ℚ bgU bgV)
+backgroundDependentDimensionBreaksIndependence eq =
+  oneIsNotZero
+    (trans (sym mismatchDrift)
+      (trans (cong (_- Mismatch.logRatio 0ℚ bgU bgV) eq)
+        (ℚP.+-inverseʳ (Mismatch.logRatio 0ℚ bgU bgV))))
+  where
+    oneIsNotZero : ¬ (1ℚ ≡ 0ℚ)
+    oneIsNotZero ()
+
+------------------------------------------------------------------------
+-- (6) NON-VACUITY OF THE MAIN HYPOTHESIS
+--
+-- A normalisation genuinely obeying the equal-dimension scaling law: the
+-- physical shape log Z(g,U) = dim log g + (field part).
+------------------------------------------------------------------------
+
+equalDimensionWitness : GaussianNormalisation TwoBackgrounds
+equalDimensionWitness = record
+  { dim       = 1ℚ + 1ℚ
+  ; reference = 0ℚ
+  ; logScale  = λ g → g
+  ; logZ      = λ { g bgU → (1ℚ + 1ℚ) * g + (+ 3 / 5)
+                  ; g bgV → (1ℚ + 1ℚ) * g + (+ 1 / 4) }
+  ; changeOfVariables = λ
+      { g bgU → solve 1 (λ x → (con 1ℚ :+ con 1ℚ) :* x :+ con (+ 3 / 5)
+                               := (con 1ℚ :+ con 1ℚ) :* (x :- con 0ℚ)
+                                    :+ ((con 1ℚ :+ con 1ℚ) :* con 0ℚ
+                                          :+ con (+ 3 / 5))) refl g
+      ; g bgV → solve 1 (λ x → (con 1ℚ :+ con 1ℚ) :* x :+ con (+ 1 / 4)
+                               := (con 1ℚ :+ con 1ℚ) :* (x :- con 0ℚ)
+                                    :+ ((con 1ℚ :+ con 1ℚ) :* con 0ℚ
+                                          :+ con (+ 1 / 4))) refl g
+      }
+  }
+
+module EqualDim = Normalisation equalDimensionWitness
+
+-- the field parts differ, so the ratio is a genuinely nonzero constant
+witnessRatioNonzero : EqualDim.logRatio 0ℚ bgU bgV ≡ + 7 / 20
+witnessRatioNonzero = refl
+
+witnessRatioIsConstant :
+  ∀ g → EqualDim.logRatio g bgU bgV ≡ + 7 / 20
+witnessRatioIsConstant g =
+  trans (EqualDim.logRatioCouplingIndependent g 0ℚ bgU bgV) witnessRatioNonzero
+
+witnessDerivativeZero :
+  ∀ kappa g D → EqualDim.IsCouplingDerivative kappa g D bgU bgV → D ≡ 0ℚ
+witnessDerivativeZero kappa g D = EqualDim.gaussianDerivativeIsZero kappa g D bgU bgV
+
+------------------------------------------------------------------------
+-- (7) FEEDING THE ROW-A TOTAL-SENSITIVITY PACKAGE
+--
+-- Given a step-indexed family of Gaussian ratios all obeying the equal-
+-- dimension scaling law, together with the identification of the sensitivity
+-- record's `betaZDerivative` with their coupling derivatives, the branch
+-- `Total.GaussianCouplingIndependent` becomes available *derived* rather than
+-- assumed, and L_total collapses to L_int.
+------------------------------------------------------------------------
+
+module RowAGaussianVanishing
+  {Bg : Set}
+  (G : GaussianNormalisation Bg)
+  (d : TotalBetaSensitivityData)
+  (kappa : Nat → ℚ)
+  (bg ref : Nat → Bg)
+  (isDerivative :
+    ∀ j → Normalisation.IsCouplingDerivative G (kappa j)
+            (TotalBetaSensitivityData.coupling d j)
+            (TotalBetaSensitivityData.betaZDerivative d j)
+            (bg j) (ref j))
+  where
+
+  open Normalisation G using (gaussianDerivativeIsZero)
+
+  gaussianVanishes :
+    ∀ j → TotalBetaSensitivityData.betaZDerivative d j ≡ 0ℚ
+  gaussianVanishes j =
+    gaussianDerivativeIsZero (kappa j)
+      (TotalBetaSensitivityData.coupling d j)
+      (TotalBetaSensitivityData.betaZDerivative d j)
+      (bg j) (ref j) (isDerivative j)
+
+  open Total d using (module GaussianCouplingIndependent)
+  open GaussianCouplingIndependent gaussianVanishes public
+    using (derivativeIsInteraction; derivativeBoundIsInteraction;
+           sensitivityCubicInteraction)

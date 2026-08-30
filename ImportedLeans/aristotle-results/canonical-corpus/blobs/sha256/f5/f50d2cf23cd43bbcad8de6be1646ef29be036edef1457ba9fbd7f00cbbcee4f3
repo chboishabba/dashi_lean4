@@ -1,0 +1,47 @@
+# Dual-Atlas Census Reports
+
+Each corpus is swept through the dual atlas (`cog` / `triad` / `harm`).
+
+| corpus | total | cogWins | triadWins | harmWins | cogWinsRel | triadWinsRel | harmWinsRel |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| itself | 232 | 231 | 1 | 0 | 55 | 98 | 79 |
+| mathlib | 504719 | 504719 | 0 | 0 | 156991 | 134330 | 213398 |
+| batteries | 9602 | 9602 | 0 | 0 | 2754 | 2844 | 4004 |
+| lean4 | 183878 | 183878 | 0 | 0 | 58468 | 45209 | 80201 |
+
+## Harmonic cell distribution
+
+| corpus | Trivector | Muse (9^5) | Heptad (6^7) | Hemispheres (2^11) | Recursion (3^13) |
+|---|---:|---:|---:|---:|---:|
+| itself | 143 | 24 | 30 | 20 | 15 |
+| mathlib | 291321 | 71529 | 60054 | 43046 | 38769 |
+| batteries | 5598 | 1313 | 1108 | 848 | 735 |
+| lean4 | 103677 | 28751 | 21219 | 16603 | 13628 |
+
+## itself
+
+- total declarations: **232**
+- distinct buckets: cog=86, triad=20, harm=5
+- raw best field wins: cog=231, triad=1, harm=0
+- relative best field wins: cog=55, triad=98, harm=79
+
+## mathlib
+
+- total declarations: **504719**
+- distinct buckets: cog=92, triad=20, harm=5
+- raw best field wins: cog=504719, triad=0, harm=0
+- relative best field wins: cog=156991, triad=134330, harm=213398
+
+## batteries
+
+- total declarations: **9602**
+- distinct buckets: cog=92, triad=20, harm=5
+- raw best field wins: cog=9602, triad=0, harm=0
+- relative best field wins: cog=2754, triad=2844, harm=4004
+
+## lean4
+
+- total declarations: **183878**
+- distinct buckets: cog=92, triad=20, harm=5
+- raw best field wins: cog=183878, triad=0, harm=0
+- relative best field wins: cog=58468, triad=45209, harm=80201

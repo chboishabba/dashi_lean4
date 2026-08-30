@@ -1,0 +1,140 @@
+# Session summary — 2026-05-30
+
+A single honest snapshot of what this working session added, what it verified, and where
+the boundary between *proved* and *open* sits. Everything below is oracle-clean
+(`#print axioms` = `[propext, Classical.choice, Quot.sound]`, some purely-algebraic
+lemmas even `[propext, Quot.sound]`), `sorry`-free, no project axioms, and reachable from
+`YangMillsCore` (full build green, ~8198 jobs).
+
+Read with `ROADMAP.md` §0 (the honest distance to Clay) and `HORIZON.md` (the DAG).
+
+---
+
+## The one-line honest status
+
+**Distance to the Clay prize: ~0% (<0.1%), unchanged.** Everything here lives on the
+**lattice in finite volume**. The Clay problem's difficulty is the *continuum limit* +
+OS/Wightman axioms + continuum mass gap — open mathematics nobody has done for 4D
+non-abelian, and not formalizable until it exists on paper. The value of this work is
+verified, honestly-mapped infrastructure with a razor-sharp proved/open boundary — not
+proximity to the prize.
+
+---
+
+## What this session added
+
+### A. KP / Mayer cluster expansion (`YangMills/KP/`) — both heavy targets reduced to one lemma each
+
+Identity side `Ξ = exp(clusterSum)`:
+- `clusterSum` (Mayer RHS), `clusterSum_eq_sum_clusters` (support on clusters).
+- `expansion_identity_isEmpty` (empty system), `clusterSum_first_order` (linear order).
+- `clusterSum_singlePolymer` = `log(1+z)` and `partition_eq_exp_clusterSum_singlePolymer`
+  (`Ξ = exp(clusterSum)`) — the **complete single-polymer Mayer identity, conditional on
+  Target A**, assembled from `ursellComplete` + `mayer_log_series_complex` + factorial
+  cancellation + `partition_singleton` + `Complex.exp_log`.
+
+Ursell values (Target A): `ursell_fin_one/two/three` = +1, −1, +2; `completeSystem`,
+`ursellComplete`, `closed_form_of_recurrence` (recurrence ⟹ `(−1)ⁿn!`),
+`ursellComplete_closed_form`, `allSubgraphs_signedSum` (`a(n)=[n≤1]`),
+`componentSupp_closed_under_adj` (no edge leaves a component).
+
+Convergence (Target B): `KPCriterion`, `kp_activity_le`, `kp_neighbor_sum_le`,
+`cluster_series_summable`, `cluster_sum_le` (geometric per-size bound ⟹ summable,
+sum ≤ C/(1−r)); `mayer_log_series` (real) and `mayer_log_series_complex`.
+
+**Two open lemmas (interactive-Lean, no axiom — explicit hypotheses):**
+- **Target A** `ursellComplete_recurrence` (`d(n+1)=−n·d(n)`, component-of-vertex-0
+  bijection). Closing it makes Target A *and* the n=1 Mayer identity unconditional.
+- **Target B** `kp_per_size_bound` (Penrose tree-graph inequality).
+Full skeletons + located Mathlib API in `docs/HANDOFF-KP.md`.
+
+### B. Lattice gauge-observable bridge (`ClayCore/GaugeMarginal.lean`, `GaugeEdgeExpectation.lean`, `WilsonLoopCenter.lean`)
+
+Moves "gauge observables" from the abstract group to the **lattice measure**
+`gaugeMeasureFrom μ`:
+- `gaugeMeasureFrom_map_eval` — single-edge marginal `= μ`.
+- `integral_single_edge` — `∫ f(A e) dμ_gauge = ∫ f dμ`.
+- `integral_single_edge_eq_zero` — zero group mean ⟹ zero gauge expectation.
+- `gauge_single_edge_trace_eq_zero` — SU(N) instance `∫ tr(A e) dμ_gauge = 0` (N≥2),
+  the first lattice Wilson-observable expectation end-to-end.
+- `integral_prod_edges` — edge-Fubini factorization `∫ ∏ₑ fₑ(A e) = ∏ₑ ∫ fₑ`.
+- `integral_prod_edges_eq_zero` — **scalar** edge-product vanishing (open lines).
+- `plaquetteHolonomy_center_smul` — centre eigenvalue `z⁴` (LG6 algebraic core).
+
+**Honesty correction made this session:** the Wilson *loop* is `tr(matrix product)`, NOT
+a scalar edge product, so the Fubini vanishing does *not* apply and a closed loop does
+*not* vanish (it carries `z⁴` under the centre — the area-law contributor). Scope of
+`integral_prod_edges_eq_zero` was tightened accordingly; `HORIZON.md` LG6 records the
+caveat. (Avoiding this false "theorem" was itself a key outcome.)
+
+**Open (LG6 remainder → LG8):** `IsMulLeftInvariant (gaugeMeasureFrom μ)` under the
+diagonal centre action (instance/transport plumbing, interactive Lean), then the
+strong-coupling character expansion (needs Peter–Weyl) and the area law (needs the KP
+layer). Lattice only.
+
+### B′. Wilson lines/loops + second moment (added later in the session)
+
+`WilsonLine.lean` (ordered products, non-commutative ⇒ `List.prod`):
+- `wilsonLine` (ordered edge-list product), `wilsonLine_nil/_singleton/_cons/_append`
+  (composition laws), `plaquetteHolonomy_eq_wilsonLine` (the plaquette is the length-4
+  closed line — connects to the existing `L0_Lattice` holonomy).
+- `center_listProd_scaling`, `wilsonLine_center_smul` — the centre scaling `z^L` for
+  arbitrary length (generalizes the plaquette `z⁴`).
+- `wilsonLoop` (trace of the closed line, ℂ-valued), `wilsonLoop_center_smul`
+  (`= tr(z^L·line)`), `trace_scalarPow_mul` (`tr((ω·1)^L·M)=ω^L·tr M`), assembled into
+  **`wilsonLoop_scalarCenter_smul`**: `wilsonLoop(z·A) = ω^L · wilsonLoop A` for a scalar
+  centre `z = ω·1`. This is the *complete algebraic* Wilson-loop centre eigenvalue.
+
+`GaugeEdgeExpectation.lean` (second moment / variance control):
+- `gauge_single_edge_trace_normSq_le` — `∫ |tr(A e)|² dμ_gauge ≤ N_c` (via the SchurL25
+  group bound `∫|tr U|²≤N` through the marginal).
+- `gauge_single_edge_trace_normSq_nonneg` — `≥ 0`. So the lattice second moment sits in
+  `[0, N_c]` — the variance input for two-point Wilson correlators.
+
+**Open:** the closed-loop expectation selection rule (`ω^L ≠ 1 ⟺ N ∤ L`) still needs the
+centre-invariance of `gaugeMeasureFrom` (interactive Lean); the area law needs LG7 (char
+expansion) + the KP layer.
+
+---
+
+### C. M3 bridge — clustering ⟹ lattice mass gap (the rung beneath Clay)
+
+`YangMills/Paper/ClusteringToGap.lean` — the honest **strong-coupling lattice** step toward
+the prize (Osterwalder–Seiler 1978; *not* Clay, which needs the continuum):
+- `geometric_ratio_eq_exp_neg` — for `0<r<1`, `r = exp(-m*)` with `m* = -log r > 0`.
+- `clustering_gives_exponential_decay` — a geometric cluster bound `|cov d| ≤ C·rᵈ` *is*
+  exponential decay with strictly positive mass `m* = -log r`.
+- `clustering_to_massGap_IR` — connects that to the IR hypothesis of `mass_gap_bound`.
+- **`lattice_mass_gap_of_clustering`** — full assembly: geometric IR cluster bound + UV
+  suppression ⟹ connected correlator decays with positive gap `min(m*, c₀) > 0`.
+
+Conditional on the cluster bound (KP Targets A/B) and UV bound as **explicit hypotheses**,
+never axioms. **Still ~0% toward Clay**: the prize needs the continuum limit (M4) + OS
+axioms (M5), open mathematics untouched here. This is the rung *beneath* the prize, with
+its internal logic now machine-verified.
+
+## The proved/open boundary, in one table
+
+| Area | Proved (oracle-clean) | Open (carried as explicit hypotheses, no axiom) |
+|---|---|---|
+| KP identity | empty / linear / **single-polymer** `Ξ=exp(clusterSum)` | full identity (needs Target A) |
+| KP Target A | values +1,−1,+2; recurrence ⟹ closed form; `a(n)=[n≤1]`; component lemma | `ursellComplete_recurrence` |
+| KP Target B | criterion + base bounds; geometric ⟹ convergence | `kp_per_size_bound` (tree-graph) |
+| Lattice gauge | edge marginal, edge/scalar-product expectations, loop `z⁴` | centre-invariance of `gaugeMeasureFrom`; area law |
+| Continuum (Clay) | — | **everything** (open mathematics) |
+
+---
+
+## How to verify anything here
+
+```powershell
+lake build YangMillsCore
+"import YangMillsCore`n#print axioms <fully.qualified.name>" | Set-Content _oc.lean
+lake env lean _oc.lean; Remove-Item _oc.lean
+```
+
+Expected: `[propext, Classical.choice, Quot.sound]`. Any project-local axiom means the
+FOUNDATIONS discipline was broken — revert.
+
+— The Eriksson Programme. Keep this honest: never report a number `#print axioms` and an
+adversarial audit would not support.

@@ -1,0 +1,82 @@
+This project was edited by [Aristotle](https://aristotle.harmonic.fun).
+
+To cite Aristotle:
+- Tag @Aristotle-Harmonic on GitHub PRs/issues
+- Add as co-author to commits:
+```
+Co-authored-by: Aristotle (Harmonic) <aristotle-harmonic@harmonic.fun>
+```
+
+# DASHI all-TOE cutset — 2026-08-21
+
+This is a read-only synthesis bundle assembled from the current local sources.
+
+* `Agda/` contains the complete active DASHI corpus, Cubical library, and the
+  `Monster/`, `MDL/`, and root Agda modules. It includes the current `Everything`
+  tranches and the Cuisine material at `Agda/DASHI/Culture/Cuisine/`.
+* `Lean/` contains the current canonical Lean checkout, including the completed
+  `Synthesis/` spine returned by Aristotle project `bf6411b6-e62e-4ce1-8ede-7772440fd988`.
+
+The Yang--Mills and Navier--Stokes lanes are deliberately excluded by path/name
+filter from both languages. No claim should be inferred from conceptual names:
+trace imports, definitions, theorem statements, proof terms, assumptions, and
+any `postulate`/`axiom`/`sorry`-like placeholders before treating a connection
+as established.
+
+The first requested focus is food/cookery as a concrete cross-domain test case,
+while retaining the full non-YM/non-NS corpus for genuine dependency discovery.
+
+## Reports
+
+* `TOE_GLOBAL_MAP.md` — the corpus-wide integration map: Agda import/dependency
+  provenance, the four-level classification of every cross-domain claim with its
+  Lean witness, the proved boundaries and the record/Bool sockets, and the
+  frontier of exact remaining obligations. Its machine-checked counterpart is
+  `Lean/Integration/Registry.lean`; the spine root is `Lean/Integration.lean`.
+* `CUISINE_DEPENDENCY_MAP.md`, `CUISINE_FOUR_LEVEL_MAP.md`,
+  `CUISINE_TOE_TRANSPORT.md` — the cuisine probe.
+* `RH_BRIDGE_REPORT.md`, `SPINE_REPORT.md` — the analytic probe and the common
+  spine.
+* `TOE_WELD_REPORT.md`, `TOE_GAUGE_DESCENT_REPORT.md` — the welded observer
+  schema, and gauge reduction with observational descent.
+* `TOE_PRESENTATION_INDEPENDENCE_REPORT.md` — the latest tranche: enumeration
+  independence and the closed form of the transverse certificate, composite
+  gauge redundancy as preimage-subgroup algebra, sufficiency (tower-relative and
+  intrinsic), the SSP observational threshold, orbit–stabilizer residual bounds,
+  certificate-pays-defect budgets, the Schur-complement core, the
+  invariant/equivariant/gauge-sensitive consumer classification, and the
+  exact/approximate intertwiner tiers — with the exact remaining obligations.
+* `TOE_COMMON_OWNERS_REPORT.md` — the common-owner refactor: one owner for the
+  commuting square (`Integration.StructureMorphism`), finite reindexing owned
+  once (`Spine.FiniteReindex`), the first non-finite `U(1)` gauge instance, the
+  certified-margin/relative-defect/normalisation gate, the typed residual
+  taxonomy, path transport and monotone obstructions, equivariance obstructions,
+  multiscale law descent, commutator observability and its descent level, the
+  base/fibre/transport/measurement bundle, field-controlled dynamics and
+  attractors, contrast and two-boundary conditioning — with the dependency map
+  and the exact remaining obligations.
+
+## TOE sewing round — where to start
+
+| document | contents |
+|---|---|
+| `TOE_SEWING_MAP.md` | the main report: owner set, the seven-class taxonomy, rows 1–24 lane by lane, collected negatives, coverage, and the frontier of next obligations.  Row counts quoted there are compiler evaluations of `Integration.SewingRegistry.kindCensus`, not hand-maintained numbers |
+| `TOE_LEVEL_II_SPINE.md` | the Level-II consolidation (rows 61–69): the four reusable owners — consumer-indexed adequacy, the collision owner, separability/contrast, language-indexed reachability — the eight welds onto them, the dependency map, and the exact remaining obligations |
+| `TOE_LEVEL_II_DISCHARGE.md` | the Level-II discharge and stress-test tranche (rows 70–81): welds 62/63/67 sharpened, the fibre-averaging pipeline classified arrow by arrow, three independent corpus tables discharging one rectangle obstruction, the pipeline/repair dichotomy, exhaustiveness on a proof-producing carrier, and the frontier extractor |
+| `TOE_LEVEL_III_PROBE.md` | the claim-transport probe: when may a locally valid claim cross a stage boundary?  The generic warrant and its negative, four source-exact lanes (formalisation, authority, empirical, entitlement), the registry read as a transition system on classes, and the verdict that every composition failure found reduces to the four frozen Level-II owners |
+| [`TOE_EVIDENCE_GOVERNANCE.md`](TOE_EVIDENCE_GOVERNANCE.md) | the evidence-governance round: the claim-transport geometry interface and its reconciliation theorem, evidence-indexed promotion with an executable gate proved closed on all sixteen open rows, the free-field/Boolean-sink audit, the mirror drift guard, the derived (advisory) frontier queue, the falsification probe of non-functional transport shapes, and the new prediction axis (envelopes, tightening, status propagation with no epistemic laundering) |
+| [`TOE_EXPERIMENT_CALCULUS.md`](TOE_EXPERIMENT_CALCULUS.md) | the executable experiment calculus (Stage 3): the typed quantity/law graph and its rejection of dimensionally ill-formed sums, covariance propagation and the three-way uncertainty budget that never collapses to one number, protocols as interventions bridged to the reachability owner, risk as a consumer of the same state model, measurement-value analysis with a minimality theorem, failure localisation and repair, data-driven model selection under a declared instrument tolerance, the `ExperimentSpec → ExperimentPrediction` compiler with its guarantees, and two independent domain instances (lithium electrochemistry, thermal diffusion) run through the unchanged calculus — with the dependency map and the exact remaining obligations.  Lean: `Lean/Integration/Experiment/` |
+| [`TOE_STAGE4_INFERENCE.md`](TOE_STAGE4_INFERENCE.md) | continuous deterministic scientific inference (Stage 4): continuously parameterised hypothesis families with surviving parameter regions, monotone evidence and set-valued prediction/risk envelopes proved to be closed intervals; sensitivities certified as partial derivatives with the chain rule and covariance propagation kept as separate layers; continuous-time experiment dynamics with trajectory uniqueness and endpoint/peak/integral/threshold consumers; the milestone instance (a parameterised discharge ODE, a measured series, a derived region, propagated envelopes, a next-measurement choice, and a falsified family) plus a nonlinearly parameterised portability instance; and the separated structure/parameter-evidence/validation receipts with the proposal-is-not-acceptance repair frontier — with the dependency map and the exact remaining obligations, probability explicitly not yet included.  Lean: `Lean/Integration/Experiment/` |
+| [`TOE_STAGE5_INFERENCE.md`](TOE_STAGE5_INFERENCE.md) | weighted inference, several parameters and certified propagation (Stage 5): Bayes' rule over a finite hypothesis family returned as a genuine probability mass function, with the support identity, the division-free Bayes factor, sequential-equals-batch updating, and the bridge proving the posterior's support lies inside the surviving parameter region while a region determines no weights; surviving regions in several parameters — convex and closed for affine families, interval envelopes over connected regions, and the identifiability dichotomy in which fewer readings than parameters always leave an unresolved direction for rank reasons; certified quantity-graph edges whose declared sensitivities are proved to be partial derivatives, together with a compiler field that computes the propagated variance and is proved to be `Cov.push`; and measurement discrimination for non-affine families by separation modulus, with the proof that this ranks guarantees rather than regions.  Lean: `Lean/Integration/Experiment/` |
+| [`TOE_STAGE6_INFERENCE.md`](TOE_STAGE6_INFERENCE.md) | calibrated dynamical inference (Stage 6): coverage/calibration semantics, in which a sampling model gives a genuine coverage probability, the Stage-4 tolerance region is proved to be a coverage-one procedure under bounded noise, Bonferroni intersection holds, and no function turns a reported region into a level — keeping prediction envelope, credible region and confidence region provably distinct; continuous Bayesian inference with a density prior on a compact interval, normalisation, Bayes odds, sequential-equals-batch updating and the bridge proving the posterior's support lies inside the surviving deterministic region while the region determines no density; an uncertainty budget derived from the certified graph derivatives and the input covariance, with contribution shares that sum to one, a dominant input and a measurement-selection theorem by actual variance reduction; nonlinear local identifiability from the Jacobian, with local injectivity from an antilipschitz derivative and the rank obstruction that too few measurements always leave an invisible direction no tolerance repairs; trajectory sensitivities satisfying the variational equation, unique on the window with a Grönwall modulus and a worked instance verifying the interchange with ∂/∂θ; repair obligations as six classes behind a refutability gate, with the unrestricted patch generator proved to fit everything, predict nothing and be inadmissible; and one synthetic dynamical experiment carried end to end through every lane.  Lean: `Lean/Integration/Experiment/` |
+| [`MIRROR_DRIFT_MANIFEST.json`](MIRROR_DRIFT_MANIFEST.json) | pinned source digests for the mirrors the Level-II/III spine consumes; regenerate and check with `scripts/mirror_drift.py` |
+| `CORPUS_INVENTORY.md` | the generated corpus inventory (with `corpus_index.json` and `corpus_lanes.csv`) |
+| `PR_HEADS_STATUS.md` | what was and was not found of the PR_HEADS surfaces named in the handoff |
+| `scripts/corpus_inventory.py` | the indexer that regenerates the inventory |
+
+Machine-checked counterparts: `Lean/Integration/SewingTaxonomy.lean` (the seven
+classes and the provenance schema) and `Lean/Integration/SewingRegistry.lean`
+(the rows, plus meta-theorems including `no_row_claims_agda_typechecked` and
+`no_branch_only_rows`).
+
+No Agda checker was run in this environment; no row claims an Agda typecheck.

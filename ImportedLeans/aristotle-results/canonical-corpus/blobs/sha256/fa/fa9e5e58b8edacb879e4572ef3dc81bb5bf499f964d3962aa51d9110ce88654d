@@ -1,0 +1,154 @@
+# G5: the five questions, answered
+
+This report covers the cycle organised around the five questions **Q1–Q5**.  All
+Lean referred to below compiles, contains no `sorry`/`admit`/`axiom`/postulate,
+and every spot-checked theorem depends only on `propext`, `Classical.choice`,
+`Quot.sound`.
+
+Two Lean projects are involved:
+
+* `RiemannAnalytic/` — the main library of this repository (Lean 4.28 + Mathlib
+  as pinned in `lakefile.toml`), self-contained, no external dependency;
+* `Zeta23Bridge/` — a **separate** small project, added this cycle, that depends
+  on the external companion library `Zeta23`
+  (<https://github.com/anthropics/zeta-23-lean>, pinned by commit).  That
+  library requires a different Lean/Mathlib version, so it cannot be imported
+  into `RiemannAnalytic`; the bridge is built on the companion's own toolchain
+  (`Zeta23Bridge/lean-toolchain`).  Build it with `cd Zeta23Bridge && lake build`.
+  Nothing in `RiemannAnalytic` depends on the bridge, and no statement of
+  `RiemannAnalytic` is weakened or assumed by it.
+
+**The Riemann Hypothesis is not proved.**  No theorem here asserts it, and none
+assumes it.
+
+---
+
+## Audit of the companion first
+
+Before using it, the companion was audited rather than taken on authority.  What
+it actually provides:
+
+* `Zeta23.PrimeSide.thm_traces : P.Valid → PaperInputs Z → ThmTracesHyp P Z` —
+  the paper's [thm:traces] for the *prime-side* matrix `G̃`, i.e. `EvBound`
+  statements for `tr G̃`, `tr G̃²` and the ratio `(tr G̃)²/tr G̃²`, in the shape
+  `∃ C > 0, ∃ T₀, ∀ T ≥ T₀, |f T| ≤ C · g T`;
+* `Zeta23.paperInputs_zeta : PaperInputs zetaZeroConfig` — the input package
+  (explicit formula, Riemann–von Mangoldt, Chebyshev–Mertens, Montgomery–Vaughan,
+  Stirling for `Γ'/Γ`) is *proved* there for the zeros of Mathlib's
+  `riemannZeta`, not postulated: `PaperInputs` is a `Prop`-valued structure, not
+  a Lean `axiom`, and it is discharged from `WeilEF.EF_lit_zetaZeroConfig`;
+* no `sorry` under `Zeta23/`; `#print axioms` on the theorems used here returns
+  exactly `[propext, Classical.choice, Quot.sound]`, checked in this environment
+  after building the library from source.
+
+So the trace theorem is genuinely unconditional, and the adapters below inherit
+that.
+
+---
+
+## Q1 — Does the δ-free interference ratio tend to zero?  **Yes.**
+
+`RiemannAnalytic/InterferenceRatio.lean`.
+
+`interferenceRatio N M₁ K L = 16384 N (4M₁² + 2K²)/(81 L⁶)` is the ratio of the
+δ-free localization theorem.  Proved:
+
+* `interferenceRatio_tendsto_zero_of_quotient` — reduction to the dimensionless
+  quotient `N(4M₁²+2K²)/L⁶`;
+* `interferenceRatio_tendsto_zero_log` — **the source regime**: for a logarithmic
+  taper scale `L(T) = λ log T` (λ > 0), bounded kernel constants `|M₁| ≤ M`,
+  `|K| ≤ K₀`, and a local count `0 ≤ N(T) ≤ A log T` — exactly what
+  Riemann–von Mangoldt supplies — one gets `η(T) = O((log T)⁻⁵) → 0`;
+* `source_eventually_interferenceRatio_lt_one` — hence an explicit `T₀` beyond
+  which `η(T) < 1`, and `interference_lt_gramDefect_of_ratio_lt_one`.
+
+Mixed interference is therefore no longer a frontier problem in this regime.
+
+## Q2 — Is the zero-pair budget dominated by `e₂` with the right indexing?  **Yes.**
+
+`RiemannAnalytic/GramBudgetTransport.lean`.
+
+`pairFamily a b : ι × Bool → E` assembles the two vectors of each zero pair into
+a single family; `pairDefect a b ρ = ‖a_ρ‖²‖b_ρ‖² − ⟪a_ρ,b_ρ⟫²`.  Then
+
+* `sum_pairDefect_le_e2` : `∑_ρ Δ_ρ ≤ e₂(G)`, `G = Gram(pairFamily a b)`;
+* `weightedGramSum_le_e2` : `∑_ρ m_ρ² Δ_ρ ≤ M · e₂(G)` when `m_ρ² ≤ M`.
+
+The mechanism is exactly the geometric one: all pairwise defects are nonnegative
+(Cauchy–Schwarz), and the pairs `(a_ρ, b_ρ)` occur among all ordered pairs.
+
+## Q3 — Does `e₂` transport along `G = A + E`?  **Yes, with an explicit tail.**
+
+`e2OfTraces_sub_le` / `e2_gram_le_e2_gram_add_tail`:
+
+    |e₂(t₁,t₂) − e₂(s₁,s₂)| ≤ ½(|t₁−s₁|(|t₁|+|s₁|) + |t₂−s₂|).
+
+`e₂` sees a perturbation only through the two traces, and this is the exact
+modulus of continuity.
+
+## Q4 — Do the companion's `tr1'` + `tr2` give an explicit `e₂` bound?  **Yes.**
+
+Generic adapter (`RiemannAnalytic/TraceInterface.lean`):
+`evBound_e2_of_traces` turns `tr = m₁(1+O(𝓔))`, `tr₂ = m₂(1+O(𝓔))` into
+
+    |e₂ − ½(m₁² − m₂)| ≤ ((C₁²+2C₁+C₂)/2) · 𝓔 · (m₁² + m₂),
+
+with a ratio-normalised variant `evBound_e2_of_ratio`.
+
+Instantiated at ζ (`Zeta23Bridge/Zeta23Bridge/E2Adapter.lean`):
+`zeta23_e2_asymptotic` — for the actual nontrivial zeros of Mathlib's
+`riemannZeta` and the source taper at any aperture `0 < λ ≤ 1`,
+
+    |e₂(tr G̃, tr G̃²) − ½((L·N(T,2T))² − mainTr₂(T))|
+        ≤ C · 𝓔_T · ((L·N(T,2T))² + mainTr₂(T)),   T large,
+
+with `𝓔_T → 0` proved in the companion.  No new analytic input was needed: this
+is a transport, not a re-proof.
+
+## Q5 — Does the resulting normalized budget satisfy `E(T)/L(T)⁶ → 0`?  **No.**
+
+This is the decisive finding of the cycle, and it is proved, not conjectured.
+
+* `Zeta23Bridge.zeta23_e2_ge_eventually` : eventually `e₂ ≥ (L(T)·T)²/8`.  The
+  ingredients are the companion's Riemann–von Mangoldt input (giving
+  `N(T,2T) ≥ T` eventually, `Nz_ge_self_eventually`), the domination
+  `mainTr₂ ≤ (L·N)²/2`, and `𝓔_T → 0`.
+* `Zeta23Bridge.zeta23_e2_over_L6_tendsto_atTop` :
+
+      e₂(T) / L(T)⁶ → ∞.
+
+* The abstract counterpart in the main library,
+  `RiemannAnalytic.budget_ratio_tendsto_atTop` (`BudgetScale.lean`): with
+  `L(T) = λ log T`, *any* budget carrying a power of `T` gives
+  `E/L⁶ → ∞`, so `not_tendsto_zero_of_linear_growth` and, by
+  `tube_radius_tendsto_atTop`, the tube radius `√(E/(cL⁶))` diverges.
+
+Interpretation.  The tube theorem (`abs_offset_le_of_e2_budget`,
+`tendsto_zero_of_budget_ratio`) is sharp about what it needs: a budget of size
+`o(L⁶) = o((log T)⁶)`.  The total exterior area of the full `d × d` evaluation
+family is of size `T²L²`.  The Q2 comparison is therefore *correct but lossy by
+a factor of a power of `T`*: it charges the single zero's transverse defect
+against the area of the whole family.  What the zero side needs is a **localized
+budget** — the exterior area of a sub-family attached to a bounded number of
+zeros (equivalently, a windowed / bounded-height Gram block), not the global
+trace functional.
+
+## Where the programme stands after this cycle
+
+    zero geometry            : as before, conditional on a budget;
+    interference             : δ-free and, in the source regime, o(1)  [Q1, proved];
+    e₂ as the observable     : indexing comparison and transport proved  [Q2, Q3];
+    prime side               : an explicit unconditional e₂ asymptotic for ζ [Q4];
+    budget comparison        : fails by a power of T for the *total* area [Q5];
+    remaining frontier       : a localized (bounded-height) exterior-area budget,
+                               of size o((log T)⁶), for the zeros in a window.
+
+Nothing in this repository implies the Riemann Hypothesis, and
+`RiemannHypothesisFor` was not weakened or touched.
+
+## Reproduction
+
+```bash
+lake build                        # RiemannAnalytic (default target)
+cd Zeta23Bridge && lake build     # the adapter against the external companion
+```

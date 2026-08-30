@@ -1,0 +1,184 @@
+# G17 — the top-window floor is decided: the pointwise version is **false**
+
+**The Riemann Hypothesis is not proved.**  Nothing was weakened and nothing was
+assumed: `RiemannHypothesisFor`, `RiemannHypothesis`, `CompletedRiemannHypothesis`
+and every earlier statement are untouched; there is no `sorry`/`admit`, no
+`axiom`, no postulate, no Boolean receipt, no numerical evidence and no
+`@[implemented_by]` in any Lean source.  `lake build RiemannAnalytic` succeeds
+(8103 jobs, no warnings from project sources) and `#print axioms` on every new
+theorem returns only `[propext, Classical.choice, Quot.sound]`.
+
+G16 ended with one explicitly named gap: the red branch of
+`compactTaper_gate_verdict` assumes a **pointwise floor**
+
+```
+κ_φ · exp (-(r · u))  ≤  |𝓕ψ(u)|      for every u ∈ [log N − log 4, log N],
+```
+
+and G16 recorded that a lower bound at the prime frequencies was "the next thing
+to prove".  This cycle asked first whether that statement is even true.
+
+**It is not.**  All new material lives in the single new module
+`RiemannAnalytic/SpectralWindowValleys.lean`, imported by the aggregate
+`RiemannAnalytic.lean`.
+
+---
+
+## 1.  The counterexample (target 1: *counterexample or rigidity*)
+
+The valley construction: for a taper `φ` and a shift `s`,
+
+```
+valleyTaper φ s (t) = φ t − (φ (t−s) + φ (t+s)) / 2 ,
+```
+
+whose Fourier transform is computed exactly (`fourier_shift`, `fourier_valley`,
+`taperTransformAbs_valleyTaper`):
+
+```
+𝓕(valleyTaper φ s)(ξ) = (1 − cos (2π s ξ)) · 𝓕φ(ξ).
+```
+
+It therefore **vanishes on the whole lattice `(1/s)ℤ`**, while
+`compactTaper_valleyTaper` and `valleyTaper_plateau` show that the construction
+preserves compact support and the plateau `φ ≡ 1` needed by the source-side
+Gram floor (provided `s` clears the support).
+
+Instantiating with the explicit trapezoid `plateauBase` and `s = 2` gives
+`valleyCounterTaper`: continuous, supported in `|t| ≤ 3`, equal to `1` on
+`|t| ≤ 1/2`, and with transform vanishing at every half-integer.  Since
+`log 4 > 1/2`, every window `[R − log 4, R]` contains a half-integer
+(`exists_halfInt_mem_topWindow`).  Hence
+
+> **`compactTaper_topWindowFloor_counterexample`** — there is a compactly
+> supported plateau taper whose transform vanishes somewhere in *every* top
+> window, so for every height `R`, every rate `r` and every `κ > 0` the
+> pointwise floor `κ e^{-ru} ≤ |𝓕ψ(u)|` on `[R − log 4, R]` fails.
+
+The "universal top-window floor" is therefore **false as stated**, and no time
+should be spent trying to prove it.  This settles target 1 on the counterexample
+side.
+
+## 2.  What survives: rigidity (target 2, qualitative)
+
+The transform cannot be *identically* zero on a window:
+
+* `eq_zero_of_expDecay_of_fourier_vanishing_interval` — the mirror
+  Paley–Wiener step: if a continuous integrable `g` decays exponentially and
+  `𝓕g` vanishes on a nonempty open interval, then `g ≡ 0`.  (Proved from the
+  strip-analytic extension `invFourierExt` of G16, the identity theorem, and
+  Fourier inversion.)
+* `compactTaper_expDecay_bound` — a compactly supported continuous taper obeys
+  such a decay bound.
+* `compactTaper_fourier_ne_zero_on_interval` — hence for a compactly supported,
+  somewhere nonzero taper, **every** nonempty frequency interval contains a
+  frequency where the transform is nonzero.
+* `spectralWindowMass φ c d = ∫_(c,d) |𝓕φ|²` and
+  `compactTaper_spectralWindowMass_pos` — consequently every window carries
+  **strictly positive** `L²` mass.
+
+This is the integrated statement the user asked for
+(`compactPlateau_spectralWindowMassLower`) in its *qualitative* form.  The
+quantitative form `≥ exp(−o(R))` is **not** proved and remains open.
+
+## 3.  Valleys cannot be deep at every height
+
+A genuinely quantitative piece of rigidity does follow from G16's Paley–Wiener
+obstruction, using that `taperTransformAbs` is even for a real taper
+(`taperTransformAbs_neg`):
+
+> **`compactTaper_topWindow_not_uniformly_expSmall`** — for a compactly
+> supported, somewhere nonzero taper there are **no** constants `C, a > 0, R₀`
+> with `sup_{[S−Δ, S]} |𝓕φ| ≤ C e^{-aS}` for all `S ≥ R₀`.
+>
+> **`compactTaper_topWindow_sup_large_frequently`** — equivalently, at every
+> exponential rate there are arbitrarily large heights whose top window is not
+> that small.
+
+(If such a uniform window bound held, every frequency would satisfy a global
+bound `C' e^{-a|ξ|}`, which `compactTaper_fourier_not_expDecay` forbids.)
+
+So the surviving spectral-valley pathology is necessarily **sparse in the
+height**: deep valleys along a thin sequence `R_j` are not excluded, but deep
+valleys at *all* large heights are.  Whether the sparse phenomenon actually
+occurs for some compact plateau taper (a Beurling–Malliavin-type construction)
+is **open**.
+
+## 4.  Aperture selection (target 3, qualitative)
+
+* `exists_aperture_with_positive_spectral_mass` — for every positive frequency
+  `u₀` there is an aperture `λ ∈ (0,1)` with `𝓕φ(λ u₀) ≠ 0`;
+* `exists_aperture_primeWindow_spectral_mass` — hence for any finite weighted
+  set of integer frequencies containing one genuine frequency `n₀ > 1` of
+  positive weight, some admissible `λ ∈ (0,1)` makes
+
+```
+∑ n ∈ S,  w n · |𝓕φ(λ log n)|²
+```
+
+  strictly positive.
+
+This is the `existsAdmissibleApertureWithPrimeSpectralMass` statement in its
+qualitative form: the aperture freedom always defeats the *zeros*.  It carries
+**no scale**, so by itself it does not feed the contraction gate; the
+quantitative version (a lower bound of the size `compactTaper_gate_verdict`
+needs, uniformly in `T`) is **open**.
+
+## 5.  The repaired gate
+
+Since the pointwise hypothesis cannot be assumed, the red branch is restated in
+a valley-tolerant form:
+
+* `taperedWeil_gate_fails_of_mass_lower` — the gate arithmetic isolated from the
+  hypothesis: any lower bound `κ'/4 · N^{1/2−r}` for the tapered Weil mass with
+  `r < 1/2` defeats the contraction condition (subject to the explicit constant
+  comparison).
+* `taperedWeilMass_lower_of_valleyFreeSubset` — the floor is needed only on a
+  set `T ⊆ (N/4, N]` of prime frequencies carrying a proportion `θ` of the
+  Chebyshev block mass; the mass bound then reads `θκ/4 · N^{1/2−r}`.
+* `taperedWeil_gate_fails_of_valleyFreeSubset` — **the repaired red verdict**:
+  the contraction condition still fails when the taper transform stays above
+  `κ_φ e^{-ru}` merely on such a positive-proportion set of prime frequencies.
+
+So the gate no-go is now blocked by exactly one quantitative statement:
+
+> *for some admissible aperture, the taper transform stays above a subcritical
+> exponential floor on a set of prime frequencies of `(N/4, N]` carrying a
+> positive proportion of the Chebyshev block mass, uniformly in `N`.*
+
+Nothing weaker is needed, and nothing weaker has been proved.
+
+## 6.  Packaged answer
+
+`compactTaper_topWindowFloor_counterexampleOrRigidity` states the three facts
+together: the pointwise floor fails for an explicit taper; every window carries
+positive `L²` mass; and at every exponential rate the window supremum is large
+at arbitrarily great heights.
+
+## 7.  Milestones
+
+| Milestone | Status |
+| --- | --- |
+| 1. `literalCompensatedAnchorExplicitFormula` (the identity, with `C_src` exposed) | **open — still the first unproved theorem** |
+| 2. exact normalization-scale decision | **proved as a dichotomy**; red branch covers all polylogarithmic coefficients, all polynomially decaying tapers, all subcritical exponential rates, and now also every taper obeying the floor on a positive proportion of the block; the supercritical regime is proved empty for compact tapers |
+| 2′. universal pointwise top-window floor | **proved false** (`compactTaper_topWindowFloor_counterexample`) |
+| 2″. quantitative window-mass / aperture lower bound | **open** — the one statement blocking an unconditional compact-taper no-go |
+| 3. `literalPrimeRelativeContraction` | open (assembly, conditional on 1–2 being green) |
+| 4. relative tail / mixed / gamma-pole-endpoint bounds | open |
+| 5. high-zero strict contraction | abstractly proved (`riemannHypothesis_of_relative_parts`), not instantiated |
+| 6. bounded-height zero certificate | open |
+| 7. literal RH closure | wrapper proved (`riemannHypothesis_of_relative_contraction`), premises open |
+
+## The first unproved theorem, stated exactly
+
+Unchanged since G12:
+
+> **`literalCompensatedAnchorExplicitFormula`.**  For an actual zero
+> `ρ = 1/2 + α + iγ` of `completedRiemannZeta` and the actual source local matrix
+> at height `T` and window `H`, the literal anchored Gram defect `D_{ρ,H}` equals
+> `C_src(T,H,ρ) · 𝒟^{prime}_N(α,t) + R_zero + R_EF`, with every object the
+> literal source object `γ_ρ, τ_k, h = 2π/L, X = e^L, φ̂, m_ρ, A_H` and the exact
+> explicit-formula normalization, and with `C_src` given in closed form.
+
+It must produce `C_src · t² · N^{1+4|α|} < 1024c(log N)⁴/120000` in the literal
+Weil normalization.  No claim about the Riemann Hypothesis is made here.

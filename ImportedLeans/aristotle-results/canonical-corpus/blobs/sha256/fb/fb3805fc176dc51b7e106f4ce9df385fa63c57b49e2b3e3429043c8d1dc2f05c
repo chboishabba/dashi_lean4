@@ -1,0 +1,240 @@
+# G21 — the pole-quotiented two-channel exterior explicit formula: exact algebra, and where it dies
+
+**The Riemann Hypothesis is not proved, and G21 was not an attempt to prove it by
+estimate.**  Nothing was weakened and nothing was assumed: `RiemannHypothesisFor`,
+`RiemannHypothesis`, `CompletedRiemannHypothesis` and every earlier statement are
+untouched; there is no `sorry`/`admit`, no `axiom`, no postulate, no Boolean
+receipt, no numerical evidence and no `@[implemented_by]` in any new source.
+`lake build RiemannAnalytic` succeeds (8110 jobs) and `#print axioms` on every
+new theorem returns only `[propext, Classical.choice, Quot.sound]`.
+
+New modules, all wired into the aggregate `RiemannAnalytic.lean`:
+
+| module | content |
+|---|---|
+| `RiemannAnalytic/ExteriorCore.lean` | the exterior algebra: `wedge2`, `augDet3`, `augDet4`, exact pole/mixed annihilation, compensated vectors |
+| `RiemannAnalytic/ExteriorPairKernel.lean` | exact mode expansion, the surviving pair kernel, exact finite reindexing, the two nonseparability certificates |
+| `RiemannAnalytic/ExteriorGate.lean` | the literal pole profile, the rank-one verdict, single-mode annihilation, the holomorphic obstruction |
+| `RiemannAnalytic/ExteriorDecision.lean` | literal prime-side witness, literal zero-side response, the decision |
+
+The experiment was run in the prescribed make-or-break order `2 → 3 → 4 → 5`.
+
+---
+
+## Lemma 1 — `commonPoleProfileFactorization`: **false as stated, and repaired**
+
+The literal pole (PNT) profile in the `u = log t` coordinate is
+
+```
+m(x) = ∫_0^L e^{u/2} cos(xu) du          (`poleProfile`, L = log N)
+```
+
+which is the G20 main term `∫_1^N t^{-1/2}cos(x log t) dt`.  Its closed form is
+proved (`poleProfile_closedForm`), and `poleProfile_zero_freq` gives
+`m(0) = 2(e^{L/2} − 1)`, matching the G20 value `2(√N − 1)`.
+
+For a **contrastive-derivative** channel pair `f₂ = ∂_x f₁` the two pole
+responses are `m` and `m′`, and
+
+```
+poleProfile_deriv_not_proportional :  0 < L → ¬ ∃ c, ∀ x, HasDerivAt m (c · m x) x
+```
+
+so `M_i = c_i · m` is *false*: the profile is even, so `m′(0) = 0` forces `c = 0`,
+and `m` is not constant because `m(2π/L) < m(0)` exactly
+(`poleProfile_two_pi_div_lt_zero_freq`).
+
+The two desiderata "second channel is a derivative" and "pole response is rank
+one" are therefore incompatible in three samples.  The repair is exact: adjoin
+**both** pole profiles as nuisance rows and use four samples.  The dimension
+count is `#samples − #nuisance = 2`, exactly as in the design note but with the
+nuisance space two-dimensional.
+
+## Lemma 2 — `augmentedDeterminantKillsPoleAndMixedTerms`: **true, exactly**
+
+* `wedge2_pole_expansion` — the naive two-point wedge expands as
+  `E₁∧E₂ + c₁(m∧E₂) + c₂(E₁∧m)`: the mixed terms survive, and
+  `wedge2_mixed_terms_survive` exhibits data where they are nonzero.  The raw
+  `2×2` determinant is indeed inadequate.
+* `augDet3_pole_annihilation` —
+  `det(c₁m+E₁, c₂m+E₂, m) = det(E₁,E₂,m)`, an identity.
+* `augDet4_pole_annihilation` —
+  `det(c₁p+d₁q+E₁, c₂p+d₂q+E₂, p, q) = det(E₁,E₂,p,q)`, the version required by
+  the derivative channel pair (`p = m`, `q = m′`).
+* `compensatedPair_eq_error` — the equivalent exact-quotient presentation
+  `T_{ij} = m_j S(x_i) − m_i S(x_j) = m_j E(x_i) − m_i E(x_j)`.
+
+No asymptotics and no majorization occur in any of these.
+
+## Lemma 4 — `literalPrimePairKernelIdentity`: **true, exactly**
+
+Working with an arbitrary antisymmetric bilinear form `B` on the row space (both
+`augDet3 · · m` and `augDet4 · · p q` are such forms:
+`antisymBilin_augDet3`, `antisymBilin_augDet4`), the mode expansion
+
+```
+E₁(x) = ∑_r a_r e^{ixλ_r},   E₂(x) = ∂_x E₁(x) = ∑_r iλ_r a_r e^{ixλ_r}
+```
+
+(`hasDerivAt_modeSum` proves that channel two really is the `x`-derivative)
+expands **exactly**:
+
+```
+AntisymBilin.channelPair_eq_pairKernel :
+    B(E₁-samples, E₂-samples) = i · ∑_{r<t} K(r,t),
+    K(r,t) = a_r a_t (λ_t − λ_r) · B(v_r, v_t).
+```
+
+with `pairKernel_diag : K(n,n) = 0` (the diagonal literally never enters) and
+`pairKernel_symm : K(t,r) = K(r,t)`.  The passage from the full square to the
+strictly-ordered fibre is an exact reindexing theorem, not an estimate:
+
+```
+sum_pair_eq_two_mul_sum_lt : ∑_{r,t ∈ s} K(r,t) = 2 ∑_{r<t} K(r,t).
+```
+
+## Lemma 5 — nonseparability: **true, and sharper than requested**
+
+For a kernel that is symmetric and vanishes on the diagonal, separability and
+rank one are not merely unlikely — they force vanishing:
+
+* `separable_of_symm_diagZero_eq_zero` / `not_separable_of_ne_zero`:
+  `K(r,t) = L(r) + R(t)` for such a `K` implies `K ≡ 0`;
+* `rankOne_of_symm_diagZero_eq_zero` / `not_rankOne_of_ne_zero`:
+  `K(r,t) = A(r)B(t)` for such a `K` implies `K ≡ 0`;
+* `rectangleDefect_eq`: the four-point rectangle defect on `{r,t}×{r,t}` is
+  exactly `−2K(r,t)`.
+
+So *one* nonvanishing value is a complete certificate, and one is proved
+literally.  With `λ_n = log n`, `a_n = Λ(n)/√n` and the three samples
+`x = (0, π/log 2, 2π/log 2)`, the mode vectors of the prime powers `2` and `4`
+are exactly `(1,−1,1)` and `(1,1,1)` (`modeVector_two`, `modeVector_four`), so
+
+```
+augDet3_modeVector_two_four :  D(2,4) = 2 (m(2π/log 2) − m(0)),
+```
+
+and `|m(2π/log 2)| < m(0)` for every `L ≥ 1`
+(`poleProfile_abs_le`, `poleProfile_abs_lt_zero_freq`, `gridSamples_two_ge_nine`).
+Hence `primePairKernel_two_four_ne_zero`, and therefore
+
+```
+primePairKernel_nonseparable  :  ¬ ∃ L R, K(r,t) = L(r) + R(t)
+primePairKernel_not_rankOne   :  ¬ ∃ A B, K(r,t) = A(r)B(t)
+primePairKernel_rectangleDefect : defect = −2K(2,4) ≠ 0.
+```
+
+(These are computed in the three-sample presentation, which is the literal
+instance of the general certificate; the four-sample minor of the repaired
+architecture would require the analogous evaluation against `m′`, which is not
+carried out here.)
+
+## Lemma 3 — `offLineZeroAugmentedDeterminantNondegenerate`: **red**
+
+This is the gate, and it fails for two independent, exactly proved reasons.
+
+**(a) The exterior projection annihilates every single-mode response.**  A
+single zero contributes one mode `a e^{ixλ}` to channel one and `iλ a e^{ixλ}`
+to the derivative channel; the two channel rows are then proportional, so
+
+```
+augDet3_singleMode_annihilated,  augDet4_singleMode_annihilated :  observable = 0
+```
+
+*identically*, whatever the amplitude `a` — and the off-line parameter `α` lives
+precisely in that amplitude.  Consequently
+
+```
+singleMode_gate_no_floor :  ¬ ∀ α ≠ 0, c · height^p · |α|^q ≤ ‖observable‖.
+```
+
+This is the same mechanism as `pairKernel_diag`.  The diagonal annihilation that
+kills the pole is not selective: it kills **every** self-interaction, and the
+self-interaction of a zero is exactly where every positivity-based detector
+keeps its signal.  The exterior observable only ever sees *pairs of distinct*
+modes, on the prime side and on the zero side alike.
+
+**(b) The critical line is not an analytic condition.**  Any observable that is
+holomorphic in the zero parameter `ρ` near a point of the critical line and
+vanishes at every on-line `ρ` there vanishes identically near that point
+(`holomorphic_gate_local`, by the identity theorem, since the line accumulates);
+hence
+
+```
+no_criticalLine_separation :
+  ¬ ( (vanishes at every on-line ρ of the disc) ∧ (nonzero at some off-line ρ of the disc) ).
+```
+
+The literal truncated single-zero response
+
+```
+Z_ρ(x) = ∫_0^L e^{(ρ−1/2+ix)u} du = (e^{(ρ−1/2+ix)L} − 1)/(ρ−1/2+ix)
+```
+
+(`zeroResponse_eq_integral`), with its honest derivative channel
+(`hasDerivAt_zeroResponse`), gives an augmented determinant that is holomorphic
+in `ρ` (`differentiableOn_zeroResponse`, `differentiableOn_zeroResponseDeriv`,
+`differentiableOn_augDet3_of_rows`, `differentiableOn_zeroSideObservable`), so
+it is exactly of that kind:
+
+```
+zeroSideObservable_no_criticalLine_separation.
+```
+
+An exterior/determinant observable can annihilate the pole direction, but it
+cannot distinguish `Re ρ = 1/2` from `Re ρ ≠ 1/2`: linear-algebraic quotienting
+removes a *linear* nuisance direction, while the critical line is a
+conjugate-linear (positivity) condition.
+
+## The decision
+
+`twoChannelGateDecision` packages the verdict: exact annihilation of the pole and
+mixed terms (i), exact annihilation of every single-mode zero response (ii), and
+the resulting impossibility of an `|α|`-floor (iii).
+
+* The hoped-for gain — an exact algebraic rank/diagonal cancellation instead of a
+  square-root-to-polylog miracle — **is real**, and is now machine-checked:
+  lemma 2, lemma 4, the exact reindexing and the nonseparability certificates all
+  hold at literal strength.
+* But the same cancellation removes the zero-side signal.  G21 dies at lemma 3,
+  cheaply and structurally, exactly as the design note demanded it should if the
+  answer were negative.
+
+The sharpened question of the design note — *"do three observation samples make
+the pole response one-dimensional, while an off-critical-line zero generates a
+genuinely two-dimensional response in the quotient by that pole direction?"* —
+is answered: **no** on both halves.  Three samples do not make the
+derivative-pair pole response one-dimensional (lemma 1; four samples with two
+nuisance rows do), and an off-line zero does not generate a detectable
+two-dimensional residual, because its self-response is annihilated exactly and
+because no holomorphic function of `ρ` can gate the critical line.
+
+Any successor architecture must therefore keep a conjugate-linear ingredient —
+a genuine `|·|²` on the zero side — rather than removing the diagonal in
+exchange for algebraic exactness.
+
+## Addendum: the gate is red in the repaired four-sample architecture too
+
+Lemma 1 is false for the derivative channel (`poleProfile_deriv_not_proportional`),
+and the exact repair is to use **four** observation samples with **two** nuisance
+rows `m` and `m′`, annihilated together by `augDet4_pole_annihilation`.  One
+might hope the extra sample restores zero-side sensitivity.  It does not.
+
+`differentiableOn_det` (holomorphic matrix entries ⇒ holomorphic determinant, for
+any finite size) and `differentiableOn_augDet4_of_rows` show the repaired
+observable `zeroSideObservable4` is again holomorphic in `ρ`, so
+
+```
+zeroSideObservable4_no_criticalLine_separation
+```
+
+reproduces the obstruction verbatim: it cannot vanish identically on the critical
+line inside a ball while being nonzero somewhere off it.  Lemma 3 is red at every
+sample count, not just at three.
+
+Finally, `zeroSide_pairKernel_no_diagonal` records that the zero side inherits the
+same diagonal-free structure as the prime side: the exterior observable of a
+zero-mode family is a sum over *distinct* pairs of zeros, so every self-energy
+term `ρ = ρ'` — precisely where a positivity-based detector stores the off-line
+signal — is annihilated by the same mechanism that kills the pole.  That is the
+structural reason lemma 3 fails, stated as a theorem rather than as a remark.

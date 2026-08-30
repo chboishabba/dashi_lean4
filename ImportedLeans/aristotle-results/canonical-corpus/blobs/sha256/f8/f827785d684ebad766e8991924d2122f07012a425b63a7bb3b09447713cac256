@@ -1,0 +1,217 @@
+# Embodiment Report — duplicate classes, with exemplars
+
+Sampled from the live `atlas_duplicates.json` (120,000 declarations, 3,436 duplicate groups).
+
+A **duplicate group** is a set of declarations whose statement type-fingerprint `info.type.hash` collides. Each group is tagged by *how* the duplication arose. Counts across the whole corpus:
+
+| class | groups |
+|---|---|
+| alias | 1,671 |
+| independent | 1,266 |
+| unknown | 353 |
+| deprecated | 124 |
+| rfl-variant | 22 |
+
+## alias
+
+Two (or more) names, often one namespace apart, carrying the **identical proof term** — one is a copy/alias of another. Look for `alias`, `abbrev`, or `theorem X := Y` patterns.
+
+### Group 0 — fingerprint `5707331` (3 members)
+
+*syntax delta (pretty-prints differ); structurally equal.*
+
+- `_private.Lean.Meta.LazyDiscrTree.0.Lean.Meta.LazyDiscrTree.getChildNgen.match_1`
+  · namespace `_private.Lean.Meta.LazyDiscrTree.0.Lean.Meta.LazyDiscrTree.getChildNgen`  ·  base `match_1`
+
+- `_private.Mathlib.Lean.Meta.RefinedDiscrTree.0.Lean.Meta.RefinedDiscrTree.findImportMatches.match_3`
+  · namespace `_private.Mathlib.Lean.Meta.RefinedDiscrTree.0.Lean.Meta.RefinedDiscrTree.findImportMatches`  ·  base `match_3`
+
+- `_private.Mathlib.Lean.Meta.RefinedDiscrTree.Initialize.0.Lean.Meta.RefinedDiscrTree.getChildNgen.match_1`
+  · namespace `_private.Mathlib.Lean.Meta.RefinedDiscrTree.Initialize.0.Lean.Meta.RefinedDiscrTree.getChildNgen`  ·  base `match_1`
+
+
+### Group 131 — fingerprint `174121000` (2 members)
+
+*byte-identical statements; structurally equal.*
+
+Statement: `∀ {R : Type u} [inst : LinearOrder R] (x y : Tropical R), max x y = Tropical.trop (max (Tropical.untrop x) (Tropical.untrop y))`
+
+- `Tropical.trop_sup_def`
+  · namespace `Tropical`  ·  base `trop_sup_def`
+  · proof head: `rfl`
+
+- `Tropical.trop_max_def`
+  · namespace `Tropical`  ·  base `trop_max_def`
+  · proof head: `rfl`
+
+
+## independent
+
+Same statement fingerprint, **distinct proof trees** — the most mathematically interesting class. We show the two proof-term heads side by side.
+
+### Group 70 — fingerprint `94490458` (2 members)
+
+*syntax delta (pretty-prints differ); structurally equal.*
+
+- `Nat.pow_lt_pow_right`
+  · namespace `Nat`  ·  base `pow_lt_pow_right`
+  · proof head: `Iff.mpr`
+
+- `Nat.pow_lt_pow_of_lt`
+  · namespace `Nat`  ·  base `pow_lt_pow_of_lt`
+  · proof head: `Exists.casesOn  (Nat.exists_eq_add_of_lt + Nat.mul_lt_mul_of_lt_of_le ...)`
+
+
+### Group 197 — fingerprint `264411993` (2 members)
+
+*byte-identical statements; structurally equal.*
+
+Statement: `∀ {X : Type u_2} [inst : PseudoMetricSpace X] {s : Set X}, IsCompact s → ∀ {e : ℝ}, 0 < e → ∃ t ⊆ s, t.Finite ∧ s ⊆ ⋃ x ∈ t, Metric.ball x e`
+
+- `IsCompact.finite_cover_balls`
+  · namespace `IsCompact`  ·  base `finite_cover_balls`
+  · proof head: `const finite_cover_balls_of_compact  (proof = the other lemma)`
+
+- `finite_cover_balls_of_compact`
+  · namespace `_root_`  ·  base `finite_cover_balls_of_compact`
+  · proof head: `finite_cover_balls_of_compact.match_1_1 (case split)`
+
+
+## rfl-variant
+
+One member's proof is `Eq.refl`/`rfl`/`trivial`, the other is **elaborated**. We surface the elaborated proof head.
+
+### Group 839 — fingerprint `1052001627` (2 members)
+
+*syntax delta (pretty-prints differ); structurally equal.*
+
+- `Nat.zero_mul`
+  · namespace `Nat`  ·  base `zero_mul`
+  · proof head: `Nat.brecOn  (structural recursion / elaborated)`
+
+- `_private.Lean.Compiler.LCNF.Simp.ConstantFold.0.Lean.Compiler.LCNF.Simp.ConstantFold.arithmeticFolders._proof_18` _[rfl]_
+  · namespace `_private.Lean.Compiler.LCNF.Simp.ConstantFold.0.Lean.Compiler.LCNF.Simp.ConstantFold.arithmeticFolders`  ·  base `_proof_18`
+
+
+### Group 3074 — fingerprint `3846370601` (4 members)
+
+*byte-identical statements; structurally equal.*
+
+Statement: `Parser.Parser → Parser.Parser`
+
+- `Lean.Parser.interpolatedStrNoAntiquot`
+  · namespace `Lean.Parser`  ·  base `interpolatedStrNoAntiquot`
+
+- `Lean.Parser.ppDedent` _[rfl]_
+  · namespace `Lean.Parser`  ·  base `ppDedent`
+
+- `Lean.Parser.withPositionAfterLinebreak`
+  · namespace `Lean.Parser`  ·  base `withPositionAfterLinebreak`
+
+- `Lean.Parser.manyNoAntiquot`
+  · namespace `Lean.Parser`  ·  base `manyNoAntiquot`
+
+
+## deprecated
+
+At least one member carries `@[deprecated]`. We flag which one, and what it points to.
+
+### Group 83 — fingerprint `105629709` (2 members)
+
+*byte-identical statements; structurally equal.*
+
+Statement: `∀ {R : Type u_3} [inst : CommRing R], Quaternion.im 1 = 0`
+
+- `Quaternion.im_one`
+  · namespace `Quaternion`  ·  base `im_one`
+  · proof head: `rfl`
+
+- `Quaternion.one_im` _[@[deprecated]]_
+  · namespace `Quaternion`  ·  base `one_im`
+  · proof head: `const Quaternion.im_one  (proof = the renamed lemma)`
+
+
+### Group 185 — fingerprint `250002412` (2 members)
+
+*byte-identical statements; structurally equal.*
+
+Statement: `{R : Type u_5} → [Ring R] → Cubic R → R`
+
+- `Cubic.disc` _[@[deprecated]]_
+  · namespace `Cubic`  ·  base `disc`
+  · proof head: `const Cubic.discr  (def = the renamed def)`
+
+- `Cubic.discr`
+  · namespace `Cubic`  ·  base `discr`
+  · proof head: `HAdd.hAdd  (the actual discriminant expression)`
+
+
+### Group 217 — fingerprint `288151278` (2 members)
+
+*byte-identical statements; structurally equal.*
+
+Statement: `∀ {X : Type u_2} [inst : PseudoEMetricSpace X] [inst_1 : One X], Metric.ediam 1 = 0`
+
+- `Metric.ediam_one`
+  · namespace `Metric`  ·  base `ediam_one`
+  · proof head: `Metric.ediam_singleton`
+
+- `EMetric.diam_one` _[@[deprecated]]_
+  · namespace `EMetric`  ·  base `diam_one`
+  · proof head: `const Metric.ediam_one  (proof = the renamed lemma)`
+
+
+## unknown
+
+At least one member exposes **no proof value** (axiom / opaque / constructor / structural). We show the declaration kinds.
+
+### Group 45 — fingerprint `54431828` (2 members)
+
+*byte-identical statements; structurally equal.*
+
+Statement: `Name → Level`
+
+- `Lean.Level.param` _[no-value]_
+  · namespace `Lean.Level`  ·  base `param`
+  · proof head: `<no value> (constructor)`
+
+- `Lean.mkLevelParam`
+  · namespace `Lean`  ·  base `mkLevelParam`
+  · proof head: `lam -> Lean.Level.param  (thin wrapper)`
+
+
+### Group 252 — fingerprint `332782343` (2 members)
+
+*byte-identical statements; structurally equal.*
+
+Statement: `DefKind`
+
+- `Lean.Elab.DefKind.abbrev` _[no-value]_
+  · namespace `Lean.Elab.DefKind`  ·  base `abbrev`
+  · proof head: `<no value> (constructor)`
+
+- `Lean.Elab.DefKind.theorem` _[no-value]_
+  · namespace `Lean.Elab.DefKind`  ·  base `theorem`
+  · proof head: `<no value> (constructor)`
+
+
+## hash-only collisions (the couch crease)
+
+Three groups share a 64-bit fingerprint but have **structurally different statements** — the hash collided, the mathematics did not. The atlas already records `structurallyEqual = false` for exactly these three, i.e. a *finer expansion than the hash* (structural `Expr` equality) immediately separates them. Any sharper view — full `Expr` walk, a different hash seed, or the pretty-print — shows the difference.
+
+### Group 841 — fingerprint `1053078126`
+
+- `CategoryTheory.Adjunction.leftAdjointUniq_hom_counit` — `∀ {C : Type u_1} {D : Type u_2} [inst : CategoryTheory.Category.{v_1, u_1} C] [inst_1 : CategoryTheory.Category.{v_2, u_2} D] {F F' : CategoryTheory.Functor C D …`
+  · head: `CategoryTheory.NatTrans.ext'`
+- `NFA._sizeOf_1` — `{α : Type u} → {σ : Type v} → [SizeOf α] → [SizeOf σ] → NFA α σ → ℕ`
+  · head: `NFA.rec  (auto sizeOf)`
+
+### Group 2936 — fingerprint `3676478579`
+
+- `Qq.Impl.mkIsDefEqResult` — `Bool → (decls : List Qq.Impl.PatVarDecl) → have a := Qq.Impl.mkIsDefEqType decls; Q(«$a»)`
+- `Qq.Impl.mkIsDefEqResult._unsafe_rec` — `Bool → (decls : List Qq.Impl.PatVarDecl) → let a := Qq.Impl.mkIsDefEqType decls; let mkIsDefEqType_1 := Qq.Impl.mkIsDefEqType decls; Q(«$mkIsDefEqType_1»)`
+
+### Group 3181 — fingerprint `3962485042`
+
+- `Mathlib.Tactic.FieldSimp.qNF.split` — `{v : Level} → {M : Q(Type v)} → (iM : Q(CommGroupWithZero «$M»)) → (l : Mathlib.Tactic.FieldSimp.qNF M) → MetaM ((l_n : Mathlib.Tactic.FieldSimp.qNF M) × (l_d : …`
+- `Mathlib.Tactic.FieldSimp.qNF.split._unsafe_rec` — `{v : Level} → {M : Q(Type v)} → (iM : Q(CommGroupWithZero «$M»)) → (l : Mathlib.Tactic.FieldSimp.qNF M) → MetaM ((l_n : Mathlib.Tactic.FieldSimp.qNF M) × (l_d : …`

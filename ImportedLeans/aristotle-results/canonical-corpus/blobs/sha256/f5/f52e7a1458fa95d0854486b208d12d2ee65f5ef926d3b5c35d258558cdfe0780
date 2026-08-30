@@ -1,0 +1,356 @@
+module DASHI.Physics.YangMills.BalabanYM4MarkedTransverseDecayFromOneStepRGExact where
+
+------------------------------------------------------------------------
+-- ROW B, WELD:  THE TRANSVERSE GEOMETRIC DECAY IS NOT AN EXTRA POSTULATE.
+--   IT IS THE ITERATE OF THE EXISTING ONE-STEP RG OWNERS.
+--
+-- WHY THIS MODULE EXISTS.  `BalabanYM4MarkedSourceMarginalTransverseSplitExact`
+-- reformulated row B as
+--
+--     H_d = H_d^marginal + H_d^transverse ,
+--     finitely many retained marginal coordinates, no decay demanded of them;
+--     geometric decay  |H_d^transverse| <= E_0 r^d  demanded of the transverse
+--     (irrelevant) kernel only,
+--
+-- and `BalabanYM4MarkedSourceSplitToCauchyConsumersExact` showed that the split
+-- still feeds every Cauchy consumer.  Both modules take `transverseDecay` as a
+-- FIELD of `MarkedSourceSplit`: an assumption.  Creating yet another record
+-- that assumes it in a different notation would be bookkeeping.
+--
+-- The repository already owns the object that is supposed to PRODUCE that
+-- decay, in two independent places:
+--
+--   * `DASHI.Physics.YangMills.BalabanSU2OneStepRGTheorem`, whose
+--     `OneStepRGTheorem` carries the source-native relevant(coupling) /
+--     irrelevant coordinate split and the one-step recursion
+--
+--         irrelevant(output) = irrelevantLinearStep(irrelevant(input))
+--                              + irrelevantRemainder(coupling, irrelevant) ;
+--
+--   * `DASHI.Physics.YangMills.BalabanCorrectedSmallPolymerExtractionContractionExact`,
+--     whose `CorrectedSmallLargePolymerExtraction` carries the finite
+--     small-polymer relevant/marginal extraction and the contraction
+--
+--         norm(irrelevantRemainder(P)) <= smallContraction * norm(activity(P)).
+--
+-- This module WELDS the split's transverse channel onto those owners: it proves
+-- that the scale-indexed iterate of either owner satisfies exactly the
+-- geometric bound the split asks for, and then BUILDS a `MarkedSourceSplit`
+-- whose `transverseDecay` field is a derived theorem rather than a hypothesis.
+--
+-- CONTENT.
+--
+--   * `affineContractionGeometric` — the analytic core.  If a nonnegative
+--     scale family obeys the affine recursion
+--
+--         e_{j+1} <= rho * e_j + S * sigma^j ,
+--
+--     with sigma <= r and a head constant A closing the division-free budget
+--     inequality  rho*A + S <= r*A , then  e_j <= A r^j  for every j.  This is
+--     the exact-rational replacement for "solve the linear recursion and
+--     dominate by the larger root": no division, no supremum, no limit.
+--
+--   * `Weld.transverseGeometricDecay` — for any scale-indexed chain of
+--     `OneStepRGTheorem`s whose consecutive endpoints agree (`input_{j+1} =
+--     output_j`: this is what makes it ONE trajectory and not a family of
+--     unrelated one-step statements), a scalar norm on the irrelevant
+--     coordinate with a contractive linear step and a geometrically small
+--     remainder gives  |irrelevant_j| <= A r^j .
+--
+--   * `Weld.weldedSplit`, `Weld.weldedPrefixBound` — the resulting
+--     `MarkedSourceSplit` and its uniform prefix bound, i.e. the row B
+--     consumer interface, driven by the owner's own constants.
+--
+--   * `Extraction.smallChainDecay` — the same conclusion from the other owner:
+--     iterating the small-polymer extraction along a chain of small polymers
+--     gives  norm(activity_j) <= smallContraction^j * norm(activity_0) .
+--
+--   * `witnessDecay` — a numeric non-vacuity witness for the analytic core.
+--
+-- WHAT THIS IS NOT.  This does not close row B.  What it does is name exactly
+-- what the physical CMP116/CMP119 analysis must still deliver, on the literal
+-- differentiated marked source family and uniformly in cutoff, volume and
+-- scale: (i) a scalar mark norm, (ii) a contraction factor `rho` for the
+-- linearized irrelevant step, and (iii) a remainder bound `S sigma^j` with
+-- `sigma <= r`, plus (iv) the identification of the chain with the physical
+-- trajectory.  Everything downstream of those four is now machine-checked.
+-- No row becomes proved; the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat as Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+import Data.Nat.Base as ℕ
+open import Data.Nat.Base using (z≤n; s≤s)
+open import Data.Rational.Base as ℚ using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; _≤_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact
+  using (natToℚ; nonNegProduct; 0≤1ℚ; prefixSum; pow; pow-nonneg)
+
+import DASHI.Physics.YangMills.BalabanYM4MarkedSourceMarginalTransverseSplitExact
+  as MS
+import DASHI.Physics.YangMills.BalabanSU2OneStepRGTheorem as RG
+import DASHI.Physics.YangMills.BalabanCorrectedSmallPolymerExtractionContractionExact
+  as PE
+
+------------------------------------------------------------------------
+-- Monotonicity of the geometric majorant in the ratio
+------------------------------------------------------------------------
+
+pow-mono : ∀ σ r → 0ℚ ≤ σ → σ ≤ r → ∀ j → pow σ j ≤ pow r j
+pow-mono σ r 0≤σ σ≤r zero = ℚP.≤-refl
+pow-mono σ r 0≤σ σ≤r (suc j) =
+  ℚP.≤-trans
+    (ℚP.*-monoˡ-≤-nonNeg σ {{ℚ.nonNegative 0≤σ}} (pow-mono σ r 0≤σ σ≤r j))
+    (ℚP.*-monoʳ-≤-nonNeg (pow r j)
+      {{ℚ.nonNegative (pow-nonneg r (ℚP.≤-trans 0≤σ σ≤r) j)}} σ≤r)
+
+------------------------------------------------------------------------
+-- THE ANALYTIC CORE.
+--
+--   e_{j+1} <= rho e_j + S sigma^j ,  sigma <= r ,  rho A + S <= r A
+--   ==>  e_j <= A r^j .
+--
+-- Division-free: the head constant A is supplied and the single inequality
+-- `rho A + S <= r A` is what a physical estimate has to close.  (Solving for A
+-- gives the familiar A >= S/(r - rho), but no division is needed or used.)
+------------------------------------------------------------------------
+
+affineContractionGeometric :
+  ∀ (e : Nat → ℚ) (ρ σ r S A : ℚ) →
+  0ℚ ≤ ρ → 0ℚ ≤ σ → σ ≤ r → 0ℚ ≤ S → 0ℚ ≤ A →
+  e 0 ≤ A →
+  (∀ j → e (suc j) ≤ ρ * e j + S * pow σ j) →
+  ρ * A + S ≤ r * A →
+  ∀ j → e j ≤ A * pow r j
+affineContractionGeometric e ρ σ r S A 0≤ρ 0≤σ σ≤r 0≤S 0≤A head recur closes zero =
+  subst (λ z → e 0 ≤ z) (sym (ℚP.*-identityʳ A)) head
+affineContractionGeometric e ρ σ r S A 0≤ρ 0≤σ σ≤r 0≤S 0≤A head recur closes (suc j) =
+  ℚP.≤-trans (recur j)
+    (ℚP.≤-trans
+      (ℚP.+-mono-≤
+        (ℚP.*-monoˡ-≤-nonNeg ρ {{ℚ.nonNegative 0≤ρ}}
+          (affineContractionGeometric e ρ σ r S A
+            0≤ρ 0≤σ σ≤r 0≤S 0≤A head recur closes j))
+        (ℚP.*-monoˡ-≤-nonNeg S {{ℚ.nonNegative 0≤S}} (pow-mono σ r 0≤σ σ≤r j)))
+      (ℚP.≤-trans
+        (ℚP.≤-reflexive collect)
+        (ℚP.≤-trans
+          (ℚP.*-monoʳ-≤-nonNeg (pow r j) {{ℚ.nonNegative 0≤powr}} closes)
+          (ℚP.≤-reflexive reassoc))))
+  where
+    0≤r : 0ℚ ≤ r
+    0≤r = ℚP.≤-trans 0≤σ σ≤r
+
+    0≤powr : 0ℚ ≤ pow r j
+    0≤powr = pow-nonneg r 0≤r j
+
+    collect : ρ * (A * pow r j) + S * pow r j ≡ (ρ * A + S) * pow r j
+    collect =
+      trans (cong (λ z → z + S * pow r j) (sym (ℚP.*-assoc ρ A (pow r j))))
+            (sym (ℚP.*-distribʳ-+ (pow r j) (ρ * A) S))
+
+    reassoc : (r * A) * pow r j ≡ A * pow r (suc j)
+    reassoc =
+      trans (cong (λ z → z * pow r j) (ℚP.*-comm r A))
+            (ℚP.*-assoc A r (pow r j))
+
+------------------------------------------------------------------------
+-- Non-vacuity of the analytic core: an explicit dyadic instance.
+--   rho = 1/4, sigma = 1/2, S = 1/8, r = 1/2, A = 1;
+--   the budget closes as 1/4 + 1/8 = 3/8 <= 1/2.
+------------------------------------------------------------------------
+
+witnessE : Nat → ℚ
+witnessE zero = 1ℚ
+witnessE (suc j) = (+ 1 / 4) * witnessE j + (+ 1 / 8) * pow (+ 1 / 2) j
+
+witnessDecay : ∀ j → witnessE j ≤ 1ℚ * pow (+ 1 / 2) j
+witnessDecay =
+  affineContractionGeometric witnessE (+ 1 / 4) (+ 1 / 2) (+ 1 / 2) (+ 1 / 8) 1ℚ
+    (toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 4)} _)
+    (toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _)
+    ℚP.≤-refl
+    (toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 8)} _)
+    0≤1ℚ
+    ℚP.≤-refl
+    (λ j → ℚP.≤-refl)
+    (toWitness
+      {a? = ((+ 1 / 4) * 1ℚ + (+ 1 / 8)) ℚP.≤? ((+ 1 / 2) * 1ℚ)} _)
+
+------------------------------------------------------------------------
+-- WELD 1:  the one-step RG owner.
+--
+-- `chain` is ONE trajectory, not a family of unrelated one-step statements:
+-- `chainComposes` says the input of step j+1 is literally the output of step j,
+-- so `irrelevantAt` below is the irrelevant coordinate of the same evolving
+-- state, and the recursion it satisfies is the owner's own
+-- `oneStepIrrelevantContraction`.
+------------------------------------------------------------------------
+
+module Weld
+  {Coupling Irrelevant Vacuum EffectiveAction : Set}
+  (chain : Nat → RG.OneStepRGTheorem Coupling Irrelevant Vacuum EffectiveAction ℚ)
+  (chainComposes : ∀ j → RG.input (chain (suc j)) ≡ RG.output (chain j))
+  (norm : Irrelevant → ℚ)
+  (normNonNeg : ∀ x → 0ℚ ≤ norm x)
+  (ρ σ r S A : ℚ)
+  (0≤ρ : 0ℚ ≤ ρ) (0≤σ : 0ℚ ≤ σ) (σ≤r : σ ≤ r) (0≤S : 0ℚ ≤ S) (0≤A : 0ℚ ≤ A)
+  (normSubadditive : ∀ j x y →
+     norm (RG.irrelevantAdd (chain j) x y) ≤ norm x + norm y)
+  (linearStepContracts : ∀ j x →
+     norm (RG.irrelevantLinearStep (chain j) x) ≤ ρ * norm x)
+  (remainderGeometric : ∀ j →
+     norm (RG.irrelevantRemainder (chain j)
+             (RG.coupling (RG.input (chain j)))
+             (RG.irrelevant (RG.input (chain j))))
+       ≤ S * pow σ j)
+  (headBounded :
+     norm (RG.irrelevant (RG.input (chain 0))) ≤ A)
+  (budgetCloses : ρ * A + S ≤ r * A)
+  where
+
+  -- The literal transverse (irrelevant) coordinate of the trajectory at scale j.
+  irrelevantAt : Nat → Irrelevant
+  irrelevantAt j = RG.irrelevant (RG.input (chain j))
+
+  transverseNorm : Nat → ℚ
+  transverseNorm j = norm (irrelevantAt j)
+
+  -- One step of the trajectory, read off the owner's own recursion.
+  oneStepRecursion :
+    ∀ j →
+    irrelevantAt (suc j)
+      ≡ RG.irrelevantAdd (chain j)
+          (RG.irrelevantLinearStep (chain j) (irrelevantAt j))
+          (RG.irrelevantRemainder (chain j)
+            (RG.coupling (RG.input (chain j))) (irrelevantAt j))
+  oneStepRecursion j =
+    trans (cong RG.irrelevant (chainComposes j))
+          (RG.oneStepIrrelevantContraction (chain j))
+
+  affineStep :
+    ∀ j → transverseNorm (suc j) ≤ ρ * transverseNorm j + S * pow σ j
+  affineStep j =
+    ℚP.≤-trans
+      (ℚP.≤-trans
+        (ℚP.≤-reflexive (cong norm (oneStepRecursion j)))
+        (normSubadditive j
+          (RG.irrelevantLinearStep (chain j) (irrelevantAt j))
+          (RG.irrelevantRemainder (chain j)
+            (RG.coupling (RG.input (chain j))) (irrelevantAt j))))
+      (ℚP.+-mono-≤ (linearStepContracts j (irrelevantAt j)) (remainderGeometric j))
+
+  -- ROW B'S TRANSVERSE HALF, DERIVED.
+  transverseGeometricDecay : ∀ j → transverseNorm j ≤ A * pow r j
+  transverseGeometricDecay =
+    affineContractionGeometric transverseNorm ρ σ r S A
+      0≤ρ 0≤σ σ≤r 0≤S 0≤A headBounded affineStep budgetCloses
+
+  -- The full split, with the marginal channel supplied by the owner's retained
+  -- (relevant/marginal coupling) coordinates and the transverse channel now a
+  -- theorem.
+  module _
+    (marg : Nat → ℚ)
+    (retained : Nat) (marginalBound : ℚ)
+    (0≤marginalBound : 0ℚ ≤ marginalBound)
+    (marginalOnRetained : ∀ d → d ℕ.< retained → ∣ marg d ∣ ≤ marginalBound)
+    (marginalVanishes : ∀ d → retained ℕ.≤ d → marg d ≡ 0ℚ)
+    (budget : ℚ) (0≤budget : 0ℚ ≤ budget) (r≤1 : r ≤ 1ℚ)
+    (transverseBudgetCloses : A + r * budget ≤ budget)
+    where
+
+    weldedSplit : MS.MarkedSourceSplit
+    weldedSplit = record
+      { H                  = λ d → marg d + transverseNorm d
+      ; marg               = marg
+      ; perp               = transverseNorm
+      ; splits             = λ d → refl
+      ; retained           = retained
+      ; marginalBound      = marginalBound
+      ; marginalNonNeg     = 0≤marginalBound
+      ; marginalOnRetained = marginalOnRetained
+      ; marginalVanishes   = marginalVanishes
+      ; headEnergy         = A
+      ; ratio              = r
+      ; budget             = budget
+      ; headNonNeg         = 0≤A
+      ; ratioNonNeg        = ℚP.≤-trans 0≤σ σ≤r
+      ; ratioBelowOne      = r≤1
+      ; budgetNonNeg       = 0≤budget
+      ; budgetCloses       = transverseBudgetCloses
+      ; transverseDecay    = λ d →
+          ℚP.≤-trans
+            (ℚP.≤-reflexive
+              (ℚP.0≤p⇒∣p∣≡p (normNonNeg (irrelevantAt d))))
+            (transverseGeometricDecay d)
+      }
+
+    -- The row B consumer interface, now driven by the owner's own constants.
+    weldedPrefixBound :
+      ∀ k n →
+      prefixSum (λ d → ∣ MS.H weldedSplit d ∣) k n
+        ≤ marginalBound * natToℚ retained + budget
+    weldedPrefixBound = MS.Split.markedSplitPrefixBound weldedSplit
+
+------------------------------------------------------------------------
+-- WELD 2:  the small-polymer extraction owner.
+--
+-- The same conclusion from the repository's other retained/irrelevant owner.
+-- `chainIsRemainder` says the activity at scale j+1 IS the irrelevant remainder
+-- extracted at scale j -- the same-object condition -- so no auxiliary family
+-- is introduced.  Because that owner's contraction has no additive remainder,
+-- the resulting decay is the pure geometric one, with the owner's own
+-- `smallContraction` as the ratio.
+------------------------------------------------------------------------
+
+module Extraction
+  {Polymer Activity RelevantPart : Set}
+  (E : PE.CorrectedSmallLargePolymerExtraction Polymer Activity RelevantPart ℚ)
+  (orderIsLeq : ∀ {a b} → PE.LessEqual E a b → a ≤ b)
+  (productIsMul : ∀ a b → PE.multiply E a b ≡ a * b)
+  (0≤contraction : 0ℚ ≤ PE.smallContraction E)
+  (P : Nat → Polymer)
+  (allSmall : ∀ j → PE.Small E (P j))
+  (chainIsRemainder : ∀ j → PE.activity E (P (suc j)) ≡ PE.irrelevantRemainder E (P j))
+  where
+
+  activityNorm : Nat → ℚ
+  activityNorm j = PE.norm E (PE.activity E (P j))
+
+  oneStepContraction :
+    ∀ j → activityNorm (suc j) ≤ PE.smallContraction E * activityNorm j
+  oneStepContraction j =
+    ℚP.≤-trans
+      (ℚP.≤-reflexive (cong (PE.norm E) (chainIsRemainder j)))
+      (ℚP.≤-trans
+        (orderIsLeq (PE.smallRemainderContractive E (P j) (allSmall j)))
+        (ℚP.≤-reflexive
+          (productIsMul (PE.smallContraction E) (activityNorm j))))
+
+  smallChainDecay :
+    ∀ j → activityNorm j ≤ pow (PE.smallContraction E) j * activityNorm 0
+  smallChainDecay zero = ℚP.≤-reflexive (sym (ℚP.*-identityˡ (activityNorm 0)))
+  smallChainDecay (suc j) =
+    ℚP.≤-trans (oneStepContraction j)
+      (ℚP.≤-trans
+        (ℚP.*-monoˡ-≤-nonNeg (PE.smallContraction E)
+          {{ℚ.nonNegative 0≤contraction}} (smallChainDecay j))
+        (ℚP.≤-reflexive
+          (sym (ℚP.*-assoc (PE.smallContraction E)
+                 (pow (PE.smallContraction E) j) (activityNorm 0)))))
+
+  -- In the form the split consumes: head energy = the scale-zero activity norm,
+  -- ratio = the owner's own small-polymer contraction constant.
+  smallChainDecayAsSplitBound :
+    ∀ j → activityNorm j ≤ activityNorm 0 * pow (PE.smallContraction E) j
+  smallChainDecayAsSplitBound j =
+    ℚP.≤-trans (smallChainDecay j)
+      (ℚP.≤-reflexive
+        (ℚP.*-comm (pow (PE.smallContraction E) j) (activityNorm 0)))

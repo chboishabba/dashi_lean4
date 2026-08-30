@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""Apply OpenCV to each rendered frame and read off its shape.
+
+For every frame we:
+  * count the dots with Hough circle detection (independent blob count), and
+  * test whether the dot centres are collinear (a "line" shape) by fitting a
+    line and checking the max orthogonal residual.
+
+The detected dot count is compared against the Lean ground truth
+(`qdeform_pages.csv`). A mismatch is a hard failure.
+"""
+import csv
+import os
+
+import cv2
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+CSV = os.path.join(HERE, "qdeform_pages.csv")
+FRAMES = os.path.join(HERE, "frames")
+OUT = os.path.join(HERE, "detected_shapes.csv")
+
+
+def count_dots(img):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # dots are dark-red filled circles -> threshold to a binary mask
+    _, mask = cv2.threshold(gray, 120, 255, cv2.THRESH_BINARY_INV)
+    # remove the thin connecting line by erosion (line is ~2px, dots are ~20px)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL,
+                                   cv2.CHAIN_APPROX_SIMPLE)
+    centres = []
+    for c in contours:
+        area = cv2.contourArea(c)
+        if area < 50:
+            continue
+        M = cv2.moments(c)
+        cx = M["m10"] / M["m00"]
+        cy = M["m01"] / M["m00"]
+        centres.append((cx, cy))
+    return centres
+
+
+def collinear(centres, tol=1.5):
+    """True if all centres lie on one straight line (max residual < tol px)."""
+    if len(centres) <= 2:
+        return True
+    pts = np.array(centres, dtype=np.float64)
+    vx, vy, x0, y0 = cv2.fitLine(pts.astype(np.float32), cv2.DIST_L2, 0, 0.01, 0.01).ravel()
+    # orthogonal distance of each point to the fitted line
+    res = np.abs((pts[:, 0] - x0) * (-vy) + (pts[:, 1] - y0) * vx)
+    return float(res.max()) < tol
+
+
+def shape_label(n, line):
+    if n == 0:
+        return "collapse (flatline, 0 dots)"
+    return f"line with {n} dot{'s' if n != 1 else ''}" if line else f"{n} scattered dots"
+
+
+def main():
+    with open(CSV) as f:
+        truth = {int(r["page_index"]): int(r["dot_count"]) for r in csv.DictReader(f)}
+
+    rows = []
+    mismatches = 0
+    for pi in sorted(truth):
+        img = cv2.imread(os.path.join(FRAMES, f"page_{pi:03d}.png"))
+        centres = count_dots(img)
+        n = len(centres)
+        line = collinear(centres)
+        ok = (n == truth[pi])
+        if not ok:
+            mismatches += 1
+        rows.append((pi, n, truth[pi], int(line), shape_label(n, line), int(ok)))
+
+    with open(OUT, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["page_index", "detected_dots", "lean_dots",
+                    "collinear", "shape", "match"])
+        w.writerows(rows)
+
+    # histogram of shapes
+    from collections import Counter
+    hist = Counter(r[1] for r in rows)
+    print(f"wrote {OUT}")
+    print("dot-count histogram (detected):",
+          {k: hist[k] for k in sorted(hist)})
+    print(f"mismatches vs Lean ground truth: {mismatches}")
+    if mismatches:
+        raise SystemExit(1)
+    print("ALL FRAMES MATCH LEAN GROUND TRUTH")
+
+
+if __name__ == "__main__":
+    main()

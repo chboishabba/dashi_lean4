@@ -1,0 +1,124 @@
+# Dual-Atlas vision embedding over FFI
+
+This directory exposes the project's **per-declaration dual-atlas embedding** —
+the `cog` / `triad` / `harm` projections that `RequestProject.VisionAtlas`
+rasterised and `RequestProject.VisionPatterns` proved its findings about —
+through a flat **C ABI**, so the same certified computation can be called from
+Python, C, Rust, C++, …
+
+It answers the three asks from the thread:
+
+1. **a concrete `@[export]` setup example** — `RequestProject/VisionFFI.lean`;
+2. **a Python loader for the shared library** — `aristo_vision.py`;
+3. (bonus) a minimal **C consumer** — `demo.c`.
+
+Everything here is reproducible: `build_so.sh` rebuilds the `.so` from the Lean
+source, and `aristo_vision.py` / `demo.c` exercise it end-to-end.
+
+---
+
+## What is the embedding?
+
+Each declaration is reduced to a 64-bit **fingerprint** `h`
+(`DualAtlasCensus.declFingerprint` = `type.hash XOR value.hash`).  From `h`:
+
+| function            | meaning                         | range            |
+|---------------------|---------------------------------|------------------|
+| `aristo_cog(h)`     | cognitive index (46×2 grid)     | `1 … 92`         |
+| `aristo_triad(h)`   | semantic triad (20×3 recursion) | `0 … 19`         |
+| `aristo_harm(h)`    | harmonic cell code              | `{0,5,7,11,13}`  |
+| `aristo_harm_index(h)` | harmonic bucket index        | `0 … 4`          |
+| `aristo_embedding_dim(_)` | assembled embedding dim   | `117`            |
+
+The assembled **117-dim one-hot embedding** is `[cog(92) | triad(20) | harm(5)]`,
+exactly as discussed in the thread (concatenated cog/triad/harm blocks).  The
+Python loader assembles it; a corpus of declarations becomes a `N × 117` matrix
+you can cluster, search, or feed an ML model.
+
+## Why is it trustworthy?
+
+The exported functions are **not** a re-implementation: they are proven equal to
+the certified dual-atlas projections.
+
+* `RequestProject/VisionFFI.lean` — the C-ABI surface plus *self-contained*
+  range certification (`cogU_range : 1 ≤ … ≤ 92`, `triadU_range : … ≤ 19`,
+  `harmU_mem`, `harmIndexU_range`). No `Mathlib`, so the `.so` stays tiny.
+* `RequestProject/VisionFFICert.lean` — proves the FFI projections equal the
+  already-certified `DualAtlas` ones:
+  `cogU_eq_cogProj`, `triadU_eq_triadProj`, `harmU_eq_harmCode`.
+  These are the projections whose rasters `VisionPatterns` proves harmonic
+  dominance / argmax about, so the vectors you get over FFI are provably the
+  same data the in-Lean analysis is built on.
+
+Both modules build as part of the normal `lake build` and are `sorry`-free.
+
+## Concrete `@[export]` setup
+
+The whole C surface is just (from `RequestProject/VisionFFI.lean`):
+
+```lean
+@[inline] def cogU (h : UInt64) : UInt64 := (h % 92) + 1
+
+@[export aristo_cog]   def aristo_cog   (h : UInt64) : UInt64 := cogU h
+@[export aristo_triad] def aristo_triad (h : UInt64) : UInt64 := triadU h
+@[export aristo_harm]  def aristo_harm  (h : UInt64) : UInt64 := harmU h
+```
+
+`@[export c_name] def f (x : UInt64) : UInt64` makes the Lean compiler emit an
+**unboxed** C function `uint64_t c_name(uint64_t)` — no Lean heap objects cross
+the boundary, so the linkage is trivial.
+
+## Build the shared library
+
+```bash
+bash vision/ffi/build_so.sh
+# -> vision/ffi/build/libaristovision.so
+```
+
+The script (a) emits C with `lake env lean -c`, (b) compiles it to a PIC object
+with **default symbol visibility** (`leanc` defaults to `-fvisibility=hidden`,
+which would hide the `LEAN_EXPORT` symbols from the `.so`'s dynamic symbol
+table), and (c) links against `libleanshared.so`.
+
+## Python loader
+
+```python
+from aristo_vision import AristoVision
+av = AristoVision()                 # loads build/libaristovision.so
+av.cog(123456789)                   # -> 58
+av.embedding(123456789)             # -> length-117 one-hot list
+```
+
+Run the self-check:
+
+```bash
+python3 vision/ffi/aristo_vision.py
+```
+
+The loader (1) `dlopen`s `libleanshared.so` GLOBAL, (2) `dlopen`s the embedding
+library, (3) runs `lean_initialize_runtime_module()` then the module initialiser
+`initialize_RequestProject_VisionFFI(1, world)` where `world = (void*)1` is the
+inline `lean_io_mk_world()` token, then `lean_io_mark_end_initialization()`, and
+(4) binds the `uint64_t f(uint64_t)` symbols.
+
+## C consumer
+
+```bash
+SR=$(lean --print-prefix)
+cc -I"$SR/include" -o vision/ffi/build/demo vision/ffi/demo.c \
+   -Lvision/ffi/build -L"$SR/lib/lean" \
+   -laristovision -lleanshared \
+   -Wl,-rpath,vision/ffi/build -Wl,-rpath,"$SR/lib/lean"
+./vision/ffi/build/demo 123456789
+```
+
+## Files
+
+| file                                   | role                                            |
+|----------------------------------------|-------------------------------------------------|
+| `RequestProject/VisionFFI.lean`        | `@[export]` C ABI + range certification         |
+| `RequestProject/VisionFFICert.lean`    | proofs that the FFI = certified `DualAtlas`      |
+| `vision/ffi/build_so.sh`               | build `libaristovision.so`                       |
+| `vision/ffi/aristo_vision.py`          | Python ctypes loader + 117-dim embedding         |
+| `vision/ffi/demo.c`                    | minimal C consumer                               |
+| `vision/ffi/build/`                    | generated artifacts (reproducible)               |

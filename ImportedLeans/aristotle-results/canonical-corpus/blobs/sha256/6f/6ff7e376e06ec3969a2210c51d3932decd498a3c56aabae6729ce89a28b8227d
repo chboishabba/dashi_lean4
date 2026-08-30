@@ -1,0 +1,47 @@
+# Summary of changes for run 1f4108bd-ceee-4f93-b708-e655a6f5680a
+I extended the `AristotleExporter` NotebookLM plugin with graph partitioning so it groups the core library away from the project instead of walking every proof down to bedrock.
+
+What changed (in `RequestProject/AristotleExporter.lean`):
+- **Graph partitioning by defining module.** The dependency walk now classifies each reachable declaration by the module it is defined in (via `Environment.getModuleIdxFor?` + `header.moduleNames`), splitting the graph into a *project partition* and a *core-library partition*. Module-based classification is far more reliable than name prefixes: core standard-library declarations such as `Nat.add` or `List.foldl` — whose names are not under `Lean.*` — are now correctly recognised as library code.
+- **A boundary cut that stops at a reasonable level.** The traversal recurses only through project declarations. The moment it reaches a core-library declaration it records that declaration on a *frontier* and stops, so it no longer descends to the foundational Mathlib/Lean axioms on every run. Frontier declarations are emitted as lightweight, statement-only blocks (no proof bodies), sorted and annotated with their source module.
+- **Auto-derived project root.** When `projectModules` is left empty (the default), the project's module root is auto-derived from the module that defines the export target (e.g. targeting something in `MyProj.Foo` makes `MyProj` the project root). It is also fully configurable.
+- **Separate, grouped output files.** The project partition is written to `notebook_lm_part_*.txt` (top-down, result-first, with first claim on the file budget) and the core-library frontier is grouped away into `core_library_part_*.txt`, all still respecting the configurable per-file word cap (default 500,000) and maximum file count (default 50).
+- **Escape hatch.** A new `expandBoundary` config flag restores the old "go all the way to bedrock" behaviour when desired.
+
+The driver `RequestProject/RunExport.lean` and its docstring were updated to describe the two-partition output. The full project builds successfully; running it produces a 30-declaration project partition (down from 3652 when the whole transitive closure was walked) plus a 125-declaration core-library frontier, written to `notebook_lm_files/notebook_lm_part_1.txt` and `notebook_lm_files/core_library_part_1.txt`. No `sorry`, axioms, or `@[implemented_by]` were introduced.
+
+To retarget or tune the partition (output directory, project module prefixes, word/file limits, or `expandBoundary`), edit the target in `RequestProject/RunExport.lean` or pass a custom `ExportConfig` to `AristotleExporter.runExport`, then rebuild.
+
+# Summary of changes for run ad57871c-52f9-43f8-8164-0ba36ca65338
+I applied the existing `AristotleExporter` NotebookLM plugin to this project.
+
+What I added:
+- `RequestProject/RunExport.lean` — a small driver file that imports the exporter and invokes `#exportToNotebookLM AristotleExporter.elabExportCmd into "notebook_lm_files"`. The target is the project's user-facing command elaborator (the "crown jewel"), so the export starts from it and walks backwards through everything it depends on.
+
+What it produced (generated at build time):
+- `notebook_lm_files/notebook_lm_part_1.txt` — a top-down, result-first text export of the project. It contains 3,495 reachable declarations in pre-order (the target first, foundations last). The project's own declarations (`AristotleExporter.elabExportCmd`, `ExportConfig`, `runExport`, `exportTopDown`, `writeChunks`, `estimateWords`, …) appear at the top, followed by the core-library declarations they rest on.
+- The export fits in a single ~422,830-word file, comfortably within the configured 500,000-words-per-file and 50-file limits, so no truncation occurred.
+
+Verification:
+- `lake build` completes successfully; compiling `RequestProject.RunExport` runs the exporter and writes the output file into `notebook_lm_files/` at the project root.
+- No `sorry`, axioms, or `@[implemented_by]` were introduced, and the existing files were left untouched.
+
+To re-run or retarget the export, edit the target identifier (or output directory) in `RequestProject/RunExport.lean` and rebuild.
+
+# Summary of changes for run bae9a3ec-4b4f-431e-98fe-39583370d3c1
+I built the generic, drop-in Lean 4 plugin you described and added it to the project as `RequestProject/AristotleExporter.lean`. It compiles cleanly against the project's toolchain (verified with a full build) and was tested end-to-end.
+
+What it does (top-down "result-first" export for NotebookLM):
+- **Reflection / dependency tracing** — `exportTopDown` uses Lean's environment metadata (`ConstantInfo`, `Expr.getUsedConstants`) to walk the full transitive dependency graph of any target declaration.
+- **Top-down ordering** — it emits each declaration *before* recursing into its dependencies (pre-order DFS), so the target "crown-jewel" result lands first and foundational lemmas/axioms come last. Cycles and re-visits are guarded by a visited set. Verified that for a `top → mid → base` chain, `top` is emitted first.
+- **Chunking & file limits** — `writeChunks` writes plain-text `notebook_lm_part_N.txt` files capped at a configurable word count (default 500,000) and a configurable file ceiling (default 50). Whole declaration blocks are never split across files, and if the project exceeds `maxFiles × maxWordsPerFile`, the low-priority foundational tail is truncated so the top results are always preserved (with a warning in the report). Word counting is whitespace-based (spaces/tabs/newlines).
+- **Formatting** — each block is labeled by kind (THEOREM/AXIOM/DEFINITION/INDUCTIVE/…) with the pretty-printed type/statement and proof/definition.
+
+How to use it:
+- Quick command (default config): `#exportToNotebookLM my_final_theorem`
+- Custom output directory: `#exportToNotebookLM my_final_theorem into "my_output_dir"`
+- Full programmatic control via `run_cmd Command.liftTermElabM do AristotleExporter.runExport \`my_thm { outputDir := "...", maxWordsPerFile := 500000, maxFiles := 50 }`
+
+Configuration is via the `ExportConfig` structure (`maxWordsPerFile`, `maxFiles`, `outputDir`, `excludePrefixes`). By default `excludePrefixes` skips standard-library/tooling namespaces (`Lean`, `Init`, `Core`, `Std`, `Mathlib`, `Batteries`, `Aesop`, `Qq`) so the output stays focused on the project's own declarations; set it to `[]` to dump the entire transitive closure.
+
+Implementation notes vs. the original Gemini sketch: I corrected several API issues so it actually compiles and runs on this toolchain — `String.split` now returns an iterator, so word counting is done with a char fold; `StateT.run` result destructuring was fixed; file writing uses `IO.FS.createDirAll` + `IO.FS.writeFile`; and the command was implemented as a proper `syntax` + `@[command_elab]` pair supporting the optional `into "dir"` clause. No `sorry`, axioms, or `@[implemented_by]` were introduced. The existing `RequestProject/Main.lean` was left untouched.

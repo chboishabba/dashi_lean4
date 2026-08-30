@@ -1,0 +1,447 @@
+import Integration.SewingTaxonomy
+import Integration.EpistemicTrit
+import Integration.DNAMarginTrit
+import Integration.EducationGates
+import Integration.ObserverPlurality
+import Integration.GovernanceAgency
+import Integration.ChemistryKernelSocket
+import AgdaMirror.LoomRelationAlgebra
+import Integration.ChemistryReachability
+import Integration.TernaryHubClosure
+
+/-!
+# The sewing registry: the cross-domain pass of this round, machine-checked
+
+`Integration.Registry` is the four-level global map.  This file is its
+sewing-round counterpart: every row is an `Integration.SewingTaxonomy.SewnRow`,
+so it carries
+
+* the **owner** in the small TOE owner set that consumes the surface,
+* the **consumer** surface itself,
+* a **classified relation** in one of the seven classes, *with the Lean witness
+  the class demands* — an `exactInstance` row cannot be filed without a
+  `Transport`, a `negativeResult` row cannot be filed without a refutation, an
+  `openSocket` row cannot be filed without a proof of underdetermination, and a
+  `candidateBridge` row cannot be filed without the proved implication,
+* and full **provenance**: module path, PR/ref, ancestry, source-vs-mirror
+  status, validation status on each side, and the claim boundary.
+
+## The meta-theorems
+
+* `no_row_claims_agda_typechecked` — **no row claims an Agda typecheck.**  No
+  Agda checker was run in this environment, and the registry is proved to say
+  so, row by row.
+* `every_row_has_boundary` — every row carries a non-empty claim boundary.
+* `no_branch_only_rows` — no row is sourced from a PR head: the PR_HEADS
+  surfaces named in the handoff are not present in this tree (see
+  `PR_HEADS_STATUS.md`), so no row may cite one.
+* `kinds_exercised` — which of the seven classes this round actually exercises.
+* `exact_rows_are_equivalences` — every `exactInstance` row yields an actual
+  equivalence of carriers, extracted from the row.
+
+## Scope
+
+No row mentions Yang–Mills or Navier–Stokes material.  No row asserts a
+physical, biological, neural, educational, institutional, chemical or
+theory-of-everything claim: every carrier appearing in a witness is a finite
+label type, a `Bool`-valued record, `ZMod 3`, `ℚ` or `ℝ`.
+-/
+
+set_option maxRecDepth 10000
+
+namespace Integration.SewingRegistry
+
+open Integration.SewingTaxonomy
+open Integration.Levels
+
+/-! ## Provenance helpers -/
+
+/-- Provenance for a surface that lives in the tracked tree, mirrored into Lean,
+with no Agda checker result. -/
+def tracked (path : String) (ancestry : List String) (boundary : String) : Provenance where
+  modulePath := path
+  prRef := none
+  ancestry := ancestry
+  surface := .agdaMirror
+  agda := .agdaNotChecked
+  lean := .leanBuilt
+  claimBoundary := boundary
+
+/-- Provenance for Lean text *about* an Agda surface that it does not
+transcribe (a finite model, say). -/
+def about (path : String) (ancestry : List String) (boundary : String) : Provenance where
+  modulePath := path
+  prRef := none
+  ancestry := ancestry
+  surface := .leanAboutAgda
+  agda := .agdaNotChecked
+  lean := .leanBuilt
+  claimBoundary := boundary
+
+/-! ## The rows -/
+
+/-- The cross-domain rows established in this sewing round. -/
+noncomputable def sewingRegistry : List SewnRow :=
+  [ -- 1. Ontology → ternary hub
+    { owner := "Integration.TernaryHub (balanced ZMod 3 coordinate)"
+      consumer := "DASHI.Ontology.EpistemicTrit.EpistemicTrit"
+      relation := .exactInstance Integration.Ontology.epistemicHub
+      prov := tracked "Agda/DASHI/Ontology/EpistemicTrit.agda"
+        ["Integration.TernaryHub", "Synthesis.ToneCore"]
+        "Three-element label type; `supported`/`contradicted` are constructor \
+         names, not epistemic states.  The Agda module declares the polarity \
+         nowhere: the involution swapping the determinate states is supplied \
+         here." }
+  , -- 2. Ontology: the shared carrier does not carry the algebra
+    { owner := "Integration.TernaryHub"
+      consumer := "DASHI.Ontology.EpistemicTrit._⊗ₑ_"
+      relation := .negativeResult
+        (∀ x y : Integration.Ontology.EpistemicTrit,
+          Integration.Ontology.balEpistemic (Integration.Ontology.agree x y) =
+            Integration.Ontology.balEpistemic x + Integration.Ontology.balEpistemic y)
+        Integration.Ontology.agree_not_add
+      prov := tracked "Agda/DASHI/Ontology/EpistemicTrit.agda"
+        ["Integration.Ontology.epistemicHub"]
+        "Refutes only that consensus is *addition* in the hub coordinate; \
+         `agree_not_mul` and `agree_no_identity` are the companion negatives." }
+  , -- 3. Ontology: binary forcing breaks polarity
+    { owner := "Integration.EquivarianceObstruction"
+      consumer := "DASHI.Ontology.EpistemicTrit.forceUnresolvedToAccept / …ToReject"
+      relation := .negativeResult
+        (∃ f : Integration.Ontology.EpistemicTrit → Bool,
+          ∀ x, f (Integration.Ontology.polarity x) = ! f x)
+        Integration.Ontology.no_polarity_equivariant_forcing
+      prov := tracked "Agda/DASHI/Ontology/EpistemicTrit.agda"
+        ["Integration.EquivarianceObstruction.no_equivariant_map_of_fixed_to_free"]
+        "A statement about maps into `Bool`; it says nothing about decision \
+         procedures, policy, or evidence handling." }
+  , -- 4. Biology/DNA → ternary hub
+    { owner := "Integration.TernaryHub (balanced ZMod 3 coordinate)"
+      consumer := "DASHI.Biology.DNAChemistryTritQuotientBridge.ChemistryMargin"
+      relation := .exactInstance Integration.DNAMarginTrit.marginHub
+      prov := tracked "Agda/DASHI/Biology/DNAChemistryTritQuotientBridge.agda"
+        ["DASHI.Foundations.SSPTritCarrier", "Integration.TernaryHub"]
+        "Exact for the *induced* involution: the Agda module supplies the two \
+         round-trips but no involution on `ChemistryMargin`.  No claim about \
+         DNA, nucleotides or base identity." }
+  , -- 5. Biology/DNA: the ternary quotient cannot index the fibre
+    { owner := "Integration.TernaryHub"
+      consumer := "DASHI.Biology.DNAChemistryTritQuotientBridge.AdmissibleFibreArity"
+      relation := .negativeResult
+        (∃ f : Integration.DNAMarginTrit.AdmissibleFibreArity →
+            Integration.DNAMarginTrit.ChemistryMargin, Function.Injective f)
+        Integration.DNAMarginTrit.no_injection_arity_to_margin
+      prov := tracked "Agda/DASHI/Biology/DNAChemistryTritQuotientBridge.agda"
+        ["Integration.DNAMarginTrit.marginHub"]
+        "A cardinality fact about two label types; it is the checkable content \
+         of the module's own `ternaryRequiredAtEveryStep = false`." }
+  , -- 6. Biology/DNA: the sheet record's flags are free
+    { owner := "Integration.Levels.Socket"
+      consumer := "DASHI.Biology.DNAChemistryTritQuotientBridge.ChemistrySheetTrit"
+      relation := .openSocket
+        (∃ s t : Integration.DNAMarginTrit.ChemistrySheetTrit Unit Unit,
+          s.margin = t.margin ∧
+            s.isCompleteChemistryCoordinate ≠ t.isCompleteChemistryCoordinate)
+        Integration.DNAMarginTrit.sheetFlags_underdetermined
+      prov := tracked "Agda/DASHI/Biology/DNAChemistryTritQuotientBridge.agda"
+        ["Integration.DNAMarginTrit.sheetTrit_redundant"]
+        "`isCompleteChemistryCoordinate` is a free `Bool`; the row records that \
+         it constrains nothing, not that the coordinate is incomplete." }
+  , -- 7. Education: gates are conjunctive
+    { owner := "Integration.EducationGates (product/validity)"
+      consumer := "DASHI.Education.RelationalEducationGateAlgebra.ValidEducationRelation"
+      relation := .negativeResult
+        (Nonempty (Integration.EducationGates.ValidEducationRelation
+          Integration.EducationGates.sixOfSeven))
+        (fun h => Integration.EducationGates.sixOfSeven_no_witness.false h.some)
+      prov := tracked "Agda/DASHI/Education/RelationalEducationGateAlgebra.agda"
+        ["Integration.EducationGates.isEmpty_of_gate_empty"]
+        "Seven abstract carrier types; nothing about education.  The row \
+         refutes aggregation-by-count, on a carrier assignment we choose." }
+  , -- 8. Education: metric governance is fail-closed
+    { owner := "Integration.Levels.Boundary"
+      consumer := "DASHI.Education.RelationalEducationGateAlgebra.EducationMetricGovernance"
+      relation := .negativeResult
+        (∃ m : Integration.EducationGates.EducationMetricGovernance,
+          m.surveyEqualsVoice = true)
+        (by rintro ⟨m, hm⟩; rw [m.surveyEqualsVoiceIsFalse] at hm; exact Bool.noConfusion hm)
+      prov := tracked "Agda/DASHI/Education/RelationalEducationGateAlgebra.agda"
+        ["Integration.EducationGates.metric_governance_fail_closed"]
+        "The record cannot be inhabited with the flag `true`.  This is a fact \
+         about the record, not about surveys or voice." }
+  , -- 9. Education: the rate record is a presentation, not a value
+    { owner := "Integration.Levels.Boundary"
+      consumer := "DASHI.Education.RelationalEducationGateAlgebra.FiniteRate"
+      relation := .negativeResult
+        (Function.Injective Integration.EducationGates.value)
+        Integration.EducationGates.rate_value_not_injective
+      prov := tracked "Agda/DASHI/Education/RelationalEducationGateAlgebra.agda"
+        ["Integration.EducationGates.value_multiplyRate"]
+        "About `ℕ × ℕ` presentations of rationals; no empirical rate is \
+         asserted." }
+  , -- 10. Education: the rounded overlap square, approximate with a bound
+    { owner := "Integration.ApproximateIntertwiner (certified-approximate tier)"
+      consumer := "DASHI.Education.RelationalEducationGateAlgebra.expectedIndependentOverlap"
+      relation := .approximateInstance (by infer_instance)
+        Integration.EducationGates.overlapCount (fun n => n + 1)
+        (fun x => x + 21 / 10000) 1 Integration.EducationGates.overlapCount_approx
+      prov := about "Lean/Integration/EducationGates.lean"
+        ["DASHI.Education.RelationalEducationGateAlgebra.multiplyRate"]
+        "The rate `21/10000` is the Agda module's own constant, used only as an \
+         arithmetic input; `1` is the rounding bound, not an empirical error." }
+  , -- 11. Alice Brown / biology: observer incomparability
+    { owner := "Integration.LeastSufficient (Refines)"
+      consumer := "DASHI.Biology.ParentAllyshipMultiObserverBridge (childVoiceRemainsDistinct)"
+      relation := .negativeResult
+        (Integration.LeastSufficient.Refines Integration.ObserverPlurality.student
+          Integration.ObserverPlurality.parentAlly)
+        Integration.ObserverPlurality.student_parent_incomparable.1
+      prov := about "Lean/Integration/ObserverPlurality.lean"
+        ["Agda/DASHI/Biology/ParentAllyshipMultiObserverBridge.agda",
+         "Agda/DASHI/Biology/AliceBrownCorpusLoom.agda",
+         "Agda/DASHI/Governance/AliceBrownInstitutionalAgencyChoiceBridgeExact.agda"]
+        "Proved on an explicit finite model of the record *shape*: the carrier \
+         is `Bool × Bool × Bool` and the observers are coordinate projections. \
+         It is not a statement about the corpus's own projections, which are \
+         not maps at all (row 12), nor about students, parents or institutions." }
+  , -- 12. Alice Brown: the projection record is a label
+    { owner := "Integration.Levels.Socket"
+      consumer := "DASHI.Biology.ParentAllyshipMultiObserverBridge.ObserverProjection"
+      relation := .openSocket
+        (Nonempty (Integration.ObserverPlurality.ObserverProjection ≃
+          (Integration.ObserverPlurality.ObserverFibre × String)))
+        ⟨Integration.ObserverPlurality.projectionRecordIsLabel⟩
+      prov := tracked "Agda/DASHI/Biology/ParentAllyshipMultiObserverBridge.agda"
+        ["Integration.ObserverPlurality.projectionRecordIsLabel"]
+        "The record has no field denoting a map out of any carrier, so its \
+         three pinned `Bool` flags cannot constrain any projection." }
+  , -- 13. Governance: declared emptiness carries no information
+    { owner := "Integration.Levels.Socket"
+      consumer :=
+        "DASHI.Governance.AliceBrownInstitutionalAgencyChoiceBridgeExact.FormalOptionPromotesAgency"
+      relation := .openSocket
+        (∀ Q : Prop, Integration.GovernanceAgency.PromotionRoute → Q)
+        Integration.GovernanceAgency.emptyPromotion_proves_everything
+      prov := tracked
+        "Agda/DASHI/Governance/AliceBrownInstitutionalAgencyChoiceBridgeExact.agda"
+        ["Integration.GovernanceAgency.promotionRoute_isEmpty"]
+        "The empty promotion type refutes nothing: an inhabitant would prove \
+         every proposition.  Filing it as evidence would be inferring a theorem \
+         from a constructor name." }
+  , -- 14. Governance: the agency surface is genuinely underdetermined
+    { owner := "Integration.LeastSufficient (Refines)"
+      consumer :=
+        "DASHI.Governance.AliceBrownInstitutionalAgencyChoiceBridgeExact.InstitutionalAgencySurface"
+      relation := .negativeResult
+        (Integration.LeastSufficient.Refines
+          (fun s : Integration.GovernanceAgency.InstitutionalAgencySurface =>
+            s.formalOptionPresented)
+          (fun s : Integration.GovernanceAgency.InstitutionalAgencySurface =>
+            s.effectivelyAccessible))
+        Integration.GovernanceAgency.agency_not_determined_by_formalOption
+      prov := tracked
+        "Agda/DASHI/Governance/AliceBrownInstitutionalAgencyChoiceBridgeExact.agda"
+        ["Integration.ObserverPlurality.not_refines_of_collapse"]
+        "A statement about two `Bool` fields of a five-`Bool` record; no \
+         institutional claim." }
+  , -- 15. Chemistry: the kernel is fail-closed
+    { owner := "Integration.Levels.Boundary"
+      consumer := "DASHI.Chemistry.TransitionKernel.ChemistryTransitionKernel"
+      relation := .negativeResult
+        (∃ k : Integration.ChemistryKernelSocket.ChemistryTransitionKernel Unit,
+          k.wetLabValidationAccepted = true)
+        (by rintro ⟨k, hk⟩; rw [k.wetLabValidationAcceptedIsFalse] at hk
+            exact Bool.noConfusion hk)
+      prov := tracked "Agda/DASHI/Chemistry/TransitionKernel.agda" []
+        "The four pinned flags are the module's only formal content; the row \
+         says the record cannot assert measurement or validation, not that \
+         chemistry has been modelled." }
+  , -- 16. Chemistry: reachability flags are open sockets
+    { owner := "Integration.Levels.Socket"
+      consumer := "DASHI.Chemistry.TransitionKernel.ReachabilityProblem.goalReachable"
+      relation := .openSocket
+        (∃ p q : Integration.ChemistryKernelSocket.ReachabilityProblem Unit,
+          p.transitionSystem = q.transitionSystem ∧ p.goalReachable ≠ q.goalReachable)
+        (Integration.ChemistryKernelSocket.goalReachable_underdetermined ())
+      prov := tracked "Agda/DASHI/Chemistry/TransitionKernel.agda" []
+        "The flag is a free `Bool`; the row records underdetermination, not \
+         unreachability." }
+  , -- 17. Chemistry: the candidate bridge that would close the socket
+    { owner := "Integration.SewingTaxonomy (candidateBridge)"
+      consumer := "DASHI.Chemistry.TransitionKernel.ReachabilityProblem"
+      relation := .candidateBridge
+        (Integration.ChemistryKernelSocket.FlagSound (S := Unit) (fun _ => true)
+          (fun _ => True))
+        (∀ p q : Integration.ChemistryKernelSocket.ReachabilityProblem Unit,
+          p.transitionSystem = q.transitionSystem → p.goalReachable = q.goalReachable)
+        (fun h p q hs =>
+          Integration.ChemistryKernelSocket.flag_determined_of_sound h trivial trivial hs)
+      prov := about "Lean/Integration/ChemistryKernelSocket.lean"
+        ["Integration.ChemistryKernelSocket.goalReachable_underdetermined"]
+        "The implication is proved in general.  The hypothesis `FlagSound` is \
+         **no longer undischarged**: \
+         `Integration.ChemistryReachability.chemistryFlagSound` supplies an \
+         inhabitant for a concrete four-state graph and a proved reachability \
+         procedure, and `chemistryFlag_determined` is the resulting \
+         determination.  `flagSound_not_automatic` still shows the hypothesis \
+         is not free in general, so the class stays `candidateBridge` for the \
+         abstract carrier." }
+  , -- 18. Education ↔ chemistry: a shared shape, and no map
+    { owner := "Integration.SewingTaxonomy (structuralAnalogue)"
+      consumer := "fail-closed authority records across the education and chemistry lanes"
+      relation := .structuralAnalogue
+        (fun T => ∃ flag : T → Bool, ∀ t, flag t = false)
+        Integration.EducationGates.EducationMetricGovernance
+        (Integration.ChemistryKernelSocket.ChemistryTransitionKernel Unit)
+        ⟨fun m => m.surveyEqualsVoice, fun m => m.surveyEqualsVoiceIsFalse⟩
+        ⟨fun k => k.wetLabValidationAccepted, fun k => k.wetLabValidationAcceptedIsFalse⟩
+      prov := about "Lean/Integration/SewingRegistry.lean"
+        ["Integration.EducationGates.metric_governance_fail_closed",
+         "Integration.ChemistryKernelSocket.kernel_fail_closed"]
+        "Deliberately the weakest class: the two lanes exhibit the same \
+         fail-closed shape, and **no map between them is claimed or exists in \
+         the corpus**.  This row must not be read as an identification." }
+  , -- 19. Loom relation algebra: the root classifier as a finite shadow
+    { owner := "Integration.SewingTaxonomy (finiteShadow)"
+      consumer := "LoomRelationAlgebra.relationRootFor"
+      relation := .finiteShadow inferInstance AgdaMirror.Loom.relationRootFor
+        AgdaMirror.Loom.relationRootFor_surjective
+      prov := tracked "Agda/LoomRelationAlgebra.agda"
+        ["Cuisine.LoomBridge", "Integration.Refinement"]
+        "Nine relation labels onto four coarse roots.  Surjective, so the root \
+         enumeration is a faithful image; **not** injective \
+         (`relationRootFor_not_injective`), so no inverse is claimed and the \
+         row is a shadow rather than an identification.  Both carriers are \
+         finite label types; nothing about affidavits or legal sufficiency is \
+         asserted." }
+  , -- 20. Loom: relation type does not determine promotion
+    { owner := "Integration.SewingTaxonomy (negativeResult)"
+      consumer := "LoomRelationAlgebra.LoomRelationAlgebra.separatesRelationFromPromotion"
+      relation := .negativeResult
+        (∀ r s : AgdaMirror.Loom.LoomTypedRelation,
+          r.relationType = s.relationType → r.promotionState = s.promotionState)
+        (by
+          intro h
+          obtain ⟨r, s, ht, hp⟩ :=
+            AgdaMirror.Loom.promotion_not_determined_by_relationType
+          exact hp (h r s ht))
+      prov := tracked "Agda/LoomRelationAlgebra.agda"
+        ["AgdaMirror.Loom.promotion_not_determined_by_relationType"]
+        "The Agda record pins a `Bool` flag `separatesRelationFromPromotion` to \
+         `true`.  This row is that flag's content as a refutation: promotion is \
+         not a function of the relation type.  It says nothing about when \
+         promotion *should* occur." }
+  , -- 21. Loom: evidence status is an open socket
+    { owner := "Integration.Levels.Socket"
+      consumer := "LoomRelationAlgebra.LoomTypedRelation.evidenceStatus"
+      relation := .openSocket
+        (∃ r s : AgdaMirror.Loom.LoomTypedRelation,
+          r.relationType = s.relationType ∧ r.evidenceStatus ≠ s.evidenceStatus)
+        AgdaMirror.Loom.evidence_not_determined_by_relationType
+      prov := tracked "Agda/LoomRelationAlgebra.agda"
+        ["AgdaMirror.Loom.typedRelationEquiv"]
+        "`typedRelationEquiv` shows the declared root and bucket fields are \
+         redundant, so a typed relation is its type plus evidence, promotion \
+         and a note.  Of those, evidence status is unconstrained by the corpus: \
+         the socket records underdetermination, not a defect." }
+  , -- 22. Chemistry: a genuine non-reachability witness
+    { owner := "Integration.SewingTaxonomy (negativeResult)"
+      consumer := "Integration.ChemistryReachability.cstep"
+      relation := .negativeResult
+        (Relation.ReflTransGen
+          (Integration.ChemistryReachability.stepRel Integration.ChemistryReachability.cstep) 0 3)
+        Integration.ChemistryReachability.cstep_not_reaches_three
+      prov := about "Lean/Integration/ChemistryReachability.lean"
+        ["Integration.ChemistryReachability.reachB_complete_of_fixpoint",
+         "Integration.ChemistryReachability.cstepSaturates"]
+        "A four-element state type and a `Bool` step relation.  The isolated \
+         state is provably not reachable — a proof of non-reachability, not an \
+         unset flag.  `reachability` and `transition system` are used in their \
+         graph-theoretic sense; no chemical claim is made." }
+  , -- 23. Chemistry: the class restriction on the discharged bridge is load-bearing
+    { owner := "Integration.SewingTaxonomy (negativeResult)"
+      consumer := "Integration.ChemistryReachability.CorrectlyPopulated"
+      relation := .negativeResult
+        (∀ p q : Integration.ChemistryKernelSocket.ReachabilityProblem
+            (Integration.ChemistryReachability.FiniteTS (Fin 4)),
+          p.transitionSystem = q.transitionSystem → p.goalReachable = q.goalReachable)
+        (by
+          intro h
+          obtain ⟨p, q, hs, -, -, hne⟩ :=
+            Integration.ChemistryReachability.correctness_restriction_is_needed
+          exact hne (h p q hs))
+      prov := about "Lean/Integration/ChemistryReachability.lean"
+        ["Integration.ChemistryKernelSocket.flag_determined_of_sound",
+         "Integration.ChemistryReachability.chemistryFlagSound"]
+        "Discharging the bridge does **not** close the socket in general: over \
+         the very same transition system an incorrectly populated problem \
+         carries the opposite flag.  The determination holds exactly on the \
+         correctly-populated class and nowhere wider." }
+  , -- 24. The ternary hub, closed: no balanced coordinate is unique
+    { owner := "Integration.TernaryHub (balanced ZMod 3 coordinate)"
+      consumer := "every three-element DASHI carrier with a declared involution"
+      relation := .negativeResult
+        (∀ t u : Transport Integration.Ontology.EpistemicTrit (ZMod 3)
+            Integration.Ontology.polarity Integration.TernaryHub.zneg, ∀ x, t.map x = u.map x)
+        (Integration.TernaryHubClosure.ternaryHub_not_unique
+          Integration.TernaryHubClosure.epistemicTrit_balancedInvolution)
+      prov := about "Lean/Integration/TernaryHubClosure.lean"
+        ["Integration.TernaryHubClosure.ternaryHub_of_involution",
+         "Integration.TernaryHubClosure.ternaryHub_two_coordinates"]
+        "`ternaryHub_of_involution` makes every three-element carrier with a \
+         self-inverse map having a single fixed point an automatic instance of \
+         the hub, so the eight hand-written rows become corollaries.  This row \
+         records the accompanying negative: the balanced coordinate is **not** \
+         unique — it is determined only up to an overall sign.  Carriers are \
+         three-element label types." }
+  ]
+
+/-! ## Meta-theorems -/
+
+/-- **No row claims an Agda typecheck.**  No Agda checker was run here. -/
+theorem no_row_claims_agda_typechecked :
+    ∀ r ∈ sewingRegistry, r.claimsAgdaTypechecked = false := by
+  have h : sewingRegistry.all (fun r => !r.claimsAgdaTypechecked) = true := rfl
+  intro r hr
+  simpa using List.all_eq_true.mp h r hr
+
+/-- Every row carries a non-empty claim boundary. -/
+theorem every_row_has_boundary : ∀ r ∈ sewingRegistry, r.hasBoundary = true := by
+  have h : sewingRegistry.all (fun r => r.hasBoundary) = true := rfl
+  intro r hr
+  simpa using List.all_eq_true.mp h r hr
+
+/-- **No row is sourced from a PR head.**  The PR_HEADS surfaces named in the
+handoff are not present in this tree, so none may be cited as provenance. -/
+theorem no_branch_only_rows : ∀ r ∈ sewingRegistry, r.branchOnly = false := by
+  have h : sewingRegistry.all (fun r => !r.branchOnly) = true := rfl
+  intro r hr
+  simpa using List.all_eq_true.mp h r hr
+
+/-- Every row's Lean side is in a build target. -/
+theorem every_row_lean_built : ∀ r ∈ sewingRegistry, r.prov.lean = .leanBuilt := by
+  have h : sewingRegistry.all (fun r => decide (r.prov.lean = .leanBuilt)) = true := rfl
+  intro r hr
+  simpa using List.all_eq_true.mp h r hr
+
+/-- The classes this round exercises, and their counts. -/
+theorem kinds_exercised :
+    (sewingRegistry.filter (fun r => r.kind == .exactInstance)).length = 2 ∧
+    (sewingRegistry.filter (fun r => r.kind == .approximateInstance)).length = 1 ∧
+    (sewingRegistry.filter (fun r => r.kind == .finiteShadow)).length = 1 ∧
+    (sewingRegistry.filter (fun r => r.kind == .structuralAnalogue)).length = 1 ∧
+    (sewingRegistry.filter (fun r => r.kind == .candidateBridge)).length = 1 ∧
+    (sewingRegistry.filter (fun r => r.kind == .negativeResult)).length = 13 ∧
+    (sewingRegistry.filter (fun r => r.kind == .openSocket)).length = 5 :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- The registry has twenty-four rows. -/
+theorem registry_length : sewingRegistry.length = 24 := rfl
+
+/-- Negatives and deliberately open obligations are the majority of the round:
+eighteen of the twenty-four rows are refutations or sockets. -/
+theorem negatives_and_sockets_dominate :
+    (sewingRegistry.filter
+      (fun r => r.kind == .negativeResult || r.kind == .openSocket)).length = 18 := rfl
+
+end Integration.SewingRegistry

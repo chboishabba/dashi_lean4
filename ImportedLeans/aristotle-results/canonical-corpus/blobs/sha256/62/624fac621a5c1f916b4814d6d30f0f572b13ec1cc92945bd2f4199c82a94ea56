@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+"""Render the dual-atlas projection rasters (emitted by RequestProject/VisionAtlas.lean)
+into images — the "many views" of every repo/corpus.
+
+For each corpus (itself / mathlib / batteries / lean4) we render:
+  * cog_grid   : the 92-bucket cognitive histogram reshaped to the 46x2 grid
+  * cog_strip  : the 92-bucket cognitive histogram as a 1-row heat strip
+  * triad_strip: the 20-bucket semantic-triad histogram as a heat strip
+  * harm_bars  : the 5 harmonic-cell populations as bars
+  * joint      : the 92x20 cog x triad joint occupancy heatmap
+
+Every raster is contrast-normalised to [0,255] so OpenCV can pull structure out
+of corpora that differ by 3 orders of magnitude in size. A comparison montage of
+the four cog grids is also written.
+"""
+import csv
+import os
+
+import cv2
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+CORPORA = ["itself", "mathlib", "batteries", "lean4"]
+OUT = os.path.join(HERE, "views")
+os.makedirs(OUT, exist_ok=True)
+
+
+def read_row(name):
+    with open(os.path.join(HERE, name)) as f:
+        return [int(x) for x in next(csv.reader(f))]
+
+
+def read_matrix(name):
+    with open(os.path.join(HERE, name)) as f:
+        return np.array([[int(x) for x in row] for row in csv.reader(f) if row],
+                        dtype=np.float64)
+
+
+def norm8(a):
+    a = np.asarray(a, dtype=np.float64)
+    lo, hi = a.min(), a.max()
+    if hi <= lo:
+        return np.zeros_like(a, dtype=np.uint8)
+    return np.uint8(np.round((a - lo) / (hi - lo) * 255.0))
+
+
+def upscale(img, sx, sy):
+    return cv2.resize(img, (img.shape[1] * sx, img.shape[0] * sy),
+                      interpolation=cv2.INTER_NEAREST)
+
+
+def colormap(img8):
+    return cv2.applyColorMap(img8, cv2.COLORMAP_INFERNO)
+
+
+def main():
+    cog_grids = {}
+    for c in CORPORA:
+        cog = read_row(f"{c}_cog.csv")        # 92 values
+        triad = read_row(f"{c}_triad.csv")    # 20 values
+        harm = read_row(f"{c}_harm.csv")      # 5 values
+        joint = read_matrix(f"{c}_joint.csv") # 92 x 20
+
+        # 46x2 cognitive grid (row-major: bucket index 0..91 -> (r,c))
+        grid = np.array(cog, dtype=np.float64).reshape(2, 46)
+        g8 = norm8(grid)
+        cog_grids[c] = g8
+        cv2.imwrite(os.path.join(OUT, f"{c}_cog_grid.png"),
+                    colormap(upscale(g8, 18, 18)))
+
+        # cog strip
+        s8 = norm8(np.array(cog).reshape(1, 92))
+        cv2.imwrite(os.path.join(OUT, f"{c}_cog_strip.png"),
+                    colormap(upscale(s8, 10, 40)))
+
+        # triad strip
+        t8 = norm8(np.array(triad).reshape(1, 20))
+        cv2.imwrite(os.path.join(OUT, f"{c}_triad_strip.png"),
+                    colormap(upscale(t8, 30, 60)))
+
+        # harm bars
+        h8 = norm8(np.array(harm).reshape(1, 5))
+        cv2.imwrite(os.path.join(OUT, f"{c}_harm_bars.png"),
+                    colormap(upscale(h8, 80, 80)))
+
+        # joint heatmap 92x20
+        j8 = norm8(joint)
+        cv2.imwrite(os.path.join(OUT, f"{c}_joint.png"),
+                    colormap(upscale(j8, 14, 8)))
+
+    # comparison montage of the four cog grids (stacked, labelled gap)
+    tiles = []
+    for c in CORPORA:
+        t = colormap(upscale(cog_grids[c], 18, 18))
+        t = cv2.copyMakeBorder(t, 28, 6, 6, 6, cv2.BORDER_CONSTANT, value=(20, 20, 20))
+        cv2.putText(t, c, (8, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6,
+                    (255, 255, 255), 1, cv2.LINE_AA)
+        tiles.append(t)
+    montage = np.vstack(tiles)
+    cv2.imwrite(os.path.join(OUT, "cog_grid_montage.png"), montage)
+    print(f"wrote views to {OUT}")
+    print("files:", sorted(os.listdir(OUT)))
+
+
+if __name__ == "__main__":
+    main()

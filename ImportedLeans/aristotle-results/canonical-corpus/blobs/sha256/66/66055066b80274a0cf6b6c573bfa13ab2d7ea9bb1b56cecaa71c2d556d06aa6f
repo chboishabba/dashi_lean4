@@ -1,0 +1,201 @@
+# Row A1a: the Ward-compensated near/far round
+
+This note records what was added in the near/far round of lane A1a
+(`LiteralCompactSimplePositiveBeta`, half A1a), what is machine-checked, and
+what precisely remains open. Every module named below was checked with
+`agda --safe` (exit 0 for the module and its whole import cone) and contains no
+postulate, hole, receipt or pragma.
+
+## The idea
+
+The four-orbit gate consumes a bound on the negative part of the single
+(4,6,4,1)-weighted combination `D(p) = 4d₁(p)+6d₂(p)+4d₃(p)+d₄(p)` of the
+literal joint Wilson + reduced Faddeev–Popov + Haar density. A uniform bound on
+`D` is not available: the hard region is where the lattice propagator
+denominator `p̂² = Σ_μ 4 sin²(p_μ/2)` is small.
+
+The compensation principle used here is: **convert the exact cancellation into a
+quantitative gain before taking absolute values.** Gauge invariance forces
+transversality, `Π_{μν}(p) = (p̂²δ_{μν} − p̂_μ p̂_ν) Π(p)`, so the numerator of
+the scalar quotient carries the same vanishing as the denominator. Factoring
+that zero out first turns the dangerous region into a regular one; only then is
+the region split into a near part (small, handled by the compensated bound) and
+a far part (denominator floored, handled by the generic rational calculus).
+
+## New modules
+
+1. `DASHI/Physics/YangMills/BalabanCMP109LiteralWardCompensatedNearQuotientExact.agda`
+
+   `NearRegion.wardFactoredQuotient`: if the numerator of a literal quotient is
+   syntactically `multiply ward tilde` with `ward` evaluating to `h ≥ 0`, if
+   `|tilde| ≤ m`, and if the denominator value `y > 0` satisfies the *same-zero
+   comparison* `c·h ≤ y` with `c > 0`, then the quotient value `z` obeys
+
+       |z| · c ≤ m .
+
+   No denominator floor occurs anywhere in the statement, and the bound does not
+   degrade as `h → 0`. Consumer forms (`wardFactoredModulusBound`,
+   `wardFactoredNegativePart`), the weighted four-orbit near density bound, the
+   literal instance with the inhabited inverse-propagator expression, and a
+   machine-checked quantitative comparison with the generic `S/floor` route
+   (which needs 30, 300, 3000 at floors 1/10, 1/100, 1/1000 where the
+   compensated bound stays at 6) are included.
+
+2. `DASHI/Physics/YangMills/BalabanCMP109LiteralOneLoopNearFarEstimateExact.agda`
+
+   The assembly. A cell functional split into a near and a far part, each
+   monotone only against comparisons valid on its own region:
+
+   * `measureAdditivity` — the two region measures add up to the cell measure
+     (derived, not assumed);
+   * `nearFarLower` — `R ≥ −(measureNear·ε_near + measureFar·ε_far)` from
+     region-restricted bounds only;
+   * `splitMajorant` / `splitMajorantIntegral` /
+     `literalJointRegularRemainderNearFar` — the two-valued majorant, its exact
+     cell integral, and the literal feed of the cancellation-preserving gate's
+     integrated negative-part consumer;
+   * a concrete two-point instance discharging every parameter.
+
+3. `DASHI/Physics/YangMills/BalabanCMP109LiteralOneLoopBoxNearFarOptimisationExact.agda`
+
+   The near region is taken to be a **coordinate box** of half-width `r`, so its
+   measure is the exact product `r⁴` and the far measure is `1/16 − r⁴`: the
+   geometric containment law (`measureNear(δ) ≲ δ²`) that the sublevel-set
+   version of the split would need is not required at all. Contains the
+   split-parameter optimisation on the repository's own SU(2) numbers (cell
+   measure 1/16, shell budget 11/12): passes at `r = 2/5`, fails at `r = 1/4`
+   and `r = 1/8`, so the optimisation is real, and a two-point instance at the
+   optimal radius discharges every parameter of the shell bound.
+
+4. `DASHI/Physics/YangMills/BalabanCMP109LiteralFarRegionFloorQuotientExact.agda`
+
+   The far half. Off the box only *some* axis is large, and which one varies
+   from point to point, so every uniform per-axis bound table is zero and the
+   syntactic bound calculus yields no floor. Proved instead, pointwise:
+
+   * `AxisFloor.hatSquaredValueFloorFromAxis` — a single axis with
+     `σ ≤ |sin(p_μ/2)|` already gives `p̂² ≥ 4σ²`, with no assumption on the
+     other three axes;
+   * `FarRegion.flooredQuotient` and its consumer forms — the honest `S/f`
+     bound, pointwise, by inversion of the exact semantics;
+   * the weighted far-region density bound, matching the near one in shape;
+   * the numbers: with the repository's own constructive outer Brillouin sine
+     gap 87/128 the floor is 7569/4096, so a unit numerator sup gives a far
+     density bound 4096/7569 < 1, well inside the optimisation's far budget.
+
+5. `DASHI/Physics/YangMills/BalabanCMP109LiteralOneLoopNearFarCompositionExact.agda`
+
+   The composition. From *point data* alone — four Ward-factored orbit records
+   at each near point, four floored orbit records at each far point — the
+   literal joint regular remainder is bounded below by minus the SU(2) shell
+   budget 11/12. The budget arithmetic is discharged at radius 2/5 with
+   per-orbit near bound 2/5 (combined 6) and per-orbit far bound 4096/7569
+   (combined 61440/7569), passing with better than a factor two of margin.
+
+## What is now open in A1a
+
+Exactly two pointwise, physical inputs. Neither is an interface, a budget, a
+gate, or a measure question:
+
+* **near box**: the transverse cofactor expression of the literal joint
+  numerator, a bound `m` on it, and the same-zero comparison constant `c` for
+  the joint denominator, with `m/c ≤ 2/5`;
+* **far region**: that off the box some coordinate satisfies the single-axis
+  sine bound `|sin(p_μ/2)| ≥ 87/128`, and that the numerator sup there is at
+  most 1.
+
+## Bishop cone status
+
+Two genuine defects in the constructive-analysis cone were repaired in this
+round:
+
+* `BalabanP33BishopInverseDexpNumeratorExact` used `+-monoˡ-≤` where the
+  library's convention required `+-monoʳ-≤` (in `vendor/bishop`, `+-monoˡ-≤ x`
+  adds `x` on the *right*). Fixed; the module now typechecks.
+* `BalabanP33BishopInverseDexpCoefficientExact.nonnegativeDifferenceGivesOrder`
+  went through the ring solver, whose normal form is not definitionally the
+  plain expression under the pinned standard library. Since `left ≤ right`
+  unfolds to `NonNegative (right − left)`, the lemma is now proved directly by
+  `0≤x⇒nonNegx`, with no normalisation step.
+
+One blocker remains in that cone, and it is a single, precisely located
+toolchain issue rather than a mathematical gap:
+`BalabanP33BishopInverseDexpCoefficientExact.lowerCoefficientPolynomialIdentity`
+(and the three sibling polynomial identities) discharge a true polynomial
+identity — independently re-verified here by exact rational arithmetic — with
+`ℝ-Solver.solve … ≃-refl`. Under the pinned Agda 2.6.4.3 / agda-stdlib 2.1 the
+solver's folded constants and the written constants have different *unnormalised
+rational representations* of the same value (the reported mismatch is a
+denominator index, `6479 != 0`), so `≃-refl` no longer closes the obligation.
+Nothing in the near/far round depends on that cone: the sine-gap constant
+87/128 enters the modules above as an explicit numerical hypothesis, flagged as
+such.
+
+---
+
+## Addendum — second A1a round (this session)
+
+### 1. Far window compatibility (machine-checked)
+
+`BalabanCMP109LiteralFarRegionFloorQuotientExact`, section 4b, now checks that
+the far window of the box split at the optimal radius is contained in the
+window on which the repository's constructive outer Brillouin sine gap is
+proved:
+
+* `farWindowLowerCompatible` — `3/4 ≤ pi * (2/5)` for every rational `pi ≥ 3.14`;
+* `farWindowUpperCompatible` — `pi * (1/2) ≤ 11/7` for every rational
+  `pi ≤ 3.1416`;
+* `farWindowNonempty` — the far window is nonempty at that radius.
+
+The upper enclosure has to be `3.1416` rather than `3.15`: `3.15/2 = 1.575`
+already exceeds `11/7 = 1.5714…`, and the sine-gap window is genuinely that
+tight at its upper end.
+
+### 2. The far region's axis selection is now proved, not assumed
+
+New module `BalabanCMP109LiteralFarBoxAxisSelectionExact`:
+
+* `nearBoxDichotomy` — for every radius and every cell point, either all four
+  coordinates are at most the radius, or a **named** coordinate exceeds it.
+  Rational comparison is decidable, so this is constructive and produces the
+  axis that the pointwise far-region floor consumes.
+* `offNearBoxGivesLargeAxis` — the contrapositive form.
+* `largeAxisHalfAngleWindow`, `offNearBoxGivesWindowAxis` — at the optimal
+  radius `2/5`, a large coordinate `x ≤ 1/2` has half-angle `pi x` inside
+  `[3/4, 11/7]`, at every far point and not merely at the boundary.
+
+So of the far-region input `(ii)` recorded in the first round, the
+combinatorial half ("off the box some coordinate is large") and the
+angular-window half are closed.  What remains there is the valuation bridge
+(that the literal sine atom at a large coordinate is the real sine of its
+half-angle) and the numerator sup.
+
+### 3. The Bishop-cone ring-solver blocker
+
+The first round left the constructive sine/cosine cone blocked at four
+Taylor-coefficient polynomial identities in
+`BalabanP33BishopInverseDexpCoefficientExact`, discharged by
+`ℝ-Solver.solve … ≃-refl`.  The diagnosis is now exact, and there are two
+independent defects:
+
+1. **Unnormalised coefficients.**  The vendored solver's coefficient ring is
+   `ℚᵘ`, which never cancels, so a coefficient folded as `2/1 * 1/6` is the
+   syntactically distinct `2/6` and `≃-refl` cannot close the side condition.
+   Fixed by `DASHI.Foundations.BishopNormalisedRationalRingSolverExact`, which
+   rebuilds the same non-reflective solver over the *normalised* rationals,
+   with the ring morphism `p ↦ (toℚᵘ p) ⋆` assembled from the standard
+   library's `toℚᵘ` homomorphism lemmas and the library's `⋆`-distribution
+   lemmas.  Nothing is assumed.
+2. **Expression trees that did not mirror the definitions.**  The trees used
+   `Κ 2 ⊗ s` where the envelope is defined by `twice s = s + s`, and plain
+   monomials where the Taylor terms are defined through Bishop's `pow` (which
+   starts from `1ℝ`).  The solver's conclusion is therefore not the
+   statement's term, and Agda unfolds both into the sequence-with-modulus
+   semantics.  The trees are now written to mirror the definitions literally,
+   which `refl` confirms.
+
+In addition, the solver's side condition is now discharged by
+`normalFormSideCondition`: equality of the two *normal forms* is a cheap
+decidable check on first-order data with normalised rational coefficients, and
+implies the required equivalence by congruence, instead of asking the
+conversion checker to compare two Bishop reals.

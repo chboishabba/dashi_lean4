@@ -1,0 +1,398 @@
+module DASHI.Physics.YangMills.YMRowCVectorHessianGramCoercivityExact where
+
+------------------------------------------------------------------------
+-- ROW C: MARGINAL + TRANSVERSE COERCIVITY ON A GENUINE TANGENT SPACE
+--
+-- WHY THIS MODULE EXISTS.  `YMRowCMarginalTransverseHessianCoercivityExact`
+-- proves the constant inequality
+--
+--     c^2 <= (r + h)(r + lambda)   ==>   (Ricci reserve) + Hess >= 0
+--
+-- for a TWO-SCALAR model: the tangent vector has already been replaced by the
+-- pair of norms (p, q) = (|X_par|, |X_perp|), and the mixing has already been
+-- replaced by the scalar bound 2 c p q.  Both of those replacements are
+-- assumptions there, not theorems.  That is the weak point of the scalar route
+-- and the one an analyst would attack first.
+--
+-- This module removes both assumptions.  It works with an ACTUAL tangent
+-- vector in `Vec ℚ n` for arbitrary n, an ACTUAL orthogonal decomposition
+--
+--     X  =  X_par  +  X_perp ,      <X_par, X_perp> = 0 ,
+--
+-- and derives:
+--
+--   * `pythagoras`             |X|^2 = |X_par|^2 + |X_perp|^2 exactly, from
+--                              bilinearity -- so "the full norm" really is the
+--                              sum of the two block norms;
+--   * `cauchySchwarzSq`        <u,v>^2 <= |u|^2 |v|^2 in Q^n, as a corollary of
+--                              the Gram determinant being nonnegative.  This is
+--                              the exact, division-free content of "the mixing
+--                              is at most c |X_par| |X_perp|";
+--   * `rankOneMixingBound`     for a rank-one mixing operator the required
+--                              squared bound m^2 <= c^2 |u|^2 |v|^2 is a
+--                              THEOREM, with c^2 = |a|^2 |b|^2, not a
+--                              hypothesis;
+--   * `vectorGramCoercivity`   the constant inequality itself, on the vector
+--                              tangent space and in squared (rational,
+--                              square-root-free) form:
+--
+--                                 m^2 <= c^2 |u|^2 |v|^2   and
+--                                 c^2 <= (r+h)(r+lambda)
+--                                 ==>  r|X|^2 + h|u|^2 - 2m + lambda|v|^2 >= 0;
+--
+--   * `vectorSpectralGap`      the same with a margin: a UNIFORM positive
+--                              curvature kappa in every tangent direction, with
+--                              no time integral and no accumulated debt;
+--   * `uniformGapOnFullNorm`   the statement in the shape Row C's consumer
+--                              wants, against |X|^2 for the assembled vector.
+--
+-- The mechanism is exactly the parallel/transverse one: the marginal (parallel)
+-- channel is not required to be coercive on its own -- only r + h >= 0 is asked
+-- of it -- while the transverse channel carries the coercive reserve, and the
+-- mixing is paid for by the arithmetic-geometric-mean identity
+--
+--     ((r+h)s + (r+lambda)t)^2 - 4 (r+h)(r+lambda) s t
+--         =  ((r+h)s - (r+lambda)t)^2  >= 0 ,
+--
+-- which is a perfect square, i.e. a Gram-type certificate again.
+--
+-- WHAT THIS IS NOT.  This does not close Row C.  Instantiating it for the
+-- literal Yang-Mills effective potential still requires the four physical
+-- constants -- the Ricci half-reserve r, the marginal coefficient h, a squared
+-- mixing bound c^2 and the transverse coercivity lambda -- for the literal
+-- effective density, and those are exactly what is open.  The frozen research
+-- count (4) is untouched.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Nat.Base using (ℕ)
+open import Data.Integer.Base using (+_)
+open import Data.Vec.Base using (Vec; []; _∷_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.Definitions using (tri<; tri≈; tri>)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; mul-nonNeg; nonneg-difference; transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4GramWedgeIdentityExact
+  using (square-nonNeg; sum-nonNeg)
+open import DASHI.Physics.YangMills.BalabanYM4GramWedgeIdentityGeneralExact
+  using (dot; normSq; gram; gramNonNeg; normSq-nonNeg; dot-comm; dot-scaleˡ)
+open import DASHI.Physics.YangMills.YMRowCMarginalTransverseHessianCoercivityExact
+  using (fourℚ; 0≤fourℚ; diff-nonNeg⇒≤)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Vector addition, bilinearity and Pythagoras
+------------------------------------------------------------------------
+
+addV : ∀ {n} → Vec ℚ n → Vec ℚ n → Vec ℚ n
+addV []       []       = []
+addV (x ∷ xs) (y ∷ ys) = (x + y) ∷ addV xs ys
+
+dot-addˡ :
+  ∀ {n} (a b c : Vec ℚ n) → dot (addV a b) c ≡ dot a c + dot b c
+dot-addˡ []       []       []       = sym (ℚP.+-identityʳ 0ℚ)
+dot-addˡ (x ∷ xs) (y ∷ ys) (z ∷ zs) =
+  trans (cong (λ w → (x + y) * z + w) (dot-addˡ xs ys zs))
+        (solve 5
+          (λ X Y Z P Q →
+            (X :+ Y) :* Z :+ (P :+ Q) := (X :* Z :+ P) :+ (Y :* Z :+ Q))
+          refl x y z (dot xs zs) (dot ys zs))
+
+dot-addʳ :
+  ∀ {n} (a b c : Vec ℚ n) → dot a (addV b c) ≡ dot a b + dot a c
+dot-addʳ a b c =
+  trans (dot-comm a (addV b c))
+        (trans (dot-addˡ b c a) (cong₂ _+_ (dot-comm b a) (dot-comm c a)))
+
+-- The orthogonal split really is orthogonal: the full norm is the sum of the
+-- two block norms, exactly.
+pythagoras :
+  ∀ {n} (u v : Vec ℚ n) → dot u v ≡ 0ℚ →
+  normSq (addV u v) ≡ normSq u + normSq v
+pythagoras u v uv≡0 =
+  trans (dot-addˡ u v (addV u v))
+    (trans (cong₂ _+_ (dot-addʳ u u v) (dot-addʳ v u v))
+      (trans (cong₂ _+_ (cong (λ z → normSq u + z) uv≡0)
+                        (cong (λ z → z + normSq v) vu≡0))
+        (cong₂ _+_ (ℚP.+-identityʳ (normSq u))
+                   (ℚP.+-identityˡ (normSq v)))))
+  where
+    vu≡0 : dot v u ≡ 0ℚ
+    vu≡0 = trans (dot-comm v u) uv≡0
+
+------------------------------------------------------------------------
+-- Cauchy-Schwarz, exactly, and the rank-one mixing bound
+------------------------------------------------------------------------
+
+cauchySchwarzSq :
+  ∀ {n} (u v : Vec ℚ n) → dot u v * dot u v ≤ normSq u * normSq v
+cauchySchwarzSq u v = diff-nonNeg⇒≤ (gramNonNeg u v)
+
+-- For the rank-one mixing  m = <u, a> <b, v>  the squared bound demanded by
+-- the coercivity theorem is a theorem, with c^2 = |a|^2 |b|^2.
+rankOneMixingBound :
+  ∀ {n} (a b u v : Vec ℚ n) →
+  (dot u a * dot b v) * (dot u a * dot b v)
+    ≤ (normSq a * normSq b) * (normSq u * normSq v)
+rankOneMixingBound a b u v =
+  transport-≤ regroupˡ regroupʳ
+    (mulMono (square-nonNeg (dot u a)) (cauchySchwarzSq u a)
+             (square-nonNeg (dot v b)) (cauchySchwarzSq v b))
+  where
+    mulMono :
+      ∀ {w x y z : ℚ} → 0ℚ ≤ w → w ≤ x → 0ℚ ≤ y → y ≤ z → w * y ≤ x * z
+    mulMono {w} {x} {y} {z} 0≤w w≤x 0≤y y≤z =
+      ℚP.≤-trans (ℚP.*-monoˡ-≤-nonNeg w {{ℚ.nonNegative 0≤w}} y≤z)
+                 (ℚP.*-monoʳ-≤-nonNeg z
+                    {{ℚ.nonNegative (ℚP.≤-trans 0≤y y≤z)}} w≤x)
+
+    regroupˡ :
+      (dot u a * dot u a) * (dot v b * dot v b)
+        ≡ (dot u a * dot b v) * (dot u a * dot b v)
+    regroupˡ =
+      trans (cong (λ z → (dot u a * dot u a) * (z * z)) (dot-comm v b))
+        (solve 2 (λ P Q → (P :* P) :* (Q :* Q) := (P :* Q) :* (P :* Q))
+                 refl (dot u a) (dot b v))
+
+    regroupʳ :
+      (normSq u * normSq a) * (normSq v * normSq b)
+        ≡ (normSq a * normSq b) * (normSq u * normSq v)
+    regroupʳ =
+      solve 4 (λ U A V B → (U :* A) :* (V :* B) := (A :* B) :* (U :* V))
+              refl (normSq u) (normSq a) (normSq v) (normSq b)
+
+------------------------------------------------------------------------
+-- A square root free comparison lemma
+------------------------------------------------------------------------
+
+sqDominates : ∀ {A B : ℚ} → 0ℚ ≤ A → B * B ≤ A * A → B ≤ A
+sqDominates {A} {B} 0≤A sq with ℚP.<-cmp 0ℚ B
+... | tri≈ _ 0≡B _ = subst (_≤ A) 0≡B 0≤A
+... | tri> _ _ B<0 = ℚP.≤-trans (ℚP.<⇒≤ B<0) 0≤A
+... | tri< 0<B _ _ = diff-nonNeg⇒≤ 0≤A-B
+  where
+    0<A+B : 0ℚ < A + B
+    0<A+B = subst (_< A + B) (ℚP.+-identityˡ 0ℚ) (ℚP.+-mono-≤-< 0≤A 0<B)
+
+    factor : (A - B) * (A + B) ≡ A * A - B * B
+    factor =
+      solve 2 (λ X Y → (X :- Y) :* (X :+ Y) := X :* X :- Y :* Y) refl A B
+
+    prod : 0ℚ ≤ (A - B) * (A + B)
+    prod = subst (0ℚ ≤_) (sym factor) (nonneg-difference sq)
+
+    0≤A-B : 0ℚ ≤ A - B
+    0≤A-B =
+      ℚP.*-cancelʳ-≤-pos (A + B) {{ℚ.positive 0<A+B}}
+        (subst (_≤ (A - B) * (A + B)) (sym (ℚP.*-zeroˡ (A + B))) prod)
+
+------------------------------------------------------------------------
+-- The vector-level constant inequality
+------------------------------------------------------------------------
+
+-- r     : Ricci half-reserve (acts on the full norm)
+-- h     : marginal / gauge-direction coefficient (need NOT be positive)
+-- lam   : transverse coercivity
+-- s, t  : |X_par|^2 , |X_perp|^2
+-- m     : the mixing <M X_par, X_perp>
+hessValue : (r h lam s t m : ℚ) → ℚ
+hessValue r h lam s t m = r * (s + t) + (h * s - twoℚ * m + lam * t)
+
+-- The arithmetic-geometric-mean certificate, as a perfect square.
+amgmSquare :
+  ∀ P L s t →
+  (P * s + L * t) * (P * s + L * t) - fourℚ * ((P * L) * (s * t))
+    ≡ (P * s - L * t) * (P * s - L * t)
+amgmSquare P L s t =
+  solve 4
+    (λ Pv Lv S T →
+      (Pv :* S :+ Lv :* T) :* (Pv :* S :+ Lv :* T)
+        :- con fourℚ :* ((Pv :* Lv) :* (S :* T))
+      := (Pv :* S :- Lv :* T) :* (Pv :* S :- Lv :* T))
+    refl P L s t
+
+vectorGramCoercivity :
+  ∀ {n} {r h lam c : ℚ} (u v : Vec ℚ n) (m : ℚ) →
+  0ℚ ≤ r + h → 0ℚ ≤ r + lam →
+  m * m ≤ (c * c) * (normSq u * normSq v) →
+  c * c ≤ (r + h) * (r + lam) →
+  0ℚ ≤ hessValue r h lam (normSq u) (normSq v) m
+vectorGramCoercivity {n} {r} {h} {lam} {c} u v m 0≤P 0≤L mixingBound constIneq =
+  subst (0ℚ ≤_) (sym asDifference) (nonneg-difference 2m≤A)
+  where
+    P = r + h
+    L = r + lam
+    s = normSq u
+    t = normSq v
+
+    0≤s : 0ℚ ≤ s
+    0≤s = normSq-nonNeg u
+
+    0≤t : 0ℚ ≤ t
+    0≤t = normSq-nonNeg v
+
+    0≤st : 0ℚ ≤ s * t
+    0≤st = mul-nonNeg 0≤s 0≤t
+
+    A = P * s + L * t
+
+    0≤A : 0ℚ ≤ A
+    0≤A = sum-nonNeg (mul-nonNeg 0≤P 0≤s) (mul-nonNeg 0≤L 0≤t)
+
+    -- (2m)^2 = 4 m^2
+    doubling : (twoℚ * m) * (twoℚ * m) ≡ fourℚ * (m * m)
+    doubling =
+      solve 1 (λ M → (con twoℚ :* M) :* (con twoℚ :* M)
+                       := con fourℚ :* (M :* M))
+              refl m
+
+    stepOne : fourℚ * (m * m) ≤ fourℚ * ((c * c) * (s * t))
+    stepOne = ℚP.*-monoˡ-≤-nonNeg fourℚ {{ℚ.nonNegative 0≤fourℚ}} mixingBound
+
+    stepTwo : (c * c) * (s * t) ≤ (P * L) * (s * t)
+    stepTwo = ℚP.*-monoʳ-≤-nonNeg (s * t) {{ℚ.nonNegative 0≤st}} constIneq
+
+    stepThree : fourℚ * ((c * c) * (s * t)) ≤ fourℚ * ((P * L) * (s * t))
+    stepThree = ℚP.*-monoˡ-≤-nonNeg fourℚ {{ℚ.nonNegative 0≤fourℚ}} stepTwo
+
+    stepFour : fourℚ * ((P * L) * (s * t)) ≤ A * A
+    stepFour =
+      diff-nonNeg⇒≤
+        (subst (0ℚ ≤_) (sym (amgmSquare P L s t))
+          (square-nonNeg (P * s - L * t)))
+
+    squares : (twoℚ * m) * (twoℚ * m) ≤ A * A
+    squares =
+      transport-≤ (sym doubling) refl
+        (ℚP.≤-trans stepOne (ℚP.≤-trans stepThree stepFour))
+
+    2m≤A : twoℚ * m ≤ A
+    2m≤A = sqDominates 0≤A squares
+
+    asDifference : hessValue r h lam s t m ≡ A - twoℚ * m
+    asDifference =
+      solve 6
+        (λ R H Lv S T M →
+          R :* (S :+ T) :+ (H :* S :- con twoℚ :* M :+ Lv :* T)
+          := ((R :+ H) :* S :+ (R :+ Lv) :* T) :- con twoℚ :* M)
+        refl r h lam s t m
+
+------------------------------------------------------------------------
+-- Uniform positive curvature: the same inequality with a margin
+------------------------------------------------------------------------
+
+vectorSpectralGap :
+  ∀ {n} {r h lam c kappa : ℚ} (u v : Vec ℚ n) (m : ℚ) →
+  0ℚ ≤ (r - kappa) + h → 0ℚ ≤ (r - kappa) + lam →
+  m * m ≤ (c * c) * (normSq u * normSq v) →
+  c * c ≤ ((r - kappa) + h) * ((r - kappa) + lam) →
+  kappa * (normSq u + normSq v)
+    ≤ hessValue r h lam (normSq u) (normSq v) m
+vectorSpectralGap {n} {r} {h} {lam} {c} {kappa} u v m 0≤P 0≤L mixingBound constIneq =
+  diff-nonNeg⇒≤
+    (subst (0ℚ ≤_) (sym shiftIdentity)
+      (vectorGramCoercivity {n} {r - kappa} {h} {lam} {c} u v m
+        0≤P 0≤L mixingBound constIneq))
+  where
+    shiftIdentity :
+      hessValue r h lam (normSq u) (normSq v) m
+          - kappa * (normSq u + normSq v)
+        ≡ hessValue (r - kappa) h lam (normSq u) (normSq v) m
+    shiftIdentity =
+      solve 7
+        (λ R H Lv S T M K →
+          (R :* (S :+ T) :+ (H :* S :- con twoℚ :* M :+ Lv :* T))
+            :- K :* (S :+ T)
+          := (R :- K) :* (S :+ T) :+ (H :* S :- con twoℚ :* M :+ Lv :* T))
+        refl r h lam (normSq u) (normSq v) m kappa
+
+-- The statement in the shape Row C's consumer wants: a uniform positive lower
+-- bound against the squared norm of the ASSEMBLED tangent vector.
+uniformGapOnFullNorm :
+  ∀ {n} {r h lam c kappa : ℚ} (u v : Vec ℚ n) (m : ℚ) →
+  dot u v ≡ 0ℚ →
+  0ℚ ≤ (r - kappa) + h → 0ℚ ≤ (r - kappa) + lam →
+  m * m ≤ (c * c) * (normSq u * normSq v) →
+  c * c ≤ ((r - kappa) + h) * ((r - kappa) + lam) →
+  kappa * normSq (addV u v)
+    ≤ hessValue r h lam (normSq u) (normSq v) m
+uniformGapOnFullNorm {n} {r} {h} {lam} {c} {kappa} u v m orth 0≤P 0≤L mb ci =
+  transport-≤ (sym (cong (kappa *_) (pythagoras u v orth))) refl
+    (vectorSpectralGap {n} {r} {h} {lam} {c} {kappa} u v m 0≤P 0≤L mb ci)
+
+------------------------------------------------------------------------
+-- Non-vacuity: an instance in dimension five with a rank-one mixing
+------------------------------------------------------------------------
+
+eA eB : Vec ℚ 5
+eA = (+ 1 / 1) ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ []
+eB = 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ (+ 1 / 1) ∷ []
+
+witR witH witLam witC witKappa : ℚ
+witR     = + 1 / 2      -- Ricci half-reserve rho/2
+witH     = 0ℚ           -- flat marginal / gauge block
+witLam   = + 3 / 1      -- transverse coercivity
+witC     = + 1 / 1      -- mixing constant
+witKappa = + 1 / 8      -- uniform curvature obtained
+
+witParallelNonNeg : 0ℚ ≤ (witR - witKappa) + witH
+witParallelNonNeg = toWitness {a? = 0ℚ ℚP.≤? ((witR - witKappa) + witH)} _
+
+witTransverseNonNeg : 0ℚ ≤ (witR - witKappa) + witLam
+witTransverseNonNeg = toWitness {a? = 0ℚ ℚP.≤? ((witR - witKappa) + witLam)} _
+
+witConstantInequality :
+  witC * witC ≤ ((witR - witKappa) + witH) * ((witR - witKappa) + witLam)
+witConstantInequality =
+  toWitness
+    {a? = (witC * witC)
+            ℚP.≤? (((witR - witKappa) + witH) * ((witR - witKappa) + witLam))}
+    _
+
+witOrthogonal : dot eA eB ≡ 0ℚ
+witOrthogonal = refl
+
+-- A uniform positive curvature in EVERY direction of the five-dimensional
+-- tangent space, for every mixing value obeying the squared bound.
+witnessUniformGap :
+  ∀ m →
+  m * m ≤ (witC * witC) * (normSq eA * normSq eB) →
+  witKappa * normSq (addV eA eB)
+    ≤ hessValue witR witH witLam (normSq eA) (normSq eB) m
+witnessUniformGap m mb =
+  uniformGapOnFullNorm {5} {witR} {witH} {witLam} {witC} {witKappa}
+    eA eB m witOrthogonal witParallelNonNeg witTransverseNonNeg mb
+    witConstantInequality
+
+-- The hypothesis is satisfiable at the extreme admissible mixing m = 1, so the
+-- statement above is not vacuous.
+witnessMaximalMixing :
+  (+ 1 / 1) * (+ 1 / 1) ≤ (witC * witC) * (normSq eA * normSq eB)
+witnessMaximalMixing =
+  toWitness
+    {a? = ((+ 1 / 1) * (+ 1 / 1))
+            ℚP.≤? ((witC * witC) * (normSq eA * normSq eB))}
+    _
+
+witnessGapAtMaximalMixing :
+  witKappa * normSq (addV eA eB)
+    ≤ hessValue witR witH witLam (normSq eA) (normSq eB) (+ 1 / 1)
+witnessGapAtMaximalMixing = witnessUniformGap (+ 1 / 1) witnessMaximalMixing
+
+-- and a rank-one mixing operator supplies such a bound automatically.
+witnessRankOneMixing :
+  ∀ (a b : Vec ℚ 5) →
+  (dot eA a * dot b eB) * (dot eA a * dot b eB)
+    ≤ (normSq a * normSq b) * (normSq eA * normSq eB)
+witnessRankOneMixing a b = rankOneMixingBound a b eA eB

@@ -1,0 +1,501 @@
+module DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopBoxNearFarOptimisationExact where
+
+------------------------------------------------------------------------
+-- ROW A1a:  THE NEAR REGION AS AN EXACT BOX, AND THE SPLIT-PARAMETER
+--   OPTIMISATION WITH NO UNPROVED GEOMETRIC MEASURE LAW.
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  Beta extraction (5.36)--(5.42).
+--
+-- WHAT THIS MODULE ADDS.
+--
+-- `BalabanCMP109LiteralOneLoopNearFarEstimateExact` proves the near/far
+-- assembly for an arbitrary split, and optimises a *model* budget in which
+-- the near region is `{ p : p^2 <= delta }` and its measure is assumed to
+-- obey `measureNear(delta) <= delta^2`.  That assumption is the geometric
+-- containment of a small-denominator region in a small ball, and it is not
+-- proved anywhere in the repository.
+--
+-- It is also unnecessary.  Nothing in the near/far machinery requires the
+-- near region to be a sublevel set of the inverse propagator: any region on
+-- which the Ward-compensated quotient bound of
+-- `BalabanCMP109LiteralWardCompensatedNearQuotientExact` is available will
+-- do.  Taking the near region to be the coordinate box
+--
+--     B_near(r)  =  { p : 0 <= p_mu <= r for every axis }
+--
+-- of the repository's normalised Brillouin cell (cell measure
+-- 1/16 = (1/2)^4, i.e. side 1/2 per axis) makes its measure an *exact
+-- product*,
+--
+--     measureNear(r) = r^4 ,      measureFar(r) = 1/16 - r^4 ,
+--
+-- with no containment estimate at all.  The far region then carries a
+-- genuine per-axis denominator floor -- some coordinate exceeds `r` -- which
+-- is exactly the hypothesis the generic rational absolute-bound calculus
+-- needs, and which behaves like `r^2` for small `r`.
+--
+-- WHAT IS PROVED HERE:
+--
+--   * `boxMeasureAdditivity` -- the two box measures add up to the cell
+--     measure, for every `r`, as an identity.
+--   * `nearBoxMeasureRange` -- `0 <= r^4 <= 1/16` for `0 <= r <= 1/2`, so the
+--     far measure is nonnegative: the split is a genuine partition.
+--   * `BoxNearFar.boxShellBound` -- the Row A1 shell bound for the literal
+--     joint Wilson + reduced Faddeev--Popov + Haar regular remainder, for any
+--     cell functional split into a box-near and a box-far part, from the
+--     Ward-compensated near bound and the floored far bound.
+--   * Section 3 -- the split-parameter optimisation, machine-checked on the
+--     repository's own SU(2) numbers.  With the compensated near sup 6 and
+--     the far sup `1/r^2` the split passes at `r = 2/5` with total
+--     15369/40000 = 0.3842..., comfortably inside the 11/12 shell budget, and
+--     fails at `r = 1/4` and `r = 1/8`: the optimisation is real, and the
+--     failure at small `r` is the divergence of the far floor.
+--   * Section 4 -- a two-point weighted instance discharging every parameter
+--     of section 2 at the optimal radius, so none of it is vacuous.
+--
+-- WHAT IS STILL OPEN.  Exactly two literal inputs, both physical:
+--
+--   (i)  the transverse cofactor of the joint numerator, with a bound `m`,
+--        and the same-zero comparison constant `c` on the near box
+--        (hypotheses of the Ward-compensated quotient theorem);
+--   (ii) the far-region denominator floor: a positive lower bound for
+--        `sum_mu 4 sin^2(p_mu/2)` when some coordinate exceeds `r`, of order
+--        `r^2`.  The repository's constructive outer sine gap
+--        (`BalabanBishopOuterBrillouinSineGapExact`) is the statement of that
+--        kind it already owns, at the fixed window `3/4 <= t <= 11/7`.
+--
+-- The unproved *geometric measure law* of the predecessor module is gone.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Data.Bool.Base using (Bool; true; false; if_then_else_)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _-_; _*_; -_; _≤_; _<_; _/_; nonNegative)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (_≡_; refl; sym; trans; subst; cong; cong₂)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.YangMills.BalabanCMP109VacuumPolarizationHypercubicSourceSymmetryExact
+  as SourceSymmetry
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonGhostHaarWeightedFourOrbitExact
+  as Joint
+import DASHI.Physics.YangMills.BalabanYM4CancellationPreservingFourOrbitGateExact
+  as Gate
+import DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopNearFarEstimateExact
+  as NearFar
+
+------------------------------------------------------------------------
+-- 1.  THE BOX MEASURES
+------------------------------------------------------------------------
+
+cellMeasure : ℚ
+cellMeasure = Gate.cubeCellMeasure                                  -- 1/16
+
+cellSide : ℚ
+cellSide = + 1 / 2
+
+cellMeasureIsSideToTheFour :
+  cellMeasure ≡ ((cellSide * cellSide) * cellSide) * cellSide
+cellMeasureIsSideToTheFour = refl
+
+nearBoxMeasure : ℚ → ℚ
+nearBoxMeasure r = ((r * r) * r) * r
+
+farBoxMeasure : ℚ → ℚ
+farBoxMeasure r = cellMeasure - nearBoxMeasure r
+
+-- A partition, exactly, for every radius.
+boxMeasureAdditivity :
+  ∀ (r : ℚ) → cellMeasure ≡ nearBoxMeasure r + farBoxMeasure r
+boxMeasureAdditivity r = sym (complement (nearBoxMeasure r) cellMeasure)
+  where
+    complement : ∀ (x y : ℚ) → x + (y - x) ≡ y
+    complement x y =
+      trans (sym (ℚP.+-assoc x y (- x)))
+        (trans (cong (λ w → w + (- x)) (ℚP.+-comm x y))
+          (trans (ℚP.+-assoc y x (- x))
+            (trans (cong (λ w → y + w) (ℚP.+-inverseʳ x))
+              (ℚP.+-identityʳ y))))
+
+-- And a genuine one: on the admissible range of radii both measures are
+-- nonnegative.
+nearBoxMeasureNonNegative : ∀ (r : ℚ) → 0ℚ ≤ r → 0ℚ ≤ nearBoxMeasure r
+nearBoxMeasureNonNegative r 0≤r =
+  nonNegProduct (nonNegProduct (nonNegProduct 0≤r 0≤r) 0≤r) 0≤r
+  where
+    nonNegProduct : ∀ {a b : ℚ} → 0ℚ ≤ a → 0ℚ ≤ b → 0ℚ ≤ a * b
+    nonNegProduct {a} {b} 0≤a 0≤b =
+      subst (_≤ a * b) (ℚP.*-zeroʳ a)
+        (ℚP.*-monoˡ-≤-nonNeg a {{nonNegative 0≤a}} 0≤b)
+
+nearBoxMeasureBelowCell :
+  ∀ (r : ℚ) → 0ℚ ≤ r → r ≤ cellSide → nearBoxMeasure r ≤ cellMeasure
+nearBoxMeasureBelowCell r 0≤r r≤side =
+  subst (nearBoxMeasure r ≤_) (sym cellMeasureIsSideToTheFour)
+    (monoFour 0≤r r≤side)
+  where
+    monoOne : ∀ {a b c : ℚ} → 0ℚ ≤ a → 0ℚ ≤ c → a ≤ b → c ≤ cellSide →
+              a * c ≤ b * cellSide
+    monoOne {a} {b} {c} 0≤a 0≤c a≤b c≤side =
+      ℚP.≤-trans
+        (ℚP.*-monoˡ-≤-nonNeg a {{nonNegative 0≤a}} c≤side)
+        (ℚP.*-monoʳ-≤-nonNeg cellSide
+          {{nonNegative (toWitness {a? = 0ℚ ℚP.≤? cellSide} _)}} a≤b)
+
+    nonNegProduct : ∀ {a b : ℚ} → 0ℚ ≤ a → 0ℚ ≤ b → 0ℚ ≤ a * b
+    nonNegProduct {a} {b} 0≤a 0≤b =
+      subst (_≤ a * b) (ℚP.*-zeroʳ a)
+        (ℚP.*-monoˡ-≤-nonNeg a {{nonNegative 0≤a}} 0≤b)
+
+    monoFour : 0ℚ ≤ r → r ≤ cellSide →
+               ((r * r) * r) * r ≤ ((cellSide * cellSide) * cellSide) * cellSide
+    monoFour 0≤r' r'≤side =
+      monoOne (nonNegProduct (nonNegProduct 0≤r' 0≤r') 0≤r') 0≤r'
+        (monoOne (nonNegProduct 0≤r' 0≤r') 0≤r'
+          (monoOne 0≤r' 0≤r' r'≤side r'≤side)
+          r'≤side)
+        r'≤side
+
+farBoxMeasureNonNegative :
+  ∀ (r : ℚ) → 0ℚ ≤ r → r ≤ cellSide → 0ℚ ≤ farBoxMeasure r
+farBoxMeasureNonNegative r 0≤r r≤side =
+  subst (_≤ farBoxMeasure r) (ℚP.+-inverseʳ (nearBoxMeasure r))
+    (ℚP.+-monoˡ-≤ (- nearBoxMeasure r)
+      (nearBoxMeasureBelowCell r 0≤r r≤side))
+
+------------------------------------------------------------------------
+-- 2.  THE SHELL BOUND ON A BOX-SPLIT CELL FUNCTIONAL
+--
+-- Same parameters as the near/far gate of the predecessor module, with the
+-- two region measures fixed to the exact box values.
+------------------------------------------------------------------------
+
+module BoxNearFar
+  (Point : Set)
+  (nearIndicator : Point → Bool)
+  (integral integralNear integralFar : (Point → ℚ) → ℚ)
+  (integralSplit :
+     ∀ (f : Point → ℚ) → integral f ≡ integralNear f + integralFar f)
+  (integralNearMono :
+     ∀ (f g : Point → ℚ) →
+     (∀ p → nearIndicator p ≡ true → f p ≤ g p) →
+     integralNear f ≤ integralNear g)
+  (integralFarMono :
+     ∀ (f g : Point → ℚ) →
+     (∀ p → nearIndicator p ≡ false → f p ≤ g p) →
+     integralFar f ≤ integralFar g)
+  (radius : ℚ)
+  (integralNearConstant :
+     ∀ (c : ℚ) → integralNear (λ _ → c) ≡ nearBoxMeasure radius * c)
+  (integralFarConstant :
+     ∀ (c : ℚ) → integralFar (λ _ → c) ≡ farBoxMeasure radius * c)
+  (integralMono :
+     ∀ (f g : Point → ℚ) → (∀ p → f p ≤ g p) → integral f ≤ integral g)
+  (integralAdd :
+     ∀ (f g : Point → ℚ) →
+     integral (λ p → f p + g p) ≡ integral f + integral g)
+  (integralScale :
+     ∀ (c : ℚ) (f : Point → ℚ) → integral (λ p → c * f p) ≡ c * integral f)
+  (integralNegation :
+     ∀ (f : Point → ℚ) → integral (λ p → - f p) ≡ - integral f)
+  (integralConstant : ∀ (c : ℚ) → integral (λ _ → c) ≡ cellMeasure * c)
+  where
+
+  open NearFar.NearFarGate Point nearIndicator integral integralNear
+    integralFar integralSplit integralNearMono integralFarMono
+    (nearBoxMeasure radius) (farBoxMeasure radius)
+    integralNearConstant integralFarConstant
+    integralMono integralAdd integralScale integralNegation
+    cellMeasure integralConstant
+    public
+
+  -- The Row A1 shell bound, from the two region estimates and the numerical
+  -- optimisation of section 3.
+  boxShellBound :
+    ∀ {wilson ghost haar : Joint.CellScalar}
+      (wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson)
+      (ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost)
+      (haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar)
+      (d₁ d₂ d₃ d₄ : Point → ℚ) (compensatedNearSup flooredFarSup : ℚ) →
+    Joint.jointOne wilson ghost haar ≡ integral d₁ →
+    Joint.jointTwo wilson ghost haar ≡ integral d₂ →
+    Joint.jointThree wilson ghost haar ≡ integral d₃ →
+    Joint.jointFour wilson ghost haar ≡ integral d₄ →
+    (∀ p → nearIndicator p ≡ true →
+       (- compensatedNearSup) ≤ GateConsumer.combined d₁ d₂ d₃ d₄ p) →
+    (∀ p → nearIndicator p ≡ false →
+       (- flooredFarSup) ≤ GateConsumer.combined d₁ d₂ d₃ d₄ p) →
+    nearBoxMeasure radius * compensatedNearSup
+      + farBoxMeasure radius * flooredFarSup
+      ≤ NearFar.shellBudgetSU2 →
+    (- NearFar.shellBudgetSU2)
+      ≤ Joint.jointRegularRemainder wilson ghost haar
+  boxShellBound wilsonSymmetry ghostSymmetry haarSymmetry
+      d₁ d₂ d₃ d₄ compensatedNearSup flooredFarSup e₁ e₂ e₃ e₄
+      nearLower farLower inside =
+    literalJointRegularRemainderInsideBudget
+      wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄
+      compensatedNearSup flooredFarSup NearFar.shellBudgetSU2
+      e₁ e₂ e₃ e₄ nearLower farLower inside
+
+------------------------------------------------------------------------
+-- 3.  THE SPLIT-PARAMETER OPTIMISATION
+--
+-- Near sup:  6, the Ward-compensated bound of
+--            `...WardCompensatedNearQuotientExact` section 4 (cofactor bound
+--            3, same-zero comparison constant 1/2).  Independent of `r`.
+-- Far sup:   1 / r^2, the generic quotient bound at a denominator floor of
+--            order r^2 with unit numerator sup.
+--
+-- The far reciprocal is carried as an explicit rational with its defining
+-- identity, so no division appears.
+------------------------------------------------------------------------
+
+compensatedNearSup : ℚ
+compensatedNearSup = NearFar.compensatedNearSup                     -- 6
+
+boxBudget : ℚ → ℚ → ℚ
+boxBudget r inverseSquare =
+  nearBoxMeasure r * compensatedNearSup + farBoxMeasure r * inverseSquare
+
+------------------------------------------------------------------------
+-- 3a.  The optimum: r = 2/5
+------------------------------------------------------------------------
+
+radiusTwoFifths inverseSquareTwoFifths : ℚ
+radiusTwoFifths = + 2 / 5
+inverseSquareTwoFifths = + 25 / 4
+
+inverseSquareTwoFifthsIsInverse :
+  (radiusTwoFifths * radiusTwoFifths) * inverseSquareTwoFifths ≡ 1ℚ
+inverseSquareTwoFifthsIsInverse = refl
+
+boxBudgetAtTwoFifths :
+  boxBudget radiusTwoFifths inverseSquareTwoFifths ≡ + 15369 / 40000
+boxBudgetAtTwoFifths = refl
+
+boxBudgetAtTwoFifthsPasses :
+  boxBudget radiusTwoFifths inverseSquareTwoFifths < NearFar.shellBudgetSU2
+boxBudgetAtTwoFifthsPasses =
+  toWitness
+    {a? = boxBudget radiusTwoFifths inverseSquareTwoFifths
+            ℚP.<? NearFar.shellBudgetSU2} _
+
+-- Room to spare: even twice the budget is still inside the shell budget.
+boxBudgetAtTwoFifthsMargin :
+  boxBudget radiusTwoFifths inverseSquareTwoFifths * (+ 2 / 1)
+    < NearFar.shellBudgetSU2
+boxBudgetAtTwoFifthsMargin =
+  toWitness
+    {a? = boxBudget radiusTwoFifths inverseSquareTwoFifths * (+ 2 / 1)
+            ℚP.<? NearFar.shellBudgetSU2} _
+
+------------------------------------------------------------------------
+-- 3b.  Both failure modes are real
+------------------------------------------------------------------------
+
+radiusQuarter inverseSquareQuarter radiusEighth inverseSquareEighth : ℚ
+radiusQuarter = + 1 / 4
+inverseSquareQuarter = + 16 / 1
+radiusEighth = + 1 / 8
+inverseSquareEighth = + 64 / 1
+
+inverseSquareQuarterIsInverse :
+  (radiusQuarter * radiusQuarter) * inverseSquareQuarter ≡ 1ℚ
+inverseSquareQuarterIsInverse = refl
+
+inverseSquareEighthIsInverse :
+  (radiusEighth * radiusEighth) * inverseSquareEighth ≡ 1ℚ
+inverseSquareEighthIsInverse = refl
+
+-- Too small a near box: the far floor collapses and the far term overruns.
+boxBudgetAtQuarterFails :
+  NearFar.shellBudgetSU2 < boxBudget radiusQuarter inverseSquareQuarter
+boxBudgetAtQuarterFails =
+  toWitness
+    {a? = NearFar.shellBudgetSU2
+            ℚP.<? boxBudget radiusQuarter inverseSquareQuarter} _
+
+boxBudgetAtEighthFails :
+  NearFar.shellBudgetSU2 < boxBudget radiusEighth inverseSquareEighth
+boxBudgetAtEighthFails =
+  toWitness
+    {a? = NearFar.shellBudgetSU2
+            ℚP.<? boxBudget radiusEighth inverseSquareEighth} _
+
+-- And the failure is monotone in the far reciprocal, so no smaller radius
+-- rescues it: the far term is increasing in `1/r^2` at fixed near measure.
+farTermMonotone :
+  ∀ (r a b : ℚ) → 0ℚ ≤ r → r ≤ cellSide → a ≤ b →
+  farBoxMeasure r * a ≤ farBoxMeasure r * b
+farTermMonotone r a b 0≤r r≤side a≤b =
+  ℚP.*-monoˡ-≤-nonNeg (farBoxMeasure r)
+    {{nonNegative (farBoxMeasureNonNegative r 0≤r r≤side)}} a≤b
+
+------------------------------------------------------------------------
+-- 3c.  Sanity of the geometry at the optimum
+------------------------------------------------------------------------
+
+twoFifthsInsideCell : radiusTwoFifths ≤ cellSide
+twoFifthsInsideCell = toWitness {a? = radiusTwoFifths ℚP.≤? cellSide} _
+
+nearBoxMeasureAtTwoFifths : nearBoxMeasure radiusTwoFifths ≡ + 16 / 625
+nearBoxMeasureAtTwoFifths = refl
+
+farBoxMeasureAtTwoFifths : farBoxMeasure radiusTwoFifths ≡ + 369 / 10000
+farBoxMeasureAtTwoFifths = refl
+
+boxMeasuresAddAtTwoFifths :
+  cellMeasure ≡ nearBoxMeasure radiusTwoFifths + farBoxMeasure radiusTwoFifths
+boxMeasuresAddAtTwoFifths = boxMeasureAdditivity radiusTwoFifths
+
+------------------------------------------------------------------------
+-- 4.  A TWO-POINT INSTANCE AT THE OPTIMAL RADIUS
+--
+-- One near point of weight `r^4` and one far point of weight `1/16 - r^4`:
+-- every parameter of section 2 is discharged, so `boxShellBound` is not
+-- vacuous.
+------------------------------------------------------------------------
+
+module WeightedTwoPoint
+  (nearWeight farWeight : ℚ)
+  (weightsAddToCell : nearWeight + farWeight ≡ cellMeasure)
+  (nearWeightNonNegative : 0ℚ ≤ nearWeight)
+  (farWeightNonNegative : 0ℚ ≤ farWeight)
+  where
+
+  indicator : Bool → Bool
+  indicator b = b
+
+  near far total : (Bool → ℚ) → ℚ
+  near f = nearWeight * f true
+  far f = farWeight * f false
+  total f = near f + far f
+
+  split : ∀ (f : Bool → ℚ) → total f ≡ near f + far f
+  split f = refl
+
+  nearMono :
+    ∀ (f g : Bool → ℚ) → (∀ p → indicator p ≡ true → f p ≤ g p) →
+    near f ≤ near g
+  nearMono f g le =
+    ℚP.*-monoˡ-≤-nonNeg nearWeight
+      {{nonNegative nearWeightNonNegative}} (le true refl)
+
+  farMono :
+    ∀ (f g : Bool → ℚ) → (∀ p → indicator p ≡ false → f p ≤ g p) →
+    far f ≤ far g
+  farMono f g le =
+    ℚP.*-monoˡ-≤-nonNeg farWeight
+      {{nonNegative farWeightNonNegative}} (le false refl)
+
+  nearConstant : ∀ (c : ℚ) → near (λ _ → c) ≡ nearWeight * c
+  nearConstant c = refl
+
+  farConstant : ∀ (c : ℚ) → far (λ _ → c) ≡ farWeight * c
+  farConstant c = refl
+
+  mono : ∀ (f g : Bool → ℚ) → (∀ p → f p ≤ g p) → total f ≤ total g
+  mono f g le =
+    ℚP.+-mono-≤ (nearMono f g (λ p _ → le p)) (farMono f g (λ p _ → le p))
+
+  add :
+    ∀ (f g : Bool → ℚ) → total (λ p → f p + g p) ≡ total f + total g
+  add f g =
+    trans
+      (cong₂ _+_
+        (ℚP.*-distribˡ-+ nearWeight (f true) (g true))
+        (ℚP.*-distribˡ-+ farWeight (f false) (g false)))
+      (regroup (near f) (near g) (far f) (far g))
+    where
+      regroup : ∀ (a b c d : ℚ) → (a + b) + (c + d) ≡ (a + c) + (b + d)
+      regroup a b c d =
+        trans (ℚP.+-assoc a b (c + d))
+          (trans
+            (cong (λ w → a + w)
+              (trans (sym (ℚP.+-assoc b c d))
+                (trans (cong (λ w → w + d) (ℚP.+-comm b c))
+                  (ℚP.+-assoc c b d))))
+            (sym (ℚP.+-assoc a c (b + d))))
+
+  scale :
+    ∀ (c : ℚ) (f : Bool → ℚ) → total (λ p → c * f p) ≡ c * total f
+  scale c f =
+    trans (cong₂ _+_ (swap nearWeight (f true)) (swap farWeight (f false)))
+      (sym (ℚP.*-distribˡ-+ c (near f) (far f)))
+    where
+      swap : ∀ (w x : ℚ) → w * (c * x) ≡ c * (w * x)
+      swap w x =
+        trans (sym (ℚP.*-assoc w c x))
+          (trans (cong (λ z → z * x) (ℚP.*-comm w c)) (ℚP.*-assoc c w x))
+
+  negation : ∀ (f : Bool → ℚ) → total (λ p → - f p) ≡ - total f
+  negation f =
+    trans
+      (cong₂ _+_
+        (sym (ℚP.neg-distribʳ-* nearWeight (f true)))
+        (sym (ℚP.neg-distribʳ-* farWeight (f false))))
+      (sym (ℚP.neg-distrib-+ (near f) (far f)))
+
+  constant : ∀ (c : ℚ) → total (λ _ → c) ≡ cellMeasure * c
+  constant c =
+    trans (sym (ℚP.*-distribʳ-+ c nearWeight farWeight))
+      (cong (λ w → w * c) weightsAddToCell)
+
+module OptimalTwoPoint =
+  WeightedTwoPoint (nearBoxMeasure radiusTwoFifths)
+    (farBoxMeasure radiusTwoFifths)
+    (sym (boxMeasureAdditivity radiusTwoFifths))
+    (nearBoxMeasureNonNegative radiusTwoFifths
+      (toWitness {a? = 0ℚ ℚP.≤? radiusTwoFifths} _))
+    (farBoxMeasureNonNegative radiusTwoFifths
+      (toWitness {a? = 0ℚ ℚP.≤? radiusTwoFifths} _) twoFifthsInsideCell)
+
+module OptimalBoxNearFar =
+  BoxNearFar Bool OptimalTwoPoint.indicator
+    OptimalTwoPoint.total OptimalTwoPoint.near OptimalTwoPoint.far
+    OptimalTwoPoint.split OptimalTwoPoint.nearMono OptimalTwoPoint.farMono
+    radiusTwoFifths
+    OptimalTwoPoint.nearConstant OptimalTwoPoint.farConstant
+    OptimalTwoPoint.mono OptimalTwoPoint.add OptimalTwoPoint.scale
+    OptimalTwoPoint.negation OptimalTwoPoint.constant
+
+-- The derived measure additivity on the instance, at the optimal radius.
+optimalInstanceMeasureAdditivity :
+  cellMeasure ≡ nearBoxMeasure radiusTwoFifths + farBoxMeasure radiusTwoFifths
+optimalInstanceMeasureAdditivity = OptimalBoxNearFar.measureAdditivity
+
+------------------------------------------------------------------------
+-- 5.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: the exact box measures and their additivity, the
+-- nonnegativity range, the box shell bound over an arbitrary split cell
+-- functional, the whole optimisation table at r = 2/5, 1/4, 1/8, and a
+-- two-point instance discharging every parameter at the optimum.
+boxMeasureLevel : ProofLevel
+boxMeasureLevel = machineChecked
+
+boxShellBoundLevel : ProofLevel
+boxShellBoundLevel = machineChecked
+
+splitParameterOptimisationLevel : ProofLevel
+splitParameterOptimisationLevel = machineChecked
+
+-- STILL OPEN: the literal transverse cofactor with its bound and the
+-- same-zero comparison constant on the near box; and the far-region
+-- denominator floor of order r^2.
+literalNearBoxInputLevel : ProofLevel
+literalNearBoxInputLevel = conditional
+
+farRegionDenominatorFloorLevel : ProofLevel
+farRegionDenominatorFloorLevel = conditional

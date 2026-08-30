@@ -1,0 +1,19 @@
+{
+  "report": "dualatlas",
+  "corpora": [
+  {
+    "corpus": "batteries",
+    "total": 9602,
+    "cogBuckets": 92,
+    "triadBuckets": 20,
+    "harmBuckets": 5,
+    "cogWins": 9602,
+    "triadWins": 0,
+    "harmWins": 0,
+    "cogWinsRel": 2754,
+    "triadWinsRel": 2844,
+    "harmWinsRel": 4004,
+    "harm": {"trivector": 5598, "muse5": 1313, "heptad7": 1108, "hemispheres11": 848, "recursion13": 735}
+  }
+  ]
+}

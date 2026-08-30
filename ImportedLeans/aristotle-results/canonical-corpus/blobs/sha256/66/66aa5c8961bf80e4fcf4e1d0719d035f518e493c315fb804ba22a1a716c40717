@@ -1,0 +1,439 @@
+/-
+# Energy balance of the physical Galerkin system
+
+The reduction in `WaleffeSerrinReduction.lean` leaves the residual quantity
+`∫_0^T ‖u‖_A² ‖u‖_2 ‖u‖_{Ḣ¹} dt`.  Two of its three factors are paid by the
+Navier–Stokes energy balance — provided the Galerkin system really is energy
+neutral in its nonlinearity.  For a truncation to a *symmetric* mode set that is
+a theorem, and this file proves it from the literal definitions:
+
+* `force_energy_neutral` — `Re ∑_k ⟪u_k, f_k⟫ = 0` for the literal projected
+  advective forcing, using only incompressibility, the reality condition and
+  the symmetry `k ∈ modes → −k ∈ modes` of the retained mode set;
+* `galerkin_energy_identity` — hence `d/dt ∑_k |u_k|² = −2ν ∑_k |k|² |u_k|²`.
+
+The proof of neutrality is the Fourier form of `∫ (u·∇)u · u = 0`: the map
+`(k,p) ↦ (k−p, −p)` is an involution of the convolution index set, and pairing a
+term with the image of its conjugate leaves a factor `u_{−p} · (−p)`, which
+vanishes by incompressibility.
+-/
+import RequestProject.NavierStokes.WaleffeSerrinReduction
+import RequestProject.NavierStokes.WaleffeSelfForcingSign
+
+noncomputable section
+
+namespace ClayNS.Waleffe
+
+/-! ## Bilinear helpers -/
+
+theorem herm_sum_right {ι : Type*} (u : Fin 3 → ℂ) (s : Finset ι) (f : ι → Fin 3 → ℂ) :
+    herm u (fun i => ∑ a ∈ s, f a i) = ∑ a ∈ s, herm u (f a) := by
+  simp only [herm, Finset.mul_sum]
+  rw [Finset.sum_comm]
+
+theorem dotb_add_right (u v w : Fin 3 → ℂ) :
+    dotb u (fun i => v i + w i) = dotb u v + dotb u w := by
+  simp [dotb, mul_add, Finset.sum_add_distrib]
+
+theorem dotb_transverse {k : Wave} {v : Fin 3 → ℂ} (h : herm (wC k) v = 0) :
+    dotb v (wC k) = 0 := by
+  have : dotb (wC k) v = 0 := by
+    simpa [dotb, herm, wC, map_intCast] using h
+  rw [dotb_comm]
+  exact this
+
+theorem herm_wC_right_of_transverse {k : Wave} {v : Fin 3 → ℂ} (h : herm (wC k) v = 0) :
+    herm v (wC k) = 0 := by
+  have := herm_conj (wC k) v
+  rw [h] at this
+  simpa using this.symm
+
+theorem dotb_conj (u v : Fin 3 → ℂ) :
+    (starRingEnd ℂ) (dotb u v) = dotb (fun i => (starRingEnd ℂ) (u i))
+      (fun i => (starRingEnd ℂ) (v i)) := by
+  simp [dotb, map_sum]
+
+theorem conj_wC (k : Wave) : (fun i => (starRingEnd ℂ) (wC k i)) = wC k := by
+  funext i
+  simp [wC, map_intCast]
+
+/-! ## The convolution index set and its involution -/
+
+/-- Pairs `(k,p)` of retained modes whose difference `k−p` is also retained:
+the index set of the truncated convolution. -/
+def convPairs (modes : Finset Wave) : Finset (Wave × Wave) :=
+  (modes ×ˢ modes).filter (fun z => z.1 - z.2 ∈ modes)
+
+theorem mem_convPairs {modes : Finset Wave} {z : Wave × Wave} (h : z ∈ convPairs modes) :
+    z.1 ∈ modes ∧ z.2 ∈ modes ∧ z.1 - z.2 ∈ modes := by
+  simp only [convPairs, Finset.mem_filter, Finset.mem_product] at h
+  exact ⟨h.1.1, h.1.2, h.2⟩
+
+theorem mem_convPairs_iff {modes : Finset Wave} {z : Wave × Wave} :
+    z ∈ convPairs modes ↔ z.1 ∈ modes ∧ z.2 ∈ modes ∧ z.1 - z.2 ∈ modes := by
+  simp only [convPairs, Finset.mem_filter, Finset.mem_product]
+  tauto
+
+/-- The involution `(k,p) ↦ (k−p, −p)` of the convolution index set. -/
+def convFlip (z : Wave × Wave) : Wave × Wave := (z.1 - z.2, -z.2)
+
+theorem convFlip_involutive (z : Wave × Wave) : convFlip (convFlip z) = z := by
+  simp [convFlip, sub_neg_eq_add, sub_add_cancel]
+
+theorem convFlip_mem {modes : Finset Wave} (hsym : ∀ k ∈ modes, -k ∈ modes)
+    {z : Wave × Wave} (h : z ∈ convPairs modes) : convFlip z ∈ convPairs modes := by
+  obtain ⟨h1, h2, h3⟩ := mem_convPairs h
+  refine mem_convPairs_iff.2 ⟨h3, hsym _ h2, ?_⟩
+  have : z.1 - z.2 - -z.2 = z.1 := by abel
+  rw [convFlip]
+  simpa [this] using h1
+
+/-! ## The truncated convolution term and its cancellation -/
+
+/-- The scalar contribution of the pair `(k,p)` to `⟪u, (u·∇)u⟫`. -/
+def convTerm (u : Wave → Fin 3 → ℂ) (z : Wave × Wave) : ℂ :=
+  Complex.I * dotb (u z.2) (wC z.1) * herm (u z.1) (u (z.1 - z.2))
+
+theorem convTerm_conj_add_flip (u : Wave → Fin 3 → ℂ)
+    (hreal : ∀ (k : Wave) (i : Fin 3), u (-k) i = (starRingEnd ℂ) (u k i))
+    (htr : ∀ k : Wave, herm (wC k) (u k) = 0) (z : Wave × Wave) :
+    (starRingEnd ℂ) (convTerm u z) + convTerm u (convFlip z) = 0 := by
+  obtain ⟨k, p⟩ := z
+  have hconj : (starRingEnd ℂ) (convTerm u (k, p))
+      = -Complex.I * dotb (u (-p)) (wC k) * herm (u (k - p)) (u k) := by
+    have h1 : (starRingEnd ℂ) (dotb (u p) (wC k)) = dotb (u (-p)) (wC k) := by
+      rw [dotb_conj]
+      congr 1
+      · funext i; exact (hreal p i).symm
+      · exact conj_wC k
+    have h2 : (starRingEnd ℂ) (herm (u k) (u (k - p))) = herm (u (k - p)) (u k) :=
+      herm_conj _ _
+    simp only [convTerm, map_mul, Complex.conj_I]
+    rw [h1, h2]
+  have hflip : convTerm u (convFlip (k, p))
+      = Complex.I * dotb (u (-p)) (wC (k - p)) * herm (u (k - p)) (u k) := by
+    have hidx : k - p - -p = k := by abel
+    simp only [convTerm, convFlip, hidx]
+  rw [hconj, hflip]
+  have hzero : dotb (u (-p)) (wC p) = 0 := by
+    have h0 : dotb (u (-p)) (wC (-p)) = 0 := dotb_transverse (htr (-p))
+    have hwneg : wC (-p) = fun i => -(wC p i) := by
+      funext i; simp [wC]
+    rw [hwneg] at h0
+    have hneg : dotb (u (-p)) (fun i => -(wC p i)) = -dotb (u (-p)) (wC p) := by
+      simp [dotb, Finset.sum_neg_distrib]
+    rw [hneg] at h0
+    exact neg_eq_zero.mp h0
+  have hsum : dotb (u (-p)) (wC k)
+      = dotb (u (-p)) (wC (k - p)) + dotb (u (-p)) (wC p) := by
+    rw [← dotb_add_right]
+    congr 1
+    funext i
+    exact (wC_add (by abel : k - p + p = k) i).symm
+  have hdiff : dotb (u (-p)) (wC (k - p)) - dotb (u (-p)) (wC k) = 0 := by
+    rw [hsum, hzero, add_zero]
+    ring
+  have hcollect : -Complex.I * dotb (u (-p)) (wC k) * herm (u (k - p)) (u k)
+      + Complex.I * dotb (u (-p)) (wC (k - p)) * herm (u (k - p)) (u k)
+      = Complex.I * herm (u (k - p)) (u k)
+        * (dotb (u (-p)) (wC (k - p)) - dotb (u (-p)) (wC k)) := by
+    ring
+  rw [hcollect, hdiff, mul_zero]
+
+/-! ## The symmetric core of a mode set -/
+
+/-- The part of a mode set that is closed under negation.  The reality condition
+forces the field to vanish on the rest. -/
+def symCore (modes : Finset Wave) : Finset Wave := modes.filter (fun k => -k ∈ modes)
+
+theorem symCore_subset (modes : Finset Wave) : symCore modes ⊆ modes :=
+  Finset.filter_subset _ _
+
+theorem mem_symCore {modes : Finset Wave} {k : Wave} :
+    k ∈ symCore modes ↔ k ∈ modes ∧ -k ∈ modes := by
+  simp [symCore]
+
+theorem symCore_symmetric {modes : Finset Wave} {k : Wave} (h : k ∈ symCore modes) :
+    -k ∈ symCore modes := by
+  obtain ⟨h1, h2⟩ := mem_symCore.1 h
+  exact mem_symCore.2 ⟨h2, by simpa using h1⟩
+
+namespace GalerkinFlow
+
+/-- The reality condition kills the field on modes whose opposite is not
+retained. -/
+theorem u_zero_of_neg_not_mem (G : GalerkinFlow) (t : ℝ) {k : Wave} (h : -k ∉ G.modes) :
+    G.u t k = 0 := by
+  have h0 : G.u t (-k) = 0 := G.support t (-k) h
+  funext i
+  have := G.reality t k i
+  rw [h0] at this
+  have hc : (starRingEnd ℂ) (G.u t k i) = 0 := this.symm
+  simpa using congrArg (starRingEnd ℂ) hc
+
+theorem u_zero_of_not_mem_symCore (G : GalerkinFlow) (t : ℝ) {k : Wave}
+    (h : k ∉ symCore G.modes) : G.u t k = 0 := by
+  by_cases hk : k ∈ G.modes
+  · have : -k ∉ G.modes := fun hneg => h (mem_symCore.2 ⟨hk, hneg⟩)
+    exact G.u_zero_of_neg_not_mem t this
+  · exact G.support t k hk
+
+end GalerkinFlow
+
+/-! ## Energy neutrality of the truncated nonlinearity -/
+
+theorem sum_convTerm_re_eq_zero {modes : Finset Wave} (u : Wave → Fin 3 → ℂ)
+    (hsym : ∀ k ∈ modes, -k ∈ modes)
+    (hreal : ∀ (k : Wave) (i : Fin 3), u (-k) i = (starRingEnd ℂ) (u k i))
+    (htr : ∀ k : Wave, herm (wC k) (u k) = 0) :
+    (∑ z ∈ convPairs modes, convTerm u z).re = 0 := by
+  set S := ∑ z ∈ convPairs modes, convTerm u z with hS
+  have hflip : ∑ z ∈ convPairs modes, convTerm u (convFlip z) = S := by
+    refine Finset.sum_nbij' convFlip convFlip ?_ ?_ ?_ ?_ ?_
+    · exact fun a ha => convFlip_mem hsym ha
+    · exact fun a ha => convFlip_mem hsym ha
+    · exact fun a _ => convFlip_involutive a
+    · exact fun a _ => convFlip_involutive a
+    · exact fun a _ => rfl
+  have hconj : (starRingEnd ℂ) S = -S := by
+    have h1 : (starRingEnd ℂ) S = ∑ z ∈ convPairs modes, (starRingEnd ℂ) (convTerm u z) := by
+      rw [hS, map_sum]
+    have h2 : ∀ z ∈ convPairs modes,
+        (starRingEnd ℂ) (convTerm u z) = -convTerm u (convFlip z) := by
+      intro z _
+      have := convTerm_conj_add_flip u hreal htr z
+      linear_combination this
+    rw [h1, Finset.sum_congr rfl h2, Finset.sum_neg_distrib, hflip]
+  have hsum : S + (starRingEnd ℂ) S = 0 := by rw [hconj]; ring
+  have : (2 * S.re : ℝ) = 0 := by
+    have := Complex.add_conj S
+    rw [hsum] at this
+    exact_mod_cast this.symm
+  linarith
+
+namespace GalerkinFlow
+
+variable (G : GalerkinFlow)
+
+/-- The pairing of the field with its own advective term, written as a sum over
+the truncated convolution index set. -/
+theorem herm_advection_eq_sum (t : ℝ) {k : Wave} :
+    herm (G.u t k) (advection G.modes (G.u t) k)
+      = ∑ p ∈ G.modes, convTerm (G.u t) (k, p) := by
+  have hadv : advection G.modes (G.u t) k
+      = fun i => ∑ p ∈ G.modes,
+          (Complex.I * dotb (G.u t p) (wC (k - p))) * G.u t (k - p) i := rfl
+  rw [hadv, herm_sum_right]
+  refine Finset.sum_congr rfl fun p _ => ?_
+  rw [herm_smul_right]
+  have hdot : dotb (G.u t p) (wC (k - p)) = dotb (G.u t p) (wC k) := by
+    have hzero : dotb (G.u t p) (wC p) = 0 := dotb_transverse (G.transverse t p)
+    have hsum : dotb (G.u t p) (wC k)
+        = dotb (G.u t p) (wC (k - p)) + dotb (G.u t p) (wC p) := by
+      rw [← dotb_add_right]
+      congr 1
+      funext i
+      exact (wC_add (by abel : k - p + p = k) i).symm
+    rw [hsum, hzero, add_zero]
+  rw [hdot]
+  rfl
+
+/-- **Energy neutrality of the physical Galerkin nonlinearity.**  The pairing of
+the field with its own projected advective forcing has vanishing real part.  No
+hypothesis beyond the structure of a Galerkin flow is needed: incompressibility
+kills the pressure/Leray part, and the reality condition makes the effective
+mode set symmetric. -/
+theorem force_energy_neutral (t : ℝ) :
+    (∑ k ∈ G.modes, herm (G.u t k) (G.force t k)).re = 0 := by
+  classical
+  set u := G.u t with hu
+  -- the Leray projection is invisible to a transverse field
+  have hforce : ∀ k ∈ G.modes,
+      herm (u k) (G.force t k) = -herm (u k) (advection G.modes u k) := by
+    intro k _
+    have hperp : herm (u k) (wC k) = 0 := herm_wC_right_of_transverse (G.transverse t k)
+    have hv : G.force t k
+        = fun i => -(advection G.modes u k i
+            - (herm (wC k) (advection G.modes u k) / ((wsq k : ℝ) : ℂ)) * ((k i : ℤ) : ℂ)) := rfl
+    rw [hv]
+    have hsplit : herm (u k) (fun i => advection G.modes u k i
+        - (herm (wC k) (advection G.modes u k) / ((wsq k : ℝ) : ℂ)) * ((k i : ℤ) : ℂ))
+        = herm (u k) (advection G.modes u k)
+          - (herm (wC k) (advection G.modes u k) / ((wsq k : ℝ) : ℂ)) * herm (u k) (wC k) := by
+      simp only [herm, wC, Finset.sum_sub_distrib, mul_sub, Finset.mul_sum]
+      congr 1
+      exact Finset.sum_congr rfl fun i _ => by ring
+    have hneg : herm (u k) (fun i => -(advection G.modes u k i
+        - (herm (wC k) (advection G.modes u k) / ((wsq k : ℝ) : ℂ)) * ((k i : ℤ) : ℂ)))
+        = -herm (u k) (fun i => advection G.modes u k i
+            - (herm (wC k) (advection G.modes u k) / ((wsq k : ℝ) : ℂ)) * ((k i : ℤ) : ℂ)) := by
+      simp only [herm]
+      rw [← Finset.sum_neg_distrib]
+      exact Finset.sum_congr rfl fun i _ => by ring
+    rw [hneg, hsplit, hperp, mul_zero, sub_zero]
+  -- rewrite as a sum over the convolution index set
+  have hstep1 : ∑ k ∈ G.modes, herm (u k) (G.force t k)
+      = -∑ z ∈ G.modes ×ˢ G.modes, convTerm u z := by
+    rw [Finset.sum_product]
+    rw [Finset.sum_congr rfl hforce, Finset.sum_neg_distrib]
+    congr 1
+    exact Finset.sum_congr rfl fun k _ => G.herm_advection_eq_sum t
+  have hstep2 : ∑ z ∈ G.modes ×ˢ G.modes, convTerm u z
+      = ∑ z ∈ convPairs (symCore G.modes), convTerm u z := by
+    refine (Finset.sum_subset ?_ ?_).symm
+    · intro z hz
+      obtain ⟨h1, h2, -⟩ := mem_convPairs hz
+      exact Finset.mem_product.2 ⟨symCore_subset _ h1, symCore_subset _ h2⟩
+    · intro z hz hnot
+      obtain ⟨hk, hp⟩ := Finset.mem_product.1 hz
+      have hzero : u z.1 = 0 ∨ u z.2 = 0 ∨ u (z.1 - z.2) = 0 := by
+        by_cases h1 : z.1 ∈ symCore G.modes
+        · by_cases h2 : z.2 ∈ symCore G.modes
+          · by_cases h3 : z.1 - z.2 ∈ symCore G.modes
+            · exact absurd (mem_convPairs_iff.2 ⟨h1, h2, h3⟩) hnot
+            · exact Or.inr (Or.inr (G.u_zero_of_not_mem_symCore t h3))
+          · exact Or.inr (Or.inl (G.u_zero_of_not_mem_symCore t h2))
+        · exact Or.inl (G.u_zero_of_not_mem_symCore t h1)
+      rcases hzero with h | h | h
+      · simp [convTerm, h, herm]
+      · simp [convTerm, h, dotb]
+      · simp [convTerm, h, herm]
+  rw [hstep1, hstep2, Complex.neg_re,
+    sum_convTerm_re_eq_zero u (fun k hk => symCore_symmetric hk)
+      (fun k i => G.reality t k i) (fun k => G.transverse t k)]
+  ring
+
+end GalerkinFlow
+
+/-! ## The energy identity -/
+
+theorem normSq_hasDerivAt (f : ℝ → ℂ) (d : ℂ) (t : ℝ) (hf : HasDerivAt f d t) :
+    HasDerivAt (fun s => Complex.normSq (f s)) (2 * ((starRingEnd ℂ) (f t) * d).re) t := by
+  have hre : HasDerivAt (fun s => (f s).re) d.re t :=
+    Complex.reCLM.hasFDerivAt.comp_hasDerivAt t hf
+  have him : HasDerivAt (fun s => (f s).im) d.im t :=
+    Complex.imCLM.hasFDerivAt.comp_hasDerivAt t hf
+  have h := (hre.mul hre).add (him.mul him)
+  have heq : (fun s => Complex.normSq (f s))
+      = fun s => (f s).re * (f s).re + (f s).im * (f s).im := by
+    funext s; simp [Complex.normSq_apply]
+  rw [heq]
+  convert h using 1
+  simp [Complex.mul_re]
+  ring
+
+theorem nsq_hasDerivAt (v : ℝ → Fin 3 → ℂ) (d : Fin 3 → ℂ) (t : ℝ)
+    (hv : ∀ i, HasDerivAt (fun s => v s i) (d i) t) :
+    HasDerivAt (fun s => nsq (v s)) (2 * (herm (v t) d).re) t := by
+  have h : HasDerivAt (fun s => ∑ i, Complex.normSq (v s i))
+      (∑ i, 2 * ((starRingEnd ℂ) (v t i) * d i).re) t := by
+    simpa using HasDerivAt.sum fun i (_ : i ∈ Finset.univ) =>
+      normSq_hasDerivAt (fun s => v s i) (d i) t (hv i)
+  have heq : ∑ i, 2 * ((starRingEnd ℂ) (v t i) * d i).re = 2 * (herm (v t) d).re := by
+    rw [herm, Complex.re_sum, Finset.mul_sum]
+  rw [heq] at h
+  exact h
+
+namespace GalerkinFlow
+
+variable (G : GalerkinFlow)
+
+/-- The energy of a Galerkin flow. -/
+def energy (t : ℝ) : ℝ := ∑ k ∈ G.modes, nsq (G.u t k)
+
+/-- The enstrophy (Dirichlet energy) of a Galerkin flow. -/
+def dissipation (t : ℝ) : ℝ := ∑ k ∈ G.modes, wsq k * nsq (G.u t k)
+
+theorem energy_nonneg (t : ℝ) : 0 ≤ G.energy t :=
+  Finset.sum_nonneg fun _ _ => nsq_nonneg _
+
+theorem dissipation_nonneg (t : ℝ) : 0 ≤ G.dissipation t :=
+  Finset.sum_nonneg fun k _ => mul_nonneg (wsq_nonneg k) (nsq_nonneg _)
+
+theorem energy_eq_wienerL2_sq (t : ℝ) : wienerL2 G.modes (G.u t) ^ 2 = G.energy t := by
+  simp only [wienerL2, energy]
+  exact Real.sq_sqrt (Finset.sum_nonneg fun _ _ => nsq_nonneg _)
+
+theorem dissipation_eq_wienerH1_sq (t : ℝ) : wienerH1 G.modes (G.u t) ^ 2 = G.dissipation t := by
+  simp only [wienerH1, dissipation]
+  exact Real.sq_sqrt (Finset.sum_nonneg fun k _ => mul_nonneg (wsq_nonneg k) (nsq_nonneg _))
+
+/-- **The Galerkin energy identity.**  The truncated system dissipates exactly:
+`d/dt ∑_k |u_k|² = −2ν ∑_k |k|² |u_k|²`. -/
+theorem energy_hasDerivAt (t : ℝ) :
+    HasDerivAt G.energy (-2 * G.nu * G.dissipation t) t := by
+  have hterm : ∀ k ∈ G.modes,
+      HasDerivAt (fun s => nsq (G.u s k))
+        (-2 * G.nu * (wsq k * nsq (G.u t k)) + 2 * (herm (G.u t k) (G.force t k)).re) t := by
+    intro k hk
+    have hd := nsq_hasDerivAt (fun s => G.u s k)
+      (fun i => -((G.nu * wsq k : ℝ) : ℂ) * G.u t k i + G.force t k i) t
+      (fun i => G.ode t k hk i)
+    have hsplit : herm (G.u t k)
+        (fun i => -((G.nu * wsq k : ℝ) : ℂ) * G.u t k i + G.force t k i)
+        = -((G.nu * wsq k : ℝ) : ℂ) * (nsq (G.u t k) : ℂ) + herm (G.u t k) (G.force t k) := by
+      rw [herm_add_right, herm_smul_right, herm_self]
+    rw [hsplit] at hd
+    have hre : (-((G.nu * wsq k : ℝ) : ℂ) * (nsq (G.u t k) : ℂ)
+        + herm (G.u t k) (G.force t k)).re
+        = -(G.nu * wsq k) * nsq (G.u t k) + (herm (G.u t k) (G.force t k)).re := by
+      simp [Complex.add_re, Complex.mul_re]
+    rw [hre] at hd
+    convert hd using 1
+    ring
+  have hsum : HasDerivAt G.energy
+      (∑ k ∈ G.modes, (-2 * G.nu * (wsq k * nsq (G.u t k))
+        + 2 * (herm (G.u t k) (G.force t k)).re)) t := by
+    have h := HasDerivAt.sum hterm
+    have hfun : (∑ i ∈ G.modes, fun s => nsq (G.u s i)) = G.energy := by
+      funext s; simp [energy, Finset.sum_apply]
+    rwa [hfun] at h
+  have hsplit : ∑ k ∈ G.modes, (-2 * G.nu * (wsq k * nsq (G.u t k))
+        + 2 * (herm (G.u t k) (G.force t k)).re)
+      = -2 * G.nu * G.dissipation t + 2 * (∑ k ∈ G.modes, herm (G.u t k) (G.force t k)).re := by
+    rw [Finset.sum_add_distrib]
+    congr 1
+    · rw [dissipation, Finset.mul_sum]
+    · rw [Complex.re_sum, Finset.mul_sum]
+  rw [hsplit, G.force_energy_neutral t, mul_zero, add_zero] at hsum
+  exact hsum
+
+theorem continuous_energy : Continuous G.energy :=
+  continuous_finset_sum _ fun k _ => G.continuous_nsq_u k
+
+theorem continuous_dissipation : Continuous G.dissipation :=
+  continuous_finset_sum _ fun k _ => continuous_const.mul (G.continuous_nsq_u k)
+
+/-- The integrated energy balance of the truncated system. -/
+theorem energy_balance (t₀ t₁ : ℝ) :
+    G.energy t₁ + 2 * G.nu * ∫ t in t₀..t₁, G.dissipation t = G.energy t₀ := by
+  have hderiv : ∀ t ∈ Set.uIcc t₀ t₁,
+      HasDerivAt G.energy (-2 * G.nu * G.dissipation t) t := fun t _ => G.energy_hasDerivAt t
+  have hint : IntervalIntegrable (fun t => -2 * G.nu * G.dissipation t)
+      MeasureTheory.volume t₀ t₁ :=
+    ((continuous_const.mul G.continuous_dissipation).intervalIntegrable _ _)
+  have hftc := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
+  have hpull : (∫ t in t₀..t₁, -2 * G.nu * G.dissipation t)
+      = -2 * G.nu * ∫ t in t₀..t₁, G.dissipation t := by
+    rw [intervalIntegral.integral_const_mul]
+  rw [hpull] at hftc
+  linarith
+
+/-- The energy is nonincreasing along a Galerkin flow. -/
+theorem energy_le_initial {t₀ t₁ : ℝ} (ht : t₀ ≤ t₁) : G.energy t₁ ≤ G.energy t₀ := by
+  have hbal := G.energy_balance t₀ t₁
+  have hpos : 0 ≤ ∫ t in t₀..t₁, G.dissipation t :=
+    intervalIntegral.integral_nonneg ht fun t _ => G.dissipation_nonneg t
+  nlinarith [G.nu_nonneg, hpos]
+
+/-- The time-integrated dissipation is paid by the initial energy. -/
+theorem integral_dissipation_le (t₀ t₁ : ℝ) (hnu : 0 < G.nu) :
+    (∫ t in t₀..t₁, G.dissipation t) ≤ G.energy t₀ / (2 * G.nu) := by
+  have hbal := G.energy_balance t₀ t₁
+  have hE : 0 ≤ G.energy t₁ := G.energy_nonneg t₁
+  rw [le_div_iff₀ (by linarith)]
+  nlinarith
+
+end GalerkinFlow
+
+end ClayNS.Waleffe

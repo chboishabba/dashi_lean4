@@ -1,0 +1,203 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Got it!" [ref=e3] [cursor=pointer]:
+      - /url: "#null"
+    - paragraph [ref=e4]:
+      - text: This website uses cookies to ensure you get the best experience on our website
+      - link "More info" [ref=e5] [cursor=pointer]:
+        - /url: /cookies
+  - generic [ref=e6]:
+    - navigation [ref=e7]:
+      - generic [ref=e8]:
+        - link [ref=e10] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e12]:
+          - generic [ref=e14]:
+            - textbox "Search HEPData" [ref=e15]
+            - button "Search" [ref=e16] [cursor=pointer]
+          - list [ref=e17]:
+            - listitem [ref=e18]:
+              - link " About" [ref=e19] [cursor=pointer]:
+                - /url: /about
+                - generic [ref=e20]: 
+                - text: About
+            - listitem [ref=e21]:
+              - link " Submission Help" [ref=e22] [cursor=pointer]:
+                - /url: /submission
+                - generic [ref=e23]: 
+                - text: Submission Help
+            - listitem [ref=e24]:
+              - link " File Formats" [ref=e25] [cursor=pointer]:
+                - /url: /formats
+                - generic [ref=e26]: 
+                - text: File Formats
+            - listitem [ref=e27]:
+              - link " Sign in" [ref=e28] [cursor=pointer]:
+                - /url: /login/
+                - generic [ref=e29]: 
+                - text: Sign in
+    - generic [ref=e31]:
+      - list:
+        - link " Browse all":
+          - /url: /search
+          - listitem [ref=e32] [cursor=pointer]:
+            - generic [ref=e33]: 
+            - text: Browse all
+        - link " View all Publication Data":
+          - /url: /record/ins1725474
+          - listitem [ref=e34] [cursor=pointer]:
+            - generic [ref=e35]: 
+            - text: View all Publication Data
+        - listitem [ref=e36]:
+          - generic [ref=e37]: 
+          - text: fL1Zg.yaml from Version 1 of Sirunyan, Albert M et al.
+        - listitem [ref=e38]:
+          - generic [ref=e39]:
+            - button " Cite" [ref=e40] [cursor=pointer]:
+              - generic [ref=e41]: 
+              - text: Cite
+            - link "JSON" [ref=e42] [cursor=pointer]:
+              - /url: "?format=json"
+          - generic [ref=e43]: Last updated on 2019-04-25 15:36
+  - generic [ref=e44]:
+    - generic [ref=e47]:
+      - generic [ref=e48]:
+        - button " Hide Publication Information" [ref=e49] [cursor=pointer]:
+          - generic [ref=e50]: 
+          - text: Hide Publication Information
+        - generic [ref=e52] [cursor=pointer]: 
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - text: Constraints on anomalous
+            - generic [ref=e55]:
+              - generic [ref=e56]:
+                - generic [ref=e58]: H
+                - generic [ref=e60]: V
+                - generic [ref=e62]: V
+              - math [ref=e64]:
+                - generic [ref=e65]: H
+                - generic [ref=e66]: V
+                - generic [ref=e67]: V
+            - text: couplings from the production of Higgs bosons decaying to
+            - generic [ref=e68]:
+              - generic [ref=e71]: τ
+              - math [ref=e73]:
+                - generic [ref=e74]: τ
+            - text: lepton pairs
+          - generic [ref=e76]:
+            - text: The
+            - link "CMS" [ref=e78] [cursor=pointer]:
+              - /url: /search/?collaboration=CMS
+            - text: collaboration
+          - generic [ref=e79]:
+            - link "Sirunyan, Albert M" [ref=e80] [cursor=pointer]:
+              - /url: /search?author=Sirunyan, Albert M
+            - text: ","
+            - link "Tumasyan, Armen" [ref=e81] [cursor=pointer]:
+              - /url: /search?author=Tumasyan, Armen
+            - text: ","
+            - link "Adam, Wolfgang" [ref=e82] [cursor=pointer]:
+              - /url: /search?author=Adam, Wolfgang
+            - text: ","
+            - link "Ambrogi, Federico" [ref=e83] [cursor=pointer]:
+              - /url: /search?author=Ambrogi, Federico
+            - text: ","
+            - link "Asilar, Ece" [ref=e84] [cursor=pointer]:
+              - /url: /search?author=Asilar, Ece
+            - text: ","
+            - link "Bergauer, Thomas" [ref=e85] [cursor=pointer]:
+              - /url: /search?author=Bergauer, Thomas
+            - text: ","
+            - link "Brandstetter, Johannes" [ref=e86] [cursor=pointer]:
+              - /url: /search?author=Brandstetter, Johannes
+            - text: ","
+            - link "Dragicevic, Marko" [ref=e87] [cursor=pointer]:
+              - /url: /search?author=Dragicevic, Marko
+            - text: ","
+            - link "Erö, Janos" [ref=e88] [cursor=pointer]:
+              - /url: /search?author=Erö, Janos
+            - text: ","
+            - link "Escalante Del Valle, Alberto" [ref=e89] [cursor=pointer]:
+              - /url: /search?author=Escalante Del Valle, Alberto
+          - generic [ref=e90]: Phys.Rev.D 100 (2019) 112002, 2019.
+          - generic [ref=e91]:
+            - list [ref=e92]:
+              - listitem [ref=e93]:
+                - link "Journal" [ref=e94] [cursor=pointer]:
+                  - /url: https://doi.org/10.1103/PhysRevD.100.112002
+                  - generic [ref=e95]: Journal
+              - listitem [ref=e96]:
+                - link "INSPIRE" [ref=e97] [cursor=pointer]:
+                  - /url: https://inspirehep.net/literature/1725474
+                  - generic [ref=e98]: INSPIRE
+            - list
+        - generic [ref=e99]:
+          - strong [ref=e100]: Abstract (data abstract)
+          - generic [ref=e101]: Constraints on anomalous Higgs boson couplings using production and decay information in the four-lepton final state
+      - generic [ref=e102]:
+        - generic [ref=e104]:
+          - generic [ref=e105]:
+            - img
+          - paragraph [ref=e114]: Loading Data...
+        - text:  
+    - text: H V V τ H V V τ H V V τ H V V τ H V V τ   
+    - generic [ref=e115]:
+      - generic [ref=e116]:
+        - link [ref=e118] [cursor=pointer]:
+          - /url: https://www.ippp.dur.ac.uk/
+          - img [ref=e119]
+        - link [ref=e121] [cursor=pointer]:
+          - /url: http://home.cern/
+          - img [ref=e122]
+        - link [ref=e124] [cursor=pointer]:
+          - /url: https://www.ukri.org/councils/stfc/
+          - img [ref=e125]
+      - generic [ref=e127]:
+        - paragraph [ref=e128]:
+          - link "About HEPData" [ref=e129] [cursor=pointer]:
+            - /url: /about
+          - link "Submitting to HEPData" [ref=e130] [cursor=pointer]:
+            - /url: /submission
+          - link "HEPData File Formats" [ref=e131] [cursor=pointer]:
+            - /url: /formats
+          - link "HEPData Coordinators" [ref=e132] [cursor=pointer]:
+            - /url: /permissions/coordinators
+          - link "HEPData Terms of Use" [ref=e133] [cursor=pointer]:
+            - /url: /terms
+          - link "HEPData Cookie Policy" [ref=e134] [cursor=pointer]:
+            - /url: /cookies
+        - paragraph [ref=e135]:
+          - link " Status" [ref=e136] [cursor=pointer]:
+            - /url: https://status.hepdata.net
+            - generic [ref=e137]: 
+            - text: Status
+          - link " Email" [ref=e138] [cursor=pointer]:
+            - /url: mailto:info@hepdata.net
+            - generic [ref=e139]: 
+            - text: Email
+          - link "Forum" [ref=e140] [cursor=pointer]:
+            - /url: https://hepdata-forum.cern.ch
+            - img [ref=e141]
+            - text: Forum
+          - link " Twitter" [ref=e142] [cursor=pointer]:
+            - /url: https://www.twitter.com/HEPData
+            - generic [ref=e143]: 
+            - text: Twitter
+          - link " GitHub" [ref=e144] [cursor=pointer]:
+            - /url: https://www.github.com/HEPData
+            - generic [ref=e145]: 
+            - text: GitHub
+        - paragraph [ref=e146]:
+          - text: Copyright ~1975-Present, HEPData | Powered by
+          - link "Invenio" [ref=e147] [cursor=pointer]:
+            - /url: https://inveniosoftware.org/
+          - text: ", funded by"
+          - link "STFC" [ref=e148] [cursor=pointer]:
+            - /url: https://www.ukri.org/councils/stfc/
+          - text: ", hosted and originally developed at"
+          - link "CERN" [ref=e149] [cursor=pointer]:
+            - /url: https://home.cern/
+          - text: ", supported and further developed at"
+          - link "IPPP Durham" [ref=e150] [cursor=pointer]:
+            - /url: https://www.ippp.dur.ac.uk/
+          - text: .

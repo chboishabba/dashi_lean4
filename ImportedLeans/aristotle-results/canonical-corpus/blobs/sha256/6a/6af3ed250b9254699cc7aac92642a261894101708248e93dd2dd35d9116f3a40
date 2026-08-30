@@ -1,0 +1,69 @@
+import Spine.AnchoredGram
+import Spine.TernaryPhase
+import Spine.TraceNorm
+import Spine.MeanSplit
+import Spine.Observer
+import Spine.TritCarrier
+import Spine.Duality
+import Spine.OggGrid
+import Spine.FixedLocus
+import Spine.EqualCardinality
+import Spine.TwoRegime
+import Spine.RiemannBridge
+import Spine.EndToEnd
+import Spine.AxiomAudit
+
+/-!
+# The common spine
+
+One small family of reusable theorems, and the instances that earn the right to
+quote them.
+
+* `Spine.AnchoredGram` — anchored exterior coercivity in arbitrary rank:
+  `det Gram(f + t₀, t₁, …, t_r) ≥ ‖f‖² det Gram(t₁, …, t_r)`, with the exact
+  identity behind it and the strict nondegeneracy gate.
+* `Spine.MeanSplit` — the fixed ⊕ mean-zero splitting of
+  `EuclideanSpace ℝ (Fin n)`, and the coercivity theorem transported to it.
+* `Spine.TernaryPhase` — the exact `C₃` phase algebra, character orthogonality,
+  the realification `ℝ[C₃] = ℝ_triv ⊕ ℝ²_rot` (no invariant line in the
+  transverse plane), and the binary contrast that makes the ternary case the
+  first precise one.
+* `Spine.TraceNorm` — trace/norm descent, with the proved caveat that the
+  maximal real subfield of `ℚ(ζ₃)` is `ℚ`.
+* `Spine.FixedLocus` — the involution split, with complex conjugation and the
+  Riemann critical line as fixed loci.
+* `Spine.Observer` — the observer interface: a domain, a map into the structured
+  carrier, and the nondegeneracy witnesses the inherited theorem needs; the
+  Monster five-plane and cuisine taste instances; the degeneracy control.
+* `Spine.TritCarrier` — the corpus's own balanced-ternary digit carrier wired
+  into the spine by explicit equivariance: `rotTrit` is intertwined with the
+  cyclic shift, digit negation with a linear reflection, and the two satisfy the
+  dihedral relation `ρσ = σ²ρ`.  The reflection has a real eigenvector in the
+  transverse plane and the rotation provably has none, which is the structural
+  cause of the corpus's digit-level `inv ≠ rot` obstruction.
+* `Spine.Duality` — which operator a carrier actually admits.  Negatively: every
+  alternating form on an odd-dimensional real space is degenerate, so the
+  five-dimensional taste carrier has no symplectic structure and therefore no
+  Hamiltonian.  Positively: the Legendre–Fenchel conjugate, Fenchel–Young, and
+  the marginal-rate theorem identifying the dual coordinate with the derivative
+  of the acceptability functional at an optimum — with the gate that a flat
+  functional has no finite conjugate in any direction.
+* `Spine.OggGrid` — the `{5,17,29} + {0,42}` affine grid inside the Ogg set, and
+  three negative controls (translation ≠ pointed-sign map; the mod-9 fibres are
+  not five blocks of three; no free `C₃` action preserves the `ℚ(√−7)` splitting
+  class, so the internal `5 × 3` carrier does not transport).
+* `Spine.EqualCardinality` — equal cardinality is not a map.
+* `Spine.TwoRegime` — the two-regime Fourier envelope `min (‖f‖₁, ‖f'‖₁/(2π|ξ|))`
+  and a summation theorem that uses local counts only, so no minimum-separation
+  hypothesis is required.
+* `Spine.RiemannBridge` — the narrow, hypothesis-explicit bridge from the
+  two-regime envelope and the anchored Gram surplus to the RH analytic lane of
+  `Agda/DASHI/Analysis/Riemann*`: the cosh taper coercivity and plateau second
+  moment (the two gaps that lane marks unformalised), the real content of the
+  grid and Poisson retention ledgers, the aggregate kernel envelope under an
+  explicit kernel-identification hypothesis, and two honest negatives — the
+  abstract producer socket admits a contentless inhabitant, and the envelope
+  alone does not dominate an arithmetic grid tail.  Nothing there asserts the
+  Riemann hypothesis or any statement about zeta zeros.
+* `Spine.EndToEnd` — all of the above as one checked record.
+-/

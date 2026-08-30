@@ -1,0 +1,87 @@
+# Row A1a — from `D³S` and the pivot solve to the shell floor
+
+This round continues the fixed-constraint-coordinate Gaussian line
+
+    Â(U) = C(U)ᵀ A(U) C(U),   D Â = W + Q + R,
+    W = Cᵀ A' C,  Q = C'ᵀ A C,  R = Cᵀ A C',
+
+by (i) identifying the operator variation `A'` as the **mixed third** Wilson
+variation, and (ii) replacing the previously abstract connection budget `e` by a
+quantity computed from the pivot solve.
+
+Nothing was promoted from any other prover, no row closed, and the frozen
+research count is unchanged. Every load-bearing hypothesis carries a boundary
+test.
+
+## New Lean modules
+
+### `RequestProject/YangMills/ConnectionBudget.lean`
+
+Entrywise calculus for the connection term.
+
+* `EntryBound M b` — entrywise sup bound; `transpose`, `neg`, `nonneg`.
+* `entryBound_mul` — product rule with the dimension factor `#γ`.
+  `entryBound_mul_needs_dimension_factor` shows the factor cannot be dropped
+  (two all-ones `2×2` matrices).
+* `connectionBudget cardn bC bA bC' = #n²·b_C·b_A·b_{C'}` bounds every entry of
+  `R = CᵀAC'` (`entryBound_connectionRight`).
+* `pivotBudget cardc cardn bE bPinv bQ' bC = #c²·#n·b_E·b_{P⁻¹}·b_{Q'}·b_C`
+  bounds the substitution derivative `C'` **produced** by the exact pivot solve
+  `C' = E·X`, `X = −P⁻¹(Q'C)` of `EliminatedCoordinateDerivative`
+  (`entryBound_eliminated_derivative`). No norm of `C'` is assumed.
+* `sourceConnectionBudget` composes the two, and
+  `entryBound_connectionRight_of_source` bounds the connection entry by it.
+* `connection_budget_certifies_patch` — if the composite budget is `< √2/4`, the
+  candidate quarter-slab floor for the **full** restricted symbol is positive.
+* Boundary tests: `pivot_hypotheses_satisfiable` (the hypotheses are jointly
+  satisfiable with `C ≠ 0`, so nothing is vacuous) and
+  `pivotBudget_unbounded_in_pivot` (a degenerating pivot destroys any target
+  budget, so pivot control is load-bearing).
+
+### `RequestProject/YangMills/WilsonHessianFamily.lean`
+
+The ancestry `DS → D²S = A → D³S = A'`.
+
+* `WilsonHessianData` — per-entry nested derivative data (`∂_u`, `∂_t`, `∂_s`)
+  for a matrix of scalar three-parameter actions. Every derivative is a
+  `HasDerivAt` hypothesis, never a postulate.
+* `hasMixedD3R_entry` — the data really exhibits the entrywise mixed third
+  derivative in the sense of `WilsonLinkJet.HasMixedD3R`.
+* `hasMatDerivAt_hessian` — `A' = D³S` for the Hessian family.
+* `wilsonThird_restricted_variation` — `D Â = Cᵀ(D³S)C + Q + R`.
+* `wilsonThird_patch_entry_bound` — floor `c` on the conjugated third variation
+  plus connection budget `e` give `c − 2e`.
+* `hessian_zero_but_third_nonzero` — boundary test: the Hessian at the
+  background point can vanish while the third variation does not, so `W` is
+  genuinely a third-order object.
+
+### `RequestProject/YangMills/A1SourceCompiler.lean`
+
+* `A1_halfFloor_from_symbolData` — from the restricted symbol itself: Wilson
+  floor on the quarter slab, uniform connection bound, history-uniform quartic
+  remainder and `γ_*` give `β_j ≥ ((δ/4)(c−2e))/2 > 0`.
+* `A1_halfFloor_from_pivotData` — the same with `e` computed, not assumed, from
+  `(b_C, b_A, b_E, b_{P⁻¹}, b_{Q'})` uniformly in shell, history and momentum.
+* `candidatePatch_source_criterion` and `sourceConnectionBudget_expand` — at the
+  candidate patch (half-width `1/8`, Wilson floor `√2/2`) the entire Gaussian
+  obligation reduces to the single inequality
+
+      #c² · #n³ · b_C² · b_A · b_E · b_{P⁻¹} · b_{Q'} < √2/4.
+
+## What is still missing (unchanged count: 4)
+
+1. The literal `A'(U) = D³S` for Bałaban's background — hence the Wilson floor
+   `c` on one patch. The calculus is in place; the number is not.
+2. The literal `Q'(U)` and the pivot bounds `(b_E, b_{P⁻¹}, b_{Q'})` — hence a
+   number for `e`. It must beat `√2/4 ≈ 0.354` at the candidate patch, or a
+   cancellation must be proved (the KKT weld of `ConstraintAnnihilator`, which
+   is explicitly *not* claimed).
+3. Numerical five-channel coefficients giving a finite `C_β`. With any finite
+   `C_β` the coupling `γ_* = b/(2(C_β+b))` already discharges the quartic
+   absorption without fourth roots.
+4. History uniformity of the Gaussian floor and of the five-channel remainder —
+   or, on the fallback route, explicit `(C_loc, θ)` and a marginal-memory bound
+   `H_marg`, which the corrected margin
+   `b_patch − C_β γ⁴ − (C_H γ/2 + H_marg)B > 0` keeps visible.
+
+Row A1 is not closed and no Clay leaf is closed by this round.

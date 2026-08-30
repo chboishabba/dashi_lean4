@@ -1,0 +1,32 @@
+# Yang–Mills Bałaban source handoff
+
+Prepared 2026-08-28 for manual transfer to the YM Aristotle session.
+
+## Primary Row-A sources
+
+- `CMP98_Averaging_operations_for_lattice_gauge_theories.pdf` — averaging operation and linearized bounds.
+- `CMP99_Propagators_for_lattice_gauge_theories_in_a_background_field.pdf` — background-field propagator, Hessian and related estimates.
+- `CMP109_Renormalization_group_approach_to_lattice_gauge_field_theories_I.pdf` — effective actions, coupling renormalisation and the small-coupling window theorem.
+
+## Directly related Bałaban supplements
+
+- `CMP102_The_variational_problem_and_background_fields.pdf` — variational/background-field setup.
+- `Balaban_Propagators_and_renormalization_transformations_I.pdf`
+- `Balaban_Propagators_and_renormalization_transformations_II.pdf`
+- `Balaban_Ultraviolet_stability_of_three_dimensional_lattice_pure_gauge_field_theories.pdf`
+- `Balaban_Renormalization_group_approach_to_lattice_gauge_field_theories_supplement.pdf`
+
+## Formula orientation for the worker
+
+The request’s quoted source surfaces to locate and compare are:
+
+1. CMP98 Eq. (124), the full one-step averaging operator, and Eq. (125), its flat/main term
+   `(Q₀ A)c = Σ{x ∈ B(c₋)} L^(-(d+1)) (R₀,c₋ A)([x,x'])`.
+2. CMP98 Proposition 7, joint analyticity and uniformity in background perturbations.
+3. CMP109 Theorem 1, the small-field effective-action package under a uniformly small effective-coupling sequence, for semisimple compact `G ⊂ U(N)` in `d = 4`.
+4. CMP109 Theorem 2, the separate SU(2) coupling-trajectory result.
+5. CMP109 Section 5, the vacuum-polarisation second variation and the definition of the beta coefficient from the specified tensor structure.
+
+Use the PDFs to replace correspondence/socket assumptions only where the literal source formula, convention, normalisation, and hypotheses have actually been checked. The existing Lean weld is not by itself a proof of the published source theorem, nor of infinite-volume, continuum, OS, Wightman, or Clay mass-gap endpoints.
+
+The archive also contains `SHA256SUMS` for file identity and provenance.

@@ -1,0 +1,347 @@
+module DASHI.Physics.YangMills.BalabanYM4MarkedSourceMarginalTransverseSplitExact where
+
+------------------------------------------------------------------------
+-- ROW B, REFORMULATION:  PROJECT OUT THE MARGINAL MARKED COORDINATES
+--   BEFORE DEMANDING GEOMETRIC DECAY
+--
+-- ROW B AS CURRENTLY STATED (docs/ym/YangMillsClayFourFrozenResearchLemmas.md)
+-- asks for one uniform geometric bound on the whole differentiated marked
+-- source family,
+--
+--     E_d^phys  <=  E_0 r^d ,    0 <= r < 1 ,
+--
+-- whose only downstream use is the uniform prefix bound
+-- `geometricEnergyPrefixBound` of `YMGeometricPrefixBudgetExact`.
+--
+-- WHY THE BLUNT TARGET IS THE WRONG ONE.  A renormalisation group with
+-- marginal directions keeps finitely many scale-preserving coordinates
+-- (coupling, field normalisation, the retained relevant/marginal composite
+-- mixings).  Those coordinates are, by definition, NOT geometrically
+-- forgotten; the repository already records this for the beta history, where
+-- assigning artificial exponential forgetting to the marginal coupling memory
+-- is a modelling error.  This module proves that the same obstruction is
+-- present in the marked-source statement, and that it is removable:
+--
+--   * `bluntDecayForcesMarginalDecay` : if the WHOLE marked functional obeys
+--     `|H_X| <= A_0 r^d` and the transverse part obeys `|H_X^perp| <= E_0 r^d`
+--     then the marginal part is forced to obey `|H_X^marg| <= (A_0+E_0) r^d`
+--     as well.  So the blunt target silently demands geometric forgetting of
+--     the marginal channel.
+--
+--   * `marginalFloorRefutesBluntDecay` : consequently, a marginal channel with
+--     a floor `m_0 > 0` at any scale where `(A_0+E_0) r^d < m_0` makes the
+--     blunt target FALSE.  `dyadicRefutation` instantiates this with explicit
+--     rationals (`A_0 = E_0 = 1`, `r = 1/2`, `m_0 = 1/2`, `d = 4`), so the
+--     refutation is not vacuous.
+--
+--   * `markedSplitPrefixBound` : the reformulated target suffices.  If the
+--     marginal channel is carried by finitely many retained coordinates —
+--     `|H^marg_d| <= Mmax` for `d < K` and `H^marg_d = 0` for `d >= K`, with NO
+--     decay assumed — and only the transverse residual decays geometrically,
+--     `|H^perp_d| <= E_0 r^d`, then every prefix sum of the FULL marked
+--     functional is bounded by the single constant
+--
+--         Mmax * K  +  B ,       B any budget with  E_0 + r B <= B ,
+--
+--     uniformly in the starting scale and in the prefix length.  That is
+--     exactly the input row B's consumers (`Sigma_d E_d < infinity`, the
+--     coefficient-energy bound, Hilbert continuity, Cauchy differentiation of
+--     the marked generating functional) actually take.
+--
+-- SO ROW B'S TARGET SHOULD READ: *project onto the source-native
+-- relevant/marginal coordinates, then prove geometric decay of the transverse
+-- kernel only.*  This module proves the projection identity and the transfer;
+-- it does NOT prove the transverse geometric decay for the literal CMP116/119
+-- differentiated source family, which is the physical content of row B and
+-- remains open.  No row is closed and the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat as Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Empty using (⊥)
+open import Data.Integer.Base using (+_)
+import Data.Nat.Base as ℕ
+open import Data.Nat.Base using (z≤n; s≤s)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact
+  using ( natToℚ; natToℚ-nonneg; 0≤1ℚ; nonNegProduct
+        ; prefixSum; prefixSum-mono; prefixSum-add; prefixSum-cong
+        ; pow; pow-nonneg; geometricEnergyPrefixBound)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- The marginal majorant: Mmax on the first K scales, 0 afterwards
+------------------------------------------------------------------------
+
+marginalMajorant : ℚ → Nat → Nat → ℚ
+marginalMajorant Mmax zero    _       = 0ℚ
+marginalMajorant Mmax (suc K) zero    = Mmax
+marginalMajorant Mmax (suc K) (suc j) = marginalMajorant Mmax K j
+
+-- With no retained coordinates the majorant sums to nothing.
+majorantZero : ∀ Mmax k n → prefixSum (marginalMajorant Mmax zero) k n ≡ 0ℚ
+majorantZero Mmax k zero = refl
+majorantZero Mmax k (suc n) =
+  trans (cong (λ z → 0ℚ + z) (majorantZero Mmax (suc k) n)) (ℚP.+-identityˡ 0ℚ)
+
+-- Shifting the window and the retained count together is the identity.
+majorantShift :
+  ∀ Mmax K k n →
+  prefixSum (marginalMajorant Mmax (suc K)) (suc k) n
+    ≡ prefixSum (marginalMajorant Mmax K) k n
+majorantShift Mmax K k zero = refl
+majorantShift Mmax K k (suc n) =
+  cong (λ z → marginalMajorant Mmax K k + z) (majorantShift Mmax K (suc k) n)
+
+natToℚ-suc-mono : ∀ n → natToℚ n ≤ natToℚ (suc n)
+natToℚ-suc-mono n =
+  subst (_≤ 1ℚ + natToℚ n) (ℚP.+-identityˡ (natToℚ n))
+    (ℚP.+-monoˡ-≤ (natToℚ n) 0≤1ℚ)
+
+-- Every prefix of the marginal majorant, at every starting scale, is bounded
+-- by the single constant  Mmax * K.
+majorantPrefixBound :
+  ∀ Mmax K k n → 0ℚ ≤ Mmax →
+  prefixSum (marginalMajorant Mmax K) k n ≤ Mmax * natToℚ K
+majorantPrefixBound Mmax zero k n 0≤M =
+  subst (_≤ Mmax * natToℚ zero) (sym (majorantZero Mmax k n))
+    (ℚP.≤-reflexive (sym (ℚP.*-zeroʳ Mmax)))
+majorantPrefixBound Mmax (suc K) k zero 0≤M =
+  nonNegProduct Mmax (natToℚ (suc K)) 0≤M (natToℚ-nonneg (suc K))
+majorantPrefixBound Mmax (suc K) zero (suc n) 0≤M =
+  subst (Mmax + prefixSum (marginalMajorant Mmax (suc K)) 1 n ≤_) expand
+    (ℚP.+-monoʳ-≤ Mmax
+      (subst (_≤ Mmax * natToℚ K) (sym (majorantShift Mmax K zero n))
+        (majorantPrefixBound Mmax K zero n 0≤M)))
+  where
+    expand : Mmax + Mmax * natToℚ K ≡ Mmax * natToℚ (suc K)
+    expand =
+      trans (cong (_+ Mmax * natToℚ K) (sym (ℚP.*-identityʳ Mmax)))
+            (sym (ℚP.*-distribˡ-+ Mmax 1ℚ (natToℚ K)))
+majorantPrefixBound Mmax (suc K) (suc k) (suc n) 0≤M =
+  ℚP.≤-trans
+    (ℚP.≤-reflexive step)
+    (ℚP.≤-trans (majorantPrefixBound Mmax K k (suc n) 0≤M)
+      (ℚP.*-monoˡ-≤-nonNeg Mmax {{ℚ.nonNegative 0≤M}} (natToℚ-suc-mono K)))
+  where
+    step :
+      prefixSum (marginalMajorant Mmax (suc K)) (suc k) (suc n)
+        ≡ prefixSum (marginalMajorant Mmax K) k (suc n)
+    step = majorantShift Mmax K k (suc n)
+
+-- A family bounded on the first K scales and vanishing afterwards is
+-- dominated pointwise by the majorant.
+dominatedByMajorant :
+  ∀ (f : Nat → ℚ) Mmax K →
+  (∀ j → j ℕ.< K → ∣ f j ∣ ≤ Mmax) →
+  (∀ j → K ℕ.≤ j → f j ≡ 0ℚ) →
+  ∀ j → ∣ f j ∣ ≤ marginalMajorant Mmax K j
+dominatedByMajorant f Mmax zero bnd supp j =
+  ℚP.≤-reflexive (cong ∣_∣ (supp j z≤n))
+dominatedByMajorant f Mmax (suc K) bnd supp zero = bnd zero (s≤s z≤n)
+dominatedByMajorant f Mmax (suc K) bnd supp (suc j) =
+  dominatedByMajorant (λ i → f (suc i)) Mmax K
+    (λ i i<K → bnd (suc i) (s≤s i<K))
+    (λ i K≤i → supp (suc i) (s≤s K≤i))
+    j
+
+------------------------------------------------------------------------
+-- The marked source split and the reformulated row B target
+------------------------------------------------------------------------
+
+record MarkedSourceSplit : Set where
+  field
+    -- H_d : the differentiated marked polymer norm at distance class d;
+    -- H^marg_d, H^perp_d : its marginal and transverse components.
+    H marg perp : Nat → ℚ
+
+    -- The projection identity.  This is a decomposition of the SAME object,
+    -- not a comparison with an auxiliary family.
+    splits : ∀ d → H d ≡ marg d + perp d
+
+    -- Marginal channel: finitely many retained coordinates, bounded, with NO
+    -- decay demanded of them.
+    retained : Nat
+    marginalBound : ℚ
+    marginalNonNeg : 0ℚ ≤ marginalBound
+    marginalOnRetained : ∀ d → d ℕ.< retained → ∣ marg d ∣ ≤ marginalBound
+    marginalVanishes : ∀ d → retained ℕ.≤ d → marg d ≡ 0ℚ
+
+    -- Transverse channel: this is the only place geometric decay is asked for.
+    headEnergy ratio budget : ℚ
+    headNonNeg : 0ℚ ≤ headEnergy
+    ratioNonNeg : 0ℚ ≤ ratio
+    ratioBelowOne : ratio ≤ 1ℚ
+    budgetNonNeg : 0ℚ ≤ budget
+    budgetCloses : headEnergy + ratio * budget ≤ budget
+    transverseDecay : ∀ d → ∣ perp d ∣ ≤ headEnergy * pow ratio d
+
+open MarkedSourceSplit public
+
+module Split (S : MarkedSourceSplit) where
+
+  marginalPrefix :
+    ∀ k n → prefixSum (λ d → ∣ marg S d ∣) k n
+              ≤ marginalBound S * natToℚ (retained S)
+  marginalPrefix k n =
+    ℚP.≤-trans
+      (prefixSum-mono (λ d → ∣ marg S d ∣)
+        (marginalMajorant (marginalBound S) (retained S))
+        (dominatedByMajorant (marg S) (marginalBound S) (retained S)
+          (marginalOnRetained S) (marginalVanishes S))
+        k n)
+      (majorantPrefixBound (marginalBound S) (retained S) k n
+        (marginalNonNeg S))
+
+  transversePrefix :
+    ∀ k n → prefixSum (λ d → ∣ perp S d ∣) k n ≤ budget S
+  transversePrefix k n =
+    geometricEnergyPrefixBound (λ d → ∣ perp S d ∣)
+      (headEnergy S) (ratio S) (budget S)
+      (headNonNeg S) (ratioNonNeg S) (ratioBelowOne S) (budgetNonNeg S)
+      (budgetCloses S)
+      (λ d → ℚP.0≤∣p∣ (perp S d))
+      (transverseDecay S) k n
+
+  -- THE REFORMULATED ROW B CONCLUSION.  The full marked functional has
+  -- uniformly bounded prefix sums, with the marginal channel contributing a
+  -- finite constant and only the transverse channel needing geometric decay.
+  markedSplitPrefixBound :
+    ∀ k n →
+    prefixSum (λ d → ∣ H S d ∣) k n
+      ≤ marginalBound S * natToℚ (retained S) + budget S
+  markedSplitPrefixBound k n =
+    ℚP.≤-trans
+      (ℚP.≤-trans
+        (prefixSum-mono (λ d → ∣ H S d ∣)
+          (λ d → ∣ marg S d ∣ + ∣ perp S d ∣) triangle k n)
+        (ℚP.≤-reflexive
+          (prefixSum-add (λ d → ∣ marg S d ∣) (λ d → ∣ perp S d ∣) k n)))
+      (ℚP.+-mono-≤ (marginalPrefix k n) (transversePrefix k n))
+    where
+      triangle : ∀ d → ∣ H S d ∣ ≤ ∣ marg S d ∣ + ∣ perp S d ∣
+      triangle d =
+        subst (λ z → ∣ z ∣ ≤ ∣ marg S d ∣ + ∣ perp S d ∣) (sym (splits S d))
+          (ℚP.∣p+q∣≤∣p∣+∣q∣ (marg S d) (perp S d))
+
+------------------------------------------------------------------------
+-- Why the blunt target cannot be the right one
+------------------------------------------------------------------------
+
+-- Geometric decay of the whole marked functional forces geometric decay of
+-- the marginal channel at the same rate.
+bluntDecayForcesMarginalDecay :
+  ∀ (H marg perp : Nat → ℚ) (A₀ E₀ r : ℚ) d →
+  H d ≡ marg d + perp d →
+  ∣ H d ∣ ≤ A₀ * pow r d →
+  ∣ perp d ∣ ≤ E₀ * pow r d →
+  ∣ marg d ∣ ≤ (A₀ + E₀) * pow r d
+bluntDecayForcesMarginalDecay H marg perp A₀ E₀ r d split hBound tBound =
+  ℚP.≤-trans
+    (ℚP.≤-trans (ℚP.≤-reflexive (cong ∣_∣ recover))
+      (ℚP.∣p-q∣≤∣p∣+∣q∣ (H d) (perp d)))
+    (ℚP.≤-trans (ℚP.+-mono-≤ hBound tBound)
+      (ℚP.≤-reflexive (sym (ℚP.*-distribʳ-+ (pow r d) A₀ E₀))))
+  where
+    recover : marg d ≡ H d - perp d
+    recover =
+      sym (trans (cong (_- perp d) split)
+            (solve 2 (λ M P → (M :+ P) :- P := M) refl (marg d) (perp d)))
+
+-- Hence a marginal channel with a floor makes the blunt target false at every
+-- scale where the geometric bound has dropped below the floor.
+marginalFloorRefutesBluntDecay :
+  ∀ (H marg perp : Nat → ℚ) (A₀ E₀ r m₀ : ℚ) d →
+  H d ≡ marg d + perp d →
+  ∣ H d ∣ ≤ A₀ * pow r d →
+  ∣ perp d ∣ ≤ E₀ * pow r d →
+  m₀ ≤ ∣ marg d ∣ →
+  (A₀ + E₀) * pow r d < m₀ →
+  ⊥
+marginalFloorRefutesBluntDecay H marg perp A₀ E₀ r m₀ d split hB tB floor small =
+  ℚP.<-irrefl refl
+    (ℚP.≤-<-trans
+      (ℚP.≤-trans floor
+        (bluntDecayForcesMarginalDecay H marg perp A₀ E₀ r d split hB tB))
+      small)
+
+-- Non-vacuity of the refutation: with A_0 = E_0 = 1, r = 1/2 and a marginal
+-- floor m_0 = 1/2, the fourth distance class already refutes it.
+dyadicRefutation : ((+ 1 / 1) + (+ 1 / 1)) * pow (+ 1 / 2) 4 < + 1 / 2
+dyadicRefutation =
+  toWitness {a? = (((+ 1 / 1) + (+ 1 / 1)) * pow (+ 1 / 2) 4) ℚP.<? (+ 1 / 2)} _
+
+------------------------------------------------------------------------
+-- Non-vacuity of the reformulated target
+------------------------------------------------------------------------
+
+-- A split whose marginal channel is a genuine non-decaying constant on two
+-- retained coordinates, and whose transverse channel decays dyadically.  The
+-- blunt row B target fails on it (`dyadicRefutation`), while the reformulated
+-- target holds with the explicit constant  1 * 2 + 2 = 4.
+witnessSplit : MarkedSourceSplit
+witnessSplit = record
+  { H                  = λ d → witnessMarg d + witnessPerp d
+  ; marg               = witnessMarg
+  ; perp               = witnessPerp
+  ; splits             = λ d → refl
+  ; retained           = 2
+  ; marginalBound      = + 1 / 1
+  ; marginalNonNeg     = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 1)} _
+  ; marginalOnRetained = margBound
+  ; marginalVanishes   = margVanish
+  ; headEnergy         = + 1 / 1
+  ; ratio              = + 1 / 2
+  ; budget             = + 2 / 1
+  ; headNonNeg         = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 1)} _
+  ; ratioNonNeg        = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+  ; ratioBelowOne      = toWitness {a? = (+ 1 / 2) ℚP.≤? 1ℚ} _
+  ; budgetNonNeg       = toWitness {a? = 0ℚ ℚP.≤? (+ 2 / 1)} _
+  ; budgetCloses       =
+      toWitness
+        {a? = ((+ 1 / 1) + (+ 1 / 2) * (+ 2 / 1)) ℚP.≤? (+ 2 / 1)} _
+  ; transverseDecay    = perpDecay
+  }
+  where
+    witnessMarg : Nat → ℚ
+    witnessMarg zero          = + 1 / 1
+    witnessMarg (suc zero)    = + 1 / 1
+    witnessMarg (suc (suc _)) = 0ℚ
+
+    witnessPerp : Nat → ℚ
+    witnessPerp d = pow (+ 1 / 2) d
+
+    margBound : ∀ d → d ℕ.< 2 → ∣ witnessMarg d ∣ ≤ + 1 / 1
+    margBound zero _ = ℚP.≤-refl
+    margBound (suc zero) _ = ℚP.≤-refl
+    margBound (suc (suc _)) (s≤s (s≤s ()))
+
+    margVanish : ∀ d → 2 ℕ.≤ d → witnessMarg d ≡ 0ℚ
+    margVanish (suc zero) (s≤s ())
+    margVanish (suc (suc _)) _ = refl
+
+    perpDecay : ∀ d → ∣ witnessPerp d ∣ ≤ (+ 1 / 1) * pow (+ 1 / 2) d
+    perpDecay d =
+      ℚP.≤-trans
+        (ℚP.≤-reflexive (ℚP.0≤p⇒∣p∣≡p (pow-nonneg (+ 1 / 2) 0≤half d)))
+        (ℚP.≤-reflexive (sym (ℚP.*-identityˡ (pow (+ 1 / 2) d))))
+      where
+        0≤half : 0ℚ ≤ + 1 / 2
+        0≤half = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+
+witnessPrefixBound :
+  ∀ k n →
+  prefixSum (λ d → ∣ H witnessSplit d ∣) k n
+    ≤ marginalBound witnessSplit * natToℚ (retained witnessSplit)
+        + budget witnessSplit
+witnessPrefixBound = Split.markedSplitPrefixBound witnessSplit

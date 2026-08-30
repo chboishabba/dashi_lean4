@@ -1,0 +1,109 @@
+# Why the projection collapses at page 70 (and what to take from it)
+
+This note answers: *why does the q-expansion deformation collapse at page 70, and
+what can we learn?* Everything below is tied to declarations that already build in
+the project (`RequestProject/QDeform.lean`, `QShapes.lean`, `OpenCVShapes.lean`),
+so the claims are machine-checkable, not narrative.
+
+## 1. What "page 70" actually indexes
+
+In `QDeform.lean` the pages are zero-indexed, and page `pi` reads the coefficient
+
+```
+availLayer pi = monsterPrimes.filter (p ∣ |jCoeff (pi + 2)|)
+```
+
+where `jCoeff (idx) = [q^(idx-1)] j` is the q-expansion coefficient of the
+j-function (`jCoeff 0 = 1`, `jCoeff 1 = 744`, `jCoeff 2 = 196884`, …). So:
+
+- **page 70** reads `jCoeff 72 = [q^71] j = c(71)`.
+
+In other words, the "collapse at q-expansion page 70" is, in standard j-function
+terms, the **71st q-coefficient** `c(71)`.
+
+## 2. The exact reason it collapses
+
+A page draws one dot per *available prime* — i.e. per Monster prime that divides
+that page's coefficient. The picture collapses to a single point exactly when the
+coefficient is **coprime to the whole set of Monster primes** (no prime is
+available, so there is nothing to spread the projection across).
+
+The 15 Monster primes are the supersingular primes
+`{2,3,5,7,11,13,17,19,23,29,31,41,47,59,71}`. For page 70 the coefficient is
+
+```
+c(71) = |jCoeff 72| = 278775024890624328476718493296348769305198947
+```
+
+and its residue modulo each Monster prime is **nonzero**:
+
+| p  | c(71) mod p | p  | c(71) mod p | p  | c(71) mod p |
+|----|-------------|----|-------------|----|-------------|
+| 2  | 1           | 17 | 12          | 41 | 26          |
+| 3  | 2           | 19 | 17          | 47 | 8           |
+| 5  | 2           | 23 | 7           | 59 | 52          |
+| 7  | 4           | 29 | 6           | 71 | 4           |
+| 11 | 5           | 31 | 14          |    |             |
+| 13 | 2           |    |             |    |             |
+
+Since every residue is nonzero, no Monster prime divides `c(71)`, hence
+`availLayer 70 = []` and the projection collapses to one point. This is exactly
+the proved theorem `QDeform.qdeform_collapse : availLayer 70 = []` (by
+`native_decide`).
+
+## 3. It is the *unique* collapse in the rendered range
+
+Across all 104 rendered pages, page 70 is the **only** flatline:
+
+- `(List.range 104).filter (availCount · == 0) = [70]` — one collapse.
+- The next-sparsest pages have a single available prime: pages `28, 30, 58, 73`.
+- Counts range over `0…6` (`qdeform_distinct_counts`), peaking at 6 on page 94
+  (`qdeform_peak`), never exceeding 6 (`qdeform_max_count`).
+
+The uniqueness is the same fact recorded from the OpenCV pass as
+`OpenCVShapes.openCVDots_unique_collapse` and `QShapes.pages_collapse`: a single
+flatline frame in the whole animation.
+
+## 4. What we can actually learn
+
+1. **The collapse is a divisibility event, not a geometric/topological one.**
+   The animation collapses precisely because one McKay–Thompson coefficient,
+   `c(71)`, happens to be coprime to all 15 supersingular primes. There is no
+   curvature, kernel, or Euler-characteristic story behind it — just "this
+   integer shares no factor with the Monster's prime set." The shape vanishes
+   because the *support* vanishes.
+
+2. **It is a numerical coincidence within a finite window, not a moonshine
+   theorem.** Being coprime to all Monster primes is a generic-looking property
+   for a 45-digit integer; here it simply happens to occur uniquely at `c(71)`
+   among `c(1)…c(104)`. It does not generalize, and it is not predicted by
+   monstrous moonshine. Treating it as a structural signature would over-read the
+   data. (The genuinely structural Monster fact in this project is unrelated:
+   `Irrep170` proves the Monster has exactly 170 distinct irreducible-degree
+   values among its 194 irreps.)
+
+3. **70 vs. 170: an indexing/parsing trap, now ruled out.** The earlier
+   "collapse at 170" was a CSV artifact — a trailing `match`-column `1` fused with
+   the next page index `70` when the file was pasted without newlines, so
+   `"1" ++ "70" = "170"` (`OpenCVShapes.openCVCollapseString`). The recorded data
+   only runs to page 103 (`openCVDots_no_page_170`). The real collapse is at
+   page 70 = coefficient `c(71)`. The lesson is concrete: pin down indexing
+   conventions (0- vs 1-based; page vs. coefficient offset) and delimiter
+   handling before reading meaning into a number, because "170" was two correct
+   numbers glued together.
+
+4. **The discipline that paid off.** Each claim here is anchored to a
+   `native_decide`/`decide` theorem rather than to the animation's appearance, so
+   the difference between "the frame looks empty" and "the coefficient is coprime
+   to the Monster primes" is made precise and checkable.
+
+## 5. Pointers to the formal statements
+
+- `QDeform.qdeform_collapse` — `availLayer 70 = []` (the collapse).
+- `QDeform.qdeform_max_count`, `qdeform_peak`, `qdeform_distinct_counts` — the
+  surrounding count profile.
+- `QShapes.pages_collapse` / `OpenCVShapes.openCVDots_unique_collapse` —
+  uniqueness of the page-70 flatline.
+- `OpenCVShapes.openCVCollapseString`, `openCVDots_no_page_170` — the `1`+`70`→`170`
+  parsing artifact and the absence of any page 170.
+- `Irrep170.numDistinctIrreps_eq_170` — the unrelated, genuine "170" fact.

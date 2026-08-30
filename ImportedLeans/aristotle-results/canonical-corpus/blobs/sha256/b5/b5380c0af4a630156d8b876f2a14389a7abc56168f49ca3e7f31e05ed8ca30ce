@@ -1,0 +1,183 @@
+# G9 — the transverse derivative, the phase gauge, and the exact prime expansion of the anchored observable
+
+All statements below are machine-checked Lean in `RiemannAnalytic/`.
+`lake build RiemannAnalytic` succeeds (8084 jobs); there is no `sorry`, `admit`,
+`axiom`, `postulate`, Boolean receipt, imported authority or numerical evidence
+anywhere in the Lean sources.  Every theorem cited here depends only on
+`propext`, `Classical.choice`, `Quot.sound`.
+**The Riemann Hypothesis is not proved here, nothing assumes it, and
+`RiemannHypothesisFor` is untouched.**
+
+G8 reduced the open analytic obligation to two sufficient conditions: a
+shift-Lipschitz exponent `k ≤ 1` for the translated prime-side family, or a
+coercive floor for a one-sided damped taper.  G9 asks four sharper questions —
+the `L`-scale of the derivative, the scale of the derivative *modulo the anchor
+line*, the one-sided baseline defect, and whether a coordinatewise phase gauge
+can restore a zero baseline — and then the decisive one: the exact prime
+expansion of the anchored observable, and the fate of its diagonal.
+
+---
+
+## 1. The anchored determinant sees only transverse motion (`TransverseDerivative.lean`)
+
+* `wedgeSq x w = ‖x‖²‖w‖² − ⟪x,w⟫²`, `transverseComp x w = w − (⟪x,w⟫/‖x‖²)x`.
+* **`wedgeSq_eq_normSq_mul_transverseSq`** — an identity, for `x ≠ 0`:
+
+      ‖x‖²‖w‖² − ⟪x,w⟫² = ‖x‖² ‖P_{x^⊥}w‖².
+
+* **`anchorMinor_eq_normSq_mul_transverseSq`** — hence for a family,
+  `Δ(v_{i₀}, v_j) = ‖v_{i₀}‖²‖P_{v_{i₀}^⊥}(v_j − v_{i₀})‖²`: the parallel part
+  of the displacement contributes *exactly nothing*.
+* **`differentialAnchorMinor_exact`** — along a straight family the anchored
+  determinant is exactly quadratic, `Δ(x, x+s·w) = s²·wedgeSq x w`, with no
+  `O(s³)` remainder at all.
+* **`differentialAnchorMinor`** — the differential form G9 asked for: for any
+  family differentiable at the anchor,
+
+      lim_{s→0} Δ(v₀, v_s)/s² = ‖v₀‖² ‖P_{v₀^⊥}v'₀‖².
+
+* The whole `AnchoredShiftLedger` chain re-proved with the transverse constant:
+  `anchorMinorSum_le_transverse_budget`,
+  `anchorMinorSum_grid_transverse_budget`,
+  `anchoredMinorSum_source_transverse_budget`
+  (`≤ 4π² Cv M⊥² A₀³ L^{2k⊥+3} H³`).  Since `transverseComp_norm_le` gives
+  `M⊥ ≤ M`, this ledger is never worse and is the one that must be evaluated.
+* `transverse_exponent_ge_of_wedge_fraction` /
+  `wedgeSq_le_of_transverse_fraction` — the exact decision rule: a power is saved
+  by transversality **iff** the motion is asymptotically parallel to the anchor.
+
+## 2. G9.1 / G9.2 evaluated on the centred grid: negative (`TransverseGridVariance.lean`)
+
+* `sum_odd_centredGrid` — an odd function of the node position sums to zero over
+  a centred grid `{−mh, …, mh}`.
+* **`inner_centredGrid_deriv_eq_zero`** — for a real **even** profile with odd
+  derivative (the source's family) the anchor at `τ = 0` is *already orthogonal
+  to its own derivative*: `⟪V(0), V'(0)⟫ = 0`.
+* **`centredGrid_transverse_eq_full`**, `centredGrid_wedge_eq_full` — therefore
+
+      ‖P_{V(0)^⊥}V'(0)‖ = ‖V'(0)‖,    wedgeSq(V 0)(V' 0) = ‖V 0‖²‖V' 0‖².
+
+  **`k⊥ = k` exactly.**  The hoped-for extra power of `L` is not there for the
+  centred even family; this is an identity, not a lossy estimate.
+* **`transverseLipschitz_ge_transverseDerivative`** — the ledger consequence,
+  derived from the differential anchored minor: any admissible ledger constant
+  `M` satisfies `M ≥ ‖P_{V₀^⊥}V'(0)‖`.
+* **`transverse_lane_closed_of_relative_derivative`** — the source-scale reading:
+  anchor energy `≍ L²` and relative motion rate `≍ L` force `M ≥ c·L²`, i.e.
+  `k ≥ 2`; the `k ≤ 1` branch of the G8 ledger — the only branch that produced
+  `o(L⁶)` — is unavailable for this family.
+* The Gaussian model makes every quantity explicit: `hasDerivAt_gaussProfile`,
+  and **`gaussGrid_wedge_eq_weightedVariance`**, the transverse energy is exactly
+  `σ^{-4}·((∑w)(∑a²w) − (∑aw)²)`, the weighted **variance of the node
+  positions**; it degenerates only when that variance does.
+
+## 3. G9.3 / G9.4 — the critical-line phase gauge (`PhaseGauge.lean`)
+
+* **`gramDefect_eq_hermitian_sub_bilinear`** — the transverse defect of a complex
+  window is exactly the Hermitian-versus-bilinear gap:
+
+      ΔGram(Re u, Im u) = ¼( (∑|u_k|²)² − |∑u_k²|² ),
+
+  with `gramDefect_eq_zero_iff_channels`.
+* **`Hsesq_coordGauge`, `hermAnchorMinor_coordGauge`, `energy_coordGauge`** —
+  `phaseGauge_gramInvariant`: a coordinatewise unit gauge `u_k ↦ g_k u_k`,
+  `|g_k| = 1`, leaves every Hermitian Gram entry and every Hermitian anchored
+  minor unchanged.  `Sbil_coordGauge` and `exists_coordGauge_Sbil_ne` show that
+  the bilinear channel genuinely moves, so the invariance cannot be extended —
+  the real/imaginary split is *not* a gauge invariant.
+* `criticalPhase`, `criticalPhase_mul_self`, `gaugedBaseline_im_eq_zero`,
+  `gaugedBaseline_re` — the gauge `g_k = e^{−i arg u₀_k}` makes the baseline
+  window real and nonnegative coordinatewise.
+* **`gaugedDefect_zero_at_baseline`** — hence, for *any* taper, even or not, the
+  gauged anchored transverse defect at `α = 0` is exactly `0`.  The geometric
+  phase background of a one-sided taper is removed by a unitary change of
+  coordinates, not by an estimate.  `exists_nonzero_baseline_defect` exhibits an
+  ungauged window whose baseline defect is nonzero, so the gauge is doing real
+  work.
+* **`gaugedDefect_eq`** — and the price, exactly: at `α ≠ 0` the frozen gauge acts
+  on the bilinear channel only,
+  `ΔGram(gauged) = ¼((∑|u_k(α)|²)² − |∑ g_k²u_k(α)²|²)`.  A coercive floor for
+  the gauged directional family is therefore a statement about the *gauged
+  bilinear channel*.  It is **not** proved, and nothing assumes it.
+
+## 4. The exact prime expansion, and the fate of the diagonal (`AnchoredPrimeExpansion.lean`)
+
+This is the calculation G8-A named as the highest-information piece left: expand
+the anchored observable through the translated structure the explicit formula
+produces, `u_s(n) = a_n e^{isλ_n}` (`λ_n = log n`), **before any inequality**.
+With `w_n = |a_n|²` and `W = ∑ w_n`:
+
+* `Hsesq_translateVec`, `Hsesq_translateVec_self` — the Hermitian Gram entry is
+  `∑_n w_n e^{i(s−t)λ_n}`; every diagonal entry equals `W`, independently of the
+  shift.
+* **`hermAnchorMinor_translate_eq`** — the exact anchored minor:
+
+      Δ(s) = ∑_{n,m} w_n w_m (1 − cos(s(λ_n − λ_m))),
+
+  and **`hermAnchorMinor_translate_sin`**,
+  `Δ(s) = 2∑_{n,m} w_n w_m sin²(s(λ_n − λ_m)/2)`.
+* **`hermAnchorMinor_translate_diagonal_zero`** — **the prime diagonal cancels
+  identically.**  The terms `n = m` — exactly the `H∑_n|a_n|²` diagonal that
+  defeated the generic short-interval second-moment route of G7 — contribute
+  zero.  This is the cancellation the determinant was supposed to supply, and it
+  is exact.
+* **`hermAnchorMinor_translate_le_logVariance`** — what survives is a weighted
+  **variance of the log-frequencies**, `Δ(s) ≤ s²·(W∑wλ² − (∑wλ)²)`, with the
+  double-sum identity `logVariance_eq_double_sum`.  Both the shift factor `s²`
+  and the log spread are retained; only `1 − cos x ≤ x²/2` was used.
+* **`logVariance_le_block`** — `Var ≤ W²ℓ²` when all log-frequencies lie in a
+  block of length `ℓ`; **`anchoredPrimeSum_block_budget`** — the window ledger
+  `𝒜_H ≤ ½h²q³W²ℓ²`; **`anchoredPrimeSum_source_budget`** — at the source scale
+  `h = 2π/L`, `q ≤ A₀HL`, `W ≤ C_W L`:
+
+      𝒜_H ≤ 4π²A₀³C_W² · L³H³ · ℓ².
+
+* Reading it: **`anchoredPrimeBudget_full_block`** — a full block `ℓ ≍ L` returns
+  `≍ L⁵H³`, i.e. the critical scale for admissible `H`, no gain;
+  **`anchoredPrimeBudget_gain_of_short_block`** — a block `ℓ ≤ δL` gains the
+  factor `δ²`.
+* And the ledger is not vacuous: `hermAnchorMinor_translate_ge_pair`,
+  **`hermAnchorMinor_translate_pos_of_resolved`** — two amplitudes of mass `w₀`
+  at log-frequencies resolved by the shift already force `Δ(s) ≥ w₀²/2`.
+
+---
+
+## What G9 settles, and what the first unproved theorem now is
+
+Settled, at literal strength and machine-checked:
+
+1. the anchored determinant is governed by the derivative **modulo the anchor
+   line**, exactly (`wedgeSq_eq_normSq_mul_transverseSq`,
+   `differentialAnchorMinor`);
+2. for the centred **even** family that transverse projection removes nothing —
+   `k⊥ = k`, so the transverse refinement does **not** open the `k ≤ 1` branch
+   (`centredGrid_transverse_eq_full`, `transverse_lane_closed_of_relative_derivative`);
+3. a coordinatewise unit phase gauge leaves the Hermitian anchored observable
+   invariant and can set the one-sided baseline defect to exactly zero
+   (`hermAnchorMinor_coordGauge`, `gaugedDefect_zero_at_baseline`) — so the
+   directional-taper lane survives its baseline objection;
+4. the exact prime-side expansion of the anchored observable has **no diagonal**;
+   the residual is a log-frequency variance
+   (`hermAnchorMinor_translate_eq`, `hermAnchorMinor_translate_diagonal_zero`,
+   `hermAnchorMinor_translate_le_logVariance`).
+
+The first unproved theorem, stated exactly, is therefore *no longer* a
+short-interval second-moment estimate for a positive quantity.  It is a
+**localisation** statement for the compensated observable:
+
+> there are admissible source parameters — a window `H`, a taper, and a
+> decomposition of the prime side into amplitude blocks — for which the
+> log-frequency spread of the amplitude mass carrying the anchored observable is
+> `ℓ = o(L)`, uniformly in the height, so that
+> `anchoredPrimeSum_source_budget` returns `o(L⁶)`;
+
+equivalently, in relative form (the form needed for an exact high-zero
+exclusion rather than a shrinking tube),
+
+> `E_prime,loc(ρ,T,H) ≤ η_prime(T,H)·m_ρ²a₀(ρ)²‖b_ρ‖²` with `η_prime → 0`.
+
+Both are open.  For the directional lane the open obligation is now precisely a
+coercive floor for the *gauged bilinear channel* `∑_k g_k²u_k(α)²` of the
+one-sided damped taper (`gaugedDefect_eq`), together with the already-proved
+`α`-uniform ceiling `Bψ(α,L) ≤ C_bL²`.  `OffLineDetectabilityContradiction`
+remains open and no claim about the Riemann Hypothesis is made.

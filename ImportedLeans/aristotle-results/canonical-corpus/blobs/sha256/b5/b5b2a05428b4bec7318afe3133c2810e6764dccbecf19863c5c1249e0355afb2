@@ -1,0 +1,273 @@
+module DASHI.Physics.YangMills.BalabanCMP109LiteralLatticeInversePropagatorExact where
+
+------------------------------------------------------------------------
+-- ROW A1a:  THE FIRST INHABITED LITERAL EXPRESSION OF THE ONE-LOOP
+--   MOMENTUM-SPACE INTEGRAND, WITH A PROVED POSITIVE LOWER BOUND.
+--
+-- PRIMARY SOURCES
+--
+-- Kenneth G. Wilson, "Confinement of quarks", Physical Review D 10 (1974),
+-- 2445--2459.  DOI: 10.1103/PhysRevD.10.2445.  (The plaquette action whose
+-- quadratic part is diagonalised below.)
+--
+-- Tadeusz Balaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHAT THIS MODULE ADDS.
+--
+-- Every momentum-space module in the repository so far has been a record over
+-- abstract carriers: the literal diagram syntax exists, but no expression has
+-- ever been written in it.  This module writes one, and it is the one every
+-- diagram of the one-loop calculation divides by.
+--
+-- The quadratic part of the Wilson plaquette action in the background field
+-- Feynman gauge is diagonal in momentum space with eigenvalue the lattice
+-- inverse propagator
+--
+--     p^2  =  sum over the four axes of  4 sin^2 (p_mu / 2) ,
+--
+-- and this is written here as an honest `DiagramExpression` over the
+-- repository's own trigonometric atoms -- four axes, factor four, the sine
+-- atom squared -- not as an opaque atom and not as a record field.
+--
+-- Proved about it, with no new hypothesis:
+--
+--   * `hatSquaredEvaluates` -- its exact rational value under any valuation.
+--   * `hatSquaredSignedLower` -- a derivation, in the calculus of
+--     `BalabanCMP109LiteralOneLoopAbsoluteBoundCalculusExact`, of the lower
+--     bound `sum 4 l_mu^2` from any table of per-axis lower bounds on the
+--     modulus of the sine atoms.  Sums of squares are exactly what the
+--     signed judgement of that calculus was added for.
+--   * `hatSquaredLower` -- the same bound as a modulus lower bound, which is
+--     what an admissible denominator needs.
+--   * `freePropagatorUpper` -- consequently, an explicit modulus bound for the
+--     free propagator `1 / p^2` on any region where that lower bound is
+--     strictly positive.
+--   * `regularCellExample` -- a complete numerical instance: per-axis bound
+--     1/2 gives inverse propagator at least 4 and propagator at most 1/4.
+--
+-- WHAT IS STILL OPEN.  Two things, and they are named rather than hidden.
+-- First, the per-axis sine bounds are a hypothesis here: producing them for
+-- the regular cells of the Brillouin grid is a trigonometric estimate that the
+-- repository does not yet own.  Second, and this is the bulk of lane A1a, the
+-- Wilson three- and four-gluon vertices, the Faddeev-Popov numerator and the
+-- Haar contact term are still not written in the syntax; only the denominator
+-- they share is.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.List using (List; []; _∷_)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; ∣_∣; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (_≡_; refl; sym; trans; subst; cong)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.BalabanClayT4LiteralOneLoopBoxEvaluatorExact
+  using (TrigAtom; sineHalf; MomentumRole; loopMomentum; externalMomentum;
+         shiftedMomentum; AxisIndex; axis0; axis1; axis2; axis3;
+         DiagramExpression; rationalConstant; atom; add; multiply; divide;
+         sumExpressions)
+open import DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopAbsoluteBoundCalculusExact
+  using (Evaluates; evalConstant; evalAtom; evalAdd; evalMultiply; evalDivide;
+         module BoundCalculus)
+
+------------------------------------------------------------------------
+-- 1.  THE LITERAL EXPRESSION
+------------------------------------------------------------------------
+
+productNonNegative : ∀ (a b : ℚ) → 0ℚ ≤ a → 0ℚ ≤ b → 0ℚ ≤ a * b
+productNonNegative a b 0≤a 0≤b =
+  subst (_≤ a * b) (ℚP.*-zeroʳ a)
+    (ℚP.*-monoˡ-≤-nonNeg a {{ℚ.nonNegative 0≤a}} 0≤b)
+
+four : ℚ
+four = + 4 / 1
+
+-- 4 sin^2 (p_mu / 2), written out.
+axisTerm : MomentumRole → AxisIndex → DiagramExpression
+axisTerm role ax =
+  multiply (rationalConstant four)
+    (multiply (atom (sineHalf role ax)) (atom (sineHalf role ax)))
+
+-- p^2 = sum over the four axes.
+hatSquaredExpression : MomentumRole → DiagramExpression
+hatSquaredExpression role =
+  sumExpressions
+    (axisTerm role axis0 ∷ axisTerm role axis1 ∷
+     axisTerm role axis2 ∷ axisTerm role axis3 ∷ [])
+
+-- The free lattice propagator of the Feynman background gauge.
+freePropagatorExpression : MomentumRole → DiagramExpression
+freePropagatorExpression role =
+  divide (rationalConstant 1ℚ) (hatSquaredExpression role)
+
+------------------------------------------------------------------------
+-- 2.  ITS EXACT VALUE
+------------------------------------------------------------------------
+
+axisValue : (TrigAtom → ℚ) → MomentumRole → AxisIndex → ℚ
+axisValue val role ax =
+  four * (val (sineHalf role ax) * val (sineHalf role ax))
+
+hatSquaredValue : (TrigAtom → ℚ) → MomentumRole → ℚ
+hatSquaredValue val role =
+  axisValue val role axis0
+    + (axisValue val role axis1
+        + (axisValue val role axis2
+            + (axisValue val role axis3 + 0ℚ)))
+
+axisTermEvaluates :
+  ∀ (val : TrigAtom → ℚ) (role : MomentumRole) (ax : AxisIndex) →
+  Evaluates val (axisTerm role ax) (axisValue val role ax)
+axisTermEvaluates val role ax =
+  evalMultiply (evalConstant four)
+    (evalMultiply (evalAtom (sineHalf role ax)) (evalAtom (sineHalf role ax)))
+
+hatSquaredEvaluates :
+  ∀ (val : TrigAtom → ℚ) (role : MomentumRole) →
+  Evaluates val (hatSquaredExpression role) (hatSquaredValue val role)
+hatSquaredEvaluates val role =
+  evalAdd (axisTermEvaluates val role axis0)
+    (evalAdd (axisTermEvaluates val role axis1)
+      (evalAdd (axisTermEvaluates val role axis2)
+        (evalAdd (axisTermEvaluates val role axis3) (evalConstant 0ℚ))))
+
+------------------------------------------------------------------------
+-- 3.  A POSITIVE LOWER BOUND FROM PER-AXIS SINE BOUNDS
+------------------------------------------------------------------------
+
+module PropagatorBounds
+  (upperAtom lowerAtom signedLowerAtom : TrigAtom → ℚ)
+  (sineLowerNonNegative :
+     ∀ role ax → 0ℚ ≤ lowerAtom (sineHalf role ax))
+  where
+
+  open BoundCalculus upperAtom lowerAtom signedLowerAtom public
+
+  axisLower : MomentumRole → AxisIndex → ℚ
+  axisLower role ax =
+    four * (lowerAtom (sineHalf role ax) * lowerAtom (sineHalf role ax))
+
+  hatSquaredLowerValue : MomentumRole → ℚ
+  hatSquaredLowerValue role =
+    axisLower role axis0
+      + (axisLower role axis1
+          + (axisLower role axis2 + (axisLower role axis3 + 0ℚ)))
+
+  axisLowerNonNegative : ∀ role ax → 0ℚ ≤ axisLower role ax
+  axisLowerNonNegative role ax =
+    productNonNegative four
+      (lowerAtom (sineHalf role ax) * lowerAtom (sineHalf role ax))
+      (toWitness {a? = 0ℚ ℚP.≤? four} _)
+      (productNonNegative _ _
+        (sineLowerNonNegative role ax) (sineLowerNonNegative role ax))
+
+  hatSquaredLowerNonNegative : ∀ role → 0ℚ ≤ hatSquaredLowerValue role
+  hatSquaredLowerNonNegative role =
+    sumNonNegative (axisLowerNonNegative role axis0)
+      (sumNonNegative (axisLowerNonNegative role axis1)
+        (sumNonNegative (axisLowerNonNegative role axis2)
+          (sumNonNegative (axisLowerNonNegative role axis3) ℚP.≤-refl)))
+    where
+      sumNonNegative : ∀ {a b : ℚ} → 0ℚ ≤ a → 0ℚ ≤ b → 0ℚ ≤ a + b
+      sumNonNegative {a} {b} 0≤a 0≤b =
+        subst (_≤ a + b) (ℚP.+-identityʳ 0ℚ) (ℚP.+-mono-≤ 0≤a 0≤b)
+
+  axisTermSignedLower :
+    ∀ role ax → SignedLowerOK (axisTerm role ax) (axisLower role ax)
+  axisTermSignedLower role ax =
+    signedMultiply (signedConstant four)
+      (signedSquare (lowerAtomRule (sineHalf role ax))
+        (sineLowerNonNegative role ax))
+      (toWitness {a? = 0ℚ ℚP.≤? four} _)
+      (productNonNegative _ _
+        (sineLowerNonNegative role ax) (sineLowerNonNegative role ax))
+
+  -- The sum of squares is bounded below in the signed judgement...
+  hatSquaredSignedLower :
+    ∀ role →
+    SignedLowerOK (hatSquaredExpression role) (hatSquaredLowerValue role)
+  hatSquaredSignedLower role =
+    signedAdd (axisTermSignedLower role axis0)
+      (signedAdd (axisTermSignedLower role axis1)
+        (signedAdd (axisTermSignedLower role axis2)
+          (signedAdd (axisTermSignedLower role axis3) (signedConstant 0ℚ))))
+
+  -- ...hence in the modulus judgement, which is what a denominator needs.
+  hatSquaredLower :
+    ∀ role → LowerOK (hatSquaredExpression role) (hatSquaredLowerValue role)
+  hatSquaredLower role =
+    lowerFromSigned (hatSquaredSignedLower role) (hatSquaredLowerNonNegative role)
+
+  -- And so the free propagator is bounded wherever that lower bound is
+  -- strictly positive.  `1 ≤ u * L` is the division-free form of `u = 1 / L`.
+  freePropagatorUpper :
+    ∀ role (u : ℚ) → 0ℚ < hatSquaredLowerValue role →
+    1ℚ ≤ u * hatSquaredLowerValue role →
+    UpperOK (freePropagatorExpression role) u
+  freePropagatorUpper role u 0<L bound =
+    upperDivide (upperConstant 1ℚ) (hatSquaredLower role) 0<L bound
+
+------------------------------------------------------------------------
+-- 4.  A COMPLETE NUMERICAL INSTANCE
+--
+-- Per-axis sine modulus bound 1/2 on every axis: each axis contributes
+-- 4 * (1/4) = 1, the inverse propagator is at least 4, and the propagator is
+-- at most 1/4.
+------------------------------------------------------------------------
+
+exampleUpperAtom exampleLowerAtom exampleSignedLowerAtom : TrigAtom → ℚ
+exampleUpperAtom _ = 1ℚ
+exampleLowerAtom _ = + 1 / 2
+exampleSignedLowerAtom _ = - 1ℚ
+
+module ExampleBounds =
+  PropagatorBounds exampleUpperAtom exampleLowerAtom exampleSignedLowerAtom
+    (λ _ _ → toWitness {a? = 0ℚ ℚP.≤? exampleLowerAtom (sineHalf loopMomentum axis0)} _)
+
+regularCellExample :
+  ExampleBounds.hatSquaredLowerValue loopMomentum ≡ + 4 / 1
+regularCellExample = refl
+
+exampleInversePropagatorPositive :
+  0ℚ < ExampleBounds.hatSquaredLowerValue loopMomentum
+exampleInversePropagatorPositive =
+  toWitness
+    {a? = 0ℚ ℚP.<? ExampleBounds.hatSquaredLowerValue loopMomentum} _
+
+examplePropagatorBound :
+  ExampleBounds.UpperOK (freePropagatorExpression loopMomentum) (+ 1 / 4)
+examplePropagatorBound =
+  ExampleBounds.freePropagatorUpper loopMomentum (+ 1 / 4)
+    exampleInversePropagatorPositive
+    (toWitness
+      {a? = 1ℚ ℚP.≤?
+              (+ 1 / 4) * ExampleBounds.hatSquaredLowerValue loopMomentum} _)
+
+------------------------------------------------------------------------
+-- 5.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: the literal inverse propagator expression, its exact
+-- value, its lower bound derivation, the propagator modulus bound and the
+-- numerical instance.
+literalInversePropagatorLevel : ProofLevel
+literalInversePropagatorLevel = machineChecked
+
+propagatorLowerBoundLevel : ProofLevel
+propagatorLowerBoundLevel = machineChecked
+
+-- STILL OPEN: per-axis sine bounds valid on the regular cells of the
+-- Brillouin grid, and the Wilson, Faddeev-Popov and Haar numerators.
+regularCellSineBoundLevel : ProofLevel
+regularCellSineBoundLevel = conditional
+
+literalNumeratorExpressionLevel : ProofLevel
+literalNumeratorExpressionLevel = conditional

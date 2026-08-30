@@ -1,0 +1,292 @@
+module DASHI.Physics.YangMills.BalabanYM4GramWedgeIdentityExact where
+
+------------------------------------------------------------------------
+-- EXACT GRAM / WEDGE ALGEBRA ON A THREE-DIMENSIONAL RATIONAL CARRIER
+--
+-- WHY THIS MODULE EXISTS.  Three of the outstanding Yang-Mills items in
+-- `docs/ym/YangMillsClayFourFrozenResearchLemmas.md` are currently attacked
+-- with *scalar* inequalities ("some quantity is positive", "the Hessian is
+-- above -eta times the metric").  The alternative architecture — separate a
+-- marginal/parallel channel, which cancels or is reserved, from a transverse
+-- channel, whose positivity is certified by a Gram determinant
+--
+--     G(a,b)  =  |a|^2 |b|^2 - <a,b>^2  =  |a ^ b|^2  >=  0
+--
+-- — needs exactly two pieces of exact algebra, and this module supplies both
+-- on an explicit finite rational carrier:
+--
+--   (1) `lagrangeIdentity` : the Gram determinant of two vectors is the sum of
+--       the squares of the three wedge (2x2 minor) components.  Hence
+--       `gramNonNeg`, and `gramPositive`: strict positivity as soon as ONE
+--       minor is nonzero, i.e. exactly when the pair is non-collinear.  A
+--       Gram surplus is therefore a *non-collinearity certificate*, which is
+--       strictly more information than "some energy is nonnegative".
+--
+--   (2) `projectionIdentity` : with s = |a|^2 and t = <a,b>, the un-normalised
+--       transverse residual  W = s b - t a  (the component of b orthogonal to
+--       a, cleared of denominators) satisfies the exact identity
+--
+--           |W|^2  =  s * G(a,b).
+--
+--       So "Gram surplus" and "transverse residual" are the same number up to
+--       the factor |a|^2, division-free.  This is what turns a Gram bound into
+--       a dichotomy: either the transverse residual is coercive, or the pair
+--       is nearly collinear, with an explicit quantitative threshold
+--       (`gramDichotomy`).
+--
+-- WHAT THIS IS NOT.  Nothing here is a Yang-Mills theorem.  It is the shared
+-- exact-arithmetic core used by
+--
+--   * BalabanYM4ConstrainedGaussianGaugeTransverseGramDecompositionExact  (A1)
+--   * BalabanYM4RGScaleGramDichotomyExact                                 (A<->B)
+--
+-- The carrier is the concrete three-dimensional rational space, so every
+-- statement is a checked polynomial identity or inequality, not an abstract
+-- inner-product axiom scheme that could be vacuous.  The frozen research count
+-- (4) is untouched.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Sum.Base using (_⊎_; inj₁; inj₂)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.Definitions using (tri<; tri≈; tri>)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; mul-nonNeg; mul-pos; transport-≤)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Local arithmetic helpers
+------------------------------------------------------------------------
+
+square-nonNeg : ∀ (x : ℚ) → 0ℚ ≤ x * x
+square-nonNeg x with ℚP.≤-total 0ℚ x
+... | inj₁ 0≤x = mul-nonNeg 0≤x 0≤x
+... | inj₂ x≤0 = transport-≤ refl negSquare (mul-nonNeg 0≤-x 0≤-x)
+  where
+    0≤-x : 0ℚ ≤ - x
+    0≤-x = ℚP.neg-antimono-≤ x≤0
+
+    negSquare : (- x) * (- x) ≡ x * x
+    negSquare = solve 1 (λ y → (:- y) :* (:- y) := y :* y) refl x
+
+square-pos : ∀ {x : ℚ} → 0ℚ < x ⊎ x < 0ℚ → 0ℚ < x * x
+square-pos {x} (inj₁ 0<x) = mul-pos 0<x 0<x
+square-pos {x} (inj₂ x<0) = subst (0ℚ <_) negSquare (mul-pos 0<-x 0<-x)
+  where
+    0<-x : 0ℚ < - x
+    0<-x = ℚP.neg-antimono-< x<0
+
+    negSquare : (- x) * (- x) ≡ x * x
+    negSquare = solve 1 (λ y → (:- y) :* (:- y) := y :* y) refl x
+
+sum-nonNeg : ∀ {x y : ℚ} → 0ℚ ≤ x → 0ℚ ≤ y → 0ℚ ≤ x + y
+sum-nonNeg {x} {y} 0≤x 0≤y =
+  subst (_≤ x + y) (ℚP.+-identityˡ 0ℚ) (ℚP.+-mono-≤ 0≤x 0≤y)
+
+sum-posˡ : ∀ {x y : ℚ} → 0ℚ < x → 0ℚ ≤ y → 0ℚ < x + y
+sum-posˡ {x} {y} 0<x 0≤y =
+  subst (_< x + y) (ℚP.+-identityʳ 0ℚ) (ℚP.+-mono-<-≤ 0<x 0≤y)
+
+sum-posʳ : ∀ {x y : ℚ} → 0ℚ ≤ x → 0ℚ < y → 0ℚ < x + y
+sum-posʳ {x} {y} 0≤x 0<y =
+  subst (_< x + y) (ℚP.+-identityˡ 0ℚ) (ℚP.+-mono-≤-< 0≤x 0<y)
+
+------------------------------------------------------------------------
+-- The carrier: three-dimensional rational vectors
+------------------------------------------------------------------------
+
+record Vec3 : Set where
+  constructor vec3
+  field
+    v₁ v₂ v₃ : ℚ
+
+open Vec3 public
+
+dot : Vec3 → Vec3 → ℚ
+dot a b = v₁ a * v₁ b + (v₂ a * v₂ b + v₃ a * v₃ b)
+
+normSq : Vec3 → ℚ
+normSq a = dot a a
+
+scaleV : ℚ → Vec3 → Vec3
+scaleV c a = vec3 (c * v₁ a) (c * v₂ a) (c * v₃ a)
+
+subV : Vec3 → Vec3 → Vec3
+subV a b = vec3 (v₁ a - v₁ b) (v₂ a - v₂ b) (v₃ a - v₃ b)
+
+normSq-nonNeg : ∀ a → 0ℚ ≤ normSq a
+normSq-nonNeg (vec3 a₁ a₂ a₃) =
+  sum-nonNeg (square-nonNeg a₁)
+    (sum-nonNeg (square-nonNeg a₂) (square-nonNeg a₃))
+
+------------------------------------------------------------------------
+-- Wedge components and the Gram determinant
+------------------------------------------------------------------------
+
+wedge₁₂ wedge₁₃ wedge₂₃ : Vec3 → Vec3 → ℚ
+wedge₁₂ a b = v₁ a * v₂ b - v₂ a * v₁ b
+wedge₁₃ a b = v₁ a * v₃ b - v₃ a * v₁ b
+wedge₂₃ a b = v₂ a * v₃ b - v₃ a * v₂ b
+
+wedgeNormSq : Vec3 → Vec3 → ℚ
+wedgeNormSq a b =
+  wedge₁₂ a b * wedge₁₂ a b
+    + (wedge₁₃ a b * wedge₁₃ a b + wedge₂₃ a b * wedge₂₃ a b)
+
+-- G(a,b) = |a|^2|b|^2 - <a,b>^2.
+gram : Vec3 → Vec3 → ℚ
+gram a b = normSq a * normSq b - dot a b * dot a b
+
+------------------------------------------------------------------------
+-- (1) Lagrange's identity, and the two positivity consequences
+------------------------------------------------------------------------
+
+lagrangeIdentity : ∀ a b → gram a b ≡ wedgeNormSq a b
+lagrangeIdentity (vec3 a₁ a₂ a₃) (vec3 b₁ b₂ b₃) =
+  solve 6
+    (λ x₁ x₂ x₃ y₁ y₂ y₃ →
+      (x₁ :* x₁ :+ (x₂ :* x₂ :+ x₃ :* x₃))
+        :* (y₁ :* y₁ :+ (y₂ :* y₂ :+ y₃ :* y₃))
+        :- (x₁ :* y₁ :+ (x₂ :* y₂ :+ x₃ :* y₃))
+             :* (x₁ :* y₁ :+ (x₂ :* y₂ :+ x₃ :* y₃))
+      := (x₁ :* y₂ :- x₂ :* y₁) :* (x₁ :* y₂ :- x₂ :* y₁)
+           :+ ((x₁ :* y₃ :- x₃ :* y₁) :* (x₁ :* y₃ :- x₃ :* y₁)
+                :+ (x₂ :* y₃ :- x₃ :* y₂) :* (x₂ :* y₃ :- x₃ :* y₂)))
+    refl a₁ a₂ a₃ b₁ b₂ b₃
+
+-- The Gram determinant of any pair is nonnegative: Cauchy-Schwarz, exactly.
+gramNonNeg : ∀ a b → 0ℚ ≤ gram a b
+gramNonNeg a b =
+  subst (0ℚ ≤_) (sym (lagrangeIdentity a b))
+    (sum-nonNeg (square-nonNeg (wedge₁₂ a b))
+      (sum-nonNeg (square-nonNeg (wedge₁₃ a b)) (square-nonNeg (wedge₂₃ a b))))
+
+-- A single nonvanishing minor already certifies a strictly positive Gram
+-- surplus: non-collinearity, not merely nonnegativity.
+gramPositive :
+  ∀ a b →
+  (0ℚ < wedge₁₂ a b ⊎ wedge₁₂ a b < 0ℚ)
+    ⊎ (0ℚ < wedge₁₃ a b ⊎ wedge₁₃ a b < 0ℚ)
+    ⊎ (0ℚ < wedge₂₃ a b ⊎ wedge₂₃ a b < 0ℚ) →
+  0ℚ < gram a b
+gramPositive a b (inj₁ w≠0) =
+  subst (0ℚ <_) (sym (lagrangeIdentity a b))
+    (sum-posˡ (square-pos w≠0)
+      (sum-nonNeg (square-nonNeg (wedge₁₃ a b)) (square-nonNeg (wedge₂₃ a b))))
+gramPositive a b (inj₂ (inj₁ w≠0)) =
+  subst (0ℚ <_) (sym (lagrangeIdentity a b))
+    (sum-posʳ (square-nonNeg (wedge₁₂ a b))
+      (sum-posˡ (square-pos w≠0) (square-nonNeg (wedge₂₃ a b))))
+gramPositive a b (inj₂ (inj₂ w≠0)) =
+  subst (0ℚ <_) (sym (lagrangeIdentity a b))
+    (sum-posʳ (square-nonNeg (wedge₁₂ a b))
+      (sum-posʳ (square-nonNeg (wedge₁₃ a b)) (square-pos w≠0)))
+
+------------------------------------------------------------------------
+-- (2) The transverse residual, and the exact projection identity
+------------------------------------------------------------------------
+
+-- W(a,b) = |a|^2 b - <a,b> a : the component of b orthogonal to a, cleared of
+-- the denominator |a|^2.
+transverseResidual : Vec3 → Vec3 → Vec3
+transverseResidual a b = subV (scaleV (normSq a) b) (scaleV (dot a b) a)
+
+-- The residual really is orthogonal to a, exactly.
+residualOrthogonal : ∀ a b → dot a (transverseResidual a b) ≡ 0ℚ
+residualOrthogonal (vec3 a₁ a₂ a₃) (vec3 b₁ b₂ b₃) =
+  solve 6
+    (λ x₁ x₂ x₃ y₁ y₂ y₃ →
+      x₁ :* ((x₁ :* x₁ :+ (x₂ :* x₂ :+ x₃ :* x₃)) :* y₁
+              :- (x₁ :* y₁ :+ (x₂ :* y₂ :+ x₃ :* y₃)) :* x₁)
+        :+ (x₂ :* ((x₁ :* x₁ :+ (x₂ :* x₂ :+ x₃ :* x₃)) :* y₂
+              :- (x₁ :* y₁ :+ (x₂ :* y₂ :+ x₃ :* y₃)) :* x₂)
+             :+ x₃ :* ((x₁ :* x₁ :+ (x₂ :* x₂ :+ x₃ :* x₃)) :* y₃
+              :- (x₁ :* y₁ :+ (x₂ :* y₂ :+ x₃ :* y₃)) :* x₃))
+      := con 0ℚ)
+    refl a₁ a₂ a₃ b₁ b₂ b₃
+
+-- |W|^2 = |a|^2 * G(a,b): Gram surplus and transverse residual are the same
+-- number up to the factor |a|^2.
+projectionIdentity :
+  ∀ a b → normSq (transverseResidual a b) ≡ normSq a * gram a b
+projectionIdentity (vec3 a₁ a₂ a₃) (vec3 b₁ b₂ b₃) =
+  solve 6
+    (λ x₁ x₂ x₃ y₁ y₂ y₃ →
+      let s = x₁ :* x₁ :+ (x₂ :* x₂ :+ x₃ :* x₃)
+          u = y₁ :* y₁ :+ (y₂ :* y₂ :+ y₃ :* y₃)
+          t = x₁ :* y₁ :+ (x₂ :* y₂ :+ x₃ :* y₃)
+      in ((s :* y₁ :- t :* x₁) :* (s :* y₁ :- t :* x₁)
+           :+ ((s :* y₂ :- t :* x₂) :* (s :* y₂ :- t :* x₂)
+                :+ (s :* y₃ :- t :* x₃) :* (s :* y₃ :- t :* x₃)))
+         := s :* (s :* u :- t :* t))
+    refl a₁ a₂ a₃ b₁ b₂ b₃
+
+------------------------------------------------------------------------
+-- (3) The quantitative dichotomy
+------------------------------------------------------------------------
+
+-- Either the Gram surplus clears a prescribed threshold — in which case the
+-- transverse residual is coercive with the explicit constant |a|^2 * delta —
+-- or the pair is delta-nearly collinear, with the residual bounded by the same
+-- explicit constant.  Decidable, so this is a genuine case split, not an
+-- excluded-middle appeal.
+data GramDichotomy (a b : Vec3) (delta : ℚ) : Set where
+  transverseCoercive :
+    delta ≤ gram a b →
+    normSq a * delta ≤ normSq (transverseResidual a b) →
+    GramDichotomy a b delta
+  nearlyCollinear :
+    gram a b < delta →
+    normSq (transverseResidual a b) < normSq a * delta ⊎ normSq a ≡ 0ℚ →
+    GramDichotomy a b delta
+
+gramDichotomy : ∀ a b delta → 0ℚ ≤ normSq a → GramDichotomy a b delta
+gramDichotomy a b delta 0≤s with ℚP.<-cmp (gram a b) delta
+... | tri< g<d _ _ = nearlyCollinear g<d residualSmall
+  where
+    residualSmall :
+      normSq (transverseResidual a b) < normSq a * delta ⊎ normSq a ≡ 0ℚ
+    residualSmall with ℚP.<-cmp 0ℚ (normSq a)
+    ... | tri< 0<s _ _ =
+          inj₁ (subst (_< normSq a * delta) (sym (projectionIdentity a b))
+                 (ℚP.*-monoʳ-<-pos (normSq a) {{ℚ.positive 0<s}} g<d))
+    ... | tri≈ _ 0≡s _ = inj₂ (sym 0≡s)
+    ... | tri> _ _ s<0 = inj₂ (ℚP.≤-antisym (ℚP.<⇒≤ s<0) 0≤s)
+... | tri≈ _ g≡d _ =
+  transverseCoercive (ℚP.≤-reflexive (sym g≡d))
+    (ℚP.≤-reflexive
+      (sym (trans (projectionIdentity a b) (cong (normSq a *_) g≡d))))
+... | tri> _ _ d<g =
+  transverseCoercive (ℚP.<⇒≤ d<g)
+    (transport-≤ refl (sym (projectionIdentity a b))
+      (ℚP.*-monoˡ-≤-nonNeg (normSq a) {{ℚ.nonNegative 0≤s}} (ℚP.<⇒≤ d<g)))
+
+------------------------------------------------------------------------
+-- Non-vacuity: explicit witnesses on both branches
+------------------------------------------------------------------------
+
+eNaught eOne eTwo : Vec3
+eNaught = vec3 (+ 1 / 1) 0ℚ 0ℚ
+eOne    = vec3 0ℚ (+ 1 / 1) 0ℚ
+eTwo    = vec3 (+ 2 / 1) 0ℚ 0ℚ
+
+-- Orthonormal pair: Gram surplus exactly 1.
+orthogonalWitness : gram eNaught eOne ≡ + 1 / 1
+orthogonalWitness = refl
+
+-- Collinear pair: Gram surplus exactly 0, transverse residual exactly 0.
+collinearWitness : gram eNaught eTwo ≡ 0ℚ
+collinearWitness = refl
+
+collinearResidualVanishes : normSq (transverseResidual eNaught eTwo) ≡ 0ℚ
+collinearResidualVanishes = refl

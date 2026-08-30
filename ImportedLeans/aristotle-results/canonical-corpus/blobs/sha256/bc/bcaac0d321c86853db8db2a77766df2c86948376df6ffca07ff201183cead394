@@ -1,0 +1,20 @@
+# Dual-Atlas Census Reports
+
+Each corpus is swept through the dual atlas (`cog` / `triad` / `harm`).
+
+| corpus | total | cogWins | triadWins | harmWins | cogWinsRel | triadWinsRel | harmWinsRel |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| itself | 232 | 231 | 1 | 0 | 55 | 98 | 79 |
+
+## Harmonic cell distribution
+
+| corpus | Trivector | Muse (9^5) | Heptad (6^7) | Hemispheres (2^11) | Recursion (3^13) |
+|---|---:|---:|---:|---:|---:|
+| itself | 143 | 24 | 30 | 20 | 15 |
+
+## itself
+
+- total declarations: **232**
+- distinct buckets: cog=86, triad=20, harm=5
+- raw best field wins: cog=231, triad=1, harm=0
+- relative best field wins: cog=55, triad=98, harm=79

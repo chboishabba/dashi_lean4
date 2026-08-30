@@ -1,0 +1,20 @@
+# Page 5 — Class: rfl-variant
+
+One side is `rfl`/`trivial`, the other is elaborated. We surface the elaborated head.
+
+**Group 839** — fp `1052001627`, 2 members (syntax delta; struct-equal).
+- `Nat.zero_mul` — head `Nat.brecOn  (structural recursion / elaborated)`
+    `∀ (n : ℕ), 0 * n = 0`
+- `_private.Lean.Compiler.LCNF.Simp.ConstantFold.0.Lean.Compiler.LCNF.Simp.ConstantFold.arithmeticFolders._proof_18` _[rfl]_
+    `∀ (a : ℕ), 0 * a = 0`
+
+**Group 3074** — fp `3846370601`, 4 members (identical; struct-equal).
+
+Statement: `Parser.Parser → Parser.Parser`
+
+- `Lean.Parser.interpolatedStrNoAntiquot`
+- `Lean.Parser.ppDedent` _[rfl]_
+- `Lean.Parser.withPositionAfterLinebreak`
+- `Lean.Parser.manyNoAntiquot`
+
+Group 839: the compiler's internal `arithmeticFolders._proof_18` proves `∀ a, 0*a = 0` by `rfl`, while the public `Nat.zero_mul` proves the same shape through structural recursion (`Nat.brecOn`). Group 3074: four `Parser → Parser` combinators land on one fingerprint; `ppDedent` is `rfl` (a pure reducible alias) while the others are elaborated parser builders.

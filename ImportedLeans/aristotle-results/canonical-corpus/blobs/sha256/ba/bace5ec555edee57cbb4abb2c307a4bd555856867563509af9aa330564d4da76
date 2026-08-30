@@ -1,0 +1,9 @@
+{
+  "totalDeclarations": 708091,
+  "distinctCanonicalDigests": 625422,
+  "relocatedForCollision": 84016,
+  "maxProbeDistance": 2290,
+  "occupiedSlots": 708091,
+  "digestSpace": 16777216,
+  "collisionFree": true
+}

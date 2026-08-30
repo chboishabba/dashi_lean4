@@ -1,0 +1,43 @@
+# TOE / DASHI source handoff
+
+Prepared 2026-08-30 for manual transfer to the TOE Aristotle session.
+
+This bundle contains:
+
+- `agda-suite/`: the complete tracked `dashi_agda` repository at master
+  `611e947ab9cc467faf27a5d7e9f86a46af4fba28`, with each checked-out submodule
+  archived at its committed HEAD. This includes the Agda sources, tracked
+  documentation, and the 21 tracked PDFs present in the suite.
+- `aristo-lean/TOE/`: the domain-focused Aristotle Lean output from
+  `output-final_aristotle`, including the YM, Navier--Stokes, spectral/RH
+  entrypoints and the `DASHI/Physics` and `DASHI/Analysis` source trees.
+- `aristo-lean/RH/`: the RH-to-TOE handoff and the newest imported Aristotle RH
+  result found locally (`abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle (2)`).
+- `dashi-lean4/`: the complete tracked Lean corpus at commit `36f8f9f`,
+  including imported Aristotle results, `Synthesis`, `Cuisine`, and manifests.
+- `provenance/`: status and summary documents accompanying the Aristotle
+  output.
+
+Submodule commits included:
+
+```text
+DCHoTT-Agda                         ca8c755af0b26f8f50c5a60d3b7f9384a26f5d0e
+Monster-LILA                        ac5272ec345aed17fd0383e8eca89b2a875a7313
+THE-ERIKSSON-PROGRAMME              8c9939135ce3b9f61b57375b4ce66e2e85d5e7bf
+cubical                             d0b9c7b0e9e4f816422c3447d7983b03274dd829
+monster                             f2aa01f9077807996675fb1c3fd32f7359395eeb
+vendor/bishop                       240e38c7f6938f20f865b1f956c5f084da48bd54
+ym-audit                            15933bb0046e2902656e86fafeeb3729e3a01243
+ym-mass-gap-lean-verification       8f90610352b5fe79fb98029f7d04e83dd7d3d265
+```
+
+The Aristotle material is a source handoff, not a claim that all of these
+files form one buildable Lean project. Generated build caches, `.olean` files,
+virtual environments, Git metadata, and ignored archive dumps are excluded. No
+validation/build was run while preparing this archive.
+
+Useful starting points include `aristo-lean/TOE/YangMillsClosure.lean`,
+`aristo-lean/TOE/NavierStokesClosure.lean`,
+`aristo-lean/TOE/SpectralClosure.lean`,
+`aristo-lean/RH/latest-aristotle-result/RiemannAnalytic.lean`, and the Agda
+top-level modules under `agda-suite/`.

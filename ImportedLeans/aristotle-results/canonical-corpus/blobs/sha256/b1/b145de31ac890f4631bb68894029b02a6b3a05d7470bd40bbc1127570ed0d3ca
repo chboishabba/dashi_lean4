@@ -1,0 +1,52 @@
+import Synthesis.ToneCore
+import Synthesis.DialecticTone
+import Synthesis.MonsterFibre
+import Synthesis.WalkGeometry
+import Synthesis.MoonshineBase
+import Synthesis.WalkArithmetic
+import Synthesis.Vec15Fibre
+import Synthesis.StatisticsFibre
+import Synthesis.Hyperfabric
+import Synthesis.CodecBridge
+import Synthesis.EndToEnd
+import Synthesis.AxiomAudit
+
+/-!
+# Cross-domain synthesis spine
+
+Root module of the `Synthesis` library: a minimal, fully proved proof spine over
+the cross-domain material in this repository.
+
+Layers, in dependency order:
+
+* `Synthesis.ToneCore` — the shared ternary tone primitive (`Trit ≃ TriTruth ≃ ℤ/3`)
+  and the half-trit fibre with its `Fin 5` index;
+* `Synthesis.DialecticTone` — dialectical carriers over the tone: the sixfold
+  descent bridge, the fourfold impossibility, and the tetralemma route divergence;
+* `Synthesis.MonsterFibre` — the 15-element supersingular prime base, the
+  identification of the three supplied mask carriers, and the transported
+  ultrametric geometry with its contractive projection;
+* `Synthesis.WalkGeometry` — the walk state carrier, the proof that the two
+  supplied mask distances are complementary, and the fact that the walk stays
+  inside the mask fibre;
+* `Synthesis.MoonshineBase` — mask products over the prime base, and the supplied
+  moonshine numerals as values of that arithmetic;
+* `Synthesis.WalkArithmetic` — an arithmetic reading of the walk's uninterpreted
+  admissibility lens, and the proof that under it the walk is non-expanding
+  towards the collapse mask;
+* `Synthesis.Vec15Fibre` — the flat 15-slot record carriers (`Vec15`, `Sig15`)
+  identified with the same fibre over the prime base;
+* `Synthesis.StatisticsFibre` — the order/selection layer on the 15-lane carrier:
+  its threshold masks are Monster masks and its threshold family is a monotone
+  chain in the mask geometry;
+* `Synthesis.Hyperfabric` — sections of the ternary fibre over the Monster base,
+  their `(ℤ/3)^15` algebra, and the dialectical action on them;
+* `Synthesis.CodecBridge` — the identification of the hyperfabric with the
+  depth-15 balanced-ternary codec kernel of `TriadicKernelAlgebra`;
+* `Synthesis.EndToEnd` — the `CrossDomainSpine` interface, its canonical
+  inhabitant, and the composite theorem `spine_end_to_end`;
+* `Synthesis.AxiomAudit` — prints the axiom dependencies of the headline results.
+
+See `DEPENDENCY_MAP.md` for the provenance map and the list of remaining proof
+obligations.
+-/

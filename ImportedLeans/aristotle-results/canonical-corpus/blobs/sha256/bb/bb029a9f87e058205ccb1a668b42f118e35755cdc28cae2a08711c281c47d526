@@ -1,0 +1,263 @@
+module DASHI.Physics.YangMills.BalabanYM4ConstrainedGaussianGaugeTransverseGramDecompositionGeneralExact where
+
+------------------------------------------------------------------------
+-- ROW A1b: THE GAUGE/TRANSVERSE GRAM DECOMPOSITION IN ARBITRARY DIMENSION
+--
+-- `BalabanYM4ConstrainedGaussianGaugeTransverseGramDecompositionExact` states
+-- the decomposition
+--
+--     D^2 S(dU, dU)  =  D^2 S_parallel  +  G(a, b)  +  R
+--
+-- with a THREE-dimensional transverse pair (a, b).  For Yang-Mills that is the
+-- wrong carrier: the constrained physical fluctuation space of a lattice block
+-- has dimension dim(G) times the number of retained links, not three.  This
+-- module reproves the whole decomposition on `Vec ℚ n` for arbitrary n, on top
+-- of `BalabanYM4GramWedgeIdentityGeneralExact`, and supplies THREE independent
+-- non-collinearity certificates rather than one:
+--
+--   * `minorCertificate`     -- any single nonvanishing 2x2 minor, at ANY pair
+--                               of distinct coordinate indices;
+--   * `residualCertificate`  -- a nonzero transverse residual
+--                               W = |a|^2 b - <a,b> a, which is a
+--                               coordinate-free certificate;
+--   * `marginFromResidual`   -- the quantitative version: an explicit lower
+--                               bound on |W|^2 is exactly a lower bound on the
+--                               Gram margin, by the division-free projection
+--                               identity |W|^2 = |a|^2 G(a,b).
+--
+-- The last one is the physically usable direction: a spectral lower bound on
+-- the transverse block of the constrained Gaussian is a statement about |W|^2,
+-- and `marginFromResidual` converts it into the Gram margin that
+-- `positiveSecondVariation` consumes.  No determinant expansion occurs
+-- anywhere.
+--
+-- `fromVec3` exhibits the existing three-dimensional record as the n = 3
+-- instance, so the earlier development is subsumed, not duplicated.
+--
+-- WHAT THIS IS NOT.  This is not a proof of Row A1b.  Instantiating the record
+-- for the literal Wilson + reduced Faddeev-Popov + Haar second variation
+-- requires four physical inputs that remain open:
+--
+--   (i)   that the literal second variation splits as stated,
+--   (ii)  that the gauge/marginal channel cancels exactly,
+--   (iii) a transverse Gram margin, and
+--   (iv)  an enclosure of the regular remainder below that margin.
+--
+-- The frozen research count (4) is untouched; no row is closed.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Nat.Base using (ℕ)
+import Data.Fin.Base as Fin
+open Fin using (Fin)
+open import Data.Integer.Base using (+_)
+open import Data.Sum.Base using (_⊎_; inj₁; inj₂)
+open import Data.Product.Base using (_×_; _,_)
+open import Data.Vec.Base using (Vec; []; _∷_; lookup)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (_≢_; sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4GramWedgeIdentityGeneralExact
+  using ( dot; normSq; gram; gramNonNeg; gramPositiveFromMinor
+        ; gramPositiveFromResidual; transverseResidual; projectionIdentity
+        ; residualOrthogonal; normSq-nonNeg; ofVec3; gram-ofVec3)
+open import DASHI.Physics.YangMills.BalabanYM4InteractionCauchyPackageToRowAConstantsExact
+  using (abs-bound-lower)
+import DASHI.Physics.YangMills.BalabanYM4GramWedgeIdentityExact as V3
+import DASHI.Physics.YangMills.BalabanYM4ConstrainedGaussianGaugeTransverseGramDecompositionExact
+  as Three
+
+------------------------------------------------------------------------
+-- The decomposition, in dimension n
+------------------------------------------------------------------------
+
+record GaugeTransverseGramDecomposition (n : ℕ) : Set where
+  field
+    -- The second variation of the constrained-Gaussian action in the chosen
+    -- background direction, and its three channels.
+    secondVariation parallelPart gramPart remainder : ℚ
+
+    -- The transverse pair whose Gram determinant is the transverse channel.
+    transverseA transverseB : Vec ℚ n
+
+    -- (i) the decomposition itself
+    decomposes : secondVariation ≡ parallelPart + gramPart + remainder
+
+    -- (ii) exact cancellation of the gauge/marginal channel
+    parallelCancels : parallelPart ≡ 0ℚ
+
+    -- (iii) the transverse channel is a Gram determinant
+    gramShape : gramPart ≡ gram transverseA transverseB
+
+    -- (iv) the regular remainder enclosure
+    remainderRadius : ℚ
+    remainderBound : ∣ remainder ∣ ≤ remainderRadius
+
+open GaugeTransverseGramDecomposition public
+
+module Decomposition {n : ℕ} (D : GaugeTransverseGramDecomposition n) where
+
+  private
+    a = transverseA D
+    b = transverseB D
+
+  -- The transverse channel is nonnegative for free, in every dimension.
+  gramPartNonNeg : 0ℚ ≤ gramPart D
+  gramPartNonNeg = subst (0ℚ ≤_) (sym (gramShape D)) (gramNonNeg a b)
+
+  -- Certificate 1: a single nonvanishing 2x2 minor, at any pair of distinct
+  -- coordinates.
+  minorCertificate :
+    ∀ (i j : Fin n) → i ≢ j →
+    let m = lookup a i * lookup b j - lookup a j * lookup b i
+    in (0ℚ < m ⊎ m < 0ℚ) → 0ℚ < gramPart D
+  minorCertificate i j i≢j m≠0 =
+    subst (0ℚ <_) (sym (gramShape D)) (gramPositiveFromMinor a b i j i≢j m≠0)
+
+  -- Certificate 2: a nonzero transverse residual -- no coordinates at all.
+  residualCertificate :
+    0ℚ < normSq a → 0ℚ < normSq (transverseResidual a b) → 0ℚ < gramPart D
+  residualCertificate 0<s 0<W =
+    subst (0ℚ <_) (sym (gramShape D)) (gramPositiveFromResidual a b 0<s 0<W)
+
+  -- Certificate 3, quantitative: a lower bound |a|^2 * margin <= |W|^2 on the
+  -- transverse residual IS the Gram margin `margin`.  This is the shape a
+  -- transverse spectral bound actually comes in.
+  marginFromResidual :
+    ∀ margin →
+    (0<s : 0ℚ < normSq a) →
+    normSq a * margin ≤ normSq (transverseResidual a b) →
+    margin ≤ gramPart D
+  marginFromResidual margin 0<s bound =
+    subst (margin ≤_) (sym (gramShape D))
+      (ℚP.*-cancelˡ-≤-pos (normSq a) {{ℚ.positive 0<s}}
+        (transport-≤ refl (projectionIdentity a b) bound))
+
+  -- The exact residual orthogonality, recorded so that the "transverse"
+  -- adjective is not merely a name.
+  transverseIsOrthogonal : dot a (transverseResidual a b) ≡ 0ℚ
+  transverseIsOrthogonal = residualOrthogonal a b
+
+  -- The whole second variation is the transverse surplus minus the remainder
+  -- radius: the gauge/marginal channel has been removed exactly.
+  secondVariationFloor : gram a b - remainderRadius D ≤ secondVariation D
+  secondVariationFloor =
+    transport-≤ refl (sym expand)
+      (ℚP.+-monoʳ-≤ (gram a b) (abs-bound-lower (remainderBound D)))
+    where
+      expand : secondVariation D ≡ gram a b + remainder D
+      expand =
+        trans (decomposes D)
+          (trans
+            (cong (λ z → z + gramPart D + remainder D) (parallelCancels D))
+            (trans
+              (cong (λ z → 0ℚ + z + remainder D) (gramShape D))
+              (cong (λ z → z + remainder D) (ℚP.+-identityˡ (gram a b)))))
+
+  -- Row A's b_-: a strictly positive floor produced by a transverse Gram
+  -- margin exceeding the remainder radius, in arbitrary dimension.
+  positiveSecondVariation :
+    ∀ margin →
+    margin ≤ gram a b →
+    remainderRadius D < margin →
+    (margin - remainderRadius D ≤ secondVariation D)
+      × (0ℚ < margin - remainderRadius D)
+  positiveSecondVariation margin marginBelowGram radiusSmall =
+    ℚP.≤-trans (ℚP.+-monoˡ-≤ (- remainderRadius D) marginBelowGram)
+      secondVariationFloor
+    , positiveGap
+    where
+      positiveGap : 0ℚ < margin - remainderRadius D
+      positiveGap =
+        subst (λ z → z < margin - remainderRadius D)
+          (ℚP.+-inverseʳ (remainderRadius D))
+          (ℚP.+-monoˡ-< (- remainderRadius D) radiusSmall)
+
+  -- The end-to-end statement: a transverse residual bound plus a remainder
+  -- enclosure strictly below it already give Row A's positive floor, with no
+  -- determinant arithmetic and no reference to the dimension.
+  floorFromResidualBound :
+    ∀ margin →
+    0ℚ < normSq a →
+    normSq a * margin ≤ normSq (transverseResidual a b) →
+    remainderRadius D < margin →
+    (margin - remainderRadius D ≤ secondVariation D)
+      × (0ℚ < margin - remainderRadius D)
+  floorFromResidualBound margin 0<s bound radiusSmall =
+    positiveSecondVariation margin
+      (subst (margin ≤_) (gramShape D) (marginFromResidual margin 0<s bound))
+      radiusSmall
+
+------------------------------------------------------------------------
+-- The three-dimensional record is the instance n = 3
+------------------------------------------------------------------------
+
+fromVec3 :
+  Three.GaugeTransverseGramDecomposition → GaugeTransverseGramDecomposition 3
+fromVec3 D = record
+  { secondVariation = Three.secondVariation D
+  ; parallelPart    = Three.parallelPart D
+  ; gramPart        = Three.gramPart D
+  ; remainder       = Three.remainder D
+  ; transverseA     = ofVec3 (Three.transverseA D)
+  ; transverseB     = ofVec3 (Three.transverseB D)
+  ; decomposes      = Three.decomposes D
+  ; parallelCancels = Three.parallelCancels D
+  ; gramShape       =
+      trans (Three.gramShape D)
+        (sym (gram-ofVec3 (Three.transverseA D) (Three.transverseB D)))
+  ; remainderRadius = Three.remainderRadius D
+  ; remainderBound  = Three.remainderBound D
+  }
+
+------------------------------------------------------------------------
+-- Non-vacuity: an instance in dimension five
+------------------------------------------------------------------------
+
+wA wB : Vec ℚ 5
+wA = (+ 1 / 1) ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ []
+wB = 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ 0ℚ ∷ (+ 1 / 1) ∷ []
+
+-- Gram surplus 1, remainder radius 1/2: floor 1/2 > 0.
+fiveDimWitness : GaugeTransverseGramDecomposition 5
+fiveDimWitness = record
+  { secondVariation = + 1 / 2
+  ; parallelPart    = 0ℚ
+  ; gramPart        = + 1 / 1
+  ; remainder       = - (+ 1 / 2)
+  ; transverseA     = wA
+  ; transverseB     = wB
+  ; decomposes      = refl
+  ; parallelCancels = refl
+  ; gramShape       = refl
+  ; remainderRadius = + 1 / 2
+  ; remainderBound  = toWitness {a? = ∣ - (+ 1 / 2) ∣ ℚP.≤? (+ 1 / 2)} _
+  }
+
+module FiveDim = Decomposition fiveDimWitness
+
+-- The transverse pair is certified non-collinear by the minor joining the
+-- FIRST and the LAST coordinate -- a certificate unavailable in dimension 3.
+fiveDimMinorCertificate : 0ℚ < gramPart fiveDimWitness
+fiveDimMinorCertificate =
+  FiveDim.minorCertificate Fin.zero
+    (Fin.suc (Fin.suc (Fin.suc (Fin.suc Fin.zero))))
+    (λ ()) (inj₁ (toWitness {a? = 0ℚ ℚP.<? (+ 1 / 1)} _))
+
+-- and the resulting Row A floor is exactly 1/2.
+fiveDimFloor :
+  ((+ 1 / 1) - (+ 1 / 2) ≤ secondVariation fiveDimWitness)
+    × (0ℚ < (+ 1 / 1) - (+ 1 / 2))
+fiveDimFloor =
+  FiveDim.positiveSecondVariation (+ 1 / 1)
+    (toWitness {a? = (+ 1 / 1) ℚP.≤? gram wA wB} _)
+    (toWitness {a? = (+ 1 / 2) ℚP.<? (+ 1 / 1)} _)

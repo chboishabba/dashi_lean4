@@ -1,0 +1,171 @@
+module DASHI.Physics.YangMills.BalabanYM4OneStepRGToCauchyAndDebtEndToEndExact where
+
+------------------------------------------------------------------------
+-- ROW B → CONSUMERS, END TO END, FROM ONE OWNER AND ONE HYPOTHESIS SET.
+--
+-- WHY THIS MODULE EXISTS.  The previous three modules each closed one link:
+--
+--   * `BalabanYM4MarkedTransverseDecayFromOneStepRGExact` (the WELD) derives
+--     the transverse geometric decay `|H_j^perp| <= A r^j` from the repository's
+--     own `BalabanSU2OneStepRGTheorem`, along ONE trajectory
+--     (`input_{j+1} = output_j`), and packages it as a `MarkedSourceSplit`
+--     whose `transverseDecay` is a theorem rather than a field assumption;
+--
+--   * `BalabanYM4MarkedSourceSplitToCauchyConsumersExact` shows that a
+--     `MarkedSourceSplit` still feeds every Cauchy consumer (uniform coefficient
+--     sup, tube package, function and derivative majorants);
+--
+--   * `YMRowBToRowCQuadraticDebtCompositionExact` shows that the same decay,
+--     squared, caps the row C scale-time Heat/Doob debt integral.
+--
+-- Nothing so far exhibits the WHOLE chain as a single statement about a single
+-- object.  That is what this module does: from the one-step RG owner and its
+-- constants alone (plus the marginal window data and the tube caps), it
+-- produces simultaneously
+--
+--     owner  ==>  split  ==>  { Cauchy function/derivative majorants ,
+--                               row C debt integral budget          }.
+--
+-- Everything below is derived; no new record, no new inequality architecture,
+-- no additional assumption beyond the ones the weld and the composition module
+-- already name.  In particular the two consumers are fed by literally the same
+-- `transverseNorm` — the irrelevant coordinate of the owner's own trajectory —
+-- so this is a same-object statement, not two parallel abstractions.
+--
+-- WHAT THIS IS NOT.  This does not close row B or row C.  The physical content
+-- still missing is exactly the four items the weld names (a scalar mark norm,
+-- the contraction factor `rho`, the remainder bound `S sigma^j` uniform in
+-- cutoff/volume/scale, and the identification of the chain with the literal
+-- CMP116/119 differentiated marked source trajectory) together with the
+-- quadratic Hessian-debt comparison hypothesis `eta_j <= K (H_j^perp)^2` on the
+-- Heat/Doob same-density carrier.  No row becomes proved; the frozen research
+-- count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+import Data.Nat.Base as ℕ
+open import Data.Rational.Base as ℚ using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; _≤_; _<_; _-_)
+import Data.Rational.Properties as ℚP
+
+open import DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact
+  using (natToℚ; prefixSum; pow)
+
+import DASHI.Physics.YangMills.BalabanYM4MarkedSourceMarginalTransverseSplitExact
+  as MS
+import DASHI.Physics.YangMills.BalabanSU2OneStepRGTheorem as RG
+import DASHI.Physics.YangMills.BalabanYM4MarkedTransverseDecayFromOneStepRGExact
+  as BW
+import DASHI.Physics.YangMills.BalabanYM4MarkedSourceSplitToCauchyConsumersExact
+  as CC
+open import DASHI.Physics.YangMills.YMRowCScaleTimeHessianDebtIntegralGateExact
+  using (debtIntegral)
+import DASHI.Physics.YangMills.YMRowBToRowCQuadraticDebtCompositionExact as BC
+
+------------------------------------------------------------------------
+-- The end-to-end module.  Its parameters are exactly the owner's own data
+-- (the trajectory and its constants), the marginal window, and the tube caps.
+------------------------------------------------------------------------
+
+module EndToEnd
+  {Coupling Irrelevant Vacuum EffectiveAction : Set}
+  -- the one-step RG owner, as one trajectory
+  (chain : Nat → RG.OneStepRGTheorem Coupling Irrelevant Vacuum EffectiveAction ℚ)
+  (chainComposes : ∀ j → RG.input (chain (suc j)) ≡ RG.output (chain j))
+  (norm : Irrelevant → ℚ)
+  (normNonNeg : ∀ x → 0ℚ ≤ norm x)
+  (ρ σ r S A : ℚ)
+  (0≤ρ : 0ℚ ≤ ρ) (0≤σ : 0ℚ ≤ σ) (σ≤r : σ ≤ r) (0≤S : 0ℚ ≤ S) (0≤A : 0ℚ ≤ A)
+  (normSubadditive : ∀ j x y →
+     norm (RG.irrelevantAdd (chain j) x y) ≤ norm x + norm y)
+  (linearStepContracts : ∀ j x →
+     norm (RG.irrelevantLinearStep (chain j) x) ≤ ρ * norm x)
+  (remainderGeometric : ∀ j →
+     norm (RG.irrelevantRemainder (chain j)
+             (RG.coupling (RG.input (chain j)))
+             (RG.irrelevant (RG.input (chain j))))
+       ≤ S * pow σ j)
+  (headBounded : norm (RG.irrelevant (RG.input (chain 0))) ≤ A)
+  (rgBudgetCloses : ρ * A + S ≤ r * A)
+  -- the retained (relevant/marginal) window
+  (marg : Nat → ℚ) (retained : Nat) (marginalBound : ℚ)
+  (0≤marginalBound : 0ℚ ≤ marginalBound)
+  (marginalOnRetained : ∀ d → d ℕ.< retained → ∣ marg d ∣ ≤ marginalBound)
+  (marginalVanishes : ∀ d → retained ℕ.≤ d → marg d ≡ 0ℚ)
+  (budget : ℚ) (0≤budget : 0ℚ ≤ budget) (r≤1 : r ≤ 1ℚ)
+  (transverseBudgetCloses : A + r * budget ≤ budget)
+  where
+
+  open BW.Weld chain chainComposes norm normNonNeg ρ σ r S A
+       0≤ρ 0≤σ σ≤r 0≤S 0≤A
+       normSubadditive linearStepContracts remainderGeometric
+       headBounded rgBudgetCloses
+    using (irrelevantAt; transverseNorm; transverseGeometricDecay; weldedSplit)
+    public
+
+  ----------------------------------------------------------------------
+  -- The split, built from the owner.
+  ----------------------------------------------------------------------
+
+  split : MS.MarkedSourceSplit
+  split = weldedSplit marg retained marginalBound 0≤marginalBound
+            marginalOnRetained marginalVanishes budget 0≤budget r≤1
+            transverseBudgetCloses
+
+  -- The split's own transverse channel IS the owner's irrelevant coordinate
+  -- norm: the chain is a same-object chain, not a re-abstraction.
+  splitPerpIsOwnerNorm : ∀ d → MS.perp split d ≡ transverseNorm d
+  splitPerpIsOwnerNorm d = refl
+
+  ----------------------------------------------------------------------
+  -- CONSUMER 1: the Cauchy differentiation interface.
+  ----------------------------------------------------------------------
+
+  uniformCoefficientBound :
+    ∀ d → ∣ MS.H split d ∣ ≤ marginalBound + A
+  uniformCoefficientBound = CC.uniformCoefficientBound split
+
+  beyondRetainedIsTransverse :
+    ∀ d → retained ℕ.≤ d → ∣ MS.H split d ∣ ≤ A * pow r d
+  beyondRetainedIsTransverse = CC.beyondRetainedIsTransverse split
+
+  prefixBound :
+    ∀ k n →
+    prefixSum (λ d → ∣ MS.H split d ∣) k n
+      ≤ marginalBound * natToℚ retained + budget
+  prefixBound = MS.Split.markedSplitPrefixBound split
+
+  module Cauchy
+    (gam Tcap Scap : ℚ)
+    (0≤g : 0ℚ ≤ gam) (g<1 : 0ℚ < 1ℚ - gam)
+    (geoCap : 1ℚ ≤ (1ℚ - gam) * Tcap)
+    (arithCap : Tcap ≤ (1ℚ - gam) * Scap)
+    where
+
+    open CC.Consumers split gam Tcap Scap 0≤g g<1 geoCap arithCap public
+
+  ----------------------------------------------------------------------
+  -- CONSUMER 2: the row C scale-time Heat/Doob debt integral.
+  --
+  -- The debt family is capped by the SQUARE of the same transverse channel,
+  -- so the geometric rate is r^{2j} and the gate is r^2 * tau <= 1.
+  ----------------------------------------------------------------------
+
+  debtBudget :
+    ∀ (η : Nat → ℚ) (K w₀ τ B : ℚ) →
+    0ℚ ≤ K → 0ℚ ≤ w₀ → 0ℚ ≤ τ → 0ℚ ≤ B →
+    (∀ j → 0ℚ ≤ η j) →
+    (∀ j → η j ≤ K * (MS.perp split j * MS.perp split j)) →
+    (r * r) * τ ≤ 1ℚ →
+    (w₀ * (K * (A * A))) + ((r * r) * τ) * B ≤ B →
+    ∀ k n → debtIntegral (λ j → w₀ * pow τ j) η k n ≤ B
+  debtBudget η K w₀ τ B 0≤K 0≤w₀ 0≤τ 0≤B 0≤η quadratic gate closes =
+    BC.Compose.rowCDebtBudgetFromOneStepRG
+      chain chainComposes norm normNonNeg ρ σ r S A
+      0≤ρ 0≤σ σ≤r 0≤S 0≤A
+      normSubadditive linearStepContracts remainderGeometric
+      headBounded rgBudgetCloses
+      η K w₀ τ B 0≤K 0≤w₀ 0≤τ 0≤B 0≤η quadratic gate closes

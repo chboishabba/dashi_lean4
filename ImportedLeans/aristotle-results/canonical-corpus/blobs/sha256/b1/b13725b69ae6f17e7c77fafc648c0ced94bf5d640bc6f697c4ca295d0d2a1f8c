@@ -1,0 +1,30 @@
+# RH/Zeta handoff for the TOE integration lane
+
+This attachment is a **Lean-first analytic-domain handoff**.  Its authority for
+machine-checked content is the `Lean/RiemannAnalytic.lean` aggregate and its 23
+modules.  The reports are an available result snapshot and must not be read as
+the current state of the separate RH specialist task.
+
+## Scope for the TOE lane
+
+Use this material to classify and, where justified, connect the analytic lane
+to the common integration kernel.  Good candidates are generic finite-Gram,
+Fourier-envelope, Poisson, coercivity, local-window, and ternary/channel
+interfaces already shared with another domain.  Promote a connection only with
+an explicit map plus a preservation/equivalence theorem.  Otherwise record a
+typed dependency, socket, or boundary at its proper level.
+
+## Explicit non-goals
+
+Do **not** pursue a proof of RH or duplicate the specialist's analytic frontier:
+complex continuation, finite-tail domination, short-interval prime estimates,
+or uniform twisted-taper estimates.  Preserve their open status.  Do not infer
+that a Lean theorem mirrors an Agda theorem merely because their names or prose
+look related.
+
+## Agda provenance
+
+`Agda-reference/` is selected local source material only.  It is supplied to
+guide faithful Lean mirrors and provenance checks; it is not a claim of Agda
+typechecking in the Aristotle environment.  No Yang--Mills or Navier--Stokes
+material is included.

@@ -1,0 +1,123 @@
+name: DASHI compact Lie theory Agda check
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'DASHI/Physics/YangMills/CompactLie*.agda'
+      - 'DASHI/Physics/YangMills/CompactSimpleClassification.agda'
+      - 'DASHI/Physics/YangMills/SU2CompactLieAlgebraInstance.agda'
+      - 'DASHI/Physics/YangMills/SU2AdjointGenericInstance.agda'
+      - 'DASHI/Physics/YangMills/SUNMatrix*.agda'
+      - 'DASHI/Physics/YangMills/SUNWilson*.agda'
+      - 'DASHI/Physics/YangMills/SU3MatrixInstance.agda'
+      - 'DASHI/Physics/YangMills/FiniteReflectionPositivity.agda'
+      - 'DASHI/Physics/YangMills/ReflectionPositiveBlocking.agda'
+      - 'DASHI/Physics/YangMills/ConstructiveYangMillsNextSurface.agda'
+      - 'DASHI/Physics/YangMills/BalabanWeightedGreenKernelDecay.agda'
+      - 'DASHI/Physics/YangMills/BalabanCriticalMapLipschitzContraction.agda'
+      - 'DASHI/Physics/YangMills/BalabanBackgroundFieldClosure.agda'
+      - 'DASHI/Physics/YangMills/BalabanReferenceHodgeCoercivity.agda'
+      - 'DASHI/Physics/YangMills/BalabanBackgroundPerturbationBudget.agda'
+      - 'DASHI/Physics/YangMills/BalabanCorrectionNeumannBound.agda'
+      - 'DASHI/Physics/YangMills/BalabanSmallFieldNonlinearConstants.agda'
+      - 'DASHI/Physics/YangMills/BalabanExplicitContractionBudget.agda'
+      - 'DASHI/Physics/YangMills/BalabanAnalyticProducerFrontier.agda'
+      - 'DASHI/Physics/YangMills/BalabanRelativeHessianCoercivity.agda'
+      - 'DASHI/Physics/YangMills/BalabanReferenceGreenPerturbation.agda'
+      - 'DASHI/Physics/YangMills/BalabanNonlinearComponentLipschitz.agda'
+      - 'DASHI/Physics/YangMills/BalabanCriticalBallSelfMap.agda'
+      - 'DASHI/Physics/YangMills/BalabanDominantFreeBackgroundClosure.agda'
+      - 'DASHI/Physics/YangMills/BalabanFiniteInverseConsequences.agda'
+      - 'DASHI/Physics/YangMills/BalabanFiniteCoerciveGreen.agda'
+      - 'DASHI/Physics/YangMills/BalabanUniformNeumannAsymptoticResidual.agda'
+      - 'DASHI/Physics/YangMills/BalabanGeometricPowerVanishing.agda'
+      - 'DASHI/Physics/YangMills/BalabanGeometricNeumannClosure.agda'
+      - 'DASHI/Physics/YangMills/BalabanFiniteVolumeBackgroundLane.agda'
+      - 'DASHI/Physics/YangMills/BalabanSU2FiniteBackgroundAssembly.agda'
+      - 'DASHI/Physics/YangMills/BalabanUniformGreenNonlinearProduct.agda'
+      - 'DASHI/Physics/YangMills/BalabanSeparatedUniformGreenNonlinearBounds.agda'
+      - 'DASHI/Physics/YangMills/BalabanOneStepPolymerEstimate.agda'
+      - 'DASHI/Physics/YangMills/BalabanConcreteOneStepRG.agda'
+      - 'DASHI/Physics/YangMills/BalabanOneStepRGClosure.agda'
+      - 'DASHI/Physics/YangMills/BalabanConcreteStepVSuppression.agda'
+      - 'DASHI/Physics/YangMills/BalabanStepVKPClosure.agda'
+      - 'DASHI/Physics/YangMills/BalabanQuantitativeAllScaleInvariant.agda'
+      - 'DASHI/Physics/YangMills/BalabanAllScaleRGClosure.agda'
+      - 'DASHI/Physics/YangMills/BalabanContinuumOSLimit.agda'
+      - 'DASHI/Physics/YangMills/BalabanOSMassGapClosure.agda'
+      - 'DASHI/Physics/YangMills/BalabanMassGapSurvival.agda'
+      - 'DASHI/Physics/YangMills/BalabanUniformToMassGapChain.agda'
+      - 'DASHI/Physics/YangMills/BalabanDashenGrossCalibration.agda'
+      - 'DASHI/Physics/YangMills/BalabanFiniteOneStepFrontierBundle.agda'
+      - 'scripts/audit_constructive_yang_mills_levels.py'
+      - 'scripts/audit_balaban_dominant_free_background.py'
+      - 'Docs/CompactLieYangMills.md'
+      - '.github/workflows/compact-lie-theory-agda.yml'
+
+concurrency:
+  group: dashi-global-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  focused-agda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Audit proof-level boundaries
+        run: |
+          python scripts/audit_constructive_yang_mills_levels.py
+          python scripts/audit_balaban_dominant_free_background.py
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - name: Restore Agda 2.9 shadow cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/dashi-agda29
+          key: compact-lie-theory-agda29-${{ runner.os }}-86a1179-${{ hashFiles('scripts/run_agda29_parallel_check.sh') }}
+
+      - name: Check compact Lie exact and aggregate surfaces
+        id: focused
+        shell: bash
+        run: |
+          set +e
+          (
+            set -euo pipefail
+            export AGDA_FLAKE="github:agda/agda/86a1179c1f886da773dc53be920bcca5d876884e#debug.bin"
+            export DASHI_REPO_ROOT="$GITHUB_WORKSPACE"
+            export DASHI_AGDA29_CACHE_ROOT="$RUNNER_TEMP/dashi-agda29"
+            export AGDA_LOG_PATH="$GITHUB_WORKSPACE/agda-compact-lie-theory.log"
+            export AGDA_JOBS=4
+            scripts/run_agda29_parallel_check.sh \
+              DASHI/Physics/YangMills/CompactLieExactSurface.agda \
+              DASHI/Physics/YangMills/ConstructiveYangMillsNextSurface.agda \
+              DASHI/Physics/YangMills/CompactLieTheorySurface.agda \
+              DASHI/Physics/YangMills/BalabanAnalyticProducerFrontier.agda \
+              DASHI/Physics/YangMills/BalabanDominantFreeBackgroundClosure.agda \
+              DASHI/Physics/YangMills/BalabanFiniteOneStepFrontierBundle.agda
+          ) > agda-compact-lie-theory.log 2>&1
+          status=$?
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          tail -n 420 agda-compact-lie-theory.log
+          exit 0
+
+      - name: Upload Agda log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compact-lie-theory-agda-log
+          path: agda-compact-lie-theory.log
+          if-no-files-found: error
+
+      - name: Fail on Agda error
+        if: steps.focused.outputs.status != '0'
+        run: exit 1

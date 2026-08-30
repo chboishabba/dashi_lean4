@@ -1,0 +1,2 @@
+corpus,total,cogBuckets,triadBuckets,harmBuckets,cogWins,triadWins,harmWins,cogWinsRel,triadWinsRel,harmWinsRel,harm0,harm5,harm7,harm11,harm13
+lean4,183878,92,20,5,183878,0,0,58468,45209,80201,103677,28751,21219,16603,13628

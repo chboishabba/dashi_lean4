@@ -1,0 +1,366 @@
+module DASHI.Physics.YangMills.YMCumulativeBetaMarginExact where
+
+------------------------------------------------------------------------
+-- ROW A, ARITHMETIC CORE:
+--   PREFIX GAUSSIAN MARGIN  +  SUMMABLE HISTORY  ==>  UNIFORM POSITIVE
+--   CUMULATIVE BETA MARGIN
+--
+-- Frozen row A of docs/ym/YangMillsClayFourFrozenResearchLemmas.md
+-- (`LiteralCompactSimplePositiveBeta`) asks, on the literal Balaban
+-- trajectory, for constants
+--
+--     b_- > 0,  b_+ < infinity,  C < infinity,  rho > 0
+--
+-- with, for every admissible prefix k < m,
+--
+--     b_-(m-k)  <=  sum_{j=k+1}^{m} beta_{Z,j}  <=  b_+(m-k),
+--     | sum_{j=k+1}^{m} beta_{Int,j} |  <=  C sum_{j=k+1}^{m} g_{j-1}^rho,
+--
+-- and asks that the small-coupling history be strong enough that the second
+-- line cannot consume the positive Gaussian margin, the downstream consumer
+-- needing only
+--
+--     sum_{j=k+1}^{m} beta_j  >=  b_*(m-k),   b_* > 0  uniform.
+--
+-- WHAT IS PROVED HERE, AND WHAT IS NOT.
+--
+-- This module proves the *reduction*: it is exactly the implication
+--
+--     (two-sided Gaussian shell bounds)
+--   + (interaction prefix controlled by C times the history prefix)
+--   + (history prefix uniformly bounded by a budget gamma)
+--   + (margin inequality  C*gamma + b_*  <=  b_-)
+--   ==> for every start k and every nonempty prefix,
+--         b_* (m-k)  <=  sum_{j=k+1}^{m} beta_j
+--         and         sum_{j=k+1}^{m} beta_j  <=  b_+(m-k) + C*gamma.
+--
+-- It is *not* a proof of row A.  The two genuinely analytic inputs
+--
+--   (i)  b_- > 0 for the identity-background Hessian of the actual
+--        constrained Gaussian normalisation, including the Q-constraint
+--        dependence, and
+--   (ii) the uniform nonlinear interaction Hessian estimate producing
+--        finite C and positive rho on the same trajectory,
+--
+-- remain open, and row A therefore stays open; the frozen count stays at 4.
+-- What this module removes is any later ambiguity about whether the *shape*
+-- of the target inequality actually closes: given (i) and (ii) with a
+-- geometrically decaying admissible history, it does, with the explicit
+-- uniform constant b_* = b_- - C*gamma, and it closes with no dependence on
+-- the prefix length m-k.
+--
+-- Everything is exact rational arithmetic: no postulate, no hole, no
+-- Boolean receipt, no imported authority.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat as Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Rational.Base as ℚ using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _≤_; _<_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; cong₂; subst)
+
+open import DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact using
+  ( prefixSum ; prefixSum-add ; prefixSum-mono ; prefixSum-lowerConst
+  ; prefixSum-upperConst ; prefixSum-budget ; prefixSum-cong ; prefixSum-reindex
+  ; prefixSum-scale ; prefixSum-neg
+  ; ContractingShellFamily ; shell ; budget ; budgetNonneg
+  ; natToℚ ; natToℚ-nonneg ; 1≤natToℚ-suc ; nonNegProduct
+  )
+
+------------------------------------------------------------------------
+-- One transposition lemma
+------------------------------------------------------------------------
+
+addNegTranspose : ∀ a b i → a + i ≤ b → a ≤ b + (- i)
+addNegTranspose a b i a+i≤b =
+  subst (λ z → z ≤ b + (- i))
+    (trans (ℚP.+-assoc a i (- i))
+      (trans (cong (λ z → a + z) (ℚP.+-inverseʳ i)) (ℚP.+-identityʳ a)))
+    (ℚP.+-monoˡ-≤ (- i) a+i≤b)
+
+------------------------------------------------------------------------
+-- The hypotheses of row A's reduction, on one admissible trajectory
+------------------------------------------------------------------------
+
+record CumulativeBetaHypotheses : Set where
+  field
+    -- Source-native split  beta_{j+1} = beta_{Z,j+1} + beta_{Int,j+1}.
+    betaZ betaInt : Nat → ℚ
+
+    -- Majorant for the small-coupling history  g_{j-1}^rho, assumed to
+    -- contract geometrically along the trajectory.
+    history : ContractingShellFamily
+
+    interactionConstant bMinus bPlus bStar : ℚ
+
+    interactionConstantNonneg : 0ℚ ≤ interactionConstant
+
+    -- Two-sided Gaussian shell bounds.
+    gaussianLower : ∀ j → bMinus ≤ betaZ j
+    gaussianUpper : ∀ j → betaZ j ≤ bPlus
+
+    -- | sum beta_Int | <= C * sum of the history majorant, written out.
+    interactionUpper : ∀ k n →
+      prefixSum betaInt k n ≤ interactionConstant * prefixSum (shell history) k n
+    interactionLower : ∀ k n →
+      - (interactionConstant * prefixSum (shell history) k n) ≤ prefixSum betaInt k n
+
+    bStarPositive : 0ℚ < bStar
+
+    -- The history budget cannot consume the Gaussian margin.
+    marginNotConsumed :
+      interactionConstant * budget history + bStar ≤ bMinus
+
+open CumulativeBetaHypotheses public
+
+module _ (H : CumulativeBetaHypotheses) where
+
+  beta : Nat → ℚ
+  beta j = betaZ H j + betaInt H j
+
+  interactionBudget : ℚ
+  interactionBudget = interactionConstant H * budget (history H)
+
+  interactionBudgetNonneg : 0ℚ ≤ interactionBudget
+  interactionBudgetNonneg =
+    nonNegProduct (interactionConstant H) (budget (history H))
+      (interactionConstantNonneg H) (budgetNonneg (history H))
+
+  ----------------------------------------------------------------------
+  -- The literal two-sided Gaussian prefix bound
+  --   b_-(m-k) <= sum beta_Z <= b_+(m-k)
+  ----------------------------------------------------------------------
+
+  gaussianPrefixLower : ∀ k n →
+    bMinus H * natToℚ n ≤ prefixSum (betaZ H) k n
+  gaussianPrefixLower =
+    prefixSum-lowerConst (betaZ H) (bMinus H) (gaussianLower H)
+
+  gaussianPrefixUpper : ∀ k n →
+    prefixSum (betaZ H) k n ≤ bPlus H * natToℚ n
+  gaussianPrefixUpper =
+    prefixSum-upperConst (betaZ H) (bPlus H) (gaussianUpper H)
+
+  ----------------------------------------------------------------------
+  -- The interaction prefix is bounded by C*gamma, uniformly in k and in the
+  -- prefix length.
+  ----------------------------------------------------------------------
+
+  historyPrefixBudget : ∀ k n →
+    interactionConstant H * prefixSum (shell (history H)) k n ≤ interactionBudget
+  historyPrefixBudget k n =
+    ℚP.*-monoˡ-≤-nonNeg (interactionConstant H)
+      {{ℚ.nonNegative (interactionConstantNonneg H)}}
+      (prefixSum-budget (history H) k n)
+
+  interactionPrefixUpper : ∀ k n →
+    prefixSum (betaInt H) k n ≤ interactionBudget
+  interactionPrefixUpper k n =
+    ℚP.≤-trans (interactionUpper H k n) (historyPrefixBudget k n)
+
+  interactionPrefixLower : ∀ k n →
+    - interactionBudget ≤ prefixSum (betaInt H) k n
+  interactionPrefixLower k n =
+    ℚP.≤-trans
+      (ℚP.neg-antimono-≤ (historyPrefixBudget k n))
+      (interactionLower H k n)
+
+  ----------------------------------------------------------------------
+  -- Row A's downstream target:  sum_{j=k+1}^{m} beta_j >= b_*(m-k).
+  ----------------------------------------------------------------------
+
+  -- The margin inequality, multiplied out along a nonempty prefix.
+  marginTimesLength : ∀ n →
+    bStar H * natToℚ (suc n) + interactionBudget
+      ≤ bMinus H * natToℚ (suc n)
+  marginTimesLength n =
+    ℚP.≤-trans
+      (ℚP.+-monoʳ-≤ (bStar H * natToℚ (suc n)) budgetGrowsWithLength)
+      (ℚP.≤-trans
+        (ℚP.≤-reflexive
+          (sym (ℚP.*-distribʳ-+ (natToℚ (suc n)) (bStar H) interactionBudget)))
+        (ℚP.*-monoʳ-≤-nonNeg (natToℚ (suc n))
+          {{ℚ.nonNegative (natToℚ-nonneg (suc n))}}
+          (subst (λ z → z ≤ bMinus H)
+            (ℚP.+-comm (interactionBudget) (bStar H))
+            (marginNotConsumed H))))
+    where
+      budgetGrowsWithLength : interactionBudget ≤ interactionBudget * natToℚ (suc n)
+      budgetGrowsWithLength =
+        subst (λ z → z ≤ interactionBudget * natToℚ (suc n))
+          (ℚP.*-identityʳ interactionBudget)
+          (ℚP.*-monoˡ-≤-nonNeg interactionBudget
+            {{ℚ.nonNegative interactionBudgetNonneg}}
+            (1≤natToℚ-suc n))
+
+  cumulativeBetaMargin : ∀ k n →
+    bStar H * natToℚ (suc n) ≤ prefixSum beta k (suc n)
+  cumulativeBetaMargin k n =
+    subst (λ z → bStar H * natToℚ (suc n) ≤ z)
+      (sym (prefixSum-add (betaZ H) (betaInt H) k (suc n)))
+      (ℚP.≤-trans
+        (addNegTranspose
+          (bStar H * natToℚ (suc n))
+          (bMinus H * natToℚ (suc n))
+          interactionBudget
+          (marginTimesLength n))
+        (ℚP.+-mono-≤
+          (gaussianPrefixLower k (suc n))
+          (interactionPrefixLower k (suc n))))
+
+  cumulativeBetaUpper : ∀ k n →
+    prefixSum beta k n ≤ bPlus H * natToℚ n + interactionBudget
+  cumulativeBetaUpper k n =
+    subst (λ z → z ≤ bPlus H * natToℚ n + interactionBudget)
+      (sym (prefixSum-add (betaZ H) (betaInt H) k n))
+      (ℚP.+-mono-≤ (gaussianPrefixUpper k n) (interactionPrefixUpper k n))
+
+------------------------------------------------------------------------
+-- ADMISSIBLE PREFIXES OF THE ORIGINAL TRAJECTORY
+--
+-- Bałaban's shell bounds hold from a first admissible scale j0 onwards, and
+-- row A speaks of *admissible* prefixes.  Nothing above is lost: if the
+-- hypotheses hold for the trajectory reindexed from j0, then the uniform
+-- positive margin holds for every prefix of the original trajectory that
+-- starts at or after j0.
+------------------------------------------------------------------------
+
+admissibleCumulativeBetaMargin :
+  (betaZfull betaIntfull : Nat → ℚ) (j0 : Nat) (H : CumulativeBetaHypotheses) →
+  (∀ i → betaZ H i ≡ betaZfull (j0 Nat.+ i)) →
+  (∀ i → betaInt H i ≡ betaIntfull (j0 Nat.+ i)) →
+  ∀ k n →
+  bStar H * natToℚ (suc n)
+    ≤ prefixSum (λ j → betaZfull j + betaIntfull j) (j0 Nat.+ k) (suc n)
+admissibleCumulativeBetaMargin betaZfull betaIntfull j0 H hZ hInt k n =
+  subst (λ z → bStar H * natToℚ (suc n) ≤ z)
+    (trans
+      (prefixSum-cong (beta H)
+        (λ i → betaZfull (j0 Nat.+ i) + betaIntfull (j0 Nat.+ i))
+        (λ i → cong₂ _+_ (hZ i) (hInt i)) k (suc n))
+      (prefixSum-reindex (λ j → betaZfull j + betaIntfull j) j0 k (suc n)))
+    (cumulativeBetaMargin H k n)
+
+------------------------------------------------------------------------
+-- THE CLOSURE CRITERION
+--
+-- Row A's remaining analysis has to produce four numbers.  This is the
+-- sharp statement of what they must satisfy: with the geometric history
+-- budget B of the majorant, the *whole* prefix inequality closes as soon as
+--
+--                        C * B  <  b_-,
+--
+-- and then the uniform downstream constant is exactly
+--
+--                        b_*  =  b_-  -  C * B.
+--
+-- So row A is falsified by, and only by, failure of that single numerical
+-- inequality for the constants delivered by the constrained Gaussian Hessian
+-- (b_-) and by the uniform nonlinear interaction Hessian estimate (C, and the
+-- history exponent rho entering B).
+------------------------------------------------------------------------
+
+sumMinusCancel : ∀ a b → a + (b ℚ.- a) ≡ b
+sumMinusCancel a b =
+  trans (cong (λ z → a + z) (ℚP.+-comm b (- a)))
+  (trans (sym (ℚP.+-assoc a (- a) b))
+  (trans (cong (λ z → z + b) (ℚP.+-inverseʳ a))
+         (ℚP.+-identityˡ b)))
+
+closureCriterion :
+  (betaZseq betaIntseq : Nat → ℚ)
+  (hist : ContractingShellFamily)
+  (C bM bP : ℚ) →
+  0ℚ ≤ C →
+  (∀ j → bM ≤ betaZseq j) →
+  (∀ j → betaZseq j ≤ bP) →
+  (∀ k n → prefixSum betaIntseq k n ≤ C * prefixSum (shell hist) k n) →
+  (∀ k n → - (C * prefixSum (shell hist) k n) ≤ prefixSum betaIntseq k n) →
+  0ℚ < bM ℚ.- C * budget hist →
+  CumulativeBetaHypotheses
+closureCriterion betaZseq betaIntseq hist C bM bP C≥0 lower upper intUp intLow positive =
+  record
+    { betaZ                     = betaZseq
+    ; betaInt                   = betaIntseq
+    ; history                   = hist
+    ; interactionConstant       = C
+    ; bMinus                    = bM
+    ; bPlus                     = bP
+    ; bStar                     = bM ℚ.- C * budget hist
+    ; interactionConstantNonneg = C≥0
+    ; gaussianLower             = lower
+    ; gaussianUpper             = upper
+    ; interactionUpper          = intUp
+    ; interactionLower          = intLow
+    ; bStarPositive             = positive
+    ; marginNotConsumed         =
+        ℚP.≤-reflexive (sumMinusCancel (C * budget hist) bM)
+    }
+
+closureCriterionMargin :
+  (betaZseq betaIntseq : Nat → ℚ)
+  (hist : ContractingShellFamily)
+  (C bM bP : ℚ)
+  (C≥0 : 0ℚ ≤ C)
+  (lower : ∀ j → bM ≤ betaZseq j)
+  (upper : ∀ j → betaZseq j ≤ bP)
+  (intUp : ∀ k n → prefixSum betaIntseq k n ≤ C * prefixSum (shell hist) k n)
+  (intLow : ∀ k n → - (C * prefixSum (shell hist) k n) ≤ prefixSum betaIntseq k n)
+  (positive : 0ℚ < bM ℚ.- C * budget hist) →
+  ∀ k n →
+  (bM ℚ.- C * budget hist) * natToℚ (suc n)
+    ≤ prefixSum (λ j → betaZseq j + betaIntseq j) k (suc n)
+closureCriterionMargin betaZseq betaIntseq hist C bM bP C≥0 lower upper intUp intLow positive =
+  cumulativeBetaMargin
+    (closureCriterion betaZseq betaIntseq hist C bM bP C≥0 lower upper intUp intLow positive)
+
+------------------------------------------------------------------------
+-- FROM THE PER-SHELL INTERACTION ESTIMATE TO THE PREFIX ESTIMATE
+--
+-- Bałaban's nonlinear estimate is produced shell by shell, in the form
+--
+--     | beta_{Int,j} |  <=  C g_{j-1}^rho,
+--
+-- written here two-sidedly against the history majorant.  The prefix form
+-- assumed by `CumulativeBetaHypotheses` follows by summation, so the record
+-- may be fed directly with the per-shell estimate.
+------------------------------------------------------------------------
+
+perShellInteractionPrefixUpper :
+  (betaIntseq : Nat → ℚ) (C : ℚ) (h : Nat → ℚ) →
+  (∀ j → betaIntseq j ≤ C * h j) →
+  ∀ k n → prefixSum betaIntseq k n ≤ C * prefixSum h k n
+perShellInteractionPrefixUpper betaIntseq C h perShell k n =
+  subst (λ z → prefixSum betaIntseq k n ≤ z)
+    (prefixSum-scale C h k n)
+    (prefixSum-mono betaIntseq (λ j → C * h j) perShell k n)
+
+perShellInteractionPrefixLower :
+  (betaIntseq : Nat → ℚ) (C : ℚ) (h : Nat → ℚ) →
+  (∀ j → - (C * h j) ≤ betaIntseq j) →
+  ∀ k n → - (C * prefixSum h k n) ≤ prefixSum betaIntseq k n
+perShellInteractionPrefixLower betaIntseq C h perShell k n =
+  subst (λ z → z ≤ prefixSum betaIntseq k n)
+    (trans (prefixSum-neg (λ j → C * h j) k n)
+           (cong -_ (prefixSum-scale C h k n)))
+    (prefixSum-mono (λ j → - (C * h j)) betaIntseq perShell k n)
+
+-- Row A's closure criterion, fed by the per-shell estimates as produced.
+perShellClosureCriterionMargin :
+  (betaZseq betaIntseq : Nat → ℚ)
+  (hist : ContractingShellFamily)
+  (C bM bP : ℚ) →
+  0ℚ ≤ C →
+  (∀ j → bM ≤ betaZseq j) →
+  (∀ j → betaZseq j ≤ bP) →
+  (∀ j → betaIntseq j ≤ C * shell hist j) →
+  (∀ j → - (C * shell hist j) ≤ betaIntseq j) →
+  0ℚ < bM ℚ.- C * budget hist →
+  ∀ k n →
+  (bM ℚ.- C * budget hist) * natToℚ (suc n)
+    ≤ prefixSum (λ j → betaZseq j + betaIntseq j) k (suc n)
+perShellClosureCriterionMargin betaZseq betaIntseq hist C bM bP C≥0 lower upper shellUp shellLow positive =
+  closureCriterionMargin betaZseq betaIntseq hist C bM bP C≥0 lower upper
+    (perShellInteractionPrefixUpper betaIntseq C (shell hist) shellUp)
+    (perShellInteractionPrefixLower betaIntseq C (shell hist) shellLow)
+    positive

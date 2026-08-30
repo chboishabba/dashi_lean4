@@ -1,0 +1,394 @@
+module DASHI.Physics.YangMills.BalabanYM4SignNormalizedBorderedKKTSecondVariationExact where
+
+------------------------------------------------------------------------
+-- ROW A1: THE SIGN-NORMALISED BORDERED (KKT) SECOND-VARIATION CRITERION
+--
+-- WHY THIS MODULE EXISTS
+--
+-- `BalabanYM4ConstrainedGaussianFixedAmbientSecondVariationExact` proves the
+-- fixed-ambient second variation of  S = -1/2 log |det M|  in the *one
+-- constraint* convention, where the bordered determinant of a positive
+-- definite Delta_0 with a nonzero constraint row is negative, and the
+-- resulting sufficient condition reads `k_2 > 0` for
+--
+--     det M(eps)  =  k_0 + k_1 eps + k_2 eps^2 + ... ,      k_0 < 0 .
+--
+-- That criterion is *convention dependent*.  For a positive definite Delta_0
+-- with m independent constraints the standard bordered-Hessian sign rule is
+--
+--     sgn det [ Delta_0  Q_0^* ]  =  (-1)^m ,
+--             [ Q_0      0     ]
+--
+-- so the sign of the leading Taylor coefficient — and hence the sign of the
+-- correct sufficient condition — flips with the parity of the number of
+-- constraints.  Attaching the `k_2 > 0` form directly to the physical,
+-- many-constraint Q of the Balaban background problem would therefore be
+-- wrong for odd/even mismatches.
+--
+-- WHAT THIS MODULE PROVES
+--
+--   (1) `signNormalized` : the parity-normalised determinant
+--
+--           d(eps)  =  (-1)^m det M(eps),
+--
+--       together with the two concrete parity facts the repository can check
+--       in explicit coordinates:
+--
+--         * m = 1, ambient dimension 2:  d(0) = - det M > 0
+--           (from `borderedDeterminantNegative`);
+--         * m = 2, ambient dimension 2:  det M = (det Q)^2, hence
+--           d(0) = (+1) det M > 0 whenever Q is invertible.
+--
+--       These two exhibit the sign flip explicitly: with the same positive
+--       definite Delta_0, one constraint gives a negative determinant and two
+--       constraints give a positive one, exactly as (-1)^m predicts.
+--
+--   (2) `SignNormalizedCriterion` : the dimension- and parity-independent
+--       second-variation criterion.  Writing
+--
+--           d(eps) = d_0 + d_1 eps + d_2 eps^2 + ... ,     d_0 > 0 ,
+--
+--       and  S = -1/2 log d  (which equals -1/2 log|det M| because d = |det M|
+--       once d > 0), the exact identity  S'' = -1/2 (d'' d - (d')^2)/d^2  gives
+--       at eps = 0 the cleared relation
+--
+--           S''(0) * 2 d_0^2  =  d_1^2 - 2 d_0 d_2 ,
+--
+--       i.e.  S''(0) = (d_1^2 - 2 d_0 d_2) / (2 d_0^2), and the module proves
+--
+--           d_1^2 >  2 d_0 d_2   ==>   S''(0) > 0 ,
+--           d_1^2 >= 2 d_0 d_2   ==>   S''(0) >= 0 .
+--
+--       This — not `k_2 > 0` — is the invariant positivity condition.
+--
+--   (3) `OneConstraintBridge` : in the one-constraint convention d_i = -k_i,
+--       the cleared numerator is *the same rational number*, and the previous
+--       criterion is recovered as a special case: k_0 < 0 and k_2 > 0 imply
+--       d_1^2 > 2 d_0 d_2.  So nothing proved earlier is lost; it is placed
+--       inside the sign-normalised statement as the m odd instance.
+--
+-- WHAT IS *NOT* PROVED.  The general-m parity law is verified here only in the
+-- two explicitly computable cases m = 1 and m = 2 (ambient dimension 2); no
+-- general-dimension determinant theory is developed, and the identification of
+-- (Delta, Q) with the literal Wilson + reduced Faddeev-Popov + Haar background
+-- data — hence the actual numerical sign of d_1^2 - 2 d_0 d_2 — is still open.
+-- Row A stays open and the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Data.Sum.Base using (_⊎_; inj₁; inj₂)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; mul-pos; scaleˡ-nonNeg; transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4BorderedKKTDeterminantExact
+  using ( det4; borderedMatrixDeterminant2; borderedDeterminantNegative
+        ; PositiveDefinite2; square-nonNeg; square-pos)
+open import DASHI.Physics.YangMills.BalabanYM4ConstrainedGaussianFixedAmbientSecondVariationExact
+  using (AffineKKTFamily; module Family; posFromProductʳ; nonNegFromProductʳ)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Parity of the number of constraints
+------------------------------------------------------------------------
+
+parity : Nat → ℚ
+parity zero    = 1ℚ
+parity (suc m) = - parity m
+
+parityOne : parity 1 ≡ - 1ℚ
+parityOne = refl
+
+parityTwo : parity 2 ≡ 1ℚ
+parityTwo = refl
+
+-- d = (-1)^m det M
+signNormalized : Nat → ℚ → ℚ
+signNormalized m x = parity m * x
+
+------------------------------------------------------------------------
+-- (1a) m = 1, ambient dimension 2:  (-1)^1 det M > 0
+------------------------------------------------------------------------
+
+oneConstraintSignNormalizedPositive :
+  ∀ {a b c q₁ q₂ : ℚ} → PositiveDefinite2 a b c →
+  (0ℚ < q₁ ⊎ q₁ < 0ℚ) ⊎ (0ℚ < q₂ ⊎ q₂ < 0ℚ) →
+  0ℚ < signNormalized 1 (borderedMatrixDeterminant2 a b c q₁ q₂)
+oneConstraintSignNormalizedPositive {a} {b} {c} {q₁} {q₂} pd nonzeroQ =
+  subst (0ℚ <_) (sym flip) (ℚP.neg-antimono-< (borderedDeterminantNegative pd nonzeroQ))
+  where
+    flip : signNormalized 1 (borderedMatrixDeterminant2 a b c q₁ q₂)
+             ≡ - borderedMatrixDeterminant2 a b c q₁ q₂
+    flip =
+      solve 1 (λ X → (:- con 1ℚ) :* X := :- X) refl
+        (borderedMatrixDeterminant2 a b c q₁ q₂)
+
+------------------------------------------------------------------------
+-- (1b) m = 2, ambient dimension 2:  det M = (det Q)^2, so (-1)^2 det M > 0
+------------------------------------------------------------------------
+
+-- M = [ Delta   Q^*  ]  with Delta = [[a,b],[b,c]] symmetric and
+--     [ Q       0    ]       Q = [[p₁,p₂],[r₁,r₂]]  (two constraint rows).
+borderedMatrixDeterminant2×2 : (a b c p₁ p₂ r₁ r₂ : ℚ) → ℚ
+borderedMatrixDeterminant2×2 a b c p₁ p₂ r₁ r₂ =
+  det4 a  b  p₁ r₁
+       b  c  p₂ r₂
+       p₁ p₂ 0ℚ 0ℚ
+       r₁ r₂ 0ℚ 0ℚ
+
+-- The full-constraint bordered determinant is the *square* of det Q, hence
+-- independent of Delta and nonnegative: the m = 2 face of the parity law.
+twoConstraintDeterminantIsSquare :
+  ∀ a b c p₁ p₂ r₁ r₂ →
+  borderedMatrixDeterminant2×2 a b c p₁ p₂ r₁ r₂
+    ≡ (p₁ * r₂ - p₂ * r₁) * (p₁ * r₂ - p₂ * r₁)
+twoConstraintDeterminantIsSquare a b c p₁ p₂ r₁ r₂ =
+  solve 7
+    (λ A B C P₁ P₂ R₁ R₂ →
+       A :* ((C :* (con 0ℚ :* con 0ℚ :- con 0ℚ :* con 0ℚ)
+                :- P₂ :* (P₂ :* con 0ℚ :- con 0ℚ :* R₂)
+                :+ R₂ :* (P₂ :* con 0ℚ :- con 0ℚ :* R₂)))
+         :- B :* ((B :* (con 0ℚ :* con 0ℚ :- con 0ℚ :* con 0ℚ)
+                :- P₂ :* (P₁ :* con 0ℚ :- con 0ℚ :* R₁)
+                :+ R₂ :* (P₁ :* con 0ℚ :- con 0ℚ :* R₁)))
+         :+ P₁ :* ((B :* (P₂ :* con 0ℚ :- con 0ℚ :* R₂)
+                :- C :* (P₁ :* con 0ℚ :- con 0ℚ :* R₁)
+                :+ R₂ :* (P₁ :* R₂ :- P₂ :* R₁)))
+         :- R₁ :* ((B :* (P₂ :* con 0ℚ :- con 0ℚ :* R₂)
+                :- C :* (P₁ :* con 0ℚ :- con 0ℚ :* R₁)
+                :+ P₂ :* (P₁ :* R₂ :- P₂ :* R₁)))
+       := (P₁ :* R₂ :- P₂ :* R₁) :* (P₁ :* R₂ :- P₂ :* R₁))
+    refl a b c p₁ p₂ r₁ r₂
+
+twoConstraintSignNormalizedPositive :
+  ∀ {a b c p₁ p₂ r₁ r₂ : ℚ} →
+  (0ℚ < p₁ * r₂ - p₂ * r₁) →
+  0ℚ < signNormalized 2 (borderedMatrixDeterminant2×2 a b c p₁ p₂ r₁ r₂)
+twoConstraintSignNormalizedPositive {a} {b} {c} {p₁} {p₂} {r₁} {r₂} detQpos =
+  subst (0ℚ <_) (sym parityTwoNormalise) (square-pos (inj₁ detQpos))
+  where
+    parityTwoNormalise :
+      signNormalized 2 (borderedMatrixDeterminant2×2 a b c p₁ p₂ r₁ r₂)
+        ≡ (p₁ * r₂ - p₂ * r₁) * (p₁ * r₂ - p₂ * r₁)
+    parityTwoNormalise =
+      trans
+        (cong (1ℚ *_) (twoConstraintDeterminantIsSquare a b c p₁ p₂ r₁ r₂))
+        (ℚP.*-identityˡ ((p₁ * r₂ - p₂ * r₁) * (p₁ * r₂ - p₂ * r₁)))
+
+------------------------------------------------------------------------
+-- (2) THE SIGN-NORMALISED SECOND-VARIATION CRITERION
+--
+--   d(eps) = d_0 + d_1 eps + d_2 eps^2 + ... ,   d_0 > 0,
+--   S = -1/2 log d,  S''(0) = (d_1^2 - 2 d_0 d_2)/(2 d_0^2).
+------------------------------------------------------------------------
+
+module SignNormalizedCriterion (d₀ d₁ d₂ : ℚ) (d₀pos : 0ℚ < d₀) where
+
+  -- S''(0) * 2 d_0^2
+  cleared : ℚ
+  cleared = d₁ * d₁ - twoℚ * (d₀ * d₂)
+
+  -- the invariant positivity condition, d_1^2 > 2 d_0 d_2
+  Condition : Set
+  Condition = twoℚ * (d₀ * d₂) < d₁ * d₁
+
+  WeakCondition : Set
+  WeakCondition = twoℚ * (d₀ * d₂) ≤ d₁ * d₁
+
+  clearedPositive : Condition → 0ℚ < cleared
+  clearedPositive cond =
+    subst (0ℚ <_) (sym asDifference)
+      (ℚP.<-respˡ-≡ (ℚP.+-inverseʳ (twoℚ * (d₀ * d₂)))
+        (ℚP.+-monoˡ-< (- (twoℚ * (d₀ * d₂))) cond))
+    where
+      asDifference : cleared ≡ d₁ * d₁ + (- (twoℚ * (d₀ * d₂)))
+      asDifference =
+        solve 3 (λ X Y Z → X :* X :- con twoℚ :* (Y :* Z)
+                             := X :* X :+ (:- (con twoℚ :* (Y :* Z))))
+          refl d₁ d₀ d₂
+
+  clearedNonNeg : WeakCondition → 0ℚ ≤ cleared
+  clearedNonNeg cond =
+    subst (0ℚ ≤_) (sym asDifference)
+      (transport-≤ (ℚP.+-inverseʳ (twoℚ * (d₀ * d₂))) refl
+        (ℚP.+-monoˡ-≤ (- (twoℚ * (d₀ * d₂))) cond))
+    where
+      asDifference : cleared ≡ d₁ * d₁ + (- (twoℚ * (d₀ * d₂)))
+      asDifference =
+        solve 3 (λ X Y Z → X :* X :- con twoℚ :* (Y :* Z)
+                             := X :* X :+ (:- (con twoℚ :* (Y :* Z))))
+          refl d₁ d₀ d₂
+
+  denominatorPositive : 0ℚ < twoℚ * (d₀ * d₀)
+  denominatorPositive =
+    mul-pos (toWitness {a? = 0ℚ ℚP.<? twoℚ} _) (mul-pos d₀pos d₀pos)
+
+  -- `H` is the second variation S''(0), characterised by the cleared relation
+  -- it satisfies; no property of the logarithm beyond its standard
+  -- second-derivative formula is used.
+  module Value (H : ℚ) (defining : H * (twoℚ * (d₀ * d₀)) ≡ cleared) where
+
+    secondVariationPositive : Condition → 0ℚ < H
+    secondVariationPositive cond =
+      posFromProductʳ denominatorPositive
+        (ℚP.<-respʳ-≡ (sym defining) (clearedPositive cond))
+
+    secondVariationNonNeg : WeakCondition → 0ℚ ≤ H
+    secondVariationNonNeg cond =
+      nonNegFromProductʳ denominatorPositive
+        (transport-≤ refl (sym defining) (clearedNonNeg cond))
+
+------------------------------------------------------------------------
+-- (3) THE ONE-CONSTRAINT BRIDGE:  d_i = -k_i  recovers the old criterion
+------------------------------------------------------------------------
+
+module OneConstraintBridge (k₀ k₁ k₂ : ℚ) (k₀neg : k₀ < 0ℚ) where
+
+  d₀ d₁ d₂ : ℚ
+  d₀ = - k₀
+  d₁ = - k₁
+  d₂ = - k₂
+
+  d₀Positive : 0ℚ < d₀
+  d₀Positive = ℚP.neg-antimono-< k₀neg
+
+  open SignNormalizedCriterion d₀ d₁ d₂ d₀Positive public
+
+  -- the two conventions produce literally the same cleared numerator
+  clearedAgrees : cleared ≡ k₁ * k₁ - twoℚ * (k₂ * k₀)
+  clearedAgrees =
+    solve 3
+      (λ K₀ K₁ K₂ →
+        (:- K₁) :* (:- K₁) :- con twoℚ :* ((:- K₀) :* (:- K₂))
+          := K₁ :* K₁ :- con twoℚ :* (K₂ :* K₀))
+      refl k₀ k₁ k₂
+
+  -- and the old sufficient condition `k_2 > 0` is the m = 1 instance of the
+  -- invariant condition d_1^2 > 2 d_0 d_2
+  conditionFromK₂ : 0ℚ < k₂ → Condition
+  conditionFromK₂ 0<k₂ =
+    ℚP.<-≤-trans negative (square-nonNeg d₁)
+    where
+      positiveOpposite : 0ℚ < twoℚ * (d₀ * k₂)
+      positiveOpposite =
+        mul-pos (toWitness {a? = 0ℚ ℚP.<? twoℚ} _) (mul-pos d₀Positive 0<k₂)
+
+      flip : twoℚ * (d₀ * d₂) ≡ - (twoℚ * (d₀ * k₂))
+      flip =
+        solve 2
+          (λ D K → con twoℚ :* (D :* (:- K)) := :- (con twoℚ :* (D :* K)))
+          refl d₀ k₂
+
+      negative : twoℚ * (d₀ * d₂) < 0ℚ
+      negative =
+        subst (_< 0ℚ) (sym flip) (ℚP.neg-antimono-< positiveOpposite)
+
+------------------------------------------------------------------------
+-- (4) THE SIGN-NORMALISED TAYLOR DATA OF AN AFFINE FAMILY (m = 1)
+------------------------------------------------------------------------
+
+module SignNormalizedFamily (F : AffineKKTFamily) where
+
+  open Family F public
+
+  -- d(eps) = (-1)^1 det M(eps)
+  d : ℚ → ℚ
+  d ε = signNormalized 1 (detM ε)
+
+  d₀ d₁ d₂ d₃ : ℚ
+  d₀ = - k₀
+  d₁ = - k₁
+  d₂ = - k₂
+  d₃ = - k₃
+
+  signNormalizedExpansion :
+    ∀ ε → d ε ≡ d₀ + ε * d₁ + (ε * ε) * d₂ + (ε * (ε * ε)) * d₃
+  signNormalizedExpansion ε =
+    trans (cong (parity 1 *_) (determinantExpansion ε))
+      (solve 5
+        (λ K₀ K₁ K₂ K₃ E →
+          (:- con 1ℚ) :* (K₀ :+ E :* K₁ :+ (E :* E) :* K₂
+                            :+ (E :* (E :* E)) :* K₃)
+            := (:- K₀) :+ E :* (:- K₁) :+ (E :* E) :* (:- K₂)
+                 :+ (E :* (E :* E)) :* (:- K₃))
+        refl k₀ k₁ k₂ k₃ ε)
+
+  dAtZero : d 0ℚ ≡ d₀
+  dAtZero =
+    trans (cong (parity 1 *_) determinantAtZero)
+      (solve 1 (λ K → (:- con 1ℚ) :* K := :- K) refl k₀)
+
+------------------------------------------------------------------------
+-- NON-VACUITY
+------------------------------------------------------------------------
+
+-- (a) The m = 2 face: Delta = [[2,1],[1,2]] (positive definite) with the two
+--     constraint rows (1,0) and (0,1).  det M = (det Q)^2 = 1 > 0, i.e. the
+--     sign-normalised determinant with parity (+1) is positive — the opposite
+--     raw sign to the m = 1 case with the same Delta.
+sampleTwoConstraintDeterminant :
+  borderedMatrixDeterminant2×2 (+ 2 / 1) 1ℚ (+ 2 / 1) 1ℚ 0ℚ 0ℚ 1ℚ ≡ 1ℚ
+sampleTwoConstraintDeterminant = refl
+
+sampleTwoConstraintPositive :
+  0ℚ < signNormalized 2
+         (borderedMatrixDeterminant2×2 (+ 2 / 1) 1ℚ (+ 2 / 1) 1ℚ 0ℚ 0ℚ 1ℚ)
+sampleTwoConstraintPositive =
+  twoConstraintSignNormalizedPositive
+    {a = + 2 / 1} {b = 1ℚ} {c = + 2 / 1}
+    {p₁ = 1ℚ} {p₂ = 0ℚ} {r₁ = 0ℚ} {r₂ = 1ℚ}
+    (toWitness {a? = 0ℚ ℚP.<? (1ℚ * 1ℚ - 0ℚ * 0ℚ)} _)
+
+-- (b) The m = 1 face on the same Delta: det M = -2 < 0, so the *raw*
+--     determinant is negative while the sign-normalised one is positive.
+sampleOneConstraintDeterminant :
+  borderedMatrixDeterminant2 (+ 2 / 1) 1ℚ (+ 2 / 1) 1ℚ 0ℚ ≡ - (+ 2 / 1)
+sampleOneConstraintDeterminant = refl
+
+-- (c) The sign-normalised criterion on the strict family of the fixed-ambient
+--     module:  k_0 = -1, k_1 = 0, k_2 = 3, hence d_0 = 1, d_1 = 0, d_2 = -3,
+--     d_1^2 - 2 d_0 d_2 = 6 > 0 and S''(0) = 3 > 0.
+strictFamily : AffineKKTFamily
+strictFamily = record
+  { a₀ = 1ℚ ; a₁ = 0ℚ
+  ; b₀ = 0ℚ ; b₁ = + 2 / 1
+  ; c₀ = 1ℚ ; c₁ = 0ℚ
+  ; p₀ = 1ℚ ; p₁ = 0ℚ
+  ; r₀ = 0ℚ ; r₁ = 1ℚ
+  }
+
+module StrictSigned = SignNormalizedFamily strictFamily
+
+strictD₀ : StrictSigned.d₀ ≡ 1ℚ
+strictD₀ = refl
+
+strictD₂ : StrictSigned.d₂ ≡ - (+ 3 / 1)
+strictD₂ = refl
+
+strictK₀Negative : StrictSigned.k₀ < 0ℚ
+strictK₀Negative = toWitness {a? = StrictSigned.k₀ ℚP.<? 0ℚ} _
+
+module StrictBridge =
+  OneConstraintBridge StrictSigned.k₀ StrictSigned.k₁ StrictSigned.k₂
+    strictK₀Negative
+
+strictCondition : StrictBridge.Condition
+strictCondition =
+  StrictBridge.conditionFromK₂ (toWitness {a? = 0ℚ ℚP.<? StrictSigned.k₂} _)
+
+module StrictValue = StrictBridge.Value (+ 3 / 1) refl
+
+strictSecondVariationPositive : 0ℚ < (+ 3 / 1)
+strictSecondVariationPositive =
+  StrictValue.secondVariationPositive strictCondition

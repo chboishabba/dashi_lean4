@@ -1,0 +1,570 @@
+import Integration.Registry
+import Integration.SewingRegistry
+import Integration.ObserverTower
+import Integration.ObserverDescent
+import Integration.StructuredObserver
+import Integration.PhysicsInstances
+import Integration.ResidualQuotient
+import Integration.RiemannDomain
+import Integration.GaugeObserver
+import Integration.GaugeSU2
+import Integration.GaugeSSP
+import Integration.DescentLevel
+import Integration.EnumInvariance
+import Integration.GaugePreimage
+import Integration.LeastSufficient
+import Integration.OrbitResidual
+import Integration.CertificatePays
+import Integration.CertificateFormula
+import Integration.SSPThreshold
+import Integration.ApproximateIntertwiner
+import Integration.ConsumerGauge
+import Integration.StructureMorphism
+import Integration.PhaseGaugeU1
+import Integration.CertifiedMargin
+import Integration.CommutatorObservability
+import Integration.MultiscaleDescent
+import Integration.PathTransport
+import Integration.ResidualTaxonomy
+import Integration.EquivarianceObstruction
+import Integration.LocalRealisation
+import Integration.FieldControlledDynamics
+import Integration.ObserverBundle
+import Integration.ContrastBoundary
+
+/-!
+# Axiom audit for the integration spine
+
+Building this module prints the axiom dependencies of every headline result of
+the `Integration` spine.  Each one uses only the standard Lean/Mathlib axioms
+(`propext`, `Classical.choice`, `Quot.sound`); none uses `sorry`, a project
+axiom, or `Lean.ofReduceBool` — in particular there is no `native_decide`
+anywhere in the spine.
+-/
+
+-- Levels
+#print axioms Integration.Levels.BridgeLevel.rank_injective
+#print axioms Integration.Levels.NoTransport.elim
+
+-- Ternary hub
+#print axioms Integration.TernaryHub.ternaryHub
+#print axioms Integration.TernaryHub.bal_unique_up_to_sign
+#print axioms Integration.TernaryHub.balTone_triXor_affine
+#print axioms Integration.TernaryHub.balTone_triXor_ne_add
+#print axioms Integration.TernaryHub.trit369_inv
+
+-- Base369 group layer
+#print axioms Integration.Base369Group.hexSplit_xor
+#print axioms Integration.Base369Group.hexSplit_surjective
+#print axioms Integration.Base369Group.nonary_not_ternary_square
+#print axioms Integration.Base369Group.zmod9_not_add_equiv_sq
+#print axioms Integration.Base369Group.nonary_extension_nonsplit
+#print axioms Integration.Base369Group.base369_carrier_cards
+
+-- Address geometry
+#print axioms Integration.Address.agree_ge_iff
+#print axioms Integration.Address.Addr.ultrametric
+#print axioms Integration.Address.Addr.dist_eq_zero_iff
+#print axioms Integration.Address.Addr.dist_map
+#print axioms Integration.Address.Addr.dist_mono_map
+#print axioms Integration.Address.kernelIsometry
+#print axioms Integration.Address.kernelIsometry_inv
+
+-- Clopen balls / supervoxel refinement
+#print axioms Integration.ClopenBalls.member_iff_dist_le
+#print axioms Integration.ClopenBalls.ball_open
+#print axioms Integration.ClopenBalls.ball_closed
+#print axioms Integration.ClopenBalls.refinement_iff_subset
+#print axioms Integration.ClopenBalls.no_atomic_ball
+#print axioms Integration.ClopenBalls.ternaryAddressBallSystem
+#print axioms Integration.ClopenBalls.authorityContentless
+
+-- Receipt socket
+#print axioms Integration.ReceiptSocket.alignment_unconstrained
+#print axioms Integration.ReceiptSocket.aligned_forced
+
+-- Refinement systems
+#print axioms Integration.Refinement.loomRefinement
+#print axioms Integration.Refinement.loom_project_coherent
+#print axioms Integration.Refinement.loom_root_not_product
+#print axioms Integration.Refinement.addressRefinement
+
+-- Monster 15-prime junction
+#print axioms Integration.MonsterFifteen.lcpLen_ofFn
+#print axioms Integration.MonsterFifteen.dSSP_eq_dist
+#print axioms Integration.MonsterFifteen.USSP_d_eq_dist
+#print axioms Integration.MonsterFifteen.fabric369_isometry
+#print axioms Integration.MonsterFifteen.support_nonexpansive
+#print axioms Integration.MonsterFifteen.support_not_isometry
+#print axioms Integration.MonsterFifteen.support_not_injective
+#print axioms Integration.MonsterFifteen.monster_ternary_junction
+
+-- Cognition domain instance
+#print axioms Integration.CognitionSupervoxel.phase3Transport
+#print axioms Integration.CognitionSupervoxel.observeTrit_flip
+#print axioms Integration.CognitionSupervoxel.observeTrit_surjective
+#print axioms Integration.CognitionSupervoxel.observeTrit_not_injective
+#print axioms Integration.CognitionSupervoxel.publicZero_not_atomic
+#print axioms Integration.CognitionSupervoxel.boundaryContentless
+#print axioms Integration.CognitionSupervoxel.cognition_supervoxel_junction
+
+-- Ultrametric census
+#print axioms Integration.UltrametricCensus.d15_eq_prefix
+#print axioms Integration.UltrametricCensus.dSafety_eq_prefix
+#print axioms Integration.UltrametricCensus.walk_not_prefix
+#print axioms Integration.UltrametricCensus.walk_not_mask15
+#print axioms Integration.UltrametricCensus.ultrametric_census
+
+-- The analytic (RH/zeta) domain
+#print axioms Integration.RiemannReflection.centredPolarTransport
+#print axioms Integration.RiemannReflection.sideTrit_reflect
+#print axioms Integration.RiemannReflection.c3Transport
+#print axioms Integration.RiemannReflection.phaseC_invert
+#print axioms Integration.RiemannReflection.phaseC_sum
+#print axioms Integration.RiemannReflection.c3_not_equiv_centred
+#print axioms Integration.RiemannReflection.role_fibres_not_equiv
+#print axioms Integration.RiemannStrip.critReflect_fixed_iff
+#print axioms Integration.RiemannStrip.stripC2_swap
+#print axioms Integration.RiemannStrip.stripTrit_critReflect
+#print axioms Integration.RiemannStrip.modelDisplacement_injective
+#print axioms Integration.RiemannStrip.stripSymmetry_not_equiv_trit
+#print axioms Integration.RiemannSubstrate.substrate_does_not_constrain_rh
+#print axioms Integration.RiemannXiSymmetry.criticalLine_iff_fixed
+#print axioms Integration.RiemannXiSymmetry.qToC_injective
+#print axioms Integration.RiemannXiSymmetry.qToC_criticalLine_iff
+#print axioms Integration.RiemannXiSymmetry.xiZeroSymmetry_is_socket
+#print axioms Integration.RiemannXiSymmetry.hilbertPolya_is_socket
+#print axioms Integration.RiemannXiSymmetry.stage_card
+#print axioms Integration.RiemannDomain.analyticEntries_levels
+#print axioms Integration.RiemannDomain.analyticDomain
+
+-- Phase quotient: 27/C₃ = 9, the transported nonary algebra, the chart dichotomy
+#print axioms Integration.PhaseQuotient.phaseEquiv
+#print axioms Integration.PhaseQuotient.quotient_eq_iff_orbit
+#print axioms Integration.PhaseQuotient.rotateOutputCode_ne
+#print axioms Integration.PhaseQuotient.phaseZModEquiv_add
+#print axioms Integration.PhaseQuotient.nonary_two_algebras
+#print axioms Integration.PhaseQuotient.q9_nonary_group_iso_impossible
+#print axioms Integration.PhaseQuotient.triXor_chart_dichotomy
+
+-- The lawful SSP weave
+#print axioms Integration.SSPWeave.compose_assoc
+#print axioms Integration.SSPWeave.not_a_group
+#print axioms Integration.SSPWeave.orientationSign_hom
+#print axioms Integration.SSPWeave.transportSSP_comp
+#print axioms Integration.SSPWeave.laneStateHub
+#print axioms Integration.SSPWeave.laneBal_action
+#print axioms Integration.SSPWeave.ssp_weave_preservation
+
+-- Observer quotient: what the Boolean layer keeps and what it forgets
+#print axioms Integration.ObserverQuotient.polarPresence_orbit
+#print axioms Integration.ObserverQuotient.polarPresence_equivariant
+#print axioms Integration.ObserverQuotient.laneAction_descends
+#print axioms Integration.ObserverQuotient.no_equivariant_section
+#print axioms Integration.ObserverQuotient.support_no_descent
+#print axioms Integration.ObserverQuotient.polarPresence_no_descent
+#print axioms Integration.ObserverQuotient.support_not_polarity_invariant
+#print axioms Integration.ObserverQuotient.polarPresenceMask_nonexpansive
+#print axioms Integration.ObserverQuotient.orientation_swap
+#print axioms Integration.ObserverQuotient.defectOrientationHub
+#print axioms Integration.ObserverQuotient.defectToFibreOrientation_equiv
+#print axioms Integration.ObserverQuotient.observer_loss_summary
+
+-- The residual-bearing 9 → 6 projection
+#print axioms Integration.PolarResidual.polarEquiv
+#print axioms Integration.PolarResidual.no_retraction_to_polar
+#print axioms Integration.PolarResidual.project_preserves_phase
+#print axioms Integration.PolarResidual.polarTransport
+#print axioms Integration.PolarResidual.kernelTritHub
+#print axioms Integration.PolarResidual.polar_residual_summary
+
+-- Residual-bearing quotients as one structure
+#print axioms Integration.Residual.card_le
+#print axioms Integration.Residual.residual_not_subsingleton
+#print axioms Integration.Residual.polarQuotient
+#print axioms Integration.Residual.signQuotient
+#print axioms Integration.Residual.residual_quotient_instances
+
+-- Symmetry reduction as a typed obligation
+#print axioms Integration.SymmetryReduction.orbit_invariant
+#print axioms Integration.SymmetryReduction.phaseReduction
+#print axioms Integration.SymmetryReduction.polarReduction
+#print axioms Integration.SymmetryReduction.laneReduction
+#print axioms Integration.SymmetryReduction.support_no_equivariant_action
+#print axioms Integration.SymmetryReduction.support_not_a_reduction
+#print axioms Integration.SymmetryReduction.symmetry_reduction_summary
+
+-- The weld: symmetry-resolved observers (Spine geometry × Integration transport)
+#print axioms Integration.StructuredObserver.FixedIsometryRep.fluct_map
+#print axioms Integration.StructuredObserver.FixedIsometryRep.area2_map
+#print axioms Integration.StructuredObserver.SymmetryResolvedObserver.nondegeneracy_pos
+#print axioms Integration.StructuredObserver.SymmetryResolvedObserver.nondegeneracy_invariant
+#print axioms Integration.StructuredObserver.SymmetryResolvedObserver.symmetry_resolved_theorem
+#print axioms Integration.StructuredObserver.kernelReduction
+#print axioms Integration.StructuredObserver.kernelReduction_action_nontrivial
+#print axioms Integration.StructuredObserver.ssp369Observer
+#print axioms Integration.StructuredObserver.ssp369_theorem
+#print axioms Integration.StructuredObserver.ssp369_residual_nontrivial
+#print axioms Integration.StructuredObserver.polar6_no_equivariant_action
+#print axioms Integration.StructuredObserver.polarResultReduction
+#print axioms Integration.StructuredObserver.equivariant_reduction_plus_residual
+
+-- The order-three instance, and its identification with the spine's ℝ[C₃]
+#print axioms Integration.StructuredObserver.actWheel_order_three
+#print axioms Integration.StructuredObserver.wheelReduction
+#print axioms Integration.StructuredObserver.wheelObserver
+#print axioms Integration.StructuredObserver.wheel_theorem
+#print axioms Integration.StructuredObserver.phaseEmbed_rot
+#print axioms Integration.StructuredObserver.wheel_no_invariant_line
+#print axioms Integration.StructuredObserver.wheel_c3_summary
+
+-- Towers: the hierarchy composes
+#print axioms Integration.ObserverTower.compQuotient
+#print axioms Integration.ObserverTower.towerOf
+#print axioms Integration.ObserverTower.tower_nondegeneracy
+#print axioms Integration.ObserverTower.tower_theorem
+#print axioms Integration.ObserverTower.tower_card_bound
+#print axioms Integration.ObserverTower.magnitudeStep
+#print axioms Integration.ObserverTower.magnitudeStep_proper
+#print axioms Integration.ObserverTower.sspTower
+#print axioms Integration.ObserverTower.sspTower_theorem
+#print axioms Integration.ObserverTower.sspTower_cards
+#print axioms Integration.ObserverTower.sspTower_residual_grows
+
+-- Descent of the transverse certificate to the visible layer
+#print axioms Integration.ObserverDescent.nondegeneracy_descends
+#print axioms Integration.ObserverDescent.certificate_is_coarse_observable
+#print axioms Integration.ObserverDescent.wheel_orbitFibred
+#print axioms Integration.ObserverDescent.wheel_certificate_descends
+#print axioms Integration.ObserverDescent.ssp369_not_orbit_fibred
+
+-- Finite physics lanes as instances of the welded schema
+#print axioms Integration.Physics369.axisLiftDoubleCover
+#print axioms Integration.Physics369.axisLiftObserver
+#print axioms Integration.Physics369.axisLift_theorem
+#print axioms Integration.Physics369.axisLift_residual_nontrivial
+#print axioms Integration.Physics369.matrixSlotNonary
+#print axioms Integration.Physics369.matrixSlot_no_canonical_phase_cell
+#print axioms Integration.Physics369.stage3NonaryChart
+#print axioms Integration.Physics369.stage3SixChart
+#print axioms Integration.Physics369.nsStage3Observer
+#print axioms Integration.Physics369.nsStage3_theorem
+#print axioms Integration.Physics369.physics_actions_factor_through_sign
+#print axioms Integration.Physics369.physics_instances_summary
+
+-- The registry itself
+#print axioms Integration.Registry.registry
+#print axioms Integration.Registry.registry_levels
+#print axioms Integration.Registry.boundaries
+#print axioms Integration.Registry.sockets
+
+-- Gauge reduction: quotient the redundancy, keep the effective symmetry
+#print axioms Integration.Gauge.GaugeReduction.gauge_invariant
+#print axioms Integration.Gauge.GaugeReduction.toEquivariantQuotient
+#print axioms Integration.Gauge.GaugeReduction.coarse_action_trivial_of_orbit
+#print axioms Integration.Gauge.GaugeReduction.effective_not_orbit_quotient
+#print axioms Integration.Gauge.GaugeReduction.redundant_iff_gauge
+#print axioms Integration.Gauge.GaugeReduction.compGauge
+#print axioms Integration.Gauge.GaugeReduction.compGauge_invisible_of_mid_gauge
+#print axioms Integration.Gauge.GaugeReduction.compGauge_redundant_iff
+#print axioms Integration.Gauge.GaugeReduction.residual_nontrivial_of_card
+
+-- Equivariant transverse channels
+#print axioms Integration.EquivariantChannel.EqObserverBuild.channelVec_equivariant
+#print axioms Integration.EquivariantChannel.EqObserverBuild.toObserver
+
+-- The welded gauge theorem and its finite SU(2)-pattern instance
+#print axioms Integration.GaugeObserver.gauge_welded_theorem
+#print axioms Integration.GaugeSU2.gaugeDatum_exact
+#print axioms Integration.GaugeSU2.su2GaugeReduction
+#print axioms Integration.GaugeSU2.su2_effective
+#print axioms Integration.GaugeSU2.su2_not_orbit_quotient
+#print axioms Integration.GaugeSU2.su2_redundant_iff_gauge
+#print axioms Integration.GaugeSU2.sheet_is_deck_transformation
+#print axioms Integration.GaugeSU2.su2GaugeObserver
+#print axioms Integration.GaugeSU2.su2_gauge_theorem
+#print axioms Integration.GaugeSU2.su2_welded
+
+-- Descent levels: the coarsest sufficient observation
+#print axioms Integration.DescentLevel.LayerTower.factorsAt_of_le
+#print axioms Integration.DescentLevel.LayerTower.factorsAt_iff_fibre
+#print axioms Integration.DescentLevel.LayerTower.coarsest_unique
+#print axioms Integration.DescentLevel.LayerTower.exists_coarsest
+#print axioms Integration.DescentLevel.factorsAt_one_of_orbitFibred
+#print axioms Integration.DescentLevel.cert_mid
+#print axioms Integration.DescentLevel.cert_high
+#print axioms Integration.DescentLevel.cert_factorsAt_one
+#print axioms Integration.DescentLevel.cert_not_factorsAt_two
+#print axioms Integration.DescentLevel.axis_coarsest_sufficient
+#print axioms Integration.DescentLevel.axis_coarsest_unique
+#print axioms Integration.DescentLevel.factorsAt_all_of_transitive
+#print axioms Integration.DescentLevel.su2_cert_constant
+#print axioms Integration.DescentLevel.su2_cert_factorsAt
+#print axioms Integration.DescentLevel.su2_no_coarsest
+
+-- The SSP lane as a gauge reduction
+#print axioms Integration.GaugeSSP.sspDatum_exact
+#print axioms Integration.GaugeSSP.sspGaugeReduction
+#print axioms Integration.GaugeSSP.ssp_effective
+#print axioms Integration.GaugeSSP.ssp_redundant_iff_gauge
+#print axioms Integration.GaugeSSP.wheel_vs_gauge
+#print axioms Integration.GaugeSSP.sspGaugeObserver
+#print axioms Integration.GaugeSSP.ssp_gauge_theorem
+#print axioms Integration.GaugeSSP.ssp_welded
+
+-- Presentation independence of the certificate
+#print axioms Integration.EnumInvariance.area2_permVec
+#print axioms Integration.EnumInvariance.nondegeneracy_reindex
+#print axioms Integration.EnumInvariance.nondegeneracy_reindex'
+#print axioms Integration.EnumInvariance.certificate_presentation_independent
+#print axioms Integration.EnumInvariance.det_gram_reindex
+
+-- Composite gauge redundancy as a subgroup
+#print axioms Integration.Gauge.compGaugeQuotient
+#print axioms Integration.Gauge.compGaugeQuotient_exact
+#print axioms Integration.Gauge.preimage_inv_mem
+#print axioms Integration.Gauge.preimage_normal
+#print axioms Integration.Gauge.compGaugeExact_redundant_iff
+
+-- Sufficiency and least sufficient observers
+#print axioms Integration.LeastSufficient.sufficient_iff_refines
+#print axioms Integration.LeastSufficient.canonical_least
+#print axioms Integration.LeastSufficient.coarsest_iff_last_refining
+#print axioms Integration.LeastSufficient.exists_coarsestBelow
+#print axioms Integration.LeastSufficient.coarsest_of_coarsestBelow
+#print axioms Integration.LeastSufficient.axis_coarsestBelow
+#print axioms Integration.LeastSufficient.su2_coarsestBelow
+
+-- Orbit–stabilizer residual bound
+#print axioms Integration.OrbitResidual.residual_injOn_fibre
+#print axioms Integration.OrbitResidual.card_orbit_le_card_residual
+#print axioms Integration.OrbitResidual.index_stabilizer_le_card_residual
+#print axioms Integration.OrbitResidual.cosetResidual_injective
+#print axioms Integration.OrbitResidual.card_group_le_card_residual
+
+-- Certificates paying for defects
+#print axioms Integration.CertificatePays.sum_defect_le_of_budget
+#print axioms Integration.CertificatePays.sites_le_of_budget
+#print axioms Integration.CertificatePays.weighted_budget_not_uniform
+#print axioms Integration.CertificatePays.exists_certificate_floor
+#print axioms Integration.CertificatePays.welded_sites_le_of_budget
+
+-- Closed form of the certificate, and the SSP threshold
+#print axioms Integration.CertificateFormula.area2_read_indicator
+#print axioms Integration.CertificateFormula.nondegeneracy_eq
+#print axioms Integration.CertificateFormula.nondegeneracy_eq_of_card_eq
+#print axioms Integration.SSPThreshold.ssp_cert_constant
+#print axioms Integration.SSPThreshold.ssp_no_threshold
+#print axioms Integration.SSPThreshold.sspZero_cert_zero
+#print axioms Integration.SSPThreshold.sspZero_cert_nonzero
+#print axioms Integration.SSPThreshold.sspZero_coarsest_sufficient
+#print axioms Integration.SSPThreshold.ssp_threshold_dichotomy
+#print axioms Integration.SSPThreshold.sspZero_coarsest_strictly_finer
+#print axioms Integration.LeastSufficient.coarsest_equivalent_canonical
+#print axioms Integration.LeastSufficient.coarsest_strictly_finer
+
+-- Exact and approximate intertwiners
+#print axioms Integration.ApproximateIntertwiner.approx_of_exact
+#print axioms Integration.ApproximateIntertwiner.approx_comp
+#print axioms Integration.ApproximateIntertwiner.approx_iterate
+#print axioms Integration.ApproximateIntertwiner.certificate_intertwiner
+
+-- Invariant / equivariant / gauge-sensitive consumers
+#print axioms Integration.ConsumerGauge.invariant_iff_not_sensitive
+#print axioms Integration.ConsumerGauge.exists_factor_of_invariant
+#print axioms Integration.ConsumerGauge.invariant_of_orbit_consumer
+#print axioms Integration.ConsumerGauge.gauge_consumer_invariant
+#print axioms Integration.ConsumerGauge.red_equivariant
+#print axioms Integration.ConsumerGauge.ssp_consumer_trichotomy
+
+-- One owner for the commuting square: exact / approximate / sound / dynamic / gauge
+#print axioms Integration.StructureMorphism.tier_exact_le_approx
+#print axioms Integration.StructureMorphism.exact_iterate
+#print axioms Integration.StructureMorphism.exact_reaches
+#print axioms Integration.StructureMorphism.sound_iff_factors
+#print axioms Integration.StructureMorphism.sound_transport
+#print axioms Integration.StructureMorphism.not_sound_of_collision
+#print axioms Integration.StructureMorphism.gauge_of_gaugeReduction
+#print axioms Integration.StructureMorphism.gauge_of_equivariantQuotient
+#print axioms Integration.StructureMorphism.approx_of_gauge
+#print axioms Integration.StructureMorphism.structure_morphism_unification
+
+-- Continuous U(1) phase gauge instance
+#print axioms Integration.PhaseGaugeU1.norm_invariant
+#print axioms Integration.PhaseGaugeU1.state_equivariant
+#print axioms Integration.PhaseGaugeU1.arg_sensitive
+#print axioms Integration.PhaseGaugeU1.u1_consumer_trichotomy
+#print axioms Integration.PhaseGaugeU1.norm_complete_invariant
+#print axioms Integration.PhaseGaugeU1.reopen_phase
+#print axioms Integration.PhaseGaugeU1.no_retraction_without_residual
+#print axioms Integration.PhaseGaugeU1.phaseGauge_structureMorphism
+
+-- Certified margin, relative defect and the normalisation gate
+#print axioms Integration.CertifiedMargin.margin_pos
+#print axioms Integration.CertifiedMargin.relDefect_lt_one_iff
+#print axioms Integration.CertifiedMargin.contraction_of_le_eta
+#print axioms Integration.CertifiedMargin.nogo_of_one_le_relDefect
+#print axioms Integration.CertifiedMargin.eventually_contractive_of_tendsto_zero
+#print axioms Integration.CertifiedMargin.not_eventually_contractive_of_eventually_one_le
+#print axioms Integration.CertifiedMargin.compensated_isLittleO
+#print axioms Integration.CertifiedMargin.normalization_gate
+#print axioms Integration.CertifiedMargin.normalization_is_part_of_the_theorem
+
+-- Commutator observability: fine noncommutativity with coarse flatness
+#print axioms Integration.CommutatorObservability.coarseFlat_of_exact_pair
+#print axioms Integration.CommutatorObservability.hidden_order_information
+#print axioms Integration.CommutatorObservability.no_reconstruction_of_order
+#print axioms Integration.CommutatorObservability.cubie_hidden_order
+#print axioms Integration.CommutatorObservability.commutator_defect_pos
+#print axioms Integration.CommutatorObservability.coarse_defect_zero
+#print axioms Integration.CommutatorObservability.cubie_coarsest_sufficient
+
+-- Multiscale law descent through a tower of observers
+#print axioms Integration.MultiscaleDescent.LawTower.descendsAt_iff_exact
+#print axioms Integration.MultiscaleDescent.LawTower.trajectory_descends
+#print axioms Integration.MultiscaleDescent.approx_descends_two
+#print axioms Integration.MultiscaleDescent.defect_descends_at_zero
+#print axioms Integration.MultiscaleDescent.defect_no_effective_law_at_one
+
+-- Paths, simulations and proof transport
+#print axioms Integration.PathTransport.path_transport
+#print axioms Integration.PathTransport.simulation_of_exact
+#print axioms Integration.PathTransport.mono_le_of_path
+#print axioms Integration.PathTransport.persistent_obstruction
+#print axioms Integration.PathTransport.provable_transport
+#print axioms Integration.PathTransport.provable_sound_of_simulation
+
+-- Typed residual taxonomy
+#print axioms Integration.ResidualTaxonomy.reconstructive_injective
+#print axioms Integration.ResidualTaxonomy.reconstructive_of_residualQuotient
+#print axioms Integration.ResidualTaxonomy.trajectory_obstruction
+#print axioms Integration.ResidualTaxonomy.contrast_not_function_of_present
+#print axioms Integration.ResidualTaxonomy.resolve_eq_none_of_disagree
+#print axioms Integration.ResidualTaxonomy.combinatorial_residual_exact
+#print axioms Integration.ResidualTaxonomy.trajectory_not_reconstructive
+#print axioms Integration.ResidualTaxonomy.contrastive_not_reconstructive
+
+-- Equivariance obstructions from orbit data
+#print axioms Integration.EquivarianceObstruction.no_equivariant_of_free_and_fixed
+#print axioms Integration.EquivarianceObstruction.card_equal_but_not_equivariantly_equivalent
+#print axioms Integration.EquivarianceObstruction.translation_free_group
+#print axioms Integration.EquivarianceObstruction.no_equivariant_free_shift_to_ramified
+
+-- Semantic reduction is not computational locality
+#print axioms Integration.LocalRealisation.semantic_parity_not_bounded_exposure
+#print axioms Integration.LocalRealisation.exposure_unbounded
+#print axioms Integration.LocalRealisation.localRealisation_transfers
+#print axioms Integration.LocalRealisation.no_localRealisation_from_semantics_alone
+
+-- Field-controlled effective dynamics and attractor classes
+#print axioms Integration.FieldControlledDynamics.field_changes_successor
+#print axioms Integration.FieldControlledDynamics.field_changes_effective_edge
+#print axioms Integration.FieldControlledDynamics.structural_edge_insufficient
+#print axioms Integration.FieldControlledDynamics.field_changes_reachability
+#print axioms Integration.FieldControlledDynamics.eventually_periodic
+#print axioms Integration.FieldControlledDynamics.threeClass_classes
+
+-- Base + fibre + transport + measurement bundle
+#print axioms Integration.ObserverBundle.measured_of_factors
+#print axioms Integration.ObserverBundle.not_measured_of_collision
+#print axioms Integration.ObserverBundle.pullbackDist_le_of_nonexpansive
+#print axioms Integration.ObserverBundle.coarse_zero_fine_distinct
+
+-- Contrast operator and two-boundary constraint system
+#print axioms Integration.ContrastBoundary.state_add_contrasts
+#print axioms Integration.ContrastBoundary.contrast_not_determined_by_state
+#print axioms Integration.ContrastBoundary.middles_depends_on_future
+#print axioms Integration.ContrastBoundary.middles_depends_on_past
+#print axioms Integration.ContrastBoundary.middles_not_function_of_past
+
+-- Sewing round: the seven-class taxonomy and its registry
+#print axioms Integration.SewingRegistry.no_row_claims_agda_typechecked
+#print axioms Integration.SewingRegistry.every_row_has_boundary
+#print axioms Integration.SewingRegistry.no_branch_only_rows
+#print axioms Integration.SewingRegistry.every_row_lean_built
+#print axioms Integration.SewingRegistry.kinds_exercised
+#print axioms Integration.SewingRegistry.negatives_and_sockets_dominate
+#print axioms Integration.SewingTaxonomy.identifiesCarriers_iff
+#print axioms Integration.SewingTaxonomy.toBridgeLevel_eq_none_iff
+
+-- Ontology lane: the epistemic trit
+#print axioms Integration.Ontology.agree_eq_ifEq
+#print axioms Integration.Ontology.agree_no_identity
+#print axioms Integration.Ontology.agree_polarity_equivariant
+#print axioms Integration.Ontology.agree_not_add
+#print axioms Integration.Ontology.agree_not_mul
+#print axioms Integration.Ontology.no_polarity_equivariant_forcing
+#print axioms Integration.Ontology.forcing_not_injective
+#print axioms Integration.EquivarianceObstruction.no_equivariant_map_of_fixed_to_free
+
+-- Biology/DNA lane: the chemistry margin
+#print axioms Integration.DNAMarginTrit.marginPolarity_unique
+#print axioms Integration.DNAMarginTrit.no_injection_arity_to_margin
+#print axioms Integration.DNAMarginTrit.sheetFlags_underdetermined
+
+-- Education lane
+#print axioms Integration.EducationGates.isEmpty_of_gate_empty
+#print axioms Integration.EducationGates.sixOfSeven_no_witness
+#print axioms Integration.EducationGates.metric_governance_fail_closed
+#print axioms Integration.EducationGates.value_multiplyRate
+#print axioms Integration.EducationGates.overlap_lt_marginals
+#print axioms Integration.EducationGates.rate_value_not_injective
+#print axioms Integration.EducationGates.twentyOne_not_first_order
+#print axioms Integration.EducationGates.overlapCount_approx
+
+-- Alice Brown multi-observer lane
+#print axioms Integration.ObserverPlurality.not_refines_of_collapse
+#print axioms Integration.ObserverPlurality.no_projection_faithful
+#print axioms Integration.ObserverPlurality.student_parent_incomparable
+#print axioms Integration.ObserverPlurality.pairwise_incomparable_core
+#print axioms Integration.ObserverPlurality.model_incomparable_with_each
+#print axioms Integration.ObserverPlurality.plurality_jointly_faithful
+
+-- Governance lane
+#print axioms Integration.GovernanceAgency.emptyPromotion_proves_everything
+#print axioms Integration.GovernanceAgency.agency_not_determined_by_formalOption
+#print axioms Integration.GovernanceAgency.surface_fields_independent
+#print axioms Integration.GovernanceAgency.boundary_record_unconstrained
+
+-- Chemistry lane
+#print axioms Integration.ChemistryKernelSocket.kernel_fail_closed
+#print axioms Integration.ChemistryKernelSocket.goalReachable_underdetermined
+#print axioms Integration.ChemistryKernelSocket.flag_determined_of_sound
+#print axioms Integration.ChemistryKernelSocket.flagSound_not_automatic
+
+-- Loom relation algebra (sewing-round additions)
+#print axioms AgdaMirror.Loom.typedRelationEquiv
+#print axioms AgdaMirror.Loom.classifiers_determined
+#print axioms AgdaMirror.Loom.promotion_not_determined_by_relationType
+#print axioms AgdaMirror.Loom.evidence_not_determined_by_relationType
+#print axioms AgdaMirror.Loom.precedence_is_permutation
+#print axioms AgdaMirror.Loom.relationRootFor_surjective
+#print axioms AgdaMirror.Loom.relationRootFor_not_injective
+
+-- Sewing registry meta-theorems
+#print axioms Integration.SewingRegistry.no_row_claims_agda_typechecked
+#print axioms Integration.SewingRegistry.every_row_has_boundary
+#print axioms Integration.SewingRegistry.no_branch_only_rows
+#print axioms Integration.SewingRegistry.every_row_lean_built
+#print axioms Integration.SewingRegistry.kinds_exercised
+#print axioms Integration.SewingRegistry.registry_length
+#print axioms Integration.SewingRegistry.negatives_and_sockets_dominate
+
+-- Chemistry reachability: the discharged bridge
+#print axioms Integration.ChemistryReachability.reachB_sound
+#print axioms Integration.ChemistryReachability.reachB_complete_of_fixpoint
+#print axioms Integration.ChemistryReachability.reachB_iff_of_fixpoint
+#print axioms Integration.ChemistryReachability.cstepSaturates
+#print axioms Integration.ChemistryReachability.cstep_not_reaches_three
+#print axioms Integration.ChemistryReachability.chemistryFlagSound
+#print axioms Integration.ChemistryReachability.chemistryFlag_determined
+#print axioms Integration.ChemistryReachability.correctlyPopulated_nonempty
+#print axioms Integration.ChemistryReachability.correctness_restriction_is_needed
+
+-- Ternary hub closure
+#print axioms Integration.TernaryHubClosure.ternaryHub_of_involution
+#print axioms Integration.TernaryHubClosure.ternaryHub_two_coordinates
+#print axioms Integration.TernaryHubClosure.ternaryHub_not_unique
+#print axioms Integration.TernaryHubClosure.epistemicTrit_hub_from_closure
+#print axioms Integration.TernaryHubClosure.chemistryMargin_hub_from_closure
+#print axioms Integration.TernaryHubClosure.six_carriers_from_closure

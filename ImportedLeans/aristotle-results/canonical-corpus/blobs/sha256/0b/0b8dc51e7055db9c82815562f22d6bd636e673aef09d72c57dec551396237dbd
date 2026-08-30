@@ -1,0 +1,916 @@
+This project was edited by [Aristotle](https://aristotle.harmonic.fun).
+
+To cite Aristotle:
+- Tag @Aristotle-Harmonic on GitHub PRs/issues
+- Add as co-author to commits:
+```
+Co-authored-by: Aristotle (Harmonic) <aristotle-harmonic@harmonic.fun>
+```
+
+# Aristo Dual-Atlas Coordinate System
+
+A Lean 4 project implementing the **Dual-Atlas coordinate functor** over the
+prime-power structure of the Monster sporadic simple group `𝕄`. It pairs a small
+set of *proven* number-theoretic foundations with two reflection-based coordinate
+atlases (a *primal* atlas and its *dual*) and a unified dispatcher, all exposed as
+custom Lean elaboration commands.
+
+The whole library builds with `lake build` and contains **no `sorry`**; every
+theorem depends only on the standard Lean/Mathlib axioms.
+
+---
+
+## Architecture overview
+
+The system is organised as three layers, each in its own module under
+`RequestProject/`:
+
+```
+RequestProject/
+  Holograms.lean    -- Layer 1: proven mathematical foundations
+  AristoTask.lean   -- Layer 2: primal coordinate atlas + #stratify
+  DualAtlas.lean     -- Layer 3: dual atlas, dual functor, #dualstratify, #atlas
+  Main.lean          -- option/environment scaffold
+```
+
+Dependency order is strict and acyclic:
+
+```
+Holograms  ──▶  AristoTask  ──▶  DualAtlas
+```
+
+---
+
+## Layer 1 — `Holograms.lean` (mathematical foundations)
+
+This module records the proven facts the coordinate atlases rest on. The central
+object is the order of the Monster group,
+
+```
+|𝕄| = 2^46 · 3^20 · 5^9 · 7^6 · 11^2 · 13^3 · 17 · 19 · 23 · 29 · 31 · 41 · 47 · 59 · 71 .
+```
+
+| Declaration | Statement |
+|-------------|-----------|
+| `monsterOrder` | the order `|𝕄|`, as the prime factorisation above. |
+| `monster_divisor_count` | `monsterOrder.divisors.card = 424488960`. |
+| `monster_threeadic_depth` | every divisor `d ∣ |𝕄|` satisfies `v₃(d) ≤ 20`. |
+| `divisors_partition_mod` | for any modulus `m > 0`, the divisors partition by residue mod `m` (the prime-signature partition specialised to `5, 7, 11, 13`). |
+| `dualizePair` | the exponent–base swap `(p, e) ↦ (e, p)` (i.e. `p^e ↦ e^p`). |
+| `dualizePair_involutive` | `dualizePair` is an involution. |
+| `dualizePair_bijective` | hence a bijection of `ℕ × ℕ`. |
+
+The divisor count `424488960` factors as `47·21·10·7·3·4·2^9`, matching the
+exponent-plus-one product over the prime factorisation; `monster_divisor_count`
+proves this equality.
+
+---
+
+## Layer 2 — `AristoTask.lean` (primal atlas)
+
+The primal atlas maps each Lean declaration into *Monster-divisor space* using the
+reflected hash of its value.
+
+* `AristoCoordinate { size, cell, depth }` — the primal coordinate.
+  * `size` — index into the `424488960`-element divisor space (`h % 424488960`).
+    The literal is exactly `Holograms.monsterOrder.divisors.card`; it is used
+    directly so the projection stays efficiently computable.
+  * `cell` — harmonic cell from the prime-signature partition, via `cellCode`
+    (priority `13 > 11 > 7 > 5 > default`).
+  * `depth` — semantic recursion depth (`h % 21`), bounded by the 3-adic depth.
+* `primalCoord` — the projection `Nat → AristoCoordinate`.
+* `primalCoord_depth_le` — `(primalCoord h).depth ≤ 20`, consistent with the
+  3-adic depth bound.
+* `#stratify f` — reflection command printing the primal coordinate of `f`.
+
+---
+
+## Layer 3 — `DualAtlas.lean` (dual atlas, functor, dispatcher)
+
+The dual atlas dualizes each structured prime power `p^e ↦ e^p`:
+
+| Prime power | Dualized | Meaning            |
+|-------------|----------|--------------------|
+| `2^46`      | `46^2`   | Cognitive manifold |
+| `3^20`      | `20^3`   | Semantic triads    |
+| `5^9`       | `9^5`    | Muse cycles        |
+| `7^6`       | `6^7`    | Heptads            |
+| `11^2`      | `2^11`   | Hemispheres        |
+| `13^3`      | `3^13`   | Deep recursion     |
+
+### Data structure and projections
+
+* `DualCoordinate { cog, triad, harm }` — the dual coordinate.
+* `cogProj h = (h % 92) + 1` — cognitive `46×2` grid projection.
+  * `cogProj_mem` — `1 ≤ cogProj h ∧ cogProj h ≤ 92`.
+* `triadProj h = (h % 60) / 3` — semantic `20×3` recursion projection.
+  * `triadProj_le` — `triadProj h ≤ 19`.
+* `harmCode` / `harmLabel` — harmonic cell classifier, priority
+  `13 > 11 > 7 > 5 > default`, with labels:
+  `Recursion (3^13)`, `Hemispheres (2^11)`, `Heptad (6^7)`,
+  `Muse Cycle (9^5)`, `Trivector Default`.
+* `dualCoord` — the projection `Nat → DualCoordinate`.
+
+### The dual-atlas functor
+
+* `primalAtlas = [(2,46), (3,20), (5,9), (7,6), (11,2), (13,3)]`.
+* `dualFunctor l = l.map Holograms.dualizePair` — dualize every prime power.
+* `dualAtlas = dualFunctor primalAtlas`.
+* `dualFunctor_involutive` — **the dual functor is involutive** (dualizing twice
+  is the identity), the formal justification that the dual atlas is a faithful
+  re-coordinatisation.
+* `dualAtlas_eq` — `dualAtlas = [(46,2), (20,3), (9,5), (6,7), (2,11), (3,13)]`.
+* `dualFunctor_dualAtlas` — `dualFunctor dualAtlas = primalAtlas`.
+
+### Reflection commands
+
+* `#dualstratify f` — reflect `f` into its dual coordinate.
+* `#atlas f` — combined primal + dual dispatcher.
+
+---
+
+## Reflection commands at a glance
+
+| Command | Module | Output |
+|---------|--------|--------|
+| `#stratify f` | `AristoTask` | primal `size / cell / depth` |
+| `#dualstratify f` | `DualAtlas` | dual `cognitive index / semantic triad / harmonic cell` |
+| `#atlas f` | `DualAtlas` | combined primal + dual report |
+
+Each command reflects on `f`'s declaration value, takes `e.hash.toNat`, and runs
+the corresponding projection(s).
+
+---
+
+## Test suite
+
+The following commands elaborate without error as part of the build
+(`DualAtlas.lean`):
+
+```lean
+#dualstratify Nat.add
+#dualstratify List.map
+#dualstratify Prod.fst
+#atlas Nat.add
+```
+
+and, in `AristoTask.lean`, the primal commands
+
+```lean
+#stratify Nat.add
+#stratify List.map
+#stratify Prod.fst
+```
+
+are run as part of the build as well.
+
+---
+
+## Building
+
+```bash
+lake build
+```
+
+This compiles all layers and runs the reflection test commands, whose
+output appears as build info messages.
+
+---
+
+## Layer 4 — Introspection & the animated SVG comic book
+
+The newest layer lets the source code *see itself* and draw itself into the
+atlas.  It is split across three modules.
+
+### `RequestProject/SVG.lean` — native SVG
+A small, total SVG abstract syntax tree (`Svg.elem` / `Svg.text` / `Svg.raw`)
+with convenience builders (`rect`, `circle`, `line`, `polygon`, `group`) and a
+pretty-printer `svgToString` / `render`.  SVG is just another term Lean emits.
+
+### `RequestProject/Introspect.lean` — the projection layer
+* `IntrospectivePanel {name, primal, dual, x, y, z, style}` — the abstract
+  comic panel for one declaration.
+* `mkPanel` / `projectPanel` — reflect a declaration (via `e.hash.toNat`) and
+  fuse its primal + dual coordinates into a 3-axis atlas position:
+  `x = dual.cog`, `y = primal.depth + 3·dual.triad`, `z = styleOfHarm dual.harm`.
+* `#introspect f` — project a single declaration.
+* `#atlasmap` — project **every** project declaration and print the sorted map.
+
+### `RequestProject/IntrospectSVG.lean` — the SVG + animation layer
+Projects the entire source code into one self-contained **animated 2D/3D SVG
+comic book**:
+
+* **Panel I (2D)** — the atlas: cognitive axis (`cog`, 46×2) horizontally,
+  semantic axis (`triad`, 20×3) vertically.  One marker per declaration,
+  colour-coded by harmonic class and shaped by cognitive-layer band
+  (rect / hexagon / octagon / circle / star).
+* **Panel II (3D)** — the same atlas in isometric projection with a harmonic
+  `z`-lift and a gentle auto-rotation.
+* **Chapters 1–3** — one comic page per module (`Holograms`, `AristoTask`,
+  `DualAtlas`) with halftone backgrounds and a chip + name for every decl.
+* **Animation** — native SMIL (`<animate>` / `<animateTransform>`): staggered
+  entrances plus per-harmonic motion (recursion drift, hemisphere oscillation,
+  heptad 7-cycle, Muse pulse).
+
+Commands:
+
+```lean
+#svgatlas              -- build the comic and report its size
+#writecomic "path"     -- build the comic and write the SVG file to `path`
+```
+
+The committed artifact `atlas_comic.svg` (with a static PNG preview
+`atlas_comic_preview.png`) is generated by `#writecomic`, reflecting all 64
+current declarations.  Regenerate it with:
+
+```lean
+import RequestProject.IntrospectSVG
+#writecomic "atlas_comic.svg"
+```
+
+### `RequestProject/AtlasGuide.lean` — the minimap + motion gallery
+
+The animated comic is busy — dozens of markers entering, drifting, oscillating,
+spinning and pulsing at once.  This companion module emits a single, calmer
+overview page that answers two questions at a glance:
+
+* **What is everything?** — a **minimap** plotting *every* declaration as one
+  coloured dot in the dual atlas (cognitive axis `cog` horizontally, semantic
+  axis `triad` vertically), beside an **inventory** panel that counts decls per
+  harmonic class and per module.
+* **What is moving?** — a **motion gallery** with one comic strip per *moving
+  thing* in the animation.  Each strip pairs a *live* animated example with a
+  **key-frame sequence** (a row of film cells freezing the motion at successive
+  keyframes), a plain-language explanation, and the exact SMIL it corresponds to.
+  The six catalogued motions are: staggered entrance fade-in, recursion spiral
+  drift (`3^13`), hemisphere oscillation (`2^11`), heptad 7-phase rotation
+  (`6^7`), Muse-cycle pulse (`9^5`), and the isometric panel's parallax sway.
+
+```
+#minimap               -- build the guide and report its size / inventory
+#writeguide "path"     -- build the guide and write the SVG file to `path`
+```
+
+The committed artifact `atlas_minimap.svg` (with a static PNG preview
+`atlas_minimap_preview.png`) is generated by `#writeguide` at build time.
+Regenerate it with:
+
+```lean
+import RequestProject.AtlasGuide
+#writeguide "atlas_minimap.svg"
+```
+
+### `RequestProject/Cosmos.lean` — the whole-universe modular + functional view
+
+The atlas layers above project the *project's own* declarations.  This module
+zooms all the way out and ingests **every declaration in scope** — the entire
+**Lean compiler** (`Lean.*`), the **Lean core / standard library**
+(`Init.*`, `Std.*`, `Batteries.*`), and the **whole of Mathlib** (`Mathlib.*`) —
+parses the `uses` relation between them straight from Lean's live `Environment`
+(the same `getUsedConstants` relation the kernel sees), and renders two
+complementary pictures into one self-contained animated SVG:
+
+* a **modular view** — the universe grouped into *ecosystems*
+  (Mathlib / Lean compiler / Init core / Std / Batteries / Other), each annotated
+  with how many **modules** (source files) and **declarations** it contributes,
+  plus a bar-chart breakdown of the dominant **subsystems** inside Mathlib
+  (Algebra, CategoryTheory, Analysis, Topology, …) and inside the Lean compiler
+  (Meta, Elab, Compiler, …);
+* a **functional view** — the aggregated dependency graph: a directed weighted
+  graph whose edge `A → B` carries the number of times a declaration in
+  ecosystem `A` references one in ecosystem `B` (edge width ∝ the magnitude of
+  the weight; hover for exact counts).
+
+At the time of writing the scan covers **707,165 declarations across 9,981
+modules** (Mathlib 504,719 / Lean compiler 82,176 / Init 57,532 / Std 44,170 /
+Batteries 9,602 / Other).
+
+```
+#cosmos                -- scan the universe and print the modular + functional report
+#writecosmos "path"    -- scan and write the SVG view to `path`
+```
+
+The committed artifact `atlas_cosmos.svg` (with a static PNG preview
+`atlas_cosmos_preview.png`) is generated by `#writecosmos` at build time.
+Because the scan touches well over a million declarations it is the slow step of
+the build (~90s).  Regenerate it with:
+
+```lean
+import RequestProject.Cosmos
+#writecosmos "atlas_cosmos.svg"
+```
+
+---
+
+## Layer 5 — `Anatomy.lean` (how much of the language, and the depth)
+
+The atlas layers say *where* a declaration lands.  This layer says *what it is
+made of*.  It reflects each declaration's kernel `Expr` value and measures, for
+every project declaration:
+
+* **how much of the Lean 4 term language** composes it — which of the twelve
+  `Expr` constructors (`bvar`, `fvar`, `mvar`, `sort`, `const`, `app`, `lam`,
+  `forallE`, `letE`, `lit`, `mdata`, `proj`) appear and how often, summarised as a
+  `features`/12 coverage score; and
+* **the depth** — the maximum nesting depth of the term's abstract syntax tree,
+  plus its total node `size` and the number of distinct constants it references.
+
+The numbers are exactly what the kernel stores (the same `Expr` the atlas layers
+hash), not an estimate.
+
+```
+#anatomy f             -- print the language profile + depth of `f`
+#anatomymap            -- profile every project declaration as a table
+```
+
+## Layer 6 — `AnatomySVG.lean` (a few examples, constructed as animation)
+
+A short **animated film** that builds a handful of worked examples before your
+eyes.  For each featured declaration an *anatomy card* assembles itself with
+native SMIL animation:
+
+* the twelve `Expr`-constructor counters grow from `0` to their true values as
+  staggered bar charts (literally *how much of the language* the term uses);
+* twelve **language-coverage cells** light up one per constructor actually used;
+* a **depth ladder** rises to the measured AST depth.
+
+Featured examples: `Nat.add`, `List.map`, `Prod.fst`, `DualAtlas.dualFunctor`,
+`Holograms.dualizePair`, `AristoTask.primalCoord`.
+
+```
+#anatomyfilm           -- build the example film and report its size
+#writeanatomy "path"   -- build the film and write the SVG to `path`
+```
+
+The committed artifact `atlas_anatomy.svg` is generated by `#writeanatomy` at
+build time and is well-formed, self-contained, self-playing SVG.
+
+## Layer 7 — `Quine.lean` (the program reproduced as a quine)
+
+The smallest fixed point of the whole introspective stack: a genuine,
+self-contained Lean 4 **quine** — a program whose output is its own source, with
+no input and without reading its own file.  The committed artifact `quine.lean`
+(project root) is exactly two lines:
+
+```lean
+def s : String := "#eval IO.println s!\"def s : String := {repr s}\\n{s}\""
+#eval IO.println s!"def s : String := {repr s}\n{s}"
+```
+
+Running it reproduces it verbatim:
+
+```bash
+lake env lean quine.lean | diff - quine.lean   # no output ⇒ self-reproducing
+```
+
+The module models and checks this:
+
+* `Quine.body` / `Quine.reproduce` / `Quine.quineSource` — the program line, the
+  pure model of its runtime output, and the full source it prints.
+* `Quine.quine_is_fixpoint : reproduce body = quineSource` — the fixed-point
+  identity (depends only on `propext`).
+* commands `#quine` (print it), `#writequine "path"` ((re)generate the artifact),
+  and `#verifyquine "path"` (read the artifact and confirm it is byte-identical
+  to the modelled quine source).
+
+Regenerate and re-verify with:
+
+```lean
+import RequestProject.Quine
+#writequine "quine.lean"
+#verifyquine "quine.lean"
+```
+
+---
+
+## Layer 8 — Moonshine flip-book (194 irreps × 104 j-expansion frames)
+
+`RequestProject/Moonshine.lean` + `RequestProject/MoonshineSVG.lean` project
+**every source-code atom into the 194 irreducible representations of the Monster
+group** and play the result back as an animated SVG *flip-book video*, keyed by
+the q-expansion of Klein's modular invariant `j`.
+
+* **The key is computed, not assumed.** `Moonshine.lean` builds `j` from first
+  principles as a truncated integer power series: `E₄ = 1 + 240 Σ σ₃(n) qⁿ`,
+  `∏(1-qⁿ)²⁴ = Δ/q`, and `jSeries = E₄³ / Δ`. The classical coefficients are
+  recorded as proved theorems — `jc0..jc5` (`1, 744, 196884, 21493760,
+  864299970, 20245856256`) — together with the **Monstrous Moonshine head
+  identities** `moonshine_c1 : 196884 = 1 + 196883`,
+  `moonshine_c2 : 21493760 = 1 + 196883 + 21296876`, and
+  `moonshine_c3 : 864299970 = 2·1 + 2·196883 + 21296876 + 842609326`, where
+  `1, 196883, 21296876, 842609326, …` are the smallest Monster irrep degrees.
+* **The projection is faithful.** Each atom's reflected hash lands in its primary
+  irrep `h mod 194` (`Moonshine.irrepOf`), the same `e.hash.toNat` used by
+  `#dualstratify`.
+* **104 flip-book pages — the whole circle is projected.** Page `p` (`1 … 104`)
+  is keyed by the coefficient of `q^p` in `j`; that coefficient's residue mod 194
+  (`Moonshine.pageRot`), scaled to a full turn, is the angle by which the
+  **entire circle** (the 194-irrep ring together with every atom, fixed on it)
+  is rigidly rotated. Only *one* variable moves: the atoms sit still relative to
+  the wheel, and the q-expansion alone turns the whole ring to project it into
+  the current q-expansion frame. This is a single `animateTransform type="rotate"`
+  with `calcMode="linear"` on the group (`MoonshineSVG.wheelTransform`); the HUD
+  key flips with `calcMode="discrete"`.
+
+Commands:
+
+* `#moonshine` — build the flip-book and report its size.
+* `#writemoonshine "path"` — write the flip-book SVG.
+
+Generated artifact: `atlas_moonshine.svg` (self-contained, self-playing animated
+SVG; ~240 KB; well-formed XML). Regenerate with:
+
+```lean
+import RequestProject.MoonshineSVG
+#writemoonshine "atlas_moonshine.svg"
+```
+
+---
+
+## Layer 9 — Prime-modulus atlas (multi-mod projection, q-keyed view selector)
+
+`RequestProject/PrimeProjection.lean` projects **every source-code atom into its
+residues modulo each Monster prime**, turns those residues into a 2D location,
+and lets the **q-expansion of `j` select which view to show**.
+
+* **The Monster primes.** `monsterPrimes` is the descending list of the fifteen
+  prime divisors of `|𝕄|` (`71, 59, 47, 41, 31, 29, 23, 19, 17, 13, 11, 7, 5, 3,
+  2`). Proved facts: `monsterPrimes_all_prime` (each is prime),
+  `monsterPrimes_dvd_order` (each divides `|𝕄|`).
+* **Views = prime-modulus tuples.** A *view* is a sublist of `monsterPrimes`.
+  `viewPrimes k` is the `k`-th view, always a sublist of `monsterPrimes`
+  (`viewPrimes_subset`). The first two are pinned to the requested tuples:
+  `viewPrimes_zero : viewPrimes 0 = [71, 59, 47]` and
+  `viewPrimes_one : viewPrimes 1 = [71, 59, 41, 31]`.
+  Beyond the pinned views, the moduli are chosen by a genuinely `k`-dependent
+  sliding window over the thirteen non-frame primes (`freePrimes`), so
+  *consecutive views differ* and *distinct views give distinct modulus tuples*.
+  This is what makes each page reproject the atoms to a new spot rather than
+  leaving them frozen in place.
+* **Projection into mods → 2D.** For a hash `h` and view `[p₀,…,p_{n-1}]`, each
+  prime contributes its residue fraction `(h mod pᵢ)/pᵢ ∈ [0,1)` along direction
+  `2π i / n`; the atom's location is the normalised vector sum (`projPoint`). A
+  different view ⇒ different residues and directions ⇒ a different location for
+  the same atom.
+* **The finding: faithful & fixed coordinates.** The atoms in `atlas_primeview.svg`
+  do **not** move — and that is proved to be correct, not a bug. Each atom is
+  placed once, at the projection of its *full* fifteen-prime residue address
+  (`fixedPoint`, using all of `monsterPrimes`), so its location is a fixed
+  invariant of the atom alone, independent of the q-page. `projection_faithful`
+  proves this address is **faithful**: two atoms below the radical `2·3·…·71`
+  with equal residues modulo every Monster prime are equal (the Chinese
+  Remainder Theorem, routed through `MonsterAddress.addr_inj`). So the
+  coordinates are *stuck by design*.
+* **The q-expansion is the only thing that moves.** Page `pi` is keyed by the
+  coefficient of `q^{pi+1}` in `j`; its residue mod the number of views selects a
+  view (`viewOfPage`). That selection drives the *single* moving variable: the
+  fifteen prime-modulus spokes (`primeAxes`) light up exactly on the pages whose
+  q-selected view uses that modulus (`calcMode="discrete"` opacity), sweeping
+  which moduli are active while the atoms stay fixed. A `FINDING · FAITHFUL &
+  FIXED` badge on the artifact records the proof.
+
+Commands:
+
+* `#primeatlas` — build the prime-projection flip-book and report its size.
+* `#writeprimeatlas "path"` — write the flip-book SVG.
+
+Generated artifact: `atlas_primeview.svg` (self-contained, self-playing animated
+SVG; well-formed XML). Regenerate with:
+
+```lean
+import RequestProject.PrimeProjection
+#writeprimeatlas "atlas_primeview.svg"
+```
+
+---
+
+## Layer 10 — Moonshine address pipeline & the separation theorem (`MonsterAddress.lean`, `MoonshineAddress.lean`)
+
+The full three-stage pipeline that gives every hashable object a coordinate in
+the Monster's moonshine lattice, with proofs that distinct objects land in
+distinct locations.
+
+* **`RequestProject/MonsterAddress.lean`** — the 15-prime address with a genuine
+  Chinese-Remainder-Theorem separation: `addr_inj` proves the 15-residue address
+  is injective on `[0, radical)` (`radical = 2·3·…·71`), `location_inj` lifts this
+  to injectivity of the assembled `embed : ℕ → Fin 194 → Fin 104 → ℤ` moonshine
+  point, and `objects_locations_distinct` verifies a concrete sample list lands at
+  pairwise-distinct locations.
+* **`RequestProject/MoonshineAddress.lean`** — the T₁ (untwisted j) pipeline:
+  * Stage 1 `primeAddress h j = h % mp j` (the ℤ¹⁵ address over the 15 Monster
+    primes);
+  * Stage 2 `irrepWeight h i = jCoeff (i%15+2) · (h % mp (i%15))` — a diagonal
+    projection into the 194 irreps, each tuned to one Monster prime;
+  * Stage 3 `moonshineCoord h i k = irrepWeight h i · jCoeff (k+2)` into
+    ℤ^(194×104) = ℤ^20176 (`moonshine_dimension`);
+  * `separation_local` / `separation` — distinct prime residues separate objects
+    in moonshine space; `threadLabel` / `tgIndex` scaffold the future 170
+    McKay–Thompson `T_g` threads (the 194-stranded braid).
+
+## Layer 11 — FRACTRAN walk across the irrep biomes (`FractranWalk.lean`)
+
+Lifts a concrete computational process into the moonshine coordinate system:
+`fractranLift P start t = moonshinePoint (fractranState P start t)` sends each
+step of a FRACTRAN program to its point in ℤ^(194×104).  The worked example
+`mulProgram = [(3,2)]` started at `8 = 2³` walks `8 → 12 → 18 → 27` across four
+distinct irrep biomes (`mul_trajectory`, `mul_visits_four_biomes`,
+`mul_walks_biomes`), and `mul_moves_in_moonshine` proves its moonshine coordinate
+genuinely changes on the first step.
+
+## Layer 12 — PRIMEGAME through the Monster biomes (`FractranBiome.lean`, `FractranBiomeSVG.lean`)
+
+Runs the real thing: **Conway's prime-generating PRIMEGAME** (the original
+fourteen-fraction FRACTRAN program) traced step-by-step through the
+`MoonshineAddress` pipeline.  Each integer state `n` is sent to its point
+`moonshinePoint n ∈ ℤ^(194×104)`, so the whole computation is a path in moonshine
+space (`primegamePath`), and each state lights up its biome (primary irrep
+`n % 194`).
+
+`FractranBiome.lean` proves the trace: `primegame_step0` (`2 → 15`),
+`primegame_step19` (step 19 returns `4 = 2²`, the prime 2), `primegame_traj20`
+and `primegame_biomes20` (the explicit 20-step state/biome traces),
+`primegame_biomes_visited` (18 distinct biomes), `primegame_moves_in_moonshine`
+/ `trajectory_distinct_steps_0_1` (the lift genuinely moves), and
+`primegame_pow2_biome` (every prime-witnessing pure power of two sits at residue
+0 of the Monster prime 2).  The structural highlight is
+`primegame_monster_native`: **every numerator and denominator of all fourteen
+fractions is Monster-prime-smooth**, so PRIMEGAME is natively typed for the
+moonshine address system.
+
+`FractranBiomeSVG.lean` visualises the lift exactly as requested — *on the
+q-expansion from 1–104*. The redesign pins one variable: the **entire PRIMEGAME
+path is drawn at once** as a single continuous curve through the 194-biome ring
+(the elliptic-curve-like trajectory), and the **q-expansion is mapped along that
+fixed curve as colour** — each segment is coloured by the hue of its j-coefficient
+(`coloredPath`, `hueOfPage`). The only moving element is a single q-expansion
+*cursor* (`walker`) that glides along the already-drawn curve, flaring gold on
+every pure power of two (the prime-generating events). So the fractran path no
+longer moves; only the q-expansion does, swept along the static curve. Commands
+`#fractranbiome` and `#writefractranbiome "path"` regenerate the artifact
+`atlas_fractran.svg` (well-formed, self-playing animated SVG) at build time.
+
+## Layer 13 — Irrep fold: decls squeezed into the available primes (`IrrepFold.lean`)
+
+Forces every declaration into the available prime dimensions, fold by fold, so we
+watch the whole source code **deform** while the dependency **arrows are
+preserved**.  Nothing is ever placed outside Monster-prime space
+(`foldLayers_subset`).
+
+* **The folds.** A *layer* is the list of primes that exist in that step
+  (`foldLayers`).  Step 1 is the empty layer — every decl collapses to **one
+  point** on the surface of the sphere; step 2 is the requested `71·59·47`
+  (`foldLayers_one`); step 3 is `71·59·41·31` (`foldLayers_two`); the remaining
+  steps grow through prefixes of the fifteen Monster primes, ending at the full
+  faithful fifteen-prime address.
+
+* **Folding.** `foldPos h ps` squeezes the atom with hash `h` onto exactly the
+  dimensions of layer `ps`: each available prime `pᵢ` contributes its residue
+  fraction `(h mod pᵢ)/pᵢ` along direction `2π i / n`, and the normalised vector
+  sum is the location.  The empty layer has no dimensions, hence the single
+  shared point.
+
+* **Arrows preserved.** Each declaration's outgoing references (extracted via
+  `Expr.getUsedConstants` over its value and type, `projectFoldAtoms` /
+  `foldEdges`) become arrows.  Every atom carries one SMIL `translate` animation
+  that morphs it continuously through its per-layer locations, and every arrow is
+  a line whose four endpoint coordinates are animated **in lockstep** with the
+  two atoms it joins — so the arrows stretch and bend through every fold but
+  never detach.
+
+Commands `#irrepfold` and `#writeirrepfold "path"` regenerate the artifact
+`atlas_irrepfold.svg` (well-formed, self-playing animated SVG; 64 decls, 65
+arrows, 14 folds) at build time.
+
+### Layer: Irrep194 (`RequestProject/Irrep194.lean`)
+
+Two more animated SVGs, plus the formalisation of the compaction observed in
+`atlas_irrepfold.svg`.
+
+* **194-step irrep walk** (`atlas_irrep194.svg`).  One frame per Monster irrep
+  (`numIrrepSteps = Moonshine.numIrreps = 194`; `stepIrrep_surjective` shows the
+  walk visits every irrep exactly once).  Each declaration sits at the angle of
+  its primary irrep `h % 194`, and the whole constellation contracts toward the
+  centre as the *compaction radius* shrinks.  The observation that the earlier
+  fold "got compacter and compacter over time" is now a proved law:
+  `compactionRadius k = outerR·compBase/(compBase+k)` is monotone non-increasing
+  (`compaction_antitone`, never re-expands) and strictly shrinks `400 → 68`
+  across the walk (`compaction_strict`).  A dashed outline ring animates through
+  exactly these radii, and the dependency arrows are preserved in lockstep.
+  Commands: `#irrep194`, `#writeirrep194 "path"`.
+
+* **T1–T170 Thompson views sampled in 104 expansions** (`atlas_thompson.svg`).
+  Each declaration carries a Thompson class `thompsonOf h = h % 170`
+  (`thompsonOf_lt`); each of the 104 q-expansion pages samples one view
+  `thompsonView pi`, keyed by `[q^{pi+1}] j mod 170` (`thompsonView_lt`).  Turning
+  the 104 pages lights up the atoms in the sampled view.  Finding
+  (`thompson_sample_count`): the 104 expansions sample exactly **49** of the 170
+  views.  Commands: `#thompson`, `#writethompson "path"`.
+
+* **Precomputed T1 (= j) expansion and its irrep configurations**
+  (`RequestProject/JExpansion.lean`).  The supplied list of the first **100**
+  nontrivial coefficients of `T1 = j - 744` is recorded as `t1Coeffs`, and
+  `t1Coeffs_correct` proves it equals the honestly computed power series exactly
+  (`t1Coeffs[k] = jSeries[k+2]`, the coefficient of `q^{k+1}` in `j`), so the
+  precomputed data is verified rather than assumed (`t1Coeffs_eq_jSeries` is the
+  pointwise form).  The moonshine "configurations" — each coefficient as a
+  non-negative integer combination of the smallest Monster irrep degrees — are
+  extended from `moonshine_c1 … c3` to `moonshine_c4` (multiplicities `(3,3,1,2,1)`)
+  and `moonshine_c5` (`(4,5,3,2,1,1,1)`).
+* `RequestProject/MonsterReach.lean` — how far the `j`-expansion has to run before a
+  single coefficient `c(n)` first exceeds the order of the Monster
+  `Holograms.monsterOrder = |𝕄|`.  The answer is exactly four coefficients beyond
+  the recorded 100: every coefficient through `q¹⁰³` is below `|𝕄|`
+  (`jCoeff_below_monster_through_103`, and `t1Coeffs_below_monster` for the recorded
+  table), `c(104)` is the first to exceed it (`jCoeff_104_exceeds_monster`), and
+  `c(105)` is over as well (`jCoeff_105_exceeds_monster`).  `monster_size_crossover_at_104`
+  packages the crossover: `c(n) < |𝕄|` for all `n ≤ 103` and `|𝕄| < c(104)`.  All
+  checked by kernel computation against the honest `jSeries`.
+* `RequestProject/SpectralAtlas.lean` — the **multihash / graded** refinement of the
+  moonshine projection.  Instead of one scalar hash, an object is a *multihash*
+  `μ : Fin 15 → ℕ` (one channel per Monster prime), and each of the 194 irreps is a
+  distinct lens reading its own channel (`irrepWeightV`).  The q-expansion composes
+  these into **graded jets** `gradedPoint μ N` (the embedding truncated to the first
+  `N` q-pages).  Proved properties: `gradedPoint_prefix` (higher grades restrict to
+  lower ones — a compatible tower of finer approximations), `fullPoint_scalar` (on a
+  constant multihash the pipeline reduces exactly to `MoonshineAddress.moonshinePoint`,
+  so this strictly generalises the scalar atlas), `grade_zero_uninformative` (the
+  grade-0 jet is identical for every object — maximal privacy),
+  `grade_zero_collision_separated` (objects can share the grade-0 jet yet separate
+  once a single q-page is revealed — a lossy→faithful hierarchy), and
+  `spectral_separation_local` / `spectral_separation` (multihashes differing in their
+  prime channels land at distinct coordinates).  The AST-driven multihash
+  `langMultiHash` packages the 12 `Expr` constructor counts plus `size`, `depth`,
+  `consts` (exactly 15 invariants) so that syntactic structure — not a single opaque
+  hash — drives the embedding; `#spectral Nat.add` prints this address.
+
+## Layer — `QDeform.lean` (the projection deformed along the 104 q-expansions)
+
+`atlas_qdeform.svg` deforms the whole projection along the 104 q-expansions and
+shows what happens as the number of available primes changes with each irrep
+combination.  For page `n` the **primes available** are exactly the Monster primes
+dividing the coefficient `[q^n] j` — the prime support of that page's irrep
+combination (`availLayer`, `availCount`).  Every project declaration is folded
+onto exactly those available primes (`qPos`, reusing `IrrepFold.foldPos`), so as
+the pages turn the projection morphs continuously; the dependency **arrows are
+preserved** (`IrrepFold.foldEdges`, endpoints animated in lockstep), and a live
+inset graph plots `availCount` across the 104 pages with a cursor on the current
+page.  Findings (all `native_decide`): `qdeform_max_count` (the count never
+exceeds **6**), `qdeform_collapse` (page 71 / `q^71` is coprime to every Monster
+prime, so the projection collapses to one point — `availLayer 70 = []`),
+`qdeform_peak` (page 95 hits the maximum 6), `qdeform_distinct_counts` (exactly
+**7** distinct counts, the values `0 … 6`), and `availLayer_subset` (nothing ever
+leaves Monster-prime space).  Commands: `#qdeform`, `#writeqdeform "path"`.
+
+## Layer — `DualAtlasSVG.lean` (the dual-atlas functor, as an animation)
+
+`RequestProject/DualAtlasSVG.lean` turns the `DualAtlas` construction into a
+single self-contained, self-playing **animated SVG**.  Everything it draws is
+computed natively by Lean from the same definitions the proofs use
+(`primalAtlas`/`dualAtlas` via `Holograms.dualizePair`, `cogProj`, `triadProj`,
+`harmCode`/`harmLabel`), so the picture is faithful to the formalised
+mathematics.  The film has four animated movements:
+
+1. **Dualization** — the six structured prime powers `p^e` of `|𝕄|` flip to
+   their duals `e^p` (`2^46 ↦ 46^2`, …), the involution `dualFunctor` made
+   visible (`dualFunctor_involutive`).
+2. **Cognitive grid (46×2)** — the 92-cell grid of `cogProj`; reflected
+   declarations drop into their cognitive cell `(h mod 92) + 1`.
+3. **Semantic triad (20×3)** — the 20-lane recursion of `triadProj`; markers
+   slide to `⌊(h mod 60)/3⌋`.
+4. **Harmonic classifier** — the priority wheel `13 > 11 > 7 > 5 > default`
+   of `harmCode`, with each reflected declaration's cell lighting up.
+
+Commands:
+
+```
+#dualfilm                    -- build the film and report its size
+#writedualatlas "path"       -- build the film and write the SVG file to `path`
+```
+
+The committed artifact `atlas_dual.svg` is generated by `#writedualatlas` at
+build time and is well-formed, self-contained, self-playing animated SVG.
+Regenerate with:
+
+```lean
+import RequestProject.DualAtlasSVG
+#writedualatlas "atlas_dual.svg"
+```
+
+---
+
+## Layer — `CorpusGraph.lean` (the entire corpus as a dependency graph)
+
+Where every other layer reflects only the project's own namespaces (a few dozen
+declarations), this layer **scales the visualization up to the entire corpus**.
+It reflects over *every* constant in the whole environment (Lean + Std +
+Mathlib + the project) and renders the **namespace dependency graph** as one
+self-contained, self-playing animated SVG, `atlas_corpus.svg`.
+
+* **Nodes = top-level namespaces.**  Every non-internal declaration is bucketed
+  by its top-level namespace (`topNs`); a node's size is the number of
+  declarations it holds.  Only the `topK = 60` largest namespaces are drawn, but
+  the totals reported are computed over the whole corpus.
+* **Edges = cross-namespace references.**  For each declaration the constants it
+  uses (`Expr.getUsedConstants`) are read and bucketed; a directed edge between
+  two namespaces is weighted by how many references cross between them.
+* **Layout.**  Namespaces sit on a golden-angle (phyllotaxis) spiral ranked by
+  size — the big hubs near the centre, the long tail outward.  Node radius grows
+  with `√(declaration count)`; node colour is the harmonic class
+  (`DualAtlas.harmCode`) of the namespace-name hash, reusing the project palette.
+  Each edge is a quadratic Bézier bowed toward the centre, with width and opacity
+  scaling with `√(weight)`.
+* **Animation.**  Native SMIL: edges light up in a travelling wave, node glows
+  pulse, and a slow radar sweep rotates over the whole graph.
+
+Commands `#corpusgraph` (build + report the corpus totals and size) and
+`#writecorpusgraph "path"` (write the SVG) regenerate the artifact at build time.
+The whole computation is performed natively by Lean over the live environment, so
+the reported counts and the drawn graph reflect exactly what is imported.
+Regenerate with:
+
+```lean
+import RequestProject.CorpusGraph
+#writecorpusgraph "atlas_corpus.svg"
+```
+
+## Layer — `MonsterBitmapSVG.lean` (the 194×100 Monster–Moonshine bitmap, animated)
+
+This layer renders the bitmap defined in `RequestProject/MonsterBitmap.lean` —
+the zero-`sorry`, axiom-free pipeline that turns a natural number `N` into a
+`194 × 100` image — as one self-contained, self-playing animated SVG,
+`atlas_bitmap.svg`.
+
+* **Rows = the 194 Monster irrep dimensions** (`MonsterBitmap.degArr`, OEIS
+  A001379); **columns = the j-function coefficients** `q¹…q¹⁰⁰`
+  (`Moonshine.t1Coeffs`).
+* **Each pixel** is `fold(N) ▸ weave ▸ CRT-over-supersingular-primes ▸
+  normalize`, exactly the stages of `MonsterBitmap.pixelValue`: `N` is folded
+  mod each irrep dimension, gated by the greedy moonshine weave
+  (`MonsterBitmap.weaveArr`), recombined modulo the product of the supersingular
+  primes dividing that dimension, then normalized to a byte and heat-mapped
+  (indigo → magenta → gold).
+* **Faithfulness is proved.**  `MonsterBitmapSVG.render_faithful` checks, by
+  `native_decide`, that the fast renderer's per-cell byte equals
+  `MonsterBitmap.pixelValue` at every one of the `194 × 100` cells.
+* **Animation.**  Only the `1833` cells with nonzero weave (the moonshine
+  support) are drawn over the black field; each one's colour is flip-booked
+  over a handful of featured inputs `N`, so the picture *breathes* as `N`
+  changes while its lit support stays fixed.
+
+Commands `#bitmapfilm` (build + report size and active-cell count) and
+`#writemonsterbitmap "path"` regenerate the artifact at build time. Regenerate
+with:
+
+```lean
+import RequestProject.MonsterBitmapSVG
+#writemonsterbitmap "atlas_bitmap.svg"
+```
+
+---
+
+## Breaking the persistent smushes with the q-expansion (`RequestProject/QExpansionLadder.lean`)
+
+The resolution ladder leaves a residue of **persistent (semantic) smushes** —
+irrep-1 collisions that survive the full fifteen-prime address `fullModulus =
+2·3·5·…·71`. This module attacks them with the McKay–Thompson `T1 = j`
+q-expansion `c(1), c(2), …`, measuring up to **100 q-expansions**, in two layers:
+
+* **Layer 1 (theorem `monster_q_cannot_break`).** Grading by which *Monster*
+  primes divide each `c(n)` is provably hopeless: the radical of those primes
+  divides `fullModulus`, so by `coarsen` a persistent smush automatically agrees
+  modulo it. No Monster-prime q-content ever separates a persistent smush.
+* **Layer 2 (the full coefficients).** Using the whole integer `c(n)` as a fresh
+  coordinate adds non-Monster primes and unbounded size. Since `2^64 ≤ c(14)`
+  (`hashRange_le_qCoeff14`), any two *distinct* hashes are broken by depth 14
+  (`distinct_hashes_break_by_14`), and a smush survives all 100 q-expansions iff
+  its members carry the **literally identical** hash (`unbreakable_iff_equal_hash`).
+
+**Result on the 120,000-declaration sample:** of the 1,969 persistent smush
+groups, **0** are broken at any depth 1…100 and **1,969 are unbreakable** —
+every persistent smush is a group of declarations whose statement fingerprints
+are literally equal, so there is nothing for any q-expansion to separate. The
+per-depth curve is written to `atlas_qexpansion.json`. Commands `#qladder` (full
+corpus) and `#qladder_sample n` regenerate it.
+
+## The persistent smushes as a glossary of duplicates (`RequestProject/DuplicateGlossary.lean`)
+
+Since the persistent smushes are exactly the declarations whose statement
+fingerprints are *literally identical*, this module reframes them from noise into
+signal: a **glossary of duplicates**. It groups every declaration by its statement
+fingerprint `info.type.hash` and, for each group of ≥ 2 members, writes a glossary
+entry pairing two faces:
+
+* the **syntax face** — how the members diverge in *name / namespace / spelling*
+  despite the shared fingerprint, with the pretty-printed statement(s) and whether
+  those strings are byte-identical (`syntaxIdentical`) or only hash-identical (a
+  genuine *syntax delta*, e.g. `cngen` vs `cNGen`). It also records whether the
+  member types are structurally `Expr`-equal, so a rare hash-only collision of
+  truly different statements is flagged rather than silently asserted equal.
+* the **proof-semantics face** — *how* the duplicate arose, by inspecting the
+  stored proof terms: `alias` (all members carry the literally identical proof
+  term), `rfl-variant` (some member's proof is a reflexivity/triviality term),
+  `independent` (all members have proof terms, but distinct ones), `deprecated`
+  (some member is tagged `@[deprecated]`), or `unknown` (some member exposes no
+  proof value). Priority when several apply: `deprecated` > `alias` >
+  `rfl-variant` > `independent` > `unknown`.
+
+Grouping by the exact fingerprint is finer than the resolution ladder's
+base-cell tally (a single irrep-1 cell can host several distinct-hash duplicate
+groups, in which case the ladder counts the cell as *geometric* and drops the
+duplicates): on the 120,000-declaration sample the strict-fingerprint grouping
+finds **3,436** duplicate groups — alias 1,671, independent 1,266, unknown 353,
+deprecated 124, rfl-variant 22; 2,938 with byte-identical statements and 498 with
+a syntax delta (3 of those hash-only). The machine-readable glossary is written to
+`atlas_duplicates.json` and the human-readable one to `DuplicateGlossary.md`.
+Commands `#dupglossary` (full corpus) and `#dupglossary_sample n` regenerate both.
+
+Because `atlas_duplicates.json` is ~7 MB and not meant to be read by eye, a small
+set of viewable summaries is generated from it by `gen_embodiment.py`:
+
+* `DuplicateReport/` — a 10-page digest (`page_01.md` … `page_10.md`, `index.md`):
+  what a "duplicate" means, the five proof-semantics classes, 2–3 exemplars per
+  class, the non-autogenerated (user-code) duplicates, and the hash-only collisions.
+* `EmbodimentReport.md` / `atlas_embodiment.json` — 2–3 exemplars per class with
+  namespace splits, deprecated/rfl flags, and proof-term heads.
+* `atlas_user_duplicates.json` — only the duplicate groups whose members are all
+  hand-written (no Lean-generated `match_`/`_simp_`/`_private`/`.rec`/… names);
+  **560** such groups (independent 344, unknown 113, deprecated 91, alias 11,
+  rfl-variant 1).
+
+Regenerate the summaries from the atlas with `python3 gen_embodiment.py`.
+
+---
+
+## Fiber homes — the natural home of every declaration (`RequestProject/FiberHome.lean`)
+
+This layer reads the three dual-atlas coordinates as a **fiber bundle** and gives
+every declaration in the whole environment a single *natural home* cell:
+
+* the **base** is the `92 × 20` cognitive/semantic grid (`cog` column × `triad`
+  row), `1840` base cells;
+* the **fibre** over each base point is the `5`-element harmonic class
+  (trivector / Muse / heptad / hemispheres / recursion), normalised to a rank
+  `0..4` by `harmRank`;
+* the total space has `92 · 20 · 5 = 9200` cells, and `homeIndex` linearises a
+  cell to an integer in `[0, 9200)`.
+
+Verified fiber-address algebra (standard axioms only):
+
+* `homeIndex_lt` — every declaration lands in `[0, 9200)`;
+* `homeIndex_determines_cell` — the linear address determines all three
+  coordinates (the mixed-radix linearisation is injective on its range);
+* `SimilarHome` ("lands in the same cell") is an `Equivalence`
+  (`similarHome_equiv`) and is exactly cell-equality (`similarHome_iff_cell`) —
+  this is the formal meaning of "find similar declarations".
+
+Reflection commands (run natively over the entire loaded environment):
+
+* `#findhome f` — the natural home of `f` plus the population of that home cell;
+* `#similar f` — list the declarations sharing `f`'s home cell (its nearest
+  neighbours); writes `atlas_fiberhome.json`;
+* `#fibercensus` — occupancy of the bundle (≈ 707k declarations land in ≈ 5.5k
+  of the 9200 cells; busiest cell ≈ 2.6k declarations);
+* `#fiberatlas` / `#writefibers "path"` — render the whole corpus as a heat-map
+  over the `92 × 20` base grid, each base cell coloured by its dominant harmonic
+  fibre and shaded by population. The generated picture is `atlas_fibers.svg`.
+
+---
+
+## Guided tour — `TourSVG.lean` (an animated SVG of everything we did)
+
+The layers above each emit their own picture; this module ties them all together
+into a single, self-playing **slideshow tour**. `RequestProject/TourSVG.lean`
+builds one self-contained animated SVG that cross-fades through 23 scenes — one
+per chapter of the work, from the proven foundations (`Holograms`) through the
+primal/dual atlases, the introspective comic, the minimap, the whole-universe
+`Cosmos` scan, anatomy, the quine, the Moonshine flip-book, the prime-modulus
+and address pipelines, FRACTRAN biomes, irrep fold, q-deformation, the corpus
+graph, the Monster bitmap, the duplicate glossary, fiber homes, and the certified
+vision FFI.
+
+* Built **natively in Lean** with the tiny `SVG` AST (`RequestProject/SVG.lean`)
+  — no Mathlib dependency.
+* Looping is plain **SMIL** (`<animate>` / `<animateTransform>`): each scene has
+  a soft opacity cross-fade keyed to its time slot, a varied animated motif
+  (rotating ring, pulsing rings, orbiting satellites, growing bars, twinkling
+  constellation, bobbing wave), and a sweeping progress bar. No JavaScript, no
+  external assets; it plays in any browser.
+* The committed artifact is `atlas_tour.svg` (≈ 23 scenes, a 115-second loop),
+  written at build time by an `#eval` in the module.
+
+Regenerate it with:
+
+```lean
+import RequestProject.TourSVG   -- the #eval writes atlas_tour.svg at build time
+```
+
+---
+
+This project was edited by [Aristotle](https://aristotle.harmonic.fun).
+
+To cite Aristotle:
+- Tag @Aristotle-Harmonic on GitHub PRs/issues
+- Add as co-author to commits:
+```
+Co-authored-by: Aristotle (Harmonic) <aristotle-harmonic@harmonic.fun>
+```

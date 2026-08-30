@@ -1,0 +1,70 @@
+# TOE Agda corpus handoff
+
+This is the complete Agda corpus available in this checkout at handoff time.
+It contains the RH/analytic lane only. The two copies are intentionally
+preserved: `Agda-reference/` is the selected handoff layout and
+`Agda/DASHI/Analysis/` is the repository-style layout.
+
+## Intake instruction
+
+Treat this archive as a source corpus and provenance input for the TOE sewing
+pass. Do not import every file into the TOE kernel. First index each module,
+its imports, declarations, status, and any Lean mirror. Then classify every
+candidate correspondence as exactly one of:
+
+* `exactInstance`
+* `approximateInstance`
+* `finiteShadow`
+* `structuralAnalogue`
+* `candidateBridge`
+* `negativeResult`
+* `openSocket`
+
+The corpus index should record source path, module name, domain, PR/branch
+status when known, theorem shape, proposed TOE owner, validation status, and
+claim boundary. Keep merged code, open-PR material, source-only Agda, and Lean
+re-proofs distinct. Similar names or prose are not evidence of a bridge.
+
+## Suggested TOE owners to test
+
+Check these surfaces against the existing owners, without silently discharging
+their hypotheses:
+
+* `FiniteReindex`: centered grids, finite retention, and Gram/determinant
+  invariance;
+* `StructureMorphism`: Poisson/channel transport and commuting-square claims;
+* `CertifiedMargin`: coercivity, retained defect, envelope and contraction
+  gates;
+* `PathTransport`: source transport and reachability-shaped statements;
+* `ResidualTaxonomy`: discarded tails, off-diagonal terms, and normalization
+  defects;
+* `ObserverBundle` / `MultiscaleDescent`: analytic source-to-observer layers;
+* `CommutatorObservability`: only if a genuine path-order distinction and an
+  observation map are supplied.
+
+For each proposed bridge, ask: does the map commute; does the observable
+descend; what residual is required; what symmetry survives; and what is the
+coarsest sufficient observation level? Record `yes`, `no`, `conditional`, or
+`open`, including the exact missing hypothesis.
+
+## Validation and boundaries
+
+No Agda toolchain was available when this archive was prepared. Do not report
+the Agda modules as typechecked. Lean mirrors, where present in the wider
+project, are separate evidence and must not be treated as automatic proofs of
+the Agda source. This bundle makes no claim about RH, zeta zeros, physics, a
+mass gap, or a theory of everything.
+
+Do not add Yang--Mills or Navier--Stokes material from unrelated archives. Keep
+negative results and open sockets in the corpus index: the goal is a complete
+constraint map, not a catalogue of only successful analogies.
+
+## Included modules
+
+The eight source modules are:
+
+`RiemannAnalyticSubstrate`, `RiemannCenteredGridRetentionExact`,
+`RiemannComplexPoissonHermitianReductionExact`,
+`RiemannG3SourceTransportExact`, `RiemannHermitianTopDownAssemblyExact`,
+`RiemannMixedKernelEnvelopeExact`, `RiemannPhiCoshCoercivityReductionExact`,
+and `RiemannWeilPairKernelFrobeniusExact`.

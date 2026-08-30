@@ -1,0 +1,147 @@
+# G16 — the taper dichotomy becomes a theorem: no compactly supported taper can pass the gate
+
+**The Riemann Hypothesis is not proved.**  Nothing was weakened and nothing was
+assumed: `RiemannHypothesisFor`, `RiemannHypothesis`, `CompletedRiemannHypothesis`
+and every earlier statement are untouched; there is no `sorry`/`admit`, no
+`axiom`, no postulate, no Boolean receipt, no numerical evidence and no
+`@[implemented_by]` in any Lean source.  `lake build RiemannAnalytic` succeeds
+(8102 jobs, no warnings from project sources) and `#print axioms` on every new
+theorem returns only `[propext, Classical.choice, Quot.sound]`.
+
+G15 closed with one explicitly named open question.  Its §2 had proved the
+source-normalization gate **red** for every taper whose transform decays only
+polynomially along the prime frequencies `u = log n`, and observed that the sole
+remaining possibility for a green gate was a taper transform decaying
+*exponentially* at rate `> 1/2 + 2|α|` — i.e. a taper analytic in a horizontal
+strip — which "appears incompatible with the compact support and plateau
+hypotheses under which `finiteGridGramDefect_source_floor` proves the `L⁶`
+floor".  That was recorded as an assessment, not a theorem.
+
+**G16 turns it into a theorem, and closes the intermediate regime the G15
+argument left uncovered.**
+
+---
+
+## New modules
+
+| Module | Content |
+| --- | --- |
+| `RiemannAnalytic/TaperAnalyticIncompatibility.lean` | the holomorphic strip extension of an inverse Fourier transform, the Paley–Wiener obstruction, and the incompatibility theorem for the tree's taper class |
+| `RiemannAnalytic/SubexponentialTaperGate.lean` | logarithms against an arbitrary power of `N`, the master power-gain gate theorem, and the red verdict for every subcritical exponential decay rate; the combined go/no-go verdict |
+
+Both are imported by the aggregate `RiemannAnalytic.lean`.
+
+---
+
+## 1.  Exponential decay of the transform is unavailable to the taper class
+
+The chain proved in `TaperAnalyticIncompatibility.lean`:
+
+* `expStrip b = {z : |Im z| < b}`, with `isOpen_expStrip`, `convex_expStrip`,
+  `isPreconnected_expStrip`;
+* `invFourierExt g z = ∫ g(v) e^{2πi v z} dv` — the complex extension of the
+  inverse Fourier transform, with `invFourierExt_ofReal` identifying it with
+  Mathlib's `fourierInv` on the real line;
+* `differentiableOn_invFourierExt` / `analyticOnNhd_invFourierExt` — if
+  `‖g v‖ ≤ C e^{-a|v|}`, then `invFourierExt g` is holomorphic, hence analytic,
+  on every strip of half-width `b` with `2πb < a`.  (Proved by differentiation
+  under the integral sign, with the dominating weights
+  `C e^{-(a-2πb)|v|}` and `2πC|v| e^{-(a-2πb)|v|}`, whose integrability is
+  established here as `integrable_exp_neg_mul_abs` and
+  `integrable_abs_mul_exp_neg_mul_abs`.)
+* `eq_zero_of_expDecay_fourier_of_vanishing_interval` — **the Paley–Wiener
+  step.**  A continuous integrable `φ : ℝ → ℂ` whose Fourier transform obeys
+  `‖𝓕φ(ξ)‖ ≤ C e^{-a|ξ|}` with `a > 0`, and which vanishes on *some* nonempty
+  open interval, vanishes identically.  (Fourier inversion identifies `φ` with
+  the restriction of the analytic extension; the identity theorem on the
+  connected strip then propagates the zeros of a real interval to everything.)
+* `not_expDecay_fourier_of_vanishing_interval` — the contrapositive;
+* `compactTaper_fourier_not_expDecay` — **the incompatibility for this tree's
+  taper class**: a `CompactTaper φ R` which is somewhere nonzero has *no*
+  exponentially decaying Fourier transform, at any rate `a > 0`;
+* `plateau_taper_fourier_not_expDecay` — the same in the plateau normalization
+  `φ ≡ 1` on `|t| ≤ a` used by `finiteGridGramDefect_source_floor`.
+
+So the one regime in which the gate could have been green is empty for exactly
+the tapers for which the source-side `L⁶` Gram floor is proved.
+
+## 2.  The intermediate regime: every subcritical exponential rate is red too
+
+A smooth compactly supported taper has a transform decaying faster than every
+polynomial, so the G15 polynomial-decay verdict does not apply to it, while §1
+shows genuine exponential decay is impossible.  `SubexponentialTaperGate.lean`
+covers the whole range in between:
+
+* `log_pow_le_mul_rpow` — `(log N)^k ≤ (k/δ)^k N^δ` for every `δ > 0`
+  (G15's `log_pow_le_mul_sqrt` is `δ = 1/2`);
+* `gate_fails_of_power_gain` — **master theorem.**  If the gate quantity
+  `C_src t² S²` retains *any* positive power `κN^δ` after an arbitrary
+  polylogarithmic loss `(log N)^A`, then
+
+```
+120000 (log N)² · C_src t² S²  <  c (log N)⁶
+```
+
+  is false, subject only to the explicit constant comparison
+  `c((A+4)/δ)^{A+4} ≤ 120000κ`;
+* `taperedWeilMass_lower_of_expDecay` — an exponential lower bound
+  `|φ̂(u)| ≥ κ_φ e^{-ru}` along `u = log n ∈ [0, log N]` keeps the tapered Weil
+  mass at `κ_φ N^{-r}` times the full Weil mass;
+* `taperedWeil_gate_fails_of_subcritical_expDecay` — **the sharpened verdict.**
+  For every rate `r < 1/2` the gate fails.  The critical rate `1/2` is exactly
+  the archimedean normalization `n^{-1/2}` of the explicit formula; the
+  two-sided Weil mass bound `weilMass_two_sided` shows the true threshold is
+  `1/2 + 2|α|`.
+
+## 3.  The packaged verdict
+
+`compactTaper_gate_verdict` states both halves for a compactly supported,
+somewhere-nonzero taper `ψ`, with `taperTransformAbs ψ = ‖𝓕ψ‖`:
+
+1. there is **no** `C, a > 0` with `‖𝓕ψ(ξ)‖ ≤ C e^{-a|ξ|}`;
+2. for every subcritical rate `r < 1/2` with a lower bound
+   `κ_φ e^{-ru} ≤ ‖𝓕ψ(u)‖` on the top frequency window
+   `[log N − log 4, log N]`, the contraction condition fails.
+
+## 4.  What is still *not* proved
+
+The verdict is red for the taper class of the Gram floor in the two regimes
+above, and the supercritical regime is proved empty for that class.  The one
+logical gap that remains before "red" is unconditional for *every* compactly
+supported taper is regularity of the transform along the prime frequencies:
+statement 2 assumes a pointwise lower bound `κ_φ e^{-ru} ≤ ‖𝓕ψ(u)‖` on the top
+window `u ∈ [log N − log 4, log N]`, and statement 1 excludes only a uniform *upper* exponential
+bound, not the possibility that `‖𝓕ψ‖` dips at the particular frequencies
+`log n`.  Closing that gap needs a lower bound for the prime-frequency mass of
+an entire function of exponential type (a Jensen-type zero-counting argument
+against the density `e^u` of `{log n}`); it is stated here as the next thing to
+prove, and is *not* proved.
+
+## 5.  Milestones
+
+| Milestone | Status |
+| --- | --- |
+| 1. `literalCompensatedAnchorExplicitFormula` (the identity, with `C_src` exposed) | **open — still the first unproved theorem** |
+| 2. exact normalization-scale decision | **proved as a dichotomy**; the red branch now covers all polylogarithmic coefficients, all polynomially-decaying tapers, and all subcritical exponential rates, and the supercritical regime is proved unavailable to compactly supported tapers |
+| 3. `literalPrimeRelativeContraction` | open (assembly, conditional on 1–2 being green) |
+| 4. relative tail / mixed / gamma-pole-endpoint bounds | open |
+| 5. high-zero strict contraction | abstractly proved (`riemannHypothesis_of_relative_parts`), not instantiated |
+| 6. bounded-height zero certificate | open |
+| 7. literal RH closure | wrapper proved (`riemannHypothesis_of_relative_contraction`), premises open |
+
+## The first unproved theorem, stated exactly
+
+Unchanged since G12:
+
+> **`literalCompensatedAnchorExplicitFormula`.**  For an actual zero
+> `ρ = 1/2 + α + iγ` of `completedRiemannZeta` and the actual source local matrix
+> at height `T` and window `H`, the literal anchored Gram defect `D_{ρ,H}` equals
+> `C_src(T,H,ρ) · 𝒟^{prime}_N(α,t) + R_zero + R_EF`, with every object the
+> literal source object `γ_ρ, τ_k, h = 2π/L, X = e^L, φ̂, m_ρ, A_H` and the exact
+> explicit-formula normalization, and with `C_src` given in closed form.
+
+It must produce `C_src · t² · N^{1+4|α|} < 1024c(log N)⁴/120000` in the literal
+Weil normalization.  G16 adds that this cannot be achieved by any taper of the
+class for which the source floor is proved, in any decay regime up to the
+critical rate, and that the supercritical regime is empty for that class.  No
+claim about the Riemann Hypothesis is made.

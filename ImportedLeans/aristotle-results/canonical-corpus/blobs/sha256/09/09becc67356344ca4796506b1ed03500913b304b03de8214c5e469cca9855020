@@ -1,0 +1,201 @@
+# G22 — support-corner slack, radius freedom, and the literal parity bridge
+
+This pass closes the algebraic sublane of the odd finite-radius chain, answers
+the radius-freedom audit, builds the literal test-function bridge, and settles
+the single-frequency four-sample decision.  Everything below is machine-checked
+in Lean 4 / Mathlib under `lake build RiemannAnalytic`, with no `sorry`, no
+`axiom`, no postulate, no Boolean receipt, no numerical evidence, and
+`#print axioms` reporting only `propext`, `Classical.choice`, `Quot.sound`.
+
+## 1. The support-corner slack identity (`RiemannAnalytic/OddTaylorSupportSlack.lean`)
+
+With the normalised determinant-level error polynomial
+
+    P(q_a, q_p, c_a, c_p) = 204 (c_a + c_p) + 40 (q_a c_p + q_p c_a) + 64 c_a c_p
+
+and the compact-support majorant `S(R) = 510 R⁴ + 100 R⁶ + 4 R⁸`:
+
+* `supportMajorant_eq_corner_value` — `S(R) = 25 · P(R², R², R⁴/20, R⁴/20)`.
+  The majorant is *literally* the corner value, not a loose estimate.
+* `oddTaylorSupportPolynomialSlackIdentity` — the exact ring identity
+
+      S − 25P = 25 [ 40C((U − q_a) + (U − q_p))
+                     + (C − c_a)(204 + 40 q_p + 64C)
+                     + (C − c_p)(204 + 40 q_a + 64 c_a) ],
+      U = R²,  C = R⁴/20,
+
+  recording the four debts to saturation explicitly.
+* `oddTaylorSupportPolynomialMajorization` — the ordered consequence
+  `25 P ≤ S` under exactly `q ≤ R²`, `20 c ≤ R⁴` and nonnegativity.  No
+  optimisation theorem, no derivative, no multivariate monotonicity.
+* `oddTaylorRadiusGate` — `S r² < 900 Δ ⟹ P r² < 36 Δ`.
+
+## 2. Radius freedom — audit answered
+
+The audit question was whether the observation radius `r` is free to be chosen
+after `a, p, R`, or constrained elsewhere.
+
+**It is free.**  Every downstream statement in the zero-side chain is of the
+form `∃ r₀ > 0, ∀ r, 0 < r → r < r₀ → …`:
+`exists_radius_oddFiniteRadiusDeterminant_neg`,
+`exists_radius_evenFiniteRadiusDeterminant_neg`,
+`exists_radius_both_parity_minors_neg`, `parity_responses_linearly_independent`,
+`pole_quotient_transversality`, `zero_response_not_in_pole_span`,
+`offline_zero_parity_transversality`.  Consequently:
+
+* `exists_threshold_supportMajorant_lt` — `Δ > 0`, `S ≥ 0` gives a threshold
+  below which `S r² < 900 Δ`.
+* `NormalizedMomentCoefficients.strictTP2_exists_radius_strict_odd_minor` — from
+  *strict* TP₂ positivity alone (`q_p − q_a > 0`) one obtains a radius threshold
+  below which the support gate, the normalised gate, and strict negativity of
+  the actual finite-radius odd minor all hold simultaneously.
+
+So **no quantitative lower bound on the TP₂ margin is required anywhere**.
+
+## 3. Normalised moment coefficients (`RiemannAnalytic/NormalizedMomentCoefficients.lean`)
+
+* `oddMoment_pos` — `N k y > 0` for `y > 0`, proved from the plateau: on a
+  subinterval `(c,d) ⊂ (0,L]` the integrand `uᵏ φ(u) sinh(yu)` is a product of
+  three strictly positive factors, and `(c,d)` has positive measure.  This is
+  the denominator positivity for `q_y`, `c_y`, with no boundary issue at `u = 0`.
+* `normalizedCubicCoeff = N₃/N₁`, `normalizedQuinticCoeff = N₅/(20 N₁)` with
+  `q_y ≤ L²`, `20 c_y ≤ L⁴`, `0 ≤ q_y`, `0 ≤ c_y`, from the pointwise support
+  domination `N_{k+j} ≤ Lʲ N_k` (`oddMoment_le_of_support`, an honest
+  `integral_mono`).
+* `abs_sin_sub_taylor3_all`, `sixScaled_sine_remainder` — the fifth-order sine
+  remainder on the whole line and its six-scaled form
+  `6|sin x − x + x³/6| ≤ |x|⁵/20`, the source of the `20` in `c_y`.
+* `normalizedCubicCoeff_strictMono` — strict TP₂ in normalised form,
+  `q_a < q_p`.
+* `normalizedCoefficients_support_majorization` — the majorization at the actual
+  taper moments.
+
+## 4. The literal parity-response bridge (`RiemannAnalytic/WeilParityResponseBridge.lean`)
+
+For the compactly supported test family
+`h(z) = ∫₋ᴸᴸ g(u) e^{izu} du` with the symmetric extensions
+`g_even(u) = φ(|u|) cos(ru)`, `g_odd(u) = φ(|u|) sin(ru)`:
+
+* `weilTransform_pair_cosh`, `weilTransform_pair_sinh` — for a zero
+  `ρ = 1/2 + α + i t` (Weil argument `t − iα`) and its reflection `1 − ρ̄`
+  (argument `t + iα`), the sum and difference of the two evaluations are the
+  `cosh`- and `sinh`-weighted transforms.  This is exactly where the hyperbolic
+  kernels of the zero-side analysis come from.
+* `weilZeroEven_eq`, `weilZeroOdd_eq` — the paired evaluations at height `α`
+  equal `4 · evenResponse L φ α r` and `4 · oddResponse L φ α r`:
+  the constants `c_e = c_o = 4` are exposed in the statements.
+* `weilPoleEven_eq`, `weilPoleOdd_eq` —
+  `h_even(i/2) + h_even(−i/2) = 4 · A_{1/2}(r)` and
+  `h_odd(i/2) − h_odd(−i/2) = −4 · B_{1/2}(r)`; the sign is carried, not
+  normalised away.
+* `weilParity_cross_vanishes` — the cross-parity combinations vanish
+  identically, so the two channels are exactly separated.
+
+`RiemannAnalytic/LiteralWeilFourSampleTransversality.lean` transports the
+transversality capstone into that language:
+`literalWeilFourSampleTransversality` and `literalWeilZeroNotInPoleSpan`.
+
+These are exact identities about the literal test family.  **The Weil explicit
+formula itself is neither used nor asserted.**
+
+## 5. The single-frequency four-sample decision (`RiemannAnalytic/PrimeFourSampleGeometry.lean`)
+
+For a frequency `λ` and radius `r`, the parity four-sample vector is
+`Φ_r(λ) = (cos rλ, sin rλ, cos 2rλ, sin 2rλ)`.
+
+* `primeFourSampleChebyshevConstraint` — `c₂ = 2c₁² − 1`, `s₂ = 2 s₁ c₁`,
+  `c₁² + s₁² = 1`: a single mode lies on the degree-two Veronese lift of the
+  unit circle.
+* `primeFourSample_annihilator_trivial` — no nonzero linear functional
+  annihilates the whole family (four phases `0, π, π/2, π/4` suffice).
+* `primeFourSampleQuotientDecision` — **decision: NO.**  For every `r > 0` and
+  every pair of directions `v, w ∈ ℝ⁴` there is a frequency `λ > 0` with
+  `Φ_r(λ) ∉ span{v, w}`.  Four explicit frequencies give four linearly
+  independent sample vectors, and four independent vectors cannot lie in the
+  span of two.
+
+So the quadratic Chebyshev constraint buys **no** linear degeneracy: the
+single-frequency image is transverse to any two-dimensional nuisance plane.
+The hoped-for structural annihilation of the prime image by the parity quotient
+does not happen at the level of the four-sample geometry.
+
+## 6. Surface #3: the parity quotient bookkeeping
+
+`RiemannAnalytic/WeilParityQuotientDecomposition.lean`.
+
+The four-sample space is `ℝ⁴` with coordinates the samples at `r, -r, 2r, -2r`;
+a height-`y` channel contributes
+
+* `evenVec y = (A_y(r), A_y(r), A_y(2r), A_y(2r))`,
+* `oddVec  y = (B_y(r), -B_y(r), B_y(2r), -B_y(2r))`,
+
+the sign pattern being exactly `evenResponse_neg` / `oddResponse_neg`.  The pole
+space is `poleSpace = span ℝ {evenVec (1/2), oddVec (1/2)}` and the parity
+quotient is `ParityQuotient = ℝ⁴ ⧸ poleSpace`, with class map `qcls`.
+
+* `poleContribution_quotient_zero` — **`Q_pole = 0`**: every real combination of
+  the two pole directions has zero class.
+* `targetPair_quotient_independent` — for a zero height `0 < a < p`, at all
+  sufficiently small radii the two classes `[evenVec a]`, `[oddVec a]` are
+  linearly independent in the quotient.
+* `target_quotient_ne_zero` — in particular **`Q_target ≠ 0`**.
+* `parityQuotientBalance` — pure bookkeeping: given a balance relation
+  `v_target + v_other + v_prime + v_Γ + v_pole = 0` with `v_pole ∈ poleSpace`,
+  one gets `Q_pole = 0`, `Q_target = -(Q_other + Q_prime + Q_Γ)`, and the
+  right-hand side is nonzero whenever `Q_target ≠ 0`.
+* `literalWeilParityQuotientDecomposition` — the two combined for an **actual**
+  off-line nontrivial zero of `riemannZeta`: at small radii, any four-sample
+  balance relation of the above shape forces
+  `Q_other + Q_prime + Q_Γ ≠ 0`, and equal to `-Q_target`.
+* `no_offline_zero_if_nuisance_in_pole_span` — the "dream case" is impossible:
+  if the other-zeros, prime and gamma contributions all lay in the pole span,
+  no such balance relation could hold for an actual off-line zero.  So at least
+  one of the three must be transverse.
+
+**Status of the balance relation.**  It is a *hypothesis* of these theorems, not
+an assertion.  The Weil explicit formula for `riemannZeta` is not available in
+Mathlib and is not developed here; what is proved is exactly the linear-algebraic
+consequence of having a relation of that shape.  This is the honest form of
+surface #3: no axiom, no postulate, no promise.
+
+### The prime image in the same coordinates
+
+`primeContribution_quotient_ne_zero` transports section 5's decision into these
+coordinates through the invertible parity lift
+`(A₁,B₁,A₂,B₂) ↦ (A₁+B₁, A₁-B₁, A₂+B₂, A₂-B₂)`: for every `r > 0` there is a
+log-frequency `λ > 0` whose four-sample contribution has **nonzero** class in
+the parity quotient.  Combined with `no_offline_zero_if_nuisance_in_pole_span`,
+this says the contradiction cannot be obtained for free: the prime side is not
+annihilated by the quotient.
+
+## 6b. First unproved obligation
+
+The first unproved obligation is now the **literal instantiation** of
+`literalWeilParityQuotientDecomposition`, i.e. the theorem
+
+> for the literal test family `h_r` and an actual nontrivial zero `ρ`, the Weil
+> explicit formula supplies a four-sample balance relation
+> `v_target + v_other + v_prime + v_Γ + v_pole = 0`
+
+with `v_target = evenVec |Re ρ − 1/2| r + oddVec |Re ρ − 1/2| r`.  This requires
+the Weil explicit formula for `riemannZeta`, which is absent from Mathlib and
+is not developed in this project.  Until it is supplied, the decomposition
+above is conditional.
+
+Related, and independent of that gap: the four-sample transversality proved here
+is local to a single target zero `ρ`; the explicit formula sums over the whole
+zero set, so "other zeros" remain an open contribution, as flagged — and by
+section 5 / `primeContribution_quotient_ne_zero` the prime contribution is not
+structurally annihilated either.
+
+## 7. What is deliberately **not** claimed
+
+* **The Riemann Hypothesis is not proved.**  Nothing here weakens or discharges
+  `RiemannHypothesisFor`.
+* The prime-side estimate is untouched: no `Λ(m)Λ(n)` double sum is derived,
+  estimated, or assumed.  Section 5 is a statement about the geometry of
+  individual log-frequency sample vectors, not an evaluation of the weighted
+  prime sum of the explicit formula.
+* The bridge of section 4 identifies the parity responses with evaluations of
+  the literal test family; it does not prove, use, or presuppose the explicit
+  formula.

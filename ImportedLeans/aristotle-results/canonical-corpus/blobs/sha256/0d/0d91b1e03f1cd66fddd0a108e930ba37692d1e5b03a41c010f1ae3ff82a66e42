@@ -1,0 +1,41 @@
+# Page 9 — Hash-only collisions — and your question
+
+Exactly **3** groups share a 64-bit fingerprint while their
+statements are structurally *different*. The fingerprint collided; the mathematics did
+not.
+
+**Group 841** — fp `1053078126` (`structurallyEqual = false`):
+- `CategoryTheory.Adjunction.leftAdjointUniq_hom_counit` : `∀ {C : Type u_1} {D : Type u_2} [inst : CategoryTheory.Category.{v_1, u_1} C] [inst_1 : CategoryTheory.Category.{v_2, u_2} D] {F F' : CategoryTheory.F …`
+- `NFA._sizeOf_1` : `{α : Type u} → {σ : Type v} → [SizeOf α] → [SizeOf σ] → NFA α σ → ℕ`
+
+**Group 2936** — fp `3676478579` (`structurallyEqual = false`):
+- `Qq.Impl.mkIsDefEqResult` : `Bool → (decls : List Qq.Impl.PatVarDecl) → have a := Qq.Impl.mkIsDefEqType decls; Q(«$a»)`
+- `Qq.Impl.mkIsDefEqResult._unsafe_rec` : `Bool → (decls : List Qq.Impl.PatVarDecl) → let a := Qq.Impl.mkIsDefEqType decls; let mkIsDefEqType_1 := Qq.Impl.mkIsDefEqType decls; Q(«$mkIsDefEqType …`
+
+**Group 3181** — fp `3962485042` (`structurallyEqual = false`):
+- `Mathlib.Tactic.FieldSimp.qNF.split` : `{v : Level} → {M : Q(Type v)} → (iM : Q(CommGroupWithZero «$M»)) → (l : Mathlib.Tactic.FieldSimp.qNF M) → MetaM ((l_n : Mathlib.Tactic.FieldSimp.qNF M …`
+- `Mathlib.Tactic.FieldSimp.qNF.split._unsafe_rec` : `{v : Level} → {M : Q(Type v)} → (iM : Q(CommGroupWithZero «$M»)) → (l : Mathlib.Tactic.FieldSimp.qNF M) → MetaM ((l_n : Mathlib.Tactic.FieldSimp.qNF M …`
+
+Group 841 is the startling one: a category-theory adjunction-uniqueness lemma and an
+auto-generated `sizeOf` for nondeterministic finite automata, landing in the same cell
+purely by the geometry of `Expr.hash`. Groups 2936 and 3181 are milder — a definition
+and its `._unsafe_rec` twin, differing only by `have`- vs `let`-bindings in the type.
+
+**Your question — "if we keep looking at it from different expansions we will see a
+difference, no?" — yes, exactly.** The 64-bit hash is a *lossy projection*: it folds the
+whole statement tree down to one number, so distinct trees can land together. Any *finer
+expansion* of the same object separates them:
+
+1. **Structural `Expr` equality** (a full walk of the syntax tree, no folding). This is
+   already what the atlas computes, and it returns `false` for all three groups — that is
+   precisely "look from a finer expansion and the difference appears."
+2. **A different hash seed / a second independent hash.** A collision under one seed is
+   astronomically unlikely under another; two hashes together make accidental agreement
+   vanish.
+3. **The pretty-printed statement**, or the fully β/δ-expanded `Expr`, which differ
+   visibly (an adjunction equation vs a `ℕ`-valued size function).
+
+So a "hash-only" duplicate is never a real duplicate — it is the couch-crease artifact of
+one lossy coordinate, and every sharper coordinate dissolves it. That is exactly why the
+atlas pairs the hash with the structural-equality check and flags these three rather than
+counting them as duplicates.

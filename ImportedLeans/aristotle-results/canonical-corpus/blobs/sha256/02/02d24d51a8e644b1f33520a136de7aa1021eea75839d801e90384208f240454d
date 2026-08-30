@@ -1,0 +1,160 @@
+# Summary of changes for run 9451ddaa-1724-4d58-9bc6-d903892620d5
+## What I did this session
+
+Continuing the DASHI integration spine in Lean (Agda sources are read only; no Agda toolchain is available here, so no Agda module was rechecked). Everything below builds with `lake build`, contains no `sorry`, and is committed and pushed.
+
+### 1. Fixed the outstanding build break
+`Lean/Integration/AxiomAudit.lean` referenced the new residual-quotient constants without importing their module. Added the import; the whole project builds again and the audit now covers 97 headline results, every one depending only on `propext`, `Classical.choice`, `Quot.sound` (no `sorry`, no project axiom, no `native_decide`).
+
+### 2. New: symmetry reduction as a typed obligation — `Lean/Integration/SymmetryReduction.lean`
+This is the structure your last message asked for — the commuting square, not a description of one.
+
+`EquivariantQuotient G Rich Coarse` bundles a monoid action on each of two layers, a surjective projection, and a proof of `π (g · x) = ḡ · π x`. The coarse action is a **field**, so an instance must exhibit the reduced action rather than assert one exists. `orbit_invariant` isolates the trivial-coarse case (quotient by a symmetry).
+
+Three inhabitants, all proved:
+- `phaseReduction` — the free C₃ output-phase reduction `27 → 9` of the ternary endomorphism codes, induced action trivial, so the nine-state carrier is the orbit space. This is independent of which of the two algebras those nine labels are later given.
+- `polarReduction` — the SSP orientation action descending along the polarity-invariant Boolean observer.
+- `laneReduction` — an instance with **nontrivial** induced action (`laneReduction_action_nontrivial`), so the structure is not inhabited only by orbit maps.
+
+And the boundary, stated at the right level: `support_no_equivariant_action` proves there is **no map at all** on the Boolean layer making the native-chart support observer intertwine the polarity involution, and `support_not_a_reduction` upgrades this to "no `EquivariantQuotient` has `support` as its projection". So the failure is at the *unary* symmetry, prior to any binary law, and it is a property of that observer's choice of origin — the same action does descend along the polarity-invariant observer.
+
+The SSP/Hecke intertwiner square is **not** constructed and is not claimed; it is recorded as an open obligation whose shape is now typed (frontier item 9).
+
+### 3. New: a mirror signature-faithfulness layer
+`scripts/mirror_signature_compare.py` + `MIRROR_SIGNATURES.md` go beyond the existing name-level provenance census. For each name-matched (Agda declaration, Lean mirror declaration) pair it compares the **arity** (explicitly quantified arguments, implicit and instance binders excluded) and the **head connective** of the conclusion: 515 comparable pairs, 495 (96.1 %) agreeing on both, and the 20 that disagree listed individually as a review queue. It also checks that no Agda `postulate` in a cited source is mirrored under the same name (none is). Spot checks of the queue are recorded: binder-convention differences, three mirrors that genuinely take an extra `fuel` argument, two that deliberately strengthen an assumed Agda record into a constructed Lean object, and one parse artefact. The report states plainly that shape agreement is necessary but not sufficient for faithfulness — a full statement-level check still needs an Agda toolchain.
+
+### 4. Registry and documentation
+`Integration.Registry` gains two positive rows (the `27 → 9` phase reduction; the reduction with nontrivial induced action) and one boundary (support admits no equivariant coarse action). Totals are now 33 positive rows (26 at level iv, 4 at iii, 2 at ii, 1 at i), 12 boundaries, 3 sockets, with `registry_levels` checking all 33 levels by `rfl`. `TOE_GLOBAL_MAP.md` gains §3.14 (residual-bearing quotients as one structure) and §3.15 (symmetry reduction), the new rows and boundary, updated §1.5 and frontier items 8 and 9; `TOE_INTEGRATION_CORRECTIONS.md` gains matching sections. `ARISTOTLE_SUMMARY.md` was not modified.
+
+### Scope kept
+No Yang–Mills or Navier–Stokes material is touched or referenced. No physical, Monster-group, moonshine, vertex-algebra or Riemann-hypothesis claim is made; outside the analytic lane every carrier is finite.
+
+
+# Summary of changes for run 9d3f0634-60a5-4353-9c93-dd7ed994b6ec
+The RH/zeta lane is now incorporated as one analytic domain of the global TOE map/registry, Lean-first, with everything machine-checked.
+
+**Important archive note (documented in §0 of `RH_TOE_DOMAIN_MAP.md`).** The promised "RiemannAnalytic Lean aggregate plus 23 modules" is not present in the archive. An exhaustive search turns up only `Lean/Spine/RiemannBridge.lean` and `RH_BRIDGE_REPORT.md` on the Lean side, against 50 `Riemann*` Agda sources and a tranche root `EverythingRiemannReflectionOrbitDefect2026.agda` with exactly 24 imports (aggregate + 23) matching the handoff's description — so the intended Lean mirror appears to have been omitted. Rather than stop, I wrote faithful Lean mirrors of the tranche members whose content is finite or elementary-complex, and bridged those to the common kernel. No Agda file was edited or rechecked (no Agda toolchain here); every Agda-side statement in the reports is source reading, used for provenance only.
+
+**Five new Lean modules under `Lean/Integration/`** (1 623 lines total), all building with no `sorry`, no project `axiom`, no `@[implemented_by]` and no `native_decide`:
+- `RiemannReflection.lean` — the lane's reflection/orbit carriers, the transports to the ternary hub, and the evaluation of the Moonshine cyclotomic carrier into ℂ.
+- `RiemannStrip.lean` — the critical strip's two declared symmetries as maps of ℂ: critical line as fixed locus, displacement as transverse coordinate, polarity classifier, Klein-four symmetry group, descent of the discrete model.
+- `RiemannSubstrate.lean` — faithful mirror of the analytic substrate tower plus the proof that it is a socket.
+- `RiemannXiSymmetry.lean` — the exact rational symmetry plane, its injective evaluation `qToC` into ℂ intertwining all three involutions, and the classification of the xi-zero-symmetry, nontrivial-zero, Hilbert–Pólya and proof-stage surfaces.
+- `RiemannDomain.lean` — the domain's thirteen registry rows, six boundaries, five sockets, and an inhabited `AnalyticDomainSummary` bundle.
+
+**Honest classification.** Eleven level-iv rows (explicit map plus preservation/equivalence), one level-ii typed record dependency (the ℕ cosh-coercivity ledger), one level-i vocabulary row (`RiemannHypothesisFor`); `analyticEntries_levels` checks each row's level by `rfl` off its evidence constructor, so no row can be filed above the level it has a witness for. Six boundaries carry the refuted claim together with its refutation — including the Agda `Bool` flag `c3AndZetaCarriersIdentified = false` promoted to a theorem, and the proof that the strip's symmetry group is binary (Klein four), not ternary. Five sockets carry proofs of their own underdetermination.
+
+**Scope respected.** No statement about the Riemann zeta function, its zeros, or the Riemann hypothesis is made anywhere; there is no complex continuation, no tail estimate, no short-interval prime work and no uniform-taper work. No Yang–Mills or Navier–Stokes material is touched. `ARISTOTLE_SUMMARY.md` was not edited.
+
+**Wiring and reports.** The modules are imported by `Lean/Integration.lean`, audited in `Lean/Integration/AxiomAudit.lean` (21 new `#print axioms` lines; every result stays within `propext`, `Classical.choice`, `Quot.sound`, several depending on none), and the registry's closing note now points to the analytic domain. `RH_TOE_DOMAIN_MAP.md` gives the provenance map, the Agda→Lean mirror table, the 12-bridge table, boundaries, sockets and seven exactly-stated remaining obligations; `TOE_GLOBAL_MAP.md` gains §3.9 for the analytic domain.
+
+A full `lake build` from the repository root completes successfully (8 217 jobs), and all work is committed and pushed.
+
+# Summary of changes for run b7a02639-f8bc-4bab-950e-1a79c2ca13ba
+## What was done
+
+The project was refocused from the cuisine/Riemann probes onto a corpus-wide integration pass. The result is a single coherent `Integration` spine plus one global map document — no per-domain reports.
+
+### 1. The global TOE map
+
+`TOE_GLOBAL_MAP.md` (prose) and `Lean/Integration/Registry.lean` (machine-checked) are two halves of one deliverable.
+
+**Provenance.** `scripts/toe_import_map.py` walks the Agda tree, excluding the vendored cubical library and all YM/NS-named paths: 8 713 modules, 2 146 283 lines. The map records domain sizes, the import hubs by in-degree (`Core.Prelude` 897, `Algebra.Trit` 180, `Base369` 140, `GenericReceipt` 108, `MonsterOntos` 107, `Ultrametric` 73, `SSPTritCarrier` 58), the heaviest cross-domain edges, and the vocabulary spread of each junction term. It also records Lean↔Agda provenance: 107 hand-transcribed mirror modules, and the fact that no Agda module was rechecked (no Agda toolchain here), so "the Agda states X" never means "the Agda was verified".
+
+**Four-level classification.** `Integration.Levels` encodes the levels as a Lean datatype whose evidence constructors *determine* the level, so a row cannot be filed at level iii without an `Equiv` or at level iv without a transport/preservation proof. Negatives are `Boundary` values carrying their refutations; unconstrained corpus fields are `Socket` values carrying a proof that nothing is constrained. The registry has 20 positive rows (14 at level iv, 3 iii, 2 ii, 1 i), 8 boundaries and 3 sockets; `registry_levels` checks every row's level by `rfl`.
+
+### 2. Integration work at the junctions
+
+- **Ternary hub.** The corpus's six independently-declared ternary carriers are one object with one balanced coordinate, and that coordinate is forced up to sign by polarity-compatibility alone (`bal_unique_up_to_sign`). Boundary found: the `Base369` XOR is affine (`x+y+1`), not addition, so the corpus's two "ternary operations" are not the same group law.
+- **Base369.** The loom's `projection2x3` realised as `ℤ/6 ≅ ℤ/2 × ℤ/3`, additively; and `nonary_not_ternary_square` — the nonary layer is provably *not* two ternary layers. The declared `projection2x9` and `projectionThreeStrand` tags have no carrier and are recorded as absences.
+- **Codec / geometry.** `kernelIsometry`: the corpus's `kernel→369` is distance-preserving, where the source proves only the reflexive case.
+- **Supervoxel / clopen.** Prefix balls proved open and closed; refinement proved equivalent to containment (the source has one direction only); no ball atomic; a checked inhabitant of the corpus's ball-system record; the clopen-authority record proved contentless.
+- **Monster 15-prime.** `dSSP_eq_dist`: the supplied length-15 mask ultrametric *is* the depth-15 prefix geometry — two constructions in unrelated files with no import between them. The hyperfabric support map is proved non-expansive onto it, with three proved barriers (not an isometry, not injective, not an algebra map) to upgrading that.
+- **`Ultrametric` census.** Every live instance of the corpus's `Ultrametric` record is classified: five are the same prefix geometry pulled back along a map; the sixth (the `Monster` walk distance) is provably not, because the Agda module postulates a strong triangle law that is false for it — so the corpus's two "Monster distances" are not isomorphic.
+- **Domain instances.** A culture-layer instance (cuisine safety fields) and a full cognition instance (`ClopenPsychologicalSupervoxel`), including promoting that module's `Bool` placeholder `publicZeroIsAtomic ≡ false` into an actual theorem about the constraint system, and identifying the cognition phase and observable with the ternary hub. The module's *empirical* `Bool` field is deliberately left as a socket.
+- **Receipts and refinement records.** The archetypal receipt record proved to constrain nothing, with a repaired version that does; the corpus's never-instantiated refinement-system record given two inhabitants, with a proof that the loom is a refinement and not a bundle.
+
+### 3. Frontier
+
+Section 4 of the map lists eight exact remaining obligations, including the two loom projection tags with no carrier, the open question of any descent of the ternary algebra to the mask layer, missing domain instances, the untested Agda cutset, and the unverified faithfulness of the 107 hand-written mirrors — flagged as the largest soundness gap between the Lean results and any claim about the Agda corpus.
+
+### Verification
+
+Full `lake build` succeeds (8 212 jobs). No `sorry`, no `axiom`, no `@[implemented_by]`, no `native_decide` in the spine; `Integration.AxiomAudit` prints the axiom dependencies of every headline result, all within `{propext, Classical.choice, Quot.sound}`. No Yang–Mills or Navier–Stokes material is imported, referenced or modified. No physical, empirical, theory-of-everything, Riemann-hypothesis, Monster-group, moonshine, vertex-algebra or unitarity claim is made anywhere: every carrier is finite and every distance is a natural number. All work is committed and pushed.
+
+# Summary of changes for run 3b8ad543-36ae-4b1b-be16-8e3e8b5349bc
+I inspected the RH analytic lane (`Agda/DASHI/Analysis/Riemann*`) and added one new Mathlib-only Lean module, `Lean/Spine/RiemannBridge.lean` (`Spine.RiemannBridge`), wired into `Lean/Spine.lean` and the spine axiom audit. `lake build` builds all default targets (8198 jobs) with no `sorry`, no project axiom, no `native_decide`; the audit prints only `propext` / `Classical.choice` / `Quot.sound` for every new result.
+
+**Direct answer to the question asked.** The source supports a *shared estimate*, not a real type-level transport, and this is now proved rather than asserted:
+- `producer_socket_is_contentless` — the analytic fields of the lane's producer sockets are abstract types with no defining equation, so a socket inhabitant exists in which every analytic field is trivially true;
+- `nat_margin_iff_le` + `ledgers_have_trivial_inhabitants` — every ledger in the lane is a conjunction of ℕ-equations `a + slack = b`, i.e. an encoding of `a ≤ b`, and each is inhabited with all fields zero.
+
+**What is genuinely bridged** (each with its analytic hypotheses explicit, none discharged silently):
+- *Taper coercivity* — the two items the lane's own boundary records mark unformalised: `sq_div_two_le_cosh_sub_one` (`x²/2 ≤ cosh x − 1`), its integrated form `taper_cosh_excess_ge`, the plateau bound `plateau_second_moment_ge` (second moment ≥ 2R³/3), and their combination `taper_coercivity_of_plateau`: `(4R³/3)·α² ≤ ∫ φ²(cosh 2αu − 1)`, so the ledger's coercive weight can be taken to be `4R³/3`, positive for `R > 0`.
+- *Kernel envelope* — `fourier_pair_sum_le`, the generic two-regime envelope of `Spine.TwoRegime` summed by local counts over an off-diagonal frequency set, **given** the kernel-identification hypothesis `k ξ = ‖𝓕 f ξ‖` (exactly the field the source marks unproved; it is carried as a hypothesis).
+- *Grid tail* — `grid_tail_sum_le` on an arithmetic grid, and the real content of the two retention ledgers, `real_centered_grid_retention` (the finite one-sided grid retains ≥ ¼ of the full transverse energy) and `real_finite_retention`; the source's ℕ derivations are also re-proved on faithful Lean mirrors.
+- *Complex/transverse channels* — the channel-split algebra re-proved over ℤ, which shows that the envelope's exclusion of frequency 0 (`envelope_zero`) is precisely the off-diagonal restriction.
+- *Poisson extension* — `poisson_unit_lattice`, the real unit-lattice Poisson identity from Mathlib, the honest counterpart of the abstract `continuedPoissonIdentity` field.
+- *Gram surplus* — `det_gram_surplus_of_coercive`, composing a coercive lower bound on the anchor with the anchored Gram theorem.
+All of these are bundled as statements in `BridgeLedger` with the checked inhabitant `bridgeLedger`.
+
+**Honest negative on the tail:** `grid_envelope_not_summable` shows the two-regime envelope's own bound along an arithmetic grid is harmonic, hence not summable, so it does not supply the lane's lattice-tail domination.
+
+`RH_BRIDGE_REPORT.md` gives the provenance table for the six Agda modules inspected (including each Bool boundary flag), the list of what is bridged, the negatives, and seven exact remaining obligations — kernel identification, local counts, a summable tail estimate, the strip continuation, instantiating the taper from the source, and the fact that no inhabitant of the analytic substrate record exists anywhere in the bundle (so `RiemannHypothesisFor` currently has no subject). No claim about the Riemann hypothesis or about zeta zeros is made anywhere; the Agda side remains unedited and unchecked (no Agda toolchain here); no Yang–Mills or Navier–Stokes material was touched. All work is committed and pushed.
+
+# Summary of changes for run 2a5b1886-0a14-4afe-b29a-e8a847922a89
+## What I did
+
+**1. Integrated the additional Lean corpus and built it.** The `Synthesis` and `AgdaMirror` trees are now treated as first-class, provenance-labelled source alongside the cuisine work:
+
+- Fixed three aggregate mirror files (`Lean/AgdaMirror/{Core,Algebra,Analysis}.lean`) whose module docstring sat above the `import` block, which Lean rejects.
+- Changed the `AgdaMirror` library glob to submodules only (`AgdaMirror.+`) and added it to `defaultTargets`. The root aggregate `Lean/AgdaMirror.lean` imports `AgdaMirror.Physics.YangMills`, excluded from this cutset by the YM/NS filter; it is documented and deliberately not reinstated. With that one aggregate excluded, all 107 mirror modules build.
+- `lake build` now builds `Synthesis`, `Cuisine` and `AgdaMirror`: 8182 jobs, no `sorry`, no `axiom`, no `native_decide`; the axiom audits print only `propext` / `Classical.choice` / `Quot.sound`.
+
+**2. Reconciled the earlier "no formal link" claim** in a new report, `CUISINE_FOUR_LEVEL_MAP.md`. The two earlier statements answer different questions: the first is about the Agda import graph (what the cuisine records *store*), the second about maps proved in Lean between carriers. The report gives the four-level map (explicit vocabulary / stored record dependency / shared implementation type / proved transport) lane by lane — Monster base, moonshine numerals, MDL, `Base369`, trit algebra, dialectic stage action, codec, supervoxel, loom relation algebra, Klüver spiral, hyperfabric bridge, Sweetgrass, cubical — with the exact evidence for each entry, including a mechanically computed Agda import closure (30 modules; the precise chains reaching `Base369`, Sweetgrass, SensibLaw, the hyperfabric bridge and the knot-weave bridge, and the absence of any Monster/moonshine/MDL/cubical/supervoxel/trit/loom module).
+
+The distinction is also formalised: `Lean/Cuisine/FourLevelLedger.lean` carries the level assignment plus a witness bundle that requires the actual transport theorem for every level-4 entry and the actual proved obstruction for every lower one, so a semantic label or record field cannot be promoted silently.
+
+**3. New proved bridges (all sorry-free, wired into the `Cuisine` aggregate and axiom audit).**
+
+- `Cuisine/SupervoxelClopen.lean` — the Agda supervoxel interface mirrored; `BTBranch ≃ Trit`; a checked ternary clopen-ball instance (containment and covering proved, not postulated); non-atomicity as a theorem replacing the corpus's `Bool`-pinned-to-`false` idiom; the cuisine transport identified with the depth-15 ball projection; and the refinement order on cuisine neutrality constraints proved to be exactly the Monster mask lattice order (the hard direction needs the transport's surjectivity).
+- `Cuisine/CodecTransport.lean` — cuisine blends in balanced-ternary codec coordinates: combination is the *affine* codec law `x+y+1`; self-seasoning is the codec inversion translated, and provably never literally it; the two involutions are nonetheless conjugate, which explains the equal orbit counts `7174454`.
+- `Cuisine/LoomBridge.lean` — bucket refines root in the loom relation algebra; loom, cuisine publication and supervoxel constraints are three instances of one refinement interface, none of them atomic; and the honest negative: no fixed-point-free order-three permutation of the nine relation types preserves the root classifier, so the shared numeral 9 is not a map to the nonary carrier.
+- `Cuisine/TransportKernel.lean` — closes a frontier item: the kernel of the umami transport, exactly (neutral shadow iff the successor is a cube times a factor carrying no supersingular prime), plus the induced congruence and the divisibility of the supersingular part.
+
+**4. Frontier.** The report lists twelve exact remaining obligations, including the ones I did *not* close: the quotient-monoid packaging, an ultrametric/topology for the ball system, any positive transport for the loom (with the reason it may be unsatisfiable as stated), the unrealised Sweetgrass motifs (the realisation table was deliberately left unedited, since naming a motif's referent is a judgement, not a theorem), and the fact that the Agda side remains unchecked and unedited — Agda is not installed here, so all Agda-side statements are source reading.
+
+No Yang–Mills or Navier–Stokes material was touched or referenced. Every carrier involved is a finite set or a natural number; no physical or mathematical theory-of-everything claim is made or supported.
+
+
+# Summary of changes for run 4e4075be-b5a9-4add-99b0-fe1012b5303b
+## What was done
+
+Continuing from the earlier session, I closed the last gap in the cross-domain analysis and produced the requested map and frontier report.
+
+**New checked work this session — `Lean/Cuisine/HyperfabricGuard.lean`.** Tracing the cuisine lane's imports showed that its *only* genuine cross-domain definitional dependency is `SituatedMoleWorld`'s use of `DASHI.Biology.HyperfabricIntersectionalBodyMemoryBridge` (fields `hyperfabricBridge`, `hyperfabricPowerAxes`, and a canonicity proof). That edge is now audited in Lean:
+
+- `exists_unique_admissible` / `admissible_iff_candidate` — the guard has real proof content: exactly one of its seven interpretive routes is admissible, so no social-truth, clinical, legal or educational authority promotion passes it (Agda states this as six separate absurdity lemmas, never as uniqueness).
+- `surfaceName_injective`, `canonicalPowerAtlasAxes_nodup/_length/_complete` — the eight "triad surfaces" and twelve power axes are pairwise distinct; the surfaces are separated *only* by their names.
+- `no_injective_trit_labelling`, `no_injective_hex_labelling` — eight surfaces do not inject into the three-element or six-element carriers, so the surface named `trit-triad-surface` is not a trit and the vocabulary cannot be read as ternary structure at all.
+- `HyperfabricFacet` is `Unique` — the part of that module the cuisine record actually stores is a singleton type, i.e. a constant, not information.
+- `hyperfabric_edge_audit` combines the four. Three new fields were added to `CuisineSpine` (now 26 fields), its inhabitant `cuisineSpine`, and the axiom audit.
+
+**Map and frontier report — `CUISINE_DEPENDENCY_MAP.md`.** Contains the cuisine import graph (14 modules, 3 284 lines; 7 direct external imports; 27-module `DASHI` closure; no postulates anywhere in that closure), the two callers, a per-module classification table, the Lean↔Agda provenance table for all 15 `Cuisine.*` modules, and an honest frontier report: the seven defects (a)–(g) with status, six exact open obligations, and the wiring gaps (five unwired `DASHI.Culture.*` modules; 4 598 of 8 662 `DASHI` modules reachable from no `*.Everything`).
+
+## Headline findings
+
+- **Cuisine has no formal link to the Monster, MDL, moonshine, cubical, supervoxel, trit-algebra or dialectic-loom material.** `Base369` is *module-reachable* only, via a chain whose sole used name is a `String` attribution constant.
+- The one tempting identification is refuted, not assumed: the safety carrier and the `Synthesis` tone carrier are abstractly isomorphic, but **no** self-map is simultaneously order-3-with-a-moved-point and monotone for the fail-closed severity order, so the tone structure provably does not transport.
+- The supplied Agda contains three real holes (phantom route indices; free `overallRisk`; free `standing`), each exhibited by a concrete inconsistent inhabitant in Lean and each given an exact repair.
+- The corpus-wide `Bool` + `≡ false` idiom (30 pairs in this lane) is proved contentless.
+
+## Verification status
+
+`lake build` from the repo root builds `Synthesis` and `Cuisine` successfully; no `sorry`, no `axiom`, no `native_decide`, and only `propext`/`Classical.choice`/`Quot.sound`, as printed by `Lean/Cuisine/AxiomAudit.lean` during the build.
+
+**Agda could not be typechecked** — it is not installed in this environment. Every Agda-side statement rests on source reading, and the report says so explicitly. The single Agda edit (a plain, non-`public` aggregate import wiring `ProvenanceRoutingBridge` into the cuisine `Everything`) is unchecked; the Agda repairs for the indexed-family and free-field defects were deliberately *not* applied, since editing them without a checker would be irresponsible.
+
+No Yang–Mills or Navier–Stokes material was touched. Nothing here is an empirical claim about food, chemistry, safety, history or cultural authority; every carrier is a finite set or a list of naturals, and no physical or mathematical theory-of-everything claim is made or supported.
+
+All work is committed and pushed.

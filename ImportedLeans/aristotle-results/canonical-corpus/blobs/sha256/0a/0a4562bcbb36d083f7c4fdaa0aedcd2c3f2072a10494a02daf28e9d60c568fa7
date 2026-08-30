@@ -1,0 +1,204 @@
+# Row A1 status after the Lean round
+
+**Scope.** This round works the A1 lane only (A1a near/far one-loop analysis,
+A1b beta-observer contraction). B1/B2/C1/C2 were held, as instructed.
+
+**Toolchain.** There is no Agda executable in this environment, so the existing
+`DASHI/Physics/YangMills/BalabanCMP109*` modules cannot be re-checked here, and
+no claim is made about them. Following the instruction to reuse or rewrite in
+Lean, the A1 lane has been re-implemented in Lean 4 with Mathlib, where it *is*
+machine-checked. All statements below compile with `lake build`, contain no
+`sorry`, no `axiom`, no `native_decide`, and depend only on the three standard
+Lean axioms (`propext`, `Classical.choice`, `Quot.sound`).
+
+Files (all under `RequestProject/YangMills/`):
+
+| file | content |
+|---|---|
+| `LatticeMomentum.lean` | literal lattice atoms, inverse propagator, Ward identity, Jordan/sine-gap bounds |
+| `NearFarRegions.lean` | far-axis selection, denominator floor, Ward-compensated near quotient |
+| `TransverseFormFactor.lean` | reduction of the entire A1a input to one scalar form factor |
+| `ShellBudget.lean` | the cell integral as a genuine Lebesgue integral; box measures; budget arithmetic |
+| `BetaObserver.lean` | A1b: observer square, contraction, uniform history budget, `κ = 1` adversarial test |
+| `RadiusRobustness.lean` | radius-dependent far floor `16 r²`; the split radius is not fine-tuned |
+| `LocalGap.lean`, `A1aClosure.lean`, `A1Closure.lean` | the assembly and the end-to-end Row A1 statement |
+
+## 1. What this round actually changed
+
+### 1.1 A far-region physical hypothesis is now *proved*, not assumed
+
+Previously the far region carried the hypothesis "for some axis
+`|sin(p_μ/2)| ≥ 87/128`" as a conditional physical input. It is now a theorem:
+
+* `two_mul_le_sinAtom` — Jordan's inequality in the lattice normalisation,
+  `sin(π x) ≥ 2x` on `[0,1/2]`;
+* `abs_sinAtom_ge_of_far` — hence `|sin(π x)| ≥ 4/5` whenever `2/5 ≤ |x| ≤ 1/2`,
+  which is *sharper* than the constructive constant `87/128`
+  (`abs_sinAtom_ge_87_128_of_far` records the weaker form);
+* `phatSq_floor_far` — the far denominator floor `p̂² ≥ 64/25`, sharper than the
+  previous `7569/4096`;
+* `farAxis_of_not_nearBox` — the constructive axis selection.
+
+No rational π-enclosure, no interval arithmetic, no long-running solver call is
+needed: the whole far denominator lane is three short proofs.
+
+### 1.2 The cell functional is no longer an interface
+
+The shell bound used to be stated for an abstract positive linear functional
+with assumed additivity, monotonicity, constant rule and near/far split. In
+`ShellBudget.lean` the functional is the actual Lebesgue integral over
+`[0,1/2]^4 ⊂ (Fin 4 → ℝ)`, and
+
+* `volume_brillouinCell` : the cell has measure `1/16`;
+* `volume_farCellShell` : the far shell has measure `1/16 − r⁴`;
+* `shell_lower_bound` : pointwise region bounds integrate to a cell bound.
+
+The split, additivity and monotonicity are theorems about `volume`, not
+hypotheses.
+
+### 1.3 The A1a physical input is now a single scalar inequality
+
+`TransverseFormFactor.lean` proves `|K_{μν}(p)| ≤ p̂²` for the literal Wilson
+inverse propagator `K_{μν} = δ_{μν} p̂² − p̂_μ p̂_ν`
+(`abs_wilsonInversePropagator_le`), so for a transversely factorised joint
+numerator `N_{μν} = K_{μν} Π`:
+
+* near box: `|Π(p)| ≤ A p̂²` with `A ≤ 1/40` ⟹ per-orbit density `≤ 2/5`
+  (`near_perOrbit_bound_of_formFactor`);
+* far shell: `|Π(p)| ≤ 25/128` ⟹ per-orbit density `≤ 25/64`
+  (`far_perOrbit_bound_of_formFactor`); alternatively a numerator sup `≤ 1`
+  through the proved denominator floor
+  (`far_perOrbit_bound_of_numerator_sup`).
+
+Two separate physical hypotheses (near cofactor data `m/c ≤ 2/5`; far axis sine
+gap plus numerator sup) have therefore been replaced by **one** hypothesis on
+**one** scalar function.
+
+### 1.4 A1a closure modulo that scalar bound
+
+`A1aClosure.A1a_closure_of_formFactor` gives, from the form-factor bounds alone,
+
+```
+−splitCost(2/5)  ≤  ∫_{[0,1/2]^4} ( 4 d₁ + 6 d₂ + 4 d₃ + d₄ )
+```
+
+with the cancellation-preserving combination bounded *before* integration and
+
+```
+splitCost(2/5) = (2/5)^4 · 6 + (1/16 − (2/5)^4) · (375/64) = 236679/640000
+               = 0.3698…  <  11/12 = shell budget      (margin > 2×).
+```
+
+### 1.4b The split radius is not fine-tuned
+
+`RadiusRobustness.splitCostGeneral_lt_budget`: using the radius-dependent floor
+`p̂_μ² ≥ 16 r²` (Jordan again, at arbitrary radius) instead of the fixed
+`64/25`, the total split cost stays strictly below `11/12` for *every*
+`r ∈ [1/4, 1/2]`.  The working value `r = 2/5` is therefore a convenience, not a
+tuned parameter; at that value the two floors coincide
+(`splitCostGeneral_two_fifths`).
+
+### 1.5 A1b: the contraction package, with the boundary case settled
+
+`BetaObserver.lean` proves, for observer data `(O, T, κ, L, B)`:
+
+* `observer_square_iterate` — the observed history is the history of the
+  observation (the same-object audit, as a theorem);
+* `historyRemainder_bound` — `|R_hist| ≤ L γ B`, `γ = 1/(1−κ)`, **uniformly in
+  the number of shells**;
+* `historyRemainder_bound_of_products` — the fallback when pointwise `κ < 1`
+  fails: any bound `S` on the partial sums of the response products
+  `∏_{i<n} κ_i` gives `|R_hist| ≤ L S B`;
+* `exists_fixedPoint_of_contraction` / `historyRemainder_bound_complete` — on a
+  complete observer space the fixed point is produced by the contraction rather
+  than assumed, so `hfix` is not an extra physical hypothesis;
+* `kappa_one_no_finite_budget` — at `κ = 1` the budget genuinely fails: for the
+  unit shift on `ℝ` with `β = id` (exactly `κ = 1`, `L = 1`) the history sums
+  are unbounded. The boundary produces no fake finite `B`.
+
+### 1.6 End-to-end Row A1
+
+`A1Closure.A1_beta_pos`: given the A1a form-factor bounds, the A1b observer
+data with `L γ B ≤ 1/2`, and the shell decomposition
+`β = (11/24) C_A + R_local + R_hist` with `R_local` the cell integral above,
+
+```
+β  ≥  b₋(G) = (11/24) C_A(G) − 236679/640000 − 1/2  >  0   for every SU(N), N ≥ 2.
+```
+
+`A1_beta_pos_nonvacuous` instantiates the whole hypothesis package, so the
+theorem is not reached through a contradictory hypothesis set.
+
+## 2. Metric movement
+
+* `M₁` (missing literal physical objects): **down**. The cell functional
+  interface is gone (real Lebesgue integral); the literal inverse propagator and
+  its Ward identity are inhabited and proved; the near/far quotient consumers are
+  proved theorems about real numbers.
+* `M₂` (conditional physical hypotheses in A1a): **down, 2 → 1**. The far sine
+  gap is proved; near cofactor data and far numerator sup are merged into the
+  single form-factor bound.
+* `M₃` (`(r_local + L γ B)/((11/24) C_A)`): for SU(2), `(0.36981 + 0.5)/0.91667
+  = 0.9489 < 1`, with `r_local` itself improved from `0.45309` to `0.36981` by
+  the sharper Jordan constant.
+* `M₄` (official analytic leaves): **unchanged, 5**. A1 is *not* closed.
+
+## 3. Obstruction report — what blocks A1
+
+**First unresolved statement.** The literal joint one-loop numerator
+
+```
+N_{μν}(p) = N^Wilson_{μν}(p) + N^FP_{μν}(p) + N^Haar_{μν}(p)
+```
+
+of Bałaban, *CMP* **109** (1987) 249–301 (beta extraction (5.36)–(5.42)) is not
+constructed here, and consequently neither of the two bounds it must satisfy —
+`|Π(p)| ≤ (1/40) p̂²` on the near box and `|Π(p)| ≤ 25/128` on the far shell —
+is proved. Everything downstream of those two inequalities is now machine-checked;
+nothing upstream of them is.
+
+Why it was not constructed in this round: writing the three channel numerators
+*literally* requires the lattice Feynman rules of the source (the Wilson
+three-gluon and four-gluon vertices at the relevant momentum routing, the reduced
+Faddeev–Popov determinant in the same gauge-fixing convention, and the Haar
+measure counterterm normalisation). Those are transcription-from-source items,
+and the source text is not available in this environment. Writing down a
+plausible-looking vertex from memory and calling it "the CMP109 integrand" would
+be a fabricated provenance claim, not a derivation, so it was not done. The
+honest statement is: **A1a is closed modulo a single, precisely stated scalar
+inequality about an object that still has to be transcribed or re-derived from
+the lattice Feynman rules.**
+
+**Second unresolved statement (A1b).** The actual observer coordinates
+`O_β(K)`, the actual contraction factor `κ` and the actual Lipschitz constant
+`L_β` of the shell coefficient on the physical small-field tube are not derived.
+The package proves what those constants *buy* (uniformly in shells, with the
+fallback for the non-pointwise case, and with the `κ = 1` boundary shown to
+fail), but the constants themselves require the explicit Balaban block-spin
+step. No numerical value of `κ` or `L_β` is claimed.
+
+**Consequently: no Clay leaf is closed by this round, and the official count
+stays at 5.** The Yang–Mills existence and mass-gap theorem is not proved here,
+and nothing in this repository should be read as proving it.
+
+## 4. Tests performed
+
+* T1 (object check): each new declaration is either a real-valued expression or
+  a proved inequality about one; the only records introduced (`IsTransverse…`,
+  `IsObserver…`) are named propositions, not bound interfaces.
+* T2 (kernel): `lake build` clean; `#print axioms` on the top-level theorems
+  shows only `propext`, `Classical.choice`, `Quot.sound`.
+* T3 (same object): `orbitDensity` feeds the same `phatSq` denominator used by
+  the near and far lemmas and by the inverse propagator; A1b's
+  `observer_square_iterate` is the same-object audit in theorem form.
+* T4 (adversarial): `near_quotient_boundary_sharp` exhibits data attaining
+  `m/c = 2/5` exactly, so the near criterion is recognised as boundary-tight;
+  `phat_sq_eq_at_zone_boundary` shows the far floor `16 r²` is attained at the
+  zone boundary; `kappa_one_no_finite_budget` at `κ = 1`;
+  `splitCost_two_fifths_double_lt_budget` shows the margin at the working
+  radius; the degenerate momentum `p̂² = 0` is inside the statements (Lean's
+  division convention) rather than excluded.
+* T5 (provenance): the source and equation range are named above; the
+  normalisation used here (`p̂_μ = 2 sin(π p_μ)` with the zone `[-1/2,1/2]^4`) is
+  stated in `LatticeMomentum.lean` and is a convention change relative to the
+  source's `sin(p_μ/2)` variables.

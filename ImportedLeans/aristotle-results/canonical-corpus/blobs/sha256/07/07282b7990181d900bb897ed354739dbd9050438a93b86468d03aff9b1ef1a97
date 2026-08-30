@@ -1,0 +1,354 @@
+module DASHI.Physics.YangMills.BalabanYM4NormalizedInteractionLogHessianExact where
+
+------------------------------------------------------------------------
+-- ROW A, ANALYTIC PRODUCER LANE:
+--   THE NORMALIZED INTERACTION FACTOR  Z_int  ==>  THE CONSTANT  C
+--
+-- PRIMARY SOURCE FOR THE SETTING
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHAT THIS MODULE PROVES.  In the Bałaban step the interaction enters the
+-- beta function through the *logarithm* of a normalized nonlinear factor
+-- Z_int: the shell contribution is a second logarithmic derivative
+--
+--     (log Z_int)'' = Z_int'' / Z_int - (Z_int' / Z_int)^2 .
+--
+-- Suppose the analytic producer supplies, uniformly on the small-coupling
+-- tube 0 <= g <= gamma,
+--
+--     Z_int >= z0 > 0,      |Z_int'| <= A g,      |Z_int''| <= B g
+--
+-- (the two derivative bounds vanish at g = 0 because the interaction does).
+-- Then
+--
+--     |(log Z_int)''|  <=  ( B/z0 + A^2 gamma / z0^2 ) g ,
+--
+-- i.e. row A's linear interaction constant is
+--
+--     C = B/z0 + A^2 gamma / z0^2 ,
+--
+-- produced from *one* package of bounds on the same functional rather than
+-- from an independent estimate.  This is the second half of the compression
+-- carried out in
+-- `DASHI.Physics.YangMills.BalabanYM4UniformInteractionDerivativePackageExact`:
+-- there C and L come from sup|F| and sup|F'|; here C itself comes from
+-- (z0, A, B) for the literal normalized interaction factor.
+--
+-- The statement is division-free: the reciprocal 1/Z_int is carried as a
+-- function `recip` with `recip g * value g = 1`, the floor hypothesis is
+-- `z0 <= Z_int`, and the constant is any C closing the exact inequality
+--
+--     B z0 + A^2 gamma  <=  C z0^2 .
+--
+-- WHAT IS NOT PROVED.  The three physical inputs z0 > 0, A and B for the
+-- literal constrained Gaussian/Haar interaction factor of the Yang-Mills RG
+-- step are the open analytic producer.  Row A stays open and the frozen
+-- research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Empty using (⊥-elim)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; ∣_∣; nonNegative; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Data.Sum.Base using (inj₁; inj₂)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4GeometricMajorantSeriesExact
+  using (mul-nonNeg; scaleˡ-nonNeg; scaleʳ-nonNeg; mul-mono-nonNeg)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Absolute-value helper
+------------------------------------------------------------------------
+
+mul-pos : ∀ {x y} → 0ℚ < x → 0ℚ < y → 0ℚ < x * y
+mul-pos {x} {y} 0<x 0<y =
+  subst (λ z → z < x * y) (ℚP.*-zeroʳ x)
+    (ℚP.*-monoʳ-<-pos x {{positive 0<x}} 0<y)
+
+absSub : ∀ p q → ∣ p - q ∣ ≤ ∣ p ∣ + ∣ q ∣
+absSub p q =
+  subst (λ z → ∣ p - q ∣ ≤ ∣ p ∣ + z) (ℚP.∣-p∣≡∣p∣ q)
+    (ℚP.∣p+q∣≤∣p∣+∣q∣ p (- q))
+
+------------------------------------------------------------------------
+-- The analytic input
+------------------------------------------------------------------------
+
+record NormalizedInteractionData : Set where
+  field
+    tubeCap    : ℚ            -- gamma
+    floorValue : ℚ            -- z0
+    slope1     : ℚ            -- A
+    slope2     : ℚ            -- B
+    hessianConstant : ℚ       -- C
+
+    value  : ℚ → ℚ            -- Z_int
+    deriv1 : ℚ → ℚ            -- Z_int'
+    deriv2 : ℚ → ℚ            -- Z_int''
+    recip  : ℚ → ℚ            -- 1 / Z_int
+
+    tubeCapNonNeg : 0ℚ ≤ tubeCap
+    floorPositive : 0ℚ < floorValue
+    slope1NonNeg  : 0ℚ ≤ slope1
+    slope2NonNeg  : 0ℚ ≤ slope2
+
+    valueLower : ∀ g → 0ℚ ≤ g → g ≤ tubeCap → floorValue ≤ value g
+    recipInverse : ∀ g → 0ℚ ≤ g → g ≤ tubeCap → recip g * value g ≡ 1ℚ
+    deriv1Bound : ∀ g → 0ℚ ≤ g → g ≤ tubeCap → ∣ deriv1 g ∣ ≤ slope1 * g
+    deriv2Bound : ∀ g → 0ℚ ≤ g → g ≤ tubeCap → ∣ deriv2 g ∣ ≤ slope2 * g
+
+    -- C >= B/z0 + A^2 gamma / z0^2, written without division
+    constantClosing :
+      slope2 * floorValue + (slope1 * slope1) * tubeCap
+        ≤ hessianConstant * (floorValue * floorValue)
+
+module LogHessian (d : NormalizedInteractionData) where
+
+  open NormalizedInteractionData d
+
+  logHessian : ℚ → ℚ
+  logHessian g =
+    deriv2 g * recip g - (deriv1 g * recip g) * (deriv1 g * recip g)
+
+  module Point (g : ℚ) (0≤g : 0ℚ ≤ g) (g≤γ : g ≤ tubeCap) where
+
+    private
+      v w : ℚ
+      v = value g
+      w = recip g
+
+      0<v : 0ℚ < v
+      0<v = ℚP.<-≤-trans floorPositive (valueLower g 0≤g g≤γ)
+
+      0≤v : 0ℚ ≤ v
+      0≤v = ℚP.<⇒≤ 0<v
+
+      wv : w * v ≡ 1ℚ
+      wv = recipInverse g 0≤g g≤γ
+
+      0≤w : 0ℚ ≤ w
+      0≤w with ℚP.≤-total 0ℚ w
+      ... | inj₁ h = h
+      ... | inj₂ w≤0 =
+        ⊥-elim (ℚP.<-irrefl refl
+          (ℚP.≤-<-trans
+            (subst (λ z → z ≤ 0ℚ) wv
+              (subst (λ z → w * v ≤ z) (ℚP.*-zeroˡ v) (scaleʳ-nonNeg 0≤v w≤0)))
+            (toWitness {a? = 0ℚ ℚP.<? 1ℚ} _)))
+
+      wz0≤1 : w * floorValue ≤ 1ℚ
+      wz0≤1 =
+        subst (λ z → w * floorValue ≤ z) wv
+          (scaleˡ-nonNeg 0≤w (valueLower g 0≤g g≤γ))
+
+      0≤z0 : 0ℚ ≤ floorValue
+      0≤z0 = ℚP.<⇒≤ floorPositive
+
+      -- |Z''/Z| <= (B g) w
+      term1Bound : ∣ deriv2 g * w ∣ ≤ (slope2 * g) * w
+      term1Bound =
+        subst (λ z → z ≤ (slope2 * g) * w)
+          (sym (ℚP.∣p*q∣≡∣p∣*∣q∣ (deriv2 g) w))
+          (subst (λ z → ∣ deriv2 g ∣ * z ≤ (slope2 * g) * w)
+            (sym (ℚP.0≤p⇒∣p∣≡p 0≤w))
+            (scaleʳ-nonNeg 0≤w (deriv2Bound g 0≤g g≤γ)))
+
+      -- |(Z'/Z)^2| <= ((A g) w)^2
+      term2Bound :
+        ∣ (deriv1 g * w) * (deriv1 g * w) ∣
+          ≤ ((slope1 * g) * w) * ((slope1 * g) * w)
+      term2Bound =
+        subst (λ z → z ≤ ((slope1 * g) * w) * ((slope1 * g) * w))
+          (sym (ℚP.∣p*q∣≡∣p∣*∣q∣ (deriv1 g * w) (deriv1 g * w)))
+          (mul-mono-nonNeg
+            (ℚP.0≤∣p∣ (deriv1 g * w)) (ℚP.0≤∣p∣ (deriv1 g * w))
+            singleBound singleBound)
+        where
+          singleBound : ∣ deriv1 g * w ∣ ≤ (slope1 * g) * w
+          singleBound =
+            subst (λ z → z ≤ (slope1 * g) * w)
+              (sym (ℚP.∣p*q∣≡∣p∣*∣q∣ (deriv1 g) w))
+              (subst (λ z → ∣ deriv1 g ∣ * z ≤ (slope1 * g) * w)
+                (sym (ℚP.0≤p⇒∣p∣≡p 0≤w))
+                (scaleʳ-nonNeg 0≤w (deriv1Bound g 0≤g g≤γ)))
+
+      -- the closing arithmetic, after multiplying by z0^2 > 0
+      scaledClosing :
+        ((slope2 * g) * w + ((slope1 * g) * w) * ((slope1 * g) * w))
+          * (floorValue * floorValue)
+        ≤ (hessianConstant * g) * (floorValue * floorValue)
+      scaledClosing =
+        subst (λ z → z ≤ (hessianConstant * g) * (floorValue * floorValue))
+          (sym expandLeft)
+          (ℚP.≤-trans
+            (ℚP.+-mono-≤ firstPiece secondPiece)
+            (subst (λ z → z ≤ (hessianConstant * g) * (floorValue * floorValue))
+              collect
+              (subst
+                (λ z → g * (slope2 * floorValue + (slope1 * slope1) * tubeCap) ≤ z)
+                finalShape
+                (scaleˡ-nonNeg 0≤g constantClosing))))
+        where
+          expandLeft :
+            ((slope2 * g) * w + ((slope1 * g) * w) * ((slope1 * g) * w))
+              * (floorValue * floorValue)
+            ≡ ((slope2 * g) * floorValue) * (w * floorValue)
+              + ((slope1 * g) * (slope1 * g))
+                * ((w * floorValue) * (w * floorValue))
+          expandLeft =
+            solve 4
+              (λ b a u z →
+                (b :* u :+ (a :* u) :* (a :* u)) :* (z :* z)
+                  := (b :* z) :* (u :* z)
+                     :+ (a :* a) :* ((u :* z) :* (u :* z)))
+              refl (slope2 * g) (slope1 * g) w floorValue
+
+          0≤Bg : 0ℚ ≤ slope2 * g
+          0≤Bg = mul-nonNeg slope2NonNeg 0≤g
+
+          0≤Ag : 0ℚ ≤ slope1 * g
+          0≤Ag = mul-nonNeg slope1NonNeg 0≤g
+
+          0≤wz0 : 0ℚ ≤ w * floorValue
+          0≤wz0 = mul-nonNeg 0≤w 0≤z0
+
+          firstPiece :
+            ((slope2 * g) * floorValue) * (w * floorValue)
+              ≤ (slope2 * floorValue) * g
+          firstPiece =
+            subst (λ z → ((slope2 * g) * floorValue) * (w * floorValue) ≤ z)
+              (reassoc slope2 g floorValue)
+              (subst
+                (λ z → ((slope2 * g) * floorValue) * (w * floorValue) ≤ z)
+                (ℚP.*-identityʳ ((slope2 * g) * floorValue))
+                (scaleˡ-nonNeg (mul-nonNeg 0≤Bg 0≤z0) wz0≤1))
+            where
+              reassoc : ∀ b x z → (b * x) * z ≡ (b * z) * x
+              reassoc = solve 3 (λ b x z → (b :* x) :* z := (b :* z) :* x) refl
+
+          secondPiece :
+            ((slope1 * g) * (slope1 * g))
+              * ((w * floorValue) * (w * floorValue))
+            ≤ ((slope1 * slope1) * tubeCap) * g
+          secondPiece = ℚP.≤-trans step1 step2
+            where
+              squareShape : ∀ a x → ((a * a) * x) * x ≡ (a * x) * (a * x)
+              squareShape =
+                solve 2 (λ a x → ((a :* a) :* x) :* x := (a :* x) :* (a :* x))
+                  refl
+
+              step1 :
+                ((slope1 * g) * (slope1 * g))
+                  * ((w * floorValue) * (w * floorValue))
+                ≤ (slope1 * g) * (slope1 * g)
+              step1 =
+                subst
+                  (λ z →
+                    ((slope1 * g) * (slope1 * g))
+                      * ((w * floorValue) * (w * floorValue)) ≤ z)
+                  (ℚP.*-identityʳ ((slope1 * g) * (slope1 * g)))
+                  (scaleˡ-nonNeg (mul-nonNeg 0≤Ag 0≤Ag)
+                    (mul-mono-nonNeg 0≤wz0 0≤wz0 wz0≤1 wz0≤1))
+
+              step2 :
+                (slope1 * g) * (slope1 * g)
+                  ≤ ((slope1 * slope1) * tubeCap) * g
+              step2 =
+                subst (λ z → z ≤ ((slope1 * slope1) * tubeCap) * g)
+                  (squareShape slope1 g)
+                  (scaleʳ-nonNeg 0≤g
+                    (scaleˡ-nonNeg (mul-nonNeg slope1NonNeg slope1NonNeg) g≤γ))
+
+          collect :
+            g * (slope2 * floorValue + (slope1 * slope1) * tubeCap)
+              ≡ (slope2 * floorValue) * g + ((slope1 * slope1) * tubeCap) * g
+          collect =
+            solve 3 (λ x p q → x :* (p :+ q) := p :* x :+ q :* x) refl g
+              (slope2 * floorValue) ((slope1 * slope1) * tubeCap)
+
+          finalShape :
+            g * (hessianConstant * (floorValue * floorValue))
+              ≡ (hessianConstant * g) * (floorValue * floorValue)
+          finalShape =
+            solve 3 (λ x c z → x :* (c :* z) := (c :* x) :* z) refl g
+              hessianConstant (floorValue * floorValue)
+
+      sumBound :
+        (slope2 * g) * w + ((slope1 * g) * w) * ((slope1 * g) * w)
+          ≤ hessianConstant * g
+      sumBound =
+        ℚP.*-cancelʳ-≤-pos (floorValue * floorValue)
+          {{positive (mul-pos floorPositive floorPositive)}}
+          scaledClosing
+
+    -- MAIN ESTIMATE
+    logHessianBound : ∣ logHessian g ∣ ≤ hessianConstant * g
+    logHessianBound =
+      ℚP.≤-trans
+        (absSub (deriv2 g * w) ((deriv1 g * w) * (deriv1 g * w)))
+        (ℚP.≤-trans (ℚP.+-mono-≤ term1Bound term2Bound) sumBound)
+
+------------------------------------------------------------------------
+-- Non-vacuity: an instance with a genuinely nonzero log-Hessian
+------------------------------------------------------------------------
+
+-- z0 = 1, gamma = 1, A = B = 1, hence C = B/z0 + A^2 gamma/z0^2 = 2.  The
+-- normalized factor is taken flat (Z = 1, 1/Z = 1) with linear first and
+-- second derivative data, so the log-Hessian is the nonzero function
+-- g - g^2, and the theorem returns |g - g^2| <= 2 g on the tube.  Over exact
+-- rationals the record cannot express that `deriv1`/`deriv2` really are the
+-- derivatives of `value`; that identification is part of the open analytic
+-- producer, and the instance is here only to show the hypotheses are jointly
+-- satisfiable with nonzero data.
+
+module UnitWitness where
+
+  open import Data.Integer.Base using (+_)
+  open import Data.Rational.Base using (_/_)
+
+  witnessData : NormalizedInteractionData
+  witnessData = record
+    { tubeCap = 1ℚ
+    ; floorValue = 1ℚ
+    ; slope1 = 1ℚ
+    ; slope2 = 1ℚ
+    ; hessianConstant = + 2 / 1
+    ; value = λ _ → 1ℚ
+    ; deriv1 = λ g → g
+    ; deriv2 = λ g → g
+    ; recip = λ _ → 1ℚ
+    ; tubeCapNonNeg = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+    ; floorPositive = toWitness {a? = 0ℚ ℚP.<? 1ℚ} _
+    ; slope1NonNeg = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+    ; slope2NonNeg = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+    ; valueLower = λ _ _ _ → ℚP.≤-refl
+    ; recipInverse = λ _ _ _ → refl
+    ; deriv1Bound = linearBound
+    ; deriv2Bound = linearBound
+    ; constantClosing =
+        toWitness
+          {a? = (1ℚ * 1ℚ + (1ℚ * 1ℚ) * 1ℚ) ℚP.≤? ((+ 2 / 1) * (1ℚ * 1ℚ))} _
+    }
+    where
+      linearBound : ∀ g → 0ℚ ≤ g → g ≤ 1ℚ → ∣ g ∣ ≤ 1ℚ * g
+      linearBound g 0≤g _ =
+        ℚP.≤-reflexive
+          (trans (ℚP.0≤p⇒∣p∣≡p 0≤g) (sym (ℚP.*-identityˡ g)))
+
+  open LogHessian witnessData
+
+  witnessBound :
+    ∀ g → (0≤g : 0ℚ ≤ g) → (g≤1 : g ≤ 1ℚ) →
+    ∣ logHessian g ∣ ≤ (+ 2 / 1) * g
+  witnessBound g 0≤g g≤1 = Point.logHessianBound g 0≤g g≤1

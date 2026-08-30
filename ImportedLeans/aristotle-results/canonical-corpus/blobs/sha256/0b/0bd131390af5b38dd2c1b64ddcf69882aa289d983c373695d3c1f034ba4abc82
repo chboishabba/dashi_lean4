@@ -1,0 +1,207 @@
+import Integration.Experiment.ModelDiscrepancy
+import Integration.Experiment.DiscrepancyCoverage
+import Integration.Experiment.CorrelatedUncertainty
+import Integration.Experiment.IdentifiabilityRadius
+import Integration.Experiment.InformationMatrix
+import Integration.Experiment.VectorDynamics
+import Integration.Experiment.RepairSearch
+import Integration.Experiment.RCCircuit
+import Integration.Experiment.ObservationalEquivalence
+import Integration.Experiment.ModelLadder
+
+/-!
+# Axiom audit — Stage 7 (robust multiscale experiment inference)
+
+`Integration.AxiomAudit` had grown past a comfortable size, so the Stage-7 lanes
+are audited here instead.  Every result of every Stage-7 module is listed; the
+build log must show only `propext`, `Classical.choice` and `Quot.sound` for each
+of them.  Anything else — in particular a `sorryAx` — is a failure of the audit.
+-/
+
+-- ModelDiscrepancy
+#print axioms Integration.Experiment.ModelDiscrepancy.discrepancy_apply
+#print axioms Integration.Experiment.ModelDiscrepancy.truth_eq_model_add_discrepancy
+#print axioms Integration.Experiment.ModelDiscrepancy.discrepancy_self
+#print axioms Integration.Experiment.ModelDiscrepancy.adequateOn_mono
+#print axioms Integration.Experiment.ModelDiscrepancy.linearFamily_predict
+#print axioms Integration.Experiment.ModelDiscrepancy.bentTruth_one
+#print axioms Integration.Experiment.ModelDiscrepancy.bentTruth_two
+#print axioms Integration.Experiment.ModelDiscrepancy.bentTruth_five
+#print axioms Integration.Experiment.ModelDiscrepancy.bentData_generated
+#print axioms Integration.Experiment.ModelDiscrepancy.bentData_pins_down_two
+#print axioms Integration.Experiment.ModelDiscrepancy.fit_is_not_adequacy
+#print axioms Integration.Experiment.ModelDiscrepancy.fit_precise_yet_arbitrarily_inadequate
+#print axioms Integration.Experiment.ModelDiscrepancy.discrepancy_destroys_nominal_containment
+#print axioms Integration.Experiment.ModelDiscrepancy.containment_of_small_discrepancy
+#print axioms Integration.Experiment.ModelDiscrepancy.silent_coverage_failure
+#print axioms Integration.Experiment.ModelDiscrepancy.inflate_time
+#print axioms Integration.Experiment.ModelDiscrepancy.inflate_value
+#print axioms Integration.Experiment.ModelDiscrepancy.inflate_tol
+#print axioms Integration.Experiment.ModelDiscrepancy.inflated_tolerance_contains_the_truth
+#print axioms Integration.Experiment.ModelDiscrepancy.inflation_widens_the_region
+#print axioms Integration.Experiment.ModelDiscrepancy.inflation_strictly_widens
+#print axioms Integration.Experiment.ModelDiscrepancy.every_parameter_is_consistent_with_some_discrepancy
+#print axioms Integration.Experiment.ModelDiscrepancy.bounded_discrepancy_is_still_not_identified
+
+-- DiscrepancyCoverage
+#print axioms Integration.Experiment.DiscrepancyCoverage.coverageProb_eq_zero_of_always_missing
+#print axioms Integration.Experiment.DiscrepancyCoverage.discrepancy_destroys_nominal_coverage
+#print axioms Integration.Experiment.DiscrepancyCoverage.no_positive_level_under_discrepancy
+#print axioms Integration.Experiment.DiscrepancyCoverage.discrepancy_coverage_of_bounded_noise
+#print axioms Integration.Experiment.DiscrepancyCoverage.inflated_tolerance_restores_full_coverage
+#print axioms Integration.Experiment.DiscrepancyCoverage.slopeFamily_predict
+#print axioms Integration.Experiment.DiscrepancyCoverage.nominal_coverage_can_be_destroyed
+
+-- CorrelatedUncertainty
+#print axioms Integration.Experiment.CorrelatedUncertainty.entry_symm
+#print axioms Integration.Experiment.CorrelatedUncertainty.bil_self
+#print axioms Integration.Experiment.CorrelatedUncertainty.bil_add_left
+#print axioms Integration.Experiment.CorrelatedUncertainty.bil_add_right
+#print axioms Integration.Experiment.CorrelatedUncertainty.bil_single
+#print axioms Integration.Experiment.CorrelatedUncertainty.two_abs_offdiag_le
+#print axioms Integration.Experiment.CorrelatedUncertainty.totalVariance_split
+#print axioms Integration.Experiment.CorrelatedUncertainty.crossTerms_diag
+#print axioms Integration.Experiment.CorrelatedUncertainty.totalVariance_two
+#print axioms Integration.Experiment.CorrelatedUncertainty.outputVariance_eq_totalVariance
+#print axioms Integration.Experiment.CorrelatedUncertainty.correlation_error_bound_two
+#print axioms Integration.Experiment.CorrelatedUncertainty.symmetricAttribution_isAttribution
+#print axioms Integration.Experiment.CorrelatedUncertainty.firstInputAttribution_isAttribution
+#print axioms Integration.Experiment.CorrelatedUncertainty.correlated_variance_has_no_canonical_attribution
+#print axioms Integration.Experiment.CorrelatedUncertainty.neglecting_correlation_underestimates
+#print axioms Integration.Experiment.CorrelatedUncertainty.neglecting_correlation_overestimates
+
+-- IdentifiabilityRadius
+#print axioms Integration.Experiment.IdentifiabilityRadius.opNorm_bound_of_pointwise
+#print axioms Integration.Experiment.IdentifiabilityRadius.injOn_ball_of_lipschitz_deriv
+#print axioms Integration.Experiment.IdentifiabilityRadius.certifiably_identifiable_within_radius
+#print axioms Integration.Experiment.IdentifiabilityRadius.locallyIdentifiable_of_certified_radius
+#print axioms Integration.Experiment.IdentifiabilityRadius.readings_pin_down_within_the_certified_radius
+#print axioms Integration.Experiment.IdentifiabilityRadius.quadraticMap_hasFDerivAt
+#print axioms Integration.Experiment.IdentifiabilityRadius.quadraticDeriv_apply
+#print axioms Integration.Experiment.IdentifiabilityRadius.quadraticMap_certified_radius
+#print axioms Integration.Experiment.IdentifiabilityRadius.certified_radius_is_not_maximal
+#print axioms Integration.Experiment.IdentifiabilityRadius.no_radius_without_curvature_control
+
+-- InformationMatrix
+#print axioms Integration.Experiment.InformationMatrix.infoMatrix_toMatrix
+#print axioms Integration.Experiment.InformationMatrix.infoMatrix_quadratic
+#print axioms Integration.Experiment.InformationMatrix.zero_information_iff_invisible
+#print axioms Integration.Experiment.InformationMatrix.singular_iff_invisible_direction
+#print axioms Integration.Experiment.InformationMatrix.nonsingular_has_no_invisible_direction
+#print axioms Integration.Experiment.InformationMatrix.infoOf_union
+#print axioms Integration.Experiment.InformationMatrix.infoOf_insert
+#print axioms Integration.Experiment.InformationMatrix.rankOne_quadratic
+#print axioms Integration.Experiment.InformationMatrix.more_measurements_never_lose_information
+#print axioms Integration.Experiment.InformationMatrix.eigLower_gives_derivative_lower_bound
+#print axioms Integration.Experiment.InformationMatrix.eigLower_pos_no_invisible
+#print axioms Integration.Experiment.InformationMatrix.best_design_by_det_is_identifiable_if_any_is
+#print axioms Integration.Experiment.InformationMatrix.dCrit_diagInfo
+#print axioms Integration.Experiment.InformationMatrix.criteria_disagree
+#print axioms Integration.Experiment.InformationMatrix.aCrit_diagInfo
+#print axioms Integration.Experiment.InformationMatrix.aCrit_of_singular
+#print axioms Integration.Experiment.InformationMatrix.aCrit_ranks_a_singular_design_best
+#print axioms Integration.Experiment.InformationMatrix.all_three_criteria_disagree
+#print axioms Integration.Experiment.InformationMatrix.information_sees_only_the_jacobian_and_weight
+
+-- VectorDynamics
+#print axioms Integration.Experiment.VectorDynamics.clm_apply
+#print axioms Integration.Experiment.VectorDynamics.sensitivity_column_unique
+#print axioms Integration.Experiment.VectorDynamics.sensitivity_column_bound
+#print axioms Integration.Experiment.VectorDynamics.sensitivityMatrix_col
+#print axioms Integration.Experiment.VectorDynamics.output_sensitivity_chain_rule
+#print axioms Integration.Experiment.VectorDynamics.outputJacobian_apply
+#print axioms Integration.Experiment.VectorDynamics.unexcited_parameter_is_invisible
+#print axioms Integration.Experiment.VectorDynamics.unexcited_parameter_makes_information_singular
+#print axioms Integration.Experiment.VectorDynamics.information_of_trajectory_design
+#print axioms Integration.Experiment.VectorDynamics.sensitivity_of_a_flat_field_is_zero
+
+-- RepairSearch
+#print axioms Integration.Experiment.RepairSearch.sharpReading_time
+#print axioms Integration.Experiment.RepairSearch.sharpReading_value
+#print axioms Integration.Experiment.RepairSearch.sharpReading_tol
+#print axioms Integration.Experiment.RepairSearch.forbids_of_not_fits
+#print axioms Integration.Experiment.RepairSearch.forbidden_reading_falsifies
+#print axioms Integration.Experiment.RepairSearch.ValidatedRepair.restores_fit
+#print axioms Integration.Experiment.RepairSearch.ValidatedRepair.survives_the_held_out_reading
+#print axioms Integration.Experiment.RepairSearch.ValidatedRepair.could_have_failed
+#print axioms Integration.Experiment.RepairSearch.fitRestored_ne_supported
+#print axioms Integration.Experiment.RepairSearch.freeFamily_risks_nothing
+#print axioms Integration.Experiment.RepairSearch.no_validated_repair_from_the_free_family
+#print axioms Integration.Experiment.RepairSearch.earlyData_functional
+#print axioms Integration.Experiment.RepairSearch.blindAfterTwo_compatible
+#print axioms Integration.Experiment.RepairSearch.blindAfterTwo_refutable
+#print axioms Integration.Experiment.RepairSearch.fit_and_refutability_do_not_give_a_held_out_prediction
+#print axioms Integration.Experiment.RepairSearch.offsetRead_risks_at_three
+#print axioms Integration.Experiment.RepairSearch.offsetRead_survives_heldOut
+#print axioms Integration.Experiment.RepairSearch.offset_repair_is_promoted
+#print axioms Integration.Experiment.RepairSearch.exists_min_by_cost
+#print axioms Integration.Experiment.RepairSearch.exists_cheapest_validated_repair
+#print axioms Integration.Experiment.RepairSearch.cheapest_is_still_validated
+
+-- RCCircuit
+#print axioms Integration.Experiment.RCCircuit.voltage_eq_vtau
+#print axioms Integration.Experiment.RCCircuit.voltage_at_zero
+#print axioms Integration.Experiment.RCCircuit.vtau_hasDerivAt_time
+#print axioms Integration.Experiment.RCCircuit.rc_solves_the_ode
+#print axioms Integration.Experiment.RCCircuit.voltage_depends_only_on_the_product
+#print axioms Integration.Experiment.RCCircuit.rcFamily_predict
+#print axioms Integration.Experiment.RCCircuit.perfect_measurements_do_not_identify_R_and_C
+#print axioms Integration.Experiment.RCCircuit.no_dataset_identifies_the_pair
+#print axioms Integration.Experiment.RCCircuit.vtau_injOn
+#print axioms Integration.Experiment.RCCircuit.exact_reading_identifies_tau
+#print axioms Integration.Experiment.RCCircuit.vtau_hasDerivAt_tau
+#print axioms Integration.Experiment.RCCircuit.most_informative_time_is_tau
+#print axioms Integration.Experiment.RCCircuit.voltage_hasDerivAt_R
+#print axioms Integration.Experiment.RCCircuit.voltage_hasDerivAt_C
+#print axioms Integration.Experiment.RCCircuit.rcJacobian_is_certified
+#print axioms Integration.Experiment.RCCircuit.rc_design_has_an_invisible_direction
+#print axioms Integration.Experiment.RCCircuit.rc_invisible_direction_ne_zero
+#print axioms Integration.Experiment.RCCircuit.rc_information_is_singular
+#print axioms Integration.Experiment.RCCircuit.family_falsified_by_an_impossible_reading
+
+-- ObservationalEquivalence
+#print axioms Integration.Experiment.ObservationalEquivalence.obsEquiv_refl
+#print axioms Integration.Experiment.ObservationalEquivalence.obsEquiv_symm
+#print axioms Integration.Experiment.ObservationalEquivalence.obsEquiv_trans
+#print axioms Integration.Experiment.ObservationalEquivalence.obsEquiv_equivalence
+#print axioms Integration.Experiment.ObservationalEquivalence.obsEquiv_empty
+#print axioms Integration.Experiment.ObservationalEquivalence.obsEquiv_univ_iff
+#print axioms Integration.Experiment.ObservationalEquivalence.obsEquiv_antitone
+#print axioms Integration.Experiment.ObservationalEquivalence.mem_obsClass
+#print axioms Integration.Experiment.ObservationalEquivalence.self_mem_obsClass
+#print axioms Integration.Experiment.ObservationalEquivalence.obsClass_antitone
+#print axioms Integration.Experiment.ObservationalEquivalence.not_obsEquiv_iff_exists_separating
+#print axioms Integration.Experiment.ObservationalEquivalence.separates_symm
+#print axioms Integration.Experiment.ObservationalEquivalence.separating_not_mem_of_obsEquiv
+#print axioms Integration.Experiment.ObservationalEquivalence.obsEquiv_transfers_refutation
+#print axioms Integration.Experiment.ObservationalEquivalence.obsEquiv_transfers_survival
+#print axioms Integration.Experiment.ObservationalEquivalence.voltOnly_subset_voltAndOhm
+#print axioms Integration.Experiment.ObservationalEquivalence.ohm_not_mem_voltOnly
+#print axioms Integration.Experiment.ObservationalEquivalence.rcTheory_volt
+#print axioms Integration.Experiment.ObservationalEquivalence.rcTheory_ohm
+#print axioms Integration.Experiment.ObservationalEquivalence.rc_theories_equivalent_for_voltage_only
+#print axioms Integration.Experiment.ObservationalEquivalence.ohm_separates
+#print axioms Integration.Experiment.ObservationalEquivalence.ohmmeter_splits_the_class
+#print axioms Integration.Experiment.ObservationalEquivalence.obsClass_strictly_shrinks
+#print axioms Integration.Experiment.ObservationalEquivalence.equivalent_theories_need_not_be_equal
+#print axioms Integration.Experiment.ObservationalEquivalence.separates_of_discriminates
+#print axioms Integration.Experiment.ObservationalEquivalence.pairwise_separation_does_not_give_one_discriminating_experiment
+
+-- ModelLadder
+#print axioms Integration.Experiment.ModelLadder.extends_refl
+#print axioms Integration.Experiment.ModelLadder.extends_trans
+#print axioms Integration.Experiment.ModelLadder.survivors_mono
+#print axioms Integration.Experiment.ModelLadder.explains_mono
+#print axioms Integration.Experiment.ModelLadder.refutation_travels_down
+#print axioms Integration.Experiment.ModelLadder.envelopeAt_mono
+#print axioms Integration.Experiment.ModelLadder.added_structure_never_adds_a_held_out_prediction
+#print axioms Integration.Experiment.ModelLadder.richer_rung_risks_no_more
+#print axioms Integration.Experiment.ModelLadder.const_extends_affine
+#print axioms Integration.Experiment.ModelLadder.constRung_survivors
+#print axioms Integration.Experiment.ModelLadder.constRung_envelope
+#print axioms Integration.Experiment.ModelLadder.affineRung_envelope
+#print axioms Integration.Experiment.ModelLadder.added_structure_can_destroy_the_held_out_prediction
+#print axioms Integration.Experiment.ModelLadder.EarnedRung.could_have_failed
+#print axioms Integration.Experiment.ModelLadder.earned_step_is_not_mere_extension
+#print axioms Integration.Experiment.ModelLadder.earned_step_separates_on_calibration
+

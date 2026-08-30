@@ -1,0 +1,481 @@
+module DASHI.Physics.YangMills.BalabanCMP109LiteralFarRegionFloorQuotientExact where
+
+------------------------------------------------------------------------
+-- ROW A1a, FAR REGION:  A POINTWISE DENOMINATOR FLOOR FROM A *SINGLE*
+--   AXIS, AND THE QUOTIENT BOUND IT GIVES.
+--
+-- PRIMARY SOURCES
+--
+-- Kenneth G. Wilson, "Confinement of quarks", Physical Review D 10 (1974),
+-- 2445--2459.  DOI: 10.1103/PhysRevD.10.2445.
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- THE DEFECT THIS MODULE REMOVES.
+--
+-- `BalabanCMP109LiteralLatticeInversePropagatorExact` bounds the literal
+-- lattice inverse propagator below by `sum_mu 4 l_mu^2` from a table of
+-- per-axis lower bounds `l_mu` on the sine atoms.  That is a *syntactic*
+-- derivation in the bound calculus, so the table must be one and the same at
+-- every point of the region.
+--
+-- On the far region of a near/far split that table does not exist, and this
+-- is not a technical inconvenience but the structure of the region: off the
+-- coordinate box `{ p : |p_mu| <= r for all mu }` all one knows is that
+-- *some* axis has `|p_mu| > r`, and *which* axis it is varies from point to
+-- point.  Every per-axis lower bound valid at every far point is therefore
+-- zero, and the syntactic route yields no floor at all.
+--
+-- The fix is to leave the syntactic calculus for this step and work with the
+-- exact semantics pointwise, where "some axis" is exactly what one can use:
+-- the inverse propagator is a sum of four nonnegative terms, so a single
+-- large axis already floors it.
+--
+-- WHAT IS PROVED HERE:
+--
+--   * `hatSquaredValueFloorFromAxis` -- if at a point *one* axis has
+--     `sigma <= |sin(p_mu/2)|` with `sigma >= 0`, then the literal inverse
+--     propagator value at that point is at least `4 sigma^2`.  No assumption
+--     whatsoever on the other three axes.
+--   * `flooredQuotient` -- the far-region counterpart of the Ward-compensated
+--     near estimate: a literal quotient whose numerator has modulus at most
+--     `S` and whose denominator is at least `f > 0` obeys `|z| * f <= S`,
+--     pointwise, by inversion of the exact semantics.  This is the honest
+--     `S / f` bound, and it is where the floor is paid for.
+--   * `flooredModulusBound`, `flooredNegativePart` -- the two consumer forms.
+--   * `FarRegionOrbit` and `flooredCombinedNegativePart` -- the (4,6,4,1)
+--     weighted far-region density bound, i.e. the far half of the
+--     `combinedLower` hypothesis of the cancellation-preserving gate, in the
+--     same shape as the near half.
+--   * Section 4 -- the numbers.  With the repository's own constructive outer
+--     Brillouin sine gap `|sin| >= 87/128`
+--     (`BalabanBishopOuterBrillouinSineGapExact`) the floor is `7569/4096`,
+--     so a unit numerator sup gives a far density bound of `4096/7569 < 1`.
+--     That is far inside the far budget `25/4` which the split-parameter
+--     optimisation at `r = 2/5`
+--     (`BalabanCMP109LiteralOneLoopBoxNearFarOptimisationExact`) allows, and
+--     the module machine-checks the comparison.
+--
+-- WHAT IS STILL OPEN.  The bridge from the far region of the momentum split
+-- to the per-point single-axis sine bound `sigma` -- that is, that off the
+-- box some coordinate really does have `|sin(p_mu/2)| >= sigma` -- is a
+-- trigonometric statement about the valuation, not proved here; and so is the
+-- numerator sup `S` of the literal joint Wilson + reduced Faddeev--Popov +
+-- Haar numerator on that region.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; ∣_∣; _≤_; _<_; _/_; positive; nonNegative)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (_≡_; refl; sym; trans; subst; cong; cong₂)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.BalabanClayT4LiteralOneLoopBoxEvaluatorExact
+  using (TrigAtom; sineHalf; MomentumRole; loopMomentum; AxisIndex;
+         axis0; axis1; axis2; axis3; DiagramExpression;
+         rationalConstant; atom; add; multiply; divide)
+open import DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopAbsoluteBoundCalculusExact
+  using (Evaluates; evalConstant; evalAtom; evalAdd; evalMultiply; evalDivide;
+         negAbsLe; absSquare; module Soundness)
+open import DASHI.Physics.YangMills.BalabanCMP109LiteralLatticeInversePropagatorExact
+  using (hatSquaredExpression; hatSquaredValue; hatSquaredEvaluates;
+         axisValue; four)
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonGhostHaarWeightedFourOrbitExact
+  as Joint
+import DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopBoxNearFarOptimisationExact
+  as Box
+import DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopNearFarEstimateExact
+  as NearFar
+
+------------------------------------------------------------------------
+-- 0.  Elementary order facts
+------------------------------------------------------------------------
+
+nonNegProduct : ∀ {a b : ℚ} → 0ℚ ≤ a → 0ℚ ≤ b → 0ℚ ≤ a * b
+nonNegProduct {a} {b} 0≤a 0≤b =
+  subst (_≤ a * b) (ℚP.*-zeroʳ a)
+    (ℚP.*-monoˡ-≤-nonNeg a {{nonNegative 0≤a}} 0≤b)
+
+belowSumRight : ∀ {t x y : ℚ} → t ≤ x → 0ℚ ≤ y → t ≤ x + y
+belowSumRight {t} {x} {y} t≤x 0≤y =
+  ℚP.≤-trans t≤x
+    (subst (_≤ x + y) (ℚP.+-identityʳ x) (ℚP.+-monoʳ-≤ x 0≤y))
+
+belowSumLeft : ∀ {t x y : ℚ} → 0ℚ ≤ x → t ≤ y → t ≤ x + y
+belowSumLeft {t} {x} {y} 0≤x t≤y =
+  ℚP.≤-trans t≤y
+    (subst (_≤ x + y) (ℚP.+-identityˡ y) (ℚP.+-monoˡ-≤ y 0≤x))
+
+fourNonNegative : 0ℚ ≤ four
+fourNonNegative = toWitness {a? = 0ℚ ℚP.≤? four} _
+
+fourPositive : 0ℚ < four
+fourPositive = toWitness {a? = 0ℚ ℚP.<? four} _
+
+posProduct : ∀ {a b : ℚ} → 0ℚ < a → 0ℚ < b → 0ℚ < a * b
+posProduct {a} {b} 0<a 0<b =
+  ℚP.positive⁻¹ (a * b)
+    {{ℚP.pos*pos⇒pos a {{ℚ.positive 0<a}} b {{ℚ.positive 0<b}}}}
+
+axisFloorPositive : ∀ (σ : ℚ) → 0ℚ < σ → 0ℚ < four * (σ * σ)
+axisFloorPositive σ 0<σ = posProduct fourPositive (posProduct 0<σ 0<σ)
+
+------------------------------------------------------------------------
+-- 1.  A SINGLE LARGE AXIS FLOORS THE LITERAL INVERSE PROPAGATOR
+------------------------------------------------------------------------
+
+module AxisFloor (val : TrigAtom → ℚ) (role : MomentumRole) where
+
+  sine : AxisIndex → ℚ
+  sine ax = val (sineHalf role ax)
+
+  axisValueNonNegative : ∀ (ax : AxisIndex) → 0ℚ ≤ axisValue val role ax
+  axisValueNonNegative ax =
+    nonNegProduct fourNonNegative
+      (subst (0ℚ ≤_) (absSquare (sine ax))
+        (nonNegProduct (ℚP.0≤∣p∣ (sine ax)) (ℚP.0≤∣p∣ (sine ax))))
+
+  -- The per-axis floor: the axis term dominates `4 sigma^2`.
+  axisTermFloor :
+    ∀ (ax : AxisIndex) (σ : ℚ) → 0ℚ ≤ σ → σ ≤ ∣ sine ax ∣ →
+    four * (σ * σ) ≤ axisValue val role ax
+  axisTermFloor ax σ 0≤σ σ≤abs =
+    ℚP.*-monoˡ-≤-nonNeg four {{nonNegative fourNonNegative}}
+      (subst (σ * σ ≤_) (absSquare (sine ax))
+        (ℚP.≤-trans
+          (ℚP.*-monoʳ-≤-nonNeg σ {{nonNegative 0≤σ}} σ≤abs)
+          (ℚP.*-monoˡ-≤-nonNeg ∣ sine ax ∣ {{ℚP.∣-∣-nonNeg (sine ax)}} σ≤abs)))
+
+  -- THE FAR-REGION FLOOR.  One axis is enough.
+  hatSquaredValueFloorFromAxis :
+    ∀ (ax : AxisIndex) (σ : ℚ) → 0ℚ ≤ σ → σ ≤ ∣ sine ax ∣ →
+    four * (σ * σ) ≤ hatSquaredValue val role
+  hatSquaredValueFloorFromAxis axis0 σ 0≤σ σ≤abs =
+    belowSumRight (axisTermFloor axis0 σ 0≤σ σ≤abs)
+      (belowSumRight (axisValueNonNegative axis1)
+        (belowSumRight (axisValueNonNegative axis2)
+          (belowSumRight (axisValueNonNegative axis3) ℚP.≤-refl)))
+  hatSquaredValueFloorFromAxis axis1 σ 0≤σ σ≤abs =
+    belowSumLeft (axisValueNonNegative axis0)
+      (belowSumRight (axisTermFloor axis1 σ 0≤σ σ≤abs)
+        (belowSumRight (axisValueNonNegative axis2)
+          (belowSumRight (axisValueNonNegative axis3) ℚP.≤-refl)))
+  hatSquaredValueFloorFromAxis axis2 σ 0≤σ σ≤abs =
+    belowSumLeft (axisValueNonNegative axis0)
+      (belowSumLeft (axisValueNonNegative axis1)
+        (belowSumRight (axisTermFloor axis2 σ 0≤σ σ≤abs)
+          (belowSumRight (axisValueNonNegative axis3) ℚP.≤-refl)))
+  hatSquaredValueFloorFromAxis axis3 σ 0≤σ σ≤abs =
+    belowSumLeft (axisValueNonNegative axis0)
+      (belowSumLeft (axisValueNonNegative axis1)
+        (belowSumLeft (axisValueNonNegative axis2)
+          (belowSumRight (axisTermFloor axis3 σ 0≤σ σ≤abs) ℚP.≤-refl)))
+
+  -- In particular the denominator is strictly positive there.
+  hatSquaredValuePositiveFromAxis :
+    ∀ (ax : AxisIndex) (σ : ℚ) → 0ℚ < σ → σ ≤ ∣ sine ax ∣ →
+    0ℚ < hatSquaredValue val role
+  hatSquaredValuePositiveFromAxis ax σ 0<σ σ≤abs =
+    ℚP.<-≤-trans (axisFloorPositive σ 0<σ)
+      (hatSquaredValueFloorFromAxis ax σ (ℚP.<⇒≤ 0<σ) σ≤abs)
+
+------------------------------------------------------------------------
+-- 2.  THE FLOORED QUOTIENT BOUND, POINTWISE
+------------------------------------------------------------------------
+
+module FarRegion (val : TrigAtom → ℚ) where
+
+  open Soundness (λ a → ∣ val a ∣) (λ a → ∣ val a ∣) val val
+    (λ _ → ℚP.≤-refl) (λ _ → ℚP.≤-refl) (λ _ → ℚP.≤-refl)
+    using (evaluatesUnique)
+
+  flooredQuotient :
+    ∀ {num den : DiagramExpression} {x y z S f : ℚ} →
+    Evaluates val num x → ∣ x ∣ ≤ S →
+    Evaluates val den y → 0ℚ < f → f ≤ y →
+    Evaluates val (divide num den) z →
+    ∣ z ∣ * f ≤ S
+  flooredQuotient {num} {den} {x} {y} {z} {S} {f}
+      en ∣x∣≤S ed 0<f f≤y (evalDivide en' ed' y'≢0 eq) =
+    ℚP.≤-trans step0 (ℚP.≤-trans (ℚP.≤-reflexive absStep) ∣x∣≤S)
+    where
+      xEq : _
+      xEq = evaluatesUnique en' en
+
+      yEq : _
+      yEq = evaluatesUnique ed' ed
+
+      key : x ≡ z * y
+      key = trans (sym xEq) (trans eq (cong (λ w → z * w) yEq))
+
+      step0 : ∣ z ∣ * f ≤ ∣ z ∣ * y
+      step0 = ℚP.*-monoˡ-≤-nonNeg ∣ z ∣ {{ℚP.∣-∣-nonNeg z}} f≤y
+
+      absY : ∣ y ∣ ≡ y
+      absY = ℚP.0≤p⇒∣p∣≡p (ℚP.≤-trans (ℚP.<⇒≤ 0<f) f≤y)
+
+      absStep : ∣ z ∣ * y ≡ ∣ x ∣
+      absStep =
+        trans (cong (λ w → ∣ z ∣ * w) (sym absY))
+          (trans (sym (ℚP.∣p*q∣≡∣p∣*∣q∣ z y)) (cong ∣_∣ (sym key)))
+
+  flooredModulusBound :
+    ∀ {num den : DiagramExpression} {x y z S f u : ℚ} →
+    Evaluates val num x → ∣ x ∣ ≤ S →
+    Evaluates val den y → 0ℚ < f → f ≤ y → S ≤ u * f →
+    Evaluates val (divide num den) z →
+    ∣ z ∣ ≤ u
+  flooredModulusBound {f = f} en ∣x∣≤S ed 0<f f≤y S≤u*f evq =
+    ℚP.*-cancelʳ-≤-pos f {{positive 0<f}}
+      (ℚP.≤-trans (flooredQuotient en ∣x∣≤S ed 0<f f≤y evq) S≤u*f)
+
+  flooredNegativePart :
+    ∀ {num den : DiagramExpression} {x y z S f u : ℚ} →
+    Evaluates val num x → ∣ x ∣ ≤ S →
+    Evaluates val den y → 0ℚ < f → f ≤ y → S ≤ u * f →
+    Evaluates val (divide num den) z →
+    (- u) ≤ z
+  flooredNegativePart {z = z} en ∣x∣≤S ed 0<f f≤y S≤u*f evq =
+    ℚP.≤-trans
+      (ℚP.neg-antimono-≤
+        (flooredModulusBound en ∣x∣≤S ed 0<f f≤y S≤u*f evq))
+      (negAbsLe z)
+
+  -- The literal instance: the denominator is the inverse propagator
+  -- expression, floored by a single axis.
+  literalFarQuotientBound :
+    ∀ {num : DiagramExpression} {x z S u : ℚ}
+      (role : MomentumRole) (ax : AxisIndex) (σ : ℚ) →
+    Evaluates val num x → ∣ x ∣ ≤ S →
+    0ℚ < σ → σ ≤ ∣ val (sineHalf role ax) ∣ →
+    S ≤ u * (four * (σ * σ)) →
+    Evaluates val (divide num (hatSquaredExpression role)) z →
+    ∣ z ∣ ≤ u
+  literalFarQuotientBound {S = S} role ax σ en ∣x∣≤S 0<σ σ≤abs budget evq =
+    flooredModulusBound en ∣x∣≤S (hatSquaredEvaluates val role)
+      floorPositive
+      (AxisFloor.hatSquaredValueFloorFromAxis val role ax σ (ℚP.<⇒≤ 0<σ) σ≤abs)
+      budget evq
+    where
+      floorPositive : 0ℚ < four * (σ * σ)
+      floorPositive = axisFloorPositive σ 0<σ
+
+------------------------------------------------------------------------
+-- 3.  THE (4,6,4,1)-WEIGHTED FAR-REGION DENSITY
+------------------------------------------------------------------------
+
+module FarRegionFourOrbit
+  (Point : Set)
+  (valuationAt : Point → (TrigAtom → ℚ))
+  where
+
+  record FarRegionOrbit (p : Point) (u : ℚ) : Set where
+    field
+      numerator denominator : DiagramExpression
+      numeratorValue denominatorValue quotientValue : ℚ
+      numeratorSup denominatorFloor : ℚ
+
+      numeratorEvaluates :
+        Evaluates (valuationAt p) numerator numeratorValue
+      numeratorBounded : ∣ numeratorValue ∣ ≤ numeratorSup
+      denominatorEvaluates :
+        Evaluates (valuationAt p) denominator denominatorValue
+      floorPositive : 0ℚ < denominatorFloor
+      floorBelowDenominator : denominatorFloor ≤ denominatorValue
+      quotientBudget : numeratorSup ≤ u * denominatorFloor
+      quotientEvaluates :
+        Evaluates (valuationAt p) (divide numerator denominator) quotientValue
+  open FarRegionOrbit public
+
+  orbitNegativePart :
+    ∀ {p u} (orbit : FarRegionOrbit p u) → (- u) ≤ quotientValue orbit
+  orbitNegativePart {p} orbit =
+    FarRegion.flooredNegativePart (valuationAt p)
+      (numeratorEvaluates orbit) (numeratorBounded orbit)
+      (denominatorEvaluates orbit) (floorPositive orbit)
+      (floorBelowDenominator orbit) (quotientBudget orbit)
+      (quotientEvaluates orbit)
+
+  flooredCombinedNegativePart :
+    ∀ {u₁ u₂ u₃ u₄ : ℚ} (p : Point)
+      (o₁ : FarRegionOrbit p u₁) (o₂ : FarRegionOrbit p u₂)
+      (o₃ : FarRegionOrbit p u₃) (o₄ : FarRegionOrbit p u₄) →
+    (- Joint.weightedFourOrbit u₁ u₂ u₃ u₄)
+      ≤ Joint.weightedFourOrbit
+          (quotientValue o₁) (quotientValue o₂)
+          (quotientValue o₃) (quotientValue o₄)
+  flooredCombinedNegativePart {u₁} {u₂} {u₃} {u₄} p o₁ o₂ o₃ o₄ =
+    subst
+      (_≤ Joint.weightedFourOrbit
+            (quotientValue o₁) (quotientValue o₂)
+            (quotientValue o₃) (quotientValue o₄))
+      (sym (negWeighted u₁ u₂ u₃ u₄))
+      (Joint.weightedFourOrbitMono
+        (orbitNegativePart o₁) (orbitNegativePart o₂)
+        (orbitNegativePart o₃) (orbitNegativePart o₄))
+    where
+      negWeighted : ∀ (a b c d : ℚ) →
+        - Joint.weightedFourOrbit a b c d
+        ≡ Joint.weightedFourOrbit (- a) (- b) (- c) (- d)
+      negWeighted a b c d =
+        trans
+          (ℚP.neg-distrib-+
+            (Joint.weightOne * a + Joint.weightTwo * b
+              + Joint.weightThree * c)
+            d)
+          (cong (λ w → w + (- d))
+            (trans
+              (ℚP.neg-distrib-+
+                (Joint.weightOne * a + Joint.weightTwo * b)
+                (Joint.weightThree * c))
+              (cong₂ _+_
+                (trans
+                  (ℚP.neg-distrib-+
+                    (Joint.weightOne * a) (Joint.weightTwo * b))
+                  (cong₂ _+_
+                    (ℚP.neg-distribʳ-* Joint.weightOne a)
+                    (ℚP.neg-distribʳ-* Joint.weightTwo b)))
+                (ℚP.neg-distribʳ-* Joint.weightThree c))))
+
+------------------------------------------------------------------------
+-- 4.  THE NUMBERS:  THE REPOSITORY'S OWN OUTER SINE GAP IS FAR MORE THAN
+--     THE SPLIT-PARAMETER OPTIMISATION NEEDS
+--
+-- `BalabanBishopOuterBrillouinSineGapExact` derives constructively, with no
+-- monotonicity oracle, the outer sine bound 87/128, i.e. the per-axis term
+-- `(2 sin)^2 >= 7569/4096`.  Feeding that as the single-axis floor:
+------------------------------------------------------------------------
+
+outerSineGap : ℚ
+outerSineGap = + 87 / 128
+
+outerAxisFloor : ℚ
+outerAxisFloor = four * (outerSineGap * outerSineGap)
+
+outerAxisFloorValue : outerAxisFloor ≡ + 7569 / 4096
+outerAxisFloorValue = refl
+
+-- Unit numerator sup: the far density bound is 4096/7569 < 1.
+unitNumeratorFarBound : ℚ
+unitNumeratorFarBound = + 4096 / 7569
+
+unitNumeratorFarBudget : 1ℚ ≤ unitNumeratorFarBound * outerAxisFloor
+unitNumeratorFarBudget =
+  toWitness {a? = 1ℚ ℚP.≤? unitNumeratorFarBound * outerAxisFloor} _
+
+unitNumeratorFarBoundBelowOne : unitNumeratorFarBound < 1ℚ
+unitNumeratorFarBoundBelowOne =
+  toWitness {a? = unitNumeratorFarBound ℚP.<? 1ℚ} _
+
+-- The split-parameter optimisation at r = 2/5 allows a far sup of 25/4.
+-- The outer-gap far bound is more than an order of magnitude inside it.
+outerGapInsideOptimisationBudget :
+  unitNumeratorFarBound < Box.inverseSquareTwoFifths
+outerGapInsideOptimisationBudget =
+  toWitness
+    {a? = unitNumeratorFarBound ℚP.<? Box.inverseSquareTwoFifths} _
+
+-- ... so the optimisation's budget still passes with the outer-gap far bound
+-- substituted for the model far sup, with the same near sup 6.
+outerGapBoxBudgetPasses :
+  Box.boxBudget Box.radiusTwoFifths unitNumeratorFarBound
+    < NearFar.shellBudgetSU2
+outerGapBoxBudgetPasses =
+  toWitness
+    {a? = Box.boxBudget Box.radiusTwoFifths unitNumeratorFarBound
+            ℚP.<? NearFar.shellBudgetSU2} _
+
+------------------------------------------------------------------------
+-- 4b.  THE FAR WINDOW IS EXACTLY THE WINDOW THE CONSTRUCTIVE SINE GAP
+--      ALREADY COVERS
+--
+-- In the repository's normalised cell a coordinate `x` runs over `[0, 1/2]`
+-- and the corresponding half-angle is `t = pi * x`, so the boundary of the
+-- near box of half-width `r` sits at half-angle `pi * r`, and the far region
+-- is `pi * r <= t <= pi / 2`.
+--
+-- `BalabanBishopOuterBrillouinSineGapExact` proves its sine gap on the window
+-- `3/4 <= t <= 11/7`.  At the optimal radius `r = 2/5` the far window is
+-- `2 pi / 5 <= t <= pi / 2`, and the two lemmas below check, for any rational
+-- enclosure of pi inside `[3.14, 3.1416]`, that this is contained in the proved
+-- window.  So the far input of the optimisation asks the constructive sine
+-- gap only for angles it already covers.
+------------------------------------------------------------------------
+
+sineGapWindowLower sineGapWindowUpper : ℚ
+sineGapWindowLower = + 3 / 4
+sineGapWindowUpper = + 11 / 7
+
+optimalRadius : ℚ
+optimalRadius = + 2 / 5
+
+-- The near-box boundary half-angle `pi * r` is above the window's lower end.
+farWindowLowerCompatible :
+  ∀ (piValue : ℚ) → (+ 314 / 100) ≤ piValue →
+  sineGapWindowLower ≤ piValue * optimalRadius
+farWindowLowerCompatible piValue lower =
+  ℚP.≤-trans
+    (toWitness
+      {a? = sineGapWindowLower ℚP.≤? (+ 314 / 100) * optimalRadius} _)
+    (ℚP.*-monoʳ-≤-nonNeg optimalRadius
+      {{nonNegative (toWitness {a? = 0ℚ ℚP.≤? optimalRadius} _)}} lower)
+
+-- The largest far half-angle `pi / 2` is below the window's upper end.
+farWindowUpperCompatible :
+  ∀ (piValue : ℚ) → piValue ≤ (+ 31416 / 10000) →
+  piValue * (+ 1 / 2) ≤ sineGapWindowUpper
+farWindowUpperCompatible piValue upper =
+  ℚP.≤-trans
+    (ℚP.*-monoʳ-≤-nonNeg (+ 1 / 2)
+      {{nonNegative (toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _)}} upper)
+    (toWitness
+      {a? = (+ 31416 / 10000) * (+ 1 / 2) ℚP.≤? sineGapWindowUpper} _)
+
+-- And the far window is nonempty at the optimal radius.
+farWindowNonempty :
+  ∀ (piValue : ℚ) → (+ 314 / 100) ≤ piValue →
+  piValue * optimalRadius < piValue * (+ 1 / 2)
+farWindowNonempty piValue lower =
+  ℚP.*-monoʳ-<-pos piValue
+    {{ℚ.positive
+      (ℚP.<-≤-trans (toWitness {a? = 0ℚ ℚP.<? (+ 314 / 100)} _) lower)}}
+    (toWitness {a? = optimalRadius ℚP.<? (+ 1 / 2)} _)
+
+------------------------------------------------------------------------
+-- 5.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: the single-axis floor for the literal inverse
+-- propagator value, the pointwise floored quotient bound and its consumer
+-- forms, the weighted far-region density bound, and the numerical comparison
+-- with the split-parameter optimisation.
+singleAxisFloorLevel : ProofLevel
+singleAxisFloorLevel = machineChecked
+
+flooredQuotientLevel : ProofLevel
+flooredQuotientLevel = machineChecked
+
+farRegionFourOrbitLevel : ProofLevel
+farRegionFourOrbitLevel = machineChecked
+
+-- STILL OPEN: that off the near box some coordinate really does satisfy the
+-- single-axis sine bound, and the numerator sup of the literal joint
+-- numerator on that region.
+farRegionAxisSineBoundLevel : ProofLevel
+farRegionAxisSineBoundLevel = conditional
+
+-- Machine checked: the far window at the optimal radius lies inside the
+-- window on which the repository's constructive outer sine gap is proved.
+farWindowCompatibilityLevel : ProofLevel
+farWindowCompatibilityLevel = machineChecked
+
+farRegionNumeratorSupLevel : ProofLevel
+farRegionNumeratorSupLevel = conditional

@@ -1,0 +1,11 @@
+Latest YM Agda handoff
+
+Source snapshot from the pushed dashi_agda master branch. The source/ tree
+contains all tracked Agda and Literate Agda files selected by YM/Yang-Mills
+path or filename, including DASHI/Physics/YM, DASHI/Physics/YangMills,
+Yang-Mills closure surfaces, and related cross-lane YM files. MANIFEST.tsv
+records the exact source commit and blob hash for every file.
+
+This is a source snapshot, not a claim that every module typechecks or that
+any formal statement establishes a physical Yang-Mills result. Validate with
+the repository's available Agda checker and preserve each module's provenance.

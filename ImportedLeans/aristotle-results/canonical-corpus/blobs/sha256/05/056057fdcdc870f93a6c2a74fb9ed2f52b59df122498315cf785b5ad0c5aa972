@@ -1,0 +1,374 @@
+module DASHI.Physics.YangMills.BalabanYM4SU2DexpJacobianDeterminantExact where
+
+------------------------------------------------------------------------
+-- ROW A1a: THE SU(2) CHART JACOBIAN, COMPUTED FROM THE ADJOINT MATRIX
+--
+-- PRIMARY SOURCES
+--
+-- Brian C. Hall, "Lie Groups, Lie Algebras, and Representations: An
+-- Elementary Introduction", second edition, Springer (2015).
+-- DOI: 10.1007/978-3-319-13467-3.  (SU(2), its principal exponential chart,
+-- and the adjoint representation.)
+--
+-- Tadeusz Balaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  (The background-field chart in which the Haar
+-- density is evaluated.)
+--
+-- WHAT THIS MODULE ADDS
+--
+-- The repository already fixes (in
+-- `BalabanClayGate4SU2DexpInverseClosedFormExact`) the Cayley-Hamilton shape
+-- of the left-trivialised chart differential of SU(2),
+--
+--     dexp_Y^{-1}  =  I + alpha ad_Y + beta ad_Y^2 ,
+--
+-- with alpha = -1/2 and beta = c(theta) a scalar of the angle; and it proves
+-- (in `BalabanYM4SU2HaarJacobianQuadraticCoefficientExact`) the radial
+-- expansion of -log J for J = (sin s / s)^2.  What was missing between them is
+-- the *same-object* step: that the determinant of that chart differential
+-- really is s^2 / (sin s)^2, i.e. that J = (sin s / s)^2 in these coordinates.
+--
+-- This module supplies the algebraic core of that step, in exact rational
+-- arithmetic and in explicit coordinates:
+--
+--   (1) `adjointCubeRelation` : in the repository's normalisation the adjoint
+--       matrix A = ad_Y of Y = (y1,y2,y3) — twice the cross-product matrix —
+--       satisfies exactly
+--
+--           A^3  =  -4 |Y|^2 A ,
+--
+--       which is the structure relation the Haar module's convention assumes.
+--
+--   (2) `spanDeterminant` : for *every* element of the Cayley-Hamilton span,
+--
+--           det (I + alpha A + beta A^2)
+--             =  (1 - 4|Y|^2 beta)^2  +  4|Y|^2 alpha^2 ,
+--
+--       an identity of polynomials in y1,y2,y3,alpha,beta.  This is the
+--       eigenvalue product (1)(1 + 2i s alpha - 4 s^2 beta)(1 - 2i s alpha -
+--       4 s^2 beta) obtained without leaving the rationals.
+--
+--   (3) `dexpInverseDeterminant` : specialising to alpha = -1/2 and beta = c,
+--
+--           det dexp_Y^{-1}  =  (1 - 4 s^2 c)^2 + s^2 ,        s^2 = |Y|^2 .
+--
+--   (4) `jacobianCleared` and `haarDensityCleared` : with the *scalar* chart
+--       input in cleared (division-free) form,
+--
+--           S (1 - 4 s^2 c)  =  s C ,      S^2 + C^2 = 1
+--
+--       (S = sin s, C = cos s; this is exactly the removable-singularity
+--       identity  1 - theta^2 c(theta) = theta (1+cos theta)/(2 sin theta)  at
+--       theta = 2s), one gets
+--
+--           (sin s)^2  det dexp_Y^{-1}  =  s^2 ,
+--
+--       hence for the Haar density J with J det dexp_Y^{-1} = 1,
+--
+--           J s^2  =  (sin s)^2 ,     i.e.   J = (sin s / s)^2 .
+--
+-- So the chart Jacobian identification is reduced from a differential-geometry
+-- statement to (i) the polynomial identities (1)--(2), proved here, and (ii)
+-- one scalar trigonometric input, which the repository's dexp module already
+-- isolates as an explicit chart input.
+--
+-- WHAT IS *NOT* PROVED.  The identification of the repository's chart
+-- differential with the displayed span element (i.e. that its matrix in these
+-- coordinates is I - (1/2) A + c A^2 with the stated c) is an input, as is the
+-- real-analytic value of c; and s, S, C, c are treated here as numbers
+-- satisfying the displayed relations, so the theorem is the exact algebra that
+-- turns those relations into the Jacobian.  Row A stays open and the frozen
+-- research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_; -[1+_])
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _/_; _≤_; _<_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; cong₂; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; halfℚ)
+open import DASHI.Physics.YangMills.BalabanYM4BorderedKKTDeterminantExact
+  using (det3)
+open import DASHI.Physics.YangMills.BalabanYM4RadialQuadraticFormToHessianExact
+  using (normSq)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- 3x3 matrices over the rationals
+------------------------------------------------------------------------
+
+record Mat3 : Set where
+  constructor mat3
+  field
+    m₁₁ m₁₂ m₁₃ m₂₁ m₂₂ m₂₃ m₃₁ m₃₂ m₃₃ : ℚ
+
+open Mat3
+
+mat≡ :
+  ∀ {X Y : Mat3} →
+  m₁₁ X ≡ m₁₁ Y → m₁₂ X ≡ m₁₂ Y → m₁₃ X ≡ m₁₃ Y →
+  m₂₁ X ≡ m₂₁ Y → m₂₂ X ≡ m₂₂ Y → m₂₃ X ≡ m₂₃ Y →
+  m₃₁ X ≡ m₃₁ Y → m₃₂ X ≡ m₃₂ Y → m₃₃ X ≡ m₃₃ Y →
+  X ≡ Y
+mat≡ refl refl refl refl refl refl refl refl refl = refl
+
+idM : Mat3
+idM = mat3 1ℚ 0ℚ 0ℚ 0ℚ 1ℚ 0ℚ 0ℚ 0ℚ 1ℚ
+
+addM : Mat3 → Mat3 → Mat3
+addM X Y = mat3
+  (m₁₁ X + m₁₁ Y) (m₁₂ X + m₁₂ Y) (m₁₃ X + m₁₃ Y)
+  (m₂₁ X + m₂₁ Y) (m₂₂ X + m₂₂ Y) (m₂₃ X + m₂₃ Y)
+  (m₃₁ X + m₃₁ Y) (m₃₂ X + m₃₂ Y) (m₃₃ X + m₃₃ Y)
+
+scaleM : ℚ → Mat3 → Mat3
+scaleM r X = mat3
+  (r * m₁₁ X) (r * m₁₂ X) (r * m₁₃ X)
+  (r * m₂₁ X) (r * m₂₂ X) (r * m₂₃ X)
+  (r * m₃₁ X) (r * m₃₂ X) (r * m₃₃ X)
+
+mulM : Mat3 → Mat3 → Mat3
+mulM X Y = mat3
+  (m₁₁ X * m₁₁ Y + m₁₂ X * m₂₁ Y + m₁₃ X * m₃₁ Y)
+  (m₁₁ X * m₁₂ Y + m₁₂ X * m₂₂ Y + m₁₃ X * m₃₂ Y)
+  (m₁₁ X * m₁₃ Y + m₁₂ X * m₂₃ Y + m₁₃ X * m₃₃ Y)
+  (m₂₁ X * m₁₁ Y + m₂₂ X * m₂₁ Y + m₂₃ X * m₃₁ Y)
+  (m₂₁ X * m₁₂ Y + m₂₂ X * m₂₂ Y + m₂₃ X * m₃₂ Y)
+  (m₂₁ X * m₁₃ Y + m₂₂ X * m₂₃ Y + m₂₃ X * m₃₃ Y)
+  (m₃₁ X * m₁₁ Y + m₃₂ X * m₂₁ Y + m₃₃ X * m₃₁ Y)
+  (m₃₁ X * m₁₂ Y + m₃₂ X * m₂₂ Y + m₃₃ X * m₃₂ Y)
+  (m₃₁ X * m₁₃ Y + m₃₂ X * m₂₃ Y + m₃₃ X * m₃₃ Y)
+
+detM : Mat3 → ℚ
+detM X =
+  det3 (m₁₁ X) (m₁₂ X) (m₁₃ X)
+       (m₂₁ X) (m₂₂ X) (m₂₃ X)
+       (m₃₁ X) (m₃₂ X) (m₃₃ X)
+
+------------------------------------------------------------------------
+-- The adjoint matrix of su(2) in the repository's normalisation
+--
+--   ad_Y = 2 K(Y),   K(Y) the cross-product matrix,  so  ad_Y^3 = -4|Y|^2 ad_Y
+------------------------------------------------------------------------
+
+adjoint : (y₁ y₂ y₃ : ℚ) → Mat3
+adjoint y₁ y₂ y₃ = mat3
+  0ℚ            (- (twoℚ * y₃)) (twoℚ * y₂)
+  (twoℚ * y₃)   0ℚ              (- (twoℚ * y₁))
+  (- (twoℚ * y₂)) (twoℚ * y₁)   0ℚ
+
+fourℚ : ℚ
+fourℚ = + 4 / 1
+
+-- (1) THE STRUCTURE RELATION  ad_Y^3 = -4|Y|^2 ad_Y
+adjointCubeRelation :
+  ∀ y₁ y₂ y₃ →
+  mulM (mulM (adjoint y₁ y₂ y₃) (adjoint y₁ y₂ y₃)) (adjoint y₁ y₂ y₃)
+    ≡ scaleM (- (fourℚ * normSq y₁ y₂ y₃)) (adjoint y₁ y₂ y₃)
+adjointCubeRelation y₁ y₂ y₃ =
+  mat≡ e₁₁ e₁₂ e₁₃ e₂₁ e₂₂ e₂₃ e₃₁ e₃₂ e₃₃
+  where
+    e₁₁ = solve 3 (λ Y1 Y2 Y3 →
+            ((((con 0ℚ :* con 0ℚ :+ (:- (con twoℚ :* Y3)) :* (con twoℚ :* Y3)) :+ (con twoℚ :* Y2) :* (:- (con twoℚ :* Y2))) :* con 0ℚ :+ ((con 0ℚ :* (:- (con twoℚ :* Y3)) :+ (:- (con twoℚ :* Y3)) :* con 0ℚ) :+ (con twoℚ :* Y2) :* (con twoℚ :* Y1)) :* (con twoℚ :* Y3)) :+ ((con 0ℚ :* (con twoℚ :* Y2) :+ (:- (con twoℚ :* Y3)) :* (:- (con twoℚ :* Y1))) :+ (con twoℚ :* Y2) :* con 0ℚ) :* (:- (con twoℚ :* Y2)))
+              := (:- (con fourℚ :* ((Y1 :* Y1 :+ Y2 :* Y2) :+ Y3 :* Y3))) :* con 0ℚ) refl y₁ y₂ y₃
+
+    e₁₂ = solve 3 (λ Y1 Y2 Y3 →
+            ((((con 0ℚ :* con 0ℚ :+ (:- (con twoℚ :* Y3)) :* (con twoℚ :* Y3)) :+ (con twoℚ :* Y2) :* (:- (con twoℚ :* Y2))) :* (:- (con twoℚ :* Y3)) :+ ((con 0ℚ :* (:- (con twoℚ :* Y3)) :+ (:- (con twoℚ :* Y3)) :* con 0ℚ) :+ (con twoℚ :* Y2) :* (con twoℚ :* Y1)) :* con 0ℚ) :+ ((con 0ℚ :* (con twoℚ :* Y2) :+ (:- (con twoℚ :* Y3)) :* (:- (con twoℚ :* Y1))) :+ (con twoℚ :* Y2) :* con 0ℚ) :* (con twoℚ :* Y1))
+              := (:- (con fourℚ :* ((Y1 :* Y1 :+ Y2 :* Y2) :+ Y3 :* Y3))) :* (:- (con twoℚ :* Y3))) refl y₁ y₂ y₃
+
+    e₁₃ = solve 3 (λ Y1 Y2 Y3 →
+            ((((con 0ℚ :* con 0ℚ :+ (:- (con twoℚ :* Y3)) :* (con twoℚ :* Y3)) :+ (con twoℚ :* Y2) :* (:- (con twoℚ :* Y2))) :* (con twoℚ :* Y2) :+ ((con 0ℚ :* (:- (con twoℚ :* Y3)) :+ (:- (con twoℚ :* Y3)) :* con 0ℚ) :+ (con twoℚ :* Y2) :* (con twoℚ :* Y1)) :* (:- (con twoℚ :* Y1))) :+ ((con 0ℚ :* (con twoℚ :* Y2) :+ (:- (con twoℚ :* Y3)) :* (:- (con twoℚ :* Y1))) :+ (con twoℚ :* Y2) :* con 0ℚ) :* con 0ℚ)
+              := (:- (con fourℚ :* ((Y1 :* Y1 :+ Y2 :* Y2) :+ Y3 :* Y3))) :* (con twoℚ :* Y2)) refl y₁ y₂ y₃
+
+    e₂₁ = solve 3 (λ Y1 Y2 Y3 →
+            (((((con twoℚ :* Y3) :* con 0ℚ :+ con 0ℚ :* (con twoℚ :* Y3)) :+ (:- (con twoℚ :* Y1)) :* (:- (con twoℚ :* Y2))) :* con 0ℚ :+ (((con twoℚ :* Y3) :* (:- (con twoℚ :* Y3)) :+ con 0ℚ :* con 0ℚ) :+ (:- (con twoℚ :* Y1)) :* (con twoℚ :* Y1)) :* (con twoℚ :* Y3)) :+ (((con twoℚ :* Y3) :* (con twoℚ :* Y2) :+ con 0ℚ :* (:- (con twoℚ :* Y1))) :+ (:- (con twoℚ :* Y1)) :* con 0ℚ) :* (:- (con twoℚ :* Y2)))
+              := (:- (con fourℚ :* ((Y1 :* Y1 :+ Y2 :* Y2) :+ Y3 :* Y3))) :* (con twoℚ :* Y3)) refl y₁ y₂ y₃
+
+    e₂₂ = solve 3 (λ Y1 Y2 Y3 →
+            (((((con twoℚ :* Y3) :* con 0ℚ :+ con 0ℚ :* (con twoℚ :* Y3)) :+ (:- (con twoℚ :* Y1)) :* (:- (con twoℚ :* Y2))) :* (:- (con twoℚ :* Y3)) :+ (((con twoℚ :* Y3) :* (:- (con twoℚ :* Y3)) :+ con 0ℚ :* con 0ℚ) :+ (:- (con twoℚ :* Y1)) :* (con twoℚ :* Y1)) :* con 0ℚ) :+ (((con twoℚ :* Y3) :* (con twoℚ :* Y2) :+ con 0ℚ :* (:- (con twoℚ :* Y1))) :+ (:- (con twoℚ :* Y1)) :* con 0ℚ) :* (con twoℚ :* Y1))
+              := (:- (con fourℚ :* ((Y1 :* Y1 :+ Y2 :* Y2) :+ Y3 :* Y3))) :* con 0ℚ) refl y₁ y₂ y₃
+
+    e₂₃ = solve 3 (λ Y1 Y2 Y3 →
+            (((((con twoℚ :* Y3) :* con 0ℚ :+ con 0ℚ :* (con twoℚ :* Y3)) :+ (:- (con twoℚ :* Y1)) :* (:- (con twoℚ :* Y2))) :* (con twoℚ :* Y2) :+ (((con twoℚ :* Y3) :* (:- (con twoℚ :* Y3)) :+ con 0ℚ :* con 0ℚ) :+ (:- (con twoℚ :* Y1)) :* (con twoℚ :* Y1)) :* (:- (con twoℚ :* Y1))) :+ (((con twoℚ :* Y3) :* (con twoℚ :* Y2) :+ con 0ℚ :* (:- (con twoℚ :* Y1))) :+ (:- (con twoℚ :* Y1)) :* con 0ℚ) :* con 0ℚ)
+              := (:- (con fourℚ :* ((Y1 :* Y1 :+ Y2 :* Y2) :+ Y3 :* Y3))) :* (:- (con twoℚ :* Y1))) refl y₁ y₂ y₃
+
+    e₃₁ = solve 3 (λ Y1 Y2 Y3 →
+            (((((:- (con twoℚ :* Y2)) :* con 0ℚ :+ (con twoℚ :* Y1) :* (con twoℚ :* Y3)) :+ con 0ℚ :* (:- (con twoℚ :* Y2))) :* con 0ℚ :+ (((:- (con twoℚ :* Y2)) :* (:- (con twoℚ :* Y3)) :+ (con twoℚ :* Y1) :* con 0ℚ) :+ con 0ℚ :* (con twoℚ :* Y1)) :* (con twoℚ :* Y3)) :+ (((:- (con twoℚ :* Y2)) :* (con twoℚ :* Y2) :+ (con twoℚ :* Y1) :* (:- (con twoℚ :* Y1))) :+ con 0ℚ :* con 0ℚ) :* (:- (con twoℚ :* Y2)))
+              := (:- (con fourℚ :* ((Y1 :* Y1 :+ Y2 :* Y2) :+ Y3 :* Y3))) :* (:- (con twoℚ :* Y2))) refl y₁ y₂ y₃
+
+    e₃₂ = solve 3 (λ Y1 Y2 Y3 →
+            (((((:- (con twoℚ :* Y2)) :* con 0ℚ :+ (con twoℚ :* Y1) :* (con twoℚ :* Y3)) :+ con 0ℚ :* (:- (con twoℚ :* Y2))) :* (:- (con twoℚ :* Y3)) :+ (((:- (con twoℚ :* Y2)) :* (:- (con twoℚ :* Y3)) :+ (con twoℚ :* Y1) :* con 0ℚ) :+ con 0ℚ :* (con twoℚ :* Y1)) :* con 0ℚ) :+ (((:- (con twoℚ :* Y2)) :* (con twoℚ :* Y2) :+ (con twoℚ :* Y1) :* (:- (con twoℚ :* Y1))) :+ con 0ℚ :* con 0ℚ) :* (con twoℚ :* Y1))
+              := (:- (con fourℚ :* ((Y1 :* Y1 :+ Y2 :* Y2) :+ Y3 :* Y3))) :* (con twoℚ :* Y1)) refl y₁ y₂ y₃
+
+    e₃₃ = solve 3 (λ Y1 Y2 Y3 →
+            (((((:- (con twoℚ :* Y2)) :* con 0ℚ :+ (con twoℚ :* Y1) :* (con twoℚ :* Y3)) :+ con 0ℚ :* (:- (con twoℚ :* Y2))) :* (con twoℚ :* Y2) :+ (((:- (con twoℚ :* Y2)) :* (:- (con twoℚ :* Y3)) :+ (con twoℚ :* Y1) :* con 0ℚ) :+ con 0ℚ :* (con twoℚ :* Y1)) :* (:- (con twoℚ :* Y1))) :+ (((:- (con twoℚ :* Y2)) :* (con twoℚ :* Y2) :+ (con twoℚ :* Y1) :* (:- (con twoℚ :* Y1))) :+ con 0ℚ :* con 0ℚ) :* con 0ℚ)
+              := (:- (con fourℚ :* ((Y1 :* Y1 :+ Y2 :* Y2) :+ Y3 :* Y3))) :* con 0ℚ) refl y₁ y₂ y₃
+
+------------------------------------------------------------------------
+-- (2) THE DETERMINANT OF EVERY ELEMENT OF THE CAYLEY-HAMILTON SPAN
+------------------------------------------------------------------------
+
+-- w = theta^2 = 4 |Y|^2, the square of the SU(2) rotation angle in this
+-- normalisation
+angleSquared : (y₁ y₂ y₃ : ℚ) → ℚ
+angleSquared y₁ y₂ y₃ = fourℚ * normSq y₁ y₂ y₃
+
+spanElement : (y₁ y₂ y₃ α β : ℚ) → Mat3
+spanElement y₁ y₂ y₃ α β =
+  addM idM
+    (addM (scaleM α (adjoint y₁ y₂ y₃))
+      (scaleM β (mulM (adjoint y₁ y₂ y₃) (adjoint y₁ y₂ y₃))))
+
+-- det (I + alpha A + beta A^2) = (1 - w beta)^2 + w alpha^2
+spanDeterminant :
+  ∀ y₁ y₂ y₃ α β →
+  detM (spanElement y₁ y₂ y₃ α β)
+    ≡ (1ℚ - angleSquared y₁ y₂ y₃ * β) * (1ℚ - angleSquared y₁ y₂ y₃ * β)
+        + angleSquared y₁ y₂ y₃ * (α * α)
+spanDeterminant y₁ y₂ y₃ α β =
+  solve 5 (λ Y1 Y2 Y3 Al Be →
+      (con 1ℚ :+ (Al :* con 0ℚ :+ Be :* ((con 0ℚ :* con 0ℚ :+ (:- (con twoℚ :* Y3)) :* (con twoℚ :* Y3)) :+ (con twoℚ :* Y2) :* (:- (con twoℚ :* Y2))))) :* ((con 1ℚ :+ (Al :* con 0ℚ :+ Be :* (((con twoℚ :* Y3) :* (:- (con twoℚ :* Y3)) :+ con 0ℚ :* con 0ℚ) :+ (:- (con twoℚ :* Y1)) :* (con twoℚ :* Y1)))) :* (con 1ℚ :+ (Al :* con 0ℚ :+ Be :* (((:- (con twoℚ :* Y2)) :* (con twoℚ :* Y2) :+ (con twoℚ :* Y1) :* (:- (con twoℚ :* Y1))) :+ con 0ℚ :* con 0ℚ))) :- (con 0ℚ :+ (Al :* (:- (con twoℚ :* Y1)) :+ Be :* (((con twoℚ :* Y3) :* (con twoℚ :* Y2) :+ con 0ℚ :* (:- (con twoℚ :* Y1))) :+ (:- (con twoℚ :* Y1)) :* con 0ℚ))) :* (con 0ℚ :+ (Al :* (con twoℚ :* Y1) :+ Be :* (((:- (con twoℚ :* Y2)) :* (:- (con twoℚ :* Y3)) :+ (con twoℚ :* Y1) :* con 0ℚ) :+ con 0ℚ :* (con twoℚ :* Y1))))) :- (con 0ℚ :+ (Al :* (:- (con twoℚ :* Y3)) :+ Be :* ((con 0ℚ :* (:- (con twoℚ :* Y3)) :+ (:- (con twoℚ :* Y3)) :* con 0ℚ) :+ (con twoℚ :* Y2) :* (con twoℚ :* Y1)))) :* ((con 0ℚ :+ (Al :* (con twoℚ :* Y3) :+ Be :* (((con twoℚ :* Y3) :* con 0ℚ :+ con 0ℚ :* (con twoℚ :* Y3)) :+ (:- (con twoℚ :* Y1)) :* (:- (con twoℚ :* Y2))))) :* (con 1ℚ :+ (Al :* con 0ℚ :+ Be :* (((:- (con twoℚ :* Y2)) :* (con twoℚ :* Y2) :+ (con twoℚ :* Y1) :* (:- (con twoℚ :* Y1))) :+ con 0ℚ :* con 0ℚ))) :- (con 0ℚ :+ (Al :* (:- (con twoℚ :* Y1)) :+ Be :* (((con twoℚ :* Y3) :* (con twoℚ :* Y2) :+ con 0ℚ :* (:- (con twoℚ :* Y1))) :+ (:- (con twoℚ :* Y1)) :* con 0ℚ))) :* (con 0ℚ :+ (Al :* (:- (con twoℚ :* Y2)) :+ Be :* (((:- (con twoℚ :* Y2)) :* con 0ℚ :+ (con twoℚ :* Y1) :* (con twoℚ :* Y3)) :+ con 0ℚ :* (:- (con twoℚ :* Y2)))))) :+ (con 0ℚ :+ (Al :* (con twoℚ :* Y2) :+ Be :* ((con 0ℚ :* (con twoℚ :* Y2) :+ (:- (con twoℚ :* Y3)) :* (:- (con twoℚ :* Y1))) :+ (con twoℚ :* Y2) :* con 0ℚ))) :* ((con 0ℚ :+ (Al :* (con twoℚ :* Y3) :+ Be :* (((con twoℚ :* Y3) :* con 0ℚ :+ con 0ℚ :* (con twoℚ :* Y3)) :+ (:- (con twoℚ :* Y1)) :* (:- (con twoℚ :* Y2))))) :* (con 0ℚ :+ (Al :* (con twoℚ :* Y1) :+ Be :* (((:- (con twoℚ :* Y2)) :* (:- (con twoℚ :* Y3)) :+ (con twoℚ :* Y1) :* con 0ℚ) :+ con 0ℚ :* (con twoℚ :* Y1)))) :- (con 1ℚ :+ (Al :* con 0ℚ :+ Be :* (((con twoℚ :* Y3) :* (:- (con twoℚ :* Y3)) :+ con 0ℚ :* con 0ℚ) :+ (:- (con twoℚ :* Y1)) :* (con twoℚ :* Y1)))) :* (con 0ℚ :+ (Al :* (:- (con twoℚ :* Y2)) :+ Be :* (((:- (con twoℚ :* Y2)) :* con 0ℚ :+ (con twoℚ :* Y1) :* (con twoℚ :* Y3)) :+ con 0ℚ :* (:- (con twoℚ :* Y2))))))
+        := ((con 1ℚ :- (con fourℚ :* ((Y1 :* Y1 :+ Y2 :* Y2) :+ Y3 :* Y3)) :* Be) :* (con 1ℚ :- (con fourℚ :* ((Y1 :* Y1 :+ Y2 :* Y2) :+ Y3 :* Y3)) :* Be) :+ (con fourℚ :* ((Y1 :* Y1 :+ Y2 :* Y2) :+ Y3 :* Y3)) :* (Al :* Al))) refl y₁ y₂ y₃ α β
+
+------------------------------------------------------------------------
+-- (3) THE CHART DIFFERENTIAL  dexp^{-1} = I - (1/2) ad + c ad^2
+------------------------------------------------------------------------
+
+dexpInverseMatrix : (y₁ y₂ y₃ c : ℚ) → Mat3
+dexpInverseMatrix y₁ y₂ y₃ c = spanElement y₁ y₂ y₃ (- halfℚ) c
+
+-- det dexp^{-1} = (1 - 4 s^2 c)^2 + s^2,  s^2 = |Y|^2
+dexpInverseDeterminant :
+  ∀ y₁ y₂ y₃ c →
+  detM (dexpInverseMatrix y₁ y₂ y₃ c)
+    ≡ (1ℚ - angleSquared y₁ y₂ y₃ * c) * (1ℚ - angleSquared y₁ y₂ y₃ * c)
+        + normSq y₁ y₂ y₃
+dexpInverseDeterminant y₁ y₂ y₃ c =
+  trans (spanDeterminant y₁ y₂ y₃ (- halfℚ) c)
+    (cong (λ z → (1ℚ - angleSquared y₁ y₂ y₃ * c)
+                   * (1ℚ - angleSquared y₁ y₂ y₃ * c) + z)
+      quarterOfAngle)
+  where
+    quarterOfAngle :
+      angleSquared y₁ y₂ y₃ * ((- halfℚ) * (- halfℚ)) ≡ normSq y₁ y₂ y₃
+    quarterOfAngle =
+      solve 1
+        (λ N → (con fourℚ :* N) :* ((:- con halfℚ) :* (:- con halfℚ)) := N)
+        refl (normSq y₁ y₂ y₃)
+
+------------------------------------------------------------------------
+-- (4) THE SCALAR CHART INPUT AND THE HAAR DENSITY
+--
+-- s, S = sin s, C = cos s and c are numbers satisfying the two displayed
+-- relations; the second is the cleared form of the removable-singularity
+-- identity  1 - theta^2 c(theta) = theta (1 + cos theta) / (2 sin theta)
+-- at theta = 2s, using the double-angle formulae.
+------------------------------------------------------------------------
+
+module ChartScalars
+  (s S C c sSq : ℚ)
+  (sSqIsSquare : sSq ≡ s * s)
+  (pythagoras : S * S + C * C ≡ 1ℚ)
+  (removableSingularity : S * (1ℚ - (fourℚ * sSq) * c) ≡ s * C)
+  where
+
+  -- (sin s)^2 [ (1 - 4 s^2 c)^2 + s^2 ] = s^2
+  jacobianCleared :
+    (S * S)
+      * ((1ℚ - (fourℚ * sSq) * c) * (1ℚ - (fourℚ * sSq) * c) + sSq)
+      ≡ s * s
+  jacobianCleared =
+    trans expand
+      (trans (cong₂ (λ u v → u * u + (S * S) * v)
+                removableSingularity sSqIsSquare)
+        (trans regroup
+          (trans (cong ((s * s) *_) pythagoras) (ℚP.*-identityʳ (s * s)))))
+    where
+      X : ℚ
+      X = 1ℚ - (fourℚ * sSq) * c
+
+      expand :
+        (S * S) * (X * X + sSq) ≡ (S * X) * (S * X) + (S * S) * sSq
+      expand =
+        solve 3
+          (λ Ss Xx Q → (Ss :* Ss) :* (Xx :* Xx :+ Q)
+                         := (Ss :* Xx) :* (Ss :* Xx) :+ (Ss :* Ss) :* Q)
+          refl S X sSq
+
+      regroup :
+        (s * C) * (s * C) + (S * S) * (s * s) ≡ (s * s) * (S * S + C * C)
+      regroup =
+        solve 3
+          (λ Sm Cc Ss → (Sm :* Cc) :* (Sm :* Cc) :+ (Ss :* Ss) :* (Sm :* Sm)
+                          := (Sm :* Sm) :* (Ss :* Ss :+ Cc :* Cc))
+          refl s C S
+
+  -- the same statement about the actual chart matrix
+  chartJacobian :
+    ∀ y₁ y₂ y₃ → normSq y₁ y₂ y₃ ≡ sSq →
+    (S * S) * detM (dexpInverseMatrix y₁ y₂ y₃ c) ≡ s * s
+  chartJacobian y₁ y₂ y₃ normIsSSq =
+    trans (cong ((S * S) *_) (dexpInverseDeterminant y₁ y₂ y₃ c))
+      (trans (cong (λ n → (S * S)
+                            * ((1ℚ - (fourℚ * n) * c) * (1ℚ - (fourℚ * n) * c)
+                                 + n))
+               normIsSSq)
+        jacobianCleared)
+
+  -- and hence the Haar density itself:  J s^2 = (sin s)^2, i.e. J = (sin s/s)^2
+  haarDensityCleared :
+    ∀ (J : ℚ) y₁ y₂ y₃ → normSq y₁ y₂ y₃ ≡ sSq →
+    J * detM (dexpInverseMatrix y₁ y₂ y₃ c) ≡ 1ℚ →
+    J * (s * s) ≡ S * S
+  haarDensityCleared J y₁ y₂ y₃ normIsSSq inverseRelation =
+    trans (cong (J *_) (sym (chartJacobian y₁ y₂ y₃ normIsSSq)))
+      (trans shuffle
+        (trans (cong ((S * S) *_) inverseRelation) (ℚP.*-identityʳ (S * S))))
+    where
+      shuffle :
+        J * ((S * S) * detM (dexpInverseMatrix y₁ y₂ y₃ c))
+          ≡ (S * S) * (J * detM (dexpInverseMatrix y₁ y₂ y₃ c))
+      shuffle =
+        solve 3 (λ Jj Ss Dd → Jj :* (Ss :* Dd) := Ss :* (Jj :* Dd))
+          refl J (S * S) (detM (dexpInverseMatrix y₁ y₂ y₃ c))
+
+------------------------------------------------------------------------
+-- NON-VACUITY OF THE SCALAR HYPOTHESES
+--
+-- The three scalar relations are simultaneously satisfiable by rational
+-- numbers: s = 1/2, (S,C) = (3/5,4/5) a Pythagorean pair, c = 1/3.  This shows
+-- the hypothesis set of `ChartScalars` is consistent and the conclusions are
+-- not vacuous; it does NOT claim that 3/5 and 4/5 are the values of sin(1/2)
+-- and cos(1/2), which are irrational.  The real values enter, as everywhere in
+-- this tree, through enclosures supplied by the Bishop-real modules.
+------------------------------------------------------------------------
+
+module SampleScalars =
+  ChartScalars (+ 1 / 2) (+ 3 / 5) (+ 4 / 5) (+ 1 / 3) (+ 1 / 4)
+    refl refl refl
+
+sampleChartJacobian :
+  ((+ 3 / 5) * (+ 3 / 5))
+    * detM (dexpInverseMatrix (+ 1 / 2) 0ℚ 0ℚ (+ 1 / 3))
+    ≡ (+ 1 / 2) * (+ 1 / 2)
+sampleChartJacobian = SampleScalars.chartJacobian (+ 1 / 2) 0ℚ 0ℚ refl
+
+-- the determinant value at that sample point is 25/36, so the density is 36/25
+sampleDeterminantValue :
+  detM (dexpInverseMatrix (+ 1 / 2) 0ℚ 0ℚ (+ 1 / 3)) ≡ + 25 / 36
+sampleDeterminantValue = refl
+
+sampleHaarDensity :
+  (+ 36 / 25) * ((+ 1 / 2) * (+ 1 / 2)) ≡ (+ 3 / 5) * (+ 3 / 5)
+sampleHaarDensity =
+  SampleScalars.haarDensityCleared (+ 36 / 25) (+ 1 / 2) 0ℚ 0ℚ refl refl

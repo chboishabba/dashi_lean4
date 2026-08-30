@@ -1,0 +1,1521 @@
+import Integration.PromotionEvidence
+import Integration.Experiment.Dimension
+import Integration.Experiment.QuantityGraph
+import Integration.Experiment.Uncertainty
+import Integration.Experiment.Protocol
+import Integration.Experiment.Risk
+import Integration.Experiment.MeasurementValue
+import Integration.Experiment.FailureLocalisation
+import Integration.Experiment.Compiler
+import Integration.Experiment.ModelSelection
+import Integration.Experiment.Lithium
+import Integration.Experiment.ThermalDiffusion
+import Integration.Experiment.ParameterRegion
+import Integration.Experiment.JacobianSensitivity
+import Integration.Experiment.ContinuousDynamics
+import Integration.Experiment.LithiumContinuous
+import Integration.Experiment.ModelReceipts
+import Integration.Experiment.ThermalRC
+import Integration.Experiment.ProbabilityLayer
+import Integration.Experiment.BestReading
+import Integration.Experiment.CoverageSemantics
+import Integration.Experiment.ContinuousBayes
+import Integration.Experiment.VarianceBudget
+import Integration.Experiment.LocalIdentifiability
+import Integration.Experiment.TrajectorySensitivity
+import Integration.Experiment.RepairObligations
+import Integration.Experiment.CalibratedCell
+import Integration.Experiment.BayesUpdate
+import Integration.Experiment.MultiParameterRegion
+import Integration.Experiment.CertifiedPropagation
+import Integration.Experiment.NonlinearDiscrimination
+import Integration.FreeFieldAudit
+import Integration.MirrorDrift
+import Integration.FrontierPriority
+import Integration.PredictionEnvelope
+import Integration.PredictionStatus
+import Integration.TransportFalsification
+import Integration.ClaimTransportGeometry
+import Integration.Registry
+import Integration.SewingRegistry
+import Integration.ObserverTower
+import Integration.ObserverDescent
+import Integration.StructuredObserver
+import Integration.PhysicsInstances
+import Integration.ResidualQuotient
+import Integration.RiemannDomain
+import Integration.GaugeObserver
+import Integration.GaugeSU2
+import Integration.GaugeSSP
+import Integration.DescentLevel
+import Integration.EnumInvariance
+import Integration.GaugePreimage
+import Integration.LeastSufficient
+import Integration.OrbitResidual
+import Integration.CertificatePays
+import Integration.CertificateFormula
+import Integration.SSPThreshold
+import Integration.ApproximateIntertwiner
+import Integration.ConsumerGauge
+import Integration.StructureMorphism
+import Integration.PhaseGaugeU1
+import Integration.CertifiedMargin
+import Integration.CommutatorObservability
+import Integration.MultiscaleDescent
+import Integration.PathTransport
+import Integration.ResidualTaxonomy
+import Integration.EquivarianceObstruction
+import Integration.LocalRealisation
+import Integration.ClaimTransport
+import Integration.ClaimTransportLanes
+import Integration.PromotionDiscipline
+import AgdaMirror.EntitlementRoutes
+import Integration.FieldControlledDynamics
+import Integration.ObserverBundle
+import Integration.CoordinateSufficiency
+import Integration.ContextIndexedRole
+import Integration.ApproximateTower
+import Integration.KernelRenormalisation
+import Integration.NeuralObservation
+import Integration.StatefulTransducer
+import Integration.CellDynamics
+import Integration.HolonomySocket
+import Integration.SelectiveDecision
+import Integration.CounterfactualEffect
+import Integration.ParetoOutcome
+import Integration.ReachabilityBarrier
+import Integration.Marginalisation
+import Integration.DeclaredCarrier
+import Integration.ContrastBoundary
+import Integration.RealisationAdequacy
+import Integration.FactorisationCollision
+import Integration.SeparabilityContrast
+import Integration.LanguageReachability
+import Integration.LevelIIWelds
+import Integration.PipelineAdequacy
+import Integration.SourceExactWelds
+import Integration.AveragingResidualWeld
+import Integration.OutstandingObligations
+import Integration.InteractionWelds
+
+/-!
+# Axiom audit for the integration spine
+
+Building this module prints the axiom dependencies of every headline result of
+the `Integration` spine.  Each one uses only the standard Lean/Mathlib axioms
+(`propext`, `Classical.choice`, `Quot.sound`); none uses `sorry`, a project
+axiom, or `Lean.ofReduceBool` — in particular there is no `native_decide`
+anywhere in the spine.
+-/
+
+-- Levels
+#print axioms Integration.Levels.BridgeLevel.rank_injective
+#print axioms Integration.Levels.NoTransport.elim
+
+-- Ternary hub
+#print axioms Integration.TernaryHub.ternaryHub
+#print axioms Integration.TernaryHub.bal_unique_up_to_sign
+#print axioms Integration.TernaryHub.balTone_triXor_affine
+#print axioms Integration.TernaryHub.balTone_triXor_ne_add
+#print axioms Integration.TernaryHub.trit369_inv
+
+-- Base369 group layer
+#print axioms Integration.Base369Group.hexSplit_xor
+#print axioms Integration.Base369Group.hexSplit_surjective
+#print axioms Integration.Base369Group.nonary_not_ternary_square
+#print axioms Integration.Base369Group.zmod9_not_add_equiv_sq
+#print axioms Integration.Base369Group.nonary_extension_nonsplit
+#print axioms Integration.Base369Group.base369_carrier_cards
+
+-- Address geometry
+#print axioms Integration.Address.agree_ge_iff
+#print axioms Integration.Address.Addr.ultrametric
+#print axioms Integration.Address.Addr.dist_eq_zero_iff
+#print axioms Integration.Address.Addr.dist_map
+#print axioms Integration.Address.Addr.dist_mono_map
+#print axioms Integration.Address.kernelIsometry
+#print axioms Integration.Address.kernelIsometry_inv
+
+-- Clopen balls / supervoxel refinement
+#print axioms Integration.ClopenBalls.member_iff_dist_le
+#print axioms Integration.ClopenBalls.ball_open
+#print axioms Integration.ClopenBalls.ball_closed
+#print axioms Integration.ClopenBalls.refinement_iff_subset
+#print axioms Integration.ClopenBalls.no_atomic_ball
+#print axioms Integration.ClopenBalls.ternaryAddressBallSystem
+#print axioms Integration.ClopenBalls.authorityContentless
+
+-- Receipt socket
+#print axioms Integration.ReceiptSocket.alignment_unconstrained
+#print axioms Integration.ReceiptSocket.aligned_forced
+
+-- Refinement systems
+#print axioms Integration.Refinement.loomRefinement
+#print axioms Integration.Refinement.loom_project_coherent
+#print axioms Integration.Refinement.loom_root_not_product
+#print axioms Integration.Refinement.addressRefinement
+
+-- Monster 15-prime junction
+#print axioms Integration.MonsterFifteen.lcpLen_ofFn
+#print axioms Integration.MonsterFifteen.dSSP_eq_dist
+#print axioms Integration.MonsterFifteen.USSP_d_eq_dist
+#print axioms Integration.MonsterFifteen.fabric369_isometry
+#print axioms Integration.MonsterFifteen.support_nonexpansive
+#print axioms Integration.MonsterFifteen.support_not_isometry
+#print axioms Integration.MonsterFifteen.support_not_injective
+#print axioms Integration.MonsterFifteen.monster_ternary_junction
+
+-- Cognition domain instance
+#print axioms Integration.CognitionSupervoxel.phase3Transport
+#print axioms Integration.CognitionSupervoxel.observeTrit_flip
+#print axioms Integration.CognitionSupervoxel.observeTrit_surjective
+#print axioms Integration.CognitionSupervoxel.observeTrit_not_injective
+#print axioms Integration.CognitionSupervoxel.publicZero_not_atomic
+#print axioms Integration.CognitionSupervoxel.boundaryContentless
+#print axioms Integration.CognitionSupervoxel.cognition_supervoxel_junction
+
+-- Ultrametric census
+#print axioms Integration.UltrametricCensus.d15_eq_prefix
+#print axioms Integration.UltrametricCensus.dSafety_eq_prefix
+#print axioms Integration.UltrametricCensus.walk_not_prefix
+#print axioms Integration.UltrametricCensus.walk_not_mask15
+#print axioms Integration.UltrametricCensus.ultrametric_census
+
+-- The analytic (RH/zeta) domain
+#print axioms Integration.RiemannReflection.centredPolarTransport
+#print axioms Integration.RiemannReflection.sideTrit_reflect
+#print axioms Integration.RiemannReflection.c3Transport
+#print axioms Integration.RiemannReflection.phaseC_invert
+#print axioms Integration.RiemannReflection.phaseC_sum
+#print axioms Integration.RiemannReflection.c3_not_equiv_centred
+#print axioms Integration.RiemannReflection.role_fibres_not_equiv
+#print axioms Integration.RiemannStrip.critReflect_fixed_iff
+#print axioms Integration.RiemannStrip.stripC2_swap
+#print axioms Integration.RiemannStrip.stripTrit_critReflect
+#print axioms Integration.RiemannStrip.modelDisplacement_injective
+#print axioms Integration.RiemannStrip.stripSymmetry_not_equiv_trit
+#print axioms Integration.RiemannSubstrate.substrate_does_not_constrain_rh
+#print axioms Integration.RiemannXiSymmetry.criticalLine_iff_fixed
+#print axioms Integration.RiemannXiSymmetry.qToC_injective
+#print axioms Integration.RiemannXiSymmetry.qToC_criticalLine_iff
+#print axioms Integration.RiemannXiSymmetry.xiZeroSymmetry_is_socket
+#print axioms Integration.RiemannXiSymmetry.hilbertPolya_is_socket
+#print axioms Integration.RiemannXiSymmetry.stage_card
+#print axioms Integration.RiemannDomain.analyticEntries_levels
+#print axioms Integration.RiemannDomain.analyticDomain
+
+-- Phase quotient: 27/C₃ = 9, the transported nonary algebra, the chart dichotomy
+#print axioms Integration.PhaseQuotient.phaseEquiv
+#print axioms Integration.PhaseQuotient.quotient_eq_iff_orbit
+#print axioms Integration.PhaseQuotient.rotateOutputCode_ne
+#print axioms Integration.PhaseQuotient.phaseZModEquiv_add
+#print axioms Integration.PhaseQuotient.nonary_two_algebras
+#print axioms Integration.PhaseQuotient.q9_nonary_group_iso_impossible
+#print axioms Integration.PhaseQuotient.triXor_chart_dichotomy
+
+-- The lawful SSP weave
+#print axioms Integration.SSPWeave.compose_assoc
+#print axioms Integration.SSPWeave.not_a_group
+#print axioms Integration.SSPWeave.orientationSign_hom
+#print axioms Integration.SSPWeave.transportSSP_comp
+#print axioms Integration.SSPWeave.laneStateHub
+#print axioms Integration.SSPWeave.laneBal_action
+#print axioms Integration.SSPWeave.ssp_weave_preservation
+
+-- Observer quotient: what the Boolean layer keeps and what it forgets
+#print axioms Integration.ObserverQuotient.polarPresence_orbit
+#print axioms Integration.ObserverQuotient.polarPresence_equivariant
+#print axioms Integration.ObserverQuotient.laneAction_descends
+#print axioms Integration.ObserverQuotient.no_equivariant_section
+#print axioms Integration.ObserverQuotient.support_no_descent
+#print axioms Integration.ObserverQuotient.polarPresence_no_descent
+#print axioms Integration.ObserverQuotient.support_not_polarity_invariant
+#print axioms Integration.ObserverQuotient.polarPresenceMask_nonexpansive
+#print axioms Integration.ObserverQuotient.orientation_swap
+#print axioms Integration.ObserverQuotient.defectOrientationHub
+#print axioms Integration.ObserverQuotient.defectToFibreOrientation_equiv
+#print axioms Integration.ObserverQuotient.observer_loss_summary
+
+-- The residual-bearing 9 → 6 projection
+#print axioms Integration.PolarResidual.polarEquiv
+#print axioms Integration.PolarResidual.no_retraction_to_polar
+#print axioms Integration.PolarResidual.project_preserves_phase
+#print axioms Integration.PolarResidual.polarTransport
+#print axioms Integration.PolarResidual.kernelTritHub
+#print axioms Integration.PolarResidual.polar_residual_summary
+
+-- Residual-bearing quotients as one structure
+#print axioms Integration.Residual.card_le
+#print axioms Integration.Residual.residual_not_subsingleton
+#print axioms Integration.Residual.polarQuotient
+#print axioms Integration.Residual.signQuotient
+#print axioms Integration.Residual.residual_quotient_instances
+
+-- Symmetry reduction as a typed obligation
+#print axioms Integration.SymmetryReduction.orbit_invariant
+#print axioms Integration.SymmetryReduction.phaseReduction
+#print axioms Integration.SymmetryReduction.polarReduction
+#print axioms Integration.SymmetryReduction.laneReduction
+#print axioms Integration.SymmetryReduction.support_no_equivariant_action
+#print axioms Integration.SymmetryReduction.support_not_a_reduction
+#print axioms Integration.SymmetryReduction.symmetry_reduction_summary
+
+-- The weld: symmetry-resolved observers (Spine geometry × Integration transport)
+#print axioms Integration.StructuredObserver.FixedIsometryRep.fluct_map
+#print axioms Integration.StructuredObserver.FixedIsometryRep.area2_map
+#print axioms Integration.StructuredObserver.SymmetryResolvedObserver.nondegeneracy_pos
+#print axioms Integration.StructuredObserver.SymmetryResolvedObserver.nondegeneracy_invariant
+#print axioms Integration.StructuredObserver.SymmetryResolvedObserver.symmetry_resolved_theorem
+#print axioms Integration.StructuredObserver.kernelReduction
+#print axioms Integration.StructuredObserver.kernelReduction_action_nontrivial
+#print axioms Integration.StructuredObserver.ssp369Observer
+#print axioms Integration.StructuredObserver.ssp369_theorem
+#print axioms Integration.StructuredObserver.ssp369_residual_nontrivial
+#print axioms Integration.StructuredObserver.polar6_no_equivariant_action
+#print axioms Integration.StructuredObserver.polarResultReduction
+#print axioms Integration.StructuredObserver.equivariant_reduction_plus_residual
+
+-- The order-three instance, and its identification with the spine's ℝ[C₃]
+#print axioms Integration.StructuredObserver.actWheel_order_three
+#print axioms Integration.StructuredObserver.wheelReduction
+#print axioms Integration.StructuredObserver.wheelObserver
+#print axioms Integration.StructuredObserver.wheel_theorem
+#print axioms Integration.StructuredObserver.phaseEmbed_rot
+#print axioms Integration.StructuredObserver.wheel_no_invariant_line
+#print axioms Integration.StructuredObserver.wheel_c3_summary
+
+-- Towers: the hierarchy composes
+#print axioms Integration.ObserverTower.compQuotient
+#print axioms Integration.ObserverTower.towerOf
+#print axioms Integration.ObserverTower.tower_nondegeneracy
+#print axioms Integration.ObserverTower.tower_theorem
+#print axioms Integration.ObserverTower.tower_card_bound
+#print axioms Integration.ObserverTower.magnitudeStep
+#print axioms Integration.ObserverTower.magnitudeStep_proper
+#print axioms Integration.ObserverTower.sspTower
+#print axioms Integration.ObserverTower.sspTower_theorem
+#print axioms Integration.ObserverTower.sspTower_cards
+#print axioms Integration.ObserverTower.sspTower_residual_grows
+
+-- Descent of the transverse certificate to the visible layer
+#print axioms Integration.ObserverDescent.nondegeneracy_descends
+#print axioms Integration.ObserverDescent.certificate_is_coarse_observable
+#print axioms Integration.ObserverDescent.wheel_orbitFibred
+#print axioms Integration.ObserverDescent.wheel_certificate_descends
+#print axioms Integration.ObserverDescent.ssp369_not_orbit_fibred
+
+-- Finite physics lanes as instances of the welded schema
+#print axioms Integration.Physics369.axisLiftDoubleCover
+#print axioms Integration.Physics369.axisLiftObserver
+#print axioms Integration.Physics369.axisLift_theorem
+#print axioms Integration.Physics369.axisLift_residual_nontrivial
+#print axioms Integration.Physics369.matrixSlotNonary
+#print axioms Integration.Physics369.matrixSlot_no_canonical_phase_cell
+#print axioms Integration.Physics369.stage3NonaryChart
+#print axioms Integration.Physics369.stage3SixChart
+#print axioms Integration.Physics369.nsStage3Observer
+#print axioms Integration.Physics369.nsStage3_theorem
+#print axioms Integration.Physics369.physics_actions_factor_through_sign
+#print axioms Integration.Physics369.physics_instances_summary
+
+-- The registry itself
+#print axioms Integration.Registry.registry
+#print axioms Integration.Registry.registry_levels
+#print axioms Integration.Registry.boundaries
+#print axioms Integration.Registry.sockets
+
+-- Gauge reduction: quotient the redundancy, keep the effective symmetry
+#print axioms Integration.Gauge.GaugeReduction.gauge_invariant
+#print axioms Integration.Gauge.GaugeReduction.toEquivariantQuotient
+#print axioms Integration.Gauge.GaugeReduction.coarse_action_trivial_of_orbit
+#print axioms Integration.Gauge.GaugeReduction.effective_not_orbit_quotient
+#print axioms Integration.Gauge.GaugeReduction.redundant_iff_gauge
+#print axioms Integration.Gauge.GaugeReduction.compGauge
+#print axioms Integration.Gauge.GaugeReduction.compGauge_invisible_of_mid_gauge
+#print axioms Integration.Gauge.GaugeReduction.compGauge_redundant_iff
+#print axioms Integration.Gauge.GaugeReduction.residual_nontrivial_of_card
+
+-- Equivariant transverse channels
+#print axioms Integration.EquivariantChannel.EqObserverBuild.channelVec_equivariant
+#print axioms Integration.EquivariantChannel.EqObserverBuild.toObserver
+
+-- The welded gauge theorem and its finite SU(2)-pattern instance
+#print axioms Integration.GaugeObserver.gauge_welded_theorem
+#print axioms Integration.GaugeSU2.gaugeDatum_exact
+#print axioms Integration.GaugeSU2.su2GaugeReduction
+#print axioms Integration.GaugeSU2.su2_effective
+#print axioms Integration.GaugeSU2.su2_not_orbit_quotient
+#print axioms Integration.GaugeSU2.su2_redundant_iff_gauge
+#print axioms Integration.GaugeSU2.sheet_is_deck_transformation
+#print axioms Integration.GaugeSU2.su2GaugeObserver
+#print axioms Integration.GaugeSU2.su2_gauge_theorem
+#print axioms Integration.GaugeSU2.su2_welded
+
+-- Descent levels: the coarsest sufficient observation
+#print axioms Integration.DescentLevel.LayerTower.factorsAt_of_le
+#print axioms Integration.DescentLevel.LayerTower.factorsAt_iff_fibre
+#print axioms Integration.DescentLevel.LayerTower.coarsest_unique
+#print axioms Integration.DescentLevel.LayerTower.exists_coarsest
+#print axioms Integration.DescentLevel.factorsAt_one_of_orbitFibred
+#print axioms Integration.DescentLevel.cert_mid
+#print axioms Integration.DescentLevel.cert_high
+#print axioms Integration.DescentLevel.cert_factorsAt_one
+#print axioms Integration.DescentLevel.cert_not_factorsAt_two
+#print axioms Integration.DescentLevel.axis_coarsest_sufficient
+#print axioms Integration.DescentLevel.axis_coarsest_unique
+#print axioms Integration.DescentLevel.factorsAt_all_of_transitive
+#print axioms Integration.DescentLevel.su2_cert_constant
+#print axioms Integration.DescentLevel.su2_cert_factorsAt
+#print axioms Integration.DescentLevel.su2_no_coarsest
+
+-- The SSP lane as a gauge reduction
+#print axioms Integration.GaugeSSP.sspDatum_exact
+#print axioms Integration.GaugeSSP.sspGaugeReduction
+#print axioms Integration.GaugeSSP.ssp_effective
+#print axioms Integration.GaugeSSP.ssp_redundant_iff_gauge
+#print axioms Integration.GaugeSSP.wheel_vs_gauge
+#print axioms Integration.GaugeSSP.sspGaugeObserver
+#print axioms Integration.GaugeSSP.ssp_gauge_theorem
+#print axioms Integration.GaugeSSP.ssp_welded
+
+-- Presentation independence of the certificate
+#print axioms Integration.EnumInvariance.area2_permVec
+#print axioms Integration.EnumInvariance.nondegeneracy_reindex
+#print axioms Integration.EnumInvariance.nondegeneracy_reindex'
+#print axioms Integration.EnumInvariance.certificate_presentation_independent
+#print axioms Integration.EnumInvariance.det_gram_reindex
+
+-- Composite gauge redundancy as a subgroup
+#print axioms Integration.Gauge.compGaugeQuotient
+#print axioms Integration.Gauge.compGaugeQuotient_exact
+#print axioms Integration.Gauge.preimage_inv_mem
+#print axioms Integration.Gauge.preimage_normal
+#print axioms Integration.Gauge.compGaugeExact_redundant_iff
+
+-- Sufficiency and least sufficient observers
+#print axioms Integration.LeastSufficient.sufficient_iff_refines
+#print axioms Integration.LeastSufficient.canonical_least
+#print axioms Integration.LeastSufficient.coarsest_iff_last_refining
+#print axioms Integration.LeastSufficient.exists_coarsestBelow
+#print axioms Integration.LeastSufficient.coarsest_of_coarsestBelow
+#print axioms Integration.LeastSufficient.axis_coarsestBelow
+#print axioms Integration.LeastSufficient.su2_coarsestBelow
+
+-- Orbit–stabilizer residual bound
+#print axioms Integration.OrbitResidual.residual_injOn_fibre
+#print axioms Integration.OrbitResidual.card_orbit_le_card_residual
+#print axioms Integration.OrbitResidual.index_stabilizer_le_card_residual
+#print axioms Integration.OrbitResidual.cosetResidual_injective
+#print axioms Integration.OrbitResidual.card_group_le_card_residual
+
+-- Certificates paying for defects
+#print axioms Integration.CertificatePays.sum_defect_le_of_budget
+#print axioms Integration.CertificatePays.sites_le_of_budget
+#print axioms Integration.CertificatePays.weighted_budget_not_uniform
+#print axioms Integration.CertificatePays.exists_certificate_floor
+#print axioms Integration.CertificatePays.welded_sites_le_of_budget
+
+-- Closed form of the certificate, and the SSP threshold
+#print axioms Integration.CertificateFormula.area2_read_indicator
+#print axioms Integration.CertificateFormula.nondegeneracy_eq
+#print axioms Integration.CertificateFormula.nondegeneracy_eq_of_card_eq
+#print axioms Integration.SSPThreshold.ssp_cert_constant
+#print axioms Integration.SSPThreshold.ssp_no_threshold
+#print axioms Integration.SSPThreshold.sspZero_cert_zero
+#print axioms Integration.SSPThreshold.sspZero_cert_nonzero
+#print axioms Integration.SSPThreshold.sspZero_coarsest_sufficient
+#print axioms Integration.SSPThreshold.ssp_threshold_dichotomy
+#print axioms Integration.SSPThreshold.sspZero_coarsest_strictly_finer
+#print axioms Integration.LeastSufficient.coarsest_equivalent_canonical
+#print axioms Integration.LeastSufficient.coarsest_strictly_finer
+
+-- Exact and approximate intertwiners
+#print axioms Integration.ApproximateIntertwiner.approx_of_exact
+#print axioms Integration.ApproximateIntertwiner.approx_comp
+#print axioms Integration.ApproximateIntertwiner.approx_iterate
+#print axioms Integration.ApproximateIntertwiner.certificate_intertwiner
+
+-- Invariant / equivariant / gauge-sensitive consumers
+#print axioms Integration.ConsumerGauge.invariant_iff_not_sensitive
+#print axioms Integration.ConsumerGauge.exists_factor_of_invariant
+#print axioms Integration.ConsumerGauge.invariant_of_orbit_consumer
+#print axioms Integration.ConsumerGauge.gauge_consumer_invariant
+#print axioms Integration.ConsumerGauge.red_equivariant
+#print axioms Integration.ConsumerGauge.ssp_consumer_trichotomy
+
+-- One owner for the commuting square: exact / approximate / sound / dynamic / gauge
+#print axioms Integration.StructureMorphism.tier_exact_le_approx
+#print axioms Integration.StructureMorphism.exact_iterate
+#print axioms Integration.StructureMorphism.exact_reaches
+#print axioms Integration.StructureMorphism.sound_iff_factors
+#print axioms Integration.StructureMorphism.sound_transport
+#print axioms Integration.StructureMorphism.not_sound_of_collision
+#print axioms Integration.StructureMorphism.gauge_of_gaugeReduction
+#print axioms Integration.StructureMorphism.gauge_of_equivariantQuotient
+#print axioms Integration.StructureMorphism.approx_of_gauge
+#print axioms Integration.StructureMorphism.structure_morphism_unification
+
+-- Continuous U(1) phase gauge instance
+#print axioms Integration.PhaseGaugeU1.norm_invariant
+#print axioms Integration.PhaseGaugeU1.state_equivariant
+#print axioms Integration.PhaseGaugeU1.arg_sensitive
+#print axioms Integration.PhaseGaugeU1.u1_consumer_trichotomy
+#print axioms Integration.PhaseGaugeU1.norm_complete_invariant
+#print axioms Integration.PhaseGaugeU1.reopen_phase
+#print axioms Integration.PhaseGaugeU1.no_retraction_without_residual
+#print axioms Integration.PhaseGaugeU1.phaseGauge_structureMorphism
+
+-- Certified margin, relative defect and the normalisation gate
+#print axioms Integration.CertifiedMargin.margin_pos
+#print axioms Integration.CertifiedMargin.relDefect_lt_one_iff
+#print axioms Integration.CertifiedMargin.contraction_of_le_eta
+#print axioms Integration.CertifiedMargin.nogo_of_one_le_relDefect
+#print axioms Integration.CertifiedMargin.eventually_contractive_of_tendsto_zero
+#print axioms Integration.CertifiedMargin.not_eventually_contractive_of_eventually_one_le
+#print axioms Integration.CertifiedMargin.compensated_isLittleO
+#print axioms Integration.CertifiedMargin.normalization_gate
+#print axioms Integration.CertifiedMargin.normalization_is_part_of_the_theorem
+
+-- Commutator observability: fine noncommutativity with coarse flatness
+#print axioms Integration.CommutatorObservability.coarseFlat_of_exact_pair
+#print axioms Integration.CommutatorObservability.hidden_order_information
+#print axioms Integration.CommutatorObservability.no_reconstruction_of_order
+#print axioms Integration.CommutatorObservability.cubie_hidden_order
+#print axioms Integration.CommutatorObservability.commutator_defect_pos
+#print axioms Integration.CommutatorObservability.coarse_defect_zero
+#print axioms Integration.CommutatorObservability.cubie_coarsest_sufficient
+
+-- Multiscale law descent through a tower of observers
+#print axioms Integration.MultiscaleDescent.LawTower.descendsAt_iff_exact
+#print axioms Integration.MultiscaleDescent.LawTower.trajectory_descends
+#print axioms Integration.MultiscaleDescent.approx_descends_two
+#print axioms Integration.MultiscaleDescent.defect_descends_at_zero
+#print axioms Integration.MultiscaleDescent.defect_no_effective_law_at_one
+
+-- Paths, simulations and proof transport
+#print axioms Integration.PathTransport.path_transport
+#print axioms Integration.PathTransport.simulation_of_exact
+#print axioms Integration.PathTransport.mono_le_of_path
+#print axioms Integration.PathTransport.persistent_obstruction
+#print axioms Integration.PathTransport.provable_transport
+#print axioms Integration.PathTransport.provable_sound_of_simulation
+
+-- Typed residual taxonomy
+#print axioms Integration.ResidualTaxonomy.reconstructive_injective
+#print axioms Integration.ResidualTaxonomy.reconstructive_of_residualQuotient
+#print axioms Integration.ResidualTaxonomy.trajectory_obstruction
+#print axioms Integration.ResidualTaxonomy.contrast_not_function_of_present
+#print axioms Integration.ResidualTaxonomy.resolve_eq_none_of_disagree
+#print axioms Integration.ResidualTaxonomy.combinatorial_residual_exact
+#print axioms Integration.ResidualTaxonomy.trajectory_not_reconstructive
+#print axioms Integration.ResidualTaxonomy.contrastive_not_reconstructive
+
+-- Equivariance obstructions from orbit data
+#print axioms Integration.EquivarianceObstruction.no_equivariant_of_free_and_fixed
+#print axioms Integration.EquivarianceObstruction.card_equal_but_not_equivariantly_equivalent
+#print axioms Integration.EquivarianceObstruction.translation_free_group
+#print axioms Integration.EquivarianceObstruction.no_equivariant_free_shift_to_ramified
+
+-- Semantic reduction is not computational locality
+#print axioms Integration.LocalRealisation.semantic_parity_not_bounded_exposure
+#print axioms Integration.LocalRealisation.exposure_unbounded
+#print axioms Integration.LocalRealisation.localRealisation_transfers
+#print axioms Integration.LocalRealisation.no_localRealisation_from_semantics_alone
+
+-- Field-controlled effective dynamics and attractor classes
+#print axioms Integration.FieldControlledDynamics.field_changes_successor
+#print axioms Integration.FieldControlledDynamics.field_changes_effective_edge
+#print axioms Integration.FieldControlledDynamics.structural_edge_insufficient
+#print axioms Integration.FieldControlledDynamics.field_changes_reachability
+#print axioms Integration.FieldControlledDynamics.eventually_periodic
+#print axioms Integration.FieldControlledDynamics.threeClass_classes
+
+-- Base + fibre + transport + measurement bundle
+#print axioms Integration.ObserverBundle.measured_of_factors
+#print axioms Integration.ObserverBundle.not_measured_of_collision
+#print axioms Integration.ObserverBundle.pullbackDist_le_of_nonexpansive
+#print axioms Integration.ObserverBundle.coarse_zero_fine_distinct
+
+-- Contrast operator and two-boundary constraint system
+#print axioms Integration.ContrastBoundary.state_add_contrasts
+#print axioms Integration.ContrastBoundary.contrast_not_determined_by_state
+#print axioms Integration.ContrastBoundary.middles_depends_on_future
+#print axioms Integration.ContrastBoundary.middles_depends_on_past
+#print axioms Integration.ContrastBoundary.middles_not_function_of_past
+
+-- Sewing round: the seven-class taxonomy and its registry
+#print axioms Integration.SewingRegistry.no_row_claims_agda_typechecked
+#print axioms Integration.SewingRegistry.every_row_has_boundary
+#print axioms Integration.SewingRegistry.no_branch_only_rows
+#print axioms Integration.SewingRegistry.every_row_lean_built
+#print axioms Integration.SewingRegistry.kinds_exercised
+#print axioms Integration.SewingRegistry.negatives_and_sockets_dominate
+#print axioms Integration.SewingTaxonomy.identifiesCarriers_iff
+#print axioms Integration.SewingTaxonomy.toBridgeLevel_eq_none_iff
+
+-- Ontology lane: the epistemic trit
+#print axioms Integration.Ontology.agree_eq_ifEq
+#print axioms Integration.Ontology.agree_no_identity
+#print axioms Integration.Ontology.agree_polarity_equivariant
+#print axioms Integration.Ontology.agree_not_add
+#print axioms Integration.Ontology.agree_not_mul
+#print axioms Integration.Ontology.no_polarity_equivariant_forcing
+#print axioms Integration.Ontology.forcing_not_injective
+#print axioms Integration.EquivarianceObstruction.no_equivariant_map_of_fixed_to_free
+
+-- Biology/DNA lane: the chemistry margin
+#print axioms Integration.DNAMarginTrit.marginPolarity_unique
+#print axioms Integration.DNAMarginTrit.no_injection_arity_to_margin
+#print axioms Integration.DNAMarginTrit.sheetFlags_underdetermined
+
+-- Education lane
+#print axioms Integration.EducationGates.isEmpty_of_gate_empty
+#print axioms Integration.EducationGates.sixOfSeven_no_witness
+#print axioms Integration.EducationGates.metric_governance_fail_closed
+#print axioms Integration.EducationGates.value_multiplyRate
+#print axioms Integration.EducationGates.overlap_lt_marginals
+#print axioms Integration.EducationGates.rate_value_not_injective
+#print axioms Integration.EducationGates.twentyOne_not_first_order
+#print axioms Integration.EducationGates.overlapCount_approx
+
+-- Alice Brown multi-observer lane
+#print axioms Integration.ObserverPlurality.not_refines_of_collapse
+#print axioms Integration.ObserverPlurality.no_projection_faithful
+#print axioms Integration.ObserverPlurality.student_parent_incomparable
+#print axioms Integration.ObserverPlurality.pairwise_incomparable_core
+#print axioms Integration.ObserverPlurality.model_incomparable_with_each
+#print axioms Integration.ObserverPlurality.plurality_jointly_faithful
+
+-- Governance lane
+#print axioms Integration.GovernanceAgency.emptyPromotion_proves_everything
+#print axioms Integration.GovernanceAgency.agency_not_determined_by_formalOption
+#print axioms Integration.GovernanceAgency.surface_fields_independent
+#print axioms Integration.GovernanceAgency.boundary_record_unconstrained
+
+-- Chemistry lane
+#print axioms Integration.ChemistryKernelSocket.kernel_fail_closed
+#print axioms Integration.ChemistryKernelSocket.goalReachable_underdetermined
+#print axioms Integration.ChemistryKernelSocket.flag_determined_of_sound
+#print axioms Integration.ChemistryKernelSocket.flagSound_not_automatic
+
+-- Loom relation algebra (sewing-round additions)
+#print axioms AgdaMirror.Loom.typedRelationEquiv
+#print axioms AgdaMirror.Loom.classifiers_determined
+#print axioms AgdaMirror.Loom.promotion_not_determined_by_relationType
+#print axioms AgdaMirror.Loom.evidence_not_determined_by_relationType
+#print axioms AgdaMirror.Loom.precedence_is_permutation
+#print axioms AgdaMirror.Loom.relationRootFor_surjective
+#print axioms AgdaMirror.Loom.relationRootFor_not_injective
+
+-- Sewing registry meta-theorems
+#print axioms Integration.SewingRegistry.no_row_claims_agda_typechecked
+#print axioms Integration.SewingRegistry.every_row_has_boundary
+#print axioms Integration.SewingRegistry.no_branch_only_rows
+#print axioms Integration.SewingRegistry.every_row_lean_built
+#print axioms Integration.SewingRegistry.kinds_exercised
+#print axioms Integration.SewingRegistry.registry_length
+#print axioms Integration.SewingRegistry.negatives_and_sockets_dominate
+
+-- Chemistry reachability: the discharged bridge
+#print axioms Integration.ChemistryReachability.reachB_sound
+#print axioms Integration.ChemistryReachability.reachB_complete_of_fixpoint
+#print axioms Integration.ChemistryReachability.reachB_iff_of_fixpoint
+#print axioms Integration.ChemistryReachability.cstepSaturates
+#print axioms Integration.ChemistryReachability.cstep_not_reaches_three
+#print axioms Integration.ChemistryReachability.chemistryFlagSound
+#print axioms Integration.ChemistryReachability.chemistryFlag_determined
+#print axioms Integration.ChemistryReachability.correctlyPopulated_nonempty
+#print axioms Integration.ChemistryReachability.correctness_restriction_is_needed
+
+-- Ternary hub closure
+#print axioms Integration.TernaryHubClosure.ternaryHub_of_involution
+#print axioms Integration.TernaryHubClosure.ternaryHub_two_coordinates
+#print axioms Integration.TernaryHubClosure.ternaryHub_not_unique
+#print axioms Integration.TernaryHubClosure.epistemicTrit_hub_from_closure
+#print axioms Integration.TernaryHubClosure.chemistryMargin_hub_from_closure
+#print axioms Integration.TernaryHubClosure.six_carriers_from_closure
+
+-- Coordinate sufficiency: the generic product-state owner
+#print axioms Integration.CoordinateSufficiency.determines_iff_refines
+#print axioms Integration.CoordinateSufficiency.not_determines_of_collision
+#print axioms Integration.CoordinateSufficiency.essential_iff_not_factorsOn_compl
+#print axioms Integration.CoordinateSufficiency.essential_mem_of_factorsOn
+#print axioms Integration.CoordinateSufficiency.factorsOn_essentialSet
+#print axioms Integration.CoordinateSufficiency.factorsOn_iff_essentialSet_subset
+#print axioms Integration.CoordinateSufficiency.essentialSet_unique_least
+#print axioms Integration.CoordinateSufficiency.essentialSet_not_sufficient_infinite
+#print axioms Integration.CoordinateSufficiency.separable_rectangle
+#print axioms Integration.CoordinateSufficiency.dependence_ne_interaction
+#print axioms Integration.CoordinateSufficiency.no_sample_statistic_separates
+#print axioms Integration.CoordinateSufficiency.aggregation_destroys_distinction
+#print axioms Integration.CoordinateSufficiency.join_least
+
+-- Context-indexed roles and the corpus's own non-factorability owner
+#print axioms Integration.ContextIndexedRole.witness_rules_out_every_factorisation
+#print axioms Integration.ContextIndexedRole.factorsThrough_iff_determines
+#print axioms Integration.ContextIndexedRole.flat_reweighting_cannot_repair
+#print axioms Integration.ContextIndexedRole.not_determines_of_downstream
+#print axioms Integration.ContextIndexedRole.context_not_eliminable_of_split
+#print axioms Integration.ContextIndexedRole.role_not_context_free
+#print axioms Integration.ContextIndexedRole.access_all_essential
+#print axioms Integration.ContextIndexedRole.access_only_full_is_sufficient
+#print axioms Integration.ContextIndexedRole.access_pair_not_separable
+
+-- Approximate multiscale naturality, generalised to the whole tower
+#print axioms Integration.ApproximateTower.exact_as_approximate
+#print axioms Integration.ApproximateTower.accumulate_two_errors
+#print axioms Integration.ApproximateTower.approx_descends_projTo
+#print axioms Integration.ApproximateTower.approx_descends_of_globalBound
+#print axioms Integration.ApproximateTower.approx_descends_zero_of_exact
+#print axioms Integration.ApproximateTower.approximate_is_strictly_weaker
+
+-- Descent versus locality
+#print axioms Integration.KernelRenormalisation.trajectories_descend
+#print axioms Integration.KernelRenormalisation.pooling_commutes
+#print axioms Integration.KernelRenormalisation.pooling_destroys_locality
+#print axioms Integration.KernelRenormalisation.forgetful_no_coarse_law
+#print axioms Integration.KernelRenormalisation.descent_and_locality_independent
+
+-- The corpus's own coarse projection
+#print axioms Integration.NeuralObservation.fmri_collision
+#print axioms Integration.NeuralObservation.variation_not_determined
+#print axioms Integration.NeuralObservation.variation_coords_essential
+#print axioms Integration.NeuralObservation.fmri_pullbackDist_zero
+#print axioms Integration.NeuralObservation.no_effective_transport
+#print axioms Integration.NeuralObservation.neural_no_effective_law
+#print axioms Integration.NeuralObservation.phase_not_determined
+#print axioms Integration.NeuralObservation.phase_information_destroyed_not_absent
+
+-- Stateful transducers as field-controlled dynamics
+#print axioms Integration.StatefulTransducer.field_changes_successor_of_split
+#print axioms Integration.StatefulTransducer.canonical_field_separation
+#print axioms Integration.StatefulTransducer.canonical_output_all_essential
+#print axioms Integration.StatefulTransducer.canonical_output_not_input_only
+#print axioms Integration.StatefulTransducer.attractor_class_depends_on_field
+#print axioms Integration.StatefulTransducer.delayed_store_then_release
+#print axioms Integration.StatefulTransducer.pending_is_a_residual
+#print axioms Integration.StatefulTransducer.quantitative_field_separation
+
+-- The cell/bioelectric lane
+#print axioms Integration.CellDynamics.chemical_modulation_changes_update
+#print axioms Integration.CellDynamics.update_all_coordinates_essential
+#print axioms Integration.CellDynamics.update_not_state_only
+#print axioms Integration.CellDynamics.pattern_no_effective_law
+#print axioms Integration.CellDynamics.basin_forward_invariant
+#print axioms Integration.CellDynamics.attractor_depends_on_environment
+#print axioms Integration.CellDynamics.attractor_not_identity
+#print axioms Integration.CellDynamics.modeSelection_trivially_inhabited
+
+-- The holonomy socket
+#print axioms Integration.HolonomySocket.flags_underdetermined
+#print axioms Integration.HolonomySocket.phaseDefect_flag_is_free
+#print axioms Integration.HolonomySocket.observed_defect_implies_defect
+#print axioms Integration.HolonomySocket.defect_can_be_invisible
+#print axioms Integration.HolonomySocket.owner_is_ready
+
+-- Selective decisions: three-way verdicts with abstention
+#print axioms Integration.SelectiveDecision.resolve_not_injective_of_default_collision
+#print axioms Integration.SelectiveDecision.verdict_not_determined_of_default_collision
+#print axioms Integration.SelectiveDecision.abstention_is_reachable_iff
+#print axioms Integration.SelectiveDecision.corpus_thresholds_admit_no_abstention
+#print axioms Integration.SelectiveDecision.widened_thresholds_admit_abstention
+#print axioms Integration.SelectiveDecision.clamp9_not_determines
+#print axioms Integration.SelectiveDecision.abstention_compiles_to_hold
+#print axioms Integration.SelectiveDecision.compile_never_flattens
+#print axioms Integration.SelectiveDecision.action_does_not_determine_direction
+#print axioms Integration.SelectiveDecision.action_does_not_determine_abstention
+#print axioms Integration.SelectiveDecision.direction_essential_only_when_not_abstaining
+#print axioms Integration.SelectiveDecision.abstention_preserves_exposure
+#print axioms Integration.SelectiveDecision.exposure_does_not_determine_abstention
+
+-- Interventions, responses and counterfactual effects
+#print axioms Integration.CounterfactualEffect.not_determines_post_of_pre
+#print axioms Integration.CounterfactualEffect.not_homogeneous_of_split
+#print axioms Integration.CounterfactualEffect.contrast_treat
+#print axioms Integration.CounterfactualEffect.contrast_not_homogeneous
+#print axioms Integration.CounterfactualEffect.observation_not_intervention
+#print axioms Integration.CounterfactualEffect.level_not_determines_post
+#print axioms Integration.CounterfactualEffect.intervention_can_reverse_ordering
+#print axioms Integration.CounterfactualEffect.label_not_determines_effect
+#print axioms Integration.CounterfactualEffect.same_intervention_different_effect
+#print axioms Integration.CounterfactualEffect.intervention_label_cannot_determine_effect
+#print axioms Integration.CounterfactualEffect.observed_position_cannot_determine_effect
+#print axioms Integration.CounterfactualEffect.counterfactual_determines_effect
+#print axioms Integration.CounterfactualEffect.effect_essential_set
+#print axioms Integration.CounterfactualEffect.observed_group_cannot_determine_individual_effect
+
+-- Multi-objective outcomes
+#print axioms Integration.ParetoOutcome.noWorse_direction
+#print axioms Integration.ParetoOutcome.dominates_irrefl
+#print axioms Integration.ParetoOutcome.dominates_asymm
+#print axioms Integration.ParetoOutcome.dominates_trans
+#print axioms Integration.ParetoOutcome.incomparable_pair
+#print axioms Integration.ParetoOutcome.dominates_example
+#print axioms Integration.ParetoOutcome.no_coordinate_determines_dominance
+#print axioms Integration.ParetoOutcome.total_not_determines_outcome
+#print axioms Integration.ParetoOutcome.scalarisation_invents_order
+#print axioms Integration.ParetoOutcome.separation_flags_underdetermined
+
+-- Reachability relative to a declared action language
+#print axioms Integration.ReachabilityBarrier.executes_implies_reachable
+#print axioms Integration.ReachabilityBarrier.reachable_trans
+#print axioms Integration.ReachabilityBarrier.reachable_of_weaker_precondition
+#print axioms Integration.ReachabilityBarrier.not_reachable_of_invariant
+#print axioms Integration.ReachabilityBarrier.barrier_is_language_relative
+#print axioms Integration.ReachabilityBarrier.unreachability_never_survives_extension
+#print axioms Integration.ReachabilityBarrier.converse_fails
+
+-- Marginalisation and interaction
+#print axioms Integration.Marginalisation.separable_contrast_weight_invariant
+#print axioms Integration.Marginalisation.interaction_contrast_can_reverse
+#print axioms Integration.Marginalisation.reversal_implies_interaction
+#print axioms Integration.Marginalisation.parityQ_not_separable
+#print axioms Integration.Marginalisation.pooled_reversal
+#print axioms Integration.Marginalisation.pooling_weights_differ
+#print axioms Integration.Marginalisation.common_weights_no_reversal
+
+-- Declared carriers
+#print axioms Integration.DeclaredCarrier.universal_of_exhaustive
+#print axioms Integration.DeclaredCarrier.exterior_witness_refutes_exhaustion
+#print axioms Integration.DeclaredCarrier.sample_exhaustive_on_declared
+#print axioms Integration.DeclaredCarrier.sample_not_exhaustive_ambient
+#print axioms Integration.DeclaredCarrier.verified_not_universal
+#print axioms Integration.DeclaredCarrier.exhaustion_flag_is_free
+#print axioms Integration.DeclaredCarrier.determinesOn_of_determines
+#print axioms Integration.DeclaredCarrier.determinesOn_not_determines
+
+-- The Level-II spine: consumer-indexed realisation and adequacy
+#print axioms Integration.RealisationAdequacy.realisationAdequate_of_adequateFor
+#print axioms Integration.RealisationAdequacy.representationAdequate_of_realisationAdequate
+#print axioms Integration.RealisationAdequacy.adequate_chain
+#print axioms Integration.RealisationAdequacy.adequate_of_finer_observation
+#print axioms Integration.RealisationAdequacy.representation_not_realisation
+#print axioms Integration.RealisationAdequacy.realisation_not_consumer
+#print axioms Integration.RealisationAdequacy.adequateFor_not_transfers
+#print axioms Integration.RealisationAdequacy.adequateOn_of_adequateFor
+#print axioms Integration.RealisationAdequacy.adequate_of_adequateOn_exhaustive
+#print axioms Integration.RealisationAdequacy.adequateOn_not_adequate
+#print axioms Integration.RealisationAdequacy.small_not_exhaustive
+#print axioms Integration.RealisationAdequacy.adequateFor_of_exhaustiveFamily
+#print axioms Integration.RealisationAdequacy.adequateGlobally_not_universal
+#print axioms Integration.RealisationAdequacy.flag_does_not_give_exhaustive
+#print axioms Integration.RealisationAdequacy.exhaustive_flag_free
+#print axioms Integration.RealisationAdequacy.upgrade_needs_evidence_not_a_flag
+
+-- The Level-II spine: the collision owner and its four families
+#print axioms Integration.FactorisationCollision.Collision.not_determines
+#print axioms Integration.FactorisationCollision.Collision.not_refines
+#print axioms Integration.FactorisationCollision.Collision.no_reading
+#print axioms Integration.FactorisationCollision.Collision.projection_not_injective
+#print axioms Integration.FactorisationCollision.Collision.consumer_not_constant
+#print axioms Integration.FactorisationCollision.nonempty_collision_of_not_injective
+#print axioms Integration.FactorisationCollision.sum_not_injective
+#print axioms Integration.FactorisationCollision.nonempty_collision_of_essential
+#print axioms Integration.FactorisationCollision.essential_of_deleteCoord_collision
+#print axioms Integration.FactorisationCollision.scalarise_not_determines
+#print axioms Integration.FactorisationCollision.scalarise_post_not_determines
+#print axioms Integration.FactorisationCollision.marginal_not_determines
+#print axioms Integration.FactorisationCollision.four_families_one_owner
+
+-- The Level-II spine: interaction and non-separability
+#print axioms Integration.SeparabilityContrast.separable_marginal
+#print axioms Integration.SeparabilityContrast.separable_contrast_invariant
+#print axioms Integration.SeparabilityContrast.not_separable_of_contrast_ne
+#print axioms Integration.SeparabilityContrast.not_separable_of_contrast_reversal
+#print axioms Integration.SeparabilityContrast.separable_no_reversal
+#print axioms Integration.SeparabilityContrast.separable_iff_rectangle
+#print axioms Integration.SeparabilityContrast.marginalisation_contrast_is_instance
+#print axioms Integration.SeparabilityContrast.marginalisation_invariance_is_instance
+#print axioms Integration.SeparabilityContrast.simpsonInstance
+#print axioms Integration.SeparabilityContrast.thresholdInstance
+#print axioms Integration.SeparabilityContrast.productInstance
+#print axioms Integration.SeparabilityContrast.three_shapes_one_owner
+
+-- The Level-II spine: language-indexed reachability
+#print axioms Integration.LanguageReachability.reachableIn_trans
+#print axioms Integration.LanguageReachability.reachableIn_mono
+#print axioms Integration.LanguageReachability.not_reachableIn_of_invariant
+#print axioms Integration.LanguageReachability.not_reachable_evenOnly
+#print axioms Integration.LanguageReachability.reachable_allActions
+#print axioms Integration.LanguageReachability.notReachable_not_antitone
+#print axioms Integration.LanguageReachability.unreachability_does_not_transfer
+#print axioms Integration.LanguageReachability.barrier_needs_the_language
+#print axioms Integration.LanguageReachability.BarrierReport.not_reachable
+
+-- The welds
+#print axioms Integration.LevelIIWelds.weld_reconstruction_instance
+#print axioms Integration.LevelIIWelds.weld_reconstruction_loss_is_at_realisation
+#print axioms Integration.LevelIIWelds.weld_mediator_bridge
+#print axioms Integration.LevelIIWelds.weld_mediator_instance
+#print axioms Integration.LevelIIWelds.weld_threshold_bridge
+#print axioms Integration.LevelIIWelds.weld_threshold_instance
+#print axioms Integration.LevelIIWelds.weld_product_instance
+#print axioms Integration.LevelIIWelds.exposureOf_surjective
+#print axioms Integration.LevelIIWelds.weld_hidden_coordinate_essential
+#print axioms Integration.LevelIIWelds.weld_hidden_deletion
+#print axioms Integration.LevelIIWelds.weld_pareto_scalarisation
+#print axioms Integration.LevelIIWelds.weld_scalar_descent_is_not_dominance
+#print axioms Integration.LevelIIWelds.weld_action_not_invertible
+#print axioms Integration.LevelIIWelds.weld_action_readout
+#print axioms Integration.LevelIIWelds.weld_atlas_bridge
+#print axioms Integration.LevelIIWelds.weld_atlas_flag_is_not_evidence
+#print axioms Integration.LevelIIWelds.weld_counter_is_language_indexed
+#print axioms Integration.LevelIIWelds.weld_reachability_monotone
+#print axioms Integration.LevelIIWelds.weld_unreachability_negative
+#print axioms Integration.LevelIIWelds.welds_are_owner_applications
+
+-- The registry census, machine-checked
+#print axioms Integration.SewingRegistry.kinds_exercised
+#print axioms Integration.SewingRegistry.registry_length
+#print axioms Integration.SewingRegistry.census_total
+#print axioms Integration.SewingRegistry.negatives_and_sockets_dominate
+#print axioms Integration.SewingRegistry.negatives_and_sockets_majority
+
+-- The pipeline owner: a collision at one stage is never repaired downstream
+#print axioms Integration.PipelineAdequacy.collision_propagates
+#print axioms Integration.PipelineAdequacy.no_downstream_determination
+#print axioms Integration.PipelineAdequacy.no_downstream_repair
+#print axioms Integration.PipelineAdequacy.no_computation_repair
+#print axioms Integration.PipelineAdequacy.representationRepair_exists
+#print axioms Integration.PipelineAdequacy.repair_dichotomy
+#print axioms Integration.PipelineAdequacy.repair_dichotomy_downstream
+#print axioms Integration.PipelineAdequacy.not_adequateFor_of_state_collision
+#print axioms Integration.PipelineAdequacy.pipeline_adequacy_lost_at_realisation
+
+-- The corpus kernels are the collision owner
+#print axioms Integration.SourceExactWelds.collisionOfNonFactorability
+#print axioms Integration.SourceExactWelds.collisionOfConsumerDescentDefect
+#print axioms Integration.SourceExactWelds.kernelWitnessEquiv
+#print axioms Integration.SourceExactWelds.kernelTransport
+#print axioms Integration.SourceExactWelds.determines_of_factorsThrough
+#print axioms Integration.SourceExactWelds.nonempty_factorsThrough_iff_determines
+#print axioms Integration.SourceExactWelds.kernel_refutations_are_the_owner
+#print axioms Integration.SourceExactWelds.three_corpus_surfaces_one_owner
+
+-- Weld 62, discharged on a corpus carrier
+#print axioms Integration.SourceExactWelds.Provisioning.resourceCollision
+#print axioms Integration.SourceExactWelds.Provisioning.resource_does_not_determine_realised_outcome
+#print axioms Integration.SourceExactWelds.Provisioning.resource_observer_not_adequate
+#print axioms Integration.SourceExactWelds.Provisioning.resource_repair_is_representational
+#print axioms Integration.SourceExactWelds.Provisioning.provisioned_pipeline_adequate
+#print axioms Integration.SourceExactWelds.Provisioning.weld62_resource_adequacy
+
+-- The two empty corpus types, given content
+#print axioms Integration.SourceExactWelds.no_aggregation_rule_determines_the_outcome_vector
+#print axioms Integration.SourceExactWelds.no_reading_of_the_verdict_determines_the_vector
+#print axioms Integration.SourceExactWelds.interaction_zero_iff_separable
+#print axioms Integration.SourceExactWelds.marginals_do_not_determine_interaction
+#print axioms Integration.SourceExactWelds.separate_axis_sufficiency_does_not_promote
+
+-- Where the contrast owner cannot apply
+#print axioms Integration.SourceExactWelds.separable_of_subsingleton_left
+#print axioms Integration.SourceExactWelds.socioEcological_every_table_separable
+
+-- Exhaustiveness evidence on a proof-producing carrier
+#print axioms Integration.SourceExactWelds.SSPAdequacy.sspEnumeration_complete
+#print axioms Integration.SourceExactWelds.SSPAdequacy.lastDigit_adequateOn_atlas
+#print axioms Integration.SourceExactWelds.SSPAdequacy.lastDigit_not_adequate
+#print axioms Integration.SourceExactWelds.SSPAdequacy.twoDigit_adequate
+#print axioms Integration.SourceExactWelds.SSPAdequacy.exhaustiveness_evidence_is_load_bearing
+
+-- The averaging/residual pipeline, arrow by arrow
+#print axioms Integration.AveragingResidualWeld.pullback_injective
+#print axioms Integration.AveragingResidualWeld.average_determines_coarse
+#print axioms Integration.AveragingResidualWeld.decompose_determines_observable
+#print axioms Integration.AveragingResidualWeld.compensationCollision
+#print axioms Integration.AveragingResidualWeld.average_does_not_determine_residual
+#print axioms Integration.AveragingResidualWeld.no_reading_of_the_average_recovers_the_residual
+#print axioms Integration.AveragingResidualWeld.averaging_repair_is_representational
+#print axioms Integration.AveragingResidualWeld.averaging_pipeline_classified
+
+-- The frontier extractor
+#print axioms Integration.OutstandingObligations.ledger_covers_outstanding
+#print axioms Integration.OutstandingObligations.outstanding_count
+#print axioms Integration.OutstandingObligations.discharge_always_closes
+#print axioms Integration.OutstandingObligations.frontier_split
+
+-- Interaction welds: four independent corpus tables, one rectangle obstruction
+#print axioms Integration.InteractionWelds.Kernel.kernel_not_separable
+#print axioms Integration.InteractionWelds.Affinity.combinedAffinity_not_separable
+#print axioms Integration.InteractionWelds.Affinity.additiveAffinity_separable
+#print axioms Integration.InteractionWelds.Affinity.additiveAffinity_contrast_invariant
+#print axioms Integration.InteractionWelds.Affinity.corpus_pointwise_claim_is_weaker
+#print axioms Integration.InteractionWelds.Slice.restrictField_not_separable
+#print axioms Integration.InteractionWelds.Contextual.contextual_effect_separable
+#print axioms Integration.InteractionWelds.Intersectional.intersectional_capability_separable
+#print axioms Integration.InteractionWelds.three_corpus_tables_one_rectangle
+#print axioms Integration.InteractionWelds.the_owner_is_discriminating
+#print axioms Integration.InteractionWelds.surrogate_separable
+#print axioms Integration.InteractionWelds.rowMean_surrogate
+#print axioms Integration.InteractionWelds.colMean_surrogate
+#print axioms Integration.InteractionWelds.interaction_is_not_another_coordinate
+#print axioms Integration.InteractionWelds.kernel_marginals_do_not_determine_the_table
+#print axioms Integration.InteractionWelds.affinity_marginals_do_not_determine_the_table
+
+-- Claim transport: the warrant that licenses composing two locally valid arrows
+#print axioms Integration.ClaimTransport.local_claims_do_not_compose
+#print axioms Integration.ClaimTransport.transport_of_warrant
+#print axioms Integration.ClaimTransport.warrant_of_transport_of_refining
+#print axioms Integration.ClaimTransport.transport_forces_upstream
+#print axioms Integration.ClaimTransport.upstream_determination_not_sufficient
+#print axioms Integration.ClaimTransport.warrant_forces_upstream
+#print axioms Integration.ClaimTransport.no_warrant_of_not_upstream
+#print axioms Integration.ClaimTransport.warrant_is_a_determination
+#print axioms Integration.ClaimTransport.no_collision_of_warrant
+#print axioms Integration.ClaimTransport.determines_iff_sim_le
+#print axioms Integration.ClaimTransport.sim_not_transitive_across_consumers
+#print axioms Integration.ClaimTransport.three_stage_transport
+#print axioms Integration.ClaimTransport.three_stage_needs_every_warrant
+
+-- The three lanes
+#print axioms Integration.ClaimTransportLanes.transcription_forgets_head_status
+#print axioms Integration.ClaimTransportLanes.hazard_readings_distinct
+#print axioms Integration.ClaimTransportLanes.mirror_cannot_settle_elaboration
+#print axioms Integration.ClaimTransportLanes.A_and_B_do_not_give_C
+#print axioms Integration.ClaimTransportLanes.no_warrant_in_the_formalisation_lane
+#print axioms Integration.ClaimTransportLanes.content_does_not_determine_permission
+#print axioms Integration.ClaimTransportLanes.boundaryHolds_determines_nothing
+#print axioms Integration.ClaimTransportLanes.receipts_do_not_determine_promotion
+#print axioms Integration.ClaimTransportLanes.guide_licence_does_not_transport_to_proof
+#print axioms Integration.ClaimTransportLanes.status_determines_the_licences
+#print axioms Integration.ClaimTransportLanes.licences_separate_the_statuses
+#print axioms Integration.ClaimTransportLanes.authority_lane_is_a_table_plus_collisions
+#print axioms Integration.ClaimTransportLanes.no_policy_rule_on_the_plan_score_predicts_the_outcome
+#print axioms Integration.ClaimTransportLanes.no_warrant_in_the_empirical_lane
+#print axioms Integration.ClaimTransportLanes.three_lanes_one_obstruction
+#print axioms Integration.ClaimTransportLanes.every_lane_lacks_a_warrant
+
+-- The authority-route mirror
+#print axioms AgdaMirror.AuthorityRoutes.canonicalRows_eq_map
+#print axioms AgdaMirror.AuthorityRoutes.no_route_licenses_two_strong_uses
+#print axioms AgdaMirror.AuthorityRoutes.strong_uses_are_single_route
+#print axioms AgdaMirror.AuthorityRoutes.guide_and_authority_are_incomparable
+#print axioms AgdaMirror.AuthorityRoutes.guide_agrees_proof_differs
+#print axioms AgdaMirror.AuthorityRoutes.permission_flag_free
+#print axioms AgdaMirror.AuthorityRoutes.boundaryHolds_constant
+#print axioms AgdaMirror.AuthorityRoutes.boundaryHolds_does_not_summarise
+#print axioms AgdaMirror.AuthorityRoutes.receipts_do_not_determine_promotion
+#print axioms AgdaMirror.AuthorityRoutes.vacuous_receipts_admit_promotion
+
+-- Promotion discipline: what evidence licenses a reclassification
+#print axioms Integration.PromotionDiscipline.shared_shape_gives_no_transport
+#print axioms Integration.PromotionDiscipline.shared_shape_gives_no_transport_structure
+#print axioms Integration.PromotionDiscipline.naming_resemblance_cannot_promote_to_exactInstance
+#print axioms Integration.PromotionDiscipline.shared_shape_reaches_only_structuralAnalogue
+#print axioms Integration.PromotionDiscipline.coverage_flag_cannot_discharge_exhaustiveness
+#print axioms Integration.PromotionDiscipline.coverage_flag_promotes_nothing
+#print axioms Integration.PromotionDiscipline.enumeration_completeness_does_promote
+#print axioms Integration.PromotionDiscipline.promotion_never_lands_in_an_open_class
+#print axioms Integration.PromotionDiscipline.agda_typecheck_promotes_nothing
+#print axioms Integration.PromotionDiscipline.ledger_transitions_are_licensed
+#print axioms Integration.PromotionDiscipline.ledger_evidence_is_actionable
+#print axioms Integration.ClaimTransport.barriers_do_not_compose
+#print axioms Integration.ClaimTransport.barrier_transports_upstream
+#print axioms Integration.ClaimTransportLanes.entitlement_does_not_determine_route
+#print axioms Integration.ClaimTransportLanes.route_does_not_determine_floor
+#print axioms Integration.ClaimTransportLanes.entitlement_determines_the_floor
+#print axioms Integration.ClaimTransportLanes.corpus_barriers_do_not_compose
+#print axioms AgdaMirror.EntitlementRoutes.entitlement_eq_floor
+#print axioms AgdaMirror.EntitlementRoutes.same_entitlement_different_routes
+#print axioms AgdaMirror.EntitlementRoutes.same_route_different_floor
+#print axioms AgdaMirror.EntitlementRoutes.nordic_architectures_differ_at_parallel_route
+#print axioms AgdaMirror.EntitlementRoutes.boundary_fields_are_pinned
+#print axioms Integration.ClaimTransportLanes.transcription_does_not_separate_the_readings
+
+-- Claim-transport geometry: the interface and the reconciliation theorem
+#print axioms Integration.ClaimTransportGeometry.factors_iff_determines
+#print axioms Integration.ClaimTransportGeometry.nonDescent_blocks_transport
+#print axioms Integration.ClaimTransportGeometry.not_factors_iff_nonempty_collision
+#print axioms Integration.ClaimTransportGeometry.warrant_iff_factors_pullback
+#print axioms Integration.ClaimTransportGeometry.two_formulations_agree
+#print axioms Integration.ClaimTransportGeometry.obstructions_agree
+#print axioms Integration.ClaimTransportGeometry.other_formulation_reduces_to_determination
+#print axioms Integration.ClaimTransportGeometry.interface_is_the_existing_owner
+#print axioms Integration.ClaimTransportGeometry.commuting_square_does_not_give_soundness
+#print axioms Integration.ClaimTransportGeometry.square_soundness_fidelity_independent
+#print axioms Integration.ClaimTransportGeometry.cited_source_absent
+
+-- Promotion evidence: receipts, the gate, and the census
+#print axioms Integration.PromotionEvidence.carrier_receipt_discharges
+#print axioms Integration.PromotionEvidence.enumeration_receipt_universalises
+#print axioms Integration.PromotionEvidence.field_receipt_determines
+#print axioms Integration.PromotionEvidence.collision_receipt_refutes
+#print axioms Integration.PromotionEvidence.hollow_receipts_are_always_available
+#print axioms Integration.PromotionEvidence.evidenced_promotion_closes
+#print axioms Integration.PromotionEvidence.no_promotion_on_hollow_evidence
+#print axioms Integration.PromotionEvidence.licensed_shape_without_receipt
+#print axioms Integration.PromotionEvidence.no_carrier_receipt_for_refuted_hypothesis
+#print axioms Integration.PromotionEvidence.sspPromotion_closes
+#print axioms Integration.PromotionEvidence.promotion_census_covers_obligations
+#print axioms Integration.PromotionEvidence.gate_refuses_every_open_row
+#print axioms Integration.PromotionEvidence.promotion_evidence_coverage
+#print axioms Integration.PromotionEvidence.negative_transitions_unchanged
+
+-- Free-field audit
+#print axioms Integration.FreeFieldAudit.free_is_a_collision
+#print axioms Integration.FreeFieldAudit.free_not_determined
+#print axioms Integration.FreeFieldAudit.free_field_not_recoverable
+#print axioms Integration.FreeFieldAudit.pinned_field_cannot_report
+#print axioms Integration.FreeFieldAudit.fieldReceipt_field_is_not_free
+#print axioms Integration.FreeFieldAudit.permission_not_determined
+#print axioms Integration.FreeFieldAudit.boundaryHolds_cannot_report
+#print axioms Integration.FreeFieldAudit.representationPromoted_not_determined
+#print axioms Integration.FreeFieldAudit.every_free_field_is_exposed
+#print axioms Integration.FreeFieldAudit.audit_census
+
+-- Mirror drift
+#print axioms Integration.MirrorDrift.every_consumed_mirror_has_provenance
+#print axioms Integration.MirrorDrift.present_rows_have_a_digest
+#print axioms Integration.MirrorDrift.absent_rows_have_no_digest
+#print axioms Integration.MirrorDrift.drift_coverage
+#print axioms Integration.MirrorDrift.absent_source_is_recorded
+#print axioms Integration.MirrorDrift.digests_distinct
+
+-- Frontier priority
+#print axioms Integration.FrontierPriority.cohort_census
+#print axioms Integration.FrontierPriority.cohorts_partition
+#print axioms Integration.FrontierPriority.queue_covers_ledger
+#print axioms Integration.FrontierPriority.band_is_derived_from_cohort_size
+#print axioms Integration.FrontierPriority.band_census
+#print axioms Integration.FrontierPriority.high_band_is_the_free_field_cohort
+#print axioms Integration.FrontierPriority.high_priority_rows_are_still_refused
+#print axioms Integration.FrontierPriority.no_band_passes_the_gate
+
+-- Prediction envelopes
+#print axioms Integration.PredictionEnvelope.determines_iff_envelope_subsingleton
+#print axioms Integration.PredictionEnvelope.factors_iff_envelope_subsingleton
+#print axioms Integration.PredictionEnvelope.envelope_eq_singleton_of_determines
+#print axioms Integration.PredictionEnvelope.refinement_narrows_envelope
+#print axioms Integration.PredictionEnvelope.joint_evidence_contracts
+#print axioms Integration.PredictionEnvelope.contraction_can_be_strict
+#print axioms Integration.PredictionEnvelope.envelope_image
+#print axioms Integration.PredictionEnvelope.envelope_not_subsingleton_of_collision
+#print axioms Integration.PredictionEnvelope.collision_of_envelope_not_subsingleton
+#print axioms Integration.PredictionEnvelope.no_algorithm_recovers_from_this_representation
+#print axioms Integration.PredictionEnvelope.relational_prediction_without_point_prediction
+#print axioms Integration.PredictionEnvelope.aggregation_must_erase
+#print axioms Integration.PredictionEnvelope.experiment_must_separate_the_pair
+
+-- Prediction status
+#print axioms Integration.PredictionStatus.isHollow_iff_promotes_nothing
+#print axioms Integration.PredictionStatus.propagate_never_strengthens_without_receipt
+#print axioms Integration.PredictionStatus.hollow_receipt_is_a_no_op
+#print axioms Integration.PredictionStatus.chain_rank_monotone
+#print axioms Integration.PredictionStatus.no_epistemic_laundering
+#print axioms Integration.PredictionStatus.no_receipt_free_route_to_proof
+#print axioms Integration.PredictionStatus.analogy_step_is_permanent_without_a_receipt
+#print axioms Integration.PredictionStatus.receipt_may_strengthen
+#print axioms Integration.PredictionStatus.status_is_computed_not_declared
+#print axioms Integration.PredictionStatus.search_precondition_is_necessary
+#print axioms Integration.PredictionStatus.search_precondition_is_not_sufficient
+#print axioms Integration.PredictionStatus.encoding_does_not_identify_mechanism
+#print axioms Integration.PredictionStatus.local_success_does_not_globalise
+#print axioms Integration.PredictionStatus.identifiability_is_envelope_width
+#print axioms Integration.PredictionStatus.out_of_sample_measurement_discriminates
+#print axioms Integration.PredictionStatus.scope_must_name_the_consumer
+
+-- Falsification probe
+#print axioms Integration.TransportFalsification.definedness_is_determined
+#print axioms Integration.TransportFalsification.partial_map_pair_reading
+#print axioms Integration.TransportFalsification.relational_consumer_reduces
+#print axioms Integration.TransportFalsification.nondeterministic_answers_determined
+#print axioms Integration.TransportFalsification.nondeterministic_transport
+#print axioms Integration.TransportFalsification.context_indexed_reduces
+#print axioms Integration.TransportFalsification.context_determination_does_not_transfer
+#print axioms Integration.TransportFalsification.declared_domain_gap_is_strict
+#print axioms Integration.TransportFalsification.no_irreducible_shape_found
+#print axioms Integration.TransportFalsification.irreducible_count
+
+-- Experiment calculus: typed quantities and the quantity graph
+#print axioms Integration.Experiment.Dimension.three_volt_plus_two_coulomb_rejected
+#print axioms Integration.Experiment.Dimension.three_volt_times_two_coulomb_is_six_joules
+#print axioms Integration.Experiment.Dimension.dimensional_consistency_does_not_determine_the_law
+#print axioms Integration.Experiment.QuantityGraph.Law.apply_isSome_iff
+#print axioms Integration.Experiment.QuantityGraph.deposit_lithium
+#print axioms Integration.Experiment.QuantityGraph.charge_factors_through_current_and_time
+#print axioms Integration.Experiment.QuantityGraph.amount_does_not_factor_through_charge
+#print axioms Integration.Experiment.QuantityGraph.efficiency_collides_even_with_z_known
+#print axioms Integration.Experiment.QuantityGraph.amount_determined_by_charge_and_both_parameters
+#print axioms Integration.Experiment.QuantityGraph.dimensional_law_versus_model_law
+#print axioms Integration.Experiment.QuantityGraph.validity_domain_is_not_observable
+
+-- Experiment calculus: uncertainty
+#print axioms Integration.Experiment.Uncertainty.Cov.push_symm
+#print axioms Integration.Experiment.Uncertainty.Cov.push_psd
+#print axioms Integration.Experiment.Uncertainty.Cov.push_push
+#print axioms Integration.Experiment.Uncertainty.scalar_variance_diagonal
+#print axioms Integration.Experiment.Uncertainty.charge_variance
+#print axioms Integration.Experiment.Uncertainty.total_does_not_determine_the_split
+#print axioms Integration.Experiment.Uncertainty.unquantified_discrepancy_blocks_the_ranking
+#print axioms Integration.Experiment.Uncertainty.numerically_dominant_is_not_epistemically_dominant
+#print axioms Integration.Experiment.Uncertainty.interval_widens_with_discrepancy
+#print axioms Integration.Experiment.Uncertainty.widening_is_strict
+#print axioms Integration.Experiment.Uncertainty.report_does_not_determine_the_budget
+
+-- Experiment calculus: protocols
+#print axioms Integration.Experiment.Intervention.trajectory_determined_by_initial_state_and_controls
+#print axioms Integration.Experiment.Intervention.charge_after_pulse
+#print axioms Integration.Experiment.Intervention.constant_after_pulse
+#print axioms Integration.Experiment.Intervention.trajectory_reachableIn
+#print axioms Integration.Experiment.Intervention.blind_trace_does_not_determine_the_state
+
+-- Experiment calculus: risk and measurement value
+#print axioms Integration.Experiment.Risk.risk_envelope_is_the_image_of_the_fibre
+#print axioms Integration.Experiment.Risk.risk_inherits_determination
+#print axioms Integration.Experiment.Risk.threshold_risk_can_be_determined_without_the_quantity
+#print axioms Integration.Experiment.Risk.instrumentation_insufficient_for_the_risk_question
+#print axioms Integration.Experiment.Risk.verdict_depends_on_the_hazard
+#print axioms Integration.Experiment.MeasurementValue.ambiguity_eq_zero_iff_determines
+#print axioms Integration.Experiment.MeasurementValue.ambiguity_join_le
+#print axioms Integration.Experiment.MeasurementValue.bestSensor_minimal
+#print axioms Integration.Experiment.MeasurementValue.bestSensor_resolves_iff_some_candidate_resolves
+#print axioms Integration.Experiment.MeasurementValue.best_is_not_always_sufficient
+#print axioms Integration.Experiment.MeasurementValue.best_sensor_depends_on_the_question
+
+-- Experiment calculus: failure localisation
+#print axioms Integration.Experiment.FailureLocalisation.falsification_localises_to_a_dependency
+#print axioms Integration.Experiment.FailureLocalisation.failure_does_not_localise_uniquely
+#print axioms Integration.Experiment.FailureLocalisation.measurement_failure_is_not_model_failure
+#print axioms Integration.Experiment.FailureLocalisation.discriminating_experiment_exists_iff_repairs_differ
+#print axioms Integration.Experiment.FailureLocalisation.repair_needs_a_receipt
+
+-- Experiment calculus: the compiler and its two domain instances
+#print axioms Integration.Experiment.Compiler.truth_in_envelope
+#print axioms Integration.Experiment.Compiler.truth_in_risk_envelope
+#print axioms Integration.Experiment.Compiler.envelope_is_a_point_iff_determined
+#print axioms Integration.Experiment.Compiler.risk_resolved_iff_no_ambiguity
+#print axioms Integration.Experiment.Compiler.recommendation_is_minimal
+#print axioms Integration.Experiment.Compiler.recommendation_resolves_iff_possible
+#print axioms Integration.Experiment.Compiler.status_is_the_computed_one
+#print axioms Integration.Experiment.Lithium.traces_agree
+#print axioms Integration.Experiment.Lithium.risks_differ
+#print axioms Integration.Experiment.Lithium.voltage_and_current_are_insufficient_for_the_thermal_risk
+#print axioms Integration.Experiment.Lithium.temperature_envelope_is_not_a_point
+#print axioms Integration.Experiment.Lithium.budget_is_not_one_number
+#print axioms Integration.Experiment.Lithium.temperature_sensor_resolves
+#print axioms Integration.Experiment.Lithium.voltage_repeat_does_not_resolve
+#print axioms Integration.Experiment.Lithium.recommendation_resolves_the_risk_question
+#print axioms Integration.Experiment.Lithium.charge_delivered_is_typed
+#print axioms Integration.Experiment.ThermalDiffusion.traces_agree
+#print axioms Integration.Experiment.ThermalDiffusion.risks_differ
+#print axioms Integration.Experiment.ThermalDiffusion.surface_probe_is_insufficient_for_the_interior_risk
+#print axioms Integration.Experiment.ThermalDiffusion.interior_envelope_is_not_a_point
+#print axioms Integration.Experiment.ThermalDiffusion.interior_sensor_resolves
+#print axioms Integration.Experiment.ThermalDiffusion.recommendation_resolves_the_risk_question
+#print axioms Integration.Experiment.ThermalDiffusion.same_calculus_two_domains
+#print axioms Integration.Experiment.Lithium.reported_interval_does_not_cover_the_envelope
+#print axioms Integration.Experiment.Lithium.epistemic_status_is_model_conditional
+#print axioms Integration.Experiment.Lithium.analogy_step_weakens_the_status
+#print axioms Integration.Experiment.Lithium.threeFifty_outside_envelope
+#print axioms Integration.Experiment.Lithium.observing_350_localises
+#print axioms Integration.Experiment.Lithium.two_repairs_of_the_overheat
+
+#print axioms Integration.Experiment.ModelSelection.traceAgree_self
+#print axioms Integration.Experiment.ModelSelection.refine_shrinks
+#print axioms Integration.Experiment.ModelSelection.truth_survives_refinement
+#print axioms Integration.Experiment.ModelSelection.truth_survives_exact_observation
+#print axioms Integration.Experiment.ModelSelection.refined_envelope_subset
+#print axioms Integration.Experiment.ModelSelection.refined_risk_envelope_subset
+#print axioms Integration.Experiment.ModelSelection.truth_in_refined_envelope
+#print axioms Integration.Experiment.ModelSelection.refinement_is_idempotent_on_its_own_prediction
+#print axioms Integration.Experiment.ModelSelection.data_cannot_separate_identical_traces
+#print axioms Integration.Experiment.ModelSelection.coarser_instrument_admits_more
+#print axioms Integration.Experiment.ModelSelection.refutation_is_total
+#print axioms Integration.Experiment.ModelSelection.surviving_pair_is_not_a_selection
+#print axioms Integration.Experiment.Lithium.observation_keeps_the_truth
+#print axioms Integration.Experiment.Lithium.data_does_not_select
+#print axioms Integration.Experiment.Lithium.observing_the_trace_leaves_the_pair
+
+-- Stage 4: continuous parameter regions
+#print axioms Integration.Experiment.ParameterRegion.compatible_subset_prior
+#print axioms Integration.Experiment.ParameterRegion.compatible_append
+#print axioms Integration.Experiment.ParameterRegion.more_evidence_no_larger
+#print axioms Integration.Experiment.ParameterRegion.truth_survives
+#print axioms Integration.Experiment.ParameterRegion.truth_survives_exact
+#print axioms Integration.Experiment.ParameterRegion.coarser_tolerance_admits_more
+#print axioms Integration.Experiment.ParameterRegion.data_cannot_separate_identical_predictions
+#print axioms Integration.Experiment.ParameterRegion.envelope_antitone
+#print axioms Integration.Experiment.ParameterRegion.riskEnvelope_antitone
+#print axioms Integration.Experiment.ParameterRegion.truth_in_envelope
+#print axioms Integration.Experiment.ParameterRegion.truth_in_riskEnvelope
+#print axioms Integration.Experiment.ParameterRegion.envelope_subsingleton_iff
+#print axioms Integration.Experiment.ParameterRegion.falsified_iff_forall_exists_bad_reading
+#print axioms Integration.Experiment.ParameterRegion.falsified_is_permanent
+#print axioms Integration.Experiment.ParameterRegion.falsified_envelope_empty
+#print axioms Integration.Experiment.ParameterRegion.falsified_riskEnvelope_empty
+#print axioms Integration.Experiment.ParameterRegion.falsified_of_single_reading
+#print axioms Integration.Experiment.ParameterRegion.compatible_isClosed
+#print axioms Integration.Experiment.ParameterRegion.compatible_ordConnected
+#print axioms Integration.Experiment.ParameterRegion.envelope_eq_Icc
+#print axioms Integration.Experiment.ParameterRegion.affineConstraint_eq_Icc
+#print axioms Integration.Experiment.ParameterRegion.steeper_reading_contracts_more
+#print axioms Integration.Experiment.ParameterRegion.steeper_reading_leaves_smaller_region
+
+-- Stage 4: certified sensitivities
+#print axioms Integration.Experiment.JacobianSensitivity.jacobian_of_linear
+#print axioms Integration.Experiment.JacobianSensitivity.jacobian_of_affine
+#print axioms Integration.Experiment.JacobianSensitivity.jacobian_comp
+#print axioms Integration.Experiment.JacobianSensitivity.CertifiedSensitivity.declared_is_the_partial_derivative
+#print axioms Integration.Experiment.JacobianSensitivity.CertifiedSensitivity.declared_unique
+#print axioms Integration.Experiment.JacobianSensitivity.chargeSensitivity_declared
+#print axioms Integration.Experiment.JacobianSensitivity.RCov.push_push
+#print axioms Integration.Experiment.JacobianSensitivity.affine_variation_is_exactly_the_jacobian
+#print axioms Integration.Experiment.JacobianSensitivity.derivative_zero_does_not_bound_variation
+#print axioms Integration.Experiment.JacobianSensitivity.jacobian_does_not_determine_the_output_covariance
+
+-- Stage 4: continuous-time dynamics
+#print axioms Integration.Experiment.ContinuousDynamics.trajectory_unique
+#print axioms Integration.Experiment.ContinuousDynamics.affine_isTrajectory
+#print axioms Integration.Experiment.ContinuousDynamics.affineSolution_unique
+#print axioms Integration.Experiment.ContinuousDynamics.peak_mem_image
+#print axioms Integration.Experiment.ContinuousDynamics.endpoint_le_peak
+#print axioms Integration.Experiment.ContinuousDynamics.integrated_affine
+#print axioms Integration.Experiment.ContinuousDynamics.crossing_exists
+#print axioms Integration.Experiment.ContinuousDynamics.crossingTime_mem
+#print axioms Integration.Experiment.ContinuousDynamics.crossingTime_is_first
+#print axioms Integration.Experiment.ContinuousDynamics.parameterised_predictions_are_well_defined
+
+-- Stage 4: the milestone instance
+#print axioms Integration.Experiment.LithiumContinuous.predict_is_the_trajectory
+#print axioms Integration.Experiment.LithiumContinuous.trajectory_is_unique
+#print axioms Integration.Experiment.LithiumContinuous.surviving_region_after_the_first_reading
+#print axioms Integration.Experiment.LithiumContinuous.first_reading_contracts
+#print axioms Integration.Experiment.LithiumContinuous.truth_survives_the_first_reading
+#print axioms Integration.Experiment.LithiumContinuous.surviving_region_is_an_interval
+#print axioms Integration.Experiment.LithiumContinuous.endpoint_envelope_after_the_first_reading
+#print axioms Integration.Experiment.LithiumContinuous.risk_unresolved_after_the_first_reading
+#print axioms Integration.Experiment.LithiumContinuous.endpoint_reading_is_more_discriminating
+#print axioms Integration.Experiment.LithiumContinuous.risk_resolved_after_the_endpoint_reading
+#print axioms Integration.Experiment.LithiumContinuous.repeating_the_early_reading_adds_nothing
+#print axioms Integration.Experiment.LithiumContinuous.family_is_falsified_by_the_low_reading
+#print axioms Integration.Experiment.LithiumContinuous.falsified_family_predicts_nothing
+#print axioms Integration.Experiment.LithiumContinuous.falsification_is_permanent
+#print axioms Integration.Experiment.LithiumContinuous.endpoint_sensitivity_is_certified
+
+-- Stage 4: receipts and the repair frontier
+#print axioms Integration.Experiment.ModelReceipts.receipts_are_independent
+#print axioms Integration.Experiment.ModelReceipts.structure_does_not_determine_validation
+#print axioms Integration.Experiment.ModelReceipts.finer_structure_does_not_imply_better_prediction
+#print axioms Integration.Experiment.ModelReceipts.better_prediction_does_not_imply_finer_structure
+#print axioms Integration.Experiment.ModelReceipts.adding_parameters_without_evidence_is_underdetermined
+#print axioms Integration.Experiment.ModelReceipts.accepted_repair_is_refutable
+#print axioms Integration.Experiment.ModelReceipts.flexible_explains_everything
+#print axioms Integration.Experiment.ModelReceipts.flexible_is_never_falsified
+#print axioms Integration.Experiment.ModelReceipts.unfalsifiable_repair_admits_no_acceptance
+#print axioms Integration.Experiment.ModelReceipts.repair_does_not_rehabilitate_the_old_family
+#print axioms Integration.Experiment.ModelReceipts.proposal_is_not_acceptance
+
+-- Stage 4: the nonlinear-parameter portability instance
+#print axioms Integration.Experiment.ThermalRC.relaxation_isTrajectory
+#print axioms Integration.Experiment.ThermalRC.rc_field_lipschitz
+#print axioms Integration.Experiment.ThermalRC.relaxation_is_the_only_trajectory
+#print axioms Integration.Experiment.ThermalRC.temp_monotoneOn
+#print axioms Integration.Experiment.ThermalRC.temp_continuousOn
+#print axioms Integration.Experiment.ThermalRC.truth_survives_the_reading
+#print axioms Integration.Experiment.ThermalRC.surviving_region_is_closed
+#print axioms Integration.Experiment.ThermalRC.surviving_region_is_an_interval
+#print axioms Integration.Experiment.ThermalRC.surviving_region_is_compact
+#print axioms Integration.Experiment.ThermalRC.endpoint_envelope_is_a_closed_interval
+#print axioms Integration.Experiment.ThermalRC.predictions_differ_by_more_than_the_tolerance
+#print axioms Integration.Experiment.ThermalRC.fast_relaxation_is_excluded
+#print axioms Integration.Experiment.ThermalRC.surviving_region_is_a_proper_subset
+#print axioms Integration.Experiment.ParameterRegion.compatible_ordConnected_of_monotoneOn
+#print axioms Integration.Experiment.ParameterRegion.compatible_isClosed_of_continuousOn
+
+-- Stage 4: the separate probability layer
+#print axioms Integration.Experiment.Probability.FinPMF.expect_const
+#print axioms Integration.Experiment.Probability.FinPMF.expect_add
+#print axioms Integration.Experiment.Probability.FinPMF.expect_const_mul
+#print axioms Integration.Experiment.Probability.FinPMF.expect_sub
+#print axioms Integration.Experiment.Probability.FinPMF.expect_mono
+#print axioms Integration.Experiment.Probability.FinPMF.expect_nonneg
+#print axioms Integration.Experiment.Probability.FinPMF.variance_eq_expect_sq_sub
+#print axioms Integration.Experiment.Probability.FinPMF.variance_nonneg
+#print axioms Integration.Experiment.Probability.FinPMF.variance_const
+#print axioms Integration.Experiment.Probability.FinPMF.cov_comm
+#print axioms Integration.Experiment.Probability.FinPMF.cov_self
+#print axioms Integration.Experiment.Probability.FinPMF.variance_add
+#print axioms Integration.Experiment.Probability.FinPMF.cov_sq_le_variance_mul_variance
+#print axioms Integration.Experiment.Probability.MeasurementModel.likelihood_nonneg
+#print axioms Integration.Experiment.Probability.MeasurementModel.likelihood_le_one
+#print axioms Integration.Experiment.Probability.MeasurementModel.likelihood_pos_iff
+#print axioms Integration.Experiment.Probability.MeasurementModel.likelihood_pos_imp_tolerance
+#print axioms Integration.Experiment.Probability.MeasurementModel.twoPoint_likelihood
+#print axioms Integration.Experiment.Probability.MeasurementModel.tolerance_does_not_imply_positive_likelihood
+#print axioms Integration.Experiment.Probability.MeasurementModel.tolerance_cannot_rank_hypotheses
+#print axioms Integration.Experiment.Probability.measure_is_not_determined_by_the_possible_values
+#print axioms Integration.Experiment.Probability.credible_can_be_strictly_inside_the_envelope
+#print axioms Integration.Experiment.Probability.coverage_is_not_a_property_of_the_reported_interval
+
+-- Stage 4: choosing the best next measurement over a candidate set
+#print axioms Integration.Experiment.BestReading.steepest_mem
+#print axioms Integration.Experiment.BestReading.le_steepest
+#print axioms Integration.Experiment.BestReading.steepest_maximal
+#print axioms Integration.Experiment.BestReading.steepest_contracts_most
+#print axioms Integration.Experiment.BestReading.steepest_envelope_smallest
+#print axioms Integration.Experiment.BestReading.steepest_riskEnvelope_smallest
+#print axioms Integration.Experiment.BestReading.steepest_of_flat_candidates_is_no_better
+#print axioms Integration.Experiment.LithiumContinuous.best_next_measurement_is_the_endpoint
+#print axioms Integration.Experiment.LithiumContinuous.selected_measurement_contracts_most
+#print axioms Integration.Experiment.LithiumContinuous.selected_measurement_gives_the_narrowest_envelope
+
+-- Stage 4: existence of trajectories (Picard–Lindelöf)
+#print axioms Integration.Experiment.ContinuousDynamics.trajectory_exists
+#print axioms Integration.Experiment.ContinuousDynamics.trajectory_exists_unique
+#print axioms Integration.Experiment.ContinuousDynamics.constantRate_trajectory_exists
+
+-- Stage 5, lane 1: Bayes update over a finite hypothesis family, and the
+-- bridge from the probabilistic layer to the set-valued surviving region.
+#print axioms Integration.Experiment.Bayes.evidence_nonneg
+#print axioms Integration.Experiment.Bayes.evidence_pos_iff
+#print axioms Integration.Experiment.Bayes.posterior_mass
+#print axioms Integration.Experiment.Bayes.posterior_pos_iff
+#print axioms Integration.Experiment.Bayes.zero_prior_stays_zero
+#print axioms Integration.Experiment.Bayes.bayes_factor
+#print axioms Integration.Experiment.Bayes.posterior_mono
+#print axioms Integration.Experiment.Bayes.sequential_is_batch
+#print axioms Integration.Experiment.Bayes.flat_likelihood_leaves_the_prior
+#print axioms Integration.Experiment.Bayes.posterior_concentrates
+#print axioms Integration.Experiment.Bayes.no_posterior_of_total_refutation
+#print axioms Integration.Experiment.Bayes.jointLikelihood_nonneg
+#print axioms Integration.Experiment.Bayes.jointLikelihood_pos_iff_all_pos
+#print axioms Integration.Experiment.Bayes.positive_joint_likelihood_fits
+#print axioms Integration.Experiment.Bayes.posterior_support_subset_compatible
+#print axioms Integration.Experiment.Bayes.posterior_support_subset_compatible_cons
+#print axioms Integration.Experiment.Bayes.falsified_family_has_no_posterior
+#print axioms Integration.Experiment.Bayes.compatible_does_not_determine_the_posterior
+#print axioms Integration.Experiment.Bayes.posterior_support_can_be_strictly_smaller
+
+-- Stage 5, lane 2: surviving regions in several parameters, and the
+-- identifiability dichotomy.
+#print axioms Integration.Experiment.MultiParameterRegion.affineConstraint_convex
+#print axioms Integration.Experiment.MultiParameterRegion.affineConstraint_isClosed
+#print axioms Integration.Experiment.MultiParameterRegion.affineCompatible_convex
+#print axioms Integration.Experiment.MultiParameterRegion.affineCompatible_isClosed
+#print axioms Integration.Experiment.MultiParameterRegion.affineCompatible_ordConnected
+#print axioms Integration.Experiment.MultiParameterRegion.envelope_ordConnected_of_isPreconnected
+#print axioms Integration.Experiment.MultiParameterRegion.envelope_eq_Icc_of_isCompact
+#print axioms Integration.Experiment.MultiParameterRegion.unidentified_direction_survives
+#print axioms Integration.Experiment.MultiParameterRegion.envelope_not_a_point_of_unidentified_direction
+#print axioms Integration.Experiment.MultiParameterRegion.few_readings_do_not_identify
+#print axioms Integration.Experiment.MultiParameterRegion.exact_readings_identify
+#print axioms Integration.Experiment.MultiParameterRegion.line_one_reading_does_not_identify
+#print axioms Integration.Experiment.MultiParameterRegion.line_two_exact_readings_identify
+
+-- Stage 5, lane 3: certified edge sensitivities and the compiler's propagated
+-- variance.
+#print axioms Integration.Experiment.CertifiedPropagation.CertifiedLaw.declared_is_the_partial_derivative
+#print axioms Integration.Experiment.CertifiedPropagation.propagatedVariance_eq_sum
+#print axioms Integration.Experiment.CertifiedPropagation.propagatedVariance_nonneg
+#print axioms Integration.Experiment.CertifiedPropagation.compile_propagatedVariance
+#print axioms Integration.Experiment.CertifiedPropagation.compile_propagatedVariance_eq_push
+#print axioms Integration.Experiment.CertifiedPropagation.compile_propagatedVariance_nonneg
+#print axioms Integration.Experiment.CertifiedPropagation.compile_propagatedVariance_of_nothing_declared
+#print axioms Integration.Experiment.CertifiedPropagation.compile_variance_from_certified_derivatives
+#print axioms Integration.Experiment.CertifiedPropagation.propagation_cannot_detect_a_wrong_row
+#print axioms Integration.Experiment.CertifiedPropagation.certificate_does_not_make_propagation_exact
+#print axioms Integration.Experiment.Lithium.propagated_variance_is_computed
+#print axioms Integration.Experiment.Lithium.propagated_variance_is_the_push
+#print axioms Integration.Experiment.Lithium.propagated_variance_is_not_the_declared_budget
+
+-- Stage 5, lane 4: nonlinear measurement discrimination by separation modulus.
+#print axioms Integration.Experiment.NonlinearDiscrimination.separationModulus_mono
+#print axioms Integration.Experiment.NonlinearDiscrimination.affine_separationModulus
+#print axioms Integration.Experiment.NonlinearDiscrimination.guaranteedRadius_antitone
+#print axioms Integration.Experiment.NonlinearDiscrimination.compatible_subset_Icc_of_modulus
+#print axioms Integration.Experiment.NonlinearDiscrimination.mostSeparating_mem
+#print axioms Integration.Experiment.NonlinearDiscrimination.mostSeparating_guarantee_is_best
+#print axioms Integration.Experiment.NonlinearDiscrimination.mostSeparating_region_within_guarantee
+#print axioms Integration.Experiment.NonlinearDiscrimination.bigger_modulus_does_not_contract_more
+#print axioms Integration.Experiment.NonlinearDiscrimination.guarantee_is_vacuous_at_zero_modulus
+
+-- Stage 6, lane 1: coverage semantics.
+#print axioms Integration.Experiment.CoverageSemantics.coverageProb_nonneg
+#print axioms Integration.Experiment.CoverageSemantics.coverageProb_le_one
+#print axioms Integration.Experiment.CoverageSemantics.coverageProb_eq_one_iff
+#print axioms Integration.Experiment.CoverageSemantics.coverageProb_mono
+#print axioms Integration.Experiment.CoverageSemantics.hasLevel_mono
+#print axioms Integration.Experiment.CoverageSemantics.coverage_inter_ge
+#print axioms Integration.Experiment.CoverageSemantics.hasLevel_inter
+#print axioms Integration.Experiment.CoverageSemantics.tolerance_procedure_has_full_coverage
+#print axioms Integration.Experiment.CoverageSemantics.tolerance_procedure_hasLevel
+#print axioms Integration.Experiment.CoverageSemantics.full_coverage_is_free
+#print axioms Integration.Experiment.CoverageSemantics.credible_mass_is_not_coverage
+#print axioms Integration.Experiment.CoverageSemantics.coverage_is_not_credible_mass
+#print axioms Integration.Experiment.CoverageSemantics.no_function_from_envelope_to_level
+
+-- Stage 6, lane 2: Bayes over a continuous parameter.
+#print axioms Integration.Experiment.ContinuousBayes.evidence_nonneg
+#print axioms Integration.Experiment.ContinuousBayes.posterior_nonneg
+#print axioms Integration.Experiment.ContinuousBayes.posterior_integral_eq_one
+#print axioms Integration.Experiment.ContinuousBayes.posterior_pos_iff
+#print axioms Integration.Experiment.ContinuousBayes.zero_prior_stays_zero
+#print axioms Integration.Experiment.ContinuousBayes.bayes_ratio
+#print axioms Integration.Experiment.ContinuousBayes.flat_likelihood_leaves_the_prior
+#print axioms Integration.Experiment.ContinuousBayes.no_posterior_of_total_refutation
+#print axioms Integration.Experiment.ContinuousBayes.sequential_is_batch
+#print axioms Integration.Experiment.ContinuousBayes.posterior_support_subset_compatible
+#print axioms Integration.Experiment.ContinuousBayes.region_does_not_determine_the_posterior
+
+-- Stage 6, lane 3: the derived uncertainty budget.
+#print axioms Integration.Experiment.VarianceBudget.totalVariance_eq_push
+#print axioms Integration.Experiment.VarianceBudget.totalVariance_nonneg
+#print axioms Integration.Experiment.VarianceBudget.variance_diag_nonneg
+#print axioms Integration.Experiment.VarianceBudget.totalVariance_diag
+#print axioms Integration.Experiment.VarianceBudget.shareFraction_sum_eq_one
+#print axioms Integration.Experiment.VarianceBudget.exists_dominant_input
+#print axioms Integration.Experiment.VarianceBudget.dominant_share_ge_average
+#print axioms Integration.Experiment.VarianceBudget.zeroing_removes_exactly_its_share
+#print axioms Integration.Experiment.VarianceBudget.reducing_the_dominant_helps_most
+#print axioms Integration.Experiment.VarianceBudget.totalVariance_mono
+#print axioms Integration.Experiment.VarianceBudget.derivedBudget_is_from_certified_derivatives
+#print axioms Integration.Experiment.VarianceBudget.shares_do_not_account_for_correlation
+#print axioms Integration.Experiment.VarianceBudget.derived_budget_ignores_model_discrepancy
+
+-- Stage 6, lane 4: nonlinear local identifiability.
+#print axioms Integration.Experiment.LocalIdentifiability.locallyIdentifiable_of_injective_deriv
+#print axioms Integration.Experiment.LocalIdentifiability.exact_readings_pin_down_locally
+#print axioms Integration.Experiment.LocalIdentifiability.invisible_direction_of_not_injective
+#print axioms Integration.Experiment.LocalIdentifiability.invisible_direction_vanishes_to_first_order
+#print axioms Integration.Experiment.LocalIdentifiability.few_measurements_give_invisible_direction
+#print axioms Integration.Experiment.LocalIdentifiability.tolerance_cannot_repair_missing_rank
+#print axioms Integration.Experiment.LocalIdentifiability.first_order_test_is_only_first_order
+#print axioms Integration.Experiment.LocalIdentifiability.local_identifiability_is_not_global
+
+-- Stage 6, lane 5: trajectory sensitivities.
+#print axioms Integration.Experiment.TrajectorySensitivity.sensitivity_unique
+#print axioms Integration.Experiment.TrajectorySensitivity.sensitivity_bound
+#print axioms Integration.Experiment.TrajectorySensitivity.constantRate_isParamTrajectory
+#print axioms Integration.Experiment.TrajectorySensitivity.constantRate_isSensitivity
+#print axioms Integration.Experiment.TrajectorySensitivity.constantRate_sensitivity_is_the_theta_derivative
+#print axioms Integration.Experiment.TrajectorySensitivity.locally_identifiable_of_nonzero_sensitivity
+#print axioms Integration.Experiment.TrajectorySensitivity.zero_sensitivity_time_is_first_order_blind
+#print axioms Integration.Experiment.TrajectorySensitivity.most_sensitive_reading_is_maximal
+#print axioms Integration.Experiment.TrajectorySensitivity.most_sensitive_reading_mem
+
+-- Stage 6, lane 6: repair obligations.
+#print axioms Integration.Experiment.RepairObligations.repairClass_card
+#print axioms Integration.Experiment.RepairObligations.interpolant_at_reading
+#print axioms Integration.Experiment.RepairObligations.interpolant_mem_compatible
+#print axioms Integration.Experiment.RepairObligations.freeFamily_fits_everything
+#print axioms Integration.Experiment.RepairObligations.freeFamily_not_refutable
+#print axioms Integration.Experiment.RepairObligations.freeFamily_predicts_nothing
+#print axioms Integration.Experiment.RepairObligations.saturated_repair_is_no_proposal
+#print axioms Integration.Experiment.RepairObligations.proportional_family_cannot_fit_the_offset_data
+#print axioms Integration.Experiment.RepairObligations.offsetRead_fits
+#print axioms Integration.Experiment.RepairObligations.offsetRead_refutable
+
+-- Stage 6 milestone: the calibrated dynamical cell, end to end.
+#print axioms Integration.Experiment.CalibratedCell.cell_trajectory_sensitivity
+#print axioms Integration.Experiment.CalibratedCell.cell_sensitivity_is_the_theta_derivative
+#print axioms Integration.Experiment.CalibratedCell.cell_region_is_a_coverage_one_procedure
+#print axioms Integration.Experiment.CalibratedCell.cell_evidence_pos
+#print axioms Integration.Experiment.CalibratedCell.cell_posterior_is_a_density
+#print axioms Integration.Experiment.CalibratedCell.cell_posterior_support_subset_compatible
+#print axioms Integration.Experiment.CalibratedCell.cell_posterior_support_subset_surviving_region
+#print axioms Integration.Experiment.CalibratedCell.cell_budget_total
+#print axioms Integration.Experiment.CalibratedCell.initial_state_dominates
+#print axioms Integration.Experiment.CalibratedCell.perfecting_the_initial_state_helps_most
+#print axioms Integration.Experiment.CalibratedCell.endpoint_is_the_most_sensitive_time
+#print axioms Integration.Experiment.CalibratedCell.offsetCellFamily_fits
+#print axioms Integration.Experiment.CalibratedCell.offsetCellFamily_refutable

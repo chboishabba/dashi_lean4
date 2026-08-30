@@ -1,0 +1,306 @@
+# G6: the bounded-height (localization) cycle
+
+This report covers the cycle organised around the localization proposal: kill the
+global `e₂` observer, compress to a bounded-height window, lift multiplicity into
+the family, reduce to anchored minors, and try to close the tube at scale
+`L = λ log T`.
+
+All Lean referred to below is in `RiemannAnalytic/` and compiles with
+`lake build RiemannAnalytic` (default target, 8071 jobs).  There is no `sorry`,
+no `admit`, no `axiom`, no postulate, no Boolean receipt, and no numerical
+evidence used as a proof step.  Spot-checked theorems depend only on
+`propext`, `Classical.choice`, `Quot.sound`.
+
+**The Riemann Hypothesis is not proved, and no statement of it is weakened.**
+The bottom line of this cycle is stated exactly in §7: localization removes the
+fatal power of `T` identified in G5, but the localized budget lands at
+`(log T)⁶` — *the same order as the floor* — and therefore yields a tube of
+**constant** radius, not a shrinking one.  The gap is a genuine constant-factor
+gap at criticality, not a power gap.
+
+---
+
+## 0. New modules
+
+| module | content |
+|---|---|
+| `RiemannAnalytic/MultiplicityLift.lean` | the multiplicity lift; removal of the `M` factor |
+| `RiemannAnalytic/LocalWindow.lean` | compression algebra `P_H · P_H*`, local trace/Frobenius transport, trace-square budget |
+| `RiemannAnalytic/LocalTraceScale.lean` | the true per-vector energy scale on the source grid |
+| `RiemannAnalytic/AnchoredMinorConsumer.lean` | anchored family minors and anchored **coordinate** minors |
+| `RiemannAnalytic/LocalHeight.lean` | bounded-height retention: the height threshold and the unit-height dichotomy |
+| `RiemannAnalytic/LocalBudgetScale.lean` | the scale test `budget / L⁶`, and the `o(1)`-vs-`=½` distinction |
+| `RiemannAnalytic/LocalSchur.lean` | real Schur-complement theorems (variational identity, optimality, compression comparison, coercivity transfer) |
+| `RiemannAnalytic/LocalHotCold.lean` | exact hot/cold split around the window; universal property; hot-determinacy of the anchored consumer |
+| `RiemannAnalytic/LocalRouteCapstone.lean` | floor vs ceiling for one window: what the route actually yields |
+
+---
+
+## 1. Q6 — the multiplicity lift.  **Proved, and it does remove `M`.**
+
+`MultiplicityLift.lean`.  Index the lifted family by
+`MultIndex mult = Σ ρ, Fin (mult ρ) × Bool` and put `mult ρ` copies of each of
+`a_ρ`, `b_ρ` into the family (`multPairFamily`).  Then
+
+* `card_multIndex` — the lifted family has `2 ∑_ρ m_ρ` members, i.e. multiplicity
+  is ordinary cardinality, exactly as in Riemann–von Mangoldt;
+* `sum_mult_sq_pairDefect_le_e2` —
+  `∑_ρ m_ρ² · Δ_ρ ≤ e₂(Gram(multPairFamily a b mult))`,
+  **with no maximum-multiplicity factor**.  The `m_ρ²` copies of the cross pair
+  each contribute `Δ_ρ`; same-type duplicate pairs contribute `0`; all other
+  pair minors are `≥ 0`.
+* `weightedGramSum_le_e2_mult`, `abs_offset_le_of_e2_mult_budget` — the same
+  statement in the weighted-sum language of `GramBudgetTransport.lean`, and the
+  resulting tube.
+
+This is a clean improvement on the earlier `M · e₂(G)` bound: no separate
+multiplicity theorem for `ζ` is needed anywhere downstream.
+
+## 2. Q2/Q9 — anchored-minor reduction.  **Proved, and it is tight.**
+
+`AnchoredMinorConsumer.lean`.  Two layers.
+
+*Family minors.*  `anchorMinorSum v i₀ = ∑_{j ≠ i₀} det Gram(v i₀, v j)` satisfies
+`anchorMinorSum_le_e2` (it is at most the full `e₂`, so it is a strictly cheaper
+observer: `q − 1` minors instead of `q(q−1)/2`) and
+`pairDefect_le_anchorMinorSum` (the target's defect is still dominated by it, at
+the anchor `(ρ, false)`).  Coercivity for an arbitrary anchor coordinate is
+`gramDefect_ge_anchor_coord_sq_mul`: `b_{i₀} = 0 ⟹ a_{i₀}²‖b‖² ≤ Δ(a,b)`.
+
+*Coordinate minors* (new this cycle).  `coordAnchorMinorSum a b i₀
+= ∑_{j ≠ i₀}(a_{i₀}b_j − a_j b_{i₀})²` is the anchored row of the Cauchy–Binet
+expansion.  Proved:
+
+* `coordAnchorMinorSum_le_gramDefect` — it is dominated by the full defect, the
+  slack being exactly the off-anchor Cauchy–Schwarz defect `AB − C²`;
+* `coordAnchorMinorSum_eq_of_anchor` — if `b_{i₀} = 0` it equals `a_{i₀}²‖b‖²`
+  **exactly**.
+
+So the answer to Q2 is yes and the reduction is *lossless for the target*.  It
+also settles a question the proposal left open: the anchored observable does not
+buy a further logarithmic factor on the **zero side**, because it already equals
+the target signal there.  Its gain is entirely on the arithmetic side — an
+`O(q)`-term observable instead of an `O(q²)`-term one.
+
+## 3. Q3 — local tail transport.  **Proved; the dimensional gain is real.**
+
+`LocalWindow.lean`.  `compress M f = M ∘ (f × f)` for any coordinate selection
+`f : κ → n` (no injectivity needed).  Proved: `compress_add` (so
+`G_H = A_H + E_H` is literally an identity), `compress_gram` (the compression of
+a Gram matrix is the Gram matrix of the restricted family), `compress_comp`
+(functoriality of nested windows — the "context restriction" the proposal asked
+for), and the quantitative transport
+
+* `abs_trace_compress_le` : `|tr E_H| ≤ q · θ` where `θ` bounds the entries,
+* `frobSq_compress_le` : `‖E_H‖_F² ≤ q² θ²`,
+* `e2_compress_tail` : `|e₂(A_H) − e₂(G_H)| ≤ …` in terms of `q` and `θ`.
+
+Every constant involves the **window size `q`**, never the ambient `d ≍ LT`.  So
+existing global entrywise/operator control does transport to the window with the
+improved dimensional factor.  Caveat, stated honestly: the bounds are in terms of
+an entrywise bound `θ`; converting an operator-norm bound into an entrywise bound
+costs nothing, but converting it into a *Frobenius* bound on the window still
+costs `q`.
+
+Also proved here, and used later: `e2_gram_le_half_trace_sq`
+(`e₂(G) ≤ ½ (tr G)²` for a Gram matrix) and the count-and-norm budget
+`e₂_multFamily_le_of_norm_bound` : if every vector has `‖v‖² ≤ B` and the lifted
+family has `N` members then `e₂ ≤ ½ N² B²`, with the tube corollary
+`local_tube_of_norm_bound`.
+
+## 4. Hot/cold and Schur (the architectural requests)
+
+`LocalHotCold.lean` implements the "retain the omitted world as residual"
+requirement as literal theorems rather than record fields:
+`reopen_hotBlock_coldResidual` (exact reopening `reopen (hot M) (cold M) = M`),
+`hotBlock_reopen`, `coldResidual_reopen`, `hotBlock_surjective`, and the
+universal property `consumer_factors_through_hotBlock` — a consumer that cannot
+distinguish matrices with equal window blocks factors **uniquely** through the
+hot state.  `windowAnchorSum` (the anchored observable of the window block) is
+then shown hot-determined and to agree with the geometric anchored sum on Gram
+matrices (`windowAnchorSum_gram`).
+
+`LocalSchur.lean` proves the real Schur statements the abstract sockets in
+`BlockSchurStructure.agda` / `BlockSchurCoercivity.agda` only *assume*
+(`subtractLowerBound`, `highBlockCoercive`, `crossCorrectionBounded`,
+`schurQuadraticIdentity` are record fields there, i.e. hypotheses, not theorems).
+Proved here for real matrices: the variational identity `schur_form_le_full_form`
+and `schur_form_eq_at_optimum`, the coercivity transfer `schur_coercive`
+(`D ≥ δ`, `CA⁻¹B ≤ η` ⟹ `S ≥ δ − η`), and — the decisive one for our purpose —
+
+> `schur_form_le_compression_form` : the Schur form is **at most** the plain
+> compression form.
+
+Consequence: replacing the principal compression `P_H G P_H*` by the effective
+Schur object `S_H = G_H − C G_out⁻¹ B` can only *lower* the local quadratic form.
+Since the localization programme needs a **lower** bound on the local observable,
+the Schur route cannot improve on plain compression here.  That is a negative
+answer to the "Schur is a better localization than truncation" suggestion, in
+the direction we need; Schur remains the right object if one ever needs an upper
+bound or an exact reopening.
+
+## 5. Q1 — local retention at bounded height.  **Quantitative, not free.**
+
+`LocalHeight.lean`, on top of the centred-grid decomposition
+`B_full = 2(B_fin + B_tail)` of `RiemannCenteredGridRetentionExact`.
+
+* `tail_le_of_window_length` — a window retaining `m` positive coordinates has
+  lattice tail at most half the floor as soon as
+  `256 · derivMass(φ,α)² ≤ 9π² m L² α²`;
+* `localGramDefect_floor_of_window_length` — under that condition the window
+  already carries the full floor `(81/16384) L⁶ α² ≤ Δ_H`;
+* `tail_le_of_window_height` — in terms of the ordinate height `H = m h`,
+  `h = 2π/L`, the condition reads `512 · derivMass(φ,α)² ≤ 9π H L³ α²`;
+* `unit_height_dichotomy` — hence for `H = 1`: **either**
+  `|α| ≤ √(512 derivMass²/(9π L³)) ≍ L^{−3/2}`, **or** the unit-height window
+  carries the whole floor.
+
+So the answer to "is `H = 1` enough?" is: yes, precisely when
+`|α| ≳ derivMass · L^{−3/2}`; for smaller offsets the required height grows like
+`derivMass²/(L³α²)`.  This is the honest form of the proposal's hope that a fixed
+height suffices — a fixed height suffices *outside a shrinking neighbourhood of
+the line*, which is exactly the regime the argument is trying to rule out.  The
+"`O(log T)` Fourier samples in a unit window" intuition is correct as far as it
+goes; what it does not control is the `α`-dependence of the tail.
+
+## 6. Q7/Q8 — the local trace scale.  **The predicted `L` is false; the truth is `L²`.**
+
+`LocalTraceScale.lean`.  The proposal's step 2 assumed a per-vector bound
+`tr G_W^mult ≲ C_vec · L · N_mult(W)`, i.e. `‖v‖² ≲ L` for each grid vector.
+That is false for the source vectors.  Proved:
+
+* `sum_normSq_gridVec_le` — a **window-length-free** upper bound
+  `∑_k ‖v_k‖² ≤ taperMass² + 2 derivMass²/h²`, and in the source normalisation
+  `h = 2π/L`, `gridVec_normSq_source_le` :
+  `‖v‖² ≤ taperMass(φ,α)² + derivMass(φ,α)² L²/(2π²)`;
+* `gridVec_re_normSq_ge_plateau` — a matching lower bound from the plateau:
+  `‖Re v‖² ≥ (2a)² ≥ 9L²/16`;
+* `not_linear_trace_bound` — consequently **no** bound of the form `‖v‖² ≤ C_vec·L`
+  can hold once `16 C_vec < 9 L`.
+
+The true scale is `‖v‖² ≍ L²`.  This is not a technicality: it is the whole
+difference between the proposal's predicted `(log T)⁴` local budget and what the
+route actually gives.
+
+## 7. Q5/Q6 (scale) — what the localized budget really is.  **`L⁶`: critical, not decaying.**
+
+`LocalBudgetScale.lean` and `LocalRouteCapstone.lean`.
+
+Feeding the count-and-norm budget `e₂ ≤ ½ N² B²` (`localNormCountBudget N B
+= 2N²B²` for the lifted family, which has `N ≍ 2 ∑ m_ρ`) with
+
+* `N ≍ A · L` (bounded-height Riemann–von Mangoldt, counting multiplicity), and
+* `B ≍ C_b · L²` (the **proved** scale of §6, not the assumed `C_vec · L`),
+
+gives budget `≍ 2A²C_b² L⁶`, exactly the order of the floor `c L⁶ α²`.  Proved:
+
+* `linear_scale_ratio_tendsto_zero` — *if* `B ≍ L` had been true, the ratio
+  `budget / L⁶` would indeed tend to `0` (the proposal's `(log T)^{−2}`);
+* `quadratic_scale_ratio_eq_const` — with the true `B ≍ C_b L²`, the ratio is the
+  **constant** `2A²C_b²`;
+* `quadratic_scale_not_tendsto_zero` — hence it does not tend to `0`;
+* `quadratic_scale_tube_radius_const` — the resulting tube radius is a constant.
+
+`LocalRouteCapstone.lean` states the same conclusion in the taper variables,
+with no arithmetic input whatsoever:
+
+* `finiteGridGramDefect_le_normBound_sq` — Δ ≤ `Bφ(α,L)²` where
+  `Bφ(α,L) = taperMass² + derivMass² L²/(2π²)`, by Cauchy–Schwarz plus §6;
+* `source_local_route_constraint` — combining with the §5 floor,
+  `(81/16384) L⁶ α² ≤ Bφ(α,L)²`;
+* `offset_le_of_quadratic_norm_bound` — and *if* one had an `α`-uniform
+  `Bφ ≤ C_b L²`, then `|α| ≤ (128/9) C_b / L`.
+
+The last item isolates precisely what would have to be earned.  It is not
+available for free: `taperMass(φ,α) = ∫|φ| e^{−αu}` and
+`derivMass(φ,α) = ∫|φ'| e^{−αu}` are taken against a taper of width `≍ L`, so in
+the off-line direction they grow like `e^{αL/2}`.  (That growth is asserted here
+as prose, not proved in Lean; what *is* proved is the conditional statement
+above, which is the form the programme needs.)
+
+So the summary answers:
+
+| question | answer |
+|---|---|
+| Q1 local retention at fixed `H` | **yes, conditionally** — `H = 1` works iff `\|α\| ≳ derivMass·L^{−3/2}` (`unit_height_dichotomy`) |
+| Q2 anchored-minor reduction | **yes**, and lossless at the anchor (`coordAnchorMinorSum_eq_of_anchor`) |
+| Q3 local tail transport | **yes** — constants involve `q ≍ LH`, not `d ≍ LT` |
+| Q4 prime-source audit below `thm_traces` | **partially** — see §8 |
+| Q5 local prime scale `E_prime,loc(T,1) = o(L⁶)` | **not available** — genuinely new short-interval analytic number theory |
+| Q6 literal target contradiction | **no** — the localized budget is `≍ L⁶`, critical; the tube radius is constant |
+
+## 8. Q4 — audit of the companion below `PrimeSide.thm_traces`
+
+Companion `Zeta23`, as vendored under `Zeta23Bridge/.lake/packages/Zeta23`.
+
+*Uniform-in-`k` material does exist.*  `GentryA k l = ∫ φ̂(τ−τ_k) φ̂(τ−τ_l) ν_X(τ) dτ`
+is defined **entrywise**; `GentryA_diag_eq` is an entrywise diagonal identity;
+and the archimedean μ-part carries a per-`k` uniform bound
+`|Gμ_k − 2π a L_μ(τ_k)| ≤ (K I₁ + 10 I₂)/T` (`Zeta23/PrimeSideA.lean`, ≈ lines
+115–140).  So the archimedean side localizes for free.
+
+*The prime part does not.*  The prime contributions enter only through
+`Mform Φ T u₁ u₂ = ∬_{[T,2T]²} Φ(τ−τ')² u₁ u₂` and through `prop_PP`
+(`Zeta23/PrimeSideB/PP.lean`, `PPOffDiag.lean`), whose inputs are Hilbert-type
+Montgomery–Vaughan (`MVHilbert`) and Chebyshev–Mertens over the **whole dyadic
+interval** (`Zeta23/Hypotheses.lean`, `PaperInputs`).  These are mean-value
+estimates: they are only good after averaging over `[T, 2T]`.
+
+Conclusion: the fork identified in the proposal resolves to the **harder case**.
+A bounded-height version of the prime-side second moment is a short-interval
+Dirichlet-polynomial mean-value theorem and is not derivable from the present
+inputs.  That said, §7 shows this is no longer the *binding* obstruction: even a
+perfect local prime bound would face a floor and a self-budget of the same
+order `L⁶`.
+
+## 9. The `o(1)`-versus-`= ½` distinction, formalized
+
+The proposal correctly warned against conflating `β_ρ − ½ → 0` with `β_ρ = ½`.
+This is now a pair of theorems rather than a caution:
+
+* `fixed_offset_eq_zero_of_eventual_tube` — for a **fixed** offset `α`, if `α` is
+  eventually inside a tube of radius `r(T) → 0`, then `α = 0`;
+* `exists_nonzero_offsets_within_shrinking_tube` — but there exists a family of
+  **nonzero** offsets `α_n` with `|α_n| ≤ r(n) → 0`.
+
+So a family of bounded-height localization statements, one per window, gives at
+best `β − ½ = o(1)` as the height grows, and never `β = ½` — unless the same zero
+can be placed in windows of unboundedly large scale parameter, which its ordinate
+forbids.  Any future closure of this programme must supply that step explicitly.
+
+---
+
+## 10. The first unproved theorem, exactly
+
+As required: the strongest verified reductions are preserved and RH is not
+claimed.  The first unproved statement on the localized route is
+
+> **`e₂(G_H) ≤ E_prime,loc(T, H)` with `E_prime,loc(T, H) = o(L⁶)` for some
+> `H = o(L²)`** — a bounded-height (short-interval) prime-side exterior-area
+> bound.
+
+There is no Lean declaration for it in this repository (it is not stated as a
+`sorry`ed lemma, by design), and per §8 it is not derivable from the companion's
+present inputs.  Even granted it, §7 shows a second obligation is now equally
+binding:
+
+> an **`α`-uniform** window energy bound `Bφ(α, L) ≤ C_b L²`, i.e. control of the
+> twisted taper masses `taperMass(φ,α)`, `derivMass(φ,α)` that does not degrade
+> like `e^{αL/2}` — the hypothesis of `offset_le_of_quadratic_norm_bound`.
+
+Both are strictly weaker than RH, and both are open here.
+
+## 11. Verdict on the localization proposal
+
+* The structural diagnosis was right: the global `e₂` lane is dead for a reason
+  no constant can repair (G5), and localization is the correct response.
+* The architectural steps all go through, and are now proved rather than
+  assumed: multiplicity lift (no `M`), compression functoriality, hot/cold exact
+  reopening with a universal property, anchored minors (tight), local transport
+  with window-size constants, and real Schur theorems.
+* The **arithmetic prediction did not survive contact with the source vectors**.
+  The predicted `(log T)⁴` local budget rested on a linear per-vector trace bound
+  that is provably false; the true `L²` energy scale puts the localized budget at
+  `L⁶`, precisely the order of the floor.  Localization converts a power-of-`T`
+  failure into a *critical* constant-order failure.  That is real progress, and
+  it is still not a proof.

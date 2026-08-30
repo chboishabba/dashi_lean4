@@ -1,0 +1,209 @@
+name: YM Clay analytic inhabitation
+
+on:
+  pull_request:
+    paths:
+      - 'DASHI/Physics/YangMills/BalabanClayAnalyticConcreteDefinitions.agda'
+      - 'DASHI/Physics/YangMills/BalabanExactPatchTransferCalculus.agda'
+      - 'DASHI/Physics/YangMills/BalabanBulkPropagatorAnalyticInhabitation.agda'
+      - 'DASHI/Physics/YangMills/BalabanFiniteFourierHodgeReduction.agda'
+      - 'DASHI/Physics/YangMills/BalabanFiniteFourierHodgeReductionRegression.agda'
+      - 'DASHI/Physics/YangMills/BalabanPeriodic*.agda'
+      - 'DASHI/Physics/YangMills/BalabanPublishedAnalyticAuthorities.agda'
+      - 'DASHI/Physics/YangMills/BalabanPublishedAuthorityAdapters.agda'
+      - 'DASHI/Physics/YangMills/BalabanPublishedSourceTheoremAuthorities.agda'
+      - 'DASHI/Physics/YangMills/BalabanPublishedSourceTheoremRegression.agda'
+      - 'DASHI/Physics/YangMills/BalabanExactPublishedCarrierMatching.agda'
+      - 'DASHI/Physics/YangMills/BalabanExactPublishedCarrierMatchingRegression.agda'
+      - 'DASHI/Physics/YangMills/BalabanPublishedSourceToDashi.agda'
+      - 'DASHI/Physics/YangMills/BalabanOneStepAllScaleAnalyticInhabitation.agda'
+      - 'DASHI/Physics/YangMills/BalabanThermodynamicContinuumOSAnalyticInhabitation.agda'
+      - 'DASHI/Physics/YangMills/BalabanUniformPhysicalMassGapAnalyticInhabitation.agda'
+      - 'DASHI/Physics/YangMills/BalabanUnconditionalSolutionCertificate.agda'
+      - 'DASHI/Physics/YangMills/BalabanClayAnalyticInhabitationSpine.agda'
+      - 'DASHI/Physics/YangMills/ConstructiveYangMillsNextSurface.agda'
+      - 'scripts/check_ym_unconditional_gate.py'
+      - 'scripts/check_ym_periodic_fourier_foundation.py'
+      - 'scripts/check_ym_periodic_physical_closure.py'
+      - '.github/workflows/ym-clay-analytic-inhabitation.yml'
+  workflow_dispatch:
+
+
+concurrency:
+  group: dashi-global-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  focused-agda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit fail-closed theorem and status surface
+        run: python3 scripts/check_ym_unconditional_gate.py
+      - name: Audit periodic finite-Fourier foundation
+        run: python3 scripts/check_ym_periodic_fourier_foundation.py
+      - name: Audit periodic physical closure
+        run: python3 scripts/check_ym_periodic_physical_closure.py
+      - uses: DeterminateSystems/nix-installer-action@main
+      - name: Typecheck periodic four-torus carrier
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicTorus4Carrier.agda
+          '
+      - name: Typecheck literal finite Fourier definitions
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicTorus4Fourier.agda
+          '
+      - name: Typecheck physical Fourier normalization matching
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicFourierNormalizationMatching.agda
+          '
+      - name: Typecheck difference symbols
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicDifferenceSymbols.agda
+          '
+      - name: Typecheck constraint removal and symbol-gap reduction
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicBlockSymbolGap.agda
+          '
+      - name: Typecheck physical constraint matching
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicPhysicalConstraintMatching.agda
+          '
+      - name: Typecheck local block gap inhabitation
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicLocalBlockGapInhabitation.agda
+          '
+      - name: Typecheck physical Hodge adapter
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicFiniteFourierHodgeCertificate.agda
+          '
+      - name: Typecheck periodic Fourier regression
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicFourierHodgeRegression.agda
+          '
+      - name: Typecheck periodic bulk Hessian and Green closure
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicBulkHessianGreenClosure.agda
+          '
+      - name: Typecheck periodic physical closure regression
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicPhysicalClosureRegression.agda
+          '
+      - name: Typecheck periodic patch Green transfer
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicPatchGreenTransfer.agda
+          '
+      - name: Typecheck periodic patch Green regression
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicPatchGreenTransferRegression.agda
+          '
+      - name: Typecheck periodic constructive completion spine
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPeriodicConstructiveCompletionSpine.agda
+          '
+      - name: Typecheck finite Fourier Hodge reduction
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanFiniteFourierHodgeReduction.agda
+          '
+      - name: Typecheck finite Fourier Hodge regression
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanFiniteFourierHodgeReductionRegression.agda
+          '
+      - name: Typecheck source-faithful published theorem boundary
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPublishedSourceTheoremAuthorities.agda
+          '
+      - name: Typecheck published source theorem regression
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPublishedSourceTheoremRegression.agda
+          '
+      - name: Typecheck exact published carrier matching
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanExactPublishedCarrierMatching.agda
+          '
+      - name: Typecheck exact matching regression
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanExactPublishedCarrierMatchingRegression.agda
+          '
+      - name: Typecheck source-to-DASHI composition
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanPublishedSourceToDashi.agda
+          '
+      - name: Typecheck unconditional solution gate
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/BalabanUnconditionalSolutionCertificate.agda
+          '
+      - name: Typecheck focused Yang-Mills aggregate
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            agda -i . -i DCHoTT-Agda -i cubical -l standard-library \
+              DASHI/Physics/YangMills/ConstructiveYangMillsNextSurface.agda
+          '

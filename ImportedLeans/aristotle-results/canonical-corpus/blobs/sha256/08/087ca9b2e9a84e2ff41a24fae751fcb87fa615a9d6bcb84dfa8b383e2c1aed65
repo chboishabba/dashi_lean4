@@ -1,0 +1,188 @@
+# 🗺️ User Skill: Give Your Own Code an Address in Mathlib
+
+**Audience:** complete beginners. No knowledge of the Monster group, moonshine,
+or the rest of this project is required.
+
+This is the *user manual* for the tool in
+[`RequestProject/UserAddress.lean`](RequestProject/UserAddress.lean). It lets you
+take **your own** definitions, theorems, or domain-specific language and stamp
+each one with a short **address** — a coordinate that lives in the **same space
+as every declaration in Mathlib**.
+
+---
+
+## TL;DR — the question you asked
+
+> *Can we assign our user-space code (or our own domain language) an address in
+> the Mathlib space?*
+
+**Yes.** Every Lean declaration — yours or Mathlib's — gets turned into a number
+(its *structural fingerprint*) and then into a triple of coordinates
+
+```
+address = (k mod 71, k mod 59, k mod 47)
+```
+
+Because `47 · 59 · 71 = 196883`, the Chinese Remainder Theorem guarantees this
+triple is a **unique label** for every fingerprint below `196883`. Mathlib uses
+the exact same recipe, so your code and Mathlib share one coordinate system, and
+you can ask *"which Mathlib lemma sits at my address?"*
+
+This uniqueness is **proved in Lean** (`UserAddress.sameAddress_unique`,
+`UserAddress.crtTriple_inj`); there is no `sorry`.
+
+---
+
+## 1. Install / import
+
+In any Lean file in this project, just write:
+
+```lean
+import RequestProject.UserAddress
+```
+
+That brings three commands into scope: `#address`, `#compareaddress`, `#ward`.
+
+---
+
+## 2. The three commands (with copy-paste examples)
+
+### `#address f` — "what is my address?"
+
+Point it at *any* declaration and it prints an **address card**.
+
+```lean
+#address Nat.add        -- a Mathlib function
+#address List.map       -- a Mathlib function
+```
+
+Output looks like:
+
+```
+[Your code @ Mathlib address] Nat.add
+  ├── structural fingerprint k = 488
+  ├── page slot (k mod 196883) = 488
+  ├── address (mod 71, 59, 47) = (62, 16, 18)
+  └── this is a valid cell of the 71×59×47 Monster-irrep grid
+```
+
+It works identically on **your own** code:
+
+```lean
+def myGreeting (n : Nat) : Nat := n + 41
+#address myGreeting
+```
+
+### `#compareaddress f g` — "how does my code line up with Mathlib?"
+
+Put two declarations side by side and see which coordinates they share:
+
+```lean
+#compareaddress myGreeting Nat.add
+```
+
+```
+[Address comparison]
+  myGreeting: (7, 31, 8)
+  Nat.add:    (62, 16, 18)
+  mod 71: 7 ≠ 62
+  mod 59: 31 ≠ 16
+  mod 47: 8 ≠ 18
+  → different cells; only the coordinates marked (shared) coincide.
+```
+
+If all three coordinates match it tells you the two land on the **same grid
+cell** — the strongest form of "your code lives where this Mathlib lemma lives".
+
+### `#ward f` — "who are my Mathlib neighbours?"
+
+Scan the loaded environment (Mathlib included) and list a few declarations in the
+same **mod-47 ward** (they share your third coordinate):
+
+```lean
+#ward myGreeting
+```
+
+```
+[mod-47 ward of myGreeting]  ward index c47 = 8
+  (scanned 817 declarations, showing 12 neighbours)
+  • Matrix.smul_hadamard        (type fingerprint 666, 8 mod 47)
+  • Finset.subsetSum_mono       (type fingerprint 243, 8 mod 47)
+  • finite_irreducible          (type fingerprint 196, 8 mod 47)
+  ...
+```
+
+These really are Mathlib declarations — proof that your code now shares
+neighbourhoods with the standard library.
+
+---
+
+## 3. Use cases / "skills"
+
+| You want to… | Use | Why it works |
+|---|---|---|
+| Stamp every definition in your library with a stable ID | `#address` | The fingerprint depends only on the declaration's shape, so the address is reproducible. |
+| Tell whether two definitions are "structurally the same" | `#compareaddress` | Identical shapes ⇒ identical fingerprints ⇒ identical address (a visible collision). |
+| Find Mathlib lemmas that live near your code | `#ward` | Same coordinate space ⇒ "neighbours" are well-defined across libraries. |
+| Give a **domain-specific language** an address map | `#address` on each DSL constructor / rule | A DSL is just a bunch of Lean declarations; each one gets a coordinate like anything else. |
+| Detect duplicate / clashing declarations | `#compareaddress` / `#ward` | Two decls that keep landing on the same cell are candidates for de-duplication. |
+
+### Worked mini-example: addressing your own DSL
+
+Suppose your "domain language" is a few constructors:
+
+```lean
+inductive Cmd | move | turn | wait
+def runMove : Nat := 1
+def runTurn : Nat := 2
+```
+
+Then:
+
+```lean
+#address Cmd
+#address runMove
+#address runTurn
+#compareaddress runMove runTurn      -- do two rules collide?
+#ward runMove                        -- which Mathlib decls share runMove's ward?
+```
+
+Now every piece of your language has a coordinate in the same atlas Mathlib uses.
+
+---
+
+## 4. What is *guaranteed* (the proved part)
+
+Open `RequestProject/UserAddress.lean` and you'll find these theorems, all
+checked by Lean with only the standard axioms:
+
+- **Every coordinate is a real grid cell:** `c71_lt`, `c59_lt`, `c47_lt`,
+  `slot_lt` — your three coordinates are always in `0…70`, `0…58`, `0…46`, and
+  the slot is in `0…196882`.
+- **The address is computed straight from the fingerprint:** `addressOf_addr`.
+- **"Shares an address" is an equivalence relation:** `sameAddress_equivalence`
+  — so addresses cleanly partition *all* code (yours + Mathlib) into classes.
+- **Addresses are unique within a page:** `sameAddress_unique` — below `196883`,
+  same address ⇒ same declaration. This is the precise sense in which the
+  address really *identifies* your code.
+
+---
+
+## 5. Honest small print
+
+The fingerprint is a **structural hash**. The tool does **not** claim a deep
+mathematical relationship between the Monster group and your code — it borrows
+the Monster's first irrep dimension `196883 = 47·59·71` only because that
+factorisation gives a clean, provably-unique 3-coordinate address. What *is*
+guaranteed is the address algebra above: validity, uniqueness, and the
+equivalence-relation structure that lets your code and Mathlib share one map.
+
+---
+
+## 6. Where things live
+
+| File | Role |
+|---|---|
+| `RequestProject/UserAddress.lean` | The user tool: `#address`, `#compareaddress`, `#ward`, plus the proofs. |
+| `RequestProject/ExprAddress.lean` | The underlying structural fingerprint + CRT uniqueness theorem it builds on. |
+| This file | The beginner guide you're reading. |

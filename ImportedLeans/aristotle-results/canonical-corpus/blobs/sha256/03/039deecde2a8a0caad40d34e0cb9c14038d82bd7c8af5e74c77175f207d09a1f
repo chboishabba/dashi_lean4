@@ -1,0 +1,26 @@
+This project was edited by [Aristotle](https://aristotle.harmonic.fun).
+
+To cite Aristotle:
+- Tag @Aristotle-Harmonic on GitHub PRs/issues
+- Add as co-author to commits:
+```
+Co-authored-by: Aristotle (Harmonic) <aristotle-harmonic@harmonic.fun>
+```
+
+# Literal RH completion cutset
+
+This bundle contains the merged Riemann Hermitian top-down tranche from
+`dashi_agda`, including:
+
+- `DASHI/Analysis/RiemannHermitianTopDownAssemblyExact.agda`;
+- complex-Poisson/Hermitian reduction;
+- phi/cosh coercivity reduction;
+- finite-retention and mixed-kernel envelope reductions;
+- the Riemann analytic substrate and exact theorem surface.
+
+The material is a proof programme and reduction ledger, not a proof of the
+Riemann hypothesis.  It includes the later committed
+`RiemannG3SourceTransportExact.agda` and
+`RiemannCenteredGridRetentionExact.agda` updates.  Their source assumptions
+and proof status must still be checked; their presence is not a proof that the
+literal analytic obligations are discharged.

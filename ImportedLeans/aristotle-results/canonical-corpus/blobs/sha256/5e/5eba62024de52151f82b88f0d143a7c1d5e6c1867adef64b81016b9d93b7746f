@@ -1,0 +1,15 @@
+name = "RequestProject"
+defaultTargets = ["RiemannAnalytic"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.28.0"
+
+[[lean_lib]]
+name = "RiemannAnalytic"
+globs = ["RiemannAnalytic.*"]
+
+# The two pre-existing directories below carry hyphens in their names, which
+# are not valid Lean module-name components, so they cannot be configured as
+# Lake libraries here.  They are left in the tree untouched.

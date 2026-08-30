@@ -1,0 +1,399 @@
+# The frozen four: authoritative Clay Yang–Mills research count
+
+**Count: 4. Frozen.**
+
+This file is the authoritative count file for the Yang–Mills lane. It supersedes
+the round-by-round leaf counting recorded in
+`DASHI/Physics/YangMills/BalabanClayHighestAlphaRound*.agda`, whose last entry
+(Round 82) reported five leaves. It does not *decrement* that number by
+relabelling: rows A2 and the old B1/B2, C1/C2 groupings are here re-pinned to
+four named, falsifiable theorem statements, and the count is frozen at four
+until one entire row is proved.
+
+Machine-checked ledger: `DASHI/Physics/YangMills/YMFrozenFourResearchScoreboardExact.agda`.
+
+## Relation to the Round-82 count of five
+
+The integer changed from five to four by **regrouping**, not by proving
+anything, and this must not be read as a decrement under the rule below:
+
+| Round-82 leaf | Frozen row |
+| --- | --- |
+| A1 `LiteralCompactSimplePositiveBeta` | A (unchanged) |
+| B1 `UniformHeatHessianDebt` | C (first half) |
+| B2 `UniformCovariantFiniteSpeed` | C (second half) |
+| C1 `SameFamilyCompositeOPERemainder` | D (parts 1–2) |
+| C2 `SameFamilyStressWardHamiltonian` | D (part 3), **without** the stronger `∫T₀₀ = H_OS` |
+| (Round-82 A2, previously declared source-owned) | B, restated as the physical same-object locality theorem it actually needs |
+
+So B1+B2 became one theorem C on one density, C1+C2 became one theorem D on
+one family, and the locality content that Round 82 had discharged to the
+literature is counted again as row B, because what the chain needs is the
+physical same-object statement, not the general mechanism. Four theorem-sized
+results remain open; none has been proved. The historical round modules
+(`BalabanClayHighestAlphaRound73..82*`) stay in the tree as a record of the
+earlier counting and are superseded by this file.
+
+## The rule
+
+> The count moves only when one entire row becomes proved.
+
+No decrement because a nicer compiler was found. No decrement because two
+hypotheses share notation. No decrement because an old source almost proves
+something. No decrement because a narrower conditional record was created. A
+claim of "3 remain" is invalid unless it is accompanied by a proof of A, B, C or
+D, or by a genuine theorem showing one of them is logically implied by another.
+
+The Agda ledger enforces the proof-carrying half of this rule: a row's status
+can only be `provedRow` if a `CompletionCertificate` is supplied, and a
+certificate must carry a proposition **together with an inhabitant of it**. What
+the type system cannot check is that the proposition chosen is the row's
+normative statement. The normative statements are the displayed conditions
+below; a certificate must quote the one it claims to discharge.
+
+## Two tracks, kept apart
+
+* **Research track (this file).** Rows A–D below. These are new physical
+  theorems about four-dimensional Yang–Mills. Each is open.
+* **Formalization-completeness track.** Everything needed to state the above
+  inside this repository from its own constructive foundations: normalized Haar
+  measure on a compact Lie group from Bishop reals, Peter–Weyl, an SU(N) chart,
+  and so on. That track is recorded in
+  `docs/ym/YangMillsClayObstructionReport.md` and is *not* part of the research
+  count. Haar measure (Weil/von Neumann) and Peter–Weyl are classical
+  mathematics; "not yet internally derived in Agda" is a formalization debt, not
+  an open research problem, and must never be counted as one. Equally, closing
+  the formalization track does not decrement the research count.
+
+## Scoreboard
+
+| Row | Name | Falsifiable completion condition | One-line numerical target | Status |
+| --- | --- | --- | --- | --- |
+| A | `LiteralCompactSimplePositiveBeta` | positive terminal-tail slope **and** small-field survival **and** the tuned trajectory landing in the prescribed nonzero physical coupling window | two gates: `C·γ < b₋` (sign) and `L·γ < b_*` (tuning contraction), for the constants delivered by the literal constrained Gaussian determinant and the differentiated interaction estimate | **open** |
+| B | `PhysicalMarkedSourceLocalityCompositeStress` | physical same-object `E_d ≤ E₀ rᵈ`, `r < 1` | one pair `(E₀, r)` with `r < 1`, valid for the *same* marked source family, uniformly in cutoff, volume and scale | **open** |
+| C | `SameDensityCompactLieHeatLangevinMassGap` | integrable same-density Hessian debt + uniform exponential clustering | `sup_N ∫₀^∞ η_N(t) dt < ∞` and `m > 0` uniform in `N`, both on the one effective density | **open** |
+| D | `SameFamilyShortDistanceOPEStressAF` | physical RG OPE tail + AF mixing + stress Ward | `R_D^phys = R_D^RG`, `C₀^phys = C₀^AF` with mixing `M_n`, and `∂^μ T_{μν} = 0` | **open** |
+
+Research DAG, frozen:
+
+```
+A ──▶ B ──▶ C
+      └───▶ D          C + D feed the final nontriviality / mass-gap /
+                       local-QFT assembly.
+```
+
+Effort allocation: **A to closure first**; **C as the main parallel research
+attack**; **B, D only where concrete estimates emerge**.
+
+---
+
+## A. `LiteralCompactSimplePositiveBeta`
+
+Source-native split, per RG shell:
+
+    β_{j+1} = β_{Z,j+1} + β_{Int,j+1}.
+
+**Completion condition.** Exhibit constants `b₋ > 0`, `b₊ < ∞`, `C < ∞`,
+`ρ > 0` such that every admissible prefix `k < m` of the literal Bałaban
+trajectory on an arbitrary compact simple gauge group satisfies
+
+    b₋(m−k) ≤ Σ_{j=k+1}^{m} β_{Z,j} ≤ b₊(m−k),
+
+    | Σ_{j=k+1}^{m} β_{Int,j} | ≤ C Σ_{j=k+1}^{m} g_{j−1}^ρ,
+
+with the admissible small-coupling history strong enough that the right-hand
+side cannot consume the positive Gaussian margin. What downstream consumes is
+only
+
+    Σ_{j=k+1}^{m} β_j ≥ b_*(m−k),   b_* > 0 uniform.
+
+**The concrete new analysis.** The identity-background Hessian of the *actual*
+constrained Gaussian normalization, including the `Q`-constraint dependence,
+followed by a uniform estimate of the nonlinear interaction Hessian.
+
+**Falsification.** A sign that comes out wrong in the constrained Gaussian
+Hessian; an interval for `b₋` that does not close away from zero; or a required
+constant inconsistent with `C_A(G) ≥ 2`.
+
+**Machine-checked here (does not close the row).**
+`DASHI/Physics/YangMills/YMCumulativeBetaMarginExact.agda` proves the reduction:
+given the two-sided Gaussian shell bounds, an interaction prefix controlled by
+`C` times the history prefix, a history prefix bounded uniformly by a budget
+`γ`, and the margin inequality `C·γ + b_* ≤ b₋`, the target inequality
+`Σ β_j ≥ b_*(m−k)` holds for every start `k` and every nonempty prefix, with no
+dependence on the prefix length; the companion upper bound
+`Σ β_j ≤ b₊(m−k) + C·γ` is proved as well, as is the version for prefixes
+starting at a first admissible scale `j₀`. The uniform history budget itself is
+proved in `YMGeometricPrefixBudgetExact.agda` from geometric contraction of the
+history majorant. The hypotheses are shown consistent, with nonzero interaction,
+in `YMCumulativeBetaMarginNonVacuityExact.agda`.
+
+The sharp form is the **closure criterion** `closureCriterionMargin`: for any
+admissible trajectory the entire prefix inequality closes as soon as the single
+numerical inequality
+
+    C · B  <  b₋
+
+holds, and the uniform downstream constant is then exactly `b_* = b₋ − C·B`.
+Row A can be numerically falsified only by failure of that inequality for the
+constants the analysis actually delivers. The criterion may be fed directly
+with the estimates in the form the analysis produces them, shell by shell
+(`|β_{Int,j}| ≤ C g_{j−1}^ρ`), via `perShellClosureCriterionMargin`; the
+summation to prefix form is done inside.
+
+So the *shape* of A closes with the explicit uniform constant
+`b_* = b₋ − C·γ`. What is open, and keeps A open, is exactly
+
+1. `b₋ > 0` for the identity-background Hessian of the actual constrained
+   Gaussian normalization with its `Q`-constraint dependence, and
+2. the uniform nonlinear interaction Hessian estimate producing finite `C` and
+   positive `ρ` on the same trajectory.
+
+### Correction and sharpening of row A's statement
+
+Two corrections to the statement above, both of them substantive.
+
+**The completion condition was too weak in one direction.** A positive
+cumulative beta average does not construct Bałaban's tuned trajectory. The same
+history-dependent dynamics must additionally land in the prescribed *nonzero*
+physical coupling window at the terminal scale while remaining inside the
+CMP122 small-field tube. That this is a real gap, and not a stylistic one, is
+now machine-checked: `slopeAndTubeDoNotImplyWindow` in
+`DASHI/Physics/YangMills/YMRowATunedTrajectoryContractExact.agda` exhibits a
+family that survives in the tube and has a uniformly positive terminal-tail
+slope, yet whose terminal coupling misses a prescribed positive window. A
+future "A is solved" claim therefore has to inhabit the *combined* condition
+`TunedTrajectoryContract`, not the slope alone.
+
+**And too strong in another.** Requiring the positive slope on every internal
+subinterval is more than the source argument needs: what is needed are the
+*terminal tails*, the blocks ending at the cutoff `K`, while smallness from the
+bare end is handled by the existing one-sided prefix bound. The contract
+quantifies the slope over terminal tails only.
+
+### The shell-local mechanism, replacing the geometric history budget
+
+If CMP109's differentiated interaction really starts at `O(g)` — which the
+source supports for the explicit `P^{(k)}` lane, since after the rescaling
+`B = g_k B'` the interaction of (2.13) vanishes at `g_k = 0` and the Section 3
+`P^{(k)}` bound is a quadratic polynomial in the fluctuation field with `O(g_k)`
+coefficients — then a *summable* history is the wrong mechanism: on a
+marginal, asymptotically free trajectory `Σ_j g_j` is not uniformly bounded in
+the cutoff. The correct statement is shell-local and needs only the tube:
+
+    β_{Z,j} ≥ b₋,   β_{Int,j} ≥ −C g_{j−1},   g_{j−1} ≤ γ   ⟹   β_j ≥ b₋ − C γ,
+
+so A's sign condition reduces to the single small-coupling test `C γ < b₋`.
+Proved, with the finite-prefix consequence, in
+`DASHI/Physics/YangMills/BalabanYM4LinearInteractionBetaMarginExact.agda`.
+
+### The cutoff-independent tuning mechanism
+
+In the shooting variable `u = g^{-2}` a positive inverse-square margin
+`u_j − u_{j+1} ≥ b_*` gives, for `a = g_j ≤ b = g_{j+1}`,
+
+    b_* a² b² ≤ (b−a)(a+b)   and   a(a+b) ≤ 2b²   ⟹   (b_*/2) a³ ≤ b − a,
+
+which telescopes to `(b_*/2) Σ_{j<K} g_j³ ≤ g_K − g_0 ≤ γ`, i.e.
+`Σ_{j<K} g_j³ ≤ 2γ/b_*`, uniformly in the cutoff. Proved in
+`DASHI/Physics/YangMills/BalabanYM4CubicCouplingDriftTelescopeExact.agda`
+(with an explicit positive-margin witness; note that the margin can only hold
+on a finite range of shells, since `u_j > 0`).
+
+Since `|dg/du| = g³/2`, a uniform coupling derivative `|∂_g β_j| ≤ L` gives
+`|∂_u β_j| ≤ (L/2) g_j³` and hence cumulative sensitivity `≤ L γ / b_*`. The
+shooting map `T_K(u) = u_R + B_K(u)` has the target cancelling exactly from
+differences, so any cumulative-beta Lipschitz constant transfers to `T_K`;
+combining, `L γ < b_*` forces the cumulative sensitivity strictly below `1` for
+every cutoff. Both halves are proved in
+`DASHI/Physics/YangMills/BalabanYM4ShootingSensitivityFromCubicDriftExact.agda`,
+again with an explicit witness satisfying the gate.
+
+### The algebraic channel for the sign
+
+The endpoint-determinant machinery transported *upper* component bounds into
+the prefix majorant that keeps `g_j` small. The opposite transport, which is
+what an AF sign proof consumes,
+
+    L_D(k,n) + L_C(k,n) + L_I(k,n) ≤ Σ_{j=k+1}^{k+n} β_j,
+
+is now proved as well:
+`DASHI/Physics/YangMills/BalabanYM4DeterminantBetaLowerAlgebraExact.agda`
+(exact rationals, `--safe`, postulate-free) and, in the existing lane over the
+repository's postulated reals, `betaIntervalLowerBound` in
+`DASHI/Physics/YangMills/BalabanIntervalDeterminantAlgebra.agda`.
+
+### The SU(2) group-theory arithmetic is settled
+
+`(11/24)·C_A` with `C_A(SU(2)) = 2` is exactly `11/12`, so once the four joint
+orbit sums of the *same literal* Wilson + reduced Faddeev–Popov + Haar
+evaluator are enclosed in `[−1/2, 1/2]`,
+
+    β_Z ≥ 11/12 − 1/2 = 5/12 > 0.
+
+Proved in
+`DASHI/Physics/YangMills/BalabanYM4SU2RegularOrbitBetaFloorExact.agda`
+(self-contained, with the matching ceiling `17/12` and a nonzero-remainder
+witness). So the group-theory/sign arithmetic is not part of the physical
+obstruction.
+
+### What therefore remains for row A
+
+Three analytic producers, and only these:
+
+* **A1.** Construct the same-object constrained Gaussian Wilson/Faddeev–Popov/
+  Haar scalar and enclose its regular contribution, giving `b₋ > 0`.
+* **A2.** `|β_{Int,j}| ≤ C g_{j−1}` on the same physical trajectory, with a
+  uniform twice-background-differentiated Cauchy/log-integral constant. CMP109
+  evaluates the inherited-interaction lane at `B' = g_k C B − h D(g_k C B)`
+  with `D` beginning quadratically, so structurally `B' = O(g_k) + O(g_k²)`,
+  and treats the inherited `E^{(j)}` terms by analytic differentiation/Cauchy
+  localization; the exponent candidate is therefore `ρ = 1`, but the uniform
+  differentiated bound is **not** proved here.
+* **A3.** `|∂_g β_j| ≤ L` uniformly, with `L γ < b_*`.
+
+and then the two numerical gates `C γ < b₋` and `L γ < b_*`, together with the
+identification of the contract's `coupling`/`betaOf` with the literal Bałaban
+trajectory. **Row A is open. The count remains 4.**
+
+## B. `PhysicalMarkedSourceLocalityCompositeStress`
+
+**Completion condition.** On the actual CMP116/CMP119 carrier, for the
+differentiated Hessian/composite/stress source family of the *source-native*
+Yang–Mills RG state:
+
+* a common physical analytic radius `R_* > 0`;
+* same-object differentiated CMP116 localization, i.e. the marks and analytic
+  radii are those of the physical state, not of a separately constructed
+  auxiliary family;
+* `E_d^phys ≤ E₀ r^d` with `0 ≤ r < 1`, uniformly in cutoff, volume and scale.
+
+**Not separately countable.** Once B holds,
+
+    E_d ≤ E₀ r^d ⟹ Σ_d E_d < ∞ ⟹ coefficient-energy bound
+                 ⟹ Hilbert continuity ⟹ continuum curvature/composite/stress fields
+
+are implementation consequences, not Clay breakthroughs. The first implication,
+in the uniform form actually needed (a single constant bounding every partial
+sum at every starting scale), is machine-checked as
+`geometricEnergyPrefixBound` in
+`DASHI/Physics/YangMills/YMGeometricPrefixBudgetExact.agda`, so it can never be
+recounted as a research lemma.
+
+## C. `SameDensityCompactLieHeatLangevinMassGap`
+
+Probably the hardest remaining theorem, and the most likely site of a true
+mathematical brick wall.
+
+**Completion condition.** On the actual finite-volume Yang–Mills effective
+density,
+
+    u_t = H_t(e^{−V₀}),    V_t = −log u_t,
+
+prove a cutoff/volume-uniform Hessian debt
+
+    Hess V_t ≥ −η_N(t) g,    sup_N ∫₀^∞ η_N(t) dt < ∞,
+
+with the pointwise, division-free target
+
+    (X u_t)² − u_t Hess u_t(X,X) + η_N(t) u_t² |X|² ≥ 0;
+
+and, **on that same density**, spatial covariant influence propagation strong
+enough that for local observables
+
+    |Cov_{μ_N}(F_x, G_y)| ≤ C_{F,G} e^{−m d(x,y)},   m > 0 uniform in N.
+
+**Not separately countable.** "LSI", "Poincaré", "finite speed", "clustering",
+"OS gap" are downstream consumers once these hypotheses hold on the same
+physical family, and are not to be listed as additional rows.
+
+**Which criterion is the operative one.** The route this repository uses is the
+compact-group Heat/Doob criterion, whose geometry is
+
+    ½ Ric + Hess V_t ≥ κ_t g,
+
+consumed through `RicciReserveHessianDebtData` in
+`DASHI/Physics/YangMills/CompactLieHeatDoobRicciReserveDebtExact.agda`: from
+`Ric ≥ ρ g`, `Hess V_t ≥ −η(t) g` and `∫₀^∞ η ≤ M` it gives `I ≤ e^{2M}/ρ` and
+hence `γ_LSI ≥ ρ e^{−2M} > 0`. The covariance-weighted Bakry–Émery–type
+condition
+
+    Ċ_t Hess V_t Ċ_t − ½ C̈_t ≥ ℓ̇_t Ċ_t
+
+is a *separate alternate route*: it presupposes a gauge chart and its
+globalization, and must not be silently substituted for the group Heat/Doob
+criterion. Supplying the covariance-weighted condition alone therefore does not
+close row C.
+
+That separation is now machine-checked rather than asserted. In
+`DASHI/Physics/YangMills/YMRowCCurvatureCriterionIndependenceExact.agda` the
+two inequalities are reduced to their pointwise scalar form and shown to be
+logically independent, in exact rational arithmetic:
+
+* `bbdDoesNotImplyHessianFloor` — for every prescribed debt allowance `η` there
+  is a datum satisfying `Ċ Hess V Ċ − ½C̈ ≥ ℓ̇Ċ` whose Hessian is strictly below
+  `−η` (take `Ċ = 1`, `Hess V = −(η+1)`, `C̈ = 2 Hess V`, `ℓ̇ = 0`, so both sides
+  of the covariance-weighted inequality are exactly `0`). Hence no bound on the
+  negative part of `Hess V`, and in particular no cumulative Hessian debt bound,
+  can be extracted from the covariance-weighted condition alone.
+* `hessianFloorDoesNotImplyBBD` — conversely `Ċ = 1`, `Hess V = 0`, `C̈ = 2`,
+  `ℓ̇ = 0` meets every nonnegative debt floor while the covariance-weighted
+  inequality reads `0 ≤ −1` and fails.
+
+Both are re-exported from the frozen scoreboard as
+`rowCCriteriaIndependentChecked`. None of this proves row C: its physical
+content (a same-density uniform Hessian debt bound with physical covariant
+propagation) is untouched and remains open. The theorems only close off one
+specific false-positive completion path.
+
+## D. `SameFamilyShortDistanceOPEStressAF`
+
+**Completion condition.** For the physical fields supplied by B, exactly three
+things:
+
+1. `R_D^phys(x) = R_D^RG(x)`: the source RG tail is the actual continuum product
+   remainder;
+2. `C_{n+1}^phys = M_n C_n^phys` with the same `M_n` as the asymptotically-free
+   reference, and `C_0^phys = C_0^AF`;
+3. the physical stress insertion satisfies the local translation Ward identity
+   `∂^μ T_{μν} = 0` in the appropriate distributional/Ward sense, together with
+   its required short-distance action on the local fields.
+
+**Not separately countable.** The induction `C_n^phys = C_n^AF` for all `n` from
+(2) is an existing recurrence argument. The much stronger identification
+`∫ T₀₀ = H_OS` is **not** required as a fifth shortest-path research lemma.
+
+---
+
+## How to move the count
+
+1. Prove one row's displayed condition.
+2. Add the theorem to the tree as a checked Agda module with no postulate, hole,
+   receipt, or imported authority in its dependency cone.
+3. In `YMFrozenFourResearchScoreboardExact.agda`, set that row's `status` to
+   `provedRow` and supply a `CompletionCertificate` whose `Proposition` is the
+   theorem, whose `proof` is the checked term, and whose
+   `quotedNormativeStatement` is the displayed condition above, verbatim.
+4. `frozenResearchCountIsFour` will then fail to typecheck, which is the point:
+   the count is recomputed from the rows, never written by hand.
+
+Nothing else moves the count.
+
+## Verification of the material added with this file
+
+The four modules
+
+* `DASHI/Physics/YangMills/YMGeometricPrefixBudgetExact.agda`
+* `DASHI/Physics/YangMills/YMCumulativeBetaMarginExact.agda`
+* `DASHI/Physics/YangMills/YMCumulativeBetaMarginNonVacuityExact.agda`
+* `DASHI/Physics/YangMills/YMFrozenFourResearchScoreboardExact.agda`
+
+typecheck under `agda --safe` (Agda 2.6.4.3, standard library `_≤?_`/ordering
+API only). `--safe` rejects postulates and unsafe pragmas, so their content is
+exact rational arithmetic and bookkeeping with no trusted placeholder. None of
+it is evidence for any row, and the Clay status of this repository is unchanged.
+
+## Round records
+
+* [Round 83 — observer contraction and the proved bound calculus](round83-observer-and-bound-calculus.md).
+  Two new machine-checked modules on row A; no row moved, count unchanged.

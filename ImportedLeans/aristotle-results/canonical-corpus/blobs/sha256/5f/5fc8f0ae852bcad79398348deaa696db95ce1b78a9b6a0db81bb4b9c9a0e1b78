@@ -1,0 +1,486 @@
+module DASHI.Physics.YangMills.BalabanYM4InteractionCauchyPackageToRowAConstantsExact where
+
+------------------------------------------------------------------------
+-- ROW A2 + A3 AS ONE CALCULATION:
+--   A UNIFORM CAUCHY PACKAGE ON THE INTERACTION FACTOR
+--   ==>  THE TWO ROW-A GATE CONSTANTS  C  AND  L
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHAT THIS MODULE DOES.
+--
+-- `BalabanYM4InteractionLogHessianCauchyGateExact` (Row A2) and
+-- `BalabanYM4InteractionMixedCouplingDerivativeGateExact` (Row A3) estimate the
+-- *same* normalised interaction factor and its derivatives.  This module packs
+-- their hypotheses into one shell-indexed record — the seven uniform numbers
+--
+--     z₀ , A , B , D₀ , D₁ , D₂ , γ
+--
+-- of the CMP109 analytic tube, together with the shell data they bound — and
+-- produces the two Row-A gate constants in *divided* form:
+--
+--     C  =  (B z₀ + A² γ) / z₀² ,
+--     L  =  [ z₀ (D₂ z₀ + (D₀ B + 2 A D₁) γ) + 2 D₀ (B γ z₀ + A² γ²) ] / z₀³ ,
+--
+-- together with the sharpened variant obtained by differentiating the
+-- logarithmic form of beta_Int rather than its numerator,
+--
+--     L_sharp  =  [ D₂ z₀² + B D₀ γ z₀ + 2 A D₁ γ z₀ + 2 A² γ² D₀ ] / z₀³
+--              =  L - 2 B D₀ γ / z₀²      (Lemma `Lsharp≤L`),
+--
+-- proving, for every shell j,
+--
+--     |beta_Int,j| <= C g_j ,        -(C g_j) <= beta_Int,j ,
+--     |∂_g beta_Int,j| <= L ,
+--
+-- and the shooting transfer that Row A actually consumes: if W_j = ∂_u
+-- beta_Int,j is the derivative in the inverse-square variable u = g^{-2}, i.e.
+-- 2 W_j = -P_j g_j³ up to the chain-rule sign, then
+--
+--     |W_j|  <=  (L/2) g_j³ ,
+--
+-- which is exactly the `sensitivityCubic` hypothesis of
+-- `BalabanYM4ShootingSensitivityFromCubicDriftExact`, and the first inequality
+-- is exactly the `interactionLinearLower` hypothesis of
+-- `BalabanYM4LinearInteractionBetaMarginExact` with slope C and cap γ.
+--
+-- So Row A's remaining analytic obligation is now a *single* source
+-- calculation: exhibit z₀, A, B, D₀, D₁, D₂ for the literal CMP109 interaction
+-- functional on its small-field polydisc.  Everything downstream of those
+-- seven numbers — C, L, the sign gate C γ < b₋, the margin b_* = b₋ - Cγ, the
+-- cubic telescope and the tuning gate L γ_tube < b_* — is machine-checked.
+--
+-- WHAT IS *NOT* PROVED.  The seven numbers themselves, and the identification
+-- of the record's shell data with the literal Bałaban interaction functional.
+-- Row A stays open; the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Product.Base using (_×_; _,_)
+open import Data.Sum.Base using (inj₁; inj₂)
+open import Data.Rational.Base as ℚ
+  using ( ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _≤_; _<_; _/_; 1/_
+        ; NonZero; nonNegative; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; halfℚ; mul-nonNeg; mul-pos; scaleˡ-nonNeg; scaleʳ-nonNeg
+        ; transport-≤)
+import DASHI.Physics.YangMills.BalabanYM4InteractionLogHessianCauchyGateExact
+  as LogHess
+import DASHI.Physics.YangMills.BalabanYM4InteractionMixedCouplingDerivativeGateExact
+  as Mixed
+import DASHI.Physics.YangMills.BalabanYM4InteractionMixedCouplingDerivativeSharpGateExact
+  as Sharp
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Two elementary rational facts used to divide and to drop absolute values
+------------------------------------------------------------------------
+
+cancelDivide :
+  ∀ (x y c : ℚ) .{{_ : NonZero c}} → 0ℚ < c → x * c ≤ y → x ≤ y * (1/ c)
+cancelDivide x y c 0<c bound =
+  ℚP.*-cancelʳ-≤-pos c {{positive 0<c}} (transport-≤ refl (sym back) bound)
+  where
+    back : (y * (1/ c)) * c ≡ y
+    back =
+      trans (ℚP.*-assoc y (1/ c) c)
+        (trans (cong (y *_) (ℚP.*-inverseˡ c)) (ℚP.*-identityʳ y))
+
+neg-abs-≤ : ∀ p → - ∣ p ∣ ≤ p
+neg-abs-≤ p with ℚP.∣p∣≡p∨∣p∣≡-p p
+... | inj₁ eq =
+  subst (λ z → - z ≤ p) (sym eq)
+    (ℚP.≤-trans (ℚP.neg-antimono-≤ (ℚP.∣p∣≡p⇒0≤p eq)) (ℚP.∣p∣≡p⇒0≤p eq))
+... | inj₂ eq =
+  ℚP.≤-reflexive (trans (cong -_ eq) (negNeg p))
+  where
+    negNeg : ∀ (x : ℚ) → - (- x) ≡ x
+    negNeg x = solve 1 (λ y → :- (:- y) := y) refl x
+
+abs-bound-lower : ∀ {x y : ℚ} → ∣ x ∣ ≤ y → - y ≤ x
+abs-bound-lower {x} bound =
+  ℚP.≤-trans (ℚP.neg-antimono-≤ bound) (neg-abs-≤ x)
+
+------------------------------------------------------------------------
+-- The uniform CMP109 Cauchy package, shell by shell
+------------------------------------------------------------------------
+
+record UniformInteractionCauchyPackage : Set where
+  field
+    -- the seven uniform numbers
+    z₀ A B γ D₀ D₁ D₂ : ℚ
+    0<z₀ : 0ℚ < z₀
+    0≤A  : 0ℚ ≤ A
+    0≤B  : 0ℚ ≤ B
+    0≤D₀ : 0ℚ ≤ D₀
+    0≤D₁ : 0ℚ ≤ D₁
+    0≤D₂ : 0ℚ ≤ D₂
+
+    -- the shell data of the one interaction functional
+    coupling                         : Nat → ℚ   -- g_j
+    Zval Z₁val Z₂val G₀val G₁val G₂val : Nat → ℚ
+    betaInt                          : Nat → ℚ   -- H_j   = beta_Int,j
+    betaIntDerivative                : Nat → ℚ   -- P_j   = ∂_g beta_Int,j
+
+    0≤coupling : ∀ j → 0ℚ ≤ coupling j
+    couplingCapped : ∀ j → coupling j ≤ γ
+    lowerZ : ∀ j → z₀ ≤ Zval j
+    boundZ₁ : ∀ j → ∣ Z₁val j ∣ ≤ A * coupling j
+    boundZ₂ : ∀ j → ∣ Z₂val j ∣ ≤ B * coupling j
+    boundG₀ : ∀ j → ∣ G₀val j ∣ ≤ D₀
+    boundG₁ : ∀ j → ∣ G₁val j ∣ ≤ D₁
+    boundG₂ : ∀ j → ∣ G₂val j ∣ ≤ D₂
+
+    logHessianEquation :
+      ∀ j → betaInt j * (Zval j * Zval j)
+              ≡ Zval j * Z₂val j - Z₁val j * Z₁val j
+    mixedEquation :
+      ∀ j → betaIntDerivative j * (Zval j * (Zval j * Zval j))
+              ≡ (G₀val j * Z₂val j + Zval j * G₂val j
+                   - twoℚ * (Z₁val j * G₁val j)) * Zval j
+                  - twoℚ * ((Zval j * Z₂val j - Z₁val j * Z₁val j) * G₀val j)
+
+module Package (pkg : UniformInteractionCauchyPackage) where
+
+  open UniformInteractionCauchyPackage pkg
+
+  ------------------------------------------------------------------
+  -- The Row A2 / A3 data of each shell, on the same object
+  ------------------------------------------------------------------
+
+  shellLogHessData : Nat → LogHess.InteractionLogHessianData
+  shellLogHessData j = record
+    { z₀ = z₀ ; A = A ; B = B ; γ = γ ; g = coupling j
+    ; Z = Zval j ; Z₁ = Z₁val j ; Z₂ = Z₂val j ; H = betaInt j
+    ; 0<z₀ = 0<z₀
+    ; z₀≤Z = lowerZ j
+    ; 0≤A = 0≤A
+    ; 0≤B = 0≤B
+    ; 0≤g = 0≤coupling j
+    ; g≤γ = couplingCapped j
+    ; boundZ₁ = boundZ₁ j
+    ; boundZ₂ = boundZ₂ j
+    ; logHessianEquation = logHessianEquation j
+    }
+
+  shellMixedData : Nat → Mixed.InteractionMixedDerivativeData
+  shellMixedData j = record
+    { base = shellLogHessData j
+    ; D₀ = D₀ ; D₁ = D₁ ; D₂ = D₂
+    ; G₀ = G₀val j ; G₁ = G₁val j ; G₂ = G₂val j
+    ; P = betaIntDerivative j
+    ; 0≤D₀ = 0≤D₀ ; 0≤D₁ = 0≤D₁ ; 0≤D₂ = 0≤D₂
+    ; boundG₀ = boundG₀ j ; boundG₁ = boundG₁ j ; boundG₂ = boundG₂ j
+    ; mixedEquation = mixedEquation j
+    }
+
+  ------------------------------------------------------------------
+  -- The two gate constants, in divided form
+  ------------------------------------------------------------------
+
+  0≤z₀ : 0ℚ ≤ z₀
+  0≤z₀ = ℚP.<⇒≤ 0<z₀
+
+  z₀² z₀³ : ℚ
+  z₀² = z₀ * z₀
+  z₀³ = z₀ * (z₀ * z₀)
+
+  0<z₀² : 0ℚ < z₀²
+  0<z₀² = mul-pos 0<z₀ 0<z₀
+
+  0<z₀³ : 0ℚ < z₀³
+  0<z₀³ = mul-pos 0<z₀ 0<z₀²
+
+  instance
+    z₀²NonZero : NonZero z₀²
+    z₀²NonZero = ℚP.pos⇒nonZero z₀² {{positive 0<z₀²}}
+
+    z₀³NonZero : NonZero z₀³
+    z₀³NonZero = ℚP.pos⇒nonZero z₀³ {{positive 0<z₀³}}
+
+  interactionNumerator : ℚ
+  interactionNumerator = B * z₀ + A * A * γ
+
+  derivativeNumerator : ℚ
+  derivativeNumerator =
+    z₀ * (D₂ * z₀ + (D₀ * B + twoℚ * (A * D₁)) * γ)
+      + twoℚ * (D₀ * (B * γ * z₀ + A * A * (γ * γ)))
+
+  -- C = (B z₀ + A² γ) / z₀²
+  C : ℚ
+  C = interactionNumerator * (1/ z₀²)
+
+  -- L = [ z₀(D₂ z₀ + (D₀B + 2AD₁)γ) + 2D₀(Bγz₀ + A²γ²) ] / z₀³
+  L : ℚ
+  L = derivativeNumerator * (1/ z₀³)
+
+  ------------------------------------------------------------------
+  -- A2: |beta_Int,j| <= C g_j, hence the linear lower bound Row A wants
+  ------------------------------------------------------------------
+
+  interactionAbsBound : ∀ j → ∣ betaInt j ∣ ≤ C * coupling j
+  interactionAbsBound j =
+    ℚP.≤-trans
+      (cancelDivide ∣ betaInt j ∣ (interactionNumerator * coupling j) z₀² 0<z₀²
+        (LogHess.sharpLogHessianBound (shellLogHessData j)))
+      (ℚP.≤-reflexive
+        (solve 3
+          (λ n i gg → (n :* gg) :* i := (n :* i) :* gg)
+          refl interactionNumerator (1/ z₀²) (coupling j)))
+
+  interactionLinearLower : ∀ j → - (C * coupling j) ≤ betaInt j
+  interactionLinearLower j = abs-bound-lower (interactionAbsBound j)
+
+  ------------------------------------------------------------------
+  -- A3: |∂_g beta_Int,j| <= L, uniformly in the shell
+  ------------------------------------------------------------------
+
+  derivativeAbsBound : ∀ j → ∣ betaIntDerivative j ∣ ≤ L
+  derivativeAbsBound j =
+    cancelDivide ∣ betaIntDerivative j ∣ derivativeNumerator z₀³ 0<z₀³
+      (Mixed.mixedDerivativeBound (shellMixedData j))
+
+  ------------------------------------------------------------------
+  -- A3 sharpened: the same shell data through the logarithmic route
+  --
+  -- The cleared mixed equation of the package is *algebraically identical*
+  -- to the logarithmic-route equation of the sharp gate, so the same shell
+  -- data yields the strictly smaller constant
+  --
+  --   L_sharp = [ D₂ z₀² + B D₀ γ z₀ + 2 A D₁ γ z₀ + 2 A² γ² D₀ ] / z₀³
+  --           = L - 2 B D₀ γ / z₀² .
+  ------------------------------------------------------------------
+
+  shellSharpData : Nat → Sharp.SharpMixedDerivativeData
+  shellSharpData j = record
+    { z₀ = z₀ ; A = A ; B = B ; D₀ = D₀ ; D₁ = D₁ ; D₂ = D₂ ; γ = γ
+    ; g = coupling j
+    ; Z = Zval j ; Z₁ = Z₁val j ; Z₂ = Z₂val j
+    ; G₀ = G₀val j ; G₁ = G₁val j ; G₂ = G₂val j
+    ; P = betaIntDerivative j
+    ; 0<z₀ = 0<z₀ ; z₀≤Z = lowerZ j
+    ; 0≤A = 0≤A ; 0≤B = 0≤B
+    ; 0≤D₀ = 0≤D₀ ; 0≤D₁ = 0≤D₁ ; 0≤D₂ = 0≤D₂
+    ; 0≤g = 0≤coupling j ; g≤γ = couplingCapped j
+    ; boundZ₁ = boundZ₁ j ; boundZ₂ = boundZ₂ j
+    ; boundG₀ = boundG₀ j ; boundG₁ = boundG₁ j ; boundG₂ = boundG₂ j
+    ; mixedEquation = trans (mixedEquation j) (sameEquation j)
+    }
+    where
+      sameEquation :
+        ∀ k →
+        (G₀val k * Z₂val k + Zval k * G₂val k
+           - twoℚ * (Z₁val k * G₁val k)) * Zval k
+          - twoℚ * ((Zval k * Z₂val k - Z₁val k * Z₁val k) * G₀val k)
+          ≡ G₂val k * (Zval k * Zval k) - (Z₂val k * G₀val k) * Zval k
+              - twoℚ * ((Z₁val k * G₁val k) * Zval k)
+              + twoℚ * ((Z₁val k * Z₁val k) * G₀val k)
+      sameEquation k =
+        solve 6
+          (λ w w₁ w₂ h₀ h₁ h₂ →
+            (h₀ :* w₂ :+ w :* h₂ :- con twoℚ :* (w₁ :* h₁)) :* w
+              :- con twoℚ :* ((w :* w₂ :- w₁ :* w₁) :* h₀)
+              := h₂ :* (w :* w) :- (w₂ :* h₀) :* w
+                   :- con twoℚ :* ((w₁ :* h₁) :* w)
+                   :+ con twoℚ :* ((w₁ :* w₁) :* h₀))
+          refl (Zval k) (Z₁val k) (Z₂val k) (G₀val k) (G₁val k) (G₂val k)
+
+  sharpDerivativeNumerator : ℚ
+  sharpDerivativeNumerator =
+    D₂ * (z₀ * z₀)
+      + ((B * D₀) * γ) * z₀
+      + twoℚ * (((A * D₁) * γ) * z₀)
+      + twoℚ * ((A * A) * ((γ * γ) * D₀))
+
+  Lsharp : ℚ
+  Lsharp = sharpDerivativeNumerator * (1/ z₀³)
+
+  derivativeAbsBoundSharp : ∀ j → ∣ betaIntDerivative j ∣ ≤ Lsharp
+  derivativeAbsBoundSharp j =
+    cancelDivide ∣ betaIntDerivative j ∣ sharpDerivativeNumerator z₀³ 0<z₀³
+      (Sharp.sharpMixedDerivativeBound (shellSharpData j))
+
+  -- and it really is the sharper constant
+  sharpNumerator≤numerator : sharpDerivativeNumerator ≤ derivativeNumerator
+  sharpNumerator≤numerator =
+    transport-≤ (ℚP.+-identityʳ sharpDerivativeNumerator) (sym split)
+      (ℚP.+-monoʳ-≤ sharpDerivativeNumerator extraNonNeg)
+    where
+      0≤γ : 0ℚ ≤ γ
+      0≤γ = ℚP.≤-trans (0≤coupling 0) (couplingCapped 0)
+
+      extraNonNeg : 0ℚ ≤ twoℚ * (((B * D₀) * γ) * z₀)
+      extraNonNeg =
+        mul-nonNeg (toWitness {a? = 0ℚ ℚP.≤? twoℚ} _)
+          (mul-nonNeg (mul-nonNeg (mul-nonNeg 0≤B 0≤D₀) 0≤γ) 0≤z₀)
+
+      split :
+        derivativeNumerator
+          ≡ sharpDerivativeNumerator + twoℚ * (((B * D₀) * γ) * z₀)
+      split =
+        solve 7
+          (λ a b c e₀ e₁ e₂ gm →
+            c :* (e₂ :* c :+ (e₀ :* b :+ con twoℚ :* (a :* e₁)) :* gm)
+              :+ con twoℚ :* (e₀ :* (b :* gm :* c :+ a :* a :* (gm :* gm)))
+              := (e₂ :* (c :* c)
+                    :+ ((b :* e₀) :* gm) :* c
+                    :+ con twoℚ :* (((a :* e₁) :* gm) :* c)
+                    :+ con twoℚ :* ((a :* a) :* ((gm :* gm) :* e₀)))
+                   :+ con twoℚ :* (((b :* e₀) :* gm) :* c))
+          refl A B z₀ D₀ D₁ D₂ γ
+
+  Lsharp≤L : Lsharp ≤ L
+  Lsharp≤L =
+    scaleʳ-nonNeg
+      (ℚP.<⇒≤ (ℚP.positive⁻¹ (1/ z₀³) {{ℚP.1/pos⇒pos z₀³ {{positive 0<z₀³}}}}))
+      sharpNumerator≤numerator
+
+  -- the shooting transfer, with the sharp constant
+  shootingSensitivityCubicSharp :
+    ∀ j (W : ℚ) →
+    twoℚ * W ≡ - (betaIntDerivative j * (coupling j * coupling j * coupling j)) →
+    ∣ W ∣ ≤ (halfℚ * Lsharp) * (coupling j * coupling j * coupling j)
+  shootingSensitivityCubicSharp j W chainRule =
+    ℚP.*-cancelˡ-≤-pos twoℚ {{positive (toWitness {a? = 0ℚ ℚP.<? twoℚ} _)}}
+      (transport-≤ absTwo (sym collapse) scaled)
+    where
+      g³ : ℚ
+      g³ = coupling j * coupling j * coupling j
+
+      0≤g³ : 0ℚ ≤ g³
+      0≤g³ =
+        mul-nonNeg (mul-nonNeg (0≤coupling j) (0≤coupling j)) (0≤coupling j)
+
+      absTwo : ∣ twoℚ * W ∣ ≡ twoℚ * ∣ W ∣
+      absTwo = ℚP.∣p*q∣≡∣p∣*∣q∣ twoℚ W
+
+      viaChain : ∣ twoℚ * W ∣ ≡ ∣ betaIntDerivative j ∣ * g³
+      viaChain =
+        trans (cong ∣_∣ chainRule)
+          (trans (ℚP.∣-p∣≡∣p∣ (betaIntDerivative j * g³))
+            (trans (ℚP.∣p*q∣≡∣p∣*∣q∣ (betaIntDerivative j) g³)
+              (cong (∣ betaIntDerivative j ∣ *_) (ℚP.0≤p⇒∣p∣≡p 0≤g³))))
+
+      scaled : ∣ twoℚ * W ∣ ≤ Lsharp * g³
+      scaled =
+        transport-≤ (sym viaChain) refl
+          (scaleʳ-nonNeg 0≤g³ (derivativeAbsBoundSharp j))
+
+      collapse : twoℚ * ((halfℚ * Lsharp) * g³) ≡ Lsharp * g³
+      collapse =
+        solve 2
+          (λ l s → con twoℚ :* ((con halfℚ :* l) :* s) := l :* s)
+          refl Lsharp g³
+
+  ------------------------------------------------------------------
+  -- The shooting transfer: |∂_u beta_j| <= (L/2) g_j³
+  ------------------------------------------------------------------
+
+  -- With u = g^{-2} one has du = -2 g^{-3} dg, so ∂_u = -(g³/2) ∂_g; the
+  -- cleared form of that chain rule is 2 W = -(P g³), and only its absolute
+  -- value is used, so either sign convention gives the same estimate.
+
+  shootingSensitivityCubic :
+    ∀ j (W : ℚ) →
+    twoℚ * W ≡ - (betaIntDerivative j * (coupling j * coupling j * coupling j)) →
+    ∣ W ∣ ≤ (halfℚ * L) * (coupling j * coupling j * coupling j)
+  shootingSensitivityCubic j W chainRule =
+    ℚP.*-cancelˡ-≤-pos twoℚ {{positive (toWitness {a? = 0ℚ ℚP.<? twoℚ} _)}}
+      (transport-≤ absTwo (sym collapse) scaled)
+    where
+      g³ : ℚ
+      g³ = coupling j * coupling j * coupling j
+
+      0≤g³ : 0ℚ ≤ g³
+      0≤g³ =
+        mul-nonNeg (mul-nonNeg (0≤coupling j) (0≤coupling j)) (0≤coupling j)
+
+      absTwo : ∣ twoℚ * W ∣ ≡ twoℚ * ∣ W ∣
+      absTwo = ℚP.∣p*q∣≡∣p∣*∣q∣ twoℚ W
+
+      viaChain : ∣ twoℚ * W ∣ ≡ ∣ betaIntDerivative j ∣ * g³
+      viaChain =
+        trans (cong ∣_∣ chainRule)
+          (trans (ℚP.∣-p∣≡∣p∣ (betaIntDerivative j * g³))
+            (trans (ℚP.∣p*q∣≡∣p∣*∣q∣ (betaIntDerivative j) g³)
+              (cong (∣ betaIntDerivative j ∣ *_) (ℚP.0≤p⇒∣p∣≡p 0≤g³))))
+
+      scaled : ∣ twoℚ * W ∣ ≤ L * g³
+      scaled =
+        transport-≤ (sym viaChain) refl
+          (scaleʳ-nonNeg 0≤g³ (derivativeAbsBound j))
+
+      collapse : twoℚ * ((halfℚ * L) * g³) ≡ L * g³
+      collapse =
+        solve 2
+          (λ l s → con twoℚ :* ((con halfℚ :* l) :* s) := l :* s)
+          refl L g³
+
+------------------------------------------------------------------------
+-- Non-vacuity: a package with genuinely nonzero interaction data
+------------------------------------------------------------------------
+
+-- Every shell carries the Row A3 sample: Z = 1, Z₁ = Z₂ = g = 1/2,
+-- G₀ = G₁ = 1/2, G₂ = 1, z₀ = A = B = γ = D₀ = D₁ = D₂ = 1, so
+-- beta_Int = 1/4 and ∂_g beta_Int = 1/2, giving C = 2 and L = 8.
+
+samplePackage : UniformInteractionCauchyPackage
+samplePackage = record
+  { z₀ = 1ℚ ; A = 1ℚ ; B = 1ℚ ; γ = 1ℚ ; D₀ = 1ℚ ; D₁ = 1ℚ ; D₂ = 1ℚ
+  ; 0<z₀ = toWitness {a? = 0ℚ ℚP.<? 1ℚ} _
+  ; 0≤A = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+  ; 0≤B = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+  ; 0≤D₀ = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+  ; 0≤D₁ = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+  ; 0≤D₂ = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+  ; coupling = λ _ → + 1 / 2
+  ; Zval = λ _ → 1ℚ
+  ; Z₁val = λ _ → + 1 / 2
+  ; Z₂val = λ _ → + 1 / 2
+  ; G₀val = λ _ → + 1 / 2
+  ; G₁val = λ _ → + 1 / 2
+  ; G₂val = λ _ → 1ℚ
+  ; betaInt = λ _ → + 1 / 4
+  ; betaIntDerivative = λ _ → + 1 / 2
+  ; 0≤coupling = λ _ → toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+  ; couplingCapped = λ _ → toWitness {a? = (+ 1 / 2) ℚP.≤? 1ℚ} _
+  ; lowerZ = λ _ → ℚP.≤-refl
+  ; boundZ₁ = λ _ → toWitness {a? = ∣ + 1 / 2 ∣ ℚP.≤? 1ℚ * (+ 1 / 2)} _
+  ; boundZ₂ = λ _ → toWitness {a? = ∣ + 1 / 2 ∣ ℚP.≤? 1ℚ * (+ 1 / 2)} _
+  ; boundG₀ = λ _ → toWitness {a? = ∣ + 1 / 2 ∣ ℚP.≤? 1ℚ} _
+  ; boundG₁ = λ _ → toWitness {a? = ∣ + 1 / 2 ∣ ℚP.≤? 1ℚ} _
+  ; boundG₂ = λ _ → toWitness {a? = ∣ 1ℚ ∣ ℚP.≤? 1ℚ} _
+  ; logHessianEquation = λ _ → refl
+  ; mixedEquation = λ _ → refl
+  }
+
+module SamplePackage = Package samplePackage
+
+sampleInteractionBound :
+  ∀ j → ∣ + 1 / 4 ∣ ≤ SamplePackage.C * (+ 1 / 2)
+sampleInteractionBound = SamplePackage.interactionAbsBound
+
+sampleDerivativeBound : ∀ j → ∣ + 1 / 2 ∣ ≤ SamplePackage.L
+sampleDerivativeBound = SamplePackage.derivativeAbsBound
+
+sampleDerivativeBoundSharp : ∀ j → ∣ + 1 / 2 ∣ ≤ SamplePackage.Lsharp
+sampleDerivativeBoundSharp = SamplePackage.derivativeAbsBoundSharp
+
+sampleSharpIsSharper : SamplePackage.Lsharp ≤ SamplePackage.L
+sampleSharpIsSharper = SamplePackage.Lsharp≤L

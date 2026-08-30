@@ -1,0 +1,393 @@
+module DASHI.Physics.YangMills.BalabanYM4JointFourOrbitDensitySupGateExact where
+
+------------------------------------------------------------------------
+-- ROW A1, ORBIT HALF:  FOUR JOINT REPRESENTATIVE ENCLOSURES REDUCED TO
+--   ONE POINTWISE SUP BOUND ON THE JOINT WILSON + FP + HAAR DENSITY.
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  Source locators: Euclidean covariance (5.6),(5.7);
+-- beta extraction (5.36)--(5.42).
+--
+-- Kenneth G. Wilson, "Confinement of Quarks", Physical Review D 10 (1974),
+-- 2445--2459.  DOI: 10.1103/PhysRevD.10.2445.
+--
+-- Ludwig D. Faddeev and Victor N. Popov, "Feynman Diagrams for the
+-- Yang--Mills Field", Physics Letters B 25 (1967), 29--30.
+-- DOI: 10.1016/0370-2693(67)90067-6.
+--
+-- WHERE THIS SITS.  `BalabanYM4LiteralWilsonGhostHaarWeightedFourOrbitExact`
+-- proves the weighted quadrature identity for the JOINT cell evaluator
+--
+--     R := (1/16) * sum_{B regular} (W + F + H)(B) = 4 r1 + 6 r2 + 4 r3 + r4 ,
+--
+-- and leaves as its physical leaf the production of FOUR joint two-sided
+-- representative enclosures  lo_i <= r_i <= hi_i.  Its own closing comment
+-- names exactly that as the open item.
+--
+-- This module removes three of those four unknowns.  The representative
+-- values are not free numbers: each is the integral of ONE joint momentum-space
+-- density over ONE Brillouin cell of the generated grid.  Therefore a single
+-- POINTWISE sup bound
+--
+--     | (Wilson + reduced Faddeev-Popov + Haar)(p) | <= epsilon
+--
+-- valid on the regular part of the Brillouin zone -- one number, on the
+-- cancelled sum, never on the three species separately -- already gives all
+-- four enclosures, with the SAME half-width `cellMeasure * epsilon`.  The
+-- weighted (4,6,4,1) form then obeys
+--
+--     | R | <= 15 * cellMeasure * epsilon ,
+--
+-- so the whole of the A1 orbit obligation collapses to the single falsifiable
+-- numerical gate
+--
+--     15 * cellMeasure * epsilon <= 1/2 .                                (GATE)
+--
+-- In the repository's normalized fundamental cube [-1,1]^4 the grid cell has
+-- measure 1/16 and (GATE) reads  epsilon <= 8/15 = 0.5333...;  with the
+-- probability normalization d^4p/(2 pi)^4 on [-pi,pi]^4 the cell measure is
+-- 1/256 and (GATE) reads  epsilon <= 128/15 = 8.533...  Both instances are
+-- verified below in exact rational arithmetic, as equalities at the gate value,
+-- so the target is sharp and not merely sufficient.
+--
+-- WHY THIS IS NOT THE DISCARDED TWELVE-PIECE ROUTE.  The sup bound is taken of
+-- the joint density AFTER the three species are added pointwise.  The
+-- species-wise route would need  |W| + |F| + |H| <= epsilon, which the physics
+-- does not supply; here the Wilson/ghost/Haar cancellation is kept intact all
+-- the way to the single number.  Section 5 exhibits data on which the joint
+-- gate passes and the species-wise one fails by a factor of 200.
+--
+-- WHAT IS STILL OPEN.  The literal momentum-space integrand and the value of
+-- `epsilon` for it.  That is Row A's physical leaf and it stays open; the
+-- frozen research count is unchanged.  What has changed is its shape: not four
+-- unknown interval enclosures of unspecified objects, but one sup norm of one
+-- explicitly cancelled density, against one explicit rational threshold.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_; -[1+_])
+open import Data.Product using (_×_; _,_; proj₁; proj₂)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (cong; sym; trans; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.YangMills.BalabanCMP109VacuumPolarizationHypercubicSourceSymmetryExact
+  as SourceSymmetry
+import DASHI.Physics.YangMills.BalabanYM4SU2RegularOrbitBetaFloorExact as Floor
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonGhostHaarWeightedFourOrbitExact
+  as Joint
+
+------------------------------------------------------------------------
+-- 1.  The weighted (4,6,4,1) form at a constant argument
+------------------------------------------------------------------------
+
+fifteen : ℚ
+fifteen = + 15 / 1
+
+-- 4x + 6x + 4x + x = 15x, by distributivity alone.
+weightedFourOrbitConstant :
+  ∀ x → Joint.weightedFourOrbit x x x x ≡ fifteen * x
+weightedFourOrbitConstant x =
+  trans (cong (λ z → z + x)
+          (trans (cong (λ z → z + (Joint.weightThree * x))
+                   (sym (ℚP.*-distribʳ-+ x Joint.weightOne Joint.weightTwo)))
+                 (sym (ℚP.*-distribʳ-+ x (Joint.weightOne + Joint.weightTwo)
+                        Joint.weightThree))))
+    (trans (cong (λ z → ((Joint.weightOne + Joint.weightTwo)
+                            + Joint.weightThree) * x + z)
+             (sym (ℚP.*-identityˡ x)))
+      (sym (ℚP.*-distribʳ-+ x ((Joint.weightOne + Joint.weightTwo)
+                                 + Joint.weightThree) 1ℚ)))
+
+negatedFifteen : ∀ b → fifteen * (- b) ≡ - (fifteen * b)
+negatedFifteen b = sym (ℚP.neg-distribʳ-* fifteen b)
+
+------------------------------------------------------------------------
+-- 2.  One common half-width for the four representatives
+------------------------------------------------------------------------
+
+-- If every joint representative value lies in [-b, b], the weighted total lies
+-- in [-15b, 15b].  (Monotonicity is the one from the weighted-quadrature
+-- module, so this is the same (4,6,4,1) form the identity was proved for.)
+jointTotalFromCommonHalfWidth :
+  ∀ (r₁ r₂ r₃ r₄ b : ℚ) →
+  (- b) ≤ r₁ → r₁ ≤ b →
+  (- b) ≤ r₂ → r₂ ≤ b →
+  (- b) ≤ r₃ → r₃ ≤ b →
+  (- b) ≤ r₄ → r₄ ≤ b →
+  ((- (fifteen * b)) ≤ Joint.weightedFourOrbit r₁ r₂ r₃ r₄)
+  × (Joint.weightedFourOrbit r₁ r₂ r₃ r₄ ≤ fifteen * b)
+jointTotalFromCommonHalfWidth r₁ r₂ r₃ r₄ b l₁ u₁ l₂ u₂ l₃ u₃ l₄ u₄ =
+  subst (_≤ Joint.weightedFourOrbit r₁ r₂ r₃ r₄)
+    (trans (weightedFourOrbitConstant (- b)) (negatedFifteen b))
+    (Joint.weightedFourOrbitMono l₁ l₂ l₃ l₄)
+  , subst (Joint.weightedFourOrbit r₁ r₂ r₃ r₄ ≤_)
+      (weightedFourOrbitConstant b)
+      (Joint.weightedFourOrbitMono u₁ u₂ u₃ u₄)
+
+-- (GATE):  once 15b <= 1/2, the weighted total is inside the regular radius.
+jointTotalInsideRegularRadius :
+  ∀ (r₁ r₂ r₃ r₄ b : ℚ) →
+  (- b) ≤ r₁ → r₁ ≤ b →
+  (- b) ≤ r₂ → r₂ ≤ b →
+  (- b) ≤ r₃ → r₃ ≤ b →
+  (- b) ≤ r₄ → r₄ ≤ b →
+  fifteen * b ≤ Floor.regularEnclosureRadius →
+  ((- Floor.regularEnclosureRadius) ≤ Joint.weightedFourOrbit r₁ r₂ r₃ r₄)
+  × (Joint.weightedFourOrbit r₁ r₂ r₃ r₄ ≤ Floor.regularEnclosureRadius)
+jointTotalInsideRegularRadius r₁ r₂ r₃ r₄ b l₁ u₁ l₂ u₂ l₃ u₃ l₄ u₄ gate =
+  ℚP.≤-trans (ℚP.neg-antimono-≤ gate) lower
+  , ℚP.≤-trans upper gate
+  where
+    enclosure = jointTotalFromCommonHalfWidth r₁ r₂ r₃ r₄ b
+                  l₁ u₁ l₂ u₂ l₃ u₃ l₄ u₄
+    lower = proj₁ enclosure
+    upper = proj₂ enclosure
+
+------------------------------------------------------------------------
+-- 3.  From a pointwise sup bound on the joint density to the cell value
+------------------------------------------------------------------------
+
+-- `integral` is the cell integral of the generated Brillouin grid: any
+-- positive linear functional on cell densities which integrates constants to
+-- `cellMeasure` times the constant.  Only monotonicity and that normalization
+-- are used, so no analytic structure is assumed beyond what a measure gives.
+module CellIntegral
+  (Point : Set)
+  (integral : (Point → ℚ) → ℚ)
+  (integralMono :
+     ∀ (f g : Point → ℚ) → (∀ p → f p ≤ g p) → integral f ≤ integral g)
+  (cellMeasure : ℚ)
+  (integralConstant : ∀ (c : ℚ) → integral (λ _ → c) ≡ cellMeasure * c)
+  where
+
+  -- |density| <= epsilon pointwise  ==>  |cell value| <= cellMeasure * epsilon.
+  cellValueFromSupBound :
+    ∀ (density : Point → ℚ) (ε : ℚ) →
+    (∀ p → (- ε) ≤ density p) → (∀ p → density p ≤ ε) →
+    ((- (cellMeasure * ε)) ≤ integral density)
+    × (integral density ≤ cellMeasure * ε)
+  cellValueFromSupBound density ε lower upper =
+    subst (_≤ integral density)
+      (trans (integralConstant (- ε)) (sym (ℚP.neg-distribʳ-* cellMeasure ε)))
+      (integralMono (λ _ → - ε) density lower)
+    , subst (integral density ≤_) (integralConstant ε)
+        (integralMono density (λ _ → ε) upper)
+
+  -- The half-width delivered by the sup bound.
+  halfWidth : ℚ → ℚ
+  halfWidth ε = cellMeasure * ε
+
+  -- (GATE), stated on the density: one sup bound, one threshold.
+  SupGate : ℚ → Set
+  SupGate ε = fifteen * halfWidth ε ≤ Floor.regularEnclosureRadius
+
+------------------------------------------------------------------------
+-- 4.  THE A1 ORBIT OBLIGATION, DISCHARGED FROM ONE SUP BOUND
+------------------------------------------------------------------------
+
+  -- Hypotheses: the four joint representative cell values ARE the cell
+  -- integrals of the joint (Wilson + reduced Faddeev-Popov + Haar) density on
+  -- the four orbit representatives, that density is bounded by `epsilon` in
+  -- sup norm on each of them, and (GATE) holds.  Conclusion: the joint regular
+  -- remainder is inside [-1/2, 1/2], hence the SU(2) Gaussian beta enclosure,
+  -- hence  5/12 <= beta_Z <= 17/12.
+  literalJointSupGateEnclosure :
+    ∀ {wilson ghost haar : Joint.CellScalar}
+      (wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson)
+      (ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost)
+      (haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar)
+      (d₁ d₂ d₃ d₄ : Point → ℚ) (ε : ℚ) →
+    Joint.jointOne wilson ghost haar ≡ integral d₁ →
+    Joint.jointTwo wilson ghost haar ≡ integral d₂ →
+    Joint.jointThree wilson ghost haar ≡ integral d₃ →
+    Joint.jointFour wilson ghost haar ≡ integral d₄ →
+    (∀ p → (- ε) ≤ d₁ p) → (∀ p → d₁ p ≤ ε) →
+    (∀ p → (- ε) ≤ d₂ p) → (∀ p → d₂ p ≤ ε) →
+    (∀ p → (- ε) ≤ d₃ p) → (∀ p → d₃ p ≤ ε) →
+    (∀ p → (- ε) ≤ d₄ p) → (∀ p → d₄ p ≤ ε) →
+    SupGate ε →
+    Floor.SU2RegularOrbitEnclosure
+  literalJointSupGateEnclosure {wilson} {ghost} {haar}
+      wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄ ε
+      e₁ e₂ e₃ e₄ l₁ u₁ l₂ u₂ l₃ u₃ l₄ u₄ gate =
+    Joint.enclosureFromJointBound wilsonSymmetry ghostSymmetry haarSymmetry
+      (proj₁ inside) (proj₂ inside)
+    where
+      cell : ∀ (d : Point → ℚ) →
+             (∀ p → (- ε) ≤ d p) → (∀ p → d p ≤ ε) →
+             ((- halfWidth ε) ≤ integral d) × (integral d ≤ halfWidth ε)
+      cell d lower upper = cellValueFromSupBound d ε lower upper
+
+      transportLower : ∀ (r : ℚ) (d : Point → ℚ) → r ≡ integral d →
+                       (- halfWidth ε) ≤ integral d → (- halfWidth ε) ≤ r
+      transportLower r d eq bound = subst ((- halfWidth ε) ≤_) (sym eq) bound
+
+      transportUpper : ∀ (r : ℚ) (d : Point → ℚ) → r ≡ integral d →
+                       integral d ≤ halfWidth ε → r ≤ halfWidth ε
+      transportUpper r d eq bound = subst (_≤ halfWidth ε) (sym eq) bound
+
+      inside =
+        jointTotalInsideRegularRadius
+          (Joint.jointOne wilson ghost haar)
+          (Joint.jointTwo wilson ghost haar)
+          (Joint.jointThree wilson ghost haar)
+          (Joint.jointFour wilson ghost haar)
+          (halfWidth ε)
+          (transportLower _ d₁ e₁ (proj₁ (cell d₁ l₁ u₁)))
+          (transportUpper _ d₁ e₁ (proj₂ (cell d₁ l₁ u₁)))
+          (transportLower _ d₂ e₂ (proj₁ (cell d₂ l₂ u₂)))
+          (transportUpper _ d₂ e₂ (proj₂ (cell d₂ l₂ u₂)))
+          (transportLower _ d₃ e₃ (proj₁ (cell d₃ l₃ u₃)))
+          (transportUpper _ d₃ e₃ (proj₂ (cell d₃ l₃ u₃)))
+          (transportLower _ d₄ e₄ (proj₁ (cell d₄ l₄ u₄)))
+          (transportUpper _ d₄ e₄ (proj₂ (cell d₄ l₄ u₄)))
+          gate
+
+  -- The physical conclusion, stated on the same data.
+  literalJointSupGateBetaFloor :
+    ∀ {wilson ghost haar : Joint.CellScalar}
+      (wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson)
+      (ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost)
+      (haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar)
+      (d₁ d₂ d₃ d₄ : Point → ℚ) (ε : ℚ)
+      (e₁ : Joint.jointOne wilson ghost haar ≡ integral d₁)
+      (e₂ : Joint.jointTwo wilson ghost haar ≡ integral d₂)
+      (e₃ : Joint.jointThree wilson ghost haar ≡ integral d₃)
+      (e₄ : Joint.jointFour wilson ghost haar ≡ integral d₄)
+      (l₁ : ∀ p → (- ε) ≤ d₁ p) (u₁ : ∀ p → d₁ p ≤ ε)
+      (l₂ : ∀ p → (- ε) ≤ d₂ p) (u₂ : ∀ p → d₂ p ≤ ε)
+      (l₃ : ∀ p → (- ε) ≤ d₃ p) (u₃ : ∀ p → d₃ p ≤ ε)
+      (l₄ : ∀ p → (- ε) ≤ d₄ p) (u₄ : ∀ p → d₄ p ≤ ε)
+      (gate : SupGate ε) →
+    (Floor.su2BetaFloor ≤
+       Floor.betaGauss (literalJointSupGateEnclosure
+         wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄ ε
+         e₁ e₂ e₃ e₄ l₁ u₁ l₂ u₂ l₃ u₃ l₄ u₄ gate))
+    × (0ℚ <
+       Floor.betaGauss (literalJointSupGateEnclosure
+         wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄ ε
+         e₁ e₂ e₃ e₄ l₁ u₁ l₂ u₂ l₃ u₃ l₄ u₄ gate))
+  literalJointSupGateBetaFloor
+      wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄ ε
+      e₁ e₂ e₃ e₄ l₁ u₁ l₂ u₂ l₃ u₃ l₄ u₄ gate =
+    Floor.su2GaussianBetaFloor enclosure , Floor.su2GaussianBetaPositive enclosure
+    where
+      enclosure = literalJointSupGateEnclosure
+        wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄ ε
+        e₁ e₂ e₃ e₄ l₁ u₁ l₂ u₂ l₃ u₃ l₄ u₄ gate
+
+------------------------------------------------------------------------
+-- 5.  THE TWO NUMERICAL GATES, EXACTLY
+------------------------------------------------------------------------
+
+-- Normalized fundamental cube [-1,1]^4 of the generated grid: four intervals
+-- of length 1/2 per axis, so the cell has measure (1/2)^4 = 1/16.
+cubeCellMeasure : ℚ
+cubeCellMeasure = + 1 / 16
+
+-- Probability normalization d^4 p / (2 pi)^4 on [-pi,pi]^4: total mass 1 spread
+-- over 256 cells, so the cell has measure 1/256.
+probabilityCellMeasure : ℚ
+probabilityCellMeasure = + 1 / 256
+
+cubeGateThreshold : ℚ
+cubeGateThreshold = + 8 / 15
+
+probabilityGateThreshold : ℚ
+probabilityGateThreshold = + 128 / 15
+
+-- Both thresholds are exactly critical: the gate holds with EQUALITY there, so
+-- these are the sharp targets for the literal sup norm, not padded ones.
+cubeGateExact :
+  fifteen * (cubeCellMeasure * cubeGateThreshold)
+  ≡ Floor.regularEnclosureRadius
+cubeGateExact = refl
+
+probabilityGateExact :
+  fifteen * (probabilityCellMeasure * probabilityGateThreshold)
+  ≡ Floor.regularEnclosureRadius
+probabilityGateExact = refl
+
+cubeGateHolds :
+  fifteen * (cubeCellMeasure * cubeGateThreshold)
+  ≤ Floor.regularEnclosureRadius
+cubeGateHolds = ℚP.≤-reflexive cubeGateExact
+
+probabilityGateHolds :
+  fifteen * (probabilityCellMeasure * probabilityGateThreshold)
+  ≤ Floor.regularEnclosureRadius
+probabilityGateHolds = ℚP.≤-reflexive probabilityGateExact
+
+-- Monotonicity of the gate in the sup norm: any smaller sup bound also passes.
+gateMonotone :
+  ∀ (cellMeasure ε ε′ : ℚ) → 0ℚ ≤ cellMeasure → ε′ ≤ ε →
+  fifteen * (cellMeasure * ε) ≤ Floor.regularEnclosureRadius →
+  fifteen * (cellMeasure * ε′) ≤ Floor.regularEnclosureRadius
+gateMonotone cellMeasure ε ε′ 0≤m ε′≤ε gate =
+  ℚP.≤-trans
+    (ℚP.*-monoˡ-≤-nonNeg fifteen
+      (ℚP.*-monoˡ-≤-nonNeg cellMeasure {{ℚ.nonNegative 0≤m}} ε′≤ε))
+    gate
+
+------------------------------------------------------------------------
+-- 6.  WHY THE JOINT SUP NORM AND NOT THREE SPECIES SUP NORMS
+------------------------------------------------------------------------
+
+-- Sample densities: Wilson = 1, reduced Faddeev-Popov = -1, Haar = 1/100,
+-- pointwise.  The joint density is 1/100, comfortably below the cube gate
+-- 8/15, while each species alone is 1 and the species-wise budget would need
+-- 1 + 1 + 1/100 <= 8/15, which fails by a factor of more than 3.
+sampleWilsonDensity sampleGhostDensity sampleHaarDensity : ℚ
+sampleWilsonDensity = 1ℚ
+sampleGhostDensity = -[1+ 0 ] / 1
+sampleHaarDensity = + 1 / 100
+
+sampleJointDensity : ℚ
+sampleJointDensity =
+  sampleWilsonDensity + (sampleGhostDensity + sampleHaarDensity)
+
+sampleJointDensityValue : sampleJointDensity ≡ + 1 / 100
+sampleJointDensityValue = refl
+
+sampleJointPassesCubeGate : sampleJointDensity ≤ cubeGateThreshold
+sampleJointPassesCubeGate =
+  toWitness {a? = sampleJointDensity ℚP.≤? cubeGateThreshold} _
+
+sampleSpeciesWiseBudget : ℚ
+sampleSpeciesWiseBudget = 1ℚ + (1ℚ + sampleHaarDensity)
+
+sampleSpeciesWiseFailsCubeGate : cubeGateThreshold < sampleSpeciesWiseBudget
+sampleSpeciesWiseFailsCubeGate =
+  toWitness {a? = cubeGateThreshold ℚP.<? sampleSpeciesWiseBudget} _
+
+------------------------------------------------------------------------
+-- 7.  Proof levels
+------------------------------------------------------------------------
+
+-- The reduction of the four joint representative enclosures to one pointwise
+-- sup bound, the (4,6,4,1) constant-argument identity, the two exact gate
+-- values and the beta-floor consequence are all machine checked.
+jointSupGateReductionLevel : ProofLevel
+jointSupGateReductionLevel = machineChecked
+
+exactGateThresholdsLevel : ProofLevel
+exactGateThresholdsLevel = machineChecked
+
+-- STILL OPEN (Row A physical leaf).  The literal momentum-space joint
+-- Wilson + reduced Faddeev-Popov + Haar density of the CMP109 background-field
+-- vacuum polarisation, its Euclidean symmetry (5.6),(5.7), and a value of
+-- `epsilon` for it below the gate threshold, uniformly in cutoff, volume and
+-- scale.
+literalJointDensitySupNormLevel : ProofLevel
+literalJointDensitySupNormLevel = conditional

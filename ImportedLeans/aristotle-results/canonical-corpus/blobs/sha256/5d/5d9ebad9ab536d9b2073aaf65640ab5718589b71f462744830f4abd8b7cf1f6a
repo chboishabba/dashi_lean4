@@ -1,0 +1,213 @@
+module DASHI.Physics.YangMills.BalabanYM4UniformInteractionDerivativePackageExact where
+
+------------------------------------------------------------------------
+-- ROW A, ANALYTIC PRODUCER LANE:
+--   THE UNIFORM DERIVATIVE PACKAGE  beta_Int(g) = g F(g)
+--   ==>  BOTH ROW-A CONSTANTS  C  AND  L
+--
+-- PRIMARY SOURCE FOR THE SETTING
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHAT THIS MODULE PROVES.  Row A's two remaining analytic constants are not
+-- independent estimates.  If the literal interaction correction of the
+-- Bałaban step factorises on the small-coupling tube as
+--
+--     beta_Int(g) = g F(g),      sup_{0<=g<=gamma} |F|  <= M0,
+--                                sup_{0<=g<=gamma} |F'| <= M1,
+--
+-- and the constrained-Gaussian part has a uniform coupling derivative
+-- |d beta_Z / dg| <= L_Z on the same tube, then
+--
+--     |beta_Int(g)|          <= M0 g                       (so C = M0),
+--     |d beta_Int / dg|      <= M0 + gamma M1,
+--     |d beta / dg|          <= L_Z + M0 + gamma M1        (so L = that).
+--
+-- Both of row A's numerical gates are therefore fed by *one* analytic
+-- package, and the second gate reads
+--
+--     (L_Z + M0 + gamma M1) gamma_tube  <  b_- - M0 gamma .
+--
+-- The companion module
+-- `DASHI.Physics.YangMills.BalabanYM4CauchyTubeAnalyticPackageExact`
+-- produces (M0, M1) from a single Cauchy coefficient bound on a slightly
+-- larger disc: M0 = M0(R) R/(R-gamma) and M1 = M0(R) R/(R-gamma)^2.
+--
+-- HONEST SCOPE.  `interactionFactorDerivative` is a *given* function, i.e.
+-- the package carries F together with its derivative; over exact rationals
+-- there is no differentiation available, and the statement that the supplied
+-- function really is dF/dg is part of the open analytic producer, not of this
+-- algebra.  What is proved here is the Leibniz combination and the resulting
+-- constants, which is exactly the step that fuses A2 and A3 into one
+-- estimate.  Row A stays open and the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; ∣_∣; nonNegative)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Data.Sum.Base using (inj₁; inj₂)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+
+open +-*-Solver
+
+open import DASHI.Physics.YangMills.BalabanYM4GeometricMajorantSeriesExact
+  using (mul-nonNeg; scaleˡ-nonNeg; scaleʳ-nonNeg; mul-mono-nonNeg)
+
+------------------------------------------------------------------------
+-- Absolute-value helpers not present in the standard library
+------------------------------------------------------------------------
+
+negInvolutive : ∀ p → - (- p) ≡ p
+negInvolutive = solve 1 (λ x → :- (:- x) := x) refl
+
+negZero : - 0ℚ ≡ 0ℚ
+negZero = refl
+
+-∣p∣≤p : ∀ p → - ∣ p ∣ ≤ p
+-∣p∣≤p p with ℚP.≤-total 0ℚ p
+... | inj₁ 0≤p =
+  ℚP.≤-trans
+    (subst (λ z → - ∣ p ∣ ≤ z) negZero (ℚP.neg-antimono-≤ (ℚP.0≤∣p∣ p)))
+    0≤p
+... | inj₂ p≤0 =
+  ℚP.≤-reflexive
+    (trans (cong -_ absIsNeg) (negInvolutive p))
+  where
+    absIsNeg : ∣ p ∣ ≡ - p
+    absIsNeg =
+      trans (sym (ℚP.∣-p∣≡∣p∣ p))
+        (ℚP.0≤p⇒∣p∣≡p
+          (subst (λ z → z ≤ - p) negZero (ℚP.neg-antimono-≤ p≤0)))
+
+absBound⇒lower : ∀ {p q} → ∣ p ∣ ≤ q → - q ≤ p
+absBound⇒lower {p} {q} bound =
+  ℚP.≤-trans (ℚP.neg-antimono-≤ bound) (-∣p∣≤p p)
+
+------------------------------------------------------------------------
+-- The package
+------------------------------------------------------------------------
+
+record UniformDerivativePackage : Set where
+  field
+    tubeCap               : ℚ        -- gamma (small-coupling tube)
+    factorSup             : ℚ        -- M0 = sup |F|
+    factorDerivativeSup   : ℚ        -- M1 = sup |F'|
+    gaussianDerivativeSup : ℚ        -- L_Z = sup |d beta_Z / dg|
+
+    interactionFactor           : ℚ → ℚ   -- F
+    interactionFactorDerivative : ℚ → ℚ   -- F' (supplied, see honest scope)
+    gaussianBetaDerivative      : ℚ → ℚ   -- d beta_Z / dg (supplied)
+
+    tubeCapNonNeg               : 0ℚ ≤ tubeCap
+    factorSupNonNeg             : 0ℚ ≤ factorSup
+    factorDerivativeSupNonNeg   : 0ℚ ≤ factorDerivativeSup
+    gaussianDerivativeSupNonNeg : 0ℚ ≤ gaussianDerivativeSup
+
+    factorBounded :
+      ∀ g → 0ℚ ≤ g → g ≤ tubeCap → ∣ interactionFactor g ∣ ≤ factorSup
+    factorDerivativeBounded :
+      ∀ g → 0ℚ ≤ g → g ≤ tubeCap →
+      ∣ interactionFactorDerivative g ∣ ≤ factorDerivativeSup
+    gaussianDerivativeBounded :
+      ∀ g → 0ℚ ≤ g → g ≤ tubeCap →
+      ∣ gaussianBetaDerivative g ∣ ≤ gaussianDerivativeSup
+
+module Package (pkg : UniformDerivativePackage) where
+
+  open UniformDerivativePackage pkg
+
+  -- the interaction beta and its Leibniz derivative
+  interactionBeta : ℚ → ℚ
+  interactionBeta g = g * interactionFactor g
+
+  interactionBetaDerivative : ℚ → ℚ
+  interactionBetaDerivative g =
+    interactionFactor g + g * interactionFactorDerivative g
+
+  betaDerivative : ℚ → ℚ
+  betaDerivative g = gaussianBetaDerivative g + interactionBetaDerivative g
+
+  ----------------------------------------------------------------
+  -- row A's constant C
+  ----------------------------------------------------------------
+
+  interactionSlope : ℚ
+  interactionSlope = factorSup            -- C = M0
+
+  interactionAbsLinear :
+    ∀ g → 0ℚ ≤ g → g ≤ tubeCap →
+    ∣ interactionBeta g ∣ ≤ interactionSlope * g
+  interactionAbsLinear g 0≤g g≤γ =
+    subst (λ z → z ≤ interactionSlope * g)
+      (sym (ℚP.∣p*q∣≡∣p∣*∣q∣ g (interactionFactor g)))
+      (subst (λ z → z * ∣ interactionFactor g ∣ ≤ interactionSlope * g)
+        (sym (ℚP.0≤p⇒∣p∣≡p 0≤g))
+        (subst (λ z → g * ∣ interactionFactor g ∣ ≤ z)
+          (ℚP.*-comm g interactionSlope)
+          (scaleˡ-nonNeg 0≤g (factorBounded g 0≤g g≤γ))))
+
+  -- the one-sided form consumed by the shell-local sign estimate
+  interactionLinearLower :
+    ∀ g → 0ℚ ≤ g → g ≤ tubeCap →
+    - (interactionSlope * g) ≤ interactionBeta g
+  interactionLinearLower g 0≤g g≤γ =
+    absBound⇒lower (interactionAbsLinear g 0≤g g≤γ)
+
+  ----------------------------------------------------------------
+  -- row A's constant L
+  ----------------------------------------------------------------
+
+  interactionDerivativeConstant : ℚ
+  interactionDerivativeConstant = factorSup + tubeCap * factorDerivativeSup
+
+  uniformDerivativeConstant : ℚ            -- L
+  uniformDerivativeConstant =
+    gaussianDerivativeSup + interactionDerivativeConstant
+
+  interactionDerivativeBounded :
+    ∀ g → 0ℚ ≤ g → g ≤ tubeCap →
+    ∣ interactionBetaDerivative g ∣ ≤ interactionDerivativeConstant
+  interactionDerivativeBounded g 0≤g g≤γ =
+    ℚP.≤-trans
+      (ℚP.∣p+q∣≤∣p∣+∣q∣ (interactionFactor g)
+        (g * interactionFactorDerivative g))
+      (ℚP.+-mono-≤ (factorBounded g 0≤g g≤γ) productBound)
+    where
+      productBound :
+        ∣ g * interactionFactorDerivative g ∣ ≤ tubeCap * factorDerivativeSup
+      productBound =
+        subst (λ z → z ≤ tubeCap * factorDerivativeSup)
+          (sym (ℚP.∣p*q∣≡∣p∣*∣q∣ g (interactionFactorDerivative g)))
+          (subst (λ z → z * ∣ interactionFactorDerivative g ∣
+                          ≤ tubeCap * factorDerivativeSup)
+            (sym (ℚP.0≤p⇒∣p∣≡p 0≤g))
+            (mul-mono-nonNeg 0≤g
+              (ℚP.0≤∣p∣ (interactionFactorDerivative g))
+              g≤γ
+              (factorDerivativeBounded g 0≤g g≤γ)))
+
+  -- MAIN: one package, one uniform coupling derivative bound.
+  totalDerivativeBounded :
+    ∀ g → 0ℚ ≤ g → g ≤ tubeCap →
+    ∣ betaDerivative g ∣ ≤ uniformDerivativeConstant
+  totalDerivativeBounded g 0≤g g≤γ =
+    ℚP.≤-trans
+      (ℚP.∣p+q∣≤∣p∣+∣q∣ (gaussianBetaDerivative g)
+        (interactionBetaDerivative g))
+      (ℚP.+-mono-≤ (gaussianDerivativeBounded g 0≤g g≤γ)
+        (interactionDerivativeBounded g 0≤g g≤γ))
+
+  uniformDerivativeConstantNonNeg : 0ℚ ≤ uniformDerivativeConstant
+  uniformDerivativeConstantNonNeg =
+    subst (λ z → z ≤ uniformDerivativeConstant) (ℚP.+-identityˡ 0ℚ)
+      (ℚP.+-mono-≤ gaussianDerivativeSupNonNeg
+        (subst (λ z → z ≤ interactionDerivativeConstant) (ℚP.+-identityˡ 0ℚ)
+          (ℚP.+-mono-≤ factorSupNonNeg
+            (mul-nonNeg tubeCapNonNeg factorDerivativeSupNonNeg))))

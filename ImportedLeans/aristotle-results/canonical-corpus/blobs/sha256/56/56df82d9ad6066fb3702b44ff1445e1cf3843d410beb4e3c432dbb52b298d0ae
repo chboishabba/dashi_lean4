@@ -1,0 +1,735 @@
+  YM Plan
+  Goal: get the repo to a state where the canonical YM route is mathematically complete and publication-grade, with clayYangMillsPromoted = false only for the external authority reasons in DASHI/Physics/YangMills/ClayPromotionAuthorityGate.agda, not
+  because of remaining internal mathematical gaps.
+
+  There are three distinct notions of “complete” in this repo:
+
+  1. source-intake complete
+  2. repo-internal mathematical route complete
+  3. Clay-authority complete
+
+  The repo already claims (1) in DASHI/Physics/YangMills/PostulateInventory.agda. The implementation work is to make (2) true on one canonical route. (3) is external and stays false until publication, waiting period, and community acceptance.
+
+  Canonical Route
+  The route that should be treated as authoritative is:
+
+  1. P01–P33 theorem surfaces in DASHI/Physics/YangMills/P01P33ProofSurfaces.agda
+  2. Step V assembly in DASHI/Physics/YangMills/BalabanStepVSpatialKPCertificate.agda and DASHI/Physics/YangMills/StepVAssemblyLemmaQueue.agda
+  3. RG lane in DASHI/Physics/YangMills/BalabanRGStepVLane.agda and DASHI/Physics/YangMills/BalabanRGLane.agda
+  4. OS / O(4) / Wightman endpoint in DASHI/Physics/YangMills/OSAxiomBundle.agda, DASHI/Physics/YangMills/O4CovarianceRestorationGate.agda, DASHI/Physics/YangMills/WightmanReconstructionLane.agda
+  5. Route summary in DASHI/Physics/YangMills/YMMassGapRoute.agda
+  6. External authority gate in DASHI/Physics/YangMills/ClayPromotionAuthorityGate.agda
+
+  Alternate lanes are not on the first winning path:
+
+  - DASHI/Physics/YangMills/LogSobolevLane.agda
+  - DASHI/Physics/YangMills/WittenLaplacianLane.agda
+  - DASHI/Physics/YangMills/QITMassGapLane.agda
+
+  They can remain false without blocking the main route.
+
+  Priority Order
+  The repo already encodes the right critical ordering in DASHI/Physics/YangMills/HardAnalyticDischargeProgram.agda:
+
+  1. P10 endpoint replacement and source-theorem reconstruction
+  2. P06 residual counting proof completion and endpoint depostulation
+  3. P33 Balaban metric reconstruction
+  4. Step V local-lattice handoff depostulation
+  5. Step V downstream RG / continuum / endpoint depostulation
+  6. Final O(4) / OS / Wightman constructive closeout
+  7. Clay-track publication package
+
+  That is the shortest high-alpha order. Anything else adds revisions.
+
+  Stage 1
+  Route coherence and canonicalization.
+
+  Purpose: eliminate contradictions where legacy carrier modules still hardcode false while modern source-intake gates say the route is closed.
+
+  Modules:
+
+  - DASHI/Physics/YangMills/YMMassGapTarget.agda
+  - DASHI/Physics/YangMills/LatticeYangMills.agda
+  - DASHI/Physics/YangMills/O4RestorationLane.agda
+  - DASHI/Physics/YangMills/MassGapSpectralStatement.agda
+  - DASHI/Physics/YangMills/BalabanRGLane.agda
+  - DASHI/Physics/YangMills/YMMassGapRoute.agda
+
+  Required status sources:
+
+  - currentPostulateInventory
+  - canonicalOSAxiomBundle
+  - currentO4CovarianceRestorationGate
+  - currentContinuumStabilityGate
+  - canonicalWightmanReconstructionLane
+  - currentClayPromotionAuthorityGate
+
+  Concrete fields that must become coherent:
+
+  - YMMassGapTarget.quantumMeasureExists
+  - YMMassGapTarget.osAxiomsSatisfied
+  - YMMassGapTarget.wightmanReconstructed
+  - YMMassGapTarget.spectralGapProved
+  - LatticeYangMills.latticeGapExists
+  - O4RestorationLane.latticeSchwingersExist
+  - O4RestorationLane.continuumSchwingersCandidated
+  - O4RestorationLane.o4InvarianceRestored
+  - O4RestorationLane.restorationErrorVanishes
+  - MassGapSpectralStatement.hamiltonianAvailable
+  - MassGapSpectralStatement.vacuumEigenvalueZero
+  - MassGapSpectralStatement.vacuumMultiplicityOne
+  - MassGapSpectralStatement.spectralGapPositive
+  - BalabanRGLane.fullBalabanCertificate
+
+  This stage is bookkeeping, not new math.
+
+  Stage 2
+  P10 large-field theorem internalization.
+
+  Core files:
+
+  - DASHI/Physics/YangMills/BalabanLargeFieldSuppression.agda
+  - DASHI/Physics/YangMills/P10BalabanFaithfulnessBridge.agda
+
+  Current state:
+
+  - normalized source model is largely assembled
+  - remaining blocker is replacing source/import-faithfulness placeholders with true source-theorem content
+
+  Exact objects that define the P10 route:
+
+  - currentP10AdmissibleConstants
+  - currentP10SourceObjectAdapter
+  - currentP10SourceObjects
+  - currentP10ImportedActivityBoundBridge
+  - currentP10SourceAnalyticEstimatePackage
+  - currentP10SourceAnalyticLeaves
+  - currentP10AnalyticEstimateKernel
+  - currentLargeFieldSuppressionControl
+  - currentLargeFieldSuppressionBound
+
+  Exact theorem kernels / lemmas to own:
+
+  - P10BadBlockTailLowerBound
+  - P10BadBlockTailNonnegative
+  - P10BlockWeightBoundedByTailIntegral
+  - P10GaussianTailSuppression
+  - currentP10SourceActivityLocalisesToSupportProductWitness
+  - currentP10SourceProductWeightsAreSupportProductWitness
+  - currentP10SourceΦLargeIsPenaltySumWitness
+  - currentP10SourcePenaltySumIsSupportBlockSumWitness
+  - currentP10SourceSupportBlockWeightsNonnegativeWitness
+  - currentP10SourceSupportBlockWeightSuppressionWitness
+  - currentP10SourceComplexityCoveredByBadBlockCountWitness
+  - currentP10SourceBadBlockPenaltyListMatchesCountWitness
+  - currentP10SourceBadBlockPenaltyListUniformLowerBoundWitness
+  - currentP10SourceBadBlockPenaltyListIncludedInPenaltySumWitness
+  - currentP10SourceKappaBoundedByCoercivityConstantWitness
+  - P10CurrentActivitySuppressedByFunctional
+  - P10CurrentSourceDiameterCoercivity
+  - P10SourceCanonicalDiameterDecay
+  - P10CurrentCanonicalLargeFieldDecayFromOwnedKernels
+
+  Hard dependency shape:
+
+  1. tail lower bound
+  2. Gaussian tail suppression
+  3. support-product localization
+  4. product suppression
+  5. penalty/coercivity by complexity or diameter
+  6. canonical diameter-decay theorem
+  7. repackage as P10AnalyticLeaves
+
+  Success criterion:
+
+  - P10AnalyticLeaves remains the public reducer boundary
+  - no Clay-critical P10 content depends on imported endpoint witnesses
+  - P10 is source-faithful and internally owned
+
+  Stage 3
+  P06 polymer counting proof completion.
+
+  Core files:
+
+  - DASHI/Physics/YangMills/BalabanPolymerDiameterEntropy.agda
+  - DASHI/Physics/YangMills/HardAnalyticDischargeProgram.agda
+
+  Current state:
+
+  - the P06 route is structurally split correctly into skeleton counting + decoration multiplicity + recombination
+  - everything after `ActualSkeletonEncodingData` is essentially wired
+  - the live blocker is local finite graph combinatorics, not downstream YM
+  - the first missing theorem is still `P06a3a`: rooted connected size-`n`
+    skeletons lie inside the radius-`(n ∸ 1)` root ball
+
+  Canonical split already exposed:
+
+  - P06a1BoundedDegreeSupportGraphSkeleton
+  - P06a2aBoundedDegreeRootBallGrowth
+  - P06a2RootedConnectedSkeletonSizeShellCounting
+  - ConnectedSkeletonHasRootedSpanningTree
+  - RootedTreeDFSWalk
+  - BoundedDegreeWalkCount
+  - ConnectedSkeletonCoveredByDFSWalk
+  - P06a2fDFSWalkSizeShellCountingBridge
+  - P06a3aDiameterShellContainedInRootBall
+  - P06a3DiameterShellSkeletonCounting
+  - P06cSkeletonDecorationImpliesAnimalCounting
+
+  Exact live witnesses/vars:
+
+  - currentP06a1BoundedDegreeSupportGraphSkeleton
+  - currentP06a2aBoundedDegreeRootBallGrowth
+  - currentP06a2RootedConnectedSkeletonSizeShellCounting
+  - currentConnectedSkeletonHasRootedSpanningTree
+  - currentRootedTreeDFSWalk
+  - currentBoundedDegreeWalkCount
+  - currentConnectedSkeletonCoveredByDFSWalk
+  - currentP06a2fDFSWalkSizeShellCountingBridge
+  - currentP06a3aDiameterShellContainedInRootBall
+  - currentReducedSkeletonCardinalityBound
+  - currentP06a3DiameterShellSkeletonCounting
+  - currentP06aRootedConnectedSkeletonCounting
+  - currentP06cSkeletonDecorationImpliesAnimalCounting
+  - currentP06AnimalCountingReducer
+  - currentEntropySideQueue
+  - currentPolymerDiameterEntropyBound
+  - currentP06EndpointUnblockingSemanticKernel
+  - currentOwnedP06SourceSkeletonDecompositionSprintWitness
+  - currentOwnedP06EndpointUnblockingSprintWitness
+
+  Already wired on the active repo-local chain:
+
+  - `VertexLabeling -> vertexOrder -> vertexOrderIsTotalOrder`
+  - rooted spanning-tree extraction for connected skeletons
+  - DFS walk cover of rooted connected skeletons
+  - reverse containment of the DFS walk range into the skeleton
+  - canonical vertex-list equality from `NoDuplicates + Sorted + SameVertexSet`
+  - `CanonicalDFSMap -> ActualSkeletonEncodingData`
+  - `ActualSkeletonEncodingData -> countSkeletons ≤ (Δ²)^n`
+
+  Exact live theorem frontier, in dependency order:
+
+  1. path-inside-skeleton construction
+
+     - `connectedGivesPathInSkeleton`
+     - if `Connected G X` is still abstract, either project this from the
+       existing connectedness witness or strengthen the connectedness carrier
+       so these internal paths are explicit
+
+  2. simple-path reduction and length bound
+
+     - `pathSimplify`
+     - `simplePathInsideSkeletonLengthBound`
+     - hard combinatorial content:
+       simple path inside an `n`-vertex set has at most `n` vertices, hence at
+       most `n ∸ 1` edges
+
+  3. ball membership from bounded path length
+
+     - `pathBoundGivesBallMembership`
+     - `connectedSkeletonContainedInBall`
+     - exact target theorem:
+       `RootedConnectedSkeleton G r X -> length X ≡ n -> X ⊆ ball G r (n ∸ 1)`
+
+  4. finite ball enumeration
+
+     - `FiniteBallEnumeration`
+     - concrete finite sorted duplicate-free carrier for `ball G r (n ∸ 1)`
+
+  5. subset enumeration over the finite ball
+
+     - `chooseN`
+     - `chooseNSound`
+     - `chooseNComplete`
+
+  6. canonical skeleton enumeration from the finite ball
+
+     - `canonicalSkeletonEnumerationFromBall`
+     - `canonicalSkeletonCandidatesFromBall` now filters `chooseN` with a
+       supplied `Connected` decision procedure while retaining typed root,
+       subset, and connectivity witnesses
+     - `ConcreteCountSkeletonsSemantics` now fixes that concrete candidate
+       list and isolates completeness, vertex-list uniqueness, and the single
+       count-agreement field
+     - named projections now expose these exact obligations as
+       `candidateCompleteFromConcreteSemantics`,
+       `candidateVertexListsUniqueFromConcreteSemantics`, and
+       `countSkeletonsConcreteAgreement`
+     - active semantic route now constructs `ActualSkeletonEncodingData`
+       directly from `CanonicalSkeletonEnumeration`
+     - legacy `bridgeSkeletonIndex` and `bridgeSkeletonIndexOf` remain only
+       for compatibility consumers of `SkeletonEnumeration`
+
+  7. bounded neighbour enumeration / concrete walk enumeration
+
+     - `BoundedNeighbourEnumeration`
+     - `WalkObject` and `walkObjectsFromNeighbourCodes`
+     - membership-aware recursive extension through enumerated neighbours
+     - recursive walk completeness has landed through
+       `walkObjectsCompleteByVertices`
+     - successor-membership inversion has landed through
+       `walkObjectsSucMemberByVertices` and `walkObjectExtendMemberByVertices`
+     - extensional recursive uniqueness has landed through
+       `generatedWalksUniqueByVertices`
+     - `CanonicalBoundedNeighbourEnumeration` now isolates the extra
+       neighbour-list `NoDuplicates` witness required for canonical indexing
+     - `generatedWalkVertexLists` and
+       `generatedWalkVertexListComplete` now expose the recursive generator
+       at the valid vertex-sequence level
+     - `MembershipIndexedCanonicalWalkObjectList` and
+       `generatedWalksToMembershipIndexedCanonicalWalkObjectList` now provide
+       the corrected membership-indexed `Fin` bridge constructively from the
+       explicit count equality; the legacy total `CanonicalWalkObjectList`
+       remains compatibility-only until DFS consumers migrate
+     - the remaining blocker is not recursive completeness or inversion: the
+       total walk-index API required by `CountWalksSemantics` still ranges over
+       arbitrary `List (Graph.Vertex G)` values and requires a total
+       `walkIndex` plus `walkIndexOf`
+
+  8. final P06 encoding depostulation
+
+  - `P06EncodingWitness.p06ConcreteSemanticCountWitness` now accepts the
+     normalized `ConcreteCountSkeletonsSemantics` directly
+   - Added `ExplicitSkeletonCandidateEnumeration` as the stable witness-list
+     front door, plus `p06ExplicitCandidateSemanticCountWitness`; the old
+     dependent Dec-filter remains compatibility-only.
+   - Added `explicitSkeletonCandidateEnumerationFromWitnesses` and the
+     matching `ExplicitWalkEnumeration` / recursive-walk constructor.  The
+     remaining P06 semantic obligations are now supplied finite witnesses
+     plus the two explicit count equalities.
+   - The walk constructor now derives soundness from `walkObjectsSound`;
+     arbitrary explicit lists are not conflated with the recursive generated
+     list, so completeness, uniqueness, and count agreement remain explicit.
+   - Generalized `ExplicitWalkEnumeration` to the existing arbitrary degree
+     parameter `Δ`; it no longer assumes `Δ ≡ countNeighbors G r`.
+   - Added `walkObjectsFromNeighbourCodesSound`, closing generated-list
+     soundness by membership and leaving only recursive completeness,
+     uniqueness, and count agreement as walk-frontier obligations.
+     - Added `explicitWalkEnumerationToCountWalksFromNeighbourCodes`, requiring
+       an explicit list-equality witness before crossing to the recursive count
+       surface.
+     - Added `SameWalkVertices` and `GeneratedExplicitWalkEnumeration`, making
+       the recursive-list equality a first-class witness rather than a loose
+       bridge argument; the generated constructor now packages the existing
+       completeness, uniqueness, soundness, and count obligations together.
+     - Added `RecursiveWalkEnumeration` as the single induction target and a
+       generated-witness constructor plus count bridge; recursive completeness
+       and extensional uniqueness now have one normalized package surface.
+     - Added `ConcreteWalkCountAgreement` and a constructor from supplied
+       generated-list completeness/uniqueness witnesses; the eventual length
+       induction now has an exact target without hiding the count axiom.
+     - Added `mapListWithMembership-complete` and
+       `walkObjectExtendContains`; neighbour completeness now yields a
+       generated extension with the expected appended vertex sequence, which
+       is the first concrete induction lemma for recursive walk completeness.
+     - Added `splitConsecutiveLastVertices`, exposing the prefix/suffix vertex
+       equation needed to construct `splitWalkLast` without proof-object
+       equality.
+     - Added the direct `splitPathLast` decomposition and its thin
+       `splitWalkLast` wrapper; arbitrary positive-length walk objects now
+       split into a length-`L` prefix plus a final adjacent vertex.
+     - Added `walkEndpoint-cong-by-vertices` and
+       `walkObjectsCompleteByVertices`: the first constructive successor
+       induction for the recursive walk generator.  It uses
+       `splitWalkLast`, endpoint transport, `walkObjectExtendContains`, and
+       `concatMap-complete`; completeness is intentionally extensional by
+       vertex sequence rather than proof-object equality.
+     - Normalized `RecursiveWalkEnumeration` and `ExplicitWalkEnumeration` to
+       consume `completeByVertices`; added
+       `recursiveWalkEnumerationFromConcreteAgreement`, so the constructive
+       walk induction plus the single `countWalks` length equality now builds
+       the active recursive package directly.
+     - Added `mapListWithMembership-elem` and
+       `walkObjectExtendMemberByVertices`, exposing successor-generator
+       membership inversion and the selected neighbour/appended vertex
+       sequence needed for the next uniqueness/indexing theorem.
+     - Added `walkObjectsSucMemberByVertices`, hiding the recursive
+       `concatMap`/extension membership plumbing behind the exact prefix,
+       final-edge, and appended-vertex equation needed by induction.
+     - Added `generatedWalksUniqueByVertices`; the current extensional
+       `SameWalkVertices` boundary is now constructively exposed, while
+       genuine `Fin` indexing remains the next separate bridge because
+       `CountWalksSemantics` still requires a total-list `walkIndex` API.
+     - Added `snocList-injective`, its prefix/last projections, and the
+       `append-singleton-injective` specialisation.  These are the exact
+       list equalities required by the successor uniqueness proof; they do
+       not prove duplicate-freedom by themselves.
+     - Added `P06WalkListAlgebra.agda` with reusable `mapList-++`,
+       `mapList-concatMap`, and append-singleton projections.
+     - Added `P06CanonicalNeighbourEnumeration.agda`: canonicalized
+       neighbours now have transported soundness/completeness, proven
+       `NoDuplicates`, sortedness, and the boundedness lemma
+       `canonicalizeLength≤`.  Its adapter constructs the existing
+       `CanonicalBoundedNeighbourEnumeration` refinement.
+     - Added the additive `CountWalksMembershipSemantics` alias and bridge;
+       `P06ConcreteWalkCountAgreementAdapter` now carries this corrected
+       semantic witness while the legacy total-index blocker remains explicit.
+     - Added focused-checked `P06GeneratedWalkUniqueness.agda`: canonical
+       neighbour extension blocks are duplicate-free, recursive blocks are
+       disjoint by snoc-prefix cancellation, and
+       `generatedWalkVertexListsNoDuplicates` is constructive and
+       postulate-free.
+     - Added `GeneratedWalkVertexListSemantics`, packaging valid generated
+       vertex lists with extensional completeness, duplicate-freedom, and the
+       sole `countWalks ≡ length` bridge.
+     - Added focused-checked `P06ConcreteEnumerationEndpoint.agda` and
+       `P06SkeletonEnumerationSurface.agda`.  The endpoint uses a
+       membership-indexed DFS map whose `dfsWalkMember` field makes the
+       remaining DFS validity obligation explicit; it does not revive the
+       legacy total-index API.
+     - Added focused-checked `P06ConcreteSkeletonWitness.agda`.  It proves
+       candidate-level chooseN soundness, length, sortedness, no-duplicates,
+       and ball containment, while keeping candidate-list completeness,
+       list-level uniqueness, and `countSkeletons ≡ length candidates` as
+       the exact finite-enumeration boundary.
+     - Added focused-checked `P06DFSValidWalkSurface.agda`.  The minimal DFS
+       validity witness is now named explicitly:
+       `WalkObject G r (n + n)` plus equality of its vertex list to
+       `dfsWalkRange`.  The module derives generated-list membership and
+       adapts this witness to `MembershipIndexedDFSMap`; it intentionally
+       supplies no invalid conversion from `DFSCover` coverage to path data.
+
+     Corrected P06 status as of 2026-07-13:
+
+     - recursive walk completeness, successor-membership inversion, and
+       duplicate-free vertex-list enumeration are now landed across
+       `GraphCombinatorics.agda` and `P06GeneratedWalkUniqueness.agda`.
+     - the corrected membership-indexed finite walk semantics is constructive;
+       the legacy `CountWalksSemantics` remains compatibility-only because
+       its total `walkIndex` / `walkIndexOf` contract still ranges over
+       arbitrary vertex lists.
+     - exact remaining P06 targets are now:
+         1. construct the DFS-valid `WalkObject`/vertex-list membership witness
+            for each canonical skeleton (the `dfsWalkMember` field in
+            `MembershipIndexedDFSMap`)
+         2. instantiate the explicit skeleton candidate list, including its
+            complete/unique witnesses
+         3. supply the two named count-definition equalities
+         4. redirect active downstream consumers to the additive endpoint in
+            `P06ConcreteEnumerationEndpoint.agda`; do not promote the legacy
+            total-index route
+     - after those local witnesses, perform focused Track B checks and then
+       the authoritative audit when allowed; `Everything.agda` remains
+       intentionally outside this tranche.
+       membership-indexed constructor is intentionally additive; the active
+       legacy consumer still requires this migration.
+     - `DASHI/Everything.agda` was explicitly not run for this tranche and
+       remains an unrun promotion check
+
+     - `encode`
+     - `decode`
+     - `decenc`
+     - `skeletonVertices`
+     - `walkRange`
+     - `skeletonVerticesSize`
+     - `skeletonWitness`
+     - `walkRangeOfEncode`
+     - `skeletonCountBound`
+
+  Exact subkernel fields in HardAnalyticDischargeProgram that must stop being abstract scaffolding:
+
+  - P06EncodingSubkernel.reducedSkeleton
+  - P06EncodingSubkernel.decoration
+  - P06EncodingSubkernel.encode
+  - P06EncodingSubkernel.decode
+  - P06EncodingSubkernel.encodeDecodeSound
+  - P06EncodingSubkernel.skeletonSound
+  - P06EncodingSubkernel.decorationSound
+  - P06CountingSubkernel.skeletonDiameterControlled
+  - P06CountingSubkernel.reducedComplexityControlledByDiameter
+  - P06CountingSubkernel.decorationMultiplicityByComplexity
+  - P06CountingSubkernel.polymerCountingFromEncoding
+
+  Corrected local blocker statement:
+
+  - `P06a3aDiameterShellContainedInRootBall` is not closed
+  - what exists now is an exposed root-ball containment interface, not a
+    theorem-backed containment proof
+  - `currentReducedSkeletonCardinalityBound` only becomes mathematically owned
+    after the path/ball/enumeration spine is inhabited
+
+  Success criterion:
+
+  - currentP06AnimalCountingReducer is fully supported by owned combinatorics
+  - P07/P09 consume a genuine P06 theorem, not an imported surrogate plus recombination story
+
+  Stage 4
+  P33 source-faithful metric reconstruction and radius lane closeout.
+
+  Core files:
+
+  - DASHI/Physics/YangMills/P33BalabanMetricFaithfulnessBridge.agda
+  - DASHI/Physics/YangMills/BalabanAnisotropicDiameterCompatibility.agda
+  - DASHI/Physics/Closure/RealDyadicDecayBridge.agda
+  - DASHI/Physics/Closure/YMSmallFieldSurvivalAuthority.agda
+
+  This stage has two subproblems.
+
+  First subproblem: P33 Balaban metric faithfulness.
+  Live variables and witness chain:
+
+  - metricPerturbation
+  - localMetric
+  - currentP33LocalMetricDecomposition
+  - currentP33SmallFieldControlsMetricPerturbation
+  - currentP33BackgroundMetricUniformPositive
+  - currentP33PerturbationMargin
+  - currentP33LinkWeightMetricComparison
+  - currentP33EdgePerturbationBoundedBySup
+  - currentP33BackgroundFloorPositive
+  - currentP33PositiveLinkWeightFromMetric
+  - currentSmallFieldToMetricLane
+  - currentMetricToPositiveLinkLane
+  - currentSmallFieldRegularityLeaf
+  - currentP33a1SmallFieldRegularityGivesPositiveLinkWeight
+  - currentP33a2DASHINormalisationRaisesLowerBoundToOne
+  - currentP33a3UniformityAcrossScaleAndPolymer
+  - currentP33aSplitEllipticityBundle
+  - currentP33aFullUniformLinkEllipticityFromSplit
+  - currentP33aUniformLinkEllipticityWrapper
+  - currentP33bWeightedTreeDistanceDominatesOrdinaryDiameter
+  - currentSpanningPathWeightAccumulation
+  - currentAnisotropicDiameterCompatibility
+
+  Exact abstract/bridge objects that must be made source-faithful:
+
+  - P33PerturbationStabilityKernel
+  - P33BalabanFaithfulnessReceipt
+  - P33BalabanMetricDischarge
+  - P33a1AnalyticDischargePackage
+  - P33DiameterLaneFromAnalyticDischarge
+
+  The only genuinely analytic P33 leaf, by the repo’s own wording, is:
+
+  - P33a1SmallFieldRegularityGivesPositiveLinkWeight
+
+  Second subproblem: dyadic-real radius lane.
+  Live bridge obligations in DASHI/Physics/Closure/RealDyadicDecayBridge.agda:
+
+  - currentDyadicRealSemantics
+  - natAsReal
+  - dyadicPow2NegAsReal
+  - dyadicPow2NegZeroIsOne
+  - dyadicPow2NegMonotone
+  - perLinkOscillationDecayAsReal
+  - dyadicPow2NegNonIncreasing
+  - dyadicDecayBelowUnit
+  - unitPerLinkDecayBelowScaleZero
+
+  Live faithfulness leaves in DASHI/Physics/Closure/YMSmallFieldSurvivalAuthority.agda:
+
+  - blockedOscillationMatchesPerLinkDecayAsReal
+  - perLinkOscillationDecayAsRealFitsBlockedEnvelope
+
+  These feed:
+
+  - currentOscillationDecayBelowMargin
+  - currentBlockedSmallFieldRadiusSurvival
+  - blockedLinkPerturbationBudgetTheorem
+  - blockedPlaquettePerturbationControlTheorem
+  - blockedCovarianceStabilityTheorem
+  - SmallFieldBoundsSurviveAnisotropicBlockingTheorem
+
+  Success criterion:
+
+  - the P33 metric route becomes source-faithful
+  - the radius-survival lane is internally justified enough to flip the small-field authority boundary from imported/conditional to owned on the canonical route
+
+  Stage 5
+  Step V local-lattice handoff depostulation.
+
+  Core files:
+
+  - DASHI/Physics/YangMills/StepVAssemblyLemmaQueue.agda
+  - DASHI/Physics/YangMills/LocalLatticeDischargePipeline.agda
+
+  Current architecture is already correct. The work is to remove remaining “semantic kernel only” packaging.
+
+  Exact boundary terms:
+
+  - StepVSourceAnalyticInputs
+  - StepVInternalReducers
+  - currentStepVSourceAnalyticInputs
+  - currentStepVInternalReducers
+  - StepVFromDischargePackages
+  - currentStepVSourceAnalyticInputs
+  - currentStepVRGAssemblyBundle
+  - LocalLatticeStepVSourceInputs
+  - LocalLatticeStepVInternalReducers
+  - LocalLatticeStepVFromAnalyticDischarge
+
+  Exact transfer reducers that must remain as the canonical API:
+
+  - currentStepVToDLRSmallness
+  - currentStepVToA2
+  - currentA2ToB6Influence
+  - currentB6ToRGCauchy
+  - currentDLRSmallnessAndCrossScaleToUniformLSI
+
+  Success criterion:
+
+  - Step V is assembled from owned P06/P10/P33 plus arithmetic, with no hidden imported shortcut between local-lattice analytic content and RG handoff reducers
+
+  Stage 6
+  Downstream RG / fixed-lattice / continuum / endpoint depostulation.
+
+  Core files:
+
+  - DASHI/Physics/YangMills/StepVAssemblyLemmaQueue.agda
+  - DASHI/Physics/YangMills/YangMillsDischargeClosure.agda
+  - DASHI/Physics/YangMills/HardAnalyticDischargeProgram.agda
+
+  Exact package shells:
+
+  - P12P19RGTransferPackage
+  - StepVToRGDischargePackage
+  - currentStepVDownstreamTransferSemanticKernel
+  - FixedLatticeGapDischargePackage
+  - ThermodynamicLimitPackage
+  - ContinuumLimitPackage
+  - OSWightmanEndpointPackage
+  - DownstreamAnalyticTransferPackage
+  - YangMillsFullDischargePackage
+
+  Exact package constructors / kernels:
+
+  - P12P19RGTransferFromStepV
+  - StepVToRGDischargePackageFromP12P19
+  - FixedLatticeGapDischargePackageFromKernel
+  - ThermodynamicLimitPackageFromKernel
+  - ContinuumLimitPackageFromKernel
+  - OSWightmanEndpointPackageFromKernel
+  - YangMillsEndpointFromLocalLatticeAndTransferPackages
+  - DownstreamEndpointFromTransferPackage
+  - YangMillsEndpointFromFullDischargePackage
+
+  Exact live semantic arrows:
+
+  - StepVSpatialKPImpliesDLRSmallness
+  - StepVSpatialKPImpliesA2
+  - A2ImpliesB6Influence
+  - B6InfluenceImpliesRGCauchy
+  - RGCauchyImpliesConvergence
+  - DLRSmallnessImpliesClusterExpansionStable
+  - DLRSmallnessAndCrossScaleToUniformLSIReducer
+  - UniformLSIImpliesSpectralGap
+  - SpectralGapImpliesExponentialClustering
+  - ExponentialClusteringImpliesFixedLatticeMassGap
+
+  This stage is where the repo stops being “a collection of theorem surfaces and reducer ledgers” and becomes a single owned theorem pipeline.
+
+  Stage 7
+  O(4), OS, and Wightman endpoint closeout.
+
+  Core files:
+
+  - DASHI/Physics/YangMills/WightmanEndpointLemmaQueue.agda
+  - DASHI/Physics/YangMills/WightmanReconstructionLane.agda
+  - DASHI/Physics/YangMills/OSAxiomBundle.agda
+  - DASHI/Physics/YangMills/O4CovarianceRestorationGate.agda
+  - DASHI/Physics/YangMills/BalabanContinuumStabilityGate.agda
+
+  There are two layers here.
+
+  O(4) queue:
+
+  - lemmaO4-1-anisotropicQuotientOneDimensional
+  - lemmaO4-2-anisotropyCoeffBound
+  - lemmaO4-3-insertionIntegrability
+  - lemmaO4-4-rotationalWardIdentity
+  - lemmaO4-5-symanzikBreakingDecomposition
+  - lemmaO4-6-triangularMixingLock
+  - lemmaO4-7-OS1FromComponents
+  - lemmaO4-7-OS1Covariance
+
+  OS / Wightman queue:
+
+  - lemmaOS0-temperedness
+  - lemmaOS2-reflectionPositivity
+  - lemmaOS3-bosonicSymmetry
+  - lemmaOS4-clusterProperty
+  - lemmaW-1-OSReconstruction
+  - lemmaW-2-spectralCondition
+  - lemmaW-3-clusterToMassGap
+  - lemmaW-4-nontriviality
+  - lemmaW-5-physicalMassScaleId
+
+  Split endpoint records already present:
+
+  - P31aAbstractOSReconstruction
+  - P31bYMSatisfiesOSInputs
+  - P31cClusterGapToPhysicalMassGap
+
+  Canonical lane booleans that should end true on the publication-grade route:
+
+  - OSAxiomBundle.osComplete
+  - DirectProofScaffoldStatus.completeMonotonicityScaffoldClosed
+  - DirectProofScaffoldStatus.directClusterDecayProofClosed
+  - WightmanReconstructionLane.constructiveAgdaEndpointClosed
+  - O4CovarianceRestorationGate.os1EuclideanCovarianceAvailable
+  - ContinuumStabilityGate.continuumStabilityClosed
+  - MassGapSpectralStatement.hamiltonianAvailable
+  - MassGapSpectralStatement.vacuumEigenvalueZero
+  - MassGapSpectralStatement.vacuumMultiplicityOne
+  - MassGapSpectralStatement.spectralGapPositive
+
+  Important default:
+
+  - lemmaW-1-OSReconstruction can remain an explicit wrapper around the standard OS theorem if clearly isolated as standard background. The YM-specific content around it cannot remain imported.
+
+  Stage 8
+  Publication-grade audit and Clay-track packaging.
+
+  Core files:
+
+  - DASHI/Physics/YangMills/PostulateInventory.agda
+  - DASHI/Physics/YangMills/P01P33ReplacementBacklog.agda
+  - DASHI/Physics/YangMills/YangMillsDischargeClosure.agda
+  - DASHI/Physics/YangMills/ClayPromotionAuthorityGate.agda
+
+  Required end-state:
+
+  - one canonical route is coherent
+  - every YM-specific theorem on that route is repo-owned, or else explicitly classified as standard background mathematics
+  - all remaining false values on the canonical route are external authority gates only
+
+  External, non-code conditions remain:
+
+  - qualifyingJournalPublication = true
+  - twoYearWaitingPeriodElapsed = true
+  - globalMathematicsAcceptance = true
+  - clayOrSABConsiderationAvailable = true
+
+  Until then:
+
+  - clayYangMillsPromoted = false must remain
+
+  Shortest Critical Path
+  If the goal is fewest revisions:
+
+  1. route coherence
+  2. P10
+  3. P06
+  4. P33 + radius lane
+  5. Step V local-lattice depostulation
+  6. downstream RG/fixed-lattice/continuum depostulation
+  7. O(4)/OS/Wightman closeout
+  8. publication package
+
+  That is the highest-alpha ordering already implied by:
+
+  - currentHardAnalyticSprintPlan.currentFocus
+  - currentP01P33ReplacementBacklog
+  - activeYMSprintFrontierBoundary
+
+  Acceptance Criteria
+  The YM path is “repo-internally complete” when all of the following are true:
+
+  - DASHI/Physics/YangMills/YMMassGapRoute.agda has no stale false placeholders on the canonical route
+  - P10, P06, P33 are owned mathematical lanes, not mixed endpoint imports
+  - Step V to endpoint is one theorem pipeline
+  - O(4), OS, and Wightman endpoint are constructively closed or reduced to explicit standard wrappers only
+  - DASHI/Physics/YangMills/ClayPromotionAuthorityGate.agda is the only remaining reason clayYangMillsPromoted is false
+
+  If you want, I can next turn rewrite this into a tighter “execution docket” grouped by revision, each with exact target lemmas and “done means” lines only.

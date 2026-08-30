@@ -1,0 +1,533 @@
+module DASHI.Physics.YangMills.BalabanYM4CancellationPreservingFourOrbitGateExact where
+
+------------------------------------------------------------------------
+-- ROW A1 (LEMMA 1), STEP 3:  RETAIN THE EXACT CANCELLATION BETWEEN THE
+--   FOUR ORBIT REPRESENTATIVES BEFORE ANY INTERVAL ENCLOSURE.
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I. Generation of Effective Actions in a Small Field Approximation
+-- and a Coupling Constant Renormalization in Four Dimensions",
+-- Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  Locators: Euclidean covariance (5.6),(5.7);
+-- beta extraction (5.36)--(5.42).
+--
+-- Ludwig D. Faddeev and Victor N. Popov, "Feynman Diagrams for the
+-- Yang--Mills Field", Physics Letters B 25 (1967), 29--30.
+-- DOI: 10.1016/0370-2693(67)90067-6.
+--
+-- THE DEFECT THIS MODULE REMOVES.
+--
+-- `BalabanYM4LiteralWilsonFPHaarPositiveBetaExact` proves the one-sided orbit
+-- gate by bounding the FOUR representative cell integrals SEPARATELY and then
+-- assembling them with the hypercubic multiplicities (4,6,4,1):
+--
+--     R = 4 r1 + 6 r2 + 4 r3 + r4 ,       r_i >= - cellMeasure * epsilon
+--   ==>  R >= - 15 * cellMeasure * epsilon .
+--
+-- The factor 15 = 4+6+4+1 is precisely the cancellation that was thrown away:
+-- the four representatives are values of ONE joint Wilson + reduced
+-- Faddeev-Popov + Haar density, and the estimate that the physics actually
+-- supplies is a bound on the WEIGHTED COMBINATION
+--
+--     D(p) = 4 d1(p) + 6 d2(p) + 4 d3(p) + d4(p) ,
+--
+-- in which the Wilson, ghost and Haar pieces partially cancel against each
+-- other AND the four orbits partially cancel among themselves.  This module
+-- proves the gate directly from a bound on D, with no intermediate
+-- per-orbit intervalization:
+--
+--     - epsilon <= D(p) for all p   ==>   R >= - cellMeasure * epsilon .
+--
+-- Everything the abstract cell functional has to satisfy is linearity
+-- (additivity and rational homogeneity) plus monotonicity and the value on
+-- constants -- true of any measure -- so nothing beyond `integral` being a
+-- positive linear functional on the fundamental cell is assumed.
+--
+-- THE QUANTITATIVE GAIN, MACHINE-CHECKED IN SECTION 4.  For SU(2) in the
+-- repository's normalized cube (cell measure 1/16) the admissible negative
+-- sup norm of the physical density rises from
+--
+--     epsilon <= 44/45 = 0.977...        (one-sided, per-orbit)
+-- to
+--     epsilon <= 44/3  = 14.66...        (one-sided, cancellation-preserving)
+--
+-- exactly a factor 15, verified here as an identity and as a strict
+-- inequality.  The user's step-4 target |4R1 + 6R2 + 4R3 + R4| <= 1/2 is also
+-- discharged in the cancellation-preserving form: it holds as soon as the
+-- COMBINED density obeys |D| <= 8 pointwise, again exactly.
+--
+-- WHAT IS STILL OPEN.  The physical leaf is unchanged in kind and strictly
+-- weaker in content: one still needs the literal momentum-space joint
+-- density of the CMP109 background-field vacuum polarisation and a bound on
+-- the negative part of its (4,6,4,1)-weighted combination, uniform in cutoff,
+-- volume and scale.  No such density exists anywhere in this repository, and
+-- nothing below should be read as supplying one.  What is proved is that the
+-- gate consumes fifteen times less than was previously demanded of it.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Product using (_×_; _,_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (cong; cong₂; sym; trans; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.YangMills.BalabanCMP109VacuumPolarizationHypercubicSourceSymmetryExact
+  as SourceSymmetry
+import DASHI.Physics.YangMills.BalabanYM4SU2RegularOrbitBetaFloorExact as Floor
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonGhostHaarWeightedFourOrbitExact
+  as Joint
+import DASHI.Physics.YangMills.BalabanYM4JointFourOrbitDensitySupGateExact
+  as SupGate
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonFPHaarPositiveBetaExact
+  as RowA1
+
+------------------------------------------------------------------------
+-- 1.  Congruence of the weighted (4,6,4,1) form
+------------------------------------------------------------------------
+
+weightedFourOrbitCong :
+  ∀ {a₁ a₂ a₃ a₄ b₁ b₂ b₃ b₄ : ℚ} →
+  a₁ ≡ b₁ → a₂ ≡ b₂ → a₃ ≡ b₃ → a₄ ≡ b₄ →
+  Joint.weightedFourOrbit a₁ a₂ a₃ a₄ ≡ Joint.weightedFourOrbit b₁ b₂ b₃ b₄
+weightedFourOrbitCong refl refl refl refl = refl
+
+------------------------------------------------------------------------
+-- 2.  THE CANCELLATION-PRESERVING GATE ON A POSITIVE LINEAR FUNCTIONAL
+------------------------------------------------------------------------
+
+module LinearCellIntegral
+  (Point : Set)
+  (integral : (Point → ℚ) → ℚ)
+  (integralMono :
+     ∀ (f g : Point → ℚ) → (∀ p → f p ≤ g p) → integral f ≤ integral g)
+  (integralAdd :
+     ∀ (f g : Point → ℚ) →
+     integral (λ p → f p + g p) ≡ integral f + integral g)
+  (integralScale :
+     ∀ (c : ℚ) (f : Point → ℚ) → integral (λ p → c * f p) ≡ c * integral f)
+  (cellMeasure : ℚ)
+  (integralConstant : ∀ (c : ℚ) → integral (λ _ → c) ≡ cellMeasure * c)
+  where
+
+  halfWidth : ℚ → ℚ
+  halfWidth ε = cellMeasure * ε
+
+  ------------------------------------------------------------------
+  -- 2a.  The single combined density, formed BEFORE integration
+  ------------------------------------------------------------------
+
+  combined :
+    (Point → ℚ) → (Point → ℚ) → (Point → ℚ) → (Point → ℚ) → (Point → ℚ)
+  combined d₁ d₂ d₃ d₄ =
+    λ p → Joint.weightedFourOrbit (d₁ p) (d₂ p) (d₃ p) (d₄ p)
+
+  -- Linearity: integrating the combination is combining the integrals.  This
+  -- is the exact step at which the earlier proof lost the cancellation.
+  integralCombined :
+    ∀ (d₁ d₂ d₃ d₄ : Point → ℚ) →
+    integral (combined d₁ d₂ d₃ d₄)
+    ≡ Joint.weightedFourOrbit
+        (integral d₁) (integral d₂) (integral d₃) (integral d₄)
+  integralCombined d₁ d₂ d₃ d₄ =
+    trans
+      (integralAdd
+        (λ p → Joint.weightOne * d₁ p + Joint.weightTwo * d₂ p
+                 + Joint.weightThree * d₃ p)
+        d₄)
+      (cong (λ z → z + integral d₄)
+        (trans
+          (integralAdd
+            (λ p → Joint.weightOne * d₁ p + Joint.weightTwo * d₂ p)
+            (λ p → Joint.weightThree * d₃ p))
+          (cong₂ _+_
+            (trans
+              (integralAdd
+                (λ p → Joint.weightOne * d₁ p)
+                (λ p → Joint.weightTwo * d₂ p))
+              (cong₂ _+_
+                (integralScale Joint.weightOne d₁)
+                (integralScale Joint.weightTwo d₂)))
+            (integralScale Joint.weightThree d₃))))
+
+  ------------------------------------------------------------------
+  -- 2b.  One-sided and two-sided cell bounds
+  ------------------------------------------------------------------
+
+  cellValueLowerFromDensityLower :
+    ∀ (density : Point → ℚ) (ε : ℚ) →
+    (∀ p → (- ε) ≤ density p) →
+    (- halfWidth ε) ≤ integral density
+  cellValueLowerFromDensityLower density ε lower =
+    subst (_≤ integral density)
+      (trans (integralConstant (- ε)) (sym (ℚP.neg-distribʳ-* cellMeasure ε)))
+      (integralMono (λ _ → - ε) density lower)
+
+  cellValueUpperFromDensityUpper :
+    ∀ (density : Point → ℚ) (ε : ℚ) →
+    (∀ p → density p ≤ ε) →
+    integral density ≤ halfWidth ε
+  cellValueUpperFromDensityUpper density ε upper =
+    subst (integral density ≤_) (integralConstant ε)
+      (integralMono density (λ _ → ε) upper)
+
+  ------------------------------------------------------------------
+  -- 2c.  THE GATE, WITH NO PER-ORBIT INTERVALIZATION
+  ------------------------------------------------------------------
+
+  -- - epsilon <= D pointwise  ==>  4 r1 + 6 r2 + 4 r3 + r4 >= - cellMeasure * epsilon.
+  -- The factor 15 of the per-orbit route is absent.
+  weightedFourOrbitLowerNoCancellationLoss :
+    ∀ (d₁ d₂ d₃ d₄ : Point → ℚ) (ε : ℚ) →
+    (∀ p → (- ε) ≤ combined d₁ d₂ d₃ d₄ p) →
+    (- halfWidth ε)
+      ≤ Joint.weightedFourOrbit
+          (integral d₁) (integral d₂) (integral d₃) (integral d₄)
+  weightedFourOrbitLowerNoCancellationLoss d₁ d₂ d₃ d₄ ε lower =
+    subst ((- halfWidth ε) ≤_) (integralCombined d₁ d₂ d₃ d₄)
+      (cellValueLowerFromDensityLower (combined d₁ d₂ d₃ d₄) ε lower)
+
+  weightedFourOrbitUpperNoCancellationLoss :
+    ∀ (d₁ d₂ d₃ d₄ : Point → ℚ) (ε : ℚ) →
+    (∀ p → combined d₁ d₂ d₃ d₄ p ≤ ε) →
+    Joint.weightedFourOrbit
+      (integral d₁) (integral d₂) (integral d₃) (integral d₄)
+      ≤ halfWidth ε
+  weightedFourOrbitUpperNoCancellationLoss d₁ d₂ d₃ d₄ ε upper =
+    subst (_≤ halfWidth ε) (integralCombined d₁ d₂ d₃ d₄)
+      (cellValueUpperFromDensityUpper (combined d₁ d₂ d₃ d₄) ε upper)
+
+  ------------------------------------------------------------------
+  -- 2d.  THE SAME, ON THE LITERAL JOINT WILSON + FP + HAAR EVALUATOR
+  ------------------------------------------------------------------
+
+  -- Hypotheses: the four joint representative values ARE the cell integrals
+  -- of four densities; and the (4,6,4,1)-weighted COMBINATION of those
+  -- densities -- not any one of them individually -- is bounded below by
+  -- -epsilon.  No upper bound of any kind is assumed.
+  literalJointRegularRemainderLowerNoCancellationLoss :
+    ∀ {wilson ghost haar : Joint.CellScalar}
+      (wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson)
+      (ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost)
+      (haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar)
+      (d₁ d₂ d₃ d₄ : Point → ℚ) (ε : ℚ) →
+    Joint.jointOne wilson ghost haar ≡ integral d₁ →
+    Joint.jointTwo wilson ghost haar ≡ integral d₂ →
+    Joint.jointThree wilson ghost haar ≡ integral d₃ →
+    Joint.jointFour wilson ghost haar ≡ integral d₄ →
+    (∀ p → (- ε) ≤ combined d₁ d₂ d₃ d₄ p) →
+    (- halfWidth ε) ≤ Joint.jointRegularRemainder wilson ghost haar
+  literalJointRegularRemainderLowerNoCancellationLoss
+      wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄ ε
+      e₁ e₂ e₃ e₄ lower =
+    subst ((- halfWidth ε) ≤_)
+      (sym
+        (trans
+          (Joint.literalWilsonGhostHaarWeightedFourOrbitExact
+            wilsonSymmetry ghostSymmetry haarSymmetry)
+          (weightedFourOrbitCong e₁ e₂ e₃ e₄)))
+      (weightedFourOrbitLowerNoCancellationLoss d₁ d₂ d₃ d₄ ε lower)
+
+  -- The two-sided enclosure, i.e. the user's step 4 in its
+  -- cancellation-preserving form:  |4 R1 + 6 R2 + 4 R3 + R4| <= radius,
+  -- whenever the combined density is enclosed by +/- epsilon and
+  -- cellMeasure * epsilon <= radius.
+  literalJointRegularRemainderEnclosure :
+    ∀ {wilson ghost haar : Joint.CellScalar}
+      (wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson)
+      (ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost)
+      (haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar)
+      (d₁ d₂ d₃ d₄ : Point → ℚ) (ε radius : ℚ) →
+    Joint.jointOne wilson ghost haar ≡ integral d₁ →
+    Joint.jointTwo wilson ghost haar ≡ integral d₂ →
+    Joint.jointThree wilson ghost haar ≡ integral d₃ →
+    Joint.jointFour wilson ghost haar ≡ integral d₄ →
+    (∀ p → (- ε) ≤ combined d₁ d₂ d₃ d₄ p) →
+    (∀ p → combined d₁ d₂ d₃ d₄ p ≤ ε) →
+    halfWidth ε ≤ radius →
+    ((- radius) ≤ Joint.jointRegularRemainder wilson ghost haar)
+      × (Joint.jointRegularRemainder wilson ghost haar ≤ radius)
+  literalJointRegularRemainderEnclosure
+      {wilson} {ghost} {haar}
+      wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄ ε radius
+      e₁ e₂ e₃ e₄ lower upper gate =
+    ℚP.≤-trans (ℚP.neg-antimono-≤ gate)
+      (literalJointRegularRemainderLowerNoCancellationLoss
+        wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄ ε
+        e₁ e₂ e₃ e₄ lower)
+    , ℚP.≤-trans
+        (subst (_≤ halfWidth ε)
+          (sym
+            (trans
+              (Joint.literalWilsonGhostHaarWeightedFourOrbitExact
+                wilsonSymmetry ghostSymmetry haarSymmetry)
+              (weightedFourOrbitCong e₁ e₂ e₃ e₄)))
+          (weightedFourOrbitUpperNoCancellationLoss d₁ d₂ d₃ d₄ ε upper))
+        gate
+
+  ------------------------------------------------------------------
+  -- 2e.  Per-shell packaging, matching the Row A1 shell assembly
+  ------------------------------------------------------------------
+
+  record ShellCombinedDensity (ε : ℚ) : Set where
+    field
+      wilson ghost haar : Joint.CellScalar
+      wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson
+      ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost
+      haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar
+      d₁ d₂ d₃ d₄ : Point → ℚ
+      cellOne : Joint.jointOne wilson ghost haar ≡ integral d₁
+      cellTwo : Joint.jointTwo wilson ghost haar ≡ integral d₂
+      cellThree : Joint.jointThree wilson ghost haar ≡ integral d₃
+      cellFour : Joint.jointFour wilson ghost haar ≡ integral d₄
+      combinedLower : ∀ p → (- ε) ≤ combined d₁ d₂ d₃ d₄ p
+  open ShellCombinedDensity public
+
+  shellRegularRemainder : ∀ {ε} → ShellCombinedDensity ε → ℚ
+  shellRegularRemainder shell =
+    Joint.jointRegularRemainder (wilson shell) (ghost shell) (haar shell)
+
+  -- The per-shell local radius supplied to `RowA1.LiteralPositiveBetaData` is
+  -- cellMeasure * epsilon, not 15 * cellMeasure * epsilon.
+  shellRegularRemainderLower :
+    ∀ {ε} (shell : ShellCombinedDensity ε) →
+    (- halfWidth ε) ≤ shellRegularRemainder shell
+  shellRegularRemainderLower {ε} shell =
+    literalJointRegularRemainderLowerNoCancellationLoss
+      (wilsonSymmetry shell) (ghostSymmetry shell) (haarSymmetry shell)
+      (d₁ shell) (d₂ shell) (d₃ shell) (d₄ shell) ε
+      (cellOne shell) (cellTwo shell) (cellThree shell) (cellFour shell)
+      (combinedLower shell)
+
+------------------------------------------------------------------------
+-- 3.  A COMBINED BOUND IS IMPLIED BY, AND STRICTLY WEAKER THAN, FOUR
+--     SEPARATE BOUNDS
+--
+-- Every density family that passes the per-orbit gate at half-width `ε`
+-- passes the cancellation-preserving gate at half-width `15 ε` -- so the new
+-- statement subsumes the old one and is not a different hypothesis.  The
+-- converse fails, which is the whole point: cancellation between the four
+-- representatives is invisible to the per-orbit route.
+------------------------------------------------------------------------
+
+combinedLowerFromSeparateLowers :
+  ∀ (r₁ r₂ r₃ r₄ ε : ℚ) →
+  (- ε) ≤ r₁ → (- ε) ≤ r₂ → (- ε) ≤ r₃ → (- ε) ≤ r₄ →
+  (- (SupGate.fifteen * ε)) ≤ Joint.weightedFourOrbit r₁ r₂ r₃ r₄
+combinedLowerFromSeparateLowers r₁ r₂ r₃ r₄ ε =
+  RowA1.weightedFourOrbitLowerFromCommon r₁ r₂ r₃ r₄ ε
+
+------------------------------------------------------------------------
+-- 4.  THE SU(2) NUMBERS
+------------------------------------------------------------------------
+
+cubeCellMeasure : ℚ
+cubeCellMeasure = SupGate.cubeCellMeasure                     -- 1/16
+
+-- One-sided PER-ORBIT threshold at C_A = 2 (Row A1, section 5):
+-- 15 * (1/16) * epsilon <= 11/12, i.e. epsilon <= 44/45.
+perOrbitCubeThreshold : ℚ
+perOrbitCubeThreshold = RowA1.oneSidedCubeThreshold            -- 44/45
+
+-- One-sided CANCELLATION-PRESERVING threshold at C_A = 2:
+-- (1/16) * epsilon <= 11/12, i.e. epsilon <= 44/3.
+cancellationCubeThreshold : ℚ
+cancellationCubeThreshold = + 44 / 3
+
+-- Sharpness: at this value the gate is an exact equality.
+cancellationCubeThresholdExact :
+  cubeCellMeasure * cancellationCubeThreshold
+  ≡ RowA1.universalBetaCoefficient Floor.su2AdjointCasimir
+cancellationCubeThresholdExact = refl
+
+-- The gain is exactly the discarded multiplicity 4+6+4+1 = 15.
+cancellationGainIsFifteen :
+  cancellationCubeThreshold ≡ SupGate.fifteen * perOrbitCubeThreshold
+cancellationGainIsFifteen = refl
+
+cancellationThresholdStrictlyWeaker :
+  perOrbitCubeThreshold < cancellationCubeThreshold
+cancellationThresholdStrictlyWeaker =
+  toWitness {a? = perOrbitCubeThreshold ℚP.<? cancellationCubeThreshold} _
+
+-- ...and a fortiori strictly weaker than the original TWO-sided gate 8/15.
+cancellationThresholdBeatsTwoSided :
+  RowA1.twoSidedCubeThreshold < cancellationCubeThreshold
+cancellationThresholdBeatsTwoSided =
+  toWitness {a? = RowA1.twoSidedCubeThreshold ℚP.<? cancellationCubeThreshold} _
+
+------------------------------------------------------------------------
+-- 4b.  THE USER'S STEP-4 TARGET  |4 R1 + 6 R2 + 4 R3 + R4| <= 1/2
+------------------------------------------------------------------------
+
+halfRadius : ℚ
+halfRadius = + 1 / 2
+
+-- On the normalized cube the step-4 enclosure holds exactly when the
+-- COMBINED density is enclosed by +/- 8: (1/16) * 8 = 1/2.
+stepFourCubeThreshold : ℚ
+stepFourCubeThreshold = + 8 / 1
+
+stepFourCubeThresholdExact :
+  cubeCellMeasure * stepFourCubeThreshold ≡ halfRadius
+stepFourCubeThresholdExact = refl
+
+stepFourGate : cubeCellMeasure * stepFourCubeThreshold ≤ halfRadius
+stepFourGate =
+  ℚP.≤-reflexive stepFourCubeThresholdExact
+
+-- The per-orbit route needed |d_i| <= 8/15 = 0.533... on each representative
+-- separately for the same conclusion; the cancellation-preserving route needs
+-- only |D| <= 8 on the single weighted combination.
+stepFourThresholdStrictlyWeaker :
+  RowA1.twoSidedCubeThreshold < stepFourCubeThreshold
+stepFourThresholdStrictlyWeaker =
+  toWitness {a? = RowA1.twoSidedCubeThreshold ℚP.<? stepFourCubeThreshold} _
+
+------------------------------------------------------------------------
+-- 4c.  WEAKER STILL: AN INTEGRATED BUDGET ON THE NEGATIVE PART OF THE
+--      COMBINED DENSITY
+--
+-- A pointwise lower bound on D = 4 d1 + 6 d2 + 4 d3 + d4 is more than the
+-- conclusion needs.  All the cell integral consumes is that the NEGATIVE part
+-- of D is dominated by some majorant of small integral: a combined density
+-- with an arbitrarily deep negative spike on a set of small measure still
+-- passes.  This is the cancellation-preserving analogue of
+-- `RowA1.NegativePartCellIntegral`, and it is the weakest form of physical
+-- leaf (A) currently on record.
+------------------------------------------------------------------------
+
+module NegativePartCombinedCellIntegral
+  (Point : Set)
+  (integral : (Point → ℚ) → ℚ)
+  (integralMono :
+     ∀ (f g : Point → ℚ) → (∀ p → f p ≤ g p) → integral f ≤ integral g)
+  (integralAdd :
+     ∀ (f g : Point → ℚ) →
+     integral (λ p → f p + g p) ≡ integral f + integral g)
+  (integralScale :
+     ∀ (c : ℚ) (f : Point → ℚ) → integral (λ p → c * f p) ≡ c * integral f)
+  (integralNegation :
+     ∀ (f : Point → ℚ) → integral (λ p → - f p) ≡ - integral f)
+  (cellMeasure : ℚ)
+  (integralConstant : ∀ (c : ℚ) → integral (λ _ → c) ≡ cellMeasure * c)
+  where
+
+  open LinearCellIntegral Point integral integralMono integralAdd
+    integralScale cellMeasure integralConstant public
+
+  cellValueLowerFromNegativePartBudget :
+    ∀ (density majorant : Point → ℚ) (δ : ℚ) →
+    (∀ p → (- majorant p) ≤ density p) →
+    integral majorant ≤ δ →
+    (- δ) ≤ integral density
+  cellValueLowerFromNegativePartBudget density majorant δ dominated budget =
+    ℚP.≤-trans (ℚP.neg-antimono-≤ budget)
+      (subst (_≤ integral density) (integralNegation majorant)
+        (integralMono (λ p → - majorant p) density dominated))
+
+  -- The combined gate with only an integrated negative-part budget.
+  literalJointRegularRemainderFromCombinedNegativePartBudget :
+    ∀ {wilson ghost haar : Joint.CellScalar}
+      (wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson)
+      (ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost)
+      (haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar)
+      (d₁ d₂ d₃ d₄ majorant : Point → ℚ) (δ : ℚ) →
+    Joint.jointOne wilson ghost haar ≡ integral d₁ →
+    Joint.jointTwo wilson ghost haar ≡ integral d₂ →
+    Joint.jointThree wilson ghost haar ≡ integral d₃ →
+    Joint.jointFour wilson ghost haar ≡ integral d₄ →
+    (∀ p → (- majorant p) ≤ combined d₁ d₂ d₃ d₄ p) →
+    integral majorant ≤ δ →
+    (- δ) ≤ Joint.jointRegularRemainder wilson ghost haar
+  literalJointRegularRemainderFromCombinedNegativePartBudget
+      wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄ majorant δ
+      e₁ e₂ e₃ e₄ dominated budget =
+    subst ((- δ) ≤_)
+      (sym
+        (trans
+          (Joint.literalWilsonGhostHaarWeightedFourOrbitExact
+            wilsonSymmetry ghostSymmetry haarSymmetry)
+          (weightedFourOrbitCong e₁ e₂ e₃ e₄)))
+      (subst ((- δ) ≤_) (integralCombined d₁ d₂ d₃ d₄)
+        (cellValueLowerFromNegativePartBudget
+          (combined d₁ d₂ d₃ d₄) majorant δ dominated budget))
+
+------------------------------------------------------------------------
+-- 5.  A CONCRETE NON-VACUOUS INSTANCE OF THE LINEAR FUNCTIONAL
+--
+-- One-point cell with the measure of the normalized cube: `integral f =
+-- (1/16) * f tt`.  It satisfies every hypothesis of section 2, so the
+-- abstract module is inhabited and its conclusions are not vacuous.
+------------------------------------------------------------------------
+
+open import Data.Unit using (⊤; tt)
+
+pointIntegral : (⊤ → ℚ) → ℚ
+pointIntegral f = cubeCellMeasure * f tt
+
+pointIntegralMono :
+  ∀ (f g : ⊤ → ℚ) → (∀ p → f p ≤ g p) → pointIntegral f ≤ pointIntegral g
+pointIntegralMono f g le =
+  ℚP.*-monoˡ-≤-nonNeg cubeCellMeasure {{ℚ.nonNegative (toWitness
+    {a? = 0ℚ ℚP.≤? cubeCellMeasure} _)}} (le tt)
+
+pointIntegralAdd :
+  ∀ (f g : ⊤ → ℚ) →
+  pointIntegral (λ p → f p + g p) ≡ pointIntegral f + pointIntegral g
+pointIntegralAdd f g = ℚP.*-distribˡ-+ cubeCellMeasure (f tt) (g tt)
+
+pointIntegralScale :
+  ∀ (c : ℚ) (f : ⊤ → ℚ) →
+  pointIntegral (λ p → c * f p) ≡ c * pointIntegral f
+pointIntegralScale c f =
+  trans (sym (ℚP.*-assoc cubeCellMeasure c (f tt)))
+    (trans (cong (λ z → z * f tt) (ℚP.*-comm cubeCellMeasure c))
+      (ℚP.*-assoc c cubeCellMeasure (f tt)))
+
+pointIntegralConstant :
+  ∀ (c : ℚ) → pointIntegral (λ _ → c) ≡ cubeCellMeasure * c
+pointIntegralConstant c = refl
+
+module CubeGate =
+  LinearCellIntegral ⊤ pointIntegral pointIntegralMono
+    pointIntegralAdd pointIntegralScale cubeCellMeasure pointIntegralConstant
+
+-- Non-vacuity of the gate itself: a combined density of constant value -8
+-- (the extreme admissible negative value of section 4b) integrates to exactly
+-- -1/2, saturating the step-4 enclosure.
+saturatingCombined : ⊤ → ℚ
+saturatingCombined _ = - stepFourCubeThreshold
+
+saturatingCombinedIntegral :
+  pointIntegral saturatingCombined ≡ - halfRadius
+saturatingCombinedIntegral = refl
+
+------------------------------------------------------------------------
+-- 6.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: the cancellation-preserving gate and the exact
+-- factor-15 improvement of the admissible negative sup norm.
+cancellationPreservingGateLevel : ProofLevel
+cancellationPreservingGateLevel = machineChecked
+
+stepFourEnclosureLevel : ProofLevel
+stepFourEnclosureLevel = machineChecked
+
+-- STILL OPEN, and unchanged in kind: the literal momentum-space joint
+-- Wilson + reduced Faddeev-Popov + Haar density of the CMP109
+-- background-field vacuum polarisation, together with a bound on the
+-- negative part of its (4,6,4,1)-weighted combination below the threshold of
+-- section 4, uniform in cutoff, volume and scale.
+literalCombinedJointDensityLevel : ProofLevel
+literalCombinedJointDensityLevel = conditional

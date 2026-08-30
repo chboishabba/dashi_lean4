@@ -1,0 +1,20 @@
+{
+  "totalDecls": 120000,
+  "baseCells": 82213,
+  "smushGroups": 22394,
+  "geometricGroups": 20422,
+  "semanticGroups": 1972,
+  "fullModulus": 1618964990108856390,
+  "ladder": [
+    { "irrep": 192, "modulus": 208311270618, "splits": 20422 },
+    { "irrep": 174, "modulus": 4404781290, "splits": 20422 },
+    { "irrep": 180, "modulus": 940154026, "splits": 20422 },
+    { "irrep": 101, "modulus": 9584146, "splits": 20422 },
+    { "irrep": 102, "modulus": 9584146, "splits": 20422 },
+    { "irrep": 139, "modulus": 434524970, "splits": 20422 },
+    { "irrep": 122, "modulus": 8767612282, "splits": 20422 },
+    { "irrep": 123, "modulus": 8767612282, "splits": 20422 },
+    { "irrep": 124, "modulus": 8767612282, "splits": 20422 },
+    { "irrep": 132, "modulus": 12483718786, "splits": 20422 }
+  ]
+}

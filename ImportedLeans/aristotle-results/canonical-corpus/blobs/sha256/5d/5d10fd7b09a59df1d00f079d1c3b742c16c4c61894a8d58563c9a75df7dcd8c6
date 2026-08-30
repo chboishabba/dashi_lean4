@@ -1,0 +1,163 @@
+# Row A1: the sign of the Gaussian coefficient, and response decay from the RG chain rule
+
+*Machine-checked round following `docs/ym_A1_recut_status.md`.  All statements
+below compile in `RequestProject/YangMills/` with a clean `lake build`, contain
+no `sorry`, no axiom and no unsafe pragma, and `#print axioms` reports only
+`propext, Classical.choice, Quot.sound`.*
+
+## 1. What this round adds
+
+The previous round reduced the Gaussian half of Row A1a to a finite Brillouin
+sum of the bubble-minus-seagull integrand
+
+    I(q) = ½ Tr( g(q) v(q) g(q) v(q) ) − ½ Tr( g(q) s(q) ),
+
+proved that the bubble is nonnegative at every momentum for a constrained
+(Schur-projected) propagator and a symmetric first variation, and left the sign
+of the seagull as the open question.
+
+This round turns that residual question from an inequality on a trace into a
+*qualitative property of the second background variation*, and does the same
+kind of reduction for A1b.
+
+### 1.1 The seagull sign is exactly the sign of the second variation
+
+`RequestProject/YangMills/SeagullSign.lean`
+
+* `trace_gram_mul_gram_nonneg` — for a Gram propagator `G = CᵀC` and a positive
+  semidefinite second variation `S = WᵀW`, `Tr(G S) ≥ 0`; the proof exhibits
+  `Tr(G S) = Tr(MᵀM)` with `M = W Cᵀ`.
+* `seagull_nonpos_of_negSemidef` — hence for a negative semidefinite
+  ("paramagnetic") `S = −WᵀW`, the seagull hypothesis of the previous round is
+  *automatic*.
+* `betaTrace_nonneg_of_paramagnetic`, `betaTrace_pos_of_paramagnetic` — the
+  diagonal one-loop functional is then nonnegative, and strictly positive as
+  soon as the propagator does not annihilate the first variation.
+* `betaTrace_nonneg_of_paramagnetic_dominance` — the mixed case
+  `S = W₁ᵀW₁ − W₂ᵀW₂`: positivity from dominance of the paramagnetic part inside
+  the propagator trace.
+* `brillouinSum_pos_of_paramagnetic_seagull`, `brillouinSum_pos_of_gram` — the
+  same criterion for the whole finite Brillouin sum, in the two forms a literal
+  symbol extraction can be delivered in (Schur formula, or an already
+  factorised symbol).
+
+### 1.2 A structural obstruction that fixes what the source datum must contain
+
+Still in `SeagullSign.lean`:
+
+* `affineGram_expansion` — for a background-affine first-order operator
+  `M(s,t) = M₀ + s M₁ + t M₂`, the Gram fluctuation operator `Δ = MᵀM` expands as
+
+      Δ = M₀ᵀM₀ + s V₁ + t V₂ + (s t) S + s² M₁ᵀM₁ + t² M₂ᵀM₂,
+      V_i = M₀ᵀM_i + M_iᵀM₀,   S = M₁ᵀM₂ + M₂ᵀM₁,
+
+  with `V_i` symmetric (`affineGram_variation_symm`) and, on the diagonal,
+  `S = 2 M₁ᵀM₁` (`affineGram_diagonal_secondVariation`).
+* `diamagnetic_seagull_nonneg` — that diagonal second variation is positive
+  semidefinite, so it contributes to the coefficient with the **unfavourable**
+  sign.
+* `betaTrace_nonneg_iff_bubble_dominates`, `betaTrace_nonpos_of_pure_diamagnetic`
+  — in the purely diamagnetic case the coefficient is a competition between
+  bubble and seagull, and with the bubble switched off it is `≤ 0`.
+
+The consequence is a precise requirement on the source extraction: a fluctuation
+operator that is a plain squared covariant derivative (a Gram form of a
+background-affine operator) can never give the positive coefficient for free.
+Whatever produces positivity must be a genuinely non-Gram, negative semidefinite
+piece of the second background variation — the lattice analogue of the
+paramagnetic/spin term.  That is exactly the datum A1a must extract, and it is
+now a *sign*, not an estimate.
+
+### 1.3 The project's own lattice symbol satisfies the hypotheses
+
+`RequestProject/YangMills/TransverseGram.lean`
+
+The closed-form lattice constrained symbol of the previous round,
+`G(p) = (1/p̂²)(1 − p̂p̂ᵀ/p̂²)` with `p̂_μ = 2 sin(π p_μ)`, is put into the form the
+criterion consumes:
+
+* `transverseProjector_transpose`, `transverseProjector_idem`,
+  `transverseProjector_gram` — the transverse projector is a symmetric
+  idempotent, hence its own Gram factor;
+* `smul_transverseProjector_gram`, `latticeSymbol_gram` — therefore
+  `G(p) = C(p)ᵀC(p)` with the explicit factor `C(p) = (1/p̂²)^{1/2}(1 − p̂p̂ᵀ/p̂²)`;
+* `latticeBrillouinSum_pos_of_paramagnetic` — **on the project's literal lattice
+  symbol**, any symmetric first variation and any negative semidefinite second
+  variation give a strictly positive finite Brillouin sum, provided the symbol
+  does not annihilate the first variation at one momentum;
+* `transverseProjector_trace`, `latticeSymbol_bubble_ne_zero`,
+  `latticeBrillouinSum_pos_example` — the non-annihilation hypothesis is
+  satisfiable, and the criterion is instantiated end to end.
+
+### 1.4 Row A1b: geometric response decay derived from the chain rule
+
+`RequestProject/YangMills/HistoryChainRule.lean`
+
+* `HasChainFactorisation` — the chain-rule shape of the history-response kernel:
+  an earlier coupling reaches a later shell only through the intervening
+  renormalisation-group steps, `R_{j,k} = A_j · ∏_{i=k}^{j−1} J_i`.
+* `responseDecay_of_chainRule` — a bounded head and one-step transfer factors
+  bounded by `θ` give `|R_{j,k}| ≤ C θ^{j−k}`.  The scale-separation exponent is
+  *produced* by the number of intervening steps, not assumed.
+* `responseDecay_of_irrelevantChain` — with the one-step factors bounded by the
+  irrelevance ratio `θ = L^{−ω}` (`L > 1`, `ω > 0`) the kernel decays
+  geometrically with `θ < 1`.
+* `historyDebt_of_irrelevantChain` — the resulting uniform history debt
+  `C·B·θ/(1−θ)`, i.e. the third of the three numbers in the Row A1 margin
+  `b_− = b_Z − C_int γ^ρ − C_R B θ/(1−θ)`.
+* `chainFactorisation_nonvacuous` — the hypotheses are satisfiable.
+
+So A1b now needs one source datum too: a uniform bound on the *one-step*
+response of the effective action to the preceding coupling.  No abstract
+contraction metric is postulated anywhere.
+
+### 1.5 Boundary tests
+
+`RequestProject/YangMills/SeagullSignChecks.lean` works a two-momentum instance
+on the constrained two-dimensional space of `ConstrainedDeterminantChecks`:
+
+* with the paramagnetic sign the integrand is `1` at each momentum and the sum
+  is `2` (`paramagnetic_instance_integrand`, `paramagnetic_instance_sum`,
+  `paramagnetic_instance_sum_pos` — the last obtained *through* the general
+  criterion);
+* with the diamagnetic sign the integrand is `0` and the sum is not positive
+  (`diamagnetic_instance_integrand`, `diamagnetic_instance_sum_not_pos`).
+
+The sign hypothesis is therefore load-bearing rather than decorative.
+
+## 2. What is still missing
+
+Unchanged in kind from the previous round, and stated without euphemism.
+
+1. **No literal symbols.**  The first and second background variations
+   `V_μ = D_μ Δ̂`, `S_{μν} = D_μ D_ν Δ̂` of the literal constrained fluctuation
+   operator, and their Fourier symbols `v_μ(q)`, `s_{μν}(q)`, are not available
+   in this environment: the primary source text is not retrievable here, and
+   nothing in this repository is permitted to invent its formulas.  Everything
+   in §1 is a theorem *about supplied symbol data* plus the project's own
+   lattice conventions.
+2. **No numerical value of any beta coefficient** is derived or asserted.  In
+   particular `b_Z`, `C_int`, `ρ`, `C_R`, `θ` remain unpopulated, and no
+   comparison with a continuum normalisation is claimed.
+3. **No Clay leaf is closed.**  Row A1 remains open; the margin theorem
+   `A1_margin_positive` is a consumer of the three numbers, not a proof that any
+   of them exists.
+
+## 3. Honest summary of the state of Row A1
+
+Everything downstream of the literal symbols is machine-checked:
+
+    constrained Gaussian normalisation
+      → exact bordered-determinant factorisation (automatic ghost subtraction)
+      → Ward-kernel normalisation of the jets
+      → matrix-valued Brillouin reduction
+      → pointwise Gram positivity of the constrained symbol
+      → sign criterion: positivity ⟸ negative semidefinite second variation
+      → finite Brillouin sum, strictly positive
+      → Row A1 margin b_Z − C_int γ^ρ − C_R B θ/(1−θ) > 0.
+
+Nothing upstream of the literal symbols is.  The remaining Row A1 work is
+therefore exactly two source-extraction tasks, each now reduced to a single
+qualitative or one-step datum: the *sign* of the second background variation of
+the literal constrained operator, and a uniform bound on the *one-step*
+historical response.

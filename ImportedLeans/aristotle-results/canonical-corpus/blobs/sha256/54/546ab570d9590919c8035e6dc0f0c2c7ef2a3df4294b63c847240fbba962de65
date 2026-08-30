@@ -1,0 +1,22 @@
+# Page 4 — Class: independent (the interesting one)
+
+Same statement, **two different proofs**. Heads side by side:
+
+**Group 70** — fp `94490458`, 2 members (syntax delta; struct-equal).
+- `Nat.pow_lt_pow_right` — head `Iff.mpr`
+    `∀ {a m n : ℕ}, 1 < a → m < n → a ^ m < a ^ n`
+- `Nat.pow_lt_pow_of_lt` — head `Exists.casesOn  (Nat.exists_eq_add_of_lt + Nat.mul_lt_mul_of_lt_of_le ...)`
+    `∀ {a n m : ℕ}, 1 < a → n < m → a ^ n < a ^ m`
+
+**Group 197** — fp `264411993`, 2 members (identical; struct-equal).
+
+Statement: `∀ {X : Type u_2} [inst : PseudoMetricSpace X] {s : Set X}, IsCompact s → ∀ {e : ℝ}, 0 < e → ∃ t ⊆ s, t.Finite ∧ s ⊆ ⋃ x ∈ t, Metric.ball x e`
+
+- `IsCompact.finite_cover_balls` — head `const finite_cover_balls_of_compact  (proof = the other lemma)`
+- `finite_cover_balls_of_compact` — head `finite_cover_balls_of_compact.match_1_1 (case split)`
+
+Group 70: `Nat.pow_lt_pow_right` discharges `1<a → m<n → a^m<a^n` via `Iff.mpr`, while `Nat.pow_lt_pow_of_lt` builds the same fact from `Nat.exists_eq_add_of_lt` + an explicit `Exists.casesOn` — genuinely independent derivations of one theorem.
+
+Group 197 is subtler: `IsCompact.finite_cover_balls`'s proof term is literally `const finite_cover_balls_of_compact` — it *is* the other lemma by reference, yet the classifier calls the group `independent` because the two stored terms are not byte-identical (one is a `const`, one is a `match`). A reminder that `independent` means *distinct proof terms*, not *unrelated proofs*.
+
+**Caveat for `def`s.** Many `independent` groups are plain definitions that merely share a type signature (e.g. `Char.toUpper`/`toLower : Char → Char`, `Int32.lor`/`land`/`xor`). Those are not duplicate *statements* — only `Prop`-valued members give genuine duplicate theorems.

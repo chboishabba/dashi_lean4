@@ -1,0 +1,13 @@
+{
+  "totalDecls": 708123,
+  "totalNodes": 1950655588,
+  "distinctStmtCells": 186387,
+  "distinctProofCells": 188142,
+  "smushCount": 521736,
+  "faithfulCount": 707172,
+  "saturationIrrep": 194,
+  "saturationModulus": 1,
+  "deepestDecl": "SheafOfModules.Presentation.map._proof_6",
+  "deepestCount": 68071930,
+  "arithmetization": 2994870043851426
+}

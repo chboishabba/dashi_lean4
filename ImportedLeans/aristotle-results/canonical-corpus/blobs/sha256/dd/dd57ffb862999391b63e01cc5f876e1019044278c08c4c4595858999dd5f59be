@@ -1,0 +1,387 @@
+module DASHI.Physics.YangMills.YMFrozenFourResearchScoreboardExact where
+
+------------------------------------------------------------------------
+-- THE FROZEN FOUR: AUTHORITATIVE CLAY YANG-MILLS RESEARCH SCOREBOARD
+--
+-- Normative statements: docs/ym/YangMillsClayFourFrozenResearchLemmas.md.
+-- That document, not this module, carries the displayed inequalities.  This
+-- module carries the ledger and the freeze rule, machine-checked.
+--
+--   A  LiteralCompactSimplePositiveBeta
+--   B  PhysicalMarkedSourceLocalityCompositeStress
+--   C  SameDensityCompactLieHeatLangevinMassGap
+--   D  SameFamilyShortDistanceOPEStressAF
+--
+-- Research DAG:   A -> B,   B -> C,   B -> D,   and C + D feed the final
+-- nontriviality / mass-gap / local-QFT assembly.
+--
+-- FREEZE RULE (the point of this module).  The count moves only when one
+-- entire row becomes proved, and a row becomes proved only by exhibiting an
+-- inhabitant of a stated Agda proposition.  It does not move because a
+-- compiler improved, because two hypotheses share notation, because an old
+-- source almost proves something, or because a narrower conditional record
+-- was created.  `CompletionCertificate` below is proof-carrying: the type
+-- system refuses a decrement that is not accompanied by an actual inhabitant
+-- of a proposition.  What the type system cannot check is that the chosen
+-- proposition IS the row's normative statement; that identification is made
+-- in the document, and a certificate must quote it.
+--
+-- HONESTY NOTE.  No formalisation of the continuum Yang-Mills objects exists
+-- in this tree (see docs/ym/YangMillsClayObstructionReport.md), so no Agda
+-- record here should be read as a faithful formalisation of rows A-D.  The
+-- Agda content that IS mathematics, rather than bookkeeping, is imported
+-- below: the row-A cumulative-margin reduction and the row-B geometric
+-- energy-summability consequence, both proved as exact rational arithmetic
+-- with no postulate, hole, or receipt.  Neither is a proof of its row.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Bool using (Bool; false; true)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+import Data.Nat.Base as NatOrder
+open import Agda.Builtin.String using (String)
+open import Data.List.Base using (List; []; _∷_)
+open import Data.Product using (Σ; _,_; _×_)
+open import Relation.Nullary using (¬_)
+open import Data.Rational.Base as ℚ using (ℚ; 0ℚ; 1ℚ; _+_; _*_; _≤_; _<_)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact using
+  ( prefixSum ; pow ; natToℚ ; geometricEnergyPrefixBound
+  ; ContractingShellFamily ; shell ; budget )
+open import DASHI.Physics.YangMills.YMCumulativeBetaMarginExact using
+  ( CumulativeBetaHypotheses ; bStar ; beta ; cumulativeBetaMargin
+  ; closureCriterionMargin )
+import DASHI.Physics.YangMills.YMCumulativeBetaMarginNonVacuityExact as WitnessA
+import DASHI.Physics.YangMills.BalabanYM4LinearInteractionBetaMarginExact as ShellMargin
+import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact as CubicDrift
+import DASHI.Physics.YangMills.BalabanYM4ShootingSensitivityFromCubicDriftExact as Shooting
+import DASHI.Physics.YangMills.BalabanYM4SU2RegularOrbitBetaFloorExact as SU2Floor
+import DASHI.Physics.YangMills.YMRowATunedTrajectoryContractExact as Contract
+import DASHI.Physics.YangMills.YMRowCCurvatureCriterionIndependenceExact as RowC
+import DASHI.Physics.YangMills.BalabanYM4UniformInteractionDerivativePackageExact
+  as DerivPackage
+import DASHI.Physics.YangMills.BalabanYM4CauchyTubeAnalyticPackageExact
+  as CauchyTube
+import DASHI.Physics.YangMills.BalabanYM4NormalizedInteractionLogHessianExact
+  as LogHessian
+import DASHI.Physics.YangMills.BalabanYM4AnalyticPackageGateClosureExact
+  as AnalyticGates
+import DASHI.Physics.YangMills.BalabanYM4GateFeasibilityRegionExact
+  as GateRegion
+
+------------------------------------------------------------------------
+-- Rows and the proof-carrying completion certificate
+------------------------------------------------------------------------
+
+data RowStatus : Set where
+  openRow   : RowStatus
+  provedRow : RowStatus
+
+-- A decrement of the count must supply a proposition together with an
+-- inhabitant of it, and must quote the normative statement it claims to
+-- discharge.
+record CompletionCertificate : Set₁ where
+  field
+    quotedNormativeStatement : String
+    Proposition              : Set
+    proof                    : Proposition
+    level                    : ProofLevel
+    locallyPromotable        : promotable level ≡ true
+
+record ResearchRow : Set₂ where
+  field
+    label                   : String
+    completionCondition     : String   -- verbatim from the normative document
+    status                  : RowStatus
+    certificate             : status ≡ provedRow → CompletionCertificate
+
+open ResearchRow public
+
+------------------------------------------------------------------------
+-- The four frozen rows
+------------------------------------------------------------------------
+
+-- No row may be closed by a certificate here; each `certificate` field is a
+-- function out of `openRow ≡ provedRow`, which is empty, so the ledger is
+-- honest by construction rather than by a Boolean flag.
+noCertificate : openRow ≡ provedRow → CompletionCertificate
+noCertificate ()
+
+rowA : ResearchRow
+rowA = record
+  { label = "LiteralCompactSimplePositiveBeta"
+  ; completionCondition =
+      "on the literal Balaban trajectory of an arbitrary compact simple gauge group, and uniformly in the cutoff K: (i) small-field survival 0 < g_j <= gamma for all j <= K; (ii) a positive terminal-tail slope, i.e. b_* > 0 with b_*(K-k) <= sum_{j=k+1}^{K} beta_j for every k <= K; and (iii) the same tuned trajectory landing in the prescribed nonzero physical coupling window at the terminal scale. Condition (ii) alone is provably insufficient (slopeAndTubeDoNotImplyWindow). The two numerical gates delivered by the analysis are C*gamma < b- for the sign and L*gamma < b_* for the shooting contraction"
+  ; status = openRow
+  ; certificate = noCertificate
+  }
+
+rowB : ResearchRow
+rowB = record
+  { label = "PhysicalMarkedSourceLocalityCompositeStress"
+  ; completionCondition =
+      "a common physical analytic radius R_* > 0 and same-object differentiated CMP116 localization for the actual differentiated Hessian/composite/stress source family of the source-native Yang-Mills RG state, with E_d^phys <= E_0 r^d, 0 <= r < 1, uniformly in cutoff, volume and scale"
+  ; status = openRow
+  ; certificate = noCertificate
+  }
+
+rowC : ResearchRow
+rowC = record
+  { label = "SameDensityCompactLieHeatLangevinMassGap"
+  ; completionCondition =
+      "on the actual finite-volume Yang-Mills effective density u_t = H_t(exp(-V_0)), V_t = -log u_t, a cutoff/volume-uniform Hessian debt Hess V_t >= -eta_N(t) g with sup_N integral_0^infinity eta_N(t) dt < infinity (division-free form (Xu_t)^2 - u_t Hess u_t(X,X) + eta_N(t) u_t^2 |X|^2 >= 0), and on the same density |Cov_{mu_N}(F_x,G_y)| <= C_{F,G} exp(-m d(x,y)) with m > 0 uniform in N"
+  ; status = openRow
+  ; certificate = noCertificate
+  }
+
+rowD : ResearchRow
+rowD = record
+  { label = "SameFamilyShortDistanceOPEStressAF"
+  ; completionCondition =
+      "for the physical fields supplied by row B: R_D^phys(x) = R_D^RG(x); C_{n+1}^phys = M_n C_n^phys with the asymptotically-free reference mixing M_n and C_0^phys = C_0^AF; and the physical stress insertion satisfies the local translation Ward identity d^mu T_{mu nu} = 0 in the distributional/Ward sense with its required short-distance action on the local fields"
+  ; status = openRow
+  ; certificate = noCertificate
+  }
+
+frozenRows : List ResearchRow
+frozenRows = rowA ∷ rowB ∷ rowC ∷ rowD ∷ []
+
+------------------------------------------------------------------------
+-- The count is computed from the rows, never written down by hand
+------------------------------------------------------------------------
+
+isOpen : ResearchRow → Bool
+isOpen row with status row
+... | openRow   = true
+... | provedRow = false
+
+openRows : List ResearchRow → Nat
+openRows [] = zero
+openRows (row ∷ rows) with isOpen row
+... | true  = suc (openRows rows)
+... | false = openRows rows
+
+frozenResearchCount : Nat
+frozenResearchCount = openRows frozenRows
+
+frozenResearchCountIsFour : frozenResearchCount ≡ 4
+frozenResearchCountIsFour = refl
+
+rowAOpen : status rowA ≡ openRow
+rowAOpen = refl
+
+rowBOpen : status rowB ≡ openRow
+rowBOpen = refl
+
+rowCOpen : status rowC ≡ openRow
+rowCOpen = refl
+
+rowDOpen : status rowD ≡ openRow
+rowDOpen = refl
+
+------------------------------------------------------------------------
+-- The research DAG, as data
+------------------------------------------------------------------------
+
+data RowName : Set where
+  A B C D : RowName
+
+feeds : RowName → RowName → Bool
+feeds A B = true
+feeds B C = true
+feeds B D = true
+feeds _ _ = false
+
+-- A -> B, B -> C, B -> D and nothing else.
+dagAtoB : feeds A B ≡ true
+dagAtoB = refl
+
+dagBtoC : feeds B C ≡ true
+dagBtoC = refl
+
+dagBtoD : feeds B D ≡ true
+dagBtoD = refl
+
+dagNoCtoD : feeds C D ≡ false
+dagNoCtoD = refl
+
+dagNoAtoC : feeds A C ≡ false
+dagNoAtoC = refl
+
+------------------------------------------------------------------------
+-- What is actually machine-checked in this repository today, and is
+-- therefore NOT a separate research row
+------------------------------------------------------------------------
+
+-- Row A's arithmetic reduction: two-sided Gaussian shell bounds plus a
+-- uniformly bounded small-coupling history budget that does not consume the
+-- margin give the uniform positive cumulative margin the downstream chain
+-- consumes.  Open: b- > 0 for the actual constrained Gaussian normalisation
+-- (identity-background Hessian including Q-constraint dependence), and the
+-- uniform nonlinear interaction Hessian estimate producing C and rho.
+rowAReductionChecked :
+  (H : CumulativeBetaHypotheses) → ∀ k n →
+  (bStar H * natToℚ (suc n)) ≤ prefixSum (beta H) k (suc n)
+rowAReductionChecked = cumulativeBetaMargin
+
+-- The sharp form: row A's four constants close the entire prefix inequality
+-- as soon as  C * B < b_-,  with uniform downstream constant b_* = b_- - C*B.
+-- This is the single numerical target that the constrained Gaussian Hessian
+-- and the nonlinear interaction Hessian estimate must meet, and the only way
+-- row A can be numerically falsified.
+rowAClosureCriterionChecked :
+  (betaZseq betaIntseq : Nat → ℚ) (hist : ContractingShellFamily)
+  (C bM bP : ℚ) →
+  0ℚ ≤ C →
+  (∀ j → bM ≤ betaZseq j) →
+  (∀ j → betaZseq j ≤ bP) →
+  (∀ k n → prefixSum betaIntseq k n ≤ C * prefixSum (shell hist) k n) →
+  (∀ k n → (ℚ.- (C * prefixSum (shell hist) k n)) ≤ prefixSum betaIntseq k n) →
+  0ℚ < (bM ℚ.- C * budget hist) →
+  ∀ k n →
+  ((bM ℚ.- C * budget hist) * natToℚ (suc n))
+    ≤ prefixSum (λ j → betaZseq j + betaIntseq j) k (suc n)
+rowAClosureCriterionChecked = closureCriterionMargin
+
+-- The hypotheses of that reduction are consistent (explicit inhabitant with
+-- a nonzero geometric interaction history).
+rowAReductionNonVacuous : CumulativeBetaHypotheses
+rowAReductionNonVacuous = WitnessA.witness
+
+-- Row A's shell-local sign mechanism: with the CMP109-supported linear
+-- interaction estimate, only the small-coupling tube is needed (no summability
+-- of the marginal history), and the sign condition reduces to  C*gamma < b-.
+rowAShellMarginChecked :
+  (d : ShellMargin.ShellLinearInteractionData) → ∀ j →
+  ShellMargin.Shell.shellMargin d
+    ≤ ShellMargin.ShellLinearInteractionData.beta d j
+rowAShellMarginChecked d = ShellMargin.Shell.shellBetaLower d
+
+-- Row A's cutoff-independent summability mechanism: a positive inverse-square
+-- (beta) margin telescopes into a bounded sum of cubes of the coupling.
+rowACubicTelescopeChecked :
+  ∀ {cutoff} (flow : CubicDrift.InverseSquareMarginFlow cutoff) →
+  ∀ {tubeWidth} →
+  (∀ K → CubicDrift.InverseSquareMarginFlow.coupling flow K
+           ℚ.- CubicDrift.InverseSquareMarginFlow.coupling flow 0 ≤ tubeWidth) →
+  ∀ K → K NatOrder.≤ cutoff →
+  CubicDrift.InverseSquareMarginFlow.marginConstant flow
+    * CubicDrift.sumCubes (CubicDrift.InverseSquareMarginFlow.coupling flow) K
+    ≤ CubicDrift.twoℚ * tubeWidth
+rowACubicTelescopeChecked flow = CubicDrift.Flow.cubicSumInTube flow
+
+-- Row A's tuning gate: L*gamma < b_* makes the cumulative shooting
+-- sensitivity strictly below one, uniformly in the cutoff.
+rowAContractionGateChecked :
+  ∀ {cutoff} (d : Shooting.CumulativeSensitivityData cutoff) →
+  ∀ K → K NatOrder.≤ cutoff →
+  ShellMargin.sum₀ (Shooting.CumulativeSensitivityData.sensitivity d) K < 1ℚ
+rowAContractionGateChecked d = Shooting.Sensitivity.cumulativeSensitivityBelowOne d
+
+-- Row A's group-theoretic sign arithmetic for SU(2): once the regular
+-- four-orbit contribution is enclosed in [-1/2,1/2], beta_Z >= 5/12 > 0.
+rowASU2FloorChecked :
+  (enclosure : SU2Floor.SU2RegularOrbitEnclosure) →
+  SU2Floor.su2BetaFloor ≤ SU2Floor.betaGauss enclosure
+rowASU2FloorChecked = SU2Floor.su2GaussianBetaFloor
+
+-- Row A's completion contract cannot be met by the slope condition alone.
+rowASlopeInsufficientChecked :
+  Contract.SlopeInsufficiency
+rowASlopeInsufficientChecked = Contract.slopeAndTubeDoNotImplyWindow
+
+-- Row B's declared downstream consequence, machine-checked, so that it can
+-- never be recounted as a research lemma:  E_d <= E_0 r^d with r < 1 gives a
+-- single constant bounding every partial sum of the differentiated source
+-- energies, at every starting scale.
+rowBEnergySummabilityChecked :
+  (E : Nat → ℚ) (E₀ r Bud : ℚ) →
+  0ℚ ≤ E₀ → 0ℚ ≤ r → r ≤ 1ℚ → 0ℚ ≤ Bud → (E₀ + r * Bud) ≤ Bud →
+  (∀ d → 0ℚ ≤ E d) → (∀ d → E d ≤ E₀ * pow r d) →
+  ∀ k n → prefixSum E k n ≤ Bud
+rowBEnergySummabilityChecked = geometricEnergyPrefixBound
+
+-- Row C's completion contract may not be met by the covariance-weighted
+-- (BBD) inequality in place of the group Heat/Doob hypothesis: already in the
+-- pointwise scalar reduction neither of the two criteria implies the other.
+rowCCriteriaIndependentChecked :
+  (∀ eta →
+    Σ RowC.ScalarCurvatureDatum
+      (λ d → RowC.BBDCondition d × ¬ (RowC.HessianDebtFloor eta d)))
+  ×
+  Σ RowC.ScalarCurvatureDatum
+    (λ d →
+      (∀ eta → 0ℚ ≤ eta → RowC.HessianDebtFloor eta d)
+        × ¬ (RowC.BBDCondition d))
+rowCCriteriaIndependentChecked =
+  RowC.bbdDoesNotImplyHessianFloor , RowC.hessianFloorDoesNotImplyBBD
+
+-- Row A's analytic compression: ONE package for the literal interaction
+-- correction, beta_Int(g) = g F(g) with sup|F| <= M0 and sup|F'| <= M1 on the
+-- tube plus a Gaussian derivative bound L_Z, produces BOTH row-A constants,
+-- C = M0 and L = L_Z + M0 + gamma M1.  A2 and A3 are therefore one analytic
+-- estimate, not two.
+rowAUniformDerivativePackageChecked :
+  (pkg : DerivPackage.UniformDerivativePackage) →
+  ∀ g → 0ℚ ≤ g → g ≤ DerivPackage.UniformDerivativePackage.tubeCap pkg →
+  (ℚ.∣ DerivPackage.Package.interactionBeta pkg g ∣
+      ≤ DerivPackage.Package.interactionSlope pkg * g)
+  × (ℚ.∣ DerivPackage.Package.betaDerivative pkg g ∣
+      ≤ DerivPackage.Package.uniformDerivativeConstant pkg)
+rowAUniformDerivativePackageChecked pkg g 0≤g g≤γ =
+  DerivPackage.Package.interactionAbsLinear pkg g 0≤g g≤γ ,
+  DerivPackage.Package.totalDerivativeBounded pkg g 0≤g g≤γ
+
+-- Row A's Cauchy input: a single coefficient bound |a_n| R^n <= M0 on a disc
+-- slightly larger than the tube caps every truncation of the function
+-- majorant, uniformly in the truncation.
+rowACauchyTubeSupChecked :
+  (pkg : CauchyTube.CauchyTubePackage) →
+  ∀ {g} → 0ℚ ≤ g →
+  g ≤ CauchyTube.CauchyTubePackage.tubeRadius pkg →
+  ∀ N →
+  CauchyTube.Tube.seriesMajorant pkg g N ≤ CauchyTube.Tube.functionSup pkg
+rowACauchyTubeSupChecked pkg = CauchyTube.Tube.seriesMajorantBound pkg
+
+-- Row A's second producer route: bounds on the normalized interaction factor
+-- (Z >= z0 > 0, |Z'| <= A g, |Z''| <= B g) give the linear interaction
+-- constant C = B/z0 + A^2 gamma/z0^2 for the logarithmic second derivative.
+rowALogHessianConstantChecked :
+  (d : LogHessian.NormalizedInteractionData) →
+  ∀ g → (0≤g : 0ℚ ≤ g) →
+  (g≤γ : g ≤ LogHessian.NormalizedInteractionData.tubeCap d) →
+  ℚ.∣ LogHessian.LogHessian.logHessian d g ∣
+    ≤ LogHessian.NormalizedInteractionData.hessianConstant d * g
+rowALogHessianConstantChecked d g 0≤g g≤γ =
+  LogHessian.LogHessian.Point.logHessianBound d g 0≤g g≤γ
+
+-- Row A in canonical form: the analytic package plus the two numerical gates
+-- give a cutoff-uniform strict contraction of the shooting map.
+rowAAnalyticGateClosureChecked :
+  ∀ {cutoff} (t : AnalyticGates.AnalyticGateTrajectory cutoff) →
+  ∀ K → K NatOrder.≤ cutoff →
+  ShellMargin.sum₀ (AnalyticGates.Closure.sensitivity t) K < 1ℚ
+rowAAnalyticGateClosureChecked t = AnalyticGates.Closure.contractionBelowOne t
+
+-- Row A scoping: for ANY nonnegative analytic constants the two gates are
+-- jointly satisfiable as soon as b_- > 0, so no numerical accident in M0, M1
+-- or L_Z can obstruct row A; the obstruction is A1 (a positive Gaussian
+-- floor) together with the literal trajectory's drift fitting the region.
+rowAGatesSatisfiableChecked :
+  ∀ b₋ M0 M1 LZ → 0ℚ < b₋ → 0ℚ ≤ M0 → 0ℚ ≤ M1 → 0ℚ ≤ LZ →
+  Σ ℚ (λ γ → Σ ℚ (λ γt →
+    (0ℚ < γ) × (0ℚ < γt)
+    × (M0 * γ < b₋)
+    × ((LZ + (M0 + γ * M1)) * γt < b₋ ℚ.- M0 * γ)))
+rowAGatesSatisfiableChecked = GateRegion.gatesSatisfiable
+
+------------------------------------------------------------------------
+-- Nothing in this module promotes any Clay claim
+------------------------------------------------------------------------
+
+scoreboardLevel : ProofLevel
+scoreboardLevel = conditional
+
+scoreboardDoesNotPromote : promotable scoreboardLevel ≡ false
+scoreboardDoesNotPromote = refl

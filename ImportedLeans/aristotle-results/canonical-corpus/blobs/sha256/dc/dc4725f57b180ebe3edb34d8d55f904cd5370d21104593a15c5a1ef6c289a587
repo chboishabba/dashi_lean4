@@ -1,0 +1,29 @@
+# Summary of changes for run f4133027-09ab-48ac-9a6e-ab4ef96569aa
+Happy to branch out from Lean! I wrote and ran a "Hello, World!" program in Agda.
+
+What I did:
+1. Installed Agda (version 2.6.4.3), GHC (9.6.6, the compilation backend), and the Agda standard library (2.1) into the environment.
+2. Configured Agda's library settings so the standard library's `IO` module is available.
+3. Wrote `HelloWorld.agda` with the program:
+
+   ```agda
+   {-# OPTIONS --guardedness #-}
+
+   module HelloWorld where
+
+   open import IO
+
+   main : Main
+   main = run (putStrLn "Hello, World!")
+   ```
+
+   The `--guardedness` pragma is required because the standard library's `IO` module relies on coinduction.
+4. Compiled it with `agda --compile HelloWorld.agda` (Agda translates to Haskell and GHC builds a native binary) and ran the resulting executable, which printed:
+
+   ```
+   Hello, World!
+   ```
+
+5. Cleaned up the generated build artifacts (the `MAlonzo/` directory, the `.agdai` interface file, and the binary), leaving just the source file `HelloWorld.agda` in the project root.
+
+To reproduce: from the project directory run `agda --compile HelloWorld.agda` and then `./HelloWorld`.

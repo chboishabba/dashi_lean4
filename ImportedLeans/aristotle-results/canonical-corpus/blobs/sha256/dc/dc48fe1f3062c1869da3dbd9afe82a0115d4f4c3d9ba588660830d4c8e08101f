@@ -1,0 +1,479 @@
+module DASHI.Physics.YangMills.BalabanYM4PolydiscInteractionCauchyConstantsExact where
+
+------------------------------------------------------------------------
+-- ROW A2 + A3, COMPRESSED:
+--   ONE POLYDISC NORM  (M, N)  ON THE CMP109 INTERACTION FACTOR
+--   ==>  THE SEVEN CAUCHY CONSTANTS  ==>  THE TWO ROW-A GATE CONSTANTS
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHAT THIS MODULE DOES.
+--
+-- `BalabanYM4InteractionCauchyPackageToRowAConstantsExact` reduces Row A2/A3
+-- to *seven* uniform numbers  z₀, A, B, D₀, D₁, D₂, γ.  That is more source
+-- extraction than is necessary.  On a polydisc
+--
+--     |g| ≤ γ ,     |B| ≤ R ,     physical tube  |B| ≤ r ,   δ = R - r ,
+--
+-- a single analytic normal form
+--
+--     Z_int(g,B) = 1 + g F(g,B) ,    |F| ≤ M ,    |∂_g Z_int| ≤ N
+--
+-- produces all of them by Cauchy's estimate on the background variable:
+--
+--     A = M/δ ,  B = 2M/δ² ,  D₀ = N ,  D₁ = N/δ ,  D₂ = 2N/δ² ,
+--
+-- and the denominator floor is *derived*, not assumed:
+--
+--     z₀ = 1 - Mγ           (Lemma `lowerZ`, from the normal form).
+--
+-- So the seven constants collapse to four numbers  M, N, δ, γ.
+--
+-- The module then proves, in cleared (division-free) form, the two closed
+-- formulas that the Row-A gates consume:
+--
+--     C · δ² z₀²   ≡  M (2 - M γ)               (Lemma `CClosed`)
+--     L_sharp · δ² z₀³ ≡  2 N                   (Lemma `LsharpClosed`)
+--
+-- i.e.
+--
+--     C  =  M (2 - Mγ) / ( δ² (1 - Mγ)² ) ,
+--     L  =  2 N / ( δ² (1 - Mγ)³ ) ,
+--
+-- the second being exactly the collapse produced by  z₀ + Mγ = 1.  Finally the
+-- two Row-A numerical gates
+--
+--     C γ < b₋ = 5/12 ,        L γ_tube < b₋ - C γ
+--
+-- are reduced to two *polynomial* inequalities in M, N, δ, γ, γ_tube
+-- (`gateOne`, `gateTwo`), and the gate region is shown nonempty by an exact
+-- rational witness (`sampleGateOne`, `sampleGateTwo`).
+--
+-- WHAT IS *NOT* PROVED.  The polydisc data itself: that the literal Bałaban
+-- interaction functional admits the normal form with finite M and N, and the
+-- Cauchy background estimates for it.  Those remain the hypotheses of the
+-- record `PolydiscInteractionData`.  The numerical witness at the end is a
+-- feasibility check on the gate region, *not* a claim about the physical
+-- values of M, N, δ, γ.  Row A stays open; the frozen research count stays 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using ( ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _≤_; _<_; _/_; 1/_
+        ; NonZero; NonNegative; nonNegative; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; halfℚ; mul-nonNeg; mul-pos; scaleˡ-nonNeg; scaleʳ-nonNeg
+        ; transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4InteractionCauchyPackageToRowAConstantsExact
+  using (UniformInteractionCauchyPackage; module Package; abs-bound-lower)
+open import DASHI.Physics.YangMills.BalabanYM4SU2RegularOrbitBetaFloorExact
+  using (su2BetaFloor)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Elementary transport for the strict order
+------------------------------------------------------------------------
+
+transport-< : ∀ {x y u v : ℚ} → x ≡ y → u ≡ v → x < u → y < v
+transport-< refl refl lt = lt
+
+------------------------------------------------------------------------
+-- The polydisc data of the literal interaction factor
+------------------------------------------------------------------------
+
+record PolydiscInteractionData : Set where
+  field
+    -- the four numbers the source has to supply
+    M N δ invδ γ : ℚ
+    0≤M  : 0ℚ ≤ M
+    0≤N  : 0ℚ ≤ N
+    0<δ  : 0ℚ < δ
+    δinv : δ * invδ ≡ 1ℚ            -- invδ is 1/δ, kept division-free
+    Mγ<1 : M * γ < 1ℚ               -- the polydisc smallness condition
+
+    -- the shell data of the one interaction functional
+    coupling Fval Zval Z₁val Z₂val G₀val G₁val G₂val : Nat → ℚ
+    betaInt betaIntDerivative : Nat → ℚ
+
+    0≤coupling     : ∀ j → 0ℚ ≤ coupling j
+    couplingCapped : ∀ j → coupling j ≤ γ
+
+    -- the analytic normal form  Z = 1 + g F  with a uniformly bounded F
+    normalForm : ∀ j → Zval j ≡ 1ℚ + coupling j * Fval j
+    boundF     : ∀ j → ∣ Fval j ∣ ≤ M
+
+    -- Cauchy estimates on the background variable, radius gap δ
+    boundZ₁ : ∀ j → ∣ Z₁val j ∣ ≤ (M * invδ) * coupling j
+    boundZ₂ : ∀ j → ∣ Z₂val j ∣ ≤ (twoℚ * (M * (invδ * invδ))) * coupling j
+
+    -- Cauchy estimates on ∂_g Z, same radius gap
+    boundG₀ : ∀ j → ∣ G₀val j ∣ ≤ N
+    boundG₁ : ∀ j → ∣ G₁val j ∣ ≤ N * invδ
+    boundG₂ : ∀ j → ∣ G₂val j ∣ ≤ twoℚ * (N * (invδ * invδ))
+
+    -- the two cleared identities of the interaction beta function
+    logHessianEquation :
+      ∀ j → betaInt j * (Zval j * Zval j)
+              ≡ Zval j * Z₂val j - Z₁val j * Z₁val j
+    mixedEquation :
+      ∀ j → betaIntDerivative j * (Zval j * (Zval j * Zval j))
+              ≡ (G₀val j * Z₂val j + Zval j * G₂val j
+                   - twoℚ * (Z₁val j * G₁val j)) * Zval j
+                  - twoℚ * ((Zval j * Z₂val j - Z₁val j * Z₁val j) * G₀val j)
+
+module Polydisc (dat : PolydiscInteractionData) where
+
+  open PolydiscInteractionData dat
+
+  ------------------------------------------------------------------
+  -- The reciprocal of δ
+  ------------------------------------------------------------------
+
+  instance
+    δNonZero : NonZero δ
+    δNonZero = ℚP.pos⇒nonZero δ {{positive 0<δ}}
+
+  invδ≡1/δ : invδ ≡ 1/ δ
+  invδ≡1/δ =
+    trans (sym (ℚP.*-identityˡ invδ))
+      (trans (cong (_* invδ) (sym (ℚP.*-inverseˡ δ)))
+        (trans (ℚP.*-assoc (1/ δ) δ invδ)
+          (trans (cong ((1/ δ) *_) δinv) (ℚP.*-identityʳ (1/ δ)))))
+
+  0<invδ : 0ℚ < invδ
+  0<invδ =
+    subst (0ℚ <_) (sym invδ≡1/δ)
+      (ℚP.positive⁻¹ (1/ δ) {{ℚP.1/pos⇒pos δ {{positive 0<δ}}}})
+
+  0≤invδ : 0ℚ ≤ invδ
+  0≤invδ = ℚP.<⇒≤ 0<invδ
+
+  -- (1/δ)² δ² = 1, division-free
+  invδ²δ² : (invδ * invδ) * (δ * δ) ≡ 1ℚ
+  invδ²δ² =
+    trans
+      (solve 2 (λ i d → (i :* i) :* (d :* d) := (d :* i) :* (d :* i))
+        refl invδ δ)
+      (trans (cong₂ _*_ δinv δinv) (ℚP.*-identityˡ 1ℚ))
+
+  ------------------------------------------------------------------
+  -- The denominator floor is DERIVED from the normal form
+  ------------------------------------------------------------------
+
+  z₀ : ℚ
+  z₀ = 1ℚ - M * γ
+
+  0<z₀ : 0ℚ < z₀
+  0<z₀ =
+    transport-< (ℚP.+-inverseʳ (M * γ)) refl
+      (ℚP.+-monoˡ-< (- (M * γ)) Mγ<1)
+
+  0≤z₀ : 0ℚ ≤ z₀
+  0≤z₀ = ℚP.<⇒≤ 0<z₀
+
+  0≤γ : 0ℚ ≤ γ
+  0≤γ = ℚP.≤-trans (0≤coupling 0) (couplingCapped 0)
+
+  -- |g F| ≤ M γ
+  normalFormTail : ∀ j → ∣ coupling j * Fval j ∣ ≤ M * γ
+  normalFormTail j =
+    transport-≤ (sym absSplit) (ℚP.*-comm γ M)
+      (ℚP.≤-trans (scaleˡ-nonNeg (0≤coupling j) (boundF j))
+        (scaleʳ-nonNeg 0≤M (couplingCapped j)))
+    where
+      absSplit : ∣ coupling j * Fval j ∣ ≡ coupling j * ∣ Fval j ∣
+      absSplit =
+        trans (ℚP.∣p*q∣≡∣p∣*∣q∣ (coupling j) (Fval j))
+          (cong (_* ∣ Fval j ∣) (ℚP.0≤p⇒∣p∣≡p (0≤coupling j)))
+
+  -- hence  1 - Mγ ≤ Z  on every shell
+  lowerZ : ∀ j → z₀ ≤ Zval j
+  lowerZ j =
+    transport-≤ refl (sym (normalForm j))
+      (ℚP.+-monoʳ-≤ 1ℚ
+        (abs-bound-lower {coupling j * Fval j} {M * γ} (normalFormTail j)))
+
+  ------------------------------------------------------------------
+  -- The seven Cauchy constants, assembled
+  ------------------------------------------------------------------
+
+  Acst Bcst D₀cst D₁cst D₂cst : ℚ
+  Acst  = M * invδ
+  Bcst  = twoℚ * (M * (invδ * invδ))
+  D₀cst = N
+  D₁cst = N * invδ
+  D₂cst = twoℚ * (N * (invδ * invδ))
+
+  package : UniformInteractionCauchyPackage
+  package = record
+    { z₀ = z₀ ; A = Acst ; B = Bcst ; γ = γ
+    ; D₀ = D₀cst ; D₁ = D₁cst ; D₂ = D₂cst
+    ; 0<z₀ = 0<z₀
+    ; 0≤A  = mul-nonNeg 0≤M 0≤invδ
+    ; 0≤B  = mul-nonNeg (toWitness {a? = 0ℚ ℚP.≤? twoℚ} _)
+               (mul-nonNeg 0≤M (mul-nonNeg 0≤invδ 0≤invδ))
+    ; 0≤D₀ = 0≤N
+    ; 0≤D₁ = mul-nonNeg 0≤N 0≤invδ
+    ; 0≤D₂ = mul-nonNeg (toWitness {a? = 0ℚ ℚP.≤? twoℚ} _)
+               (mul-nonNeg 0≤N (mul-nonNeg 0≤invδ 0≤invδ))
+    ; coupling = coupling
+    ; Zval = Zval ; Z₁val = Z₁val ; Z₂val = Z₂val
+    ; G₀val = G₀val ; G₁val = G₁val ; G₂val = G₂val
+    ; betaInt = betaInt ; betaIntDerivative = betaIntDerivative
+    ; 0≤coupling = 0≤coupling
+    ; couplingCapped = couplingCapped
+    ; lowerZ = lowerZ
+    ; boundZ₁ = boundZ₁ ; boundZ₂ = boundZ₂
+    ; boundG₀ = boundG₀ ; boundG₁ = boundG₁ ; boundG₂ = boundG₂
+    ; logHessianEquation = logHessianEquation
+    ; mixedEquation = mixedEquation
+    }
+
+  module P = Package package
+
+  ------------------------------------------------------------------
+  -- Closed forms of the two gate constants, in cleared form
+  ------------------------------------------------------------------
+
+  K₂ K₃ : ℚ
+  K₂ = (δ * δ) * (z₀ * z₀)
+  K₃ = (δ * δ) * (z₀ * (z₀ * z₀))
+
+  0<K₂ : 0ℚ < K₂
+  0<K₂ = mul-pos (mul-pos 0<δ 0<δ) (mul-pos 0<z₀ 0<z₀)
+
+  0<K₃ : 0ℚ < K₃
+  0<K₃ = mul-pos (mul-pos 0<δ 0<δ) (mul-pos 0<z₀ (mul-pos 0<z₀ 0<z₀))
+
+  -- C δ² z₀² = M (2 - Mγ)
+  CClosed : P.C * K₂ ≡ M * (twoℚ - M * γ)
+  CClosed =
+    trans
+      (solve 4
+        (λ n i d z → (n :* i) :* ((d :* d) :* (z :* z))
+                       := (n :* (d :* d)) :* (i :* (z :* z)))
+        refl P.interactionNumerator (1/ P.z₀²) δ z₀)
+      (trans (cong ((P.interactionNumerator * (δ * δ)) *_)
+                (ℚP.*-inverseˡ P.z₀²))
+        (trans (ℚP.*-identityʳ (P.interactionNumerator * (δ * δ)))
+          numeratorClosed))
+    where
+      collapse : twoℚ * M - (M * M) * γ ≡ M * (twoℚ - M * γ)
+      collapse =
+        solve 2 (λ m g → con twoℚ :* m :- (m :* m) :* g
+                           := m :* (con twoℚ :- m :* g))
+          refl M γ
+
+      numeratorClosed :
+        P.interactionNumerator * (δ * δ) ≡ M * (twoℚ - M * γ)
+      numeratorClosed =
+        trans
+          (solve 4
+            (λ m g i d →
+              ((con twoℚ :* (m :* (i :* i))) :* (con 1ℚ :- m :* g)
+                 :+ ((m :* i) :* (m :* i)) :* g) :* (d :* d)
+                := (con twoℚ :* m :- (m :* m) :* g) :* ((i :* i) :* (d :* d)))
+            refl M γ invδ δ)
+          (trans (cong ((twoℚ * M - (M * M) * γ) *_) invδ²δ²)
+            (trans (ℚP.*-identityʳ (twoℚ * M - (M * M) * γ)) collapse))
+
+  -- L_sharp δ² z₀³ = 2 N   (the (z₀ + Mγ)² = 1 collapse)
+  LsharpClosed : P.Lsharp * K₃ ≡ twoℚ * N
+  LsharpClosed =
+    trans
+      (solve 4
+        (λ n i d z → (n :* i) :* ((d :* d) :* (z :* (z :* z)))
+                       := (n :* (d :* d)) :* (i :* (z :* (z :* z))))
+        refl P.sharpDerivativeNumerator (1/ P.z₀³) δ z₀)
+      (trans (cong ((P.sharpDerivativeNumerator * (δ * δ)) *_)
+                (ℚP.*-inverseˡ P.z₀³))
+        (trans (ℚP.*-identityʳ (P.sharpDerivativeNumerator * (δ * δ)))
+          numeratorClosed))
+    where
+      numeratorClosed :
+        P.sharpDerivativeNumerator * (δ * δ) ≡ twoℚ * N
+      numeratorClosed =
+        trans
+          (solve 5
+            (λ m g i n d →
+              let z = con 1ℚ :- m :* g in
+              ((con twoℚ :* (n :* (i :* i))) :* (z :* z)
+                 :+ (((con twoℚ :* (m :* (i :* i))) :* n) :* g) :* z
+                 :+ con twoℚ :* ((((m :* i) :* (n :* i)) :* g) :* z)
+                 :+ con twoℚ :* (((m :* i) :* (m :* i)) :* ((g :* g) :* n)))
+                :* (d :* d)
+                := (con twoℚ :* n) :* ((i :* i) :* (d :* d)))
+            refl M γ invδ N δ)
+          (trans (cong ((twoℚ * N) *_) invδ²δ²)
+            (ℚP.*-identityʳ (twoℚ * N)))
+
+  ------------------------------------------------------------------
+  -- The two Row-A gates, reduced to polynomial inequalities
+  ------------------------------------------------------------------
+
+  -- Gate 1:   M (2 - Mγ) γ  <  b₋ δ² z₀²    ==>    C γ < b₋
+  gateOne :
+    (M * (twoℚ - M * γ)) * γ < su2BetaFloor * K₂ →
+    P.C * γ < su2BetaFloor
+  gateOne cleared =
+    ℚP.*-cancelʳ-<-nonNeg K₂ {{nonNegative (ℚP.<⇒≤ 0<K₂)}}
+      (transport-< (sym lhs) refl cleared)
+    where
+      lhs : (P.C * γ) * K₂ ≡ (M * (twoℚ - M * γ)) * γ
+      lhs =
+        trans
+          (solve 3 (λ c g k → (c :* g) :* k := (c :* k) :* g) refl P.C γ K₂)
+          (cong (_* γ) CClosed)
+
+  -- Gate 2:   2 N γ_tube + M (2 - Mγ) γ z₀  <  b₋ δ² z₀³
+  --                                         ==>  L_sharp γ_tube < b₋ - C γ
+  gateTwo :
+    ∀ (γtube : ℚ) →
+    (twoℚ * N) * γtube + ((M * (twoℚ - M * γ)) * γ) * z₀
+      < su2BetaFloor * K₃ →
+    P.Lsharp * γtube < su2BetaFloor - P.C * γ
+  gateTwo γtube cleared =
+    ℚP.*-cancelʳ-<-nonNeg K₃ {{nonNegative (ℚP.<⇒≤ 0<K₃)}}
+      (transport-< (sym lhs) (sym rhs) shifted)
+    where
+      lhs : (P.Lsharp * γtube) * K₃ ≡ (twoℚ * N) * γtube
+      lhs =
+        trans
+          (solve 3 (λ l t k → (l :* t) :* k := (l :* k) :* t)
+            refl P.Lsharp γtube K₃)
+          (cong (_* γtube) LsharpClosed)
+
+      CγK₃ : (P.C * γ) * K₃ ≡ ((M * (twoℚ - M * γ)) * γ) * z₀
+      CγK₃ =
+        trans
+          (solve 4
+            (λ c g d z → (c :* g) :* ((d :* d) :* (z :* (z :* z)))
+                           := ((c :* ((d :* d) :* (z :* z))) :* g) :* z)
+            refl P.C γ δ z₀)
+          (cong (λ w → (w * γ) * z₀) CClosed)
+
+      rhs : (su2BetaFloor - P.C * γ) * K₃
+              ≡ su2BetaFloor * K₃ - ((M * (twoℚ - M * γ)) * γ) * z₀
+      rhs =
+        trans
+          (solve 4
+            (λ f c g k → (f :- c :* g) :* k := f :* k :- (c :* g) :* k)
+            refl su2BetaFloor P.C γ K₃)
+          (cong (λ w → su2BetaFloor * K₃ - w) CγK₃)
+
+      shifted :
+        (twoℚ * N) * γtube
+          < su2BetaFloor * K₃ - ((M * (twoℚ - M * γ)) * γ) * z₀
+      shifted =
+        transport-<
+          (solve 2 (λ a b → (a :+ b) :+ (:- b) := a) refl
+            ((twoℚ * N) * γtube) (((M * (twoℚ - M * γ)) * γ) * z₀))
+          refl
+          (ℚP.+-monoˡ-< (- (((M * (twoℚ - M * γ)) * γ) * z₀)) cleared)
+
+  ------------------------------------------------------------------
+  -- What the gates deliver to the Row-A composition
+  ------------------------------------------------------------------
+
+  -- the interaction slope bound consumed by the margin lemma
+  interactionAbsBound : ∀ j → ∣ betaInt j ∣ ≤ P.C * coupling j
+  interactionAbsBound = P.interactionAbsBound
+
+  interactionLinearLower : ∀ j → - (P.C * coupling j) ≤ betaInt j
+  interactionLinearLower = P.interactionLinearLower
+
+  -- the shooting sensitivity consumed by the tuning contraction
+  derivativeAbsBoundSharp : ∀ j → ∣ betaIntDerivative j ∣ ≤ P.Lsharp
+  derivativeAbsBoundSharp = P.derivativeAbsBoundSharp
+
+------------------------------------------------------------------------
+-- Non-vacuity of the data type: a shell family with Z ≠ 1
+------------------------------------------------------------------------
+
+-- M = N = 1/10, δ = 1, γ = 1/10; every shell has g = 1/10 and F = 1/10, so
+-- Z = 101/100 and the derived floor z₀ = 99/100 really is a lower bound.
+-- The interaction beta function of this sample vanishes; it exists only to
+-- witness that the hypotheses of `PolydiscInteractionData` are consistent.
+
+sampleData : PolydiscInteractionData
+sampleData = record
+  { M = + 1 / 10 ; N = + 1 / 10 ; δ = 1ℚ ; invδ = 1ℚ ; γ = + 1 / 10
+  ; 0≤M = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 10)} _
+  ; 0≤N = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 10)} _
+  ; 0<δ = toWitness {a? = 0ℚ ℚP.<? 1ℚ} _
+  ; δinv = refl
+  ; Mγ<1 = toWitness {a? = (+ 1 / 10) * (+ 1 / 10) ℚP.<? 1ℚ} _
+  ; coupling = λ _ → + 1 / 10
+  ; Fval = λ _ → + 1 / 10
+  ; Zval = λ _ → + 101 / 100
+  ; Z₁val = λ _ → 0ℚ ; Z₂val = λ _ → 0ℚ
+  ; G₀val = λ _ → 0ℚ ; G₁val = λ _ → 0ℚ ; G₂val = λ _ → 0ℚ
+  ; betaInt = λ _ → 0ℚ ; betaIntDerivative = λ _ → 0ℚ
+  ; 0≤coupling = λ _ → toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 10)} _
+  ; couplingCapped = λ _ → ℚP.≤-refl
+  ; normalForm = λ _ → refl
+  ; boundF = λ _ → toWitness {a? = ∣ + 1 / 10 ∣ ℚP.≤? (+ 1 / 10)} _
+  ; boundZ₁ = λ _ →
+      toWitness {a? = ∣ 0ℚ ∣ ℚP.≤? ((+ 1 / 10) * 1ℚ) * (+ 1 / 10)} _
+  ; boundZ₂ = λ _ →
+      toWitness {a? = ∣ 0ℚ ∣ ℚP.≤?
+                        (twoℚ * ((+ 1 / 10) * (1ℚ * 1ℚ))) * (+ 1 / 10)} _
+  ; boundG₀ = λ _ → toWitness {a? = ∣ 0ℚ ∣ ℚP.≤? (+ 1 / 10)} _
+  ; boundG₁ = λ _ → toWitness {a? = ∣ 0ℚ ∣ ℚP.≤? (+ 1 / 10) * 1ℚ} _
+  ; boundG₂ = λ _ →
+      toWitness {a? = ∣ 0ℚ ∣ ℚP.≤? twoℚ * ((+ 1 / 10) * (1ℚ * 1ℚ))} _
+  ; logHessianEquation = λ _ → refl
+  ; mixedEquation = λ _ → refl
+  }
+
+module Sample = Polydisc sampleData
+
+-- the derived floor is genuinely below the sample's Z
+sampleFloor : ∀ j → Sample.z₀ ≤ (+ 101 / 100)
+sampleFloor = Sample.lowerZ
+
+------------------------------------------------------------------------
+-- Feasibility of the gate region: an exact rational witness
+------------------------------------------------------------------------
+
+-- With M = N = δ⁻¹ = 1/10 · … the cleared gates are decidable inequalities
+-- between explicit rationals.  For M = N = γ = γ_tube = 1/10 and δ = 1:
+--
+--   gate 1 :   199/10000        <  (5/12)(99/100)²  =  9801/24000
+--   gate 2 :   397010/10000000  <  (5/12)(99/100)³  =  970299/2400000
+--
+-- Both hold, so the Row-A gate region is nonempty.  This is a feasibility
+-- statement about the *constants*, not a claim about their physical values.
+
+sampleGateOne : Sample.P.C * (+ 1 / 10) < su2BetaFloor
+sampleGateOne =
+  Sample.gateOne
+    (toWitness
+      {a? = ((+ 1 / 10) * (twoℚ - (+ 1 / 10) * (+ 1 / 10))) * (+ 1 / 10)
+              ℚP.<? su2BetaFloor * Sample.K₂} _)
+
+sampleGateTwo :
+  Sample.P.Lsharp * (+ 1 / 10) < su2BetaFloor - Sample.P.C * (+ 1 / 10)
+sampleGateTwo =
+  Sample.gateTwo (+ 1 / 10)
+    (toWitness
+      {a? = (twoℚ * (+ 1 / 10)) * (+ 1 / 10)
+              + (((+ 1 / 10) * (twoℚ - (+ 1 / 10) * (+ 1 / 10))) * (+ 1 / 10))
+                  * Sample.z₀
+              ℚP.<? su2BetaFloor * Sample.K₃} _)

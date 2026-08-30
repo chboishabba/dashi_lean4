@@ -1,0 +1,128 @@
+{
+  "corpora": {
+    "itself": {
+      "cog_argmax_bucket": 78,
+      "cog_peak_count_stable": 15,
+      "triad_argmax": 13,
+      "triad_peak_count_stable": 5,
+      "harm": [
+        173,
+        30,
+        37,
+        29,
+        24
+      ],
+      "harm_argmax_code": 0,
+      "harm_strictly_decreasing": false,
+      "harm_trivector_dominant": true
+    },
+    "mathlib": {
+      "cog_argmax_bucket": 48,
+      "cog_peak_count_stable": 11,
+      "triad_argmax": 3,
+      "triad_peak_count_stable": 6,
+      "harm": [
+        291321,
+        71529,
+        60054,
+        43046,
+        38769
+      ],
+      "harm_argmax_code": 0,
+      "harm_strictly_decreasing": true,
+      "harm_trivector_dominant": true
+    },
+    "batteries": {
+      "cog_argmax_bucket": 56,
+      "cog_peak_count_stable": 20,
+      "triad_argmax": 15,
+      "triad_peak_count_stable": 3,
+      "harm": [
+        5598,
+        1313,
+        1108,
+        848,
+        735
+      ],
+      "harm_argmax_code": 0,
+      "harm_strictly_decreasing": true,
+      "harm_trivector_dominant": true
+    },
+    "lean4": {
+      "cog_argmax_bucket": 35,
+      "cog_peak_count_stable": 1,
+      "triad_argmax": 17,
+      "triad_peak_count_stable": 5,
+      "harm": [
+        103677,
+        28751,
+        21219,
+        16603,
+        13628
+      ],
+      "harm_argmax_code": 0,
+      "harm_strictly_decreasing": true,
+      "harm_trivector_dominant": true
+    }
+  },
+  "comparison": {
+    "cog": {
+      "itself~itself": 1.0,
+      "itself~mathlib": -0.3027,
+      "itself~batteries": 0.1729,
+      "itself~lean4": 0.11,
+      "mathlib~itself": -0.3027,
+      "mathlib~mathlib": 1.0,
+      "mathlib~batteries": -0.0346,
+      "mathlib~lean4": 0.0501,
+      "batteries~itself": 0.1729,
+      "batteries~mathlib": -0.0346,
+      "batteries~batteries": 1.0,
+      "batteries~lean4": 0.2555,
+      "lean4~itself": 0.11,
+      "lean4~mathlib": 0.0501,
+      "lean4~batteries": 0.2555,
+      "lean4~lean4": 1.0
+    },
+    "triad": {
+      "itself~itself": 1.0,
+      "itself~mathlib": -0.1471,
+      "itself~batteries": -0.3266,
+      "itself~lean4": -0.3685,
+      "mathlib~itself": -0.1471,
+      "mathlib~mathlib": 1.0,
+      "mathlib~batteries": -0.0784,
+      "mathlib~lean4": 0.4322,
+      "batteries~itself": -0.3266,
+      "batteries~mathlib": -0.0784,
+      "batteries~batteries": 1.0,
+      "batteries~lean4": 0.2881,
+      "lean4~itself": -0.3685,
+      "lean4~mathlib": 0.4322,
+      "lean4~batteries": 0.2881,
+      "lean4~lean4": 1.0
+    },
+    "harm": {
+      "itself~itself": 1.0,
+      "itself~mathlib": 0.9951,
+      "itself~batteries": 0.9962,
+      "itself~lean4": 0.9911,
+      "mathlib~itself": 0.9951,
+      "mathlib~mathlib": 1.0,
+      "mathlib~batteries": 0.9999,
+      "mathlib~lean4": 0.9993,
+      "batteries~itself": 0.9962,
+      "batteries~mathlib": 0.9999,
+      "batteries~batteries": 1.0,
+      "batteries~lean4": 0.9989,
+      "lean4~itself": 0.9911,
+      "lean4~mathlib": 0.9993,
+      "lean4~batteries": 0.9989,
+      "lean4~lean4": 1.0
+    }
+  },
+  "findings": {
+    "trivector_dominant_in_all_corpora": true,
+    "harm_strictly_decreasing_in_large_corpora": true
+  }
+}

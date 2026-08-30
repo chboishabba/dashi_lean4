@@ -1,0 +1,615 @@
+module DASHI.Physics.YangMills.BalabanYM4InteractionMixedCouplingDerivativeSharpGateExact where
+
+------------------------------------------------------------------------
+-- ROW A3, SHARPENED: THE MIXED COUPLING-DERIVATIVE GATE CONSTANT L
+--   WITHOUT ANY UPPER BOUND  z₁  ON THE INTERACTION FACTOR
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHAT THIS MODULE PROVES.
+--
+-- Let Z be the normalised interaction factor, Z₁ = ∂_B Z, Z₂ = ∂_B² Z, and let
+-- G₀ = ∂_g Z, G₁ = ∂_g Z₁, G₂ = ∂_g Z₂ be their coupling derivatives.  Write
+--
+--     beta_int  =  Z₂/Z - (Z₁/Z)²
+--
+-- for the interaction log-Hessian, and P = ∂_g beta_int.  Differentiating the
+-- *logarithmic* form (rather than the numerator N = Z Z₂ - Z₁²) gives the
+-- exact identity
+--
+--     P  =  G₂/Z - (Z₂ G₀)/Z² - 2 Z₁ G₁ / Z² + 2 Z₁² G₀ / Z³ ,
+--
+-- i.e. in division-free form
+--
+--     P Z³  =  G₂ Z² - Z₂ G₀ Z - 2 Z₁ G₁ Z + 2 Z₁² G₀ .        (mixed)
+--
+-- From the uniform Cauchy data
+--
+--     0 < z₀ ≤ Z ,   |Z₁| ≤ A g ,   |Z₂| ≤ B g ,
+--     |G₀| ≤ D₀ ,    |G₁| ≤ D₁ ,    |G₂| ≤ D₂ ,   0 ≤ g ≤ γ ,
+--
+-- this module derives, by exact rational arithmetic and with no division,
+--
+--     |P| z₀³  ≤  D₂ z₀² + B D₀ γ z₀ + 2 A D₁ γ z₀ + 2 A² γ² D₀ ,
+--
+-- that is
+--
+--     |∂_g beta_int|  ≤  L ,
+--     L  =  D₂/z₀ + B D₀ γ/z₀² + 2 A D₁ γ/z₀² + 2 A² γ² D₀/z₀³ .
+--
+-- SHARPNESS.  The route through the numerator N = Z Z₂ - Z₁² carries an upper
+-- bound z₁ on Z and produces
+--
+--     L_coarse  =  D₂/z₀ + (B D₀ + 2 A D₁) γ/z₀² + 2 B D₀ γ/z₀²
+--                    + 2 A² γ² D₀/z₀³ ,
+--
+-- which exceeds the constant proved here by exactly 2 B D₀ γ/z₀² (Lemma
+-- `sharpNumerator≤coarseNumerator`).  As in the A2 sharpening, the reason is
+-- that each factor of Z in the numerator is cancelled against a factor of Z in
+-- the denominator *before* any estimate is made, so only the lower bound z₀ is
+-- ever used and no upper bound on Z is needed at all.
+--
+-- WHAT IS *NOT* PROVED.  The seven uniform numbers z₀, A, B, D₀, D₁, D₂, γ are
+-- inputs: they must come from the literal CMP109 analytic tube for the
+-- physical interaction functional.  This module fixes the arithmetic that
+-- converts them into the Row A gate constant L and nothing else.  Row A stays
+-- open and the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _≤_; _<_; _/_; nonNegative; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; mul-nonNeg; mul-pos; scaleˡ-nonNeg; scaleʳ-nonNeg; transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4InteractionLogHessianCauchyGateExact
+  using (absSub; absMul-mono)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Monotonicity helpers
+------------------------------------------------------------------------
+
+square-mono-nonNeg : ∀ {x y : ℚ} → 0ℚ ≤ x → x ≤ y → x * x ≤ y * y
+square-mono-nonNeg {x} {y} 0≤x x≤y =
+  ℚP.≤-trans (scaleˡ-nonNeg 0≤x x≤y)
+    (scaleʳ-nonNeg (ℚP.≤-trans 0≤x x≤y) x≤y)
+
+cube-mono-nonNeg : ∀ {x y : ℚ} → 0ℚ ≤ x → x ≤ y → x * (x * x) ≤ y * (y * y)
+cube-mono-nonNeg {x} {y} 0≤x x≤y =
+  ℚP.≤-trans (scaleˡ-nonNeg 0≤x (square-mono-nonNeg 0≤x x≤y))
+    (scaleʳ-nonNeg (mul-nonNeg 0≤y 0≤y) x≤y)
+  where
+    0≤y : 0ℚ ≤ y
+    0≤y = ℚP.≤-trans 0≤x x≤y
+
+absSelf : ∀ {x : ℚ} → 0ℚ ≤ x → ∣ x ∣ ≤ x
+absSelf 0≤x = ℚP.≤-reflexive (ℚP.0≤p⇒∣p∣≡p 0≤x)
+
+------------------------------------------------------------------------
+-- The uniform Cauchy data of the interaction factor and its g-derivatives
+------------------------------------------------------------------------
+
+record SharpMixedDerivativeData : Set where
+  field
+    z₀ A B D₀ D₁ D₂ γ g Z Z₁ Z₂ G₀ G₁ G₂ P : ℚ
+    0<z₀    : 0ℚ < z₀
+    z₀≤Z    : z₀ ≤ Z
+    0≤A     : 0ℚ ≤ A
+    0≤B     : 0ℚ ≤ B
+    0≤D₀    : 0ℚ ≤ D₀
+    0≤D₁    : 0ℚ ≤ D₁
+    0≤D₂    : 0ℚ ≤ D₂
+    0≤g     : 0ℚ ≤ g
+    g≤γ     : g ≤ γ
+    boundZ₁ : ∣ Z₁ ∣ ≤ A * g
+    boundZ₂ : ∣ Z₂ ∣ ≤ B * g
+    boundG₀ : ∣ G₀ ∣ ≤ D₀
+    boundG₁ : ∣ G₁ ∣ ≤ D₁
+    boundG₂ : ∣ G₂ ∣ ≤ D₂
+    -- (mixed), cleared of denominators
+    mixedEquation :
+      P * (Z * (Z * Z))
+        ≡ G₂ * (Z * Z) - (Z₂ * G₀) * Z - twoℚ * ((Z₁ * G₁) * Z)
+            + twoℚ * ((Z₁ * Z₁) * G₀)
+
+open SharpMixedDerivativeData public
+
+-- The numerator of the sharp gate constant:  L = sharpNumerator / z₀³.
+sharpNumerator : SharpMixedDerivativeData → ℚ
+sharpNumerator d =
+  D₂ d * (z₀ d * z₀ d)
+    + ((B d * D₀ d) * γ d) * z₀ d
+    + twoℚ * (((A d * D₁ d) * γ d) * z₀ d)
+    + twoℚ * ((A d * A d) * ((γ d * γ d) * D₀ d))
+
+-- The numerator produced by the cruder route through N = Z Z₂ - Z₁².
+coarseNumerator : SharpMixedDerivativeData → ℚ
+coarseNumerator d = sharpNumerator d + twoℚ * (((B d * D₀ d) * γ d) * z₀ d)
+
+module Estimates (d : SharpMixedDerivativeData) where
+
+  z₀' = z₀ d ; A' = A d ; B' = B d ; γ' = γ d ; g' = g d
+  D₀' = D₀ d ; D₁' = D₁ d ; D₂' = D₂ d
+  Z' = Z d ; Z₁' = Z₁ d ; Z₂' = Z₂ d
+  G₀' = G₀ d ; G₁' = G₁ d ; G₂' = G₂ d ; P' = P d
+
+  0≤z₀ : 0ℚ ≤ z₀'
+  0≤z₀ = ℚP.<⇒≤ (0<z₀ d)
+
+  0<Z : 0ℚ < Z'
+  0<Z = ℚP.<-≤-trans (0<z₀ d) (z₀≤Z d)
+
+  0≤Z : 0ℚ ≤ Z'
+  0≤Z = ℚP.<⇒≤ 0<Z
+
+  0≤γ : 0ℚ ≤ γ'
+  0≤γ = ℚP.≤-trans (0≤g d) (g≤γ d)
+
+  0≤two : 0ℚ ≤ twoℚ
+  0≤two = toWitness {a? = 0ℚ ℚP.≤? twoℚ} _
+
+  ------------------------------------------------------------------
+  -- Step 1: the four-term Cauchy estimate of the cleared numerator
+  ------------------------------------------------------------------
+
+  numeratorBound :
+    ∣ G₂' * (Z' * Z') - (Z₂' * G₀') * Z' - twoℚ * ((Z₁' * G₁') * Z')
+        + twoℚ * ((Z₁' * Z₁') * G₀') ∣
+      ≤ D₂' * (Z' * Z')
+          + ((B' * g') * D₀') * Z'
+          + twoℚ * (((A' * g') * D₁') * Z')
+          + twoℚ * (((A' * g') * (A' * g')) * D₀')
+  numeratorBound =
+    ℚP.≤-trans
+      (ℚP.≤-trans
+        (ℚP.∣p+q∣≤∣p∣+∣q∣
+          (G₂' * (Z' * Z') - (Z₂' * G₀') * Z' - twoℚ * ((Z₁' * G₁') * Z'))
+          (twoℚ * ((Z₁' * Z₁') * G₀')))
+        (ℚP.+-monoˡ-≤ ∣ twoℚ * ((Z₁' * Z₁') * G₀') ∣
+          (ℚP.≤-trans
+            (absSub (G₂' * (Z' * Z') - (Z₂' * G₀') * Z')
+                    (twoℚ * ((Z₁' * G₁') * Z')))
+            (ℚP.+-monoˡ-≤ ∣ twoℚ * ((Z₁' * G₁') * Z') ∣
+              (absSub (G₂' * (Z' * Z')) ((Z₂' * G₀') * Z'))))))
+      (ℚP.+-mono-≤ (ℚP.+-mono-≤ (ℚP.+-mono-≤ term₀ term₁) term₂) term₃)
+    where
+      0≤ZZ : 0ℚ ≤ Z' * Z'
+      0≤ZZ = mul-nonNeg 0≤Z 0≤Z
+
+      term₀ : ∣ G₂' * (Z' * Z') ∣ ≤ D₂' * (Z' * Z')
+      term₀ = absMul-mono G₂' (Z' * Z') 0≤ZZ (boundG₂ d) (absSelf 0≤ZZ)
+
+      term₁ : ∣ (Z₂' * G₀') * Z' ∣ ≤ ((B' * g') * D₀') * Z'
+      term₁ =
+        absMul-mono (Z₂' * G₀') Z' 0≤Z
+          (absMul-mono Z₂' G₀' (0≤D₀ d) (boundZ₂ d) (boundG₀ d))
+          (absSelf 0≤Z)
+
+      term₂ :
+        ∣ twoℚ * ((Z₁' * G₁') * Z') ∣ ≤ twoℚ * (((A' * g') * D₁') * Z')
+      term₂ =
+        absMul-mono twoℚ ((Z₁' * G₁') * Z')
+          (mul-nonNeg (mul-nonNeg (mul-nonNeg (0≤A d) (0≤g d)) (0≤D₁ d)) 0≤Z)
+          (absSelf 0≤two)
+          (absMul-mono (Z₁' * G₁') Z' 0≤Z
+            (absMul-mono Z₁' G₁' (0≤D₁ d) (boundZ₁ d) (boundG₁ d))
+            (absSelf 0≤Z))
+
+      term₃ :
+        ∣ twoℚ * ((Z₁' * Z₁') * G₀') ∣
+          ≤ twoℚ * (((A' * g') * (A' * g')) * D₀')
+      term₃ =
+        absMul-mono twoℚ ((Z₁' * Z₁') * G₀')
+          (mul-nonNeg
+            (mul-nonNeg (mul-nonNeg (0≤A d) (0≤g d))
+                        (mul-nonNeg (0≤A d) (0≤g d)))
+            (0≤D₀ d))
+          (absSelf 0≤two)
+          (absMul-mono (Z₁' * Z₁') G₀' (0≤D₀ d)
+            (absMul-mono Z₁' Z₁' (mul-nonNeg (0≤A d) (0≤g d))
+              (boundZ₁ d) (boundZ₁ d))
+            (boundG₀ d))
+
+  -- the cleared estimate for |P| itself
+  clearedBound :
+    ∣ P' ∣ * (Z' * (Z' * Z'))
+      ≤ D₂' * (Z' * Z')
+          + ((B' * g') * D₀') * Z'
+          + twoℚ * (((A' * g') * D₁') * Z')
+          + twoℚ * (((A' * g') * (A' * g')) * D₀')
+  clearedBound =
+    transport-≤ absLeft refl
+      (ℚP.≤-trans (ℚP.≤-reflexive (cong ∣_∣ (mixedEquation d))) numeratorBound)
+    where
+      0≤ZZZ : 0ℚ ≤ Z' * (Z' * Z')
+      0≤ZZZ = mul-nonNeg 0≤Z (mul-nonNeg 0≤Z 0≤Z)
+
+      absLeft : ∣ P' * (Z' * (Z' * Z')) ∣ ≡ ∣ P' ∣ * (Z' * (Z' * Z'))
+      absLeft =
+        trans (ℚP.∣p*q∣≡∣p∣*∣q∣ P' (Z' * (Z' * Z')))
+          (cong (∣ P' ∣ *_) (ℚP.0≤p⇒∣p∣≡p 0≤ZZZ))
+
+  ------------------------------------------------------------------
+  -- Step 2: rescale to z₀ and compare against the gate numerator
+  ------------------------------------------------------------------
+
+  cubes : z₀' * (z₀' * z₀') ≤ Z' * (Z' * Z')
+  cubes = cube-mono-nonNeg 0≤z₀ (z₀≤Z d)
+
+  squares : z₀' * z₀' ≤ Z' * Z'
+  squares = square-mono-nonNeg 0≤z₀ (z₀≤Z d)
+
+  -- (i) D₂ Z² z₀³ ≤ D₂ z₀² Z³
+  cmp₀ :
+    (D₂' * (Z' * Z')) * (z₀' * (z₀' * z₀'))
+      ≤ (D₂' * (z₀' * z₀')) * (Z' * (Z' * Z'))
+  cmp₀ =
+    transport-≤ (sym shapeL) (sym shapeR)
+      (scaleˡ-nonNeg
+        (mul-nonNeg (mul-nonNeg (0≤D₂ d) (mul-nonNeg 0≤z₀ 0≤z₀))
+                    (mul-nonNeg 0≤Z 0≤Z))
+        (z₀≤Z d))
+    where
+      shapeL :
+        (D₂' * (Z' * Z')) * (z₀' * (z₀' * z₀'))
+          ≡ ((D₂' * (z₀' * z₀')) * (Z' * Z')) * z₀'
+      shapeL =
+        solve 3
+          (λ e u v →
+            (e :* (u :* u)) :* (v :* (v :* v))
+              := ((e :* (v :* v)) :* (u :* u)) :* v)
+          refl D₂' Z' z₀'
+
+      shapeR :
+        (D₂' * (z₀' * z₀')) * (Z' * (Z' * Z'))
+          ≡ ((D₂' * (z₀' * z₀')) * (Z' * Z')) * Z'
+      shapeR =
+        solve 3
+          (λ e u v →
+            (e :* (v :* v)) :* (u :* (u :* u))
+              := ((e :* (v :* v)) :* (u :* u)) :* u)
+          refl D₂' Z' z₀'
+
+  -- (ii) B g D₀ Z z₀³ ≤ B D₀ γ z₀ Z³
+  cmp₁ :
+    (((B' * g') * D₀') * Z') * (z₀' * (z₀' * z₀'))
+      ≤ (((B' * D₀') * γ') * z₀') * (Z' * (Z' * Z'))
+  cmp₁ = ℚP.≤-trans stepG stepZ
+    where
+      base : ℚ
+      base = ((B' * D₀') * Z') * (z₀' * (z₀' * z₀'))
+
+      stepG :
+        (((B' * g') * D₀') * Z') * (z₀' * (z₀' * z₀'))
+          ≤ ((B' * D₀' * γ') * Z') * (z₀' * (z₀' * z₀'))
+      stepG =
+        transport-≤ (sym shapeL) (sym shapeR)
+          (scaleˡ-nonNeg
+            (mul-nonNeg
+              (mul-nonNeg (mul-nonNeg (0≤B d) (0≤D₀ d)) 0≤Z)
+              (mul-nonNeg 0≤z₀ (mul-nonNeg 0≤z₀ 0≤z₀)))
+            (g≤γ d))
+        where
+          shapeL :
+            (((B' * g') * D₀') * Z') * (z₀' * (z₀' * z₀'))
+              ≡ (((B' * D₀') * Z') * (z₀' * (z₀' * z₀'))) * g'
+          shapeL =
+            solve 5
+              (λ b e c u v →
+                (((b :* c) :* e) :* u) :* (v :* (v :* v))
+                  := ((((b :* e) :* u) :* (v :* (v :* v)))) :* c)
+              refl B' D₀' g' Z' z₀'
+
+          shapeR :
+            ((B' * D₀' * γ') * Z') * (z₀' * (z₀' * z₀'))
+              ≡ (((B' * D₀') * Z') * (z₀' * (z₀' * z₀'))) * γ'
+          shapeR =
+            solve 5
+              (λ b e c u v →
+                ((b :* e :* c) :* u) :* (v :* (v :* v))
+                  := ((((b :* e) :* u) :* (v :* (v :* v)))) :* c)
+              refl B' D₀' γ' Z' z₀'
+
+      stepZ :
+        ((B' * D₀' * γ') * Z') * (z₀' * (z₀' * z₀'))
+          ≤ (((B' * D₀') * γ') * z₀') * (Z' * (Z' * Z'))
+      stepZ =
+        transport-≤ (sym shapeL) (sym shapeR)
+          (scaleˡ-nonNeg
+            (mul-nonNeg
+              (mul-nonNeg (mul-nonNeg (0≤B d) (0≤D₀ d)) 0≤γ)
+              (mul-nonNeg 0≤Z 0≤z₀))
+            squares)
+        where
+          shapeL :
+            ((B' * D₀' * γ') * Z') * (z₀' * (z₀' * z₀'))
+              ≡ ((((B' * D₀') * γ') * (Z' * z₀'))) * (z₀' * z₀')
+          shapeL =
+            solve 5
+              (λ b e c u v →
+                ((b :* e :* c) :* u) :* (v :* (v :* v))
+                  := ((((b :* e) :* c) :* (u :* v))) :* (v :* v))
+              refl B' D₀' γ' Z' z₀'
+
+          shapeR :
+            (((B' * D₀') * γ') * z₀') * (Z' * (Z' * Z'))
+              ≡ ((((B' * D₀') * γ') * (Z' * z₀'))) * (Z' * Z')
+          shapeR =
+            solve 5
+              (λ b e c u v →
+                (((b :* e) :* c) :* v) :* (u :* (u :* u))
+                  := ((((b :* e) :* c) :* (u :* v))) :* (u :* u))
+              refl B' D₀' γ' Z' z₀'
+
+  -- (iii) 2 A g D₁ Z z₀³ ≤ 2 A D₁ γ z₀ Z³
+  cmp₂ :
+    (twoℚ * (((A' * g') * D₁') * Z')) * (z₀' * (z₀' * z₀'))
+      ≤ (twoℚ * (((A' * D₁') * γ') * z₀')) * (Z' * (Z' * Z'))
+  cmp₂ = ℚP.≤-trans stepG stepZ
+    where
+      stepG :
+        (twoℚ * (((A' * g') * D₁') * Z')) * (z₀' * (z₀' * z₀'))
+          ≤ (twoℚ * (((A' * γ') * D₁') * Z')) * (z₀' * (z₀' * z₀'))
+      stepG =
+        transport-≤ (sym shapeL) (sym shapeR)
+          (scaleˡ-nonNeg
+            (mul-nonNeg
+              (mul-nonNeg 0≤two
+                (mul-nonNeg (mul-nonNeg (0≤A d) (0≤D₁ d)) 0≤Z))
+              (mul-nonNeg 0≤z₀ (mul-nonNeg 0≤z₀ 0≤z₀)))
+            (g≤γ d))
+        where
+          shapeL :
+            (twoℚ * (((A' * g') * D₁') * Z')) * (z₀' * (z₀' * z₀'))
+              ≡ ((twoℚ * (((A' * D₁') * Z'))) * (z₀' * (z₀' * z₀'))) * g'
+          shapeL =
+            solve 5
+              (λ a e c u v →
+                (con twoℚ :* (((a :* c) :* e) :* u)) :* (v :* (v :* v))
+                  := ((con twoℚ :* ((a :* e) :* u)) :* (v :* (v :* v))) :* c)
+              refl A' D₁' g' Z' z₀'
+
+          shapeR :
+            (twoℚ * (((A' * γ') * D₁') * Z')) * (z₀' * (z₀' * z₀'))
+              ≡ ((twoℚ * (((A' * D₁') * Z'))) * (z₀' * (z₀' * z₀'))) * γ'
+          shapeR =
+            solve 5
+              (λ a e c u v →
+                (con twoℚ :* (((a :* c) :* e) :* u)) :* (v :* (v :* v))
+                  := ((con twoℚ :* ((a :* e) :* u)) :* (v :* (v :* v))) :* c)
+              refl A' D₁' γ' Z' z₀'
+
+      stepZ :
+        (twoℚ * (((A' * γ') * D₁') * Z')) * (z₀' * (z₀' * z₀'))
+          ≤ (twoℚ * (((A' * D₁') * γ') * z₀')) * (Z' * (Z' * Z'))
+      stepZ =
+        transport-≤ (sym shapeL) (sym shapeR)
+          (scaleˡ-nonNeg
+            (mul-nonNeg
+              (mul-nonNeg 0≤two
+                (mul-nonNeg (mul-nonNeg (0≤A d) (0≤D₁ d)) 0≤γ))
+              (mul-nonNeg 0≤Z 0≤z₀))
+            squares)
+        where
+          shapeL :
+            (twoℚ * (((A' * γ') * D₁') * Z')) * (z₀' * (z₀' * z₀'))
+              ≡ ((twoℚ * ((A' * D₁') * γ')) * (Z' * z₀')) * (z₀' * z₀')
+          shapeL =
+            solve 5
+              (λ a e c u v →
+                (con twoℚ :* (((a :* c) :* e) :* u)) :* (v :* (v :* v))
+                  := ((con twoℚ :* ((a :* e) :* c)) :* (u :* v)) :* (v :* v))
+              refl A' D₁' γ' Z' z₀'
+
+          shapeR :
+            (twoℚ * (((A' * D₁') * γ') * z₀')) * (Z' * (Z' * Z'))
+              ≡ ((twoℚ * ((A' * D₁') * γ')) * (Z' * z₀')) * (Z' * Z')
+          shapeR =
+            solve 5
+              (λ a e c u v →
+                (con twoℚ :* (((a :* e) :* c) :* v)) :* (u :* (u :* u))
+                  := ((con twoℚ :* ((a :* e) :* c)) :* (u :* v)) :* (u :* u))
+              refl A' D₁' γ' Z' z₀'
+
+  -- (iv) 2 (A g)² D₀ z₀³ ≤ 2 A² γ² D₀ Z³
+  cmp₃ :
+    (twoℚ * (((A' * g') * (A' * g')) * D₀')) * (z₀' * (z₀' * z₀'))
+      ≤ (twoℚ * ((A' * A') * ((γ' * γ') * D₀'))) * (Z' * (Z' * Z'))
+  cmp₃ = ℚP.≤-trans stepG stepZ
+    where
+      stepG :
+        (twoℚ * (((A' * g') * (A' * g')) * D₀')) * (z₀' * (z₀' * z₀'))
+          ≤ (twoℚ * ((A' * A') * ((γ' * γ') * D₀'))) * (z₀' * (z₀' * z₀'))
+      stepG =
+        transport-≤ (sym shapeL) (sym shapeR)
+          (scaleˡ-nonNeg
+            (mul-nonNeg
+              (mul-nonNeg 0≤two
+                (mul-nonNeg (mul-nonNeg (0≤A d) (0≤A d)) (0≤D₀ d)))
+              (mul-nonNeg 0≤z₀ (mul-nonNeg 0≤z₀ 0≤z₀)))
+            (square-mono-nonNeg (0≤g d) (g≤γ d)))
+        where
+          shapeL :
+            (twoℚ * (((A' * g') * (A' * g')) * D₀')) * (z₀' * (z₀' * z₀'))
+              ≡ ((twoℚ * ((A' * A') * D₀')) * (z₀' * (z₀' * z₀'))) * (g' * g')
+          shapeL =
+            solve 4
+              (λ a e c v →
+                (con twoℚ :* (((a :* c) :* (a :* c)) :* e))
+                  :* (v :* (v :* v))
+                  := ((con twoℚ :* ((a :* a) :* e)) :* (v :* (v :* v)))
+                       :* (c :* c))
+              refl A' D₀' g' z₀'
+
+          shapeR :
+            (twoℚ * ((A' * A') * ((γ' * γ') * D₀'))) * (z₀' * (z₀' * z₀'))
+              ≡ ((twoℚ * ((A' * A') * D₀')) * (z₀' * (z₀' * z₀'))) * (γ' * γ')
+          shapeR =
+            solve 4
+              (λ a e c v →
+                (con twoℚ :* ((a :* a) :* ((c :* c) :* e)))
+                  :* (v :* (v :* v))
+                  := ((con twoℚ :* ((a :* a) :* e)) :* (v :* (v :* v)))
+                       :* (c :* c))
+              refl A' D₀' γ' z₀'
+
+      stepZ :
+        (twoℚ * ((A' * A') * ((γ' * γ') * D₀'))) * (z₀' * (z₀' * z₀'))
+          ≤ (twoℚ * ((A' * A') * ((γ' * γ') * D₀'))) * (Z' * (Z' * Z'))
+      stepZ =
+        scaleˡ-nonNeg
+          (mul-nonNeg 0≤two
+            (mul-nonNeg (mul-nonNeg (0≤A d) (0≤A d))
+              (mul-nonNeg (mul-nonNeg 0≤γ 0≤γ) (0≤D₀ d))))
+          cubes
+
+  ------------------------------------------------------------------
+  -- THE SHARP GATE
+  ------------------------------------------------------------------
+
+  sharpMixedDerivativeBound :
+    ∣ P' ∣ * (z₀' * (z₀' * z₀')) ≤ sharpNumerator d
+  sharpMixedDerivativeBound =
+    ℚP.*-cancelʳ-≤-pos (Z' * (Z' * Z'))
+      {{positive (mul-pos 0<Z (mul-pos 0<Z 0<Z))}}
+      (transport-≤ shapeL refl
+        (ℚP.≤-trans
+          (scaleʳ-nonNeg
+            (mul-nonNeg 0≤z₀ (mul-nonNeg 0≤z₀ 0≤z₀)) clearedBound)
+          (transport-≤ (sym distL) (sym distR)
+            (ℚP.+-mono-≤ (ℚP.+-mono-≤ (ℚP.+-mono-≤ cmp₀ cmp₁) cmp₂) cmp₃))))
+    where
+      shapeL :
+        (∣ P' ∣ * (Z' * (Z' * Z'))) * (z₀' * (z₀' * z₀'))
+          ≡ (∣ P' ∣ * (z₀' * (z₀' * z₀'))) * (Z' * (Z' * Z'))
+      shapeL =
+        solve 3
+          (λ h u v →
+            (h :* (u :* (u :* u))) :* (v :* (v :* v))
+              := (h :* (v :* (v :* v))) :* (u :* (u :* u)))
+          refl ∣ P' ∣ Z' z₀'
+
+      distL :
+        (D₂' * (Z' * Z')
+           + ((B' * g') * D₀') * Z'
+           + twoℚ * (((A' * g') * D₁') * Z')
+           + twoℚ * (((A' * g') * (A' * g')) * D₀'))
+          * (z₀' * (z₀' * z₀'))
+          ≡ (D₂' * (Z' * Z')) * (z₀' * (z₀' * z₀'))
+              + (((B' * g') * D₀') * Z') * (z₀' * (z₀' * z₀'))
+              + (twoℚ * (((A' * g') * D₁') * Z')) * (z₀' * (z₀' * z₀'))
+              + (twoℚ * (((A' * g') * (A' * g')) * D₀'))
+                  * (z₀' * (z₀' * z₀'))
+      distL =
+        solve 8
+          (λ e₂ b e₀ e₁ a c u v →
+            (e₂ :* (u :* u)
+               :+ ((b :* c) :* e₀) :* u
+               :+ con twoℚ :* (((a :* c) :* e₁) :* u)
+               :+ con twoℚ :* (((a :* c) :* (a :* c)) :* e₀))
+              :* (v :* (v :* v))
+              := (e₂ :* (u :* u)) :* (v :* (v :* v))
+                   :+ (((b :* c) :* e₀) :* u) :* (v :* (v :* v))
+                   :+ (con twoℚ :* (((a :* c) :* e₁) :* u))
+                        :* (v :* (v :* v))
+                   :+ (con twoℚ :* (((a :* c) :* (a :* c)) :* e₀))
+                        :* (v :* (v :* v)))
+          refl D₂' B' D₀' D₁' A' g' Z' z₀'
+
+      distR :
+        sharpNumerator d * (Z' * (Z' * Z'))
+          ≡ (D₂' * (z₀' * z₀')) * (Z' * (Z' * Z'))
+              + (((B' * D₀') * γ') * z₀') * (Z' * (Z' * Z'))
+              + (twoℚ * (((A' * D₁') * γ') * z₀')) * (Z' * (Z' * Z'))
+              + (twoℚ * ((A' * A') * ((γ' * γ') * D₀')))
+                  * (Z' * (Z' * Z'))
+      distR =
+        solve 8
+          (λ e₂ b e₀ e₁ a c u v →
+            (e₂ :* (v :* v)
+               :+ ((b :* e₀) :* c) :* v
+               :+ con twoℚ :* (((a :* e₁) :* c) :* v)
+               :+ con twoℚ :* ((a :* a) :* ((c :* c) :* e₀)))
+              :* (u :* (u :* u))
+              := (e₂ :* (v :* v)) :* (u :* (u :* u))
+                   :+ (((b :* e₀) :* c) :* v) :* (u :* (u :* u))
+                   :+ (con twoℚ :* (((a :* e₁) :* c) :* v))
+                        :* (u :* (u :* u))
+                   :+ (con twoℚ :* ((a :* a) :* ((c :* c) :* e₀)))
+                        :* (u :* (u :* u)))
+          refl D₂' B' D₀' D₁' A' γ' Z' z₀'
+
+open Estimates public using (sharpMixedDerivativeBound)
+
+------------------------------------------------------------------------
+-- The sharp numerator really is smaller than the coarse one
+------------------------------------------------------------------------
+
+sharpNumerator≤coarseNumerator :
+  (d : SharpMixedDerivativeData) → sharpNumerator d ≤ coarseNumerator d
+sharpNumerator≤coarseNumerator d =
+  transport-≤ (ℚP.+-identityʳ (sharpNumerator d)) refl
+    (ℚP.+-monoʳ-≤ (sharpNumerator d) extraNonNeg)
+  where
+    0≤γ : 0ℚ ≤ γ d
+    0≤γ = ℚP.≤-trans (0≤g d) (g≤γ d)
+
+    extraNonNeg : 0ℚ ≤ twoℚ * (((B d * D₀ d) * γ d) * z₀ d)
+    extraNonNeg =
+      mul-nonNeg (toWitness {a? = 0ℚ ℚP.≤? twoℚ} _)
+        (mul-nonNeg (mul-nonNeg (mul-nonNeg (0≤B d) (0≤D₀ d)) 0≤γ)
+          (ℚP.<⇒≤ (0<z₀ d)))
+
+------------------------------------------------------------------------
+-- Non-vacuity: data with genuinely nonzero derivatives
+------------------------------------------------------------------------
+
+-- Z = 1, Z₁ = Z₂ = 1/2, g = 1/2, z₀ = A = B = γ = 1,
+-- G₀ = G₁ = 1/2, G₂ = 1, D₀ = D₁ = 1/2, D₂ = 1.
+-- Then  P Z³ = G₂ - Z₂G₀ - 2Z₁G₁ + 2Z₁²G₀ = 1 - 1/4 - 1/2 + 1/4 = 1/2,
+-- so P = 1/2 and the gate reads  1/2 ≤ 1 + 1/2 + 1/2 + 1 = 3.
+sampleSharpData : SharpMixedDerivativeData
+sampleSharpData = record
+  { z₀ = 1ℚ ; A = 1ℚ ; B = 1ℚ
+  ; D₀ = + 1 / 2 ; D₁ = + 1 / 2 ; D₂ = 1ℚ
+  ; γ = 1ℚ ; g = + 1 / 2
+  ; Z = 1ℚ ; Z₁ = + 1 / 2 ; Z₂ = + 1 / 2
+  ; G₀ = + 1 / 2 ; G₁ = + 1 / 2 ; G₂ = 1ℚ
+  ; P = + 1 / 2
+  ; 0<z₀ = toWitness {a? = 0ℚ ℚP.<? 1ℚ} _
+  ; z₀≤Z = ℚP.≤-refl
+  ; 0≤A = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+  ; 0≤B = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+  ; 0≤D₀ = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+  ; 0≤D₁ = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+  ; 0≤D₂ = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+  ; 0≤g = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+  ; g≤γ = toWitness {a? = (+ 1 / 2) ℚP.≤? 1ℚ} _
+  ; boundZ₁ = toWitness {a? = ∣ + 1 / 2 ∣ ℚP.≤? (1ℚ * (+ 1 / 2))} _
+  ; boundZ₂ = toWitness {a? = ∣ + 1 / 2 ∣ ℚP.≤? (1ℚ * (+ 1 / 2))} _
+  ; boundG₀ = toWitness {a? = ∣ + 1 / 2 ∣ ℚP.≤? (+ 1 / 2)} _
+  ; boundG₁ = toWitness {a? = ∣ + 1 / 2 ∣ ℚP.≤? (+ 1 / 2)} _
+  ; boundG₂ = toWitness {a? = ∣ 1ℚ ∣ ℚP.≤? 1ℚ} _
+  ; mixedEquation = refl
+  }
+
+sampleSharpGate :
+  ∣ P sampleSharpData ∣
+    * (z₀ sampleSharpData * (z₀ sampleSharpData * z₀ sampleSharpData))
+    ≤ sharpNumerator sampleSharpData
+sampleSharpGate = sharpMixedDerivativeBound sampleSharpData

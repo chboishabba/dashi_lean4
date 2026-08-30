@@ -1,0 +1,68 @@
+# ym-mass-gap-lean-verification
+**Lean 4 verification workspace for the Eriksson Programme on the 4D SU(N) Yang–Mills existence and mass gap problem.**
+
+## Purpose
+
+This repository is the main **Lean-oriented verification and formal architecture workspace** for the Yang–Mills mass gap programme.
+
+It complements the companion repository:
+
+- [`ym-audit`](https://github.com/lluiseriksson/ym-audit)
+
+which contains the numerical, symbolic, and reproducibility audit suite.
+
+## Mathematical claim
+
+The underlying programme is presented as claiming a **mathematically unconditional solution, in the standard sense used by mathematicians**, of the 4D SU(N) Yang–Mills existence and mass gap problem.
+
+Here, **“unconditional”** means:
+
+- the proof does **not** rely on open conjectures;
+- it no longer depends on the former “Hypothesis 1.1”;
+- it is assembled from established inputs in the literature, including:
+  - Bałaban’s renormalization-group results,
+  - the Kotecký–Preiss cluster expansion,
+  - Osterwalder–Seiler reflection positivity,
+  - Osterwalder–Schrader reconstruction.
+
+Using previously proved theorems as inputs is standard mathematical practice and does not by itself make a result conditional.
+
+## Lean status
+
+The current Lean layer is **modular and partially axiomatized**.
+
+- Some analytic lemmas and logical assembly steps are formalized directly in Lean 4.
+- Some established external theorems are currently represented as `axiom` declarations because they have not yet been fully ported into Lean/Mathlib.
+
+Accordingly:
+
+- **Mathematical status of the programme:** claimed unconditional.
+- **Formal Lean status of this repository:** modular, partially axiomatized verification workspace.
+
+## Companion repository
+
+For audit scripts, generated artifacts, and reproducibility tooling, see:
+
+- [`ym-audit`](https://github.com/lluiseriksson/ym-audit)
+
+## Structure
+
+```text
+.
+├─ README.md
+├─ LICENSE
+├─ NOTICE
+├─ lean/
+├─ docs/
+├─ colab/
+├─ links/
+└─ papers/
+```
+
+## Suggested wording
+
+> This repository documents the Lean-oriented verification architecture of a Yang–Mills mass gap programme claimed to be mathematically unconditional in the standard sense, while the current Lean layer remains partially axiomatized pending full transcription of established external theorems.
+
+## License
+
+See `LICENSE` and `NOTICE`.

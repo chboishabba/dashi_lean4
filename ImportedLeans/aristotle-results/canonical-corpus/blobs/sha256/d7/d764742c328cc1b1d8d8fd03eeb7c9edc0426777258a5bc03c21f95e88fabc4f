@@ -1,0 +1,78 @@
+# Agda → Lean cross-prover return, and its verification status
+
+## What was returned into the Lean package
+
+The architectural pattern taken from the Agda side is:
+
+> the residual does not need a favourable sign; the stable interface is
+> `residual ≤ budget < strictSignalMargin`, together with its split form
+> `structuredResidual + farResidual ≤ structuredBudget + farBudget < margin`.
+
+Implemented, and **kernel-checked in this Lean project**:
+
+- `ResidualBudgetMarginCompiler.lean` — the generic compiler and its split form.
+- `LiteralWeilWindowSchurResidualBudget.lean` — `WindowSchurResidualBudgetData`, which
+  converts the already-proved `|detRest| ≤ detRestBound` plus a budget into the old
+  `hdom` hypothesis of the Schur gate.
+- `LiteralWeilDetRestBoundMonotonicity.lean` — the endpoint copy of the quartic
+  remainder polynomial and `detRestBound_mono`, the transport of ten nonnegative
+  response bounds through the literal remainder.
+- `NormalizedNarrowWindowCertificate.lean`, `WindowSchurSharedCertificate.lean` — the
+  "construct the shared evidence once, keep downstream consumers thin" pattern:
+  a single `NormalizedNarrowWindowTriple` carries the geometry, a single
+  `ResponseEnvelope` carries the ten endpoint bounds, and one strict comparison
+  generates `hdom`.
+- `CertifiedFiniteCarrierReindex.lean` — the exact, presentation-only reindex boundary
+  intended for the two-zero / three-taper stage (`∑ i, f i = ∑ j, f (e.symm j)`).
+- `OddTaylorDeterminant.lean` — the exact odd cubic determinant algebra, including the
+  double-radius coefficient `-36 r⁴`.
+
+## What the Lean side then added on its own
+
+The returned architecture was *empty* until a budget object was actually constructed.
+It is now inhabited:
+
+- `LiteralWeilNormalizedWindowBounds.lean` — unit-mass normalization and the geometric
+  endpoint cap/floor for window responses;
+- `LiteralWeilNarrowWindowDomination.lean` — the domination theorem: for all
+  sufficiently narrow symmetric windows the endpoint budget is strictly below the cross
+  margin, so `hdom` is discharged rather than assumed;
+- `LiteralWeilWindowSchurInstance.lean` — an actual `NormalizedNarrowWindowTriple`, an
+  actual `ResponseEnvelope`, an actual `WindowSchurResidualBudgetData`, and the first
+  inhabited literal one-zero Schur admission.
+
+## Verification status (this repository)
+
+- `lake build Zeta23Bridge` succeeds; every module listed above is imported by the
+  aggregate.
+- `AxiomCheck.lean` (run with `lake env lean AxiomCheck.lean` from `Zeta23Bridge/`)
+  reports, for each capstone theorem, exactly `[propext, Classical.choice, Quot.sound]`.
+- No `sorry`, `admit`, `axiom`, postulate, `@[implemented_by]`, Boolean receipt or
+  numerical evidence occurs in `Zeta23Bridge/Zeta23Bridge/`; the words appear only as
+  prose inside docstrings.
+- **Agda:** no Agda executable is available in this environment, so no Agda module here
+  received a kernel receipt during this pass. A static scan of the 48 Riemann modules in
+  `DASHI/Analysis/` found no `postulate`, no `TERMINATING` pragma and no `trustMe`.
+  Nothing was transported from Agda as a proof term: every Lean theorem above is proved
+  in Lean.
+
+## Second return: the split-budget architecture at two zeros
+
+The Agda side's split residual compiler
+
+    R_structured + R_far ≤ B_structured + B_far < M   ⟹   R_structured + R_far < M
+
+was recorded as the shape the *next* stage should take.  The Lean side has now built the
+"structured" half of that shape at size two, in
+`ThreeTaperSchurCore`, `ThreeTaperCrossDetLeading`,
+`LiteralWeilThreeTaperCoefficientGate`, `CoshCombinationSeparation`,
+`ThreeWindowPointGate` and `LiteralWeilThreeWindowNarrowInstance`
+(see `FRONTIER.md` §24).  The structured part is now *exact* rather than budgeted:
+`elim2_add_two_nuisances_of_det3_ne_zero` shows that a nonzero `3 × 3` determinant
+removes both selected nuisance responses with **no** residue, so `R_structured = 0` and
+only `B_far` is left to bound.
+
+As before, nothing is transported: `elim2`, `det3`, the `r⁶` expansion, the cosh
+non-vanishing argument and the narrow-window transport are all proved in Lean, and no
+Agda module received a kernel receipt in this environment (no Agda executable is
+available here).

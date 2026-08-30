@@ -1,0 +1,213 @@
+/-
+# Literal Schur admission from localized-window separation
+
+`LiteralWeilWindowRatioSeparation` proved, unconditionally, that two tapers living in
+two disjoint higher modulus windows separate the responses of two distinct heights:
+the *cross determinant* of the bilinear leading coefficients is strictly positive
+under a four-endpoint gate that the point-window case satisfies outright.
+
+This module transports that to the **literal** two-taper channel of
+`LiteralWeilTwoTaperCoefficientGate`, whose radius-free leading determinant is built
+from `zeroLeadingCoeff g ρ = 2 · mult ρ · targetLeadingCoeff g (heightOf ρ)`.
+
+* `leadingCrossDet_eq` — the literal leading determinant is exactly
+  `4 · mult σ · mult ρ` times the determinant of the two `targetLeadingCoeff`s.
+* `leadingCrossDet_windowPair_ne_zero` — for the two-window tapers
+  `g_j = p + λ q_j` the literal leading determinant is nonzero, provided the window
+  gate holds and the *self-response remainder* `detRest` is dominated by the (proved
+  positive) cross determinant.
+* `exists_radius_gate`, `exists_radius_wedgeSq_pos` — a nonzero leading determinant
+  automatically produces radii at which the literal Gram wedge is strictly positive,
+  hence at which the selected nuisance zero can be Schur-eliminated exactly and the
+  target still survives.
+
+The remaining analytic obligation of this branch is therefore exactly the domination
+hypothesis `hdom`: bounding the within-window self responses against the proved
+cross determinant.  Nothing here uses an absolute zero mass `W(t)`, a tail estimate
+or numerical evidence.
+
+No `sorry`, no `axiom`, no Boolean receipt, no numerical evidence.
+-/
+import Zeta23Bridge.LiteralWeilWindowRatioSeparation
+import Zeta23Bridge.LiteralWeilTwoTaperCoefficientGate
+
+noncomputable section
+
+open scoped Real
+open MeasureTheory Set
+
+namespace Zeta23Bridge
+namespace LiteralWeilWindowSchurAdmission
+
+open Zeta23Bridge.LiteralWeilParityBalance
+open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilTargetDefectLeadingCoefficient
+open Zeta23Bridge.LiteralWeilLeadingCoefficientCovariance
+open Zeta23Bridge.LiteralWeilWindowRatioSeparation
+open Zeta23Bridge.LiteralWeilTwoTaperCoefficientGate
+open Zeta23Bridge.CoshWindowSeparation
+open Zeta23Bridge.MultiTaperSchurCore
+
+/-- The literal radius-free leading determinant, in terms of the two leading response
+coefficients of the tapers. -/
+theorem leadingCrossDet_eq (g : Fin 2 → ℝ → ℝ) (σ ρ : Zeros) :
+    leadingCrossDet g σ ρ
+      = 4 * ((Zeta23.zetaZeroConfig).mult σ : ℝ) * ((Zeta23.zetaZeroConfig).mult ρ : ℝ)
+        * (targetLeadingCoeff (g 0) (heightOf σ) * targetLeadingCoeff (g 1) (heightOf ρ)
+          - targetLeadingCoeff (g 1) (heightOf σ) * targetLeadingCoeff (g 0) (heightOf ρ)) := by
+  unfold leadingCrossDet zeroLeadingCoeff
+  ring
+
+/-- The two-window taper family. -/
+def windowPair (p q0 q1 : ℝ → ℝ) (lam : ℝ) : Fin 2 → ℝ → ℝ :=
+  ![fun u => p u + lam * q0 u, fun u => p u + lam * q1 u]
+
+theorem windowPair_zero (p q0 q1 : ℝ → ℝ) (lam : ℝ) :
+    windowPair p q0 q1 lam 0 = fun u => p u + lam * q0 u := rfl
+
+theorem windowPair_one (p q0 q1 : ℝ → ℝ) (lam : ℝ) :
+    windowPair p q0 q1 lam 1 = fun u => p u + lam * q1 u := rfl
+
+theorem windowPair_continuous {p q0 q1 : ℝ → ℝ} (hp : Continuous p) (hq0 : Continuous q0)
+    (hq1 : Continuous q1) (lam : ℝ) : ∀ j, Continuous (windowPair p q0 q1 lam j) := by
+  intro j
+  fin_cases j
+  · exact hp.add (hq0.const_smul lam)
+  · exact hp.add (hq1.const_smul lam)
+
+theorem windowPair_compactSupport {p q0 q1 : ℝ → ℝ} (hpc : HasCompactSupport p)
+    (hq0c : HasCompactSupport q0) (hq1c : HasCompactSupport q1) (lam : ℝ) :
+    ∀ j, HasCompactSupport (windowPair p q0 q1 lam j) := by
+  intro j
+  fin_cases j
+  · exact hpc.add hq0c.mul_left
+  · exact hpc.add hq1c.mul_left
+
+/-- **The literal leading determinant is nonzero.**  Under the localized-window
+separation gate, and once the within-window self responses are dominated, the two
+window tapers force the literal nuisance/target determinant to be nonzero. -/
+theorem leadingCrossDet_windowPair_ne_zero {p q0 q1 : ℝ → ℝ}
+    {al0 be0 al1 be1 al2 be2 lam : ℝ} {σ ρ : Zeros}
+    (hp : WindowTaper p al0 be0) (hq0 : WindowTaper q0 al1 be1) (hq1 : WindowTaper q1 al2 be2)
+    (hal0 : 0 < al0) (h0 : al0 ≤ be0) (h01 : be0 < al1) (h1 : al1 ≤ be1) (h12 : be1 < al2)
+    (ha : 0 < heightOf σ) (hab : heightOf σ < heightOf ρ)
+    (hgate : coshDiff (heightOf ρ) be0 be1 * coshDiff (heightOf σ) al0 al2
+      < coshDiff (heightOf ρ) al0 al2 * coshDiff (heightOf σ) be0 be1)
+    (hdom : |detRest p q0 q1 lam (heightOf σ) (heightOf ρ)|
+      < 4 * lam ^ 2 * (covForm p q0 (heightOf σ) * covForm p q1 (heightOf ρ)
+        - covForm p q1 (heightOf σ) * covForm p q0 (heightOf ρ)))
+    (hmsig : 0 < ((Zeta23.zetaZeroConfig).mult σ : ℝ))
+    (hmrho : 0 < ((Zeta23.zetaZeroConfig).mult ρ : ℝ)) :
+    0 < covForm p q0 (heightOf σ) * covForm p q1 (heightOf ρ)
+        - covForm p q1 (heightOf σ) * covForm p q0 (heightOf ρ) ∧
+      leadingCrossDet (windowPair p q0 q1 lam) σ ρ ≠ 0 := by
+  refine ⟨by linarith [covForm_det_lt hp hq0 hq1 ha hab hal0 h0 h01 h1 h12 hgate], ?_⟩
+  have hdet := targetLeadingCoeff_det_ne_zero_of_cross_dominant hp.cont hp.cpt hq0.cont hq0.cpt
+    hq1.cont hq1.cpt hdom
+  rw [leadingCrossDet_eq, windowPair_zero, windowPair_one]
+  intro hzero
+  apply hdet
+  have hfac : (4 : ℝ) * ((Zeta23.zetaZeroConfig).mult σ : ℝ)
+      * ((Zeta23.zetaZeroConfig).mult ρ : ℝ) ≠ 0 := by positivity
+  exact (mul_eq_zero.mp hzero).resolve_left hfac
+
+/-! ## Radii at which the literal Gram wedge opens -/
+
+/-- A nonzero radius-free determinant produces an explicit radius threshold below
+which the literal coefficient gate holds. -/
+theorem exists_radius_gate {g : Fin 2 → ℝ → ℝ} {σ ρ : Zeros}
+    (hL : leadingCrossDet g σ ρ ≠ 0) :
+    ∃ r0 : ℝ, 0 < r0 ∧ r0 ≤ 1 ∧ ∀ r : ℝ, 0 < r → r ≤ r0 →
+      r ^ 2 * crossRemainderCoeff g σ ρ < |leadingCrossDet g σ ρ| := by
+  obtain ⟨C, hCdef⟩ : ∃ x : ℝ, x = crossRemainderCoeff g σ ρ := ⟨_, rfl⟩
+  have hC0 : 0 ≤ C := by rw [hCdef]; exact crossRemainderCoeff_nonneg g σ ρ
+  have hL0 : 0 < |leadingCrossDet g σ ρ| := abs_pos.mpr hL
+  refine ⟨min 1 (|leadingCrossDet g σ ρ| / (C + 1)), ?_, min_le_left _ _, ?_⟩
+  · exact lt_min one_pos (div_pos hL0 (by linarith))
+  · intro r hr0 hr
+    have hr1 : r ≤ 1 := hr.trans (min_le_left _ _)
+    have hr2 : r ≤ |leadingCrossDet g σ ρ| / (C + 1) := hr.trans (min_le_right _ _)
+    have hrC : r * (C + 1) ≤ |leadingCrossDet g σ ρ| := by
+      rw [le_div_iff₀ (by linarith : (0:ℝ) < C + 1)] at hr2
+      exact hr2
+    have hsq : r ^ 2 * C ≤ r * C := by
+      nlinarith [mul_nonneg (mul_nonneg hr0.le (sub_nonneg.mpr hr1)) hC0]
+    rw [← hCdef]
+    nlinarith [hsq, hrC, hr0]
+
+/-- **Literal admission.**  A nonzero leading determinant opens the literal Gram wedge
+at every sufficiently small radius: the nuisance and target response vectors span a
+nondegenerate plane, so the nuisance zero can be removed exactly. -/
+theorem exists_radius_wedgeSq_pos {g : Fin 2 → ℝ → ℝ} {σ ρ : Zeros}
+    (hg : ∀ j, Continuous (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    (hL : leadingCrossDet g σ ρ ≠ 0) :
+    ∃ r0 : ℝ, 0 < r0 ∧ r0 ≤ 1 ∧ ∀ r : ℝ, 0 < r → r ≤ r0 →
+      0 < wedgeSq (zeroRespVec g r σ) (zeroRespVec g r ρ) := by
+  obtain ⟨r0, hr0, hr01, hgate⟩ := exists_radius_gate hL
+  refine ⟨r0, hr0, hr01, ?_⟩
+  intro r hrpos hrle
+  exact wedgeSq_pos_of_coefficientGate hg hgc σ ρ hrpos (hrle.trans hr01) (hgate r hrpos hrle)
+
+/-- The same conclusion in transverse form: the target response survives the exact
+projection that annihilates the nuisance response. -/
+theorem exists_radius_transverseComp_ne_zero {g : Fin 2 → ℝ → ℝ} {σ ρ : Zeros}
+    (hg : ∀ j, Continuous (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    (hL : leadingCrossDet g σ ρ ≠ 0) :
+    ∃ r0 : ℝ, 0 < r0 ∧ r0 ≤ 1 ∧ ∀ r : ℝ, 0 < r → r ≤ r0 →
+      transverseComp (zeroRespVec g r σ) (zeroRespVec g r ρ) ≠ 0 := by
+  obtain ⟨r0, hr0, hr01, hw⟩ := exists_radius_wedgeSq_pos hg hgc hL
+  exact ⟨r0, hr0, hr01, fun r hrpos hrle =>
+    transverseComp_ne_zero_of_wedgeSq_pos (hw r hrpos hrle)⟩
+
+/-- **The full window-to-Schur chain.**  Two disjoint higher windows, one shared low
+window, two distinct positive heights, the window gate and the domination of the
+self-response remainder together produce radii at which the literal nuisance zero is
+Schur-eliminated exactly while the target survives. -/
+theorem exists_radius_windowPair_transverseComp_ne_zero {p q0 q1 : ℝ → ℝ}
+    {al0 be0 al1 be1 al2 be2 lam : ℝ} {σ ρ : Zeros}
+    (hp : WindowTaper p al0 be0) (hq0 : WindowTaper q0 al1 be1) (hq1 : WindowTaper q1 al2 be2)
+    (hal0 : 0 < al0) (h0 : al0 ≤ be0) (h01 : be0 < al1) (h1 : al1 ≤ be1) (h12 : be1 < al2)
+    (ha : 0 < heightOf σ) (hab : heightOf σ < heightOf ρ)
+    (hgate : coshDiff (heightOf ρ) be0 be1 * coshDiff (heightOf σ) al0 al2
+      < coshDiff (heightOf ρ) al0 al2 * coshDiff (heightOf σ) be0 be1)
+    (hdom : |detRest p q0 q1 lam (heightOf σ) (heightOf ρ)|
+      < 4 * lam ^ 2 * (covForm p q0 (heightOf σ) * covForm p q1 (heightOf ρ)
+        - covForm p q1 (heightOf σ) * covForm p q0 (heightOf ρ)))
+    (hmsig : 0 < ((Zeta23.zetaZeroConfig).mult σ : ℝ))
+    (hmrho : 0 < ((Zeta23.zetaZeroConfig).mult ρ : ℝ)) :
+    ∃ r0 : ℝ, 0 < r0 ∧ r0 ≤ 1 ∧ ∀ r : ℝ, 0 < r → r ≤ r0 →
+      transverseComp (zeroRespVec (windowPair p q0 q1 lam) r σ)
+        (zeroRespVec (windowPair p q0 q1 lam) r ρ) ≠ 0 :=
+  exists_radius_transverseComp_ne_zero
+    (windowPair_continuous hp.cont hq0.cont hq1.cont lam)
+    (windowPair_compactSupport hp.cpt hq0.cpt hq1.cpt lam)
+    (leadingCrossDet_windowPair_ne_zero hp hq0 hq1 hal0 h0 h01 h1 h12 ha hab hgate hdom
+      hmsig hmrho)
+
+/-! ## The same chain with the explicit remainder bound -/
+
+/-- **Explicit form of the admission chain.**  The domination hypothesis is replaced
+by the explicit `detRestBound`, all of whose summands are products of nonnegative
+window responses, bounded above by `crossIntegral_le`. -/
+theorem exists_radius_windowPair_transverseComp_ne_zero_of_bound {p q0 q1 : ℝ → ℝ}
+    {al0 be0 al1 be1 al2 be2 lam : ℝ} {σ ρ : Zeros}
+    (hp : WindowTaper p al0 be0) (hq0 : WindowTaper q0 al1 be1) (hq1 : WindowTaper q1 al2 be2)
+    (hal0 : 0 < al0) (h0 : al0 ≤ be0) (h01 : be0 < al1) (h1 : al1 ≤ be1) (h12 : be1 < al2)
+    (ha : 0 < heightOf σ) (hab : heightOf σ < heightOf ρ)
+    (hgate : coshDiff (heightOf ρ) be0 be1 * coshDiff (heightOf σ) al0 al2
+      < coshDiff (heightOf ρ) al0 al2 * coshDiff (heightOf σ) be0 be1)
+    (hbound : detRestBound p q0 q1 lam (heightOf σ) (heightOf ρ)
+      < 4 * lam ^ 2 * (covForm p q0 (heightOf σ) * covForm p q1 (heightOf ρ)
+        - covForm p q1 (heightOf σ) * covForm p q0 (heightOf ρ)))
+    (hmsig : 0 < ((Zeta23.zetaZeroConfig).mult σ : ℝ))
+    (hmrho : 0 < ((Zeta23.zetaZeroConfig).mult ρ : ℝ)) :
+    ∃ r0 : ℝ, 0 < r0 ∧ r0 ≤ 1 ∧ ∀ r : ℝ, 0 < r → r ≤ r0 →
+      transverseComp (zeroRespVec (windowPair p q0 q1 lam) r σ)
+        (zeroRespVec (windowPair p q0 q1 lam) r ρ) ≠ 0 :=
+  exists_radius_windowPair_transverseComp_ne_zero hp hq0 hq1 hal0 h0 h01 h1 h12 ha hab hgate
+    (detRest_dominated_of_bound hp.cont hp.cpt hq0.cont hq0.cpt hq1.cont hq1.cpt hp.nonneg
+      hq0.nonneg hq1.nonneg hbound)
+    hmsig hmrho
+
+end LiteralWeilWindowSchurAdmission
+end Zeta23Bridge

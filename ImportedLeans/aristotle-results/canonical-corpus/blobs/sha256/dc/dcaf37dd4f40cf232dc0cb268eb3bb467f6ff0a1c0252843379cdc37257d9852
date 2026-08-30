@@ -1,0 +1,266 @@
+module DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact where
+
+------------------------------------------------------------------------
+-- EXACT PREFIX CALCULUS FOR GEOMETRICALLY CONTRACTING SHELL FAMILIES
+--
+-- This module is pure exact rational arithmetic.  It contains no postulate,
+-- no hole, no imported authority and no Boolean receipt.  It supplies the
+-- shared arithmetic core used by two of the four frozen Clay Yang-Mills
+-- research rows recorded in
+--
+--   docs/ym/YangMillsClayFourFrozenResearchLemmas.md
+--
+--   * row A (LiteralCompactSimplePositiveBeta): the small-coupling history
+--     budget  sum_{j=k+1}^{m} g_{j-1}^rho  must be bounded UNIFORMLY in the
+--     prefix length, otherwise the nonlinear/history contribution to the
+--     cumulative beta sum can consume a per-shell positive Gaussian margin.
+--
+--   * row B (PhysicalMarkedSourceLocalityCompositeStress): the differentiated
+--     source energies must satisfy  E_d <= E_0 r^d  with 0 <= r < 1, and the
+--     downstream consumer only needs the resulting uniform bound on every
+--     partial sum  sum_d E_d.
+--
+-- Both are instances of one statement: a nonnegative shell family whose head
+-- is bounded and which contracts by a nonnegative ratio has every prefix sum
+-- bounded by any budget closing the affine inequality
+--
+--     headBound + ratio * budget <= budget.
+--
+-- Existing DASHI geometric modules (BalabanTraceKoteckyPreissGeometricExact,
+-- BalabanContinuumScaleLocalObservableCauchyExact) fix the ratio to 1/2 and a
+-- fixed coefficient normalisation.  The statement proved here is the general
+-- ratio version required by the frozen rows, where r is an unknown constant
+-- to be produced by the analysis rather than a chosen dyadic constant.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat as Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Rational.Base as ℚ using (ℚ; 0ℚ; 1ℚ; _+_; _*_; _≤_; _<_; NonNegative)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; cong₂; subst)
+
+------------------------------------------------------------------------
+-- Nonnegativity helpers (instance plumbing kept local)
+------------------------------------------------------------------------
+
+nonNegProduct : ∀ p q → 0ℚ ≤ p → 0ℚ ≤ q → 0ℚ ≤ p * q
+nonNegProduct p q p≥0 q≥0 =
+  subst (λ z → z ≤ p * q) (ℚP.*-zeroʳ p)
+    (ℚP.*-monoˡ-≤-nonNeg p {{ℚ.nonNegative p≥0}} q≥0)
+
+0≤1ℚ : 0ℚ ≤ 1ℚ
+0≤1ℚ = ℚP.nonNegative⁻¹ 1ℚ
+
+------------------------------------------------------------------------
+-- Natural numbers as rationals, by iterated addition (no coercion lemmas)
+------------------------------------------------------------------------
+
+natToℚ : Nat → ℚ
+natToℚ zero = 0ℚ
+natToℚ (suc n) = 1ℚ + natToℚ n
+
+natToℚ-nonneg : ∀ n → 0ℚ ≤ natToℚ n
+natToℚ-nonneg zero = ℚP.≤-refl
+natToℚ-nonneg (suc n) =
+  subst (λ z → z ≤ 1ℚ + natToℚ n)
+    (ℚP.+-identityʳ 0ℚ)
+    (ℚP.+-mono-≤ 0≤1ℚ (natToℚ-nonneg n))
+
+1≤natToℚ-suc : ∀ n → 1ℚ ≤ natToℚ (suc n)
+1≤natToℚ-suc n =
+  subst (λ z → z ≤ 1ℚ + natToℚ n)
+    (ℚP.+-identityʳ 1ℚ)
+    (ℚP.+-mono-≤ (ℚP.≤-refl {1ℚ}) (natToℚ-nonneg n))
+
+------------------------------------------------------------------------
+-- Prefix sums:  prefixSum f k n = f k + f (k+1) + ... + f (k+n-1)
+------------------------------------------------------------------------
+
+prefixSum : (Nat → ℚ) → Nat → Nat → ℚ
+prefixSum f k zero = 0ℚ
+prefixSum f k (suc n) = f k + prefixSum f (suc k) n
+
+prefixSum-add : ∀ (f g : Nat → ℚ) k n →
+  prefixSum (λ j → f j + g j) k n ≡ prefixSum f k n + prefixSum g k n
+prefixSum-add f g k zero = sym (ℚP.+-identityʳ 0ℚ)
+prefixSum-add f g k (suc n) =
+  trans
+    (cong (λ z → (f k + g k) + z) (prefixSum-add f g (suc k) n))
+    (rearrange (f k) (g k) (prefixSum f (suc k) n) (prefixSum g (suc k) n))
+  where
+    rearrange : ∀ a b s t → (a + b) + (s + t) ≡ (a + s) + (b + t)
+    rearrange a b s t =
+      trans (ℚP.+-assoc a b (s + t))
+      (trans (cong (λ z → a + z) (sym (ℚP.+-assoc b s t)))
+      (trans (cong (λ z → a + (z + t)) (ℚP.+-comm b s))
+      (trans (cong (λ z → a + z) (ℚP.+-assoc s b t))
+             (sym (ℚP.+-assoc a s (b + t))))))
+
+prefixSum-mono : ∀ (f g : Nat → ℚ) → (∀ j → f j ≤ g j) → ∀ k n →
+  prefixSum f k n ≤ prefixSum g k n
+prefixSum-mono f g f≤g k zero = ℚP.≤-refl
+prefixSum-mono f g f≤g k (suc n) =
+  ℚP.+-mono-≤ (f≤g k) (prefixSum-mono f g f≤g (suc k) n)
+
+prefixSum-const : ∀ c k n → prefixSum (λ _ → c) k n ≡ c * natToℚ n
+prefixSum-const c k zero = sym (ℚP.*-zeroʳ c)
+prefixSum-const c k (suc n) =
+  trans (cong (λ z → c + z) (prefixSum-const c (suc k) n))
+  (trans (cong (λ z → z + c * natToℚ n) (sym (ℚP.*-identityʳ c)))
+         (sym (ℚP.*-distribˡ-+ c 1ℚ (natToℚ n))))
+
+prefixSum-lowerConst : ∀ (f : Nat → ℚ) c → (∀ j → c ≤ f j) → ∀ k n →
+  c * natToℚ n ≤ prefixSum f k n
+prefixSum-lowerConst f c lower k n =
+  subst (λ z → z ≤ prefixSum f k n)
+    (prefixSum-const c k n)
+    (prefixSum-mono (λ _ → c) f lower k n)
+
+prefixSum-upperConst : ∀ (f : Nat → ℚ) c → (∀ j → f j ≤ c) → ∀ k n →
+  prefixSum f k n ≤ c * natToℚ n
+prefixSum-upperConst f c upper k n =
+  subst (λ z → prefixSum f k n ≤ z)
+    (prefixSum-const c k n)
+    (prefixSum-mono f (λ _ → c) upper k n)
+
+prefixSum-scale : ∀ c (f : Nat → ℚ) k n →
+  prefixSum (λ j → c * f j) k n ≡ c * prefixSum f k n
+prefixSum-scale c f k zero = sym (ℚP.*-zeroʳ c)
+prefixSum-scale c f k (suc n) =
+  trans (cong (λ z → c * f k + z) (prefixSum-scale c f (suc k) n))
+        (sym (ℚP.*-distribˡ-+ c (f k) (prefixSum f (suc k) n)))
+
+prefixSum-neg : ∀ (f : Nat → ℚ) k n →
+  prefixSum (λ j → ℚ.- f j) k n ≡ ℚ.- prefixSum f k n
+prefixSum-neg f k zero = refl
+prefixSum-neg f k (suc n) =
+  trans (cong (λ z → ℚ.- f k + z) (prefixSum-neg f (suc k) n))
+        (sym (ℚP.neg-distrib-+ (f k) (prefixSum f (suc k) n)))
+
+prefixSum-cong : ∀ (f g : Nat → ℚ) → (∀ j → f j ≡ g j) → ∀ k n →
+  prefixSum f k n ≡ prefixSum g k n
+prefixSum-cong f g f≡g k zero = refl
+prefixSum-cong f g f≡g k (suc n) =
+  cong₂ _+_ (f≡g k) (prefixSum-cong f g f≡g (suc k) n)
+
+-- Reindexing the trajectory from a first admissible scale d.
+prefixSum-reindex : ∀ (f : Nat → ℚ) d k n →
+  prefixSum (λ j → f (d Nat.+ j)) k n ≡ prefixSum f (d Nat.+ k) n
+prefixSum-reindex f d k zero = refl
+prefixSum-reindex f d k (suc n) =
+  cong (λ z → f (d Nat.+ k) + z)
+    (trans (prefixSum-reindex f d (suc k) n)
+      (cong (λ z → prefixSum f z n) (Nat+-suc d k)))
+  where
+    Nat+-suc : ∀ a b → a Nat.+ suc b ≡ suc (a Nat.+ b)
+    Nat+-suc zero b = refl
+    Nat+-suc (suc a) b = cong suc (Nat+-suc a b)
+
+prefixSum-nonneg : ∀ (f : Nat → ℚ) → (∀ j → 0ℚ ≤ f j) → ∀ k n →
+  0ℚ ≤ prefixSum f k n
+prefixSum-nonneg f nonneg k zero = ℚP.≤-refl
+prefixSum-nonneg f nonneg k (suc n) =
+  subst (λ z → z ≤ f k + prefixSum f (suc k) n)
+    (ℚP.+-identityʳ 0ℚ)
+    (ℚP.+-mono-≤ (nonneg k) (prefixSum-nonneg f nonneg (suc k) n))
+
+------------------------------------------------------------------------
+-- Contracting shell families
+------------------------------------------------------------------------
+
+record ContractingShellFamily : Set where
+  field
+    shell            : Nat → ℚ
+    ratio headBound budget : ℚ
+    shellNonneg      : ∀ j → 0ℚ ≤ shell j
+    ratioNonneg      : 0ℚ ≤ ratio
+    shellBelowHead   : ∀ j → shell j ≤ headBound
+    shellContracts   : ∀ j → shell (suc j) ≤ ratio * shell j
+    budgetNonneg     : 0ℚ ≤ budget
+    budgetCloses     : headBound + ratio * budget ≤ budget
+
+open ContractingShellFamily public
+
+-- Shifting the window by one costs at most one factor of the ratio.
+prefixSum-shift :
+  (F : ContractingShellFamily) → ∀ k n →
+  prefixSum (shell F) (suc k) n ≤ ratio F * prefixSum (shell F) k n
+prefixSum-shift F k zero =
+  subst (λ z → 0ℚ ≤ z) (sym (ℚP.*-zeroʳ (ratio F))) ℚP.≤-refl
+prefixSum-shift F k (suc n) =
+  subst (λ z → shell F (suc k) + prefixSum (shell F) (suc (suc k)) n ≤ z)
+    (sym (ℚP.*-distribˡ-+ (ratio F) (shell F k) (prefixSum (shell F) (suc k) n)))
+    (ℚP.+-mono-≤ (shellContracts F k) (prefixSum-shift F (suc k) n))
+
+-- The frozen quantitative statement: every prefix, at every starting scale,
+-- is bounded by the budget, with no dependence on the prefix length.
+prefixSum-budget :
+  (F : ContractingShellFamily) → ∀ k n →
+  prefixSum (shell F) k n ≤ budget F
+prefixSum-budget F k zero = budgetNonneg F
+prefixSum-budget F k (suc n) =
+  ℚP.≤-trans
+    (ℚP.+-mono-≤
+      (shellBelowHead F k)
+      (ℚP.≤-trans
+        (prefixSum-shift F k n)
+        (ℚP.*-monoˡ-≤-nonNeg (ratio F) {{ℚ.nonNegative (ratioNonneg F)}}
+          (prefixSum-budget F k n))))
+    (budgetCloses F)
+
+------------------------------------------------------------------------
+-- The literal  E_d <= E_0 r^d  instance
+------------------------------------------------------------------------
+
+pow : ℚ → Nat → ℚ
+pow r zero = 1ℚ
+pow r (suc n) = r * pow r n
+
+pow-nonneg : ∀ r → 0ℚ ≤ r → ∀ n → 0ℚ ≤ pow r n
+pow-nonneg r r≥0 zero = 0≤1ℚ
+pow-nonneg r r≥0 (suc n) = nonNegProduct r (pow r n) r≥0 (pow-nonneg r r≥0 n)
+
+pow-below-one : ∀ r → 0ℚ ≤ r → r ≤ 1ℚ → ∀ n → pow r n ≤ 1ℚ
+pow-below-one r r≥0 r≤1 zero = ℚP.≤-refl
+pow-below-one r r≥0 r≤1 (suc n) =
+  ℚP.≤-trans
+    (subst (λ z → r * pow r n ≤ z) (ℚP.*-identityʳ r)
+      (ℚP.*-monoˡ-≤-nonNeg r {{ℚ.nonNegative r≥0}} (pow-below-one r r≥0 r≤1 n)))
+    r≤1
+
+-- Geometric majorant family E_0 r^d, packaged as a contracting shell family.
+geometricMajorant :
+  (E₀ r B : ℚ) → 0ℚ ≤ E₀ → 0ℚ ≤ r → r ≤ 1ℚ → 0ℚ ≤ B →
+  E₀ + r * B ≤ B → ContractingShellFamily
+geometricMajorant E₀ r B E₀≥0 r≥0 r≤1 B≥0 closes = record
+  { shell          = λ d → E₀ * pow r d
+  ; ratio          = r
+  ; headBound      = E₀
+  ; budget         = B
+  ; shellNonneg    = λ d → nonNegProduct E₀ (pow r d) E₀≥0 (pow-nonneg r r≥0 d)
+  ; ratioNonneg    = r≥0
+  ; shellBelowHead = λ d →
+      subst (λ z → E₀ * pow r d ≤ z) (ℚP.*-identityʳ E₀)
+        (ℚP.*-monoˡ-≤-nonNeg E₀ {{ℚ.nonNegative E₀≥0}} (pow-below-one r r≥0 r≤1 d))
+  ; shellContracts = λ d →
+      ℚP.≤-reflexive
+        (trans (cong (λ z → E₀ * z) refl)
+          (trans (sym (ℚP.*-assoc E₀ r (pow r d)))
+            (trans (cong (λ z → z * pow r d) (ℚP.*-comm E₀ r))
+                   (ℚP.*-assoc r E₀ (pow r d)))))
+  ; budgetNonneg   = B≥0
+  ; budgetCloses   = closes
+  }
+
+-- Row B's downstream consequence, machine-checked:
+--   E_d <= E_0 r^d  (r < 1, all quantities uniform)  ==>  every partial sum
+--   of the differentiated source energies is bounded by the same constant B.
+geometricEnergyPrefixBound :
+  (E : Nat → ℚ) (E₀ r B : ℚ) →
+  0ℚ ≤ E₀ → 0ℚ ≤ r → r ≤ 1ℚ → 0ℚ ≤ B → E₀ + r * B ≤ B →
+  (∀ d → 0ℚ ≤ E d) → (∀ d → E d ≤ E₀ * pow r d) →
+  ∀ k n → prefixSum E k n ≤ B
+geometricEnergyPrefixBound E E₀ r B E₀≥0 r≥0 r≤1 B≥0 closes Enonneg Ebound k n =
+  ℚP.≤-trans
+    (prefixSum-mono E (λ d → E₀ * pow r d) Ebound k n)
+    (prefixSum-budget (geometricMajorant E₀ r B E₀≥0 r≥0 r≤1 B≥0 closes) k n)

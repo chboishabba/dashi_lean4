@@ -1,0 +1,10 @@
+# Why the programme is described as unconditional
+
+In standard mathematical usage, a proof is called unconditional when it does not rely on open conjectures.
+
+The programme documented here is presented in that sense:
+- it does not rely on the former “Hypothesis 1.1”;
+- it instead invokes established results from the literature plus bridge arguments.
+
+The existence of `axiom` declarations in Lean does not by itself mean that the mathematical argument depends on conjectures.
+It means that some external published results have not yet been fully transcribed into Lean/Mathlib.

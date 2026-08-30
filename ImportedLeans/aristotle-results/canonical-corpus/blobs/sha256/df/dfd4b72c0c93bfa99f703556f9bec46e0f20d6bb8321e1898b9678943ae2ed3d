@@ -1,0 +1,286 @@
+module DASHI.Physics.YangMills.BalabanYM4AnalyticPackageGateClosureExact where
+
+------------------------------------------------------------------------
+-- ROW A, CANONICAL FORM:
+--   ONE ANALYTIC PACKAGE  +  TWO NUMERICAL GATES  ==>  q < 1
+--
+-- PRIMARY SOURCE FOR THE SETTING
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- This module fixes the canonical shape of row A after the algebraic part is
+-- settled.  All tuning algebra is imported, not redone:
+--
+--   * `BalabanYM4LinearInteractionBetaMarginExact` -- shell-local sign,
+--   * `BalabanYM4CubicCouplingDriftTelescopeExact` -- inverse-square margin
+--     gives the cubic history budget b_* sum g^3 <= 2 gamma_tube,
+--   * `BalabanYM4ShootingSensitivityFromCubicDriftExact` -- cumulative
+--     shooting sensitivity below one,
+--   * `BalabanYM4RowAGateCompositionExact` -- the two gates on one trajectory.
+--
+-- What is new here is that the *interaction data* is no longer a list of
+-- separately assumed inequalities: it is produced by the single analytic
+-- package of
+-- `BalabanYM4UniformInteractionDerivativePackageExact`,
+--
+--     beta_Int(g) = g F(g),   sup|F| <= M0,   sup|F'| <= M1,
+--     |d beta_Z/dg| <= L_Z ,
+--
+-- so that row A's two constants are
+--
+--     C = M0 ,          L = L_Z + M0 + gamma M1 ,
+--
+-- and the two gates read, in the package's own constants,
+--
+--     GATE 1 (sign)    :  M0 gamma                    <  b_- ,
+--     GATE 2 (tuning)  :  (L_Z + M0 + gamma M1) gamma_tube  <  b_- - M0 gamma .
+--
+-- Their conjunction gives, uniformly in the number of shells and hence in the
+-- cutoff, the strict contraction of the shooting map,
+--
+--     sum_{j<K} |d beta_j / du|  <=  L gamma_tube / b_*  =  q  <  1 .
+--
+-- SCOPE.  The inverse-square identification beta_j = u_j - u_{j+1} is imposed
+-- only for j < cutoff: a fixed positive decrement of u_j = g_j^{-2} cannot
+-- persist forever, so the construction is a family of finite-cutoff
+-- trajectories of increasing extent, not one infinite sequence.
+--
+-- WHAT IS NOT PROVED.  The three analytic producers -- b_- > 0 for the
+-- literal constrained Gaussian (Wilson + reduced Faddeev-Popov + Haar)
+-- determinant, and the numbers M0, M1 (equivalently z0, A, B through
+-- `BalabanYM4NormalizedInteractionLogHessianExact`) and L_Z for the literal
+-- interaction of the Bałaban step -- are open, as is the identification of
+-- these sequences with the literal Bałaban trajectory.  Row A stays open and
+-- the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+import Data.Nat.Base as ℕ
+import Data.Nat.Properties as ℕP
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (sym; subst)
+
+open import DASHI.Physics.YangMills.BalabanYM4LinearInteractionBetaMarginExact
+  using (ShellLinearInteractionData; sum₀)
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (halfℚ)
+open import DASHI.Physics.YangMills.BalabanYM4RowAGateCompositionExact
+  using (RowAGateData; module Gates)
+open import DASHI.Physics.YangMills.BalabanYM4UniformInteractionDerivativePackageExact
+  using (UniformDerivativePackage; module Package)
+
+------------------------------------------------------------------------
+-- A trajectory whose interaction data comes from one analytic package
+------------------------------------------------------------------------
+
+record AnalyticGateTrajectory (cutoff : Nat) : Set where
+  field
+    package : UniformDerivativePackage
+
+  open UniformDerivativePackage package public
+    using (tubeCap; factorSup; factorDerivativeSup; gaussianDerivativeSup)
+  open Package package public
+    using ( interactionBeta; interactionSlope; uniformDerivativeConstant
+          ; interactionLinearLower; uniformDerivativeConstantNonNeg)
+
+  field
+    gaussianFloor : ℚ                  -- b_-
+    betaGauss     : Nat → ℚ
+    priorCoupling : Nat → ℚ            -- g_{j-1}
+    coupling inverseSquare : Nat → ℚ   -- g_j and u_j = g_j^{-2}
+    tubeWidth     : ℚ                  -- gamma_tube
+
+    gaussianLower       : ∀ j → gaussianFloor ≤ betaGauss j
+    priorCouplingNonNeg : ∀ j → 0ℚ ≤ priorCoupling j
+    priorCouplingCapped : ∀ j → priorCoupling j ≤ tubeCap
+
+    couplingPositive : ∀ j → 0ℚ < coupling j
+    inverseSquareRelation :
+      ∀ j → inverseSquare j * (coupling j * coupling j) ≡ 1ℚ
+    couplingMonotone : ∀ j → coupling j ≤ coupling (suc j)
+    couplingTube : ∀ K → coupling K - coupling 0 ≤ tubeWidth
+
+    -- the literal identification, on the finite range of shells only
+    betaIsInverseSquareStep :
+      ∀ j → j ℕ.< cutoff →
+      betaGauss j + interactionBeta (priorCoupling j)
+        ≡ inverseSquare j - inverseSquare (suc j)
+
+    -- GATE 1 (sign):  M0 gamma < b_-
+    signGate : interactionSlope * tubeCap < gaussianFloor
+    -- GATE 2 (tuning):  L gamma_tube < b_- - M0 gamma
+    tuningGate :
+      uniformDerivativeConstant * tubeWidth
+        < gaussianFloor - interactionSlope * tubeCap
+
+module Closure {cutoff : Nat} (t : AnalyticGateTrajectory cutoff) where
+
+  open AnalyticGateTrajectory t
+  open UniformDerivativePackage package using (factorSupNonNeg)
+
+  betaInt : Nat → ℚ
+  betaInt j = interactionBeta (priorCoupling j)
+
+  beta : Nat → ℚ
+  beta j = betaGauss j + betaInt j
+
+  shellData : ShellLinearInteractionData
+  shellData = record
+    { gaussianFloor = gaussianFloor
+    ; interactionSlope = interactionSlope
+    ; couplingCap = tubeCap
+    ; beta = beta
+    ; betaGauss = betaGauss
+    ; betaInt = betaInt
+    ; priorCoupling = priorCoupling
+    ; betaDecomposition = λ _ → refl
+    ; gaussianLower = gaussianLower
+    ; interactionLinearLower =
+        λ j →
+          interactionLinearLower (priorCoupling j)
+            (priorCouplingNonNeg j) (priorCouplingCapped j)
+    ; slopeNonNegative = factorSupNonNeg
+    ; priorCouplingNonNegative = priorCouplingNonNeg
+    ; priorCouplingCapped = priorCouplingCapped
+    }
+
+  gateData : RowAGateData cutoff
+  gateData = record
+    { shellData = shellData
+    ; coupling = coupling
+    ; inverseSquare = inverseSquare
+    ; tubeWidth = tubeWidth
+    ; couplingPositive = couplingPositive
+    ; inverseSquareRelation = inverseSquareRelation
+    ; couplingMonotone = couplingMonotone
+    ; betaIsInverseSquareStep = betaIsInverseSquareStep
+    ; couplingTube = couplingTube
+    ; signGate = signGate
+    }
+
+  open Gates gateData public using (betaMargin; betaMarginPositive; cubicSumBound)
+
+  -- the shooting sensitivity supplied by the uniform derivative constant:
+  -- |d beta_j / du| <= (L/2) g_j^3
+  sensitivity : Nat → ℚ
+  sensitivity j =
+    (halfℚ * uniformDerivativeConstant)
+      * (coupling j * coupling j * coupling j)
+
+  open Gates.Tuning gateData
+    uniformDerivativeConstant
+    uniformDerivativeConstantNonNeg
+    sensitivity
+    (λ _ → ℚP.≤-refl)
+    tuningGate
+    public
+    using (cumulativeSensitivityBelowOne)
+
+  -- MAIN: the cumulative shooting sensitivity is strictly below one for every
+  -- cutoff, with all constants coming from one analytic package.
+  contractionBelowOne : ∀ K → K ℕ.≤ cutoff → sum₀ sensitivity K < 1ℚ
+  contractionBelowOne = cumulativeSensitivityBelowOne
+
+------------------------------------------------------------------------
+-- Non-vacuity: an explicit analytic package closing both gates
+------------------------------------------------------------------------
+
+-- Package:  gamma = 1, F = 1/2 (so M0 = 1/2), F' = 0 (M1 = 0),
+--           d beta_Z/dg = 1 with L_Z = 1, hence L = 1 + 1/2 = 3/2.
+-- Trajectory (one shell): g_0 = 1/2, g_1 = 1, so u_0 = 4, u_1 = 1 and the
+--           inverse-square step is 3;  beta_Int = (1/2)(1/2) = 1/4, so
+--           beta_Z = 11/4 and b_- = 11/4.
+-- Gate 1:  M0 gamma = 1/2 < 11/4.            Margin b_* = 9/4.
+-- Gate 2:  L gamma_tube = (3/2)(1/2) = 3/4 < 9/4.
+
+module BothGatesFromAnalyticPackage where
+
+  open import Data.Integer.Base using (+_)
+  open import Data.Rational.Base using (_/_; ∣_∣)
+  open import Relation.Nullary.Decidable using (toWitness)
+
+  witnessPackage : UniformDerivativePackage
+  witnessPackage = record
+    { tubeCap = 1ℚ
+    ; factorSup = + 1 / 2
+    ; factorDerivativeSup = 0ℚ
+    ; gaussianDerivativeSup = 1ℚ
+    ; interactionFactor = λ _ → + 1 / 2
+    ; interactionFactorDerivative = λ _ → 0ℚ
+    ; gaussianBetaDerivative = λ _ → 1ℚ
+    ; tubeCapNonNeg = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+    ; factorSupNonNeg = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+    ; factorDerivativeSupNonNeg = ℚP.≤-refl
+    ; gaussianDerivativeSupNonNeg = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+    ; factorBounded = λ _ _ _ → ℚP.≤-refl
+    ; factorDerivativeBounded = λ _ _ _ → ℚP.≤-refl
+    ; gaussianDerivativeBounded = λ _ _ _ → ℚP.≤-refl
+    }
+
+  witnessCoupling witnessInverseSquare : Nat → ℚ
+  witnessCoupling zero = + 1 / 2
+  witnessCoupling (suc _) = 1ℚ
+  witnessInverseSquare zero = + 4 / 1
+  witnessInverseSquare (suc _) = 1ℚ
+
+  witnessTrajectory : AnalyticGateTrajectory 1
+  witnessTrajectory = record
+    { package = witnessPackage
+    ; gaussianFloor = + 11 / 4
+    ; betaGauss = λ _ → + 11 / 4
+    ; priorCoupling = λ _ → + 1 / 2
+    ; coupling = witnessCoupling
+    ; inverseSquare = witnessInverseSquare
+    ; tubeWidth = + 1 / 2
+    ; gaussianLower = λ _ → ℚP.≤-refl
+    ; priorCouplingNonNeg = λ _ → toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+    ; priorCouplingCapped = λ _ → toWitness {a? = (+ 1 / 2) ℚP.≤? 1ℚ} _
+    ; couplingPositive = positive?
+    ; inverseSquareRelation = relation
+    ; couplingMonotone = monotone
+    ; couplingTube = tube
+    ; betaIsInverseSquareStep = step
+    ; signGate = toWitness {a? = ((+ 1 / 2) * 1ℚ) ℚP.<? (+ 11 / 4)} _
+    ; tuningGate =
+        toWitness
+          {a? = ((1ℚ + ((+ 1 / 2) + 1ℚ * 0ℚ)) * (+ 1 / 2))
+                  ℚP.<? ((+ 11 / 4) - (+ 1 / 2) * 1ℚ)} _
+    }
+    where
+      positive? : ∀ j → 0ℚ < witnessCoupling j
+      positive? zero = toWitness {a? = 0ℚ ℚP.<? (+ 1 / 2)} _
+      positive? (suc _) = toWitness {a? = 0ℚ ℚP.<? 1ℚ} _
+
+      relation :
+        ∀ j →
+        witnessInverseSquare j * (witnessCoupling j * witnessCoupling j) ≡ 1ℚ
+      relation zero = refl
+      relation (suc _) = refl
+
+      monotone : ∀ j → witnessCoupling j ≤ witnessCoupling (suc j)
+      monotone zero = toWitness {a? = (+ 1 / 2) ℚP.≤? 1ℚ} _
+      monotone (suc _) = ℚP.≤-refl
+
+      tube : ∀ K → witnessCoupling K - witnessCoupling 0 ≤ + 1 / 2
+      tube zero = toWitness {a? = ((+ 1 / 2) - (+ 1 / 2)) ℚP.≤? (+ 1 / 2)} _
+      tube (suc _) = toWitness {a? = (1ℚ - (+ 1 / 2)) ℚP.≤? (+ 1 / 2)} _
+
+      step :
+        ∀ j → j ℕ.< 1 →
+        (+ 11 / 4) + (+ 1 / 2) * (+ 1 / 2)
+          ≡ witnessInverseSquare j - witnessInverseSquare (suc j)
+      step zero _ = refl
+      step (suc _) (ℕ.s≤s ())
+
+  open Closure witnessTrajectory
+
+  witnessContraction : sum₀ sensitivity 1 < 1ℚ
+  witnessContraction = contractionBelowOne 1 ℕP.≤-refl

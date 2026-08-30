@@ -1,0 +1,14 @@
+# Formalization status
+
+## Mathematical layer
+The programme is presented as mathematically unconditional in the standard mathematical sense:
+it does not depend on open conjectures, but on established results and bridge arguments.
+
+## Lean layer
+The current Lean workspace is modular and partially axiomatized.
+
+This means:
+- some analytic and assembly steps are directly formalized;
+- some external historical results are represented as `axiom`.
+
+Therefore this repository should be read as a Lean verification workspace, not yet as a fully self-contained axiom-free formal library.

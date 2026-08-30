@@ -1,0 +1,89 @@
+name: Build & Deploy Docs
+
+on:
+  push:
+    branches: ["master"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: dashi-global-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Install Agda + stdlib
+        uses: wenkokke/setup-agda@v2
+        with:
+          agda-version: "2.6.4.3"
+          agda-stdlib-version: "2.1"
+
+      - name: Install LaTeX toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y latexmk texlive-latex-base texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra texlive-xetex
+
+      - name: Build HTML (clickable rendered code)
+        run: |
+          set -euxo pipefail
+          mkdir -p site
+          scripts/generate-everything.sh
+          agda -i . -l standard-library \
+            --html --html-dir=site \
+            DASHI/Everything.agda
+
+      - name: Build PDF (Full Book)
+        run: |
+          set -euxo pipefail
+          scripts/build_book.sh
+          cp build/latex/Book.pdf site/Book.pdf
+
+      - name: Add a tiny landing page
+        run: |
+          set -euxo pipefail
+          cat > site/index.html <<'HTML'
+          <!doctype html>
+          <meta charset="utf-8" />
+          <title>DASHI Proof Artifacts</title>
+          <h1>DASHI Proof Artifacts</h1>
+          <ul>
+            <li><a href="./DASHI.Everything.html">Clickable rendered code (HTML)</a></li>
+            <li><a href="./Book.pdf">Full Book PDF</a></li>
+          </ul>
+          HTML
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Upload PDF as a normal artifact too
+        uses: actions/upload-artifact@v4
+        with:
+          name: book-pdf
+          path: site/Book.pdf
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

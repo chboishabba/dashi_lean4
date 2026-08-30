@@ -1,0 +1,378 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Got it!" [ref=e3] [cursor=pointer]:
+      - /url: "#null"
+    - paragraph [ref=e4]:
+      - text: This website uses cookies to ensure you get the best experience on our website
+      - link "More info" [ref=e5] [cursor=pointer]:
+        - /url: /cookies
+  - generic [ref=e6]:
+    - navigation [ref=e7]:
+      - generic [ref=e8]:
+        - link [ref=e10] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e12]:
+          - generic [ref=e14]:
+            - textbox "Search HEPData" [ref=e15]
+            - button "Search" [ref=e16] [cursor=pointer]
+          - list [ref=e17]:
+            - listitem [ref=e18]:
+              - link " About" [ref=e19] [cursor=pointer]:
+                - /url: /about
+                - generic [ref=e20]: 
+                - text: About
+            - listitem [ref=e21]:
+              - link " Submission Help" [ref=e22] [cursor=pointer]:
+                - /url: /submission
+                - generic [ref=e23]: 
+                - text: Submission Help
+            - listitem [ref=e24]:
+              - link " File Formats" [ref=e25] [cursor=pointer]:
+                - /url: /formats
+                - generic [ref=e26]: 
+                - text: File Formats
+            - listitem [ref=e27]:
+              - link " Sign in" [ref=e28] [cursor=pointer]:
+                - /url: /login/
+                - generic [ref=e29]: 
+                - text: Sign in
+    - generic [ref=e31]:
+      - list:
+        - link " Browse all":
+          - /url: /search
+          - listitem [ref=e32] [cursor=pointer]:
+            - generic [ref=e33]: 
+            - text: Browse all
+        - link " View all Publication Data":
+          - /url: /record/ins3094698
+          - listitem [ref=e34] [cursor=pointer]:
+            - generic [ref=e35]: 
+            - text: View all Publication Data
+        - listitem [ref=e36]:
+          - generic [ref=e37]: 
+          - text: config_2_results from Version 1 of Aaij, Roel et al.
+        - listitem [ref=e38]:
+          - generic [ref=e39]:
+            - button " Cite" [ref=e40] [cursor=pointer]:
+              - generic [ref=e41]: 
+              - text: Cite
+            - link "JSON" [ref=e42] [cursor=pointer]:
+              - /url: "?format=json"
+          - generic [ref=e43]: Last updated on 2026-03-30 22:36
+  - generic [ref=e44]:
+    - generic [ref=e47]:
+      - generic [ref=e48]:
+        - button " Hide Publication Information" [ref=e49] [cursor=pointer]:
+          - generic [ref=e50]: 
+          - text: Hide Publication Information
+        - generic [ref=e52] [cursor=pointer]: 
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - text: A comprehensive analysis of the
+            - generic [ref=e55]:
+              - generic [ref=e56]:
+                - generic [ref=e57]:
+                  - generic [ref=e59]: B
+                  - generic [ref=e62]: "0"
+                - generic [ref=e64]: →
+                - generic [ref=e65]:
+                  - generic [ref=e67]: K
+                  - generic [ref=e69]:
+                    - generic [ref=e71]: ∗
+                    - generic [ref=e73]: "0"
+                - generic [ref=e74]:
+                  - generic [ref=e76]: μ
+                  - generic [ref=e79]: +
+                - generic [ref=e80]:
+                  - generic [ref=e82]: μ
+                  - generic [ref=e85]: −
+              - math [ref=e87]:
+                - generic [ref=e88]:
+                  - generic [ref=e89]: B
+                  - generic [ref=e90]: "0"
+                - generic [ref=e91]: →
+                - generic [ref=e92]:
+                  - generic [ref=e93]: K
+                  - generic [ref=e94]:
+                    - generic [ref=e95]: ∗
+                    - generic [ref=e96]: "0"
+                - generic [ref=e97]:
+                  - generic [ref=e98]: μ
+                  - generic [ref=e99]: +
+                - generic [ref=e100]:
+                  - generic [ref=e101]: μ
+                  - generic [ref=e102]: −
+            - text: decay
+          - generic [ref=e104]:
+            - text: The
+            - link "LHCb" [ref=e106] [cursor=pointer]:
+              - /url: /search/?collaboration=LHCb
+            - text: collaboration
+          - generic [ref=e107]:
+            - link "Aaij, Roel" [ref=e108] [cursor=pointer]:
+              - /url: /search?author=Aaij, Roel
+            - text: ","
+            - link "Abdelmotteleb, Ahmed Sameh Wagih" [ref=e109] [cursor=pointer]:
+              - /url: /search?author=Abdelmotteleb, Ahmed Sameh Wagih
+            - text: ","
+            - link "Abellan Beteta, Carlos" [ref=e110] [cursor=pointer]:
+              - /url: /search?author=Abellan Beteta, Carlos
+            - text: ","
+            - link "Abudinén, Fernando Jesus" [ref=e111] [cursor=pointer]:
+              - /url: /search?author=Abudinén, Fernando Jesus
+            - text: ","
+            - link "Ackernley, Thomas" [ref=e112] [cursor=pointer]:
+              - /url: /search?author=Ackernley, Thomas
+            - text: ","
+            - link "Adefisoye, Ayomide Matthew" [ref=e113] [cursor=pointer]:
+              - /url: /search?author=Adefisoye, Ayomide Matthew
+            - text: ","
+            - link "Adeva, Bernardo" [ref=e114] [cursor=pointer]:
+              - /url: /search?author=Adeva, Bernardo
+            - text: ","
+            - link "Adinolfi, Marco" [ref=e115] [cursor=pointer]:
+              - /url: /search?author=Adinolfi, Marco
+            - text: ","
+            - link "Adlarson, Patrik Harri" [ref=e116] [cursor=pointer]:
+              - /url: /search?author=Adlarson, Patrik Harri
+            - text: ","
+            - link "Agapopoulou, Christina" [ref=e117] [cursor=pointer]:
+              - /url: /search?author=Agapopoulou, Christina
+          - generic [ref=e118]: LHCb-PAPER-2025-041, 2025.
+          - generic [ref=e119]:
+            - list [ref=e120]:
+              - listitem [ref=e121]:
+                - link "INSPIRE" [ref=e122] [cursor=pointer]:
+                  - /url: https://inspirehep.net/literature/3094698
+                  - generic [ref=e123]: INSPIRE
+              - listitem [ref=e124]:
+                - button "Resources" [ref=e125] [cursor=pointer]
+            - list
+        - generic [ref=e126]:
+          - strong [ref=e127]: Abstract
+          - generic [ref=e128]:
+            - text: An analysis of the
+            - generic [ref=e129]:
+              - generic [ref=e130]:
+                - generic [ref=e131]:
+                  - generic [ref=e133]: B
+                  - generic [ref=e137]: "0"
+                - generic [ref=e139]: →
+                - generic [ref=e140]:
+                  - generic [ref=e142]: K
+                  - generic [ref=e144]:
+                    - generic [ref=e146]: ∗
+                    - generic [ref=e148]: "0"
+                - generic [ref=e150]: (
+                - generic [ref=e152]: →
+                - generic [ref=e153]:
+                  - generic [ref=e155]: K
+                  - generic [ref=e158]: +
+                - generic [ref=e159]:
+                  - generic [ref=e161]: π
+                  - generic [ref=e164]: −
+                - generic [ref=e166]: )
+                - generic [ref=e167]:
+                  - generic [ref=e169]: μ
+                  - generic [ref=e173]: +
+                - generic [ref=e174]:
+                  - generic [ref=e176]: μ
+                  - generic [ref=e180]: −
+              - math [ref=e182]:
+                - generic [ref=e183]:
+                  - generic [ref=e184]: B
+                  - generic [ref=e186]: "0"
+                - generic [ref=e187]: →
+                - generic [ref=e188]:
+                  - generic [ref=e189]: K
+                  - generic [ref=e190]:
+                    - generic [ref=e191]: ∗
+                    - generic [ref=e192]: "0"
+                - generic [ref=e193]: (
+                - generic [ref=e194]: →
+                - generic [ref=e195]:
+                  - generic [ref=e196]: K
+                  - generic [ref=e197]: +
+                - generic [ref=e198]:
+                  - generic [ref=e199]: π
+                  - generic [ref=e200]: −
+                - generic [ref=e201]: )
+                - generic [ref=e202]:
+                  - generic [ref=e203]: μ
+                  - generic [ref=e205]: +
+                - generic [ref=e206]:
+                  - generic [ref=e207]: μ
+                  - generic [ref=e209]: −
+            - text: decay is presented using proton-proton collision data collected by the LHCb experiment, corresponding to an integrated luminosity of 8.4 fb
+            - generic [ref=e210]:
+              - generic [ref=e214]:
+                - generic [ref=e216]: −
+                - generic [ref=e218]: "1"
+              - math [ref=e220]:
+                - generic [ref=e222]:
+                  - generic [ref=e223]: −
+                  - generic [ref=e224]: "1"
+            - text: . The full set of
+            - generic [ref=e225]:
+              - generic [ref=e226]:
+                - generic [ref=e228]: C
+                - generic [ref=e230]: P
+              - math [ref=e232]:
+                - generic [ref=e233]: C
+                - generic [ref=e234]: P
+            - text: "-averaged and"
+            - generic [ref=e235]:
+              - generic [ref=e236]:
+                - generic [ref=e238]: C
+                - generic [ref=e240]: P
+              - math [ref=e242]:
+                - generic [ref=e243]: C
+                - generic [ref=e244]: P
+            - text: "-asymmetric angular observables is determined in bins of the invariant mass squared of the dimuon system, as well as the branching fraction relative to the"
+            - generic [ref=e245]:
+              - generic [ref=e246]:
+                - generic [ref=e247]:
+                  - generic [ref=e249]: B
+                  - generic [ref=e253]: "0"
+                - generic [ref=e255]: →
+                - generic [ref=e257]: J
+                - generic [ref=e260]: /
+                - generic [ref=e262]: ψ
+                - generic [ref=e264]: (
+                - generic [ref=e266]: →
+                - generic [ref=e267]:
+                  - generic [ref=e269]: μ
+                  - generic [ref=e273]: +
+                - generic [ref=e274]:
+                  - generic [ref=e276]: μ
+                  - generic [ref=e280]: −
+                - generic [ref=e282]: )
+                - generic [ref=e283]:
+                  - generic [ref=e285]: K
+                  - generic [ref=e288]: +
+                - generic [ref=e289]:
+                  - generic [ref=e291]: π
+                  - generic [ref=e294]: −
+              - math [ref=e296]:
+                - generic [ref=e297]:
+                  - generic [ref=e298]: B
+                  - generic [ref=e300]: "0"
+                - generic [ref=e301]: →
+                - generic [ref=e302]: J
+                - generic [ref=e304]: /
+                - generic [ref=e305]: ψ
+                - generic [ref=e306]: (
+                - generic [ref=e307]: →
+                - generic [ref=e308]:
+                  - generic [ref=e309]: μ
+                  - generic [ref=e311]: +
+                - generic [ref=e312]:
+                  - generic [ref=e313]: μ
+                  - generic [ref=e315]: −
+                - generic [ref=e316]: )
+                - generic [ref=e317]:
+                  - generic [ref=e318]: K
+                  - generic [ref=e319]: +
+                - generic [ref=e320]:
+                  - generic [ref=e321]: π
+                  - generic [ref=e322]: −
+            - text: decay. For the first time, the full set of observables pertaining to the
+            - generic [ref=e323]:
+              - generic [ref=e324]:
+                - generic [ref=e325]:
+                  - generic [ref=e327]: K
+                  - generic [ref=e330]: +
+                - generic [ref=e331]:
+                  - generic [ref=e333]: π
+                  - generic [ref=e336]: −
+              - math [ref=e338]:
+                - generic [ref=e339]:
+                  - generic [ref=e340]: K
+                  - generic [ref=e341]: +
+                - generic [ref=e342]:
+                  - generic [ref=e343]: π
+                  - generic [ref=e344]: −
+            - text: S-wave contribution to the final state are presented and consideration is given to effects arising from the mass of the muons. The measurements of the
+            - generic [ref=e345]:
+              - generic [ref=e346]:
+                - generic [ref=e348]: C
+                - generic [ref=e350]: P
+              - math [ref=e352]:
+                - generic [ref=e353]: C
+                - generic [ref=e354]: P
+            - text: "-averaged observables and the branching fractions continue to exhibit the pattern of tensions with the Standard Model predictions that have been seen in previous analyses that use part of the dataset considered in this study. The extracted"
+            - generic [ref=e355]:
+              - generic [ref=e356]:
+                - generic [ref=e358]: C
+                - generic [ref=e360]: P
+              - math [ref=e362]:
+                - generic [ref=e363]: C
+                - generic [ref=e364]: P
+            - text: "-asymmetry observables show no significant deviations from zero."
+      - generic [ref=e365]:
+        - generic [ref=e367]:
+          - generic [ref=e368]:
+            - img
+          - paragraph [ref=e377]: Loading Data...
+        - text:  
+    - text: B 0 → K ∗ 0 μ + μ − B 0 → K ∗ 0 μ + μ − B 0 → K ∗ 0 μ + μ − B 0 → K ∗ 0 μ + μ − B 0 → K ∗ 0 μ + μ −   
+    - generic [ref=e378]:
+      - generic [ref=e379]:
+        - link [ref=e381] [cursor=pointer]:
+          - /url: https://www.ippp.dur.ac.uk/
+          - img [ref=e382]
+        - link [ref=e384] [cursor=pointer]:
+          - /url: http://home.cern/
+          - img [ref=e385]
+        - link [ref=e387] [cursor=pointer]:
+          - /url: https://www.ukri.org/councils/stfc/
+          - img [ref=e388]
+      - generic [ref=e390]:
+        - paragraph [ref=e391]:
+          - link "About HEPData" [ref=e392] [cursor=pointer]:
+            - /url: /about
+          - link "Submitting to HEPData" [ref=e393] [cursor=pointer]:
+            - /url: /submission
+          - link "HEPData File Formats" [ref=e394] [cursor=pointer]:
+            - /url: /formats
+          - link "HEPData Coordinators" [ref=e395] [cursor=pointer]:
+            - /url: /permissions/coordinators
+          - link "HEPData Terms of Use" [ref=e396] [cursor=pointer]:
+            - /url: /terms
+          - link "HEPData Cookie Policy" [ref=e397] [cursor=pointer]:
+            - /url: /cookies
+        - paragraph [ref=e398]:
+          - link " Status" [ref=e399] [cursor=pointer]:
+            - /url: https://status.hepdata.net
+            - generic [ref=e400]: 
+            - text: Status
+          - link " Email" [ref=e401] [cursor=pointer]:
+            - /url: mailto:info@hepdata.net
+            - generic [ref=e402]: 
+            - text: Email
+          - link "Forum" [ref=e403] [cursor=pointer]:
+            - /url: https://hepdata-forum.cern.ch
+            - img [ref=e404]
+            - text: Forum
+          - link " Twitter" [ref=e405] [cursor=pointer]:
+            - /url: https://www.twitter.com/HEPData
+            - generic [ref=e406]: 
+            - text: Twitter
+          - link " GitHub" [ref=e407] [cursor=pointer]:
+            - /url: https://www.github.com/HEPData
+            - generic [ref=e408]: 
+            - text: GitHub
+        - paragraph [ref=e409]:
+          - text: Copyright ~1975-Present, HEPData | Powered by
+          - link "Invenio" [ref=e410] [cursor=pointer]:
+            - /url: https://inveniosoftware.org/
+          - text: ", funded by"
+          - link "STFC" [ref=e411] [cursor=pointer]:
+            - /url: https://www.ukri.org/councils/stfc/
+          - text: ", hosted and originally developed at"
+          - link "CERN" [ref=e412] [cursor=pointer]:
+            - /url: https://home.cern/
+          - text: ", supported and further developed at"
+          - link "IPPP Durham" [ref=e413] [cursor=pointer]:
+            - /url: https://www.ippp.dur.ac.uk/
+          - text: .

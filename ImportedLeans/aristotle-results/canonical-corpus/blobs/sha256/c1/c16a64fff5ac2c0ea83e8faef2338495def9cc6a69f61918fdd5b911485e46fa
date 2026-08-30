@@ -1,0 +1,274 @@
+import Integration.CoordinateSufficiency
+
+/-!
+# The collision owner: one theorem behind projection loss, aggregation loss and
+scalarisation
+
+Four families of statement recur across the corpus, each stated separately in
+its own vocabulary:
+
+* an **aggregate** (a sum, a total, a count) loses a distinction its summands
+  carry;
+* a **coordinate deletion** loses a distinction the deleted coordinate carries;
+* a **scalarisation** of a vector objective loses the vector;
+* a **marginal** loses the joint.
+
+All four are the same theorem.  Its content is:
+
+> if `x ≠ y`, `P x = P y` and `C x ≠ C y`, then `C` does not factor through `P`
+> — and no downstream reading of `P` repairs that.
+
+This file owns that theorem once, packages its hypotheses as the datum
+`Collision P C`, and then *derives* the four families as constructions of a
+`Collision`.  There are deliberately not four parallel theorem families: there
+is one, with four constructors.
+
+The generic non-factorability statements themselves are not re-proved here.
+They already live in `Integration.CoordinateSufficiency` (`Determines`,
+`not_determines_of_collision`, `not_refines_of_collision`) and this file calls
+them.
+
+## Contents
+
+* `Collision` — the datum: a separated collided pair;
+* `Collision.not_determines`, `Collision.not_refines`, `Collision.no_reading` —
+  the owner theorem in its three equivalent phrasings;
+* `Collision.post` — **downstream closure**: a collision survives every further
+  processing of the observation, so the four families are also closed under
+  post-composition;
+* `Collision.ofNotInjective` — every non-injective observation collides with the
+  identity consumer, so non-injectivity *is* the hypothesis of the owner;
+* `sumCollision` — aggregation: a commutative sum of two summands;
+* `Collision.ofEssential` — coordinate deletion: an essential coordinate is
+  exactly a collision of the projection that deletes it;
+* `scalarCollision` — scalarisation: **every** linear scalarisation of a
+  two-dimensional objective collides, whatever its weights;
+* `marginalCollision` — marginalisation: two joints with equal marginals.
+
+Nothing here is a claim about any domain.  The carriers are function types,
+`ℚ` and `Bool`.
+-/
+
+namespace Integration.FactorisationCollision
+
+open Integration.CoordinateSufficiency
+
+variable {X Y Z W : Type}
+
+/-! ## The datum -/
+
+/-- A **collision** of the observation `P` against the consumer `C`: two
+distinct states that `P` identifies and `C` separates.  This is the single
+hypothesis behind projection loss, aggregation loss, scalarisation loss and
+marginalisation loss. -/
+structure Collision (P : X → Y) (C : X → Z) where
+  /-- The first state. -/
+  left : X
+  /-- The second state. -/
+  right : X
+  /-- They are genuinely different states. -/
+  distinct : left ≠ right
+  /-- The observation identifies them. -/
+  collide : P left = P right
+  /-- The consumer separates them. -/
+  separate : C left ≠ C right
+
+namespace Collision
+
+variable {P : X → Y} {C : X → Z}
+
+/-- **The owner theorem.**  A collision refutes determination of the consumer by
+the observation. -/
+theorem not_determines (w : Collision P C) : ¬ Determines P C :=
+  not_determines_of_collision w.collide w.separate
+
+/-- The same statement against every candidate downstream map. -/
+theorem not_refines (w : Collision P C) : ¬ Integration.LeastSufficient.Refines P C :=
+  not_refines_of_collision w.collide w.separate
+
+/-- And the same statement in explicit form: no reading of the observation
+returns the consumer. -/
+theorem no_reading (w : Collision P C) (f : Y → Z) : ¬ ∀ x, C x = f (P x) := by
+  intro h
+  exact w.separate (by rw [h w.left, h w.right, w.collide])
+
+/-- **Downstream closure.**  Post-processing the observation preserves the
+collision, so nothing computed from `P` recovers the distinction. -/
+def post (w : Collision P C) (g : Y → W) : Collision (fun x => g (P x)) C where
+  left := w.left
+  right := w.right
+  distinct := w.distinct
+  collide := congrArg g w.collide
+  separate := w.separate
+
+/-- Post-composing the *consumer* with an injection also preserves it. -/
+def mapConsumer (w : Collision P C) {f : Z → W} (hf : Function.Injective f) :
+    Collision P (fun x => f (C x)) where
+  left := w.left
+  right := w.right
+  distinct := w.distinct
+  collide := w.collide
+  separate := fun h => w.separate (hf h)
+
+/-- A collision witnesses non-injectivity of the observation. -/
+theorem projection_not_injective (w : Collision P C) : ¬ Function.Injective P :=
+  fun h => w.distinct (h w.collide)
+
+/-- A collision witnesses non-constancy of the consumer. -/
+theorem consumer_not_constant (w : Collision P C) : ¬ ∀ x y, C x = C y :=
+  fun h => w.separate (h w.left w.right)
+
+end Collision
+
+/-- **Non-injectivity is the hypothesis.**  Every non-injective observation
+collides against the identity consumer, so the owner applies to every lossy
+observation whose consumer is the state itself. -/
+theorem nonempty_collision_of_not_injective {P : X → Y} (h : ¬ Function.Injective P) :
+    Nonempty (Collision P (id : X → X)) := by
+  simp only [Function.Injective, not_forall] at h
+  obtain ⟨x, y, hEq, hne⟩ := h
+  exact ⟨⟨x, y, hne, hEq, hne⟩⟩
+
+/-- The chosen such collision. -/
+noncomputable def Collision.ofNotInjective {P : X → Y} (h : ¬ Function.Injective P) :
+    Collision P (id : X → X) := (nonempty_collision_of_not_injective h).some
+
+/-! ## Family 1: aggregation -/
+
+/-- **Aggregation collision.**  A commutative two-summand aggregate identifies a
+state with its transpose, so the aggregate never determines the summands.  This
+is the general form behind every "the total lost the breakdown" statement. -/
+def sumCollision {A : Type} [AddCommMonoid A] {a b : A} (hab : a ≠ b) :
+    Collision (fun v : Fin 2 → A => v 0 + v 1) (id : (Fin 2 → A) → (Fin 2 → A)) where
+  left := ![a, b]
+  right := ![b, a]
+  distinct := fun h => hab (by simpa using congrFun h 0)
+  collide := by simp [add_comm]
+  separate := fun h => hab (by simpa using congrFun h 0)
+
+/-- Hence the aggregate is not injective. -/
+theorem sum_not_injective {A : Type} [AddCommMonoid A] {a b : A} (hab : a ≠ b) :
+    ¬ Function.Injective (fun v : Fin 2 → A => v 0 + v 1) :=
+  (sumCollision hab).projection_not_injective
+
+/-! ## Family 2: coordinate deletion -/
+
+section Deletion
+
+variable {I : Type} {A : I → Type} {V : Type}
+
+/-- The projection that deletes coordinate `j`. -/
+def deleteCoord (j : I) (x : ∀ i, A i) : ∀ i : {i // i ≠ j}, A i.1 := fun i => x i.1
+
+/-- **Coordinate-deletion collision.**  An essential coordinate is exactly a
+collision of the projection that deletes it, so the coordinate family of
+statements is the owner again and not a separate theorem. -/
+theorem nonempty_collision_of_essential {j : I} {C : (∀ i, A i) → V}
+    (h : Essential j C) : Nonempty (Collision (deleteCoord (A := A) j) C) := by
+  obtain ⟨x, y, hagree, hsep⟩ := h
+  exact ⟨⟨x, y, fun hxy => hsep (congrArg C hxy), funext fun i => hagree i.1 i.2, hsep⟩⟩
+
+/-- The chosen such collision. -/
+noncomputable def Collision.ofEssential {j : I} {C : (∀ i, A i) → V}
+    (h : Essential j C) : Collision (deleteCoord (A := A) j) C :=
+  (nonempty_collision_of_essential h).some
+
+/-- And conversely a collision of the deletion projection makes the coordinate
+essential, so the two notions coincide. -/
+theorem essential_of_deleteCoord_collision {j : I} {C : (∀ i, A i) → V}
+    (w : Collision (deleteCoord (A := A) j) C) : Essential j C :=
+  ⟨w.left, w.right, fun i hi => congrFun w.collide ⟨i, hi⟩, w.separate⟩
+
+end Deletion
+
+/-! ## Family 3: scalarisation -/
+
+/-- The linear scalarisation of a two-dimensional objective with weights `w`. -/
+def scalarise (w : Fin 2 → ℚ) (x : Fin 2 → ℚ) : ℚ := w 0 * x 0 + w 1 * x 1
+
+/-- **Scalarisation collision, for every weight vector.**  There is no choice of
+weights under which the scalar total determines the objective vector: the
+collision is constructed from the weights themselves.  So "pick better weights"
+is not an available repair. -/
+noncomputable def scalarCollision (w : Fin 2 → ℚ) :
+    Collision (scalarise w) (id : (Fin 2 → ℚ) → (Fin 2 → ℚ)) := by
+  classical
+  by_cases h1 : w 1 = 0
+  · refine ⟨![0, 0], ![0, 1], ?_, ?_, ?_⟩
+    · intro h; simpa using congrFun h 1
+    · simp [scalarise, h1]
+    · intro h; simpa using congrFun h 1
+  · refine ⟨![0, 0], ![w 1, -w 0], ?_, ?_, ?_⟩
+    · intro h
+      apply h1
+      have := congrFun h 0
+      simp at this
+      simp [this]
+    · simp [scalarise]; ring
+    · intro h
+      apply h1
+      have := congrFun h 0
+      simp at this
+      simp [this]
+
+/-- **No scalarisation determines the objective vector.** -/
+theorem scalarise_not_determines (w : Fin 2 → ℚ) :
+    ¬ Determines (scalarise w) (id : (Fin 2 → ℚ) → (Fin 2 → ℚ)) :=
+  (scalarCollision w).not_determines
+
+/-- Nor does any reading of the scalar total, however it is post-processed. -/
+theorem scalarise_post_not_determines (w : Fin 2 → ℚ) (g : ℚ → ℚ) :
+    ¬ Determines (fun x => g (scalarise w x)) (id : (Fin 2 → ℚ) → (Fin 2 → ℚ)) :=
+  ((scalarCollision w).post g).not_determines
+
+/-! ## Family 4: marginalisation -/
+
+/-- The uniform marginal of a two-coordinate rational consumer. -/
+def uniformMarginal (C : Bool → Bool → ℚ) (a : Bool) : ℚ := (C a false + C a true) / 2
+
+/-- The parity consumer. -/
+def par (a b : Bool) : ℚ := if a = b then 0 else 1
+
+/-- Its complement. -/
+def coPar (a b : Bool) : ℚ := 1 - par a b
+
+/-- **Marginalisation collision.**  Two joints with identical marginals in the
+first coordinate, separated by the joint itself. -/
+def marginalCollision :
+    Collision uniformMarginal (id : (Bool → Bool → ℚ) → (Bool → Bool → ℚ)) where
+  left := par
+  right := coPar
+  distinct := fun h => by
+    have := congrFun (congrFun h false) false
+    simp [par, coPar] at this
+  collide := by
+    funext a
+    cases a <;> norm_num [uniformMarginal, par, coPar]
+  separate := fun h => by
+    have := congrFun (congrFun h false) false
+    simp [par, coPar] at this
+
+/-- **The marginals do not determine the joint.** -/
+theorem marginal_not_determines :
+    ¬ Determines uniformMarginal (id : (Bool → Bool → ℚ) → (Bool → Bool → ℚ)) :=
+  marginalCollision.not_determines
+
+/-! ## The four families, collected -/
+
+/-- **One owner, four families.**  Aggregation, coordinate deletion,
+scalarisation and marginalisation each supply a `Collision`, and each
+non-factorability conclusion is `Collision.not_determines` applied to it.  The
+statement below is the collected form; the point of the file is that its four
+components have one proof. -/
+theorem four_families_one_owner :
+    (¬ Determines (fun v : Fin 2 → ℚ => v 0 + v 1) (id : (Fin 2 → ℚ) → (Fin 2 → ℚ))) ∧
+    (∀ w : Fin 2 → ℚ, ¬ Determines (scalarise w) (id : (Fin 2 → ℚ) → (Fin 2 → ℚ))) ∧
+    (¬ Determines uniformMarginal (id : (Bool → Bool → ℚ) → (Bool → Bool → ℚ))) ∧
+    (∀ {I : Type} {A : I → Type} {V : Type} {j : I} {C : (∀ i, A i) → V},
+      Essential j C → ¬ Determines (deleteCoord (A := A) j) C) :=
+  ⟨(sumCollision (a := (0 : ℚ)) (b := 1) (by norm_num)).not_determines,
+    fun w => scalarise_not_determines w,
+    marginal_not_determines,
+    fun h => (Collision.ofEssential h).not_determines⟩
+
+end Integration.FactorisationCollision

@@ -1,0 +1,148 @@
+#!/usr/bin/env python3
+"""
+aristo_vision — Python loader for the dual-atlas vision embedding (Lean FFI).
+
+This module loads ``libaristovision.so`` (built from
+``RequestProject/VisionFFI.lean`` via ``build_so.sh``) and exposes the
+per-declaration dual-atlas projections over ctypes:
+
+    cog(h)        cognitive index   in 1..92      (certified: VisionFFI.cogU_range)
+    triad(h)      semantic triad    in 0..19      (certified: VisionFFI.triadU_range)
+    harm(h)       harmonic code     in {0,5,7,11,13}
+    harm_index(h) harmonic bucket   in 0..4
+    embedding(h)  117-dim one-hot vector  [cog(92) | triad(20) | harm(5)]
+
+``h`` is a 64-bit declaration *fingerprint* — the same quantity the in-Lean
+analysis uses (``DualAtlasCensus.declFingerprint`` = ``type.hash XOR value.hash``).
+The Lean theorems ``VisionFFICert.cogU_eq_cogProj`` / ``triadU_eq_triadProj`` /
+``harmU_eq_harmCode`` prove that what this module returns is *exactly* the
+certified ``DualAtlas`` projection used to build the rasters that
+``RequestProject.VisionPatterns`` proves its findings about.
+
+Usage:
+    from aristo_vision import AristoVision
+    av = AristoVision()                 # finds build/libaristovision.so next to this file
+    print(av.cog(123456789))
+    v = av.embedding(123456789)         # length-117 list of 0/1
+"""
+
+from __future__ import annotations
+
+import ctypes
+import os
+from typing import List
+
+# 64-bit unsigned mask, mirroring Lean's UInt64 wraparound.
+_U64 = (1 << 64) - 1
+
+# Block sizes of the assembled embedding (must match VisionFFI.embeddingDimU = 117).
+COG_DIM = 92
+TRIAD_DIM = 20
+HARM_DIM = 5
+EMBED_DIM = COG_DIM + TRIAD_DIM + HARM_DIM  # 117
+
+
+def _default_lib_path() -> str:
+    here = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(here, "build", "libaristovision.so")
+
+
+def _find_lean_shared() -> str:
+    """Locate libleanshared.so via the active Lean toolchain."""
+    # Honour an explicit override first.
+    env = os.environ.get("LIBLEANSHARED")
+    if env and os.path.exists(env):
+        return env
+    # Try the elan default toolchain layout.
+    import subprocess
+    try:
+        prefix = subprocess.check_output(["lean", "--print-prefix"]).decode().strip()
+        cand = os.path.join(prefix, "lib", "lean", "libleanshared.so")
+        if os.path.exists(cand):
+            return cand
+    except Exception:
+        pass
+    # Fall back to the bare name and let the dynamic loader resolve it.
+    return "libleanshared.so"
+
+
+class AristoVision:
+    """Thin ctypes wrapper around ``libaristovision.so``."""
+
+    def __init__(self, lib_path: str | None = None):
+        lib_path = lib_path or _default_lib_path()
+        if not os.path.exists(lib_path):
+            raise FileNotFoundError(
+                f"{lib_path} not found — run vision/ffi/build_so.sh first."
+            )
+
+        # 1. Load the Lean runtime first, GLOBAL so the embedding lib resolves it.
+        self._lean = ctypes.CDLL(_find_lean_shared(), mode=ctypes.RTLD_GLOBAL)
+
+        # 2. Load the embedding library.
+        self._lib = ctypes.CDLL(lib_path, mode=ctypes.RTLD_GLOBAL)
+
+        # 3. Initialise the Lean runtime and the module.
+        #    Signatures of the Lean C runtime entry points we touch:
+        self._lean.lean_initialize_runtime_module.restype = None
+        self._lean.lean_io_mark_end_initialization.restype = None
+
+        init = self._lib.initialize_RequestProject_VisionFFI
+        init.restype = ctypes.c_void_p
+        init.argtypes = [ctypes.c_uint8, ctypes.c_void_p]
+
+        self._lean.lean_initialize_runtime_module()
+        # `lean_io_mk_world()` is a header-inline returning `lean_box(0)`,
+        # i.e. the tagged pointer (void*)1 — the IO "real world" token.
+        world = ctypes.c_void_p(1)
+        init(1, world)  # builtin = 1
+        self._lean.lean_io_mark_end_initialization()
+
+        # 4. Bind the exported scalar functions: uint64_t f(uint64_t).
+        for name in ("aristo_cog", "aristo_triad", "aristo_harm",
+                     "aristo_harm_index", "aristo_embedding_dim"):
+            fn = getattr(self._lib, name)
+            fn.restype = ctypes.c_uint64
+            fn.argtypes = [ctypes.c_uint64]
+
+    # --- scalar projections ------------------------------------------------
+    def cog(self, h: int) -> int:
+        return int(self._lib.aristo_cog(h & _U64))
+
+    def triad(self, h: int) -> int:
+        return int(self._lib.aristo_triad(h & _U64))
+
+    def harm(self, h: int) -> int:
+        return int(self._lib.aristo_harm(h & _U64))
+
+    def harm_index(self, h: int) -> int:
+        return int(self._lib.aristo_harm_index(h & _U64))
+
+    def embedding_dim(self) -> int:
+        return int(self._lib.aristo_embedding_dim(0))
+
+    # --- assembled one-hot embedding --------------------------------------
+    def embedding(self, h: int) -> List[int]:
+        """The 117-dim one-hot dual-atlas embedding: [cog | triad | harm]."""
+        v = [0] * EMBED_DIM
+        v[self.cog(h) - 1] = 1                       # cog block, index cog-1 in 0..91
+        v[COG_DIM + self.triad(h)] = 1               # triad block
+        v[COG_DIM + TRIAD_DIM + self.harm_index(h)] = 1  # harm block
+        return v
+
+
+def _demo() -> None:
+    av = AristoVision()
+    assert av.embedding_dim() == EMBED_DIM, av.embedding_dim()
+    print(f"embedding dim (from Lean) = {av.embedding_dim()}")
+    for h in [0, 1, 65, 91, 143, 123456789, (1 << 64) - 1]:
+        c, t, hm = av.cog(h), av.triad(h), av.harm(h)
+        v = av.embedding(h)
+        assert 1 <= c <= 92 and 0 <= t <= 19 and hm in (0, 5, 7, 11, 13)
+        assert sum(v) == 3 and len(v) == EMBED_DIM
+        print(f"h={h:<22} cog={c:<3} triad={t:<3} harm={hm:<3} |v|1={sum(v)}")
+    print("OK — all FFI calls in documented ranges; embeddings are valid one-hots.")
+
+
+if __name__ == "__main__":
+    _demo()

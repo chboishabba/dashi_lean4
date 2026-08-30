@@ -1,0 +1,17 @@
+{
+  "totalDeclarations": 707228,
+  "cogBuckets": 92,
+  "triadBuckets": 20,
+  "harmBuckets": 5,
+  "cogWins": 707228,
+  "triadWins": 0,
+  "harmWins": 0,
+  "cogWinsRel": 221316,
+  "triadWinsRel": 184354,
+  "harmWinsRel": 301558,
+  "featured": [
+    {"decl": "Nat.add", "rawBest": "Cognitive (46×2)", "relBest": "Cognitive (46×2)", "cogPop": 7435, "triadPop": 35643, "harmPop": 405670},
+    {"decl": "List.map", "rawBest": "Cognitive (46×2)", "relBest": "Cognitive (46×2)", "cogPop": 7448, "triadPop": 34645, "harmPop": 405670},
+    {"decl": "Prod.fst", "rawBest": "Cognitive (46×2)", "relBest": "Harmonic Cell", "cogPop": 7687, "triadPop": 35310, "harmPop": 103077}
+  ]
+}

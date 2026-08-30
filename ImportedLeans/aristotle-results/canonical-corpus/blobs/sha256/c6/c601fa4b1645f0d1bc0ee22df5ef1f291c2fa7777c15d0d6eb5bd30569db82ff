@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+"""Render one frame per q-expansion page of the moonshine q-deformation.
+
+Each frame draws the *shape* the user described: a horizontal line carrying one
+dot per available Monster prime at that page (`dot_count` in
+`qdeform_pages.csv`, the ground truth emitted by `RequestProject/QDeform.lean`).
+
+The frame geometry is deterministic and matches `QShapes.dotPositions` in
+`RequestProject/QShapes.lean`, so the shapes OpenCV detects here are exactly the
+shapes proven in Lean.
+"""
+import csv
+import os
+
+import cv2
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+CSV = os.path.join(HERE, "qdeform_pages.csv")
+FRAMES = os.path.join(HERE, "frames")
+
+# Frame geometry (kept identical to QShapes.lean).
+W, H = 640, 200
+CY = 100          # the line is horizontal at y = 100
+X0, X1 = 80, 560  # dots live between these x's
+R = 10            # dot radius
+
+
+def dot_positions(k: int):
+    """k evenly spaced dot centres on the horizontal line y = CY.
+
+    Mirrors `QShapes.dotPositions` exactly.
+    """
+    if k <= 0:
+        return []
+    if k == 1:
+        return [((X0 + X1) // 2, CY)]
+    step = (X1 - X0) // (k - 1)
+    return [(X0 + i * step, CY) for i in range(k)]
+
+
+def render(k: int):
+    img = np.full((H, W, 3), 255, np.uint8)
+    # draw the connecting line (the "line" shape)
+    if k >= 2:
+        pts = dot_positions(k)
+        cv2.line(img, pts[0], pts[-1], (40, 40, 40), 2)
+    elif k == 0:
+        # full collapse: a faint reference line, no dots
+        cv2.line(img, (X0, CY), (X1, CY), (210, 210, 210), 1)
+    for (x, y) in dot_positions(k):
+        cv2.circle(img, (x, y), R, (20, 20, 200), -1)
+    return img
+
+
+def main():
+    os.makedirs(FRAMES, exist_ok=True)
+    with open(CSV) as f:
+        rows = list(csv.DictReader(f))
+    for row in rows:
+        pi = int(row["page_index"])
+        k = int(row["dot_count"])
+        img = render(k)
+        cv2.imwrite(os.path.join(FRAMES, f"page_{pi:03d}.png"), img)
+    print(f"rendered {len(rows)} frames into {FRAMES}")
+
+
+if __name__ == "__main__":
+    main()

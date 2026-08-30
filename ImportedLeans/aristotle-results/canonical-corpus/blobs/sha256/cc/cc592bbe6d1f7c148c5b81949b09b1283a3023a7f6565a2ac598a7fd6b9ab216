@@ -1,0 +1,164 @@
+module DASHI.Physics.YangMills.BalabanCMP109LiteralPropagatorOuterSineGapWeldExact where
+
+------------------------------------------------------------------------
+-- ROW A1a:  WELDING THE REPOSITORY'S OWN CONSTRUCTIVE SINE GAP TO THE
+--   LITERAL LATTICE INVERSE PROPAGATOR.
+--
+-- PRIMARY SOURCES
+--
+-- Zachary Murray, "Constructive Analysis in the Agda Proof Assistant",
+-- B.Sc. Honours thesis, Dalhousie University, 2022.  arXiv:2205.08354.
+--
+-- Tadeusz Balaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHAT THIS MODULE ADDS.
+--
+-- `BalabanBishopOuterBrillouinSineGapExact` already proves constructively,
+-- over Bishop reals and with no monotonicity theorem for sine, that on an
+-- outer Brillouin coordinate
+--
+--     3/4 <= t <= 11/7   implies   (2 sin t)^2 >= 7569/4096 .
+--
+-- `BalabanCMP109LiteralLatticeInversePropagatorExact` writes the lattice
+-- inverse propagator as a literal expression whose per-axis term is exactly
+-- `4 sin^2 = (2 sin)^2`.  These two statements are about the same number, and
+-- this module puts them together:
+--
+--   * `axisContributionMatchesSineGap` -- with the per-axis sine bound 87/128
+--     supplied by the source module, the literal per-axis term of the
+--     inverse propagator is exactly 7569/4096, the source module's own
+--     constant;
+--   * `sourceGapConstant` -- the constant is recorded here in the normalised
+--     rationals with the same value 7569/4096 the source module derives.
+--     It is *not* imported: under the toolchain this repository pins (Agda
+--     2.6.4.3 with agda-stdlib 2.1) the Bishop constructive-analysis cone does
+--     not currently typecheck -- a parse error in
+--     `BalabanBishopSineTwoBallCubicLowerExact`, and then name ambiguities
+--     coming from a different standard-library version -- so an import-level
+--     weld cannot be machine-checked today.  That is a toolchain defect in
+--     that cone, recorded rather than papered over;
+--   * `outerAxisInversePropagatorPositive` and `outerAxisPropagatorBound` --
+--     so a single outer axis already makes the literal inverse propagator
+--     uniformly positive, with free propagator bounded by 4096/7569.
+--
+-- WHAT IS STILL OPEN.  The bridge from the Bishop-real statement to the
+-- rational atom valuation of the diagram syntax -- that is, the claim that the
+-- valuation of the sine atom on a regular cell really is bounded below by
+-- 87/128 -- is a hypothesis of the bound table here, not a theorem.  So is the
+-- rest of lane A1a: the Wilson, Faddeev-Popov and Haar numerators.  What is
+-- removed is the guesswork about the constant: it is the source module's.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (_≡_; refl)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.BalabanClayT4LiteralOneLoopBoxEvaluatorExact
+  using (TrigAtom; sineHalf; MomentumRole; loopMomentum; externalMomentum;
+         shiftedMomentum; AxisIndex; axis0; axis1; axis2; axis3)
+open import DASHI.Physics.YangMills.BalabanCMP109LiteralLatticeInversePropagatorExact
+  using (freePropagatorExpression; module PropagatorBounds)
+
+------------------------------------------------------------------------
+-- 1.  The source module's constants, in the normalised rationals
+------------------------------------------------------------------------
+
+outerSineLower : ℚ
+outerSineLower = + 87 / 128
+
+outerAxisGap : ℚ
+outerAxisGap = + 7569 / 4096
+
+-- The value 7569/4096 is the one `BalabanBishopOuterBrillouinSineGapExact`
+-- derives for (2 sin t)^2 on an outer coordinate; it is recorded here as a
+-- normalised rational because that cone is not currently checkable under the
+-- pinned toolchain (see the header).
+sourceGapConstant : outerAxisGap ≡ (+ 87 / 128) * ((+ 87 / 128) * (+ 4 / 1))
+sourceGapConstant = refl
+
+------------------------------------------------------------------------
+-- 2.  The bound table: one marked outer axis
+------------------------------------------------------------------------
+
+outerUpperAtom outerSignedLowerAtom : TrigAtom → ℚ
+outerUpperAtom _ = 1ℚ
+outerSignedLowerAtom _ = ℚ.- 1ℚ
+
+outerLowerAtom : TrigAtom → ℚ
+outerLowerAtom (sineHalf loopMomentum axis0) = outerSineLower
+outerLowerAtom _ = 0ℚ
+
+outerSineLowerNonNegative :
+  ∀ role ax → 0ℚ ≤ outerLowerAtom (sineHalf role ax)
+outerSineLowerNonNegative loopMomentum axis0 =
+  toWitness {a? = 0ℚ ℚP.≤? outerSineLower} _
+outerSineLowerNonNegative loopMomentum axis1 = ℚP.≤-refl
+outerSineLowerNonNegative loopMomentum axis2 = ℚP.≤-refl
+outerSineLowerNonNegative loopMomentum axis3 = ℚP.≤-refl
+outerSineLowerNonNegative externalMomentum axis0 = ℚP.≤-refl
+outerSineLowerNonNegative externalMomentum axis1 = ℚP.≤-refl
+outerSineLowerNonNegative externalMomentum axis2 = ℚP.≤-refl
+outerSineLowerNonNegative externalMomentum axis3 = ℚP.≤-refl
+outerSineLowerNonNegative shiftedMomentum axis0 = ℚP.≤-refl
+outerSineLowerNonNegative shiftedMomentum axis1 = ℚP.≤-refl
+outerSineLowerNonNegative shiftedMomentum axis2 = ℚP.≤-refl
+outerSineLowerNonNegative shiftedMomentum axis3 = ℚP.≤-refl
+
+module OuterBounds =
+  PropagatorBounds outerUpperAtom outerLowerAtom outerSignedLowerAtom
+    outerSineLowerNonNegative
+
+------------------------------------------------------------------------
+-- 3.  The weld
+------------------------------------------------------------------------
+
+-- The literal per-axis term of the inverse propagator, evaluated with the
+-- source module's sine bound, is the source module's gap constant.
+axisContributionMatchesSineGap :
+  OuterBounds.axisLower loopMomentum axis0 ≡ outerAxisGap
+axisContributionMatchesSineGap = refl
+
+outerAxisInversePropagatorLower :
+  OuterBounds.hatSquaredLowerValue loopMomentum ≡ outerAxisGap
+outerAxisInversePropagatorLower = refl
+
+outerAxisInversePropagatorPositive :
+  0ℚ < OuterBounds.hatSquaredLowerValue loopMomentum
+outerAxisInversePropagatorPositive =
+  toWitness
+    {a? = 0ℚ ℚP.<? OuterBounds.hatSquaredLowerValue loopMomentum} _
+
+-- Hence a free propagator bound of 4096/7569 on the marked outer axis.
+outerAxisPropagatorBound :
+  OuterBounds.UpperOK (freePropagatorExpression loopMomentum) (+ 4096 / 7569)
+outerAxisPropagatorBound =
+  OuterBounds.freePropagatorUpper loopMomentum (+ 4096 / 7569)
+    outerAxisInversePropagatorPositive
+    (toWitness
+      {a? = 1ℚ ℚP.≤?
+              (+ 4096 / 7569)
+                * OuterBounds.hatSquaredLowerValue loopMomentum} _)
+
+------------------------------------------------------------------------
+-- 4.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: the constant match with the source sine gap, the
+-- positive lower bound on the literal inverse propagator from one outer axis,
+-- and the resulting free propagator bound.
+outerSineGapWeldLevel : ProofLevel
+outerSineGapWeldLevel = machineChecked
+
+-- STILL OPEN: the transfer of the Bishop-real sine gap to the rational atom
+-- valuation of the diagram syntax, and the one-loop numerators.
+atomValuationTransferLevel : ProofLevel
+atomValuationTransferLevel = conditional

@@ -1,0 +1,273 @@
+module DASHI.Physics.YangMills.BalabanYM4CauchyTubeAnalyticPackageExact where
+
+------------------------------------------------------------------------
+-- ROW A, ANALYTIC PRODUCER LANE:
+--   ONE CAUCHY COEFFICIENT BOUND  ==>  BOTH TUBE SUP BOUNDS
+--
+-- PRIMARY SOURCE FOR THE SETTING
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHAT THIS MODULE IS FOR.  Row A needs two analytic constants for the same
+-- literal interaction correction of the Bałaban step:
+--
+--     A2 :  |beta_Int(g)| <= C g          on the small-coupling tube,
+--     A3 :  |d beta / d g| <= L           on the same tube.
+--
+-- Written as beta_Int(g) = g F(g), those are `sup |F| <= M0` and (through the
+-- Leibniz rule) `sup |F| + gamma sup |F'|`.  They are therefore *not* two
+-- independent estimates: a single analytic bound for F on a slightly larger
+-- disc produces both, by the Cauchy estimate.  This module is the exact,
+-- division-free form of that implication.
+--
+-- HYPOTHESIS (the Cauchy input).  F is given by its Taylor coefficients a_n
+-- at the origin, and the analytic producer supplies the polydisc bound
+--
+--     |a_n| R^n <= M0      for all n,
+--
+-- which is exactly what a uniform bound `sup_{|z| <= R} |F(z)| <= M0` yields.
+-- Writing theta = gamma / R < 1 for the tube ratio, the hypothesis is stated
+-- here without division as
+--
+--     |a_n| gamma^n <= M0 theta^n .
+--
+-- CONCLUSIONS (uniform in the truncation N, hence valid for the sums):
+--
+--     sum_{n<N} |a_n| g^n                <= M0 Tcap                (g <= gamma)
+--     gamma sum_{n<N} (n+1)|a_{n+1}| g^n <= (M0 theta) Scap
+--
+-- for any caps satisfying `1 <= (1-theta) Tcap` and `Tcap <= (1-theta) Scap`
+-- -- i.e. for Tcap = R/(R-gamma) and Scap = R^2/(R-gamma)^2.  Dividing by
+-- gamma, the derivative sup on the tube is
+--
+--     M1 = M0 theta Scap / gamma = M0 R / (R - gamma)^2 ,
+--
+-- and the function sup is `M0tube = M0 Tcap = M0 R/(R - gamma)`, the two
+-- inputs of the uniform derivative package.
+--
+-- Uniformity in N is what makes these legitimate sup bounds: a bound on every
+-- partial sum of a nonnegative majorant bounds the sum of any convergent
+-- realisation, with no completeness or limit machinery.
+--
+-- WHAT IS NOT PROVED.  That the literal Bałaban interaction correction *has*
+-- such a coefficient bound with a specific numerical M0 and radius R is the
+-- open analytic producer A2/A3; this module only shows that one such bound
+-- suffices for both.  Row A stays open and the frozen research count stays
+-- at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; nonNegative; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; subst)
+
+open import DASHI.Physics.YangMills.BalabanYM4GeometricMajorantSeriesExact
+  using ( sum₀; sum₀-mono; sum₀-scaleˡ; pow; natℚ; natℚ-nonNeg
+        ; pow-nonNeg; pow-mono; geoSum; arithGeoSum; geoCap; arithGeoCap
+        ; mul-nonNeg; scaleˡ-nonNeg; scaleʳ-nonNeg; mul-mono-nonNeg)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- The Cauchy input
+------------------------------------------------------------------------
+
+record CauchyTubePackage : Set where
+  field
+    tubeRadius    : ℚ       -- gamma
+    tubeRatio     : ℚ       -- theta = gamma / R
+    coeffSup      : ℚ       -- M0
+    geoCapValue   : ℚ       -- Tcap  (intended R/(R-gamma))
+    arithCapValue : ℚ       -- Scap  (intended R^2/(R-gamma)^2)
+    coeffAbs      : Nat → ℚ -- |a_n|
+
+    tubeRadiusNonNeg  : 0ℚ ≤ tubeRadius
+    tubeRatioNonNeg   : 0ℚ ≤ tubeRatio
+    tubeRatioBelowOne : 0ℚ < 1ℚ - tubeRatio
+    coeffSupNonNeg    : 0ℚ ≤ coeffSup
+    coeffAbsNonNeg    : ∀ n → 0ℚ ≤ coeffAbs n
+
+    -- the Cauchy coefficient bound, division-free
+    cauchyCoefficientBound :
+      ∀ n → coeffAbs n * pow tubeRadius n ≤ coeffSup * pow tubeRatio n
+
+    geoCapClosing   : 1ℚ ≤ (1ℚ - tubeRatio) * geoCapValue
+    arithCapClosing : geoCapValue ≤ (1ℚ - tubeRatio) * arithCapValue
+
+module Tube (pkg : CauchyTubePackage) where
+
+  open CauchyTubePackage pkg
+
+  -- majorants of |F| and of |F'| at a tube point g
+  seriesMajorant : ℚ → Nat → ℚ
+  seriesMajorant g = sum₀ (λ n → coeffAbs n * pow g n)
+
+  derivativeMajorant : ℚ → Nat → ℚ
+  derivativeMajorant g = sum₀ (λ n → natℚ (suc n) * coeffAbs (suc n) * pow g n)
+
+  functionSup : ℚ
+  functionSup = coeffSup * geoCapValue                            -- M0 Tcap
+
+  scaledDerivativeSup : ℚ
+  scaledDerivativeSup = (coeffSup * tubeRatio) * arithCapValue    -- M0 theta Scap
+
+  ----------------------------------------------------------------
+  -- (1) the function bound on the tube
+  ----------------------------------------------------------------
+
+  seriesMajorantBound :
+    ∀ {g} → 0ℚ ≤ g → g ≤ tubeRadius →
+    ∀ N → seriesMajorant g N ≤ functionSup
+  seriesMajorantBound {g} 0≤g g≤γ N =
+    ℚP.≤-trans
+      (sum₀-mono termBound N)
+      (subst (λ z → z ≤ functionSup)
+        (sym (sum₀-scaleˡ coeffSup (pow tubeRatio) N))
+        (scaleˡ-nonNeg coeffSupNonNeg
+          (geoCap tubeRatioNonNeg tubeRatioBelowOne geoCapClosing N)))
+    where
+      termBound : ∀ n → coeffAbs n * pow g n ≤ coeffSup * pow tubeRatio n
+      termBound n =
+        ℚP.≤-trans
+          (scaleˡ-nonNeg (coeffAbsNonNeg n) (pow-mono 0≤g g≤γ n))
+          (cauchyCoefficientBound n)
+
+  ----------------------------------------------------------------
+  -- (2) the derivative bound on the tube, in the division-free form
+  ----------------------------------------------------------------
+
+  private
+    regroupLeft : ∀ r m c p → r * (m * c * p) ≡ m * (c * (r * p))
+    regroupLeft =
+      solve 4 (λ r m c p → r :* (m :* c :* p) := m :* (c :* (r :* p))) refl
+
+    regroupRight : ∀ s t m p → m * (s * (t * p)) ≡ (s * t) * (m * p)
+    regroupRight =
+      solve 4 (λ s t m p → m :* (s :* (t :* p)) := (s :* t) :* (m :* p)) refl
+
+  derivativeMajorantScaledBound :
+    ∀ {g} → 0ℚ ≤ g → g ≤ tubeRadius →
+    ∀ N → tubeRadius * derivativeMajorant g N ≤ scaledDerivativeSup
+  derivativeMajorantScaledBound {g} 0≤g g≤γ N =
+    subst (λ z → z ≤ scaledDerivativeSup)
+      (sum₀-scaleˡ tubeRadius
+         (λ n → natℚ (suc n) * coeffAbs (suc n) * pow g n) N)
+      (ℚP.≤-trans
+        (sum₀-mono termBound N)
+        (subst (λ z → z ≤ scaledDerivativeSup)
+          (sym (sum₀-scaleˡ (coeffSup * tubeRatio)
+                  (λ n → natℚ (suc n) * pow tubeRatio n) N))
+          (scaleˡ-nonNeg
+            (mul-nonNeg coeffSupNonNeg tubeRatioNonNeg)
+            (arithGeoCap tubeRatioNonNeg tubeRatioBelowOne
+              geoCapClosing arithCapClosing N))))
+    where
+      termBound :
+        ∀ n →
+        tubeRadius * (natℚ (suc n) * coeffAbs (suc n) * pow g n)
+          ≤ (coeffSup * tubeRatio) * (natℚ (suc n) * pow tubeRatio n)
+      termBound n =
+        subst
+          (λ z → z ≤ (coeffSup * tubeRatio) * (natℚ (suc n) * pow tubeRatio n))
+          (sym (regroupLeft tubeRadius (natℚ (suc n)) (coeffAbs (suc n)) (pow g n)))
+          (ℚP.≤-trans
+            (scaleˡ-nonNeg (natℚ-nonNeg (suc n))
+              (scaleˡ-nonNeg (coeffAbsNonNeg (suc n))
+                (scaleˡ-nonNeg tubeRadiusNonNeg (pow-mono 0≤g g≤γ n))))
+            (subst
+              (λ z →
+                natℚ (suc n)
+                  * (coeffAbs (suc n) * (tubeRadius * pow tubeRadius n)) ≤ z)
+              (regroupRight coeffSup tubeRatio (natℚ (suc n)) (pow tubeRatio n))
+              (scaleˡ-nonNeg (natℚ-nonNeg (suc n))
+                (cauchyCoefficientBound (suc n)))))
+
+  ----------------------------------------------------------------
+  -- (3) the two constants of the uniform derivative package
+  ----------------------------------------------------------------
+
+  -- Any M1 with  M0 theta Scap <= gamma M1  is a valid derivative sup on the
+  -- tube; the sharp choice is M1 = M0 R/(R-gamma)^2.
+  derivativeSupFromCap :
+    ∀ {M1 g} → 0ℚ < tubeRadius → 0ℚ ≤ g → g ≤ tubeRadius →
+    scaledDerivativeSup ≤ tubeRadius * M1 →
+    ∀ N → derivativeMajorant g N ≤ M1
+  derivativeSupFromCap {M1} {g} 0<γ 0≤g g≤γ capped N =
+    ℚP.*-cancelˡ-≤-pos tubeRadius {{positive 0<γ}}
+      (ℚP.≤-trans (derivativeMajorantScaledBound 0≤g g≤γ N) capped)
+
+------------------------------------------------------------------------
+-- Non-vacuity: an explicit package with genuinely nonzero coefficients
+------------------------------------------------------------------------
+
+-- gamma = 1/4 and R = 1/2, so theta = 1/2, Tcap = 2, Scap = 4; the
+-- coefficients |a_n| = 2^n saturate the Cauchy bound with M0 = 1 at R = 1/2.
+-- Then M0tube = 2 and, since M0 theta Scap = 2 = gamma * 8, M1 = 8: exactly
+-- R/(R-gamma) = 2 and R/(R-gamma)^2 = 8.
+
+module HalfDiscWitness where
+
+  open import Data.Integer.Base using (+_)
+  open import Data.Rational.Base using (_/_)
+  open import Relation.Nullary.Decidable using (toWitness)
+
+  twoPow : Nat → ℚ
+  twoPow n = pow (+ 2 / 1) n
+
+  exactRatio : ∀ n → twoPow n * pow (+ 1 / 4) n ≡ pow (+ 1 / 2) n
+  exactRatio zero = refl
+  exactRatio (suc n) =
+    trans (regroup (+ 2 / 1) (+ 1 / 4) (twoPow n) (pow (+ 1 / 4) n))
+          (cong ((+ 1 / 2) *_) (exactRatio n))
+    where
+      regroup : ∀ a b p q → (a * p) * (b * q) ≡ (a * b) * (p * q)
+      regroup =
+        solve 4 (λ a b p q → (a :* p) :* (b :* q) := (a :* b) :* (p :* q)) refl
+
+  witnessPackage : CauchyTubePackage
+  witnessPackage = record
+    { tubeRadius = + 1 / 4
+    ; tubeRatio = + 1 / 2
+    ; coeffSup = 1ℚ
+    ; geoCapValue = + 2 / 1
+    ; arithCapValue = + 4 / 1
+    ; coeffAbs = twoPow
+    ; tubeRadiusNonNeg = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 4)} _
+    ; tubeRatioNonNeg = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+    ; tubeRatioBelowOne = toWitness {a? = 0ℚ ℚP.<? (1ℚ - (+ 1 / 2))} _
+    ; coeffSupNonNeg = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+    ; coeffAbsNonNeg = λ n → pow-nonNeg (toWitness {a? = 0ℚ ℚP.≤? (+ 2 / 1)} _) n
+    ; cauchyCoefficientBound = bound
+    ; geoCapClosing = toWitness {a? = 1ℚ ℚP.≤? ((1ℚ - (+ 1 / 2)) * (+ 2 / 1))} _
+    ; arithCapClosing =
+        toWitness {a? = (+ 2 / 1) ℚP.≤? ((1ℚ - (+ 1 / 2)) * (+ 4 / 1))} _
+    }
+    where
+      bound : ∀ n → twoPow n * pow (+ 1 / 4) n ≤ 1ℚ * pow (+ 1 / 2) n
+      bound n =
+        ℚP.≤-reflexive
+          (trans (exactRatio n) (sym (ℚP.*-identityˡ (pow (+ 1 / 2) n))))
+
+  open Tube witnessPackage
+
+  -- the two produced constants, machine-checked on the witness
+  witnessFunctionSup : functionSup ≡ + 2 / 1
+  witnessFunctionSup = refl
+
+  witnessDerivativeSup :
+    ∀ {g} → 0ℚ ≤ g → g ≤ (+ 1 / 4) →
+    ∀ N → derivativeMajorant g N ≤ + 8 / 1
+  witnessDerivativeSup 0≤g g≤γ =
+    derivativeSupFromCap
+      (toWitness {a? = 0ℚ ℚP.<? (+ 1 / 4)} _) 0≤g g≤γ
+      (toWitness
+        {a? = ((1ℚ * (+ 1 / 2)) * (+ 4 / 1)) ℚP.≤? ((+ 1 / 4) * (+ 8 / 1))} _)

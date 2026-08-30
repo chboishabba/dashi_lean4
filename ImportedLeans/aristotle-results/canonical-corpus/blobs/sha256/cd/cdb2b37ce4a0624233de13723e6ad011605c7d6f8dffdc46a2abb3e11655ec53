@@ -1,0 +1,551 @@
+# Status of the literal Weil bridge, and the first unproved obligation
+
+This note records the state of the `Zeta23Bridge` tranche.  Everything listed as
+proved below compiles with `lake build` in `Zeta23Bridge/` and uses only the
+standard axioms `propext`, `Classical.choice`, `Quot.sound`.  There is no `sorry`,
+no `axiom`, no postulate, no Boolean receipt and no numerical evidence anywhere in
+`Zeta23Bridge/Zeta23Bridge/`.
+
+The Riemann Hypothesis is **not** proved.  `RiemannHypothesisFor` in the main
+library is untouched and unweakened.
+
+## Why the work lives in a separate project
+
+The main library is built against Lean v4.28.0.  The public companion
+`anthropics/zeta-23-lean`, whose `Zeta23.WeilEF.EF_lit_zeta` / `EF_lit_zetaZeroConfig`
+the bridge consumes, requires Lean v4.33.0-rc2.  The two cannot be linked in one
+Lake package, so the bridge is the separate project `Zeta23Bridge/`, which pins
+the companion at revision `cec57f919ccf34e5fa5372b4ba332f7c848bbb6e`.  That
+revision **does** contain the literal zeta Weil explicit formula.
+
+## What is proved
+
+1. `LiteralWeilParityBalance.lean` — the literal explicit formula supplies the
+   four-sample balance relation itself.  The zero `tsum` is split at the target
+   zero, the five contributions are packaged as vectors in `ℝ⁴`, the target
+   coordinates are identified with the parity pair `evenVec(a,r) + oddVec(a,r)`,
+   and the pole contribution is shown to lie in a two-dimensional pole space,
+   killed exactly by the parity quotient.  The balance relation is therefore no
+   longer a hypothesis.
+
+2. `LiteralWeilOddChannelTaper.lean` — an explicit taper is constructed for which
+   the ordinate-modulated odd pole response vanishes while the odd target response
+   does not.  This discharges the odd-channel parity minor and yields
+   `Q_other + Q_prime + Q_Γ ≠ 0` for an isolated off-line target.
+
+3. `LiteralWeilGammaChannel.lean` — the gamma channel is characterized.  On the
+   real axis the transform of the sample test is the real cosine transform of the
+   taper, so the gamma term is a real number; the gamma bracket is even; and
+   reflecting the sample point is the same as reflecting the ordinate.  The gamma
+   four-sample vector splits accordingly, and at ordinate zero it is purely even.
+
+4. `LiteralWeilOtherZerosChannel.lean` — the other-zeros channel is characterized:
+   each zero contributes a parity pair of the same shape as the target's, at a
+   frequency shifted by its ordinate gap.  **Negative result:** the
+   functional-equation partner `1 - ρ̄` of an off-line zero has the same ordinate,
+   the same multiplicity and the opposite height, is a genuine summand of
+   `Q_other`, and cancels the odd contribution of the target exactly — for every
+   taper and every sample radius.  So the odd-channel transversality of (2),
+   though true of the isolated target, cannot by itself yield a contradiction.
+
+5. `LiteralWeilEvenChannelTaper.lean` — what survives the pairing is the even
+   channel.  An explicit taper is constructed killing the ordinate-modulated even
+   pole response while keeping the even target response nonzero, and the whole
+   reflection pair is split off the balance relation, giving
+
+       Q_rest + Q_prime + Q_Γ ≠ 0,   Q_pair = -(Q_rest + Q_prime + Q_Γ),
+
+   where `Q_rest` excludes both the target zero and its partner.
+
+   **The limitation, proved:** for every height — on-line included — the pair
+   contribution is a purely even pattern.  No four-sample parity coordinate
+   distinguishes an off-line reflection pair from an on-line one by parity alone;
+   only the *value* of the even response `A_a` can.
+
+6. `LiteralWeilSameOrdinateEvenCone.lean` — the *same-ordinate reflection cluster*.
+   The zero sum is split along the ordinate fibre
+
+       SameOrd t = { ρ nontrivial zero | Im ρ = t },
+
+   which contains **every** zero at the target ordinate; no uniqueness of the real
+   part at a fixed ordinate is assumed anywhere.  With the strengthened positive
+   taper the functional `ℓ(v) = v 0 + v 1` annihilates the whole pole space, so it
+   descends to the parity quotient, and it evaluates every same-ordinate zero,
+   whatever its height, to the strictly positive number `2 m_ρ A_{a_ρ}(r)`.
+   Consequently same-ordinate reflection pairs cannot cancel one another:
+
+       ℓ(Q_cluster) ≥ ℓ(Q_pair) > 0,   Q_cluster ≠ 0,
+       ℓ(Q_offOrd + Q_prime + Q_Γ) = -ℓ(Q_cluster) < 0.
+
+7. `LiteralWeilTwoRadiusHeightDetector.lean` — the negative/positive pair.
+   `pairParityCannotDetectHeight`: at every height the reflection-pair four-sample
+   vector is an even pattern, so parity alone cannot see the height.
+   `twoRadiusEvenProfileDetectsHeight`: the two-radius defect
+
+       D(a, b) = A_a(r) A_b(2r) - A_a(2r) A_b(r)
+
+   satisfies `D(a, 0) > 0` for every `a ≠ 0`.  The four sampled values therefore do
+   carry the height — in their *radial* shape, not in their parity.
+
+   The detector is proved in its **two-height** form,
+   `twoRadiusEvenProfileDetectsHeightPair`: `|b| < |a| ⟹ D(a, b) > 0`, from a
+   strict total-positivity minor for `cosh`,
+
+       |b| < |a|, |u| < |v|  ⟹  cosh(au) cosh(bv) < cosh(av) cosh(bu),
+
+   with `heightDefect_nonneg` the nonstrict companion (`|b| ≤ |a| ⟹ D(a, b) ≥ 0`),
+   both obtained from one integral representation `2 D(a,b) = ∫∫ …` of the
+   determinant.  `clusterTwoRadiusProfileDetectsOffLine` lifts this to any finite
+   positively weighted cluster of heights: a single off-line member forces the
+   cluster's own two-radius profile strictly off the on-line direction, and
+   `clusterProfileDefect_eq_zero_of_onLine` gives the exact converse.
+
+8. `LiteralWeilOffOrdinateTail.lean` — the off-ordinate envelope, assembled from
+   already machine-checked companion machinery rather than a new zeta argument.
+   The two halves of `[eq:hfbound]` combine into a strip envelope
+
+       ‖h_k(z)‖ (1 + |z|²) ≤ e^{Λ/2} (‖k‖₁ + ‖k''‖₁)   for |Im z| ≤ 1/2,
+
+   and `Zeta23.WeilEF.zero_sum_inv_sq` (unit-window summation of the
+   Riemann–von Mangoldt local zero count) makes the off-ordinate weight
+   `W(t) = ∑_{Im ρ ≠ t} m_ρ/(1+|γ_ρ|²)` finite.  Hence
+
+       |ℓ(Q_offOrd)| ≤ ε_zero(g, Λ, t, r) := 2 (C_r + C_{-r}) W(t).
+
+9. `LiteralWeilGammaConeBound.lean` — the gamma channel.  An *identity* first,
+
+       ℓ(Q_Γ) = -(gammaResp g t r + gammaResp g t (-r)),
+
+   then a genuinely finite envelope `|ℓ(Q_Γ)| ≤ ε_Γ(g, t, r)`: the smoothed gamma
+   bracket is absolutely integrable, because the quadratic decay of the taper's
+   cosine transform beats the square-root growth of the bracket, the latter coming
+   from the Stirling clause of the companion's *proved* `Zeta23.gammaFacts`.
+
+10. `LiteralWeilPrimeEvenCone.lean` — the prime directional gate.  The literal
+    prime frequencies sit at `|u| = log n ≥ log 2`, while the even-channel taper is
+    supported in `|u| < 9π/(4|t|)`.  So whenever `9π ≤ 4 |t| log 2`,
+
+        Q_prime = 0   (the zero vector in ℝ⁴, not merely in the quotient),
+
+    and the balance becomes
+
+        0 < ℓ(Q_cluster) ≤ ε_zero(g, Λ, t, r) + ε_Γ(g, t, r).
+
+    The reachability question — can the literal prime image point in the direction
+    `-Q_cluster`? — is therefore answered negatively in the strongest form for
+    these tapers: the admissible prime cone is the single point `0`.
+
+    **This is not a contradiction, and none is claimed.**  Nothing in
+    `ℓ(Q_cluster) > 0` uses the height of the target, so the displayed inequality
+    is satisfied by on-line zeros as well.
+
+11. `LiteralWeilClusterTwoRadiusProfile.lean` — the same statement for the
+    **literal** fibre.  The cluster's two-radius profile
+
+        P(t, r) = ( Σ_{Im ρ = t} 2 m_ρ A_{a_ρ}(r) , Σ_{Im ρ = t} 2 m_ρ A_{a_ρ}(2r) )
+
+    is built from the genuine zeros with their genuine multiplicities, both sums
+    absolutely convergent by the companion's zero-count summation.  Its defect
+    against the on-line profile obeys a sharp dichotomy
+    (`literalTwoRadiusClusterDichotomy`): strictly positive if a single zero of the
+    fibre is off the critical line, exactly zero if the whole fibre is on it.
+
+12. `LiteralWeilTwoRadiusBalance.lean` — the literal balance read at **both** radii
+    and combined into the same determinant.  With
+    `R(s) = ℓ(Q_offOrd) + ℓ(Q_prime) + ℓ(Q_Γ) + ℓ(Q_pole)` at sampling radius `s`,
+
+        D_cluster(t, r) = -( R(r) A_0(2r) - R(2r) A_0(r) )     (an identity),
+
+    so an off-line zero in the fibre forces the strict orientation
+
+        R(2r) A_0(r) - R(r) A_0(2r) > 0,
+
+    while a fully on-line fibre forces that quantity to be exactly `0`
+    (`offLineZeroForcesResidualOrientation`).  The residual channels are thus
+    constrained in *direction*, not merely in size.
+
+13. `LiteralWeilTwoRadiusResidualEnvelope.lean` — the explicit residual envelope.
+    The pole cone value is the *exact* number `-4 P_t(s)`, so with the prime channel
+    absent at every sampling radius the total residual at radius `s` obeys
+
+        |R(s)| ≤ ε(s) := ε_zero(g, Λ, t, s) + ε_Γ(g, t, s) + 4 |P_t(s)|,
+
+    and therefore
+
+        0 < D_cluster(t, r) ≤ ε(2r) |A₀(r)| + ε(r) |A₀(2r)| =: E_residual(t, r).
+
+    (This module was present but did not compile — a malformed tactic block — and
+    was not wired into the aggregate; both are fixed.)
+
+14. `LiteralWeilTwoRadiusSeparationGate.lean` — the separation gate.  The admissible
+    data are packaged as `GateData g t r Λ`, and `exists_gateData` produces them for
+    every high ordinate with the *explicit* support radius `Λ = 9π/(4|t|)`.  The
+    central result is the sandwich
+
+        0 < D_{ρ*}(r) ≤ D_cluster(t, r) ≤ E_red(t, r) = E_residual(t, r),
+        D_{ρ*}(r) = 2 m_{ρ*} D(a_{ρ*}, 0; r),
+
+    where the **reduced** envelope
+
+        E_red(t, r) = [ε_zero(2r) + ε_Γ(2r) + 4|P_t(2r)|] |A₀(r)|
+                    + [ε_zero(r)  + ε_Γ(r)]              |A₀(2r)|
+
+    drops the pole penalty at the base radius, because the taper kills `P_t(r)`
+    there; only the doubled radius retains it.  The contradiction criterion is then
+    a single explicit inequality: `E_red(t, r) < D_{ρ*}(r) ⟹ ⊥`
+    (`false_of_reducedEnvelope_lt_targetDefect`), in usable form
+    `no_offLineZero_of_reducedEnvelope_lt_targetDefect`.  The gate inequality itself
+    is a hypothesis there, never an assertion.
+
+    Also recorded: `primeConeValue_eq_zero_of_short_taper` applies at an arbitrary
+    sampling radius, so in this short-taper/high-ordinate regime the literal von
+    Mangoldt channel vanishes at **both** radii.  There is no prime-side estimate
+    left in this lane; the residual obstruction is exactly
+    *off-ordinate zeros + Γ + the doubled-radius pole*.
+
+15. `LiteralWeilTargetHeightMargin.lean` — quantitative floor and ceiling for the
+    signal side, and the resulting audit.
+
+    * Floor: `heightDefect_ge_rectangle` — on a rectangle where `g ≥ c` and the
+      two-radius kernel is `≥ κ`, `D(a, 0; r) ≥ c² κ (q−p)(q'−p')/2`; and
+      `exists_rectangle_margin` / `targetHeightDefectLowerMargin` produce such a
+      rectangle with strictly positive constants.  This upgrades the earlier strict
+      positivity to an explicit margin.
+    * Ceiling: `heightDefect_le_taperMass` — for a nonnegative taper supported in
+      `|u| ≤ Λ`, `D(a, 0; r) ≤ (∫g)² (cosh(aΛ) − 1)`, uniformly in the radius.
+    * Pole demand: `gate_forces_small_pole_channel` — the gate forces
+      `4|P_t(2r)| |A₀(r)| < 2 m_ρ (∫g)² (cosh(a_ρΛ) − 1)`.
+    * Zero-tail demand: `gate_forces_small_offOrdinate_weight` — the off-ordinate
+      envelope alone contributes at least `2 (∫g)² W(t)` to `E_red` (because
+      `‖sampleTest‖₁ = ∫g` and `A₀(r) ≥ (∫g)/2` on the radially admissible range),
+      so the gate forces `W(t) < m_ρ (cosh(a_ρ Λ) − 1)`.
+    * **No-go for this lane:** `gate_fails_of_heavy_offOrdinate_zero` and
+      `highOrdinate_gate_impossible_of_large_ordinate`.  Since `Λ = 9π/(4|t|)` and
+      `cosh x − 1 ≤ x²` for `|x| ≤ 1`, the threshold the zero tail must beat is at
+      most `m_ρ a_ρ² (9π/4)² / t²`.  Hence for any single zero `σ` off the ordinate
+      `t` with weight `w_σ`, once `m_ρ a_ρ² (9π/4)² ≤ w_σ t²` the gate inequality is
+      **impossible**: the reduced envelope provably exceeds the largest value the
+      target defect can take.  This is a comparison of two explicit expressions and
+      does not use the balance identity, so it is a limitation of the envelope
+      method itself, not a consequence of assuming the zero.
+
+## The first unproved obligation, stated exactly
+
+The linear parity geometry is exhausted; the prime channel is provably absent at
+both sampling radii for the high-ordinate tapers; the off-ordinate, gamma and pole
+channels carry explicit envelopes; and the two-radius sandwich
+
+    0 < D_{ρ*}(r) ≤ D_cluster(t, r) ≤ E_red(t, r)
+
+is proved at literal strength (item 14).  What is still missing is the *strict*
+separation, and item 15 shows precisely what it would take.
+
+The first unproved statement is
+
+> For an actual nontrivial zero `ρ* = 1/2 + a + it` of `riemannZeta` with `a ≠ 0`,
+> `t ≠ 0` and `9π ≤ 4|t| log 2`, and for gate data `GateData g t r Λ` (for instance
+> the taper of `exists_positive_taper_poleEven_zero` with `Λ = 9π/(4|t|)`), the
+> strict inequality
+>
+>     E_red(t, r) < D_{ρ*}(r) = 2 m_{ρ*} D(a, 0; r).
+
+Two necessary conditions for it are now proved, and both are severe:
+
+* `4 |P_t(2r)| |A₀(r)| < 2 m_{ρ*} (∫g)² (cosh(aΛ) − 1)` — the doubled-radius pole
+  response must be *relatively* tiny, of size `O(a²Λ²)` against the taper mass,
+  even though the taper only kills the pole channel at the base radius;
+* `W(t) < m_{ρ*} (cosh(aΛ) − 1) ≤ m_{ρ*} a² (9π/4)² / t²` — the whole off-ordinate
+  zero weight must be below an `O(1/t²)` threshold.
+
+The second is what makes the current lane quantitatively dead at large ordinates:
+a single off-ordinate zero of weight `w_σ` with `m_{ρ*} a² (9π/4)² ≤ w_σ t²` already
+refutes the gate (`highOrdinate_gate_impossible_of_large_ordinate`).  So the next
+genuine step is **not** a sharper prime estimate — there is no prime term here —
+but either
+
+1. a taper that kills the even pole response at *both* radii `r` and `2r` and whose
+   off-ordinate strip constant is not inflated by the `‖k''‖₁` term (the crude
+   `[eq:hfbound]` envelope is what forces the `W(t)` threshold above), or
+2. a replacement for the triangle-inequality envelope `ε_zero`, using cancellation
+   among the off-ordinate zeros rather than their absolute weights.
+
+No such estimate is proved here, and none is assumed anywhere in the development.
+
+---
+
+## 16. The projective tranche: cancellation *before* majorization
+
+The envelope of item 15 takes absolute values radius by radius,
+
+    |R(2r)A₀(r) − R(r)A₀(2r)| ≤ |R(2r)||A₀(r)| + |R(r)||A₀(2r)|,
+
+and therefore discards the two-radius cancellation the literal balance actually
+constrains.  This tranche replaces it.  For any scalar channel `C` put
+
+    𝔇_C(r) = C(2r) A₀(r) − C(r) A₀(2r).
+
+* `LiteralWeilProjectiveResidualDecomposition` — the exact channel-by-channel
+  determinant decomposition `𝔇_R = 𝔇_{Z_off} + 𝔇_P + 𝔇_Γ + 𝔇_Π`
+  (`residualProjectiveDecomposition`), proved by linearity, together with
+  `primeProjectiveDefect = 0` in the short-taper lane and the resulting
+  `clusterHeightDefect_eq_threeProjectiveChannels`.
+
+* `LiteralWeilProjectiveTaper` — the two-radius bracket
+  `B_r(u) = A₀(r) cos(2ru) − A₀(2r) cos(ru)` and the projective taper
+  `h_r = g · B_r`.  Every channel that is a cosine transform in the sampling
+  radius has its projective defect equal to that same channel evaluated at radius
+  `0` with taper `h_r`.  The bracket and its first two derivatives are all
+  `O(r²)`: `|B_r| ≤ 5r²Λ²‖g‖₁`, `|B_r′| ≤ 5r²Λ‖g‖₁`, `|B_r″| ≤ 5r²‖g‖₁`.
+
+* `LiteralWeilProjectiveStripConstant` — consequently
+  `stripConst (sampleTest h_r t 0) Λ ≤ r² · projStripCoeff g Λ t`
+  (`stripConst_projTaper_le`), and hence
+  `|𝔇_{Z_off}| ≤ r² · 4 · projStripCoeff · W(t)` (`offOrdProjectiveTailQuadratic`).
+
+* `LiteralWeilGammaProjectiveBound` — the exact identity
+  `𝔇_Γ = −2 · gammaResp h_r t 0` (`gammaProjectiveDefect_eq`) and an absolute
+  constant `C_Γ ≥ 0` with `|𝔇_Γ| ≤ r² · projStripCoeff · C_Γ`.
+
+* `LiteralWeilPoleProjectiveCancellation` — **deliberate deviation from the
+  suggested target.**  An exact `𝔇_Π = 0` was *not* pursued as a taper
+  constraint: within the two-bump positive family already in the repository the
+  relevant quadratic in the mixing parameter has no sign change, so no
+  intermediate-value root exists and the collinearity condition
+  `P_t(2r)/P_t(r) = A₀(2r)/A₀(r)` cannot be met there.  What is proved instead is
+  strictly stronger for the purpose at hand, because it needs no side condition:
+  `|𝔇_Π| ≤ 20 r² Λ² cosh(Λ/2) ‖g‖₁²` unconditionally
+  (`abs_poleProjectiveDefect_le'`).
+
+* `LiteralWeilProjectiveSeparationGate` — the assembled envelope
+  `|D_cluster(t,r)| ≤ r² · E_proj(g, Λ, t, C_Γ)` (`exists_projectiveEnvelope`) with
+  `E_proj` independent of `r`, and the capstone sandwich
+  `0 < D_{ρ*}(r) ≤ D_cluster(t,r) ≤ r² · E_proj`
+  (`targetZeroDefect_le_projectiveEnvelope`).
+
+This is a genuine order improvement: the old envelope was `O(1)` as `r → 0`, the
+projectivized one is `O(r²)`.
+
+## 17. The signal side at the same order, and the exact remaining obligation
+
+`LiteralWeilTargetDefectLeadingCoefficient` puts the signal on the same footing.
+With `M_y = ∫ g cosh(yu)`, `N_y = ∫ g u² cosh(yu)`:
+
+* `abs_cos_sub_quadratic_le` — the *global* bound `|cos x − (1 − x²/2)| ≤ x⁴/24`,
+  proved here from scratch (Mathlib's `Real.cos_bound` is restricted to `|x| ≤ 1`);
+* `abs_evenResp_sub_quadratic_le` — `|A_y(s) − (M_y − s²N_y/2)| ≤ (s⁴/24) Q⁴_y`;
+* `abs_heightDefect_sub_leading_le` — for `0 ≤ r ≤ 1`,
+
+      |heightDefect(g, r, a, 0) − r² · (3/2)(N_a M_0 − M_a N_0)|
+        ≤ r⁴ · defectRemainderCoeff(g, a);
+
+* `gate_of_coefficientComparison` — the gate inequality `r² E < D_ρ(r)` follows
+  from the **radius-free** comparison
+
+      E + r² · zeroRemainderCoeff(g, ρ)  <  zeroLeadingCoeff(g, ρ)
+        = 2 m_ρ · (3/2)(N_a M_0 − M_a N_0),   a = heightOf ρ.
+
+So the frontier has moved from an order mismatch to a coefficient comparison.
+
+### The first unproved theorem, stated exactly
+
+> For an actual nontrivial zero `ρ* = 1/2 + a + it` of `riemannZeta` with `a ≠ 0`,
+> `t ≠ 0`, `9π ≤ 4|t| log 2`, and gate data `GateData g t r Λ` produced by
+> `exists_gateData` (so `Λ = 9π/(4|t|)`), with `C_Γ` the constant of
+> `exists_gammaProjectiveEnvelope`:
+>
+>     r² · projectiveEnvelope g Λ t C_Γ  <  zeroHeightDefect g r ρ*.
+>
+> Equivalently, by `gate_of_coefficientComparison`, it suffices to prove the
+> radius-free comparison
+>
+>     projectiveEnvelope g Λ t C_Γ + r² · zeroRemainderCoeff g ρ*
+>       < zeroLeadingCoeff g ρ*.
+
+This inequality is a hypothesis in `false_of_projectiveEnvelope_lt_targetDefect`,
+`no_offLineZero_of_projectiveEnvelope_lt_targetDefect` and
+`gate_of_coefficientComparison`; it is never asserted anywhere in the development.
+`RiemannHypothesisFor` is not weakened and is not derived.
+
+### Status of the conceptual frontier
+
+    prime channel:                        structurally eliminated (short-taper lane)
+    same-ordinate zero cluster:           positive / projectively detectable
+    radiuswise absolute residual envelope: exhausted (item 15 no-go)
+    projective residual cancellation:      now exploited — all three residual
+                                           channels are O(r²) at determinant level
+    signal side:                           now also O(r²) with an explicit
+                                           leading coefficient
+    live frontier:                         the r-free coefficient comparison above
+
+**Heuristic remark (not verified in Lean, recorded only as orientation for the
+next tranche).**  Symmetrising the target coefficient suggests
+`N_a M_0 − M_a N_0 = ½∬ g(u)g(v)(u²−v²)(cosh(au) − cosh(av)) du dv`, which for a
+nonnegative taper is nonnegative and of size `O(a²)` as the off-line displacement
+`a → 0`, whereas `projectiveEnvelope` contains the `a`-independent term
+`4 · projStripCoeff · W(t)`.  If that is right, the projectivization alone does
+not close the lane for small `a`, and the next step is the multi-taper
+Gram/Schur nuisance projection: several individually admissible positive tapers,
+a vector-valued literal balance, and a Schur complement projecting out the pole
+and the finitely many dangerous nearby zero fibres while retaining the target Gram
+energy.  Nothing in this remark is used in any proof.
+
+## 18. The projective gate is still dead at large ordinates (now proved)
+
+The heuristic remark closing item 17 is superseded by a theorem, obtained by
+majorizing *both* sides of the coefficient comparison explicitly
+(`LiteralWeilProjectiveGateNoGo`).
+
+* Residual side, from below: `projStripCoeff g Λ t ≥ 5 t² ‖g‖₁²`
+  (`projStripCoeff_ge`), hence
+
+      20 t² ‖g‖₁² W(t) ≤ projectiveEnvelope g Λ t C_Γ      (`projectiveEnvelope_ge`).
+
+* Signal side, from above, for a nonnegative taper supported in `|u| ≤ Λ`:
+  `absMom0 ≤ cosh(yΛ)‖g‖₁`, `absMom2 ≤ Λ²cosh(yΛ)‖g‖₁`, `absMom4 ≤ Λ⁴cosh(yΛ)‖g‖₁`
+  (`absMom0_le`, `absMom2_le`, `absMom4_le`), and therefore
+
+      zeroLeadingCoeff   ≤ 3 m Λ² cosh(aΛ) ‖g‖₁²                (`zeroLeadingCoeff_le`)
+      zeroRemainderCoeff ≤ m (34Λ⁴+10Λ⁶)/12 · cosh(aΛ) ‖g‖₁²   (`zeroRemainderCoeff_le`)
+
+  so both together are at most `projSignalBound(m, Λ, a) · ‖g‖₁²` with
+
+      projSignalBound(m, Λ, a) = (3Λ² + (34Λ⁴+10Λ⁶)/12) · m · cosh(aΛ).
+
+* Conclusion (`projectiveGate_impossible_of_heavy_offOrdinate`): for gate data
+  `GateData g t r Λ` with `0 < r ≤ 1` and `C_Γ ≥ 0`,
+
+      projSignalBound(m_ρ, Λ, heightOf ρ) ≤ 20 t² W(t)
+        ⟹  ¬ ( r² · projectiveEnvelope g Λ t C_Γ  <  zeroHeightDefect g r ρ ).
+
+Because the gate tapers of `exists_gateData` have `Λ = 9π/(4|t|)`, the left-hand
+side of the hypothesis is `O(t⁻²)` while the right-hand side is `Ω(t²)`: the
+hypothesis is satisfied at every sufficiently large ordinate.  Like the item-15
+no-go, this is a comparison of two explicit expressions — it does not use the
+balance identity and does not assume that an off-line zero exists — so it limits
+the *majorization method*, not the literal two-radius balance.
+
+**Revised frontier.**  Projectivizing removed the order mismatch in the sampling
+radius (`O(1) → O(r²)` on the residual side, matched by `O(r²)` on the signal
+side), but it did not touch the ordinate mismatch: the off-ordinate channel is
+still majorized by the *absolute* zero mass `W(t)`, and `projStripCoeff` still
+grows like `t²`.  Any further progress must therefore extract cancellation
+*inside* the off-ordinate sum, and the natural device left in the programme is
+item 6 of the plan: several individually admissible positive tapers, a
+vector-valued literal balance, and a Schur complement projecting out the pole and
+the finitely many dangerous nearby zero fibres while retaining the target Gram
+energy.  That is not attempted here.
+
+## 19. The multi-taper Schur tranche (kernel-checked in this project)
+
+The successor architecture announced at the end of item 18 is now implemented and
+built here, from scratch, against this project's Lean toolchain.  Every statement
+listed below compiles in `lake build Zeta23Bridge` and uses only
+`propext, Classical.choice, Quot.sound`.
+
+* `MultiTaperSchurCore` — the exact transverse geometry on `Fin m → ℝ`:
+  `transverseComp`, `schur`, `wedgeSq`, `perp2`, `elim2`, with
+  `wedgeSq = ‖n‖² ‖P_{n^⊥}x‖²`, `schur = ‖P_{n^⊥}x‖²`, the *exact* nuisance removal
+  `P_{n^⊥}(n + r) = P_{n^⊥}r`, and the recursive two-nuisance elimination
+  `elim2 (n₁ + n₂ + r) = elim2 r`.
+* `TwoTaperCrossDetSchur` — the planar admission surface: `wedgeSq = det₂²`, so
+  `det₂ (n, x) ≠ 0 ⟹ wedgeSq (n, x) > 0 ⟹ P_{n^⊥}x ≠ 0`.
+* `TwoTaperCrossDetLeading` — the radius expansion `|Δ(r) − r⁴Δ₀| ≤ r⁶C` and the
+  gate `r²C < |Δ₀| ⟹ Δ(r) ≠ 0`.
+* `LiteralWeilTwoTaperCoefficientGate` — the literal instance: the nuisance/target
+  cross determinant of `zeroHeightDefect`, its radius-free leading determinant, and
+  the resulting literal Gram admission and exact elimination.  It also records the
+  two **sharp degeneracies** of this channel: if `heightOf σ = ± heightOf ρ` the
+  determinant vanishes identically, for every taper pair and every radius.
+* `LiteralWeilThreeWindowPoleNullSeed` — two *distinct* tapers, each individually
+  `GateData`, with a common radius `r = min 1 (|t|/16) ≤ 1`, built from three
+  disjoint windows around `π/t`, `2π/t`, `15π/(8t)`.
+
+## 20. Localized-window separation of the two leading response ratios (proved)
+
+This is the item the continuation named as the highest-alpha next theorem, and it
+is now a theorem here rather than a plan.
+
+*Analytic core* (`CoshWindowSeparation`, no project dependencies).  Write
+`coshDiff x u v = cosh (x v) − cosh (x u)`.  Then for `0 < a < b`:
+
+    sinh t < t cosh t                                         (sinh_lt_mul_cosh)
+    q sinh p < p sinh q          for 0 < p < q                (mul_sinh_lt_mul_sinh)
+    x cosh x sinh y < y cosh y sinh x   for 0 < x < y         (mul_cosh_mul_sinh_lt)
+    sinh(bs) sinh(as') < sinh(as) sinh(bs')   for 0 < s < s'  (sinh_cross_lt)
+
+and hence, by two applications of the Cauchy mean value theorem,
+
+    coshDiff a c₁ c₂ · coshDiff b c₀ c₁ < coshDiff a c₀ c₁ · coshDiff b c₁ c₂
+                                                              (cosh_increment_cross)
+
+for `0 < c₀ < c₁ < c₂`.  Pure algebra then gives strict monotonicity of the
+increment ratio `ρ(u,v) = coshDiff b u v / coshDiff a u v` in **each** endpoint, and
+the packaged window statement `coshDiff_cross_of_window_gate`: under a gate on four
+window endpoints, every pair of sample points drawn from three ordered windows
+separates strictly.  The gate is not vacuous — `window_gate_of_point_windows` proves
+it outright for degenerate (point) windows.
+
+*Transport to the leading coefficients* (`LiteralWeilWindowRatioSeparation`).  The
+polarised leading coefficient is the double integral of a bilinear kernel,
+
+    covForm p q a = 3/4 ∬ p(u) q(v) (u² − v²)(cosh(au) − cosh(av)) du dv
+                                                       (covForm_eq_crossIntegral)
+
+— proved without Fubini, because the kernel is a finite sum of products of
+one-dimensional moments.  For **window tapers** (nonnegative, continuous, compactly
+supported, positive mass, support inside a prescribed modulus window) the pointwise
+window bounds integrate to
+
+    crossIntegral p q b · coshDiff a β₀ β₁ ≤ coshDiff b β₀ β₁ · crossIntegral p q a
+    coshDiff b α₀ α₂ · crossIntegral p q a ≤ crossIntegral p q b · coshDiff a α₀ α₂
+    0 < crossIntegral p q a                     (disjoint windows, positive masses)
+
+and therefore the **cross determinant is strictly positive**:
+
+    covForm p q₁ a · covForm p q₀ b < covForm p q₀ a · covForm p q₁ b   (covForm_det_lt)
+
+with the quantitative refinement `crossIntegral_det_ge` and the uniform upper bound
+`crossIntegral_le`.  No `W(t)`, no absolute zero mass, no tail estimate and no
+numerical input occur in any of these statements.
+
+*Literal transport* (`LiteralWeilWindowSchurAdmission`).  Since
+`zeroLeadingCoeff g ρ = 2 · mult ρ · targetLeadingCoeff g (heightOf ρ)`, the literal
+radius-free determinant is `4 · mult σ · mult ρ` times the determinant of the two
+`targetLeadingCoeff`s (`leadingCrossDet_eq`).  For the two-window tapers
+`g_j = p + λ q_j` the determinant splits **exactly** as
+
+    det = 4 λ² · (cross determinant) + detRest        (targetLeadingCoeff_det_expand)
+
+where every summand of `detRest` carries a *within-window* self response.  Under the
+window gate and domination of `detRest`, the literal leading determinant is nonzero
+(`leadingCrossDet_windowPair_ne_zero`), and a nonzero leading determinant produces
+explicit radii at which the literal Gram wedge is strictly positive and the target
+survives the exact Schur removal of the nuisance zero
+(`exists_radius_windowPair_transverseComp_ne_zero`).
+
+## 21. The first unproved obligation of this branch
+
+Stated exactly, and with nothing else assumed:
+
+> **Obligation.**  Exhibit window tapers `p` (window `[α₀, β₀]`), `q₀`
+> (`[α₁, β₁]`), `q₁` (`[α₂, β₂]`) with `0 < α₀ ≤ β₀ < α₁ ≤ β₁ < α₂`, a scale `λ`,
+> and heights `0 < a < b`, such that
+>
+>   (i) the four-endpoint window gate holds:
+>       `coshDiff b β₀ β₁ · coshDiff a α₀ α₂ < coshDiff b α₀ α₂ · coshDiff a β₀ β₁`, and
+>   (ii) `detRestBound p q₀ q₁ λ a b < 4 λ² · (covForm p q₀ a · covForm p q₁ b −
+>        covForm p q₁ a · covForm p q₀ b)`,
+>
+> while `p + λ q₀` and `p + λ q₁` remain `GateData` tapers.
+
+Both hypotheses are *explicit and finite*: (i) is a comparison of four hyperbolic
+increments, true in the point-window limit by `window_gate_of_point_windows`; (ii)
+compares the explicit `detRestBound` — a sum of products of within-window self
+responses with cross responses, each bounded above by `crossIntegral_le` and below
+by `crossIntegral_pos` — with the strictly positive cross determinant.  Since the
+self responses vanish as the windows narrow while the cross responses stay bounded
+below, (ii) is what a sufficiently narrow three-window construction should deliver;
+it is *not* proved here, and no part of the programme is claimed on the strength of
+it.
+
+The Riemann Hypothesis is **not** proved.  `RiemannHypothesisFor` is untouched.

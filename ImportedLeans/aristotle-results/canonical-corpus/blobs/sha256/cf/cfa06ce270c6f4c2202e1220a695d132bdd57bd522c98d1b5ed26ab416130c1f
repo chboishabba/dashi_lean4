@@ -1,0 +1,293 @@
+module DASHI.Physics.YangMills.BalabanYM4InteractionLogHessianCauchyGateExact where
+
+------------------------------------------------------------------------
+-- ROW A2, INTERACTION LOG-HESSIAN GATE:
+--   UNIFORM CAUCHY DATA ON THE NORMALISED INTERACTION FACTOR
+--   ==>  |(log Z_int)''| <= C g   WITH AN EXPLICIT C
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHAT THIS MODULE PROVES.
+--
+-- Let Z be the value of the normalised interaction factor Z_int at a point of
+-- the small-field polydisc, Z₁ = ∂_B Z and Z₂ = ∂_B² Z its first two
+-- background derivatives, and let H be the second logarithmic derivative,
+-- i.e. the unique rational satisfying the *cleared* defining relation
+--
+--     H * Z^2  =  Z * Z₂ - Z₁^2                                   (log-Hess)
+--
+-- which is the division-free form of
+--
+--     (log Z)''  =  Z''/Z - (Z'/Z)^2 .
+--
+-- From the uniform Cauchy data
+--
+--     0 < z₀ <= Z ,      |Z₁| <= A g ,     |Z₂| <= B g ,     0 <= g <= γ
+--
+-- the module derives, by exact rational arithmetic and with no division,
+--
+--     |H| * z₀^2  <=  (B z₀ + A^2 γ) * g ,
+--
+-- that is
+--
+--     |(log Z_int)''|  <=  C g ,        C = B/z₀ + A^2 γ/z₀^2 .
+--
+-- SHARPNESS REMARK.  A cruder route bounds |Z Z₂ - Z₁^2| <= (z₁ B + A^2 γ) g
+-- using an *upper* bound z₁ on Z and then divides by z₀^2, giving the constant
+-- (z₁ B + A^2 γ)/z₀^2.  The constant proved here is smaller (Lemma
+-- `sharpConstant≤coarseConstant`) and, more importantly, does not need an
+-- upper bound on Z at all: the factor Z in the numerator is cancelled against
+-- one factor of Z^2 in the denominator before any estimate is made.  Only the
+-- positive lower bound z₀ is used.
+--
+-- WHAT IS *NOT* PROVED.  The five uniform numbers z₀, A, B (and γ, together
+-- with the upper bound z₁ used only for the comparison lemma) are inputs: they
+-- must come from the literal CMP109 analytic tube for the physical interaction
+-- functional.  This module fixes the arithmetic that converts them into the
+-- Row A gate constant C and nothing else.  Row A stays open and the frozen
+-- research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _≤_; _<_; _/_; nonNegative; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (mul-nonNeg; mul-pos; scaleˡ-nonNeg; scaleʳ-nonNeg; transport-≤)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Absolute-value helpers
+------------------------------------------------------------------------
+
+absSub : ∀ p q → ∣ p - q ∣ ≤ ∣ p ∣ + ∣ q ∣
+absSub p q =
+  subst (λ z → ∣ p - q ∣ ≤ ∣ p ∣ + z) (ℚP.∣-p∣≡∣p∣ q)
+    (ℚP.∣p+q∣≤∣p∣+∣q∣ p (- q))
+
+absMul-mono :
+  ∀ (x y : ℚ) {cx cy} → 0ℚ ≤ cy →
+  ∣ x ∣ ≤ cx → ∣ y ∣ ≤ cy → ∣ x * y ∣ ≤ cx * cy
+absMul-mono x y {cx} {cy} 0≤cy bx by =
+  transport-≤ (sym (ℚP.∣p*q∣≡∣p∣*∣q∣ x y)) refl
+    (ℚP.≤-trans (scaleˡ-nonNeg (ℚP.0≤∣p∣ x) by) (scaleʳ-nonNeg 0≤cy bx))
+
+square-mono : ∀ (x : ℚ) {c} → 0ℚ ≤ c → ∣ x ∣ ≤ c → ∣ x * x ∣ ≤ c * c
+square-mono x 0≤c bound = absMul-mono x x 0≤c bound bound
+
+------------------------------------------------------------------------
+-- The uniform Cauchy data of the normalised interaction factor
+------------------------------------------------------------------------
+
+record InteractionLogHessianData : Set where
+  field
+    z₀ A B γ g Z Z₁ Z₂ H : ℚ
+    0<z₀    : 0ℚ < z₀
+    z₀≤Z    : z₀ ≤ Z
+    0≤A     : 0ℚ ≤ A
+    0≤B     : 0ℚ ≤ B
+    0≤g     : 0ℚ ≤ g
+    g≤γ     : g ≤ γ
+    boundZ₁ : ∣ Z₁ ∣ ≤ A * g
+    boundZ₂ : ∣ Z₂ ∣ ≤ B * g
+    -- (log-Hess), cleared of denominators.
+    logHessianEquation : H * (Z * Z) ≡ Z * Z₂ - Z₁ * Z₁
+
+open InteractionLogHessianData public
+
+-- The numerator of the gate constant: C = sharpConstantNumerator / z₀².
+sharpConstantNumerator : InteractionLogHessianData → ℚ
+sharpConstantNumerator d = B d * z₀ d + A d * A d * γ d
+
+coarseConstantNumerator : (d : InteractionLogHessianData) (z₁ : ℚ) → ℚ
+coarseConstantNumerator d z₁ = z₁ * B d + A d * A d * γ d
+
+------------------------------------------------------------------------
+-- Step 1: the cleared numerator estimate  |H| Z^2 <= Z B g + (A g)^2
+------------------------------------------------------------------------
+
+-- The Cauchy estimate of the numerator N = Z Z₂ - Z₁² itself.  Row A3 reuses
+-- this on the *same* object.
+numeratorAbsBound :
+  (d : InteractionLogHessianData) →
+  ∣ Z d * Z₂ d - Z₁ d * Z₁ d ∣
+    ≤ Z d * (B d * g d) + (A d * g d) * (A d * g d)
+numeratorAbsBound d =
+  ℚP.≤-trans (absSub (Z d * Z₂ d) (Z₁ d * Z₁ d))
+    (ℚP.+-mono-≤ bound₁ bound₂)
+  where
+    0≤Z : 0ℚ ≤ Z d
+    0≤Z = ℚP.≤-trans (ℚP.<⇒≤ (0<z₀ d)) (z₀≤Z d)
+
+    bound₁ : ∣ Z d * Z₂ d ∣ ≤ Z d * (B d * g d)
+    bound₁ =
+      absMul-mono (Z d) (Z₂ d) (mul-nonNeg (0≤B d) (0≤g d))
+        (ℚP.≤-reflexive (ℚP.0≤p⇒∣p∣≡p 0≤Z)) (boundZ₂ d)
+
+    bound₂ : ∣ Z₁ d * Z₁ d ∣ ≤ (A d * g d) * (A d * g d)
+    bound₂ = square-mono (Z₁ d) (mul-nonNeg (0≤A d) (0≤g d)) (boundZ₁ d)
+
+clearedNumeratorBound :
+  (d : InteractionLogHessianData) →
+  ∣ H d ∣ * (Z d * Z d) ≤ Z d * (B d * g d) + (A d * g d) * (A d * g d)
+clearedNumeratorBound d =
+  transport-≤ absLeft refl
+    (ℚP.≤-trans transported (numeratorAbsBound d))
+  where
+    0≤Z : 0ℚ ≤ Z d
+    0≤Z = ℚP.≤-trans (ℚP.<⇒≤ (0<z₀ d)) (z₀≤Z d)
+
+    transported :
+      ∣ H d * (Z d * Z d) ∣ ≤ ∣ Z d * Z₂ d - Z₁ d * Z₁ d ∣
+    transported = ℚP.≤-reflexive (cong ∣_∣ (logHessianEquation d))
+
+    absLeft : ∣ H d * (Z d * Z d) ∣ ≡ ∣ H d ∣ * (Z d * Z d)
+    absLeft =
+      trans (ℚP.∣p*q∣≡∣p∣*∣q∣ (H d) (Z d * Z d))
+        (cong (∣ H d ∣ *_) (ℚP.0≤p⇒∣p∣≡p (mul-nonNeg 0≤Z 0≤Z)))
+
+------------------------------------------------------------------------
+-- Step 2: the sharp gate constant
+------------------------------------------------------------------------
+
+sharpLogHessianBound :
+  (d : InteractionLogHessianData) →
+  ∣ H d ∣ * (z₀ d * z₀ d) ≤ sharpConstantNumerator d * g d
+sharpLogHessianBound d =
+  ℚP.*-cancelʳ-≤-pos (Z d * Z d) {{positive (mul-pos 0<Z 0<Z)}}
+    (transport-≤ shapeL refl (ℚP.≤-trans scaled compare))
+  where
+    z₀' = z₀ d ; A' = A d ; B' = B d ; γ' = γ d ; g' = g d
+    Z' = Z d
+
+    0≤z₀ : 0ℚ ≤ z₀'
+    0≤z₀ = ℚP.<⇒≤ (0<z₀ d)
+
+    0<Z : 0ℚ < Z'
+    0<Z = ℚP.<-≤-trans (0<z₀ d) (z₀≤Z d)
+
+    0≤Z : 0ℚ ≤ Z'
+    0≤Z = ℚP.<⇒≤ 0<Z
+
+    0≤γ : 0ℚ ≤ γ'
+    0≤γ = ℚP.≤-trans (0≤g d) (g≤γ d)
+
+    scaled :
+      (∣ H d ∣ * (Z' * Z')) * (z₀' * z₀')
+        ≤ (Z' * (B' * g') + (A' * g') * (A' * g')) * (z₀' * z₀')
+    scaled = scaleʳ-nonNeg (mul-nonNeg 0≤z₀ 0≤z₀) (clearedNumeratorBound d)
+
+    squares : z₀' * z₀' ≤ Z' * Z'
+    squares =
+      ℚP.≤-trans (scaleʳ-nonNeg 0≤z₀ (z₀≤Z d)) (scaleˡ-nonNeg 0≤Z (z₀≤Z d))
+
+    ineq₁ : (B' * g' * z₀') * (Z' * z₀') ≤ (B' * g' * z₀') * (Z' * Z')
+    ineq₁ =
+      scaleˡ-nonNeg (mul-nonNeg (mul-nonNeg (0≤B d) (0≤g d)) 0≤z₀)
+        (scaleˡ-nonNeg 0≤Z (z₀≤Z d))
+
+    ineq₂ : (A' * A' * g') * (g' * (z₀' * z₀'))
+              ≤ (A' * A' * g') * (γ' * (Z' * Z'))
+    ineq₂ =
+      scaleˡ-nonNeg (mul-nonNeg (mul-nonNeg (0≤A d) (0≤A d)) (0≤g d))
+        (ℚP.≤-trans
+          (scaleʳ-nonNeg (mul-nonNeg 0≤z₀ 0≤z₀) (g≤γ d))
+          (scaleˡ-nonNeg 0≤γ squares))
+
+    leftEq :
+      (Z' * (B' * g') + (A' * g') * (A' * g')) * (z₀' * z₀')
+        ≡ (B' * g' * z₀') * (Z' * z₀') + (A' * A' * g') * (g' * (z₀' * z₀'))
+    leftEq =
+      solve 5
+        (λ a b c u v →
+          (u :* (b :* c) :+ (a :* c) :* (a :* c)) :* (v :* v)
+            := (b :* c :* v) :* (u :* v) :+ (a :* a :* c) :* (c :* (v :* v)))
+        refl A' B' g' Z' z₀'
+
+    rightEq :
+      ((B' * z₀' + A' * A' * γ') * g') * (Z' * Z')
+        ≡ (B' * g' * z₀') * (Z' * Z') + (A' * A' * g') * (γ' * (Z' * Z'))
+    rightEq =
+      solve 6
+        (λ a b c d' u v →
+          ((b :* v :+ a :* a :* d') :* c) :* (u :* u)
+            := (b :* c :* v) :* (u :* u) :+ (a :* a :* c) :* (d' :* (u :* u)))
+        refl A' B' g' γ' Z' z₀'
+
+    compare :
+      (Z' * (B' * g') + (A' * g') * (A' * g')) * (z₀' * z₀')
+        ≤ ((B' * z₀' + A' * A' * γ') * g') * (Z' * Z')
+    compare =
+      transport-≤ (sym leftEq) (sym rightEq) (ℚP.+-mono-≤ ineq₁ ineq₂)
+
+    shapeL :
+      (∣ H d ∣ * (Z' * Z')) * (z₀' * z₀')
+        ≡ (∣ H d ∣ * (z₀' * z₀')) * (Z' * Z')
+    shapeL =
+      solve 3
+        (λ h u v → (h :* (u :* u)) :* (v :* v) := (h :* (v :* v)) :* (u :* u))
+        refl ∣ H d ∣ Z' z₀'
+
+------------------------------------------------------------------------
+-- Step 3: the sharp constant really is at most the crude one
+------------------------------------------------------------------------
+
+-- With an upper bound z₁ on Z the crude route produces the numerator
+-- z₁ B + A² γ.  Since z₀ <= Z <= z₁ and B >= 0, the numerator proved above is
+-- never larger, so the sharp gate is strictly more permissive whenever
+-- z₀ < z₁ and B > 0.
+
+sharpConstant≤coarseConstant :
+  (d : InteractionLogHessianData) (z₁ : ℚ) → z₀ d ≤ z₁ →
+  sharpConstantNumerator d ≤ coarseConstantNumerator d z₁
+sharpConstant≤coarseConstant d z₁ z₀≤z₁ =
+  ℚP.+-monoˡ-≤ (A d * A d * γ d)
+    (transport-≤ refl (ℚP.*-comm (B d) z₁) (scaleˡ-nonNeg (0≤B d) z₀≤z₁))
+
+------------------------------------------------------------------------
+-- Non-vacuity: data with genuinely nonzero derivatives
+------------------------------------------------------------------------
+
+-- Z = 1, Z₁ = 1/2, Z₂ = 1/2, g = 1/2, z₀ = 1, A = B = γ = 1.
+-- Then H = Z₂ - Z₁² = 1/2 - 1/4 = 1/4 and the gate reads 1/4 <= 1.
+
+sampleLogHessianData : InteractionLogHessianData
+sampleLogHessianData = record
+  { z₀ = 1ℚ
+  ; A = 1ℚ
+  ; B = 1ℚ
+  ; γ = 1ℚ
+  ; g = + 1 / 2
+  ; Z = 1ℚ
+  ; Z₁ = + 1 / 2
+  ; Z₂ = + 1 / 2
+  ; H = + 1 / 4
+  ; 0<z₀ = toWitness {a? = 0ℚ ℚP.<? 1ℚ} _
+  ; z₀≤Z = ℚP.≤-refl
+  ; 0≤A = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+  ; 0≤B = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+  ; 0≤g = toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 2)} _
+  ; g≤γ = toWitness {a? = (+ 1 / 2) ℚP.≤? 1ℚ} _
+  ; boundZ₁ = toWitness {a? = ∣ + 1 / 2 ∣ ℚP.≤? 1ℚ * (+ 1 / 2)} _
+  ; boundZ₂ = toWitness {a? = ∣ + 1 / 2 ∣ ℚP.≤? 1ℚ * (+ 1 / 2)} _
+  ; logHessianEquation = refl
+  }
+
+sampleGate :
+  ∣ H sampleLogHessianData ∣ * (z₀ sampleLogHessianData * z₀ sampleLogHessianData)
+    ≤ sharpConstantNumerator sampleLogHessianData * g sampleLogHessianData
+sampleGate = sharpLogHessianBound sampleLogHessianData

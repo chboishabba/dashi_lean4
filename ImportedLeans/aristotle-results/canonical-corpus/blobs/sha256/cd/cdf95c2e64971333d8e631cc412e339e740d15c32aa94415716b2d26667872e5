@@ -1,0 +1,244 @@
+module DASHI.Physics.YangMills.BalabanCMP109LiteralFarBoxAxisSelectionExact where
+
+------------------------------------------------------------------------
+-- ROW A1a, FAR REGION:  OFF THE NEAR BOX SOME AXIS IS LARGE, AND ITS
+--   HALF-ANGLE LIES IN THE WINDOW THE CONSTRUCTIVE SINE GAP COVERS.
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHAT THIS MODULE ADDS.
+--
+-- `BalabanCMP109LiteralFarRegionFloorQuotientExact` proves that a *single*
+-- large axis floors the literal inverse propagator, and leaves two inputs
+-- open on the far region of the box split:
+--
+--   (a) that off the near box some coordinate really is large, and
+--   (b) that the half-angle of such a coordinate lies inside the window
+--       `3/4 <= t <= 11/7` on which the repository's constructive outer
+--       Brillouin sine gap `|sin t| >= 87/128` is proved.
+--
+-- Both are settled here, exactly and without any new interface.
+--
+--   * `nearBoxDichotomy` -- for every radius and every point of the cell,
+--     either all four coordinates are at most the radius (the point is in
+--     the near box) or some named coordinate exceeds it.  This is a
+--     constructive four-way case split on decidable rational comparisons, so
+--     it *produces the axis*, which is what the pointwise far-region floor
+--     consumes.
+--   * `offNearBoxGivesLargeAxis` -- the contrapositive form.
+--   * `largeAxisHalfAngleWindow` -- at the optimisation's radius `2/5`, a
+--     coordinate `x` of the normalised cell with `2/5 < x <= 1/2` has
+--     half-angle `t = pi x` with `3/4 <= t <= 11/7`, for every rational
+--     enclosure `3.14 <= pi <= 3.1416`.  So the far region asks the
+--     constructive sine gap only for angles it already covers, at every far
+--     point and not merely at the boundary.
+--
+-- WHAT REMAINS on the far region after this module: only that the literal
+-- valuation of the sine atom at a large coordinate agrees with the real sine
+-- of its half-angle (the valuation/soundness bridge), and the numerator sup
+-- of the literal joint Wilson + reduced Faddeev--Popov + Haar numerator.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Data.Integer.Base using (+_)
+open import Data.Product.Base using (_×_; _,_; proj₁; proj₂)
+open import Data.Sum.Base using (_⊎_; inj₁; inj₂)
+open import Data.Empty using (⊥-elim)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; _*_; _≤_; _<_; _/_; nonNegative)
+import Data.Rational.Properties as ℚP
+open import Relation.Nullary.Negation using (¬_)
+open import Relation.Nullary.Decidable using (toWitness; yes; no)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.BalabanClayT4LiteralOneLoopBoxEvaluatorExact
+  using (AxisIndex; axis0; axis1; axis2; axis3)
+
+------------------------------------------------------------------------
+-- 1.  POINTS OF THE NORMALISED CELL, AND THE NEAR BOX
+------------------------------------------------------------------------
+
+-- A point of the repository's normalised Brillouin cell is given by its four
+-- coordinates; `InsideCell` records that they lie in `[0, 1/2]`, i.e. the
+-- cell of measure `(1/2)^4 = 1/16` used by the split-parameter optimisation.
+Coordinates : Set
+Coordinates = AxisIndex → ℚ
+
+cellSide : ℚ
+cellSide = + 1 / 2
+
+record InsideCell (point : Coordinates) : Set where
+  field
+    coordinateNonNegative : ∀ (ax : AxisIndex) → 0ℚ ≤ point ax
+    coordinateBelowSide   : ∀ (ax : AxisIndex) → point ax ≤ cellSide
+
+open InsideCell public
+
+-- The near box of half-width `radius`.
+InNearBox : ℚ → Coordinates → Set
+InNearBox radius point = ∀ (ax : AxisIndex) → point ax ≤ radius
+
+-- A named large axis: the datum the pointwise far-region floor consumes.
+record LargeAxis (radius : ℚ) (point : Coordinates) : Set where
+  constructor largeAxis
+  field
+    largeIndex  : AxisIndex
+    indexIsLarge : radius < point largeIndex
+
+open LargeAxis public
+
+------------------------------------------------------------------------
+-- 2.  THE DICHOTOMY
+------------------------------------------------------------------------
+
+-- Either every coordinate is at most `radius`, or some *named* coordinate
+-- exceeds it.  Rational comparison is decidable, so this is constructive and
+-- the witness is produced.
+nearBoxDichotomy :
+  ∀ (radius : ℚ) (point : Coordinates) →
+  InNearBox radius point ⊎ LargeAxis radius point
+nearBoxDichotomy radius point
+  with point axis0 ℚP.≤? radius
+     | point axis1 ℚP.≤? radius
+     | point axis2 ℚP.≤? radius
+     | point axis3 ℚP.≤? radius
+... | no  p0 | _       | _       | _       =
+        inj₂ (largeAxis axis0 (ℚP.≰⇒> p0))
+... | yes _  | no  p1  | _       | _       =
+        inj₂ (largeAxis axis1 (ℚP.≰⇒> p1))
+... | yes _  | yes _   | no  p2  | _       =
+        inj₂ (largeAxis axis2 (ℚP.≰⇒> p2))
+... | yes _  | yes _   | yes _   | no  p3  =
+        inj₂ (largeAxis axis3 (ℚP.≰⇒> p3))
+... | yes h0 | yes h1  | yes h2  | yes h3  =
+        inj₁ inBox
+  where
+  inBox : InNearBox radius point
+  inBox axis0 = h0
+  inBox axis1 = h1
+  inBox axis2 = h2
+  inBox axis3 = h3
+
+-- Contrapositive form: off the near box, some axis is large.
+offNearBoxGivesLargeAxis :
+  ∀ (radius : ℚ) (point : Coordinates) →
+  ¬ (InNearBox radius point) → LargeAxis radius point
+offNearBoxGivesLargeAxis radius point notInBox
+  with nearBoxDichotomy radius point
+... | inj₁ inBox = ⊥-elim (notInBox inBox)
+... | inj₂ large = large
+
+------------------------------------------------------------------------
+-- 3.  THE HALF-ANGLE OF A LARGE AXIS SITS IN THE SINE-GAP WINDOW
+------------------------------------------------------------------------
+
+-- The window of `BalabanBishopOuterBrillouinSineGapExact`.
+sineGapWindowLower sineGapWindowUpper : ℚ
+sineGapWindowLower = + 3 / 4
+sineGapWindowUpper = + 11 / 7
+
+-- The radius at which the split-parameter optimisation passes.
+optimalRadius : ℚ
+optimalRadius = + 2 / 5
+
+piLowerEnclosure piUpperEnclosure : ℚ
+piLowerEnclosure = + 314 / 100
+piUpperEnclosure = + 31416 / 10000
+
+-- In the normalised cell a coordinate `x` runs over `[0, 1/2]` and the
+-- corresponding half-angle is `t = pi x`.  A large coordinate therefore has
+-- its half-angle inside the proved sine-gap window.
+largeAxisHalfAngleWindow :
+  ∀ (piValue coordinate : ℚ) →
+  piLowerEnclosure ≤ piValue → piValue ≤ piUpperEnclosure →
+  optimalRadius < coordinate → coordinate ≤ cellSide →
+  (sineGapWindowLower ≤ piValue * coordinate)
+    × (piValue * coordinate ≤ sineGapWindowUpper)
+largeAxisHalfAngleWindow piValue coordinate piLower piUpper large below =
+  windowLower , windowUpper
+  where
+  radiusBelow : optimalRadius ≤ coordinate
+  radiusBelow = ℚP.<⇒≤ large
+
+  coordinateNonNeg : 0ℚ ≤ coordinate
+  coordinateNonNeg =
+    ℚP.≤-trans (toWitness {a? = 0ℚ ℚP.≤? optimalRadius} _) radiusBelow
+
+  windowLower : sineGapWindowLower ≤ piValue * coordinate
+  windowLower =
+    ℚP.≤-trans
+      (ℚP.≤-trans
+        (toWitness
+          {a? = sineGapWindowLower ℚP.≤? piLowerEnclosure * optimalRadius} _)
+        (ℚP.*-monoˡ-≤-nonNeg piLowerEnclosure
+          {{nonNegative (toWitness {a? = 0ℚ ℚP.≤? piLowerEnclosure} _)}}
+          radiusBelow))
+      (ℚP.*-monoʳ-≤-nonNeg coordinate
+        {{nonNegative coordinateNonNeg}} piLower)
+
+  piNonNeg : 0ℚ ≤ piValue
+  piNonNeg =
+    ℚP.≤-trans (toWitness {a? = 0ℚ ℚP.≤? piLowerEnclosure} _) piLower
+
+  windowUpper : piValue * coordinate ≤ sineGapWindowUpper
+  windowUpper =
+    ℚP.≤-trans
+      (ℚP.≤-trans
+        (ℚP.*-monoˡ-≤-nonNeg piValue {{nonNegative piNonNeg}} below)
+        (ℚP.*-monoʳ-≤-nonNeg cellSide
+          {{nonNegative (toWitness {a? = 0ℚ ℚP.≤? cellSide} _)}} piUpper))
+      (toWitness
+        {a? = piUpperEnclosure * cellSide ℚP.≤? sineGapWindowUpper} _)
+
+-- The combination actually used on the far region: off the near box of the
+-- optimal radius, some named axis has its half-angle inside the sine-gap
+-- window.
+record WindowAxis (piValue : ℚ) (point : Coordinates) : Set where
+  constructor windowAxis
+  field
+    windowIndex      : AxisIndex
+    windowLowerBound : sineGapWindowLower ≤ piValue * point windowIndex
+    windowUpperBound : piValue * point windowIndex ≤ sineGapWindowUpper
+
+open WindowAxis public
+
+offNearBoxGivesWindowAxis :
+  ∀ (piValue : ℚ) (point : Coordinates) →
+  piLowerEnclosure ≤ piValue → piValue ≤ piUpperEnclosure →
+  InsideCell point →
+  ¬ (InNearBox optimalRadius point) →
+  WindowAxis piValue point
+offNearBoxGivesWindowAxis piValue point piLower piUpper inside notInBox =
+  windowAxis chosenAxis (proj₁ window) (proj₂ window)
+  where
+  large : LargeAxis optimalRadius point
+  large = offNearBoxGivesLargeAxis optimalRadius point notInBox
+
+  chosenAxis : AxisIndex
+  chosenAxis = largeIndex large
+
+  window :
+    (sineGapWindowLower ≤ piValue * point chosenAxis)
+      × (piValue * point chosenAxis ≤ sineGapWindowUpper)
+  window =
+    largeAxisHalfAngleWindow piValue (point chosenAxis) piLower piUpper
+      (indexIsLarge large) (coordinateBelowSide inside chosenAxis)
+
+------------------------------------------------------------------------
+-- 4.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: the near/far dichotomy with a produced axis, its
+-- contrapositive form, and the half-angle window membership of a large
+-- coordinate for every rational enclosure of pi in [3.14, 3.1416].
+nearBoxDichotomyLevel : ProofLevel
+nearBoxDichotomyLevel = machineChecked
+
+largeAxisWindowLevel : ProofLevel
+largeAxisWindowLevel = machineChecked

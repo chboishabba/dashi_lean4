@@ -1,0 +1,19 @@
+{
+  "report": "dualatlas",
+  "corpora": [
+  {
+    "corpus": "mathlib",
+    "total": 504719,
+    "cogBuckets": 92,
+    "triadBuckets": 20,
+    "harmBuckets": 5,
+    "cogWins": 504719,
+    "triadWins": 0,
+    "harmWins": 0,
+    "cogWinsRel": 156991,
+    "triadWinsRel": 134330,
+    "harmWinsRel": 213398,
+    "harm": {"trivector": 291321, "muse5": 71529, "heptad7": 60054, "hemispheres11": 43046, "recursion13": 38769}
+  }
+  ]
+}

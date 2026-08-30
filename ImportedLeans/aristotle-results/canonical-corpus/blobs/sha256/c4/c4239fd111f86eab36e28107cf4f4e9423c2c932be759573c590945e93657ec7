@@ -1,0 +1,27 @@
+{
+  "schema": "dashi.form_constants.renderer.v0_1",
+  "renderer": "scripts/render_form_constants.py",
+  "claim_boundary": "visualization-only; no qualia, V1/V2 recovery, fMRI validation, or brain-closure claim",
+  "sources": [
+    "DASHI/Kl\u00fcver's Form Constants_aristotle/FormConstantGeometry.lean",
+    "../dashi_agda/Ontology/Brain/BrainVisualFormConstantSurface.agda",
+    "../dashi_agda/DASHI/Biology/RetinalPerturbationObservationBridge.agda"
+  ],
+  "classifier": {
+    "openLoop=false, radialRing=0": "cobweb",
+    "openLoop=false, radialRing>0": "lattice",
+    "openLoop=true, radialRing=0": "tunnel",
+    "openLoop=true, radialRing>0": "spiral"
+  },
+  "canvas": {
+    "width": 720,
+    "height": 720
+  },
+  "artifacts": [
+    "artifacts/form_constants/form_constant_cobweb.svg",
+    "artifacts/form_constants/form_constant_lattice.svg",
+    "artifacts/form_constants/form_constant_tunnel.svg",
+    "artifacts/form_constants/form_constant_spiral.svg",
+    "artifacts/form_constants/form_constants_contact_sheet.svg"
+  ]
+}

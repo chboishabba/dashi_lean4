@@ -1,0 +1,158 @@
+# Row A1 — the fixed-constraint-coordinate Gaussian round
+
+**No row closes. The frozen research count stays at 4.** Nothing here promotes a
+cross-prover result: this round is Lean-side mathematics only, and the Agda
+frontier is untouched.
+
+All modules below compile with `lake build` (8082 jobs, green), contain no
+`sorry`, no `axiom`, no unsafe pragma and no `@[implemented_by]`, and
+`#print axioms` on every theorem cited reports only
+`propext, Classical.choice, Quot.sound`.
+
+## 1. The Gaussian is now organised the way the source organises it
+
+`RequestProject/YangMills/MatrixFamilyDerivative.lean` — entrywise calculus for
+matrix-valued background families: the noncommutative product rule
+`(AB)' = A'B + AB'` with the factor order preserved (`HasMatDerivAt.mul`), the
+three-factor rule (`.mul₃`), transpose, and the fact that the derivative of an
+identically vanishing family vanishes (`.of_eq_zero`).
+
+`RequestProject/YangMills/ConstraintCoordinateGaussian.lean` — the restricted
+operator
+
+    Â(U) = C(U)ᵀ A(U) C(U).
+
+* `restricted_quadForm`: the restricted form is the ambient form on the
+  substituted coordinates, `x·Âx = (Cx)·A(Cx)`.
+* `restricted_floor`, `restricted_pos`: ambient coercivity `a` plus a
+  substitution lower bound `σ` give the restricted floor `aσ`, strictly positive
+  on nonzero vectors. This is the shape of the datum `b_patch > 0`.
+* `restricted_floor_needs_injectivity`: if `C` kills a vector the form
+  degenerates there whatever `A` is — the substitution bound is load-bearing.
+* `hasMatDerivAt_restricted` / `restrictedVariation_eq_W_add_Q_add_R`:
+
+      D Â = C'ᵀAC + CᵀA'C + CᵀAC',   W = CᵀA'C,  Q = C'ᵀAC,  R = CᵀAC'.
+
+* `connection_transpose`: for symmetric `A`, `Q = Rᵀ`. Hence
+  `restrictedVariation_diag`: `V_ii = W_ii + 2R_ii`, and
+  `restrictedVariation_entry_lower_bound`: `V_ii ≥ c − 2e`. **The two connection
+  terms are not independent error sources**, which halves the budget the patch
+  producer has to meet.
+* `wilsonOnly_not_sufficient`: even with `Q = Rᵀ`, a `W`-only certificate is
+  still not a certificate for `V`.
+
+## 2. `Q' ⇒ C'` is now a solve, not a guess
+
+`RequestProject/YangMills/EliminatedCoordinateDerivative.lean`. From the
+constraint identity `Q(U)C(U) = 0`:
+
+* `constraint_derivative`: `Q C' = −Q' C` — exact, obtained by differentiating.
+* `eliminated_derivative_solve`: if `C' = E·X` is carried by the eliminated
+  coordinates and the pivot `P = Q·E` has a left inverse, then
+  `X = −P⁻¹(Q'·C)`. The substitution derivative is computed by the pivot solve.
+* `eliminated_derivative_unique`, `pivot_needed`: uniqueness, and a
+  demonstration that without an invertible pivot `C'` is not determined.
+* `unmoved_entry_derivative_zero`: on a bond where `C` does not move, `C'`
+  vanishes — the formal version of "`C` is the identity on almost every bond".
+
+The remaining source problem is exactly the literal `Q'(U)`.
+
+## 3. The KKT annihilator reduction — and its honest limits
+
+`RequestProject/YangMills/ConstraintAnnihilator.lean`.
+
+* `annihilates_ker_iff_mem_range_transpose`: a covector annihilates `ker L`
+  **iff** it is longitudinal, `g ∈ im Lᵀ`. Both directions.
+* `orthogonalProjection_ker_eq_zero`: the projection form `P g = 0`.
+* `longitudinal_does_not_cancel_connection`: with a trivial constraint kernel
+  *every* covector is longitudinal, yet the connection term `CᵀAC'` is nonzero.
+  **No cancellation is claimed.** The weld that would be needed — identifying
+  the KKT projection with the `CᵀAC` carrier — is not done.
+
+## 4. `W = D³S`, with a derived recursion
+
+`RequestProject/YangMills/MixedThirdVariation.lean`. `Δ_Wilson` is already the
+Hessian, so `W = D_bg Δ_Wilson` is the mixed *third* variation.
+
+* `Jet3`, `jetMul`: three-direction jets and the ordered eight-term Leibniz
+  product.
+* `JetCarrier`: a three-parameter matrix family together with the nested
+  one-parameter derivative data exhibiting a jet. **The combinatorial formula is
+  not assumed**: `JetCarrier.mul` derives every one of the eight components from
+  the noncommutative product rule.
+* `JetCarrier.hasMixedD3`: the carrier's mixed third derivative is `jet.d123`.
+* `Jet3.carrier`, `hasMixedD3_jetFun`: carriers exist (the multi-affine family
+  of a jet), so nothing is vacuous.
+* `mixedD3_plaquette`, `Jet3.hasMixedD3_jetFun_four`: the recursion iterates to
+  an ordered product of four links — the plaquette shape.
+* `Jet3.jetMul_assoc`: bracketing independence.
+* `first_variation_does_not_control_third`: a jet with all first variations zero
+  and nonzero mixed third variation, and conversely. `D³S` is a genuinely
+  different datum from `DS`.
+
+## 5. The patch test on the full restricted symbol, with an explicit budget
+
+`RequestProject/YangMills/RestrictedSymbolPatch.lean`.
+
+* `restrictedSymbol_entry_ge_on_patch`, `cellIntegral_restricted_ge`: the patch
+  compiler on `V = W+Q+R`, giving the cell-integral floor `(δ/4)(c − 2e)`.
+* At the project's candidate patch (half-width `1/8`, Wilson floor `√2/2`) the
+  floor is `√2/64 − e/16`, and
+
+      restricted_patch_survives_iff :  0 < floor  ↔  e < √2/4,
+
+  with `sqrt2_div_four_gt_thirtyFive : 0.35 < √2/4` and
+  `restricted_patch_fails_at_budget` showing the budget is attained exactly.
+  **This is the sharp number the `Q`/`R` producer must beat on this one patch.**
+
+## 6. History-uniformity and root-free small coupling
+
+`RequestProject/YangMills/HistoryUniformRemainder.lean`.
+
+* `A1_historyUniform_lower_bound`: if the Gaussian floor and the five-channel
+  quartic remainder hold uniformly over admissible preceding-coupling histories,
+  then `β_j ≥ b_patch − C_β γ⁴`, with **no memory debt subtracted**.
+* `correctedMargin_le_historyUniformMargin`,
+  `historyUniform_strictly_stronger`: re-subtracting the memory debt is a strict
+  loss, i.e. double counting.
+* `historyUniformFloor_is_a_real_hypothesis`: history-uniformity does **not**
+  follow from a floor along one reference trajectory. It is the extra source
+  obligation this route trades the memory debt for. The explicit-debt route of
+  `A1CorrectedMargin` remains available as the fallback and is untouched.
+
+`RequestProject/YangMills/SmallCouplingAbsorption.lean`.
+
+* `criticalCoupling b Cb = b/(2(C_β+b))`, with `0 < γ_* ≤ 1/2`,
+  `C_β γ_* ≤ b/2`, `γ_*⁴ ≤ γ_*`, hence
+  `Cbeta_mul_criticalCoupling_pow_le_half : C_β γ_*⁴ ≤ b/2`. No fourth root, and
+  **no numerical `C_β` is needed**: any finite `C_β` and any `b > 0` suffice.
+* `half_floor_of_smallCoupling`, `beta_pos_of_smallCoupling`: `β ≥ b/2 > 0`.
+
+## 7. The assembly
+
+`A1_historyUniform_half_floor` and `A1_halfFloor_from_restrictedPatch`:
+
+    patch floor on the full restricted symbol  (b_patch = (δ/4)(c − 2e) > 0)
+  + history-uniform five-channel quartic remainder (any finite C_β)
+  + γ_* = (1/2)·b_patch/(C_β + b_patch)
+  ⟹  β_j ≥ b_patch/2 > 0,  uniformly in shell index, number of scales,
+      volume and cutoff.
+
+## What is still missing
+
+Nothing above instantiates, for Bałaban's construction:
+
+1. the literal `A'(U)` (the ambient operator variation) and the literal `Q'(U)`
+   — hence not the Wilson floor `c` on the patch;
+2. a bound `e` on the connection entry `CᵀAC'` on that patch, which must beat
+   `√2/4`; equivalently a proof that the connection contribution cancels after
+   restriction to the admissible carrier (the KKT weld, explicitly *not* claimed
+   here);
+3. the numerical channel coefficients giving a finite `C_β`;
+4. history-uniformity of the Gaussian floor and of the five-channel remainder —
+   or, on the fallback route, explicit `(C_loc, θ)` and a marginal-memory bound
+   `H_marg`.
+
+Those are source data. Everything downstream of them is machine checked; nothing
+upstream of them is. No Clay leaf is closed and no beta-coefficient value is
+derived or asserted.

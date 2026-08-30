@@ -1,0 +1,655 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Got it!" [ref=e3] [cursor=pointer]:
+      - /url: "#null"
+    - paragraph [ref=e4]:
+      - text: This website uses cookies to ensure you get the best experience on our website
+      - link "More info" [ref=e5] [cursor=pointer]:
+        - /url: /cookies
+  - generic [ref=e6]:
+    - navigation [ref=e7]:
+      - generic [ref=e8]:
+        - link [ref=e10] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e12]:
+          - generic [ref=e14]:
+            - textbox "Search HEPData" [ref=e15]
+            - button "Search" [ref=e16] [cursor=pointer]
+          - list [ref=e17]:
+            - listitem [ref=e18]:
+              - link " About" [ref=e19] [cursor=pointer]:
+                - /url: /about
+                - generic [ref=e20]: 
+                - text: About
+            - listitem [ref=e21]:
+              - link " Submission Help" [ref=e22] [cursor=pointer]:
+                - /url: /submission
+                - generic [ref=e23]: 
+                - text: Submission Help
+            - listitem [ref=e24]:
+              - link " File Formats" [ref=e25] [cursor=pointer]:
+                - /url: /formats
+                - generic [ref=e26]: 
+                - text: File Formats
+            - listitem [ref=e27]:
+              - link " Sign in" [ref=e28] [cursor=pointer]:
+                - /url: /login/
+                - generic [ref=e29]: 
+                - text: Sign in
+    - generic [ref=e31]:
+      - list:
+        - link " Browse all":
+          - /url: /search
+          - listitem [ref=e32] [cursor=pointer]:
+            - generic [ref=e33]: 
+            - text: Browse all
+        - listitem [ref=e34]:
+          - generic [ref=e35]: 
+          - text: Aaij, Roel et al.
+        - listitem [ref=e36]:
+          - generic [ref=e37]:
+            - button " Cite" [ref=e38] [cursor=pointer]:
+              - generic [ref=e39]: 
+              - text: Cite
+            - link "JSON" [ref=e40] [cursor=pointer]:
+              - /url: "?format=json"
+          - generic [ref=e41]:
+            - generic [ref=e42]: 
+            - text: Accessed 5362 times
+          - generic [ref=e43]: Last updated on 2016-11-07 14:14
+  - generic [ref=e47]:
+    - generic [ref=e48]:
+      - button " Hide Publication Information" [ref=e49] [cursor=pointer]:
+        - generic [ref=e50]: 
+        - text: Hide Publication Information
+      - generic [ref=e52] [cursor=pointer]: 
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - text: Differential branching fraction and angular moments analysis of the decay
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - generic [ref=e57]:
+                - generic [ref=e59]: B
+                - generic [ref=e62]: "0"
+              - generic [ref=e64]: →
+              - generic [ref=e65]:
+                - generic [ref=e67]: K
+                - generic [ref=e70]: +
+              - generic [ref=e71]:
+                - generic [ref=e73]: π
+                - generic [ref=e76]: −
+              - generic [ref=e77]:
+                - generic [ref=e79]: μ
+                - generic [ref=e82]: +
+              - generic [ref=e83]:
+                - generic [ref=e85]: μ
+                - generic [ref=e88]: −
+            - math [ref=e90]:
+              - generic [ref=e91]:
+                - generic [ref=e92]: B
+                - generic [ref=e93]: "0"
+              - generic [ref=e94]: →
+              - generic [ref=e95]:
+                - generic [ref=e96]: K
+                - generic [ref=e97]: +
+              - generic [ref=e98]:
+                - generic [ref=e99]: π
+                - generic [ref=e100]: −
+              - generic [ref=e101]:
+                - generic [ref=e102]: μ
+                - generic [ref=e103]: +
+              - generic [ref=e104]:
+                - generic [ref=e105]: μ
+                - generic [ref=e106]: −
+          - text: in the
+          - generic [ref=e107]:
+            - generic [ref=e108]:
+              - generic [ref=e109]:
+                - generic [ref=e111]: K
+                - generic [ref=e112]:
+                  - generic [ref=e114]: ∗
+                  - generic [ref=e115]:
+                    - generic [ref=e117]: "0"
+                    - generic [ref=e119]: ","
+                    - generic [ref=e121]: "2"
+              - generic [ref=e123]: (
+              - generic [ref=e124]:
+                - generic [ref=e125]: "1"
+                - generic [ref=e126]: "4"
+                - generic [ref=e127]: "3"
+                - generic [ref=e128]: "0"
+              - generic [ref=e129]:
+                - generic [ref=e131]: )
+                - generic [ref=e134]: "0"
+            - math [ref=e136]:
+              - generic [ref=e137]:
+                - generic [ref=e138]: K
+                - generic [ref=e139]:
+                  - generic [ref=e140]: "0"
+                  - generic [ref=e141]: ","
+                  - generic [ref=e142]: "2"
+                - generic [ref=e143]: ∗
+              - generic [ref=e144]: (
+              - generic [ref=e145]: "1430"
+              - generic [ref=e146]:
+                - generic [ref=e147]: )
+                - generic [ref=e148]: "0"
+          - text: region
+        - generic [ref=e150]:
+          - text: The
+          - link "LHCb" [ref=e152] [cursor=pointer]:
+            - /url: /search/?collaboration=LHCb
+          - text: collaboration
+        - generic [ref=e153]:
+          - link "Aaij, Roel" [ref=e154] [cursor=pointer]:
+            - /url: /search?author=Aaij, Roel
+          - text: ","
+          - link "Adeva, Bernardo" [ref=e155] [cursor=pointer]:
+            - /url: /search?author=Adeva, Bernardo
+          - text: ","
+          - link "Adinolfi, Marco" [ref=e156] [cursor=pointer]:
+            - /url: /search?author=Adinolfi, Marco
+          - text: ","
+          - link "Ajaltouni, Ziad" [ref=e157] [cursor=pointer]:
+            - /url: /search?author=Ajaltouni, Ziad
+          - text: ","
+          - link "Akar, Simon" [ref=e158] [cursor=pointer]:
+            - /url: /search?author=Akar, Simon
+          - text: ","
+          - link "Albrecht, Johannes" [ref=e159] [cursor=pointer]:
+            - /url: /search?author=Albrecht, Johannes
+          - text: ","
+          - link "Alessio, Federico" [ref=e160] [cursor=pointer]:
+            - /url: /search?author=Alessio, Federico
+          - text: ","
+          - link "Alexander, Michael" [ref=e161] [cursor=pointer]:
+            - /url: /search?author=Alexander, Michael
+          - text: ","
+          - link "Ali, Suvayu" [ref=e162] [cursor=pointer]:
+            - /url: /search?author=Ali, Suvayu
+          - text: ","
+          - link "Alkhazov, Georgy" [ref=e163] [cursor=pointer]:
+            - /url: /search?author=Alkhazov, Georgy
+        - generic [ref=e164]: JHEP 12 (2016) 065, 2016.
+        - link "https://doi.org/10.17182/hepdata.75193.v1" [ref=e166] [cursor=pointer]:
+          - /url: https://doi.org/10.17182/hepdata.75193.v1
+        - generic [ref=e167]:
+          - list [ref=e168]:
+            - listitem [ref=e169]:
+              - link "Journal" [ref=e170] [cursor=pointer]:
+                - /url: https://doi.org/10.1007/JHEP12(2016)065
+                - generic [ref=e171]: Journal
+            - listitem [ref=e172]:
+              - link "INSPIRE" [ref=e173] [cursor=pointer]:
+                - /url: https://inspirehep.net/literature/1486676
+                - generic [ref=e174]: INSPIRE
+          - list
+      - generic [ref=e175]:
+        - strong [ref=e176]: Abstract (data abstract)
+        - generic [ref=e177]:
+          - text: CERN-LHC. Measurements of the differential branching fraction and angular moments of the decay
+          - generic [ref=e178]:
+            - generic [ref=e179]:
+              - generic [ref=e180]:
+                - generic [ref=e182]: B
+                - generic [ref=e185]: "0"
+              - generic [ref=e187]: →
+              - generic [ref=e188]:
+                - generic [ref=e190]: K
+                - generic [ref=e193]: +
+              - generic [ref=e194]:
+                - generic [ref=e196]: π
+                - generic [ref=e199]: −
+              - generic [ref=e200]:
+                - generic [ref=e202]: μ
+                - generic [ref=e205]: +
+              - generic [ref=e206]:
+                - generic [ref=e208]: μ
+                - generic [ref=e211]: −
+            - math [ref=e213]:
+              - generic [ref=e214]:
+                - generic [ref=e215]: B
+                - generic [ref=e216]: "0"
+              - generic [ref=e217]: →
+              - generic [ref=e218]:
+                - generic [ref=e219]: K
+                - generic [ref=e220]: +
+              - generic [ref=e221]:
+                - generic [ref=e222]: π
+                - generic [ref=e223]: −
+              - generic [ref=e224]:
+                - generic [ref=e225]: μ
+                - generic [ref=e226]: +
+              - generic [ref=e227]:
+                - generic [ref=e228]: μ
+                - generic [ref=e229]: −
+          - text: in the
+          - generic [ref=e230]:
+            - generic [ref=e231]:
+              - generic [ref=e232]:
+                - generic [ref=e234]: K
+                - generic [ref=e235]:
+                  - generic [ref=e237]: ∗
+                  - generic [ref=e238]:
+                    - generic [ref=e240]: "0"
+                    - generic [ref=e242]: ","
+                    - generic [ref=e244]: "2"
+              - generic [ref=e246]: (
+              - generic [ref=e247]:
+                - generic [ref=e248]: "1"
+                - generic [ref=e249]: "4"
+                - generic [ref=e250]: "3"
+                - generic [ref=e251]: "0"
+              - generic [ref=e252]:
+                - generic [ref=e254]: )
+                - generic [ref=e257]: "0"
+            - math [ref=e259]:
+              - generic [ref=e260]:
+                - generic [ref=e261]: K
+                - generic [ref=e262]:
+                  - generic [ref=e263]: "0"
+                  - generic [ref=e264]: ","
+                  - generic [ref=e265]: "2"
+                - generic [ref=e266]: ∗
+              - generic [ref=e267]: (
+              - generic [ref=e268]: "1430"
+              - generic [ref=e269]:
+                - generic [ref=e270]: )
+                - generic [ref=e271]: "0"
+          - text: in the
+          - generic [ref=e272]:
+            - generic [ref=e273]:
+              - generic [ref=e274]:
+                - generic [ref=e276]: K
+                - generic [ref=e279]: +
+              - generic [ref=e280]:
+                - generic [ref=e282]: π
+                - generic [ref=e285]: −
+            - math [ref=e287]:
+              - generic [ref=e288]:
+                - generic [ref=e289]: K
+                - generic [ref=e290]: +
+              - generic [ref=e291]:
+                - generic [ref=e292]: π
+                - generic [ref=e293]: −
+          - text: invariant mass range
+          - generic [ref=e294]:
+            - generic [ref=e295]:
+              - generic [ref=e296]:
+                - generic [ref=e297]: "1"
+                - generic [ref=e298]: "3"
+                - generic [ref=e299]: "3"
+                - generic [ref=e300]: "0"
+              - generic [ref=e302]: <
+              - generic [ref=e304]: m
+              - generic [ref=e306]: (
+              - generic [ref=e307]:
+                - generic [ref=e309]: K
+                - generic [ref=e312]: +
+              - generic [ref=e313]:
+                - generic [ref=e315]: π
+                - generic [ref=e318]: −
+              - generic [ref=e320]: )
+              - generic [ref=e322]: <
+              - generic [ref=e323]:
+                - generic [ref=e324]: "1"
+                - generic [ref=e325]: "5"
+                - generic [ref=e326]: "3"
+                - generic [ref=e327]: "0"
+              - generic [ref=e329]: M
+              - generic [ref=e331]: e
+              - generic [ref=e333]: V
+              - generic [ref=e336]: /
+              - generic [ref=e337]:
+                - generic [ref=e339]: c
+                - generic [ref=e342]: "2"
+            - math [ref=e344]:
+              - generic [ref=e345]: "1330"
+              - generic [ref=e346]: <
+              - generic [ref=e347]: m
+              - generic [ref=e348]: (
+              - generic [ref=e349]:
+                - generic [ref=e350]: K
+                - generic [ref=e351]: +
+              - generic [ref=e352]:
+                - generic [ref=e353]: π
+                - generic [ref=e354]: −
+              - generic [ref=e355]: )
+              - generic [ref=e356]: <
+              - generic [ref=e357]: "1530"
+              - generic [ref=e358]: M
+              - generic [ref=e359]: e
+              - generic [ref=e360]: V
+              - generic [ref=e362]: /
+              - generic [ref=e363]:
+                - generic [ref=e364]: c
+                - generic [ref=e365]: "2"
+          - text: are presented. Proton-proton collision data are used, corresponding to an integrated luminosity of 3
+          - generic [ref=e366]:
+            - generic [ref=e367]:
+              - generic [ref=e369]: f
+              - generic [ref=e370]:
+                - generic [ref=e372]: b
+                - generic [ref=e374]:
+                  - generic [ref=e376]: −
+                  - generic [ref=e378]: "1"
+            - math [ref=e380]:
+              - generic [ref=e381]: f
+              - generic [ref=e382]:
+                - generic [ref=e383]: b
+                - generic [ref=e384]:
+                  - generic [ref=e385]: −
+                  - generic [ref=e386]: "1"
+          - text: collected by the LHCb experiment. Differential branching fraction measurements are reported in five bins of the invariant mass squared of the dimuon system,
+          - generic [ref=e387]:
+            - generic [ref=e389]:
+              - generic [ref=e391]: q
+              - generic [ref=e394]: "2"
+            - math [ref=e396]:
+              - generic [ref=e397]:
+                - generic [ref=e398]: q
+                - generic [ref=e399]: "2"
+          - text: ", between 0.1 and 8.0"
+          - generic [ref=e400]:
+            - generic [ref=e401]:
+              - generic [ref=e403]: G
+              - generic [ref=e405]: e
+              - generic [ref=e406]:
+                - generic [ref=e408]: V
+                - generic [ref=e411]: "2"
+              - generic [ref=e414]: /
+              - generic [ref=e415]:
+                - generic [ref=e417]: c
+                - generic [ref=e420]: "4"
+            - math [ref=e422]:
+              - generic [ref=e423]: G
+              - generic [ref=e424]: e
+              - generic [ref=e425]:
+                - generic [ref=e426]: V
+                - generic [ref=e427]: "2"
+              - generic [ref=e429]: /
+              - generic [ref=e430]:
+                - generic [ref=e431]: c
+                - generic [ref=e432]: "4"
+          - text: . For the first time, an angular analysis sensitive to the S-, P- and D-wave contributions of this rare decay is performed. The set of 40 normalised angular moments describing the decay is presented for the
+          - generic [ref=e433]:
+            - generic [ref=e435]:
+              - generic [ref=e437]: q
+              - generic [ref=e440]: "2"
+            - math [ref=e442]:
+              - generic [ref=e443]:
+                - generic [ref=e444]: q
+                - generic [ref=e445]: "2"
+          - text: range 1.1--6.0
+          - generic [ref=e446]:
+            - generic [ref=e447]:
+              - generic [ref=e449]: G
+              - generic [ref=e451]: e
+              - generic [ref=e452]:
+                - generic [ref=e454]: V
+                - generic [ref=e457]: "2"
+              - generic [ref=e460]: /
+              - generic [ref=e461]:
+                - generic [ref=e463]: c
+                - generic [ref=e466]: "4"
+            - math [ref=e468]:
+              - generic [ref=e469]: G
+              - generic [ref=e470]: e
+              - generic [ref=e471]:
+                - generic [ref=e472]: V
+                - generic [ref=e473]: "2"
+              - generic [ref=e475]: /
+              - generic [ref=e476]:
+                - generic [ref=e477]: c
+                - generic [ref=e478]: "4"
+          - text: .
+    - text: 
+    - generic [ref=e479]:
+      - button " Download All" [ref=e482] [cursor=pointer]:
+        - generic [ref=e483]: 
+        - text: Download All
+      - textbox "Filter 3 data tables" [ref=e485]
+      - list [ref=e486]:
+        - listitem [ref=e487] [cursor=pointer]:
+          - generic [ref=e488]:
+            - heading "Table 1" [level=4] [ref=e489]
+            - paragraph [ref=e490]: Data from Section 7, Figure 5, Table 2
+            - paragraph [ref=e491]: 10.17182/hepdata.75193.v1/t1
+            - paragraph [ref=e492]:
+              - text: ": Differential branching fraction of"
+              - generic [ref=e493]:
+                - generic [ref=e494]:
+                  - generic [ref=e495]:
+                    - generic [ref=e497]: B
+                    - generic [ref=e500]: "0"
+                  - generic [ref=e502]: →
+                  - generic [ref=e503]:
+                    - generic [ref=e505]: K
+                    - generic [ref=e508]: +
+                  - generic [ref=e509]:
+                    - generic [ref=e511]: π
+                    - generic [ref=e514]: −
+                  - generic [ref=e515]:
+                    - generic [ref=e517]: μ
+                    - generic [ref=e520]: +
+                  - generic [ref=e521]:
+                    - generic [ref=e523]: μ
+                    - generic [ref=e526]: −
+                - math [ref=e528]:
+                  - generic [ref=e529]:
+                    - generic [ref=e530]: B
+                    - generic [ref=e531]: "0"
+                  - generic [ref=e532]: →
+                  - generic [ref=e533]:
+                    - generic [ref=e534]: K
+                    - generic [ref=e535]: +
+                  - generic [ref=e536]:
+                    - generic [ref=e537]: π
+                    - generic [ref=e538]: −
+                  - generic [ref=e539]:
+                    - generic [ref=e540]: μ
+                    - generic [ref=e541]: +
+                  - generic [ref=e542]:
+                    - generic [ref=e543]: μ
+                    - generic [ref=e544]: −
+              - text: in bins of
+              - generic [ref=e545]:
+                - generic [ref=e547]:
+                  - generic [ref=e549]: q
+                  - generic [ref=e552]: "2"
+                - math [ref=e554]:
+                  - generic [ref=e555]:
+                    - generic [ref=e556]: q
+                    - generic [ref=e557]: "2"
+              - text: for the range
+              - generic [ref=e558]:
+                - generic [ref=e559]:
+                  - generic [ref=e560]:
+                    - generic [ref=e561]: "1"
+                    - generic [ref=e562]: "3"
+                    - generic [ref=e563]: "3"
+                    - generic [ref=e564]: "0"
+                  - generic [ref=e566]: <
+                  - generic [ref=e568]: m
+                  - generic [ref=e570]: (
+                  - generic [ref=e571]:
+                    - generic [ref=e573]: K
+                    - generic [ref=e576]: +
+                  - generic [ref=e577]:
+                    - generic [ref=e579]: π
+                    - generic [ref=e582]: −
+                  - generic [ref=e584]: )
+                  - generic [ref=e586]: <
+                  - generic [ref=e587]:
+                    - generic [ref=e588]: "1"
+                    - generic [ref=e589]: "5"
+                    - generic [ref=e590]: "3"
+                    - generic [ref=e591]: "0"
+                  - generic [ref=e593]: M
+                  - generic [ref=e595]: e
+                  - generic [ref=e597]: V
+                  - generic [ref=e600]: /
+                  - generic [ref=e601]:
+                    - generic [ref=e603]: c
+                    - generic [ref=e606]: "2"
+                - math [ref=e608]:
+                  - generic [ref=e609]: "1330"
+                  - generic [ref=e610]: <
+                  - generic [ref=e611]: m
+                  - generic [ref=e612]: (
+                  - generic [ref=e613]:
+                    - generic [ref=e614]: K
+                    - generic [ref=e615]: +
+                  - generic [ref=e616]:
+                    - generic [ref=e617]: π
+                    - generic [ref=e618]: −
+                  - generic [ref=e619]: )
+                  - generic [ref=e620]: <
+                  - generic [ref=e621]: "1530"
+                  - generic [ref=e622]: M
+                  - generic [ref=e623]: e
+                  - generic [ref=e624]: V
+                  - generic [ref=e626]: /
+                  - generic [ref=e627]:
+                    - generic [ref=e628]: c
+                    - generic [ref=e629]: "2"
+              - text: ....
+          - generic [ref=e631]: 
+        - listitem [ref=e633] [cursor=pointer]:
+          - generic [ref=e634]:
+            - heading "Table 2" [level=4] [ref=e635]
+            - paragraph [ref=e636]: Data from Section 8, Table 3
+            - paragraph [ref=e637]: 10.17182/hepdata.75193.v1/t2
+            - paragraph [ref=e638]:
+              - text: Measurement of the normalised moments,
+              - generic [ref=e639]:
+                - generic [ref=e641]:
+                  - generic [ref=e642]:
+                    - generic [ref=e646]: –
+                    - generic [ref=e649]: Γ
+                  - generic [ref=e653]: i
+                - math [ref=e655]:
+                  - generic [ref=e656]:
+                    - generic [ref=e657]:
+                      - generic [ref=e658]: Γ
+                      - generic [ref=e659]: ―
+                    - generic [ref=e661]: i
+              - text: ", of the decay"
+              - generic [ref=e662]:
+                - generic [ref=e663]:
+                  - generic [ref=e664]:
+                    - generic [ref=e666]: B
+                    - generic [ref=e669]: "0"
+                  - generic [ref=e671]: →
+                  - generic [ref=e672]:
+                    - generic [ref=e674]: K
+                    - generic [ref=e677]: +
+                  - generic [ref=e678]:
+                    - generic [ref=e680]: π
+                    - generic [ref=e683]: −
+                  - generic [ref=e684]:
+                    - generic [ref=e686]: μ
+                    - generic [ref=e689]: +
+                  - generic [ref=e690]:
+                    - generic [ref=e692]: μ
+                    - generic [ref=e695]: −
+                - math [ref=e697]:
+                  - generic [ref=e698]:
+                    - generic [ref=e699]: B
+                    - generic [ref=e700]: "0"
+                  - generic [ref=e701]: →
+                  - generic [ref=e702]:
+                    - generic [ref=e703]: K
+                    - generic [ref=e704]: +
+                  - generic [ref=e705]:
+                    - generic [ref=e706]: π
+                    - generic [ref=e707]: −
+                  - generic [ref=e708]:
+                    - generic [ref=e709]: μ
+                    - generic [ref=e710]: +
+                  - generic [ref=e711]:
+                    - generic [ref=e712]: μ
+                    - generic [ref=e713]: −
+              - text: in the range $1.1< q^2<6.0...
+          - generic [ref=e715]: 
+        - listitem [ref=e717] [cursor=pointer]:
+          - generic [ref=e718]:
+            - heading "Table 3" [level=4] [ref=e719]
+            - paragraph [ref=e720]: Data from Additional material
+            - paragraph [ref=e721]: 10.17182/hepdata.75193.v1/t3
+            - paragraph [ref=e722]: Full covariance matrix of the normalised moments. The statistical and systematic uncertainties are combined.
+          - generic [ref=e724]: 
+    - generic [ref=e726]:
+      - generic [ref=e728]:
+        - generic [ref=e729]:
+          - img
+        - paragraph [ref=e738]: Loading Data...
+      - text:  
+  - text: B 0 → K + π − μ + μ − K ∗ 0 , 2 ( 1 4 3 0 ) 0 B 0 → K + π − μ + μ − K ∗ 0 , 2 ( 1 4 3 0 ) 0 B 0 → K + π − μ + μ − K ∗ 0 , 2 ( 1 4 3 0 ) 0 B 0 → K + π − μ + μ − K ∗ 0 , 2 ( 1 4 3 0 ) 0 B 0 → K + π − μ + μ − K ∗ 0 , 2 ( 1 4 3 0 ) 0 B 0 → K + π − μ + μ − K ∗ 0 , 2 ( 1 4 3 0 ) 0 B 0 → K + π − μ + μ − K ∗ 0 , 2 ( 1 4 3 0 ) 0   
+  - generic [ref=e740] [cursor=pointer]: 
+  - generic [ref=e741]:
+    - heading "Ask a Question" [level=4] [ref=e743]
+    - generic [ref=e744]:
+      - paragraph [ref=e745]: Your question will be emailed to those involved with the submission. Please mention the relevant table.
+      - textbox "Send question on this data..." [ref=e746]
+      - paragraph [ref=e747]: Please log in to HEPData to send a question.
+  - generic [ref=e748]:
+    - generic [ref=e749]:
+      - link [ref=e751] [cursor=pointer]:
+        - /url: https://www.ippp.dur.ac.uk/
+        - img [ref=e752]
+      - link [ref=e754] [cursor=pointer]:
+        - /url: http://home.cern/
+        - img [ref=e755]
+      - link [ref=e757] [cursor=pointer]:
+        - /url: https://www.ukri.org/councils/stfc/
+        - img [ref=e758]
+    - generic [ref=e760]:
+      - paragraph [ref=e761]:
+        - link "About HEPData" [ref=e762] [cursor=pointer]:
+          - /url: /about
+        - link "Submitting to HEPData" [ref=e763] [cursor=pointer]:
+          - /url: /submission
+        - link "HEPData File Formats" [ref=e764] [cursor=pointer]:
+          - /url: /formats
+        - link "HEPData Coordinators" [ref=e765] [cursor=pointer]:
+          - /url: /permissions/coordinators
+        - link "HEPData Terms of Use" [ref=e766] [cursor=pointer]:
+          - /url: /terms
+        - link "HEPData Cookie Policy" [ref=e767] [cursor=pointer]:
+          - /url: /cookies
+      - paragraph [ref=e768]:
+        - link " Status" [ref=e769] [cursor=pointer]:
+          - /url: https://status.hepdata.net
+          - generic [ref=e770]: 
+          - text: Status
+        - link " Email" [ref=e771] [cursor=pointer]:
+          - /url: mailto:info@hepdata.net
+          - generic [ref=e772]: 
+          - text: Email
+        - link "Forum" [ref=e773] [cursor=pointer]:
+          - /url: https://hepdata-forum.cern.ch
+          - img [ref=e774]
+          - text: Forum
+        - link " Twitter" [ref=e775] [cursor=pointer]:
+          - /url: https://www.twitter.com/HEPData
+          - generic [ref=e776]: 
+          - text: Twitter
+        - link " GitHub" [ref=e777] [cursor=pointer]:
+          - /url: https://www.github.com/HEPData
+          - generic [ref=e778]: 
+          - text: GitHub
+      - paragraph [ref=e779]:
+        - text: Copyright ~1975-Present, HEPData | Powered by
+        - link "Invenio" [ref=e780] [cursor=pointer]:
+          - /url: https://inveniosoftware.org/
+        - text: ", funded by"
+        - link "STFC" [ref=e781] [cursor=pointer]:
+          - /url: https://www.ukri.org/councils/stfc/
+        - text: ", hosted and originally developed at"
+        - link "CERN" [ref=e782] [cursor=pointer]:
+          - /url: https://home.cern/
+        - text: ", supported and further developed at"
+        - link "IPPP Durham" [ref=e783] [cursor=pointer]:
+          - /url: https://www.ippp.dur.ac.uk/
+        - text: .

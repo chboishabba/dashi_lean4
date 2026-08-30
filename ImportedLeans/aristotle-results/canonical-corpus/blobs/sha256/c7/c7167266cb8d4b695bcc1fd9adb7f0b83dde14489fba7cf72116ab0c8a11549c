@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(agda:*)",
+      "Skill(gsd:plan-phase)",
+      "Bash(ls:*)",
+      "Skill(gsd:execute-plan)",
+      "Bash(git status:*)",
+      "Bash(git:*)",
+      "Skill(gsd:add-phase)"
+    ]
+  }
+}

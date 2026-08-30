@@ -1,0 +1,213 @@
+module DASHI.Analysis.RiemannCenteredGridRetentionExact where
+
+------------------------------------------------------------------------
+-- PURPOSE
+--
+-- Preferred G1 finite-coordinate geometry.
+--
+-- Choose the source height T to equal the ordinate gamma of the hypothetical
+-- zero.  Then tau_0=T=gamma and
+--
+--   z - tau_k = -k h - i alpha.
+--
+-- For a real-even taper, complex Fourier symmetry gives conjugate/reflection
+-- pairing of the k and -k samples.  In particular their imaginary parts have
+-- opposite sign and equal square, while the k=0 sample phiHat(-i alpha) is
+-- real.  Therefore the full imaginary-channel energy has the shape
+--
+--   B_full = 2 * sum_{k>=1} b_k^2,
+--
+-- whereas the source matrix uses the one-sided finite coordinates
+--
+--   B_fin = sum_{1<=k<d} b_k^2.
+--
+-- Hence
+--
+--   B_full = 2 * (B_fin + B_tail),
+--
+-- and a bound on the far positive lattice tail k>=d immediately retains a
+-- positive fraction of the transverse channel in the exact `Fin d` matrix.
+--
+-- This module closes that algebra.  The analytic producer still has to supply
+-- the actual source-grid tail from the existing strip estimate.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat; zero; suc; _+_; _*_)
+
+sym : {A : Set} {x y : A} → x ≡ y → y ≡ x
+sym refl = refl
+
+cong : {A B : Set} {x y : A} (f : A → B) → x ≡ y → f x ≡ f y
+cong f refl = refl
+
+trans : {A : Set} {x y z : A} → x ≡ y → y ≡ z → x ≡ z
+trans refl yz = yz
+
+congPlusLeft : {a b : Nat} → a ≡ b → (c : Nat) → c + a ≡ c + b
+congPlusLeft refl c = refl
+
+congPlusRight : {a b : Nat} → a ≡ b → (c : Nat) → a + c ≡ b + c
+congPlusRight refl c = refl
+
++-identityRight : (n : Nat) → n + 0 ≡ n
++-identityRight zero = refl
++-identityRight (suc n) rewrite +-identityRight n = refl
+
++-sucRight : (n m : Nat) → n + suc m ≡ suc (n + m)
++-sucRight zero m = refl
++-sucRight (suc n) m rewrite +-sucRight n m = refl
+
++-assoc : (a b c : Nat) → (a + b) + c ≡ a + (b + c)
++-assoc zero b c = refl
++-assoc (suc a) b c rewrite +-assoc a b c = refl
+
++-comm : (a b : Nat) → a + b ≡ b + a
++-comm zero b = sym (+-identityRight b)
++-comm (suc a) b rewrite +-comm a b = sym (+-sucRight b a)
+
+-- (x + y) + (x + y) ≡ (x + x) + (y + y)
+doubleShuffle : (x y : Nat) → (x + y) + (x + y) ≡ (x + x) + (y + y)
+doubleShuffle x y =
+  trans (+-assoc x y (x + y))
+    (trans (congPlusLeft (sym (+-assoc y x y)) x)
+      (trans (congPlusLeft (congPlusRight (+-comm y x) y) x)
+        (trans (congPlusLeft (+-assoc x y y) x)
+          (sym (+-assoc x x (y + y))))))
+
+timesTwo : (x : Nat) → 2 * x ≡ x + x
+timesTwo x = congPlusLeft (+-identityRight x) x
+
+timesFour : (x : Nat) → 4 * x ≡ (x + x) + (x + x)
+timesFour x =
+  trans
+    (congPlusLeft
+      (congPlusLeft (congPlusLeft (+-identityRight x) x) x)
+      x)
+    (sym (+-assoc x x (x + x)))
+
+-- 2 * ((t + m) + t) ≡ 4 * t + 2 * m
+centeredEnergyNormalization :
+  (t m : Nat) → 2 * ((t + m) + t) ≡ 4 * t + 2 * m
+centeredEnergyNormalization t m =
+  trans (timesTwo ((t + m) + t))
+    (trans (congPlusRight regroup ((t + m) + t))
+      (trans (congPlusLeft regroup ((t + t) + m))
+        (trans (doubleShuffle (t + t) m)
+          (trans (congPlusRight (sym (timesFour t)) (m + m))
+            (congPlusLeft (sym (timesTwo m)) (4 * t))))))
+  where
+  regroup : (t + m) + t ≡ (t + t) + m
+  regroup =
+    trans (+-assoc t m t)
+      (trans (congPlusLeft (+-comm m t) t)
+        (sym (+-assoc t t m)))
+
+------------------------------------------------------------------------
+-- The analytic symmetry has already been reduced upstream to a scalar energy
+-- decomposition.  We keep no unsupported assertion about actual phiHat here.
+------------------------------------------------------------------------
+
+record CenteredImaginaryGridLedger : Set where
+  constructor centeredImaginaryGridLedger
+  field
+    finitePositiveImaginaryEnergy : Nat
+    omittedPositiveImaginaryTail : Nat
+    fullImaginaryEnergy : Nat
+
+    reflectionEnergyDecomposition :
+      fullImaginaryEnergy
+        ≡ 2 * (finitePositiveImaginaryEnergy + omittedPositiveImaginaryTail)
+
+open CenteredImaginaryGridLedger public
+
+record CenteredGridTailDomination
+  (g : CenteredImaginaryGridLedger) : Set where
+  constructor centeredGridTailDomination
+  field
+    retainedMargin : Nat
+    tailPlusMarginIsFinite :
+      omittedPositiveImaginaryTail g + retainedMargin
+        ≡ finitePositiveImaginaryEnergy g
+
+open CenteredGridTailDomination public
+
+------------------------------------------------------------------------
+-- Exact retained-energy consequence:
+--
+-- full = 2(fin+tail), tail+margin=fin
+--       = 4 tail + 2 margin.
+--
+-- Thus any nonzero full transverse energy cannot disappear in the finite
+-- one-sided grid once the tail is strictly dominated.
+------------------------------------------------------------------------
+
+record CenteredFiniteRetentionCertificate
+  (g : CenteredImaginaryGridLedger) : Set where
+  constructor centeredFiniteRetentionCertificate
+  field
+    tailEnergy : Nat
+    margin : Nat
+    fullEnergyAsFourTailPlusTwoMargin :
+      fullImaginaryEnergy g ≡ 4 * tailEnergy + 2 * margin
+    finiteEnergyAsTailPlusMargin :
+      finitePositiveImaginaryEnergy g ≡ tailEnergy + margin
+
+centeredTailDominationImpliesRetention :
+  (g : CenteredImaginaryGridLedger) →
+  CenteredGridTailDomination g →
+  CenteredFiniteRetentionCertificate g
+centeredTailDominationImpliesRetention g h =
+  centeredFiniteRetentionCertificate
+    (omittedPositiveImaginaryTail g)
+    (retainedMargin h)
+    fullRewrite
+    (sym (tailPlusMarginIsFinite h))
+  where
+  fullRewrite :
+    fullImaginaryEnergy g
+      ≡ 4 * omittedPositiveImaginaryTail g + 2 * retainedMargin h
+  fullRewrite =
+    trans (reflectionEnergyDecomposition g)
+      (trans
+        (cong
+          (λ z → 2 * (z + omittedPositiveImaginaryTail g))
+          (sym (tailPlusMarginIsFinite h)))
+        (centeredEnergyNormalization
+          (omittedPositiveImaginaryTail g)
+          (retainedMargin h)))
+
+------------------------------------------------------------------------
+-- Actual source-facing geometric ingredients.
+------------------------------------------------------------------------
+
+record TargetCenteredGridProducer : Set₁ where
+  field
+    ZeroPair : Set
+
+    sourceHeight : ZeroPair → Set
+    targetOrdinate : ZeroPair → Set
+    sourceHeightEqualsTargetOrdinate :
+      (rho : ZeroPair) → Set
+
+    plusMinusSampleConjugation :
+      (rho : ZeroPair) → Set
+    zeroSampleIsReal :
+      (rho : ZeroPair) → Set
+
+    centeredLedger :
+      (rho : ZeroPair) → CenteredImaginaryGridLedger
+
+    positiveLatticeTailBound :
+      (rho : ZeroPair) →
+      CenteredGridTailDomination (centeredLedger rho)
+
+producerCenteredFiniteRetention :
+  (p : TargetCenteredGridProducer) →
+  (rho : TargetCenteredGridProducer.ZeroPair p) →
+  CenteredFiniteRetentionCertificate
+    (TargetCenteredGridProducer.centeredLedger p rho)
+producerCenteredFiniteRetention p rho =
+  centeredTailDominationImpliesRetention
+    (TargetCenteredGridProducer.centeredLedger p rho)
+    (TargetCenteredGridProducer.positiveLatticeTailBound p rho)

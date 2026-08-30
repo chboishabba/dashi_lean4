@@ -1,0 +1,60 @@
+# Summary of changes for run 6bdec22a-f117-4748-a2f6-d68e9b710a9b
+I ran the revised G3 cycle you specified, and the key question came out **affirmative**: the finite pair block does have a coercive positive transverse Frobenius surplus, on the actual one-sided window. Everything below is machine-checked Lean (`lake build RiemannAnalytic` clean, no `sorry`/`admit`/`axiom`/receipts; axioms only `propext`, `Classical.choice`, `Quot.sound`). A narrative write-up is in `RIEMANN_G3_GRAM_REPORT.md`.
+
+First, a build fix: the checked-in library did not compile in this toolchain (`Matrix.dotProduct` no longer exists under that name); repaired without changing any statement.
+
+**M1 — Gram coercivity (`RiemannAnalytic/OneSidedGram.lean`).** Your algebra is confirmed and formalized: `pairBlock_frobSq` (`4m²(A²+B²−2C²)`), `pairBlock_gramDecomposition` (`4m²(A−B)² + 8m²(AB−C²)`), `gramDefect_nonneg` (Cauchy–Schwarz). The warning is a theorem too: `imagEnergy_pos_not_sufficient` exhibits vectors with `B > 0` and `AB − C² = 0`. The decisive question then resolves, but by a different route than the tail estimate: the one-sided window `0 ≤ k < d` **contains the central grid point**, where a real even taper's sample `φ̂(−iα)` is real, so `b₀ = 0` while `a₀ > 0`. Splitting off that coordinate gives, unconditionally, `AB − C² ≥ a₀²·B` (`gramDefect_ge_head_sq_mul`, `finiteGridGramDefect_ge`) — no bound on the correlation `C_d` is needed (and none is claimed; for a one-sided window the ±k cancellation is genuinely gone). With the existing plateau and lattice-tail bounds this yields explicit floors: `finiteGridGramDefectLower`, `finiteGridGramDefect_source_floor` (`ΔGram ≥ (9/16)L²((9/512)L⁴α² − tail)`), `finiteGridGramDefect_pos`, and the pair-block surplus floor.
+
+**M2/M3 (`PairExpansion.lean`).** `frobSq_pairFamily_expand`: `‖A‖_F² = diagonal baselines + D_diag + off-diagonal interference`, every term literally defined, nothing named a critical baseline; then `diagGramSum_le_of_offDiag_bound`, `diagGramSum_le_transport` (`A = G − E`) and `diagGramSum_le_prime` — exact inequalities ready for a prime-side bound. For the rank–trace test: `pairBlock_trace`, `rankTrace_pairBlock` show the Gram defect enters `c·tr − ‖·‖_F²` with the **opposite** sign to `‖·‖_F²`, so `F₂` does not carry the defect as positive signal (monotonicity lemmas both ways, plus the whole-family identity).
+
+**M4/M5 (`TransverseDecay.lean`).** The predicted joint estimate is proved: `abs_im_PhiExt_le_transverse_decay` gives `|Im Φ_ψ(x+iy)| ≤ |y|·K_ψ/|x|` with `K_ψ = 2∫|ψ'||u| + ∫|ψ|e^{|u|}`, via the lifted taper `g_y(t) = ψ(t)(e^{yt}−1)`. Consequently the interference envelope becomes **quadratic**: `mixedInterference_envelope_quadratic` (`≤ 2y²K²/δ²`), matching the order of the defect, and `gramDefect_beats_interference` shows the competition is decided by the α-independent constant inequality `2K²/δ² < (81/16384)L⁶`.
+
+**M6/M7.** `GramDetectability.lean` converts the floor into a tube: `|α| ≤ √(E/((81/16384)L⁶))`, shrinking when `E(T)/L(T)⁶ → 0`. `interference_le_ratio_mul_gramDefect` states localization in ratio form: interference `≤ η·ΔGram` with `η = 32768K²/(81δ²L⁶)` free of `α`.
+
+**What is still missing, exactly.** The prime side: an unconditional bound for `‖G‖_F²` (main term plus error) for the actual zeros of ζ, which needs the explicit formula and prime second-moment estimates present neither here nor in Mathlib. Also hypotheses rather than theorems: the ordinate separation δ and the constant inequality on `2K²/δ²`, the window/tail condition, and the error budget `E`. So no statement here implies the Riemann Hypothesis, and none asserts it; `RiemannHypothesisFor` was not weakened.
+
+# Summary of changes for run 3cbfb14f-3fd5-4cca-aa44-5a471e267c48
+## Outcome
+
+**No machine-checked literal Riemann Hypothesis proof was produced.** `RiemannHypothesisFor` was not weakened, and no postulate, axiom, `sorry`/`admit`, Boolean receipt, imported authority, or numerical evidence was introduced anywhere. The strongest verified reductions are preserved, and the first unproved theorem is reported exactly (below and in `RIEMANN_LITERAL_AUDIT.md`).
+
+## 1. Audit of the two newly committed modules
+
+Both **failed to typecheck as committed**; both were repaired without weakening any statement.
+
+- `DASHI/Analysis/RiemannG3SourceTransportExact.agda`: used an undefined operator `_|>_`, had a `cancelLeft` step whose implicits do not unify, and three transport links with the wrong associativity direction. Repaired with a `sucInjective` helper and an explicit eleven-step chain.
+- `DASHI/Analysis/RiemannCenteredGridRetentionExact.agda`: the `rewrite` justifying `fullRewrite` was not a valid proof. Repaired with `+-assoc`, `+-comm`, `doubleShuffle`, `timesTwo`, `timesFour`, `centeredEnergyNormalization` and a term-mode proof.
+
+Content characterization: both are **ℕ-level ledger identities with `Set`-valued placeholder producers** — arithmetically correct, but carrying no analytic information about ζ, primes, or Frobenius data.
+
+## 2. Wiring
+
+Both modules are now imported by the 2026 aggregate and by `ZetaTheoremSurface`; the checker script `scripts/check_riemann_reflection_orbit_defect_2026.sh` lists both in `sources`, carries `require_pattern` markers for their key names, and its previously dead invocation was replaced by a real Agda run over a `targets` array — it exits 0. A toolchain-portable aggregate `DASHI/EverythingRiemannTrancheCheckable.agda` collects the tranche and typechecks (Agda 2.6.4.3 + stdlib 2.1). Pre-existing gap, not introduced here: `ZetaTheoremSurface` cannot be checked because its transitive import needs `Ontology.GodelLattice`, whose source is absent from the bundle.
+
+## 3. Analytic obligations discharged at literal strength (Lean 4 / Mathlib, `lake build RiemannAnalytic` clean, no `sorry`, axioms only `propext`/`Classical.choice`/`Quot.sound`)
+
+- **(a) Complex bilinear Poisson extension for the real even taper** — `PhiExt_even`, `PhiExt_conj`, `PhiExt_conj_even`, plus the exact grid conjugation/reflection laws `gridSample_neg_eq_conj`, `gridSample_im_neg`, `gridSample_im_sq_neg`, `gridSample_zero_im`.
+- **(b) One-sided lattice-tail / finite-retention theorem** — `gridFiniteRetention` over real energies and genuine `tsum`s; and, new this session, `gauss_finite_retention`, which **discharges the tail-domination hypothesis** for the explicit Gaussian taper (supported by the closed forms `gridSample_gauss_im`, `transverseEnergy_gauss`, `summable_transverseEnergy_gauss`).
+- **(c) Summable complex-Φ mixed-kernel envelope** — `PhiExt_gaussTaper` (closed form `(2π)^{1/2} e^{−z²/2}`), `norm_gridSample_gaussTaper`, `summable_gaussEnvelope`, `mixedKernel_gaussTaper_summable`.
+- **New literal-statement layer** (`RiemannAnalytic/LiteralStatement.lean`), over Mathlib's genuine `riemannZeta`/`completedRiemannZeta` and Mathlib's own `RiemannHypothesis`: `completedZeta_zero_mem_strip` (every zero of Λ lies in `0 < Re s < 1`), `completedZeta_zero_reflect`, `riemannHypothesis_iff_completed` (literal RH ⟺ completed form), and `riemannHypothesis_iff_no_completed_zero_right` (⟺ the one-sided statement `∀ s, Λ s = 0 → Re s ≤ 1/2`). Neither side of these equivalences is assumed.
+
+## 4. First unproved theorem, exactly
+
+Obligation (d), critical-A Frobenius versus prime-main-term alignment with source A-to-G error transport. In the source, `DASHI/Analysis/RiemannG3SourceTransportExact.agda` lines 227–235:
+
+```agda
+record G3RemainingAlignment (owned : G3SourceOwnedTransport) : Set₁ where
+  field
+    CriticalFiniteABaseline         : Set
+    RetainedDefectInsideAFrobenius  : Set
+    CriticalBaselineEqualsPrimeMain : Set
+    criticalFiniteABaseline         : CriticalFiniteABaseline
+    retainedDefectInsideAFrobenius  : RetainedDefectInsideAFrobenius
+    criticalBaselineEqualsPrimeMain : CriticalBaselineEqualsPrimeMain
+```
+
+This is three abstract `Set`s with assumed inhabitants: it states nothing, and no instance for zeta data is constructed. Its intended content needs the Weil/Riemann explicit formula for ζ plus prime-side second-moment bounds, which exist neither in this bundle nor in Mathlib. Obligation (e) (localization/amplification with bounded-height closure) is likewise ℕ-ledger only and depends on (d).
+
+Separately, `RiemannHypothesisFor` is parametric over an abstract `AnalyticSubstrate` (`nontrivialZero`, `criticalLine` are arbitrary predicates) and **no substrate instance for the actual ζ exists in the tree**, so an inhabitant of it for the tranche's schematic substrate would not be the Riemann Hypothesis.
+
+Full details in `RIEMANN_LITERAL_AUDIT.md`, including reproduction commands. All work is committed and pushed.

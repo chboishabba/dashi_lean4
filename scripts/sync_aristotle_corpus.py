@@ -199,7 +199,7 @@ def main() -> int:
     # retain one complete occurrence per line and keep the index streamable.
     shard_size = 100_000
     for index in range(0, len(records), shard_size):
-        shard = records_dir / f"records-{index // shard_size + 1:04d}.jsonl"
+        shard = records_dir / f"records-{index // shard_size:04d}.jsonl"
         with shard.open("w", encoding="utf-8") as handle:
             for record in records[index : index + shard_size]:
                 handle.write(json.dumps(record, sort_keys=True) + "\n")

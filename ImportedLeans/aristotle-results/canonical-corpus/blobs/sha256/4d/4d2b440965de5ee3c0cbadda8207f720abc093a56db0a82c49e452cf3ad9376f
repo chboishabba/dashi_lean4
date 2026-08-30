@@ -1,0 +1,207 @@
+# G13 — the twisted prime moments, computed
+
+**The Riemann Hypothesis is not proved.**  Nothing was weakened or assumed:
+`RiemannHypothesisFor` and every earlier statement are untouched; there is no
+`sorry`/`admit`, no `axiom`, no postulate, no Boolean receipt, no numerical
+evidence and no `@[implemented_by]` in any Lean source of this cycle.
+`lake build RiemannAnalytic` succeeds (8096 jobs) and `#print axioms` on every
+new theorem returns only `[propext, Classical.choice, Quot.sound]`.
+
+The instruction for this cycle was: *stop inventing observers; compute the
+actual twisted prime distribution they induce.*  That is what was done.  The
+first three moments `S₀, S₁, S₀S₂ − S₁²` of the literal cosh-twisted von
+Mangoldt measure are now **proved theorems**, uniformly for every off-line
+displacement `0 < |α| < 1/2`, together with matching lower bounds that settle
+what those moments can and cannot deliver.
+
+---
+
+## New modules
+
+| Module | Content |
+| --- | --- |
+| `RiemannAnalytic/ChebyshevLower.lean` | Chebyshev **lower** bounds for `ψ` (Mathlib has only upper bounds) and the top-block prime mass bound |
+| `RiemannAnalytic/TwistedPrimeMoments.lean` | the master tilted centered second-moment estimate and the central variance theorem |
+| `RiemannAnalytic/TwistedPrimeMassMean.lean` | the uniform exponential-tilt master estimate; the mass `S₀` and mean log-frequency `S₁` |
+| `RiemannAnalytic/TwistedPrimeVarianceLower.lean` | the matching **lower** bound for the variance |
+| `RiemannAnalytic/TwistedPrimeAbsoluteScale.lean` | the absolute scale of `α²·Var`, and the failure of the un-normalized `o(L⁶)` target |
+
+All five are imported by `RiemannAnalytic.lean`.
+
+Throughout, `Λ` is Mathlib's `ArithmeticFunction.vonMangoldt`, the literal
+weights are
+
+```
+coshVonMangoldt α n = Λ n * cosh (2 α log n),
+twistedMoment N α r = ∑_{n ∈ [1,N]} coshVonMangoldt α n * (log n)^r,
+```
+
+so `S_r = twistedMoment N α r`, and `cosh` is exactly the functional-equation
+pair `n^{2α} + n^{-2α}` of the two tilts (`cosh_split`).
+
+---
+
+## 0. Chebyshev lower bounds (new, needed and absent from Mathlib)
+
+* `log_centralBinom_le_psi` : `log (2n choose n) ≤ ψ (2n)`.
+* `psi_lower` : `x log 2 − log x − 2 log 2 ≤ ψ x` for `x ≥ 2`.
+* `psi_block_lower` : `x/4 ≤ ψ x − ψ (x/4)` for `x ≥ 10⁸`.
+
+The last one is the arithmetic input for everything below: a positive
+proportion of the prime mass up to `N` sits in the top log-window `(N/4, N]`.
+
+## 1. `S₀` — the twisted prime mass (milestone 3a)
+
+`vonMangoldt_uniformExponentialTilt` (the master partial-summation estimate the
+prompt asked for, in two-sided comparable form):
+
+```
+N^{1+v}/16  ≤  ∑_{n ≤ N} Λ(n) n^v  ≤  5.4 · N^{1+v}      (0 ≤ v ≤ 1, N ≥ 10⁸)
+```
+
+with absolute constants **uniform in the tilt `v`**.  Specialised to the
+functional-equation pair, `twistedPrimeMass`:
+
+```
+N^{1+2|α|}/32  ≤  S₀(α)  ≤  5.4 · N^{1+2|α|}             (|α| < 1/2, N ≥ 10⁸)
+```
+
+uniformly all the way down to `α → 0` and all the way up to `|α| → 1/2`, as
+required.
+
+## 2. `S₁` — the mean log-frequency (milestone 3b)
+
+`twistedPrimeMeanLog`:
+
+```
+| S₁(α) − (log N)·S₀(α) |  ≤  123 · S₀(α)                 (|α| < 1/2, N ≥ 10⁸)
+```
+
+i.e. `μ_{α} = log N + O(1)`, uniformly in the twist.  Proof: the centered
+second-moment bound of §3 plus a pointwise AM–GM at the optimal scale.
+
+## 3. `S₀S₂ − S₁²` — the centered second moment (milestone 3c, the central target)
+
+The master estimate is `tiltedCentered_le`:
+
+```
+∑_{n ≤ N} Λ(n) n^v (log N − log n)²  ≤  800 · N^{1+v}     (v ≥ −1/2)
+```
+
+proved by a dyadic block decomposition: the mass of the block at log-distance
+`≈ 2k` from the top is `≲ N^{1+v} e^{-k}`, and `∑ (k+1)² 2^{-k} ≤ 12`.
+Combining with the mass lower bound gives the twisted concentration theorem
+`vonMangoldt_twistedCentered_le_mass`:
+
+```
+∑_{n ≤ N} w_α(n) (log n − log N)²  ≤  15000 · ∑_{n ≤ N} w_α(n)
+```
+
+and hence the theorem the prompt named `zetaTwistedPrimeCenteredVariance`:
+
+```
+S₀S₂ − S₁²  ≤  15000 · S₀²                                (|α| < 1/2, N ≥ 10⁸)
+```
+
+with the `α²`-carrying corollary `alphaSq_twistedPrimeVariance_le`
+(`α²(S₀S₂−S₁²) ≤ 3750·S₀²`) and the relative `o(L⁶)` form
+`twistedPrimeVariance_isLittleO_L6`.
+
+**The predicted mechanism is real, and it is proved.**  The cosh tilt does
+concentrate the literal von Mangoldt measure in a log-window of *bounded* width
+about `log N`, uniformly in `α`, exactly as conjectured; the arbitrary-weight
+counterexample of `TiltedLogVariance` does not apply to the zeta weights.
+
+---
+
+## 4. What the twisted moments provably cannot do
+
+This is the decisive new information of this cycle, and it is proved, not
+conjectured.
+
+### 4a. The relative variance is `Θ(1)`, not `o(1)`
+
+`zetaTwistedPrimeVariance_lower`:
+
+```
+S₀S₂ − S₁²  ≥  10⁻⁷ · S₀²                                 (|α| < 1/2, N ≥ 10⁹)
+```
+
+Proof: the exact second-difference identity `varForm_eq_double`
+(`S₀S₂ − S₁² = ½ ∑∑ wₙwₘ(λₙ−λₘ)²`), then two blocks `(N/4, N]` and
+`(N/32, N/8]` which carry comparable twisted mass and are `log 2` apart in
+log-frequency.
+
+Together with §3 the relative twisted variance is pinned between `10⁻⁷` and
+`15000`, uniformly in `α` and `N`.  So the tilt concentrates the measure into a
+window of width `Θ(1)` — but not into a window of width `o(1)`.  **No vanishing
+relative budget can come from the shape of the twisted prime measure alone.**
+
+### 4b. At absolute scale the `o(L⁶)` target is false
+
+`twistedPrimeMass` gives `S₀ ≍ N^{1+2|α|}`, so `alphaSq_twistedPrimeVariance_ge`:
+
+```
+α²(S₀S₂ − S₁²)  ≥  α² N² / (10⁷·1024)                     (|α| < 1/2, N ≥ 10⁹)
+```
+
+and therefore `alphaSq_twistedPrimeVariance_not_littleO`: for any fixed `α ≠ 0`
+and any constant `C`, eventually in `N`
+
+```
+C (log N)⁶  ≤  α²(S₀S₂ − S₁²).
+```
+
+So the literal, un-normalized moments satisfy `α²V ≍ α² N^{2+4|α|}`, which is
+polynomially large in `N`.  The target `α² V_prime ≤ δ(T,H)² L⁶` is **only**
+available in the normalized form, i.e. after the source divides the prime term
+by a factor of size `S₀²`.
+
+### 4c. Consequence for the route
+
+The quantitative answer to the question asked is therefore:
+
+> The twisted prime measure does concentrate (§3), with the predicted
+> uniformity in `α`; but its relative log-variance does not tend to zero (§4a),
+> and its absolute log-variance is polynomially large (§4b).  Hence the factor
+> `δ(T,H) → 0` demanded by `zeta_twistedAnchoredPrime_relative` cannot be
+> produced by the twisted prime moments.  It must come from the source
+> normalization that relates `S₀` to `L³` in the definition of `D_{ρ,H}` — that
+> is, from the still-unproved identification of the literal anchored defect with
+> the compensated observable.
+
+This does not close the branch, but it relocates the remaining unknown content
+precisely: it is no longer an unproved analytic-number-theory estimate; it is
+the source normalization constant.
+
+---
+
+## Status of the six milestones of the prompt
+
+| Milestone | Status |
+| --- | --- |
+| 1. `literalCompensatedAnchorIdentity` | **open** — first unproved theorem, see below |
+| 2. `literalTwistedPrimeRepresentation` | open (depends on 1) |
+| 3. `vonMangoldtUniformTwistedMoment` / `zetaTwistedPrimeCenteredVariance` | **proved**, in the relative (scale-invariant) form, with matching lower bounds; the `δ → 0` strengthening is proved **false** at this scale |
+| 4. `literalRelativeRemainders` | open |
+| 5. `highZeroRelativeContraction` | abstractly proved (`riemannHypothesis_of_relative_parts`), not instantiated |
+| 6. `boundedHeightCompletedZeta` + wrapper | open; the wrapper (`riemannHypothesis_of_relative_contraction`) is proved |
+
+---
+
+## The first unproved theorem, stated exactly
+
+Unchanged from G12, and now the only remaining place where the missing factor
+can live:
+
+> **`literalCompensatedAnchorIdentity`.**  For an actual zero
+> `ρ = 1/2 + α + iγ` of `completedRiemannZeta` and the actual source local
+> matrix at height `T` and window `H`, the literal anchored Gram defect
+> `D_{ρ,H}` equals the baseline-subtracted anchored observable
+> `𝒜_H(α) − 𝒜_H(0) + R_zero(ρ,T,H)`, with `R_zero = 0` or
+> `|R_zero| ≤ η_zero D_{ρ,H}`, `η_zero → 0`, every object being the literal
+> source object `γ_ρ, τ_k, φ̂, m_ρ, A_H`.
+
+Everything downstream of it — `literalTwistedPrimeRepresentation`, the relative
+remainders, and the high-zero contraction — remains open, and no claim about the
+Riemann Hypothesis is made.

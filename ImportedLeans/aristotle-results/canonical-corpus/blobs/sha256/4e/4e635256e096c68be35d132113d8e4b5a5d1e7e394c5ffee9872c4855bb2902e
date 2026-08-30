@@ -1,0 +1,76 @@
+# Dual-Atlas vision pass: extract → detect → adjust → prove → compare
+
+This folder runs the full requested pipeline over **all repos / corpora**
+(`itself`, `mathlib`, `batteries`, `lean4`) using the projections we already
+built (`cogProj`, `triadProj`, `harmCode` in `RequestProject/DualAtlas.lean`),
+across **many views**, then certifies every reproducible pattern in Lean 4.
+
+## 1. Extract visual patterns from all repos (all modules)
+
+`RequestProject/VisionAtlas.lean` (`#visionatlas`, runs during `lake build`)
+sweeps every declaration of the loaded environment, classifies it by corpus
+(module prefix), projects it through the dual atlas, and writes the full
+projection rasters here:
+
+| file | shape | view |
+|------|-------|------|
+| `<corpus>_cog.csv`   | 92 | cognitive `46×2` histogram |
+| `<corpus>_triad.csv` | 20 | semantic-triad histogram |
+| `<corpus>_harm.csv`  | 5  | harmonic-cell histogram (codes `0,5,7,11,13`) |
+| `<corpus>_joint.csv` | 92×20 | joint `cog × triad` occupancy matrix |
+| `summary.json`       | — | all of the above in one JSON |
+
+## 2. Render the views + look for patterns with OpenCV
+
+```bash
+pip install opencv-python-headless numpy
+python3 render_views.py     # -> views/*.png  (cog grids, strips, joint heatmaps, montage)
+python3 detect_patterns.py  # OpenCV detection + parameter sweep + cross-module compare
+```
+
+`render_views.py` renders every raster (contrast-normalised so corpora differing
+by 1000× in size are comparable): the `46×2` cognitive grid, the cog/triad heat
+strips, the harmonic bars, the `92×20` joint heatmap, plus a `cog_grid_montage.png`
+stacking all four corpora.
+
+`detect_patterns.py`:
+* **Stage 1 — detect.** OpenCV blob/peak counting (threshold → connected
+  components) and argmax on each view.
+* **Stage 2 — adjust parameters and try again.** A threshold × blur sweep
+  (`thresh ∈ {120,150,180,210}`, `blur ∈ {1,3,5}`); the modal (most stable)
+  peak count is kept.
+* **Stage 3 — compare all modules against each other.** Pairwise
+  `cv2.compareHist` correlation of the normalised `cog`, `triad`, `harm`
+  profiles across the four corpora.
+
+Outputs: `patterns.json`, `patterns.csv`.
+
+### What OpenCV found (reproducible)
+
+* **Trivector dominates every corpus.** Harmonic code `0` (trivector) is the
+  strict, unique maximum of the harmonic histogram in all four corpora.
+* **Harmonic monotonicity in the large corpora.** For `mathlib`, `batteries`,
+  `lean4` the whole harmonic histogram is strictly decreasing in code order
+  `0 > 5 > 7 > 11 > 13`. Small `itself` is the lone exception (heptad > muse).
+* **Harmonic profiles are near-identical across modules** — pairwise correlation
+  `> 0.99` in the `harm` view, i.e. every repo carries the same harmonic shape.
+* **Per-view peak locations.** cog argmax buckets `itself=78, mathlib=48,
+  batteries=56, lean4=35`; triad argmax `itself=13, mathlib=3, batteries=15
+  (tied with 18), lean4=17`.
+
+## 3. Prove the patterns in Lean 4
+
+`RequestProject/VisionPatterns.lean` freezes the histogram rows (verbatim from
+the CSVs OpenCV read) as literals and certifies the findings, all `sorry`-free:
+
+* `harm_trivector_dominant_all` — trivector is the unique harmonic max in all
+  four corpora.
+* `harm_strictDecreasing_large` — strict harmonic decrease for the three large
+  corpora; `itself_harm_not_decreasing` certifies the lone exception.
+* `*_cog_argmax`, `*_triad_argmax` — the OpenCV peak locations as (unique, or for
+  `batteries` triad, tied via `batteries_triad_tie`) maxima.
+* `cog_in_range`, `triad_in_range` — the rasters are exhaustive, from the
+  projection range guarantees `DualAtlas.cogProj_mem` / `triadProj_le`.
+
+Data proofs are by `native_decide`; the range lemmas are the abstract `DualAtlas`
+theorems.

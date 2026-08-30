@@ -1,0 +1,803 @@
+module DASHI.Physics.YangMills.BalabanYM4RadialQuadraticFormToHessianExact where
+
+------------------------------------------------------------------------
+-- ROW A1a: FROM THE RADIAL QUADRATIC COEFFICIENT 1/3
+--          TO THE MULTIVARIABLE HESSIAN (2/3) I
+--
+-- WHY THIS MODULE EXISTS
+--
+-- `BalabanYM4SU2HaarJacobianQuadraticCoefficientExact` proves the *radial*
+-- statement about the SU(2) Haar/dexp Jacobian J = (sin s / s)^2, namely
+--
+--     | (-log J)(s)  -  s^2/3 |  <=  s^4/16        (0 <= s <= 1/2).
+--
+-- The Hessian statement that Row A1 actually consumes is the multivariable one
+--
+--     D^2 (-log J)(0)  =  (2/3) I ,
+--
+-- and it does *not* follow from the radial expansion alone: it needs the
+-- same-object facts that, in the repository's SU(2) coordinates, the Haar
+-- action is a function of the squared norm  s^2 = |Y|^2  only.  This module
+-- proves the missing transfer, in exact rational arithmetic and with no
+-- appeal to any limit process:
+--
+--   IF a function F on the three-dimensional chart is radial,
+--
+--        F(y)  =  phi(|y|^2) ,
+--
+--   AND its radial profile satisfies the quadratic enclosure
+--
+--        | phi(t) - t/3 |  <=  C t^2         (0 <= t <= 1/4),
+--
+--   AND a symmetric matrix H is a second-order jet of F at the origin,
+--
+--        | F(y) - (1/2) y^T H y |  <=  C' |y|^4    (|y|^2 <= 1/4),
+--
+--   THEN  H = (2/3) I  exactly, entry by entry.
+--
+-- Two things are worth stressing.  First, the conclusion is an *identity of
+-- rational numbers*, obtained by the scaling argument y -> eps y with eps
+-- ranging over the rationals in (0,1]: the quadratic parts must agree
+-- identically, because their difference is O(eps^4) while being homogeneous of
+-- degree 2.  Second, the theorem is a genuine uniqueness statement: no
+-- symmetric matrix other than (2/3) I can be a second-order jet of a radial
+-- function with radial coefficient 1/3.
+--
+-- WHAT THIS DOES AND DOES NOT SETTLE FOR ROW A1.  It removes the inference gap
+-- between the proved radial coefficient and the Hessian normalisation: the
+-- Hessian (2/3) I is now a *proved consequence* of radiality plus the radial
+-- coefficient.  What remains open is the same-object chart identification
+-- itself — that the repository's SU(2) chart Jacobian is (sin |Y| / |Y|)^2 with
+-- s^2 = |Y|^2 in those coordinates — which is not formalised anywhere in the
+-- tree.  Row A stays open and the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Empty using (⊥-elim)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _/_; _≤_; _<_; 1/_
+        ; NonZero; Positive; positive; nonNegative)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.Definitions using (tri<; tri≈; tri>)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst; subst₂)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; halfℚ; mul-pos; mul-nonNeg; scaleˡ-nonNeg; scaleʳ-nonNeg
+        ; transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4BorderedKKTDeterminantExact
+  using (square-nonNeg)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Constants
+------------------------------------------------------------------------
+
+thirdℚ twoThirdsℚ chartRadius : ℚ
+thirdℚ      = + 1 / 3
+twoThirdsℚ  = + 2 / 3
+chartRadius = + 1 / 4          -- |y|^2 <= 1/4, i.e. |y| <= 1/2
+
+------------------------------------------------------------------------
+-- An archimedean vanishing lemma
+--
+--   |x| <= K eps  for every rational eps in (0,1]   ==>   x = 0.
+--
+-- Proof: with D = |x| + K + 1 > 0 and eps = |x|/D in (0,1], the hypothesis
+-- reads |x| D <= K |x|, while |x| D = |x|^2 + K|x| + |x| > K|x| when |x| > 0.
+------------------------------------------------------------------------
+
+smallMultipleVanishes :
+  ∀ (x K : ℚ) → 0ℚ ≤ K →
+  (∀ ε → 0ℚ < ε → ε ≤ 1ℚ → ∣ x ∣ ≤ K * ε) →
+  x ≡ 0ℚ
+smallMultipleVanishes x K 0≤K hyp with ℚP.<-cmp 0ℚ ∣ x ∣
+... | tri≈ _ 0≡∣x∣ _ = ℚP.∣p∣≡0⇒p≡0 x (sym 0≡∣x∣)
+... | tri> _ _ ∣x∣<0 = ⊥-elim (ℚP.<-irrefl refl (ℚP.≤-<-trans (ℚP.0≤∣p∣ x) ∣x∣<0))
+... | tri< 0<∣x∣ _ _ = ⊥-elim (ℚP.<-irrefl refl (ℚP.≤-<-trans chain strict))
+  where
+    D : ℚ
+    D = ∣ x ∣ + K + 1ℚ
+
+    0<D : 0ℚ < D
+    0<D =
+      ℚP.<-respˡ-≡ padZero
+        (ℚP.+-mono-<-≤ (ℚP.+-mono-<-≤ 0<∣x∣ 0≤K)
+          (toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _))
+      where
+        padZero : (0ℚ + 0ℚ) + 0ℚ ≡ 0ℚ
+        padZero = refl
+
+    0≤D : 0ℚ ≤ D
+    0≤D = ℚP.<⇒≤ 0<D
+
+    instance
+      DNonZero : NonZero D
+      DNonZero = ℚP.pos⇒nonZero D {{positive 0<D}}
+
+    invD : ℚ
+    invD = 1/ D
+
+    0<invD : 0ℚ < invD
+    0<invD = ℚP.positive⁻¹ invD {{ℚP.1/pos⇒pos D {{positive 0<D}}}}
+
+    ε : ℚ
+    ε = ∣ x ∣ * invD
+
+    0<ε : 0ℚ < ε
+    0<ε = mul-pos 0<∣x∣ 0<invD
+
+    clearInv : ∀ (u : ℚ) → (u * invD) * D ≡ u
+    clearInv u =
+      trans (ℚP.*-assoc u invD D)
+        (trans (cong (u *_) (ℚP.*-inverseˡ D)) (ℚP.*-identityʳ u))
+
+    ε≤1 : ε ≤ 1ℚ
+    ε≤1 =
+      ℚP.*-cancelʳ-≤-pos D {{positive 0<D}}
+        (transport-≤ (sym (clearInv ∣ x ∣)) (sym (ℚP.*-identityˡ D)) ∣x∣≤D)
+      where
+        padSelf : (∣ x ∣ + 0ℚ) + 0ℚ ≡ ∣ x ∣
+        padSelf =
+          solve 1 (λ X → (X :+ con 0ℚ) :+ con 0ℚ := X) refl ∣ x ∣
+
+        ∣x∣≤D : ∣ x ∣ ≤ D
+        ∣x∣≤D =
+          transport-≤ padSelf refl
+            (ℚP.+-mono-≤ (ℚP.+-mono-≤ (ℚP.≤-refl {∣ x ∣}) 0≤K)
+              (toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _))
+
+    chain : ∣ x ∣ * D ≤ K * ∣ x ∣
+    chain =
+      transport-≤ refl rightShape (scaleʳ-nonNeg 0≤D (hyp ε 0<ε ε≤1))
+      where
+        rightShape : (K * (∣ x ∣ * invD)) * D ≡ K * ∣ x ∣
+        rightShape =
+          trans (cong (_* D) (sym (ℚP.*-assoc K ∣ x ∣ invD)))
+            (clearInv (K * ∣ x ∣))
+
+    strict : K * ∣ x ∣ < ∣ x ∣ * D
+    strict =
+      ℚP.<-respʳ-≡ (sym expand)
+        (ℚP.<-respˡ-≡ (ℚP.+-identityʳ (K * ∣ x ∣))
+          (ℚP.+-monoʳ-< (K * ∣ x ∣) positivePart))
+      where
+        positivePart : 0ℚ < ∣ x ∣ * ∣ x ∣ + ∣ x ∣
+        positivePart =
+          ℚP.<-respˡ-≡ (ℚP.+-identityˡ 0ℚ)
+            (ℚP.+-mono-≤-< (square-nonNeg ∣ x ∣) 0<∣x∣)
+
+        expand : ∣ x ∣ * D ≡ K * ∣ x ∣ + (∣ x ∣ * ∣ x ∣ + ∣ x ∣)
+        expand =
+          solve 2
+            (λ X Kk → X :* (X :+ Kk :+ con 1ℚ)
+                        := Kk :* X :+ (X :* X :+ X))
+            refl ∣ x ∣ K
+
+------------------------------------------------------------------------
+-- The three-dimensional chart: squared norm and symmetric quadratic form
+------------------------------------------------------------------------
+
+normSq : (y₁ y₂ y₃ : ℚ) → ℚ
+normSq y₁ y₂ y₃ = y₁ * y₁ + y₂ * y₂ + y₃ * y₃
+
+normSqNonNeg : ∀ y₁ y₂ y₃ → 0ℚ ≤ normSq y₁ y₂ y₃
+normSqNonNeg y₁ y₂ y₃ =
+  transport-≤ (ℚP.+-identityˡ 0ℚ) refl
+    (ℚP.+-mono-≤
+      (transport-≤ (ℚP.+-identityˡ 0ℚ) refl
+        (ℚP.+-mono-≤ (square-nonNeg y₁) (square-nonNeg y₂)))
+      (square-nonNeg y₃))
+
+-- y^T H y for the symmetric matrix H with entries h_ij
+quadForm : (h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ y₁ y₂ y₃ : ℚ) → ℚ
+quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ y₁ y₂ y₃ =
+  h₁₁ * (y₁ * y₁) + h₂₂ * (y₂ * y₂) + h₃₃ * (y₃ * y₃)
+    + twoℚ * (h₁₂ * (y₁ * y₂))
+    + twoℚ * (h₁₃ * (y₁ * y₃))
+    + twoℚ * (h₂₃ * (y₂ * y₃))
+
+-- (1/2) y^T ((2/3) I) y = (1/3) |y|^2 : the Hessian normalisation Row A1 uses
+twoThirdsIdentityHalfQuadForm :
+  ∀ y₁ y₂ y₃ →
+  halfℚ * quadForm twoThirdsℚ 0ℚ 0ℚ twoThirdsℚ 0ℚ twoThirdsℚ y₁ y₂ y₃
+    ≡ thirdℚ * normSq y₁ y₂ y₃
+twoThirdsIdentityHalfQuadForm y₁ y₂ y₃ =
+  solve 3
+    (λ Y₁ Y₂ Y₃ →
+      con halfℚ :* (con twoThirdsℚ :* (Y₁ :* Y₁)
+                      :+ con twoThirdsℚ :* (Y₂ :* Y₂)
+                      :+ con twoThirdsℚ :* (Y₃ :* Y₃)
+                      :+ con twoℚ :* (con 0ℚ :* (Y₁ :* Y₂))
+                      :+ con twoℚ :* (con 0ℚ :* (Y₁ :* Y₃))
+                      :+ con twoℚ :* (con 0ℚ :* (Y₂ :* Y₃)))
+        := con thirdℚ :* (Y₁ :* Y₁ :+ Y₂ :* Y₂ :+ Y₃ :* Y₃))
+    refl y₁ y₂ y₃
+
+------------------------------------------------------------------------
+-- The hypotheses: a radial function with radial coefficient 1/3, and a
+-- candidate symmetric second-order jet
+------------------------------------------------------------------------
+
+record RadialQuadraticJet : Set where
+  field
+    F   : ℚ → ℚ → ℚ → ℚ           -- the chart function (e.g. the Haar action)
+    phi : ℚ → ℚ                    -- its radial profile, F(y) = phi(|y|^2)
+    remainderCap candidateCap : ℚ  -- C and C'
+    h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ : ℚ    -- the candidate symmetric jet H
+
+    remainderCapNonNeg : 0ℚ ≤ remainderCap
+    candidateCapNonNeg : 0ℚ ≤ candidateCap
+
+    radial : ∀ y₁ y₂ y₃ → F y₁ y₂ y₃ ≡ phi (normSq y₁ y₂ y₃)
+
+    -- | phi(t) - t/3 | <= C t^2   on the chart
+    radialQuadratic :
+      ∀ t → 0ℚ ≤ t → t ≤ chartRadius →
+      ∣ phi t - thirdℚ * t ∣ ≤ remainderCap * (t * t)
+
+    -- | F(y) - (1/2) y^T H y | <= C' |y|^4   on the chart
+    candidateQuadratic :
+      ∀ y₁ y₂ y₃ → normSq y₁ y₂ y₃ ≤ chartRadius →
+      ∣ F y₁ y₂ y₃ - halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ y₁ y₂ y₃ ∣
+        ≤ candidateCap * (normSq y₁ y₂ y₃ * normSq y₁ y₂ y₃)
+
+module Jet (J : RadialQuadraticJet) where
+
+  open RadialQuadraticJet J public
+
+  Q : (y₁ y₂ y₃ : ℚ) → ℚ
+  Q y₁ y₂ y₃ =
+    halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ y₁ y₂ y₃
+      - thirdℚ * normSq y₁ y₂ y₃
+
+  totalCap : ℚ
+  totalCap = remainderCap + candidateCap
+
+  totalCapNonNeg : 0ℚ ≤ totalCap
+  totalCapNonNeg =
+    transport-≤ (ℚP.+-identityˡ 0ℚ) refl
+      (ℚP.+-mono-≤ remainderCapNonNeg candidateCapNonNeg)
+
+  ------------------------------------------------------------------
+  -- The scaling estimate:  |Q(y)| <= (C + C') |y|^4 eps^2   for eps in (0,1]
+  ------------------------------------------------------------------
+
+  private
+    normSqScale :
+      ∀ ε y₁ y₂ y₃ →
+      normSq (ε * y₁) (ε * y₂) (ε * y₃) ≡ (ε * ε) * normSq y₁ y₂ y₃
+    normSqScale ε y₁ y₂ y₃ =
+      solve 4
+        (λ E Y₁ Y₂ Y₃ →
+          (E :* Y₁) :* (E :* Y₁) :+ (E :* Y₂) :* (E :* Y₂)
+            :+ (E :* Y₃) :* (E :* Y₃)
+            := (E :* E) :* (Y₁ :* Y₁ :+ Y₂ :* Y₂ :+ Y₃ :* Y₃))
+        refl ε y₁ y₂ y₃
+
+    quadFormScale :
+      ∀ ε y₁ y₂ y₃ →
+      quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ (ε * y₁) (ε * y₂) (ε * y₃)
+        ≡ (ε * ε) * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ y₁ y₂ y₃
+    quadFormScale ε y₁ y₂ y₃ =
+      solve 10
+        (λ H₁₁ H₁₂ H₁₃ H₂₂ H₂₃ H₃₃ E Y₁ Y₂ Y₃ →
+          H₁₁ :* ((E :* Y₁) :* (E :* Y₁))
+            :+ H₂₂ :* ((E :* Y₂) :* (E :* Y₂))
+            :+ H₃₃ :* ((E :* Y₃) :* (E :* Y₃))
+            :+ con twoℚ :* (H₁₂ :* ((E :* Y₁) :* (E :* Y₂)))
+            :+ con twoℚ :* (H₁₃ :* ((E :* Y₁) :* (E :* Y₃)))
+            :+ con twoℚ :* (H₂₃ :* ((E :* Y₂) :* (E :* Y₃)))
+            := (E :* E)
+                 :* (H₁₁ :* (Y₁ :* Y₁) :+ H₂₂ :* (Y₂ :* Y₂)
+                       :+ H₃₃ :* (Y₃ :* Y₃)
+                       :+ con twoℚ :* (H₁₂ :* (Y₁ :* Y₂))
+                       :+ con twoℚ :* (H₁₃ :* (Y₁ :* Y₃))
+                       :+ con twoℚ :* (H₂₃ :* (Y₂ :* Y₃))))
+        refl h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ ε y₁ y₂ y₃
+
+  module Scaled (y₁ y₂ y₃ : ℚ) (inChart : normSq y₁ y₂ y₃ ≤ chartRadius) where
+
+    N : ℚ
+    N = normSq y₁ y₂ y₃
+
+    0≤N : 0ℚ ≤ N
+    0≤N = normSqNonNeg y₁ y₂ y₃
+
+    module At (ε : ℚ) (0<ε : 0ℚ < ε) (ε≤1 : ε ≤ 1ℚ) where
+
+      0≤ε : 0ℚ ≤ ε
+      0≤ε = ℚP.<⇒≤ 0<ε
+
+      0<ε² : 0ℚ < ε * ε
+      0<ε² = mul-pos 0<ε 0<ε
+
+      ε²≤1 : ε * ε ≤ 1ℚ
+      ε²≤1 =
+        transport-≤ refl (ℚP.*-identityˡ 1ℚ)
+          (ℚP.≤-trans (scaleˡ-nonNeg 0≤ε ε≤1) (scaleʳ-nonNeg
+            (toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _) ε≤1))
+
+      Nε : ℚ
+      Nε = normSq (ε * y₁) (ε * y₂) (ε * y₃)
+
+      NεValue : Nε ≡ (ε * ε) * N
+      NεValue = normSqScale ε y₁ y₂ y₃
+
+      0≤Nε : 0ℚ ≤ Nε
+      0≤Nε = normSqNonNeg (ε * y₁) (ε * y₂) (ε * y₃)
+
+      NεInChart : Nε ≤ chartRadius
+      NεInChart =
+        ℚP.≤-trans
+          (transport-≤ (sym NεValue) (ℚP.*-identityˡ N)
+            (scaleʳ-nonNeg 0≤N ε²≤1))
+          inChart
+
+      -- the two enclosures at the scaled point
+      radialPart :
+        ∣ phi Nε - thirdℚ * Nε ∣ ≤ remainderCap * (Nε * Nε)
+      radialPart = radialQuadratic Nε 0≤Nε NεInChart
+
+      candidatePart :
+        ∣ F (ε * y₁) (ε * y₂) (ε * y₃)
+            - halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ (ε * y₁) (ε * y₂) (ε * y₃) ∣
+          ≤ candidateCap * (Nε * Nε)
+      candidatePart = candidateQuadratic (ε * y₁) (ε * y₂) (ε * y₃) NεInChart
+
+      -- their difference is exactly eps^2 Q(y)
+      difference :
+        (phi Nε - thirdℚ * Nε)
+          - (F (ε * y₁) (ε * y₂) (ε * y₃)
+               - halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ (ε * y₁) (ε * y₂) (ε * y₃))
+          ≡ (ε * ε) * Q y₁ y₂ y₃
+      difference =
+        trans
+          (cong (λ w → (phi Nε - thirdℚ * Nε)
+                         - (w - halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃
+                                          (ε * y₁) (ε * y₂) (ε * y₃)))
+            (radial (ε * y₁) (ε * y₂) (ε * y₃)))
+          (trans
+            (cong (λ w → (phi Nε - thirdℚ * Nε)
+                           - (phi Nε - halfℚ * w))
+              (quadFormScale ε y₁ y₂ y₃))
+            (trans
+              (cong (λ w → (phi Nε - thirdℚ * w)
+                             - (phi Nε
+                                  - halfℚ * ((ε * ε)
+                                       * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ y₁ y₂ y₃)))
+                NεValue)
+              (solve 4
+                (λ P E Nn Qq →
+                  (P :- con thirdℚ :* ((E :* E) :* Nn))
+                    :- (P :- con halfℚ :* ((E :* E) :* Qq))
+                    := (E :* E) :* (con halfℚ :* Qq :- con thirdℚ :* Nn))
+                refl (phi Nε) ε N
+                (quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ y₁ y₂ y₃))))
+
+      -- |eps^2 Q| <= (C + C') Nε^2
+      scaledBound : (ε * ε) * ∣ Q y₁ y₂ y₃ ∣ ≤ totalCap * (Nε * Nε)
+      scaledBound =
+        transport-≤ absShape (sym distrib)
+          (ℚP.≤-trans
+            (transport-≤ (cong ∣_∣ difference) refl
+              (ℚP.∣p-q∣≤∣p∣+∣q∣
+                (phi Nε - thirdℚ * Nε)
+                (F (ε * y₁) (ε * y₂) (ε * y₃)
+                   - halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃
+                                (ε * y₁) (ε * y₂) (ε * y₃))))
+            (ℚP.+-mono-≤ radialPart candidatePart))
+        where
+          absShape :
+            ∣ (ε * ε) * Q y₁ y₂ y₃ ∣ ≡ (ε * ε) * ∣ Q y₁ y₂ y₃ ∣
+          absShape =
+            trans (ℚP.∣p*q∣≡∣p∣*∣q∣ (ε * ε) (Q y₁ y₂ y₃))
+              (cong (_* ∣ Q y₁ y₂ y₃ ∣) (ℚP.0≤p⇒∣p∣≡p (ℚP.<⇒≤ 0<ε²)))
+
+          distrib :
+            totalCap * (Nε * Nε)
+              ≡ remainderCap * (Nε * Nε) + candidateCap * (Nε * Nε)
+          distrib = ℚP.*-distribʳ-+ (Nε * Nε) remainderCap candidateCap
+
+      -- cancel eps^2 and use Nε = eps^2 N, eps^2 <= eps
+      linearBound : ∣ Q y₁ y₂ y₃ ∣ ≤ (totalCap * (N * N)) * ε
+      linearBound =
+        ℚP.*-cancelʳ-≤-pos (ε * ε) {{positive 0<ε²}}
+          (transport-≤ (ℚP.*-comm (ε * ε) ∣ Q y₁ y₂ y₃ ∣) refl
+            (ℚP.≤-trans scaledBound majorant))
+        where
+          NεSquare : Nε * Nε ≡ ((ε * ε) * (ε * ε)) * (N * N)
+          NεSquare =
+            trans (cong (λ w → w * w) NεValue)
+              (solve 2 (λ E Nn → (E :* Nn) :* (E :* Nn)
+                                   := (E :* E) :* (Nn :* Nn))
+                refl (ε * ε) N)
+
+          -- (C+C') eps^4 N^2  <=  ((C+C') N^2 eps) eps^2, since eps <= 1
+          bulk : ℚ
+          bulk = ((totalCap * (N * N)) * (ε * ε)) * ε
+
+          0≤bulk : 0ℚ ≤ bulk
+          0≤bulk =
+            mul-nonNeg
+              (mul-nonNeg (mul-nonNeg totalCapNonNeg (mul-nonNeg 0≤N 0≤N))
+                (ℚP.<⇒≤ 0<ε²))
+              0≤ε
+
+          majorant :
+            totalCap * (Nε * Nε) ≤ ((totalCap * (N * N)) * ε) * (ε * ε)
+          majorant =
+            transport-≤ (sym leftShape) (sym rightShape)
+              (scaleˡ-nonNeg 0≤bulk ε≤1)
+            where
+              leftShape : totalCap * (Nε * Nε) ≡ bulk * ε
+              leftShape =
+                trans (cong (totalCap *_) NεSquare)
+                  (solve 3
+                    (λ T E Nn →
+                      T :* (((E :* E) :* (E :* E)) :* (Nn :* Nn))
+                        := (((T :* (Nn :* Nn)) :* (E :* E)) :* E) :* E)
+                    refl totalCap ε N)
+
+              rightShape :
+                ((totalCap * (N * N)) * ε) * (ε * ε) ≡ bulk * 1ℚ
+              rightShape =
+                solve 3
+                  (λ T Nn E →
+                    ((T :* (Nn :* Nn)) :* E) :* (E :* E)
+                      := (((T :* (Nn :* Nn)) :* (E :* E)) :* E) :* con 1ℚ)
+                  refl totalCap N ε
+
+    ------------------------------------------------------------------
+    -- Hence Q(y) = 0: the quadratic parts agree identically
+    ------------------------------------------------------------------
+
+    quadraticPartVanishes : Q y₁ y₂ y₃ ≡ 0ℚ
+    quadraticPartVanishes =
+      smallMultipleVanishes (Q y₁ y₂ y₃) (totalCap * (N * N))
+        (mul-nonNeg totalCapNonNeg (mul-nonNeg 0≤N 0≤N))
+        (λ ε 0<ε ε≤1 → At.linearBound ε 0<ε ε≤1)
+
+    halfQuadFormValue :
+      halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ y₁ y₂ y₃ ≡ thirdℚ * N
+    halfQuadFormValue =
+      trans (sym reconstruct)
+        (trans (cong (_+ thirdℚ * N) quadraticPartVanishes)
+          (ℚP.+-identityˡ (thirdℚ * N)))
+      where
+        reconstruct :
+          Q y₁ y₂ y₃ + thirdℚ * N
+            ≡ halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ y₁ y₂ y₃
+        reconstruct =
+          solve 2 (λ A B → (A :- B) :+ B := A) refl
+            (halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ y₁ y₂ y₃)
+            (thirdℚ * N)
+
+  ------------------------------------------------------------------
+  -- THE HESSIAN IS (2/3) I, ENTRY BY ENTRY
+  --
+  -- Probing at the chart points with coordinates 1/4 (all of which lie in
+  -- |y|^2 <= 1/4) and solving the resulting linear equations.
+  ------------------------------------------------------------------
+
+  private
+    probe : ℚ
+    probe = + 1 / 4
+
+    scale : ℚ
+    scale = + 32 / 1                 -- 1 / (probe^2 / 2)
+
+  diagonal₁ : h₁₁ ≡ twoThirdsℚ
+  diagonal₁ =
+    trans (sym leftShape) (trans (cong (scale *_) equation) refl)
+    where
+      equation :
+        halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ probe 0ℚ 0ℚ
+          ≡ thirdℚ * normSq probe 0ℚ 0ℚ
+      equation =
+        Scaled.halfQuadFormValue probe 0ℚ 0ℚ
+          (toWitness {a? = normSq probe 0ℚ 0ℚ ℚP.≤? chartRadius} _)
+
+      leftShape :
+        scale * (halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ probe 0ℚ 0ℚ) ≡ h₁₁
+      leftShape =
+        solve 6
+          (λ H₁₁ H₁₂ H₁₃ H₂₂ H₂₃ H₃₃ →
+            con scale :* (con halfℚ
+              :* (H₁₁ :* (con probe :* con probe)
+                    :+ H₂₂ :* (con 0ℚ :* con 0ℚ)
+                    :+ H₃₃ :* (con 0ℚ :* con 0ℚ)
+                    :+ con twoℚ :* (H₁₂ :* (con probe :* con 0ℚ))
+                    :+ con twoℚ :* (H₁₃ :* (con probe :* con 0ℚ))
+                    :+ con twoℚ :* (H₂₃ :* (con 0ℚ :* con 0ℚ))))
+              := H₁₁)
+          refl h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃
+
+  diagonal₂ : h₂₂ ≡ twoThirdsℚ
+  diagonal₂ =
+    trans (sym leftShape) (trans (cong (scale *_) equation) refl)
+    where
+      equation :
+        halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ 0ℚ probe 0ℚ
+          ≡ thirdℚ * normSq 0ℚ probe 0ℚ
+      equation =
+        Scaled.halfQuadFormValue 0ℚ probe 0ℚ
+          (toWitness {a? = normSq 0ℚ probe 0ℚ ℚP.≤? chartRadius} _)
+
+      leftShape :
+        scale * (halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ 0ℚ probe 0ℚ) ≡ h₂₂
+      leftShape =
+        solve 6
+          (λ H₁₁ H₁₂ H₁₃ H₂₂ H₂₃ H₃₃ →
+            con scale :* (con halfℚ
+              :* (H₁₁ :* (con 0ℚ :* con 0ℚ)
+                    :+ H₂₂ :* (con probe :* con probe)
+                    :+ H₃₃ :* (con 0ℚ :* con 0ℚ)
+                    :+ con twoℚ :* (H₁₂ :* (con 0ℚ :* con probe))
+                    :+ con twoℚ :* (H₁₃ :* (con 0ℚ :* con 0ℚ))
+                    :+ con twoℚ :* (H₂₃ :* (con probe :* con 0ℚ))))
+              := H₂₂)
+          refl h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃
+
+  diagonal₃ : h₃₃ ≡ twoThirdsℚ
+  diagonal₃ =
+    trans (sym leftShape) (trans (cong (scale *_) equation) refl)
+    where
+      equation :
+        halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ 0ℚ 0ℚ probe
+          ≡ thirdℚ * normSq 0ℚ 0ℚ probe
+      equation =
+        Scaled.halfQuadFormValue 0ℚ 0ℚ probe
+          (toWitness {a? = normSq 0ℚ 0ℚ probe ℚP.≤? chartRadius} _)
+
+      leftShape :
+        scale * (halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ 0ℚ 0ℚ probe) ≡ h₃₃
+      leftShape =
+        solve 6
+          (λ H₁₁ H₁₂ H₁₃ H₂₂ H₂₃ H₃₃ →
+            con scale :* (con halfℚ
+              :* (H₁₁ :* (con 0ℚ :* con 0ℚ)
+                    :+ H₂₂ :* (con 0ℚ :* con 0ℚ)
+                    :+ H₃₃ :* (con probe :* con probe)
+                    :+ con twoℚ :* (H₁₂ :* (con 0ℚ :* con 0ℚ))
+                    :+ con twoℚ :* (H₁₃ :* (con 0ℚ :* con probe))
+                    :+ con twoℚ :* (H₂₃ :* (con 0ℚ :* con probe))))
+              := H₃₃)
+          refl h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃
+
+  -- off-diagonal entries: probing at the chart points with two equal
+  -- coordinates 1/4 and subtracting the diagonal values already determined
+  offDiagonal₁₂ : h₁₂ ≡ 0ℚ
+  offDiagonal₁₂ = halveIt
+    where
+      equation :
+        halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ probe probe 0ℚ
+          ≡ thirdℚ * normSq probe probe 0ℚ
+      equation =
+        Scaled.halfQuadFormValue probe probe 0ℚ
+          (toWitness {a? = normSq probe probe 0ℚ ℚP.≤? chartRadius} _)
+
+      leftShape :
+        scale * (halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ probe probe 0ℚ)
+          ≡ h₁₁ + h₂₂ + twoℚ * h₁₂
+      leftShape =
+        solve 6
+          (λ H₁₁ H₁₂ H₁₃ H₂₂ H₂₃ H₃₃ →
+            con scale :* (con halfℚ
+              :* (H₁₁ :* (con probe :* con probe)
+                    :+ H₂₂ :* (con probe :* con probe)
+                    :+ H₃₃ :* (con 0ℚ :* con 0ℚ)
+                    :+ con twoℚ :* (H₁₂ :* (con probe :* con probe))
+                    :+ con twoℚ :* (H₁₃ :* (con probe :* con 0ℚ))
+                    :+ con twoℚ :* (H₂₃ :* (con probe :* con 0ℚ))))
+              := H₁₁ :+ H₂₂ :+ con twoℚ :* H₁₂)
+          refl h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃
+
+      combined : h₁₁ + h₂₂ + twoℚ * h₁₂ ≡ + 4 / 3
+      combined = trans (sym leftShape) (trans (cong (scale *_) equation) refl)
+
+      substituted : twoThirdsℚ + twoThirdsℚ + twoℚ * h₁₂ ≡ + 4 / 3
+      substituted =
+        subst₂ (λ u v → u + v + twoℚ * h₁₂ ≡ + 4 / 3)
+          diagonal₁ diagonal₂ combined
+
+      doubled : twoℚ * h₁₂ ≡ 0ℚ
+      doubled =
+        trans (sym shift) (trans (cong (_- (+ 4 / 3)) substituted) refl)
+        where
+          shift :
+            (twoThirdsℚ + twoThirdsℚ + twoℚ * h₁₂) - (+ 4 / 3) ≡ twoℚ * h₁₂
+          shift =
+            solve 1
+              (λ H → (con twoThirdsℚ :+ con twoThirdsℚ :+ con twoℚ :* H)
+                       :- con (+ 4 / 3) := con twoℚ :* H)
+              refl h₁₂
+
+      halveIt : h₁₂ ≡ 0ℚ
+      halveIt = trans (sym halve) (trans (cong (halfℚ *_) doubled) refl)
+        where
+          halve : halfℚ * (twoℚ * h₁₂) ≡ h₁₂
+          halve =
+            solve 1 (λ H → con halfℚ :* (con twoℚ :* H) := H) refl h₁₂
+
+  offDiagonal₁₃ : h₁₃ ≡ 0ℚ
+  offDiagonal₁₃ = halveIt
+    where
+      equation :
+        halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ probe 0ℚ probe
+          ≡ thirdℚ * normSq probe 0ℚ probe
+      equation =
+        Scaled.halfQuadFormValue probe 0ℚ probe
+          (toWitness {a? = normSq probe 0ℚ probe ℚP.≤? chartRadius} _)
+
+      leftShape :
+        scale * (halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ probe 0ℚ probe)
+          ≡ h₁₁ + h₃₃ + twoℚ * h₁₃
+      leftShape =
+        solve 6
+          (λ H₁₁ H₁₂ H₁₃ H₂₂ H₂₃ H₃₃ →
+            con scale :* (con halfℚ
+              :* (H₁₁ :* (con probe :* con probe)
+                    :+ H₂₂ :* (con 0ℚ :* con 0ℚ)
+                    :+ H₃₃ :* (con probe :* con probe)
+                    :+ con twoℚ :* (H₁₂ :* (con probe :* con 0ℚ))
+                    :+ con twoℚ :* (H₁₃ :* (con probe :* con probe))
+                    :+ con twoℚ :* (H₂₃ :* (con 0ℚ :* con probe))))
+              := H₁₁ :+ H₃₃ :+ con twoℚ :* H₁₃)
+          refl h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃
+
+      combined : h₁₁ + h₃₃ + twoℚ * h₁₃ ≡ + 4 / 3
+      combined = trans (sym leftShape) (trans (cong (scale *_) equation) refl)
+
+      substituted : twoThirdsℚ + twoThirdsℚ + twoℚ * h₁₃ ≡ + 4 / 3
+      substituted =
+        subst₂ (λ u v → u + v + twoℚ * h₁₃ ≡ + 4 / 3)
+          diagonal₁ diagonal₃ combined
+
+      doubled : twoℚ * h₁₃ ≡ 0ℚ
+      doubled =
+        trans (sym shift) (trans (cong (_- (+ 4 / 3)) substituted) refl)
+        where
+          shift :
+            (twoThirdsℚ + twoThirdsℚ + twoℚ * h₁₃) - (+ 4 / 3) ≡ twoℚ * h₁₃
+          shift =
+            solve 1
+              (λ H → (con twoThirdsℚ :+ con twoThirdsℚ :+ con twoℚ :* H)
+                       :- con (+ 4 / 3) := con twoℚ :* H)
+              refl h₁₃
+
+      halveIt : h₁₃ ≡ 0ℚ
+      halveIt = trans (sym halve) (trans (cong (halfℚ *_) doubled) refl)
+        where
+          halve : halfℚ * (twoℚ * h₁₃) ≡ h₁₃
+          halve =
+            solve 1 (λ H → con halfℚ :* (con twoℚ :* H) := H) refl h₁₃
+
+  offDiagonal₂₃ : h₂₃ ≡ 0ℚ
+  offDiagonal₂₃ = halveIt
+    where
+      equation :
+        halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ 0ℚ probe probe
+          ≡ thirdℚ * normSq 0ℚ probe probe
+      equation =
+        Scaled.halfQuadFormValue 0ℚ probe probe
+          (toWitness {a? = normSq 0ℚ probe probe ℚP.≤? chartRadius} _)
+
+      leftShape :
+        scale * (halfℚ * quadForm h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃ 0ℚ probe probe)
+          ≡ h₂₂ + h₃₃ + twoℚ * h₂₃
+      leftShape =
+        solve 6
+          (λ H₁₁ H₁₂ H₁₃ H₂₂ H₂₃ H₃₃ →
+            con scale :* (con halfℚ
+              :* (H₁₁ :* (con 0ℚ :* con 0ℚ)
+                    :+ H₂₂ :* (con probe :* con probe)
+                    :+ H₃₃ :* (con probe :* con probe)
+                    :+ con twoℚ :* (H₁₂ :* (con 0ℚ :* con probe))
+                    :+ con twoℚ :* (H₁₃ :* (con 0ℚ :* con probe))
+                    :+ con twoℚ :* (H₂₃ :* (con probe :* con probe))))
+              := H₂₂ :+ H₃₃ :+ con twoℚ :* H₂₃)
+          refl h₁₁ h₁₂ h₁₃ h₂₂ h₂₃ h₃₃
+
+      combined : h₂₂ + h₃₃ + twoℚ * h₂₃ ≡ + 4 / 3
+      combined = trans (sym leftShape) (trans (cong (scale *_) equation) refl)
+
+      substituted : twoThirdsℚ + twoThirdsℚ + twoℚ * h₂₃ ≡ + 4 / 3
+      substituted =
+        subst₂ (λ u v → u + v + twoℚ * h₂₃ ≡ + 4 / 3)
+          diagonal₂ diagonal₃ combined
+
+      doubled : twoℚ * h₂₃ ≡ 0ℚ
+      doubled =
+        trans (sym shift) (trans (cong (_- (+ 4 / 3)) substituted) refl)
+        where
+          shift :
+            (twoThirdsℚ + twoThirdsℚ + twoℚ * h₂₃) - (+ 4 / 3) ≡ twoℚ * h₂₃
+          shift =
+            solve 1
+              (λ H → (con twoThirdsℚ :+ con twoThirdsℚ :+ con twoℚ :* H)
+                       :- con (+ 4 / 3) := con twoℚ :* H)
+              refl h₂₃
+
+      halveIt : h₂₃ ≡ 0ℚ
+      halveIt = trans (sym halve) (trans (cong (halfℚ *_) doubled) refl)
+        where
+          halve : halfℚ * (twoℚ * h₂₃) ≡ h₂₃
+          halve =
+            solve 1 (λ H → con halfℚ :* (con twoℚ :* H) := H) refl h₂₃
+
+------------------------------------------------------------------------
+-- NON-VACUITY: the hypotheses are satisfiable with a genuinely nonzero
+-- quartic remainder, exactly of the shape the SU(2) Haar action produces
+------------------------------------------------------------------------
+
+-- phi(t) = t/3 + t^2/16, F(y) = phi(|y|^2): radial, with radial coefficient
+-- 1/3 and quartic remainder constant 1/16 (the constant proved for the Haar
+-- action in `BalabanYM4SU2HaarJacobianQuadraticCoefficientExact`).
+
+sixteenthℚ : ℚ
+sixteenthℚ = + 1 / 16
+
+sampleProfile : ℚ → ℚ
+sampleProfile t = thirdℚ * t + sixteenthℚ * (t * t)
+
+sampleF : ℚ → ℚ → ℚ → ℚ
+sampleF y₁ y₂ y₃ = sampleProfile (normSq y₁ y₂ y₃)
+
+sampleRemainder :
+  ∀ t → (sampleProfile t - thirdℚ * t) ≡ sixteenthℚ * (t * t)
+sampleRemainder t =
+  solve 1
+    (λ T → (con thirdℚ :* T :+ con sixteenthℚ :* (T :* T)) :- con thirdℚ :* T
+             := con sixteenthℚ :* (T :* T))
+    refl t
+
+sampleRemainderAbs :
+  ∀ t → ∣ sampleProfile t - thirdℚ * t ∣ ≡ sixteenthℚ * (t * t)
+sampleRemainderAbs t =
+  trans (cong ∣_∣ (sampleRemainder t))
+    (ℚP.0≤p⇒∣p∣≡p
+      (mul-nonNeg (toWitness {a? = 0ℚ ℚP.≤? sixteenthℚ} _) (square-nonNeg t)))
+
+sampleJet : RadialQuadraticJet
+sampleJet = record
+  { F = sampleF
+  ; phi = sampleProfile
+  ; remainderCap = sixteenthℚ
+  ; candidateCap = sixteenthℚ
+  ; h₁₁ = twoThirdsℚ ; h₁₂ = 0ℚ ; h₁₃ = 0ℚ
+  ; h₂₂ = twoThirdsℚ ; h₂₃ = 0ℚ ; h₃₃ = twoThirdsℚ
+  ; remainderCapNonNeg = toWitness {a? = 0ℚ ℚP.≤? sixteenthℚ} _
+  ; candidateCapNonNeg = toWitness {a? = 0ℚ ℚP.≤? sixteenthℚ} _
+  ; radial = λ _ _ _ → refl
+  ; radialQuadratic =
+      λ t _ _ → ℚP.≤-reflexive (sampleRemainderAbs t)
+  ; candidateQuadratic = candidate
+  }
+  where
+    candidate :
+      ∀ y₁ y₂ y₃ → normSq y₁ y₂ y₃ ≤ chartRadius →
+      ∣ sampleF y₁ y₂ y₃
+          - halfℚ * quadForm twoThirdsℚ 0ℚ 0ℚ twoThirdsℚ 0ℚ twoThirdsℚ y₁ y₂ y₃ ∣
+        ≤ sixteenthℚ * (normSq y₁ y₂ y₃ * normSq y₁ y₂ y₃)
+    candidate y₁ y₂ y₃ _ =
+      ℚP.≤-reflexive
+        (trans
+          (cong (λ w → ∣ sampleF y₁ y₂ y₃ - w ∣)
+            (twoThirdsIdentityHalfQuadForm y₁ y₂ y₃))
+          (sampleRemainderAbs (normSq y₁ y₂ y₃)))
+
+module SampleJet = Jet sampleJet
+
+-- the transfer theorem returns the expected Hessian entries on this instance
+sampleDiagonal₁ : SampleJet.h₁₁ ≡ twoThirdsℚ
+sampleDiagonal₁ = SampleJet.diagonal₁
+
+sampleOffDiagonal₁₂ : SampleJet.h₁₂ ≡ 0ℚ
+sampleOffDiagonal₁₂ = SampleJet.offDiagonal₁₂

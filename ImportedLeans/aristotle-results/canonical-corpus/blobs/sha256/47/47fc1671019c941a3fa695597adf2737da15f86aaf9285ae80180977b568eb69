@@ -1,0 +1,372 @@
+module DASHI.Physics.YangMills.BalabanYM4BorderedKKTDeterminantExact where
+
+------------------------------------------------------------------------
+-- ROW A1, CONSTRAINED-GAUSSIAN NORMALISATION:
+--   THE BORDERED (KKT) DETERMINANT IDENTITY, PROVED ON EXPLICIT FINITE
+--   RATIONAL CARRIERS, NOT ASSUMED
+--
+-- CONTEXT
+--
+-- The constrained Gaussian normalisation of the Bałaban block step is the
+-- determinant of the KKT (bordered) matrix
+--
+--     M(U)  =  [ Δ(U)   Q(U)* ]
+--              [ Q(U)     0   ] ,
+--
+-- and the object the RG needs is the splitting
+--
+--     |det M|  =  det Δ · det ( Q Δ^{-1} Q* ) .
+--
+-- Every generic block-determinant module in this tree *assumes* a determinant
+-- factorisation as an interface field.  This module proves the identity
+-- outright, by exact rational algebra, on explicit finite carriers: ambient
+-- dimension 2 and 3 with one constraint.  Nothing here is postulated, no
+-- authority is cited and no determinant multiplicativity is assumed — the
+-- determinants are the literal Leibniz/Laplace polynomials in the entries.
+--
+-- WHAT IS PROVED.
+--
+--   (1) `borderedDeterminant2` :  for symmetric Δ = [[a,b],[b,c]] and
+--       Q = (q₁,q₂),
+--
+--           det M  =  - ( Q adj(Δ) Q* ) ,
+--
+--       with adj(Δ) the literal adjugate.  Since Q adj(Δ) Q* = det Δ ·
+--       (Q Δ^{-1} Q*), this is the bordered identity with its (-1)^m sign,
+--       m = 1, cleared of denominators.
+--
+--   (2) `borderedDeterminant3` : the same for a symmetric 3×3 Δ, i.e. for the
+--       4×4 bordered matrix.
+--
+--   (3) `adjugateFormPositive` : if Δ is positive definite (a > 0 and
+--       det Δ > 0) and Q ≠ 0, then Q adj(Δ) Q* > 0.  The proof is an exact
+--       sum-of-squares identity, `completionOfSquares`:
+--
+--           c · (Q adj(Δ) Q*)  =  (c q₁ - b q₂)²  +  det Δ · q₂² .
+--
+--   (4) `borderedDeterminantNegative` : hence det M < 0 for the 2-dimensional
+--       carrier: the bordered determinant never vanishes there, so the
+--       normalisation is well defined, and
+--
+--   (5) `constrainedGaussianSplit` : |det M| = det Δ · S with
+--       S = (Q adj(Δ) Q*)/det Δ = Q Δ^{-1} Q* > 0 — the literal
+--       constrained-Gaussian factorisation on a fixed ambient space, with no
+--       moving ker Q(U) basis anywhere in the statement or the proof.
+--
+-- WHAT IS *NOT* PROVED.  This is the linear-algebra seam of Row A1 only: it
+-- does not evaluate Δ(U), Q(U) for the literal Wilson + reduced Faddeev–Popov
+-- + Haar background object, and it is proved for ambient dimensions 2 and 3,
+-- not for a general finite carrier.  Row A stays open and the frozen research
+-- count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Sum.Base using (_⊎_; inj₁; inj₂)
+open import Data.Rational.Base as ℚ
+  using ( ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _≤_; _<_; _/_; 1/_
+        ; NonZero; nonNegative; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; mul-nonNeg; mul-pos; scaleˡ-nonNeg; scaleʳ-nonNeg; transport-≤)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Literal determinants of 2×2, 3×3 and 4×4 rational matrices
+------------------------------------------------------------------------
+
+det2 : (a₁₁ a₁₂ a₂₁ a₂₂ : ℚ) → ℚ
+det2 a₁₁ a₁₂ a₂₁ a₂₂ = a₁₁ * a₂₂ - a₁₂ * a₂₁
+
+det3 : (a₁₁ a₁₂ a₁₃ a₂₁ a₂₂ a₂₃ a₃₁ a₃₂ a₃₃ : ℚ) → ℚ
+det3 a₁₁ a₁₂ a₁₃ a₂₁ a₂₂ a₂₃ a₃₁ a₃₂ a₃₃ =
+  a₁₁ * det2 a₂₂ a₂₃ a₃₂ a₃₃
+    - a₁₂ * det2 a₂₁ a₂₃ a₃₁ a₃₃
+    + a₁₃ * det2 a₂₁ a₂₂ a₃₁ a₃₂
+
+det4 :
+  (a₁₁ a₁₂ a₁₃ a₁₄
+   a₂₁ a₂₂ a₂₃ a₂₄
+   a₃₁ a₃₂ a₃₃ a₃₄
+   a₄₁ a₄₂ a₄₃ a₄₄ : ℚ) → ℚ
+det4 a₁₁ a₁₂ a₁₃ a₁₄ a₂₁ a₂₂ a₂₃ a₂₄ a₃₁ a₃₂ a₃₃ a₃₄ a₄₁ a₄₂ a₄₃ a₄₄ =
+  a₁₁ * det3 a₂₂ a₂₃ a₂₄ a₃₂ a₃₃ a₃₄ a₄₂ a₄₃ a₄₄
+    - a₁₂ * det3 a₂₁ a₂₃ a₂₄ a₃₁ a₃₃ a₃₄ a₄₁ a₄₃ a₄₄
+    + a₁₃ * det3 a₂₁ a₂₂ a₂₄ a₃₁ a₃₂ a₃₄ a₄₁ a₄₂ a₄₄
+    - a₁₄ * det3 a₂₁ a₂₂ a₂₃ a₃₁ a₃₂ a₃₃ a₄₁ a₄₂ a₄₃
+
+------------------------------------------------------------------------
+-- Ambient dimension 2, one constraint
+------------------------------------------------------------------------
+
+-- The quadratic form  Q adj(Δ) Q*  with adj(Δ) = [[c,-b],[-b,a]].
+adjugateForm2 : (a b c q₁ q₂ : ℚ) → ℚ
+adjugateForm2 a b c q₁ q₂ =
+  c * (q₁ * q₁) - twoℚ * (b * (q₁ * q₂)) + a * (q₂ * q₂)
+
+-- The bordered KKT matrix of the 2-dimensional carrier.
+borderedMatrixDeterminant2 : (a b c q₁ q₂ : ℚ) → ℚ
+borderedMatrixDeterminant2 a b c q₁ q₂ =
+  det3 a b q₁
+       b c q₂
+       q₁ q₂ 0ℚ
+
+-- (1) THE BORDERED IDENTITY, m = 1:  det M = - Q adj(Δ) Q*.
+borderedDeterminant2 :
+  ∀ a b c q₁ q₂ →
+  borderedMatrixDeterminant2 a b c q₁ q₂ ≡ - (adjugateForm2 a b c q₁ q₂)
+borderedDeterminant2 a b c q₁ q₂ =
+  solve 5
+    (λ x y z p r →
+      (x :* (z :* con 0ℚ :- r :* r)
+        :- y :* (y :* con 0ℚ :- r :* p)
+        :+ p :* (y :* r :- z :* p))
+        := :- (z :* (p :* p) :- con twoℚ :* (y :* (p :* r)) :+ x :* (r :* r)))
+    refl a b c q₁ q₂
+
+-- (3a) The exact completion of squares behind positivity.
+completionOfSquares :
+  ∀ a b c q₁ q₂ →
+  c * adjugateForm2 a b c q₁ q₂
+    ≡ (c * q₁ - b * q₂) * (c * q₁ - b * q₂)
+        + (a * c - b * b) * (q₂ * q₂)
+completionOfSquares a b c q₁ q₂ =
+  solve 5
+    (λ x y z p r →
+      z :* (z :* (p :* p) :- con twoℚ :* (y :* (p :* r)) :+ x :* (r :* r))
+        := (z :* p :- y :* r) :* (z :* p :- y :* r)
+             :+ (x :* z :- y :* y) :* (r :* r))
+    refl a b c q₁ q₂
+
+------------------------------------------------------------------------
+-- Positive definiteness of the adjugate form
+------------------------------------------------------------------------
+
+-- The companion completion of squares, in the other pivot.
+completionOfSquares' :
+  ∀ a b c q₁ q₂ →
+  a * adjugateForm2 a b c q₁ q₂
+    ≡ (a * q₂ - b * q₁) * (a * q₂ - b * q₁)
+        + (a * c - b * b) * (q₁ * q₁)
+completionOfSquares' a b c q₁ q₂ =
+  solve 5
+    (λ x y z p r →
+      x :* (z :* (p :* p) :- con twoℚ :* (y :* (p :* r)) :+ x :* (r :* r))
+        := (x :* r :- y :* p) :* (x :* r :- y :* p)
+             :+ (x :* z :- y :* y) :* (p :* p))
+    refl a b c q₁ q₂
+
+square-nonNeg : ∀ (x : ℚ) → 0ℚ ≤ x * x
+square-nonNeg x with ℚP.≤-total 0ℚ x
+... | inj₁ 0≤x = mul-nonNeg 0≤x 0≤x
+... | inj₂ x≤0 =
+  transport-≤ refl negSquare (mul-nonNeg 0≤-x 0≤-x)
+  where
+    0≤-x : 0ℚ ≤ - x
+    0≤-x = ℚP.neg-antimono-≤ x≤0
+
+    negSquare : (- x) * (- x) ≡ x * x
+    negSquare = solve 1 (λ y → (:- y) :* (:- y) := y :* y) refl x
+
+square-pos : ∀ {x : ℚ} → 0ℚ < x ⊎ x < 0ℚ → 0ℚ < x * x
+square-pos {x} (inj₁ 0<x) = mul-pos 0<x 0<x
+square-pos {x} (inj₂ x<0) =
+  subst (0ℚ <_) negSquare (mul-pos 0<-x 0<-x)
+  where
+    0<-x : 0ℚ < - x
+    0<-x = ℚP.neg-antimono-< x<0
+
+    negSquare : (- x) * (- x) ≡ x * x
+    negSquare = solve 1 (λ y → (:- y) :* (:- y) := y :* y) refl x
+
+sumPositive : ∀ {X Y : ℚ} → 0ℚ ≤ X → 0ℚ < Y → 0ℚ < X + Y
+sumPositive {X} {Y} 0≤X 0<Y =
+  ℚP.<-respˡ-≡ (ℚP.+-identityˡ 0ℚ) (ℚP.+-mono-≤-< 0≤X 0<Y)
+
+-- Positive definiteness of a symmetric 2×2 rational matrix, in the standard
+-- leading-minor form.
+record PositiveDefinite2 (a b c : ℚ) : Set where
+  field
+    pivotPositive : 0ℚ < a
+    detPositive   : 0ℚ < a * c - b * b
+
+open PositiveDefinite2 public
+
+-- the second diagonal entry is then positive as well
+lowerPivotPositive : ∀ {a b c} → PositiveDefinite2 a b c → 0ℚ < c
+lowerPivotPositive {a} {b} {c} pd =
+  ℚP.*-cancelˡ-<-nonNeg a {{nonNegative (ℚP.<⇒≤ (pivotPositive pd))}}
+    (ℚP.<-respˡ-≡ (sym (ℚP.*-zeroʳ a)) 0<ac)
+  where
+    expand : a * c ≡ (a * c - b * b) + b * b
+    expand =
+      solve 3 (λ x y z → x :* z := (x :* z :- y :* y) :+ y :* y) refl a b c
+
+    0<ac : 0ℚ < a * c
+    0<ac =
+      ℚP.<-respʳ-≡ (sym expand)
+        (ℚP.<-respˡ-≡ (ℚP.+-identityʳ 0ℚ)
+          (ℚP.+-mono-<-≤ (detPositive pd) (square-nonNeg b)))
+
+-- (3) Q adj(Δ) Q* > 0 for positive definite Δ and Q ≠ 0.
+adjugateFormPositive :
+  ∀ {a b c q₁ q₂} → PositiveDefinite2 a b c →
+  (0ℚ < q₁ ⊎ q₁ < 0ℚ) ⊎ (0ℚ < q₂ ⊎ q₂ < 0ℚ) →
+  0ℚ < adjugateForm2 a b c q₁ q₂
+adjugateFormPositive {a} {b} {c} {q₁} {q₂} pd (inj₁ q₁≠0) =
+  ℚP.*-cancelˡ-<-nonNeg a {{nonNegative (ℚP.<⇒≤ (pivotPositive pd))}}
+    (ℚP.<-respˡ-≡ (sym (ℚP.*-zeroʳ a))
+      (ℚP.<-respʳ-≡ (sym (completionOfSquares' a b c q₁ q₂))
+        (sumPositive (square-nonNeg (a * q₂ - b * q₁))
+          (mul-pos (detPositive pd) (square-pos q₁≠0)))))
+adjugateFormPositive {a} {b} {c} {q₁} {q₂} pd (inj₂ q₂≠0) =
+  ℚP.*-cancelˡ-<-nonNeg c {{nonNegative (ℚP.<⇒≤ (lowerPivotPositive pd))}}
+    (ℚP.<-respˡ-≡ (sym (ℚP.*-zeroʳ c))
+      (ℚP.<-respʳ-≡ (sym (completionOfSquares a b c q₁ q₂))
+        (sumPositive (square-nonNeg (c * q₁ - b * q₂))
+          (mul-pos (detPositive pd) (square-pos q₂≠0)))))
+
+-- (4) The bordered determinant is strictly negative on this carrier.
+borderedDeterminantNegative :
+  ∀ {a b c q₁ q₂} → PositiveDefinite2 a b c →
+  (0ℚ < q₁ ⊎ q₁ < 0ℚ) ⊎ (0ℚ < q₂ ⊎ q₂ < 0ℚ) →
+  borderedMatrixDeterminant2 a b c q₁ q₂ < 0ℚ
+borderedDeterminantNegative {a} {b} {c} {q₁} {q₂} pd nonzeroQ =
+  ℚP.<-respˡ-≡ (sym (borderedDeterminant2 a b c q₁ q₂))
+    (ℚP.neg-antimono-< (adjugateFormPositive pd nonzeroQ))
+
+------------------------------------------------------------------------
+-- (5) The constrained-Gaussian split on a fixed ambient space
+------------------------------------------------------------------------
+
+-- S = Q Δ^{-1} Q* = (Q adj(Δ) Q*) / det Δ, and |det M| = det Δ · S.
+
+module Split
+  {a b c q₁ q₂ : ℚ}
+  (pd : PositiveDefinite2 a b c)
+  (nonzeroQ : (0ℚ < q₁ ⊎ q₁ < 0ℚ) ⊎ (0ℚ < q₂ ⊎ q₂ < 0ℚ))
+  where
+
+  detΔ : ℚ
+  detΔ = a * c - b * b
+
+  0<detΔ : 0ℚ < detΔ
+  0<detΔ = detPositive pd
+
+  instance
+    detΔNonZero : NonZero detΔ
+    detΔNonZero = ℚP.pos⇒nonZero detΔ {{positive 0<detΔ}}
+
+  -- the Schur complement value Q Δ^{-1} Q*
+  schur : ℚ
+  schur = adjugateForm2 a b c q₁ q₂ * (1/ detΔ)
+
+  schurPositive : 0ℚ < schur
+  schurPositive =
+    mul-pos (adjugateFormPositive pd nonzeroQ)
+      (ℚP.positive⁻¹ (1/ detΔ) {{ℚP.1/pos⇒pos detΔ {{positive 0<detΔ}}}})
+
+  -- |det M| = det Δ · (Q Δ^{-1} Q*)
+  determinantSplit :
+    ∣ borderedMatrixDeterminant2 a b c q₁ q₂ ∣ ≡ detΔ * schur
+  determinantSplit = trans absValue (sym clear)
+    where
+      absValue :
+        ∣ borderedMatrixDeterminant2 a b c q₁ q₂ ∣ ≡ adjugateForm2 a b c q₁ q₂
+      absValue =
+        trans (cong ∣_∣ (borderedDeterminant2 a b c q₁ q₂))
+          (trans (ℚP.∣-p∣≡∣p∣ (adjugateForm2 a b c q₁ q₂))
+            (ℚP.0≤p⇒∣p∣≡p (ℚP.<⇒≤ (adjugateFormPositive pd nonzeroQ))))
+
+      clear : detΔ * schur ≡ adjugateForm2 a b c q₁ q₂
+      clear =
+        trans (ℚP.*-comm detΔ schur)
+          (trans (ℚP.*-assoc (adjugateForm2 a b c q₁ q₂) (1/ detΔ) detΔ)
+            (trans (cong (adjugateForm2 a b c q₁ q₂ *_) (ℚP.*-inverseˡ detΔ))
+              (ℚP.*-identityʳ (adjugateForm2 a b c q₁ q₂))))
+
+
+------------------------------------------------------------------------
+-- Ambient dimension 3, one constraint
+------------------------------------------------------------------------
+
+-- adj(Δ) for a symmetric 3×3 Δ, written out.
+adjugateForm3 : (a₁₁ a₁₂ a₁₃ a₂₂ a₂₃ a₃₃ q₁ q₂ q₃ : ℚ) → ℚ
+adjugateForm3 a₁₁ a₁₂ a₁₃ a₂₂ a₂₃ a₃₃ q₁ q₂ q₃ =
+  (a₂₂ * a₃₃ - a₂₃ * a₂₃) * (q₁ * q₁)
+    + (a₁₁ * a₃₃ - a₁₃ * a₁₃) * (q₂ * q₂)
+    + (a₁₁ * a₂₂ - a₁₂ * a₁₂) * (q₃ * q₃)
+    + twoℚ * ((a₁₃ * a₂₃ - a₁₂ * a₃₃) * (q₁ * q₂))
+    + twoℚ * ((a₁₂ * a₂₃ - a₁₃ * a₂₂) * (q₁ * q₃))
+    + twoℚ * ((a₁₂ * a₁₃ - a₁₁ * a₂₃) * (q₂ * q₃))
+
+borderedMatrixDeterminant3 :
+  (a₁₁ a₁₂ a₁₃ a₂₂ a₂₃ a₃₃ q₁ q₂ q₃ : ℚ) → ℚ
+borderedMatrixDeterminant3 a₁₁ a₁₂ a₁₃ a₂₂ a₂₃ a₃₃ q₁ q₂ q₃ =
+  det4 a₁₁ a₁₂ a₁₃ q₁
+       a₁₂ a₂₂ a₂₃ q₂
+       a₁₃ a₂₃ a₃₃ q₃
+       q₁  q₂  q₃  0ℚ
+
+-- (2) THE BORDERED IDENTITY IN AMBIENT DIMENSION 3.
+borderedDeterminant3 :
+  ∀ a₁₁ a₁₂ a₁₃ a₂₂ a₂₃ a₃₃ q₁ q₂ q₃ →
+  borderedMatrixDeterminant3 a₁₁ a₁₂ a₁₃ a₂₂ a₂₃ a₃₃ q₁ q₂ q₃
+    ≡ - (adjugateForm3 a₁₁ a₁₂ a₁₃ a₂₂ a₂₃ a₃₃ q₁ q₂ q₃)
+borderedDeterminant3 a₁₁ a₁₂ a₁₃ a₂₂ a₂₃ a₃₃ q₁ q₂ q₃ =
+  solve 9
+    (λ x₁₁ x₁₂ x₁₃ x₂₂ x₂₃ x₃₃ p₁ p₂ p₃ →
+      (x₁₁ :* (x₂₂ :* (x₃₃ :* con 0ℚ :- p₃ :* p₃)
+                 :- x₂₃ :* (x₂₃ :* con 0ℚ :- p₃ :* p₂)
+                 :+ p₂ :* (x₂₃ :* p₃ :- x₃₃ :* p₂))
+        :- x₁₂ :* (x₁₂ :* (x₃₃ :* con 0ℚ :- p₃ :* p₃)
+                 :- x₂₃ :* (x₁₃ :* con 0ℚ :- p₃ :* p₁)
+                 :+ p₂ :* (x₁₃ :* p₃ :- x₃₃ :* p₁))
+        :+ x₁₃ :* (x₁₂ :* (x₂₃ :* con 0ℚ :- p₃ :* p₂)
+                 :- x₂₂ :* (x₁₃ :* con 0ℚ :- p₃ :* p₁)
+                 :+ p₂ :* (x₁₃ :* p₂ :- x₂₃ :* p₁))
+        :- p₁ :* (x₁₂ :* (x₂₃ :* p₃ :- x₃₃ :* p₂)
+                 :- x₂₂ :* (x₁₃ :* p₃ :- x₃₃ :* p₁)
+                 :+ x₂₃ :* (x₁₃ :* p₂ :- x₂₃ :* p₁)))
+        := :- ((x₂₂ :* x₃₃ :- x₂₃ :* x₂₃) :* (p₁ :* p₁)
+                :+ (x₁₁ :* x₃₃ :- x₁₃ :* x₁₃) :* (p₂ :* p₂)
+                :+ (x₁₁ :* x₂₂ :- x₁₂ :* x₁₂) :* (p₃ :* p₃)
+                :+ con twoℚ :* ((x₁₃ :* x₂₃ :- x₁₂ :* x₃₃) :* (p₁ :* p₂))
+                :+ con twoℚ :* ((x₁₂ :* x₂₃ :- x₁₃ :* x₂₂) :* (p₁ :* p₃))
+                :+ con twoℚ :* ((x₁₂ :* x₁₃ :- x₁₁ :* x₂₃) :* (p₂ :* p₃))))
+    refl a₁₁ a₁₂ a₁₃ a₂₂ a₂₃ a₃₃ q₁ q₂ q₃
+
+------------------------------------------------------------------------
+-- Non-vacuity: an explicit positive definite Δ with a nonzero constraint
+------------------------------------------------------------------------
+
+-- Δ = [[2,1],[1,2]] (det Δ = 3), Q = (1,0):
+--   Q adj(Δ) Q* = 2, det M = -2, S = 2/3, det Δ · S = 2 = |det M|.
+
+samplePD : PositiveDefinite2 (+ 2 / 1) 1ℚ (+ 2 / 1)
+samplePD = record
+  { pivotPositive = toWitness {a? = 0ℚ ℚP.<? (+ 2 / 1)} _
+  ; detPositive =
+      toWitness {a? = 0ℚ ℚP.<? ((+ 2 / 1) * (+ 2 / 1) - 1ℚ * 1ℚ)} _
+  }
+
+module SampleSplit =
+  Split {q₁ = 1ℚ} {q₂ = 0ℚ} samplePD (inj₁ (inj₁ (toWitness {a? = 0ℚ ℚP.<? 1ℚ} _)))
+
+sampleDeterminantValue :
+  borderedMatrixDeterminant2 (+ 2 / 1) 1ℚ (+ 2 / 1) 1ℚ 0ℚ ≡ - (+ 2 / 1)
+sampleDeterminantValue = refl
+
+sampleSplit :
+  ∣ borderedMatrixDeterminant2 (+ 2 / 1) 1ℚ (+ 2 / 1) 1ℚ 0ℚ ∣
+    ≡ SampleSplit.detΔ * SampleSplit.schur
+sampleSplit = SampleSplit.determinantSplit

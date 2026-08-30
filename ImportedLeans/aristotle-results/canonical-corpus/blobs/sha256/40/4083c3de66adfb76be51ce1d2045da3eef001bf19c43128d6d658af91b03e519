@@ -1,0 +1,107 @@
+name: pointed-bulk-sporadic-tarot
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'DASHI/Core/Optional.agda'
+      - 'DASHI/Core/ListExact.agda'
+      - 'DASHI/Biology/PointedTernaryBulkExact.agda'
+      - 'DASHI/Biology/DecimalTenTernaryPresentationExact.agda'
+      - 'DASHI/Biology/ThreeSixNineMoonshineScaleExact.agda'
+      - 'DASHI/Biology/ReducedFiftyThreeOrbitCandidateExact.agda'
+      - 'DASHI/Biology/SporadicSignedFiftyThreeTarotProjectionExact.agda'
+      - 'DASHI/Biology/SporadicTarotDependencyExact.agda'
+      - 'DASHI/Biology/TarotCarrierExact.agda'
+      - 'DASHI/Biology/JMDSporadicTarotV2CorrespondenceExact.agda'
+      - 'DASHI/Biology/JMDSporadicTarotOrdinalTotalisationExact.agda'
+      - 'DASHI/Biology/StageSymmetrySSP15BridgeExact.agda'
+      - 'DASHI/Biology/StageSymmetrySSP15SpectrumExact.agda'
+      - 'DASHI/Biology/ImageHexagramSSP15MDLExact.agda'
+      - 'DASHI/Biology/SporadicStageSymmetryTarotRegression.agda'
+      - 'DASHI/Biology/PointedBulkReducedMoonshineBoundary.agda'
+      - 'DASHI/Biology/PointedBulkSporadicTarotSourceAtlas.agda'
+      - 'DASHI/Biology/PointedBulkSporadicTarotEverything.agda'
+      - 'DASHI/Foundations/BalancedTernaryStageSymmetryExact.agda'
+      - 'DASHI/Foundations/BalancedTernaryAmplitudeClosureExact.agda'
+      - 'DASHI/Foundations/BalancedTernaryUltrametricExact.agda'
+      - 'DASHI/Foundations/StageSymmetryCarrierTowerExact.agda'
+      - 'DASHI/Foundations/CounterpositionOrderedJoinExact.agda'
+      - 'DASHI/Foundations/DialecticSheetFrameSelectorExact.agda'
+      - 'DASHI/Foundations/FrameWitnessFibreMDLExact.agda'
+      - 'DASHI/Foundations/DialecticCubieTetralemmaExact.agda'
+      - 'DASHI/Foundations/SecondRevolutionJankoTarotExact.agda'
+      - 'DASHI/Moonshine/DepthTwoNonaryResidueFibreExact.agda'
+      - 'DASHI/Moonshine/EulerMonsterMeaningSeparationExact.agda'
+      - 'DASHI/Governance/CabarlahTraumaProjectionBridgeExact.agda'
+      - 'DASHI/Governance/Everything.agda'
+      - 'DASHI/PointedBulkSporadicTarotCabarlahBoundary.agda'
+      - 'DASHI/PointedBulkSporadicTarotCabarlahRegression.agda'
+      - 'DASHI/EverythingPointedBulkSporadicTarot.agda'
+      - 'Docs/support/reference/PointedBulkSporadicTarotCabarlah.md'
+      - 'Docs/support/reference/ThreeSixNineMoonshineScaleLedger.md'
+      - 'Docs/support/reference/SporadicStageSymmetryEulerTotalisation.md'
+      - 'Docs/support/reference/StageAmplitudeWitnessSSP15DepthTwo.md'
+      - 'scripts/check_pointed_bulk_sporadic_tarot.sh'
+      - '.github/workflows/pointed-bulk-sporadic-tarot.yml'
+  workflow_dispatch:
+
+
+concurrency:
+  group: dashi-global-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  agda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - name: Resolve repository Agda toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="$(nix build --no-link --print-out-paths .#agda-with-dashi-deps)"
+          agda_bin="$package/bin/agda"
+          test -x "$agda_bin"
+          "$agda_bin" --version
+          printf 'AGDA_BIN=%s\n' "$agda_bin" >> "$GITHUB_ENV"
+      - name: Check amplitudes, counterpositions, witness fibres, SSP15 spectra, residues, and Tarot boundaries
+        env:
+          DASHI_REPO_ROOT: ${{ github.workspace }}
+          DASHI_AGDA29_EPHEMERAL: '1'
+          AGDA_LOG_PATH: ${{ runner.temp }}/pointed-bulk-sporadic-tarot-agda.log
+        run: bash scripts/check_pointed_bulk_sporadic_tarot.sh
+      - name: Report kernel-check status to the active pull request
+        if: always() && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_STATUS: ${{ job.status }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          pr_number="$(
+            gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --head "$GITHUB_REF_NAME" \
+              --state open \
+              --json number \
+              --jq '.[0].number // empty'
+          )"
+
+          if [[ -z "$pr_number" ]]; then
+            echo "No open pull request found for $GITHUB_REF_NAME; skipping comment."
+            exit 0
+          fi
+
+          gh pr comment "$pr_number" \
+            --repo "$GITHUB_REPOSITORY" \
+            --body "Pointed bulk / amplitude / counterposition / witness-fibre / SSP15 / depth-two Agda kernel check ${CHECK_STATUS} on ${GITHUB_SHA} (workflow run ${GITHUB_RUN_ID})."

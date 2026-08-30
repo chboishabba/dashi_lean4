@@ -1,0 +1,931 @@
+module DASHI.Physics.YangMills.BalabanYM4LiteralWilsonFPHaarPositiveBetaExact where
+
+------------------------------------------------------------------------
+-- ROW A1 (LEMMA 1), ASSEMBLED:  LITERAL WILSON + REDUCED FADDEEV-POPOV +
+--   HAAR POSITIVE SHELL BETA, FOR AN ARBITRARY COMPACT SIMPLE GROUP, WITH
+--   A ONE-SIDED ORBIT GATE AND A HISTORY-LENGTH-INDEPENDENT SHELL BUDGET.
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I. Generation of Effective Actions in a Small Field Approximation
+-- and a Coupling Constant Renormalization in Four Dimensions",
+-- Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  Locators: Euclidean covariance (5.6),(5.7);
+-- beta extraction (5.36)--(5.42); end of Sect. 5 for the dependence of
+-- beta_j on ALL preceding effective couplings.
+--
+-- Kenneth G. Wilson, "Confinement of Quarks", Physical Review D 10 (1974),
+-- 2445--2459.  DOI: 10.1103/PhysRevD.10.2445.
+--
+-- Ludwig D. Faddeev and Victor N. Popov, "Feynman Diagrams for the
+-- Yang--Mills Field", Physics Letters B 25 (1967), 29--30.
+-- DOI: 10.1016/0370-2693(67)90067-6.
+--
+-- David J. Gross and Frank Wilczek, "Ultraviolet Behavior of Non-Abelian
+-- Gauge Theories", Physical Review Letters 30 (1973), 1343--1346.
+-- DOI: 10.1103/PhysRevLett.30.1343.
+--
+-- WHAT THIS MODULE ADDS.
+--
+-- The Row A1 target is
+--
+--     beta_j = (11/24) C_A(G) + R_local,j + R_history,j  >=  b_-(G) > 0
+--
+-- uniformly in the shell index j, the length of the preceding small-coupling
+-- history, the volume and the cutoff.  Three things are new here.
+--
+-- (1) ONE-SIDED ORBIT GATE.  `BalabanYM4JointFourOrbitDensitySupGateExact`
+--     reduces the four unknown joint representative enclosures to a single
+--     TWO-sided pointwise sup bound |density| <= epsilon and the gate
+--     15 * cellMeasure * epsilon <= 1/2.  But the physical conclusion is a
+--     LOWER bound on beta, so only the lower half of that estimate is ever
+--     consumed, and the threshold is not the symmetric radius 1/2 but the
+--     whole universal coefficient (11/24) C_A.  Section 3 proves the
+--     one-sided statement: from  - epsilon <= density  alone, with NO upper
+--     bound whatsoever, the literal normalized regular remainder of the joint
+--     Wilson + reduced Faddeev-Popov + Haar evaluator obeys
+--
+--         R >= - 15 * cellMeasure * epsilon .
+--
+--     For SU(2) in the repository's normalized cube (cell measure 1/16) this
+--     turns the target for the literal density from
+--
+--         epsilon <= 8/15 = 0.5333...   (two-sided)
+--     into
+--         epsilon <  44/45 = 0.9777...  (one-sided, and only from below),
+--
+--     both computed here exactly, together with the strict comparison
+--     8/15 < 44/45.  This is a genuine weakening of the open physical leaf,
+--     not a restatement of it: the admissible sup norm grows by the factor
+--     11/6 and every constraint on the positive part of the density is
+--     dropped.
+--
+-- (2) HISTORY-LENGTH-INDEPENDENT SHELL BUDGET, PROVED AS AN EXACT IDENTITY.
+--     Section 2 defines the shell weights 2^-(d+2) and proves the closed form
+--
+--         sum_{d<n} 2^-(d+2)  =  1/2 - 2^-(n+1)   <=  1/2
+--
+--     for every n by induction in exact rational arithmetic.  Hence a
+--     localized influence estimate |Delta_d beta_j| <= C gamma 2^-(d+2) gives
+--     |R_history,j| <= C gamma / 2 with NO dependence on how many earlier
+--     scales the history has, which is exactly what the remark at the end of
+--     Bałaban's Sect. 5 obstructs for a naive scale-counting bound.
+--
+-- (3) THE ASSEMBLED POSITIVE-BETA THEOREM FOR ARBITRARY COMPACT SIMPLE G.
+--     Section 4 combines (1) and (2) with the universal coefficient
+--     (11/24) C_A into a single record whose only inputs are the two literal
+--     physical estimates, and derives
+--
+--         b_-(G) := (11/24) C_A - r_0 - C gamma / 2  >  0
+--     and beta_j >= b_-(G) for every shell and every admissible history.
+--
+--     The group enters only through C_A > 0, so no classification is used and
+--     no group is privileged; the SU(2) numbers of Section 5 are an instance.
+--
+-- WHAT IS STILL OPEN, STATED WITHOUT EUPHEMISM.  Two physical inputs, both
+-- recorded as `conditional` proof levels at the end of the module:
+--
+--   (A) the literal momentum-space joint Wilson + reduced Faddeev-Popov +
+--       Haar density of the CMP109 background-field vacuum polarisation, and
+--       a value of `epsilon` for its NEGATIVE part below the one-sided gate,
+--       uniform in cutoff, volume and scale;
+--   (B) the localized influence estimate |Delta_d beta_j| <= C gamma 2^-(d+2)
+--       for the same literal coefficient, uniform in the same data.
+--
+-- Neither is proved here and nothing in this module should be read as
+-- claiming otherwise; what is proved is that these two -- and only these two,
+-- with the group entering solely through C_A > 0 -- imply a uniform positive
+-- shell beta.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Data.Integer.Base using (+_; -[1+_])
+open import Data.Product using (_×_; _,_; proj₁; proj₂)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (cong; cong₂; sym; trans; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.YangMills.BalabanCMP109VacuumPolarizationHypercubicSourceSymmetryExact
+  as SourceSymmetry
+import DASHI.Physics.YangMills.BalabanYM4SU2RegularOrbitBetaFloorExact as Floor
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonGhostHaarWeightedFourOrbitExact
+  as Joint
+import DASHI.Physics.YangMills.BalabanYM4JointFourOrbitDensitySupGateExact
+  as SupGate
+import DASHI.Physics.YangMills.BalabanYM4SourceNormalizedCouplingRecurrenceExact
+  as Flow
+import DASHI.Physics.YangMills.BalabanPhysicalBlockFibreSumsExact as Sums
+
+------------------------------------------------------------------------
+-- 1.  The universal one-loop coefficient of an arbitrary compact simple G
+------------------------------------------------------------------------
+
+-- (11/24) C_A.  The group-independent factor is the repository's convention
+-- constant `Floor.universalCoefficientDensity`.
+universalBetaCoefficient : ℚ → ℚ
+universalBetaCoefficient adjointCasimir =
+  Floor.universalCoefficientDensity * adjointCasimir
+
+-- SU(2): (11/24) * 2 = 11/12.
+su2UniversalBetaCoefficient :
+  universalBetaCoefficient Floor.su2AdjointCasimir ≡ Floor.su2UniversalCoefficient
+su2UniversalBetaCoefficient = refl
+
+-- Monotone in C_A, so a lower bound on the adjoint Casimir is a lower bound
+-- on the universal coefficient.  (Used to see that SU(2), the compact simple
+-- group with the smallest adjoint Casimir in this normalisation, is the
+-- worst case for the gate, without assuming any classification statement.)
+universalBetaCoefficientMono :
+  ∀ {c d : ℚ} → c ≤ d → universalBetaCoefficient c ≤ universalBetaCoefficient d
+universalBetaCoefficientMono =
+  ℚP.*-monoˡ-≤-nonNeg Floor.universalCoefficientDensity
+
+------------------------------------------------------------------------
+-- 2.  Shell weights:  sum_{d<n} 2^-(d+2) = 1/2 - 2^-(n+1) <= 1/2
+------------------------------------------------------------------------
+
+half : ℚ
+half = + 1 / 2
+
+halfPower : Nat → ℚ
+halfPower zero = 1ℚ
+halfPower (suc n) = half * halfPower n
+
+halfPowerNonNegative : ∀ n → 0ℚ ≤ halfPower n
+halfPowerNonNegative zero = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+halfPowerNonNegative (suc n) =
+  subst (_≤ half * halfPower n) (ℚP.*-zeroʳ half)
+    (ℚP.*-monoˡ-≤-nonNeg half (halfPowerNonNegative n))
+
+-- The influence weight of the shell d scales back:  2^-(d+2).
+shellWeight : Nat → ℚ
+shellWeight d = halfPower (suc (suc d))
+
+-- Partial sums of the shell weights over an arbitrary history length.
+shellSum : Nat → ℚ
+shellSum zero = 0ℚ
+shellSum (suc n) = shellWeight n + shellSum n
+
+-- half * a + half * a = a.
+halfDouble : ∀ a → half * a + half * a ≡ a
+halfDouble a =
+  trans (sym (ℚP.*-distribʳ-+ a half half)) (ℚP.*-identityˡ a)
+
+-- The exact closed form.
+shellSumClosed : ∀ n → shellSum n ≡ half + (- halfPower (suc n))
+shellSumClosed zero = refl
+shellSumClosed (suc n) =
+  trans (cong (λ z → shellWeight n + z) (shellSumClosed n)) step
+  where
+    a : ℚ
+    a = halfPower (suc n)
+
+    -- half*a + (half + -a) = half + -(half*a),
+    -- because half*a + half*a = a.
+    step : half * a + (half + (- a)) ≡ half + (- (half * a))
+    step =
+      trans (sym (ℚP.+-assoc (half * a) half (- a)))
+        (trans (cong (_+ (- a)) (ℚP.+-comm (half * a) half))
+          (trans (ℚP.+-assoc half (half * a) (- a))
+            (cong (λ z → half + z) inner)))
+      where
+        inner : half * a + (- a) ≡ - (half * a)
+        inner =
+          trans (cong (λ z → half * a + (- z)) (sym (halfDouble a)))
+            (trans (cong (λ z → half * a + z)
+                      (ℚP.neg-distrib-+ (half * a) (half * a)))
+              (trans (sym (ℚP.+-assoc (half * a) (- (half * a)) (- (half * a))))
+                (trans (cong (_+ (- (half * a))) (ℚP.+-inverseʳ (half * a)))
+                  (ℚP.+-identityˡ (- (half * a))))))
+
+negZero : (- 0ℚ) ≡ 0ℚ
+negZero = refl
+
+-- Hence, for every history length, the shell budget stays below 1/2.
+shellSumBelowHalf : ∀ n → shellSum n ≤ half
+shellSumBelowHalf n =
+  subst (_≤ half) (sym (shellSumClosed n))
+    (subst (λ z → half + (- halfPower (suc n)) ≤ z) (ℚP.+-identityʳ half)
+      (ℚP.+-monoʳ-≤ half
+        (subst ((- halfPower (suc n)) ≤_) negZero
+          (ℚP.neg-antimono-≤ (halfPowerNonNegative (suc n))))))
+
+-- Scaled by a nonnegative coefficient C*gamma: the history budget is
+-- history-length independent.
+historyBudgetBelowHalfCoefficient :
+  ∀ (coefficient : ℚ) → 0ℚ ≤ coefficient → ∀ n →
+  coefficient * shellSum n ≤ coefficient * half
+historyBudgetBelowHalfCoefficient coefficient nonneg n =
+  ℚP.*-monoˡ-≤-nonNeg coefficient {{ℚ.nonNegative nonneg}} (shellSumBelowHalf n)
+
+-- The two normalisations of a localized influence estimate agree up to the
+-- explicit factor 4:  2^-d = 4 * 2^-(d+2).  So a source-side estimate of the
+-- natural form |Delta_d beta_j| <= K gamma 2^-d feeds the shell budget with
+-- coefficient 4 K gamma, and nothing depends on which of the two conventions
+-- the physical producer uses.
+halfPowerIsFourShellWeight : ∀ d → halfPower d ≡ (+ 4 / 1) * shellWeight d
+halfPowerIsFourShellWeight d =
+  trans (sym (ℚP.*-identityˡ (halfPower d)))
+    (trans (cong (λ z → z * halfPower d) fourHalfHalf)
+      (trans (ℚP.*-assoc ((+ 4 / 1) * half) half (halfPower d))
+        (ℚP.*-assoc (+ 4 / 1) half (half * halfPower d))))
+  where
+    -- 1 = 4 * (1/2) * (1/2), and the associated regrouping.
+    fourHalfHalf : 1ℚ ≡ (+ 4 / 1) * half * half
+    fourHalfHalf = refl
+
+-- Per-shell increments summed over an arbitrary history length.
+shellIncrementSum : (Nat → ℚ) → Nat → ℚ
+shellIncrementSum increment zero = 0ℚ
+shellIncrementSum increment (suc n) = increment n + shellIncrementSum increment n
+
+-- If each shell increment is bounded below by -c * 2^-(d+2), the accumulated
+-- history remainder is bounded below by -c * shellSum n, for every n.
+shellIncrementSumLower :
+  ∀ (increment : Nat → ℚ) (c : ℚ) →
+  (∀ d → (- (c * shellWeight d)) ≤ increment d) →
+  ∀ n → (- (c * shellSum n)) ≤ shellIncrementSum increment n
+shellIncrementSumLower increment c bound zero =
+  ℚP.≤-reflexive (trans (cong -_ (ℚP.*-zeroʳ c)) negZero)
+shellIncrementSumLower increment c bound (suc n) =
+  subst (_≤ increment n + shellIncrementSum increment n)
+    (sym split)
+    (ℚP.+-mono-≤ (bound n) (shellIncrementSumLower increment c bound n))
+  where
+    split : (- (c * (shellWeight n + shellSum n)))
+            ≡ (- (c * shellWeight n)) + (- (c * shellSum n))
+    split =
+      trans (cong -_ (ℚP.*-distribˡ-+ c (shellWeight n) (shellSum n)))
+        (ℚP.neg-distrib-+ (c * shellWeight n) (c * shellSum n))
+
+------------------------------------------------------------------------
+-- 3.  The ONE-SIDED orbit gate on the literal joint density
+------------------------------------------------------------------------
+
+fifteen : ℚ
+fifteen = SupGate.fifteen
+
+-- Only lower bounds on the four joint representative values are used, and
+-- only a lower bound on the weighted (4,6,4,1) form is produced.
+weightedFourOrbitLowerFromCommon :
+  ∀ (r₁ r₂ r₃ r₄ b : ℚ) →
+  (- b) ≤ r₁ → (- b) ≤ r₂ → (- b) ≤ r₃ → (- b) ≤ r₄ →
+  (- (fifteen * b)) ≤ Joint.weightedFourOrbit r₁ r₂ r₃ r₄
+weightedFourOrbitLowerFromCommon r₁ r₂ r₃ r₄ b l₁ l₂ l₃ l₄ =
+  subst (_≤ Joint.weightedFourOrbit r₁ r₂ r₃ r₄)
+    (trans (SupGate.weightedFourOrbitConstant (- b)) (SupGate.negatedFifteen b))
+    (Joint.weightedFourOrbitMono l₁ l₂ l₃ l₄)
+
+-- The same, with a SEPARATE budget for each orbit: the four representatives
+-- need not share one half-width, and the (4,6,4,1) weights are applied to the
+-- individual budgets.
+negatedWeightedFourOrbit :
+  ∀ (b₁ b₂ b₃ b₄ : ℚ) →
+  Joint.weightedFourOrbit (- b₁) (- b₂) (- b₃) (- b₄)
+  ≡ - Joint.weightedFourOrbit b₁ b₂ b₃ b₄
+negatedWeightedFourOrbit b₁ b₂ b₃ b₄ =
+  trans
+    (cong₂ _+_
+      (cong₂ _+_
+        (cong₂ _+_
+          (sym (ℚP.neg-distribʳ-* Joint.weightOne b₁))
+          (sym (ℚP.neg-distribʳ-* Joint.weightTwo b₂)))
+        (sym (ℚP.neg-distribʳ-* Joint.weightThree b₃)))
+      refl)
+    (trans
+      (cong (λ z → z + (- b₄))
+        (trans
+          (cong (λ z → z + (- (Joint.weightThree * b₃)))
+            (sym (ℚP.neg-distrib-+ (Joint.weightOne * b₁)
+                                    (Joint.weightTwo * b₂))))
+          (sym (ℚP.neg-distrib-+
+                 (Joint.weightOne * b₁ + Joint.weightTwo * b₂)
+                 (Joint.weightThree * b₃)))))
+      (sym (ℚP.neg-distrib-+
+             (Joint.weightOne * b₁ + Joint.weightTwo * b₂
+               + Joint.weightThree * b₃)
+             b₄)))
+
+weightedFourOrbitLowerFromIndividual :
+  ∀ (r₁ r₂ r₃ r₄ b₁ b₂ b₃ b₄ : ℚ) →
+  (- b₁) ≤ r₁ → (- b₂) ≤ r₂ → (- b₃) ≤ r₃ → (- b₄) ≤ r₄ →
+  (- Joint.weightedFourOrbit b₁ b₂ b₃ b₄)
+  ≤ Joint.weightedFourOrbit r₁ r₂ r₃ r₄
+weightedFourOrbitLowerFromIndividual r₁ r₂ r₃ r₄ b₁ b₂ b₃ b₄ l₁ l₂ l₃ l₄ =
+  subst (_≤ Joint.weightedFourOrbit r₁ r₂ r₃ r₄)
+    (negatedWeightedFourOrbit b₁ b₂ b₃ b₄)
+    (Joint.weightedFourOrbitMono l₁ l₂ l₃ l₄)
+
+module OneSidedCellIntegral
+  (Point : Set)
+  (integral : (Point → ℚ) → ℚ)
+  (integralMono :
+     ∀ (f g : Point → ℚ) → (∀ p → f p ≤ g p) → integral f ≤ integral g)
+  (cellMeasure : ℚ)
+  (integralConstant : ∀ (c : ℚ) → integral (λ _ → c) ≡ cellMeasure * c)
+  where
+
+  halfWidth : ℚ → ℚ
+  halfWidth ε = cellMeasure * ε
+
+  -- density >= -epsilon pointwise  ==>  cell value >= -(cellMeasure*epsilon).
+  cellValueLowerFromDensityLower :
+    ∀ (density : Point → ℚ) (ε : ℚ) →
+    (∀ p → (- ε) ≤ density p) →
+    (- halfWidth ε) ≤ integral density
+  cellValueLowerFromDensityLower density ε lower =
+    subst (_≤ integral density)
+      (trans (integralConstant (- ε)) (sym (ℚP.neg-distribʳ-* cellMeasure ε)))
+      (integralMono (λ _ → - ε) density lower)
+
+  ------------------------------------------------------------------
+  -- THE ONE-SIDED ROW A1 ORBIT ESTIMATE, ON THE LITERAL EVALUATOR.
+  --
+  -- Hypotheses: the four joint representative values ARE the cell integrals
+  -- of the joint (Wilson + reduced Faddeev-Popov + Haar) density, and that
+  -- density is bounded BELOW by -epsilon on each of them.  No upper bound of
+  -- any kind is assumed.
+  ------------------------------------------------------------------
+  literalJointRegularRemainderLower :
+    ∀ {wilson ghost haar : Joint.CellScalar}
+      (wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson)
+      (ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost)
+      (haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar)
+      (d₁ d₂ d₃ d₄ : Point → ℚ) (ε : ℚ) →
+    Joint.jointOne wilson ghost haar ≡ integral d₁ →
+    Joint.jointTwo wilson ghost haar ≡ integral d₂ →
+    Joint.jointThree wilson ghost haar ≡ integral d₃ →
+    Joint.jointFour wilson ghost haar ≡ integral d₄ →
+    (∀ p → (- ε) ≤ d₁ p) →
+    (∀ p → (- ε) ≤ d₂ p) →
+    (∀ p → (- ε) ≤ d₃ p) →
+    (∀ p → (- ε) ≤ d₄ p) →
+    (- (fifteen * halfWidth ε))
+      ≤ Joint.jointRegularRemainder wilson ghost haar
+  literalJointRegularRemainderLower {wilson} {ghost} {haar}
+      wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄ ε
+      e₁ e₂ e₃ e₄ l₁ l₂ l₃ l₄ =
+    subst ((- (fifteen * halfWidth ε)) ≤_)
+      (sym (Joint.literalWilsonGhostHaarWeightedFourOrbitExact
+              wilsonSymmetry ghostSymmetry haarSymmetry))
+      (weightedFourOrbitLowerFromCommon
+        (Joint.jointOne wilson ghost haar)
+        (Joint.jointTwo wilson ghost haar)
+        (Joint.jointThree wilson ghost haar)
+        (Joint.jointFour wilson ghost haar)
+        (halfWidth ε)
+        (transport _ d₁ e₁ l₁)
+        (transport _ d₂ e₂ l₂)
+        (transport _ d₃ e₃ l₃)
+        (transport _ d₄ e₄ l₄))
+    where
+      transport : ∀ (r : ℚ) (d : Point → ℚ) → r ≡ integral d →
+                  (∀ p → (- ε) ≤ d p) → (- halfWidth ε) ≤ r
+      transport r d eq lower =
+        subst ((- halfWidth ε) ≤_) (sym eq)
+          (cellValueLowerFromDensityLower d ε lower)
+
+------------------------------------------------------------------------
+-- 3c.  THE LITERAL END-TO-END ASSEMBLY (see section 4 for the record)
+--
+-- Everything a single RG shell has to supply on the orbit side, packaged so
+-- that a whole small-coupling history is a function `Nat -> ShellJointDensity`.
+------------------------------------------------------------------------
+
+module LiteralShellAssembly
+  (Point : Set)
+  (integral : (Point → ℚ) → ℚ)
+  (integralMono :
+     ∀ (f g : Point → ℚ) → (∀ p → f p ≤ g p) → integral f ≤ integral g)
+  (cellMeasure : ℚ)
+  (integralConstant : ∀ (c : ℚ) → integral (λ _ → c) ≡ cellMeasure * c)
+  where
+
+  open OneSidedCellIntegral Point integral integralMono cellMeasure
+    integralConstant public
+
+  record ShellJointDensity (ε : ℚ) : Set where
+    field
+      wilson ghost haar : Joint.CellScalar
+      wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson
+      ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost
+      haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar
+      d₁ d₂ d₃ d₄ : Point → ℚ
+      cellOne : Joint.jointOne wilson ghost haar ≡ integral d₁
+      cellTwo : Joint.jointTwo wilson ghost haar ≡ integral d₂
+      cellThree : Joint.jointThree wilson ghost haar ≡ integral d₃
+      cellFour : Joint.jointFour wilson ghost haar ≡ integral d₄
+      lowerOne : ∀ p → (- ε) ≤ d₁ p
+      lowerTwo : ∀ p → (- ε) ≤ d₂ p
+      lowerThree : ∀ p → (- ε) ≤ d₃ p
+      lowerFour : ∀ p → (- ε) ≤ d₄ p
+
+  open ShellJointDensity public
+
+  shellRegularRemainder : ∀ {ε} → ShellJointDensity ε → ℚ
+  shellRegularRemainder shell =
+    Joint.jointRegularRemainder (wilson shell) (ghost shell) (haar shell)
+
+  shellRegularRemainderLower :
+    ∀ {ε} (shell : ShellJointDensity ε) →
+    (- (fifteen * halfWidth ε)) ≤ shellRegularRemainder shell
+  shellRegularRemainderLower {ε} shell =
+    literalJointRegularRemainderLower
+      (wilsonSymmetry shell) (ghostSymmetry shell) (haarSymmetry shell)
+      (d₁ shell) (d₂ shell) (d₃ shell) (d₄ shell) ε
+      (cellOne shell) (cellTwo shell) (cellThree shell) (cellFour shell)
+      (lowerOne shell) (lowerTwo shell) (lowerThree shell) (lowerFour shell)
+
+------------------------------------------------------------------------
+-- 3b.  WEAKER STILL: AN INTEGRATED BOUND ON THE NEGATIVE PART
+--
+-- A pointwise sup bound is more than the conclusion needs.  What the cell
+-- integral consumes is only that the NEGATIVE part of the joint density is
+-- dominated by some majorant of small integral: a density with an arbitrarily
+-- deep negative spike on a set of small measure still passes.  This submodule
+-- assumes, in addition to monotonicity, only that the integral commutes with
+-- negation -- true of any linear functional, hence of any measure.
+------------------------------------------------------------------------
+
+module NegativePartCellIntegral
+  (Point : Set)
+  (integral : (Point → ℚ) → ℚ)
+  (integralMono :
+     ∀ (f g : Point → ℚ) → (∀ p → f p ≤ g p) → integral f ≤ integral g)
+  (integralNegation : ∀ (f : Point → ℚ) → integral (λ p → - f p) ≡ - integral f)
+  where
+
+  -- density >= -majorant pointwise and integral majorant <= delta
+  --   ==>  cell value >= -delta.
+  cellValueLowerFromNegativePartBudget :
+    ∀ (density majorant : Point → ℚ) (δ : ℚ) →
+    (∀ p → (- majorant p) ≤ density p) →
+    integral majorant ≤ δ →
+    (- δ) ≤ integral density
+  cellValueLowerFromNegativePartBudget density majorant δ dominated budget =
+    ℚP.≤-trans (ℚP.neg-antimono-≤ budget)
+      (subst (_≤ integral density) (integralNegation majorant)
+        (integralMono (λ p → - majorant p) density dominated))
+
+  -- The Row A1 orbit estimate under the weakest hypothesis so far: per-orbit
+  -- integrated budgets on the negative part of the literal joint density.
+  literalJointRegularRemainderFromNegativePartBudgets :
+    ∀ {wilson ghost haar : Joint.CellScalar}
+      (wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson)
+      (ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost)
+      (haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar)
+      (d₁ d₂ d₃ d₄ m₁ m₂ m₃ m₄ : Point → ℚ) (δ₁ δ₂ δ₃ δ₄ : ℚ) →
+    Joint.jointOne wilson ghost haar ≡ integral d₁ →
+    Joint.jointTwo wilson ghost haar ≡ integral d₂ →
+    Joint.jointThree wilson ghost haar ≡ integral d₃ →
+    Joint.jointFour wilson ghost haar ≡ integral d₄ →
+    (∀ p → (- m₁ p) ≤ d₁ p) → integral m₁ ≤ δ₁ →
+    (∀ p → (- m₂ p) ≤ d₂ p) → integral m₂ ≤ δ₂ →
+    (∀ p → (- m₃ p) ≤ d₃ p) → integral m₃ ≤ δ₃ →
+    (∀ p → (- m₄ p) ≤ d₄ p) → integral m₄ ≤ δ₄ →
+    (- Joint.weightedFourOrbit δ₁ δ₂ δ₃ δ₄)
+      ≤ Joint.jointRegularRemainder wilson ghost haar
+  literalJointRegularRemainderFromNegativePartBudgets {wilson} {ghost} {haar}
+      wilsonSymmetry ghostSymmetry haarSymmetry
+      d₁ d₂ d₃ d₄ m₁ m₂ m₃ m₄ δ₁ δ₂ δ₃ δ₄
+      e₁ e₂ e₃ e₄ c₁ b₁ c₂ b₂ c₃ b₃ c₄ b₄ =
+    subst ((- Joint.weightedFourOrbit δ₁ δ₂ δ₃ δ₄) ≤_)
+      (sym (Joint.literalWilsonGhostHaarWeightedFourOrbitExact
+              wilsonSymmetry ghostSymmetry haarSymmetry))
+      (weightedFourOrbitLowerFromIndividual
+        (Joint.jointOne wilson ghost haar)
+        (Joint.jointTwo wilson ghost haar)
+        (Joint.jointThree wilson ghost haar)
+        (Joint.jointFour wilson ghost haar)
+        δ₁ δ₂ δ₃ δ₄
+        (transport _ d₁ m₁ δ₁ e₁ c₁ b₁)
+        (transport _ d₂ m₂ δ₂ e₂ c₂ b₂)
+        (transport _ d₃ m₃ δ₃ e₃ c₃ b₃)
+        (transport _ d₄ m₄ δ₄ e₄ c₄ b₄))
+    where
+      transport : ∀ (r : ℚ) (d m : Point → ℚ) (δ : ℚ) → r ≡ integral d →
+                  (∀ p → (- m p) ≤ d p) → integral m ≤ δ → (- δ) ≤ r
+      transport r d m δ eq dominated budget =
+        subst ((- δ) ≤_) (sym eq)
+          (cellValueLowerFromNegativePartBudget d m δ dominated budget)
+
+------------------------------------------------------------------------
+-- 4.  THE ASSEMBLED POSITIVE SHELL BETA, ARBITRARY COMPACT SIMPLE G
+------------------------------------------------------------------------
+
+-- The data of Lemma 1:  beta_j = (11/24) C_A + R_local,j + R_history,j,
+-- with a one-sided local radius r_0, a localized influence coefficient
+-- C*gamma, and the gate  r_0 + C gamma / 2 < (11/24) C_A.
+--
+-- The shell index and the length of the preceding coupling history are both
+-- universally quantified, so nothing below depends on either.
+record LiteralPositiveBetaData : Set where
+  field
+    adjointCasimir localRadius influenceCoefficient : ℚ
+    influenceNonNegative : 0ℚ ≤ influenceCoefficient
+
+    beta localRemainder historyRemainder : Nat → Nat → ℚ
+
+    -- shell j, history length n
+    decomposition : ∀ j n →
+      beta j n
+      ≡ universalBetaCoefficient adjointCasimir
+          + (localRemainder j n + historyRemainder j n)
+
+    -- (A) one-sided orbit input
+    localRemainderLower : ∀ j n → (- localRadius) ≤ localRemainder j n
+
+    -- (B) localized history influence input, resolved into shells
+    historyRemainderLower : ∀ j n →
+      (- (influenceCoefficient * shellSum n)) ≤ historyRemainder j n
+
+    -- the numerical gate
+    gate : localRadius + influenceCoefficient * half
+             < universalBetaCoefficient adjointCasimir
+
+open LiteralPositiveBetaData public
+
+-- b_-(G) = (11/24) C_A - r_0 - C gamma / 2.
+betaFloor : LiteralPositiveBetaData → ℚ
+betaFloor dataSet =
+  universalBetaCoefficient (adjointCasimir dataSet)
+    + (- (localRadius dataSet + influenceCoefficient dataSet * half))
+
+betaFloorPositive : ∀ dataSet → 0ℚ < betaFloor dataSet
+betaFloorPositive dataSet =
+  subst (_< betaFloor dataSet)
+    (ℚP.+-inverseʳ (localRadius dataSet + influenceCoefficient dataSet * half))
+    (ℚP.+-monoˡ-< (- (localRadius dataSet + influenceCoefficient dataSet * half))
+      (gate dataSet))
+
+-- The uniform lower bound: beta_j >= b_-(G) for EVERY shell j and EVERY
+-- history length n.
+betaAboveFloor : ∀ dataSet j n → betaFloor dataSet ≤ beta dataSet j n
+betaAboveFloor dataSet j n =
+  subst (betaFloor dataSet ≤_) (sym (decomposition dataSet j n))
+    (subst (_≤ universalBetaCoefficient (adjointCasimir dataSet)
+                 + (localRemainder dataSet j n + historyRemainder dataSet j n))
+      (sym floorAsSum)
+      (ℚP.+-monoʳ-≤ (universalBetaCoefficient (adjointCasimir dataSet))
+        remainderLower))
+  where
+    r₀ = localRadius dataSet
+    c = influenceCoefficient dataSet
+
+    historyLower : (- (c * half)) ≤ historyRemainder dataSet j n
+    historyLower =
+      ℚP.≤-trans
+        (ℚP.neg-antimono-≤
+          (historyBudgetBelowHalfCoefficient c (influenceNonNegative dataSet) n))
+        (historyRemainderLower dataSet j n)
+
+    remainderLower :
+      (- r₀) + (- (c * half))
+      ≤ localRemainder dataSet j n + historyRemainder dataSet j n
+    remainderLower =
+      ℚP.+-mono-≤ (localRemainderLower dataSet j n) historyLower
+
+    floorAsSum :
+      betaFloor dataSet
+      ≡ universalBetaCoefficient (adjointCasimir dataSet)
+          + ((- r₀) + (- (c * half)))
+    floorAsSum =
+      cong (λ z → universalBetaCoefficient (adjointCasimir dataSet) + z)
+        (ℚP.neg-distrib-+ r₀ (c * half))
+
+-- Hence a strictly positive shell beta, uniformly.
+betaPositive : ∀ dataSet j n → 0ℚ < beta dataSet j n
+betaPositive dataSet j n =
+  ℚP.<-≤-trans (betaFloorPositive dataSet) (betaAboveFloor dataSet j n)
+
+-- Building the data from the physically natural inputs: a one-sided local
+-- radius and PER-SHELL influence increments.  The accumulated history
+-- remainder is then the sum of the increments over the actual history, and no
+-- separate hypothesis about it is needed.
+positiveBetaDataFromShellIncrements :
+  ∀ (casimir radius influence : ℚ) → 0ℚ ≤ influence →
+    (localRem : Nat → Nat → ℚ) (increment : Nat → Nat → ℚ) →
+    (∀ j n → (- radius) ≤ localRem j n) →
+    (∀ j d → (- (influence * shellWeight d)) ≤ increment j d) →
+    radius + influence * half < universalBetaCoefficient casimir →
+  LiteralPositiveBetaData
+positiveBetaDataFromShellIncrements
+    casimir radius influence influenceNonNeg
+    localRem increment localBound incrementBound numericalGate =
+  record
+    { adjointCasimir = casimir
+    ; localRadius = radius
+    ; influenceCoefficient = influence
+    ; influenceNonNegative = influenceNonNeg
+    ; beta = λ j n →
+        universalBetaCoefficient casimir
+          + (localRem j n + shellIncrementSum (increment j) n)
+    ; localRemainder = localRem
+    ; historyRemainder = λ j n → shellIncrementSum (increment j) n
+    ; decomposition = λ j n → refl
+    ; localRemainderLower = localBound
+    ; historyRemainderLower = λ j n →
+        shellIncrementSumLower (increment j) influence (incrementBound j) n
+    ; gate = numericalGate
+    }
+
+------------------------------------------------------------------------
+-- 4b.  FEEDING b_-(G) INTO THE SOURCE-NORMALIZED TRAJECTORY COMPILER
+--
+-- The consumer of Row A1 is the source-normalized coupling recurrence
+--
+--     inverseCoupling_d = inverseCoupling_{d+1} + beta_{d+1} .
+--
+-- A uniform positive shell beta is exactly the input its enclosure record
+-- wants, and the telescope then gives linear growth of the inverse coupling
+-- towards the ultraviolet -- the small-coupling history the CMP119/CMP122
+-- machinery consumes.  Here the shell beta of a trajectory at depth d is the
+-- literal shell beta with a preceding history of exactly d scales, so the
+-- history length is not fixed in advance anywhere.
+------------------------------------------------------------------------
+
+literalBetaTrajectoryEnclosure :
+  ∀ (dataSet : LiteralPositiveBetaData)
+    (trajectory : Flow.SourceNormalizedCouplingTrajectory)
+    (betaCeiling : ℚ) →
+  (∀ depth → Flow.beta trajectory (suc depth) ≡ beta dataSet depth depth) →
+  (∀ depth → Flow.beta trajectory (suc depth) ≤ betaCeiling) →
+  Flow.UniformBetaEnclosure trajectory
+literalBetaTrajectoryEnclosure dataSet trajectory betaCeiling matches ceiling =
+  record
+    { betaLower = betaFloor dataSet
+    ; betaUpper = betaCeiling
+    ; betaLowerNonnegative = ℚP.<⇒≤ (betaFloorPositive dataSet)
+    ; betaLowerBelow = λ depth →
+        subst (betaFloor dataSet ≤_) (sym (matches depth))
+          (betaAboveFloor dataSet depth depth)
+    ; betaBelowUpper = ceiling
+    }
+
+-- Linear growth of the inverse coupling: after d renormalization steps the
+-- inverse coupling has increased by at least d * b_-(G).  Stated without
+-- subtraction.
+literalBetaLinearInverseCouplingGrowth :
+  ∀ (dataSet : LiteralPositiveBetaData)
+    (trajectory : Flow.SourceNormalizedCouplingTrajectory)
+    (betaCeiling : ℚ)
+    (matches : ∀ depth → Flow.beta trajectory (suc depth) ≡ beta dataSet depth depth)
+    (ceiling : ∀ depth → Flow.beta trajectory (suc depth) ≤ betaCeiling) →
+  ∀ depth →
+  Sums.natAsRational depth * betaFloor dataSet
+      + Flow.inverseCoupling trajectory depth
+  ≤ Flow.inverseCoupling trajectory 0
+literalBetaLinearInverseCouplingGrowth
+    dataSet trajectory betaCeiling matches ceiling depth =
+  subst (λ target → Sums.natAsRational depth * betaFloor dataSet
+                      + Flow.inverseCoupling trajectory depth ≤ target)
+    (sym telescope)
+    (subst (λ target → Sums.natAsRational depth * betaFloor dataSet
+                         + Flow.inverseCoupling trajectory depth ≤ target)
+      (ℚP.+-comm (Flow.betaPartial (Flow.beta trajectory) depth)
+                 (Flow.inverseCoupling trajectory depth))
+      (ℚP.+-monoˡ-≤ (Flow.inverseCoupling trajectory depth) partialLower))
+  where
+    enclosure = literalBetaTrajectoryEnclosure
+      dataSet trajectory betaCeiling matches ceiling
+
+    partialLower :
+      Sums.natAsRational depth * betaFloor dataSet
+      ≤ Flow.betaPartial (Flow.beta trajectory) depth
+    partialLower = Flow.betaPartialLower enclosure depth
+
+    telescope :
+      Flow.inverseCoupling trajectory 0
+      ≡ Flow.inverseCoupling trajectory depth
+          + Flow.betaPartial (Flow.beta trajectory) depth
+    telescope = Flow.sourceRecurrenceTelescope trajectory depth
+
+------------------------------------------------------------------------
+-- 4c.  THE LITERAL ROW A1 STATEMENT, END TO END
+--
+--   beta_j  =  (11/24) C_A
+--            +  R_j            (the literal joint Wilson + reduced FP + Haar
+--                               normalized regular remainder at shell j)
+--            +  sum_{d<n} Delta_d,j    (the localized history increments)
+--
+--          >=  b_-(G)  =  (11/24) C_A - 15 cellMeasure epsilon - C gamma / 2
+--          >   0 ,
+--
+-- uniformly in the shell index and in the history length, for an arbitrary
+-- compact simple group entering only through C_A.
+------------------------------------------------------------------------
+
+module LiteralRowA1
+  (Point : Set)
+  (integral : (Point → ℚ) → ℚ)
+  (integralMono :
+     ∀ (f g : Point → ℚ) → (∀ p → f p ≤ g p) → integral f ≤ integral g)
+  (cellMeasure : ℚ)
+  (integralConstant : ∀ (c : ℚ) → integral (λ _ → c) ≡ cellMeasure * c)
+  where
+
+  open LiteralShellAssembly Point integral integralMono cellMeasure
+    integralConstant public
+
+  literalRowA1Data :
+    ∀ (casimir influence ε : ℚ) → 0ℚ ≤ influence →
+      (shells : Nat → ShellJointDensity ε)
+      (increment : Nat → Nat → ℚ) →
+      (∀ j d → (- (influence * shellWeight d)) ≤ increment j d) →
+      fifteen * halfWidth ε + influence * half
+        < universalBetaCoefficient casimir →
+    LiteralPositiveBetaData
+  literalRowA1Data casimir influence ε influenceNonNeg
+      shells increment incrementBound numericalGate =
+    positiveBetaDataFromShellIncrements
+      casimir (fifteen * halfWidth ε) influence influenceNonNeg
+      (λ j _ → shellRegularRemainder (shells j))
+      increment
+      (λ j _ → shellRegularRemainderLower (shells j))
+      incrementBound
+      numericalGate
+
+  -- The shell beta of the assembled data is literally
+  --   (11/24) C_A + (literal regular remainder) + (summed history increments).
+  literalRowA1BetaIsLiteral :
+    ∀ (casimir influence ε : ℚ) (influenceNonNeg : 0ℚ ≤ influence)
+      (shells : Nat → ShellJointDensity ε)
+      (increment : Nat → Nat → ℚ)
+      (incrementBound : ∀ j d → (- (influence * shellWeight d)) ≤ increment j d)
+      (numericalGate : fifteen * halfWidth ε + influence * half
+                         < universalBetaCoefficient casimir)
+      j n →
+    beta (literalRowA1Data casimir influence ε influenceNonNeg
+            shells increment incrementBound numericalGate) j n
+    ≡ universalBetaCoefficient casimir
+        + (shellRegularRemainder (shells j)
+            + shellIncrementSum (increment j) n)
+  literalRowA1BetaIsLiteral _ _ _ _ _ _ _ _ _ _ = refl
+
+  -- ... and it is bounded below by b_-(G) > 0, uniformly.
+  literalRowA1PositiveBeta :
+    ∀ (casimir influence ε : ℚ) (influenceNonNeg : 0ℚ ≤ influence)
+      (shells : Nat → ShellJointDensity ε)
+      (increment : Nat → Nat → ℚ)
+      (incrementBound : ∀ j d → (- (influence * shellWeight d)) ≤ increment j d)
+      (numericalGate : fifteen * halfWidth ε + influence * half
+                         < universalBetaCoefficient casimir)
+      j n →
+    (0ℚ < betaFloor (literalRowA1Data casimir influence ε influenceNonNeg
+                       shells increment incrementBound numericalGate))
+    × (betaFloor (literalRowA1Data casimir influence ε influenceNonNeg
+                    shells increment incrementBound numericalGate)
+       ≤ universalBetaCoefficient casimir
+           + (shellRegularRemainder (shells j)
+               + shellIncrementSum (increment j) n))
+  literalRowA1PositiveBeta casimir influence ε influenceNonNeg
+      shells increment incrementBound numericalGate j n =
+    betaFloorPositive assembled , betaAboveFloor assembled j n
+    where
+      assembled = literalRowA1Data casimir influence ε influenceNonNeg
+        shells increment incrementBound numericalGate
+
+------------------------------------------------------------------------
+-- 5.  THE SU(2) NUMBERS: THE ONE-SIDED GATE IS STRICTLY WEAKER
+------------------------------------------------------------------------
+
+-- Normalized fundamental cube of the generated grid: cell measure 1/16.
+cubeCellMeasure : ℚ
+cubeCellMeasure = SupGate.cubeCellMeasure
+
+-- Two-sided threshold of the earlier gate: epsilon <= 8/15, obtained from
+-- 15 * (1/16) * epsilon <= 1/2.
+twoSidedCubeThreshold : ℚ
+twoSidedCubeThreshold = SupGate.cubeGateThreshold          -- 8/15
+
+-- One-sided threshold at C_A = 2: 15 * (1/16) * epsilon <= 11/12, i.e.
+-- epsilon <= 44/45.  This is the sharp value, verified as an equality.
+oneSidedCubeThreshold : ℚ
+oneSidedCubeThreshold = + 44 / 45
+
+oneSidedCubeThresholdExact :
+  fifteen * (cubeCellMeasure * oneSidedCubeThreshold)
+  ≡ universalBetaCoefficient Floor.su2AdjointCasimir
+oneSidedCubeThresholdExact = refl
+
+-- The strict improvement: 8/15 = 0.5333... < 0.9777... = 44/45, so every
+-- density passing the old two-sided gate passes the new one, and there is a
+-- whole extra range 8/15 < epsilon < 44/45 -- plus complete freedom in the
+-- positive direction -- that the one-sided gate admits and the old one did not.
+oneSidedThresholdStrictlyWeaker : twoSidedCubeThreshold < oneSidedCubeThreshold
+oneSidedThresholdStrictlyWeaker =
+  toWitness {a? = twoSidedCubeThreshold ℚP.<? oneSidedCubeThreshold} _
+
+-- The ratio of the admissible sup norms is exactly 11/6.
+oneSidedThresholdRatio :
+  oneSidedCubeThreshold ≡ (+ 11 / 6) * twoSidedCubeThreshold
+oneSidedThresholdRatio = refl
+
+-- SU(2) IS THE WORST CASE, PRECISELY.  The gate is monotone in the adjoint
+-- Casimir, so a budget that passes at C_A = 2 passes at every larger C_A.
+-- Nothing here assumes the classification of compact simple groups; it is the
+-- conditional statement, and the group-theoretic input C_A(G) >= 2 (true in
+-- the normalisation in which SU(2) has C_A = 2) is left explicit as a
+-- hypothesis of the user.
+gateTransfersUpwardInCasimir :
+  ∀ (casimir radius influence : ℚ) →
+  Floor.su2AdjointCasimir ≤ casimir →
+  radius + influence * half
+    < universalBetaCoefficient Floor.su2AdjointCasimir →
+  radius + influence * half < universalBetaCoefficient casimir
+gateTransfersUpwardInCasimir casimir radius influence casimirAtLeastTwo su2Gate =
+  ℚP.<-≤-trans su2Gate (universalBetaCoefficientMono casimirAtLeastTwo)
+
+------------------------------------------------------------------------
+-- 6.  NON-VACUITY: A COMPLETE INSTANCE WITH BOTH REMAINDERS NONZERO
+------------------------------------------------------------------------
+
+-- C_A = 2 (SU(2)), local radius r_0 = 1/3, influence coefficient
+-- C*gamma = 1/10.  The gate reads 1/3 + 1/20 < 11/12, i.e. 23/60 < 55/60.
+-- The instance SATURATES both one-sided inputs: the local remainder is
+-- exactly -1/3 and the history remainder is exactly minus the shell budget of
+-- the given history length, so neither hypothesis is satisfied vacuously and
+-- the history remainder genuinely varies with the history length.
+sampleCasimir sampleLocalRadius sampleInfluence : ℚ
+sampleCasimir = Floor.su2AdjointCasimir            -- 2
+sampleLocalRadius = + 1 / 3
+sampleInfluence = + 1 / 10
+
+sampleLocalRemainder : Nat → Nat → ℚ
+sampleLocalRemainder _ _ = - sampleLocalRadius
+
+sampleHistoryRemainder : Nat → Nat → ℚ
+sampleHistoryRemainder _ n = - (sampleInfluence * shellSum n)
+
+sampleBeta : Nat → Nat → ℚ
+sampleBeta j n =
+  universalBetaCoefficient sampleCasimir
+    + (sampleLocalRemainder j n + sampleHistoryRemainder j n)
+
+sampleData : LiteralPositiveBetaData
+sampleData = record
+  { adjointCasimir = sampleCasimir
+  ; localRadius = sampleLocalRadius
+  ; influenceCoefficient = sampleInfluence
+  ; influenceNonNegative = toWitness {a? = 0ℚ ℚP.≤? sampleInfluence} _
+  ; beta = sampleBeta
+  ; localRemainder = sampleLocalRemainder
+  ; historyRemainder = sampleHistoryRemainder
+  ; decomposition = λ _ _ → refl
+  ; localRemainderLower = λ _ _ → ℚP.≤-refl
+  ; historyRemainderLower = λ _ _ → ℚP.≤-refl
+  ; gate = toWitness
+      {a? = (sampleLocalRadius + sampleInfluence * half)
+              ℚP.<? universalBetaCoefficient sampleCasimir} _
+  }
+
+-- b_- = 11/12 - 1/3 - 1/20 = 8/15 > 0 for the sample data.
+sampleBetaFloorValue : betaFloor sampleData ≡ + 8 / 15
+sampleBetaFloorValue = refl
+
+sampleBetaPositive : ∀ j n → 0ℚ < sampleBeta j n
+sampleBetaPositive = betaPositive sampleData
+
+-- With an empty history the sample beta is exactly 11/12 - 1/3 = 7/12; with a
+-- history of three preceding scales it is 7/12 - (1/10)(1/4+1/8+1/16) = 7/12 -
+-- 7/160, and the floor 8/15 still holds -- so the history term is not zero.
+sampleBetaEmptyHistory : sampleBeta 0 0 ≡ + 7 / 12
+sampleBetaEmptyHistory = refl
+
+sampleBetaThreeScaleHistory : sampleBeta 0 3 ≡ + 259 / 480
+sampleBetaThreeScaleHistory = refl
+
+------------------------------------------------------------------------
+-- 7.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here.
+oneSidedOrbitGateLevel : ProofLevel
+oneSidedOrbitGateLevel = machineChecked
+
+historyShellBudgetClosedFormLevel : ProofLevel
+historyShellBudgetClosedFormLevel = machineChecked
+
+assembledPositiveBetaLevel : ProofLevel
+assembledPositiveBetaLevel = machineChecked
+
+-- STILL OPEN, Row A physical leaf (A): the literal momentum-space joint
+-- Wilson + reduced Faddeev-Popov + Haar density and a lower sup bound
+-- -epsilon for it with 15 * cellMeasure * epsilon below the universal
+-- coefficient, uniformly in cutoff, volume and scale.
+literalJointDensityLowerSupNormLevel : ProofLevel
+literalJointDensityLowerSupNormLevel = conditional
+
+-- STILL OPEN, Row A physical leaf (B): the localized influence estimate
+-- |Delta_d beta_j| <= C gamma 2^-(d+2) for the same literal coefficient.
+literalLocalizedHistoryInfluenceLevel : ProofLevel
+literalLocalizedHistoryInfluenceLevel = conditional

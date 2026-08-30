@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#
+# build_so.sh — build libaristovision.so from RequestProject/VisionFFI.lean.
+#
+# The module RequestProject/VisionFFI.lean exports a flat C ABI
+# (aristo_cog / aristo_triad / aristo_harm / aristo_harm_index /
+# aristo_embedding_dim), each a `uint64_t f(uint64_t)`.  This script:
+#
+#   1. emits C from the Lean module,
+#   2. compiles it to a position-independent object with DEFAULT symbol
+#      visibility (so the LEAN_EXPORT'ed symbols land in the .so's dynamic
+#      symbol table — `leanc` defaults to -fvisibility=hidden, which would
+#      hide them),
+#   3. links a shared library against the Lean runtime (libleanshared.so).
+#
+# Run from the project root or anywhere; paths are resolved relative to this
+# script.  Output: vision/ffi/build/libaristovision.so
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJ_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+BUILD_DIR="$SCRIPT_DIR/build"
+mkdir -p "$BUILD_DIR"
+
+cd "$PROJ_ROOT"
+
+SYSROOT="$(lean --print-prefix)"
+LEAN_LIB="$SYSROOT/lib/lean"
+
+echo "[1/3] emit C from RequestProject/VisionFFI.lean"
+lake env lean -c "$BUILD_DIR/VisionFFI.c" RequestProject/VisionFFI.lean
+
+echo "[2/3] compile C -> object (default visibility)"
+cc -c -fPIC -fvisibility=default -I"$SYSROOT/include" \
+   -o "$BUILD_DIR/VisionFFI.o" "$BUILD_DIR/VisionFFI.c"
+
+echo "[3/3] link shared library against libleanshared"
+cc -shared -o "$BUILD_DIR/libaristovision.so" "$BUILD_DIR/VisionFFI.o" \
+   -L"$LEAN_LIB" -lleanshared -Wl,-rpath,"$LEAN_LIB"
+
+echo "done: $BUILD_DIR/libaristovision.so"
+echo "exported symbols:"
+nm -D "$BUILD_DIR/libaristovision.so" | grep -E "aristo_|initialize_RequestProject_VisionFFI" || true

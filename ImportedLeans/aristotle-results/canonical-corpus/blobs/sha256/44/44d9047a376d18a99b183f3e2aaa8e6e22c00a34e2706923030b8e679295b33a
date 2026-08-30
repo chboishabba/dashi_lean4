@@ -1,0 +1,185 @@
+# G4 cycle: anchored exterior coercivity, a gap-free interference envelope,
+# the prime-side target in Gram language, and the `C₃` phase/Ogg algebra
+
+All statements below are machine-checked Lean 4 (Mathlib), `lake build
+RiemannAnalytic` clean, no `sorry`/`admit`/`axiom`/postulate/Boolean receipt;
+the transitive axiom set of every theorem is `propext, Classical.choice,
+Quot.sound`.  Nothing here asserts the Riemann Hypothesis, and
+`RiemannHypothesisFor` was not touched or weakened.  The Agda tranche was left
+unchanged (it could not be re-checked in this session), so all new material is
+Lean.
+
+---
+
+## 1. Anchored exterior coercivity — the `k`-dimensional Gram-minor theorem
+
+`RiemannAnalytic/AnchoredExterior.lean`, for an arbitrary real inner product
+space `E`.
+
+* `gramDet v = det (Gram v)` — the squared exterior volume; `gramDet_nonneg`.
+* **`gramDet_anchored_eq`** (exact splitting).  If `‖e‖ = 1` and
+  `⟪e, vⱼ⟫ = 0` for `j = 1, …, r`, then with `tᵢ = vᵢ − ⟪e, vᵢ⟫ e`
+
+      det Gram(v₀,…,v_r) = det Gram(t₀,…,t_r) + ⟪e, v₀⟫² · det Gram(v₁,…,v_r).
+
+* **`gramDet_anchored_ge`** (the theorem requested):
+
+      det Gram(v₀,…,v_r) ≥ ⟪e, v₀⟫² · det Gram(v₁,…,v_r).
+
+* `gramDet_anchored_pos`, `linearIndependent_of_anchored`,
+  `linearIndependent_of_gramDet_ne_zero`: a nonzero anchor upgrades transverse
+  nondegeneracy to strict positive exterior volume, hence to linear
+  independence of the whole family.
+* `gramDefect_ge_anchor_sq_mul`: the `k = 2` case, `‖a‖²‖b‖² − ⟪a,b⟫² ≥
+  ⟪e,a⟫²‖b‖²`, i.e. exactly the inequality used on the one-sided source window,
+  now derived as a special case of the general theorem.
+
+## 2. The minimum-gap hypothesis is removed
+
+`RiemannAnalytic/TwoRegimeInterference.lean`.
+
+* **`abs_im_PhiKernel_le_two_regime`**: for a `C¹` real even taper,
+
+      |Im Φ_{φ²}(x+iy)| ≤ |y| · min ( 2 M₁ , K / |x| ),
+
+  `M₁ = momentMass (φ²)`, `K = transverseDecayConst (φ²)`.  Finite at `x = 0`;
+  the singular `1/|x|` bound is only used away from the origin.
+* **`mixedInterference_envelope_localCount`**: with *no* separation hypothesis,
+  only a local count — at most `N` members of the family per unit window of the
+  ordinate difference — the total interference obeys
+
+      ∑ (Im Φ(w n))² ≤ N y² (4 M₁² + 2 K²).
+
+  The proof partitions the family by `⌊|Re w n|⌋`, uses the flat bound in the
+  central window and the decay bound with `1/k²` beyond it.
+* **`interference_le_ratio_mul_gramDefect_localCount`**: the localization ratio
+  in `δ`-free form, `interference ≤ η · ΔGram` with
+
+      η = 16384 N (4 M₁² + 2 K²) / (81 L⁶),
+
+  independent of the transverse offset `α` *and* of any assumed ordinate
+  separation.  The unit-window count `N` is the quantity Riemann–von Mangoldt
+  actually supplies (`≍ log T`), in place of the unavailable uniform `δ > 0`.
+
+## 3. The prime-side target, restated in Gram language
+
+`RiemannAnalytic/WeightedGramTarget.lean` defines the source-native positive
+object `weightedGramSum s mult defect = ∑_ρ m_ρ² Δ_ρ` and proves what a budget
+`∑_ρ m_ρ² Δ_ρ ≤ E` buys, unconditionally:
+
+* `offset_sq_le_of_budget`, `abs_offset_le_of_budget`: each zero is confined to
+  `|α_ρ| ≤ √(E/c)` for the floor constant `c`;
+* `sum_offset_sq_le_of_budget`: the density bound `∑_ρ α_ρ² ≤ E/c`;
+* `budget_lt_floor_excludes`: a budget below one target's own floor rules that
+  target out;
+* `all_on_line_of_budget_nonpos`: a vanishing budget puts the whole family on
+  the critical line;
+* `source_floor_family` and `source_budget_tube` instantiate this with the
+  actual one-sided source-window defect and the explicit constant
+  `c = (81/16384) L⁶`.
+
+The budget `E` is an explicit hypothesis of each statement.  **Producing `E(T)`
+unconditionally for the actual zeros of `ζ` is still the missing theorem**: it
+needs the explicit formula plus prime second-moment input that exists neither in
+this tree nor in Mathlib.  This is unchanged from the previous cycle; what
+changed is only that the target is now stated in the coercive Gram quantity
+rather than in a vaguely defined "imaginary energy".
+
+## 4. Do higher traces carry higher Gram minors?
+
+`RiemannAnalytic/HigherTraceMinors.lean` answers this precisely at rank two:
+
+* `sum_pairMinor_eq_trace_sq_sub_trace_mul_self`: for any square matrix,
+  `∑_{i,j} (Aᵢᵢ Aⱼⱼ − Aᵢⱼ Aⱼᵢ) = (tr A)² − tr(A²)`.
+* `sum_pair_gramDefect_eq`: for a Gram matrix,
+  `∑_{i,j} (‖vᵢ‖²‖vⱼ‖² − ⟪vᵢ,vⱼ⟫²) = (tr G)² − ‖G‖_F²`.
+  So the total pairwise transverse area *is* carried by the traces — but only
+  through the difference: `tr G² = ‖G‖_F²` enters with the wrong sign, matching
+  the earlier finding for the pair block, and only `(tr G)²` restores it.
+* `sum_pair_gramDefect_le_of_frobSq_ge`: consequently a *lower* prime-side bound
+  on `‖G‖_F²` is an *upper* bound on the total pairwise area — the exact shape a
+  prime-side estimate has to take to be useful here.
+* `det_submatrix_gram_eq_gramDet`: the `r × r` principal minors of `G` are the
+  squared exterior `r`-volumes of the subfamilies, so higher exterior
+  information is present in `G` as principal minors.
+
+`RiemannAnalytic/TripleTraceMinors.lean` then settles the rank-three case
+outright, by direct `3 × 3` expansion and Fubini rather than by an appeal to
+Newton's identities:
+
+* `sum_tripleMinor_eq_trace_combination`: for any square matrix,
+  `∑_{i,j,k} det(A|_{i,j,k}) = (tr A)³ − 3 (tr A)(tr A²) + 2 tr A³`.
+  The six permutations of `S₃` contribute by cycle type: `+1` identity, `−3`
+  transpositions, `+2` three-cycles.
+* `sum_tripleGramDet_eq_trace_combination`: for a Gram matrix the left side is
+  the total squared exterior `3`-volume `∑_{i,j,k} ‖v_i ∧ v_j ∧ v_k‖²`.
+* `sum_tripleGramDet_nonneg` and `tripleGramDet_le_trace_combination`: that
+  trace combination is therefore nonnegative, and dominates every individual
+  triple exterior volume.
+
+So the answer to attack 4 is affirmative at `r = 3`: `tr G³` does carry
+exterior `3`-volume information, but — exactly as at `r = 2` — only in
+combination with the lower traces, and with the pure third trace entering with
+coefficient `+2` against `−3 (tr G)(tr G²)`.  A general rank-`r` version
+(Newton's identities) is **not** claimed anywhere in this development.
+
+## 5. The `C₃` phase carrier, made explicit
+
+`RiemannAnalytic/CubicPhase.lean` (over `ℂ`, not as labels):
+
+`zeta3 = (−1 + √3 i)/2`; `zeta3_pow_three` (`ζ³ = 1`), `zeta3_ne_one`,
+`one_add_zeta3_add_sq` (`1 + ζ + ζ² = 0`), **`zeta3_inv_eq_sq`** (`ζ⁻¹ = ζ²`),
+**`conj_zeta3`** (`conj ζ = ζ²`), `zeta3_add_inv` (`ζ + ζ⁻¹ = −1`),
+`zeta3_mul_inv`.  The discrete Fourier matrix
+
+      F₃ = ![![1,1,1], ![1,ζ,ζ²], ![1,ζ²,ζ]]
+
+is `fourier3`, with `fourier3_apply` (`F₃ i j = ζ^{ij}`), `fourier3_conj_row`
+(the two nontrivial rows are complex conjugates), `fourier3_row_orthogonal`,
+`fourier3_mul_conjTranspose` (`F₃ F₃ᴴ = 3·1`), `fourier3_det_ne_zero`.  The
+trace/norm bridge to real observables: `trace_cyclotomic_real`
+(`z + z̄ = 2a − b − c`), `norm_cyclotomic_real`
+(`z z̄ = a² + b² + c² − ab − bc − ca`), `norm_cyclotomic_nonneg`.
+
+`RiemannAnalytic/CubicTransversePlane.lean` supplies the nondegeneracy statement
+that "two phase labels" does *not* by itself provide: the realified conjugate
+pair spans a genuine plane.  With `u = Re χ₁`, `w = Im χ₁`,
+
+      ‖u‖² = ‖w‖² = 3/2,  ⟪u,w⟫ = 0,  Δ = ‖u‖²‖w‖² − ⟪u,w⟫² = 9/4 > 0
+
+(`c3_gramDefect`, `c3_gramDefect_pos`), and both are orthogonal to the constant
+mode `(1,1,1)` (`c3Real_dot_const`, `c3Imag_dot_const`) — the `1 + 2` splitting.
+The conjugate character spans the same real plane with opposite orientation
+(`c3_conj_re`, `c3_conj_im`).
+
+## 6. The affine grid inside the fifteen Ogg primes
+
+`RiemannAnalytic/OggAffineGrid.lean`, all kernel-checked finite statements:
+
+* `oggPrimes` (the fifteen), `oggPrimes_card`, `oggPrimes_prime`;
+* `ssp_translate_42`: `{5,17,29} + 42 = {47,59,71}`;
+* `sspGrid_eq_rows`, `sspGrid_card`, `sspGrid_subset_ogg`: the six points
+  `5 + 12 i + 42 j` (`i < 3`, `j < 2`) form a `2 × 3` affine grid inside the Ogg
+  set, with row spacing `12` (`ssp_row_spacing`);
+* `ogg_top_product`: `47 · 59 · 71 = 196883`;
+* two honest caveats, proved rather than omitted: `42` is **not** the unique
+  translation carrying `{5,17,29}` into the Ogg set — the full list below `100`
+  is `{2, 12, 42}` (`ogg_translations_of_lower_row`), with `42` the largest
+  (`ogg_translation_le_42`); and `p ↦ p + 42` is **not** the pointed-sign map
+  `p ↦ 2p+1` (`translate42_ne_pointedSign`), whose own chain
+  `2 → 5 → 11 → 23 → 47` is `pointedSign_chain`.
+* `ogg_ap12_starts`: the three-term progressions of difference `12` inside the
+  Ogg set start exactly at `5, 7, 17, 47`.
+
+No claim is made connecting these finite configurations to the zeros of `ζ`.
+
+---
+
+## What is still missing, exactly
+
+Unchanged and still first in line: an **unconditional prime-side bound for
+`‖G‖_F²`** (main term plus error) for the actual zeros of `ζ`, which would
+supply the budget `E(T)` of §3.  The remaining hypotheses of the localization
+statements are: the window/tail condition, the plateau/taper conditions, and now
+— in place of the ordinate separation `δ`, which §2 eliminates — the unit-window
+count `N`.  No statement in this tree implies the Riemann Hypothesis.

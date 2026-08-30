@@ -1,0 +1,51 @@
+# Multi-taper Schur continuation — what is kernel-checked here
+
+This note records, precisely, the status of the multi-taper Schur architecture
+inside *this* project.  It exists because the architecture was first described in a
+report produced in an environment with no Lean toolchain, where the described files
+could not be typechecked and are not present in this repository.  Everything listed
+below was (re)implemented here and **verified by the pinned Lean toolchain**:
+`lake build Zeta23Bridge` succeeds, and every theorem named here reports axioms
+`[propext, Classical.choice, Quot.sound]` under `#print axioms`.
+
+There are no `sorry`, `admit`, `axiom`, `postulate` or `@[implemented_by]`
+declarations in any module added by this tranche.
+
+## Verified modules
+
+| module | content |
+| --- | --- |
+| `MultiTaperSchurCore` | exact transverse/Schur geometry on `Fin m → ℝ`; `wedgeSq = ‖n‖²‖P_{n^⊥}x‖²`; exact nuisance removal; recursive two-nuisance elimination |
+| `TwoTaperCrossDetSchur` | planar Lagrange identity `wedgeSq = det₂²`; `det₂ ≠ 0 ⟹ wedgeSq > 0 ⟹ P_{n^⊥}x ≠ 0` |
+| `TwoTaperCrossDetLeading` | `\|Δ(r) − r⁴Δ₀\| ≤ r⁶C`; the coefficient gate `r²C < \|Δ₀\| ⟹ Δ(r) ≠ 0` |
+| `LiteralWeilTwoTaperCoefficientGate` | literal instance on `zeroHeightDefect`; literal Gram admission; the two sharp height degeneracies |
+| `LiteralWeilThreeWindowPoleNullSeed` | two distinct tapers, each individually `GateData`, common radius `r = min 1 (\|t\|/16) ≤ 1` |
+| `LiteralWeilLeadingCoefficientCovariance` | covariance form of the leading coefficient; `covForm` polarisation; two-window decomposition |
+| `CoshWindowSeparation` | strict monotonicity of the hyperbolic increment ratio in both endpoints; the four-endpoint window gate |
+| `LiteralWeilWindowRatioSeparation` | `covForm` as a double integral; window sandwich bounds; **strict positivity of the cross determinant**; exact determinant expansion; explicit remainder bound |
+| `LiteralWeilWindowSchurAdmission` | transport to the literal channel: nonzero leading determinant, radii with strictly positive Gram wedge, exact nuisance elimination |
+
+## What changed conceptually
+
+The large-ordinate no-go of `LiteralWeilProjectiveGateNoGo` kills any argument that
+majorizes the off-ordinate channel by the absolute zero mass `W(t)`.  The Schur
+route replaces that majorization by an *exact* algebraic removal of finitely many
+selected zeros, which is admissible exactly when the corresponding Gram wedge is
+open.  The wedge, in turn, is a single scalar cross determinant, and this tranche
+proves the mechanism that forces it to be nonzero: two tapers concentrated in two
+*different* modulus windows respond to two different zero heights with strictly
+different ratios.  That statement (`covForm_det_lt`) is unconditional apart from a
+gate on four window endpoints, which is itself unconditionally true for point
+windows (`window_gate_of_point_windows`).
+
+## What is not proved
+
+1. The three-window instantiation of the gate: producing concrete `GateData` tapers
+   `p + λ q_j` whose windows satisfy the four-endpoint gate *and* whose within-window
+   self responses are dominated (`detRestBound < 4λ² · cross determinant`).  Both
+   conditions are explicit and finite; neither is established here.
+2. Everything downstream of a single admitted Schur elimination: the projected
+   distant-zero tail bound `W_far(t; H)`, the recursion over several nearby zeros,
+   and any closure of the literal Weil inequality.
+3. The Riemann Hypothesis.  `RiemannHypothesisFor` is untouched, and no theorem in
+   this tranche weakens it or asserts it.

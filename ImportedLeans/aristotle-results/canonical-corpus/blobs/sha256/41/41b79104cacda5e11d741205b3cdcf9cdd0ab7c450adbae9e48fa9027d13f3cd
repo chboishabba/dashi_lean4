@@ -1,0 +1,26 @@
+# RH analytic bridge source bundle
+
+This is a deliberately small source attachment for the TOE/Spine continuation.
+It is not a claim that the Riemann hypothesis is proved.
+
+## Lean
+
+`Lean/RiemannAnalytic` is a 19-module Mathlib-only analytic lane recovered from
+the prior RH continuation. It contains the project's formal interfaces for
+Poisson extension, taper coercivity, complex/transverse/imaginary channels,
+lattice tails, kernel envelopes, finite-window Gram surplus, and literal route
+assembly. Treat it as prior source to audit and reuse; preserve its stated
+assumptions and boundary declarations.
+
+## Agda
+
+The eight Agda modules are current source-side exact reductions: complex-Poisson
+Hermitian reduction, cosh coercivity, target-centred grid retention, mixed-kernel
+envelope and pair-kernel Frobenius identity, G3 source transport, top-down
+assembly, and the analytic substrate interface.
+
+They explain intended analytic dependencies, but they are not Lean proofs and
+must not be represented as a completed RH proof without checking the actual
+theorem statements and assumptions.
+
+No Yang--Mills or Navier--Stokes source is included.

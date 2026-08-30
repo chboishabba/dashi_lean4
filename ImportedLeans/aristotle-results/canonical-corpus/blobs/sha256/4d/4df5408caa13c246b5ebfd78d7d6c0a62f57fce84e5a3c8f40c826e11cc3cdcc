@@ -1,0 +1,172 @@
+# G7 — Lane A (twisted-taper uniformity) and Lane B (anchored short-window target)
+
+All statements below are machine-checked Lean in `RiemannAnalytic/`.
+`lake build RiemannAnalytic` succeeds; there is no `sorry`, `admit`, `axiom`,
+`postulate`, Boolean receipt or numerical evidence anywhere in the Lean sources.
+**The Riemann Hypothesis is not proved here, nothing assumes it, and
+`RiemannHypothesisFor` is untouched.**
+
+The cycle followed the two-lane split requested after G6.
+
+---
+
+## Lane A — the true uniform-in-`α` growth of `Bφ(α, L)`
+
+**Question.** Is the `α`-uniform quadratic window energy bound
+`Bφ(α, L) ≤ C_b L²` — the estimate that would give `|α| ≤ (128/9)C_b/L` through
+`offset_le_of_quadratic_norm_bound` — actually true?
+
+**Answer: no.**  New file `RiemannAnalytic/TwistedTaperUniformity.lean`.
+
+1. **Evenness produces `cosh`, not cancellation.**
+   `taperMass_eq_cosh_of_even`: for an even `C¹` taper,
+   `taperMass φ α = ∫ |φ(u)| cosh(αu) du`.  Pairing `u` with `−u` — the move that
+   might have produced cancellation — instead replaces `e^{−αu}` by the positive
+   even weight `cosh(αu)`.  There is nothing to cancel.
+
+2. **An explicit exponential lower bound.**
+   `taperMass_ge_plateau_exp`: for a taper equal to `1` on `|t| ≤ a`,
+   `(a/2)·e^{|α|a/2} ≤ taperMass φ α`; hence in the source regime `a ≥ 3L/8`,
+   `windowEnergyBound_ge_exp_source`:
+   `(9/256)·L²·e^{3|α|L/8} ≤ Bφ(α, L)`.
+
+3. **A matching upper bound.**  `taperMass_le_exp_support`: for `|φ| ≤ 1`
+   supported in `[−R, R]`, `taperMass φ α ≤ 2R·e^{|α|R}`.  So the growth of the
+   twisted mass is genuinely `e^{Θ(|α|L)}`, not an artefact of the lower bound.
+
+4. **The uniform bound is not an auxiliary estimate; it is the conclusion.**
+   `abs_offset_le_of_uniform_quadratic_bound`: `Bφ(α,L) ≤ C_b L²` implies, with
+   **no use of the `L⁶` floor at all**, `|α| ≤ (8/(3L))·log(256C_b/9)`.
+   Assuming the uniform bound is therefore assuming a localization theorem of
+   the very strength one is trying to prove.
+
+5. **And it is false at every fixed off-line offset.**
+   `no_uniform_quadratic_bound_of_fixed_offset`: for `α ≠ 0` and any `C_b > 0`
+   there is an explicit `L₀` beyond which *no* taper satisfying the source-regime
+   hypotheses obeys `Bφ(α,L) ≤ C_b L²`.
+
+6. **The taper-only route is vacuous beyond radius `18/L`.**
+   `source_constraint_vacuous_of_large_offset`: once `|α| L ≥ 18`, the capstone
+   inequality `(81/16384)L⁶α² ≤ Bφ(α,L)²` holds outright, from the exponential
+   lower bound alone, with no window or lattice-tail hypothesis.  So the
+   zero-side self-constraint can never exclude an offset of size `≥ 18/L`: the
+   best conceivable outcome of the taper-only route is a tube of radius of order
+   `1/L`, and the estimate that would deliver it is the false one above.
+
+7. **Non-vacuity.**  `exists_sourceTaper`: for every `L > 0` there is an actual
+   `C¹`, even, nonnegative taper with plateau half-width `3L/8` and support in
+   `[−L/2, L/2]`, built from `Real.smoothTransition` of `((L/2)² − t²)`.  All the
+   source-regime hypotheses used above (and in the earlier files) are satisfiable
+   at every scale, so the negative results are about a nonempty class.
+
+**Consequence for the programme.**  Lane A closes negatively: the present taper
+family admits no `α`-uniform quadratic energy bound, and the obstruction is
+structural (`cosh(αL)` growth of the twisted mass), not a gap in the estimates.
+An `O(1/log T)` localization theorem, if it is to exist, must come from a taper
+whose twisted mass is normalized in the off-line direction, or from an estimate
+that does not pass through absolute values — not from `Bφ` as defined.
+
+---
+
+## Lane B — the anchored short-window prime target and the exponent it needs
+
+New file `RiemannAnalytic/ShortWindowPrimeTarget.lean`.
+
+### The narrower sufficient target, formalized
+
+`finiteGridAnchorMinorSum φ h α m` is the anchored coordinate observable of the
+one-sided source window: the `m` squared `2×2` minors through the central grid
+point.  Proved:
+
+* `finiteGridAnchorMinorSum_eq` — it equals `a₀²‖b‖²` (the transverse coordinate
+  vanishes at the anchor for a real even taper);
+* `finiteGridAnchorMinorSum_le_gramDefect` — it is dominated by the full window
+  Gram defect, so any `e₂`-budget is a budget for it;
+* `anchoredMinorSum_source_floor` — **it carries the entire source floor by
+  itself**: `(9/16)L²((9/512)L⁴α² − tail) ≤ finiteGridAnchorMinorSum`;
+* `anchored_floor_family`, `anchored_budget_tube` — a prime-side bound on the
+  *anchored* weighted sum alone already yields
+  `|α_ρ| ≤ √(E/((81/16384)L⁶))`.
+
+So the arithmetic side never has to reconstruct the local `e₂`: the `O(q)`
+anchored minors suffice, exactly as conjectured.
+
+### What cancellation exponent in the window height is required
+
+With a mesoscopic window of height `H`, local zero count `≍ A·H·L` and the true
+per-vector energy `≍ C_b L²` (`LocalTraceScale.lean`), the norm-and-count budget
+is `mesoBudget A C_b L H θ`, where `H^θ` records an assumed arithmetic saving.
+
+* `mesoBudget_ratio_eq` — `mesoBudget / L⁶ = 2A²C_b²·H^{2−θ}`;
+* `meso_no_gain_of_exponent_le_two` — for `θ ≤ 2` and any window with `H ≥ 1`,
+  the normalized budget stays `≥ 2A²C_b²`: never `o(L⁶)`;
+* `meso_bounded_window_no_gain` — for a *fixed* height it is a nonzero constant,
+  so bounded height by itself never produces the required `o(L⁶)`;
+* `meso_gain_of_exponent_gt_two` — for `θ > 2` with `H → ∞` it does tend to `0`.
+
+**The exponent question is therefore answered at the scaling level: a
+short-interval input is useful here only if it beats the trivial count by more
+than the square of the window height.**
+
+### The short-window second moment itself
+
+New file `RiemannAnalytic/ShortIntervalMeanValue.lean` proves, from scratch, the
+identity every short-interval mean-value theorem starts from.  For
+`D(t) = ∑_{1≤n≤N} a_n e^{−it log n}`:
+
+* `integral_expWindow` — `∫₀^H e^{iλt} dt = H` (diagonal) or `(e^{iλH}−1)/(iλ)`;
+* `dirichletPoly_secondMoment_eq` — the exact expansion
+  `∫₀^H |D|² = ∑_{m,n} a_m conj(a_n)·expWindow H (log n − log m)`;
+* `norm_expWindow_le` — off the diagonal, `‖expWindow H λ‖ ≤ 2/|λ|`,
+  **uniformly in `H`**;
+* `dirichletPoly_secondMoment_le` — hence
+  `∫₀^H |D|² ≤ H ∑|a_n|² + ∑_{m≠n} 2|a_m||a_n|/|log n − log m|`.
+
+The last two together are the quantitative form of the difficulty: the diagonal
+scales with the window, the classical off-diagonal cost does not.  In the
+language above, the classical expansion supplies cancellation exponent `θ = 0`,
+whereas the local exterior-area target needs `θ > 2`.  A usable short-interval
+input must beat this expansion (Montgomery–Vaughan-type or short-interval
+mean-value theory), not merely invoke it; no such input is assumed anywhere in
+this project.
+
+---
+
+## Status of the frontier after G7
+
+| item | status |
+|---|---|
+| exterior coercivity, arbitrary anchored rank | proved (G4) |
+| spacing and multiplicity obstructions | removed (G4, G6) |
+| global prime budget | proved too large (G5) |
+| generic local budget | proved critically `L⁶` (G6) |
+| Schur / compression tricks | proved unable to help (G6) |
+| **anchored form is exactly sufficient** | **proved (G7)** |
+| **required window-height cancellation exponent `θ > 2`** | **proved (G7)** |
+| **`α`-uniform taper bound `Bφ ≤ C_b L²`** | **proved false (G7)** |
+| genuine `o(L⁶)` arithmetic input | **open** |
+
+### First unproved theorem, stated exactly
+
+> `∑_ρ m_ρ² · a₀(ρ)² ‖b_ρ‖² ≤ E_prime,loc(T,H)` with `E_prime,loc(T,H) = o(L⁶)`
+> for some `H = o(L²)` — a bounded-height (short-interval) prime-side bound for
+> the **anchored** exterior form, with a cancellation exponent `θ > 2` in the
+> window height.
+
+The second obligation reported after G6 — an `α`-uniform `Bφ(α,L) ≤ C_b L²` —
+is no longer open: it is **false** (`no_uniform_quadratic_bound_of_fixed_offset`).
+Its replacement, if the zero side is to contribute further, is the design of a
+taper family whose twisted mass does not grow exponentially off the line.
+
+### Agda side
+
+The Agda toolchain is not available in this environment (`agda` is not on the
+path and cannot be installed offline), so no Agda module was added or modified:
+writing boundary modules that cannot be typechecked would put unverified text
+into the tree.  The corresponding boundary content requested after G6 —
+critical local scale `L⁶`, anchored exterior consumer, hot/cold universal
+property, the Schur direction `Q_Schur ≤ Q_compression`, the shrinking-tube
+quantifier distinction, and the two open target objects — exists as *proved*
+Lean theorems (`LocalBudgetScale.lean`, `AnchoredMinorConsumer.lean`,
+`LocalHotCold.lean`, `LocalSchur.lean`, and the two new files above) rather than
+as record fields with assumed inhabitants.

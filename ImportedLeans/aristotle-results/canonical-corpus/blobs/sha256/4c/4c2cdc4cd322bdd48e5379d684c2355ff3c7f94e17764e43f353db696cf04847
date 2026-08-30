@@ -1,0 +1,135 @@
+# Status of the Lean analytic tranche (`RiemannAnalytic`)
+
+This file records, at literal strength, what is **proved** in the Lean library
+`RiemannAnalytic` and what is **not**.  Everything listed as proved compiles
+with `lake build`, contains no `sorry`, `admit`, `axiom` or `postulate`, and
+depends only on `propext`, `Classical.choice`, `Quot.sound`.
+
+**The Riemann Hypothesis is not proved.**  No theorem in this development
+asserts it, and no theorem assumes it.
+
+## Literal statement layer (`LiteralStatement.lean`)
+
+* `completedZeta_zero_mem_strip` — every zero of Mathlib's
+  `completedRiemannZeta` lies in the open critical strip.
+* `completedZeta_zero_reflect` — the zero set of `Λ` is `s ↦ 1 - s` symmetric.
+* `riemannHypothesis_iff_completed`,
+  `riemannHypothesis_iff_no_completed_zero_right` — Mathlib's literal
+  `RiemannHypothesis` is equivalent to the completed form, and to the one-sided
+  statement "no zero with `Re s > 1/2`".
+
+## Complex Poisson layer (`PoissonExtension.lean`, `ComplexPoisson.lean`)
+
+* `PhiExt` — the complex bilinear (Fourier–Laplace) extension
+  `Φ_φ(z) = ∫ φ(t) e^{-izt} dt`; evenness and the reflection law
+  `conj (Φ z) = Φ (conj z)` for a real even taper.
+* `complex_bilinear_poisson` — **complex-parameter** bilinear Poisson identity
+  for a `C¹`, even, compactly supported taper of radius `R` and grid period
+  `L ≥ 2R`:
+  `∑_{n∈ℤ} φ̂(z + n·2π/L) φ̂(w + n·2π/L) = L · Φ_{φ²}(z − w)`
+  for *arbitrary complex* `z, w`.  This is the complexification of the
+  real-argument identity.
+
+## Coercivity layer (`TaperCoercivity.lean`)
+
+* `PhiExt_excess_eq_taperExcess` — `Φ(−2iα) − Φ(0) = ∫ φ(u)²(cosh(2αu) − 1) du`.
+* `taperExcess_pos_iff` — the excess vanishes exactly at `α = 0` (plateau of
+  positive half-width).
+* `transverseDefect_lower_source_regime` — explicit floor
+  `L(Φ(−2iα) − Φ(0)) ≥ (9/128)·L⁴·α²` when the plateau half-width is `≥ 3L/8`.
+
+## Transverse energy (`TransverseEnergy.lean`, `ImaginaryChannel.lean`)
+
+* `hermitian_poisson` — Hermitian specialisation `w = conj z`:
+  `∑_{k∈ℤ}|φ̂(z + k·2π/L)|² = L·Φ_{φ²}(z − conj z)`.
+* `gridEnergy_transverse_floor` — `gridEnergy(α) − gridEnergy(0) ≥ (9/128)L⁴α²`.
+* `transverseEnergy_tsum` — **exact** transverse (imaginary-channel) identity
+  `∑_{k∈ℤ}(Im φ̂(kh − iα))² = (L/2)·∫ φ(u)²(cosh(2αu) − 1) du`, obtained by
+  subtracting the bilinear (`w = z`) Poisson sum from the Hermitian one.
+* `transverseEnergy_finite_retention` — unconditional finite-window retention
+  for *any* `C¹` compactly supported even taper with a plateau: some finite
+  one-sided window carries positive transverse energy and at least a quarter of
+  the full two-sided energy.  No tail-domination hypothesis, no Gaussian.
+
+## Quantitative tails (`GridTail.lean`)
+
+* `transverseEnergy_tail_le` — explicit lattice tail bound
+  `∑_{k>m} (Im φ̂(kh − iα))² ≤ C_φ(α)²/(h²m)`.
+* `transverseEnergy_window_lower` — explicit retained-window lower bound
+  `(L/4)·taperExcess − C_φ(α)²/(h²m)`; and `transverseEnergy_window_pos`, the
+  corresponding positivity criterion with floor `(9/512)L⁴α²`.
+
+## Interference kernel (`KernelChannels.lean`, `KernelEnvelope.lean`)
+
+* `grid_Sbil`, `grid_Hsesq` — the bilinear and Hermitian lattice channels of a
+  pair of zero coordinates equal `L·Φ(z − w)` and `L·Φ(z − conj w)`.
+* `mixedLoss_eq_Phi_kernel` — the mixed interference weight equals
+  `L²[(Im Φ(z − w))² + (Im Φ(z − conj w))²]`.
+* `abs_im_PhiKernel_le` — uniform horizontal decay `|Im Φ(w)| ≤ M/|Re w|` on the
+  strip `|Im w| ≤ 1`, with `M = ∫|(φ²)'(u)|e^{|u|}du`.
+* `mixedInterference_envelope` — **quantitative** envelope: for a `δ`-separated
+  family of coordinate differences, the total mixed interference of the target
+  with the rest is at most `4M²/δ²`.
+
+## Frobenius decomposition (`FrobeniusDecomposition.lean`)
+
+* `pairBlock_frobSq_decomposition` — for a pair block `Q = 2m(aaᵀ − bbᵀ)`,
+  `‖Q‖_F² = 4m²(a·a − b·b)² + 8m²((a·a)(b·b) − (a·b)²)`; the second term (the
+  Gram determinant surplus) is nonnegative and vanishes exactly when `a ∥ b`.
+  This corrects the conjectured form `‖Q‖² = ‖Q_crit‖² + 8m²AB`.
+* `A_frobSq_target_decomposition` — exact target split of `‖A‖_F²` into the
+  target's critical baseline, its transverse surplus, and the interference with
+  all other zeros.
+* `pairPair_frobInner_channels`, `mixedChannel_parseval` — the pair-pair inner
+  product through the `S`/`H` channels and the Parseval identity
+  `(Im S)² + (Im H)² = 2((a·d)² + (b·c)²)`.
+
+## Grid-to-matrix bridge (`GridVectors.lean`)
+
+* `gridVec`, `reOf`, `imOf` — the finite evaluation vector `u(k) = φ̂(z + kh)`,
+  `0 ≤ k < d`, and its real and imaginary parts.
+* `gridPairBlock_frobInner` — the abstract pair-block algebra is literally the
+  grid algebra: the Frobenius inner product of two pair blocks is
+  `2 m m' Re(S² + H²)` with `S`, `H` the finite-window channels.
+* `imOf_gridVec_eq_window_sum`, `imOf_gridVec_lower` — the `b·b` Gram entry of a
+  pair block is exactly the retained one-sided window energy, hence obeys the
+  explicit lower bound of `GridTail.lean`.
+
+## Detectability and terminal surface (`Detectability.lean`, `LiteralRoute.lean`)
+
+* `zero_in_detectability_tube` — from a quadratic defect floor and an error
+  bound, `|Re ρ − 1/2| ≤ √(E/(cL⁴))`; `detectRadius_tendsto_zero` gives the
+  shrinking tube when the relative error budget tends to `0`.
+* `riemannHypothesis_of_height_split` — RH from the high-ordinate statement plus
+  a bounded-height closure.
+* `hermitianRoute_riemannHypothesis`,
+  `riemannHypothesis_of_defect_exceeds_error` — the literal terminal step: the
+  route ends at Mathlib's `RiemannHypothesis`, with the remaining analytic
+  obligation as an explicit hypothesis.
+
+## The first unproved obligation
+
+Stated exactly, the first thing that is *not* proved and that the route needs
+is the transport of the retained transverse energy into the observable whose
+prime-side value is controlled, i.e.
+
+> **Unproved.**  For a hypothetical zero `ρ` of `completedRiemannZeta` with
+> `Re ρ > 1/2`, the retained transverse surplus
+> `transverseSurplus m_ρ a_ρ b_ρ` of the finite zero-side matrix `A` is bounded
+> above by the accumulated error budget `E_base + E_tail + E_prime + E_mixed`
+> attached to the prime-side second moment.
+
+Concretely, the missing ingredients are:
+
+1. the identification of the finite `Fin d` zero-side matrix `A` built from the
+   actual zeros of `Λ` with the pair-block sum of `FrobeniusDecomposition.lean`
+   (the localisation of the grid identities to the finite window);
+2. the prime-side input `‖G‖_F² ≤ mainTr₂ + E_prime` and the tail transport
+   `‖A‖_F² ≤ ‖G‖_F² + E_tail` (no prime-side trace asymptotics exist in Mathlib
+   and none are proved here);
+3. the alignment `C_crit = mainTr₂` (or an approximate version with an explicit
+   `E_base`);
+4. a bounded-height closure for ordinates below any eventual analytic threshold.
+
+Until (1)–(4) are proved, `OffLineDetectabilityContradiction` remains open and
+no claim about the Riemann Hypothesis is made.

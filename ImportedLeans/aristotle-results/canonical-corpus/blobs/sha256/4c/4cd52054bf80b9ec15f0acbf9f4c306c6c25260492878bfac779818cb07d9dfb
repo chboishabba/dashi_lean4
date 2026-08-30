@@ -1,0 +1,329 @@
+module DASHI.Physics.YangMills.BalabanClayT4HypercubicRepresentativeSumExact where
+
+------------------------------------------------------------------------
+-- PRIMARY SOURCES
+--
+-- Kenneth G. Wilson, "Confinement of Quarks", Physical Review D 10 (1974),
+-- 2445--2459. DOI: 10.1103/PhysRevD.10.2445.
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- DASHI CONTRIBUTION
+-- Given invariance under the seven concrete signed-permutation generators, the
+-- exact 240-cell regular sum collapses to FOUR representative values with
+-- multiplicities 64,96,64,16.  This theorem uses the generated action and the
+-- generated regular-cell list; no per-box equality receipt is accepted.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Agda.Builtin.List using (List; []; _∷_)
+open import Agda.Builtin.Nat as Nat using (Nat)
+open import Data.Rational.Base using (ℚ; 0ℚ; 1ℚ; _+_; _*_ ; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (trans; sym; cong)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.YangMills.BalabanPhysicalBlockFibreSumsExact as Sums
+import DASHI.Physics.YangMills.BalabanClayT4GeneratedBrillouinGridExact as Grid
+import DASHI.Physics.YangMills.BalabanClayT4HypercubicOrbitGeometryExact as Orbit
+import DASHI.Physics.YangMills.BalabanClayT4HypercubicGeneratedActionExact as Action
+
+orbitValue :
+  (Grid.GridCell4 → ℚ) → Orbit.OrbitClass → ℚ
+orbitValue contribution Orbit.infrared =
+  contribution (Action.representative Orbit.infrared)
+orbitValue contribution Orbit.oneOuter =
+  contribution Orbit.oneOuterRepresentative
+orbitValue contribution Orbit.twoOuter =
+  contribution Orbit.twoOuterRepresentative
+orbitValue contribution Orbit.threeOuter =
+  contribution Orbit.threeOuterRepresentative
+orbitValue contribution Orbit.fourOuter =
+  contribution Orbit.fourOuterRepresentative
+
+canonicalizedContribution :
+  (Grid.GridCell4 → ℚ) → Grid.GridCell4 → ℚ
+canonicalizedContribution contribution cell =
+  orbitValue contribution (Orbit.orbitClass cell)
+
+-- `orbitValue` and the generated action's `representative` pick the same cell
+-- in every orbit class, so the two canonicalizations agree.  (Without this
+-- step the generated-action equality does not have the type the canonicalized
+-- contribution needs: `orbitValue contribution (orbitClass cell)` is stuck on
+-- the orbit class and does not reduce.)
+orbitValueIsRepresentativeValue :
+  ∀ (contribution : Grid.GridCell4 → ℚ) (orbit : Orbit.OrbitClass) →
+  orbitValue contribution orbit
+  ≡ contribution (Action.representative orbit)
+orbitValueIsRepresentativeValue contribution Orbit.infrared = refl
+orbitValueIsRepresentativeValue contribution Orbit.oneOuter = refl
+orbitValueIsRepresentativeValue contribution Orbit.twoOuter = refl
+orbitValueIsRepresentativeValue contribution Orbit.threeOuter = refl
+orbitValueIsRepresentativeValue contribution Orbit.fourOuter = refl
+
+invariantContributionCanonicalizes :
+  ∀ {contribution}
+    (invariant : Action.GeneratorInvariantRationalContribution contribution)
+    cell →
+  contribution cell ≡ canonicalizedContribution contribution cell
+invariantContributionCanonicalizes {contribution} invariant cell =
+  trans (Action.cellContributionEqualsOrbitRepresentative invariant cell)
+    (sym (orbitValueIsRepresentativeValue contribution (Orbit.orbitClass cell)))
+
+regularSumCanonicalizes :
+  ∀ {contribution}
+    (invariant : Action.GeneratorInvariantRationalContribution contribution) →
+  Sums.sumRational Grid.regularGridCells contribution
+  ≡ Sums.sumRational Grid.regularGridCells
+      (canonicalizedContribution contribution)
+regularSumCanonicalizes {contribution} invariant =
+  Sums.sumRationalCong
+    Grid.regularGridCells
+    contribution
+    (canonicalizedContribution contribution)
+    (invariantContributionCanonicalizes invariant)
+
+-- The orbit values as five free rationals.  Making them variables is what lets
+-- the ring solver see the multiplicities: with the values still written as
+-- applications of `contribution` the goal is not a universally quantified
+-- equation and the solver cannot be called on it at all.
+orbitTuple : ℚ → ℚ → ℚ → ℚ → ℚ → Orbit.OrbitClass → ℚ
+orbitTuple v0 v1 v2 v3 v4 Orbit.infrared = v0
+orbitTuple v0 v1 v2 v3 v4 Orbit.oneOuter = v1
+orbitTuple v0 v1 v2 v3 v4 Orbit.twoOuter = v2
+orbitTuple v0 v1 v2 v3 v4 Orbit.threeOuter = v3
+orbitTuple v0 v1 v2 v3 v4 Orbit.fourOuter = v4
+
+orbitValueIsTuple :
+  ∀ (contribution : Grid.GridCell4 → ℚ) (orbit : Orbit.OrbitClass) →
+  orbitValue contribution orbit
+  ≡ orbitTuple
+      (orbitValue contribution Orbit.infrared)
+      (orbitValue contribution Orbit.oneOuter)
+      (orbitValue contribution Orbit.twoOuter)
+      (orbitValue contribution Orbit.threeOuter)
+      (orbitValue contribution Orbit.fourOuter)
+      orbit
+orbitValueIsTuple contribution Orbit.infrared = refl
+orbitValueIsTuple contribution Orbit.oneOuter = refl
+orbitValueIsTuple contribution Orbit.twoOuter = refl
+orbitValueIsTuple contribution Orbit.threeOuter = refl
+orbitValueIsTuple contribution Orbit.fourOuter = refl
+
+canonicalSum : ℚ → ℚ → ℚ → ℚ → ℚ → ℚ
+canonicalSum v0 v1 v2 v3 v4 =
+  Sums.sumRational Grid.regularGridCells
+    (λ cell → orbitTuple v0 v1 v2 v3 v4 (Orbit.orbitClass cell))
+
+-- The orbit multiplicities are obtained by COUNTING the generated regular
+-- cells, not by a ring tactic: the sum over a concrete list of a function of
+-- the orbit class equals the corresponding integer combination of the five
+-- orbit values, and the counts of the 240-cell regular list are computed by
+-- the kernel.  (The previous version called the rational ring solver on a goal
+-- that is not a universally quantified ring equation, which cannot elaborate.)
+
+record OrbitCounts : Set where
+  constructor orbitCounts
+  field
+    countInfrared countOne countTwo countThree countFour : Nat
+
+open OrbitCounts public
+
+natToℚ : Nat → ℚ
+natToℚ Nat.zero = 0ℚ
+natToℚ (Nat.suc n) = 1ℚ + natToℚ n
+
+comboOf : OrbitCounts → ℚ → ℚ → ℚ → ℚ → ℚ → ℚ
+comboOf counts v0 v1 v2 v3 v4 =
+  natToℚ (countInfrared counts) * v0
+  + (natToℚ (countOne counts) * v1
+     + (natToℚ (countTwo counts) * v2
+        + (natToℚ (countThree counts) * v3
+           + natToℚ (countFour counts) * v4)))
+
+bumpCount : Orbit.OrbitClass → OrbitCounts → OrbitCounts
+bumpCount Orbit.infrared (orbitCounts a b c d e) = orbitCounts (Nat.suc a) b c d e
+bumpCount Orbit.oneOuter (orbitCounts a b c d e) = orbitCounts a (Nat.suc b) c d e
+bumpCount Orbit.twoOuter (orbitCounts a b c d e) = orbitCounts a b (Nat.suc c) d e
+bumpCount Orbit.threeOuter (orbitCounts a b c d e) = orbitCounts a b c (Nat.suc d) e
+bumpCount Orbit.fourOuter (orbitCounts a b c d e) = orbitCounts a b c d (Nat.suc e)
+
+countCells : List Grid.GridCell4 → OrbitCounts
+countCells [] = orbitCounts 0 0 0 0 0
+countCells (cell ∷ cells) = bumpCount (Orbit.orbitClass cell) (countCells cells)
+
+-- (n+1) v = v + n v.
+succScale : ∀ n v → natToℚ (Nat.suc n) * v ≡ v + natToℚ n * v
+succScale n v =
+  trans (ℚP.*-distribʳ-+ v 1ℚ (natToℚ n))
+    (cong (λ z → z + natToℚ n * v) (ℚP.*-identityˡ v))
+
+swapLeft : ∀ a b c → a + (b + c) ≡ b + (a + c)
+swapLeft a b c =
+  trans (sym (ℚP.+-assoc a b c))
+    (trans (cong (λ z → z + c) (ℚP.+-comm a b)) (ℚP.+-assoc b a c))
+
+-- Adding one more cell of a given class to the tally.
+comboBump :
+  ∀ (orbit : Orbit.OrbitClass) (counts : OrbitCounts) v0 v1 v2 v3 v4 →
+  orbitTuple v0 v1 v2 v3 v4 orbit + comboOf counts v0 v1 v2 v3 v4
+  ≡ comboOf (bumpCount orbit counts) v0 v1 v2 v3 v4
+comboBump Orbit.infrared (orbitCounts a b c d e) v0 v1 v2 v3 v4 =
+  trans (sym (ℚP.+-assoc v0 (natToℚ a * v0) rest))
+    (cong (λ z → z + rest) (sym (succScale a v0)))
+  where
+    rest = natToℚ b * v1 + (natToℚ c * v2 + (natToℚ d * v3 + natToℚ e * v4))
+comboBump Orbit.oneOuter (orbitCounts a b c d e) v0 v1 v2 v3 v4 =
+  trans (swapLeft v1 (natToℚ a * v0) tail₁)
+    (cong (λ z → natToℚ a * v0 + z)
+      (trans (sym (ℚP.+-assoc v1 (natToℚ b * v1) rest))
+        (cong (λ z → z + rest) (sym (succScale b v1)))))
+  where
+    rest = natToℚ c * v2 + (natToℚ d * v3 + natToℚ e * v4)
+    tail₁ = natToℚ b * v1 + rest
+comboBump Orbit.twoOuter (orbitCounts a b c d e) v0 v1 v2 v3 v4 =
+  trans (swapLeft v2 (natToℚ a * v0) tail₁)
+    (cong (λ z → natToℚ a * v0 + z)
+      (trans (swapLeft v2 (natToℚ b * v1) tail₂)
+        (cong (λ z → natToℚ b * v1 + z)
+          (trans (sym (ℚP.+-assoc v2 (natToℚ c * v2) rest))
+            (cong (λ z → z + rest) (sym (succScale c v2)))))))
+  where
+    rest = natToℚ d * v3 + natToℚ e * v4
+    tail₂ = natToℚ c * v2 + rest
+    tail₁ = natToℚ b * v1 + tail₂
+comboBump Orbit.threeOuter (orbitCounts a b c d e) v0 v1 v2 v3 v4 =
+  trans (swapLeft v3 (natToℚ a * v0) tail₁)
+    (cong (λ z → natToℚ a * v0 + z)
+      (trans (swapLeft v3 (natToℚ b * v1) tail₂)
+        (cong (λ z → natToℚ b * v1 + z)
+          (trans (swapLeft v3 (natToℚ c * v2) tail₃)
+            (cong (λ z → natToℚ c * v2 + z)
+              (trans (sym (ℚP.+-assoc v3 (natToℚ d * v3) rest))
+                (cong (λ z → z + rest) (sym (succScale d v3)))))))))
+  where
+    rest = natToℚ e * v4
+    tail₃ = natToℚ d * v3 + rest
+    tail₂ = natToℚ c * v2 + tail₃
+    tail₁ = natToℚ b * v1 + tail₂
+comboBump Orbit.fourOuter (orbitCounts a b c d e) v0 v1 v2 v3 v4 =
+  trans (swapLeft v4 (natToℚ a * v0) tail₁)
+    (cong (λ z → natToℚ a * v0 + z)
+      (trans (swapLeft v4 (natToℚ b * v1) tail₂)
+        (cong (λ z → natToℚ b * v1 + z)
+          (trans (swapLeft v4 (natToℚ c * v2) tail₃)
+            (cong (λ z → natToℚ c * v2 + z)
+              (trans (swapLeft v4 (natToℚ d * v3) (natToℚ e * v4))
+                (cong (λ z → natToℚ d * v3 + z) (sym (succScale e v4)))))))))
+  where
+    tail₃ = natToℚ d * v3 + natToℚ e * v4
+    tail₂ = natToℚ c * v2 + tail₃
+    tail₁ = natToℚ b * v1 + tail₂
+
+emptyCombo :
+  ∀ v0 v1 v2 v3 v4 → comboOf (orbitCounts 0 0 0 0 0) v0 v1 v2 v3 v4 ≡ 0ℚ
+emptyCombo v0 v1 v2 v3 v4 =
+  trans (cong (λ z → z + (0ℚ * v1 + (0ℚ * v2 + (0ℚ * v3 + 0ℚ * v4))))
+          (ℚP.*-zeroˡ v0))
+    (trans (ℚP.+-identityˡ (0ℚ * v1 + (0ℚ * v2 + (0ℚ * v3 + 0ℚ * v4))))
+      (trans (cong (λ z → z + (0ℚ * v2 + (0ℚ * v3 + 0ℚ * v4))) (ℚP.*-zeroˡ v1))
+        (trans (ℚP.+-identityˡ (0ℚ * v2 + (0ℚ * v3 + 0ℚ * v4)))
+          (trans (cong (λ z → z + (0ℚ * v3 + 0ℚ * v4)) (ℚP.*-zeroˡ v2))
+            (trans (ℚP.+-identityˡ (0ℚ * v3 + 0ℚ * v4))
+              (trans (cong (λ z → z + 0ℚ * v4) (ℚP.*-zeroˡ v3))
+                (trans (ℚP.+-identityˡ (0ℚ * v4)) (ℚP.*-zeroˡ v4))))))))
+
+-- The sum over ANY list of cells is the integer combination of the five orbit
+-- values with the counts of that list.
+sumIsCountCombination :
+  ∀ v0 v1 v2 v3 v4 (cells : List Grid.GridCell4) →
+  Sums.sumRational cells
+    (λ cell → orbitTuple v0 v1 v2 v3 v4 (Orbit.orbitClass cell))
+  ≡ comboOf (countCells cells) v0 v1 v2 v3 v4
+sumIsCountCombination v0 v1 v2 v3 v4 [] = sym (emptyCombo v0 v1 v2 v3 v4)
+sumIsCountCombination v0 v1 v2 v3 v4 (cell ∷ cells) =
+  trans
+    (cong (λ z → orbitTuple v0 v1 v2 v3 v4 (Orbit.orbitClass cell) + z)
+      (sumIsCountCombination v0 v1 v2 v3 v4 cells))
+    (comboBump (Orbit.orbitClass cell) (countCells cells) v0 v1 v2 v3 v4)
+
+-- The generated 240-cell regular list has orbit counts (0, 64, 96, 64, 16).
+regularCellCounts : countCells Grid.regularGridCells ≡ orbitCounts 0 64 96 64 16
+regularCellCounts = refl
+
+-- 240 regular cells, in orbits of 64, 96, 64 and 16; no infrared cell occurs,
+-- so `v0` has coefficient zero.
+canonicalSumMultiplicity :
+  ∀ v0 v1 v2 v3 v4 →
+  canonicalSum v0 v1 v2 v3 v4
+  ≡ (+ 64 / 1) * v1 + (+ 96 / 1) * v2 + (+ 64 / 1) * v3 + (+ 16 / 1) * v4
+canonicalSumMultiplicity v0 v1 v2 v3 v4 =
+  trans (sumIsCountCombination v0 v1 v2 v3 v4 Grid.regularGridCells)
+    (trans (cong (λ counts → comboOf counts v0 v1 v2 v3 v4) regularCellCounts)
+      (trans (cong (λ z → z + right) (ℚP.*-zeroˡ v0))
+        (trans (ℚP.+-identityˡ right) reassociate)))
+  where
+    a₁ = (+ 64 / 1) * v1
+    a₂ = (+ 96 / 1) * v2
+    a₃ = (+ 64 / 1) * v3
+    a₄ = (+ 16 / 1) * v4
+    right = a₁ + (a₂ + (a₃ + a₄))
+    reassociate : a₁ + (a₂ + (a₃ + a₄)) ≡ ((a₁ + a₂) + a₃) + a₄
+    reassociate =
+      trans (cong (λ z → a₁ + z) (sym (ℚP.+-assoc a₂ a₃ a₄)))
+        (trans (sym (ℚP.+-assoc a₁ (a₂ + a₃) a₄))
+          (cong (λ z → z + a₄) (sym (ℚP.+-assoc a₁ a₂ a₃))))
+
+-- The right-hand side contains only four variables after reduction of the
+-- generated finite grid.  Ring normalization then exposes the exact orbit
+-- multiplicities.
+canonicalizedRegularSumMultiplicity :
+  ∀ contribution →
+  Sums.sumRational Grid.regularGridCells
+      (canonicalizedContribution contribution)
+  ≡ (+ 64 / 1) * orbitValue contribution Orbit.oneOuter
+    + (+ 96 / 1) * orbitValue contribution Orbit.twoOuter
+    + (+ 64 / 1) * orbitValue contribution Orbit.threeOuter
+    + (+ 16 / 1) * orbitValue contribution Orbit.fourOuter
+canonicalizedRegularSumMultiplicity contribution =
+  trans
+    (Sums.sumRationalCong Grid.regularGridCells
+      (canonicalizedContribution contribution)
+      (λ cell → orbitTuple
+        (orbitValue contribution Orbit.infrared)
+        (orbitValue contribution Orbit.oneOuter)
+        (orbitValue contribution Orbit.twoOuter)
+        (orbitValue contribution Orbit.threeOuter)
+        (orbitValue contribution Orbit.fourOuter)
+        (Orbit.orbitClass cell))
+      (λ cell → orbitValueIsTuple contribution (Orbit.orbitClass cell)))
+    (canonicalSumMultiplicity
+      (orbitValue contribution Orbit.infrared)
+      (orbitValue contribution Orbit.oneOuter)
+      (orbitValue contribution Orbit.twoOuter)
+      (orbitValue contribution Orbit.threeOuter)
+      (orbitValue contribution Orbit.fourOuter))
+
+regularInvariantSumIsFourRepresentatives :
+  ∀ {contribution}
+    (invariant : Action.GeneratorInvariantRationalContribution contribution) →
+  Sums.sumRational Grid.regularGridCells contribution
+  ≡ (+ 64 / 1) * contribution Orbit.oneOuterRepresentative
+    + (+ 96 / 1) * contribution Orbit.twoOuterRepresentative
+    + (+ 64 / 1) * contribution Orbit.threeOuterRepresentative
+    + (+ 16 / 1) * contribution Orbit.fourOuterRepresentative
+regularInvariantSumIsFourRepresentatives {contribution} invariant =
+  trans
+    (regularSumCanonicalizes invariant)
+    (canonicalizedRegularSumMultiplicity contribution)
+
+hypercubicInvariantRegularSumReductionLevel : ProofLevel
+hypercubicInvariantRegularSumReductionLevel = machineChecked
+
+-- Physical leaf only: instantiate `GeneratorInvariantRationalContribution` for
+-- the actual scalar Wilson/ghost/Haar orbit expression after Bishop interval
+-- semantics has produced its rational certified contribution.
+literalOneLoopFourRepresentativeReductionLevel : ProofLevel
+literalOneLoopFourRepresentativeReductionLevel = conditional

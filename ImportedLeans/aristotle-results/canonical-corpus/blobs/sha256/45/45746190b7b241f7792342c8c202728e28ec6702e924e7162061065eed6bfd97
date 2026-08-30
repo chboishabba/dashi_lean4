@@ -1,0 +1,55 @@
+status_labels:
+  # OPEN            — not started; no Lean file exists for this node
+  # PARTIAL         — Lean file exists but has significant gaps or sorry
+  # FORMALIZED      — Lean theorem proved unconditionally (no open axioms, no sorry)
+  # FORMALIZED_KERNEL — Lean code compiles and type-checks (0 sorry, 0 errors),
+  #                   but the theorem may depend on named `axiom` declarations
+  #                   or on `open_hypotheses` listed in nodes.yaml.
+  #                   This is NOT an unconditional mathematical proof.
+  # IMPORTED        — result imported from Mathlib or another external library
+  # BLACKBOX        — gap intentionally registered; must have bottlenecks.yaml entry
+  # BLOCKED         — blocked on another node or external infrastructure
+  # NEEDS_MATHLIB   — gap is a Mathlib coverage hole, not a Clay-specific gap
+  # NEEDS_NUMERICS  — requires numerical / computational verification
+  # DEPRECATED      — no longer on any critical path
+  - OPEN
+  - PARTIAL
+  - FORMALIZED
+  - FORMALIZED_KERNEL
+  - IMPORTED
+  - BLACKBOX
+  - BLOCKED
+  - NEEDS_MATHLIB
+  - NEEDS_NUMERICS
+  - DEPRECATED
+
+evidence_labels:
+  - PAPER_ONLY
+  - PROXY_TEST
+  - AUDITED_EXTERNALLY
+  - IMPORTED_AXIOM
+  - IMPORTED_THEOREM
+  - FORMALIZED_WEAK
+  - FORMALIZED_KERNEL
+
+kind_labels:
+  - target
+  - infrastructure
+
+risk_labels:
+  - LOW
+  - MEDIUM
+  - HIGH
+  - EXTREME
+
+blocker_labels:
+  - NONE
+  - NEEDS_MATHLIB
+  - NEEDS_NEW_ANALYSIS
+  - NEEDS_OPERATOR_THEORY
+  - NEEDS_LIE_GROUPS
+  - NEEDS_NUMERICS
+  - NEEDS_REWRITE_OF_ARGUMENT
+  - NEEDS_STATEMENT_EXACTNESS
+  - ANTI_VACUITY_RISK
+  - PLACEHOLDER_DEPENDENCY

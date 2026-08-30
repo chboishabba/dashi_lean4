@@ -1,0 +1,132 @@
+# G10 — the relative (contractive) endgame
+
+This cycle answers the sharpened finish-line question: an `o(L⁶)` budget is
+*not* enough for the Riemann Hypothesis, and the replacement target is a
+**relative** budget.  Everything below is machine-checked, with no postulate,
+axiom, `sorry`/`admit`, Boolean receipt, imported authority or numerical
+evidence; `RiemannHypothesisFor` is unchanged.
+
+New module: `RiemannAnalytic/RelativeContraction.lean` (wired into
+`RiemannAnalytic.lean`).  One addition to
+`RiemannAnalytic/AnchoredPrimeExpansion.lean`.
+
+## 1. The absolute architecture is provably insufficient
+
+* `tube_radius_of_absolute_budget` — the positive content of every budget
+  proved so far: from the floor `cL⁶α² ≤ D` and `D ≤ E` one gets
+  `|α| ≤ √(E/(cL⁶))`.  A shrinking tube around the critical line.
+* `absolute_budget_insufficient` — the negative content, now a **theorem**
+  rather than a remark: for every `c > 0`, `L > 0`, `E > 0` there is a
+  **nonzero** `α` compatible with the floor.  So no absolute budget, however
+  small, can force `α = 0`.  A hypothetical family of zeros with
+  `α_ρ = (log γ)^{-100}` really does survive the `o(L⁶)` architecture.
+
+## 2. The contraction endgame, proved
+
+* `defect_eq_zero_of_relative_contraction` — `0 ≤ D`, `η < 1`, `D ≤ ηD` ⟹ `D = 0`.
+* `offLineTarget_excluded_of_relative_budget` — floor plus relative budget give
+  `α = 0` **exactly**.  There is no detectability radius in the conclusion.
+* `totalRelativeError_lt_one_of_parts`,
+  `totalRelativeError_eventually_contractive` — four relative budgets (prime,
+  source tail, mixed interference, endpoint) each tending to `0` with the
+  height sum to a strict contraction factor for all large heights.
+* `offLineTarget_excluded_eventually` — the packaged form: floor + relative
+  decomposition + four vanishing budgets ⟹ every sufficiently high off-line
+  target is excluded outright.
+* `no_positive_defect_of_relative_budget` — the contrapositive the programme
+  consumes.
+
+These are the *consumers*.  They contain no analytic input: they say precisely
+what an analytic input must deliver in order to finish.
+
+## 3. Exactly what the missing prime theorem must deliver
+
+* `relative_budget_of_alpha_factor` — an `α²`-carrying prime bound
+  `P ≤ Cδ²α²L⁶` is automatically a relative budget `P ≤ (Cδ²/c)·D` against the
+  geometric floor.
+* `offLineTarget_excluded_of_alpha_factor_budget` — and if the localisation
+  parameter satisfies `Cδ² < c`, that bound excludes the off-line target
+  outright.
+
+So the difference between `α = o(1)` and `α = 0` is exactly the retention of
+the factor `α²` in the prime estimate.  The budgets proved in G9
+(`anchoredPrimeSum_source_budget`: `𝒜_H ≤ 4π²A₀³C_W²L³H³ℓ²`) have the correct
+`δ²` localisation gain but **no `α²` factor**; that is the gap, stated formally.
+
+## 4. The difference kernel, made explicit
+
+* `normSq_exp_diff` — `|e^{it} − e^{ip}|² = 2(1 − cos(t − p))`.
+* `hermAnchorMinor_translate_diffKernel` — the anchored minor is exactly
+
+      Δ(s) = ½ ∑_{n,m} w_n w_m |e^{isλ_n} − e^{isλ_m}|².
+
+  This is the predicted difference-kernel form: the determinant replaces each
+  diagonal amplitude mass `|a_n|²` by a phase difference, which is the source of
+  every gain the norm-and-count budget discarded.
+
+## 5. A new verdict: the raw anchored prime observable cannot carry `α²`
+
+* `anchoredPrime_no_alpha_factor_of_positive_baseline` — if at the baseline
+  `α = 0` the amplitude family has two log-frequencies resolved by the shift
+  (exactly the hypothesis that makes the G9 ledger non-vacuous), then the
+  anchored minor is bounded below by a positive constant at `α = 0`, so **no**
+  bound of the form `C α² L⁶` can hold for it.
+
+Consequently the `α²`-carrying quantity required by §3 must be a
+*baseline-subtracted* (compensated) observable `𝒟(α) = 𝒜(α) − 𝒜(0)`, never the
+raw anchored prime sum.  This is the same conclusion the gauge analysis of
+`PhaseGauge` reached from the one-sided side, now proved on the prime side.
+
+## 6. The compensated observable does carry `α²`
+
+New module `RiemannAnalytic/CompensatedObservable.lean`.  Since the raw
+observable cannot carry `α²` (§5) and an absolute budget cannot close the
+argument (§1), the only remaining object is the compensated observable
+`𝒟(α) = 𝒜(α) − 𝒜(0)` (`compensatedMinor`, with `compensatedMinor_zero`).
+
+For the weight family the functional equation actually produces — pairing `ρ`
+with `1 − ρ̄` symmetrises the prime amplitude mass, `w_n(α) = w_n·cosh(2αλ_n)`
+(`coshWeight`) — we prove, with explicit constants and no asymptotics:
+
+* `sinh_le_mul_exp`, `cosh_sub_one_le` — `cosh x − 1 ≤ (x²/2)e^A` for `|x| ≤ A`;
+* `prod_sub_one_le_quadratic` — the two-factor version;
+* `compensatedMinor_cosh_le` — **the `α²`-carrying bound**
+
+      𝒟(α) ≤ K·α²·𝒜(0),   K = 2κ + κ²A²,  κ = 2Λ²e^{2AΛ},
+
+  valid for `|α| ≤ A` and log-frequencies bounded by `Λ`;
+* `compensatedMinor_cosh_le_of_reciprocal` — the regime where the constant is
+  clean: if `A·Λ ≤ 1` then `𝒟(α) ≤ 8Λ²e⁴·α²·𝒜(0)`;
+* `minorForm_le_varForm`, `compensatedMinor_cosh_le_varForm` — combined with the
+  G9 log-variance ledger, `𝒟(α) ≤ K·α²·s²·Var(w)`, which is exactly the shape
+  `𝒫 ≤ Cδ²α²L⁶` that §3 shows is sufficient to finish.
+
+**Honest caveat.**  The constant grows like `e^{2AΛ}`.  For the literal source
+the log-frequency range is `Λ ≍ L`, so with a fixed displacement range
+`A = 1/2` this is exponentially large — the same `cosh` blow-up that closed
+Lane A.  The bound is uniform precisely in the reciprocal regime `A·Λ ≲ 1`,
+i.e. `|α| ≲ 1/L`.  So the present state is a **two-step** architecture:
+the absolute (shrinking-tube) budgets would first have to push the admissible
+displacement down to `|α| = O(1/L)`, after which the compensated `α²` bound has
+a bounded constant and the contraction of §2 closes exactly.  Neither step is
+proved for the literal source, and the first step at strength `O(1/L)` is *not*
+implied by anything proved here.
+
+## 7. Status
+
+RH is **not** proved.  `OffLineDetectabilityContradiction` remains open.
+
+**First unproved theorem, in its now-sharpened relative form:**
+
+> There exist admissible source parameters `H = H(T)` and a function
+> `η_prime(T,H) → 0` such that for every off-line target `ρ` of height `T` the
+> anchored local prime error satisfies
+>
+>     E_prime,loc(ρ,T,H) ≤ η_prime(T,H) · m_ρ² a₀(ρ)² ‖b_ρ‖².
+>
+> Equivalently (via `relative_budget_of_alpha_factor`), an anchored prime bound
+> of the form `𝒫_H(α,T) ≤ C δ(T)² α² L⁶` with `δ(T) → 0`: the localisation gain
+> `δ²` is already available; the `α²` factor is not.
+
+Everything downstream of that estimate — the contraction, the exact exclusion,
+and the packaging over heights — is now proved.

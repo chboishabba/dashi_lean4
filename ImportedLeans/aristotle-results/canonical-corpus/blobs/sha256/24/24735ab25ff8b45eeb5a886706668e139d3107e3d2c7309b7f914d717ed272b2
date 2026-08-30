@@ -1,0 +1,201 @@
+module DASHI.Physics.YangMills.BalabanYM4BorderedKKTBlockFactorizationExact where
+
+------------------------------------------------------------------------
+-- ROW A1, CONSTRAINED-GAUSSIAN NORMALISATION:
+--   THE KKT BLOCK FACTORISATION  M = L · D · U,  PROVED (NOT ASSUMED),
+--   ON A FIXED AMBIENT SPACE
+--
+-- CONTEXT
+--
+-- The generic block-determinant modules of this tree take a determinant
+-- factorisation as an *interface field*.  The companion module
+-- `BalabanYM4BorderedKKTDeterminantExact` proves the resulting bordered
+-- identity outright on explicit finite rational carriers of ambient dimension
+-- 2 and 3.  This module proves the underlying *operator* identity in general:
+-- for any additive Δ with an additive two-sided inverse Δ^{-1}, any additive
+-- constraint Q and any Q*, the bordered (KKT) operator
+--
+--     M (x , λ)  =  ( Δ x + Q* λ , Q x )
+--
+-- factorises as M = L ∘ D ∘ U with
+--
+--     U (x , λ)  =  ( x + Δ^{-1} Q* λ , λ )            (unipotent, upper)
+--     D (x , λ)  =  ( Δ x , S λ ) ,  S λ = -( Q Δ^{-1} Q* λ )   (block diagonal)
+--     L (x , λ)  =  ( x , Q Δ^{-1} x + λ )             (unipotent, lower)
+--
+-- so the Schur complement S = -(Q Δ^{-1} Q*) — the constrained-Gaussian
+-- normalisation — appears as the second diagonal block, on the *fixed* ambient
+-- space Fine × Coarse.  No basis of ker Q is chosen anywhere, so no moving
+-- kernel basis can enter a later derivative computation.
+--
+-- The corollary `borderedDeterminantFactorises` records exactly what the
+-- factorisation buys: for *any* determinant that is multiplicative, equal to 1
+-- on the two unipotent factors and multiplicative across the diagonal blocks,
+--
+--     det M  =  det_Fine Δ · det_Coarse S .
+--
+-- Those three determinant properties are module parameters, i.e. explicit
+-- hypotheses of the corollary, not postulates; on the finite rational carriers
+-- of `BalabanYM4BorderedKKTDeterminantExact` the conclusion itself is proved
+-- directly from the Laplace determinants, with no such hypotheses at all.
+--
+-- WHAT IS *NOT* PROVED.  Nothing here evaluates Δ(U), Q(U) for the literal
+-- Wilson + reduced Faddeev–Popov + Haar background object.  Row A stays open
+-- and the frozen research count stays at 4.
+--
+-- No postulate, no hole, no receipt.  Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Product.Base using (_×_; _,_; proj₁; proj₂)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _/_; 1/_; NonZero)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst)
+
+------------------------------------------------------------------------
+-- The data of a constrained (KKT) Gaussian on a fixed ambient space
+------------------------------------------------------------------------
+
+record KKTOperatorData : Set₁ where
+  field
+    Fine Coarse : Set
+
+    _+F_  : Fine → Fine → Fine
+    _+C_  : Coarse → Coarse → Coarse
+    negC  : Coarse → Coarse
+    zeroC : Coarse
+
+    Δ Δinv : Fine → Fine
+    Q      : Fine → Coarse
+    Q*     : Coarse → Fine
+
+    Δ-additive    : ∀ x y → Δ (x +F y) ≡ Δ x +F Δ y
+    Δinv-additive : ∀ x y → Δinv (x +F y) ≡ Δinv x +F Δinv y
+    Q-additive    : ∀ x y → Q (x +F y) ≡ Q x +C Q y
+
+    Δ∘Δinv : ∀ x → Δ (Δinv x) ≡ x
+    Δinv∘Δ : ∀ x → Δinv (Δ x) ≡ x
+
+    +C-assoc     : ∀ u v w → (u +C v) +C w ≡ u +C (v +C w)
+    +C-inverseʳ  : ∀ v → v +C negC v ≡ zeroC
+    +C-identityʳ : ∀ v → v +C zeroC ≡ v
+
+module Factorisation (d : KKTOperatorData) where
+
+  open KKTOperatorData d
+
+  Ambient : Set
+  Ambient = Fine × Coarse
+
+  -- the Schur complement  S = -(Q Δ^{-1} Q*)
+  schur : Coarse → Coarse
+  schur v = negC (Q (Δinv (Q* v)))
+
+  -- the bordered (KKT) operator
+  bordered : Ambient → Ambient
+  bordered (x , v) = (Δ x +F Q* v) , Q x
+
+  upper : Ambient → Ambient
+  upper (x , v) = (x +F Δinv (Q* v)) , v
+
+  diagonal : Ambient → Ambient
+  diagonal (x , v) = Δ x , schur v
+
+  lower : Ambient → Ambient
+  lower (x , v) = x , (Q (Δinv x) +C v)
+
+  -- M = L ∘ D ∘ U, pointwise on the fixed ambient space.
+  kktFactorisation :
+    ∀ x v → lower (diagonal (upper (x , v))) ≡ bordered (x , v)
+  kktFactorisation x v = cong₂ _,_ firstComponent secondComponent
+    where
+      w : Coarse
+      w = Q (Δinv (Q* v))
+
+      firstComponent : Δ (x +F Δinv (Q* v)) ≡ Δ x +F Q* v
+      firstComponent =
+        trans (Δ-additive x (Δinv (Q* v)))
+          (cong (Δ x +F_) (Δ∘Δinv (Q* v)))
+
+      innerInverse : Δinv (Δ (x +F Δinv (Q* v))) ≡ x +F Δinv (Q* v)
+      innerInverse = Δinv∘Δ (x +F Δinv (Q* v))
+
+      secondComponent :
+        Q (Δinv (Δ (x +F Δinv (Q* v)))) +C schur v ≡ Q x
+      secondComponent =
+        trans (cong (λ z → Q z +C schur v) innerInverse)
+          (trans (cong (_+C schur v) (Q-additive x (Δinv (Q* v))))
+            (trans (+C-assoc (Q x) w (negC w))
+              (trans (cong (Q x +C_) (+C-inverseʳ w))
+                (+C-identityʳ (Q x)))))
+
+  -- The determinant consequence, with the determinant properties as explicit
+  -- hypotheses rather than assumed interface fields.  `detCongruent` is the
+  -- (mild) requirement that the determinant depends only on the operator's
+  -- values; it replaces function extensionality, since the factorisation is
+  -- proved pointwise.
+  module Determinant
+    (Scalar : Set)
+    (det : (Ambient → Ambient) → Scalar)
+    (detFine : (Fine → Fine) → Scalar)
+    (detCoarse : (Coarse → Coarse) → Scalar)
+    (_·_ : Scalar → Scalar → Scalar)
+    (unit : Scalar)
+    (detCongruent : ∀ f g → (∀ z → f z ≡ g z) → det f ≡ det g)
+    (multiplicative : ∀ f g → det (λ z → f (g z)) ≡ det f · det g)
+    (detUnipotentUpper : det upper ≡ unit)
+    (detUnipotentLower : det lower ≡ unit)
+    (detDiagonal : det diagonal ≡ detFine Δ · detCoarse schur)
+    (·-identityˡ : ∀ s → unit · s ≡ s)
+    (·-identityʳ : ∀ s → s · unit ≡ s)
+    where
+
+    borderedDeterminantFactorises :
+      det bordered ≡ detFine Δ · detCoarse schur
+    borderedDeterminantFactorises =
+      trans (sym composed)
+        (trans (multiplicative lower (λ z → diagonal (upper z)))
+          (trans (cong (det lower ·_) (multiplicative diagonal upper))
+            (trans (cong (_· (det diagonal · det upper)) detUnipotentLower)
+              (trans (·-identityˡ (det diagonal · det upper))
+                (trans (cong (det diagonal ·_) detUnipotentUpper)
+                  (trans (·-identityʳ (det diagonal)) detDiagonal))))))
+      where
+        composed : det (λ z → lower (diagonal (upper z))) ≡ det bordered
+        composed =
+          detCongruent (λ z → lower (diagonal (upper z))) bordered
+            (λ { (x , v) → kktFactorisation x v })
+
+------------------------------------------------------------------------
+-- A concrete one-dimensional instance, so the record is not vacuous
+------------------------------------------------------------------------
+
+-- Fine = Coarse = ℚ, Δ x = a x with a ≠ 0, Q x = q x, Q* λ = q λ.
+-- Then S λ = -(q² / a) λ, and the factorisation is the familiar
+--   [ a  q ]   [ 1    0 ] [ a   0    ] [ 1  q/a ]
+--   [ q  0 ] = [ q/a  1 ] [ 0  -q²/a ] [ 0   1  ] .
+
+scalarKKT : (a q : ℚ) .{{_ : NonZero a}} → KKTOperatorData
+scalarKKT a q = record
+  { Fine = ℚ ; Coarse = ℚ
+  ; _+F_ = _+_ ; _+C_ = _+_ ; negC = -_ ; zeroC = 0ℚ
+  ; Δ = λ x → a * x
+  ; Δinv = λ x → (1/ a) * x
+  ; Q = λ x → q * x
+  ; Q* = λ v → q * v
+  ; Δ-additive = λ x y → ℚP.*-distribˡ-+ a x y
+  ; Δinv-additive = λ x y → ℚP.*-distribˡ-+ (1/ a) x y
+  ; Q-additive = λ x y → ℚP.*-distribˡ-+ q x y
+  ; Δ∘Δinv = λ x →
+      trans (sym (ℚP.*-assoc a (1/ a) x))
+        (trans (cong (_* x) (ℚP.*-inverseʳ a)) (ℚP.*-identityˡ x))
+  ; Δinv∘Δ = λ x →
+      trans (sym (ℚP.*-assoc (1/ a) a x))
+        (trans (cong (_* x) (ℚP.*-inverseˡ a)) (ℚP.*-identityˡ x))
+  ; +C-assoc = ℚP.+-assoc
+  ; +C-inverseʳ = ℚP.+-inverseʳ
+  ; +C-identityʳ = ℚP.+-identityʳ
+  }

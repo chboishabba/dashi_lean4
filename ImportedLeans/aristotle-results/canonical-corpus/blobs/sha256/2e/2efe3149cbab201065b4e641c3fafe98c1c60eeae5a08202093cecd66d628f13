@@ -1,0 +1,153 @@
+module DASHI.Physics.YangMills.BalabanYM4SU2RegularOrbitBetaFloorExact where
+
+------------------------------------------------------------------------
+-- ROW A, GROUP-THEORY / SIGN ARITHMETIC FOR SU(2)
+--
+-- PRIMARY SOURCES
+--
+-- Roger Dashen and David J. Gross, "Relationship between Lattice and
+-- Continuum Definitions of the Gauge-Theory Coupling", Physical Review D 23
+-- (1981), 2340--2344.  DOI: 10.1103/PhysRevD.23.2340.
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHAT THIS MODULE SETTLES.  In the repository's exact rational convention the
+-- universal inverse-coupling coefficient of the pure Yang-Mills one-loop
+-- vacuum polarisation is (11/24) C_A, and for SU(2) the adjoint Casimir is
+-- C_A = 2, so the universal coefficient is exactly 11/12.  If the *regular*
+-- (four joint orbit) contribution of the same literal Wilson + reduced
+-- Faddeev-Popov + Haar evaluator is enclosed in [-1/2, 1/2] — the enclosure
+-- the finite lattice computation has to produce — then
+--
+--        beta_Z  >=  11/12 - 1/2  =  5/12  >  0.
+--
+-- So the SU(2) group-theory and sign arithmetic is *not* part of the physical
+-- obstruction: the remaining work is the enclosure itself, i.e. constructing
+-- the same-object constrained Gaussian determinant/log-determinant scalar and
+-- bounding its four orbit sums.  Row A stays open; the frozen research count
+-- stays at 4 (docs/ym/YangMillsClayFourFrozenResearchLemmas.md).
+--
+-- A companion module, `BalabanYM4SU2GaussianBetaLowerExact`, states the same
+-- coefficient fact against the repository's plaquette-coefficient producer;
+-- this module is deliberately self-contained (standard library only) so that
+-- the arithmetic can be checked in isolation with `agda --safe`.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_; -[1+_])
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _≤_; _<_; _/_; nonNegative)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- The universal coefficient at C_A = 2
+------------------------------------------------------------------------
+
+universalCoefficientDensity : ℚ          -- 11/24, the C_A-independent factor
+universalCoefficientDensity = + 11 / 24
+
+su2AdjointCasimir : ℚ                    -- C_A(SU(2)) = 2
+su2AdjointCasimir = + 2 / 1
+
+su2UniversalCoefficient : ℚ              -- 11/12
+su2UniversalCoefficient = + 11 / 12
+
+regularEnclosureRadius : ℚ               -- 1/2
+regularEnclosureRadius = + 1 / 2
+
+su2BetaFloor : ℚ                         -- 11/12 - 1/2 = 5/12
+su2BetaFloor = + 5 / 12
+
+-- (11/24) * 2 = 11/12, exactly.
+su2CoefficientExact :
+  universalCoefficientDensity * su2AdjointCasimir ≡ su2UniversalCoefficient
+su2CoefficientExact = refl
+
+-- 11/12 - 1/2 = 5/12, exactly.
+su2FloorExact :
+  su2UniversalCoefficient + (- regularEnclosureRadius) ≡ su2BetaFloor
+su2FloorExact = refl
+
+-- 11/12 + 1/2 = 17/12, exactly.
+su2CeilingExact :
+  su2UniversalCoefficient + regularEnclosureRadius ≡ + 17 / 12
+su2CeilingExact = refl
+
+su2BetaFloorPositive : 0ℚ < su2BetaFloor
+su2BetaFloorPositive = toWitness {a? = 0ℚ ℚP.<? su2BetaFloor} _
+
+------------------------------------------------------------------------
+-- The enclosure hypothesis and the resulting positive Gaussian beta
+------------------------------------------------------------------------
+
+-- `betaGauss` is the constrained-Gaussian part of the shell beta function in
+-- the normalised convention in which the universal term contributes exactly
+-- `su2UniversalCoefficient`; `regular` is the joint four-orbit regular
+-- remainder of the same literal evaluator.
+
+record SU2RegularOrbitEnclosure : Set where
+  field
+    betaGauss regular : ℚ
+    casimirIsSU2 : universalCoefficientDensity * su2AdjointCasimir
+                     ≡ su2UniversalCoefficient
+    decomposition : betaGauss
+                      ≡ universalCoefficientDensity * su2AdjointCasimir + regular
+    regularLower : - regularEnclosureRadius ≤ regular
+    regularUpper : regular ≤ regularEnclosureRadius
+
+open SU2RegularOrbitEnclosure public
+
+-- beta_Z >= 5/12 for any evaluator whose regular part is enclosed in
+-- [-1/2, 1/2].
+su2GaussianBetaFloor :
+  (enclosure : SU2RegularOrbitEnclosure) → su2BetaFloor ≤ betaGauss enclosure
+su2GaussianBetaFloor enclosure =
+  subst (λ z → su2BetaFloor ≤ z) (sym (decomposition enclosure))
+    (subst (λ z → su2BetaFloor ≤ z + regular enclosure)
+      (sym (casimirIsSU2 enclosure))
+      (subst (λ z → z ≤ su2UniversalCoefficient + regular enclosure)
+        su2FloorExact
+        (ℚP.+-monoʳ-≤ su2UniversalCoefficient (regularLower enclosure))))
+
+su2GaussianBetaPositive :
+  (enclosure : SU2RegularOrbitEnclosure) → 0ℚ < betaGauss enclosure
+su2GaussianBetaPositive enclosure =
+  ℚP.<-≤-trans su2BetaFloorPositive (su2GaussianBetaFloor enclosure)
+
+-- The matching upper bound, so the enclosure is genuinely two-sided:
+-- beta_Z <= 11/12 + 1/2 = 17/12.
+su2GaussianBetaCeiling :
+  (enclosure : SU2RegularOrbitEnclosure) → betaGauss enclosure ≤ + 17 / 12
+su2GaussianBetaCeiling enclosure =
+  subst (λ z → z ≤ + 17 / 12) (sym (decomposition enclosure))
+    (subst (λ z → z + regular enclosure ≤ + 17 / 12)
+      (sym (casimirIsSU2 enclosure))
+      (subst (λ z → su2UniversalCoefficient + regular enclosure ≤ z)
+        su2CeilingExact
+        (ℚP.+-monoʳ-≤ su2UniversalCoefficient (regularUpper enclosure))))
+
+------------------------------------------------------------------------
+-- Non-vacuity: an enclosure with a genuinely nonzero regular part
+------------------------------------------------------------------------
+
+-- regular = -1/3 (inside the enclosure, nonzero, and of the dangerous sign):
+-- beta_Z = 11/12 - 1/3 = 7/12 >= 5/12 > 0.
+
+sampleEnclosure : SU2RegularOrbitEnclosure
+sampleEnclosure = record
+  { betaGauss = + 7 / 12
+  ; regular = -[1+ 0 ] / 3
+  ; casimirIsSU2 = refl
+  ; decomposition = refl
+  ; regularLower = toWitness {a? = (- regularEnclosureRadius) ℚP.≤? (-[1+ 0 ] / 3)} _
+  ; regularUpper = toWitness {a? = (-[1+ 0 ] / 3) ℚP.≤? regularEnclosureRadius} _
+  }

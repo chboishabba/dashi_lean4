@@ -1,0 +1,606 @@
+{
+  "schema_version": 1,
+  "catalog": "cmp116-lemma3",
+  "updated": "2026-06-25",
+  "sources": {
+    "cmp116": {
+      "short": "Balaban CMP116",
+      "title": "Renormalization Group Approach to Lattice Gauge Field Theories II. Cluster Expansions",
+      "author": "T. Balaban",
+      "journal": "Communications in Mathematical Physics 116 (1988), 1-22",
+      "doi": "10.1007/BF01239022",
+      "local_artifacts": {
+        "pdf": "balaban-rg-II-cmp116-1104161193.pdf",
+        "text_full": "text/balaban-rg-II-cmp116-1104161193.txt",
+        "text_pages_15_20": "text/cmp116-pages-15-20.txt",
+        "text_page_21": "text/cmp116-page-21-post-lemma3.txt",
+        "render_source_12": "renders/cmp116-source-12-eq25-28.png",
+        "render_source_13": "renders/cmp116-source-13-eq25-28.png",
+        "render_source_14": "renders/cmp116-source-14-eq25-28.png",
+        "render_source_18": "renders/cmp116-source-18.png",
+        "render_source_19": "renders/cmp116-source-19.png",
+        "render_source_20": "renders/cmp116-source-20.png",
+        "render_source_21": "renders/cmp116-source-21.png"
+      }
+    },
+    "cmp109": {
+      "short": "Balaban CMP109",
+      "title": "Renormalization Group Approach to Lattice Gauge Field Theories I. Generation of Effective Actions in a Small Field Approximation and a Coupling Constant Renormalization in Four Dimensions",
+      "author": "T. Balaban",
+      "journal": "Communications in Mathematical Physics 109 (1987), 249-301",
+      "doi": "10.1007/BF01215223",
+      "local_artifacts": {
+        "pdf": "balaban-rg-I-cmp109-1104116842.pdf",
+        "text_full": "text/balaban-rg-I-cmp109-1104116842.txt",
+        "render_reference_26_page_51": "renders/cmp109-reference-26-page-51.png"
+      }
+    },
+    "cammarota_cmp85": {
+      "short": "Cammarota CMP85",
+      "title": "Decay of correlations for infinite range interactions in unbounded spin systems",
+      "author": "C. Cammarota",
+      "journal": "Communications in Mathematical Physics 85 (1982), 517-528",
+      "doi": "10.1007/BF01403502",
+      "web_urls": {
+        "springer": "https://link.springer.com/article/10.1007/BF01403502",
+        "project_euclid_html": "https://projecteuclid.org/journals/communications-in-mathematical-physics/volume-85/issue-4/Decay-of-correlations-for-infinite-range-interactions-in-unbounded-spin/cmp/1103921545.full",
+        "project_euclid_pdf": "https://projecteuclid.org/journals/communications-in-mathematical-physics/volume-85/issue-4/Decay-of-correlations-for-infinite-range-interactions-in-unbounded-spin/cmp/1103921545.pdf",
+        "researchgate_author_upload": "https://www.researchgate.net/publication/256305844_Decay_of_correlations_for_infinite_range_interactions_in_unbounded_spin_systems"
+      }
+    },
+    "cmp119": {
+      "short": "Balaban CMP119",
+      "title": "Convergent Renormalization Expansions for Lattice Gauge Theories",
+      "author": "T. Balaban",
+      "journal": "Communications in Mathematical Physics 119 (1988), 243-285",
+      "doi": "10.1007/BF01217741",
+      "local_artifacts": {
+        "pdf": "balaban-convergent-cmp119-from-fusion.pdf",
+        "text_full": "text/balaban-convergent-cmp119-from-fusion.txt",
+        "render_source_18": "renders/cmp119-source-18.png",
+        "render_source_19": "renders/cmp119-source-19.png"
+      }
+    }
+  },
+  "citations": [
+    {
+      "key": "cmp116.gaussian-pushforward.2.5-2.6",
+      "source_id": "cmp116",
+      "locator": {
+        "printed_pages": "12-13",
+        "pdf_pages": "12-13",
+        "equations": ["2.5", "2.6"],
+        "local_text": "balaban-rg-II-cmp116-1104161193.txt lines 453-493",
+        "renders": ["render_source_12", "render_source_13"]
+      },
+      "status": "visual_confirmed",
+      "summary": "Linear covariance-root change of variables moves the localized fluctuation integral to the product standard Gaussian interface.",
+      "lean_targets": [
+        "balabanCMP116Dmu0",
+        "PhysicalGaugeCMP116LocalizedGaussianActivitySourceHypotheses.gaussian_pushforward",
+        "BalabanCMP116Lemma3WeightedPostPSourceAssumptions.gaussian_pushforward"
+      ],
+      "use_for": [
+        "Source anchor for Gaussian pushforward after the covariance-root change of variables."
+      ],
+      "do_not_use_for": [
+        "Do not treat this as the dictionary coordinate identification, determinant normalization, or root-localization theorem."
+      ],
+      "open_questions": [
+        "Exact coordinate/dictionary statement for the repository's physical fluctuation field.",
+        "Normalization/Jacobian assumptions needed by the Lean Gaussian pushforward field."
+      ]
+    },
+    {
+      "key": "cmp116.localized-activity.2.7-2.10",
+      "source_id": "cmp116",
+      "locator": {
+        "printed_pages": "13-14",
+        "pdf_pages": "13-14",
+        "equations": ["2.7", "2.8", "2.9", "2.10"],
+        "local_text": "balaban-rg-II-cmp116-1104161193.txt lines 494-553",
+        "renders": ["render_source_13", "render_source_14"]
+      },
+      "status": "visual_confirmed",
+      "summary": "Balaban localizes the product-Gaussian expression into quantities H(Z,Z0) and H(Z), with component factorization.",
+      "lean_targets": [
+        "local_physical_activity_construction",
+        "CMP116Lemma3ActivityTermwiseScaleBoundary",
+        "PhysicalGaugeLocalActivity.globalEval"
+      ],
+      "use_for": [
+        "Source anchor for existence of localized activity H(Z) before Lemma 3 estimates."
+      ],
+      "do_not_use_for": [
+        "Do not claim exact finite covariance-root reconstruction from this citation.",
+        "Do not claim the repository's active support inclusion without the enlargement convention."
+      ],
+      "open_questions": [
+        "Exact map from Balaban localization domains to OmegaPolymerType supports.",
+        "Exact active-support and external-field locality theorem needed by Appendix-F support hypotheses."
+      ]
+    },
+    {
+      "key": "cmp116.lemma3.window.2.14-2.38",
+      "source_id": "cmp116",
+      "locator": {
+        "printed_pages": "15-20",
+        "pdf_pages": "15-20",
+        "equations": ["2.14", "2.26", "2.27", "2.29", "2.31", "2.32", "2.37", "2.38"],
+        "local_text": "cmp116-pages-15-20.txt lines 1-334",
+        "renders": ["render_source_18", "render_source_19", "render_source_20"]
+      },
+      "status": "ocr_corrupted",
+      "summary": "Main resummation window for the activity H(Z), ending in Lemma 3 and the final exponential activity estimate.",
+      "lean_targets": [
+        "CMP116Lemma3Eq229ScaleBoundary",
+        "CMP116Eq231PBondBoundary",
+        "CMP116Lemma3WeightedPostPSourceScaleBoundary",
+        "CMP116Lemma3ActivityTermwiseScaleBoundary",
+        "CMP116RawSourceM3Frontier.of_eq231WeightedPostPSourceBoundaries"
+      ],
+      "use_for": [
+        "Navigation to the exact source region for the remaining Lemma 3 boundary discharges."
+      ],
+      "do_not_use_for": [
+        "Do not cite the OCR text as exact formula data.",
+        "Do not use this broad window as a single monolithic Lean hypothesis."
+      ],
+      "open_questions": [
+        "Exact source-to-Lean dictionary for the H(Z) termwise summation (2.14) and the D/P/Z0/Z0' dependent indices.",
+        "External Cammarota theorem and threshold dependencies needed to theorem-feed the visually confirmed Eq. (2.29) D-stage display.",
+        "Exact Eq. (2.31) P-family carrier, injection, and carrier-count theorem.",
+        "Formal constant-hierarchy theorem turning the visually confirmed Eq. (2.37), alpha5/C3 region, and smallness assumptions into repository postPSourceWeight/postPAmplitude fields."
+      ]
+    },
+    {
+      "key": "cmp116.eq229.d-stage-summability",
+      "source_id": "cmp116",
+      "locator": {
+        "printed_pages": "18",
+        "pdf_pages": "18",
+        "equations": ["2.29"],
+        "local_text": "cmp116-pages-15-20.txt lines 181-191",
+        "renders": ["render_source_18"]
+      },
+      "status": "visual_confirmed",
+      "summary": "Visually confirmed D-stage summability after the product estimate following (2.28): for K sufficiently large and alpha6 sufficiently small, the D-family product sum is at most one.",
+      "extracted_claims": [
+        "Before Eq. (2.27), Balaban fixes one connected component Y0 and considers the product over Y in D in Eq. (2.26), extracting alpha6 * exp(-delta * kappa * d_k(Y)) from each factor.",
+        "Eq. (2.27) states sum_{Y in D} (d_k(Y) + 5) >= d_k(Y0) + 5, using that union_{Y in D} Y = Y0 and Y0 is connected.",
+        "Under the displayed smallness condition 2*E0*epsilon1*C1*alpha4^-1*alpha6^-1*M^q*exp(C2*kappa1)*exp(5*kappa) <= 1, Eq. (2.28) bounds the product from Eq. (2.26) by the Eq. (2.29) product times the remaining Y0 exponential prefactor.",
+        "Eq. (2.29) states sum_D product_{Y in D} alpha6 * exp(-delta * kappa * d_k(Y)) <= 1 for K sufficiently large and alpha6 sufficiently small.",
+        "Eq. (2.30) records the domain metric comparison (3*2^3)^-1 * M^-4 * |Y| <= d_k(Y) <= M^-4 * |Y| - 1 for localization domains Y in D_k."
+      ],
+      "lean_targets": [
+        "CMP116Lemma3Eq229ScaleBoundary",
+        "CMP116Eq229Summability",
+        "cmp116Eq229Product",
+        "cmp116H_postD_sum_le_of_eq229",
+        "cmp116H_termWeightSum_le_of_eq229_of_pStagePostPResidualBound"
+      ],
+      "use_for": [
+        "Source anchor for the Eq. (2.29) D-family product, the product-sum bound, and the adjacent Eq. (2.27)/(2.30) metric comparisons."
+      ],
+      "do_not_use_for": [
+        "Do not treat the qualitative phrase 'K sufficiently large and alpha6 sufficiently small' as a formal uniform threshold without extracting or proving the cited combinatorial argument.",
+        "Do not identify the repository's DIndex/DParts with Balaban's D-families until the source-to-Lean dictionary is supplied."
+      ],
+      "open_questions": [
+        "Exact source-to-Lean dictionary for DIndex, DParts, and the localization-domain metric d_k.",
+        "Formal proof or source theorem for the large-K/small-alpha6 summability assertion, including threshold dependencies and uniformity over scale, volume, and background.",
+        "Exact role of the cited argument in [26] used to prove inequalities of this type."
+      ]
+    },
+    {
+      "key": "cmp109.ref26.cammarota-infinite-range-cluster",
+      "source_id": "cmp109",
+      "locator": {
+        "printed_pages": "299",
+        "pdf_pages": "51",
+        "equations": ["Reference 26"],
+        "local_text": "balaban-rg-I-cmp109-1104116842.txt lines 2020-2023",
+        "renders": ["render_reference_26_page_51"]
+      },
+      "status": "visual_confirmed",
+      "summary": "Visual identification of the reference [26] cited by CMP116 Eq. (2.29)-type summability as C. Cammarota, Decay of correlations for infinite range interactions in unbounded spin systems, CMP 85, 517-528 (1982).",
+      "extracted_claims": [
+        "CMP109 printed page 299, reference 26, lists C. Cammarota: Decay of correlations for infinite range interactions in unbounded spin systems, Communications in Mathematical Physics 85, 517-528 (1982).",
+        "CMP116 printed page 18 says inequalities of the Eq. (2.29) type can be proved by a simple modification of the argument in [26].",
+        "This citation identifies the external source to inspect next; it does not extract Cammarota's theorem, constants, hypotheses, or its translation to Balaban D-families."
+      ],
+      "lean_targets": [
+        "CMP116Lemma3Eq229ScaleBoundary",
+        "CMP116Eq229Summability",
+        "cmp116_DStage_sum_le_of_eq229"
+      ],
+      "use_for": [
+        "Bibliographic source lookup for the external combinatorial/cluster-expansion argument behind CMP116 Eq. (2.29)-type product summability."
+      ],
+      "do_not_use_for": [
+        "Do not cite this entry as a theorem proving Eq. (2.29).",
+        "Do not infer threshold dependencies for K or alpha6 from this bibliographic identification alone.",
+        "Do not identify Cammarota's polymer/spin-system hypotheses with the repository's DIndex/DParts without extracting the actual theorem."
+      ],
+      "open_questions": [
+        "Exact theorem, lemma, proposition, or equation in Cammarota CMP85 proving the polymer-family summability argument needed by Balaban.",
+        "Constants and threshold dependencies needed to convert Cammarota's argument into the qualitative CMP116 condition K sufficiently large and alpha6 sufficiently small.",
+        "Precise dictionary from Cammarota's interaction/polymer objects to Balaban's D-families and then to the repository's DIndex/DParts fields."
+      ]
+    },
+    {
+      "key": "cammarota.cmp85.polymer-mayer-source-target",
+      "source_id": "cammarota_cmp85",
+      "locator": {
+        "printed_pages": "517-528",
+        "pdf_pages": "-",
+        "equations": ["Section 1", "Theorem 1", "general polymer Mayer series theorem"],
+        "local_text": "-",
+        "web_urls": [
+          "https://link.springer.com/article/10.1007/BF01403502",
+          "https://projecteuclid.org/journals/communications-in-mathematical-physics/volume-85/issue-4/Decay-of-correlations-for-infinite-range-interactions-in-unbounded-spin/cmp/1103921545.full",
+          "https://projecteuclid.org/journals/communications-in-mathematical-physics/volume-85/issue-4/Decay-of-correlations-for-infinite-range-interactions-in-unbounded-spin/cmp/1103921545.pdf",
+          "https://www.researchgate.net/publication/256305844_Decay_of_correlations_for_infinite_range_interactions_in_unbounded_spin_systems"
+        ]
+      },
+      "status": "source_pending",
+      "summary": "Primary bibliographic page located for Cammarota CMP85, the external argument CMP116 cites for Eq. (2.29)-type summability; the exact theorem, constants, hypotheses, and Balaban D-family dictionary are still not extracted.",
+      "extracted_claims": [
+        "Springer confirms the article metadata: C. Cammarota, Communications in Mathematical Physics 85, 517-528 (1982), DOI 10.1007/BF01403502.",
+        "The Springer abstract says the paper uses an associated polymer model and gives a proof of convergence of the Mayer series for the general polymer model.",
+        "Project Euclid advertises a PDF endpoint for this article, but the automation environment received an anti-bot HTML page rather than a PDF.",
+        "ResearchGate exposes an author-uploaded OCR/full-text view, but it is not yet a local primary PDF artifact and its OCR is too corrupted to theorem-feed Eq. (2.29)."
+      ],
+      "lean_targets": [
+        "CMP116Lemma3Eq229ScaleBoundary",
+        "CMP116Eq229Summability",
+        "cmp116_DStage_sum_le_of_eq229"
+      ],
+      "use_for": [
+        "Precise source request and access ledger for the Cammarota theorem behind CMP116 Eq. (2.29)-type D-family summability."
+      ],
+      "do_not_use_for": [
+        "Do not cite this entry as a theorem proving Eq. (2.29).",
+        "Do not use ResearchGate OCR to set Lean constants or thresholds.",
+        "Do not identify Cammarota polymers with Balaban D-families or repository DIndex/DParts until the exact theorem and dictionary are extracted."
+      ],
+      "open_questions": [
+        "Exact printed theorem/lemma/proposition/equation in Cammarota CMP85 that proves the polymer-family summability used by Balaban.",
+        "Exact smallness hypothesis, constants, metric/diameter convention, dimension dependence, and uniformity in volume.",
+        "Exact route from Cammarota's polymer-model theorem to Balaban's qualitative large-K/small-alpha6 Eq. (2.29) assertion.",
+        "Exact source-to-Lean dictionary from Cammarota polymers to Balaban D-families and then to DIndex/DParts."
+      ]
+    },
+    {
+      "key": "cmp116.eq231.p-bond-sum",
+      "source_id": "cmp116",
+      "locator": {
+        "printed_pages": "18-19",
+        "pdf_pages": "18-19",
+        "equations": ["2.31"],
+        "local_text": "cmp116-pages-15-20.txt lines 194-214",
+        "renders": ["render_source_18", "render_source_19"]
+      },
+      "status": "visual_confirmed",
+      "summary": "Visually confirmed Eq. (2.31) P-summation with fixed Z0 and Y0, controlled by the exponential factor involving the finite bond set P.",
+      "extracted_claims": [
+        "For fixed Z0 and Y0, the displayed P-sum has factors exp(-rho * M^-4 * |Z0 \\ Y0|) and exp(-2 * rho * |P|), where rho = (1/20) * gamma2 * epsilon1^2 / gk^2.",
+        "The displayed powerset/cardinality bound is exp(-M^-4 * |Z0 \\ Y0| * (rho - 4 * M^4 * exp(-2 * rho))) <= 1.",
+        "The localization/counting scale visible in Eq. (2.31) is M, and the Lean gapMass abstraction corresponds to M^-4 * |Z0 \\ Y0|.",
+        "The source text immediately before Eq. (2.31) describes P as a set of bonds and says |P| >= (1/2) * M^-4 * |Z0 \\ Y0| because one bond in P may connect two cubes in Z0 \\ Y0."
+      ],
+      "lean_targets": [
+        "CMP116Eq231PBondBoundary",
+        "cmp116Eq231SourcePIndex",
+        "cmp116Eq231SourcePIndex_mem_iff",
+        "CMP116Eq231PBondBoundary.of_sourceBondSets",
+        "CMP116Eq231PBondBoundary.of_sourceFilteredBondSets",
+        "cmp116Eq231PWeight",
+        "cmp116Eq231_rate_condition_of_source_bracket",
+        "cmp116Eq231_rate_condition_of_source_smallness",
+        "cmp116PGeometricFamilySummation_of_eq231",
+        "cmp116PStageSourceBound_of_eq231_sourceBondSets",
+        "cmp116PStageSourceBound_of_eq231_filteredBondSets",
+        "CMP116Lemma3PStageSourceScaleBoundary.of_eq231_pointwise"
+      ],
+      "use_for": [
+        "Source anchor for the Eq. (2.31) rate rho, gapMass shape, exact bracket condition rho - 4*M^4*exp(-2*rho), and finite bond-subset entropy bound."
+      ],
+      "do_not_use_for": [
+        "Do not assert the repository's pBonds_injective, pBonds_subset, or PIndex dictionary until the exact source-to-Lean set map is supplied.",
+        "Do not cite the stronger Lean sufficient condition 80*M^4*gk^2 <= gamma2*epsilon1^2 as a verbatim source hypothesis."
+      ],
+      "open_questions": [
+        "Exact dictionary from Balaban's finite bond set P to the repository's PIndex/pBonds fields.",
+        "Formal source proof of the carrier/cardinality bound used as bondCarrier_card_le in Lean.",
+        "Exact parameter-hierarchy statement relating gk, gamma, gamma2, epsilon1, M, and kappa after Eq. (2.31)."
+      ]
+    },
+    {
+      "key": "cmp116.eq231.p-family-carrier-source-target",
+      "source_id": "cmp116",
+      "locator": {
+        "printed_pages": "12, 18-19",
+        "pdf_pages": "12, 18-19",
+        "equations": ["2.3", "paragraph before 2.31", "2.31"],
+        "local_text": [
+          "balaban-rg-II-cmp116-1104161193.txt lines 467-475",
+          "cmp116-pages-15-20.txt lines 194-214"
+        ],
+        "renders": ["render_source_12", "render_source_18", "render_source_19"]
+      },
+      "status": "source_pending",
+      "summary": "Source-targeting entry for the exact Balaban P-family membership theorem and eligible bond carrier theorem needed before identifying source PIndex with the filtered Lean family.",
+      "extracted_claims": [
+        "The visually confirmed Eq. (2.31) display fixes the rate rho, the gap factor M^-4*|Z0 \\ Y0|, and the powerset/cardinality bracket used by the current finite-sum theorem.",
+        "The earlier OCR candidate at CMP116 full-text lines 467-475 says that for fixed Y0 one defines a set of bonds Y0, decomposes chi_k into a sum over P subsets of Y0, takes Z0 as the smallest localization domain containing Y0 and P, and requires bonds of P to be in the interior of Z0 and not intersect dZ0.",
+        "The visually confirmed paragraph describes P as a finite bond set and gives the lower bound |P| >= (1/2)*M^-4*|Z0 \\ Y0|.",
+        "The inspected citation material does not yet give a formal source-to-Lean map from Balaban's P to repository PIndex/pBonds, nor does it prove the carrier upper bound recorded by CMP116Eq231PBondBoundary.",
+        "Lean now has a source-neutral extensional bridge: a pointwise membership iff for PIndex yields equality with cmp116Eq231SourcePIndex, but the source membership iff remains pending."
+      ],
+      "lean_targets": [
+        "CMP116Eq231PBondBoundary",
+        "cmp116Eq231SourcePIndex_mem_iff",
+        "cmp116Eq231PIndex_eq_sourceFilteredBondSets_of_mem_iff",
+        "CMP116Eq231PBondBoundary.of_sourceBondSets",
+        "CMP116Eq231PBondBoundary.of_sourceFilteredBondSets",
+        "cmp116PGeometricFamilySummation_of_eq231",
+        "cmp116PStageSourceBound_of_eq231_pointwise",
+        "cmp116PStageSourceBound_of_eq231_sourceBondSets",
+        "cmp116PStageSourceBound_of_eq231_filteredBondSets",
+        "CMP116Lemma3PStageSourceScaleBoundary.of_eq231_pointwise",
+        "CMP116Lemma3PStageSourceScaleBoundary.of_eq231_sourceBondSets",
+        "CMP116Lemma3PStageSourceScaleBoundary.of_eq231_filteredBondSets",
+        "CMP116Lemma3WeightedPostPScaleSourceAssumptions.of_eq231_boundaries",
+        "CMP116Lemma3WeightedPostPScaleSourceAssumptions.of_eq231_filteredBondSets",
+        "CMP116Lemma3WeightedPostPScaleSourceAssumptions.lemma3_activity_estimate_of_eq231_filteredBondSets",
+        "CMP116RawSourceM3Frontier.of_eq231WeightedPostPSourceBoundaries"
+      ],
+      "use_for": [
+        "Target for proving the pointwise membership iff that identifies Balaban's source P-family with the filtered Lean PIndex family.",
+        "Precise source request for removing the live carrier-containment hypothesis from concrete source-facing P-stage and M3 routes.",
+        "Checklist for the source facts required to justify the four-positive-direction carrier used by the concrete finite-bond-set PIndex route."
+      ],
+      "do_not_use_for": [
+        "Do not construct a source-native PIndex, pBonds_injective, pBonds_subset, gapMass, or bondCarrier_card_le theorem from this entry alone.",
+        "Do not treat the source lower bound on |P| as the carrier upper bound needed by Lean.",
+        "Do not replace CMP116Eq231PBondBoundary with a record that merely repackages the same arbitrary data under a source name."
+      ],
+      "open_questions": [
+        "Exact pointwise membership characterization: P is in Balaban's source P-family iff P is contained in the eligible carrier and satisfies the admissibility condition used by cmp116Eq231SourcePIndex.",
+        "Exact definition of the eligible bond universe for fixed Z0 and Y0, including orientation and adjacency conventions.",
+        "Whether Balaban's P is literally a subset of that eligible carrier or an encoded object requiring a quotient/dictionary.",
+        "Proof that the source P-family has an injective representation as finite bond subsets in the repository convention.",
+        "Proof of the carrier count |Carrier(Z0,Y0)| <= 4*|Z0 \\ Y0|, equivalently <= 4*M^4*gapMass under the Lean gapMass convention.",
+        "Exact relationship between the source lower bound |P| >= (1/2)*M^-4*|Z0 \\ Y0| and the repository weight exp(-2*rho*|P|)."
+      ]
+    },
+    {
+      "key": "cmp109.bond-convention.positive-oriented",
+      "source_id": "cmp109",
+      "locator": {
+        "printed_pages": "251, 262, 269",
+        "pdf_pages": "3, 14, 21",
+        "equations": ["lattice-domain convention", "1.10", "2.17"],
+        "local_text": [
+          "balaban-rg-I-cmp109-1104116842.txt lines 131-136",
+          "balaban-rg-I-cmp109-1104116842.txt lines 572-579",
+          "balaban-rg-I-cmp109-1104116842.txt lines 868-878"
+        ]
+      },
+      "status": "source_pending",
+      "summary": "Candidate CMP109 bond-convention source windows: subsets determine bonds as nearest-neighbor intervals, bonds have endpoints b_- and b_+, and later CMP109 formulas restrict b to positively oriented bonds.",
+      "extracted_claims": [
+        "CMP109 printed page 251 says a continuous-space subset determines lattice points, bonds, and plaquettes, and describes bonds as intervals connecting nearest-neighbor points that intersect the subset.",
+        "CMP109 printed page 262 writes a bond as b = (b_-, b_+) when defining endpoint-dependent gauge transformations.",
+        "CMP109 printed page 269 says that in the displayed transformation formulas the bonds b are positively oriented, and recalls that the relevant representation formula holds for such bonds only.",
+        "These windows support the search for a four-positive-direction carrier convention, but they do not by themselves identify the CMP116 Eq. (2.31) P-family carrier or prove the filtered PIndex membership iff."
+      ],
+      "lean_targets": [
+        "CMP116Eq231PBondBoundary",
+        "cmp116Eq231SourcePIndex_mem_iff",
+        "cmp116Eq231PIndex_eq_sourceFilteredBondSets_of_mem_iff",
+        "CMP116Eq231PBondBoundary.of_sourceBondSets",
+        "CMP116Eq231PBondBoundary.of_sourceFilteredBondSets",
+        "CMP116Lemma3PStageSourceScaleBoundary.of_eq231_filteredBondSets",
+        "CMP116Lemma3WeightedPostPScaleSourceAssumptions.of_eq231_filteredBondSets"
+      ],
+      "use_for": [
+        "Companion source target for the oriented-bond convention needed by the CMP116 Eq. (2.31) filtered P-family dictionary.",
+        "Input for a precise source/pro-advisor request asking for the missing bridge from CMP109's general bond convention to CMP116's fixed-(Z0,Y0) eligible P carrier."
+      ],
+      "do_not_use_for": [
+        "Do not cite this entry as proving that Balaban's Eq. (2.31) P-family equals cmp116Eq231SourcePIndex.",
+        "Do not infer the carrier bound |Carrier(Z0,Y0)| <= 4*|Z0 \\ Y0| from these windows alone.",
+        "Do not treat positive orientation here as the complete source-to-Lean dictionary for Cube x Fin 4."
+      ],
+      "open_questions": [
+        "Exact CMP116 or surrounding-source statement that the P-family near Eq. (2.31) uses the same positively oriented bond convention.",
+        "Exact eligible carrier for fixed (Z0,Y0) and proof that every source P is a subset of it.",
+        "Exact carrier cardinality theorem and the source-to-Lean conversion to gapCubes Z D x Finset.univ."
+      ]
+    },
+    {
+      "key": "cmp116.eq237.post-p-resummation",
+      "source_id": "cmp116",
+      "locator": {
+        "printed_pages": "19-20",
+        "pdf_pages": "19-20",
+        "equations": ["2.37"],
+        "local_text": "cmp116-pages-15-20.txt lines 281-311",
+        "renders": ["render_source_19", "render_source_20"]
+      },
+      "status": "visual_confirmed",
+      "summary": "Post-P resummation over D, P, and Z0 families leading to the fixed Z0' bound before the final Z0' summation.",
+      "extracted_claims": [
+        "The paragraph before Eq. (2.37) estimates sums over connected components Z_i' of a fixed Z0' by using (1.28), then Eq. (2.29), with the smallness assumptions (L+2)^4*O(1)*epsilon2 <= 1/2 and 2*(L+2)^4*O(1)*epsilon2*exp(5*kappa) <= 1.",
+        "Eq. (2.37) bounds the partially resummed absolute value for fixed Z0' by exp(-(kappa1 - 1)*(LM)^-4*|Z \\ Z0'|) times a product over connected components Z_i' of Z0' of 2*(L+2)^4*O(1)*epsilon2*exp(-((1 - 7*delta)/2)*L*kappa*d_{k+1}(Z_i')), multiplied by exp(O(1)*alpha5*|Z|).",
+        "The paragraph following Eq. (2.37) performs the last sum over Z0' or Z \\ Z0'. It uses the adapted Eq. (2.32), half of the first exponential factor, the assumption (1/2)*(kappa1 - 1) >= 2*L*kappa, and an Eq. (2.34)-type estimate.",
+        "This supports the Lean design in which Eq. (2.37) plus the following paragraph feed a combined post-P source boundary and a separate majorization into the canonical Lemma-3 base factor; it does not justify separate normalized Z0 and Z0' source theorems by itself."
+      ],
+      "lean_targets": [
+        "CMP116Eq237MajorizationBoundary",
+        "cmp116Eq237Z0PrimeIndex",
+        "cmp116Eq237Z0Fiber",
+        "cmp116Eq237_nested_sum_eq_fiber_sum",
+        "cmp116Eq237Amplitude",
+        "cmp116Eq237FixedZ0PrimeWeight",
+        "cmp116PostPResidualSourceBound_of_eq237",
+        "cmp116Eq237_residualExponent_absorbed",
+        "cmp116PostPResidualSourceMajorizationScaleFamily_of_eq237",
+        "CMP116Lemma3WeightedPostPSourceScaleBoundary.of_sourceBound_eq237Majorization",
+        "CMP116Lemma3WeightedPostPSourceScaleBoundary.of_eq237",
+        "CMP116Lemma3WeightedPostPScaleSourceAssumptions.of_eq237Majorization",
+        "CMP116Lemma3WeightedPostPScaleSourceAssumptions.of_eq237",
+        "CMP116Lemma3WeightedPostPScaleSourceAssumptions.lemma3_activity_estimate_of_eq237Majorization",
+        "CMP116Lemma3WeightedPostPScaleSourceAssumptions.lemma3_activity_estimate_of_eq237",
+        "CMP116Lemma3WeightedPostPSourceScaleBoundary.postP_source_bound",
+        "CMP116PostPResidualSourceBound",
+        "CMP116PostPResidualSourceMajorizationScaleFamily"
+      ],
+      "use_for": [
+        "Source anchor for the combined post-P source boundary supplied to CMP116PostPResidualSourceBound.",
+        "Source anchor for the exponent-reserve step that turns the page-20 post-P weight into the canonical Lemma-3 decay weight once the residual exponent is explicitly bounded.",
+        "Source anchor for treating the post-P stage as order-sensitive and combined rather than as separately normalized Z0 and Z0' source estimates."
+      ],
+      "do_not_use_for": [
+        "Do not split this into standalone Z0 and Z0' residual theorems unless the source text explicitly supports that split.",
+        "Do not claim this entry alone proves the repository source-to-Lean dictionaries for D, P, Z0, or Z0'.",
+        "Do not collapse the following final Z0' summation/majorization into Eq. (2.37) without recording it as a separate source step."
+      ],
+      "open_questions": [
+        "Exact source-to-Lean dictionary for the D, P, Z0, and Z0' indices in Eq. (2.37).",
+        "Exact formal theorem deriving CMP116Eq237MajorizationBoundary from the visual Eq. (2.37), alpha5, C3, and metric-comparison constants.",
+        "Exact identities or common majorants for the O(1) constants in the Eq. (2.37) and post-Eq. (2.37) paragraphs."
+      ]
+    },
+    {
+      "key": "cmp116.constants.c3-alpha5",
+      "source_id": "cmp116",
+      "locator": {
+        "printed_pages": "20",
+        "pdf_pages": "20",
+        "equations": ["2.37", "2.38"],
+        "local_text": "cmp116-pages-15-20.txt lines 313-327",
+        "renders": ["render_source_20"]
+      },
+      "status": "visual_confirmed",
+      "summary": "Definition region for alpha5 restrictions and the final C3 constant used in Lemma 3.",
+      "extracted_claims": [
+        "After Eq. (2.37), Balaban recalls alpha5 as alpha5 = O(1)*exp(-(1/3)*delta0*M) + O(alpha0 + alpha1) + O(1)*alpha4 + gamma2.",
+        "The source assumes (LM)^4*alpha0, (LM)^4*alpha1, (LM)^4*alpha4, and (LM)^4*gamma2 are bounded by an M-independent constant, for example by 1.",
+        "Under those bounds, O(1)*(LM)^4*alpha5 + exp(-(1/2)*(kappa1 - 1)) is bounded by an absolute constant.",
+        "Balaban then uses the factor exp(-(delta/2)*L*kappa*d_{k+1}(Z)) and Eq. (2.30) to bound the remaining exponentials by 1, leaves one factor 2*(L+2)^4*O(1)*epsilon2, and estimates the remaining factors by 1.",
+        "The visual definition of the final Lemma-3 constant is C3 = 2*(L+2)^4*O(1)*2*E0*C1*alpha4^-1*alpha6^-1*M^q*exp(C2*kappa1), followed by Lemma 3's |H(Z)| <= C3*epsilon1*exp(-((1 - 8*delta)/2)*L*kappa*d_{k+1}(Z))."
+      ],
+      "lean_targets": [
+        "CMP116Lemma3Parameters",
+        "CMP116Eq237MajorizationBoundary",
+        "cmp116Eq237Amplitude",
+        "cmp116Eq237FixedZ0PrimeWeight",
+        "cmp116PostPResidualSourceBound_of_eq237",
+        "cmp116PostPResidualSourceMajorizationScaleFamily_of_eq237",
+        "CMP116Lemma3WeightedPostPScaleSourceAssumptions.of_eq237Majorization",
+        "CMP116Lemma3WeightedPostPScaleSourceAssumptions.of_eq237",
+        "CMP116Lemma3WeightedPostPScaleSourceAssumptions.lemma3_activity_estimate_of_eq237Majorization",
+        "CMP116Lemma3WeightedPostPScaleSourceAssumptions.lemma3_activity_estimate_of_eq237",
+        "CMP116Lemma3WeightedPostPSourceScaleBoundary",
+        "CMP116RawSourceM3Frontier.of_eq231WeightedPostPSourceBoundaries"
+      ],
+      "use_for": [
+        "Source anchor for the alpha5 definition region, the boundedness assumptions on (LM)^4 times alpha0/alpha1/alpha4/gamma2, and the visual C3 formula.",
+        "Source anchor for the final Lemma-3 amplitude shape C3*epsilon1 in Eq. (2.38)."
+      ],
+      "do_not_use_for": [
+        "Do not collapse repeated O(1) constants into one Lean constant without a source majorant theorem.",
+        "Do not infer exact numeric values for the O(1), E0, C1, C2, or q constants from this visual entry alone.",
+        "Do not use the final Lemma 3 bound to backfill the upstream Eq. (2.31) P-family carrier or Eq. (2.29) D-family dictionary."
+      ],
+      "open_questions": [
+        "Exact earlier definitions of epsilon1, epsilon2, gamma2, alpha0, alpha1, alpha4, alpha6, E0, C1, C2, and q.",
+        "Whether distinct O(1) constants need distinct Lean fields or a common majorant.",
+        "Exact source theorem or constant-hierarchy package proving the displayed boundedness and smallness assumptions uniformly in scale."
+      ]
+    },
+    {
+      "key": "cmp116.lemma3.final-2.38",
+      "source_id": "cmp116",
+      "locator": {
+        "printed_pages": "20",
+        "pdf_pages": "20",
+        "equations": ["2.38"],
+        "local_text": "cmp116-pages-15-20.txt lines 328-334",
+        "renders": ["render_source_20"]
+      },
+      "status": "visual_confirmed",
+      "summary": "Final Lemma 3 activity estimate for H(Z), after all restrictions and resummations.",
+      "lean_targets": [
+        "CMP116Lemma3ActivityEstimateScaleFamily",
+        "BalabanCMP116Lemma3SourceAssumptions",
+        "CMP116RawSourceM3Frontier"
+      ],
+      "use_for": [
+        "Final target shape of the Lemma 3 activity estimate."
+      ],
+      "do_not_use_for": [
+        "Do not use (2.38) to pretend the upstream Eq. (2.31) or post-P source boundaries have been proved separately."
+      ],
+      "open_questions": [
+        "Exact exponent convention: OCR and existing notes differ on visible half-power/one-half formatting.",
+        "Full restriction list preceding Lemma 3."
+      ]
+    },
+    {
+      "key": "cmp116.effective-action.2.39-2.41",
+      "source_id": "cmp116",
+      "locator": {
+        "printed_pages": "21",
+        "pdf_pages": "21",
+        "equations": ["2.39", "2.40", "2.41"],
+        "local_text": "cmp116-page-21-post-lemma3.txt",
+        "renders": ["render_source_21"]
+      },
+      "status": "visual_confirmed",
+      "summary": "Post-Lemma-3 insertion of the H(Z) bound into the effective-action estimate.",
+      "lean_targets": [
+        "post_lemma3_effective_action_consumer",
+        "docs/BALABAN-SOURCE-BOUNDS.md B5d"
+      ],
+      "use_for": [
+        "Downstream effective-action source anchor after Lemma 3 is available."
+      ],
+      "do_not_use_for": [
+        "Do not use this as a proof of the Lemma 3 resummation itself."
+      ],
+      "open_questions": [
+        "Exact Lean theorem target for the post-Lemma-3 effective-action consumer."
+      ]
+    },
+    {
+      "key": "cmp119.r-term-bound.2.31",
+      "source_id": "cmp119",
+      "locator": {
+        "printed_pages": "260",
+        "pdf_pages": "18",
+        "equations": ["2.31"],
+        "local_text": "balaban-convergent-cmp119-from-fusion.txt around line 701",
+        "renders": ["render_source_18"]
+      },
+      "status": "visual_confirmed",
+      "summary": "Localized R-term decay in the convergent expansion paper.",
+      "lean_targets": [
+        "future_R_operation_bound",
+        "RawYMActivityDecay"
+      ],
+      "use_for": [
+        "Later R-operation/localized remainder source targeting."
+      ],
+      "do_not_use_for": [
+        "Do not substitute this CMP119 R-term bound for CMP116 Lemma 3's H(Z) estimate."
+      ],
+      "open_questions": [
+        "Exact bridge from CMP119 localized R terms to the current raw Yang-Mills activity predicate."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+name: Yang-Mills P33 hard mathematics
+
+on:
+  pull_request:
+    paths:
+      - 'DASHI/Physics/YangMills/BalabanPath4GeneratedLDLCertificate.agda'
+      - 'DASHI/Physics/YangMills/BalabanP33*.agda'
+      - 'scripts/check_yang_mills_p33_hard_math.sh'
+      - 'scripts/check_yang_mills_p33_five_local_bounds.sh'
+      - '.github/workflows/yang-mills-p33-hard-math.yml'
+  workflow_dispatch:
+
+
+concurrency:
+  group: dashi-global-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  focused-agda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      AGDA_JOBS: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: cachix/install-nix-action@v27
+      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - name: Check exact LDL, SU2 geometry, Wilson/CMP109 channels and decay reductions
+        run: |
+          nix develop --command bash scripts/check_yang_mills_p33_hard_math.sh
+          nix develop --command bash scripts/check_yang_mills_p33_five_local_bounds.sh

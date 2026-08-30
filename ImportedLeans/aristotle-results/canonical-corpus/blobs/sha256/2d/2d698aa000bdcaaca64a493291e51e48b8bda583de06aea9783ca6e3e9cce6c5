@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Helper to typecheck a DASHI Agda file with the bundled toolchain.
+# Handles the multi-.agda-lib project-root restriction and the C-locale
+# unicode-output problem by transliterating output.
+set -uo pipefail
+cd /workspace/request-project
+TARGET="$1"
+mv dchott-agda.agda-lib /tmp/dchott-lib-bak 2>/dev/null
+./agda-toolchain/agda --transliterate --no-libraries \
+  -i . -i agda-toolchain/agda-stdlib/src "$TARGET"
+RC=$?
+[ -f /tmp/dchott-lib-bak ] && mv /tmp/dchott-lib-bak dchott-agda.agda-lib
+echo "AGDA_EXIT=$RC"
+exit $RC

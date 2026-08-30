@@ -1,0 +1,480 @@
+module DASHI.Physics.YangMills.BalabanCMP109LiteralWardCompensatedNearQuotientExact where
+
+------------------------------------------------------------------------
+-- ROW A1a, NEAR REGION:  CANCEL THE WARD ZERO *BEFORE* TAKING ABSOLUTE
+--   VALUES, AND THE INFRARED SINGULARITY OF THE ONE-LOOP QUOTIENT
+--   DISAPPEARS.
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  Beta extraction (5.36)--(5.42).
+--
+-- Ludwig D. Faddeev and Victor N. Popov, "Feynman Diagrams for the
+-- Yang--Mills Field", Physics Letters B 25 (1967), 29--30.
+-- DOI: 10.1016/0370-2693(67)90067-6.
+--
+-- THE DEFECT THIS MODULE REMOVES.
+--
+-- `BalabanCMP109LiteralOneLoopAbsoluteBoundCalculusExact` proves a sound
+-- absolute-value calculus for the literal diagram syntax.  Its division rule
+-- is the honest generic one: an upper bound for `N / Q` needs a *strictly
+-- positive lower bound* for the denominator.  On the Brillouin region that
+-- rule is useless exactly where the estimate is hardest, namely near the
+-- infrared point, because the lattice inverse propagator
+--
+--     p^2  =  sum_mu 4 sin^2 (p_mu / 2)
+--
+-- tends to zero there: the generic quotient bound behaves like 1/floor and
+-- blows up as the floor is lowered.
+--
+-- But the physical numerator is not generic.  Gauge invariance forces the
+-- vacuum polarisation to be transverse,
+--
+--     Pi_{mu nu}(p) = ( p^2 delta_{mu nu} - p_mu p_nu ) Pi(p) ,
+--
+-- so the numerator of the scalar quotient carries the *same* vanishing at the
+-- infrared point that the denominator does.  The correct order of operations
+-- is therefore: factor the Ward zero out of the numerator first, and only
+-- then take absolute values.  Bounding numerator and denominator separately
+-- discards exactly the cancellation that makes the region harmless.
+--
+-- WHAT IS PROVED HERE (ordinary theorems, by structural inversion of the
+-- exact rational semantics; no new record, no new hypothesis class):
+--
+--   * `wardFactoredQuotient` -- if the numerator of a literal quotient is
+--     *syntactically* `multiply ward tilde` with `ward` evaluating to a
+--     nonnegative `h`, if `|tilde| <= m`, and if the denominator value `y`
+--     obeys the same-zero comparison `c * h <= y` with `0 < c` and `0 < y`,
+--     then the quotient value `z` obeys
+--
+--         |z| * c  <=  m .
+--
+--     There is *no* denominator floor anywhere in that statement, and the
+--     bound `m / c` does not degrade as `h -> 0`.  This is the quantitative
+--     form of "the Ward zero cancels the propagator zero".
+--
+--   * `wardFactoredModulusBound` / `wardFactoredNegativePart` -- the same in
+--     the two forms the four-orbit gate consumes: a modulus bound `|z| <= u`
+--     and a negative-part bound `- u <= z`.
+--
+--   * `wardFactoredCombinedNegativePart` -- the (4,6,4,1)-weighted
+--     combination of four such Ward-factored quotients is bounded below by
+--     `- (4 u1 + 6 u2 + 4 u3 + u4)` pointwise, which is *literally* the
+--     `combinedLower` hypothesis of
+--     `BalabanYM4CancellationPreservingFourOrbitGateExact.LinearCellIntegral`.
+--
+--   * `literalHatSquaredWardQuotient` -- the literal instance: `ward` is the
+--     inhabited lattice inverse propagator expression of
+--     `BalabanCMP109LiteralLatticeInversePropagatorExact`, and the
+--     denominator is any expression comparable to it from below.
+--
+--   * Section 5 quantifies the gain against the generic route: with numerator
+--     sup `S`, the generic bound on the near region is `S / floor`, which is
+--     unbounded as the floor drops, while the compensated bound is the fixed
+--     `m / c`.  Both are machine-checked at three successive floors.
+--
+-- WHAT IS STILL OPEN.  The two literal inputs -- the transverse cofactor
+-- expression `tilde` of the joint Wilson + reduced Faddeev--Popov + Haar
+-- numerator, and a bound `m` on it -- are hypotheses here, as is the
+-- same-zero denominator comparison constant `c`.  This module supplies the
+-- estimate that turns them into a near-region bound; it does not supply them.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; ∣_∣; _≤_; _<_; _/_; positive; nonNegative)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (_≡_; refl; sym; trans; subst; cong; cong₂)
+open import Data.Empty using (⊥-elim)
+open import Relation.Binary.Definitions using (tri<; tri≈; tri>)
+open import Relation.Nullary using (¬_)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.BalabanClayT4LiteralOneLoopBoxEvaluatorExact
+  using (TrigAtom; MomentumRole; loopMomentum; DiagramExpression;
+         rationalConstant; atom; add; subtract; multiply; divide; negate)
+open import DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopAbsoluteBoundCalculusExact
+  using (Evaluates; evalConstant; evalAtom; evalAdd; evalSubtract;
+         evalMultiply; evalNegate; evalDivide; negAbsLe; mulCancelRight;
+         module Soundness)
+open import DASHI.Physics.YangMills.BalabanCMP109LiteralLatticeInversePropagatorExact
+  using (hatSquaredExpression; hatSquaredValue; hatSquaredEvaluates)
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonGhostHaarWeightedFourOrbitExact
+  as Joint
+
+------------------------------------------------------------------------
+-- 0.  Uniqueness of the exact semantics, at the trivial bound tables
+--
+-- `Soundness.evaluatesUnique` needs atom bound tables only to be in scope;
+-- instantiating them by the valuation itself makes their soundness
+-- reflexivity, so no assumption is created.
+------------------------------------------------------------------------
+
+module Semantics (val : TrigAtom → ℚ) where
+
+  open Soundness (λ a → ∣ val a ∣) (λ a → ∣ val a ∣) val val
+    (λ _ → ℚP.≤-refl) (λ _ → ℚP.≤-refl) (λ _ → ℚP.≤-refl)
+    public using (evaluatesUnique)
+
+------------------------------------------------------------------------
+-- 1.  THE WARD-COMPENSATED NEAR-REGION QUOTIENT BOUND
+------------------------------------------------------------------------
+
+module NearRegion (val : TrigAtom → ℚ) where
+
+  open Semantics val
+
+  -- The engine.  `ward` is the factor that carries the transversality zero;
+  -- `tilde` is what is left of the numerator after it is factored out; the
+  -- denominator is only ever compared with `ward`, never bounded below by a
+  -- constant.
+  wardFactoredQuotient :
+    ∀ {ward tilde denom : DiagramExpression} {h n y z m c : ℚ} →
+    Evaluates val ward h → 0ℚ ≤ h →
+    Evaluates val tilde n → ∣ n ∣ ≤ m → 0ℚ ≤ m →
+    Evaluates val denom y → 0ℚ < y →
+    0ℚ < c → c * h ≤ y →
+    Evaluates val (divide (multiply ward tilde) denom) z →
+    ∣ z ∣ * c ≤ m
+  wardFactoredQuotient {ward} {tilde} {denom} {h} {n} {y} {z} {m} {c}
+      ew 0≤h et ∣n∣≤m 0≤m ed 0<y 0<c comparison
+      (evalDivide (evalMultiply ew' et') ed' y'≢0 eq) = bound
+    where
+      -- Transport the inverted subderivations onto the named values.
+      hEq : _
+      hEq = evaluatesUnique ew' ew
+
+      nEq : _
+      nEq = evaluatesUnique et' et
+
+      yEq : _
+      yEq = evaluatesUnique ed' ed
+
+      key : h * n ≡ z * y
+      key = trans (sym (cong₂ _*_ hEq nEq)) (trans eq (cong (z *_) yEq))
+
+      y≢0 : ¬ (y ≡ 0ℚ)
+      y≢0 e = ℚP.<-irrefl (sym e) 0<y
+
+      -- Case h = 0: the numerator vanishes identically, so does the quotient.
+      zeroCase : h ≡ 0ℚ → ∣ z ∣ * c ≤ m
+      zeroCase h≡0 =
+        let z≡0 : z ≡ 0ℚ
+            z≡0 =
+              mulCancelRight y≢0
+                (trans (sym key)
+                  (trans (cong (_* n) h≡0)
+                    (trans (ℚP.*-zeroˡ n) (sym (ℚP.*-zeroˡ y)))))
+        in subst (_≤ m)
+             (sym (trans (cong (λ w → ∣ w ∣ * c) z≡0) (ℚP.*-zeroˡ c)))
+             0≤m
+
+      -- Case h > 0: the two zeros cancel, quantitatively.
+      positiveCase : 0ℚ < h → ∣ z ∣ * c ≤ m
+      positiveCase 0<h =
+        ℚP.*-cancelʳ-≤-pos h {{positive 0<h}} assoc
+        where
+          s0 : ∣ z ∣ * (c * h) ≤ ∣ z ∣ * y
+          s0 = ℚP.*-monoˡ-≤-nonNeg ∣ z ∣ {{ℚP.∣-∣-nonNeg z}} comparison
+
+          absY : ∣ y ∣ ≡ y
+          absY = ℚP.0≤p⇒∣p∣≡p (ℚP.<⇒≤ 0<y)
+
+          absH : ∣ h ∣ ≡ h
+          absH = ℚP.0≤p⇒∣p∣≡p 0≤h
+
+          s1 : ∣ z ∣ * y ≡ ∣ z * y ∣
+          s1 = trans (cong (∣ z ∣ *_) (sym absY)) (sym (ℚP.∣p*q∣≡∣p∣*∣q∣ z y))
+
+          s2 : ∣ z * y ∣ ≡ h * ∣ n ∣
+          s2 = trans (cong ∣_∣ (sym key))
+                 (trans (ℚP.∣p*q∣≡∣p∣*∣q∣ h n) (cong (_* ∣ n ∣) absH))
+
+          s3 : h * ∣ n ∣ ≤ h * m
+          s3 = ℚP.*-monoˡ-≤-nonNeg h {{nonNegative 0≤h}} ∣n∣≤m
+
+          s4 : ∣ z ∣ * (c * h) ≤ h * m
+          s4 = ℚP.≤-trans s0
+                 (ℚP.≤-trans (ℚP.≤-reflexive (trans s1 s2)) s3)
+
+          assoc : (∣ z ∣ * c) * h ≤ m * h
+          assoc =
+            subst₂ _≤_ (sym (ℚP.*-assoc ∣ z ∣ c h)) (ℚP.*-comm h m) s4
+            where
+              subst₂ : ∀ {A : Set} (R : A → A → Set) {a a' b b' : A} →
+                       a ≡ a' → b ≡ b' → R a b → R a' b'
+              subst₂ R refl refl r = r
+
+      bound : ∣ z ∣ * c ≤ m
+      bound with ℚP.<-cmp 0ℚ h
+      ... | tri< 0<h _ _ = positiveCase 0<h
+      ... | tri≈ _ 0≡h _ = zeroCase (sym 0≡h)
+      ... | tri> _ _ h<0 =
+        ⊥-elim (ℚP.<-irrefl refl (ℚP.<-≤-trans h<0 0≤h))
+
+  -- The consumer forms.  `m <= u * c` is the division-free way of writing
+  -- `u = m / c` (or anything larger).
+  wardFactoredModulusBound :
+    ∀ {ward tilde denom : DiagramExpression} {h n y z m c u : ℚ} →
+    Evaluates val ward h → 0ℚ ≤ h →
+    Evaluates val tilde n → ∣ n ∣ ≤ m → 0ℚ ≤ m →
+    Evaluates val denom y → 0ℚ < y →
+    0ℚ < c → c * h ≤ y → m ≤ u * c →
+    Evaluates val (divide (multiply ward tilde) denom) z →
+    ∣ z ∣ ≤ u
+  wardFactoredModulusBound {c = c} {u = u}
+      ew 0≤h et ∣n∣≤m 0≤m ed 0<y 0<c comparison m≤u*c evq =
+    ℚP.*-cancelʳ-≤-pos c {{positive 0<c}}
+      (ℚP.≤-trans
+        (wardFactoredQuotient ew 0≤h et ∣n∣≤m 0≤m ed 0<y 0<c comparison evq)
+        m≤u*c)
+
+  wardFactoredNegativePart :
+    ∀ {ward tilde denom : DiagramExpression} {h n y z m c u : ℚ} →
+    Evaluates val ward h → 0ℚ ≤ h →
+    Evaluates val tilde n → ∣ n ∣ ≤ m → 0ℚ ≤ m →
+    Evaluates val denom y → 0ℚ < y →
+    0ℚ < c → c * h ≤ y → m ≤ u * c →
+    Evaluates val (divide (multiply ward tilde) denom) z →
+    (- u) ≤ z
+  wardFactoredNegativePart {z = z}
+      ew 0≤h et ∣n∣≤m 0≤m ed 0<y 0<c comparison m≤u*c evq =
+    ℚP.≤-trans
+      (ℚP.neg-antimono-≤
+        (wardFactoredModulusBound
+          ew 0≤h et ∣n∣≤m 0≤m ed 0<y 0<c comparison m≤u*c evq))
+      (negAbsLe z)
+
+------------------------------------------------------------------------
+-- 2.  THE (4,6,4,1)-WEIGHTED NEAR-REGION DENSITY
+--
+-- Four Ward-factored quotients, one per hypercubic orbit representative,
+-- give the pointwise lower bound on the single weighted combination that the
+-- cancellation-preserving gate consumes.
+------------------------------------------------------------------------
+
+module NearRegionFourOrbit
+  (Point : Set)
+  (valuationAt : Point → (TrigAtom → ℚ))
+  where
+
+  -- Everything a single orbit representative needs on the near region, at a
+  -- single point.  All fields are data about literal expressions and their
+  -- exact values; none of them is an interval, an interface or a receipt.
+  record WardFactoredOrbit (p : Point) (u : ℚ) : Set where
+    field
+      ward tilde denom : DiagramExpression
+      wardValue tildeValue denomValue quotientValue : ℚ
+      cofactorBound comparisonConstant : ℚ
+
+      wardEvaluates : Evaluates (valuationAt p) ward wardValue
+      wardNonNegative : 0ℚ ≤ wardValue
+      tildeEvaluates : Evaluates (valuationAt p) tilde tildeValue
+      tildeBounded : ∣ tildeValue ∣ ≤ cofactorBound
+      cofactorNonNegative : 0ℚ ≤ cofactorBound
+      denomEvaluates : Evaluates (valuationAt p) denom denomValue
+      denomPositive : 0ℚ < denomValue
+      comparisonPositive : 0ℚ < comparisonConstant
+      -- The same-zero comparison: the denominator vanishes no faster than the
+      -- Ward factor.  This, and not a floor, is what controls the region.
+      sameZeroComparison :
+        comparisonConstant * wardValue ≤ denomValue
+      quotientBudget : cofactorBound ≤ u * comparisonConstant
+      quotientEvaluates :
+        Evaluates (valuationAt p)
+          (divide (multiply ward tilde) denom) quotientValue
+  open WardFactoredOrbit public
+
+  orbitNegativePart :
+    ∀ {p u} (orbit : WardFactoredOrbit p u) → (- u) ≤ quotientValue orbit
+  orbitNegativePart {p} orbit =
+    NearRegion.wardFactoredNegativePart (valuationAt p)
+      (wardEvaluates orbit) (wardNonNegative orbit)
+      (tildeEvaluates orbit) (tildeBounded orbit)
+      (cofactorNonNegative orbit)
+      (denomEvaluates orbit) (denomPositive orbit)
+      (comparisonPositive orbit) (sameZeroComparison orbit)
+      (quotientBudget orbit) (quotientEvaluates orbit)
+
+  -- THE NEAR-REGION HYPOTHESIS OF THE GATE, DERIVED.
+  wardFactoredCombinedNegativePart :
+    ∀ {u₁ u₂ u₃ u₄ : ℚ} (p : Point)
+      (o₁ : WardFactoredOrbit p u₁) (o₂ : WardFactoredOrbit p u₂)
+      (o₃ : WardFactoredOrbit p u₃) (o₄ : WardFactoredOrbit p u₄) →
+    (- Joint.weightedFourOrbit u₁ u₂ u₃ u₄)
+      ≤ Joint.weightedFourOrbit
+          (quotientValue o₁) (quotientValue o₂)
+          (quotientValue o₃) (quotientValue o₄)
+  wardFactoredCombinedNegativePart {u₁} {u₂} {u₃} {u₄} p o₁ o₂ o₃ o₄ =
+    subst
+      (_≤ Joint.weightedFourOrbit
+            (quotientValue o₁) (quotientValue o₂)
+            (quotientValue o₃) (quotientValue o₄))
+      (sym (negWeighted u₁ u₂ u₃ u₄))
+      (Joint.weightedFourOrbitMono
+        (orbitNegativePart o₁) (orbitNegativePart o₂)
+        (orbitNegativePart o₃) (orbitNegativePart o₄))
+    where
+      negWeighted : ∀ (a b c d : ℚ) →
+        - Joint.weightedFourOrbit a b c d
+        ≡ Joint.weightedFourOrbit (- a) (- b) (- c) (- d)
+      negWeighted a b c d =
+        trans
+          (ℚP.neg-distrib-+
+            (Joint.weightOne * a + Joint.weightTwo * b
+              + Joint.weightThree * c)
+            d)
+          (cong (λ w → w + (- d))
+            (trans
+              (ℚP.neg-distrib-+
+                (Joint.weightOne * a + Joint.weightTwo * b)
+                (Joint.weightThree * c))
+              (cong₂ _+_
+                (trans
+                  (ℚP.neg-distrib-+
+                    (Joint.weightOne * a) (Joint.weightTwo * b))
+                  (cong₂ _+_
+                    (ℚP.neg-distribʳ-* Joint.weightOne a)
+                    (ℚP.neg-distribʳ-* Joint.weightTwo b)))
+                (ℚP.neg-distribʳ-* Joint.weightThree c))))
+
+------------------------------------------------------------------------
+-- 3.  THE LITERAL INSTANCE:  THE WARD FACTOR IS THE LATTICE INVERSE
+--     PROPAGATOR EXPRESSION
+------------------------------------------------------------------------
+
+module LiteralHatSquared (val : TrigAtom → ℚ) (role : MomentumRole) where
+
+  open NearRegion val public
+
+  -- Transversality writes the scalar numerator as `p^2 * (cofactor)`, with
+  -- `p^2` the inhabited expression of the inverse propagator module.  The
+  -- denominator is only assumed comparable to `p^2` from below.
+  literalHatSquaredWardQuotient :
+    ∀ {tilde denom : DiagramExpression} {n y z m c u : ℚ} →
+    0ℚ ≤ hatSquaredValue val role →
+    Evaluates val tilde n → ∣ n ∣ ≤ m → 0ℚ ≤ m →
+    Evaluates val denom y → 0ℚ < y →
+    0ℚ < c → c * hatSquaredValue val role ≤ y → m ≤ u * c →
+    Evaluates val
+      (divide (multiply (hatSquaredExpression role) tilde) denom) z →
+    ∣ z ∣ ≤ u
+  literalHatSquaredWardQuotient 0≤hat et ∣n∣≤m 0≤m ed 0<y 0<c comparison budget
+      evq =
+    wardFactoredModulusBound (hatSquaredEvaluates val role) 0≤hat
+      et ∣n∣≤m 0≤m ed 0<y 0<c comparison budget evq
+
+  -- The Feynman-gauge case: the denominator *is* the inverse propagator, so
+  -- the comparison holds with `c = 1` and the near-region bound is exactly
+  -- the cofactor bound.  No floor, no `delta`.
+  feynmanGaugeNearBound :
+    ∀ {tilde : DiagramExpression} {n z m : ℚ} →
+    0ℚ < hatSquaredValue val role →
+    Evaluates val tilde n → ∣ n ∣ ≤ m → 0ℚ ≤ m →
+    Evaluates val
+      (divide (multiply (hatSquaredExpression role) tilde)
+              (hatSquaredExpression role)) z →
+    ∣ z ∣ ≤ m
+  feynmanGaugeNearBound {m = m} 0<hat et ∣n∣≤m 0≤m evq =
+    literalHatSquaredWardQuotient (ℚP.<⇒≤ 0<hat) et ∣n∣≤m 0≤m
+      (hatSquaredEvaluates val role) 0<hat
+      (toWitness {a? = 0ℚ ℚP.<? 1ℚ} _)
+      (ℚP.≤-reflexive (ℚP.*-identityˡ (hatSquaredValue val role)))
+      (ℚP.≤-reflexive (sym (ℚP.*-identityʳ m)))
+      evq
+
+------------------------------------------------------------------------
+-- 4.  A COMPLETE NUMERICAL INSTANCE OF THE ENGINE
+--
+-- Ward factor `h`, cofactor bounded by `m = 3`, denominator `y >= (1/2) h`.
+-- The compensated bound is `m / c = 6`, uniformly in `h` -- in particular at
+-- `h = 1/1000`, where any floor-based bound is at least a thousandfold worse.
+------------------------------------------------------------------------
+
+exampleCofactorBound exampleComparison exampleCompensatedBound : ℚ
+exampleCofactorBound = + 3 / 1
+exampleComparison = + 1 / 2
+exampleCompensatedBound = + 6 / 1
+
+exampleBudget :
+  exampleCofactorBound ≤ exampleCompensatedBound * exampleComparison
+exampleBudget =
+  toWitness
+    {a? = exampleCofactorBound ℚP.≤?
+            exampleCompensatedBound * exampleComparison} _
+
+------------------------------------------------------------------------
+-- 5.  THE GAIN OVER THE GENERIC ROUTE, QUANTIFIED
+--
+-- Generic route on the near region: bound numerator and denominator apart.
+-- With numerator sup `S` and denominator floor `f` the bound is `S / f`.  As
+-- the near region is shrunk the floor drops and the bound blows up.  The
+-- compensated route never sees the floor.
+------------------------------------------------------------------------
+
+-- `AdmissibleQuotientBound sup floor u` is the division-free form of
+-- `sup / floor <= u`: it is exactly what the generic division rule
+-- `upperDivide` of the absolute-bound calculus demands.
+AdmissibleQuotientBound : ℚ → ℚ → ℚ → Set
+AdmissibleQuotientBound numeratorSup floor u = numeratorSup ≤ u * floor
+
+exampleNumeratorSup : ℚ
+exampleNumeratorSup = + 3 / 1
+
+-- Floor 1/10 already needs 30, and 29 fails.
+genericAtFloorTenth : AdmissibleQuotientBound exampleNumeratorSup (+ 1 / 10) (+ 30 / 1)
+genericAtFloorTenth =
+  toWitness {a? = exampleNumeratorSup ℚP.≤? (+ 30 / 1) * (+ 1 / 10)} _
+
+genericAtFloorTenthSharp : (+ 29 / 1) * (+ 1 / 10) < exampleNumeratorSup
+genericAtFloorTenthSharp =
+  toWitness {a? = (+ 29 / 1) * (+ 1 / 10) ℚP.<? exampleNumeratorSup} _
+
+-- Floor 1/100 needs 300 ...
+genericAtFloorHundredth :
+  AdmissibleQuotientBound exampleNumeratorSup (+ 1 / 100) (+ 300 / 1)
+genericAtFloorHundredth =
+  toWitness {a? = exampleNumeratorSup ℚP.≤? (+ 300 / 1) * (+ 1 / 100)} _
+
+genericAtFloorHundredthSharp : (+ 299 / 1) * (+ 1 / 100) < exampleNumeratorSup
+genericAtFloorHundredthSharp =
+  toWitness {a? = (+ 299 / 1) * (+ 1 / 100) ℚP.<? exampleNumeratorSup} _
+
+-- ... and floor 1/1000 needs 3000.
+genericAtFloorThousandth :
+  AdmissibleQuotientBound exampleNumeratorSup (+ 1 / 1000) (+ 3000 / 1)
+genericAtFloorThousandth =
+  toWitness {a? = exampleNumeratorSup ℚP.≤? (+ 3000 / 1) * (+ 1 / 1000)} _
+
+-- The compensated bound of section 4 is 6 at every one of those floors,
+-- because it never mentions a floor at all.
+compensatedBeatsGenericAtThousandth :
+  exampleCompensatedBound < + 3000 / 1
+compensatedBeatsGenericAtThousandth =
+  toWitness {a? = exampleCompensatedBound ℚP.<? + 3000 / 1} _
+
+------------------------------------------------------------------------
+-- 6.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: the Ward-compensated quotient theorem, its consumer
+-- forms, the weighted four-orbit near-region density bound, the literal
+-- inverse-propagator instance and the numerical instance.
+wardCompensatedQuotientLevel : ProofLevel
+wardCompensatedQuotientLevel = machineChecked
+
+wardCompensatedFourOrbitLevel : ProofLevel
+wardCompensatedFourOrbitLevel = machineChecked
+
+-- STILL OPEN: the literal transverse cofactor expression of the joint
+-- Wilson + reduced Faddeev--Popov + Haar numerator, a bound on it, and the
+-- same-zero comparison constant for the literal denominator.
+literalTransverseCofactorLevel : ProofLevel
+literalTransverseCofactorLevel = conditional

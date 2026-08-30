@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Check one DASHI YangMills module with the local Agda 2.6.4.3 toolchain.
+#   scripts/ymcheck.sh <ModuleBaseName> [logfile]
+# Writes the (noise-filtered) output plus a trailing EXIT=<code> line to the log.
+set -u
+mod="$1"
+log="${2:-/tmp/${mod}.log}"
+cd "$(dirname "$0")/.."
+LC_ALL=C.UTF-8 timeout 5400 /usr/bin/agda --safe -i vendor/stdlib-compat \
+  "DASHI/Physics/YangMills/${mod}.agda" > "${log}.raw" 2>&1
+code=$?
+grep -v "^ *Checking\|UserWarning\|decToMaybe\|^Warning\|dec⇒maybe\|RingSolver.agda:45" \
+  "${log}.raw" > "$log"
+echo "EXIT=${code}" >> "$log"

@@ -1,0 +1,66 @@
+# Vision pass: dot-line shapes in the q-deformation, then proven in Lean
+
+You noticed that certain frames of the moonshine q-deformation collapse into
+**definite shapes — lines carrying 1, 2, 3, 4 … dots**, and the occasional
+flatline with no dots. This folder applies OpenCV to those frames, reads the
+shapes off, and the results are then certified in Lean
+(`RequestProject/QShapes.lean`).
+
+## What a "dot" is
+
+Each q-expansion page `n` (for `q¹ … q¹⁰⁴`) carries the McKay–Thompson
+coefficient `[qⁿ] j`. The **dots** are the *available Monster primes* at that
+page — the Monster primes dividing that coefficient (`QDeform.availLayer` /
+`availCount`). A page with `k` available primes draws as a horizontal line with
+`k` dots; a page coprime to every Monster prime is the **flatline** (0 dots).
+
+## Pipeline
+
+1. `qdeform_pages.csv` — ground truth emitted by `RequestProject/QDeform.lean`
+   (page → dot count → primes).
+2. `render_frames.py` — renders one frame per page: a horizontal line with
+   `dot_count` evenly spaced dots. Frame geometry matches `QShapes.dotPositions`
+   exactly. → `frames/page_###.png`.
+3. `detect_shapes.py` — OpenCV reads each frame back: counts the dots
+   (threshold → morphological open → contour blobs) and tests collinearity
+   (`cv2.fitLine`, max orthogonal residual). Writes `detected_shapes.csv` and
+   asserts every detected count equals the Lean ground truth (0 mismatches).
+4. `montage.py` — labelled contact sheet `shapes_montage.png` of one example per
+   dot count (0…6), with the detected dots circled.
+
+Run:
+
+```bash
+pip install opencv-python-headless numpy
+python3 render_frames.py && python3 detect_shapes.py && python3 montage.py
+```
+
+## OpenCV result (histogram of detected dot counts over the 104 pages)
+
+| dots | pages | shape |
+|------|-------|-------|
+| 0 | 1 | flatline / full collapse |
+| 1 | 4 | single dot |
+| 2 | 17 | 2-dot line |
+| 3 | 41 | 3-dot line |
+| 4 | 32 | 4-dot line |
+| 5 | 7 | 5-dot line |
+| 6 | 2 | 6-dot line |
+
+All detected counts match the Lean ground truth exactly.
+
+## The Lean proofs (`RequestProject/QShapes.lean`)
+
+- `dotPositions_length` — a `k`-dot frame really has `k` dots.
+- `dots_on_line` / `dots_collinear` — the dots are collinear: the shape is a
+  **line** (all dot centres share the row `y = lineY`).
+- `dot_histogram` — the histogram `[1,4,17,41,32,7,2]` (pages with `0…6` dots),
+  i.e. exactly what OpenCV detected; `dot_histogram_total` checks it sums to 104.
+- `pages_collapse` — the unique flatline is page 70 (`q⁷¹`).
+- `pages_one_dot`, `pages_two_dots`, `pages_six_dots` — the page catalogs per
+  shape; `small_line_counts` packages the 1/2/3/4-dot multiplicities you asked
+  about.
+
+All page-level findings are by `native_decide` (axioms: `propext`,
+`Quot.sound`, `Lean.ofReduceBool`, `Lean.trustCompiler`); the geometry lemmas
+use only `propext`, `Quot.sound`.

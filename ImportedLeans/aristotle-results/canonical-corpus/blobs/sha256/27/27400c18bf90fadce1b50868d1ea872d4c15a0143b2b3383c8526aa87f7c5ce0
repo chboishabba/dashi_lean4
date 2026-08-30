@@ -1,0 +1,509 @@
+module DASHI.Physics.YangMills.BalabanYM4GeneralSummableHistoryBudgetPositiveBetaExact where
+
+------------------------------------------------------------------------
+-- ROW A1 (LEMMA 1), STEP 5:  THE HISTORY HALF UNDER AN ARBITRARY
+--   SUMMABLE SHELL PROFILE -- ANY CONTRACTION FACTOR kappa < 1 SUFFICES.
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I. Generation of Effective Actions in a Small Field Approximation
+-- and a Coupling Constant Renormalization in Four Dimensions",
+-- Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  Locator: end of Sect. 5, where beta_j is stated
+-- to depend on ALL preceding effective couplings.
+--
+-- THE DEFECT THIS MODULE REMOVES.
+--
+-- `BalabanYM4LiteralWilsonFPHaarPositiveBetaExact` fixes the shell profile to
+-- the particular geometric sequence 2^-(d+2) and
+-- `BalabanYM4BetaHistoryContractionToShellInfluenceExact` therefore has to
+-- demand a one-step RG contraction factor
+--
+--     kappa <= 1/2
+--
+-- in a cutoff- and volume-uniform distance.  The value 1/2 is an artefact of
+-- the chosen profile, not of the physics: nothing in Bałaban's Sect. 5 makes
+-- one-half a threshold.  Demanding it of the literal Balaban map is a
+-- strictly stronger -- and arbitrarily stronger -- requirement than the
+-- argument needs.
+--
+-- What the positivity argument actually consumes is only that the per-shell
+-- influence increments are dominated by SOME nonnegative profile whose
+-- partial sums are bounded, uniformly in the history length.  This module
+-- proves the assembled positive-beta theorem in that generality and then
+-- specializes:
+--
+--   * a geometric profile kappa^d has partial sums bounded by any B with
+--     1 + kappa B = B, i.e. by 1/(1 - kappa), for EVERY kappa in [0,1);
+--     proved here by an exact tail induction, with no division;
+--
+--   * hence a one-step contraction with ANY factor kappa < 1 -- together with
+--     the same Lipschitz dependence of the shell coefficient -- yields a
+--     uniform positive shell beta, provided only the numerical gate
+--
+--         r_0 + K gamma / (1 - kappa)  <  (11/24) C_A(G)
+--
+--     holds.  At kappa = 1/2 this reproduces the earlier statement exactly,
+--     which is verified here as an identity of the two gates.
+--
+-- WHAT IS STILL OPEN.  Unchanged in kind, strictly weaker in content: for the
+-- literal Balaban RG map on the literal effective-coupling states one still
+-- needs SOME cutoff- and volume-uniform one-step contraction factor kappa < 1
+-- and the Lipschitz dependence of the literal Wilson + reduced
+-- Faddeev-Popov + Haar shell coefficient.  Neither is proved here.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (cong; cong₂; sym; trans; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.YangMills.BalabanYM4SU2RegularOrbitBetaFloorExact as Floor
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonFPHaarPositiveBetaExact
+  as RowA1
+import DASHI.Physics.YangMills.BalabanYM4BetaHistoryContractionToShellInfluenceExact
+  as Contract
+
+------------------------------------------------------------------------
+-- 1.  Partial sums of a shell profile
+------------------------------------------------------------------------
+
+partialSum : (Nat → ℚ) → Nat → ℚ
+partialSum w zero = 0ℚ
+partialSum w (suc n) = partialSum w n + w n
+
+negZero : (- 0ℚ) ≡ 0ℚ
+negZero = refl
+
+------------------------------------------------------------------------
+-- 2.  THE GEOMETRIC PROFILE IS SUMMABLE FOR EVERY kappa IN [0,1)
+--
+-- Stated with the fixed-point identity 1 + kappa * B = B in place of the
+-- quotient 1/(1-kappa), so nothing has to be divided and no nonzero-ness
+-- side condition appears.
+------------------------------------------------------------------------
+
+geometric : ℚ → Nat → ℚ
+geometric κ zero = 1ℚ
+geometric κ (suc n) = κ * geometric κ n
+
+geometricNonNegative : ∀ (κ : ℚ) → 0ℚ ≤ κ → ∀ n → 0ℚ ≤ geometric κ n
+geometricNonNegative κ κnn zero = ℚP.nonNegative⁻¹ 1ℚ {{_}}
+geometricNonNegative κ κnn (suc n) =
+  subst (_≤ κ * geometric κ n) (ℚP.*-zeroʳ κ)
+    (ℚP.*-monoˡ-≤-nonNeg κ {{ℚ.nonNegative κnn}}
+      (geometricNonNegative κ κnn n))
+
+-- The exact tail identity: sum_{d<n} kappa^d + kappa^n B <= B, by induction.
+-- (It is in fact an equality when 1 + kappa B = B; only "<=" is used.)
+geometricPartialSumWithTail :
+  ∀ (κ B : ℚ) → 0ℚ ≤ κ → 1ℚ + κ * B ≡ B →
+  ∀ n → partialSum (geometric κ) n + geometric κ n * B ≤ B
+geometricPartialSumWithTail κ B κnn fix zero =
+  ℚP.≤-reflexive
+    (trans (cong (λ z → 0ℚ + z) (ℚP.*-identityˡ B)) (ℚP.+-identityˡ B))
+geometricPartialSumWithTail κ B κnn fix (suc n) =
+  ℚP.≤-trans (ℚP.≤-reflexive step)
+    (geometricPartialSumWithTail κ B κnn fix n)
+  where
+    g : ℚ
+    g = geometric κ n
+
+    reassoc : (κ * g) * B ≡ g * (κ * B)
+    reassoc =
+      trans (cong (λ z → z * B) (ℚP.*-comm κ g)) (ℚP.*-assoc g κ B)
+
+    tail : g + (κ * g) * B ≡ g * B
+    tail =
+      trans (cong (λ z → g + z) reassoc)
+        (trans (cong (λ z → z + g * (κ * B)) (sym (ℚP.*-identityʳ g)))
+          (trans (sym (ℚP.*-distribˡ-+ g 1ℚ (κ * B)))
+            (cong (λ z → g * z) fix)))
+
+    step :
+      (partialSum (geometric κ) n + g) + (κ * g) * B
+      ≡ partialSum (geometric κ) n + g * B
+    step =
+      trans (ℚP.+-assoc (partialSum (geometric κ) n) g ((κ * g) * B))
+        (cong (λ z → partialSum (geometric κ) n + z) tail)
+
+geometricPartialSumBound :
+  ∀ (κ B : ℚ) → 0ℚ ≤ κ → 0ℚ ≤ B → 1ℚ + κ * B ≡ B →
+  ∀ n → partialSum (geometric κ) n ≤ B
+geometricPartialSumBound κ B κnn Bnn fix n =
+  ℚP.≤-trans belowWithTail (geometricPartialSumWithTail κ B κnn fix n)
+  where
+    tailNonNegative : 0ℚ ≤ geometric κ n * B
+    tailNonNegative =
+      subst (_≤ geometric κ n * B) (ℚP.*-zeroʳ (geometric κ n))
+        (ℚP.*-monoˡ-≤-nonNeg (geometric κ n)
+          {{ℚ.nonNegative (geometricNonNegative κ κnn n)}} Bnn)
+
+    belowWithTail :
+      partialSum (geometric κ) n
+      ≤ partialSum (geometric κ) n + geometric κ n * B
+    belowWithTail =
+      subst (_≤ partialSum (geometric κ) n + geometric κ n * B)
+        (ℚP.+-identityʳ (partialSum (geometric κ) n))
+        (ℚP.+-monoʳ-≤ (partialSum (geometric κ) n) tailNonNegative)
+
+------------------------------------------------------------------------
+-- 3.  Accumulating per-shell increments against a profile
+------------------------------------------------------------------------
+
+incrementSum : (Nat → ℚ) → Nat → ℚ
+incrementSum inc zero = 0ℚ
+incrementSum inc (suc n) = incrementSum inc n + inc n
+
+incrementSumLower :
+  ∀ (inc profile : Nat → ℚ) (influence : ℚ) →
+  (∀ d → (- (influence * profile d)) ≤ inc d) →
+  ∀ n → (- (influence * partialSum profile n)) ≤ incrementSum inc n
+incrementSumLower inc profile influence bound zero =
+  ℚP.≤-reflexive
+    (trans (cong -_ (ℚP.*-zeroʳ influence)) negZero)
+incrementSumLower inc profile influence bound (suc n) =
+  subst (_≤ incrementSum inc n + inc n) (sym expand)
+    (ℚP.+-mono-≤ (incrementSumLower inc profile influence bound n) (bound n))
+  where
+    expand :
+      (- (influence * partialSum profile (suc n)))
+      ≡ (- (influence * partialSum profile n)) + (- (influence * profile n))
+    expand =
+      trans
+        (cong -_ (ℚP.*-distribˡ-+ influence (partialSum profile n) (profile n)))
+        (ℚP.neg-distrib-+ (influence * partialSum profile n)
+                          (influence * profile n))
+
+------------------------------------------------------------------------
+-- 4.  THE ASSEMBLED POSITIVE SHELL BETA UNDER AN ARBITRARY SUMMABLE PROFILE
+------------------------------------------------------------------------
+
+record SummableHistoryPositiveBetaData : Set where
+  field
+    adjointCasimir localRadius influenceCoefficient historyBudget : ℚ
+    influenceNonNegative : 0ℚ ≤ influenceCoefficient
+
+    shellProfile : Nat → ℚ
+    profileBudget : ∀ n → partialSum shellProfile n ≤ historyBudget
+
+    beta localRemainder historyRemainder : Nat → Nat → ℚ
+
+    decomposition : ∀ j n →
+      beta j n
+      ≡ RowA1.universalBetaCoefficient adjointCasimir
+          + (localRemainder j n + historyRemainder j n)
+
+    localRemainderLower : ∀ j n → (- localRadius) ≤ localRemainder j n
+
+    historyRemainderLower : ∀ j n →
+      (- (influenceCoefficient * partialSum shellProfile n))
+        ≤ historyRemainder j n
+
+    gate : localRadius + influenceCoefficient * historyBudget
+             < RowA1.universalBetaCoefficient adjointCasimir
+
+open SummableHistoryPositiveBetaData public
+
+-- b_-(G) = (11/24) C_A - r_0 - K * B.
+generalBetaFloor : SummableHistoryPositiveBetaData → ℚ
+generalBetaFloor dataSet =
+  RowA1.universalBetaCoefficient (adjointCasimir dataSet)
+    + (- (localRadius dataSet
+            + influenceCoefficient dataSet * historyBudget dataSet))
+
+generalBetaFloorPositive : ∀ dataSet → 0ℚ < generalBetaFloor dataSet
+generalBetaFloorPositive dataSet =
+  subst (_< generalBetaFloor dataSet)
+    (ℚP.+-inverseʳ
+      (localRadius dataSet
+        + influenceCoefficient dataSet * historyBudget dataSet))
+    (ℚP.+-monoˡ-<
+      (- (localRadius dataSet
+           + influenceCoefficient dataSet * historyBudget dataSet))
+      (gate dataSet))
+
+generalBetaAboveFloor :
+  ∀ dataSet j n → generalBetaFloor dataSet ≤ beta dataSet j n
+generalBetaAboveFloor dataSet j n =
+  subst (generalBetaFloor dataSet ≤_) (sym (decomposition dataSet j n))
+    (subst
+      (_≤ RowA1.universalBetaCoefficient (adjointCasimir dataSet)
+            + (localRemainder dataSet j n + historyRemainder dataSet j n))
+      (sym floorAsSum)
+      (ℚP.+-monoʳ-≤
+        (RowA1.universalBetaCoefficient (adjointCasimir dataSet))
+        remainderLower))
+  where
+    r₀ = localRadius dataSet
+    k = influenceCoefficient dataSet
+    b = historyBudget dataSet
+
+    historyLower : (- (k * b)) ≤ historyRemainder dataSet j n
+    historyLower =
+      ℚP.≤-trans
+        (ℚP.neg-antimono-≤
+          (ℚP.*-monoˡ-≤-nonNeg k
+            {{ℚ.nonNegative (influenceNonNegative dataSet)}}
+            (profileBudget dataSet n)))
+        (historyRemainderLower dataSet j n)
+
+    remainderLower :
+      (- r₀) + (- (k * b))
+      ≤ localRemainder dataSet j n + historyRemainder dataSet j n
+    remainderLower =
+      ℚP.+-mono-≤ (localRemainderLower dataSet j n) historyLower
+
+    floorAsSum :
+      generalBetaFloor dataSet
+      ≡ RowA1.universalBetaCoefficient (adjointCasimir dataSet)
+          + ((- r₀) + (- (k * b)))
+    floorAsSum =
+      cong (λ z → RowA1.universalBetaCoefficient (adjointCasimir dataSet) + z)
+        (ℚP.neg-distrib-+ r₀ (k * b))
+
+generalBetaPositive : ∀ dataSet j n → 0ℚ < beta dataSet j n
+generalBetaPositive dataSet j n =
+  ℚP.<-≤-trans (generalBetaFloorPositive dataSet)
+    (generalBetaAboveFloor dataSet j n)
+
+-- Builder from the physically natural inputs.
+generalPositiveBetaDataFromIncrements :
+  ∀ (casimir radius influence budget : ℚ) → 0ℚ ≤ influence →
+    (profile : Nat → ℚ) →
+    (∀ n → partialSum profile n ≤ budget) →
+    (localRem : Nat → Nat → ℚ) (increment : Nat → Nat → ℚ) →
+    (∀ j n → (- radius) ≤ localRem j n) →
+    (∀ j d → (- (influence * profile d)) ≤ increment j d) →
+    radius + influence * budget
+      < RowA1.universalBetaCoefficient casimir →
+  SummableHistoryPositiveBetaData
+generalPositiveBetaDataFromIncrements
+    casimir radius influence budget influenceNonNeg
+    profile budgetBound localRem increment localBound incrementBound
+    numericalGate =
+  record
+    { adjointCasimir = casimir
+    ; localRadius = radius
+    ; influenceCoefficient = influence
+    ; historyBudget = budget
+    ; influenceNonNegative = influenceNonNeg
+    ; shellProfile = profile
+    ; profileBudget = budgetBound
+    ; beta = λ j n →
+        RowA1.universalBetaCoefficient casimir
+          + (localRem j n + incrementSum (increment j) n)
+    ; localRemainder = localRem
+    ; historyRemainder = λ j n → incrementSum (increment j) n
+    ; decomposition = λ j n → refl
+    ; localRemainderLower = localBound
+    ; historyRemainderLower = λ j n →
+        incrementSumLower (increment j) profile influence (incrementBound j) n
+    ; gate = numericalGate
+    }
+
+------------------------------------------------------------------------
+-- 5.  SPECIALIZATION: ANY ONE-STEP CONTRACTION FACTOR kappa < 1
+------------------------------------------------------------------------
+
+-- The gate now reads  r_0 + K * B  <  (11/24) C_A  with 1 + kappa B = B.
+geometricHistoryPositiveBetaData :
+  ∀ (casimir radius influence κ budget : ℚ) →
+    0ℚ ≤ influence → 0ℚ ≤ κ → 0ℚ ≤ budget → 1ℚ + κ * budget ≡ budget →
+    (localRem : Nat → Nat → ℚ) (increment : Nat → Nat → ℚ) →
+    (∀ j n → (- radius) ≤ localRem j n) →
+    (∀ j d → (- (influence * geometric κ d)) ≤ increment j d) →
+    radius + influence * budget
+      < RowA1.universalBetaCoefficient casimir →
+  SummableHistoryPositiveBetaData
+geometricHistoryPositiveBetaData
+    casimir radius influence κ budget
+    influenceNonNeg κnn budgetNonNeg fix
+    localRem increment localBound incrementBound numericalGate =
+  generalPositiveBetaDataFromIncrements
+    casimir radius influence budget influenceNonNeg
+    (geometric κ)
+    (geometricPartialSumBound κ budget κnn budgetNonNeg fix)
+    localRem increment localBound incrementBound numericalGate
+
+------------------------------------------------------------------------
+-- 5b.  THE BRIDGE FROM A CONTRACTING RG HISTORY, AT ANY kappa < 1
+--
+-- `Contract.ContractingHistory.geometricInfluenceLower` gives increments
+-- bounded below by  - K * (kappa^d * gamma);  regrouped, that is exactly the
+-- hypothesis `incrementBound` above with influence coefficient K*gamma.
+------------------------------------------------------------------------
+
+regroupGeometricInfluence :
+  ∀ (lipschitz gamma κ : ℚ) (n : Nat) →
+  lipschitz * (geometric κ n * gamma)
+  ≡ (lipschitz * gamma) * geometric κ n
+regroupGeometricInfluence lipschitz gamma κ n =
+  trans (cong (λ z → lipschitz * z) (ℚP.*-comm (geometric κ n) gamma))
+    (sym (ℚP.*-assoc lipschitz gamma (geometric κ n)))
+
+module ContractingHistoryAtAnyKappa
+  (State : Set)
+  (distance : State → State → ℚ)
+  (step : Nat → State → State)
+  (kappa : ℚ)
+  (kappaNonNegative : 0ℚ ≤ kappa)
+  (stepContracts :
+     ∀ index x y →
+     distance (step index x) (step index y) ≤ kappa * distance x y)
+  where
+
+  open Contract.ContractingHistory State distance step kappa
+    kappaNonNegative stepContracts public
+
+  kappaPowerIsGeometric : ∀ n → kappaPower n ≡ geometric kappa n
+  kappaPowerIsGeometric zero = refl
+  kappaPowerIsGeometric (suc n) =
+    cong (λ z → kappa * z) (kappaPowerIsGeometric n)
+
+  -- The per-shell influence hypothesis of section 5, with influence
+  -- coefficient K*gamma and profile kappa^d -- for EVERY kappa in [0,1);
+  -- kappa < 1 is used only through the existence of the budget B.
+  geometricShellInfluence :
+    ∀ (coefficient : State → ℚ) (lipschitz : ℚ) → 0ℚ ≤ lipschitz →
+    (∀ x y → (- (lipschitz * distance x y))
+               ≤ coefficient x + (- coefficient y)) →
+    ∀ (gamma : ℚ) (x y : State) → distance x y ≤ gamma →
+    ∀ n →
+    (- ((lipschitz * gamma) * geometric kappa n))
+      ≤ coefficient (chain n x) + (- coefficient (chain n y))
+  geometricShellInfluence coefficient lipschitz lipschitzNonNegative
+      lipschitzBound gamma x y initial n =
+    subst
+      (λ bound → (- bound)
+                   ≤ coefficient (chain n x) + (- coefficient (chain n y)))
+      influenceValue
+      (geometricInfluenceLower coefficient lipschitz lipschitzNonNegative
+        lipschitzBound gamma x y initial n)
+    where
+      influenceValue :
+        lipschitz * (kappaPower n * gamma)
+        ≡ (lipschitz * gamma) * geometric kappa n
+      influenceValue =
+        trans (cong (λ z → lipschitz * (z * gamma)) (kappaPowerIsGeometric n))
+          (regroupGeometricInfluence lipschitz gamma kappa n)
+
+------------------------------------------------------------------------
+-- 6.  CONSISTENCY WITH THE kappa = 1/2 STATEMENT OF ROW A1
+------------------------------------------------------------------------
+
+twoQ : ℚ
+twoQ = + 2 / 1
+
+-- B = 2 is the budget at kappa = 1/2:  1 + (1/2)*2 = 2.
+halfBudgetFixedPoint : 1ℚ + RowA1.half * twoQ ≡ twoQ
+halfBudgetFixedPoint = refl
+
+halfBudgetNonNegative : 0ℚ ≤ twoQ
+halfBudgetNonNegative = toWitness {a? = 0ℚ ℚP.≤? twoQ} _
+
+-- At kappa = 1/2 the geometric profile is Row A1's 2^-d.
+geometricHalfIsHalfPower : ∀ n → geometric RowA1.half n ≡ RowA1.halfPower n
+geometricHalfIsHalfPower zero = refl
+geometricHalfIsHalfPower (suc n) =
+  cong (λ z → RowA1.half * z) (geometricHalfIsHalfPower n)
+
+-- ...and the two numerical gates coincide: Row A1 charges (4K) * (1/2),
+-- this module charges K * 2, and 4K/2 = 2K.
+gatesAgreeAtHalf :
+  ∀ (k : ℚ) → (Contract.four * k) * RowA1.half ≡ k * twoQ
+gatesAgreeAtHalf k =
+  trans (cong (λ z → z * RowA1.half) (ℚP.*-comm Contract.four k))
+    (trans (ℚP.*-assoc k Contract.four RowA1.half) refl)
+
+-- The partial sums also agree: sum_{d<n} 2^-d = 2 * (sum_{d<n} 2^-(d+2)) * 2,
+-- i.e. Row A1's shell budget 1/2 at weights 2^-(d+2) is the budget 2 here at
+-- weights 2^-d, since 2^-d = 4 * 2^-(d+2).
+profileScaleAtHalf :
+  ∀ n → geometric RowA1.half n ≡ (+ 4 / 1) * RowA1.shellWeight n
+profileScaleAtHalf n =
+  trans (geometricHalfIsHalfPower n) (RowA1.halfPowerIsFourShellWeight n)
+
+------------------------------------------------------------------------
+-- 7.  A NON-VACUOUS INSTANCE WITH kappa = 3/4 > 1/2
+--
+-- The earlier statement could not reach this contraction factor at all.
+-- C_A = 2 (SU(2)), r_0 = 1/3, K = 1/10, kappa = 3/4, budget B = 4.
+-- Gate: 1/3 + (1/10)*4 = 1/3 + 2/5 = 11/15 < 11/12.  Floor b_- = 11/12 -
+-- 11/15 = 11/60 > 0.
+------------------------------------------------------------------------
+
+sampleKappa sampleBudget sampleRadius sampleInfluence : ℚ
+sampleKappa = + 3 / 4
+sampleBudget = + 4 / 1
+sampleRadius = + 1 / 3
+sampleInfluence = + 1 / 10
+
+sampleBudgetFixedPoint : 1ℚ + sampleKappa * sampleBudget ≡ sampleBudget
+sampleBudgetFixedPoint = refl
+
+sampleIncrement : Nat → Nat → ℚ
+sampleIncrement _ d = - (sampleInfluence * geometric sampleKappa d)
+
+sampleLocalRemainder : Nat → Nat → ℚ
+sampleLocalRemainder _ _ = - sampleRadius
+
+sampleData : SummableHistoryPositiveBetaData
+sampleData =
+  geometricHistoryPositiveBetaData
+    Floor.su2AdjointCasimir sampleRadius sampleInfluence
+    sampleKappa sampleBudget
+    (toWitness {a? = 0ℚ ℚP.≤? sampleInfluence} _)
+    (toWitness {a? = 0ℚ ℚP.≤? sampleKappa} _)
+    (toWitness {a? = 0ℚ ℚP.≤? sampleBudget} _)
+    sampleBudgetFixedPoint
+    sampleLocalRemainder sampleIncrement
+    (λ _ _ → ℚP.≤-refl)
+    (λ _ _ → ℚP.≤-refl)
+    (toWitness
+      {a? = (sampleRadius + sampleInfluence * sampleBudget)
+              ℚP.<? RowA1.universalBetaCoefficient Floor.su2AdjointCasimir}
+      _)
+
+sampleFloorValue : generalBetaFloor sampleData ≡ + 11 / 60
+sampleFloorValue = refl
+
+samplePositive : ∀ j n → 0ℚ < beta sampleData j n
+samplePositive = generalBetaPositive sampleData
+
+-- The history term genuinely varies with the history length: with three
+-- preceding scales the accumulated influence is -(1/10)(1 + 3/4 + 9/16)
+-- = -37/160, and 11/12 - 1/3 - 37/160 = 169/480 is still above the floor 11/60.
+sampleBetaThreeScaleHistory : beta sampleData 0 3 ≡ + 169 / 480
+sampleBetaThreeScaleHistory = refl
+
+------------------------------------------------------------------------
+-- 8.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: summability of an arbitrary bounded-partial-sum shell
+-- profile suffices; the geometric profile is summable for every kappa in
+-- [0,1) via an exact tail induction; the assembled positive shell beta and
+-- its agreement with the kappa = 1/2 statement.
+generalSummableHistoryBudgetLevel : ProofLevel
+generalSummableHistoryBudgetLevel = machineChecked
+
+geometricBudgetAtAnyKappaLevel : ProofLevel
+geometricBudgetAtAnyKappaLevel = machineChecked
+
+-- STILL OPEN: for the literal Balaban RG map, SOME cutoff- and
+-- volume-uniform one-step contraction factor kappa < 1, and the Lipschitz
+-- dependence of the literal Wilson + reduced Faddeev-Popov + Haar shell
+-- coefficient on the effective-coupling state.
+literalContractionFactorLevel : ProofLevel
+literalContractionFactorLevel = conditional

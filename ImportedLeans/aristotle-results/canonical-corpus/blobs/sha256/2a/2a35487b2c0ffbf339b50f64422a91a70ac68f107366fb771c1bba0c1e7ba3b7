@@ -1,0 +1,46 @@
+# Colab setup
+
+## 1. Clone the repository and install Python dependencies
+
+```python
+import os
+import subprocess
+
+REPO_URL = "https://github.com/lluiseriksson/ym-mass-gap-lean-verification.git"
+REPO_DIR = "/content/ym-mass-gap-lean-verification"
+
+if not os.path.isdir(REPO_DIR):
+    subprocess.run(["git", "clone", REPO_URL, REPO_DIR], check=True)
+
+subprocess.run(["python3", "-m", "pip", "install", "--upgrade", "pip", "-q"], check=True)
+subprocess.run(["python3", "-m", "pip", "install", "-r", f"{REPO_DIR}/requirements.txt", "-q"], check=True)
+print("Environment ready.")
+```
+
+## 2. Install Lean 4
+
+```python
+import os
+import subprocess
+
+install_cmd = r'''
+curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+| sh -s -- -y --default-toolchain leanprover/lean4:stable
+'''
+subprocess.run(["bash", "-lc", install_cmd], check=True)
+os.environ["PATH"] = os.path.expanduser("~/.elan/bin") + ":" + os.environ["PATH"]
+subprocess.run(["bash", "-lc", "source $HOME/.elan/env && lean --version"], check=True)
+```
+
+## 3. Build Lean workspace
+
+```bash
+%%bash
+set -e
+source "$HOME/.elan/env"
+cd /content/ym-mass-gap-lean-verification/lean
+lake update || true
+lake exe cache get || true
+lake build || true
+lake build YMProof || true
+```

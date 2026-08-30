@@ -1,0 +1,23 @@
+# TOE full-repository handoff
+
+This attachment is a source handoff from the clean DASHI Agda repository.
+It includes the current tracked integration checkout plus `PR_HEADS/`, which
+contains metadata and patches for the fetched heads of PRs #602, #604--#607,
+#610, and #612--#617.
+
+The corpus includes Alice Brown, loom, biology, cognition, brain/DNA,
+observer, ontology, chemistry, education, mathematics, physics, governance,
+and the other tracked DASHI lanes. Treat the current checkout as the
+integrated source surface and `PR_HEADS/` as branch-specific provenance; do
+not silently merge or collapse the PR patches.
+
+Use the existing TOE owners as a small sewing kernel and classify every source
+surface as an exact instance, approximate instance, finite shadow, structural
+analogue, candidate bridge, negative result, or open socket. Preserve source
+path, PR number, branch/ref, ancestry, validation status, and claim boundary.
+Index the whole corpus, including negative results and deliberate gaps. Do not
+infer a theorem from shared vocabulary, and do not treat an Agda source file
+or a Lean mirror as typechecked unless an actual checker result is present.
+
+The fetched PR heads are not asserted to be mutually mergeable. The task is to
+map them to common owners and identify exact, checkable bridge obligations.

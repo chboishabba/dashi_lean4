@@ -1,0 +1,1082 @@
+module DASHI.Physics.YangMills.BalabanP33FiniteKKTAdmissibleProjectorExact where
+
+open import Agda.Builtin.Equality using (refl)
+
+------------------------------------------------------------------------
+-- PRIMARY SOURCES
+--
+-- Franco Brezzi,
+-- "On the Existence, Uniqueness and Approximation of Saddle-Point Problems
+-- Arising from Lagrangian Multipliers",
+-- RAIRO Analyse Numérique 8 (1974), 129--151.
+-- No DOI was assigned to the cited article.
+--
+-- Roger A. Horn and Charles R. Johnson,
+-- "Matrix Analysis", second edition, Cambridge University Press, 2012.
+-- DOI: 10.1017/CBO9781139020411.
+--
+-- Jerrold E. Marsden and Matthew West,
+-- "Discrete Mechanics and Variational Integrators",
+-- Acta Numerica 10 (2001), 357--514.
+-- DOI: 10.1017/S096249290100006X.
+--
+-- DASHI CONTRIBUTION
+--
+-- On the literal 3072-coordinate side-four SU(2) state carrier, construct the
+-- exact finite KKT projector
+--
+--   P = I - L* (L L*)^-1 L.
+--
+-- The multiplier carrier is finite but otherwise generic.  A concrete caller
+-- must supply the actual constraint matrix and an exact two-sided inverse of
+-- its Gram matrix.  From those data this module proves the full orthogonal
+-- decomposition, image/kernel characterizations, norm contraction, the unique
+-- nearest-admissible theorem and the minimum-norm repair theorem.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Rational.Base as ℚ using
+  (ℚ; 0ℚ; _+_; _-_; _*_; -_; _≤_)
+import Data.Rational.Properties as ℚP
+import Data.Rational.Tactic.RingSolver as ℚRing
+open import Relation.Binary.PropositionalEquality using
+  (cong; cong₂; subst; sym; trans)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.Closure.NSTriadKNRationalOrderedFiniteL2 as FiniteL2
+import DASHI.Physics.Closure.NSTriadKNRationalComplex3Separation as Separation
+import DASHI.Physics.YangMills.BalabanPhysicalBlockFibreSumsExact as Sums
+import DASHI.Physics.YangMills.BalabanFiniteSumFubiniExact as Fubini
+import DASHI.Physics.YangMills.BalabanConstructiveRationalMatrixInverseExact as Matrix
+import DASHI.Physics.YangMills.BalabanFiniteRectangularRationalExact as Rect
+import DASHI.Physics.YangMills.BalabanP33PhysicalSU2FiniteCoordinatesExact as Physical
+import DASHI.Physics.YangMills.BalabanP33LiteralResidualKernelNumericalCalibrationExact as Calibration
+import DASHI.Physics.YangMills.BalabanP33PhysicalCombesThomasEntryDecayExact as Entry
+import DASHI.Physics.YangMills.BalabanP33PhysicalCoordinateBasisExact as Basis
+
+State : Set
+State = Physical.PhysicalSU2Coordinate4
+
+StateVector : Set
+StateVector = State → ℚ
+
+physicalStateCarrier : Matrix.FiniteRationalCoordinates State
+physicalStateCarrier = record
+  { Matrix.FiniteRationalCoordinates.coordinates =
+      Physical.physicalSU2Coordinates4
+  ; Matrix.FiniteRationalCoordinates.delta =
+      Calibration.identityEntry
+  ; Matrix.FiniteRationalCoordinates.deltaActsAsIdentity =
+      Entry.physicalIdentityApplyExact
+  }
+
+stateDot : StateVector → StateVector → ℚ
+stateDot = Rect.finiteDot physicalStateCarrier
+
+stateNormSq : StateVector → ℚ
+stateNormSq = Rect.finiteNormSq physicalStateCarrier
+
+stateNormSqNonnegative : ∀ vector → 0ℚ ≤ stateNormSq vector
+stateNormSqNonnegative =
+  Rect.finiteNormSqNonnegative physicalStateCarrier
+
+stateNormSqZeroPointwise :
+  ∀ vector → stateNormSq vector ≡ 0ℚ →
+  ∀ coordinate → vector coordinate ≡ 0ℚ
+stateNormSqZeroPointwise vector normZero coordinate =
+  let
+    squareBelowZero :
+      FiniteL2.square (vector coordinate) ≤ 0ℚ
+    squareBelowZero =
+      subst
+        (λ upper → FiniteL2.square (vector coordinate) ≤ upper)
+        normZero
+        (Basis.physicalCoordinateSquareBelowNormSq vector coordinate)
+
+    squareZero :
+      FiniteL2.square (vector coordinate) ≡ 0ℚ
+    squareZero = ℚP.≤-antisym
+      squareBelowZero
+      (FiniteL2.squareNonnegative (vector coordinate))
+  in
+  Separation.rationalSquareZeroImpliesZero
+    (vector coordinate) squareZero
+
+constraintGramRaw :
+  ∀ {Multiplier : Set} →
+  Matrix.FiniteRationalCoordinates Multiplier →
+  Rect.RectangularMatrix Multiplier State →
+  Matrix.RationalMatrix Multiplier
+constraintGramRaw multiplierCarrier constraintMatrix =
+  Rect.composeRectangular
+    physicalStateCarrier
+    constraintMatrix
+    (Rect.transposeRectangular constraintMatrix)
+
+record FiniteKKTProjectorData (Multiplier : Set) : Set₁ where
+  field
+    multiplierCarrier :
+      Matrix.FiniteRationalCoordinates Multiplier
+
+    constraintMatrix :
+      Rect.RectangularMatrix Multiplier State
+
+    gramInverseCertificate :
+      Matrix.RationalMatrixInverseCertificate
+        multiplierCarrier
+        (constraintGramRaw multiplierCarrier constraintMatrix)
+
+    gramInverseSymmetric :
+      ∀ left right →
+      Matrix.inverseMatrix gramInverseCertificate left right
+      ≡ Matrix.inverseMatrix gramInverseCertificate right left
+
+open FiniteKKTProjectorData public
+
+constraintApply :
+  ∀ {Multiplier} →
+  FiniteKKTProjectorData Multiplier →
+  StateVector → Multiplier → ℚ
+constraintApply dataSet =
+  Rect.applyRectangular
+    physicalStateCarrier
+    (constraintMatrix dataSet)
+
+constraintAdjointApply :
+  ∀ {Multiplier} →
+  FiniteKKTProjectorData Multiplier →
+  (Multiplier → ℚ) → StateVector
+constraintAdjointApply dataSet =
+  Rect.applyRectangular
+    (multiplierCarrier dataSet)
+    (Rect.transposeRectangular (constraintMatrix dataSet))
+
+constraintGram :
+  ∀ {Multiplier} →
+  FiniteKKTProjectorData Multiplier →
+  Matrix.RationalMatrix Multiplier
+constraintGram dataSet =
+  constraintGramRaw
+    (multiplierCarrier dataSet)
+    (constraintMatrix dataSet)
+
+multiplierGreen :
+  ∀ {Multiplier} →
+  FiniteKKTProjectorData Multiplier →
+  Matrix.RationalMatrix Multiplier
+multiplierGreen dataSet =
+  Matrix.inverseMatrix (gramInverseCertificate dataSet)
+
+multiplierGreenApply :
+  ∀ {Multiplier} →
+  FiniteKKTProjectorData Multiplier →
+  (Multiplier → ℚ) → Multiplier → ℚ
+multiplierGreenApply dataSet =
+  Rect.applyRectangular
+    (multiplierCarrier dataSet)
+    (multiplierGreen dataSet)
+
+selectedConstraintRepair :
+  ∀ {Multiplier} →
+  FiniteKKTProjectorData Multiplier →
+  StateVector → StateVector
+selectedConstraintRepair dataSet vector =
+  constraintAdjointApply dataSet
+    (multiplierGreenApply dataSet
+      (constraintApply dataSet vector))
+
+selectedAdmissibleProject :
+  ∀ {Multiplier} →
+  FiniteKKTProjectorData Multiplier →
+  StateVector → StateVector
+selectedAdmissibleProject dataSet vector =
+  Rect.vectorSubtract vector
+    (selectedConstraintRepair dataSet vector)
+
+record SelectedConstraintKernel
+    {Multiplier : Set}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    (vector : StateVector) : Set where
+  field
+    constraintZero :
+      ∀ multiplier → constraintApply dataSet vector multiplier ≡ 0ℚ
+
+open SelectedConstraintKernel public
+
+record SelectedRepairSpace
+    {Multiplier : Set}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    (vector : StateVector) : Set₁ where
+  field
+    multiplier : Multiplier → ℚ
+    representedByAdjoint :
+      ∀ coordinate →
+      vector coordinate
+      ≡ constraintAdjointApply dataSet multiplier coordinate
+
+open SelectedRepairSpace public
+
+record SelectedProjectorImage
+    {Multiplier : Set}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    (vector : StateVector) : Set where
+  field
+    fixedByProjector :
+      ∀ coordinate →
+      selectedAdmissibleProject dataSet vector coordinate
+      ≡ vector coordinate
+
+open SelectedProjectorImage public
+
+record SelectedProjectorKernel
+    {Multiplier : Set}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    (vector : StateVector) : Set where
+  field
+    killedByProjector :
+      ∀ coordinate →
+      selectedAdmissibleProject dataSet vector coordinate
+      ≡ 0ℚ
+
+open SelectedProjectorKernel public
+
+constraintGramActionExact :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    multiplier row →
+  constraintApply dataSet
+    (constraintAdjointApply dataSet multiplier) row
+  ≡ Rect.applyRectangular
+      (multiplierCarrier dataSet)
+      (constraintGram dataSet)
+      multiplier row
+constraintGramActionExact dataSet multiplier row =
+  sym
+    (Rect.applyComposeRectangularExact
+      physicalStateCarrier
+      (multiplierCarrier dataSet)
+      (constraintMatrix dataSet)
+      (Rect.transposeRectangular (constraintMatrix dataSet))
+      multiplier row)
+
+constraintRepairExact :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector multiplier →
+  constraintApply dataSet
+    (selectedConstraintRepair dataSet vector) multiplier
+  ≡ constraintApply dataSet vector multiplier
+constraintRepairExact dataSet vector multiplier =
+  trans
+    (constraintGramActionExact
+      dataSet
+      (multiplierGreenApply dataSet
+        (constraintApply dataSet vector))
+      multiplier)
+    (Matrix.matrixInverseRightExact
+      (gramInverseCertificate dataSet)
+      (constraintApply dataSet vector)
+      multiplier)
+
+selectedProjectorConstraintZero :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  SelectedConstraintKernel dataSet
+    (selectedAdmissibleProject dataSet vector)
+selectedProjectorConstraintZero dataSet vector = record
+  { constraintZero = λ multiplier →
+      trans
+        (Rect.applyRectangularSubtract
+          physicalStateCarrier
+          (constraintMatrix dataSet)
+          vector
+          (selectedConstraintRepair dataSet vector)
+          multiplier)
+        (trans
+          (cong
+            (constraintApply dataSet vector multiplier -_)
+            (constraintRepairExact dataSet vector multiplier))
+          (ℚRing.solve-∀
+            (constraintApply dataSet vector multiplier)))
+  }
+
+greenOfConstraintKernelZero :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  SelectedConstraintKernel dataSet vector →
+  ∀ multiplier →
+  multiplierGreenApply dataSet
+    (constraintApply dataSet vector) multiplier
+  ≡ 0ℚ
+greenOfConstraintKernelZero dataSet vector kernel multiplier =
+  trans
+    (Rect.applyRectangularVectorCong
+      (multiplierCarrier dataSet)
+      (multiplierGreen dataSet)
+      (constraintZero kernel)
+      multiplier)
+    (Rect.applyRectangularZero
+      (multiplierCarrier dataSet)
+      (multiplierGreen dataSet)
+      multiplier)
+
+repairOfConstraintKernelZero :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  SelectedConstraintKernel dataSet vector →
+  ∀ coordinate →
+  selectedConstraintRepair dataSet vector coordinate ≡ 0ℚ
+repairOfConstraintKernelZero dataSet vector kernel coordinate =
+  trans
+    (Rect.applyRectangularVectorCong
+      (multiplierCarrier dataSet)
+      (Rect.transposeRectangular (constraintMatrix dataSet))
+      (greenOfConstraintKernelZero dataSet vector kernel)
+      coordinate)
+    (Rect.applyRectangularZero
+      (multiplierCarrier dataSet)
+      (Rect.transposeRectangular (constraintMatrix dataSet))
+      coordinate)
+
+selectedProjectorFixesConstraintKernel :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  SelectedConstraintKernel dataSet vector →
+  ∀ coordinate →
+  selectedAdmissibleProject dataSet vector coordinate
+  ≡ vector coordinate
+selectedProjectorFixesConstraintKernel dataSet vector kernel coordinate =
+  trans
+    (cong
+      (vector coordinate -_)
+      (repairOfConstraintKernelZero
+        dataSet vector kernel coordinate))
+    (ℚRing.solve-∀ (vector coordinate))
+
+selectedProjectorIdempotent :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector coordinate →
+  selectedAdmissibleProject dataSet
+    (selectedAdmissibleProject dataSet vector) coordinate
+  ≡ selectedAdmissibleProject dataSet vector coordinate
+selectedProjectorIdempotent dataSet vector =
+  selectedProjectorFixesConstraintKernel
+    dataSet
+    (selectedAdmissibleProject dataSet vector)
+    (selectedProjectorConstraintZero dataSet vector)
+
+greenGramExact :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    multiplier row →
+  multiplierGreenApply dataSet
+    (Rect.applyRectangular
+      (multiplierCarrier dataSet)
+      (constraintGram dataSet)
+      multiplier)
+    row
+  ≡ multiplier row
+greenGramExact dataSet multiplier row =
+  Matrix.matrixInverseLeftExact
+    (gramInverseCertificate dataSet)
+    multiplier row
+
+repairOfAdjointExact :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    multiplier coordinate →
+  selectedConstraintRepair dataSet
+    (constraintAdjointApply dataSet multiplier)
+    coordinate
+  ≡ constraintAdjointApply dataSet multiplier coordinate
+repairOfAdjointExact dataSet multiplier coordinate =
+  let
+    gramToGreenPointwise : ∀ row →
+      multiplierGreenApply dataSet
+        (constraintApply dataSet
+          (constraintAdjointApply dataSet multiplier))
+        row
+      ≡ multiplier row
+    gramToGreenPointwise row =
+      trans
+        (Rect.applyRectangularVectorCong
+          (multiplierCarrier dataSet)
+          (multiplierGreen dataSet)
+          (λ selected →
+            constraintGramActionExact
+              dataSet multiplier selected)
+          row)
+        (greenGramExact dataSet multiplier row)
+  in
+  Rect.applyRectangularVectorCong
+    (multiplierCarrier dataSet)
+    (Rect.transposeRectangular (constraintMatrix dataSet))
+    gramToGreenPointwise
+    coordinate
+
+selectedProjectorKillsRepairSpace :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  SelectedRepairSpace dataSet vector →
+  SelectedProjectorKernel dataSet vector
+selectedProjectorKillsRepairSpace dataSet vector repairSpace = record
+  { killedByProjector = λ coordinate →
+      let
+        constraintRepresentation : ∀ row →
+          constraintApply dataSet vector row
+          ≡ constraintApply dataSet
+              (constraintAdjointApply dataSet
+                (multiplier repairSpace))
+              row
+        constraintRepresentation row =
+          Rect.applyRectangularVectorCong
+            physicalStateCarrier
+            (constraintMatrix dataSet)
+            (representedByAdjoint repairSpace)
+            row
+
+        greenRepresentation : ∀ row →
+          multiplierGreenApply dataSet
+            (constraintApply dataSet vector) row
+          ≡ multiplierGreenApply dataSet
+              (constraintApply dataSet
+                (constraintAdjointApply dataSet
+                  (multiplier repairSpace)))
+              row
+        greenRepresentation row =
+          Rect.applyRectangularVectorCong
+            (multiplierCarrier dataSet)
+            (multiplierGreen dataSet)
+            constraintRepresentation
+            row
+
+        repairRepresentation :
+          selectedConstraintRepair dataSet vector coordinate
+          ≡ selectedConstraintRepair dataSet
+              (constraintAdjointApply dataSet
+                (multiplier repairSpace))
+              coordinate
+        repairRepresentation =
+          Rect.applyRectangularVectorCong
+            (multiplierCarrier dataSet)
+            (Rect.transposeRectangular (constraintMatrix dataSet))
+            greenRepresentation
+            coordinate
+
+        repairIsVector :
+          selectedConstraintRepair dataSet vector coordinate
+          ≡ vector coordinate
+        repairIsVector =
+          trans repairRepresentation
+            (trans
+              (repairOfAdjointExact
+                dataSet (multiplier repairSpace) coordinate)
+              (sym
+                (representedByAdjoint repairSpace coordinate)))
+      in
+      trans
+        (cong
+          (vector coordinate -_)
+          repairIsVector)
+        (ℚRing.solve-∀ (vector coordinate))
+  }
+
+selectedProjectorImageIsConstraintKernel :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  SelectedProjectorImage dataSet vector →
+  SelectedConstraintKernel dataSet vector
+selectedProjectorImageIsConstraintKernel dataSet vector image = record
+  { constraintZero = λ multiplier →
+      trans
+        (Rect.applyRectangularVectorCong
+          physicalStateCarrier
+          (constraintMatrix dataSet)
+          (λ coordinate →
+            sym (fixedByProjector image coordinate))
+          multiplier)
+        (constraintZero
+          (selectedProjectorConstraintZero dataSet vector)
+          multiplier)
+  }
+
+selectedConstraintKernelIsProjectorImage :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  SelectedConstraintKernel dataSet vector →
+  SelectedProjectorImage dataSet vector
+selectedConstraintKernelIsProjectorImage dataSet vector kernel = record
+  { fixedByProjector =
+      selectedProjectorFixesConstraintKernel dataSet vector kernel
+  }
+
+selectedProjectorKernelIsRepairSpace :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  SelectedProjectorKernel dataSet vector →
+  SelectedRepairSpace dataSet vector
+selectedProjectorKernelIsRepairSpace dataSet vector kernel = record
+  { multiplier =
+      multiplierGreenApply dataSet (constraintApply dataSet vector)
+  ; representedByAdjoint = λ coordinate →
+      let
+        projectedZero = killedByProjector kernel coordinate
+        repair = selectedConstraintRepair dataSet vector coordinate
+
+        shifted :
+          selectedAdmissibleProject dataSet vector coordinate
+            + repair
+          ≡ 0ℚ + repair
+        shifted = cong (_+ repair) projectedZero
+      in
+      trans
+        (sym
+          (ℚRing.solve-∀
+            (vector coordinate) repair))
+        (trans shifted
+          (ℚRing.solve-∀ repair))
+  }
+
+selectedRepairSpaceIsProjectorKernel :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  SelectedRepairSpace dataSet vector →
+  SelectedProjectorKernel dataSet vector
+selectedRepairSpaceIsProjectorKernel =
+  selectedProjectorKillsRepairSpace
+
+selectedAdmissibleOrthogonalDecompositionPointwise :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector coordinate →
+  vector coordinate
+  ≡ selectedAdmissibleProject dataSet vector coordinate
+    + selectedConstraintRepair dataSet vector coordinate
+selectedAdmissibleOrthogonalDecompositionPointwise dataSet vector coordinate =
+  ℚRing.solve-∀
+    (vector coordinate)
+    (selectedConstraintRepair dataSet vector coordinate)
+
+multiplierDot :
+  ∀ {Multiplier} →
+  FiniteKKTProjectorData Multiplier →
+  (Multiplier → ℚ) → (Multiplier → ℚ) → ℚ
+multiplierDot dataSet =
+  Rect.finiteDot (multiplierCarrier dataSet)
+
+selectedRepairSelfAdjoint :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    left right →
+  stateDot left (selectedConstraintRepair dataSet right)
+  ≡ stateDot (selectedConstraintRepair dataSet left) right
+selectedRepairSelfAdjoint dataSet left right =
+  let
+    leftConstraint = constraintApply dataSet left
+    rightConstraint = constraintApply dataSet right
+    greenLeft = multiplierGreenApply dataSet leftConstraint
+    greenRight = multiplierGreenApply dataSet rightConstraint
+  in
+  trans
+    (sym
+      (Rect.rectangularAdjointExact
+        (multiplierCarrier dataSet)
+        physicalStateCarrier
+        (constraintMatrix dataSet)
+        left
+        greenRight))
+    (trans
+      (Rect.symmetricMatrixMovesAcrossDot
+        (multiplierCarrier dataSet)
+        (multiplierGreen dataSet)
+        (gramInverseSymmetric dataSet)
+        leftConstraint
+        rightConstraint)
+      (trans
+        (Rect.finiteDotSymmetric
+          (multiplierCarrier dataSet)
+          greenLeft rightConstraint)
+        (trans
+          (Rect.rectangularAdjointExact
+            (multiplierCarrier dataSet)
+            physicalStateCarrier
+            (constraintMatrix dataSet)
+            right
+            greenLeft)
+          (Rect.finiteDotSymmetric
+            physicalStateCarrier
+            right
+            (selectedConstraintRepair dataSet left)))))
+
+selectedProjectorSelfAdjoint :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    left right →
+  stateDot left (selectedAdmissibleProject dataSet right)
+  ≡ stateDot (selectedAdmissibleProject dataSet left) right
+selectedProjectorSelfAdjoint dataSet left right =
+  trans
+    (Rect.finiteDotSubtractRight
+      physicalStateCarrier
+      left right
+      (selectedConstraintRepair dataSet right))
+    (trans
+      (cong
+        (stateDot left right -_)
+        (selectedRepairSelfAdjoint dataSet left right))
+      (sym
+        (Rect.finiteDotSubtractLeft
+          physicalStateCarrier
+          left
+          (selectedConstraintRepair dataSet left)
+          right)))
+
+selectedAdmissibleRepairOrthogonal :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    admissible multiplier →
+  SelectedConstraintKernel dataSet admissible →
+  stateDot admissible
+    (constraintAdjointApply dataSet multiplier)
+  ≡ 0ℚ
+selectedAdmissibleRepairOrthogonal
+    dataSet admissible multiplier admissibleKernel =
+  trans
+    (sym
+      (Rect.rectangularAdjointExact
+        (multiplierCarrier dataSet)
+        physicalStateCarrier
+        (constraintMatrix dataSet)
+        admissible multiplier))
+    (trans
+      (Sums.sumRationalCong
+        (Matrix.coordinates (multiplierCarrier dataSet))
+        (λ row →
+          constraintApply dataSet admissible row * multiplier row)
+        (λ row → 0ℚ * multiplier row)
+        (λ row →
+          cong (_* multiplier row)
+            (constraintZero admissibleKernel row)))
+      (trans
+        (Sums.sumRationalCong
+          (Matrix.coordinates (multiplierCarrier dataSet))
+          (λ row → 0ℚ * multiplier row)
+          (λ _ → 0ℚ)
+          (λ row → ℚRing.solve-∀ (multiplier row)))
+        (Fubini.sumRationalZero
+          (Matrix.coordinates (multiplierCarrier dataSet)))))
+
+selectedProjectRepairOrthogonal :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  stateDot
+    (selectedAdmissibleProject dataSet vector)
+    (selectedConstraintRepair dataSet vector)
+  ≡ 0ℚ
+selectedProjectRepairOrthogonal dataSet vector =
+  selectedAdmissibleRepairOrthogonal
+    dataSet
+    (selectedAdmissibleProject dataSet vector)
+    (multiplierGreenApply dataSet
+      (constraintApply dataSet vector))
+    (selectedProjectorConstraintZero dataSet vector)
+
+selectedRepairProjectOrthogonal :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  stateDot
+    (selectedConstraintRepair dataSet vector)
+    (selectedAdmissibleProject dataSet vector)
+  ≡ 0ℚ
+selectedRepairProjectOrthogonal dataSet vector =
+  trans
+    (Rect.finiteDotSymmetric
+      physicalStateCarrier
+      (selectedConstraintRepair dataSet vector)
+      (selectedAdmissibleProject dataSet vector))
+    (selectedProjectRepairOrthogonal dataSet vector)
+
+stateNormPointwiseCong :
+  ∀ {left right : StateVector} →
+  (∀ coordinate → left coordinate ≡ right coordinate) →
+  stateNormSq left ≡ stateNormSq right
+stateNormPointwiseCong {left} {right} pointwise =
+  Sums.sumRationalCong
+    Physical.physicalSU2Coordinates4
+    (λ coordinate → left coordinate * left coordinate)
+    (λ coordinate → right coordinate * right coordinate)
+    (λ coordinate →
+      cong₂ _*_
+        (pointwise coordinate)
+        (pointwise coordinate))
+
+selectedStatePythagorean :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  stateNormSq vector
+  ≡ stateNormSq (selectedAdmissibleProject dataSet vector)
+    + stateNormSq (selectedConstraintRepair dataSet vector)
+selectedStatePythagorean dataSet vector =
+  trans
+    (stateNormPointwiseCong
+      (selectedAdmissibleOrthogonalDecompositionPointwise dataSet vector))
+    (Rect.normSqAddOrthogonal
+      physicalStateCarrier
+      (selectedAdmissibleProject dataSet vector)
+      (selectedConstraintRepair dataSet vector)
+      (selectedProjectRepairOrthogonal dataSet vector)
+      (selectedRepairProjectOrthogonal dataSet vector))
+
+selectedProjectorNormContraction :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  stateNormSq (selectedAdmissibleProject dataSet vector)
+  ≤ stateNormSq vector
+selectedProjectorNormContraction dataSet vector =
+  let
+    repairNN =
+      stateNormSqNonnegative
+        (selectedConstraintRepair dataSet vector)
+
+    withRemainder :
+      stateNormSq (selectedAdmissibleProject dataSet vector)
+      ≤ stateNormSq (selectedAdmissibleProject dataSet vector)
+        + stateNormSq (selectedConstraintRepair dataSet vector)
+    withRemainder =
+      subst
+        (λ lower →
+          lower
+          ≤ stateNormSq (selectedAdmissibleProject dataSet vector)
+            + stateNormSq (selectedConstraintRepair dataSet vector))
+        (ℚP.+-identityʳ
+          (stateNormSq (selectedAdmissibleProject dataSet vector)))
+        (ℚP.+-mono-≤ ℚP.≤-refl repairNN)
+  in
+  subst
+    (λ upper →
+      stateNormSq (selectedAdmissibleProject dataSet vector)
+      ≤ upper)
+    (sym (selectedStatePythagorean dataSet vector))
+    withRemainder
+
+stateDistanceSq : StateVector → StateVector → ℚ
+stateDistanceSq left right =
+  stateNormSq (Rect.vectorSubtract left right)
+
+selectedDifferenceDecompositionPointwise :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector admissible coordinate →
+  Rect.vectorSubtract vector admissible coordinate
+  ≡ Rect.vectorAdd
+      (selectedConstraintRepair dataSet vector)
+      (Rect.vectorSubtract
+        (selectedAdmissibleProject dataSet vector)
+        admissible)
+      coordinate
+selectedDifferenceDecompositionPointwise
+    dataSet vector admissible coordinate =
+  ℚRing.solve-∀
+    (vector coordinate)
+    (selectedConstraintRepair dataSet vector coordinate)
+    (admissible coordinate)
+
+selectedProjectedDifferenceKernel :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector admissible →
+  SelectedConstraintKernel dataSet admissible →
+  SelectedConstraintKernel dataSet
+    (Rect.vectorSubtract
+      (selectedAdmissibleProject dataSet vector)
+      admissible)
+selectedProjectedDifferenceKernel dataSet vector admissible kernel = record
+  { constraintZero = λ multiplier →
+      trans
+        (Rect.applyRectangularSubtract
+          physicalStateCarrier
+          (constraintMatrix dataSet)
+          (selectedAdmissibleProject dataSet vector)
+          admissible
+          multiplier)
+        (trans
+          (cong₂ _-_
+            (constraintZero
+              (selectedProjectorConstraintZero dataSet vector)
+              multiplier)
+            (constraintZero kernel multiplier))
+          (refl))
+  }
+
+selectedDifferencePythagorean :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector admissible →
+  SelectedConstraintKernel dataSet admissible →
+  stateDistanceSq vector admissible
+  ≡ stateNormSq (selectedConstraintRepair dataSet vector)
+    + stateNormSq
+        (Rect.vectorSubtract
+          (selectedAdmissibleProject dataSet vector)
+          admissible)
+selectedDifferencePythagorean dataSet vector admissible kernel =
+  let
+    difference =
+      Rect.vectorSubtract
+        (selectedAdmissibleProject dataSet vector)
+        admissible
+
+    differenceKernel =
+      selectedProjectedDifferenceKernel
+        dataSet vector admissible kernel
+
+    differenceRepairOrthogonal :
+      stateDot difference
+        (selectedConstraintRepair dataSet vector)
+      ≡ 0ℚ
+    differenceRepairOrthogonal =
+      selectedAdmissibleRepairOrthogonal
+        dataSet difference
+        (multiplierGreenApply dataSet
+          (constraintApply dataSet vector))
+        differenceKernel
+
+    repairDifferenceOrthogonal :
+      stateDot
+        (selectedConstraintRepair dataSet vector)
+        difference
+      ≡ 0ℚ
+    repairDifferenceOrthogonal =
+      trans
+        (Rect.finiteDotSymmetric
+          physicalStateCarrier
+          (selectedConstraintRepair dataSet vector)
+          difference)
+        differenceRepairOrthogonal
+  in
+  trans
+    (stateNormPointwiseCong
+      (selectedDifferenceDecompositionPointwise
+        dataSet vector admissible))
+    (Rect.normSqAddOrthogonal
+      physicalStateCarrier
+      (selectedConstraintRepair dataSet vector)
+      difference
+      repairDifferenceOrthogonal
+      differenceRepairOrthogonal)
+
+selectedDistanceToProjectionIsRepairNorm :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector →
+  stateDistanceSq vector
+    (selectedAdmissibleProject dataSet vector)
+  ≡ stateNormSq (selectedConstraintRepair dataSet vector)
+selectedDistanceToProjectionIsRepairNorm dataSet vector =
+  stateNormPointwiseCong
+    (λ coordinate →
+      ℚRing.solve-∀
+        (vector coordinate)
+        (selectedConstraintRepair dataSet vector coordinate))
+
+selectedProjectedVariationNearestAdmissible :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector admissible →
+  SelectedConstraintKernel dataSet admissible →
+  stateDistanceSq vector
+    (selectedAdmissibleProject dataSet vector)
+  ≤ stateDistanceSq vector admissible
+selectedProjectedVariationNearestAdmissible
+    dataSet vector admissible kernel =
+  let
+    residual =
+      Rect.vectorSubtract
+        (selectedAdmissibleProject dataSet vector)
+        admissible
+
+    residualNN = stateNormSqNonnegative residual
+
+    repairBelowSum :
+      stateNormSq (selectedConstraintRepair dataSet vector)
+      ≤ stateNormSq (selectedConstraintRepair dataSet vector)
+        + stateNormSq residual
+    repairBelowSum =
+      subst
+        (λ lower →
+          lower
+          ≤ stateNormSq (selectedConstraintRepair dataSet vector)
+            + stateNormSq residual)
+        (ℚP.+-identityʳ
+          (stateNormSq (selectedConstraintRepair dataSet vector)))
+        (ℚP.+-mono-≤ ℚP.≤-refl residualNN)
+  in
+  subst
+    (λ lower → lower ≤ stateDistanceSq vector admissible)
+    (sym (selectedDistanceToProjectionIsRepairNorm dataSet vector))
+    (subst
+      (λ upper →
+        stateNormSq (selectedConstraintRepair dataSet vector)
+        ≤ upper)
+      (sym
+        (selectedDifferencePythagorean
+          dataSet vector admissible kernel))
+      repairBelowSum)
+
+selectedProjectedVariationUniqueNearestAdmissible :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector admissible →
+  SelectedConstraintKernel dataSet admissible →
+  stateDistanceSq vector admissible
+    ≡ stateDistanceSq vector
+        (selectedAdmissibleProject dataSet vector) →
+  ∀ coordinate →
+  admissible coordinate
+  ≡ selectedAdmissibleProject dataSet vector coordinate
+selectedProjectedVariationUniqueNearestAdmissible
+    dataSet vector admissible kernel sameDistance coordinate =
+  let
+    residual =
+      Rect.vectorSubtract
+        (selectedAdmissibleProject dataSet vector)
+        admissible
+
+    pythagorean =
+      selectedDifferencePythagorean
+        dataSet vector admissible kernel
+
+    projectionDistance =
+      selectedDistanceToProjectionIsRepairNorm dataSet vector
+
+    sumEqualsRepair :
+      stateNormSq (selectedConstraintRepair dataSet vector)
+        + stateNormSq residual
+      ≡ stateNormSq (selectedConstraintRepair dataSet vector)
+    sumEqualsRepair =
+      trans
+        (sym pythagorean)
+        (trans sameDistance projectionDistance)
+
+    residualZero :
+      stateNormSq residual ≡ 0ℚ
+    residualZero =
+      trans
+        (sym
+          (ℚRing.solve-∀
+            (stateNormSq (selectedConstraintRepair dataSet vector))
+            (stateNormSq residual)))
+        (trans
+          (cong
+            (λ selected →
+              selected
+              - stateNormSq
+                  (selectedConstraintRepair dataSet vector))
+            sumEqualsRepair)
+          (ℚRing.solve-∀
+            (stateNormSq (selectedConstraintRepair dataSet vector))))
+
+    differenceZero :
+      selectedAdmissibleProject dataSet vector coordinate
+        - admissible coordinate
+      ≡ 0ℚ
+    differenceZero =
+      stateNormSqZeroPointwise residual residualZero coordinate
+
+    shifted :
+      (selectedAdmissibleProject dataSet vector coordinate
+        - admissible coordinate)
+        + admissible coordinate
+      ≡ 0ℚ + admissible coordinate
+    shifted = cong (_+ admissible coordinate) differenceZero
+  in
+  sym
+    (trans
+      (sym
+        (ℚRing.solve-∀
+          (selectedAdmissibleProject dataSet vector coordinate)
+          (admissible coordinate)))
+      (trans shifted
+        (ℚRing.solve-∀ (admissible coordinate))))
+
+selectedRepairIsMinimumNorm :
+  ∀ {Multiplier}
+    (dataSet : FiniteKKTProjectorData Multiplier)
+    vector correction →
+  (∀ multiplier →
+    constraintApply dataSet correction multiplier
+    ≡ constraintApply dataSet vector multiplier) →
+  stateNormSq (selectedConstraintRepair dataSet vector)
+  ≤ stateNormSq correction
+selectedRepairIsMinimumNorm dataSet vector correction sameConstraint =
+  let
+    candidate = Rect.vectorSubtract vector correction
+
+    candidateKernel : SelectedConstraintKernel dataSet candidate
+    candidateKernel = record
+      { constraintZero = λ multiplier →
+          trans
+            (Rect.applyRectangularSubtract
+              physicalStateCarrier
+              (constraintMatrix dataSet)
+              vector correction multiplier)
+            (trans
+              (cong
+                (constraintApply dataSet vector multiplier -_)
+                (sameConstraint multiplier))
+              (ℚRing.solve-∀
+                (constraintApply dataSet vector multiplier)))
+      }
+
+    nearest =
+      selectedProjectedVariationNearestAdmissible
+        dataSet vector candidate candidateKernel
+
+    correctionDistance :
+      stateDistanceSq vector candidate
+      ≡ stateNormSq correction
+    correctionDistance =
+      stateNormPointwiseCong
+        (λ coordinate →
+          ℚRing.solve-∀
+            (vector coordinate) (correction coordinate))
+  in
+  subst
+    (λ lower → lower ≤ stateNormSq correction)
+    (selectedDistanceToProjectionIsRepairNorm dataSet vector)
+    (subst
+      (λ upper →
+        stateDistanceSq vector
+          (selectedAdmissibleProject dataSet vector)
+        ≤ upper)
+      correctionDistance
+      nearest)
+
+finiteKKTProjectorConstraintLevel : ProofLevel
+finiteKKTProjectorConstraintLevel = machineChecked
+
+finiteKKTProjectorOrthogonalLevel : ProofLevel
+finiteKKTProjectorOrthogonalLevel = machineChecked
+
+finiteKKTNearestAdmissibleLevel : ProofLevel
+finiteKKTNearestAdmissibleLevel = machineChecked
+
+selectedPhysicalConstraintMatrixProducerLevel : ProofLevel
+selectedPhysicalConstraintMatrixProducerLevel = conditional
+
+selectedConstraintGramInverseProducerLevel : ProofLevel
+selectedConstraintGramInverseProducerLevel = conditional

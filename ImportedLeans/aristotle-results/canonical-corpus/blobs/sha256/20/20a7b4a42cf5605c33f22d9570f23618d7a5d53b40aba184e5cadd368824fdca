@@ -1,0 +1,13 @@
+# Clay checklist (draft)
+
+Items to document:
+- precise theorem statement,
+- Euclidean construction,
+- reflection positivity,
+- OS axioms,
+- reconstruction,
+- non-triviality,
+- positive mass gap,
+- continuum interpretation,
+- role of external theorems,
+- role of the Lean verification layer.

@@ -1,0 +1,53 @@
+------------------------------------------------------------------------
+-- Compatibility backfill of the standard-library module
+--
+--   Data.Rational.Tactic.RingSolver
+--
+-- This module exists in agda-stdlib master (and is used by several DASHI
+-- modules), but not in agda-stdlib 2.1, the version shipped by some
+-- distributions for Agda 2.6.4.3.  It is *not* part of DASHI: it is a
+-- verbatim reconstruction of the upstream file, with the upstream
+-- `0≡?-weak` (also absent from 2.1) replaced by the equivalent
+-- `decToMaybe (0ℚ ≟ x)`.  The `0≟_` field is only a zero-detection hint for
+-- the solver; soundness of `solve`/`solve-∀` does not depend on it, since it
+-- must return a *proof* `0# ≈ x` whenever it answers `just`.
+--
+-- It is deliberately NOT on the `dashi-agda` include path.  Add it by hand,
+--
+--   agda --safe -i vendor/stdlib-compat <file>
+--
+-- only when the ambient standard library lacks the module.
+------------------------------------------------------------------------
+
+{-# OPTIONS --without-K --safe #-}
+
+module Data.Rational.Tactic.RingSolver where
+
+open import Agda.Builtin.Reflection using (Term; TC)
+open import Data.Maybe.Base using (Maybe)
+open import Data.Rational.Base using (ℚ; 0ℚ)
+open import Data.Rational.Properties using (+-*-commutativeRing; _≟_)
+open import Level using (0ℓ)
+open import Data.Unit.Base using (⊤)
+open import Relation.Binary.PropositionalEquality using (_≡_)
+open import Relation.Nullary.Decidable.Core using (decToMaybe)
+
+import Tactic.RingSolver as Solver using (solve-macro; solve-∀-macro)
+import Tactic.RingSolver.Core.AlmostCommutativeRing as ACR
+
+------------------------------------------------------------------------
+-- A module for automatically solving propositional equalities
+-- containing _+_ and _*_
+
+ring : ACR.AlmostCommutativeRing 0ℓ 0ℓ
+ring = ACR.fromCommutativeRing
+  +-*-commutativeRing
+  (λ x → decToMaybe (0ℚ ≟ x))
+
+macro
+  solve-∀ : Term → TC ⊤
+  solve-∀ = Solver.solve-∀-macro (quote ring)
+
+macro
+  solve : Term → Term → TC ⊤
+  solve n = Solver.solve-macro n (quote ring)

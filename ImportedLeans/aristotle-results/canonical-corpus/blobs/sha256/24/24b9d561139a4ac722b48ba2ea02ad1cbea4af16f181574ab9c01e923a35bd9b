@@ -1,0 +1,46 @@
+name = "RequestProject"
+defaultTargets = ["Synthesis", "Cuisine", "AgdaMirror", "Spine", "Integration"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.28.0"
+
+# Cross-domain finite synthesis returned from the prior session, plus the
+# cuisine lane added on top of it.
+[[lean_lib]]
+name = "Synthesis"
+srcDir = "Lean"
+globs = ["Synthesis.*"]
+
+# The common spine: fixed/transverse decomposition, anchored exterior
+# coercivity, the C₃ phase core and the observer interface.
+[[lean_lib]]
+name = "Spine"
+srcDir = "Lean"
+globs = ["Spine", "Spine.*"]
+
+# The corpus-wide TOE integration spine: the four-level classification, the
+# ternary hub, the 369 address ultrametric, clopen prefix balls, the receipt
+# socket meta-theorems and the global registry.
+[[lean_lib]]
+name = "Integration"
+srcDir = "Lean"
+globs = ["Integration", "Integration.*"]
+
+[[lean_lib]]
+name = "Cuisine"
+srcDir = "Lean"
+globs = ["Cuisine.*"]
+
+[[lean_lib]]
+name = "AgdaMirror"
+srcDir = "Lean"
+# Submodules only (`.+`): the root aggregate `Lean/AgdaMirror.lean` imports
+# `AgdaMirror.Physics.YangMills`, which is excluded from this cutset by the
+# YM/NS path filter, so the aggregate cannot be built here.
+globs = ["AgdaMirror.+"]
+
+[[lean_lib]]
+name = "TriadicKernelAlgebra"
+srcDir = "Lean/DASHI/Klüver’s Form Constants_aristotle"

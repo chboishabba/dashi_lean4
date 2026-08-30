@@ -1,0 +1,155 @@
+# G12 — the compensated prime diagonal: what it gives, and what it provably does not
+
+**The Riemann Hypothesis is not proved.**  Nothing was weakened or assumed:
+`RiemannHypothesisFor` and every earlier statement are untouched, there is no
+`sorry`/`admit`, no `axiom`, no postulate, no Boolean receipt, no numerical
+evidence and no `@[implemented_by]` in any Lean source of this cycle.
+`lake build RiemannAnalytic` succeeds (8091 jobs) and `#print axioms` on every
+new theorem returns only `[propext, Classical.choice, Quot.sound]`.
+
+The first unproved theorem in the chain requested by G12 is stated exactly at
+the end of this report.
+
+---
+
+## New modules
+
+| Module | Content |
+| --- | --- |
+| `RiemannAnalytic/CompensatedDiagonal.lean` | Q12.2, Q12.3, Q12.5 at the level of the compensated observable |
+| `RiemannAnalytic/PrimeLogFrequency.lean` | the literal `log(n/m)` structure and the actual von Mangoldt block bound |
+| `RiemannAnalytic/TiltedLogVariance.lean` | the twisted (exponentially tilted) log-variance: one positive and one negative theorem |
+| `RiemannAnalytic/LiteralRelativeRoute.lean` | the literal capstone in relative (contraction) form |
+
+All four are imported by `RiemannAnalytic.lean`.
+
+---
+
+## Q12.2 — exact diagonal vanishing (proved)
+
+`minorForm_diag_term_zero`, `minorForm_eq_offDiag`: every diagonal term of the
+anchored observable is literally `0`, so the observable is a sum over
+off-diagonal pairs.  This is an identity, not an estimate.
+
+`minorForm_le_quadDiffForm` and `quadDiffForm_eq_two_varForm`: the observable is
+dominated by the second-difference form `∑ₙ∑ₘ wₙwₘ(λₙ−λₘ)²`, which is exactly
+twice the log-variance `S₀S₂ − S₁²`.  The compensated observable therefore does
+see the quadratic zero on the diagonal, as conjectured in G12.
+
+## Q12.3 — the near/far split (proved)
+
+`minorForm_eq_near_add_far` splits the observable exactly at a threshold `Δ` in
+the log-frequency difference; `nearPart_le_nearMass`, `farPart_le_farMass`,
+`farPart_le_second_difference` and `minorForm_le_nearFar` give
+
+    𝒜 ≤ (s²Δ²/2)·N(Δ) + 2·F(Δ),
+
+and `compensatedMinor_le_nearFar` carries this through the G11 twisted
+normalization, so the compensated observable retains the factor `α²` *and*
+acquires the near-diagonal factor `(sΔ)²`.
+
+`offLineTarget_excluded_of_nearFar_gain` is the consumer: if the near/far budget
+beats the geometric floor `cL⁶`, the off-line displacement is exactly `0`.
+
+## Q12.5 — adversarially, how much the quadratic zero is worth (proved)
+
+* `nearPart_twoPoint_ge`: a two-point configuration at spacing `Δ` realises the
+  near-diagonal bound up to the factor `4`.  So the gain produced by the
+  quadratic diagonal zero is **exactly** the factor `(sΔ)²` — no more can be
+  extracted from the kernel.
+* `nearPart_twoPoint_eq_nearMass_of_pi`: once `sΔ = π` the near part equals the
+  **entire** near mass; the gain is zero.
+* `nearFar_contraction_forces_small_spacing`: a contraction against the floor
+  forces `16Λ²s²Δ² < cL⁶`.
+
+Conclusion, proved rather than conjectured: `η_prime(T) → 0` cannot follow from
+the diagonal structure alone.  It requires `sΔ → 0`, i.e. information about the
+spacing of the actual log-prime frequencies relative to the window scale.
+
+## Q12.1 / Q12.4 — the literal prime side (partially proved)
+
+`PrimeLogFrequency.lean` supplies the literal inequalities the prime-side
+estimate is allowed to use, with no asymptotics:
+
+* `log_sub_log_le_div`, `abs_log_sub_log_le`, `log_ratio_sq_le`;
+* `log_ratio_two_sided`: `(n−m)/n ≤ log(n/m) ≤ (n−m)/m` — the exact meaning of
+  the near-diagonal model `λ ≍ h/m`;
+* `logFreq_eq_iff`: the quadratic zero sits on the prime diagonal `n = m` and
+  nowhere else;
+* `minorForm_logFreq_le_secondDifference`: on a block of integers `≥ M` the
+  anchored observable is bounded by the second-difference-weighted prime
+  correlation sum `(s²/2M²)·∑ₙ∑ₘ wₙwₘ(n−m)²`.
+
+And, with the **actual** von Mangoldt coefficients:
+
+* `vonMangoldt_block_secondDifference_le`: from the trivial input `Λ(n) ≤ log n`
+  the second-difference prime sum over a dyadic block is at most
+  `(log 2M)²(M+1)²` — the quadratic factor contributes a *constant*.  The
+  trivial coefficient input therefore provably yields **no** `δ(T) → 0`; the
+  missing estimate has to see cancellation in the prime correlations.
+
+## The twisted log-variance: the mechanism is real, but not universal
+
+G12 proposed that the `cosh`/exponential tilt concentrates the log-frequency
+measure so that `α²·Var = O(1)` uniformly.  Both halves of that proposal are now
+settled:
+
+* **Negative.**  `alpha_sq_tilted_variance_unbounded`: for *arbitrary positive
+  weights* on a bounded interval, `α²·Var/S₀²` is unbounded.  The mechanism is
+  false as a weight-theoretic statement — exactly parallel to G11's
+  `no_uniform_twisted_contraction`.
+* **Positive.**  `geomGrid_alpha_sq_variance_le`: for the exponentially tilted
+  *uniform grid* — the model of a measure with two-sided density —
+
+      α²·Var ≤ 4·S₀²
+
+  holds uniformly in the spacing `h`, the length `K` and the twist `α > 0`,
+  provided `2αh ≤ 1` and the grid is at least `1/(2α)` long.  Explicit
+  constants, no asymptotics; the supporting estimates
+  (`sq_mul_exp_neg_le`, `grid_term_le`, `grid_second_moment_le`,
+  `geom_sum_exp_ge`) are all proved.
+
+Together these locate the remaining arithmetic content exactly: the twisted
+prime variance bound holds precisely when the von Mangoldt weights have a
+two-sided density on the relevant log-frequency scale, and nothing weaker
+(positivity, boundedness, total mass) suffices.
+
+**A caveat that must not be glossed.**  A concentration bound that is *uniform in
+`α`* consumes the factor `α²` instead of preserving it, so it produces an
+*absolute* budget, to which `absolute_budget_insufficient` applies.
+`twisted_variance_bound_gives_tube_only` records this: such a bound yields only
+`|α| ≤ √(32Λ²s²S²/(cL⁶))`, a shrinking tube.  Exact exclusion still needs the
+budget to beat the geometric floor outright.
+
+## The capstone, in relative form
+
+`LiteralRelativeRoute.lean` closes the gap between the abstract contraction
+endgame and the literal terminal surface:
+
+* `zero_on_critical_line_of_relative_contraction`;
+* `riemannHypothesis_of_relative_contraction` — floor plus strict relative
+  contraction at every zero of `Λ` gives Mathlib's literal `RiemannHypothesis`;
+* `riemannHypothesis_of_relative_parts` — the four-budget (prime, tail, mixed,
+  endpoint) interface.
+
+Every hypothesis there is an explicit input; none of them is proved.
+
+---
+
+## The first unproved theorem, stated exactly
+
+    literalCompensatedAnchorIdentity :
+      for a zero ρ = 1/2 + α + iγ of the completed zeta function and the literal
+      source data (γ_ρ, τ_k, φ̂, m_ρ, A_H), the literal anchored defect D_{ρ,H}
+      equals the compensated observable 𝒜_H(α) − 𝒜_H(0) of the source weights,
+      up to an explicit relative remainder.
+
+This theorem does not exist in the development.  Until it does, every estimate
+of this cycle is an estimate about the abstract compensated observable, not
+about the literal zeta source.  The chain after it — `literalCoshWeight-
+PrimeRepresentation`, the near/far split at the source, `nearDiagonalPrime-
+VarianceBound`, `primeRelativeAnchoredBudget`, `OffLineDetectability-
+Contradiction` — is likewise unproved, and by the theorems above the decisive
+step `nearDiagonalPrimeVarianceBound` must produce `sΔ → 0` together with a
+two-sided density statement for the von Mangoldt weights: neither the kernel
+algebra nor the trivial coefficient bound can supply it.

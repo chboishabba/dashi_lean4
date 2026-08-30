@@ -1,0 +1,84 @@
+name: Physics scaling and limit spine
+
+on:
+  workflow_dispatch:
+    paths:
+      - 'DASHI/Physics/Units/**'
+      - 'DASHI/Physics/Limits/**'
+      - 'DASHI/Physics/Closure/NSTriadKNNavierStokesNormalizationTransportExact.agda'
+      - 'DASHI/Physics/Closure/NSTriadKNLuoScalingExact.agda'
+      - 'DASHI/Physics/Closure/GRWeakFieldDimensionExact.agda'
+      - 'DASHI/Physics/Closure/HEPDataCMSBelowZDrellYanClaimExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanClayT5MassScaleDimensionExact.agda'
+      - 'DASHI/Unified/QuantumClassicalGravityBoundaryIntegration.agda'
+      - 'DASHI/Physics/PhysicsScalingLimitSpineValidation.agda'
+      - 'Docs/papers/PhysicsScalingLimitSpine.md'
+      - 'scripts/check_physics_scaling_limit_spine.sh'
+      - '.github/workflows/physics-scaling-limit-spine.yml'
+      - 'scripts/run_agda29_parallel_check.sh'
+      - 'flake.nix'
+      - 'flake.lock'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'DASHI/Physics/Units/**'
+      - 'DASHI/Physics/Limits/**'
+      - 'DASHI/Physics/Closure/NSTriadKNNavierStokesNormalizationTransportExact.agda'
+      - 'DASHI/Physics/Closure/NSTriadKNLuoScalingExact.agda'
+      - 'DASHI/Physics/Closure/GRWeakFieldDimensionExact.agda'
+      - 'DASHI/Physics/Closure/HEPDataCMSBelowZDrellYanClaimExact.agda'
+      - 'DASHI/Physics/YangMills/BalabanClayT5MassScaleDimensionExact.agda'
+      - 'DASHI/Unified/QuantumClassicalGravityBoundaryIntegration.agda'
+      - 'DASHI/Physics/PhysicsScalingLimitSpineValidation.agda'
+      - 'Docs/papers/PhysicsScalingLimitSpine.md'
+      - 'scripts/check_physics_scaling_limit_spine.sh'
+      - '.github/workflows/physics-scaling-limit-spine.yml'
+      - 'scripts/run_agda29_parallel_check.sh'
+      - 'flake.nix'
+      - 'flake.lock'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dashi-global-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  focused-agda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Check out repository and submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Restore Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v9
+
+      - name: Run focused scaling and limit spine checker
+        shell: bash
+        run: |
+          nix develop --accept-flake-config --command bash -lc '
+            set -euo pipefail
+            export AGDA_BIN="$(command -v agda)"
+            export AGDA_ARGS="-i . -i DCHoTT-Agda -i vendor/bishop -i cubical -l standard-library"
+            bash scripts/check_physics_scaling_limit_spine.sh
+          ' 2>&1 | tee /tmp/physics-scaling-limit-spine.log
+
+      - name: Upload diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-scaling-limit-spine-diagnostic
+          path: /tmp/physics-scaling-limit-spine.log
+          if-no-files-found: ignore

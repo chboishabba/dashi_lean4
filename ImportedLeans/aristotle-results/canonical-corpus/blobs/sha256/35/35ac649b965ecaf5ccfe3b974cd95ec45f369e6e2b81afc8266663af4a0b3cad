@@ -1,0 +1,6 @@
+name = "ymproof"
+version = "0.1.0"
+defaultTargets = ["YMProof"]
+
+[[lean_lib]]
+name = "YMProof"

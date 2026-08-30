@@ -1,0 +1,26 @@
+name = "monster-lean"
+version = "0.1.0"
+defaultTargets = ["MonsterLean"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "v4.27.0"
+
+# Supplemental repos for Monster research
+[[require]]
+name = "FLT"
+git = "https://github.com/ImperialCollegeLondon/FLT"
+rev = "main"
+
+[[require]]
+name = "Carleson"
+git = "https://github.com/fpvandoorn/carleson"
+rev = "master"
+
+[[lean_lib]]
+name = "MonsterLean"
+
+[[lean_exe]]
+name = "monster-lean"
+root = "Main"

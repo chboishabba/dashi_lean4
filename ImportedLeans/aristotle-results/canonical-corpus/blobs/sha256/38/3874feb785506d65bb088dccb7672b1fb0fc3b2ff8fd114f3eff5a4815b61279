@@ -1,0 +1,114 @@
+import Integration.Registry
+import Integration.RiemannDomain
+
+/-!
+# Axiom audit for the integration spine
+
+Building this module prints the axiom dependencies of every headline result of
+the `Integration` spine.  Each one uses only the standard Lean/Mathlib axioms
+(`propext`, `Classical.choice`, `Quot.sound`); none uses `sorry`, a project
+axiom, or `Lean.ofReduceBool` — in particular there is no `native_decide`
+anywhere in the spine.
+-/
+
+-- Levels
+#print axioms Integration.Levels.BridgeLevel.rank_injective
+#print axioms Integration.Levels.NoTransport.elim
+
+-- Ternary hub
+#print axioms Integration.TernaryHub.ternaryHub
+#print axioms Integration.TernaryHub.bal_unique_up_to_sign
+#print axioms Integration.TernaryHub.balTone_triXor_affine
+#print axioms Integration.TernaryHub.balTone_triXor_ne_add
+#print axioms Integration.TernaryHub.trit369_inv
+
+-- Base369 group layer
+#print axioms Integration.Base369Group.hexSplit_xor
+#print axioms Integration.Base369Group.hexSplit_surjective
+#print axioms Integration.Base369Group.nonary_not_ternary_square
+#print axioms Integration.Base369Group.zmod9_not_add_equiv_sq
+#print axioms Integration.Base369Group.nonary_extension_nonsplit
+#print axioms Integration.Base369Group.base369_carrier_cards
+
+-- Address geometry
+#print axioms Integration.Address.agree_ge_iff
+#print axioms Integration.Address.Addr.ultrametric
+#print axioms Integration.Address.Addr.dist_eq_zero_iff
+#print axioms Integration.Address.Addr.dist_map
+#print axioms Integration.Address.Addr.dist_mono_map
+#print axioms Integration.Address.kernelIsometry
+#print axioms Integration.Address.kernelIsometry_inv
+
+-- Clopen balls / supervoxel refinement
+#print axioms Integration.ClopenBalls.member_iff_dist_le
+#print axioms Integration.ClopenBalls.ball_open
+#print axioms Integration.ClopenBalls.ball_closed
+#print axioms Integration.ClopenBalls.refinement_iff_subset
+#print axioms Integration.ClopenBalls.no_atomic_ball
+#print axioms Integration.ClopenBalls.ternaryAddressBallSystem
+#print axioms Integration.ClopenBalls.authorityContentless
+
+-- Receipt socket
+#print axioms Integration.ReceiptSocket.alignment_unconstrained
+#print axioms Integration.ReceiptSocket.aligned_forced
+
+-- Refinement systems
+#print axioms Integration.Refinement.loomRefinement
+#print axioms Integration.Refinement.loom_project_coherent
+#print axioms Integration.Refinement.loom_root_not_product
+#print axioms Integration.Refinement.addressRefinement
+
+-- Monster 15-prime junction
+#print axioms Integration.MonsterFifteen.lcpLen_ofFn
+#print axioms Integration.MonsterFifteen.dSSP_eq_dist
+#print axioms Integration.MonsterFifteen.USSP_d_eq_dist
+#print axioms Integration.MonsterFifteen.fabric369_isometry
+#print axioms Integration.MonsterFifteen.support_nonexpansive
+#print axioms Integration.MonsterFifteen.support_not_isometry
+#print axioms Integration.MonsterFifteen.support_not_injective
+#print axioms Integration.MonsterFifteen.monster_ternary_junction
+
+-- Cognition domain instance
+#print axioms Integration.CognitionSupervoxel.phase3Transport
+#print axioms Integration.CognitionSupervoxel.observeTrit_flip
+#print axioms Integration.CognitionSupervoxel.observeTrit_surjective
+#print axioms Integration.CognitionSupervoxel.observeTrit_not_injective
+#print axioms Integration.CognitionSupervoxel.publicZero_not_atomic
+#print axioms Integration.CognitionSupervoxel.boundaryContentless
+#print axioms Integration.CognitionSupervoxel.cognition_supervoxel_junction
+
+-- Ultrametric census
+#print axioms Integration.UltrametricCensus.d15_eq_prefix
+#print axioms Integration.UltrametricCensus.dSafety_eq_prefix
+#print axioms Integration.UltrametricCensus.walk_not_prefix
+#print axioms Integration.UltrametricCensus.walk_not_mask15
+#print axioms Integration.UltrametricCensus.ultrametric_census
+
+-- The analytic (RH/zeta) domain
+#print axioms Integration.RiemannReflection.centredPolarTransport
+#print axioms Integration.RiemannReflection.sideTrit_reflect
+#print axioms Integration.RiemannReflection.c3Transport
+#print axioms Integration.RiemannReflection.phaseC_invert
+#print axioms Integration.RiemannReflection.phaseC_sum
+#print axioms Integration.RiemannReflection.c3_not_equiv_centred
+#print axioms Integration.RiemannReflection.role_fibres_not_equiv
+#print axioms Integration.RiemannStrip.critReflect_fixed_iff
+#print axioms Integration.RiemannStrip.stripC2_swap
+#print axioms Integration.RiemannStrip.stripTrit_critReflect
+#print axioms Integration.RiemannStrip.modelDisplacement_injective
+#print axioms Integration.RiemannStrip.stripSymmetry_not_equiv_trit
+#print axioms Integration.RiemannSubstrate.substrate_does_not_constrain_rh
+#print axioms Integration.RiemannXiSymmetry.criticalLine_iff_fixed
+#print axioms Integration.RiemannXiSymmetry.qToC_injective
+#print axioms Integration.RiemannXiSymmetry.qToC_criticalLine_iff
+#print axioms Integration.RiemannXiSymmetry.xiZeroSymmetry_is_socket
+#print axioms Integration.RiemannXiSymmetry.hilbertPolya_is_socket
+#print axioms Integration.RiemannXiSymmetry.stage_card
+#print axioms Integration.RiemannDomain.analyticEntries_levels
+#print axioms Integration.RiemannDomain.analyticDomain
+
+-- The registry itself
+#print axioms Integration.Registry.registry
+#print axioms Integration.Registry.registry_levels
+#print axioms Integration.Registry.boundaries
+#print axioms Integration.Registry.sockets

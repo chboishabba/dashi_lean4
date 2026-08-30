@@ -1,0 +1,432 @@
+module DASHI.Physics.YangMills.YMRowCMarginalTransverseHessianCoercivityExact where
+
+------------------------------------------------------------------------
+-- ROW C, ARCHITECTURE: REPLACE THE BLUNT HESSIAN DEBT BY A
+--   MARGINAL/GAUGE + TRANSVERSE-COERCIVE DECOMPOSITION
+--
+-- WHAT ROW C CURRENTLY ASKS FOR.  `docs/ym/YangMillsClayFourFrozenResearchLemmas.md`
+-- states row C as a *scalar worst-case* bound on the heat-renormalised
+-- potential of the Yang-Mills effective density,
+--
+--     Hess V_t  >=  - eta(t) g ,      sup_N int_0^infty eta_N(t) dt < infinity,
+--
+-- consumed through `CompactLieHeatDoobRicciReserveDebtExact` together with a
+-- positive Ricci reserve  Ric >= rho g  to give  kappa_t >= rho/2 - eta(t)
+-- and  gamma_LSI >= rho e^{-2M}.
+--
+-- WHAT THIS MODULE PROVES.  The tangent space at a configuration splits into a
+-- gauge/marginal block and the physical transverse block,
+--
+--     T  =  T_gauge  (+)  T_phys ,     |X|^2 = p^2 + q^2 ,
+--     p = |X_par| ,   q = |X_perp| ,
+--
+-- and on the two blocks the second variation has the shape
+--
+--     splitForm h c lam p q  =  h p^2  -  2 c p q  +  lam q^2 ,
+--
+-- with `h` the marginal (gauge-direction) coefficient, `c >= 0` a bound on the
+-- mixing between the blocks and `lam` the transverse coercivity.  Four exact
+-- facts follow, and they are the whole point of the decomposition.
+--
+--  (1) `transverseCompletion`, `debtCleared`, `debtFromMixing`.  The debt
+--      produced by the cross term is NOT `c`, it is `c^2 / lam`:
+--
+--          lam * splitForm h c lam p q  >=  (lam h - c^2) p^2 ,
+--
+--      so if the gauge/marginal block is flat (`h = 0`, which is what gauge
+--      invariance along the orbit directions gives) then
+--
+--          Hess V_t (X,X)  >=  - (c^2/lam) |X_par|^2 ,
+--
+--      a debt carried by the PARALLEL norm alone and quadratically small in
+--      the mixing.  `gramDebtBelowBluntDebt` records the exact comparison with
+--      the blunt term-by-term estimate `-2cpq >= -c(p^2+q^2)`: whenever
+--      `c < lam` the transverse route is strictly better.
+--
+--  (2) `ricciCompletion`, `ricciPaysMarginalDebt`.  With Ricci reserve
+--      `r = rho/2` the Bakry-Emery form is
+--
+--          F(p,q) = r(p^2+q^2) + splitForm h c lam p q,
+--
+--      and the exact completion of squares
+--
+--          4(r+h) F = (2(r+h)p - 2cq)^2 + 4((r+h)(r+lam) - c^2) q^2
+--
+--      turns row C's *time-integrated* debt into a single CONSTANT inequality
+--
+--          c^2  <=  (r+h)(r+lam),      r + h > 0,
+--
+--      under which `F >= 0` pointwise: the curvature debt is zero, not merely
+--      integrable.
+--
+--  (3) `ricciSpectralGap`.  Strengthening that constant inequality to
+--      `c^2 <= (r-kappa+h)(r-kappa+lam)` with `r-kappa+h > 0` gives the
+--      strictly positive uniform curvature  F >= kappa |X|^2, i.e. a
+--      t-independent `kappa_t >= kappa > 0`, hence `M = 0` in the Heat/Doob
+--      reserve-debt consumer.
+--
+--  (4) `bluntRicciNegativeWitness` / `splitRicciPositiveWitness`.  An explicit
+--      rational datum (`r = 1/2`, `h = 0`, `c = 1`, `lam = 3`) on which the
+--      blunt scalar route yields a NEGATIVE curvature value at `(p,q) = (1,0)`
+--      while the split route yields `F(1,0) = 1/2 > 0`, together with the
+--      uniform gap `kappa = 1/8` for the same datum.  The two formulations are
+--      therefore genuinely inequivalent, and the decomposition is strictly
+--      stronger, not a restatement.
+--
+-- WHAT IS STILL INPUT (and why row C stays OPEN).  Everything above is exact
+-- algebra about the *shape* of the second variation.  The physical inputs it
+-- consumes on the literal cutoff-uniform Yang-Mills effective density are:
+--
+--     (i)   the gauge/marginal coefficient `h` (gauge invariance suggests
+--           `h = 0`, but that must be proved for the heat-renormalised V_t,
+--           not for V_0);
+--     (ii)  the transverse coercivity constant `lam > 0`;
+--     (iii) the block-mixing bound `c >= 0`, uniform in cutoff, volume, time;
+--     (iv)  the Ricci reserve `r = rho/2 > 0` in the same normalisation.
+--
+-- None of (i)-(iv) is supplied here.  Row C is NOT closed, no row is closed,
+-- and the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; mul-nonNeg; mul-pos; nonneg-difference; transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4GramWedgeIdentityExact
+  using (square-nonNeg; sum-nonNeg)
+
+open +-*-Solver
+
+fourℚ : ℚ
+fourℚ = + 4 / 1
+
+0≤fourℚ : 0ℚ ≤ fourℚ
+0≤fourℚ = toWitness {a? = 0ℚ ℚP.≤? fourℚ} _
+
+0<fourℚ : 0ℚ < fourℚ
+0<fourℚ = toWitness {a? = 0ℚ ℚP.<? fourℚ} _
+
+------------------------------------------------------------------------
+-- Generic order helper
+------------------------------------------------------------------------
+
+diff-nonNeg⇒≤ : ∀ {x y : ℚ} → 0ℚ ≤ y - x → x ≤ y
+diff-nonNeg⇒≤ {x} {y} 0≤d =
+  transport-≤ (ℚP.+-identityˡ x) cancel (ℚP.+-monoˡ-≤ x 0≤d)
+  where
+    cancel : (y - x) + x ≡ y
+    cancel = solve 2 (λ Y X → (Y :- X) :+ X := Y) refl y x
+
+------------------------------------------------------------------------
+-- The two-block second variation and its blunt scalar competitor
+------------------------------------------------------------------------
+
+-- h   : marginal / gauge-direction coefficient
+-- c   : block mixing (nonnegative)
+-- lam : transverse coercivity
+-- p,q : |X_par| , |X_perp|
+splitForm : (h c lam p q : ℚ) → ℚ
+splitForm h c lam p q =
+  h * (p * p) - twoℚ * (c * (p * q)) + lam * (q * q)
+
+-- The blunt route: estimate -2cpq >= -c(p^2+q^2) term by term.
+bluntForm : (h c lam p q : ℚ) → ℚ
+bluntForm h c lam p q = (h - c) * (p * p) + (lam - c) * (q * q)
+
+-- The blunt estimate is a correct lower bound, so what follows compares two
+-- correct routes rather than a correct and an incorrect one.
+bluntBelowSplit :
+  ∀ {c} h lam p q → 0ℚ ≤ c →
+  bluntForm h c lam p q ≤ splitForm h c lam p q
+bluntBelowSplit {c} h lam p q 0≤c = diff-nonNeg⇒≤ difference≥0
+  where
+    differenceIsSquare :
+      splitForm h c lam p q - bluntForm h c lam p q
+        ≡ c * ((p - q) * (p - q))
+    differenceIsSquare =
+      solve 5
+        (λ H C L P Q →
+          (H :* (P :* P) :- con twoℚ :* (C :* (P :* Q)) :+ L :* (Q :* Q))
+            :- ((H :- C) :* (P :* P) :+ (L :- C) :* (Q :* Q))
+          := C :* ((P :- Q) :* (P :- Q)))
+        refl h c lam p q
+
+    difference≥0 : 0ℚ ≤ splitForm h c lam p q - bluntForm h c lam p q
+    difference≥0 =
+      subst (0ℚ ≤_) (sym differenceIsSquare)
+        (mul-nonNeg 0≤c (square-nonNeg (p - q)))
+
+------------------------------------------------------------------------
+-- (1) The transverse completion of squares and the c^2/lam debt
+------------------------------------------------------------------------
+
+transverseCompletion :
+  ∀ h c lam p q →
+  lam * splitForm h c lam p q
+    ≡ (lam * q - c * p) * (lam * q - c * p) + (lam * h - c * c) * (p * p)
+transverseCompletion h c lam p q =
+  solve 5
+    (λ H C L P Q →
+      L :* (H :* (P :* P) :- con twoℚ :* (C :* (P :* Q)) :+ L :* (Q :* Q))
+      := (L :* Q :- C :* P) :* (L :* Q :- C :* P)
+           :+ (L :* H :- C :* C) :* (P :* P))
+    refl h c lam p q
+
+-- Unconditional cleared form of the Gram debt.
+debtCleared :
+  ∀ h c lam p q →
+  (lam * h - c * c) * (p * p) ≤ lam * splitForm h c lam p q
+debtCleared h c lam p q =
+  diff-nonNeg⇒≤
+    (subst (0ℚ ≤_) (sym difference) (square-nonNeg (lam * q - c * p)))
+  where
+    difference :
+      lam * splitForm h c lam p q - (lam * h - c * c) * (p * p)
+        ≡ (lam * q - c * p) * (lam * q - c * p)
+    difference =
+      solve 5
+        (λ H C L P Q →
+          (L :* (H :* (P :* P) :- con twoℚ :* (C :* (P :* Q)) :+ L :* (Q :* Q)))
+            :- (L :* H :- C :* C) :* (P :* P)
+          := (L :* Q :- C :* P) :* (L :* Q :- C :* P))
+        refl h c lam p q
+
+-- The Hessian debt of the split form is any `eta` with `c^2 <= lam (h + eta)`,
+-- i.e. `eta = c^2/lam - h`: quadratic in the mixing, and carried by the
+-- PARALLEL norm alone.
+debtFromMixing :
+  ∀ {h c lam eta} p q → 0ℚ < lam → c * c ≤ lam * (h + eta) →
+  - (eta * (p * p)) ≤ splitForm h c lam p q
+debtFromMixing {h} {c} {lam} {eta} p q 0<lam bound =
+  ℚP.*-cancelˡ-≤-pos lam {{ℚ.positive 0<lam}}
+    (ℚP.≤-trans lowerStep (debtCleared h c lam p q))
+  where
+    slack : 0ℚ ≤ lam * (h + eta) - c * c
+    slack = nonneg-difference bound
+
+    gap :
+      (lam * h - c * c) * (p * p) - lam * (- (eta * (p * p)))
+        ≡ (lam * (h + eta) - c * c) * (p * p)
+    gap =
+      solve 5
+        (λ H C L P E →
+          ((L :* H :- C :* C) :* (P :* P)) :- L :* (:- (E :* (P :* P)))
+          := (L :* (H :+ E) :- C :* C) :* (P :* P))
+        refl h c lam p eta
+
+    lowerStep : lam * (- (eta * (p * p))) ≤ (lam * h - c * c) * (p * p)
+    lowerStep =
+      diff-nonNeg⇒≤
+        (subst (0ℚ ≤_) (sym gap) (mul-nonNeg slack (square-nonNeg p)))
+
+-- The same debt written against the full norm |X|^2 = p^2 + q^2, which is the
+-- form row C's consumer expects.
+debtOnFullNorm :
+  ∀ {h c lam eta} p q → 0ℚ < lam → 0ℚ ≤ eta → c * c ≤ lam * (h + eta) →
+  - (eta * (p * p + q * q)) ≤ splitForm h c lam p q
+debtOnFullNorm {h} {c} {lam} {eta} p q 0<lam 0≤eta bound =
+  ℚP.≤-trans weaken (debtFromMixing {h} {c} {lam} {eta} p q 0<lam bound)
+  where
+    gap :
+      - (eta * (p * p)) - (- (eta * (p * p + q * q))) ≡ eta * (q * q)
+    gap =
+      solve 3
+        (λ E P Q →
+          (:- (E :* (P :* P))) :- (:- (E :* (P :* P :+ Q :* Q)))
+          := E :* (Q :* Q))
+        refl eta p q
+
+    weaken : - (eta * (p * p + q * q)) ≤ - (eta * (p * p))
+    weaken =
+      diff-nonNeg⇒≤
+        (subst (0ℚ ≤_) (sym gap) (mul-nonNeg 0≤eta (square-nonNeg q)))
+
+-- The exact comparison of the two debts when the marginal block is flat:
+-- the Gram debt is c^2/lam, the blunt debt is c, and c^2/lam < c precisely
+-- when the transverse coercivity beats the mixing.
+gramDebtBelowBluntDebt : ∀ {c lam} → 0ℚ < c → c < lam → c * c < lam * c
+gramDebtBelowBluntDebt {c} {lam} 0<c c<lam =
+  ℚP.*-monoˡ-<-pos c {{ℚ.positive 0<c}} c<lam
+
+------------------------------------------------------------------------
+-- (2) Ricci reserve + transverse coercivity: a CONSTANT inequality
+------------------------------------------------------------------------
+
+-- r = rho/2 is the Ricci half-reserve of the Heat/Doob criterion.
+ricciForm : (r h c lam p q : ℚ) → ℚ
+ricciForm r h c lam p q = r * (p * p + q * q) + splitForm h c lam p q
+
+ricciBluntForm : (r h c lam p q : ℚ) → ℚ
+ricciBluntForm r h c lam p q = r * (p * p + q * q) + bluntForm h c lam p q
+
+ricciCompletion :
+  ∀ r h c lam p q →
+  fourℚ * ((r + h) * ricciForm r h c lam p q)
+    ≡ (twoℚ * ((r + h) * p) - twoℚ * (c * q))
+        * (twoℚ * ((r + h) * p) - twoℚ * (c * q))
+      + fourℚ * (((r + h) * (r + lam) - c * c) * (q * q))
+ricciCompletion r h c lam p q =
+  solve 6
+    (λ R H C L P Q →
+      con fourℚ :* ((R :+ H)
+        :* (R :* (P :* P :+ Q :* Q)
+             :+ (H :* (P :* P) :- con twoℚ :* (C :* (P :* Q)) :+ L :* (Q :* Q))))
+      := (con twoℚ :* ((R :+ H) :* P) :- con twoℚ :* (C :* Q))
+           :* (con twoℚ :* ((R :+ H) :* P) :- con twoℚ :* (C :* Q))
+         :+ con fourℚ :* (((R :+ H) :* (R :+ L) :- C :* C) :* (Q :* Q)))
+    refl r h c lam p q
+
+-- THE CONSTANT INEQUALITY.  If the mixing squared is below the product of the
+-- two reserve-shifted coefficients, the Bakry-Emery form is pointwise
+-- nonnegative: the positive Ricci reserve pays for the marginal channel and
+-- the transverse channel is already coercive.  No time integral appears.
+ricciPaysMarginalDebt :
+  ∀ {r h c lam} p q → 0ℚ < r + h → c * c ≤ (r + h) * (r + lam) →
+  0ℚ ≤ ricciForm r h c lam p q
+ricciPaysMarginalDebt {r} {h} {c} {lam} p q 0<r+h bound =
+  ℚP.*-cancelˡ-≤-pos (r + h) {{ℚ.positive 0<r+h}}
+    (subst (_≤ (r + h) * ricciForm r h c lam p q)
+      (sym (ℚP.*-zeroʳ (r + h))) inner)
+  where
+    slack : 0ℚ ≤ (r + h) * (r + lam) - c * c
+    slack = nonneg-difference bound
+
+    scaled : 0ℚ ≤ fourℚ * ((r + h) * ricciForm r h c lam p q)
+    scaled =
+      subst (0ℚ ≤_) (sym (ricciCompletion r h c lam p q))
+        (sum-nonNeg
+          (square-nonNeg (twoℚ * ((r + h) * p) - twoℚ * (c * q)))
+          (mul-nonNeg 0≤fourℚ (mul-nonNeg slack (square-nonNeg q))))
+
+    inner : 0ℚ ≤ (r + h) * ricciForm r h c lam p q
+    inner =
+      ℚP.*-cancelˡ-≤-pos fourℚ {{ℚ.positive 0<fourℚ}}
+        (subst (_≤ fourℚ * ((r + h) * ricciForm r h c lam p q))
+          (sym (ℚP.*-zeroʳ fourℚ)) scaled)
+
+-- (3) The same inequality with a margin gives a strictly positive UNIFORM
+-- curvature, i.e. kappa_t >= kappa > 0 with zero accumulated debt.
+ricciSpectralGap :
+  ∀ {r h c lam kappa} p q →
+  0ℚ < (r - kappa) + h →
+  c * c ≤ ((r - kappa) + h) * ((r - kappa) + lam) →
+  kappa * (p * p + q * q) ≤ ricciForm r h c lam p q
+ricciSpectralGap {r} {h} {c} {lam} {kappa} p q 0<shift bound =
+  diff-nonNeg⇒≤
+    (subst (0ℚ ≤_) (sym shiftIdentity)
+      (ricciPaysMarginalDebt {r - kappa} {h} {c} {lam} p q 0<shift bound))
+  where
+    shiftIdentity :
+      ricciForm r h c lam p q - kappa * (p * p + q * q)
+        ≡ ricciForm (r - kappa) h c lam p q
+    shiftIdentity =
+      solve 7
+        (λ R H C L P Q K →
+          (R :* (P :* P :+ Q :* Q)
+            :+ (H :* (P :* P) :- con twoℚ :* (C :* (P :* Q)) :+ L :* (Q :* Q)))
+            :- K :* (P :* P :+ Q :* Q)
+          := (R :- K) :* (P :* P :+ Q :* Q)
+               :+ (H :* (P :* P) :- con twoℚ :* (C :* (P :* Q)) :+ L :* (Q :* Q)))
+        refl r h c lam p q kappa
+
+------------------------------------------------------------------------
+-- (4) An explicit datum separating the blunt and split routes
+------------------------------------------------------------------------
+
+witR witH witC witLam witKappa : ℚ
+witR     = + 1 / 2      -- Ricci half-reserve rho/2
+witH     = 0ℚ           -- flat gauge/marginal block
+witC     = + 1 / 1      -- block mixing
+witLam   = + 3 / 1      -- transverse coercivity
+witKappa = + 1 / 8      -- the uniform curvature obtained
+
+-- The blunt route charges the whole mixing to both blocks, and already at
+-- (p,q) = (1,0) — where there is no mixing at all — it returns a negative
+-- curvature value.
+bluntRicciNegativeWitness :
+  ricciBluntForm witR witH witC witLam (+ 1 / 1) 0ℚ ≡ - (+ 1 / 2)
+bluntRicciNegativeWitness = refl
+
+-- The split route returns the correct positive value on the same data.
+splitRicciPositiveWitness :
+  ricciForm witR witH witC witLam (+ 1 / 1) 0ℚ ≡ + 1 / 2
+splitRicciPositiveWitness = refl
+
+witnessShiftPositive : 0ℚ < (witR - witKappa) + witH
+witnessShiftPositive = toWitness {a? = 0ℚ ℚP.<? ((witR - witKappa) + witH)} _
+
+witnessConstantInequality :
+  witC * witC ≤ ((witR - witKappa) + witH) * ((witR - witKappa) + witLam)
+witnessConstantInequality =
+  toWitness
+    {a? = (witC * witC)
+            ℚP.≤? (((witR - witKappa) + witH) * ((witR - witKappa) + witLam))}
+    _
+
+-- Hence, for this datum, a uniform positive curvature in EVERY direction.
+witnessUniformGap :
+  ∀ p q → witKappa * (p * p + q * q) ≤ ricciForm witR witH witC witLam p q
+witnessUniformGap p q =
+  ricciSpectralGap {witR} {witH} {witC} {witLam} {witKappa} p q
+    witnessShiftPositive witnessConstantInequality
+
+------------------------------------------------------------------------
+-- Transfer interface: an abstract Hessian dominated by the split form
+------------------------------------------------------------------------
+
+record SplitHessianData : Set where
+  field
+    marginal mixing transverse ricciHalf gap : ℚ
+    hess : ℚ → ℚ → ℚ
+
+    -- The physical input: the Hessian of the effective potential, evaluated on
+    -- a tangent vector with parallel norm p and transverse norm q, dominates
+    -- the two-block quadratic form.
+    dominates : ∀ p q → splitForm marginal mixing transverse p q ≤ hess p q
+
+    -- The constant inequality, with margin `gap`.
+    shiftPositive : 0ℚ < (ricciHalf - gap) + marginal
+    constantInequality :
+      mixing * mixing
+        ≤ ((ricciHalf - gap) + marginal) * ((ricciHalf - gap) + transverse)
+
+open SplitHessianData public
+
+-- Row C's Heat/Doob consumer needs `1/2 Ric + Hess V >= kappa g` with
+-- kappa > 0 uniform.  Under the split hypotheses that is exactly what comes
+-- out, with no time integral and no accumulated debt.
+uniformCurvatureFromSplit :
+  (d : SplitHessianData) →
+  ∀ p q →
+  gap d * (p * p + q * q)
+    ≤ ricciHalf d * (p * p + q * q) + hess d p q
+uniformCurvatureFromSplit d p q =
+  ℚP.≤-trans
+    (ricciSpectralGap {ricciHalf d} {marginal d} {mixing d} {transverse d}
+      {gap d} p q (shiftPositive d) (constantInequality d))
+    (ℚP.+-monoʳ-≤ (ricciHalf d * (p * p + q * q)) (dominates d p q))
+
+-- The interface is inhabited by the separating datum above, with the abstract
+-- Hessian taken to be the split form itself, so the theorem is not vacuous.
+witnessSplitHessianData : SplitHessianData
+witnessSplitHessianData = record
+  { marginal           = witH
+  ; mixing             = witC
+  ; transverse         = witLam
+  ; ricciHalf          = witR
+  ; gap                = witKappa
+  ; hess               = splitForm witH witC witLam
+  ; dominates          = λ p q → ℚP.≤-refl
+  ; shiftPositive      = witnessShiftPositive
+  ; constantInequality = witnessConstantInequality
+  }

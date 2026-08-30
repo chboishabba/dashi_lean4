@@ -1,0 +1,416 @@
+import Integration.LeastSufficient
+
+/-!
+# Coordinate sufficiency: which parts of a product state a consumer needs
+
+Several lanes of the corpus independently arrive at the same situation: a state
+is a product (or dependent product) of coordinates, some map forgets part of it,
+and a downstream consumer is then shown *not* to factor through what is left.
+The domain vocabulary differs every time; the mathematics does not.  This file
+owns that mathematics once, domain-neutrally.
+
+Nothing in this file is a claim about any domain.  Carriers are arbitrary
+types, and the only structure used is "a state is a function on an index set".
+
+## Contents
+
+### Generic non-factorability
+
+* `Determines` — the consumer is constant on the fibres of the observation;
+* `determines_iff_refines` — this is exactly `Integration.LeastSufficient.Refines`
+  (the existing owner), so nothing new is introduced;
+* `not_determines_of_collision` — the witness form: one collided pair that the
+  consumer separates refutes factorisation, for *every* candidate downstream map.
+
+### The coordinate version
+
+* `AgreeOn`, `FactorsOn` — factorisation through the projection onto a subset
+  `S` of coordinates;
+* `factorsOn_mono`, `factorsOn_univ` — the sufficiency family is upward closed
+  and contains everything;
+* `Essential` — coordinate `j` is essential when two states differing only at
+  `j` are separated by the consumer;
+* `essential_iff_not_factorsOn_compl` — **the coordinate non-factorability
+  theorem**: `j` is essential exactly when the consumer does not factor through
+  the projection that forgets `j`;
+* `essential_mem_of_factorsOn`, `essentialSet_subset_of_factorsOn` — every
+  sufficient coordinate set contains every essential coordinate;
+* `factorsOn_essentialSet` — **completeness on a finite index**: the essential
+  set is itself sufficient, so it is the least sufficient set
+  (`essentialSet_least`, `essentialSet_unique_least`);
+* `essentialSet_not_sufficient_infinite` — and the honest boundary: on an
+  infinite index this fails.  There is a non-constant consumer with *no*
+  essential coordinate at all.
+
+### Coordinate dependence is not interaction
+
+* `Separable` — the consumer is a sum of one-coordinate contributions;
+* `separable_rectangle` — separable consumers satisfy the rectangle identity;
+* `parityPair_not_separable` — a consumer violating it, hence not separable;
+* `sumPair_separable_both_essential` — and a separable consumer both of whose
+  coordinates are essential.  So "both coordinates matter" is strictly weaker
+  than "the coordinates interact"; the two must not be conflated.
+
+### Aggregation: statistics downstream of a collision
+
+* `no_statistic_separates` — no function of the observation separates a collided
+  pair;
+* `no_sample_statistic_separates` — and no statistic of any number of
+  observations does either.  Sample size is irrelevant to a distinction the
+  observation map has already destroyed; this is a deterministic statement and
+  says nothing about estimation error.
+-/
+
+namespace Integration.CoordinateSufficiency
+
+open Integration.LeastSufficient
+
+/-! ## Generic non-factorability -/
+
+section Generic
+
+variable {X Y Z : Type}
+
+/-- The consumer `C` is **determined** by the observation `O` when it is
+constant on the fibres of `O`. -/
+def Determines (O : X → Y) (C : X → Z) : Prop := ∀ x y, O x = O y → C x = C y
+
+/-- Determination is refinement: this is the existing owner, not a new notion.
+The `Nonempty` hypothesis is only needed to name a value off the image of `O`. -/
+theorem determines_iff_refines [Nonempty Z] (O : X → Y) (C : X → Z) :
+    Determines O C ↔ Refines O C := by
+  classical
+  constructor
+  · intro h
+    refine ⟨fun y => if hy : ∃ x, O x = y then C hy.choose else Classical.arbitrary Z,
+      fun x => ?_⟩
+    have hex : ∃ x', O x' = O x := ⟨x, rfl⟩
+    show C x = if hy : ∃ x', O x' = O x then C hy.choose else Classical.arbitrary Z
+    rw [dif_pos hex]
+    exact (h _ _ hex.choose_spec).symm
+  · rintro ⟨f, hf⟩ x y hxy
+    rw [hf x, hf y, hxy]
+
+/-- **The witness form of non-factorability.**  One pair the observation
+identifies and the consumer separates refutes factorisation through the
+observation, for every candidate downstream map. -/
+theorem not_determines_of_collision {O : X → Y} {C : X → Z} {x₁ x₂ : X}
+    (hcoll : O x₁ = O x₂) (hsplit : C x₁ ≠ C x₂) : ¬ Determines O C :=
+  fun h => hsplit (h x₁ x₂ hcoll)
+
+/-- The same conclusion stated against every candidate downstream map. -/
+theorem not_refines_of_collision {O : X → Y} {C : X → Z} {x₁ x₂ : X}
+    (hcoll : O x₁ = O x₂) (hsplit : C x₁ ≠ C x₂) : ¬ Refines O C := by
+  rintro ⟨f, hf⟩
+  exact hsplit (by rw [hf x₁, hf x₂, hcoll])
+
+end Generic
+
+/-! ## Coordinates of a product state -/
+
+section Coordinates
+
+variable {I : Type*} {A : I → Type*} {Y : Sort*}
+
+/-- Two states agree on a set of coordinates. -/
+def AgreeOn (S : Set I) (x y : ∀ i, A i) : Prop := ∀ i ∈ S, x i = y i
+
+/-- The consumer **factors through the projection onto `S`**: states agreeing on
+`S` are never separated. -/
+def FactorsOn (S : Set I) (C : (∀ i, A i) → Y) : Prop :=
+  ∀ x y, AgreeOn S x y → C x = C y
+
+/-- Sufficiency is upward closed: keeping more coordinates cannot hurt. -/
+theorem factorsOn_mono {S T : Set I} (hST : S ⊆ T) {C : (∀ i, A i) → Y}
+    (h : FactorsOn S C) : FactorsOn T C :=
+  fun x y hxy => h x y fun i hi => hxy i (hST hi)
+
+/-- Keeping every coordinate is always sufficient. -/
+theorem factorsOn_univ (C : (∀ i, A i) → Y) : FactorsOn Set.univ C :=
+  fun _ _ hxy => congrArg C (funext fun i => hxy i (Set.mem_univ i))
+
+/-- Factoring on the empty set is exactly constancy. -/
+theorem factorsOn_empty_iff (C : (∀ i, A i) → Y) :
+    FactorsOn (∅ : Set I) C ↔ ∀ x y, C x = C y := by
+  constructor
+  · intro h x y; exact h x y (fun i hi => absurd hi (Set.notMem_empty i))
+  · intro h x y _; exact h x y
+
+/-- Coordinate `j` is **essential** for `C`: two states differing only at `j`
+that `C` separates. -/
+def Essential (j : I) (C : (∀ i, A i) → Y) : Prop :=
+  ∃ x y : ∀ i, A i, (∀ i, i ≠ j → x i = y i) ∧ C x ≠ C y
+
+/-- **The coordinate non-factorability theorem.**  A coordinate is essential
+exactly when the consumer fails to factor through the projection forgetting it.
+Both directions are immediate once the two notions are stated; the content is
+that they *are* the same statement, so a domain module supplying the two-state
+witness has thereby supplied the non-factorability conclusion. -/
+theorem essential_iff_not_factorsOn_compl (j : I) (C : (∀ i, A i) → Y) :
+    Essential j C ↔ ¬ FactorsOn ({j}ᶜ : Set I) C := by
+  constructor
+  · rintro ⟨x, y, hxy, hne⟩ h
+    exact hne (h x y fun i hi => hxy i (by simpa using hi))
+  · intro h
+    by_contra hcon
+    apply h
+    intro x y hxy
+    by_contra hne
+    exact hcon ⟨x, y, fun i hi => hxy i (by simpa using hi), hne⟩
+
+/-- An essential coordinate belongs to every sufficient coordinate set. -/
+theorem essential_mem_of_factorsOn {S : Set I} {C : (∀ i, A i) → Y} (hS : FactorsOn S C)
+    {j : I} (hj : Essential j C) : j ∈ S := by
+  by_contra hjS
+  refine (essential_iff_not_factorsOn_compl j C).mp hj (factorsOn_mono ?_ hS)
+  intro i hi
+  simp only [Set.mem_compl_iff, Set.mem_singleton_iff]
+  rintro rfl
+  exact hjS hi
+
+/-- The convenient way to exhibit an essential coordinate: change that one
+coordinate of a state and watch the consumer move. -/
+theorem essential_of_update_ne [DecidableEq I] {C : (∀ i, A i) → Y} {j : I}
+    (x : ∀ i, A i) (a : A j) (h : C x ≠ C (Function.update x j a)) : Essential j C :=
+  ⟨x, Function.update x j a, fun _ hi => (Function.update_of_ne hi _ _).symm, h⟩
+
+/-- The set of essential coordinates. -/
+def essentialSet (C : (∀ i, A i) → Y) : Set I := {j | Essential j C}
+
+theorem essentialSet_subset_of_factorsOn {S : Set I} {C : (∀ i, A i) → Y}
+    (hS : FactorsOn S C) : essentialSet C ⊆ S :=
+  fun _ hj => essential_mem_of_factorsOn hS hj
+
+/-! ### Completeness on a finite index -/
+
+/-- Replace the coordinates in `s` of `x` by those of `y`. -/
+def patch [DecidableEq I] (s : Finset I) (x y : ∀ i, A i) : ∀ i, A i :=
+  fun i => if i ∈ s then y i else x i
+
+theorem patch_empty [DecidableEq I] (x y : ∀ i, A i) : patch ∅ x y = x :=
+  funext fun i => by simp [patch]
+
+/-- Patching only inessential coordinates does not move the consumer. -/
+theorem consumer_patch_eq [DecidableEq I] {C : (∀ i, A i) → Y} (x y : ∀ i, A i)
+    (s : Finset I) (hs : ∀ j ∈ s, ¬ Essential j C) : C (patch s x y) = C x := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => rw [patch_empty]
+  | @insert a s ha ih =>
+    have hnotEss : ¬ Essential a C := hs a (Finset.mem_insert_self a s)
+    have hfac : FactorsOn ({a}ᶜ : Set I) C := by
+      by_contra hcon
+      exact hnotEss ((essential_iff_not_factorsOn_compl a C).mpr hcon)
+    have hstep : C (patch (insert a s) x y) = C (patch s x y) := by
+      refine hfac _ _ fun i hi => ?_
+      have hia : i ≠ a := by simpa using hi
+      simp [patch, Finset.mem_insert, hia]
+    rw [hstep]
+    exact ih fun j hj => hs j (Finset.mem_insert_of_mem hj)
+
+/-- **Completeness on a finite index.**  The essential coordinates are
+themselves sufficient. -/
+theorem factorsOn_essentialSet [Fintype I] [DecidableEq I] (C : (∀ i, A i) → Y) :
+    FactorsOn (essentialSet C) C := by
+  classical
+  intro x y hxy
+  set s : Finset I := Finset.univ.filter (fun i => x i ≠ y i) with hs
+  have hsnot : ∀ j ∈ s, ¬ Essential j C := by
+    intro j hj hEss
+    have : x j = y j := hxy j hEss
+    exact (Finset.mem_filter.mp hj).2 this
+  have hpatch : patch s x y = y := by
+    refine funext fun i => ?_
+    by_cases hi : i ∈ s
+    · simp [patch, hi]
+    · have : x i = y i := by
+        by_contra hne
+        exact hi (Finset.mem_filter.mpr ⟨Finset.mem_univ i, hne⟩)
+      simp [patch, hi, this]
+  have := consumer_patch_eq (C := C) x y s hsnot
+  rw [hpatch] at this
+  exact this.symm
+
+/-- **The essential set is the least sufficient set** on a finite index. -/
+theorem essentialSet_least [Fintype I] [DecidableEq I] (C : (∀ i, A i) → Y) :
+    FactorsOn (essentialSet C) C ∧ ∀ S : Set I, FactorsOn S C → essentialSet C ⊆ S :=
+  ⟨factorsOn_essentialSet C, fun _ hS => essentialSet_subset_of_factorsOn hS⟩
+
+/-- **The sufficiency family, characterised.**  On a finite index a set of
+coordinates is sufficient exactly when it contains every essential one, so the
+family is the upward closure of a single set. -/
+theorem factorsOn_iff_essentialSet_subset [Fintype I] [DecidableEq I]
+    (C : (∀ i, A i) → Y) (S : Set I) : FactorsOn S C ↔ essentialSet C ⊆ S :=
+  ⟨essentialSet_subset_of_factorsOn, fun h => factorsOn_mono h (factorsOn_essentialSet C)⟩
+
+/-- And it is the unique such set. -/
+theorem essentialSet_unique_least [Fintype I] [DecidableEq I] (C : (∀ i, A i) → Y)
+    {S : Set I} (hS : FactorsOn S C) (hmin : ∀ T : Set I, FactorsOn T C → S ⊆ T) :
+    S = essentialSet C :=
+  Set.Subset.antisymm (hmin _ (factorsOn_essentialSet C))
+    (essentialSet_subset_of_factorsOn hS)
+
+end Coordinates
+
+/-! ### The boundary: finiteness of the index is load-bearing -/
+
+/-- A consumer of an infinite product: "the sequence is `true` infinitely
+often". -/
+def infinitelyOftenTrue (x : ℕ → Bool) : Prop := ∀ N, ∃ n, N ≤ n ∧ x n = true
+
+/-- No single coordinate is essential for it. -/
+theorem infinitelyOftenTrue_no_essential (j : ℕ) :
+    ¬ Essential (A := fun _ : ℕ => Bool) j infinitelyOftenTrue := by
+  rintro ⟨x, y, hxy, hne⟩
+  apply hne
+  have key : ∀ u v : ℕ → Bool, (∀ i, i ≠ j → u i = v i) →
+      infinitelyOftenTrue u → infinitelyOftenTrue v := by
+    intro u v huv hu N
+    obtain ⟨n, hn, hun⟩ := hu (max N (j + 1))
+    refine ⟨n, le_trans (le_max_left _ _) hn, ?_⟩
+    have hnj : n ≠ j := by
+      have : j + 1 ≤ n := le_trans (le_max_right _ _) hn
+      omega
+    rw [← huv n hnj]; exact hun
+  exact propext ⟨key x y hxy, key y x fun i hi => (hxy i hi).symm⟩
+
+/-- Yet the consumer is not constant, so the empty set is not sufficient. -/
+theorem infinitelyOftenTrue_not_constant :
+    ¬ FactorsOn (A := fun _ : ℕ => Bool) (∅ : Set ℕ) infinitelyOftenTrue := by
+  intro h
+  have hall : infinitelyOftenTrue (fun _ => true) := fun N => ⟨N, le_refl N, rfl⟩
+  have hnone : ¬ infinitelyOftenTrue (fun _ => false) := by
+    intro hc
+    obtain ⟨n, -, hn⟩ := hc 0
+    exact Bool.noConfusion hn
+  have := h (fun _ => true) (fun _ => false) (fun i hi => absurd hi (Set.notMem_empty i))
+  exact hnone (this ▸ hall)
+
+/-- **The boundary.**  On an infinite index the essential set can be empty while
+the consumer is not constant: `factorsOn_essentialSet` genuinely needs
+finiteness. -/
+theorem essentialSet_not_sufficient_infinite :
+    essentialSet (A := fun _ : ℕ => Bool) infinitelyOftenTrue = ∅ ∧
+      ¬ FactorsOn (A := fun _ : ℕ => Bool)
+        (essentialSet (A := fun _ : ℕ => Bool) infinitelyOftenTrue) infinitelyOftenTrue := by
+  have hempty : essentialSet (A := fun _ : ℕ => Bool) infinitelyOftenTrue = ∅ :=
+    Set.eq_empty_iff_forall_notMem.mpr fun j hj => infinitelyOftenTrue_no_essential j hj
+  refine ⟨hempty, ?_⟩
+  rw [hempty]
+  exact infinitelyOftenTrue_not_constant
+
+/-! ## Coordinate dependence is not interaction -/
+
+section Interaction
+
+variable {A B : Type*} {M : Type*} [AddCommGroup M]
+
+/-- The consumer is a sum of independent one-coordinate contributions. -/
+def Separable (C : A → B → M) : Prop := ∃ f : A → M, ∃ g : B → M, ∀ a b, C a b = f a + g b
+
+/-- **The rectangle identity.**  Every separable consumer satisfies it, so any
+violation of it is a proof of non-separability. -/
+theorem separable_rectangle {C : A → B → M} (h : Separable C) (a a' : A) (b b' : B) :
+    C a b + C a' b' = C a b' + C a' b := by
+  obtain ⟨f, g, hfg⟩ := h
+  rw [hfg, hfg, hfg, hfg]; abel
+
+/-- The parity consumer on two Boolean coordinates. -/
+def parityPair (a b : Bool) : ℤ := if a = b then 0 else 1
+
+/-- **A genuinely interacting consumer.**  `parityPair` violates the rectangle
+identity, so it is not a sum of coordinatewise effects. -/
+theorem parityPair_not_separable : ¬ Separable parityPair := by
+  intro h
+  have := separable_rectangle h true false true false
+  simp [parityPair] at this
+
+/-- Both coordinates of the sum consumer are essential… -/
+def sumPair (x : Fin 2 → Bool) : ℤ := (if x 0 then 1 else 0) + (if x 1 then 1 else 0)
+
+theorem sumPair_separable : Separable (fun a b : Bool => sumPair ![a, b]) :=
+  ⟨fun a => if a then 1 else 0, fun b => if b then 1 else 0, fun a b => by simp [sumPair]⟩
+
+/-- …and yet it is separable.  **Coordinate dependence is strictly weaker than
+interaction**: `sumPair` depends on both coordinates and has no interaction,
+while `parityPair` depends on both and cannot be decomposed. -/
+theorem sumPair_both_essential :
+    Essential (A := fun _ : Fin 2 => Bool) 0 sumPair ∧
+      Essential (A := fun _ : Fin 2 => Bool) 1 sumPair := by
+  constructor
+  · refine ⟨![false, false], ![true, false], ?_, ?_⟩
+    · intro i hi; fin_cases i <;> simp_all
+    · simp [sumPair]
+  · refine ⟨![false, false], ![false, true], ?_, ?_⟩
+    · intro i hi; fin_cases i <;> simp_all
+    · simp [sumPair]
+
+/-- The two notions separated in one statement. -/
+theorem dependence_ne_interaction :
+    (Essential (A := fun _ : Fin 2 => Bool) 0 sumPair ∧
+      Essential (A := fun _ : Fin 2 => Bool) 1 sumPair ∧
+      Separable (fun a b : Bool => sumPair ![a, b])) ∧
+    ¬ Separable parityPair :=
+  ⟨⟨sumPair_both_essential.1, sumPair_both_essential.2, sumPair_separable⟩,
+    parityPair_not_separable⟩
+
+end Interaction
+
+/-! ## Aggregation: statistics downstream of a collision -/
+
+section Aggregation
+
+variable {X Y Z : Type*}
+
+/-- **No function of the observation separates a collided pair.** -/
+theorem no_statistic_separates {O : X → Y} {x₁ x₂ : X} (hcoll : O x₁ = O x₂)
+    (T : Y → Z) : T (O x₁) = T (O x₂) := by rw [hcoll]
+
+/-- **And no statistic of any number of observations does either.**  Repeated
+observation of the two states produces literally the same data, so every
+statistic of a sample of any size agrees on them.  This is a deterministic
+statement about the observation map; it makes no claim about estimation error,
+noise, or convergence. -/
+theorem no_sample_statistic_separates {O : X → Y} {x₁ x₂ : X} (hcoll : O x₁ = O x₂)
+    (n : ℕ) (T : (Fin n → Y) → Z) :
+    T (fun _ => O x₁) = T (fun _ => O x₂) := by rw [hcoll]
+
+/-- The packaged form: a non-injective observation has a pair of distinct states
+that **no** statistic of **any** sample size distinguishes. -/
+theorem aggregation_destroys_distinction {O : X → Y} (hnot : ¬ Function.Injective O) :
+    ∃ x₁ x₂ : X, x₁ ≠ x₂ ∧
+      ∀ (n : ℕ) (Z : Type) (T : (Fin n → Y) → Z),
+        T (fun _ => O x₁) = T (fun _ => O x₂) := by
+  simp only [Function.Injective, not_forall] at hnot
+  obtain ⟨x₁, x₂, hEq, hne⟩ := hnot
+  exact ⟨x₁, x₂, hne, fun _ _ _ => by rw [hEq]⟩
+
+end Aggregation
+
+/-! ## Joining observers -/
+
+section Join
+
+variable {X Y Z W : Type}
+
+/-- The **join** of two observers: report both. -/
+def join (O₁ : X → Y) (O₂ : X → Z) : X → Y × Z := fun x => (O₁ x, O₂ x)
+
+theorem join_refines_left (O₁ : X → Y) (O₂ : X → Z) : Refines (join O₁ O₂) O₁ :=
+  ⟨Prod.fst, fun _ => rfl⟩
+
+theorem join_refines_right (O₁ : X → Y) (O₂ : X → Z) : Refines (join O₁ O₂) O₂ :=
+  ⟨Prod.snd, fun _ => rfl⟩
+
+/-- **The join is least among the observers refining both.**  Together with the
+two statements above, the join is the supremum of the two observers in the
+information order. -/
+theorem join_least {O : X → W} {O₁ : X → Y} {O₂ : X → Z} (h₁ : Refines O O₁)
+    (h₂ : Refines O O₂) : Refines O (join O₁ O₂) := by
+  obtain ⟨f, hf⟩ := h₁
+  obtain ⟨g, hg⟩ := h₂
+  exact ⟨fun w => (f w, g w), fun x => by simp [join, hf x, hg x]⟩
+
+end Join
+
+end Integration.CoordinateSufficiency

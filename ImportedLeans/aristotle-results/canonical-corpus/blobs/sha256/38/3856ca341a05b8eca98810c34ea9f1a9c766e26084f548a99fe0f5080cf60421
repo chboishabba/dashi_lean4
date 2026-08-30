@@ -1,0 +1,80 @@
+import Integration.Variation.Pairing
+import Integration.Variation.CutoffLimit
+import Integration.Variation.CommonLanguage
+import Integration.Variation.SourceCoordinate
+import Integration.Variation.MetricDensity
+import Integration.Variation.SymmetricFibre
+import Integration.Variation.Weld
+
+/-!
+# Axiom audit — the QFT/GR common-variation tranche
+
+Every result of `Integration.Variation.*` is listed here; the build log must
+show only `propext`, `Classical.choice` and `Quot.sound` for each of them.
+Anything else — in particular a `sorryAx` — is a failure of the audit.
+-/
+
+-- Lane 1: the stress pairing and separation.
+#print axioms Integration.Variation.Pairing.pair_add_right
+#print axioms Integration.Variation.Pairing.pair_smul_right
+#print axioms Integration.Variation.Pairing.pair_sum
+#print axioms Integration.Variation.Pairing.eq_of_pair_eq_on_spanning
+#print axioms Integration.Variation.Pairing.eq_of_pair_eq_on_top
+#print axioms Integration.Variation.Pairing.pair_tsum
+#print axioms Integration.Variation.Pairing.eq_of_pair_eq_on_dense
+#print axioms Integration.Variation.Pairing.eq_of_pair_eq_on_dense_submodule
+#print axioms Integration.Variation.Pairing.separates_iff_dense
+#print axioms Integration.Variation.Pairing.exists_ne_agreeing_of_ne_top
+#print axioms Integration.Variation.Pairing.separates_iff_eq_top
+#print axioms Integration.Variation.Pairing.plane_pairing_does_not_separate
+
+-- Lane 2: finite cutoff to continuum, and sector aggregation.
+#print axioms Integration.Variation.CutoffLimit.scalar_limit_interchange
+#print axioms Integration.Variation.CutoffLimit.exists_unique_continuum_stress
+#print axioms Integration.Variation.CutoffLimit.continuum_stress_of_cutoff_family
+#print axioms Integration.Variation.CutoffLimit.exists_unique_continuum_functional
+#print axioms Integration.Variation.CutoffLimit.sector_aggregate_variation
+#print axioms Integration.Variation.CutoffLimit.sector_aggregate_variation_tsum
+#print axioms Integration.Variation.CutoffLimit.sector_aggregation_commutes_with_cutoff_limit
+#print axioms Integration.Variation.CutoffLimit.pairing_convergence_is_not_tensor_convergence
+#print axioms Integration.Variation.CutoffLimit.l2_pairing_convergence_is_not_tensor_convergence
+#print axioms Integration.Variation.CutoffLimit.divergent_cutoff_family_has_no_continuum_pairing
+#print axioms Integration.Variation.CutoffLimit.one_sector_is_not_the_total
+
+-- Lane 3: one common metric-variation language.
+#print axioms Integration.Variation.CommonLanguage.CommonVariation.pairings_agree
+#print axioms Integration.Variation.CommonLanguage.stress_weld_of_common_carrier
+#print axioms Integration.Variation.CommonLanguage.stress_weld_of_dense_carrier
+#print axioms Integration.Variation.CommonLanguage.stress_weld
+#print axioms Integration.Variation.CommonLanguage.tensor_unique_of_spanning
+#print axioms Integration.Variation.CommonLanguage.mismatched_carrier_maps_do_not_weld
+#print axioms Integration.Variation.CommonLanguage.non_spanning_fibre_does_not_weld
+#print axioms Integration.Variation.CommonLanguage.separate_actions_do_not_weld
+
+-- Lane 4: source-coordinate discipline.
+#print axioms Integration.Variation.SourceCoordinate.second_deriv_comp
+#print axioms Integration.Variation.SourceCoordinate.second_deriv_comp_affine
+#print axioms Integration.Variation.SourceCoordinate.naive_hessian_identification_fails
+#print axioms Integration.Variation.SourceCoordinate.affine_iff_no_correction_at
+
+-- The assembled cutset.
+#print axioms Integration.Variation.Weld.qftgr_stress_weld_of_cutset
+#print axioms Integration.Variation.Weld.common_variation_has_one_stress
+#print axioms Integration.Variation.SourceCoordinate.second_fderiv_comp
+#print axioms Integration.Variation.SourceCoordinate.second_fderiv_comp_of_const_fderiv
+#print axioms Integration.Variation.SourceCoordinate.correction_is_detected_by_a_linear_energy
+
+-- Lane 5: the metric-density first variation.
+#print axioms Integration.Variation.MetricDensity.hasDerivAt_det_one_add_smul
+#print axioms Integration.Variation.MetricDensity.hasDerivAt_det_add_smul
+#print axioms Integration.Variation.MetricDensity.hasDerivAt_sqrt_neg_det
+#print axioms Integration.Variation.MetricDensity.density_variation_is_a_trace_pairing
+#print axioms Integration.Variation.MetricDensity.density_variation_is_linear
+#print axioms Integration.Variation.MetricDensity.density_variation_does_not_determine_the_perturbation
+
+-- Lane 6: the symmetric perturbation fibre.
+#print axioms Integration.Variation.SymmetricFibre.trace_mul_single
+#print axioms Integration.Variation.SymmetricFibre.isSymm_singlePair
+#print axioms Integration.Variation.SymmetricFibre.eq_of_trace_eq_on_symmetric
+#print axioms Integration.Variation.SymmetricFibre.symmetric_perturbations_do_not_separate_general_tensors
+#print axioms Integration.Variation.SymmetricFibre.symmetry_of_the_stress_is_load_bearing

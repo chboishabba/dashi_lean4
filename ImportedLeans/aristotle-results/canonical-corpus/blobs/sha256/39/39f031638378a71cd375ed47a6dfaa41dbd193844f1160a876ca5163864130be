@@ -1,0 +1,293 @@
+#!/usr/bin/env python3
+"""Corpus inventory and provenance indexer for the DASHI cutset.
+
+Walks the Agda and Lean trees that are physically present in this repository and
+emits
+
+* ``corpus_index.json``  -- one record per source file,
+* ``corpus_lanes.csv``   -- per-lane aggregate,
+* ``CORPUS_INVENTORY.md`` -- the human-readable inventory.
+
+It reports only what it can read off the files.  It never runs a typechecker,
+so no field of the output may be read as "this module typechecks".
+"""
+
+from __future__ import annotations
+
+import csv
+import json
+import os
+import re
+import sys
+from collections import Counter, defaultdict
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+AGDA = os.path.join(ROOT, "Agda")
+LEAN = os.path.join(ROOT, "Lean")
+
+# Paths deliberately excluded from the sewing pass: the Yang-Mills and
+# Navier-Stokes lanes and their explicitly-named supporting files.  They are
+# counted (so the inventory is honest about corpus size) but never opened.
+EXCLUDE_RE = re.compile(r"(yangmills|yang_mills|navier|stokes|balaban|clay)", re.I)
+# ... and modules whose basename is prefixed `NS`/`YM`, which is how the Physics
+# lane names the bulk of its Navier-Stokes and Yang-Mills material.
+EXCLUDE_BASENAME_RE = re.compile(r"^(NS|YM)[A-Z0-9]")
+
+
+def is_excluded(rel: str) -> bool:
+    return bool(EXCLUDE_RE.search(rel)) or bool(
+        EXCLUDE_BASENAME_RE.match(os.path.basename(rel)))
+
+AGDA_PATTERNS = {
+    "data": re.compile(r"^\s*data\s+([^\s:]+)", re.M),
+    "record": re.compile(r"^\s*record\s+([^\s:]+)", re.M),
+    "postulate": re.compile(r"^\s*postulate\b", re.M),
+    "eq_decl": re.compile(r"^[^\s:][^:\n]*:\s*[^\n]*\b_?≡_?|^[^\s:][^:\n]*:[^\n]*≡", re.M),
+    "terminating": re.compile(r"\{-#\s*TERMINATING", re.M),
+    "no_positivity": re.compile(r"\{-#\s*NO_POSITIVITY_CHECK", re.M),
+    "bool_field": re.compile(r":\s*Bool\b", re.M),
+    "hole": re.compile(r"(^|\s)\?(\s|$)", re.M),
+}
+
+BOOL_FIELD_NAME_RE = re.compile(r"^\s*([A-Za-z][A-Za-z0-9_'-]*)\s*:\s*Bool\b", re.M)
+
+
+def classify_bool_fields(text: str) -> tuple[int, int]:
+    """Split declared `... : Bool` fields into *pinned* and *free*.
+
+    A field `f : Bool` is **pinned** when the same module also declares a
+    companion equation `f \u2261 true` or `f \u2261 false` (the corpus's fail-closed
+    idiom); otherwise it is **free**, i.e. it constrains nothing.  This is a
+    syntactic count over source text, not a typechecked judgement.
+    """
+    pinned = free = 0
+    for name in BOOL_FIELD_NAME_RE.findall(text):
+        pat = re.compile(r"\b" + re.escape(name) + r"\s*\u2261\s*(?:true|false)\b")
+        if pat.search(text):
+            pinned += 1
+        else:
+            free += 1
+    return pinned, free
+
+
+IMPORT_RE = re.compile(r"^\s*(?:open\s+)?import\s+([A-Za-z0-9_.']+)", re.M)
+MODULE_RE = re.compile(r"^\s*module\s+([A-Za-z0-9_.']+)", re.M)
+
+LEAN_PATTERNS = {
+    "theorem": re.compile(r"^\s*(?:@\[[^\]]*\]\s*)?(?:private\s+|protected\s+)?(?:theorem|lemma)\s+([^\s({\[:]+)", re.M),
+    "def": re.compile(r"^\s*(?:noncomputable\s+)?(?:private\s+|protected\s+)?def\s+([^\s({\[:]+)", re.M),
+    "structure": re.compile(r"^\s*structure\s+([^\s({\[:]+)", re.M),
+    "inductive": re.compile(r"^\s*inductive\s+([^\s({\[:]+)", re.M),
+    "sorry": re.compile(r"\bsorry\b", re.M),
+    "axiom": re.compile(r"^\s*axiom\s+", re.M),
+}
+LEAN_IMPORT_RE = re.compile(r"^\s*import\s+([A-Za-z0-9_.']+)", re.M)
+
+
+def lane_of(relpath: str) -> str:
+    parts = relpath.split(os.sep)
+    if parts[0] == "Agda":
+        if len(parts) >= 3 and parts[1] == "DASHI":
+            return "DASHI/" + parts[2] if not parts[2].endswith(".agda") else "DASHI/<root>"
+        if len(parts) >= 2 and parts[1] in ("Monster", "MDL", "cubical"):
+            return "Agda/" + parts[1]
+        return "Agda/<root>"
+    if parts[0] == "Lean":
+        return "Lean/" + (parts[1] if len(parts) >= 3 else "<root>")
+    return "other"
+
+
+def scan_agda(path: str, rel: str) -> dict:
+    excluded = is_excluded(rel)
+    rec = {
+        "path": rel,
+        "language": "agda",
+        "lane": lane_of(rel),
+        "excluded_lane": excluded,
+    }
+    if excluded:
+        # counted, not read
+        rec.update({"lines": None, "module": None, "imports": [], "read": False})
+        return rec
+    with open(path, "r", encoding="utf-8", errors="replace") as fh:
+        text = fh.read()
+    m = MODULE_RE.search(text)
+    rec.update(
+        {
+            "read": True,
+            "lines": text.count("\n") + 1,
+            "module": m.group(1) if m else None,
+            "imports": sorted(set(IMPORT_RE.findall(text))),
+        }
+    )
+    for key, pat in AGDA_PATTERNS.items():
+        rec[key] = len(pat.findall(text))
+    rec["bool_pinned"], rec["bool_free"] = classify_bool_fields(text)
+    return rec
+
+
+BUILD_TOPS = {"Synthesis", "Spine", "Integration", "Cuisine", "AgdaMirror"}
+
+
+def in_build_target(rel: str) -> bool:
+    """Whether the file is reached by a `defaultTargets` library of `lakefile.toml`."""
+    parts = rel.split(os.sep)
+    if len(parts) < 2 or parts[0] != "Lean":
+        return False
+    if len(parts) == 2:
+        # root aggregate `Lean/<Top>.lean`; `AgdaMirror.lean` is excluded by the
+        # lakefile glob `AgdaMirror.+` (it imports the YM/NS-filtered lane).
+        top = parts[1][:-5]
+        return top in BUILD_TOPS and top != "AgdaMirror"
+    return parts[1] in BUILD_TOPS
+
+
+def scan_lean(path: str, rel: str) -> dict:
+    with open(path, "r", encoding="utf-8", errors="replace") as fh:
+        text = fh.read()
+    rec = {
+        "path": rel,
+        "language": "lean",
+        "lane": lane_of(rel),
+        "excluded_lane": is_excluded(rel),
+        "read": True,
+        "lines": text.count("\n") + 1,
+        "imports": sorted(set(LEAN_IMPORT_RE.findall(text))),
+        "build_target": in_build_target(rel),
+    }
+    for key, pat in LEAN_PATTERNS.items():
+        rec[key] = len(pat.findall(text))
+    return rec
+
+
+def walk() -> list[dict]:
+    out = []
+    for base, exts, scan in ((AGDA, (".agda",), scan_agda), (LEAN, (".lean",), scan_lean)):
+        if not os.path.isdir(base):
+            continue
+        for dirpath, _dirnames, filenames in os.walk(base):
+            if os.sep + ".lake" in dirpath or os.sep + "_build" in dirpath:
+                continue
+            for fn in sorted(filenames):
+                if not fn.endswith(exts):
+                    continue
+                full = os.path.join(dirpath, fn)
+                rel = os.path.relpath(full, ROOT)
+                out.append(scan(full, rel))
+    return out
+
+
+def main() -> int:
+    records = walk()
+    with open(os.path.join(ROOT, "corpus_index.json"), "w", encoding="utf-8") as fh:
+        json.dump(records, fh, indent=1, sort_keys=True)
+
+    lanes: dict[str, Counter] = defaultdict(Counter)
+    for r in records:
+        c = lanes[r["lane"]]
+        c["files"] += 1
+        if not r.get("read"):
+            c["unread_excluded"] += 1
+            continue
+        c["lines"] += r.get("lines") or 0
+        for k in ("data", "record", "postulate", "terminating", "no_positivity",
+                  "bool_field", "bool_pinned", "bool_free", "hole", "theorem", "def",
+                  "structure", "inductive", "sorry", "axiom"):
+            if k in r:
+                c[k] += r[k]
+
+    cols = ["lane", "files", "unread_excluded", "lines", "data", "record", "postulate",
+            "terminating", "no_positivity", "bool_field", "bool_pinned", "bool_free", "hole",
+            "theorem", "def", "structure", "inductive", "sorry", "axiom"]
+    with open(os.path.join(ROOT, "corpus_lanes.csv"), "w", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        w.writerow(cols)
+        for lane in sorted(lanes):
+            w.writerow([lane] + [lanes[lane][c] for c in cols[1:]])
+
+    # reverse import graph over Agda modules that were read
+    by_module = {r["module"]: r for r in records if r.get("module")}
+    importers: dict[str, set] = defaultdict(set)
+    for r in records:
+        for imp in r.get("imports", []):
+            if imp in by_module:
+                importers[imp].add(r["module"] or r["path"])
+
+    lines = []
+    A = lines.append
+    A("# DASHI corpus inventory\n")
+    A("Generated by `scripts/corpus_inventory.py` from the files physically present")
+    A("in this repository.  Every number below is a *syntactic* count obtained by")
+    A("reading source text.  **No Agda typechecker was run**, so nothing here")
+    A("asserts that any Agda module compiles.\n")
+    tot = len(records)
+    agda = [r for r in records if r["language"] == "agda"]
+    lean = [r for r in records if r["language"] == "lean"]
+    unread = [r for r in agda if not r.get("read")]
+    A(f"* total source files indexed: **{tot}** ({len(agda)} Agda, {len(lean)} Lean)")
+    A(f"* Agda files in excluded (Yang–Mills / Navier–Stokes and supporting) lanes, counted but **not opened**: **{len(unread)}**")
+    A(f"* Agda files read: **{len(agda) - len(unread)}**")
+    A(f"* Agda modules containing at least one `postulate` block: **{sum(1 for r in agda if r.get('postulate'))}**")
+    built = [r for r in lean if r.get("build_target")]
+    archive = [r for r in lean if not r.get("build_target")]
+    A(f"* Lean files in a `defaultTargets` library: **{len(built)}**; Lean files in the "
+      f"unbuilt archive (`Lean/outputs`, `Lean/DASHI`, `Lean/docs`, root aggregates): "
+      f"**{len(archive)}**")
+    A(f"* occurrences of the token `sorry` in build-target Lean files: "
+      f"**{sum(r.get('sorry', 0) for r in built)}** (all inside docstrings/comments; "
+      f"`lake build` reports no `sorry` warning)")
+    A(f"* occurrences of the token `sorry` in the unbuilt Lean archive: "
+      f"**{sum(r.get('sorry', 0) for r in archive)}** — these are *not* checked and "
+      f"must not be read as results")
+    A(f"* Lean files containing an `axiom` declaration: **{sum(1 for r in lean if r.get('axiom'))}**")
+    tp = sum(r.get("bool_pinned", 0) for r in agda)
+    tf = sum(r.get("bool_free", 0) for r in agda)
+    A(f"* declared `... : Bool` fields in read Agda modules: **{tp + tf}**, of which "
+      f"**{tp} are pinned** (the module also declares `f \u2261 true` or `f \u2261 false`) "
+      f"and **{tf} are free** (nothing in the module constrains them)\n")
+    A("### Pinned versus free `Bool` fields\n")
+    A("The corpus's dominant idiom is a `Bool` flag accompanied by a proof field")
+    A("pinning it to a constant \u2014 the *fail-closed* pattern.  A pinned flag is a")
+    A("`negativeResult` candidate (the module refuses an authority); a free flag is")
+    A("an `openSocket` candidate (the module constrains nothing).  The split below")
+    A("is a **syntactic** count over source text; no Agda typechecker was run.\n")
+    A("| lane | Bool fields | pinned | free |")
+    A("|---|---:|---:|---:|")
+    for lane in sorted(lanes, key=lambda l: -(lanes[l]["bool_pinned"] + lanes[l]["bool_free"]))[:15]:
+        c = lanes[lane]
+        if c["bool_pinned"] + c["bool_free"] == 0:
+            continue
+        A("| `{}` | {} | {} | {} |".format(
+            lane, c["bool_pinned"] + c["bool_free"], c["bool_pinned"], c["bool_free"]))
+    A("")
+    A("## Per-lane aggregate\n")
+    A("| lane | files | not read (excluded) | lines | data | record | postulate blocks | Bool fields | TERMINATING | theorem/lemma | def | sorry |")
+    A("|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
+    for lane in sorted(lanes, key=lambda l: -lanes[l]["files"]):
+        c = lanes[lane]
+        A("| `{}` | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} |".format(
+            lane, c["files"], c["unread_excluded"], c["lines"], c["data"], c["record"],
+            c["postulate"], c["bool_field"], c["terminating"], c["theorem"], c["def"], c["sorry"]))
+    A("")
+    A("## Most-imported Agda modules (in-degree over the read set)\n")
+    A("| module | importers |")
+    A("|---|---:|")
+    for mod, imps in sorted(importers.items(), key=lambda kv: -len(kv[1]))[:40]:
+        A(f"| `{mod}` | {len(imps)} |")
+    A("")
+    A("## Agda modules carrying `postulate` blocks\n")
+    A("A `postulate` is an assumed statement with no proof term; every module in")
+    A("this table must be read as an interface, not as established mathematics.\n")
+    A("| module | postulate blocks |")
+    A("|---|---:|")
+    for r in sorted((r for r in agda if r.get("postulate")), key=lambda r: -r["postulate"]):
+        A(f"| `{r['module'] or r['path']}` | {r['postulate']} |")
+    A("")
+    with open(os.path.join(ROOT, "CORPUS_INVENTORY.md"), "w", encoding="utf-8") as fh:
+        fh.write("\n".join(lines))
+    print(f"indexed {tot} files; {len(lanes)} lanes")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

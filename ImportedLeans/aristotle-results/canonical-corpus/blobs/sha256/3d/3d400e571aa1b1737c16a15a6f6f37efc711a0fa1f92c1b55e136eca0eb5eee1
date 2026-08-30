@@ -1,0 +1,232 @@
+# Summary of changes for run e599b472-4cc2-40ce-8eb4-ac644885a7c3
+**RH is not proved.** The programme is advanced with new machine-checked results, and the first unproved theorem is reported exactly below.
+
+Everything builds: `lake build RiemannAnalytic` succeeds (8086 jobs) with no `sorry`/`admit`, no `axiom`, no postulates, no Boolean receipts, no numerical evidence, and no `@[implemented_by]`. `#print axioms` on every new theorem returns only `[propext, Classical.choice, Quot.sound]`. No existing statement was weakened; only new files were added (plus import lines and reports). All work is committed and pushed.
+
+### What was added this cycle
+
+**1. `RiemannAnalytic/RelativeContraction.lean` — the endgame, and why `o(L⁶)` is not enough**
+- `tube_radius_of_absolute_budget`: floor `cL⁶α² ≤ D` plus `D ≤ E` gives only `|α| ≤ √(E/(cL⁶))`.
+- `absolute_budget_insufficient`: **proved negative** — for every `c, L, E > 0` there is a *nonzero* `α` compatible with the floor. No absolute budget can force `α = 0`; the `o(L⁶)` architecture yields a shrinking tube only.
+- `offLineTarget_excluded_of_relative_budget`: with a *relative* budget `D ≤ ηD`, `η < 1`, the displacement is exactly `0` — no detectability radius.
+- `totalRelativeError_eventually_contractive`, `offLineTarget_excluded_eventually`: four relative budgets (prime, tail, mixed interference, endpoint) each tending to `0` combine into a strict contraction, excluding every sufficiently high off-line target.
+- `relative_budget_of_alpha_factor`, `offLineTarget_excluded_of_alpha_factor_budget`: an `α²`-carrying prime bound `P ≤ Cδ²α²L⁶` with `Cδ² < c` finishes.
+
+**2. Anchored prime expansion (additions)**
+- `hermAnchorMinor_translate_diffKernel`: the exact difference-kernel form `Δ(s) = ½∑ₙ∑ₘ wₙwₘ|e^{isλₙ} − e^{isλₘ}|²` (with `normSq_exp_diff`).
+- `anchoredPrime_no_alpha_factor_of_positive_baseline`: **proved negative** — whenever a resolved pair of log-frequencies exists at the baseline, the *raw* anchored prime observable is positive at `α = 0` and therefore admits no `Cα²L⁶` bound. The `α²`-carrying object must be baseline-subtracted.
+
+**3. `RiemannAnalytic/CompensatedObservable.lean` — the compensated observable does carry `α²`**
+- `compensatedMinor` (`𝒟(α) = 𝒜(α) − 𝒜(0)`), `compensatedMinor_zero`, `coshWeight` (the functional-equation-symmetrised prime mass `wₙ(α) = wₙcosh(2αλₙ)`).
+- `cosh_sub_one_le`, `sinh_le_mul_exp`, `prod_sub_one_le_quadratic` — explicit elementary estimates.
+- `compensatedMinor_cosh_le`: `𝒟(α) ≤ (2κ + κ²A²)α²·𝒜(0)`, `κ = 2Λ²e^{2AΛ}`, for `|α| ≤ A`, `|λₙ| ≤ Λ`.
+- `compensatedMinor_cosh_le_of_reciprocal`: clean constant `𝒟(α) ≤ 8Λ²e⁴α²·𝒜(0)` when `A·Λ ≤ 1`.
+- `minorForm_le_varForm`, `compensatedMinor_cosh_le_varForm`: combined with the log-variance ledger, `𝒟(α) ≤ K·α²·s²·Var(w)`.
+- **Stated caveat (in the module and the report):** the constant grows like `e^{2AΛ}`, so with `Λ ≍ L` the bound is uniform only for `|α| ≲ 1/L`. Closing RH this way would require first reducing the admissible displacement to that scale, which is *not* proved.
+
+### First unproved theorem (exact)
+
+> There exist admissible source parameters `H = H(T)` and a function `η_prime(T,H) → 0` such that for every off-line target `ρ` of height `T`,
+> `E_prime,loc(ρ,T,H) ≤ η_prime(T,H) · m_ρ² a₀(ρ)² ‖b_ρ‖²`;
+> equivalently, an anchored prime bound `𝒫_H(α,T) ≤ C δ(T)² α² L⁶` with `δ(T) → 0`, uniform for `0 < |α| < 1/2` — i.e. with a constant that does **not** degrade like `e^{2AΛ}` at the literal source.
+
+`OffLineDetectabilityContradiction` remains open. Documentation: new `RIEMANN_G10_REPORT.md`, and a "G10" section appended to `RIEMANN_LEAN_STATUS.md`; `ARISTOTLE_SUMMARY.md` was left untouched.
+
+# Summary of changes for run 87842918-a85a-4154-be90-3ee89e585eae
+**The Riemann Hypothesis is not proved. Nothing was weakened, nothing was assumed, and `RiemannHypothesisFor` is untouched.** All work is machine-checked Lean: `lake build RiemannAnalytic` succeeds (8080 jobs), there is no `sorry`, `admit`, `axiom`, `postulate`, Boolean receipt or numerical evidence in the Lean sources, and every new theorem depends only on `propext`, `Classical.choice`, `Quot.sound`.
+
+**G8 cycle, step by step.**
+
+1. *Anchored row variance and the wedge factor* (`RiemannAnalytic/AnchoredRowVariance.lean`). Proved `∑_{j≠0}(G₀₀G_jj − G_{0j}²) = ‖v₀‖²·tr G − ‖G_{0,*}‖²`, the Lagrange/wedge identity, and the exact shift factorization `‖x‖²‖x+e‖² − ⟪x,x+e⟫² = ‖x‖²‖e‖² − ⟪x,e⟫²`: for a translate family the anchored determinant sees only the displacement. The resulting grid budget `‖v₀‖²M²h²q³` is proved strictly below the norm-and-count budget.
+
+2. *Ledger for the anchored determinant at source scale* (`RiemannAnalytic/AnchoredShiftLedger.lean`, new). With spacing `2π/L`, count `≤ A₀HL`, anchor energy `≤ CvL²` and shift-Lipschitz constant `Mc·L^k`, the anchored sum is `≤ 4π²CvMc²A₀³·L^{2k+3}·H³`. Hence: closed for `k ≥ 2` (at least `C·L⁶` for every window), and *open* for `k ≤ 1` with `H³ ≤ δL`, giving `o(L⁶)` up to `H ≍ L^{1/3}`. So the anchored determinant does **not** require the unavailable exponent `θ > 2` demanded by the earlier norm-and-count model; it requires a shift-Lipschitz bound with `k ≤ 1`, which is nowhere assumed.
+
+3. *Diagonal of the transverse (imaginary) projection* (`ImaginaryProjectionDiagonal.lean`). Exact identities plus the bound `|∫₀^H (Im D)² − ½H∑|aₙ|²| ≤ ½(offDiag + sq)` with `H`-free errors. **Negative verdict:** the projection halves the diagonal, it does not cancel it.
+
+4. *Purify before the mean square* (`ShiftProjector.lean`, and `ProjectorLedger.lean`, new). Exact symbol algebra; `P(1)=0` annihilates the zero-frequency mode exactly; the diagonal cost is `(W log N)²`, which at the source parameters is a constant independent of `L` — proved now for the whole admissible finite-shift family, not just the first difference. And the structural obstruction: if the projector retains a floor `ϱ` at the (low) anchor frequency, its guaranteed damping factor is at least `ϱ²`. **Negative verdict:** within this budget model, killing the diagonal and retaining the anchored floor are incompatible.
+
+5. *Directional taper* (`OneSidedDampedTaper.lean`). For an explicitly constructed C¹ one-sided damped taper `χ(u)e^{−cu}`, the α-uniform quadratic window bound `Bψ(α,L) ≤ C_b L²` holds for `|α| ≤ 1/2` — the bound previously proved false for every even taper — and the anchored identity is shown to need no evenness.
+
+**First unproved theorem, stated exactly:** `∑_ρ m_ρ² a₀(ρ)²‖b_ρ‖² ≤ E_prime,loc(T,H)` with `E_prime,loc = o(L⁶)` for some `H = o(L²)`. G8 replaces it by two precise sufficient obligations, both open and both explicitly hypotheses in the sources: (a) a shift-Lipschitz bound `‖v_j − v₀‖ ≤ Mc L^k|jh|` with `k ≤ 1` for the translated prime-side family; or (b) a coercive floor for the one-sided damped family (the existing floor proof uses evenness essentially).
+
+**Documentation:** new `RIEMANN_G8_REPORT.md`, and a new G8 section appended to `RIEMANN_LEAN_STATUS.md`; `ARISTOTLE_SUMMARY.md` was not edited. The Properties table was reconciled: the ten G8 results are registered and marked proved.
+
+Scope note: no Agda toolchain is available in this environment, so all verification this cycle is the Lean development; the Agda modules were not rebuilt.
+
+# Summary of changes for run 5caee2a4-7f9c-46d2-9577-112afc89858b
+## Outcome
+
+**The Riemann Hypothesis is not proved, and nothing was weakened to make it look proved.** No `axiom`, `postulate`, `sorry`/`admit`, Boolean receipt, imported authority or numerical evidence is used anywhere. `lake build RiemannAnalytic` succeeds (8074 jobs), a text scan finds no `sorry`/`admit`, and every new theorem spot-checked depends only on `propext`, `Classical.choice`, `Quot.sound`. Narrative write-up: `RIEMANN_G7_REPORT.md`; a new section is appended to `RIEMANN_LEAN_STATUS.md`.
+
+I ran the two-lane programme exactly as specified.
+
+### Lane A — the α-uniform taper problem: **answered, and the answer is negative**
+New module `RiemannAnalytic/TwistedTaperUniformity.lean`.
+
+- `taperMass_eq_cosh_of_even`: for an even taper, `taperMass φ α = ∫|φ(u)| cosh(αu) du` — pairing `u` with `−u` yields a *positive even weight*, not cancellation. The suggested high-α move provably fails.
+- `taperMass_ge_plateau_exp` / `windowEnergyBound_ge_exp_source`: `(a/2)e^{|α|a/2} ≤ taperMass`, hence `(9/256)L²e^{3|α|L/8} ≤ Bφ(α,L)`; and the matching upper bound `taperMass_le_exp_support` (`≤ 2R e^{|α|R}`) shows the growth really is `e^{Θ(|α|L)}`.
+- `no_uniform_quadratic_bound_of_fixed_offset`: **`Bφ(α,L) ≤ C_b L²` is false** — for any fixed `α ≠ 0` and any `C_b > 0`, every long enough source window violates it.
+- `abs_offset_le_of_uniform_quadratic_bound`: assuming that bound already gives `|α| ≤ (8/(3L))·log(256C_b/9)` with no use of the `L⁶` floor — i.e. it is the conclusion, not an input.
+- `source_constraint_vacuous_of_large_offset`: once `|α|L ≥ 18` the capstone inequality holds outright, so the taper-only route can never exclude an offset of size `≥ 18/L`.
+- `exists_sourceTaper`: an explicit `C¹`, even, nonnegative taper with plateau `3L/8` and support `[−L/2, L/2]` exists at every scale, so none of the above is vacuous.
+
+So the current taper family is the wrong one: no `O(1/log T)` localization can come from `Bφ`.
+
+### Lane B — the anchored short-window target and the exponent it needs
+New module `RiemannAnalytic/ShortWindowPrimeTarget.lean`.
+
+- The anchored observable of the *actual* source window is defined (`finiteGridAnchorMinorSum`), shown to equal `a₀²‖b‖²`, to be dominated by the full window Gram defect, and — the point — to **carry the entire coercive floor by itself** (`anchoredMinorSum_source_floor`), so a budget for it alone yields the tube (`anchored_budget_tube`). The prime side may target `O(q)` anchored minors instead of the local `e₂`.
+- Window-height calculus: `mesoBudget_ratio_eq` (`budget/L⁶ = 2A²C_b²H^{2−θ}`), `meso_no_gain_of_exponent_le_two`, `meso_bounded_window_no_gain`, `meso_gain_of_exponent_gt_two`. **The required cancellation exponent is exactly `θ > 2`:** no mesoscopic or bounded window gives the gain by itself.
+- New module `RiemannAnalytic/ShortIntervalMeanValue.lean` proves from scratch the identity all short-interval mean-value theory starts from: `dirichletPoly_secondMoment_eq` (exact expansion of `∫₀^H |∑_{n≤N}a_n n^{-it}|²`), `norm_expWindow_le` (off-diagonal kernel `≤ 2/|λ|`, **uniformly in H**) and `dirichletPoly_secondMoment_le`. Since the diagonal scales with `H` while the classical off-diagonal cost does not, the classical expansion supplies `θ = 0` — quantifying precisely why a genuinely new arithmetic input is needed.
+
+### First unproved theorem, stated exactly
+> `∑_ρ m_ρ² · a₀(ρ)² ‖b_ρ‖² ≤ E_prime,loc(T,H)` with `E_prime,loc(T,H) = o(L⁶)` for some `H = o(L²)` — a bounded-height (short-interval) prime-side bound for the **anchored** exterior form, carrying cancellation exponent `θ > 2` in the window height.
+
+The second obligation carried over from the previous cycle (α-uniform `Bφ ≤ C_b L²`) is no longer open: it is proved **false**.
+
+### Scope note on the Agda lane
+The Agda toolchain is not present in this environment and cannot be installed offline, so no Agda module was added or edited — shipping boundary modules that cannot be typechecked would put unverified text in the tree. The boundary content requested (critical local `L⁶` scale, anchored exterior consumer, hot/cold universal property, `Q_Schur ≤ Q_compression`, the shrinking-tube quantifier distinction, and the two open target objects) exists as *proved* theorems on the Lean side rather than as record fields with assumed inhabitants; the two open targets remain explicit hypotheses, never assumed.
+
+All work is committed and pushed.
+
+
+# Summary of changes for run 0a54cc71-e713-4525-9212-8f40d70cdb56
+## Outcome
+
+**The Riemann Hypothesis is not proved, and nothing is weakened to make it look proved.** No `axiom`, `postulate`, `sorry`/`admit`, Boolean receipt, or numerical evidence is used anywhere. `lake build RiemannAnalytic` succeeds (8071 jobs); a text scan finds no `sorry`/`admit`; spot-checked theorems depend only on `propext`, `Classical.choice`, `Quot.sound`.
+
+The full cycle account is in `RIEMANN_G6_LOCAL_REPORT.md`, with a summary appended to `RIEMANN_LEAN_STATUS.md`.
+
+## The six questions, answered with proofs
+
+1. **Local retention at bounded height — yes, conditionally.** `unit_height_dichotomy` (`RiemannAnalytic/LocalHeight.lean`): for every offset, either `|α|` is below an explicit threshold of order `derivMass·L^{-3/2}`, or a unit-height window alone already carries the full `(81/16384)L⁶α²` floor. So a fixed height suffices exactly above that threshold.
+2. **Anchored-minor reduction — yes, and tight.** `coordAnchorMinorSum_le_gramDefect` and `coordAnchorMinorSum_eq_of_anchor` (`AnchoredMinorConsumer.lean`): keeping only the `q−1` minors through the anchor is dominated by the full defect and is *exactly* the target signal `a₀²‖b‖²` at the anchor. It costs the arithmetic side `O(q)` minors instead of `O(q²)`, but buys nothing further on the zero side.
+3. **Local tail transport — yes.** `compress_add`, `compress_gram`, `compress_comp`, `abs_trace_compress_le`, `frobSq_compress_le`, `e2_compress_tail` (`LocalWindow.lean`): all constants involve the window size `q ≍ LH`, never the ambient `d ≍ LT`.
+4. **Prime-source audit — partially uniform.** The companion's arithmetic-side entries are defined entrywise and the archimedean part carries a per-coordinate uniform bound, but the prime contributions enter only through a double integral over the whole dyadic interval and Montgomery–Vaughan/Chebyshev mean values. So the second trace is controlled only after averaging over `[T,2T]`.
+5. **Local prime scale — not available.** A bounded-height version is a short-interval Dirichlet-polynomial mean-value theorem, not derivable from the present inputs.
+6. **Literal target contradiction — no, and here is why.** The programme's predicted `(log T)⁴` local budget rested on a *linear* per-vector trace bound. That bound is **false**: `not_linear_trace_bound` (`LocalTraceScale.lean`) shows a single grid vector's longitudinal energy exceeds `C·L` once `16C < 9L`, matched by the window-length-free quadratic upper bound `gridVec_normSq_source_le`. With the true `L²` scale and a bounded-height count of order `L`, the localized budget is `≍ L⁶` — the same order as the floor. `quadratic_scale_ratio_eq_const`, `quadratic_scale_not_tendsto_zero`, `quadratic_scale_tube_radius_const` prove the normalized budget is a nonzero constant and the tube radius does not shrink.
+
+## Also proved this cycle
+
+- **Multiplicity lift removes the `M` factor**: `sum_mult_sq_pairDefect_le_e2` gives `∑ m_ρ²Δ_ρ ≤ e₂(G^mult)` with multiplicity as ordinary cardinality of the lifted family.
+- **Hot/cold split** (`LocalHotCold.lean`): exact reopening `reopen (hot M) (cold M) = M`, surjectivity of the hot state, and the *universal property* — any observer that cannot distinguish equal window blocks factors uniquely through the window block; the anchored window observable is hot-determined.
+- **Real Schur theorems** (`LocalSchur.lean`), supplying the quantitative content that the corresponding abstract modules only assume as structure fields. Notably `schur_form_le_compression_form`: the Schur object is *at most* the plain compression, so it cannot improve a lower bound on the local observable — a negative answer to the "Schur beats truncation here" suggestion, in the direction the argument needs.
+- **The `o(1)` vs `= ½` distinction is now theorems, not caution**: `fixed_offset_eq_zero_of_eventual_tube` (a *fixed* offset in shrinking tubes is zero) versus `exists_nonzero_offsets_within_shrinking_tube` (a *family* need not vanish).
+- **Capstone** (`LocalRouteCapstone.lean`): `source_local_route_constraint` gives `(81/16384)L⁶α² ≤ Bφ(α,L)²` with no arithmetic input at all, and `offset_le_of_quadratic_norm_bound` isolates what an α-uniform `Bφ ≤ Cb·L²` would buy (`|α| ≤ (128/9)Cb/L`).
+
+## Verdict and first unproved theorem
+
+The structural diagnosis was right — localization removes the power of `T` that killed the global lane. But the arithmetic prediction does not survive contact with the source vectors: the route lands **critically** at `(log T)⁶`, a constant-order gap rather than a power gap. As required, the first unproved theorem, stated exactly:
+
+> `e₂(G_H) ≤ E_prime,loc(T,H)` with `E_prime,loc(T,H) = o(L⁶)` for some `H = o(L²)` — a bounded-height (short-interval) prime-side exterior-area bound.
+
+Per §7 of the report a second obligation is now equally binding: an **α-uniform** window energy bound `Bφ(α,L) ≤ Cb·L²`, i.e. control of the twisted taper masses that does not degrade in the off-line direction. Both are strictly weaker than RH and both are open here.
+
+## Note on the Agda side
+
+The upstream repository was compared against the snapshot in this project: the snapshot contains strictly more Riemann modules and every shared file is byte-identical, so there was nothing new to import. The two block-Schur modules are abstract sockets whose quantitative content is assumed as record fields; the Lean module now supplies proved real-scalar versions.
+
+All work is committed and pushed.
+
+# Summary of changes for run eb14ef78-182e-4840-804d-2499e894a38d
+I ran the Q1–Q5 cycle you specified. Four of the five come out affirmative and machine-checked; the fifth comes out **negative**, and that negative is itself proved rather than guessed — it is the most consequential result of the cycle. Everything below builds with no `sorry`/`admit`/`axiom`/postulate; spot-checked theorems depend only on `propext`, `Classical.choice`, `Quot.sound`. A narrative write-up is in `RIEMANN_G5_REPORT.md`, and `RIEMANN_LEAN_STATUS.md` has a new section. The Riemann Hypothesis is not proved, nothing asserts or assumes it, and `RiemannHypothesisFor` was not touched.
+
+**On reusing the companion rather than re-proving PNT — I did exactly that, but audited it first.** The companion library does prove its trace theorem `PrimeSide.thm_traces` unconditionally for the zeros of Mathlib's `riemannZeta`: its input package is a `Prop`-valued structure (no Lean `axiom`), and it is discharged there, including the explicit formula. It targets a different Lean/Mathlib version than this repository, so it cannot be imported into `RiemannAnalytic`; I therefore added a small **separate** project `Zeta23Bridge/` on the companion's own toolchain, pinned to a specific commit, that consumes the real theorem. `RiemannAnalytic` remains self-contained and independent of it. Build with `lake build` (main) and `cd Zeta23Bridge && lake build` (adapter).
+
+**Q1 — yes** (`RiemannAnalytic/InterferenceRatio.lean`). `interferenceRatio_tendsto_zero_log`: with `L(T) = λ log T`, bounded kernel constants and a local count `N(T) ≤ A log T`, `η(T) = O((log T)⁻⁵) → 0`; plus `source_eventually_interferenceRatio_lt_one`. Mixed interference is asymptotically perturbative with no spacing parameter.
+
+**Q2 — yes** (`GramBudgetTransport.lean`). `sum_pairDefect_le_e2`: `∑_ρ Δ_ρ ≤ e₂(G)` for the assembled pair family, and `weightedGramSum_le_e2`: `∑_ρ m_ρ²Δ_ρ ≤ M·e₂(G)`. A localized version over a sub-family, `weightedGramSum_le_e2_restrict`, is also proved.
+
+**Q3 — yes.** `e2OfTraces_sub_le`/`e2_gram_le_e2_gram_add_tail`: `e₂` moves by at most `½(|Δtr₁|(|tr₁|+|tr₁'|) + |Δtr₂|)`.
+
+**Q4 — yes.** Generic adapter `evBound_e2_of_traces` (`TraceInterface.lean`) turns `tr = m₁(1+O(𝓔))`, `tr² = m₂(1+O(𝓔))` into `e₂ = ½(m₁²−m₂) + O(𝓔(m₁²+m₂))` with an explicit constant; a ratio-normalised variant is also proved. Instantiated at ζ in the bridge as `zeta23_e2_asymptotic` — an unconditional asymptotic for the exterior observable of the prime-side matrix, for any aperture `0 < λ ≤ 1`, obtained purely by transport.
+
+**Q5 — no, and this is the key finding.** `zeta23_e2_over_L6_tendsto_atTop` proves `e₂(T)/L(T)⁶ → ∞`, via `zeta23_e2_ge_eventually` (`e₂ ≥ (L·T)²/8`) and `Nz_ge_self_eventually` (`N(T,2T) ≥ T`, from the companion's Riemann–von Mangoldt input). The abstract counterpart `budget_ratio_tendsto_atTop` (`BudgetScale.lean`) shows that with a logarithmic taper scale *no* budget carrying a power of `T` can meet the tube criterion, and `tube_radius_tendsto_atTop` shows the radius diverges. So the snag you anticipated is real and quantified: the Q2 comparison is correct but lossy by a power of `T`, because it charges one zero's transverse defect against the area of the whole `d × d` family. The tube theorem needs a budget of size `o((log T)⁶)`.
+
+Consequently the frontier is now sharper than "prime-side control of the Gram observable": that control now exists. What is missing is a **localized, bounded-height exterior-area budget** — the windowed quantity in `weightedGramSum_le_e2_restrict` — of size `o((log T)⁶)`. Rank-three `e₃` was not pursued, per your instruction to defer it. All work is committed and pushed.
+
+# Summary of changes for run 4082a356-ba6c-490e-b8f7-c243b17c7614
+All four "concrete next attacks" plus the three algebraic objects you flagged are now machine-checked Lean. `lake build RiemannAnalytic` completes successfully with **zero warnings**, there is no `sorry`/`admit`/`axiom`/postulate anywhere in the Lean sources, and spot-checked theorems depend only on `propext, Classical.choice, Quot.sound`.
+
+**1. General anchored exterior coercivity** (`RiemannAnalytic/AnchoredExterior.lean`). `gramDet` and `gramDet_nonneg`; the exact splitting `gramDet_anchored_eq`; and the theorem you predicted, `gramDet_anchored_ge`: with a unit anchor `e` orthogonal to `v₁,…,v_r`,
+`⟪e,v₀⟫² · det Gram(v₁,…,v_r) ≤ det Gram(v₀,…,v_r)`.
+Consequences: `gramDet_anchored_pos`, `linearIndependent_of_anchored`, and `gramDefect_ge_anchor_sq_mul` recovering the rank-2 case you already had. Mirrored in Gram-minor form as `det_gram_anchored_minor_ge` (`HigherTraceMinors.lean`).
+
+**2. The minimum-gap hypothesis δ is removed** (`RiemannAnalytic/TwoRegimeInterference.lean`). The two-regime bound is proved: `abs_im_PhiKernel_le_two_regime` gives `|Im Φ(x+iy)| ≤ |y|·min(2M₁, K/|x|)`, finite at `x = 0`. Summing it against a *local counting* hypothesis (at most `N` family members per unit window of the ordinate difference — what Riemann–von Mangoldt actually supplies) gives `mixedInterference_envelope_localCount`: `∑ (Im Φ(wₙ))² ≤ N y² (4M₁² + 2K²)`, with **no pairwise separation hypothesis at all**. Combined with the one-sided Gram floor this yields the δ-free localization ratio `interference_le_ratio_mul_gramDefect_localCount`, with `η = 16384 N (4M₁²+2K²)/(81 L⁶)`, free of α.
+
+**3. The prime-side target in Gram language** (`RiemannAnalytic/WeightedGramTarget.lean`). `weightedGramSum s m Δ = ∑ m_ρ² Δ_ρ`, and the transport theorems from a budget `E`: `sum_offset_sq_le_of_budget` (`∑ offset² ≤ E/c`), `abs_offset_le_of_budget`, `budget_lt_floor_excludes`, `all_on_line_of_budget_nonpos`, and `source_budget_tube` giving `|α_ρ| ≤ √(E/((81/16384)L⁶))` at source strength. The budget `E` is always an explicit hypothesis — never asserted, never an axiom.
+
+**4. Higher trace vs higher exterior rank.** At rank two (`HigherTraceMinors.lean`): `sum_pair_gramDefect_eq` shows the total pairwise area is exactly `(tr G)² − tr G²`, so `tr G²` carries it with the wrong sign. New this session, the rank-three case is settled outright in `RiemannAnalytic/TripleTraceMinors.lean` — by direct 3×3 expansion and Fubini, not by an appeal to Newton's identities:
+`sum_tripleMinor_eq_trace_combination`: `∑_{i,j,k} det(A|_{i,j,k}) = (tr A)³ − 3(tr A)(tr A²) + 2 tr A³` (the six permutations contribute by cycle type);
+`sum_tripleGramDet_eq_trace_combination`: for a Gram matrix the left side is the total squared exterior 3-volume `∑ ‖vᵢ∧vⱼ∧v_k‖²`;
+`sum_tripleGramDet_nonneg` and `tripleGramDet_le_trace_combination`: that trace combination is nonnegative and dominates every individual triple exterior volume.
+So the answer is affirmative at `r = 3`: the third trace does carry exterior 3-volume information, but — as at `r = 2` — only in combination with the lower traces. A general rank-`r` version is not claimed anywhere.
+
+**The C₃ Fourier object** (`RiemannAnalytic/CubicPhase.lean`), over ℂ rather than as labels: `zeta3 = (−1+√3i)/2`, with `zeta3_pow_three`, `zeta3_ne_one`, `one_add_zeta3_add_sq` (`1+ζ+ζ²=0`), `zeta3_inv_eq_sq` (`ζ⁻¹=ζ²`), `conj_zeta3` (`ζ̄=ζ²`), `zeta3_add_inv` (`ζ+ζ⁻¹=−1`), `zeta3_mul_inv`. The matrix `fourier3 = !![1,1,1; 1,ζ,ζ²; 1,ζ²,ζ]` with `fourier3_conj_row`, `fourier3_row_orthogonal`, `fourier3_mul_conjTranspose` (`F₃F₃ᴴ = 3·I`), `fourier3_det_ne_zero`. The trace/norm bridge `z ↦ (z+z̄, z z̄)` is `trace_cyclotomic_real`, `norm_cyclotomic_real`, `norm_cyclotomic_nonneg`. And in `CubicTransversePlane.lean`, the nondegeneracy you asked for: the realified conjugate pair is a genuine transverse plane, `c3_gramDefect = 9/4 > 0` — the two phase labels are not two names for one line.
+
+**The Ogg affine grid** (`RiemannAnalytic/OggAffineGrid.lean`): `ssp_translate_42` ({5,17,29}+42 = {47,59,71}), `sspGrid_eq_rows` (the parametrisation `5+12i+42j`), `ssp_row_spacing`, `sspGrid_subset_ogg`, `ogg_top_product` (47·59·71 = 196883). Two honest caveats are proved rather than glossed: `ogg_translations_of_lower_row` shows the shifts that carry {5,17,29} into the Ogg primes are exactly {2, 12, 42}, so 42 is one of three, not unique; and `translate42_ne_pointedSign` separates `p ↦ p+42` from the pointed-sign map `p ↦ 2p+1` (whose chain 2→5→11→23→47 is recorded separately).
+
+**What is still missing, exactly.** Unchanged and stated plainly: the unconditional prime-side bound for `‖G‖_F²` for the actual zeros of ζ, which is what would supply the budget `E(T)`. That needs the explicit formula together with explicit-constant PNT/zero-free-region input, which is present neither in this project nor in the ambient library. Also hypotheses rather than theorems: the window/tail condition, the local-count parameter `N`, and `E` itself. Consequently **no statement in this project implies the Riemann Hypothesis, and none asserts it**; nothing was weakened, and the Agda-side statement of the hypothesis is byte-for-byte unchanged from the submitted snapshot.
+
+One scope note: the Agda toolchain is not available in this environment, so the Agda tranche could not be re-checked and no Agda mirror of the new results was written — all work delivered this session is Lean. A narrative write-up is in `RIEMANN_G4_REPORT.md`.
+
+# Summary of changes for run 6bdec22a-f117-4748-a2f6-d68e9b710a9b
+I ran the revised G3 cycle you specified, and the key question came out **affirmative**: the finite pair block does have a coercive positive transverse Frobenius surplus, on the actual one-sided window. Everything below is machine-checked Lean (`lake build RiemannAnalytic` clean, no `sorry`/`admit`/`axiom`/receipts; axioms only `propext`, `Classical.choice`, `Quot.sound`). A narrative write-up is in `RIEMANN_G3_GRAM_REPORT.md`.
+
+First, a build fix: the checked-in library did not compile in this toolchain (`Matrix.dotProduct` no longer exists under that name); repaired without changing any statement.
+
+**M1 — Gram coercivity (`RiemannAnalytic/OneSidedGram.lean`).** Your algebra is confirmed and formalized: `pairBlock_frobSq` (`4m²(A²+B²−2C²)`), `pairBlock_gramDecomposition` (`4m²(A−B)² + 8m²(AB−C²)`), `gramDefect_nonneg` (Cauchy–Schwarz). The warning is a theorem too: `imagEnergy_pos_not_sufficient` exhibits vectors with `B > 0` and `AB − C² = 0`. The decisive question then resolves, but by a different route than the tail estimate: the one-sided window `0 ≤ k < d` **contains the central grid point**, where a real even taper's sample `φ̂(−iα)` is real, so `b₀ = 0` while `a₀ > 0`. Splitting off that coordinate gives, unconditionally, `AB − C² ≥ a₀²·B` (`gramDefect_ge_head_sq_mul`, `finiteGridGramDefect_ge`) — no bound on the correlation `C_d` is needed (and none is claimed; for a one-sided window the ±k cancellation is genuinely gone). With the existing plateau and lattice-tail bounds this yields explicit floors: `finiteGridGramDefectLower`, `finiteGridGramDefect_source_floor` (`ΔGram ≥ (9/16)L²((9/512)L⁴α² − tail)`), `finiteGridGramDefect_pos`, and the pair-block surplus floor.
+
+**M2/M3 (`PairExpansion.lean`).** `frobSq_pairFamily_expand`: `‖A‖_F² = diagonal baselines + D_diag + off-diagonal interference`, every term literally defined, nothing named a critical baseline; then `diagGramSum_le_of_offDiag_bound`, `diagGramSum_le_transport` (`A = G − E`) and `diagGramSum_le_prime` — exact inequalities ready for a prime-side bound. For the rank–trace test: `pairBlock_trace`, `rankTrace_pairBlock` show the Gram defect enters `c·tr − ‖·‖_F²` with the **opposite** sign to `‖·‖_F²`, so `F₂` does not carry the defect as positive signal (monotonicity lemmas both ways, plus the whole-family identity).
+
+**M4/M5 (`TransverseDecay.lean`).** The predicted joint estimate is proved: `abs_im_PhiExt_le_transverse_decay` gives `|Im Φ_ψ(x+iy)| ≤ |y|·K_ψ/|x|` with `K_ψ = 2∫|ψ'||u| + ∫|ψ|e^{|u|}`, via the lifted taper `g_y(t) = ψ(t)(e^{yt}−1)`. Consequently the interference envelope becomes **quadratic**: `mixedInterference_envelope_quadratic` (`≤ 2y²K²/δ²`), matching the order of the defect, and `gramDefect_beats_interference` shows the competition is decided by the α-independent constant inequality `2K²/δ² < (81/16384)L⁶`.
+
+**M6/M7.** `GramDetectability.lean` converts the floor into a tube: `|α| ≤ √(E/((81/16384)L⁶))`, shrinking when `E(T)/L(T)⁶ → 0`. `interference_le_ratio_mul_gramDefect` states localization in ratio form: interference `≤ η·ΔGram` with `η = 32768K²/(81δ²L⁶)` free of `α`.
+
+**What is still missing, exactly.** The prime side: an unconditional bound for `‖G‖_F²` (main term plus error) for the actual zeros of ζ, which needs the explicit formula and prime second-moment estimates present neither here nor in Mathlib. Also hypotheses rather than theorems: the ordinate separation δ and the constant inequality on `2K²/δ²`, the window/tail condition, and the error budget `E`. So no statement here implies the Riemann Hypothesis, and none asserts it; `RiemannHypothesisFor` was not weakened.
+
+# Summary of changes for run 3cbfb14f-3fd5-4cca-aa44-5a471e267c48
+## Outcome
+
+**No machine-checked literal Riemann Hypothesis proof was produced.** `RiemannHypothesisFor` was not weakened, and no postulate, axiom, `sorry`/`admit`, Boolean receipt, imported authority, or numerical evidence was introduced anywhere. The strongest verified reductions are preserved, and the first unproved theorem is reported exactly (below and in `RIEMANN_LITERAL_AUDIT.md`).
+
+## 1. Audit of the two newly committed modules
+
+Both **failed to typecheck as committed**; both were repaired without weakening any statement.
+
+- `DASHI/Analysis/RiemannG3SourceTransportExact.agda`: used an undefined operator `_|>_`, had a `cancelLeft` step whose implicits do not unify, and three transport links with the wrong associativity direction. Repaired with a `sucInjective` helper and an explicit eleven-step chain.
+- `DASHI/Analysis/RiemannCenteredGridRetentionExact.agda`: the `rewrite` justifying `fullRewrite` was not a valid proof. Repaired with `+-assoc`, `+-comm`, `doubleShuffle`, `timesTwo`, `timesFour`, `centeredEnergyNormalization` and a term-mode proof.
+
+Content characterization: both are **ℕ-level ledger identities with `Set`-valued placeholder producers** — arithmetically correct, but carrying no analytic information about ζ, primes, or Frobenius data.
+
+## 2. Wiring
+
+Both modules are now imported by the 2026 aggregate and by `ZetaTheoremSurface`; the checker script `scripts/check_riemann_reflection_orbit_defect_2026.sh` lists both in `sources`, carries `require_pattern` markers for their key names, and its previously dead invocation was replaced by a real Agda run over a `targets` array — it exits 0. A toolchain-portable aggregate `DASHI/EverythingRiemannTrancheCheckable.agda` collects the tranche and typechecks (Agda 2.6.4.3 + stdlib 2.1). Pre-existing gap, not introduced here: `ZetaTheoremSurface` cannot be checked because its transitive import needs `Ontology.GodelLattice`, whose source is absent from the bundle.
+
+## 3. Analytic obligations discharged at literal strength (Lean 4 / Mathlib, `lake build RiemannAnalytic` clean, no `sorry`, axioms only `propext`/`Classical.choice`/`Quot.sound`)
+
+- **(a) Complex bilinear Poisson extension for the real even taper** — `PhiExt_even`, `PhiExt_conj`, `PhiExt_conj_even`, plus the exact grid conjugation/reflection laws `gridSample_neg_eq_conj`, `gridSample_im_neg`, `gridSample_im_sq_neg`, `gridSample_zero_im`.
+- **(b) One-sided lattice-tail / finite-retention theorem** — `gridFiniteRetention` over real energies and genuine `tsum`s; and, new this session, `gauss_finite_retention`, which **discharges the tail-domination hypothesis** for the explicit Gaussian taper (supported by the closed forms `gridSample_gauss_im`, `transverseEnergy_gauss`, `summable_transverseEnergy_gauss`).
+- **(c) Summable complex-Φ mixed-kernel envelope** — `PhiExt_gaussTaper` (closed form `(2π)^{1/2} e^{−z²/2}`), `norm_gridSample_gaussTaper`, `summable_gaussEnvelope`, `mixedKernel_gaussTaper_summable`.
+- **New literal-statement layer** (`RiemannAnalytic/LiteralStatement.lean`), over Mathlib's genuine `riemannZeta`/`completedRiemannZeta` and Mathlib's own `RiemannHypothesis`: `completedZeta_zero_mem_strip` (every zero of Λ lies in `0 < Re s < 1`), `completedZeta_zero_reflect`, `riemannHypothesis_iff_completed` (literal RH ⟺ completed form), and `riemannHypothesis_iff_no_completed_zero_right` (⟺ the one-sided statement `∀ s, Λ s = 0 → Re s ≤ 1/2`). Neither side of these equivalences is assumed.
+
+## 4. First unproved theorem, exactly
+
+Obligation (d), critical-A Frobenius versus prime-main-term alignment with source A-to-G error transport. In the source, `DASHI/Analysis/RiemannG3SourceTransportExact.agda` lines 227–235:
+
+```agda
+record G3RemainingAlignment (owned : G3SourceOwnedTransport) : Set₁ where
+  field
+    CriticalFiniteABaseline         : Set
+    RetainedDefectInsideAFrobenius  : Set
+    CriticalBaselineEqualsPrimeMain : Set
+    criticalFiniteABaseline         : CriticalFiniteABaseline
+    retainedDefectInsideAFrobenius  : RetainedDefectInsideAFrobenius
+    criticalBaselineEqualsPrimeMain : CriticalBaselineEqualsPrimeMain
+```
+
+This is three abstract `Set`s with assumed inhabitants: it states nothing, and no instance for zeta data is constructed. Its intended content needs the Weil/Riemann explicit formula for ζ plus prime-side second-moment bounds, which exist neither in this bundle nor in Mathlib. Obligation (e) (localization/amplification with bounded-height closure) is likewise ℕ-ledger only and depends on (d).
+
+Separately, `RiemannHypothesisFor` is parametric over an abstract `AnalyticSubstrate` (`nontrivialZero`, `criticalLine` are arbitrary predicates) and **no substrate instance for the actual ζ exists in the tree**, so an inhabitant of it for the tranche's schematic substrate would not be the Riemann Hypothesis.
+
+Full details in `RIEMANN_LITERAL_AUDIT.md`, including reproduction commands. All work is committed and pushed.

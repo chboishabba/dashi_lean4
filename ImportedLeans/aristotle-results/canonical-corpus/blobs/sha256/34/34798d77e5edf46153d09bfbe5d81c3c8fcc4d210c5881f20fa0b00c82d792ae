@@ -1,0 +1,249 @@
+import Mathlib
+
+/-!
+# Three-valued evidence states
+
+`Trit` is the evidence state of an imported claim: `supported`, `unresolved` or
+`contradicted`.  It is a *Kleene* three-valued logic: `unresolved` is genuine
+ignorance, not a truth value halfway between the other two, and no combination
+of ignorance ever produces a determinate state.
+
+The two structural rules the whole development rests on are:
+
+* **fail-closed import** (`receiptState`): a claim becomes `supported` only when
+  the source is matched *and* the checker accepts; every other combination is
+  `unresolved`;
+* **open-world absence** (`compareStates`): a conflict between two sources
+  requires explicit opposing evidence — a missing edge, a failed checker or an
+  unmatched source can never manufacture a conflict.
+-/
+
+namespace Epistemic
+
+/-- The evidence state of a claim. -/
+inductive Trit
+  | supported
+  | unresolved
+  | contradicted
+  deriving DecidableEq, Repr, Inhabited
+
+namespace Trit
+
+/-- Kleene negation: swaps support and refutation, fixes ignorance. -/
+def neg : Trit → Trit
+  | supported => contradicted
+  | unresolved => unresolved
+  | contradicted => supported
+
+/-- Kleene conjunction of evidence states. -/
+def meet : Trit → Trit → Trit
+  | contradicted, _ => contradicted
+  | _, contradicted => contradicted
+  | supported, supported => supported
+  | _, _ => unresolved
+
+/-- Kleene disjunction of evidence states. -/
+def join : Trit → Trit → Trit
+  | supported, _ => supported
+  | _, supported => supported
+  | contradicted, contradicted => contradicted
+  | _, _ => unresolved
+
+@[simp] theorem neg_neg (t : Trit) : neg (neg t) = t := by cases t <;> rfl
+
+theorem meet_comm (s t : Trit) : meet s t = meet t s := by cases s <;> cases t <;> rfl
+
+theorem join_comm (s t : Trit) : join s t = join t s := by cases s <;> cases t <;> rfl
+
+theorem meet_assoc (r s t : Trit) : meet (meet r s) t = meet r (meet s t) := by
+  cases r <;> cases s <;> cases t <;> rfl
+
+theorem join_assoc (r s t : Trit) : join (join r s) t = join r (join s t) := by
+  cases r <;> cases s <;> cases t <;> rfl
+
+@[simp] theorem meet_supported (t : Trit) : meet supported t = t := by cases t <;> rfl
+
+@[simp] theorem meet_contradicted (t : Trit) : meet contradicted t = contradicted := rfl
+
+@[simp] theorem join_contradicted (t : Trit) : join contradicted t = t := by cases t <;> rfl
+
+@[simp] theorem join_supported (t : Trit) : join supported t = supported := rfl
+
+theorem neg_meet (s t : Trit) : neg (meet s t) = join (neg s) (neg t) := by
+  cases s <;> cases t <;> rfl
+
+theorem neg_join (s t : Trit) : neg (join s t) = meet (neg s) (neg t) := by
+  cases s <;> cases t <;> rfl
+
+/-- Ignorance is never resolved by combining it with ignorance. -/
+@[simp] theorem meet_unresolved_self : meet unresolved unresolved = unresolved := rfl
+
+/-- Conjoining with an unresolved claim can never yield support. -/
+theorem meet_unresolved_ne_supported (t : Trit) : meet unresolved t ≠ supported := by
+  cases t <;> simp [meet]
+
+end Trit
+
+/-! ## Fail-closed import of external results -/
+
+/-- The evidence state produced by importing a checker or theorem result:
+support requires both a matched source and an accepting checker. -/
+def receiptState (sourceMatched accepted : Bool) : Trit :=
+  if sourceMatched = true ∧ accepted = true then Trit.supported else Trit.unresolved
+
+@[simp] theorem receiptState_eq_supported_iff (m a : Bool) :
+    receiptState m a = Trit.supported ↔ m = true ∧ a = true := by
+  unfold receiptState
+  split <;> simp_all
+
+/-- A source mismatch always yields `unresolved`. -/
+theorem receiptState_of_source_mismatch (a : Bool) :
+    receiptState false a = Trit.unresolved := by
+  simp [receiptState]
+
+/-- A failed or unrun checker yields `unresolved` — never a refutation. -/
+theorem receiptState_of_checker_failure (m : Bool) :
+    receiptState m false = Trit.unresolved := by
+  simp [receiptState]
+
+/-- **Open-world import.**  Importing a positive checker result can never
+manufacture a refutation. -/
+theorem receiptState_ne_contradicted (m a : Bool) : receiptState m a ≠ Trit.contradicted := by
+  unfold receiptState
+  split <;> simp
+
+/-! ## Cross-source comparison -/
+
+/-- The outcome of comparing the evidence of two sources about the same claim. -/
+inductive Disposition
+  | replicated
+  | conflicting
+  | comparisonUnresolved
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Comparison of two evidence states.  Agreement on a determinate state is
+replication; determinate disagreement is conflict; anything involving ignorance
+is unresolved. -/
+def compareStates : Trit → Trit → Disposition
+  | Trit.supported, Trit.supported => Disposition.replicated
+  | Trit.contradicted, Trit.contradicted => Disposition.replicated
+  | Trit.supported, Trit.contradicted => Disposition.conflicting
+  | Trit.contradicted, Trit.supported => Disposition.conflicting
+  | _, _ => Disposition.comparisonUnresolved
+
+theorem compareStates_comm (s t : Trit) : compareStates s t = compareStates t s := by
+  cases s <;> cases t <;> rfl
+
+/-- **Absence never manufactures conflict.** -/
+theorem unresolved_left_never_conflicts (t : Trit) :
+    compareStates Trit.unresolved t ≠ Disposition.conflicting := by
+  cases t <;> simp [compareStates]
+
+theorem unresolved_right_never_conflicts (t : Trit) :
+    compareStates t Trit.unresolved ≠ Disposition.conflicting := by
+  cases t <;> simp [compareStates]
+
+/-- **Conflict requires explicit opposing evidence.** -/
+theorem conflict_requires_opposition {s t : Trit} (h : compareStates s t = Disposition.conflicting) :
+    (s = Trit.supported ∧ t = Trit.contradicted) ∨ (s = Trit.contradicted ∧ t = Trit.supported) := by
+  cases s <;> cases t <;> simp_all [compareStates]
+
+/-- A failed checker cannot conflict with anything. -/
+theorem failed_receipt_never_conflicts (m : Bool) (t : Trit) :
+    compareStates (receiptState m false) t ≠ Disposition.conflicting := by
+  rw [receiptState_of_checker_failure]
+  exact unresolved_left_never_conflicts t
+
+/-- An unmatched source cannot conflict with anything. -/
+theorem mismatched_receipt_never_conflicts (a : Bool) (t : Trit) :
+    compareStates (receiptState false a) t ≠ Disposition.conflicting := by
+  rw [receiptState_of_source_mismatch]
+  exact unresolved_left_never_conflicts t
+
+/-! ## Certified verdicts
+
+A source theorem can certify a proposition *or* certify its negation.  That is
+different from merely running a checker and observing failure: only the former
+may contradict an expected-positive proposition. -/
+
+/-- What the imported source says about an object-level proposition. -/
+inductive ObjectVerdict
+  | notObserved
+  | certifiedHolds
+  | certifiedRefuted
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Evidence state of an expected-positive proposition, given a source verdict. -/
+def verdictState (sourceMatched accepted : Bool) : ObjectVerdict → Trit
+  | ObjectVerdict.certifiedHolds =>
+      if sourceMatched = true ∧ accepted = true then Trit.supported else Trit.unresolved
+  | ObjectVerdict.certifiedRefuted =>
+      if sourceMatched = true ∧ accepted = true then Trit.contradicted else Trit.unresolved
+  | ObjectVerdict.notObserved => Trit.unresolved
+
+theorem verdictState_certifiedHolds :
+    verdictState true true ObjectVerdict.certifiedHolds = Trit.supported := by
+  simp [verdictState]
+
+theorem verdictState_certifiedRefuted :
+    verdictState true true ObjectVerdict.certifiedRefuted = Trit.contradicted := by
+  simp [verdictState]
+
+/-- **Bare absence is not refutation.** -/
+theorem verdictState_notObserved (m a : Bool) :
+    verdictState m a ObjectVerdict.notObserved = Trit.unresolved := rfl
+
+theorem verdictState_of_source_mismatch (a : Bool) (v : ObjectVerdict) :
+    verdictState false a v = Trit.unresolved := by
+  cases v <;> simp [verdictState]
+
+theorem verdictState_of_checker_failure (m : Bool) (v : ObjectVerdict) :
+    verdictState m false v = Trit.unresolved := by
+  cases v <;> simp [verdictState]
+
+/-- Only a source-matched, accepted, explicitly negative verdict can contradict. -/
+theorem verdictState_eq_contradicted_iff (m a : Bool) (v : ObjectVerdict) :
+    verdictState m a v = Trit.contradicted ↔
+      (m = true ∧ a = true ∧ v = ObjectVerdict.certifiedRefuted) := by
+  cases v <;> cases m <;> cases a <;> simp [verdictState]
+
+/-! ## Provenance-bearing claims -/
+
+/-- A claim whose evidence state may depend on a context, carrying its source
+references. -/
+structure ScopedClaim (ctx : Type) where
+  stateAt : ctx → Trit
+  references : List String
+
+/-- The scoped claim generated by an imported receipt: the same state in every
+context, with the receipt's references retained. -/
+def scopedOfReceipt {ctx : Type} (m a : Bool) (refs : List String) : ScopedClaim ctx :=
+  { stateAt := fun _ => receiptState m a, references := refs }
+
+@[simp] theorem scopedOfReceipt_references {ctx : Type} (m a : Bool) (refs : List String) :
+    (scopedOfReceipt (ctx := ctx) m a refs).references = refs := rfl
+
+@[simp] theorem scopedOfReceipt_stateAt {ctx : Type} (m a : Bool) (refs : List String) (k : ctx) :
+    (scopedOfReceipt (ctx := ctx) m a refs).stateAt k = receiptState m a := rfl
+
+/-- Conjunction of scoped claims: evidence is combined contextwise and *all*
+provenance is retained. -/
+def ScopedClaim.and {ctx : Type} (p q : ScopedClaim ctx) : ScopedClaim ctx :=
+  { stateAt := fun k => Trit.meet (p.stateAt k) (q.stateAt k),
+    references := p.references ++ q.references }
+
+@[simp] theorem ScopedClaim.and_references {ctx : Type} (p q : ScopedClaim ctx) :
+    (p.and q).references = p.references ++ q.references := rfl
+
+/-- Composition never loses provenance. -/
+theorem ScopedClaim.references_subset_and {ctx : Type} (p q : ScopedClaim ctx) :
+    p.references ⊆ (p.and q).references ∧ q.references ⊆ (p.and q).references :=
+  ⟨fun _ h => List.mem_append.2 (Or.inl h), fun _ h => List.mem_append.2 (Or.inr h)⟩
+
+/-- Composing with an unresolved claim never yields support. -/
+theorem ScopedClaim.and_unresolved_ne_supported {ctx : Type} (p q : ScopedClaim ctx) (k : ctx)
+    (h : p.stateAt k = Trit.unresolved) : (p.and q).stateAt k ≠ Trit.supported := by
+  simp only [ScopedClaim.and, h]
+  exact Trit.meet_unresolved_ne_supported _
+
+end Epistemic

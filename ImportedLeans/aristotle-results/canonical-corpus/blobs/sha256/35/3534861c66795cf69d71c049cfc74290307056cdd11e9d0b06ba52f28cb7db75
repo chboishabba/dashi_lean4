@@ -1,0 +1,234 @@
+/-
+# Compactness and inheritance for the blow-up sequence
+
+The blow-up (KNSŠ) argument extracts from the rescaled fields `u_k` a limiting
+*ancient* profile `U`.  `BlowupOscillation.lean` already proves what the limit
+inherits **once uniform convergence is given** (`oscOn_ge_of_uniform_limit`:
+the oscillation defect survives).  What was missing is the extraction itself.
+
+This file proves it, unconditionally and without any compactness postulate:
+
+* `ClayNS.exists_locally_uniform_limit_of_equiLipschitz` — a sequence of
+  spacetime fields that is *uniformly bounded* and *uniformly Lipschitz* has a
+  subsequence converging pointwise everywhere, and uniformly on every bounded
+  subset of spacetime, to a limit `U` which inherits the same bound and the
+  same Lipschitz constant.  The proof is the honest diagonal argument:
+  sequential compactness of `∏ₙ B̄(0,K)` along a countable dense set of
+  spacetime, then equi-Lipschitz propagation to all of spacetime, then a
+  total-boundedness covering for the uniformity.
+* `ClayNS.tendstoUniformlyOn_iff_forall_eps` — the `ε`–`N` reformulation used by
+  the inheritance lemmas.
+* `ClayNS.blowup_compactness_and_inheritance` — the packaged statement: the
+  extracted limit is bounded, Lipschitz (hence continuous, hence a legitimate
+  ancient carrier for the oscillation machinery), and **carries the defect**
+  `c₀ ≤ osc_S U` whenever every member of the sequence does, on any bounded
+  set `S`.
+
+What is *not* claimed here is that the limit solves the Navier–Stokes system:
+that requires the equation-level convergence (local energy inequality, pressure
+identities), which is a separate obligation.  The compactness, the pointwise
+and locally uniform convergence, and the inheritance of the normalized defect
+are proved.
+
+No `sorry`, no postulates.
+-/
+import RequestProject.NavierStokes.BlowupOscillation
+
+open Metric Set Filter Topology
+
+noncomputable section
+
+namespace ClayNS
+
+/-- `TendstoUniformlyOn` in the `ε`–`N` form used by the inheritance lemmas. -/
+lemma tendstoUniformlyOn_iff_forall_eps {u : ℕ → STime → E3} {U : STime → E3}
+    {S : Set STime} (h : TendstoUniformlyOn u U atTop S) :
+    ∀ eps > 0, ∃ N : ℕ, ∀ k ≥ N, ∀ z ∈ S, ‖u k z - U z‖ ≤ eps := by
+  intro eps heps
+  have h' := (Metric.tendstoUniformlyOn_iff).1 h eps heps
+  obtain ⟨N, hN⟩ := eventually_atTop.1 h'
+  refine ⟨N, fun k hk z hz => ?_⟩
+  have := hN k hk z hz
+  rw [dist_eq_norm] at this
+  have hsym : ‖u k z - U z‖ = ‖U z - u k z‖ := norm_sub_rev _ _
+  rw [hsym]
+  exact this.le
+
+/-- **Blow-up compactness.**  A uniformly bounded, uniformly Lipschitz sequence
+of spacetime fields has a subsequence converging pointwise everywhere, and
+uniformly on every bounded set, to a field with the same bound and the same
+Lipschitz constant. -/
+theorem exists_locally_uniform_limit_of_equiLipschitz
+    (u : ℕ → STime → E3) {K L : ℝ}
+    (hK : ∀ k z, ‖u k z‖ ≤ K) (hL : 0 ≤ L)
+    (hLip : ∀ k z w, ‖u k z - u k w‖ ≤ L * dist z w) :
+    ∃ (phi : ℕ → ℕ) (U : STime → E3), StrictMono phi ∧
+      (∀ z, ‖U z‖ ≤ K) ∧ (∀ z w, ‖U z - U w‖ ≤ L * dist z w) ∧
+      (∀ z, Tendsto (fun k => u (phi k) z) atTop (nhds (U z))) ∧
+      (∀ S : Set STime, Bornology.IsBounded S →
+        TendstoUniformlyOn (fun k => u (phi k)) U atTop S) := by
+  classical
+  -- a countable dense set of spacetime
+  set d : ℕ → STime := TopologicalSpace.denseSeq STime with hd
+  have hdense : DenseRange d := TopologicalSpace.denseRange_denseSeq STime
+  -- sequential compactness of the product of closed balls
+  set C : Set (ℕ → E3) := Set.univ.pi (fun _ : ℕ => Metric.closedBall (0 : E3) K) with hC
+  have hCcomp : IsCompact C := isCompact_univ_pi (fun _ => isCompact_closedBall 0 K)
+  have hmem : ∀ k, (fun n => u k (d n)) ∈ C := by
+    intro k n _
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hK k (d n)
+  obtain ⟨g, _hgC, phi, hphi, htend⟩ := hCcomp.isSeqCompact hmem
+  have hpt : ∀ n, Tendsto (fun k => u (phi k) (d n)) atTop (nhds (g n)) := fun n =>
+    (tendsto_pi_nhds.1 htend) n
+  -- the equi-Lipschitz bound upgrades convergence on the dense set to a Cauchy
+  -- property at every spacetime point
+  have hcauchy : ∀ z : STime, CauchySeq (fun k => u (phi k) z) := by
+    intro z
+    rw [Metric.cauchySeq_iff]
+    intro eps heps
+    have hLpos : (0:ℝ) < 4 * (L + 1) := by linarith
+    obtain ⟨n, hn⟩ := Metric.denseRange_iff.1 hdense z (eps / (4 * (L + 1)))
+      (by positivity)
+    obtain ⟨N, hN⟩ := Metric.tendsto_atTop.1 (hpt n) (eps / 4) (by linarith)
+    refine ⟨N, fun j hj k hk => ?_⟩
+    have h1 : ‖u (phi j) z - u (phi j) (d n)‖ ≤ L * dist z (d n) := hLip _ _ _
+    have h2 : ‖u (phi k) z - u (phi k) (d n)‖ ≤ L * dist z (d n) := hLip _ _ _
+    have h3 : dist (u (phi j) (d n)) (g n) < eps / 4 := hN j hj
+    have h4 : dist (u (phi k) (d n)) (g n) < eps / 4 := hN k hk
+    have hdn : dist z (d n) < eps / (4 * (L + 1)) := hn
+    have hLd : L * dist z (d n) ≤ eps / 4 := by
+      have hle : L * dist z (d n) ≤ L * (eps / (4 * (L + 1))) := by
+        exact mul_le_mul_of_nonneg_left hdn.le hL
+      have hfrac : L * (eps / (4 * (L + 1))) ≤ eps / 4 := by
+        have hL1 : (0 : ℝ) < L + 1 := by linarith
+        have hsplit : L * (eps / (4 * (L + 1))) = (L / (L + 1)) * (eps / 4) := by
+          field_simp
+        rw [hsplit]
+        have hle : L / (L + 1) ≤ 1 := by rw [div_le_one hL1]; linarith
+        nlinarith [heps.le]
+      linarith
+    have hsplit : dist (u (phi j) z) (u (phi k) z)
+        ≤ ‖u (phi j) z - u (phi j) (d n)‖ + dist (u (phi j) (d n)) (g n)
+          + dist (u (phi k) (d n)) (g n) + ‖u (phi k) z - u (phi k) (d n)‖ := by
+      have e1 : dist (u (phi j) z) (u (phi k) z)
+          ≤ dist (u (phi j) z) (u (phi j) (d n)) + dist (u (phi j) (d n)) (g n)
+            + (dist (g n) (u (phi k) (d n)) + dist (u (phi k) (d n)) (u (phi k) z)) := by
+        calc dist (u (phi j) z) (u (phi k) z)
+            ≤ dist (u (phi j) z) (u (phi j) (d n)) + dist (u (phi j) (d n)) (u (phi k) z) :=
+              dist_triangle _ _ _
+          _ ≤ dist (u (phi j) z) (u (phi j) (d n))
+              + (dist (u (phi j) (d n)) (g n) + dist (g n) (u (phi k) z)) := by
+              have := dist_triangle (u (phi j) (d n)) (g n) (u (phi k) z)
+              linarith
+          _ ≤ dist (u (phi j) z) (u (phi j) (d n)) + dist (u (phi j) (d n)) (g n)
+              + (dist (g n) (u (phi k) (d n)) + dist (u (phi k) (d n)) (u (phi k) z)) := by
+              have := dist_triangle (g n) (u (phi k) (d n)) (u (phi k) z)
+              linarith
+      have e2 : dist (g n) (u (phi k) (d n)) = dist (u (phi k) (d n)) (g n) := dist_comm _ _
+      have e3 : dist (u (phi j) z) (u (phi j) (d n)) = ‖u (phi j) z - u (phi j) (d n)‖ :=
+        dist_eq_norm _ _
+      have e4 : dist (u (phi k) (d n)) (u (phi k) z) = ‖u (phi k) z - u (phi k) (d n)‖ := by
+        rw [dist_eq_norm, norm_sub_rev]
+      rw [e2, e3, e4] at e1
+      linarith
+    linarith
+  -- the limit field
+  set U : STime → E3 := fun z => limUnder atTop (fun k => u (phi k) z) with hU
+  have hlim : ∀ z, Tendsto (fun k => u (phi k) z) atTop (nhds (U z)) := fun z =>
+    (hcauchy z).tendsto_limUnder
+  have hUK : ∀ z, ‖U z‖ ≤ K := by
+    intro z
+    exact le_of_tendsto ((hlim z).norm) (Eventually.of_forall fun k => hK _ z)
+  have hULip : ∀ z w, ‖U z - U w‖ ≤ L * dist z w := by
+    intro z w
+    exact le_of_tendsto (((hlim z).sub (hlim w)).norm)
+      (Eventually.of_forall fun k => hLip _ z w)
+  -- uniform convergence on bounded sets
+  have huc : ∀ S : Set STime, Bornology.IsBounded S →
+      TendstoUniformlyOn (fun k => u (phi k)) U atTop S := by
+    intro S hS
+    rw [Metric.tendstoUniformlyOn_iff]
+    intro eps heps
+    set delta : ℝ := eps / (4 * (L + 1)) with hdelta
+    have hdpos : 0 < delta := by
+      have : (0:ℝ) < 4 * (L + 1) := by linarith
+      positivity
+    have hSTB : TotallyBounded S := by
+      obtain ⟨r, hr⟩ := hS.subset_closedBall (0 : STime)
+      exact (isCompact_closedBall (0 : STime) r).totallyBounded.subset hr
+    obtain ⟨t, htfin, hcov⟩ := Metric.totallyBounded_iff.1 hSTB delta hdpos
+    have hLd : L * delta ≤ eps / 4 := by
+      have hfrac : L * (eps / (4 * (L + 1))) ≤ eps / 4 := by
+        have hL1 : (0 : ℝ) < L + 1 := by linarith
+        have hsplit : L * (eps / (4 * (L + 1))) = (L / (L + 1)) * (eps / 4) := by
+          field_simp
+        rw [hsplit]
+        have hle : L / (L + 1) ≤ 1 := by rw [div_le_one hL1]; linarith
+        nlinarith [heps.le]
+      simpa [hdelta] using hfrac
+    have hall : ∀ᶠ k in atTop, ∀ y ∈ t, dist (U y) (u (phi k) y) < eps / 4 := by
+      refine (Filter.eventually_all_finite htfin).2 ?_
+      intro y _
+      obtain ⟨N, hN⟩ := Metric.tendsto_atTop.1 (hlim y) (eps / 4) (by linarith)
+      refine eventually_atTop.2 ⟨N, fun k hk => ?_⟩
+      rw [dist_comm]
+      exact hN k hk
+    filter_upwards [hall] with k hk
+    intro z hz
+    obtain ⟨y, hyt, hzy⟩ : ∃ y ∈ t, z ∈ Metric.ball y delta := by
+      have := hcov hz
+      simpa using this
+    have h1 : ‖U z - U y‖ ≤ L * dist z y := hULip z y
+    have h2 : dist (U y) (u (phi k) y) < eps / 4 := hk y hyt
+    have h3 : ‖u (phi k) y - u (phi k) z‖ ≤ L * dist y z := hLip _ _ _
+    have hzy' : dist z y < delta := by simpa [Metric.mem_ball] using hzy
+    have hyz' : dist y z < delta := by rwa [dist_comm] at hzy'
+    have e1 : dist (U z) (u (phi k) z)
+        ≤ ‖U z - U y‖ + dist (U y) (u (phi k) y) + ‖u (phi k) y - u (phi k) z‖ := by
+      calc dist (U z) (u (phi k) z)
+          ≤ dist (U z) (U y) + dist (U y) (u (phi k) z) := dist_triangle _ _ _
+        _ ≤ dist (U z) (U y) + (dist (U y) (u (phi k) y) + dist (u (phi k) y) (u (phi k) z)) := by
+            have := dist_triangle (U y) (u (phi k) y) (u (phi k) z)
+            linarith
+        _ = ‖U z - U y‖ + dist (U y) (u (phi k) y) + ‖u (phi k) y - u (phi k) z‖ := by
+            rw [show dist (U z) (U y) = ‖U z - U y‖ from dist_eq_norm _ _,
+              show dist (u (phi k) y) (u (phi k) z) = ‖u (phi k) y - u (phi k) z‖ from
+                dist_eq_norm _ _]
+            ring
+    have hb1 : L * dist z y ≤ L * delta := mul_le_mul_of_nonneg_left hzy'.le hL
+    have hb2 : L * dist y z ≤ L * delta := mul_le_mul_of_nonneg_left hyz'.le hL
+    linarith
+  exact ⟨phi, U, hphi, hUK, hULip, hlim, huc⟩
+
+/-- **Compactness and inheritance, packaged.**  The extracted ancient limit is
+bounded and Lipschitz (hence continuous), and inherits the normalized
+oscillation defect on every bounded set on which the sequence carries it. -/
+theorem blowup_compactness_and_inheritance
+    (u : ℕ → STime → E3) {K L : ℝ}
+    (hK : ∀ k z, ‖u k z‖ ≤ K) (hL : 0 ≤ L)
+    (hLip : ∀ k z w, ‖u k z - u k w‖ ≤ L * dist z w)
+    (S : Set STime) (hS : Bornology.IsBounded S) {c0 : ℝ} :
+    ∃ (phi : ℕ → ℕ) (U : STime → E3), StrictMono phi ∧
+      (∀ z, ‖U z‖ ≤ K) ∧ LipschitzWith (Real.toNNReal L) U ∧ Continuous U ∧
+      (∀ z, Tendsto (fun k => u (phi k) z) atTop (nhds (U z))) ∧
+      ((∀ k, c0 ≤ oscOn (u (phi k)) S) → c0 ≤ oscOn U S) := by
+  obtain ⟨phi, U, hphi, hUK, hULip, hlim, huc⟩ :=
+    exists_locally_uniform_limit_of_equiLipschitz u hK hL hLip
+  have hlipW : LipschitzWith (Real.toNNReal L) U := by
+    refine LipschitzWith.of_dist_le_mul ?_
+    intro z w
+    have h := hULip z w
+    rw [dist_eq_norm]
+    have : (Real.toNNReal L : ℝ) = L := Real.coe_toNNReal L hL
+    rw [this]
+    exact h
+  refine ⟨phi, U, hphi, hUK, hlipW, hlipW.continuous, hlim, ?_⟩
+  intro hdef
+  have hbU : Bornology.IsBounded (U '' S) := by
+    refine (Metric.isBounded_closedBall (x := (0:E3)) (r := K)).subset ?_
+    rintro p ⟨z, _, rfl⟩
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hUK z
+  exact oscOn_ge_of_uniform_limit hbU
+    (tendstoUniformlyOn_iff_forall_eps (huc S hS)) hdef
+
+end ClayNS

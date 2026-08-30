@@ -1,0 +1,12 @@
+import Lake
+open Lake DSL
+
+package «RequestProject» where
+
+require mathlib from git
+  "https://github.com/leanprover-community/mathlib4.git" @ "v4.28.0"
+
+@[default_target]
+lean_lib «Wave1Mirror» where
+  srcDir := "lean-baseline"
+  roots := #[`AgdaMirror, `ClosureEndToEnd, `DashiPerf, `FormConstantGeometry, `Main, `Main11, `MoonshineEarn, `MoonshineFractran, `NavierStokesClosure, `Q, `SpectralClosure, `TriadicKernelAlgebra, `YangMillsClosure, `YangMillsContinuumGap]

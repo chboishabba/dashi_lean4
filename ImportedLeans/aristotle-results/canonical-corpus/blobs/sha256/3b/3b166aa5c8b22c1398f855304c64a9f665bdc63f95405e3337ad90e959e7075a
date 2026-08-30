@@ -1,0 +1,360 @@
+module DASHI.Physics.YangMills.BalabanYM4LiteralWilsonGhostHaarWeightedFourOrbitExact where
+
+------------------------------------------------------------------------
+-- ROW A1c: THE PHYSICALLY WEIGHTED (4,6,4,1) FOUR-ORBIT REGULAR REMAINDER
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Bałaban,
+-- "Renormalization Group Approach to Lattice Gauge Field Theories. I.
+-- Generation of Effective Actions in a Small Field Approximation and a
+-- Coupling Constant Renormalization in Four Dimensions",
+-- Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+-- Source locators: Euclidean covariance (5.6),(5.7); beta extraction
+-- (5.36)--(5.42).
+--
+-- Kenneth G. Wilson, "Confinement of Quarks", Physical Review D 10 (1974),
+-- 2445--2459.  DOI: 10.1103/PhysRevD.10.2445.
+--
+-- Ludwig D. Faddeev and Victor N. Popov, "Feynman Diagrams for the
+-- Yang--Mills Field", Physics Letters B 25 (1967), 29--30.
+-- DOI: 10.1016/0370-2693(67)90067-6.
+--
+-- WHAT THIS MODULE DOES, AND WHY IT REPLACES THE TWELVE-PIECE ROUTE
+--
+-- The repository already proves the physical quadrature
+--
+--     (1/16) * sum_{B regular} c(B) = 4 c(B1) + 6 c(B2) + 4 c(B3) + c(B4)
+--
+-- (`BalabanCMP109FourOrbitNormalizedQuadratureExact`).  The regular remainder
+-- is therefore a *weighted four-representative sum*, not four interchangeable
+-- unweighted orbit totals.
+--
+-- The earlier fallback module `BalabanYM4FourOrbitRegularRemainderBudgetExact`
+-- applies the triangle inequality separately to the Wilson, Faddeev--Popov and
+-- Haar species, i.e. it certifies
+--
+--     4|W1| + 4|F1| + 4|H1| + ... <= 1/2 ,
+--
+-- which destroys exactly the Wilson/ghost/Haar cancellation the orbit-summed
+-- machinery was designed to preserve.  It stays in the tree as a strictly
+-- weaker fallback; this module is the primary path.
+--
+-- Here the three species are added *pointwise on cells first*,
+--
+--     r(B) = W(B) + (F(B) + H(B)) ,
+--
+-- the Euclidean source symmetry (5.6),(5.7) is shown to be closed under that
+-- pointwise addition, and the literal evaluator then satisfies
+--
+--     R := (1/16) * sum_{B regular} r(B) = 4 r1 + 6 r2 + 4 r3 + r4 ,
+--
+-- with r_i = W(B_i) + (F(B_i) + H(B_i)) a single *joint* evaluation per
+-- representative.  So A1c needs four joint evaluations, not twelve independent
+-- ones.
+--
+-- The module then supplies:
+--   * `weightedFourOrbitMono`, monotonicity of the (4,6,4,1) form, hence
+--   * `jointEnclosureFromRepresentativeIntervals`, an interval compiler that
+--     turns four *joint* two-sided representative enclosures into the joint
+--     bilateral bound  -1/2 <= R <= 1/2  (one-sided information is kept
+--     separate, so a one-sided input yields a one-sided output);
+--   * `enclosureFromJointBound`, which feeds that bilateral bound into
+--     `SU2RegularOrbitEnclosure` and hence into  5/12 <= beta_Z <= 17/12.
+--
+-- WHAT IS STILL OPEN.  This module does not manufacture the numbers r_i: the
+-- literal Wilson/Faddeev--Popov/Haar cell evaluator and its four joint
+-- representative enclosures remain the physical leaf (recorded below as a
+-- `conditional` proof level).  Row A therefore stays open and the frozen
+-- research count is unchanged.  Nothing here is a postulate, hole, receipt or
+-- authority import.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_; -[1+_])
+open import Data.Product using (_×_; _,_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (cong; cong₂; sym; trans; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.YangMills.BalabanClayT4GeneratedBrillouinGridExact as Grid
+import DASHI.Physics.YangMills.BalabanClayT4HypercubicOrbitGeometryExact as Orbit
+import DASHI.Physics.YangMills.BalabanCMP109VacuumPolarizationHypercubicSourceSymmetryExact as SourceSymmetry
+import DASHI.Physics.YangMills.BalabanCMP109FourOrbitNormalizedQuadratureExact as Quadrature
+import DASHI.Physics.YangMills.BalabanYM4SU2RegularOrbitBetaFloorExact as Floor
+
+------------------------------------------------------------------------
+-- 1.  Joint (Wilson + Faddeev-Popov + Haar) cell evaluator
+------------------------------------------------------------------------
+
+CellScalar : Set
+CellScalar = Grid.GridCell4 → ℚ
+
+-- The joint per-cell value.  Adding the three species BEFORE any estimate is
+-- what preserves the cancellations.
+jointCellValue : CellScalar → CellScalar → CellScalar → CellScalar
+jointCellValue wilson ghost haar cell =
+  wilson cell + (ghost cell + haar cell)
+
+-- The Euclidean source symmetry (5.6),(5.7) is closed under pointwise
+-- addition, so the joint evaluator inherits it from the three species.
+jointSourceSymmetry :
+  ∀ {wilson ghost haar : CellScalar} →
+  SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson →
+  SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost →
+  SourceSymmetry.CMP109ScalarEuclideanSymmetry haar →
+  SourceSymmetry.CMP109ScalarEuclideanSymmetry
+    (jointCellValue wilson ghost haar)
+jointSourceSymmetry wilsonSymmetry ghostSymmetry haarSymmetry = record
+  { reflectionInvariant = λ axis cell →
+      cong₂ _+_
+        (SourceSymmetry.reflectionInvariant wilsonSymmetry axis cell)
+        (cong₂ _+_
+          (SourceSymmetry.reflectionInvariant ghostSymmetry axis cell)
+          (SourceSymmetry.reflectionInvariant haarSymmetry axis cell))
+  ; permutationInvariant = λ permutation cell →
+      cong₂ _+_
+        (SourceSymmetry.permutationInvariant wilsonSymmetry permutation cell)
+        (cong₂ _+_
+          (SourceSymmetry.permutationInvariant ghostSymmetry permutation cell)
+          (SourceSymmetry.permutationInvariant haarSymmetry permutation cell))
+  }
+
+------------------------------------------------------------------------
+-- 2.  The (4,6,4,1) weighted four-representative form
+------------------------------------------------------------------------
+
+weightOne weightTwo weightThree : ℚ
+weightOne   = + 4 / 1
+weightTwo   = + 6 / 1
+weightThree = + 4 / 1
+
+-- R = 4 r1 + 6 r2 + 4 r3 + r4.
+weightedFourOrbit : ℚ → ℚ → ℚ → ℚ → ℚ
+weightedFourOrbit r₁ r₂ r₃ r₄ =
+  weightOne * r₁ + weightTwo * r₂ + weightThree * r₃ + r₄
+
+-- The four joint representative values.
+jointOne jointTwo jointThree jointFour :
+  CellScalar → CellScalar → CellScalar → ℚ
+jointOne wilson ghost haar =
+  jointCellValue wilson ghost haar Orbit.oneOuterRepresentative
+jointTwo wilson ghost haar =
+  jointCellValue wilson ghost haar Orbit.twoOuterRepresentative
+jointThree wilson ghost haar =
+  jointCellValue wilson ghost haar Orbit.threeOuterRepresentative
+jointFour wilson ghost haar =
+  jointCellValue wilson ghost haar Orbit.fourOuterRepresentative
+
+-- The normalized regular remainder of the joint evaluator.
+jointRegularRemainder : CellScalar → CellScalar → CellScalar → ℚ
+jointRegularRemainder wilson ghost haar =
+  Quadrature.normalizedRegularSum (jointCellValue wilson ghost haar)
+
+------------------------------------------------------------------------
+-- 3.  THE EXACT WEIGHTED FOUR-ORBIT IDENTITY
+--
+--        (1/16) * sum_{B regular} (W + F + H)(B)
+--            = 4 r1 + 6 r2 + 4 r3 + r4 ,      r_i = W(B_i) + F(B_i) + H(B_i).
+------------------------------------------------------------------------
+
+literalWilsonGhostHaarWeightedFourOrbitExact :
+  ∀ {wilson ghost haar : CellScalar} →
+  SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson →
+  SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost →
+  SourceSymmetry.CMP109ScalarEuclideanSymmetry haar →
+  jointRegularRemainder wilson ghost haar
+  ≡ weightedFourOrbit
+      (jointOne wilson ghost haar)
+      (jointTwo wilson ghost haar)
+      (jointThree wilson ghost haar)
+      (jointFour wilson ghost haar)
+literalWilsonGhostHaarWeightedFourOrbitExact
+    wilsonSymmetry ghostSymmetry haarSymmetry =
+  Quadrature.sourceSymmetryNormalizedQuadrature
+    (jointSourceSymmetry wilsonSymmetry ghostSymmetry haarSymmetry)
+
+------------------------------------------------------------------------
+-- 4.  Monotonicity of the weighted form, and the interval compiler
+------------------------------------------------------------------------
+
+scaleFourMono : ∀ {a b : ℚ} → a ≤ b → weightOne * a ≤ weightOne * b
+scaleFourMono = ℚP.*-monoˡ-≤-nonNeg weightOne
+
+scaleSixMono : ∀ {a b : ℚ} → a ≤ b → weightTwo * a ≤ weightTwo * b
+scaleSixMono = ℚP.*-monoˡ-≤-nonNeg weightTwo
+
+weightedFourOrbitMono :
+  ∀ {a₁ b₁ a₂ b₂ a₃ b₃ a₄ b₄ : ℚ} →
+  a₁ ≤ b₁ → a₂ ≤ b₂ → a₃ ≤ b₃ → a₄ ≤ b₄ →
+  weightedFourOrbit a₁ a₂ a₃ a₄ ≤ weightedFourOrbit b₁ b₂ b₃ b₄
+weightedFourOrbitMono h₁ h₂ h₃ h₄ =
+  ℚP.+-mono-≤
+    (ℚP.+-mono-≤
+      (ℚP.+-mono-≤ (scaleFourMono h₁) (scaleSixMono h₂))
+      (scaleFourMono h₃))
+    h₄
+
+regularRadius : ℚ
+regularRadius = Floor.regularEnclosureRadius   -- 1/2
+
+-- One-sided information is deliberately kept separate: a lower enclosure of
+-- the four joint values yields a lower bound on R and nothing else.
+jointLowerFromRepresentatives :
+  ∀ {r₁ r₂ r₃ r₄ lo₁ lo₂ lo₃ lo₄ : ℚ} →
+  lo₁ ≤ r₁ → lo₂ ≤ r₂ → lo₃ ≤ r₃ → lo₄ ≤ r₄ →
+  (- regularRadius) ≤ weightedFourOrbit lo₁ lo₂ lo₃ lo₄ →
+  (- regularRadius) ≤ weightedFourOrbit r₁ r₂ r₃ r₄
+jointLowerFromRepresentatives h₁ h₂ h₃ h₄ base =
+  ℚP.≤-trans base (weightedFourOrbitMono h₁ h₂ h₃ h₄)
+
+jointUpperFromRepresentatives :
+  ∀ {r₁ r₂ r₃ r₄ hi₁ hi₂ hi₃ hi₄ : ℚ} →
+  r₁ ≤ hi₁ → r₂ ≤ hi₂ → r₃ ≤ hi₃ → r₄ ≤ hi₄ →
+  weightedFourOrbit hi₁ hi₂ hi₃ hi₄ ≤ regularRadius →
+  weightedFourOrbit r₁ r₂ r₃ r₄ ≤ regularRadius
+jointUpperFromRepresentatives h₁ h₂ h₃ h₄ base =
+  ℚP.≤-trans (weightedFourOrbitMono h₁ h₂ h₃ h₄) base
+
+jointEnclosureFromRepresentativeIntervals :
+  ∀ {r₁ r₂ r₃ r₄ lo₁ hi₁ lo₂ hi₂ lo₃ hi₃ lo₄ hi₄ : ℚ} →
+  lo₁ ≤ r₁ → r₁ ≤ hi₁ →
+  lo₂ ≤ r₂ → r₂ ≤ hi₂ →
+  lo₃ ≤ r₃ → r₃ ≤ hi₃ →
+  lo₄ ≤ r₄ → r₄ ≤ hi₄ →
+  (- regularRadius) ≤ weightedFourOrbit lo₁ lo₂ lo₃ lo₄ →
+  weightedFourOrbit hi₁ hi₂ hi₃ hi₄ ≤ regularRadius →
+  ((- regularRadius) ≤ weightedFourOrbit r₁ r₂ r₃ r₄)
+  × (weightedFourOrbit r₁ r₂ r₃ r₄ ≤ regularRadius)
+jointEnclosureFromRepresentativeIntervals
+    l₁ u₁ l₂ u₂ l₃ u₃ l₄ u₄ lowBase highBase =
+  jointLowerFromRepresentatives l₁ l₂ l₃ l₄ lowBase ,
+  jointUpperFromRepresentatives u₁ u₂ u₃ u₄ highBase
+
+------------------------------------------------------------------------
+-- 5.  From the joint bilateral bound to the SU(2) beta enclosure
+------------------------------------------------------------------------
+
+-- Given the joint bilateral bound on the weighted four-orbit total of the
+-- literal evaluator, the regular remainder of the *normalized regular sum*
+-- itself is enclosed, and `SU2RegularOrbitEnclosure` follows.
+enclosureFromJointBound :
+  ∀ {wilson ghost haar : CellScalar}
+    (wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson)
+    (ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost)
+    (haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar) →
+  (- regularRadius) ≤
+    weightedFourOrbit
+      (jointOne wilson ghost haar) (jointTwo wilson ghost haar)
+      (jointThree wilson ghost haar) (jointFour wilson ghost haar) →
+  weightedFourOrbit
+      (jointOne wilson ghost haar) (jointTwo wilson ghost haar)
+      (jointThree wilson ghost haar) (jointFour wilson ghost haar)
+    ≤ regularRadius →
+  Floor.SU2RegularOrbitEnclosure
+enclosureFromJointBound {wilson} {ghost} {haar}
+    wilsonSymmetry ghostSymmetry haarSymmetry lower upper = record
+  { betaGauss =
+      Floor.universalCoefficientDensity * Floor.su2AdjointCasimir
+        + jointRegularRemainder wilson ghost haar
+  ; regular = jointRegularRemainder wilson ghost haar
+  ; casimirIsSU2 = refl
+  ; decomposition = refl
+  ; regularLower =
+      subst (λ z → (- Floor.regularEnclosureRadius) ≤ z) (sym exact) lower
+  ; regularUpper =
+      subst (λ z → z ≤ Floor.regularEnclosureRadius) (sym exact) upper
+  }
+  where
+  exact = literalWilsonGhostHaarWeightedFourOrbitExact
+            wilsonSymmetry ghostSymmetry haarSymmetry
+
+-- The two consequences, restated on the joint evaluator.
+jointBetaFloor :
+  (enclosure : Floor.SU2RegularOrbitEnclosure) →
+  Floor.su2BetaFloor ≤ Floor.betaGauss enclosure
+jointBetaFloor = Floor.su2GaussianBetaFloor
+
+jointBetaCeiling :
+  (enclosure : Floor.SU2RegularOrbitEnclosure) →
+  Floor.betaGauss enclosure ≤ + 17 / 12
+jointBetaCeiling = Floor.su2GaussianBetaCeiling
+
+jointBetaPositive :
+  (enclosure : Floor.SU2RegularOrbitEnclosure) →
+  0ℚ < Floor.betaGauss enclosure
+jointBetaPositive = Floor.su2GaussianBetaPositive
+
+------------------------------------------------------------------------
+-- 6.  Non-vacuity, and why the joint route is strictly stronger
+--
+-- Take four representatives at which the three species are individually O(1)
+-- but cancel to 1/100:
+--
+--     W(B_i) = 1 ,  F(B_i) = -1 ,  H(B_i) = 1/100 ,   r_i = 1/100 .
+--
+-- The joint weighted total is 15/100 = 3/20, comfortably inside [-1/2, 1/2].
+-- The twelve-piece absolute-value route would instead have to certify
+--
+--     15 * (|W| + |F| + |H|) = 15 + 15 + 3/20 ,
+--
+-- which exceeds 1/2 by a wide margin.  Both facts are checked below.
+------------------------------------------------------------------------
+
+sampleJoint : ℚ
+sampleJoint = + 1 / 100
+
+sampleWeightedTotal : ℚ
+sampleWeightedTotal =
+  weightedFourOrbit sampleJoint sampleJoint sampleJoint sampleJoint
+
+sampleWeightedTotalValue : sampleWeightedTotal ≡ + 3 / 20
+sampleWeightedTotalValue = refl
+
+sampleLower : (- regularRadius) ≤ sampleWeightedTotal
+sampleLower =
+  toWitness {a? = (- regularRadius) ℚP.≤? sampleWeightedTotal} _
+
+sampleUpper : sampleWeightedTotal ≤ regularRadius
+sampleUpper =
+  toWitness {a? = sampleWeightedTotal ℚP.≤? regularRadius} _
+
+-- The twelve-piece split-absolute budget for the very same data.
+splitAbsoluteTotal : ℚ
+splitAbsoluteTotal =
+  weightedFourOrbit 1ℚ 1ℚ 1ℚ 1ℚ
+  + (weightedFourOrbit 1ℚ 1ℚ 1ℚ 1ℚ
+     + weightedFourOrbit sampleJoint sampleJoint sampleJoint sampleJoint)
+
+splitAbsoluteTotalValue : splitAbsoluteTotal ≡ + 603 / 20
+splitAbsoluteTotalValue = refl
+
+-- 1/2 < 603/20: the cancellation-destroying route fails on data the joint
+-- route certifies.
+splitAbsoluteBudgetFails : regularRadius < splitAbsoluteTotal
+splitAbsoluteBudgetFails =
+  toWitness {a? = regularRadius ℚP.<? splitAbsoluteTotal} _
+
+------------------------------------------------------------------------
+-- 7.  Proof levels
+------------------------------------------------------------------------
+
+-- The weighted (4,6,4,1) identity for the joint Wilson+FP+Haar evaluator, the
+-- symmetry closure, the interval compiler and the beta enclosure bridge are
+-- all machine checked.
+literalWeightedFourOrbitIdentityLevel : ProofLevel
+literalWeightedFourOrbitIdentityLevel = machineChecked
+
+jointRepresentativeIntervalCompilerLevel : ProofLevel
+jointRepresentativeIntervalCompilerLevel = machineChecked
+
+-- STILL OPEN (Row A physical leaf).  Producing the literal Wilson,
+-- Faddeev--Popov and Haar cell scalars from the CMP109 background-field
+-- vacuum polarisation, verifying (5.6),(5.7) for each of them, and evaluating
+-- or enclosing the four JOINT representative values r_1..r_4.
+literalWilsonGhostHaarJointRepresentativeEvaluationLevel : ProofLevel
+literalWilsonGhostHaarJointRepresentativeEvaluationLevel = conditional

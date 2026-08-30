@@ -1,0 +1,496 @@
+module DASHI.Physics.YangMills.BalabanYM4SU2HaarJacobianQuadraticCoefficientExact where
+
+------------------------------------------------------------------------
+-- ROW A1, HAAR NORMALISATION IN THE EXPONENTIAL CHART:
+--   THE QUADRATIC COEFFICIENT OF  -log J  IS EXACTLY  1/3,  WITH AN
+--   EXPLICIT QUARTIC REMAINDER
+--
+-- CONTEXT
+--
+-- In the repository's SU(2) normalisation the adjoint action satisfies
+--
+--     ad_Y³  =  -4 |Y|² ad_Y ,
+--
+-- so the nonzero adjoint eigenvalues are ±2i|Y| and the exponential-coordinate
+-- Haar (dexp) Jacobian is
+--
+--     J(Y)  =  ( sin |Y| / |Y| )² .
+--
+-- Writing s = |Y| and t = s², this module proves, by exact rational
+-- arithmetic, that the Haar action  -log J  has quadratic coefficient exactly
+-- 1/3 with a controlled quartic remainder on the small-field chart s ≤ 1/2:
+--
+--     | (-log J)  -  s²/3 |  ≤  s⁴/16 .
+--
+-- The headline is therefore the *radial* quadratic coefficient 1/3.  The
+-- multivariable Hessian normalisation
+--
+--     D²(-log J)(0) = (2/3) I
+--
+-- that Row A1's constrained-Gaussian evaluation uses is a *consequence* of
+-- this coefficient once radiality is available in the repository's actual
+-- SU(2) coordinates: the transfer
+--
+--     radiality + radial coefficient 1/3  ==>  Hessian = (2/3) I (uniquely)
+--
+-- is proved in
+-- `DASHI.Physics.YangMills.BalabanYM4RadialQuadraticFormToHessianExact`,
+-- and what is still missing is the same-object chart identification
+-- s² = |Y|² and J(Y) = (sin s / s)² in those coordinates.  So this module
+-- must NOT be read as proving that the Haar Hessian is (2/3) I.
+--
+-- HOW THE ANALYTIC INPUTS ENTER.  Nothing is postulated and no authority is
+-- cited.  The two analytic facts used are supplied as *enclosures* of the
+-- values involved, i.e. as hypotheses about the numbers themselves:
+--
+--   (i)  the standard alternating-series enclosure of the cardinal sine,
+--          1 - t/6  ≤  sin s / s  ≤  1 - t/6 + t²/120        (0 ≤ s ≤ 1/2),
+--   (ii) the standard two-sided logarithm enclosure at the value J,
+--          1 - J  ≤  -log J  ≤  (1 - J) + (1 - J)²/(2J) ,
+--        used in cleared (division-free) form.
+--
+-- The theorem therefore holds for *any* numbers in those enclosures, and its
+-- content is the exact rational algebra that turns them into the coefficient
+-- 1/3 and the constant 1/16.
+--
+-- WHAT IS *NOT* PROVED.  The identification of the repository's SU(2) chart
+-- Jacobian with (sin s / s)² — i.e. the same-object step from ad_Y³ = -4s² ad_Y
+-- to the displayed determinant, together with s² = |Y|² in those coordinates —
+-- is not formalised here or anywhere in the tree; only the radial coefficient
+-- is proved here, and the multivariable Hessian statement is available only as
+-- the conditional transfer cited above.  Row A stays open and the frozen
+-- research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Sum.Base using (_⊎_; inj₁; inj₂)
+open import Data.Rational.Base as ℚ
+  using ( ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _≤_; _<_; _/_
+        ; nonNegative; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; cong₂; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; mul-nonNeg; mul-pos; scaleˡ-nonNeg; scaleʳ-nonNeg; transport-≤)
+open import DASHI.Physics.YangMills.BalabanYM4BorderedKKTDeterminantExact
+  using (square-nonNeg)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Rational constants of the chart
+------------------------------------------------------------------------
+
+sixth third twentieth sixteenth quarter half : ℚ
+sixth = + 1 / 6
+third = + 1 / 3
+twentieth = + 1 / 20
+sixteenth = + 1 / 16
+quarter = + 1 / 4
+half = + 1 / 2
+
+oneTwentyth : ℚ                      -- 1/120, the quartic sine coefficient
+oneTwentyth = + 1 / 120
+
+-- the alternating-series enclosure polynomials for sin s / s, in t = s²
+sincLower sincUpper : ℚ → ℚ
+sincLower t = 1ℚ - sixth * t
+sincUpper t = 1ℚ - sixth * t + oneTwentyth * (t * t)
+
+------------------------------------------------------------------------
+-- Elementary helpers
+------------------------------------------------------------------------
+
+respˡ : ∀ {x y u : ℚ} → x ≡ y → x ≤ u → y ≤ u
+respˡ e le = transport-≤ e refl le
+
+respʳ : ∀ {x u v : ℚ} → u ≡ v → x ≤ u → x ≤ v
+respʳ e le = transport-≤ refl e le
+
+abs-from-bounds : ∀ {x y : ℚ} → - y ≤ x → x ≤ y → ∣ x ∣ ≤ y
+abs-from-bounds {x} {y} lower upper with ℚP.∣p∣≡p∨∣p∣≡-p x
+... | inj₁ eq = subst (_≤ y) (sym eq) upper
+... | inj₂ eq =
+  subst (_≤ y) (sym eq) (respʳ negNeg (ℚP.neg-antimono-≤ lower))
+  where
+    negNeg : - (- y) ≡ y
+    negNeg = solve 1 (λ z → :- (:- z) := z) refl y
+
+square-mono-nonNeg : ∀ {x y : ℚ} → 0ℚ ≤ x → x ≤ y → x * x ≤ y * y
+square-mono-nonNeg {x} {y} 0≤x x≤y =
+  ℚP.≤-trans (scaleˡ-nonNeg 0≤x x≤y)
+    (scaleʳ-nonNeg (ℚP.≤-trans 0≤x x≤y) x≤y)
+
+------------------------------------------------------------------------
+-- The chart data: a point of the small-field chart with its enclosures
+------------------------------------------------------------------------
+
+record HaarChartPoint : Set where
+  field
+    s sinc jacobian haarAction : ℚ
+    -- 0 <= s <= 1/2
+    0≤s   : 0ℚ ≤ s
+    s≤half : s ≤ half
+    -- (i) the cardinal-sine enclosure, in t = s²
+    sincLowerBound : sincLower (s * s) ≤ sinc
+    sincUpperBound : sinc ≤ sincUpper (s * s)
+    -- J = (sin s / s)²
+    jacobianIsSincSquared : jacobian ≡ sinc * sinc
+    -- (ii) the logarithm enclosure at J, cleared of denominators
+    haarLowerBound : 1ℚ - jacobian ≤ haarAction
+    haarUpperBoundCleared :
+      haarAction * (twoℚ * jacobian)
+        ≤ (1ℚ - jacobian) * (twoℚ * jacobian)
+            + (1ℚ - jacobian) * (1ℚ - jacobian)
+
+open HaarChartPoint public
+
+module Chart (p : HaarChartPoint) where
+
+  t : ℚ
+  t = s p * s p
+
+  0≤t : 0ℚ ≤ t
+  0≤t = square-nonNeg (s p)
+
+  t≤quarter : t ≤ quarter
+  t≤quarter =
+    ℚP.≤-trans (square-mono-nonNeg (0≤s p) (s≤half p)) (ℚP.≤-reflexive refl)
+
+  ------------------------------------------------------------------
+  -- Enclosure of the Jacobian:  1 - t/3  ≤  J  ≤  1 - t/3 + t²/20
+  ------------------------------------------------------------------
+
+  0≤sincLower : 0ℚ ≤ sincLower t
+  0≤sincLower =
+    ℚP.≤-trans (toWitness {a? = 0ℚ ℚP.≤? (1ℚ - sixth * quarter)} _)
+      (ℚP.+-monoʳ-≤ 1ℚ (ℚP.neg-antimono-≤ (scaleˡ-nonNeg
+        (toWitness {a? = 0ℚ ℚP.≤? sixth} _) t≤quarter)))
+
+  jacobianLower : 1ℚ - third * t ≤ jacobian p
+  jacobianLower =
+    ℚP.≤-trans dropSquare
+      (respʳ (sym (jacobianIsSincSquared p))
+        (square-mono-nonNeg 0≤sincLower (sincLowerBound p)))
+    where
+      identity₁ :
+        sincLower t * sincLower t ≡ (1ℚ - third * t) + (sixth * t) * (sixth * t)
+      identity₁ =
+        solve 1
+          (λ u →
+            (con 1ℚ :- con sixth :* u) :* (con 1ℚ :- con sixth :* u)
+              := (con 1ℚ :- con third :* u) :+ (con sixth :* u) :* (con sixth :* u))
+          refl t
+
+      dropSquare : 1ℚ - third * t ≤ sincLower t * sincLower t
+      dropSquare =
+        respʳ (sym identity₁)
+          (respˡ (ℚP.+-identityʳ (1ℚ - third * t))
+            (ℚP.+-monoʳ-≤ (1ℚ - third * t) (square-nonNeg (sixth * t))))
+
+  jacobianUpper : jacobian p ≤ (1ℚ - third * t) + twentieth * (t * t)
+  jacobianUpper =
+    ℚP.≤-trans
+      (respˡ (sym (jacobianIsSincSquared p))
+        (square-mono-nonNeg
+          (ℚP.≤-trans 0≤sincLower (sincLowerBound p))
+          (sincUpperBound p)))
+      bracket
+    where
+      -- exact identity: sincUpper² + (t³/360 + t²/180 - t⁴/14400)
+      --                   = 1 - t/3 + t²/20
+      slack : ℚ
+      slack =
+        (+ 1 / 360) * (t * (t * t)) + (+ 1 / 180) * (t * t)
+          - (+ 1 / 14400) * ((t * t) * (t * t))
+
+      identity₂ :
+        sincUpper t * sincUpper t + slack ≡ (1ℚ - third * t) + twentieth * (t * t)
+      identity₂ =
+        solve 1
+          (λ u →
+            (con 1ℚ :- con sixth :* u :+ con oneTwentyth :* (u :* u))
+              :* (con 1ℚ :- con sixth :* u :+ con oneTwentyth :* (u :* u))
+              :+ ((con (+ 1 / 360) :* (u :* (u :* u))
+                    :+ con (+ 1 / 180) :* (u :* u))
+                    :- con (+ 1 / 14400) :* ((u :* u) :* (u :* u)))
+              := (con 1ℚ :- con third :* u) :+ con twentieth :* (u :* u))
+          refl t
+
+      0≤slack : 0ℚ ≤ slack
+      0≤slack =
+        ℚP.≤-trans
+          (ℚP.≤-reflexive (sym (ℚP.+-inverseʳ ((+ 1 / 14400) * ((t * t) * (t * t))))))
+          (ℚP.+-monoˡ-≤ (- ((+ 1 / 14400) * ((t * t) * (t * t)))) quarticDominated)
+        where
+          -- t⁴/14400 ≤ t²/180, since t² ≤ 1/16 ≤ 80
+          quarticDominated :
+            (+ 1 / 14400) * ((t * t) * (t * t))
+              ≤ (+ 1 / 360) * (t * (t * t)) + (+ 1 / 180) * (t * t)
+          quarticDominated =
+            ℚP.≤-trans step
+              (respˡ (ℚP.+-identityˡ ((+ 1 / 180) * (t * t)))
+                (ℚP.+-monoˡ-≤ ((+ 1 / 180) * (t * t))
+                  (mul-nonNeg (toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 360)} _)
+                    (mul-nonNeg 0≤t (mul-nonNeg 0≤t 0≤t)))))
+            where
+              factorised :
+                (+ 1 / 14400) * ((t * t) * (t * t))
+                  ≡ ((+ 1 / 14400) * (t * t)) * (t * t)
+              factorised =
+                solve 1
+                  (λ u →
+                    con (+ 1 / 14400) :* ((u :* u) :* (u :* u))
+                      := (con (+ 1 / 14400) :* (u :* u)) :* (u :* u))
+                  refl t
+
+              target :
+                ((+ 1 / 14400) * quarter) * (t * t) ≤ (+ 1 / 180) * (t * t)
+              target =
+                scaleʳ-nonNeg (mul-nonNeg 0≤t 0≤t)
+                  (toWitness
+                    {a? = ((+ 1 / 14400) * quarter) ℚP.≤? (+ 1 / 180)} _)
+
+              step :
+                (+ 1 / 14400) * ((t * t) * (t * t)) ≤ (+ 1 / 180) * (t * t)
+              step =
+                ℚP.≤-trans (ℚP.≤-reflexive factorised)
+                  (ℚP.≤-trans
+                    (scaleʳ-nonNeg (mul-nonNeg 0≤t 0≤t)
+                      (scaleˡ-nonNeg (toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 14400)} _)
+                        (ℚP.≤-trans (square-mono-nonNeg 0≤t t≤quarter)
+                          (toWitness
+                            {a? = (quarter * quarter) ℚP.≤? quarter} _))))
+                    target)
+
+      bracket :
+        sincUpper t * sincUpper t ≤ (1ℚ - third * t) + twentieth * (t * t)
+      bracket =
+        respʳ identity₂
+          (respˡ (ℚP.+-identityʳ (sincUpper t * sincUpper t))
+            (ℚP.+-monoʳ-≤ (sincUpper t * sincUpper t) 0≤slack))
+
+  ------------------------------------------------------------------
+  -- Enclosure of the Haar action
+  ------------------------------------------------------------------
+
+  0≤one-J : 0ℚ ≤ 1ℚ - jacobian p
+  0≤one-J =
+    ℚP.≤-trans smallGap
+      (ℚP.+-monoʳ-≤ 1ℚ (ℚP.neg-antimono-≤ jacobianUpper))
+    where
+      -- 1 - (1 - t/3 + t²/20) = t/3 - t²/20 >= 0 for 0 <= t <= 1/4
+      identity₃ :
+        1ℚ - ((1ℚ - third * t) + twentieth * (t * t))
+          ≡ third * t - twentieth * (t * t)
+      identity₃ =
+        solve 1
+          (λ u →
+            con 1ℚ :- ((con 1ℚ :- con third :* u) :+ con twentieth :* (u :* u))
+              := con third :* u :- con twentieth :* (u :* u))
+          refl t
+
+      quadraticSmall : twentieth * (t * t) ≤ third * t
+      quadraticSmall =
+        ℚP.≤-trans
+          (ℚP.≤-reflexive
+            (solve 1 (λ u → con twentieth :* (u :* u) := (con twentieth :* u) :* u)
+              refl t))
+          (ℚP.≤-trans
+            (scaleʳ-nonNeg 0≤t
+              (scaleˡ-nonNeg (toWitness {a? = 0ℚ ℚP.≤? twentieth} _) t≤quarter))
+            (ℚP.≤-trans
+              (ℚP.≤-reflexive
+                (solve 1
+                  (λ u → (con twentieth :* con quarter) :* u
+                           := (con twentieth :* con quarter) :* u)
+                  refl t))
+              (scaleʳ-nonNeg 0≤t
+                (toWitness
+                  {a? = (twentieth * quarter) ℚP.≤? third} _))))
+
+      smallGap : 0ℚ ≤ 1ℚ - ((1ℚ - third * t) + twentieth * (t * t))
+      smallGap =
+        respʳ (sym identity₃)
+          (respˡ (ℚP.+-inverseʳ (twentieth * (t * t)))
+            (ℚP.+-monoˡ-≤ (- (twentieth * (t * t))) quadraticSmall))
+
+  one-J≤third : 1ℚ - jacobian p ≤ third * t
+  one-J≤third =
+    respʳ collapse (ℚP.+-monoʳ-≤ 1ℚ (ℚP.neg-antimono-≤ jacobianLower))
+    where
+      collapse : 1ℚ - (1ℚ - third * t) ≡ third * t
+      collapse =
+        solve 1 (λ u → con 1ℚ :- (con 1ℚ :- con third :* u) := con third :* u)
+          refl t
+
+  -- lower half of the conclusion:  -t²/20 ≤ haarAction - t/3
+  haarLower : third * t - twentieth * (t * t) ≤ haarAction p
+  haarLower =
+    ℚP.≤-trans (respʳ gap ℚP.≤-refl)
+      (ℚP.≤-trans (ℚP.+-monoʳ-≤ 1ℚ (ℚP.neg-antimono-≤ jacobianUpper))
+        (haarLowerBound p))
+    where
+      gap :
+        third * t - twentieth * (t * t)
+          ≡ 1ℚ - ((1ℚ - third * t) + twentieth * (t * t))
+      gap =
+        solve 1
+          (λ u →
+            con third :* u :- con twentieth :* (u :* u)
+              := con 1ℚ :- ((con 1ℚ :- con third :* u) :+ con twentieth :* (u :* u)))
+          refl t
+
+  -- the Jacobian is bounded below by 8/9 on the chart, so 2J > 0
+  jacobian≥eightNinths : (+ 8 / 9) ≤ jacobian p
+  jacobian≥eightNinths =
+    ℚP.≤-trans
+      (ℚP.≤-trans
+        (toWitness {a? = (+ 8 / 9) ℚP.≤? (1ℚ - third * quarter)} _)
+        (ℚP.+-monoʳ-≤ 1ℚ
+          (ℚP.neg-antimono-≤
+            (scaleˡ-nonNeg (toWitness {a? = 0ℚ ℚP.≤? third} _) t≤quarter))))
+      jacobianLower
+
+  0<jacobian : 0ℚ < jacobian p
+  0<jacobian =
+    ℚP.<-≤-trans (toWitness {a? = 0ℚ ℚP.<? (+ 8 / 9)} _) jacobian≥eightNinths
+
+  -- upper half of the conclusion:  haarAction - t/3 ≤ t²/16
+  haarUpper : haarAction p ≤ third * t + sixteenth * (t * t)
+  haarUpper =
+    ℚP.*-cancelʳ-≤-pos (twoℚ * jacobian p)
+      {{positive (mul-pos (toWitness {a? = 0ℚ ℚP.<? twoℚ} _) 0<jacobian)}}
+      (ℚP.≤-trans (haarUpperBoundCleared p) combined)
+    where
+      J = jacobian p
+      u = 1ℚ - J
+
+      linearPart : u * (twoℚ * J) ≤ (third * t) * (twoℚ * J)
+      linearPart =
+        scaleʳ-nonNeg
+          (mul-nonNeg (toWitness {a? = 0ℚ ℚP.≤? twoℚ} _) (ℚP.<⇒≤ 0<jacobian))
+          one-J≤third
+
+      -- u² ≤ (t/3)² ≤ (8/9)(t²/8) ≤ J t²/8 = (t²/16)(2J)
+      squarePart : u * u ≤ (sixteenth * (t * t)) * (twoℚ * J)
+      squarePart =
+        ℚP.≤-trans (square-mono-nonNeg 0≤one-J one-J≤third)
+          (ℚP.≤-trans
+            (ℚP.≤-reflexive
+              (solve 1
+                (λ w →
+                  (con third :* w) :* (con third :* w)
+                    := (con (+ 1 / 9) :* (w :* w)) :* con 1ℚ)
+                refl t))
+            (ℚP.≤-trans
+              (scaleˡ-nonNeg
+                (mul-nonNeg (toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 9)} _)
+                  (mul-nonNeg 0≤t 0≤t))
+                (toWitness {a? = 1ℚ ℚP.≤? ((+ 9 / 8) * (+ 8 / 9))} _))
+              (ℚP.≤-trans
+                (ℚP.≤-reflexive
+                  (solve 1
+                    (λ w →
+                      (con (+ 1 / 9) :* (w :* w)) :* (con (+ 9 / 8) :* con (+ 8 / 9))
+                        := (con sixteenth :* (w :* w)) :* (con twoℚ :* con (+ 8 / 9)))
+                    refl t))
+                (scaleˡ-nonNeg
+                  (mul-nonNeg (toWitness {a? = 0ℚ ℚP.≤? sixteenth} _)
+                    (mul-nonNeg 0≤t 0≤t))
+                  (scaleˡ-nonNeg (toWitness {a? = 0ℚ ℚP.≤? twoℚ} _)
+                    jacobian≥eightNinths)))))
+
+      combined :
+        u * (twoℚ * J) + u * u
+          ≤ (third * t + sixteenth * (t * t)) * (twoℚ * J)
+      combined =
+        ℚP.≤-trans (ℚP.+-mono-≤ linearPart squarePart)
+          (ℚP.≤-reflexive
+            (sym (ℚP.*-distribʳ-+ (twoℚ * J) (third * t) (sixteenth * (t * t)))))
+
+  ------------------------------------------------------------------
+  -- MAIN THEOREM:  | (-log J) - s²/3 |  ≤  s⁴/16
+  ------------------------------------------------------------------
+
+  haarQuadraticCoefficient :
+    ∣ haarAction p - third * t ∣ ≤ sixteenth * (t * t)
+  haarQuadraticCoefficient = abs-from-bounds lowerHalf upperHalf
+    where
+      lowerHalf : - (sixteenth * (t * t)) ≤ haarAction p - third * t
+      lowerHalf =
+        ℚP.≤-trans
+          (ℚP.neg-antimono-≤
+            (scaleʳ-nonNeg (mul-nonNeg 0≤t 0≤t)
+              (toWitness {a? = twentieth ℚP.≤? sixteenth} _)))
+          (respˡ shift (ℚP.+-monoˡ-≤ (- (third * t)) haarLower))
+        where
+          shift :
+            (third * t - twentieth * (t * t)) - third * t
+              ≡ - (twentieth * (t * t))
+          shift =
+            solve 1
+              (λ w →
+                (con third :* w :- con twentieth :* (w :* w)) :- con third :* w
+                  := :- (con twentieth :* (w :* w)))
+              refl t
+
+      upperHalf : haarAction p - third * t ≤ sixteenth * (t * t)
+      upperHalf =
+        respʳ collapse (ℚP.+-monoˡ-≤ (- (third * t)) haarUpper)
+        where
+          collapse :
+            (third * t + sixteenth * (t * t)) - third * t ≡ sixteenth * (t * t)
+          collapse =
+            solve 1
+              (λ w →
+                (con third :* w :+ con sixteenth :* (w :* w)) :- con third :* w
+                  := con sixteenth :* (w :* w))
+              refl t
+
+------------------------------------------------------------------------
+-- NON-VACUITY
+--
+-- The hypotheses are simultaneously satisfiable at a non-degenerate chart
+-- point.  Take s = 1/2 (the outer edge of the chart), and let `sinc` be the
+-- lower alternating-series endpoint 1 - t/6 = 23/24, which does lie inside the
+-- enclosure; then J = 529/576 and the logarithm value is pinned at its own
+-- lower endpoint 1 - J = 47/576, which also lies inside its enclosure because
+-- (1 - J)² ≥ 0.  Every field is discharged by exact rational decision.
+------------------------------------------------------------------------
+
+sampleChartPoint : HaarChartPoint
+sampleChartPoint = record
+  { s = half
+  ; sinc = + 23 / 24
+  ; jacobian = + 529 / 576
+  ; haarAction = + 47 / 576
+  ; 0≤s = toWitness {a? = 0ℚ ℚP.≤? half} _
+  ; s≤half = ℚP.≤-refl
+  ; sincLowerBound =
+      toWitness {a? = sincLower (half * half) ℚP.≤? (+ 23 / 24)} _
+  ; sincUpperBound =
+      toWitness {a? = (+ 23 / 24) ℚP.≤? sincUpper (half * half)} _
+  ; jacobianIsSincSquared = refl
+  ; haarLowerBound =
+      toWitness {a? = (1ℚ - (+ 529 / 576)) ℚP.≤? (+ 47 / 576)} _
+  ; haarUpperBoundCleared =
+      toWitness
+        {a? = ((+ 47 / 576) * (twoℚ * (+ 529 / 576))) ℚP.≤?
+              ((1ℚ - (+ 529 / 576)) * (twoℚ * (+ 529 / 576))
+                 + (1ℚ - (+ 529 / 576)) * (1ℚ - (+ 529 / 576)))} _
+  }
+
+-- the conclusion instantiated at that point: |(-log J) - t/3| ≤ t²/16
+sampleHaarQuadraticCoefficient :
+  ∣ (+ 47 / 576) - third * (half * half) ∣
+    ≤ sixteenth * ((half * half) * (half * half))
+sampleHaarQuadraticCoefficient =
+  Chart.haarQuadraticCoefficient sampleChartPoint

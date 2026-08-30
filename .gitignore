@@ -1,5 +1,13 @@
 /.lake
 artifacts/aristotle-archives/
+*.tar
+*.tar.gz
+*.tgz
+*.tar.zst
+target/
+**/.lake/
+**/.venv/
+**/__pycache__/
 outputs/aristotle_mirror_waves/
 outputs/aristotle_mirror_waves_v2/
 outputs/aristotle_mirror_waves_v3/

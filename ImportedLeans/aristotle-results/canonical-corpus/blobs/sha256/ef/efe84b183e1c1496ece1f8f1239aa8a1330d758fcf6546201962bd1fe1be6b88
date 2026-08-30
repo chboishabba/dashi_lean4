@@ -1,0 +1,42 @@
+source_repo=https://github.com/chboishabba/dashi_agda.git
+base_commit=1ec4c33badc0009b521eeb89b8b5cba41421351f
+merged_head=9b9a7e1b5fa11f406a3c1bf8bdafbe62602919bb
+integration_branch=integrate/toe-consolidation-20260827
+open_prs_merged=583,602,603,604,605,606,607,608,609,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625
+changed_files=760
+changed_agda_files=686
+
+merge_commits:
+9b9a7e1b5fa11f406a3c1bf8bdafbe62602919bb Merge remote-tracking branch 'origin/pr/583' into integrate/toe-consolidation-20260827
+68b7240e7535b68a282bd83fb0690f67a74aa9b6 Merge PR #625 into TOE consolidation branch
+a67adf360611046acf4f419786e8d3b21cfa0a6c Merge remote-tracking branch 'origin/pr/624' into integrate/toe-consolidation-20260827
+07992b70c9318f3275c05c1313d6d90fe63c0589 Merge remote-tracking branch 'origin/pr/623' into integrate/toe-consolidation-20260827
+f0ad4137107fea6af6e553f180f3863ee97cc309 Merge remote-tracking branch 'origin/pr/622' into integrate/toe-consolidation-20260827
+20868c8862614e6ad022b19ccf6b8f3f6e279350 Merge PR #621 into TOE consolidation branch
+24bbec0da988c3f99c04a4121975ca48b5a2ce4e Merge PR #620 into TOE consolidation branch
+09133cf8808f7529a5bbae41c707b84245e709ca Merge PR #619 into TOE consolidation branch
+506ac217364d209f764cbc8d3d6a67167d320860 Merge remote-tracking branch 'origin/pr/618' into integrate/toe-consolidation-20260827
+c0c6a2007827a22a1bf2cfe5ba9486f4e59f5973 Merge PR #617 into TOE consolidation branch
+73676f4d193ccb4f3a42d30e978a627b02d6f9b8 Merge remote-tracking branch 'origin/pr/616' into integrate/toe-consolidation-20260827
+22fb5c2959b547fcc8c5152cbf013522650ce713 Merge PR #615 into TOE consolidation branch
+f7ba210e1bd12915f5d5a19827e5233646d7e060 Merge remote-tracking branch 'origin/pr/614' into integrate/toe-consolidation-20260827
+1dc1fb5f81f76ee4e8a20464222061790c70c899 Merge remote-tracking branch 'origin/pr/613' into integrate/toe-consolidation-20260827
+bd63143cc66ccc445f1a6dd9a54b85aa88d8076d Merge remote-tracking branch 'origin/pr/612' into integrate/toe-consolidation-20260827
+0527c9b1a4d537c509874144ae9becf04e503c25 Merge remote-tracking branch 'origin/pr/611' into integrate/toe-consolidation-20260827
+76298764a9d2d85d467f7552c05251b9bf536afb Merge remote-tracking branch 'origin/pr/610' into integrate/toe-consolidation-20260827
+c53825975d62fd608c383ce24667bc95b39c5674 Merge PR #609 into TOE consolidation branch
+7e55494d3d78e9d260066e196b08a1fd74cfd5b6 Merge remote-tracking branch 'origin/pr/608' into integrate/toe-consolidation-20260827
+7fc32d09fe948e1ce34f501e1978af4e4966eb9a Merge PR #607 into TOE consolidation branch
+5fd74b32d5286e001b8d905c9f68cad3ba29b25d Merge PR #606 into TOE consolidation branch
+2696dd241320724a303b55b19b5693669c3cbcac Merge remote-tracking branch 'origin/pr/605' into integrate/toe-consolidation-20260827
+d2aa9e7502480a0cd203a2645a30ac8f09d25136 Merge remote-tracking branch 'origin/pr/604' into integrate/toe-consolidation-20260827
+6b4e2afa4df9010b63b0b3a909d0dc7aa36d21b1 Merge remote-tracking branch 'origin/pr/603' into integrate/toe-consolidation-20260827
+c89d84cad918f59f7aa5c22d1ca8a71d080274ea Merge branch origin/agent/repo-typecheck-coverage-round11
+82ac0db01037c1f74d51ef18965356c1a2da9f9a Merge origin/master
+c0744d93104cf4715321cafbff21c7d1030fc2cb Merge branch origin/agent/promotion-codec-ownership-round9
+5084ddfd7433fe3852c9e7993001150fc5683ee4 Integrate NS Waleffe phase closure falsification tranche
+6087f861d35e7a1cfece64ba679f11f2a350c358 Merge branch origin/agent/biology-floating-owners-round8
+eaae1dff5ba208f92cbf827fe59a4f2efa44c0f0 Merge branch origin/agent/ownership-high-payoff-round7
+57be53a4df183eb96163555e60eb387632c0997e Merge branch origin/agent/live-closure-invariant-round6
+fe9e83b722bda77647c509f13cec98f3b8cafc77 Merge branch origin/agent/geometry-hierarchy-round5
+755acf25dca8c6673687c47a908b638f19be31d5 Merge branch origin/agent/quantum-fast-exhaustive-round4

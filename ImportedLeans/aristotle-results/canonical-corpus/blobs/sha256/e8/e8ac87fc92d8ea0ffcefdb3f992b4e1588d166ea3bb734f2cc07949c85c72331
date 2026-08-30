@@ -1,0 +1,262 @@
+module DASHI.Physics.YangMills.YMRowCSpatialInfluenceShellBudgetExact where
+
+------------------------------------------------------------------------
+-- ROW C, SPATIAL HALF:  A GEOMETRIC INFLUENCE KERNEL BEATS THE FOUR-DIMENSIONAL
+--   SHELL GROWTH, AND BY EXACTLY HOW MUCH.
+--
+-- Row C's second requirement (docs/ym/YangMillsClayFourFrozenResearchLemmas.md)
+-- is spatial: on the same effective density,
+--
+--     |Cov(F_x, G_y)|  <=  C_{F,G} e^{-m d(x,y)} ,   m > 0 uniform in N .
+--
+-- On a lattice, `e^{-m d}` IS a geometric bound `r^d` with `r = e^{-m}`, so the
+-- statement row B is expected to supply -- a spatial influence kernel
+-- `I_n <= C_inf r^n` on the distance-n shell -- has the right SHAPE.  What is
+-- not automatic is that the influence SUMS: in d = 4 the number of sites at
+-- distance n grows like n^3, and every consumer of clustering (Dobrushin-type
+-- summable influence, finite-speed/Poincare transport, the OS gap) needs the
+-- shell-weighted total
+--
+--     sum_n  #{y : d(x,y) = n} * I_n
+--
+-- to be finite UNIFORMLY IN THE VOLUME, not merely each term to decay.
+--
+-- This module proves the exact-rational gate for that, in the same
+-- division-free budget form as the temporal half
+-- (`YMRowCScaleTimeHessianDebtIntegralGateExact`).  With the four-dimensional
+-- shell majorant `(n+1)^3`:
+--
+--   * `shellWeightDoubling` — `(n+2)^3 <= 8 (n+1)^3`: the polynomial weight can
+--     at most octuple from one shell to the next.  This is the only property of
+--     the shell count that is used, and it is proved, not assumed.
+--   * `majorantContracts` — hence the weighted majorant `C (n+1)^3 r^n`
+--     contracts by `8r` per shell.
+--   * `weightedInfluenceShellBudget` — if `8r <= 1` then every partial sum of
+--     the shell-weighted influence, at every starting shell and for every
+--     number of shells, is bounded by any `B` closing `C + (8r) B <= B`.  So
+--     the summable-influence hypothesis holds uniformly in the volume.
+--   * `dyadicSixteenthShellBudget` — the explicit instance: `r = 1/16` gives
+--     `8r = 1/2`, and with `C = 1` the budget closes at `B = 2`.
+--
+-- THE GATE IS `r < 1/8` IN FOUR DIMENSIONS.  A geometric influence rate alone
+-- is not enough for row C's spatial half; it has to beat the shell growth.  In
+-- exponential form the requirement is `m > log 8`, i.e. the correlation length
+-- must be shorter than `1/log 8` lattice units at the scale where the kernel is
+-- measured -- which is exactly the small-field/large-mass regime the Balaban
+-- expansion produces, and is the quantitative statement row B has to deliver.
+--
+-- WHAT THIS IS NOT.  This does not close row C.  The open obligations are
+-- unchanged: the physical influence kernel of the literal effective density,
+-- with a rate uniform in cutoff and volume, and the identification of that
+-- density with the one carrying the temporal debt.  The frozen research count
+-- stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat as Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ using (ℚ; 0ℚ; 1ℚ; _+_; _*_; _≤_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact
+  using ( natToℚ; natToℚ-nonneg; 1≤natToℚ-suc; nonNegProduct; 0≤1ℚ
+        ; prefixSum; prefixSum-mono; prefixSum-budget
+        ; ContractingShellFamily; pow; pow-nonneg)
+
+------------------------------------------------------------------------
+-- The four-dimensional shell majorant  (n+1)^3
+------------------------------------------------------------------------
+
+cube : ℚ → ℚ
+cube x = x * (x * x)
+
+cube-nonneg : ∀ x → 0ℚ ≤ x → 0ℚ ≤ cube x
+cube-nonneg x 0≤x = nonNegProduct x (x * x) 0≤x (nonNegProduct x x 0≤x 0≤x)
+
+cube-mono : ∀ x y → 0ℚ ≤ x → x ≤ y → cube x ≤ cube y
+cube-mono x y 0≤x x≤y =
+  ℚP.≤-trans
+    (ℚP.*-monoˡ-≤-nonNeg x {{ℚ.nonNegative 0≤x}}
+      (ℚP.≤-trans
+        (ℚP.*-monoˡ-≤-nonNeg x {{ℚ.nonNegative 0≤x}} x≤y)
+        (ℚP.*-monoʳ-≤-nonNeg y {{ℚ.nonNegative 0≤y}} x≤y)))
+    (ℚP.*-monoʳ-≤-nonNeg (y * y) {{ℚ.nonNegative (nonNegProduct y y 0≤y 0≤y)}} x≤y)
+  where
+    0≤y : 0ℚ ≤ y
+    0≤y = ℚP.≤-trans 0≤x x≤y
+
+shellWeight : Nat → ℚ
+shellWeight n = cube (natToℚ (suc n))
+
+shellWeight-nonneg : ∀ n → 0ℚ ≤ shellWeight n
+shellWeight-nonneg n = cube-nonneg (natToℚ (suc n)) (natToℚ-nonneg (suc n))
+
+two : ℚ
+two = + 2 / 1
+
+-- The successor shell radius is at most twice the current one, ...
+radiusDoubling : ∀ n → natToℚ (suc (suc n)) ≤ two * natToℚ (suc n)
+radiusDoubling n =
+  ℚP.≤-trans
+    (ℚP.≤-reflexive refl)
+    (subst (λ z → 1ℚ + natToℚ (suc n) ≤ z) expand
+      (ℚP.+-monoˡ-≤ (natToℚ (suc n)) (1≤natToℚ-suc n)))
+  where
+    expand : natToℚ (suc n) + natToℚ (suc n) ≡ two * natToℚ (suc n)
+    expand =
+      trans (cong (λ z → z + natToℚ (suc n)) (sym (ℚP.*-identityˡ (natToℚ (suc n)))))
+      (trans (cong (λ z → 1ℚ * natToℚ (suc n) + z)
+                (sym (ℚP.*-identityˡ (natToℚ (suc n)))))
+      (trans (sym (ℚP.*-distribʳ-+ (natToℚ (suc n)) 1ℚ 1ℚ)) refl))
+
+-- ... hence the four-dimensional shell weight at most octuples.
+shellWeightDoubling : ∀ n → shellWeight (suc n) ≤ (+ 8 / 1) * shellWeight n
+shellWeightDoubling n =
+  ℚP.≤-trans
+    (cube-mono (natToℚ (suc (suc n))) (two * natToℚ (suc n))
+      (natToℚ-nonneg (suc (suc n))) (radiusDoubling n))
+    (ℚP.≤-reflexive (cubeOfDouble (natToℚ (suc n))))
+  where
+    cubeOfDouble : ∀ x → cube (two * x) ≡ (+ 8 / 1) * cube x
+    cubeOfDouble x =
+      trans (cong (λ z → (two * x) * z) (mulSwap x))
+      (trans (sym (ℚP.*-assoc (two * x) (two * two) (x * x)))
+      (trans (cong (_* (x * x))
+                (trans (ℚP.*-assoc two x (two * two))
+                (trans (cong (two *_) (ℚP.*-comm x (two * two)))
+                       (sym (ℚP.*-assoc two (two * two) x)))))
+             (ℚP.*-assoc ((two * (two * two))) x (x * x))))
+      where
+        mulSwap : ∀ y → (two * y) * (two * y) ≡ (two * two) * (y * y)
+        mulSwap y =
+          trans (ℚP.*-assoc two y (two * y))
+          (trans (cong (two *_) (sym (ℚP.*-assoc y two y)))
+          (trans (cong (λ z → two * (z * y)) (ℚP.*-comm y two))
+          (trans (cong (two *_) (ℚP.*-assoc two y y))
+                 (sym (ℚP.*-assoc two two (y * y))))))
+
+------------------------------------------------------------------------
+-- The weighted geometric majorant is a contracting shell family with
+-- ratio 8r.
+------------------------------------------------------------------------
+
+module Majorant (C r : ℚ) (0≤C : 0ℚ ≤ C) (0≤r : 0ℚ ≤ r) (gate : (+ 8 / 1) * r ≤ 1ℚ)
+  where
+
+  majorant : Nat → ℚ
+  majorant n = C * (shellWeight n * pow r n)
+
+  majorant-nonneg : ∀ n → 0ℚ ≤ majorant n
+  majorant-nonneg n =
+    nonNegProduct C (shellWeight n * pow r n) 0≤C
+      (nonNegProduct (shellWeight n) (pow r n)
+        (shellWeight-nonneg n) (pow-nonneg r 0≤r n))
+
+  majorantContracts : ∀ n → majorant (suc n) ≤ ((+ 8 / 1) * r) * majorant n
+  majorantContracts n =
+    ℚP.≤-trans
+      (ℚP.*-monoˡ-≤-nonNeg C {{ℚ.nonNegative 0≤C}}
+        (ℚP.*-monoʳ-≤-nonNeg (pow r (suc n))
+          {{ℚ.nonNegative (pow-nonneg r 0≤r (suc n))}}
+          (shellWeightDoubling n)))
+      (ℚP.≤-reflexive regroup)
+    where
+      regroup :
+        C * (((+ 8 / 1) * shellWeight n) * pow r (suc n))
+          ≡ ((+ 8 / 1) * r) * (C * (shellWeight n * pow r n))
+      regroup =
+        trans (cong (C *_)
+                (trans (ℚP.*-assoc (+ 8 / 1) (shellWeight n) (r * pow r n))
+                (trans (cong ((+ 8 / 1) *_)
+                          (trans (sym (ℚP.*-assoc (shellWeight n) r (pow r n)))
+                          (trans (cong (_* pow r n) (ℚP.*-comm (shellWeight n) r))
+                                 (ℚP.*-assoc r (shellWeight n) (pow r n)))))
+                       (sym (ℚP.*-assoc (+ 8 / 1) r (shellWeight n * pow r n))))))
+        (trans (sym (ℚP.*-assoc C ((+ 8 / 1) * r) (shellWeight n * pow r n)))
+        (trans (cong (_* (shellWeight n * pow r n))
+                 (ℚP.*-comm C ((+ 8 / 1) * r)))
+               (ℚP.*-assoc ((+ 8 / 1) * r) C (shellWeight n * pow r n))))
+
+  -- With the gate `8r <= 1` the weighted majorant never exceeds its head.
+  majorantBelowHead : ∀ n → majorant n ≤ C
+  majorantBelowHead zero =
+    ℚP.≤-reflexive
+      (trans (cong (C *_)
+                (trans (cong (_* 1ℚ) headWeight) (ℚP.*-identityʳ 1ℚ)))
+             (ℚP.*-identityʳ C))
+    where
+      headWeight : shellWeight 0 ≡ 1ℚ
+      headWeight = refl
+  majorantBelowHead (suc n) =
+    ℚP.≤-trans (majorantContracts n)
+      (ℚP.≤-trans
+        (ℚP.*-monoʳ-≤-nonNeg (majorant n)
+          {{ℚ.nonNegative (majorant-nonneg n)}} gate)
+        (ℚP.≤-trans
+          (ℚP.≤-reflexive (ℚP.*-identityˡ (majorant n)))
+          (majorantBelowHead n)))
+
+  shellFamily : ∀ (B : ℚ) → 0ℚ ≤ B → C + ((+ 8 / 1) * r) * B ≤ B →
+    ContractingShellFamily
+  shellFamily B 0≤B closes = record
+    { shell          = majorant
+    ; ratio          = (+ 8 / 1) * r
+    ; headBound      = C
+    ; budget         = B
+    ; shellNonneg    = majorant-nonneg
+    ; ratioNonneg    = nonNegProduct (+ 8 / 1) r
+                         (toWitness {a? = 0ℚ ℚP.≤? (+ 8 / 1)} _) 0≤r
+    ; shellBelowHead = majorantBelowHead
+    ; shellContracts = majorantContracts
+    ; budgetNonneg   = 0≤B
+    ; budgetCloses   = closes
+    }
+
+------------------------------------------------------------------------
+-- THE SPATIAL BUDGET
+------------------------------------------------------------------------
+
+weightedInfluenceShellBudget :
+  ∀ (I : Nat → ℚ) (C r B : ℚ) →
+  0ℚ ≤ C → 0ℚ ≤ r → (+ 8 / 1) * r ≤ 1ℚ → 0ℚ ≤ B →
+  C + ((+ 8 / 1) * r) * B ≤ B →
+  (∀ n → 0ℚ ≤ I n) → (∀ n → I n ≤ C * pow r n) →
+  ∀ k n → prefixSum (λ m → shellWeight m * I m) k n ≤ B
+weightedInfluenceShellBudget I C r B 0≤C 0≤r gate 0≤B closes 0≤I Ibound k n =
+  ℚP.≤-trans
+    (prefixSum-mono (λ m → shellWeight m * I m)
+      (Majorant.majorant C r 0≤C 0≤r gate) dominated k n)
+    (prefixSum-budget (Majorant.shellFamily C r 0≤C 0≤r gate B 0≤B closes) k n)
+  where
+    dominated : ∀ m → shellWeight m * I m ≤ Majorant.majorant C r 0≤C 0≤r gate m
+    dominated m =
+      ℚP.≤-trans
+        (ℚP.*-monoˡ-≤-nonNeg (shellWeight m)
+          {{ℚ.nonNegative (shellWeight-nonneg m)}} (Ibound m))
+        (ℚP.≤-reflexive
+          (trans (sym (ℚP.*-assoc (shellWeight m) C (pow r m)))
+          (trans (cong (_* pow r m) (ℚP.*-comm (shellWeight m) C))
+                 (ℚP.*-assoc C (shellWeight m) (pow r m)))))
+
+------------------------------------------------------------------------
+-- The explicit instance:  r = 1/16  gives  8r = 1/2  and, with C = 1, B = 2.
+------------------------------------------------------------------------
+
+dyadicSixteenthShellBudget :
+  ∀ (I : Nat → ℚ) →
+  (∀ n → 0ℚ ≤ I n) → (∀ n → I n ≤ 1ℚ * pow (+ 1 / 16) n) →
+  ∀ k n → prefixSum (λ m → shellWeight m * I m) k n ≤ + 2 / 1
+dyadicSixteenthShellBudget I 0≤I Ibound =
+  weightedInfluenceShellBudget I 1ℚ (+ 1 / 16) (+ 2 / 1)
+    0≤1ℚ
+    (toWitness {a? = 0ℚ ℚP.≤? (+ 1 / 16)} _)
+    (toWitness {a? = ((+ 8 / 1) * (+ 1 / 16)) ℚP.≤? 1ℚ} _)
+    (toWitness {a? = 0ℚ ℚP.≤? (+ 2 / 1)} _)
+    (toWitness
+      {a? = (1ℚ + ((+ 8 / 1) * (+ 1 / 16)) * (+ 2 / 1)) ℚP.≤? (+ 2 / 1)} _)
+    0≤I Ibound

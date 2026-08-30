@@ -1,0 +1,490 @@
+module DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopAbsoluteBoundCalculusExact where
+
+------------------------------------------------------------------------
+-- ROW A1a:  AN EXACT RATIONAL SEMANTICS FOR THE LITERAL ONE-LOOP DIAGRAM
+--   SYNTAX, AND A *PROVED* ABSOLUTE-VALUE BOUND CALCULUS ON IT.
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Balaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  Beta extraction (5.36)--(5.42).
+--
+-- WHAT THIS MODULE ADDS.
+--
+-- `BalabanClayT4LiteralOneLoopBoxEvaluatorExact` owns the literal diagram
+-- syntax `DiagramExpression` (Wilson, Faddeev-Popov and Haar channels built
+-- from lattice trigonometric atoms) and an interval evaluator whose soundness
+-- fields are `Set`-valued placeholders: nothing in the repository actually
+-- *proves* that an enclosure produced for an expression encloses the value of
+-- that expression.
+--
+-- This module supplies the missing mathematics for the absolute-value part,
+-- which is exactly the part the four-orbit gate consumes:
+--
+--   1. `Evaluates val e x` -- the exact rational semantics of the literal
+--      syntax.  Division is total-by-witness: `divide n d` evaluates to `z`
+--      only in the presence of a proof that the denominator value is nonzero
+--      and that the numerator value factors as `z * (denominator value)`.
+--      So no evaluation of a literal expression can silently divide by zero.
+--
+--   2. `UpperOK e u` / `LowerOK e l` -- a derivation calculus for bounds on
+--      `∣ value ∣`, with a rule for every syntactic form.  The division rule
+--      is the honest one: an upper bound for a quotient needs a *strictly
+--      positive lower* bound for the denominator.
+--
+--   3. `soundUpper` / `soundLower` -- the theorems.  Every derivation of the
+--      calculus is valid for every valuation that respects the atom bounds.
+--      These are ordinary machine-checked proofs by structural induction, not
+--      record fields.
+--
+--   4. `soundNegativePart` and `weightedNegativePartFromBounds` -- the
+--      consumer form.  A bound derivation for the four literal orbit
+--      representative densities yields, pointwise and with no intervalization,
+--
+--          - (4 u1 + 6 u2 + 4 u3 + u4)  <=  4 d1(p) + 6 d2(p) + 4 d3(p) + d4(p),
+--
+--      which is *literally* the `combinedLower` hypothesis of
+--      `BalabanYM4CancellationPreservingFourOrbitGateExact.LinearCellIntegral`.
+--      Same object: the `ε` fed to the gate is the weighted sum of the bounds
+--      derived from the expressions themselves.
+--
+--   5. The SU(2) arithmetic: if the derived weighted bound is at most 44/3
+--      then the shell radius `(1/16) * ε` is within the 11/12 budget.
+--
+-- WHAT IS STILL OPEN.  The literal Wilson + Faddeev-Popov + Haar expressions
+-- themselves are still not inhabited anywhere in the repository, and this
+-- module does not inhabit them: it is the estimation machinery they will be
+-- fed to, with its soundness proved rather than asserted.  Row A1a therefore
+-- remains open; what changed is that the remaining obligation is now exactly
+-- "write the expressions and derive bounds for their atoms", with every step
+-- after that machine-checked here.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _-_; _*_; -_; ∣_∣; _≤_; _<_; _/_; 1/_; mkℚ;
+         NonZero; ≢-nonZero; Positive; NonNegative; positive; nonNegative)
+import Data.Rational.Properties as ℚP
+open import Data.Integer.Base using (+_; +0; +[1+_]; -[1+_])
+open import Data.Sum using (inj₁; inj₂)
+open import Relation.Binary.PropositionalEquality
+  using (_≡_; refl; sym; trans; subst; cong; cong₂)
+open import Relation.Nullary using (¬_)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.BalabanClayT4LiteralOneLoopBoxEvaluatorExact
+  using (TrigAtom; DiagramExpression;
+         rationalConstant; atom; add; subtract; multiply; divide; negate)
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonGhostHaarWeightedFourOrbitExact
+  as Joint
+import DASHI.Physics.YangMills.BalabanYM4CancellationPreservingFourOrbitGateExact
+  as Gate
+
+------------------------------------------------------------------------
+-- 0.  Two elementary rational facts absent from the vendored library
+------------------------------------------------------------------------
+
+negNegId : ∀ p → - (- p) ≡ p
+negNegId (mkℚ +[1+ n ] d _) = refl
+negNegId (mkℚ +0 d _) = refl
+negNegId (mkℚ -[1+ n ] d _) = refl
+
+-- The negative part of a number is controlled by its absolute value.
+negAbsLe : ∀ p → (- ∣ p ∣) ≤ p
+negAbsLe p with ℚP.∣p∣≡p∨∣p∣≡-p p
+... | inj₁ e =
+  ℚP.≤-trans (ℚP.neg-antimono-≤ (ℚP.0≤∣p∣ p)) (ℚP.∣p∣≡p⇒0≤p e)
+... | inj₂ e =
+  subst (_≤ p) (sym (trans (cong -_ e) (negNegId p))) ℚP.≤-refl
+
+-- Squares do not see the sign.
+absSquare : ∀ x → ∣ x ∣ * ∣ x ∣ ≡ x * x
+absSquare x with ℚP.∣p∣≡p∨∣p∣≡-p x
+... | inj₁ e = cong₂ _*_ e e
+... | inj₂ e =
+  trans (cong₂ _*_ e e)
+    (trans (sym (ℚP.neg-distribˡ-* x (- x)))
+      (trans (cong -_ (sym (ℚP.neg-distribʳ-* x x))) (negNegId (x * x))))
+
+-- Cancellation of a nonzero factor.
+mulCancelRight :
+  ∀ {z z' y : ℚ} → ¬ (y ≡ 0ℚ) → z * y ≡ z' * y → z ≡ z'
+mulCancelRight {z} {z'} {y} y≢0 eq =
+  trans (sym (ℚP.*-identityʳ z))
+    (trans (cong (λ w → z * w) (sym inverse))
+      (trans (sym (ℚP.*-assoc z y reciprocal))
+        (trans (cong (λ w → w * reciprocal) eq)
+          (trans (ℚP.*-assoc z' y reciprocal)
+            (trans (cong (λ w → z' * w) inverse) (ℚP.*-identityʳ z'))))))
+  where
+    instance
+      nonZeroY : ℚ.NonZero y
+      nonZeroY = ℚ.≢-nonZero y≢0
+
+    reciprocal : ℚ
+    reciprocal = ℚ.1/ y
+
+    inverse : y * reciprocal ≡ 1ℚ
+    inverse = ℚP.*-inverseʳ y
+
+------------------------------------------------------------------------
+-- 1.  EXACT RATIONAL SEMANTICS OF THE LITERAL DIAGRAM SYNTAX
+--
+-- `Evaluates val e x` says: under the atom valuation `val`, the literal
+-- expression `e` has the exact rational value `x`.  The `evalDivide` rule
+-- carries its own nonvanishing witness and states the quotient by its
+-- defining equation, so the semantics never needs a partial operation.
+------------------------------------------------------------------------
+
+data Evaluates (val : TrigAtom → ℚ) : DiagramExpression → ℚ → Set where
+  evalConstant : (q : ℚ) → Evaluates val (rationalConstant q) q
+  evalAtom : (a : TrigAtom) → Evaluates val (atom a) (val a)
+  evalAdd : ∀ {l r x y} → Evaluates val l x → Evaluates val r y →
+            Evaluates val (add l r) (x + y)
+  evalSubtract : ∀ {l r x y} → Evaluates val l x → Evaluates val r y →
+            Evaluates val (subtract l r) (x - y)
+  evalMultiply : ∀ {l r x y} → Evaluates val l x → Evaluates val r y →
+            Evaluates val (multiply l r) (x * y)
+  evalNegate : ∀ {e x} → Evaluates val e x → Evaluates val (negate e) (- x)
+  evalDivide : ∀ {n d x y z} → Evaluates val n x → Evaluates val d y →
+            ¬ (y ≡ 0ℚ) → x ≡ z * y → Evaluates val (divide n d) z
+
+------------------------------------------------------------------------
+-- 2.  THE ABSOLUTE BOUND CALCULUS
+--
+-- Derivations are relative to a pair of atom bound tables: `upperAtom a` is
+-- claimed to dominate `∣ val a ∣`, and `lowerAtom a` to be dominated by it.
+-- On the regular (non-infrared) region of the Brillouin cube the second table
+-- is what makes propagator denominators safe.
+------------------------------------------------------------------------
+
+module BoundCalculus
+  (upperAtom lowerAtom signedLowerAtom : TrigAtom → ℚ) where
+
+  data LowerOK : DiagramExpression → ℚ → Set
+  data SignedLowerOK : DiagramExpression → ℚ → Set
+  data UpperOK : DiagramExpression → ℚ → Set
+
+  -- Lower bounds on the modulus.  A sum of two moduli has no useful modulus
+  -- lower bound, so sums enter only through the signed judgement below.
+  data LowerOK where
+    lowerConstant : (q : ℚ) → LowerOK (rationalConstant q) ∣ q ∣
+    lowerAtomRule : (a : TrigAtom) → LowerOK (atom a) (lowerAtom a)
+    lowerMultiply : ∀ {l r x y} → LowerOK l x → LowerOK r y →
+                    0ℚ ≤ x → 0ℚ ≤ y → LowerOK (multiply l r) (x * y)
+    lowerWeaken : ∀ {e l l'} → LowerOK e l → l' ≤ l → LowerOK e l'
+    -- A nonnegative signed lower bound is a modulus lower bound.  This is the
+    -- rule that makes a lattice inverse propagator -- a sum of squares -- an
+    -- admissible denominator.
+    lowerFromSigned : ∀ {e l} → SignedLowerOK e l → 0ℚ ≤ l → LowerOK e l
+
+  -- Signed lower bounds:  `SignedLowerOK e l` claims `l ≤ value of e`.
+  data SignedLowerOK where
+    signedConstant : (q : ℚ) → SignedLowerOK (rationalConstant q) q
+    signedAtomRule : (a : TrigAtom) → SignedLowerOK (atom a) (signedLowerAtom a)
+    signedAdd : ∀ {l r a b} → SignedLowerOK l a → SignedLowerOK r b →
+                SignedLowerOK (add l r) (a + b)
+    signedMultiply : ∀ {l r a b} → SignedLowerOK l a → SignedLowerOK r b →
+                0ℚ ≤ a → 0ℚ ≤ b → SignedLowerOK (multiply l r) (a * b)
+    -- A square is bounded below by the square of any modulus lower bound,
+    -- whatever the sign of the factor.
+    signedSquare : ∀ {e l} → LowerOK e l → 0ℚ ≤ l →
+                SignedLowerOK (multiply e e) (l * l)
+    signedWeaken : ∀ {e l l'} → SignedLowerOK e l → l' ≤ l → SignedLowerOK e l'
+
+  -- Upper bounds on the modulus, one rule per syntactic form.
+  data UpperOK where
+    upperConstant : (q : ℚ) → UpperOK (rationalConstant q) ∣ q ∣
+    upperAtomRule : (a : TrigAtom) → UpperOK (atom a) (upperAtom a)
+    upperAdd : ∀ {l r u v} → UpperOK l u → UpperOK r v →
+               UpperOK (add l r) (u + v)
+    upperSubtract : ∀ {l r u v} → UpperOK l u → UpperOK r v →
+               UpperOK (subtract l r) (u + v)
+    upperMultiply : ∀ {l r u v} → UpperOK l u → UpperOK r v →
+               UpperOK (multiply l r) (u * v)
+    upperNegate : ∀ {e u} → UpperOK e u → UpperOK (negate e) u
+    -- A quotient bound needs a strictly positive lower bound on the
+    -- denominator; `un ≤ u * ld` is the division-free way of writing
+    -- `u = un / ld` (or anything larger).
+    upperDivide : ∀ {n d un ld u} → UpperOK n un → LowerOK d ld →
+               0ℚ < ld → un ≤ u * ld → UpperOK (divide n d) u
+    upperWeaken : ∀ {e u u'} → UpperOK e u → u ≤ u' → UpperOK e u'
+
+------------------------------------------------------------------------
+-- 3.  SOUNDNESS OF THE CALCULUS
+------------------------------------------------------------------------
+
+module Soundness
+  (upperAtom lowerAtom signedLowerAtom : TrigAtom → ℚ)
+  (val : TrigAtom → ℚ)
+  (atomUpperSound : ∀ a → ∣ val a ∣ ≤ upperAtom a)
+  (atomLowerSound : ∀ a → lowerAtom a ≤ ∣ val a ∣)
+  (atomSignedLowerSound : ∀ a → signedLowerAtom a ≤ val a)
+  where
+
+  open BoundCalculus upperAtom lowerAtom signedLowerAtom public
+
+  -- The semantics is a function: an expression has at most one value.
+  evaluatesUnique : ∀ {e x y} → Evaluates val e x → Evaluates val e y → x ≡ y
+  evaluatesUnique (evalConstant q) (evalConstant .q) = refl
+  evaluatesUnique (evalAtom a) (evalAtom .a) = refl
+  evaluatesUnique (evalAdd el er) (evalAdd el' er') =
+    cong₂ _+_ (evaluatesUnique el el') (evaluatesUnique er er')
+  evaluatesUnique (evalSubtract el er) (evalSubtract el' er') =
+    cong₂ _-_ (evaluatesUnique el el') (evaluatesUnique er er')
+  evaluatesUnique (evalMultiply el er) (evalMultiply el' er') =
+    cong₂ _*_ (evaluatesUnique el el') (evaluatesUnique er er')
+  evaluatesUnique (evalNegate e) (evalNegate e') =
+    cong -_ (evaluatesUnique e e')
+  evaluatesUnique {y = z'} (evalDivide {x = x} {y = y} {z = z} en ed y≢0 eq)
+                  (evalDivide {x = x'} {y = y'} en' ed' y'≢0 eq') =
+    mulCancelRight y≢0
+      (trans (sym eq)
+        (trans (evaluatesUnique en en')
+          (trans eq' (cong (λ w → z' * w) (sym (evaluatesUnique ed ed'))))))
+
+  soundLower : ∀ {e l x} → Evaluates val e x → LowerOK e l → l ≤ ∣ x ∣
+  soundSigned : ∀ {e l x} → Evaluates val e x → SignedLowerOK e l → l ≤ x
+  soundUpper : ∀ {e u x} → Evaluates val e x → UpperOK e u → ∣ x ∣ ≤ u
+
+  soundLower ev (lowerWeaken b le) = ℚP.≤-trans le (soundLower ev b)
+  soundLower (evalConstant q) (lowerConstant .q) = ℚP.≤-refl
+  soundLower (evalAtom a) (lowerAtomRule .a) = atomLowerSound a
+  soundLower (evalMultiply {x = x} {y = y} el er)
+             (lowerMultiply {x = lx} {y = ly} bl br 0≤lx 0≤ly) =
+    let hx : lx ≤ ∣ x ∣
+        hx = soundLower el bl
+        hy : ly ≤ ∣ y ∣
+        hy = soundLower er br
+        step1 : lx * ly ≤ ∣ x ∣ * ly
+        step1 = ℚP.*-monoʳ-≤-nonNeg ly {{nonNegative 0≤ly}} hx
+        step2 : ∣ x ∣ * ly ≤ ∣ x ∣ * ∣ y ∣
+        step2 = ℚP.*-monoˡ-≤-nonNeg ∣ x ∣ {{ℚP.∣-∣-nonNeg x}} hy
+    in subst (lx * ly ≤_) (sym (ℚP.∣p*q∣≡∣p∣*∣q∣ x y))
+         (ℚP.≤-trans step1 step2)
+  soundLower {l = l} {x = x} ev (lowerFromSigned s 0≤l) =
+    let l≤x : l ≤ x
+        l≤x = soundSigned ev s
+    in subst (l ≤_) (sym (ℚP.0≤p⇒∣p∣≡p (ℚP.≤-trans 0≤l l≤x))) l≤x
+
+  soundSigned ev (signedWeaken b le) = ℚP.≤-trans le (soundSigned ev b)
+  soundSigned (evalConstant q) (signedConstant .q) = ℚP.≤-refl
+  soundSigned (evalAtom a) (signedAtomRule .a) = atomSignedLowerSound a
+  soundSigned (evalAdd el er) (signedAdd bl br) =
+    ℚP.+-mono-≤ (soundSigned el bl) (soundSigned er br)
+  soundSigned (evalMultiply {x = x} {y = y} el er)
+              (signedMultiply {a = a} {b = b} bl br 0≤a 0≤b) =
+    let hx : a ≤ x
+        hx = soundSigned el bl
+        hy : b ≤ y
+        hy = soundSigned er br
+        0≤x : 0ℚ ≤ x
+        0≤x = ℚP.≤-trans 0≤a hx
+        step1 : a * b ≤ x * b
+        step1 = ℚP.*-monoʳ-≤-nonNeg b {{nonNegative 0≤b}} hx
+        step2 : x * b ≤ x * y
+        step2 = ℚP.*-monoˡ-≤-nonNeg x {{nonNegative 0≤x}} hy
+    in ℚP.≤-trans step1 step2
+  soundSigned (evalMultiply {x = x} {y = y} el er)
+              (signedSquare {l = l} b 0≤l) =
+    let hx : l ≤ ∣ x ∣
+        hx = soundLower el b
+        step1 : l * l ≤ ∣ x ∣ * l
+        step1 = ℚP.*-monoʳ-≤-nonNeg l {{nonNegative 0≤l}} hx
+        step2 : ∣ x ∣ * l ≤ ∣ x ∣ * ∣ x ∣
+        step2 = ℚP.*-monoˡ-≤-nonNeg ∣ x ∣ {{ℚP.∣-∣-nonNeg x}} hx
+        sameValue : x ≡ y
+        sameValue = evaluatesUnique el er
+    in subst (λ w → l * l ≤ x * w) sameValue
+         (subst (l * l ≤_) (absSquare x) (ℚP.≤-trans step1 step2))
+
+  soundUpper ev (upperWeaken b le) = ℚP.≤-trans (soundUpper ev b) le
+  soundUpper (evalConstant q) (upperConstant .q) = ℚP.≤-refl
+  soundUpper (evalAtom a) (upperAtomRule .a) = atomUpperSound a
+  soundUpper (evalAdd {x = x} {y = y} el er) (upperAdd bl br) =
+    ℚP.≤-trans (ℚP.∣p+q∣≤∣p∣+∣q∣ x y)
+      (ℚP.+-mono-≤ (soundUpper el bl) (soundUpper er br))
+  soundUpper (evalSubtract {x = x} {y = y} el er) (upperSubtract bl br) =
+    ℚP.≤-trans (ℚP.∣p-q∣≤∣p∣+∣q∣ x y)
+      (ℚP.+-mono-≤ (soundUpper el bl) (soundUpper er br))
+  soundUpper (evalMultiply {x = x} {y = y} el er)
+             (upperMultiply {u = u} {v = v} bl br) =
+    let hx : ∣ x ∣ ≤ u
+        hx = soundUpper el bl
+        hy : ∣ y ∣ ≤ v
+        hy = soundUpper er br
+        0≤u : 0ℚ ≤ u
+        0≤u = ℚP.≤-trans (ℚP.0≤∣p∣ x) hx
+        step1 : ∣ x ∣ * ∣ y ∣ ≤ u * ∣ y ∣
+        step1 = ℚP.*-monoʳ-≤-nonNeg ∣ y ∣ {{ℚP.∣-∣-nonNeg y}} hx
+        step2 : u * ∣ y ∣ ≤ u * v
+        step2 = ℚP.*-monoˡ-≤-nonNeg u {{nonNegative 0≤u}} hy
+    in subst (_≤ u * v) (sym (ℚP.∣p*q∣≡∣p∣*∣q∣ x y))
+         (ℚP.≤-trans step1 step2)
+  soundUpper (evalNegate {x = x} e) (upperNegate {u = u} b) =
+    subst (_≤ u) (sym (ℚP.∣-p∣≡∣p∣ x)) (soundUpper e b)
+  soundUpper (evalDivide {x = x} {y = y} {z = z} en ed y≢0 eq)
+             (upperDivide {un = un} {ld = ld} {u = u} bn bd 0<ld un≤u*ld) =
+    let hn : ∣ x ∣ ≤ un
+        hn = soundUpper en bn
+        hd : ld ≤ ∣ y ∣
+        hd = soundLower ed bd
+        s0 : ∣ z ∣ * ld ≤ ∣ z ∣ * ∣ y ∣
+        s0 = ℚP.*-monoˡ-≤-nonNeg ∣ z ∣ {{ℚP.∣-∣-nonNeg z}} hd
+        s1 : ∣ z * y ∣ ≤ un
+        s1 = subst (λ w → ∣ w ∣ ≤ un) eq hn
+        s2 : ∣ z ∣ * ∣ y ∣ ≤ un
+        s2 = subst (_≤ un) (ℚP.∣p*q∣≡∣p∣*∣q∣ z y) s1
+        s3 : ∣ z ∣ * ld ≤ u * ld
+        s3 = ℚP.≤-trans (ℚP.≤-trans s0 s2) un≤u*ld
+    in ℚP.*-cancelʳ-≤-pos ld {{positive 0<ld}} s3
+
+  -- The form the gate consumes: a derived modulus bound is in particular a
+  -- bound on the negative part of the value.
+  soundNegativePart : ∀ {e u x} → Evaluates val e x → UpperOK e u → (- u) ≤ x
+  soundNegativePart {x = x} ev b =
+    ℚP.≤-trans (ℚP.neg-antimono-≤ (soundUpper ev b)) (negAbsLe x)
+
+------------------------------------------------------------------------
+-- 4.  THE (4,6,4,1) WEIGHTED CONSUMER
+------------------------------------------------------------------------
+
+-- The weighted form commutes with negation, so a bound on the four
+-- representative moduli is a bound on the negative part of the combination.
+negWeightedFourOrbit :
+  ∀ (u₁ u₂ u₃ u₄ : ℚ) →
+  - Joint.weightedFourOrbit u₁ u₂ u₃ u₄
+  ≡ Joint.weightedFourOrbit (- u₁) (- u₂) (- u₃) (- u₄)
+negWeightedFourOrbit u₁ u₂ u₃ u₄ =
+  trans
+    (ℚP.neg-distrib-+
+      (Joint.weightOne * u₁ + Joint.weightTwo * u₂ + Joint.weightThree * u₃)
+      u₄)
+    (cong (λ z → z + (- u₄))
+      (trans
+        (ℚP.neg-distrib-+
+          (Joint.weightOne * u₁ + Joint.weightTwo * u₂)
+          (Joint.weightThree * u₃))
+        (cong₂ _+_
+          (trans
+            (ℚP.neg-distrib-+ (Joint.weightOne * u₁) (Joint.weightTwo * u₂))
+            (cong₂ _+_
+              (ℚP.neg-distribʳ-* Joint.weightOne u₁)
+              (ℚP.neg-distribʳ-* Joint.weightTwo u₂)))
+          (ℚP.neg-distribʳ-* Joint.weightThree u₃))))
+
+module WeightedConsumer
+  (Point : Set)
+  (valuationAt : Point → (TrigAtom → ℚ))
+  (upperAtom lowerAtom signedLowerAtom : TrigAtom → ℚ)
+  (atomUpperSound : ∀ p a → ∣ valuationAt p a ∣ ≤ upperAtom a)
+  (atomLowerSound : ∀ p a → lowerAtom a ≤ ∣ valuationAt p a ∣)
+  (atomSignedLowerSound : ∀ p a → signedLowerAtom a ≤ valuationAt p a)
+  where
+
+  open BoundCalculus upperAtom lowerAtom signedLowerAtom public
+
+  pointNegativePart :
+    ∀ {e u x} (p : Point) →
+    Evaluates (valuationAt p) e x → UpperOK e u → (- u) ≤ x
+  pointNegativePart p ev b =
+    Soundness.soundNegativePart upperAtom lowerAtom signedLowerAtom
+      (valuationAt p)
+      (atomUpperSound p) (atomLowerSound p) (atomSignedLowerSound p) ev b
+
+  -- THE THEOREM THE GATE ASKS FOR.  Four literal expressions with derived
+  -- modulus bounds give the pointwise lower bound on the single weighted
+  -- combination, with `ε` the weighted sum of the derived bounds.
+  weightedNegativePartFromBounds :
+    ∀ {e₁ e₂ e₃ e₄ : DiagramExpression} {u₁ u₂ u₃ u₄ : ℚ}
+      (b₁ : UpperOK e₁ u₁) (b₂ : UpperOK e₂ u₂)
+      (b₃ : UpperOK e₃ u₃) (b₄ : UpperOK e₄ u₄)
+      (d₁ d₂ d₃ d₄ : Point → ℚ) →
+    (∀ p → Evaluates (valuationAt p) e₁ (d₁ p)) →
+    (∀ p → Evaluates (valuationAt p) e₂ (d₂ p)) →
+    (∀ p → Evaluates (valuationAt p) e₃ (d₃ p)) →
+    (∀ p → Evaluates (valuationAt p) e₄ (d₄ p)) →
+    ∀ p → (- Joint.weightedFourOrbit u₁ u₂ u₃ u₄)
+          ≤ Joint.weightedFourOrbit (d₁ p) (d₂ p) (d₃ p) (d₄ p)
+  weightedNegativePartFromBounds {u₁ = u₁} {u₂ = u₂} {u₃ = u₃} {u₄ = u₄}
+      b₁ b₂ b₃ b₄ d₁ d₂ d₃ d₄ ev₁ ev₂ ev₃ ev₄ p =
+    subst (_≤ Joint.weightedFourOrbit (d₁ p) (d₂ p) (d₃ p) (d₄ p))
+      (sym (negWeightedFourOrbit u₁ u₂ u₃ u₄))
+      (Joint.weightedFourOrbitMono
+        (pointNegativePart p (ev₁ p) b₁)
+        (pointNegativePart p (ev₂ p) b₂)
+        (pointNegativePart p (ev₃ p) b₃)
+        (pointNegativePart p (ev₄ p) b₄))
+
+------------------------------------------------------------------------
+-- 5.  THE SU(2) BUDGET ARITHMETIC
+--
+-- The gate turns a pointwise bound `- ε ≤ D` into `R ≥ - (1/16) * ε`, and the
+-- Row A1 shell budget at C_A = 2 is 11/12.  So a derived weighted bound of at
+-- most 44/3 is admissible -- and 44/3 is exactly the sharp threshold.
+------------------------------------------------------------------------
+
+su2AdmissibleWeightedBound : ℚ
+su2AdmissibleWeightedBound = Gate.cancellationCubeThreshold      -- 44/3
+
+su2ShellBudget : ℚ
+su2ShellBudget = Gate.cubeCellMeasure * su2AdmissibleWeightedBound  -- 11/12
+
+su2BudgetIsElevenTwelfths : su2ShellBudget ≡ + 11 / 12
+su2BudgetIsElevenTwelfths = refl
+
+-- Any derived weighted bound below the threshold keeps the shell radius
+-- inside the budget.
+derivedBoundInsideBudget :
+  ∀ (ε : ℚ) → ε ≤ su2AdmissibleWeightedBound →
+  Gate.cubeCellMeasure * ε ≤ su2ShellBudget
+derivedBoundInsideBudget ε h =
+  ℚP.*-monoˡ-≤-nonNeg Gate.cubeCellMeasure
+    {{nonNegative (toWitness {a? = 0ℚ ℚP.≤? Gate.cubeCellMeasure} _)}} h
+
+-- Sanity: the step-4 enclosure threshold 8 is strictly inside the SU(2)
+-- admissible weighted bound, so a derivation that reaches |D| ≤ 8 passes.
+stepFourInsideAdmissible :
+  Gate.stepFourCubeThreshold < su2AdmissibleWeightedBound
+stepFourInsideAdmissible =
+  toWitness
+    {a? = Gate.stepFourCubeThreshold ℚP.<? su2AdmissibleWeightedBound} _
+
+-- Adversarial boundary check.  The threshold is sharp on both sides: at
+-- exactly 44/3 the shell radius equals the budget (`su2BudgetIsElevenTwelfths`
+-- above, an identity), and at 15 > 44/3 the budget is already exceeded.  So no
+-- non-strict/strict mismatch is hiding in the gate.
+fifteenExceedsBudget : su2ShellBudget < Gate.cubeCellMeasure * (+ 15 / 1)
+fifteenExceedsBudget =
+  toWitness
+    {a? = su2ShellBudget ℚP.<? Gate.cubeCellMeasure * (+ 15 / 1)} _
+
+thresholdIsBelowFifteen : su2AdmissibleWeightedBound < + 15 / 1
+thresholdIsBelowFifteen =
+  toWitness {a? = su2AdmissibleWeightedBound ℚP.<? + 15 / 1} _
+
+------------------------------------------------------------------------
+-- 6.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: the exact semantics, the bound calculus, its
+-- soundness, the weighted consumer and the SU(2) budget arithmetic.
+literalExpressionSemanticsLevel : ProofLevel
+literalExpressionSemanticsLevel = machineChecked
+
+absoluteBoundCalculusSoundnessLevel : ProofLevel
+absoluteBoundCalculusSoundnessLevel = machineChecked
+
+weightedNegativePartConsumerLevel : ProofLevel
+weightedNegativePartConsumerLevel = machineChecked
+
+-- STILL OPEN: the literal Wilson + Faddeev-Popov + Haar expressions of the
+-- CMP109 background-field vacuum polarisation, and atom bound tables valid on
+-- the regular region.  This module estimates them once they exist; it does
+-- not supply them.
+literalOneLoopExpressionInhabitationLevel : ProofLevel
+literalOneLoopExpressionInhabitationLevel = conditional

@@ -1,0 +1,215 @@
+module DASHI.Physics.YangMills.BalabanA1ReferenceCoercivityScaleUniformityExact where
+
+------------------------------------------------------------------------
+-- ROW A1:  WHAT THE LITERAL CONSTANTS FEEDING `RelativeHessianCoercivityData`
+--   MUST SATISFY, AND TWO WAYS THE CURRENT SURFACE FAILS TO ASK FOR IT.
+--
+-- The A1 obligation is NOT another decomposition, and not another Schur or
+-- Gram inequality: the repository already owns the mechanism
+--
+--     reference coercivity  -  relative perturbation budget
+--         ==>  uniform full-Hessian coercivity
+--
+-- in `DASHI.Physics.YangMills.BalabanRelativeHessianCoercivity`
+-- (`relativePerturbationPreservesCoercivity`), consumed by
+-- `BalabanClayT3UniformFluctuationSchurExact`.  What is missing is the literal
+-- Wilson + Faddeev--Popov + Haar CONSTANTS: a reference coercivity `cReference`
+-- and a relative perturbation size closing
+--
+--     cH + perturbationSize <= cReference                                 (BUD)
+--
+-- uniformly in lattice spacing, volume, patch regime AND SCALE.  This module
+-- proves, in exact rational arithmetic, three things about that requirement.
+--
+-- 1. WHEN (BUD) IS CLOSABLE AT ALL.  `relativeBudgetCloses`: if the
+--    perturbation is RELATIVE -- `perturbationSize = theta * cReference` with
+--    `0 <= theta <= 1` -- then (BUD) closes exactly, with
+--    `cH = (1 - theta) cReference`.  This is the arithmetic behind the
+--    `cFluctuation = (1 - epsilonTotal) cReference` law of
+--    `BalabanClayT3PhysicalUniformFluctuationCoercivityExact`.
+--
+-- 2. WHEN IT IS NOT.  `absoluteBudgetFails`: an ABSOLUTE perturbation size
+--    `epsilon > 0` refutes (BUD) at every scale where `cReference` has fallen
+--    below `cH + epsilon`.  So the physical estimate has to be relative; no
+--    choice of constants repairs an absolute one.
+--
+-- 3. THE SHARP CONSEQUENCE FOR ROW A.  The repository's own A1 surface fixes
+--    the reference constant PROPORTIONAL TO THE RUNNING COUPLING:
+--    `cReference scale = couplingBeta scale * gammaBalaban`
+--    (`cReferenceCouplingScaling`).  Under asymptotic freedom the coupling
+--    contracts along scales, so this makes the fluctuation coercivity constant
+--    contract as well.  `decayingMajorantRefutesUniformFloor` and the explicit
+--    `noDyadicUniformFloorAboveOneThousandth` show what that costs: with the
+--    dyadic history `beta_j <= (1/2)^j`, `gamma = 1` and `epsilonTotal = 1/2`,
+--    NO uniform positive floor above `1/1000` can hold for the coercivity
+--    constant, because by scale 10 the majorant is `1/2048`.  Per-scale
+--    positivity is therefore not the A1 input; a scale-uniform positive lower
+--    bound is, and it can only exist for the RESCALED (dimensionless) tangent
+--    norm in which the block-spin normalisation has been divided out.  Naming
+--    that norm, and the constants in it, is the remaining A1 analysis.
+--
+-- 4. A PLACEHOLDER FIELD, IDENTIFIED.  The same surface carries fields named
+--    `cFluctuationIndependentOfVolume` and `cFluctuationIndependentOfPatchRegime`
+--    whose statements are `cFluctuation scale == cFluctuation scale`.  They are
+--    inhabited by `refl` for every datum and constrain nothing:
+--    `independenceFieldIsVacuous` proves the same statement WITHOUT using the
+--    field.  `GenuineIndependence` below records the statement that was meant:
+--    a constant indexed by the full index, agreeing across volumes and patch
+--    regimes at fixed scale.  The existing record cannot express it, because
+--    its `cFluctuation` is a function of the scale alone.
+--
+-- WHAT THIS IS NOT.  Row A stays open and the frozen research count stays at 4.
+-- Nothing here produces the Balaban constants; it fixes exactly which property
+-- of them A1 needs, and removes one field that looked like a hypothesis and
+-- was not.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat as Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Empty using (⊥)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _-_; _*_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact
+  using (nonNegProduct; 0≤1ℚ; pow; pow-nonneg)
+
+import DASHI.Physics.YangMills.BalabanClayT3PhysicalUniformFluctuationCoercivityExact
+  as SF
+
+------------------------------------------------------------------------
+-- 1.  A RELATIVE PERTURBATION CLOSES THE BUDGET, EXACTLY
+------------------------------------------------------------------------
+
+-- cH = (1 - theta) cReference and perturbationSize = theta cReference give
+--   cH * x + perturbationSize * x = cReference * x
+-- for every x, so the budget field of `RelativeHessianCoercivityData` holds
+-- with equality.  (Stated as the inequality the record asks for.)
+relativeBudgetCloses :
+  ∀ c θ x → ((1ℚ - θ) * c) * x + (θ * c) * x ≤ c * x
+relativeBudgetCloses c θ x = ℚP.≤-reflexive collapse
+  where
+    collapse : ((1ℚ - θ) * c) * x + (θ * c) * x ≡ c * x
+    collapse =
+      trans (sym (ℚP.*-distribʳ-+ x ((1ℚ - θ) * c) (θ * c)))
+      (trans (cong (_* x) (sym (ℚP.*-distribʳ-+ c (1ℚ - θ) θ)))
+      (trans (cong (λ z → (z * c) * x)
+                (trans (ℚP.+-assoc 1ℚ (ℚ.- θ) θ)
+                (trans (cong (λ z → 1ℚ + z) (ℚP.+-inverseˡ θ))
+                       (ℚP.+-identityʳ 1ℚ))))
+             (cong (_* x) (ℚP.*-identityˡ c))))
+
+-- The resulting coercivity constant is positive exactly when the reference is
+-- and the relative perturbation is a strict fraction of it.
+relativeCoercivityConstant : ℚ → ℚ → ℚ
+relativeCoercivityConstant θ c = (1ℚ - θ) * c
+
+------------------------------------------------------------------------
+-- 2.  AN ABSOLUTE PERTURBATION CANNOT CLOSE IT ONCE THE REFERENCE IS SMALL
+------------------------------------------------------------------------
+
+absoluteBudgetFails :
+  ∀ cRef cH ε x → 0ℚ < x →
+  cRef < cH + ε →
+  cH * x + ε * x ≤ cRef * x →
+  ⊥
+absoluteBudgetFails cRef cH ε x 0<x refBelow budget =
+  ℚP.<-irrefl refl
+    (ℚP.<-≤-trans refBelow
+      (ℚP.*-cancelʳ-≤-pos x {{ℚ.positive 0<x}}
+        (subst (_≤ cRef * x) (sym (ℚP.*-distribʳ-+ x cH ε)) budget)))
+
+------------------------------------------------------------------------
+-- 3.  A COUPLING-PROPORTIONAL REFERENCE CANNOT CARRY A UNIFORM FLOOR
+------------------------------------------------------------------------
+
+-- With  cReference_j = gamma * beta_j ,  cFluctuation_j = (1-theta) cReference_j
+-- and a geometrically contracting coupling history  beta_j <= beta_0 rho^j ,
+-- the coercivity constant is dominated by a geometrically contracting majorant.
+couplingScaledCoercivityMajorant :
+  ∀ (β : Nat → ℚ) (γ θ β₀ ρ : ℚ) →
+  0ℚ ≤ 1ℚ - θ → 0ℚ ≤ γ →
+  (∀ j → β j ≤ β₀ * pow ρ j) →
+  ∀ j → (1ℚ - θ) * (γ * β j) ≤ ((1ℚ - θ) * (γ * β₀)) * pow ρ j
+couplingScaledCoercivityMajorant β γ θ β₀ ρ 0≤1-θ 0≤γ βBound j =
+  ℚP.≤-trans
+    (ℚP.*-monoˡ-≤-nonNeg (1ℚ - θ) {{ℚ.nonNegative 0≤1-θ}}
+      (ℚP.*-monoˡ-≤-nonNeg γ {{ℚ.nonNegative 0≤γ}} (βBound j)))
+    (ℚP.≤-reflexive
+      (trans (cong ((1ℚ - θ) *_) (sym (ℚP.*-assoc γ β₀ (pow ρ j))))
+             (sym (ℚP.*-assoc (1ℚ - θ) (γ * β₀) (pow ρ j)))))
+
+-- A claimed scale-uniform floor is below the majorant at every scale ...
+uniformFloorBelowMajorant :
+  ∀ (c M : Nat → ℚ) (cStar : ℚ) →
+  (∀ j → cStar ≤ c j) → (∀ j → c j ≤ M j) → ∀ j → cStar ≤ M j
+uniformFloorBelowMajorant c M cStar floor majorant j =
+  ℚP.≤-trans (floor j) (majorant j)
+
+-- ... so a single scale at which the majorant has dropped below it refutes it.
+decayingMajorantRefutesUniformFloor :
+  ∀ (c M : Nat → ℚ) (cStar : ℚ) (j : Nat) →
+  (∀ i → cStar ≤ c i) → (∀ i → c i ≤ M i) → M j < cStar → ⊥
+decayingMajorantRefutesUniformFloor c M cStar j floor majorant small =
+  ℚP.<-irrefl refl
+    (ℚP.≤-<-trans (uniformFloorBelowMajorant c M cStar floor majorant j) small)
+
+-- The explicit dyadic instance: gamma = 1, beta_0 = 1, rho = 1/2,
+-- epsilonTotal = theta = 1/2.  The majorant at scale 10 is (1/2)(1/1024).
+dyadicCoercivityMajorant : Nat → ℚ
+dyadicCoercivityMajorant j = ((1ℚ - (+ 1 / 2)) * (1ℚ * 1ℚ)) * pow (+ 1 / 2) j
+
+dyadicMajorantAtScaleTen : dyadicCoercivityMajorant 10 < (+ 1 / 1000)
+dyadicMajorantAtScaleTen =
+  toWitness {a? = (dyadicCoercivityMajorant 10) ℚP.<? (+ 1 / 1000)} _
+
+noDyadicUniformFloorAboveOneThousandth :
+  ∀ (β cFluc : Nat → ℚ) →
+  (∀ j → β j ≤ 1ℚ * pow (+ 1 / 2) j) →
+  (∀ j → cFluc j ≡ (1ℚ - (+ 1 / 2)) * (1ℚ * β j)) →
+  (∀ j → (+ 1 / 1000) ≤ cFluc j) →
+  ⊥
+noDyadicUniformFloorAboveOneThousandth β cFluc βBound cFlucDef floor =
+  decayingMajorantRefutesUniformFloor cFluc dyadicCoercivityMajorant
+    (+ 1 / 1000) 10 floor majorant dyadicMajorantAtScaleTen
+  where
+    majorant : ∀ i → cFluc i ≤ dyadicCoercivityMajorant i
+    majorant i =
+      ℚP.≤-trans (ℚP.≤-reflexive (cFlucDef i))
+        (couplingScaledCoercivityMajorant β 1ℚ (+ 1 / 2) 1ℚ (+ 1 / 2)
+          (toWitness {a? = 0ℚ ℚP.≤? (1ℚ - (+ 1 / 2))} _)
+          0≤1ℚ βBound i)
+
+------------------------------------------------------------------------
+-- 4.  THE INDEPENDENCE FIELDS OF THE EXISTING A1 SURFACE ARE VACUOUS
+------------------------------------------------------------------------
+
+-- The field `cFluctuationIndependentOfVolume` of
+-- `SmallFieldFluctuationCoercivityData` states
+--     cFluctuation scale == cFluctuation scale ,
+-- which every datum satisfies by reflexivity; the proof below never mentions
+-- the field.  So the surface does NOT currently assume volume independence, and
+-- must not be read as supplying it.
+independenceFieldIsVacuous :
+  ∀ {Scale Volume PatchRegime Background Fluctuation Tangent Bound : Set}
+    (dataSet : SF.SmallFieldFluctuationCoercivityData
+      Scale Volume PatchRegime Background Fluctuation Tangent Bound) →
+  ∀ scale (v1 v2 : Volume) (r : PatchRegime) (b : Background) →
+  SF.cFluctuation dataSet scale ≡ SF.cFluctuation dataSet scale
+independenceFieldIsVacuous dataSet scale v1 v2 r b = refl
+
+-- The statement that was intended, for a constant that actually depends on the
+-- full index.  It is not expressible for a `Scale -> Bound` constant, which is
+-- why the existing field degenerated.
+GenuineIndependence :
+  ∀ {Scale Volume PatchRegime Background Index Bound : Set} →
+  (Index → Bound) → (Scale → Volume → PatchRegime → Background → Index) → Set
+GenuineIndependence {Scale} {Volume} {PatchRegime} {Background} constant mkIndex =
+  ∀ scale (v1 v2 : Volume) (r : PatchRegime) (b : Background) →
+    constant (mkIndex scale v1 r b) ≡ constant (mkIndex scale v2 r b)

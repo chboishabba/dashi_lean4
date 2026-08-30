@@ -1,0 +1,160 @@
+#!/usr/bin/env python3
+"""OpenCV pattern detection over the dual-atlas projection views.
+
+Three stages, exactly as requested:
+
+  (1) look for patterns with OpenCV in every view of every corpus;
+  (2) adjust the detector parameters and try again (a threshold/blur sweep), and
+      keep the parameter setting that is most stable;
+  (3) compare all modules (corpora) against each other across the many views
+      (cross-correlation of the cog / triad / harm profiles).
+
+The *reproducible* findings (argmax buckets, harmonic ordering, dominance) are
+written to patterns.json and patterns.csv; these are the patterns then certified
+in Lean (RequestProject/VisionPatterns.lean).
+"""
+import csv
+import json
+import os
+from collections import Counter
+
+import cv2
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+CORPORA = ["itself", "mathlib", "batteries", "lean4"]
+
+
+def read_row(name):
+    with open(os.path.join(HERE, name)) as f:
+        return [int(x) for x in next(csv.reader(f))]
+
+
+def norm8(a):
+    a = np.asarray(a, dtype=np.float64)
+    lo, hi = a.min(), a.max()
+    if hi <= lo:
+        return np.zeros_like(a, dtype=np.uint8)
+    return np.uint8(np.round((a - lo) / (hi - lo) * 255.0))
+
+
+def detect_blobs(profile, thresh, blur):
+    """OpenCV blob/peak count on a 1-row heat strip after blur+threshold."""
+    img = norm8(profile).reshape(1, -1)
+    img = cv2.resize(img, (img.shape[1] * 10, 40), interpolation=cv2.INTER_NEAREST)
+    if blur > 1:
+        img = cv2.GaussianBlur(img, (blur, blur), 0)
+    _, mask = cv2.threshold(img, thresh, 255, cv2.THRESH_BINARY)
+    n, _ = cv2.connectedComponents(mask)
+    return n - 1  # minus background
+
+
+def parameter_sweep(profile):
+    """Stage (2): sweep threshold and blur; report the count histogram and the
+    most stable (modal) detected peak-count."""
+    results = {}
+    for thresh in (120, 150, 180, 210):
+        for blur in (1, 3, 5):
+            results[(thresh, blur)] = detect_blobs(profile, thresh, blur)
+    counts = Counter(results.values())
+    stable, _ = counts.most_common(1)[0]
+    return stable, {f"t{t}_b{b}": v for (t, b), v in results.items()}
+
+
+def main():
+    data = {c: {} for c in CORPORA}
+    for c in CORPORA:
+        data[c]["cog"] = read_row(f"{c}_cog.csv")
+        data[c]["triad"] = read_row(f"{c}_triad.csv")
+        data[c]["harm"] = read_row(f"{c}_harm.csv")
+
+    out = {"corpora": {}, "comparison": {}}
+
+    print("=" * 64)
+    print("STAGE 1+2 : OpenCV detection with parameter sweep")
+    print("=" * 64)
+    for c in CORPORA:
+        cog = data[c]["cog"]
+        triad = data[c]["triad"]
+        harm = data[c]["harm"]
+
+        cog_peaks, cog_sweep = parameter_sweep(cog)
+        triad_peaks, triad_sweep = parameter_sweep(triad)
+
+        cog_argmax = int(np.argmax(cog))            # 0..91  (cog bucket = +1)
+        triad_argmax = int(np.argmax(triad))        # 0..19
+        harm_argmax = int(np.argmax(harm))          # 0..4 over [0,5,7,11,13]
+        harm_codes = [0, 5, 7, 11, 13]
+        harm_decreasing = all(harm[i] > harm[i + 1] for i in range(4))
+        harm_dominant = all(harm[0] > harm[i] for i in range(1, 5))
+
+        out["corpora"][c] = {
+            "cog_argmax_bucket": cog_argmax + 1,
+            "cog_peak_count_stable": cog_peaks,
+            "triad_argmax": triad_argmax,
+            "triad_peak_count_stable": triad_peaks,
+            "harm": harm,
+            "harm_argmax_code": harm_codes[harm_argmax],
+            "harm_strictly_decreasing": harm_decreasing,
+            "harm_trivector_dominant": harm_dominant,
+        }
+        print(f"\n[{c}]  ({sum(harm)} harm-classified decls)")
+        print(f"  cog : argmax bucket = {cog_argmax + 1:>3}  "
+              f"stable peak count = {cog_peaks}  sweep={cog_sweep}")
+        print(f"  triad: argmax = {triad_argmax:>2}  "
+              f"stable peak count = {triad_peaks}")
+        print(f"  harm : {harm}  argmax code = {harm_codes[harm_argmax]}  "
+              f"decreasing={harm_decreasing}  trivector-dominant={harm_dominant}")
+
+    print("\n" + "=" * 64)
+    print("STAGE 3 : compare all modules against each other (many views)")
+    print("=" * 64)
+    for view in ("cog", "triad", "harm"):
+        mat = {}
+        for a in CORPORA:
+            for b in CORPORA:
+                ha = np.array(data[a][view], dtype=np.float32)
+                hb = np.array(data[b][view], dtype=np.float32)
+                # normalise to a probability profile so different sizes compare
+                ha = ha / (ha.sum() or 1)
+                hb = hb / (hb.sum() or 1)
+                corr = float(cv2.compareHist(ha, hb, cv2.HISTCMP_CORREL))
+                mat[f"{a}~{b}"] = round(corr, 4)
+        out["comparison"][view] = mat
+        print(f"\n[{view}] pairwise correlation of normalised profiles:")
+        header = "        " + "".join(f"{b[:5]:>8}" for b in CORPORA)
+        print(header)
+        for a in CORPORA:
+            row = "".join(f"{mat[f'{a}~{b}']:>8.3f}" for b in CORPORA)
+            print(f"  {a[:6]:<6}{row}")
+
+    # dominant cross-module facts
+    all_dominant = all(out["corpora"][c]["harm_trivector_dominant"] for c in CORPORA)
+    large = ["mathlib", "batteries", "lean4"]
+    all_large_decreasing = all(out["corpora"][c]["harm_strictly_decreasing"] for c in large)
+    out["findings"] = {
+        "trivector_dominant_in_all_corpora": all_dominant,
+        "harm_strictly_decreasing_in_large_corpora": all_large_decreasing,
+    }
+    print("\nFINDINGS:")
+    print(f"  trivector (harm=0) dominant in ALL corpora      : {all_dominant}")
+    print(f"  harm strictly decreasing in mathlib/batteries/lean4: {all_large_decreasing}")
+
+    with open(os.path.join(HERE, "patterns.json"), "w") as f:
+        json.dump(out, f, indent=2)
+    with open(os.path.join(HERE, "patterns.csv"), "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["corpus", "cog_argmax_bucket", "cog_peaks", "triad_argmax",
+                    "triad_peaks", "harm_argmax_code", "harm_decreasing",
+                    "trivector_dominant"])
+        for c in CORPORA:
+            d = out["corpora"][c]
+            w.writerow([c, d["cog_argmax_bucket"], d["cog_peak_count_stable"],
+                        d["triad_argmax"], d["triad_peak_count_stable"],
+                        d["harm_argmax_code"], int(d["harm_strictly_decreasing"]),
+                        int(d["harm_trivector_dominant"])])
+    print(f"\nwrote patterns.json and patterns.csv")
+
+
+if __name__ == "__main__":
+    main()

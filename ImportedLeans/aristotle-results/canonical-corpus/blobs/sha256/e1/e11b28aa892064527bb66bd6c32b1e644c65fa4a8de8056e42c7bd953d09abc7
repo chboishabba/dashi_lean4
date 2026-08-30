@@ -1,0 +1,111 @@
+import Spine.TransverseGram
+import Spine.SchurComplement
+import Spine.EndToEnd
+import Spine.TwoRegime
+import Spine.RiemannBridge
+import Spine.Duality
+import Spine.FiniteReindex
+import Spine.SchurBlock
+
+/-!
+# Axiom audit for the spine
+
+Building this module prints the axiom dependencies of the spine's headline
+results.  Each uses only the standard Lean/Mathlib axioms (`propext`,
+`Classical.choice`, `Quot.sound`); none uses `sorry`, a project axiom, or
+`Lean.ofReduceBool` (i.e. no `native_decide`).
+-/
+
+#print axioms Spine.det_gram_anchored_eq
+#print axioms Spine.det_gram_anchored_ge
+#print axioms Spine.det_gram_anchored_pos
+#print axioms Spine.linearIndependent_anchored
+#print axioms Spine.anchored_area_ge
+#print axioms Spine.charMatrix_orthogonality
+#print axioms Spine.charMatrix_det_ne_zero
+#print axioms Spine.RealC3.no_real_eigenvector_transverse
+#print axioms Spine.RealC3.finrank_transverse
+#print axioms Spine.RealC3.fixed_iff_constant
+#print axioms Spine.RealC3.isCompl_fixedSub_transverse
+#print axioms Spine.RealC3.transverse_irreducible
+#print axioms Spine.RealC2.swap_eq_neg_on_transverse
+#print axioms Spine.RealC2.finrank_transverse
+#print axioms Spine.Cyc.mul_conj_eq_norm
+#print axioms Spine.Cyc.conj_fixed_iff_rational
+#print axioms Spine.MeanSplit.det_gram_mean_anchored_ge
+#print axioms Spine.MeanSplit.det_gram_mean_anchored_pos
+#print axioms Spine.MeanSplit.anchored_plane_area
+#print axioms Spine.MeanObserver.transverse_area_pos
+#print axioms Spine.monster_five_transverse_planes
+#print axioms Spine.TritCarrier.embed_rot
+#print axioms Spine.TritCarrier.reflect_shift
+#print axioms Spine.TritCarrier.reflect_ne_shift
+#print axioms Spine.TritCarrier.trit_weighting_plane_pos
+#print axioms Spine.Cuisine.taste_plane_pos
+#print axioms Spine.Cuisine.flat_profile_degenerate
+#print axioms Spine.Duality.odd_alternating_form_degenerate
+#print axioms Spine.Duality.taste_carrier_no_symplectic_form
+#print axioms Spine.Duality.fenchel_young
+#print axioms Spine.Duality.dual_eq_deriv
+#print axioms Spine.Duality.flat_not_bddAbove
+#print axioms Spine.re_eq_half_iff
+#print axioms Spine.criticalLine_eq_half_add_fixed
+#print axioms Spine.Ogg.grid_subset
+#print axioms Spine.Ogg.cm_class_counts
+#print axioms Spine.Ogg.mod_nine_not_uniform
+#print axioms Spine.Ogg.no_free_order_three_cm_preserving
+#print axioms Spine.Ogg.no_equivariant_labelling
+#print axioms Spine.exists_two_distinct_equivs
+#print axioms Spine.TwoRegime.norm_fourier_le_envelope
+#print axioms Spine.TwoRegime.sum_envelope_le
+#print axioms Spine.TwoRegime.single_regime_unbounded
+#print axioms Spine.RiemannBridge.sq_div_two_le_cosh_sub_one
+#print axioms Spine.RiemannBridge.taper_cosh_excess_ge
+#print axioms Spine.RiemannBridge.plateau_second_moment_ge
+#print axioms Spine.RiemannBridge.taper_coercivity_of_plateau
+#print axioms Spine.RiemannBridge.real_centered_grid_retention
+#print axioms Spine.RiemannBridge.real_finite_retention
+#print axioms Spine.RiemannBridge.fourier_pair_sum_le
+#print axioms Spine.RiemannBridge.grid_tail_sum_le
+#print axioms Spine.RiemannBridge.grid_envelope_not_summable
+#print axioms Spine.RiemannBridge.producer_socket_is_contentless
+#print axioms Spine.RiemannBridge.poisson_unit_lattice
+#print axioms Spine.RiemannBridge.bilinear_diagonal_transverse_zero
+#print axioms Spine.RiemannBridge.hermitian_diagonal_transverse_double
+#print axioms Spine.RiemannBridge.det_gram_surplus_of_coercive
+#print axioms Spine.RiemannBridge.bridgeLedger
+#print axioms Spine.spineLedger
+
+-- The domain-neutral transverse Gram core
+#print axioms Spine.TransverseGram.area2_nonneg
+#print axioms Spine.TransverseGram.norm_sq_transverseResidual
+#print axioms Spine.TransverseGram.area2_eq_zero_iff
+#print axioms Spine.TransverseGram.area2_pos_iff
+#print axioms Spine.TransverseGram.area2_dichotomy
+#print axioms Spine.TransverseGram.area2_lagrange
+
+-- Hidden-variable elimination: the Schur complement core
+#print axioms Spine.SchurComplement.coupled_eq_schur_add
+#print axioms Spine.SchurComplement.schur_isLeast
+#print axioms Spine.SchurComplement.schur_eq_iInf
+#print axioms Spine.SchurComplement.schur_coercive
+#print axioms Spine.SchurComplement.schur_norm_sq
+#print axioms Spine.SchurComplement.schur_pos_iff_area2_pos
+
+-- Domain-neutral finite reindexing owner
+#print axioms Spine.FiniteReindex.foldW_perm
+#print axioms Spine.FiniteReindex.foldW_of_nodup_mem
+#print axioms Spine.FiniteReindex.meanW_perm
+#print axioms Spine.FiniteReindex.moment_perm
+#print axioms Spine.FiniteReindex.gramEntry_perm
+#print axioms Spine.FiniteReindex.gram_comp_perm
+#print axioms Spine.FiniteReindex.det_gram_reindex
+
+-- Block Schur complement: vector hidden block
+#print axioms Spine.SchurBlock.coupledB_eq_schurB_add
+#print axioms Spine.SchurBlock.coupledB_hiddenMinB
+#print axioms Spine.SchurBlock.coupledB_ge_schurB
+#print axioms Spine.SchurBlock.schurB_isLeast
+#print axioms Spine.SchurBlock.schurB_coercive
+#print axioms Spine.SchurBlock.schurB_pos_of_coercive
+#print axioms Spine.SchurBlock.schurB_eq_schur

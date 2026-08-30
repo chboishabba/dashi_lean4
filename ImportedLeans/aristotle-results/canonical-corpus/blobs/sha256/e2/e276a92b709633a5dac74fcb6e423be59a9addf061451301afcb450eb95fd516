@@ -1,0 +1,239 @@
+import RequestProject.Wikidata.ParentingFibres
+import RequestProject.Epistemic.Authority
+
+/-!
+# Deciding on the parent surface: future safety and delegated authority
+
+`RequestProject.Wikidata.ParentingFibres` shows that the Wikidata parent slot
+erases distinctions that an authority route depends on.  This module takes the
+next step and asks what happens when someone *acts* on the coarse surface, and
+how the authority so exercised behaves over time.
+
+**Future safety is consumer-relative.**  Two situations — an anonymous donor and
+an adoptive parent — present the same public parent surface today.  One
+admissible authority-resolution step later, the authority-facing consumer sees
+different things (`authority_terminalisation_defect`), so its projection is not
+dynamically safe.  The public-registry consumer stays safe, because it
+deliberately observes only the stable public surface
+(`publicRegistry_dynamicallySafe`); that safety does not promote to the plural
+statement (`not_plural_safety`).  A coarse policy that selects its action from
+the public observation is likewise unsafe (`coarse_policy_unsafe`).
+
+**Authority is diachronic.**  The parent relation stays recorded in the knowledge
+base while the delegated authority attached to it is revoked
+(`parent_relation_survives_revocation`); the historical record is not erased
+(`history_is_not_erased`); a past grant does not restore authority and a new
+discretionary act needs a fresh one (`new_act_requires_fresh_authorisation`); an
+unavoidable continuation creates no mandate; and a supporter cannot self-authorise
+(`supporter_cannot_self_authorise_parent_override`).
+
+**Family agency is not sovereignty.**  A parent's report is a legitimate
+observation of a family system and is provably not the whole of it: the child's
+own voice is an independent coordinate that strictly refines it
+(`parent_report_strictly_refined_by_child_voice`).
+-/
+
+namespace Wikidata.Parenting
+
+open Epistemic
+
+/-! ## An authority-resolution transition system -/
+
+/-- The states of a small authority-resolution system: two situations that look
+alike publicly, before and after the authority question is resolved. -/
+inductive DecisionState
+  | donorNow
+  | adoptiveNow
+  | donorResolved
+  | adoptiveResolved
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The only admissible action: resolve who currently holds parental authority. -/
+inductive DecisionAction
+  | resolveAuthority
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The transition function of the system. -/
+def next : DecisionState → DecisionAction → Option DecisionState
+  | DecisionState.donorNow, _ => some DecisionState.donorResolved
+  | DecisionState.adoptiveNow, _ => some DecisionState.adoptiveResolved
+  | DecisionState.donorResolved, _ => none
+  | DecisionState.adoptiveResolved, _ => none
+
+/-- The admissible step relation. -/
+def decisionStep (s : DecisionState) (a : DecisionAction) (t : DecisionState) : Prop :=
+  next s a = some t
+
+/-- What a consumer can see. -/
+inductive DecisionObservation
+  | publicParentSlot
+  | noCurrentLegalAuthority
+  | currentLegalAuthority
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The two consumers of the parent surface. -/
+inductive DecisionConsumer
+  | publicRegistry
+  | authorityDecision
+  deriving DecidableEq, Repr, Inhabited
+
+/-- How each consumer observes the system. -/
+def decisionObs : DecisionConsumer → DecisionState → DecisionObservation
+  | DecisionConsumer.publicRegistry, _ => DecisionObservation.publicParentSlot
+  | DecisionConsumer.authorityDecision, DecisionState.donorNow =>
+      DecisionObservation.publicParentSlot
+  | DecisionConsumer.authorityDecision, DecisionState.adoptiveNow =>
+      DecisionObservation.publicParentSlot
+  | DecisionConsumer.authorityDecision, DecisionState.donorResolved =>
+      DecisionObservation.noCurrentLegalAuthority
+  | DecisionConsumer.authorityDecision, DecisionState.adoptiveResolved =>
+      DecisionObservation.currentLegalAuthority
+
+/-- The two situations are publicly indistinguishable today, for either consumer. -/
+theorem same_public_surface_now :
+    decisionObs DecisionConsumer.authorityDecision DecisionState.donorNow =
+      decisionObs DecisionConsumer.authorityDecision DecisionState.adoptiveNow := rfl
+
+/-- **The public-registry consumer is dynamically safe**, because it observes a
+constant public surface. -/
+theorem publicRegistry_dynamicallySafe :
+    DynamicSafety decisionStep (decisionObs DecisionConsumer.publicRegistry) :=
+  dynamicSafety_of_const _ _
+
+/-- **The authority-facing consumer has a terminalisation defect**: same
+observation now, one admissible action, different observations after. -/
+theorem authority_terminalisation_defect :
+    TerminalisationDefect decisionStep (decisionObs DecisionConsumer.authorityDecision) := by
+  refine ⟨[DecisionAction.resolveAuthority], DecisionState.donorNow, DecisionState.adoptiveNow,
+    DecisionState.donorResolved, DecisionState.adoptiveResolved, rfl,
+    executes_single rfl, executes_single rfl, ?_⟩
+  decide
+
+/-- Hence the authority-facing projection is not dynamically safe. -/
+theorem authority_not_dynamicallySafe :
+    ¬ DynamicSafety decisionStep (decisionObs DecisionConsumer.authorityDecision) :=
+  not_dynamicSafety_of_defect authority_terminalisation_defect
+
+/-- **Safety for the public consumer does not promote to plural safety.** -/
+theorem not_plural_safety : ¬ PluralDynamicSafety decisionStep decisionObs :=
+  not_plural_of_defect (c := DecisionConsumer.authorityDecision) authority_terminalisation_defect
+
+/-- The asymmetry, stated as one result. -/
+theorem parent_consumer_safety_asymmetry :
+    DynamicSafety decisionStep (decisionObs DecisionConsumer.publicRegistry) ∧
+      ¬ PluralDynamicSafety decisionStep decisionObs :=
+  consumer_safety_asymmetry publicRegistry_dynamicallySafe
+    (defectConsumer := DecisionConsumer.authorityDecision) authority_terminalisation_defect
+
+/-- A policy that reads only the coarse observation. -/
+def coarseAuthorityPolicy : DecisionObservation → DecisionAction :=
+  fun _ => DecisionAction.resolveAuthority
+
+/-- **The coarse policy exposes the collapsed distinction**: it selects the same
+action for both states and the resulting observations differ. -/
+theorem coarse_policy_defect :
+    PolicyExposedQuotientDefect decisionStep
+      (decisionObs DecisionConsumer.authorityDecision) coarseAuthorityPolicy := by
+  refine ⟨DecisionState.donorNow, DecisionState.adoptiveNow, DecisionState.donorResolved,
+    DecisionState.adoptiveResolved, rfl, rfl, rfl, ?_⟩
+  decide
+
+/-- **The coarse parent surface is unsafe as the decision carrier of that
+policy.** -/
+theorem coarse_policy_unsafe :
+    ¬ PolicyRelativeSafety decisionStep (decisionObs DecisionConsumer.authorityDecision)
+      coarseAuthorityPolicy :=
+  not_policySafety_of_defect coarse_policy_defect
+
+/-! ## Diachronic parental authority -/
+
+open Epistemic.Authority
+
+/-- The mandate at issue: holder `0`, acting within scope `0`. -/
+def parentMandate : Mandate := ⟨0, 0⟩
+
+/-- A history in which the mandate was granted and later revoked. -/
+def revokedHistory : List AuthEvent :=
+  [AuthEvent.grant Issuer.principal parentMandate, AuthEvent.revoke parentMandate]
+
+/-- **The parent relation remains visible while the delegated authority is
+revoked**: the knowledge base still records the parent link, and no current
+authority attaches to it. -/
+theorem parent_relation_survives_revocation :
+    descendsFrom donorKB ⟨100⟩ ⟨101⟩ = true ∧
+      currentAuthority revokedHistory parentMandate = false := by
+  refine ⟨by decide, ?_⟩
+  decide
+
+/-- **Revocation does not erase the record.** -/
+theorem history_is_not_erased :
+    everGranted revokedHistory parentMandate = true ∧
+      currentAuthority revokedHistory parentMandate = false := by
+  refine ⟨?_, ?_⟩ <;> decide
+
+/-- **Historical evidence does not restore authority, and a new discretionary act
+requires a fresh authorisation.** -/
+theorem new_act_requires_fresh_authorisation (later : List AuthEvent)
+    (hno : ∀ e ∈ later, e ≠ AuthEvent.grant Issuer.principal parentMandate) :
+    Permitted ([AuthEvent.grant Issuer.principal parentMandate] ++
+      AuthEvent.revoke parentMandate :: later) ⟨ActKind.discretionary, parentMandate⟩ = false :=
+  discretionary_act_requires_fresh_grant _ later parentMandate hno
+
+/-- Once a fresh grant is made, the act is permitted again. -/
+theorem fresh_grant_restores :
+    Permitted (revokedHistory ++ [AuthEvent.grant Issuer.principal parentMandate])
+      ⟨ActKind.discretionary, parentMandate⟩ = true :=
+  currentAuthority_append_grant revokedHistory parentMandate
+
+/-- **An unavoidable continuation confers no new mandate.** -/
+theorem unavoidable_continuation_confers_nothing :
+    Permitted revokedHistory ⟨ActKind.unavoidableContinuation, parentMandate⟩ = true ∧
+      Permitted revokedHistory ⟨ActKind.discretionary, parentMandate⟩ = false :=
+  unavoidable_continuation_creates_no_mandate revokedHistory parentMandate (by decide)
+
+/-- **A supporter cannot self-authorise an override.** -/
+theorem supporter_cannot_self_authorise_parent_override :
+    currentAuthority (revokedHistory ++ [AuthEvent.grant Issuer.supporter parentMandate])
+      parentMandate = false := by
+  rw [currentAuthority_append]
+  have h : currentAuthority revokedHistory parentMandate = false := by decide
+  simp [h, Epistemic.Authority.step]
+
+/-! ## Family agency is not sovereignty
+
+A parent's report is a legitimate observation of the family system; the child's
+own voice is a separate coordinate of the same system. -/
+
+/-- A minimal family system state: what the parent reports and what the child
+says. -/
+structure FamilyState where
+  /-- The parent's report. -/
+  parentReport : Bool
+  /-- The child's own voice. -/
+  childVoice : Bool
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The parent observer. -/
+def parentObserver : Observer FamilyState Bool := FamilyState.parentReport
+
+/-- The child's own voice as an observer. -/
+def childVoiceObserver : Observer FamilyState Bool := FamilyState.childVoice
+
+/-- **The parent's report is not the whole system.** -/
+theorem parentObserver_not_separating : ¬ Separating parentObserver := by
+  refine not_separating_of_collision ⟨⟨true, true⟩, ⟨true, false⟩, rfl, ?_⟩
+  decide
+
+/-- **The child's voice strictly refines the parent's report**: it is an
+independent coordinate, not a redundant one. -/
+theorem parent_report_strictly_refined_by_child_voice :
+    StrictlyRefines parentObserver (pairObserver parentObserver childVoiceObserver) :=
+  strictlyRefines_pair (x := ⟨true, true⟩) (y := ⟨true, false⟩) rfl (by decide)
+
+/-- Nor is the child's voice alone the whole system: neither party's view is
+canonical. -/
+theorem childVoiceObserver_not_separating : ¬ Separating childVoiceObserver := by
+  refine not_separating_of_collision ⟨⟨true, true⟩, ⟨false, true⟩, rfl, ?_⟩
+  decide
+
+end Wikidata.Parenting

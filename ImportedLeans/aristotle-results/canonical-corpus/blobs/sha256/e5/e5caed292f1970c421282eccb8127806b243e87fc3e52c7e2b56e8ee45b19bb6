@@ -1,0 +1,25 @@
+name: DNA chemistry sheet codec completion
+
+on:
+  pull_request:
+    paths:
+      - 'Ontology/DNA/**'
+      - '.github/workflows/dna-chemistry-sheet-codec-completion.yml'
+  workflow_dispatch:
+
+
+concurrency:
+  group: dashi-global-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  agda:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - name: Typecheck completion surface
+        run: |
+          nix develop --command agda -i . -l standard-library Ontology/DNA/ChemistrySheetCodecCompletionSurface.agda
+          nix develop --command agda -i . -l standard-library Ontology/DNA/ChemistrySheetCodecCompletionRegression.agda

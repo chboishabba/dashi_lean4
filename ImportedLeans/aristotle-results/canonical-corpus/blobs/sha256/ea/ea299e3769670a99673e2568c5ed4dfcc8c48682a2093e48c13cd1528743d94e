@@ -1,0 +1,235 @@
+module DASHI.Analysis.RiemannG3SourceTransportExact where
+
+------------------------------------------------------------------------
+-- PURPOSE
+--
+-- Source-native G3 transport.
+--
+-- The Hermitian excess is first a finite ZERO-SIDE A-energy.  The paper/source
+-- then gives G=A+E with E controlled by prop:tail and a prime-side estimate for
+-- the raw G Frobenius square.  Therefore the faithful route is an inequality
+-- chain, not the overly strong exact identity
+--
+--     criticalMain + excess = rawPrimeTrace.
+--
+-- Abstractly:
+--
+--   criticalMain + retainedExcess            = finiteAenergy
+--   finiteAenergy + tailSlack                 = rawGenergy + tailBudget
+--   rawGenergy + primeSlack                   = primeMain + primeError
+--   criticalMain                              = primeMain
+--
+-- cancel the common main term to obtain
+--
+--   retainedExcess + (tailSlack+primeSlack)
+--       = tailBudget + primeError.
+--
+-- Thus the arithmetic error floor consumed by detectability is exactly the
+-- sum of the zero-side matrix-tail transport budget and the prime trace error.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat; zero; suc; _+_)
+
+sym : {A : Set} {x y : A} → x ≡ y → y ≡ x
+sym refl = refl
+
+trans : {A : Set} {x y z : A} → x ≡ y → y ≡ z → x ≡ z
+trans refl yz = yz
+
+congPlusLeft : {a b : Nat} → a ≡ b → (c : Nat) → c + a ≡ c + b
+congPlusLeft refl c = refl
+
+congPlusRight : {a b : Nat} → a ≡ b → (c : Nat) → a + c ≡ b + c
+congPlusRight refl c = refl
+
++-assoc : (a b c : Nat) → (a + b) + c ≡ a + (b + c)
++-assoc zero b c = refl
++-assoc (suc a) b c rewrite +-assoc a b c = refl
+
++-comm : (a b : Nat) → a + b ≡ b + a
++-comm zero b = sym (zeroRight b)
+  where
+  zeroRight : (n : Nat) → n + zero ≡ n
+  zeroRight zero = refl
+  zeroRight (suc n) rewrite zeroRight n = refl
++-comm (suc a) b rewrite +-comm a b = sym (sucRight b a)
+  where
+  sucRight : (n m : Nat) → n + suc m ≡ suc (n + m)
+  sucRight zero m = refl
+  sucRight (suc n) m rewrite sucRight n m = refl
+
+sucInjective : {m n : Nat} → suc m ≡ suc n → m ≡ n
+sucInjective refl = refl
+
+cancelLeft : (c a b : Nat) → c + a ≡ c + b → a ≡ b
+cancelLeft zero a b eq = eq
+cancelLeft (suc c) a b eq = cancelLeft c a b (sucInjective eq)
+
+record G3SourceTransportLedger : Set where
+  constructor g3SourceTransportLedger
+  field
+    criticalCompatibleMain : Nat
+    retainedHermitianExcess : Nat
+    finiteZeroSideFrobenius : Nat
+
+    rawPrimeSideFrobenius : Nat
+    zeroSideTailBudget : Nat
+    zeroSideTailSlack : Nat
+
+    primeCompatibleMain : Nat
+    primeTraceError : Nat
+    primeTraceSlack : Nat
+
+    finiteADecomposition :
+      criticalCompatibleMain + retainedHermitianExcess
+        ≡ finiteZeroSideFrobenius
+
+    zeroToPrimeTransport :
+      finiteZeroSideFrobenius + zeroSideTailSlack
+        ≡ rawPrimeSideFrobenius + zeroSideTailBudget
+
+    primeTraceUpper :
+      rawPrimeSideFrobenius + primeTraceSlack
+        ≡ primeCompatibleMain + primeTraceError
+
+    criticalMainMatchesPrimeMain :
+      criticalCompatibleMain ≡ primeCompatibleMain
+
+open G3SourceTransportLedger public
+
+combinedArithmeticError : G3SourceTransportLedger → Nat
+combinedArithmeticError g = zeroSideTailBudget g + primeTraceError g
+
+combinedTransportSlack : G3SourceTransportLedger → Nat
+combinedTransportSlack g = zeroSideTailSlack g + primeTraceSlack g
+
+------------------------------------------------------------------------
+-- Exact cancellation theorem.
+------------------------------------------------------------------------
+
+retainedExcessWithinCombinedSourceError :
+  (g : G3SourceTransportLedger) →
+  retainedHermitianExcess g + combinedTransportSlack g
+    ≡ combinedArithmeticError g
+retainedExcessWithinCombinedSourceError g =
+  cancelLeft
+    (criticalCompatibleMain g)
+    (retainedHermitianExcess g + combinedTransportSlack g)
+    (combinedArithmeticError g)
+    chain
+  where
+  C : Nat
+  C = criticalCompatibleMain g
+
+  D : Nat
+  D = retainedHermitianExcess g
+
+  A : Nat
+  A = finiteZeroSideFrobenius g
+
+  G : Nat
+  G = rawPrimeSideFrobenius g
+
+  Et : Nat
+  Et = zeroSideTailBudget g
+
+  st : Nat
+  st = zeroSideTailSlack g
+
+  Ep : Nat
+  Ep = primeTraceError g
+
+  sp : Nat
+  sp = primeTraceSlack g
+
+  Pm : Nat
+  Pm = primeCompatibleMain g
+
+  step1 : C + (D + (st + sp)) ≡ (C + D) + (st + sp)
+  step1 = sym (+-assoc C D (st + sp))
+
+  step2 : (C + D) + (st + sp) ≡ A + (st + sp)
+  step2 = congPlusRight (finiteADecomposition g) (st + sp)
+
+  step3 : A + (st + sp) ≡ (A + st) + sp
+  step3 = sym (+-assoc A st sp)
+
+  step4 : (A + st) + sp ≡ (G + Et) + sp
+  step4 = congPlusRight (zeroToPrimeTransport g) sp
+
+  step5 : (G + Et) + sp ≡ G + (Et + sp)
+  step5 = +-assoc G Et sp
+
+  step6 : G + (Et + sp) ≡ G + (sp + Et)
+  step6 = congPlusLeft (+-comm Et sp) G
+
+  step7 : G + (sp + Et) ≡ (G + sp) + Et
+  step7 = sym (+-assoc G sp Et)
+
+  step8 : (G + sp) + Et ≡ (Pm + Ep) + Et
+  step8 = congPlusRight (primeTraceUpper g) Et
+
+  step9 : (Pm + Ep) + Et ≡ (C + Ep) + Et
+  step9 =
+    congPlusRight
+      (congPlusRight (sym (criticalMainMatchesPrimeMain g)) Ep)
+      Et
+
+  step10 : (C + Ep) + Et ≡ C + (Ep + Et)
+  step10 = +-assoc C Ep Et
+
+  step11 : C + (Ep + Et) ≡ C + (Et + Ep)
+  step11 = congPlusLeft (+-comm Ep Et) C
+
+  chain :
+    C + (D + (st + sp)) ≡ C + (Et + Ep)
+  chain =
+    trans step1
+      (trans step2
+        (trans step3
+          (trans step4
+            (trans step5
+              (trans step6
+                (trans step7
+                  (trans step8
+                    (trans step9
+                      (trans step10 step11)))))))))
+
+------------------------------------------------------------------------
+-- Cleaner source-facing factorization.  The upstream companion already owns:
+--
+-- * Gz=Gp from H-EF / explicit-formula bridge,
+-- * G=A+E by definition,
+-- * prop:tail bounds on E (operator and trace norm),
+-- * generic Frobenius perturbation lemmas in Assembly.lean,
+-- * thm:traces `tr2`: raw G Frobenius square = mainTr2 + O(E_T mainTr2).
+--
+-- The genuinely new G3 statement is therefore concentrated in identifying the
+-- CRITICAL-compatible A baseline and proving that the retained Hermitian defect
+-- from G1/G2 enters the finite A Frobenius square with the required sign/scale.
+------------------------------------------------------------------------
+
+record G3SourceOwnedTransport : Set₁ where
+  field
+    ExplicitFormulaGzEqualsGp : Set
+    ZeroSideSplitGEqualsAPlusE : Set
+    TailMatrixControl : Set
+    FrobeniusPerturbationControl : Set
+    PrimeSecondTraceBound : Set
+
+    explicitFormulaGzEqualsGp : ExplicitFormulaGzEqualsGp
+    zeroSideSplitGEqualsAPlusE : ZeroSideSplitGEqualsAPlusE
+    tailMatrixControl : TailMatrixControl
+    frobeniusPerturbationControl : FrobeniusPerturbationControl
+    primeSecondTraceBound : PrimeSecondTraceBound
+
+record G3RemainingAlignment (owned : G3SourceOwnedTransport) : Set₁ where
+  field
+    CriticalFiniteABaseline : Set
+    RetainedDefectInsideAFrobenius : Set
+    CriticalBaselineEqualsPrimeMain : Set
+
+    criticalFiniteABaseline : CriticalFiniteABaseline
+    retainedDefectInsideAFrobenius : RetainedDefectInsideAFrobenius
+    criticalBaselineEqualsPrimeMain : CriticalBaselineEqualsPrimeMain

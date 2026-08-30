@@ -1,0 +1,355 @@
+module DASHI.Physics.YangMills.BalabanYM4SU2PrincipalLogDexpBridgeExact where
+
+------------------------------------------------------------------------
+-- ROW A1a, THE SAME-OBJECT STEP:
+--   THE REPOSITORY'S PRINCIPAL-LOG FRECHET DERIVATIVE *IS*
+--   I - (1/2) ad_Y + c ad_Y^2
+--
+-- PRIMARY SOURCES
+--
+-- Brian C. Hall, "Lie Groups, Lie Algebras, and Representations: An
+-- Elementary Introduction", second edition, Springer (2015).
+-- DOI: 10.1007/978-3-319-13467-3.
+--
+-- Tadeusz Balaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHAT THIS MODULE CLOSES.
+--
+-- Two representations of the same operator live in this tree:
+--
+--   (i)  `BalabanCMP109SU2PrincipalLogJacobianStructureExact` writes the
+--        inverse-dexp operator in axis/plane form,
+--
+--            J v  =  a v  +  (1 - a) <n,v> n  +  sigma (n x v) ,
+--
+--        with n the logarithm axis and a the (still analytic) radial
+--        coefficient;
+--
+--   (ii) `BalabanYM4SU2DexpJacobianDeterminantExact` computes determinants of
+--        the Cayley-Hamilton span  I + alpha ad_Y + beta ad_Y^2 , and needs to
+--        know that the chart differential *is* the span element with
+--        alpha = -1/2, beta = c.
+--
+-- The bridge between (i) and (ii) was the missing same-chart part of the Haar
+-- statement.  It is supplied here as an exact identity of 3x3 rational
+-- matrices: writing Y = s n with n a unit axis,
+--
+--     dexp_Y^{-1}  =  I - (1/2) ad_Y + c ad_Y^2
+--                  =  structureMatrix a sigma n ,
+--     a = 1 - 4 s^2 c ,      sigma = - s .
+--
+-- (`dexpInverseIsPrincipalLogOperator`; the vector form is
+-- `dexpInverseActsAsPrincipalLog`.)  In particular the two representations
+-- have the *same* radial coefficient, so the repository's analytic input
+--
+--     a = s cot s        (cleared:  S a = s C,  S = sin s, C = cos s)
+--
+-- is literally the removable-singularity input of the determinant module,
+--
+--     S (1 - 4 s^2 c) = s C ,     i.e.    c = (1 - s cot s) / (4 s^2) .
+--
+-- Feeding that through the determinant theorem gives, with no further Haar
+-- algebra,
+--
+--     det dexp_Y^{-1} = (s / sin s)^2 ,     J(Y) = (sin s / s)^2
+--
+-- in cleared form  J s^2 = (sin s)^2  (`haarDensityFromPrincipalLogChart`).
+--
+-- WHAT IS *NOT* PROVED HERE.  The real-analytic value of the radial
+-- coefficient a = s cot s itself: it enters, as everywhere in this tree, as
+-- the cleared scalar relation  S a = s C, and is supplied by the Bishop-real
+-- enclosures.  What is proved is that the *operator* identification needs no
+-- new Lie theory: it is the displayed polynomial identity.  Row A stays open;
+-- the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _-_; _/_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (twoℚ; halfℚ)
+open import DASHI.Physics.YangMills.BalabanYM4SU2DexpJacobianDeterminantExact
+  using (Mat3; mat3; mat≡; detM; fourℚ; dexpInverseMatrix; module ChartScalars)
+open import DASHI.Physics.YangMills.BalabanYM4RadialQuadraticFormToHessianExact
+  using (normSq)
+import DASHI.Physics.YangMills.BalabanCMP109SU2PrincipalLogJacobianStructureExact
+  as Struct
+
+open Mat3
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- The matrix of the axis/plane (principal-log) representation
+------------------------------------------------------------------------
+
+structureMatrix : (a sigma n₀ n₁ n₂ : ℚ) → Mat3
+structureMatrix a sigma n₀ n₁ n₂ = mat3
+  (a + (1ℚ - a) * (n₀ * n₀))
+  ((1ℚ - a) * (n₀ * n₁) - sigma * n₂)
+  ((1ℚ - a) * (n₀ * n₂) + sigma * n₁)
+  ((1ℚ - a) * (n₁ * n₀) + sigma * n₂)
+  (a + (1ℚ - a) * (n₁ * n₁))
+  ((1ℚ - a) * (n₁ * n₂) - sigma * n₀)
+  ((1ℚ - a) * (n₂ * n₀) - sigma * n₁)
+  ((1ℚ - a) * (n₂ * n₁) + sigma * n₀)
+  (a + (1ℚ - a) * (n₂ * n₂))
+
+matVec₀ matVec₁ matVec₂ : Mat3 → ℚ → ℚ → ℚ → ℚ
+matVec₀ X v₀ v₁ v₂ = m₁₁ X * v₀ + m₁₂ X * v₁ + m₁₃ X * v₂
+matVec₁ X v₀ v₁ v₂ = m₂₁ X * v₀ + m₂₂ X * v₁ + m₂₃ X * v₂
+matVec₂ X v₀ v₁ v₂ = m₃₁ X * v₀ + m₃₂ X * v₁ + m₃₃ X * v₂
+
+------------------------------------------------------------------------
+-- `structureMatrix` really is the matrix of the axis/plane operator
+------------------------------------------------------------------------
+
+structureMatrixActs₀ :
+  ∀ a sigma n₀ n₁ n₂ v₀ v₁ v₂ →
+  matVec₀ (structureMatrix a sigma n₀ n₁ n₂) v₀ v₁ v₂
+    ≡ Struct.principalLogJacobian0 a sigma n₀ n₁ n₂ v₀ v₁ v₂
+structureMatrixActs₀ a sigma n₀ n₁ n₂ v₀ v₁ v₂ =
+  solve 8 (λ av sg n0 n1 n2 v0 v1 v2 →
+      ((((av :+ ((con 1ℚ :- av) :* (n0 :* n0))) :* v0) :+ ((((con 1ℚ :- av) :* (n0 :* n1)) :- (sg :* n2)) :* v1)) :+ ((((con 1ℚ :- av) :* (n0 :* n2)) :+ (sg :* n1)) :* v2))
+        := (((av :* v0) :+ (((con 1ℚ :- av) :* (((n0 :* v0) :+ (n1 :* v1)) :+ (n2 :* v2))) :* n0)) :+ (sg :* ((n1 :* v2) :- (n2 :* v1)))))
+    refl a sigma n₀ n₁ n₂ v₀ v₁ v₂
+
+structureMatrixActs₁ :
+  ∀ a sigma n₀ n₁ n₂ v₀ v₁ v₂ →
+  matVec₁ (structureMatrix a sigma n₀ n₁ n₂) v₀ v₁ v₂
+    ≡ Struct.principalLogJacobian1 a sigma n₀ n₁ n₂ v₀ v₁ v₂
+structureMatrixActs₁ a sigma n₀ n₁ n₂ v₀ v₁ v₂ =
+  solve 8 (λ av sg n0 n1 n2 v0 v1 v2 →
+      ((((((con 1ℚ :- av) :* (n1 :* n0)) :+ (sg :* n2)) :* v0) :+ ((av :+ ((con 1ℚ :- av) :* (n1 :* n1))) :* v1)) :+ ((((con 1ℚ :- av) :* (n1 :* n2)) :- (sg :* n0)) :* v2))
+        := (((av :* v1) :+ (((con 1ℚ :- av) :* (((n0 :* v0) :+ (n1 :* v1)) :+ (n2 :* v2))) :* n1)) :+ (sg :* ((n2 :* v0) :- (n0 :* v2)))))
+    refl a sigma n₀ n₁ n₂ v₀ v₁ v₂
+
+structureMatrixActs₂ :
+  ∀ a sigma n₀ n₁ n₂ v₀ v₁ v₂ →
+  matVec₂ (structureMatrix a sigma n₀ n₁ n₂) v₀ v₁ v₂
+    ≡ Struct.principalLogJacobian2 a sigma n₀ n₁ n₂ v₀ v₁ v₂
+structureMatrixActs₂ a sigma n₀ n₁ n₂ v₀ v₁ v₂ =
+  solve 8 (λ av sg n0 n1 n2 v0 v1 v2 →
+      ((((((con 1ℚ :- av) :* (n2 :* n0)) :- (sg :* n1)) :* v0) :+ ((((con 1ℚ :- av) :* (n2 :* n1)) :+ (sg :* n0)) :* v1)) :+ ((av :+ ((con 1ℚ :- av) :* (n2 :* n2))) :* v2))
+        := (((av :* v2) :+ (((con 1ℚ :- av) :* (((n0 :* v0) :+ (n1 :* v1)) :+ (n2 :* v2))) :* n2)) :+ (sg :* ((n0 :* v1) :- (n1 :* v0)))))
+    refl a sigma n₀ n₁ n₂ v₀ v₁ v₂
+
+------------------------------------------------------------------------
+-- THE BRIDGE: the chart differential is the axis/plane operator
+------------------------------------------------------------------------
+
+addZero : ∀ {x y : ℚ} → y ≡ 0ℚ → x + y ≡ x
+addZero {x} eq = trans (cong (x +_) eq) (ℚP.+-identityʳ x)
+
+dexpInverseIsPrincipalLogOperator :
+  ∀ s c n₀ n₁ n₂ → Struct.normSq3 n₀ n₁ n₂ ≡ 1ℚ →
+  dexpInverseMatrix (s * n₀) (s * n₁) (s * n₂) c
+    ≡ structureMatrix (1ℚ - (fourℚ * (s * s)) * c) (- s) n₀ n₁ n₂
+dexpInverseIsPrincipalLogOperator s c n₀ n₁ n₂ unit =
+  mat≡ (trans e₁₁Raw (addZero corrZero)) e₁₂Raw e₁₃Raw
+       e₂₁Raw (trans e₂₂Raw (addZero corrZero)) e₂₃Raw
+       e₃₁Raw e₃₂Raw (trans e₃₃Raw (addZero corrZero))
+  where
+    vanish : (fourℚ * (c * (s * s))) * (1ℚ - 1ℚ) ≡ 0ℚ
+    vanish =
+      solve 2 (λ cc ss → (con fourℚ :* (cc :* (ss :* ss))) :* (con 1ℚ :- con 1ℚ)
+                           := con 0ℚ)
+        refl c s
+
+    corrZero :
+      (fourℚ * (c * (s * s))) * (1ℚ - Struct.normSq3 n₀ n₁ n₂) ≡ 0ℚ
+    corrZero =
+      trans (cong (λ z → (fourℚ * (c * (s * s))) * (1ℚ - z)) unit) vanish
+
+    e₁₁Raw =
+      solve 5 (λ sv cv n0 n1 n2 →
+          (con 1ℚ :+ (((:- con halfℚ) :* con 0ℚ) :+ (cv :* (((con 0ℚ :* con 0ℚ) :+ ((:- (con twoℚ :* (sv :* n2))) :* (con twoℚ :* (sv :* n2)))) :+ ((con twoℚ :* (sv :* n1)) :* (:- (con twoℚ :* (sv :* n1))))))))
+            := (((con 1ℚ :- ((con fourℚ :* (sv :* sv)) :* cv)) :+ ((con 1ℚ :- (con 1ℚ :- ((con fourℚ :* (sv :* sv)) :* cv))) :* (n0 :* n0))) :+ ((con fourℚ :* (cv :* (sv :* sv))) :* (con 1ℚ :- (((n0 :* n0) :+ (n1 :* n1)) :+ (n2 :* n2))))))
+        refl s c n₀ n₁ n₂
+
+    e₁₂Raw =
+      solve 5 (λ sv cv n0 n1 n2 →
+          (con 0ℚ :+ (((:- con halfℚ) :* (:- (con twoℚ :* (sv :* n2)))) :+ (cv :* (((con 0ℚ :* (:- (con twoℚ :* (sv :* n2)))) :+ ((:- (con twoℚ :* (sv :* n2))) :* con 0ℚ)) :+ ((con twoℚ :* (sv :* n1)) :* (con twoℚ :* (sv :* n0)))))))
+            := (((con 1ℚ :- (con 1ℚ :- ((con fourℚ :* (sv :* sv)) :* cv))) :* (n0 :* n1)) :- ((:- sv) :* n2)))
+        refl s c n₀ n₁ n₂
+
+    e₁₃Raw =
+      solve 5 (λ sv cv n0 n1 n2 →
+          (con 0ℚ :+ (((:- con halfℚ) :* (con twoℚ :* (sv :* n1))) :+ (cv :* (((con 0ℚ :* (con twoℚ :* (sv :* n1))) :+ ((:- (con twoℚ :* (sv :* n2))) :* (:- (con twoℚ :* (sv :* n0))))) :+ ((con twoℚ :* (sv :* n1)) :* con 0ℚ)))))
+            := (((con 1ℚ :- (con 1ℚ :- ((con fourℚ :* (sv :* sv)) :* cv))) :* (n0 :* n2)) :+ ((:- sv) :* n1)))
+        refl s c n₀ n₁ n₂
+
+    e₂₁Raw =
+      solve 5 (λ sv cv n0 n1 n2 →
+          (con 0ℚ :+ (((:- con halfℚ) :* (con twoℚ :* (sv :* n2))) :+ (cv :* ((((con twoℚ :* (sv :* n2)) :* con 0ℚ) :+ (con 0ℚ :* (con twoℚ :* (sv :* n2)))) :+ ((:- (con twoℚ :* (sv :* n0))) :* (:- (con twoℚ :* (sv :* n1))))))))
+            := (((con 1ℚ :- (con 1ℚ :- ((con fourℚ :* (sv :* sv)) :* cv))) :* (n1 :* n0)) :+ ((:- sv) :* n2)))
+        refl s c n₀ n₁ n₂
+
+    e₂₂Raw =
+      solve 5 (λ sv cv n0 n1 n2 →
+          (con 1ℚ :+ (((:- con halfℚ) :* con 0ℚ) :+ (cv :* ((((con twoℚ :* (sv :* n2)) :* (:- (con twoℚ :* (sv :* n2)))) :+ (con 0ℚ :* con 0ℚ)) :+ ((:- (con twoℚ :* (sv :* n0))) :* (con twoℚ :* (sv :* n0)))))))
+            := (((con 1ℚ :- ((con fourℚ :* (sv :* sv)) :* cv)) :+ ((con 1ℚ :- (con 1ℚ :- ((con fourℚ :* (sv :* sv)) :* cv))) :* (n1 :* n1))) :+ ((con fourℚ :* (cv :* (sv :* sv))) :* (con 1ℚ :- (((n0 :* n0) :+ (n1 :* n1)) :+ (n2 :* n2))))))
+        refl s c n₀ n₁ n₂
+
+    e₂₃Raw =
+      solve 5 (λ sv cv n0 n1 n2 →
+          (con 0ℚ :+ (((:- con halfℚ) :* (:- (con twoℚ :* (sv :* n0)))) :+ (cv :* ((((con twoℚ :* (sv :* n2)) :* (con twoℚ :* (sv :* n1))) :+ (con 0ℚ :* (:- (con twoℚ :* (sv :* n0))))) :+ ((:- (con twoℚ :* (sv :* n0))) :* con 0ℚ)))))
+            := (((con 1ℚ :- (con 1ℚ :- ((con fourℚ :* (sv :* sv)) :* cv))) :* (n1 :* n2)) :- ((:- sv) :* n0)))
+        refl s c n₀ n₁ n₂
+
+    e₃₁Raw =
+      solve 5 (λ sv cv n0 n1 n2 →
+          (con 0ℚ :+ (((:- con halfℚ) :* (:- (con twoℚ :* (sv :* n1)))) :+ (cv :* ((((:- (con twoℚ :* (sv :* n1))) :* con 0ℚ) :+ ((con twoℚ :* (sv :* n0)) :* (con twoℚ :* (sv :* n2)))) :+ (con 0ℚ :* (:- (con twoℚ :* (sv :* n1))))))))
+            := (((con 1ℚ :- (con 1ℚ :- ((con fourℚ :* (sv :* sv)) :* cv))) :* (n2 :* n0)) :- ((:- sv) :* n1)))
+        refl s c n₀ n₁ n₂
+
+    e₃₂Raw =
+      solve 5 (λ sv cv n0 n1 n2 →
+          (con 0ℚ :+ (((:- con halfℚ) :* (con twoℚ :* (sv :* n0))) :+ (cv :* ((((:- (con twoℚ :* (sv :* n1))) :* (:- (con twoℚ :* (sv :* n2)))) :+ ((con twoℚ :* (sv :* n0)) :* con 0ℚ)) :+ (con 0ℚ :* (con twoℚ :* (sv :* n0)))))))
+            := (((con 1ℚ :- (con 1ℚ :- ((con fourℚ :* (sv :* sv)) :* cv))) :* (n2 :* n1)) :+ ((:- sv) :* n0)))
+        refl s c n₀ n₁ n₂
+
+    e₃₃Raw =
+      solve 5 (λ sv cv n0 n1 n2 →
+          (con 1ℚ :+ (((:- con halfℚ) :* con 0ℚ) :+ (cv :* ((((:- (con twoℚ :* (sv :* n1))) :* (con twoℚ :* (sv :* n1))) :+ ((con twoℚ :* (sv :* n0)) :* (:- (con twoℚ :* (sv :* n0))))) :+ (con 0ℚ :* con 0ℚ)))))
+            := (((con 1ℚ :- ((con fourℚ :* (sv :* sv)) :* cv)) :+ ((con 1ℚ :- (con 1ℚ :- ((con fourℚ :* (sv :* sv)) :* cv))) :* (n2 :* n2))) :+ ((con fourℚ :* (cv :* (sv :* sv))) :* (con 1ℚ :- (((n0 :* n0) :+ (n1 :* n1)) :+ (n2 :* n2))))))
+        refl s c n₀ n₁ n₂
+
+------------------------------------------------------------------------
+-- Vector form of the bridge
+------------------------------------------------------------------------
+
+dexpInverseActsAsPrincipalLog₀ :
+  ∀ s c n₀ n₁ n₂ v₀ v₁ v₂ → Struct.normSq3 n₀ n₁ n₂ ≡ 1ℚ →
+  matVec₀ (dexpInverseMatrix (s * n₀) (s * n₁) (s * n₂) c) v₀ v₁ v₂
+    ≡ Struct.principalLogJacobian0
+        (1ℚ - (fourℚ * (s * s)) * c) (- s) n₀ n₁ n₂ v₀ v₁ v₂
+dexpInverseActsAsPrincipalLog₀ s c n₀ n₁ n₂ v₀ v₁ v₂ unit =
+  trans (cong (λ X → matVec₀ X v₀ v₁ v₂)
+          (dexpInverseIsPrincipalLogOperator s c n₀ n₁ n₂ unit))
+    (structureMatrixActs₀ (1ℚ - (fourℚ * (s * s)) * c) (- s) n₀ n₁ n₂ v₀ v₁ v₂)
+
+dexpInverseActsAsPrincipalLog₁ :
+  ∀ s c n₀ n₁ n₂ v₀ v₁ v₂ → Struct.normSq3 n₀ n₁ n₂ ≡ 1ℚ →
+  matVec₁ (dexpInverseMatrix (s * n₀) (s * n₁) (s * n₂) c) v₀ v₁ v₂
+    ≡ Struct.principalLogJacobian1
+        (1ℚ - (fourℚ * (s * s)) * c) (- s) n₀ n₁ n₂ v₀ v₁ v₂
+dexpInverseActsAsPrincipalLog₁ s c n₀ n₁ n₂ v₀ v₁ v₂ unit =
+  trans (cong (λ X → matVec₁ X v₀ v₁ v₂)
+          (dexpInverseIsPrincipalLogOperator s c n₀ n₁ n₂ unit))
+    (structureMatrixActs₁ (1ℚ - (fourℚ * (s * s)) * c) (- s) n₀ n₁ n₂ v₀ v₁ v₂)
+
+dexpInverseActsAsPrincipalLog₂ :
+  ∀ s c n₀ n₁ n₂ v₀ v₁ v₂ → Struct.normSq3 n₀ n₁ n₂ ≡ 1ℚ →
+  matVec₂ (dexpInverseMatrix (s * n₀) (s * n₁) (s * n₂) c) v₀ v₁ v₂
+    ≡ Struct.principalLogJacobian2
+        (1ℚ - (fourℚ * (s * s)) * c) (- s) n₀ n₁ n₂ v₀ v₁ v₂
+dexpInverseActsAsPrincipalLog₂ s c n₀ n₁ n₂ v₀ v₁ v₂ unit =
+  trans (cong (λ X → matVec₂ X v₀ v₁ v₂)
+          (dexpInverseIsPrincipalLogOperator s c n₀ n₁ n₂ unit))
+    (structureMatrixActs₂ (1ℚ - (fourℚ * (s * s)) * c) (- s) n₀ n₁ n₂ v₀ v₁ v₂)
+
+------------------------------------------------------------------------
+-- The scalar consequence:  a = 1 - 4 s^2 c   and   c = (1 - a) / (4 s^2)
+------------------------------------------------------------------------
+
+coefficientCleared :
+  ∀ sSq c a → a ≡ 1ℚ - (fourℚ * sSq) * c → (fourℚ * sSq) * c ≡ 1ℚ - a
+coefficientCleared sSq c a eq =
+  trans (sym flip) (cong (1ℚ -_) (sym eq))
+  where
+    flip : 1ℚ - (1ℚ - (fourℚ * sSq) * c) ≡ (fourℚ * sSq) * c
+    flip =
+      solve 2 (λ q cc → con 1ℚ :- (con 1ℚ :- (con fourℚ :* q) :* cc)
+                          := (con fourℚ :* q) :* cc)
+        refl sSq c
+
+normSqScaled :
+  ∀ s n₀ n₁ n₂ →
+  normSq (s * n₀) (s * n₁) (s * n₂) ≡ (s * s) * Struct.normSq3 n₀ n₁ n₂
+normSqScaled s n₀ n₁ n₂ =
+  solve 4 (λ sv m0 m1 m2 →
+      (((sv :* m0) :* (sv :* m0) :+ (sv :* m1) :* (sv :* m1))
+         :+ (sv :* m2) :* (sv :* m2))
+        := (sv :* sv) :* (((m0 :* m0) :+ (m1 :* m1)) :+ (m2 :* m2)))
+    refl s n₀ n₁ n₂
+
+------------------------------------------------------------------------
+-- THE HAAR DENSITY, FROM THE PRINCIPAL-LOG CHART
+--
+-- The analytic input is exactly the repository's radial coefficient in
+-- cleared form,  S a = s C  with  a  the principal-log coefficient; the
+-- identification  a = 1 - 4 s^2 c  is the theorem proved above.
+------------------------------------------------------------------------
+
+module HaarFromPrincipalLog
+  (s S C c sSq a : ℚ)
+  (sSqIsSquare : sSq ≡ s * s)
+  (pythagoras : S * S + C * C ≡ 1ℚ)
+  (radialCoefficient : a ≡ 1ℚ - (fourℚ * sSq) * c)
+  (cotangentCleared : S * a ≡ s * C)
+  where
+
+  removableSingularity : S * (1ℚ - (fourℚ * sSq) * c) ≡ s * C
+  removableSingularity =
+    subst (λ z → S * z ≡ s * C) radialCoefficient cotangentCleared
+
+  open ChartScalars s S C c sSq sSqIsSquare pythagoras removableSingularity
+    public
+
+  -- c = (1 - a) / (4 s^2), division-free
+  coefficientValue : (fourℚ * sSq) * c ≡ 1ℚ - a
+  coefficientValue = coefficientCleared sSq c a radialCoefficient
+
+  -- the Haar density on the literal chart:  J s^2 = (sin s)^2
+  haarDensityFromPrincipalLogChart :
+    ∀ n₀ n₁ n₂ (J : ℚ) → Struct.normSq3 n₀ n₁ n₂ ≡ 1ℚ →
+    J * detM (dexpInverseMatrix (s * n₀) (s * n₁) (s * n₂) c) ≡ 1ℚ →
+    J * (s * s) ≡ S * S
+  haarDensityFromPrincipalLogChart n₀ n₁ n₂ J unit inverseRelation =
+    haarDensityCleared J (s * n₀) (s * n₁) (s * n₂) normIsSSq inverseRelation
+    where
+      normIsSSq : normSq (s * n₀) (s * n₁) (s * n₂) ≡ sSq
+      normIsSSq =
+        trans (normSqScaled s n₀ n₁ n₂)
+          (trans (cong ((s * s) *_) unit)
+            (trans (ℚP.*-identityʳ (s * s)) (sym sSqIsSquare)))
+
+------------------------------------------------------------------------
+-- NON-VACUITY
+--
+-- s = 1/2, unit axis n = (1,0,0), c = 1/3, a = 2/3, and the Pythagorean pair
+-- (S,C) = (3/5,4/5).  The bridge, the scalar relation S a = s C and the Haar
+-- conclusion are all inhabited at these values.  As in the determinant module
+-- this does NOT claim 3/5 = sin(1/2); the real values enter through the
+-- Bishop-real enclosures.
+------------------------------------------------------------------------
+
+sampleUnitAxis : Struct.normSq3 1ℚ 0ℚ 0ℚ ≡ 1ℚ
+sampleUnitAxis = refl
+
+sampleBridge :
+  dexpInverseMatrix ((+ 1 / 2) * 1ℚ) ((+ 1 / 2) * 0ℚ) ((+ 1 / 2) * 0ℚ) (+ 1 / 3)
+    ≡ structureMatrix (1ℚ - (fourℚ * ((+ 1 / 2) * (+ 1 / 2))) * (+ 1 / 3))
+        (- (+ 1 / 2)) 1ℚ 0ℚ 0ℚ
+sampleBridge =
+  dexpInverseIsPrincipalLogOperator (+ 1 / 2) (+ 1 / 3) 1ℚ 0ℚ 0ℚ sampleUnitAxis
+
+module SampleHaar =
+  HaarFromPrincipalLog (+ 1 / 2) (+ 3 / 5) (+ 4 / 5) (+ 1 / 3) (+ 1 / 4)
+    (+ 2 / 3) refl refl refl refl
+
+sampleHaarDensity :
+  (+ 36 / 25) * ((+ 1 / 2) * (+ 1 / 2)) ≡ (+ 3 / 5) * (+ 3 / 5)
+sampleHaarDensity =
+  SampleHaar.haarDensityFromPrincipalLogChart 1ℚ 0ℚ 0ℚ (+ 36 / 25)
+    sampleUnitAxis refl
+

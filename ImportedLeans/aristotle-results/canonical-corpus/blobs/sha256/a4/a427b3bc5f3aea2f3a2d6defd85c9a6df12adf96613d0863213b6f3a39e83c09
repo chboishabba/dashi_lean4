@@ -1,0 +1,153 @@
+# G20 — final autopsy of the Gram / explicit-formula route: exact pole subtraction, and the arithmetic wall behind it
+
+**The Riemann Hypothesis is not proved, and G20 was not an attempt to prove it.**
+Nothing was weakened and nothing was assumed: `RiemannHypothesisFor`,
+`RiemannHypothesis`, `CompletedRiemannHypothesis` and every earlier statement are
+untouched; there is no `sorry`/`admit`, no `axiom`, no postulate, no Boolean
+receipt, no numerical evidence and no `@[implemented_by]` in any Lean source.
+`lake build RiemannAnalytic` succeeds (8106 jobs) and `#print axioms` on every
+new theorem returns only `[propext, Classical.choice, Quot.sound]`.
+
+All new material is in the single new module
+`RiemannAnalytic/PoleErrorAutopsy.lean`, wired into the aggregate
+`RiemannAnalytic.lean`.  The Riemann–Weil explicit formula is, as before, *not*
+proved and *not* postulated: it is the explicit hypothesis `WeilExplicitFormula`
+over literal zero data, carried in the statement of every theorem that uses it.
+The G20 statements below are unconditional facts about the *literal transported
+prime sum* and about the Chebyshev function `ψ`; they do not use the explicit
+formula at all.
+
+---
+
+## 1.  `weilPrimeSum_pole_error_decomposition` — `S = M + E`, exactly
+
+With the plateau taper the literal transported prime sum is
+
+```
+S(x) = ∑_{n ≤ N} Λ(n) n^{-1/2} cos(x log n)      (`weilPlateauPrimeSum`)
+```
+
+(and `weilGridPrimeSum φ N x = 2 S(x)`, `weilGridResidualPrimeSum φ N β x_u x_v
+= 2(S(x_v) − β S(x_u))`, proved as `weilGridPrimeSum_eq_two_mul_plateau`,
+`weilGridResidualPrimeSum_eq_two_mul_plateau`).  Define
+
+```
+M(x) = ∫_1^N t^{-1/2} cos(x log t) dt            (`weilPoleMainTerm`)
+E(x) = S(x) − M(x)                               (`weilPoleErrorTerm`).
+```
+
+`weilPrimeSum_pole_error_decomposition` is `S = M + E`.  The content is that `E`
+is *not* a formal remainder: `weilPoleErrorTerm_eq_discrepancyFunctional` proves,
+from Abel summation against `Λ` (`weilPlateauPrimeSum_abel`, using Mathlib's
+`sum_mul_eq_sub_sub_integral_mul'`) plus integration by parts for the continuum
+term (`weilPoleMainTerm_byParts`), the exact identity
+
+```
+E(x) = f_x(N)·(ψ(N) − N) + 1 − ∫_1^N f_x'(t)·(ψ(t) − t) dt,
+f_x(t) = t^{-1/2}cos(x log t),  f_x'(t) = −t^{-3/2}((1/2)cos(x log t) + x sin(x log t)).
+```
+
+So after subtracting the deterministic pole contribution, what remains of the
+literal prime side is *literally* a linear functional of the Chebyshev
+discrepancy `ψ(t) − t` (`weilDiscrepancyFunctional`, `chebyshevDiscrepancy`).
+The supporting analysis — `hasDerivAt_weilPoleKernel`,
+`weilPoleKernelDeriv_abs_le`, the integrability lemmas — is proved, not assumed.
+
+## 2.  `transverseResidual_mainTermDecision` — does the literal `β` cancel `M`?
+
+**Answer: only by coincidence, and at the literal anchor it does not.**
+
+* `transverseResidual_mainTermDecision`: for `M(x_u) ≠ 0`,
+  `M(x_v) − β M(x_u) = 0 ↔ β = M(x_v)/M(x_u)`, and in general
+  `|M(x_v) − β M(x_u)| = |M(x_u)|·|β − M(x_v)/M(x_u)|`.  Cancellation is one
+  scalar condition on `β`.  The projection coefficient produced by the Gram
+  geometry is the inner-product ratio; nothing ties it to the main-term ratio.
+* `weilPoleMainTerm_zero_freq`: `M(N,0) = 2(√N − 1)` exactly.
+* `transverseResidual_mainTerm_atAnchor_lowerBound`: at the G19 anchor
+  `x_u = x_v = 0`, `|M_v − β M_u| ≥ |1 − β|·√N`.
+* `transverseResidual_atAnchor_red`: consequently a green gate there forces the
+  prime discrepancy alone to be at least `|1 − β|√N − c_r(log N)²/4`.  **Red at
+  the main term, before any prime cancellation.**
+
+The only escape is to force `β = 1` by running the frequencies together, and it
+is closed:
+
+* `transverseResidual_mainTerm_equalFrequencies_iff`: at `x_u = x_v` the pole
+  term cancels **iff** `β = 1`;
+* `weilGridResidualPrimeSum_degenerate`: at `β = 1`, `x_u = x_v` the literal
+  transported residual is identically `0`;
+* `transverseComp_self`, `transverseResidual_degenerate_source_collapse`: and
+  there the zero-side witness collapses — the source floor forces
+  `L²|α| = 0`, so there is no off-line displacement left to detect.
+
+## 3.  `transverseResidual_error_requiredScale` — the cost of a green gate
+
+For a plateau taper, `L ≤ log N`, `|α| ≤ 1/2` and the literal gate
+`|weilGridResidualPrimeSum φ N β x_u x_v| ≤ c_r L²|α|`:
+
+```
+|M(x_v) − β M(x_u)| − c_r(log N)²/4 ≤ |E(x_v) − β E(x_u)|,
+```
+
+and in the only surviving branch (exact pole cancellation)
+
+```
+|E(x_v) − β E(x_u)| ≤ c_r(log N)²/4 .
+```
+
+What that bound costs is calibrated on both sides:
+
+* `weilDiscrepancyFunctional_abs_le_of_sqrt_bound`: if `|ψ(t) − t| ≤ K√t` on
+  `[1,N]` — square-root (RH) strength — then `|E(x)| ≤ K + 1 + K(1/2+|x|)log N`,
+  polylogarithmic, i.e. exactly the required scale;
+* `weilDiscrepancyFunctional_model_lower`: for the model profile `R(t) = K t^θ`
+  the functional is at least `K N^{θ−1/2}`;
+* `modelDiscrepancy_exceeds_gateScale`: hence for every `K > 0`, `θ > 1/2` and
+  `c_r ≥ 0` there is an explicit threshold beyond which such a profile exceeds
+  the gate scale `c_r(log N)²/4`.
+
+So the surviving branch is not merely "hard": it is equivalent to supplying a
+discrepancy estimate of essentially square-root strength for `ψ(t) − t`.  Every
+classical unconditional input (PNT with any zero-free-region error, exponent
+`θ > 1/2`) is provably insufficient *for this functional*.
+
+## 4.  `gramExplicitFormulaRouteNoGo` — the packaged conclusion
+
+Under the literal source architecture, every green gate satisfies the dichotomy
+
+```
+M(x_v) ≠ β M(x_u)      (the deterministic pole term fails to cancel — dead at
+                        the main term, by §2/§3),
+    or
+|D_N(x_v, ψ−id) − β D_N(x_u, ψ−id)| ≤ c_r(log N)²/4
+                       (the gate *is* a polylogarithmic bound on the literal
+                        Chebyshev-discrepancy functional).
+```
+
+Either way, a closure theorem along this route must supply an independently deep
+prime-discrepancy estimate; the explicit-formula/Gram interface supplies no
+mechanism for it.  Combined with G18 (degree mismatch: quadratic observable,
+linear transport) and G19 (normalization invariance; cosine-only interface), the
+second-order geometric route is exhausted, and the residual obstruction is an
+arithmetic statement of RH strength rather than a geometric one.
+
+**Verdict.**  G18 + G19 + G20 close the Gram/Schur/transverse-residual family as
+a candidate proof architecture: the missing input is not a normalization, a
+taper or a phase, but a prime-discrepancy theorem whose strength is that of the
+conclusion.  Any future route should be judged by whether its prime-side gain is
+algebraic *before* any cancellation estimate.
+
+---
+
+### Files
+
+* `RiemannAnalytic/PoleErrorAutopsy.lean` — new (all G20 statements).
+* `RiemannAnalytic.lean` — aggregate import added.
+
+### Verification
+
+```
+lake build RiemannAnalytic        # 8106 jobs, success
+#print axioms <every G20 theorem> # [propext, Classical.choice, Quot.sound]
+rg 'sorry|admit|axiom |postulate' RiemannAnalytic/PoleErrorAutopsy.lean   # none
+```

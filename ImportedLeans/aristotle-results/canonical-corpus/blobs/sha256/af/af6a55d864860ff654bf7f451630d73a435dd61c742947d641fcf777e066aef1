@@ -1,0 +1,240 @@
+module DASHI.Physics.YangMills.BalabanYM4BetaHistoryContractionToShellInfluenceExact where
+
+------------------------------------------------------------------------
+-- ROW A1, HISTORY HALF:  A ONE-STEP CONTRACTION SUFFICES.
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I. Generation of Effective Actions in a Small Field Approximation
+-- and a Coupling Constant Renormalization in Four Dimensions",
+-- Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  End of Sect. 5: beta_j depends on ALL preceding
+-- effective couplings, not only on g_{j-1}.
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. II. Cluster Expansions", Communications in Mathematical Physics
+-- 116 (1988), 1--22.  DOI: 10.1007/BF01239022.  Localization is preserved by
+-- the cluster resummations.
+--
+-- WHAT THIS MODULE DOES.
+--
+-- `BalabanYM4LiteralWilsonFPHaarPositiveBetaExact` consumes the history half
+-- of Row A1 in the shell-resolved form
+--
+--     Delta_{d,j}  >=  - C gamma 2^-(d+2)                                (SHELL)
+--
+-- and proves that the accumulated history remainder is then bounded below by
+-- - C gamma / 2, uniformly in the history length.  (SHELL) is still a
+-- statement about a d-fold composition, so as an obligation it is not local.
+--
+-- Here (SHELL) is reduced to a ONE-STEP hypothesis.  Let the effective RG
+-- states carry a distance, let one RG step contract that distance by a factor
+-- kappa, and let the beta coefficient be Lipschitz in the state.  Then the
+-- influence of a perturbation d scales back is automatically geometric:
+--
+--     |Delta_{d,j}|  <=  K kappa^d gamma ,
+--
+-- and at kappa = 1/2 this is exactly (SHELL) with C gamma = 4 K gamma, using
+-- the normalisation identity 2^-d = 4 * 2^-(d+2) proved in the consumer
+-- module.  So the open physical obligation for the history half of Row A1 is
+-- not a statement about arbitrarily long histories at all: it is
+--
+--     (i)  one RG step contracts the effective-coupling distance by <= 1/2,
+--     (ii) the shell beta coefficient is Lipschitz in the effective state,
+--
+-- both of which are one-step, localized statements of the kind CMP109/CMP116
+-- actually produce.
+--
+-- WHAT IS NOT PROVED HERE.  (i) and (ii) themselves, for the literal Balaban
+-- RG map and the literal Wilson + reduced Faddeev-Popov + Haar beta
+-- coefficient: they are recorded as `conditional` at the end.  Nothing in this
+-- module supplies a contraction factor for the physical map.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _≤_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (cong; sym; trans; subst)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonFPHaarPositiveBetaExact
+  as RowA1
+
+------------------------------------------------------------------------
+-- 1.  A contracting chain of RG steps
+------------------------------------------------------------------------
+
+module ContractingHistory
+  (State : Set)
+  (distance : State → State → ℚ)
+  (step : Nat → State → State)
+  (kappa : ℚ)
+  (kappaNonNegative : 0ℚ ≤ kappa)
+  (stepContracts :
+     ∀ index x y → distance (step index x) (step index y) ≤ kappa * distance x y)
+  where
+
+  -- The state after d further RG steps.
+  chain : Nat → State → State
+  chain zero x = x
+  chain (suc n) x = step n (chain n x)
+
+  kappaPower : Nat → ℚ
+  kappaPower zero = 1ℚ
+  kappaPower (suc n) = kappa * kappaPower n
+
+  kappaPowerNonNegative : ∀ n → 0ℚ ≤ kappaPower n
+  kappaPowerNonNegative zero = ℚP.nonNegative⁻¹ 1ℚ {{_}}
+  kappaPowerNonNegative (suc n) =
+    subst (_≤ kappa * kappaPower n) (ℚP.*-zeroʳ kappa)
+      (ℚP.*-monoˡ-≤-nonNeg kappa {{ℚ.nonNegative kappaNonNegative}}
+        (kappaPowerNonNegative n))
+
+  -- d steps contract by kappa^d.
+  chainContracts :
+    ∀ n x y → distance (chain n x) (chain n y) ≤ kappaPower n * distance x y
+  chainContracts zero x y = ℚP.≤-reflexive (sym (ℚP.*-identityˡ (distance x y)))
+  chainContracts (suc n) x y =
+    ℚP.≤-trans (stepContracts n (chain n x) (chain n y))
+      (ℚP.≤-trans
+        (ℚP.*-monoˡ-≤-nonNeg kappa {{ℚ.nonNegative kappaNonNegative}}
+          (chainContracts n x y))
+        (ℚP.≤-reflexive
+          (sym (ℚP.*-assoc kappa (kappaPower n) (distance x y)))))
+
+  -- With a bounded initial perturbation gamma, the state distance d scales
+  -- later is at most kappa^d gamma.
+  chainDistanceBound :
+    ∀ (gamma : ℚ) (x y : State) → distance x y ≤ gamma →
+    ∀ n → distance (chain n x) (chain n y) ≤ kappaPower n * gamma
+  chainDistanceBound gamma x y initial n =
+    ℚP.≤-trans (chainContracts n x y)
+      (ℚP.*-monoˡ-≤-nonNeg (kappaPower n)
+        {{ℚ.nonNegative (kappaPowerNonNegative n)}} initial)
+
+  ------------------------------------------------------------------
+  -- 2.  A Lipschitz beta coefficient therefore has geometric influence
+  ------------------------------------------------------------------
+
+  -- Only the lower half of the Lipschitz property is used, because only the
+  -- lower half of the influence estimate is consumed by Row A1.
+  geometricInfluenceLower :
+    ∀ (coefficient : State → ℚ) (lipschitz : ℚ) → 0ℚ ≤ lipschitz →
+    (∀ x y → (- (lipschitz * distance x y))
+               ≤ coefficient x + (- coefficient y)) →
+    ∀ (gamma : ℚ) (x y : State) → distance x y ≤ gamma →
+    ∀ n →
+    (- (lipschitz * (kappaPower n * gamma)))
+      ≤ coefficient (chain n x) + (- coefficient (chain n y))
+  geometricInfluenceLower coefficient lipschitz lipschitzNonNegative
+      lipschitzBound gamma x y initial n =
+    ℚP.≤-trans
+      (ℚP.neg-antimono-≤
+        (ℚP.*-monoˡ-≤-nonNeg lipschitz {{ℚ.nonNegative lipschitzNonNegative}}
+          (chainDistanceBound gamma x y initial n)))
+      (lipschitzBound (chain n x) (chain n y))
+
+------------------------------------------------------------------------
+-- 3.  At kappa = 1/2 this is exactly the shell hypothesis of Row A1
+------------------------------------------------------------------------
+
+four : ℚ
+four = + 4 / 1
+
+-- K * ((4 * w) * gamma) = (4 * (K * gamma)) * w.
+regroupInfluence :
+  ∀ (lipschitz gamma weight : ℚ) →
+  lipschitz * ((four * weight) * gamma)
+  ≡ (four * (lipschitz * gamma)) * weight
+regroupInfluence lipschitz gamma weight =
+  trans (cong (λ z → lipschitz * z) swapWeight)
+    (trans (sym (ℚP.*-assoc lipschitz (four * gamma) weight))
+      (cong (λ z → z * weight) pullFour))
+  where
+    swapWeight : (four * weight) * gamma ≡ (four * gamma) * weight
+    swapWeight =
+      trans (ℚP.*-assoc four weight gamma)
+        (trans (cong (λ z → four * z) (ℚP.*-comm weight gamma))
+          (sym (ℚP.*-assoc four gamma weight)))
+
+    pullFour : lipschitz * (four * gamma) ≡ four * (lipschitz * gamma)
+    pullFour =
+      trans (sym (ℚP.*-assoc lipschitz four gamma))
+        (trans (cong (λ z → z * gamma) (ℚP.*-comm lipschitz four))
+          (ℚP.*-assoc four lipschitz gamma))
+
+module HalfContractingHistory
+  (State : Set)
+  (distance : State → State → ℚ)
+  (step : Nat → State → State)
+  (stepContracts :
+     ∀ index x y →
+     distance (step index x) (step index y) ≤ RowA1.half * distance x y)
+  where
+
+  open ContractingHistory State distance step RowA1.half
+    (ℚP.nonNegative⁻¹ RowA1.half) stepContracts public
+
+  -- kappa^d = 2^-d at kappa = 1/2.
+  kappaPowerIsHalfPower : ∀ n → kappaPower n ≡ RowA1.halfPower n
+  kappaPowerIsHalfPower zero = refl
+  kappaPowerIsHalfPower (suc n) =
+    cong (λ z → RowA1.half * z) (kappaPowerIsHalfPower n)
+
+  ------------------------------------------------------------------
+  -- THE HISTORY HYPOTHESIS OF ROW A1, FROM ONE-STEP DATA.
+  --
+  -- With C gamma := 4 K gamma, the per-shell influence increments of the
+  -- Lipschitz coefficient satisfy exactly the hypothesis
+  -- `incrementBound` of `RowA1.positiveBetaDataFromShellIncrements`.
+  ------------------------------------------------------------------
+  shellInfluenceFromOneStepContraction :
+    ∀ (coefficient : State → ℚ) (lipschitz : ℚ) → 0ℚ ≤ lipschitz →
+    (∀ x y → (- (lipschitz * distance x y))
+               ≤ coefficient x + (- coefficient y)) →
+    ∀ (gamma : ℚ) (x y : State) → distance x y ≤ gamma →
+    ∀ n →
+    (- ((four * (lipschitz * gamma)) * RowA1.shellWeight n))
+      ≤ coefficient (chain n x) + (- coefficient (chain n y))
+  shellInfluenceFromOneStepContraction coefficient lipschitz lipschitzNonNegative
+      lipschitzBound gamma x y initial n =
+    subst (λ bound → (- bound)
+                       ≤ coefficient (chain n x) + (- coefficient (chain n y)))
+      influenceValue
+      (geometricInfluenceLower coefficient lipschitz lipschitzNonNegative
+        lipschitzBound gamma x y initial n)
+    where
+      influenceValue :
+        lipschitz * (kappaPower n * gamma)
+        ≡ (four * (lipschitz * gamma)) * RowA1.shellWeight n
+      influenceValue =
+        trans
+          (cong (λ z → lipschitz * (z * gamma))
+            (trans (kappaPowerIsHalfPower n)
+              (RowA1.halfPowerIsFourShellWeight n)))
+          (regroupInfluence lipschitz gamma (RowA1.shellWeight n))
+
+------------------------------------------------------------------------
+-- 4.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: a one-step contraction plus a Lipschitz coefficient
+-- give the geometric per-shell influence estimate Row A1 consumes, with the
+-- explicit constant 4 K gamma at contraction factor 1/2.
+contractionToShellInfluenceLevel : ProofLevel
+contractionToShellInfluenceLevel = machineChecked
+
+-- STILL OPEN: for the literal Balaban RG map on the literal effective-coupling
+-- states, a one-step contraction factor kappa <= 1/2 in a cutoff- and
+-- volume-uniform distance, and the Lipschitz dependence of the literal
+-- Wilson + reduced Faddeev-Popov + Haar shell coefficient on that state.
+literalOneStepContractionLevel : ProofLevel
+literalOneStepContractionLevel = conditional

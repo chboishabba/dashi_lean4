@@ -1,0 +1,259 @@
+module DASHI.Physics.YangMills.BalabanYM4GateFeasibilityRegionExact where
+
+------------------------------------------------------------------------
+-- ROW A, WHERE THE REMAINING DIFFICULTY ACTUALLY SITS:
+--   THE TWO NUMERICAL GATES ARE ALWAYS SATISFIABLE ONCE b_- > 0
+--
+-- CONTEXT.  Row A is now in the canonical shape fixed by
+-- `DASHI.Physics.YangMills.BalabanYM4AnalyticPackageGateClosureExact`:
+--
+--     GATE 1 (sign)   :  M0 gamma                          <  b_- ,
+--     GATE 2 (tuning) :  (L_Z + M0 + gamma M1) gamma_tube  <  b_- - M0 gamma ,
+--
+-- with M0, M1 from the analytic package for beta_Int(g) = g F(g), L_Z the
+-- Gaussian coupling-derivative bound, gamma the small-coupling tube cap and
+-- gamma_tube the total coupling drift of the trajectory.
+--
+-- WHAT IS PROVED HERE.
+--
+--   (1) MONOTONICITY.  The admissible region is downward closed: shrinking
+--       the tube cap gamma and the drift gamma_tube preserves both gates.
+--
+--   (2) NONEMPTINESS.  For *every* choice of nonnegative analytic constants
+--       M0, M1, L_Z and every strictly positive Gaussian floor b_- there are
+--       positive gamma and gamma_tube closing both gates.  Explicitly one may
+--       take
+--
+--           gamma      = (b_-/2) / (M0 + 1) ,
+--           gamma_tube = (b_*/2) / (L + 1) ,   b_* = b_- - M0 gamma ,
+--                                              L   = L_Z + M0 + gamma M1 .
+--
+-- CONSEQUENCE, STATED PRECISELY.  No numerical accident in the analytic
+-- constants can obstruct row A: the *only* inequality-level obstruction is
+-- the strict positivity of the Gaussian floor, b_- > 0 (producer A1).  What
+-- the gates then demand of the physics is not a smaller constant but a
+-- smaller *tube*: gamma_tube is not a free parameter, it is the total
+-- coupling drift of the literal Bałaban trajectory, and closure requires that
+-- drift to fall inside the admissible region for the M0, M1, L_Z that the
+-- same trajectory produces.
+--
+-- This is therefore a scoping theorem, not a closure: it removes "the gates
+-- might be numerically unsatisfiable" from the list of possible obstructions
+-- and leaves A1, A2, A3 exactly as they were.  Row A stays open and the
+-- frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Product using (Σ; _×_; _,_; proj₁; proj₂)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; 1/_; _+_; _*_; -_; _-_; _≤_; _<_; nonNegative; positive)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+
+open import DASHI.Physics.YangMills.BalabanYM4GeometricMajorantSeriesExact
+  using (mul-nonNeg; scaleˡ-nonNeg; scaleʳ-nonNeg; mul-mono-nonNeg)
+open import DASHI.Physics.YangMills.BalabanYM4CubicCouplingDriftTelescopeExact
+  using (halfℚ; mul-pos; nonneg-difference)
+open import DASHI.Physics.YangMills.BalabanYM4LinearInteractionBetaMarginExact
+  using (positive-difference)
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- Positive reciprocals
+------------------------------------------------------------------------
+
+recip⁺ : (p : ℚ) → 0ℚ < p → ℚ
+recip⁺ p 0<p = (1/ p) {{ℚP.pos⇒nonZero p {{positive 0<p}}}}
+
+recip⁺-inverse : ∀ p (0<p : 0ℚ < p) → p * recip⁺ p 0<p ≡ 1ℚ
+recip⁺-inverse p 0<p = ℚP.*-inverseʳ p {{ℚP.pos⇒nonZero p {{positive 0<p}}}}
+
+recip⁺-positive : ∀ p (0<p : 0ℚ < p) → 0ℚ < recip⁺ p 0<p
+recip⁺-positive p 0<p =
+  ℚP.positive⁻¹ (recip⁺ p 0<p)
+    {{ℚP.1/pos⇒pos p {{positive 0<p}}}}
+
+------------------------------------------------------------------------
+-- Halving
+------------------------------------------------------------------------
+
+halfSum : ∀ x → halfℚ * x + halfℚ * x ≡ x
+halfSum = solve 1 (λ x → con halfℚ :* x :+ con halfℚ :* x := x) refl
+
+halfLess : ∀ {b} → 0ℚ < b → halfℚ * b < b
+halfLess {b} 0<b =
+  subst₂ (λ u v → u < v)
+    (ℚP.+-identityʳ (halfℚ * b))
+    (halfSum b)
+    (ℚP.+-monoʳ-< (halfℚ * b) (mul-pos (ℚP.positive⁻¹ halfℚ) 0<b))
+  where
+    subst₂ : ∀ (R : ℚ → ℚ → Set) {x y u v} → x ≡ y → u ≡ v → R x u → R y v
+    subst₂ R refl refl r = r
+
+------------------------------------------------------------------------
+-- (1) The admissible region is downward closed
+------------------------------------------------------------------------
+
+module Monotone
+  (floorValue interactionSup derivativeSup gaussianSup : ℚ)
+  (0≤M0 : 0ℚ ≤ interactionSup)
+  (0≤M1 : 0ℚ ≤ derivativeSup)
+  (0≤LZ : 0ℚ ≤ gaussianSup)
+  where
+
+  totalDerivative : ℚ → ℚ
+  totalDerivative γ = gaussianSup + (interactionSup + γ * derivativeSup)
+
+  margin : ℚ → ℚ
+  margin γ = floorValue - interactionSup * γ
+
+  signGate : ℚ → Set
+  signGate γ = interactionSup * γ < floorValue
+
+  tuningGate : ℚ → ℚ → Set
+  tuningGate γ γt = totalDerivative γ * γt < margin γ
+
+  -- shrinking both the tube cap and the drift preserves both gates
+  shrinkSign :
+    ∀ {γ γ′} → 0ℚ ≤ γ′ → γ′ ≤ γ → signGate γ → signGate γ′
+  shrinkSign {γ} {γ′} 0≤γ′ γ′≤γ gate =
+    ℚP.≤-<-trans (scaleˡ-nonNeg 0≤M0 γ′≤γ) gate
+
+  shrinkTuning :
+    ∀ {γ γ′ γt γt′} →
+    0ℚ ≤ γ′ → γ′ ≤ γ → 0ℚ ≤ γt′ → γt′ ≤ γt →
+    tuningGate γ γt → tuningGate γ′ γt′
+  shrinkTuning {γ} {γ′} {γt} {γt′} 0≤γ′ γ′≤γ 0≤γt′ γt′≤γt gate =
+    ℚP.≤-<-trans
+      (mul-mono-nonNeg 0≤total′ 0≤γt′ derivativeMonotone γt′≤γt)
+      (ℚP.<-≤-trans gate marginMonotone)
+    where
+      0≤total′ : 0ℚ ≤ totalDerivative γ′
+      0≤total′ =
+        subst (λ z → z ≤ totalDerivative γ′) (ℚP.+-identityˡ 0ℚ)
+          (ℚP.+-mono-≤ 0≤LZ
+            (subst (λ z → z ≤ interactionSup + γ′ * derivativeSup)
+              (ℚP.+-identityˡ 0ℚ)
+              (ℚP.+-mono-≤ 0≤M0 (mul-nonNeg 0≤γ′ 0≤M1))))
+
+      derivativeMonotone : totalDerivative γ′ ≤ totalDerivative γ
+      derivativeMonotone =
+        ℚP.+-monoʳ-≤ gaussianSup
+          (ℚP.+-monoʳ-≤ interactionSup (scaleʳ-nonNeg 0≤M1 γ′≤γ))
+
+      marginMonotone : margin γ ≤ margin γ′
+      marginMonotone =
+        ℚP.+-monoʳ-≤ floorValue
+          (ℚP.neg-antimono-≤ (scaleˡ-nonNeg 0≤M0 γ′≤γ))
+
+------------------------------------------------------------------------
+-- (2) The admissible region is nonempty whenever b_- > 0
+------------------------------------------------------------------------
+
+-- The basic step: for a >= 0 and b > 0 there is a positive t with a t < b.
+shrinkBelow :
+  ∀ a b → 0ℚ ≤ a → 0ℚ < b →
+  Σ ℚ (λ t → (0ℚ < t) × (a * t < b))
+shrinkBelow a b 0≤a 0<b = t , 0<t , bound
+  where
+    s : ℚ
+    s = a + 1ℚ
+
+    0<s : 0ℚ < s
+    0<s =
+      ℚP.<-≤-trans (ℚP.positive⁻¹ 1ℚ)
+        (subst (λ z → z ≤ a + 1ℚ) (ℚP.+-identityˡ 1ℚ)
+          (ℚP.+-monoˡ-≤ 1ℚ 0≤a))
+
+    r : ℚ
+    r = recip⁺ s 0<s
+
+    0<r : 0ℚ < r
+    0<r = recip⁺-positive s 0<s
+
+    t : ℚ
+    t = (halfℚ * b) * r
+
+    0<t : 0ℚ < t
+    0<t = mul-pos (mul-pos (ℚP.positive⁻¹ halfℚ) 0<b) 0<r
+
+    a≤s : a ≤ s
+    a≤s =
+      subst (λ z → z ≤ a + 1ℚ) (ℚP.+-identityʳ a)
+        (ℚP.+-monoʳ-≤ a (ℚP.nonNegative⁻¹ 1ℚ))
+
+    ar≤1 : a * r ≤ 1ℚ
+    ar≤1 =
+      subst (λ z → a * r ≤ z) (recip⁺-inverse s 0<s)
+        (scaleʳ-nonNeg (ℚP.<⇒≤ 0<r) a≤s)
+
+    regroup : a * ((halfℚ * b) * r) ≡ (halfℚ * b) * (a * r)
+    regroup =
+      solve 3 (λ x y z → x :* (y :* z) := y :* (x :* z)) refl a (halfℚ * b) r
+
+    bound : a * t < b
+    bound =
+      subst (λ z → z < b) (sym regroup)
+        (ℚP.≤-<-trans
+          (subst (λ z → (halfℚ * b) * (a * r) ≤ z)
+            (ℚP.*-identityʳ (halfℚ * b))
+            (scaleˡ-nonNeg
+              (ℚP.<⇒≤ (mul-pos (ℚP.positive⁻¹ halfℚ) 0<b)) ar≤1))
+          (halfLess 0<b))
+
+-- MAIN: both gates are simultaneously satisfiable for any nonnegative
+-- analytic constants, as soon as the Gaussian floor is strictly positive.
+gatesSatisfiable :
+  ∀ floorValue interactionSup derivativeSup gaussianSup →
+  0ℚ < floorValue →
+  0ℚ ≤ interactionSup → 0ℚ ≤ derivativeSup → 0ℚ ≤ gaussianSup →
+  Σ ℚ (λ γ → Σ ℚ (λ γt →
+    (0ℚ < γ) × (0ℚ < γt)
+    × (interactionSup * γ < floorValue)
+    × ((gaussianSup + (interactionSup + γ * derivativeSup)) * γt
+        < floorValue - interactionSup * γ)))
+gatesSatisfiable b₋ M0 M1 LZ 0<b₋ 0≤M0 0≤M1 0≤LZ =
+  γ , γt , 0<γ , 0<γt , gate1 , gate2
+  where
+    firstStep : Σ ℚ (λ t → (0ℚ < t) × (M0 * t < b₋))
+    firstStep = shrinkBelow M0 b₋ 0≤M0 0<b₋
+
+    γ : ℚ
+    γ = proj₁ firstStep
+
+    0<γ : 0ℚ < γ
+    0<γ = proj₁ (proj₂ firstStep)
+
+    gate1 : M0 * γ < b₋
+    gate1 = proj₂ (proj₂ firstStep)
+
+    marginPositive : 0ℚ < b₋ - M0 * γ
+    marginPositive = positive-difference gate1
+
+    total : ℚ
+    total = LZ + (M0 + γ * M1)
+
+    0≤total : 0ℚ ≤ total
+    0≤total =
+      subst (λ z → z ≤ total) (ℚP.+-identityˡ 0ℚ)
+        (ℚP.+-mono-≤ 0≤LZ
+          (subst (λ z → z ≤ M0 + γ * M1) (ℚP.+-identityˡ 0ℚ)
+            (ℚP.+-mono-≤ 0≤M0 (mul-nonNeg (ℚP.<⇒≤ 0<γ) 0≤M1))))
+
+    secondStep :
+      Σ ℚ (λ t → (0ℚ < t) × (total * t < b₋ - M0 * γ))
+    secondStep = shrinkBelow total (b₋ - M0 * γ) 0≤total marginPositive
+
+    γt : ℚ
+    γt = proj₁ secondStep
+
+    0<γt : 0ℚ < γt
+    0<γt = proj₁ (proj₂ secondStep)
+
+    gate2 : total * γt < b₋ - M0 * γ
+    gate2 = proj₂ (proj₂ secondStep)

@@ -1,0 +1,325 @@
+module DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopNearFarCompositionExact where
+
+------------------------------------------------------------------------
+-- ROW A1a:  THE WHOLE NEAR/FAR CHAIN AS ONE STATEMENT.
+--
+-- PRIMARY SOURCE
+--
+-- Tadeusz Bałaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.  Beta extraction (5.36)--(5.42).
+--
+-- WHAT THIS MODULE ADDS.
+--
+-- The four preceding modules each own one link:
+--
+--   near estimate   `...WardCompensatedNearQuotientExact`
+--                    -- cancel the transversality zero against the propagator
+--                       zero, giving a bound with no denominator floor;
+--   far estimate    `...FarRegionFloorQuotientExact`
+--                    -- one large axis floors the literal inverse propagator,
+--                       and the floored quotient bound follows pointwise;
+--   assembly        `...OneLoopNearFarEstimateExact`
+--                    -- region-restricted bounds compose into one cell bound
+--                       and feed the cancellation-preserving gate;
+--   geometry        `...OneLoopBoxNearFarOptimisationExact`
+--                    -- the near region is a coordinate box, so its measure is
+--                       exact, and the split parameter is optimised.
+--
+-- This module composes them.  Its hypothesis is *point data*: at each near
+-- point, four Ward-factored orbit records whose quotient values are the four
+-- densities; at each far point, four floored orbit records likewise.  Its
+-- conclusion is the Row A1 shell bound for the literal joint Wilson +
+-- reduced Faddeev--Popov + Haar regular remainder.  Nothing else is assumed:
+-- the cell functional is a positive linear functional split into the two box
+-- regions, and the budget check is an inequality between explicit rationals.
+--
+-- Section 3 instantiates the arithmetic with the repository's own constants:
+-- per-orbit near bound 2/5 (so a combined near bound of exactly
+-- 4*2/5 + 6*2/5 + 4*2/5 + 2/5 = 6) and per-orbit far bound 4096/7569 from the
+-- constructive outer Brillouin sine gap 87/128 (so a combined far bound of
+-- 61440/7569).  At the optimal radius 2/5 the total budget is
+--
+--     (16/625) * 6  +  (369/10000) * (61440/7569)  =  0.4531...  <  11/12 ,
+--
+-- machine-checked, with the shell budget passing by better than a factor two.
+--
+-- WHAT IS STILL OPEN -- and it is now exactly two physical inputs, both
+-- pointwise and both about the literal joint numerator:
+--
+--   (i)  on the near box: the transverse cofactor expression of the joint
+--        numerator, a bound `m` on it, and the same-zero comparison constant
+--        `c` for the joint denominator, with `m / c <= 2/5`;
+--   (ii) off the box: the single-axis sine bound `|sin(p_mu/2)| >= 87/128`
+--        for some axis, and the numerator sup `S <= 1` there.
+--
+-- Neither is an interface, a budget, a gate or a measure question any more.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Data.Bool.Base using (Bool; true; false)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (_≡_; refl; sym; trans; subst; cong)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.BalabanClayT4LiteralOneLoopBoxEvaluatorExact
+  using (TrigAtom)
+import DASHI.Physics.YangMills.BalabanCMP109VacuumPolarizationHypercubicSourceSymmetryExact
+  as SourceSymmetry
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonGhostHaarWeightedFourOrbitExact
+  as Joint
+import DASHI.Physics.YangMills.BalabanYM4CancellationPreservingFourOrbitGateExact
+  as Gate
+import DASHI.Physics.YangMills.BalabanCMP109LiteralWardCompensatedNearQuotientExact
+  as Near
+import DASHI.Physics.YangMills.BalabanCMP109LiteralFarRegionFloorQuotientExact
+  as Far
+import DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopNearFarEstimateExact
+  as NearFar
+import DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopBoxNearFarOptimisationExact
+  as Box
+
+------------------------------------------------------------------------
+-- 1.  THE COMPOSITION
+------------------------------------------------------------------------
+
+module Composition
+  (Point : Set)
+  (valuationAt : Point → (TrigAtom → ℚ))
+  (nearIndicator : Point → Bool)
+  (integral integralNear integralFar : (Point → ℚ) → ℚ)
+  (integralSplit :
+     ∀ (f : Point → ℚ) → integral f ≡ integralNear f + integralFar f)
+  (integralNearMono :
+     ∀ (f g : Point → ℚ) →
+     (∀ p → nearIndicator p ≡ true → f p ≤ g p) →
+     integralNear f ≤ integralNear g)
+  (integralFarMono :
+     ∀ (f g : Point → ℚ) →
+     (∀ p → nearIndicator p ≡ false → f p ≤ g p) →
+     integralFar f ≤ integralFar g)
+  (radius : ℚ)
+  (integralNearConstant :
+     ∀ (c : ℚ) → integralNear (λ _ → c) ≡ Box.nearBoxMeasure radius * c)
+  (integralFarConstant :
+     ∀ (c : ℚ) → integralFar (λ _ → c) ≡ Box.farBoxMeasure radius * c)
+  (integralMono :
+     ∀ (f g : Point → ℚ) → (∀ p → f p ≤ g p) → integral f ≤ integral g)
+  (integralAdd :
+     ∀ (f g : Point → ℚ) →
+     integral (λ p → f p + g p) ≡ integral f + integral g)
+  (integralScale :
+     ∀ (c : ℚ) (f : Point → ℚ) → integral (λ p → c * f p) ≡ c * integral f)
+  (integralNegation :
+     ∀ (f : Point → ℚ) → integral (λ p → - f p) ≡ - integral f)
+  (integralConstant :
+     ∀ (c : ℚ) → integral (λ _ → c) ≡ Box.cellMeasure * c)
+  where
+
+  module NearOrbits = Near.NearRegionFourOrbit Point valuationAt
+  module FarOrbits = Far.FarRegionFourOrbit Point valuationAt
+
+  module Shell =
+    Box.BoxNearFar Point nearIndicator integral integralNear integralFar
+      integralSplit integralNearMono integralFarMono radius
+      integralNearConstant integralFarConstant
+      integralMono integralAdd integralScale integralNegation
+      integralConstant
+
+  ------------------------------------------------------------------
+  -- 1a.  The point data
+  ------------------------------------------------------------------
+
+  -- At a near point: four Ward-factored orbits, each bounded by the same
+  -- per-orbit near bound, whose quotient values are the four densities.
+  record NearPointData
+      (d₁ d₂ d₃ d₄ : Point → ℚ) (nearOrbitBound : ℚ) (p : Point) : Set where
+    field
+      orbitOne orbitTwo orbitThree orbitFour :
+        NearOrbits.WardFactoredOrbit p nearOrbitBound
+      valueOne : NearOrbits.quotientValue orbitOne ≡ d₁ p
+      valueTwo : NearOrbits.quotientValue orbitTwo ≡ d₂ p
+      valueThree : NearOrbits.quotientValue orbitThree ≡ d₃ p
+      valueFour : NearOrbits.quotientValue orbitFour ≡ d₄ p
+  open NearPointData public
+
+  -- At a far point: four floored orbits, likewise.
+  record FarPointData
+      (d₁ d₂ d₃ d₄ : Point → ℚ) (farOrbitBound : ℚ) (p : Point) : Set where
+    field
+      orbitOne orbitTwo orbitThree orbitFour :
+        FarOrbits.FarRegionOrbit p farOrbitBound
+      valueOne : FarOrbits.quotientValue orbitOne ≡ d₁ p
+      valueTwo : FarOrbits.quotientValue orbitTwo ≡ d₂ p
+      valueThree : FarOrbits.quotientValue orbitThree ≡ d₃ p
+      valueFour : FarOrbits.quotientValue orbitFour ≡ d₄ p
+  open FarPointData public
+
+  ------------------------------------------------------------------
+  -- 1b.  Each kind of point data gives the region bound the assembly wants
+  ------------------------------------------------------------------
+
+  -- The (4,6,4,1) combination of four equal per-orbit bounds.
+  combinedOf : ℚ → ℚ
+  combinedOf u = Joint.weightedFourOrbit u u u u
+
+  nearRegionBound :
+    ∀ (d₁ d₂ d₃ d₄ : Point → ℚ) (nearOrbitBound : ℚ) (p : Point) →
+    NearPointData d₁ d₂ d₃ d₄ nearOrbitBound p →
+    (- combinedOf nearOrbitBound)
+      ≤ Joint.weightedFourOrbit (d₁ p) (d₂ p) (d₃ p) (d₄ p)
+  nearRegionBound d₁ d₂ d₃ d₄ nearOrbitBound p pointData =
+    subst
+      ((- combinedOf nearOrbitBound) ≤_)
+      (Gate.weightedFourOrbitCong
+        (valueOne pointData) (valueTwo pointData)
+        (valueThree pointData) (valueFour pointData))
+      (NearOrbits.wardFactoredCombinedNegativePart p
+        (NearPointData.orbitOne pointData) (NearPointData.orbitTwo pointData)
+        (NearPointData.orbitThree pointData)
+        (NearPointData.orbitFour pointData))
+
+  farRegionBound :
+    ∀ (d₁ d₂ d₃ d₄ : Point → ℚ) (farOrbitBound : ℚ) (p : Point) →
+    FarPointData d₁ d₂ d₃ d₄ farOrbitBound p →
+    (- combinedOf farOrbitBound)
+      ≤ Joint.weightedFourOrbit (d₁ p) (d₂ p) (d₃ p) (d₄ p)
+  farRegionBound d₁ d₂ d₃ d₄ farOrbitBound p pointData =
+    subst
+      ((- combinedOf farOrbitBound) ≤_)
+      (Gate.weightedFourOrbitCong
+        (valueOne pointData) (valueTwo pointData)
+        (valueThree pointData) (valueFour pointData))
+      (FarOrbits.flooredCombinedNegativePart p
+        (FarPointData.orbitOne pointData) (FarPointData.orbitTwo pointData)
+        (FarPointData.orbitThree pointData)
+        (FarPointData.orbitFour pointData))
+
+  ------------------------------------------------------------------
+  -- 1c.  THE ROW A1a SHELL BOUND FROM POINT DATA ALONE
+  ------------------------------------------------------------------
+
+  nearFarCompositionShellBound :
+    ∀ {wilson ghost haar : Joint.CellScalar}
+      (wilsonSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry wilson)
+      (ghostSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry ghost)
+      (haarSymmetry : SourceSymmetry.CMP109ScalarEuclideanSymmetry haar)
+      (d₁ d₂ d₃ d₄ : Point → ℚ) (nearOrbitBound farOrbitBound : ℚ) →
+    Joint.jointOne wilson ghost haar ≡ integral d₁ →
+    Joint.jointTwo wilson ghost haar ≡ integral d₂ →
+    Joint.jointThree wilson ghost haar ≡ integral d₃ →
+    Joint.jointFour wilson ghost haar ≡ integral d₄ →
+    (∀ p → nearIndicator p ≡ true →
+       NearPointData d₁ d₂ d₃ d₄ nearOrbitBound p) →
+    (∀ p → nearIndicator p ≡ false →
+       FarPointData d₁ d₂ d₃ d₄ farOrbitBound p) →
+    Box.nearBoxMeasure radius * combinedOf nearOrbitBound
+      + Box.farBoxMeasure radius * combinedOf farOrbitBound
+      ≤ NearFar.shellBudgetSU2 →
+    (- NearFar.shellBudgetSU2)
+      ≤ Joint.jointRegularRemainder wilson ghost haar
+  nearFarCompositionShellBound
+      wilsonSymmetry ghostSymmetry haarSymmetry d₁ d₂ d₃ d₄
+      nearOrbitBound farOrbitBound e₁ e₂ e₃ e₄ nearData farData inside =
+    Shell.boxShellBound wilsonSymmetry ghostSymmetry haarSymmetry
+      d₁ d₂ d₃ d₄ (combinedOf nearOrbitBound) (combinedOf farOrbitBound)
+      e₁ e₂ e₃ e₄
+      (λ p isNear →
+        nearRegionBound d₁ d₂ d₃ d₄ nearOrbitBound p (nearData p isNear))
+      (λ p isFar →
+        farRegionBound d₁ d₂ d₃ d₄ farOrbitBound p (farData p isFar))
+      inside
+
+------------------------------------------------------------------------
+-- 2.  THE PER-ORBIT BOUNDS AND THEIR COMBINATIONS
+------------------------------------------------------------------------
+
+perOrbitNearBound : ℚ
+perOrbitNearBound = + 2 / 5
+
+perOrbitFarBound : ℚ
+perOrbitFarBound = Far.unitNumeratorFarBound                    -- 4096/7569
+
+combinedNearBound combinedFarBound : ℚ
+combinedNearBound = Joint.weightedFourOrbit
+  perOrbitNearBound perOrbitNearBound perOrbitNearBound perOrbitNearBound
+combinedFarBound = Joint.weightedFourOrbit
+  perOrbitFarBound perOrbitFarBound perOrbitFarBound perOrbitFarBound
+
+-- The per-orbit near bound 2/5 is exactly the compensated combined bound 6
+-- used by the split-parameter optimisation: 15 * 2/5 = 6.
+combinedNearBoundIsSix : combinedNearBound ≡ Box.compensatedNearSup
+combinedNearBoundIsSix = refl
+
+combinedFarBoundValue : combinedFarBound ≡ + 61440 / 7569
+combinedFarBoundValue = refl
+
+------------------------------------------------------------------------
+-- 3.  THE BUDGET AT THE OPTIMAL RADIUS
+------------------------------------------------------------------------
+
+compositionBudget : ℚ
+compositionBudget =
+  Box.nearBoxMeasure Box.radiusTwoFifths * combinedNearBound
+    + Box.farBoxMeasure Box.radiusTwoFifths * combinedFarBound
+
+compositionBudgetPasses : compositionBudget < NearFar.shellBudgetSU2
+compositionBudgetPasses =
+  toWitness {a? = compositionBudget ℚP.<? NearFar.shellBudgetSU2} _
+
+-- With better than a factor two to spare.
+compositionBudgetMargin :
+  compositionBudget * (+ 2 / 1) < NearFar.shellBudgetSU2
+compositionBudgetMargin =
+  toWitness
+    {a? = compositionBudget * (+ 2 / 1) ℚP.<? NearFar.shellBudgetSU2} _
+
+-- The near half alone uses a quarter of the shell budget; the far half the
+-- rest of what is spent.  Both are recorded so the split of the cost is
+-- explicit rather than hidden in one number.
+nearHalfCost farHalfCost : ℚ
+nearHalfCost = Box.nearBoxMeasure Box.radiusTwoFifths * combinedNearBound
+farHalfCost = Box.farBoxMeasure Box.radiusTwoFifths * combinedFarBound
+
+nearHalfCostValue : nearHalfCost ≡ + 96 / 625
+nearHalfCostValue = refl
+
+nearHalfInsideBudget : nearHalfCost < NearFar.shellBudgetSU2
+nearHalfInsideBudget =
+  toWitness {a? = nearHalfCost ℚP.<? NearFar.shellBudgetSU2} _
+
+farHalfInsideBudget : farHalfCost < NearFar.shellBudgetSU2
+farHalfInsideBudget =
+  toWitness {a? = farHalfCost ℚP.<? NearFar.shellBudgetSU2} _
+
+costsSumToBudget : compositionBudget ≡ nearHalfCost + farHalfCost
+costsSumToBudget = refl
+
+------------------------------------------------------------------------
+-- 4.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: the composition of the near and far pointwise
+-- estimates into the Row A1 shell bound over a box-split cell functional,
+-- and the whole budget arithmetic at the optimal radius.
+nearFarCompositionLevel : ProofLevel
+nearFarCompositionLevel = machineChecked
+
+compositionBudgetArithmeticLevel : ProofLevel
+compositionBudgetArithmeticLevel = machineChecked
+
+-- STILL OPEN: the two pointwise physical inputs -- the near-box transverse
+-- cofactor data with `m / c <= 2/5`, and the far single-axis sine bound with
+-- numerator sup at most 1.
+nearBoxCofactorDataLevel : ProofLevel
+nearBoxCofactorDataLevel = conditional
+
+farAxisSineAndNumeratorDataLevel : ProofLevel
+farAxisSineAndNumeratorDataLevel = conditional

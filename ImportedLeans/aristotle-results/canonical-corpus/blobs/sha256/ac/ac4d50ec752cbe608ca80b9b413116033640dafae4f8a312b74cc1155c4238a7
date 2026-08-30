@@ -1,0 +1,11 @@
+# Companion audit repository
+
+The companion audit / reproducibility repository is:
+
+- https://github.com/lluiseriksson/ym-audit
+
+That repository contains:
+- numerical and symbolic audit tests,
+- generated artifacts,
+- Overleaf export tooling,
+- Colab-friendly reproducibility scripts.

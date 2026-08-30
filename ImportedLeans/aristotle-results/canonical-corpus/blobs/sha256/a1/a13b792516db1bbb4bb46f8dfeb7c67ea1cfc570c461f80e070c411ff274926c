@@ -1,0 +1,129 @@
+module DASHI.Physics.YangMills.YMCumulativeBetaMarginNonVacuityExact where
+
+------------------------------------------------------------------------
+-- NON-VACUITY WITNESS FOR THE ROW-A REDUCTION
+--
+-- `YMCumulativeBetaMarginExact` proves an implication.  An implication is
+-- worthless if its hypotheses are contradictory, so this module exhibits an
+-- explicit inhabitant of `CumulativeBetaHypotheses` in which
+--
+--   * the interaction/history contribution is genuinely nonzero,
+--     beta_Int(j) = 2^{-j}, with the geometric history majorant of ratio 1/2
+--     and budget 2, and
+--   * the Gaussian shell coefficient is b_- = b_+ = 3,
+--
+-- so that the conclusion delivers the uniform cumulative margin b_* = 1:
+--
+--     sum_{j=k+1}^{m} beta_j  >=  1 * (m-k)     for every k and every m > k.
+--
+-- This witness is a CONSISTENCY CHECK ONLY.  It is not the Bałaban
+-- trajectory, it is not evidence for row A, and it does not move the frozen
+-- count in docs/ym/YangMillsClayFourFrozenResearchLemmas.md.  Producing
+-- b_- > 0 and the constants C, rho for the actual constrained Gaussian
+-- normalisation is exactly what remains open in row A.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ using (ℚ; 0ℚ; 1ℚ; _+_; _*_; -_; _/_; _≤_; _<_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality using (sym; trans; cong; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.YMGeometricPrefixBudgetExact
+open import DASHI.Physics.YangMills.YMCumulativeBetaMarginExact
+
+------------------------------------------------------------------------
+-- Concrete constants
+------------------------------------------------------------------------
+
+half : ℚ
+half = + 1 / 2
+
+two three : ℚ
+two = + 2 / 1
+three = + 3 / 1
+
+0≤half : 0ℚ ≤ half
+0≤half = toWitness {a? = 0ℚ ℚP.≤? half} _
+
+half≤1 : half ≤ 1ℚ
+half≤1 = toWitness {a? = half ℚP.≤? 1ℚ} _
+
+0≤two : 0ℚ ≤ two
+0≤two = toWitness {a? = 0ℚ ℚP.≤? two} _
+
+0<1 : 0ℚ < 1ℚ
+0<1 = toWitness {a? = 0ℚ ℚP.<? 1ℚ} _
+
+------------------------------------------------------------------------
+-- The dyadic history majorant: shell d = 2^{-d}, ratio 1/2, budget 2
+------------------------------------------------------------------------
+
+dyadicHistory : ContractingShellFamily
+dyadicHistory = record
+  { shell          = pow half
+  ; ratio          = half
+  ; headBound      = 1ℚ
+  ; budget         = two
+  ; shellNonneg    = pow-nonneg half 0≤half
+  ; ratioNonneg    = 0≤half
+  ; shellBelowHead = pow-below-one half 0≤half half≤1
+  ; shellContracts = λ d → ℚP.≤-refl
+  ; budgetNonneg   = 0≤two
+  ; budgetCloses   = toWitness {a? = (1ℚ + half * two) ℚP.≤? two} _
+  }
+
+------------------------------------------------------------------------
+-- Nonnegativity of the history prefix sums, used for the two-sided
+-- interaction hypothesis.
+------------------------------------------------------------------------
+
+historyPrefixNonneg : ∀ k n → 0ℚ ≤ prefixSum (pow half) k n
+historyPrefixNonneg = prefixSum-nonneg (pow half) (pow-nonneg half 0≤half)
+
+negBelowSelf : ∀ x → 0ℚ ≤ x → - x ≤ x
+negBelowSelf x 0≤x =
+  ℚP.≤-trans
+    (subst (λ z → - x ≤ z) refl (ℚP.neg-antimono-≤ 0≤x))
+    0≤x
+
+------------------------------------------------------------------------
+-- The witness
+------------------------------------------------------------------------
+
+witness : CumulativeBetaHypotheses
+witness = record
+  { betaZ                    = λ _ → three
+  ; betaInt                  = pow half
+  ; history                  = dyadicHistory
+  ; interactionConstant      = 1ℚ
+  ; bMinus                   = three
+  ; bPlus                    = three
+  ; bStar                    = 1ℚ
+  ; interactionConstantNonneg = toWitness {a? = 0ℚ ℚP.≤? 1ℚ} _
+  ; gaussianLower            = λ _ → ℚP.≤-refl
+  ; gaussianUpper            = λ _ → ℚP.≤-refl
+  ; interactionUpper         = λ k n →
+      ℚP.≤-reflexive (sym (ℚP.*-identityˡ (prefixSum (pow half) k n)))
+  ; interactionLower         = λ k n →
+      subst (λ z → - z ≤ prefixSum (pow half) k n)
+        (sym (ℚP.*-identityˡ (prefixSum (pow half) k n)))
+        (negBelowSelf (prefixSum (pow half) k n) (historyPrefixNonneg k n))
+  ; bStarPositive            = 0<1
+  ; marginNotConsumed        = toWitness {a? = (1ℚ * two + 1ℚ) ℚP.≤? three} _
+  }
+
+------------------------------------------------------------------------
+-- The conclusion of the reduction, on the witness:
+--   every nonempty prefix of the beta sum grows at least linearly.
+------------------------------------------------------------------------
+
+witnessMargin : ∀ k n →
+  1ℚ * natToℚ (suc n) ≤ prefixSum (beta witness) k (suc n)
+witnessMargin = cumulativeBetaMargin witness
+
+witnessUpper : ∀ k n →
+  prefixSum (beta witness) k n ≤ three * natToℚ n + 1ℚ * two
+witnessUpper = cumulativeBetaUpper witness

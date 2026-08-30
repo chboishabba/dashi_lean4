@@ -1,0 +1,186 @@
+# Round 83 — Yang–Mills lane: what was added, what is still open
+
+Plain-language record of one working round on the Clay Yang–Mills lane.
+Parent index: [the frozen research count](YangMillsClayFourFrozenResearchLemmas.md).
+Diagram: [round83-architecture.puml](round83-architecture.puml).
+
+## Short version
+
+Two new machine-checked Agda modules were added. Neither closes an open
+research leaf. One supplies the missing *proof* that the estimation machinery
+for the literal one-loop diagram syntax is sound; the other replaces a strong
+premise about the renormalisation-group (RG) step with a strictly weaker one.
+
+Nothing was renamed, no count was decremented, and no new assumption was
+introduced anywhere.
+
+| Item | Status after this round |
+| --- | --- |
+| Round-82 research leaves | 5, unchanged |
+| Independently attackable analytic lemmas | 6, unchanged |
+| Frozen rows A–D | all open, unchanged |
+| New postulates / holes / receipts | none |
+
+## The six lemmas on the wall
+
+The working cutset this round was planned against:
+
+| Tag | Statement to be proved |
+| --- | --- |
+| A1a | the literal joint one-loop density and a bound on its negative part |
+| A1b | a literal RG contraction plus a Lipschitz beta functional |
+| B1 | same-density Heat/Doob Hessian-debt comparison |
+| B2 | same-density covariant finite-speed propagation |
+| C1 | same-family physical composite/OPE theorem |
+| C2 | same-family stress/Ward/Hamiltonian theorem |
+
+A1a and A1b are the two halves of the single Round-82 leaf
+`LiteralCompactSimplePositiveBeta`. Lanes B1, B2, C1 and C2 were deliberately
+left untouched this round: A1a and A1b were judged to carry more information
+per unit of work, and B1 in particular is held behind inputs that do not exist
+yet.
+
+## What lane A1a got
+
+New module:
+`DASHI/Physics/YangMills/BalabanCMP109LiteralOneLoopAbsoluteBoundCalculusExact.agda`.
+
+The repository already owned the literal diagram syntax — Wilson, ghost and
+Haar channels built from lattice trigonometric atoms — together with an
+interval evaluator. The evaluator's soundness conditions, however, were
+*record fields of type `Set`*: placeholders. Nothing in the tree actually
+proved that an enclosure computed for an expression encloses the value of that
+expression.
+
+The new module supplies the missing mathematics for the part the four-orbit
+gate consumes:
+
+1. **An exact rational semantics** for the literal syntax. Division carries
+   its own non-vanishing witness and is stated by its defining equation, so a
+   literal expression can never be silently divided by zero.
+2. **A bound calculus** with one rule per syntactic form, deriving upper
+   bounds on the size of a value and lower bounds on the size of a
+   denominator. The quotient rule is the honest one: it needs a strictly
+   positive lower bound on the denominator.
+3. **Soundness theorems**, proved by structural induction, saying every
+   derivation is valid for every valuation that respects the atom bounds.
+   These are ordinary proofs, not fields.
+4. **The consumer form.** Bound derivations for the four orbit representative
+   densities give, pointwise and with no intervalisation,
+
+   `-(4·u₁ + 6·u₂ + 4·u₃ + u₄) ≤ 4·d₁(p) + 6·d₂(p) + 4·d₃(p) + d₄(p)`
+
+   which is literally the hypothesis the cancellation-preserving four-orbit
+   gate asks for. The ε handed to the gate is the weighted sum of the bounds
+   derived from the expressions themselves — same object, no relabelling.
+5. **The SU(2) arithmetic**, including a sharpness check at the boundary: at
+   exactly 44/3 the shell radius equals the 11/12 budget (an identity), and at
+   15 it already exceeds it. So no strict/non-strict mismatch is hiding there.
+
+The calculus also carries a signed lower-bound judgement with a rule for sums
+and for squares, and a proof that the semantics is a function (an expression
+has at most one value). Both are needed the moment a real lattice denominator
+— a sum of squares — appears.
+
+### The first inhabited literal expression
+
+New module:
+`DASHI/Physics/YangMills/BalabanCMP109LiteralLatticeInversePropagatorExact.agda`.
+
+Until this round no expression had ever been written in the literal diagram
+syntax; every momentum-space module was a record over abstract carriers. This
+module writes the one object every diagram of the one-loop calculation divides
+by: the lattice inverse propagator
+
+`p̂² = Σ over the four axes of 4·sin²(p_μ/2)`,
+
+spelled out over the repository's own trigonometric atoms — four axes, factor
+four, the sine atom squared — not as an opaque atom and not as a record field.
+Proved about it: its exact rational value under any valuation; a lower-bound
+derivation `Σ 4·l_μ²` from any table of per-axis sine bounds; the same bound in
+the modulus judgement, which is what an admissible denominator needs; an
+explicit bound for the free propagator `1/p̂²` wherever that lower bound is
+positive; and a numerical instance (per-axis bound 1/2 gives inverse propagator
+at least 4 and propagator at most 1/4).
+
+**Still open, and this is the bulk of lane A1a:** the Wilson three- and
+four-gluon vertices, the Faddeev–Popov numerator and the Haar contact term are
+still not written in the syntax — only the denominator they share is. The
+per-axis sine bounds for the regular cells of the Brillouin grid are also still
+a hypothesis rather than a derived estimate. Both are named in the modules as
+`conditional` rather than hidden.
+
+## What lane A1b got
+
+New module:
+`DASHI/Physics/YangMills/BalabanCMP109LiteralBetaObserverContractionExact.agda`.
+
+The repository's history budget previously consumed a one-step contraction of
+the *whole* effective-state coordinate. That is much more than the shell
+coefficient needs, and it is not what the published RG estimates give.
+
+The new module proves that three smaller statements suffice:
+
+* the shell coefficient's observable is closed under the RG step
+  (a factorisation identity);
+* the *observed* step contracts, with factor κ < 1;
+* the beta functional is Lipschitz on the observed coordinates.
+
+From these it derives, on the same RG step object:
+
+* a contraction of the full step in the pulled-back distance, so the existing
+  chain machinery applies unchanged;
+* the shelled influence bound — a perturbation of observed size γ contributes
+  at least `−(L·γ)·κ^d` at depth d;
+* the assembled positive floor
+  `b₋ = (11/24)·C_A − r_local − L·γ·B` with `1 + κ·B = B`,
+  and strict positivity of beta on every shell of every history;
+* a subsumption proof: taking the observer to be the identity recovers the old
+  premise exactly, so the new one is strictly weaker;
+* a complete numerical instance (κ = 1/2, B = 2, L = 1, γ = 1/8,
+  r_local = 1/2, floor = 1/6) so the reduction is demonstrably not vacuous.
+
+**Still open:** for the literal RG map, nobody has identified the minimal
+observed coordinates, nor exhibited κ < 1 and L uniformly in volume, cutoff
+and scale. That is lane A1b's physical content and it stays marked
+`conditional` in the module.
+
+## Testing phase
+
+Run after the modules were written, on the pinned Agda 2.6.4.3 toolchain with
+the patched standard library described in `scripts/make_patched_stdlib.sh`.
+
+| Check | Target | Result |
+| --- | --- | --- |
+| Kernel, `agda --safe`, whole import cone | new A1a module | exit 0 |
+| Kernel, `agda --safe`, whole import cone | new A1b module | exit 0 |
+| Kernel, `agda --safe`, whole import cone | new lattice inverse propagator module | exit 0 |
+| Regression | four-orbit cancellation gate | exit 0 |
+| Regression | summable history budget | exit 0 |
+| Regression | literal one-loop box evaluator | exit 0 |
+| Hygiene | new files scanned for `postulate`, holes, pragmas, receipts | none present |
+| Same-object | ε consumed by the gate is the weighted sum of the derived bounds; distance consumed by the chain is the pulled-back observed distance | holds by construction |
+| Adversarial constants | ε at 44/3 (equality) and at 15 (fails); κ enters only through the budget identity `1 + κB = B`, which has no solution at κ = 1 | machine-checked |
+
+## Honest scoreboard
+
+* No leaf inhabited. The research count stays at five leaves / six lemmas, and
+  the frozen rows A–D stay open.
+* Progress claimed, against the round metric: a previously absent literal
+  physical object was constructed (the lattice inverse propagator, in the
+  repository's own syntax) and a uniform quantitative estimate was proved on
+  it; the estimation machinery it feeds is now proved sound rather than
+  asserted by placeholder fields; and one premise — full-state RG contraction
+  — was eliminated in favour of a strictly weaker observed-fibre premise.
+* Not claimed: any inhabited one-loop *density* (the numerators are still
+  missing), any closure of A1, any change to the Clay-facing endpoint
+  theorems.
+
+## Suggested next step
+
+Lane A1a, unchanged in priority: write the actual momentum-space Wilson,
+Faddeev–Popov and Haar *numerators* in the existing syntax — the denominator is
+now done — together with atom bound tables valid on the regular region, and run
+them through the calculus proved here. Either the derived weighted bound comes in under 44/3 and the
+lane advances materially, or it does not and the obstruction becomes visible
+immediately.

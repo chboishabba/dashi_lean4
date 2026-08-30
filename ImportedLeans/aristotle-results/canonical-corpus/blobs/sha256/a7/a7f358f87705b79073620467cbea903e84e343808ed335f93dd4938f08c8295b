@@ -1,0 +1,322 @@
+module DASHI.Physics.YangMills.BalabanCMP109LiteralBetaObserverContractionExact where
+
+------------------------------------------------------------------------
+-- ROW A1b:  CONTRACT ONLY WHAT THE SHELL COEFFICIENT OBSERVES.
+--
+-- PRIMARY SOURCES
+--
+-- Tadeusz Balaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- Tadeusz Balaban, "Large Field Renormalization II.  Localization,
+-- Exponentiation, and Bounds for the R Operation", Communications in
+-- Mathematical Physics 122 (1989), 355--392.  DOI: 10.1007/BF01238433.
+--
+-- THE DEFECT THIS MODULE REMOVES.
+--
+-- The repository's history budget consumes a one-step contraction of the
+-- WHOLE effective-state coordinate:
+--
+--   `BalabanYM4GeneralSummableHistoryBudgetPositiveBetaExact
+--      .ContractingHistoryAtAnyKappa`
+--
+-- asks for `distance (step x) (step y) ≤ kappa * distance x y` on the full
+-- state.  That is far more than the shell coefficient needs, and it is not
+-- what Balaban's published estimates give.
+--
+-- The shell coefficient only ever looks at the state through the observable
+-- that the polarisation scalar evaluates.  So the correct premise is a
+-- contraction of the OBSERVED fibre:
+--
+--     observe (rgStep K) = observedStep (observe K)          (factorisation)
+--     d_beta (observedStep a) (observedStep b)
+--        <= kappa * d_beta a b                                (contraction)
+--     | beta a - beta b | <= L_beta * d_beta a b              (Lipschitz)
+--
+-- This module proves that these three literal statements are enough:
+--
+--   1. `stepContractsInPulledDistance` -- the observed contraction lifts to a
+--      contraction of the full RG step in the pulled-back distance, so the
+--      existing chain machinery applies verbatim, on the same RG step object.
+--
+--   2. `observedShellInfluence` -- a perturbation of observed size `gamma`
+--      shells back with the geometric profile: the beta increment at depth d
+--      is at least `- (L_beta * gamma) * kappa^d`.
+--
+--   3. `observerBetaFloorData` / `observerBetaFloorPositive` -- assembled with
+--      the repository's own summable history budget, this yields
+--
+--          b_-(G) = (11/24) C_A - r_local - L_beta * gamma * B ,   1 + kappa B = B
+--
+--      and `beta j n >= b_-(G) > 0` on every shell of every history.
+--
+--   4. `StateLevelIsSpecialCase` -- taking the observer to be the identity
+--      recovers the previous hypothesis exactly, so the new premise is
+--      strictly weaker and nothing downstream changes carrier.
+--
+-- WHAT IS STILL OPEN.  The three literal statements above are not proved here
+-- for Balaban's RG map: identifying the minimal observed coordinates and
+-- exhibiting `kappa < 1` and `L_beta` for them, uniformly in volume, cutoff
+-- and scale, is Row A1b's physical content and remains `conditional`.  What
+-- this module removes is the strictly larger obligation of contracting the
+-- full effective density.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt, no pragma.
+-- Checked with `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Data.Integer.Base using (+_)
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; _+_; _-_; _*_; -_; ∣_∣; _≤_; _<_; _/_)
+import Data.Rational.Properties as ℚP
+open import Relation.Binary.PropositionalEquality
+  using (cong; cong₂; sym; trans; subst)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.YangMills.BalabanYM4SU2RegularOrbitBetaFloorExact as Floor
+import DASHI.Physics.YangMills.BalabanYM4LiteralWilsonFPHaarPositiveBetaExact
+  as RowA1
+import DASHI.Physics.YangMills.BalabanYM4GeneralSummableHistoryBudgetPositiveBetaExact
+  as Budget
+open import DASHI.Physics.YangMills.BalabanCMP109LiteralOneLoopAbsoluteBoundCalculusExact
+  using (negAbsLe)
+
+------------------------------------------------------------------------
+-- 0.  A product of nonnegatives is nonnegative
+------------------------------------------------------------------------
+
+productNonNegative : ∀ (a b : ℚ) → 0ℚ ≤ a → 0ℚ ≤ b → 0ℚ ≤ a * b
+productNonNegative a b 0≤a 0≤b =
+  subst (_≤ a * b) (ℚP.*-zeroʳ a)
+    (ℚP.*-monoˡ-≤-nonNeg a {{ℚ.nonNegative 0≤a}} 0≤b)
+
+------------------------------------------------------------------------
+-- 1.  THE OBSERVER REDUCTION
+------------------------------------------------------------------------
+
+module BetaObserverReduction
+  (State : Set)
+  (rgStep : Nat → State → State)
+  (Obs : Set)
+  (observe : State → Obs)
+  (observedStep : Nat → Obs → Obs)
+  -- the shell coefficient's observable is closed under the RG step
+  (observerFactorisation :
+     ∀ j K → observe (rgStep j K) ≡ observedStep j (observe K))
+  (obsDistance : Obs → Obs → ℚ)
+  (kappa : ℚ)
+  (kappaNonNegative : 0ℚ ≤ kappa)
+  (observedContracts :
+     ∀ j a b → obsDistance (observedStep j a) (observedStep j b)
+                 ≤ kappa * obsDistance a b)
+  where
+
+  -- The distance the consumer actually uses, pulled back to states.
+  pulledDistance : State → State → ℚ
+  pulledDistance x y = obsDistance (observe x) (observe y)
+
+  -- The literal RG step contracts in it -- same step object, weaker premise.
+  stepContractsInPulledDistance :
+    ∀ j x y → pulledDistance (rgStep j x) (rgStep j y)
+                ≤ kappa * pulledDistance x y
+  stepContractsInPulledDistance j x y =
+    subst (_≤ kappa * pulledDistance x y)
+      (sym (cong₂ obsDistance
+              (observerFactorisation j x) (observerFactorisation j y)))
+      (observedContracts j (observe x) (observe y))
+
+  open Budget.ContractingHistoryAtAnyKappa
+    State pulledDistance rgStep kappa kappaNonNegative
+    stepContractsInPulledDistance public
+
+  ----------------------------------------------------------------------
+  -- 2.  Shelling back a perturbation of the observed coordinates
+  ----------------------------------------------------------------------
+
+  observedShellInfluence :
+    ∀ (betaObs : Obs → ℚ) (lipschitz : ℚ) → 0ℚ ≤ lipschitz →
+    (∀ a b → (- (lipschitz * obsDistance a b))
+               ≤ betaObs a + (- betaObs b)) →
+    ∀ (gamma : ℚ) (x y : State) → pulledDistance x y ≤ gamma →
+    ∀ n →
+    (- ((lipschitz * gamma) * Budget.geometric kappa n))
+      ≤ betaObs (observe (chain n x)) + (- betaObs (observe (chain n y)))
+  observedShellInfluence betaObs lipschitz lipschitzNonNegative
+      lipschitzBound gamma x y initial n =
+    geometricShellInfluence (λ s → betaObs (observe s))
+      lipschitz lipschitzNonNegative
+      (λ x' y' → lipschitzBound (observe x') (observe y'))
+      gamma x y initial n
+
+  ----------------------------------------------------------------------
+  -- 3.  The assembled positive shell beta
+  ----------------------------------------------------------------------
+
+  observerBetaFloorData :
+    ∀ (casimir radius gamma lipschitz budget : ℚ) →
+    0ℚ ≤ lipschitz → 0ℚ ≤ gamma → 0ℚ ≤ budget →
+    1ℚ + kappa * budget ≡ budget →
+    (betaObs : Obs → ℚ) →
+    (∀ a b → (- (lipschitz * obsDistance a b))
+               ≤ betaObs a + (- betaObs b)) →
+    (localRemainder : Nat → Nat → ℚ) →
+    (∀ j n → (- radius) ≤ localRemainder j n) →
+    (historyA historyB : Nat → State) →
+    (∀ j → pulledDistance (historyA j) (historyB j) ≤ gamma) →
+    radius + (lipschitz * gamma) * budget
+      < RowA1.universalBetaCoefficient casimir →
+    Budget.SummableHistoryPositiveBetaData
+  observerBetaFloorData casimir radius gamma lipschitz budget
+      lipschitzNonNegative gammaNonNegative budgetNonNegative fixedPoint
+      betaObs lipschitzBound localRemainder localBound
+      historyA historyB historyClose numericalGate =
+    Budget.geometricHistoryPositiveBetaData
+      casimir radius (lipschitz * gamma) kappa budget
+      (productNonNegative lipschitz gamma
+        lipschitzNonNegative gammaNonNegative)
+      kappaNonNegative budgetNonNegative fixedPoint
+      localRemainder increment localBound incrementBound numericalGate
+    where
+      increment : Nat → Nat → ℚ
+      increment j d =
+        betaObs (observe (chain d (historyA j)))
+          + (- betaObs (observe (chain d (historyB j))))
+
+      incrementBound :
+        ∀ j d → (- ((lipschitz * gamma) * Budget.geometric kappa d))
+                  ≤ increment j d
+      incrementBound j d =
+        observedShellInfluence betaObs lipschitz lipschitzNonNegative
+          lipschitzBound gamma (historyA j) (historyB j)
+          (historyClose j) d
+
+------------------------------------------------------------------------
+-- 4.  THE PREVIOUS HYPOTHESIS IS THE IDENTITY-OBSERVER SPECIAL CASE
+------------------------------------------------------------------------
+
+module StateLevelIsSpecialCase
+  (State : Set)
+  (rgStep : Nat → State → State)
+  (distance : State → State → ℚ)
+  (kappa : ℚ)
+  (kappaNonNegative : 0ℚ ≤ kappa)
+  (stepContracts :
+     ∀ j x y → distance (rgStep j x) (rgStep j y) ≤ kappa * distance x y)
+  where
+
+  -- Observing everything, the observer reduction is literally the old module.
+  open BetaObserverReduction
+    State rgStep State (λ x → x) rgStep (λ j K → refl)
+    distance kappa kappaNonNegative stepContracts public
+
+  pulledDistanceIsDistance : ∀ x y → pulledDistance x y ≡ distance x y
+  pulledDistanceIsDistance x y = refl
+
+------------------------------------------------------------------------
+-- 5.  NON-VACUITY: A COMPLETE NUMERICAL INSTANCE
+--
+-- Observed coordinate: one rational effective coupling.  Observed step:
+-- halving, so kappa = 1/2 and B = 2.  Beta observable: the identity, so
+-- L_beta = 1.  Perturbation size gamma = 1/8, local radius r = 1/2.
+-- The gate is 1/2 + (1 * 1/8) * 2 = 3/4 < 11/12 = (11/24) * 2.
+------------------------------------------------------------------------
+
+sampleKappa sampleGamma sampleLipschitz sampleRadius sampleBudget : ℚ
+sampleKappa = + 1 / 2
+sampleGamma = + 1 / 8
+sampleLipschitz = + 1 / 1
+sampleRadius = + 1 / 2
+sampleBudget = + 2 / 1
+
+sampleDistance : ℚ → ℚ → ℚ
+sampleDistance a b = ∣ a - b ∣
+
+sampleStep : Nat → ℚ → ℚ
+sampleStep _ a = sampleKappa * a
+
+sampleStepContracts :
+  ∀ j a b → sampleDistance (sampleStep j a) (sampleStep j b)
+              ≤ sampleKappa * sampleDistance a b
+sampleStepContracts _ a b =
+  ℚP.≤-reflexive
+    (trans (cong ∣_∣ difference) (ℚP.∣p*q∣≡∣p∣*∣q∣ sampleKappa (a - b)))
+  where
+    difference : sampleKappa * a - sampleKappa * b ≡ sampleKappa * (a - b)
+    difference =
+      trans
+        (cong (λ z → sampleKappa * a + z)
+          (ℚP.neg-distribʳ-* sampleKappa b))
+        (sym (ℚP.*-distribˡ-+ sampleKappa a (- b)))
+
+sampleLipschitzBound :
+  ∀ a b → (- (sampleLipschitz * sampleDistance a b)) ≤ a + (- b)
+sampleLipschitzBound a b =
+  subst (λ z → (- z) ≤ a + (- b))
+    (sym (ℚP.*-identityˡ (sampleDistance a b)))
+    (negAbsLe (a - b))
+
+sampleLocalRemainder : Nat → Nat → ℚ
+sampleLocalRemainder _ _ = - sampleRadius
+
+sampleHistory : Nat → ℚ
+sampleHistory _ = 0ℚ
+
+samplePerturbedHistory : Nat → ℚ
+samplePerturbedHistory _ = sampleGamma
+
+module SampleReduction =
+  BetaObserverReduction
+    ℚ sampleStep ℚ (λ x → x) sampleStep (λ j K → refl)
+    sampleDistance sampleKappa
+    (toWitness {a? = 0ℚ ℚP.≤? sampleKappa} _)
+    sampleStepContracts
+
+sampleData : Budget.SummableHistoryPositiveBetaData
+sampleData =
+  SampleReduction.observerBetaFloorData
+    Floor.su2AdjointCasimir sampleRadius sampleGamma sampleLipschitz
+    sampleBudget
+    (toWitness {a? = 0ℚ ℚP.≤? sampleLipschitz} _)
+    (toWitness {a? = 0ℚ ℚP.≤? sampleGamma} _)
+    (toWitness {a? = 0ℚ ℚP.≤? sampleBudget} _)
+    refl
+    (λ a → a) sampleLipschitzBound
+    sampleLocalRemainder (λ _ _ → ℚP.≤-refl)
+    sampleHistory samplePerturbedHistory
+    (λ _ → toWitness
+             {a? = sampleDistance (sampleHistory 0) (samplePerturbedHistory 0)
+                     ℚP.≤? sampleGamma} _)
+    (toWitness
+      {a? = sampleRadius + (sampleLipschitz * sampleGamma) * sampleBudget
+              ℚP.<? RowA1.universalBetaCoefficient Floor.su2AdjointCasimir} _)
+
+-- b_-(SU(2)) = 11/12 - 1/2 - 1/4 = 1/6 with these constants.
+sampleFloorValue : Budget.generalBetaFloor sampleData ≡ + 1 / 6
+sampleFloorValue = refl
+
+sampleBetaPositive : ∀ j n → 0ℚ < Budget.beta sampleData j n
+sampleBetaPositive = Budget.generalBetaPositive sampleData
+
+------------------------------------------------------------------------
+-- 6.  Proof levels
+------------------------------------------------------------------------
+
+-- Machine checked here: the observer reduction, the shelled influence bound,
+-- the assembled positive floor, the identity-observer subsumption and the
+-- numerical instance.
+observerContractionReductionLevel : ProofLevel
+observerContractionReductionLevel = machineChecked
+
+observerBetaFloorLevel : ProofLevel
+observerBetaFloorLevel = machineChecked
+
+-- STILL OPEN: for Balaban's literal RG map, the minimal observed coordinates
+-- of the shell coefficient, a strictly contracting observed step (kappa < 1)
+-- and a Lipschitz constant for the beta observable, uniform in volume, cutoff
+-- and scale.
+literalObservedContractionLevel : ProofLevel
+literalObservedContractionLevel = conditional

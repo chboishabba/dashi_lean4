@@ -1,0 +1,409 @@
+# Summary of changes for run 6d9755e3-5af3-4c0a-a934-8b5ce0a2ab9f
+Continued the Bałaban Row A1a lane in the same direction as the handoff, on the Lean side only. Three new modules, all building, all `sorry`-free, and axiom-checked (`propext`, `Classical.choice`, `Quot.sound` only). No row closes, the frozen research count remains 4, and nothing from any other prover was promoted.
+
+**1. `RequestProject/YangMills/ConnectionBudget.lean` — the connection budget `e` is no longer abstract.**
+Entrywise calculus (`EntryBound`, product rule with the dimension factor `#γ`) is used to bound the coordinate-connection term `R = CᵀAC'` by `#n²·b_C·b_A·b_C'`, and — crucially — the substitution derivative `C'` is *not* assumed bounded: it is the matrix the exact pivot solve `C' = E·X`, `X = −P⁻¹(Q'C)` produces from the constraint identity `Q C' = −Q' C`, giving `‖C'‖ ≤ #c²·#n·b_E·b_{P⁻¹}·b_{Q'}·b_C`. Composing gives `sourceConnectionBudget`, and `entryBound_connectionRight_of_source` bounds every connection entry by it. `connection_budget_certifies_patch` turns that into positivity of the candidate quarter-slab floor for the full restricted symbol. Boundary tests: the dimension factor cannot be dropped, a degenerating pivot destroys any target budget, and the pivot hypotheses are jointly satisfiable with `C ≠ 0` (so nothing is vacuous).
+
+**2. `RequestProject/YangMills/WilsonHessianFamily.lean` — `A' = D³S`.**
+`WilsonHessianData` packages the per-entry nested derivative data (∂_u, ∂_t, ∂_s) as `HasDerivAt` hypotheses, never postulates; `hasMixedD3R_entry` confirms it exhibits the mixed third derivative, `hasMatDerivAt_hessian` identifies the background derivative of the Wilson Hessian family with it, and `wilsonThird_restricted_variation` gives `D Â = Cᵀ(D³S)C + Q + R`. The boundary test `hessian_zero_but_third_nonzero` shows the Hessian at the background point can vanish while the third variation does not, so the Wilson component of the Gaussian symbol really is a third-order object.
+
+**3. `RequestProject/YangMills/A1SourceCompiler.lean` — the compiler.**
+`A1_halfFloor_from_symbolData` and `A1_halfFloor_from_pivotData` run the whole chain from literal symbol/pivot data to the shell floor `β_j ≥ b_patch/2 > 0`, with the connection error computed rather than assumed, uniformly in shell, history and momentum. `candidatePatch_source_criterion` plus `sourceConnectionBudget_expand` reduce the entire Gaussian obligation at the candidate patch (half-width 1/8, Wilson floor √2/2) to one inequality:
+
+  `#c² · #n³ · b_C² · b_A · b_E · b_{P⁻¹} · b_{Q'} < √2/4`.
+
+`docs/ym_A1_source_compiler_status.md` records the round and, honestly, what is still missing: (i) the literal `A' = D³S` for the background, hence the Wilson floor `c`; (ii) the literal `Q'(U)` and the pivot bounds, hence a number for `e` beating `√2/4` — or a proof of cancellation, which is explicitly *not* claimed; (iii) numerical five-channel coefficients giving a finite `C_β` (with any finite `C_β`, the root-free `γ_* = b/(2(C_β+b))` already discharges the quartic absorption); (iv) history uniformity, or else explicit `(C_loc, θ)` and `H_marg`, which the corrected margin `b_patch − C_β γ⁴ − (C_H γ/2 + H_marg)B > 0` keeps visible.
+
+Full build succeeds (8086 jobs); a repository-wide search confirms no `sorry`, `admit`, new `axiom`, or `@[implemented_by]`. The Properties table has been updated with the new definitions and the four newly proved results. All work is committed and pushed.
+
+# Summary of changes for run 819db68a-85ad-4666-a007-6dac05d39c43
+I worked the Row A1 lane along the corrected route you described, and turned each of its four claims into machine-checked mathematics on the Lean side of the repository. Everything below compiles (`lake build` green, 8074 jobs), contains no `sorry`, no `axiom`, no unsafe pragma, and `#print axioms` on every new theorem reports only `propext, Classical.choice, Quot.sound`. **No row closes; the frozen research count stays at 4.** There is no Agda tool-chain in this working copy and the modules you list are not present here, so nothing is promoted on the strength of this build — it is cross-prover evidence only.
+
+**1. The single-corner witness is disqualified — proved, not asserted** (`RequestProject/YangMills/WilsonCubicVertex.lean`). Writing the literal Wilson three-gluon vertex in the project's normalisation: its all-equal Lorentz component vanishes *identically* in all three momenta (`wilsonCubic_allEqual`), so a collapsed scalar `V_00` cannot be that component; and at background momentum `0` with loop momenta `(q,−q)`, *every* component with the two fluctuation indices equal vanishes at any Brillouin-boundary momentum — including `(0,1/2,0,0)` — for every background index (`wilsonCubic_bgZero_diag_corner_eq_zero`). At the quarter momentum (normalised `1/4`, physical `π/2`) the same component equals `1` and is continuous there. Your physical objection is therefore now a theorem, and the corner route is superseded rather than deleted: the earlier corner modules are untouched.
+
+**2. The volume objection, sharpened** (`SingleModeWeight.lean`). A floor `b` on a normalised mode average with integrand bounded by `M` *forces* the contributing mode set to have at least `(b/M)·|Λ|` elements; a support of fixed cardinality gives an average tending to `0`. So multiplicity must grow proportionally with the volume — a single mode cannot do it.
+
+**3. The corrected patch route, on literal Lebesgue integrals** (`PositivePatchEnclosure.lean`, `PatchGaussianFloor.lean`, `QuarterPatchLowerBound.lean`, `PositivePatchChecks.lean`). Patch bound plus complement sign gives `∫_Ω f ≥ vol(P)·c`, with the enclosure ("lower sum") form `vol(P)·c − err`, and a measure-zero patch provably buys nothing. The candidate patch — the slab of half-width `δ` around normalised momentum `1/4` — has volume exactly `δ/4`. On the project's own one-loop integrand the paramagnetic sign gives nonnegativity on the whole punctured cell (`p̂²` vanishes only at `q = 0`, a null set), and one entry bound of the reduced bubble kernel on the patch gives the floor `(δ/4)(c²/2)`. Concretely: on the slab of half-width `1/8` (volume `1/32`) the Wilson component stays above `√2/2`, patch floor `√2/64`; if the bubble entry inherits that bound the Gaussian coefficient is at least `1/128`. Boundary tests show the complement sign is load-bearing (positive patch, ambient integral `−9`).
+
+**4. Two generic debt parameters replaced** (`FiveChannelQuartic.lean`, `LocalizedHistoryMemory.lean`). From the five channelwise fourth-order majorants, `βInt(g) ≥ −C_β g⁴` with `C_β = ∑_k c_k` — `ρ = 4`, no Cauchy pair `(A,K)` — and bounding four of the five channels provably never suffices. Scale-local localization gives `H_irr ≤ C_H γ/2` with `C_H = 2C_loc θ/(1−θ)`, uniformly in history length; your correction is kept load-bearing: the marginal component is *not* assumed to forget (a non-decaying memory contributes `j·a` at shell `j`), so a marginal bound `H_marg` appears explicitly.
+
+**5. The corrected margin, end to end** (`A1CorrectedMargin.lean`, `PatchGaussianFloor.lean`). `correctedMargin = b_patch − C_β γ⁴ − (C_H γ/2 + H_marg)·B`, which reduces to exactly `b_patch − C_β γ⁴ − C_H γ/2` at zero marginal memory and unit displacement budget. Every shell coefficient is bounded below by it, uniformly in shell index, number of scales, volume and cutoff; a positive margin gives strict positivity; and the whole hypothesis package is inhabited by an explicit family with nonzero quartic interaction and nonzero history response, so the assembly is not vacuous.
+
+**6. Indices kept visible, and the `Q`/`R` warning made formal** (`FirstVariationDecomposition.lean`). `V = W + Q + R` is recorded as a fully index-resolved symbol `V_{αβ;ρ}^{ab;c}(q)`. The Wilson piece vanishes on the all-equal component and on the whole diagonal at corner momenta; there is an explicit `V` whose `W` piece is strictly positive at a momentum while `W+Q+R` vanishes there — so a patch certified from `W` alone is not a certificate for `V`. The correct compiler is proved: `W ≥ c` on the patch and `|Q|+|R| ≤ e` there gives `c − e`.
+
+**7. The `11/12` shortcut audited and excluded** (`UniversalCoefficientCircularity.lean`). A carrier with the field `infraredCoefficient = universalColorCoefficient` yields the value from the field alone; every integrand can carry every value; two carriers with the same integrand carry different coefficients; the value is consistent with an identically zero integrand. The contrast is also proved: a coefficient equal to a fixed functional of the integrand *is* determined. No theorem here uses such a carrier as an input to the Gaussian floor.
+
+**Honest status — what is still missing.** Nothing above asserts, for Bałaban's construction: the literal constrained first variation `V = W+Q+R`; a strict lower bound for one of its components (equivalently one reduced-bubble entry) on a positive-volume patch; the numerical channel coefficients giving `C_β`; explicit localization constants `(C_loc, θ)` giving a numerical `C_H`, or a marginal-memory bound `H_marg`. Those are source data and were not retrievable in this environment; writing formulas from memory and attributing them to a source would be fabricated provenance, and I did not do it. Everything downstream of those data is machine-checked. No Clay leaf is closed and no beta-coefficient value is derived or asserted.
+
+Documentation: `docs/ym/a1_corrected_patch_round.md` records the round with the "what is still missing" section; `status.md` has a matching dated entry (A, B, C, D open, count 4). `ARISTOTLE_SUMMARY.md` was read but not edited. All work is committed and pushed, and the Properties table lists this round's deliverables.
+
+# Summary of changes for run 554b2510-651a-4a03-b25d-04986b9cb345
+I worked Row A1 only, as directed, and added no new A1 abstraction layer — the round is a calculation on the project's own literal lattice symbol plus two derivations of the remaining debt constants. Everything below compiles (`lake build` green, 8063 jobs), contains no `sorry`, no `axiom`, no unsafe pragma, and `#print axioms` on every new theorem reports only `propext, Classical.choice, Quot.sound`. **No row closes; the frozen research count stays at 4.** There is no Agda tool-chain in this working copy and the two modules you describe are not present here, so nothing is promoted on the strength of this build — it is cross-prover evidence only.
+
+**A1a — the reduced bubble entry is now computed, not postulated** (`RequestProject/YangMills/TransverseBubbleEntry.lean`).
+The reduction `M = CVCᵀ` is evaluated exactly on the project's literal lattice constrained symbol `G(p) = (1/p̂²)(1 − p̂p̂ᵀ/p̂²)`. If the momentum has no component in direction `μ`, the transverse projector is the identity there, so `(PVP)_{μμ} = V_{μμ}` and hence **exactly** `M_{μμ}(p) = V_{μμ}(p)/p̂²` — no approximation, no near/far split, no Brillouin integral. On such a momentum `p̂² ≤ 12` unconditionally, because the *lattice* momentum is bounded, so `|M_{μμ}| ≥ |V_{μμ}|/12` uniformly in momentum, volume and cutoff: the infrared denominator cannot spoil it, since the direction used is transverse rather than the small one. At the corner momentum `q = (0,1/2,0,0)` — lattice momentum `π` in one direction, present on every even torus at every scale — `p̂² = 4` exactly, so `M_{00} = V_{00}/4` and the floor is **`b_Z = v²/32`** with `v = inf_j |V_j(0,0)|`. This is proved in the faithful shape too (`latticeBrillouinFloor_corner`): `βZ_j` as the finite Brillouin sum, with only the corner momentum used for the bound and every other momentum contributing nonnegatively by the paramagnetic sign. A weaker form uses the whole 3×3 transverse block `{0,2,3}` rather than a single entry.
+
+**Interaction debt — derived** (`InteractionDebt.lean`). From a Cauchy majorant `|a_{j,m}| ≤ A·K^m` on the nonlinear coefficients, on a trajectory with `0 ≤ g_j ≤ γ`, `Kγ < 1`, I prove `|βInt_j| ≤ (A/(1−Kγ))·g_j^ρ`, i.e. `C_int = A/(1−Kγ)`, with a truncated-expansion version and the boundary test that at `Kγ = 1` the majorant is not summable.
+
+**History debt — three producers, all weaker than geometric contraction** (`HistorySummabilityCriteria.lean`). Any nonnegative summable profile `|R_{j,k}| ≤ w(j−k)` gives `D = ∑' w(m+1)` with no rate and no chain structure; average contraction of the *products* suffices, individual one-step factors may exceed 1; and such a product bound follows from `|J_i| ≤ θ·exp(d_i)` with summable excess `∑ d_i ≤ Δ`, giving `Λ = e^Δ`. So a chain that is only asymptotically contracting, marginal or expanding at finitely many scales, still produces the datum. The earlier negative result (marginal factors with non-vanishing head ⇒ unbounded debt) stays load-bearing.
+
+**Assembly** (`A1ReducedMargin.lean`). `reducedMargin v A K γ D B ρ = v²/32 − (A/(1−Kγ))γ^ρ − D·B`; `A1_reduced_lower_bound_brillouin` proves `β_j(g) ≥ reducedMargin` for every shell index, uniformly in the number of scales, the volume and the cutoff, and positivity follows once the margin is positive. The target inequality is stated in checkable form and shown satisfiable (`v=1, A=1, K=1, γ=1/10, ρ=2, D=B=1/100` gives `1/32 − 1/90 − 1/10000 > 0`). The whole remaining obligation is packaged as one predicate `A1ResidualObligation`, with a proof that inhabiting it makes every shell coefficient positive and a witness showing the predicate is consistent.
+
+**Honest obstruction — why the numerical inequality is not yet proved.** The three quantities `v`, `(A,K)`, `D` are source numbers of Bałaban's construction. The primary source text is not retrievable in this environment, so the literal constrained fluctuation operator and its first background variation `V` could not be recovered; writing a formula for `V` from memory and attributing it to a source would be fabricated provenance, and I did not do it. What changed is the *shape* of what is missing: the A1a obligation is now a single scalar — one diagonal entry of the first background variation at one explicit lattice momentum — rather than a Brillouin-zone lower bound; the interaction obligation is one Cauchy pair; the history obligation is one summability bound. Everything downstream of those is machine-checked.
+
+Documentation: `docs/ym/a1_literal_bubble_entry_round.md` records the round and the honest status; `status.md` has a matching dated entry (A, B, C, D open, count 4). `ARISTOTLE_SUMMARY.md` was read but not edited. The Properties table has been updated with this round's deliverables.
+
+
+# Summary of changes for run 1fae90f3-f8e6-4c69-85f7-1253e168f500
+I took the sharpened A1 dependency graph you described and turned it into machine-checked mathematics on the Lean side of this repository. Everything below compiles (full build green, 8059 jobs), contains no `sorry`, no new axiom or postulate, and `#print axioms` on every new theorem reports only `propext, Classical.choice, Quot.sound`. **No row is closed and the frozen research count stays at 4.** The Agda modules you mention (the seagull/history source refinement and the direct-beta source regression) are not in this working copy and there is no Agda kernel available here, so nothing is promoted on the strength of the Lean build — these results are cross-prover evidence only.
+
+**1. The four literal source data are now one package with a proved consequence** (`RequestProject/YangMills/A1SourcePackage.lean`).
+`A1LiteralSource` bundles exactly your items: the split `β_j = βZ_j + βInt_j` with a history-response kernel; the uniform Gaussian floor `βZ_j(g_ref) ≥ b_Z`; the finite-`g` interaction debt `|βInt_j| ≤ C_int g_j^ρ` along a trajectory with `g_j ≤ γ`; and the chain identification `R_{j,k} = A_j ∏_{i=k}^{j−1} J_i` with `|A_j| ≤ C_R`, `|J_i| ≤ θ < 1`, over a displacement budget `B`. `A1_literal_lower_bound` proves `β_j(g) ≥ b_Z − C_int γ^ρ − C_R B θ/(1−θ)` for every shell index, uniformly (no dependence on the number of scales, the volume or the cutoff), and `A1_literal_beta_pos` gives strict positivity once that margin is positive. Two supporting results feed it: `historyDebt_of_oneStepSources` (item 4 from the literal `A_j`, `J_i` alone — no whole-state contraction anywhere) and `interactionBound_of_couplingBound` (item 3 at a bounded coupling). `witnessSource` is an explicit inhabitant with nonzero interaction and nonzero history response and positive margin, so the assembly is not vacuous.
+
+**2. Your distinction "paramagnetic sign ≠ uniform quantitative `b_Z`" is now a theorem.**
+`paramagnetic_sign_not_uniform_floor` and `paramagneticFamily_betaTrace_tendsto_zero` exhibit an explicit family of literal instances, each satisfying the *full* paramagnetic sign criterion (Gram propagator, symmetric first variation, negative semidefinite second variation, non-annihilated bubble) and each therefore with a strictly positive one-loop coefficient, whose coefficients nevertheless tend to 0. So keeping the seagull-sign level and the uniform-floor level as separate conditional obligations is provably correct, not merely cautious.
+
+**3. The uniform floor is reduced to a strictly weaker, checkable datum** (`UniformGaussianFloor.lean`).
+`bubble_eq_frobenius`: for a Gram propagator and symmetric first variation, `Tr(GVGV) = Σ_{a,b} M_{ab}²` with `M = C V Cᵀ`. The sign argument only uses `M ≠ 0`; every single entry gives a quantitative bound. Hence `betaTrace_ge_entry_sq`, the one-momentum Brillouin form `brillouinSum_ge_entry_sq`, and `uniformGaussianFloor_of_entryBound` / `gaussianFloor_of_entryBound`: a scale-indexed family of literal paramagnetic instances with one entry of the reduced bubble kernel of modulus at least `c > 0` uniformly in the scale has `βZ_j ≥ c²/2` uniformly, i.e. `b_Z = c²/2`, delivered in the field shape the package consumes. This does not assert that the literal Bałaban kernel has such an entry.
+
+**4. What item (4) actually needs** (`HistoryDebtCriteria.lean`).
+`historyDebt_of_summableKernel` and `A1_lower_bound_of_summableKernel`: the margin does not need a rate — uniform summability `Σ_{k<j}|R_{j,k}| ≤ D` already gives the debt `D·B`, with `summableKernel_of_geometric` exhibiting the geometric datum as `D = C_R θ/(1−θ)`. But `marginalChain_debt_unbounded` shows the contraction cannot simply be dropped: marginal one-step factors (`J_i = 1`) with a non-vanishing head give `Σ_{k<j}|R_{j,k}| = j·|A_j|`, exceeding every constant. So `|J_i| ≤ θ < 1`, or some genuine summability replacing it, is load-bearing rather than convenient.
+
+Documentation: `docs/ym/a1_literal_source_package_round.md` records the round and the honest status; `status.md` has a matching entry (`A, B, C, D` open, count 4). What still blocks A1, unchanged in substance: the literal extraction of a uniform Gaussian floor (equivalently, a uniformly nonvanishing bubble entry) for the literal Bałaban Gaussian, and the one-step factors `A_j`, `J_i` of Bałaban's actual effective-coupling map with a uniform `θ < 1`. All work is committed and pushed.
+
+# Summary of changes for run 934a1a5c-2b9f-418c-b68b-a40b254da8d6
+Continued Row A1 only, as requested. Everything below compiles: full `lake build` is green (8056 jobs), there is no `sorry`, no `axiom`, no unsafe pragma anywhere under `RequestProject/`, and `#print axioms` on every new theorem reports only `propext, Classical.choice, Quot.sound`. All work is committed and pushed.
+
+**A1a — the residual sign question is reduced to a sign, not an estimate** (`RequestProject/YangMills/SeagullSign.lean`).
+The earlier rounds had reduced the Gaussian coefficient to a finite Brillouin sum of `I(q) = ½Tr(g v g v) − ½Tr(g s)` with the bubble already known nonnegative. This round removes the remaining abstract hypothesis:
+- `trace_gram_mul_gram_nonneg`: for a Gram propagator `G = CᵀC` and a positive semidefinite second background variation `S = WᵀW`, `Tr(G S) ≥ 0` (proved by exhibiting `Tr(GS) = Tr(MᵀM)`, `M = WCᵀ`).
+- `betaTrace_nonneg_of_paramagnetic` / `betaTrace_pos_of_paramagnetic`, `betaTrace_nonneg_of_paramagnetic_dominance`, and the Brillouin forms `brillouinSum_pos_of_paramagnetic_seagull`, `brillouinSum_pos_of_gram`: a negative semidefinite ("paramagnetic") second variation makes the whole finite Brillouin sum strictly positive, with no global control of the Brillouin zone and no near/far split.
+- A structural obstruction that constrains what the source datum must contain: `affineGram_expansion` (a background-affine first-order operator `M₀ + sM₁ + tM₂` gives `Δ = MᵀM` with symmetric first variations and diagonal second variation `2M₁ᵀM₁`), `diamagnetic_seagull_nonneg`, `betaTrace_nonneg_iff_bubble_dominates`, `betaTrace_nonpos_of_pure_diamagnetic`. Consequence: a plain squared-covariant-derivative (Gram) fluctuation operator can never yield positivity for free — the positivity must come from a genuinely non-Gram, negative semidefinite part of the second background variation.
+
+**A1a — the project's own lattice symbol satisfies the criterion** (`TransverseGram.lean`). The transverse projector is proved symmetric and idempotent, hence its own Gram factor; `latticeSymbol_gram` gives the explicit factorisation of `G(p) = (1/p̂²)(1 − p̂p̂ᵀ/p̂²)`; `latticeBrillouinSum_pos_of_paramagnetic` proves strict positivity of the Brillouin sum directly on that literal lattice symbol; `latticeSymbol_bubble_ne_zero` and `latticeBrillouinSum_pos_example` show the hypotheses are satisfiable.
+
+**A1b — geometric response decay derived, not postulated** (`HistoryChainRule.lean`). `HasChainFactorisation` states the chain-rule shape `R_{j,k} = A_j·∏_{i=k}^{j−1} J_i`; `responseDecay_of_chainRule` produces `|R_{j,k}| ≤ Cθ^{j−k}` with the scale-separation exponent generated by the count of intervening steps; `responseDecay_of_irrelevantChain` specialises to one-step factors bounded by the irrelevance ratio `θ = L^{−ω} < 1`; `historyDebt_of_irrelevantChain` yields the uniform debt `C·B·θ/(1−θ)`, the third number in the margin `b_Z − C_int γ^ρ − C_R B θ/(1−θ)`.
+
+**Boundary tests** (`SeagullSignChecks.lean`): a worked two-momentum instance where the paramagnetic sign gives integrand `1` per momentum and sum `2` (obtained both directly and through the general criterion), while the diamagnetic sign gives integrand `0` and a sum that is *not* positive — so the sign hypothesis is load-bearing, not decorative.
+
+Documentation: new report `docs/ym_A1_seagull_round.md` (including an explicit "what is still missing" section) and a dated entry at the top of `status.md`. `ARISTOTLE_SUMMARY.md` was left untouched. A stray `ring` call in `WardKernelReduction.lean` was replaced by `rfl` to remove build noise.
+
+**Honest status — what was not achieved.** No Clay leaf is closed and no numerical value of any beta coefficient is derived or asserted. The three quantitative inputs `b_Z`, `C_int γ^ρ`, `C_R`/`θ` remain unpopulated. The reason is unchanged: the literal first and second background variations `V_μ = D_μΔ̂`, `S_{μν} = D_μD_νΔ̂` of the constrained fluctuation operator and their Fourier symbols cannot be obtained here — the primary source text is not retrievable in this environment, and nothing in the project invents its formulas. Every statement above is a theorem about supplied symbol data plus the project's own lattice conventions. What this round changes is the *shape* of the two remaining source-extraction tasks: A1a now needs a single qualitative datum (the sign of the second background variation), and A1b a single one-step datum (a uniform bound on the one-step historical response); everything downstream of those is machine-checked.
+
+
+# Summary of changes for run e3cbbc09-213a-4cdb-a40f-59c2f8cbe92b
+## What I did
+
+I worked only the Row A1 lane, along the route you specified — constrained Gaussian → trace-log Hessian → Ward cancellation inside the trace → Fourier scalar → beta read-off — and did **not** add any new near/far, Gram or coercivity architecture. Six new Lean files under `RequestProject/YangMills/` (~700 lines). Everything builds with `lake build`; there is no `sorry`, no `axiom` and no unsafe pragma anywhere in `RequestProject/`, and `#print axioms` on every new top-level theorem reports only `propext, Classical.choice, Quot.sound`.
+
+### The five requested lemmas, all proved
+
+1. **`TraceLogHessian.lean` — exact second variation of `log det`.** Jacobi's formula on an affine line (`d/dt log det(M+t·N)|₀ = Tr(M⁻¹N)`, itself derived from the polynomial derivative-of-determinant identity), the exact resolvent identity `(A+s·B)⁻¹ = A⁻¹ − s·((A+s·B)⁻¹BA⁻¹)`, and from them `logDet_secondVariation`: for the jet `A + s·B + t·C + (s·t)·D`, `∂_s∂_t log det|₀ = Tr(A⁻¹D) − Tr(A⁻¹BA⁻¹C)`. Specialised to `log Z = −½ log det Â + c`, this gives `gaussianHessian_eq_betaTrace`: `∂_s∂_t log Z|₀ = ½Tr(G V₁ G V₂) − ½Tr(G S)` — bubble minus seagull, with the signs produced by the Gaussian normalisation. No norm on matrices, no hypothesis beyond nonsingularity, nothing Yang–Mills specific, so it is reusable by any later Hessian consumer.
+2. **`ConstrainedPropagator.lean` — the literal constrained propagator** `G = G̃ − G̃Qᵀ(QG̃Qᵀ)⁻¹QG̃` with `QG = 0` and `GQᵀ = 0` proved from invertibility of the reduced block alone, and the Ward cancellation: if the first and second variations are longitudinal (in the image of `Qᵀ`), the bubble-minus-seagull functional vanishes for *every* second direction. Transversality is structural, before any expansion. (Stated for the algebraic functional rather than through `A⁻¹`, because the constrained propagator is deliberately singular.)
+3. **`BetaProjection.lean` — the beta projection annihilates a third-order remainder.** With `a + b = 3` lattice-derivative factors on the slice spanned by the two differentiated directions, the mixed second momentum derivative at `p = 0` is zero; a factor in a third direction is annihilated too. Proved for a general lattice factor and instantiated at the literal `p̂ = 2 sin(πx)`.
+4. **`CMP109BetaChain.lean` — the trace form and the read-off.** `gaussianHessian_brillouin` and `beta_readoff_thirdOrder`: for `Π = β·M + R` with third-order `R`, `∂_{p_μ}∂_{p_ν}Π(0) = β·∂_{p_μ}∂_{p_ν}M(0)`, with no hypothesis on `R` away from `p = 0`.
+5. **`BrillouinReduction.lean` — Fourier reduction.** With all operators diagonalised by the same transform with symbols `g, v₁, v₂, s`, the trace collapses to one scalar momentum sum `∑_q (½g² v₁v₂ − ½g s)` — computed, not assumed.
+
+Additionally, **A1b in source-facing form** (`BetaHistoryResponse.lean`): the history response kernel `R_{j,k} = ∂β_j/∂g_k`, and the theorem that geometric decay `|R_{j,k}| ≤ Cθ^{j−k}`, `θ<1`, yields the uniform history debt `C·B·θ/(1−θ)`, uniform in the shell index, number of scales, volume and cutoff, plus the positivity gate that consumes it.
+
+**Boundary tests** (`CMP109BetaChainChecks.lean`, and in the history file): a nonzero Hessian instance; a *second*-order term projecting to `4π² ≠ 0`, so the `a+b=3` hypothesis is load-bearing; a nonzero constrained propagator with a nonzero longitudinal Ward instance; a read-off instance returning exactly `β·4π²` in the presence of a genuine nonzero third-order remainder; a satisfiable history-response family; and the `θ = 1` failure showing the decay hypothesis cannot be dropped.
+
+### The binary question, answered honestly
+
+Architecturally **yes**: the coefficient provably needs only the `p = 0` second jet, the irrelevant remainder is provably invisible to it, and the Hessian provably equals one explicit scalar momentum sum — so global control of the polarisation over the whole Brillouin zone is not logically required to determine the coefficient. Numerically **not yet**: no external source text was retrievable in this environment, so the literal constrained fluctuation operator, its variations `V_μ`, `S_{μν}` and the symbols of their Fourier diagonalisation are still absent, and writing a formula from memory and attributing it to a source would be fabricated provenance. I therefore did **not** delete the near/far apparatus; it stays as the second gate. No coefficient value, and in particular `11/24·C_A`, is derived or used by any new theorem.
+
+### Status
+
+**No Clay leaf is closed**; nothing here proves existence or a mass gap. The first blocking items, now sharper: (A1a) construct the literal constrained operator and the symbols of its Fourier diagonalisation — everything downstream of them is machine-checked; (A1b) compute the literal response kernel and exhibit `C`, `θ<1` uniform in cutoff, volume and scale — everything such a bound buys is machine-checked. A full write-up is in `docs/ym_A1_source_chain_status.md`; `ARISTOTLE_SUMMARY.md` was read but not edited. All work is committed and pushed, and the Properties table has been updated with this round's deliverables.
+
+
+# Summary of changes for run 0105cf40-0829-4146-b512-1c35662c079e
+## What I did
+
+Following your instruction that the Agda modules target a newer stdlib and that reworking in Lean is fine, I re-implemented the **Row A1 lane** (A1a near/far one-loop analysis + A1b beta observer) in Lean 4 / Mathlib, where it is machine-checked. B1/B2/C1/C2 were held, as you asked. Nine new files under `RequestProject/YangMills/` (~1,280 lines), all building with `lake build`, **no `sorry`, no `axiom`, no unsafe pragma**; `#print axioms` on the top-level theorems shows only `propext`, `Classical.choice`, `Quot.sound`. A full status/obstruction report is in `docs/ym_A1_status.md`.
+
+There is no Agda executable in this environment, so the existing `DASHI/.../BalabanCMP109*` modules could not be re-checked and I make no claim about them; nothing there was deleted.
+
+## Round objective — what moved
+
+1. **A far physical hypothesis is now proved, not assumed.** From Jordan's inequality in the lattice normalisation (`sin(πx) ≥ 2x` on `[0,1/2]`) I derive `|sin(πx)| ≥ 4/5` for `2/5 ≤ |x| ≤ 1/2` — sharper than the constructive constant `87/128` — hence the far denominator floor `p̂² ≥ 64/25` (sharper than `7569/4096`). No interval arithmetic or long solver run is involved. Constructive far-axis selection is also proved.
+2. **The cell functional is no longer an interface.** The shell bound is now stated for the actual Lebesgue integral over `[0,1/2]^4 ⊂ (Fin 4 → ℝ)`: the near-box measure `r⁴`, the far-shell measure `1/16 − r⁴`, additivity and monotonicity are theorems about `volume`, not hypotheses.
+3. **The whole A1a physical input is reduced to one scalar inequality.** I prove `|K_{μν}(p)| ≤ p̂²` for the literal Wilson inverse propagator `K_{μν} = δ_{μν}p̂² − p̂_μp̂_ν` (whose Ward identity is also proved). For a transversely factorised joint numerator `N = K·Π`, `|Π| ≤ A p̂²` with `A ≤ 1/40` gives the near per-orbit bound `2/5`, and `|Π| ≤ 25/128` gives the far per-orbit bound `25/64`. Two separate conditional inputs collapse to one bound on one function.
+4. **A1a closure modulo that bound**, with the cancellation-preserving combination `4d₁+6d₂+4d₃+d₄` bounded before integration: cell integral `≥ −236679/640000 = −0.3698…`, versus the `11/12` shell budget (margin better than 2×). I also prove the split radius is *not* fine-tuned: with the radius-dependent floor `16r²`, the cost stays below `11/12` for every `r ∈ [1/4,1/2]`.
+5. **A1b package**: observer factorisation square propagated to all iterates (same-object audit as a theorem); uniform history budget `|R_hist| ≤ L·(1/(1−κ))·B`, uniform in the number of shells; the summable-response-product fallback for when pointwise `κ<1` fails; the fixed point produced by the contraction rather than assumed; and the adversarial boundary test — at `κ = 1` (unit shift, `β = id`) the history sums are unbounded, so no fake finite `B` appears.
+6. **End-to-end Row A1** (`A1_beta_pos`): the two budgets force `β ≥ (11/24)C_A − 0.3698… − 1/2 > 0` for every `SU(N)`, `N ≥ 2`, with a non-vacuity check that instantiates the entire hypothesis package.
+
+## Honest status
+
+**No Clay leaf is closed; the official analytic-leaf count stays at 5, and nothing here proves Yang–Mills existence or the mass gap.** The first unresolved item is the literal joint one-loop numerator `N = N_W + N_FP + N_Haar` of the source: constructing it literally requires that paper's lattice Feynman rules (vertex momentum routing, reduced Faddeev–Popov convention, Haar counterterm normalisation), and the source text is not available in this environment. Writing a plausible-looking vertex from memory and calling it the source integrand would be fabricated provenance, so I did not do it. Everything downstream of the two scalar form-factor inequalities is now machine-checked; nothing upstream of them is. For A1b, the actual observer coordinates and numerical values of `κ` and `L_β` are likewise not derived — the package proves what such constants buy, not what they are.
+
+
+# Summary of changes for run 1e7840b4-17fe-4022-9058-d5ff55367c9e
+## What I did
+
+I continued the Yang–Mills lane, following your instruction to stop building Gram/Schur architecture and attack Lemma #1 (`LiteralWilsonFPHaarPositiveBetaExact`) literally. Everything below is committed and pushed, and every module named was type-checked with `agda --safe` (exit 0 for the module *and its whole import cone*), with no postulate, hole, receipt or pragma introduced.
+
+**No Clay leaf has been closed.** This round is a reduction and verification round: it makes the Row A1 hypotheses strictly weaker on both halves and re-runs the whole chain on the weakened pair. The two physical inputs remain open and are recorded as `conditional` proof levels inside the modules.
+
+### Step 3 — retain the cancellation before intervalization
+New module `DASHI/Physics/YangMills/BalabanYM4CancellationPreservingFourOrbitGateExact.agda`.
+
+The previous gate bounded the four orbit representative cell integrals *separately* and then assembled them with the hypercubic multiplicities (4,6,4,1), paying the factor 15 = 4+6+4+1. That factor is exactly the discarded cancellation. The new gate is proved directly from a bound on the single weighted combination `D(p) = 4d₁(p)+6d₂(p)+4d₃(p)+d₄(p)`, formed *before* integration:
+
+`∀p. −ε ≤ D(p) ⟹ R ≥ −cellMeasure·ε`
+
+on the literal normalized regular remainder of the joint Wilson + reduced Faddeev–Popov + Haar evaluator. The cell functional is assumed only to be a positive linear functional (monotone, additive, rationally homogeneous, constant rule) — nothing beyond a measure. A further section weakens the hypothesis to an integrated budget on the negative part of `D`, so a combined density with an arbitrarily deep negative spike on a set of small measure still passes.
+
+Machine-checked SU(2) numbers on the normalized cube (cell measure 1/16): the admissible negative sup norm rises from 44/45 to **44/3 = 15 · 44/45** (exact identity, plus both strict comparisons). Your step-4 target `|4R₁+6R₂+4R₃+R₄| ≤ 1/2` is discharged in the same cancellation-preserving form: it holds as soon as the *combined* density is enclosed by ±8, since (1/16)·8 = 1/2 exactly.
+
+### Step 5 — remove the artificial threshold κ ≤ 1/2
+New module `DASHI/Physics/YangMills/BalabanYM4GeneralSummableHistoryBudgetPositiveBetaExact.agda`.
+
+The earlier history budget fixed the shell profile to 2^−(d+2), which forced a one-step RG contraction factor κ ≤ 1/2 — an artefact of the profile, not of Bałaban's Sect. 5. The positive-beta theorem is now proved for an arbitrary nonnegative shell profile with bounded partial sums, and the geometric profile κ^d is shown summable for **every κ ∈ [0,1)** by an exact tail induction (`Σ_{d<n} κ^d + κⁿB ≤ B`), stated through the fixed-point identity `1 + κB = B` so no division and no non-zero-ness side condition appears. The contraction bridge is re-derived at arbitrary κ, and agreement with the κ = 1/2 statement is verified (`geometric ½ d = 2^−d = 4·2^−(d+2)`; the two numerical gates coincide).
+
+### Steps 6–7 — the sharpened chain and the trajectory weld
+New module `DASHI/Physics/YangMills/BalabanYM4SharpenedLiteralRowA1PositiveBetaExact.agda` runs Row A1 on both weakened hypotheses at once:
+
+`β_j = (11/24)C_A(G) + R_j + Σ_{d<n} Δ_{d,j} ≥ b_−(G) = (11/24)C_A(G) − cellMeasure·ε − Kγ·B > 0`
+
+uniformly in shell index, history length, volume and cutoff, with the group entering only through C_A(G) > 0. The decomposition is a definitional identity, not a restatement: `R_j` is literally the joint evaluator's normalized regular remainder. It is welded into the CMP109 source-normalized coupling recurrence, giving linear ultraviolet growth of the inverse coupling at rate `b_−(G)`. A worked SU(2) instance (ε = 5, κ = 3/4, Kγ = 1/20, B = 4) gives floor 97/240 > 0 and is machine-checked to be unreachable by the earlier statement on both counts.
+
+### Repairs (statements unchanged)
+`YangMillsClayLiteralTopDownConstructionExact` and `YangMillsClayTopDownFiveTheoremClosureExact` did **not** parse under the installed Agda, which rejects qualified field names in record expressions. Both were repaired to unqualified field names with the record opened; both now check, and `BalabanClayHighestAlphaRound78TopDownThreeAnalyticFrontierExact`, which failed only through that dependency, checks as a result.
+
+### Documentation
+Addendum L appended to `docs/ym/YangMillsClayObstructionReport.md` (L.1–L.5: the two weakenings, the sharpened chain, what is still open, measured verification status), and a dated entry prepended to `status.md`. `ARISTOTLE_SUMMARY.md` was read but not edited.
+
+## Honest status
+
+Row A1 is **not closed**. What remains, unchanged in kind and strictly weaker in content:
+
+* **(A)** the literal momentum-space joint Wilson + reduced Faddeev–Popov + Haar density of the CMP109 background-field vacuum polarisation, with a bound on the negative part of its (4,6,4,1)-weighted *combination*, uniform in cutoff, volume and scale. No such density object exists anywhere in the repository — the momentum-space diagram modules are records over abstract carriers.
+* **(B)** for the literal Balaban RG map, *some* cutoff- and volume-uniform one-step contraction factor κ < 1 on effective-coupling states, plus Lipschitz dependence of the literal shell coefficient on that state.
+
+Also worth naming again: the universal coefficient (11/24)C_A is a convention constant in this repository, not a derived lattice one-loop computation.
+
+So on your own scoreboard the count does **not** go 5 → 4. What did change is the answer to the diagnostic question you posed: the budget is not the obstruction. The orbit half now has fifteen times more room than the gate demanded, the step-4 enclosure holds at |D| ≤ 8 rather than 8/15 per orbit, and the contraction requirement is generic rather than pinned at 1/2. The blocking content is entirely the existence and estimation of the literal density (A) and the literal contraction (B).
+
+
+# Summary of changes for run 1c2fed89-c564-4bf8-b84f-541f1e91134d
+Continued the Yang–Mills lane along the revised queue (reuse existing owners; add no new Schur/Gram/coercivity architecture).
+
+**New this session**
+- `DASHI/Physics/YangMills/BalabanYM4OneStepRGToCauchyAndDebtEndToEndExact.agda` — presents the whole Row B chain as a single parametrised, machine-checked statement: from the repository's own one-step RG owner along one trajectory (`input_{j+1} = output_j`) plus its constants, the retained marginal window and the tube caps, it derives at once (i) the marked source split, (ii) the Cauchy consumers (uniform coefficient bound, purely transverse geometric tail beyond the retained window, prefix bound, function/derivative majorants on the analytic tube) and (iii) the Row C scale-time Heat/Doob debt-integral budget with the quadratic `r^{2j}` gain. Both consumers are fed by literally the same transverse channel — the owner's irrelevant coordinate norm — with `splitPerpIsOwnerNorm` recording that same-object identification. No new record and no hypothesis beyond those the weld and the B→C composition already name. Checked with `agda --safe`, exit 0, no postulate/hole/pragma/receipt in its cone.
+- Documented as Addendum J.7 in `docs/ym/YangMillsClayObstructionReport.md` and as a dated follow-up entry in `status.md`. `ARISTOTLE_SUMMARY.md` untouched.
+
+**Re-verified** all five modules from the earlier part of this round (marked transverse decay from the one-step RG owner; scale-time Hessian debt integral gate; B→C quadratic debt composition; A1 reference-coercivity scale-uniformity, including the refutation of a coupling-proportional uniform floor and the vacuous independence field; Row C spatial shell-weighted influence budget). All six modules now check with `agda --safe`, exit 0, and are free of postulates, holes and pragmas.
+
+**Repair statistics, stated honestly.** Two repo-wide defect classes were repaired earlier this round (the non-scope-checking `ℚRing.solve []` term in 221 modules, and the reserved keyword `data` used as an identifier in 47 modules); statements were unchanged in both cases. Of 59 repaired modules sampled by re-checking, 3 typecheck; the remainder still fail on independent pre-existing defects, largely in their dependencies (invalid solver calls, other parse errors, out-of-scope names, false `refl` claims, unsolved constraints), or exceed a ten-minute check budget. That sampling was for reporting only; nothing in the new modules depends on it.
+
+**No closure is claimed.** Nothing here supplies the physical inputs that are still missing: a scalar mark norm on the literal CMP116/119 differentiated marked source family, contraction and remainder bounds uniform in cutoff, volume and scale, identification of the chain with the physical trajectory, the quadratic Hessian-debt comparison on the Heat/Doob same-density carrier, and the scale-uniform A1 constants. Scoreboard remains: **A, B, C, D open, frozen research count 4.**
+
+All work is committed and pushed; the Properties table has been reconciled (the six earlier properties and the new end-to-end statement are marked proved on the strength of verified sorry-free `agda --safe` checks; no row of the DAG is marked closed).
+
+# Summary of changes for run bce82fb5-f49b-47f4-877a-4b190a4d1089
+## What I did this round
+
+I continued the Yang–Mills lane by attacking the four priorities you set, in your priority order. The previous round had established the *shape* of the parallel/transverse (Gram) architecture, but on carriers that would not survive scrutiny: the Gram algebra lived on a three-dimensional rational space, Row C had already replaced the tangent vector by the pair of block norms `(p,q)` and the mixing by the scalar bound `2cpq` (both as assumptions), and Row B's reformulation had been shown *necessary* without being shown *sufficient* for the consumers it exists to serve. This round removes all four defects.
+
+Five new modules, all typechecking under `agda --safe` (Agda 2.6.4.3 / stdlib 2.1), all in exact rational arithmetic, all verified free of postulates, holes, receipts, `TERMINATING` pragmas and `trustMe`:
+
+1. **`DASHI/Physics/YangMills/BalabanYM4GramWedgeIdentityGeneralExact.agda`** — the core in arbitrary dimension `n`. Lagrange's identity `G(a,b) = Σ_{i<j}(a_i b_j − a_j b_i)²` by induction on the dimension; exact Cauchy–Schwarz in ℚⁿ; **every** squared 2×2 minor, at **any** pair of distinct indices, bounds `G(a,b)` from below (the general non-collinearity certificate); the projection identity `|W|² = |a|²G(a,b)` derived from genuine bilinearity rather than componentwise; the quantitative dichotomy. `gram-ofVec3` exhibits the earlier ℚ³ core as the `n = 3` instance, so nothing is duplicated.
+
+2. **`…ConstrainedGaussianGaugeTransverseGramDecompositionGeneralExact.agda`** (A1b) — the decomposition record and its consequences in dimension `n`, with three independent certificates instead of one. The important new one is `marginFromResidual` / `floorFromResidualBound`: a transverse *spectral* bound — which is the form a physical estimate actually comes in — is exactly a bound on `|W|²`, and the division-free projection identity converts it into the Gram margin that produces Row A's positive floor. No determinant expansion anywhere.
+
+3. **`YMRowCVectorHessianGramCoercivityExact.agda`** (C) — Row C on a genuine `n`-dimensional tangent space with an actual orthogonal split. The two modelling assumptions are now theorems: `pythagoras` (`|X|² = |X∥|² + |X⊥|²`) and `cauchySchwarzSq`; for a rank-one mixing the required bound `m² ≤ c²|u|²|v|²` is itself a theorem with `c² = |a|²|b|²`. The AM–GM certificate is a perfect square, and `uniformGapOnFullNorm` gives a uniform positive curvature `κ|X|²` in every direction — a constant inequality, no time integral, no accumulated debt — with the marginal channel required only to satisfy `(r−κ)+h ≥ 0`.
+
+4. **`BalabanYM4MarkedSourceSplitToCauchyConsumersExact.agda`** (B) — the missing consumer half. From a `MarkedSourceSplit` alone: a uniform coefficient bound (the marginal channel contributes a constant, not a divergence); `beyondRetainedIsTransverse` (beyond the retained window the whole marked functional decays geometrically — only the irrelevant channel carries the tail); and an actual Cauchy tube analytic package, hence function and derivative majorant bounds with constants independent of the number of scales. So projecting out the finitely many source-native marginal coordinates costs Cauchy differentiation nothing.
+
+5. **`BalabanYM4RGScaleGramDichotomyGeneralExact.agda`** (A↔B) — the dichotomy in dimension `n`, and, new, content on **both** branches. The coercive branch feeds Row A1b's floor; `nearMarginalWindowIsRetainable` shows the near-marginal branch supplies exactly the two conditions Row B's marginal channel asks of a retained family (bounded by the single constant `Smax·δ` on the window, vanishing beyond it). Whichever branch a window falls into, it hands the corresponding row its hypothesis.
+
+Documentation: **Addendum I** appended to `docs/ym/YangMillsClayObstructionReport.md` and a dated entry to `status.md`. `ARISTOTLE_SUMMARY.md` was read but not edited.
+
+## What this does not do
+
+**No row is closed, and the frozen research count remains 4.** Scoreboard `A, B, C, D` open; `LiteralCompactSimplePositiveBetaCompletion` remains uninhabited. Every module above is architecture, not physics, and each still consumes named open inputs:
+
+- **A1b** — that the literal Wilson + reduced Faddeev–Popov + Haar second variation has the stated shape, the exact gauge cancellation, the transverse margin, and the remainder enclosure.
+- **B** — inhabiting `MarkedSourceSplit` for the literal CMP116/119 differentiated marked source family: the projection onto the source-native marginal coordinates, and geometric decay of the resulting transverse kernel.
+- **C** — the four physical constants `r`, `h`, `c²`, `λ` for the literal cutoff/volume-uniform effective density.
+- **A↔B** — the literal linearised Bałaban step, the threshold `δ`, and the state-norm bound `Smax`.
+
+As you anticipated, this round lowers the risk that the decomposition is the wrong architecture; it does not lower the risk that the transverse inequality fails numerically for Yang–Mills. Also as noted: much of the pre-existing tree still cannot be re-verified with this toolchain version (qualified field names in record literals; a rational ring-solver tactic that needs a newer standard library), so I make no claim of a fresh green run of the whole stack — only of the ten modules named above, each of which I checked individually.
+
+All work is committed and pushed; the working tree is clean.
+
+# Summary of changes for run 00071d03-4a02-4aff-983e-4f99d45e689e
+## Round outcome: no row closed; scoreboard remains `A, B, C, D` open, frozen research count **4**
+
+I acted on your four corrections and then did exactly what you said was the highest-alpha edge: **stopped producing Row-A algebra** and attached the existing pieces to the literal Wilson / Faddeev–Popov / Haar objects. Three new modules, all exact rational arithmetic, all checked with `agda --safe`, all free of `postulate`, holes, receipts and unsafe pragmas.
+
+### A1a — `DASHI/Physics/YangMills/BalabanYM4SU2DexpJacobianDeterminantExact.agda`
+
+The algebraic core of the same-object chart theorem the Hessian downgrade was waiting on:
+
+- `adjointCubeRelation`: for `A = ad_Y` of `Y = (y₁,y₂,y₃)` in the repository's normalisation, `A³ = −4‖Y‖²A`, proved entrywise as nine polynomial identities.
+- `spanDeterminant`: for *every* element of the Cayley–Hamilton span, `det(I + αA + βA²) = (1 − 4‖Y‖²β)² + 4‖Y‖²α²` — the eigenvalue product obtained without leaving the rationals.
+- `dexpInverseDeterminant`: at `α = −1/2`, `β = c`, `det dexp⁻¹ = (1 − 4s²c)² + s²`, `s² = ‖Y‖²`.
+- `ChartScalars.chartJacobian` / `haarDensityCleared`: with the cleared scalar relations `S(1 − 4s²c) = sC` and `S² + C² = 1` (the removable-singularity identity `1 − θ²c(θ) = θ(1+cos θ)/(2 sin θ)` at `θ = 2s`, division-free), one gets `(sin s)² det dexp⁻¹ = s²`, hence **`J = (sin s / s)²`**.
+
+*Still an input, stated in the header:* identification of the repository's chart differential with `I − ½ad + c·ad²`, and the value of `c`. The rational sample (`s=1/2, S=3/5, C=4/5, c=1/3`) is a consistency witness only — it is **not** a claim that `sin(1/2)=3/5`.
+
+### A3b — `.../BalabanYM4GaussianNormalisationCouplingIndependenceExact.agda`
+
+Your third correction, settled in the **`∂_g β_Z = 0`** form and *derived*, not assumed. The coupling enters the fluctuation integral only through `1/g²`, so `φ = (g/g₀)ψ` contributes a Jacobian `(g/g₀)^dim` whose exponent is the fluctuation-space dimension — the same for every background, since one integrates over the same vector space. That scaling law makes the `g`-dependent term cancel identically in the ratio: `β_Z` is constant in `g`, every increment is exactly `0`, and `0` both satisfies and is the *unique* number satisfying the exact affine derivative characterisation. `RowAGaussianVanishing` feeds this into the total-sensitivity package, so `L_Z = 0` and **`L_total = L_int = L_sharp`** are now derived. So `L_Z` can be deleted, as you hoped.
+
+The equal-dimension hypothesis is shown to be load-bearing rather than free: `ratioDrift` computes the residual drift `(dim U − dim V)(logScale g − logScale g₀)` when the exponent is background-dependent, and an explicit rational witness *provably* breaks coupling-independence.
+
+*Still an input:* that the literal block-spin normalisation obeys that scaling law.
+
+### A1c — `.../BalabanYM4FourOrbitRegularRemainderBudgetExact.agda`
+
+Your fourth correction, in the form you specified. Replaces the single opaque remainder enclosure by the actual shape: four joint orbits × three literal pieces (Wilson plaquette, reduced Faddeev–Popov, Haar), recorded as equations a producer must supply. Exact triangle inequalities give `|R| ≤ Σ_orbits (w + f + h)`; if that budget is at most `1/2` the data assembles into the SU(2) regular-orbit enclosure and delivers **`β_Z ≥ 5/12 > 0`** and `β_Z ≤ 17/12` — i.e. `β_Z = 11/12 + R`, `|R| ≤ 1/2` ⟹ `b₋ ≥ 5/12`. Two explicit allocations: `1/16 + 1/32 + 1/32` per orbit (saturating `1/2`), and `1/16 + 1/64 + 1/64` per orbit (summing to `3/8`, leaving `b₋ ≥ 13/24`).
+
+*Still an input, and now counted:* exactly **twelve** numerical enclosures on the literal evaluator, plus the identification of the repository's remainder with the twelve-term sum. The module proves nothing else stands between those twelve numbers and `b₋ = 5/12`. The sample data has all twelve pieces nonzero and of mixed sign; it is a consistency witness, not the physical numbers.
+
+### On correction two
+
+The sign-normalised KKT criterion (`d(ε) = (−1)^m det M(ε)`, `S''(0) = (d₁² − 2d₀d₂)/(2d₀²)`, invariant condition `d₁² > 2d₀d₂`, with the `m=1`/`m=2` parity faces and the `d_i = −k_i` bridge) was already in place from the previous round and re-verified here. I deliberately did **not** attach it to a physical `Q` — that is A1b, it needs the physical coefficients, and you asked me to stop making Row-A algebra rather than manufacture a synthetic attachment.
+
+### Documentation
+
+`docs/ym/YangMillsClayObstructionReport.md` gained **Addendum G** (G.1–G.4): the precise statements, the inputs each module still consumes, and the updated shortest Row-A frontier. `status.md` gained a dated round entry. Both restate the scoreboard as `A, B, C, D` open, count `4`.
+
+### What this is not
+
+`LiteralCompactSimplePositiveBetaCompletion` remains uninhabited, and the frozen contract still requires both the positive bilateral terminal-tail beta tube and the tuned renormalised trajectory on the same construction. No row was closed; no closure is claimed anywhere. Every remaining open Row-A item is now either an identification of a repository object with an explicitly displayed algebraic shape, or an explicit finite list of numerical enclosures.
+
+Verification: the three new modules plus the sign-normalised KKT, total-sensitivity, radial-to-Hessian, Haar-coefficient, SU(2) beta-floor, Row-A gate composition, Cauchy-package and scoreboard modules all typecheck under `agda --safe`. As previously noted, some pre-existing modules use language/library features newer than the available toolchain and could not be re-verified here — a toolchain-version matter, not a claim about their content.
+
+
+# Summary of changes for run 456df963-c49d-40ff-a774-c19adfeda7cb
+## Outcome
+
+**The Clay Yang–Mills theorem is not closed. The frozen research count remains 4: rows A, B, C, D are all still open.** Nothing in this round inhabits or eliminates a physical completion row, and I have made no closure claim anywhere in the repository.
+
+What I did was push further on the highest-alpha lane you identified (Row A), landing three new self-contained theorems plus one integration, all in exact rational arithmetic, all checked with `agda --safe`, and all free of `postulate`, holes, receipts and unsafe pragmas.
+
+## New Row A mathematics
+
+**1. `DASHI/Physics/YangMills/BalabanYM4SU2HaarJacobianQuadraticCoefficientExact.agda`** — the Haar normalisation you flagged as unfinished. In the repository's SU(2) normalisation `ad_Y³ = −4|Y|² ad_Y`, so the exponential-coordinate Haar/dexp Jacobian is `J(Y) = (sin|Y|/|Y|)²`. With `t = |Y|²` the module proves
+`| (−log J) − t/3 | ≤ t²/16` for `0 ≤ |Y| ≤ 1/2`,
+so the quadratic coefficient is exactly `1/3` and the Haar Hessian in these coordinates is `(2/3) I`. The two classical analytic inputs (the alternating cardinal-sine enclosure and the two-sided logarithm enclosure, in cleared division-free form) enter as hypotheses *about the numbers involved*, so the theorem holds for any values in those enclosures; the record is inhabited at the non-degenerate point `|Y| = 1/2`. The same-object identification of the repository's chart Jacobian with `(sin s/s)²`, and the multivariable Hessian statement, are **not** formalised — only the radial coefficient.
+
+**2. `.../BalabanYM4ConstrainedGaussianFixedAmbientSecondVariationExact.agda`** — the fixed-ambient KKT derivative, which removes the moving-`ker Q(U)`-basis derivative entirely. For an affine background family `Δ(ε) = Δ₀+εΔ₁`, `Q(ε) = Q₀+εQ₁`, the bordered determinant expands exactly as `det M(ε) = k₀ + k₁ε + k₂ε² + k₃ε³` with all four coefficients written out in the ten background entries. Writing `S = −½log|det M|` and using its cleared defining relation `S''(0)·2k₀² = k₁² − 2k₂k₀`, the module proves `S''(0)·2k₀² ≥ 2k₂(−k₀)`, hence `S''(0) ≥ 0` when `k₂ ≥ 0` and `S''(0) > 0` when `k₂ > 0`, given `k₀ < 0` — which is exactly the already-proved `borderedDeterminantNegative` for positive definite `Δ₀` with `Q₀ ≠ 0`. **Positivity of the constrained-Gaussian shell contribution is thereby reduced to the sign of one explicit rational `k₂`.** The criterion is factored into a module over abstract Taylor data `(k₀,k₁,k₂)`, so it applies in any ambient dimension where those can be computed; the cubic expansion supplies them in ambient dimension 2 with one constraint. Both branches are witnessed on a positive definite `Δ₀` (`k₂ = 0`, and `k₂ = 3 > 0` giving `S''(0) = 3 > 0`).
+
+**3. `.../BalabanYM4InteractionMixedCouplingDerivativeSharpGateExact.agda`** — your suggested A3 sharpening, carried out. Differentiating the *logarithmic* form of `β_int = Z₂/Z − (Z₁/Z)²` rather than the numerator `N = ZZ₂ − Z₁²` gives the division-free identity `P Z³ = G₂Z² − Z₂G₀Z − 2Z₁G₁Z + 2Z₁²G₀`, from which, using only `z₀ ≤ Z`,
+`|∂_g β_int| z₀³ ≤ D₂z₀² + BD₀γz₀ + 2AD₁γz₀ + 2A²γ²D₀`, i.e. `L_sharp = D₂/z₀ + BD₀γ/z₀² + 2AD₁γ/z₀² + 2A²γ²D₀/z₀³`.
+A lemma proves this is smaller than the numerator-route constant by exactly `2BD₀γ/z₀²`, and no upper bound on the interaction factor is used anywhere. So, together with the earlier A2 sharpening, **neither Row-A gate constant needs `z₁`**, and the list the source analysis must produce is exactly `z₀, A, B, D₀, D₁, D₂, γ`.
+
+**4. Integration.** `BalabanYM4InteractionCauchyPackageToRowAConstantsExact` now carries the sharp branch on the *same* shell data: its cleared mixed equation is proved algebraically identical to the logarithmic-route equation, and the package exports `Lsharp`, `derivativeAbsBoundSharp`, `Lsharp≤L` and the sharp cubic shooting transfer alongside the originals.
+
+## Documentation
+
+`docs/ym/YangMillsClayObstructionReport.md` gained **Addendum E** with the full statements, the enclosure-hypothesis discipline, and an explicit list of what is *not* proved; `status.md` gained a dated round entry. Both restate that the scoreboard is unchanged at 4. `ARISTOTLE_SUMMARY.md` was not edited.
+
+## What Row A still needs (unchanged in substance)
+
+1. **A1**: the literal Wilson + reduced Faddeev–Popov + constraint + Haar background object and its identity-background second variation giving `b₋ > 0`. The linear-algebra seam (bordered determinant identity, `L D U` factorisation, fixed-ambient second variation) and the Haar radial coefficient `1/3` are now in the tree; the *same-object* attachment of both to the literal background data is not.
+2. **A2/A3**: the seven uniform numbers for the literal CMP109 interaction functional. Everything downstream of them is machine-checked.
+3. The gates `Cγ < b₋` and `L_sharp γ_tube < b₋ − Cγ`, and the same-object identification of the resulting coupling sequence with the literal Bałaban trajectory.
+
+## Verification and one environment caveat
+
+Available here: Agda 2.6.4.3 with standard-library 2.1. All modules I wrote or touched typecheck under `agda --safe`, as do `BalabanYM4CubicCouplingDriftTelescopeExact`, `BalabanYM4ShootingSensitivityFromCubicDriftExact`, `BalabanYM4RowAGateCompositionExact`, `BalabanYM4SU2RegularOrbitBetaFloorExact`, `YMRowCCurvatureCriterionIndependenceExact`, `BalabanYM4InteractionLogHessianCauchyGateExact`, `BalabanYM4InteractionMixedCouplingDerivativeGateExact`, `BalabanYM4BorderedKKTDeterminantExact` and `BalabanYM4BorderedKKTBlockFactorizationExact`.
+
+I could **not** re-verify a large part of the pre-existing tree — including the reduced Faddeev–Popov fourth-jet lane and the configured Brillouin modules — because it uses features newer than this toolchain: qualified field names in record literals (used in roughly 166 files) and `Data.Rational.Tactic.RingSolver` (standard-library ≥ 2.2). That is a toolchain-version matter and **not** a statement about those modules' content; I deliberately did not rewrite them to older syntax, since that would be large-scale churn on your sources. It does, however, mean that the same-object work against the literal Wilson/FP jets could not be machine-checked in this environment, which is why my contributions this round are the self-contained exact-rational analytic lemmas above. So I am also **not** claiming a fresh green kernel run of the complete stack.
+
+All work is committed and pushed.
+
+
+# Summary of changes for run d847bee7-48f1-4d1c-a18c-edc12e5f2620
+Continued the Yang–Mills lane. **The Jaffe–Witten theorem is not closed, no Clay claim was promoted, and the frozen research count is unchanged at 4 open rows (A–D).** What follows is genuinely proved new mathematics on the path identified by the existing obstruction report, plus updated documentation.
+
+All new work is in Agda over the vendored *constructed* Bishop reals, checked with `agda --safe`, with no postulate, `TERMINATING` pragma, authority receipt or conditional bridge. Every module below type-checks cleanly (verified by re-running the checker on each file at the end).
+
+New results this session:
+- `DASHI/Analysis/BishopTorusLinearity.agda` — `torusIntegral-product`: the torus measure is a product measure (distinct coordinates/links are independent). Fixes and completes the one block that was left non-compiling.
+- `DASHI/Analysis/BishopTorusShear.agda` — `shear₁-invariant`, `shear₂-invariant`: invariance of the two-dimensional integral under both transvections `(x,y) ↦ (x+y,y)` and `(x,y) ↦ (x,y+x)` (the generators of the SL(2,ℤ) action). These are the first non-translational changes of variables in the tree; the second uses the interchange (Fubini) theorem.
+- `DASHI/Analysis/BishopCircleReflection.agda` — `integral-reflect`: unimodularity, `∫f(−x) = ∫f(x)` for periodic uniformly continuous `f`, proved by exact finite combinatorics on the partition (reflected nodes are the original nodes reversed modulo the period) plus the explicit convergence rate. Supporting general lemmas: bounded congruence of finite sums, reversal of summation order, complementary-node identity.
+- `DASHI/Analysis/BishopTorusReflection.agda` — `torus-reflect-canonical`: the same for the n-torus.
+- `DASHI/Physics/YangMills/BishopU1LatticeHaarMeasure.agda` — new proved field `orientInvar` of the lattice gauge measure: reversing the orientation of every link leaves every expectation unchanged.
+- `DASHI/Analysis/BishopCircleHaarUniqueness.agda` — `haar-unique` and `haarFunctional-unique`: **uniqueness** of the Haar integral on U(1). Every normalized, monotone, linear, translation-invariant functional on periodic uniformly continuous functions equals the constructed one, so the construction is canonical. The hypothesis record is inhabited by the constructed integral, so the theorem is not vacuous.
+
+Documentation: appended Addenda B and C to `docs/ym/YangMillsClayObstructionReport.md` and dated entries to `status.md`, each stating explicitly what is and is not achieved. `ARISTOTLE_SUMMARY.md` was not edited.
+
+Standing obstruction (unchanged and restated precisely in the report): every construction here is for U(1) and its finite products, an **abelian** group. The Clay statement requires the same package for a compact simple non-abelian group (SU(N)); no constructive normalized invariant integral over a non-abelian carrier exists anywhere in the tree, so the lattice step of the continuum chain still cannot be built, and the later steps (infinite-volume and continuum limits, OS axioms, reconstruction, mass gap) remain untouched. The two candidate routes to SU(2) — charts plus change of variables, and averaging over ε-nets — are spelled out in the report with the specific missing steps; the shear and inversion results above discharge one of those steps (invariance under transvections and under inversion), the rest are not written.
+
+All work is committed and pushed.
+
+# Summary of changes for run 3832198b-2bd5-49cf-930d-ad5e1863a052
+**No row closed. The frozen research count remains 4 — A, B, C and D are all still open.** Nothing in this round promotes any Clay claim; the machine-checked ledger `DASHI/Physics/YangMills/YMFrozenFourResearchScoreboardExact.agda` still computes `frozenResearchCount ≡ 4` with all four rows marked open, and `scoreboardDoesNotPromote` still holds.
+
+What was added or repaired this round, all verified by typechecking:
+
+**Row A — the two numerical gates composed (new).** `DASHI/Physics/YangMills/BalabanYM4RowAGateCompositionExact.agda` joins the shell-local sign estimate, the cubic drift telescope and the shooting sensitivity along the single identification `β_j = u_j − u_{j+1}` with `u_j = g_j^{-2}`. From `β_{Z,j} ≥ b₋`, `β_{Int,j} ≥ −C·g_{j−1}`, `g_{j−1} ≤ γ` and the sign gate `Cγ < b₋` it produces the positive inverse-square margin `b_* = b₋ − Cγ`, hence `(b₋ − Cγ)·Σ_{j<K} g_j³ ≤ 2γ_tube` uniformly in the number of shells; with a uniform coupling-derivative bound `L` satisfying the tuning gate `L·γ_tube < b₋ − Cγ`, the cumulative shooting sensitivity is strictly below one for every cutoff. `BothGatesWitness` exhibits data satisfying both gates, so the composition is not vacuous.
+
+**Row A — lower half of the determinant-to-beta transport, in the second lane.** `BalabanEndpointDeterminantPrefixBridge` now also carries lower endpoint/correction/interaction estimates onto the same exact beta prefix sum, `L_D(k) + L_C(k) + L_I(k) ≤ Σ_{j≤k} β_j` (`endpointDeterminantToBetaPrefixLower`), mirroring the exact-rational `betaIntervalLowerBound`. This is the algebraic channel a sign proof needs and is deliberately separate from the existing smallness majorant.
+
+**Row C — the two curvature criteria are provably independent (new).** `DASHI/Physics/YangMills/YMRowCCurvatureCriterionIndependenceExact.agda` reduces the covariance-weighted inequality `Ċ (Hess V) Ċ − ½C̈ ≥ ℓ̇Ċ` and the group Heat/Doob hypothesis `Hess V ≥ −η` to their pointwise scalar form and shows neither implies the other: for any prescribed debt allowance `η`, taking `Ċ = 1`, `Hess V = −(η+1)`, `C̈ = 2 Hess V`, `ℓ̇ = 0` satisfies the covariance-weighted inequality with both sides exactly `0` while the Hessian sits strictly below `−η`; conversely `Ċ = 1`, `Hess V = 0`, `C̈ = 2`, `ℓ̇ = 0` meets every nonnegative debt floor while the covariance-weighted inequality reads `0 ≤ −1`. Re-exported from the scoreboard as `rowCCriteriaIndependentChecked`. This removes one specific false-positive completion path; row C's physical content is untouched.
+
+**A real source defect repaired.** `DASHI/Physics/YangMills/BalabanClayT4ConfiguredBrillouinIntegralCertificateExact.agda` declared its `Set`-valued certificate fields (including `regularBoxEnclosuresValid`) as `∀ scale → Set`, whose binder type is unconstrained; these produced unsolved metavariables and made the module and every consumer fail to elaborate. The fields now bind `Scale → Set`, and the module typechecks.
+
+Documentation was updated in `docs/ym/YangMillsClayFourFrozenResearchLemmas.md` (row C section) and `status.md` (new round entry). All new modules are exact rational arithmetic with no postulate, hole, or receipt, and typecheck under `agda --safe`; the two determinant-lane files build over the repository's postulate-based real-analysis foundation and are checked with plain `agda`, as before. Note that a number of pre-existing modules in this tree use standard-library names introduced after the version available here (for example `Data.Rational.Tactic.RingSolver`, `Data.Rational.Properties.pos*pos⇒pos`) and so could not be re-verified in this environment; that is a toolchain-version matter and is recorded in `status.md`, not a claim about their content.
+
+**What row A still needs, unchanged in substance:** A1 a positive `b₋` for the literal constrained-Gaussian determinant (the identity-background Hessian / normalized log-step floor), A2 a uniform differentiated interaction constant `C` with `β_Int = O(g)`, A3 a uniform coupling derivative `L`; plus the two numerical gates `Cγ < b₋` and `Lγ < b_*` and the identification of these sequences with the literal Bałaban trajectory. Rows B, C and D are as previously stated. All work is committed and pushed.
+
+# Summary of changes for run bef67618-4043-42b7-9741-fc5f5b2284d3
+I adopted your freeze and implemented it, then spent the rest of the round attacking A. Nothing was closed; the count stays at **4** and no row is proved.
+
+**1. The count is now frozen, pinned, and self-checking.**
+
+`docs/ym/YangMillsClayFourFrozenResearchLemmas.md` is the authoritative count file. It records the four rows exactly as you stated them (A `LiteralCompactSimplePositiveBeta`, B `PhysicalMarkedSourceLocalityCompositeStress`, C `SameDensityCompactLieHeatLangevinMassGap`, D `SameFamilyShortDistanceOPEStressAF`), each with its falsifiable completion condition *and* a one-line numerical target, the frozen DAG A→B, B→C, B→D, the effort allocation, and the rule that the count moves only when an entire row is proved. It also keeps your two-track distinction explicit: Haar/Peter–Weyl-level formalization debts live in the separate obstruction report and can never decrement the research count, and closing them does not either. Because the repository's previous ledger reported five leaves, I tabulated the five-to-four mapping and stated plainly that the integer changed by regrouping, not by proving anything.
+
+`DASHI/Physics/YangMills/YMFrozenFourResearchScoreboardExact.agda` is the machine-checked ledger. The count is *computed* from the four rows rather than written down (`frozenResearchCountIsFour : frozenResearchCount ≡ 4`), and a row can only be marked proved by supplying a `CompletionCertificate` carrying a proposition **together with an inhabitant of it** — so a decrement cannot typecheck without an actual proof. I documented the one thing the type system cannot enforce: that a future certificate's proposition really is the row's normative statement.
+
+**2. New verified mathematics on A (does not close A).**
+
+Three new modules, all passing `agda --safe` (which rejects postulates and unsafe pragmas), containing exact rational arithmetic with no receipt, authority or placeholder:
+
+- `YMGeometricPrefixBudgetExact` — general-ratio contracting shell families: every prefix sum, from every starting scale and of any length, is bounded by a budget closing `E₀ + rB ≤ B`. This is the uniform small-coupling history budget A needs, and it also machine-checks B's declared downstream step `E_d ≤ E₀ rᵈ ⟹` uniformly bounded partial sums, so that step can never be recounted as research.
+- `YMCumulativeBetaMarginExact` — A's reduction: two-sided Gaussian shell bounds, an interaction estimate against the history (accepted in the per-shell form `|β_Int,j| ≤ C g_{j−1}^ρ` the analysis actually produces), and a history budget that does not consume the margin give `Σ_{j=k+1}^m β_j ≥ b_*(m−k)` for every start and every nonempty prefix, plus the companion upper bound and an admissible-prefix form starting from a first admissible scale. The sharp statement is the **closure criterion**: the whole prefix inequality closes as soon as `C·B < b₋`, with uniform constant exactly `b_* = b₋ − C·B`.
+- `YMCumulativeBetaMarginNonVacuityExact` — an explicit inhabitant with genuinely nonzero interaction, so the reduction is not vacuous.
+
+**3. What this does and does not say about A.** The shape of A closes, with an explicit constant and no dependence on prefix length, and A is now falsifiable by a single inequality. What remains, and keeps A open, is exactly the analysis you named: `b₋ > 0` for the identity-background Hessian of the actual constrained Gaussian normalization including its Q-constraint dependence, and the uniform nonlinear interaction Hessian estimate producing finite `C` and positive `ρ` on the same trajectory. I did not produce either, and I did not attempt to substitute a literature value for the one-loop coefficient — the repository already reduces `b₋` to a Dashen–Gross-normalized certificate, and that import is precisely why A is still counted.
+
+Rows B, C, D are unchanged and open; no work was done on their analytic content this round. The stale frontier checklist and the running status log now point at the frozen count file. All work is committed and pushed.
+
+# Summary of changes for run b68d0ead-5d6a-4554-9b83-906c1950a1ee
+## Outcome, stated plainly
+
+**The Jaffe–Witten 4D quantum Yang–Mills existence and positive mass-gap theorem was not closed, and I make no claim that it was.** The deliverable is (a) a precise obstruction report identifying the first blocking theorem, and (b) new, machine-checked, postulate-free constructive mathematics that builds the first missing brick underneath it.
+
+## The obstruction (report: `docs/ym/YangMillsClayObstructionReport.md`)
+
+Tracing the Clay chain to its base, the first unproved item is not any of the Balaban/continuum/OS/mass-gap steps — it is at the very bottom:
+
+- `DASHI/Physics/YangMills/CompactLieStandardAuthority.agda` (lines 21–33) **postulates** the whole standard analytic package for compact simple Lie groups, including `haar : NormalizedHaarTheory H`. That record (`CompactLieAnalyticPackage.agda`, lines 113–134) is a faithful specification (integral, `normalized`, left/right invariance) with **no proved inhabitant anywhere in the tree**.
+- No integration theory of any kind exists in DASHI, in `vendor/bishop`, or in the Agda standard library, so the lattice Yang–Mills measure of step L1 (a product of normalized Haar measures over links) cannot be constructed; every statement above L1 is therefore conditional on that postulate.
+- Supporting placeholders, all cited with file/line in the report: the postulated reals of `DASHI/Foundations/RealAnalysisAxioms.agda` over which every YM analytic record is stated; SU(N) as a Boolean record with open obligations in `DASHI/Geometry/Gauge/SpecialUnitaryCarrier.agda`; the repository's own `Round11CompleteCutset`, whose `fixedLatticeDLRLSIGapChain` and `continuumOSAndSIMassGapChain` are opaque `Set` hypotheses at `conditional` level; and the fail-closed receipts in `DASHI/Papers/YangMills/TheoremInterface.agda` and `DASHI/Physics/Boundaries/ClayYMGap.agda`. The report also records that two entry points named in the request (`Docs/roadmaps/ClayYMProofRoadmap.md`, `Docs/papers/live/Paper3YangMillsClayDraft.md`) do not exist in the tree, and that `docs/ym_repo_frontier_checklist.md` is stale.
+
+The report also states clearly what genuine constructive material the repository *does* have (the Bishop reals in `vendor/bishop`, the `DASHI/Analysis` real-analysis modules, the ~70 Bishop-based Balaban estimate modules), so the negative finding is scoped, not blanket.
+
+## New verified content (all typechecks, no postulate, no hole, no `sorry`)
+
+Five modules over the *constructed* Bishop reals (not the postulated ones):
+
+- `DASHI/Analysis/BishopFiniteSumLemmas.agda` — finite-sum calculus (`∑₀-block`, `∑₀-abs`, `∑₀-const`, `∑₀-scale`, `∑₀-sub`, bounded-index bounds, `natToℝ-⋆`).
+- `DASHI/Analysis/BishopRiemannIntegral.agda` — a constructive Riemann integral on [0,1]: uniform partitions and refinements, the refinement estimate, `riemannSum-isCauchy`, the integral as the limit given by Bishop's `cauchy⇒convergent`, `riemannSum-converges`, and the normalisation `integral-const` / `integral-one` (∫₀¹1 = 1).
+- `DASHI/Analysis/BishopRiemannIntegralAdditivity.agda` — `integral-add`.
+- `DASHI/Analysis/BishopPeriodicShift.agda` — uniformly continuous functions respect equality of reals; exact invariance of the Riemann sum of a 1-periodic function under shifts by a multiple of the mesh.
+- `DASHI/Analysis/BishopCircleInvariance.agda` — `integral-rationalShift`: the integral of a 1-periodic uniformly continuous function is invariant under translation by every rational point of the circle.
+
+Together these give a normalised, additive, rational-translation-invariant integral on the circle group ℝ/ℤ — constructed rather than postulated, i.e. the shape `NormalizedHaarTheory` demands, for the simplest nontrivial compact group.
+
+## What remains (section 6 of the report)
+
+Invariance under arbitrary real translations; monotonicity/homogeneity; iterated integration on [0,1]³ with Fubini; a Bishop-real chart of SU(2) with its Jacobian; genuine left/right invariance on the non-abelian SU(2); and SU(N) via Weyl integration. Only then does L1 exist; L2–L9 (Balaban RG with small-field survival, infinite-volume and continuum limits, OS/Wightman, Hamiltonian convergence without spectral pollution, positive gap) remain open research mathematics.
+
+No axiom, postulate, receipt or promotion flag was added or flipped; no existing user content was deleted. All work is committed and pushed.

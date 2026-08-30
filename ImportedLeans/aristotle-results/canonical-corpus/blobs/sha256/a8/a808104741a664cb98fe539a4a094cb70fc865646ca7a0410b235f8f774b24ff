@@ -1,0 +1,204 @@
+# G8 — the anchored determinant, purification before the mean square, and a directional taper
+
+All statements below are machine-checked Lean in `RiemannAnalytic/`.
+`lake build RiemannAnalytic` succeeds (8078 jobs); there is no `sorry`, `admit`,
+`axiom`, `postulate`, Boolean receipt, imported authority or numerical evidence
+anywhere in the Lean sources.  Every theorem cited here depends only on
+`propext`, `Classical.choice`, `Quot.sound`.
+**The Riemann Hypothesis is not proved here, nothing assumes it, and
+`RiemannHypothesisFor` is untouched.**
+
+G7 closed two lanes: the even taper has no `α`-uniform quadratic window energy
+bound, and the *norm-and-count* budget for the anchored observable needs the
+unavailable exponent `θ > 2`.  G8 attacks exactly the distinction G7 left open:
+bounding the anchored determinant by its two diagonal norms is critical-scale
+and useless; the anchored determinant *itself* had not been shown to be critical.
+
+---
+
+## 1. The anchored row variance and the wedge factor
+
+New file `RiemannAnalytic/AnchoredRowVariance.lean`.
+
+1. **The `O(q)` observable is one row variance.**
+   `anchorMinorSum_eq_diag_mul_trace_sub_rowNormSq`:
+
+       ∑_{j ≠ 0} (G₀₀G_jj − G_{0j}²)  =  ‖v₀‖² · tr G  −  ‖G_{0,*}‖².
+
+   So the anchored observable asks for one diagonal entry, one local trace and
+   one row second moment — and, decisively, for their *correlated difference*,
+   not for `q` separately estimated determinants.
+
+2. **Lagrange / wedge identity.**  `lagrange_identity` and
+   `anchorMinor_eq_wedgeSum`: each anchored minor is a genuine exterior
+   quantity,
+
+       ‖x‖²‖y‖² − ⟪x,y⟫²  =  ½ ∑_{s,t} (x_s y_t − x_t y_s)²  ≥ 0.
+
+3. **Shift factorization — the point.**  `anchorMinorPair_shift` is an exact
+   identity, not an estimate:
+
+       ‖x‖²‖x+e‖² − ⟪x, x+e⟫²  =  ‖x‖²‖e‖² − ⟪x, e⟫².
+
+   For a translate family `v_j = v₀ + e_j` the anchored determinant therefore
+   sees **only the displacement** `e_j`, never the full vector `v_j`.
+   `translatedWedge_factor` and `anchorMinor_le_normSq_mul_shiftSq` record the
+   consequence `Δ_{0j} ≤ ‖v₀‖² M² s²` for a shift-Lipschitz family, and
+   `anchorMinorSum_grid_shift_budget` sums it over a grid of `q` translates at
+   spacing `h`:
+
+       ∑_{j≠0} Δ_{0j}  ≤  ‖v₀‖² M² h² q³,
+
+   in place of the norm-and-count budget `q ‖v₀‖² N²`.
+   `anchorMinorSum_lt_normCount_budget` proves the shift budget is *strictly*
+   smaller whenever the displacements are below the vector scale — the exact
+   sense in which G7's critical-scale computation was an artefact of the
+   inequality used.
+
+## 2. The ledger for the anchored determinant, at source scale
+
+New file `RiemannAnalytic/AnchoredShiftLedger.lean`.  This answers step 4 of the
+G8 cycle: what is the actual `L, H` scale of the anchored determinant *without*
+the norm-count relaxation?
+
+Feeding the source parameters — spacing `h = 2π/L`, window count `q ≤ A₀HL`,
+anchor energy `‖v₀‖² ≤ Cv L²`, shift-Lipschitz constant `M ≤ Mc L^k` — into the
+grid budget gives (`anchoredMinorSum_source_shift_budget`)
+
+    ∑_{j≠0} Δ_{0j}  ≤  4π² Cv Mc² A₀³ · L^{2k+3} · H³,
+
+against the coercive floor of order `L⁶`.  The ledger is a single exponent
+inequality, and it splits the route cleanly:
+
+* `anchored_shift_no_gain_of_large_lipschitz` — for `k ≥ 2` the budget is at
+  least `C L⁶` for every `L ≥ 1`, `H ≥ 1`: the route is closed and no window
+  shortening rescues it;
+* `anchored_shift_gain_of_short_window` — for `k ≤ 1` and windows with
+  `H³ ≤ δL`, the budget is at most `C δ L⁶`;
+* `anchored_shift_budget_ratio_tendsto_zero` — asymptotically, `o(L⁶)` along any
+  family with `δ → 0`, i.e. windows up to `H ≍ L^{1/3}`.
+
+**Verdict.**  Unlike the norm-and-count model, which demanded the unavailable
+`θ > 2` (`meso_no_gain_of_exponent_le_two`), the anchored determinant has a live
+regime.  What it needs is not a short-interval mean-value theorem but a
+**shift-Lipschitz bound with exponent `k ≤ 1`** for the translated prime-side
+family.  That bound is *not* assumed anywhere: it is an explicit hypothesis of
+every theorem above, and it is the obligation this ledger isolates.
+
+## 3. Does the transverse (imaginary) projection cancel the diagonal?
+
+New file `RiemannAnalytic/ImaginaryProjectionDiagonal.lean`.  Questions Q8.2/Q8.3
+asked for the exact diagonal of the anchored form, keeping the algebra
+`b = Im Φ`, `(Im z)² = −¼(z − z̄)²`, intact.
+
+* `im_secondMoment_eq` — the exact identity
+  `∫₀^H (Im D)² = ½(∫₀^H |D|² − Re ∫₀^H D²)`;
+* `dirichletPoly_sqIntegral_eq` — the exact expansion of the *unconjugated*
+  square, whose frequencies are `log(nm)` and never vanish once `a₁ = 0`;
+* `im_secondMoment_sub_half_diagonal_le` — consequently, with `a₁ = 0`,
+
+      | ∫₀^H (Im D)² − ½ H ∑ |a_n|² |  ≤  ½ (offDiagSum + sqSum),
+
+  with both error terms independent of `H`.
+
+**Verdict: outcome B/C, negative.**  The transverse projection **halves** the
+diagonal; it does not cancel it.  The self-conjugate cancellation hoped for in
+Q8.3 does not occur, because the conjugate square contributes at frequencies
+`log(nm) ≥ log 2`, not at frequency `0`.
+
+## 4. Purify before the mean square: the shift-projector lane
+
+New files `RiemannAnalytic/ShiftProjector.lean` and
+`RiemannAnalytic/ProjectorLedger.lean`.  This is the methodological import
+requested — an explicit finite operator that *annihilates* the unwanted
+component before any estimate is taken.
+
+* Exact algebra: `shiftProjected_dirichletPoly` — a finite shift combination
+  `∑_j c_j D(· + s_j)` is again a Dirichlet polynomial, with coefficients
+  multiplied by the symbol `P(n^{-i·})`; `shiftMultiplier_zeroFreq_eq_zero` —
+  the normalization `P(1) = ∑_j c_j = 0` annihilates the zero-frequency mode
+  **exactly**, with no inequality involved; `norm_shiftSymbol_sub_one_eq` — the
+  exact symbol defect `2|sin(λs/2)|`.
+* Cost: `diff_diagonalMass_le` and, for the whole admissible family,
+  `projected_diagonalMass_le` — the diagonal is damped by at most
+  `(W log N)²`, `W = ∑_j ‖c_j‖|s_j|`; `projected_secondMoment_le_general` feeds
+  this into the exact short-window expansion.
+* Ledger: `source_gain_factor_eq` and `source_projector_gain_eq` — at the source
+  parameters (`s_j = k_j·2π/L`, `log N = cL`) the damping factor equals
+  `(2πc ∑_j ‖c_j‖|k_j|)²`, a **constant independent of `L`**.  The projector
+  gains exactly when `|s| log N → 0` (`gain_tendsto_zero_of_short`), and
+  `norm_shiftSymbol_sub_one_eq_two_of_pi` shows there is no damping at all at
+  frequencies with `λs = π`.
+* The structural reason: `projector_ledger_no_margin`.  An annihilating
+  projector damps *low* frequencies, and the anchored floor lives at a low
+  frequency `λ₀`.  If the projector retains the floor, `‖P(λ₀)‖ ≥ ϱ`, and
+  `|λ₀| ≤ log N`, then its guaranteed diagonal-damping factor is at least `ϱ²`.
+
+**Verdict: negative within the purify-then-estimate budget model.**  Killing the
+diagonal and retaining the anchored floor are incompatible demands for a finite
+shift projector on the source grid; the strict margin `δ = θ − 2 > 0` cannot come
+from this lane alone.
+
+## 5. The directional (one-sided damped) taper
+
+New file `RiemannAnalytic/OneSidedDampedTaper.lean`.  This attacks the proved
+obstruction `no_uniform_quadratic_bound_of_fixed_offset` rather than negotiating
+with it: since the literal closure is one-sided, the contradiction branch may
+assume `α > 0`, so a taper supported on one half of physical space is natural.
+
+* `integral_twisted_le_of_oneSided_damped`, `integral_twisted_le_inv_of_oneSided_damped`
+  — for `ψ_c(u) = χ(u)e^{−cu}` supported in `u ≥ 0`, the twisted masses obey
+  `≤ K·R` and even `≤ K/(c+α)`, uniformly for `α ≥ −c`: the `cosh` catastrophe
+  is gone;
+* **`windowEnergyBound_le_quadratic_oneSided`** — for `c ≥ 1`, `|α| ≤ 1/2`,
+  `L ≥ 1`,
+
+      Bψ(α, L)  ≤  (4K₁² + 2K₂²/π²) · L²,
+
+  uniformly in `α`.  This is exactly the bound G7 proved **false** for every
+  even taper;
+* `exists_oneSidedDampedTaper` — an explicit `C¹` construction with a genuine
+  `e^{−cu}` plateau and constants independent of scale, so the hypotheses are
+  not vacuous;
+* `gridSample_zero_im_of_real`, `finiteGridAnchorMinorSum_eq_of_real` — the
+  anchor argument needs **no evenness**: for any real taper the central grid
+  sample is real, so the anchored identity survives the change of family.
+
+**What is still missing for this family, stated honestly.**  The coercive floor
+`anchoredMinorSum_source_floor` is proved for even tapers and uses evenness
+essentially (through `transverseEnergy_twoSided` / `taperExcess`), and the
+damped plateau mass is `O(1/(c+α))` rather than `≍ L`.  A coercive floor for a
+one-sided family is therefore a **new, open obligation**.  Nothing about it is
+assumed anywhere in the sources.
+
+---
+
+## Status after G8
+
+Proved this cycle: the anchored row-variance identity, the wedge/Lagrange
+identity, the exact shift factorization of the anchored minor, the source-scaled
+anchored shift ledger with its closed (`k ≥ 2`) and open (`k ≤ 1`) regimes, the
+exact diagonal of the transverse projection, the exact algebra and the full cost
+ledger of finite shift projectors, and the `α`-uniform quadratic window bound
+for an explicitly constructed one-sided damped taper.
+
+Proved negative this cycle: the transverse projection does not cancel the
+diagonal (it halves it); a finite shift projector on the source grid buys no
+power of `L`, and cannot both kill the diagonal and retain the anchored floor.
+
+**The first unproved theorem is unchanged in substance:**
+
+    ∑_ρ m_ρ² a₀(ρ)² ‖b_ρ‖²  ≤  E_prime,loc(T, H),   E_prime,loc = o(L⁶),
+
+for some window height `H = o(L²)`.  G8 has split it into two now-precise
+sufficient obligations, either of which would suffice:
+
+* **G8.a (shift-Lipschitz route).**  A bound `‖v_j − v₀‖ ≤ Mc L^k |jh|` with
+  `k ≤ 1` for the translated prime-side family on the source grid; then
+  `anchored_shift_gain_of_short_window` gives `o(L⁶)` for windows `H = o(L^{1/3})`.
+* **G8.b (directional route).**  A coercive floor for the one-sided damped taper
+  family, matching `anchoredMinorSum_source_floor` without evenness; then
+  `windowEnergyBound_le_quadratic_oneSided` supplies the `α`-uniform ceiling that
+  the even family provably cannot.
+
+No claim about the Riemann Hypothesis is made.

@@ -1,0 +1,368 @@
+module DASHI.Physics.YangMills.BalabanYM4FourOrbitRegularRemainderBudgetExact where
+
+------------------------------------------------------------------------
+-- ROW A1c: THE LITERAL WILSON + FADDEEV-POPOV + HAAR REGULAR REMAINDER,
+-- BUDGETED ORBIT BY ORBIT, AND THE RESULTING b_- = 5/12
+--
+-- PRIMARY SOURCES
+--
+-- Roger Dashen and David J. Gross, "Relationship between Lattice and Continuum
+-- Definitions of the Gauge-Theory Coupling", Physical Review D 23 (1981),
+-- 2340--2344.  DOI: 10.1103/PhysRevD.23.2340.  (The lattice/continuum
+-- normalisation in which the universal SU(2) coefficient is 11/12, and the
+-- separation of the singular universal term from the finite regular matching
+-- remainder.)
+--
+-- Tadeusz Balaban, "Renormalization Group Approach to Lattice Gauge Field
+-- Theories. I.", Communications in Mathematical Physics 109 (1987), 249--301.
+-- DOI: 10.1007/BF01215223.
+--
+-- WHERE THIS SITS
+--
+-- `BalabanYM4SU2RegularOrbitBetaFloorExact` proves the sign arithmetic
+--
+--     beta_Z  =  (11/24) C_A  +  regular ,      |regular| <= 1/2
+--        ==>   beta_Z  >=  11/12 - 1/2  =  5/12  >  0        (for C_A = 2),
+--
+-- but it consumes `regular` as one opaque number with one opaque enclosure.
+-- The universal 11/12 is *not* what the four-orbit Brillouin calculation
+-- computes: that calculation computes the finite regular matching remainder,
+-- and it computes it as a sum over the four joint orbits, each orbit
+-- contributing three separately estimated pieces -- the Wilson plaquette term,
+-- the reduced Faddeev-Popov term, and the Haar-measure term.
+--
+-- WHAT THIS MODULE ADDS
+--
+-- It replaces the single opaque enclosure by the actual shape of the object,
+-- and proves the composition exactly:
+--
+--   (1) `RegularRemainderData` records, for each of the four orbits o, the
+--       three literal pieces  wilson o, faddeevPopov o, haar o,  their sum
+--       `orbitTotal o`, and the total `regularTotal` as the sum of the four
+--       orbit totals -- all as equations, not as definitions, so a producer
+--       must supply the identifications.
+--
+--   (2) `budgetedRemainderBound` : from twelve per-piece absolute enclosures
+--
+--           |wilson o| <= w o ,  |faddeevPopov o| <= f o ,  |haar o| <= h o
+--
+--       it derives, by exact triangle inequalities,
+--
+--           |regularTotal|  <=  sum over the four orbits of (w o + f o + h o).
+--
+--   (3) `remainderWithinRadius` : if that budget sum is at most 1/2, the data
+--       assembles into an `SU2RegularOrbitEnclosure`, hence
+--
+--           beta_Z  >=  5/12  >  0 ,        beta_Z  <=  17/12 ,
+--
+--       which is the Row-A b_- in the form the frontier asks for:
+--       beta_Z = 11/12 + R with |R| <= 1/2 giving b_- >= 5/12.
+--
+--   (4) `standardBudget` : the explicit even allocation
+--       w = 1/16, f = 1/32, h = 1/32 per orbit, whose twelve pieces sum to
+--       exactly 1/2, together with `standardBudgetSumsToHalf`; and
+--       `headroomBudget`, a strictly-inside allocation summing to 3/8, which
+--       leaves b_- >= 11/12 - 3/8 = 13/24.
+--
+-- SO WHAT REMAINS.  Exactly twelve numerical enclosures on the literal
+-- evaluator -- one Wilson, one Faddeev-Popov and one Haar bound per joint
+-- orbit -- plus the identification of the repository's regular remainder with
+-- the displayed twelve-term sum.  Those are the remaining Row-A1c producers;
+-- this module proves that nothing else is needed between them and b_- = 5/12.
+--
+-- WHAT IS *NOT* PROVED.  None of the twelve enclosures is proved here, and no
+-- claim is made that the literal evaluator has the displayed decomposition;
+-- both are inputs of `RegularRemainderData`.  The sample data at the end is a
+-- consistency witness, not a computation of the physical numbers.  Row A stays
+-- open and the frozen research count stays at 4.
+--
+-- Exact rational arithmetic; no postulate, no hole, no receipt.  Checked with
+-- `agda --safe`.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Data.Integer.Base using (+_; -[1+_])
+open import Data.Rational.Base as ℚ
+  using (ℚ; 0ℚ; 1ℚ; ∣_∣; _+_; _*_; -_; _-_; _/_; _≤_; _<_)
+import Data.Rational.Properties as ℚP
+open import Data.Rational.Solver using (module +-*-Solver)
+open import Data.Sum.Base using (inj₁; inj₂)
+open import Relation.Binary.PropositionalEquality
+  using (sym; trans; cong; subst; subst₂)
+open import Relation.Nullary.Decidable using (toWitness)
+
+open import DASHI.Physics.YangMills.BalabanYM4InteractionCauchyPackageToRowAConstantsExact
+  using (abs-bound-lower)
+open import DASHI.Physics.YangMills.BalabanYM4SU2RegularOrbitBetaFloorExact
+  using ( SU2RegularOrbitEnclosure; su2BetaFloor; su2GaussianBetaFloor
+        ; su2GaussianBetaPositive; su2GaussianBetaCeiling
+        ; universalCoefficientDensity; su2AdjointCasimir
+        ; regularEnclosureRadius )
+
+open +-*-Solver
+
+------------------------------------------------------------------------
+-- A small absolute-value helper: p <= |p|.  (The companion inequality
+-- -|p| <= p is `abs-bound-lower`, reused from the Cauchy package module.)
+------------------------------------------------------------------------
+
+abs-upper : ∀ p → p ≤ ∣ p ∣
+abs-upper p with ℚP.∣p∣≡p∨∣p∣≡-p p
+... | inj₁ eq = ℚP.≤-reflexive (sym eq)
+... | inj₂ eq = ℚP.≤-trans p≤0 (ℚP.0≤∣p∣ p)
+  where
+    negNeg : ∀ (x : ℚ) → - (- x) ≡ x
+    negNeg x = solve 1 (λ y → :- (:- y) := y) refl x
+
+    p≤0 : p ≤ 0ℚ
+    p≤0 = subst₂ _≤_ (negNeg p) (negNeg 0ℚ)
+            (ℚP.neg-antimono-≤ (subst (0ℚ ≤_) eq (ℚP.0≤∣p∣ p)))
+
+------------------------------------------------------------------------
+-- THE FOUR JOINT ORBITS
+--
+-- The four orbits of the joint stabiliser action that the regular Brillouin
+-- matching calculation sums over.  Nothing below depends on which is which;
+-- only on there being exactly four of them.
+------------------------------------------------------------------------
+
+data Orbit : Set where
+  orbit₁ orbit₂ orbit₃ orbit₄ : Orbit
+
+sumOverOrbits : (Orbit → ℚ) → ℚ
+sumOverOrbits t = ((t orbit₁ + t orbit₂) + t orbit₃) + t orbit₄
+
+------------------------------------------------------------------------
+-- THE LITERAL THREE-PIECE, FOUR-ORBIT REGULAR REMAINDER
+------------------------------------------------------------------------
+
+record RegularRemainderData : Set where
+  field
+    -- the three literal pieces of each orbit contribution
+    wilson       : Orbit → ℚ   -- Wilson plaquette term
+    faddeevPopov : Orbit → ℚ   -- reduced Faddeev-Popov term
+    haar         : Orbit → ℚ   -- Haar-measure term
+
+    orbitTotal   : Orbit → ℚ
+    regularTotal : ℚ
+
+    orbitDecomposition :
+      ∀ o → orbitTotal o ≡ (wilson o + faddeevPopov o) + haar o
+    totalDecomposition :
+      regularTotal ≡ sumOverOrbits orbitTotal
+
+    -- the twelve per-piece budgets and the twelve enclosures
+    wilsonBudget       : Orbit → ℚ
+    faddeevPopovBudget : Orbit → ℚ
+    haarBudget         : Orbit → ℚ
+
+    wilsonEnclosure       : ∀ o → ∣ wilson o ∣ ≤ wilsonBudget o
+    faddeevPopovEnclosure : ∀ o → ∣ faddeevPopov o ∣ ≤ faddeevPopovBudget o
+    haarEnclosure         : ∀ o → ∣ haar o ∣ ≤ haarBudget o
+
+module Budget (d : RegularRemainderData) where
+
+  open RegularRemainderData d public
+
+  ----------------------------------------------------------------------
+  -- (1) THE PER-ORBIT BUDGET
+  ----------------------------------------------------------------------
+
+  orbitBudget : Orbit → ℚ
+  orbitBudget o = (wilsonBudget o + faddeevPopovBudget o) + haarBudget o
+
+  orbitBound : ∀ o → ∣ orbitTotal o ∣ ≤ orbitBudget o
+  orbitBound o =
+    subst (λ z → ∣ z ∣ ≤ orbitBudget o) (sym (orbitDecomposition o))
+      (ℚP.≤-trans
+        (ℚP.∣p+q∣≤∣p∣+∣q∣ (wilson o + faddeevPopov o) (haar o))
+        (ℚP.+-mono-≤
+          (ℚP.≤-trans (ℚP.∣p+q∣≤∣p∣+∣q∣ (wilson o) (faddeevPopov o))
+            (ℚP.+-mono-≤ (wilsonEnclosure o) (faddeevPopovEnclosure o)))
+          (haarEnclosure o)))
+
+  ----------------------------------------------------------------------
+  -- (2) THE TOTAL BUDGET
+  ----------------------------------------------------------------------
+
+  totalBudget : ℚ
+  totalBudget = sumOverOrbits orbitBudget
+
+  budgetedRemainderBound : ∣ regularTotal ∣ ≤ totalBudget
+  budgetedRemainderBound =
+    subst (λ z → ∣ z ∣ ≤ totalBudget) (sym totalDecomposition)
+      (ℚP.≤-trans
+        (ℚP.∣p+q∣≤∣p∣+∣q∣
+          ((orbitTotal orbit₁ + orbitTotal orbit₂) + orbitTotal orbit₃)
+          (orbitTotal orbit₄))
+        (ℚP.+-mono-≤
+          (ℚP.≤-trans
+            (ℚP.∣p+q∣≤∣p∣+∣q∣
+              (orbitTotal orbit₁ + orbitTotal orbit₂) (orbitTotal orbit₃))
+            (ℚP.+-mono-≤
+              (ℚP.≤-trans
+                (ℚP.∣p+q∣≤∣p∣+∣q∣ (orbitTotal orbit₁) (orbitTotal orbit₂))
+                (ℚP.+-mono-≤ (orbitBound orbit₁) (orbitBound orbit₂)))
+              (orbitBound orbit₃)))
+          (orbitBound orbit₄)))
+
+  ----------------------------------------------------------------------
+  -- (3) IF THE BUDGET FITS IN 1/2, ROW A GETS ITS b_-
+  ----------------------------------------------------------------------
+
+  module WithinRadius (budgetFits : totalBudget ≤ regularEnclosureRadius) where
+
+    remainderWithinRadius : ∣ regularTotal ∣ ≤ regularEnclosureRadius
+    remainderWithinRadius =
+      ℚP.≤-trans budgetedRemainderBound budgetFits
+
+    enclosure : SU2RegularOrbitEnclosure
+    enclosure = record
+      { betaGauss = universalCoefficientDensity * su2AdjointCasimir
+                      + regularTotal
+      ; regular = regularTotal
+      ; casimirIsSU2 = refl
+      ; decomposition = refl
+      ; regularLower = abs-bound-lower remainderWithinRadius
+      ; regularUpper = ℚP.≤-trans (abs-upper regularTotal) remainderWithinRadius
+      }
+
+    -- b_- = 5/12: the Gaussian beta increment of the literal evaluator
+    betaFloor :
+      su2BetaFloor
+        ≤ universalCoefficientDensity * su2AdjointCasimir + regularTotal
+    betaFloor = su2GaussianBetaFloor enclosure
+
+    betaPositive :
+      0ℚ < universalCoefficientDensity * su2AdjointCasimir + regularTotal
+    betaPositive = su2GaussianBetaPositive enclosure
+
+    betaCeiling :
+      universalCoefficientDensity * su2AdjointCasimir + regularTotal
+        ≤ + 17 / 12
+    betaCeiling = su2GaussianBetaCeiling enclosure
+
+------------------------------------------------------------------------
+-- (4) TWO EXPLICIT ALLOCATIONS OF THE 1/2 BUDGET
+--
+-- `standardBudget` spends the whole radius: 1/16 + 1/32 + 1/32 = 1/8 per
+-- orbit, four orbits, total exactly 1/2.  `headroomBudget` spends 3/32 per
+-- orbit, total 3/8, leaving beta_Z >= 11/12 - 3/8 = 13/24.
+------------------------------------------------------------------------
+
+standardWilson standardFP standardHaar : ℚ
+standardWilson = + 1 / 16
+standardFP     = + 1 / 32
+standardHaar   = + 1 / 32
+
+standardOrbitBudget : ℚ
+standardOrbitBudget = (standardWilson + standardFP) + standardHaar
+
+standardOrbitBudgetIsEighth : standardOrbitBudget ≡ + 1 / 8
+standardOrbitBudgetIsEighth = refl
+
+standardBudgetSumsToHalf :
+  sumOverOrbits (λ _ → standardOrbitBudget) ≡ regularEnclosureRadius
+standardBudgetSumsToHalf = refl
+
+headroomWilson headroomFP headroomHaar : ℚ
+headroomWilson = + 1 / 16
+headroomFP     = + 1 / 64
+headroomHaar   = + 1 / 64
+
+headroomOrbitBudget : ℚ
+headroomOrbitBudget = (headroomWilson + headroomFP) + headroomHaar
+
+headroomBudgetSum :
+  sumOverOrbits (λ _ → headroomOrbitBudget) ≡ + 3 / 8
+headroomBudgetSum = refl
+
+headroomBudgetFits :
+  sumOverOrbits (λ _ → headroomOrbitBudget) ≤ regularEnclosureRadius
+headroomBudgetFits =
+  toWitness {a? = sumOverOrbits (λ _ → headroomOrbitBudget)
+                    ℚP.≤? regularEnclosureRadius} _
+
+-- the improved floor available when the twelve enclosures come in at the
+-- headroom allocation: 11/12 - 3/8 = 13/24
+headroomFloor :
+  universalCoefficientDensity * su2AdjointCasimir + (- (+ 3 / 8)) ≡ + 13 / 24
+headroomFloor = refl
+
+------------------------------------------------------------------------
+-- (5) NON-VACUITY
+--
+-- Data with all twelve pieces nonzero, of mixed sign, saturating none of the
+-- budgets, and with a genuinely nonzero total; the standard allocation covers
+-- it and the theorem delivers b_- = 5/12.  These are demonstration numbers,
+-- not the physical enclosures.
+------------------------------------------------------------------------
+
+sampleData : RegularRemainderData
+sampleData = record
+  { wilson       = λ { orbit₁ → + 1 / 32 ; orbit₂ → -[1+ 0 ] / 32
+                     ; orbit₃ → + 1 / 64 ; orbit₄ → -[1+ 0 ] / 64 }
+  ; faddeevPopov = λ { orbit₁ → + 1 / 64 ; orbit₂ → + 1 / 64
+                     ; orbit₃ → -[1+ 0 ] / 64 ; orbit₄ → + 1 / 128 }
+  ; haar         = λ { orbit₁ → -[1+ 0 ] / 128 ; orbit₂ → + 1 / 128
+                     ; orbit₃ → + 1 / 64 ; orbit₄ → + 1 / 64 }
+  ; orbitTotal   = λ { orbit₁ → (+ 1 / 32 + (+ 1 / 64)) + (-[1+ 0 ] / 128)
+                     ; orbit₂ → (-[1+ 0 ] / 32 + (+ 1 / 64)) + (+ 1 / 128)
+                     ; orbit₃ → (+ 1 / 64 + (-[1+ 0 ] / 64)) + (+ 1 / 64)
+                     ; orbit₄ → (-[1+ 0 ] / 64 + (+ 1 / 128)) + (+ 1 / 64) }
+  ; regularTotal = sumOverOrbits
+                     (λ { orbit₁ → (+ 1 / 32 + (+ 1 / 64)) + (-[1+ 0 ] / 128)
+                        ; orbit₂ → (-[1+ 0 ] / 32 + (+ 1 / 64)) + (+ 1 / 128)
+                        ; orbit₃ → (+ 1 / 64 + (-[1+ 0 ] / 64)) + (+ 1 / 64)
+                        ; orbit₄ → (-[1+ 0 ] / 64 + (+ 1 / 128)) + (+ 1 / 64) })
+  ; orbitDecomposition = λ { orbit₁ → refl ; orbit₂ → refl
+                           ; orbit₃ → refl ; orbit₄ → refl }
+  ; totalDecomposition = refl
+  ; wilsonBudget       = λ _ → standardWilson
+  ; faddeevPopovBudget = λ _ → standardFP
+  ; haarBudget         = λ _ → standardHaar
+  ; wilsonEnclosure = λ
+      { orbit₁ → toWitness {a? = ∣ + 1 / 32 ∣ ℚP.≤? standardWilson} _
+      ; orbit₂ → toWitness {a? = ∣ -[1+ 0 ] / 32 ∣ ℚP.≤? standardWilson} _
+      ; orbit₃ → toWitness {a? = ∣ + 1 / 64 ∣ ℚP.≤? standardWilson} _
+      ; orbit₄ → toWitness {a? = ∣ -[1+ 0 ] / 64 ∣ ℚP.≤? standardWilson} _ }
+  ; faddeevPopovEnclosure = λ
+      { orbit₁ → toWitness {a? = ∣ + 1 / 64 ∣ ℚP.≤? standardFP} _
+      ; orbit₂ → toWitness {a? = ∣ + 1 / 64 ∣ ℚP.≤? standardFP} _
+      ; orbit₃ → toWitness {a? = ∣ -[1+ 0 ] / 64 ∣ ℚP.≤? standardFP} _
+      ; orbit₄ → toWitness {a? = ∣ + 1 / 128 ∣ ℚP.≤? standardFP} _ }
+  ; haarEnclosure = λ
+      { orbit₁ → toWitness {a? = ∣ -[1+ 0 ] / 128 ∣ ℚP.≤? standardHaar} _
+      ; orbit₂ → toWitness {a? = ∣ + 1 / 128 ∣ ℚP.≤? standardHaar} _
+      ; orbit₃ → toWitness {a? = ∣ + 1 / 64 ∣ ℚP.≤? standardHaar} _
+      ; orbit₄ → toWitness {a? = ∣ + 1 / 64 ∣ ℚP.≤? standardHaar} _ }
+  }
+
+module SampleBudget = Budget sampleData
+
+sampleTotalBudgetIsHalf :
+  SampleBudget.totalBudget ≡ regularEnclosureRadius
+sampleTotalBudgetIsHalf = refl
+
+sampleBudgetFits :
+  SampleBudget.totalBudget ≤ regularEnclosureRadius
+sampleBudgetFits = ℚP.≤-refl
+
+module SampleWithin = SampleBudget.WithinRadius sampleBudgetFits
+
+-- the sample remainder is genuinely nonzero: 7/128
+sampleRemainderValue : RegularRemainderData.regularTotal sampleData ≡ + 7 / 128
+sampleRemainderValue = refl
+
+-- and the delivered Gaussian beta increment is 11/12 + 7/128 = 373/384 >= 5/12
+sampleBetaFloor :
+  su2BetaFloor
+    ≤ universalCoefficientDensity * su2AdjointCasimir
+        + RegularRemainderData.regularTotal sampleData
+sampleBetaFloor = SampleWithin.betaFloor
+
+sampleBetaValue :
+  universalCoefficientDensity * su2AdjointCasimir
+    + RegularRemainderData.regularTotal sampleData
+  ≡ + 373 / 384
+sampleBetaValue = refl

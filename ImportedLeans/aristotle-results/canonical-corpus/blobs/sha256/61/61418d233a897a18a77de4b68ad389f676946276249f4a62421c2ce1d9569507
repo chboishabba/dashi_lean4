@@ -1,0 +1,277 @@
+# Row A source-weld round — averaging identification, beta normalisation,
+coupling window
+
+Date: 2026-08-28.
+
+This note records one round of work on **Row A only**
+(`LiteralCompactSimplePositiveBeta` in
+`docs/ym/YangMillsClayFourFrozenResearchLemmas.md`).  It changes no count.
+**Row A remains open; the frozen research count stays 4.**  Nothing here is
+promoted on the strength of a receipt, a placeholder, an imported authority or a
+renamed ledger, and no new axiom or postulate was introduced anywhere.
+
+---
+
+## 0. Source-material status — read this first
+
+The task instructed me to use attached source PDFs (the Bałaban averaging paper
+CMP 98, the gauge-fixing/regular-configuration paper CMP 99, and the RG /
+coupling-constant-renormalisation paper CMP 109) as the primary authority, to
+quote literal equations and to record page provenance.
+
+**Factual statement of what I could access.**  There is no PDF (or DjVu, or
+scanned text) file anywhere in this project's working tree, and none anywhere
+else on the machine I work on: I searched the whole filesystem for `*.pdf` and
+found none, and the project tree contains only the Agda/Lean sources, the
+tarballs of previous rounds and the `docs/` notes.  I therefore could not open
+the papers, and I will not fabricate page numbers, equation numbers beyond those
+supplied to me, or literal transcriptions of text I have not read.  Any citation
+of the form "p. N, Eq. (M)" that I did not read would be an invented provenance
+record and is exactly the sort of authority receipt this lane forbids.
+
+**What I did use as source data, and its provenance.**  The task request itself
+supplied literal source content, and that is the provenance recorded in the Lean
+files:
+
+| Source datum | Form used | Provenance recorded |
+| --- | --- | --- |
+| flat/main averaging specialisation `(Q₀A)_c = Σ_{x∈B(c₋)} L^{-(d+1)} (R_{0,c₋}A)([x,x'])` | verbatim as quoted in the request | "as supplied in the task request" |
+| polarization tensor `Π(b,b') = [δ²/δB(b)δB(b') E^{(j)}(U_j(e^{iB}))]_{B=0}`, with `β_j` the coefficient of the specified tensor structure | verbatim as quoted in the request | same |
+| the small-field theorem: *arbitrary semisimple compact `G ⊂ U(N)`, `d = 4`; if the whole effective-coupling sequence stays in a sufficiently small interval, the small-field effective actions have the required form with uniform analytic bounds* | as quoted in the request, formalised as an implication `CouplingWindow γ g → Pkg g` | same |
+
+**What is still missing, precisely.**  These are the literal items I could not
+obtain, each stated as the exact formula/normalisation that is needed.  This
+list replaces "PDF unavailable" with a specific shopping list:
+
+1. **The general averaging formula (the one the request calls Eq. (124)).**  I
+   have its *shape* from the request — the factors `g(-i·ad Y)`,
+   `g^{-1}(-i·ad Y_x)`, `g^{-1}(i·ad Y_x)e^{-i·ad Y}`, the exponential adjoint,
+   the parallel transport and the block sum — but not the equation itself: which
+   argument each `Y` carries (background at the block base point vs. at the
+   running site), the ordering of the factors inside the block sum, and the
+   normalisation constant multiplying the whole expression.  Without those three
+   data the general (non-flat) operator cannot be written down literally, only
+   guessed at.  *Needed:* the full right-hand side of Eq. (124) with its
+   argument conventions.
+2. **The analyticity/uniform-neighbourhood statement (the request's
+   Proposition 7).**  *Needed:* the explicit neighbourhood — the radius in the
+   background variable and in the fluctuation variable, and the norm in which it
+   is measured — over which joint analyticity is asserted, plus the constant in
+   front.  I deliberately did *not* invent a parallel neighbourhood assumption;
+   in the Lean development the corresponding role is played by an explicit
+   `HasDerivAt` hypothesis on the background family, which is weaker and
+   honest.
+3. **The linear estimate `|Q(V₀)A| < (1 + O(1)L²α₀)|A|` and the Proposition-3
+   bounds.**  *Needed:* the norms on both sides (which lattice norm, at which
+   scale), the meaning of `α₀`, and the absolute constant hidden in `O(1)`.
+   Without the constant the estimate cannot produce a *number*, and the Lean
+   development therefore derives its own constant from the kernel structure
+   instead (see §2.3): `K_Q = 16π²(2L)²M + 2M`, with `M` the mass of the
+   derivative kernel, which is a hypothesis of the theorem.
+4. **The background Hessian, constrained propagator and seagull bounds of the
+   gauge-fixing paper.**  *Needed:* the statements with their constants and the
+   admissibility conditions on the background under which they hold.
+5. **The tensor-structure normalisation of the polarization tensor.**  *Needed:*
+   the exact tensor structure whose coefficient is called `β_j` (which index
+   contraction, with which combinatorial factor), and the sign convention
+   relating polarization and beta terms.  In the Lean development this is
+   isolated as a single normalisation datum: the theorem is proved for a general
+   structure coefficient `τ` and specialised at `τ = 1`
+   (`polarizationAt_of_quadratic` → `polarizationAt_of_normalizedStructure`), so
+   supplying the source convention amounts to fixing one number.
+
+Everything below is what was proved *without* those items.
+
+---
+
+## 1. New Lean modules
+
+All under `RequestProject/YangMills/`, all built by `lake build RequestProject`
+(8120 jobs, green), no `sorry`, no `axiom`, no `@[implemented_by]`, and
+`#print axioms` on every new top-level theorem reports only
+`propext, Classical.choice, Quot.sound`.
+
+| Module | Content |
+| --- | --- |
+| `CMP98AveragingEq125.lean` | the flat/main averaging equation written literally; identification with the Row A block-averaging operator; kernel form |
+| `CMP98BackgroundDerivative.lean` | the kernel of that operator; normalisation ⇒ total mass `δ_ab`; background derivative ⇒ zero mass; range `2L`; derived constant `K_Q`; shell bound with `Q'` supplied by the source operator |
+| `CMP109Polarization.lean` | the literal second variation `δ²/δBδB'`; the coefficient of the tensor structure; the weld to the Lean shell Gaussian coefficient; two-sided bounds transported |
+| `CMP109CouplingWindow.lean` | the coupling window; the two-sided rate; the window from the positive shell bound; consumption of the published theorem as an explicit implication |
+| `A1FiveChannelAssignment.lean` | the assignment of the five source remainders to the two existing analytic interfaces; completeness and soundness |
+| `CMP98AveragingWitness.lean` | an explicit normalised background family whose derivative kernel is nonzero, with mass `1/20000`, satisfying the whole Gaussian-sector hypothesis package |
+| `RowAWeldedStatement.lean` | the welded Row A implication and the polarization conjunct |
+
+## 2. What each part of the request produced
+
+### 2.1 A1.1 — same-object identification of the averaging map
+
+`cmp98Q` is the operator written in the literal shape of the quoted flat/main
+equation: sum over the `L^d` fine sites `x = L·y + r` of the block `B(c₋)`, of
+`L^{-(d+1)}` times the transported value of the fine one-form on the axial path
+`[x, x + L e_μ]` (a sum over the `L` links of that path).  In `d = 4` the weight
+is `L^{-5}`.
+
+* `cmp98Q_eq_blockAverage` : this operator **is** `blockAverage`, the map the
+  whole Row A lane is built on — an equality of functions, for every background
+  transport.  This is a same-object identification, not an analogy.
+* `cmp98Q_flat_const` : with `L^d` paths of `L` links and the weight
+  `L^{-(d+1)}` the operator reproduces constants, so the quoted weight is the
+  correct normalisation.
+* `cmp98Q_flat_eq_kernel` + `cmp98_index_displacement` : the operator in kernel
+  form is exactly the kernel data `(blockAveragingWeight, blockAveragingDispl)`
+  consumed by the zero-mass symbol machinery — weights `L^{-5}` on `L⁵` indices,
+  displacement `r + k e_μ` relative to the block base point.
+
+*Not done, and why:* the literal general formula (item 1 of §0) is not
+transcribed, so the derivative of the general formula in the background is not
+computed factor by factor.  What is computed instead is the derivative of the
+kernel of the operator (§2.2), which is the object the downstream bound actually
+consumes.
+
+### 2.2 A1.1 — `Q'` and the object consumed downstream
+
+* `cmp98Kernel_totalMass_of_normalized` : the normalisation "the averaging map
+  reproduces constants at every background" is *equivalent to* the statement
+  that the kernel has total mass `δ_ab` in each colour channel, for every
+  background.
+* `cmp98DerivKernel_zeroMass` : therefore every background derivative of the
+  kernel has total mass `0`.  In the previous state of the lane, zero mass was a
+  hypothesis on an abstract kernel; it is now a theorem about the source
+  operator's normalisation.
+* `cmp98DerivKernel_range` : range `2L`, computed from the block displacements.
+* `A1_beta_pos_from_cmp98_averaging` : the Row A shell bound
+  `β_j ≥ 1/16777216 > 0`, at every scale and admissible history, with the
+  Gaussian-sector kernel data *supplied by* the background derivative of the
+  source averaging operator.  The surviving Gaussian-sector hypotheses are: the
+  source normalisation, differentiability of the background family, the
+  derivative-kernel mass bound `M`, and `16π²(2L)²M + 2M ≤ 1/2`.
+
+*Non-vacuity.*  `CMP98AveragingWitness.lean` exhibits a background family
+`T_t(x,μ,k) = 1 + t·δ·ε(k)` at block size `L = 2` whose tilt sums to zero along
+each axial path: it is normalised at every parameter value
+(`witnessTransport_normalized`), its derivative kernel `2⁻⁵δε` is **not** zero
+(`witnessDerivKernel_ne_zero`), has mass exactly `|δ|`
+(`witnessDerivKernel_mass`), and satisfies the small-field inequality at
+`δ = 1/20000` (`witness_smallness`), so
+`A1_beta_pos_from_cmp98_averaging_nonvacuous` obtains the shell bound from a
+genuinely nonzero averaging derivative.  This is an inhabitation statement about
+the hypothesis package, not a claim that this family is the source background
+family.
+
+### 2.3 A1.3 — the constants
+
+`cmp98DerivSymbol_linear_bound` derives, rather than assumes, the linear
+vanishing of the averaging derivative at zero momentum:
+
+    |Q'(q)| ≤ (16π²(2L)²M + 2M)·‖q‖ ,    K_Q := 16π²(2L)²M + 2M .
+
+This is precisely the `hQlin` slot of `A1_beta_pos_from_pivotSolve`.  The input
+is one number, the mass `M` of the derivative kernel; the source's own linear
+estimate (item 3 of §0) would supply `M` — that correspondence is left as an
+explicit hypothesis and is classified below as a **candidateBridge**, not
+discharged.
+
+### 2.4 A1.2 — the beta normalisation weld
+
+`polarizationAt E b b'` is the literal `δ²/δB(b) δB(b') E(B)` at `B = 0`, taken
+along `B = s·e_b + t·e_{b'}`.
+
+* `polarizationAt_of_quadratic` : if the effective action restricted to that
+  configuration is `β·(τ·st + q₂₀s² + q₀₂t²)` plus a remainder with vanishing
+  mixed second variation, the polarization entry is `β·τ`.  The pure `s²`, `t²`
+  terms drop out of the *mixed* derivative — the cancellation between the
+  diagonal polarization terms and the `β` term.
+* `shellGaussian_eq_polarization` : with the effective action carrying the Lean
+  shell Gaussian coefficient on the normalised structure (`τ = 1`), the second
+  variation returns exactly `cellGaussianCoefficient I`.  Left side: the source
+  polarization coefficient.  Right side: the Lean shell coefficient.  Same
+  number, same second derivative.  No `11/12` theorem, no universality
+  argument.
+* `polarization_two_sided_from_kernels` : the polarization coefficient therefore
+  inherits `1/8388608 ≤ Π ≤ (4π + 64·LVC(R,M))² + 128·MW²`.
+
+The residual is exactly item 5 of §0: the source's tensor-structure convention,
+i.e. the value of `τ`.  Classified below as a **candidateBridge**.
+
+### 2.5 A1.4 — five-channel identification
+
+`channelInterfaceOf` assigns each of the five source remainders (determinant,
+interaction, chart, gauge, localization) to exactly one of the two existing
+analytic interfaces — spectral `log det` or polynomial tail.  Being a function,
+the assignment is total and single-valued by construction.
+`shellInteraction_eq_sum_channelTerm` is completeness (the interaction sector is
+exactly the sum of the five assigned terms, nothing else enters), and
+`channelTerm_abs_le` is soundness (each channel obeys the majorant of its
+assigned interface, with the closed-form coefficient).  **No new generic
+Taylor/Cauchy theorem was added**, as instructed.
+
+### 2.6 The rest of Row A — the coupling window and the published theorem
+
+* `couplingSq_two_sided_rate` : `b₋ ≤ β_j ≤ b₊` traps
+  `(u₀ + b₊j)⁻¹ ≤ g_j² ≤ (u₀ + b₋j)⁻¹`.
+* `couplingWindow_of_positiveShell` : a uniformly positive shell coefficient
+  makes the inverse coupling increase, so the whole sequence stays in `(0, γ]`
+  once the bare coupling does.  This is the hypothesis of the published
+  small-field theorem, supplied with no correspondence assumption on that side.
+* `effectiveCoupling_pos_lower` : the two-sided version — the window is
+  nondegenerate at every finite scale.
+* `cmp109Thm1_package_of_window`, `cmp109Thm1_package_of_shellKernels`,
+  `rowA_from_cmp98_averaging_and_cmp109Thm1` : the published theorem is consumed
+  in its literal implication form, supplied as an explicit hypothesis
+  `thm1 : ∀ g, CouplingWindow γ g → Pkg g`.  Small-field survival is *not*
+  re-proved as a measure theorem; it is taken from the published theorem under
+  the window, as instructed.
+
+## 3. Comparison with the SU(2)-specific theorem of the source
+
+The request asks to keep two cases distinct.  On the evidence available:
+
+* **Case (1) — the trajectory supplies the general theorem's hypothesis
+  directly, so the SU(2) theorem is not needed for local Row A.**  This is the
+  case that the Lean development realises.  Inspect the hypotheses of
+  `couplingWindow_of_positiveShell` and of
+  `rowA_from_cmp98_averaging_and_cmp109Thm1`: **no** structure constant, Casimir,
+  Ward scalar or any other group-specific datum appears in either.  The window
+  argument uses only the recursion `u_{j+1} = u_j + β_j`, positivity of `β_j`,
+  and positivity of the bare inverse coupling.  Its generality therefore matches
+  the general semisimple-compact-`G` theorem, and no SU(2) input is consumed.
+* **Case (2) — the quantitative content.**  Where a quantitative SU(2) statement
+  is wanted, the material available is the two-sided rate
+  `(u₀ + b₊j)⁻¹ ≤ g_j² ≤ (u₀ + b₋j)⁻¹` together with the explicit constants
+  `b₋ = 2⁻²⁴` (`1/16777216`) for the assembled shell coefficient and
+  `b₊ = (4π + 64·LVC(R,M))² + 128·MW²` for the Gaussian ceiling.  Whether those
+  reproduce the source's SU(2) numbers cannot be checked without item 5 of §0
+  (the tensor-structure normalisation) and the source's own constants: a
+  numerical comparison would be a fabricated claim.  This case is therefore
+  recorded as **not checked**, with the missing datum named.
+
+Group-specific SU(2) inputs (structure constants, Ward scalars) are audited
+separately in the existing Ward modules (`A1WardAssembly`, `WardTransverseVertex`,
+`A1Closure`) and are *not* used by any theorem introduced in this round.
+
+## 4. Frontier classification after this round
+
+| Item | Before | After | Note |
+| --- | --- | --- | --- |
+| averaging map = source flat/main operator | correspondence hypothesis | **proved** (`cmp98Q_eq_blockAverage`) | equality of functions |
+| Row A kernel data = source kernel data | correspondence hypothesis | **proved** (`cmp98Q_flat_eq_kernel`, `cmp98_index_displacement`) | |
+| zero total mass of `Q'` | hypothesis | **proved from normalisation** (`cmp98DerivKernel_zeroMass`) | |
+| range of `Q'` | hypothesis | **proved** (`2L`) | |
+| linear-vanishing constant `K_Q` | assumed number | **derived** from `(L, M)` | |
+| derivative-kernel mass `M` | — | **candidateBridge** | needs item 3 of §0 |
+| general (non-flat) averaging formula | — | **openSocket** | needs item 1 of §0 |
+| joint analyticity / uniform neighbourhood | — | **openSocket** | needs item 2 of §0 |
+| shell Gaussian coefficient = polarization coefficient | — | **proved given the shape hypothesis**; the shape hypothesis is a **candidateBridge** | needs item 5 of §0 |
+| five-channel assignment | informal | **proved** total, complete, sound | |
+| coupling window from the shell bound | — | **proved** | no group-specific input |
+| published small-field theorem | — | **openSocket** (`thm1`) | not proved here |
+| Row A itself | open | **open** | unchanged |
+
+## 5. Non-claims
+
+This round does **not** claim: Row A closure; small-field survival as a proved
+measure statement; the infinite-volume or continuum limit; Osterwalder–Schrader
+axioms or reflection positivity; Wightman reconstruction; a positive continuum
+mass gap; the Clay statement or any part of it; nor any result about the Riemann
+hypothesis or anything outside this lane.  The Lean theorems proved here are
+conditional statements with explicit hypotheses, exactly as displayed above.

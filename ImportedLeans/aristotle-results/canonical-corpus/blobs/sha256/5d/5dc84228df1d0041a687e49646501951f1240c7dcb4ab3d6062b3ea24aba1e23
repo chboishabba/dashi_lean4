@@ -1,0 +1,131 @@
+# Row A1a — source-identification round: Ward transversality and the literal one-loop integrand
+
+**Scoreboard is unchanged: `A`, `B`, `C`, `D` remain open; frozen research count = 4.
+Row A1 is *not* closed.**
+
+This round worked only on Row A1a, and only on the transcription/identification
+frontier: no new analytic machinery was invented, no new quartic constant was
+derived, `A' = D³S` was not re-proved, and no Q/R vanishing was assumed as a
+hypothesis.
+
+## 1. What was welded
+
+### 1.1 Source objects instead of receipts (`A1SourceObjects.lean`)
+
+All seven "this named object is the corresponding source object" hypotheses of
+`A1_beta_pos_welded` are gone.  They are replaced by *constructed* objects:
+
+| receipt removed | replacement |
+| --- | --- |
+| `hPhiA`, `hPhiP` | `latticeFourierTransform` with `annihilatesZero_*` proved |
+| `hQlor` | `literalAveragingMatrix` (Bałaban block averaging on finite site labels) with `isLorentzDiagonal_literalAveragingMatrix` proved |
+| `hident`, `hsplit`, `hchannels` | `shellBetaOfSources`, `shellGaussianOfIntegrand`, `shellInteractionOfChannels` — definitional, discharged by `rfl` |
+
+`A1_beta_pos_from_source_objects` and `A1_beta_pos_from_literal_averaging`
+conclude `β_j(g) ≥ 1/3276800 > 0` from those objects.
+
+### 1.2 The lattice Ward identity (`WardTransverseVertex.lean`)
+
+Working from the literal Wilson action rather than from an abstract vertex:
+
+* `wilsonBgZeroMatrix_eq` — the closed form of the zero-background Wilson cubic
+  vertex, `δ_{αβ} sin(2πx_ρ) − (cos(πx_ρ)/2)(δ_{βρ}p̂_α + δ_{αρ}p̂_β)`;
+* **`transverseProjector_conj_wilsonBgZeroMatrix`** — `P W P = sin(2πx_ρ)·P`;
+* **`transverseProjector_conj_gaugeVariationMatrix`** — `P R_gauge P = 0`.
+
+So the constrained propagator sees exactly one scalar from the Wilson sector and
+nothing at all from the gauge-projection sector.
+
+## 2. The obstruction found (and why it matters)
+
+`A1WardAssembly.mixedPatch_entry_hypothesis_fails` proves that the entry
+hypothesis used upstream on the mixed-component patch,
+
+    |V_{01;1}(q)|² / 2  ≤  I(q)   on   mixedPatch (1/16),
+
+is **false** once `I` is the literal one-loop integrand.  At the point
+`q = (1/4, 0, 1/2, 1/2)` — which lies in the mixed patch for every admissible
+half-width — the Ward factor `sin(2πq_ρ)` vanishes, hence the literal integrand
+vanishes identically, while the mixed component of the constrained first
+variation is bounded below.
+
+This is a source-identification obstruction, not an estimate that can be
+sharpened: the mixed-component patch is exactly where the literal Gaussian
+coefficient is blind.
+
+**Replacement.**  The same Ward identity supplies a working box.  `wardPatch`
+(`q_0 ∈ [0,1/8]`, `q_1 ∈ [1/8,1/4]`, `q_2, q_3 ∈ [0,1/2]`) has volume `1/256`,
+`sin(2πq_1) ≥ 1/2` and transverse projector diagonal entry `≥ 1/2` throughout,
+giving a *computed* integrand floor `I ≥ 1/32768` and hence
+
+    β_j(g) ≥ 1/16777216 > 0        (`A1_beta_pos_ward`)
+
+for every shell index and admissible history.
+
+## 3. The integrability obligation, discharged
+
+`A1_beta_pos_ward` still assumed integrability of the literal integrand.  That is
+a genuine analytic obligation, and it is now a theorem.
+
+### 3.1 Free case (`WardIntegrability.lean`)
+
+With no Lorentz-diagonal contribution and no seagull the integrand collapses to a
+scalar:
+
+    I(q) = (3/2)·sin(2πq_ρ)² / (q̂²)²        (`literalOneLoopIntegrand_free_eq`)
+
+using `Tr P = 3`.  Two elementary bounds — `|sin(2πt)| ≤ p̂(t)` and `p̂(t) ≥ 4t`
+on `[0,1/2]` — give `I(q) ≤ (3/32)‖q‖⁻²`, and `‖q‖⁻²` is integrable in four
+dimensions (`integrable_radialCutoff_norm`, via the polar-coordinates criterion).
+Hence `literalOneLoopIntegrand_free_integrableOn`, and
+`A1_beta_pos_ward_free` with no integrability hypothesis.
+
+`A1_beta_pos_ward_nonvacuous` is a completely instantiated instance with no
+hypotheses left at all.  It is an *inhabitation* statement about the compiler
+inputs and is **not** an identification of Bałaban's objects.
+
+### 3.2 Interacting case (`LiteralIntegrability.lean`)
+
+Power counting on the constrained propagator `G(q) = (q̂²)⁻¹P(q)`, with
+`q̂² ≥ 16‖q‖²`, gives `‖q‖⁻⁴|V|² + ‖q‖⁻²|S|`.  In four dimensions `‖q‖⁻²` is
+integrable and `‖q‖⁻⁴` is not.  Therefore:
+
+* a **bounded** seagull insertion is harmless;
+* the first variation must **vanish at zero momentum**, at least linearly.
+
+Crucially, it is the *transverse conjugate* `P V P` that must vanish linearly,
+not `V` itself: the literal gauge-projection variation has entries of size
+`‖q‖⁻¹` (see `gaugeVariationMatrix_eq`) and is only killed after conjugation.
+This is why the naive entrywise route fails and the Ward identity is needed.
+
+* `literalOneLoopIntegrand_integrableOn_of_conjBound` — the criterion.
+* `sourceVariation_conj_bound` — the literal source vertex satisfies it, with
+  constant `4π + 64·K_D`, where `K_D` is the linear-vanishing constant of the
+  Lorentz-diagonal averaging/constrained-projection variation.
+* `A1_beta_pos_ward_of_linearVanishing` — Row A1a from the literal one-loop
+  trace, integrability discharged, for interacting source data.
+
+The linear-vanishing requirement is not an assumption imposed for convenience:
+it is the momentum-space form of `AnnihilatesZero`, the property the literal
+transforms of Bałaban's averaging and constrained-projection operators are
+already known to carry.
+
+## 4. What is still open on Row A1a
+
+None of the following is an identification receipt, a postulate or a renamed
+ledger; each is a stated hypothesis of a theorem.
+
+1. **Diagonal size bound.**  `d ≤ 1/4` on the Lorentz-diagonal entries of the
+   averaging/constrained-projection background variation.  These entries do not
+   vanish — only the mixed ones do — and they enter the transverse conjugate.
+2. **Linear-vanishing constant.**  `|D(q)_{ab}| ≤ K_D‖q‖`, and boundedness of the
+   seagull insertion, for the literal Bałaban objects.
+3. **Five remainder-channel majorants.**  The `det`, interaction, chart, gauge and
+   localization channels must be matched to the already-proved remainder grammars
+   with their actual spectral/polynomial/Cauchy data.
+4. **The source-identification chain itself.**  The objects constructed in
+   `A1SourceObjects` have the right shape and the right structural properties,
+   but the same-object theorems tying them to the printed CMP98/CMP99/CMP109
+   constructions do not exist.
+
+Until item 4 exists, **Row A1 must not be reported as closed.**

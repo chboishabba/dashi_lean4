@@ -1,0 +1,28 @@
+{
+  "class_counts": {
+    "arrow_ladder": 1,
+    "interior_family": 6,
+    "mdl_tail_boundary": 1,
+    "single_arrow_break": 1
+  },
+  "family_count": 9,
+  "mdl_tail_boundary_all_closest_ok": true,
+  "mdl_tail_boundary_all_cone_ok": true,
+  "mdl_tail_boundary_all_fejer_ok": true,
+  "mdl_tail_boundary_all_mdl_exact_fail": true,
+  "mdl_tail_boundary_all_tail_localized": true,
+  "mdl_tail_boundary_all_terminal_boundary": true,
+  "mdl_tail_boundary_count": 1,
+  "mdl_tail_boundary_families": [
+    "ttbar_mtt_8tev_cms"
+  ],
+  "tail_localized_counts_by_class": {
+    "arrow_ladder": 1,
+    "mdl_tail_boundary": 1,
+    "single_arrow_break": 1
+  },
+  "terminal_boundary_counts_by_class": {
+    "mdl_tail_boundary": 1,
+    "single_arrow_break": 1
+  }
+}

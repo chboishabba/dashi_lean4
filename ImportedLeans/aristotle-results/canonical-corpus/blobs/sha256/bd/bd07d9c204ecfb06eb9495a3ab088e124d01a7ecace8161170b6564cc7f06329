@@ -1,0 +1,1003 @@
+# Authority Boundary Candidate Audit
+
+Discovery-only report. Migrate by hand; do not broad-rewrite Agda proofs.
+
+## Summary
+
+- Total candidates: 1846
+- Low risk: 75
+- Medium risk: 245
+- Avoid/defer: 1526
+
+## Top Ranked Candidates
+
+### DASHI/Culture/QiOperatorTheoryBoundary.agda
+
+- Risk: `low`
+- Score: `473` (raw `480`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, blocked_claim_vocabulary, adapter_canonicality_pair
+- Notes: receipt-surface namespace; theorem-heavy vocabulary; many pattern-matching clauses; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (69): coreAuthorityClass, coreAuthorityClassIsCandidateOnly, coreExternalAuthority, coreExternalAuthorityIsFalse, permitsAuthorityTransfer, permitsAuthorityTransferIsFalse, empiricalAuthority, empiricalAuthorityIsFalseWithoutValidation, spiritualAuthority, spiritualAuthorityIsFalseWithoutValidation ...
+  - `false_authority_bool` (31): coreExternalAuthorityIsFalse, canonicalQiCoreRoleFamilyExternalAuthorityFalse, permitsAuthorityTransferIsFalse, empiricalAuthorityIsFalseWithoutValidation, spiritualAuthorityIsFalseWithoutValidation, clinicalAuthorityIsFalseWithoutValidation, environmentalAuthorityIsFalseWithoutValidation, mysticalAuthorityIsFalseWithoutValidation, legalAuthorityIsFalseWithoutValidation, scientificAuthorityIsFalseWithoutValidation ...
+  - `blocked_claim_vocabulary` (3): QiOperatorTheoryBoundaryStatus, QiBlockedAuthorityKind, QiReceiptBoundaryRow
+  - `adapter_canonicality_pair` (1): formalLensCandidateOnlyCoreAdapter
+
+### DASHI/Promotion/CrossDomainClaimPromotionBoundary.agda
+
+- Risk: `low`
+- Score: `368` (raw `370`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, BridgeRequirementCore, CandidateOnlyCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, true_block_or_boundary_flag, candidate_only_promoted_false_bundle, adapter_canonicality_pair, bridge_required_or_supplied_bundle
+- Notes: receipt-surface namespace; many pattern-matching clauses; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (38): coreAuthorityGate, coreAuthorityGateReceipt, formalLensTruthAuthority, formalLensTruthAuthorityIsFalse, formalLensSupportAuthority, formalLensSupportAuthorityIsFalse, formalLensAdmissibilityAuthority, formalLensAdmissibilityAuthorityIsFalse, formalLensAnalyticAuthority, formalLensAnalyticAuthorityIsFalse ...
+  - `false_authority_bool` (31): targetClaimPromotedIsFalse, formalLensPromotedIsFalse, formalLensTruthAuthorityIsFalse, formalLensSupportAuthorityIsFalse, formalLensAdmissibilityAuthorityIsFalse, formalLensAnalyticAuthorityIsFalse, formalLensEmpiricalAuthorityIsFalse, formalLensClinicalAuthorityIsFalse, formalLensTheoremAuthorityIsFalse, formalLensClayAuthorityIsFalse ...
+  - `true_block_or_boundary_flag` (4): bridgeReceiptsRequiredIsTrue, promotionWithoutBridgeBlockedFlagIsTrue, explicitBridgeReceiptsRequiredIsTrue, promotionWithoutBridgeBlockedIsTrue
+  - `candidate_only_promoted_false_bundle` (8): targetClaimPromoted, formalLensPromoted, formalLensPromotionAuthority, formalLensAuthorityBundlePromotion, empiricalClaimPromoted, politicalClaimPromoted, economicClaimPromoted, clinicalClaimPromoted
+  - `adapter_canonicality_pair` (3): authorityNonPromotionCoreAdapter, bridgeRequirementCoreAdapter, candidateOnlyCoreAdapter
+  - `bridge_required_or_supplied_bundle` (6): promotionWithoutBridgeBlockedFlag, explicitBridgeReceiptSupplied, formalLensBridgeAuthority, formalLensBackgroundBridgeAuthority, explicitBridgeReceiptsRequired, promotionWithoutBridgeBlocked
+
+### DASHI/Interop/MeditationQiBridge.agda
+
+- Risk: `low`
+- Score: `258` (raw `261`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, EmptyPromotionCore, CandidateOnlyCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle, blocked_claim_vocabulary, adapter_canonicality_pair
+- Notes: receipt-surface namespace; theorem-heavy vocabulary; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (30): boundedAwarenessBoundary, openAwarenessBoundary, awarenessBoundary, formalLensClinicalAuthorityPromoted, formalLensClinicalAuthorityPromotedIsFalse, formalLensSpiritualAuthorityPromoted, formalLensSpiritualAuthorityPromotedIsFalse, formalLensMetaphysicalAuthorityPromoted, formalLensMetaphysicalAuthorityPromotedIsFalse, formalLensAnalyticHamiltonianAuthorityPromoted ...
+  - `false_authority_bool` (15): formalLensClinicalAuthorityPromotedIsFalse, formalLensSpiritualAuthorityPromotedIsFalse, formalLensMetaphysicalAuthorityPromotedIsFalse, formalLensAnalyticHamiltonianAuthorityPromotedIsFalse, formalLensSpectralTheoremAuthorityPromotedIsFalse, formalLensEmpiricalAuthorityPromotedIsFalse, formalLensTheoremAuthorityPromotedIsFalse, formalLensClayAuthorityPromotedIsFalse, formalLensPromotionAuthorityPromotedIsFalse, clinicalAuthorityPromotedIsFalse ...
+  - `empty_promotion_datatype` (1): MeditationPromotion
+  - `candidate_only_promoted_false_bundle` (8): formalLensClinicalAuthorityPromoted, formalLensSpiritualAuthorityPromoted, formalLensMetaphysicalAuthorityPromoted, formalLensAnalyticHamiltonianAuthorityPromoted, formalLensSpectralTheoremAuthorityPromoted, formalLensEmpiricalAuthorityPromoted, formalLensTheoremAuthorityPromoted, formalLensClayAuthorityPromoted
+  - `blocked_claim_vocabulary` (1): AwarenessBoundary
+  - `adapter_canonicality_pair` (10): candidateOnlyCoreAdapter, authorityNonPromotionCoreAdapter, formalLensCanonicalityAdapter, formalLensQualificationCoreAdapter, interMediaAdapter, qiCarrierAdapter, candidateFunctionalCoreAdapter, operatorShapeNonAuthorityCoreAdapter, formalLensQualificationAdapter, formalLensQualificationAdapterCanonicalityCore
+
+### DASHI/Interop/InterMediaCarrierBridge.agda
+
+- Risk: `low`
+- Score: `212` (raw `210`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, EmptyPromotionCore, CandidateOnlyCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle, adapter_canonicality_pair
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (24): carriesTruthAuthority, carriesSupportAuthority, carriesAdmissibilityAuthority, carriesClinicalAuthority, carriesMetaphysicalAuthority, carriesClayAuthority, rowTruthAuthorityFalse, rowSupportAuthorityFalse, rowAdmissibilityAuthorityFalse, rowClinicalAuthorityFalse ...
+  - `false_authority_bool` (15): rowTruthAuthorityFalse, rowSupportAuthorityFalse, rowAdmissibilityAuthorityFalse, rowClinicalAuthorityFalse, rowMetaphysicalAuthorityFalse, rowClayAuthorityFalse, truthAuthorityPromotedIsFalse, supportAuthorityPromotedIsFalse, admissibilityAuthorityPromotedIsFalse, clinicalAuthorityPromotedIsFalse ...
+  - `empty_promotion_datatype` (1): InterMediaBridgePromotion
+  - `candidate_only_promoted_false_bundle` (6): truthAuthorityPromoted, supportAuthorityPromoted, admissibilityAuthorityPromoted, clinicalAuthorityPromoted, metaphysicalAuthorityPromoted, clayAuthorityPromoted
+  - `adapter_canonicality_pair` (4): authorityNonPromotionCoreAdapter, candidateOnlyCoreAdapter, bridgeRequirementCoreAdapter, emptyPromotionCoreAdapter
+
+### DASHI/Interop/PNFSpectralCoordinateRebuildability.agda
+
+- Risk: `low`
+- Score: `199` (raw `197`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, BridgeRequirementCore, EmptyPromotionCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, true_block_or_boundary_flag, empty_promotion_datatype, blocked_claim_vocabulary, adapter_canonicality_pair
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (22): rowCarriesSignedBoundary, rowCarriesAuthority, methodCarriesAuthority, registryPayloadIsAuthority, mapRowCarriesVectorAuthority, fallbackCarriesAuthority, nonRebuildablePromotesVectorAuthority, adapterSpectralCoordinateCarriesVectorAuthority, adapterTextFallbackCarriesNoAuthority, adapterRowsUseNonAuthorityCoreBoundary ...
+  - `false_authority_bool` (17): canonicalTextFallbackCarriesNoAuthority, vectorCoordinateCommittedSupportFalse, vectorCoordinateAdmissibilityFalse, vectorCoordinateRegistryAuthorityFalse, textFallbackCoordinateAuthorityFalse, adapterTextFallbackCarriesNoAuthority, vectorRowCommittedSupportFalse, vectorRowAdmissibilityFalse, operatorRelativeProximitySupportFalse, operatorRelativeProximityAdmissibilityFalse ...
+  - `true_block_or_boundary_flag` (2): canonicalResidualCheckRequired, residualCheckRequiredHere
+  - `empty_promotion_datatype` (2): NonRebuildablePromotion, VectorAuthorityPromotion
+  - `blocked_claim_vocabulary` (1): VectorAuthorityPromotion
+  - `adapter_canonicality_pair` (2): adapterCoreReceipt, spectralOperatorShapeCore
+
+### DASHI/Biology/NeurochemicalTransmissionBridge.agda
+
+- Risk: `low`
+- Score: `194` (raw `192`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, adapter_canonicality_pair
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (26): bioactiveClinicalAuthorityFalse, authorityBoundary, authorityBoundaryIsCanonical, authorityBoundaryClinicalFalse, authorityBoundaryBrainStateRecoveryFalse, functionalSurfaceClinicalAuthorityFalse, functionalSurfaceNumericAuthorityFalse, operatorShapeTheoremAuthorityFalse, clinicalAuthority, clinicalAuthorityIsFalse ...
+  - `false_authority_bool` (15): authorityNonPromotionClinicalFalse, authorityNonPromotionEmpiricalFalse, authorityNonPromotionPromotesAnyFalse, functionalSurfaceClinicalAuthorityFalse, functionalSurfaceNumericAuthorityFalse, operatorShapeTheoremAuthorityFalse, clinicalAuthorityIsFalse, therapeuticAuthorityIsFalse, doseResponseAuthorityIsFalse, diseaseCausationAuthorityIsFalse ...
+  - `adapter_canonicality_pair` (1): operatorShapeReceipt
+
+### DASHI/Interop/PNFSpectralRegistryAnchoring.agda
+
+- Risk: `low`
+- Score: `193` (raw `191`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, blocked_claim_vocabulary, adapter_canonicality_pair
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (30): runtimeParserHasAuthority, rowAdmitsVectorRowAuthority, rowAdmitsRuntimeParserAuthority, canonicalRegistryAuthorityKind, fixtureRegistryAuthority, resolverIdentityAuthority, rejectsVectorRowAuthority, rejectsRuntimeParserAuthority, vectorRowAuthorityAdmission, runtimeParserAuthorityAdmission ...
+  - `false_authority_bool` (8): receiptRuntimeParserAuthorityIsFalse, receiptRowVectorAuthorityIsFalse, receiptRowRuntimeParserAuthorityIsFalse, canonicalReceiptRowVectorAuthorityFalse, corroboratedVectorRowSupportAuthorityFalse, corroboratedVectorRowAdmissibilityAuthorityFalse, corroboratedRegistryVectorAuthorityFalse, corroboratedRuntimeParserAuthorityFalse
+  - `blocked_claim_vocabulary` (1): RegistryIdentityAuthorityKind
+  - `adapter_canonicality_pair` (3): pnfPackageCoreAdapter, vectorNonAuthorityCoreAdapter, vectorNonAuthorityRegistryAdapter
+
+### DASHI/Promotion/EmpiricalRuntimeReplayAdapter.agda
+
+- Risk: `low`
+- Score: `189` (raw `193`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: receipt-surface namespace; many pattern-matching clauses; universe-polymorphic/Setω surface; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (25): hepDataProviderAuthority, codataProviderAuthority, nistProviderAuthority, runtimeReceiptProviderAuthority, providerAuthorityClass, sourceAuthorityPolicyReceipt, governingAuthorityRow, providerAuthorityTokenAccepted, providerAuthorityTokenAcceptedIsFalse, providerAuthorityPromoted ...
+  - `false_authority_bool` (14): providerAuthorityTokenAcceptedIsFalse, providerAuthorityPromotedIsFalse, observableAuthorityAcceptedIsFalse, projectionAuthorityAcceptedIsFalse, comparisonLawPromotedIsFalse, covarianceCalibrationPromotedIsFalse, runtimeReplayAuthorityAcceptedIsFalse, semanticReviewAuthorityTokenAcceptedIsFalse, promotesEmpiricalClaimIsFalse
+  - `candidate_only_promoted_false_bundle` (3): providerAuthorityPromoted, comparisonLawPromoted, covarianceCalibrationPromoted
+  - `blocked_claim_vocabulary` (1): ProviderAuthorityClass
+
+### DASHI/Interop/TypedTermRoleFunctor.agda
+
+- Risk: `low`
+- Score: `179` (raw `182`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle, adapter_canonicality_pair
+- Notes: receipt-surface namespace; theorem-heavy vocabulary; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (23): localCommitAuthority, localCommitAuthorityMatchesStatus, externalAuthority, externalAuthorityIsFalse, receiptSurfaceEntityIdentityAuthority, receiptSurfaceEntityIdentityAuthorityIsFalse, receiptCandidateOnlyAuthority, receiptCandidateOnlyAuthorityIsFalse, receiptExternalAuthority, receiptExternalAuthorityIsFalse ...
+  - `false_authority_bool` (11): externalAuthorityIsFalse, receiptSurfaceEntityIdentityAuthorityIsFalse, receiptCandidateOnlyAuthorityIsFalse, receiptExternalAuthorityIsFalse, formalLensRoleTruthAuthorityIsFalse, formalLensExternalOntologyAuthorityIsFalse, formalLensTheoremAuthorityIsFalse, formalLensCategoryTheoryAuthorityIsFalse, formalLensPromotionIsFalse, receiptCandidateOnlyAssignmentsHaveNoAuthority ...
+  - `candidate_only_promoted_false_bundle` (1): formalLensPromotion
+  - `adapter_canonicality_pair` (10): typedTermRoleFunctorCore, authorityNonPromotionCoreAdapter, candidateOnlyCoreAdapter, emptyPromotionCoreAdapter, formalLensRoleCandidateOnlyAdapter, formalLensFunctionalCandidateOnlyAdapter, formalLensOperatorCandidateOnlyAdapter, formalLensAuthorityFailClosedAdapter, formalLensEmptyPromotionAdapter, formalLensCoreAdapter
+
+### DASHI/Interop/PNFHodgeResidualTopology.agda
+
+- Risk: `low`
+- Score: `157` (raw `159`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, EmptyPromotionCore, CandidateOnlyCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle, blocked_claim_vocabulary, adapter_canonicality_pair
+- Notes: receipt-surface namespace; many pattern-matching clauses; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (18): triangleBoundary, lowerBoundaryShape, upperBoundaryShape, richerHodgeDiagnosticOnlyNoAuthority, richerHodgeDiagnosticOnlyNoAuthorityIsFalse, hodgeAuthorityGranted, hodgeAuthorityGrantedIsFalse, featureGrantsHodgeAuthority, featureGrantsHodgeAuthorityIsFalse, hodgeOperatorShapeCoreAuthorityFalse ...
+  - `false_authority_bool` (9): richerHodgeDiagnosticOnlyNoAuthorityIsFalse, hodgeAuthorityGrantedIsFalse, featureGrantsHodgeAuthorityIsFalse, hodgeAuthorityPromotionIsFalse, hodgeDecompositionAuthorityPromotionIsFalse, harmonicCycleAuthorityPromotionIsFalse, topologyDecisionAuthorityPromotionIsFalse, runtimeEvidencePromotionIsFalse, closedLoopResolutionPromotionIsFalse
+  - `empty_promotion_datatype` (1): PNFHodgeResidualTopologyPromotion
+  - `candidate_only_promoted_false_bundle` (6): hodgeAuthorityPromotion, hodgeDecompositionAuthorityPromotion, harmonicCycleAuthorityPromotion, topologyDecisionAuthorityPromotion, runtimeEvidencePromotion, closedLoopResolutionPromotion
+  - `blocked_claim_vocabulary` (1): HodgeLaplacianBoundaryLayer
+  - `adapter_canonicality_pair` (4): spectralCoreReceipt, spectralGraphReceipt, hodge1OperatorShapeCore, hodge2OperatorShapeCore
+
+### DASHI/Biology/NeurochemicalAtomicChemistryBridge.agda
+
+- Risk: `low`
+- Score: `145` (raw `143`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, adapter_canonicality_pair
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (21): bioactiveClinicalAuthorityFalse, bioactiveDoseResponseAuthorityFalse, bioactiveBiomarkerAuthorityFalse, molecularIdentityAuthority, molecularIdentityAuthorityIsFalse, bindingAuthority, bindingAuthorityIsFalse, concentrationAuthority, concentrationAuthorityIsFalse, doseResponseAuthority ...
+  - `false_authority_bool` (9): molecularIdentityAuthorityIsFalse, bindingAuthorityIsFalse, concentrationAuthorityIsFalse, doseResponseAuthorityIsFalse, pharmacologicalAuthorityIsFalse, clinicalAuthorityIsFalse, therapeuticAuthorityIsFalse, diagnosticAuthorityIsFalse, biomarkerAuthorityIsFalse
+  - `adapter_canonicality_pair` (1): chemistryQuantitativeAdapter
+
+### DASHI/Promotion/NumericAndAuthorityObligations.agda
+
+- Risk: `low`
+- Score: `143` (raw `141`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (19): codataNumericAuthority, pdgNumericAuthority, providerDatasetAuthority, comparisonMethodAuthority, covarianceCalibrationAuthority, holdoutProtocolAuthority, runtimeReplayAuthority, semanticReviewAuthority, promotionRequiresAuthorityToken, promotionRequiresAuthorityTokenIsTrue ...
+  - `false_authority_bool` (7): currentPromotionIsFalse, numericValuePromotedIsFalse, acceptedAuthorityTokenPresentIsFalse, acceptedProviderAuthorityPromotedIsFalse, comparisonLawPromotedIsFalse, covarianceCalibrationPromotedIsFalse, runtimeReplayAuthorityAcceptedIsFalse
+  - `candidate_only_promoted_false_bundle` (5): currentPromotion, numericValuePromoted, acceptedProviderAuthorityPromoted, comparisonLawPromoted, covarianceCalibrationPromoted
+  - `blocked_claim_vocabulary` (1): RequiredAuthorityKind
+
+### DASHI/Interop/PNFResidualFieldInvariants.agda
+
+- Risk: `low`
+- Score: `138` (raw `140`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, EmptyPromotionCore, CandidateOnlyCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle, blocked_claim_vocabulary, adapter_canonicality_pair
+- Notes: receipt-surface namespace; many pattern-matching clauses; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (14): proximityPromotesAuthority, proximityPromotesAuthorityIsFalse, exampleSpectralAuthorityGate, corroboratedCandidateAuthorityGate, vectorProximityAloneAuthorityGate, spectralAuthorityGate, vectorNonAuthorityCoreAdapter, vectorNonAuthorityCoreAdapterIsCanonical, vectorNonAuthorityCarrierAdapterIsCanonical, vectorNonAuthorityCoreTruthFalse ...
+  - `false_authority_bool` (12): proximityPromotesTruthIsFalse, proximityPromotesSupportIsFalse, proximityPromotesAdmissibilityIsFalse, proximityPromotesAuthorityIsFalse, canonicalExactProximityTruthGateFalse, canonicalPartialProximitySupportGateFalse, canonicalPartialProximityAuthorityGateFalse, canonicalVectorProximityAloneAuthorityGateFalse, semanticTruthPromotionIsFalse, supportPromotionIsFalse ...
+  - `empty_promotion_datatype` (1): PNFResidualFieldInvariantPromotion
+  - `candidate_only_promoted_false_bundle` (3): semanticTruthPromotion, supportPromotion, admissibilityPromotion
+  - `blocked_claim_vocabulary` (1): NonAuthorityCarrier
+  - `adapter_canonicality_pair` (3): severityReceipt, vectorNonAuthorityCoreAdapter, vectorNonAuthorityCarrierAdapter
+
+### DASHI/Interop/PNFResolverSelectorCommitment.agda
+
+- Risk: `low`
+- Score: `133` (raw `131`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, adapter_canonicality_pair
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (13): vectorScoreAsResolveAuthority, vectorScoreAsResolveAuthorityIsFalse, provenanceAsAuthority, traceUsesScoreAsAuthority, scoreAsAuthority, scoreAsAuthorityIsFalse, vectorNonAuthorityCoreAdapter, vectorNonAuthorityCoreAdapterIsCanonical, vectorNonAuthorityRankingAdapterIsCanonical, vectorNonAuthorityCoreTruthFalse ...
+  - `false_authority_bool` (15): unresolvedCandidateSupportIsFalse, vectorScoreAsResolveAuthorityIsFalse, packageUsesVectorProximityAsAdmissibilityIsFalse, scoreAsAuthorityIsFalse, rankingCommitsSupportIsFalse, unresolvedCandidateCanCommitSupportIsFalse, vectorScoreCanCommitSupportIsFalse, rawHitCanCommitSupportIsFalse, receiptSupportFromVectorIsFalse, receiptAdmissibilityFromVectorIsFalse ...
+  - `adapter_canonicality_pair` (3): pnfPackageCoreAdapter, vectorNonAuthorityCoreAdapter, vectorNonAuthorityRankingAdapter
+
+### DASHI/Promotion/ChemistryAuthorityBinding.agda
+
+- Risk: `low`
+- Score: `132` (raw `130`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, BridgeRequirementCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, true_block_or_boundary_flag, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (12): spectralLineAuthorityAccepted, spectralLineAuthorityAcceptedIsFalse, enthalpyAuthorityRequired, enthalpyAuthorityRequiredIsTrue, entropyAuthorityRequired, entropyAuthorityRequiredIsTrue, thermochemistryAuthorityAccepted, thermochemistryAuthorityAcceptedIsFalse, exactAuthorityBindingCounts, exactAuthorityBindingCountsIsTrue ...
+  - `false_authority_bool` (10): promotesClaimIsFalse, spectralLineAuthorityAcceptedIsFalse, thermochemistryAuthorityAcceptedIsFalse, acceptedAuthorityTokenPresentIsFalse, physicalChemistryPromotedIsFalse, spectroscopyPromotedIsFalse, canonicalAuthorityBindingPhysicalChemistryPromotionIsFalse, canonicalAuthorityBindingSpectroscopyPromotionIsFalse, canonicalAuthorityBindingWetLabPromotionIsFalse
+  - `true_block_or_boundary_flag` (12): checksumRequiredIsTrue, uncertaintyRequiredIsTrue, isotopeReducedMassAdapterRequiredIsTrue, instrumentCalibrationRequiredIsTrue, enthalpyAuthorityRequiredIsTrue, entropyAuthorityRequiredIsTrue, activityModelRequiredIsTrue, responseFunctionChecksumRequiredIsTrue, driftPolicyRequiredIsTrue, sourceChecksumRequiredIsTrue ...
+  - `candidate_only_promoted_false_bundle` (2): physicalChemistryPromoted, spectroscopyPromoted
+
+### DASHI/Promotion/ChemistryFiniteRuleTargets.agda
+
+- Risk: `low`
+- Score: `131` (raw `129`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster, false_authority_bool
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (17): measuredAuthorityAccepted, measuredAuthorityAcceptedIsFalse, spectroscopyAuthorityAccepted, spectroscopyAuthorityAcceptedIsFalse, thermochemistryAuthorityAccepted, thermochemistryAuthorityAcceptedIsFalse, wetLabAuthorityAccepted, wetLabAuthorityAcceptedIsFalse, spectroscopyAuthorityIntake, measuredConstantsAuthorityAccepted ...
+  - `false_authority_bool` (11): measuredAuthorityAcceptedIsFalse, spectroscopyAuthorityAcceptedIsFalse, thermochemistryAuthorityAcceptedIsFalse, wetLabAuthorityAcceptedIsFalse, promotesFormulaClaimIsFalse, measuredConstantsAuthorityAcceptedIsFalse, canonicalSpectroscopyAuthorityAcceptedIsFalse, canonicalWetLabAuthorityAcceptedIsFalse
+
+### DASHI/Promotion/NumericAuthorityPayloadValidator.agda
+
+- Risk: `low`
+- Score: `129` (raw `127`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, BridgeRequirementCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, true_block_or_boundary_flag, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (14): hasExplicitFamilyBoundary, hasExplicitFamilyBoundaryIsTrue, acceptedAuthorityTokenPresent, acceptedAuthorityTokenPresentIsFalse, missingAuthorityPayloadFieldCountIs8, allPayloadsMissingAuthorityArtifact, allPayloadsMissingAuthorityArtifactIsTrue, NumericAuthorityPayloadValidator, NumericAndAuthorityObligations, NumericAuthorityTokenIntake ...
+  - `false_authority_bool` (10): acceptedAuthorityTokenPresentIsFalse, numericValuePromotedIsFalse, normalizedNumericValuePromotedIsFalse, intakeNumericValuePromotedIsFalse, bindingNumericValuePromotedIsFalse, obligationNumericValuePromotedIsFalse
+  - `true_block_or_boundary_flag` (1): hasExplicitFamilyBoundaryIsTrue
+  - `candidate_only_promoted_false_bundle` (5): numericValuePromoted, normalizedNumericValuePromoted, intakeNumericValuePromoted, bindingNumericValuePromoted, obligationNumericValuePromoted
+
+### DASHI/Interop/PNFSpectralVectorIndex.agda
+
+- Risk: `low`
+- Score: `118` (raw `116`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, adapter_canonicality_pair
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (6): providerBoundaryStatementIsCanonical, vectorNonAuthorityCoreAdapter, vectorNonAuthorityCoreAdapterIsCanonical, vectorNonAuthorityCoreTruthFalse, vectorNonAuthorityCoreSupportFalse, vectorNonAuthorityCoreAdmissibilityFalse, VectorNonAuthorityCore, VectorNonAuthorityReceipt, proposalRowCarriesTruthAuthority, proposalRowCarriesSupportAuthority ...
+  - `false_authority_bool` (21): sampleRowCommittedSupportIsFalse, sampleRowAdmissibilityIsFalse, sampleCandidateCommittedSupportIsFalse, searchCommittedSupportIsFalse, resolverCommitIsFalse, selectorVectorAdmissibilityIsFalse, selectorCommitIsFalse, itirVectorSupportIsFalse, vectorProximityIsSupportIsFalse, vectorProximityIsAdmissibilityIsFalse ...
+  - `adapter_canonicality_pair` (1): vectorNonAuthorityCoreAdapter
+
+### DASHI/Interop/QiCarrierFieldBridge.agda
+
+- Risk: `low`
+- Score: `112` (raw `110`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, EmptyPromotionCore, CandidateOnlyCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle, adapter_canonicality_pair
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (11): qiTruthAuthority, qiSupportAuthority, qiAdmissibilityAuthority, qiClinicalAuthority, qiMetaphysicalAuthority, qiTruthAuthorityPromoted, qiTruthAuthorityPromotedIsFalse, qiClinicalAuthorityPromoted, qiClinicalAuthorityPromotedIsFalse, qiMetaphysicalAuthorityPromoted ...
+  - `false_authority_bool` (10): qiRowTruthFalse, qiRowSupportFalse, qiRowAdmissibilityFalse, qiRowClinicalFalse, qiRowMetaphysicalFalse, qiTruthAuthorityPromotedIsFalse, qiClinicalAuthorityPromotedIsFalse, qiMetaphysicalAuthorityPromotedIsFalse, canonicalMeditationQiTruthFalse, canonicalQiClinicalAuthorityFalse
+  - `empty_promotion_datatype` (1): QiCarrierFieldPromotion
+  - `candidate_only_promoted_false_bundle` (3): qiTruthAuthorityPromoted, qiClinicalAuthorityPromoted, qiMetaphysicalAuthorityPromoted
+  - `adapter_canonicality_pair` (1): interMediaAdapter
+
+### DASHI/Biology/BioactiveAuthorityBoundaryCore.agda
+
+- Risk: `low`
+- Score: `111` (raw `164`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, blocked_claim_vocabulary, adapter_canonicality_pair
+- Notes: receipt-surface namespace; already consumes AuthorityBoundaryCore; already consumes BioactiveAuthorityBoundaryCore; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (19): genericAuthorityBoundaryReceipt, genericAuthorityBoundaryReceiptIsCanonical, genericBoundaryPromotedIsFalse, clinicalAuthorityClaimFlag, clinicalAuthorityClaimFlagIsFalse, doseResponseAuthorityClaimFlag, doseResponseAuthorityClaimFlagIsFalse, prescribingAuthorityClaimFlag, prescribingAuthorityClaimFlagIsFalse, diseaseAuthorityClaimFlag ...
+  - `false_authority_bool` (16): clinicalAuthorityClaimFlagIsFalse, doseResponseAuthorityClaimFlagIsFalse, prescribingAuthorityClaimFlagIsFalse, diseaseAuthorityClaimFlagIsFalse, behaviorAuthorityClaimFlagIsFalse, biomarkerAuthorityClaimFlagIsFalse, receptorActionIdentityAuthorityClaimFlagIsFalse, shapeEffectIdentityAuthorityClaimFlagIsFalse, canonicalClinicalAuthorityClaimFlagIsFalse, canonicalDoseResponseAuthorityClaimFlagIsFalse ...
+  - `blocked_claim_vocabulary` (1): BioactiveBlockedClaim
+  - `adapter_canonicality_pair` (1): genericAuthorityBoundaryReceipt
+
+### DASHI/Ontology/WikidataAnimalSemanticJoinLayer.agda
+
+- Risk: `low`
+- Score: `105` (raw `103`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (13): noEditAuthority, noTruthAuthority, editAuthority, editAuthorityIsFalse, truthAuthority, truthAuthorityIsFalse, candidateOnlyCoreTruthAuthorityFalse, bridgeCoreAuthorityPromotionFalse, bridgeCoreTransportMapAuthorityFalse, bridgeCoreBackgroundBridgeAuthorityFalse ...
+  - `false_authority_bool` (8): editAuthorityIsFalse, truthAuthorityIsFalse, qualiaIdentityClaimIsFalse, anthropomorphicPromotionAllowedIsFalse, editBlocked, truthBlocked, qualiaIdentityBlocked, anthropomorphicPromotionBlocked
+  - `candidate_only_promoted_false_bundle` (1): anthropomorphicPromotionAllowed
+  - `blocked_claim_vocabulary` (1): SemanticJoinBoundary
+
+### DASHI/Interop/ObserverCultureEvolutionThreadDischarge.agda
+
+- Risk: `low`
+- Score: `102` (raw `100`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster, false_authority_bool
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (4): scienceBoundary, clinicalOrWAISAuthorityClaim, clinicalOrWAISAuthorityClaimIsFalse, clinicalOrWAISAuthorityBlocked, NoClinicalOrWAISAuthorityPromotion
+  - `false_authority_bool` (20): biologyInevitabilityClaimIsFalse, abiogenesisOrOriginClosureClaimIsFalse, universalDeterminismClaimIsFalse, hiddenVariableClaimIsFalse, latentStateRecoveryClaimIsFalse, metaphysicalFreeWillClaimIsFalse, intentRecoveryClaimIsFalse, clinicalOrWAISAuthorityClaimIsFalse, cultureDeterminismClaimIsFalse, qualiaOrAestheticTruthClaimIsFalse ...
+
+### DASHI/Interop/AggregateBidirectionalTranslationDischarge.agda
+
+- Risk: `low`
+- Score: `98` (raw `96`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, adapter_canonicality_pair
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (12): WikidataSemanticJoinNonAuthorityCertificate, bridgeRequirementCoreAdapterAuthorityPromotionFalse, receiptAuthorityPromotion, receiptAuthorityPromotionFalse, bridgeRequirementCoreAdapterTransportMapAuthorityFalse, receiptTransportMapAuthority, receiptTransportMapAuthorityFalse, bridgeRequirementCoreAdapterBackgroundBridgeAuthorityFalse, receiptBackgroundBridgeAuthority, receiptBackgroundBridgeAuthorityFalse ...
+  - `false_authority_bool` (8): universalTranslatorClaimIsFalse, qualiaIdentityClaimIsFalse, zeroDefectClaimIsFalse, runtimeOptimizerClaimIsFalse, universalTranslatorBlocked, qualiaIdentityBlocked, zeroDefectBlockedUnlessWitnessed, runtimeOptimizerBlocked
+  - `adapter_canonicality_pair` (2): bridgeRequirementCoreAdapter, emptyPromotionCoreAdapter
+
+### DASHI/Promotion/AuthorityGateCore.agda
+
+- Risk: `low`
+- Score: `95` (raw `93`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster, false_authority_bool
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (17): empiricalAuthority, legalAuthority, clinicalAuthority, scientificAuthority, spiritualAuthority, culturalAuthority, tradingAuthority, supportAuthority, admissibilityAuthority, theoremAuthority ...
+  - `false_authority_bool` (2): externalAuthoritySuppliedIsFalse, receiptExternalAuthoritySuppliedIsFalse
+
+### DASHI/Promotion/AuthorityBoundaryCore.agda
+
+- Risk: `low`
+- Score: `92` (raw `125`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: receipt-surface namespace; already consumes AuthorityBoundaryCore; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (23): bioactiveBoundaryDomain, legalBoundaryDomain, physicsBoundaryDomain, tradingBoundaryDomain, culturalBoundaryDomain, clinicalBoundaryDomain, runtimeBoundaryDomain, bioactiveAuthorityClaim, legalAuthorityClaim, physicsAuthorityClaim ...
+  - `false_authority_bool` (1): receiptBoundaryPromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (1): receiptBoundaryPromoted
+  - `blocked_claim_vocabulary` (1): AuthorityBoundaryDomain
+
+### DASHI/Promotion/NumericAuthorityTokenIntake.agda
+
+- Risk: `low`
+- Score: `91` (raw `89`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, BridgeRequirementCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, true_block_or_boundary_flag, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (9): codataAuthorityProvider, pdgAuthorityProvider, acceptedAuthorityTokenPresent, acceptedAuthorityTokenPresentIsFalse, sourceAuthorityPolicy, bindingReceiptAcceptedAuthorityTokenPresent, bindingReceiptAcceptedAuthorityTokenPresentIsFalse, NumericAuthorityTokenIntake, NumericAndAuthorityObligations, NumericMeasuredAuthorityBinding ...
+  - `false_authority_bool` (7): acceptedAuthorityTokenPresentIsFalse, numericValuePromotedIsFalse, bindingReceiptAcceptedAuthorityTokenPresentIsFalse, bindingReceiptNumericValuePromotedIsFalse, obligationIndexNumericValuePromotedIsFalse
+  - `true_block_or_boundary_flag` (2): tokenRequiredBeforeNumericUseIsTrue, valueIngestionRequiredBeforePromotionIsTrue
+  - `candidate_only_promoted_false_bundle` (3): numericValuePromoted, bindingReceiptNumericValuePromoted, obligationIndexNumericValuePromoted
+  - `blocked_claim_vocabulary` (1): NumericAuthorityProvider
+
+### DASHI/Interop/PNFBraidTransportField.agda
+
+- Risk: `low`
+- Score: `87` (raw `89`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, EmptyPromotionCore, CandidateOnlyCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle, blocked_claim_vocabulary, adapter_canonicality_pair
+- Notes: receipt-surface namespace; many pattern-matching clauses; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (6): sourceAuthorityPromotion, sourceAuthorityPromotionIsFalse, policyAuthorityPromotion, policyAuthorityPromotionIsFalse, wikidataAuthorityPromotion, wikidataAuthorityPromotionIsFalse, noSourceAuthorityPromotion, noLegalOrPolicyAuthority, noWikidataAuthority, noRuntimeITIRAuthority
+  - `false_authority_bool` (6): sourceAuthorityPromotionIsFalse, policyAuthorityPromotionIsFalse, wikidataAuthorityPromotionIsFalse, runtimeITIRPromotionIsFalse, physicsPromotionIsFalse, clayPromotionIsFalse
+  - `empty_promotion_datatype` (1): PNFBraidTransportPromotion
+  - `candidate_only_promoted_false_bundle` (6): sourceAuthorityPromotion, policyAuthorityPromotion, wikidataAuthorityPromotion, runtimeITIRPromotion, physicsPromotion, clayPromotion
+  - `blocked_claim_vocabulary` (1): PNFBraidTransportNonClaim
+  - `adapter_canonicality_pair` (5): braidPathReceipt, braidSignatureReceipt, transportReceipt, continuationPartialReceipt, terminationPartialReceipt
+
+### DASHI/Biology/CrossSpeciesOntologyTranslationBridge.agda
+
+- Risk: `low`
+- Score: `85` (raw `83`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (9): candidateOnlyCoreAdapterNoTruthAuthority, candidateOnlyCoreAdapterNoSupportAuthority, candidateOnlyCoreAdapterNoAdmissibilityAuthority, candidateOnlyAdapterCanonicalityAuthorityFalse, authorityNonPromotionAdapterCanonicalityAuthorityFalse, bridgeRequirementCoreAdapterAuthorityPromotionFalse, bridgeRequirementCoreAdapterTransportMapAuthorityFalse, bridgeRequirementCoreAdapterBackgroundBridgeAuthorityFalse, bridgeRequirementAdapterCanonicalityAuthorityFalse, OntologyAuthorityBoundary ...
+  - `false_authority_bool` (8): qualiaIdentityClaimIsFalse, speciesIsomorphismClaimIsFalse, anthropomorphicPromotionClaimIsFalse, contextFreeTranslationClaimIsFalse, qualiaIdentityBlocked, speciesIsomorphismBlocked, anthropomorphicPromotionBlocked, contextFreeTranslationBlocked
+  - `candidate_only_promoted_false_bundle` (1): anthropomorphicPromotionClaim
+  - `blocked_claim_vocabulary` (1): OntologyAuthorityBoundary
+
+### DASHI/Promotion/NumericMeasuredAuthorityTokenNormalization.agda
+
+- Risk: `low`
+- Score: `82` (raw `80`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (6): acceptedAuthorityTokenPresent, acceptedAuthorityTokenPresentIsFalse, normalizedAcceptedAuthorityTokenPresent, normalizedAcceptedAuthorityTokenPresentIsFalse, intakeAcceptedAuthorityTokenPresent, intakeAcceptedAuthorityTokenPresentIsFalse, NumericMeasuredAuthorityTokenNormalization, NumericAndAuthorityObligations, NumericAuthorityTokenIntake, NumericMeasuredAuthorityBinding ...
+  - `false_authority_bool` (8): acceptedAuthorityTokenPresentIsFalse, numericValuePromotedIsFalse, normalizedAcceptedAuthorityTokenPresentIsFalse, intakeAcceptedAuthorityTokenPresentIsFalse, normalizedNumericValuePromotedIsFalse, bindingNumericValuePromotedIsFalse, intakeNumericValuePromotedIsFalse, obligationNumericValuePromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (5): numericValuePromoted, normalizedNumericValuePromoted, bindingNumericValuePromoted, intakeNumericValuePromoted, obligationNumericValuePromoted
+  - `blocked_claim_vocabulary` (1): NormalizedMeasuredAuthorityProvider
+
+### DASHI/Biology/EmbodiedMotorMultisensoryBridge.agda
+
+- Risk: `low`
+- Score: `81` (raw `84`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster, false_authority_bool
+- Notes: receipt-surface namespace; theorem-heavy vocabulary; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (8): candidateOnlyCoreAdapterTruthAuthorityFalse, candidateOnlyCoreAdapterRuntimeAuthorityFalse, candidateOnlyCoreAdapterTheoremAuthorityFalse, authorityNonPromotionCoreAdapterClinicalAuthorityFalse, authorityNonPromotionCoreAdapterScientificAuthorityFalse, authorityNonPromotionCoreAdapterEmpiricalAuthorityFalse, authorityNonPromotionCoreAdapterExternalAuthorityFalse, authorityNonPromotionCoreAdapterPromotesAnyAuthorityFalse, carriesTruthAuthority, carriesRuntimeAuthority ...
+  - `false_authority_bool` (11): candidateOnlyCoreAdapterTruthAuthorityFalse, candidateOnlyCoreAdapterRuntimeAuthorityFalse, candidateOnlyCoreAdapterTheoremAuthorityFalse, intentRecoveryClaimIsFalse, painQualiaIdentityClaimIsFalse, fullMotorPolicyClaimIsFalse, sensorFusionClosureClaimIsFalse, intentRecoveryBlocked, painQualiaIdentityBlocked, fullMotorPolicyBlocked ...
+
+### DASHI/Interop/PNFSpectralFieldArchitectureReceipt.agda
+
+- Risk: `low`
+- Score: `81` (raw `83`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, adapter_canonicality_pair
+- Notes: receipt-surface namespace; many pattern-matching clauses; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (13): architectureIntakeOnlyBoundary, noRuntimeParserBoundary, noExternalRuntimeImplementationBoundary, noANNBackendBoundary, pnfOnlySummaryBoundary, vectorNonAuthorityBoundary, noSpectralUtilityProofBoundary, noSemanticTruthBoundary, noTradingTruthBoundary, vectorNonAuthority ...
+  - `false_authority_bool` (4): promotesRuntimeParserIsFalse, promotesExternalRuntimeIsFalse, promotesVectorAuthorityIsFalse, promotesTradingTruthIsFalse
+  - `adapter_canonicality_pair` (1): pnfPackageCoreAdapter
+
+### DASHI/Promotion/PNFSpectralTradingSignalBoundary.agda
+
+- Risk: `low`
+- Score: `78` (raw `80`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, BridgeRequirementCore, EmptyPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, true_block_or_boundary_flag, empty_promotion_datatype, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: receipt-surface namespace; many pattern-matching clauses; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (5): noProductionTradingAuthorityGate, financialAdviceAuthority, financialAdviceAuthorityIsFalse, productionTradingAuthority, productionTradingAuthorityIsFalse
+  - `false_authority_bool` (9): marketFactClaimedIsFalse, counterfactualProfitClaimedIsFalse, tradableSupportClaimedIsFalse, executableTradingSignalIsFalse, predictionClaimIsFalse, financialAdviceClaimIsFalse, financialAdviceAuthorityIsFalse, productionTradingAuthorityIsFalse, tradingSignalPromotedIsFalse
+  - `true_block_or_boundary_flag` (3): resolverRequiredIsTrue, selectorRequiredIsTrue, itirValidationRequiredIsTrue
+  - `empty_promotion_datatype` (1): TradingSignalPromotion
+  - `candidate_only_promoted_false_bundle` (2): candidateOnly/candidateOnlyIsTrue, tradingSignalPromoted
+  - `blocked_claim_vocabulary` (1): TradingBoundaryGovernanceGate
+
+### DASHI/Promotion/SIMetrologyExternalSourceLocator.agda
+
+- Risk: `low`
+- Score: `75` (raw `73`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (8): acceptedAuthorityTokenPresent, acceptedAuthorityTokenPresentIsFalse, anyAcceptedAuthorityTokenPresent, anyAcceptedAuthorityTokenPresentIsFalse, anyAuthorityPromoted, anyAuthorityPromotedIsFalse, sourceAuthorityAcceptedKey, intakeAcceptedAuthorityTokenPresentKey
+  - `false_authority_bool` (6): acceptedAuthorityTokenPresentIsFalse, authorityPromotedIsFalse, numericValuePromotedIsFalse, anyAcceptedAuthorityTokenPresentIsFalse, anyAuthorityPromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (3): authorityPromoted, numericValuePromoted, anyAuthorityPromoted
+
+### DASHI/Promotion/ChemistryFiniteComputationSurface.agda
+
+- Risk: `low`
+- Score: `68` (raw `70`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, BridgeRequirementCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, true_block_or_boundary_flag, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; many pattern-matching clauses; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (8): thermochemistryAuthorityRequired, thermochemistryAuthorityRequiredIsTrue, measuredNumericAuthorityAccepted, measuredNumericAuthorityAcceptedIsFalse, spectroscopyAuthorityAccepted, spectroscopyAuthorityAcceptedIsFalse, thermochemistryAuthorityAccepted, thermochemistryAuthorityAcceptedIsFalse, ChemistryAuthorityBinding
+  - `false_authority_bool` (5): measuredNumericAuthorityAcceptedIsFalse, spectroscopyAuthorityAcceptedIsFalse, thermochemistryAuthorityAcceptedIsFalse, bondingInterpretationPromotedIsFalse, physicalChemistryPromotedIsFalse
+  - `true_block_or_boundary_flag` (2): measuredRydbergConstantRequiredIsTrue, thermochemistryAuthorityRequiredIsTrue
+  - `candidate_only_promoted_false_bundle` (2): bondingInterpretationPromoted, physicalChemistryPromoted
+
+### DASHI/Promotion/SIMetreFromSecondAndCAdapter.agda
+
+- Risk: `low`
+- Score: `67` (raw `65`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, BridgeRequirementCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, true_block_or_boundary_flag, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (4): siAuthorityManifest, cAuthorityRequest, acceptedSpectroscopyAuthorityTokenPresent, acceptedSpectroscopyAuthorityTokenPresentIsFalse, NumericAuthorityPayloadValidator, SIDefiningConstantsAuthorityArtifactRequest, SIDefiningConstantAuthorityArtifactRowRequest, SIDefiningConstantsAuthorityArtifactRequestManifest, NumericAuthorityPayloadValidatorReceipt, acceptedAuthorityTokenPresent
+  - `false_authority_bool` (7): spectroscopyPromotionIsFalse, cRowPromotedIsFalse, manifestAnyRowPromotedIsFalse, acceptedSpectroscopyAuthorityTokenPresentIsFalse, authorityPayloadPromotedIsFalse, spectroscopyPromotedIsFalse
+  - `true_block_or_boundary_flag` (1): codataRInfinityPayloadRequiredIsTrue
+  - `candidate_only_promoted_false_bundle` (5): spectroscopyPromotion, cRowPromoted, manifestAnyRowPromoted, authorityPayloadPromoted, spectroscopyPromoted
+
+### DASHI/Interop/SemanticOperatorAlignmentDischarge.agda
+
+- Risk: `low`
+- Score: `66` (raw `64`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore
+- Patterns: false_authority_bool
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (16): globalOntologyClaimIsFalse, untypedExactEquivalenceClaimIsFalse, universalTranslationClaimIsFalse, perfectUnderstandingClaimIsFalse, qualiaRecoveryClaimIsFalse, contextFreeOptimalCommunicationClaimIsFalse, operatorGlobalOntologyBlocked, operatorSubstanceIdentityBlocked, operatorUntypedExactEquivalenceBlocked, operatorUniversalReducibilityBlocked ...
+
+### DASHI/Promotion/StandardModelFirstPrinciplesGapIndex.agda
+
+- Risk: `low`
+- Score: `66` (raw `66`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; universe-polymorphic/Setω surface; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (2): empiricalProviderAuthorityPromoted, empiricalProviderAuthorityPromotedIsFalse, empiricalAuthorityTarget, empiricalAuthorityGapRow, missingHiggsMixingAndCouplingAuthorityGuard, missingQFTObservableAndEmpiricalAuthorityGuard, acceptedProviderAuthorityPromoted, acceptedProviderAuthorityPromotedIsFalse
+  - `false_authority_bool` (8): broadClaimPromotedIsFalse, registryStandardModelPromotedIsFalse, authorityNumericValuePromotedIsFalse, empiricalProviderAuthorityPromotedIsFalse, empiricalComparisonLawPromotedIsFalse, broadStandardModelFromFirstPrinciplesPromotedIsFalse, falseBroadStandardModelPromotionIsFalse, terminalUnificationPromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (8): broadClaimPromoted, registryStandardModelPromoted, authorityNumericValuePromoted, empiricalProviderAuthorityPromoted, empiricalComparisonLawPromoted, broadStandardModelFromFirstPrinciplesPromoted, falseBroadStandardModelPromotion, terminalUnificationPromoted
+
+### DASHI/Interop/AvianCompassPNFSemanticBridge.agda
+
+- Risk: `low`
+- Score: `65` (raw `63`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (6): noPNFSemanticTruthAuthority, pnfSemanticTruthAuthorityField, pnfSemanticTruthAuthorityFieldIsFalse, mechanismQualiaBoundaryIsBridgeResidual, pnfSemanticTruthAuthorityCertificate, pnfSemanticTruthAuthorityCertificateIsFalse, pnfSemanticTruthAuthority, pnfSemanticTruthAuthorityIsFalse
+  - `false_authority_bool` (6): pnfSemanticTruthAuthorityIsFalse, qualiaPromotionIsFalse, pnfSemanticTruthAuthorityFieldIsFalse, qualiaPromotionFieldIsFalse, pnfSemanticTruthAuthorityCertificateIsFalse, qualiaPromotionCertificateIsFalse
+  - `candidate_only_promoted_false_bundle` (3): qualiaPromotion, qualiaPromotionField, qualiaPromotionCertificate
+
+### DASHI/Interop/PNFVoidScopeBoundary.agda
+
+- Risk: `low`
+- Score: `65` (raw `63`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, EmptyPromotionCore, CandidateOnlyCore
+- Patterns: false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (8): ntmTruthPromotionIsFalse, ntmSupportPromotionIsFalse, ntmAdmissibilityPromotionIsFalse, scopeTruthPromotionIsFalse, scopeSupportPromotionIsFalse, scopeAdmissibilityPromotionIsFalse, collapseGrantsSupportIsFalse, collapseGrantsAdmissibilityIsFalse
+  - `empty_promotion_datatype` (1): PNFVoidScopeBoundaryPromotion
+  - `candidate_only_promoted_false_bundle` (6): ntmTruthPromotion, ntmSupportPromotion, ntmAdmissibilityPromotion, scopeTruthPromotion, scopeSupportPromotion, scopeAdmissibilityPromotion
+  - `blocked_claim_vocabulary` (3): PNFVoidScopeBoundaryStatus, PNFVoidScopeBoundaryPromotion, PNFVoidScopeBoundaryRow
+
+### DASHI/Promotion/DownloadedNewAdditionsReferenceIndex.agda
+
+- Risk: `low`
+- Score: `64` (raw `64`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster, false_authority_bool
+- Notes: receipt-surface namespace; universe-polymorphic/Setω surface; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (8): theoremAuthority, theoremAuthorityIsFalse, empiricalAuthority, empiricalAuthorityIsFalse
+  - `false_authority_bool` (6): theoremAuthorityIsFalse, empiricalAuthorityIsFalse, promotesTheoremIsFalse, promotesEmpiricalValidationIsFalse
+
+### DASHI/Interop/StratifiedTypedComparisonLaw.agda
+
+- Risk: `low`
+- Score: `63` (raw `70`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, EmptyPromotionCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, empty_promotion_datatype, adapter_canonicality_pair
+- Notes: receipt-surface namespace; theorem-heavy vocabulary; many pattern-matching clauses; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (12): comparisonVerdictExternalAuthority, admissionExternalAuthority, comparisonExternalAuthority, comparisonBridgeAuthorityPromoted, receiptAuthorityPromotion, comparisonBridgeAuthorityPromotedFalse, receiptAuthorityPromotionFalse, comparisonBridgeTransportMapAuthorityFalse, receiptTransportMapAuthority, receiptTransportMapAuthorityFalse ...
+  - `empty_promotion_datatype` (1): CrossDomainContentIdentityWithoutBridgePromotion
+  - `adapter_canonicality_pair` (3): bridgeRequirementCoreAdapter, candidateOnlyCoreAdapter, emptyPromotionCoreAdapter
+
+### DASHI/Interop/CategoricalInterlinkLayer.agda
+
+- Risk: `low`
+- Score: `62` (raw `60`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (1): sourceAuthorityPolicyReceipt, s5ProofOrAuthorityTokenInhabited, externalAuthoritySlotPromoted, conditionalOnExternalAuthority, externalAuthorityRequired
+  - `false_authority_bool` (10): theoremPromotedIsFalse, claimPromotedIsFalse, clayPromotedIsFalse, fullStandardModelPromotedIsFalse, terminalPromotionIsFalse, categoricalInterlinkKeepsTheoremPromotionFalse, categoricalInterlinkKeepsClayPromotionFalse, categoricalInterlinkKeepsTerminalPromotionFalse
+  - `candidate_only_promoted_false_bundle` (5): theoremPromoted, claimPromoted, clayPromoted, fullStandardModelPromoted, terminalPromotion
+
+### DASHI/Promotion/SIDefiningConstantAuthorityEvidenceChecklist.agda
+
+- Risk: `low`
+- Score: `61` (raw `59`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (6): promotesAuthority, promotesAuthorityIsFalse, rowAuthorityTokenAccepted, rowAuthorityTokenAcceptedIsFalse, candidate256AuthorityTokenConstructed, candidate256AuthorityTokenConstructedIsFalse, SIDefiningConstantAuthorityEvidenceChecklist, NumericAuthorityPayloadValidator, SIDefiningConstantsAuthorityArtifactRequest, SIConstantAuthorityEvidenceField ...
+  - `false_authority_bool` (5): promotesAuthorityIsFalse, rowAuthorityTokenAcceptedIsFalse, rowPromotedIsFalse, candidate256AuthorityTokenConstructedIsFalse, anySIConstantPromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (2): rowPromoted, anySIConstantPromoted
+  - `blocked_claim_vocabulary` (1): SIConstantAuthorityEvidenceField
+
+### DASHI/Biology/NeurochemicalGenomicExpressionBridge.agda
+
+- Risk: `low`
+- Score: `56` (raw `54`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster, false_authority_bool
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (6): developmentalGenomicInverseBoundary, developmentalGenomicInverseBoundaryIsCanonical, clinicalAuthorityClaim, clinicalAuthorityClaimIsFalse, therapeuticAuthorityClaim, therapeuticAuthorityClaimIsFalse, clinicalAuthorityRoute, therapeuticAuthorityRoute, clinicalAuthorityRejected, therapeuticAuthorityRejected
+  - `false_authority_bool` (6): genomeToBehaviorClosureClaimIsFalse, genomeToConnectomeClosureClaimIsFalse, psychiatricGeneticsClaimIsFalse, diseaseCausationClaimIsFalse, clinicalAuthorityClaimIsFalse, therapeuticAuthorityClaimIsFalse
+
+### DASHI/Biology/NeurochemicalBrainCarrierBridge.agda
+
+- Risk: `low`
+- Score: `55` (raw `53`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore, AdapterCanonicalityCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle, adapter_canonicality_pair
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (8): authorityBoundary, authorityBoundaryIsCanonical, authorityBoundaryClinicalFalse, authorityBoundaryInterventionFalse, clinicalAuthorityBlocked, clinicalAuthorityBlockedIsFalse, interventionAuthorityBlocked, interventionAuthorityBlockedIsFalse, NeurochemicalAuthorityBoundary, clinicalAuthorityRoute ...
+  - `false_authority_bool` (2): clinicalAuthorityBlockedIsFalse, interventionAuthorityBlockedIsFalse
+  - `candidate_only_promoted_false_bundle` (1): candidateOnly/candidateOnlyIsTrue
+  - `adapter_canonicality_pair` (1): sensoryReceipt
+
+### DASHI/Promotion/ExternalTheoremAuthoritySourceLocator.agda
+
+- Risk: `low`
+- Score: `53` (raw `56`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: receipt-surface namespace; theorem-heavy vocabulary; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (6): externalTheoremAuthorityRequest, externalProofAuthorityRequest, crtMonsterFixedPointCompactificationBoundaryAnchor, stageQuotientIrreversibilityBoundaryAnchor, importedBoundaryPromotionFlag, importedBoundaryPromotionFlagIsFalse, ExternalTheoremAuthoritySourceLocator, ExternalTheoremAuthorityLane, ExternalAuthorityRequestKind, ExternalTheoremAuthoritySourceLocatorRow ...
+  - `false_authority_bool` (5): importedBoundaryPromotionFlagIsFalse, monsterMoonshineLocatorAcceptedAsProofFalse, monsterMoonshineLocatorPromotionPreservedFalse, carnotThermodynamicLocatorAcceptedAsProofFalse, carnotThermodynamicLocatorPromotionPreservedFalse
+  - `candidate_only_promoted_false_bundle` (1): importedBoundaryPromotionFlag
+  - `blocked_claim_vocabulary` (1): ExternalTheoremAuthorityLane
+
+### DASHI/Interop/InterMediaBridgeRegression.agda
+
+- Risk: `low`
+- Score: `52` (raw `50`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (10): interMediaTruthAuthorityFalse, truthAuthorityPromoted, interMediaClinicalAuthorityFalse, clinicalAuthorityPromoted, qiTruthAuthorityFalse, qiTruthAuthorityPromoted, qiClinicalAuthorityFalse, qiClinicalAuthorityPromoted, meditationClinicalAuthorityFalse, meditationTruthAuthorityFalse
+
+### DASHI/Interop/PNFSpectralFieldCore.agda
+
+- Risk: `low`
+- Score: `52` (raw `50`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, EmptyPromotionCore, CandidateOnlyCore
+- Patterns: false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (7): textEmbeddingTruthPromotionIsFalse, vectorProximitySupportPromotionIsFalse, candidateAdmissibilityPromotionIsFalse, supportPacketTruthPromotionIsFalse, residualEdgeRuntimeEvidencePromotionIsFalse, semanticTruthPromotionIsFalse, policyLegalWikidataAuthorityIsFalse
+  - `empty_promotion_datatype` (1): PNFSpectralFieldPromotion
+  - `candidate_only_promoted_false_bundle` (6): textEmbeddingTruthPromotion, vectorProximitySupportPromotion, candidateAdmissibilityPromotion, supportPacketTruthPromotion, residualEdgeRuntimeEvidencePromotion, semanticTruthPromotion
+
+### DASHI/Promotion/FiniteQuantumPhysicalScopeDecision.agda
+
+- Risk: `low`
+- Score: `46` (raw `49`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, CandidateOnlyCore
+- Patterns: false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; theorem-heavy vocabulary; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (7): infiniteHilbertPromotionIsFalse, unboundedOperatorPromotionIsFalse, stoneTheoremPromotionIsFalse, spectralTheoremPromotionIsFalse, generalBornPromotionIsFalse, qftPromotionIsFalse, terminalPromotionIsFalse
+  - `candidate_only_promoted_false_bundle` (7): infiniteHilbertPromotion, unboundedOperatorPromotion, stoneTheoremPromotion, spectralTheoremPromotion, generalBornPromotion, qftPromotion, terminalPromotion
+
+### DASHI/Promotion/MaxwellExteriorCalculusAdapter.agda
+
+- Risk: `low`
+- Score: `46` (raw `44`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (1): hodgeSourceAuthorityBoundary, HodgeSourceAuthorityBoundary, hodgeStarAuthorityRequired, sourceCurrentAuthorityRequired, chargeCalibrationAuthorityRequired
+  - `false_authority_bool` (6): hodgeEquationPromotedIsFalse, sourceEquationPromotedIsFalse, empiricalObservablePromotedIsFalse, modelLawPromotedIsFalse, maxwellFieldEquationPromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (5): hodgeEquationPromoted, sourceEquationPromoted, empiricalObservablePromoted, modelLawPromoted, maxwellFieldEquationPromoted
+
+### DASHI/Interop/SenateFormalizationPNFAdapter.agda
+
+- Risk: `low`
+- Score: `43` (raw `41`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (6): legalAuthorityPromoted, liveEditAuthority, legalAuthorityPromotion, legalAuthorityPromotionIsFalse, wikidataLiveEditAuthority, wikidataLiveEditAuthorityIsFalse, sourceUnitHasNoLiveEditAuthority, rulemakingAuthoritySource, proceduralSourceNoLiveEditAuthority
+  - `false_authority_bool` (2): legalAuthorityPromotionIsFalse, wikidataLiveEditAuthorityIsFalse
+  - `candidate_only_promoted_false_bundle` (1): legalAuthorityPromotion
+
+### DASHI/Interop/PhysicsChemistryBiologyDNAUnificationDischarge.agda
+
+- Risk: `low`
+- Score: `42` (raw `42`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, CandidateOnlyCore
+- Patterns: false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; universe-polymorphic/Setω surface; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (6): physicsToBiologyDerivationPromotedIsFalse, finishedChemistryClosurePromotedIsFalse, fullProteinFoldingPromotedIsFalse, hormoneBehaviourClosurePromotedIsFalse, dnaMeaningPromotedIsFalse, fullBiologyClosurePromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (6): physicsToBiologyDerivationPromoted, finishedChemistryClosurePromoted, fullProteinFoldingPromoted, hormoneBehaviourClosurePromoted, dnaMeaningPromoted, fullBiologyClosurePromoted
+
+### DASHI/Promotion/MaxwellHodgeSourceCalibration.agda
+
+- Risk: `low`
+- Score: `42` (raw `40`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (1): nextBlockerIsHodgeAuthority, epsilon0Mu0AuthorityInput, epsilon0Mu0AuthorityObject, nextHodgeStarAuthority, nextEpsilon0Mu0Authority, nextEmpiricalObservableAuthority, epsilon0Mu0AuthorityRow, epsilon0Mu0AuthorityRequired, HodgeSourceAuthorityBoundary
+  - `false_authority_bool` (5): hodgePromotionIsFalse, sourceCurrentPromotionIsFalse, empiricalObservablePromotionIsFalse, sourceEquationPromotionIsFalse, maxwellFieldEquationPromotionIsFalse
+  - `candidate_only_promoted_false_bundle` (5): hodgePromotion, sourceCurrentPromotion, empiricalObservablePromotion, sourceEquationPromotion, maxwellFieldEquationPromotion
+
+### DASHI/Promotion/PoliticalRoleAssignmentBoundary.agda
+
+- Risk: `low`
+- Score: `42` (raw `40`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (8): politicalAdjudicationAuthority, noPoliticalAdjudicationAuthority, dehumanizingClassifierAuthority, noDehumanizingClassifierAuthority, violenceOrErasureAuthority, noViolenceOrErasureAuthority, legalPolicyAuthority, noLegalPolicyAuthority
+
+### DASHI/Biology/AvianVisualOverlayQuotient.agda
+
+- Risk: `low`
+- Score: `38` (raw `36`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, BridgeRequirementCore
+- Patterns: authority_field_cluster, true_block_or_boundary_flag
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (6): quotientOnlyBoundary, noPhenomenalIdentityBoundary, noQualiaRecoveryBoundary, noDirectSubjectiveReportBoundary, noFirstPersonContentBoundary, noEthologyToExperiencePromotionBoundary
+  - `true_block_or_boundary_flag` (3): phenomenalIdentityBlockedIsTrue, qualiaRecoveryBlockedIsTrue, directSubjectiveReportBlockedIsTrue
+
+### DASHI/Interop/PNFResidualSpectralSeverityReceipt.agda
+
+- Risk: `low`
+- Score: `38` (raw `36`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, EmptyPromotionCore, CandidateOnlyCore
+- Patterns: false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (5): runtimePNFPromotionIsFalse, semanticTruthPromotionIsFalse, policyLegalWikidataAuthorityIsFalse, continuumSpectralPromotionIsFalse, clayPromotionIsFalse
+  - `empty_promotion_datatype` (1): PNFResidualSpectralPromotion
+  - `candidate_only_promoted_false_bundle` (4): runtimePNFPromotion, semanticTruthPromotion, continuumSpectralPromotion, clayPromotion
+
+### DASHI/Interop/PNFSpectralFieldGraph.agda
+
+- Risk: `low`
+- Score: `38` (raw `40`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, EmptyPromotionCore, CandidateOnlyCore, AdapterCanonicalityCore
+- Patterns: false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle, adapter_canonicality_pair
+- Notes: receipt-surface namespace; many pattern-matching clauses; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (5): spectralOperatorShapeCorePromotionFalse, semanticTruthPromotionIsFalse, admissibilityPromotionIsFalse, runtimeEvidencePromotionIsFalse, continuumSpectralPromotionIsFalse
+  - `empty_promotion_datatype` (1): PNFSpectralFieldGraphPromotion
+  - `candidate_only_promoted_false_bundle` (4): semanticTruthPromotion, admissibilityPromotion, runtimeEvidencePromotion, continuumSpectralPromotion
+  - `adapter_canonicality_pair` (2): severityReceipt, spectralOperatorShapeCore
+
+### DASHI/Culture/KnotWeaveTopologyCultureBridge.agda
+
+- Risk: `low`
+- Score: `37` (raw `35`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, CandidateOnlyCore
+- Patterns: false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (8): culturalUniversalClaimIsFalse, identityOrQualiaClosureClaimIsFalse, authorityPromotionClaimIsFalse, contextFreeEquivalenceClaimIsFalse, culturalUniversalBlocked, identityOrQualiaClosureBlocked, authorityPromotionBlocked, contextFreeEquivalenceBlocked
+  - `candidate_only_promoted_false_bundle` (1): authorityPromotionClaim
+
+### DASHI/Promotion/PlanckHbarSIPayloadRequest.agda
+
+- Risk: `low`
+- Score: `34` (raw `32`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (2): acceptedAuthorityTokenPresent, acceptedAuthorityTokenPresentIsFalse, NumericAuthorityPayloadValidator, missingAuthorityArtifactField, hbarAuthorityPayloadSupplied, hbarAuthorityPayloadSuppliedIsFalse, NumericAuthorityPayloadValidatorReceipt
+  - `false_authority_bool` (4): hbarAuthorityPayloadSuppliedIsFalse, acceptedAuthorityTokenPresentIsFalse, planckNumericValuePromotedIsFalse, hbarNumericValuePromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (2): planckNumericValuePromoted, hbarNumericValuePromoted
+
+### DASHI/Interop/SpectralOperatorShapeCore.agda
+
+- Risk: `low`
+- Score: `31` (raw `29`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, EmptyPromotionCore, CandidateOnlyCore
+- Patterns: false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (4): higherHodgeDiagnosticGrantsAuthorityIsFalse, semanticTruthPromotionIsFalse, runtimeEvidencePromotionIsFalse, continuumSpectralPromotionIsFalse
+  - `empty_promotion_datatype` (1): SpectralOperatorShapePromotion
+  - `candidate_only_promoted_false_bundle` (3): semanticTruthPromotion, runtimeEvidencePromotion, continuumSpectralPromotion
+
+### DASHI/Biology/GenomeSensorimotorConnectomeBridge.agda
+
+- Risk: `low`
+- Score: `30` (raw `28`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore
+- Patterns: false_authority_bool
+- Notes: receipt-surface namespace; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (7): genomeBlueprintClaimIsFalse, dnaEncodesMeaningClaimIsFalse, dnaEncodesQualiaClaimIsFalse, genomeToConnectomeClosureClaimIsFalse, meaningEncodingBlocked, qualiaEncodingBlocked, connectomeClosureBlocked
+
+### DASHI/Interop/FiniteSelectionMiningTermination.agda
+
+- Risk: `low`
+- Score: `30` (raw `28`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, CandidateOnlyCore
+- Patterns: false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (4): boundaryCrankMiningPromotedAsDASHIClaimIsFalse, boundaryClayPromotionIsFalse, crankMiningPromotedAsDASHIClaimIsFalse, clayPromotionIsFalse
+  - `candidate_only_promoted_false_bundle` (4): boundaryCrankMiningPromotedAsDASHIClaim, boundaryClayPromotion, crankMiningPromotedAsDASHIClaim, clayPromotion
+
+### DASHI/Promotion/QuantumFiniteToGeneralBoundary.agda
+
+- Risk: `low`
+- Score: `30` (raw `33`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, CandidateOnlyCore
+- Patterns: false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; theorem-heavy vocabulary; boundary/bridge/receipt-shaped module; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (6): finiteAdapterPromotesSchrodingerIsFalse, finiteAdapterPromotesBornIsFalse, finiteAdapterPromotesQFTIsFalse, upstreamSchrodingerPromotedIsFalse, upstreamBornPromotedIsFalse, upstreamQFTPromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (3): upstreamSchrodingerPromoted, upstreamBornPromoted, upstreamQFTPromoted
+
+### DASHI/Promotion/SIDefiningConstantsAuthorityArtifactRequest.agda
+
+- Risk: `low`
+- Score: `30` (raw `28`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (2): acceptedAuthorityTokenPresent, acceptedAuthorityTokenPresentIsFalse, SIDefiningConstantsAuthorityArtifactRequest, NumericAuthorityPayloadValidator, missingAuthorityArtifactField, SIDefiningConstantAuthorityArtifactRowRequest, SIDefiningConstantsAuthorityArtifactRequestManifest, NumericAuthorityPayloadValidatorReceipt
+  - `false_authority_bool` (3): rowPromotedIsFalse, acceptedAuthorityTokenPresentIsFalse, anyRowPromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (2): rowPromoted, anyRowPromoted
+
+### DASHI/Interop/SeaMeInItROMSeamAtlas.agda
+
+- Risk: `low`
+- Score: `27` (raw `25`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (5): unwrapBoundary, unwrapBoundaryMatchesRun, noUnwrapManufacturingAuthority, nonPromotionBoundary, noManufacturingAuthorityClaim, claimsManufacturingAuthority
+
+### DASHI/Interop/FiberedCrankDASHISystem.agda
+
+- Risk: `low`
+- Score: `24` (raw `22`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, CandidateOnlyCore
+- Patterns: false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (4): promotedAsDASHIClaimIsFalse, jmdCrankTermPromotedToDASHIClaimIsFalse, jmdProtagonistTermPromotedToDASHIClaimIsFalse, fiberedCrankDASHIPromotesJMDTermsIsFalse
+  - `candidate_only_promoted_false_bundle` (2): jmdCrankTermPromotedToDASHIClaim, jmdProtagonistTermPromotedToDASHIClaim
+
+### DASHI/Interop/PNFPackageCore.agda
+
+- Risk: `low`
+- Score: `24` (raw `22`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster, false_authority_bool
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (2): resolverUsesScoreAsAuthority, resolverUsesScoreAsAuthorityIsFalse, scoreClaimedAsAuthority
+  - `false_authority_bool` (3): resolverPromotesCandidateSupportIsFalse, resolverUsesScoreAsAuthorityIsFalse, selectorPromotesCandidateSupportIsFalse
+
+### DASHI/Promotion/StandardModelHiggsCovariantComparisonLaw.agda
+
+- Risk: `low`
+- Score: `24` (raw `24`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, BridgeRequirementCore, CandidateOnlyCore
+- Patterns: false_authority_bool, true_block_or_boundary_flag, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; universe-polymorphic/Setω surface; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (4): promotesEmpiricalValidationIsFalse, acceptedAuthorityTokenPresentIsFalse, empiricalValidationPromotedIsFalse, standardModelPromotedIsFalse
+  - `true_block_or_boundary_flag` (1): checksumRequiredIsTrue
+  - `candidate_only_promoted_false_bundle` (2): empiricalValidationPromoted, standardModelPromoted
+
+### DASHI/Interop/QuantumPathLightTransportAnalogyDischarge.agda
+
+- Risk: `low`
+- Score: `23` (raw `21`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, CandidateOnlyCore
+- Patterns: false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (3): rendererAlgorithmClaimPromotedIsFalse, qedProofClaimPromotedIsFalse, globalO1ClaimPromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (3): rendererAlgorithmClaimPromoted, qedProofClaimPromoted, globalO1ClaimPromoted
+
+### DASHI/Promotion/Cs133NumericAuthorityPayloadRequest.agda
+
+- Risk: `low`
+- Score: `23` (raw `21`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (2): acceptedAuthorityTokenPresent, acceptedAuthorityTokenPresentIsFalse, Cs133NumericAuthorityPayloadRequest, NumericAuthorityPayloadValidator, missingAuthorityArtifactField, NumericAuthorityPayloadValidatorReceipt
+  - `false_authority_bool` (2): acceptedAuthorityTokenPresentIsFalse, numericValuePromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (1): numericValuePromoted
+
+### DASHI/Promotion/StandardModelFiniteAnomalyHyperchargeCheck.agda
+
+- Risk: `low`
+- Score: `23` (raw `32`)
+- Suggested cores: AuthorityNonPromotionCore, AuthorityBoundaryCore, CandidateOnlyCore
+- Patterns: false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; theorem-heavy vocabulary; many pattern-matching clauses; universe-polymorphic/Setω surface; likely migration-safe if public names are preserved
+
+  - `false_authority_bool` (5): promotedAsPhysicalSMTheoremIsFalse, continuousStandardModelPromotedIsFalse, exactPhysicalIrrepPromotedIsFalse, broadStandardModelPromotedIsFalse, terminalUnificationPromotedIsFalse
+  - `candidate_only_promoted_false_bundle` (4): continuousStandardModelPromoted, exactPhysicalIrrepPromoted, broadStandardModelPromoted, terminalUnificationPromoted
+
+### DASHI/Interop/PNFRoleVectorAlgebra.agda
+
+- Risk: `low`
+- Score: `22` (raw `20`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (4): promotesLegalAuthority, grantsLiveWikidataEditAuthority, parserObservationDoesNotPromoteAuthority, parserObservationDoesNotGrantWikidataAuthority
+
+### DASHI/Interop/UnifiedMathLanguageSpine.agda
+
+- Risk: `low`
+- Score: `21` (raw `24`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; theorem-heavy vocabulary; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (2): externalAuthorityPromotion, externalAuthorityPromotionIsFalse, domainLanePromotesExternalAuthority, domainLaneDoesNotPromoteExternalAuthority
+  - `false_authority_bool` (2): externalTheoremPromotionIsFalse, externalAuthorityPromotionIsFalse
+  - `candidate_only_promoted_false_bundle` (2): externalTheoremPromotion, externalAuthorityPromotion
+
+### DASHI/Promotion/StandardModelArchiveContextBinding.agda
+
+- Risk: `low`
+- Score: `21` (raw `19`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster, false_authority_bool
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (3): topicTagsAreCanonicalBoundary, theoremAuthority, theoremAuthorityIsFalse, archiveContextIsNotTheoremAuthority
+  - `false_authority_bool` (1): theoremAuthorityIsFalse
+
+### DASHI/Promotion/SIMetrologyPayloadDependencyDAG.agda
+
+- Risk: `low`
+- Score: `19` (raw `17`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle
+- Notes: receipt-surface namespace; likely migration-safe if public names are preserved
+
+  - `authority_field_cluster` (2): noAuthorityFabricated, noAuthorityFabricatedIsTrue, externalAuthorityGate, carrierBeforeAuthority, siAuthorityPayloadNode, SIDefiningConstantsAuthorityArtifactRequest, SIDefiningConstantAuthorityArtifactRowRequest, Candidate256PhysicalCalibrationAuthorityToken, parsedCarriersToAuthorityEdge, carrierAuthorityEdge ...
+  - `false_authority_bool` (1): terminalPromotionAllowedIsFalse
+  - `candidate_only_promoted_false_bundle` (1): terminalPromotionAllowed
+
+### DASHI/Algebra/LieGaugeTheoryParity.agda
+
+- Risk: `medium`
+- Score: `459` (raw `472`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, EmptyPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: theorem-heavy vocabulary; contains with-abstractions; many pattern-matching clauses; universe-polymorphic/Setω surface; manual review needed before migration
+
+  - `authority_field_cluster` (84): smoothStructureAuthority, smoothStructureAuthorityIsTrue, vectorSpaceAuthority, vectorSpaceAuthorityIsTrue, linearityAuthority, linearityAuthorityIsTrue, linearAuthority, linearAuthorityIsTrue, localTrivialityAuthority, localTrivialityAuthorityIsTrue ...
+  - `false_authority_bool` (9): promotesContinuumTheoremIsFalse, promotesClayMassGapIsFalse, analyticAuthorityAvailableIsFalse, continuumAuthorityAvailableIsFalse, physLeanParityPromotedIsFalse, quantumYangMillsPromotedIsFalse, clayMassGapPromotedIsFalse
+  - `empty_promotion_datatype` (1): LieGaugePromotion
+  - `candidate_only_promoted_false_bundle` (3): physLeanParityPromoted, quantumYangMillsPromoted, clayMassGapPromoted
+  - `blocked_claim_vocabulary` (1): ParityClaim
+
+### DASHI/Physics/QFT/AQFTCarrierAlgebraQuotientSurface.agda
+
+- Risk: `medium`
+- Score: `455` (raw `472`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, EmptyPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, empty_promotion_datatype, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: theorem-heavy vocabulary; contains with-abstractions; many pattern-matching clauses; universe-polymorphic/Setω surface; manual review needed before migration
+
+  - `authority_field_cluster` (45): unitaryNormAuthority, completionAuthority, cStarCompletionSafeAuthority, cStarCompletionSafeAuthorityIsTrue, analyticAuthority, noDepthColimitPromotionWithoutAuthority, cStarCompletionAuthority, noTimeSliceTheoremPromotionWithoutAuthority, bisognanoWichmannAuthorityReceipt, noGate5PromotionWithoutAuthority ...
+  - `false_authority_bool` (50): operationLabelsPromotedIsFalse, predicatePromotedIsFalse, quotientEquivalencePromotedIsFalse, quotientNormPromotedIsFalse, unitaryConjugationPromotedIsFalse, finiteDimensionalCStarPromotedIsFalse, cStarCompletionPromotedIsFalse, gate4PromotedIsFalse, colimitUniversalityPromotedIsFalse, isotonyCausalityDescentPromotedIsFalse ...
+  - `empty_promotion_datatype` (5): AQFTCarrierAlgebraPromotionAuthorityToken, CauchyEvolutionPromotionAuthorityToken, TimeSliceTheoremPromotionAuthorityToken, DepthFilteredAlgebraPromotionAuthorityToken, Gate5TimeSliceDependencyPromotionAuthorityToken
+  - `candidate_only_promoted_false_bundle` (8): operationLabelsPromoted, predicatePromoted, quotientEquivalencePromoted, quotientNormPromoted, unitaryConjugationPromoted, finiteDimensionalCStarPromoted, cStarCompletionPromoted, gate4Promoted
+  - `blocked_claim_vocabulary` (1): AQFTCarrierAlgebraPromotionAuthorityToken
+
+### DASHI/Physics/QFT/DHRGaugeReceiptSurface.agda
+
+- Risk: `medium`
+- Score: `417` (raw `434`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, BridgeRequirementCore, EmptyPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, true_block_or_boundary_flag, empty_promotion_datatype, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: theorem-heavy vocabulary; contains with-abstractions; many pattern-matching clauses; universe-polymorphic/Setω surface; boundary/bridge/receipt-shaped module; manual review needed before migration
+
+  - `authority_field_cluster` (46): complementPrimitiveBoundary, localisedTransportablePrimitiveBoundary, haagEqualityPrimitiveBoundary, primitiveBoundaryReceipt, safeAuthority, safeAuthorityIsTrue, citedAuthorityRecorded, citedAuthorityRecordedIsTrue, safeAuthorityRecorded, safeAuthorityRecordedIsTrue ...
+  - `false_authority_bool` (38): lawPromotedIsFalse, arbitrarySectorBraidingNaturalityPromotedIsFalse, cstarLawPromotedIsFalse, conjugateEquationsPromotedIsFalse, splittingPromotedIsFalse, endUnitProofPromotedIsFalse, drReconstructionPromotedByCheckIsFalse, dhrEqualsStandardModelPromotedIsFalse, provesSerreTateLaneGroupTheoremHereIsFalse, flipsDHRGaugePromotionAuthorityIsFalse ...
+  - `true_block_or_boundary_flag` (3): canonicalComplementPrimitiveBoundarySelectedIsTrue, canonicalLocalisedTransportablePrimitiveBoundarySelectedIsTrue, canonicalHaagEqualityPrimitiveBoundarySelectedIsTrue
+  - `empty_promotion_datatype` (1): DHRGaugePromotionAuthorityToken
+  - `candidate_only_promoted_false_bundle` (8): lawPromoted, arbitrarySectorBraidingNaturalityPromoted, cstarLawPromoted, conjugateEquationsPromoted, splittingPromoted, endUnitProofPromoted, drReconstructionPromotedByCheck, dhrEqualsStandardModelPromoted
+  - `blocked_claim_vocabulary` (6): DHRComplementPrimitiveBoundaryBlocker, DHRGaugePromotionAuthorityToken, DHRLocalisedTransportablePrimitiveBoundaryBlocker, HaagEqualityPrimitiveBoundaryBlocker, AQFTToDHRPrimitiveBoundaryConsumer, AQFTToDHRPrimitiveBoundaryLedgerBlocker
+
+### DASHI/Core/AuthorityNonPromotionCore.agda
+
+- Risk: `medium`
+- Score: `373` (raw `373`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore
+- Patterns: authority_field_cluster, false_authority_bool
+- Notes: manual review needed before migration
+
+  - `authority_field_cluster` (49): truthAuthority, supportAuthority, admissibilityAuthority, clinicalAuthority, scientificAuthority, spiritualAuthority, metaphysicalAuthority, tradingAuthority, theoremAuthority, clayAuthority ...
+  - `false_authority_bool` (32): truthAuthorityFlagIsFalse, supportAuthorityFlagIsFalse, admissibilityAuthorityFlagIsFalse, clinicalAuthorityFlagIsFalse, scientificAuthorityFlagIsFalse, spiritualAuthorityFlagIsFalse, metaphysicalAuthorityFlagIsFalse, tradingAuthorityFlagIsFalse, theoremAuthorityFlagIsFalse, clayAuthorityFlagIsFalse ...
+
+### DASHI/Promotion/ObligationIndex.agda
+
+- Risk: `medium`
+- Score: `340` (raw `351`)
+- Suggested cores: AuthorityBoundaryCore, AuthorityNonPromotionCore, CandidateOnlyCore
+- Patterns: authority_field_cluster, false_authority_bool, candidate_only_promoted_false_bundle, blocked_claim_vocabulary
+- Notes: receipt-surface namespace; theorem-heavy vocabulary; contains with-abstractions; universe-polymorphic/Setω surface; manual review needed before migration
+
+  - `authority_field_cluster` (61): smUniquenessCountermodelBoundaryLane, smGaugeCouplingAuthorityFrontierLane, smObservableAuthorityBridgeLane, nsFullClayExternalAuthorityBoundaryLane, nsMechanismExhaustionAnalyticAttemptBoundaryLane, nsCriticalResidualBoundaryLane, nsTopologicalAlignmentObstructionBoundaryLane, nsMicrolocalTopologicalBridgeBoundaryLane, nsProjectionNonlocalityLeakagePrincipleBoundaryLane, pnfSpectralTradingSignalBoundaryLane ...
+  - `false_authority_bool` (10): promotesClaimIsFalse, promotesTerminalClaimIsFalse, promotesClayIsFalse, promotesRuntimeOrTradingAuthorityIsFalse, promotesAuthorityClaimIsFalse, terminalPromotionIsFalse
+  - `candidate_only_promoted_false_bundle` (1): terminalPromotion
+  - `blocked_claim_vocabulary` (1): SMFirstPrinciplesBoundaryLane
+
+## Policy
+
+- Prefer low-risk receipt, bridge, promotion, biology, culture, ontology, and interop surfaces.
+- Preserve public receipt names, constructors, booleans, and local false projections.
+- Avoid GR/NS/YM analytic internals and theorem-heavy physics closures unless explicitly targeted.
+- Use this report to choose worker lanes; use Agda checks to validate migrations.

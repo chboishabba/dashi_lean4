@@ -1,0 +1,902 @@
+
+\clearpage
+\pagenumbering{roman}
+\setcounter{section}{0}
+
+{\noindent\bf\Large Supplemental Material} \\
+
+\noindent This supplemental material includes additional information to that already provided in the main letter. A full set of results for the nominal analysis is presented in both graphical and tabular form in Sec.~\ref{sec:supp:tables}. A complete description of the corresponding systematic uncertainties is given in Sec.~\ref{sec:supp:sys}. The correlations between the angular observables are presented for the $S_{i}$ observables in Sec.~\ref{sec:appendix:likelihood:correlation} and for the $P^{(\prime)}_{i}$ observables in Sec.~\ref{sec:appendix:correlation:optimised}. 
+The angular and mass distributions of the selected candidates in the different \qsq bins are shown in Sec.~\ref{sec:sub:signalchannelprojections}.
+
+
+\section{Results}
+\label{sec:supp:tables}
+
+ The values of $S_3$, $S_4$ and $S_7$--$S_9$ obtained from the simultaneous fit are shown in Fig.~\ref{fig:sub:Si}. 
+The data are compared to theoretical predictions based on the prescription of  Ref.~\cite{Altmannshofer:2014rta}. 
+The predictions combine light-cone sum rule calculations~\cite{Straub:2015ica} with lattice determinations~\cite{Horgan:2013hoa,Horgan:2015vla} of the $\Bz\to\Kstarz$ form factors. 
+Figure~\ref{fig:sub:Pi} shows the values of the optimised observables, $P_{i}^{(\prime)}$, obtained from the fit. 
+The data are compared to predictions based on the prescription in Ref.~\cite{Descotes-Genon:2014uoa}. These predictions use form factors from Ref.~\cite{Khodjamirian:2010vf}. 
+The values of the observables in the standard and optimised basis are given in Tables~\ref{tab:sub:siresults} and \ref{tab:sub:piresults}, respectively. 
+The statistical correlation between the observables in each \qsq bin is provided in Tables~\ref{appendix:likelihood:correlation:average:1}--\ref{appendix:likelihood:correlation:average:10} and Tables~\ref{appendix:likelihood:correlation:optimised:1}--\ref{appendix:likelihood:correlation:optimised:10}. 
+
+
+
+\begin{figure}[!htb]
+    \centering
+    % \includegraphics[width=0.4\linewidth]{figs/Sim/FL.pdf} 
+    % \includegraphics[width=0.4\linewidth]{figs/Sim/AFB.pdf} \\
+    % \includegraphics[width=0.4\linewidth]{figs/Sim/S5.pdf} 
+    \includegraphics[width=0.48\linewidth]{figs/Fig3a.pdf} 
+    \includegraphics[width=0.48\linewidth]{figs/Fig3b.pdf} \\
+    \includegraphics[width=0.48\linewidth]{figs/Fig3c.pdf} 
+    \includegraphics[width=0.48\linewidth]{figs/Fig3d.pdf} \\
+    \includegraphics[width=0.48\linewidth]{figs/Fig3e.pdf}
+    \caption{
+    Results for the \CP-averaged angular observables $S_3$, $S_4$ and $S_7$--$S_9$ in bins of \qsq.
+    The data are compared to SM predictions based on the prescription of Refs.~\cite{Altmannshofer:2014rta, Straub:2015ica}.}
+    \label{fig:sub:Si}
+\end{figure}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.48\linewidth]{figs/Fig4a.pdf} 
+    \includegraphics[width=0.48\linewidth]{figs/Fig4b.pdf} %\\
+    \includegraphics[width=0.48\linewidth]{figs/Fig4c.pdf} 
+    \includegraphics[width=0.48\linewidth]{figs/Fig4d.pdf} \\
+    \includegraphics[width=0.48\linewidth]{figs/Fig4e.pdf} 
+    \includegraphics[width=0.48\linewidth]{figs/Fig4f.pdf} \\
+    \caption{
+    Results for the optimised angular observables $P_{1}$--$P_{3}$, $P_{4}'$, $P_{6}'$ and $P_{8}'$ in bins of \qsq. 
+    The data are compared to SM predictions based on Refs.~\cite{Descotes-Genon:2014uoa, Khodjamirian:2010vf}.
+    }
+    \label{fig:sub:Pi}
+\end{figure}
+
+\clearpage
+
+%\vspace{-2cm}
+\begin{table}[h]
+\caption{Results for the \CP-averaged observables $F_{\rm L}$, $A_{\rm FB}$ and $S_3$--$S_9$. The first uncertainties are statistical and the second systematic.\label{tab:sub:siresults}}
+\begin{center}\footnotesize
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$0.10 < q^{2} < 0.98 \gevgevcccc$}\\ \hline
+$F_{\rm L}$ & $0.255\pm0.032\pm0.007$\\
+$S_{3}$ & $0.034\pm0.044\pm0.003$\\
+$S_{4}$ & $0.059\pm0.050\pm0.004$\\
+$S_{5}$ & $0.227\pm0.041\pm0.008$\\
+$A_{\rm FB}$ & $-0.004\pm0.040\pm0.004$\\
+$S_{7}$ & $0.006\pm0.042\pm0.002$\\
+$S_{8}$ & $-0.003\pm0.051\pm0.001$\\
+$S_{9}$ & $-0.055\pm0.041\pm0.002$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$1.1 < q^{2} < 2.5 \gevgevcccc$}\\ \hline
+$F_{\rm L}$ & $0.655\pm0.046\pm0.017$\\
+$S_{3}$ & $-0.107\pm0.052\pm0.003$\\
+$S_{4}$ & $-0.038\pm0.070\pm0.011$\\
+$S_{5}$ & $0.174\pm0.060\pm0.007$\\
+$A_{\rm FB}$ & $-0.229\pm0.046\pm0.009$\\
+$S_{7}$ & $-0.107\pm0.063\pm0.004$\\
+$S_{8}$ & $-0.174\pm0.075\pm0.002$\\
+$S_{9}$ & $-0.112\pm0.054\pm0.005$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$2.5 < q^{2} < 4.0 \gevgevcccc$}\\ \hline
+$F_{\rm L}$ & $0.756\pm0.047\pm0.023$\\
+$S_{3}$ & $0.020\pm0.053\pm0.002$\\
+$S_{4}$ & $-0.187\pm0.074\pm0.008$\\
+$S_{5}$ & $-0.064\pm0.068\pm0.010$\\
+$A_{\rm FB}$ & $-0.070\pm0.043\pm0.006$\\
+$S_{7}$ & $-0.066\pm0.065\pm0.004$\\
+$S_{8}$ & $0.016\pm0.074\pm0.002$\\
+$S_{9}$ & $-0.012\pm0.055\pm0.003$\\
+\end{tabular}\\[0.6em]
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$4.0 < q^{2} < 6.0 \gevgevcccc$}\\ \hline
+$F_{\rm L}$ & $0.684\pm0.035\pm0.015$\\
+$S_{3}$ & $0.014\pm0.038\pm0.003$\\
+$S_{4}$ & $-0.145\pm0.057\pm0.004$\\
+$S_{5}$ & $-0.204\pm0.051\pm0.013$\\
+$A_{\rm FB}$ & $0.050\pm0.033\pm0.002$\\
+$S_{7}$ & $-0.136\pm0.053\pm0.002$\\
+$S_{8}$ & $0.077\pm0.062\pm0.001$\\
+$S_{9}$ & $0.029\pm0.045\pm0.002$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$6.0 < q^{2} < 8.0 \gevgevcccc$}\\ \hline
+$F_{\rm L}$ & $0.645\pm0.030\pm0.011$\\
+$S_{3}$ & $-0.013\pm0.038\pm0.004$\\
+$S_{4}$ & $-0.275\pm0.045\pm0.006$\\
+$S_{5}$ & $-0.279\pm0.043\pm0.013$\\
+$A_{\rm FB}$ & $0.110\pm0.027\pm0.005$\\
+$S_{7}$ & $-0.074\pm0.046\pm0.003$\\
+$S_{8}$ & $-0.062\pm0.047\pm0.001$\\
+$S_{9}$ & $0.024\pm0.035\pm0.002$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$11.0 < q^{2} < 12.5 \gevgevcccc$}\\ \hline
+$F_{\rm L}$ & $0.461\pm0.031\pm0.010$\\
+$S_{3}$ & $-0.124\pm0.037\pm0.003$\\
+$S_{4}$ & $-0.245\pm0.047\pm0.007$\\
+$S_{5}$ & $-0.310\pm0.043\pm0.011$\\
+$A_{\rm FB}$ & $0.333\pm0.030\pm0.008$\\
+$S_{7}$ & $-0.096\pm0.050\pm0.003$\\
+$S_{8}$ & $0.009\pm0.049\pm0.001$\\
+$S_{9}$ & $0.042\pm0.040\pm0.003$\\
+\end{tabular}\\[0.6em]
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$15.0 < q^{2} < 17.0 \gevgevcccc$}\\ \hline
+$F_{\rm L}$ & $0.352\pm0.026\pm0.009$\\
+$S_{3}$ & $-0.166\pm0.034\pm0.007$\\
+$S_{4}$ & $-0.299\pm0.033\pm0.008$\\
+$S_{5}$ & $-0.341\pm0.034\pm0.009$\\
+$A_{\rm FB}$ & $0.385\pm0.024\pm0.007$\\
+$S_{7}$ & $0.029\pm0.039\pm0.001$\\
+$S_{8}$ & $0.003\pm0.042\pm0.002$\\
+$S_{9}$ & $0.000\pm0.037\pm0.002$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$17.0 < q^{2} < 19.0 \gevgevcccc$}\\ \hline
+$F_{\rm L}$ & $0.344\pm0.032\pm0.025$\\
+$S_{3}$ & $-0.250\pm0.050\pm0.025$\\
+$S_{4}$ & $-0.307\pm0.041\pm0.008$\\
+$S_{5}$ & $-0.280\pm0.040\pm0.014$\\
+$A_{\rm FB}$ & $0.323\pm0.032\pm0.019$\\
+$S_{7}$ & $0.049\pm0.049\pm0.007$\\
+$S_{8}$ & $-0.026\pm0.046\pm0.002$\\
+$S_{9}$ & $-0.056\pm0.045\pm0.002$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$1.1 < q^{2} < 6.0 \gevgevcccc$}\\ \hline
+$F_{\rm L}$ & $0.700\pm0.025\pm0.013$\\
+$S_{3}$ & $-0.012\pm0.025\pm0.003$\\
+$S_{4}$ & $-0.136\pm0.039\pm0.003$\\
+$S_{5}$ & $-0.052\pm0.034\pm0.007$\\
+$A_{\rm FB}$ & $-0.073\pm0.021\pm0.002$\\
+$S_{7}$ & $-0.090\pm0.034\pm0.002$\\
+$S_{8}$ & $-0.009\pm0.037\pm0.002$\\
+$S_{9}$ & $-0.025\pm0.026\pm0.002$\\
+\end{tabular}\\[0.6em]
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$15.0 < q^{2} < 19.0 \gevgevcccc$}\\ \hline
+$F_{\rm L}$ & $0.345\pm0.020\pm0.007$\\
+$S_{3}$ & $-0.189\pm0.030\pm0.009$\\
+$S_{4}$ & $-0.303\pm0.024\pm0.008$\\
+$S_{5}$ & $-0.317\pm0.024\pm0.011$\\
+$A_{\rm FB}$ & $0.353\pm0.020\pm0.010$\\
+$S_{7}$ & $0.035\pm0.030\pm0.003$\\
+$S_{8}$ & $0.005\pm0.031\pm0.001$\\
+$S_{9}$ & $-0.031\pm0.029\pm0.001$\\
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+\begin{table}
+\caption{Results for the optimised observables $P_i^{(\prime)}$. The first uncertainties are statistical and the second systematic.\label{tab:sub:piresults}}
+\begin{center}\footnotesize
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$0.10 < q^{2} < 0.98 \gevgevcccc$}\\ \hline
+$P_{1}$ & $0.090\pm0.119\pm0.009$\\
+$P_{2}$ & $-0.003\pm0.038\pm0.003$\\
+$P_{3}$ & $0.073\pm0.057\pm0.003$\\
+$P_{4}'$ & $0.135\pm0.118\pm0.010$\\
+$P_{5}'$ & $0.521\pm0.095\pm0.024$\\
+$P_{6}'$ & $0.015\pm0.094\pm0.007$\\
+$P_{8}'$ & $-0.007\pm0.122\pm0.002$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$1.1 < q^{2} < 2.5 \gevgevcccc$}\\ \hline
+$P_{1}$ & $-0.617\pm0.296\pm0.023$\\
+$P_{2}$ & $-0.443\pm0.100\pm0.027$\\
+$P_{3}$ & $0.324\pm0.147\pm0.014$\\
+$P_{4}'$ & $-0.080\pm0.142\pm0.019$\\
+$P_{5}'$ & $0.365\pm0.122\pm0.013$\\
+$P_{6}'$ & $-0.226\pm0.128\pm0.005$\\
+$P_{8}'$ & $-0.366\pm0.158\pm0.005$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$2.5 < q^{2} < 4.0 \gevgevcccc$}\\ \hline
+$P_{1}$ & $0.168\pm0.371\pm0.043$\\
+$P_{2}$ & $-0.191\pm0.116\pm0.043$\\
+$P_{3}$ & $0.049\pm0.195\pm0.014$\\
+$P_{4}'$ & $-0.435\pm0.169\pm0.035$\\
+$P_{5}'$ & $-0.150\pm0.144\pm0.032$\\
+$P_{6}'$ & $-0.155\pm0.148\pm0.024$\\
+$P_{8}'$ & $0.037\pm0.169\pm0.007$\\
+\end{tabular} \\[0.6em]
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$4.0 < q^{2} < 6.0 \gevgevcccc$}\\ \hline
+$P_{1}$ & $0.088\pm0.235\pm0.029$\\
+$P_{2}$ & $0.105\pm0.068\pm0.009$\\
+$P_{3}$ & $-0.090\pm0.139\pm0.006$\\
+$P_{4}'$ & $-0.312\pm0.115\pm0.013$\\
+$P_{5}'$ & $-0.439\pm0.111\pm0.036$\\
+$P_{6}'$ & $-0.293\pm0.117\pm0.004$\\
+$P_{8}'$ & $0.166\pm0.127\pm0.004$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$6.0 < q^{2} < 8.0 \gevgevcccc$}\\ \hline
+$P_{1}$ & $-0.071\pm0.211\pm0.020$\\
+$P_{2}$ & $0.207\pm0.048\pm0.013$\\
+$P_{3}$ & $-0.068\pm0.104\pm0.007$\\
+$P_{4}'$ & $-0.574\pm0.091\pm0.018$\\
+$P_{5}'$ & $-0.583\pm0.090\pm0.030$\\
+$P_{6}'$ & $-0.155\pm0.098\pm0.009$\\
+$P_{8}'$ & $-0.129\pm0.098\pm0.005$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$11.0 < q^{2} < 12.5 \gevgevcccc$}\\ \hline
+$P_{1}$ & $-0.460\pm0.132\pm0.015$\\
+$P_{2}$ & $0.411\pm0.033\pm0.008$\\
+$P_{3}$ & $-0.078\pm0.077\pm0.007$\\
+$P_{4}'$ & $-0.491\pm0.095\pm0.013$\\
+$P_{5}'$ & $-0.622\pm0.088\pm0.017$\\
+$P_{6}'$ & $-0.193\pm0.100\pm0.003$\\
+$P_{8}'$ & $0.018\pm0.099\pm0.009$\\
+\end{tabular} \\[0.6em]
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$15.0 < q^{2} < 17.0 \gevgevcccc$}\\ \hline
+$P_{1}$ & $-0.511\pm0.096\pm0.020$\\
+$P_{2}$ & $0.396\pm0.022\pm0.004$\\
+$P_{3}$ & $-0.000\pm0.056\pm0.003$\\
+$P_{4}'$ & $-0.626\pm0.069\pm0.018$\\
+$P_{5}'$ & $-0.714\pm0.074\pm0.021$\\
+$P_{6}'$ & $0.061\pm0.085\pm0.003$\\
+$P_{8}'$ & $0.007\pm0.086\pm0.002$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$17.0 < q^{2} < 19.0 \gevgevcccc$}\\ \hline
+$P_{1}$ & $-0.763\pm0.152\pm0.094$\\
+$P_{2}$ & $0.328\pm0.032\pm0.017$\\
+$P_{3}$ & $0.085\pm0.068\pm0.004$\\
+$P_{4}'$ & $-0.647\pm0.086\pm0.057$\\
+$P_{5}'$ & $-0.590\pm0.084\pm0.059$\\
+$P_{6}'$ & $0.103\pm0.105\pm0.016$\\
+$P_{8}'$ & $-0.055\pm0.099\pm0.006$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$1.1 < q^{2} < 6.0 \gevgevcccc$}\\ \hline
+$P_{1}$ & $-0.079\pm0.159\pm0.021$\\
+$P_{2}$ & $-0.162\pm0.050\pm0.012$\\
+$P_{3}$ & $0.085\pm0.090\pm0.005$\\
+$P_{4}'$ & $-0.298\pm0.087\pm0.016$\\
+$P_{5}'$ & $-0.114\pm0.068\pm0.026$\\
+$P_{6}'$ & $-0.197\pm0.075\pm0.009$\\
+$P_{8}'$ & $-0.020\pm0.089\pm0.009$\\
+\end{tabular} \\[0.6em]
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$15.0 < q^{2} < 19.0 \gevgevcccc$}\\ \hline
+$P_{1}$ & $-0.577\pm0.090\pm0.031$\\
+$P_{2}$ & $0.359\pm0.018\pm0.009$\\
+$P_{3}$ & $0.048\pm0.045\pm0.002$\\
+$P_{4}'$ & $-0.638\pm0.055\pm0.020$\\
+$P_{5}'$ & $-0.667\pm0.053\pm0.029$\\
+$P_{6}'$ & $0.073\pm0.067\pm0.006$\\
+$P_{8}'$ & $0.011\pm0.069\pm0.003$\\
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\clearpage
+\section{Systematic uncertainties}
+\label{sec:supp:sys}
+A summary of the sources of systematic uncertainty on the angular observables is shown in Table~\ref{tab:systematics}. Details of how the systematic uncertainties are estimated are given in the letter. The dominant systematic uncertainties arise from the peaking backgrounds that are neglected in the analysis (\emph{peaking backgrounds} in Table~\ref{tab:systematics}) and, for the narrow \qsq bins, from
+the uncertainty associated with evaluating the acceptance at a fixed point in \qsq (\emph{acceptance variation with $q^2$} in Table~\ref{tab:systematics}). The \emph{bias correction} in Table~\ref{tab:systematics} refers to the biases observed when generating pseudoexperiments using the result of the best fit to data, as discussed in the letter. The systematic uncertainty associated with the \emph{background model} is calculated by increasing the polynomial order to four. 
+
+\begin{table}[ht]
+\caption{Summary of the different sources of systematic uncertainty on the angular observables.
+%Upper limits are quoted for the different groups of observables. 
+\label{tab:systematics}}
+\begin{center}
+\scalebox{1.00}{
+\setlength\extrarowheight{2pt}
+\begin{tabular}{r|ccccc}
+Source                                 & $F_{\rm L}$     & $A_{\rm FB}$, $S_3$--$S_9$  & $P^{}_1$--$P'_{8}$     \\
+\hline
+Acceptance stat. uncertainty           & $<0.01$         & $<0.01$       &   $<0.01$                                 \\
+Acceptance polynomial order            &   $<0.01$       & $<0.01$       &   $<0.02$               \\
+Data-simulation differences            & $<0.01$  & $<0.01$              &  $<0.01$                            \\
+Acceptance variation with $q^2$        & $<0.03$         & $<0.03$       &   $<0.09$                         \\
+$m(\Kp\pim)$ model                     & $<0.01$         & $<0.01$       &    $<0.02$                    \\
+Background model                       & $<0.01$         & $<0.01$       &  $<0.03 $                \\
+Peaking backgrounds                    & $<0.02$         & $<0.02 $       &   $<0.03$                    \\
+$m(\Kp\pim\mumu)$ model                & $<0.01$         & $<0.01$       &    $<0.02 $                    \\
+\Kp\mumu veto                & $<0.01$         & $<0.01$       &    $<0.01$                    \\
+Trigger                & $<0.01$         & $<0.01$       &    $<0.01$                    \\
+Bias correction               & $<0.02$         & $<0.02 $       &    $<0.04$                    \\
+\end{tabular}
+
+}
+
+\end{center}
+\end{table}
+
+\clearpage
+\section[Correlation matrices for the CP-averaged observables]{Correlation matrices for the \boldmath{\CP}-averaged observables} 
+\label{sec:appendix:likelihood:correlation}
+
+Correlation matrices between the \CP-averaged observables in the different \qsq bins are provided in Tables~\ref{appendix:likelihood:correlation:average:1}--\ref{appendix:likelihood:correlation:average:10}.  The different $q^2$ bins are statistically independent.
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the \CP-averaged observables from the maximum-likelihood fit in the bin $0.10<q^2<0.98\gevgevcccc$. 
+\label{appendix:likelihood:correlation:average:1}
+}
+\centering 
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $S_{3}$ & $S_{4}$ & $S_{5}$ & $A_{\rm FB}$ & $S_{7}$ & $S_{8}$ & $S_{9}$\\ \hline
+                   $F_{\rm L}$ &  1.00 & $-0.00$ & $-0.03$ &  0.09 &  0.03 & $-0.01$ &  0.06 &  0.03 \\ 
+                   $S_{3}$ &       &  1.00 &  0.02 &  0.14 &  0.02 & $-0.06$ &  0.01 & $-0.01$ \\ 
+                   $S_{4}$ &       &       &  1.00 &  0.06 &  0.15 & $-0.03$ &  0.06 &  0.00 \\ 
+                   $S_{5}$ &       &       &       &  1.00 &  0.04 & $-0.03$ & $-0.01$ &  0.00 \\ 
+                   $A_{\rm FB}$ &       &       &       &       &  1.00 & $-0.02$ & $-0.01$ & $-0.02$ \\ 
+                   $S_{7}$ &       &       &       &       &       &  1.00 & $-0.04$ &  0.10 \\ 
+                   $S_{8}$ &       &       &       &       &       &       &  1.00 &  0.02 \\ 
+                   $S_{9}$ &       &       &       &       &       &       &       &  1.00 \\ 
+\end{tabular}
+\end{table} 
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the \CP-averaged observables from the maximum-likelihood fit in the bin $1.1<q^2<2.5\gevgevcccc$. 
+\label{appendix:likelihood:correlation:average:2}
+}
+\centering 
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $S_{3}$ & $S_{4}$ & $S_{5}$ & $A_{\rm FB}$ & $S_{7}$ & $S_{8}$ & $S_{9}$\\ \hline
+$                   F_{\rm L}$ & 1.00  & 0.05  & 0.04  & 0.16  & 0.11  & $-0.08$ & $-0.06$ & 0.05  \\ 
+$                   S_{3}$ &       & 1.00  & 0.00  & 0.04  & 0.05  & 0.08  & 0.08  & 0.18  \\ 
+$                   S_{4}$ &       &       & 1.00  & $-0.20$ & $-0.01$ & 0.02  & $-0.09$ & $-0.07$ \\ 
+$                   S_{5}$ &       &       &       & 1.00  & $-0.09$ & $-0.11$ & $-0.02$ & $-0.12$ \\ 
+$                   A_{\rm FB}$ &       &       &       &       & 1.00  & $-0.03$ & 0.08  & $-0.04$ \\ 
+$                   S_{7}$ &       &       &       &       &       & 1.00  & $-0.16$ & 0.14  \\ 
+$                   S_{8}$ &       &       &       &       &       &       & 1.00  & $-0.04$ \\ 
+$                   S_{9}$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the \CP-averaged observables from the maximum-likelihood fit in the bin $2.5<q^2<4.0\gevgevcccc$.
+\label{appendix:likelihood:correlation:average:3}
+}
+\centering 
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $S_{3}$ & $S_{4}$ & $S_{5}$ & $A_{\rm FB}$ & $S_{7}$ & $S_{8}$ & $S_{9}$\\ \hline
+$                   F_{\rm L}$ & 1.00  & $-0.02$ & $-0.03$ & $-0.02$ & $-0.03$ & $-0.01$ & $-0.08$ & 0.06  \\ 
+$                   S_{3}$ &       & 1.00  & $-0.05$ & $-0.03$ & 0.05  & 0.02  & $-0.07$ & 0.02  \\ 
+$                   S_{4}$ &       &       & 1.00  & $-0.13$ & $-0.10$ & 0.01  & 0.03  & $-0.03$ \\ 
+$                   S_{5}$ &       &       &       & 1.00  & $-0.08$ & 0.01  & 0.02  & 0.03  \\ 
+$                   A_{\rm FB}$ &       &       &       &       & 1.00  & 0.06  & $-0.05$ & $-0.08$ \\ 
+$                   S_{7}$ &       &       &       &       &       & 1.00  & 0.01  & 0.03  \\ 
+$                   S_{8}$ &       &       &       &       &       &       & 1.00  & $-0.08$ \\ 
+$                   S_{9}$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the \CP-averaged observables from the maximum-likelihood fit in the bin $4.0 <q^2< 6.0\gevgevcccc$.
+\label{appendix:likelihood:correlation:average:4}
+}
+\centering 
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $S_{3}$ & $S_{4}$ & $S_{5}$ & $A_{\rm FB}$ & $S_{7}$ & $S_{8}$ & $S_{9}$\\ \hline
+$                   F_{\rm L}$ & 1.00  & $-0.01$ & 0.05  & $-0.02$ & $-0.14$ & $-0.10$ & 0.09  & 0.04  \\ 
+$                   S_{3}$ &       & 1.00  & $-0.06$ & $-0.10$ & 0.06  & $-0.02$ & 0.02  & $-0.08$ \\ 
+$                   S_{4}$ &       &       & 1.00  & 0.01  & $-0.14$ & 0.03  & 0.02  & 0.01  \\ 
+$                   S_{5}$ &       &       &       & 1.00  & $-0.08$ & 0.07  & 0.02  & $-0.05$ \\ 
+$                   A_{\rm FB}$ &       &       &       &       & 1.00  & $-0.01$ & $-0.03$ & 0.01  \\ 
+$                   S_{7}$ &       &       &       &       &       & 1.00  & 0.03  & $-0.18$ \\ 
+$                   S_{8}$ &       &       &       &       &       &       & 1.00  & $-0.00$ \\ 
+$                   S_{9}$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the \CP-averaged observables from the maximum-likelihood fit in the bin $6.0<q^2<8.0\gevgevcccc$.
+\label{appendix:likelihood:correlation:average:5}
+}
+\centering 
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $S_{3}$ & $S_{4}$ & $S_{5}$ & $A_{\rm FB}$ & $S_{7}$ & $S_{8}$ & $S_{9}$\\ \hline
+$                   F_{\rm L}$ & 1.00  & 0.00  & $-0.01$ & $-0.06$ & $-0.20$ & $-0.05$ & 0.00  & $-0.06$ \\ 
+$                   S_{3}$ &       & 1.00  & $-0.12$ & $-0.24$ & 0.01  & 0.05  & 0.04  & $-0.10$ \\ 
+$                   S_{4}$ &       &       & 1.00  & 0.13  & $-0.10$ & 0.02  & $-0.04$ & $-0.04$ \\ 
+$                   S_{5}$ &       &       &       & 1.00  & $-0.16$ & $-0.01$ & 0.02  & $-0.06$ \\ 
+$                   A_{\rm FB}$ &       &       &       &       & 1.00  & $-0.03$ & 0.02  & 0.02  \\ 
+$                   S_{7}$ &       &       &       &       &       & 1.00  & 0.08  & $-0.09$ \\ 
+$                   S_{8}$ &       &       &       &       &       &       & 1.00  & $-0.08$ \\ 
+$                   S_{9}$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the \CP-averaged observables from the maximum-likelihood fit in the bin $11.0 <q^2< 12.5 \gevgevcccc$.
+\label{appendix:likelihood:correlation:average:6}
+}
+\centering 
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $S_{3}$ & $S_{4}$ & $S_{5}$ & $A_{\rm FB}$ & $S_{7}$ & $S_{8}$ & $S_{9}$\\ \hline
+$                   F_{\rm L}$ & 1.00  & 0.14  & 0.02  & $-0.09$ & $-0.56$ & 0.02  & 0.01  & 0.01  \\ 
+$                   S_{3}$ &       & 1.00  & 0.08  & $-0.08$ & $-0.15$ & 0.02  & 0.06  & $-0.10$ \\ 
+$                   S_{4}$ &       &       & 1.00  & 0.08  & $-0.12$ & 0.03  & $-0.02$ & $-0.02$ \\ 
+$                   S_{5}$ &       &       &       & 1.00  & $-0.13$ & 0.03  & $-0.00$ & $-0.17$ \\ 
+$                   A_{\rm FB}$ &       &       &       &       & 1.00  & $-0.05$ & $-0.10$ & 0.12  \\ 
+$                   S_{7}$ &       &       &       &       &       & 1.00  & 0.27  & $-0.10$ \\ 
+$                   S_{8}$ &       &       &       &       &       &       & 1.00  & $-0.01$ \\ 
+$                   S_{9}$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the \CP-averaged observables from the maximum-likelihood fit in the bin $15.0 <q^2< 17.0 \gevgevcccc$.
+\label{appendix:likelihood:correlation:average:7}
+}
+\centering 
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $S_{3}$ & $S_{4}$ & $S_{5}$ & $A_{\rm FB}$ & $S_{7}$ & $S_{8}$ & $S_{9}$\\ \hline
+$                   F_{\rm L}$ & 1.00  & 0.27  & 0.02  & 0.07  & $-0.53$ & 0.00  & $-0.04$ & 0.06  \\ 
+$                   S_{3}$ &       & 1.00  & $-0.05$ & 0.01  & $-0.12$ & $-0.02$ & $-0.04$ & 0.10  \\ 
+$                   S_{4}$ &       &       & 1.00  & 0.29  & $-0.15$ & 0.02  & 0.06  & 0.03  \\ 
+$                   S_{5}$ &       &       &       & 1.00  & $-0.28$ & 0.06  & 0.03  & 0.04  \\ 
+$                   A_{\rm FB}$ &       &       &       &       & 1.00  & 0.01  & $-0.00$ & 0.01  \\ 
+$                   S_{7}$ &       &       &       &       &       & 1.00  & 0.31  & $-0.23$ \\ 
+$                   S_{8}$ &       &       &       &       &       &       & 1.00  & $-0.13$ \\ 
+$                   S_{9}$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the \CP-averaged observables from the maximum-likelihood fit in the bin $17.0 <q^2< 19.0\gevgevcccc$.
+\label{appendix:likelihood:correlation:average:8}
+}
+\centering 
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $S_{3}$ & $S_{4}$ & $S_{5}$ & $A_{\rm FB}$ & $S_{7}$ & $S_{8}$ & $S_{9}$\\ \hline
+$                   F_{\rm L}$ & 1.00  & 0.14  & 0.06  & 0.00  & $-0.35$ & 0.02  & $-0.02$ & 0.08  \\ 
+$                   S_{3}$ &       & 1.00  & $-0.04$ & $-0.15$ & $-0.12$ & $-0.04$ & 0.03  & $-0.04$ \\ 
+$                   S_{4}$ &       &       & 1.00  & 0.25  & $-0.14$ & $-0.10$ & 0.08  & 0.02  \\ 
+$                   S_{5}$ &       &       &       & 1.00  & $-0.25$ & $-0.07$ & $-0.08$ & 0.05  \\ 
+$                   A_{\rm FB}$ &       &       &       &       & 1.00  & $-0.00$ & $-0.03$ & $-0.09$ \\ 
+$                   S_{7}$ &       &       &       &       &       & 1.00  & 0.33  & $-0.09$ \\ 
+$                   S_{8}$ &       &       &       &       &       &       & 1.00  & $-0.13$ \\ 
+$                   S_{9}$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the \CP-averaged observables from the maximum-likelihood fit in the bin $1.1 <q^2< 6.0\gevgevcccc$.
+\label{appendix:likelihood:correlation:average:9}
+}
+\centering 
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $S_{3}$ & $S_{4}$ & $S_{5}$ & $A_{\rm FB}$ & $S_{7}$ & $S_{8}$ & $S_{9}$\\ \hline
+$                   F_{\rm L}$ & 1.00  & $-0.01$ & $-0.02$ & 0.00  & 0.01  & $-0.08$ & 0.02  & 0.03  \\ 
+$                   S_{3}$ &       & 1.00  & $-0.04$ & $-0.01$ & 0.04  & 0.03  & 0.00  & $-0.02$ \\ 
+$                   S_{4}$ &       &       & 1.00  & $-0.07$ & $-0.09$ & 0.01  & 0.01  & $-0.03$ \\ 
+$                   S_{5}$ &       &       &       & 1.00  & $-0.07$ & 0.00  & 0.01  & $-0.04$ \\ 
+$                   A_{\rm FB}$ &       &       &       &       & 1.00  & $-0.01$ & $-0.03$ & $-0.03$ \\ 
+$                   S_{7}$ &       &       &       &       &       & 1.00  & $-0.02$ & $-0.04$ \\ 
+$                   S_{8}$ &       &       &       &       &       &       & 1.00  & $-0.08$ \\ 
+$                   S_{9}$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the \CP-averaged observables from the maximum-likelihood fit in the bin $15.0 <q^2< 19.0\gevgevcccc$.
+\label{appendix:likelihood:correlation:average:10}
+}
+\centering 
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $S_{3}$ & $S_{4}$ & $S_{5}$ & $A_{\rm FB}$ & $S_{7}$ & $S_{8}$ & $S_{9}$\\ \hline
+$                   F_{\rm L}$ & 1.00  & 0.18  & $-0.06$ & $-0.07$ & $-0.37$ & 0.00  & $-0.03$ & 0.07  \\ 
+$                   S_{3}$ &       & 1.00  & $-0.04$ & $-0.03$ & $-0.07$ & $-0.00$ & $-0.04$ & 0.02  \\ 
+$                   S_{4}$ &       &       & 1.00  & 0.21  & $-0.13$ & $-0.03$ & 0.04  & 0.06  \\ 
+$                   S_{5}$ &       &       &       & 1.00  & $-0.23$ & 0.02  & $-0.01$ & 0.04  \\ 
+$                   A_{\rm FB}$ &       &       &       &       & 1.00  & 0.03  & $-0.01$ & 0.00  \\ 
+$                   S_{7}$ &       &       &       &       &       & 1.00  & 0.28  & $-0.18$ \\ 
+$                   S_{8}$ &       &       &       &       &       &       & 1.00  & $-0.14$ \\ 
+$                   S_{9}$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+\clearpage
+
+
+\section{Correlation matrices for the optimised angular observables} 
+\label{sec:appendix:correlation:optimised}
+
+Correlation matrices between the optimised $P^{(\prime)}_{i}$ basis of observables in the different \qsq bins are provided in Tables~\ref{appendix:likelihood:correlation:optimised:1}--\ref{appendix:likelihood:correlation:optimised:10}.
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the optimised angular observables from the maximum-likelihood fit in the bin $0.10<q^2<0.98 \gevgevcccc$. 
+\label{appendix:likelihood:correlation:optimised:1}
+}
+\centering
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $P_{1}$ & $P_{2}$ & $P_{3}$ & $P_{4}'$ & $P_{5}'$ & $P_{6}'$ & $P_{8}'$\\ \hline
+                   $F_{\rm L}$ &  1.00 &  0.03 &  0.02 &  0.03 & $-0.08$ & $-0.13$ & $-0.02$ &  0.06 \\ 
+                   $P_{1}$ &       &  1.00 &  0.02 &  0.01 &  0.02 &  0.14 & $-0.06$ &  0.01 \\ 
+                   $P_{2}$ &       &       &  1.00 &  0.02 &  0.14 &  0.03 & $-0.02$ & $-0.01$ \\ 
+                   $P_{3}$ &       &       &       &  1.00 & $-0.01$ & $-0.00$ & $-0.10$ & $-0.02$ \\ 
+                   $P_{4}'$ &       &       &       &       &  1.00 &  0.07 & $-0.03$ &  0.06 \\ 
+                   $P_{5}'$ &       &       &       &       &       &  1.00 & $-0.03$ & $-0.02$ \\ 
+                   $P_{6}'$ &       &       &       &       &       &       &  1.00 & $-0.04$ \\ 
+                   $P_{8}'$ &       &       &       &       &       &       &       &  1.00 \\ 
+\end{tabular}
+\end{table}
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the optimised angular observables from the maximum-likelihood fit in the bin $1.1<q^2<2.5 \gevgevcccc$. 
+\label{appendix:likelihood:correlation:optimised:2}
+}
+\centering
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $P_{1}$ & $P_{2}$ & $P_{3}$ & $P_{4}'$ & $P_{5}'$ & $P_{6}'$ & $P_{8}'$\\ \hline
+$                   F_{\rm L}$ & 1.00  & $-0.23$ & $-0.51$ & 0.26  & 0.03  & 0.24  & $-0.13$ & $-0.13$ \\ 
+$                   P_{1}$ &       & 1.00  & 0.15  & $-0.23$ & $-0.00$ & $-0.02$ & 0.11  & 0.11  \\ 
+$                   P_{2}$ &       &       & 1.00  & $-0.09$ & $-0.03$ & $-0.22$ & 0.05  & 0.14  \\ 
+$                   P_{3}$ &       &       &       & 1.00  & 0.07  & 0.19  & $-0.17$ & $-0.00$ \\ 
+$                   P_{4}'$ &       &       &       &       & 1.00  & $-0.20$ & 0.02  & $-0.09$ \\ 
+$                   P_{5}'$ &       &       &       &       &       & 1.00  & $-0.12$ & $-0.04$ \\ 
+$                   P_{6}'$ &       &       &       &       &       &       & 1.00  & $-0.14$ \\ 
+$                   P_{8}'$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the optimised angular observables from the maximum-likelihood fit in the bin $2.5<q^2<4.0 \gevgevcccc$. 
+\label{appendix:likelihood:correlation:optimised:3}
+}
+\centering
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $P_{1}$ & $P_{2}$ & $P_{3}$ & $P_{4}'$ & $P_{5}'$ & $P_{6}'$ & $P_{8}'$\\ \hline
+$                   F_{\rm L}$ & 1.00  & 0.08  & $-0.34$ & 0.01  & $-0.21$ & $-0.09$ & $-0.08$ & $-0.06$ \\ 
+$                   P_{1}$ &       & 1.00  & 0.02  & $-0.02$ & $-0.07$ & $-0.03$ & 0.00  & $-0.08$ \\ 
+$                   P_{2}$ &       &       & 1.00  & 0.07  & $-0.02$ & $-0.05$ & 0.08  & $-0.03$ \\ 
+$                   P_{3}$ &       &       &       & 1.00  & 0.02  & $-0.04$ & $-0.04$ & 0.07  \\ 
+$                   P_{4}'$ &       &       &       &       & 1.00  & $-0.10$ & 0.02  & 0.04  \\ 
+$                   P_{5}'$ &       &       &       &       &       & 1.00  & 0.01  & 0.02  \\ 
+$                   P_{6}'$ &       &       &       &       &       &       & 1.00  & 0.01  \\ 
+$                   P_{8}'$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the optimised angular observables from the maximum-likelihood fit in the bin $4.0 <q^2< 6.0 \gevgevcccc$. 
+\label{appendix:likelihood:correlation:optimised:4}
+}
+\centering
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $P_{1}$ & $P_{2}$ & $P_{3}$ & $P_{4}'$ & $P_{5}'$ & $P_{6}'$ & $P_{8}'$\\ \hline
+$                   F_{\rm L}$ & 1.00  & 0.04  & 0.05  & $-0.10$ & $-0.04$ & $-0.14$ & $-0.17$ & 0.14  \\ 
+$                   P_{1}$ &       & 1.00  & 0.06  & 0.07  & $-0.06$ & $-0.10$ & $-0.03$ & 0.02  \\ 
+$                   P_{2}$ &       &       & 1.00  & $-0.02$ & $-0.14$ & $-0.09$ & $-0.03$ & $-0.01$ \\ 
+$                   P_{3}$ &       &       &       & 1.00  & $-0.01$ & 0.07  & 0.19  & $-0.01$ \\ 
+$                   P_{4}'$ &       &       &       &       & 1.00  & 0.02  & 0.04  & 0.01  \\ 
+$                   P_{5}'$ &       &       &       &       &       & 1.00  & 0.09  & 0.00  \\ 
+$                   P_{6}'$ &       &       &       &       &       &       & 1.00  & 0.02  \\ 
+$                   P_{8}'$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table} 
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the optimised angular observables from the maximum-likelihood fit in the bin $6.0 <q^2< 8.0 \gevgevcccc$. 
+\label{appendix:likelihood:correlation:optimised:5}
+}
+\centering
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $P_{1}$ & $P_{2}$ & $P_{3}$ & $P_{4}'$ & $P_{5}'$ & $P_{6}'$ & $P_{8}'$\\ \hline
+$                   F_{\rm L}$ & 1.00  & $-0.02$ & 0.17  & 0.01  & $-0.14$ & $-0.18$ & $-0.08$ & $-0.02$ \\ 
+$                   P_{1}$ &       & 1.00  & 0.01  & 0.10  & $-0.12$ & $-0.23$ & 0.04  & 0.04  \\ 
+$                   P_{2}$ &       &       & 1.00  & $-0.00$ & $-0.13$ & $-0.21$ & $-0.06$ & 0.02  \\ 
+$                   P_{3}$ &       &       &       & 1.00  & 0.03  & 0.06  & 0.09  & 0.08  \\ 
+$                   P_{4}'$ &       &       &       &       & 1.00  & 0.15  & 0.03  & $-0.03$ \\ 
+$                   P_{5}'$ &       &       &       &       &       & 1.00  & 0.00  & 0.02  \\ 
+$                   P_{6}'$ &       &       &       &       &       &       & 1.00  & 0.08  \\ 
+$                   P_{8}'$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the optimised angular observables from the maximum-likelihood fit in the bin $11.0 <q^2< 12.5 \gevgevcccc$. 
+\label{appendix:likelihood:correlation:optimised:6}
+}
+\centering
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $P_{1}$ & $P_{2}$ & $P_{3}$ & $P_{4}'$ & $P_{5}'$ & $P_{6}'$ & $P_{8}'$\\ \hline
+$                   F_{\rm L}$ & 1.00  & $-0.07$ & 0.13  & $-0.07$ & 0.04  & $-0.07$ & 0.03  & 0.00  \\ 
+$                   P_{1}$ &       & 1.00  & $-0.09$ & 0.10  & 0.07  & $-0.06$ & 0.01  & 0.05  \\ 
+$                   P_{2}$ &       &       & 1.00  & $-0.16$ & $-0.12$ & $-0.23$ & $-0.05$ & $-0.11$ \\ 
+$                   P_{3}$ &       &       &       & 1.00  & 0.01  & 0.18  & 0.10  & 0.00  \\ 
+$                   P_{4}'$ &       &       &       &       & 1.00  & 0.08  & 0.03  & $-0.02$ \\ 
+$                   P_{5}'$ &       &       &       &       &       & 1.00  & 0.03  & 0.00  \\ 
+$                   P_{6}'$ &       &       &       &       &       &       & 1.00  & 0.27  \\ 
+$                   P_{8}'$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the optimised angular observables from the maximum-likelihood fit in the bin $15.0 <q^2< 17.0 \gevgevcccc$. 
+\label{appendix:likelihood:correlation:optimised:7}
+}
+\centering
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $P_{1}$ & $P_{2}$ & $P_{3}$ & $P_{4}'$ & $P_{5}'$ & $P_{6}'$ & $P_{8}'$\\ \hline
+$                   F_{\rm L}$ & 1.00  & 0.06  & 0.14  & $-0.06$ & 0.18  & 0.23  & $-0.01$ & $-0.04$ \\ 
+$                   P_{1}$ &       & 1.00  & 0.03  & $-0.09$ & -0.04 & 0.00  & $-0.03$ & $-0.04$ \\ 
+$                   P_{2}$ &       &       & 1.00  & $-0.06$ & $-0.13$ & $-0.25$ & 0.01  & $-0.03$ \\ 
+$                   P_{3}$ &       &       &       & 1.00  & $-0.04$ & $-0.05$ & 0.23  & 0.13  \\ 
+$                   P_{4}'$ &       &       &       &       & 1.00  & 0.32  & 0.02  & 0.06  \\ 
+$                   P_{5}'$ &       &       &       &       &       & 1.00  & 0.06  & 0.03  \\ 
+$                   P_{6}'$ &       &       &       &       &       &       & 1.00  & 0.31  \\ 
+$                   P_{8}'$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the optimised angular observables from the maximum-likelihood fit in the bin $17.0 <q^2< 19.0 \gevgevcccc$. 
+\label{appendix:likelihood:correlation:optimised:8}
+}
+\centering
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $P_{1}$ & $P_{2}$ & $P_{3}$ & $P_{4}'$ & $P_{5}'$ & $P_{6}'$ & $P_{8}'$\\ \hline
+$                   F_{\rm L}$ & 1.00  & $-0.10$ & 0.16  & $-0.01$ & 0.22  & 0.14  & $-0.01$ & $-0.01$ \\ 
+$                   P_{1}$ &       & 1.00  & $-0.10$ & 0.05  & $-0.07$ & $-0.16$ & $-0.05$ & 0.03  \\ 
+$                   P_{2}$ &       &       & 1.00  & 0.06  & $-0.09$ & $-0.23$ & 0.00  & $-0.05$ \\ 
+$                   P_{3}$ &       &       &       & 1.00  & $-0.01$ & $-0.06$ & 0.09  & 0.14  \\ 
+$                   P_{4}'$ &       &       &       &       & 1.00  & 0.27  & $-0.09$ & 0.08  \\ 
+$                   P_{5}'$ &       &       &       &       &       & 1.00  & $-0.07$ & $-0.09$ \\ 
+$                   P_{6}'$ &       &       &       &       &       &       & 1.00  & 0.34  \\ 
+$                   P_{8}'$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the optimised angular observables from the maximum-likelihood fit in the bin $1.1 <q^2< 6.0 \gevgevcccc$. 
+\label{appendix:likelihood:correlation:optimised:9}
+}
+\centering
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $P_{1}$ & $P_{2}$ & $P_{3}$ & $P_{4}'$ & $P_{5}'$ & $P_{6}'$ & $P_{8}'$\\ \hline
+$                   F_{\rm L}$ & 1.00  & $-0.05$ & $-0.33$ & 0.09  & $-0.11$ & $-0.03$ & $-0.14$ & 0.02  \\ 
+$                   P_{1}$ &       & 1.00  & 0.05  & 0.02  & $-0.04$ & $-0.00$ & 0.03  & 0.01  \\ 
+$                   P_{2}$ &       &       & 1.00  & $-0.00$ & $-0.04$ & $-0.06$ & 0.03  & $-0.04$ \\ 
+$                   P_{3}$ &       &       &       & 1.00  & 0.02  & 0.03  & 0.03  & 0.08  \\ 
+$                   P_{4}'$ &       &       &       &       & 1.00  & $-0.06$ & 0.03  & 0.01  \\ 
+$                   P_{5}'$ &       &       &       &       &       & 1.00  & 0.01  & 0.00  \\ 
+$                   P_{6}'$ &       &       &       &       &       &       & 1.00  & $-0.02$ \\ 
+$                   P_{8}'$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular} 
+\end{table}
+
+
+\begin{table}[!htb]
+\caption{
+Correlation matrix for the optimised angular observables from the maximum-likelihood fit in the bin $15.0 <q^2< 19.0 \gevgevcccc$. 
+\label{appendix:likelihood:correlation:optimised:10}
+}
+\centering
+\begin{tabular}{c|rrrrrrrr}
+      & $F_{\rm L}$ & $P_{1}$ & $P_{2}$ & $P_{3}$ & $P_{4}'$ & $P_{5}'$ & $P_{6}'$ & $P_{8}'$\\ \hline
+$                   F_{\rm L}$ & 1.00  & $-0.08$ & 0.19  & $-0.02$ & 0.11  & 0.09  & $-0.01$ & $-0.04$ \\ 
+$                   P_{1}$ &       & 1.00  & $-0.01$ & $-0.00$ & $-0.04$ & $-0.02$ & 0.00  & $-0.04$ \\ 
+$                   P_{2}$ &       &       & 1.00  & $-0.04$ & $-0.14$ & $-0.25$ & 0.03  & $-0.03$ \\ 
+$                   P_{3}$ &       &       &       & 1.00  & $-0.06$ & $-0.04$ & 0.18  & 0.14  \\ 
+$                   P_{4}'$ &       &       &       &       & 1.00  & 0.21  & $-0.03$ & 0.04  \\ 
+$                   P_{5}'$ &       &       &       &       &       & 1.00  & 0.02  & $-0.01$ \\ 
+$                   P_{6}'$ &       &       &       &       &       &       & 1.00  & 0.28  \\ 
+$                   P_{8}'$ &       &       &       &       &       &       &       & 1.00  \\ 
+\end{tabular}
+\end{table}
+
+\clearpage
+
+
+\section{Fit projections of the signal channel}
+\label{sec:sub:signalchannelprojections}
+
+The angular and mass distributions of the candidates in bins of \qsq for the Run~1 and the 2016 data, along with the projections of the simultaneous fit, are shown in Figs.~\ref{fig:projectionsa}--\ref{fig:projectionsj}. 
+
+
+\begin{figure}[ht]
+   \centering
+ \includegraphics[width=0.32\textwidth]{figs/Fig5a.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig5b.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig5c.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig5d.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig5e.pdf}\\[0.5cm]
+ \includegraphics[width=0.32\textwidth]{figs/Fig5f.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig5g.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig5h.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig5i.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig5j.pdf}
+ \caption{Projections of the fitted probability density function on the decay angles, \Mkpi and \Mkpimm for the bin $0.10<q^2<0.98\gevgevcccc$. The blue shaded region indicates background. \label{fig:projectionsa}}
+ \end{figure}
+
+ \begin{figure}
+   \centering
+ \includegraphics[width=0.32\textwidth]{figs/Fig6a.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig6b.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig6c.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig6d.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig6e.pdf}\\[0.5cm]
+ \includegraphics[width=0.32\textwidth]{figs/Fig6f.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig6g.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig6h.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig6i.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig6j.pdf}
+ \caption{Projections of the fitted probability density function on the decay angles, \Mkpi and \Mkpimm for the bin $1.1<q^2<2.5\gevgevcccc$. The blue shaded region indicates background. \label{fig:projectionsb}}
+ \end{figure}
+
+ \begin{figure}
+   \centering
+ \includegraphics[width=0.32\textwidth]{figs/Fig7a.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig7b.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig7c.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig7d.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig7e.pdf}\\[0.5cm]
+ \includegraphics[width=0.32\textwidth]{figs/Fig7f.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig7g.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig7h.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig7i.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig7j.pdf}
+ \caption{Projections of the fitted probability density function on the decay angles, \Mkpi and \Mkpimm for the bin $2.5<q^2<4.0\gevgevcccc$. The blue shaded region indicates background. \label{fig:projectionsc}}
+ \end{figure}
+
+ \begin{figure}
+   \centering
+ \includegraphics[width=0.32\textwidth]{figs/Fig8a.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig8b.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig8c.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig8d.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig8e.pdf}\\[0.5cm]
+ \includegraphics[width=0.32\textwidth]{figs/Fig8f.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig8g.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig8h.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig8i.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig8j.pdf}
+ \caption{Projections of the fitted probability density function on the decay angles, \Mkpi and \Mkpimm for the bin $4.0<q^2<6.0 \gevgevcccc$. The blue shaded region indicates background. \label{fig:projectionsd}}
+ \end{figure}
+
+ \begin{figure}
+   \centering
+ \includegraphics[width=0.32\textwidth]{figs/Fig9a.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig9b.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig9c.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig9d.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig9e.pdf}\\[0.5cm]
+ \includegraphics[width=0.32\textwidth]{figs/Fig9f.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig9g.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig9h.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig9i.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig9j.pdf}
+ \caption{Projections of the fitted probability density function on the decay angles, \Mkpi and \Mkpimm for the bin $6.0<q^2<8.0\gevgevcccc$. The blue shaded region indicates background. \label{fig:projectionse}}
+ \end{figure}
+
+
+
+\begin{figure}
+   \centering
+ \includegraphics[width=0.32\textwidth]{figs/Fig10a.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig10b.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig10c.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig10d.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig10e.pdf}\\[0.5cm]
+ \includegraphics[width=0.32\textwidth]{figs/Fig10f.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig10g.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig10h.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig10i.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig10j.pdf}
+ \caption{Projections of the fitted probability density function on the decay angles, \Mkpi and \Mkpimm for the bin $11.0<q^2<12.5\gevgevcccc$. The blue shaded region indicates background. \label{fig:projectionsf}}
+ \end{figure}
+
+ \begin{figure}
+   \centering
+ \includegraphics[width=0.32\textwidth]{figs/Fig11a.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig11b.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig11c.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig11d.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig11e.pdf}\\[0.5cm]
+ \includegraphics[width=0.32\textwidth]{figs/Fig11f.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig11g.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig11h.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig11i.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig11j.pdf}
+ \caption{Projections of the fitted probability density function on the decay angles, \Mkpi and \Mkpimm for the bin $15.0<q^2<17.0\gevgevcccc$. The blue shaded region indicates background. \label{fig:projectionsg}}
+ \end{figure}
+
+ \begin{figure}
+   \centering
+ \includegraphics[width=0.32\textwidth]{figs/Fig12a.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig12b.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig12c.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig12d.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig12e.pdf}\\[0.5cm]
+ \includegraphics[width=0.32\textwidth]{figs/Fig12f.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig12g.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig12h.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig12i.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig12j.pdf}
+ \caption{Projections of the fitted probability density function on the decay angles, \Mkpi and \Mkpimm for the bin $17.0<q^2<19.0\gevgevcccc$. The blue shaded region indicates background. \label{fig:projectionsh}}
+ \end{figure}
+
+ \begin{figure}
+   \centering
+ \includegraphics[width=0.32\textwidth]{figs/Fig13a.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig13b.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig13c.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig13d.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig13e.pdf}\\[0.5cm]
+ \includegraphics[width=0.32\textwidth]{figs/Fig13f.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig13g.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig13h.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig13i.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig13j.pdf}
+ \caption{Projections of the fitted probability density function on the decay angles, \Mkpi and \Mkpimm for the bin $1.1<q^2<6.0\gevgevcccc$. The blue shaded region indicates background. \label{fig:projectionsi}}
+ \end{figure}
+
+ \begin{figure}
+   \centering
+ \includegraphics[width=0.32\textwidth]{figs/Fig14a.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig14b.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig14c.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig14d.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig14e.pdf}\\[0.5cm]
+ \includegraphics[width=0.32\textwidth]{figs/Fig14f.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig14g.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig14h.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig14i.pdf}
+ \includegraphics[width=0.32\textwidth]{figs/Fig14j.pdf}
+ \caption{Projections of the fitted probability density function on the decay angles, \Mkpi and \Mkpimm for the bin $15.0<q^2<19.0\gevgevcccc$. The blue shaded region indicates background. \label{fig:projectionsj}}
+ \end{figure}
+ 
+ 
+\clearpage
+

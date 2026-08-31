@@ -1,0 +1,152 @@
+# Row A1a — the mixed-component patch round (Lean lane)
+
+This round follows the cutset
+
+    Q' + R'  →  V = W + Q + R  →  one robust patch  →  b_patch > 0
+
+and the debt-side cutset
+
+    five literal quartic coefficients + marginal-history disposition
+      →  positive corrected margin
+
+exactly as they were handed over, and it replaces two absolute-value budgets by
+structural cancellations rather than improving a constant.
+
+## 1. `Q` vanishes on mixed Lorentz components
+
+`RequestProject/YangMills/AveragingLorentzDiagonal.lean` writes out the literal
+background-dependent block-averaging operator
+
+    (Q(T) A)_μ(y)^a = L^{-5} Σ_{r∈[0,L)^4} Σ_{k∈[0,L)} Σ_b
+                        T(x_r, μ, k)^{ab} A_μ(x_r + k e_μ)^b,   x_r = L·y + r,
+
+with the background entering only through colour transports `T`.  A coarse link
+in direction `μ` averages fine links in direction `μ`; a transport rotates
+colour and cannot move a link between directions.  Hence:
+
+* `averagingKernel_mixed_zero` — the kernel entry coupling a coarse `α`-link to
+  a fine `β`-link is zero for `α ≠ β`, for every background;
+* `deriv_averagingKernel_mixed_zero`, `iteratedDeriv_averagingKernel_mixed_zero`
+  — therefore *every* background derivative of a mixed entry vanishes, to all
+  orders, along an arbitrary background family.
+
+So on a mixed component the `Q` piece of `V = W + Q + R` is not estimated: it is
+absent.
+
+## 2. The constrained part of `R` vanishes with it
+
+`RequestProject/YangMills/LorentzBlockDiagonal.lean` proves that the projection
+eliminating the constrained coordinates,
+
+    Π = 1 − Qᵀ (Q Qᵀ)⁻¹ Q,
+
+inherits Lorentz block diagonality from `Q`.  The inverse step is the only
+nontrivial one and is proved without block-matrix reindexing:
+`isLorentzDiagonal_iff_commute` characterises Lorentz diagonality as commutation
+with the four Lorentz component projectors, and commutation passes to inverses.
+`kerProjection_mul_eq_zero` and `kerProjection_idem` confirm that `Π` is the
+projection it is named after.  Consequently
+`deriv_kerProjection_mixed_zero`: the constrained part of `R` has no mixed
+entries either.
+
+## 3. The gauge part of `R` is *computed*, and it is momentum-suppressed
+
+`RequestProject/YangMills/GaugeProjectionVariation.lean` differentiates the
+longitudinal projector along a background deformation of the gauge-orbit
+direction:
+
+    d/dt|₀ (v_α v_β/|v|²) = (c_α k_β + k_α c_β)/|k|² − 2 k_α k_β (k·c)/|k|⁴,
+    v = k + t·c    (`hasDerivAt_gaugeProjector`).
+
+For a background perturbation of amplitude `f` in Lorentz direction `ρ`, i.e.
+`c_α = f δ_{αρ}`, the mixed component `α ≠ β = ρ` is exactly
+
+    R^gauge = f k_α (|k|² − 2k_ρ²)/|k|⁴,   |R^gauge| ≤ |f| |k_α| / |k|².
+
+The `1/|k|²` is the whole point: the gauge-projection variation is suppressed at
+large lattice momentum, while the Wilson piece is not.
+
+## 4. One robust patch, with the error computed rather than budgeted
+
+`RequestProject/YangMills/MixedComponentPatch.lean` chooses the box
+
+    x_α ∈ [1/4−δ, 1/4+δ],  x_ρ ∈ [0, δ],  x_2, x_3 ∈ [1/2−δ, 1/2],
+
+i.e. it pushes the two spectator momenta to the Brillouin corner (maximising
+`|k|²`, hence minimising the gauge term) and keeps `x_ρ` small (maximising the
+Wilson cosine).  With `α = 0`, `β = ρ = 1` the literal mixed symbol is
+
+    V = −sin(π x_α) cos(π x_ρ) + f k_α(|k|² − 2k_ρ²)/|k|⁴,  k_μ = 2 sin(π x_μ),
+
+and one elementary inequality (`two_mul_le_sinAtom`, already in the repository)
+gives, for `|f| ≤ F`,
+
+    |V| ≥ (1/2 − 2δ)·((1 − 2δ) − F/(4(1−2δ)²))   on the whole box.
+
+The positivity criterion is `F < 4(1−2δ)³`, i.e. roughly `F < 4` — far weaker
+than the dimension-counted fallback budget `#c²#n³b_C²b_A b_E b_{P⁻¹}b_{Q'} <
+√2/4` of `ConnectionBudget`, which stays available as a fallback.  At `δ = 1/16`
+and `F = 1` the floor is `≥ 1/5` (`mixedPatch_floor_concrete`), and the box has
+volume `2δ⁴ = 1/32768 > 0` (`mixedPatch_volume`).
+
+`RequestProject/YangMills/A1MixedPatchCompiler.lean` feeds this through the
+existing chain: `A1_halfFloor_from_literalMixedSymbol` gives
+
+    β_j ≥ 1/3276800 > 0
+
+for every shell, with **no free error parameter left in the Gaussian sector**.
+
+## 5. The five quartic coefficients
+
+`RequestProject/YangMills/QuarticChannelMajorant.lean` replaces "find some finite
+`C_β`" by fourth-derivative data: a channel vanishing to third order at zero
+coupling with `|ch⁗| ≤ M` on `[0,γ]` obeys `|ch(g)| ≤ (M/6) g⁴`
+(`abs_le_quartic_of_fourthDeriv_bound`, Taylor with the Lagrange bound).  Hence
+
+    C_β = (M_det + M_int + M_chart + M_gauge + M_loc)/6,
+    βInt(g) ≥ −C_β g⁴.
+
+The remaining debt-side source task is exactly those five fourth-derivative
+bounds.
+
+## 6. The marginal-history disposition
+
+`RequestProject/YangMills/MarginalMemoryDisposition.lean` addresses `H_marg`
+without inventing memory decay.  A marginal direction transports the *increments*
+`Δ_k g = g_k − g_{k+1}` of the running coupling, and for an increment response
+kernel bounded by `a` — with no decay at all — the debt is `2aV` where `V` bounds
+the total variation of the trajectories (`incrementResponse_bound`).  A
+monotonically decreasing trajectory inside `[0,γ]` has total variation at most
+`γ` (`totalVariationLe_of_antitone`), so the marginal debt is `≤ 2aγ`, uniformly
+in the shell index and not growing with the number of scales.  The explicit
+root-free coupling
+
+    γ_* = b / (2(C_β + C_H B/2 + 2a + 1))
+
+then absorbs the quartic, irrelevant-memory and marginal debts at once and
+leaves `β ≥ b/2 > 0` (`absorbedMargin_ge_half`).
+
+If the source recursion does not have that increment structure, the third
+honest outcome stands and `H_marg` remains a separate uniform constant; the
+`Hmarg` field of `correctedMargin` is therefore kept.
+
+## What is *not* claimed
+
+Row A1 is **not** closed and no scoreboard row changes.  The statements above
+concern the literal symbols defined in this repository.  Three source
+identifications remain open and are displayed as hypotheses wherever they are
+used:
+
+1. that the Wilson cubic vertex and the longitudinal lattice gauge projector are
+   the `W` and gauge-`R` pieces of Bałaban's constrained first variation, with a
+   relative background amplitude `f` — carried throughout as the explicit
+   parameter `F`;
+2. that the shell Gaussian coefficient is the cell integral of the one-loop
+   integrand of that mixed component;
+3. the five fourth-derivative channel bounds, and the increment structure of the
+   marginal response.
+
+The Lorentz block-diagonality arguments are position-space statements about the
+averaging kernel and the constrained projection; they transfer to the momentum
+symbol because the Fourier transform acts on the site index only and leaves the
+Lorentz index untouched.

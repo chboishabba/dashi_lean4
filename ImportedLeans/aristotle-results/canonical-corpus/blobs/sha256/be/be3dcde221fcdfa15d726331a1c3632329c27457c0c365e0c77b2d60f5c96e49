@@ -1,0 +1,215 @@
+Closure hygiene run: 20260312_132426
+Root: /home/c/Documents/code/dashi_agda
+Agda binary: agda
+Max workers: 3
+Verbose: 1
+Stage filter from: none
+Stage filter only: none
+Class filter: none
+Exclude heavy: 0
+Cache enabled: 1
+Cache refresh: 0
+Metadata file: /home/c/Documents/code/dashi_agda/.cache/closure_hygiene_metadata.tsv
+Timeout ladder: none
+
+Selected tasks:
+  - total: 830
+  - fast: 825
+  - medium: 0
+  - heavy: 0
+  - aggregator: 2
+  - audit: 3
+
+Alias checks:
+  - 01 DASHI/Physics/Closure/CanonicalStageCTheoremBundle.agda: 125
+  - 02 DASHI/Everything.agda: 125
+  - 03 canonical_path_audit: 0
+  - 04 placeholder_postulate_audit: 0
+  - 05 closure_status_pointers: 0
+
+Overall status: FAIL
+
+Failed steps:
+  - DASHI/Physics/Closure/RootSystemB4IndependenceScaffold.agda:42
+  - DASHI/Physics/Closure/SyntheticRealizationWitness.agda:42
+  - DASHI/Physics/Closure/PhysicsClosureFull.agda:125
+  - DASHI/Physics/Closure/SyntheticObservablePredictionInstance.agda:-15
+  - DASHI/Physics/Closure/CanonicalContractionQuadraticSignatureBridgeTheorem.agda:125
+  - DASHI/Physics/Closure/CanonicalContractionToCliffordBridgeTheorem.agda:125
+  - DASHI/Physics/Closure/CanonicalDynamicsLawTheorem.agda:125
+  - DASHI/Physics/Closure/Canonical/Ladder.agda:125
+  - DASHI/Physics/Closure/CanonicalGeometryConsumer.agda:125
+  - DASHI/Physics/Closure/Canonical/LocalProgramBundle.agda:125
+  - DASHI/Physics/Closure/CanonicalObservableConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalProofSpine.agda:125
+  - DASHI/Everything.agda:125
+  - DASHI/Physics/Closure/CanonicalPropagationConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalRecoveryConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalRecoveryTransportConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalRegimeConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalSpinDiracConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalStageC.agda:125
+  - DASHI/Physics/Closure/CanonicalStageCSummaryBundle.agda:125
+  - DASHI/Physics/Closure/CanonicalStageCTheoremBundle.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveGeometryConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableGeometryConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/AccountabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/AdaptabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/AlignmentConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/AuditabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/BalanceConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/CalibrationConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ClarityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/CoherenceConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/CohesionConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/CompatibilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/CompletenessConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ComposabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ConcordanceConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ConsistencyConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/Consumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ContinuityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ConvergenceConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/DurabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/EquilibriumConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ExtensibilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/FidelityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/FusionConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/HarmonyConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/IntegrationConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/IntegrityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/InteroperabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/InvarianceConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/LegibilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/MaintainabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ManageabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/NormalizationConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/OperabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/PortabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/PrecisionConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/RefinementConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ReliabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/RepeatabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ReproducibilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ResilienceConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ResolutionConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/RobustnessConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/ScalabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/SoundnessConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/StabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/StewardshipConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/SustainabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/SymmetryConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/SynthesisConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/TraceabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/TransparencyConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/UsabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometry/Regime/VerifiabilityConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometryCoherenceConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveObservableTransportGeometryConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWaveRegimeConsumer.agda:125
+  - DASHI/Physics/Closure/CanonicalWavefrontConsumer.agda:125
+  - DASHI/Physics/Closure/CliffordToEvenWaveLiftBridgeTheorem.agda:125
+  - DASHI/Physics/Closure/Consumers/WaveRegime.agda:125
+  - DASHI/Physics/Closure/ContractionSignatureToSpinDiracBridgeTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsCompleteLocalRegimeTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsExtendedLocalRecoveryTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsFullMatterGaugeTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsGRBridgeTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsLocalPhysicsCoherenceTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsMatterGaugeTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsPropagationSpinTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsQFTBridgeTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredDynamicsTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredLocalRegimeTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredObservableGeometryTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredObservableRegimeTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredObservablesTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredTransportConsistencyTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveGeometryTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableGeometryTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/AccountabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/AdaptabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/AlignmentTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/AuditabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/BalanceTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/CalibrationTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ClarityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/CoherenceTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/CohesionTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/CompatibilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/CompletenessTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ComposabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ConcordanceTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ConsistencyTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ContinuityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ConvergenceTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/DurabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/EquilibriumTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ExtensibilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/FidelityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/FusionTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/HarmonyTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/IntegrationTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/IntegrityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/InteroperabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/InvarianceTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/LegibilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/MaintainabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ManageabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/NormalizationTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/OperabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/PortabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/PrecisionTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/RefinementTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ReliabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/RepeatabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ReproducibilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ResilienceTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ResolutionTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/RobustnessTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/ScalabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/SoundnessTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/StabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/StewardshipTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/SustainabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/SymmetryTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/SynthesisTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/Theorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/TraceabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/TransparencyTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/UsabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometry/Regime/VerifiabilityTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometryCoherenceTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportGeometryTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservableTransportTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveObservablesTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWaveRegimeTheorem.agda:125
+  - DASHI/Physics/Closure/KnownLimitsRecoveredWavefrontTheorem.agda:125
+  - DASHI/Physics/Closure/MinimalCrediblePhysicsClosure.agda:125
+  - DASHI/Physics/Closure/MinimalCrediblePhysicsClosureShiftInstance.agda:125
+  - DASHI/Physics/Closure/MinimalCrediblePhysicsClosureValidation.agda:125
+  - DASHI/Physics/Closure/MinimalCrediblePhysicsClosureValidationShiftInstance.agda:125
+  - DASHI/Physics/Closure/PhysicsClosureConstructorTheorem.agda:125
+  - DASHI/Physics/Closure/PhysicsClosureCoreWitness.agda:125
+  - DASHI/Physics/Closure/PhysicsClosureEmpiricalToFull.agda:125
+  - DASHI/Physics/Closure/PhysicsClosureFivePillarsTheorem.agda:125
+  - DASHI/Physics/Closure/PhysicsClosureFullCanonicalBridgePackage.agda:125
+  - DASHI/Physics/Closure/PhysicsClosureFullInstance.agda:125
+  - DASHI/Physics/Closure/PhysicsClosureRealizationIndependenceTheorem.agda:125
+  - DASHI/Physics/Closure/PhysicsClosureSummary.agda:125
+  - DASHI/Physics/Closure/PhysicsClosureTheoremChecklist.agda:125
+  - DASHI/Physics/Closure/PhysicsClosureTheoremLadder.agda:125
+  - DASHI/Physics/Closure/PhysicsClosureValidationSummary.agda:125
+  - DASHI/Physics/Closure/Recovery/WaveRegime.agda:125
+  - DASHI/Physics/Closure/SpinDiracGateFromClosure.agda:125
+  - DASHI/Physics/Closure/SpinLocalLorentzBridgeTheorem.agda:125
+  - DASHI/Physics/Closure/Validation/RealizationProfileRigidityReport.agda:125
+  - DASHI/Physics/Closure/Validation/RealizationProfileRigidityShift.agda:125
+  - DASHI/Physics/Closure/Validation/SyntheticOneMinusAdmissible.agda:125
+  - DASHI/Physics/GR.agda:125
+  - DASHI/Physics/GRSpinLocalLorentzBridge.agda:125
+  - DASHI/Physics/LorentzBridge.agda:125
+  - DASHI/Physics/QFT.agda:125

@@ -1,0 +1,62 @@
+[timeout] none
+[cmd] bash -lc "echo \"# Canonical Path Audit\"
+echo
+echo \"## Canonical bridge imports (expected)\"
+rg -n \"import DASHI\.Physics\.Closure\.(ContractionForcesQuadraticTheorem|ContractionQuadraticToSignatureBridgeTheorem|QuadraticToCliffordBridgeTheorem|CanonicalContractionToCliffordBridgeTheorem|PhysicsUnification|CanonicalStageCTheoremBundle)\" DASHI || true
+echo
+echo \"## Potential alternate-route imports inside closure stack (review)\"
+rg -n \"import DASHI\.Geometry\.(QuadraticEmergence|QuadraticFromNorm|QuadraticFromParallelogram|QuadraticFormEmergence)|import DASHI\.Physics\.ContractionQuadraticBridge\" DASHI/Physics/Closure || true"
+---
+# Canonical Path Audit
+
+## Canonical bridge imports (expected)
+DASHI/Everything.agda:217:import DASHI.Physics.Closure.CanonicalContractionToCliffordBridgeTheorem
+DASHI/Everything.agda:236:import DASHI.Physics.Closure.CanonicalStageCTheoremBundle
+DASHI/Everything.agda:305:import DASHI.Physics.Closure.ContractionForcesQuadraticTheorem
+DASHI/Everything.agda:306:import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem
+DASHI/Everything.agda:513:import DASHI.Physics.Closure.QuadraticToCliffordBridgeTheorem
+DASHI/Physics/Closure/CanonicalStageCSummaryBundle.agda:7:open import DASHI.Physics.Closure.CanonicalStageCTheoremBundle as CSTB
+DASHI/Physics/Closure/CanonicalStageCSummaryBundle.agda:33:open import DASHI.Physics.Closure.ContractionForcesQuadraticTheorem as CFQT
+DASHI/Physics/Closure/CanonicalStageCSummaryBundle.agda:35:open import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB
+DASHI/Physics/Closure/CanonicalStageCSummaryBundle.agda:37:open import DASHI.Physics.Closure.CanonicalContractionToCliffordBridgeTheorem as CCTCB
+DASHI/Physics/Closure/PhysicsClosureFullInstance.agda:27:open import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB
+DASHI/Physics/Closure/PhysicsClosureFullInstance.agda:28:open import DASHI.Physics.Closure.QuadraticToCliffordBridgeTheorem as QTCB
+DASHI/Physics/Closure/CanonicalStageC.agda:164:import DASHI.Physics.Closure.ContractionForcesQuadraticTheorem as CFQT
+DASHI/Physics/Closure/CanonicalStageC.agda:166:import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB
+DASHI/Physics/Closure/CanonicalStageC.agda:168:import DASHI.Physics.Closure.CanonicalContractionToCliffordBridgeTheorem as CCTCB
+DASHI/Physics/Closure/CanonicalStageCTheoremBundle.agda:60:open import DASHI.Physics.Closure.ContractionForcesQuadraticTheorem as CFQT
+DASHI/Physics/Closure/CanonicalStageCTheoremBundle.agda:62:open import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB
+DASHI/Physics/Closure/CanonicalStageCTheoremBundle.agda:64:open import DASHI.Physics.Closure.CanonicalContractionToCliffordBridgeTheorem as CCTCB
+DASHI/Physics/Closure/CanonicalContractionToCliffordBridgeTheorem.agda:22:open import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB
+DASHI/Physics/Closure/CanonicalContractionToCliffordBridgeTheorem.agda:24:open import DASHI.Physics.Closure.QuadraticToCliffordBridgeTheorem as QTCB
+DASHI/Physics/Closure/ConstraintClosureFromCanonicalPathTheorem.agda:8:open import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB
+DASHI/Physics/Closure/ConstraintClosureFromCanonicalPathTheorem.agda:9:open import DASHI.Physics.Closure.QuadraticToCliffordBridgeTheorem as QTCB
+DASHI/Physics/Closure/Canonical/Ladder.agda:9:open import DASHI.Physics.Closure.CanonicalStageCTheoremBundle public
+DASHI/Physics/Closure/Canonical/LocalProgramBundle.agda:10:open import DASHI.Physics.Closure.CanonicalStageCTheoremBundle as CSTB
+DASHI/Physics/Closure/CliffordToEvenWaveLiftBridgeTheorem.agda:13:open import DASHI.Physics.Closure.CanonicalContractionToCliffordBridgeTheorem as CCTCB
+DASHI/Physics/Closure/CanonicalContractionQuadraticSignatureBridgeTheorem.agda:21:open import DASHI.Physics.Closure.CanonicalContractionToCliffordBridgeTheorem as CCTCB
+DASHI/Physics/Closure/PhysicsClosureTheoremLadder.agda:9:open import DASHI.Physics.Closure.ContractionForcesQuadraticTheorem as CFQT
+DASHI/Physics/Closure/PhysicsClosureTheoremLadder.agda:11:open import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB
+DASHI/Physics/Closure/PhysicsClosureTheoremLadder.agda:12:open import DASHI.Physics.Closure.QuadraticToCliffordBridgeTheorem as QTCB
+DASHI/Physics/Closure/ContractionQuadraticToSignatureBridgeTheorem.agda:25:open import DASHI.Physics.Closure.ContractionForcesQuadraticTheorem as CFQT
+DASHI/Physics/Closure/PhysicsClosureTheoremChecklist.agda:10:open import DASHI.Physics.Closure.ContractionForcesQuadraticTheorem as CFQT
+DASHI/Physics/Closure/PhysicsClosureTheoremChecklist.agda:12:open import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB
+DASHI/Physics/Closure/PhysicsClosureTheoremChecklist.agda:13:open import DASHI.Physics.Closure.QuadraticToCliffordBridgeTheorem as QTCB
+DASHI/Physics/Closure/ContractionSignatureToSpinDiracBridgeTheorem.agda:7:open import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB
+DASHI/Physics/Closure/PhysicsClosureCoreWitness.agda:10:open import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB
+DASHI/Physics/Closure/PhysicsClosureCoreWitness.agda:11:open import DASHI.Physics.Closure.QuadraticToCliffordBridgeTheorem as QTCB
+DASHI/Physics/Closure/PhysicsClosureValidationSummary.agda:214:open import DASHI.Physics.Closure.ContractionForcesQuadraticTheorem as CFQT public
+DASHI/Physics/Closure/PhysicsClosureValidationSummary.agda:218:open import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB public
+DASHI/Physics/Closure/PhysicsClosureValidationSummary.agda:222:open import DASHI.Physics.Closure.CanonicalContractionToCliffordBridgeTheorem as CCTCB public
+DASHI/Physics/Closure/PhysicsClosureValidationSummary.agda:339:open import DASHI.Physics.Closure.CanonicalStageCTheoremBundle as CSTB public
+DASHI/Physics/Closure/CanonicalProofSpine.agda:22:open import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB
+DASHI/Physics/Closure/CanonicalProofSpine.agda:23:open import DASHI.Physics.Closure.QuadraticToCliffordBridgeTheorem as QTCB
+DASHI/Physics/Closure/PhysicsClosureFullCanonicalBridgePackage.agda:7:open import DASHI.Physics.Closure.CanonicalContractionToCliffordBridgeTheorem as CCTCB
+DASHI/Physics/Closure/PhysicsClosureFull.agda:33:open import DASHI.Physics.Closure.ContractionForcesQuadraticTheorem as CFQT
+DASHI/Physics/Closure/PhysicsClosureFull.agda:34:open import DASHI.Physics.Closure.ContractionQuadraticToSignatureBridgeTheorem as CQSB
+
+## Potential alternate-route imports inside closure stack (review)
+DASHI/Physics/Closure/CanonicalContractionToCliffordBridgeTheorem.agda:17:open import DASHI.Physics.ContractionQuadraticBridge as CQB
+DASHI/Physics/Closure/KnownLimitsQFTBridgeTheorem.agda:19:open import DASHI.Physics.ContractionQuadraticBridge as CQB
+DASHI/Physics/Closure/CliffordToEvenWaveLiftBridgeTheorem.agda:11:open import DASHI.Physics.ContractionQuadraticBridge as CQB
+DASHI/Physics/Closure/CanonicalContractionQuadraticSignatureBridgeTheorem.agda:17:open import DASHI.Physics.ContractionQuadraticBridge as CQB

@@ -1,0 +1,54 @@
+# Source-Process Evidence Migration Candidate Audit
+
+Discovery-only scan. This script reports candidates and risk tiers only; it does not edit Agda.
+
+## Summary
+- Scanned files: 3265
+- Total candidates: 18
+- Matched pattern hits: 108
+- Low-risk: 12
+- Medium-risk: 2
+- High-risk: 4
+
+## Ranked Candidates
+(Sorted by risk then score, limited to 3 entries in this section)
+
+### DASHI/Physics/Closure/W4MatterStressEnergyInterfaceReceipt.agda
+- Risk: `low`
+- Score: `13`
+- Risk score: `2`
+- Pattern hits: `2`
+- Source-fiber hits: `0`
+- Source-compromise hits: `0`
+
+- Pattern details:
+  - `trace_context` (1): 1@2651
+  - `witness_context` (1): 1@1029
+
+### DASHI/Interop/SenateFormalizationPNFAdapter.agda
+- Risk: `low`
+- Score: `9`
+- Risk score: `1`
+- Pattern hits: `1`
+- Source-fiber hits: `0`
+- Source-compromise hits: `0`
+
+- Pattern details:
+  - `side_evidence` (1): 1@20
+
+### DASHI/Interop/PNFBraidTransportField.agda
+- Risk: `low`
+- Score: `8`
+- Risk score: `0`
+- Pattern hits: `1`
+- Source-fiber hits: `0`
+- Source-compromise hits: `0`
+
+- Pattern details:
+  - `source_id` (1): 1@49
+
+## Notes
+
+- This is a discovery-only report and intentionally does not emit edits.
+- Files near `source-process evidence` vocabulary and source-process source-fiber/witness/compromise interfaces are ranked highest.
+- Inspect high-risk files manually before any migration or refactor decisions.

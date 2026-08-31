@@ -1,0 +1,51 @@
+{
+  "batch_size": 1,
+  "batches": [
+    {
+      "command": [
+        "bash",
+        "/home/c/Documents/code/dashi_agda/scripts/run_agda29_parallel_check.sh",
+        "DASHI/Everything.agda"
+      ],
+      "duration_seconds": 0.129464,
+      "finished_at": "2026-06-17T09:04:29.141874+00:00",
+      "first_failure": null,
+      "index": 1,
+      "returncode": 1,
+      "started_at": "2026-06-17T09:04:29.012410+00:00",
+      "stderr": "error: cannot connect to socket at '/nix/var/nix/daemon-socket/socket': Operation not permitted\n",
+      "stdout": "",
+      "targets": [
+        "DASHI/Everything.agda"
+      ]
+    }
+  ],
+  "finished_at": "2026-06-17T09:04:29.141999+00:00",
+  "jobs": 8,
+  "repo_root": "/home/c/Documents/code/dashi_agda",
+  "started_at": "2026-06-17T09:04:29.012312+00:00",
+  "stop_on_failure": true,
+  "summary": {
+    "exit_code": 1,
+    "failed_batches": 1,
+    "failed_targets_upper_bound": 1,
+    "first_failure": {
+      "batch_index": 1,
+      "column": null,
+      "line": null,
+      "line_text": null,
+      "path": null,
+      "targets": [
+        "DASHI/Everything.agda"
+      ]
+    },
+    "succeeded_batches": 0,
+    "total_batches": 1,
+    "total_targets": 1
+  },
+  "targets": [
+    "DASHI/Everything.agda"
+  ],
+  "tool": "agda29_frontier_audit",
+  "wrapper": "/home/c/Documents/code/dashi_agda/scripts/run_agda29_parallel_check.sh"
+}

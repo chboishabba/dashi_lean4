@@ -1,0 +1,3 @@
+[cached] skip closure_status_pointers
+[fingerprint] f40d28093ab544f7346ebf8213c5dfa71d0acc3f2068c97207d316c2a6a79731
+[source] .cache/closure_hygiene_metadata.test.tsv

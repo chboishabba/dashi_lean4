@@ -1,0 +1,131 @@
+
+\documentclass[border=5pt,multi=true]{standalone}
+\usepackage{standalone}
+\usepackage{ifthen}
+\usepackage{microtype}
+\usepackage{lineno}
+\usepackage{xspace}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{colortbl}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{upgreek}
+\usepackage{hyperxmp}
+\usepackage{hyperref}
+\usepackage{todonotes}
+\usepackage{footmisc}
+\usepackage{hypcap}
+\usepackage{xspace}
+\usepackage{upgreek}
+\usepackage{cite}
+\usepackage{mciteplus}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{afterpage}
+
+\begin{document}
+\footnotesize
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$0.10 < q^{2} < 0.98 \text{\,Ge\kern -0.1em V}\xspace^2\!/c^4\xspace$}\\ \hline
+$P_{1}$ & $0.090\pm0.119\pm0.009$\\
+$P_{2}$ & $-0.003\pm0.038\pm0.003$\\
+$P_{3}$ & $0.073\pm0.057\pm0.003$\\
+$P_{4}'$ & $0.135\pm0.118\pm0.010$\\
+$P_{5}'$ & $0.521\pm0.095\pm0.024$\\
+$P_{6}'$ & $0.015\pm0.094\pm0.007$\\
+$P_{8}'$ & $-0.007\pm0.122\pm0.002$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$1.1 < q^{2} < 2.5 \text{\,Ge\kern -0.1em V}\xspace^2\!/c^4\xspace$}\\ \hline
+$P_{1}$ & $-0.617\pm0.296\pm0.023$\\
+$P_{2}$ & $-0.443\pm0.100\pm0.027$\\
+$P_{3}$ & $0.324\pm0.147\pm0.014$\\
+$P_{4}'$ & $-0.080\pm0.142\pm0.019$\\
+$P_{5}'$ & $0.365\pm0.122\pm0.013$\\
+$P_{6}'$ & $-0.226\pm0.128\pm0.005$\\
+$P_{8}'$ & $-0.366\pm0.158\pm0.005$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$2.5 < q^{2} < 4.0 \text{\,Ge\kern -0.1em V}\xspace^2\!/c^4\xspace$}\\ \hline
+$P_{1}$ & $0.168\pm0.371\pm0.043$\\
+$P_{2}$ & $-0.191\pm0.116\pm0.043$\\
+$P_{3}$ & $0.049\pm0.195\pm0.014$\\
+$P_{4}'$ & $-0.435\pm0.169\pm0.035$\\
+$P_{5}'$ & $-0.150\pm0.144\pm0.032$\\
+$P_{6}'$ & $-0.155\pm0.148\pm0.024$\\
+$P_{8}'$ & $0.037\pm0.169\pm0.007$\\
+\end{tabular} \\[0.6em]
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$4.0 < q^{2} < 6.0 \text{\,Ge\kern -0.1em V}\xspace^2\!/c^4\xspace$}\\ \hline
+$P_{1}$ & $0.088\pm0.235\pm0.029$\\
+$P_{2}$ & $0.105\pm0.068\pm0.009$\\
+$P_{3}$ & $-0.090\pm0.139\pm0.006$\\
+$P_{4}'$ & $-0.312\pm0.115\pm0.013$\\
+$P_{5}'$ & $-0.439\pm0.111\pm0.036$\\
+$P_{6}'$ & $-0.293\pm0.117\pm0.004$\\
+$P_{8}'$ & $0.166\pm0.127\pm0.004$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$6.0 < q^{2} < 8.0 \text{\,Ge\kern -0.1em V}\xspace^2\!/c^4\xspace$}\\ \hline
+$P_{1}$ & $-0.071\pm0.211\pm0.020$\\
+$P_{2}$ & $0.207\pm0.048\pm0.013$\\
+$P_{3}$ & $-0.068\pm0.104\pm0.007$\\
+$P_{4}'$ & $-0.574\pm0.091\pm0.018$\\
+$P_{5}'$ & $-0.583\pm0.090\pm0.030$\\
+$P_{6}'$ & $-0.155\pm0.098\pm0.009$\\
+$P_{8}'$ & $-0.129\pm0.098\pm0.005$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$11.0 < q^{2} < 12.5 \text{\,Ge\kern -0.1em V}\xspace^2\!/c^4\xspace$}\\ \hline
+$P_{1}$ & $-0.460\pm0.132\pm0.015$\\
+$P_{2}$ & $0.411\pm0.033\pm0.008$\\
+$P_{3}$ & $-0.078\pm0.077\pm0.007$\\
+$P_{4}'$ & $-0.491\pm0.095\pm0.013$\\
+$P_{5}'$ & $-0.622\pm0.088\pm0.017$\\
+$P_{6}'$ & $-0.193\pm0.100\pm0.003$\\
+$P_{8}'$ & $0.018\pm0.099\pm0.009$\\
+\end{tabular} \\[0.6em]
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$15.0 < q^{2} < 17.0 \text{\,Ge\kern -0.1em V}\xspace^2\!/c^4\xspace$}\\ \hline
+$P_{1}$ & $-0.511\pm0.096\pm0.020$\\
+$P_{2}$ & $0.396\pm0.022\pm0.004$\\
+$P_{3}$ & $-0.000\pm0.056\pm0.003$\\
+$P_{4}'$ & $-0.626\pm0.069\pm0.018$\\
+$P_{5}'$ & $-0.714\pm0.074\pm0.021$\\
+$P_{6}'$ & $0.061\pm0.085\pm0.003$\\
+$P_{8}'$ & $0.007\pm0.086\pm0.002$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$17.0 < q^{2} < 19.0 \text{\,Ge\kern -0.1em V}\xspace^2\!/c^4\xspace$}\\ \hline
+$P_{1}$ & $-0.763\pm0.152\pm0.094$\\
+$P_{2}$ & $0.328\pm0.032\pm0.017$\\
+$P_{3}$ & $0.085\pm0.068\pm0.004$\\
+$P_{4}'$ & $-0.647\pm0.086\pm0.057$\\
+$P_{5}'$ & $-0.590\pm0.084\pm0.059$\\
+$P_{6}'$ & $0.103\pm0.105\pm0.016$\\
+$P_{8}'$ & $-0.055\pm0.099\pm0.006$\\
+\end{tabular}
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$1.1 < q^{2} < 6.0 \text{\,Ge\kern -0.1em V}\xspace^2\!/c^4\xspace$}\\ \hline
+$P_{1}$ & $-0.079\pm0.159\pm0.021$\\
+$P_{2}$ & $-0.162\pm0.050\pm0.012$\\
+$P_{3}$ & $0.085\pm0.090\pm0.005$\\
+$P_{4}'$ & $-0.298\pm0.087\pm0.016$\\
+$P_{5}'$ & $-0.114\pm0.068\pm0.026$\\
+$P_{6}'$ & $-0.197\pm0.075\pm0.009$\\
+$P_{8}'$ & $-0.020\pm0.089\pm0.009$\\
+\end{tabular} \\[0.6em]
+\begin{tabular}{lr}
+\multicolumn{2}{c}{$15.0 < q^{2} < 19.0 \text{\,Ge\kern -0.1em V}\xspace^2\!/c^4\xspace$}\\ \hline
+$P_{1}$ & $-0.577\pm0.090\pm0.031$\\
+$P_{2}$ & $0.359\pm0.018\pm0.009$\\
+$P_{3}$ & $0.048\pm0.045\pm0.002$\\
+$P_{4}'$ & $-0.638\pm0.055\pm0.020$\\
+$P_{5}'$ & $-0.667\pm0.053\pm0.029$\\
+$P_{6}'$ & $0.073\pm0.067\pm0.006$\\
+$P_{8}'$ & $0.011\pm0.069\pm0.003$\\
+\end{tabular}
+\end{document}

@@ -1,0 +1,30 @@
+Closure hygiene run: 20260312_121528
+Root: /home/c/Documents/code/dashi_agda
+Agda binary: agda
+Max workers: 3
+Verbose: 0
+Stage filter from: none
+Stage filter only: 05
+Class filter: none
+Exclude heavy: 0
+Cache enabled: 1
+Cache refresh: 1
+Metadata file: /home/c/Documents/code/dashi_agda/.cache/closure_hygiene_metadata.tsv
+Timeout ladder: none
+
+Selected tasks:
+  - total: 1
+  - fast: 0
+  - medium: 0
+  - heavy: 0
+  - aggregator: 0
+  - audit: 1
+
+Alias checks:
+  - 01 DASHI/Physics/Closure/CanonicalStageCTheoremBundle.agda: N/A
+  - 02 DASHI/Everything.agda: N/A
+  - 03 canonical_path_audit: N/A
+  - 04 placeholder_postulate_audit: N/A
+  - 05 closure_status_pointers: 0
+
+Overall status: PASS

@@ -1,0 +1,1100 @@
+{
+  "explicitWidth1": [
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 25,
+      "repatterningCount": 1,
+      "contractiveCount": 12,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 38,
+      "repatterningCount": 1,
+      "contractiveCount": 12,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 1,
+      "repatterningCount": 0,
+      "contractiveCount": 1,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 26,
+      "repatterningCount": 0,
+      "contractiveCount": 13,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 25,
+      "repatterningCount": 0,
+      "contractiveCount": 13,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 25,
+      "repatterningCount": 0,
+      "contractiveCount": 13,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 25,
+      "repatterningCount": 0,
+      "contractiveCount": 13,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 25,
+      "repatterningCount": 0,
+      "contractiveCount": 13,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 25,
+      "repatterningCount": 0,
+      "contractiveCount": 13,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 25,
+      "repatterningCount": 0,
+      "contractiveCount": 13,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 25,
+      "repatterningCount": 0,
+      "contractiveCount": 13,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 25,
+      "repatterningCount": 0,
+      "contractiveCount": 13,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 25,
+      "repatterningCount": 0,
+      "contractiveCount": 13,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 25,
+      "repatterningCount": 0,
+      "contractiveCount": 13,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 2,
+      "motifChangeCount": 0,
+      "totalDrift": 25,
+      "repatterningCount": 0,
+      "contractiveCount": 13,
+      "expansiveCount": 0
+    }
+  ],
+  "explicitWidth2": [
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 17,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 16,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 16,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 16,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 16,
+      "repatterningCount": 1,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 24,
+      "repatterningCount": 2,
+      "contractiveCount": 6,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 17,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 16,
+      "repatterningCount": 1,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 24,
+      "repatterningCount": 2,
+      "contractiveCount": 6,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    }
+  ],
+  "explicitWidth3": [
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 27,
+      "repatterningCount": 3,
+      "contractiveCount": 5,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 19,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 18,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 18,
+      "repatterningCount": 1,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 26,
+      "repatterningCount": 4,
+      "contractiveCount": 4,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 1,
+      "repatterningCount": 0,
+      "contractiveCount": 1,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 27,
+      "repatterningCount": 3,
+      "contractiveCount": 5,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 1,
+      "repatterningCount": 0,
+      "contractiveCount": 1,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 19,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 18,
+      "repatterningCount": 1,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 26,
+      "repatterningCount": 4,
+      "contractiveCount": 4,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    }
+  ],
+  "balancedCycle": [
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 15,
+      "repatterningCount": 0,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 14,
+      "repatterningCount": 0,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 14,
+      "repatterningCount": 0,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 14,
+      "repatterningCount": 1,
+      "contractiveCount": 6,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 21,
+      "repatterningCount": 2,
+      "contractiveCount": 5,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 15,
+      "repatterningCount": 0,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 14,
+      "repatterningCount": 1,
+      "contractiveCount": 6,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 21,
+      "repatterningCount": 2,
+      "contractiveCount": 5,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    }
+  ],
+  "denseComposed": [
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 27,
+      "repatterningCount": 3,
+      "contractiveCount": 5,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 19,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 18,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 18,
+      "repatterningCount": 1,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 26,
+      "repatterningCount": 4,
+      "contractiveCount": 4,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 1,
+      "repatterningCount": 0,
+      "contractiveCount": 1,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 27,
+      "repatterningCount": 3,
+      "contractiveCount": 5,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 1,
+      "repatterningCount": 0,
+      "contractiveCount": 1,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 19,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 18,
+      "repatterningCount": 1,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 26,
+      "repatterningCount": 4,
+      "contractiveCount": 4,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    }
+  ],
+  "balancedComposed": [
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 15,
+      "repatterningCount": 0,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 14,
+      "repatterningCount": 0,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 14,
+      "repatterningCount": 0,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 14,
+      "repatterningCount": 1,
+      "contractiveCount": 6,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 21,
+      "repatterningCount": 2,
+      "contractiveCount": 5,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 15,
+      "repatterningCount": 0,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 14,
+      "repatterningCount": 1,
+      "contractiveCount": 6,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 8,
+      "motifChangeCount": 0,
+      "totalDrift": 21,
+      "repatterningCount": 2,
+      "contractiveCount": 5,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    }
+  ],
+  "anchoredTrajectory": [
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 17,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 16,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 16,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 16,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 16,
+      "repatterningCount": 1,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 24,
+      "repatterningCount": 2,
+      "contractiveCount": 6,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 17,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 16,
+      "repatterningCount": 1,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 24,
+      "repatterningCount": 2,
+      "contractiveCount": 6,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    }
+  ],
+  "supportCascade": [
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 27,
+      "repatterningCount": 3,
+      "contractiveCount": 5,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 19,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 18,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 18,
+      "repatterningCount": 1,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 26,
+      "repatterningCount": 4,
+      "contractiveCount": 4,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 1,
+      "repatterningCount": 0,
+      "contractiveCount": 1,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 27,
+      "repatterningCount": 3,
+      "contractiveCount": 5,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 1,
+      "repatterningCount": 0,
+      "contractiveCount": 1,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 19,
+      "repatterningCount": 0,
+      "contractiveCount": 8,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 18,
+      "repatterningCount": 1,
+      "contractiveCount": 7,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 7,
+      "motifChangeCount": 0,
+      "totalDrift": 26,
+      "repatterningCount": 4,
+      "contractiveCount": 4,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    }
+  ],
+  "fullSupportCascade": [
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 9,
+      "motifChangeCount": 0,
+      "totalDrift": 13,
+      "repatterningCount": 0,
+      "contractiveCount": 6,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 9,
+      "motifChangeCount": 0,
+      "totalDrift": 12,
+      "repatterningCount": 0,
+      "contractiveCount": 6,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 9,
+      "motifChangeCount": 0,
+      "totalDrift": 12,
+      "repatterningCount": 1,
+      "contractiveCount": 5,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 9,
+      "motifChangeCount": 0,
+      "totalDrift": 18,
+      "repatterningCount": 2,
+      "contractiveCount": 4,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 15,
+      "motifChangeCount": 0,
+      "totalDrift": 0,
+      "repatterningCount": 0,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 9,
+      "motifChangeCount": 0,
+      "totalDrift": 13,
+      "repatterningCount": 0,
+      "contractiveCount": 6,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 9,
+      "motifChangeCount": 0,
+      "totalDrift": 12,
+      "repatterningCount": 1,
+      "contractiveCount": 5,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 9,
+      "motifChangeCount": 0,
+      "totalDrift": 18,
+      "repatterningCount": 2,
+      "contractiveCount": 4,
+      "expansiveCount": 0
+    },
+    {
+      "forcedStableCount": 14,
+      "motifChangeCount": 0,
+      "totalDrift": 2,
+      "repatterningCount": 1,
+      "contractiveCount": 0,
+      "expansiveCount": 0
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.48\linewidth]{figs/Fig2a.pdf} 
+    \includegraphics[width=0.48\linewidth]{figs/Fig2b.pdf} \\
+    \includegraphics[width=0.48\linewidth]{figs/Fig2c.pdf} 
+    \includegraphics[width=0.48\linewidth]{figs/Fig2d.pdf} \\
+    \caption{
+    Results for the \CP-averaged angular observables $F_{\rm L}$, $A_{\rm FB}$, $S_{5}$ and $P_{5}'$ in bins of \qsq.
+    The data are compared to SM predictions based on the prescription of Refs.~\cite{Altmannshofer:2014rta, Straub:2015ica}, with the exception of the $P_5'$ distribution, which is compared to SM predictions based on Refs.~\cite{Descotes-Genon:2014uoa, Khodjamirian:2010vf}.}
+    \label{fig:results:angobs}
+\end{figure}
+
+The \CP-averaged observables $F_{\rm L}$, $A_{\rm FB}$, $S_{5}$ and $P'_5$ that are obtained from the $S_{i}$ and $P_{i}^{(\prime)}$ fits are shown together with their respective SM predictions in Fig.~\ref{fig:results:angobs}. The results for all observables are given in Figs.~\ref{fig:sub:Si} and~\ref{fig:sub:Pi} and Tables~\ref{tab:sub:siresults} and~\ref{tab:sub:piresults} of the Supplemental Material. In addition, the statistical correlation between the observables is provided in Tables~\ref{appendix:likelihood:correlation:average:1}--\ref{appendix:likelihood:correlation:optimised:10}.
+The SM predictions are based on the prescription of Ref.~\cite{Altmannshofer:2014rta}, which combines light-cone sum rule calculations~\cite{Straub:2015ica}, valid in the low-\qsq region, with lattice determinations at high \qsq~\cite{Horgan:2013hoa,Horgan:2015vla} to yield more precise determinations of the form factors over the full \qsq range.
+For the $P^{(\prime)}_{i}$ observables, predictions from Ref.~\cite{Descotes-Genon:2014uoa} are shown using form factors from Ref.~\cite{Khodjamirian:2010vf}. These predictions are restricted to the region \mbox{$\qsq < 8.0\gevgevcccc$}.
+The results from Run~1 and the 2016 data are in excellent agreement. 
+A stand-alone fit to the Run~1 data  reproduces exactly the central values of the observables obtained in Ref.~\cite{LHCb-PAPER-2015-051}.
+
+
+Considering the observables individually, the results are largely in agreement with the SM predictions. 
+The local discrepancy in the $P'_5$ observable in the \mbox{$4.0<q^2<6.0\gevgevcccc$} and \mbox{$6.0<q^2<8.0\gevgevcccc$} bins reduces from the 2.8 and $3.0\,\sigma$ observed in Ref.~\cite{LHCb-PAPER-2015-051} to 2.5 and $2.9\,\sigma$. However, as discussed below, the overall tension with the SM is observed to increase mildly.
+
+Using the \flavio~software package~\cite{Straub:2018kue}, a fit of the angular observables is performed varying the parameter $\Real(C_{9})$. 
+The default \flavio SM nuisance parameters are used, 
+including form-factor parameters and subleading corrections to account for long-distance QCD interference effects with the charmonium decay modes~\cite{Straub:2015ica,Altmannshofer:2014rta}. 
+The same \qsq bins as in Ref.~\cite{LHCb-PAPER-2015-051} are included. The $3.0\,\sigma$ discrepancy with respect to the SM value of $\Real(C_{9})$ obtained with the Ref.~\cite{LHCb-PAPER-2015-051} data set changes to $3.3\,\sigma$ with the data set used here. 
+The best fit to the angular distribution is obtained with a shift in the SM value of $\Real(C_{9})$ by $-0.99^{+0.25}_{-0.21}$. 
+The tension observed in any such fit will depend on the effective coupling(s) varied, the handling of the SM nuisance parameters and the \qsq bins that are included in the fit. For example, the \mbox{$6.0 < \qsq < 8.0\gevgevcccc$} bin is known to be associated with larger theoretical uncertainties~\cite{Altmannshofer:2008dz}. Neglecting this bin, a \flavio fit gives a tension of $2.4\,\sigma$ using the observables from Ref.~\cite{LHCb-PAPER-2015-051} and $2.7\,\sigma$ tension with the measurements reported here. 
+
+
+
+

@@ -1,0 +1,160 @@
+# Row A-ii response kernel, Row C weighted influence, and the log-heat covariance correction
+
+**Scoreboard, first: A, B, C, D remain open; the frozen research count stays 4.**
+Nothing in this round is a closure, a receipt, a transcribed constant, or a new
+axiom. Everything listed below compiles in `lake build RequestProject` with no
+`sorry`, no `axiom`, no `@[implemented_by]`, and every new theorem checks
+against only `propext`, `Classical.choice`, `Quot.sound`.
+
+The round attacks the two seams named as highest-alpha on the current frontier:
+the Row A-ii cumulative sensitivity (`Σ_{j<K} q_j < 1`) and the Row B → Row C
+fusion through the differentiated locality estimate, and it also settles — as a
+theorem — a question about the temporal seam that had been left as prose.
+
+## 1. Row A-ii: the irrelevant-history response kernel pays the shooting bound
+
+`RequestProject/YangMills/RowAResponseKernelClosure.lean`.
+
+Inputs (physics, carried as hypotheses):
+
+* one-step response recurrence for the propagated irrelevant response,
+  `r₀ = 0`, `r_{j+1} ≤ R·s_j + ½·r_j`;
+* quartic injection budget `s_j ≤ D·g_j⁴`;
+* marginal (current-coupling) shell sensitivity `m_j ≤ C_m·g_j⁴`;
+* per-shell Lipschitz split `L_j ≤ m_j + r_j`.
+
+Proved:
+
+* `sum_response_of_recurrence` — `Σ_{j<K} r_j ≤ 2R·Σ_{j<K} s_j` for every `K`.
+  No summability of `r` is assumed and no exponential-forgetting law is imposed
+  on any coordinate; the factor `2 = (1−½)⁻¹` is the response-kernel mass.
+* `history_response_budget` — with the quartic budget and the repository's own
+  positive-drift telescope (`debt_block_telescope`), `Σ_{j<K} r_j ≤ 2RD·κ·b₋⁻¹·g₀²`
+  uniformly in `K`, `κ = (u₀+b₊)/u₀`.
+* `cumulative_lipschitz_of_response` — the *total* cumulative sensitivity obeys
+  `Σ_{j<K} L_j ≤ (C_m + 2RD)·κ·b₋⁻¹·g₀²`. Marginal and history halves ride on one
+  and the same small-coupling budget; there is no separate summability theorem
+  left on this route.
+* `response_gate_lt_one`, `canonical_bare_coupling_gate` — the smallness
+  condition is met by the **explicit** bare inverse coupling
+  `u₀ = b₊ + 2(C_m+2RD)/b₋ + 1`. "Choose the coupling small enough" is exact
+  arithmetic here, not a search.
+* `tuned_bare_coupling_of_response`, `tuned_bare_coupling_canonical` — the
+  shooting statement (unique tuned bare coupling, exact observation-scale value,
+  whole trajectory inside the small-field window).
+* `rowA_completion_of_response_kernel` — the repository's `RowACompletion`
+  predicate with the `q < 1` slot *derived* from the response data instead of
+  assumed.
+
+What is still missing on Row A-ii is exactly the identification of `R`, `D`,
+`C_m` with literal constants of the generated Bałaban history: the recurrence
+and the quartic injection are hypotheses about the literal irrelevant
+coordinate, and they are not proved or transcribed here.
+
+## 2. Row C, spatial: one weighted row gives all orders and the semigroup
+
+`RequestProject/YangMills/WeightedInfluenceRows.lean`.
+
+* `weighted_iter_row_le` — for a weight with `w ≥ 1` and `w(x,z) ≤ w(x,y)w(y,z)`,
+  a nonnegative kernel with `Σ_y w(x,y)M(x,y) ≤ C` satisfies
+  `Σ_y w(x,y)Mⁿ(x,y) ≤ Cⁿ` for every `n`. Positivity of powers and the all-order
+  Dyson row estimate are consequences, not hypotheses.
+* `weighted_row_of_split` — an entrywise splitting `M_dyn ≤ M_static + M_cov`
+  gives the row bound `C_H + C_cov`. This is the honest form of the "same
+  object" reduction.
+* `metricWeight`, `one_le_metricWeight`, `metricWeight_submul` — for the
+  repository weight `(3/2)^{d(x,y)}`, `w ≥ 1` and submultiplicativity are proved
+  from `d x x = 0` and the ordinary triangle inequality of the `ℕ`-valued
+  lattice metric; no separate weight algebra remains.
+* `metric_iter_entry_le` — `Mⁿ(x,y) ≤ Cⁿ·(2/3)^{d(x,y)}`.
+* `exp_series_summable`, `exp_series_cluster` — quasi-locality of the semigroup:
+  `Σ_n (tⁿ/n!)Mⁿ(x,y) ≤ (2/3)^{d(x,y)}·e^{Ct}` for `t ≥ 0`, uniformly in the
+  finite volume. This replaces the older strict nearest-neighbour finite-speed
+  route.
+
+## 3. Row C, temporal: the covariance term is genuine mathematics
+
+`RequestProject/YangMills/HeatDoobCurvatureDebt.lean`,
+`RequestProject/YangMills/LogHeatSecondVariation.lean`.
+
+The earlier optimistic seam `η_n = H_n` (dynamical curvature = static
+CMP-differentiated Hessian) is **false**, and this is now a theorem rather than a
+caveat. In the finite-noise model, where the semigroup is an average over a
+finite family of shifts,
+
+    (d²/ds²)|₀ (−log Σ_ω ρ_ω e^{−V(s,ω)}) = 𝔼_tilt[∂²_s V] − Var_tilt(∂_s V)
+
+(`hasDerivAt_logPartition`, `hasDerivAt_tilted_expectation`), and
+`ResponseChecks.covariance_term_not_removable` exhibits a two-point noise and a
+potential family with `∂²_s V ≡ 0` whose log-heat second variation is `−1`. So no
+identification of the dynamical curvature with the tilted static Hessian is
+available, and only the split form can be claimed.
+
+What survives, and is proved:
+
+* `wcov_centered`, `wvar_nonneg`, `abs_wcov_le_sqrt` — finite covariance algebra,
+  with `|Cov(f,g)| ≤ √Var f·√Var g`: a gradient-fluctuation (Cauchy) estimate is
+  enough to produce a covariance estimate; no separate covariance decay theorem
+  is needed.
+* `curvature_shell_of_split`, `curvature_shell_envelope`, `curvature_debt_total`,
+  `curvature_debt_tsum` — `η_n ≤ H_n + Cov_n` with two `2⁻ⁿ` shells gives
+  `η_n ≤ (A_H+A_cov)2⁻ⁿ ≤ (A_H+A_cov)(17/32)ⁿ` and accumulated debt
+  `≤ 2(A_H+A_cov)`, uniformly in the cutoff.
+
+## 3b. The covariance row is not an independent estimate
+
+`RequestProject/YangMills/CovarianceRowFromDecay.lean`.
+
+* `weighted_row_of_decay` — exponential decay `M(x,y) ≤ K θ^{d(x,y)}` plus a
+  lattice sphere-growth bound `#{y : d(x,y) = r} ≤ G gʳ` gives, whenever
+  `(3/2)gθ < 1`, the weighted row bound `Σ_y (3/2)^{d(x,y)} M(x,y) ≤ K G/(1−(3/2)gθ)`,
+  uniformly in the finite volume.  All-order Dyson rows and semigroup
+  quasi-locality then follow from §2.
+* `cov_shell_of_variance_shells` — two geometric variance shells give the
+  geometric covariance shell `|Cov(f,g)| ≤ √(A·B)·2⁻ⁿ` consumed by
+  `curvature_shell_of_split`.  A first-gradient fluctuation estimate therefore
+  suffices; no separate covariance-decay theorem is required.
+
+## 4. B → C fusion
+
+`RequestProject/YangMills/RowBToRowCTemporalFusion.lean`.
+
+* `geometric_debt_prefix`, `geometric_debt_tsum` — the general geometric shell
+  compiler `η_n ≤ A rⁿ ⇒ Σ_{n<N} η_n ≤ A/(1−r)`.
+* `curvature_debt_of_marked_shell` — Row B's activity and entropy majorants,
+  plus the same-object domination `η_n ≤ E_n + Cov_n` and a geometric covariance
+  shell, bound the accumulated temporal curvature debt by
+  `(A·B)/(1−r) + A_cov/(1−r_cov)`, uniformly in the cutoff.
+* `marked_shell_meets_envelope` — a Row-B ratio `r ≤ 17/32` puts the marked
+  shell inside the existing curvature envelope.
+
+So the *summation* half of Row C's temporal obligation is not independent
+physics; what remains is Row B's activity/entropy majorant (a source datum that
+the available scan does not support transcribing), the same-object domination,
+and the covariance response.
+
+## 5. Non-vacuity and axioms
+
+`RequestProject/YangMills/ResponseAndCurvatureChecks.lean` inhabits the Row A-ii
+response package with a genuinely nonzero propagated response
+(`response_package_inhabited`, `wR_one_pos`), inhabits the Row C spatial package
+with a kernel having a genuine off-diagonal entry
+(`clustering_package_inhabited`), proves `covariance_term_not_removable`, and
+audits the axioms of every new headline theorem.
+
+## 6. What did not close, and why
+
+* **A1**: the identification of the finite five-channel/Ward evaluator with the
+  literal CMP 109 Eq. (5.1)/(5.42) mixed jet is a source-transcription
+  obligation. The scan available in this tree does not support transcribing it,
+  and inventing the constants would be exactly the imported authority the task
+  forbids.
+* **A2**: `R`, `D`, `C_m` are not yet literal constants of the generated
+  history; the machinery above consumes them but does not produce them.
+* **B**: the literal CMP 116 differentiated activity/entropy constants are still
+  missing, for the same documentary reason.
+* **C**: beyond the summation and clustering compilers above, the covariance
+  response of the Heat/Doob dynamics on the *same* density is a genuine
+  analytic obligation, now visible precisely because the naive identification
+  has been refuted.
+* **D**: untouched this round.

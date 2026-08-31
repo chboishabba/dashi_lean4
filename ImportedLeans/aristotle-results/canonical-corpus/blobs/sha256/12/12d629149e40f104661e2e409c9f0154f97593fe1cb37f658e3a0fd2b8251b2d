@@ -1,0 +1,12 @@
+This ZIP file contains supplementary material for the publication
+LHCb-PAPER-2020-002. The files are:
+
+Supplementary.pdf   : An overview of the extra figures
+*.pdf, *.png, *.eps *.C : The figures in various formats
+
+flavio.zip, which contains:
+
+  - measurements.yml: File that contains the data to which one fits with flavio
+  - contour_plot_simultaneous_fit.py: Python script to plot figure 5
+  - wilson_scans.py: Python script to plot figures 6 and 7
+

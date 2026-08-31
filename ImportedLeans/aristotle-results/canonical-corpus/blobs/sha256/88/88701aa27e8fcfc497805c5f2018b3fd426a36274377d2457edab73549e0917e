@@ -1,0 +1,126 @@
+# Row A1a — literal quartic channels, and the weld of the mixed-vanishing argument
+
+Lean lane, `RequestProject/YangMills/`. Everything below compiles with no
+`sorry` and no non-standard axiom (`propext`, `Classical.choice`, `Quot.sound`
+only). **Row A1 is not closed**; the scoreboard stays `A, B, C, D` open and the
+frozen research count stays `4`.
+
+This round attacks the two items that the previous one left as genuine
+abstractions: the five quartic channel constants, and the fact that the
+`MixedVanishing` inputs to the patch theorem were still hypotheses.
+
+## 1. The five quartic channel coefficients are now computed
+
+`QuarticChannelSources.lean`.
+
+Previously the debt side had been reduced to five fourth-derivative bounds
+`M_k`, which is still five numbers taken as given. Bałaban's fourth-order
+remainders have only two literal shapes, and both are now handled with explicit
+constants.
+
+**Logarithmic (spectral) shape.** The elementary inequality
+
+    |log(1+u) − (u − u²/2 + u³/3)| ≤ u⁴ / (4(1−θ))      for |u| ≤ θ < 1
+
+is proved (`abs_logQuartic_le`) from the exact derivative identity
+
+    d/du [log(1+u) − u + u²/2 − u³/3] = −u³/(1+u)
+
+(`hasDerivAt_logQuartic`) together with a sign/monotonicity argument. No power
+series, no Taylor remainder machinery, no free constant. The cubic subtraction
+is exactly what makes the derivative carry the full factor `u³`.
+
+Summing over a spectrum bounded by `Λ` on `n` modes gives
+(`abs_logDetChannel_le`)
+
+    |∑_i (log(1+gλ_i) − …)| ≤ (n Λ⁴ / (4(1−θ))) g⁴,
+
+so the determinant and Faddeev–Popov/gauge coefficients are computed from
+`(mode count, spectral bound, small-field radius)`.
+
+**Polynomial (tail) shape.** A degree-≥4 channel `∑_{n<N} a_n g^{n+4}` obeys
+(`abs_tailPolyChannel_le`, and `…_of_majorant` for history-dependent
+coefficients)
+
+    |ch(g)| ≤ (∑_n |a_n| θⁿ) g⁴      on 0 ≤ g ≤ θ,
+
+so the interaction, chart and localization coefficients are computed from the
+source Taylor coefficients.
+
+**Analytic (power-series) shape.** When a channel is not a polynomial but is
+given by a convergent small-field expansion with a Cauchy bound `|a_n| ≤ A Kⁿ`
+and vanishes to third order, `abs_le_quartic_of_analyticChannel` gives
+
+    |F| ≤ (A K⁴ / (1 − ρ)) g⁴      for K g ≤ ρ < 1,
+
+which is the form small-field analyticity actually supplies for the chart and
+localization channels.
+
+**Assembly.** `sourceChannelCoefficient` gives the five coefficients in closed
+form, `Cbeta_sourceChannelCoefficient` writes out
+
+    C_β = C_det + C_int + C_chart + C_gauge + C_loc,
+
+and `betaInt_ge_of_sourceChannels` gives `βInt(g) ≥ −C_β g⁴`. No channel
+constant is postulated, and none is left as "some finite number": each is an
+explicit function of source data.
+
+*Not done:* the source identification — which operator's spectrum, its bound,
+the mode count, the Taylor coefficients. Those are inputs to the theorems.
+
+## 2. The mixed-vanishing argument is welded to the momentum symbol
+
+`MixedVanishingWeld.lean`.
+
+The previous round proved, in position space, that every background derivative
+of the block-averaging kernel and of the `ker Q` projection vanishes on mixed
+Lorentz components. The patch theorems, however, consume `MixedVanishing` for
+*momentum-space* symbols, and took it as a hypothesis.
+
+The bridge is that the momentum transform acts only on the position indices:
+`symbolOfPositionKernel Phi K` with `AnnihilatesZero Phi` (every linear
+transform has this). Then `mixedVanishing_symbolOfPositionKernel` transfers the
+vanishing, and
+
+* `mixedVanishing_averagingVariationSymbol` — the `Q` piece of `V = W + Q + R`
+  has `MixedVanishing`, **proved**;
+* `mixedVanishing_constrainedProjectionVariationSymbol` — the constrained part
+  of the `R` piece has `MixedVanishing`, **proved**.
+
+`weightedPositionTransform` / `annihilatesZero_weightedPositionTransform` give a
+concrete lattice-Fourier witness, so the bridge is not vacuous.
+
+`constrainedFirstVariation_mixedPatch_floor_welded` then restates the patch floor
+`|V_{0,1;1}(q)| ≥ 1/5` on the box with both `MixedVanishing` hypotheses
+discharged.
+
+## 3. End-to-end statements with no assumed constants
+
+`A1LiteralAssembly.lean` and `A1WeldedAssembly.lean`.
+
+* `historyUniformQuartic_of_sourceChannels` : the five literal source shapes,
+  with history-uniform data, give the history-uniform quartic hypothesis with
+  the *computed* coefficient vector.
+* `sourceChannel_package_nonvacuous` : that hypothesis package is inhabited, so
+  the reduction does not rest on incompatible small-field conditions.
+* `A1_beta_pos_from_literal_sources` : `β_j(g) ≥ 1/3276800 > 0`, with the
+  Gaussian floor the explicit rational from the literal mixed-component box and
+  the debt constant the explicit `Cbeta (sourceChannelCoefficient …)`.
+* `A1_beta_pos_welded` : the same conclusion with the Gaussian entry phrased in
+  terms of the *actual* constrained first variation `V = W + Q + R` — not a model
+  symbol — and with the vanishing of `Q` and of the constrained part of `R` on
+  the chosen component a theorem rather than an assumption.
+
+## What is *not* claimed
+
+* Row A1 is **not** closed. The remaining hypotheses of `A1_beta_pos_welded` are
+  source identifications, displayed in the statement: the one-loop
+  identification of the shell Gaussian coefficient; the paramagnetic entry
+  inequality on the box; the identification of `Q` with the transformed
+  averaging variation and of the constrained part of `R` with the transformed
+  projection variation; the Wilson and gauge component identifications on the
+  chosen component; and the five source channels with uniform data.
+* Nothing here is an Agda receipt. This is the Lean lane; no Agda kernel was run.
+* The five source constants are computed *from* source data, not *for*
+  Bałaban's construction: `Λ`, the mode counts and the Taylor coefficients are
+  still to be supplied.

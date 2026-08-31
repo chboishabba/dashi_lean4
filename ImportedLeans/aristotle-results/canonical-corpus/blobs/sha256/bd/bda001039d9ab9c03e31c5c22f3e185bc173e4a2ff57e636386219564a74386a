@@ -1,0 +1,41 @@
+[
+  {
+    "count": 4,
+    "failure_axes": {
+      "v_arrow": 4
+    },
+    "max_required_eps": 0.07972790403493235,
+    "mean_required_eps": 0.02217892320815995,
+    "min_required_eps": 3.998670026561513e-05,
+    "name": "phistar_50_76",
+    "step_pairs": [
+      {
+        "arrow_delta": 0.07972790403493235,
+        "energy_delta": 0.0441470377583677,
+        "next_t": "1",
+        "t": "0"
+      },
+      {
+        "arrow_delta": 0.008136583447949874,
+        "energy_delta": 0.0045123907591282375,
+        "next_t": "2",
+        "t": "1"
+      },
+      {
+        "arrow_delta": 0.0008112186494919627,
+        "energy_delta": 0.00044906822958878934,
+        "next_t": "3",
+        "t": "2"
+      },
+      {
+        "arrow_delta": 3.998670026561513e-05,
+        "energy_delta": 1.3204345899353598e-05,
+        "next_t": "4",
+        "t": "3"
+      }
+    ],
+    "top_structural_signatures": {
+      "1,-1,1": 4
+    }
+  }
+]

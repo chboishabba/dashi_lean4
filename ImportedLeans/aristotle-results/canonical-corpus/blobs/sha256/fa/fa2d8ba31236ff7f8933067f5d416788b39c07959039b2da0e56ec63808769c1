@@ -1,0 +1,78 @@
+[
+  {
+    "input": "../dashifine/hepdata_lyapunov_test_out/dashi_idk_out.csv/closure_embedding_per_step.csv",
+    "steps": 60,
+    "trace_families": 5,
+    "status_counts": {
+      "arrow_boundary": 4,
+      "interior": 56
+    },
+    "source_support_all": true,
+    "projection_conflicts": 0,
+    "arrow_boundary_families": [
+      "phistar_50_76"
+    ],
+    "spoke_rows": [
+      {
+        "name": "pTll_76_106",
+        "canonical_projection": "Spoke@p17",
+        "score_components": "trace_support=0.6667, exponent_norm=0.0217, canonical_alignment=1.0000, hecke_proximity=1.0000, bott_alignment=1.0000, attack_bonus=0.0000",
+        "shortlist": "Spoke@p17[0.6210|trace_support=0.6667, exponent_norm=0.0217, canonical_alignment=1.0000, hecke_proximity=1.0000, bott_alignment=1.0000, attack_bonus=0.0000]; Earth@p2[0.4440|trace_support=0.3333, exponent_norm=1.0000, canonical_alignment=0.0000, hecke_proximity=0.5714, bott_alignment=0.5000, attack_bonus=0.0000]; Spoke@p71[0.4353|trace_support=0.6667, exponent_norm=0.0217, canonical_alignment=0.0000, hecke_proximity=0.4286, bott_alignment=1.0000, attack_bonus=1.0000]"
+      }
+    ]
+  },
+  {
+    "input": "../dashifine/hepdata_lyapunov_test_out_new/dashi_idk_out/closure_embedding_per_step.csv",
+    "steps": 108,
+    "trace_families": 9,
+    "status_counts": {
+      "arrow_boundary": 7,
+      "interior": 101
+    },
+    "source_support_all": true,
+    "projection_conflicts": 0,
+    "arrow_boundary_families": [
+      "phistar_50_76",
+      "ttbar_mtt_8tev_cms",
+      "z_pt_7tev_atlas"
+    ],
+    "spoke_rows": [
+      {
+        "name": "pTll_76_106",
+        "canonical_projection": "Spoke@p17",
+        "score_components": "trace_support=0.6667, exponent_norm=0.0217, canonical_alignment=1.0000, hecke_proximity=1.0000, bott_alignment=1.0000, attack_bonus=0.0000",
+        "shortlist": "Spoke@p17[0.6210|trace_support=0.6667, exponent_norm=0.0217, canonical_alignment=1.0000, hecke_proximity=1.0000, bott_alignment=1.0000, attack_bonus=0.0000]; Earth@p2[0.4440|trace_support=0.3333, exponent_norm=1.0000, canonical_alignment=0.0000, hecke_proximity=0.5714, bott_alignment=0.5000, attack_bonus=0.0000]; Spoke@p71[0.4353|trace_support=0.6667, exponent_norm=0.0217, canonical_alignment=0.0000, hecke_proximity=0.4286, bott_alignment=1.0000, attack_bonus=1.0000]"
+      }
+    ]
+  },
+  {
+    "input": "../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+    "steps": 156,
+    "trace_families": 13,
+    "status_counts": {
+      "arrow_boundary": 7,
+      "interior": 149
+    },
+    "source_support_all": true,
+    "projection_conflicts": 0,
+    "arrow_boundary_families": [
+      "phistar_50_76",
+      "ttbar_mtt_8tev_cms",
+      "z_pt_7tev_atlas"
+    ],
+    "spoke_rows": [
+      {
+        "name": "pTll_76_106",
+        "canonical_projection": "Spoke@p17",
+        "score_components": "trace_support=0.6667, exponent_norm=0.0217, canonical_alignment=1.0000, hecke_proximity=1.0000, bott_alignment=1.0000, attack_bonus=0.0000",
+        "shortlist": "Spoke@p17[0.6210|trace_support=0.6667, exponent_norm=0.0217, canonical_alignment=1.0000, hecke_proximity=1.0000, bott_alignment=1.0000, attack_bonus=0.0000]; Earth@p2[0.4440|trace_support=0.3333, exponent_norm=1.0000, canonical_alignment=0.0000, hecke_proximity=0.5714, bott_alignment=0.5000, attack_bonus=0.0000]; Spoke@p71[0.4353|trace_support=0.6667, exponent_norm=0.0217, canonical_alignment=0.0000, hecke_proximity=0.4286, bott_alignment=1.0000, attack_bonus=1.0000]"
+      },
+      {
+        "name": "ptll_76_106_table",
+        "canonical_projection": "Spoke@p17",
+        "score_components": "trace_support=1.0000, exponent_norm=0.0217, canonical_alignment=1.0000, hecke_proximity=1.0000, bott_alignment=1.0000, attack_bonus=0.0000",
+        "shortlist": "Spoke@p17[0.7543|trace_support=1.0000, exponent_norm=0.0217, canonical_alignment=1.0000, hecke_proximity=1.0000, bott_alignment=1.0000, attack_bonus=0.0000]; Spoke@p71[0.5686|trace_support=1.0000, exponent_norm=0.0217, canonical_alignment=0.0000, hecke_proximity=0.4286, bott_alignment=1.0000, attack_bonus=1.0000]; Spoke@p59[0.5668|trace_support=1.0000, exponent_norm=0.0217, canonical_alignment=0.0000, hecke_proximity=0.5000, bott_alignment=0.7500, attack_bonus=1.0000]"
+      }
+    ]
+  }
+]

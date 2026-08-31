@@ -1,0 +1,227 @@
+    \pdfoutput=1
+% Uncomment line above if submitting to arXiv and using pdflatex
+% ============================================================================
+% Purpose: Template for LHCb documents
+% Authors: Tomasz Skwarnicki, Roger Forty, Ulrik Egede, Patrick Koppenburg
+% Created on: 2010-09-24
+% ============================================================================
+\documentclass[12pt,a4paper]{article}
+%%\documentclass[12pt,letter]{article}
+% For two column text, add "twocolumn" as an option to the document
+% class. Also uncomment the two "onecolumn" and "twocolumn" lines
+% around the title page below.
+
+% Variables that controls behaviour
+\usepackage{ifthen} % for conditional statements
+\newboolean{pdflatex}
+\setboolean{pdflatex}{true} % False for eps figures 
+
+\newboolean{articletitles}
+\setboolean{articletitles}{true} % False removes titles in references
+
+\newboolean{uprightparticles}
+\setboolean{uprightparticles}{false} %True for upright particle symbols
+
+\newboolean{inbibliography}
+\setboolean{inbibliography}{false} %True once you enter the bibliography
+
+% Define titles and authors here. It will then be used both in metadata and in
+% what is printed on the front page.
+\def\paperauthors{LHCb collaboration} % Leave as is for PAPER, CONF and FIGURE
+\def\paperasciititle{Measurement of CP-averaged observables in the B0->K*0mu+mu- decay} % Set ASCII title here !! MAKE sure it's only ASCII characters !! 
+\def\papertitle{Measurement \\ of \CP-averaged observables \\ in the $\decay{\Bd}{\Kstarz\mup\mun}$ decay} % Latex formatted title
+\def\paperkeywords{{High Energy Physics}, {LHCb}} 
+\def\papercopyright{\the\year\ CERN for the benefit of the LHCb collaboration} 
+\def\paperlicence{CC BY 4.0 licence}
+\def\paperlicenceurl{https://creativecommons.org/licenses/by/4.0/}
+
+
+\input{preamble}
+\newcommand{\br}[1]{\ensuremath{\BR\left[#1\right]}\xspace}
+\def\LstFTTT      {\ensuremath{\PLambda^{*}(1520)^{0}}\xspace}
+\def\mkpi  {\ensuremath{m_{K\pi}}\xspace}
+\def\mkpimm{\ensuremath{m_{K\pi\mu\mu}}\xspace} 
+\def\eos        {\mbox{\textsc{Eos}}\xspace}
+\def\urania     {\mbox{\textsc{Urania}}\xspace}
+\def\flavio     {\mbox{\textsc{Flavio}}\xspace}
+
+\def\Mkpi  {\ensuremath{m(\Kp\pim)}\xspace}
+\def\Mkpimm{\ensuremath{m(\Kp\pim\mumu)}\xspace} 
+
+\def\BdToKpimm    {\decay{\Bd}{\Kp\pim\mumu}}
+\def\BuToKmm    {\decay{\Bu}{\Kp\mumu}}
+\def\BsToJPsiKst  {\decay{\Bs}{\jpsi\Kstarz}}
+\def\BdPsitwosKst  {\decay{\Bd}{\psitwos\Kstarz}}
+
+\def\LstFTTTTopK  {\decay{\LstFTTT}{p\Km}}
+\def\LbToLstmm    {\decay{\Lb}{\LstFTTT\mumu}}
+\def\LbTopKmm     {\decay{\Lb}{p\Km\mumu}}
+\def\BuToKmm      {\decay{\Bu}{\Kp\mumu}}
+\def\BsTophimm    {\decay{\Bs}{\Pphi(1020)\mumu}}
+\def\BzToKstphimm{\decay{\Bz}{\Pphi(1020)(\to\mumu)\Kstarz}}
+
+\def\BsTophiKKmm  {\decay{\Bs}{\Pphi(1020)(\to\Kp\Km)\mumu}}
+\def\LambdapKmm    {\decay{\Lb}{\proton\Km\mumu}}
+
+\def\BF {dBF/d\qq}
+\def\BupsitwosK       {\decay{\Bp}{ \psitwos \Kp}}
+\def\jpsim {\ensuremath{m_{\mup\mun}}\xspace}
+\def\JPsimm  {\decay{\jpsi}{\mumu}}
+\def\AFB {\ensuremath{A_{FB}}\xspace}
+\def\FH {\ensuremath{F_{H}}\xspace}
+\def\thetal {\ensuremath{\theta_{l}}\xspace}
+\def\thetak {\ensuremath{\theta_{K}}\xspace}
+\def\costhetal {\ensuremath{\cos\thetal}\xspace}
+\def\costhetalsq {\ensuremath{\cos^{2}\thetal}\xspace}
+\def\BdKsMuMu     {\decay{\Bd}{ \KS \mup\mun}}
+\def\BdKzMuMu     {\decay{\Bd}{ K^{0} \mup\mun}}
+\def\BdJpsiKs     {\decay{\Bd}{ \jpsi \KS}}
+\def\BdJpsiKz    {\decay{\Bd}{ \jpsi K^{0}}}
+\def\BuJpsiK       {\decay{\Bp}{ \jpsi \Kp}}
+\def\BmJpsiK     {\decay{\Bm}{ \jpsi \Km}}
+\def\BuKMuMu     {\decay{\Bp}{ \Kp \mup\mun}}
+\def\BmKMuMu     {\decay{\Bm}{ \Km \mup\mun}}
+\def\KsMuMu     { \KS \mup\mun}
+\def\KzMuMu     { \Kz \mup\mun}
+\def\KMuMu     { \Kp \mup\mun}
+\def\JpsiKs     { \jpsi \KS}
+\def\JpsiKz     { \jpsi \Kz}
+\def\JpsiK       { \jpsi \Kp}
+\def\BuKstMuMu     {\decay{\Bp}{ (K^{*+} \to \KS \pip) \mup\mun}}
+\def\BuJpsiKst    {\decay{\Bp}{ \jpsi (K^{*+} \to \KS \pip)}}
+\def\BdKstKpiMuMu     {\decay{\Bd}{ (K^{*0} \to \Kp \pim) \mup\mun}}
+\def\BdKstMuMu     {\decay{\Bd}{K^{*0} \mup\mun}}
+\def\BdJpsiKst    {\decay{\Bd}{ \jpsi (K^{*0} \to \Kp \pim) }}
+\def\BKMuMu    {\decay{\B}{ K \mup\mun}}
+\def\BKstMuMu {\decay{\B}{ K^{*} \mup \mun}}
+\def\BJpsiK  {\decay{\B}{\jpsi K}}
+\def\BJpsiKst  {\decay{\B}{ \jpsi \Kstar}}
+\def\AllModes    {\decay{\B}{ K^{(*)} \mup\mun}}
+\def\CharModes    {\decay{\Bu}{ K^{(*)+} \mup\mun}}
+\def\NeutModes    {\decay{\Bd}{ K^{(*)0} \mup\mun}}
+\def\Ks {\KS}
+\def\qq {$q^{2}$\xspace}
+\def\AI {$A_{I}$\xspace}
+\def\PageBreak {\pagebreak}
+\def\JpsiModes {\decay{\B}{ \jpsi h  }}
+% lambda swap masses
+\def\mSwappKmm {\ensuremath{m_{(\pi\to p)K\mu\mu}}\xspace}
+\def\mDoubleSwappKmm {\ensuremath{m_{(K\to p)(\pi\to K)\mu\mu}}\xspace}
+%some aliases
+\newcommand{\bdtokstmm}{\BdToKstmm}
+\newcommand{\bdbtokstmm}{\BdbToKstmm}
+\newcommand{\btokstmm}{\BdToKstmm}
+\newcommand{\butokmm}{\BuToKmm}
+\newcommand{\comment}[1]{}
+\def\eos {{\tt EOS}}
+
+%some more colors
+\definecolor{darkred}{rgb}{0.6,0.0,0.0}
+\definecolor{darkgreen}{rgb}{0.0,0.5,0.0}
+\definecolor{lightgreen}{rgb}{0.75,1.0,0.75}
+\definecolor{lightred}{rgb}{1.0,0.75,0.75}
+\definecolor{lightblue}{rgb}{0.75,0.75,1.0}
+\definecolor{darkblue}{RGB}{100,100,200}
+%\definecolor{darkblue}{rgb}{0.5,0.5,1.0}%100, 100 200
+\definecolor{verylightblue}{rgb}{0.9,0.9,1.0}
+\definecolor{verylightred}{rgb}{1.0,0.9,0.9}
+\definecolor{lightgray}{rgb}{0.9,0.9,0.9}
+\definecolor{verylightgray}{rgb}{0.95,0.95,0.95}
+\definecolor{darkgray}{rgb}{0.75,0.75,0.75}
+\definecolor{orange}{rgb}{1.0,0.75,0.0}
+
+\usepackage{longtable} % only for template; not usually to be used in PAPERs
+\usepackage{multirow}
+%\usepackage{accents}
+\usepackage{afterpage}
+
+
+
+
+%\usepackage{longtable} % only for template; not usually to be used in PAPERs
+
+\begin{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Title     %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\setcounter{footnote}{1}
+
+% %%%%%%% CHOOSE TITLE PAGE--------
+%\onecolumn
+%\input{title-LHCb-INT}
+%\input{title-LHCb-ANA}
+%\input{title-LHCb-CONF}
+%\input{title-LHCb-FIGURE}
+\input{title-LHCb-PAPER}
+%\twocolumn
+% %%%%%%%%%%%%% ---------
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\setcounter{footnote}{0}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%  Table of Content   %%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Uncomment if desired
+%\tableofcontents
+\cleardoublepage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Main text %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{plain} % restore page numbers for the main text
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+%% Uncomment during review phase. 
+%% Comment before a final submission.
+% \linenumbers
+\input{introduction}
+
+\input{angularintroduction}
+
+\input{detector}
+
+\input{selection}
+
+%\input{acceptance}
+
+% \input{mass} MP 21/10/19
+
+\input{angularanalysis}
+
+\input{systematics}
+
+\input{results}
+
+% \input{compatibility}
+
+\input{conclusions}
+
+% Do not include this in analysis note and conference reports
+\input{acknowledgements}
+
+\input{supplemental_material}
+
+% \input{supplementary_material.tex}
+
+% \input{PRLjust}
+
+\addcontentsline{toc}{section}{References}
+\setboolean{inbibliography}{true}
+\bibliographystyle{LHCb}
+\bibliography{main,standard,LHCb-PAPER,LHCb-CONF,LHCb-DP,LHCb-TDR}
+ 
+ 
+\newpage
+ \input{LHCb_Authorship_21-Jan-2020}
+
+
+
+\end{document}

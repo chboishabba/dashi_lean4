@@ -1,0 +1,904 @@
+{
+  "batch_count": 3,
+  "batches": [
+    {
+      "families": [
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "pTll_106_170",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "pTll_170_350",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "pTll_50_76",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "pTll_76_106",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 4,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "phistar_50_76",
+          "family_class": "arrow_ladder",
+          "family_class_base": "arrow_ladder",
+          "family_class_reason": "no_exception_override",
+          "fejer_ok": true,
+          "first_boundary_index": 0,
+          "mdl_exact_ok": false,
+          "step_count": 12,
+          "tail_localized": true,
+          "terminal_boundary": false
+        }
+      ],
+      "family_count": 5,
+      "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out/dashi_idk_out.csv/closure_embedding_per_step.csv",
+      "tail_boundary_summary": {
+        "class_counts": {
+          "arrow_ladder": 1,
+          "interior_family": 4
+        },
+        "family_count": 5,
+        "mdl_tail_boundary_all_closest_ok": null,
+        "mdl_tail_boundary_all_cone_ok": null,
+        "mdl_tail_boundary_all_fejer_ok": null,
+        "mdl_tail_boundary_all_mdl_exact_fail": null,
+        "mdl_tail_boundary_all_tail_localized": null,
+        "mdl_tail_boundary_all_terminal_boundary": null,
+        "mdl_tail_boundary_count": 0,
+        "mdl_tail_boundary_families": [],
+        "tail_localized_counts_by_class": {
+          "arrow_ladder": 1
+        },
+        "terminal_boundary_counts_by_class": {}
+      }
+    },
+    {
+      "families": [
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "dijet_chi_7tev_cms",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "hgg_pt_8tev_atlas",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "pTll_106_170",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "pTll_170_350",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "pTll_50_76",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "pTll_76_106",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 4,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "phistar_50_76",
+          "family_class": "arrow_ladder",
+          "family_class_base": "arrow_ladder",
+          "family_class_reason": "no_exception_override",
+          "fejer_ok": true,
+          "first_boundary_index": 0,
+          "mdl_exact_ok": false,
+          "step_count": 12,
+          "tail_localized": true,
+          "terminal_boundary": false
+        },
+        {
+          "boundary_steps": 2,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "ttbar_mtt_8tev_cms",
+          "family_class": "mdl_tail_boundary",
+          "family_class_base": "mixed_hard_axis_outlier",
+          "family_class_reason": "mixed_hard_axis_outlier + closestpoint/fejer admissible + mdl_exact_fail + tail_max_frac_err",
+          "fejer_ok": true,
+          "first_boundary_index": 10,
+          "mdl_exact_ok": false,
+          "step_count": 12,
+          "tail_localized": true,
+          "terminal_boundary": true
+        },
+        {
+          "boundary_steps": 1,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "z_pt_7tev_atlas",
+          "family_class": "single_arrow_break",
+          "family_class_base": "single_arrow_break",
+          "family_class_reason": "no_exception_override",
+          "fejer_ok": true,
+          "first_boundary_index": 9,
+          "mdl_exact_ok": false,
+          "step_count": 12,
+          "tail_localized": true,
+          "terminal_boundary": true
+        }
+      ],
+      "family_count": 9,
+      "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_new/dashi_idk_out/closure_embedding_per_step.csv",
+      "tail_boundary_summary": {
+        "class_counts": {
+          "arrow_ladder": 1,
+          "interior_family": 6,
+          "mdl_tail_boundary": 1,
+          "single_arrow_break": 1
+        },
+        "family_count": 9,
+        "mdl_tail_boundary_all_closest_ok": true,
+        "mdl_tail_boundary_all_cone_ok": true,
+        "mdl_tail_boundary_all_fejer_ok": true,
+        "mdl_tail_boundary_all_mdl_exact_fail": true,
+        "mdl_tail_boundary_all_tail_localized": true,
+        "mdl_tail_boundary_all_terminal_boundary": true,
+        "mdl_tail_boundary_count": 1,
+        "mdl_tail_boundary_families": [
+          "ttbar_mtt_8tev_cms"
+        ],
+        "tail_localized_counts_by_class": {
+          "arrow_ladder": 1,
+          "mdl_tail_boundary": 1,
+          "single_arrow_break": 1
+        },
+        "terminal_boundary_counts_by_class": {
+          "mdl_tail_boundary": 1,
+          "single_arrow_break": 1
+        }
+      }
+    },
+    {
+      "families": [
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "atlas_4l_m4l_8tev",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "atlas_4l_pt4l_8tev",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "dijet_chi_13tev_cms_mgt6",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "dijet_chi_7tev_cms",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "hgg_pt_8tev_atlas",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "pTll_106_170",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "pTll_170_350",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "pTll_50_76",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "pTll_76_106",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 4,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "phistar_50_76",
+          "family_class": "arrow_ladder",
+          "family_class_base": "arrow_ladder",
+          "family_class_reason": "no_exception_override",
+          "fejer_ok": true,
+          "first_boundary_index": 0,
+          "mdl_exact_ok": false,
+          "step_count": 12,
+          "tail_localized": true,
+          "terminal_boundary": false
+        },
+        {
+          "boundary_steps": 0,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "ptll_76_106_table",
+          "family_class": "interior_family",
+          "family_class_base": "interior_family",
+          "family_class_reason": "no_boundary_steps",
+          "fejer_ok": true,
+          "first_boundary_index": null,
+          "mdl_exact_ok": true,
+          "step_count": 12,
+          "tail_localized": false,
+          "terminal_boundary": null
+        },
+        {
+          "boundary_steps": 2,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "ttbar_mtt_8tev_cms",
+          "family_class": "mdl_tail_boundary",
+          "family_class_base": "mixed_hard_axis_outlier",
+          "family_class_reason": "mixed_hard_axis_outlier + closestpoint/fejer admissible + mdl_exact_fail + tail_max_frac_err",
+          "fejer_ok": true,
+          "first_boundary_index": 10,
+          "mdl_exact_ok": false,
+          "step_count": 12,
+          "tail_localized": true,
+          "terminal_boundary": true
+        },
+        {
+          "boundary_steps": 1,
+          "closest_ok": true,
+          "cone_ok": true,
+          "family": "z_pt_7tev_atlas",
+          "family_class": "single_arrow_break",
+          "family_class_base": "single_arrow_break",
+          "family_class_reason": "no_exception_override",
+          "fejer_ok": true,
+          "first_boundary_index": 9,
+          "mdl_exact_ok": false,
+          "step_count": 12,
+          "tail_localized": true,
+          "terminal_boundary": true
+        }
+      ],
+      "family_count": 13,
+      "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+      "tail_boundary_summary": {
+        "class_counts": {
+          "arrow_ladder": 1,
+          "interior_family": 10,
+          "mdl_tail_boundary": 1,
+          "single_arrow_break": 1
+        },
+        "family_count": 13,
+        "mdl_tail_boundary_all_closest_ok": true,
+        "mdl_tail_boundary_all_cone_ok": true,
+        "mdl_tail_boundary_all_fejer_ok": true,
+        "mdl_tail_boundary_all_mdl_exact_fail": true,
+        "mdl_tail_boundary_all_tail_localized": true,
+        "mdl_tail_boundary_all_terminal_boundary": true,
+        "mdl_tail_boundary_count": 1,
+        "mdl_tail_boundary_families": [
+          "ttbar_mtt_8tev_cms"
+        ],
+        "tail_localized_counts_by_class": {
+          "arrow_ladder": 1,
+          "mdl_tail_boundary": 1,
+          "single_arrow_break": 1
+        },
+        "terminal_boundary_counts_by_class": {
+          "mdl_tail_boundary": 1,
+          "single_arrow_break": 1
+        }
+      }
+    }
+  ],
+  "class_counts": {
+    "arrow_ladder": 3,
+    "interior_family": 20,
+    "mdl_tail_boundary": 2,
+    "single_arrow_break": 2
+  },
+  "cohort_class_counts": {
+    "negative_control": {
+      "arrow_ladder": 3,
+      "interior_family": 13
+    },
+    "tail_candidate": {
+      "interior_family": 7,
+      "mdl_tail_boundary": 2,
+      "single_arrow_break": 2
+    }
+  },
+  "cohort_counts": {
+    "negative_control": 6,
+    "tail_candidate": 7
+  },
+  "compatible_step_file_count": 3,
+  "family_cohorts": {
+    "atlas_4l_m4l_8tev": "tail_candidate",
+    "atlas_4l_pt4l_8tev": "tail_candidate",
+    "dijet_chi_13tev_cms_mgt6": "tail_candidate",
+    "dijet_chi_7tev_cms": "tail_candidate",
+    "hgg_pt_8tev_atlas": "tail_candidate",
+    "pTll_106_170": "negative_control",
+    "pTll_170_350": "negative_control",
+    "pTll_50_76": "negative_control",
+    "pTll_76_106": "negative_control",
+    "phistar_50_76": "negative_control",
+    "ptll_76_106_table": "negative_control",
+    "ttbar_mtt_8tev_cms": "tail_candidate",
+    "z_pt_7tev_atlas": "tail_candidate"
+  },
+  "inputs": [
+    "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out/dashi_idk_out.csv/closure_embedding_per_step.csv",
+    "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_new/dashi_idk_out/closure_embedding_per_step.csv",
+    "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv"
+  ],
+  "mdl_tail_boundary_all_closest_ok": true,
+  "mdl_tail_boundary_all_cone_ok": true,
+  "mdl_tail_boundary_all_fejer_ok": true,
+  "mdl_tail_boundary_all_mdl_exact_fail": true,
+  "mdl_tail_boundary_all_tail_localized": true,
+  "mdl_tail_boundary_all_terminal_boundary": true,
+  "mdl_tail_boundary_families": [
+    "ttbar_mtt_8tev_cms"
+  ],
+  "mdl_tail_boundary_instance_count": 2,
+  "mdl_tail_boundary_unique_family_count": 1,
+  "negative_control_families": [
+    "pTll_106_170",
+    "pTll_170_350",
+    "pTll_50_76",
+    "pTll_76_106",
+    "phistar_50_76",
+    "ptll_76_106_table"
+  ],
+  "next_priority_tail_families": [
+    "z_pt_7tev_atlas",
+    "atlas_4l_m4l_8tev",
+    "atlas_4l_pt4l_8tev",
+    "dijet_chi_13tev_cms_mgt6",
+    "dijet_chi_7tev_cms",
+    "hgg_pt_8tev_atlas"
+  ],
+  "repeated_interior_control_families": [
+    "dijet_chi_7tev_cms",
+    "hgg_pt_8tev_atlas",
+    "pTll_106_170",
+    "pTll_170_350",
+    "pTll_50_76",
+    "pTll_76_106"
+  ],
+  "repeated_non_mdl_boundary_families": [
+    "phistar_50_76",
+    "z_pt_7tev_atlas"
+  ],
+  "tail_candidate_boundary_families": [
+    "ttbar_mtt_8tev_cms",
+    "z_pt_7tev_atlas"
+  ],
+  "tail_candidate_families": [
+    "atlas_4l_m4l_8tev",
+    "atlas_4l_pt4l_8tev",
+    "dijet_chi_13tev_cms_mgt6",
+    "dijet_chi_7tev_cms",
+    "hgg_pt_8tev_atlas",
+    "ttbar_mtt_8tev_cms",
+    "z_pt_7tev_atlas"
+  ],
+  "tail_candidate_interior_families": [
+    "atlas_4l_m4l_8tev",
+    "atlas_4l_pt4l_8tev",
+    "dijet_chi_13tev_cms_mgt6",
+    "dijet_chi_7tev_cms",
+    "hgg_pt_8tev_atlas"
+  ],
+  "total_family_instances": 27,
+  "unclassified_families": [],
+  "unique_family_occurrences": {
+    "atlas_4l_m4l_8tev": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      }
+    ],
+    "atlas_4l_pt4l_8tev": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      }
+    ],
+    "dijet_chi_13tev_cms_mgt6": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      }
+    ],
+    "dijet_chi_7tev_cms": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_new/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      }
+    ],
+    "hgg_pt_8tev_atlas": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_new/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      }
+    ],
+    "pTll_106_170": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out/dashi_idk_out.csv/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_new/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      }
+    ],
+    "pTll_170_350": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out/dashi_idk_out.csv/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_new/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      }
+    ],
+    "pTll_50_76": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out/dashi_idk_out.csv/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_new/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      }
+    ],
+    "pTll_76_106": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out/dashi_idk_out.csv/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_new/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      }
+    ],
+    "phistar_50_76": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "arrow_ladder",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out/dashi_idk_out.csv/closure_embedding_per_step.csv",
+        "mdl_exact_ok": false,
+        "tail_localized": true,
+        "terminal_boundary": false
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "arrow_ladder",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_new/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": false,
+        "tail_localized": true,
+        "terminal_boundary": false
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "arrow_ladder",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": false,
+        "tail_localized": true,
+        "terminal_boundary": false
+      }
+    ],
+    "ptll_76_106_table": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "interior_family",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": true,
+        "tail_localized": false,
+        "terminal_boundary": null
+      }
+    ],
+    "ttbar_mtt_8tev_cms": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "mdl_tail_boundary",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_new/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": false,
+        "tail_localized": true,
+        "terminal_boundary": true
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "mdl_tail_boundary",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": false,
+        "tail_localized": true,
+        "terminal_boundary": true
+      }
+    ],
+    "z_pt_7tev_atlas": [
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "single_arrow_break",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_new/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": false,
+        "tail_localized": true,
+        "terminal_boundary": true
+      },
+      {
+        "closest_ok": true,
+        "cone_ok": true,
+        "family_class": "single_arrow_break",
+        "fejer_ok": true,
+        "input": "/home/c/Documents/code/dashi_agda/../dashifine/hepdata_lyapunov_test_out_all/dashi_idk_out/closure_embedding_per_step.csv",
+        "mdl_exact_ok": false,
+        "tail_localized": true,
+        "terminal_boundary": true
+      }
+    ]
+  }
+}

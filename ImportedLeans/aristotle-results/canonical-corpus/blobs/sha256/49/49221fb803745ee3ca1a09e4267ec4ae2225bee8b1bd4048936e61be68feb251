@@ -1,0 +1,191 @@
+# Row A — source-pack verification round
+
+This round is the first in which the Bałaban source PDFs were actually
+available in the project tree (`ym-balaban-source-pdfs-20260828.tar.gz`, with
+`SHA256SUMS`).  Every statement below about the papers was read off the
+extracted text of those files; nothing is quoted from memory, and no page or
+equation number appears here that was not located in the extracted text.
+
+## 0. What was located in the sources
+
+**CMP 98 (Averaging operations for lattice gauge theories, 98 (1985) 17–51).**
+
+* Eq. (124) — the full linear form `Q(V₀)A` of the one-step averaging operator,
+  as a sum of a main term plus four correction terms built from the functions
+  `g(∓i ad Γ)`, `g⁻¹(·)` and `e^{i ad Γ}`, each of which equals `1` at argument
+  zero.
+* Eq. (125) — the main term `Q₀ = Q_{V₀}`, exactly in the form quoted in the
+  earlier round: a sum over `x ∈ B(c₋)` of `L^{−(d+1)}(R_{0,c₋}A)([x,x'])`.  The
+  formula, the normalisation `L^{−(d+1)}`, and the summation range that earlier
+  rounds had to take from the request text are therefore **confirmed against the
+  source**.
+* Eq. (126) and Proposition 3 — the linear estimate: the main term obeys
+  `|(Q₀A)_c| ≤ |A|`, and the whole linear form obeys
+  `|(Q(V₀)A)_c| ≤ (1 + O(1)L²α₀)|A|`, the correction terms being `O(L²α₀)`.
+  The constant in `O(1)` is **not** given numerically; the paper's constants
+  `C₁, α₀, c₃` are existentially quantified ("there exist constants … such that
+  for α₀, α₁ sufficiently small"), with dependence on `d` and `L` recorded but
+  no value.
+* Proposition 7 — joint analyticity: for `U₀` in the stated regularity class and
+  `U' = e^{iηA'}` with `|A'| < α₁`, and `α₀, α₁` sufficiently small, `Q_k(U'U₀, ηA)`
+  is analytic in the complex variables `A', A`, with the earlier bounds holding
+  uniformly in `A'`.  The **analytic radius is again an unspecified "sufficiently
+  small" constant**; the source gives no numerical neighbourhood.
+
+**CMP 109 (Renormalization group approach I, 109 (1987) 249–301).**
+
+* Theorem 1 — the small-field effective-action package: *if* the sequence of
+  effective coupling constants lies in an interval `]0, γ]` with `γ` sufficiently
+  small, then the small-field effective actions have the stated form with
+  irrelevant terms obeying the stated bound.  Proved there for arbitrary
+  semisimple compact `G ⊂ U(N)` in `d = 4` (and `d = 3`).  The paper states
+  explicitly that no asymptotic behaviour of the couplings is assumed.  This is
+  the implication form in which the Lean weld consumes it.
+* Theorem 2 — for `d = 4`, `G = SU(2)`, and `γ` sufficiently small: for
+  sufficiently small `g` there exists a bare coupling `g₀ = g₀(ε, g)` such that
+  the effective couplings stay in `]0, γ]`, `g_K = g` at the observation scale,
+  and two-sided bounds of the form
+  `1/g² + β log(L^k ε)^{−1} ≤ 1/g_k² ≤ 1/g² + β' log(L^k ε)^{−1}` hold with
+  `0 < β ≤ β'`.
+* §5, Eq. (5.1) — the vacuum polarization tensor is *defined* as the second
+  variation `δ²/δB(b)δB(b') E^{(j)}(U_j(exp iB))` at `B = 0` (as a limit in the
+  stated scaling), confirming the definition the polarization weld uses.
+* §5, Eqs. (5.36)–(5.41) — the tensor-structure normalisation: in momentum space
+  the polarization tensor is written as `β·(δ_{μν}Δ(p) − ∂_μ(p) conj ∂_ν(p))`
+  plus a remainder that is a third-order polynomial in the lattice derivative
+  symbols, the off-diagonal coefficients being all equal after the stated
+  `2^{d−2}` normalisation, and `β` is expressed through the expansion
+  coefficients of the effective action.
+
+## 1. The two findings that matter for the frontier
+
+**(F1) The tensor-structure normalisation is now available, and has been
+formalised.**  Earlier rounds listed "the tensor-structure normalisation of the
+polarization tensor" as a missing datum.  The source fixes it: the structure is
+the lattice transverse one, `T_{μν}(p) = δ_{μν}Δ(p) − ∂_μ(p) conj ∂_ν(p)` with
+`∂_μ(p) = e^{ip_μ} − 1`.  `RequestProject/YangMills/CMP109TensorNormalisation.lean`
+formalises this and proves the resulting *convention-free* extraction identity:
+the mixed momentum second derivative of the off-diagonal structure at zero
+momentum equals `−1` (`latticeTransverse_offDiag_mixed_deriv`), hence for any
+decomposition on that structure with a remainder whose mixed second derivative
+vanishes at zero,
+
+    β = − ∂²Π_{μν}/∂p_μ∂p_ν |_{p=0},   μ ≠ ν   (`beta_coefficient_extraction`).
+
+So the coefficient is determined by the polarization tensor alone; no further
+convention has to be assumed in the weld.
+
+**(F2) The Row-A completion content is exactly CMP 109 Theorem 2 — and CMP 109
+does not prove it.**  The Row-A completion contract asks for (i) a bilateral
+cumulative beta tube with positive lower slope and (ii) a tuned bare coupling
+keeping every effective coupling in the small-field window with a prescribed
+nonzero coupling at the observation scale.  That *is* Theorem 2 of CMP 109,
+including the two-sided form of the bounds.  The paper states the theorem and
+then says its proof, based on perturbative calculations, will be given in a
+separate paper.  That separate paper is not in the source pack, and the other
+items in the pack (CMP 98, CMP 99, CMP 102, the two "Propagators and
+renormalization transformations" papers, the three-dimensional UV-stability
+paper and the supplement) do not contain it either.  Two further facts sharpen
+this: Theorem 2 is stated only for `SU(2)` (the paper calls the restriction
+superficial but does not remove it), and CMP 109 proves no positivity or lower
+bound for the `β` it defines in §5 — positivity is part of the deferred
+statement.
+
+Consequence for the frontier: **the missing Row-A input cannot be supplied by
+literal transcription from the pack**, because the source itself defers it.  It
+has to be proved.
+
+## 2. What was proved in Lean this round
+
+All new modules build under `lake build RequestProject`, contain no `sorry`,
+no `axiom`, no `@[implemented_by]`, and every new top-level theorem reports only
+`propext, Classical.choice, Quot.sound`.
+
+* `RowATerminalTube.lean` — Row A-i, the **defect-free** bilateral tube.  The
+  additive defect `D` of the earlier cumulative bound is removed in the two
+  regimes in which removal is actually true:
+  - `terminal_tube_of_small_bare_coupling`: uniform in the block, once the bare
+    inverse coupling satisfies `C ≤ ε u₀²`;
+  - `terminal_tube_of_late_start`: for every tolerance `ε > 0` there is a scale
+    `k₀` beyond which every block obeys the tube, with no smallness assumption
+    at all.  The mechanism is the new telescoping estimate
+    `debt_block_telescope`: the total quartic debt of a block `[k, m)` is at most
+    `C·κ/u_k` with `κ = (u₀+b₊)/u₀`.
+  Both give slopes `b_Z⁻ − ε > 0` and `b_Z⁺ + ε`, i.e. the absorption
+  `b̃∓ = b∓ ∓ ε` asked for by the contract.
+
+* `RowAShooting.lean` — Row A-ii, the sensitivity-to-tuning bridge.
+  - `cumulative_sensitivity_le`: quartically suppressed per-shell sensitivities
+    `L_j ≤ C_s g_j⁴` sum, **uniformly in the cutoff**, to `C_s κ b₋⁻¹ g₀²`;
+    `cumulative_sensitivity_lt_one` records that this is `< 1` for a small
+    enough bare coupling.  This is the `q < 1` object the shooting bridge
+    consumes, and it is derived, not assumed, *given* the per-shell sensitivity.
+  - `shooting_exists_unique`: `q < 1` makes the shooting map a contraction of
+    `ℝ`, so the tuned bare coupling exists and is unique.
+  - `tuned_bare_coupling_window`: the tuned trajectory hits the prescribed
+    observation-scale value exactly, and every effective coupling on the way
+    satisfies `0 < g_j² ≤ (u⋆ − b₊K)⁻¹`.
+
+* `RowACompletion.lean` — the completion predicate `RowACompletion`, stated on a
+  *single* generated trajectory (tuning, observation-scale value, window, and
+  bilateral defect-free tube all for the same bare coupling), together with:
+  - `rowA_completion_of_uniform_debt`, which inhabits it from the hypothesis
+    package;
+  - `quartic_debt_bootstrap`, which shows the per-shell debt tolerance in that
+    package is a *consequence* of the quartic remainder bound on the physical
+    region (bare couplings above a floor `v₀` with `C ≤ ε v₀²`), proved by a
+    joint induction: the lower bound on `u_j` controls the remainder, and the
+    controlled remainder keeps the shell coefficient nonnegative, propagating the
+    lower bound;
+  - `rowA_completion_witness`, an explicit numerical instance of the hypothesis
+    package (with a genuinely coupling-dependent remainder), so the predicate is
+    demonstrably inhabitable and the assembly theorem is not vacuous.
+
+* `CMP109TensorNormalisation.lean` — finding (F1) above.
+
+## 3. Honest status
+
+Row A is **not** closed, and the frozen research count stays at four (A, B, C,
+D).  The single missing input on the Row-A path is now completely isolated and
+named:
+
+> a quantitative sensitivity estimate for the Bałaban shell coefficient with
+> respect to the bare coupling — in Lipschitz form, `|β_j(v) − β_j(w)| ≤ L_j|v − w|`
+> with `Σ_{j<K} L_j ≤ q < 1` uniformly in the cutoff `K`.
+
+Everything downstream of that estimate on Row A is now machine-checked here: the
+contraction, the tuned bare coupling, the observation window, and the
+defect-free bilateral tube on the same trajectory.  Upstream, the estimate is
+*not* available from the source pack, because the corresponding source statement
+(CMP 109 Theorem 2) is itself stated without proof there.
+
+Nothing in this round claims: small-field survival as a measure statement, the
+infinite-volume limit, the continuum limit, OS axioms, Wightman reconstruction,
+a positive continuum mass gap, nontriviality, or the Clay statement.  Rows B, C
+and D were not advanced this round.
+
+## 4. Note on the pack contents — CMP 116 *is* present, under a misleading name
+
+The file distributed as
+`Balaban_Renormalization_group_approach_to_lattice_gauge_field_theories_supplement.pdf`
+is **not** a supplement: its title page reads *Commun. Math. Phys. 116, 1–22
+(1988), Renormalization Group Approach to Lattice Gauge Field Theories II.
+Cluster Expansions*.  That is the paper Row B is indexed against, so the Row-B
+source is available after all; the pack's `README.md` mislabels it.  (The file
+named `Balaban_Ultraviolet_stability_of_three_dimensional_lattice_pure_gauge_field_theories.pdf`
+is CMP 102, 255–275, and the file named `CMP102_The_variational_problem_and_background_fields.pdf`
+is CMP 102, 277–309; the two CMP 102 articles are consecutive in the same
+volume, so both labels are defensible, but the first one's descriptive name and
+its number disagree.)
+
+CMP 116's activity estimates have the shape `|E^{(k)}(X)| ≤ (const)·exp(−μ d_k(X))`,
+an exponential majorant in the polymer size functional `d_k(X)` rather than in
+the Euclidean diameter, with the constants again of `O(1)` type.  Accordingly
+`RequestProject/YangMills/RowBShellEnergy.lean` proves the step that this shape
+is meant to feed: an exponential activity majorant together with an entropy
+bound `card{X : d(X) = n} ≤ B e^{νn}` with `ν < μ` yields the Row-B scalar target
+
+    E_n ≤ (A·B)·r^n,   r = e^{ν−μ} < 1,
+
+with summable total energy bounded by `A·B/(1−r)`.  The majorant and the entropy
+bound are hypotheses there; Row B is not closed.

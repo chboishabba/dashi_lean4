@@ -1,6 +1,63 @@
 {
   "archives": [
     {
+      "archive_id": "009295c6-6b8a-4ac4-818f-026ac05fdd77-aristotle--971446ae1909",
+      "errors": [],
+      "excluded_members": {
+        "_build": 241
+      },
+      "imported": true,
+      "members": 12565,
+      "modified_at": "2026-08-31T05:52:30.036794+00:00",
+      "path": "/home/c/Documents/code/aristotle-cli-rs/.aristotle-current-AVwPPq/009295c6-6b8a-4ac4-818f-026ac05fdd77-aristotle.tar.gz",
+      "sha256": "971446ae19092207f7a4285b9b7bd4f7a8664c4e29eee205cd64edd4c4cd937c",
+      "size_bytes": 298445117,
+      "source_members": 12301
+    },
+    {
+      "archive_id": "2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle--049a8d30256c",
+      "errors": [],
+      "excluded_members": {
+        ".agda": 1
+      },
+      "imported": true,
+      "members": 18878,
+      "modified_at": "2026-08-31T05:49:54.042480+00:00",
+      "path": "/home/c/Documents/code/aristotle-cli-rs/.aristotle-current-AVwPPq/2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle.tar.gz",
+      "sha256": "049a8d30256ca4fce283ae9a669f69aee81d3d131f2a4f223b4e074ebb13361a",
+      "size_bytes": 31217948,
+      "source_members": 18728
+    },
+    {
+      "archive_id": "abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle--62d4d4e945eb",
+      "errors": [],
+      "excluded_members": {
+        ".lake": 338,
+        "_build": 32
+      },
+      "imported": true,
+      "members": 13050,
+      "modified_at": "2026-08-31T05:53:51.679913+00:00",
+      "path": "/home/c/Documents/code/aristotle-cli-rs/.aristotle-current-AVwPPq/abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle.tar.gz",
+      "sha256": "62d4d4e945ebcbe5612f9d6e4498d9252b82f115900bedad5a97968acadf5efe",
+      "size_bytes": 754919437,
+      "source_members": 12656
+    },
+    {
+      "archive_id": "bd585849-3e34-445c-965e-ff822be3aefd-aristotle--79b30c841ab6",
+      "errors": [],
+      "excluded_members": {
+        "_build": 74
+      },
+      "imported": true,
+      "members": 12381,
+      "modified_at": "2026-08-31T05:52:22.648874+00:00",
+      "path": "/home/c/Documents/code/aristotle-cli-rs/.aristotle-current-AVwPPq/bd585849-3e34-445c-965e-ff822be3aefd-aristotle.tar.gz",
+      "sha256": "79b30c841ab666ecec6356d2cc3dc17731ae911abe8b76d94e6439de42759c5e",
+      "size_bytes": 275552112,
+      "source_members": 12288
+    },
+    {
       "archive_id": "9cfdcaf3-ef7c-43cd-b4fc-2283850b1416-aristotle--6137fdd2daa4",
       "errors": [],
       "excluded_members": {
@@ -52,6 +109,21 @@
       "sha256": "3eebb1dc83aa72b743778436eb9b9c7e872aff04b5a9475a7ff6d11d3e6c4e10",
       "size_bytes": 24973,
       "source_members": 17
+    },
+    {
+      "archive_id": "toe-dashi-canonical-corpus-handoff-20260830--c5c89e236094",
+      "errors": [],
+      "excluded_members": {
+        ".autonomous-orchestrator": 185,
+        ".cache": 44426
+      },
+      "imported": true,
+      "members": 97945,
+      "modified_at": "2026-08-31T05:40:24.435673+00:00",
+      "path": "/home/c/Documents/code/aristotle-cli-rs/attachments/toe-dashi-canonical-corpus-handoff-20260830.tar.gz",
+      "sha256": "c5c89e2360948a7e73ab61e8a4914ea62d93c1358462d2ca08c795cc5cf14ac2",
+      "size_bytes": 487027784,
+      "source_members": 20990
     },
     {
       "archive_id": "toe-dashi-full-agda-and-lean-handoff-20260830-v2--d8e304eed1be",
@@ -809,7 +881,7 @@
       "source_members": 12
     }
   ],
-  "generated_at": "2026-08-30T11:20:04.188500+00:00",
+  "generated_at": "2026-08-31T06:06:14.331986+00:00",
   "policy": {
     "excluded_generated_paths": [
       ".agda",
@@ -860,10 +932,10 @@
   },
   "schema": "dashi-aristotle-corpus-v1",
   "summary": {
-    "archives_discovered": 59,
-    "archives_imported": 55,
-    "duplicate_occurrences": 603192,
-    "source_occurrences": 635529,
-    "unique_content_blobs": 32337
+    "archives_discovered": 64,
+    "archives_imported": 60,
+    "duplicate_occurrences": 679626,
+    "source_occurrences": 712492,
+    "unique_content_blobs": 32866
   }
 }

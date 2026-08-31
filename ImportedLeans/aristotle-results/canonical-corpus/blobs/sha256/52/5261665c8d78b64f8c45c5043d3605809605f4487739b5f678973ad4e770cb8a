@@ -1,0 +1,680 @@
+{
+  "summary": {
+    "total_candidates": 18,
+    "low_risk": 12,
+    "medium_risk": 2,
+    "high_risk": 4,
+    "total_pattern_hits": 108
+  },
+  "candidates": [
+    {
+      "file": "DASHI/Physics/Closure/W4MatterStressEnergyInterfaceReceipt.agda",
+      "score": 13,
+      "risk": "low",
+      "risk_score": 2,
+      "summary": {
+        "patterns": 2,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "trace_context",
+          "count": 1,
+          "lines": [
+            2651
+          ],
+          "examples": [
+            "source compatibility, and trace"
+          ]
+        },
+        {
+          "kind": "witness_context",
+          "count": 1,
+          "lines": [
+            1029
+          ],
+          "examples": [
+            "source and a trivial local conservation witness"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Interop/SenateFormalizationPNFAdapter.agda",
+      "score": 9,
+      "risk": "low",
+      "risk_score": 1,
+      "summary": {
+        "patterns": 1,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "side_evidence",
+          "count": 1,
+          "lines": [
+            20
+          ],
+          "examples": [
+            "side evidence"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Interop/PNFBraidTransportField.agda",
+      "score": 8,
+      "risk": "low",
+      "risk_score": 0,
+      "summary": {
+        "patterns": 1,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "source_id",
+          "count": 1,
+          "lines": [
+            49
+          ],
+          "examples": [
+            "sourceId"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Interop/FiberedCrankDASHISystem.agda",
+      "score": 7,
+      "risk": "low",
+      "risk_score": 3,
+      "summary": {
+        "patterns": 1,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "witness_context",
+          "count": 1,
+          "lines": [
+            156
+          ],
+          "examples": [
+            "Witness source (generate source"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Physics/Closure/GRDiscreteBianchiFiniteR.agda",
+      "score": 7,
+      "risk": "low",
+      "risk_score": 1,
+      "summary": {
+        "patterns": 1,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "witness_context",
+          "count": 1,
+          "lines": [
+            5688
+          ],
+          "examples": [
+            "witness, and keep the W4 source"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Physics/Closure/GRQFTConsumerSourceDiagnostic.agda",
+      "score": 7,
+      "risk": "low",
+      "risk_score": 2,
+      "summary": {
+        "patterns": 1,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "witness_context",
+          "count": 1,
+          "lines": [
+            217
+          ],
+          "examples": [
+            "witness source"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Physics/Closure/NSSprint109SmoothCompactSupportWitness.agda",
+      "score": 7,
+      "risk": "low",
+      "risk_score": 2,
+      "summary": {
+        "patterns": 1,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "witness_context",
+          "count": 1,
+          "lines": [
+            195
+          ],
+          "examples": [
+            "source for compact support so the witness"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Physics/Closure/ShiftContractMdlLevelWitnessSourceAudit.agda",
+      "score": 7,
+      "risk": "low",
+      "risk_score": 1,
+      "summary": {
+        "patterns": 1,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "witness_context",
+          "count": 1,
+          "lines": [
+            38
+          ],
+          "examples": [
+            "witness-source"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Physics/Closure/W5W6PhysicsConsumerSourceInventory.agda",
+      "score": 7,
+      "risk": "low",
+      "risk_score": 0,
+      "summary": {
+        "patterns": 1,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "emission_context",
+          "count": 1,
+          "lines": [
+            501
+          ],
+          "examples": [
+            "emission routes remain outside this source"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Physics/QFT/W3ToM3Iso.agda",
+      "score": 7,
+      "risk": "low",
+      "risk_score": 1,
+      "summary": {
+        "patterns": 1,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "witness_context",
+          "count": 1,
+          "lines": [
+            11
+          ],
+          "examples": [
+            "source algebra is the existing finite W3 witness"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Physics/Closure/GRDiscreteRicciCandidateFromCurvature.agda",
+      "score": 6,
+      "risk": "low",
+      "risk_score": 1,
+      "summary": {
+        "patterns": 1,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "trace_context",
+          "count": 1,
+          "lines": [
+            355
+          ],
+          "examples": [
+            "trace, Einstein tensor law, source"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Physics/Closure/HEPDataResidualSourceCandidateDiagnostic.agda",
+      "score": 6,
+      "risk": "low",
+      "risk_score": 2,
+      "summary": {
+        "patterns": 1,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "anomaly_context",
+          "count": 1,
+          "lines": [
+            127
+          ],
+          "examples": [
+            "anomaly/fit source"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Crypto/RSAKeygenTraceCore.agda",
+      "score": 20,
+      "risk": "medium",
+      "risk_score": 0,
+      "summary": {
+        "patterns": 3,
+        "source_fiber_mentions": 1,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "trace_context",
+          "count": 2,
+          "lines": [
+            165,
+            264
+          ],
+          "examples": [
+            "observable trace",
+            "observable trace"
+          ]
+        },
+        {
+          "kind": "source_fiber",
+          "count": 1,
+          "lines": [
+            166
+          ],
+          "examples": [
+            "source fiber"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Crypto/RSAIterationLeakBoundary.agda",
+      "score": 8,
+      "risk": "medium",
+      "risk_score": 1,
+      "summary": {
+        "patterns": 1,
+        "source_fiber_mentions": 1,
+        "compromise_mentions": 0
+      },
+      "patterns": [
+        {
+          "kind": "source_fiber",
+          "count": 1,
+          "lines": [
+            223
+          ],
+          "examples": [
+            "source fiber"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Core/SourceProcessEvidenceCore.agda",
+      "score": 333,
+      "risk": "high",
+      "risk_score": 43,
+      "summary": {
+        "patterns": 36,
+        "source_fiber_mentions": 3,
+        "compromise_mentions": 8
+      },
+      "patterns": [
+        {
+          "kind": "source_process_evidence_phrase",
+          "count": 9,
+          "lines": [
+            18,
+            142,
+            147,
+            181
+          ],
+          "examples": [
+            "Source-process evidence",
+            "source-process evidence"
+          ]
+        },
+        {
+          "kind": "emission_context",
+          "count": 2,
+          "lines": [
+            147,
+            200
+          ],
+          "examples": [
+            "emitted by a shared hidden/source",
+            "emitted from a shared source"
+          ]
+        },
+        {
+          "kind": "batch_context",
+          "count": 2,
+          "lines": [
+            20,
+            425
+          ],
+          "examples": [
+            "batch/source",
+            "public artifact batch"
+          ]
+        },
+        {
+          "kind": "trace_context",
+          "count": 1,
+          "lines": [
+            426
+          ],
+          "examples": [
+            "observable trace"
+          ]
+        },
+        {
+          "kind": "side_evidence",
+          "count": 6,
+          "lines": [
+            23,
+            148,
+            201,
+            234
+          ],
+          "examples": [
+            "side evidence",
+            "side evidence"
+          ]
+        },
+        {
+          "kind": "source_fiber",
+          "count": 3,
+          "lines": [
+            24,
+            428,
+            429
+          ],
+          "examples": [
+            "source fiber",
+            "source fiber"
+          ]
+        },
+        {
+          "kind": "restricted_source_fiber",
+          "count": 1,
+          "lines": [
+            429
+          ],
+          "examples": [
+            "restricted source fiber"
+          ]
+        },
+        {
+          "kind": "anomaly_context",
+          "count": 1,
+          "lines": [
+            201
+          ],
+          "examples": [
+            "anomaly and side evidence do not promote source"
+          ]
+        },
+        {
+          "kind": "witness_context",
+          "count": 3,
+          "lines": [
+            25,
+            200,
+            432
+          ],
+          "examples": [
+            "recovered witness",
+            "source-fiber restriction and witness"
+          ]
+        },
+        {
+          "kind": "source_compromise",
+          "count": 8,
+          "lines": [
+            201,
+            297,
+            383,
+            384
+          ],
+          "examples": [
+            "source compromise",
+            "SourceCompromise"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Crypto/RSAKeygenSourceBoundary.agda",
+      "score": 227,
+      "risk": "high",
+      "risk_score": 72,
+      "summary": {
+        "patterns": 24,
+        "source_fiber_mentions": 3,
+        "compromise_mentions": 11
+      },
+      "patterns": [
+        {
+          "kind": "source_id",
+          "count": 4,
+          "lines": [
+            22,
+            169,
+            341,
+            414
+          ],
+          "examples": [
+            "source id",
+            "sourceId"
+          ]
+        },
+        {
+          "kind": "generator_context",
+          "count": 1,
+          "lines": [
+            341
+          ],
+          "examples": [
+            "source id, hidden generator"
+          ]
+        },
+        {
+          "kind": "emission_context",
+          "count": 2,
+          "lines": [
+            25,
+            341
+          ],
+          "examples": [
+            "emitted modulus, and keygen-source",
+            "emitted modulus, and keygen-source"
+          ]
+        },
+        {
+          "kind": "trace_context",
+          "count": 3,
+          "lines": [
+            24,
+            341,
+            419
+          ],
+          "examples": [
+            "observable trace",
+            "observable trace"
+          ]
+        },
+        {
+          "kind": "source_fiber",
+          "count": 3,
+          "lines": [
+            25,
+            341,
+            422
+          ],
+          "examples": [
+            "source fiber",
+            "source fiber"
+          ]
+        },
+        {
+          "kind": "source_compromise",
+          "count": 11,
+          "lines": [
+            94,
+            112,
+            238,
+            290
+          ],
+          "examples": [
+            "sourceCompromise",
+            "sourceCompromise"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Crypto/RSABatchSharedPrimeBoundary.agda",
+      "score": 170,
+      "risk": "high",
+      "risk_score": 86,
+      "summary": {
+        "patterns": 16,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 12
+      },
+      "patterns": [
+        {
+          "kind": "batch_context",
+          "count": 2,
+          "lines": [
+            502,
+            531
+          ],
+          "examples": [
+            "source-conditioned modulus batch",
+            "batch RSA shared-prime boundary over source"
+          ]
+        },
+        {
+          "kind": "witness_context",
+          "count": 2,
+          "lines": [
+            30,
+            532
+          ],
+          "examples": [
+            "recovered witness",
+            "recovered witness"
+          ]
+        },
+        {
+          "kind": "source_compromise",
+          "count": 12,
+          "lines": [
+            87,
+            105,
+            164,
+            207
+          ],
+          "examples": [
+            "sourceWideCompromise",
+            "sourceWideCompromise"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DASHI/Crypto/RSAEntropySourceStatisticalBoundary.agda",
+      "score": 159,
+      "risk": "high",
+      "risk_score": 79,
+      "summary": {
+        "patterns": 15,
+        "source_fiber_mentions": 0,
+        "compromise_mentions": 11
+      },
+      "patterns": [
+        {
+          "kind": "generator_context",
+          "count": 3,
+          "lines": [
+            21,
+            120,
+            156
+          ],
+          "examples": [
+            "source entropy / generator",
+            "source RSA entropy and generator"
+          ]
+        },
+        {
+          "kind": "anomaly_context",
+          "count": 1,
+          "lines": [
+            125
+          ],
+          "examples": [
+            "anomaly remains a statistical source"
+          ]
+        },
+        {
+          "kind": "source_compromise",
+          "count": 11,
+          "lines": [
+            28,
+            125,
+            316,
+            319
+          ],
+          "examples": [
+            "source compromise",
+            "source compromise"
+          ]
+        }
+      ]
+    }
+  ]
+}

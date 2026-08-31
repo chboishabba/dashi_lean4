@@ -1,0 +1,124 @@
+# Round — Row A history-free contraction, Row B CMP 116 rate conversion
+
+Two lanes, run in parallel, both in the Lean library `RequestProject/YangMills/`.
+Everything below compiles in a full `lake build RequestProject` with no `sorry`,
+no `axiom`, no `@[implemented_by]`, and `#print axioms` reporting only
+`propext, Classical.choice, Quot.sound`.
+
+**No row is promoted. The scoreboard is unchanged: `A, B, C, D` open, frozen
+research count `4`.**
+
+---
+
+## Lane A — the boxed inequality, and the history-free fork
+
+The target was the literal estimate
+
+    |𝓑_K(u) − 𝓑_K(v)| ≤ q|u − v|,  q < 1,  u = g⁻²,
+    𝓑_K(u) = Σ_{j<K} β_j(g_j(u), h_j(u)),
+
+on the admissible small-field tube.
+
+### What was already in place
+
+The repository already carried the whole chain in its *memory-bearing* form:
+
+* `LiteralChannelSensitivity` differentiates the five source channel majorants
+  and produces `analyticDirectSensitivityBound`, including the closed form
+  `Σ_{m≥0}(m+4)xᵐ = (4−3x)/(1−x)²` and the Cauchy-family derivative bound
+  `|R′(g)| ≤ A K⁴ ((4−3ρ)/(1−ρ)²) g³`;
+* `RowALiteralBetaSensitivity` composes that cubic derivative with the Jacobian
+  `dg/du = −½g³` of the shooting coordinate, giving the per-shell weight
+  `s_j = (C_dir/2) g_j⁶`, retains the trajectory weights in the summation via
+  `g_j² ≤ (u₀ + b j)⁻¹`, and proves
+  `literal_cumulative_beta_contraction`: the boxed inequality with
+  `q = σ/(1−σ)` and `σ = literalKernelMass`;
+* `RowASmallBareCoupling` shows all five numerical gates follow from one
+  smallness statement on the bare coupling, with an explicit threshold.
+
+### What this round adds
+
+`RowAHistoryFreeBeta.lean` records the strategic fork explicitly.  In the
+source normalisation the Gaussian shell coefficient `β_Z` and the five channel
+data are attached to the *scale* `j`, not to the bare inverse coupling: the bare
+coupling reaches the shell coefficient only through the running coupling `g_j`,
+which the shooting recursion already tracks as an explicit scalar.  Whenever
+that is so — the hypotheses `hZfree`, `hDfree`, `hGfree`, `hIfree`, `hCfree`,
+`hLfree` — the memory sector is *empty*, and:
+
+* `literalKernelMass_history_free` — the total response mass is exactly the
+  resummed direct marginal weight, `σ = (C_dir/2)(u₀⁻³ + 1/(2 b u₀²))`, with no
+  memory prefactor;
+* `literal_cumulative_beta_contraction_history_free` — **the boxed inequality**,
+  with `q = σ/(1−σ) < 1` under the single smallness hypothesis
+  `C_dir(1 + 1/(2b)) < u₀²`.  No exponential-forgetting law is imposed on any
+  coordinate, marginal or irrelevant, because no coordinate is asked to forget;
+* `rowA_history_free_small_bare_coupling` — the Row-A completion predicate at
+  every sufficiently small bare coupling from the channel majorants, the
+  two-sided Gaussian window and the quartic debt bound *alone*.
+
+`RowAHistoryFreeWitness.lean` certifies that the added freeness hypotheses are
+compatible with the rest: for an explicit scale-attached family
+(`a_I = 10⁻³`, no determinant or gauge modes, `β_Z ≡ 1`, hence
+`β_j(p) = 1 + 10⁻³ g_j(p)⁴` with a fully active marginal coordinate), both
+`historyFree_contraction_witness` (the boxed inequality, for every `u₀ ≥ 4`)
+and `historyFree_package_inhabited` hold.
+
+### Honest status of Lane A
+
+Row A is **not** closed.  What remains is exactly the identification that was
+outstanding before: that the literal Bałaban shell coefficient *is*
+`literalShellAt` for source data satisfying these majorants — and, for the sharp
+form above, that the literal data are scale-attached.  Both are hypotheses of
+the theorems, displayed in their statements, not results.  A conditional
+theorem, however sharp, is not a closure route.
+
+---
+
+## Lane B — the CMP 116 activity rate in block units
+
+Row B had been reduced to a single scalar: an activity decay rate `μ` exceeding
+the proved four-dimensional lattice-animal entropy rate `ν = 1 + 2 log 8`.
+The obstruction recorded was that the source states its estimates with
+unspecified constants.
+
+`CMP116ActivityRate.lean` addresses the part of that which is a genuine
+bookkeeping issue rather than a missing constant: **the source rate is not
+stated per polymer.**  It is stated per unit-lattice volume, or per tree length,
+while the polymers of the `k`-th cluster expansion are unions of blocks of `M⁴`
+unit sites and the entropy counts *blocks*.
+
+* Volume form.  A majorant `e^{−¼(κ₁−1)M⁻⁴|Y|}` with `|Y|` in unit sites, on a
+  polymer of `n` blocks, has `|Y| = M⁴ n`, so **the block size cancels
+  exactly**: `cmp116_block_activity_bound` gives the block-unit rate
+  `cmp116BlockRate κ₁ = (κ₁−1)/4`, independent of `M`.
+* Hence `cmp116BlockRate_exceeds_entropy`: the Row-B margin `μ > ν` is the
+  single explicit numerical condition
+
+        κ₁ > 5 + 8 log 8   (< 22, by `cmp116_threshold_lt_22`)
+
+  on the source's own parameter.  No `O(1)` is transcribed and `M` is absent.
+* Tree form.  A connected polymer of `n` blocks has tree length at least `n − 1`
+  in block units, so `cmp116_tree_activity_bound` converts a majorant
+  `e^{−(1−4δ)κ d(Y)}` into a block-unit majorant with rate
+  `cmp116TreeRate δ κ = (1−4δ)κ`, at the cost of one prefactor `e^{rate}`; the
+  margin is `(1−4δ)κ > 1 + 2 log 8` (`cmp116TreeRate_exceeds_entropy`).
+* `cmp116_block_marked_shell_energy_geometric`,
+  `cmp116_block_marked_shell_energy_tsum_le`,
+  `cmp116_tree_marked_shell_energy_geometric` — Row B's geometric shell energy
+  `E_n ≤ E₀ r^n` and finite total energy in each of the source's two shapes,
+  the entropy input being the proved lattice-animal bound and the marks costing
+  only the explicit constant of `MarkedPolymerDecay`.
+
+`CMP116ActivityRateChecks.lean` exhibits an inhabiting family with nonvanishing
+activities and audits the axioms.
+
+### Honest status of Lane B
+
+Row B is **not** closed.  What is proved is the conversion; what remains is the
+identification that the literal *differentiated* cluster-expansion activities of
+the source satisfy a majorant of either shape, with a parameter in the stated
+range.  That identification is the hypothesis `hact` of every theorem above.
+It was not extracted from the source text in this round: the available scan of
+CMP 116 is not legible enough to transcribe constants from, and inventing them
+would be exactly the kind of unchecked import the task forbids.

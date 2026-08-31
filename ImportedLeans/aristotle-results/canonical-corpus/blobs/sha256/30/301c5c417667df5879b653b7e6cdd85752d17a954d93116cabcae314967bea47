@@ -1,0 +1,13 @@
+{
+  "Ontology/Hecke/SaturatedInvariantRefinementStatus.agda": {
+    "last_elapsed_s": 30.451,
+    "last_layer": "L1",
+    "last_outcome_reason_code": "timeout",
+    "last_route": "bounded",
+    "last_status": "failed",
+    "max_elapsed_s": 30.49,
+    "run_count": 2,
+    "success_count": 0,
+    "timeout_count": 2
+  }
+}

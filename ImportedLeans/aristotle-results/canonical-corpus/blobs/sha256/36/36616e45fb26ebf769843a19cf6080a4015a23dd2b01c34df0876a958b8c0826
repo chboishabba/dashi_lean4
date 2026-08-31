@@ -1,0 +1,1163 @@
+{
+  "alt_v_dnorm": {
+    "family_minmax": {
+      "all_step_deltas": [
+        {
+          "delta": -0.8999937568263463,
+          "next_t": "1",
+          "t": "0"
+        },
+        {
+          "delta": -0.09000549117459775,
+          "next_t": "2",
+          "t": "1"
+        },
+        {
+          "delta": -0.00900061059821327,
+          "next_t": "3",
+          "t": "2"
+        },
+        {
+          "delta": -0.0009000647296212431,
+          "next_t": "4",
+          "t": "3"
+        },
+        {
+          "delta": -9.002649965851943e-05,
+          "next_t": "5",
+          "t": "4"
+        },
+        {
+          "delta": -9.034696048455007e-06,
+          "next_t": "6",
+          "t": "5"
+        },
+        {
+          "delta": -9.099311216091634e-07,
+          "next_t": "7",
+          "t": "6"
+        },
+        {
+          "delta": -9.240033227828718e-08,
+          "next_t": "8",
+          "t": "7"
+        },
+        {
+          "delta": -1.1299650076255221e-08,
+          "next_t": "9",
+          "t": "8"
+        },
+        {
+          "delta": -1.6425260566103809e-09,
+          "next_t": "10",
+          "t": "9"
+        },
+        {
+          "delta": -1.8330913539808766e-10,
+          "next_t": "11",
+          "t": "10"
+        },
+        {
+          "delta": -1.857531538419943e-11,
+          "next_t": "12",
+          "t": "11"
+        }
+      ],
+      "boundary_failures": []
+    },
+    "log_abs": {
+      "all_step_deltas": [
+        {
+          "delta": -0.00014205308889621822,
+          "next_t": "1",
+          "t": "0"
+        },
+        {
+          "delta": -1.4207384140534313e-05,
+          "next_t": "2",
+          "t": "1"
+        },
+        {
+          "delta": -1.4207592206850734e-06,
+          "next_t": "3",
+          "t": "2"
+        },
+        {
+          "delta": -1.4207661237283728e-07,
+          "next_t": "4",
+          "t": "3"
+        },
+        {
+          "delta": -1.4210823592831002e-08,
+          "next_t": "5",
+          "t": "4"
+        },
+        {
+          "delta": -1.4261408946283535e-09,
+          "next_t": "6",
+          "t": "5"
+        },
+        {
+          "delta": -1.436340500976043e-10,
+          "next_t": "7",
+          "t": "6"
+        },
+        {
+          "delta": -1.4585536906435514e-11,
+          "next_t": "8",
+          "t": "7"
+        },
+        {
+          "delta": -1.7836674301343914e-12,
+          "next_t": "9",
+          "t": "8"
+        },
+        {
+          "delta": -2.5927530592141447e-13,
+          "next_t": "10",
+          "t": "9"
+        },
+        {
+          "delta": -2.893563360365606e-14,
+          "next_t": "11",
+          "t": "10"
+        },
+        {
+          "delta": -2.93214257359465e-15,
+          "next_t": "12",
+          "t": "11"
+        }
+      ],
+      "boundary_failures": []
+    },
+    "raw": {
+      "all_step_deltas": [
+        {
+          "delta": -0.0001420654215435093,
+          "next_t": "1",
+          "t": "0"
+        },
+        {
+          "delta": -1.4207507494318121e-05,
+          "next_t": "2",
+          "t": "1"
+        },
+        {
+          "delta": -1.4207604542648688e-06,
+          "next_t": "3",
+          "t": "2"
+        },
+        {
+          "delta": -1.4207662471014088e-07,
+          "next_t": "4",
+          "t": "3"
+        },
+        {
+          "delta": -1.4210823716349313e-08,
+          "next_t": "5",
+          "t": "4"
+        },
+        {
+          "delta": -1.4261408958738954e-09,
+          "next_t": "6",
+          "t": "5"
+        },
+        {
+          "delta": -1.4363405011031273e-10,
+          "next_t": "7",
+          "t": "6"
+        },
+        {
+          "delta": -1.458553690657215e-11,
+          "next_t": "8",
+          "t": "7"
+        },
+        {
+          "delta": -1.7836674301365022e-12,
+          "next_t": "9",
+          "t": "8"
+        },
+        {
+          "delta": -2.592753059214564e-13,
+          "next_t": "10",
+          "t": "9"
+        },
+        {
+          "delta": -2.893563360365657e-14,
+          "next_t": "11",
+          "t": "10"
+        },
+        {
+          "delta": -2.9321425735946552e-15,
+          "next_t": "12",
+          "t": "11"
+        }
+      ],
+      "boundary_failures": []
+    },
+    "robust_z": {
+      "all_step_deltas": [
+        {
+          "delta": -886278.146544085,
+          "next_t": "1",
+          "t": "0"
+        },
+        {
+          "delta": -88633.83694827573,
+          "next_t": "2",
+          "t": "1"
+        },
+        {
+          "delta": -8863.444238634507,
+          "next_t": "3",
+          "t": "2"
+        },
+        {
+          "delta": -886.348037736817,
+          "next_t": "4",
+          "t": "3"
+        },
+        {
+          "delta": -88.65452526977862,
+          "next_t": "5",
+          "t": "4"
+        },
+        {
+          "delta": -8.897010237770871,
+          "next_t": "6",
+          "t": "5"
+        },
+        {
+          "delta": -0.8960640691401536,
+          "next_t": "7",
+          "t": "6"
+        },
+        {
+          "delta": -0.09099218145738652,
+          "next_t": "8",
+          "t": "7"
+        },
+        {
+          "delta": -0.011127447107516453,
+          "next_t": "9",
+          "t": "8"
+        },
+        {
+          "delta": -0.0016174944971134586,
+          "next_t": "10",
+          "t": "9"
+        },
+        {
+          "delta": -0.00018051556417231218,
+          "next_t": "11",
+          "t": "10"
+        },
+        {
+          "delta": -1.8292233657679624e-05,
+          "next_t": "12",
+          "t": "11"
+        }
+      ],
+      "boundary_failures": []
+    },
+    "winsor95": {
+      "all_step_deltas": [
+        {
+          "delta": 0.0,
+          "next_t": "1",
+          "t": "0"
+        },
+        {
+          "delta": -1.4207507494318121e-05,
+          "next_t": "2",
+          "t": "1"
+        },
+        {
+          "delta": -1.4207604542648688e-06,
+          "next_t": "3",
+          "t": "2"
+        },
+        {
+          "delta": -1.4207662471014088e-07,
+          "next_t": "4",
+          "t": "3"
+        },
+        {
+          "delta": -1.4210823716349313e-08,
+          "next_t": "5",
+          "t": "4"
+        },
+        {
+          "delta": -1.4261408958738954e-09,
+          "next_t": "6",
+          "t": "5"
+        },
+        {
+          "delta": -1.4363405011031273e-10,
+          "next_t": "7",
+          "t": "6"
+        },
+        {
+          "delta": -1.458553690657215e-11,
+          "next_t": "8",
+          "t": "7"
+        },
+        {
+          "delta": -1.7836674301365022e-12,
+          "next_t": "9",
+          "t": "8"
+        },
+        {
+          "delta": -2.592753059214564e-13,
+          "next_t": "10",
+          "t": "9"
+        },
+        {
+          "delta": -2.893563360365657e-14,
+          "next_t": "11",
+          "t": "10"
+        },
+        {
+          "delta": -2.9321425735946552e-15,
+          "next_t": "12",
+          "t": "11"
+        }
+      ],
+      "boundary_failures": []
+    }
+  },
+  "boundary_count": 0,
+  "boundary_summary": [],
+  "family_context": {
+    "context_root": "/home/c/Documents/code/dashifine",
+    "family": "atlas_4l_m4l_8tev",
+    "meta": {
+      "best_deg": 1.0,
+      "bic": 4.72956973713859,
+      "chi2": 0.12439955115049788,
+      "chi2_over_dof": 0.015549943893812234,
+      "condA": 19.4047670774081,
+      "dof": 8.0,
+      "hi_energy": 0.3690291002011414,
+      "odd_even": 0.6280278681406739
+    },
+    "meta_path": "/home/c/Documents/code/dashifine/hepdata_to_dashi_all/atlas_4l_m4l_8tev/meta.txt",
+    "metrics": [
+      {
+        "R_E_hi": 0.0006259172445705628,
+        "alpha": 1e-06,
+        "chi2": 464.32937330827565,
+        "chi2_dof": 92.86587466165513,
+        "condA": 2303478.900515197,
+        "iter": 0,
+        "odd_even_ratio": 3.410226768244372e-05
+      },
+      {
+        "R_E_hi": 0.0006263833696275318,
+        "alpha": 9.999999999999999e-06,
+        "chi2": 464.3742934331862,
+        "chi2_dof": 92.87485868663724,
+        "condA": 23033548.240813725,
+        "iter": 1,
+        "odd_even_ratio": 3.410413962886477e-06
+      },
+      {
+        "R_E_hi": 0.0006258213519293264,
+        "alpha": 9.999999999999999e-05,
+        "chi2": 464.37878609868056,
+        "chi2_dof": 92.87575721973612,
+        "condA": 230238289.59713373,
+        "iter": 2,
+        "odd_even_ratio": 3.410468103761812e-07
+      },
+      {
+        "R_E_hi": 0.0006197268553180514,
+        "alpha": 0.001,
+        "chi2": 464.37925467872674,
+        "chi2_dof": 92.87585093574535,
+        "condA": 2292742653.861388,
+        "iter": 3,
+        "odd_even_ratio": 3.4108259712209485e-08
+      },
+      {
+        "R_E_hi": 0.0005632321848799718,
+        "alpha": 0.01,
+        "chi2": 464.38106088742006,
+        "chi2_dof": 92.876212177484,
+        "condA": 22013162162.920547,
+        "iter": 4,
+        "odd_even_ratio": 3.414220126886706e-09
+      },
+      {
+        "R_E_hi": 0.0002583360336621561,
+        "alpha": 0.09999999999999999,
+        "chi2": 464.4641803837194,
+        "chi2_dof": 92.89283607674388,
+        "condA": 161338572782.59808,
+        "iter": 5,
+        "odd_even_ratio": 3.4373132046683954e-10
+      },
+      {
+        "R_E_hi": 1.0052833730301312e-05,
+        "alpha": 1.0,
+        "chi2": 464.95144555376515,
+        "chi2_dof": 92.99028911075303,
+        "condA": 862615017390.4388,
+        "iter": 6,
+        "odd_even_ratio": 3.4964206884512856e-11
+      },
+      {
+        "R_E_hi": 2.448189516880044e-07,
+        "alpha": 10.0,
+        "chi2": 472.01508528915474,
+        "chi2_dof": 94.40301705783095,
+        "condA": 7210264466026.937,
+        "iter": 7,
+        "odd_even_ratio": 3.7528465197651836e-12
+      },
+      {
+        "R_E_hi": 7.402514610425053e-07,
+        "alpha": 100.0,
+        "chi2": 867.7694021345702,
+        "chi2_dof": 173.55388042691405,
+        "condA": 39707075615138.32,
+        "iter": 8,
+        "odd_even_ratio": 6.086884544156189e-13
+      },
+      {
+        "R_E_hi": 6.87125116623196e-07,
+        "alpha": 1000.0,
+        "chi2": 4133.083613171974,
+        "chi2_dof": 826.6167226343948,
+        "condA": 73772461243851.12,
+        "iter": 9,
+        "odd_even_ratio": 2.813628206320585e-13
+      },
+      {
+        "R_E_hi": 6.688454996652454e-07,
+        "alpha": 10000.0,
+        "chi2": 6251.142603596949,
+        "chi2_dof": 1250.2285207193897,
+        "condA": 80233964610756.48,
+        "iter": 10,
+        "odd_even_ratio": 2.4719942010816106e-13
+      },
+      {
+        "R_E_hi": 6.667630682000702e-07,
+        "alpha": 100000.0,
+        "chi2": 6559.620013086066,
+        "chi2_dof": 1311.9240026172133,
+        "condA": 80789558125953.14,
+        "iter": 11,
+        "odd_even_ratio": 2.4375417181001476e-13
+      },
+      {
+        "R_E_hi": 6.665516731108621e-07,
+        "alpha": 1000000.0,
+        "chi2": 6591.822765051712,
+        "chi2_dof": 1318.3645530103424,
+        "condA": 80977624930228.78,
+        "iter": 12,
+        "odd_even_ratio": 2.434093282901207e-13
+      }
+    ],
+    "metrics_path": "/home/c/Documents/code/dashifine/hepdata_dashi_native/atlas_4l_m4l_8tev_dashi_native_metrics.csv",
+    "npz_path": "/home/c/Documents/code/dashifine/hepdata_npz_all/atlas_4l_m4l_8tev.npz",
+    "observable_bins": [
+      {
+        "bin_index": 0,
+        "err": 28.513154858766505,
+        "frac_err": 0.16481592403911274,
+        "x": 90.0,
+        "y": 173.0
+      },
+      {
+        "bin_index": 1,
+        "err": 10.246950765959598,
+        "frac_err": 0.44942766517366656,
+        "x": 110.0,
+        "y": 22.8
+      },
+      {
+        "bin_index": 2,
+        "err": 42.14261501141095,
+        "frac_err": 0.1734263992239134,
+        "x": 125.0,
+        "y": 243.0
+      },
+      {
+        "bin_index": 3,
+        "err": 15.264337522473747,
+        "frac_err": 0.2344752307599654,
+        "x": 140.0,
+        "y": 65.1
+      },
+      {
+        "bin_index": 4,
+        "err": 10.908712114635714,
+        "frac_err": 0.16428783305174266,
+        "x": 165.0,
+        "y": 66.4
+      },
+      {
+        "bin_index": 5,
+        "err": 25.65151067676132,
+        "frac_err": 0.11659777580346053,
+        "x": 190.0,
+        "y": 220.0
+      },
+      {
+        "bin_index": 6,
+        "err": 17.74823934929885,
+        "frac_err": 0.08963757247120631,
+        "x": 220.0,
+        "y": 198.0
+      },
+      {
+        "bin_index": 7,
+        "err": 9.939818911831342,
+        "frac_err": 0.11093547892668909,
+        "x": 270.0,
+        "y": 89.6
+      },
+      {
+        "bin_index": 8,
+        "err": 4.5934736311423405,
+        "frac_err": 0.13752915063300422,
+        "x": 350.0,
+        "y": 33.4
+      },
+      {
+        "bin_index": 9,
+        "err": 0.4898979485566356,
+        "frac_err": 0.22892427502646523,
+        "x": 700.0,
+        "y": 2.14
+      }
+    ],
+    "report_summary": {
+      "closestpoint": [
+        {
+          "T_iter": 12,
+          "beta_dim": 5,
+          "closest_argmax": 396,
+          "closest_frac": 1.0,
+          "closest_max_violation": -0.04217903977283074,
+          "metric": "L1"
+        },
+        {
+          "T_iter": 12,
+          "beta_dim": 5,
+          "closest_argmax": 396,
+          "closest_frac": 1.0,
+          "closest_max_violation": -0.04217903977283074,
+          "metric": "MDL"
+        }
+      ],
+      "defect_monotonicity": [
+        {
+          "L1_monotone": true,
+          "L1_violations": 0,
+          "L1_worst_increase": -2.9374084987530886e-15,
+          "L2_monotone": true,
+          "L2_violations": 0,
+          "L2_worst_increase": -2.9321425735946552e-15,
+          "T_iter": 12,
+          "beta_dim": 5
+        }
+      ],
+      "fejer_set": [
+        {
+          "T_iter": 12,
+          "beta_dim": 5,
+          "fejer_set_argmax": 770,
+          "fejer_set_frac": 1.0,
+          "fejer_set_max_violation": 0.0,
+          "metric": "L1"
+        },
+        {
+          "T_iter": 12,
+          "beta_dim": 5,
+          "fejer_set_argmax": 770,
+          "fejer_set_frac": 1.0,
+          "fejer_set_max_violation": 0.0,
+          "metric": "MDL"
+        }
+      ],
+      "mdl_descent": [
+        {
+          "MDL_monotone": true,
+          "MDL_violations": 0,
+          "MDL_worst_increase": -6.87692625822578e-05,
+          "MDL_worst_iter": 2,
+          "T_iter": 12
+        }
+      ]
+    },
+    "tail_bins": [
+      {
+        "bin_index": 7,
+        "err": 9.939818911831342,
+        "frac_err": 0.11093547892668909,
+        "x": 270.0,
+        "y": 89.6
+      },
+      {
+        "bin_index": 8,
+        "err": 4.5934736311423405,
+        "frac_err": 0.13752915063300422,
+        "x": 350.0,
+        "y": 33.4
+      },
+      {
+        "bin_index": 9,
+        "err": 0.4898979485566356,
+        "frac_err": 0.22892427502646523,
+        "x": 700.0,
+        "y": 2.14
+      }
+    ],
+    "tail_summary": {
+      "bin_count": 10,
+      "last_bin_frac_err": 0.22892427502646523,
+      "last_bin_x": 700.0,
+      "max_frac_err_bin": 1,
+      "max_frac_err_value": 0.44942766517366656,
+      "max_frac_err_x": 110.0,
+      "tail_has_max_fractional_uncertainty": false
+    }
+  },
+  "name": "atlas_4l_m4l_8tev",
+  "onset": null,
+  "records": [
+    {
+      "arrow_delta": -0.0001411700691802409,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 5.352768285027553,
+        "v_depth": -6.0,
+        "v_dnorm": 0.00015785156337613841,
+        "v_pnorm": 4.628770287244205
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.0001411700691802409,
+        "v_depth": 1.0,
+        "v_dnorm": -0.0001420654215435093,
+        "v_pnorm": 3.4897233978092856e-05
+      },
+      "delta_norm": 1.0000000206646946,
+      "energy_delta": -0.00012128519448229014,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 5.352627114958373,
+        "v_depth": -5.0,
+        "v_dnorm": 1.578614183262912e-05,
+        "v_pnorm": 4.628805184478183
+      },
+      "next_t": "1",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        2,
+        2,
+        5
+      ],
+      "t": "0",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -6.87692625822578e-05,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 5.352627114958373,
+        "v_depth": -5.0,
+        "v_dnorm": 1.578614183262912e-05,
+        "v_pnorm": 4.628805184478183
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -6.87692625822578e-05,
+        "v_depth": 1.0,
+        "v_dnorm": -1.4207507494318121e-05,
+        "v_pnorm": -1.43842669277916e-05
+      },
+      "delta_norm": 1.000000002568986,
+      "energy_delta": -3.5468700681384746e-05,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 5.35255834569579,
+        "v_depth": -4.0,
+        "v_dnorm": 1.578634338311001e-06,
+        "v_pnorm": 4.628790800211255
+      },
+      "next_t": "2",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        2,
+        2,
+        5
+      ],
+      "t": "1",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.000550573544117583,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 5.35255834569579,
+        "v_depth": -4.0,
+        "v_dnorm": 1.578634338311001e-06,
+        "v_pnorm": 4.628790800211255
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.000550573544117583,
+        "v_depth": 1.0,
+        "v_dnorm": -1.4207604542648688e-06,
+        "v_pnorm": -0.00017927390740624105
+      },
+      "delta_norm": 1.0000001676361758,
+      "energy_delta": -0.00023575202227199554,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 5.352007772151673,
+        "v_depth": -3.0,
+        "v_dnorm": 1.5787388404613214e-07,
+        "v_pnorm": 4.628611526303849
+      },
+      "next_t": "3",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        2,
+        2,
+        5
+      ],
+      "t": "2",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.005224576247749191,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 5.352007772151673,
+        "v_depth": -3.0,
+        "v_dnorm": 1.5787388404613214e-07,
+        "v_pnorm": 4.628611526303849
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.005224576247749191,
+        "v_depth": 1.0,
+        "v_dnorm": -1.4207662471014088e-07,
+        "v_pnorm": -0.001710287105558983
+      },
+      "delta_norm": 1.000015110525322,
+      "energy_delta": -0.002232886806958767,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 5.346783195903924,
+        "v_depth": -2.0,
+        "v_dnorm": 1.5797259335991258e-08,
+        "v_pnorm": 4.62690123919829
+      },
+      "next_t": "4",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        3,
+        1,
+        5
+      ],
+      "t": "3",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.03475270315716639,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 5.346783195903924,
+        "v_depth": -2.0,
+        "v_dnorm": 1.5797259335991258e-08,
+        "v_pnorm": 4.62690123919829
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.03475270315716639,
+        "v_depth": 0.9999999999999996,
+        "v_dnorm": -1.4210823716349313e-08,
+        "v_pnorm": -0.011565000746179166
+      },
+      "delta_norm": 1.0006705250076013,
+      "energy_delta": -0.015040285272719167,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 5.312030492746757,
+        "v_depth": -1.0000000000000004,
+        "v_dnorm": 1.5864356196419438e-09,
+        "v_pnorm": 4.615336238452111
+      },
+      "next_t": "5",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 4,
+      "structural_signature": [
+        -1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        3,
+        1,
+        4
+      ],
+      "t": "4",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.06904227781595651,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 5.312030492746757,
+        "v_depth": -1.0000000000000004,
+        "v_dnorm": 1.5864356196419438e-09,
+        "v_pnorm": 4.615336238452111
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.06904227781595651,
+        "v_depth": 1.0000000000000004,
+        "v_dnorm": -1.4261408958738954e-09,
+        "v_pnorm": -0.030798562609251512
+      },
+      "delta_norm": 1.0028536222125404,
+      "energy_delta": -0.037702791816988324,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 5.242988214930801,
+        "v_depth": 0.0,
+        "v_dnorm": 1.6029472376804843e-10,
+        "v_pnorm": 4.584537675842859
+      },
+      "next_t": "6",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        3,
+        1,
+        5
+      ],
+      "t": "5",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.14238512978003115,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 5.242988214930801,
+        "v_depth": 0.0,
+        "v_dnorm": 1.6029472376804843e-10,
+        "v_pnorm": 4.584537675842859
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.14238512978003115,
+        "v_depth": 1.0,
+        "v_dnorm": -1.4363405011031273e-10,
+        "v_pnorm": -0.14506124908655682
+      },
+      "delta_norm": 1.0204490634857912,
+      "energy_delta": -0.1592997622081942,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 5.1006030851507695,
+        "v_depth": 1.0,
+        "v_dnorm": 1.6660673657735716e-11,
+        "v_pnorm": 4.439476426756302
+      },
+      "next_t": "7",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        0,
+        1
+      ],
+      "structural_ultra": [
+        4,
+        0,
+        5
+      ],
+      "t": "6",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -1.0692895987556916,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 5.1006030851507695,
+        "v_depth": 1.0,
+        "v_dnorm": 1.6660673657735716e-11,
+        "v_pnorm": 4.439476426756302
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -1.0692895987556916,
+        "v_depth": 1.0,
+        "v_dnorm": -1.458553690657215e-11,
+        "v_pnorm": -1.0302828793688712
+      },
+      "delta_norm": 1.7902131318722139,
+      "energy_delta": -1.1372118392590256,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 4.031313486395078,
+        "v_depth": 2.0,
+        "v_dnorm": 2.075136751163565e-12,
+        "v_pnorm": 3.409193547387431
+      },
+      "next_t": "8",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        0,
+        1
+      ],
+      "structural_ultra": [
+        5,
+        0,
+        5
+      ],
+      "t": "7",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -2.7730646828583216,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 4.031313486395078,
+        "v_depth": 2.0,
+        "v_dnorm": 2.075136751163565e-12,
+        "v_pnorm": 3.409193547387431
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -2.7730646828583216,
+        "v_depth": 1.0,
+        "v_dnorm": -1.7836674301365022e-12,
+        "v_pnorm": -2.3732737326371396
+      },
+      "delta_norm": 3.7844835771002554,
+      "energy_delta": -2.6505802009247557,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 1.2582488035367565,
+        "v_depth": 3.0,
+        "v_dnorm": 2.914693210270628e-13,
+        "v_pnorm": 1.0359198147502913
+      },
+      "next_t": "9",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        0,
+        1
+      ],
+      "structural_ultra": [
+        5,
+        0,
+        5
+      ],
+      "t": "8",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -1.09925185765348,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 1.2582488035367565,
+        "v_depth": 3.0,
+        "v_dnorm": 2.914693210270628e-13,
+        "v_pnorm": 1.0359198147502913
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -1.09925185765348,
+        "v_depth": 1.0,
+        "v_dnorm": -2.592753059214564e-13,
+        "v_pnorm": -0.9056848203021942
+      },
+      "delta_norm": 1.7402929754154743,
+      "energy_delta": -1.0156100060678015,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 0.1589969458832766,
+        "v_depth": 4.0,
+        "v_dnorm": 3.2194015105606396e-14,
+        "v_pnorm": 0.13023499444809705
+      },
+      "next_t": "10",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        0,
+        1
+      ],
+      "structural_ultra": [
+        4,
+        0,
+        5
+      ],
+      "t": "9",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.14266759504628318,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 0.1589969458832766,
+        "v_depth": 4.0,
+        "v_dnorm": 3.2194015105606396e-14,
+        "v_pnorm": 0.13023499444809705
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.14266759504628318,
+        "v_depth": 1.0,
+        "v_dnorm": -2.893563360365657e-14,
+        "v_pnorm": -0.11686750425291109
+      },
+      "delta_norm": 1.016863833670268,
+      "energy_delta": -0.13113426375756834,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 0.0163293508369934,
+        "v_depth": 5.0,
+        "v_dnorm": 3.2583815019498256e-15,
+        "v_pnorm": 0.01336749019518596
+      },
+      "next_t": "11",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        0,
+        1
+      ],
+      "structural_ultra": [
+        4,
+        0,
+        5
+      ],
+      "t": "10",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.014691399218696501,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 0.0163293508369934,
+        "v_depth": 5.0,
+        "v_dnorm": 3.2583815019498256e-15,
+        "v_pnorm": 0.01336749019518596
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.014691399218696501,
+        "v_depth": 1.0,
+        "v_dnorm": -2.9321425735946552e-15,
+        "v_pnorm": -0.012027200854578198
+      },
+      "delta_norm": 1.0001802291444275,
+      "energy_delta": -0.013496340776450781,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 0.0016379516182969,
+        "v_depth": 6.0,
+        "v_dnorm": 3.2623892835517023e-16,
+        "v_pnorm": 0.0013402893406077613
+      },
+      "next_t": "12",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        0,
+        1
+      ],
+      "structural_ultra": [
+        3,
+        0,
+        5
+      ],
+      "t": "11",
+      "trace_eigenspace": "Earth"
+    }
+  ],
+  "step_count": 12
+}

@@ -1,0 +1,1379 @@
+{
+  "alt_v_dnorm": {
+    "family_minmax": {
+      "all_step_deltas": [
+        {
+          "delta": -0.897802634612571,
+          "next_t": "1",
+          "t": "0"
+        },
+        {
+          "delta": -0.09195512279273886,
+          "next_t": "2",
+          "t": "1"
+        },
+        {
+          "delta": -0.009217792723136668,
+          "next_t": "3",
+          "t": "2"
+        },
+        {
+          "delta": -0.0009220026216223494,
+          "next_t": "4",
+          "t": "3"
+        },
+        {
+          "delta": -9.220249621449179e-05,
+          "next_t": "5",
+          "t": "4"
+        },
+        {
+          "delta": -9.220272090990436e-06,
+          "next_t": "6",
+          "t": "5"
+        },
+        {
+          "delta": -9.220286086926671e-07,
+          "next_t": "7",
+          "t": "6"
+        },
+        {
+          "delta": -9.220894260493685e-08,
+          "next_t": "8",
+          "t": "7"
+        },
+        {
+          "delta": -9.226644862553555e-09,
+          "next_t": "9",
+          "t": "8"
+        },
+        {
+          "delta": -9.218515743105735e-10,
+          "next_t": "10",
+          "t": "9"
+        },
+        {
+          "delta": -8.887606964142757e-11,
+          "next_t": "11",
+          "t": "10"
+        },
+        {
+          "delta": -6.701844911127549e-12,
+          "next_t": "12",
+          "t": "11"
+        }
+      ],
+      "boundary_failures": [
+        {
+          "delta": -9.218515743105735e-10,
+          "next_t": "10",
+          "next_value": 9.557791455255512e-11,
+          "nonincreasing_ok": true,
+          "t": "9",
+          "value": 1.0174294888631286e-09
+        }
+      ]
+    },
+    "log_abs": {
+      "all_step_deltas": [
+        {
+          "delta": -0.10593876666952884,
+          "next_t": "1",
+          "t": "0"
+        },
+        {
+          "delta": -0.011512105709384794,
+          "next_t": "2",
+          "t": "1"
+        },
+        {
+          "delta": -0.0011613420632325105,
+          "next_t": "3",
+          "t": "2"
+        },
+        {
+          "delta": -0.00011623657935541804,
+          "next_t": "4",
+          "t": "3"
+        },
+        {
+          "delta": -1.1624682737830547e-05,
+          "next_t": "5",
+          "t": "4"
+        },
+        {
+          "delta": -1.1624785390751313e-06,
+          "next_t": "6",
+          "t": "5"
+        },
+        {
+          "delta": -1.1624810469100539e-07,
+          "next_t": "7",
+          "t": "6"
+        },
+        {
+          "delta": -1.1625577989310413e-08,
+          "next_t": "8",
+          "t": "7"
+        },
+        {
+          "delta": -1.1632828344508394e-09,
+          "next_t": "9",
+          "t": "8"
+        },
+        {
+          "delta": -1.1622579268714148e-10,
+          "next_t": "10",
+          "t": "9"
+        },
+        {
+          "delta": -1.1205373981571764e-11,
+          "next_t": "11",
+          "t": "10"
+        },
+        {
+          "delta": -8.449594913356253e-13,
+          "next_t": "12",
+          "t": "11"
+        }
+      ],
+      "boundary_failures": [
+        {
+          "delta": -1.1622579268714148e-10,
+          "next_t": "10",
+          "next_value": 1.2052461932490251e-11,
+          "nonincreasing_ok": true,
+          "t": "9",
+          "value": 1.2827825461963173e-10
+        }
+      ]
+    },
+    "raw": {
+      "all_step_deltas": [
+        {
+          "delta": -0.11319373508670359,
+          "next_t": "1",
+          "t": "0"
+        },
+        {
+          "delta": -0.011593576815196438,
+          "next_t": "2",
+          "t": "1"
+        },
+        {
+          "delta": -0.0011621667695786314,
+          "next_t": "3",
+          "t": "2"
+        },
+        {
+          "delta": -0.00011624483653492847,
+          "next_t": "4",
+          "t": "3"
+        },
+        {
+          "delta": -1.1624765319762896e-05,
+          "next_t": "5",
+          "t": "4"
+        },
+        {
+          "delta": -1.162479364905491e-06,
+          "next_t": "6",
+          "t": "5"
+        },
+        {
+          "delta": -1.1624811294940959e-07,
+          "next_t": "7",
+          "t": "6"
+        },
+        {
+          "delta": -1.162557807190259e-08,
+          "next_t": "8",
+          "t": "7"
+        },
+        {
+          "delta": -1.1632828352766769e-09,
+          "next_t": "9",
+          "t": "8"
+        },
+        {
+          "delta": -1.162257926952965e-10,
+          "next_t": "10",
+          "t": "9"
+        },
+        {
+          "delta": -1.1205373981644036e-11,
+          "next_t": "11",
+          "t": "10"
+        },
+        {
+          "delta": -8.44959491335984e-13,
+          "next_t": "12",
+          "t": "11"
+        }
+      ],
+      "boundary_failures": [
+        {
+          "delta": -1.162257926952965e-10,
+          "next_t": "10",
+          "next_value": 1.2052461932562882e-11,
+          "nonincreasing_ok": true,
+          "t": "9",
+          "value": 1.2827825462785938e-10
+        }
+      ]
+    },
+    "robust_z": {
+      "all_step_deltas": [
+        {
+          "delta": -876348.2058975953,
+          "next_t": "1",
+          "t": "0"
+        },
+        {
+          "delta": -89757.70818191518,
+          "next_t": "2",
+          "t": "1"
+        },
+        {
+          "delta": -8997.518835242254,
+          "next_t": "3",
+          "t": "2"
+        },
+        {
+          "delta": -899.9698955442468,
+          "next_t": "4",
+          "t": "3"
+        },
+        {
+          "delta": -89.99917022043266,
+          "next_t": "5",
+          "t": "4"
+        },
+        {
+          "delta": -8.999938954638928,
+          "next_t": "6",
+          "t": "5"
+        },
+        {
+          "delta": -0.8999952616119901,
+          "next_t": "7",
+          "t": "6"
+        },
+        {
+          "delta": -0.09000546256407627,
+          "next_t": "8",
+          "t": "7"
+        },
+        {
+          "delta": -0.009006159438641248,
+          "next_t": "9",
+          "t": "8"
+        },
+        {
+          "delta": -0.000899822457749444,
+          "next_t": "10",
+          "t": "9"
+        },
+        {
+          "delta": -8.675223392606846e-05,
+          "next_t": "11",
+          "t": "10"
+        },
+        {
+          "delta": -6.541693616912703e-06,
+          "next_t": "12",
+          "t": "11"
+        }
+      ],
+      "boundary_failures": [
+        {
+          "delta": -0.000899822457749444,
+          "next_t": "10",
+          "next_value": -0.999906706072457,
+          "nonincreasing_ok": true,
+          "t": "9",
+          "value": -0.9990068836147076
+        }
+      ]
+    },
+    "winsor95": {
+      "all_step_deltas": [
+        {
+          "delta": 0.0,
+          "next_t": "1",
+          "t": "0"
+        },
+        {
+          "delta": -0.011593576815196438,
+          "next_t": "2",
+          "t": "1"
+        },
+        {
+          "delta": -0.0011621667695786314,
+          "next_t": "3",
+          "t": "2"
+        },
+        {
+          "delta": -0.00011624483653492847,
+          "next_t": "4",
+          "t": "3"
+        },
+        {
+          "delta": -1.1624765319762896e-05,
+          "next_t": "5",
+          "t": "4"
+        },
+        {
+          "delta": -1.162479364905491e-06,
+          "next_t": "6",
+          "t": "5"
+        },
+        {
+          "delta": -1.1624811294940959e-07,
+          "next_t": "7",
+          "t": "6"
+        },
+        {
+          "delta": -1.162557807190259e-08,
+          "next_t": "8",
+          "t": "7"
+        },
+        {
+          "delta": -1.1632828352766769e-09,
+          "next_t": "9",
+          "t": "8"
+        },
+        {
+          "delta": -1.162257926952965e-10,
+          "next_t": "10",
+          "t": "9"
+        },
+        {
+          "delta": -1.1205373981644036e-11,
+          "next_t": "11",
+          "t": "10"
+        },
+        {
+          "delta": -8.44959491335984e-13,
+          "next_t": "12",
+          "t": "11"
+        }
+      ],
+      "boundary_failures": [
+        {
+          "delta": -1.162257926952965e-10,
+          "next_t": "10",
+          "next_value": 1.2052461932562882e-11,
+          "nonincreasing_ok": true,
+          "t": "9",
+          "value": 1.2827825462785938e-10
+        }
+      ]
+    }
+  },
+  "boundary_count": 1,
+  "boundary_summary": [
+    {
+      "count": 1,
+      "failure_axes": {
+        "v_arrow": 1
+      },
+      "family_class": "single_arrow_break",
+      "family_class_base": "single_arrow_break",
+      "family_class_reason": "no_exception_override",
+      "max_required_eps": 0.030555146910952402,
+      "mean_required_eps": 0.030555146910952402,
+      "min_required_eps": 0.030555146910952402,
+      "name": "z_pt_7tev_atlas",
+      "non_arrow_failures": {},
+      "profile_clearance": {
+        "boundary": false,
+        "lenient": true,
+        "strict": false
+      },
+      "step_pairs": [
+        {
+          "arrow_delta": 0.030555146910952402,
+          "energy_delta": -0.13197970891420052,
+          "next_t": "10",
+          "t": "9"
+        }
+      ],
+      "top_structural_signatures": {
+        "-1,0,1": 1
+      }
+    }
+  ],
+  "family_context": {
+    "context_root": "/home/c/Documents/code/dashifine",
+    "family": "z_pt_7tev_atlas",
+    "meta": {
+      "best_deg": 4.0,
+      "bic": 656234423.4799845,
+      "chi2": 656234407.1895019,
+      "chi2_over_dof": 31249257.485214375,
+      "condA": 72360.60933407146,
+      "dof": 21.0,
+      "hi_energy": 0.5635643360267305,
+      "odd_even": 0.27234058284500773
+    },
+    "meta_path": "/home/c/Documents/code/dashifine/hepdata_to_dashi_all/z_pt_7tev_atlas/meta.txt",
+    "metrics": [
+      {
+        "R_E_hi": 0.002025392274474401,
+        "alpha": 1e-06,
+        "chi2": 657040.651713184,
+        "chi2_dof": 31287.65008158019,
+        "condA": 3404.1477327843436,
+        "iter": 0,
+        "odd_even_ratio": 0.030270960845133855
+      },
+      {
+        "R_E_hi": 0.002177021408359318,
+        "alpha": 9.999999999999999e-06,
+        "chi2": 686194.7516811631,
+        "chi2_dof": 32675.940556245863,
+        "condA": 33645.507697078996,
+        "iter": 1,
+        "odd_even_ratio": 0.0031172734425055104
+      },
+      {
+        "R_E_hi": 0.002192744774703951,
+        "alpha": 9.999999999999999e-05,
+        "chi2": 689216.579377928,
+        "chi2_dof": 32819.837113234666,
+        "condA": 336059.61068421026,
+        "iter": 2,
+        "odd_even_ratio": 0.000312652808104046
+      },
+      {
+        "R_E_hi": 0.0021942864731708776,
+        "alpha": 0.001,
+        "chi2": 689519.8611005709,
+        "chi2_dof": 32834.27910002718,
+        "condA": 3360200.5779763246,
+        "iter": 3,
+        "odd_even_ratio": 3.127455868737439e-05
+      },
+      {
+        "R_E_hi": 0.002194078000839935,
+        "alpha": 0.01,
+        "chi2": 689550.200306824,
+        "chi2_dof": 32835.723824134475,
+        "condA": 33601597.4571605,
+        "iter": 4,
+        "odd_even_ratio": 3.127547825805576e-06
+      },
+      {
+        "R_E_hi": 0.0021904352468735647,
+        "alpha": 0.09999999999999999,
+        "chi2": 689553.2351981754,
+        "chi2_dof": 32835.868342770256,
+        "condA": 336014287.03447163,
+        "iter": 5,
+        "odd_even_ratio": 3.127548567815726e-07
+      },
+      {
+        "R_E_hi": 0.0021543534225622837,
+        "alpha": 1.0,
+        "chi2": 689553.6232931934,
+        "chi2_dof": 32835.8868234854,
+        "condA": 3360013930.542739,
+        "iter": 6,
+        "odd_even_ratio": 3.1274645320019705e-08
+      },
+      {
+        "R_E_hi": 0.0018381103507070782,
+        "alpha": 10.0,
+        "chi2": 689560.8613649257,
+        "chi2_dof": 32836.231493567895,
+        "condA": 33587442927.467445,
+        "iter": 7,
+        "odd_even_ratio": 3.126656325154491e-09
+      },
+      {
+        "R_E_hi": 0.000597260929676623,
+        "alpha": 100.0,
+        "chi2": 689787.4054942677,
+        "chi2_dof": 32847.01930925084,
+        "condA": 334617194618.7493,
+        "iter": 8,
+        "odd_even_ratio": 3.12130362695388e-10
+      },
+      {
+        "R_E_hi": 2.5375857588320884e-05,
+        "alpha": 1000.0,
+        "chi2": 690447.7964660262,
+        "chi2_dof": 32878.4664983822,
+        "condA": 3227085987937.484,
+        "iter": 9,
+        "odd_even_ratio": 3.105182773945293e-11
+      },
+      {
+        "R_E_hi": 1.16120267406885e-06,
+        "alpha": 10000.0,
+        "chi2": 696426.2509741511,
+        "chi2_dof": 33163.15480829291,
+        "condA": 23777698234859.645,
+        "iter": 10,
+        "odd_even_ratio": 3.016081530715649e-12
+      },
+      {
+        "R_E_hi": 4.132763156698352e-07,
+        "alpha": 100000.0,
+        "chi2": 963054.8669430887,
+        "chi2_dof": 45859.75556871851,
+        "condA": 64986766710264.74,
+        "iter": 11,
+        "odd_even_ratio": 2.6131256049417823e-13
+      },
+      {
+        "R_E_hi": 3.581685701934631e-07,
+        "alpha": 1000000.0,
+        "chi2": 4054756.082261146,
+        "chi2_dof": 193083.6229648165,
+        "condA": 79217625981502.89,
+        "iter": 12,
+        "odd_even_ratio": 1.8226739626020918e-15
+      }
+    ],
+    "metrics_path": "/home/c/Documents/code/dashifine/hepdata_dashi_native/z_pt_7tev_atlas_dashi_native_metrics.csv",
+    "npz_path": "/home/c/Documents/code/dashifine/hepdata_npz_all/z_pt_7tev_atlas.npz",
+    "observable_bins": [
+      {
+        "bin_index": 0,
+        "err": 0.00028507753416395337,
+        "frac_err": 0.010141498903022177,
+        "x": 1.0,
+        "y": 0.02811
+      },
+      {
+        "bin_index": 1,
+        "err": 0.0005116919886025186,
+        "frac_err": 0.008761849119906141,
+        "x": 3.0,
+        "y": 0.0584
+      },
+      {
+        "bin_index": 2,
+        "err": 0.00034314393269880205,
+        "frac_err": 0.005910160742314882,
+        "x": 5.0,
+        "y": 0.05806
+      },
+      {
+        "bin_index": 3,
+        "err": 0.0002706529494093866,
+        "frac_err": 0.005514526271584894,
+        "x": 7.0,
+        "y": 0.04908
+      },
+      {
+        "bin_index": 4,
+        "err": 0.0002565649816635154,
+        "frac_err": 0.0062976185975335145,
+        "x": 9.0,
+        "y": 0.04074
+      },
+      {
+        "bin_index": 5,
+        "err": 0.00023380293390374722,
+        "frac_err": 0.006915200647848187,
+        "x": 11.0,
+        "y": 0.03381
+      },
+      {
+        "bin_index": 6,
+        "err": 0.00018435563735617094,
+        "frac_err": 0.0065490457320131765,
+        "x": 13.0,
+        "y": 0.02815
+      },
+      {
+        "bin_index": 7,
+        "err": 0.0001568278127884209,
+        "frac_err": 0.006606057825965498,
+        "x": 15.0,
+        "y": 0.02374
+      },
+      {
+        "bin_index": 8,
+        "err": 0.00013966476493375128,
+        "frac_err": 0.006934695379034323,
+        "x": 17.0,
+        "y": 0.02014
+      },
+      {
+        "bin_index": 9,
+        "err": 9.824776394402064e-05,
+        "frac_err": 0.006148170459575759,
+        "x": 20.0,
+        "y": 0.01598
+      },
+      {
+        "bin_index": 10,
+        "err": 8.097467604751501e-05,
+        "frac_err": 0.006753517601961218,
+        "x": 24.0,
+        "y": 0.01199
+      },
+      {
+        "bin_index": 11,
+        "err": 6.672122058955457e-05,
+        "frac_err": 0.007280796659706958,
+        "x": 28.0,
+        "y": 0.009164
+      },
+      {
+        "bin_index": 12,
+        "err": 5.83968064236393e-05,
+        "frac_err": 0.008070315978944071,
+        "x": 32.0,
+        "y": 0.007236
+      },
+      {
+        "bin_index": 13,
+        "err": 5.1030083098109886e-05,
+        "frac_err": 0.008789197915623473,
+        "x": 36.0,
+        "y": 0.005806
+      },
+      {
+        "bin_index": 14,
+        "err": 4.5079452492682294e-05,
+        "frac_err": 0.00966126285741155,
+        "x": 40.0,
+        "y": 0.004666
+      },
+      {
+        "bin_index": 15,
+        "err": 3.8861014294534306e-05,
+        "frac_err": 0.01033537614216338,
+        "x": 44.0,
+        "y": 0.00376
+      },
+      {
+        "bin_index": 16,
+        "err": 3.5635253663752696e-05,
+        "frac_err": 0.011080613701415639,
+        "x": 48.0,
+        "y": 0.003216
+      },
+      {
+        "bin_index": 17,
+        "err": 3.259267762182175e-05,
+        "frac_err": 0.012516389255691915,
+        "x": 52.0,
+        "y": 0.002604
+      },
+      {
+        "bin_index": 18,
+        "err": 2.4876643032571736e-05,
+        "frac_err": 0.011862967588255478,
+        "x": 57.0,
+        "y": 0.002097
+      },
+      {
+        "bin_index": 19,
+        "err": 1.618089139108226e-05,
+        "frac_err": 0.010780074211247341,
+        "x": 65.0,
+        "y": 0.001501
+      },
+      {
+        "bin_index": 20,
+        "err": 1.2703907455582318e-05,
+        "frac_err": 0.012936769303036983,
+        "x": 75.0,
+        "y": 0.000982
+      },
+      {
+        "bin_index": 21,
+        "err": 6.584957216504902e-06,
+        "frac_err": 0.011760952342391323,
+        "x": 90.0,
+        "y": 0.0005599
+      },
+      {
+        "bin_index": 22,
+        "err": 2.6591133559891726e-06,
+        "frac_err": 0.013849548729110274,
+        "x": 125.0,
+        "y": 0.000192
+      },
+      {
+        "bin_index": 23,
+        "err": 1.06555981116782e-06,
+        "frac_err": 0.022157617200412143,
+        "x": 175.0,
+        "y": 4.809e-05
+      },
+      {
+        "bin_index": 24,
+        "err": 4.297284920155981e-07,
+        "frac_err": 0.039606312628165725,
+        "x": 250.0,
+        "y": 1.085e-05
+      },
+      {
+        "bin_index": 25,
+        "err": 2.7134216832995195e-08,
+        "frac_err": 0.06939697399743017,
+        "x": 550.0,
+        "y": 3.91e-07
+      }
+    ],
+    "report_summary": {
+      "closestpoint": [
+        {
+          "T_iter": 12,
+          "beta_dim": 5,
+          "closest_argmax": 108,
+          "closest_frac": 1.0,
+          "closest_max_violation": -0.0297878459870301,
+          "metric": "L1"
+        },
+        {
+          "T_iter": 12,
+          "beta_dim": 5,
+          "closest_argmax": 108,
+          "closest_frac": 1.0,
+          "closest_max_violation": -0.0297878459870301,
+          "metric": "MDL"
+        }
+      ],
+      "defect_monotonicity": [
+        {
+          "L1_monotone": true,
+          "L1_violations": 0,
+          "L1_worst_increase": -8.57604421952293e-13,
+          "L2_monotone": true,
+          "L2_violations": 0,
+          "L2_worst_increase": -8.44959491335984e-13,
+          "T_iter": 12,
+          "beta_dim": 5
+        }
+      ],
+      "fejer_set": [
+        {
+          "T_iter": 12,
+          "beta_dim": 5,
+          "fejer_set_argmax": 775,
+          "fejer_set_frac": 1.0,
+          "fejer_set_max_violation": -2.220446049250313e-15,
+          "metric": "L1"
+        },
+        {
+          "T_iter": 12,
+          "beta_dim": 5,
+          "fejer_set_argmax": 775,
+          "fejer_set_frac": 1.0,
+          "fejer_set_max_violation": -2.220446049250313e-15,
+          "metric": "MDL"
+        }
+      ],
+      "mdl_descent": [
+        {
+          "MDL_monotone": false,
+          "MDL_violations": 1,
+          "MDL_worst_increase": 0.030555146910952402,
+          "MDL_worst_iter": 10,
+          "T_iter": 12
+        }
+      ]
+    },
+    "tail_bins": [
+      {
+        "bin_index": 23,
+        "err": 1.06555981116782e-06,
+        "frac_err": 0.022157617200412143,
+        "x": 175.0,
+        "y": 4.809e-05
+      },
+      {
+        "bin_index": 24,
+        "err": 4.297284920155981e-07,
+        "frac_err": 0.039606312628165725,
+        "x": 250.0,
+        "y": 1.085e-05
+      },
+      {
+        "bin_index": 25,
+        "err": 2.7134216832995195e-08,
+        "frac_err": 0.06939697399743017,
+        "x": 550.0,
+        "y": 3.91e-07
+      }
+    ],
+    "tail_summary": {
+      "bin_count": 26,
+      "last_bin_frac_err": 0.06939697399743017,
+      "last_bin_x": 550.0,
+      "max_frac_err_bin": 25,
+      "max_frac_err_value": 0.06939697399743017,
+      "max_frac_err_x": 550.0,
+      "tail_has_max_fractional_uncertainty": true
+    }
+  },
+  "name": "z_pt_7tev_atlas",
+  "onset": {
+    "arrow_sign_flip": true,
+    "failure_mode": "arrow_only",
+    "first_boundary_arrow_delta": 0.030555146910952402,
+    "first_boundary_energy_delta": -0.13197970891420052,
+    "first_boundary_failures": [
+      "v_arrow"
+    ],
+    "first_boundary_index": 9,
+    "first_boundary_next_t": "10",
+    "first_boundary_signature": [
+      -1,
+      0,
+      1
+    ],
+    "first_boundary_t": "9",
+    "previous_arrow_delta": -0.05508391994191353,
+    "previous_energy_delta": -0.012296760282715091,
+    "previous_next_t": "9",
+    "previous_signature": [
+      -1,
+      -1,
+      1
+    ],
+    "previous_t": "8",
+    "signature_changed": true
+  },
+  "records": [
+    {
+      "arrow_delta": -0.10136110148696797,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 4.811335525358294,
+        "v_depth": -6.0,
+        "v_dnorm": 0.12607863991795037,
+        "v_pnorm": 4.1650029070084065
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.10136110148696797,
+        "v_depth": 1.0,
+        "v_dnorm": -0.11319373508670359,
+        "v_pnorm": -0.03161356247679237
+      },
+      "delta_norm": 1.0119714975679919,
+      "energy_delta": -0.15494340771219228,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 4.709974423871326,
+        "v_depth": -5.0,
+        "v_dnorm": 0.012884904831246777,
+        "v_pnorm": 4.133389344531614
+      },
+      "next_t": "1",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        3,
+        4,
+        5
+      ],
+      "t": "0",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.010445810385263599,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 4.709974423871326,
+        "v_depth": -5.0,
+        "v_dnorm": 0.012884904831246777,
+        "v_pnorm": 4.133389344531614
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.010445810385263599,
+        "v_depth": 1.0,
+        "v_dnorm": -0.011593576815196438,
+        "v_pnorm": -0.0031593175542701246
+      },
+      "delta_norm": 1.000126745600468,
+      "energy_delta": -0.01579747540799392,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 4.699528613486063,
+        "v_depth": -4.0,
+        "v_dnorm": 0.0012913280160503395,
+        "v_pnorm": 4.130230026977344
+      },
+      "next_t": "2",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        3,
+        3,
+        5
+      ],
+      "t": "1",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.001049089248567725,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 4.699528613486063,
+        "v_depth": -4.0,
+        "v_dnorm": 0.0012913280160503395,
+        "v_pnorm": 4.130230026977344
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.001049089248567725,
+        "v_depth": 1.0,
+        "v_dnorm": -0.0011621667695786314,
+        "v_pnorm": -0.0003157486402800558
+      },
+      "delta_norm": 1.0000012754577143,
+      "energy_delta": -0.0015828243347151272,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 4.698479524237495,
+        "v_depth": -3.0,
+        "v_dnorm": 0.00012916124647170807,
+        "v_pnorm": 4.129914278337064
+      },
+      "next_t": "3",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        2,
+        3,
+        5
+      ],
+      "t": "2",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.00011803177362423867,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 4.698479524237495,
+        "v_depth": -3.0,
+        "v_dnorm": 0.00012916124647170807,
+        "v_pnorm": 4.129914278337064
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.00011803177362423867,
+        "v_depth": 1.0,
+        "v_dnorm": -0.00011624483653492847,
+        "v_pnorm": -3.0210633146232624e-05
+      },
+      "delta_norm": 1.000000014178522,
+      "energy_delta": -0.00015825864704321901,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 4.698361492463871,
+        "v_depth": -2.0,
+        "v_dnorm": 1.2916409936779603e-05,
+        "v_pnorm": 4.129884067703918
+      },
+      "next_t": "4",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        2,
+        2,
+        5
+      ],
+      "t": "3",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.00014258636148767323,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 4.698361492463871,
+        "v_depth": -2.0,
+        "v_dnorm": 1.2916409936779603e-05,
+        "v_pnorm": 4.129884067703918
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.00014258636148767323,
+        "v_depth": 0.9999999999999996,
+        "v_dnorm": -1.1624765319762896e-05,
+        "v_pnorm": 1.060542174080581e-05
+      },
+      "delta_norm": 1.00000001028924,
+      "energy_delta": -1.5277979727557067e-05,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 4.698218906102383,
+        "v_depth": -1.0000000000000004,
+        "v_dnorm": 1.2916446170167075e-06,
+        "v_pnorm": 4.1298946731256585
+      },
+      "next_t": "5",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 4,
+      "structural_signature": [
+        1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        2,
+        2,
+        4
+      ],
+      "t": "4",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.0013097387310239128,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 4.698218906102383,
+        "v_depth": -1.0000000000000004,
+        "v_dnorm": 1.2916446170167075e-06,
+        "v_pnorm": 4.1298946731256585
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.0013097387310239128,
+        "v_depth": 1.0000000000000004,
+        "v_dnorm": -1.162479364905491e-06,
+        "v_pnorm": 0.00013624455523508772
+      },
+      "delta_norm": 1.0000008669893614,
+      "energy_delta": 4.108202767305613e-06,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 4.696909167371359,
+        "v_depth": 0.0,
+        "v_dnorm": 1.2916525211121672e-07,
+        "v_pnorm": 4.130030917680894
+      },
+      "next_t": "6",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        2,
+        2,
+        5
+      ],
+      "t": "5",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.01195763259739202,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 4.696909167371359,
+        "v_depth": 0.0,
+        "v_dnorm": 1.2916525211121672e-07,
+        "v_pnorm": 4.130030917680894
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.01195763259739202,
+        "v_depth": 1.0,
+        "v_dnorm": -1.1624811294940959e-07,
+        "v_pnorm": 0.0012639284726088107
+      },
+      "delta_norm": 1.0000722886334426,
+      "energy_delta": 6.804896475731681e-05,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 4.684951534773967,
+        "v_depth": 1.0,
+        "v_dnorm": 1.2917139161807126e-08,
+        "v_pnorm": 4.131294846153502
+      },
+      "next_t": "7",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        3,
+        1,
+        5
+      ],
+      "t": "6",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.06148787332749617,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 4.684951534773967,
+        "v_depth": 1.0,
+        "v_dnorm": 1.2917139161807126e-08,
+        "v_pnorm": 4.131294846153502
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.06148787332749617,
+        "v_depth": 1.0,
+        "v_dnorm": -1.162557807190259e-08,
+        "v_pnorm": 0.006595100697566636
+      },
+      "delta_norm": 1.0019103023322744,
+      "energy_delta": 0.00044630173923909666,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 4.623463661446471,
+        "v_depth": 2.0,
+        "v_dnorm": 1.2915610899045363e-09,
+        "v_pnorm": 4.137889946851069
+      },
+      "next_t": "8",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        3,
+        1,
+        5
+      ],
+      "t": "7",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.05508391994191353,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 4.623463661446471,
+        "v_depth": 2.0,
+        "v_dnorm": 1.2915610899045363e-09,
+        "v_pnorm": 4.137889946851069
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.05508391994191353,
+        "v_depth": 1.0,
+        "v_dnorm": -1.1632828352766769e-09,
+        "v_pnorm": -0.00678836712523978
+      },
+      "delta_norm": 1.00153897585885,
+      "energy_delta": -0.012296760282715091,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 4.5683797415045575,
+        "v_depth": 3.0,
+        "v_dnorm": 1.2827825462785938e-10,
+        "v_pnorm": 4.131101579725829
+      },
+      "next_t": "9",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        -1,
+        1
+      ],
+      "structural_ultra": [
+        3,
+        1,
+        5
+      ],
+      "t": "8",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": 0.030555146910952402,
+      "arrow_ok": false,
+      "axis_values": {
+        "v_arrow": 4.5683797415045575,
+        "v_depth": 3.0,
+        "v_dnorm": 1.2827825462785938e-10,
+        "v_pnorm": 4.131101579725829
+      },
+      "cone_failures": [
+        "v_arrow"
+      ],
+      "delta_by_axis": {
+        "v_arrow": 0.030555146910952402,
+        "v_depth": 1.0,
+        "v_dnorm": -1.162257926952965e-10,
+        "v_pnorm": -0.13503522348907104
+      },
+      "delta_norm": 1.009538572113762,
+      "energy_delta": -0.13197970891420052,
+      "joint_ok": false,
+      "next_axis_values": {
+        "v_arrow": 4.59893488841551,
+        "v_depth": 4.0,
+        "v_dnorm": 1.2052461932562882e-11,
+        "v_pnorm": 3.996066356236758
+      },
+      "next_t": "10",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "arrow_boundary",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        0,
+        1
+      ],
+      "structural_ultra": [
+        4,
+        0,
+        5
+      ],
+      "t": "9",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -0.5796322261522073,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 4.59893488841551,
+        "v_depth": 4.0,
+        "v_dnorm": 1.2052461932562882e-11,
+        "v_pnorm": 3.996066356236758
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -0.5796322261522073,
+        "v_depth": 1.0,
+        "v_dnorm": -1.1205373981644036e-11,
+        "v_pnorm": -0.7544007075720973
+      },
+      "delta_norm": 1.380251406512395,
+      "energy_delta": -0.8123639301985239,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 4.019302662263303,
+        "v_depth": 5.0,
+        "v_dnorm": 8.47087950918845e-13,
+        "v_pnorm": 3.241665648664661
+      },
+      "next_t": "11",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        0,
+        1
+      ],
+      "structural_ultra": [
+        4,
+        0,
+        5
+      ],
+      "t": "10",
+      "trace_eigenspace": "Earth"
+    },
+    {
+      "arrow_delta": -2.5407194579109578,
+      "arrow_ok": true,
+      "axis_values": {
+        "v_arrow": 4.019302662263303,
+        "v_depth": 5.0,
+        "v_dnorm": 8.47087950918845e-13,
+        "v_pnorm": 3.241665648664661
+      },
+      "cone_failures": [],
+      "delta_by_axis": {
+        "v_arrow": -2.5407194579109578,
+        "v_depth": 1.0,
+        "v_dnorm": -8.44959491335984e-13,
+        "v_pnorm": -2.0738980574600614
+      },
+      "delta_norm": 3.4287473684341294,
+      "energy_delta": -2.3279700032520023,
+      "joint_ok": true,
+      "next_axis_values": {
+        "v_arrow": 1.4785832043523448,
+        "v_depth": 6.0,
+        "v_dnorm": 2.1284595828610095e-15,
+        "v_pnorm": 1.1677675912045993
+      },
+      "next_t": "12",
+      "source_projection_eigenspace": "Earth",
+      "source_projection_prime": 2,
+      "status_class": "interior",
+      "structural_ok": true,
+      "structural_radius": 5,
+      "structural_signature": [
+        -1,
+        0,
+        1
+      ],
+      "structural_ultra": [
+        5,
+        0,
+        5
+      ],
+      "t": "11",
+      "trace_eigenspace": "Earth"
+    }
+  ],
+  "step_count": 12
+}

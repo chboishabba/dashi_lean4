@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "class of molecular entities",
+  "group of molecular entities",
+  "group or class of molecular entities"
+ ],
+ "canonical": "Q72070508",
+ "description": "set of chemical entities that shares a common characteristic",
+ "id": "Q72070508",
+ "label": "group or class of chemical entities"
+}

@@ -1,0 +1,67 @@
+name = "RequestProject"
+defaultTargets = ["Synthesis", "Cuisine", "AgdaMirror", "Spine", "Integration", "Promoted", "AristotleArchive"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.28.0"
+
+# Cross-domain finite synthesis returned from the prior session, plus the
+# cuisine lane added on top of it.
+[[lean_lib]]
+name = "Synthesis"
+srcDir = "Lean"
+globs = ["Synthesis.*"]
+
+# The common spine: fixed/transverse decomposition, anchored exterior
+# coercivity, the C₃ phase core and the observer interface.
+[[lean_lib]]
+name = "Spine"
+srcDir = "Lean"
+globs = ["Spine", "Spine.*"]
+
+# The corpus-wide TOE integration spine: the four-level classification, the
+# ternary hub, the 369 address ultrametric, clopen prefix balls, the receipt
+# socket meta-theorems and the global registry.
+[[lean_lib]]
+name = "Integration"
+srcDir = "Lean"
+globs = ["Integration", "Integration.*"]
+
+# Imported handoff material that clears the mechanical promotion bar recorded in
+# `Lean/Imported/PROMOTION_STATUS.csv`: Mathlib-only imports, elaborates in this
+# toolchain, no `sorry`/`axiom`/`native_decide`.  Being built here is the rung
+# `wired`, not `audited`.
+[[lean_lib]]
+name = "Promoted"
+srcDir = "Lean"
+globs = ["Promoted", "Promoted.*"]
+
+[[lean_lib]]
+name = "Cuisine"
+srcDir = "Lean"
+globs = ["Cuisine.*"]
+
+[[lean_lib]]
+name = "AgdaMirror"
+srcDir = "Lean"
+# Submodules only (`.+`): the root aggregate `Lean/AgdaMirror.lean` imports
+# `AgdaMirror.Physics.YangMills`, a Lean mirror module that has never been
+# shipped to this checkout (no topic filter is involved: the file simply does
+# not exist in any handoff, including the 2026-09-10 full-source archive), so
+# the aggregate cannot be built here.  Deferred, not refused.
+globs = ["AgdaMirror.+"]
+
+[[lean_lib]]
+name = "TriadicKernelAlgebra"
+srcDir = "Lean/DASHI/Klüver’s Form Constants_aristotle"
+
+# The Wikidata/Aristotle archive corpus, integrated this round under
+# `Lean/DASHI/output-final_aristotle`.  Only the four semantic modules the
+# reciprocal-garden instantiation actually consumes are declared as build
+# targets (lake pulls in their transitive imports); the CLI, generated corpus
+# and wiki tranches of the archive are present as sources but are not built.
+[[lean_lib]]
+name = "AristotleArchive"
+srcDir = "Lean/DASHI/output-final_aristotle"
+globs = ["RequestProject.Core", "RequestProject.Engine", "RequestProject.Properties", "RequestProject.PropertyConstraints", "RequestProject.PropertyEngine", "RequestProject.Provenance", "RequestProject.Ranks", "RequestProject.Reachability", "RequestProject.Schemas", "RequestProject.Snaks", "RequestProject.StatementConstraints", "RequestProject.Temporal", "RequestProject.TypeProperties", "RequestProject.Archive", "RequestProject.Publish", "RequestProject.Cli.Format", "RequestProject.Sync", "RequestProject.Merge", "RequestProject.Worklist", "RequestProject.Reports", "RequestProject.ReportFormat", "RequestProject.Diagnostics", "RequestProject.SeriesDiagnostics", "RequestProject.TaxaDiagnostics", "RequestProject.KinshipDiagnostics", "RequestProject.ParentingDiagnostics", "RequestProject.Cli.Derive", "RequestProject.Cli.Query", "RequestProject.Examples", "RequestProject.FastEval", "RequestProject.Kinship", "RequestProject.Normalize", "RequestProject.Parenting", "RequestProject.Queries", "RequestProject.Redundancy", "RequestProject.SelfDescription", "RequestProject.Series", "RequestProject.SeriesChain", "RequestProject.SeriesExamples", "RequestProject.Taxa", "RequestProject.TaxaExamples", "RequestProject.TaxaLineage"]

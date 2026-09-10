@@ -1,0 +1,306 @@
+/-
+# §37.  The density cut versus the quarter-period requirement: an explicit constant window
+
+Two necessary conditions on the search parameters `(Λ, J)` of the near-core lane are now
+owned in this development, and they live on **the same inverse-width scale**:
+
+* the *quarter-period* requirement of §33
+  (`NearCoreNarrowWindowNoCancellation.window_must_exceed_quarter_period`): as long as
+  `J·Λ ≤ π/2` the finite near core is pinned from below by the near mass, so any route
+  that needs signed cancellation of that core must first cross
+  `J·Λ > π/2`;
+
+* the *density cut* of §36
+  (`NearCoreClusteringDensityCut.gap_split_pos_requires_bounded_cutoff`): positivity of
+  the gap split forces `J < 1 + D + π²·A·(2D+2)/(4c)`, with `A` the upper local density
+  constant of the short window and `c` the lower one of the long window.
+
+At the §34 threshold `D = π/(3Λ)` the density bound is exactly
+
+    J  <  (π/3 + π³A/(6c))·(1/Λ)  +  (1 + π²A/(2c))       (`density_cutoff_bound_eq`)
+
+so it is an *inverse-width* bound of the same order as the quarter-period lower bound
+`J > π/(2Λ)`.  This module makes the comparison exact.  What comes out is not "the
+adaptive route is impossible" but a sharp arithmetic condition on the two density
+constants:
+
+* `quarter_period_and_density_window` — if the gap split is positive at the §34 threshold
+  *and* the quarter-period requirement holds, then
+  `π/2 < π/3 + π³A/(6c) + Λ·(1 + π²A/(2c))`;
+* `quarter_period_and_density_force_c_lt` — equivalently `c < π²·A + Λ·(6c/π + 3πA)`,
+  an explicit `O(Λ)` perturbation of the leading-order condition `c < π²·A`;
+* `no_window_of_density_constants` — its contrapositive: when
+  `π²A + Λ(6c/π + 3πA) ≤ c`, the two requirements are jointly unsatisfiable;
+* `leading_window_nonempty_iff` — the leading-order comparison
+  `π/2 < π/3 + π³A/(6c) ↔ c < π²A`;
+* `exists_cutoff_in_window` — and, when `c < π²A`, for every width below an explicit
+  threshold there *is* an integer cutoff `J` meeting both constraints simultaneously.
+
+The last two say precisely that the §36 density cut, on its own, does **not** rule out the
+inverse-width regime `Λ ≍ |t|⁻¹`, `J ≍ |t|`; it converts it into the constant-window
+question `π/2 < J·Λ < π/3 + π³A/(6c) + O(Λ)`, whose leading-order solvability is the
+single inequality `c < π²A` between the two local density constants.
+
+Nothing here asserts or assumes the Riemann Hypothesis, and nothing weakens
+`RiemannHypothesisFor`.  No `sorry`, no `axiom`, no Boolean receipt, no numerical
+evidence.  The density constants `A`, `c` remain hypotheses of every statement that uses
+them, exactly as in §36.
+-/
+import Zeta23Bridge.NearCoreClusteringDensityCut
+
+noncomputable section
+
+open scoped Real
+open Zeta23 MeasureTheory
+
+namespace Zeta23Bridge
+namespace NearCoreQuarterPeriodDensityWindow
+
+open Zeta23Bridge.LiteralWeilParityBalance
+open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilOtherZerosChannel
+open Zeta23Bridge.ReflectionPairCurvatureBound
+open Zeta23Bridge.NearCoreDeterminantTaper
+open Zeta23Bridge.NearCoreGapSplitEvaluation
+open Zeta23Bridge.NearCoreTaperShapeNoGo
+open Zeta23Bridge.NearCoreClusteringDensityCut
+
+/-! ## 1. The density bound at the §34 threshold is an inverse-width bound -/
+
+/-- **The §36 cutoff bound, evaluated at the §34 gap threshold `D = π/(3Λ)`.**  It is an
+affine function of `1/Λ` with leading coefficient `π/3 + π³A/(6c)`. -/
+theorem density_cutoff_bound_eq {A c Λ : ℝ} (hΛ : Λ ≠ 0) (hc : c ≠ 0) :
+    1 + π / (3 * Λ) + π ^ 2 * (A * (2 * (π / (3 * Λ)) + 2)) / (4 * c)
+      = (π / 3 + π ^ 3 * A / (6 * c)) / Λ + (1 + π ^ 2 * A / (2 * c)) := by
+  field_simp
+  ring
+
+/-- **The leading-order window is nonempty exactly when `c < π²A`.**  The quarter-period
+lower bound has inverse-width coefficient `π/2`; the density upper bound has inverse-width
+coefficient `π/3 + π³A/(6c)`. -/
+theorem leading_window_nonempty_iff {A c : ℝ} (hc : 0 < c) :
+    π / 2 < π / 3 + π ^ 3 * A / (6 * c) ↔ c < π ^ 2 * A := by
+  have hπ : (0 : ℝ) < π := Real.pi_pos
+  constructor
+  · intro h
+    have h1 : π / 6 < π ^ 3 * A / (6 * c) := by linarith
+    have h2 : (π / 6) * (6 * c / π) < (π ^ 3 * A / (6 * c)) * (6 * c / π) :=
+      mul_lt_mul_of_pos_right h1 (by positivity)
+    have e1 : (π / 6) * (6 * c / π) = c := by field_simp
+    have e2 : (π ^ 3 * A / (6 * c)) * (6 * c / π) = π ^ 2 * A := by
+      field_simp
+    rw [e1, e2] at h2
+    exact h2
+  · intro h
+    have h2 : c * (π / (6 * c)) < (π ^ 2 * A) * (π / (6 * c)) :=
+      mul_lt_mul_of_pos_right h (by positivity)
+    have e1 : c * (π / (6 * c)) = π / 6 := by field_simp
+    have e2 : (π ^ 2 * A) * (π / (6 * c)) = π ^ 3 * A / (6 * c) := by
+      field_simp
+    rw [e1, e2] at h2
+    linarith
+
+/-! ## 2. The two necessary conditions together -/
+
+/-- **The constant window.**  Suppose the gap split is positive at the §34 threshold
+`D = π/(3Λ)` under the §36 density hypotheses, and suppose the quarter-period requirement
+`π/2 < J·Λ` of §33 holds as well.  Then the two density constants satisfy the explicit
+window inequality
+
+    π/2  <  π/3 + π³A/(6c) + Λ·(1 + π²A/(2c)) .
+
+This is the exact reconciliation of the §36 upper bound with the quarter-period lower
+bound: both are inverse-width statements, and their compatibility is a comparison of two
+constants up to an `O(Λ)` correction. -/
+theorem quarter_period_and_density_window {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C A c : ℝ} {J : ℕ} (hΛ : 0 < Λ) (hc : 0 < c)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C)
+    (hupper : ((zetaZeroConfig).N (t - π / (3 * Λ) - 1) (t + π / (3 * Λ)) : ℝ)
+      ≤ A * (2 * (π / (3 * Λ)) + 2))
+    (hlower : c * ((J : ℝ) - 1 - π / (3 * Λ))
+      ≤ ((zetaZeroConfig).N (t + π / (3 * Λ)) (t + (J : ℝ) - 1) : ℝ))
+    (hpos : 0 < lowGapMass t J (π / (3 * Λ))
+        * (Real.cos (π / (3 * Λ) * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      - highGapMass t J (π / (3 * Λ)) * (C / (π / (3 * Λ)) ^ 2))
+    (hquarter : π / 2 < (J : ℝ) * Λ) :
+    π / 2 < π / 3 + π ^ 3 * A / (6 * c) + Λ * (1 + π ^ 2 * A / (2 * c)) := by
+  have hπ : (0 : ℝ) < π := Real.pi_pos
+  have hD : 0 < π / (3 * Λ) := by positivity
+  have hDΛ : π / (3 * Λ) * Λ ≤ π / 2 := by
+    have he : π / (3 * Λ) * Λ = π / 3 := by
+      field_simp
+    rw [he]
+    linarith
+  have hbound := gap_split_pos_requires_bounded_cutoff hg hgc hΛ.le hD hDΛ hc hq0 hsupp hCbase
+    hupper hlower hpos
+  rw [density_cutoff_bound_eq (ne_of_gt hΛ) (ne_of_gt hc)] at hbound
+  have hmul : (J : ℝ) * Λ
+      < ((π / 3 + π ^ 3 * A / (6 * c)) / Λ + (1 + π ^ 2 * A / (2 * c))) * Λ :=
+    mul_lt_mul_of_pos_right hbound hΛ
+  have hexp : ((π / 3 + π ^ 3 * A / (6 * c)) / Λ + (1 + π ^ 2 * A / (2 * c))) * Λ
+      = π / 3 + π ^ 3 * A / (6 * c) + Λ * (1 + π ^ 2 * A / (2 * c)) := by
+    field_simp
+  rw [hexp] at hmul
+  linarith
+
+/-- **The window as a comparison of the density constants.**  The same hypotheses force
+
+    c  <  π²·A  +  Λ·(6c/π + 3πA) ,
+
+an explicit `O(Λ)` perturbation of the leading-order condition `c < π²A`. -/
+theorem quarter_period_and_density_force_c_lt {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C A c : ℝ} {J : ℕ} (hΛ : 0 < Λ) (hc : 0 < c)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C)
+    (hupper : ((zetaZeroConfig).N (t - π / (3 * Λ) - 1) (t + π / (3 * Λ)) : ℝ)
+      ≤ A * (2 * (π / (3 * Λ)) + 2))
+    (hlower : c * ((J : ℝ) - 1 - π / (3 * Λ))
+      ≤ ((zetaZeroConfig).N (t + π / (3 * Λ)) (t + (J : ℝ) - 1) : ℝ))
+    (hpos : 0 < lowGapMass t J (π / (3 * Λ))
+        * (Real.cos (π / (3 * Λ) * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      - highGapMass t J (π / (3 * Λ)) * (C / (π / (3 * Λ)) ^ 2))
+    (hquarter : π / 2 < (J : ℝ) * Λ) :
+    c < π ^ 2 * A + Λ * (6 * c / π + 3 * π * A) := by
+  have hπ : (0 : ℝ) < π := Real.pi_pos
+  have hwin := quarter_period_and_density_window hg hgc hΛ hc hq0 hsupp hCbase hupper hlower
+    hpos hquarter
+  have h6c : (0 : ℝ) < 6 * c := by positivity
+  have hscaled : (π / 2) * (6 * c / π)
+      < (π / 3 + π ^ 3 * A / (6 * c) + Λ * (1 + π ^ 2 * A / (2 * c))) * (6 * c / π) :=
+    mul_lt_mul_of_pos_right hwin (by positivity)
+  have hL : (π / 2) * (6 * c / π) = 3 * c := by field_simp; ring
+  have hR : (π / 3 + π ^ 3 * A / (6 * c) + Λ * (1 + π ^ 2 * A / (2 * c))) * (6 * c / π)
+      = 2 * c + π ^ 2 * A + Λ * (6 * c / π + 3 * π * A) := by
+    field_simp
+    ring
+  rw [hL, hR] at hscaled
+  linarith
+
+/-- **When the density constants are on the wrong side, the two requirements are jointly
+unsatisfiable.**  The contrapositive of `quarter_period_and_density_force_c_lt`: if
+`π²A + Λ(6c/π + 3πA) ≤ c`, then no cutoff can both make the gap split positive at the §34
+threshold and cross the quarter period. -/
+theorem no_window_of_density_constants {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C A c : ℝ} {J : ℕ} (hΛ : 0 < Λ) (hc : 0 < c)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C)
+    (hupper : ((zetaZeroConfig).N (t - π / (3 * Λ) - 1) (t + π / (3 * Λ)) : ℝ)
+      ≤ A * (2 * (π / (3 * Λ)) + 2))
+    (hlower : c * ((J : ℝ) - 1 - π / (3 * Λ))
+      ≤ ((zetaZeroConfig).N (t + π / (3 * Λ)) (t + (J : ℝ) - 1) : ℝ))
+    (hbig : π ^ 2 * A + Λ * (6 * c / π + 3 * π * A) ≤ c)
+    (hpos : 0 < lowGapMass t J (π / (3 * Λ))
+        * (Real.cos (π / (3 * Λ) * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      - highGapMass t J (π / (3 * Λ)) * (C / (π / (3 * Λ)) ^ 2)) :
+    ¬ (π / 2 < (J : ℝ) * Λ) := by
+  intro hquarter
+  have := quarter_period_and_density_force_c_lt hg hgc hΛ hc hq0 hsupp hCbase hupper hlower
+    hpos hquarter
+  linarith
+
+/-! ## 3. The window really is nonempty when `c < π²A` -/
+
+/-- An integer strictly inside an interval of length more than one. -/
+theorem exists_nat_mem_Ioo {a b : ℝ} (ha : 0 ≤ a) (hab : a + 1 < b) :
+    ∃ n : ℕ, a < (n : ℝ) ∧ (n : ℝ) < b := by
+  refine ⟨⌊a⌋₊ + 1, ?_, ?_⟩
+  · push_cast
+    exact Nat.lt_floor_add_one a
+  · have hle : (⌊a⌋₊ : ℝ) ≤ a := Nat.floor_le ha
+    push_cast
+    linarith
+
+/-- **The §36 density cut does not close the inverse-width regime.**  If the two local
+density constants satisfy `c < π²A`, then for every width `Λ` below the explicit threshold
+`π/3 + π³A/(6c) − π/2` there is an integer cutoff `J` with
+
+    π/(2Λ)  <  J  <  1 + D + π²A(2D+2)/(4c),      D = π/(3Λ),
+
+i.e. one that meets the quarter-period requirement of §33 and is still permitted by the
+density bound of §36.  So the two necessary conditions isolated so far are jointly
+satisfiable in that regime; the surviving obstruction is the clustering statement itself,
+not the arithmetic of these two bounds. -/
+theorem exists_cutoff_in_window {A c Λ : ℝ} (hc : 0 < c) (hcA : c < π ^ 2 * A) (hΛ : 0 < Λ)
+    (hsmall : Λ < π / 3 + π ^ 3 * A / (6 * c) - π / 2) :
+    ∃ J : ℕ, π / 2 < (J : ℝ) * Λ ∧
+      (J : ℝ) < 1 + π / (3 * Λ) + π ^ 2 * (A * (2 * (π / (3 * Λ)) + 2)) / (4 * c) := by
+  have hπ : (0 : ℝ) < π := Real.pi_pos
+  set m : ℝ := π / 3 + π ^ 3 * A / (6 * c) - π / 2 with hm
+  have hmpos : 0 < m := by
+    have h := (leading_window_nonempty_iff hc).2 hcA
+    simp only [hm]
+    linarith
+  have hπ2 : (0 : ℝ) < π ^ 2 := by positivity
+  have hA : 0 < A := by nlinarith
+  have hK : 0 < 1 + π ^ 2 * A / (2 * c) := by positivity
+  -- the interval `(π/(2Λ), (π/2+m)/Λ + K)` has length `m/Λ + K > 1`
+  have hlen : π / 2 / Λ + 1 < (π / 2 + m) / Λ + (1 + π ^ 2 * A / (2 * c)) := by
+    have h1 : 1 < m / Λ := (one_lt_div hΛ).2 hsmall
+    have h2 : (π / 2 + m) / Λ = π / 2 / Λ + m / Λ := by ring
+    rw [h2]
+    linarith
+  obtain ⟨J, hJ1, hJ2⟩ := exists_nat_mem_Ioo (a := π / 2 / Λ)
+    (by positivity) hlen
+  refine ⟨J, ?_, ?_⟩
+  · rw [div_lt_iff₀ hΛ] at hJ1
+    linarith [hJ1]
+  · rw [density_cutoff_bound_eq (ne_of_gt hΛ) (ne_of_gt hc)]
+    have : (π / 2 + m) / Λ = (π / 3 + π ^ 3 * A / (6 * c)) / Λ := by
+      congr 1
+      simp only [hm]; ring
+    linarith [this ▸ hJ2]
+
+/-- **Matched density constants already satisfy the leading-order condition.**  If the
+lower density constant of the long window does not exceed the upper density constant of
+the short window — the situation one expects at a common height, where both are of size
+`log|t|/(2π)` — then `c < π²A` holds automatically, because `π² > 1`. -/
+theorem matched_densities_lt {A c : ℝ} (hc : 0 < c) (hcA : c ≤ A) : c < π ^ 2 * A := by
+  have hπ : (3 : ℝ) < π := Real.pi_gt_three
+  have hπ2 : (9 : ℝ) < π ^ 2 := by nlinarith
+  have hA : 0 < A := lt_of_lt_of_le hc hcA
+  calc c < 9 * c := by linarith
+    _ ≤ π ^ 2 * c := by nlinarith
+    _ ≤ π ^ 2 * A := by nlinarith
+
+/-- **The window is nonempty for matched density constants.**  Combining
+`matched_densities_lt` with `exists_cutoff_in_window`: whenever `0 < c ≤ A` and the taper
+width is below the explicit threshold, some integer cutoff satisfies both the
+quarter-period requirement of §33 and the density bound of §36. -/
+theorem exists_cutoff_in_window_of_matched_densities {A c Λ : ℝ} (hc : 0 < c) (hcA : c ≤ A)
+    (hΛ : 0 < Λ) (hsmall : Λ < π / 3 + π ^ 3 * A / (6 * c) - π / 2) :
+    ∃ J : ℕ, π / 2 < (J : ℝ) * Λ ∧
+      (J : ℝ) < 1 + π / (3 * Λ) + π ^ 2 * (A * (2 * (π / (3 * Λ)) + 2)) / (4 * c) :=
+  exists_cutoff_in_window hc (matched_densities_lt hc hcA) hΛ hsmall
+
+/-- **A completely explicit nonemptiness statement.**  For matched density constants
+`0 < c ≤ A` the threshold of `exists_cutoff_in_window` exceeds `4`, so *every* taper width
+`0 < Λ ≤ 4` — in particular the whole inverse-width family `Λ ≍ |t|⁻¹` at large height —
+admits an integer cutoff meeting both the quarter-period requirement and the density
+bound.  The §36 density cut therefore does not by itself close the adaptive regime. -/
+theorem exists_cutoff_in_window_of_matched_densities_width_le_four {A c Λ : ℝ} (hc : 0 < c)
+    (hcA : c ≤ A) (hΛ : 0 < Λ) (hΛ4 : Λ ≤ 4) :
+    ∃ J : ℕ, π / 2 < (J : ℝ) * Λ ∧
+      (J : ℝ) < 1 + π / (3 * Λ) + π ^ 2 * (A * (2 * (π / (3 * Λ)) + 2)) / (4 * c) := by
+  have hp : (0 : ℝ) < π := Real.pi_pos
+  have h1 : (3.14 : ℝ) < π := Real.pi_gt_d2
+  have h2 : π < 3.15 := Real.pi_lt_d2
+  have hcube : (30 : ℝ) < π ^ 3 := by nlinarith [sq_nonneg (π - 3.14)]
+  have hAc : (1 : ℝ) ≤ A / c := (one_le_div hc).2 hcA
+  have heq : π ^ 3 * A / (6 * c) = (π ^ 3 / 6) * (A / c) := by
+    field_simp
+  have hπ3 : (0 : ℝ) < π ^ 3 := by positivity
+  have hlow : π ^ 3 / 6 ≤ π ^ 3 * A / (6 * c) := by
+    rw [heq]
+    nlinarith
+  have hsmall : Λ < π / 3 + π ^ 3 * A / (6 * c) - π / 2 := by linarith
+  exact exists_cutoff_in_window_of_matched_densities hc hcA hΛ hsmall
+
+end NearCoreQuarterPeriodDensityWindow
+end Zeta23Bridge

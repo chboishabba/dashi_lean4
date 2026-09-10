@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "finitary relation",
+  "mathematical relation",
+  "n-ary relation"
+ ],
+ "canonical": "Q203066",
+ "description": "property that assigns truth values to k-tuples of individuals",
+ "id": "Q203066",
+ "label": "relation"
+}

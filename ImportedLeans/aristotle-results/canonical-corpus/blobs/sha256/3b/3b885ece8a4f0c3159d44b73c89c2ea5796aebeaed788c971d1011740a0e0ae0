@@ -1,0 +1,242 @@
+{-# OPTIONS --safe #-}
+module DASHI.Physics.YangMills.BalabanCMP98Equation119ComputedWitnessRound148Exact where
+
+------------------------------------------------------------------------
+-- ROUND148 A1: THE Eq. (119) REALIZATION IS INHABITED AND COMPUTES
+--
+-- Round146 realizes CMP98 Eq. (119) on the periodic lattice for an arbitrary
+-- gauge group, adjoint module and ad-functional calculus.  A realization is
+-- worth nothing if its parameter record cannot be inhabited by data with a
+-- nontrivial adjoint action, so this module supplies an explicit inhabitant
+-- and *evaluates* the resulting operator.
+--
+-- The witness carrier is the two-element group acting on a rank-two integer
+-- module by exchanging the two coordinates.  The adjoint action is therefore
+-- genuinely nontrivial: R(e^{iY_x}) is the exchange, not the identity, so the
+-- Eq. (119) bracket does not collapse.
+--
+-- On a 4^4 torus with block length 2 and constant nontrivial background the
+-- operator evaluates, by kernel computation alone, to a nonzero vector.  This
+-- is a non-vacuity check for the Round146 interface: it is deliberately *not*
+-- a physical statement about SU(N) Yang-Mills, and nothing downstream is
+-- allowed to consume it as one.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat)
+open import Data.Bool.Base using (Bool; true; false)
+open import Data.Empty using (⊥)
+open import Data.Fin.Base using (Fin; zero; suc)
+open import Data.Integer.Base using (ℤ; 0ℤ; _+_; _-_; _*_; +_; -_)
+import Data.Integer.Properties as ℤP
+open import Relation.Binary.PropositionalEquality using (cong; cong₂; sym; trans)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.P06CubeCoordinatesCore using
+  ( Cube4
+  ; cube4
+  ; Axis4
+  ; axis₀
+  )
+open import DASHI.Physics.YangMills.BalabanPeriodicGaugeTransport using
+  ( GroupStructure )
+open import DASHI.Physics.YangMills.BalabanGaugeTransformationCovariance using
+  ( DirectedGaugeField4 )
+open import DASHI.Physics.YangMills.BalabanLatticeAdjointCovariantDerivative using
+  ( AdjointAdditiveModule )
+open import DASHI.Physics.YangMills.BalabanCovariantPathIntegral using
+  ( AdjointLinearModule )
+open import DASHI.Physics.YangMills.BalabanLinearBlockPathAverage using
+  ( ScalarAdjointLinearModule )
+import DASHI.Physics.YangMills.BalabanCMP98Equation119LatticeRealizationRound146Exact
+  as R146
+
+------------------------------------------------------------------------
+-- The two-element group.
+------------------------------------------------------------------------
+
+exchangeMultiply : Bool → Bool → Bool
+exchangeMultiply false b = b
+exchangeMultiply true false = true
+exchangeMultiply true true = false
+
+exchangeGroup : GroupStructure
+exchangeGroup = record
+  { Carrier = Bool
+  ; unit = false
+  ; multiply = exchangeMultiply
+  ; inverse = λ b → b
+  ; multiplyAssoc = assoc
+  ; unitLeft = λ _ → refl
+  ; unitRight = right
+  ; inverseLeft = cancel
+  ; inverseRight = cancel
+  ; inverseInvolutive = λ _ → refl
+  }
+  where
+    assoc :
+      ∀ a b c →
+      exchangeMultiply (exchangeMultiply a b) c
+      ≡ exchangeMultiply a (exchangeMultiply b c)
+    assoc false b c = refl
+    assoc true false c = refl
+    assoc true true false = refl
+    assoc true true true = refl
+
+    right : ∀ a → exchangeMultiply a false ≡ a
+    right false = refl
+    right true = refl
+
+    cancel : ∀ a → exchangeMultiply a a ≡ false
+    cancel false = refl
+    cancel true = refl
+
+------------------------------------------------------------------------
+-- The rank-two integer module with the exchange action.
+------------------------------------------------------------------------
+
+record Pair2 : Set where
+  constructor pair2
+  field
+    fst snd : ℤ
+
+open Pair2 public
+
+exchange : Bool → Pair2 → Pair2
+exchange false v = v
+exchange true (pair2 a b) = pair2 b a
+
+addPair : Pair2 → Pair2 → Pair2
+addPair (pair2 a b) (pair2 c d) = pair2 (a + c) (b + d)
+
+subPair : Pair2 → Pair2 → Pair2
+subPair (pair2 a b) (pair2 c d) = pair2 (a - c) (b - d)
+
+zeroPair : Pair2
+zeroPair = pair2 0ℤ 0ℤ
+
+scalePair : ℤ → Pair2 → Pair2
+scalePair s (pair2 a b) = pair2 (s * a) (s * b)
+
+exchangeAdditiveModule : AdjointAdditiveModule exchangeGroup
+exchangeAdditiveModule = record
+  { Vector = Pair2
+  ; subtract = subPair
+  ; action = exchange
+  ; actionUnit = λ _ → refl
+  ; actionMultiply = actMul
+  ; actionSubtract = actSub
+  }
+  where
+    actMul :
+      ∀ g h X →
+      exchange (exchangeMultiply g h) X ≡ exchange g (exchange h X)
+    actMul false h X = refl
+    actMul true false X = refl
+    actMul true true (pair2 a b) = refl
+
+    actSub :
+      ∀ g X Y →
+      exchange g (subPair X Y) ≡ subPair (exchange g X) (exchange g Y)
+    actSub false X Y = refl
+    actSub true (pair2 a b) (pair2 c d) = refl
+
+exchangeLinearModule : AdjointLinearModule exchangeGroup
+exchangeLinearModule = record
+  { additive = exchangeAdditiveModule
+  ; zeroVector = zeroPair
+  ; addVector = addPair
+  ; addAssociative = assoc
+  ; zeroLeft = zLeft
+  ; zeroRight = zRight
+  ; actionZero = actZero
+  ; actionAdd = actAdd
+  }
+  where
+    assoc :
+      ∀ X Y Z → addPair (addPair X Y) Z ≡ addPair X (addPair Y Z)
+    assoc (pair2 a b) (pair2 c d) (pair2 e f) =
+      cong₂ pair2 (ℤP.+-assoc a c e) (ℤP.+-assoc b d f)
+
+    zLeft : ∀ X → addPair zeroPair X ≡ X
+    zLeft (pair2 a b) =
+      cong₂ pair2 (ℤP.+-identityˡ a) (ℤP.+-identityˡ b)
+
+    zRight : ∀ X → addPair X zeroPair ≡ X
+    zRight (pair2 a b) =
+      cong₂ pair2 (ℤP.+-identityʳ a) (ℤP.+-identityʳ b)
+
+    actZero : ∀ g → exchange g zeroPair ≡ zeroPair
+    actZero false = refl
+    actZero true = refl
+
+    actAdd :
+      ∀ g X Y →
+      exchange g (addPair X Y) ≡ addPair (exchange g X) (exchange g Y)
+    actAdd false X Y = refl
+    actAdd true (pair2 a b) (pair2 c d) = refl
+
+exchangeScalarModule : ScalarAdjointLinearModule exchangeGroup
+exchangeScalarModule = record
+  { linear = exchangeLinearModule
+  ; Scalar = ℤ
+  ; scale = scalePair
+  ; actionScale = actScale
+  }
+  where
+    actScale :
+      ∀ g s X → exchange g (scalePair s X) ≡ scalePair s (exchange g X)
+    actScale false s X = refl
+    actScale true s (pair2 a b) = refl
+
+------------------------------------------------------------------------
+-- The Eq. (119) data of the witness.
+------------------------------------------------------------------------
+
+open R146.Equation119 {N = 4} exchangeGroup exchangeScalarModule
+
+-- Constant nontrivial background: every bond carries the exchange element,
+-- so parallel transport alternates the two coordinates along a path.
+witnessBackground : DirectedGaugeField4 4 exchangeGroup
+witnessBackground _ = true
+
+witnessInputs : Equation119Inputs
+witnessInputs = record
+  { blockLength = 2
+  ; coarseAxis = axis₀
+  ; background = witnessBackground
+  ; inverseVolumeWeight = + 2
+  ; expBlockY = λ _ _ → true
+  ; expCoarseY = λ _ → false
+  ; gOp = λ _ v → v
+  ; gInvOp = λ _ _ v → v
+  }
+
+witnessField : BondField
+witnessField _ = pair2 (+ 1) 0ℤ
+
+origin : Cube4 4
+origin = cube4 zero zero zero zero
+
+------------------------------------------------------------------------
+-- The computation.  Each of the sixteen block points contributes
+--
+--   2 * [ (R_0 A)(F_{c_-,x} u [x,x']) - R(e^{iY_x}) (R_0 A)(c u F_{c_+,x'}) ],
+--
+-- which vanishes when the two paths have even length and equals 2*(1,-1) when
+-- they have odd length; eight of the sixteen offsets are odd.  The last term
+-- adds (R_0 A)(c) = (1,1).
+------------------------------------------------------------------------
+
+equation119WitnessValue :
+  equation119QPrime witnessInputs witnessField origin
+  ≡ pair2 (+ 17) (- (+ 15))
+equation119WitnessValue = refl
+
+-- Non-vacuity: the realized operator is not the zero operator.
+equation119WitnessNonZero :
+  (equation119QPrime witnessInputs witnessField origin ≡ zeroPair) → ⊥
+equation119WitnessNonZero ()
+
+cmp98Equation119ComputedWitnessRound148Level : ProofLevel
+cmp98Equation119ComputedWitnessRound148Level = computed

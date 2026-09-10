@@ -1,0 +1,16 @@
+{
+ "aliases": [
+  "substance with uniform characteristics",
+  "substance with some constant properties",
+  "consistent substance of variable amount",
+  "substance",
+  "base material",
+  "materials",
+  "engineering material",
+  "engineering materials"
+ ],
+ "canonical": "Q214609",
+ "description": "substance that can occur in different amounts, all with some similar [mixture of some] characteristics, and with which objects can be made",
+ "id": "Q214609",
+ "label": "material"
+}

@@ -1,0 +1,2 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/defects.skb","series","dangling-follows","error","suggested-fix","V6","","V7","","","`follows` (P155) statement with an undeclared endpoint","declare the missing item, or delete the statement"

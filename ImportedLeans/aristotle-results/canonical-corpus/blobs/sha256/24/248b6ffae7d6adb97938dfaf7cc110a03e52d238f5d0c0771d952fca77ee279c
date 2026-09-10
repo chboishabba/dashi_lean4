@@ -1,0 +1,16 @@
+# TOE / Aristotle-integration Agda source tranche
+
+Source commit: `74c7bee33ddd4877181ab332628909a9e6425b63` from `chboishabba/dashi_agda` (2026-09-09).
+
+This is a focused source-only handoff covering the Aristotle/Wikidata reciprocal-garden, interop, and provenance surfaces. It excludes all generated build outputs and raw archives.
+
+## Required intake
+
+1. Unpack beside your existing project and inspect `SOURCE_MANIFEST.txt` first.
+2. Start with `DASHI/EverythingAristotleWikidataReciprocalGarden.agda`, `DASHI/Core/AristotleWikidataReciprocalGardenValidation.agda`, and `DASHI/Interop/Aristotle*`.
+3. Import individual reviewed modules into your tree; preserve your checked Lean source as the authority for its own results and preserve the handoff provenance.
+4. Do not report an Agda kernel receipt merely because source imports resolve. Run your local checker before making any such claim.
+
+## Current context
+
+Your completed project already imported the prior corpus and produced ten Lean owners around statement-family visibility, snak absence, provenance tiers, coverage, revision identity, and worklist status. The updated master adds the corresponding cross-pollinated Aristotle/Wikidata and SensibLaw interoperability surfaces. The important limitation remains unchanged: coverage-residual scheduling and report/worklist semantics are modelling interfaces, not automatic authority or information gain; keep their validation separate from Lean's completed audit.

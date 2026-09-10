@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "⊂",
+  "⊆"
+ ],
+ "canonical": "Q177646",
+ "description": "set whose elements are all contained in another set",
+ "id": "Q177646",
+ "label": "subset"
+}

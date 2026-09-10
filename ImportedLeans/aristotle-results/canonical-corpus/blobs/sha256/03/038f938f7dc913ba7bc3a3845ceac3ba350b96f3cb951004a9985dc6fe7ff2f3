@@ -1,0 +1,17 @@
+{-# OPTIONS --safe #-}
+module DASHI.Physics.YangMills.ListMembershipCore where
+
+------------------------------------------------------------------------
+-- The inductive list-membership relation of
+-- `DASHI.Physics.YangMills.GraphCombinatorics`, split out so that the
+-- postulate-free part of the lattice lane can use it under `--safe`.
+--
+-- GraphCombinatorics re-exports this module, so the relation, its
+-- constructors, and every existing proof term are unchanged.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.List using (List; []; _∷_)
+
+data _∈_ {A : Set} (x : A) : List A → Set where
+  here  : ∀ {xs} → x ∈ (x ∷ xs)
+  there : ∀ {y xs} → x ∈ xs → x ∈ (y ∷ xs)

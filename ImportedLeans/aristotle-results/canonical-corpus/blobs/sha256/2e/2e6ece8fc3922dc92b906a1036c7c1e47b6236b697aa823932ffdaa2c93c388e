@@ -1,0 +1,17 @@
+{
+ "aliases": [
+  "life processes",
+  "physiological process",
+  "single-organism process",
+  "single organism process",
+  "biological processes",
+  "biological process class",
+  "class of biological process",
+  "biological phenomenon",
+  "biological phenomena"
+ ],
+ "canonical": "Q2996394",
+ "description": "process specifically pertinent to the functioning of integrated living units",
+ "id": "Q2996394",
+ "label": "biological process"
+}

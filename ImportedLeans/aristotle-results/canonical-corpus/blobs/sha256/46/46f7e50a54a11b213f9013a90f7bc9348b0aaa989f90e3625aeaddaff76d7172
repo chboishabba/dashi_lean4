@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "stripping functor"
+ ],
+ "canonical": "Q2646117",
+ "description": "drops some or all of the input's structure or properties",
+ "id": "Q2646117",
+ "label": "forgetful functor"
+}

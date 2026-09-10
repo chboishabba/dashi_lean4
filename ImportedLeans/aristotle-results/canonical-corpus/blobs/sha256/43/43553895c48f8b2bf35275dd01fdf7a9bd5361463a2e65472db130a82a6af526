@@ -1,0 +1,16 @@
+# Riemann / RH Agda source tranche
+
+Source commit: `74c7bee33ddd4877181ab332628909a9e6425b63` from `chboishabba/dashi_agda` (2026-09-09).
+
+This archive carries the current `DASHI/Analysis` source family only, plus the minimal prelude and an exact path manifest. No build products are included.
+
+## Required intake
+
+1. Unpack without replacing your existing Lean workspace.
+2. Inspect `SOURCE_MANIFEST.txt`, then begin with the `RiemannG2*`, `RiemannZeta*`, and direct-terminal / analytic-core modules relevant to your result.
+3. Import only reviewed definitions. This is a source handoff, not a claim that the Agda modules have a fresh kernel receipt.
+4. Do not weaken the existing RH boundary: the tranche does not establish RH or turn unproved density/mass assumptions into authorities.
+
+## Current context
+
+The master now includes the reconciled RH direct-terminal and analytic-core work: historical allowance routes are organized as implementations of the smaller Off/Gamma analytic-core surface. Your Lean result advances the local ζ count / density package but leaves the actual near-core multiplicity-mass clustering inequality open. The productive comparison point is whether any donor module cleanly isolates that same remaining mass payment; avoid mistaking an average-density scheduler receipt for the required pointwise/clustering statement.

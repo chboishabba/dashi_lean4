@@ -1,0 +1,174 @@
+# Yang–Mills terminal lane: exact status of the Lean results
+
+This note states, in exact terms, what the Lean modules of the Yang–Mills lane
+prove and what they do **not** prove.  It supersedes any looser phrasing found
+elsewhere in the documentation; where an earlier text and this note disagree,
+this note (and, above it, the Lean source) is authoritative.
+
+All statements below are machine-checked by `lake build RequestProject`, and
+every headline theorem listed here is followed in its own file by a
+`#print axioms` command; all of them report only `propext`, `Classical.choice`,
+`Quot.sound`.  There is no `axiom`, `@[implemented_by]`, `unsafe` or `sorry` in
+the Lean Yang–Mills lane.
+
+## 1. Corrections to earlier phrasing
+
+**Audit coverage.**  The claim "every headline theorem is audited with
+`#print axioms`" was previously false as stated: `PhysicalNullQuotient.lean` and
+`GaugeInvariantL2Carrier.lean` carried no audit commands.  They now do, covering
+in particular
+
+```
+preservesNull_of_isSymmetricOp
+hamiltonian_eqOn_core_of_same_evolution
+hamiltonian_unique_of_same_evolution_on_dense_core
+```
+
+so the claim is now literally true for the theorems listed in this note.
+
+**"Unbounded".**  In `GeneratorUniquenessCore` the candidate Hamiltonians `A`,
+`B` are *total* maps `H → H` that are merely not assumed bounded (indeed not
+assumed linear or symmetric); in `PhysicalNullQuotient` the operator is an
+everywhere-defined linear map `T : E →ₗ[ℂ] E`.  The correct claim is
+
+> generator uniqueness requires no boundedness assumption,
+
+not that unbounded-operator theory had been formalised there.  The
+domain-theoretic development is now a separate module, see §2.
+
+**"No spectral pollution from below".**  `MassGapFormTransport` proves
+preservation of a quadratic-form lower bound under a strong limit of *bounded*
+operators.  By itself it mentions no spectra.  The exact reading of that file is
+
+> no loss of the form lower bound in this strong-limit setting.
+
+The spectral statement is now proved separately, for bounded operators, in
+`FormGapSpectralExclusion` (see §3).
+
+**Gap stability.**  Accordingly:
+
+* bounded strong-limit form-gap transport — **proved**
+  (`MassGapFormTransport.hasFormGap_of_tendsto`);
+* spectral exclusion below a form bound, bounded case — **proved**
+  (`FormGapSpectralExclusion.spectrum_subset_halfPlane`);
+* form-gap transport for genuinely unbounded Hamiltonians, under stated
+  convergence hypotheses — **proved**
+  (`UnboundedFormGapTransport.hasFormGapOn_of_tendsto`, `hasFormGapOn_of_core`);
+* form bound ⇒ no spectrum below the bound for an **unbounded self-adjoint**
+  operator — **proved** (`UnboundedFormGapResolvent`, see §6);
+* *physical* unbounded continuum-Hamiltonian gap transport for Yang–Mills —
+  **open**: nothing here constructs the physical Hamiltonians, their domains, or
+  the convergence of the cutoff family.
+
+## 2. Domain-theoretic unbounded operators (`UnboundedHamiltonianDomain.lean`)
+
+Operators are Mathlib `LinearPMap`s, `H : D(H) ⊆ E → E`.
+
+* `IsSymmetric H` — symmetry on the domain (`⟪Hx, y⟫ = ⟪x, Hy⟫` for
+  `x, y ∈ D(H)`), i.e. `H.IsFormalAdjoint H`.
+* `IsSymmetric.isClosable` — a densely defined symmetric operator is closable.
+* `IsSymmetric.closure` — the closure of a densely defined symmetric operator is
+  symmetric (proved by graph approximation, not assumed).
+* `eq_of_hasCore_of_eqOn` — two unbounded operators agreeing on a submodule that
+  is a **core** for both are equal as operators, domains included.
+* `pmap_generator_eqOn_core`, `pmap_generator_unique_of_hasCore` — the terminal
+  weld in domain form: two unbounded Hamiltonians differentiating the same
+  evolution on a common core agree there, and are equal as operators when that
+  submodule is a core for both.
+
+Not proved here, and not claimed: existence of a Yang–Mills Hamiltonian,
+essential self-adjointness of any concrete operator, or invariance of a physical
+core under a physical dynamics.
+
+## 3. Form bound ⟹ spectrum, bounded case (`FormGapSpectralExclusion.lean`)
+
+* `bijective_of_isFormCoercive` — a bounded operator with `c‖ψ‖² ≤ Re⟪ψ, Hψ⟫`,
+  `c > 0`, is bijective (complex Lax–Milgram; no self-adjointness used).
+* `spectrum_subset_halfPlane` — if `Δ‖ψ‖² ≤ Re⟪ψ, Hψ⟫` for all `ψ`, then
+  `spectrum ℂ H ⊆ {z | Δ ≤ z.re}`.
+* `spectrum_restrict_subset_halfPlane` — the same for the restriction of `H` to
+  the orthogonal complement of a vacuum vector, from a form gap above that
+  vacuum, assuming the complement is invariant.
+* `spectrum_restrict_of_tendsto` — combining with strong-limit transport: the
+  strong limit of bounded Hamiltonians with a uniform form gap `Δ` above a
+  common vacuum has no spectrum with real part `< Δ` on the vacuum complement.
+
+The corresponding statement for an unbounded self-adjoint operator (form bound
+⟹ spectral bound, via the spectral theorem) is **not** proved here.
+
+## 4. Unbounded gap transport and the recovery compiler
+(`UnboundedFormGapTransport.lean`)
+
+* `HasFormGapOn H v Δ` — the form gap on the domain of an unbounded `H`.
+* `hasFormGapOn_of_core` — a gap on a core transports to the whole domain along
+  graph limits of vacuum-orthogonal approximants.
+* `hasFormGapOn_of_tendsto` — uniform gaps transport to a limit operator whose
+  vacuum-orthogonal domain states lie in all approximating domains with
+  converging energies.
+* `VacuumOrthogonalRecoverySystem` / `gap_of_recoverySystem` — the Lean twin of
+  the recovery-system gap compiler: from `‖u‖² ≤ ‖uₙ‖²`, `m‖uₙ‖² ≤ Qₙ(uₙ)` and
+  `Qₙ(uₙ) → L ≤ Q∞(u)` (with `m ≥ 0`) one gets `m‖u‖² ≤ Q∞(u)`.  The forms are
+  arbitrary real-valued energy functionals: no boundedness, no operator
+  representation, no closedness of the forms is used — and correspondingly none
+  is provided.
+
+## 5. Unbounded self-adjoint resolvent below the gap
+(`UnboundedFormGapResolvent.lean`)
+
+For `H : D(H) ⊆ E → E` self-adjoint (`IsSelfAdjoint` for `LinearPMap`, i.e.
+`H† = H`) with `Δ‖ψ‖² ≤ re ⟨ψ, Hψ⟩` on the domain:
+
+* `norm_sub_smul_lower_bound` — `(Δ - lam)‖ψ‖ ≤ ‖Hψ - lam ψ‖`;
+* `exists_unique_solution_of_formGap` — for every real `lam < Δ` and every `y`
+  there is a unique `ψ ∈ D(H)` with `Hψ - lam ψ = y`: `lam` is in the resolvent
+  set, so there is no spectrum below the form gap;
+* `resolvent_bound_of_formGap` — `‖ψ‖ ≤ (Δ - lam)⁻¹‖y‖`;
+* `no_eigenvalue_below_gap` — no eigenvalue below `Δ` (no self-adjointness
+  needed);
+* `isSelfAdjoint_smul_id`, `hasFormLowerBound_smul_id` — the hypotheses are
+  simultaneously satisfiable, so the statement is not vacuous.
+
+Self-adjointness of the physical Hamiltonian and the physical form bound remain
+inputs (`M7c`, `M9`).
+
+## 6. A genuinely unbounded model (`UnboundedHamiltonianWitness.lean`)
+
+The number operator on `ℓ²(ℕ)`, with domain the dense span of the unit vectors,
+is densely defined, symmetric, provably **not** bounded on its domain
+(`numberPMap_not_bounded`), closable with symmetric closure, and has form gap
+`1` above the vacuum `e₀`.  So the domain-theoretic statements of §2 and §4 are
+inhabited by a real unbounded operator with a positive gap.  This is a witness
+only; it is not a Yang–Mills Hamiltonian.
+
+## 7. The surviving frontier
+
+Unchanged in substance by this round; only the labels are now accurate.
+
+1. **E1** — the same-object equality identifying the transported relative bond
+   with the relative contour element on the common coarse bond / embedded fine
+   site.
+2. **M7a–c** — the literal Yang–Mills action variation identified with an
+   operator `H_YM : D(H_YM) ⊆ ℋ_phys → ℋ_phys`; construction of that domain and
+   of a common invariant dense core; genuine analytic self-adjointness.
+3. **M8** — construction of the OS dynamics and the identification
+   `U_t^{YM} = U_t^{OS}` on the common core.  Given that, the uniqueness weld is
+   already available (`pmap_generator_unique_of_hasCore`).
+4. **M9** — instantiation of a recovery system (or of the dense-core clustering
+   route) for the actual cutoff/continuum Yang–Mills family.  Given that, the
+   gap conclusion is already available (`gap_of_recoverySystem`).
+5. **C** — the physical finite → continuum same-object identification, and the
+   OS/Wightman package on the resulting continuum theory.
+
+The generic operator-theoretic machinery needed by 2–4 is now present in Lean in
+domain-theoretic form — including the step "self-adjoint with a form gap ⇒ no
+spectrum below the gap" that item 2(c) is aimed at — so what is missing is the
+physical construction that instantiates it.  No Boolean flag, evidence record or
+receipt anywhere in the repository should be read as supplying any of items
+1–5.
+
+## 8. Scope of the verification behind this note
+
+Everything asserted above is about the Lean lane and was checked by building it
+from source with the axiom audits described at the top.  This round did not
+rebuild or re-verify the Agda lane, and no kernel receipt for Agda modules is
+claimed here.

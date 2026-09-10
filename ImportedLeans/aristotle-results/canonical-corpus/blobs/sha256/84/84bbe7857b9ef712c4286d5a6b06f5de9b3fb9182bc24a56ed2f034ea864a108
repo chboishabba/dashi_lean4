@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "sentential connective",
+  "sentential operator",
+  "propositional connective",
+  "connective",
+  "logical connective"
+ ],
+ "canonical": "Q211790",
+ "description": "symbol or word which can be applied to statements (of either a formal or a natural language) to produce a new statement",
+ "id": "Q211790",
+ "label": "logical operator"
+}

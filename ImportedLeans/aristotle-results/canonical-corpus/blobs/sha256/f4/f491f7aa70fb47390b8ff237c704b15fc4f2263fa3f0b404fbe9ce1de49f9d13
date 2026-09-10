@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "Von Neumann finite ring",
+  "directly finite ring"
+ ],
+ "canonical": "Q112160790",
+ "description": "ring in which left inverses are always right inverses",
+ "id": "Q112160790",
+ "label": "Dedekind-finite ring"
+}

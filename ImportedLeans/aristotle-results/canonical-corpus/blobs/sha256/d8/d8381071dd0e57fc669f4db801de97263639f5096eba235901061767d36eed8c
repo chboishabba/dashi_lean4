@@ -1,0 +1,182 @@
+/-
+# The clustering requirement versus the local zero density: the cutoff is bounded
+
+§35 (`NearCoreTaperShapeNoGo`) reduced the whole gap-split route to a single surviving
+requirement: the split lower bound
+
+    lowGapMass · cos(DΛ) · ∫q  −  highGapMass · C/D²
+
+can be positive only if `(4/π²)·highGapMass < lowGapMass`, i.e. only if more than a
+`4/π² ≈ 0.405` proportion of the near multiplicity mass sits within the gap threshold
+`D`.  That is a *clustering* statement about the zeros around the target ordinate.
+
+This module confronts it with the local density of the zeros, and shows that it caps the
+cutoff.  Both sides of the proportion are compared with counting windows of the carrier:
+
+* `lowGapMass_le_N` — the small-gap mass is at most `N(t−D−1, t+D)`, the multiplicity of
+  the single counting window that contains every zero with target gap at most `D`;
+* `N_le_highGapMass` — conversely `N(t+D, t+J−1) ≤ highGapMass`, because every zero of
+  that window is a near zero with target gap beyond `D`.
+
+Feeding in the local density of the zeros at the target height — an upper bound on the
+short window and a lower bound on the long one, both supplied as explicit hypotheses,
+never assumed silently — the clustering requirement becomes an upper bound on the cutoff:
+
+    J  <  1 + D + π²·A·(2D+2)/(4c)                (`gap_split_pos_requires_bounded_cutoff`)
+
+with `A` the upper density constant of the short window and `c` the lower density
+constant of the long one.  The large-gap mass grows linearly in the cutoff while the
+small-gap mass does not grow at all, so the proportion is lost as soon as the cutoff
+exceeds an explicit multiple of the gap threshold.  Since the far-tail estimate of §27
+requires the cutoff to grow, the gap-split route is closed in the regime it was built
+for.
+
+The density inputs are hypotheses of the theorems that use them, in the same style as the
+local counting hypothesis `N τ (τ+1) ≤ A log(|τ|+3)` already used in §33.7.  Nothing here
+asserts or assumes the Riemann Hypothesis, and nothing weakens `RiemannHypothesisFor`.
+No `sorry`, no `axiom`, no Boolean receipt, no numerical evidence.
+-/
+import Zeta23Bridge.NearCoreTaperShapeNoGo
+
+noncomputable section
+
+open scoped Real
+open Zeta23 MeasureTheory
+
+namespace Zeta23Bridge
+namespace NearCoreClusteringDensityCut
+
+open Zeta23Bridge.LiteralWeilParityBalance
+open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilOtherZerosChannel
+open Zeta23Bridge.LiteralWeilProjectiveTaper
+open Zeta23Bridge.ReflectionPairKernelDecay
+open Zeta23Bridge.ReflectionPairCurvatureBound
+open Zeta23Bridge.OffOrdinateCutoffCarrier
+open Zeta23Bridge.NearCoreDeterminantTaper
+open Zeta23Bridge.NearCoreNarrowWindowNoCancellation
+open Zeta23Bridge.ProjectedZeroTailSummability
+open Zeta23Bridge.NearCoreGapSplitEvaluation
+open Zeta23Bridge.NearCoreTaperShapeNoGo
+
+/-! ## 1. The two sides of the proportion are counting windows -/
+
+/-- **The small-gap mass fits in one counting window.**  Every near zero with target gap
+at most `D` has ordinate in `(t−D−1, t+D]`. -/
+theorem lowGapMass_le_N (t : ℝ) (J : ℕ) (D : ℝ) :
+    lowGapMass t J D ≤ ((zetaZeroConfig).N (t - D - 1) (t + D) : ℝ) := by
+  classical
+  set F : Finset ℂ :=
+    (lowGapFinset t J D).image (fun σ : ((SameOrd t)ᶜ : Set Zeros) => ((σ : Zeros) : ℂ))
+    with hF
+  have hinj : ∀ x ∈ lowGapFinset t J D, ∀ y ∈ lowGapFinset t J D,
+      ((x : Zeros) : ℂ) = ((y : Zeros) : ℂ) → x = y :=
+    fun x _ y _ h => Subtype.ext (Subtype.ext h)
+  have hmass : lowGapMass t J D = ((∑ ρ ∈ F, (zetaZeroConfig).mult ρ : ℕ) : ℝ) := by
+    rw [hF, Finset.sum_image hinj]
+    push_cast
+    rfl
+  have hsub : ↑F ⊆ (zetaZeroConfig).window (t - D - 1) (t + D) := by
+    intro ρ hρ
+    simp only [hF, Finset.coe_image, Set.mem_image, Finset.mem_coe] at hρ
+    obtain ⟨σ, hσ, rfl⟩ := hρ
+    have hgap : |(((σ : Zeros) : ℂ).im - t)| ≤ D := gap_le_of_mem_lowGapFinset hσ
+    have h1 : ((σ : Zeros) : ℂ).im - t ≤ D := le_trans (le_abs_self _) hgap
+    have h2 : -D ≤ ((σ : Zeros) : ℂ).im - t := by
+      have := neg_abs_le (((σ : Zeros) : ℂ).im - t); linarith
+    exact ⟨(σ : Zeros).2, by constructor <;> [linarith; linarith]⟩
+  have hN := sum_mult_le_N (t - D - 1) (t + D) F hsub
+  rw [hmass]
+  exact_mod_cast hN
+
+/-- **A far counting window sits inside the large-gap part.**  Every zero with ordinate in
+`(t+D, t+J−1]` is a near zero whose target gap exceeds `D`. -/
+theorem N_le_highGapMass (t : ℝ) (J : ℕ) {D : ℝ} (hD : 0 ≤ D) :
+    ((zetaZeroConfig).N (t + D) (t + (J : ℝ) - 1) : ℝ) ≤ highGapMass t J D := by
+  classical
+  have hfin : ((zetaZeroConfig).window (t + D) (t + (J : ℝ) - 1)).Finite :=
+    zetaZeroConfig.finite_window _ _
+  set G : Finset ℂ :=
+    (highGapFinset t J D).image (fun σ : ((SameOrd t)ᶜ : Set Zeros) => ((σ : Zeros) : ℂ))
+    with hG
+  have hinj : ∀ x ∈ highGapFinset t J D, ∀ y ∈ highGapFinset t J D,
+      ((x : Zeros) : ℂ) = ((y : Zeros) : ℂ) → x = y :=
+    fun x _ y _ h => Subtype.ext (Subtype.ext h)
+  have hmass : highGapMass t J D = ((∑ ρ ∈ G, (zetaZeroConfig).mult ρ : ℕ) : ℝ) := by
+    rw [hG, Finset.sum_image hinj]
+    push_cast
+    rfl
+  have hNeq : (zetaZeroConfig).N (t + D) (t + (J : ℝ) - 1)
+      = ∑ ρ ∈ hfin.toFinset, (zetaZeroConfig).mult ρ := by
+    have h2 := finsum_mem_coe_finset (zetaZeroConfig.mult) hfin.toFinset
+    rw [hfin.coe_toFinset] at h2
+    exact h2
+  have hsub : hfin.toFinset ⊆ G := by
+    intro ρ hρ
+    have hmem : ρ ∈ (zetaZeroConfig).window (t + D) (t + (J : ℝ) - 1) := hfin.mem_toFinset.1 hρ
+    obtain ⟨hcar, hlow, hhigh⟩ := hmem
+    have hgt : t + D < ρ.im := hlow
+    have hle : ρ.im ≤ t + (J : ℝ) - 1 := hhigh
+    have hne : ρ.im ≠ t := by intro h; rw [h] at hgt; linarith
+    have hσmem : (⟨ρ, hcar⟩ : Zeros) ∈ ((SameOrd t)ᶜ : Set Zeros) := fun h => hne h
+    refine Finset.mem_image.2 ⟨⟨⟨ρ, hcar⟩, hσmem⟩, ?_, rfl⟩
+    refine Finset.mem_filter.2 ⟨?_, ?_⟩
+    · refine (mem_nearOffFinset_iff t J _).2 ?_
+      have habs : |ρ.im - t| = ρ.im - t := abs_of_nonneg (by linarith)
+      rw [habs]
+      linarith
+    · intro hcon
+      have habs : |ρ.im - t| = ρ.im - t := abs_of_nonneg (by linarith)
+      rw [habs] at hcon
+      linarith
+  have hsum : (∑ ρ ∈ hfin.toFinset, (zetaZeroConfig).mult ρ)
+      ≤ ∑ ρ ∈ G, (zetaZeroConfig).mult ρ :=
+    Finset.sum_le_sum_of_subset hsub
+  rw [hmass, hNeq]
+  exact_mod_cast hsum
+
+/-! ## 2. The clustering requirement caps the cutoff -/
+
+/-- **The gap-split route needs a bounded cutoff.**  Given the local density of the zeros
+at the target height — an upper bound `A·(2D+2)` for the short window carrying the
+small-gap zeros and a lower bound `c·(J−1−D)` for the long window inside the large-gap
+part — the positivity of the split lower bound forces
+
+    J  <  1 + D + π²·A·(2D+2)/(4c) .
+
+The small-gap mass cannot grow with the cutoff while the large-gap mass grows linearly in
+it, so the clustering proportion required by §35.4 is lost beyond an explicit multiple of
+the gap threshold. -/
+theorem gap_split_pos_requires_bounded_cutoff {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ D C A c : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ) (hD : 0 < D)
+    (hDΛ : D * Λ ≤ π / 2) (hc : 0 < c)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C)
+    (hupper : ((zetaZeroConfig).N (t - D - 1) (t + D) : ℝ) ≤ A * (2 * D + 2))
+    (hlower : c * ((J : ℝ) - 1 - D) ≤ ((zetaZeroConfig).N (t + D) (t + (J : ℝ) - 1) : ℝ))
+    (hpos : 0 < lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      - highGapMass t J D * (C / D ^ 2)) :
+    (J : ℝ) < 1 + D + π ^ 2 * (A * (2 * D + 2)) / (4 * c) := by
+  have hπ : (0 : ℝ) < π ^ 2 := by positivity
+  have hprop := gap_split_pos_requires_low_gap_proportion hg hgc hΛ hD hDΛ hq0 hsupp hCbase hpos
+  have hlow : lowGapMass t J D ≤ A * (2 * D + 2) :=
+    le_trans (lowGapMass_le_N t J D) hupper
+  have hhigh : c * ((J : ℝ) - 1 - D) ≤ highGapMass t J D :=
+    le_trans hlower (N_le_highGapMass t J hD.le)
+  have hkey : 4 / π ^ 2 * (c * ((J : ℝ) - 1 - D)) < A * (2 * D + 2) := by
+    have h4 : (0 : ℝ) < 4 / π ^ 2 := by positivity
+    calc 4 / π ^ 2 * (c * ((J : ℝ) - 1 - D))
+        ≤ 4 / π ^ 2 * highGapMass t J D := by
+          exact mul_le_mul_of_nonneg_left hhigh h4.le
+      _ < lowGapMass t J D := hprop
+      _ ≤ A * (2 * D + 2) := hlow
+  have hgoal : (J : ℝ) - 1 - D < π ^ 2 * (A * (2 * D + 2)) / (4 * c) := by
+    rw [lt_div_iff₀ (by positivity : (0 : ℝ) < 4 * c)]
+    rw [div_mul_eq_mul_div, div_lt_iff₀ hπ] at hkey
+    nlinarith
+  linarith
+
+end NearCoreClusteringDensityCut
+end Zeta23Bridge

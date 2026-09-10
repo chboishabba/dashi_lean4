@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "instance",
+  "individual",
+  "individual object",
+  "individual thing"
+ ],
+ "canonical": "Q23958946",
+ "description": "entity, be it a thing, a person or any other agent, which is identifiable by its determined characteristics, as contrasted to a class whose characteristics may be varying among its instances",
+ "id": "Q23958946",
+ "label": "individual entity"
+}

@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "siblings",
+  "brother and sister",
+  "sister and brother",
+  "child of parent",
+  "brother or sister",
+  "sister or brother"
+ ],
+ "canonical": "Q31184",
+ "description": "one of two or more individuals having at least one parent in common",
+ "id": "Q31184",
+ "label": "sibling"
+}

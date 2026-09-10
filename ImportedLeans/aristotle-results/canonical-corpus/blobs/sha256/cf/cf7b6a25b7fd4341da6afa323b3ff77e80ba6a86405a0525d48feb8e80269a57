@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "top-level ontology",
+  "foundation ontology",
+  "Standard upper ontology",
+  "foundational ontology",
+  "upper model"
+ ],
+ "canonical": "Q3882785",
+ "description": "ontology applicable across domains of knowledge",
+ "id": "Q3882785",
+ "label": "upper ontology"
+}

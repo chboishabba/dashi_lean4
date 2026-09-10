@@ -1,0 +1,17 @@
+{
+ "aliases": [
+  "concretum",
+  "particular object",
+  "existent object",
+  "partially tangible object",
+  "object",
+  "thing",
+  "something",
+  "item",
+  "element"
+ ],
+ "canonical": "Q4406616",
+ "description": "a particular or specific instance of an entity. To describe tangible or physical objects use Q223557",
+ "id": "Q4406616",
+ "label": "concrete object"
+}

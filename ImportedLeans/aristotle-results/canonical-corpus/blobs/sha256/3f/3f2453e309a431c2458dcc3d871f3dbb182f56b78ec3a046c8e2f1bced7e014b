@@ -1,0 +1,16 @@
+{
+ "aliases": [
+  "3rd-order class",
+  "class of the third order",
+  "class of the 3rd order",
+  "3rd-order metaclass",
+  "metaclass of the third order",
+  "metaclass of the 3rd order",
+  "third-order metaclass",
+  "metametaclass"
+ ],
+ "canonical": "Q24017465",
+ "description": "metaclass containing as instances all classes of classes of individuals",
+ "id": "Q24017465",
+ "label": "third-order class"
+}

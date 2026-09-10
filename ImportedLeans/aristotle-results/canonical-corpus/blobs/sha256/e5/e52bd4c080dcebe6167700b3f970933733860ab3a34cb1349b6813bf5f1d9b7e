@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "device",
+  "apparatus"
+ ],
+ "canonical": "Q11019",
+ "description": "set of moving and fixed elements that uses energy to perform an intended action",
+ "id": "Q11019",
+ "label": "machine"
+}

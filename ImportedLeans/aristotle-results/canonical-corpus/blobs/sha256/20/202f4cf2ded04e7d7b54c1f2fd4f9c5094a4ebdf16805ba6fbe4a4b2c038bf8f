@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "RDF query languages"
+ ],
+ "canonical": "Q6138701",
+ "description": "programming language allowing easy querying on RDF graphs",
+ "id": "Q6138701",
+ "label": "RDF query language"
+}

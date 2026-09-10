@@ -1,0 +1,15 @@
+{
+ "aliases": [
+  "allowed values",
+  "codomain constraint",
+  "value class constraint",
+  "value type constraint",
+  "value-class constraint",
+  "object type constraint",
+  "range constraint"
+ ],
+ "canonical": "Q21510865",
+ "description": "type of constraint for Wikidata properties: used to specify that the value item should be a subclass or instance of a given type",
+ "id": "Q21510865",
+ "label": "value-type constraint"
+}

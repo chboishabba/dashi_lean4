@@ -1,0 +1,16 @@
+# Yang--Mills Agda source tranche
+
+Source commit: `74c7bee33ddd4877181ab332628909a9e6425b63` from `chboishabba/dashi_agda` (2026-09-09).
+
+This is source only. Generated interfaces, compiler outputs, caches, and vendored build state are deliberately excluded.
+
+## Required intake
+
+1. Unpack beside, never over, your existing project.
+2. Inspect `SOURCE_MANIFEST.txt`; use `DASHI/Physics/YangMills/Everything.agda` as the index.
+3. Import selectively after checking the definitions and dependencies in your own Lean development; do not treat filenames or boolean-looking receipts as mathematical discharge.
+4. Keep the present physical frontier explicit: no module in this handoff constructs the physical YM Hamiltonian, domain, self-adjointness, or cutoff-to-continuum convergence.
+
+## Current context
+
+The merged master adds the latest Balaban/CMP119 terminal-cutset material (Rounds 191--217) and source-semantics / same-object scheduling around the selected continuum OS route. Your completed Lean lane has already made the unbounded operator/domain and form-gap transport boundary precise; the useful comparison is therefore at the remaining physical inputs (E1, M7--M9, and finite-to-continuum identification), not at re-proving the abstract operator lemmas.

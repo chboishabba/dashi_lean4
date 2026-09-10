@@ -1,0 +1,376 @@
+/-
+# §39.  The long-window *lower* density, discharged for the actual ζ zeros
+
+§38 (`NearCoreZetaLocalCountInstance`) removed the *upper* short-window counting
+hypothesis of §36/§37 for the actual zeros of Mathlib's ζ, leaving an asymmetry that the
+incoming reading states exactly:
+
+* upper short-window density — **proved** for ζ (`zeta_short_window_count_le`);
+* lower long-window density — still a **hypothesis**.
+
+This module removes that hypothesis in the regime where the checked Riemann–von Mangoldt
+input of the `Zeta23` package actually reaches, and draws the unconditional consequence.
+
+`Zeta23.RvM.rvM_main` (fed with the unconditional `Zeta23.gammaFacts`) is the *dyadic*
+count
+
+    | N(T, 2T) − (T/2π)·ell1 T |  ≤  C_ζ · log T        for every `T ≥ T₀`,
+
+with `ell1 T = log(T/2π) + 2 log 2 − 1`.  It is not a translated local count around an
+arbitrary ordinate, so it cannot supply the central low-gap proportion; that remains open
+and is not claimed here.  What it *does* supply is a lower bound for a **long** window
+that contains a dyadic block, and the long window `(t+D, t+J−1)` of §36 contains
+`(t+D, 2(t+D))` as soon as the cutoff satisfies `2(t+D) ≤ t + J − 1`.
+
+* `zetaDyadicConst`, `zetaDyadicThreshold`, `zetaDyadic_spec` — the checked dyadic data;
+* `zetaDyadicLower`, `zeta_dyadic_count_ge` — the lower half of the dyadic estimate;
+* `zeta_long_window_count_ge` — **the lower density hypothesis of §36, as a theorem for
+  ζ**, in the stated cutoff regime;
+* `zeta_gap_split_dyadic_constraint` — combining it with §38's upper short-window bound
+  and §35's clustering requirement gives an inequality between the two *checked* ζ
+  constants with **no density hypothesis left at all**;
+* `zeta_gap_split_no_go_large_cutoff` — that inequality is false once the target ordinate
+  is large and the gap threshold is at most a fixed proportion of it, so the gap-split
+  positivity of §34 is **unconditionally impossible** for the ζ zeros in that regime.
+  Note the direction of the loss: the surviving corner is the one where the gap threshold
+  `D = π/(3Λ)` is *comparable to* the ordinate, where the crude unit-window upper constant
+  `A_ζ ≥ 1` is far larger than the true local density `1/2π` — precisely the genuine
+  clustering question, which is untouched here.
+
+Nothing here asserts or assumes the Riemann Hypothesis, and nothing weakens
+`RiemannHypothesisFor`.  No `sorry`, no `axiom`, no Boolean receipt, no numerical
+evidence, and no unproved imported authority or authority receipt: the imported inputs
+`Zeta23.RvM.rvM_main`, `Zeta23.gammaFacts` and `Zeta23.RvM.zetaZeroConfig_local_count` are
+checked Lean theorems of the `Zeta23` package, built from source in this checkout.  A
+checked imported theorem is not an imported authority.
+-/
+import Zeta23Bridge.NearCoreZetaLocalCountInstance
+import Zeta23.RvM.MainTerm
+import Zeta23.GammaFacts.Complete
+
+noncomputable section
+
+open scoped Real
+open Zeta23 MeasureTheory
+
+namespace Zeta23Bridge
+namespace NearCoreZetaDyadicLongWindow
+
+open Zeta23Bridge.LiteralWeilParityBalance
+open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilOtherZerosChannel
+open Zeta23Bridge.ReflectionPairCurvatureBound
+open Zeta23Bridge.NearCoreDeterminantTaper
+open Zeta23Bridge.NearCoreGapSplitEvaluation
+open Zeta23Bridge.NearCoreGapSplitOptimization
+open Zeta23Bridge.NearCoreTaperShapeNoGo
+open Zeta23Bridge.NearCoreClusteringDensityCut
+open Zeta23Bridge.NearCoreZetaLocalCountInstance
+
+/-! ## 1. The checked dyadic Riemann–von Mangoldt data for ζ -/
+
+/-- The dyadic Riemann–von Mangoldt statement for Mathlib's ζ, unconditionally: the
+`Zeta23` main-term theorem fed with the package's unconditional Γ-facts. -/
+theorem zetaDyadicData :
+    ∃ C T₀ : ℝ, ∀ T : ℝ, T₀ ≤ T →
+      |((zetaZeroConfig).N T (2 * T) : ℝ) - T / (2 * π) * Zeta23.ell1 T| ≤ C * Real.log T :=
+  Zeta23.RvM.rvM_main Zeta23.gammaFacts
+
+/-- The error constant of the dyadic count, taken nonnegative. -/
+def zetaDyadicConst : ℝ := |Classical.choose zetaDyadicData|
+
+theorem zetaDyadicConst_nonneg : 0 ≤ zetaDyadicConst := abs_nonneg _
+
+/-- The height from which the dyadic count is valid (and at least `1`, so that the
+logarithm in the error term is nonnegative). -/
+def zetaDyadicThreshold : ℝ :=
+  max (Classical.choose (Classical.choose_spec zetaDyadicData)) 1
+
+theorem one_le_zetaDyadicThreshold : 1 ≤ zetaDyadicThreshold := le_max_right _ _
+
+theorem zetaDyadic_spec {T : ℝ} (hT : zetaDyadicThreshold ≤ T) :
+    |((zetaZeroConfig).N T (2 * T) : ℝ) - T / (2 * π) * Zeta23.ell1 T|
+      ≤ zetaDyadicConst * Real.log T := by
+  have hT0 : Classical.choose (Classical.choose_spec zetaDyadicData) ≤ T :=
+    le_trans (le_max_left _ _) hT
+  have hraw := Classical.choose_spec (Classical.choose_spec zetaDyadicData) T hT0
+  have hlog : 0 ≤ Real.log T :=
+    Real.log_nonneg (le_trans one_le_zetaDyadicThreshold hT)
+  have hle : Classical.choose zetaDyadicData * Real.log T ≤ zetaDyadicConst * Real.log T := by
+    have : Classical.choose zetaDyadicData ≤ zetaDyadicConst := le_abs_self _
+    exact mul_le_mul_of_nonneg_right this hlog
+  exact le_trans hraw hle
+
+/-- The checked lower bound for a dyadic block of ζ zeros. -/
+def zetaDyadicLower (T : ℝ) : ℝ :=
+  T / (2 * π) * Zeta23.ell1 T - zetaDyadicConst * Real.log T
+
+theorem zeta_dyadic_count_ge {T : ℝ} (hT : zetaDyadicThreshold ≤ T) :
+    zetaDyadicLower T ≤ ((zetaZeroConfig).N T (2 * T) : ℝ) := by
+  have h := abs_le.1 (zetaDyadic_spec hT)
+  have := h.1
+  unfold zetaDyadicLower
+  linarith
+
+/-! ## 2. The long counting window of §36, bounded below unconditionally -/
+
+/-- **The lower density hypothesis of §36, as a theorem for the actual ζ zeros.**  Once
+the cutoff is large enough that the long window `(t+D, t+J−1)` contains the dyadic block
+`(t+D, 2(t+D))`, the checked Riemann–von Mangoldt count bounds it from below. -/
+theorem zeta_long_window_count_ge {t D : ℝ} {J : ℕ}
+    (hthr : zetaDyadicThreshold ≤ t + D) (hJ : 2 * (t + D) ≤ t + (J : ℝ) - 1) :
+    zetaDyadicLower (t + D) ≤ ((zetaZeroConfig).N (t + D) (t + (J : ℝ) - 1) : ℝ) := by
+  have hpos : (0 : ℝ) < t + D :=
+    lt_of_lt_of_le zero_lt_one (le_trans one_le_zetaDyadicThreshold hthr)
+  have hsplit : (zetaZeroConfig).N (t + D) (t + (J : ℝ) - 1)
+      = (zetaZeroConfig).N (t + D) (2 * (t + D))
+        + (zetaZeroConfig).N (2 * (t + D)) (t + (J : ℝ) - 1) := by
+    refine Zeta23.Assembly.N_add zetaZeroConfig ?_ hJ
+    linarith
+  have hmono : ((zetaZeroConfig).N (t + D) (2 * (t + D)) : ℝ)
+      ≤ ((zetaZeroConfig).N (t + D) (t + (J : ℝ) - 1) : ℝ) := by
+    have : (zetaZeroConfig).N (t + D) (2 * (t + D))
+        ≤ (zetaZeroConfig).N (t + D) (t + (J : ℝ) - 1) := by omega
+    exact_mod_cast this
+  exact le_trans (zeta_dyadic_count_ge hthr) hmono
+
+/-! ## 3. The clustering requirement between two checked ζ constants -/
+
+/-- **No density hypothesis is left.**  Gap-split positivity at a large cutoff forces an
+inequality between the two counting constants of ζ that are *both* theorems: the dyadic
+main term on the long window, and the unit-window local count on the short one. -/
+theorem zeta_gap_split_dyadic_constraint {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ D C : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ) (hD : 0 < D)
+    (hDΛ : D * Λ ≤ π / 2)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C)
+    (hthr : zetaDyadicThreshold ≤ t + D) (hJ : 2 * (t + D) ≤ t + (J : ℝ) - 1)
+    (hpos : 0 < lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      - highGapMass t J D * (C / D ^ 2)) :
+    4 / π ^ 2 * zetaDyadicLower (t + D)
+      < (zetaLocalCountConst * Real.log (|t| + D + 4)) * (2 * D + 2) := by
+  have hprop := gap_split_pos_requires_low_gap_proportion hg hgc hΛ hD hDΛ hq0 hsupp hCbase hpos
+  have hhigh : zetaDyadicLower (t + D) ≤ highGapMass t J D :=
+    le_trans (zeta_long_window_count_ge hthr hJ) (N_le_highGapMass t J hD.le)
+  have hlow : lowGapMass t J D ≤ (zetaLocalCountConst * Real.log (|t| + D + 4)) * (2 * D + 2) :=
+    le_trans (lowGapMass_le_N t J D) (zeta_short_window_count_le t hD.le)
+  have h4 : (0 : ℝ) < 4 / π ^ 2 := by positivity
+  have hstep : 4 / π ^ 2 * zetaDyadicLower (t + D) ≤ 4 / π ^ 2 * highGapMass t J D :=
+    mul_le_mul_of_nonneg_left hhigh h4.le
+  linarith
+
+/-! ## 4. Elementary bounds used to compare the two constants -/
+
+theorem log_le_two_sqrt {x : ℝ} (hx : 0 < x) : Real.log x ≤ 2 * Real.sqrt x := by
+  have hs : 0 < Real.sqrt x := Real.sqrt_pos.2 hx
+  have h1 : Real.log (Real.sqrt x) ≤ Real.sqrt x - 1 := Real.log_le_sub_one_of_pos hs
+  have h2 : Real.log (Real.sqrt x) = Real.log x / 2 := Real.log_sqrt hx.le
+  rw [h2] at h1
+  linarith
+
+theorem log_two_pi_le_two : Real.log (2 * π) ≤ 2 := by
+  have hπ : π < 3.15 := Real.pi_lt_d2
+  have he : (2.7182818283 : ℝ) < Real.exp 1 := Real.exp_one_gt_d9
+  have hexp2 : Real.exp 2 = Real.exp 1 * Real.exp 1 := by
+    rw [← Real.exp_add]; norm_num
+  have h1 : (7 : ℝ) < Real.exp 2 := by rw [hexp2]; nlinarith
+  have h2 : 2 * π < Real.exp 2 := by linarith
+  have h3 : (0 : ℝ) < 2 * π := by positivity
+  calc Real.log (2 * π) ≤ Real.log (Real.exp 2) := Real.log_le_log h3 h2.le
+    _ = 2 := Real.log_exp 2
+
+theorem ell1_ge {x : ℝ} (hx : 0 < x) : Real.log x - 2 ≤ Zeta23.ell1 x := by
+  have hlog2 : (0.6931471803 : ℝ) < Real.log 2 := Real.log_two_gt_d9
+  have hπ : (0 : ℝ) < 2 * π := by positivity
+  have hdiv : Real.log (x / (2 * π)) = Real.log x - Real.log (2 * π) :=
+    Real.log_div (ne_of_gt hx) (ne_of_gt hπ)
+  have hle := log_two_pi_le_two
+  simp only [Zeta23.ell1, Zeta23.l, hdiv]
+  linarith
+
+/-! ## 5. The unconditional no-go in the dyadic regime -/
+
+/-- The proportion of the target ordinate up to which the gap threshold is covered. -/
+def zetaNoGoRatio : ℝ := 1 / (4 * π ^ 3 * zetaLocalCountConst)
+
+/-- The combined constant of the two checked ζ estimates. -/
+def zetaNoGoMass : ℝ := 4 * zetaLocalCountConst + 4 / π ^ 2 * zetaDyadicConst
+
+/-- The height from which the dyadic long-window count beats the unit-window short-window
+count. -/
+def zetaNoGoHeight : ℝ :=
+  max (max zetaDyadicThreshold (Real.exp 8)) (max 4 ((π ^ 3 * zetaNoGoMass / 2) ^ 2))
+
+theorem zetaNoGoRatio_pos : 0 < zetaNoGoRatio := by
+  have hA : 1 ≤ zetaLocalCountConst := one_le_zetaLocalCountConst
+  have hπ : (0 : ℝ) < π := Real.pi_pos
+  have hA0 : (0 : ℝ) < zetaLocalCountConst := by linarith
+  unfold zetaNoGoRatio
+  positivity
+
+theorem zetaNoGoMass_nonneg : 0 ≤ zetaNoGoMass := by
+  have hA : 1 ≤ zetaLocalCountConst := one_le_zetaLocalCountConst
+  have hC : 0 ≤ zetaDyadicConst := zetaDyadicConst_nonneg
+  have hπ : (0 : ℝ) < π := Real.pi_pos
+  have hA0 : (0 : ℝ) ≤ zetaLocalCountConst := by linarith
+  unfold zetaNoGoMass
+  positivity
+
+theorem zetaDyadicThreshold_le_height : zetaDyadicThreshold ≤ zetaNoGoHeight :=
+  le_trans (le_max_left _ _) (le_max_left _ _)
+
+/-- The purely algebraic core of the comparison, with every constant a free real
+variable.  With `q` playing the role of `1/π³` and `s` that of `4Cz/π²`: the width
+restriction `4AD ≤ qx`, the combined-constant bound `ML ≤ 4qx` and `L ≥ 8` dominate the
+short-window expression. -/
+theorem dominance_core {A M D x L q s : ℝ}
+    (hq : 0 < q) (hM : M = 4 * A + s)
+    (hx0 : 0 < x) (hL8 : 8 ≤ L)
+    (hDx : 4 * A * D ≤ q * x)
+    (hMlog : M * L ≤ 4 * (q * x)) :
+    A * (2 * L) * (2 * D + 2) ≤ 2 * (q * (x * (L - 2))) - s * L := by
+  have hL0 : (0 : ℝ) < L := by linarith
+  have hstep1 : 4 * A * D * L ≤ q * x * L := mul_le_mul_of_nonneg_right hDx hL0.le
+  have hqx : (0 : ℝ) < q * x := mul_pos hq hx0
+  have hlog8 : 8 * (q * x) ≤ q * x * L := by
+    have h := mul_nonneg hqx.le (by linarith : (0 : ℝ) ≤ L - 8)
+    nlinarith [h]
+  have hMsplit : 4 * A * L + s * L = M * L := by rw [hM]; ring
+  linarith [hstep1, hlog8, hMsplit, hMlog]
+
+set_option maxHeartbeats 1000000 in
+/-- **The dyadic long-window count dominates the unit-window short-window count.**
+Above the explicit height, and for a gap threshold at most the explicit proportion of the
+target ordinate, the two checked ζ constants are in the opposite order to the one the
+clustering requirement needs. -/
+theorem zeta_dyadic_dominates {t D : ℝ} (ht : zetaNoGoHeight ≤ t) (hD0 : 0 ≤ D)
+    (hDt : D ≤ zetaNoGoRatio * t) :
+    (zetaLocalCountConst * Real.log (|t| + D + 4)) * (2 * D + 2)
+      ≤ 4 / π ^ 2 * zetaDyadicLower (t + D) := by
+  have hA : 1 ≤ zetaLocalCountConst := one_le_zetaLocalCountConst
+  have hA0 : (0 : ℝ) < zetaLocalCountConst := by linarith
+  have hC : 0 ≤ zetaDyadicConst := zetaDyadicConst_nonneg
+  have hπ0 : (0 : ℝ) < π := Real.pi_pos
+  have hπ3pos : (0 : ℝ) < π ^ 3 := by positivity
+  have hM0 : 0 ≤ zetaNoGoMass := zetaNoGoMass_nonneg
+  -- the basic size facts about the target ordinate
+  have hexp8 : Real.exp 8 ≤ t := le_trans (le_trans (le_max_right _ _) (le_max_left _ _)) ht
+  have h4t : (4 : ℝ) ≤ t := le_trans (le_trans (le_max_left _ _) (le_max_right _ _)) ht
+  have hsq : (π ^ 3 * zetaNoGoMass / 2) ^ 2 ≤ t :=
+    le_trans (le_trans (le_max_right _ _) (le_max_right _ _)) ht
+  have ht0 : (0 : ℝ) < t := by linarith
+  have hxt : t ≤ t + D := by linarith
+  have hx0 : (0 : ℝ) < t + D := by linarith
+  -- `log (t+D) ≥ 8`
+  have hL8 : (8 : ℝ) ≤ Real.log (t + D) := by
+    have h : Real.log (Real.exp 8) ≤ Real.log (t + D) :=
+      Real.log_le_log (Real.exp_pos 8) (le_trans hexp8 hxt)
+    rwa [Real.log_exp] at h
+  have hL0 : (0 : ℝ) < Real.log (t + D) := by linarith
+  -- the short window's logarithm
+  have hlogshort : Real.log (|t| + D + 4) ≤ 2 * Real.log (t + D) := by
+    have habs : |t| = t := abs_of_pos ht0
+    have hsum : |t| + D + 4 = (t + D) + 4 := by rw [habs]
+    have h1 : Real.log ((t + D) + 4) ≤ Real.log (2 * (t + D)) :=
+      Real.log_le_log (by linarith) (by linarith)
+    have h2 : Real.log (2 * (t + D)) = Real.log 2 + Real.log (t + D) :=
+      Real.log_mul (by norm_num) (ne_of_gt hx0)
+    have hlog2 : Real.log 2 ≤ Real.log (t + D) :=
+      Real.log_le_log (by norm_num) (by linarith)
+    rw [hsum]
+    linarith
+  -- the width restriction
+  have hDx : 4 * zetaLocalCountConst * D ≤ 1 / π ^ 3 * (t + D) := by
+    have h1 : 4 * zetaLocalCountConst * D
+        ≤ 4 * zetaLocalCountConst * (zetaNoGoRatio * t) :=
+      mul_le_mul_of_nonneg_left hDt (by positivity)
+    have h2 : 4 * zetaLocalCountConst * (zetaNoGoRatio * t) = 1 / π ^ 3 * t := by
+      unfold zetaNoGoRatio
+      field_simp
+    have h3 : 1 / π ^ 3 * t ≤ 1 / π ^ 3 * (t + D) :=
+      mul_le_mul_of_nonneg_left hxt (by positivity)
+    linarith
+  -- the combined-constant bound, via `log x ≤ 2√x`
+  have hMlog : zetaNoGoMass * Real.log (t + D) ≤ 4 * (1 / π ^ 3 * (t + D)) := by
+    have hsqrt : Real.log (t + D) ≤ 2 * Real.sqrt (t + D) := log_le_two_sqrt hx0
+    have hss : Real.sqrt (t + D) * Real.sqrt (t + D) = t + D := Real.mul_self_sqrt hx0.le
+    have hs0 : (0 : ℝ) ≤ Real.sqrt (t + D) := Real.sqrt_nonneg _
+    have hhalf : (0 : ℝ) ≤ π ^ 3 * zetaNoGoMass / 2 :=
+      div_nonneg (mul_nonneg hπ3pos.le hM0) (by norm_num)
+    have hbig : π ^ 3 * zetaNoGoMass / 2 ≤ Real.sqrt (t + D) := by
+      have hmono : Real.sqrt ((π ^ 3 * zetaNoGoMass / 2) ^ 2) ≤ Real.sqrt (t + D) :=
+        Real.sqrt_le_sqrt (by linarith)
+      rwa [Real.sqrt_sq hhalf] at hmono
+    have h1 : zetaNoGoMass * Real.log (t + D) ≤ zetaNoGoMass * (2 * Real.sqrt (t + D)) :=
+      mul_le_mul_of_nonneg_left hsqrt hM0
+    have h2 : 2 * zetaNoGoMass ≤ 4 / π ^ 3 * Real.sqrt (t + D) := by
+      have hc : (0 : ℝ) ≤ 4 / π ^ 3 := by positivity
+      have hstep := mul_le_mul_of_nonneg_left hbig hc
+      have heq : 4 / π ^ 3 * (π ^ 3 * zetaNoGoMass / 2) = 2 * zetaNoGoMass := by
+        field_simp
+        ring
+      linarith [heq ▸ hstep]
+    have h3 : zetaNoGoMass * (2 * Real.sqrt (t + D))
+        ≤ 4 / π ^ 3 * Real.sqrt (t + D) * Real.sqrt (t + D) := by
+      nlinarith [h2, hs0]
+    have h4 : 4 / π ^ 3 * Real.sqrt (t + D) * Real.sqrt (t + D) = 4 * (1 / π ^ 3 * (t + D)) := by
+      rw [mul_assoc, hss]
+      ring
+    linarith
+  -- the algebraic core
+  have hcore := dominance_core (A := zetaLocalCountConst) (M := zetaNoGoMass) (D := D)
+    (x := t + D) (L := Real.log (t + D)) (q := 1 / π ^ 3)
+    (s := 4 / π ^ 2 * zetaDyadicConst) (by positivity) rfl hx0 hL8 hDx hMlog
+  -- the short-window side
+  have hshort : (zetaLocalCountConst * Real.log (|t| + D + 4)) * (2 * D + 2)
+      ≤ zetaLocalCountConst * (2 * Real.log (t + D)) * (2 * D + 2) :=
+    mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_left hlogshort hA0.le) (by linarith)
+  -- the dyadic side
+  have hell1 : Real.log (t + D) - 2 ≤ Zeta23.ell1 (t + D) := ell1_ge hx0
+  have hlong : 2 * (1 / π ^ 3 * ((t + D) * (Real.log (t + D) - 2)))
+      - 4 / π ^ 2 * zetaDyadicConst * Real.log (t + D)
+      ≤ 4 / π ^ 2 * zetaDyadicLower (t + D) := by
+    have hmul : (t + D) * (Real.log (t + D) - 2) ≤ (t + D) * Zeta23.ell1 (t + D) :=
+      mul_le_mul_of_nonneg_left hell1 hx0.le
+    have h1 : 2 * (1 / π ^ 3 * ((t + D) * (Real.log (t + D) - 2)))
+        ≤ 2 * (1 / π ^ 3 * ((t + D) * Zeta23.ell1 (t + D))) := by
+      have hstep := mul_le_mul_of_nonneg_left hmul (by positivity : (0 : ℝ) ≤ 1 / π ^ 3)
+      linarith
+    have hexp : 4 / π ^ 2 * zetaDyadicLower (t + D)
+        = 2 * (1 / π ^ 3 * ((t + D) * Zeta23.ell1 (t + D)))
+          - 4 / π ^ 2 * zetaDyadicConst * Real.log (t + D) := by
+      unfold zetaDyadicLower
+      field_simp
+      ring
+    rw [hexp]
+    linarith
+  exact le_trans hshort (le_trans hcore hlong)
+/-- **Unconditional no-go for the gap split at large cutoff.**  For the actual ζ zeros,
+with the target ordinate above the explicit height `zetaNoGoHeight`, a gap threshold at
+most `zetaNoGoRatio · t`, and a cutoff reaching the dyadic block `2(t+D) ≤ t+J−1`, the
+gap-split lower bound of §34 is never positive.  No density hypothesis, no numerical zero
+data and no form of the Riemann Hypothesis is used: both counting inputs are checked
+theorems about ζ. -/
+theorem zeta_gap_split_no_go_large_cutoff {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ D C : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ) (hD : 0 < D)
+    (hDΛ : D * Λ ≤ π / 2)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C)
+    (ht : zetaNoGoHeight ≤ t) (hDt : D ≤ zetaNoGoRatio * t)
+    (hJ : 2 * (t + D) ≤ t + (J : ℝ) - 1) :
+    ¬ (0 < lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      - highGapMass t J D * (C / D ^ 2)) := by
+  intro hpos
+  have hthr : zetaDyadicThreshold ≤ t + D :=
+    le_trans (le_trans zetaDyadicThreshold_le_height ht) (by linarith)
+  have hlt := zeta_gap_split_dyadic_constraint hg hgc hΛ hD hDΛ hq0 hsupp hCbase hthr hJ hpos
+  have hge := zeta_dyadic_dominates ht hD.le hDt
+  linarith
+
+end NearCoreZetaDyadicLongWindow
+end Zeta23Bridge

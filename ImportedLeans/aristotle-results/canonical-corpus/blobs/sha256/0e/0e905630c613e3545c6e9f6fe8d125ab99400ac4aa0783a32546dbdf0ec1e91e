@@ -1,0 +1,15 @@
+{
+ "aliases": [
+  "anthropogeographic territorial entity",
+  "human territorial entity",
+  "artificial territorial entity",
+  "anthropogeographic entity",
+  "cultural territorial entity",
+  "organisational territorial entity",
+  "human geographic territorial entity"
+ ],
+ "canonical": "Q15642541",
+ "description": "territorial entity of which the borders are determined by physiographic and human features",
+ "id": "Q15642541",
+ "label": "human-geographic territorial entity"
+}

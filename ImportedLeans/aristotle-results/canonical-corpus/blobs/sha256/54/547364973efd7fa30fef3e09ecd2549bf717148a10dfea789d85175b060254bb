@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P4241",
+ "description": "qualifier to narrow down the precision of a date not fully specified by the Wikidata time datatype precision field",
+ "id": "P4241",
+ "kind": "property",
+ "label": "refine date"
+}

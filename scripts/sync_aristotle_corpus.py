@@ -24,6 +24,14 @@ ROOTS = (
     Path("/home/c/Documents/code/aristotle-toe-result-bf6411b6"),
     Path("/home/c/Documents/code/aristotle-cuisine-result-2c3d9d4c"),
 )
+# Optional, colon-separated local download locations.  This keeps the canonical
+# sync reusable for freshly retrieved Aristotle results without baking a
+# transient directory into the repository's default inventory.
+EXTRA_ROOTS = tuple(
+    Path(entry).expanduser()
+    for entry in os.environ.get("ARISTOTLE_ARCHIVE_ROOTS", "").split(":")
+    if entry
+)
 ARCHIVE_SUFFIXES = (".tar", ".tar.gz", ".tgz", ".tar.zst")
 SOURCE_SUFFIXES = {
     ".lean", ".agda", ".pdf", ".md", ".markdown", ".rst", ".txt",
@@ -37,7 +45,7 @@ UUID_RE = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
 
 def candidate_archives() -> list[Path]:
     found: set[Path] = set()
-    for root in ROOTS:
+    for root in ROOTS + EXTRA_ROOTS:
         if not root.is_dir():
             continue
         for path in root.rglob("*"):

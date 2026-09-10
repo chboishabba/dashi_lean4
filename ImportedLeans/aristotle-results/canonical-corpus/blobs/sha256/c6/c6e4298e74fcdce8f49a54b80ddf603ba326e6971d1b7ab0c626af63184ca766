@@ -1,0 +1,166 @@
+/-
+# The gauge-invariant `L²` carrier of a finite physical measure
+
+The terminal lane needs the physical Hilbert carrier to be built from *one*
+literal finite measure and the gauge-invariant wavefunctions on it — not from a
+fresh counting measure, a generic GNS state, or an abstract quotient framework.
+
+This module does exactly that, with Mathlib's `L²` of an arbitrary finite
+measure as the literal carrier:
+
+* `gaugeCLM` — a measure-preserving gauge transformation acts on `L²(μ)` as a
+  linear isometry, hence a bounded operator;
+* `invariantSubspace` / `mem_invariantSubspace_iff` — the gauge-invariant
+  wavefunctions form a submodule, and it is **closed**
+  (`isClosed_invariantSubspace`), hence complete;
+* `PhysicalCarrier` — the resulting Hilbert space: inner product from the same
+  measure, positivity and definiteness inherited, completion already performed
+  by `Lp`;
+* `restrict` — an operator commuting with the gauge action restricts to the
+  carrier, and preserves symmetry (`restrict_symmetric`);
+* `hamiltonian_unique_on_carrier` — on this carrier, a physical time evolution
+  determines its bounded generator uniquely.
+
+The null-vector bookkeeping is not re-done here: `Lp` is already the quotient
+of the semi-definite pairing by its null space, which is what the abstract
+development in `PhysicalNullQuotient` proves in general.  Finiteness of the
+measure turns out not to be needed for any statement below, so it is not
+assumed: the carrier construction works for the literal physical measure
+whatever its total mass.
+-/
+import Mathlib
+import RequestProject.YangMills.PhysicalTimeEvolutionGenerator
+import RequestProject.YangMills.GeneratorUniquenessCore
+
+namespace RequestProject.YangMills.GaugeInvariantL2Carrier
+
+open MeasureTheory
+open scoped InnerProductSpace
+
+variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+variable {G : Type*} (act : G → Ω → Ω) (hact : ∀ g, MeasurePreserving (act g) μ μ)
+
+/-- A measure-preserving gauge transformation as a bounded operator on `L²(μ)`. -/
+noncomputable def gaugeCLM (g : G) : Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ :=
+  (Lp.compMeasurePreservingₗᵢ ℂ (act g) (hact g)).toContinuousLinearMap
+
+/-- The gauge-invariant wavefunctions. -/
+noncomputable def invariantSubspace : Submodule ℂ (Lp ℂ 2 μ) :=
+  ⨅ g : G, LinearMap.ker ((gaugeCLM act hact g : Lp ℂ 2 μ →ₗ[ℂ] Lp ℂ 2 μ) - LinearMap.id)
+
+@[simp] theorem mem_invariantSubspace_iff {f : Lp ℂ 2 μ} :
+    f ∈ invariantSubspace act hact ↔ ∀ g : G, gaugeCLM act hact g f = f := by
+  simp [invariantSubspace, Submodule.mem_iInf, LinearMap.mem_ker, sub_eq_zero]
+
+theorem isClosed_invariantSubspace :
+    IsClosed (invariantSubspace act hact : Set (Lp ℂ 2 μ)) := by
+  have hset : (invariantSubspace act hact : Set (Lp ℂ 2 μ))
+      = ⋂ g : G, {f : Lp ℂ 2 μ | gaugeCLM act hact g f = f} := by
+    ext f
+    simp [mem_invariantSubspace_iff]
+  rw [hset]
+  exact isClosed_iInter fun g =>
+    isClosed_eq (gaugeCLM act hact g).continuous continuous_id
+
+/-- **The physical carrier.**  Gauge-invariant wavefunctions of the literal
+finite measure. -/
+noncomputable abbrev PhysicalCarrier : Type _ := invariantSubspace act hact
+
+noncomputable instance : NormedAddCommGroup (PhysicalCarrier act hact) := inferInstance
+noncomputable instance : InnerProductSpace ℂ (PhysicalCarrier act hact) := inferInstance
+
+instance completeSpace_physicalCarrier : CompleteSpace (PhysicalCarrier act hact) :=
+  (isClosed_invariantSubspace act hact).completeSpace_coe
+
+/-- The physical pairing on the carrier is definite: no residual null
+wavefunctions survive on `L²` of the literal measure. -/
+theorem carrier_inner_definite (x : PhysicalCarrier act hact)
+    (h : ∀ y : PhysicalCarrier act hact, ⟪x, y⟫_ℂ = 0) : x = 0 := by
+  have := h x
+  simpa using inner_self_eq_zero.mp this
+
+/-! ## Operators on the carrier -/
+
+variable (T : Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ)
+
+/-- An operator commuting with the gauge action preserves gauge invariance. -/
+theorem mapsTo_invariant (hT : ∀ g : G, ∀ f, T (gaugeCLM act hact g f) = gaugeCLM act hact g (T f))
+    {f : Lp ℂ 2 μ} (hf : f ∈ invariantSubspace act hact) :
+    T f ∈ invariantSubspace act hact := by
+  rw [mem_invariantSubspace_iff] at hf ⊢
+  intro g
+  rw [← hT g f, hf g]
+
+/-- The restriction of a gauge-commuting operator to the physical carrier. -/
+noncomputable def restrict
+    (hT : ∀ g : G, ∀ f, T (gaugeCLM act hact g f) = gaugeCLM act hact g (T f)) :
+    PhysicalCarrier act hact →L[ℂ] PhysicalCarrier act hact where
+  toFun f := ⟨T f, mapsTo_invariant act hact T hT f.2⟩
+  map_add' f g := by ext; simp
+  map_smul' c f := by ext; simp
+  cont := by
+    refine Continuous.subtype_mk ?_ _
+    exact T.continuous.comp continuous_subtype_val
+
+@[simp] theorem restrict_apply
+    (hT : ∀ g : G, ∀ f, T (gaugeCLM act hact g f) = gaugeCLM act hact g (T f))
+    (f : PhysicalCarrier act hact) :
+    ((restrict act hact T hT f : Lp ℂ 2 μ)) = T (f : Lp ℂ 2 μ) := rfl
+
+/-- Symmetry descends to the carrier. -/
+theorem restrict_symmetric
+    (hT : ∀ g : G, ∀ f, T (gaugeCLM act hact g f) = gaugeCLM act hact g (T f))
+    (hsym : ∀ f h : Lp ℂ 2 μ, ⟪T f, h⟫_ℂ = ⟪f, T h⟫_ℂ)
+    (f h : PhysicalCarrier act hact) :
+    ⟪restrict act hact T hT f, h⟫_ℂ = ⟪f, restrict act hact T hT h⟫_ℂ :=
+  hsym (f : Lp ℂ 2 μ) (h : Lp ℂ 2 μ)
+
+/-- **One evolution, one Hamiltonian, on the physical carrier.**  Two bounded
+operators on the gauge-invariant `L²` carrier that generate the same
+norm-continuous unitary group are equal; no separate same-object theorem
+relating a reconstructed generator to a variational one is needed. -/
+theorem hamiltonian_unique_on_carrier
+    {H₁ H₂ : PhysicalCarrier act hact →L[ℂ] PhysicalCarrier act hact}
+    (h : ∀ t : ℝ, NormedSpace.exp ((-(Complex.I * t)) • H₁)
+        = NormedSpace.exp ((-(Complex.I * t)) • H₂)) :
+    H₁ = H₂ :=
+  RequestProject.YangMills.PhysicalTimeEvolutionGenerator.hamiltonian_eq_of_unitary_group_eq h
+
+/-- **One evolution, one Hamiltonian, with no boundedness assumption.**  If two
+candidate Hamiltonians — total maps of the carrier, not assumed bounded —
+differentiate the *same* physical time evolution on a common core `D` of the
+gauge-invariant carrier, they agree on `D`.  (For the domain-theoretic version,
+with `D(H) ⊆ ℋ` and equality of operators including domains, see
+`UnboundedHamiltonianDomain`.)  This is the uniqueness content of
+`U_t^{YM} = U_t^{OS} ⟹ H_YM = H_Stone` and, unlike the bounded statement
+above, it needs neither norm continuity nor Stone's theorem. -/
+theorem hamiltonian_eqOn_core_of_same_evolution
+    {U V : ℝ → PhysicalCarrier act hact → PhysicalCarrier act hact}
+    {D : Set (PhysicalCarrier act hact)}
+    {H₁ H₂ : PhysicalCarrier act hact → PhysicalCarrier act hact}
+    (hUV : U = V)
+    (h₁ : _root_.YangMills.IsEvolutionGenerator U D H₁)
+    (h₂ : _root_.YangMills.IsEvolutionGenerator V D H₂) :
+    Set.EqOn H₁ H₂ D :=
+  _root_.YangMills.generator_unique_of_evolution_eq hUV h₁ h₂
+
+/-- If in addition the two generators are bounded and the core is dense in the
+carrier, they are equal as operators. -/
+theorem hamiltonian_unique_of_same_evolution_on_dense_core
+    {U V : ℝ → PhysicalCarrier act hact → PhysicalCarrier act hact}
+    {D : Set (PhysicalCarrier act hact)} (hD : Dense D)
+    {H₁ H₂ : PhysicalCarrier act hact →L[ℂ] PhysicalCarrier act hact}
+    (hUV : U = V)
+    (h₁ : _root_.YangMills.IsEvolutionGenerator U D (H₁ : PhysicalCarrier act hact → _))
+    (h₂ : _root_.YangMills.IsEvolutionGenerator V D (H₂ : PhysicalCarrier act hact → _)) :
+    H₁ = H₂ :=
+  _root_.YangMills.generator_clm_unique hD hUV h₁ h₂
+
+end RequestProject.YangMills.GaugeInvariantL2Carrier
+
+#print axioms RequestProject.YangMills.GaugeInvariantL2Carrier.isClosed_invariantSubspace
+#print axioms RequestProject.YangMills.GaugeInvariantL2Carrier.carrier_inner_definite
+#print axioms RequestProject.YangMills.GaugeInvariantL2Carrier.restrict_symmetric
+#print axioms RequestProject.YangMills.GaugeInvariantL2Carrier.hamiltonian_unique_on_carrier
+#print axioms RequestProject.YangMills.GaugeInvariantL2Carrier.hamiltonian_eqOn_core_of_same_evolution
+#print axioms RequestProject.YangMills.GaugeInvariantL2Carrier.hamiltonian_unique_of_same_evolution_on_dense_core

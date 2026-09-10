@@ -1,0 +1,114 @@
+# The long-window lower density for the actual ζ zeros, and the large-cutoff no-go (§39)
+
+This round closes the asymmetry the incoming review identified exactly:
+
+> upper short-window density = **PROVED** for ζ, lower long-window density = **HYPOTHESIS**.
+
+Everything below is machine-checked Lean in this repository.  Nothing is a receipt or a
+promise, and every imported mathematical input is itself a checked Lean theorem — there is
+no unproved imported authority or authority receipt.
+
+## 1. What the checked ζ package actually gives
+
+The `Zeta23` dependency, built from source in this checkout, proves
+
+* `Zeta23.RvM.zetaZeroConfig_local_count` — a constant `A_ζ ≥ 1` with
+  `N(τ, τ+1] ≤ A_ζ·log(|τ|+3)` for every real `τ` (used already in §38);
+* `Zeta23.gammaFacts` — the Γ-facts, **unconditionally**;
+* `Zeta23.RvM.rvM_main hΓ` — the *dyadic* Riemann–von Mangoldt count
+  `| N(T,2T) − (T/2π)·ell1 T | ≤ C_ζ·log T` for `T ≥ T₀`, with
+  `ell1 T = log(T/2π) + 2 log 2 − 1`.
+
+The review's reading of the dyadic input is correct and is preserved here: it is *not* an
+arbitrary translated local count around `t`, so it cannot supply the central low-gap
+proportion.  What it does supply is a lower bound for any window that **contains a dyadic
+block**.
+
+## 2. The new module
+
+`Zeta23Bridge/Zeta23Bridge/NearCoreZetaDyadicLongWindow.lean` (documented as FRONTIER §39):
+
+* `zetaDyadicData`, `zetaDyadicConst`, `zetaDyadicThreshold`, `zetaDyadic_spec`,
+  `zetaDyadicLower`, `zeta_dyadic_count_ge` — the checked dyadic data and its lower half,
+  with the error constant taken nonnegative and the threshold at least `1`;
+* **`zeta_long_window_count_ge`** — the §36 long-window lower density, now a *theorem* for
+  ζ: if `2(t+D) ≤ t+J−1` and `t+D` is above the threshold, then
+  `zetaDyadicLower (t+D) ≤ N(t+D, t+J−1]`;
+* **`zeta_gap_split_dyadic_constraint`** — with §35's clustering requirement and §38's
+  short-window upper count, gap-split positivity at a large cutoff forces
+  `(4/π²)·zetaDyadicLower (t+D) < (A_ζ·log(|t|+D+4))·(2D+2)`.  **No density hypothesis is
+  left in this statement**: both sides are checked constants of ζ;
+* `log_le_two_sqrt`, `log_two_pi_le_two`, `ell1_ge`, `dominance_core` — the elementary
+  ingredients (`log x ≤ 2√x`, `log 2π ≤ 2`, `ell1 x ≥ log x − 2`, and the division-free
+  algebraic core of the comparison);
+* **`zeta_dyadic_dominates`, `zeta_gap_split_no_go_large_cutoff`** — with
+  `κ = 1/(4π³A_ζ)`, `M = 4A_ζ + 4C_ζ/π²` and
+  `T₁ = max(max(T₀, e⁸), max(4, (π³M/2)²))`, for every target ordinate `t ≥ T₁`, every gap
+  threshold `0 < D ≤ κ·t` and every cutoff with `2(t+D) ≤ t+J−1`, the gap-split lower
+  bound of §34 is **never positive**.  Unconditional: no density hypothesis, no numerical
+  zero data, no form of RH.
+
+## 3. The exact reach, stated honestly
+
+The dyadic long window carries `≍ t·log t` zero mass while the short window carries at
+most `≍ A_ζ·D·log t`, so the comparison is decisive precisely when `D ≲ t/A_ζ`.  The
+surviving corner is `D ≍ t`, i.e. the inverse-width regime `Λ ≍ |t|⁻¹`, `D = π/(3Λ)`,
+where the crude unit-window constant `A_ζ ≥ 1` is far larger than the true local density
+`1/2π`.  §39 therefore **prunes** the large-cutoff/short-threshold corner; it does not
+prove the clustering statement, and no claim to the contrary is made.  The open target is
+unchanged in substance and sharper in form:
+
+    (4/π²)·highGapMass  <  lowGapMass      at  D = π/(3Λ),
+
+which needs a *sharp two-sided* local count at the dynamically chosen scale, not a crude
+population bound.
+
+## 3b. §40 — the sharp translated window count
+
+The dyadic input above is not the end of what the checked package supports.  The contour
+machinery behind `rvM_main` works for an **arbitrary** window; only its μ-integral input is
+dyadic.  `Zeta23Bridge/Zeta23Bridge/NearCoreZetaWindowCount.lean` (FRONTIER §40) assembles
+it directly and proves
+
+    | N(a,b] − ∫_a^b μ |  ≤  C_w·log b        for all  T_w ≤ a ≤ b,
+
+with `μ` the Γ-phase density (`μ(τ) ≈ log(τ/2π)/(2π)`), from
+`N_eq_halfContour_completedZeta`, `halfContour_completedZeta_split`, `gamma_side`,
+`backlund_horizontal`, `vertical_two`, `exists_goodHeight` and `zeta_local_zero_count` —
+all checked Lean theorems.  Monotonicity of `μ` turns this into sharp two-sided counts for
+every window (`zeta_window_count_le`, `zeta_window_count_ge`), i.e. genuine local density
+information for the actual ζ zeros at every scale above `O(log t)`.
+
+Applied to the gap split, both counting sides become the **same** number `μ(t+D)` and, with
+no density hypothesis at all, `zeta_gap_split_sharp_cutoff_lt` gives
+
+    J  <  1 + D + (π²/4)(2D+1) + (π²/4 + 1)·C_w·log(t+J−1)/μ(t+D) .
+
+§36 needed two unknown density constants for this and §37 had to assume they were matched;
+here they are literally equal.  The surviving cutoff window is `O(D)`, not `O(|t|)`.  The
+clustering statement itself is still open: §40 gives the sharp *average* density, whereas
+`(4/π²)·highGapMass < lowGapMass` is about the *actual* multiplicity mass.
+
+## 4. Scope notes
+
+* The Agda modules and schedulers named in the incoming report are not present in this
+  checkout and no Agda toolchain is available here, so nothing Agda-side is audited,
+  wired or claimed as checked.  All mathematics of this round is Lean.
+* **The Riemann Hypothesis is not proved.**  `RiemannHypothesisFor` is untouched and
+  unweakened; nothing added asserts or assumes it.  No postulate, axiom, `sorry`/`admit`,
+  Boolean receipt, unproved imported authority or authority receipt, numerical evidence or
+  conditional promise is used.
+
+## 5. Reproduction
+
+```
+cd Zeta23Bridge
+lake exe cache get
+lake build                       # 8898 jobs
+lake env lean AxiomCheck.lean    # 224 declarations, standard axioms only
+```
+
+Observed here: `Build completed successfully (8898 jobs).`; `AxiomCheck.lean` prints the
+axioms of **224** declarations, each depending only on `propext`, `Classical.choice`,
+`Quot.sound`; a source scan finds no `sorry`, `admit`, `axiom`, `postulate` or
+`native_decide` in the bridge sources.

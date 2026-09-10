@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "natural number (excluding zero)",
+  "natural number (positive integer)",
+  "natural number (nonzero)",
+  "integer greater than zero",
+  "natural number"
+ ],
+ "canonical": "Q16317911",
+ "description": "integer greater than zero; natural number explicitly excluding zero",
+ "id": "Q16317911",
+ "label": "positive integer"
+}

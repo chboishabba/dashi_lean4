@@ -1,0 +1,96 @@
+# Eq. (119) defect→chart spine and the terminal physical-carrier round (Lean lane)
+
+This round turned the latest source-side and terminal-side findings into
+machine-checked Lean in `RequestProject/YangMills/`.  Everything below compiles
+in the full `lake build RequestProject`, contains no `sorry`, no `axiom` and no
+`@[implemented_by]`, and every headline theorem is audited with `#print axioms`
+(only `propext`, `Classical.choice`, `Quot.sound`).
+
+## 1. Source side: from the stored-bond budget to the principal logarithm
+
+`SU2QuaternionOperatorNorm.lean`, `RelativeHolonomyDefect.lean`,
+`SU2PrincipalChart.lean`, `Eq119RelativeLogSpine.lean`, `Eq119SpineChecks.lean`.
+
+* The quaternion-to-matrix representation `su2 : Quaternion ℝ → Matrix (Fin 2) (Fin 2) ℂ`
+  is a multiplicative, star-preserving map, and its **L² operator norm equals the
+  quaternion norm** (`su2_norm`).  This closes the representation seam that the
+  source-side report flagged as row B: `‖U − I‖_op ≤ ‖quaternion coordinates‖₁`
+  is now a theorem (`su2_defect_le_l1`), not a receipt.
+* Signed links are eliminated: a negative traversal is the group inverse of the
+  stored positive bond, and `l1defect_star` shows the defect functional is
+  inversion invariant.  So the only quantitative input is the **stored positive
+  bond budget** `δ(U_b) ≤ 1/2048`.
+* `holonomy_relative` proves the same-object identity
+  `Hol(Γ ‖ c⁻¹) = Hol(Γ) · Hol(c)⁻¹`, and `relative_holonomy_defect_le`
+  telescopes the 74 oriented links of the canonical `L = 13`, radius‑6 contour
+  word to `74/2048 = 37/1024`, hence `< 1/24`
+  (`relative_holonomy_defect_lt_inv24`).
+* `principal_chart_of_defect_le_inv24` proves the chart admission
+  `δ(U) ≤ 1/24 ⟹ U ∈ PrincipalImage` for the explicit quaternion logarithm
+  `qlog`, with `exp (qlog U) = U` and `‖qlog U‖ < π/2`.
+* `relative_log_spine` composes these: the stored-bond budget alone yields
+  `Y_x = qlog (U(Γ_{c,x}) U(c)⁻¹)` with `exp (i Y_x) = U(Γ_{c,x})U(c)⁻¹` and the
+  quantitative bound `‖Y‖ ≤ arccos(1 − 37/1024)`.
+* `Eq119SpineChecks.lean` exhibits an explicit rational unit quaternion and a
+  74-link word satisfying the hypotheses, so the spine is **not vacuous**.
+
+The physical hypothesis that remains displayed (and is *not* claimed proved) is
+that the Eq. (119) bond field is the selected Bałaban background with the
+`1/2048` per-bond budget.
+
+## 2. Terminal side: physical carrier, quotient, generator, gap
+
+`PhysicalNullQuotient.lean`, `GeneratorUniquenessCore.lean`,
+`PhysicalTimeEvolutionGenerator.lean`, `GaugeInvariantL2Carrier.lean`,
+`GaugeInvariantCarrierWitness.lean`, `MassGapFormTransport.lean`.
+
+* **Separation is a theorem.**  For a semi-inner product, equality of all weak
+  pairings *is* the physical null relation (`nullRel_iff_forall_inner_eq`), so
+  the "null-class separating pairing" item needs no receipt.  Consequently two
+  operators with equal weak pairings have equal descended operators
+  (`descend_congr_of_forall_inner_eq`).
+* **Symmetry already implies null preservation**
+  (`preservesNull_of_isSymmetricOp`): the integration-by-parts identity and the
+  "H preserves the null ideal" requirement are the *same* payment, not two.
+* **Generator uniqueness needs no Stone theorem.**  `GeneratorUniquenessCore`
+  proves that two — possibly unbounded — candidate Hamiltonians differentiating
+  the same orbit map on a common core agree there
+  (`generator_unique_of_evolution_eq`), and are equal as operators if bounded on
+  a dense core (`generator_clm_unique`).  This is the uniqueness content of
+  `U_t^{YM} = U_t^{OS} ⟹ H_YM = H_Stone`, obtained from uniqueness of
+  derivatives alone.
+* **The carrier is literal.**  `GaugeInvariantL2Carrier` builds the physical
+  Hilbert space as the gauge-invariant subspace of `L²(μ)` for one arbitrary
+  measure `μ` with a measure-preserving gauge action: invariance is a closed
+  submodule, hence complete; the pairing is definite; gauge-commuting operators
+  restrict and stay symmetric.  No fresh counting measure, no generic GNS state,
+  no extra quotient framework.
+* **Non-vacuity.**  `GaugeInvariantCarrierWitness` instantiates the carrier on
+  the finite group `ZMod 2` with its Haar (counting) measure and the nontrivial
+  left-translation gauge action, and exhibits a nonzero invariant wavefunction.
+* **Uniform gaps survive limits.**  `MassGapFormTransport` proves that a
+  uniform form gap `Δ` above a fixed vacuum passes to a *strong* limit of
+  Hamiltonians (`hasFormGap_of_tendsto`), also with converging gap constants.
+  This is the "no spectral pollution from below" step at the level at which the
+  gap is consumed, and it assumes no norm/resolvent convergence or compactness.
+
+## 3. What is still open
+
+Nothing here claims the Clay theorem, nor any physical closure.  The
+still-unpaid physical inputs are, unchanged in substance:
+
+1. the Eq. (119) bond field is the selected physical Bałaban background with the
+   `1/2048` stored-bond budget;
+2. the literal Yang–Mills Hamiltonian is the selected action variation on the
+   gauge-invariant carrier, with a common invariant dense core;
+3. the physical time evolution `U_t^{YM}` and the OS-reconstructed evolution are
+   the same one-parameter family on that carrier;
+4. the finite-to-continuum construction producing a strongly convergent family
+   of Hamiltonians with a uniform gap, and the OS/Wightman-axiom package on the
+   continuum object.
+
+Items 1–4 are hypotheses of the corresponding Lean statements, displayed rather
+than discharged.  What this round removed from the list is the machinery around
+them: representation identification, defect telescoping, chart admission,
+separation, null preservation, generator uniqueness, carrier completeness and
+gap stability are now theorems.

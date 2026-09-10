@@ -1,0 +1,15 @@
+{
+ "aliases": [
+  "mistake",
+  "incorrect",
+  "wrong",
+  "mistaken",
+  "blunder",
+  "misstep",
+  "goof"
+ ],
+ "canonical": "Q29485",
+ "description": "action or proposition which is inaccurate or incorrect, that could result in failure or deviation from the intended performance or behaviour",
+ "id": "Q29485",
+ "label": "error"
+}

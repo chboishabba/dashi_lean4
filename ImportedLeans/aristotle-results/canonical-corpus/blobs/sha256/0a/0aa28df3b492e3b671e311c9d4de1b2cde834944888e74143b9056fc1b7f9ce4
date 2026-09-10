@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "value type in Wikibase",
+  "Wikidata value type"
+ ],
+ "canonical": "Q19798657",
+ "description": "every value in Wikibase can be either no-value or unknown or an actual value",
+ "id": "Q19798657",
+ "label": "Wikibase value type"
+}

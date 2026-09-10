@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "braided category"
+ ],
+ "canonical": "Q2943034",
+ "description": "monoidal category with a commutativity constraint that need not be symmetric",
+ "id": "Q2943034",
+ "label": "braided monoidal category"
+}

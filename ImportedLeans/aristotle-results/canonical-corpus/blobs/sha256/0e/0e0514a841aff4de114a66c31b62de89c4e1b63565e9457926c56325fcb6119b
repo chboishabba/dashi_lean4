@@ -1,0 +1,241 @@
+/-
+# §38.  The counting hypotheses, discharged for the actual ζ zeros
+
+§34–§37 carry their zero-counting inputs as explicit hypotheses.  The *upper* ones are not
+hypotheses at all for the Riemann zeta function: `Zeta23.RvM.zetaZeroConfig_local_count`
+proves, unconditionally, that there is a constant `A_ζ ≥ 1` with
+
+    N(τ, τ+1]  ≤  A_ζ · log(|τ| + 3)     for every real `τ`,
+
+zeros counted with multiplicity.  This module instantiates the near-core tranche with that
+constant, so the corresponding no-gos become statements about ζ itself rather than
+about a hypothetical counting bound.
+
+* `zetaLocalCountConst`, `one_le_zetaLocalCountConst`, `zetaLocalCount_spec` — the constant
+  and its defining property, taken from `Zeta23`;
+* `zeta_criterion_never` — the explicit positivity criterion of §34 is **never** satisfiable
+  at ζ's own local counting constant, for any taper, cutoff, radius or target height;
+* `N_le_of_unit_bounds`, `zeta_short_window_count_le` — the short counting window of §36 is
+  covered by unit windows, giving unconditionally
+  `N(t−D−1, t+D] ≤ (A_ζ·log(|t|+D+4))·(2D+2)`;
+* `gap_split_pos_requires_bounded_cutoff_zeta` — hence the §36 cutoff bound holds for ζ
+  with the *explicit* upper density constant `A_ζ·log(|t|+D+4)`, only the lower density
+  bound remaining a hypothesis;
+* `quarter_period_and_density_force_c_lt_zeta` — and the §37 window comparison becomes
+  `c < π²·A_ζ·log(|t| + π/(3Λ) + 4) + Λ·(6c/π + 3π·A_ζ·log(|t| + π/(3Λ) + 4))`.
+
+Nothing here asserts or assumes the Riemann Hypothesis, and nothing weakens
+`RiemannHypothesisFor`.  No `sorry`, no `axiom`, no Boolean receipt, no numerical evidence,
+and no unproved imported authority or authority receipt: the one imported mathematical
+input, `Zeta23.RvM.zetaZeroConfig_local_count`, is a checked Lean theorem of the `Zeta23`
+package built from source here.  A checked imported theorem is not an imported authority.
+-/
+import Zeta23Bridge.NearCoreQuarterPeriodDensityWindow
+import Zeta23.Assembly
+
+noncomputable section
+
+open scoped Real
+open Zeta23 MeasureTheory
+
+namespace Zeta23Bridge
+namespace NearCoreZetaLocalCountInstance
+
+open Zeta23Bridge.LiteralWeilParityBalance
+open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilOtherZerosChannel
+open Zeta23Bridge.ReflectionPairCurvatureBound
+open Zeta23Bridge.NearCoreDeterminantTaper
+open Zeta23Bridge.NearCoreGapSplitEvaluation
+open Zeta23Bridge.NearCoreGapSplitOptimization
+open Zeta23Bridge.NearCoreTaperShapeNoGo
+open Zeta23Bridge.NearCoreClusteringDensityCut
+open Zeta23Bridge.NearCoreQuarterPeriodDensityWindow
+
+/-! ## 1. ζ's own local counting constant -/
+
+/-- The local counting constant of the ζ zeros, supplied by
+`Zeta23.RvM.zetaZeroConfig_local_count`. -/
+def zetaLocalCountConst : ℝ := Classical.choose Zeta23.RvM.zetaZeroConfig_local_count
+
+theorem one_le_zetaLocalCountConst : 1 ≤ zetaLocalCountConst :=
+  (Classical.choose_spec Zeta23.RvM.zetaZeroConfig_local_count).1
+
+theorem zetaLocalCount_spec (τ : ℝ) :
+    ((zetaZeroConfig).N τ (τ + 1) : ℝ) ≤ zetaLocalCountConst * Real.log (|τ| + 3) :=
+  (Classical.choose_spec Zeta23.RvM.zetaZeroConfig_local_count).2 τ
+
+/-! ## 2. The §34 criterion is unsatisfiable for ζ -/
+
+/-- `log x ≥ 1` as soon as `x ≥ 4`. -/
+theorem one_le_log_of_four_le {x : ℝ} (hx : 4 ≤ x) : 1 ≤ Real.log x := by
+  have he : Real.exp 1 < 4 := by
+    have := Real.exp_one_lt_d9
+    norm_num at this ⊢
+    linarith
+  calc (1 : ℝ) = Real.log (Real.exp 1) := (Real.log_exp 1).symm
+    _ ≤ Real.log x := Real.log_le_log (Real.exp_pos 1) (le_of_lt (lt_of_lt_of_le he hx))
+
+/-- With a counting constant at least one, the local count factor of §35 always reaches
+one, because the log is evaluated at a point `≥ 4`. -/
+theorem one_le_count_factor {A : ℝ} (hA : 1 ≤ A) (t : ℝ) (J : ℕ) :
+    1 ≤ A * Real.log (|t| + (J : ℝ) + 4) := by
+  have h4 : (4 : ℝ) ≤ |t| + (J : ℝ) + 4 := by
+    have h1 : (0 : ℝ) ≤ |t| := abs_nonneg t
+    have h2 : (0 : ℝ) ≤ (J : ℝ) := Nat.cast_nonneg J
+    linarith
+  have hlog := one_le_log_of_four_le h4
+  nlinarith
+
+/-- **The explicit criterion of §34 is never satisfiable at ζ's own counting constant.**
+No taper, radius, width, height or cutoff makes the escape term of §34 fall below half the
+taper mass. -/
+theorem zeta_criterion_never {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C) :
+    ¬ (escapeTerm zetaLocalCountConst C Λ t J
+        < 1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u)) :=
+  not_criterion_of_unit_local_count hg hgc hΛ hsupp hCbase
+    (one_le_count_factor one_le_zetaLocalCountConst t J)
+
+/-! ## 3. Covering the short counting window by unit windows -/
+
+/-- A counting window of integer length is covered by that many unit windows. -/
+theorem N_le_of_unit_bounds (a M : ℝ) :
+    ∀ n : ℕ, (∀ k : ℕ, k < n → ((zetaZeroConfig).N (a + k) (a + k + 1) : ℝ) ≤ M) →
+      ((zetaZeroConfig).N a (a + (n : ℝ)) : ℝ) ≤ (n : ℝ) * M := by
+  intro n
+  induction n with
+  | zero =>
+      intro _
+      simp [Zeta23.Assembly.N_self]
+  | succ n ih =>
+      intro h
+      have hstep : ((zetaZeroConfig).N a (a + ((n : ℝ) + 1)))
+          = (zetaZeroConfig).N a (a + (n : ℝ))
+            + (zetaZeroConfig).N (a + (n : ℝ)) (a + ((n : ℝ) + 1)) := by
+        refine Zeta23.Assembly.N_add zetaZeroConfig ?_ ?_
+        · have : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
+          linarith
+        · linarith
+      have hlast : ((zetaZeroConfig).N (a + (n : ℝ)) (a + ((n : ℝ) + 1)) : ℝ) ≤ M := by
+        have := h n (Nat.lt_succ_self n)
+        have heq : a + (n : ℝ) + 1 = a + ((n : ℝ) + 1) := by ring
+        rwa [heq] at this
+      have hprev : ((zetaZeroConfig).N a (a + (n : ℝ)) : ℝ) ≤ (n : ℝ) * M :=
+        ih (fun k hk => h k (Nat.lt_succ_of_lt hk))
+      have hcast : (((n : ℕ) + 1 : ℕ) : ℝ) = (n : ℝ) + 1 := by push_cast; ring
+      rw [hcast, hstep]
+      push_cast
+      nlinarith [hprev, hlast]
+
+/-- **The short counting window of §36 is bounded unconditionally for ζ.**  Covering
+`(t−D−1, t+D]` by unit windows and using ζ's local counting bound gives
+
+    N(t−D−1, t+D]  ≤  (A_ζ·log(|t|+D+4))·(2D+2) . -/
+theorem zeta_short_window_count_le (t : ℝ) {D : ℝ} (hD : 0 ≤ D) :
+    ((zetaZeroConfig).N (t - D - 1) (t + D) : ℝ)
+      ≤ (zetaLocalCountConst * Real.log (|t| + D + 4)) * (2 * D + 2) := by
+  set A : ℝ := zetaLocalCountConst with hA
+  have hA1 : 1 ≤ A := one_le_zetaLocalCountConst
+  set a : ℝ := t - D - 1 with ha
+  set n : ℕ := ⌈2 * D + 1⌉₊ with hn
+  have hnge : 2 * D + 1 ≤ (n : ℝ) := Nat.le_ceil _
+  have hnle : (n : ℝ) ≤ 2 * D + 2 := by
+    have := Nat.ceil_lt_add_one (by linarith : (0 : ℝ) ≤ 2 * D + 1)
+    linarith
+  have hM0 : 0 ≤ A * Real.log (|t| + D + 4) := by
+    have hlog : 0 ≤ Real.log (|t| + D + 4) :=
+      Real.log_nonneg (by have := abs_nonneg t; linarith)
+    nlinarith
+  -- each unit window inside the cover is bounded by the same quantity
+  have hunit : ∀ k : ℕ, k < n →
+      ((zetaZeroConfig).N (a + k) (a + k + 1) : ℝ) ≤ A * Real.log (|t| + D + 4) := by
+    intro k hk
+    have hkle : (k : ℝ) ≤ 2 * D + 1 := by
+      have h1 : (k : ℝ) + 1 ≤ (n : ℝ) := by exact_mod_cast Nat.succ_le_of_lt hk
+      linarith
+    have habs : |a + (k : ℝ)| ≤ |t| + D + 1 := by
+      have hlow : -(D + 1) ≤ (k : ℝ) - D - 1 := by
+        have : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
+        linarith
+      have hhigh : (k : ℝ) - D - 1 ≤ D := by linarith
+      have hsplit : a + (k : ℝ) = t + ((k : ℝ) - D - 1) := by rw [ha]; ring
+      have h2 : |(k : ℝ) - D - 1| ≤ D + 1 := by
+        rw [abs_le]
+        constructor <;> linarith
+      calc |a + (k : ℝ)| = |t + ((k : ℝ) - D - 1)| := by rw [hsplit]
+        _ ≤ |t| + |(k : ℝ) - D - 1| := abs_add_le _ _
+        _ ≤ |t| + D + 1 := by linarith
+    have hlog : Real.log (|a + (k : ℝ)| + 3) ≤ Real.log (|t| + D + 4) := by
+      refine Real.log_le_log (by have := abs_nonneg (a + (k : ℝ)); linarith) (by linarith)
+    calc ((zetaZeroConfig).N (a + k) (a + k + 1) : ℝ)
+        ≤ A * Real.log (|a + (k : ℝ)| + 3) := zetaLocalCount_spec (a + (k : ℝ))
+      _ ≤ A * Real.log (|t| + D + 4) := by
+          have : (0 : ℝ) ≤ A := by linarith
+          exact mul_le_mul_of_nonneg_left hlog this
+  have hcover := N_le_of_unit_bounds a (A * Real.log (|t| + D + 4)) n hunit
+  -- the window of interest sits inside the cover
+  have hmono : ((zetaZeroConfig).N a (t + D) : ℝ) ≤ ((zetaZeroConfig).N a (a + (n : ℝ)) : ℝ) := by
+    have hsplit : (zetaZeroConfig).N a (a + (n : ℝ))
+        = (zetaZeroConfig).N a (t + D) + (zetaZeroConfig).N (t + D) (a + (n : ℝ)) := by
+      refine Zeta23.Assembly.N_add zetaZeroConfig ?_ ?_
+      · rw [ha]; linarith
+      · rw [ha]; linarith
+    have : (zetaZeroConfig).N a (t + D) ≤ (zetaZeroConfig).N a (a + (n : ℝ)) := by omega
+    exact_mod_cast this
+  calc ((zetaZeroConfig).N (t - D - 1) (t + D) : ℝ)
+      = ((zetaZeroConfig).N a (t + D) : ℝ) := by rw [ha]
+    _ ≤ ((zetaZeroConfig).N a (a + (n : ℝ)) : ℝ) := hmono
+    _ ≤ (n : ℝ) * (A * Real.log (|t| + D + 4)) := hcover
+    _ ≤ (2 * D + 2) * (A * Real.log (|t| + D + 4)) := by
+        exact mul_le_mul_of_nonneg_right hnle hM0
+    _ = (A * Real.log (|t| + D + 4)) * (2 * D + 2) := by ring
+
+/-! ## 4. The §36 and §37 statements with ζ's explicit upper density constant -/
+
+/-- **The §36 cutoff bound for ζ.**  Only the lower density bound of the long window
+remains a hypothesis; the upper density constant is now explicit,
+`A = A_ζ·log(|t|+D+4)`. -/
+theorem gap_split_pos_requires_bounded_cutoff_zeta {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ D C c : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ) (hD : 0 < D)
+    (hDΛ : D * Λ ≤ π / 2) (hc : 0 < c)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C)
+    (hlower : c * ((J : ℝ) - 1 - D) ≤ ((zetaZeroConfig).N (t + D) (t + (J : ℝ) - 1) : ℝ))
+    (hpos : 0 < lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      - highGapMass t J D * (C / D ^ 2)) :
+    (J : ℝ) < 1 + D
+      + π ^ 2 * ((zetaLocalCountConst * Real.log (|t| + D + 4)) * (2 * D + 2)) / (4 * c) :=
+  gap_split_pos_requires_bounded_cutoff hg hgc hΛ hD hDΛ hc hq0 hsupp hCbase
+    (zeta_short_window_count_le t hD.le) hlower hpos
+
+/-- **The §37 window comparison for ζ.**  At the §34 threshold `D = π/(3Λ)`, gap-split
+positivity together with the quarter-period requirement forces the lower density constant
+of the long window to obey
+
+    c  <  π²·A  +  Λ·(6c/π + 3π·A) ,     A = A_ζ·log(|t| + π/(3Λ) + 4) . -/
+theorem quarter_period_and_density_force_c_lt_zeta {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C c : ℝ} {J : ℕ} (hΛ : 0 < Λ) (hc : 0 < c)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C)
+    (hlower : c * ((J : ℝ) - 1 - π / (3 * Λ))
+      ≤ ((zetaZeroConfig).N (t + π / (3 * Λ)) (t + (J : ℝ) - 1) : ℝ))
+    (hpos : 0 < lowGapMass t J (π / (3 * Λ))
+        * (Real.cos (π / (3 * Λ) * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      - highGapMass t J (π / (3 * Λ)) * (C / (π / (3 * Λ)) ^ 2))
+    (hquarter : π / 2 < (J : ℝ) * Λ) :
+    c < π ^ 2 * (zetaLocalCountConst * Real.log (|t| + π / (3 * Λ) + 4))
+      + Λ * (6 * c / π + 3 * π * (zetaLocalCountConst * Real.log (|t| + π / (3 * Λ) + 4))) := by
+  have hD : (0 : ℝ) ≤ π / (3 * Λ) := by positivity
+  exact quarter_period_and_density_force_c_lt hg hgc hΛ hc hq0 hsupp hCbase
+    (zeta_short_window_count_le t hD) hlower hpos hquarter
+
+end NearCoreZetaLocalCountInstance
+end Zeta23Bridge

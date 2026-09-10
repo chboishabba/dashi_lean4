@@ -1,0 +1,17 @@
+{
+ "aliases": [
+  "geographical region",
+  "delimited region",
+  "bounded region",
+  "bounded area",
+  "geographical area",
+  "geographic area",
+  "geographic zone",
+  "geographical zone",
+  "geographic region"
+ ],
+ "canonical": "Q82794",
+ "description": "2D or 3D defined space on something, mainly in terrestrial and astrophysics sciences",
+ "id": "Q82794",
+ "label": "region"
+}

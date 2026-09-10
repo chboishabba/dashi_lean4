@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "communication",
+  "statement",
+  "core message",
+  "main idea",
+  "theme",
+  "messages"
+ ],
+ "canonical": "Q628523",
+ "description": "discrete unit of communication intended by the source for consumption by some recipient or group of recipients",
+ "id": "Q628523",
+ "label": "message"
+}

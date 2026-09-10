@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "Q21503247",
+ "description": "type of constraint for Wikidata properties: used to specify that an item with this property should also have another given property",
+ "id": "Q21503247",
+ "kind": "item",
+ "label": "item-requires-statement constraint"
+}

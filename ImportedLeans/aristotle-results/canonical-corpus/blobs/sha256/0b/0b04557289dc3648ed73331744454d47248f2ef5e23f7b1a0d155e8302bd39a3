@@ -1,0 +1,205 @@
+{-# OPTIONS --safe #-}
+module DASHI.Physics.YangMills.BalabanCMP98Equation119MultiscaleInstallationRound147Exact where
+
+------------------------------------------------------------------------
+-- ROUND147 A1: THE LATTICE Eq. (119) OPERATOR IS ROUND126'S ONE-STEP Q'
+--
+-- Round126 proves the noncommutative finite product rule
+--
+--   Q_k' = sum_j Q_{k-1} ... Q_{j+1} Q'_j Q_{j-1} ... Q_0
+--
+-- for an abstract additive operator carrier.  Round146 realizes CMP98
+-- Eq. (119) on the repository's actual periodic lattice.  This module joins
+-- them: it builds the Round126 carrier out of the lattice Lie-algebra bond
+-- fields, installs
+--
+--   q_j      := the CMP98 (125) block-path average at scale j,
+--   qPrime_j := the Round146 realization of Eq. (119) at scale j,
+--
+-- and records that the installed one-step derivative *is* the Eq. (119)
+-- expression on every positively oriented coarse bond, definitionally.
+--
+-- Consequently the multiscale derivative Q_k' supplied by Round126 is, on this
+-- carrier, the literal insertion sum of the source's one-step derivatives; no
+-- further scalar Q' receipt is involved.
+--
+-- What is still a modelling convention, and is stated as such: the source
+-- defines its coarse objects on positively oriented bonds, while the
+-- repository's bond fields are total on directed bonds, so `fromCoarseValues`
+-- extends a coarse value function to reversed bonds by the sign convention
+-- A(reverse b) = - A(b).  Every path used by Eq. (119) and by the block-path
+-- average is built from positive bonds only, so no value used by either
+-- operator depends on that extension.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat)
+open import Data.Nat.Base using (NonZero)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.P06CubeCoordinatesCore using
+  ( Cube4
+  ; Axis4
+  ; FaceOrientation
+  ; forward
+  ; backward
+  ; shiftBackward
+  )
+open import DASHI.Physics.YangMills.BalabanPeriodicLatticeBonds using
+  ( DirectedBond4
+  ; bond4
+  ; positiveBond
+  )
+open import DASHI.Physics.YangMills.BalabanPeriodicGaugeTransport using
+  ( GroupStructure
+  ; Carrier
+  )
+open import DASHI.Physics.YangMills.BalabanLatticeAdjointCovariantDerivative using
+  ( AdjointAdditiveModule
+  ; Vector
+  ; subtract
+  )
+open import DASHI.Physics.YangMills.BalabanCovariantPathIntegral using
+  ( AdjointLinearModule
+  ; additive
+  ; zeroVector
+  ; addVector
+  ; DirectedAdjointBondField4
+  )
+open import DASHI.Physics.YangMills.BalabanLinearBlockPathAverage using
+  ( ScalarAdjointLinearModule
+  ; linear
+  )
+open import DASHI.Physics.YangMills.BalabanCanonicalBlockPathSamples using
+  ( canonicalLinearBlockPathAverage )
+import DASHI.Physics.YangMills.BalabanCMP98MultiscaleAveragingDerivativeRound126Exact
+  as R126
+import DASHI.Physics.YangMills.BalabanCMP98Equation119LatticeRealizationRound146Exact
+  as R146
+
+module Installation
+  {N : Nat} {{nz : NonZero N}}
+  (group : GroupStructure)
+  (scalarLinear : ScalarAdjointLinearModule group)
+  where
+
+  open R146.Equation119 {N = N} group scalarLinear
+
+  ----------------------------------------------------------------------
+  -- The Round126 carrier: Lie-algebra valued directed bond fields.
+  ----------------------------------------------------------------------
+
+  bondFieldCarrier : R126.AdditiveOperatorCarrier
+  bondFieldCarrier = record
+    { Vector = BondField
+    ; zeroV = λ _ → zeroVector Lin
+    ; addV = λ A B b → addVector Lin (A b) (B b)
+    }
+
+  -- A function of (coarse root, direction) becomes a directed bond field.
+  fromCoarseValues :
+    (Cube4 N → Axis4 → Vec) → BondField
+  fromCoarseValues F (bond4 x a forward) = F x a
+  fromCoarseValues F (bond4 x a backward) =
+    subtract Add (zeroVector Lin) (F (shiftBackward a x) a)
+
+  fromCoarseValuesPositive :
+    (F : Cube4 N → Axis4 → Vec) (x : Cube4 N) (a : Axis4) →
+    fromCoarseValues F (positiveBond x a) ≡ F x a
+  fromCoarseValuesPositive F x a = refl
+
+  ----------------------------------------------------------------------
+  -- A scale-indexed family of Eq. (119) data.  One entry per renormalization
+  -- step and coarse direction: the block length, the background field V0 of
+  -- that step, the weight L^{-d}, the loop elements and the ad-functional
+  -- calculus.
+  ----------------------------------------------------------------------
+
+  ScaleFamily : Set
+  ScaleFamily = Nat → Axis4 → Equation119Inputs
+
+  -- q_j : the CMP98 (125) main-term block-path average of the step, written
+  -- with the same block length, direction and background as the step's
+  -- Eq. (119) data.
+  scaleAverage :
+    ScaleFamily → Nat → BondField → BondField
+  scaleAverage family j A =
+    fromCoarseValues
+      (λ root a →
+        canonicalLinearBlockPathAverage
+          group scalarLinear
+          (inverseVolumeWeight (family j a))
+          (background (family j a))
+          A
+          (blockLength (family j a))
+          a root)
+
+  -- qPrime_j : the Round146 realization of Eq. (119) for the step.
+  scaleAverageDerivative :
+    ScaleFamily → Nat → BondField → BondField
+  scaleAverageDerivative family j A =
+    fromCoarseValues
+      (λ root a → equation119QPrime (family j a) A root)
+
+  oneStepData :
+    ScaleFamily → R126.OneStepAveragingDerivative bondFieldCarrier
+  oneStepData family = record
+    { q = scaleAverage family
+    ; qPrime = scaleAverageDerivative family
+    }
+
+  ----------------------------------------------------------------------
+  -- The installation is literal: Round126's one-step derivative evaluated on
+  -- a positively oriented coarse bond is the Eq. (119) expression itself.
+  ----------------------------------------------------------------------
+
+  installedQPrimeIsEquation119 :
+    (family : ScaleFamily) (j : Nat) (A : BondField)
+    (root : Cube4 N) (a : Axis4) →
+    R126.qPrime (oneStepData family) j A (positiveBond root a)
+    ≡ equation119QPrime (family j a) A root
+  installedQPrimeIsEquation119 family j A root a = refl
+
+  installedQIsBlockPathAverage :
+    (family : ScaleFamily) (j : Nat) (A : BondField)
+    (root : Cube4 N) (a : Axis4) →
+    R126.q (oneStepData family) j A (positiveBond root a)
+    ≡ canonicalLinearBlockPathAverage
+        group scalarLinear
+        (inverseVolumeWeight (family j a))
+        (background (family j a))
+        A
+        (blockLength (family j a))
+        a root
+  installedQIsBlockPathAverage family j A root a = refl
+
+  ----------------------------------------------------------------------
+  -- The multiscale objects of Round126, now on the lattice carrier.
+  ----------------------------------------------------------------------
+
+  latticeMultiscaleAverage :
+    ScaleFamily → Nat → BondField → BondField
+  latticeMultiscaleAverage family =
+    R126.multiscaleAverage (oneStepData family)
+
+  latticeMultiscaleAveragePrime :
+    ScaleFamily → Nat → BondField → BondField
+  latticeMultiscaleAveragePrime family =
+    R126.multiscaleAveragePrime (oneStepData family)
+
+  -- The product rule of Round126 on this carrier: the k-step derivative is the
+  -- insertion of the literal Eq. (119) one-step derivative into the finite
+  -- composition of the block averages.
+  latticeMultiscaleProductRule :
+    (family : ScaleFamily) (n : Nat) (A : BondField) →
+    latticeMultiscaleAveragePrime family (Nat.suc n) A
+    ≡ (λ b →
+        addVector Lin
+          (scaleAverageDerivative family n
+            (latticeMultiscaleAverage family n A) b)
+          (scaleAverage family n
+            (latticeMultiscaleAveragePrime family n A) b))
+  latticeMultiscaleProductRule family n A = refl
+
+cmp98Equation119MultiscaleInstallationRound147Level : ProofLevel
+cmp98Equation119MultiscaleInstallationRound147Level = machineChecked

@@ -1,0 +1,106 @@
+# Quarter-period versus density cut: the constant-window reconciliation (§37) and the ζ-instance (§38)
+
+This round responds to the incoming tranche about the gap-split no-go and the adaptive
+inverse-width regime.  Everything claimed below is machine-checked Lean in this
+repository; nothing is a receipt or a promise, and every imported mathematical input is
+itself a checked Lean theorem — there is no unproved imported authority or authority
+receipt.  (§38 below does import and rely on a theorem of the checked `Zeta23` package;
+that is a checked imported theorem, which is not the same thing as an imported
+authority.)
+
+## 1. What was reproduced locally
+
+* `Zeta23Bridge` builds here from source: `lake build` in `Zeta23Bridge/` completes with
+  **8894 jobs** on the pre-existing tranche (the same job count reported upstream) and
+  with **8896 jobs** after this round's two new modules.
+* The named theorems are present and proved with only the standard axioms
+  (`propext`, `Classical.choice`, `Quot.sound`): `integral_le_curvature`,
+  `integral_detTaper_le_curvature`, `criterion_implies_count_lt`,
+  `not_criterion_of_unit_local_count`, `gap_split_pos_requires_low_gap_proportion`,
+  `lowGapMass_le_N`, `N_le_highGapMass`, `gap_split_pos_requires_bounded_cutoff`.
+  `Zeta23Bridge/AxiomCheck.lean` now prints the axioms of 196 declarations, all clean; no
+  `sorry`, `admit`, `axiom` or `native_decide` occurs in the sources.
+
+## 2. Agreement, and one correction
+
+The incoming reading of the cut is right on the following points, and all of them are
+theorems here:
+
+* the shape inequality `∫q ≤ Λ²∫|q″|` kills the optimized quadratic-decay criterion, since
+  it would force `(2J+1)·A·log(|t|+J+4) < π²/18`;
+* what survives is the clustering proportion `(4/π²)·highGapMass < lowGapMass`;
+* the density bound is `J < 1 + D + π²A(2D+2)/(4c)`.
+
+The correction concerns the consequence for the adaptive regime.  With `D = π/(3Λ)` the
+density bound is an *inverse-width* bound with leading coefficient `π/3 + π³A/(6c)`
+(`density_cutoff_bound_eq`), and the quarter-period requirement is the inverse-width lower
+bound with coefficient `π/2`.  The comparison of the two is now proved:
+
+* `leading_window_nonempty_iff` : `π/2 < π/3 + π³A/(6c) ↔ c < π²A` (for `c > 0`);
+* `quarter_period_and_density_window` : the two requirements together force
+  `π/2 < π/3 + π³A/(6c) + Λ·(1 + π²A/(2c))`;
+* `quarter_period_and_density_force_c_lt` : equivalently `c < π²A + Λ·(6c/π + 3πA)`;
+* `no_window_of_density_constants` : the contrapositive, when the density constants are on
+  the other side;
+* `exists_cutoff_in_window` : if `c < π²A`, an integer cutoff meeting *both* constraints
+  exists for every width below an explicit threshold;
+* `matched_densities_lt`, `exists_cutoff_in_window_of_matched_densities_width_le_four` :
+  for matched constants `0 < c ≤ A` the condition `c < π²A` is automatic (π² > 1) and the
+  threshold exceeds 4, so every width `0 < Λ ≤ 4` admits such a cutoff.
+
+So the density cut converts the adaptive route into the constant-window question
+`π/2 < J·Λ < π/3 + π³A/(6c) + O(Λ)`; it does not by itself make that route impossible.
+The inequality `c < π²A` is proved here as the exact leading-order solvability condition,
+and it is derived from the two bounds — it is not attributed to the density theorem alone.
+
+## 3. The counting hypotheses, discharged for ζ (§38)
+
+`Zeta23.RvM.zetaZeroConfig_local_count` supplies, unconditionally, a constant `A_ζ ≥ 1`
+with `N(τ, τ+1] ≤ A_ζ·log(|τ|+3)`.  Instantiating with it:
+
+* `zeta_criterion_never` — at ζ's own counting constant the §34 positivity criterion is
+  unsatisfiable for every taper, radius, width, height and cutoff.  The shape no-go is
+  therefore **not** conditional on a counting hypothesis; it is a statement about the zeta
+  zeros;
+* `zeta_short_window_count_le` — `N(t−D−1, t+D] ≤ (A_ζ·log(|t|+D+4))·(2D+2)`, proved by
+  covering the window with unit windows;
+* `gap_split_pos_requires_bounded_cutoff_zeta`, `quarter_period_and_density_force_c_lt_zeta`
+  — the §36 and §37 statements with the explicit upper density constant
+  `A = A_ζ·log(|t|+D+4)`; only the *lower* density bound of the long window remains a
+  hypothesis.
+
+Because `A_ζ ≥ 1` and the logarithm is evaluated at a point `≥ 4`, the resulting bound on
+the lower density constant exceeds `π²`, i.e. for ζ the window comparison bites only on an
+implausibly large lower density constant.
+
+## 4. Scope notes
+
+* The Agda side referenced in the incoming tranche (the 8894 owner module and the updated
+  reconciliation module) is not checkable in this checkout: the modules those files import
+  are not present here and no Agda toolchain is available.  The reconciliation module
+  contained in the supplied archive was read; it is a bookkeeping ledger of Booleans and
+  strings with no analytic content, so nothing in it can be used as a mathematical input.
+  All mathematics of this round is therefore in Lean.
+* **The Riemann Hypothesis is not proved.**  `RiemannHypothesisFor` is untouched and
+  unweakened.  The first unproved obligation of the near-core lane is unchanged: a genuine
+  clustering statement, `(4/π²)·highGapMass < lowGapMass` for the zeros within `π/(3Λ)` of
+  the target ordinate.
+
+## 5. Reproduction
+
+```
+cd Zeta23Bridge
+lake exe cache get
+lake build                       # 8896 jobs
+lake env lean AxiomCheck.lean    # 196 declarations, standard axioms only
+```
+
+## 6. Follow-up (§39)
+
+The remaining asymmetry recorded above — upper short-window density proved for ζ, lower
+long-window density still a hypothesis — is addressed in
+`RIEMANN_G2_ZETA_DYADIC_LONG_WINDOW_REPORT.md` and `Zeta23Bridge/FRONTIER.md` §39, which
+discharge the lower bound from the checked dyadic Riemann–von Mangoldt theorem of
+`Zeta23` in the large-cutoff regime and derive an unconditional no-go there.  The job
+counts of §5 are those of the tranche before §39; with §39 and §40 the build reports 8898
+jobs and the axiom audit covers 224 declarations.

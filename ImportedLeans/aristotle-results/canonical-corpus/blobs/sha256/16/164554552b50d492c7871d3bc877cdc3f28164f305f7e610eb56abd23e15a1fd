@@ -1,0 +1,15 @@
+{
+ "aliases": [
+  "animals with backbone",
+  "subphylum vertebrate",
+  "vertibrate",
+  "vertebrates",
+  "subphylum Vertebrata",
+  "vertebrate",
+  "Vertebrate"
+ ],
+ "canonical": "Q25241",
+ "description": "a subphylum of Chordata characterized by the presence of a vertebral column, or backbone, which replaces the notochord during development",
+ "id": "Q25241",
+ "label": "Vertebrata"
+}

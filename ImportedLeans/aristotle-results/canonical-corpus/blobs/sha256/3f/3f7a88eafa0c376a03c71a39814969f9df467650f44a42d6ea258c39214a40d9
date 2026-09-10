@@ -1,0 +1,332 @@
+import Integration.Kernel.Instances.ParameterRegion
+import Integration.Kernel.Instances.CollectiveAction
+import Integration.Kernel.Instances.Distribution
+import Integration.Kernel.Instances.Translation
+import Integration.Kernel.Instances.Assay
+import Integration.Kernel.Instances.ObservationalEquivalence
+import Integration.Kernel.Instances.ModelSelection
+import Integration.Kernel.Quotient
+import Integration.Kernel.Instances.SSSP
+import Integration.Kernel.Instances.TemporalFibre
+import Integration.Kernel.Instances.Admission
+import Integration.Kernel.Instances.SituatedValuation
+import Integration.Kernel.Instances.SourceStage
+
+/-!
+# Axiom audit for the shared inference kernel
+
+`#print axioms` for every theorem of `Integration.Kernel.*` and of its
+instances.  Each line must report only a subset of
+`{propext, Classical.choice, Quot.sound}`; nothing here may depend on a project
+axiom, `sorry`, or `Lean.ofReduceBool`.
+-/
+
+/-! ### Integration.Kernel.ResidualFibre -/
+
+#print axioms Integration.Kernel.ResidualFibre.refines_iff_subset
+#print axioms Integration.Kernel.ResidualFibre.refines_trans
+#print axioms Integration.Kernel.ResidualFibre.refines_antisymm
+#print axioms Integration.Kernel.ResidualFibre.refines_empty
+#print axioms Integration.Kernel.ResidualFibre.refines_univ
+#print axioms Integration.Kernel.ResidualFibre.mem_event
+#print axioms Integration.Kernel.ResidualFibre.mem_refine
+#print axioms Integration.Kernel.ResidualFibre.refineBy_refines
+#print axioms Integration.Kernel.ResidualFibre.refine_refines
+#print axioms Integration.Kernel.ResidualFibre.refine_mono
+#print axioms Integration.Kernel.ResidualFibre.refine_idem
+#print axioms Integration.Kernel.ResidualFibre.refine_comm
+#print axioms Integration.Kernel.ResidualFibre.truth_survives
+#print axioms Integration.Kernel.ResidualFibre.refine_nonempty_of_truth
+#print axioms Integration.Kernel.ResidualFibre.refineAll_refines
+#print axioms Integration.Kernel.ResidualFibre.refineAll_mono
+#print axioms Integration.Kernel.ResidualFibre.refineAll_append
+#print axioms Integration.Kernel.ResidualFibre.refineAll_append_refines
+#print axioms Integration.Kernel.ResidualFibre.mem_refineAll_of_forall
+#print axioms Integration.Kernel.ResidualFibre.determines_mono
+#print axioms Integration.Kernel.ResidualFibre.determines_empty
+#print axioms Integration.Kernel.ResidualFibre.determines_iff_not_collision
+#print axioms Integration.Kernel.ResidualFibre.determines_of_factors
+#print axioms Integration.Kernel.ResidualFibre.narrower_not_mechanism
+#print axioms Integration.Kernel.ResidualFibre.decision_safe_not_mechanism
+#print axioms Integration.Kernel.ResidualFibre.witness_coordinates_nonconstant
+
+/-! ### Integration.Kernel.Probe -/
+
+#print axioms Integration.Kernel.Probe.refine_eq_self_of_constant
+#print axioms Integration.Kernel.Probe.unachievable_outcome_empties
+#print axioms Integration.Kernel.Probe.strictly_refines_iff_discriminates
+#print axioms Integration.Kernel.Probe.resolves_of_factors
+#print axioms Integration.Kernel.Probe.resolving_probe_closes
+#print axioms Integration.Kernel.Probe.collision_persists_of_constant
+#print axioms Integration.Kernel.Probe.discriminating_probe_need_not_resolve
+#print axioms Integration.Kernel.Probe.refineAll_readingEvents_refines
+#print axioms Integration.Kernel.Probe.AndNode.contribution_refines
+#print axioms Integration.Kernel.Probe.flatMap_targets_eq_nil
+#print axioms Integration.Kernel.Probe.AndNode.contribution_eq_of_vacuous
+#print axioms Integration.Kernel.Probe.vacuous_success_is_not_resolution
+#print axioms Integration.Kernel.Probe.real_target_resolves
+
+/-! ### Integration.Kernel.Merge -/
+
+#print axioms Integration.Kernel.Merge.threeWay_refines_left
+#print axioms Integration.Kernel.Merge.threeWay_refines_right
+#print axioms Integration.Kernel.Merge.threeWay_refines_base
+#print axioms Integration.Kernel.Merge.threeWay_comm
+#print axioms Integration.Kernel.Merge.threeWay_assoc
+#print axioms Integration.Kernel.Merge.fastForward_refines
+#print axioms Integration.Kernel.Merge.provedJoin_refines_base
+#print axioms Integration.Kernel.Merge.guarded_refines_base
+#print axioms Integration.Kernel.Merge.guarded_never_weakens_base
+#print axioms Integration.Kernel.Merge.merge_preserves_truth
+#print axioms Integration.Kernel.Merge.merge_preserves_determination
+#print axioms Integration.Kernel.Merge.fastForward_eq_threeWay_of_not_diverged
+#print axioms Integration.Kernel.Merge.threeWay_can_refute
+#print axioms Integration.Kernel.Merge.fastForward_ne_threeWay
+#print axioms Integration.Kernel.Merge.provedJoin_ne_threeWay
+#print axioms Integration.Kernel.Merge.guarded_ne_threeWay
+#print axioms Integration.Kernel.Merge.guarded_ne_fastForward
+
+/-! ### Integration.Kernel.Authority -/
+
+#print axioms Integration.Kernel.Authority.telemetry_layers_separate
+#print axioms Integration.Kernel.Authority.rational_wrt_report_not_rational_wrt_truth
+#print axioms Integration.Kernel.Authority.faithful_credulous_transfers
+#print axioms Integration.Kernel.Authority.report_cannot_certify_itself
+#print axioms Integration.Kernel.Authority.strengthPreserving_not_weakens
+#print axioms Integration.Kernel.Authority.weakening_manufactures_satisfaction
+#print axioms Integration.Kernel.Authority.satisfies_of_strength_preserving
+#print axioms Integration.Kernel.Authority.authorised_revision_composes
+#print axioms Integration.Kernel.Authority.authorised_chain_not_weakening
+
+/-! ### Integration.Kernel.Reopen -/
+
+#print axioms Integration.Kernel.Reopen.mem_reopened_iff
+#print axioms Integration.Kernel.Reopen.reopen_of_revised_edge
+#print axioms Integration.Kernel.Reopen.stays_closed_of_disjoint
+#print axioms Integration.Kernel.Reopen.reopened_mono
+#print axioms Integration.Kernel.Reopen.reopened_union
+#print axioms Integration.Kernel.Reopen.reopening_is_selective
+#print axioms Integration.Kernel.Reopen.reopen_propagates
+#print axioms Integration.Kernel.Reopen.closedAfter_subset
+#print axioms Integration.Kernel.Reopen.unaffected_stays_closed
+#print axioms Integration.Kernel.Reopen.closedAfter_antitone
+#print axioms Integration.Kernel.Reopen.no_rule_recovers_origin
+#print axioms Integration.Kernel.Reopen.value_agreement_is_not_lineage_agreement
+
+/-! ### Integration.Kernel.Loop -/
+
+#print axioms Integration.Kernel.Loop.step_refines
+#print axioms Integration.Kernel.Loop.run_succ_refines
+#print axioms Integration.Kernel.Loop.run_antitone
+#print axioms Integration.Kernel.Loop.run_refines
+#print axioms Integration.Kernel.Loop.truth_mem_run
+#print axioms Integration.Kernel.Loop.run_nonempty
+#print axioms Integration.Kernel.Loop.step_strict_of_discriminates
+#print axioms Integration.Kernel.Loop.responsive_run_card
+#print axioms Integration.Kernel.Loop.responsive_policy_closes
+#print axioms Integration.Kernel.Loop.closure_is_consumer_relative
+#print axioms Integration.Kernel.Loop.unresponsive_policy_never_closes
+#print axioms Integration.Kernel.Loop.strategy_merges_iff
+#print axioms Integration.Kernel.Loop.strategy_needs_both_coordinates
+#print axioms Integration.Kernel.Loop.branches_merge_refines
+#print axioms Integration.Kernel.Loop.merge_preserves_truth_of_runs
+
+/-! ### Integration.Kernel.Instances.ParameterRegionBridge -/
+
+#print axioms Integration.Kernel.Instances.ParameterRegionBridge.fitEvent_eq_preimage
+#print axioms Integration.Kernel.Instances.ParameterRegionBridge.refineAll_fitEvents
+#print axioms Integration.Kernel.Instances.ParameterRegionBridge.compatible_eq_refineAll
+#print axioms Integration.Kernel.Instances.ParameterRegionBridge.compatible_refines_prior
+#print axioms Integration.Kernel.Instances.ParameterRegionBridge.evidence_refines
+#print axioms Integration.Kernel.Instances.ParameterRegionBridge.truth_survives_kernel
+#print axioms Integration.Kernel.Instances.ParameterRegionBridge.envelope_subsingleton_of_determines
+#print axioms Integration.Kernel.Instances.ParameterRegionBridge.determines_of_envelope_subsingleton
+#print axioms Integration.Kernel.Instances.ParameterRegionBridge.region_narrowing_is_not_identification
+
+/-! ### Integration.Kernel.Instances.CollectiveAction -/
+
+#print axioms Integration.Kernel.Instances.CollectiveAction.modes_pairwise_independent
+#print axioms Integration.Kernel.Instances.CollectiveAction.organisation_without_expansion
+#print axioms Integration.Kernel.Instances.CollectiveAction.effectiveOrganisation_expands
+#print axioms Integration.Kernel.Instances.CollectiveAction.effective_organisation_exists
+#print axioms Integration.Kernel.Instances.CollectiveAction.expansion_is_not_refinement
+#print axioms Integration.Kernel.Instances.CollectiveAction.join_preserves_inputs
+#print axioms Integration.Kernel.Instances.CollectiveAction.join_irreducible
+#print axioms Integration.Kernel.Instances.CollectiveAction.opposition_is_not_synthesis
+#print axioms Integration.Kernel.Instances.CollectiveAction.productive_join_exists
+
+/-! ### Integration.Kernel.Instances.Distribution -/
+
+#print axioms Integration.Kernel.Instances.Distribution.aggregate_hides_distribution
+#print axioms Integration.Kernel.Instances.Distribution.equal_cost_not_equal_burden
+#print axioms Integration.Kernel.Instances.Distribution.equal_cost_not_equal_benefit
+#print axioms Integration.Kernel.Instances.Distribution.equal_cost_not_equal_voice
+#print axioms Integration.Kernel.Instances.Distribution.cheapest_is_not_least_burdensome
+#print axioms Integration.Kernel.Instances.Distribution.cost_is_not_a_function_of_burden
+#print axioms Integration.Kernel.Instances.Distribution.burden_is_not_a_function_of_cost
+
+/-! ### Integration.Kernel.Instances.Translation -/
+
+#print axioms Integration.Kernel.Instances.Translation.translation_preserves_clinical
+#print axioms Integration.Kernel.Instances.Translation.translation_erases_subject
+#print axioms Integration.Kernel.Instances.Translation.erased_coordinate_is_unrecoverable
+#print axioms Integration.Kernel.Instances.Translation.reintroduction_is_not_restoration
+#print axioms Integration.Kernel.Instances.Translation.reinterpret_institutionalise_noncommute
+#print axioms Integration.Kernel.Instances.Translation.same_present_vocabulary_not_same_history
+#print axioms Integration.Kernel.Instances.Translation.same_future_cone_not_same_transport_history
+#print axioms Integration.Kernel.Instances.Translation.coarse_code_is_not_a_history_certificate
+
+/-! ### Integration.Kernel.Instances.Assay -/
+
+#print axioms Integration.Kernel.Instances.Assay.documented_contribution
+#print axioms Integration.Kernel.Instances.Assay.assay_narrows_but_does_not_resolve
+#print axioms Integration.Kernel.Instances.Assay.assay_vacuously_succeeds
+#print axioms Integration.Kernel.Instances.Assay.assay_collision_survives_vacuous_success
+#print axioms Integration.Kernel.Instances.Assay.new_measurement_separates
+#print axioms Integration.Kernel.Instances.Assay.reinterpretation_does_not_separate
+
+/-! ### Integration.Kernel.Instances.ObservationalEquivalenceBridge -/
+
+#print axioms Integration.Kernel.Instances.ObservationalEquivalenceBridge.refineAll_agreesEvents
+#print axioms Integration.Kernel.Instances.ObservationalEquivalenceBridge.obsClass_eq_refineAll
+#print axioms Integration.Kernel.Instances.ObservationalEquivalenceBridge.obsClass_append_eq_refineAll
+#print axioms Integration.Kernel.Instances.ObservationalEquivalenceBridge.obsClass_append_refines
+#print axioms Integration.Kernel.Instances.ObservationalEquivalenceBridge.separates_iff_discriminates
+#print axioms Integration.Kernel.Instances.ObservationalEquivalenceBridge.strictly_refines_iff_separates
+#print axioms Integration.Kernel.Instances.ObservationalEquivalenceBridge.redundant_experiment_does_not_refine
+#print axioms Integration.Kernel.Instances.ObservationalEquivalenceBridge.class_narrowing_is_not_theory_identification
+
+/-! ### Integration.Kernel.Instances.ModelSelectionBridge -/
+
+#print axioms Integration.Kernel.Instances.ModelSelectionBridge.traceAgree_exact_iff
+#print axioms Integration.Kernel.Instances.ModelSelectionBridge.exact_agreeEvent_eq_event
+#print axioms Integration.Kernel.Instances.ModelSelectionBridge.refined_admissibleSet_eq_refineBy
+#print axioms Integration.Kernel.Instances.ModelSelectionBridge.refineAll_agreeEvents
+#print axioms Integration.Kernel.Instances.ModelSelectionBridge.refineAll_observations
+#print axioms Integration.Kernel.Instances.ModelSelectionBridge.refined_refines_prior
+#print axioms Integration.Kernel.Instances.ModelSelectionBridge.truth_survives_kernel
+#print axioms Integration.Kernel.Instances.ModelSelectionBridge.identical_traces_are_a_persistent_collision
+#print axioms Integration.Kernel.Instances.ModelSelectionBridge.coarser_instrument_refines_less
+#print axioms Integration.Kernel.Instances.ModelSelectionBridge.refutation_empties_the_fibre
+
+/-! ### Integration.Kernel.Quotient -/
+
+#print axioms Integration.Kernel.Quotient.obsEq_iff
+#print axioms Integration.Kernel.Quotient.obsEq_equivalence
+#print axioms Integration.Kernel.Quotient.self_mem_fibre
+#print axioms Integration.Kernel.Quotient.fibre_eq_refine_univ
+#print axioms Integration.Kernel.Quotient.refinedBy_trans
+#print axioms Integration.Kernel.Quotient.refinedBy_of_descends
+#print axioms Integration.Kernel.Quotient.descendsThrough_iff_refinedBy
+#print axioms Integration.Kernel.Quotient.no_descent_to_empty_consumer
+#print axioms Integration.Kernel.Quotient.not_descendsThrough_of_collision
+#print axioms Integration.Kernel.Quotient.determines_of_descends
+#print axioms Integration.Kernel.Quotient.descends_of_determines_all
+#print axioms Integration.Kernel.Quotient.descent_is_consumer_relative
+#print axioms Integration.Kernel.Quotient.refinedBy_pair_left
+#print axioms Integration.Kernel.Quotient.refinedBy_pair_right
+#print axioms Integration.Kernel.Quotient.refinement_is_not_refutation
+#print axioms Integration.Kernel.Quotient.strictlyRefines_pair_of_separates
+#print axioms Integration.Kernel.Quotient.fibre_pair_subset
+#print axioms Integration.Kernel.Quotient.fibre_pair_ssubset
+#print axioms Integration.Kernel.Quotient.residual_does_not_descend
+#print axioms Integration.Kernel.Quotient.mapDescends_iff_classPreserving
+#print axioms Integration.Kernel.Quotient.dynamics_need_not_descend
+#print axioms Integration.Kernel.Quotient.invertsFor_of_inverts
+#print axioms Integration.Kernel.Quotient.invertsFor_not_inverts
+#print axioms Integration.Kernel.Quotient.invertsFor_of_descends
+#print axioms Integration.Kernel.Quotient.Reopening.pair_injective
+#print axioms Integration.Kernel.Quotient.Reopening.relativeFine_separates_inside_coarse_class
+#print axioms Integration.Kernel.Quotient.Reopening.fibre_pair_eq_singleton
+#print axioms Integration.Kernel.Quotient.exists_reopening_of_injective
+
+/-! ### Integration.Kernel.Instances.SSSP -/
+
+#print axioms Integration.Kernel.Instances.SSSP.card_order3
+#print axioms Integration.Kernel.Instances.SSSP.orderEquiv_apply
+#print axioms Integration.Kernel.Instances.SSSP.pair_bijective
+#print axioms Integration.Kernel.Instances.SSSP.abc_ne_acb
+#print axioms Integration.Kernel.Instances.SSSP.min_collides
+#print axioms Integration.Kernel.Instances.SSSP.tail_separates
+#print axioms Integration.Kernel.Instances.SSSP.sheet_ne
+#print axioms Integration.Kernel.Instances.SSSP.sheet_injective
+#print axioms Integration.Kernel.Instances.SSSP.tail_does_not_descend
+#print axioms Integration.Kernel.Instances.SSSP.minVertex_descends_through_sheet
+#print axioms Integration.Kernel.Instances.SSSP.fibre_card
+#print axioms Integration.Kernel.Instances.SSSP.tail_refines_strictly
+#print axioms Integration.Kernel.Instances.SSSP.min_still_correct_after_refinement
+#print axioms Integration.Kernel.Instances.SSSP.refined_observation_separates
+
+/-! ### Integration.Kernel.Instances.TemporalFibre -/
+
+#print axioms Integration.Kernel.Instances.TemporalFibre.lawfulTransport_refl
+#print axioms Integration.Kernel.Instances.TemporalFibre.lawfulTransport_trans
+#print axioms Integration.Kernel.Instances.TemporalFibre.no_backward_transport
+#print axioms Integration.Kernel.Instances.TemporalFibre.static_universe_is_pit_iff_constant
+#print axioms Integration.Kernel.Instances.TemporalFibre.membership_changes
+#print axioms Integration.Kernel.Instances.TemporalFibre.static_universe_misclassifies
+#print axioms Integration.Kernel.Instances.TemporalFibre.static_entrant_not_pit
+#print axioms Integration.Kernel.Instances.TemporalFibre.feature_collides
+#print axioms Integration.Kernel.Instances.TemporalFibre.dependence_separates
+#print axioms Integration.Kernel.Instances.TemporalFibre.universe_dependence_does_not_descend
+#print axioms Integration.Kernel.Instances.TemporalFibre.dependence_strictly_refines
+#print axioms Integration.Kernel.Instances.TemporalFibre.features_still_correct
+#print axioms Integration.Kernel.Instances.TemporalFibre.feature_pit_does_not_give_universe_pit
+
+/-! ### Integration.Kernel.Instances.Admission -/
+
+#print axioms Integration.Kernel.Instances.Admission.admits_iff_hasValidReceipt
+#print axioms Integration.Kernel.Instances.Admission.parser_receipt_never_valid
+#print axioms Integration.Kernel.Instances.Admission.receipt_for_other_candidate_never_valid
+#print axioms Integration.Kernel.Instances.Admission.resolve_is_lossless
+#print axioms Integration.Kernel.Instances.Admission.resolve_failure
+#print axioms Integration.Kernel.Instances.Admission.resolve_admitted_iff
+#print axioms Integration.Kernel.Instances.Admission.common_admissible
+#print axioms Integration.Kernel.Instances.Admission.rival_not_admissible
+#print axioms Integration.Kernel.Instances.Admission.frequencies_agree
+#print axioms Integration.Kernel.Instances.Admission.scores_agree
+#print axioms Integration.Kernel.Instances.Admission.admission_does_not_descend_through_frequency
+#print axioms Integration.Kernel.Instances.Admission.admission_does_not_descend_through_score
+#print axioms Integration.Kernel.Instances.Admission.admission_monotone_in_receipts
+#print axioms Integration.Kernel.Instances.Admission.admission_is_not_monotone_in_candidates
+
+/-! ### Integration.Kernel.Instances.SituatedValuation -/
+
+#print axioms Integration.Kernel.Instances.SituatedValuation.code_pos
+#print axioms Integration.Kernel.Instances.SituatedValuation.code_ne_zero
+#print axioms Integration.Kernel.Instances.SituatedValuation.valuation_ne_zero
+#print axioms Integration.Kernel.Instances.SituatedValuation.lexical_collides
+#print axioms Integration.Kernel.Instances.SituatedValuation.valuation_separates
+#print axioms Integration.Kernel.Instances.SituatedValuation.no_static_lexicon
+#print axioms Integration.Kernel.Instances.SituatedValuation.situated_descends_through_full_context
+#print axioms Integration.Kernel.Instances.SituatedValuation.world_strictly_refines_lexicon
+#print axioms Integration.Kernel.Instances.SituatedValuation.lexicon_still_correct
+#print axioms Integration.Kernel.Instances.SituatedValuation.flip_is_an_ambient_inverse
+#print axioms Integration.Kernel.Instances.SituatedValuation.flip_involutive
+#print axioms Integration.Kernel.Instances.SituatedValuation.lawfulFlip_is_ambient
+#print axioms Integration.Kernel.Instances.SituatedValuation.lawful_flip_exists
+#print axioms Integration.Kernel.Instances.SituatedValuation.ambient_inverse_is_not_lawful
+#print axioms Integration.Kernel.Instances.SituatedValuation.gate_does_not_descend_through_valuation
+
+/-! ### Integration.Kernel.Instances.SourceStage -/
+
+#print axioms Integration.Kernel.Instances.SourceStage.announcement_collides
+#print axioms Integration.Kernel.Instances.SourceStage.stages_differ
+#print axioms Integration.Kernel.Instances.SourceStage.announcement_does_not_descend
+#print axioms Integration.Kernel.Instances.SourceStage.announcement_only_constants
+#print axioms Integration.Kernel.Instances.SourceStage.stage_refines_announcement
+#print axioms Integration.Kernel.Instances.SourceStage.stage_strictly_refines
+#print axioms Integration.Kernel.Instances.SourceStage.inhabits_iff_proofTerm
+#print axioms Integration.Kernel.Instances.SourceStage.receipt_does_not_inhabit
+#print axioms Integration.Kernel.Instances.SourceStage.certificate_does_not_inhabit
+#print axioms Integration.Kernel.Instances.SourceStage.correspondence_does_not_inhabit
+#print axioms Integration.Kernel.Instances.SourceStage.no_combination_of_non_proof_carriers
+#print axioms Integration.Kernel.Instances.SourceStage.flag_true_without_witness
+#print axioms Integration.Kernel.Instances.SourceStage.flags_collide
+#print axioms Integration.Kernel.Instances.SourceStage.witnesses_differ
+#print axioms Integration.Kernel.Instances.SourceStage.flag_does_not_determine_witness
+#print axioms Integration.Kernel.Instances.SourceStage.inhabited_refines_witness
+#print axioms Integration.Kernel.Instances.SourceStage.inhabited_does_not_descend_through_flag
+#print axioms Integration.Kernel.Instances.SourceStage.recovery_is_refinement_not_refutation
+#print axioms Integration.Kernel.Instances.SourceStage.recovery_strictly_narrows
+#print axioms Integration.Kernel.Instances.SourceStage.same_announcement_different_provenance

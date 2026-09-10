@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "totally finite measure"
+ ],
+ "canonical": "Q3307145",
+ "description": "measure that always takes on finite values",
+ "id": "Q3307145",
+ "label": "finite measure"
+}

@@ -1,0 +1,346 @@
+/-
+# The taper shape inequality, and why the curvature donor cannot pay the near core
+
+§34 (`NearCoreGapSplitOptimization`) reduced the finite near core to one fully explicit
+criterion,
+
+    (2J+1) · A · log(|t|+J+4) · 9CΛ²/π²  <  ∫q/2      ⟹   0 < ∫ q·S(t,J) ,
+
+where `Λ` is the taper radius and `C` bounds the curvature `‖(q·cosh(a·))''‖₁` of the
+taper–height profiles.  The criterion is a theorem; whether it can ever be *met* was left
+open.  This module settles that, negatively, and thereby prunes the route.
+
+The obstruction is a shape inequality that holds for every `C²` compactly supported
+taper and involves no zeta data at all:
+
+    ∫ q  ≤  Λ² · ∫ |q''|                                (`integral_le_curvature`)
+
+for `q` supported in `[-Λ, Λ]`.  It is proved from two elementary facts about compactly
+supported functions:
+
+* `two_mul_abs_le_integral_abs_deriv` — `2|f(x)| ≤ ‖f'‖₁`, because `f(x)` is both the
+  integral of `f'` up to `x` and minus its integral from `x` on;
+* `integral_le_of_bound_of_support` — a function supported in `[-Λ,Λ]` and bounded by `B`
+  has integral at most `2ΛB`.
+
+Applying the first to `q'` gives `‖q'‖∞ ≤ ‖q''‖₁/2`, hence `‖q'‖₁ ≤ Λ‖q''‖₁`; applying it
+to `q` gives `‖q‖∞ ≤ Λ‖q''‖₁/2`, hence `∫q ≤ Λ²‖q''‖₁`.
+
+Since `‖q''‖₁` is exactly the curvature of the taper–height profile at height `0`
+(`detWeight_zero`), any curvature constant `C` valid on the whole strip of heights
+satisfies `∫q ≤ Λ²C`.  Feeding that back into the criterion:
+
+* `criterion_implies_count_lt` — the criterion forces
+  `(2J+1)·A·log(|t|+J+4) < π²/18 ≈ 0.548`;
+* `not_criterion_of_unit_local_count` — so it fails as soon as the local counting
+  constant reaches `A·log(|t|+J+4) ≥ 1`, which any zero-carrying window already forces;
+* `floor_nonpos_of_unit_local_count` — equivalently, the explicit floor `∫q/2 − escape`
+  of §34.2 is never positive.
+
+The route is therefore pruned, and pruned *with the reason*: the small-gap pin buys at
+most `Λ²‖q''‖₁/2`, while a single large-gap zero already costs `9Λ²‖q''‖₁/π²`, which is
+larger.  What survives is stated exactly:
+
+* `gap_split_pos_requires_low_gap_proportion` — the split floor of §33 can be positive
+  only if `(4/π²)·highGapMass < lowGapMass`: more than a `4/π² ≈ 0.405` proportion of the
+  near multiplicity mass must sit within the gap threshold.  The near core therefore
+  needs a *clustering* statement about the zeros within distance `π/(3Λ)` of the target
+  ordinate — not a counting bound, not an absolute envelope, and not a sharper form of
+  the quadratic-decay donor, whose loss is exactly what this module quantifies.
+
+Nothing here asserts or assumes the Riemann Hypothesis, and nothing weakens
+`RiemannHypothesisFor`.  No `sorry`, no `axiom`, no Boolean receipt, no numerical
+evidence: the constants `π²/18` and `4/π²` are compared using Mathlib's rational bounds
+for `π`.
+-/
+import Zeta23Bridge.NearCoreGapSplitOptimization
+
+noncomputable section
+
+open scoped Real
+open Zeta23 MeasureTheory intervalIntegral
+
+namespace Zeta23Bridge
+namespace NearCoreTaperShapeNoGo
+
+open Zeta23Bridge.LiteralWeilParityBalance
+open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilOtherZerosChannel
+open Zeta23Bridge.MultiTaperSchurCore
+open Zeta23Bridge.ThreeTaperSchurCore
+open Zeta23Bridge.ThreeTaperSchurGram
+open Zeta23Bridge.ThreeTaperSchurMargin
+open Zeta23Bridge.LiteralWeilProjectiveTaper
+open Zeta23Bridge.ReflectionPairKernelDecay
+open Zeta23Bridge.ReflectionPairCurvatureBound
+open Zeta23Bridge.OffOrdinateCutoffCarrier
+open Zeta23Bridge.NearCoreDeterminantTaper
+open Zeta23Bridge.NearCoreNarrowWindowNoCancellation
+open Zeta23Bridge.OscillatoryKernelDecay
+open Zeta23Bridge.NearCoreGapSplitEvaluation
+open Zeta23Bridge.NearCoreGapSplitOptimization
+
+/-! ## 1. Two elementary facts about compactly supported functions -/
+
+/-- **A compactly supported `C¹` function is at most half of its derivative's mass.**
+`f(x)` is both `∫_{-S}^{x} f'` and `−∫_{x}^{S} f'` for `S` beyond the support, so twice
+its absolute value is at most `‖f'‖₁`. -/
+theorem two_mul_abs_le_integral_abs_deriv {f : ℝ → ℝ} (hf : ContDiff ℝ 1 f)
+    (hfc : HasCompactSupport f) (x : ℝ) :
+    2 * |f x| ≤ ∫ u : ℝ, |deriv f u| := by
+  have hd : Differentiable ℝ f := hf.differentiable (by norm_num)
+  have hcd : Continuous (deriv f) := hf.continuous_deriv le_rfl
+  have hint : Integrable (deriv f) := hcd.integrable_of_hasCompactSupport hfc.deriv
+  have habs : Integrable (fun u : ℝ => |deriv f u|) := hint.abs
+  obtain ⟨R, hR0, hR⟩ := hfc.exists_pos_le_norm
+  set S : ℝ := max R (|x| + 1) with hS
+  have hSR : R ≤ S := le_max_left _ _
+  have hSx : |x| + 1 ≤ S := le_max_right _ _
+  have hS0 : (0 : ℝ) ≤ S := le_trans hR0.le hSR
+  have hx1 : -S ≤ x := by have := neg_abs_le x; linarith
+  have hx2 : x ≤ S := by have := le_abs_self x; linarith
+  have hfS : f S = 0 := hR S (by rw [Real.norm_eq_abs, abs_of_nonneg hS0]; linarith)
+  have hfnS : f (-S) = 0 :=
+    hR (-S) (by rw [Real.norm_eq_abs, abs_neg, abs_of_nonneg hS0]; linarith)
+  have hii : ∀ a b : ℝ, IntervalIntegrable (deriv f) volume a b := fun _ _ =>
+    hint.intervalIntegrable
+  have hiia : ∀ a b : ℝ, IntervalIntegrable (fun u : ℝ => |deriv f u|) volume a b := fun _ _ =>
+    habs.intervalIntegrable
+  have h1 : ∫ u in (-S)..x, deriv f u = f x := by
+    rw [integral_eq_sub_of_hasDerivAt (fun y _ => (hd y).hasDerivAt) (hii _ _), hfnS, sub_zero]
+  have h2 : ∫ u in x..S, deriv f u = -f x := by
+    rw [integral_eq_sub_of_hasDerivAt (fun y _ => (hd y).hasDerivAt) (hii _ _), hfS, zero_sub]
+  have b1 : |f x| ≤ ∫ u in (-S)..x, |deriv f u| := by
+    rw [← h1]; exact abs_integral_le_integral_abs hx1
+  have b2 : |f x| ≤ ∫ u in x..S, |deriv f u| := by
+    have h : |∫ u in x..S, deriv f u| ≤ ∫ u in x..S, |deriv f u| :=
+      abs_integral_le_integral_abs (μ := volume) hx2
+    rw [h2, abs_neg] at h; exact h
+  have hadd : (∫ u in (-S)..x, |deriv f u|) + ∫ u in x..S, |deriv f u|
+      = ∫ u in (-S)..S, |deriv f u| :=
+    integral_add_adjacent_intervals (hiia _ _) (hiia _ _)
+  have hle : (∫ u in (-S)..S, |deriv f u|) ≤ ∫ u : ℝ, |deriv f u| := by
+    rw [integral_of_le (by linarith : (-S : ℝ) ≤ S)]
+    exact setIntegral_le_integral habs (Filter.Eventually.of_forall (fun _ => abs_nonneg _))
+  linarith
+
+/-- A function supported in `[-Λ, Λ]` and bounded by `B` has integral at most `2ΛB`. -/
+theorem integral_le_of_bound_of_support {f : ℝ → ℝ} {Λ B : ℝ} (hΛ : 0 ≤ Λ)
+    (hsupp : ∀ u, Λ < |u| → f u = 0) (hb : ∀ u, |f u| ≤ B) :
+    ∫ u : ℝ, f u ≤ 2 * Λ * B := by
+  have hset : ∫ u in Set.Icc (-Λ) Λ, f u = ∫ u : ℝ, f u := by
+    refine setIntegral_eq_integral_of_forall_compl_eq_zero ?_
+    intro u hu
+    refine hsupp u ?_
+    rcases lt_or_ge Λ |u| with h | h
+    · exact h
+    · exact absurd (Set.mem_Icc.2 ⟨by have := neg_abs_le u; linarith,
+        by have := le_abs_self u; linarith⟩) hu
+  have hvol : (volume : Measure ℝ).real (Set.Icc (-Λ) Λ) = 2 * Λ := by
+    rw [measureReal_def, Real.volume_Icc, ENNReal.toReal_ofReal (by linarith)]
+    ring
+  have hbound : ‖∫ u in Set.Icc (-Λ) Λ, f u‖
+      ≤ B * (volume : Measure ℝ).real (Set.Icc (-Λ) Λ) := by
+    refine norm_setIntegral_le_of_norm_le_const ?_
+      (fun u _ => by rw [Real.norm_eq_abs]; exact hb u)
+    rw [Real.volume_Icc]
+    exact ENNReal.ofReal_lt_top
+  rw [hset, hvol] at hbound
+  have h2 : |∫ u : ℝ, f u| ≤ B * (2 * Λ) := by rw [← Real.norm_eq_abs]; exact hbound
+  have := le_trans (le_abs_self (∫ u : ℝ, f u)) h2
+  linarith
+
+/-- Derivatives vanish where the function vanishes on a neighbourhood. -/
+theorem deriv_eq_zero_outside {q : ℝ → ℝ} {Λ : ℝ}
+    (hsupp : ∀ u, Λ < |u| → q u = 0) : ∀ u, Λ < |u| → deriv q u = 0 := by
+  intro u hu
+  have hopen : IsOpen {x : ℝ | Λ < |x|} := isOpen_lt continuous_const continuous_abs
+  have heq : q =ᶠ[nhds u] (fun _ => (0 : ℝ)) := by
+    filter_upwards [hopen.mem_nhds (show u ∈ {x : ℝ | Λ < |x|} from hu)] with y hy using
+      hsupp y hy
+  rw [heq.deriv_eq]
+  simp
+
+/-! ## 2. The taper shape inequality -/
+
+/-- **The shape inequality.**  A `C²` function supported in `[-Λ, Λ]` has integral at most
+`Λ²` times the total variation of its derivative.  No positivity, no zeta data: this is a
+property of compactly supported tapers. -/
+theorem integral_le_curvature {q : ℝ → ℝ} {Λ : ℝ} (hq : ContDiff ℝ 2 q)
+    (hqc : HasCompactSupport q) (hΛ : 0 ≤ Λ)
+    (hsupp : ∀ u, Λ < |u| → q u = 0) :
+    ∫ u : ℝ, q u ≤ Λ ^ 2 * ∫ u : ℝ, |deriv (deriv q) u| := by
+  set V : ℝ := ∫ u : ℝ, |deriv (deriv q) u| with hV
+  have hV0 : 0 ≤ V := integral_nonneg (fun _ => abs_nonneg _)
+  have hq1 : ContDiff ℝ 1 q := hq.of_le (by norm_num)
+  have hdq1 : ContDiff ℝ 1 (deriv q) := ContDiff.deriv' hq
+  have hA : ∀ x, |deriv q x| ≤ V / 2 := by
+    intro x
+    have := two_mul_abs_le_integral_abs_deriv hdq1 hqc.deriv x
+    linarith
+  have hsuppd : ∀ u, Λ < |u| → |deriv q u| = 0 := by
+    intro u hu; rw [deriv_eq_zero_outside hsupp u hu, abs_zero]
+  have hB : (∫ u : ℝ, |deriv q u|) ≤ 2 * Λ * (V / 2) :=
+    integral_le_of_bound_of_support hΛ hsuppd (fun u => by rw [abs_abs]; exact hA u)
+  have hCsup : ∀ x, |q x| ≤ Λ * V / 2 := by
+    intro x
+    have := two_mul_abs_le_integral_abs_deriv hq1 hqc x
+    linarith
+  have hD : (∫ u : ℝ, q u) ≤ 2 * Λ * (Λ * V / 2) :=
+    integral_le_of_bound_of_support hΛ hsupp hCsup
+  nlinarith
+
+/-! ## 3. The taper mass is bounded by its own curvature constant -/
+
+/-- At height `0` the taper–height profile *is* the taper. -/
+theorem detWeight_zero (n₁ n₂ : Fin 3 → ℝ) (g : Fin 3 → (ℝ → ℝ)) (r : ℝ) :
+    detWeight n₁ n₂ g r 0 = detTaper n₁ n₂ g r := by
+  funext u
+  simp [detWeight]
+
+/-- **The taper mass is bounded by `Λ²` times any curvature constant valid at height
+`0`.**  Since the uniform constant of `exists_uniform_detWeightCurvature_bound` is valid
+on the whole strip `|a| ≤ 1/2`, it is in particular valid at height `0`. -/
+theorem integral_detTaper_le_curvature {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {r Λ C : ℝ} (hΛ : 0 ≤ Λ)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C) :
+    (∫ u : ℝ, detTaper n₁ n₂ g r u) ≤ Λ ^ 2 * C := by
+  have hshape := integral_le_curvature (detTaper_contDiff hg n₁ n₂ r)
+    (detTaper_hasCompactSupport hgc n₁ n₂ r) hΛ hsupp
+  have hbase : (∫ u : ℝ, |deriv (deriv (detTaper n₁ n₂ g r)) u|) ≤ C := by
+    rw [← detWeight_zero n₁ n₂ g r]
+    exact hCbase
+  have hΛ2 : (0 : ℝ) ≤ Λ ^ 2 := by positivity
+  calc ∫ u : ℝ, detTaper n₁ n₂ g r u
+      ≤ Λ ^ 2 * ∫ u : ℝ, |deriv (deriv (detTaper n₁ n₂ g r)) u| := hshape
+    _ ≤ Λ ^ 2 * C := mul_le_mul_of_nonneg_left hbase hΛ2
+
+/-! ## 4. The criterion of §34 cannot be met -/
+
+theorem pi_sq_lt_eighteen : π ^ 2 < 18 := by
+  nlinarith [Real.pi_le_four, Real.pi_pos]
+
+/-- **The criterion forces an impossibly small local zero count.**  If the explicit
+criterion of §34 holds, then `(2J+1)·A·log(|t|+J+4) < π²/18 ≈ 0.548`. -/
+theorem criterion_implies_count_lt {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C A : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C)
+    (hcrit : escapeTerm A C Λ t J < 1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u)) :
+    (2 * (J : ℝ) + 1) * (A * Real.log (|t| + (J : ℝ) + 4)) < π ^ 2 / 18 := by
+  have hπ : (0 : ℝ) < π ^ 2 := by positivity
+  have hC0 : 0 ≤ C := le_trans (detWeightCurvature_nonneg n₁ n₂ g r 0) hCbase
+  have hmass := integral_detTaper_le_curvature hg hgc hΛ hsupp hCbase
+  set N : ℝ := (2 * (J : ℝ) + 1) * (A * Real.log (|t| + (J : ℝ) + 4)) with hN
+  set X : ℝ := C * Λ ^ 2 with hX
+  have hX0 : 0 ≤ X := by positivity
+  have hesc : escapeTerm A C Λ t J = N * (9 * X / π ^ 2) := by
+    unfold escapeTerm
+    rw [hN, hX]; ring
+  have hkey : N * (9 * X / π ^ 2) < X / 2 := by
+    rw [← hesc]
+    have : (1 : ℝ) / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u) ≤ X / 2 := by
+      rw [hX]; nlinarith
+    linarith
+  rw [← mul_div_assoc, div_lt_iff₀ hπ] at hkey
+  rcases hX0.lt_or_eq with hpos | hzero
+  · rw [lt_div_iff₀ (by norm_num : (0:ℝ) < 18)]
+    nlinarith
+  · exfalso
+    rw [← hzero] at hkey
+    simp at hkey
+
+/-- **The criterion fails once the local counting constant reaches one.**  A window that
+carries a zero already forces `A·log(|t|+J+4) ≥ 1`, so the explicit positivity criterion
+of §34 is never available. -/
+theorem not_criterion_of_unit_local_count {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C A : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C)
+    (hcount : 1 ≤ A * Real.log (|t| + (J : ℝ) + 4)) :
+    ¬ (escapeTerm A C Λ t J < 1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u)) := by
+  intro hcrit
+  have hlt := criterion_implies_count_lt hg hgc hΛ hsupp hCbase hcrit
+  have hJ : (1 : ℝ) ≤ 2 * (J : ℝ) + 1 := by
+    have : (0 : ℝ) ≤ (J : ℝ) := Nat.cast_nonneg J
+    linarith
+  have hge : (1 : ℝ) ≤ (2 * (J : ℝ) + 1) * (A * Real.log (|t| + (J : ℝ) + 4)) := by
+    nlinarith
+  have hpi : π ^ 2 / 18 < 1 := by linarith [pi_sq_lt_eighteen]
+  linarith
+
+/-- **The explicit floor of §34.2 is never positive.**  Equivalently: the small-gap pin
+buys at most `Λ²‖q''‖₁/2`, while a single unit of large-gap mass already costs
+`9Λ²‖q''‖₁/π²`, which is more. -/
+theorem floor_nonpos_of_unit_local_count {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C A : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C)
+    (hcount : 1 ≤ A * Real.log (|t| + (J : ℝ) + 4)) :
+    1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u) - escapeTerm A C Λ t J ≤ 0 := by
+  have h := not_criterion_of_unit_local_count hg hgc hΛ hsupp hCbase hcount
+  rw [not_lt] at h
+  linarith
+
+/-! ## 5. What survives: the split needs a clustering proportion -/
+
+/-- **The surviving obligation, quantified.**  The gap-split floor of §33 can be positive
+only if more than a `4/π² ≈ 0.405` proportion of the near multiplicity mass sits within
+the gap threshold.  A counting bound or an absolute envelope cannot supply that: it is a
+statement about the *clustering* of the zeros around the target ordinate. -/
+theorem gap_split_pos_requires_low_gap_proportion {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ D C : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ) (hD : 0 < D)
+    (hDΛ : D * Λ ≤ π / 2)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hCbase : detWeightCurvature n₁ n₂ g r 0 ≤ C)
+    (hpos : 0 < lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      - highGapMass t J D * (C / D ^ 2)) :
+    4 / π ^ 2 * highGapMass t J D < lowGapMass t J D := by
+  have hπ : (0 : ℝ) < π ^ 2 := by positivity
+  have hC0 : 0 ≤ C := le_trans (detWeightCurvature_nonneg n₁ n₂ g r 0) hCbase
+  have hmass := integral_detTaper_le_curvature hg hgc hΛ hsupp hCbase
+  have hlow := lowGapMass_nonneg t J D
+  have hhigh := highGapMass_nonneg t J D
+  have hD2 : (0 : ℝ) < D ^ 2 := by positivity
+  -- the pin is at most `lowGapMass · Λ² C`
+  have hcos : Real.cos (D * Λ) ≤ 1 := Real.cos_le_one _
+  have hqnn : (∫ u : ℝ, detTaper n₁ n₂ g r u) ≤ Λ ^ 2 * C := hmass
+  have hq00 : 0 ≤ ∫ u : ℝ, detTaper n₁ n₂ g r u := integral_nonneg hq0
+  have hpin : lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      ≤ lowGapMass t J D * (Λ ^ 2 * C) := by
+    refine mul_le_mul_of_nonneg_left ?_ hlow
+    nlinarith
+  -- the cost is at least `highGapMass · 4Λ²C/π²`
+  have hDΛ2 : D ^ 2 * Λ ^ 2 ≤ π ^ 2 / 4 := by nlinarith [Real.pi_pos, mul_nonneg hD.le hΛ]
+  have hcost : highGapMass t J D * (4 * (Λ ^ 2 * C) / π ^ 2)
+      ≤ highGapMass t J D * (C / D ^ 2) := by
+    refine mul_le_mul_of_nonneg_left ?_ hhigh
+    rw [div_le_div_iff₀ hπ hD2]
+    nlinarith
+  -- so the positivity forces the proportion
+  have hkey : highGapMass t J D * (4 * (Λ ^ 2 * C) / π ^ 2)
+      < lowGapMass t J D * (Λ ^ 2 * C) := by linarith
+  set Y : ℝ := Λ ^ 2 * C with hY
+  have hY0 : 0 ≤ Y := by positivity
+  rcases hY0.lt_or_eq with hYpos | hYzero
+  · have h4 : highGapMass t J D * (4 / π ^ 2) < lowGapMass t J D := by
+      have hmul : highGapMass t J D * (4 * Y / π ^ 2) < lowGapMass t J D * Y := hkey
+      have : (highGapMass t J D * (4 / π ^ 2)) * Y < lowGapMass t J D * Y := by
+        calc (highGapMass t J D * (4 / π ^ 2)) * Y
+            = highGapMass t J D * (4 * Y / π ^ 2) := by field_simp
+          _ < lowGapMass t J D * Y := hmul
+      exact lt_of_mul_lt_mul_right (by linarith) hY0
+    linarith [h4]
+  · exfalso
+    rw [← hYzero] at hkey
+    simp at hkey
+
+end NearCoreTaperShapeNoGo
+end Zeta23Bridge

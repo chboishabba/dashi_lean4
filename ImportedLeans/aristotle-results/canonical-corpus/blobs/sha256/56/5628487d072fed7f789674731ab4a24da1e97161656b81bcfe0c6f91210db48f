@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "Q21510859",
+ "description": "type of constraint for Wikidata properties: used to specify that the value for this property has to be one of a given set of items",
+ "id": "Q21510859",
+ "kind": "item",
+ "label": "one-of constraint"
+}

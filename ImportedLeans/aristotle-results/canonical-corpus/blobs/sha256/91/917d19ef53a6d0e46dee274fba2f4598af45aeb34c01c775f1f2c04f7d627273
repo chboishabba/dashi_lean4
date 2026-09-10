@@ -1,0 +1,307 @@
+/-
+# The finite near core admits no cancellation inside the sampling window
+
+`NearCoreDeterminantTaper` reduces the whole surviving off-ordinate energy of the
+three-taper observer to one scalar,
+
+    ∫ q(u) · S(t, J; u) du ,
+    S(t, J; u) = ∑_{σ ∈ nearOffFinset t J} m_σ · cosh(a_σ u) · cos((b_σ − t) u) ,
+
+`q` the determinant taper, and leaves as the analytic obligation an *estimate* of that
+target-centred finite exponential sum: a bound `B_near` small enough that, together with
+the far remainder and the gamma bracket, it undercuts the cluster margin.
+
+This module settles what that finite sum actually does in the regime the lane uses.
+The high-ordinate taper is supported in `|u| ≤ Λ` with `Λ` of order `|t|⁻¹`, while the
+cutoff `J` is a fixed accuracy parameter, so `J · Λ ≤ π/2`: *every* phase
+`(b_σ − t) u` occurring in the sum lies in `[−π/2, π/2]`.  Consequently
+
+* every cosine factor is nonnegative, indeed `≥ cos(J Λ)`;
+* every `cosh` factor is `≥ 1` and `≤ cosh(Λ/2)` (heights lie in the critical strip).
+
+So for a nonnegative determinant taper the finite near core is **pinned between two
+positive multiples of the near mass**:
+
+    nearMass(t,J) · cos(JΛ) · ∫ q  ≤  ∫ q · S  ≤  nearMass(t,J) · cosh(Λ/2) · ∫ q ,
+
+    nearMass(t,J) = ∑_{σ ∈ nearOffFinset t J} m_σ .
+
+There is no cancellation to find: inside the sampling window the near zeros all pull in
+the same direction, and the finite core is of the size of the *number of zeros within
+distance `J` of the target ordinate*, not of the cluster margin.
+
+The consequences recorded here are honest no-gos, not estimates:
+
+* `not_scalar_bound_of_lower_bound`, `not_scalar_bound_of_narrow_window` — whenever the
+  pinned lower bound already reaches the consumer threshold, the scalar hypothesis of
+  `normSqP_elim2_offVec_lt_of_scalar_bound` is unsatisfiable, so the direct
+  phase-sensitive route cannot close the lane at that cutoff and that taper;
+* `not_normSqP_elim2_offVec_lt_of_narrow_window` — the same statement transported to the
+  surviving energy itself.
+
+Nothing here asserts or assumes the Riemann Hypothesis, and nothing here weakens
+`RiemannHypothesisFor`.  No `sorry`, no `axiom`, no Boolean receipt, no numerical
+evidence.
+-/
+import Zeta23Bridge.NearCoreDeterminantTaper
+
+noncomputable section
+
+open scoped Real
+open Zeta23 MeasureTheory
+
+namespace Zeta23Bridge
+namespace NearCoreNarrowWindowNoCancellation
+
+open Zeta23Bridge.LiteralWeilParityBalance
+open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilOtherZerosChannel
+open Zeta23Bridge.ReflectionPairCurvatureBound
+open Zeta23Bridge.MultiTaperSchurCore
+open Zeta23Bridge.ThreeTaperSchurCore
+open Zeta23Bridge.ThreeTaperSchurGram
+open Zeta23Bridge.OffOrdinateCutoffCarrier
+open Zeta23Bridge.NearCoreDeterminantTaper
+
+/-! ## 1. The near mass -/
+
+/-- The **near mass**: the total multiplicity of the zeros within distance `J` of the
+target ordinate `t` (excluding the target ordinate itself). -/
+def nearMass (t : ℝ) (J : ℕ) : ℝ :=
+  ∑ σ ∈ nearOffFinset t J, ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+
+theorem nearMass_nonneg (t : ℝ) (J : ℕ) : 0 ≤ nearMass t J :=
+  Finset.sum_nonneg (fun _ _ => by positivity)
+
+/-- A single zero within distance `J` of the target ordinate already contributes mass
+`1`: multiplicities are at least one. -/
+theorem one_le_nearMass_of_mem {t : ℝ} {J : ℕ} {σ : ((SameOrd t)ᶜ : Set Zeros)}
+    (hσ : σ ∈ nearOffFinset t J) : 1 ≤ nearMass t J := by
+  classical
+  have h1 : (1 : ℝ) ≤ ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ) := by
+    exact_mod_cast (Zeta23.zetaZeroConfig).one_le_mult ((σ : Zeros) : ℂ) (σ : Zeros).2
+  refine le_trans h1 ?_
+  exact Finset.single_le_sum (f := fun σ : ((SameOrd t)ᶜ : Set Zeros) =>
+    ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)) (fun _ _ => by positivity) hσ
+
+/-! ## 2. Every phase in the window is nonnegative -/
+
+/-- Inside the sampling window every target-centred phase of a near zero is bounded by
+`J Λ ≤ π/2`, so its cosine is at least `cos (J Λ) ≥ 0`. -/
+theorem cos_phase_ge {t Λ : ℝ} {J : ℕ} (hJΛ : (J : ℝ) * Λ ≤ π / 2)
+    {σ : ((SameOrd t)ᶜ : Set Zeros)} (hσ : σ ∈ nearOffFinset t J)
+    {u : ℝ} (hu : |u| ≤ Λ) :
+    Real.cos ((J : ℝ) * Λ) ≤ Real.cos ((((σ : Zeros) : ℂ).im - t) * u) := by
+  have hnear : |(((σ : Zeros) : ℂ).im - t)| < (J : ℝ) :=
+    (mem_nearOffFinset_iff t J σ).1 hσ
+  have habs : |(((σ : Zeros) : ℂ).im - t) * u| ≤ (J : ℝ) * Λ := by
+    rw [abs_mul]
+    exact mul_le_mul hnear.le hu (abs_nonneg u) (le_trans (abs_nonneg _) hnear.le)
+  have hpi : (J : ℝ) * Λ ≤ π := le_trans hJΛ (by linarith [Real.pi_pos])
+  have h := Real.cos_le_cos_of_nonneg_of_le_pi (abs_nonneg _) hpi habs
+  rwa [Real.cos_abs] at h
+
+theorem cos_window_nonneg {Λ : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ) (hJΛ : (J : ℝ) * Λ ≤ π / 2) :
+    0 ≤ Real.cos ((J : ℝ) * Λ) := by
+  refine Real.cos_nonneg_of_mem_Icc ⟨?_, hJΛ⟩
+  have : (0 : ℝ) ≤ (J : ℝ) * Λ := mul_nonneg (Nat.cast_nonneg J) hΛ
+  linarith [Real.pi_pos]
+
+/-! ## 3. The local zero phase sum is pinned inside the window -/
+
+/-- **Lower pin.**  Inside the sampling window every term of the local zero phase sum is
+at least `m_σ cos(JΛ)`, so the sum is at least `nearMass · cos(JΛ)`. -/
+theorem localZeroPhaseSum_ge {t Λ : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ) (hJΛ : (J : ℝ) * Λ ≤ π / 2)
+    {u : ℝ} (hu : |u| ≤ Λ) :
+    nearMass t J * Real.cos ((J : ℝ) * Λ) ≤ localZeroPhaseSum t J u := by
+  classical
+  have hc0 : 0 ≤ Real.cos ((J : ℝ) * Λ) := cos_window_nonneg hΛ hJΛ
+  unfold localZeroPhaseSum nearMass
+  rw [Finset.sum_mul]
+  refine Finset.sum_le_sum (fun σ hσ => ?_)
+  have hm : (0 : ℝ) ≤ ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ) := by positivity
+  have hcosh : (1 : ℝ) ≤ Real.cosh (heightOf (σ : Zeros) * u) := Real.one_le_cosh _
+  have hcos := cos_phase_ge (t := t) (J := J) hJΛ hσ hu
+  have hcosnn : 0 ≤ Real.cos ((((σ : Zeros) : ℂ).im - t) * u) := le_trans hc0 hcos
+  nlinarith [mul_nonneg (mul_nonneg hm hcosnn) (sub_nonneg.2 hcosh),
+    mul_le_mul_of_nonneg_left hcos hm]
+
+/-- **Upper pin.**  Inside the sampling window the heights of the near zeros give
+`cosh(a_σ u) ≤ cosh(Λ/2)`, and every cosine is at most one. -/
+theorem localZeroPhaseSum_le {t Λ : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ)
+    {u : ℝ} (hu : |u| ≤ Λ) :
+    localZeroPhaseSum t J u ≤ nearMass t J * Real.cosh (Λ / 2) := by
+  classical
+  unfold localZeroPhaseSum nearMass
+  rw [Finset.sum_mul]
+  refine Finset.sum_le_sum (fun σ hσ => ?_)
+  have hm : (0 : ℝ) ≤ ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ) := by positivity
+  have hheight : |heightOf (σ : Zeros)| ≤ 1 / 2 := abs_heightOf_le _
+  have hmono : Real.cosh (heightOf (σ : Zeros) * u) ≤ Real.cosh (Λ / 2) := by
+    rw [Real.cosh_le_cosh, abs_mul, abs_of_nonneg (by linarith : (0 : ℝ) ≤ Λ / 2)]
+    nlinarith [abs_nonneg (heightOf (σ : Zeros)), abs_nonneg u, hheight, hu]
+  have hcosh0 : (0 : ℝ) ≤ Real.cosh (heightOf (σ : Zeros) * u) :=
+    le_trans zero_le_one (Real.one_le_cosh _)
+  have hcos_le : Real.cos ((((σ : Zeros) : ℂ).im - t) * u) ≤ 1 := Real.cos_le_one _
+  have hcos_ge : -1 ≤ Real.cos ((((σ : Zeros) : ℂ).im - t) * u) := Real.neg_one_le_cos _
+  nlinarith [mul_nonneg hm hcosh0, mul_le_mul_of_nonneg_left hmono hm,
+    mul_nonneg (mul_nonneg hm hcosh0) (sub_nonneg.2 hcos_le)]
+
+/-! ## 4. The scalar frontier quantity is pinned -/
+
+variable {q : ℝ → ℝ}
+
+theorem integrable_taper_phaseSum (hq : Continuous q) (hqc : HasCompactSupport q)
+    (t : ℝ) (J : ℕ) : Integrable (fun u : ℝ => q u * localZeroPhaseSum t J u) := by
+  classical
+  have hcont : Continuous (localZeroPhaseSum t J) := by
+    unfold localZeroPhaseSum
+    exact continuous_finsetSum _ (fun σ _ => by fun_prop)
+  exact Continuous.integrable_of_hasCompactSupport (hq.mul hcont) (hqc.mul_right)
+
+/-- **The finite near core is bounded below by the near mass.**  For a nonnegative
+determinant taper supported in the sampling window the scalar frontier quantity cannot
+be small: it is at least `cos(JΛ)` times the near mass times the taper mass. -/
+theorem integral_taper_phaseSum_ge {t Λ : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ)
+    (hJΛ : (J : ℝ) * Λ ≤ π / 2) (hq : Continuous q) (hqc : HasCompactSupport q)
+    (hq0 : ∀ u, 0 ≤ q u) (hsupp : ∀ u, Λ < |u| → q u = 0) :
+    nearMass t J * Real.cos ((J : ℝ) * Λ) * (∫ u : ℝ, q u)
+      ≤ ∫ u : ℝ, q u * localZeroPhaseSum t J u := by
+  classical
+  have hqint : Integrable q := hq.integrable_of_hasCompactSupport hqc
+  have hmono : ∀ u : ℝ,
+      q u * (nearMass t J * Real.cos ((J : ℝ) * Λ)) ≤ q u * localZeroPhaseSum t J u := by
+    intro u
+    by_cases hu : |u| ≤ Λ
+    · exact mul_le_mul_of_nonneg_left (localZeroPhaseSum_ge hΛ hJΛ hu) (hq0 u)
+    · rw [hsupp u (not_le.1 hu)]; simp
+  have hle : (∫ u : ℝ, q u * (nearMass t J * Real.cos ((J : ℝ) * Λ)))
+      ≤ ∫ u : ℝ, q u * localZeroPhaseSum t J u :=
+    integral_mono (hqint.mul_const _) (integrable_taper_phaseSum hq hqc t J) hmono
+  rwa [integral_mul_const, mul_comm ((∫ u : ℝ, q u))] at hle
+
+/-- **The finite near core is bounded above by the near mass.**  The companion of
+`integral_taper_phaseSum_ge`: the core is *pinned*, not merely bounded below. -/
+theorem integral_taper_phaseSum_le {t Λ : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ)
+    (hq : Continuous q) (hqc : HasCompactSupport q)
+    (hq0 : ∀ u, 0 ≤ q u) (hsupp : ∀ u, Λ < |u| → q u = 0) :
+    (∫ u : ℝ, q u * localZeroPhaseSum t J u)
+      ≤ nearMass t J * Real.cosh (Λ / 2) * (∫ u : ℝ, q u) := by
+  classical
+  have hqint : Integrable q := hq.integrable_of_hasCompactSupport hqc
+  have hmono : ∀ u : ℝ,
+      q u * localZeroPhaseSum t J u ≤ q u * (nearMass t J * Real.cosh (Λ / 2)) := by
+    intro u
+    by_cases hu : |u| ≤ Λ
+    · exact mul_le_mul_of_nonneg_left (localZeroPhaseSum_le hΛ hu) (hq0 u)
+    · rw [hsupp u (not_le.1 hu)]; simp
+  have hle : (∫ u : ℝ, q u * localZeroPhaseSum t J u)
+      ≤ ∫ u : ℝ, q u * (nearMass t J * Real.cosh (Λ / 2)) :=
+    integral_mono (integrable_taper_phaseSum hq hqc t J) (hqint.mul_const _) hmono
+  rwa [integral_mul_const, mul_comm ((∫ u : ℝ, q u))] at hle
+
+/-- **No cancellation inside the window.**  Both pins together. -/
+theorem integral_taper_phaseSum_pinned {t Λ : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ)
+    (hJΛ : (J : ℝ) * Λ ≤ π / 2) (hq : Continuous q) (hqc : HasCompactSupport q)
+    (hq0 : ∀ u, 0 ≤ q u) (hsupp : ∀ u, Λ < |u| → q u = 0) :
+    nearMass t J * Real.cos ((J : ℝ) * Λ) * (∫ u : ℝ, q u)
+        ≤ ∫ u : ℝ, q u * localZeroPhaseSum t J u
+      ∧ (∫ u : ℝ, q u * localZeroPhaseSum t J u)
+        ≤ nearMass t J * Real.cosh (Λ / 2) * (∫ u : ℝ, q u) :=
+  ⟨integral_taper_phaseSum_ge hΛ hJΛ hq hqc hq0 hsupp,
+    integral_taper_phaseSum_le hΛ hq hqc hq0 hsupp⟩
+
+/-- **One near zero already fixes the order of magnitude.**  If any off-ordinate zero
+lies within distance `J` of the target, the finite near core is at least
+`cos(JΛ) · ∫ q`: the core is comparable to the taper mass itself, not to the
+`O(|t|^{-2})` cluster margin the lane must undercut. -/
+theorem integral_taper_phaseSum_ge_taperMass {t Λ : ℝ} {J : ℕ}
+    {σ : ((SameOrd t)ᶜ : Set Zeros)} (hσ : σ ∈ nearOffFinset t J) (hΛ : 0 ≤ Λ)
+    (hJΛ : (J : ℝ) * Λ ≤ π / 2) (hq : Continuous q) (hqc : HasCompactSupport q)
+    (hq0 : ∀ u, 0 ≤ q u) (hsupp : ∀ u, Λ < |u| → q u = 0) (hmass : 0 ≤ ∫ u : ℝ, q u) :
+    Real.cos ((J : ℝ) * Λ) * (∫ u : ℝ, q u)
+      ≤ ∫ u : ℝ, q u * localZeroPhaseSum t J u := by
+  refine le_trans ?_ (integral_taper_phaseSum_ge hΛ hJΛ hq hqc hq0 hsupp)
+  have hc0 : 0 ≤ Real.cos ((J : ℝ) * Λ) := cos_window_nonneg hΛ hJΛ
+  have hmassmul : Real.cos ((J : ℝ) * Λ) * (∫ u : ℝ, q u)
+      ≤ nearMass t J * Real.cos ((J : ℝ) * Λ) * (∫ u : ℝ, q u) := by
+    have h1 : Real.cos ((J : ℝ) * Λ) ≤ nearMass t J * Real.cos ((J : ℝ) * Λ) := by
+      nlinarith [one_le_nearMass_of_mem hσ, hc0]
+    exact mul_le_mul_of_nonneg_right h1 hmass
+  exact hmassmul
+
+/-! ## 5. The consumer no-go -/
+
+/-- A nonnegative lower bound for the scalar frontier quantity that already reaches the
+consumer threshold makes the scalar hypothesis of
+`normSqP_elim2_offVec_lt_of_scalar_bound` unsatisfiable. -/
+theorem not_scalar_bound_of_lower_bound {S E L W : ℝ}
+    (hL0 : 0 ≤ L) (hLS : L ≤ S) (hE : 0 ≤ E) (hW : W ≤ (2 * L) ^ 2) :
+    ¬ ((|2 * S| + E) ^ 2 < W) := by
+  intro hlt
+  have h1 : 2 * L ≤ |2 * S| := le_trans (by linarith) (le_abs_self (2 * S))
+  have h2 : (2 * L) ^ 2 ≤ (|2 * S| + E) ^ 2 := by nlinarith [abs_nonneg (2 * S)]
+  linarith
+
+/-- **The direct route is closed inside the sampling window.**  For a nonnegative
+determinant taper supported in `|u| ≤ Λ` with `J Λ ≤ π/2`, if the pinned lower bound
+`2 · nearMass · cos(JΛ) · ∫ q` already reaches the consumer threshold
+`√(wedgeSq · M)`, then no estimate of the finite target-centred sum can satisfy the
+scalar hypothesis: the near core is genuinely that large. -/
+theorem not_scalar_bound_of_narrow_window {t Λ : ℝ} {J : ℕ} {E W : ℝ} (hΛ : 0 ≤ Λ)
+    (hJΛ : (J : ℝ) * Λ ≤ π / 2) (hq : Continuous q) (hqc : HasCompactSupport q)
+    (hq0 : ∀ u, 0 ≤ q u) (hsupp : ∀ u, Λ < |u| → q u = 0) (hE : 0 ≤ E)
+    (hmass : 0 ≤ ∫ u : ℝ, q u)
+    (hW : W ≤ (2 * (nearMass t J * Real.cos ((J : ℝ) * Λ) * (∫ u : ℝ, q u))) ^ 2) :
+    ¬ ((|2 * ∫ u : ℝ, q u * localZeroPhaseSum t J u| + E) ^ 2 < W) := by
+  refine not_scalar_bound_of_lower_bound ?_ ?_ hE hW
+  · exact mul_nonneg (mul_nonneg (nearMass_nonneg t J) (cos_window_nonneg hΛ hJΛ)) hmass
+  · exact integral_taper_phaseSum_ge hΛ hJΛ hq hqc hq0 hsupp
+
+/-- **The pin is a property of the quantity, not of the method.**  Any budget for the
+finite near core — obtained by a direct phase-sensitive estimate, by a target-centred
+explicit-formula window, or by any other route — is at least the pinned lower bound.
+So no change of method escapes §32: only a change of taper or of cutoff does. -/
+theorem budget_ge_pinned_lower_bound {t Λ : ℝ} {J : ℕ} {B : ℝ} (hΛ : 0 ≤ Λ)
+    (hJΛ : (J : ℝ) * Λ ≤ π / 2) (hq : Continuous q) (hqc : HasCompactSupport q)
+    (hq0 : ∀ u, 0 ≤ q u) (hsupp : ∀ u, Λ < |u| → q u = 0)
+    (hB : |∫ u : ℝ, q u * localZeroPhaseSum t J u| ≤ B) :
+    nearMass t J * Real.cos ((J : ℝ) * Λ) * (∫ u : ℝ, q u) ≤ B :=
+  le_trans (integral_taper_phaseSum_ge hΛ hJΛ hq hqc hq0 hsupp)
+    (le_trans (le_abs_self _) hB)
+
+/-- **A necessary condition on the search parameters.**  If the finite near core is to
+be smaller than a single zero's worth of taper mass — which is what the lane needs, the
+cluster margin being `O(|t|^{-2})` relative to the baseline — then the cutoff must be
+large enough for the target-centred phases to oscillate inside the taper's support:
+`π/2 < J · Λ`.  This converts §32 into a checkable constraint on `(J, Λ)` rather than a
+demand for a sharper estimate. -/
+theorem window_must_exceed_quarter_period {t Λ : ℝ} {J : ℕ}
+    {σ : ((SameOrd t)ᶜ : Set Zeros)} (hσ : σ ∈ nearOffFinset t J) (hΛ : 0 ≤ Λ)
+    (hq : Continuous q) (hqc : HasCompactSupport q) (hq0 : ∀ u, 0 ≤ q u)
+    (hsupp : ∀ u, Λ < |u| → q u = 0) (hmass : 0 ≤ ∫ u : ℝ, q u)
+    (hsmall : (∫ u : ℝ, q u * localZeroPhaseSum t J u)
+      < Real.cos ((J : ℝ) * Λ) * (∫ u : ℝ, q u)) :
+    ¬ ((J : ℝ) * Λ ≤ π / 2) := by
+  intro hJΛ
+  exact absurd (integral_taper_phaseSum_ge_taperMass hσ hΛ hJΛ hq hqc hq0 hsupp hmass)
+    (not_le.2 hsmall)
+
+/-- The same no-go on the literal determinant taper of the three-taper observer: with a
+nonnegative determinant taper supported in the sampling window, the scalar route to
+`normSqP (elim2 n₁ n₂ (offVec g t r)) < M` is unavailable at that cutoff. -/
+theorem not_scalar_bound_detTaper {g : Fin 3 → (ℝ → ℝ)} {n₁ n₂ : Fin 3 → ℝ}
+    {t r Λ M E : ℝ} {J : ℕ} (hΛ : 0 ≤ Λ) (hJΛ : (J : ℝ) * Λ ≤ π / 2)
+    (hq : Continuous (detTaper n₁ n₂ g r)) (hqc : HasCompactSupport (detTaper n₁ n₂ g r))
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0) (hE : 0 ≤ E)
+    (hmass : 0 ≤ ∫ u : ℝ, detTaper n₁ n₂ g r u)
+    (hW : wedgeSq n₁ n₂ * M
+      ≤ (2 * (nearMass t J * Real.cos ((J : ℝ) * Λ)
+            * (∫ u : ℝ, detTaper n₁ n₂ g r u))) ^ 2) :
+    ¬ ((|2 * ∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u| + E) ^ 2
+        < wedgeSq n₁ n₂ * M) :=
+  not_scalar_bound_of_narrow_window hΛ hJΛ hq hqc hq0 hsupp hE hmass hW
+
+end NearCoreNarrowWindowNoCancellation
+end Zeta23Bridge

@@ -1,0 +1,265 @@
+/-
+# The optimized gap split: a low-gap floor and an explicit decision criterion
+
+`NearCoreGapSplitEvaluation` evaluates the finite near core
+
+    ∫ q(u) · S(t, J; u) du ,
+    S(t, J; u) = ∑_{σ ∈ nearOffFinset t J} m_σ · cosh(a_σ u) · cos((b_σ − t) u) ,
+
+at an *arbitrary* cutoff `J` by splitting the near carrier at a free gap threshold `D`:
+
+    lowGapMass(t,J,D) · cos(DΛ) · ∫q  −  highGapMass(t,J,D) · C/D²  ≤  ∫ q·S ,
+
+and bounds the escape term by the local zero count,
+`highGapMass ≤ (2J+1)·A·log(|t|+J+4)`.  Two quantities in that bound were still free:
+the threshold `D`, and the small-gap mass `lowGapMass`.  This module fixes both.
+
+* **The threshold.**  The constraint is `D·Λ ≤ π/2`; the pin degenerates exactly at the
+  endpoint, where `cos(DΛ) = 0`.  Choosing `D = π/(3Λ)` keeps `cos(DΛ) = 1/2` and makes
+  the escape term `C/D² = 9CΛ²/π²` explicit in the taper data alone
+  (`integral_taper_phaseSum_ge_optimized`).  No parameter is left to tune.
+
+* **The small-gap mass.**  `lowGapMass` is not an unknown when the target ordinate is
+  itself carried by a near zero: a single zero with target gap at most `D` already
+  contributes its multiplicity, which is at least one
+  (`one_le_lowGapMass_of_near_target`).  So the pin has an unconditional floor `∫q/2`.
+
+Together these produce the first *fully explicit* decision criterion for the finite near
+core (`near_core_pos_of_criterion`):
+
+    (2J+1) · A · log(|t|+J+4) · 9CΛ²/π²  <  ∫q / 2   ⟹   0 < ∫ q·S ,
+
+an inequality between the taper constants `(∫q, Λ, C)` and the local counting constant
+`A` alone — and, through `not_scalar_bound_of_criterion`, an outright refutation of the
+scalar hypothesis of the near-core consumer whenever it holds.
+
+This is a *criterion*, not a theorem that the criterion holds: nothing here asserts that
+a taper triple realising it exists, and the escape region — where the local zero count
+times `9CΛ²/π²` exceeds half the taper mass — is precisely the surviving obligation.
+Nothing here asserts or assumes the Riemann Hypothesis, and nothing weakens
+`RiemannHypothesisFor`.  No `sorry`, no `axiom`, no Boolean receipt, no numerical
+evidence.
+-/
+import Zeta23Bridge.NearCoreGapSplitEvaluation
+
+noncomputable section
+
+open scoped Real
+open Zeta23 MeasureTheory
+
+namespace Zeta23Bridge
+namespace NearCoreGapSplitOptimization
+
+open Zeta23Bridge.LiteralWeilParityBalance
+open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilOtherZerosChannel
+open Zeta23Bridge.MultiTaperSchurCore
+open Zeta23Bridge.ThreeTaperSchurCore
+open Zeta23Bridge.ThreeTaperSchurGram
+open Zeta23Bridge.ThreeTaperSchurMargin
+open Zeta23Bridge.LiteralWeilProjectiveTaper
+open Zeta23Bridge.ReflectionPairKernelDecay
+open Zeta23Bridge.ReflectionPairCurvatureBound
+open Zeta23Bridge.OffOrdinateCutoffCarrier
+open Zeta23Bridge.NearCoreDeterminantTaper
+open Zeta23Bridge.NearCoreNarrowWindowNoCancellation
+open Zeta23Bridge.OscillatoryKernelDecay
+open Zeta23Bridge.ProjectedZeroTailSummability
+open Zeta23Bridge.NearCoreGapSplitEvaluation
+
+/-! ## 1. The low-gap floor -/
+
+/-- A near zero whose target gap is at most `D` lies in the small-gap part of the split. -/
+theorem mem_lowGapFinset_of_gap_le {t : ℝ} {J : ℕ} {D : ℝ}
+    {σ : ((SameOrd t)ᶜ : Set Zeros)} (hσ : σ ∈ nearOffFinset t J)
+    (hgap : |(((σ : Zeros) : ℂ).im - t)| ≤ D) :
+    σ ∈ lowGapFinset t J D := by
+  classical
+  exact Finset.mem_filter.2 ⟨hσ, hgap⟩
+
+/-- A single small-gap zero already contributes its multiplicity to the small-gap mass. -/
+theorem mult_le_lowGapMass {t : ℝ} {J : ℕ} {D : ℝ}
+    {σ : ((SameOrd t)ᶜ : Set Zeros)} (hσ : σ ∈ nearOffFinset t J)
+    (hgap : |(((σ : Zeros) : ℂ).im - t)| ≤ D) :
+    ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ) ≤ lowGapMass t J D :=
+  Finset.single_le_sum (f := fun σ : ((SameOrd t)ᶜ : Set Zeros) =>
+    ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)) (fun _ _ => by positivity)
+    (mem_lowGapFinset_of_gap_le hσ hgap)
+
+/-- **The small-gap mass is not an unknown.**  If the target ordinate is carried by a
+near zero whose gap is at most the threshold, the small-gap mass is at least one, because
+every zero of the carrier has multiplicity at least one. -/
+theorem one_le_lowGapMass_of_near_target {t : ℝ} {J : ℕ} {D : ℝ}
+    {σ : ((SameOrd t)ᶜ : Set Zeros)} (hσ : σ ∈ nearOffFinset t J)
+    (hgap : |(((σ : Zeros) : ℂ).im - t)| ≤ D) :
+    (1 : ℝ) ≤ lowGapMass t J D := by
+  have hm : 1 ≤ (Zeta23.zetaZeroConfig).mult ((σ : Zeros) : ℂ) :=
+    (Zeta23.zetaZeroConfig).one_le_mult ((σ : Zeros) : ℂ) (σ : Zeros).2
+  have hmR : (1 : ℝ) ≤ ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ) := by exact_mod_cast hm
+  exact le_trans hmR (mult_le_lowGapMass hσ hgap)
+
+/-! ## 2. The optimized threshold `D = π/(3Λ)` -/
+
+/-- The optimized threshold is admissible: it is positive and `D·Λ = π/3 ≤ π/2`. -/
+theorem optThreshold_pos {Λ : ℝ} (hΛ : 0 < Λ) : 0 < π / (3 * Λ) := by
+  have := Real.pi_pos
+  positivity
+
+theorem optThreshold_mul {Λ : ℝ} (hΛ : 0 < Λ) : π / (3 * Λ) * Λ = π / 3 := by
+  field_simp
+
+theorem optThreshold_mul_le {Λ : ℝ} (hΛ : 0 < Λ) : π / (3 * Λ) * Λ ≤ π / 2 := by
+  rw [optThreshold_mul hΛ]
+  have := Real.pi_pos
+  linarith
+
+theorem cos_optThreshold {Λ : ℝ} (hΛ : 0 < Λ) : Real.cos (π / (3 * Λ) * Λ) = 1 / 2 := by
+  rw [optThreshold_mul hΛ, Real.cos_pi_div_three]
+
+theorem curvature_at_optThreshold {C Λ : ℝ} (hΛ : 0 < Λ) :
+    C / (π / (3 * Λ)) ^ 2 = 9 * C * Λ ^ 2 / π ^ 2 := by
+  have hpi : (π : ℝ) ≠ 0 := ne_of_gt Real.pi_pos
+  have hΛ' : (Λ : ℝ) ≠ 0 := ne_of_gt hΛ
+  field_simp
+  ring
+
+/-- The explicit escape term of the optimized split: the local zero count of the near
+carrier weighted by the curvature constant at the optimized threshold. -/
+def escapeTerm (A C Λ t : ℝ) (J : ℕ) : ℝ :=
+  (2 * (J : ℝ) + 1) * (A * Real.log (|t| + (J : ℝ) + 4)) * (9 * C * Λ ^ 2 / π ^ 2)
+
+theorem escapeTerm_nonneg {A C Λ t : ℝ} {J : ℕ} (hA0 : 0 ≤ A) (hC0 : 0 ≤ C)
+    (ht : 1 ≤ |t| + (J : ℝ) + 4) : 0 ≤ escapeTerm A C Λ t J := by
+  have hlog : 0 ≤ Real.log (|t| + (J : ℝ) + 4) := Real.log_nonneg ht
+  have hJ : (0 : ℝ) ≤ 2 * (J : ℝ) + 1 := by positivity
+  unfold escapeTerm
+  have h1 : 0 ≤ A * Real.log (|t| + (J : ℝ) + 4) := mul_nonneg hA0 hlog
+  have h2 : 0 ≤ 9 * C * Λ ^ 2 / π ^ 2 := by positivity
+  exact mul_nonneg (mul_nonneg hJ h1) h2
+
+/-- **The gap split at the optimized threshold.**  Choosing `D = π/(3Λ)` — the largest
+threshold at which the small-gap pin still retains half of the taper mass — the signed
+evaluation of the finite near core becomes an inequality in the taper constants
+`(∫q, Λ, C)`, the counting constant `A` and the cutoff alone. -/
+theorem integral_taper_phaseSum_ge_optimized {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C A : ℝ} {J : ℕ}
+    (hΛ : 0 < Λ) (hC0 : 0 ≤ C) (hA0 : 0 ≤ A)
+    (hloc : ∀ τ : ℝ, ((zetaZeroConfig).N τ (τ + 1) : ℝ) ≤ A * Real.log (|τ| + 3))
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hC : ∀ σ ∈ nearOffFinset t J,
+      detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros)) ≤ C) :
+    lowGapMass t J (π / (3 * Λ)) * (1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+        - escapeTerm A C Λ t J
+      ≤ ∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u := by
+  have h := integral_taper_phaseSum_ge_explicit (D := π / (3 * Λ)) hg hgc hΛ.le
+    (optThreshold_pos hΛ) (optThreshold_mul_le hΛ) hC0 hA0 hloc hq0 hsupp hC
+  rwa [cos_optThreshold hΛ, curvature_at_optThreshold hΛ] at h
+
+/-! ## 3. The decision criterion -/
+
+/-- **The finite near core is positive as soon as the escape term is small.**  If the
+target ordinate is carried by a near zero within the optimized threshold, and the local
+zero count times `9CΛ²/π²` stays below half the taper mass, then the finite near core is
+strictly positive: no cancellation at all. -/
+theorem near_core_pos_of_criterion {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C A : ℝ} {J : ℕ}
+    (hΛ : 0 < Λ) (hC0 : 0 ≤ C) (hA0 : 0 ≤ A)
+    (hloc : ∀ τ : ℝ, ((zetaZeroConfig).N τ (τ + 1) : ℝ) ≤ A * Real.log (|τ| + 3))
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hC : ∀ σ ∈ nearOffFinset t J,
+      detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros)) ≤ C)
+    {σ : ((SameOrd t)ᶜ : Set Zeros)} (hσ : σ ∈ nearOffFinset t J)
+    (hgap : |(((σ : Zeros) : ℂ).im - t)| ≤ π / (3 * Λ))
+    (hcrit : escapeTerm A C Λ t J < 1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u)) :
+    0 < ∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u := by
+  have hsplit := integral_taper_phaseSum_ge_optimized hg hgc hΛ hC0 hA0 hloc hq0 hsupp hC
+  have hmass : (1 : ℝ) ≤ lowGapMass t J (π / (3 * Λ)) :=
+    one_le_lowGapMass_of_near_target hσ hgap
+  have hq : 0 ≤ ∫ u : ℝ, detTaper n₁ n₂ g r u :=
+    integral_nonneg (fun u => hq0 u)
+  have hpin : 1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u)
+      ≤ lowGapMass t J (π / (3 * Λ)) * (1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u)) := by
+    nlinarith
+  linarith
+
+/-- **The explicit floor of the finite near core.**  Under the same hypotheses, the core
+is bounded below by the fully explicit quantity `∫q/2 − escapeTerm`. -/
+theorem integral_taper_phaseSum_ge_floor {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C A : ℝ} {J : ℕ}
+    (hΛ : 0 < Λ) (hC0 : 0 ≤ C) (hA0 : 0 ≤ A)
+    (hloc : ∀ τ : ℝ, ((zetaZeroConfig).N τ (τ + 1) : ℝ) ≤ A * Real.log (|τ| + 3))
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hC : ∀ σ ∈ nearOffFinset t J,
+      detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros)) ≤ C)
+    {σ : ((SameOrd t)ᶜ : Set Zeros)} (hσ : σ ∈ nearOffFinset t J)
+    (hgap : |(((σ : Zeros) : ℂ).im - t)| ≤ π / (3 * Λ)) :
+    1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u) - escapeTerm A C Λ t J
+      ≤ ∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u := by
+  have hsplit := integral_taper_phaseSum_ge_optimized hg hgc hΛ hC0 hA0 hloc hq0 hsupp hC
+  have hmass : (1 : ℝ) ≤ lowGapMass t J (π / (3 * Λ)) :=
+    one_le_lowGapMass_of_near_target hσ hgap
+  have hq : 0 ≤ ∫ u : ℝ, detTaper n₁ n₂ g r u :=
+    integral_nonneg (fun u => hq0 u)
+  have hpin : 1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u)
+      ≤ lowGapMass t J (π / (3 * Λ)) * (1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u)) := by
+    nlinarith
+  linarith
+
+/-- **The consumer no-go, fully explicit.**  If the criterion holds and the explicit floor
+already reaches the consumer threshold, then no estimate of the finite target-centred sum
+satisfies the scalar hypothesis of the near-core consumer.  Every quantity in the
+hypotheses is a taper constant, the counting constant, or the cutoff. -/
+theorem not_scalar_bound_of_criterion {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C A E W : ℝ} {J : ℕ}
+    (hΛ : 0 < Λ) (hC0 : 0 ≤ C) (hA0 : 0 ≤ A)
+    (hloc : ∀ τ : ℝ, ((zetaZeroConfig).N τ (τ + 1) : ℝ) ≤ A * Real.log (|τ| + 3))
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hC : ∀ σ ∈ nearOffFinset t J,
+      detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros)) ≤ C)
+    {σ : ((SameOrd t)ᶜ : Set Zeros)} (hσ : σ ∈ nearOffFinset t J)
+    (hgap : |(((σ : Zeros) : ℂ).im - t)| ≤ π / (3 * Λ))
+    (hcrit : escapeTerm A C Λ t J ≤ 1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+    (hE : 0 ≤ E)
+    (hW : W ≤ (2 * (1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u)
+      - escapeTerm A C Λ t J)) ^ 2) :
+    ¬ ((|2 * ∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u| + E) ^ 2 < W) :=
+  not_scalar_bound_of_lower_bound (by linarith)
+    (integral_taper_phaseSum_ge_floor hg hgc hΛ hC0 hA0 hloc hq0 hsupp hC hσ hgap) hE hW
+
+/-! ## 4. The escape region, stated as the surviving obligation -/
+
+/-- **The contrapositive: what a cancellation route must produce.**  If the finite near
+core fails to be positive at a target ordinate carried by a near zero within the
+optimized threshold, then the local zero count must be large enough to pay for it:
+
+    ∫q / 2  ≤  (2J+1) · A · log(|t|+J+4) · 9CΛ²/π² .
+
+This is the exact surviving obligation of the near core: not "prove cancellation", but
+"exhibit a taper triple whose mass beats its own curvature times the local zero count". -/
+theorem escape_requires_large_count {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ C A : ℝ} {J : ℕ}
+    (hΛ : 0 < Λ) (hC0 : 0 ≤ C) (hA0 : 0 ≤ A)
+    (hloc : ∀ τ : ℝ, ((zetaZeroConfig).N τ (τ + 1) : ℝ) ≤ A * Real.log (|τ| + 3))
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hC : ∀ σ ∈ nearOffFinset t J,
+      detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros)) ≤ C)
+    {σ : ((SameOrd t)ᶜ : Set Zeros)} (hσ : σ ∈ nearOffFinset t J)
+    (hgap : |(((σ : Zeros) : ℂ).im - t)| ≤ π / (3 * Λ))
+    (hzero : ¬ (0 < ∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u)) :
+    1 / 2 * (∫ u : ℝ, detTaper n₁ n₂ g r u) ≤ escapeTerm A C Λ t J := by
+  by_contra hlt
+  exact hzero (near_core_pos_of_criterion hg hgc hΛ hC0 hA0 hloc hq0 hsupp hC hσ hgap
+    (by linarith))
+
+end NearCoreGapSplitOptimization
+end Zeta23Bridge

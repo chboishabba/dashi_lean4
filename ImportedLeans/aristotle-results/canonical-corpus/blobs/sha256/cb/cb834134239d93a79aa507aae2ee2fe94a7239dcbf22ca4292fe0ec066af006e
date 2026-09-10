@@ -1,0 +1,65 @@
+# TOE combined Agda source handoff — 2026-09-09
+
+## Snapshot
+
+This is a deliberately slim, source-only comparison tranche built from
+`chboishabba/dashi_agda` commit
+`7f08c070a726a653e9da9419571cafe1b8cbd267` (master, 2026-09-09).
+
+It brings together the currently relevant **NS**, **Yang--Mills**, **Riemann
+Hypothesis**, and Aristotle/TOE interoperability source surfaces:
+
+- `dashi_agda/` holds 6,758 selected `.agda` source modules.  The exact list is
+  in `SOURCE_MANIFEST.txt`.
+- `ns_worker_result/` holds the slim, source/documentation outcome returned by
+  the NS worker: `RateBlockGramBound.lean` and its NS intake/frontier notes.
+
+No raw Aristotle result archive, `.agdai`, `.olean`, `.lake`, cache, build
+directory, virtual environment, or Git metadata is present.  `SHA256SUMS`
+covers every source/documentation payload file in this tranche.
+
+## Required review and intake
+
+Unpack beside your project, not over it.  First read this file, check the
+manifest and checksums, then inspect and selectively import the modules you
+need.  Preserve your existing sources and provenance; this is a comparison
+tranche, not permission to silently replace a working tree.  Do not claim an
+Agda kernel check merely from this delivery.
+
+## NS context from the actual NS worker result
+
+Read `ns_worker_result/docs/ns-clay-contract/ns-agda-tranche-intake-20260909.md`
+before making claims about the imported NS material.  The worker successfully
+reviewed the supplied `ns-agda-tranche-20260909.tar.gz` and reconciled its
+R395--R530 content into its project: 159 modules were new, 36 were reconciled
+to the donor, and two project versions were deliberately retained because the
+donor would regress local RingSolver repairs.  The R423 signed-companion family
+is dependency-complete; twelve other reconciled modules have seven missing
+external dependencies and are explicitly marked as such.  No Agda toolchain
+was available there, so this is provenance/safety/dependency review, not a
+kernel receipt.
+
+The worker also verified the included Lean frontier file.  It does **not**
+close Package A or the literal periodic Clay regularity target: the physical
+outer-cell cancellation obligation remains open.  Treat any Boolean/compiler
+interface as conditional bookkeeping unless its physical premise has an
+independent checked proof.
+
+This master additionally includes the later NS R569 componentwise low-output
+and exact-Gram-boundary integration.
+
+## YM and RH context
+
+The Yang--Mills selection includes the current terminal-cutset line through
+R250, including the beta-mark source-coordinate wall.  It does not establish a
+physical Hamiltonian conclusion by itself.  The RH selection includes the
+current direct cluster-response material, including its evaluator-independent
+final-near kernel update; do not mistake route or compiler receipts for a
+proof of RH.
+
+## TOE context
+
+The selected Interop, Wikimedia and Aristotle-related modules are included so
+you can compare your existing ten-owner Lean garden and the current Agda
+integration surfaces.  Record every adopted path and source commit in your
+own handoff notes.

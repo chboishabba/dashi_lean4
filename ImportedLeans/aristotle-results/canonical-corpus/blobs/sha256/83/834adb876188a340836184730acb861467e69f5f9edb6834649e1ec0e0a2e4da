@@ -1,0 +1,558 @@
+{-# OPTIONS --safe #-}
+module DASHI.Physics.YangMills.BalabanCMP98Equation119LatticeRealizationRound146Exact where
+
+------------------------------------------------------------------------
+-- ROUND146 A1: CMP98 Eq. (119) REALIZED ON THE REPOSITORY LATTICE CARRIER
+--
+-- Primary source:
+-- Tadeusz Bałaban, "Averaging Operations for Lattice Gauge Theories",
+-- Commun. Math. Phys. 98 (1985), 17--51, equation (119):
+--
+--   (Q'(V0) A)_c
+--     =  g(-i ad Y) sum_{x in B(c_-)} L^{-d} g^{-1}(-i ad Y_x)
+--          [ (R_0 A)(F_{c_-,x} u [x,x'])
+--            - R(e^{i Y_x}) (R_0 A)(c u F_{c_+,x'}) ]
+--      + R(e^{i Y}) (R_0 A)(c).
+--
+-- Earlier rounds owned this only as a scalar/abstract operator receipt.  This
+-- module builds the formula out of the repository's *actual* periodic lattice
+-- objects, so every component of the source expression is a real object of the
+-- same carrier the rest of the Bałaban lane uses:
+--
+--   * the lattice and its coarse blocks:  `Cube4 N`, `allCube4 L`,
+--     `offsetPoint`, `shiftForwardN` (the L-block B(c_-) of a coarse root and
+--     the coarse endpoint c_+ = c_- + L e_mu);
+--   * the three literal paths F_{c_-,x} u [x,x'],  c u F_{c_+,x'},  c, built
+--     with `offsetPath`, `axisPath` and path concatenation `append`;
+--   * R_0 = `covariantPathIntegral`, the repository's proved gauge-covariant
+--     Lie-algebra line integral along a lattice path in the background field;
+--   * R(e^{iY_x}) and R(e^{iY}) = the adjoint action of the corresponding
+--     group elements, which is exactly the source's R = Ad;
+--   * L^{-d} = a scalar of the scalar adjoint module, applied by `scale`;
+--   * g(-i ad Y), g^{-1}(-i ad Y_x) = ad-functional-calculus endomorphisms of
+--     the adjoint module attached to the coarse root and to each block point.
+--
+-- Nothing here is a field asserting "Eq. (119) holds": `equation119QPrime` is
+-- the assembled expression, and `equation119SourceForm` records that the
+-- assembled operator is *definitionally* the printed source right-hand side.
+--
+-- The main theorem of the module is not the assembly but
+-- `equation119GaugeCovariant`: under a lattice gauge transformation, with the
+-- background transported, the loop elements e^{iY_x}, e^{iY} conjugated and the
+-- functional calculus conjugated (which is how Ad-functional calculus of a
+-- conjugated argument behaves), the realized Q' transforms by the adjoint
+-- action at the coarse root, i.e. Q'(V0) is a covariant operator of the coarse
+-- bond.  That is a property of the realization, not an assumption about it.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+open import Data.List.Base using (List; []; _∷_)
+open import Data.Fin.Base using (toℕ)
+open import Data.Nat.Base using (NonZero)
+open import Relation.Binary.PropositionalEquality using (cong; cong₂; sym; trans)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.P06CubeCoordinatesCore using
+  ( Cube4
+  ; cube4
+  ; Axis4
+  ; axis₀
+  ; axis₁
+  ; axis₂
+  ; axis₃
+  ; shiftForward
+  )
+open import DASHI.Physics.YangMills.BalabanPeriodicLatticePaths using
+  ( LatticePath4
+  ; append
+  )
+open import DASHI.Physics.YangMills.BalabanPeriodicLatticeEnumeration using
+  ( allCube4 )
+open import DASHI.Physics.YangMills.BalabanPeriodicGaugeTransport using
+  ( GroupStructure
+  ; Carrier
+  ; unit
+  ; multiply
+  ; inverse
+  ; multiplyAssoc
+  ; unitLeft
+  ; inverseLeft
+  )
+open import DASHI.Physics.YangMills.BalabanGaugeTransformationCovariance using
+  ( DirectedGaugeField4
+  ; GaugeFunction4
+  ; gaugeTransformBond
+  )
+open import DASHI.Physics.YangMills.BalabanLatticeAdjointCovariantDerivative using
+  ( AdjointAdditiveModule
+  ; Vector
+  ; action
+  ; subtract
+  ; actionUnit
+  ; actionMultiply
+  ; actionSubtract
+  ; inverseActionCancels
+  )
+open import DASHI.Physics.YangMills.BalabanCovariantPathIntegral using
+  ( AdjointLinearModule
+  ; additive
+  ; zeroVector
+  ; addVector
+  ; actionZero
+  ; actionAdd
+  ; DirectedAdjointBondField4
+  ; transformAdjointBondField
+  ; covariantPathIntegral
+  ; covariantPathIntegralGaugeCovariant
+  )
+open import DASHI.Physics.YangMills.BalabanLinearBlockPathAverage using
+  ( ScalarAdjointLinearModule
+  ; linear
+  ; Scalar
+  ; scale
+  ; actionScale
+  )
+open import DASHI.Physics.YangMills.BalabanCanonicalBlockPathSamples using
+  ( shiftForwardN
+  ; axisPath
+  ; offsetPoint
+  ; offsetPath
+  )
+
+------------------------------------------------------------------------
+-- Geometry: the coarse endpoint c_+ and the block point x' = x + L e_mu.
+------------------------------------------------------------------------
+
+shiftForwardCommute :
+  ∀ {N : Nat} {{_ : NonZero N}}
+  (a b : Axis4) (x : Cube4 N) →
+  shiftForward a (shiftForward b x) ≡ shiftForward b (shiftForward a x)
+shiftForwardCommute axis₀ axis₀ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₀ axis₁ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₀ axis₂ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₀ axis₃ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₁ axis₀ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₁ axis₁ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₁ axis₂ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₁ axis₃ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₂ axis₀ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₂ axis₁ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₂ axis₂ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₂ axis₃ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₃ axis₀ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₃ axis₁ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₃ axis₂ (cube4 a₀ a₁ a₂ a₃) = refl
+shiftForwardCommute axis₃ axis₃ (cube4 a₀ a₁ a₂ a₃) = refl
+
+shiftForwardNCommute :
+  ∀ {N : Nat} {{_ : NonZero N}}
+  (count : Nat) (a b : Axis4) (x : Cube4 N) →
+  shiftForwardN count a (shiftForward b x)
+  ≡ shiftForward b (shiftForwardN count a x)
+shiftForwardNCommute zero a b x = refl
+shiftForwardNCommute (suc count) a b x =
+  trans
+    (cong (shiftForwardN count a) (shiftForwardCommute a b x))
+    (shiftForwardNCommute count a b (shiftForward a x))
+
+shiftForwardNCommuteN :
+  ∀ {N : Nat} {{_ : NonZero N}}
+  (count : Nat) (a : Axis4) (steps : Nat) (b : Axis4) (x : Cube4 N) →
+  shiftForwardN count a (shiftForwardN steps b x)
+  ≡ shiftForwardN steps b (shiftForwardN count a x)
+shiftForwardNCommuteN count a zero b x = refl
+shiftForwardNCommuteN count a (suc steps) b x =
+  trans
+    (shiftForwardNCommuteN count a steps b (shiftForward b x))
+    (cong (shiftForwardN steps b) (shiftForwardNCommute count a b x))
+
+-- The canonical block offset path commutes with a shift along any axis: the
+-- block point of c_+ is the shifted block point of c_-.
+offsetPointShift :
+  ∀ {N L : Nat} {{_ : NonZero N}}
+  (offset : Cube4 L) (steps : Nat) (b : Axis4) (root : Cube4 N) →
+  offsetPoint offset (shiftForwardN steps b root)
+  ≡ shiftForwardN steps b (offsetPoint offset root)
+offsetPointShift (cube4 o₀ o₁ o₂ o₃) steps b root =
+  trans
+    (cong (λ z → f₃ (f₂ (f₁ z)))
+      (shiftForwardNCommuteN (toℕ o₀) axis₀ steps b root))
+    (trans
+      (cong (λ z → f₃ (f₂ z))
+        (shiftForwardNCommuteN (toℕ o₁) axis₁ steps b (f₀ root)))
+      (trans
+        (cong f₃
+          (shiftForwardNCommuteN (toℕ o₂) axis₂ steps b (f₁ (f₀ root))))
+        (shiftForwardNCommuteN (toℕ o₃) axis₃ steps b (f₂ (f₁ (f₀ root))))))
+  where
+    f₀ = shiftForwardN (toℕ o₀) axis₀
+    f₁ = shiftForwardN (toℕ o₁) axis₁
+    f₂ = shiftForwardN (toℕ o₂) axis₂
+    f₃ = shiftForwardN (toℕ o₃) axis₃
+
+------------------------------------------------------------------------
+-- The whole realization is parameterized by the lattice size, the gauge group
+-- and the scalar adjoint module: exactly the parameters the rest of the
+-- Bałaban lattice lane already uses.
+------------------------------------------------------------------------
+
+module Equation119
+  {N : Nat} {{nz : NonZero N}}
+  (group : GroupStructure)
+  (scalarLinear : ScalarAdjointLinearModule group)
+  where
+
+  Lin : AdjointLinearModule group
+  Lin = linear scalarLinear
+
+  Add : AdjointAdditiveModule group
+  Add = additive Lin
+
+  Vec : Set
+  Vec = Vector Add
+
+  Endo : Set
+  Endo = Vec → Vec
+
+  ----------------------------------------------------------------------
+  -- The component operators of Eq. (119), as data on the actual carrier.
+  --
+  --   `blockLength`          : L
+  --   `coarseAxis`           : the direction mu of the coarse bond c
+  --   `background`           : V0
+  --   `inverseVolumeWeight`  : L^{-d}
+  --   `expBlockY root x`     : e^{i Y_x}, the based loop element of x in B(c_-)
+  --   `expCoarseY root`      : e^{i Y},   Y = sum_{x in B(c_-)} L^{-d} Y_x
+  --   `gOp root`             : g(-i ad Y)
+  --   `gInvOp root x`        : g^{-1}(-i ad Y_x)
+  ----------------------------------------------------------------------
+
+  record Equation119Inputs : Set where
+    field
+      blockLength : Nat
+      coarseAxis : Axis4
+      background : DirectedGaugeField4 N group
+      inverseVolumeWeight : Scalar scalarLinear
+      expBlockY : Cube4 N → Cube4 N → Carrier group
+      expCoarseY : Cube4 N → Carrier group
+      gOp : Cube4 N → Endo
+      gInvOp : Cube4 N → Cube4 N → Endo
+
+  open Equation119Inputs public
+
+  BondField : Set
+  BondField = DirectedAdjointBondField4 N group Lin
+
+  ----------------------------------------------------------------------
+  -- Geometry of one coarse bond c = [c_-, c_+].
+  ----------------------------------------------------------------------
+
+  -- c_+ = c_- + L e_mu.
+  coarsePlus : Equation119Inputs → Cube4 N → Cube4 N
+  coarsePlus I root = shiftForwardN (blockLength I) (coarseAxis I) root
+
+  -- x in B(c_-): the L-block of the coarse root is enumerated by `allCube4 L`.
+  blockPoint :
+    (I : Equation119Inputs) →
+    Cube4 (blockLength I) → Cube4 N → Cube4 N
+  blockPoint I offset root = offsetPoint offset root
+
+  -- x' = x + L e_mu.
+  blockPointPlus :
+    (I : Equation119Inputs) →
+    Cube4 (blockLength I) → Cube4 N → Cube4 N
+  blockPointPlus I offset root =
+    shiftForwardN (blockLength I) (coarseAxis I) (blockPoint I offset root)
+
+  -- The source's x' is also the corresponding block point of c_+: this is the
+  -- identification "x in B(c_-), x' = x + L e_mu in B(c_+)" used in (115).
+  blockPointPlusIsBlockPointOfCoarsePlus :
+    (I : Equation119Inputs)
+    (offset : Cube4 (blockLength I)) (root : Cube4 N) →
+    blockPoint I offset (coarsePlus I root)
+    ≡ blockPointPlus I offset root
+  blockPointPlusIsBlockPointOfCoarsePlus I offset root =
+    offsetPointShift offset (blockLength I) (coarseAxis I) root
+
+  ----------------------------------------------------------------------
+  -- The three literal paths of Eq. (119).
+  ----------------------------------------------------------------------
+
+  -- F_{c_-,x} u [x,x'].
+  blockPathThenSegment :
+    (I : Equation119Inputs)
+    (offset : Cube4 (blockLength I)) (root : Cube4 N) →
+    LatticePath4 root (blockPointPlus I offset root)
+  blockPathThenSegment I offset root =
+    append
+      (offsetPath offset root)
+      (axisPath (blockLength I) (coarseAxis I) (blockPoint I offset root))
+
+  -- c u F_{c_+,x'}.
+  coarseBondThenBlockPath :
+    (I : Equation119Inputs)
+    (offset : Cube4 (blockLength I)) (root : Cube4 N) →
+    LatticePath4 root (blockPoint I offset (coarsePlus I root))
+  coarseBondThenBlockPath I offset root =
+    append
+      (axisPath (blockLength I) (coarseAxis I) root)
+      (offsetPath offset (coarsePlus I root))
+
+  -- c itself.
+  coarseBondPath :
+    (I : Equation119Inputs) (root : Cube4 N) →
+    LatticePath4 root (coarsePlus I root)
+  coarseBondPath I root =
+    axisPath (blockLength I) (coarseAxis I) root
+
+  ----------------------------------------------------------------------
+  -- R_0 : the background line integral of the source.
+  ----------------------------------------------------------------------
+
+  r0 :
+    (I : Equation119Inputs) (A : BondField) →
+    {x y : Cube4 N} → LatticePath4 x y → Vec
+  r0 I A p = covariantPathIntegral group Lin (background I) A p
+
+  ----------------------------------------------------------------------
+  -- Eq. (119) itself.
+  ----------------------------------------------------------------------
+
+  -- (R_0 A)(F_{c_-,x} u [x,x']) - R(e^{i Y_x}) (R_0 A)(c u F_{c_+,x'})
+  equation119Bracket :
+    (I : Equation119Inputs) (A : BondField)
+    (offset : Cube4 (blockLength I)) (root : Cube4 N) → Vec
+  equation119Bracket I A offset root =
+    subtract Add
+      (r0 I A (blockPathThenSegment I offset root))
+      (action Add
+        (expBlockY I root (blockPoint I offset root))
+        (r0 I A (coarseBondThenBlockPath I offset root)))
+
+  -- L^{-d} g^{-1}(-i ad Y_x) [ ... ]
+  equation119Summand :
+    (I : Equation119Inputs) (A : BondField)
+    (offset : Cube4 (blockLength I)) (root : Cube4 N) → Vec
+  equation119Summand I A offset root =
+    scale scalarLinear (inverseVolumeWeight I)
+      (gInvOp I root (blockPoint I offset root)
+        (equation119Bracket I A offset root))
+
+  -- sum_{x in B(c_-)} ...
+  equation119BlockSumOver :
+    (I : Equation119Inputs) (A : BondField) (root : Cube4 N) →
+    List (Cube4 (blockLength I)) → Vec
+  equation119BlockSumOver I A root [] = zeroVector Lin
+  equation119BlockSumOver I A root (offset ∷ offsets) =
+    addVector Lin
+      (equation119Summand I A offset root)
+      (equation119BlockSumOver I A root offsets)
+
+  equation119BlockSum :
+    (I : Equation119Inputs) (A : BondField) (root : Cube4 N) → Vec
+  equation119BlockSum I A root =
+    equation119BlockSumOver I A root (allCube4 (blockLength I))
+
+  -- The complete right-hand side of (119).
+  equation119QPrime :
+    (I : Equation119Inputs) (A : BondField) (root : Cube4 N) → Vec
+  equation119QPrime I A root =
+    addVector Lin
+      (gOp I root (equation119BlockSum I A root))
+      (action Add
+        (expCoarseY I root)
+        (r0 I A (coarseBondPath I root)))
+
+  -- The assembled operator is definitionally the printed source expression.
+  equation119SourceForm :
+    (I : Equation119Inputs) (A : BondField) (root : Cube4 N) →
+    equation119QPrime I A root
+    ≡ addVector Lin
+        (gOp I root
+          (equation119BlockSumOver I A root (allCube4 (blockLength I))))
+        (action Add
+          (expCoarseY I root)
+          (covariantPathIntegral group Lin (background I) A
+            (axisPath (blockLength I) (coarseAxis I) root)))
+  equation119SourceForm I A root = refl
+
+  ----------------------------------------------------------------------
+  -- Gauge covariance of the realized Eq. (119) operator.
+  --
+  -- Under a lattice gauge transformation h the background transports,
+  --
+  --   V0(b) |-> h(b_-) V0(b) h(b_+)^{-1},   A(b) |-> Ad(h(b_-)) A(b),
+  --
+  -- the source's loop elements are conjugated,
+  --
+  --   e^{i Y_x} |-> h(c_-) e^{i Y_x} h(c_-)^{-1},
+  --
+  -- because Y_x is the logarithm of a V0-holonomy of a loop based at c_-, and
+  -- the ad-functional calculus follows its argument,
+  --
+  --   g(-i ad (Ad(h) Y)) = Ad(h) g(-i ad Y) Ad(h)^{-1}.
+  --
+  -- `gaugeTransformInputs` is exactly that transformation of the data, and the
+  -- theorem is that the assembled Q' is then covariant at the coarse root.
+  ----------------------------------------------------------------------
+
+  conjugate : Carrier group → Carrier group → Carrier group
+  conjugate h u = multiply group h (multiply group u (inverse group h))
+
+  gaugeTransformInputs :
+    GaugeFunction4 N group → Equation119Inputs → Equation119Inputs
+  gaugeTransformInputs h I = record
+    { blockLength = blockLength I
+    ; coarseAxis = coarseAxis I
+    ; background = gaugeTransformBond group h (background I)
+    ; inverseVolumeWeight = inverseVolumeWeight I
+    ; expBlockY = λ root x → conjugate (h root) (expBlockY I root x)
+    ; expCoarseY = λ root → conjugate (h root) (expCoarseY I root)
+    ; gOp = λ root v →
+        action Add (h root)
+          (gOp I root (action Add (inverse group (h root)) v))
+    ; gInvOp = λ root x v →
+        action Add (h root)
+          (gInvOp I root x (action Add (inverse group (h root)) v))
+    }
+
+  -- Ad of a conjugate, applied to an already transported vector.
+  conjugateActionTransported :
+    (h u : Carrier group) (v : Vec) →
+    action Add (conjugate h u) (action Add h v)
+    ≡ action Add h (action Add u v)
+  conjugateActionTransported h u v =
+    trans
+      (actionMultiply Add h (multiply group u (inverse group h))
+        (action Add h v))
+      (cong (action Add h)
+        (trans
+          (actionMultiply Add u (inverse group h) (action Add h v))
+          (cong (action Add u) (inverseActionCancels group Add h v))))
+
+  -- A conjugated endomorphism applied to an already transported vector.
+  conjugateEndoTransported :
+    (h : Carrier group) (F : Endo) (v : Vec) →
+    action Add h (F (action Add (inverse group h) (action Add h v)))
+    ≡ action Add h (F v)
+  conjugateEndoTransported h F v =
+    cong (λ w → action Add h (F w)) (inverseActionCancels group Add h v)
+
+  ----------------------------------------------------------------------
+  -- Piecewise covariance.
+  ----------------------------------------------------------------------
+
+  equation119BracketGaugeCovariant :
+    (I : Equation119Inputs) (h : GaugeFunction4 N group) (A : BondField)
+    (offset : Cube4 (blockLength I)) (root : Cube4 N) →
+    equation119Bracket (gaugeTransformInputs h I)
+      (transformAdjointBondField group Lin h A) offset root
+    ≡ action Add (h root) (equation119Bracket I A offset root)
+  equation119BracketGaugeCovariant I h A offset root =
+    trans
+      (cong₂ (subtract Add)
+        (covariantPathIntegralGaugeCovariant group Lin h (background I) A
+          (blockPathThenSegment I offset root))
+        (trans
+          (cong (action Add (conjugate (h root) (expBlockY I root (blockPoint I offset root))))
+            (covariantPathIntegralGaugeCovariant group Lin h (background I) A
+              (coarseBondThenBlockPath I offset root)))
+          (conjugateActionTransported
+            (h root)
+            (expBlockY I root (blockPoint I offset root))
+            (r0 I A (coarseBondThenBlockPath I offset root)))))
+      (sym
+        (actionSubtract Add (h root)
+          (r0 I A (blockPathThenSegment I offset root))
+          (action Add (expBlockY I root (blockPoint I offset root))
+            (r0 I A (coarseBondThenBlockPath I offset root)))))
+
+  equation119SummandGaugeCovariant :
+    (I : Equation119Inputs) (h : GaugeFunction4 N group) (A : BondField)
+    (offset : Cube4 (blockLength I)) (root : Cube4 N) →
+    equation119Summand (gaugeTransformInputs h I)
+      (transformAdjointBondField group Lin h A) offset root
+    ≡ action Add (h root) (equation119Summand I A offset root)
+  equation119SummandGaugeCovariant I h A offset root =
+    trans
+      (cong (scale scalarLinear (inverseVolumeWeight I))
+        (trans
+          (cong
+            (λ w →
+              action Add (h root)
+                (gInvOp I root (blockPoint I offset root)
+                  (action Add (inverse group (h root)) w)))
+            (equation119BracketGaugeCovariant I h A offset root))
+          (conjugateEndoTransported (h root)
+            (gInvOp I root (blockPoint I offset root))
+            (equation119Bracket I A offset root))))
+      (sym
+        (actionScale scalarLinear (h root) (inverseVolumeWeight I)
+          (gInvOp I root (blockPoint I offset root)
+            (equation119Bracket I A offset root))))
+
+  equation119BlockSumOverGaugeCovariant :
+    (I : Equation119Inputs) (h : GaugeFunction4 N group) (A : BondField)
+    (root : Cube4 N) (offsets : List (Cube4 (blockLength I))) →
+    equation119BlockSumOver (gaugeTransformInputs h I)
+      (transformAdjointBondField group Lin h A) root offsets
+    ≡ action Add (h root) (equation119BlockSumOver I A root offsets)
+  equation119BlockSumOverGaugeCovariant I h A root [] =
+    sym (actionZero Lin (h root))
+  equation119BlockSumOverGaugeCovariant I h A root (offset ∷ offsets) =
+    trans
+      (cong₂ (addVector Lin)
+        (equation119SummandGaugeCovariant I h A offset root)
+        (equation119BlockSumOverGaugeCovariant I h A root offsets))
+      (sym
+        (actionAdd Lin (h root)
+          (equation119Summand I A offset root)
+          (equation119BlockSumOver I A root offsets)))
+
+  equation119BlockSumGaugeCovariant :
+    (I : Equation119Inputs) (h : GaugeFunction4 N group) (A : BondField)
+    (root : Cube4 N) →
+    equation119BlockSum (gaugeTransformInputs h I)
+      (transformAdjointBondField group Lin h A) root
+    ≡ action Add (h root) (equation119BlockSum I A root)
+  equation119BlockSumGaugeCovariant I h A root =
+    equation119BlockSumOverGaugeCovariant I h A root
+      (allCube4 (blockLength I))
+
+  ----------------------------------------------------------------------
+  -- The theorem: the realized CMP98 Eq. (119) operator is a covariant
+  -- operator of the coarse bond.
+  ----------------------------------------------------------------------
+
+  equation119GaugeCovariant :
+    (I : Equation119Inputs) (h : GaugeFunction4 N group) (A : BondField)
+    (root : Cube4 N) →
+    equation119QPrime (gaugeTransformInputs h I)
+      (transformAdjointBondField group Lin h A) root
+    ≡ action Add (h root) (equation119QPrime I A root)
+  equation119GaugeCovariant I h A root =
+    trans
+      (cong₂ (addVector Lin)
+        (trans
+          (cong
+            (λ w →
+              action Add (h root)
+                (gOp I root (action Add (inverse group (h root)) w)))
+            (equation119BlockSumGaugeCovariant I h A root))
+          (conjugateEndoTransported (h root) (gOp I root)
+            (equation119BlockSum I A root)))
+        (trans
+          (cong (action Add (conjugate (h root) (expCoarseY I root)))
+            (covariantPathIntegralGaugeCovariant group Lin h (background I) A
+              (coarseBondPath I root)))
+          (conjugateActionTransported (h root) (expCoarseY I root)
+            (r0 I A (coarseBondPath I root)))))
+      (sym
+        (actionAdd Lin (h root)
+          (gOp I root (equation119BlockSum I A root))
+          (action Add (expCoarseY I root)
+            (r0 I A (coarseBondPath I root)))))
+
+cmp98Equation119LatticeRealizationRound146Level : ProofLevel
+cmp98Equation119LatticeRealizationRound146Level = machineChecked

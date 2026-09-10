@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "probability of an event"
+ ],
+ "canonical": "Q9492",
+ "description": "measure of the expectation that an event will occur or a statement is true",
+ "id": "Q9492",
+ "label": "probability"
+}

@@ -1,0 +1,2 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/defects.skb","series","self-follows","error","suggested-fix","V4","","","","","an item is declared to follow itself","delete the `follows` statement"

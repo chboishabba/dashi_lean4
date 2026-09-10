@@ -1,0 +1,16 @@
+{
+ "aliases": [
+  "artificial person",
+  "juridic person",
+  "juristic person",
+  "fictitious person",
+  "corporate person",
+  "corporate entity",
+  "corporate body",
+  "corporative body"
+ ],
+ "canonical": "Q155076",
+ "description": "organization recognized by law as a fictitious person",
+ "id": "Q155076",
+ "label": "juridical person"
+}

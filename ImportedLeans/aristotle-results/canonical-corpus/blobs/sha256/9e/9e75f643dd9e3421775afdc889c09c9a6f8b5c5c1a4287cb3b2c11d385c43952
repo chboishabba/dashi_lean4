@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "homogeneous relation"
+ ],
+ "canonical": "Q54938846",
+ "description": "binary relation whose domain and codomain coincide",
+ "id": "Q54938846",
+ "label": "endorelation"
+}

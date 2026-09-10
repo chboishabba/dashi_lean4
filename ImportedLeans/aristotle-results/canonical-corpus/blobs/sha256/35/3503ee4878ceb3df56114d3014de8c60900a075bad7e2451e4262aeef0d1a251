@@ -1,0 +1,15 @@
+{
+ "aliases": [
+  "temporarily empty class",
+  "currently empty set",
+  "temporarily empty set",
+  "currently nonexistent class",
+  "temporarily nonexistent",
+  "dormant class",
+  "class in abeyance"
+ ],
+ "canonical": "Q86098365",
+ "description": "class which currently contains no elements, but elements may have existed in the past and may exist in the future",
+ "id": "Q86098365",
+ "label": "currently empty class"
+}

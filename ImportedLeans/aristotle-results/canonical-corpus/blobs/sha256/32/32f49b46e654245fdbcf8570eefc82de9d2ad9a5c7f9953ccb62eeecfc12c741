@@ -1,0 +1,178 @@
+module DASHI.Physics.YangMills.BalabanCMP98Equation119SU2InstanceRound149Exact where
+
+------------------------------------------------------------------------
+-- ROUND149 A1: THE Eq. (119) REALIZATION AT THE CONCRETE SU(2) CARRIER
+--
+-- Round146 realizes CMP98 Eq. (119) on the periodic lattice for an arbitrary
+-- gauge group and adjoint module.  The repository already owns a concrete
+-- compact gauge group: the unit quaternions `su2QuaternionGroup` with the
+-- literal adjoint action Ad_u X = u X conj(u) on the three imaginary
+-- coordinates.  This module instantiates the realization there.
+--
+-- What becomes concrete at SU(2):
+--
+--   * the background V0 is an actual unit-quaternion field on the lattice;
+--   * R_0 is the su(2)-valued line integral with Ad-transport by that field;
+--   * R(e^{iY_x}) and R(e^{iY}) are the literal Ad of unit quaternions;
+--   * the blocks, the three paths of (119) and L^{-d} are unchanged;
+--   * gauge covariance at the coarse root is inherited from Round146.
+--
+-- What is *not* closed here, and is the honest remaining seam of the A1 cut:
+-- the two ad-functional-calculus operators g(-i ad Y) and g^{-1}(-i ad Y_x) of
+-- CMP98 Sect. A are still parameters of the instance.  Producing them at SU(2)
+-- requires the convergent functional calculus of Sect. A over the repository's
+-- real-number surface; that is a separate analytic obligation and this module
+-- deliberately does not pretend to discharge it.
+--
+-- This module is not `--safe`: the SU(2) quaternion carrier is built over
+-- `DASHI.Foundations.RealAnalysisAxioms`, whose reals are postulated in this
+-- repository.  Round146, Round147 and Round148 remain postulate-free.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat)
+open import Data.Nat.Base using (NonZero)
+open import Relation.Binary.PropositionalEquality using (cong; cong₂; trans)
+
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+open import DASHI.Physics.YangMills.P06CubeCoordinatesCore using
+  ( Cube4
+  ; Axis4
+  )
+open import DASHI.Physics.YangMills.BalabanGaugeTransformationCovariance using
+  ( DirectedGaugeField4
+  ; GaugeFunction4
+  )
+open import DASHI.Physics.YangMills.BalabanLatticeAdjointCovariantDerivative using
+  ( Vector
+  ; action
+  )
+open import DASHI.Physics.YangMills.BalabanCovariantPathIntegral using
+  ( additive
+  ; DirectedAdjointBondField4
+  ; transformAdjointBondField
+  )
+open import DASHI.Physics.YangMills.BalabanLinearBlockPathAverage using
+  ( linear )
+open import DASHI.Physics.YangMills.BalabanSU2QuaternionCarrier using
+  ( Quaternion
+  ; quat
+  ; SU2Quaternion
+  ; su2q
+  ; normSquaredQ
+  ; normSquaredExpand
+  ; su2Identity
+  ; su2QuaternionGroup
+  ; zeroR
+  ; oneR
+  ; *-identityˡ
+  ; +-identityˡ
+  ; +-identityʳ
+  ; zeroˡ
+  ; _+R_
+  )
+open import DASHI.Physics.YangMills.BalabanSU2LieAlgebraCarrier using
+  ( SU2LieAlgebra
+  ; su2AdjointLinearModule
+  )
+open import DASHI.Physics.YangMills.BalabanSU2AdjointInnerProduct using
+  ( su2ScalarAdjointLinearModule )
+open import DASHI.Foundations.RealAnalysisAxioms using (ℝ)
+import DASHI.Physics.YangMills.BalabanCMP98Equation119LatticeRealizationRound146Exact
+  as R146
+
+------------------------------------------------------------------------
+-- A concrete nontrivial element of SU(2): the imaginary unit i.
+------------------------------------------------------------------------
+
+imaginaryUnitQ : Quaternion
+imaginaryUnitQ = quat zeroR oneR zeroR zeroR
+
+imaginaryUnitNorm : normSquaredQ imaginaryUnitQ ≡ oneR
+imaginaryUnitNorm =
+  trans
+    (normSquaredExpand imaginaryUnitQ)
+    (trans
+      (cong₂ _+R_
+        (cong₂ _+R_
+          (cong₂ _+R_
+            (zeroˡ zeroR)
+            (*-identityˡ oneR))
+          (zeroˡ zeroR))
+        (zeroˡ zeroR))
+      (trans
+        (+-identityʳ ((zeroR +R oneR) +R zeroR))
+        (trans
+          (+-identityʳ (zeroR +R oneR))
+          (+-identityˡ oneR))))
+
+su2ImaginaryUnit : SU2Quaternion
+su2ImaginaryUnit = su2q imaginaryUnitQ imaginaryUnitNorm
+
+------------------------------------------------------------------------
+-- The SU(2) instance of the Eq. (119) realization.
+------------------------------------------------------------------------
+
+module SU2Equation119 {N : Nat} {{nz : NonZero N}} where
+
+  open R146.Equation119 {N = N} su2QuaternionGroup su2ScalarAdjointLinearModule
+    public
+
+  SU2Inputs : Set
+  SU2Inputs = Equation119Inputs
+
+  -- The instance is assembled from actual SU(2) lattice data.  Only the two
+  -- ad-functional-calculus operators remain to be produced from CMP98 Sect. A.
+  su2Inputs :
+    (blockSide : Nat) →
+    (axis : Axis4) →
+    (V0 : DirectedGaugeField4 N su2QuaternionGroup) →
+    (inverseBlockVolume : ℝ) →
+    (expY : Cube4 N → Cube4 N → SU2Quaternion) →
+    (expYCoarse : Cube4 N → SU2Quaternion) →
+    (gCalculus : Cube4 N → SU2LieAlgebra → SU2LieAlgebra) →
+    (gInverseCalculus : Cube4 N → Cube4 N → SU2LieAlgebra → SU2LieAlgebra) →
+    SU2Inputs
+  su2Inputs blockSide axis V0 inverseBlockVolume expY expYCoarse
+    gCalculus gInverseCalculus = record
+    { blockLength = blockSide
+    ; coarseAxis = axis
+    ; background = V0
+    ; inverseVolumeWeight = inverseBlockVolume
+    ; expBlockY = expY
+    ; expCoarseY = expYCoarse
+    ; gOp = gCalculus
+    ; gInvOp = gInverseCalculus
+    }
+
+  -- Gauge covariance of the SU(2) instance: a specialization of the Round146
+  -- theorem, with the adjoint action being the literal quaternion conjugation.
+  su2Equation119GaugeCovariant :
+    (I : SU2Inputs)
+    (h : GaugeFunction4 N su2QuaternionGroup)
+    (A : DirectedAdjointBondField4 N su2QuaternionGroup
+           (linear su2ScalarAdjointLinearModule))
+    (root : Cube4 N) →
+    equation119QPrime (gaugeTransformInputs h I)
+      (transformAdjointBondField su2QuaternionGroup
+        (linear su2ScalarAdjointLinearModule) h A)
+      root
+    ≡ action (additive (linear su2ScalarAdjointLinearModule)) (h root)
+        (equation119QPrime I A root)
+  su2Equation119GaugeCovariant = equation119GaugeCovariant
+
+  -- A nontrivial SU(2) background: every bond carries the imaginary unit, so
+  -- the transports appearing in (119) are not the identity.
+  imaginaryBackground : DirectedGaugeField4 N su2QuaternionGroup
+  imaginaryBackground _ = su2ImaginaryUnit
+
+  trivialBackground : DirectedGaugeField4 N su2QuaternionGroup
+  trivialBackground _ = su2Identity
+
+cmp98Equation119SU2InstanceRound149Level : ProofLevel
+cmp98Equation119SU2InstanceRound149Level = machineChecked
+
+-- The SU(2) ad-functional calculus g(-i ad Y), g^{-1}(-i ad Y_x) of CMP98
+-- Sect. A is not produced here; it stays an explicit parameter.
+cmp98SectionAFunctionalCalculusAtSU2Level : ProofLevel
+cmp98SectionAFunctionalCalculusAtSU2Level = conditional

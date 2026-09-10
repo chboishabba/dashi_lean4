@@ -1,0 +1,212 @@
+-- NOTE: this module cannot carry `--safe`: its ℝ carrier is
+-- `DASHI.Foundations.RealAnalysisAxioms`, whose reals are postulated.
+-- The pragma removed here made the module fail to typecheck at all.
+module DASHI.Physics.YangMills.BalabanFixedEffectiveDensitySemanticsRound150Exact where
+
+------------------------------------------------------------------------
+-- ROUND150: REPAIR OF THE ROUND132 SAME-ACTION WELD (CONSUMER SIDE)
+--
+-- The Round132 record `UnifiedGeneratedActionDensity` bundles two things that
+-- must not be bundled:
+--
+--   (a) the *interpretation* of a beta-driven CMP122 density as an effective
+--       potential on the exact BC1 background carrier, and
+--   (b) the *claim* that the selected density's interpretation equals the
+--       exact BC1 carrier potential.
+--
+-- Because (a) is a field of the same record that asks for (b), a consumer may
+-- pick the interpretation after seeing the goal.  `degenerateSameActionWeld`
+-- below is an explicit inhabitant that does exactly this: it interprets *every*
+-- density as the fixed BC1 potential V_BC1, so the "physical" equality (b)
+-- collapses to `refl`.  `degenerateWeldIgnoresDensity` proves at the theorem
+-- level that this inhabitant carries no CMP122 density semantics whatsoever.
+-- Hence the old interface could certify "same action" while possessing no
+-- density semantics at all.
+--
+-- The repair is on the consumer, not on the physical leaf.  Round150 supplies
+-- `FixedEffectiveDensitySemantics` *before* the weld: the source-scale
+-- correspondence and the interpretation are fixed first, independently of any
+-- equality goal.  The repaired consumer `SameActionAtFixedSemantics` can then
+-- only prove
+--
+--        interpret_source (rho_{k*}) (B)  =  V_BC1 (B)
+--
+-- for the already-fixed interpretation.  The `asRound132` adapter re-exports a
+-- genuine `UnifiedGeneratedActionDensity`, so every downstream consumer in
+-- R133--R144 is preserved verbatim.
+------------------------------------------------------------------------
+
+open import Agda.Builtin.Equality using (_≡_; refl)
+open import Agda.Builtin.Nat using (Nat; zero)
+
+open import DASHI.Foundations.RealAnalysisAxioms using (ℝ)
+open import DASHI.Physics.YangMills.CompactLieProofLevel
+import DASHI.Physics.YangMills.Balaban1989BetaDrivenCompleteDensityFlowExact as BetaDensity
+import DASHI.Physics.YangMills.BalabanClayPresentCutPhysicalCompilerRound122Exact as Present
+import DASHI.Physics.YangMills.BalabanCMP109116LiteralDifferentiatedCarrierRound103Exact as Carrier
+import DASHI.Physics.YangMills.BalabanCMP109116SourceContinuationRound103Exact as Source
+import DASHI.Physics.YangMills.BalabanUnifiedGeneratedActionDensityRound132Exact as R132
+
+------------------------------------------------------------------------
+-- 1. The weakness of the old interface, exhibited.
+------------------------------------------------------------------------
+
+-- Every density is read as the exact BC1 potential.  Nothing about the
+-- beta-driven CMP122 flow is used.
+degenerateSameActionWeld :
+  ∀ {trajectory split}
+    {inputs : BetaDensity.BetaDrivenCompleteDensityInputs
+      {trajectory = trajectory} {split = split}}
+    {History Cell : Set} {cutoff : Nat}
+    (present : Present.PresentCutPhysicalSourceInputs History Cell cutoff) →
+  R132.UnifiedGeneratedActionDensity
+    {trajectory = trajectory} {split = split} {inputs = inputs} present
+degenerateSameActionWeld present = record
+  { sourceScaleToDensityIndex = λ _ → zero
+  ; effectivePotentialOfDensity =
+      λ _ background → Carrier.effectivePotential (Present.bc1Carrier present) background
+  ; selectedDensityRepresentsBC1EffectivePotential = λ _ → refl
+  }
+
+-- Theorem-level statement of the defect: the interpretation carried by the
+-- degenerate weld is constant in the density argument, so the Round132
+-- same-action equality it satisfies has no CMP122 content.
+degenerateWeldIgnoresDensity :
+  ∀ {trajectory split}
+    {inputs : BetaDensity.BetaDrivenCompleteDensityInputs
+      {trajectory = trajectory} {split = split}}
+    {History Cell : Set} {cutoff : Nat}
+    (present : Present.PresentCutPhysicalSourceInputs History Cell cutoff)
+    (rho sigma : BetaDensity.Density inputs)
+    (background : Source.Background (Carrier.source (Present.bc1Carrier present))) →
+  R132.effectivePotentialOfDensity
+    (degenerateSameActionWeld {inputs = inputs} present) rho background
+  ≡ R132.effectivePotentialOfDensity
+      (degenerateSameActionWeld {inputs = inputs} present) sigma background
+degenerateWeldIgnoresDensity _ _ _ _ = refl
+
+------------------------------------------------------------------------
+-- 2. The repair: semantics fixed before the weld.
+------------------------------------------------------------------------
+
+-- Supplied by the density lane, with no access to the BC1 potential goal.
+record FixedEffectiveDensitySemantics
+    {trajectory split}
+    (inputs : BetaDensity.BetaDrivenCompleteDensityInputs
+      {trajectory = trajectory} {split = split})
+    {History Cell : Set} {cutoff : Nat}
+    (present : Present.PresentCutPhysicalSourceInputs History Cell cutoff) : Set₁ where
+  field
+    sourceScaleToDensityIndex :
+      Source.Scale (Carrier.source (Present.bc1Carrier present)) → Nat
+
+    interpret :
+      BetaDensity.Density inputs →
+      Source.Background (Carrier.source (Present.bc1Carrier present)) → ℝ
+
+open FixedEffectiveDensitySemantics public
+
+-- The selected source scale and the selected density, determined by the
+-- semantics alone.
+selectedIndex :
+  ∀ {trajectory split inputs History Cell cutoff}
+    {present : Present.PresentCutPhysicalSourceInputs History Cell cutoff} →
+  FixedEffectiveDensitySemantics {trajectory} {split} inputs present → Nat
+selectedIndex {present = present} semantics =
+  sourceScaleToDensityIndex semantics (Carrier.scale (Present.bc1Carrier present))
+
+selectedDensity :
+  ∀ {trajectory split inputs History Cell cutoff}
+    {present : Present.PresentCutPhysicalSourceInputs History Cell cutoff}
+    (semantics : FixedEffectiveDensitySemantics {trajectory} {split} inputs present) →
+  BetaDensity.Density inputs
+selectedDensity {inputs = inputs} semantics =
+  BetaDensity.densityAt inputs (selectedIndex semantics)
+
+-- The repaired consumer.  Its only field is the physical equality, and the
+-- interpretation it speaks about is already fixed by `semantics`.
+record SameActionAtFixedSemantics
+    {trajectory split}
+    {inputs : BetaDensity.BetaDrivenCompleteDensityInputs
+      {trajectory = trajectory} {split = split}}
+    {History Cell : Set} {cutoff : Nat}
+    {present : Present.PresentCutPhysicalSourceInputs History Cell cutoff}
+    (semantics : FixedEffectiveDensitySemantics {trajectory} {split} inputs present)
+    : Set where
+  field
+    selectedDensityRepresentsBC1EffectivePotential :
+      ∀ background →
+      interpret semantics (selectedDensity semantics) background
+      ≡ Carrier.effectivePotential (Present.bc1Carrier present) background
+
+open SameActionAtFixedSemantics public
+
+------------------------------------------------------------------------
+-- 3. The adapter: nothing downstream of Round132 changes.
+------------------------------------------------------------------------
+
+asRound132 :
+  ∀ {trajectory split inputs History Cell cutoff}
+    {present : Present.PresentCutPhysicalSourceInputs History Cell cutoff}
+    (semantics : FixedEffectiveDensitySemantics {trajectory} {split} inputs present) →
+  SameActionAtFixedSemantics semantics →
+  R132.UnifiedGeneratedActionDensity
+    {trajectory = trajectory} {split = split} {inputs = inputs} present
+asRound132 semantics weld = record
+  { sourceScaleToDensityIndex = sourceScaleToDensityIndex semantics
+  ; effectivePotentialOfDensity = interpret semantics
+  ; selectedDensityRepresentsBC1EffectivePotential =
+      selectedDensityRepresentsBC1EffectivePotential weld
+  }
+
+-- The adapter is faithful: the Round132 record it produces interprets
+-- densities by exactly the pre-fixed semantics, and selects exactly the
+-- pre-fixed scale.  So no downstream consumer can observe the change.
+asRound132PreservesInterpretation :
+  ∀ {trajectory split inputs History Cell cutoff}
+    {present : Present.PresentCutPhysicalSourceInputs History Cell cutoff}
+    (semantics : FixedEffectiveDensitySemantics {trajectory} {split} inputs present)
+    (weld : SameActionAtFixedSemantics semantics)
+    (rho : BetaDensity.Density inputs)
+    (background : Source.Background (Carrier.source (Present.bc1Carrier present))) →
+  R132.effectivePotentialOfDensity (asRound132 semantics weld) rho background
+  ≡ interpret semantics rho background
+asRound132PreservesInterpretation _ _ _ _ = refl
+
+asRound132PreservesSelectedIndex :
+  ∀ {trajectory split inputs History Cell cutoff}
+    {present : Present.PresentCutPhysicalSourceInputs History Cell cutoff}
+    (semantics : FixedEffectiveDensitySemantics {trajectory} {split} inputs present)
+    (weld : SameActionAtFixedSemantics semantics) →
+  R132.selectedDensityIndex (asRound132 semantics weld) ≡ selectedIndex semantics
+asRound132PreservesSelectedIndex _ _ = refl
+
+-- And the downstream Round132 consequences hold for the repaired weld.
+repairedSelectedDensityRepresentsExactBC1Potential :
+  ∀ {trajectory split inputs History Cell cutoff}
+    {present : Present.PresentCutPhysicalSourceInputs History Cell cutoff}
+    (semantics : FixedEffectiveDensitySemantics {trajectory} {split} inputs present)
+    (weld : SameActionAtFixedSemantics semantics) →
+  ∀ background →
+  interpret semantics (selectedDensity semantics) background
+  ≡ Carrier.effectivePotential (Present.bc1Carrier present) background
+repairedSelectedDensityRepresentsExactBC1Potential semantics weld =
+  R132.selectedDensityRepresentsExactBC1Potential (asRound132 semantics weld)
+
+------------------------------------------------------------------------
+-- Proof levels.
+------------------------------------------------------------------------
+
+-- The consumer repair and its adapter are machine-checked.
+fixedEffectiveDensitySemanticsRound150Level : ProofLevel
+fixedEffectiveDensitySemanticsRound150Level = machineChecked
+
+-- The exhibited weakness of the pre-repair interface is machine-checked too.
+round132ConsumerWeaknessExhibitedRound150Level : ProofLevel
+round132ConsumerWeaknessExhibitedRound150Level = machineChecked
+
+-- Unchanged physical seam: producing the literal CMP122 interpretation and
+-- proving the equality for it.  The repair narrows what a consumer may claim;
+-- it does not discharge that obligation.
+literalFixedInterpretationRound150Level : ProofLevel
+literalFixedInterpretationRound150Level = conditional

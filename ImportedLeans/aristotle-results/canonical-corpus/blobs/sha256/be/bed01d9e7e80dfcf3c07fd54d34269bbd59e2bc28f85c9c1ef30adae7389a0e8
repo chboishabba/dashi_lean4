@@ -1,0 +1,15 @@
+{
+ "aliases": [
+  "differential equation (elementary mathematics)",
+  "diff eq",
+  "diffyEq",
+  "diffyeq",
+  "diff eq'n",
+  "diffeq",
+  "differential equations"
+ ],
+ "canonical": "Q11214",
+ "description": "mathematical equation involving derivatives of an unknown function",
+ "id": "Q11214",
+ "label": "differential equation"
+}

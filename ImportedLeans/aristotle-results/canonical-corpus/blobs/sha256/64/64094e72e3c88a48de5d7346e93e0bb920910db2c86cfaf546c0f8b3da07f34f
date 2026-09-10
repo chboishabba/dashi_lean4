@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "covariant functor",
+  "contravariant functor"
+ ],
+ "canonical": "Q864475",
+ "description": "in category theory, a mapping between categories that preserves their structure (identity morphisms, composition of morphisms)",
+ "id": "Q864475",
+ "label": "functor"
+}

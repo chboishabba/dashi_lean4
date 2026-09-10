@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "Basic Formal Ontology class"
+ ],
+ "canonical": "Q124711104",
+ "description": "metaclass of all classes defined at some point in time in BFO (“Basic Formal Ontology”)",
+ "id": "Q124711104",
+ "label": "BFO class"
+}

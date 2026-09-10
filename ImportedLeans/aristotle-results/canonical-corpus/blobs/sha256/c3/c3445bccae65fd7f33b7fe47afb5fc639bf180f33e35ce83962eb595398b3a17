@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "canonical preorder",
+  "specialization preorder",
+  "specialization order"
+ ],
+ "canonical": "Q5569420",
+ "description": "preorder on the set of the points of a topological space",
+ "id": "Q5569420",
+ "label": "specialization (pre)order"
+}

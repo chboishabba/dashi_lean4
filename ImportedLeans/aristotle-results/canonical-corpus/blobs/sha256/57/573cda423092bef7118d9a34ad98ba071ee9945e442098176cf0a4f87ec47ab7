@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "thing",
+  "object"
+ ],
+ "canonical": "Q35120",
+ "description": "anything that can be considered, discussed, or observed",
+ "id": "Q35120",
+ "label": "entity"
+}

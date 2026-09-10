@@ -1,0 +1,18 @@
+{
+ "aliases": [
+  "legal subject",
+  "legal entity",
+  "subject of law",
+  "legal personality",
+  "law subject",
+  "law personality",
+  "legal body",
+  "persona iuris",
+  "artificial person",
+  "law figure"
+ ],
+ "canonical": "Q3778211",
+ "description": "any entity that is recognised as having privileges and obligations in law",
+ "id": "Q3778211",
+ "label": "legal person"
+}

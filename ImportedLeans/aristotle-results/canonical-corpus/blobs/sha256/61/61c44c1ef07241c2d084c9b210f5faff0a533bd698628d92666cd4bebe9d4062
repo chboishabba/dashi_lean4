@@ -1,0 +1,7 @@
+{
+ "aliases": [],
+ "canonical": "Q5711485",
+ "description": "topological space that admits a sequence of compact subsets such that every compact subset of the space lies inside some compact set in the sequence",
+ "id": "Q5711485",
+ "label": "hemicompact space"
+}

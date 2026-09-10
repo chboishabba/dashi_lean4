@@ -19,6 +19,11 @@ globs = ["Cuisine.*"]
 name = "AgdaMirror"
 globs = ["AgdaMirror.*"]
 
+# Reusable domain-neutral operators shared by Aristotle donor lanes.
+[[lean_lib]]
+name = "Spine"
+globs = ["Spine.*"]
+
 [[lean_lib]]
 name = "TriadicKernelAlgebra"
 srcDir = "DASHI/Klüver’s Form Constants_aristotle"

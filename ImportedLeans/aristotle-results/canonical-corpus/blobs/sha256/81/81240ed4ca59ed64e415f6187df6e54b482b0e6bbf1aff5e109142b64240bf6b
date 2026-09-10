@@ -1,0 +1,16 @@
+# Navier--Stokes Agda source tranche
+
+Source commit: `74c7bee33ddd4877181ab332628909a9e6425b63` from `chboishabba/dashi_agda` (2026-09-09).
+
+This is a source-only extraction: `.agda` inputs and a path manifest. It intentionally contains no `.agdai`, `.olean`, `.lake`, caches, virtual environments, or generated build output.
+
+## Required intake
+
+1. Unpack this archive without overwriting your existing project.
+2. Inspect `SOURCE_MANIFEST.txt` before copying files. Treat the `dashi_agda/` tree as a provenance-preserving donor, not as an authority or a proof receipt.
+3. Start from `DASHI/Physics/Closure/Everything.agda`, `DASHI/Core/ClayCrossDomainLiteralFrontierExact.agda`, and the latest `NSTriadKN*` / `*R423*` modules. Import only the modules whose dependencies and claims you have checked in your Lean project.
+4. Preserve your existing NS theorem boundary: this tranche does not prove the physical outer-cell Gram bound, Package A, or the periodic Clay regularity target.
+
+## Current context
+
+The reconciled master contains the current NS cut: canonical direct R423 / cutoff-uniform integrated signed quadratic-companion payment, with older Cauchy/resolvent and R284/R434 routes retained as optional producer exploration rather than silently promoted prerequisites. Your Lean result independently isolates the physical remaining payment as a truncation-uniform Gram-operator bound (equivalently, two scalar polarization bounds). Use that distinction when comparing the donor's scheduler language with your checked Lean interface.

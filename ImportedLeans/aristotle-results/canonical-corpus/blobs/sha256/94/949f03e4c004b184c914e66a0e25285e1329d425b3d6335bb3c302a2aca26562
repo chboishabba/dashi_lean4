@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "ShapeExpressions",
+  "shex",
+  "sx",
+  "ShEx"
+ ],
+ "canonical": "Q29377880",
+ "description": "language for validating, describing or transforming RDF graphs",
+ "id": "Q29377880",
+ "label": "Shape Expressions"
+}

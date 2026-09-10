@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "Q23958852",
+ "description": "abstract entity representing classes whose instances may be classes of different orders or even non-classes",
+ "id": "Q23958852",
+ "kind": "item",
+ "label": "variable-order class"
+}

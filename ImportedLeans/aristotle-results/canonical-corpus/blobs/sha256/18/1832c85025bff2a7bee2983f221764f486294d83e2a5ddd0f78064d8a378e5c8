@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "runtime system",
+  "runtime environment",
+  "runtime"
+ ],
+ "canonical": "Q1004415",
+ "description": "system that provides behavior needed by running code; primarily implements portions of an execution model",
+ "id": "Q1004415",
+ "label": "run-time system"
+}

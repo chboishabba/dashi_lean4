@@ -1,0 +1,3 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/defects.skb","series","taxonomic-follows","error","suggested-fix","V4","","V4","","","`follows` between items already related by `subclass of` or `instance of`","delete the `follows` statement: the two are related taxonomically, not serially"
+"examples/defects.skb","series","taxonomic-follows","error","suggested-fix","C1","","C2","","","`follows` between items already related by `subclass of` or `instance of`","delete the `follows` statement: the two are related taxonomically, not serially"

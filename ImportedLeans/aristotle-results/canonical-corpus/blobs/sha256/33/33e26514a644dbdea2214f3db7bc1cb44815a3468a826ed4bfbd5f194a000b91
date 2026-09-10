@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "scientific word",
+  "scientific expression",
+  "scientific phrase",
+  "academic concept",
+  "name of science",
+  "science term"
+ ],
+ "canonical": "Q999234",
+ "description": "technical term: word or expression that is part of scientific terminology",
+ "id": "Q999234",
+ "label": "scientific term"
+}

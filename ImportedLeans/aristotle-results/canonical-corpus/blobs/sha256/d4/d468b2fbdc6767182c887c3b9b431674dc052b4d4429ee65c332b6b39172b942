@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "computer protocol",
+  "protocol",
+  "computer communication protocol",
+  "computer communications protocol"
+ ],
+ "canonical": "Q132364",
+ "description": "system for exchanging messages between computing systems",
+ "id": "Q132364",
+ "label": "communication protocol"
+}

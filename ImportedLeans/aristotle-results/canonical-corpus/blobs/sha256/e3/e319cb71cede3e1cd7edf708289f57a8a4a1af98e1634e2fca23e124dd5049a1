@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "Least fixed point, LFP"
+ ],
+ "canonical": "Q6134913",
+ "description": "Smallest fixed point of a function from a poset",
+ "id": "Q6134913",
+ "label": "Least fixed point"
+}

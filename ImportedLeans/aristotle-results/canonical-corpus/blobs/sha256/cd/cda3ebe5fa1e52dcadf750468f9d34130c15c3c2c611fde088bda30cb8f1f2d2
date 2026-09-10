@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "frame network",
+  "semantic networks"
+ ],
+ "canonical": "Q1045785",
+ "description": "directed graph structure with labeled edges serving to encode and represent knowledge, whether knowledge of definitions or assertions",
+ "id": "Q1045785",
+ "label": "semantic network"
+}

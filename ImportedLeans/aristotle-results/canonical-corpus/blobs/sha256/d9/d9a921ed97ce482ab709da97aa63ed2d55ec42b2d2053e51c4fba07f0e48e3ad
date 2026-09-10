@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "transitive closure of a binary relation"
+ ],
+ "canonical": "Q1501387",
+ "description": "operation on binary relations",
+ "id": "Q1501387",
+ "label": "transitive closure"
+}

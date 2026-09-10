@@ -1,0 +1,20 @@
+{
+ "aliases": [
+  "analysis object",
+  "entity under analysis",
+  "analyte",
+  "scrutinee",
+  "test object",
+  "object under test",
+  "object of observation",
+  "object under observation",
+  "object of interest",
+  "entity of interest",
+  "target of investigation",
+  "investigation target"
+ ],
+ "canonical": "Q123177423",
+ "description": "any entity being analyzed or evaluated",
+ "id": "Q123177423",
+ "label": "object of analysis"
+}

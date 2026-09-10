@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "monoid",
+  "internal monoid"
+ ],
+ "canonical": "Q2785361",
+ "description": "monoid in certain category-theoretic category",
+ "id": "Q2785361",
+ "label": "monoid object"
+}

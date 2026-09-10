@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "persons"
+ ],
+ "canonical": "Q215627",
+ "description": "being that has certain capacities or attributes constituting personhood (for humans, use Q5 [human] with P31 [instance of])",
+ "id": "Q215627",
+ "label": "person"
+}

@@ -1,0 +1,7 @@
+{
+ "aliases": [],
+ "canonical": "Q104054982",
+ "description": "entity of an controlled vocabulary where all other entities of the ontology subclass it",
+ "id": "Q104054982",
+ "label": "ontological root"
+}

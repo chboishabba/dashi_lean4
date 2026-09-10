@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "date",
+  "instant",
+  "given moment",
+  "timepoint",
+  "moment",
+  "time point"
+ ],
+ "canonical": "Q186408",
+ "description": "position of a particular instant in time",
+ "id": "Q186408",
+ "label": "point in time"
+}

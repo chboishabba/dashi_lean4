@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "thematic role",
+  "semantic role"
+ ],
+ "canonical": "Q613930",
+ "description": "role that an entity plays with respect to a specific action or state",
+ "id": "Q613930",
+ "label": "thematic relation"
+}

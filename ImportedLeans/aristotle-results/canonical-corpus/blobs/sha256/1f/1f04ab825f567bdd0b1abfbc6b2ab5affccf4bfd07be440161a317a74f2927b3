@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "Q21502838",
+ "description": "type of constraint for Wikidata properties: used to specify that an item must not have a given statement",
+ "id": "Q21502838",
+ "kind": "item",
+ "label": "conflicts-with constraint"
+}

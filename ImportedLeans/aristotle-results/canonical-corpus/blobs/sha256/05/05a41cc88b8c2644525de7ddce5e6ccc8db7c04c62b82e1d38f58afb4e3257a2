@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "F2",
+  "Z/2Z",
+  "Z2",
+  "GF(2)",
+  "Z_2",
+  "𝔽₂"
+ ],
+ "canonical": "Q5513324",
+ "description": "finite field of order two",
+ "id": "Q5513324",
+ "label": "F₂"
+}

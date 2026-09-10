@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "rdac:C10011",
+  "rdac:10011",
+  "lrmer:E8"
+ ],
+ "canonical": "Q131085629",
+ "description": "an agent who is a gathering or organization of two or more persons that bears a particular name and that is capable of acting as a unit",
+ "id": "Q131085629",
+ "label": "collective agent"
+}

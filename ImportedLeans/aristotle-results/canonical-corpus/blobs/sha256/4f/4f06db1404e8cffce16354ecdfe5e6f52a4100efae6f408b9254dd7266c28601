@@ -1,0 +1,791 @@
+/-
+# Signed evaluation of the finite near core by the target-gap split
+
+`NearCoreDeterminantTaper` reduces the surviving off-ordinate energy of the three-taper
+observer to the single scalar
+
+    ∫ q(u) · S(t, J; u) du ,
+    S(t, J; u) = ∑_{σ ∈ nearOffFinset t J} m_σ · cosh(a_σ u) · cos((b_σ − t) u) ,
+
+`q = detTaper n₁ n₂ g r` the determinant taper, `a_σ = Re σ − 1/2` the height and
+`b_σ − t` the *target gap* of the near zero `σ`.
+
+`NearCoreNarrowWindowNoCancellation` settles the case `J·Λ ≤ π/2`: there every phase
+`(b_σ − t)u` stays inside a quarter period, all cosines are nonnegative and the core is
+pinned between two positive multiples of the near mass.  The only escape it leaves open
+is a cutoff exceeding the quarter period, `π/2 < J·Λ`, where some target gaps really do
+oscillate against the taper.
+
+This module evaluates the core in **that** regime, and it does so by transporting an
+estimate the repository already owns rather than by inventing one.  `OscillatoryKernelDecay`
+proves, for a compactly supported `C²` weight `w`,
+
+    |∫ w(u) cos(δ u) du| ≤ ‖w''‖₁ / δ²                     (`abs_integral_mul_cos_le`)
+
+by two exact integrations by parts.  Its problem is the same problem as the near core's
+once the weight is identified with the literal taper–height profile
+`w = q · cosh(a·)`; `zeroDetResponse_eq_integral_detWeight_mul_cos` is that identity, on
+the nose, for the same `q`, the same height `a_σ`, the same gap `b_σ − t` and the same
+integration semantics.  So the donor estimate applies to each *individual* near zero:
+
+* `abs_zeroDetResponse_le` — `|zeroDetResponse … a δ| ≤ detWeightCurvature … a / δ²`;
+* `zeroDetResponse_ge_of_gap_le` — the complementary pin: if `|δ| ≤ D` and `D·Λ ≤ π/2`
+  then `zeroDetResponse … a δ ≥ cos(DΛ) · ∫ q`, whatever the cutoff `J` is.
+
+Splitting the near carrier at an arbitrary gap threshold `D` therefore yields a genuine
+two-sided *signed* evaluation of the finite near core, with no restriction on `J`:
+
+    lowGapMass(t,J,D) · cos(DΛ) · ∫ q  −  highGapMass(t,J,D) · C / D²
+        ≤ ∫ q · S(t,J)                                    (`integral_taper_phaseSum_ge_gap_split`)
+
+where `C` bounds the curvature `‖(q·cosh(a_σ ·))''‖₁` of the near zeros.  Two
+consequences are recorded:
+
+* `highGapMass_pos_of_small_core` — *cancellation can only be produced by zeros whose
+  target gap exceeds the quarter-period threshold*.  If the core drops below the
+  low-gap pin, the high-gap mass is strictly positive; the low-gap zeros contribute with
+  a fixed sign and cannot cancel anything.
+* `not_scalar_bound_of_gap_split` — whenever the split lower bound already reaches the
+  consumer threshold, the scalar hypothesis of the near-core consumer is unsatisfiable at
+  that taper, cutoff and threshold.  This closes the `π/2 < J·Λ` escape quantitatively:
+  it survives only while `highGapMass · C / D²` exceeds the low-gap pin.
+
+Nothing here asserts or assumes the Riemann Hypothesis, and nothing weakens
+`RiemannHypothesisFor`.  No `sorry`, no `axiom`, no Boolean receipt, no numerical
+evidence.
+-/
+import Zeta23Bridge.NearCoreNarrowWindowNoCancellation
+import Zeta23Bridge.OscillatoryKernelDecay
+
+noncomputable section
+
+open scoped Real
+open Zeta23 MeasureTheory
+
+namespace Zeta23Bridge
+namespace NearCoreGapSplitEvaluation
+
+open Zeta23Bridge.LiteralWeilParityBalance
+open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilOtherZerosChannel
+open Zeta23Bridge.MultiTaperSchurCore
+open Zeta23Bridge.ThreeTaperSchurCore
+open Zeta23Bridge.ThreeTaperSchurGram
+open Zeta23Bridge.ThreeTaperSchurMargin
+open Zeta23Bridge.LiteralWeilProjectiveTaper
+open Zeta23Bridge.ReflectionPairKernelDecay
+open Zeta23Bridge.ReflectionPairCurvatureBound
+open Zeta23Bridge.OffOrdinateCutoffCarrier
+open Zeta23Bridge.NearCoreDeterminantTaper
+open Zeta23Bridge.NearCoreNarrowWindowNoCancellation
+open Zeta23Bridge.OscillatoryKernelDecay
+
+/-! ## 1. The determinant taper is a `C²` compactly supported weight -/
+
+theorem detTaper_contDiff {g : Fin 3 → (ℝ → ℝ)} (hg : ∀ j, ContDiff ℝ 2 (g j))
+    (n₁ n₂ : Fin 3 → ℝ) (r : ℝ) : ContDiff ℝ 2 (detTaper n₁ n₂ g r) := by
+  unfold detTaper
+  exact ContDiff.sum (fun j _ => contDiff_const.mul (projTaper_contDiff (hg j) r))
+
+theorem detTaper_hasCompactSupport {g : Fin 3 → (ℝ → ℝ)}
+    (hgc : ∀ j, HasCompactSupport (g j)) (n₁ n₂ : Fin 3 → ℝ) (r : ℝ) :
+    HasCompactSupport (detTaper n₁ n₂ g r) := by
+  have h : detTaper n₁ n₂ g r = fun u : ℝ =>
+      (cross3 n₁ n₂ 0 * projTaper (g 0) r u + cross3 n₁ n₂ 1 * projTaper (g 1) r u)
+        + cross3 n₁ n₂ 2 * projTaper (g 2) r u := by
+    funext u
+    simp [detTaper, Fin.sum_univ_three]
+  rw [h]
+  exact (((projTaper_hasCompactSupport (hgc 0) r).mul_left).add
+      ((projTaper_hasCompactSupport (hgc 1) r).mul_left)).add
+    ((projTaper_hasCompactSupport (hgc 2) r).mul_left)
+
+/-! ## 2. Same-object identification with the oscillatory donor -/
+
+/-- The **taper–height profile** of a near zero of height `a`: the exact weight the
+per-zero response integrates against `cos(δ ·)`. -/
+def detWeight (n₁ n₂ : Fin 3 → ℝ) (g : Fin 3 → (ℝ → ℝ)) (r a : ℝ) : ℝ → ℝ :=
+  fun u => detTaper n₁ n₂ g r u * Real.cosh (a * u)
+
+theorem detWeight_contDiff {g : Fin 3 → (ℝ → ℝ)} (hg : ∀ j, ContDiff ℝ 2 (g j))
+    (n₁ n₂ : Fin 3 → ℝ) (r a : ℝ) : ContDiff ℝ 2 (detWeight n₁ n₂ g r a) :=
+  (detTaper_contDiff hg n₁ n₂ r).mul
+    (Real.contDiff_cosh.comp ((contDiff_const (c := a)).mul contDiff_id))
+
+theorem detWeight_hasCompactSupport {g : Fin 3 → (ℝ → ℝ)}
+    (hgc : ∀ j, HasCompactSupport (g j)) (n₁ n₂ : Fin 3 → ℝ) (r a : ℝ) :
+    HasCompactSupport (detWeight n₁ n₂ g r a) :=
+  (detTaper_hasCompactSupport hgc n₁ n₂ r).mul_right
+
+/-- **Exact problem identity.**  The literal per-zero determinant response *is* the
+donor's oscillatory integral, for the same taper, the same height and the same target
+gap: no reformulation, no majorant. -/
+theorem zeroDetResponse_eq_integral_detWeight_mul_cos (n₁ n₂ : Fin 3 → ℝ)
+    (g : Fin 3 → (ℝ → ℝ)) (r a δ : ℝ) :
+    zeroDetResponse n₁ n₂ g r a δ
+      = ∫ u : ℝ, detWeight n₁ n₂ g r a u * Real.cos (δ * u) := by
+  unfold zeroDetResponse detWeight
+  exact integral_congr_ae (Filter.Eventually.of_forall (fun u => by ring))
+
+/-- The curvature constant of the taper–height profile: the total variation of its
+second derivative, i.e. the donor's constant on the literal problem. -/
+def detWeightCurvature (n₁ n₂ : Fin 3 → ℝ) (g : Fin 3 → (ℝ → ℝ)) (r a : ℝ) : ℝ :=
+  ∫ u : ℝ, |deriv (deriv (detWeight n₁ n₂ g r a)) u|
+
+theorem detWeightCurvature_nonneg (n₁ n₂ : Fin 3 → ℝ) (g : Fin 3 → (ℝ → ℝ)) (r a : ℝ) :
+    0 ≤ detWeightCurvature n₁ n₂ g r a :=
+  integral_nonneg (fun _ => abs_nonneg _)
+
+/-- **The donor estimate, transported to the near core.**  A single near zero's signed
+determinant response decays quadratically in its target gap. -/
+theorem abs_zeroDetResponse_le {g : Fin 3 → (ℝ → ℝ)} (hg : ∀ j, ContDiff ℝ 2 (g j))
+    (hgc : ∀ j, HasCompactSupport (g j)) (n₁ n₂ : Fin 3 → ℝ) (r a : ℝ) {δ : ℝ}
+    (hδ : δ ≠ 0) :
+    |zeroDetResponse n₁ n₂ g r a δ| ≤ detWeightCurvature n₁ n₂ g r a / δ ^ 2 := by
+  rw [zeroDetResponse_eq_integral_detWeight_mul_cos]
+  exact abs_integral_mul_cos_le (detWeight_contDiff hg n₁ n₂ r a)
+    (detWeight_hasCompactSupport hgc n₁ n₂ r a) hδ
+
+/-! ## 3. The complementary pin for small target gaps -/
+
+/-- **Small-gap pin.**  If the target gap of a zero is at most `D` and `D·Λ ≤ π/2`, its
+signed response is at least `cos(DΛ) · ∫ q`, for a nonnegative determinant taper
+supported in `|u| ≤ Λ`.  Unlike §32 this needs no hypothesis on the cutoff `J`. -/
+theorem zeroDetResponse_ge_of_gap_le {g : Fin 3 → (ℝ → ℝ)} (hgs : ∀ j, Continuous (g j))
+    (hgc : ∀ j, HasCompactSupport (g j)) {n₁ n₂ : Fin 3 → ℝ} {r a δ D Λ : ℝ}
+    (hΛ : 0 ≤ Λ) (hDΛ : D * Λ ≤ π / 2) (hδ : |δ| ≤ D)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0) :
+    Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u) ≤ zeroDetResponse n₁ n₂ g r a δ := by
+  have hD0 : 0 ≤ D := le_trans (abs_nonneg δ) hδ
+  have hDΛ0 : 0 ≤ D * Λ := mul_nonneg hD0 hΛ
+  have hcos0 : 0 ≤ Real.cos (D * Λ) := by
+    refine Real.cos_nonneg_of_mem_Icc ⟨?_, hDΛ⟩
+    linarith [Real.pi_pos]
+  have hqint : Integrable (detTaper n₁ n₂ g r) := by
+    refine Continuous.integrable_of_hasCompactSupport ?_
+      (detTaper_hasCompactSupport hgc n₁ n₂ r)
+    unfold detTaper
+    exact continuous_finsetSum _ (fun j _ => continuous_const.mul (projTaper_continuous (hgs j) r))
+  have hmono : ∀ u : ℝ, detTaper n₁ n₂ g r u * Real.cos (D * Λ)
+      ≤ detTaper n₁ n₂ g r u * (Real.cosh (a * u) * Real.cos (δ * u)) := by
+    intro u
+    by_cases hu : |u| ≤ Λ
+    · have habs : |δ * u| ≤ D * Λ := by
+        rw [abs_mul]
+        exact mul_le_mul hδ hu (abs_nonneg u) hD0
+      have hpi : D * Λ ≤ π := le_trans hDΛ (by linarith [Real.pi_pos])
+      have hcos : Real.cos (D * Λ) ≤ Real.cos (δ * u) := by
+        have h := Real.cos_le_cos_of_nonneg_of_le_pi (abs_nonneg _) hpi habs
+        rwa [Real.cos_abs] at h
+      have hcosh : (1 : ℝ) ≤ Real.cosh (a * u) := Real.one_le_cosh _
+      have hcosδ : 0 ≤ Real.cos (δ * u) := le_trans hcos0 hcos
+      have := hq0 u
+      nlinarith [mul_nonneg (hq0 u) hcosδ, mul_le_mul_of_nonneg_left hcos (hq0 u)]
+    · rw [hsupp u (not_le.1 hu)]; simp
+  have hle : (∫ u : ℝ, detTaper n₁ n₂ g r u * Real.cos (D * Λ))
+      ≤ ∫ u : ℝ, detTaper n₁ n₂ g r u * (Real.cosh (a * u) * Real.cos (δ * u)) :=
+    integral_mono (hqint.mul_const _)
+      (integrable_detTaper_phase hgs hgc n₁ n₂ r a δ) hmono
+  rw [integral_mul_const] at hle
+  rw [zeroDetResponse]
+  linarith [hle]
+
+/-- **Height pin.**  Every zero of the strip has height at most `1/2`, so its signed
+response is at most `cosh(Λ/2)·∫q` for a nonnegative taper supported in `|u| ≤ Λ`. -/
+theorem zeroDetResponse_le_of_height {g : Fin 3 → (ℝ → ℝ)} (hgs : ∀ j, Continuous (g j))
+    (hgc : ∀ j, HasCompactSupport (g j)) {n₁ n₂ : Fin 3 → ℝ} {r a δ Λ : ℝ}
+    (hΛ : 0 ≤ Λ) (ha : |a| ≤ 1 / 2)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0) :
+    zeroDetResponse n₁ n₂ g r a δ ≤ Real.cosh (Λ / 2) * (∫ u : ℝ, detTaper n₁ n₂ g r u) := by
+  have hqint : Integrable (detTaper n₁ n₂ g r) := by
+    refine Continuous.integrable_of_hasCompactSupport ?_
+      (detTaper_hasCompactSupport hgc n₁ n₂ r)
+    unfold detTaper
+    exact continuous_finsetSum _ (fun j _ => continuous_const.mul (projTaper_continuous (hgs j) r))
+  have hmono : ∀ u : ℝ,
+      detTaper n₁ n₂ g r u * (Real.cosh (a * u) * Real.cos (δ * u))
+        ≤ detTaper n₁ n₂ g r u * Real.cosh (Λ / 2) := by
+    intro u
+    by_cases hu : |u| ≤ Λ
+    · have hcoshle : Real.cosh (a * u) ≤ Real.cosh (Λ / 2) := by
+        rw [Real.cosh_le_cosh, abs_mul, abs_of_nonneg (by linarith : (0 : ℝ) ≤ Λ / 2)]
+        nlinarith [abs_nonneg a, abs_nonneg u, ha, hu]
+      have hcosh0 : (0 : ℝ) ≤ Real.cosh (a * u) :=
+        le_trans zero_le_one (Real.one_le_cosh _)
+      have hcos_le : Real.cos (δ * u) ≤ 1 := Real.cos_le_one _
+      have hcos_ge : -1 ≤ Real.cos (δ * u) := Real.neg_one_le_cos _
+      nlinarith [hq0 u, mul_nonneg (hq0 u) hcosh0,
+        mul_le_mul_of_nonneg_left hcoshle (hq0 u),
+        mul_nonneg (mul_nonneg (hq0 u) hcosh0) (sub_nonneg.2 hcos_le)]
+    · rw [hsupp u (not_le.1 hu)]; simp
+  have hle : (∫ u : ℝ, detTaper n₁ n₂ g r u * (Real.cosh (a * u) * Real.cos (δ * u)))
+      ≤ ∫ u : ℝ, detTaper n₁ n₂ g r u * Real.cosh (Λ / 2) :=
+    integral_mono (integrable_detTaper_phase hgs hgc n₁ n₂ r a δ) (hqint.mul_const _) hmono
+  rw [integral_mul_const] at hle
+  rw [zeroDetResponse]
+  linarith [hle]
+
+/-! ## 4. The gap split of the near carrier -/
+
+open scoped Classical in
+/-- The near zeros whose target gap is at most `D`. -/
+def lowGapFinset (t : ℝ) (J : ℕ) (D : ℝ) : Finset ((SameOrd t)ᶜ : Set Zeros) :=
+  (nearOffFinset t J).filter (fun σ => |(((σ : Zeros) : ℂ).im - t)| ≤ D)
+
+open scoped Classical in
+/-- The near zeros whose target gap exceeds `D`. -/
+def highGapFinset (t : ℝ) (J : ℕ) (D : ℝ) : Finset ((SameOrd t)ᶜ : Set Zeros) :=
+  (nearOffFinset t J).filter (fun σ => ¬ |(((σ : Zeros) : ℂ).im - t)| ≤ D)
+
+/-- The multiplicity mass carried by the small-gap zeros. -/
+def lowGapMass (t : ℝ) (J : ℕ) (D : ℝ) : ℝ :=
+  ∑ σ ∈ lowGapFinset t J D, ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+
+/-- The multiplicity mass carried by the large-gap zeros. -/
+def highGapMass (t : ℝ) (J : ℕ) (D : ℝ) : ℝ :=
+  ∑ σ ∈ highGapFinset t J D, ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+
+theorem lowGapMass_nonneg (t : ℝ) (J : ℕ) (D : ℝ) : 0 ≤ lowGapMass t J D :=
+  Finset.sum_nonneg (fun _ _ => by positivity)
+
+theorem highGapMass_nonneg (t : ℝ) (J : ℕ) (D : ℝ) : 0 ≤ highGapMass t J D :=
+  Finset.sum_nonneg (fun _ _ => by positivity)
+
+theorem lowGapMass_add_highGapMass (t : ℝ) (J : ℕ) (D : ℝ) :
+    lowGapMass t J D + highGapMass t J D = nearMass t J := by
+  classical
+  unfold lowGapMass highGapMass nearMass lowGapFinset highGapFinset
+  exact Finset.sum_filter_add_sum_filter_not _ _ _
+
+theorem gap_le_of_mem_lowGapFinset {t : ℝ} {J : ℕ} {D : ℝ}
+    {σ : ((SameOrd t)ᶜ : Set Zeros)} (hσ : σ ∈ lowGapFinset t J D) :
+    |(((σ : Zeros) : ℂ).im - t)| ≤ D := by
+  classical
+  exact (Finset.mem_filter.1 hσ).2
+
+theorem gap_gt_of_mem_highGapFinset {t : ℝ} {J : ℕ} {D : ℝ}
+    {σ : ((SameOrd t)ᶜ : Set Zeros)} (hσ : σ ∈ highGapFinset t J D) :
+    D < |(((σ : Zeros) : ℂ).im - t)| := by
+  classical
+  exact not_le.1 (Finset.mem_filter.1 hσ).2
+
+/-! ## 5. The two-sided signed evaluation -/
+
+/-- **Signed evaluation of the finite near core, at any cutoff.**  Splitting the near
+carrier at an arbitrary gap threshold `D > 0` with `D·Λ ≤ π/2`, the small-gap zeros
+contribute with a fixed positive sign and the large-gap zeros are controlled by the
+transported donor estimate. -/
+theorem integral_taper_phaseSum_ge_gap_split {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ D C : ℝ} {J : ℕ}
+    (hΛ : 0 ≤ Λ) (hD : 0 < D) (hDΛ : D * Λ ≤ π / 2) (hC0 : 0 ≤ C)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hC : ∀ σ ∈ nearOffFinset t J,
+      detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros)) ≤ C) :
+    lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+        - highGapMass t J D * (C / D ^ 2)
+      ≤ ∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u := by
+  classical
+  have hgs : ∀ j, Continuous (g j) := fun j => (hg j).continuous
+  rw [integral_detTaper_localZeroPhaseSum_eq_sum hgs hgc n₁ n₂ t r J]
+  have hsplit : ∑ σ ∈ nearOffFinset t J,
+        ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+          * zeroDetResponse n₁ n₂ g r (heightOf (σ : Zeros)) ((((σ : Zeros) : ℂ).im - t))
+      = (∑ σ ∈ lowGapFinset t J D,
+            ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+              * zeroDetResponse n₁ n₂ g r (heightOf (σ : Zeros))
+                  ((((σ : Zeros) : ℂ).im - t)))
+        + ∑ σ ∈ highGapFinset t J D,
+            ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+              * zeroDetResponse n₁ n₂ g r (heightOf (σ : Zeros))
+                  ((((σ : Zeros) : ℂ).im - t)) := by
+    unfold lowGapFinset highGapFinset
+    exact (Finset.sum_filter_add_sum_filter_not _ _ _).symm
+  rw [hsplit]
+  have hlow : lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      ≤ ∑ σ ∈ lowGapFinset t J D,
+          ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+            * zeroDetResponse n₁ n₂ g r (heightOf (σ : Zeros))
+                ((((σ : Zeros) : ℂ).im - t)) := by
+    unfold lowGapMass
+    rw [Finset.sum_mul]
+    refine Finset.sum_le_sum (fun σ hσ => ?_)
+    have hm : (0 : ℝ) ≤ ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ) := by positivity
+    exact mul_le_mul_of_nonneg_left
+      (zeroDetResponse_ge_of_gap_le hgs hgc hΛ hDΛ (gap_le_of_mem_lowGapFinset hσ) hq0 hsupp)
+      hm
+  have hhigh : -(highGapMass t J D * (C / D ^ 2))
+      ≤ ∑ σ ∈ highGapFinset t J D,
+          ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+            * zeroDetResponse n₁ n₂ g r (heightOf (σ : Zeros))
+                ((((σ : Zeros) : ℂ).im - t)) := by
+    unfold highGapMass
+    rw [Finset.sum_mul, ← Finset.sum_neg_distrib]
+    refine Finset.sum_le_sum (fun σ hσ => ?_)
+    have hm : (0 : ℝ) ≤ ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ) := by positivity
+    have hgap : D < |(((σ : Zeros) : ℂ).im - t)| := gap_gt_of_mem_highGapFinset hσ
+    have hne : (((σ : Zeros) : ℂ).im - t) ≠ 0 := by
+      intro h
+      rw [h, abs_zero] at hgap
+      linarith
+    have hmem : σ ∈ nearOffFinset t J := by
+      have := Finset.mem_filter.1 (by unfold highGapFinset at hσ; exact hσ)
+      exact this.1
+    have hdonor := abs_zeroDetResponse_le hg hgc n₁ n₂ r (heightOf (σ : Zeros)) hne
+    have hsq : D ^ 2 < (((σ : Zeros) : ℂ).im - t) ^ 2 := by
+      nlinarith [sq_abs (((σ : Zeros) : ℂ).im - t),
+        abs_nonneg (((σ : Zeros) : ℂ).im - t)]
+    have hle : detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros))
+        / (((σ : Zeros) : ℂ).im - t) ^ 2 ≤ C / D ^ 2 := by
+      have h1 : detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros))
+          / (((σ : Zeros) : ℂ).im - t) ^ 2 ≤ C / (((σ : Zeros) : ℂ).im - t) ^ 2 :=
+        div_le_div_of_nonneg_right (hC σ hmem) (by positivity)
+      have h2 : C / (((σ : Zeros) : ℂ).im - t) ^ 2 ≤ C / D ^ 2 :=
+        div_le_div_of_nonneg_left hC0 (by positivity) hsq.le
+      linarith
+    have habs : |zeroDetResponse n₁ n₂ g r (heightOf (σ : Zeros))
+        ((((σ : Zeros) : ℂ).im - t))| ≤ C / D ^ 2 := le_trans hdonor hle
+    have hlow' : -(C / D ^ 2) ≤ zeroDetResponse n₁ n₂ g r (heightOf (σ : Zeros))
+        ((((σ : Zeros) : ℂ).im - t)) := neg_le_of_abs_le habs
+    have := mul_le_mul_of_nonneg_left hlow' hm
+    simpa [mul_neg] using this
+  linarith
+
+/-- **Upper companion of the split.**  The finite near core is also bounded above by the
+small-gap mass times the height pin plus the transported donor bound on the large-gap
+zeros: the evaluation is two-sided. -/
+theorem integral_taper_phaseSum_le_gap_split {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ D C : ℝ} {J : ℕ}
+    (hΛ : 0 ≤ Λ) (hD : 0 < D) (hC0 : 0 ≤ C)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hC : ∀ σ ∈ nearOffFinset t J,
+      detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros)) ≤ C) :
+    (∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u)
+      ≤ lowGapMass t J D * (Real.cosh (Λ / 2) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+        + highGapMass t J D * (C / D ^ 2) := by
+  classical
+  have hgs : ∀ j, Continuous (g j) := fun j => (hg j).continuous
+  rw [integral_detTaper_localZeroPhaseSum_eq_sum hgs hgc n₁ n₂ t r J]
+  have hsplit : ∑ σ ∈ nearOffFinset t J,
+        ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+          * zeroDetResponse n₁ n₂ g r (heightOf (σ : Zeros)) ((((σ : Zeros) : ℂ).im - t))
+      = (∑ σ ∈ lowGapFinset t J D,
+            ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+              * zeroDetResponse n₁ n₂ g r (heightOf (σ : Zeros))
+                  ((((σ : Zeros) : ℂ).im - t)))
+        + ∑ σ ∈ highGapFinset t J D,
+            ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+              * zeroDetResponse n₁ n₂ g r (heightOf (σ : Zeros))
+                  ((((σ : Zeros) : ℂ).im - t)) := by
+    unfold lowGapFinset highGapFinset
+    exact (Finset.sum_filter_add_sum_filter_not _ _ _).symm
+  rw [hsplit]
+  have hlow : (∑ σ ∈ lowGapFinset t J D,
+        ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+          * zeroDetResponse n₁ n₂ g r (heightOf (σ : Zeros)) ((((σ : Zeros) : ℂ).im - t)))
+      ≤ lowGapMass t J D * (Real.cosh (Λ / 2) * (∫ u : ℝ, detTaper n₁ n₂ g r u)) := by
+    unfold lowGapMass
+    rw [Finset.sum_mul]
+    refine Finset.sum_le_sum (fun σ _ => ?_)
+    have hm : (0 : ℝ) ≤ ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ) := by positivity
+    exact mul_le_mul_of_nonneg_left
+      (zeroDetResponse_le_of_height hgs hgc hΛ (abs_heightOf_le (σ : Zeros)) hq0 hsupp) hm
+  have hhigh : (∑ σ ∈ highGapFinset t J D,
+        ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ)
+          * zeroDetResponse n₁ n₂ g r (heightOf (σ : Zeros)) ((((σ : Zeros) : ℂ).im - t)))
+      ≤ highGapMass t J D * (C / D ^ 2) := by
+    unfold highGapMass
+    rw [Finset.sum_mul]
+    refine Finset.sum_le_sum (fun σ hσ => ?_)
+    have hm : (0 : ℝ) ≤ ((Zeta23.zetaZeroConfig).mult (σ : Zeros) : ℝ) := by positivity
+    have hgap : D < |(((σ : Zeros) : ℂ).im - t)| := gap_gt_of_mem_highGapFinset hσ
+    have hne : (((σ : Zeros) : ℂ).im - t) ≠ 0 := by
+      intro h
+      rw [h, abs_zero] at hgap
+      linarith
+    have hmem : σ ∈ nearOffFinset t J :=
+      (Finset.mem_filter.1 (by unfold highGapFinset at hσ; exact hσ)).1
+    have hdonor := abs_zeroDetResponse_le hg hgc n₁ n₂ r (heightOf (σ : Zeros)) hne
+    have hsq : D ^ 2 < (((σ : Zeros) : ℂ).im - t) ^ 2 := by
+      nlinarith [sq_abs (((σ : Zeros) : ℂ).im - t),
+        abs_nonneg (((σ : Zeros) : ℂ).im - t)]
+    have hle : detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros))
+        / (((σ : Zeros) : ℂ).im - t) ^ 2 ≤ C / D ^ 2 := by
+      have h1 : detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros))
+          / (((σ : Zeros) : ℂ).im - t) ^ 2 ≤ C / (((σ : Zeros) : ℂ).im - t) ^ 2 :=
+        div_le_div_of_nonneg_right (hC σ hmem) (by positivity)
+      have h2 : C / (((σ : Zeros) : ℂ).im - t) ^ 2 ≤ C / D ^ 2 :=
+        div_le_div_of_nonneg_left hC0 (by positivity) hsq.le
+      linarith
+    exact mul_le_mul_of_nonneg_left
+      (le_trans (le_abs_self _) (le_trans hdonor hle)) hm
+  linarith
+
+/-- **The gap split, two-sided.**  Both companions together: the finite near core is
+evaluated between the two split bounds. -/
+theorem integral_taper_phaseSum_gap_pinned {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ D C : ℝ} {J : ℕ}
+    (hΛ : 0 ≤ Λ) (hD : 0 < D) (hDΛ : D * Λ ≤ π / 2) (hC0 : 0 ≤ C)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hC : ∀ σ ∈ nearOffFinset t J,
+      detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros)) ≤ C) :
+    lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+          - highGapMass t J D * (C / D ^ 2)
+        ≤ ∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u
+      ∧ (∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u)
+        ≤ lowGapMass t J D * (Real.cosh (Λ / 2) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+          + highGapMass t J D * (C / D ^ 2) :=
+  ⟨integral_taper_phaseSum_ge_gap_split hg hgc hΛ hD hDΛ hC0 hq0 hsupp hC,
+    integral_taper_phaseSum_le_gap_split hg hgc hΛ hD hC0 hq0 hsupp hC⟩
+
+/-! ## 6. What the split says about cancellation -/
+
+/-- **Cancellation lives beyond the quarter-period threshold.**  If the finite near core
+falls below the small-gap pin, then the large-gap mass is strictly positive: the zeros
+whose target gap is at most `D` all pull in the same direction and cannot cancel one
+another.  Any surviving route must therefore exploit the *distribution of the target
+gaps* beyond `D`, not the near count or an absolute envelope. -/
+theorem highGapMass_pos_of_small_core {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ D C : ℝ} {J : ℕ}
+    (hΛ : 0 ≤ Λ) (hD : 0 < D) (hDΛ : D * Λ ≤ π / 2) (hC0 : 0 < C)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hC : ∀ σ ∈ nearOffFinset t J,
+      detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros)) ≤ C)
+    (hsmall : (∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u)
+      < lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))) :
+    0 < highGapMass t J D := by
+  have hsplit := integral_taper_phaseSum_ge_gap_split hg hgc hΛ hD hDΛ hC0.le hq0 hsupp hC
+  rcases (highGapMass_nonneg t J D).lt_or_eq with h | h
+  · exact h
+  · exfalso
+    rw [← h] at hsplit
+    simp only [zero_mul, sub_zero] at hsplit
+    linarith
+
+/-- **How much large-gap mass a cancellation costs.**  If the finite near core is at
+most `B`, then the large-gap zeros must carry at least
+`(lowGapMass · cos(DΛ) · ∫q − B) · D² / C` units of multiplicity.  This is the split in
+its quantitative form: a route that wants the core small must exhibit that many zeros
+with target gap beyond `D`, not merely assert cancellation. -/
+theorem highGapMass_ge_of_core_le {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ D C B : ℝ} {J : ℕ}
+    (hΛ : 0 ≤ Λ) (hD : 0 < D) (hDΛ : D * Λ ≤ π / 2) (hC0 : 0 < C)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hC : ∀ σ ∈ nearOffFinset t J,
+      detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros)) ≤ C)
+    (hB : (∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u) ≤ B) :
+    (lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u)) - B)
+        * D ^ 2 / C
+      ≤ highGapMass t J D := by
+  have hsplit := integral_taper_phaseSum_ge_gap_split hg hgc hΛ hD hDΛ hC0.le hq0 hsupp hC
+  have hkey : lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u)) - B
+      ≤ highGapMass t J D * (C / D ^ 2) := by linarith
+  have hD2 : (0 : ℝ) < D ^ 2 := by positivity
+  rw [div_le_iff₀ hC0]
+  have := mul_le_mul_of_nonneg_right hkey (le_of_lt hD2)
+  calc (lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u)) - B) * D ^ 2
+      ≤ highGapMass t J D * (C / D ^ 2) * D ^ 2 := this
+    _ = highGapMass t J D * C := by field_simp
+
+/-- **The consumer no-go at an arbitrary cutoff.**  If the split lower bound is
+nonnegative and already reaches the consumer threshold, then no estimate of the finite
+target-centred sum satisfies the scalar hypothesis of the near-core consumer — the
+`π/2 < J·Λ` escape left open by §32 survives only while the large-gap term
+`highGapMass · C / D²` exceeds the small-gap pin. -/
+theorem not_scalar_bound_of_gap_split {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ D C E W : ℝ} {J : ℕ}
+    (hΛ : 0 ≤ Λ) (hD : 0 < D) (hDΛ : D * Λ ≤ π / 2) (hC0 : 0 ≤ C)
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hC : ∀ σ ∈ nearOffFinset t J,
+      detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros)) ≤ C)
+    (hE : 0 ≤ E)
+    (hL0 : 0 ≤ lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      - highGapMass t J D * (C / D ^ 2))
+    (hW : W ≤ (2 * (lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+      - highGapMass t J D * (C / D ^ 2))) ^ 2) :
+    ¬ ((|2 * ∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u| + E) ^ 2 < W) :=
+  not_scalar_bound_of_lower_bound hL0
+    (integral_taper_phaseSum_ge_gap_split hg hgc hΛ hD hDΛ hC0 hq0 hsupp hC) hE hW
+
+/-! ## 7. The curvature constant exists: the split evaluation is unconditional -/
+
+/-- Second derivatives are linear, so the curvature of a linear combination is at most
+the corresponding combination of curvatures. -/
+theorem curvature_linear_le {w₁ w₂ : ℝ → ℝ} (h₁ : ContDiff ℝ 2 w₁)
+    (hc₁ : HasCompactSupport w₁) (h₂ : ContDiff ℝ 2 w₂) (hc₂ : HasCompactSupport w₂)
+    (c₁ c₂ : ℝ) :
+    (∫ u : ℝ, |deriv (deriv (fun u : ℝ => c₁ * w₁ u + c₂ * w₂ u)) u|)
+      ≤ |c₁| * (∫ u : ℝ, |deriv (deriv w₁) u|)
+        + |c₂| * (∫ u : ℝ, |deriv (deriv w₂) u|) := by
+  have hd₁ : Differentiable ℝ w₁ := h₁.differentiable (by norm_num)
+  have hd₂ : Differentiable ℝ w₂ := h₂.differentiable (by norm_num)
+  have hc1₁ : ContDiff ℝ 1 (deriv w₁) := ContDiff.deriv' h₁
+  have hc1₂ : ContDiff ℝ 1 (deriv w₂) := ContDiff.deriv' h₂
+  have hdd₁ : Differentiable ℝ (deriv w₁) := hc1₁.differentiable (by norm_num)
+  have hdd₂ : Differentiable ℝ (deriv w₂) := hc1₂.differentiable (by norm_num)
+  have hstep₁ : deriv (fun u : ℝ => c₁ * w₁ u + c₂ * w₂ u)
+      = fun u : ℝ => c₁ * deriv w₁ u + c₂ * deriv w₂ u := by
+    funext u
+    exact ((HasDerivAt.const_mul c₁ (hd₁ u).hasDerivAt).add
+      (HasDerivAt.const_mul c₂ (hd₂ u).hasDerivAt)).deriv
+  have hstep₂ : deriv (deriv (fun u : ℝ => c₁ * w₁ u + c₂ * w₂ u))
+      = fun u : ℝ => c₁ * deriv (deriv w₁) u + c₂ * deriv (deriv w₂) u := by
+    rw [hstep₁]
+    funext u
+    exact ((HasDerivAt.const_mul c₁ (hdd₁ u).hasDerivAt).add
+      (HasDerivAt.const_mul c₂ (hdd₂ u).hasDerivAt)).deriv
+  have hcont₁ : Continuous (deriv (deriv w₁)) := hc1₁.continuous_deriv le_rfl
+  have hcont₂ : Continuous (deriv (deriv w₂)) := hc1₂.continuous_deriv le_rfl
+  have hint₁ : Integrable (fun u : ℝ => |deriv (deriv w₁) u|) :=
+    Continuous.integrable_of_hasCompactSupport (by fun_prop) (hc₁.deriv.deriv.abs)
+  have hint₂ : Integrable (fun u : ℝ => |deriv (deriv w₂) u|) :=
+    Continuous.integrable_of_hasCompactSupport (by fun_prop) (hc₂.deriv.deriv.abs)
+  have hbound : Integrable
+      (fun u : ℝ => |c₁| * |deriv (deriv w₁) u| + |c₂| * |deriv (deriv w₂) u|) :=
+    (hint₁.const_mul _).add (hint₂.const_mul _)
+  have hmain : Integrable
+      (fun u : ℝ => |c₁ * deriv (deriv w₁) u + c₂ * deriv (deriv w₂) u|) :=
+    (((hint₁.const_mul _).add (hint₂.const_mul _)).mono'
+      (by fun_prop : AEStronglyMeasurable
+        (fun u : ℝ => |c₁ * deriv (deriv w₁) u + c₂ * deriv (deriv w₂) u|) _)
+      (by
+        filter_upwards with u
+        rw [Real.norm_eq_abs, abs_abs]
+        calc |c₁ * deriv (deriv w₁) u + c₂ * deriv (deriv w₂) u|
+            ≤ |c₁ * deriv (deriv w₁) u| + |c₂ * deriv (deriv w₂) u| := abs_add_le _ _
+          _ = |c₁| * |deriv (deriv w₁) u| + |c₂| * |deriv (deriv w₂) u| := by
+              rw [abs_mul, abs_mul]))
+  rw [hstep₂]
+  calc (∫ u : ℝ, |c₁ * deriv (deriv w₁) u + c₂ * deriv (deriv w₂) u|)
+      ≤ ∫ u : ℝ, (|c₁| * |deriv (deriv w₁) u| + |c₂| * |deriv (deriv w₂) u|) := by
+        refine integral_mono hmain hbound (fun u => ?_)
+        calc |c₁ * deriv (deriv w₁) u + c₂ * deriv (deriv w₂) u|
+            ≤ |c₁ * deriv (deriv w₁) u| + |c₂ * deriv (deriv w₂) u| := abs_add_le _ _
+          _ = |c₁| * |deriv (deriv w₁) u| + |c₂| * |deriv (deriv w₂) u| := by
+              rw [abs_mul, abs_mul]
+    _ = |c₁| * (∫ u : ℝ, |deriv (deriv w₁) u|)
+          + |c₂| * (∫ u : ℝ, |deriv (deriv w₂) u|) := by
+        rw [integral_add (hint₁.const_mul _) (hint₂.const_mul _), integral_const_mul,
+          integral_const_mul]
+
+/-- The taper–height profile is the corresponding combination of the three
+reflection-pair weights: the determinant taper contracts the projected tapers, and the
+height factor is shared. -/
+theorem detWeight_eq_combination (n₁ n₂ : Fin 3 → ℝ) (g : Fin 3 → (ℝ → ℝ)) (r a : ℝ) :
+    detWeight n₁ n₂ g r a
+      = fun u : ℝ =>
+          1 * ((cross3 n₁ n₂ 0 / 4) * pairWeight (projTaper (g 0) r) a u
+              + (cross3 n₁ n₂ 1 / 4) * pairWeight (projTaper (g 1) r) a u)
+            + (cross3 n₁ n₂ 2 / 4) * pairWeight (projTaper (g 2) r) a u := by
+  funext u
+  simp [detWeight, detTaper, pairWeight, Fin.sum_univ_three]
+  ring
+
+/-- **A single curvature constant serves every near zero.**  The hypothesis `hC` of the
+gap split is always satisfiable: the taper–height profiles of the zeros of the strip have
+uniformly bounded second-derivative total variation. -/
+theorem exists_uniform_detWeightCurvature_bound {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    (n₁ n₂ : Fin 3 → ℝ) (r : ℝ) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ a : ℝ, |a| ≤ 1 / 2 → detWeightCurvature n₁ n₂ g r a ≤ C := by
+  choose C hC using fun j : Fin 3 =>
+    exists_uniform_pairWeightCurvature_bound (projTaper_contDiff (hg j) r)
+      (projTaper_hasCompactSupport (hgc j) r)
+  refine ⟨|cross3 n₁ n₂ 0 / 4| * |C 0| + |cross3 n₁ n₂ 1 / 4| * |C 1|
+      + |cross3 n₁ n₂ 2 / 4| * |C 2|, by positivity, fun a ha => ?_⟩
+  have hpw : ∀ j : Fin 3, ContDiff ℝ 2 (pairWeight (projTaper (g j) r) a) := fun j =>
+    pairWeight_contDiff (projTaper_contDiff (hg j) r) a
+  have hpwc : ∀ j : Fin 3, HasCompactSupport (pairWeight (projTaper (g j) r) a) := fun j =>
+    pairWeight_hasCompactSupport (projTaper_hasCompactSupport (hgc j) r) a
+  have hinner : ContDiff ℝ 2 (fun u : ℝ =>
+      (cross3 n₁ n₂ 0 / 4) * pairWeight (projTaper (g 0) r) a u
+        + (cross3 n₁ n₂ 1 / 4) * pairWeight (projTaper (g 1) r) a u) :=
+    (contDiff_const.mul (hpw 0)).add (contDiff_const.mul (hpw 1))
+  have hinnerc : HasCompactSupport (fun u : ℝ =>
+      (cross3 n₁ n₂ 0 / 4) * pairWeight (projTaper (g 0) r) a u
+        + (cross3 n₁ n₂ 1 / 4) * pairWeight (projTaper (g 1) r) a u) :=
+    ((hpwc 0).mul_left).add ((hpwc 1).mul_left)
+  have houter := curvature_linear_le hinner hinnerc (hpw 2) (hpwc 2) 1
+    (cross3 n₁ n₂ 2 / 4)
+  have hin := curvature_linear_le (hpw 0) (hpwc 0) (hpw 1) (hpwc 1)
+    (cross3 n₁ n₂ 0 / 4) (cross3 n₁ n₂ 1 / 4)
+  have hcurv : detWeightCurvature n₁ n₂ g r a
+      ≤ |cross3 n₁ n₂ 0 / 4| * pairWeightCurvature (projTaper (g 0) r) a
+        + |cross3 n₁ n₂ 1 / 4| * pairWeightCurvature (projTaper (g 1) r) a
+        + |cross3 n₁ n₂ 2 / 4| * pairWeightCurvature (projTaper (g 2) r) a := by
+    unfold detWeightCurvature
+    rw [detWeight_eq_combination]
+    unfold pairWeightCurvature at hin ⊢
+    rw [abs_one] at houter
+    linarith
+  have hj : ∀ j : Fin 3, |cross3 n₁ n₂ j / 4| * pairWeightCurvature (projTaper (g j) r) a
+      ≤ |cross3 n₁ n₂ j / 4| * |C j| := by
+    intro j
+    exact mul_le_mul_of_nonneg_left (le_trans (hC j a ha) (le_abs_self _)) (abs_nonneg _)
+  linarith [hj 0, hj 1, hj 2]
+
+/-- **The gap split, unconditionally.**  For any `C²` compactly supported taper triple
+there is a single curvature constant for which the signed evaluation of the finite near
+core holds at every target ordinate, cutoff and gap threshold. -/
+theorem exists_gap_split_evaluation {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    (n₁ n₂ : Fin 3 → ℝ) (r : ℝ) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (t Λ D : ℝ) (J : ℕ), 0 ≤ Λ → 0 < D → D * Λ ≤ π / 2 →
+      (∀ u, 0 ≤ detTaper n₁ n₂ g r u) → (∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0) →
+      lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+          - highGapMass t J D * (C / D ^ 2)
+        ≤ ∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u := by
+  obtain ⟨C, hC0, hC⟩ := exists_uniform_detWeightCurvature_bound hg hgc n₁ n₂ r
+  exact ⟨C, hC0, fun t Λ D J hΛ hD hDΛ hq0 hsupp =>
+    integral_taper_phaseSum_ge_gap_split hg hgc hΛ hD hDΛ hC0 hq0 hsupp
+    (fun σ _ => hC (heightOf (σ : Zeros)) (abs_heightOf_le _))⟩
+
+/-! ## 8. The large-gap mass is an explicit local zero count -/
+
+open Zeta23Bridge.ProjectedZeroTailSummability
+
+/-- **The near mass is a local zero count.**  With the owned local counting hypothesis
+`N τ (τ+1) ≤ A log(|τ|+3)`, the total multiplicity within distance `J` of the target
+ordinate is at most `(2J+1)·A·log(|t|+J+4)`. -/
+theorem nearMass_le {A : ℝ} (hA0 : 0 ≤ A)
+    (hloc : ∀ τ : ℝ, ((zetaZeroConfig).N τ (τ + 1) : ℝ) ≤ A * Real.log (|τ| + 3))
+    (t : ℝ) (J : ℕ) :
+    nearMass t J ≤ (2 * (J : ℝ) + 1) * (A * Real.log (|t| + (J : ℝ) + 4)) := by
+  classical
+  set K : Finset ℤ := Finset.Icc (-(J : ℤ)) (J : ℤ) with hK
+  set Fimg : Finset ℂ :=
+    (nearOffFinset t J).image (fun σ : ((SameOrd t)ᶜ : Set Zeros) => ((σ : Zeros) : ℂ))
+    with hFimg
+  have hinj : ∀ x ∈ nearOffFinset t J, ∀ y ∈ nearOffFinset t J,
+      ((x : Zeros) : ℂ) = ((y : Zeros) : ℂ) → x = y :=
+    fun x _ y _ h => Subtype.ext (Subtype.ext h)
+  have hmassimg : nearMass t J
+      = ∑ ρ ∈ Fimg, ((Zeta23.zetaZeroConfig).mult ρ : ℝ) := by
+    rw [hFimg, Finset.sum_image hinj]
+    rfl
+  have hmem : ∀ ρ ∈ Fimg, ρ ∈ (zetaZeroConfig).carrier ∧ |ρ.im - t| < (J : ℝ) := by
+    intro ρ hρ
+    rw [hFimg] at hρ
+    obtain ⟨σ, hσ, rfl⟩ := Finset.mem_image.1 hρ
+    exact ⟨(σ : Zeros).2, (mem_nearOffFinset_iff t J σ).1 hσ⟩
+  have hmaps : ∀ ρ ∈ Fimg, shellIdx t ρ ∈ K := by
+    intro ρ hρ
+    have hnear : |ρ.im - t| < (J : ℝ) := (hmem ρ hρ).2
+    have hub : ρ.im - t ≤ (J : ℝ) := le_trans (le_abs_self _) hnear.le
+    have hlb : -((J : ℝ)) < ρ.im - t := by
+      have := neg_abs_le (ρ.im - t)
+      linarith
+    have h1 : shellIdx t ρ ≤ (J : ℤ) := by
+      simp only [shellIdx]
+      exact Int.ceil_le.2 (by exact_mod_cast hub)
+    have h2 : -(J : ℤ) ≤ shellIdx t ρ := by
+      have hge : ρ.im - t ≤ ((shellIdx t ρ : ℤ) : ℝ) := Int.le_ceil _
+      have : -((J : ℝ)) < ((shellIdx t ρ : ℤ) : ℝ) := lt_of_lt_of_le hlb hge
+      exact_mod_cast this.le
+    exact Finset.mem_Icc.2 ⟨h2, h1⟩
+  have hfiber : (∑ j ∈ K, ∑ ρ ∈ Fimg with shellIdx t ρ = j,
+        ((Zeta23.zetaZeroConfig).mult ρ : ℝ))
+      = ∑ ρ ∈ Fimg, ((Zeta23.zetaZeroConfig).mult ρ : ℝ) :=
+    Finset.sum_fiberwise_of_maps_to hmaps
+      (fun ρ : ℂ => ((Zeta23.zetaZeroConfig).mult ρ : ℝ))
+  have hbound : ∀ j ∈ K, (∑ ρ ∈ Fimg with shellIdx t ρ = j,
+        ((Zeta23.zetaZeroConfig).mult ρ : ℝ))
+      ≤ A * Real.log (|t| + (J : ℝ) + 4) := by
+    intro j hj
+    have hsub : ↑(Fimg.filter (fun ρ => shellIdx t ρ = j))
+        ⊆ (zetaZeroConfig).window (t + (j : ℝ) - 1) (t + (j : ℝ)) := by
+      intro ρ hρ
+      have hρ' : ρ ∈ Fimg.filter (fun ρ => shellIdx t ρ = j) := hρ
+      have hj' : shellIdx t ρ = j := (Finset.mem_filter.1 hρ').2
+      have hcar : ρ ∈ (zetaZeroConfig).carrier := (hmem ρ (Finset.mem_filter.1 hρ').1).1
+      have := mem_window_shell t ρ hcar
+      rwa [hj'] at this
+    have hcount : (∑ ρ ∈ Fimg.filter (fun ρ => shellIdx t ρ = j),
+          ((Zeta23.zetaZeroConfig).mult ρ : ℝ))
+        ≤ ((zetaZeroConfig).N (t + (j : ℝ) - 1) (t + (j : ℝ)) : ℝ) := by
+      have h := sum_mult_le_N (t + (j : ℝ) - 1) (t + (j : ℝ))
+        (Fimg.filter (fun ρ => shellIdx t ρ = j)) hsub
+      exact_mod_cast h
+    have hlocj := hloc (t + (j : ℝ) - 1)
+    have hwin : t + (j : ℝ) - 1 + 1 = t + (j : ℝ) := by ring
+    rw [hwin] at hlocj
+    have hjle : |(j : ℝ)| ≤ (J : ℝ) := by
+      have hj' := Finset.mem_Icc.1 hj
+      have h1 : -((J : ℝ)) ≤ (j : ℝ) := by exact_mod_cast hj'.1
+      have h2 : (j : ℝ) ≤ (J : ℝ) := by exact_mod_cast hj'.2
+      rw [abs_le]
+      exact ⟨h1, h2⟩
+    have hlog : Real.log (|t + (j : ℝ) - 1| + 3) ≤ Real.log (|t| + (J : ℝ) + 4) := by
+      refine Real.log_le_log (by positivity) ?_
+      have ha := abs_add_le t ((j : ℝ))
+      have hb := abs_add_le (t + (j : ℝ)) (-1)
+      simp only [abs_neg, abs_one] at hb
+      have hrw : t + (j : ℝ) - 1 = t + (j : ℝ) + (-1) := by ring
+      rw [hrw]
+      linarith
+    calc (∑ ρ ∈ Fimg with shellIdx t ρ = j, ((Zeta23.zetaZeroConfig).mult ρ : ℝ))
+        ≤ ((zetaZeroConfig).N (t + (j : ℝ) - 1) (t + (j : ℝ)) : ℝ) := hcount
+      _ ≤ A * Real.log (|t + (j : ℝ) - 1| + 3) := hlocj
+      _ ≤ A * Real.log (|t| + (J : ℝ) + 4) := mul_le_mul_of_nonneg_left hlog hA0
+  have hcard : (K.card : ℝ) = 2 * (J : ℝ) + 1 := by
+    rw [hK, Int.card_Icc]
+    have hnat : ((J : ℤ) + 1 - -(J : ℤ)).toNat = 2 * J + 1 := by omega
+    rw [hnat]
+    push_cast
+    ring
+  calc nearMass t J
+      = ∑ ρ ∈ Fimg, ((Zeta23.zetaZeroConfig).mult ρ : ℝ) := hmassimg
+    _ = ∑ j ∈ K, ∑ ρ ∈ Fimg with shellIdx t ρ = j,
+          ((Zeta23.zetaZeroConfig).mult ρ : ℝ) := hfiber.symm
+    _ ≤ ∑ _j ∈ K, A * Real.log (|t| + (J : ℝ) + 4) := Finset.sum_le_sum hbound
+    _ = (2 * (J : ℝ) + 1) * (A * Real.log (|t| + (J : ℝ) + 4)) := by
+        rw [Finset.sum_const, nsmul_eq_mul, hcard]
+
+/-- The large-gap mass is part of the near mass. -/
+theorem highGapMass_le_nearMass (t : ℝ) (J : ℕ) (D : ℝ) :
+    highGapMass t J D ≤ nearMass t J := by
+  classical
+  unfold highGapMass nearMass highGapFinset
+  refine Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _) ?_
+  intro σ _ _
+  positivity
+
+/-- **The escape condition, explicitly.**  Combining the gap split with the local zero
+count: the large-gap term of the split is at most
+`(2J+1)·A·log(|t|+J+4)·C/D²`, so the finite near core obeys an explicit lower bound in
+the parameters `(t, J, Λ, D, A, C)` alone. -/
+theorem integral_taper_phaseSum_ge_explicit {g : Fin 3 → (ℝ → ℝ)}
+    (hg : ∀ j, ContDiff ℝ 2 (g j)) (hgc : ∀ j, HasCompactSupport (g j))
+    {n₁ n₂ : Fin 3 → ℝ} {t r Λ D C A : ℝ} {J : ℕ}
+    (hΛ : 0 ≤ Λ) (hD : 0 < D) (hDΛ : D * Λ ≤ π / 2) (hC0 : 0 ≤ C) (hA0 : 0 ≤ A)
+    (hloc : ∀ τ : ℝ, ((zetaZeroConfig).N τ (τ + 1) : ℝ) ≤ A * Real.log (|τ| + 3))
+    (hq0 : ∀ u, 0 ≤ detTaper n₁ n₂ g r u)
+    (hsupp : ∀ u, Λ < |u| → detTaper n₁ n₂ g r u = 0)
+    (hC : ∀ σ ∈ nearOffFinset t J,
+      detWeightCurvature n₁ n₂ g r (heightOf (σ : Zeros)) ≤ C) :
+    lowGapMass t J D * (Real.cos (D * Λ) * (∫ u : ℝ, detTaper n₁ n₂ g r u))
+        - (2 * (J : ℝ) + 1) * (A * Real.log (|t| + (J : ℝ) + 4)) * (C / D ^ 2)
+      ≤ ∫ u : ℝ, detTaper n₁ n₂ g r u * localZeroPhaseSum t J u := by
+  have hsplit := integral_taper_phaseSum_ge_gap_split hg hgc hΛ hD hDΛ hC0 hq0 hsupp hC
+  have hmass : highGapMass t J D ≤ (2 * (J : ℝ) + 1) * (A * Real.log (|t| + (J : ℝ) + 4)) :=
+    le_trans (highGapMass_le_nearMass t J D) (nearMass_le hA0 hloc t J)
+  have hterm : highGapMass t J D * (C / D ^ 2)
+      ≤ (2 * (J : ℝ) + 1) * (A * Real.log (|t| + (J : ℝ) + 4)) * (C / D ^ 2) :=
+    mul_le_mul_of_nonneg_right hmass (by positivity)
+  linarith
+
+end NearCoreGapSplitEvaluation
+end Zeta23Bridge

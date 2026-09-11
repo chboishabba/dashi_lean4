@@ -13,6 +13,7 @@ import Synthesis.SpinCoverBridge
 import Synthesis.CircleCover
 import Synthesis.ExponentFibre
 import Synthesis.MonsterOrder
+import Synthesis.MonsterCharacterDetermination
 import Synthesis.Hyperfabric
 import Synthesis.CodecBridge
 import Synthesis.EndToEnd
@@ -72,6 +73,10 @@ Layers, in dependency order:
 * `Synthesis.MonsterOrder` — the arithmetic half of the Monster-order obligation:
   the literature's order numeral has exactly the fifteen base primes as prime
   factors, and its radical is the full mask product (no group is constructed);
+* `Synthesis.MonsterCharacterDetermination` — a generic mathlib-backed theorem
+  that equal characters of simple finite-group representations imply a
+  nonempty equivariant isomorphism; it supplies no Monster-specific
+  identification by itself;
 * `Synthesis.Hyperfabric` — sections of the ternary fibre over the Monster base,
   their `(ℤ/3)^15` algebra, and the dialectical action on them;
 * `Synthesis.CodecBridge` — the identification of the hyperfabric with the

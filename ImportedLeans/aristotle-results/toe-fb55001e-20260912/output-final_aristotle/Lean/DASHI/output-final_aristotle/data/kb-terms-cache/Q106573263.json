@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "ambiguous term",
+  "vague label",
+  "vague term",
+  "ambiguous name",
+  "vague name"
+ ],
+ "canonical": "Q106573263",
+ "description": "label that may refer to one of several specific items, and whose referent must be determined by context",
+ "id": "Q106573263",
+ "label": "ambiguous label"
+}

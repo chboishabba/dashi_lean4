@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "graph vertex",
+  "graph node",
+  "node of a graph",
+  "vertex of a graph",
+  "vertices",
+  "vertex"
+ ],
+ "canonical": "Q1304193",
+ "description": "unit connected by edges with other units in a graph, in graph theory",
+ "id": "Q1304193",
+ "label": "node"
+}

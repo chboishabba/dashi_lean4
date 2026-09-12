@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "Cayley number",
+  "octave",
+  "octonions",
+  "Cayley numbers",
+  "octaves"
+ ],
+ "canonical": "Q743418",
+ "description": "non-commutative, non-associative algebra of numbers with eight real components",
+ "id": "Q743418",
+ "label": "octonion"
+}

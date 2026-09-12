@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "symmetric tensor category"
+ ],
+ "canonical": "Q17103860",
+ "description": "monoidal category where A ⊗ B is naturally equivalent to B ⊗ A",
+ "id": "Q17103860",
+ "label": "symmetric monoidal category"
+}

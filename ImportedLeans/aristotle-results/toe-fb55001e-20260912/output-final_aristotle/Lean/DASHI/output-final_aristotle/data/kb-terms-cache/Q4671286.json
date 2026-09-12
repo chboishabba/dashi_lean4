@@ -1,0 +1,18 @@
+{
+ "aliases": [
+  "main speciality of study",
+  "main field of study",
+  "speciality of study",
+  "field of study",
+  "main discipline",
+  "major discipline",
+  "university discipline",
+  "major concentration",
+  "major",
+  "university major"
+ ],
+ "canonical": "Q4671286",
+ "description": "focus of academic study leading to a degree",
+ "id": "Q4671286",
+ "label": "academic major"
+}

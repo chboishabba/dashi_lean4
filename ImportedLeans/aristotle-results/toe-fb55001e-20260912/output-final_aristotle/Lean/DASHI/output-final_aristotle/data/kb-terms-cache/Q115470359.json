@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "item",
+  "data item",
+  "Wikibase item data type"
+ ],
+ "canonical": "Q115470359",
+ "description": "Wikibase property value datatype",
+ "id": "Q115470359",
+ "label": "Wikibase item datatype"
+}

@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "set union",
+  "union of two sets",
+  "union of sets",
+  "∪"
+ ],
+ "canonical": "Q185359",
+ "description": "operation denoted by symbol “∪” applied on two sets; the set of all distinct elements in the collection",
+ "id": "Q185359",
+ "label": "union"
+}

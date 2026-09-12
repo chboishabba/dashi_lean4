@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "quasi-periodic semigroup",
+  "group-bound semigroup",
+  "completely π-regular semigroup",
+  "strongly π-regular semigroup"
+ ],
+ "canonical": "Q5382940",
+ "description": "algebraic structure, a semigroup in which every element has a power that belongs to a subgroup",
+ "id": "Q5382940",
+ "label": "epigroup"
+}

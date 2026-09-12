@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "directed labeled graph",
+  "labeled digraph",
+  "labelled digraph",
+  "labelled directed graph",
+  "directed labelled graph"
+ ],
+ "canonical": "Q115636432",
+ "description": "directed graph where nodes and vertices have labels assigned to them",
+ "id": "Q115636432",
+ "label": "labeled directed graph"
+}

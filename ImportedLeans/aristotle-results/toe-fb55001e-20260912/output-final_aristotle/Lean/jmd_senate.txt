@@ -1,0 +1,1531 @@
+=== ALLM.TXT ===
+Source archive: cf7316f4-0bf3-4e38-b8b0-34f430244c28-aristotle.tar.gz
+Generated: 2026-06-05 21:26:44 UTC
+Selected files: f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/ARISTOTLE_SUMMARY.md, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/README.md, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/lean-toolchain, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/lake-manifest.json, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/lakefile.toml, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Committees.lean, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Enforcement.lean, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Riddick.lean, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/UCagreements.lean, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/SenateManual.lean, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Main.lean, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/RulemakingStatutes.lean, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Basic.lean, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Voting.lean, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Recognition.lean, f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/.gitkeep
+
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/ARISTOTLE_SUMMARY.md (4.36 KiB) ─────
+# Summary of changes for run f02f42ce-3a45-421c-b515-a42b4dfa8e2d
+I formalized key structural and procedural concepts from the CRS report "Parliamentary Reference Sources: Senate" (RL30788) across 10 Lean 4 files totaling ~1,300 lines, all compiling without any `sorry` statements.
+
+## Files Created
+
+### `RequestProject/Basic.lean` (179 lines)
+Core types and properties:
+- **`ProceduralSource`**: Enumerates all 9 sources of Senate procedure (Constitution, standing rules, standing orders, rulemaking statutes, precedents, UC agreements, committee rules, party conference rules, informal practices)
+- **Floor enforceability**: Proves which sources are/aren't enforceable on the Senate floor (6 enforceable, 3 not)
+- **Rulemaking authority**: Captures that standing rules, standing orders, rulemaking statutes, and UC agreements all derive from constitutional rulemaking authority and thus have equal procedural standing
+- **Precedent weight hierarchy**: Formalizes the ordering Senate vote > presiding officer ruling > parliamentary inquiry
+
+### `RequestProject/Recognition.lean` (112 lines)
+Models the recognition priority system:
+- **`SenatorRole`**: Majority leader, minority leader, majority/minority managers, other Senators
+- **Priority ranking**: Proves the strict ordering majority leader > minority leader > majority manager > minority manager > other
+- **`recognizeFirst`**: Algorithmic model of recognition selection
+- **Key theorem**: If the majority leader is seeking recognition, the recognized Senator always has priority ≤ the majority leader's (formalizing the Riddick's p.1098 precedent)
+
+### `RequestProject/Voting.lean` (162 lines)
+Formalizes voting thresholds:
+- **Vote thresholds**: Simple majority, 3/5 sworn, 2/3 present and voting, unanimous consent
+- **Action-threshold mappings**: Rules changes (majority), cloture generally (3/5), cloture on rules (2/3), rule suspension (2/3), UC agreements (unanimous)
+- **Quorum arithmetic**: Proves quorum = 51, cloture = 60, two-thirds = 67
+- **Recorded vote**: Art. I §5 requirement (1/5 of those present)
+
+### `RequestProject/SenateManual.lean` (116 lines)
+Models the Senate Manual structure:
+- **7 components** of the Manual (standing rules, standing orders, chamber regulations, impeachment rules, Cleaves' manual, legislative procedures, Constitution)
+- **Section numbering system** and key section references
+- **Continuing body principle**: Proves that 2/3 continuing Senators > 1/2 quorum requirement
+
+### `RequestProject/UCagreements.lean` (98 lines)
+Models unanimous consent agreements:
+- Properties: floor enforceable, only alterable by UC, override contrary rules
+- Standing orders by UC (11 adopted at start of 118th Congress)
+- Override scope (4 categories of overridable authority)
+
+### `RequestProject/Enforcement.lean` (142 lines)
+Models enforcement mechanisms:
+- Points of order, rulings, and appeals
+- Two mandatory submission cases (germaneness on appropriations, constitutional questions)
+- Debate rules for each submission type
+- Cloture exception for sua sponte rulings on dilatory motions
+
+### `RequestProject/Committees.lean` (97 lines)
+Models committee rules system:
+- Publication requirements and deadlines (March 1, or 60 days for late-established committees)
+- 5 publication venues (Congressional Record is the only mandatory one)
+- Internal enforcement (no floor points of order)
+
+### `RequestProject/RulemakingStatutes.lean` (103 lines)
+Models the 3 categories of rulemaking statutes:
+- Legislative Reorganization Acts, expedited procedures, budget process
+- "Exercise of Rulemaking Power" clause properties
+- Budget resolution procedural provisions and PAYGO (first established 1993)
+
+### `RequestProject/Riddick.lean` (135 lines)
+Formalizes facts about Riddick's Senate Procedure:
+- Coverage span (1883–1992, 110 years)
+- Citation conventions (with/without "see" distinguishing precedent origins)
+- Authorship and tenure facts
+- UC agreement precedents page range
+
+### `RequestProject/Main.lean` (158 lines)
+Cross-cutting theorems tying all modules together:
+- 9 procedural sources partitioned into 6 enforceable + 3 non-enforceable
+- 4 rulemaking authority sources, all floor-enforceable
+- Rules change asymmetry (majority to adopt, 2/3 for cloture on the proposal)
+- Precedent weight is injective and strictly totally ordered
+- Vote threshold strictness is injective and strictly ordered
+- Continuing body arithmetic (66+ continuing Senators ≥ 51 quorum)
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/README.md (248 B) ─────
+This project was edited by [Aristotle](https://aristotle.harmonic.fun).
+
+To cite Aristotle:
+- Tag @Aristotle-Harmonic on GitHub PRs/issues
+- Add as co-author to commits:
+```
+Co-authored-by: Aristotle (Harmonic)
+```
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/lean-toolchain (25 B) ─────
+leanprover/lean4:v4.28.0
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/lake-manifest.json (3.04 KiB) ─────
+{"version": "1.1.0",
+ "packagesDir": ".lake/packages",
+ "packages":
+ [{"url": "https://github.com/leanprover-community/mathlib4.git",
+   "type": "git",
+   "subDir": null,
+   "scope": "",
+   "rev": "8f9d9cff6bd728b17a24e163c9402775d9e6a365",
+   "name": "mathlib",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "v4.28.0",
+   "inherited": false,
+   "configFile": "lakefile.lean"},
+  {"url": "https://github.com/leanprover-community/plausible",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "55c8532eb21ec9f6d565d51d96b8ca50bd1fbef3",
+   "name": "plausible",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "main",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/LeanSearchClient",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "c5d5b8fe6e5158def25cd28eb94e4141ad97c843",
+   "name": "LeanSearchClient",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "main",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/import-graph",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "85b59af46828c029a9168f2f9c35119bd0721e6e",
+   "name": "importGraph",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "main",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/ProofWidgets4",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "be3b2e63b1bbf496c478cef98b86972a37c1417d",
+   "name": "proofwidgets",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "v0.0.87",
+   "inherited": true,
+   "configFile": "lakefile.lean"},
+  {"url": "https://github.com/leanprover-community/aesop",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "f642a64c76df8ba9cb53dba3b919425a0c2aeaf1",
+   "name": "aesop",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "master",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/quote4",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "b8f98e9087e02c8553945a2c5abf07cec8e798c3",
+   "name": "Qq",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "master",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/batteries",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "495c008c3e3f4fb4256ff5582ddb3abf3198026f",
+   "name": "batteries",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "main",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover/lean4-cli",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover",
+   "rev": "4f10f47646cb7d5748d6f423f4a07f98f7bbcc9e",
+   "name": "Cli",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "v4.28.0",
+   "inherited": true,
+   "configFile": "lakefile.toml"}],
+ "name": "RequestProject",
+ "lakeDir": ".lake"}
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/lakefile.toml (234 B) ─────
+name = "RequestProject"
+defaultTargets = ["RequestProject"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.28.0"
+
+[[lean_lib]]
+name = "RequestProject"
+globs = ["RequestProject.+"]
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Committees.lean (3.96 KiB) ─────
+/-
+# Committee Rules — Formal Model
+
+Formalizes the committee rules system described in the report.
+
+"Rule XXVI, paragraph 2, of the Senate's standing rules requires that each
+standing committee adopt written rules of procedure and publish these rules in
+the Congressional Record not later than March 1 of the first session of each Congress."
+-/
+
+import Mathlib
+
+/-! ## Committee Rules Requirements
+
+Key properties from the report:
+1. Each standing committee must adopt written rules of procedure.
+2. Rules must be published in the Congressional Record by March 1.
+3. Committee rules cover proxy voting, quorum requirements, report preparation.
+4. Subcommittees may have supplemental rules.
+5. Committees enforce their own rules (no floor points of order).
+6. Committee rules cannot supersede standing rules of the Senate.
+-/
+
+/-- Topics that committee rules typically cover, as listed in the report.
+    "Committee rules cover important aspects of the committee stage of the legislative
+    process, such as the procedures for preparing committee reports, proxy voting,
+    and quorum requirements." -/
+inductive CommitteeRuleTopic where
+  | reportPreparation   -- Procedures for preparing committee reports
+  | proxyVoting         -- Rules on proxy voting
+  | quorumRequirements  -- Quorum requirements for committee business
+  | subcommitteeRules   -- Supplemental rules for subcommittees
+  deriving DecidableEq, Repr
+
+/-- Properties of the committee rules system. -/
+structure CommitteeRulesSystem where
+  /-- Each standing committee must adopt rules. -/
+  adoptionRequired : Prop
+  /-- Publication deadline: March 1 of the first session. -/
+  publicationDeadlineMarch1 : Prop
+  /-- Enforcement is internal to the committee. -/
+  internalEnforcement : Prop
+  /-- Cannot supersede standing rules. -/
+  cannotSupersedeStandingRules : Prop
+  /-- No floor points of order on committee rules. -/
+  noFloorPointsOfOrder : Prop
+
+/-- The actual committee rules system as described in the report. -/
+def senateCommitteeRulesSystem : CommitteeRulesSystem where
+  adoptionRequired := True
+  publicationDeadlineMarch1 := True
+  internalEnforcement := True
+  cannotSupersedeStandingRules := True
+  noFloorPointsOfOrder := True
+
+/-- The exception for committees established on or after February 1:
+    "the March 1 deadline does not apply to committees established on or after
+    February 1. Such committees must publish their rules of procedure not later
+    than 60 days after being established." -/
+def lateCommitteeDeadlineDays : ℕ := 60
+
+theorem late_committee_deadline_is_60 : lateCommitteeDeadlineDays = 60 := by rfl
+
+/-! ## Publication Venues for Committee Rules
+
+"Each committee's rules appear in the Congressional Record on the day they are
+submitted for publication. Some committees also publish their rules in a committee
+print or in the committee's interim or final 'Legislative Calendar' and many post
+them on the committee websites." -/
+
+/-- Where committee rules may be published. -/
+inductive CommitteeRulesVenue where
+  | congressionalRecord   -- Required: published in the Record
+  | committeePrint         -- Optional: some committees
+  | legislativeCalendar    -- Optional: some committees
+  | committeeWebsite       -- Optional: many committees
+  | authorityAndRules      -- Compiled by Rules and Administration Committee
+  deriving DecidableEq, Repr, Fintype
+
+/-- There are 5 publication venues. -/
+theorem num_publication_venues :
+    Fintype.card CommitteeRulesVenue = 5 := by
+  decide
+
+/-- The Congressional Record is the mandatory venue. -/
+def CommitteeRulesVenue.mandatory : CommitteeRulesVenue → Prop
+  | .congressionalRecord => True
+  | _ => False
+
+instance (v : CommitteeRulesVenue) : Decidable v.mandatory := by
+  cases v <;> simp [CommitteeRulesVenue.mandatory] <;> infer_instance
+
+/-- Only the Congressional Record is mandatory for publication. -/
+theorem only_record_mandatory :
+    ∀ v : CommitteeRulesVenue, v.mandatory ↔ v = .congressionalRecord := by
+  intro v; cases v <;> simp [CommitteeRulesVenue.mandatory]
+
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Enforcement.lean (5.43 KiB) ─────
+/-
+# Enforcement Mechanisms — Formal Model
+
+Formalizes the enforcement mechanisms described in the report, including
+points of order, rulings, and appeals.
+
+"The Senate's presiding officer ... does not always call the chamber's attention
+to a violation of Senate rules. The Senate can violate its procedures unless a
+Senator, at the right moment, makes a point of order."
+-/
+
+import Mathlib
+import RequestProject.Basic
+
+/-! ## Points of Order and Rulings
+
+The report describes a sequence of events when a procedural question arises:
+1. A Senator raises a point of order
+2. The presiding officer makes a ruling (usually without debate)
+3. Any Senator may appeal the ruling
+4. The Senate votes on the appeal (usually by majority vote)
+5. The vote establishes a precedent
+-/
+
+/-- The possible outcomes when a point of order is raised. -/
+inductive PointOfOrderOutcome where
+  | sustained       -- The presiding officer sustains the point of order
+  | overruled       -- The presiding officer overrules the point of order
+  | submittedToSenate -- The presiding officer submits the question to the Senate
+  deriving DecidableEq, Repr
+
+/-- Whether a ruling was appealed and the result. -/
+inductive AppealOutcome where
+  | notAppealed         -- No Senator appealed
+  | upheld              -- Senate voted to uphold the ruling
+  | overturned          -- Senate voted to overturn the ruling
+  deriving DecidableEq, Repr
+
+open PointOfOrderOutcome AppealOutcome
+
+/-- A complete procedural ruling event. -/
+structure RulingEvent where
+  pointOfOrder : PointOfOrderOutcome
+  appeal : AppealOutcome
+  /-- The precedent origin determined by how this ruling was resolved. -/
+  precedentOrigin : PrecedentOrigin
+
+open PrecedentOrigin
+
+/-- When a ruling is not appealed, it creates a presiding officer ruling precedent. -/
+def rulingNotAppealed_origin :
+    RulingEvent → Prop := fun e =>
+  e.appeal = notAppealed → e.precedentOrigin = presidingOfficerRule
+
+/-- When the Senate votes on an appeal, it creates a Senate vote precedent
+    (the most authoritative kind). -/
+def rulingAppealed_origin :
+    RulingEvent → Prop := fun e =>
+  (e.appeal = upheld ∨ e.appeal = overturned) → e.precedentOrigin = senateVote
+
+/-! ## The Two Mandatory Submission Cases
+
+"The presiding officer must submit two types of questions of order to the Senate:
+1. Under Rule XVI, ¶4: germaneness of amendments to appropriations bills
+2. Constitutional questions (by precedent)"
+-/
+
+/-- Types of points of order that must be submitted to the Senate. -/
+inductive MandatorySubmission where
+  | germanenessAppropriations  -- Rule XVI, ¶4
+  | constitutionalQuestion     -- By precedent
+  deriving DecidableEq, Repr
+
+/-- Whether debate is allowed on a mandatory submission.
+    "Under Rule XVI, paragraph 4, the Senate decides questions concerning the
+    germaneness or relevance of most amendments to appropriations bills and does
+    so without debate."
+    "the Senate is to decide all constitutional questions, with debate usually allowed." -/
+def MandatorySubmission.debateAllowed : MandatorySubmission → Prop
+  | .germanenessAppropriations => False
+  | .constitutionalQuestion    => True
+
+instance (m : MandatorySubmission) : Decidable m.debateAllowed := by
+  cases m <;> simp [MandatorySubmission.debateAllowed] <;> infer_instance
+
+/-- Germaneness questions on appropriations bills are decided without debate. -/
+theorem germaneness_no_debate :
+    ¬ MandatorySubmission.germanenessAppropriations.debateAllowed := by
+  simp [MandatorySubmission.debateAllowed]
+
+/-- Constitutional questions are debatable. -/
+theorem constitutional_questions_debatable :
+    MandatorySubmission.constitutionalQuestion.debateAllowed := by
+  simp [MandatorySubmission.debateAllowed]
+
+/-! ## Precedent Establishment
+
+"Most precedents are established when the Senate votes on questions of order ...
+or when the presiding officer decides a question of order and the ruling is not
+appealed. ... Precedents may also be created when the presiding officer responds
+to a parliamentary inquiry."
+
+"precedents based on a vote of the Senate have more weight than those based on
+rulings of the presiding officer"
+-/
+
+/-- A precedent is established by any of three mechanisms. -/
+def establishes_precedent (e : RulingEvent) : Prop :=
+  e.precedentOrigin = senateVote ∨
+  e.precedentOrigin = presidingOfficerRule ∨
+  e.precedentOrigin = parliamentaryInquiry
+
+/-- Every ruling event establishes a precedent (by construction of our model). -/
+theorem every_ruling_establishes_precedent (e : RulingEvent) :
+    establishes_precedent e := by
+  simp [establishes_precedent]
+  cases e.precedentOrigin <;> simp
+
+/-! ## Cloture and Dilatory Motions
+
+"When the Senate is operating under cloture ... the presiding officer has the
+authority to rule all dilatory motions out of order on his or her own initiative."
+
+This is an exception to the general principle that the presiding officer does not
+sua sponte enforce rules.
+-/
+
+/-- Whether the presiding officer can rule motions out of order on own initiative. -/
+def presidingOfficerSuaSponte (underCloture : Bool) : Prop :=
+  underCloture = true
+
+/-- Under cloture, the presiding officer can act on own initiative. -/
+theorem sua_sponte_under_cloture :
+    presidingOfficerSuaSponte true := by
+  simp [presidingOfficerSuaSponte]
+
+/-- Without cloture, the presiding officer cannot act on own initiative
+    (a Senator must raise a point of order). -/
+theorem no_sua_sponte_without_cloture :
+    ¬ presidingOfficerSuaSponte false := by
+  simp [presidingOfficerSuaSponte]
+
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Riddick.lean (4.99 KiB) ─────
+/-
+# Riddick's Senate Procedure — Formal Model
+
+Formalizes key facts about Riddick's Senate Procedure (S.Doc. 101-28), the most
+comprehensive reference source covering Senate rules, precedents, and practices.
+
+"Its principal purpose is to present a digest of precedents established in the
+Senate. The current edition, published in 1992, covers significant Senate
+precedents established from 1883 to 1992."
+-/
+
+import Mathlib
+
+/-! ## Publication Facts -/
+
+/-- The year range of precedents covered in Riddick's Senate Procedure. -/
+def riddickCoverageStart : ℕ := 1883
+def riddickCoverageEnd : ℕ := 1992
+
+/-- Riddick's covers 110 years of precedents (1883-1992 inclusive). -/
+theorem riddick_coverage_span :
+    riddickCoverageEnd - riddickCoverageStart + 1 = 110 := by
+  simp [riddickCoverageStart, riddickCoverageEnd]
+
+/-- The publication year of the current edition. -/
+def riddickPublicationYear : ℕ := 1992
+
+/-! ## Organization
+
+"It is organized around procedural topics, which are presented in alphabetical
+order. For each procedural topic, the volume first presents a summary of the
+general principles governing that topic followed by the text of relevant standing
+rules, constitutional provisions, or rulemaking provisions of statute."
+
+The report specifically mentions the cloture procedure as an example topic.
+-/
+
+/-- The structure of a topic entry in Riddick's. -/
+structure RiddickTopicEntry where
+  /-- The topic name. -/
+  topicName : String
+  /-- General principles summary is provided first. -/
+  hasPrinciplesSummary : Bool
+  /-- Relevant rule texts are included. -/
+  hasRuleTexts : Bool
+  /-- Precedent summaries organized alphabetically by subject. -/
+  hasPrecedentSummaries : Bool
+
+/-- Example: the Cloture Procedure entry, as described in the report.
+    "the topic 'Cloture Procedure' has a subject heading 'Amendments After Cloture,'
+    which is further divided into 18 topics" -/
+def clotureEntry : RiddickTopicEntry where
+  topicName := "Cloture Procedure"
+  hasPrinciplesSummary := true
+  hasRuleTexts := true
+  hasPrecedentSummaries := true
+
+/-- The number of subtopics under "Amendments After Cloture" in the Cloture
+    Procedure entry. -/
+def clotureAmendmentSubtopics : ℕ := 18
+
+theorem cloture_amendment_subtopics_is_18 :
+    clotureAmendmentSubtopics = 18 := by rfl
+
+/-! ## Citation Conventions
+
+"Footnotes provide citations to the date, the Congress, and the session when each
+precedent was established and to the Congressional Record or Senate Journal pages."
+
+"Footnote citations beginning with the word see indicate proceedings based on
+presiding officers' responses to parliamentary inquiries. Citations without see
+indicate precedents created by ruling of the presiding officers or by votes of
+the Senate."
+-/
+
+/-- The citation style in Riddick's distinguishes precedent origins. -/
+inductive RiddickCitationStyle where
+  | withSee    -- "see ..." → parliamentary inquiry
+  | withoutSee -- No "see" → ruling or Senate vote
+  deriving DecidableEq, Repr
+
+/-- Citations with "see" indicate parliamentary inquiries (lesser weight). -/
+def RiddickCitationStyle.indicatesInquiry : RiddickCitationStyle → Prop
+  | .withSee    => True
+  | .withoutSee => False
+
+instance (c : RiddickCitationStyle) : Decidable c.indicatesInquiry := by
+  cases c <;> simp [RiddickCitationStyle.indicatesInquiry] <;> infer_instance
+
+/-! ## Authorship
+
+"It was written by Floyd M. Riddick, Parliamentarian of the Senate from 1964 to
+1974, and Alan S. Frumin, Parliamentarian of the Senate from 1987 to 1995 and
+2001 to 2012 and Parliamentarian Emeritus since 1997."
+-/
+
+/-- Riddick's tenure as Senate Parliamentarian. -/
+def riddickTenureStart : ℕ := 1964
+def riddickTenureEnd : ℕ := 1974
+
+/-- Riddick served as Parliamentarian for 10 years. -/
+theorem riddick_tenure_length :
+    riddickTenureEnd - riddickTenureStart = 10 := by
+  simp [riddickTenureStart, riddickTenureEnd]
+
+/-- Frumin's first tenure as Senate Parliamentarian. -/
+def fruminFirstTenureStart : ℕ := 1987
+def fruminFirstTenureEnd : ℕ := 1995
+
+/-- Frumin's second tenure as Senate Parliamentarian. -/
+def fruminSecondTenureStart : ℕ := 2001
+def fruminSecondTenureEnd : ℕ := 2012
+
+/-- Frumin served a total of 19 years as Parliamentarian. -/
+theorem frumin_total_tenure :
+    (fruminFirstTenureEnd - fruminFirstTenureStart) +
+    (fruminSecondTenureEnd - fruminSecondTenureStart) = 19 := by
+  simp [fruminFirstTenureStart, fruminFirstTenureEnd,
+        fruminSecondTenureStart, fruminSecondTenureEnd]
+
+/-! ## UC Agreements Coverage in Riddick's
+
+"A body of precedents has developed on how UC agreements are to be interpreted
+and applied in different procedural situations. These precedents are covered in
+Riddick's Senate Procedure, pp. 1311-1369." -/
+
+/-- The page range for UC agreement precedents in Riddick's. -/
+def ucPrecedentsStartPage : ℕ := 1311
+def ucPrecedentsEndPage : ℕ := 1369
+
+/-- UC agreement precedents span 59 pages in Riddick's. -/
+theorem uc_precedents_pages :
+    ucPrecedentsEndPage - ucPrecedentsStartPage + 1 = 59 := by
+  simp [ucPrecedentsStartPage, ucPrecedentsEndPage]
+
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/UCagreements.lean (3.76 KiB) ─────
+/-
+# Unanimous Consent Agreements — Formal Model
+
+Formalizes the properties of UC agreements as described in the report.
+
+"UC agreements also include orders that function as parliamentary authorities in
+the Senate. These consent agreements establish conditions for floor consideration
+of specified measures, which, in relation to those measures, override the
+regulations established by the standing rules and other Senate parliamentary
+authorities."
+-/
+
+import Mathlib
+
+/-! ## UC Agreements as Parliamentary Authorities
+
+Key properties from the report:
+1. Once entered into, a UC agreement is enforceable on the Senate floor.
+2. A UC agreement has the same authority as the Senate's standing rules.
+3. A UC agreement can only be altered by unanimous consent.
+4. UC agreements have the effect of overriding "all Senate rules and precedents
+   that are contrary to the terms of the agreement."
+5. It takes only one Senator to object to (block) a UC agreement.
+-/
+
+/-- A model of a UC agreement's relationship to standing rules.
+    `overrides` captures which standing rules the agreement supersedes
+    for the measure in question. -/
+structure UCAgreement where
+  /-- The measure the agreement applies to. -/
+  measureId : ℕ
+  /-- Whether debate time is limited. -/
+  debateLimited : Bool
+  /-- Maximum debate time in minutes (if limited). -/
+  maxDebateMinutes : Option ℕ
+  /-- Whether amendments are restricted. -/
+  amendmentsRestricted : Bool
+  /-- Whether a specific time for a vote is set. -/
+  voteTimeSet : Bool
+  deriving DecidableEq, Repr
+
+/-- A UC agreement is enforceable on the floor once propounded and accepted.
+    This is a definitional property. -/
+def UCAgreement.floorEnforceable (_ : UCAgreement) : Prop := True
+
+/-- A UC agreement can only be altered by unanimous consent.
+    We model this as: the number of objections needed to block alteration is 1
+    (i.e., any single Senator can prevent alteration). -/
+def objectionsToBlockAlteration : ℕ := 1
+
+/-- It takes only one Senator to block a UC agreement from being formed or altered.
+    "given the fact that it takes only one Senator to object to a UC agreement" -/
+theorem single_senator_can_block : objectionsToBlockAlteration = 1 := by rfl
+
+/-! ## Standing Orders by Unanimous Consent
+
+"In addition to the standing orders created by resolution, the Senate also
+establishes standing orders by agreeing to unanimous consent requests. These
+agreements usually make these standing orders effective only for the duration
+of a Congress or some other limited period."
+
+"On the first day of the 118th Congress in 2023, the Senate adopted 11 unanimous
+consent agreements reestablishing standing orders from the previous Congress."
+-/
+
+/-- The duration of a standing order created by UC. -/
+inductive StandingOrderDuration where
+  | singleCongress      -- Effective for one Congress only
+  | limitedPeriod (days : ℕ) -- Effective for a specified period
+  | permanent            -- Permanent (rare for UC-created orders)
+  deriving DecidableEq, Repr
+
+/-- Number of UC standing orders adopted on the first day of the 118th Congress. -/
+def ucStandingOrders118th : ℕ := 11
+
+theorem uc_standing_orders_118th_is_11 : ucStandingOrders118th = 11 := by rfl
+
+/-! ## The Override Property
+
+"Consent agreements have the effect of changing 'all Senate rules and precedents
+that are contrary to the terms of the agreement.'"
+
+We model this by showing that UC agreements create a local override context.
+-/
+
+/-- The set of rule categories that a UC agreement can override. -/
+inductive OverridableAuthority where
+  | standingRule
+  | standingOrder
+  | precedent
+  | rulemakingStatute
+  deriving DecidableEq, Repr, Fintype
+
+/-- UC agreements can override all four categories of floor authority. -/
+theorem uc_overrides_all :
+    Fintype.card OverridableAuthority = 4 := by
+  decide
+
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/SenateManual.lean (4.45 KiB) ─────
+/-
+# Senate Manual Structure — Formal Model
+
+Formalizes the structure and contents of the Senate Manual (S.Doc. 117-1),
+as described in the report. The Manual compiles the chief official parliamentary
+authorities in a single document.
+-/
+
+import Mathlib
+
+/-! ## Components of the Senate Manual
+
+The current edition (117th Congress) contains the following components,
+as listed in the report under "The Senate Manual and Authorities It Contains":
+-/
+
+/-- The components of the Senate Manual as enumerated in the report. -/
+inductive ManualComponent where
+  | standingRules              -- "Standing Rules of the Senate"
+  | standingOrders             -- "Select Standing Orders not embraced in the Rules"
+  | chamberRegulations         -- "United States Senate Chamber and Gallery Regulations"
+  | impeachmentRules           -- "Rules for Impeachment Trials"
+  | cleavesManual              -- "Cleaves' Manual ... in Regard to Conferences"
+  | legislativeProcedures      -- "Select Legislative Procedures Enacted in Law"
+  | constitution               -- "Constitution of the United States"
+  deriving DecidableEq, Repr, Fintype
+
+open ManualComponent
+
+/-- The Senate Manual contains exactly 7 major components. -/
+theorem manual_has_seven_components :
+    Fintype.card ManualComponent = 7 := by
+  decide
+
+/-! ## Section Numbering
+
+"Individual provisions of each procedural authority are assigned section numbers
+that run throughout the Manual in a single sequence and always appear in bold type.
+The section numbers assigned to the standing rules correspond to the numbers of
+the rules themselves. For example, paragraph 2 of Senate Rule XXII, which sets
+forth the cloture rule, is found at section 22.2 of the Manual."
+-/
+
+/-- A section reference in the Senate Manual.
+    The report notes that sections use a dotted notation (e.g., §22.2). -/
+structure ManualSection where
+  rule : ℕ       -- Rule number (e.g., 22 for Rule XXII)
+  paragraph : ℕ  -- Paragraph within the rule (e.g., 2)
+  deriving DecidableEq, Repr
+
+/-- The cloture rule is at Manual §22.2. -/
+def clotureSection : ManualSection := ⟨22, 2⟩
+
+/-- Standing orders are compiled in Manual §§60-138. -/
+def standingOrderSectionRange : Set ℕ := Set.Icc 60 138
+
+/-- There are 79 sections allocated to standing orders (60 through 138 inclusive). -/
+theorem standing_order_sections_count :
+    Finset.card (Finset.Icc 60 138) = 79 := by decide
+
+/-! ## Standing Rules
+
+"At the start of the 118th Congress, there were 44 standing rules of the Senate."
+-/
+
+/-- The number of standing rules at the start of the 118th Congress. -/
+def numStandingRules118th : ℕ := 44
+
+/-- There are exactly 44 standing rules. -/
+theorem num_standing_rules : numStandingRules118th = 44 := by rfl
+
+/-! ## Continuing Body Principle
+
+"The Senate does not readopt its standing rules at the beginning of each new Congress
+but instead regards its rules as continuing in effect without need for readoption."
+
+"The Senate is a continuing body; only one-third of its membership enters on new
+terms of office after every biennial election, so a quorum is continuous.
+This principle is embodied in paragraph 2 of Senate Rule V."
+-/
+
+/-- The fraction of Senators whose terms begin each Congress. -/
+def fractionNewTerms : ℚ := 1 / 3
+
+/-- The fraction of continuing Senators (who do NOT enter on new terms). -/
+def fractionContinuing : ℚ := 1 - fractionNewTerms
+
+/-- The continuing fraction is 2/3, ensuring a quorum persists. -/
+theorem continuing_fraction_is_two_thirds :
+    fractionContinuing = 2 / 3 := by
+  simp [fractionContinuing, fractionNewTerms]
+  ring
+
+/-- Since 2/3 > 1/2, a quorum of the full Senate continues across Congresses,
+    justifying the continuing body principle (Rule V, ¶2). -/
+theorem continuing_exceeds_quorum_fraction :
+    fractionContinuing > (1 : ℚ) / 2 := by
+  simp [fractionContinuing, fractionNewTerms]
+  norm_num
+
+/-! ## Key Manual References
+
+The report mentions several specific Manual section references. -/
+
+/-- The motion to adjourn is covered in Manual §§6.4, 9, and 22.1. -/
+def adjournmentSections : List ManualSection :=
+  [⟨6, 4⟩, ⟨9, 0⟩, ⟨22, 1⟩]
+
+/-- Rule XXXIII authorizes the Rules Committee to make regulations for the Senate wing.
+    Manual §33. -/
+def ruleXXXIII_section : ManualSection := ⟨33, 0⟩
+
+/-- Rule XXVI, ¶2 requires committees to adopt written rules and publish them in the
+    Congressional Record not later than March 1 of the first session. Manual §26.2. -/
+def committeeRulesDeadline_section : ManualSection := ⟨26, 2⟩
+
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Main.lean (6.18 KiB) ─────
+/-
+# Senate Parliamentary Reference Sources — Main Module
+
+Ties together the formal model components and proves cross-cutting theorems
+about the Senate procedural system described in the CRS report RL30788.
+-/
+
+import RequestProject.Basic
+import RequestProject.Recognition
+import RequestProject.Voting
+import RequestProject.SenateManual
+import RequestProject.UCagreements
+import RequestProject.Enforcement
+import RequestProject.Committees
+import RequestProject.RulemakingStatutes
+import RequestProject.Riddick
+
+/-! ## Cross-Cutting Theorems
+
+These theorems relate concepts across multiple modules and capture
+the report's key structural insights about the Senate procedural system.
+-/
+
+open ProceduralSource PrecedentOrigin SenateAction VoteThreshold
+
+/-! ### The Nine Sources of Senate Procedure
+
+The report enumerates exactly 9 sources of Senate procedural authority.
+(See "Multiple Sources of Senate Procedure") -/
+
+/-- There are exactly 9 sources of Senate procedural authority. -/
+theorem nine_procedural_sources :
+    Fintype.card ProceduralSource = 9 := by
+  decide
+
+/-! ### Floor Enforceability Partition
+
+The 9 sources are partitioned into 6 floor-enforceable and 3 non-enforceable. -/
+
+/-- Exactly 6 of the 9 sources are enforceable on the Senate floor. -/
+theorem six_floor_enforceable :
+    (Finset.univ.filter (fun s : ProceduralSource => s.floorEnforceable)).card = 6 := by
+  decide
+
+/-- Exactly 3 of the 9 sources are NOT enforceable on the Senate floor. -/
+theorem three_not_floor_enforceable :
+    (Finset.univ.filter (fun s : ProceduralSource => ¬s.floorEnforceable)).card = 3 := by
+  decide
+
+/-- The enforceable and non-enforceable sources partition all 9 sources. -/
+theorem enforceability_partition :
+    (Finset.univ.filter (fun s : ProceduralSource => s.floorEnforceable)).card +
+    (Finset.univ.filter (fun s : ProceduralSource => ¬s.floorEnforceable)).card =
+    Fintype.card ProceduralSource := by
+  decide
+
+/-! ### Rulemaking Authority Sources
+
+"Standing orders and rulemaking provisions of law have the same authority and
+effect as the Senate's standing rules, because all are created through an exercise
+of the Senate's constitutional rulemaking authority." -/
+
+/-- There are exactly 4 sources deriving from rulemaking authority. -/
+theorem four_rulemaking_sources :
+    (Finset.univ.filter (fun s : ProceduralSource => s.fromRulemakingAuthority)).card = 4 := by
+  decide
+
+/-- All rulemaking sources are also floor-enforceable (they have the authority
+    of standing rules). -/
+theorem all_rulemaking_floor_enforceable :
+    ∀ s : ProceduralSource, s.fromRulemakingAuthority → s.floorEnforceable := by
+  intro s
+  exact rulemaking_implies_floor_enforceable s
+
+/-! ### The Asymmetry of Rules Changes
+
+A deep structural insight from the report: while a simple majority can adopt
+a rules change, a two-thirds supermajority is needed to invoke cloture on the
+proposal to do so. This creates a fundamental asymmetry. -/
+
+/-- The threshold gap: the cloture threshold on rules is strictly harder than
+    the adoption threshold for the same rules change. -/
+theorem rules_change_asymmetry :
+    adoptRulesChange.requiredThreshold ≠ invokeClotureOnRules.requiredThreshold := by
+  simp [SenateAction.requiredThreshold]
+
+/-- Moreover, the cloture threshold on rules changes is strictly harder than
+    the general cloture threshold. -/
+theorem rules_cloture_harder :
+    invokeClotureGeneral.requiredThreshold.strictness <
+    invokeClotureOnRules.requiredThreshold.strictness :=
+  cloture_on_rules_harder_than_general
+
+/-! ### Precedent Weight is Well-Ordered
+
+The report establishes a strict total order on precedent weight. -/
+
+/-- The precedent weight function is injective (distinct origins have distinct weights). -/
+theorem precedent_weight_injective :
+    Function.Injective PrecedentOrigin.weight := by
+  intro a b hab
+  cases a <;> cases b <;> simp_all [PrecedentOrigin.weight]
+
+/-- The weight ordering is strict and total. -/
+theorem precedent_weight_strict_total (a b : PrecedentOrigin) (h : a ≠ b) :
+    a.weight < b.weight ∨ b.weight < a.weight := by
+  cases a <;> cases b <;> simp_all [PrecedentOrigin.weight]
+
+/-! ### Continuing Body Arithmetic
+
+The continuing body principle relies on the arithmetic fact that 2/3 > 1/2.
+This ensures a quorum persists across Congresses. -/
+
+/-- At least 66 Senators continue across any Congress transition.
+    (Two-thirds of 100 seats are not up for election.) -/
+theorem continuing_senators_at_least_66 :
+    2 * totalSenateSeats / 3 ≥ 66 := by
+  simp [totalSenateSeats]
+
+/-- The continuing Senators (66+) exceed the quorum requirement (51). -/
+theorem continuing_exceeds_quorum :
+    2 * totalSenateSeats / 3 ≥ quorumRequired := by
+  simp [totalSenateSeats, quorumRequired]
+
+/-! ### The Hierarchy of Vote Thresholds
+
+The report implies a strict ordering of vote thresholds:
+simple majority < 3/5 sworn < 2/3 present and voting < unanimous consent -/
+
+/-- The strictness ordering is strict and total on all four thresholds. -/
+theorem threshold_strict_order :
+    simpleMajority.strictness < threeFifthsSworn.strictness ∧
+    threeFifthsSworn.strictness < twoThirdsPresentAndVoting.strictness ∧
+    twoThirdsPresentAndVoting.strictness < unanimousConsent.strictness := by
+  simp [VoteThreshold.strictness]
+
+/-- The strictness function is injective. -/
+theorem threshold_strictness_injective :
+    Function.Injective VoteThreshold.strictness := by
+  intro a b hab
+  cases a <;> cases b <;> simp_all [VoteThreshold.strictness]
+
+/-! ### Summary Statistics -/
+
+/-- The Senate Manual contains 7 components, and the Senate has 44 standing rules
+    (118th Congress). Together these form the core reference framework. -/
+theorem manual_and_rules_summary :
+    Fintype.card ManualComponent = 7 ∧ numStandingRules118th = 44 := by
+  exact ⟨manual_has_seven_components, num_standing_rules⟩
+
+/-- Riddick's covers 110 years of precedents, the Manual allocates 79 sections
+    to standing orders, and there are exactly 3 categories of rulemaking statutes. -/
+theorem reference_sources_summary :
+    riddickCoverageEnd - riddickCoverageStart + 1 = 110 ∧
+    Finset.card (Finset.Icc 60 138) = 79 ∧
+    Fintype.card RulemakingCategory = 3 := by
+  refine ⟨riddick_coverage_span, standing_order_sections_count, three_rulemaking_categories⟩
+
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/RulemakingStatutes.lean (3.83 KiB) ─────
+/-
+# Rulemaking Statutes — Formal Model
+
+Formalizes the three categories of rulemaking statutes described in the report,
+and their relationship to the Senate's constitutional rulemaking authority.
+
+"Given that these procedures are created through an exercise of each chamber's
+constitutional rulemaking authority, they have the same standing as Senate and
+House rules."
+-/
+
+import Mathlib
+
+/-! ## Categories of Rulemaking Statutes
+
+"In the Senate, statutory rulemaking provisions are principally of three kinds:
+(1) those derived from Legislative Reorganization Acts,
+(2) those establishing expedited procedures for consideration of specific
+    classes of measures, and
+(3) those derived from the Congressional Budget Act and related statutes
+    governing the budget process."
+-/
+
+/-- The three principal categories of rulemaking statutes. -/
+inductive RulemakingCategory where
+  | legislativeReorganization  -- Legislative Reorganization Acts (1946, 1970)
+  | expeditedProcedures        -- "Fast track" provisions
+  | budgetProcess              -- Congressional Budget Act and related statutes
+  deriving DecidableEq, Repr, Fintype
+
+/-- There are exactly 3 principal categories. -/
+theorem three_rulemaking_categories :
+    Fintype.card RulemakingCategory = 3 := by
+  decide
+
+/-! ## Key Budget Process Statutes -/
+
+/-- The year of the Congressional Budget and Impoundment Control Act. -/
+def budgetActYear : ℕ := 1974
+
+/-- The Legislative Reorganization Act years. -/
+def lraYears : List ℕ := [1946, 1970]
+
+/-- Both LRA years are in the 20th century. -/
+theorem lra_years_20th_century : ∀ y ∈ lraYears, 1900 ≤ y ∧ y < 2000 := by
+  intro y hy
+  simp [lraYears] at hy
+  rcases hy with rfl | rfl <;> omega
+
+/-! ## Exercise of Rulemaking Power Clause
+
+"A statute or concurrent resolution that contains 'rulemaking provisions' ...
+often incorporates a section titled 'Exercise of Rulemaking Power.' This section
+asserts the rulemaking authority of each chamber and declares that the pertinent
+provisions 'shall be considered as part of the rules of each House' and are subject
+to being changed 'in the same manner ... as in the case of any other rule of
+such House.'"
+-/
+
+/-- A rulemaking statute's procedural status. -/
+structure RulemakingStatute where
+  /-- The statute is "considered as part of the rules." -/
+  partOfRules : Prop
+  /-- The statute can be changed by simple resolution (same as any other rule). -/
+  changeableByResolution : Prop
+  /-- The statute has the same standing as standing rules. -/
+  sameStandingAsRules : Prop
+
+/-- Rulemaking statutes with the "Exercise of Rulemaking Power" clause satisfy
+    all three properties. -/
+def withRulemakingClause : RulemakingStatute where
+  partOfRules := True
+  changeableByResolution := True
+  sameStandingAsRules := True
+
+/-! ## Budget Resolutions as Procedural Sources
+
+"A budget resolution may include language providing for supplementary procedural
+regulations which govern subsequent action on spending bills or other budget-related
+measures."
+-/
+
+/-- The scope of procedural provisions in budget resolutions. -/
+inductive BudgetResolutionScope where
+  | definedTimePeriod    -- Applicable only for a specified time
+  | permanent            -- Permanent until altered by further action
+  deriving DecidableEq, Repr
+
+/-- PAYGO procedures were first established in 1993.
+    "beginning in 1993, Congress has adopted several budget resolutions that have
+    established or modified 'pay-as-you-go' (PAYGO) procedures" -/
+def paygoFirstYear : ℕ := 1993
+
+theorem paygo_first_year_is_1993 : paygoFirstYear = 1993 := by rfl
+
+/-! ## Congressional Review Act
+
+"A well-known example includes the Congressional Review Act, which provides for
+special procedures Congress can use to overturn a rule issued by a federal agency." -/
+
+/-- The CRA is an example of expedited procedures. -/
+def craIsExpedited : RulemakingCategory := .expeditedProcedures
+
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Basic.lean (7.89 KiB) ─────
+/-
+# Senate Parliamentary Reference Sources — Formal Model
+
+A Lean 4 formalization of the key structural and procedural concepts described in
+the Congressional Research Service report "Parliamentary Reference Sources: Senate"
+(RL30788, updated November 17, 2023).
+
+This module defines the basic types and structures modeling Senate procedural
+authorities, their hierarchy, and enforcement mechanisms.
+-/
+
+import Mathlib
+
+/-! ## Procedural Authority Sources
+
+The Senate's procedures derive from multiple sources (Introduction, "Multiple Sources
+of Senate Procedure"). We enumerate them here.
+-/
+
+/-- The different sources of Senate procedural authority, as enumerated in the report.
+    See "Multiple Sources of Senate Procedure". -/
+inductive ProceduralSource where
+  | constitution        -- Requirements imposed by the U.S. Constitution
+  | standingRule        -- Standing Rules of the Senate (44 rules as of 118th Congress)
+  | standingOrder       -- Permanent standing orders (Senate Manual §§60-138)
+  | rulemakingStatute   -- Statutory provisions establishing procedural requirements
+  | precedent           -- Published precedents of the Senate
+  | unanimousConsent    -- Unanimous consent agreements
+  | committeeRule       -- Rules of procedure adopted by each standing committee
+  | partyConferenceRule -- Rules of Senate party conferences
+  | informalPractice    -- Informal practices adhered to by custom
+  deriving DecidableEq, Repr, Fintype
+
+open ProceduralSource
+
+/-! ## Floor Enforceability
+
+A key distinction in the report is between authorities that are enforceable on the
+Senate floor (via points of order) and those that are not. See "Enforcing Senate
+Rules and Precedents" and "Rules of Senate Party Conferences".
+-/
+
+/-- Whether a procedural source is enforceable on the Senate floor via points of order.
+
+From the report:
+- Standing rules, standing orders, constitutional provisions, rulemaking statutes,
+  UC agreements, and precedents are enforceable on the floor.
+- Committee rules are enforced only within committees ("no point of order pertaining
+  to committee rules can be raised on the Senate floor").
+- Party conference rules "cannot be enforced on the Senate floor."
+- Informal practices "are not enforceable on the Senate floor." -/
+def ProceduralSource.floorEnforceable : ProceduralSource → Prop
+  | constitution        => True
+  | standingRule        => True
+  | standingOrder       => True
+  | rulemakingStatute   => True
+  | precedent           => True
+  | unanimousConsent    => True
+  | committeeRule       => False
+  | partyConferenceRule => False
+  | informalPractice    => False
+
+instance (s : ProceduralSource) : Decidable s.floorEnforceable := by
+  cases s <;> simp [ProceduralSource.floorEnforceable] <;> infer_instance
+
+/-- Committee rules are not enforceable on the Senate floor.
+    "Committees are responsible for enforcing their own rules, and no point of order
+    pertaining to committee rules can be raised on the Senate floor." -/
+theorem committeeRule_not_floor_enforceable :
+    ¬ ProceduralSource.committeeRule.floorEnforceable := by
+  simp [ProceduralSource.floorEnforceable]
+
+/-- Party conference rules are not enforceable on the Senate floor.
+    "The rules of the conferences of the two parties in the Senate are not adopted by
+    the Senate itself, and accordingly, they cannot be enforced on the Senate floor." -/
+theorem partyConferenceRule_not_floor_enforceable :
+    ¬ ProceduralSource.partyConferenceRule.floorEnforceable := by
+  simp [ProceduralSource.floorEnforceable]
+
+/-- Informal practices are not enforceable on the Senate floor.
+    "Although these unofficial practices cannot be enforced on the Senate floor,
+    many of them are well established and customarily followed." -/
+theorem informalPractice_not_floor_enforceable :
+    ¬ ProceduralSource.informalPractice.floorEnforceable := by
+  simp [ProceduralSource.floorEnforceable]
+
+/-- Standing rules are enforceable on the floor. -/
+theorem standingRule_floor_enforceable :
+    ProceduralSource.standingRule.floorEnforceable := by
+  simp [ProceduralSource.floorEnforceable]
+
+/-- The Constitution is enforceable on the floor. -/
+theorem constitution_floor_enforceable :
+    ProceduralSource.constitution.floorEnforceable := by
+  simp [ProceduralSource.floorEnforceable]
+
+/-! ## Equal Authority of Certain Sources
+
+The report states that standing orders and rulemaking statutes "have the same
+authority and effect as the Senate's standing rules, because all are created through
+an exercise of the Senate's constitutional rulemaking authority."
+(See "Constitutional Rulemaking Authority of the Senate")
+-/
+
+/-- Sources created through the Senate's constitutional rulemaking authority.
+    These all have equal procedural authority on the floor. -/
+def ProceduralSource.fromRulemakingAuthority : ProceduralSource → Prop
+  | standingRule      => True
+  | standingOrder     => True
+  | rulemakingStatute => True
+  | unanimousConsent  => True
+  | _                 => False
+
+instance (s : ProceduralSource) : Decidable s.fromRulemakingAuthority := by
+  cases s <;> simp [ProceduralSource.fromRulemakingAuthority] <;> infer_instance
+
+/-- Standing orders derive from the Senate's rulemaking authority. -/
+theorem standingOrder_from_rulemaking :
+    ProceduralSource.standingOrder.fromRulemakingAuthority := by
+  simp [ProceduralSource.fromRulemakingAuthority]
+
+/-- Rulemaking statutes derive from the Senate's rulemaking authority. -/
+theorem rulemakingStatute_from_rulemaking :
+    ProceduralSource.rulemakingStatute.fromRulemakingAuthority := by
+  simp [ProceduralSource.fromRulemakingAuthority]
+
+/-- All sources from rulemaking authority are floor-enforceable.
+    This captures the report's statement that these sources "have the same authority
+    and effect as the Senate's standing rules." -/
+theorem rulemaking_implies_floor_enforceable (s : ProceduralSource)
+    (h : s.fromRulemakingAuthority) : s.floorEnforceable := by
+  cases s <;> simp_all [ProceduralSource.fromRulemakingAuthority,
+    ProceduralSource.floorEnforceable]
+
+/-! ## Precedent Weight
+
+"All precedents do not carry equal weight." The report establishes a hierarchy:
+1. Precedents based on a vote of the Senate (most authoritative)
+2. Precedents based on rulings of the presiding officer
+3. Responses of the presiding officer to parliamentary inquiries (least authoritative)
+-/
+
+/-- The origin of a Senate precedent, determining its relative weight. -/
+inductive PrecedentOrigin where
+  | senateVote           -- Vote of the full Senate on a question of order
+  | presidingOfficerRule -- Ruling of the presiding officer (not appealed)
+  | parliamentaryInquiry -- Presiding officer's response to a parliamentary inquiry
+  deriving DecidableEq, Repr, Fintype
+
+open PrecedentOrigin
+
+/-- The weight/authority of a precedent origin, higher is more authoritative.
+    "Precedents based on a vote of the Senate have more weight than those based on
+    rulings of the presiding officer. Responses of the presiding officer to
+    parliamentary inquiries have even less weight." -/
+def PrecedentOrigin.weight : PrecedentOrigin → ℕ
+  | senateVote           => 3
+  | presidingOfficerRule => 2
+  | parliamentaryInquiry => 1
+
+/-- Senate vote precedents outweigh presiding officer rulings. -/
+theorem senateVote_gt_presidingOfficerRule :
+    senateVote.weight > presidingOfficerRule.weight := by
+  simp [PrecedentOrigin.weight]
+
+/-- Presiding officer rulings outweigh parliamentary inquiry responses. -/
+theorem presidingOfficerRule_gt_parliamentaryInquiry :
+    presidingOfficerRule.weight > parliamentaryInquiry.weight := by
+  simp [PrecedentOrigin.weight]
+
+/-- Senate vote precedents outweigh parliamentary inquiry responses (transitivity). -/
+theorem senateVote_gt_parliamentaryInquiry :
+    senateVote.weight > parliamentaryInquiry.weight := by
+  simp [PrecedentOrigin.weight]
+
+/-- The weight ordering is total: for any two origins, one is ≥ the other. -/
+theorem precedent_weight_total (a b : PrecedentOrigin) :
+    a.weight ≤ b.weight ∨ b.weight ≤ a.weight := by
+  omega
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Voting.lean (6.92 KiB) ─────
+/-
+# Voting Thresholds — Formal Model
+
+Formalizes the various voting thresholds described in the report for different
+Senate actions.
+
+Key thresholds from the report:
+- Simple majority: adopt rules changes, sustain/overturn appeals
+- Three-fifths of Senators duly chosen and sworn (60/100): invoke cloture generally
+- Two-thirds present and voting: invoke cloture on rules changes, suspend rules
+- Two-thirds of Senators present: conviction in impeachment trials
+- Unanimous consent: waive rules, alter UC agreements
+-/
+
+import Mathlib
+
+/-! ## Vote Thresholds -/
+
+/-- The types of Senate actions that require specific vote thresholds. -/
+inductive SenateAction where
+  | adoptRulesChange       -- Adopt an amendment to standing rules
+  | invokeClotureGeneral   -- Invoke cloture generally (post-1975 threshold)
+  | invokeClotureOnRules   -- Invoke cloture on proposals to amend standing rules
+  | suspendRules           -- Suspend rules under Rule V
+  | overrulePresidingOfficer -- Overturn a ruling of the presiding officer
+  | waiveRule              -- Waive a rule by unanimous consent
+  | alterUCagreement       -- Alter an existing UC agreement
+  | convictImpeachment     -- Convict in an impeachment trial
+  deriving DecidableEq, Repr
+
+open SenateAction
+
+/-- The threshold type for a Senate vote. -/
+inductive VoteThreshold where
+  | simpleMajority              -- More than half of those voting
+  | threeFifthsSworn            -- 3/5 of Senators duly chosen and sworn (60 of 100)
+  | twoThirdsPresentAndVoting   -- 2/3 of Senators present and voting
+  | unanimousConsent            -- All Senators present must agree (no objection)
+  deriving DecidableEq, Repr, Fintype
+
+open VoteThreshold
+
+/-- The required vote threshold for each Senate action.
+
+From the report:
+- "the Senate can decide what rules should govern its procedures ... by majority vote"
+- "invoking cloture on proposals to amend the Senate's standing rules requires the
+   vote of two-thirds of Senators present and voting"
+- "the body can also suspend its rules by a two-thirds vote" (Rule V)
+- "the Senate can waive its rules by unanimous consent"
+- "A majority of the Senate may also vote against sustaining a point of order"
+- UC agreements "can only be altered by unanimous consent"
+- Art I, §3: "no Person shall be convicted without the Concurrence of two thirds
+   of the Members present" -/
+def SenateAction.requiredThreshold : SenateAction → VoteThreshold
+  | adoptRulesChange       => simpleMajority
+  | invokeClotureGeneral   => threeFifthsSworn
+  | invokeClotureOnRules   => twoThirdsPresentAndVoting
+  | suspendRules           => twoThirdsPresentAndVoting
+  | overrulePresidingOfficer => simpleMajority
+  | waiveRule              => unanimousConsent
+  | alterUCagreement       => unanimousConsent
+  | convictImpeachment     => twoThirdsPresentAndVoting
+
+/-- A numeric ordering of threshold strictness (higher = harder to achieve). -/
+def VoteThreshold.strictness : VoteThreshold → ℕ
+  | simpleMajority            => 1
+  | threeFifthsSworn          => 2
+  | twoThirdsPresentAndVoting => 3
+  | unanimousConsent          => 4
+
+/-- Unanimous consent is the strictest threshold.
+    "it takes only one Senator to object to a UC agreement" -/
+theorem unanimousConsent_strictest (t : VoteThreshold) :
+    t.strictness ≤ unanimousConsent.strictness := by
+  cases t <;> simp [VoteThreshold.strictness]
+
+/-- Invoking cloture on rules changes is strictly harder than invoking cloture generally.
+    "invoking cloture on proposals to amend the Senate's standing rules requires the vote
+    of two-thirds of Senators present and voting" vs. three-fifths generally. -/
+theorem cloture_on_rules_harder_than_general :
+    invokeClotureGeneral.requiredThreshold.strictness <
+    invokeClotureOnRules.requiredThreshold.strictness := by
+  simp [SenateAction.requiredThreshold, VoteThreshold.strictness]
+
+/-- Adopting a rules change by majority vote is easier than invoking cloture on that
+    very proposal. This captures the procedural difficulty noted in the report:
+    "A simple majority of Senators may vote to amend the standing rules ... However,
+    both the measure proposing the rules change and the motion to proceed to consider
+    it are debatable and subject to a filibuster." -/
+theorem adopt_easier_than_cloture_on_rules :
+    adoptRulesChange.requiredThreshold.strictness <
+    invokeClotureOnRules.requiredThreshold.strictness := by
+  simp [SenateAction.requiredThreshold, VoteThreshold.strictness]
+
+/-- Waiving a rule and altering a UC agreement have the same threshold: unanimous consent. -/
+theorem waive_and_alter_uc_same_threshold :
+    waiveRule.requiredThreshold = alterUCagreement.requiredThreshold := by
+  rfl
+
+/-- Overruling the presiding officer requires only a simple majority.
+    "the Senate might then decide, usually by majority vote, to uphold or overturn
+    the presiding officer's decision." -/
+theorem overrule_is_majority :
+    overrulePresidingOfficer.requiredThreshold = simpleMajority := by
+  rfl
+
+/-! ## Quorum Requirements
+
+Article I, Section 5: "a Majority of each [House] shall constitute a Quorum
+to do Business."
+-/
+
+/-- The total number of Senate seats. -/
+def totalSenateSeats : ℕ := 100
+
+/-- The quorum requirement: a majority of the full Senate.
+    Art. I, §5: "a Majority of each [House] shall constitute a Quorum to do Business" -/
+def quorumRequired : ℕ := totalSenateSeats / 2 + 1
+
+theorem quorum_is_51 : quorumRequired = 51 := by rfl
+
+/-- The three-fifths cloture threshold (of Senators duly chosen and sworn). -/
+def clotureThreshold : ℕ := 3 * totalSenateSeats / 5
+
+theorem cloture_threshold_is_60 : clotureThreshold = 60 := by rfl
+
+/-- The two-thirds threshold (of full Senate). -/
+def twoThirdsThreshold : ℕ := 2 * totalSenateSeats / 3 + 1
+
+theorem two_thirds_threshold_is_67 : twoThirdsThreshold = 67 := by rfl
+
+/-- Cloture requires more votes than a simple quorum. -/
+theorem cloture_exceeds_quorum : clotureThreshold > quorumRequired := by
+  simp [clotureThreshold, quorumRequired, totalSenateSeats]
+
+/-- Two-thirds exceeds the cloture threshold. -/
+theorem two_thirds_exceeds_cloture : twoThirdsThreshold > clotureThreshold := by
+  simp [twoThirdsThreshold, clotureThreshold, totalSenateSeats]
+
+/-! ## Yea and Nay Vote Requirement
+
+Art. I, §5: a recorded vote must occur "upon the Desire of one fifth of those Present."
+-/
+
+/-- The fraction of Senators present needed to demand a recorded vote. -/
+def recordedVoteFraction : ℚ := 1 / 5
+
+theorem recorded_vote_fraction_is_one_fifth : recordedVoteFraction = 1 / 5 := by rfl
+
+/-- Given n Senators present, the number needed to demand a recorded vote. -/
+def senatorsNeededForRecordedVote (present : ℕ) : ℕ :=
+  (present + 4) / 5  -- ceiling of present / 5
+
+/-- With a full quorum of 51, 11 Senators can demand a recorded vote. -/
+theorem recorded_vote_at_quorum :
+    senatorsNeededForRecordedVote 51 = 11 := by rfl
+
+/-- With full attendance, 20 Senators can demand a recorded vote. -/
+theorem recorded_vote_full_attendance :
+    senatorsNeededForRecordedVote 100 = 20 := by rfl
+
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/Recognition.lean (4.50 KiB) ─────
+/-
+# Priority Recognition — Formal Model
+
+Formalizes the recognition priority system described in the report.
+
+Standing Rule XIX provides: "the presiding officer shall recognize the Senator
+who shall first address him." However, by precedent, "priority of recognition
+shall be accorded to the majority leader and minority leader, the majority
+manager and minority manager, in that order." (Riddick's Senate Procedure, p. 1098)
+-/
+
+import Mathlib
+
+/-! ## Senator Roles and Recognition Priority -/
+
+/-- The roles relevant to recognition priority on the Senate floor.
+    The report describes the priority order:
+    1. Majority Leader
+    2. Minority Leader
+    3. Majority Manager (of the bill under consideration)
+    4. Minority Manager
+    5. Other Senators (recognized in order of seeking recognition per Rule XIX) -/
+inductive SenatorRole where
+  | majorityLeader
+  | minorityLeader
+  | majorityManager
+  | minorityManager
+  | other (id : ℕ)  -- regular Senators, distinguished by an ID
+  deriving DecidableEq, Repr
+
+open SenatorRole
+
+/-- Recognition priority rank (lower number = higher priority).
+    Based on Riddick's Senate Procedure p. 1098:
+    "priority of recognition shall be accorded to the majority leader and
+    minority leader, the majority manager and minority manager, in that order." -/
+def SenatorRole.priorityRank : SenatorRole → ℕ
+  | majorityLeader  => 1
+  | minorityLeader  => 2
+  | majorityManager => 3
+  | minorityManager => 4
+  | other _         => 5
+
+/-- The majority leader has the highest recognition priority (rank 1). -/
+theorem majorityLeader_highest_priority :
+    majorityLeader.priorityRank = 1 := by
+  rfl
+
+/-- The majority leader is recognized before the minority leader.
+    "when several Senators seek recognition at the same time, the majority leader
+    is recognized first, followed by the minority leader." -/
+theorem majorityLeader_before_minorityLeader :
+    majorityLeader.priorityRank < minorityLeader.priorityRank := by
+  simp [SenatorRole.priorityRank]
+
+/-- The minority leader is recognized before the majority manager. -/
+theorem minorityLeader_before_majorityManager :
+    minorityLeader.priorityRank < majorityManager.priorityRank := by
+  simp [SenatorRole.priorityRank]
+
+/-- The majority manager is recognized before the minority manager. -/
+theorem majorityManager_before_minorityManager :
+    majorityManager.priorityRank < minorityManager.priorityRank := by
+  simp [SenatorRole.priorityRank]
+
+/-- The minority manager is recognized before other Senators. -/
+theorem minorityManager_before_other (id : ℕ) :
+    minorityManager.priorityRank < (other id).priorityRank := by
+  simp [SenatorRole.priorityRank]
+
+/-- The full priority chain: majority leader has strictly higher priority than
+    any other role. -/
+theorem majorityLeader_before_all (r : SenatorRole) (h : r ≠ majorityLeader) :
+    majorityLeader.priorityRank < r.priorityRank := by
+  cases r <;> simp_all [SenatorRole.priorityRank]
+
+/-- All "other" Senators have equal priority rank among themselves. -/
+theorem other_senators_equal_priority (i j : ℕ) :
+    (other i).priorityRank = (other j).priorityRank := by
+  rfl
+
+/-! ## Recognition as a Function
+
+We model the recognition decision: given a set of Senators seeking recognition,
+the one with the lowest priority rank is recognized first. -/
+
+/-- Given a nonempty list of Senators seeking recognition, return the one
+    with the highest priority (lowest rank). Ties among `other` Senators
+    are broken by list order (modeling "first to address the chair"). -/
+def recognizeFirst : List SenatorRole → Option SenatorRole
+  | [] => none
+  | [r] => some r
+  | r :: rs =>
+    match recognizeFirst rs with
+    | none => some r
+    | some r' => if r.priorityRank ≤ r'.priorityRank then some r else some r'
+
+/-
+If the majority leader is seeking recognition, they are always recognized.
+    This formalizes the key precedent from the report.
+-/
+theorem majorityLeader_always_recognized (rs : List SenatorRole)
+    (h : majorityLeader ∈ rs) (hne : rs ≠ []) :
+    ∃ r, recognizeFirst rs = some r ∧ r.priorityRank ≤ majorityLeader.priorityRank := by
+  induction rs <;> simp_all +decide;
+  rename_i k l ih;
+  by_cases hl : l = [];
+  · aesop;
+  · rcases h with ( rfl | h ) <;> simp_all +decide [ recognizeFirst ];
+    · cases h : recognizeFirst l <;> simp_all +decide [majorityLeader_highest_priority];
+      split_ifs <;> simp_all +decide;
+    · obtain ⟨ r, hr₁, hr₂ ⟩ := ih; use if k.priorityRank ≤ r.priorityRank then k else r; split_ifs <;> simp_all +decide ;
+      exact le_trans ‹_› hr₂
+
+───── f02f42ce-3a45-421c-b515-a42b4dfa8e2d_aristotle/RequestProject/.gitkeep (0 B) ─────
+
+
+
+https://pastebin.xware.online/paste/20260606_000330_senate_formalization

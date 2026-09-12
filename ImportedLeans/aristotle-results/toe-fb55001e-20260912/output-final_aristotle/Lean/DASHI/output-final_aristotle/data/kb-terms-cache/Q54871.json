@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "SPARQL Protocol and RDF Query Language",
+  "Simple Protocol RDF Query Language",
+  "SPARQL Query Language"
+ ],
+ "canonical": "Q54871",
+ "description": "RDF query language",
+ "id": "Q54871",
+ "label": "SPARQL"
+}

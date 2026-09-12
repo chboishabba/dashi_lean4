@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "algebra over a commutative ring",
+  "algebra over a unital ring",
+  "algebra"
+ ],
+ "canonical": "Q2030545",
+ "description": "module over a ring whose multiplication is bilinear",
+ "id": "Q2030545",
+ "label": "algebra over a ring"
+}

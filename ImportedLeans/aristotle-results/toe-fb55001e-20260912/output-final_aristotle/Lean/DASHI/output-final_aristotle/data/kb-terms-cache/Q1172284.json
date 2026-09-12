@@ -1,0 +1,15 @@
+{
+ "aliases": [
+  "database",
+  "db",
+  "data stock",
+  "data pool",
+  "data corpus",
+  "datasets",
+  "dataset"
+ ],
+ "canonical": "Q1172284",
+ "description": "collection of data, publication type",
+ "id": "Q1172284",
+ "label": "data set"
+}

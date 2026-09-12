@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "finitely additive measure"
+ ],
+ "canonical": "Q5165061",
+ "description": "extended-nonnegative-real-valued function defined on a field of sets (or more generally, a boolean algebra) that is additive over finitely many disjoint sets",
+ "id": "Q5165061",
+ "label": "content"
+}

@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "Q21510864",
+ "description": "type of constraint for Wikidata properties: used to specify that the referenced item should have a statement with a given property",
+ "id": "Q21510864",
+ "kind": "item",
+ "label": "value-requires-statement constraint"
+}

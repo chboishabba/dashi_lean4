@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "set class"
+ ],
+ "canonical": "Q138665581",
+ "description": "metaclass for classes of sets",
+ "id": "Q138665581",
+ "label": "type of set"
+}

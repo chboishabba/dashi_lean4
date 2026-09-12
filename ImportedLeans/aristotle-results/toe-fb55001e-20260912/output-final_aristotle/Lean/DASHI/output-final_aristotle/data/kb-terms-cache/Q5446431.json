@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "Grothendieck fibration",
+  "fibred category"
+ ],
+ "canonical": "Q5446431",
+ "description": "a “sheaf” of categories over a topological space (or, more generally, any category), where instead of equality we have natural equivalences in the definition of the sheaf axioms",
+ "id": "Q5446431",
+ "label": "fibered category"
+}

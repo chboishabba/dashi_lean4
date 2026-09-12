@@ -1,0 +1,38 @@
+{
+  "lanes": [
+    {
+      "agda_file_count": 9,
+      "bundle_bytes": 414371,
+      "bundle_dir": "/home/c/Documents/code/dashi_agda/outputs/aristotle_mirror_waves_v2/wave1/foundations",
+      "id": "foundations",
+      "lean_file_count": 116,
+      "prompt_file": "/home/c/Documents/code/dashi_agda/outputs/aristotle_mirror_waves_v2/wave1/foundations/WORKER_BRIEF.md"
+    },
+    {
+      "agda_file_count": 59,
+      "bundle_bytes": 656565,
+      "bundle_dir": "/home/c/Documents/code/dashi_agda/outputs/aristotle_mirror_waves_v2/wave1/algebra",
+      "id": "algebra",
+      "lean_file_count": 116,
+      "prompt_file": "/home/c/Documents/code/dashi_agda/outputs/aristotle_mirror_waves_v2/wave1/algebra/WORKER_BRIEF.md"
+    },
+    {
+      "agda_file_count": 61,
+      "bundle_bytes": 690534,
+      "bundle_dir": "/home/c/Documents/code/dashi_agda/outputs/aristotle_mirror_waves_v2/wave1/analysis",
+      "id": "analysis",
+      "lean_file_count": 116,
+      "prompt_file": "/home/c/Documents/code/dashi_agda/outputs/aristotle_mirror_waves_v2/wave1/analysis/WORKER_BRIEF.md"
+    },
+    {
+      "agda_file_count": 54,
+      "bundle_bytes": 706693,
+      "bundle_dir": "/home/c/Documents/code/dashi_agda/outputs/aristotle_mirror_waves_v2/wave1/physics",
+      "id": "physics",
+      "lean_file_count": 116,
+      "prompt_file": "/home/c/Documents/code/dashi_agda/outputs/aristotle_mirror_waves_v2/wave1/physics/WORKER_BRIEF.md"
+    }
+  ],
+  "schema": "dashi-aristotle-lean-mirror-wave-v1",
+  "wave_id": "wave1"
+}

@@ -1,0 +1,2 @@
+828182dbdcc0ee31380205c85d6aea5210c0293faffb56bb479612c36c8231a8  dashi_agda/DASHI/Reasoning/Everything.agda
+0f80173ee5fa3510993a51a440982fa34c7b53112cea577dbeace4c002d1e215  dashi_agda/DASHI/Reasoning/FibreRoutingGrokkingMoEBrainCrossPollinationExact.agda

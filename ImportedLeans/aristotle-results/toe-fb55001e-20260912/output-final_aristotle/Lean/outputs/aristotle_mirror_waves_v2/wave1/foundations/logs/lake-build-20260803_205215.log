@@ -1,0 +1,31 @@
+info: RequestProject: no previous manifest, creating one from scratch
+info: toolchain not updated; already up-to-date
+info: plausible: cloning https://github.com/leanprover-community/plausible
+info: plausible: checking out revision '55c8532eb21ec9f6d565d51d96b8ca50bd1fbef3'
+info: LeanSearchClient: cloning https://github.com/leanprover-community/LeanSearchClient
+info: LeanSearchClient: checking out revision 'c5d5b8fe6e5158def25cd28eb94e4141ad97c843'
+info: importGraph: cloning https://github.com/leanprover-community/import-graph
+info: importGraph: checking out revision '85b59af46828c029a9168f2f9c35119bd0721e6e'
+info: proofwidgets: cloning https://github.com/leanprover-community/ProofWidgets4
+info: proofwidgets: checking out revision 'be3b2e63b1bbf496c478cef98b86972a37c1417d'
+info: aesop: cloning https://github.com/leanprover-community/aesop
+info: aesop: checking out revision 'f642a64c76df8ba9cb53dba3b919425a0c2aeaf1'
+info: Qq: cloning https://github.com/leanprover-community/quote4
+info: Qq: checking out revision 'b8f98e9087e02c8553945a2c5abf07cec8e798c3'
+info: batteries: cloning https://github.com/leanprover-community/batteries
+info: batteries: checking out revision '495c008c3e3f4fb4256ff5582ddb3abf3198026f'
+info: Cli: cloning https://github.com/leanprover/lean4-cli
+info: Cli: checking out revision '4f10f47646cb7d5748d6f423f4a07f98f7bbcc9e'
+info: mathlib: running post-update hooks
+Not running `lake exe cache get` yet, as the `lake` version (4.27.0) does not match the toolchain version (4.28.0) in the project.
+You should run `lake exe cache get` manually.
+✖ [0/0] Running job computation
+error: no such file or directory (error code: 2)
+  file: /home/c/Documents/code/dashi_agda/outputs/aristotle_mirror_waves_v2/wave1/foundations/lean-baseline/AgdaMirror/MoonshineEarn.lean
+Some required targets logged failures:
+- job computation
+error: build failed
+
+real	0m28.388s
+user	0m6.970s
+sys	0m5.105s

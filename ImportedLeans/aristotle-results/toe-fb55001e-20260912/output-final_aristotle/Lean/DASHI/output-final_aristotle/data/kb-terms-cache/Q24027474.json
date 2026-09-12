@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "fourth-order metaclass",
+  "metametametaclass",
+  "third-order metaclass",
+  "4rd-order metaclass"
+ ],
+ "canonical": "Q24027474",
+ "description": "metaclass containing as instances all classes of classes of classes of individuals",
+ "id": "Q24027474",
+ "label": "fourth-order class"
+}

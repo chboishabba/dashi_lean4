@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "type of resource"
+ ],
+ "canonical": "Q135412187",
+ "description": "metaclass of resource, which could be natural, social or technical",
+ "id": "Q135412187",
+ "label": "resource type"
+}

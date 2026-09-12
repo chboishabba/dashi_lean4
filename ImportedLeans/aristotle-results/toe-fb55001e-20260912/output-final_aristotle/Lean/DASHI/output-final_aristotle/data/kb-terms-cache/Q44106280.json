@@ -1,0 +1,7 @@
+{
+ "aliases": [],
+ "canonical": "Q44106280",
+ "description": "function f such that its composition with itself equals f",
+ "id": "Q44106280",
+ "label": "idempotent function"
+}

@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "type of school",
+  "kind of school",
+  "school type",
+  "type of education institution",
+  "education institution type"
+ ],
+ "canonical": "Q112872396",
+ "description": "Wikidata metaclass as a classification for educational institutions",
+ "id": "Q112872396",
+ "label": "type of educational institution"
+}

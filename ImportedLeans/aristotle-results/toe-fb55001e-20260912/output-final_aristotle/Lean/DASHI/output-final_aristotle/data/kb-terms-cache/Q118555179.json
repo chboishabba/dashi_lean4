@@ -1,0 +1,7 @@
+{
+ "aliases": [],
+ "canonical": "Q118555179",
+ "description": "any page within a MediaWiki instance is that resides outside of the main (article) namespace (ns:0)",
+ "id": "Q118555179",
+ "label": "MediaWiki non-main namespace page"
+}

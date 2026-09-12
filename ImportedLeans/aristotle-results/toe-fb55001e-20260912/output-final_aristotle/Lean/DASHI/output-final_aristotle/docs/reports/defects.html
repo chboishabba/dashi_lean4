@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wikidata report — a base with deliberate defects</title>
+<style>
+body{font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;margin:2rem;color:#1b1b1f}
+h1{font-size:1.4rem} h2{font-size:1.05rem;margin-top:2rem}
+table{border-collapse:collapse;font-size:.85rem;width:100%}
+th,td{border:1px solid #d7d7de;padding:.25rem .5rem;text-align:left;vertical-align:top}
+th{background:#f2f2f5}
+tr.error td:nth-child(3){color:#a4262c;font-weight:600}
+tr.warning td:nth-child(3){color:#8a6d00;font-weight:600}
+tr.error:hover,tr.warning:hover{background:#f7f9ff}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.meta{color:#5b5b66;font-size:.85rem}
+</style>
+</head>
+<body>
+<h1>Wikidata report — a base with deliberate defects</h1>
+<p class="meta">24 issue(s) — 22 error(s), 2 warning(s) — found in examples/defects.skb. Each row names the items the problem is about and the action suggested for it.</p>
+<h2>By error type</h2>
+<table>
+<tr><th>code</th><th>severity</th><th>status</th><th>count</th></tr>
+<tr class="error"><td>dangling-sub</td><td>error</td><td>suggested-fix</td><td>1</td></tr>
+<tr class="error"><td>dangling-inst</td><td>error</td><td>suggested-fix</td><td>1</td></tr>
+<tr class="error"><td>dangling-disj</td><td>error</td><td>suggested-fix</td><td>1</td></tr>
+<tr class="error"><td>level-inst</td><td>error</td><td>needs-review</td><td>1</td></tr>
+<tr class="error"><td>level-sub</td><td>error</td><td>needs-review</td><td>2</td></tr>
+<tr class="error"><td>subclass-cycle</td><td>error</td><td>needs-review</td><td>2</td></tr>
+<tr class="error"><td>disjoint-violation</td><td>error</td><td>needs-review</td><td>1</td></tr>
+<tr class="warning"><td>redundant-sub</td><td>warning</td><td>proven-fix</td><td>1</td></tr>
+<tr class="error"><td>dangling-series</td><td>error</td><td>suggested-fix</td><td>1</td></tr>
+<tr class="error"><td>dangling-follows</td><td>error</td><td>suggested-fix</td><td>1</td></tr>
+<tr class="error"><td>dangling-ordinal</td><td>error</td><td>suggested-fix</td><td>1</td></tr>
+<tr class="error"><td>self-follows</td><td>error</td><td>suggested-fix</td><td>1</td></tr>
+<tr class="error"><td>series-cycle</td><td>error</td><td>needs-review</td><td>2</td></tr>
+<tr class="error"><td>forked-series</td><td>error</td><td>needs-review</td><td>2</td></tr>
+<tr class="error"><td>series-mismatch</td><td>error</td><td>needs-review</td><td>3</td></tr>
+<tr class="error"><td>taxonomic-follows</td><td>error</td><td>suggested-fix</td><td>2</td></tr>
+<tr class="warning"><td>ordinal-conflict</td><td>warning</td><td>needs-review</td><td>1</td></tr>
+</table>
+<h2>Issues</h2>
+<table>
+<tr><th>source</th><th>layer</th><th>code</th><th>severity</th><th>status</th><th>subject</th><th>subject label</th><th>object</th><th>object label</th><th>extra</th><th>message</th><th>fix</th></tr>
+<tr class="error"><td>examples/defects.skb</td><td>ontology</td><td>dangling-sub</td><td>error</td><td>suggested-fix</td><td>Q1</td><td></td><td>Q999</td><td></td><td></td><td>`subclass of` statement with an endpoint that is not a declared item</td><td>declare the missing item, or delete the statement</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>ontology</td><td>dangling-inst</td><td>error</td><td>suggested-fix</td><td>Q900</td><td></td><td>Q1</td><td></td><td></td><td>`instance of` statement with an endpoint that is not a declared item</td><td>declare the missing item, or delete the statement</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>ontology</td><td>dangling-disj</td><td>error</td><td>suggested-fix</td><td>Q1</td><td></td><td>Q998</td><td></td><td></td><td>disjointness declaration with an endpoint that is not a declared item</td><td>declare the missing item, or delete the declaration</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>ontology</td><td>level-inst</td><td>error</td><td>needs-review</td><td>Q11</td><td></td><td>Q12</td><td></td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>re-level one of the two items, or replace `instance of` by `subclass of`; level shifts affect the whole branch, so review by hand</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>ontology</td><td>level-sub</td><td>error</td><td>needs-review</td><td>Q13</td><td></td><td>Q14</td><td></td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>re-level one of the two items, or replace `subclass of` by `instance of`; review by hand</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>ontology</td><td>level-sub</td><td>error</td><td>needs-review</td><td>Q1</td><td></td><td>Q999</td><td></td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>re-level one of the two items, or replace `subclass of` by `instance of`; review by hand</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>ontology</td><td>subclass-cycle</td><td>error</td><td>needs-review</td><td>Q3</td><td></td><td>Q4</td><td></td><td></td><td>two distinct classes are subclasses of each other</td><td>delete one of the two `subclass of` statements — which one is a modelling decision — then re-run `normalize`</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>ontology</td><td>subclass-cycle</td><td>error</td><td>needs-review</td><td>Q4</td><td></td><td>Q3</td><td></td><td></td><td>two distinct classes are subclasses of each other</td><td>delete one of the two `subclass of` statements — which one is a modelling decision — then re-run `normalize`</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>ontology</td><td>disjoint-violation</td><td>error</td><td>needs-review</td><td>Q7</td><td></td><td>Q5</td><td>human</td><td>Q6</td><td>an item is an instance of two classes declared disjoint</td><td>drop one of the two `instance of` statements, or the disjointness declaration</td></tr>
+<tr class="warning"><td>examples/defects.skb</td><td>ontology</td><td>redundant-sub</td><td>warning</td><td>proven-fix</td><td>Q8</td><td></td><td>Q10</td><td></td><td></td><td>`subclass of` statement already implied by the others</td><td>delete the statement (`KB.dropSub`): proved to change no derived fact and to keep the base valid</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>dangling-series</td><td>error</td><td>suggested-fix</td><td>V8</td><td></td><td>T</td><td></td><td></td><td>`part of the series` (P179) statement with an undeclared endpoint</td><td>declare the missing item, or delete the statement</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>dangling-follows</td><td>error</td><td>suggested-fix</td><td>V6</td><td></td><td>V7</td><td></td><td></td><td>`follows` (P155) statement with an undeclared endpoint</td><td>declare the missing item, or delete the statement</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>dangling-ordinal</td><td>error</td><td>suggested-fix</td><td>V9</td><td></td><td></td><td></td><td></td><td>`series ordinal` (P1545) on an item that is not declared</td><td>declare the item, or delete the ordinal</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>self-follows</td><td>error</td><td>suggested-fix</td><td>V4</td><td></td><td></td><td></td><td></td><td>an item is declared to follow itself</td><td>delete the `follows` statement</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>series-cycle</td><td>error</td><td>needs-review</td><td>W1</td><td></td><td>W2</td><td></td><td></td><td>two distinct items each come after the other</td><td>delete one of the `follows` statements — the order of the series is a modelling decision</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>series-cycle</td><td>error</td><td>needs-review</td><td>W2</td><td></td><td>W1</td><td></td><td></td><td>two distinct items each come after the other</td><td>delete one of the `follows` statements — the order of the series is a modelling decision</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>forked-series</td><td>error</td><td>needs-review</td><td>V5</td><td></td><td>V1</td><td></td><td>V2</td><td>an item follows two different items: the series forks</td><td>keep one predecessor; if both are right, the two are different series</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>forked-series</td><td>error</td><td>needs-review</td><td>V5</td><td></td><td>V2</td><td></td><td>V1</td><td>an item follows two different items: the series forks</td><td>keep one predecessor; if both are right, the two are different series</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>series-mismatch</td><td>error</td><td>needs-review</td><td>V3</td><td></td><td>V2</td><td></td><td></td><td>neighbours in the chain belong to different series</td><td>correct one of the `part of the series` statements</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>series-mismatch</td><td>error</td><td>needs-review</td><td>V5</td><td></td><td>V1</td><td></td><td></td><td>neighbours in the chain belong to different series</td><td>correct one of the `part of the series` statements</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>series-mismatch</td><td>error</td><td>needs-review</td><td>V5</td><td></td><td>V2</td><td></td><td></td><td>neighbours in the chain belong to different series</td><td>correct one of the `part of the series` statements</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>taxonomic-follows</td><td>error</td><td>suggested-fix</td><td>V4</td><td></td><td>V4</td><td></td><td></td><td>`follows` between items already related by `subclass of` or `instance of`</td><td>delete the `follows` statement: the two are related taxonomically, not serially</td></tr>
+<tr class="error"><td>examples/defects.skb</td><td>series</td><td>taxonomic-follows</td><td>error</td><td>suggested-fix</td><td>C1</td><td></td><td>C2</td><td></td><td></td><td>`follows` between items already related by `subclass of` or `instance of`</td><td>delete the `follows` statement: the two are related taxonomically, not serially</td></tr>
+<tr class="warning"><td>examples/defects.skb</td><td>series</td><td>ordinal-conflict</td><td>warning</td><td>needs-review</td><td>V2</td><td></td><td>V1</td><td></td><td></td><td>`series ordinal` values do not increase along a `follows` statement</td><td>correct the ordinals, or the `follows` statement</td></tr>
+</table>
+</body>
+</html>

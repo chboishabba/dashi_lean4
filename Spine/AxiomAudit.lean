@@ -7,6 +7,7 @@ import Spine.Duality
 import Spine.FiniteReindex
 import Spine.SchurBlock
 import Spine.RateBlockSchur
+import Spine.RateBlockSchurPiCarrier
 
 /-!
 # Axiom audit for the spine
@@ -119,3 +120,9 @@ results.  Each uses only the standard Lean/Mathlib axioms (`propext`,
 #print axioms Spine.RateBlockSchur.schur_form_le_blockMultiplicity
 #print axioms Spine.RateBlockSchur.schur_form_ge_half_mul_multiplicity
 #print axioms Spine.RateBlockSchur.schur_gram_le_blockMultiplicity
+
+-- Plain `Fin n → ℂ` carrier transport used by the NS adapter.
+#print axioms Spine.RateBlockSchurPi.hermPi_eq_inner
+#print axioms Spine.RateBlockSchurPi.nrmPi_eq_norm
+#print axioms Spine.RateBlockSchurPi.hermPi_re_le_nrmPi_mul
+#print axioms Spine.RateBlockSchurPi.schur_gramPi_le_blockMultiplicity

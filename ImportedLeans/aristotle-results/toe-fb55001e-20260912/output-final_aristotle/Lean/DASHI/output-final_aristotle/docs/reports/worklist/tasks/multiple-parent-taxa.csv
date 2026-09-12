@@ -1,0 +1,3 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/taxa-defects.tkb","taxon","multiple-parent-taxa","error","needs-review","Q1","","Q2","","Q4","a taxon has two different parent taxa: the hierarchy is not a tree","keep the accepted classification and deprecate the other statement"
+"examples/taxa-defects.tkb","taxon","multiple-parent-taxa","error","needs-review","Q1","","Q4","","Q2","a taxon has two different parent taxa: the hierarchy is not a tree","keep the accepted classification and deprecate the other statement"

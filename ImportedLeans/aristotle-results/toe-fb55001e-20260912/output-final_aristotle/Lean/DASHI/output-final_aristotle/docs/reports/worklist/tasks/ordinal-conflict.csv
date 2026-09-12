@@ -1,0 +1,2 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/defects.skb","series","ordinal-conflict","warning","needs-review","V2","","V1","","","`series ordinal` values do not increase along a `follows` statement","correct the ordinals, or the `follows` statement"

@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "Alexandrov-discrete topology",
+  "topology of finitely generated space"
+ ],
+ "canonical": "Q3532117",
+ "description": "topology in which the intersection of any family of open sets is open",
+ "id": "Q3532117",
+ "label": "Alexandrov topology"
+}

@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "structure",
+  "finitary structure"
+ ],
+ "canonical": "Q1851710",
+ "description": "set together with an interpretation of a given first-order language",
+ "id": "Q1851710",
+ "label": "structure (model theory)"
+}

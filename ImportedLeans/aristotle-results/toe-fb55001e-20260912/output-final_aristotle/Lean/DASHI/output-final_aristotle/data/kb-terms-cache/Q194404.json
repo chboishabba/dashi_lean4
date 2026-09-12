@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "monotone function",
+  "weakly monotonic function",
+  "weakly monotone function",
+  "decreasing or increasing function",
+  "increasing or decreasing function",
+  "Monotonic function"
+ ],
+ "canonical": "Q194404",
+ "description": "function between ordered sets that preserves or reverses the given order",
+ "id": "Q194404",
+ "label": "monotonic function"
+}

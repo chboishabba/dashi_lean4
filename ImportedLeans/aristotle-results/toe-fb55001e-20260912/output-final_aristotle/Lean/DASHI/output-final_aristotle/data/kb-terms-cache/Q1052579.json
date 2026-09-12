@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "UFD",
+  "factorial ring"
+ ],
+ "canonical": "Q1052579",
+ "description": "integral domain where every nonzero element is uniquely expressible as a product of prime elements",
+ "id": "Q1052579",
+ "label": "unique factorization domain"
+}

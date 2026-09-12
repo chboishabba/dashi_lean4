@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "Q19798648",
+ "description": "Wikibase data model concept, (*do not use in statements*) value given to a claim when we know there is a value for the property but don't know the value",
+ "id": "Q19798648",
+ "kind": "item",
+ "label": "concept of unknown value in Wikibase"
+}

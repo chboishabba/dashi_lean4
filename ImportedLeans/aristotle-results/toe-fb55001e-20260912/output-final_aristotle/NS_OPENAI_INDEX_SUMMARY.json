@@ -1,0 +1,32 @@
+{
+  "tranche": "openai-ns-20260912",
+  "upstream_repo": "https://github.com/openai/NavierStokesAndEuler",
+  "upstream_commit": "f9e8bc5b38b6e212696e8a30e3e91517af887bbd",
+  "lean_files": 2659,
+  "total_lines": 641332,
+  "total_declarations": 51242,
+  "declaration_kinds": {
+    "theorem": 38503,
+    "def": 10827,
+    "abbrev": 899,
+    "structure": 667,
+    "notation": 156,
+    "instance": 148,
+    "lemma": 28,
+    "inductive": 14
+  },
+  "files_per_lane": {
+    "ComparatorChallenges": 2,
+    "(root)": 2,
+    "Euler": 1839,
+    "NavierStokes": 816
+  },
+  "total_sorry_tokens": 4,
+  "total_axiom_declarations": 0,
+  "import_edges": 7277,
+  "import_resolution": {
+    "mathlib": 1172,
+    "in-tranche": 6105
+  },
+  "unresolved_targets": []
+}

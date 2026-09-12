@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "Galois field"
+ ],
+ "canonical": "Q603880",
+ "description": "field that contains a finite number of elements",
+ "id": "Q603880",
+ "label": "finite field"
+}

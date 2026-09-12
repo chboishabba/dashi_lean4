@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wikidata report — a taxon layer with deliberate defects</title>
+<style>
+body{font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;margin:2rem;color:#1b1b1f}
+h1{font-size:1.4rem} h2{font-size:1.05rem;margin-top:2rem}
+table{border-collapse:collapse;font-size:.85rem;width:100%}
+th,td{border:1px solid #d7d7de;padding:.25rem .5rem;text-align:left;vertical-align:top}
+th{background:#f2f2f5}
+tr.error td:nth-child(3){color:#a4262c;font-weight:600}
+tr.warning td:nth-child(3){color:#8a6d00;font-weight:600}
+tr.error:hover,tr.warning:hover{background:#f7f9ff}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.meta{color:#5b5b66;font-size:.85rem}
+</style>
+</head>
+<body>
+<h1>Wikidata report — a taxon layer with deliberate defects</h1>
+<p class="meta">17 issue(s) — 16 error(s), 1 warning(s) — found in examples/taxa-defects.tkb. Each row names the items the problem is about and the action suggested for it.</p>
+<h2>By error type</h2>
+<table>
+<tr><th>code</th><th>severity</th><th>status</th><th>count</th></tr>
+<tr class="error"><td>dangling-parent-taxon</td><td>error</td><td>suggested-fix</td><td>1</td></tr>
+<tr class="error"><td>dangling-rank</td><td>error</td><td>suggested-fix</td><td>1</td></tr>
+<tr class="error"><td>dangling-taxon-name</td><td>error</td><td>suggested-fix</td><td>1</td></tr>
+<tr class="error"><td>self-parent-taxon</td><td>error</td><td>suggested-fix</td><td>1</td></tr>
+<tr class="error"><td>taxon-cycle</td><td>error</td><td>needs-review</td><td>2</td></tr>
+<tr class="error"><td>multiple-parent-taxa</td><td>error</td><td>needs-review</td><td>2</td></tr>
+<tr class="error"><td>rank-inversion</td><td>error</td><td>needs-review</td><td>4</td></tr>
+<tr class="error"><td>duplicate-taxon-name</td><td>error</td><td>needs-review</td><td>2</td></tr>
+<tr class="error"><td>taxonomic-parent</td><td>error</td><td>suggested-fix</td><td>2</td></tr>
+<tr class="warning"><td>missing-rank</td><td>warning</td><td>suggested-fix</td><td>1</td></tr>
+</table>
+<h2>Issues</h2>
+<table>
+<tr><th>source</th><th>layer</th><th>code</th><th>severity</th><th>status</th><th>subject</th><th>subject label</th><th>object</th><th>object label</th><th>extra</th><th>message</th><th>fix</th></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>dangling-parent-taxon</td><td>error</td><td>suggested-fix</td><td>Q2</td><td></td><td>Q97</td><td></td><td></td><td>`parent taxon` (P171) statement with an undeclared endpoint</td><td>declare the missing taxon, or delete the statement</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>dangling-rank</td><td>error</td><td>suggested-fix</td><td>Q99</td><td></td><td></td><td></td><td></td><td>`taxon rank` (P105) on an item that is not declared</td><td>declare the item, or delete the rank</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>dangling-taxon-name</td><td>error</td><td>suggested-fix</td><td>Q98</td><td></td><td></td><td></td><td></td><td>`taxon name` (P225) on an item that is not declared</td><td>declare the item, or delete the name</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>self-parent-taxon</td><td>error</td><td>suggested-fix</td><td>Q5</td><td>human</td><td></td><td></td><td></td><td>a taxon is its own parent taxon</td><td>delete the `parent taxon` statement</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>taxon-cycle</td><td>error</td><td>needs-review</td><td>Q1</td><td></td><td>Q4</td><td></td><td></td><td>two distinct taxa each descend from the other</td><td>delete one `parent taxon` statement; the ranks say which direction is right</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>taxon-cycle</td><td>error</td><td>needs-review</td><td>Q4</td><td></td><td>Q1</td><td></td><td></td><td>two distinct taxa each descend from the other</td><td>delete one `parent taxon` statement; the ranks say which direction is right</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>multiple-parent-taxa</td><td>error</td><td>needs-review</td><td>Q1</td><td></td><td>Q2</td><td></td><td>Q4</td><td>a taxon has two different parent taxa: the hierarchy is not a tree</td><td>keep the accepted classification and deprecate the other statement</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>multiple-parent-taxa</td><td>error</td><td>needs-review</td><td>Q1</td><td></td><td>Q4</td><td></td><td>Q2</td><td>a taxon has two different parent taxa: the hierarchy is not a tree</td><td>keep the accepted classification and deprecate the other statement</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>rank-inversion</td><td>error</td><td>needs-review</td><td>Q3</td><td></td><td>Q2</td><td></td><td></td><td>`taxon rank` does not increase along a `parent taxon` statement</td><td>promote or demote one rank (see `TaxonRank.level`), or reverse the statement</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>rank-inversion</td><td>error</td><td>needs-review</td><td>Q5</td><td>human</td><td>Q5</td><td>human</td><td></td><td>`taxon rank` does not increase along a `parent taxon` statement</td><td>promote or demote one rank (see `TaxonRank.level`), or reverse the statement</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>rank-inversion</td><td>error</td><td>needs-review</td><td>Q6</td><td></td><td>Q7</td><td></td><td></td><td>`taxon rank` does not increase along a `parent taxon` statement</td><td>promote or demote one rank (see `TaxonRank.level`), or reverse the statement</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>rank-inversion</td><td>error</td><td>needs-review</td><td>Q4</td><td></td><td>Q1</td><td></td><td></td><td>`taxon rank` does not increase along a `parent taxon` statement</td><td>promote or demote one rank (see `TaxonRank.level`), or reverse the statement</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>duplicate-taxon-name</td><td>error</td><td>needs-review</td><td>Q1</td><td></td><td>Q5</td><td>human</td><td></td><td>two distinct taxa carry the same scientific name</td><td>a merge waiting to happen: unify the two items, or correct one name</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>duplicate-taxon-name</td><td>error</td><td>needs-review</td><td>Q5</td><td>human</td><td>Q1</td><td></td><td></td><td>two distinct taxa carry the same scientific name</td><td>a merge waiting to happen: unify the two items, or correct one name</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>taxonomic-parent</td><td>error</td><td>suggested-fix</td><td>Q5</td><td>human</td><td>Q5</td><td>human</td><td></td><td>`parent taxon` between items already related by `subclass of` or `instance of`</td><td>delete one of the two: `parent taxon` and `subclass of` say different things</td></tr>
+<tr class="error"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>taxonomic-parent</td><td>error</td><td>suggested-fix</td><td>Q6</td><td></td><td>Q7</td><td></td><td></td><td>`parent taxon` between items already related by `subclass of` or `instance of`</td><td>delete one of the two: `parent taxon` and `subclass of` say different things</td></tr>
+<tr class="warning"><td>examples/taxa-defects.tkb</td><td>taxon</td><td>missing-rank</td><td>warning</td><td>suggested-fix</td><td>Q8</td><td></td><td></td><td></td><td></td><td>a declared taxon carries no `taxon rank`</td><td>add the `taxon rank` (P105) statement</td></tr>
+</table>
+</body>
+</html>

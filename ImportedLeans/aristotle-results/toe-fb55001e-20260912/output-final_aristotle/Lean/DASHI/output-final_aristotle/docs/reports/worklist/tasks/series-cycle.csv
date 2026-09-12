@@ -1,0 +1,3 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/defects.skb","series","series-cycle","error","needs-review","W1","","W2","","","two distinct items each come after the other","delete one of the `follows` statements — the order of the series is a modelling decision"
+"examples/defects.skb","series","series-cycle","error","needs-review","W2","","W1","","","two distinct items each come after the other","delete one of the `follows` statements — the order of the series is a modelling decision"

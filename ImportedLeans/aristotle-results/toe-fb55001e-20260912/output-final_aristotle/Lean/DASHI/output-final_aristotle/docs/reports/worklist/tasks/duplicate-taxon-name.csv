@@ -1,0 +1,3 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/taxa-defects.tkb","taxon","duplicate-taxon-name","error","needs-review","Q1","","Q5","human","","two distinct taxa carry the same scientific name","a merge waiting to happen: unify the two items, or correct one name"
+"examples/taxa-defects.tkb","taxon","duplicate-taxon-name","error","needs-review","Q5","human","Q1","","","two distinct taxa carry the same scientific name","a merge waiting to happen: unify the two items, or correct one name"

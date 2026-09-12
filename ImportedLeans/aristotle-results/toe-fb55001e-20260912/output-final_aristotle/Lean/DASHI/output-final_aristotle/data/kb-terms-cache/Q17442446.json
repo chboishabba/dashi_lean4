@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "internal item"
+ ],
+ "canonical": "Q17442446",
+ "description": "instances and/or subclasses of this item are about some Wikimedia-only content and should not refer to real world entities",
+ "id": "Q17442446",
+ "label": "Wikimedia internal item"
+}

@@ -1,0 +1,706 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="4445" viewBox="0 0 1280 4445" role="img" aria-label="Showcase: the Wikidata ontology formalised in Lean 4, and the tools built on it">
+<title>Showcase: the Wikidata ontology formalised in Lean 4, and the tools built on it</title>
+<defs><linearGradient id="hdr" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0b2545"/><stop offset="55%" stop-color="#12395c"/><stop offset="100%" stop-color="#134e35"/></linearGradient><linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#93c5fd"/></linearGradient><linearGradient id="g2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0d9488"/><stop offset="100%" stop-color="#5eead4"/></linearGradient><linearGradient id="g3" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#c4b5fd"/></linearGradient><linearGradient id="g4" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#ea580c"/><stop offset="100%" stop-color="#fdba74"/></linearGradient><linearGradient id="g5" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#be123c"/><stop offset="100%" stop-color="#fda4af"/></linearGradient><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/></marker><marker id="arrowW" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#e2e8f0"/></marker></defs>
+<rect x="0" y="0" width="1280" height="4445" fill="#f1f5f9"/>
+<rect x="0.0" y="0.0" width="1280.0" height="148.0" rx="0" fill="url(#hdr)"/>
+<text x="48.0" y="60.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="32" fill="#ffffff" font-weight="bold" text-anchor="start">The Wikidata ontology, formalised in Lean 4</text>
+<text x="48.0" y="94.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#bfdbfe" font-weight="normal" text-anchor="start">A showcase of the ontology layers, what is proved about them, and the tools that run on real Wikidata data</text>
+<text x="48.0" y="122.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="13" fill="#93c5fd" font-weight="normal" text-anchor="start">Wikidata:WikiProject Ontology  ·  machine-checked, no sorry, standard axioms only</text>
+<text x="1232.0" y="60.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#e2e8f0" font-weight="normal" text-anchor="end">2026-08-29</text>
+<text x="1232.0" y="88.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="13" fill="#94a3b8" font-weight="normal" text-anchor="end">Lean 4.28.0 + Mathlib</text>
+<text x="1232.0" y="112.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="13" fill="#94a3b8" font-weight="normal" text-anchor="end">175 modules · 3347 theorems</text>
+<rect x="48.0" y="176.0" width="160.6" height="100.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="128.3" y="226.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="32" fill="#0f172a" font-weight="bold" text-anchor="middle">3 347</text>
+<text x="62.0" y="250.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#475569" font-weight="normal" text-anchor="start">theorems and</text>
+<text x="62.0" y="268.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#475569" font-weight="normal" text-anchor="start">lemmas</text>
+<rect x="218.6" y="176.0" width="160.6" height="100.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="298.9" y="226.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="32" fill="#0f172a" font-weight="bold" text-anchor="middle">1 930</text>
+<text x="232.6" y="250.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#475569" font-weight="normal" text-anchor="start">definitions</text>
+<rect x="389.1" y="176.0" width="160.6" height="100.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="469.4" y="226.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="32" fill="#0f172a" font-weight="bold" text-anchor="middle">104.3k</text>
+<text x="403.1" y="250.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#475569" font-weight="normal" text-anchor="start">lines of Lean</text>
+<rect x="559.7" y="176.0" width="160.6" height="100.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="640.0" y="226.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="32" fill="#0f172a" font-weight="bold" text-anchor="middle">36</text>
+<text x="573.7" y="250.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#475569" font-weight="normal" text-anchor="start">tool commands</text>
+<rect x="730.3" y="176.0" width="160.6" height="100.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="810.6" y="226.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="32" fill="#0f172a" font-weight="bold" text-anchor="middle">1578</text>
+<text x="744.3" y="250.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#475569" font-weight="normal" text-anchor="start">Wikidata items</text>
+<text x="744.3" y="268.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#475569" font-weight="normal" text-anchor="start">downloaded</text>
+<rect x="900.9" y="176.0" width="160.6" height="100.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="981.1" y="226.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="32" fill="#0f172a" font-weight="bold" text-anchor="middle">1610</text>
+<text x="914.9" y="250.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#475569" font-weight="normal" text-anchor="start">terms grounded in</text>
+<text x="914.9" y="268.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#475569" font-weight="normal" text-anchor="start">Wikidata</text>
+<rect x="1071.4" y="176.0" width="160.6" height="100.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="1151.7" y="226.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="32" fill="#16a34a" font-weight="bold" text-anchor="middle">0</text>
+<text x="1085.4" y="250.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#475569" font-weight="normal" text-anchor="start">sorry / gaps</text>
+<text x="48.0" y="314.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="23" fill="#0f172a" font-weight="bold" text-anchor="start">The ontology: five hierarchies, kept apart</text>
+<text x="48.0" y="338.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#64748b" font-weight="normal" text-anchor="start">each one a computable layer over the knowledge base, with an engine proved to decide exactly the closure of the asserted statements</text>
+<rect x="48.0" y="360.0" width="385.3" height="276.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="48.0" y="360.0" width="385.3" height="6.0" rx="3" fill="url(#g1)"/>
+<text x="66.0" y="394.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#0f172a" font-weight="bold" text-anchor="start">Taxonomy</text>
+<text x="415.3" y="394.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#1d4ed8" font-weight="bold" text-anchor="end">115 theorems</text>
+<text x="66.0" y="416.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">instance of P31 · subclass of P279</text>
+<circle cx="70.0" cy="435.0" r="2.5" fill="#1d4ed8"/>
+<text x="80.0" y="439.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">derived subclass of = reflexive-transitive</text>
+<text x="80.0" y="455.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">closure of the statements</text>
+<circle cx="70.0" cy="469.0" r="2.5" fill="#1d4ed8"/>
+<text x="80.0" y="473.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">the class hierarchy is a partial order;</text>
+<text x="80.0" y="489.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">instances inherit upwards</text>
+<circle cx="70.0" cy="503.0" r="2.5" fill="#1d4ed8"/>
+<text x="80.0" y="507.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">instance of is not transitive - a decided</text>
+<text x="80.0" y="523.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">counterexample</text>
+<circle cx="70.0" cy="537.0" r="2.5" fill="#1d4ed8"/>
+<text x="80.0" y="541.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">metaclass levels drop by one across P31, are</text>
+<text x="80.0" y="557.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">constant across P279</text>
+<text x="66.0" y="624.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Core · Engine · Reachability · Subsumption · Taxonomy</text>
+<rect x="447.3" y="360.0" width="385.3" height="276.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="447.3" y="360.0" width="385.3" height="6.0" rx="3" fill="url(#g2)"/>
+<text x="465.3" y="394.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#0f172a" font-weight="bold" text-anchor="start">Meronomy</text>
+<text x="814.7" y="394.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#0f766e" font-weight="bold" text-anchor="end">60 theorems</text>
+<text x="465.3" y="416.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f766e" font-weight="normal" text-anchor="start">part of P361 · has parts of the class P2670</text>
+<circle cx="469.3" cy="435.0" r="2.5" fill="#0f766e"/>
+<text x="479.3" y="439.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">part-of is a partial order and well founded, so</text>
+<text x="479.3" y="455.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">induction upwards is legitimate</text>
+<circle cx="469.3" cy="469.0" r="2.5" fill="#0f766e"/>
+<text x="479.3" y="473.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">the meronomy is atomistic: every item has a part</text>
+<text x="479.3" y="489.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">with no proper parts</text>
+<circle cx="469.3" cy="503.0" r="2.5" fill="#0f766e"/>
+<text x="479.3" y="507.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">P2670 expectations are inherited down subclass</text>
+<text x="479.3" y="523.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">of</text>
+<circle cx="469.3" cy="537.0" r="2.5" fill="#0f766e"/>
+<text x="479.3" y="541.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">part of is not inherited through instance of;</text>
+<text x="479.3" y="557.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">supplementation and</text>
+<circle cx="469.3" cy="571.0" r="2.5" fill="#0f766e"/>
+<text x="479.3" y="575.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">extensionality both fail on valid fragments</text>
+<text x="465.3" y="624.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Mereology</text>
+<rect x="846.7" y="360.0" width="385.3" height="276.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="846.7" y="360.0" width="385.3" height="6.0" rx="3" fill="url(#g3)"/>
+<text x="864.7" y="394.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#0f172a" font-weight="bold" text-anchor="start">Kinship</text>
+<text x="1214.0" y="394.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#6d28d9" font-weight="bold" text-anchor="end">57 theorems</text>
+<text x="864.7" y="416.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#6d28d9" font-weight="normal" text-anchor="start">father P22 · mother P25 · spouse P26</text>
+<circle cx="868.7" cy="435.0" r="2.5" fill="#6d28d9"/>
+<text x="878.7" y="439.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">ancestry is decided, is a partial order and is</text>
+<text x="878.7" y="455.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">well founded</text>
+<circle cx="868.7" cy="469.0" r="2.5" fill="#6d28d9"/>
+<text x="878.7" y="473.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">at most one father and one mother, so at most</text>
+<text x="878.7" y="489.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">two parents</text>
+<circle cx="868.7" cy="503.0" r="2.5" fill="#6d28d9"/>
+<text x="878.7" y="507.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">siblinghood symmetric and irreflexive;</text>
+<text x="878.7" y="523.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">relatedness is not transitive</text>
+<circle cx="868.7" cy="537.0" r="2.5" fill="#6d28d9"/>
+<text x="878.7" y="541.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">a validated layer never confuses parenthood with</text>
+<text x="878.7" y="557.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">the taxonomy</text>
+<text x="864.7" y="624.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Kinship · KinshipDiagnostics</text>
+<rect x="48.0" y="650.0" width="385.3" height="276.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="48.0" y="650.0" width="385.3" height="6.0" rx="3" fill="url(#g4)"/>
+<text x="66.0" y="684.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#0f172a" font-weight="bold" text-anchor="start">Series</text>
+<text x="415.3" y="684.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#c2410c" font-weight="bold" text-anchor="end">99 theorems</text>
+<text x="66.0" y="706.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#c2410c" font-weight="normal" text-anchor="start">follows P155 · followed by P156 · part of the</text>
+<text x="66.0" y="723.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#c2410c" font-weight="normal" text-anchor="start">series P179 · series ordinal P1545</text>
+<circle cx="70.0" cy="742.0" r="2.5" fill="#c2410c"/>
+<text x="80.0" y="746.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">coming after is a partial order and well</text>
+<text x="80.0" y="762.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">founded: every item has an origin</text>
+<circle cx="70.0" cy="776.0" r="2.5" fill="#c2410c"/>
+<text x="80.0" y="780.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">a chain has a unique origin, and walking it out</text>
+<text x="80.0" y="796.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">enumerates it exactly once</text>
+<circle cx="70.0" cy="810.0" r="2.5" fill="#c2410c"/>
+<text x="80.0" y="814.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">consistent ordinals are a local check that</text>
+<text x="80.0" y="830.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">already rules out cycles</text>
+<circle cx="70.0" cy="844.0" r="2.5" fill="#c2410c"/>
+<text x="80.0" y="848.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">P155/P156 read as an inverse pair derive exactly</text>
+<text x="80.0" y="864.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">the intended statements</text>
+<text x="66.0" y="900.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Series · SeriesChain · SeriesExamples ·</text>
+<text x="66.0" y="914.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#94a3b8" font-weight="normal" text-anchor="start">SeriesDiagnostics</text>
+<rect x="447.3" y="650.0" width="385.3" height="276.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="447.3" y="650.0" width="385.3" height="6.0" rx="3" fill="url(#g5)"/>
+<text x="465.3" y="684.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#0f172a" font-weight="bold" text-anchor="start">Biological taxa</text>
+<text x="814.7" y="684.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#9f1239" font-weight="bold" text-anchor="end">108 theorems</text>
+<text x="465.3" y="706.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#9f1239" font-weight="normal" text-anchor="start">parent taxon P171 · taxon rank P105 · taxon</text>
+<text x="465.3" y="723.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#9f1239" font-weight="normal" text-anchor="start">name P225</text>
+<circle cx="469.3" cy="742.0" r="2.5" fill="#9f1239"/>
+<text x="479.3" y="746.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">descent is a partial order, well founded, so</text>
+<text x="479.3" y="762.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">every taxon has a root</text>
+<circle cx="469.3" cy="776.0" r="2.5" fill="#9f1239"/>
+<text x="479.3" y="780.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">ranks certify acyclicity by two purely local</text>
+<text x="479.3" y="796.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">checks</text>
+<circle cx="469.3" cy="810.0" r="2.5" fill="#9f1239"/>
+<text x="479.3" y="814.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">one parent per taxon makes a tree with a unique</text>
+<text x="479.3" y="830.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">root</text>
+<circle cx="469.3" cy="844.0" r="2.5" fill="#9f1239"/>
+<text x="479.3" y="848.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">taxon name is injective; P171 is never a</text>
+<text x="479.3" y="864.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">taxonomy statement</text>
+<text x="465.3" y="914.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Taxa · TaxaLineage · TaxaDiagnostics · TaxaExamples</text>
+<rect x="846.7" y="650.0" width="385.3" height="276.0" rx="14" fill="#0f172a"/>
+<text x="864.7" y="684.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#ffffff" font-weight="bold" text-anchor="start">Separation, proved</text>
+<text x="864.7" y="710.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#cbd5e1" font-weight="normal" text-anchor="start">Wikidata:WikiProject Ontology insists the class</text>
+<text x="864.7" y="727.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#cbd5e1" font-weight="normal" text-anchor="start">hierarchy is not the family tree, not the parts</text>
+<text x="864.7" y="744.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#cbd5e1" font-weight="normal" text-anchor="start">hierarchy, not the series and not the tree of</text>
+<text x="864.7" y="761.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#cbd5e1" font-weight="normal" text-anchor="start">life. Each layer carries that as a validated</text>
+<text x="864.7" y="778.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#cbd5e1" font-weight="normal" text-anchor="start">obligation, and each engine is proved to decide</text>
+<text x="864.7" y="795.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#cbd5e1" font-weight="normal" text-anchor="start">only its own relation: a P171, P361, P22 or P155</text>
+<text x="864.7" y="812.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#cbd5e1" font-weight="normal" text-anchor="start">statement between items already related by P279 or</text>
+<text x="864.7" y="829.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#cbd5e1" font-weight="normal" text-anchor="start">P31 is a reported defect.</text>
+<text x="48.0" y="962.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="23" fill="#0f172a" font-weight="bold" text-anchor="start">The data model around the hierarchies</text>
+<text x="48.0" y="986.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#64748b" font-weight="normal" text-anchor="start">statements are more than pairs of items: the layers below are formalised too</text>
+<rect x="48.0" y="1008.0" width="146.4" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="121.2" y="1026.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">metaclass levels</text>
+<rect x="203.4" y="1008.0" width="117.8" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="262.3" y="1026.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">disjointness</text>
+<rect x="330.2" y="1008.0" width="175.0" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="417.7" y="1026.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">disjoint union P2738</text>
+<rect x="514.2" y="1008.0" width="132.1" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="580.2" y="1026.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">union of P2737</text>
+<rect x="655.3" y="1008.0" width="189.3" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="750.0" y="1026.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">equivalent class P1709</text>
+<rect x="853.6" y="1008.0" width="139.2" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="923.2" y="1026.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">statement ranks</text>
+<rect x="1001.9" y="1008.0" width="103.5" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="1053.6" y="1026.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">qualifiers</text>
+<rect x="48.0" y="1044.0" width="182.2" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="139.1" y="1062.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">some value / no value</text>
+<rect x="239.2" y="1044.0" width="210.8" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="344.5" y="1062.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">references and provenance</text>
+<rect x="458.9" y="1044.0" width="239.4" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="578.6" y="1062.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">labels, aliases, descriptions</text>
+<rect x="707.2" y="1044.0" width="96.4" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="755.4" y="1062.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">sitelinks</text>
+<rect x="812.6" y="1044.0" width="175.0" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="900.1" y="1062.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">external identifiers</text>
+<rect x="996.6" y="1044.0" width="175.0" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="1084.1" y="1062.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">quantities and units</text>
+<rect x="48.0" y="1080.0" width="210.8" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="153.4" y="1098.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">time values and precision</text>
+<rect x="267.8" y="1080.0" width="182.2" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="358.8" y="1098.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">start time / end time</text>
+<rect x="458.9" y="1080.0" width="132.1" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="525.0" y="1098.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">property paths</text>
+<rect x="600.0" y="1080.0" width="175.0" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="687.5" y="1098.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">property constraints</text>
+<rect x="784.0" y="1080.0" width="246.5" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="907.2" y="1098.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">properties for this type P1963</text>
+<rect x="1039.5" y="1080.0" width="182.2" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="1130.6" y="1098.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">entity schemas (ShEx)</text>
+<rect x="48.0" y="1116.0" width="160.7" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="128.4" y="1134.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">lexemes and senses</text>
+<rect x="217.7" y="1116.0" width="225.1" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="330.2" y="1134.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">RDF export: wdt: p: ps: pq:</text>
+<rect x="451.8" y="1116.0" width="210.8" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="557.1" y="1134.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">item merges and redirects</text>
+<rect x="671.5" y="1116.0" width="196.5" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="769.7" y="1134.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">redundant P279 clean-up</text>
+<rect x="877.0" y="1116.0" width="275.1" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="1014.5" y="1134.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">conjunctive queries with variables</text>
+<rect x="48.0" y="1152.0" width="232.2" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="164.1" y="1170.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">witnessed diagnostic reports</text>
+<rect x="289.2" y="1152.0" width="182.2" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="380.3" y="1170.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">is the study of P2578</text>
+<rect x="480.4" y="1152.0" width="217.9" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="589.3" y="1170.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">topic's main category P910</text>
+<rect x="707.2" y="1152.0" width="268.0" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="841.2" y="1170.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">Wikimedia pages in every language</text>
+<rect x="984.2" y="1152.0" width="125.0" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="1046.7" y="1170.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">cited sources</text>
+<rect x="48.0" y="1188.0" width="153.6" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="124.8" y="1206.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">authority control</text>
+<rect x="210.6" y="1188.0" width="403.8" height="28.0" rx="14.0" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+<text x="412.5" y="1206.7" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#075985" font-weight="normal" text-anchor="middle">labels, descriptions and aliases of the whole corpus</text>
+<text x="48.0" y="1250.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="23" fill="#0f172a" font-weight="bold" text-anchor="start">The tools: a certified pipeline from the live API to a Lean module</text>
+<text x="48.0" y="1274.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#64748b" font-weight="normal" text-anchor="start">each stage is an executable command whose guarantee is a theorem of the library</text>
+<rect x="48.0" y="1296.0" width="184.0" height="231.0" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="48.0" y="1296.0" width="184.0" height="40.0" rx="13" fill="#0f2f4f"/>
+<rect x="48.0" y="1322.0" width="184.0" height="14.0" rx="0" fill="#0f2f4f"/>
+<text x="140.0" y="1322.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#ffffff" font-weight="bold" text-anchor="middle">fetch / import</text>
+<text x="60.0" y="1358.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">wikidata fetch Q42</text>
+<text x="60.0" y="1372.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">--depth 3</text>
+<text x="60.0" y="1396.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">downloads</text>
+<text x="60.0" y="1411.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">Special:EntityData JSON,</text>
+<text x="60.0" y="1426.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">follows P31/P279, caches</text>
+<text x="60.0" y="1441.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">it</text>
+<line x1="60.0" y1="1458.0" x2="220.0" y2="1458.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="60.0" y="1476.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">imports exactly the</text>
+<text x="60.0" y="1491.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">claims in the source,</text>
+<text x="60.0" y="1506.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">nothing invented</text>
+<rect x="248.0" y="1296.0" width="184.0" height="231.0" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="248.0" y="1296.0" width="184.0" height="40.0" rx="13" fill="#0f2f4f"/>
+<rect x="248.0" y="1322.0" width="184.0" height="14.0" rx="0" fill="#0f2f4f"/>
+<text x="340.0" y="1322.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#ffffff" font-weight="bold" text-anchor="middle">check</text>
+<text x="260.0" y="1358.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">wikidata check f.wdkb</text>
+<text x="260.0" y="1382.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">runs the validator and</text>
+<text x="260.0" y="1397.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">prints one witnessed</text>
+<text x="260.0" y="1412.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">defect per line</text>
+<line x1="260.0" y1="1429.0" x2="420.0" y2="1429.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="260.0" y="1447.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">the report is empty</text>
+<text x="260.0" y="1462.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">exactly when the base is</text>
+<text x="260.0" y="1477.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">valid</text>
+<path d="M 233.0 1310.0 L 244.0 1316.0 L 233.0 1322.0 z" fill="#64748b" stroke="none" stroke-width="2"/>
+<rect x="448.0" y="1296.0" width="184.0" height="231.0" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="448.0" y="1296.0" width="184.0" height="40.0" rx="13" fill="#0f2f4f"/>
+<rect x="448.0" y="1322.0" width="184.0" height="14.0" rx="0" fill="#0f2f4f"/>
+<text x="540.0" y="1322.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#ffffff" font-weight="bold" text-anchor="middle">derive / ask / why</text>
+<text x="460.0" y="1358.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">wikidata why f.wdkb Q5</text>
+<text x="460.0" y="1372.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">Q154954</text>
+<text x="460.0" y="1396.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">the entailed facts, a</text>
+<text x="460.0" y="1411.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">yes/no answer, or an</text>
+<text x="460.0" y="1426.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">explaining chain</text>
+<line x1="460.0" y1="1443.0" x2="620.0" y2="1443.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="460.0" y="1461.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">sound and conservative;</text>
+<text x="460.0" y="1476.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">the printed chain is</text>
+<text x="460.0" y="1491.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">re-checked</text>
+<path d="M 433.0 1310.0 L 444.0 1316.0 L 433.0 1322.0 z" fill="#64748b" stroke="none" stroke-width="2"/>
+<rect x="648.0" y="1296.0" width="184.0" height="231.0" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="648.0" y="1296.0" width="184.0" height="40.0" rx="13" fill="#0f2f4f"/>
+<rect x="648.0" y="1322.0" width="184.0" height="14.0" rx="0" fill="#0f2f4f"/>
+<text x="740.0" y="1322.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#ffffff" font-weight="bold" text-anchor="middle">query</text>
+<text x="660.0" y="1358.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">wikidata query f.wdkb</text>
+<text x="660.0" y="1372.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">'inst ?x Q5'</text>
+<text x="660.0" y="1396.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">conjunctive queries with</text>
+<text x="660.0" y="1411.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">variables over derived or</text>
+<text x="660.0" y="1426.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">asserted facts</text>
+<line x1="660.0" y1="1443.0" x2="820.0" y2="1443.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="660.0" y="1461.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">the evaluator is sound</text>
+<text x="660.0" y="1476.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">and complete for the</text>
+<text x="660.0" y="1491.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">query semantics</text>
+<path d="M 633.0 1310.0 L 644.0 1316.0 L 633.0 1322.0 z" fill="#64748b" stroke="none" stroke-width="2"/>
+<rect x="848.0" y="1296.0" width="184.0" height="231.0" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="848.0" y="1296.0" width="184.0" height="40.0" rx="13" fill="#0f2f4f"/>
+<rect x="848.0" y="1322.0" width="184.0" height="14.0" rx="0" fill="#0f2f4f"/>
+<text x="940.0" y="1322.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#ffffff" font-weight="bold" text-anchor="middle">merge / normalize</text>
+<text x="860.0" y="1358.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">wikidata merge</text>
+<text x="860.0" y="1372.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">data/*.wdkb --dedup</text>
+<text x="860.0" y="1396.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">one corpus out of many</text>
+<text x="860.0" y="1411.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">downloads, repetitions</text>
+<text x="860.0" y="1426.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">dropped</text>
+<line x1="860.0" y1="1443.0" x2="1020.0" y2="1443.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="860.0" y="1461.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">nothing is lost: every</text>
+<text x="860.0" y="1476.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">fact of every fragment</text>
+<text x="860.0" y="1491.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">still follows</text>
+<path d="M 833.0 1310.0 L 844.0 1316.0 L 833.0 1322.0 z" fill="#64748b" stroke="none" stroke-width="2"/>
+<rect x="1048.0" y="1296.0" width="184.0" height="231.0" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="1048.0" y="1296.0" width="184.0" height="40.0" rx="13" fill="#0f2f4f"/>
+<rect x="1048.0" y="1322.0" width="184.0" height="14.0" rx="0" fill="#0f2f4f"/>
+<text x="1140.0" y="1322.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#ffffff" font-weight="bold" text-anchor="middle">lean</text>
+<text x="1060.0" y="1358.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">wikidata lean corpus.wdkb</text>
+<text x="1060.0" y="1372.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">--module M</text>
+<text x="1060.0" y="1396.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">compiles the base and all</text>
+<text x="1060.0" y="1411.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">it entails into a Lean</text>
+<text x="1060.0" y="1426.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#334155" font-weight="normal" text-anchor="start">module</text>
+<line x1="1060.0" y1="1443.0" x2="1220.0" y2="1443.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="1060.0" y="1461.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">Lean re-checks the facts</text>
+<text x="1060.0" y="1476.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">are exactly right on</text>
+<text x="1060.0" y="1491.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#15803d" font-weight="normal" text-anchor="start">every build</text>
+<path d="M 1033.0 1310.0 L 1044.0 1316.0 L 1033.0 1322.0 z" fill="#64748b" stroke="none" stroke-width="2"/>
+<text x="48.0" y="1549.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#64748b" font-weight="normal" text-anchor="start">every command of the tool</text>
+<rect x="48.0" y="1561.0" width="124.8" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="110.4" y="1578.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata fetch</text>
+<rect x="181.8" y="1561.0" width="132.0" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="247.8" y="1578.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata import</text>
+<rect x="322.8" y="1561.0" width="124.8" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="385.2" y="1578.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata check</text>
+<rect x="456.6" y="1561.0" width="132.0" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="522.6" y="1578.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata derive</text>
+<rect x="597.6" y="1561.0" width="110.4" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="652.8" y="1578.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata ask</text>
+<rect x="717.0" y="1561.0" width="124.8" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="779.4" y="1578.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata query</text>
+<rect x="850.8" y="1561.0" width="110.4" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="906.0" y="1578.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata why</text>
+<rect x="970.2" y="1561.0" width="110.4" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="1025.4" y="1578.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata add</text>
+<rect x="1089.6" y="1561.0" width="139.2" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="1159.2" y="1578.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata classes</text>
+<rect x="48.0" y="1595.0" width="153.6" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="124.8" y="1612.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata instances</text>
+<rect x="210.6" y="1595.0" width="124.8" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="273.0" y="1612.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata stats</text>
+<rect x="344.4" y="1595.0" width="124.8" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="406.8" y="1612.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata merge</text>
+<rect x="478.2" y="1595.0" width="153.6" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="555.0" y="1612.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata normalize</text>
+<rect x="640.8" y="1595.0" width="132.0" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="706.8" y="1612.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata module</text>
+<rect x="781.8" y="1595.0" width="132.0" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="847.8" y="1612.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata scheck</text>
+<rect x="922.8" y="1595.0" width="132.0" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="988.8" y="1612.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata report</text>
+<rect x="1063.8" y="1595.0" width="146.4" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="1137.0" y="1612.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata worklist</text>
+<rect x="48.0" y="1629.0" width="110.4" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="103.2" y="1646.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata fix</text>
+<rect x="167.4" y="1629.0" width="132.0" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="233.4" y="1646.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata series</text>
+<rect x="308.4" y="1629.0" width="124.8" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="370.8" y="1646.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata gloss</text>
+<rect x="442.2" y="1629.0" width="117.6" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="501.0" y="1646.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata lean</text>
+<rect x="568.8" y="1629.0" width="139.2" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="638.4" y="1646.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata publish</text>
+<rect x="717.0" y="1629.0" width="139.2" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="786.6" y="1646.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata archive</text>
+<rect x="865.2" y="1629.0" width="153.6" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="942.0" y="1646.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata unarchive</text>
+<rect x="1027.8" y="1629.0" width="117.6" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="1086.6" y="1646.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata sync</text>
+<rect x="48.0" y="1663.0" width="117.6" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="106.8" y="1680.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata wiki</text>
+<rect x="174.6" y="1663.0" width="117.6" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="233.4" y="1680.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata wiki</text>
+<rect x="301.2" y="1663.0" width="117.6" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="360.0" y="1680.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata wiki</text>
+<rect x="427.8" y="1663.0" width="117.6" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="486.6" y="1680.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata wiki</text>
+<rect x="554.4" y="1663.0" width="153.6" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="631.2" y="1680.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata sitelinks</text>
+<rect x="717.0" y="1663.0" width="117.6" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="775.8" y="1680.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata scan</text>
+<rect x="843.6" y="1663.0" width="146.4" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="916.8" y="1680.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata frontier</text>
+<rect x="999.0" y="1663.0" width="139.2" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="1068.6" y="1680.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata sources</text>
+<rect x="48.0" y="1697.0" width="132.0" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="114.0" y="1714.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata enrich</text>
+<rect x="189.0" y="1697.0" width="153.6" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="265.8" y="1714.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata authority</text>
+<rect x="351.6" y="1697.0" width="146.4" height="26.0" rx="13.0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="424.8" y="1714.3" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12" fill="#0f172a" font-weight="normal" text-anchor="middle">wikidata scanlean</text>
+<text x="48.0" y="1757.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="23" fill="#0f172a" font-weight="bold" text-anchor="start">Wikidata itself, compiled to Lean and re-checked</text>
+<text x="48.0" y="1781.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#64748b" font-weight="normal" text-anchor="start">fragments queried from the live API, stored in data/, compiled into RequestProject/Generated/</text>
+<rect x="48.0" y="1799.0" width="1184.0" height="636.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64.0" y="1819.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="bold" text-anchor="start">fragment</text>
+<text x="238.0" y="1819.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="bold" text-anchor="start">seeds</text>
+<text x="688.0" y="1819.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="bold" text-anchor="end">items</text>
+<text x="778.0" y="1819.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="bold" text-anchor="end">P279 / P31</text>
+<text x="1216.0" y="1819.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="bold" text-anchor="end">entailed subclass of + instance of</text>
+<text x="64.0" y="1841.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">DouglasAdams</text>
+<text x="238.0" y="1841.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">Q42</text>
+<text x="688.0" y="1841.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">21</text>
+<text x="778.0" y="1841.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">12 / 9</text>
+<rect x="808.0" y="1830.0" width="3.0" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="1841.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">19 + 22</text>
+<text x="64.0" y="1867.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">UpperOntology</text>
+<text x="238.0" y="1867.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">entity, class, metaclass</text>
+<text x="688.0" y="1867.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">44</text>
+<text x="778.0" y="1867.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">50 / 44</text>
+<rect x="808.0" y="1856.0" width="14.1" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="1867.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">135 + 225</text>
+<text x="64.0" y="1893.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Geography</text>
+<text x="238.0" y="1893.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">city, country, Berlin, Paris</text>
+<text x="688.0" y="1893.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">178</text>
+<text x="778.0" y="1893.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">203 / 130</text>
+<rect x="808.0" y="1882.0" width="86.6" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="1893.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">1618 + 594</text>
+<text x="64.0" y="1919.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">CreativeWorks</text>
+<text x="238.0" y="1919.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">film, book, Hitchhiker's Guide</text>
+<text x="688.0" y="1919.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">94</text>
+<text x="778.0" y="1919.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">93 / 60</text>
+<rect x="808.0" y="1908.0" width="18.5" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="1919.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">273 + 200</text>
+<text x="64.0" y="1945.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Science</text>
+<text x="238.0" y="1945.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">Einstein, Darwin, Lovelace</text>
+<text x="688.0" y="1945.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">104</text>
+<text x="778.0" y="1945.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">82 / 65</text>
+<rect x="808.0" y="1934.0" width="17.1" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="1945.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">211 + 226</text>
+<text x="64.0" y="1971.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Technology</text>
+<text x="238.0" y="1971.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">software, computer, Python, AI</text>
+<text x="688.0" y="1971.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">132</text>
+<text x="778.0" y="1971.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">137 / 118</text>
+<rect x="808.0" y="1960.0" width="32.4" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="1971.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">424 + 404</text>
+<text x="64.0" y="1997.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Mathematics</text>
+<text x="238.0" y="1997.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">mathematics, theorem, pi</text>
+<text x="688.0" y="1997.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">84</text>
+<text x="778.0" y="1997.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">77 / 49</text>
+<rect x="808.0" y="1986.0" width="13.7" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="1997.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">180 + 169</text>
+<text x="64.0" y="2023.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">LifeSciences</text>
+<text x="238.0" y="2023.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">organism, taxon, animal, gene</text>
+<text x="688.0" y="2023.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">86</text>
+<text x="778.0" y="2023.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">85 / 77</text>
+<rect x="808.0" y="2012.0" width="18.7" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2023.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">225 + 252</text>
+<text x="64.0" y="2049.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Society</text>
+<text x="238.0" y="2049.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">organization, business, university</text>
+<text x="688.0" y="2049.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">92</text>
+<text x="778.0" y="2049.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">102 / 91</text>
+<rect x="808.0" y="2038.0" width="27.7" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2049.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">319 + 389</text>
+<text x="64.0" y="2075.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Chemistry</text>
+<text x="238.0" y="2075.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">element, compound, disease, drug</text>
+<text x="688.0" y="2075.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">62</text>
+<text x="778.0" y="2075.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">59 / 40</text>
+<rect x="808.0" y="2064.0" width="10.9" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2075.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">153 + 125</text>
+<text x="64.0" y="2101.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Events</text>
+<text x="238.0" y="2101.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">occurrence, event, war</text>
+<text x="688.0" y="2101.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">82</text>
+<text x="778.0" y="2101.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">76 / 55</text>
+<rect x="808.0" y="2090.0" width="13.5" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2101.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">195 + 149</text>
+<rect x="56.0" y="2112.0" width="1168.0" height="24.0" rx="6" fill="#f1f5f9"/>
+<text x="64.0" y="2127.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="bold" text-anchor="start">Core</text>
+<text x="238.0" y="2127.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">the eleven fragments, merged and deduplicated</text>
+<text x="688.0" y="2127.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="bold" text-anchor="end">588</text>
+<text x="778.0" y="2127.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="bold" text-anchor="end">725 / 477</text>
+<rect x="808.0" y="2116.0" width="300.0" height="13.0" rx="6" fill="url(#g4)"/>
+<text x="1216.0" y="2127.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="bold" text-anchor="end">4511 + 3148</text>
+<text x="64.0" y="2153.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Structures</text>
+<text x="238.0" y="2153.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">the notions the library is made of: pullback, retract, monoid</text>
+<text x="688.0" y="2153.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">163</text>
+<text x="778.0" y="2153.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">166 / 66</text>
+<rect x="808.0" y="2142.0" width="29.3" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2153.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">502 + 245</text>
+<text x="64.0" y="2179.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">RelatedStructures</text>
+<text x="238.0" y="2179.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">sheaf, presheaf, natural transformation, homeomorphism</text>
+<text x="688.0" y="2179.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">145</text>
+<text x="778.0" y="2179.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">146 / 35</text>
+<rect x="808.0" y="2168.0" width="20.1" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2179.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">427 + 85</text>
+<text x="64.0" y="2205.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">RelatedStructures2</text>
+<text x="238.0" y="2205.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">topos, cartesian closed category, equaliser, pushout</text>
+<text x="688.0" y="2205.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">63</text>
+<text x="778.0" y="2205.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">53 / 34</text>
+<rect x="808.0" y="2194.0" width="10.9" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2205.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">190 + 89</text>
+<text x="64.0" y="2231.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">VocabularyCorpus</text>
+<text x="238.0" y="2231.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">every notion Vocabulary.lean names</text>
+<text x="688.0" y="2231.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">571</text>
+<text x="778.0" y="2231.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">642 / 337</text>
+<rect x="808.0" y="2220.0" width="197.6" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2231.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">3096 + 1948</text>
+<text x="64.0" y="2257.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">KnowledgeRepresentation</text>
+<text x="238.0" y="2257.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">OWL, RDF Schema, SKOS, SPARQL, description logic</text>
+<text x="688.0" y="2257.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">150</text>
+<text x="778.0" y="2257.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">142 / 77</text>
+<rect x="808.0" y="2246.0" width="31.5" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2257.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">477 + 327</text>
+<text x="64.0" y="2283.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Theories</text>
+<text x="238.0" y="2283.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">the seven theories around the pullback</text>
+<text x="688.0" y="2283.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">191</text>
+<text x="778.0" y="2283.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">212 / 67</text>
+<rect x="808.0" y="2272.0" width="47.3" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2283.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">923 + 284</text>
+<text x="64.0" y="2309.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Enriched</text>
+<text x="238.0" y="2309.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">the theory corpus, grown by the enrichment loop</text>
+<text x="688.0" y="2309.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">553</text>
+<text x="778.0" y="2309.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">339 / 165</text>
+<rect x="808.0" y="2298.0" width="136.7" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2309.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">1944 + 1547</text>
+<text x="64.0" y="2335.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Frontier</text>
+<text x="238.0" y="2335.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">round 1: the items the crawl had not asked about</text>
+<text x="688.0" y="2335.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">477</text>
+<text x="778.0" y="2335.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">536 / 317</text>
+<rect x="808.0" y="2324.0" width="121.8" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2335.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">1843 + 1267</text>
+<text x="64.0" y="2361.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Frontier2</text>
+<text x="238.0" y="2361.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">round 2</text>
+<text x="688.0" y="2361.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">328</text>
+<text x="778.0" y="2361.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">318 / 201</text>
+<rect x="808.0" y="2350.0" width="60.8" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2361.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">883 + 669</text>
+<text x="64.0" y="2387.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Frontier3</text>
+<text x="238.0" y="2387.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">round 3</text>
+<text x="688.0" y="2387.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">204</text>
+<text x="778.0" y="2387.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">172 / 91</text>
+<rect x="808.0" y="2376.0" width="23.1" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2387.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">375 + 216</text>
+<text x="64.0" y="2413.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="start">Frontier4</text>
+<text x="238.0" y="2413.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#64748b" font-weight="normal" text-anchor="start">round 4: the last 18 items, leaving 14</text>
+<text x="688.0" y="2413.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">95</text>
+<text x="778.0" y="2413.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">69 / 32</text>
+<rect x="808.0" y="2402.0" width="6.7" height="13.0" rx="6" fill="url(#g1)"/>
+<text x="1216.0" y="2413.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#0f172a" font-weight="normal" text-anchor="end">121 + 50</text>
+<text x="48.0" y="2457.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#64748b" font-weight="normal" text-anchor="start">data/all.wdkb merges every fragment above into one base of 1578 items, 2257 subclass of and 1169 instance of statements: it is what the defect report, the term table and the periodicity</text>
+<text x="48.0" y="2472.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5" fill="#64748b" font-weight="normal" text-anchor="start">search run over.</text>
+<rect x="48.0" y="2487.0" width="385.3" height="108.0" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="48.0" y="2487.0" width="5.0" height="108.0" rx="2.5" fill="#16a34a"/>
+<text x="66.0" y="2515.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#0f172a" font-weight="bold" text-anchor="start">A genuine ontology</text>
+<text x="66.0" y="2537.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#475569" font-weight="normal" text-anchor="start">The Douglas Adams fragment passes every check, so</text>
+<text x="66.0" y="2553.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#475569" font-weight="normal" text-anchor="start">the whole abstract theory applies to the downloaded</text>
+<text x="66.0" y="2569.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#475569" font-weight="normal" text-anchor="start">data: it is an Ontology in the sense of Core.lean.</text>
+<rect x="447.3" y="2487.0" width="385.3" height="108.0" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="447.3" y="2487.0" width="5.0" height="108.0" rx="2.5" fill="#b91c1c"/>
+<text x="465.3" y="2515.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#0f172a" font-weight="bold" text-anchor="start">A real cycle in live Wikidata</text>
+<text x="465.3" y="2537.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#475569" font-weight="normal" text-anchor="start">Geography states region ⊑ geographical area and</text>
+<text x="465.3" y="2553.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#475569" font-weight="normal" text-anchor="start">geographical area ⊑ region. Proved: no ontology can</text>
+<text x="465.3" y="2569.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#475569" font-weight="normal" text-anchor="start">have exactly those P279 statements.</text>
+<rect x="846.7" y="2487.0" width="385.3" height="108.0" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="846.7" y="2487.0" width="5.0" height="108.0" rx="2.5" fill="#1d4ed8"/>
+<text x="864.7" y="2515.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#0f172a" font-weight="bold" text-anchor="start">Merging really adds knowledge</text>
+<text x="864.7" y="2537.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#475569" font-weight="normal" text-anchor="start">The corpus entails 1178 subclass of and 1044</text>
+<text x="864.7" y="2553.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#475569" font-weight="normal" text-anchor="start">instance of facts no single fragment does - and</text>
+<text x="864.7" y="2569.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#475569" font-weight="normal" text-anchor="start">loses nothing: every fragment statement still</text>
+<text x="864.7" y="2585.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#475569" font-weight="normal" text-anchor="start">follows.</text>
+<text x="48.0" y="2631.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="23" fill="#0f172a" font-weight="bold" text-anchor="start">Where the results sit</text>
+<text x="48.0" y="2655.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#64748b" font-weight="normal" text-anchor="start">theorems and lemmas per layer of the development</text>
+<rect x="48.0" y="2677.0" width="1184.0" height="72.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="2703.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">Foundations and certified engine</text>
+<text x="66.0" y="2723.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Core · BabySteps · BabyStepsProperties · BabyStepsAlignment · Reachability ·</text>
+<text x="66.0" y="2738.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Engine · FastEval · Matching · Semantics</text>
+<rect x="688.0" y="2695.0" width="73.7" height="16.0" rx="8" fill="url(#g1)"/>
+<text x="1214.0" y="2708.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">160 theorems</text>
+<rect x="48.0" y="2758.0" width="1184.0" height="102.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="2784.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">Class hierarchy and ontology</text>
+<text x="66.0" y="2804.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Merge · SelfDescription · Subsumption · Stratification · Concepts · DisjointUnion</text>
+<text x="66.0" y="2819.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">· ClassAlgebra · Alignment · ItemMerge · Taxonomy · UpperOntology · Examples ·</text>
+<text x="66.0" y="2834.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Reflection · Renaming · MetaFrobenius · SoftIdentity · Modules · ModulesExamples</text>
+<text x="66.0" y="2849.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">· ModulesCorpus</text>
+<rect x="688.0" y="2776.0" width="213.4" height="16.0" rx="8" fill="url(#g2)"/>
+<text x="1214.0" y="2789.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">463 theorems</text>
+<rect x="48.0" y="2869.0" width="1184.0" height="72.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="2895.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">Property layer and constraints</text>
+<text x="66.0" y="2915.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Properties · PropertyEngine · PropertyConstraints · StatementConstraints ·</text>
+<text x="66.0" y="2930.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">TypeProperties · Schemas · Paths · FieldsOfStudy · ConstraintExceptions</text>
+<rect x="688.0" y="2887.0" width="118.0" height="16.0" rx="8" fill="url(#g3)"/>
+<text x="1214.0" y="2900.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">256 theorems</text>
+<rect x="48.0" y="2950.0" width="1184.0" height="72.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="2976.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">Data model and serialisation</text>
+<text x="66.0" y="2996.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Ranks · Snaks · Qualifiers · Quantities · TimeValues · Temporal · Terms ·</text>
+<text x="66.0" y="3011.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Sitelinks · ExternalIds · Provenance · Lexemes · Rdf · GeoValues · AllowedUnits</text>
+<rect x="688.0" y="2968.0" width="182.0" height="16.0" rx="8" fill="url(#g4)"/>
+<text x="1214.0" y="2981.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">395 theorems</text>
+<rect x="48.0" y="3031.0" width="1184.0" height="87.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="3057.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">The other hierarchies: parts, kinship, series, taxa</text>
+<text x="66.0" y="3077.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Mereology · Kinship · KinshipDiagnostics · Parenting · ParentingDiagnostics ·</text>
+<text x="66.0" y="3092.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">ParentingExamples · Series · SeriesChain · SeriesExamples · SeriesDiagnostics ·</text>
+<text x="66.0" y="3107.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Taxa · TaxaLineage · TaxaDiagnostics · TaxaExamples</text>
+<rect x="688.0" y="3049.0" width="194.9" height="16.0" rx="8" fill="url(#g5)"/>
+<text x="1214.0" y="3062.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">423 theorems</text>
+<rect x="48.0" y="3127.0" width="1184.0" height="87.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="3153.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">Queries, clean-up, defects and diagnostics</text>
+<text x="66.0" y="3173.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Queries · Redundancy · Diagnostics · Normalize · Defects · DefectReport · DefTest</text>
+<text x="66.0" y="3188.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">· KbTerms · ReportFormat · Reports · Fixes · ReportExamples · Gaps · Worklist ·</text>
+<text x="66.0" y="3203.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">WorklistExamples</text>
+<rect x="688.0" y="3145.0" width="130.4" height="16.0" rx="8" fill="url(#g1)"/>
+<text x="1214.0" y="3158.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">283 theorems</text>
+<rect x="48.0" y="3223.0" width="1184.0" height="72.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="3249.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">Grounding every term in Wikidata</text>
+<text x="66.0" y="3269.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Grounding · Vocabulary · Grounded · MathResonance · MathCorpus · RelatedNotions ·</text>
+<text x="66.0" y="3284.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">RelatedCorpus · TheoryCorpus</text>
+<rect x="688.0" y="3241.0" width="53.9" height="16.0" rx="8" fill="url(#g2)"/>
+<text x="1214.0" y="3254.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">117 theorems</text>
+<rect x="48.0" y="3304.0" width="1184.0" height="102.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="3330.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">Category theory, topology and type theory of ontologies</text>
+<text x="66.0" y="3350.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">CategoryOfOntologies · OntologyLimits · OntologyColimits · PullbackComparison ·</text>
+<text x="66.0" y="3365.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">PullbackRetraction · RetractTopology · OntologyTopology · OntologyGroups ·</text>
+<text x="66.0" y="3380.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">OntologyFields · GrothendieckSite · OntologySheaves · HomotopyTypes ·</text>
+<text x="66.0" y="3395.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">CubicalTypes</text>
+<rect x="688.0" y="3322.0" width="59.0" height="16.0" rx="8" fill="url(#g3)"/>
+<text x="1214.0" y="3335.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">128 theorems</text>
+<rect x="48.0" y="3415.0" width="1184.0" height="72.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="3441.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">Programs, periodicity and the spectrum</text>
+<text x="66.0" y="3461.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">RelationWords · Periodicity · PeriodicityReport · SpectrumReport · FeedbackSets ·</text>
+<text x="66.0" y="3476.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">ProgramAlgebra · SignedWords · CyclicAlgebra · CompilerPipeline</text>
+<rect x="688.0" y="3433.0" width="80.6" height="16.0" rx="8" fill="url(#g4)"/>
+<text x="1214.0" y="3446.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">175 theorems</text>
+<rect x="48.0" y="3496.0" width="1184.0" height="72.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="3522.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">Enrichment: growing the corpus from its own sources</text>
+<text x="66.0" y="3542.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Enrichment · EnrichmentCorpus · CorpusFrontier · CorpusRounds · Cli/Enrich ·</text>
+<text x="66.0" y="3557.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Cli/EnrichCmd · Cli/ScanFormat</text>
+<rect x="688.0" y="3514.0" width="55.8" height="16.0" rx="8" fill="url(#g5)"/>
+<text x="1214.0" y="3527.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">121 theorems</text>
+<rect x="48.0" y="3577.0" width="1184.0" height="57.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="3603.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">Publication: mirrors, peer-to-peer sync and archives</text>
+<text x="66.0" y="3623.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Publish · Sync · Archive · PublishExamples · Cli/Publish</text>
+<rect x="688.0" y="3595.0" width="29.5" height="16.0" rx="8" fill="url(#g1)"/>
+<text x="1214.0" y="3608.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">64 theorems</text>
+<rect x="48.0" y="3643.0" width="1184.0" height="72.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="3669.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">Wikitext: reading and writing the project's own pages</text>
+<text x="66.0" y="3689.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Wiki/Syntax · Wiki/Text · Wiki/Clean · Wiki/Subst · Wiki/Template · Wiki/Registry</text>
+<text x="66.0" y="3704.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">· Wiki/Generate · Wiki/Pages · Cli/WikiCmd</text>
+<rect x="688.0" y="3661.0" width="51.2" height="16.0" rx="8" fill="url(#g2)"/>
+<text x="1214.0" y="3674.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">111 theorems</text>
+<rect x="48.0" y="3724.0" width="1184.0" height="102.0" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+<text x="66.0" y="3750.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#0f172a" font-weight="bold" text-anchor="start">Command line tool, compiled corpus and demos</text>
+<text x="66.0" y="3770.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Cli/Codegen · Cli/Derive · Cli/Examples · Cli/Fetch · Cli/Format · Cli/Import ·</text>
+<text x="66.0" y="3785.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Cli/Query · Cli/ReportCmd · Cli/SeriesFormat · Cli/TaxaFormat · Cli/Tool ·</text>
+<text x="66.0" y="3800.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">Cli/WorklistCmd · CompiledFacts · CorpusEntailment · Main · Showcase · 28</text>
+<text x="66.0" y="3815.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="11.5" fill="#94a3b8" font-weight="normal" text-anchor="start">compiled Generated/ modules</text>
+<rect x="688.0" y="3742.0" width="300.0" height="16.0" rx="8" fill="url(#g3)"/>
+<text x="1214.0" y="3755.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#0f172a" font-weight="bold" text-anchor="end">651 theorems</text>
+<text x="48.0" y="3861.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="23" fill="#0f172a" font-weight="bold" text-anchor="start">The ontology as mathematics</text>
+<text x="48.0" y="3885.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#64748b" font-weight="normal" text-anchor="start">three layers that treat the ontology itself as a mathematical object, each grounded in the Wikidata article that names it</text>
+<rect x="48.0" y="3907.0" width="385.3" height="328.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="48.0" y="3907.0" width="385.3" height="6.0" rx="3" fill="url(#g3)"/>
+<text x="66.0" y="3941.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#0f172a" font-weight="bold" text-anchor="start">Category theory, topology, type theory</text>
+<text x="66.0" y="3963.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#6d28d9" font-weight="normal" text-anchor="start">Q217413 category theory · Q42989 topology ·</text>
+<text x="66.0" y="3980.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#6d28d9" font-weight="normal" text-anchor="start">Q1062242 Grothendieck topology</text>
+<circle cx="70.0" cy="3999.0" r="2.5" fill="#6d28d9"/>
+<text x="80.0" y="4003.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">ontologies and strict morphisms are a category;</text>
+<text x="80.0" y="4019.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">the fibre product is a pullback square, and</text>
+<text x="80.0" y="4035.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">every cospan has one</text>
+<circle cx="70.0" cy="4049.0" r="2.5" fill="#6d28d9"/>
+<text x="80.0" y="4053.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">a class hierarchy is a space, a strict morphism</text>
+<text x="80.0" y="4069.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">is exactly a continuous map, and the fibre</text>
+<text x="80.0" y="4085.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">product is the pullback in TopCat</text>
+<circle cx="70.0" cy="4099.0" r="2.5" fill="#6d28d9"/>
+<text x="80.0" y="4103.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">jointly surjective alignments are a pretopology,</text>
+<text x="80.0" y="4119.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">so a Grothendieck topology, and labellings are a</text>
+<text x="80.0" y="4135.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">sheaf on that site</text>
+<circle cx="70.0" cy="4149.0" r="2.5" fill="#6d28d9"/>
+<text x="80.0" y="4153.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">the same pullback again as a homotopy fibre</text>
+<text x="80.0" y="4169.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">product, and cube by cube</text>
+<circle cx="70.0" cy="4183.0" r="2.5" fill="#6d28d9"/>
+<text x="80.0" y="4187.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">the automorphism group of an ontology, and class</text>
+<text x="80.0" y="4203.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">extensions as a GF(2) vector space</text>
+<rect x="447.3" y="3907.0" width="385.3" height="328.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="447.3" y="3907.0" width="385.3" height="6.0" rx="3" fill="url(#g4)"/>
+<text x="465.3" y="3941.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#0f172a" font-weight="bold" text-anchor="start">Periodicity and the spectrum</text>
+<text x="465.3" y="3963.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#c2410c" font-weight="normal" text-anchor="start">the class hierarchy of the downloaded corpus,</text>
+<text x="465.3" y="3980.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#c2410c" font-weight="normal" text-anchor="start">searched for cycles</text>
+<circle cx="469.3" cy="3999.0" r="2.5" fill="#c2410c"/>
+<text x="479.3" y="4003.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">a computable shortest-period search, proved</text>
+<text x="479.3" y="4019.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">correct and minimal, with phase certificates</text>
+<text x="479.3" y="4035.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">that make a component period exact</text>
+<circle cx="469.3" cy="4049.0" r="2.5" fill="#c2410c"/>
+<text x="479.3" y="4053.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">over the whole corpus: eleven periodic items,</text>
+<text x="479.3" y="4069.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">1567 aperiodic, four components with periods 2,</text>
+<text x="479.3" y="4085.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">2, 3 and 4</text>
+<circle cx="469.3" cy="4099.0" r="2.5" fill="#c2410c"/>
+<text x="479.3" y="4103.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">every relation of the ontology layer read as an</text>
+<text x="479.3" y="4119.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">operator: which words close, and with what phase</text>
+<circle cx="469.3" cy="4133.0" r="2.5" fill="#c2410c"/>
+<text x="479.3" y="4137.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">minimum feedback edge and vertex sets: how far</text>
+<text x="479.3" y="4153.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">the hierarchy is from acyclic</text>
+<circle cx="469.3" cy="4167.0" r="2.5" fill="#c2410c"/>
+<text x="479.3" y="4171.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">the repaired hierarchy of the defect report has</text>
+<text x="479.3" y="4187.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">no periodic point at all</text>
+<rect x="846.7" y="3907.0" width="385.3" height="328.0" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="846.7" y="3907.0" width="385.3" height="6.0" rx="3" fill="url(#g1)"/>
+<text x="864.7" y="3941.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#0f172a" font-weight="bold" text-anchor="start">The algebra of transformations</text>
+<text x="864.7" y="3963.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#1d4ed8" font-weight="normal" text-anchor="start">relation words as programs, and their grading</text>
+<circle cx="868.7" cy="3982.0" r="2.5" fill="#1d4ed8"/>
+<text x="878.7" y="3986.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">a Gödel numbering of the relation words:</text>
+<text x="878.7" y="4002.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">RelWord.equivNat</text>
+<circle cx="868.7" cy="4016.0" r="2.5" fill="#1d4ed8"/>
+<text x="878.7" y="4020.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">concatenation is composition, so the words form</text>
+<text x="878.7" y="4036.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">a monoid acting on item sets</text>
+<circle cx="868.7" cy="4050.0" r="2.5" fill="#1d4ed8"/>
+<text x="878.7" y="4054.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">the metaclass level grades the words by an</text>
+<text x="878.7" y="4070.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">integer, honestly: with inverses allowed, a</text>
+<text x="878.7" y="4086.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">forward and a backward instance of step cancel</text>
+<circle cx="868.7" cy="4100.0" r="2.5" fill="#1d4ed8"/>
+<text x="878.7" y="4104.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">so a closing signed word of non-zero degree</text>
+<text x="878.7" y="4120.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">refutes every ontology model of a base</text>
+<circle cx="868.7" cy="4134.0" r="2.5" fill="#1d4ed8"/>
+<text x="878.7" y="4138.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">the compiler stages act by morphisms; the cyclic</text>
+<text x="878.7" y="4154.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">part has order exactly twelve, split by the CRT</text>
+<text x="878.7" y="4170.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" fill="#334155" font-weight="normal" text-anchor="start">as 12 = 2^2 · 3</text>
+<rect x="48.0" y="4271.0" width="1184.0" height="104.0" rx="14" fill="#0f172a"/>
+<text x="68.0" y="4313.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#94a3b8" font-weight="normal" text-anchor="start">lake build</text>
+<text x="68.0" y="4343.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#4ade80" font-weight="bold" text-anchor="start">clean</text>
+<text x="231.4" y="4313.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#94a3b8" font-weight="normal" text-anchor="start">sorry / admit</text>
+<text x="231.4" y="4343.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#4ade80" font-weight="bold" text-anchor="start">0</text>
+<text x="394.9" y="4313.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#94a3b8" font-weight="normal" text-anchor="start">axioms</text>
+<text x="394.9" y="4343.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#4ade80" font-weight="bold" text-anchor="start">standard only</text>
+<text x="558.3" y="4313.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#94a3b8" font-weight="normal" text-anchor="start">by decide checks</text>
+<text x="558.3" y="4343.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#e2e8f0" font-weight="bold" text-anchor="start">1018</text>
+<text x="721.7" y="4313.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#94a3b8" font-weight="normal" text-anchor="start">#eval demos</text>
+<text x="721.7" y="4343.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#e2e8f0" font-weight="bold" text-anchor="start">119</text>
+<text x="885.1" y="4313.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#94a3b8" font-weight="normal" text-anchor="start">hand-written mods</text>
+<text x="885.1" y="4343.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#e2e8f0" font-weight="bold" text-anchor="start">147</text>
+<text x="1048.6" y="4313.0" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="12.5" fill="#94a3b8" font-weight="normal" text-anchor="start">generated mods</text>
+<text x="1048.6" y="4343.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" fill="#e2e8f0" font-weight="bold" text-anchor="start">28</text>
+<text x="48.0" y="4405.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#94a3b8" font-weight="normal" text-anchor="start">Every claim on this poster is a named theorem: docs/SHOWCASE.md lists them and RequestProject/Showcase.lean re-checks the list on every build. Identifiers follow Wikidata; the</text>
+<text x="48.0" y="4422.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#94a3b8" font-weight="normal" text-anchor="start">compiled fragments are real downloads and the theorems about them are theorems about that data, while the hand-built example fragments are stylised excerpts and the theorems about</text>
+<text x="48.0" y="4439.0" font-family="DejaVu Sans, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#94a3b8" font-weight="normal" text-anchor="start">them are statements about those fragments. Regenerate with python3 docs/make_showcase_svg.py.</text>
+</svg>

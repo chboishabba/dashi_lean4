@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "phrase",
+  "word and phrase"
+ ],
+ "canonical": "Q48937186",
+ "description": "sequence of one or more words",
+ "id": "Q48937186",
+ "label": "word or phrase"
+}

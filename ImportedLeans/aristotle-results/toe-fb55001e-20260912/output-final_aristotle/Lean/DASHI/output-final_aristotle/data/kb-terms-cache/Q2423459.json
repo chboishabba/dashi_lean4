@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "army deployment",
+  "redeployment",
+  "troop withdrawal"
+ ],
+ "canonical": "Q2423459",
+ "description": "movement of armed forces and their logistical support infrastructure around the world",
+ "id": "Q2423459",
+ "label": "military deployment"
+}

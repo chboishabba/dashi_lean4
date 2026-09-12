@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "geocodeable item",
+  "geoobject",
+  "geolocatable event",
+  "geolocatable object"
+ ],
+ "canonical": "Q123349660",
+ "description": "entity that may be assigned mostly stable geographic coordinates and/or geocoded",
+ "id": "Q123349660",
+ "label": "geolocatable entity"
+}

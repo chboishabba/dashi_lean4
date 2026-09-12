@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "triple",
+  "RDF triple"
+ ],
+ "canonical": "Q3539534",
+ "description": "atomic data entity in the Resource Description Framework (RDF) data model; set of three entities that codifies a statement about semantic data in the form of subject–predicate–object expressions",
+ "id": "Q3539534",
+ "label": "semantic triple"
+}

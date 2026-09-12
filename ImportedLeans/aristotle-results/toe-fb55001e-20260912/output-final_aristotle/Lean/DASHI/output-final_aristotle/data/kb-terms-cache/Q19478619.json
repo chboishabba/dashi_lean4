@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "Wikidata metaclass",
+  "Wikidata metaclasses"
+ ],
+ "canonical": "Q19478619",
+ "description": "class which has instances that are all themselves classes",
+ "id": "Q19478619",
+ "label": "metaclass"
+}

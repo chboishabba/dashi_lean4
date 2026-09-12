@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "physiological interaction between organisms",
+  "physiological interaction with other organism",
+  "interaction between organisms"
+ ],
+ "canonical": "Q22269697",
+ "description": "biological process which involves another organism of the same or different species",
+ "id": "Q22269697",
+ "label": "multi-organism process"
+}

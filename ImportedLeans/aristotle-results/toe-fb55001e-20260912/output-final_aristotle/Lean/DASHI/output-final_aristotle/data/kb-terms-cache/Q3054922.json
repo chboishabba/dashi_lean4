@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "linearly ordered set",
+  "simply ordered set",
+  "chain",
+  "toset"
+ ],
+ "canonical": "Q3054922",
+ "description": "set paired with a total order",
+ "id": "Q3054922",
+ "label": "totally ordered set"
+}

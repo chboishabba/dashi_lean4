@@ -1,0 +1,895 @@
+import Mathlib
+import YangMills.L0_Lattice.FiniteLatticeGeometryInstance
+import YangMills.L0_Lattice.GaugeConfigurations
+import YangMills.RG.LinearAveraging
+
+/-!
+# Physical gauge cochains on the full periodic lattice
+
+This module introduces the full-periodic cochain layer used by the P4
+gauge-fixed precision/covariance path.  It deliberately works with one
+coordinate for each positively oriented physical bond, and evaluates reversed
+oriented edges by parallel transport through an explicit adjoint model.
+
+No region, boundary, Hessian, propagator, or source/activity assertion is made
+here.
+-/
+
+namespace YangMills.RG
+
+open scoped BigOperators RealInnerProductSpace
+
+/-- The compact gauge group used by the physical cochain interface. -/
+abbrev SUN (Nc : ℕ) := ↥(Matrix.specialUnitaryGroup (Fin Nc) ℂ)
+
+/-- A finite-dimensional real coordinate model for `su(Nc)`.
+
+The current formalization keeps the coordinate model abstract.  Later files can
+connect this to a concrete matrix Lie algebra model without changing the
+cochain API below.
+-/
+abbrev SUNLieCoord (Nc : ℕ) := EuclideanSpace ℝ (Fin (Nc ^ 2 - 1))
+
+/-- Explicit adjoint-action data in the chosen `su(Nc)` coordinates. -/
+structure SUNAdjointModel (Nc : ℕ) [NeZero Nc] where
+  adCLM : SUN Nc → SUNLieCoord Nc →L[ℝ] SUNLieCoord Nc
+  ad_one : adCLM 1 = ContinuousLinearMap.id ℝ (SUNLieCoord Nc)
+  ad_mul :
+    ∀ g h : SUN Nc, adCLM (g * h) = (adCLM g).comp (adCLM h)
+  ad_inner :
+    ∀ (g : SUN Nc) (X Y : SUNLieCoord Nc),
+      inner ℝ (adCLM g X) (adCLM g Y) = inner ℝ X Y
+
+namespace SUNAdjointModel
+
+variable {Nc : ℕ} [NeZero Nc] (ρ : SUNAdjointModel Nc)
+
+@[simp]
+theorem ad_one_apply (X : SUNLieCoord Nc) :
+    ρ.adCLM 1 X = X := by
+  rw [ρ.ad_one]
+  rfl
+
+theorem ad_inv_comp (g : SUN Nc) :
+    (ρ.adCLM g⁻¹).comp (ρ.adCLM g)
+      = ContinuousLinearMap.id ℝ (SUNLieCoord Nc) := by
+  rw [← ρ.ad_mul g⁻¹ g, inv_mul_cancel, ρ.ad_one]
+
+theorem ad_comp_inv (g : SUN Nc) :
+    (ρ.adCLM g).comp (ρ.adCLM g⁻¹)
+      = ContinuousLinearMap.id ℝ (SUNLieCoord Nc) := by
+  rw [← ρ.ad_mul g g⁻¹, mul_inv_cancel, ρ.ad_one]
+
+@[simp]
+theorem ad_inv_apply_ad (g : SUN Nc) (X : SUNLieCoord Nc) :
+    ρ.adCLM g⁻¹ (ρ.adCLM g X) = X := by
+  have h := congrArg (fun T : SUNLieCoord Nc →L[ℝ] SUNLieCoord Nc => T X)
+    (ρ.ad_inv_comp g)
+  simpa [ContinuousLinearMap.comp_apply] using h
+
+@[simp]
+theorem ad_apply_ad_inv (g : SUN Nc) (X : SUNLieCoord Nc) :
+    ρ.adCLM g (ρ.adCLM g⁻¹ X) = X := by
+  have h := congrArg (fun T : SUNLieCoord Nc →L[ℝ] SUNLieCoord Nc => T X)
+    (ρ.ad_comp_inv g)
+  simpa [ContinuousLinearMap.comp_apply] using h
+
+theorem norm_ad (g : SUN Nc) (X : SUNLieCoord Nc) :
+    ‖ρ.adCLM g X‖ = ‖X‖ := by
+  have hsq : ‖ρ.adCLM g X‖ ^ 2 = ‖X‖ ^ 2 := by
+    simpa [real_inner_self_eq_norm_sq] using ρ.ad_inner g X X
+  have habs := (sq_eq_sq_iff_abs_eq_abs ‖ρ.adCLM g X‖ ‖X‖).mp hsq
+  simpa [abs_of_nonneg (norm_nonneg _)] using habs
+
+end SUNAdjointModel
+
+/-- One physical tangent coordinate per positively oriented lattice bond. -/
+abbrev PhysicalBond (d N : ℕ) [NeZero N] := FinBox d N × Fin d
+
+/-- Physical plaquettes are the concrete oriented plaquettes of the periodic lattice. -/
+abbrev PhysicalPlaquette (d N : ℕ) [NeZero N] := ConcretePlaquette d N
+
+/-- Full-periodic site fields in `su(Nc)` coordinates. -/
+abbrev PhysicalGaugeZeroCochain (d N Nc : ℕ) [NeZero N] :=
+  PiLp 2 (fun _ : FinBox d N => SUNLieCoord Nc)
+
+/-- Full-periodic one-cochains indexed by positive physical bonds. -/
+abbrev PhysicalGaugeOneCochain (d N Nc : ℕ) [NeZero N] :=
+  PiLp 2 (fun _ : PhysicalBond d N => SUNLieCoord Nc)
+
+/-- Full-periodic two-cochains indexed by oriented plaquettes. -/
+abbrev PhysicalGaugeTwoCochain (d N Nc : ℕ) [NeZero N] :=
+  PiLp 2 (fun _ : PhysicalPlaquette d N => SUNLieCoord Nc)
+
+/-- Gauge tangent coordinates use one independent coordinate per positive bond. -/
+abbrev PhysicalGaugeTangentField (d N Nc : ℕ) [NeZero N] :=
+  PhysicalGaugeOneCochain d N Nc
+
+/-- Forget the orientation bit and keep the physical positive bond coordinate. -/
+def physicalBondOfEdge {d N : ℕ} [NeZero N] (e : ConcreteEdge d N) :
+    PhysicalBond d N :=
+  (e.source, e.dir)
+
+/-- The concrete orientation reversal used by the finite-lattice instance. -/
+def edgeFlip {d N : ℕ} (e : ConcreteEdge d N) : ConcreteEdge d N :=
+  { e with sign := !e.sign }
+
+@[simp]
+theorem physicalBondOfEdge_edgeFlip {d N : ℕ} [NeZero N] (e : ConcreteEdge d N) :
+    physicalBondOfEdge (edgeFlip e) = physicalBondOfEdge e := by
+  rfl
+
+@[simp]
+theorem physicalBondOfEdge_mk_true {d N : ℕ} [NeZero N]
+    (x : FinBox d N) (i : Fin d) :
+    physicalBondOfEdge (ConcreteEdge.mk x i true) = (x, i) := rfl
+
+@[simp]
+theorem physicalBondOfEdge_mk_false {d N : ℕ} [NeZero N]
+    (x : FinBox d N) (i : Fin d) :
+    physicalBondOfEdge (ConcreteEdge.mk x i false) = (x, i) := rfl
+
+/-- A full periodic background gauge field. -/
+abbrev PhysicalGaugeBackground (d N Nc : ℕ) [NeZero d] [NeZero N] :=
+  GaugeConfig d N (SUN Nc)
+
+/-- The trivial full-periodic background. -/
+def trivialPhysicalGaugeBackground (d N Nc : ℕ) [NeZero d] [NeZero N] :
+    PhysicalGaugeBackground d N Nc where
+  toFun := fun _ => 1
+  map_reverse := by
+    intro e
+    simp
+
+section OrientedValues
+
+variable {d N Nc : ℕ} [NeZero d] [NeZero N] [NeZero Nc]
+
+/-- Evaluate a positive-bond one-cochain on any oriented concrete edge.
+
+For reversed edges this uses the inverse-orientation convention transported by
+the background adjoint action.
+-/
+noncomputable def orientedOneValue (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) (e : ConcreteEdge d N) :
+    SUNLieCoord Nc :=
+  if e.sign then
+    A (physicalBondOfEdge e)
+  else
+    - ρ.adCLM (U e) (A (physicalBondOfEdge e))
+
+@[simp]
+theorem orientedOneValue_pos (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc) (A : PhysicalGaugeOneCochain d N Nc)
+    (x : FinBox d N) (i : Fin d) :
+    orientedOneValue ρ U A (ConcreteEdge.mk x i true) = A (x, i) := by
+  simp [orientedOneValue]
+
+@[simp]
+theorem orientedOneValue_neg (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc) (A : PhysicalGaugeOneCochain d N Nc)
+    (x : FinBox d N) (i : Fin d) :
+    orientedOneValue ρ U A (ConcreteEdge.mk x i false)
+      = - ρ.adCLM (U (ConcreteEdge.mk x i false)) (A (x, i)) := by
+  simp [orientedOneValue]
+
+theorem orientedOneValue_reverse (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) (e : ConcreteEdge d N) :
+    orientedOneValue ρ U A (edgeFlip e)
+      = - ρ.adCLM (U (edgeFlip e))
+          (orientedOneValue ρ U A e) := by
+  cases e with
+  | mk x i s =>
+      cases s
+      · simp only [orientedOneValue, edgeFlip, physicalBondOfEdge_mk_false,
+          Bool.false_eq_true, if_false,
+          ContinuousLinearMap.map_neg, neg_neg]
+        change A (x, i) =
+          ρ.adCLM (U (ConcreteEdge.mk x i true))
+            (ρ.adCLM (U (ConcreteEdge.mk x i false)) (A (x, i)))
+        have hU :
+            U (ConcreteEdge.mk x i true)
+              = (U (ConcreteEdge.mk x i false))⁻¹ := by
+          simpa [edgeFlip] using
+            (U.map_reverse (ConcreteEdge.mk x i false))
+        rw [hU]
+        exact (ρ.ad_inv_apply_ad
+          (U (ConcreteEdge.mk x i false)) (A (x, i))).symm
+      · simp [orientedOneValue, edgeFlip]
+
+theorem orientedOneValue_add (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (A B : PhysicalGaugeOneCochain d N Nc) (e : ConcreteEdge d N) :
+    orientedOneValue ρ U (A + B) e
+      = orientedOneValue ρ U A e + orientedOneValue ρ U B e := by
+  cases e with
+  | mk x i s =>
+      cases s
+      · simp [orientedOneValue, ContinuousLinearMap.map_add]
+        abel
+      · simp [orientedOneValue]
+
+theorem orientedOneValue_smul (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc) (a : ℝ)
+    (A : PhysicalGaugeOneCochain d N Nc) (e : ConcreteEdge d N) :
+    orientedOneValue ρ U (a • A) e = a • orientedOneValue ρ U A e := by
+  cases e.sign <;>
+    simp [orientedOneValue, smul_neg]
+
+end OrientedValues
+
+section Differentials
+
+variable {d N Nc : ℕ} [NeZero d] [NeZero N] [NeZero Nc]
+
+/-- The covariant zero-to-one differential on full periodic cochains. -/
+noncomputable def covariantD0CLM (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc) :
+    PhysicalGaugeZeroCochain d N Nc →L[ℝ] PhysicalGaugeOneCochain d N Nc :=
+  LinearMap.toContinuousLinearMap
+    { toFun := fun φ =>
+        WithLp.toLp 2 fun b : PhysicalBond d N =>
+          φ b.1 - ρ.adCLM (U (ConcreteEdge.mk b.1 b.2 true)) (φ (b.1.shift b.2))
+      map_add' := fun φ ψ => by
+        apply PiLp.ext
+        intro b
+        simp only [PiLp.add_apply, ContinuousLinearMap.map_add]
+        abel
+      map_smul' := fun a φ => by
+        apply PiLp.ext
+        intro b
+        simp only [PiLp.smul_apply, ContinuousLinearMap.map_smul, smul_sub,
+          RingHom.id_apply] }
+
+@[simp]
+theorem covariantD0CLM_apply (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (φ : PhysicalGaugeZeroCochain d N Nc) (x : FinBox d N) (i : Fin d) :
+    covariantD0CLM ρ U φ (x, i)
+      = φ x - ρ.adCLM (U (ConcreteEdge.mk x i true)) (φ (x.shift i)) := rfl
+
+/-- Prefix holonomy along the concrete boundary of a plaquette. -/
+noncomputable def plaquettePrefixHolonomy (U : PhysicalGaugeBackground d N Nc)
+    (p : ConcretePlaquette d N) : Fin 4 → SUN Nc
+  | ⟨0, _⟩ => 1
+  | ⟨1, _⟩ => U (p.edges 0)
+  | ⟨2, _⟩ => U (p.edges 0) * U (p.edges 1)
+  | ⟨3, _⟩ => U (p.edges 0) * U (p.edges 1) * U (p.edges 2)
+
+omit [NeZero Nc] in
+@[simp]
+theorem plaquettePrefixHolonomy_zero (U : PhysicalGaugeBackground d N Nc)
+    (p : ConcretePlaquette d N) :
+    plaquettePrefixHolonomy U p 0 = 1 := rfl
+
+/-- The background-covariant one-to-two differential on full periodic cochains. -/
+noncomputable def covariantD1CLM (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc) :
+    PhysicalGaugeOneCochain d N Nc →L[ℝ] PhysicalGaugeTwoCochain d N Nc :=
+  LinearMap.toContinuousLinearMap
+    { toFun := fun A =>
+        WithLp.toLp 2 fun p : PhysicalPlaquette d N =>
+          ∑ k : Fin 4,
+            ρ.adCLM (plaquettePrefixHolonomy U p k)
+              (orientedOneValue ρ U A (p.edges k))
+      map_add' := fun A B => by
+        apply PiLp.ext
+        intro p
+        simp only [PiLp.add_apply, orientedOneValue_add,
+          ContinuousLinearMap.map_add, Finset.sum_add_distrib]
+      map_smul' := fun a A => by
+        apply PiLp.ext
+        intro p
+        simp only [PiLp.smul_apply, orientedOneValue_smul,
+          ContinuousLinearMap.map_smul, Finset.smul_sum, RingHom.id_apply] }
+
+theorem covariantD1CLM_apply (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) (p : ConcretePlaquette d N) :
+    covariantD1CLM ρ U A p
+      = ∑ k : Fin 4,
+          ρ.adCLM (plaquettePrefixHolonomy U p k)
+            (orientedOneValue ρ U A (p.edges k)) := rfl
+
+/-- At the trivial background, the covariant one-to-two differential is the
+usual periodic plaquette curl on positive-bond cochains. -/
+theorem covariantD1CLM_trivial_apply (ρ : SUNAdjointModel Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) (p : ConcretePlaquette d N) :
+    covariantD1CLM ρ (trivialPhysicalGaugeBackground d N Nc) A p =
+      A (p.site, p.dir1)
+        + A (FinBox.shift p.site p.dir1, p.dir2)
+        - A (FinBox.shift p.site p.dir2, p.dir1)
+        - A (p.site, p.dir2) := by
+  cases p with
+  | mk site dir1 dir2 hlt =>
+      rw [covariantD1CLM_apply]
+      rw [Fin.sum_univ_four]
+      simp [ConcretePlaquette.edges, plaquettePrefixHolonomy,
+        trivialPhysicalGaugeBackground, orientedOneValue]
+      abel
+
+/-- Full plaquette flatness for a background connection. -/
+def IsFlatPhysicalBackground (U : PhysicalGaugeBackground d N Nc) : Prop :=
+  ∀ p : ConcretePlaquette d N, GaugeConfig.plaquetteHolonomy U p = 1
+
+omit [NeZero Nc] in
+@[simp]
+theorem trivialPhysicalGaugeBackground_flat :
+    IsFlatPhysicalBackground (trivialPhysicalGaugeBackground d N Nc) := by
+  intro p
+  simp [GaugeConfig.plaquetteHolonomy, trivialPhysicalGaugeBackground]
+
+/-- The formal covariant divergence, defined as the Hilbert adjoint of `D0`. -/
+noncomputable def covariantDivCLM (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc) :
+    PhysicalGaugeOneCochain d N Nc →L[ℝ] PhysicalGaugeZeroCochain d N Nc :=
+  (covariantD0CLM ρ U).adjoint
+
+/-- Gauge constraint used in the soft full-space gauge-fixing term. -/
+noncomputable def gaugeConstraintQCLM (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc) :
+    PhysicalGaugeOneCochain d N Nc →L[ℝ] PhysicalGaugeZeroCochain d N Nc :=
+  covariantDivCLM ρ U
+
+/-- At the trivial background, the gauge constraint is the backward divergence
+of the positive-bond one-cochain. -/
+theorem gaugeConstraintQCLM_trivial_apply
+    (ρ : SUNAdjointModel Nc)
+    (A : PhysicalGaugeOneCochain d N Nc)
+    (x : FinBox d N) :
+    gaugeConstraintQCLM ρ
+        (trivialPhysicalGaugeBackground d N Nc) A x =
+      ∑ i : Fin d, (A (x, i) - A (x.shiftBack i, i)) := by
+  let B : PhysicalGaugeZeroCochain d N Nc :=
+    WithLp.toLp 2 fun x : FinBox d N =>
+      ∑ i : Fin d, (A (x, i) - A (x.shiftBack i, i))
+  have hB :
+      gaugeConstraintQCLM ρ
+          (trivialPhysicalGaugeBackground d N Nc) A = B := by
+    apply ext_inner_right ℝ
+    intro φ
+    rw [gaugeConstraintQCLM, covariantDivCLM,
+      ContinuousLinearMap.adjoint_inner_left]
+    rw [PiLp.inner_apply, PiLp.inner_apply]
+    rw [Fintype.sum_prod_type]
+    simp only [covariantD0CLM_apply, trivialPhysicalGaugeBackground,
+      SUNAdjointModel.ad_one_apply, inner_sub_right, B]
+    have hshift :
+        (∑ x : FinBox d N, ∑ i : Fin d,
+            inner ℝ (A (x, i)) (φ (x.shift i))) =
+          ∑ x : FinBox d N, ∑ i : Fin d,
+            inner ℝ (A (x.shiftBack i, i)) (φ x) := by
+      calc
+        (∑ x : FinBox d N, ∑ i : Fin d,
+            inner ℝ (A (x, i)) (φ (x.shift i)))
+            = ∑ i : Fin d, ∑ x : FinBox d N,
+                inner ℝ (A (x, i)) (φ (x.shift i)) := by
+              rw [Finset.sum_comm]
+        _ = ∑ i : Fin d, ∑ x : FinBox d N,
+                inner ℝ (A (x.shiftBack i, i)) (φ x) := by
+              apply Finset.sum_congr rfl
+              intro i _
+              let f : FinBox d N → ℝ :=
+                fun y => inner ℝ (A (y.shiftBack i, i)) (φ y)
+              have hf := FinBox.sum_shift f i
+              simpa [f, FinBox.shiftBack_shift] using hf
+        _ = ∑ x : FinBox d N, ∑ i : Fin d,
+                inner ℝ (A (x.shiftBack i, i)) (φ x) := by
+              rw [Finset.sum_comm]
+    calc
+      (∑ x : FinBox d N, ∑ i : Fin d,
+          (inner ℝ (A (x, i)) (φ x) -
+            inner ℝ (A (x, i)) (φ (x.shift i))))
+          = (∑ x : FinBox d N, ∑ i : Fin d,
+              inner ℝ (A (x, i)) (φ x)) -
+            ∑ x : FinBox d N, ∑ i : Fin d,
+              inner ℝ (A (x, i)) (φ (x.shift i)) := by
+            simp [Finset.sum_sub_distrib]
+      _ = (∑ x : FinBox d N, ∑ i : Fin d,
+              inner ℝ (A (x, i)) (φ x)) -
+            ∑ x : FinBox d N, ∑ i : Fin d,
+              inner ℝ (A (x.shiftBack i, i)) (φ x) := by
+            rw [hshift]
+      _ = ∑ x : FinBox d N, ∑ i : Fin d,
+              (inner ℝ (A (x, i)) (φ x) -
+                inner ℝ (A (x.shiftBack i, i)) (φ x)) := by
+            simp [Finset.sum_sub_distrib]
+      _ = ∑ x : FinBox d N, ∑ i : Fin d,
+              inner ℝ (A (x, i) - A (x.shiftBack i, i)) (φ x) := by
+            simp [inner_sub_left]
+      _ = ∑ x : FinBox d N,
+              inner ℝ
+                (∑ i : Fin d, (A (x, i) - A (x.shiftBack i, i))) (φ x) := by
+            apply Finset.sum_congr rfl
+            intro x _
+            rw [← sum_inner]
+  have hx := congrArg (fun B : PhysicalGaugeZeroCochain d N Nc => B x) hB
+  simpa [B] using hx
+
+/-- The positive gauge-fixing mass operator `Q†Q`. -/
+noncomputable def gaugeFixingMassCLM (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc) :
+    PhysicalGaugeOneCochain d N Nc →L[ℝ] PhysicalGaugeOneCochain d N Nc :=
+  (gaugeConstraintQCLM ρ U).adjoint.comp (gaugeConstraintQCLM ρ U)
+
+theorem gaugeFixingMass_inner (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) :
+    inner ℝ (gaugeFixingMassCLM ρ U A) A = ‖gaugeConstraintQCLM ρ U A‖ ^ 2 := by
+  rw [gaugeFixingMassCLM, ContinuousLinearMap.comp_apply,
+    ContinuousLinearMap.adjoint_inner_left, real_inner_self_eq_norm_sq]
+
+theorem gaugeFixingMass_inner_right (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) :
+    inner ℝ A (gaugeFixingMassCLM ρ U A) = ‖gaugeConstraintQCLM ρ U A‖ ^ 2 := by
+  rw [real_inner_comm, gaugeFixingMass_inner]
+
+theorem gaugeFixingMass_nonnegative (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) :
+    0 ≤ inner ℝ (gaugeFixingMassCLM ρ U A) A := by
+  rw [gaugeFixingMass_inner]
+  exact sq_nonneg _
+
+theorem gaugeFixingMass_nonnegative_right (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) :
+    0 ≤ inner ℝ A (gaugeFixingMassCLM ρ U A) := by
+  rw [gaugeFixingMass_inner_right]
+  exact sq_nonneg _
+
+/-- The background Hodge operator `D1†D1 + D0D0†` on physical one-cochains. -/
+noncomputable def backgroundGaugeHodgeK0CLM (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc) :
+    PhysicalGaugeOneCochain d N Nc →L[ℝ] PhysicalGaugeOneCochain d N Nc :=
+  (covariantD1CLM ρ U).adjoint.comp (covariantD1CLM ρ U)
+    + gaugeFixingMassCLM ρ U
+
+theorem backgroundGaugeHodgeK0_inner (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) :
+    inner ℝ (backgroundGaugeHodgeK0CLM ρ U A) A
+      = ‖covariantD1CLM ρ U A‖ ^ 2 + ‖gaugeConstraintQCLM ρ U A‖ ^ 2 := by
+  rw [backgroundGaugeHodgeK0CLM, ContinuousLinearMap.add_apply, inner_add_left,
+    ContinuousLinearMap.comp_apply, ContinuousLinearMap.adjoint_inner_left,
+    gaugeFixingMass_inner, real_inner_self_eq_norm_sq]
+
+theorem backgroundGaugeHodgeK0_inner_right (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) :
+    inner ℝ A (backgroundGaugeHodgeK0CLM ρ U A)
+      = ‖covariantD1CLM ρ U A‖ ^ 2 + ‖gaugeConstraintQCLM ρ U A‖ ^ 2 := by
+  rw [real_inner_comm, backgroundGaugeHodgeK0_inner]
+
+theorem backgroundGaugeHodgeK0_nonnegative (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) :
+    0 ≤ inner ℝ (backgroundGaugeHodgeK0CLM ρ U A) A := by
+  rw [backgroundGaugeHodgeK0_inner]
+  exact add_nonneg (sq_nonneg _) (sq_nonneg _)
+
+theorem backgroundGaugeHodgeK0_nonnegative_right (ρ : SUNAdjointModel Nc)
+    (U : PhysicalGaugeBackground d N Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) :
+    0 ≤ inner ℝ A (backgroundGaugeHodgeK0CLM ρ U A) := by
+  rw [backgroundGaugeHodgeK0_inner_right]
+  exact add_nonneg (sq_nonneg _) (sq_nonneg _)
+
+/-- The flat Hodge operator at the trivial background. -/
+noncomputable def flatGaugeHodgeK0CLM (d N Nc : ℕ) [NeZero d] [NeZero N]
+    [NeZero Nc] (ρ : SUNAdjointModel Nc) :
+    PhysicalGaugeOneCochain d N Nc →L[ℝ] PhysicalGaugeOneCochain d N Nc :=
+  backgroundGaugeHodgeK0CLM ρ (trivialPhysicalGaugeBackground d N Nc)
+
+theorem flatGaugeHodgeK0_inner (ρ : SUNAdjointModel Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) :
+    inner ℝ (flatGaugeHodgeK0CLM d N Nc ρ A) A
+      = ‖covariantD1CLM ρ (trivialPhysicalGaugeBackground d N Nc) A‖ ^ 2
+        + ‖gaugeConstraintQCLM ρ (trivialPhysicalGaugeBackground d N Nc) A‖ ^ 2 := by
+  simpa [flatGaugeHodgeK0CLM] using
+    backgroundGaugeHodgeK0_inner ρ
+      (trivialPhysicalGaugeBackground d N Nc) A
+
+theorem flatGaugeHodgeK0_inner_right (ρ : SUNAdjointModel Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) :
+    inner ℝ A (flatGaugeHodgeK0CLM d N Nc ρ A)
+      = ‖covariantD1CLM ρ (trivialPhysicalGaugeBackground d N Nc) A‖ ^ 2
+        + ‖gaugeConstraintQCLM ρ (trivialPhysicalGaugeBackground d N Nc) A‖ ^ 2 := by
+  simpa [flatGaugeHodgeK0CLM] using
+    backgroundGaugeHodgeK0_inner_right ρ
+      (trivialPhysicalGaugeBackground d N Nc) A
+
+theorem flatGaugeHodgeK0_nonnegative (ρ : SUNAdjointModel Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) :
+    0 ≤ inner ℝ (flatGaugeHodgeK0CLM d N Nc ρ A) A := by
+  simpa [flatGaugeHodgeK0CLM] using
+    backgroundGaugeHodgeK0_nonnegative ρ
+      (trivialPhysicalGaugeBackground d N Nc) A
+
+theorem flatGaugeHodgeK0_nonnegative_right (ρ : SUNAdjointModel Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) :
+    0 ≤ inner ℝ A (flatGaugeHodgeK0CLM d N Nc ρ A) := by
+  simpa [flatGaugeHodgeK0CLM] using
+    backgroundGaugeHodgeK0_nonnegative_right ρ
+      (trivialPhysicalGaugeBackground d N Nc) A
+
+/-- Flat harmonic one-cochains at the trivial background: simultaneous
+flat curl and gauge-divergence zero. -/
+def IsFlatHarmonicOneCochain (ρ : SUNAdjointModel Nc)
+    (A : PhysicalGaugeOneCochain d N Nc) : Prop :=
+  covariantD1CLM ρ (trivialPhysicalGaugeBackground d N Nc) A = 0 ∧
+    gaugeConstraintQCLM ρ (trivialPhysicalGaugeBackground d N Nc) A = 0
+
+/-- Flat-harmonic one-cochains satisfy the pointwise plaquette curl equation. -/
+theorem isFlatHarmonicOneCochain_curl_apply_eq_zero
+    (ρ : SUNAdjointModel Nc) {A : PhysicalGaugeOneCochain d N Nc}
+    (hA : IsFlatHarmonicOneCochain ρ A) (p : ConcretePlaquette d N) :
+      A (p.site, p.dir1)
+        + A (FinBox.shift p.site p.dir1, p.dir2)
+        - A (FinBox.shift p.site p.dir2, p.dir1)
+        - A (p.site, p.dir2) = 0 := by
+  have hp := congrArg (fun B : PhysicalGaugeTwoCochain d N Nc => B p) hA.1
+  have hp' :
+      covariantD1CLM ρ (trivialPhysicalGaugeBackground d N Nc) A p = 0 := by
+    simpa using hp
+  rw [covariantD1CLM_trivial_apply] at hp'
+  exact hp'
+
+/-- Flat-harmonic one-cochains satisfy the pointwise backward-divergence
+equation. -/
+theorem isFlatHarmonicOneCochain_divergence_apply_eq_zero
+    (ρ : SUNAdjointModel Nc) {A : PhysicalGaugeOneCochain d N Nc}
+    (hA : IsFlatHarmonicOneCochain ρ A) (x : FinBox d N) :
+    (∑ i : Fin d, (A (x, i) - A (x.shiftBack i, i))) = 0 := by
+  have hx := congrArg (fun B : PhysicalGaugeZeroCochain d N Nc => B x) hA.2
+  have hx' :
+      gaugeConstraintQCLM ρ (trivialPhysicalGaugeBackground d N Nc) A x = 0 := by
+    simpa using hx
+  rw [gaugeConstraintQCLM_trivial_apply] at hx'
+  exact hx'
+
+/-- Short alias for the pointwise flat divergence equation. -/
+theorem isFlatHarmonicOneCochain_div_apply_eq_zero
+    (ρ : SUNAdjointModel Nc) {A : PhysicalGaugeOneCochain d N Nc}
+    (hA : IsFlatHarmonicOneCochain ρ A) (x : FinBox d N) :
+    (∑ i : Fin d, (A (x, i) - A (x.shiftBack i, i))) = 0 :=
+  isFlatHarmonicOneCochain_divergence_apply_eq_zero ρ hA x
+
+/-- At the trivial background, the flat Hodge quadratic form vanishes exactly
+on flat harmonic one-cochains. -/
+theorem isFlatHarmonicOneCochain_iff_flatGaugeHodgeK0_inner_right_eq_zero
+    (ρ : SUNAdjointModel Nc) (A : PhysicalGaugeOneCochain d N Nc) :
+    IsFlatHarmonicOneCochain ρ A ↔
+      inner ℝ A (flatGaugeHodgeK0CLM d N Nc ρ A) = 0 := by
+  constructor
+  · intro h
+    rw [flatGaugeHodgeK0_inner_right, h.1, h.2]
+    simp
+  · intro h
+    have hsum :
+        ‖covariantD1CLM ρ (trivialPhysicalGaugeBackground d N Nc) A‖ ^ 2
+          + ‖gaugeConstraintQCLM ρ (trivialPhysicalGaugeBackground d N Nc) A‖ ^ 2
+            = 0 := by
+      simpa only [flatGaugeHodgeK0_inner_right] using h
+    have hDsq :
+        ‖covariantD1CLM ρ (trivialPhysicalGaugeBackground d N Nc) A‖ ^ 2 = 0 := by
+      nlinarith
+        [sq_nonneg
+          (‖covariantD1CLM ρ (trivialPhysicalGaugeBackground d N Nc) A‖),
+         sq_nonneg
+          (‖gaugeConstraintQCLM ρ (trivialPhysicalGaugeBackground d N Nc) A‖)]
+    have hGsq :
+        ‖gaugeConstraintQCLM ρ (trivialPhysicalGaugeBackground d N Nc) A‖ ^ 2 = 0 := by
+      nlinarith
+        [sq_nonneg
+          (‖covariantD1CLM ρ (trivialPhysicalGaugeBackground d N Nc) A‖),
+         sq_nonneg
+          (‖gaugeConstraintQCLM ρ (trivialPhysicalGaugeBackground d N Nc) A‖)]
+    exact ⟨norm_eq_zero.mp (sq_eq_zero_iff.mp hDsq),
+      norm_eq_zero.mp (sq_eq_zero_iff.mp hGsq)⟩
+
+/-- The symmetric orientation of the same flat-harmonic kernel test. -/
+theorem isFlatHarmonicOneCochain_iff_flatGaugeHodgeK0_inner_eq_zero
+    (ρ : SUNAdjointModel Nc) (A : PhysicalGaugeOneCochain d N Nc) :
+    IsFlatHarmonicOneCochain ρ A ↔
+      inner ℝ (flatGaugeHodgeK0CLM d N Nc ρ A) A = 0 := by
+  rw [real_inner_comm]
+  exact isFlatHarmonicOneCochain_iff_flatGaugeHodgeK0_inner_right_eq_zero ρ A
+
+/-- Operator-kernel form of the flat harmonic test.  At the trivial
+background, the flat Hodge operator kills exactly the simultaneous flat
+curl/divergence kernel. -/
+theorem flatGaugeHodgeK0CLM_eq_zero_iff_isFlatHarmonicOneCochain
+    (ρ : SUNAdjointModel Nc) (A : PhysicalGaugeOneCochain d N Nc) :
+    flatGaugeHodgeK0CLM d N Nc ρ A = 0 ↔
+      IsFlatHarmonicOneCochain ρ A := by
+  constructor
+  · intro hK
+    rw [isFlatHarmonicOneCochain_iff_flatGaugeHodgeK0_inner_right_eq_zero]
+    simp [hK]
+  · intro h
+    rw [flatGaugeHodgeK0CLM, backgroundGaugeHodgeK0CLM]
+    simp [gaugeFixingMassCLM, h.1, h.2]
+
+end Differentials
+
+section FlatBlockConstraint
+
+variable {d L N' Nc : ℕ} [NeZero L] [NeZero N']
+
+/-- Fine physical one-cochains used by the flat block constraint. -/
+abbrev FinePhysicalOneCochain (d L N' Nc : ℕ) [NeZero L] [NeZero N'] :=
+  PhysicalGaugeOneCochain d (L * N') Nc
+
+/-- Coarse physical one-cochains used by the flat block constraint. -/
+abbrev CoarsePhysicalOneCochain (d N' Nc : ℕ) [NeZero N'] :=
+  PhysicalGaugeOneCochain d N' Nc
+
+/-- Direction-wise constant physical one-cochains on the periodic lattice. -/
+noncomputable def constantPhysicalGaugeOneCochain {d N Nc : ℕ} [NeZero N]
+    (v : Fin d → SUNLieCoord Nc) :
+    PhysicalGaugeOneCochain d N Nc :=
+  WithLp.toLp 2 fun b : PhysicalBond d N => v b.2
+
+@[simp]
+theorem constantPhysicalGaugeOneCochain_apply {d N Nc : ℕ} [NeZero N]
+    (v : Fin d → SUNLieCoord Nc) (b : PhysicalBond d N) :
+    constantPhysicalGaugeOneCochain (d := d) (N := N) (Nc := Nc) v b =
+      v b.2 := rfl
+
+/-- The flat block constraint obtained by averaging positive-bond fields. -/
+noncomputable def flatBlockConstraintQCLM (L N' : ℕ) [NeZero L] [NeZero N'] :
+    FinePhysicalOneCochain d L N' Nc →L[ℝ] CoarsePhysicalOneCochain d N' Nc :=
+  LinearMap.toContinuousLinearMap
+    { toFun := fun A =>
+        WithLp.toLp 2 fun b : PhysicalBond d N' =>
+          linAvg L N' (fun e : ConcreteEdge d (L * N') => A (physicalBondOfEdge e))
+            (ConcreteEdge.mk b.1 b.2 true)
+      map_add' := fun A B => by
+        apply PiLp.ext
+        intro b
+        simpa only [PiLp.add_apply] using
+          (linAvg_add L N'
+            (fun e : ConcreteEdge d (L * N') => A (physicalBondOfEdge e))
+            (fun e : ConcreteEdge d (L * N') => B (physicalBondOfEdge e))
+            (ConcreteEdge.mk b.1 b.2 true))
+      map_smul' := fun a A => by
+        apply PiLp.ext
+        intro b
+        simpa only [PiLp.smul_apply] using
+          (linAvg_smul L N' a
+            (fun e : ConcreteEdge d (L * N') => A (physicalBondOfEdge e))
+            (ConcreteEdge.mk b.1 b.2 true)) }
+
+@[simp]
+theorem flatBlockConstraintQCLM_apply
+    (A : FinePhysicalOneCochain d L N' Nc) (b : PhysicalBond d N') :
+    flatBlockConstraintQCLM (d := d) (Nc := Nc) L N' A b
+      = linAvg L N'
+          (fun e : ConcreteEdge d (L * N') => A (physicalBondOfEdge e))
+          (ConcreteEdge.mk b.1 b.2 true) := rfl
+
+/-- The physical positive-bond stencil used by the flat block constraint at a
+coarse positive bond. -/
+noncomputable def flatBlockConstraintSupport (L N' : ℕ) [NeZero L] [NeZero N']
+    (b : PhysicalBond d N') : Finset (PhysicalBond d (L * N')) :=
+  (linAvgSupport L N' (ConcreteEdge.mk b.1 b.2 true)).image
+    (physicalBondOfEdge (d := d) (N := L * N'))
+
+theorem mem_flatBlockConstraintSupport_of_mem_linAvgSupport
+    (b : PhysicalBond d N') {e : ConcreteEdge d (L * N')}
+    (he : e ∈ linAvgSupport L N' (ConcreteEdge.mk b.1 b.2 true)) :
+    physicalBondOfEdge e ∈ flatBlockConstraintSupport (d := d) L N' b := by
+  exact Finset.mem_image.mpr ⟨e, he, rfl⟩
+
+theorem flatBlockConstraintQCLM_congr_of_eqOn_support
+    (A A' : FinePhysicalOneCochain d L N' Nc) (b : PhysicalBond d N')
+    (h :
+      ∀ p ∈ flatBlockConstraintSupport (d := d) L N' b,
+        A p = A' p) :
+    flatBlockConstraintQCLM (d := d) (Nc := Nc) L N' A b =
+      flatBlockConstraintQCLM (d := d) (Nc := Nc) L N' A' b := by
+  rw [flatBlockConstraintQCLM_apply, flatBlockConstraintQCLM_apply]
+  exact
+    linAvg_congr_of_eqOn_support L N'
+      (fun e : ConcreteEdge d (L * N') => A (physicalBondOfEdge e))
+      (fun e : ConcreteEdge d (L * N') => A' (physicalBondOfEdge e))
+      (ConcreteEdge.mk b.1 b.2 true)
+      (fun e he =>
+        h (physicalBondOfEdge e)
+          (mem_flatBlockConstraintSupport_of_mem_linAvgSupport
+            (d := d) (L := L) (N' := N') (b := b) he))
+
+/-- The flat block constraint reads a direction-wise constant physical field as
+`L` times the constant in the coarse bond direction. -/
+@[simp]
+theorem flatBlockConstraintQCLM_constant_apply
+    (v : Fin d → SUNLieCoord Nc) (b : PhysicalBond d N') :
+    flatBlockConstraintQCLM
+        (d := d) (Nc := Nc) L N'
+        (constantPhysicalGaugeOneCochain (N := L * N') v) b =
+      (L : ℝ) • v b.2 := by
+  rw [flatBlockConstraintQCLM_apply]
+  simpa using
+    (linAvg_constant (d := d) (V := SUNLieCoord Nc) L N' v
+      (ConcreteEdge.mk b.1 b.2 true))
+
+/-- The flat block constraint is injective on direction-wise constant physical
+one-cochains.  This is the finite-combinatorial part of the statement that the
+soft block term removes the torus harmonic one-form sector. -/
+theorem flatBlockConstraintQCLM_injective_on_constants
+    [NeZero Nc] {v : Fin d → SUNLieCoord Nc}
+    (hQ :
+      flatBlockConstraintQCLM
+          (d := d) (Nc := Nc) L N'
+          (constantPhysicalGaugeOneCochain (N := L * N') v) = 0) :
+    v = 0 := by
+  funext i
+  let b : PhysicalBond d N' := (fun _ => 0, i)
+  have hb :
+      flatBlockConstraintQCLM
+          (d := d) (Nc := Nc) L N'
+          (constantPhysicalGaugeOneCochain (N := L * N') v) b = 0 := by
+    simpa [b] using congrArg (fun A : CoarsePhysicalOneCochain d N' Nc => A b) hQ
+  rw [flatBlockConstraintQCLM_constant_apply] at hb
+  have hL : (L : ℝ) ≠ 0 := by
+    exact_mod_cast NeZero.ne L
+  exact (smul_eq_zero.mp hb).resolve_left hL
+
+/-- Whole-map form of `flatBlockConstraintQCLM_constant_apply`.
+
+The current unscaled line-integral block map sends a direction-wise constant
+fine field to `L` times the corresponding coarse direction-wise constant
+field. -/
+@[simp]
+theorem flatBlockConstraintQCLM_constant
+    [NeZero Nc] (v : Fin d → SUNLieCoord Nc) :
+    flatBlockConstraintQCLM
+        (d := d) (Nc := Nc) L N'
+        (constantPhysicalGaugeOneCochain (N := L * N') v) =
+      (L : ℝ) • constantPhysicalGaugeOneCochain (d := d) (N := N') (Nc := Nc) v := by
+  apply PiLp.ext
+  intro b
+  rw [flatBlockConstraintQCLM_constant_apply]
+  rfl
+
+/-- On the direction-wise constant sector, the flat block constraint vanishes
+exactly when the underlying directional value is zero. -/
+theorem flatBlockConstraintQCLM_constant_eq_zero_iff
+    [NeZero Nc] (v : Fin d → SUNLieCoord Nc) :
+    flatBlockConstraintQCLM
+        (d := d) (Nc := Nc) L N'
+        (constantPhysicalGaugeOneCochain (N := L * N') v) = 0 ↔
+      v = 0 := by
+  constructor
+  · exact flatBlockConstraintQCLM_injective_on_constants
+  · intro hv
+    apply PiLp.ext
+    intro b
+    rw [flatBlockConstraintQCLM_constant_apply]
+    simp [hv]
+
+end FlatBlockConstraint
+
+section FlatConstantHarmonic
+
+variable {d N Nc : ℕ} [NeZero d] [NeZero N] [NeZero Nc]
+
+/-- Direction-wise constant fields have zero flat curl at the trivial
+background. -/
+theorem covariantD1CLM_trivial_constantPhysicalGaugeOneCochain
+    (ρ : SUNAdjointModel Nc) (v : Fin d → SUNLieCoord Nc) :
+    covariantD1CLM ρ (trivialPhysicalGaugeBackground d N Nc)
+        (constantPhysicalGaugeOneCochain (d := d) (N := N) (Nc := Nc) v) = 0 := by
+  apply PiLp.ext
+  intro p
+  cases p with
+  | mk site dir1 dir2 hlt =>
+      rw [covariantD1CLM_apply]
+      rw [Fin.sum_univ_four]
+      simp [ConcretePlaquette.edges, plaquettePrefixHolonomy,
+        trivialPhysicalGaugeBackground, orientedOneValue]
+
+/-- Direction-wise constant fields pair to zero with flat gradients.  This is
+the finite periodic summation-by-parts identity behind vanishing flat
+divergence of constants. -/
+theorem inner_constantPhysicalGaugeOneCochain_covariantD0CLM_trivial
+    (ρ : SUNAdjointModel Nc) (v : Fin d → SUNLieCoord Nc)
+    (φ : PhysicalGaugeZeroCochain d N Nc) :
+    inner ℝ (constantPhysicalGaugeOneCochain (d := d) (N := N) (Nc := Nc) v)
+        (covariantD0CLM ρ (trivialPhysicalGaugeBackground d N Nc) φ) = 0 := by
+  rw [PiLp.inner_apply]
+  simp only [constantPhysicalGaugeOneCochain_apply]
+  rw [Fintype.sum_prod_type]
+  rw [Finset.sum_comm]
+  refine Finset.sum_eq_zero ?_
+  intro i _
+  change
+      (∑ x : FinBox d N,
+        inner ℝ (v i)
+          (covariantD0CLM ρ (trivialPhysicalGaugeBackground d N Nc) φ (x, i))) = 0
+  simp only [covariantD0CLM_apply, trivialPhysicalGaugeBackground,
+    SUNAdjointModel.ad_one_apply, inner_sub_right]
+  rw [Finset.sum_sub_distrib]
+  have hshift :
+      (∑ x : FinBox d N, inner ℝ (v i) (φ (x.shift i))) =
+        ∑ x : FinBox d N, inner ℝ (v i) (φ x) := by
+    have hbij : Function.Bijective (fun x : FinBox d N => x.shift i) :=
+      Function.bijective_iff_has_inverse.mpr
+        ⟨fun x => x.shiftBack i, fun x => FinBox.shiftBack_shift x i,
+          fun x => FinBox.shift_shiftBack x i⟩
+    exact hbij.sum_comp
+      (fun x : FinBox d N => inner ℝ (v i) (φ x))
+  rw [hshift]
+  simp
+
+/-- Direction-wise constant fields have zero flat gauge divergence at the
+trivial background. -/
+theorem gaugeConstraintQCLM_trivial_constantPhysicalGaugeOneCochain
+    (ρ : SUNAdjointModel Nc) (v : Fin d → SUNLieCoord Nc) :
+    gaugeConstraintQCLM ρ (trivialPhysicalGaugeBackground d N Nc)
+        (constantPhysicalGaugeOneCochain (d := d) (N := N) (Nc := Nc) v) = 0 := by
+  apply ext_inner_right ℝ
+  intro φ
+  rw [inner_zero_left]
+  rw [gaugeConstraintQCLM, covariantDivCLM, ContinuousLinearMap.adjoint_inner_left]
+  exact inner_constantPhysicalGaugeOneCochain_covariantD0CLM_trivial ρ v φ
+
+/-- Direction-wise constant one-cochains are flat harmonic at the trivial
+background. -/
+theorem isFlatHarmonicOneCochain_constantPhysicalGaugeOneCochain
+    (ρ : SUNAdjointModel Nc) (v : Fin d → SUNLieCoord Nc) :
+    IsFlatHarmonicOneCochain ρ
+      (constantPhysicalGaugeOneCochain (d := d) (N := N) (Nc := Nc) v) := by
+  exact ⟨covariantD1CLM_trivial_constantPhysicalGaugeOneCochain ρ v,
+    gaugeConstraintQCLM_trivial_constantPhysicalGaugeOneCochain ρ v⟩
+
+/-- Direction-wise constant one-cochains lie in the operator kernel of the flat
+Hodge operator at the trivial background. -/
+theorem flatGaugeHodgeK0CLM_constantPhysicalGaugeOneCochain
+    (ρ : SUNAdjointModel Nc) (v : Fin d → SUNLieCoord Nc) :
+    flatGaugeHodgeK0CLM d N Nc ρ
+        (constantPhysicalGaugeOneCochain (d := d) (N := N) (Nc := Nc) v) = 0 := by
+  rw [flatGaugeHodgeK0CLM, backgroundGaugeHodgeK0CLM]
+  simp [gaugeFixingMassCLM,
+    covariantD1CLM_trivial_constantPhysicalGaugeOneCochain,
+    gaugeConstraintQCLM_trivial_constantPhysicalGaugeOneCochain]
+
+end FlatConstantHarmonic
+
+section FlatConstantJointKernel
+
+variable {d L N' Nc : ℕ} [NeZero d] [NeZero L] [NeZero N'] [NeZero Nc]
+
+/-- On direction-wise constant one-cochains, the joint kernel of the flat
+Hodge operator and the flat block constraint is trivial.  This is the exact
+constant-sector kernel audit needed before the full periodic Poincare theorem:
+the Hodge term sees constants as harmonic, and the block term removes precisely
+the zero constant. -/
+theorem flatConstant_jointKernel_eq_zero_iff
+    (ρ : SUNAdjointModel Nc) (v : Fin d → SUNLieCoord Nc) :
+    flatGaugeHodgeK0CLM d (L * N') Nc ρ
+        (constantPhysicalGaugeOneCochain (d := d) (N := L * N') (Nc := Nc) v) = 0 ∧
+      flatBlockConstraintQCLM
+        (d := d) (Nc := Nc) L N'
+        (constantPhysicalGaugeOneCochain (d := d) (N := L * N') (Nc := Nc) v) = 0
+        ↔ v = 0 := by
+  constructor
+  · intro h
+    exact
+      (flatBlockConstraintQCLM_constant_eq_zero_iff
+        (d := d) (L := L) (N' := N') (Nc := Nc) v).mp h.2
+  · intro hv
+    constructor
+    · exact flatGaugeHodgeK0CLM_constantPhysicalGaugeOneCochain
+        (d := d) (N := L * N') (Nc := Nc) ρ v
+    · exact
+        (flatBlockConstraintQCLM_constant_eq_zero_iff
+          (d := d) (L := L) (N' := N') (Nc := Nc) v).mpr hv
+
+end FlatConstantJointKernel
+
+end YangMills.RG

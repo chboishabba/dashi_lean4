@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "linear mapping",
+  "linear transformation",
+  "linear function",
+  "linear homomorphism",
+  "linear mapped"
+ ],
+ "canonical": "Q207643",
+ "description": "mapping that preserves the operations of addition and scalar multiplication",
+ "id": "Q207643",
+ "label": "linear map"
+}

@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P2738",
+ "description": "every instance of this class is an instance of exactly one class in that list of classes. Use \"list item\" P11260 as qualifiers to specify the list of classes",
+ "id": "P2738",
+ "kind": "property",
+ "label": "disjoint union of"
+}

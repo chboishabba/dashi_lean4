@@ -1,0 +1,46 @@
+This page is generated from the formalized upper ontology.
+
+{{Q|Q24017465}} — third-order class
+{{Q|Q104054982}} — ontological root
+{{Q|Q23958946}} — individual entity
+{{Q|Q4406616}} — concrete object
+{{Q|Q5127848}} — class
+{{Q|Q99527517}} — collective entity
+{{Q|Q19868531}} — formal ontology concept
+{{Q|Q24027474}} — fourth-order class
+{{Q|Q1757074}} — root node
+{{Q|Q115471117}} — self-depicting entity
+{{Q|Q132907471}} — individual item
+{{Q|Q104086571}} — first-order class
+{{Q|Q24017414}} — second-order class
+{{Q|Q33104279}} — philosophical concept
+{{Q|Q488383}} — object
+{{Q|Q32753077}} — Wikidata entity
+{{Q|Q111513007}} — Wikibase entity
+{{Q|Q19798651}} — wikibase data model possible value for a claim
+{{Q|Q24027515}} — fifth-order class
+{{Q|Q23959932}} — fixed-order class
+{{Q|Q24027526}} — fixed-order class of higher order
+{{Q|Q1304193}} — node
+{{Q|Q246672}} — mathematical object
+{{Q|Q379825}} — element
+{{Q|Q77730568}} — graph theory term
+{{Q|Q122258005}} — abstract reference point
+{{Q|Q7048977}} — abstract entity
+{{Q|Q23958852}} — variable-order class
+{{Q|Q1272626}} — representation
+{{Q|Q7551287}} — social object
+{{Q|Q123139280}} — abstract object
+{{Q|Q45025858}} — depicting object
+{{Q|Q386724}} — work
+{{Q|Q96251598}} — type of object
+{{Q|Q1969448}} — term
+{{Q|Q48937186}} — word or phrase
+{{Q|Q3695082}} — sign
+{{Q|Q137429456}} — type of concept
+{{Q|Q21146257}} — type
+{{Q|Q16889133}} — class
+{{Q|Q35120}} — entity
+{{Q|Q19478619}} — metaclass
+{{Q|Q151885}} — concept
+{{Q|Q115490628}} — fundamental Wikidata entity

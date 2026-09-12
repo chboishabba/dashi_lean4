@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "2-sheaf"
+ ],
+ "canonical": "Q7595945",
+ "description": "generalization (and categorification) of a sheaf; a fibered category that admits effective descent",
+ "id": "Q7595945",
+ "label": "stack"
+}

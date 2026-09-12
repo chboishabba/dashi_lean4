@@ -1,0 +1,3 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/taxa-defects.tkb","taxon","taxonomic-parent","error","suggested-fix","Q5","human","Q5","human","","`parent taxon` between items already related by `subclass of` or `instance of`","delete one of the two: `parent taxon` and `subclass of` say different things"
+"examples/taxa-defects.tkb","taxon","taxonomic-parent","error","suggested-fix","Q6","","Q7","","","`parent taxon` between items already related by `subclass of` or `instance of`","delete one of the two: `parent taxon` and `subclass of` say different things"

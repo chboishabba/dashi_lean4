@@ -20,4 +20,11 @@ Spine must be through narrow adapters that state the domain hypotheses and
 source status explicitly.  Merely indexing or importing a source does not
 establish an empirical claim, a physical theorem, or an Agda kernel receipt.
 
+The 2026-09-12 TOE intake retains the full cross-domain source result, including
+education and cuisine/food, rather than narrowing it to one research lane.  Its
+QID/DOI/Dewey identifier index and donor import graphs are linked from
+[`TOECrosslink20260912.md`](TOECrosslink20260912.md).  It promotes the plain
+complex-carrier rate-block transport, the shared Gram ledger, and the
+Gronwall-comparison surface into the root Spine.
+
 Build receipts are deliberately left to Aristotle/CI for this intake.

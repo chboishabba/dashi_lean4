@@ -1,0 +1,345 @@
+# The consumer quotient — vertical extraction round
+
+This round did two things:
+
+1. **Ingested the newest corpus bundle** delivered with the request and recorded
+   exactly what it changed.
+2. **Extracted the one generic object the kernel was still missing** — the
+   consumer quotient and its descent theory — and made five of the bundle's
+   newest domain lanes thin Lean instances of it.
+
+Everything claimed below as *proved* is Lean 4 / Mathlib, machine-checked in
+this repository, sorry-free, and audited to
+`{propext, Classical.choice, Quot.sound}`.
+
+---
+
+> **Superseded in part.**  A later round added ten further kernel owners on top
+> of `Integration.Kernel.Quotient` and corrected one overstatement in §3 of this
+> report; see `TOE_XPOLLINATION_KERNELS.md`.  The `Quotient` core itself and the
+> five instances described here are unchanged apart from the five theorems added
+> to `SourceStage`.
+
+## 0. What was delivered, and what was not
+
+| delivered | detail |
+|---|---|
+| one corpus bundle (`toe-dashi-canonical-corpus-handoff-20260901-slim.tar.gz`, 84 302 entries) | the tracked `dashi_agda` tree, a `dashi_lean4` content-addressed store of *earlier* Aristotle result archives, and the usual auxiliary trees |
+| **not** delivered | any pull-request head, branch ref, patch or `PR_HEADS` metadata |
+
+The request describes twenty open draft pull requests (#664–#683) and a `master`
+commit hash. **No PR head, branch or patch is present in this environment**, and
+the bundle carries no git metadata; the working tree still has no PR refs. As in
+`PR_HEADS_STATUS.md`, this is recorded rather than papered over:
+
+* nothing here states, or relies on, what any pull request contains, whether it
+  is mergeable, or what its commit count is;
+* the PR descriptions in the request were used **only as a specification of what
+  to look for and what to build**, never as evidence that a proof exists
+  somewhere;
+* every Agda file cited below is a file now present in `Agda/`, quoted from the
+  bundle.
+
+No Agda module was typechecked (no Agda toolchain here), so **no Agda claim in
+this report is asserted to be rechecked** — Agda material is classified by
+reading its source.
+
+### What the bundle actually changed
+
+| measure | count |
+|---|---|
+| `DASHI/**.agda` in the bundle | 13 224 |
+| already present in the snapshot | 12 478 |
+| **new modules in the bundle** | **768** |
+| new modules ingested (non-YM/NS) | **523** |
+| new modules excluded by the YM/NS filter | 245 (`DASHI/Physics/YangMills/…` 145, `DASHI/Papers/NavierStokes/…`, one NS closure module, and the YM/NS-named remainder) |
+| pre-existing modules whose content changed | 21 (20 copied over; `DASHI/Math2026ClaimAuditValidation.agda` left alone because its diff is YM/NS-facing) |
+| new *non-*`DASHI` Agda modules | 0 |
+
+Ingested-lane breakdown (new modules): Governance 123, Reasoning 75, Analysis 69
+(RH lane), Culture 46, Moonshine 39, Cognition/PNF 33, Core 28, Finance 12,
+Computation 10 (the SSSP lane), Environment 9, Chemistry 9, Combinatorics 7,
+Foundations 6, Biology 6, Planning 4, Crypto 3, and singletons elsewhere.
+Physics contributed 249 new modules of which 145 are Yang–Mills and were **not**
+ingested.
+
+Composition of the 523 ingested modules, by reading:
+
+| kind | count |
+|---|---|
+| contain a `postulate` block | **0** |
+| contain at least one `≡ true` / `≡ false` boundary-ledger field | 345 |
+| contain at least one `→ ⊥` refutation | 293 |
+
+The `dashi_lean4` tree in the bundle is a content-addressed store (712 492
+member records over eight shards, 58 970 of them `.lean` paths) inventorying
+*earlier* result archives, already mined into `Lean/Imported/` in a previous
+round. Nothing new was taken from it this round.
+
+---
+
+## 1. The gap this round closed
+
+The kernel extracted in the previous round (`Integration.Kernel.*`) owns the
+residual calculus, probes, merge modes, telemetry/authority, selective
+reopening and the closed loop. Checking the list of objects the request asks to
+promote to a `Core` owner against what the kernel already had:
+
+| object to extract | already owned before this round |
+|---|---|
+| observation trust / telemetry gap | `Kernel.Authority` |
+| guarded backward-consumer revision | `Kernel.Authority` (non-weakening revision) |
+| active discriminator/refinement loop | `Kernel.Loop` |
+| guarded branch merge | `Kernel.Merge` |
+| selective dependency reopening | `Kernel.Reopen` |
+| distribution-aware experiment admissibility | `Kernel.Instances.Distribution` |
+| path-qualified transition/history | `Kernel.Instances.Translation` |
+| strict affordance-expanding join | `Kernel.Instances.CollectiveAction` (`ProductiveDialecticalJoin`) |
+| **consumer quotient / descent** | **absent** |
+| **relative-fine reopening as an equivalence** | **absent** |
+| **consumer-relative inverse** | **absent** |
+
+The three absent items are what this round built.
+
+---
+
+## 2. `Integration.Kernel.Quotient` — the new core (28 theorems)
+
+Provenance: `Agda/DASHI/Core/ObserverRefinementLatticeExact.agda` (definitions
+`Observer`, `ObservationalEq`, `Refines`, `StrictRefinement`, `pairObserver`,
+with checked proof terms), `…/ResidualObserverDependencyExact.agda`
+(`DependencyCodeDescendsAt`, `hiddenResidualDependencyBlocksDescent`) and
+`…/CoarseFineRelativeFibreExact.agda` (`CoarseFineReopening`, `reopenExact`).
+
+| item | kind | statement |
+|---|---|---|
+| `ObsEq`, `obsSetoid`, `fibre` | definitions | `x ∼_Q y ↔ Q x = Q y`; an equivalence relation; its class |
+| `fibre_eq_refine_univ` | theorem | the class **is** the kernel's residual fibre after reading that channel — one object, not an analogy |
+| `RefinedBy`, `DescendsThrough` | definitions | separation order; factoring through the quotient |
+| **`descendsThrough_iff_refinedBy`** | **theorem** | descent ⇔ refinement (the factoring map is constructed) |
+| `no_descent_to_empty_consumer` | refusal | the inhabitedness hypothesis is load-bearing |
+| `not_descendsThrough_of_collision` | theorem | one quotient collision the consumer separates refutes descent |
+| `determines_of_descends`, `descends_of_determines_all` | theorems | bridge to the kernel's `Determines` |
+| `descent_is_consumer_relative` | refusal | one consumer descends, another does not, through the same quotient |
+| `pair`, `refinedBy_pair_left/right` | definition + theorems | adding a coordinate |
+| **`refinement_is_not_refutation`** | theorem | after refinement the coarse reading is still a correct function of the fine one |
+| `StrictlyRefines`, `strictlyRefines_pair_of_separates`, `fibre_pair_subset`, `fibre_pair_ssubset` | definition + theorems | proper refinement narrows the class strictly |
+| `residual_does_not_descend` | theorem | Lean form of `hiddenResidualDependencyBlocksDescent` |
+| `MapDescends`, `mapDescends_iff_classPreserving`, `dynamics_need_not_descend` | definition + theorems | descent of dynamics, and its failure |
+| `Inverts`, `InvertsFor`, `invertsFor_of_inverts` | definitions + theorem | consumer-relative inverse |
+| **`invertsFor_not_inverts`** | refusal | inverse on one consumer ⇏ semantic inverse |
+| `invertsFor_of_descends` | theorem | consumer-relative inversion transports **down** to coarser consumers only |
+| `Reopening`, `Reopening.pair_injective`, `relativeFine_separates_inside_coarse_class`, `fibre_pair_eq_singleton` | structure + theorems | coarse quotient + retained relative-fine residual, with exact reopening |
+| **`exists_reopening_of_injective`** | theorem | the converse the Agda owner does not state: exact reopening exists **exactly when** the pair observer separates |
+
+---
+
+## 3. Five new instances (76 theorems)
+
+Each instance is data plus the corresponding kernel theorem; none re-derives the
+generic result.
+
+### 3.1 `Kernel.Instances.SSSP` — the three-vertex frontier (14 theorems)
+
+Source: `Agda/DASHI/Computation/SSSPThreeFrontierLinearExtensionQuotientBidiExact.agda`
+and `…/SSSPThreeFrontierBinaryTernaryFactorExact.agda` (pointwise `refl`
+equations plus a `Bool` boundary record).
+
+* `orderEquiv : Order3 ≃ Vertex × Bool` — the **exact factorisation**: six linear
+  extensions = ternary minimum class × binary tail orientation, with the
+  equivalence literally `pair minVertex tail`; `card_order3 : 6 = 3 * 2`.
+* `min_collides`, `tail_separates`, `sheet_injective` — the consumer identifies
+  two extensions the full relation sheet separates.
+* **`tail_does_not_descend`** — the discarded orientation is not a function of
+  what the consumer keeps: discarding is a quotient, not a derivation.
+* `minVertex_descends_through_sheet` — the compression is nonetheless sound.
+* `fibre_card` — every consumer class has exactly two elements.
+* `tail_refines_strictly`, `min_still_correct_after_refinement`,
+  `refined_observation_separates` — a later query that needs the tail refines the
+  quotient without retracting the earlier report, and closes the question.
+
+### 3.2 `Kernel.Instances.TemporalFibre` — point-in-time and leakage (13 theorems)
+
+Source: `Agda/DASHI/Finance/PointInTimeUniverseFibreExact.agda`,
+`…/UniverseLeakageResidualDependencyExact.agda`.
+
+* `no_backward_transport` — lawful transport is forward only.
+* **`static_universe_is_pit_iff_constant`** — a static membership list is
+  point-in-time correct at every time **iff** membership never changes; with
+  `membership_changes` and `static_universe_misclassifies` giving the concrete
+  failure. (The Agda owner states the impossibility of the backward transport;
+  the equivalence is new here.)
+* **`universe_dependence_does_not_descend`** — same coarse feature surface,
+  different future-dependence; `dependence_strictly_refines` and
+  `features_still_correct` place it in the kernel's refinement order.
+
+### 3.3 `Kernel.Instances.Admission` — candidate ≠ admitted object (14 theorems)
+
+Source: `Agda/DASHI/Cognition/PNF/SensibLawLegalSemanticAdmissionFrontierExact.agda`.
+Its positive part (a receipt record carrying `sameCandidate`) is a genuine
+definition; its refusals are **empty datatypes refuted by `()`**, which say only
+that a name has no constructor. Restated as content:
+
+* `admits_iff_hasValidReceipt`, `resolve_admitted_iff`.
+* `parser_receipt_never_valid` — the producer cannot certify its own output.
+* `receipt_for_other_candidate_never_valid` — exact candidate matching.
+* **`resolve_is_lossless`**, `resolve_failure` — failure returns the candidate
+  with its residuals and alternatives; nothing is deleted.
+* **`admission_does_not_descend_through_frequency`**,
+  **`admission_does_not_descend_through_score`** — occurrence count and runtime
+  score each fail to determine admission, as kernel descent failures.
+* `admission_monotone_in_receipts`, `admission_is_not_monotone_in_candidates`.
+
+### 3.4 `Kernel.Instances.SituatedValuation` — the inverse firewall (15 theorems)
+
+Source: the `Agda/DASHI/Cognition/PNF/ContextualFractran*Exact.agda` lane.
+
+* **`no_static_lexicon`** — no `(word, part of speech)` dictionary reproduces the
+  situated valuation; `situated_descends_through_full_context` shows the missing
+  coordinate is exactly the world.
+* `world_strictly_refines_lexicon`, `lexicon_still_correct`.
+* **`flip_is_an_ambient_inverse`** — reversing the relation orientation inverts
+  the value in `ℚ`, unconditionally.
+* **`ambient_inverse_is_not_lawful`** — and at an unbracketed occurrence the gate
+  refuses it: arithmetic inverse ⇏ lawful semantic inverse.
+* `gate_does_not_descend_through_valuation` — admissibility is not a function of
+  the value, so the firewall is not a property of the arithmetic.
+
+### 3.5 `Kernel.Instances.SourceStage` — announcement ≠ evidence stage (20 theorems)
+
+Source: `Agda/DASHI/Core/SourceExactFrontierBidiCrossPollination2026.agda`, whose
+generic part is a two-element `EvidenceState` with a `→ ⊥` non-factorability
+witness and four distinct verification-carrier labels.  Restated here over a
+five-stage carrier, with two converses the Agda owner does not carry.  Only that
+generic section of the Agda module is used: its later, domain-specific
+specialisations are not read, transported or relied on here.
+
+* **`announcement_does_not_descend`** — the evidence stage is not a function of
+  the public announcement surface; `announcement_only_constants` strengthens
+  this to: *every* coordinate computable from the announcement alone is
+  constant, so no announcement-level test separates any two stages.
+* `stage_refines_announcement`, `stage_strictly_refines` — the converse
+  direction, as a `StrictlyRefines` record with its explicit witness.
+* **`inhabits_iff_proofTerm`** — of the four verification carriers exactly the
+  checked proof term inhabits a theorem-facing obligation.
+  `every_non_proof_carrier_fails_to_inhabit` says the same about each
+  individual non-proof carrier; it is a statement about carriers one at a time
+  and says nothing about carriers held jointly.  The joint case is a separate
+  object added in this round: `Bundle := Finset Carrier` with
+  `BundleInhabits S := checkedProofTerm ∈ S`, for which
+  `bundleInhabits_iff_exists_member` proves that a bundle inhabits exactly when
+  one of its members does (so possession is not additive),
+  `bundle_without_proof_term_does_not_inhabit` is the general negative, and
+  `no_combination_of_non_proof_carriers :
+  ¬ BundleInhabits {externalMachineReceipt, externalNumericCertificate,
+  statementCorrespondence}` is the named three-carrier instance.  Before this
+  round that name carried the per-carrier statement, and the wording "rules out
+  the other three jointly" overstated it.
+* **`flag_does_not_determine_witness`** — a `Bool` status ledger does not
+  determine whether a witness is attached (`flag_true_without_witness` is the
+  explicit offending record), and `inhabited_does_not_descend_through_flag`
+  carries this to the inhabitance coordinate.  This is the "status closure ≠
+  theorem inhabitance" distinction as a non-descent rather than as prose, and it
+  is the reason the corpus's `… = true` ledger fields are classified as
+  placeholders throughout these reports.
+* `recovery_is_refinement_not_refutation`, `recovery_strictly_narrows`,
+  `same_announcement_different_provenance`.
+
+`Stage`, `Carrier` and `Claim` are finite label types introduced in the Lean
+file; `Inhabits` is a stipulated two-valued predicate on labels and **not** a
+provability predicate.  Nothing in the module inspects or certifies any actual
+proof, and no statement is made about any particular announcement, paper, author
+or result.
+
+---
+
+## 4. Dependency and provenance map
+
+```
+Agda (read-only, not rechecked here)                Lean (checked here)
+────────────────────────────────────                ───────────────────
+Core/ObserverRefinementLatticeExact  ─┐
+Core/ResidualObserverDependencyExact ─┼──────────►  Integration.Kernel.Quotient
+Core/CoarseFineRelativeFibreExact    ─┘                    │
+                                                           │ imports
+                                                    Integration.Kernel.ResidualFibre
+                                                      (fibre_eq_refine_univ)
+Computation/SSSPThreeFrontier*        ───────────►  Kernel.Instances.SSSP
+Finance/PointInTimeUniverseFibre,
+Finance/UniverseLeakageResidualDependency ───────►  Kernel.Instances.TemporalFibre
+Cognition/PNF/SensibLawLegalSemanticAdmissionFrontier ►  Kernel.Instances.Admission
+Cognition/PNF/ContextualFractran*     ───────────►  Kernel.Instances.SituatedValuation
+Core/SourceExactFrontierBidiCrossPollination2026 ─►  Kernel.Instances.SourceStage
+
+all six  ────► Integration (aggregate)  and  Integration.AxiomAuditKernel
+```
+
+Wiring: the six modules are imported by `Lean/Integration.lean` (module-doc
+entry 51an′) and audited in `Lean/Integration/AxiomAuditKernel.lean`, which now
+emits 253 `#print axioms` lines, every one reporting a subset of
+`{propext, Classical.choice, Quot.sound}`.
+
+Build state: full `lake build`, **8 463 jobs, no errors**. Two defects that
+predate this round were repaired to get there:
+
+1. the `AgdaMirror` library glob in `lakefile.toml` had regressed to
+   `AgdaMirror.*`, which pulls in the root aggregate importing the excluded
+   Yang–Mills mirror; it is back to `AgdaMirror.+` as its own comment documents.
+   Because that failure aborted the build early, two further defects had been
+   masked:
+2. `Integration.Kernel.Instances.CoordinateSufficiency` did not elaborate — a
+   universe-monomorphic `variable` block in `Integration.CoordinateSufficiency`
+   and `Integration.LeastSufficient` (now `Type*`), a `rw` that needed a `show`
+   to beta-reduce, and — substantively — a **false witness**: the theorem
+   `one_fibre_closure_is_not_global_sufficiency` was stated with `O = fst`,
+   `C = snd`, `y = true`, on which `C` is *not* constant on the fibre. It now
+   uses `C = fun p => p.1 && p.2` at `y = false`, for which both halves hold.
+
+---
+
+## 5. Honest frontier — exact remaining obligations
+
+1. **Cross-language transport.** Nothing here is an Agda result. Transporting
+   `descendsThrough_iff_refinedBy`, `exists_reopening_of_injective` and the five
+   instances into Agda would require restating and rechecking them there; no
+   Agda toolchain is available in this environment.
+2. **The Bool boundary ledgers are still ledgers.** 345 of the 523 newly ingested
+   modules carry `≡ true` / `≡ false` boundary fields. Five such ledgers are now
+   matched by Lean propositions (the five instances above); the rest are
+   unmatched, and a `Bool` field pinned to `false` remains a declaration, not a
+   refutation.
+3. **Empty-type refusals.** The admission lane's refusals are uninhabited
+   datatypes; three of them now have propositional counterparts here
+   (`parser_receipt_never_valid`, and the two descent failures). The remaining
+   refusals of that module — including the gold-conformance and publication ones
+   — have no Lean content.
+4. **The SSSP instance is a finite example only.** Three vertices, six linear
+   extensions. No shortest-path algorithm, no complexity statement and no
+   sorting-barrier result is formalised, and the corpus's `Pull(M=1)` observation
+   is matched only on this carrier.
+5. **The finance instance has two labelled evaluations.** The leakage theorem is
+   about a two-element state space; no estimator, return series or backtest
+   procedure is modelled, and `Universe` is a `ℕ → Asset → Bool`.
+6. **The admission instance has no notion of correctness.** A receipt is valid
+   when its fields are well formed; nothing states that a valid receipt makes the
+   resolution *right*. That is the honest boundary of the source lane too.
+7. **The situated-valuation instance has two words and two worlds.** The gate is
+   a Boolean field; no bracket calculus, no FRACTRAN execution, and no claim
+   about any language is present.
+8. **Consumer-relative inverse is a bare equation.** `InvertsFor` says the
+   consumer coordinate is restored; it says nothing about a category of
+   transformations, composition of partial inverses, or a right-inverse theory.
+9. **Descent of dynamics is stated, not applied.** `MapDescends` is proved
+   equivalent to class preservation and shown to fail in general; no lane in this
+   repository yet supplies a dynamical system whose descent is checked.
+10. **Yang–Mills and Navier–Stokes remain outside this cutset.** 245 new modules
+    were excluded by the path filter; nothing in this round reads, references or
+    claims anything about them.
+
+## 6. Claim boundary
+
+Every theorem above is a statement about Lean definitions — functions out of a
+type, finite enumerations, `ℕ`, `ℚ`, lists and records. Nothing here is a
+physical, financial, legal, linguistic, algorithmic or medical claim; no
+theory-of-everything claim is made; and no result of any pull request,
+repository branch or external programme is asserted or relied upon.

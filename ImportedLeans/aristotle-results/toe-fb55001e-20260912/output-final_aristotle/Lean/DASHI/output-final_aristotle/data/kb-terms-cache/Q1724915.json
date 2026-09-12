@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "purpose",
+  "utility",
+  "function",
+  "usage",
+  "application",
+  "using"
+ ],
+ "canonical": "Q1724915",
+ "description": "use of a resource to perform a task",
+ "id": "Q1724915",
+ "label": "use"
+}

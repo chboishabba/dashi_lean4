@@ -8,17 +8,17 @@ namespace MoonshineFractran
 def SSP : List Nat := [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 47, 59, 71]
 
 -- 196883 = 47 × 59 × 71 — product of the three largest Monster primes
-theorem moonshine_kernel : 47 * 59 * 71 = 196883 := by native_decide
+theorem moonshine_kernel : 47 * 59 * 71 = 196883 := by decide
 
 -- 196884 = 196883 + 1 — the observer
-theorem moonshine_observer : 47 * 59 * 71 + 1 = 196884 := by native_decide
+theorem moonshine_observer : 47 * 59 * 71 + 1 = 196884 := by decide
 
 -- 196884 = 2^2 × 3^3 × 1823
-theorem moonshine_factored : 4 * 27 * 1823 = 196884 := by native_decide
+theorem moonshine_factored : 4 * 27 * 1823 = 196884 := by decide
 
 -- 196883 is purely SSP: all prime factors are Monster primes
 -- 47 is the 13th SSP, 59 is the 14th, 71 is the 15th (last)
-theorem ssp_len : SSP.length = 15 := by native_decide
+theorem ssp_len : SSP.length = 15 := by decide
 
 -- FRACTRAN state: a vector of 15 exponents (one per Monster prime)
 -- The perf counters factor into this space
@@ -37,10 +37,10 @@ def perfState4 : List (Nat × Nat) :=
 def moonshinePure : List (Nat × Nat) := [(12, 1), (13, 1), (14, 1)]
 
 -- Total exponent mass of moonshine state
-theorem moonshine_mass : 1 + 1 + 1 = 3 := by native_decide
+theorem moonshine_mass : 1 + 1 + 1 = 3 := by decide
 
 -- The fixed point: 196884 mod 71 = 1 (the observer residue)
-theorem observer_residue : 196884 % 71 = 1 := by native_decide
+theorem observer_residue : 196884 % 71 = 1 := by decide
 
 -- Phase transition: dashi (Agda) → perf → FRACTRAN → Lean4
 -- The same truth (196884) traverses all representations
@@ -51,11 +51,11 @@ theorem phase_invariant :
     196884 % 59 = 1 ∧
     196884 % 47 = 1 := by
   constructor
-  · native_decide
+  · decide
   constructor
-  · native_decide
+  · decide
   constructor
-  · native_decide
-  · native_decide
+  · decide
+  · decide
 
 end MoonshineFractran

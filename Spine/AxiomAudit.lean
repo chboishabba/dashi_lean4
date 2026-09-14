@@ -121,7 +121,8 @@ results.  Each uses only the standard Lean/Mathlib axioms (`propext`,
 #print axioms Spine.RateBlockSchur.schur_form_ge_half_mul_multiplicity
 #print axioms Spine.RateBlockSchur.schur_gram_le_blockMultiplicity
 
--- Plain `Fin n → ℂ` carrier transport used by the NS adapter.
+-- The same kernel at the plain `Fin n → ℂ` carrier, via the `WithLp.toLp 2`
+-- transport (no `InnerProductSpace ℂ (Fin n → ℂ)` instance is used)
 #print axioms Spine.RateBlockSchurPi.hermPi_eq_inner
 #print axioms Spine.RateBlockSchurPi.nrmPi_eq_norm
 #print axioms Spine.RateBlockSchurPi.hermPi_re_le_nrmPi_mul

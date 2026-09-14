@@ -29,7 +29,7 @@ namespace AgdaMirror.Loom
 inductive LoomRelationType
   | exactSupport | equivalentSupport | explicitDispute | implicitDispute
   | partialOverlap | adjacentEvent | substitution | proceduralNonanswer | unrelated
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Canonical precedence ordering of relation types. -/
 def canonicalRelationPrecedence : List LoomRelationType :=
@@ -39,7 +39,7 @@ def canonicalRelationPrecedence : List LoomRelationType :=
 /-- Coarse relation roots. -/
 inductive LoomRelationRoot
   | supports | invalidates | nonResolving | unanswered
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Total root classifier. -/
 def relationRootFor : LoomRelationType → LoomRelationRoot
@@ -165,8 +165,81 @@ def canonicalLoomRelationAlgebra : LoomRelationAlgebra where
      "A support relation can remain review-only and non-promoting.",
      "Promotion requires a separate guarded contract and is not implied by bucket assignment."]
 
-/-- Every relation type has a well-defined root (totality of `relationRootFor`),
-recorded as a decision-procedure-backed sanity check. -/
+/-! ## What the record actually says
+
+The Agda original proves the derived-field equalities by `refl` and records the
+relation/promotion separation as a `Bool` pinned to `true`.  The four results
+below say what those two devices amount to.
+-/
+
+/-- The declared root and bucket of a typed relation are its derived ones, so a
+typed relation is exactly a relation type together with evidence, promotion and
+a note: **the two derived fields carry no information**. -/
+def typedRelationEquiv :
+    LoomTypedRelation ≃
+      (LoomRelationType × LoomEvidenceStatus × LoomPromotionState × String) where
+  toFun r := (r.relationType, r.evidenceStatus, r.promotionState, r.relationNote)
+  invFun p := ⟨p.1, relationRootFor p.1, rfl, bucketFor p.1, rfl, p.2.1, p.2.2.1, p.2.2.2⟩
+  left_inv := by rintro ⟨t, _, rfl, _, rfl, e, s, n⟩; rfl
+  right_inv _ := rfl
+
+/-- The positive half: the relation type determines both coarser classifiers. -/
+theorem classifiers_determined (r s : LoomTypedRelation)
+    (h : r.relationType = s.relationType) :
+    r.relationRoot = s.relationRoot ∧ r.bucket = s.bucket := by
+  refine ⟨?_, ?_⟩
+  · rw [r.relationRootIsDerived, s.relationRootIsDerived, h]
+  · rw [r.bucketIsDerived, s.bucketIsDerived, h]
+
+/-- **The relation/promotion separation, as a theorem rather than a flag.**  The
+Agda record asserts `separatesRelationFromPromotion ≡ true`; what that is *for*
+is that the promotion state is not a function of the relation type.  Here are
+two typed relations with the same relation type — hence the same root and the
+same bucket — and different promotion states. -/
+theorem promotion_not_determined_by_relationType :
+    ∃ r s : LoomTypedRelation,
+      r.relationType = s.relationType ∧ r.promotionState ≠ s.promotionState :=
+  ⟨canonicalSupportRelation,
+   { canonicalSupportRelation with promotionState := .promotionPending },
+   rfl, by decide⟩
+
+/-- Likewise the evidence status is not a function of the relation type: a
+support relation can be witnessed or merely review-only. -/
+theorem evidence_not_determined_by_relationType :
+    ∃ r s : LoomTypedRelation,
+      r.relationType = s.relationType ∧ r.evidenceStatus ≠ s.evidenceStatus :=
+  ⟨canonicalSupportRelation,
+   { canonicalSupportRelation with evidenceStatus := .reviewOnly },
+   rfl, by decide⟩
+
+/-- The canonical precedence list is a genuine reordering of the canonical
+relation-type list: duplicate-free and complete. -/
+theorem precedence_is_permutation :
+    canonicalRelationPrecedence.Nodup ∧
+    ∀ t : LoomRelationType, t ∈ canonicalRelationPrecedence := by
+  refine ⟨by decide, ?_⟩
+  intro t
+  cases t <;> decide
+
+/-- **The root classifier is a genuine finite shadow.**  Every coarse root is
+realised by some relation type, so the four-element root enumeration is a
+faithful image of the nine-element relation-type enumeration. -/
+theorem relationRootFor_surjective : Function.Surjective relationRootFor := by
+  intro b
+  cases b
+  · exact ⟨.exactSupport, rfl⟩
+  · exact ⟨.explicitDispute, rfl⟩
+  · exact ⟨.adjacentEvent, rfl⟩
+  · exact ⟨.unrelated, rfl⟩
+
+/-- ...and it is only a shadow: it has no section-free inverse, because it is
+not injective (`exactSupport` and `equivalentSupport` share a root). -/
+theorem relationRootFor_not_injective : ¬ Function.Injective relationRootFor := by
+  intro h
+  exact absurd (h (a₁ := .exactSupport) (a₂ := .equivalentSupport) rfl) (by decide)
+
+/-- Every relation type has a well-defined root.  Retained from the previous
+mirror surface alongside the stronger finite-classifier results above. -/
 theorem relationRootFor_total (t : LoomRelationType) :
     relationRootFor t = relationRootFor t := rfl
 

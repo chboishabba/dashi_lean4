@@ -1,3 +1,7 @@
+import Spine.JMD.MonsterMoonshine
+import Spine.JMD.FactorVecSheaf
+import Spine.JMD.ArchitectureDynamics
+
 /-!
 # JMD donor lane in the reusable Spine
 
@@ -10,8 +14,3 @@ with an empirical or ontological claim.
 The original archive, PDF, and source hashes remain in the canonical Aristotle
 provenance corpus.
 -/
-
-import Spine.JMD.MonsterMoonshine
-import Spine.JMD.FactorVecSheaf
-import Spine.JMD.ArchitectureDynamics
-

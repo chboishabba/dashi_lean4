@@ -1,4 +1,6 @@
 import Synthesis.EndToEnd
+import Synthesis.ContractRepair
+import Synthesis.MonsterCharacterMultiplicityRegression
 
 /-!
 # Axiom audit
@@ -59,3 +61,20 @@ axiom, or `Lean.ofReduceBool` (i.e. no `native_decide` anywhere in the spine).
 #print axioms Synthesis.ExponentFibre.jCoefficient_mod_trivector
 #print axioms Synthesis.MonsterOrder.monsterOrderNumeral_primeFactors
 #print axioms Synthesis.MonsterOrder.radical_monsterOrderNumeral
+#print axioms Synthesis.ContractRepair.substantive_forces_SM
+#print axioms Synthesis.ContractRepair.nonSM_witness_impossible
+#print axioms Synthesis.ContractRepair.substantive_still_permits_non_SM_elsewhere
+#print axioms Synthesis.ContractRepair.DoubleCover.not_injective
+#print axioms Synthesis.ContractRepair.injective_cover_not_double
+#print axioms Synthesis.ContractRepair.trivial_spin_not_double
+#print axioms Synthesis.ContractRepair.trivialIPS_not_separating
+#print axioms Synthesis.ContractRepair.realIPS_separating
+#print axioms Synthesis.ContractRepair.unitary_real_is_pm_id
+#print axioms Synthesis.ContractRepair.scaling_not_unitary
+
+-- The 2026-09-13 Monster character-determination donor (generic representation
+-- theory over an algebraically closed field; no Monster-specific claim).
+#print axioms Synthesis.nonempty_iso_of_character_eq
+#print axioms Synthesis.cast_finrank_hom_left_eq_one_of_character_eq_add
+#print axioms Synthesis.cast_finrank_hom_right_eq_one_of_character_eq_add
+#print axioms Synthesis.cast_finrank_hom_other_eq_zero_of_character_eq_add

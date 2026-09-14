@@ -17,12 +17,43 @@ globs = ["Cuisine.*"]
 
 [[lean_lib]]
 name = "AgdaMirror"
-globs = ["AgdaMirror.*"]
+globs = ["AgdaMirror", "AgdaMirror.*"]
 
 # Reusable domain-neutral operators shared by Aristotle donor lanes.
 [[lean_lib]]
 name = "Spine"
-globs = ["Spine.*"]
+globs = ["Spine", "Spine.*"]
+
+# Cross-domain consolidation surfaces returned by TOE.  They remain opt-in:
+# the default targets above stay small, while consumers can build these
+# libraries explicitly when they need the associated source lanes.
+[[lean_lib]]
+name = "Integration"
+globs = ["Integration", "Integration.*"]
+
+[[lean_lib]]
+name = "Promoted"
+globs = ["Promoted", "Promoted.*"]
+
+[[lean_lib]]
+name = "AristotleArchive"
+srcDir = "DASHI/output-final_aristotle"
+globs = ["RequestProject.Core", "RequestProject.Engine", "RequestProject.Properties", "RequestProject.PropertyConstraints", "RequestProject.PropertyEngine", "RequestProject.Provenance", "RequestProject.Ranks", "RequestProject.Reachability", "RequestProject.Schemas", "RequestProject.Snaks", "RequestProject.StatementConstraints", "RequestProject.Temporal", "RequestProject.TypeProperties", "RequestProject.Archive", "RequestProject.Publish", "RequestProject.Cli.Format", "RequestProject.Sync", "RequestProject.Merge", "RequestProject.Worklist", "RequestProject.Reports", "RequestProject.ReportFormat", "RequestProject.Diagnostics", "RequestProject.SeriesDiagnostics", "RequestProject.TaxaDiagnostics", "RequestProject.KinshipDiagnostics", "RequestProject.ParentingDiagnostics", "RequestProject.Cli.Derive", "RequestProject.Cli.Query", "RequestProject.Examples", "RequestProject.FastEval", "RequestProject.Kinship", "RequestProject.Normalize", "RequestProject.Parenting", "RequestProject.Queries", "RequestProject.Redundancy", "RequestProject.SelfDescription", "RequestProject.Series", "RequestProject.SeriesChain", "RequestProject.SeriesExamples", "RequestProject.Taxa", "RequestProject.TaxaExamples", "RequestProject.TaxaLineage"]
+
+[[lean_lib]]
+name = "Proposed"
+globs = ["Proposed.FibreRoutingProjectionAdapter"]
+
+# The NS source is retained verbatim at this provenance location.  Pointing the
+# opt-in cutset at it avoids a second lane-local copy.
+[[lean_lib]]
+name = "NSCutset"
+srcDir = "ImportedLeans/aristotle-results/toe-fb55001e-20260912/output-final_aristotle/Provenance/ns-latest-20260912/payload"
+globs = ["RequestProject.NavierStokes.AlmostOrthogonalGramSchur", "RequestProject.NavierStokes.GramConsumerFactorisation", "RequestProject.NavierStokes.OperatorSchurBlockCancellation", "RequestProject.NavierStokes.RateBlockGramBound", "RequestProject.NavierStokes.ResolventGramFlux", "RequestProject.NavierStokes.ResolventHeatFactorization", "RequestProject.NavierStokes.SignedGramWienerAssembly", "RequestProject.NavierStokes.SignedRemainderResolventBudget", "RequestProject.NavierStokes.SignedRemainderTTStar", "RequestProject.NavierStokes.SlotKernelAntiParallel", "RequestProject.NavierStokes.SpineRateBlockAdapter", "RequestProject.NavierStokes.TransverseFrameSplit", "RequestProject.NavierStokes.WaleffeAmplitude", "RequestProject.NavierStokes.WaleffeBetweenBlockGram", "RequestProject.NavierStokes.WaleffeCriticalCompanionSummation", "RequestProject.NavierStokes.WaleffeExternalBonyClasses", "RequestProject.NavierStokes.WaleffeExternalCrossTriadCells", "RequestProject.NavierStokes.WaleffeExternalForcingSplit", "RequestProject.NavierStokes.WaleffeForcingMajorant", "RequestProject.NavierStokes.WaleffeGalerkinEnergy", "RequestProject.NavierStokes.WaleffeHighHighOutputGain", "RequestProject.NavierStokes.WaleffeIntegratedPayment", "RequestProject.NavierStokes.WaleffeNetworkForcingBudget", "RequestProject.NavierStokes.WaleffeOutputGainFibre", "RequestProject.NavierStokes.WaleffeSelfForcingSign", "RequestProject.NavierStokes.WaleffeSelfPhaseEnergyPayment", "RequestProject.NavierStokes.WaleffeSerrinReduction", "RequestProject.NavierStokes.WaleffeTriadInternalPayment", "RequestProject.NavierStokes.WaleffeWienerBudget", "RequestProject.NavierStokes.WaleffeWienerSupercritical"]
+
+[[lean_lib]]
+name = "Welds"
+globs = ["Welds", "Welds.*"]
 
 [[lean_lib]]
 name = "TriadicKernelAlgebra"

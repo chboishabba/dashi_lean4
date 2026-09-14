@@ -1,0 +1,150 @@
+import RequestProject.Epistemic.Bridge
+import RequestProject.Wikidata.Redundancy
+
+/-!
+# Review-only repair proposals
+
+Diagnostic evidence about a knowledge base produces *proposals*, not edits.  Two
+things are kept apart deliberately:
+
+* `removeRedundantSuperclass` — a theorem-backed claim that an edge can be
+  deleted without changing what the ontology says;
+* `removeBadSuperclass` — a claim that a superclass assertion is *wrong*.
+
+Collapsing the first into the second would silently upgrade "provably
+redundant" into "semantically incorrect".  The main safety result,
+`enact_redundancy_proposal_preserves_subclass`, says that enacting a supported
+redundancy proposal — under any review decision — leaves the derived subclass and
+instance relations unchanged.
+-/
+
+namespace Epistemic
+
+open Wikidata
+
+/-- Repair vocabulary. -/
+inductive RepairOperation
+  | removeRedundantSuperclass
+  | removeBadSuperclass
+  | addMissingSuperclass
+  deriving DecidableEq, Repr, Inhabited
+
+/-- A repair proposal: an operation on a target statement, the evidence backing
+it, and its provenance. -/
+structure Proposal where
+  target : Statement
+  operation : RepairOperation
+  evidence : Trit
+  references : List String
+  deriving Repr
+
+/-- The review decision on a proposal. -/
+inductive Decision
+  | pending
+  | rejected
+  | approved
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Enacting a proposal.  Only an approved, theorem-backed redundancy removal is
+automatable; every other combination leaves the knowledge base untouched. -/
+def enact (kb : KB) (p : Proposal) : Decision → KB
+  | Decision.approved =>
+      match p.operation, p.evidence with
+      | RepairOperation.removeRedundantSuperclass, Trit.supported => prune kb p.target
+      | _, _ => kb
+  | Decision.pending => kb
+  | Decision.rejected => kb
+
+@[simp] theorem enact_pending (kb : KB) (p : Proposal) : enact kb p Decision.pending = kb := rfl
+
+@[simp] theorem enact_rejected (kb : KB) (p : Proposal) : enact kb p Decision.rejected = kb := rfl
+
+/-- **Evidence never edits.**  Without an approval, no proposal changes anything. -/
+theorem enact_eq_of_not_approved (kb : KB) (p : Proposal) {d : Decision}
+    (h : d ≠ Decision.approved) : enact kb p d = kb := by
+  cases d with
+  | pending => rfl
+  | rejected => rfl
+  | approved => exact absurd rfl h
+
+/-- Unsupported evidence never edits either, even when approved. -/
+theorem enact_eq_of_unsupported (kb : KB) (p : Proposal) (d : Decision)
+    (h : p.evidence ≠ Trit.supported) : enact kb p d = kb := by
+  cases d with
+  | pending => rfl
+  | rejected => rfl
+  | approved =>
+      unfold enact
+      cases hop : p.operation <;> cases hev : p.evidence <;> simp_all
+
+/-- A semantically bad superclass is never removed automatically: that judgement
+is reserved for human review. -/
+theorem enact_removeBadSuperclass (kb : KB) (p : Proposal) (d : Decision)
+    (h : p.operation = RepairOperation.removeBadSuperclass) : enact kb p d = kb := by
+  cases d with
+  | pending => rfl
+  | rejected => rfl
+  | approved =>
+      unfold enact
+      cases hev : p.evidence <;> simp_all
+
+/-! ## Theorem-backed redundancy proposals -/
+
+/-- The proposal generated from the redundancy checker. -/
+def redundancyProposal (kb : KB) (st : Statement) (refs : List String) : Proposal :=
+  { target := st
+    operation := RepairOperation.removeRedundantSuperclass
+    evidence := receiptState true (isRedundant kb st)
+    references := refs }
+
+/-- A redundancy diagnostic is never relabelled as a semantic defect. -/
+@[simp] theorem redundancyProposal_operation (kb : KB) (st : Statement) (refs : List String) :
+    (redundancyProposal kb st refs).operation = RepairOperation.removeRedundantSuperclass := rfl
+
+/-- The proposal is supported exactly when the edge is provably redundant. -/
+theorem redundancyProposal_supported_iff (kb : KB) (st : Statement) (refs : List String) :
+    (redundancyProposal kb st refs).evidence = Trit.supported ↔ Redundant kb st := by
+  simp only [redundancyProposal, receiptState_eq_supported_iff, true_and]
+  exact isRedundant_iff kb st
+
+/-- Provenance is carried into the proposal. -/
+@[simp] theorem redundancyProposal_references (kb : KB) (st : Statement) (refs : List String) :
+    (redundancyProposal kb st refs).references = refs := rfl
+
+/-- **Safety of the repair pipeline (subclass).**  Enacting a supported
+redundancy proposal, under any review decision, preserves the derived subclass
+relation exactly. -/
+theorem enact_redundancy_proposal_preserves_subclass (kb : KB) (st : Statement)
+    (refs : List String) (hrank : st.rank = Rank.normal)
+    (hsupported : (redundancyProposal kb st refs).evidence = Trit.supported) (d : Decision)
+    (a b : Qid) :
+    SubclassOf (enact kb (redundancyProposal kb st refs) d) a b ↔ SubclassOf kb a b := by
+  have hred : Redundant kb st := (redundancyProposal_supported_iff kb st refs).1 hsupported
+  cases d with
+  | pending => exact Iff.rfl
+  | rejected => exact Iff.rfl
+  | approved =>
+      have henact : enact kb (redundancyProposal kb st refs) Decision.approved = prune kb st := by
+        unfold enact redundancyProposal
+        rw [show receiptState true (isRedundant kb st) = Trit.supported from hsupported]
+      rw [henact]
+      exact subclassOf_prune_iff hrank hred a b
+
+/-- **Safety of the repair pipeline (instances).** -/
+theorem enact_redundancy_proposal_preserves_instances (kb : KB) (st : Statement)
+    (refs : List String) (hrank : st.rank = Rank.normal) (hprop : st.property = P279)
+    (hsupported : (redundancyProposal kb st refs).evidence = Trit.supported) (d : Decision)
+    (x c : Qid) :
+    InstanceOf (enact kb (redundancyProposal kb st refs) d) x c ↔ InstanceOf kb x c := by
+  have hred : Redundant kb st := (redundancyProposal_supported_iff kb st refs).1 hsupported
+  cases d with
+  | pending => exact Iff.rfl
+  | rejected => exact Iff.rfl
+  | approved =>
+      have henact : enact kb (redundancyProposal kb st refs) Decision.approved = prune kb st := by
+        unfold enact redundancyProposal
+        rw [show receiptState true (isRedundant kb st) = Trit.supported from hsupported]
+      rw [henact]
+      exact instanceOf_prune_iff hrank hprop hred x c
+
+end Epistemic

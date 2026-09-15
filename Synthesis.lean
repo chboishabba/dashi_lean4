@@ -21,6 +21,8 @@ import Synthesis.LinearConsumerKernelQuotientRegression
 import Synthesis.LinearConsumerPinnedImportRegression
 import Synthesis.LinearConsumerFiniteFamilyAction
 import Synthesis.LinearConsumerFiniteFamilyActionRegression
+import Synthesis.LinearConsumerMatrixFamilyAction
+import Synthesis.LinearConsumerMatrixFamilyActionRegression
 import Synthesis.Hyperfabric
 import Synthesis.CodecBridge
 import Synthesis.EndToEnd

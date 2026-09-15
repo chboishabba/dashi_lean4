@@ -77,7 +77,8 @@ example : packet.primary = .dischargeHypotheses := by decide
 example : packet.secondary = some .dischargePayment := by decide
 example : packet.toRow = conditionalRow := rfl
 
-theorem worker_packets_cover_live_ledger : workerPackets.length = ledger.length := rfl
+theorem worker_packets_cover_live_ledger : workerPackets.length = ledger.length :=
+  workerPackets_length
 
 theorem worker_packet_roundtrip (r : Row) : (workerPacket r).toRow = r :=
   workerPacket_toRow r

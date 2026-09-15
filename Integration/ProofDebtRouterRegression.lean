@@ -5,9 +5,10 @@ import Integration.ProofDebtRouter
 /-!
 Regression surface for the TOE proof-debt router.
 
-This file is intentionally written before `Integration.ProofDebtRouter` exists.
-It requires the router to remain a derived action view over the existing lineage
-status and canonical registry rather than introducing another proof-status enum.
+The router is a derived action view over the existing lineage status and
+canonical registry rather than a new proof-status enum. Worker packets must be
+lossless projections of lineage rows: routing may classify work, but it may not
+rewrite owner, consumer, hypotheses, payments, or evidence status.
 -/
 
 namespace Integration.ProofDebtRouterRegression
@@ -30,31 +31,48 @@ private def baseRow (status : ProofStatus) (payments : List String := []) : Row 
   , payments := payments }
 
 example : primaryAction (baseRow (.provedTheorem "T")) = .consumeReceipt := by decide
-
 example : primaryAction (baseRow (.conditionalCompiler "T" ["H"])) = .dischargeHypotheses := by decide
-
 example : primaryAction (baseRow (.openPayment "P")) = .dischargePayment := by decide
-
 example : primaryAction (baseRow (.falsePinned "flag = false")) = .preserveFalsePinned := by decide
-
 example : primaryAction (baseRow (.noGo "N")) = .preserveNoGo := by decide
-
 example : primaryAction (baseRow (.sourceReceipt ⟨.doi, "10.1/x"⟩)) = .preserveSourceReceipt := by decide
-
 example : primaryAction (baseRow .bookkeeping) = .preserveBookkeeping := by decide
-
 example : primaryAction (baseRow (.conjectural "C")) = .researchConjecture := by decide
+example : secondaryPaymentAction? (baseRow (.provedTheorem "T") ["downstream seam"]) = some .dischargePayment := by decide
 
-example : secondaryPaymentAction? (baseRow (.provedTheorem "T") ["downstream seam"]) =
-    some .dischargePayment := by decide
-
-/-- The live TOE ledger may not route a receipted row to registry repair: that
-would contradict the already-proved canonical-owner invariant. -/
 theorem live_ledger_has_no_registry_repair :
     ∀ r ∈ ledger, primaryAction r ≠ .repairCanonicalOwner :=
   no_receipted_ledger_row_needs_registry_repair
 
-/-- Routing is a view: it does not mutate or promote the underlying status. -/
 theorem routing_preserves_status (r : Row) : (route r).status = r.status := rfl
+
+private def conditionalRow : Row :=
+  { lane := .chemistry
+  , structureKey := "reachability-closure"
+  , agdaOwner := "DASHI.Chemistry.SomeOwner"
+  , leanCarrier := "Integration.ReachabilityBarrier"
+  , leanAdapter := "Welds.ReachabilityCarrier.ofStep"
+  , leanConsumer := "Integration.ChemistryReachability.reachB"
+  , hypotheses := ["finite vertex type", "Bool-valued step relation"]
+  , status := .conditionalCompiler "T" ["finite vertex type", "Bool-valued step relation"]
+  , provenance := []
+  , supersedes := "older-local-copy"
+  , payments := ["physical carrier identification"] }
+
+private def packet := workerPacket conditionalRow
+
+example : packet.lane = .chemistry := rfl
+example : packet.structureKey = "reachability-closure" := rfl
+example : packet.agdaOwner = "DASHI.Chemistry.SomeOwner" := rfl
+example : packet.leanCarrier = "Integration.ReachabilityBarrier" := rfl
+example : packet.leanAdapter = "Welds.ReachabilityCarrier.ofStep" := rfl
+example : packet.leanConsumer = "Integration.ChemistryReachability.reachB" := rfl
+example : packet.hypotheses = ["finite vertex type", "Bool-valued step relation"] := rfl
+example : packet.payments = ["physical carrier identification"] := rfl
+example : packet.status = conditionalRow.status := rfl
+example : packet.primary = .dischargeHypotheses := by decide
+example : packet.secondary = some .dischargePayment := by decide
+
+theorem worker_packets_cover_live_ledger : workerPackets.length = ledger.length := rfl
 
 end Integration.ProofDebtRouterRegression

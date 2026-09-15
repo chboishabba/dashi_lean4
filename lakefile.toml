@@ -67,6 +67,14 @@ name = "NSBFrontier"
 srcDir = "ImportedLeans/aristotle-results/ns-5fb665d1-20260915/output-final_aristotle"
 globs = ["RequestProject.NavierStokes.R571RadialCurvature", "RequestProject.NavierStokes.R571PairedSecondMoment", "RequestProject.NavierStokes.HeterochiralOutputGain", "RequestProject.NavierStokes.ProofDebtRouterMirror", "RequestProject.NavierStokes.TrancheAxiomAudit20260915"]
 
+# Dedicated NS worker task 83c905e8: literal periodic-B control carrier.
+# This remains opt-in, reuses NSCutset's Galerkin carrier, and does not turn
+# its stated S2b target or its upstream build receipt into a local closure.
+[[lean_lib]]
+name = "NSBControl"
+srcDir = "ImportedLeans/aristotle-results/ns-83c905e8-20260916"
+globs = ["RequestProject.NavierStokes.CriticalDyadicWeight", "RequestProject.NavierStokes.CriticalWeightedGalerkin", "RequestProject.NavierStokes.CriticalProductionAbsorption", "RequestProject.NavierStokes.CriticalProductionWitness", "RequestProject.NavierStokes.CriticalWeightDifferenceTransfer", "RequestProject.NavierStokes.TrancheAxiomAudit20260915B"]
+
 [[lean_lib]]
 name = "Welds"
 globs = ["Welds", "Welds.*"]

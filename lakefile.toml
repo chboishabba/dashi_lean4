@@ -59,6 +59,14 @@ name = "NSUnforced"
 srcDir = "ImportedLeans/aristotle-results/toe-759f2a06-20260915/output-final_aristotle/Lean"
 globs = ["NSUnforced", "NSUnforced.*"]
 
+# Dedicated NS worker task 5fb665d1: active periodic-B frontier welds.  This
+# library consumes the retained NSCutset and NSUnforced sources rather than
+# duplicating either carrier.
+[[lean_lib]]
+name = "NSBFrontier"
+srcDir = "ImportedLeans/aristotle-results/ns-5fb665d1-20260915/output-final_aristotle"
+globs = ["RequestProject.NavierStokes.R571RadialCurvature", "RequestProject.NavierStokes.R571PairedSecondMoment", "RequestProject.NavierStokes.HeterochiralOutputGain", "RequestProject.NavierStokes.ProofDebtRouterMirror", "RequestProject.NavierStokes.TrancheAxiomAudit20260915"]
+
 [[lean_lib]]
 name = "Welds"
 globs = ["Welds", "Welds.*"]

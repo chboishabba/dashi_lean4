@@ -1,4 +1,5 @@
-import Mathlib.LinearAlgebra.Basic
+import Mathlib.Algebra.Module.Submodule.Ker
+import Mathlib.Algebra.Module.Submodule.Lattice
 
 /-!
 # Linear consumer-family kernel quotient donor
@@ -7,10 +8,10 @@ Generic algebra for consumer-indexed compression.
 
 Given a family of linear consumers `A i : V →ₗ[R] W`, two states are
 observationally equal for the whole family exactly when their difference lies
-in the intersection of the consumer kernels.  Consequently a trivial joint
+in the intersection of the consumer kernels. Consequently a trivial joint
 kernel makes the consumer family jointly injective.
 
-This file is deliberately domain-neutral.  It does not mention RSA-260, CADO,
+This file is deliberately domain-neutral. It does not mention RSA-260, CADO,
 Block Wiedemann, `F.sols`, `mksol`, or any production artifact identity.
 -/
 
@@ -40,11 +41,10 @@ theorem same_outputs_iff_sub_mem_iInf_ker
   rw [mem_jointKernel_iff]
   constructor
   · intro h i
-    rw [map_sub, h i, sub_self]
+    simpa [map_sub, h i]
   · intro h i
     have hz := h i
-    rw [map_sub, sub_eq_zero] at hz
-    exact hz
+    simpa [map_sub, sub_eq_zero] using hz
 
 /-- If the intersection of the consumer kernels is trivial, equality of every
 consumer output forces equality of the original states. -/

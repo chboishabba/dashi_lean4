@@ -111,6 +111,48 @@ theorem cast_finrank_hom_other_eq_zero_of_character_eq_add
   rw [hTU, hSU]
   simp
 
+/-- If the whole character of `V` is `n` copies of one simple character,
+    the equivariant-Hom multiplicity of that simple representation is `n`
+    (after casting the finite dimension to the coefficient field). -/
+theorem cast_finrank_hom_eq_nat_of_character_eq_nsmul
+    (V H : FDRep k G) [Simple H] (n : ℕ)
+    (hchar : V.character = n • H.character) :
+    (Module.finrank k (H ⟶ V) : k) = n := by
+  classical
+  rw [← FDRep.scalar_product_char_eq_finrank_equivariant H V, hchar]
+  have hHH := FDRep.char_orthonormal H H
+  have hself : Nonempty (H ≅ H) := ⟨Iso.refl H⟩
+  rw [if_pos hself] at hHH
+  induction n with
+  | zero => simp
+  | succ n ih =>
+      rw [succ_nsmul]
+      simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib]
+      rw [mul_add, hHH, ih]
+      simp
+
+/-- Any simple representation not isomorphic to `H` has multiplicity zero in a
+    representation whose whole character is `n • H.character`. -/
+theorem cast_finrank_hom_other_eq_zero_of_character_eq_nsmul
+    (V H U : FDRep k G) [Simple H] [Simple U] (n : ℕ)
+    (hUH : ¬ Nonempty (U ≅ H))
+    (hchar : V.character = n • H.character) :
+    (Module.finrank k (U ⟶ V) : k) = 0 := by
+  classical
+  rw [← FDRep.scalar_product_char_eq_finrank_equivariant U V, hchar]
+  have hHU := FDRep.char_orthonormal H U
+  have hHUno : ¬ Nonempty (H ≅ U) := by
+    intro h
+    exact hUH ⟨h.some.symm⟩
+  rw [if_neg hHUno] at hHU
+  induction n with
+  | zero => simp
+  | succ n ih =>
+      rw [succ_nsmul]
+      simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib]
+      rw [mul_add, hHU, ih]
+      simp
+
 end
 
 end Synthesis

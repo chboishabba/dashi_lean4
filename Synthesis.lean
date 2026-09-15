@@ -19,6 +19,7 @@ import Synthesis.MonsterCharacterMultiplicityRegression
 import Synthesis.MonsterWholeCharacterModuleAdapter
 import Synthesis.MonsterWholeCharacterModuleAdapterRegression
 import Synthesis.MonsterWholeCharacterSubmoduleAdapterRegression
+import Synthesis.MonsterWholeCharacterMultiplicityRegression
 import Synthesis.Hyperfabric
 import Synthesis.CodecBridge
 import Synthesis.EndToEnd

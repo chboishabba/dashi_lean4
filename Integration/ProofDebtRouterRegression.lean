@@ -8,7 +8,8 @@ Regression surface for the TOE proof-debt router.
 The router is a derived action view over the existing lineage status and
 canonical registry rather than a new proof-status enum. Worker packets must be
 lossless projections of lineage rows: routing may classify work, but it may not
-rewrite owner, consumer, hypotheses, payments, or evidence status.
+rewrite owner, consumer, hypotheses, payments, provenance, supersession, or
+evidence status.
 -/
 
 namespace Integration.ProofDebtRouterRegression
@@ -55,7 +56,7 @@ private def conditionalRow : Row :=
   , leanConsumer := "Integration.ChemistryReachability.reachB"
   , hypotheses := ["finite vertex type", "Bool-valued step relation"]
   , status := .conditionalCompiler "T" ["finite vertex type", "Bool-valued step relation"]
-  , provenance := []
+  , provenance := [⟨.agdaModule, "DASHI.Chemistry.SomeOwner"⟩]
   , supersedes := "older-local-copy"
   , payments := ["physical carrier identification"] }
 
@@ -69,10 +70,16 @@ example : packet.leanAdapter = "Welds.ReachabilityCarrier.ofStep" := rfl
 example : packet.leanConsumer = "Integration.ChemistryReachability.reachB" := rfl
 example : packet.hypotheses = ["finite vertex type", "Bool-valued step relation"] := rfl
 example : packet.payments = ["physical carrier identification"] := rfl
+example : packet.provenance = [⟨.agdaModule, "DASHI.Chemistry.SomeOwner"⟩] := rfl
+example : packet.supersedes = "older-local-copy" := rfl
 example : packet.status = conditionalRow.status := rfl
 example : packet.primary = .dischargeHypotheses := by decide
 example : packet.secondary = some .dischargePayment := by decide
+example : packet.toRow = conditionalRow := rfl
 
 theorem worker_packets_cover_live_ledger : workerPackets.length = ledger.length := rfl
+
+theorem worker_packet_roundtrip (r : Row) : (workerPacket r).toRow = r :=
+  workerPacket_toRow r
 
 end Integration.ProofDebtRouterRegression

@@ -51,6 +51,14 @@ name = "NSCutset"
 srcDir = "ImportedLeans/aristotle-results/toe-fb55001e-20260912/output-final_aristotle/Provenance/ns-latest-20260912/payload"
 globs = ["RequestProject.NavierStokes.AlmostOrthogonalGramSchur", "RequestProject.NavierStokes.GramConsumerFactorisation", "RequestProject.NavierStokes.OperatorSchurBlockCancellation", "RequestProject.NavierStokes.RateBlockGramBound", "RequestProject.NavierStokes.ResolventGramFlux", "RequestProject.NavierStokes.ResolventHeatFactorization", "RequestProject.NavierStokes.SignedGramWienerAssembly", "RequestProject.NavierStokes.SignedRemainderResolventBudget", "RequestProject.NavierStokes.SignedRemainderTTStar", "RequestProject.NavierStokes.SlotKernelAntiParallel", "RequestProject.NavierStokes.SpineRateBlockAdapter", "RequestProject.NavierStokes.TransverseFrameSplit", "RequestProject.NavierStokes.WaleffeAmplitude", "RequestProject.NavierStokes.WaleffeBetweenBlockGram", "RequestProject.NavierStokes.WaleffeCriticalCompanionSummation", "RequestProject.NavierStokes.WaleffeExternalBonyClasses", "RequestProject.NavierStokes.WaleffeExternalCrossTriadCells", "RequestProject.NavierStokes.WaleffeExternalForcingSplit", "RequestProject.NavierStokes.WaleffeForcingMajorant", "RequestProject.NavierStokes.WaleffeGalerkinEnergy", "RequestProject.NavierStokes.WaleffeHighHighOutputGain", "RequestProject.NavierStokes.WaleffeIntegratedPayment", "RequestProject.NavierStokes.WaleffeNetworkForcingBudget", "RequestProject.NavierStokes.WaleffeOutputGainFibre", "RequestProject.NavierStokes.WaleffeSelfForcingSign", "RequestProject.NavierStokes.WaleffeSelfPhaseEnergyPayment", "RequestProject.NavierStokes.WaleffeSerrinReduction", "RequestProject.NavierStokes.WaleffeTriadInternalPayment", "RequestProject.NavierStokes.WaleffeWienerBudget", "RequestProject.NavierStokes.WaleffeWienerSupercritical"]
 
+# TOE task 759f2a06's retained NS proof-search library.  It stays opt-in and
+# consumes the prior NSCutset Waleffe payload where needed; importing the
+# source from its provenance location avoids a second edited copy.
+[[lean_lib]]
+name = "NSUnforced"
+srcDir = "ImportedLeans/aristotle-results/toe-759f2a06-20260915/output-final_aristotle/Lean"
+globs = ["NSUnforced", "NSUnforced.*"]
+
 [[lean_lib]]
 name = "Welds"
 globs = ["Welds", "Welds.*"]

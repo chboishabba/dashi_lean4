@@ -7,6 +7,9 @@ open RequestProject.YangMills.VacuumSectorSpectralGap
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
 
+#check rowA1GapDatumOfDirectFormBound
+#check rowA1PhysicalGapInstanceOfDirectFormBound
+
 example {N : ℕ} {r h : ℝ}
     (I : RowA1PhysicalGapInstance (E := E) N r h) :
     0 < YangMills.bMinus (YangMills.casimirAdjointSU N) r h :=

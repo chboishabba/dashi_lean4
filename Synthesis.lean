@@ -31,6 +31,8 @@ import Synthesis.LinearConsumerSyntheticBidiIncidence
 import Synthesis.LinearConsumerSyntheticBidiIncidenceRegression
 import Synthesis.LinearConsumerSyntheticBidiSeed
 import Synthesis.LinearConsumerSyntheticBidiSeedRegression
+import Synthesis.LinearConsumerSyntheticBidiCoefficients
+import Synthesis.LinearConsumerSyntheticBidiCoefficientsRegression
 import Synthesis.Hyperfabric
 import Synthesis.CodecBridge
 import Synthesis.EndToEnd

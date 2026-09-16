@@ -19,6 +19,7 @@ import Welds.YMPhysicalClosureNormalForm
 import Welds.YMBidiLatticeShell
 import Welds.YMCMP116SourceCovariance
 import Welds.YMSourceClusteringGap
+import Welds.YMClayAssembly
 
 #print axioms Welds.NSRateBlockPi.ns_herm_eq_euclidean_inner
 #print axioms Welds.NSRateBlockPi.ns_nrm_eq_euclidean_norm
@@ -65,3 +66,5 @@ import Welds.YMSourceClusteringGap
 
 #print axioms Welds.YMCMP116SourceCovariance.cmp116VolumeSourceCovarianceBound
 #print axioms Welds.YMSourceClusteringGap.vacuumFormGapOfSourceCovariance
+#print axioms Welds.YMClayAssembly.massGapOfSourceCovariance
+#print axioms Welds.YMClayAssembly.massGapOfEnergyForms

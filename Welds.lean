@@ -43,6 +43,8 @@ import Welds.YMCMP116SourceCovariance
 #print axioms Welds.YMVacuumGapBackwardBounds.chainZeroShiftResolventBound
 #print axioms Welds.YMVacuumGapBackwardBounds.rowA1CandidateZeroShiftBound
 
+#print axioms Welds.YMFinitePhysicalInstantiation.rowA1GapDatumOfDirectFormBound
+#print axioms Welds.YMFinitePhysicalInstantiation.rowA1PhysicalGapInstanceOfDirectFormBound
 #print axioms Welds.YMFinitePhysicalInstantiation.rowA1GapPositive
 #print axioms Welds.YMFinitePhysicalInstantiation.rowA1GapDatum
 #print axioms Welds.YMFinitePhysicalInstantiation.rowA1VacuumFormGap

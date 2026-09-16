@@ -1,0 +1,212 @@
+/-
+# The physical null quotient of a semi-definite Yang–Mills pairing
+
+This module machine-checks the terminal-side chain
+
+  positive semi-definite pairing on one fixed measure
+    → physical null relation
+    → pre-Hilbert quotient
+    → descended operator
+    → uniqueness of the descended operator from weak pairings
+    → completed physical Hilbert carrier.
+
+The ambient object is a *semi*-inner-product space `E` over `ℂ`: a complex
+vector space with a positive semi-definite Hermitian pairing `⟪·,·⟫`, i.e.
+exactly the structure carried by gauge-invariant wavefunctions paired through
+one fixed finite measure, where `‖f‖ = 0` is allowed and is the physical null
+condition.
+
+Two facts proved here change the shape of the informal cutset:
+
+* *separation* (weak pairings determine the null class) is a **theorem**, not
+  an extra hypothesis, once the pairing is the semi-inner product itself
+  (`nullRel_of_forall_inner_eq`);
+* null preservation is **automatic** for every bounded operator
+  (`nullRel_map_of_continuousLinearMap`); it is a genuine hypothesis only for
+  linear maps not assumed continuous.
+
+Nothing here is Yang–Mills specific, and that is the point: quotient, descent
+and uniqueness are generic machinery, so the remaining physical work is the
+construction of the measure/pairing and of the Hamiltonian, not of another
+quotient framework.
+-/
+import Mathlib
+
+namespace RequestProject.YangMills.PhysicalNullQuotient
+
+open scoped InnerProductSpace
+
+variable {E : Type*} [SeminormedAddCommGroup E] [InnerProductSpace ℂ E]
+
+/-- The physical null relation: two wavefunctions are physically identical when
+their difference has zero seminorm, i.e. vanishes almost everywhere in the
+concrete `L²` instantiation. -/
+def NullRel (f g : E) : Prop := ‖f - g‖ = 0
+
+theorem nullRel_iff_inner_self_eq_zero {f g : E} :
+    NullRel f g ↔ ⟪f - g, f - g⟫_ℂ = 0 := by
+  rw [NullRel, inner_self_eq_norm_sq_to_K]
+  constructor
+  · intro h; rw [h]; norm_num
+  · intro h
+    have h2 : ((‖f - g‖ : ℂ)) = 0 := pow_eq_zero_iff (n := 2) (by norm_num) |>.mp h
+    exact_mod_cast h2
+
+omit [InnerProductSpace ℂ E] in
+theorem nullRel_iff_inseparable {f g : E} : NullRel f g ↔ Inseparable f g := by
+  rw [NullRel, ← dist_eq_norm, ← Metric.inseparable_iff]
+
+omit [InnerProductSpace ℂ E] in
+@[refl] theorem nullRel_refl (f : E) : NullRel f f := by simp [NullRel]
+
+omit [InnerProductSpace ℂ E] in
+theorem nullRel_symm {f g : E} (h : NullRel f g) : NullRel g f := by
+  rw [nullRel_iff_inseparable] at h ⊢; exact h.symm
+
+omit [InnerProductSpace ℂ E] in
+theorem nullRel_trans {f g h : E} (hfg : NullRel f g) (hgh : NullRel g h) :
+    NullRel f h := by
+  rw [nullRel_iff_inseparable] at hfg hgh ⊢; exact hfg.trans hgh
+
+omit [InnerProductSpace ℂ E] in
+/-- The physical null relation is an equivalence relation. -/
+theorem nullRel_equivalence : Equivalence (NullRel (E := E)) :=
+  ⟨nullRel_refl, nullRel_symm, nullRel_trans⟩
+
+/-- The pairing descends: null-equivalent arguments give the same pairing. -/
+theorem inner_congr_of_nullRel {f f' g g' : E} (hf : NullRel f f')
+    (hg : NullRel g g') : ⟪f, g⟫_ℂ = ⟪f', g'⟫_ℂ :=
+  Inseparable.inner_eq_inner (nullRel_iff_inseparable.mp hf)
+    (nullRel_iff_inseparable.mp hg)
+
+/-- A null vector pairs to zero against everything. -/
+theorem inner_eq_zero_of_norm_eq_zero {f : E} (hf : ‖f‖ = 0) (g : E) :
+    ⟪f, g⟫_ℂ = 0 :=
+  inner_eq_zero_of_left g hf
+
+/-- **Separation.** The weak pairings against all test vectors determine a
+wavefunction up to the physical null relation.  This is the property the
+terminal lane needs in order to turn weak (form) identities into operator
+identities, and it is automatic for a semi-inner product. -/
+theorem nullRel_of_forall_inner_eq {f g : E}
+    (h : ∀ φ : E, ⟪f, φ⟫_ℂ = ⟪g, φ⟫_ℂ) : NullRel f g := by
+  rw [nullRel_iff_inner_self_eq_zero, inner_sub_left, h (f - g), sub_self]
+
+theorem forall_inner_eq_of_nullRel {f g : E} (h : NullRel f g) (φ : E) :
+    ⟪f, φ⟫_ℂ = ⟪g, φ⟫_ℂ :=
+  inner_congr_of_nullRel h (nullRel_refl φ)
+
+/-- Weak-pairing equality is *equivalent* to physical identity. -/
+theorem nullRel_iff_forall_inner_eq {f g : E} :
+    NullRel f g ↔ ∀ φ : E, ⟪f, φ⟫_ℂ = ⟪g, φ⟫_ℂ :=
+  ⟨forall_inner_eq_of_nullRel, nullRel_of_forall_inner_eq⟩
+
+/-! ## Descent of operators to the quotient -/
+
+/-- A linear map preserves the physical null relation. -/
+def PreservesNull (T : E →ₗ[ℂ] E) : Prop :=
+  ∀ f g : E, NullRel f g → NullRel (T f) (T g)
+
+/-- Every bounded operator preserves the physical null relation: null
+preservation is *not* an extra analytic payment in the bounded case. -/
+theorem nullRel_map_of_continuousLinearMap (T : E →L[ℂ] E) :
+    PreservesNull (T : E →ₗ[ℂ] E) := by
+  intro f g h
+  have h0 : ‖T f - T g‖ ≤ 0 := by
+    rw [← T.map_sub]
+    calc ‖T (f - g)‖ ≤ ‖T‖ * ‖f - g‖ := T.le_opNorm _
+      _ = 0 := by rw [NullRel] at h; rw [h]; ring
+  exact le_antisymm h0 (norm_nonneg _)
+
+/-- A linear map is *symmetric* for the physical pairing. -/
+def IsSymmetricOp (T : E →ₗ[ℂ] E) : Prop := ∀ f g : E, ⟪T f, g⟫_ℂ = ⟪f, T g⟫_ℂ
+
+/-- **Symmetry already implies null preservation.**  An everywhere-defined
+linear map (continuity, hence boundedness, is not assumed) that is symmetric for the physical pairing automatically maps
+null-equivalent wavefunctions to null-equivalent wavefunctions, so the physical
+Hamiltonian does not owe a separate "null preservation" receipt on top of the
+integration-by-parts identity: the two are the same payment. -/
+theorem preservesNull_of_isSymmetricOp {T : E →ₗ[ℂ] E} (hT : IsSymmetricOp T) :
+    PreservesNull T := by
+  intro f g hfg
+  refine nullRel_of_forall_inner_eq (fun φ => ?_)
+  have hz : ⟪T (f - g), φ⟫_ℂ = 0 := by
+    rw [hT]
+    exact inner_eq_zero_of_norm_eq_zero hfg (T φ)
+  rw [map_sub, inner_sub_left] at hz
+  exact sub_eq_zero.mp hz
+
+variable (T : E →ₗ[ℂ] E)
+
+/-- The operator descended to the physical quotient. -/
+noncomputable def descend (h : PreservesNull T) :
+    SeparationQuotient E →ₗ[ℂ] SeparationQuotient E where
+  toFun := SeparationQuotient.lift (fun f => SeparationQuotient.mk (T f)) <| by
+    intro f g hfg
+    exact SeparationQuotient.mk_eq_mk.mpr
+      (nullRel_iff_inseparable.mp (h f g (nullRel_iff_inseparable.mpr hfg)))
+  map_add' := by
+    intro x y
+    obtain ⟨f, rfl⟩ := SeparationQuotient.surjective_mk x
+    obtain ⟨g, rfl⟩ := SeparationQuotient.surjective_mk y
+    simp [← SeparationQuotient.mk_add]
+  map_smul' := by
+    intro c x
+    obtain ⟨f, rfl⟩ := SeparationQuotient.surjective_mk x
+    simp [← SeparationQuotient.mk_smul]
+
+@[simp] theorem descend_mk (h : PreservesNull T) (f : E) :
+    descend T h (SeparationQuotient.mk f) = SeparationQuotient.mk (T f) := rfl
+
+/-- The descended operator is the unique linear map making the quotient map
+equivariant. -/
+theorem descend_unique (h : PreservesNull T)
+    (S : SeparationQuotient E →ₗ[ℂ] SeparationQuotient E)
+    (hS : ∀ f : E, S (SeparationQuotient.mk f) = SeparationQuotient.mk (T f)) :
+    S = descend T h := by
+  ext x
+  obtain ⟨f, rfl⟩ := SeparationQuotient.surjective_mk x
+  simpa using hS f
+
+/-- **Weak identities are operator identities on the quotient.**  If two
+operators have the same weak pairings against all test wavefunctions, their
+descended operators are equal.  No bespoke operator-equality theorem is needed:
+separation of null classes does the whole job. -/
+theorem descend_congr_of_forall_inner_eq {T S : E →ₗ[ℂ] E}
+    (hT : PreservesNull T) (hS : PreservesNull S)
+    (h : ∀ f φ : E, ⟪T f, φ⟫_ℂ = ⟪S f, φ⟫_ℂ) :
+    descend T hT = descend S hS := by
+  ext x
+  obtain ⟨f, rfl⟩ := SeparationQuotient.surjective_mk x
+  have hnull : NullRel (T f) (S f) := nullRel_of_forall_inner_eq (h f)
+  simpa [descend_mk] using
+    SeparationQuotient.mk_eq_mk.mpr (nullRel_iff_inseparable.mp hnull)
+
+/-! ## The completed physical carrier -/
+
+/-- The physical Hilbert space: complete the null quotient.  Mathlib supplies
+the inner product on both stages, so the physical carrier is a genuine Hilbert
+space with no further construction. -/
+noncomputable abbrev PhysicalHilbert (E : Type*) [SeminormedAddCommGroup E]
+    [InnerProductSpace ℂ E] : Type _ :=
+  UniformSpace.Completion (SeparationQuotient E)
+
+noncomputable example : InnerProductSpace ℂ (PhysicalHilbert E) := inferInstance
+
+example : CompleteSpace (PhysicalHilbert E) := inferInstance
+
+/-- On the quotient the pairing is definite: the physical carrier has no
+residual null vectors. -/
+theorem quotient_inner_definite (x : SeparationQuotient E)
+    (h : ∀ y : SeparationQuotient E, ⟪x, y⟫_ℂ = 0) : x = 0 := by
+  have hx := h x
+  simpa using inner_self_eq_zero.mp hx
+
+end RequestProject.YangMills.PhysicalNullQuotient
+
+#print axioms RequestProject.YangMills.PhysicalNullQuotient.nullRel_of_forall_inner_eq
+#print axioms RequestProject.YangMills.PhysicalNullQuotient.nullRel_map_of_continuousLinearMap
+#print axioms RequestProject.YangMills.PhysicalNullQuotient.preservesNull_of_isSymmetricOp
+#print axioms RequestProject.YangMills.PhysicalNullQuotient.descend_unique
+#print axioms RequestProject.YangMills.PhysicalNullQuotient.descend_congr_of_forall_inner_eq
+#print axioms RequestProject.YangMills.PhysicalNullQuotient.quotient_inner_definite

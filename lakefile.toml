@@ -75,6 +75,14 @@ name = "NSBControl"
 srcDir = "ImportedLeans/aristotle-results/ns-83c905e8-20260916"
 globs = ["RequestProject.NavierStokes.CriticalDyadicWeight", "RequestProject.NavierStokes.CriticalWeightedGalerkin", "RequestProject.NavierStokes.CriticalProductionAbsorption", "RequestProject.NavierStokes.CriticalProductionWitness", "RequestProject.NavierStokes.CriticalWeightDifferenceTransfer", "RequestProject.NavierStokes.TrancheAxiomAudit20260915B"]
 
+# Yang--Mills final-lane source returned by Aristotle task 7c8ef02f.  It is
+# opt-in and retains the worker's full dependency surface as provenance; its
+# physical endpoint remains governed by the explicit hypotheses in that lane.
+[[lean_lib]]
+name = "YMFinal"
+srcDir = "ImportedLeans/aristotle-results/ym-7c8ef02f-20260916"
+globs = ["RequestProject.YangMills.*"]
+
 [[lean_lib]]
 name = "Welds"
 globs = ["Welds", "Welds.*"]

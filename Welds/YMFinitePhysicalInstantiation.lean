@@ -8,20 +8,20 @@ machinery, and the already-proved Row-A1 scalar must lower-bound the vacuum-sect
 quadratic form of that *same* operator.
 
 This module makes exactly that payment boundary theorem-bearing without hiding it
-behind a Boolean or provenance receipt.  A `RowA1PhysicalGapInstance` contains:
+behind a Boolean or provenance receipt.
 
-* the existing `SU(N)`/budget hypotheses that prove `0 < bMinus`;
-* a genuine `VacuumGapDatum`, hence an actual self-adjoint partial-domain operator,
-  normalized zero-energy vacuum, and vacuum-sector form gap;
-* the live physical same-object inequality `bMinus <= datum.gap`.
+There are now two equivalent consumer-facing entry points:
 
-Once those inputs exist, no further spectral argument is needed: the Row-A1 form
-gap and zero-shift inverse budget follow from the already-existing compilers.
+1. `RowA1PhysicalGapInstance` accepts a genuine `VacuumGapDatum` plus the visible
+   inequality `bMinus <= datum.gap`;
+2. the more primitive `rowA1PhysicalGapInstanceOfDirectFormBound` starts directly
+   from the physical operator, normalized zero-energy vacuum, self-adjointness,
+   and the Row-A1 quadratic-form inequality itself.  It constructs the gap datum
+   with `gap = bMinus`, so proof search no longer needs to presuppose a separately
+   named physical gap before proving the Row-A1 lower bound.
 
-Crucially, constructing an inhabitant of `RowA1PhysicalGapInstance` for the
-literal finite-spacing Yang--Mills action remains physical work.  This file does
-not manufacture that Hamiltonian, its dense core, self-adjointness, or the
-inequality relating its quadratic form to `bMinus`.
+Crucially, neither route manufactures the literal finite-spacing Yang--Mills
+action, its measure, domain/core, self-adjointness, or direct form estimate.
 -/
 import Welds.YMVacuumGapBackwardBounds
 
@@ -31,6 +31,33 @@ open scoped InnerProductSpace
 open RequestProject.YangMills.VacuumSectorSpectralGap
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
+
+/-- **Primitive physical constructor.**  If the literal finite-spacing operator
+is already self-adjoint, has a normalized zero-energy vacuum, and satisfies the
+Row-A1 quadratic-form lower bound on the vacuum complement, then it is a genuine
+`VacuumGapDatum` with gap exactly `bMinus`.
+
+This is the preferred backward proof-search target because it asks for the form
+inequality directly rather than assuming a pre-existing larger gap. -/
+noncomputable def rowA1GapDatumOfDirectFormBound
+    {N : ℕ} (hN : 2 ≤ N) {r h : ℝ}
+    (hr : r ≤ YangMills.splitCost (2 / 5)) (hh : h ≤ 1 / 2)
+    (op : E →ₗ.[ℂ] E) (vac : E)
+    (hmem : vac ∈ op.domain) (hunit : ‖vac‖ = 1)
+    (hground : op ⟨vac, hmem⟩ = 0)
+    (hsa : IsSelfAdjoint op)
+    (hform : HasVacuumFormGap op vac
+      (YangMills.bMinus (YangMills.casimirAdjointSU N) r h)) :
+    VacuumGapDatum E where
+  op := op
+  vac := vac
+  gap := YangMills.bMinus (YangMills.casimirAdjointSU N) r h
+  vac_mem := hmem
+  vac_unit := hunit
+  vac_ground := hground
+  selfAdjoint := hsa
+  gap_pos := YangMills.bMinus_pos_SU hN hr hh
+  form_gap := hform
 
 /-- The exact finite-spacing physical payment required to turn the already-proved
 Row-A1 scalar into a Hamiltonian vacuum gap.
@@ -45,6 +72,26 @@ structure RowA1PhysicalGapInstance (N : ℕ) (r h : ℝ) where
   datum : VacuumGapDatum E
   rowA1_le_gap :
     YangMills.bMinus (YangMills.casimirAdjointSU N) r h ≤ datum.gap
+
+/-- **Direct-form constructor for the physical instance.**  Once the literal
+operator and its Row-A1 vacuum-complement form inequality are proved, the
+`rowA1_le_gap` field is definitionally reflexive because the constructed gap is
+exactly `bMinus`. -/
+noncomputable def rowA1PhysicalGapInstanceOfDirectFormBound
+    {N : ℕ} (hN : 2 ≤ N) {r h : ℝ}
+    (hr : r ≤ YangMills.splitCost (2 / 5)) (hh : h ≤ 1 / 2)
+    (op : E →ₗ.[ℂ] E) (vac : E)
+    (hmem : vac ∈ op.domain) (hunit : ‖vac‖ = 1)
+    (hground : op ⟨vac, hmem⟩ = 0)
+    (hsa : IsSelfAdjoint op)
+    (hform : HasVacuumFormGap op vac
+      (YangMills.bMinus (YangMills.casimirAdjointSU N) r h)) :
+    RowA1PhysicalGapInstance (E := E) N r h where
+  hN := hN
+  hr := hr
+  hh := hh
+  datum := rowA1GapDatumOfDirectFormBound hN hr hh op vac hmem hunit hground hsa hform
+  rowA1_le_gap := le_rfl
 
 /-- The Row-A1 candidate is strictly positive from the existing `LocalGap`
 theorem, independently of the physical Hamiltonian weld. -/
@@ -95,6 +142,8 @@ theorem rowA1PhysicalZeroShiftBound {N : ℕ} {r h : ℝ}
   YMVacuumGapBackwardBounds.rowA1CandidateZeroShiftBound
     I.hN I.hr I.hh I.datum I.rowA1_le_gap hψorth hψ
 
+#print axioms rowA1GapDatumOfDirectFormBound
+#print axioms rowA1PhysicalGapInstanceOfDirectFormBound
 #print axioms rowA1GapPositive
 #print axioms rowA1GapDatum
 #print axioms rowA1VacuumFormGap

@@ -10,7 +10,9 @@ needed by consumer-first/BIDI proof search:
 * any independently proved positive lower bound `δ ≤ Δ` can replace `Δ`, giving
   the weaker but source-friendly budget `‖ψ‖ ≤ δ⁻¹ ‖Hψ‖`;
 * a uniform cutoff gap transported by `ContinuumGapTransport` gives the same
-  zero-shift estimate for the continuum operator.
+  zero-shift estimate for the continuum operator;
+* a genuine same-evolution/common-core operator equality transports the same
+  quantitative budget to the welded Hamiltonian.
 
 No Yang--Mills Hamiltonian, continuum carrier, or gap is manufactured here.  The
 point is to turn a genuine physical gap lower bound into an explicit terminal
@@ -19,11 +21,13 @@ against.
 -/
 import RequestProject.YangMills.VacuumSectorSpectralGap
 import RequestProject.YangMills.ContinuumGapTransport
+import RequestProject.YangMills.SameObjectGapTransfer
 
 namespace Welds.YMVacuumGapBackwardBounds
 
 open scoped InnerProductSpace
 open RequestProject.YangMills.VacuumSectorSpectralGap
+open RequestProject.YangMills.UnboundedHamiltonianDomain
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
 
@@ -82,8 +86,7 @@ existing continuum theorem. -/
 theorem continuumZeroShiftResolventBound
     {H : ℕ → E →ₗ.[ℂ] E} {vacn : ℕ → E} {Hinf : E →ₗ.[ℂ] E}
     {vac : E} {Δ : ℝ}
-    (hgap : ∀ n,
-      HasVacuumFormGap (H n) (vacn n) Δ)
+    (hgap : ∀ n, HasVacuumFormGap (H n) (vacn n) Δ)
     (hlim : RequestProject.YangMills.ContinuumGapTransport.IsVacuumGraphLimit
       H vacn Hinf vac)
     (hsa : IsSelfAdjoint Hinf) (hmem : vac ∈ Hinf.domain)
@@ -94,9 +97,56 @@ theorem continuumZeroShiftResolventBound
     (RequestProject.YangMills.ContinuumGapTransport.continuum_resolvent_bound
       hgap hlim hsa hmem hunit hground hΔ (lam := 0) hΔ hψorth)
 
+/-- **Same-object quantitative weld.**  If two self-adjoint Hamiltonians are
+proved equal by differentiating the same evolution on a common core, the
+zero-shift vacuum-sector inverse budget transfers with the same gap constant.
+
+The equality is theorem-producing machinery from `SameObjectGapTransfer`; a
+shared name, scalar or receipt is not accepted as a replacement. -/
+theorem sameObjectZeroShiftResolventBound
+    {U V : ℝ → E → E} {S : Submodule ℂ E} {H₁ H₂ : E →ₗ.[ℂ] E}
+    (hUV : U = V) (hc₁ : H₁.HasCore S) (hc₂ : H₂.HasCore S)
+    (hg₁ : IsPMapEvolutionGenerator U S H₁)
+    (hg₂ : IsPMapEvolutionGenerator V S H₂)
+    (D : VacuumGapDatum E) (hD : D.op = H₁)
+    {ψ : H₂.domain} (hψorth : ⟪D.vac, (ψ : E)⟫_ℂ = 0) :
+    ‖(ψ : E)‖ ≤ D.gap⁻¹ * ‖H₂ ψ‖ := by
+  let D₂ :=
+    RequestProject.YangMills.SameObjectGapTransfer.vacuumGapDatum_of_same_evolution
+      hUV hc₁ hc₂ hg₁ hg₂ D hD
+  have hbound : ‖(ψ : E)‖ ≤ D₂.gap⁻¹ * ‖D₂.op ψ‖ := by
+    apply zeroShiftResolventBound D₂
+    · exact hψorth
+    · rfl
+  exact hbound
+
+/-- **Assembled backward bound.**  A uniform cutoff vacuum gap, graph-limit
+transport, and genuine same-object OS/YM weld give an explicit zero-shift
+resolvent budget for the welded Hamiltonian.  This is the terminal numeric
+constraint that an upstream source construction may target. -/
+theorem chainZeroShiftResolventBound
+    {H : ℕ → E →ₗ.[ℂ] E} {vacn : ℕ → E} {Hinf Hos : E →ₗ.[ℂ] E}
+    {vac : E} {Δ : ℝ}
+    (hgap : ∀ n, HasVacuumFormGap (H n) (vacn n) Δ)
+    (hlim : RequestProject.YangMills.ContinuumGapTransport.IsVacuumGraphLimit
+      H vacn Hinf vac)
+    (hsa : IsSelfAdjoint Hinf) (hmem : vac ∈ Hinf.domain)
+    (hunit : ‖vac‖ = 1) (hground : Hinf ⟨vac, hmem⟩ = 0) (hΔ : 0 < Δ)
+    {U V : ℝ → E → E} {S : Submodule ℂ E} (hUV : U = V)
+    (hc₁ : Hinf.HasCore S) (hc₂ : Hos.HasCore S)
+    (hg₁ : IsPMapEvolutionGenerator U S Hinf)
+    (hg₂ : IsPMapEvolutionGenerator V S Hos)
+    {ψ : Hos.domain} (hψorth : ⟪vac, (ψ : E)⟫_ℂ = 0) :
+    ‖(ψ : E)‖ ≤ Δ⁻¹ * ‖Hos ψ‖ := by
+  let D := RequestProject.YangMills.ContinuumGapTransport.continuumDatum
+    hgap hlim hsa hmem hunit hground hΔ
+  exact sameObjectZeroShiftResolventBound hUV hc₁ hc₂ hg₁ hg₂ D rfl hψorth
+
 #print axioms zeroShiftResolventBound
 #print axioms weakenGapDatum
 #print axioms zeroShiftResolventBoundOfGapLowerBound
 #print axioms continuumZeroShiftResolventBound
+#print axioms sameObjectZeroShiftResolventBound
+#print axioms chainZeroShiftResolventBound
 
 end Welds.YMVacuumGapBackwardBounds

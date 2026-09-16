@@ -12,7 +12,10 @@ needed by consumer-first/BIDI proof search:
 * a uniform cutoff gap transported by `ContinuumGapTransport` gives the same
   zero-shift estimate for the continuum operator;
 * a genuine same-evolution/common-core operator equality transports the same
-  quantitative budget to the welded Hamiltonian.
+  quantitative budget to the welded Hamiltonian;
+* the already-proved Row A1 scalar `bMinus` can be used as a concrete backward
+  budget once, and only once, an explicit same-object inequality
+  `bMinus ≤ physical gap` is supplied.
 
 No Yang--Mills Hamiltonian, continuum carrier, or gap is manufactured here.  The
 point is to turn a genuine physical gap lower bound into an explicit terminal
@@ -22,6 +25,7 @@ against.
 import RequestProject.YangMills.VacuumSectorSpectralGap
 import RequestProject.YangMills.ContinuumGapTransport
 import RequestProject.YangMills.SameObjectGapTransfer
+import RequestProject.YangMills.LocalGap
 
 namespace Welds.YMVacuumGapBackwardBounds
 
@@ -142,11 +146,35 @@ theorem chainZeroShiftResolventBound
     hgap hlim hsa hmem hunit hground hΔ
   exact sameObjectZeroShiftResolventBound hUV hc₁ hc₂ hg₁ hg₂ D rfl hψorth
 
+/-- **First concrete backward cross-pollination.**  The existing Row A1 lane
+already proves positivity of
+
+`bMinus (casimirAdjointSU N) r h`
+
+for `N ≥ 2` under the repository's local/history budgets.  If the physical weld
+proves that this same scalar is a lower bound for the gap of the same
+Hamiltonian, the terminal inverse budget follows immediately.
+
+The hypothesis `hphysical` is deliberately visible: Row A1 positivity alone is
+not a theorem identifying the scalar beta coefficient with a Hamiltonian gap. -/
+theorem rowA1CandidateZeroShiftBound
+    {N : ℕ} (hN : 2 ≤ N) {r h : ℝ}
+    (hr : r ≤ YangMills.splitCost (2 / 5)) (hh : h ≤ 1 / 2)
+    (D : VacuumGapDatum E)
+    (hphysical : YangMills.bMinus (YangMills.casimirAdjointSU N) r h ≤ D.gap)
+    {y : E} {ψ : D.op.domain}
+    (hψorth : ⟪D.vac, (ψ : E)⟫_ℂ = 0) (hψ : D.op ψ = y) :
+    ‖(ψ : E)‖ ≤
+      (YangMills.bMinus (YangMills.casimirAdjointSU N) r h)⁻¹ * ‖y‖ :=
+  zeroShiftResolventBoundOfGapLowerBound D
+    (YangMills.bMinus_pos_SU hN hr hh) hphysical hψorth hψ
+
 #print axioms zeroShiftResolventBound
 #print axioms weakenGapDatum
 #print axioms zeroShiftResolventBoundOfGapLowerBound
 #print axioms continuumZeroShiftResolventBound
 #print axioms sameObjectZeroShiftResolventBound
 #print axioms chainZeroShiftResolventBound
+#print axioms rowA1CandidateZeroShiftBound
 
 end Welds.YMVacuumGapBackwardBounds

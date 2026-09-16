@@ -15,6 +15,7 @@ import Welds.NSRateBlockPiWeld
 import Welds.ReachabilityCarrierWeld
 import Welds.YMVacuumGapBackwardBounds
 import Welds.YMFinitePhysicalInstantiation
+import Welds.YMPhysicalClosureNormalForm
 import Welds.YMBidiLatticeShell
 
 #print axioms Welds.NSRateBlockPi.ns_herm_eq_euclidean_inner
@@ -46,6 +47,14 @@ import Welds.YMBidiLatticeShell
 #print axioms Welds.YMFinitePhysicalInstantiation.rowA1VacuumFormGap
 #print axioms Welds.YMFinitePhysicalInstantiation.rowA1PhysicalZeroShiftBound
 
+#print axioms Welds.YMPhysicalClosureNormalForm.rowA1UniformGapPositive
+#print axioms Welds.YMPhysicalClosureNormalForm.rowA1UniformCutoffFormGap
+#print axioms Welds.YMPhysicalClosureNormalForm.rowA1ContinuumZeroShiftBound
+#print axioms Welds.YMPhysicalClosureNormalForm.rowA1SameObjectContinuumZeroShiftBound
+
 #print axioms Welds.YMBidiLatticeShell.lattice4ShellCardBound
 #print axioms Welds.YMBidiLatticeShell.lattice4FarShellEnergyTsumLe
 #print axioms Welds.YMBidiLatticeShell.lattice4CauchyShellEstimate
+#print axioms Welds.YMBidiLatticeShell.cmp116VolumeMarkedTotalEnergyLe
+#print axioms Welds.YMBidiLatticeShell.cmp116VolumeMarkedFarShellEnergyTsumLe
+#print axioms Welds.YMBidiLatticeShell.cmp116VolumeCauchyShellEstimate

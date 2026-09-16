@@ -13,6 +13,7 @@ is why this rollup is not a default build target.
 -/
 import Welds.NSRateBlockPiWeld
 import Welds.ReachabilityCarrierWeld
+import Welds.YMVacuumGapBackwardBounds
 
 #print axioms Welds.NSRateBlockPi.ns_herm_eq_euclidean_inner
 #print axioms Welds.NSRateBlockPi.ns_nrm_eq_euclidean_norm
@@ -29,3 +30,8 @@ import Welds.ReachabilityCarrierWeld
 #print axioms Welds.ReachabilityCarrier.reachB_false_of_invariant
 #print axioms Welds.ReachabilityCarrier.chemistry_language_index_available
 #print axioms Welds.ReachabilityCarrier.reachB_accept_not_language_free
+
+#print axioms Welds.YMVacuumGapBackwardBounds.zeroShiftResolventBound
+#print axioms Welds.YMVacuumGapBackwardBounds.weakenGapDatum
+#print axioms Welds.YMVacuumGapBackwardBounds.zeroShiftResolventBoundOfGapLowerBound
+#print axioms Welds.YMVacuumGapBackwardBounds.continuumZeroShiftResolventBound

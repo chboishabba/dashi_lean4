@@ -17,6 +17,7 @@ import Welds.YMVacuumGapBackwardBounds
 import Welds.YMFinitePhysicalInstantiation
 import Welds.YMPhysicalClosureNormalForm
 import Welds.YMBidiLatticeShell
+import Welds.YMCMP116SourceCovariance
 
 #print axioms Welds.NSRateBlockPi.ns_herm_eq_euclidean_inner
 #print axioms Welds.NSRateBlockPi.ns_nrm_eq_euclidean_norm
@@ -58,3 +59,5 @@ import Welds.YMBidiLatticeShell
 #print axioms Welds.YMBidiLatticeShell.cmp116VolumeMarkedTotalEnergyLe
 #print axioms Welds.YMBidiLatticeShell.cmp116VolumeMarkedFarShellEnergyTsumLe
 #print axioms Welds.YMBidiLatticeShell.cmp116VolumeCauchyShellEstimate
+
+#print axioms Welds.YMCMP116SourceCovariance.cmp116VolumeSourceCovarianceBound

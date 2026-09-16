@@ -1,0 +1,4 @@
+import Welds.YMBidiLatticeShell
+
+#check Welds.YMBidiLatticeShell.cmp116VolumeMarkedTotalEnergyLe
+#check Welds.YMBidiLatticeShell.cmp116VolumeCauchyShellEstimate

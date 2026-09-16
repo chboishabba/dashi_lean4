@@ -16,6 +16,8 @@ import Synthesis.ExponentFibre
 import Synthesis.MonsterOrder
 import Synthesis.MonsterCharacterDetermination
 import Synthesis.MonsterCharacterMultiplicityRegression
+import Synthesis.RiemannFarShellQuarticCutoff
+import Synthesis.RiemannFarShellQuarticCutoffRegression
 import Synthesis.Hyperfabric
 import Synthesis.CodecBridge
 import Synthesis.EndToEnd

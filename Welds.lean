@@ -35,3 +35,5 @@ import Welds.YMVacuumGapBackwardBounds
 #print axioms Welds.YMVacuumGapBackwardBounds.weakenGapDatum
 #print axioms Welds.YMVacuumGapBackwardBounds.zeroShiftResolventBoundOfGapLowerBound
 #print axioms Welds.YMVacuumGapBackwardBounds.continuumZeroShiftResolventBound
+#print axioms Welds.YMVacuumGapBackwardBounds.sameObjectZeroShiftResolventBound
+#print axioms Welds.YMVacuumGapBackwardBounds.chainZeroShiftResolventBound

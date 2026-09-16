@@ -29,6 +29,8 @@ import Synthesis.LinearConsumerPreparedOperator
 import Synthesis.LinearConsumerPreparedOperatorRegression
 import Synthesis.LinearConsumerSyntheticBidiIncidence
 import Synthesis.LinearConsumerSyntheticBidiIncidenceRegression
+import Synthesis.LinearConsumerSyntheticBidiSeed
+import Synthesis.LinearConsumerSyntheticBidiSeedRegression
 import Synthesis.Hyperfabric
 import Synthesis.CodecBridge
 import Synthesis.EndToEnd

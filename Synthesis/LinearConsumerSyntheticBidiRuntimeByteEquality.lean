@@ -1,0 +1,283 @@
+import Mathlib.Tactic
+import Synthesis.LinearConsumerSyntheticBidiSeedBytes
+import Synthesis.LinearConsumerSyntheticBidiBaselineActionBytes
+
+/-!
+# Exact runtime/formal seed and baseline-action byte equality
+
+The hash-bound `dashiRTX` baseline execution emits the seed block and final
+synthetic action as 924 row bytes: bit `j` of byte `r` is matrix entry `(r,j)`.
+For compactness this module records those observed runtime bytes packed eight at
+a time into 116 little-endian 64-bit words (the final word uses only its low
+four bytes).
+
+The formal Lean side independently derives the same 924-byte carriers from the
+seed generator and the fully assembled Krylov/coefficient action.  The theorems
+below are finite equality checks between those independent constructions.
+
+This pays only the deterministic synthetic baseline object identities.  It does
+not identify production CADO artifacts or historical RSA-260 data.
+-/
+
+namespace Synthesis
+
+def syntheticBidiRuntimePackedByte
+    (words : Fin 116 → BitVec 64) (n : Fin 924) : BitVec 8 :=
+  BitVec.ofNat 8
+    ((words ⟨n.val / 8, by omega⟩).toNat / 2 ^ ((n.val % 8) * 8))
+
+def syntheticBidiRuntimeSeedPackedWord (i : Fin 116) : BitVec 64 :=
+  BitVec.ofNat 64 <| match i.val with
+    | 0 => 0xD6F84B373DC22C72
+    | 1 => 0xD8AB51B7B179DF3D
+    | 2 => 0xC9C9A15B75D3CEAE
+    | 3 => 0x6AFE46E96D07F69D
+    | 4 => 0xA21A3485238BCDCB
+    | 5 => 0x13FECAEAAF3ED5DD
+    | 6 => 0xE109A8C03F449597
+    | 7 => 0xC28B496CA823A66D
+    | 8 => 0x051BC3A0B47DBC7B
+    | 9 => 0xF0AAAE54EE25BC47
+    | 10 => 0xD86CDA1ADFF2C737
+    | 11 => 0xE034BE09F8B8FEB0
+    | 12 => 0x9A6466A77969EEFD
+    | 13 => 0x88202063E4F5D1DE
+    | 14 => 0xA91A86C93666E378
+    | 15 => 0xE45518F3F865B59C
+    | 16 => 0x3CCC186BED529B9E
+    | 17 => 0x25B1FF6C977BC43A
+    | 18 => 0xB7E5597178579BF0
+    | 19 => 0x848462545610D6E8
+    | 20 => 0x89C113A86827CFE1
+    | 21 => 0xB86585EE7123B2CE
+    | 22 => 0x55094BEA3FC72F1C
+    | 23 => 0xCE8B43EAAD3BC3CA
+    | 24 => 0x298CD8EA077FF9E6
+    | 25 => 0x2C38DC22B7B11499
+    | 26 => 0xD0AEE0FAC03EA68A
+    | 27 => 0xCFFEF6AFD873DA3D
+    | 28 => 0x278B958D7030AF9D
+    | 29 => 0x78810CB3C3D04E54
+    | 30 => 0x0139A803133FEA2C
+    | 31 => 0x494F1C06163D22C6
+    | 32 => 0x2D4723D2279CE30C
+    | 33 => 0x0B965F1CFBA967F5
+    | 34 => 0xB0F0AA213313D563
+    | 35 => 0x8CB34DC1D055C365
+    | 36 => 0xA37A7E60B5A492BB
+    | 37 => 0x0918CA8DDB53D754
+    | 38 => 0x3D3AA500C3F1619A
+    | 39 => 0x46E6A93EF6AA5E7E
+    | 40 => 0xE722D48422B4B353
+    | 41 => 0x192F13A4E8A966A9
+    | 42 => 0x5D074511019D9BA2
+    | 43 => 0x529E9B67B015D29C
+    | 44 => 0xFE9A8E9A4AF6D851
+    | 45 => 0xDC0BE2722ED92B48
+    | 46 => 0xFB47A57704508A02
+    | 47 => 0xA866FBA504F87F23
+    | 48 => 0xB89FF96B2D0BC9C9
+    | 49 => 0x84406E540FA2C861
+    | 50 => 0x406F98D9FD3FBACF
+    | 51 => 0x55D2217FB2E672E7
+    | 52 => 0x980B352E60A36A8B
+    | 53 => 0x76605F3E41311568
+    | 54 => 0x31A728CF4ABCB249
+    | 55 => 0x3ABA6762993FA0B2
+    | 56 => 0x2EBF9BEC599EAD47
+    | 57 => 0xEAF53EAB05B97D14
+    | 58 => 0x9296BAA2768E1581
+    | 59 => 0xF48CC39D4C97ADF4
+    | 60 => 0xA34516E532E24A57
+    | 61 => 0x022371022C0493ED
+    | 62 => 0xB105DDC4D097CF30
+    | 63 => 0x9380117110B4B479
+    | 64 => 0xCA2732ED1F4C7A9D
+    | 65 => 0x382A4D4E2EC2162C
+    | 66 => 0x3E921B47E8EA9DCB
+    | 67 => 0x0CC1F38A7AADB3A3
+    | 68 => 0xB5FCCAEDD8536218
+    | 69 => 0xEF6B5FBD1E82982F
+    | 70 => 0xA89655C3AE241C2B
+    | 71 => 0x832882CA0336D66D
+    | 72 => 0x9D4C63BD2268F95A
+    | 73 => 0xB2DCA7CDD319F570
+    | 74 => 0x0E5D6C40FB1EC47B
+    | 75 => 0x64C6C3DB0F402023
+    | 76 => 0x00772E8FC9D506EB
+    | 77 => 0x92E7AC83A70D5CAA
+    | 78 => 0x0696264723099CFD
+    | 79 => 0xB587C1460CA95174
+    | 80 => 0xB526692E018C38F0
+    | 81 => 0x08BFDC99D0ED1C0F
+    | 82 => 0xA558877BFF0CF0C6
+    | 83 => 0x656E27ADD2C98793
+    | 84 => 0xE0945BF836B61041
+    | 85 => 0x4209662944901DC3
+    | 86 => 0x9E98EEB7E31E9BA5
+    | 87 => 0xDCA6386638FA3318
+    | 88 => 0x2CE3E025D8B48C2D
+    | 89 => 0x3053940ECD4DBD6F
+    | 90 => 0x4D6E5D0A3D6B94E9
+    | 91 => 0x8239B25B31215A24
+    | 92 => 0x88A57A1B5C10BE58
+    | 93 => 0x2F38C95E30026557
+    | 94 => 0xF1D032BDCAF427FE
+    | 95 => 0x719CF60D447610DD
+    | 96 => 0x42B3D2F28E9D76C6
+    | 97 => 0x330E39F175FD1030
+    | 98 => 0x34B8EE1F51E9F096
+    | 99 => 0xDA4F233F366ADF11
+    | 100 => 0x36E8AB12C7ADC078
+    | 101 => 0x967370E8DBEEA10E
+    | 102 => 0xD722364D2C614F35
+    | 103 => 0x5CDA3BDE6BBDE03A
+    | 104 => 0xA03CFC6FD7C0B3B4
+    | 105 => 0xC16FC65CA17F3B2C
+    | 106 => 0x0A649538FDE093AF
+    | 107 => 0x3C47C381E1CDE055
+    | 108 => 0xEC8E6BFBAF12AE90
+    | 109 => 0xAA972AB7B09AEDA5
+    | 110 => 0x2FB7E280ECB0ED00
+    | 111 => 0x5BEEE7B69C294A8B
+    | 112 => 0x6A21E454A27F54BE
+    | 113 => 0x75A48C82CAA7FBB4
+    | 114 => 0xB5B6166CFFB23111
+    | 115 => 0x0000000025B4896C
+    | _ => 0
+
+def syntheticBidiRuntimeActionPackedWord (i : Fin 116) : BitVec 64 :=
+  BitVec.ofNat 64 <| match i.val with
+    | 0 => 0x29CBB364D377709F
+    | 1 => 0x44FDC833B4683624
+    | 2 => 0x3615284885120F4A
+    | 3 => 0xB7B1E4BDC0C8A1DF
+    | 4 => 0x9BAEC78C46FC02AC
+    | 5 => 0x2800855A0F4AAB3E
+    | 6 => 0xC66912EBE4717E15
+    | 7 => 0xC1FE8E5ACED45021
+    | 8 => 0xD276D7CC7895E992
+    | 9 => 0xC0A50A9D40E91535
+    | 10 => 0x1C101A7475DA63CB
+    | 11 => 0x8E54572E0474637E
+    | 12 => 0x1E529C9B42423C4E
+    | 13 => 0x9793F2185F867E91
+    | 14 => 0x1ED20C124684AC5D
+    | 15 => 0xEABE261A25E10C5D
+    | 16 => 0x0F805D0DBFBF4300
+    | 17 => 0xBA5AE1C51A39A3F6
+    | 18 => 0x151223C5520FC1FB
+    | 19 => 0x89E59AFC3F14A1B5
+    | 20 => 0x867EBFDF4976D582
+    | 21 => 0x19B705302FC3E38A
+    | 22 => 0x55764BA929F4CB4D
+    | 23 => 0x8A73B46A65870402
+    | 24 => 0xB468362461833FFC
+    | 25 => 0xCD12470244FDC833
+    | 26 => 0x12EBE4397E5D6000
+    | 27 => 0xC65ACED450698E21
+    | 28 => 0xD7CC30DDA192C1B6
+    | 29 => 0x429D40E915359A76
+    | 30 => 0x1A3C75922B83C0A5
+    | 31 => 0x57664C3C637E5458
+    | 32 => 0xD49B0A0A744EC61C
+    | 33 => 0xBA505FCE7E91561A
+    | 34 => 0x44120ECCE415DFDB
+    | 35 => 0x265225E1445D569A
+    | 36 => 0x150DF7F74348EAF6
+    | 37 => 0xE18D1A71A3BE4780
+    | 38 => 0x23C5524789B3F25A
+    | 39 => 0xD2B47714A1B5155A
+    | 40 => 0xF79701769D8289AD
+    | 41 => 0x4D782FC3AB8A8636
+    | 42 => 0x4B111F8149DDB7FF
+    | 43 => 0xFC6A65CF4C4A1D3E
+    | 44 => 0x366C61833FB48A73
+    | 45 => 0x474A44FD807BB468
+    | 46 => 0x79397E5D6000CD12
+    | 47 => 0x02E4FFF95CC3FD02
+    | 48 => 0xE33ED3AEC78C46FC
+    | 49 => 0x7E5D6048CD5A474A
+    | 50 => 0x50698E6912EBAC71
+    | 51 => 0xA1DA89FE8E12CE9C
+    | 52 => 0x5D35D23E9F8478DD
+    | 53 => 0x2BCB88A50AD508A1
+    | 54 => 0x2B3654581A3C75DA
+    | 55 => 0x3C068E1C57660474
+    | 56 => 0x990184F8733ADF0A
+    | 57 => 0xDE2991A972F6DBB6
+    | 58 => 0x796801B69CDCDD67
+    | 59 => 0xE6EA38B8C8F6531D
+    | 60 => 0x0176D58289AD9A44
+    | 61 => 0x2F8BE38ACE7EF7DF
+    | 62 => 0x57810195FFFF4D30
+    | 63 => 0x65CF4C021D760359
+    | 64 => 0x29CB77B48A3BB422
+    | 65 => 0x44FDC833B4683624
+    | 66 => 0x3615284885120F4A
+    | 67 => 0xB7B1E4BDC0C8A1DF
+    | 68 => 0x9BAEC78C46FC02AC
+    | 69 => 0x2800855A0F4AAB3E
+    | 70 => 0xC66912EBE4717E15
+    | 71 => 0xC1FE8E5ACED45021
+    | 72 => 0xD276D7CC7895E992
+    | 73 => 0xC0A50A9D40E91535
+    | 74 => 0x1C101A7475DA63CB
+    | 75 => 0x8E54572E0474637E
+    | 76 => 0x1E529C9B42423C4E
+    | 77 => 0x9793F2185F867E91
+    | 78 => 0x1ED20C124684AC5D
+    | 79 => 0xEABE261A25E10C5D
+    | 80 => 0x0F805D0DBFBF4300
+    | 81 => 0xBA5AE1C51A39A3F6
+    | 82 => 0x151223C5520FC1FB
+    | 83 => 0x89E59AFC3F14A1B5
+    | 84 => 0x867EBFDF4976D582
+    | 85 => 0x19B705302FC3E38A
+    | 86 => 0x55764BA929F4CB4D
+    | 87 => 0x8A73B46A65870402
+    | 88 => 0xB468362461833FFC
+    | 89 => 0xCD12470244FDC833
+    | 90 => 0x12EBE4397E5D6000
+    | 91 => 0xC65ACED450698E21
+    | 92 => 0xD7CC30DDA192C1B6
+    | 93 => 0x429D40E915359A76
+    | 94 => 0x1A3C75922B83C0A5
+    | 95 => 0x57664C3C637E5458
+    | 96 => 0xD49B0A0A744EC61C
+    | 97 => 0xBA505FCE7E91561A
+    | 98 => 0x44120ECCE415DFDB
+    | 99 => 0x265225E1445D569A
+    | 100 => 0x150DF7F74348EAF6
+    | 101 => 0xE18D1A71A3BE4780
+    | 102 => 0x23C5524789B3F25A
+    | 103 => 0xD2B47714A1B5155A
+    | 104 => 0xF79701769D8289AD
+    | 105 => 0x4D782FC3AB8A8636
+    | 106 => 0x4B111F8149DDB7FF
+    | 107 => 0xFC6A65CF4C4A1D3E
+    | 108 => 0x366C61833FB48A73
+    | 109 => 0x474A44FD807BB468
+    | 110 => 0x79397E5D6000CD12
+    | 111 => 0x02E4FFF95CC3FD02
+    | 112 => 0xE33ED3AEC78C46FC
+    | 113 => 0x7E5D6048CD5A474A
+    | 114 => 0x50698E6912EBAC71
+    | 115 => 0x000000008E12CE9C
+    | _ => 0
+
+def syntheticBidiRuntimeSeedBytes (n : Fin 924) : BitVec 8 :=
+  syntheticBidiRuntimePackedByte syntheticBidiRuntimeSeedPackedWord n
+
+def syntheticBidiRuntimeActionBytes (n : Fin 924) : BitVec 8 :=
+  syntheticBidiRuntimePackedByte syntheticBidiRuntimeActionPackedWord n
+
+theorem syntheticBidiRuntimeSeedBytes_eq_formal :
+    syntheticBidiRuntimeSeedBytes = syntheticBidiSeedBytes := by
+  native_decide
+
+theorem syntheticBidiRuntimeActionBytes_eq_formal :
+    syntheticBidiRuntimeActionBytes = syntheticBidiBaselineActionBytes := by
+  native_decide
+
+end Synthesis

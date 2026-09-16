@@ -14,6 +14,7 @@ is why this rollup is not a default build target.
 import Welds.NSRateBlockPiWeld
 import Welds.ReachabilityCarrierWeld
 import Welds.YMVacuumGapBackwardBounds
+import Welds.YMFinitePhysicalInstantiation
 
 #print axioms Welds.NSRateBlockPi.ns_herm_eq_euclidean_inner
 #print axioms Welds.NSRateBlockPi.ns_nrm_eq_euclidean_norm
@@ -38,3 +39,8 @@ import Welds.YMVacuumGapBackwardBounds
 #print axioms Welds.YMVacuumGapBackwardBounds.sameObjectZeroShiftResolventBound
 #print axioms Welds.YMVacuumGapBackwardBounds.chainZeroShiftResolventBound
 #print axioms Welds.YMVacuumGapBackwardBounds.rowA1CandidateZeroShiftBound
+
+#print axioms Welds.YMFinitePhysicalInstantiation.rowA1GapPositive
+#print axioms Welds.YMFinitePhysicalInstantiation.rowA1GapDatum
+#print axioms Welds.YMFinitePhysicalInstantiation.rowA1VacuumFormGap
+#print axioms Welds.YMFinitePhysicalInstantiation.rowA1PhysicalZeroShiftBound

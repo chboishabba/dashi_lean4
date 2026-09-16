@@ -15,6 +15,7 @@ import Welds.NSRateBlockPiWeld
 import Welds.ReachabilityCarrierWeld
 import Welds.YMVacuumGapBackwardBounds
 import Welds.YMFinitePhysicalInstantiation
+import Welds.YMBidiLatticeShell
 
 #print axioms Welds.NSRateBlockPi.ns_herm_eq_euclidean_inner
 #print axioms Welds.NSRateBlockPi.ns_nrm_eq_euclidean_norm
@@ -44,3 +45,7 @@ import Welds.YMFinitePhysicalInstantiation
 #print axioms Welds.YMFinitePhysicalInstantiation.rowA1GapDatum
 #print axioms Welds.YMFinitePhysicalInstantiation.rowA1VacuumFormGap
 #print axioms Welds.YMFinitePhysicalInstantiation.rowA1PhysicalZeroShiftBound
+
+#print axioms Welds.YMBidiLatticeShell.lattice4ShellCardBound
+#print axioms Welds.YMBidiLatticeShell.lattice4FarShellEnergyTsumLe
+#print axioms Welds.YMBidiLatticeShell.lattice4CauchyShellEstimate

@@ -27,6 +27,8 @@ import Synthesis.LinearConsumerKrylovFamilyAction
 import Synthesis.LinearConsumerKrylovFamilyActionRegression
 import Synthesis.LinearConsumerPreparedOperator
 import Synthesis.LinearConsumerPreparedOperatorRegression
+import Synthesis.LinearConsumerSyntheticBidiIncidence
+import Synthesis.LinearConsumerSyntheticBidiIncidenceRegression
 import Synthesis.Hyperfabric
 import Synthesis.CodecBridge
 import Synthesis.EndToEnd

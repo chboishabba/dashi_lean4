@@ -91,6 +91,15 @@ name = "YMBidi"
 srcDir = "ImportedLeans/aristotle-results/ym-bidi-task-449b959c-20260916/output-final_aristotle"
 globs = ["RequestProject.YangMills.BIDI.*"]
 
+# Conditional Clay assembly returned by Aristotle task 3eea48e0.  This library
+# is opt-in and exposes the form->Hamiltonian compiler, bounded-core/evolution
+# theorems, assembled mass-gap conclusion, non-vacuity witness, and lattice
+# defect instance.  Its physical Yang--Mills inputs remain explicit hypotheses.
+[[lean_lib]]
+name = "YMClay"
+srcDir = "ImportedLeans/aristotle-results/ym-clay-assembly-task-3eea48e0-20260916/output-final_aristotle"
+globs = ["RequestProject.YangMills.Clay.*"]
+
 [[lean_lib]]
 name = "Welds"
 globs = ["Welds", "Welds.*"]

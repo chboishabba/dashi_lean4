@@ -1,0 +1,1 @@
+The local quantitative theorem and the downstream R568/A1-channel adapter must refer to the same physical fixed-output carrier, or provide an explicit typed adapter.

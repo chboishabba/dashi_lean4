@@ -39,17 +39,17 @@ structure Atom where
 abbrev Configuration := List Atom
 
 /-- Exact embedding of a decimal integer numerator over `1000`. -/
-def milli (n : Int) : ℚ := n / 1000
+def milli (n : Int) : ℚ := (n : ℚ) / 1000
 
 /-- Adopted rounded working masses, attributed to the Prohaska et al. convention
 coordinate retained in `Attribution`.  They are not isotope-exact masses. -/
-def massH : ℚ := 1008 / 1000
-def massC : ℚ := 12011 / 1000
-def massN : ℚ := 14007 / 1000
-def massO : ℚ := 15999 / 1000
-def massP : ℚ := 30974 / 1000
-def massS : ℚ := 32060 / 1000
-def massMg : ℚ := 24305 / 1000
+def massH : ℚ := (1008 : ℚ) / 1000
+def massC : ℚ := (12011 : ℚ) / 1000
+def massN : ℚ := (14007 : ℚ) / 1000
+def massO : ℚ := (15999 : ℚ) / 1000
+def massP : ℚ := (30974 : ℚ) / 1000
+def massS : ℚ := (32060 : ℚ) / 1000
+def massMg : ℚ := (24305 : ℚ) / 1000
 
 /-- Exact coordinate constructor for PDB decimal-thousandths. -/
 def pdbMilliVec (x y z : Int) : Vec3Q :=

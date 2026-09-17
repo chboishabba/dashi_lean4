@@ -1,0 +1,15 @@
+{
+ "aliases": [
+  "property",
+  "property on Wikidata",
+  "property (Wikidata)",
+  "WD property",
+  "property on WD",
+  "property (WD)",
+  "data element"
+ ],
+ "canonical": "Q18616576",
+ "description": "part of statements according to the Wikidata data model, appearing as the 2nd item in the statement triple",
+ "id": "Q18616576",
+ "label": "Wikidata property"
+}

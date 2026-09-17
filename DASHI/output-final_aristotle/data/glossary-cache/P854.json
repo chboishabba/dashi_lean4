@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P854",
+ "description": "should be used for Internet URLs as references. Use \"Wikimedia import URL\" (P4656) for imports from Wikimedia sites",
+ "id": "P854",
+ "kind": "property",
+ "label": "reference URL"
+}

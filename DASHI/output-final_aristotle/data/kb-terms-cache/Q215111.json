@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "homomorphic",
+  "structure-preserving map"
+ ],
+ "canonical": "Q215111",
+ "description": "structure-preserving map between two (algebraic, relational or mixed) structures of the same signature",
+ "id": "Q215111",
+ "label": "homomorphism"
+}

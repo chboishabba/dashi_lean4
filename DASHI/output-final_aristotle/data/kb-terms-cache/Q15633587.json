@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "(main)"
+ ],
+ "canonical": "Q15633587",
+ "description": "page in the main namespace of a wiki, used for \"main\" content specific to the project such as article, lemma, ...",
+ "id": "Q15633587",
+ "label": "MediaWiki main namespace page"
+}

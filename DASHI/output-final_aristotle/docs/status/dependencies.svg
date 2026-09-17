@@ -1,0 +1,719 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="4126" height="1560" viewBox="0 0 4126 1560" font-family="'DejaVu Sans', sans-serif">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0d1117"/><stop offset="100%" stop-color="#12182100"/></linearGradient><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#484f58"/></marker></defs>
+<rect x="0.0" y="0.0" width="4126.0" height="1560.0" rx="0" fill="#0d1117" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="40.0" y="58.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="30" font-weight="bold" fill="#f0f6fc" text-anchor="start" opacity="1.0">Dependency graph of the Lean development</text>
+<text x="40.0" y="88.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="15" font-weight="normal" fill="#8b949e" text-anchor="start" opacity="1.0">Each box is a module; an arrow A → B means a declaration in A uses a declaration in B (kernel-level, from the compiled environment).</text>
+<text x="40.0" y="112.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="15" font-weight="normal" fill="#8b949e" text-anchor="start" opacity="1.0">Arrow thickness = number of declaration-level uses.  The bar in each box is the module's source mix: DASHI · Wikidata · original.</text>
+<path d="M 3714.0 1052.0 C 3714.0 1091.0 2571.0 1091.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="5.00" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 1809.0 492.0 C 1809.0 811.0 2571.0 811.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.95" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 3206.0 632.0 C 3206.0 881.0 2571.0 881.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.87" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 1936.0 632.0 C 1936.0 881.0 2571.0 881.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.68" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 2063.0 912.0 C 2063.0 951.0 3968.0 951.0 3968.0 990.0" fill="none" stroke="#484f58" stroke-width="4.64" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 2444.0 632.0 C 2444.0 881.0 2571.0 881.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.58" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 2571.0 772.0 C 2571.0 951.0 2571.0 951.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.58" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 3968.0 1052.0 C 3968.0 1091.0 2571.0 1091.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.56" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 2190.0 632.0 C 2190.0 671.0 2571.0 671.0 2571.0 710.0" fill="none" stroke="#484f58" stroke-width="4.56" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 2317.0 772.0 C 2317.0 951.0 2571.0 951.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.55" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 3079.0 772.0 C 3079.0 951.0 2571.0 951.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.55" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 1047.0 772.0 C 1047.0 951.0 2571.0 951.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.52" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 1428.0 632.0 C 1428.0 671.0 2571.0 671.0 2571.0 710.0" fill="none" stroke="#484f58" stroke-width="4.51" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 3333.0 912.0 C 3333.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.43" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 2952.0 1052.0 C 2952.0 1091.0 2571.0 1091.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.35" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 2698.0 632.0 C 2698.0 881.0 2571.0 881.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.32" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 2190.0 632.0 C 2190.0 881.0 2571.0 881.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.30" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 2571.0 352.0 C 2571.0 741.0 2571.0 741.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.28" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 1047.0 912.0 C 1047.0 1091.0 3460.0 1091.0 3460.0 1270.0" fill="none" stroke="#484f58" stroke-width="4.26" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 2317.0 912.0 C 2317.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.26" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 3079.0 912.0 C 3079.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.26" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 2190.0 1052.0 C 2190.0 1091.0 2571.0 1091.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.23" opacity="0.75" marker-end="url(#arrow)"/>
+<path d="M 1809.0 912.0 C 1809.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.02" opacity="0.66" marker-end="url(#arrow)"/>
+<path d="M 2571.0 492.0 C 2571.0 811.0 2571.0 811.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.00" opacity="0.65" marker-end="url(#arrow)"/>
+<path d="M 1555.0 492.0 C 1555.0 811.0 2571.0 811.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="4.00" opacity="0.65" marker-end="url(#arrow)"/>
+<path d="M 2825.0 772.0 C 2825.0 951.0 2571.0 951.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.97" opacity="0.63" marker-end="url(#arrow)"/>
+<path d="M 2825.0 912.0 C 2825.0 1091.0 1428.0 1091.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="3.93" opacity="0.62" marker-end="url(#arrow)"/>
+<path d="M 1428.0 1052.0 C 1428.0 1091.0 2317.0 1091.0 2317.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.93" opacity="0.62" marker-end="url(#arrow)"/>
+<path d="M 2063.0 492.0 C 2063.0 531.0 2698.0 531.0 2698.0 570.0" fill="none" stroke="#484f58" stroke-width="3.93" opacity="0.62" marker-end="url(#arrow)"/>
+<path d="M 1301.0 912.0 C 1301.0 1021.0 1555.0 1021.0 1555.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.93" opacity="0.62" marker-end="url(#arrow)"/>
+<path d="M 2571.0 352.0 C 2571.0 461.0 2698.0 461.0 2698.0 570.0" fill="none" stroke="#484f58" stroke-width="3.91" opacity="0.61" marker-end="url(#arrow)"/>
+<path d="M 3206.0 1052.0 C 3206.0 1091.0 2571.0 1091.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.89" opacity="0.60" marker-end="url(#arrow)"/>
+<path d="M 793.0 912.0 C 793.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.84" opacity="0.58" marker-end="url(#arrow)"/>
+<path d="M 3587.0 912.0 C 3587.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.80" opacity="0.57" marker-end="url(#arrow)"/>
+<path d="M 2952.0 632.0 C 2952.0 811.0 3206.0 811.0 3206.0 990.0" fill="none" stroke="#484f58" stroke-width="3.77" opacity="0.56" marker-end="url(#arrow)"/>
+<path d="M 1174.0 632.0 C 1174.0 671.0 2571.0 671.0 2571.0 710.0" fill="none" stroke="#484f58" stroke-width="3.75" opacity="0.55" marker-end="url(#arrow)"/>
+<path d="M 2698.0 1052.0 C 2698.0 1091.0 2571.0 1091.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.73" opacity="0.54" marker-end="url(#arrow)"/>
+<path d="M 1809.0 352.0 C 1809.0 741.0 2571.0 741.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.73" opacity="0.54" marker-end="url(#arrow)"/>
+<path d="M 1936.0 632.0 C 1936.0 671.0 2317.0 671.0 2317.0 710.0" fill="none" stroke="#484f58" stroke-width="3.73" opacity="0.54" marker-end="url(#arrow)"/>
+<path d="M 539.0 912.0 C 539.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.70" opacity="0.53" marker-end="url(#arrow)"/>
+<path d="M 1428.0 1052.0 C 1428.0 1091.0 2063.0 1091.0 2063.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.67" opacity="0.53" marker-end="url(#arrow)"/>
+<path d="M 2317.0 352.0 C 2317.0 741.0 2571.0 741.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.62" opacity="0.51" marker-end="url(#arrow)"/>
+<path d="M 1428.0 632.0 C 1428.0 881.0 2571.0 881.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.59" opacity="0.50" marker-end="url(#arrow)"/>
+<path d="M 666.0 1052.0 C 666.0 1091.0 2063.0 1091.0 2063.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.56" opacity="0.49" marker-end="url(#arrow)"/>
+<path d="M 2063.0 492.0 C 2063.0 741.0 666.0 741.0 666.0 990.0" fill="none" stroke="#484f58" stroke-width="3.56" opacity="0.49" marker-end="url(#arrow)"/>
+<path d="M 2063.0 912.0 C 2063.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.53" opacity="0.48" marker-end="url(#arrow)"/>
+<path d="M 2571.0 912.0 C 2571.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.50" opacity="0.47" marker-end="url(#arrow)"/>
+<path d="M 1555.0 912.0 C 1555.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.50" opacity="0.47" marker-end="url(#arrow)"/>
+<path d="M 2063.0 1192.0 C 2063.0 1231.0 1428.0 1231.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="3.47" opacity="0.47" marker-end="url(#arrow)"/>
+<path d="M 2317.0 492.0 C 2317.0 811.0 2571.0 811.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.47" opacity="0.47" marker-end="url(#arrow)"/>
+<path d="M 3079.0 772.0 C 3079.0 881.0 3206.0 881.0 3206.0 990.0" fill="none" stroke="#484f58" stroke-width="3.47" opacity="0.47" marker-end="url(#arrow)"/>
+<path d="M 1301.0 772.0 C 1301.0 881.0 3968.0 881.0 3968.0 990.0" fill="none" stroke="#484f58" stroke-width="3.43" opacity="0.46" marker-end="url(#arrow)"/>
+<path d="M 2190.0 212.0 C 2190.0 671.0 2571.0 671.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.43" opacity="0.46" marker-end="url(#arrow)"/>
+<path d="M 2571.0 352.0 C 2571.0 671.0 3714.0 671.0 3714.0 990.0" fill="none" stroke="#484f58" stroke-width="3.43" opacity="0.46" marker-end="url(#arrow)"/>
+<path d="M 1682.0 1052.0 C 1682.0 1161.0 1428.0 1161.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="3.40" opacity="0.45" marker-end="url(#arrow)"/>
+<path d="M 158.0 1052.0 C 158.0 1091.0 1555.0 1091.0 1555.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.40" opacity="0.45" marker-end="url(#arrow)"/>
+<path d="M 2317.0 492.0 C 2317.0 671.0 2825.0 671.0 2825.0 850.0" fill="none" stroke="#484f58" stroke-width="3.40" opacity="0.45" marker-end="url(#arrow)"/>
+<path d="M 2317.0 492.0 C 2317.0 881.0 1428.0 881.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="3.40" opacity="0.45" marker-end="url(#arrow)"/>
+<path d="M 2063.0 492.0 C 2063.0 811.0 2571.0 811.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.40" opacity="0.45" marker-end="url(#arrow)"/>
+<path d="M 2063.0 912.0 C 2063.0 1021.0 1809.0 1021.0 1809.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.40" opacity="0.45" marker-end="url(#arrow)"/>
+<path d="M 2825.0 772.0 C 2825.0 811.0 3333.0 811.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="3.40" opacity="0.45" marker-end="url(#arrow)"/>
+<path d="M 2952.0 632.0 C 2952.0 671.0 3079.0 671.0 3079.0 710.0" fill="none" stroke="#484f58" stroke-width="3.36" opacity="0.44" marker-end="url(#arrow)"/>
+<path d="M 1555.0 352.0 C 1555.0 391.0 1809.0 391.0 1809.0 430.0" fill="none" stroke="#484f58" stroke-width="3.36" opacity="0.44" marker-end="url(#arrow)"/>
+<path d="M 2063.0 772.0 C 2063.0 811.0 3333.0 811.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="3.32" opacity="0.43" marker-end="url(#arrow)"/>
+<path d="M 1682.0 632.0 C 1682.0 671.0 2571.0 671.0 2571.0 710.0" fill="none" stroke="#484f58" stroke-width="3.32" opacity="0.43" marker-end="url(#arrow)"/>
+<path d="M 2317.0 352.0 C 2317.0 671.0 3714.0 671.0 3714.0 990.0" fill="none" stroke="#484f58" stroke-width="3.32" opacity="0.43" marker-end="url(#arrow)"/>
+<path d="M 2063.0 912.0 C 2063.0 1091.0 1174.0 1091.0 1174.0 1270.0" fill="none" stroke="#484f58" stroke-width="3.32" opacity="0.43" marker-end="url(#arrow)"/>
+<path d="M 2317.0 352.0 C 2317.0 811.0 1428.0 811.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="3.28" opacity="0.42" marker-end="url(#arrow)"/>
+<path d="M 2190.0 212.0 C 2190.0 391.0 2698.0 391.0 2698.0 570.0" fill="none" stroke="#484f58" stroke-width="3.28" opacity="0.42" marker-end="url(#arrow)"/>
+<path d="M 2571.0 352.0 C 2571.0 391.0 1809.0 391.0 1809.0 430.0" fill="none" stroke="#484f58" stroke-width="3.28" opacity="0.42" marker-end="url(#arrow)"/>
+<path d="M 1936.0 212.0 C 1936.0 671.0 2571.0 671.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.28" opacity="0.42" marker-end="url(#arrow)"/>
+<path d="M 920.0 1052.0 C 920.0 1161.0 1174.0 1161.0 1174.0 1270.0" fill="none" stroke="#484f58" stroke-width="3.24" opacity="0.42" marker-end="url(#arrow)"/>
+<path d="M 3460.0 1052.0 C 3460.0 1161.0 3460.0 1161.0 3460.0 1270.0" fill="none" stroke="#484f58" stroke-width="3.20" opacity="0.41" marker-end="url(#arrow)"/>
+<path d="M 1809.0 352.0 C 1809.0 391.0 1809.0 391.0 1809.0 430.0" fill="none" stroke="#484f58" stroke-width="3.20" opacity="0.41" marker-end="url(#arrow)"/>
+<path d="M 2063.0 772.0 C 2063.0 1021.0 1428.0 1021.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="3.15" opacity="0.40" marker-end="url(#arrow)"/>
+<path d="M 2444.0 1052.0 C 2444.0 1091.0 2571.0 1091.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.15" opacity="0.40" marker-end="url(#arrow)"/>
+<path d="M 1809.0 912.0 C 1809.0 951.0 2190.0 951.0 2190.0 990.0" fill="none" stroke="#484f58" stroke-width="3.15" opacity="0.40" marker-end="url(#arrow)"/>
+<path d="M 1809.0 352.0 C 1809.0 671.0 1682.0 671.0 1682.0 990.0" fill="none" stroke="#484f58" stroke-width="3.15" opacity="0.40" marker-end="url(#arrow)"/>
+<path d="M 285.0 912.0 C 285.0 1021.0 2063.0 1021.0 2063.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.10" opacity="0.39" marker-end="url(#arrow)"/>
+<path d="M 2825.0 912.0 C 2825.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.10" opacity="0.39" marker-end="url(#arrow)"/>
+<path d="M 2063.0 772.0 C 2063.0 951.0 2571.0 951.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.10" opacity="0.39" marker-end="url(#arrow)"/>
+<path d="M 2317.0 492.0 C 2317.0 601.0 2825.0 601.0 2825.0 710.0" fill="none" stroke="#484f58" stroke-width="3.05" opacity="0.38" marker-end="url(#arrow)"/>
+<path d="M 2190.0 212.0 C 2190.0 671.0 2063.0 671.0 2063.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.05" opacity="0.38" marker-end="url(#arrow)"/>
+<path d="M 3206.0 632.0 C 3206.0 671.0 2571.0 671.0 2571.0 710.0" fill="none" stroke="#484f58" stroke-width="3.05" opacity="0.38" marker-end="url(#arrow)"/>
+<path d="M 2571.0 912.0 C 2571.0 951.0 2952.0 951.0 2952.0 990.0" fill="none" stroke="#484f58" stroke-width="3.00" opacity="0.38" marker-end="url(#arrow)"/>
+<path d="M 2317.0 352.0 C 2317.0 391.0 1809.0 391.0 1809.0 430.0" fill="none" stroke="#484f58" stroke-width="3.00" opacity="0.38" marker-end="url(#arrow)"/>
+<path d="M 2317.0 492.0 C 2317.0 531.0 2444.0 531.0 2444.0 570.0" fill="none" stroke="#484f58" stroke-width="3.00" opacity="0.38" marker-end="url(#arrow)"/>
+<path d="M 1936.0 1052.0 C 1936.0 1091.0 2571.0 1091.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.00" opacity="0.38" marker-end="url(#arrow)"/>
+<path d="M 3841.0 912.0 C 3841.0 951.0 3968.0 951.0 3968.0 990.0" fill="none" stroke="#484f58" stroke-width="3.00" opacity="0.38" marker-end="url(#arrow)"/>
+<path d="M 1174.0 632.0 C 1174.0 881.0 2571.0 881.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="3.00" opacity="0.38" marker-end="url(#arrow)"/>
+<path d="M 2063.0 352.0 C 2063.0 811.0 1428.0 811.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="2.94" opacity="0.37" marker-end="url(#arrow)"/>
+<path d="M 2952.0 632.0 C 2952.0 951.0 1428.0 951.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="2.94" opacity="0.37" marker-end="url(#arrow)"/>
+<path d="M 2063.0 492.0 C 2063.0 671.0 2825.0 671.0 2825.0 850.0" fill="none" stroke="#484f58" stroke-width="2.94" opacity="0.37" marker-end="url(#arrow)"/>
+<path d="M 1301.0 772.0 C 1301.0 951.0 2571.0 951.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.88" opacity="0.36" marker-end="url(#arrow)"/>
+<path d="M 1682.0 632.0 C 1682.0 951.0 1428.0 951.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="2.88" opacity="0.36" marker-end="url(#arrow)"/>
+<path d="M 2952.0 632.0 C 2952.0 881.0 2571.0 881.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.88" opacity="0.36" marker-end="url(#arrow)"/>
+<path d="M 2063.0 492.0 C 2063.0 811.0 2063.0 811.0 2063.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.88" opacity="0.36" marker-end="url(#arrow)"/>
+<path d="M 2825.0 912.0 C 2825.0 951.0 2190.0 951.0 2190.0 990.0" fill="none" stroke="#484f58" stroke-width="2.81" opacity="0.35" marker-end="url(#arrow)"/>
+<path d="M 1809.0 772.0 C 1809.0 951.0 2571.0 951.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.81" opacity="0.35" marker-end="url(#arrow)"/>
+<path d="M 1555.0 772.0 C 1555.0 951.0 2571.0 951.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.81" opacity="0.35" marker-end="url(#arrow)"/>
+<path d="M 539.0 912.0 C 539.0 951.0 1174.0 951.0 1174.0 990.0" fill="none" stroke="#484f58" stroke-width="2.81" opacity="0.35" marker-end="url(#arrow)"/>
+<path d="M 2698.0 632.0 C 2698.0 951.0 1428.0 951.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="2.81" opacity="0.35" marker-end="url(#arrow)"/>
+<path d="M 2698.0 632.0 C 2698.0 741.0 2825.0 741.0 2825.0 850.0" fill="none" stroke="#484f58" stroke-width="2.81" opacity="0.35" marker-end="url(#arrow)"/>
+<path d="M 1809.0 772.0 C 1809.0 811.0 2825.0 811.0 2825.0 850.0" fill="none" stroke="#484f58" stroke-width="2.74" opacity="0.34" marker-end="url(#arrow)"/>
+<path d="M 1301.0 772.0 C 1301.0 1021.0 1428.0 1021.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="2.74" opacity="0.34" marker-end="url(#arrow)"/>
+<path d="M 2063.0 352.0 C 2063.0 461.0 3206.0 461.0 3206.0 570.0" fill="none" stroke="#484f58" stroke-width="2.74" opacity="0.34" marker-end="url(#arrow)"/>
+<path d="M 2571.0 912.0 C 2571.0 1091.0 1428.0 1091.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="2.74" opacity="0.34" marker-end="url(#arrow)"/>
+<path d="M 1555.0 352.0 C 1555.0 741.0 2571.0 741.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.74" opacity="0.34" marker-end="url(#arrow)"/>
+<path d="M 2190.0 212.0 C 2190.0 251.0 1809.0 251.0 1809.0 290.0" fill="none" stroke="#484f58" stroke-width="2.74" opacity="0.34" marker-end="url(#arrow)"/>
+<path d="M 2571.0 352.0 C 2571.0 391.0 2317.0 391.0 2317.0 430.0" fill="none" stroke="#484f58" stroke-width="2.74" opacity="0.34" marker-end="url(#arrow)"/>
+<path d="M 1936.0 212.0 C 1936.0 321.0 1809.0 321.0 1809.0 430.0" fill="none" stroke="#484f58" stroke-width="2.74" opacity="0.34" marker-end="url(#arrow)"/>
+<path d="M 158.0 1052.0 C 158.0 1091.0 2063.0 1091.0 2063.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.66" opacity="0.33" marker-end="url(#arrow)"/>
+<path d="M 920.0 1052.0 C 920.0 1091.0 1809.0 1091.0 1809.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.57" opacity="0.33" marker-end="url(#arrow)"/>
+<path d="M 2698.0 632.0 C 2698.0 811.0 2190.0 811.0 2190.0 990.0" fill="none" stroke="#484f58" stroke-width="2.57" opacity="0.33" marker-end="url(#arrow)"/>
+<path d="M 1809.0 352.0 C 1809.0 461.0 2444.0 461.0 2444.0 570.0" fill="none" stroke="#484f58" stroke-width="2.57" opacity="0.33" marker-end="url(#arrow)"/>
+<path d="M 2571.0 492.0 C 2571.0 531.0 3206.0 531.0 3206.0 570.0" fill="none" stroke="#484f58" stroke-width="2.57" opacity="0.33" marker-end="url(#arrow)"/>
+<path d="M 1301.0 912.0 C 1301.0 1091.0 1174.0 1091.0 1174.0 1270.0" fill="none" stroke="#484f58" stroke-width="2.57" opacity="0.33" marker-end="url(#arrow)"/>
+<path d="M 3079.0 772.0 C 3079.0 811.0 3333.0 811.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="2.57" opacity="0.33" marker-end="url(#arrow)"/>
+<path d="M 3206.0 632.0 C 3206.0 951.0 3968.0 951.0 3968.0 1270.0" fill="none" stroke="#484f58" stroke-width="2.57" opacity="0.33" marker-end="url(#arrow)"/>
+<path d="M 1174.0 1052.0 C 1174.0 1091.0 1809.0 1091.0 1809.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.48" opacity="0.32" marker-end="url(#arrow)"/>
+<path d="M 2063.0 352.0 C 2063.0 741.0 2571.0 741.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.48" opacity="0.32" marker-end="url(#arrow)"/>
+<path d="M 2063.0 352.0 C 2063.0 391.0 2571.0 391.0 2571.0 430.0" fill="none" stroke="#484f58" stroke-width="2.48" opacity="0.32" marker-end="url(#arrow)"/>
+<path d="M 2317.0 492.0 C 2317.0 671.0 3333.0 671.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="2.48" opacity="0.32" marker-end="url(#arrow)"/>
+<path d="M 1047.0 912.0 C 1047.0 1021.0 1809.0 1021.0 1809.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.48" opacity="0.32" marker-end="url(#arrow)"/>
+<path d="M 2190.0 212.0 C 2190.0 741.0 1428.0 741.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="2.48" opacity="0.32" marker-end="url(#arrow)"/>
+<path d="M 3587.0 912.0 C 3587.0 951.0 3714.0 951.0 3714.0 990.0" fill="none" stroke="#484f58" stroke-width="2.48" opacity="0.32" marker-end="url(#arrow)"/>
+<path d="M 2444.0 632.0 C 2444.0 671.0 2825.0 671.0 2825.0 710.0" fill="none" stroke="#484f58" stroke-width="2.48" opacity="0.32" marker-end="url(#arrow)"/>
+<path d="M 1682.0 632.0 C 1682.0 881.0 2571.0 881.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.37" opacity="0.31" marker-end="url(#arrow)"/>
+<path d="M 2698.0 632.0 C 2698.0 811.0 2698.0 811.0 2698.0 990.0" fill="none" stroke="#484f58" stroke-width="2.37" opacity="0.31" marker-end="url(#arrow)"/>
+<path d="M 2698.0 632.0 C 2698.0 741.0 2571.0 741.0 2571.0 850.0" fill="none" stroke="#484f58" stroke-width="2.37" opacity="0.31" marker-end="url(#arrow)"/>
+<path d="M 2571.0 352.0 C 2571.0 461.0 2444.0 461.0 2444.0 570.0" fill="none" stroke="#484f58" stroke-width="2.37" opacity="0.31" marker-end="url(#arrow)"/>
+<path d="M 412.0 1052.0 C 412.0 1091.0 2063.0 1091.0 2063.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.25" opacity="0.30" marker-end="url(#arrow)"/>
+<path d="M 920.0 632.0 C 920.0 671.0 1809.0 671.0 1809.0 710.0" fill="none" stroke="#484f58" stroke-width="2.25" opacity="0.30" marker-end="url(#arrow)"/>
+<path d="M 2063.0 492.0 C 2063.0 671.0 285.0 671.0 285.0 850.0" fill="none" stroke="#484f58" stroke-width="2.25" opacity="0.30" marker-end="url(#arrow)"/>
+<path d="M 2190.0 212.0 C 2190.0 601.0 1682.0 601.0 1682.0 990.0" fill="none" stroke="#484f58" stroke-width="2.25" opacity="0.30" marker-end="url(#arrow)"/>
+<path d="M 2571.0 352.0 C 2571.0 601.0 3587.0 601.0 3587.0 850.0" fill="none" stroke="#484f58" stroke-width="2.25" opacity="0.30" marker-end="url(#arrow)"/>
+<path d="M 2571.0 352.0 C 2571.0 811.0 1428.0 811.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="2.25" opacity="0.30" marker-end="url(#arrow)"/>
+<path d="M 1047.0 772.0 C 1047.0 811.0 2571.0 811.0 2571.0 850.0" fill="none" stroke="#484f58" stroke-width="2.25" opacity="0.30" marker-end="url(#arrow)"/>
+<path d="M 2571.0 492.0 C 2571.0 671.0 3333.0 671.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="2.25" opacity="0.30" marker-end="url(#arrow)"/>
+<path d="M 1555.0 492.0 C 1555.0 741.0 920.0 741.0 920.0 990.0" fill="none" stroke="#484f58" stroke-width="2.25" opacity="0.30" marker-end="url(#arrow)"/>
+<path d="M 285.0 912.0 C 285.0 951.0 158.0 951.0 158.0 990.0" fill="none" stroke="#484f58" stroke-width="2.11" opacity="0.29" marker-end="url(#arrow)"/>
+<path d="M 920.0 632.0 C 920.0 881.0 2571.0 881.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.11" opacity="0.29" marker-end="url(#arrow)"/>
+<path d="M 1047.0 912.0 C 1047.0 951.0 920.0 951.0 920.0 990.0" fill="none" stroke="#484f58" stroke-width="2.11" opacity="0.29" marker-end="url(#arrow)"/>
+<path d="M 2317.0 772.0 C 2317.0 811.0 3333.0 811.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="2.11" opacity="0.29" marker-end="url(#arrow)"/>
+<path d="M 2698.0 632.0 C 2698.0 811.0 2952.0 811.0 2952.0 990.0" fill="none" stroke="#484f58" stroke-width="2.11" opacity="0.29" marker-end="url(#arrow)"/>
+<path d="M 2698.0 632.0 C 2698.0 741.0 3333.0 741.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="2.11" opacity="0.29" marker-end="url(#arrow)"/>
+<path d="M 2698.0 632.0 C 2698.0 741.0 1555.0 741.0 1555.0 850.0" fill="none" stroke="#484f58" stroke-width="2.11" opacity="0.29" marker-end="url(#arrow)"/>
+<path d="M 2571.0 492.0 C 2571.0 601.0 2825.0 601.0 2825.0 710.0" fill="none" stroke="#484f58" stroke-width="2.11" opacity="0.29" marker-end="url(#arrow)"/>
+<path d="M 793.0 912.0 C 793.0 951.0 2698.0 951.0 2698.0 990.0" fill="none" stroke="#484f58" stroke-width="2.11" opacity="0.29" marker-end="url(#arrow)"/>
+<path d="M 793.0 912.0 C 793.0 1021.0 1809.0 1021.0 1809.0 1130.0" fill="none" stroke="#484f58" stroke-width="2.11" opacity="0.29" marker-end="url(#arrow)"/>
+<path d="M 2571.0 772.0 C 2571.0 811.0 3333.0 811.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="2.11" opacity="0.29" marker-end="url(#arrow)"/>
+<path d="M 1174.0 1052.0 C 1174.0 1161.0 1174.0 1161.0 1174.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.95" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 1809.0 1192.0 C 1809.0 1231.0 1174.0 1231.0 1174.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.95" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 2317.0 352.0 C 2317.0 601.0 2825.0 601.0 2825.0 850.0" fill="none" stroke="#484f58" stroke-width="1.95" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 3460.0 1052.0 C 3460.0 1161.0 1428.0 1161.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.95" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 3460.0 1052.0 C 3460.0 1091.0 1809.0 1091.0 1809.0 1130.0" fill="none" stroke="#484f58" stroke-width="1.95" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 2317.0 912.0 C 2317.0 1021.0 1809.0 1021.0 1809.0 1130.0" fill="none" stroke="#484f58" stroke-width="1.95" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 2317.0 772.0 C 2317.0 881.0 2190.0 881.0 2190.0 990.0" fill="none" stroke="#484f58" stroke-width="1.95" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 2571.0 1192.0 C 2571.0 1231.0 3968.0 1231.0 3968.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.95" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 3206.0 632.0 C 3206.0 741.0 3333.0 741.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="1.95" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 2825.0 912.0 C 2825.0 951.0 2698.0 951.0 2698.0 990.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 1301.0 772.0 C 1301.0 811.0 2063.0 811.0 2063.0 850.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 1555.0 772.0 C 1555.0 881.0 2190.0 881.0 2190.0 990.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 1428.0 1052.0 C 1428.0 1161.0 1428.0 1161.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 3714.0 1052.0 C 3714.0 1161.0 3968.0 1161.0 3968.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 2698.0 632.0 C 2698.0 671.0 2063.0 671.0 2063.0 710.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 2190.0 212.0 C 2190.0 321.0 1809.0 321.0 1809.0 430.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 2571.0 352.0 C 2571.0 601.0 2825.0 601.0 2825.0 850.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 2444.0 632.0 C 2444.0 741.0 3333.0 741.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 3079.0 912.0 C 3079.0 951.0 2698.0 951.0 2698.0 990.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 1936.0 632.0 C 1936.0 741.0 3333.0 741.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 3968.0 1052.0 C 3968.0 1161.0 3968.0 1161.0 3968.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 3333.0 912.0 C 3333.0 951.0 2698.0 951.0 2698.0 990.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 2190.0 632.0 C 2190.0 741.0 3333.0 741.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 1555.0 492.0 C 1555.0 811.0 1809.0 811.0 1809.0 1130.0" fill="none" stroke="#484f58" stroke-width="1.75" opacity="0.28" marker-end="url(#arrow)"/>
+<path d="M 285.0 912.0 C 285.0 1021.0 1555.0 1021.0 1555.0 1130.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 1682.0 1052.0 C 1682.0 1091.0 2063.0 1091.0 2063.0 1130.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 1301.0 772.0 C 1301.0 811.0 1301.0 811.0 1301.0 850.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 2063.0 352.0 C 2063.0 601.0 3333.0 601.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 3460.0 1052.0 C 3460.0 1161.0 1174.0 1161.0 1174.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 1047.0 912.0 C 1047.0 1091.0 1174.0 1091.0 1174.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 1555.0 772.0 C 1555.0 811.0 1555.0 811.0 1555.0 850.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 2317.0 1192.0 C 2317.0 1231.0 1428.0 1231.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 539.0 912.0 C 539.0 1021.0 1809.0 1021.0 1809.0 1130.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 2190.0 212.0 C 2190.0 391.0 2444.0 391.0 2444.0 570.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 1047.0 772.0 C 1047.0 951.0 1809.0 951.0 1809.0 1130.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 1301.0 912.0 C 1301.0 951.0 3968.0 951.0 3968.0 990.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 3841.0 912.0 C 3841.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 1809.0 492.0 C 1809.0 531.0 2444.0 531.0 2444.0 570.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 1555.0 492.0 C 1555.0 601.0 2825.0 601.0 2825.0 710.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 1555.0 492.0 C 1555.0 881.0 1174.0 881.0 1174.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.49" opacity="0.27" marker-end="url(#arrow)"/>
+<path d="M 1555.0 1192.0 C 1555.0 1231.0 1174.0 1231.0 1174.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 1301.0 772.0 C 1301.0 951.0 1555.0 951.0 1555.0 1130.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 1301.0 772.0 C 1301.0 951.0 1809.0 951.0 1809.0 1130.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 1682.0 632.0 C 1682.0 741.0 3333.0 741.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 2952.0 632.0 C 2952.0 741.0 3333.0 741.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 1555.0 912.0 C 1555.0 951.0 2190.0 951.0 2190.0 990.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 2317.0 912.0 C 2317.0 1091.0 3968.0 1091.0 3968.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 2317.0 912.0 C 2317.0 951.0 1174.0 951.0 1174.0 990.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 2063.0 492.0 C 2063.0 671.0 3333.0 671.0 3333.0 850.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 1809.0 352.0 C 1809.0 811.0 1428.0 811.0 1428.0 1270.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 1301.0 912.0 C 1301.0 1021.0 2571.0 1021.0 2571.0 1130.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 1936.0 212.0 C 1936.0 251.0 1809.0 251.0 1809.0 290.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 793.0 912.0 C 793.0 951.0 1174.0 951.0 1174.0 990.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 2825.0 772.0 C 2825.0 881.0 2698.0 881.0 2698.0 990.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<path d="M 1555.0 492.0 C 1555.0 531.0 2444.0 531.0 2444.0 570.0" fill="none" stroke="#484f58" stroke-width="1.12" opacity="0.26" marker-end="url(#arrow)"/>
+<rect x="1820.0" y="150.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="1820.0" y="150.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1834.0" y="172.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/RdfInformationOrder</text>
+<rect x="1834.0" y="180.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1834.0" y="180.0" width="118.5" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1952.5" y="180.0" width="39.5" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1834.0" y="180.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2038.0" y="188.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">12</text>
+<text x="1834.0" y="203.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 9 · own 3</text>
+<rect x="2074.0" y="150.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2074.0" y="150.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2088.0" y="172.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/ExamplesConflict</text>
+<rect x="2088.0" y="180.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2088.0" y="180.0" width="102.2" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2190.2" y="180.0" width="55.8" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2088.0" y="180.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2292.0" y="188.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">17</text>
+<text x="2088.0" y="203.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 11 · own 6</text>
+<rect x="1439.0" y="290.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="1439.0" y="290.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1453.0" y="312.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/BlankNodes</text>
+<rect x="1453.0" y="320.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1453.0" y="320.0" width="89.6" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1542.6" y="320.0" width="68.4" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1453.0" y="320.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1657.0" y="328.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">67</text>
+<text x="1453.0" y="343.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 38 · own 29</text>
+<rect x="1693.0" y="290.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="1693.0" y="290.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1707.0" y="312.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Lens</text>
+<rect x="1707.0" y="320.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1707.0" y="320.0" width="9.3" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1716.3" y="320.0" width="148.7" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1707.0" y="320.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1911.0" y="328.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">17</text>
+<text x="1707.0" y="343.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 1 · wiki 16 · own 0</text>
+<rect x="1947.0" y="290.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1947.0" y="290.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1961.0" y="312.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/PathEvidence</text>
+<rect x="1961.0" y="320.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1961.0" y="320.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1961.0" y="320.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2165.0" y="328.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">10</text>
+<text x="1961.0" y="343.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 10</text>
+<rect x="2201.0" y="290.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="2201.0" y="290.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2215.0" y="312.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Surfaces</text>
+<rect x="2215.0" y="320.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2215.0" y="320.0" width="7.5" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2222.5" y="320.0" width="150.5" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2215.0" y="320.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2419.0" y="328.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">21</text>
+<text x="2215.0" y="343.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 1 · wiki 0 · own 20</text>
+<rect x="2455.0" y="290.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2455.0" y="290.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2469.0" y="312.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/ExamplesLayers</text>
+<rect x="2469.0" y="320.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2469.0" y="320.0" width="133.3" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2602.3" y="320.0" width="24.7" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2469.0" y="320.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2673.0" y="328.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">32</text>
+<text x="2469.0" y="343.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 27 · own 5</text>
+<rect x="1439.0" y="430.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="1439.0" y="430.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1453.0" y="452.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/ViewJoin</text>
+<rect x="1453.0" y="460.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1453.0" y="460.0" width="47.4" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1500.4" y="460.0" width="86.9" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1587.3" y="460.0" width="23.7" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1453.0" y="460.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1657.0" y="468.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">20</text>
+<text x="1453.0" y="483.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 6 · wiki 11 · own 3</text>
+<rect x="1693.0" y="430.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="1693.0" y="430.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1707.0" y="452.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Rdf</text>
+<rect x="1707.0" y="460.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1707.0" y="460.0" width="9.6" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1716.6" y="460.0" width="148.4" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1707.0" y="460.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1911.0" y="468.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">33</text>
+<text x="1707.0" y="483.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 2 · wiki 31 · own 0</text>
+<rect x="1947.0" y="430.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#f0883e" stroke-width="1.6" opacity="1.0"/>
+<rect x="1947.0" y="430.0" width="5.0" height="62.0" rx="2" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1961.0" y="452.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/EvidencePolarity</text>
+<rect x="1961.0" y="460.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1961.0" y="460.0" width="61.8" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2022.8" y="460.0" width="48.1" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2070.9" y="460.0" width="48.1" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1961.0" y="460.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2165.0" y="468.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">23</text>
+<text x="1961.0" y="483.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 9 · wiki 7 · own 7</text>
+<rect x="2201.0" y="430.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="2201.0" y="430.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2215.0" y="452.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Views</text>
+<rect x="2215.0" y="460.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2215.0" y="460.0" width="6.9" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2221.9" y="460.0" width="151.1" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2215.0" y="460.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2419.0" y="468.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">23</text>
+<text x="2215.0" y="483.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 1 · wiki 0 · own 22</text>
+<rect x="2455.0" y="430.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2455.0" y="430.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2469.0" y="452.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/NamedGraphs</text>
+<rect x="2469.0" y="460.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2469.0" y="460.0" width="158.0" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2469.0" y="460.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2673.0" y="468.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">21</text>
+<text x="2469.0" y="483.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 21 · own 0</text>
+<rect x="804.0" y="570.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="804.0" y="570.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="818.0" y="592.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Independence</text>
+<rect x="818.0" y="600.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="818.0" y="600.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="818.0" y="600.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1022.0" y="608.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">21</text>
+<text x="818.0" y="623.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 21</text>
+<rect x="1058.0" y="570.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1058.0" y="570.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1072.0" y="592.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/SparqlExpressions</text>
+<rect x="1072.0" y="600.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1072.0" y="600.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1072.0" y="600.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1276.0" y="608.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">51</text>
+<text x="1072.0" y="623.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 51</text>
+<rect x="1312.0" y="570.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="1312.0" y="570.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1326.0" y="592.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/SparqlNegation</text>
+<rect x="1326.0" y="600.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1326.0" y="600.0" width="91.2" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1417.2" y="600.0" width="66.8" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1326.0" y="600.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1530.0" y="608.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">26</text>
+<text x="1326.0" y="623.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 15 · own 11</text>
+<rect x="1566.0" y="570.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1566.0" y="570.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1580.0" y="592.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/QueryEvidence</text>
+<rect x="1580.0" y="600.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1580.0" y="600.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1580.0" y="600.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1784.0" y="608.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">9</text>
+<text x="1580.0" y="623.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 9</text>
+<rect x="1820.0" y="570.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1820.0" y="570.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1834.0" y="592.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/OwlCardinality</text>
+<rect x="1834.0" y="600.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1834.0" y="600.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1834.0" y="600.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2038.0" y="608.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">32</text>
+<text x="1834.0" y="623.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 32</text>
+<rect x="2074.0" y="570.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2074.0" y="570.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2088.0" y="592.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/SparqlAggregation</text>
+<rect x="2088.0" y="600.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2088.0" y="600.0" width="134.8" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2222.8" y="600.0" width="23.2" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2088.0" y="600.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2292.0" y="608.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">34</text>
+<text x="2088.0" y="623.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 29 · own 5</text>
+<rect x="2328.0" y="570.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2328.0" y="570.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2342.0" y="592.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Layers</text>
+<rect x="2342.0" y="600.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2342.0" y="600.0" width="6.3" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2348.3" y="600.0" width="151.7" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2342.0" y="600.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2546.0" y="608.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">25</text>
+<text x="2342.0" y="623.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 1 · wiki 24 · own 0</text>
+<rect x="2582.0" y="570.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2582.0" y="570.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2596.0" y="592.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Examples</text>
+<rect x="2596.0" y="600.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2596.0" y="600.0" width="10.1" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2606.1" y="600.0" width="84.0" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2690.1" y="600.0" width="63.9" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2596.0" y="600.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2800.0" y="608.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">47</text>
+<text x="2596.0" y="623.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 3 · wiki 25 · own 19</text>
+<rect x="2836.0" y="570.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="2836.0" y="570.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2850.0" y="592.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/ValueEvidence</text>
+<rect x="2850.0" y="600.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2850.0" y="600.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2850.0" y="600.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3054.0" y="608.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">17</text>
+<text x="2850.0" y="623.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 17</text>
+<rect x="3090.0" y="570.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="3090.0" y="570.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="3104.0" y="592.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/SparqlPaths</text>
+<rect x="3104.0" y="600.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3104.0" y="600.0" width="141.4" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3245.4" y="600.0" width="16.6" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3104.0" y="600.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3308.0" y="608.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">38</text>
+<text x="3104.0" y="623.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 34 · own 4</text>
+<rect x="931.0" y="710.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#f0883e" stroke-width="1.6" opacity="1.0"/>
+<rect x="931.0" y="710.0" width="5.0" height="62.0" rx="2" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="945.0" y="732.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Learning</text>
+<rect x="945.0" y="740.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="945.0" y="740.0" width="82.9" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1027.9" y="740.0" width="57.0" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1084.9" y="740.0" width="18.1" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="945.0" y="740.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1149.0" y="748.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">61</text>
+<text x="945.0" y="763.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 32 · wiki 22 · own 7</text>
+<rect x="1185.0" y="710.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1185.0" y="710.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1199.0" y="732.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/ParentingEvidence</text>
+<rect x="1199.0" y="740.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1199.0" y="740.0" width="19.8" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1218.8" y="740.0" width="138.2" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1199.0" y="740.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1403.0" y="748.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">16</text>
+<text x="1199.0" y="763.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 2 · wiki 0 · own 14</text>
+<rect x="1439.0" y="710.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1439.0" y="710.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1453.0" y="732.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/AlignmentSafety</text>
+<rect x="1453.0" y="740.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1453.0" y="740.0" width="28.7" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1481.7" y="740.0" width="129.3" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1453.0" y="740.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1657.0" y="748.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">22</text>
+<text x="1453.0" y="763.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 4 · own 18</text>
+<rect x="1693.0" y="710.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1693.0" y="710.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1707.0" y="732.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Commitment</text>
+<rect x="1707.0" y="740.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1707.0" y="740.0" width="7.9" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1714.9" y="740.0" width="150.1" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1707.0" y="740.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1911.0" y="748.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">20</text>
+<text x="1707.0" y="763.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 1 · wiki 0 · own 19</text>
+<rect x="1947.0" y="710.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1947.0" y="710.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1961.0" y="732.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Context</text>
+<rect x="1961.0" y="740.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1961.0" y="740.0" width="22.6" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1983.6" y="740.0" width="135.4" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1961.0" y="740.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2165.0" y="748.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">7</text>
+<text x="1961.0" y="763.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 1 · wiki 0 · own 6</text>
+<rect x="2201.0" y="710.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2201.0" y="710.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2215.0" y="732.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/ClassExpressions</text>
+<rect x="2215.0" y="740.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2215.0" y="740.0" width="141.1" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2356.1" y="740.0" width="16.9" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2215.0" y="740.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2419.0" y="748.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">28</text>
+<text x="2215.0" y="763.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 25 · own 3</text>
+<rect x="2455.0" y="710.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2455.0" y="710.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2469.0" y="732.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Sparql</text>
+<rect x="2469.0" y="740.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2469.0" y="740.0" width="153.9" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2622.9" y="740.0" width="4.1" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2469.0" y="740.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2673.0" y="748.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">39</text>
+<text x="2469.0" y="763.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 38 · own 1</text>
+<rect x="2709.0" y="710.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2709.0" y="710.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2723.0" y="732.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Slices</text>
+<rect x="2723.0" y="740.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2723.0" y="740.0" width="158.0" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2723.0" y="740.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2927.0" y="748.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">26</text>
+<text x="2723.0" y="763.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 26 · own 0</text>
+<rect x="2963.0" y="710.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2963.0" y="710.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2977.0" y="732.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Qualifiers</text>
+<rect x="2977.0" y="740.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2977.0" y="740.0" width="145.4" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3122.4" y="740.0" width="12.6" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2977.0" y="740.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3181.0" y="748.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">50</text>
+<text x="2977.0" y="763.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 46 · own 4</text>
+<rect x="169.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="169.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="183.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/AxisSupport</text>
+<rect x="183.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="183.0" y="880.0" width="54.7" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="237.7" y="880.0" width="103.3" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="183.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="387.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">26</text>
+<text x="183.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 9 · wiki 0 · own 17</text>
+<rect x="423.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="423.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="437.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/EditOrder</text>
+<rect x="437.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="437.0" y="880.0" width="9.9" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="446.9" y="880.0" width="148.1" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="437.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="641.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">16</text>
+<text x="437.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 1 · wiki 0 · own 15</text>
+<rect x="677.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="677.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="691.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Retrieval</text>
+<rect x="691.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="691.0" y="880.0" width="21.1" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="712.1" y="880.0" width="136.9" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="691.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="895.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">15</text>
+<text x="691.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 2 · wiki 0 · own 13</text>
+<rect x="931.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="931.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="945.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Ternary/Base369</text>
+<rect x="945.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="945.0" y="880.0" width="60.8" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1005.8" y="880.0" width="97.2" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="945.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1149.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">39</text>
+<text x="945.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 15 · wiki 0 · own 24</text>
+<rect x="1185.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1185.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1199.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/ParentingAuthority</text>
+<rect x="1199.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1199.0" y="880.0" width="15.8" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1214.8" y="880.0" width="142.2" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1199.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1403.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">30</text>
+<text x="1199.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 3 · wiki 0 · own 27</text>
+<rect x="1439.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="1439.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1453.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Alignment</text>
+<rect x="1453.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1453.0" y="880.0" width="31.6" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1484.6" y="880.0" width="94.8" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1579.4" y="880.0" width="31.6" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1453.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1657.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">10</text>
+<text x="1453.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 2 · wiki 6 · own 2</text>
+<rect x="1693.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="1693.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1707.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/DisjointUnionDiagnos…</text>
+<rect x="1707.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1707.0" y="880.0" width="116.4" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1823.4" y="880.0" width="41.6" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1707.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1911.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">19</text>
+<text x="1707.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 14 · own 5</text>
+<rect x="1947.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1947.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1961.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/ParentingFibres</text>
+<rect x="1961.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1961.0" y="880.0" width="6.9" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1967.9" y="880.0" width="30.9" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1998.8" y="880.0" width="120.2" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1961.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2165.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">46</text>
+<text x="1961.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 2 · wiki 9 · own 35</text>
+<rect x="2201.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="2201.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2215.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Capture</text>
+<rect x="2215.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2215.0" y="880.0" width="16.6" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2231.6" y="880.0" width="141.4" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2215.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2419.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">19</text>
+<text x="2215.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 2 · wiki 0 · own 17</text>
+<rect x="2455.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="2455.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2469.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Repair</text>
+<rect x="2469.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2469.0" y="880.0" width="63.2" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2532.2" y="880.0" width="94.8" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2469.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2673.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">15</text>
+<text x="2469.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 6 · wiki 0 · own 9</text>
+<rect x="2709.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="2709.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2723.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Bridge</text>
+<rect x="2723.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2723.0" y="880.0" width="16.9" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2739.9" y="880.0" width="141.1" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2723.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2927.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">28</text>
+<text x="2723.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 3 · wiki 0 · own 25</text>
+<rect x="2963.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2963.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2977.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Owl</text>
+<rect x="2977.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2977.0" y="880.0" width="152.4" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3129.4" y="880.0" width="5.6" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2977.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3181.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">28</text>
+<text x="2977.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 27 · own 1</text>
+<rect x="3217.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="3217.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="3231.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Provenance</text>
+<rect x="3231.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3231.0" y="880.0" width="12.2" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3243.2" y="880.0" width="139.8" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3382.9" y="880.0" width="6.1" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3231.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3435.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">26</text>
+<text x="3231.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 2 · wiki 23 · own 1</text>
+<rect x="3471.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="3471.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="3485.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Identity</text>
+<rect x="3485.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3485.0" y="880.0" width="17.6" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3502.6" y="880.0" width="87.8" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3590.3" y="880.0" width="52.7" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3485.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3689.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">27</text>
+<text x="3485.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 3 · wiki 15 · own 9</text>
+<rect x="3725.0" y="850.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="3725.0" y="850.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="3739.0" y="872.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/ParentingRoles</text>
+<rect x="3739.0" y="880.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3739.0" y="880.0" width="49.4" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3788.4" y="880.0" width="19.8" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3808.1" y="880.0" width="88.9" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3739.0" y="880.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3943.0" y="888.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">16</text>
+<text x="3739.0" y="903.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 5 · wiki 2 · own 9</text>
+<rect x="42.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="42.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="56.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/ObligationAuthority</text>
+<rect x="56.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="56.0" y="1020.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="56.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="260.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">19</text>
+<text x="56.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 19</text>
+<rect x="296.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="296.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="310.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/FourView</text>
+<rect x="310.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="310.0" y="1020.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="310.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="514.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">27</text>
+<text x="310.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 27</text>
+<rect x="550.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="550.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="564.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Opposition</text>
+<rect x="564.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="564.0" y="1020.0" width="71.4" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="635.4" y="1020.0" width="86.6" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="564.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="768.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">31</text>
+<text x="564.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 14 · wiki 0 · own 17</text>
+<rect x="804.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#f0883e" stroke-width="1.6" opacity="1.0"/>
+<rect x="804.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="818.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/ObserverJoin</text>
+<rect x="818.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="818.0" y="1020.0" width="110.6" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="928.6" y="1020.0" width="47.4" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="818.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1022.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">10</text>
+<text x="818.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 7 · wiki 0 · own 3</text>
+<rect x="1058.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1058.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1072.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/OrderDescent</text>
+<rect x="1072.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1072.0" y="1020.0" width="26.3" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1098.3" y="1020.0" width="131.7" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1072.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1276.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">12</text>
+<text x="1072.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 2 · wiki 0 · own 10</text>
+<rect x="1312.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1312.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1326.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Attribution</text>
+<rect x="1326.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1326.0" y="1020.0" width="23.1" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1349.1" y="1020.0" width="134.9" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1326.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1530.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">41</text>
+<text x="1326.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 6 · own 35</text>
+<rect x="1566.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1566.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1580.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Lens</text>
+<rect x="1580.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1580.0" y="1020.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1580.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1784.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">23</text>
+<text x="1580.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 23</text>
+<rect x="1820.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1820.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1834.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/BFO</text>
+<rect x="1834.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1834.0" y="1020.0" width="48.8" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1882.8" y="1020.0" width="109.2" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1834.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2038.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">55</text>
+<text x="1834.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 17 · own 38</text>
+<rect x="2074.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2074.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2088.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/ClassAlgebra</text>
+<rect x="2088.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2088.0" y="1020.0" width="87.8" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2175.8" y="1020.0" width="70.2" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2088.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2292.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">18</text>
+<text x="2088.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 10 · own 8</text>
+<rect x="2328.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="2328.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2342.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/ClassOrder</text>
+<rect x="2342.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2342.0" y="1020.0" width="72.2" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2414.2" y="1020.0" width="85.8" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2342.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2546.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">35</text>
+<text x="2342.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 16 · own 19</text>
+<rect x="2582.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2582.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2596.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Diagnostics</text>
+<rect x="2596.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2596.0" y="1020.0" width="158.0" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2596.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2800.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">8</text>
+<text x="2596.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 8 · own 0</text>
+<rect x="2836.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2836.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2850.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Redundancy</text>
+<rect x="2850.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2850.0" y="1020.0" width="158.0" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2850.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3054.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">15</text>
+<text x="2850.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 15 · own 0</text>
+<rect x="3090.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="3090.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="3104.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Values</text>
+<rect x="3104.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3104.0" y="1020.0" width="21.1" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3125.1" y="1020.0" width="39.5" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3164.6" y="1020.0" width="97.4" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3104.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3308.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">60</text>
+<text x="3104.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 8 · wiki 15 · own 37</text>
+<rect x="3344.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="3344.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="3358.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Ternary/Aggregate</text>
+<rect x="3358.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3358.0" y="1020.0" width="72.9" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3430.9" y="1020.0" width="85.1" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3358.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3562.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">26</text>
+<text x="3358.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 12 · wiki 0 · own 14</text>
+<rect x="3598.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="3598.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="3612.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Constraints</text>
+<rect x="3612.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3612.0" y="1020.0" width="158.0" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3612.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3816.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">48</text>
+<text x="3612.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 48 · own 0</text>
+<rect x="3852.0" y="990.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="3852.0" y="990.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="3866.0" y="1012.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Parenting</text>
+<rect x="3866.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3866.0" y="1020.0" width="38.1" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3904.1" y="1020.0" width="72.3" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3976.4" y="1020.0" width="47.6" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3866.0" y="1020.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="4070.0" y="1028.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">83</text>
+<text x="3866.0" y="1043.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 20 · wiki 38 · own 25</text>
+<rect x="1439.0" y="1130.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1439.0" y="1130.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1453.0" y="1152.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Authority</text>
+<rect x="1453.0" y="1160.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1453.0" y="1160.0" width="65.8" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1518.8" y="1160.0" width="92.2" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1453.0" y="1160.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1657.0" y="1168.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">36</text>
+<text x="1453.0" y="1183.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 15 · wiki 0 · own 21</text>
+<rect x="1693.0" y="1130.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#f0883e" stroke-width="1.6" opacity="1.0"/>
+<rect x="1693.0" y="1130.0" width="5.0" height="62.0" rx="2" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1707.0" y="1152.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Quotient</text>
+<rect x="1707.0" y="1160.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1707.0" y="1160.0" width="81.9" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1788.9" y="1160.0" width="76.1" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1707.0" y="1160.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1911.0" y="1168.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">27</text>
+<text x="1707.0" y="1183.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 14 · wiki 0 · own 13</text>
+<rect x="1947.0" y="1130.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1947.0" y="1130.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1961.0" y="1152.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Tetralemma</text>
+<rect x="1961.0" y="1160.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1961.0" y="1160.0" width="13.2" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1974.2" y="1160.0" width="144.8" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1961.0" y="1160.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2165.0" y="1168.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">48</text>
+<text x="1961.0" y="1183.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 4 · wiki 0 · own 44</text>
+<rect x="2201.0" y="1130.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="2201.0" y="1130.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2215.0" y="1152.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/DerivationFibres</text>
+<rect x="2215.0" y="1160.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2215.0" y="1160.0" width="37.0" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2252.0" y="1160.0" width="121.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2215.0" y="1160.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2419.0" y="1168.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">47</text>
+<text x="2215.0" y="1183.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 11 · own 36</text>
+<rect x="2455.0" y="1130.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="2455.0" y="1130.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2469.0" y="1152.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Core</text>
+<rect x="2469.0" y="1160.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2469.0" y="1160.0" width="4.9" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2473.9" y="1160.0" width="153.1" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2469.0" y="1160.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2673.0" y="1168.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">32</text>
+<text x="2469.0" y="1183.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 1 · wiki 31 · own 0</text>
+<rect x="42.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="42.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="56.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Agda/Prelude</text>
+<rect x="56.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="56.0" y="1300.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="56.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="260.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">46</text>
+<text x="56.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 46</text>
+<rect x="296.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="296.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="310.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Agda/Syntax</text>
+<rect x="310.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="310.0" y="1300.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="310.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="514.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">11</text>
+<text x="310.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 11</text>
+<rect x="550.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="550.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="564.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Agda/Verbatim</text>
+<rect x="564.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="564.0" y="1300.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="564.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="768.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">14</text>
+<text x="564.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 14</text>
+<rect x="804.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="804.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="818.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/ContextErasure</text>
+<rect x="818.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="818.0" y="1300.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="818.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1022.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">19</text>
+<text x="818.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 19</text>
+<rect x="1058.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1058.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1072.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Observer</text>
+<rect x="1072.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1072.0" y="1300.0" width="50.1" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1122.1" y="1300.0" width="107.9" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1072.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1276.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">41</text>
+<text x="1072.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 13 · wiki 0 · own 28</text>
+<rect x="1312.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1312.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1326.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Epistemic/Trit</text>
+<rect x="1326.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1326.0" y="1300.0" width="41.2" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1367.2" y="1300.0" width="116.8" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1326.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1530.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">46</text>
+<text x="1326.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 12 · wiki 0 · own 34</text>
+<rect x="1566.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1566.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1580.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Mirror/CRTJFixedPointBridge</text>
+<rect x="1580.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1580.0" y="1300.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1580.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="1784.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">10</text>
+<text x="1580.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 10</text>
+<rect x="1820.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="1820.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="1834.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Mirror/CRTPeriod</text>
+<rect x="1834.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1834.0" y="1300.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="1834.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2038.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">23</text>
+<text x="1834.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 23</text>
+<rect x="2074.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="2074.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2088.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Mirror/Classification</text>
+<rect x="2088.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2088.0" y="1300.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2088.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2292.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">34</text>
+<text x="2088.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 34</text>
+<rect x="2328.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="2328.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2342.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Mirror/Correspondence</text>
+<rect x="2342.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2342.0" y="1300.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2342.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2546.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">10</text>
+<text x="2342.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 10</text>
+<rect x="2582.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="2582.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2596.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Mirror/JFixedPoint</text>
+<rect x="2596.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2596.0" y="1300.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2596.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="2800.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">21</text>
+<text x="2596.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 21</text>
+<rect x="2836.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="2836.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="2850.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Mirror/Moonshine</text>
+<rect x="2850.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2850.0" y="1300.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="2850.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3054.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">28</text>
+<text x="2850.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 28</text>
+<rect x="3090.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="3090.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="3104.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Mirror/ProofRelevance</text>
+<rect x="3104.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3104.0" y="1300.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3104.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3308.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">11</text>
+<text x="3104.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 11</text>
+<rect x="3344.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="3344.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="3358.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Ternary/Balanced</text>
+<rect x="3358.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3358.0" y="1300.0" width="69.7" height="9.0" rx="0" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3427.7" y="1300.0" width="88.3" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3358.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3562.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">34</text>
+<text x="3358.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 15 · wiki 0 · own 19</text>
+<rect x="3598.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#1f6feb" stroke-width="1.6" opacity="1.0"/>
+<rect x="3598.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="3612.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Coverage</text>
+<rect x="3612.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3612.0" y="1300.0" width="88.5" height="9.0" rx="0" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3700.5" y="1300.0" width="69.5" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3612.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="3816.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">25</text>
+<text x="3612.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 14 · own 11</text>
+<rect x="3852.0" y="1270.0" width="232.0" height="62.0" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.6" opacity="1.0"/>
+<rect x="3852.0" y="1270.0" width="5.0" height="62.0" rx="2" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="3866.0" y="1292.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="bold" fill="#e6edf3" text-anchor="start" opacity="1.0">Wikidata/Reachability</text>
+<rect x="3866.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="#161b22" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3866.0" y="1300.0" width="158.0" height="9.0" rx="0" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/><rect x="3866.0" y="1300.0" width="158.0" height="9.0" rx="4" fill="none" stroke="#30363d" stroke-width="1" opacity="1.0"/>
+<text x="4070.0" y="1308.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="normal" fill="#8b949e" text-anchor="end" opacity="1.0">11</text>
+<text x="3866.0" y="1323.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="normal" fill="#6e7681" text-anchor="start" opacity="1.0">dashi 0 · wiki 0 · own 11</text>
+<text x="40.0" y="1450.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="16" font-weight="bold" fill="#f0f6fc" text-anchor="start" opacity="1.0">Legend</text>
+<rect x="40.0" y="1462.0" width="16.0" height="16.0" rx="4" fill="#f0883e" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="64.0" y="1475.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="normal" fill="#c9d1d9" text-anchor="start" opacity="1.0">DASHI Agda bridge (PR #555 / #581 / #582)</text>
+<rect x="439.0" y="1462.0" width="16.0" height="16.0" rx="4" fill="#1f6feb" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="463.0" y="1475.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="normal" fill="#c9d1d9" text-anchor="start" opacity="1.0">Wikidata data model &amp; standards</text>
+<rect x="748.0" y="1462.0" width="16.0" height="16.0" rx="4" fill="#3fb950" stroke="none" stroke-width="1" opacity="1.0"/>
+<text x="772.0" y="1475.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="normal" fill="#c9d1d9" text-anchor="start" opacity="1.0">Original to this Lean port</text>
+<text x="40.0" y="1506.0" font-family="'DejaVu Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="normal" fill="#8b949e" text-anchor="start" opacity="1.0">83 modules · 206 module-to-module edges · 9832 declaration-level uses · longest dependency chain: 9 modules.  Rows are dependency depth: the bottom row depends on nothing else in the project.</text>
+</svg>

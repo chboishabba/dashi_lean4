@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "government body",
+  "government entity",
+  "gov agency"
+ ],
+ "canonical": "Q327333",
+ "description": "organisational part of a government responsible for specific public services, such as health, judiciary, education, transportation, foreign affairs, etc",
+ "id": "Q327333",
+ "label": "government agency"
+}

@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.ReportFormat
 import RequestProject.Diagnostics
 import RequestProject.SeriesDiagnostics

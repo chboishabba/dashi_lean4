@@ -1,0 +1,98 @@
+<HTML>
+<HEAD>
+<TITLE>Topological Zoo Home Page</TITLE>
+<!-- Copyright (c) 1995 by The Geometry Center. All Rights Reserved -->
+</HEAD>
+<BODY>
+
+<!-- Navigation links -->
+<B>Up:</B> <A HREF="../"><I>The Geometry Center Welcome Page</I></A><BR>
+<HR>
+<I>Warning:  this collection currently is under construction</I>
+<HR>
+<p>
+
+<!-- Main text of document -->
+<H1>The Topological Zoo</H1>
+
+The Topological Zoo is designed a resource for mathematicians and
+educators.  It is a visual dictionary of surfaces and other
+mathematical objects, consisting primarily of movies, still images and
+interactive pictures.  Its contents can be used to complement
+classroom presentations, research papers and talks.  For the casual
+browser, each object is accompanied by a short description that
+provides background information and interconnections among the objects
+in the zoo.  Where appropriate, the equations that describe the
+objects are included.  The Zoo is primarily a reference, however; it
+is not an introduction to topology or other branches of mathematics.
+<p>
+
+The Topological Zoo is an ongoing project at the Geometry Center and
+is primarily the work of graduate students from the the University of
+Minnesota and undergraduates who participate in the
+<A HREF="/education/SI/">Summer Institute</A> at the Geometry Center.
+A list of <A HREF="keepers.html">Zookeepers</A> is available.
+<p>
+
+
+<BR>
+<H2>Main Gateways to the Collection:</H2>
+<UL>
+<LI><B><A HREF="toptype/">Topological Type</A></B>.  This exhibit
+describes the closed compact surfaces by their topological type, and
+includes the sphere, the torus, the Klein bottle, and the projective
+plane as some of its main attractions.
+<p>
+
+<LI><B><A HREF="features/">Surface Features</A></B>.  This exhibit
+describes several important features of surfaces that are generally
+local in nature.  You will find the Mobius band and the Whitney
+umbrella here.
+<p>
+
+<LI>Examples from:
+<UL>
+<LI><B>Multivariable Calculus</B>
+<LI><B><A HREF="diffgeom/">Differential Geometery</A></B>
+<LI><B>Dynamical Systems</B>
+</UL>
+<p>
+
+<LI>Special Exhibits:
+<UL>
+<LI><B>Polyhedral Solids, Stellations</B>
+<LI><B><A HREF="higher/">Higher Dimensional Objects</A></B>
+<LI><B>Knots and Links</B>
+<LI><B>Fractals</B>
+<LI><B>Hyperbolic Geometry</B>
+</UL>
+
+</UL>
+<p>
+
+If you don't know where to find what you are looking for, you can
+<B>Search</B> the collection, or browse the <B>Alphabetical List</B>
+of surfaces.
+
+<p>
+
+
+<!-- GC common information -->
+<HR>
+<NOBR><A HREF="/zoo"><IMG SRC="/zoo/pix/zoo.gif" ALT="[ZOO]"></A>
+<I>The Topological Zoo Home Page</I></NOBR><BR>
+<A HREF="/"><IMG SRC="/pix/home.gif" ALT="[HOME]"></A>
+<I>The Geometry Center Home Page</I></NOBR>
+<p>
+Comments to:
+<A HREF="/admin/mail/webmaster.html">webmaster@www.geom.uiuc.edu</A><BR>
+Created:  Jun 27 1995 ---
+<!-- hhmts start -->
+Last modified: Fri Dec 15 15:39:09 1995
+<!-- hhmts end -->
+<BR>
+Copyright &#169; 1995 by
+<A HREF="http://www.geom.uiuc.edu/">The Geometry Center</A>
+All rights reserved.
+</BODY>
+</HTML>

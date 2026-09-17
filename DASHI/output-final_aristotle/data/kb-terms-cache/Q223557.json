@@ -1,0 +1,16 @@
+{
+ "aliases": [
+  "body",
+  "physical body",
+  "cohesive object",
+  "tangible physical object",
+  "concrete physical object",
+  "object",
+  "physical entity",
+  "object (BFO)"
+ ],
+ "canonical": "Q223557",
+ "description": "singular aggregation of tangible substance(s) such as matter or radiation, with overall properties;thing subject to physical interactions",
+ "id": "Q223557",
+ "label": "physical object"
+}

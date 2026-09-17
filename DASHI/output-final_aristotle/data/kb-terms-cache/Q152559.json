@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "ISO 639-3 macrolanguage",
+  "ISO 639 macrolanguage",
+  "ISO 639-3",
+  "ISO 639"
+ ],
+ "canonical": "Q152559",
+ "description": "language scope defined in the ISO 639-3 standard",
+ "id": "Q152559",
+ "label": "macrolanguage"
+}

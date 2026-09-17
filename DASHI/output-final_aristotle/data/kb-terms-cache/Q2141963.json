@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "retraction"
+ ],
+ "canonical": "Q2141963",
+ "description": "continuous mapping from a topological space into a subspace that preserves the position of all points in that subspace",
+ "id": "Q2141963",
+ "label": "retract"
+}

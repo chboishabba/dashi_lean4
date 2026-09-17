@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "actor",
+  "lrmer:E6",
+  "rdac:C10002",
+  "rdac:10002",
+  "agent"
+ ],
+ "canonical": "Q24229398",
+ "description": "distinct and identifiable entity with agency, capable of performing actions",
+ "id": "Q24229398",
+ "label": "being"
+}

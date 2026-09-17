@@ -1,0 +1,1475 @@
+{
+  "generated_by": "tools/status_report.py",
+  "build": {
+    "toolchain": "leanprover/lean4:v4.28.0",
+    "sorry_free": true,
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  "groups": {
+    "wikidata-engine": {
+      "lines": 1194,
+      "theorems": 68,
+      "negative_results": 5,
+      "definitions": 57,
+      "examples": 0,
+      "decided_by_computation": 1,
+      "sorries": 0,
+      "label": "Wikidata engine (core)",
+      "side": "wikidata",
+      "colour": "#1f6feb",
+      "files": 7,
+      "modules": [
+        {
+          "lines": 233,
+          "theorems": 8,
+          "negative_results": 0,
+          "negative_names": [],
+          "definitions": 4,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Reachability.lean"
+        },
+        {
+          "lines": 225,
+          "theorems": 12,
+          "negative_results": 2,
+          "negative_names": [
+            "not_truthy_normal_of_hasPreferred",
+            "isTruthy_normal_of_not_hasPreferred"
+          ],
+          "definitions": 23,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Core.lean"
+        },
+        {
+          "lines": 167,
+          "theorems": 10,
+          "negative_results": 1,
+          "negative_names": [
+            "no_common_instance_of_disjoint"
+          ],
+          "definitions": 9,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/ClassAlgebra.lean"
+        },
+        {
+          "lines": 152,
+          "theorems": 12,
+          "negative_results": 2,
+          "negative_names": [
+            "mem_statements_prune_of_ne",
+            "subclassEdges_prune_of_ne"
+          ],
+          "definitions": 3,
+          "examples": 0,
+          "decided_by_computation": 1,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Redundancy.lean"
+        },
+        {
+          "lines": 105,
+          "theorems": 3,
+          "negative_results": 0,
+          "negative_names": [],
+          "definitions": 5,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Diagnostics.lean"
+        },
+        {
+          "lines": 111,
+          "theorems": 4,
+          "negative_results": 0,
+          "negative_names": [],
+          "definitions": 6,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Alignment.lean"
+        },
+        {
+          "lines": 201,
+          "theorems": 19,
+          "negative_results": 0,
+          "negative_names": [],
+          "definitions": 7,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Provenance.lean"
+        }
+      ]
+    },
+    "wikidata-surfaces": {
+      "lines": 3313,
+      "theorems": 243,
+      "negative_results": 38,
+      "definitions": 187,
+      "examples": 2,
+      "decided_by_computation": 29,
+      "sorries": 0,
+      "label": "Wikidata surfaces (layers, slices, RDF, constraints, identity)",
+      "side": "wikidata",
+      "colour": "#388bfd",
+      "files": 11,
+      "modules": [
+        {
+          "lines": 151,
+          "theorems": 23,
+          "negative_results": 0,
+          "negative_names": [],
+          "definitions": 3,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Slices.lean"
+        },
+        {
+          "lines": 198,
+          "theorems": 22,
+          "negative_results": 1,
+          "negative_names": [
+            "truthyLayer_no_deprecated"
+          ],
+          "definitions": 3,
+          "examples": 0,
+          "decided_by_computation": 1,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Layers.lean"
+        },
+        {
+          "lines": 334,
+          "theorems": 20,
+          "negative_results": 3,
+          "negative_names": [
+            "direct_layer_forgets_rank",
+            "p279_ne_p31",
+            "entails_inert"
+          ],
+          "definitions": 13,
+          "examples": 0,
+          "decided_by_computation": 2,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Rdf.lean"
+        },
+        {
+          "lines": 326,
+          "theorems": 25,
+          "negative_results": 6,
+          "negative_names": [
+            "not_holds_of_check_false",
+            "subclassOf_append_inert_iff",
+            "instanceOf_append_inert_iff",
+            "p361_ne_p279",
+            "p361_ne_p31",
+            "partOf_inert"
+          ],
+          "definitions": 25,
+          "examples": 0,
+          "decided_by_computation": 2,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Constraints.lean"
+        },
+        {
+          "lines": 252,
+          "theorems": 15,
+          "negative_results": 2,
+          "negative_names": [
+            "translates_not_transitive",
+            "identity_does_not_entail_instance"
+          ],
+          "definitions": 12,
+          "examples": 0,
+          "decided_by_computation": 2,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Identity.lean"
+        },
+        {
+          "lines": 138,
+          "theorems": 13,
+          "negative_results": 3,
+          "negative_names": [
+            "not_determines_direct_reified",
+            "no_transition_direct_reified",
+            "no_transition_reified_direct"
+          ],
+          "definitions": 4,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Lens.lean"
+        },
+        {
+          "lines": 420,
+          "theorems": 37,
+          "negative_results": 9,
+          "negative_names": [
+            "amount_equality_is_not_quantity_agreement",
+            "overlaps_not_transitive",
+            "overlaps_does_not_imply_eq",
+            "year_precision_does_not_determine_the_day",
+            "agreeAt_year_not_agreeAt_day",
+            "numeric_equality_is_not_time_agreement",
+            "covers_not_symmetric",
+            "covers_not_transitive",
+            "same_numbers_different_globe_do_not_match"
+          ],
+          "definitions": 29,
+          "examples": 0,
+          "decided_by_computation": 4,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Values.lean"
+        },
+        {
+          "lines": 409,
+          "theorems": 25,
+          "negative_results": 5,
+          "negative_names": [
+            "core_forgets_qualifiers",
+            "someValue_names_no_item",
+            "literal_statement_is_inert",
+            "validAt_of_no_temporal_qualifiers",
+            "reference_is_not_truth"
+          ],
+          "definitions": 26,
+          "examples": 0,
+          "decided_by_computation": 5,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Qualifiers.lean"
+        },
+        {
+          "lines": 314,
+          "theorems": 16,
+          "negative_results": 4,
+          "negative_names": [
+            "optional_not_monotone",
+            "notBound_not_monotone",
+            "absence_from_answers_is_not_refutation",
+            "query_does_not_close_over_subclasses"
+          ],
+          "definitions": 23,
+          "examples": 0,
+          "decided_by_computation": 8,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Sparql.lean"
+        },
+        {
+          "lines": 203,
+          "theorems": 11,
+          "negative_results": 3,
+          "negative_names": [
+            "transitivity_is_not_conservative",
+            "converse_is_derived_not_recorded",
+            "symmetry_is_not_conservative"
+          ],
+          "definitions": 18,
+          "examples": 0,
+          "decided_by_computation": 5,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Owl.lean"
+        },
+        {
+          "lines": 568,
+          "theorems": 36,
+          "negative_results": 2,
+          "negative_names": [
+            "blank_is_not_a_witness",
+            "twoBlanks_not_isLean"
+          ],
+          "definitions": 31,
+          "examples": 2,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/BlankNodes.lean"
+        }
+      ]
+    },
+    "attribution": {
+      "lines": 1277,
+      "theorems": 71,
+      "negative_results": 18,
+      "definitions": 72,
+      "examples": 0,
+      "decided_by_computation": 16,
+      "sorries": 0,
+      "label": "Fifth pass (fibres, attribution, alignment safety, diagnostics)",
+      "side": "wikidata",
+      "colour": "#79c0ff",
+      "files": 5,
+      "modules": [
+        {
+          "lines": 386,
+          "theorems": 23,
+          "negative_results": 5,
+          "negative_names": [
+            "outcomeOn_ne_violated_of_no_contradiction",
+            "validate_inapplicable_ne_violation",
+            "collapseOutcome_not_injective",
+            "unresolved_corner_ne_violated",
+            "fact_transfer_not_identity_transfer"
+          ],
+          "definitions": 24,
+          "examples": 0,
+          "decided_by_computation": 2,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/DerivationFibres.lean"
+        },
+        {
+          "lines": 391,
+          "theorems": 21,
+          "negative_results": 4,
+          "negative_names": [
+            "pooled_against_eq_false_of_no_refutation",
+            "blame_not_recoverable_from_pooled",
+            "alignmentLocalStress_trit_is_lossy",
+            "bfo_no_layer_refutes"
+          ],
+          "definitions": 21,
+          "examples": 0,
+          "decided_by_computation": 5,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Attribution.lean"
+        },
+        {
+          "lines": 186,
+          "theorems": 11,
+          "negative_results": 5,
+          "negative_names": [
+            "subclassOnly_not_safe_for_disjointness",
+            "instance_transport_does_not_manufacture_disjointness",
+            "no_single_boolean_summary",
+            "alignOk_does_not_transport_disjointness",
+            "cmProfile_not_safe_for_disjointness"
+          ],
+          "definitions": 11,
+          "examples": 0,
+          "decided_by_computation": 2,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/AlignmentSafety.lean"
+        },
+        {
+          "lines": 189,
+          "theorems": 9,
+          "negative_results": 1,
+          "negative_names": [
+            "coverage_not_monotone_under_growth"
+          ],
+          "definitions": 11,
+          "examples": 0,
+          "decided_by_computation": 6,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/DisjointUnionDiagnostics.lean"
+        },
+        {
+          "lines": 125,
+          "theorems": 7,
+          "negative_results": 3,
+          "negative_names": [
+            "no_reconstruction_of_identified",
+            "no_reconstruction_of_forgetRank",
+            "no_reconstruction_of_directTriples"
+          ],
+          "definitions": 5,
+          "examples": 0,
+          "decided_by_computation": 1,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/RdfInformationOrder.lean"
+        }
+      ]
+    },
+    "parenting": {
+      "lines": 1327,
+      "theorems": 78,
+      "negative_results": 24,
+      "definitions": 101,
+      "examples": 0,
+      "decided_by_computation": 43,
+      "sorries": 0,
+      "label": "Parenting surface (slots, carrier, fibres, authority)",
+      "side": "wikidata",
+      "colour": "#58a6ff",
+      "files": 4,
+      "modules": [
+        {
+          "lines": 591,
+          "theorems": 29,
+          "negative_results": 10,
+          "negative_names": [
+            "causal_input_is_not_progenitor",
+            "cap_does_not_mean_exactly_two",
+            "genetic_does_not_confer_parenthood",
+            "parenthood_does_not_require_genetics",
+            "gestation_does_not_confer_parenthood",
+            "mitochondrial_does_not_confer_parenthood",
+            "progeniture_is_not_parenthood",
+            "slot_does_not_determine_semantics",
+            "recorded_statement_forgets_relation",
+            "recorded_descent_not_genetic"
+          ],
+          "definitions": 58,
+          "examples": 0,
+          "decided_by_computation": 16,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Parenting.lean"
+        },
+        {
+          "lines": 155,
+          "theorems": 8,
+          "negative_results": 1,
+          "negative_names": [
+            "recorded_tag_is_lossy"
+          ],
+          "definitions": 8,
+          "examples": 0,
+          "decided_by_computation": 7,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/ParentingRoles.lean"
+        },
+        {
+          "lines": 331,
+          "theorems": 24,
+          "negative_results": 8,
+          "negative_names": [
+            "slotObserver_not_separating",
+            "geneticObserver_not_separating",
+            "slot_genetic_pair_not_separating",
+            "projectSlot_not_injective",
+            "genetic_not_fibreConstant",
+            "genealogical_not_fibreConstant",
+            "progenitor_not_fibreConstant",
+            "route_not_factorsThrough"
+          ],
+          "definitions": 22,
+          "examples": 0,
+          "decided_by_computation": 11,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/ParentingFibres.lean"
+        },
+        {
+          "lines": 250,
+          "theorems": 17,
+          "negative_results": 5,
+          "negative_names": [
+            "authority_not_dynamicallySafe",
+            "not_plural_safety",
+            "history_is_not_erased",
+            "parentObserver_not_separating",
+            "childVoiceObserver_not_separating"
+          ],
+          "definitions": 13,
+          "examples": 0,
+          "decided_by_computation": 9,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/ParentingAuthority.lean"
+        }
+      ]
+    },
+    "epistemic": {
+      "lines": 2694,
+      "theorems": 201,
+      "negative_results": 58,
+      "definitions": 123,
+      "examples": 0,
+      "decided_by_computation": 24,
+      "sorries": 0,
+      "label": "Evidence / epistemic layer",
+      "side": "rest",
+      "colour": "#8957e5",
+      "files": 14,
+      "modules": [
+        {
+          "lines": 269,
+          "theorems": 34,
+          "negative_results": 7,
+          "negative_names": [
+            "meet_unresolved_ne_supported",
+            "receiptState_ne_contradicted",
+            "unresolved_left_never_conflicts",
+            "unresolved_right_never_conflicts",
+            "failed_receipt_never_conflicts",
+            "mismatched_receipt_never_conflicts",
+            "ScopedClaim.and_unresolved_ne_supported"
+          ],
+          "definitions": 12,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/Trit.lean"
+        },
+        {
+          "lines": 243,
+          "theorems": 16,
+          "negative_results": 6,
+          "negative_names": [
+            "not_holds_of_check_false",
+            "state_ne_contradicted",
+            "not_holds_of_refuted",
+            "no_conflict_of_source_mismatch",
+            "no_conflict_of_checker_failure",
+            "import_carries_no_refutation"
+          ],
+          "definitions": 12,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/Bridge.lean"
+        },
+        {
+          "lines": 164,
+          "theorems": 10,
+          "negative_results": 1,
+          "negative_names": [
+            "enact_eq_of_not_approved"
+          ],
+          "definitions": 6,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/Repair.lean"
+        },
+        {
+          "lines": 78,
+          "theorems": 6,
+          "negative_results": 1,
+          "negative_names": [
+            "sliceClaim_ne_contradicted"
+          ],
+          "definitions": 1,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/Context.lean"
+        },
+        {
+          "lines": 189,
+          "theorems": 13,
+          "negative_results": 4,
+          "negative_names": [
+            "not_holds_of_check_false",
+            "state_ne_contradicted",
+            "not_holds_of_check_false",
+            "identifier_evidence_grants_no_class_fact"
+          ],
+          "definitions": 8,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/Surfaces.lean"
+        },
+        {
+          "lines": 182,
+          "theorems": 11,
+          "negative_results": 5,
+          "negative_names": [
+            "not_holds_of_check_false",
+            "state_ne_contradicted",
+            "not_holds_of_check_false",
+            "core_support_does_not_transfer_to_the_instant",
+            "time_support_does_not_refine"
+          ],
+          "definitions": 6,
+          "examples": 0,
+          "decided_by_computation": 2,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/ValueEvidence.lean"
+        },
+        {
+          "lines": 98,
+          "theorems": 6,
+          "negative_results": 2,
+          "negative_names": [
+            "state_ne_contradicted",
+            "negation_as_failure_support_is_not_stable"
+          ],
+          "definitions": 3,
+          "examples": 0,
+          "decided_by_computation": 1,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/QueryEvidence.lean"
+        },
+        {
+          "lines": 192,
+          "theorems": 17,
+          "negative_results": 3,
+          "negative_names": [
+            "viewClaim_layer_irrelevant",
+            "view_support_does_not_transfer_down",
+            "viewClaim_ne_contradicted"
+          ],
+          "definitions": 6,
+          "examples": 0,
+          "decided_by_computation": 1,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/Views.lean"
+        },
+        {
+          "lines": 325,
+          "theorems": 33,
+          "negative_results": 5,
+          "negative_names": [
+            "collapse_not_injective",
+            "eq_of_collapse_eq_of_ne",
+            "importSquare_ne_both",
+            "merge_then_collapse_ne_collapse_then_merge",
+            "Qualified.scopeExceeded_ne_contradicted"
+          ],
+          "definitions": 16,
+          "examples": 0,
+          "decided_by_computation": 2,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/Tetralemma.lean"
+        },
+        {
+          "lines": 187,
+          "theorems": 13,
+          "negative_results": 6,
+          "negative_names": [
+            "isEmpty_transition_of_not_determines",
+            "disposition_forgets_pair",
+            "unresolved_not_resolved",
+            "notObserved_not_resolved",
+            "sourceMismatch_not_resolved",
+            "bothSupported_not_resolved"
+          ],
+          "definitions": 10,
+          "examples": 0,
+          "decided_by_computation": 1,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/Lens.lean"
+        },
+        {
+          "lines": 165,
+          "theorems": 10,
+          "negative_results": 6,
+          "negative_names": [
+            "not_holds_of_check_false",
+            "state_ne_contradicted",
+            "not_holds_of_check_false",
+            "recorded_support_does_not_license_genetic",
+            "cap_support_is_not_two",
+            "support_does_not_confer_authority"
+          ],
+          "definitions": 6,
+          "examples": 0,
+          "decided_by_computation": 3,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/ParentingEvidence.lean"
+        },
+        {
+          "lines": 257,
+          "theorems": 12,
+          "negative_results": 6,
+          "negative_names": [
+            "fourView_not_supportSquare",
+            "inference_does_not_determine_force",
+            "force_does_not_determine_inference",
+            "no_force_from_inference",
+            "no_inference_from_ground",
+            "no_discipline_from_inference"
+          ],
+          "definitions": 18,
+          "examples": 0,
+          "decided_by_computation": 8,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/FourView.lean"
+        },
+        {
+          "lines": 161,
+          "theorems": 11,
+          "negative_results": 4,
+          "negative_names": [
+            "no_obligations_from_evidence",
+            "no_promotion_from_evidence",
+            "no_promotion_from_obligations",
+            "supporter_grant_does_not_promote"
+          ],
+          "definitions": 8,
+          "examples": 0,
+          "decided_by_computation": 3,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/ObligationAuthority.lean"
+        },
+        {
+          "lines": 184,
+          "theorems": 9,
+          "negative_results": 2,
+          "negative_names": [
+            "marginals_do_not_determine_conditional_direction",
+            "no_conditional_direction_from_marginals"
+          ],
+          "definitions": 11,
+          "examples": 0,
+          "decided_by_computation": 3,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/ContextErasure.lean"
+        }
+      ]
+    },
+    "projection-cores": {
+      "lines": 797,
+      "theorems": 63,
+      "negative_results": 16,
+      "definitions": 41,
+      "examples": 0,
+      "decided_by_computation": 1,
+      "sorries": 0,
+      "label": "Projection cores (observers, residuals, authority)",
+      "side": "rest",
+      "colour": "#a371f7",
+      "files": 3,
+      "modules": [
+        {
+          "lines": 259,
+          "theorems": 27,
+          "negative_results": 6,
+          "negative_names": [
+            "not_separating_of_strictlyRefines",
+            "not_separating_of_collision",
+            "collision_of_not_separating",
+            "not_injective_of_hiddenTransition",
+            "exists_descendsToSurface_not_surfaceInvariant",
+            "not_injective_of_fibreAutomorphism"
+          ],
+          "definitions": 14,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/Observer.lean"
+        },
+        {
+          "lines": 231,
+          "theorems": 15,
+          "negative_results": 3,
+          "negative_names": [
+            "exists_section_not_injective",
+            "residual_ne_of_hiddenTransition",
+            "not_factorsThrough"
+          ],
+          "definitions": 12,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/Quotient.lean"
+        },
+        {
+          "lines": 307,
+          "theorems": 21,
+          "negative_results": 7,
+          "negative_names": [
+            "not_dynamicSafety_of_defect",
+            "not_plural_of_defect",
+            "not_policySafety_of_defect",
+            "not_dynamicSafety_of_policyDefect",
+            "currentAuthority_eq_false_of_no_regrant",
+            "exists_everGranted_and_not_current",
+            "unavoidable_continuation_creates_no_mandate"
+          ],
+          "definitions": 15,
+          "examples": 0,
+          "decided_by_computation": 1,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/Authority.lean"
+        }
+      ]
+    },
+    "regression": {
+      "lines": 664,
+      "theorems": 66,
+      "negative_results": 17,
+      "definitions": 30,
+      "examples": 0,
+      "decided_by_computation": 49,
+      "sorries": 0,
+      "label": "Worked regression (artist / painter / sculptor)",
+      "side": "wikidata",
+      "colour": "#3fb950",
+      "files": 3,
+      "modules": [
+        {
+          "lines": 307,
+          "theorems": 30,
+          "negative_results": 8,
+          "negative_names": [
+            "artist_not_subclass_painter",
+            "leonardo_not_instance_sculptor",
+            "artist_union_not_disjoint",
+            "painter_sculptor_not_disjoint",
+            "absence_is_not_world_refutation",
+            "deprecated_not_instance",
+            "support_does_not_transfer_down",
+            "truthy_does_not_determine_evidence"
+          ],
+          "definitions": 17,
+          "examples": 0,
+          "decided_by_computation": 21,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Examples.lean"
+        },
+        {
+          "lines": 215,
+          "theorems": 24,
+          "negative_results": 8,
+          "negative_names": [
+            "shadowKB_leonardo_not_sculptor",
+            "artist_not_rdf_painter",
+            "p279_not_single_valued",
+            "p279_not_distinct_valued",
+            "ceiling_part_not_subclass",
+            "part_statement_is_inert",
+            "identifier_gives_no_type",
+            "artist_support_not_in_empty_slice"
+          ],
+          "definitions": 8,
+          "examples": 0,
+          "decided_by_computation": 19,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/ExamplesLayers.lean"
+        },
+        {
+          "lines": 142,
+          "theorems": 12,
+          "negative_results": 1,
+          "negative_names": [
+            "no_transport_back_from_direct"
+          ],
+          "definitions": 5,
+          "examples": 0,
+          "decided_by_computation": 9,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/ExamplesConflict.lean"
+        }
+      ]
+    },
+    "polarity": {
+      "lines": 610,
+      "theorems": 41,
+      "negative_results": 14,
+      "definitions": 27,
+      "examples": 0,
+      "decided_by_computation": 5,
+      "sorries": 0,
+      "label": "Evidence polarity, axes and observer joins (PR #582)",
+      "side": "rest",
+      "colour": "#bc8cff",
+      "files": 3,
+      "modules": [
+        {
+          "lines": 117,
+          "theorems": 9,
+          "negative_results": 1,
+          "negative_names": [
+            "not_separating_pairObserver_of_common_collision"
+          ],
+          "definitions": 1,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/ObserverJoin.lean"
+        },
+        {
+          "lines": 297,
+          "theorems": 16,
+          "negative_results": 6,
+          "negative_names": [
+            "not_holds_of_sound_against",
+            "sound_ne_bothSupported",
+            "converse_not_opposes",
+            "converse_support_does_not_refute",
+            "mislabelled_not_opposes",
+            "role_does_not_determine_opposition"
+          ],
+          "definitions": 15,
+          "examples": 0,
+          "decided_by_computation": 1,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/Opposition.lean"
+        },
+        {
+          "lines": 196,
+          "theorems": 16,
+          "negative_results": 7,
+          "negative_names": [
+            "not_axisResolved_conflict",
+            "not_axisResolved_empty",
+            "requiredAxesResolved_iff_no_missing",
+            "not_resolved_of_missing",
+            "strong_support_does_not_compensate",
+            "no_resolution_from_supportCount",
+            "resolved_axes_do_not_open_authority"
+          ],
+          "definitions": 11,
+          "examples": 0,
+          "decided_by_computation": 4,
+          "sorries": 0,
+          "module": "RequestProject/Epistemic/AxisSupport.lean"
+        }
+      ]
+    },
+    "ternary": {
+      "lines": 878,
+      "theorems": 65,
+      "negative_results": 10,
+      "definitions": 35,
+      "examples": 0,
+      "decided_by_computation": 12,
+      "sorries": 0,
+      "label": "Balanced-ternary carrier and its quotients (PR #582)",
+      "side": "rest",
+      "colour": "#e3b341",
+      "files": 3,
+      "modules": [
+        {
+          "lines": 357,
+          "theorems": 24,
+          "negative_results": 1,
+          "negative_names": [
+            "card_sumFibre_nine_zero_ne_one"
+          ],
+          "definitions": 10,
+          "examples": 0,
+          "decided_by_computation": 2,
+          "sorries": 0,
+          "module": "RequestProject/Ternary/Balanced.lean"
+        },
+        {
+          "lines": 325,
+          "theorems": 25,
+          "negative_results": 5,
+          "negative_names": [
+            "blockwise_ne_global",
+            "blockObs_structuralZero_ne_cancellationZero",
+            "aggregate_not_factorsThrough_blockObs",
+            "blockObs_not_factorsThrough_aggregate",
+            "jointObs_not_separating"
+          ],
+          "definitions": 14,
+          "examples": 0,
+          "decided_by_computation": 2,
+          "sorries": 0,
+          "module": "RequestProject/Ternary/Base369.lean"
+        },
+        {
+          "lines": 196,
+          "theorems": 16,
+          "negative_results": 4,
+          "negative_names": [
+            "no_canonical_binary_decision",
+            "direction_not_factorsThrough_acceptCount",
+            "comparison_not_factorsThrough_binaryProject",
+            "binaryProject_not_separating"
+          ],
+          "definitions": 11,
+          "examples": 0,
+          "decided_by_computation": 8,
+          "sorries": 0,
+          "module": "RequestProject/Ternary/Aggregate.lean"
+        }
+      ]
+    },
+    "polarity-surface": {
+      "lines": 846,
+      "theorems": 58,
+      "negative_results": 19,
+      "definitions": 46,
+      "examples": 0,
+      "decided_by_computation": 22,
+      "sorries": 0,
+      "label": "Polarity and view joins on the Wikidata surface (PR #582)",
+      "side": "wikidata",
+      "colour": "#7ee787",
+      "files": 3,
+      "modules": [
+        {
+          "lines": 216,
+          "theorems": 15,
+          "negative_results": 5,
+          "negative_names": [
+            "converse_not_opposes_reflexive",
+            "converse_opposition_not_uniform",
+            "counterposition_not_opposes",
+            "painterArtist_has_no_references",
+            "painterArtist_import_not_resolved"
+          ],
+          "definitions": 8,
+          "examples": 0,
+          "decided_by_computation": 8,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/EvidencePolarity.lean"
+        },
+        {
+          "lines": 130,
+          "theorems": 9,
+          "negative_results": 1,
+          "negative_names": [
+            "viewObs_not_separating"
+          ],
+          "definitions": 11,
+          "examples": 0,
+          "decided_by_computation": 5,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/ViewJoin.lean"
+        },
+        {
+          "lines": 500,
+          "theorems": 34,
+          "negative_results": 13,
+          "negative_names": [
+            "admitted_cons_of_not_trains",
+            "held_does_not_train",
+            "unresolved_does_not_train",
+            "coverageIncomplete_does_not_train",
+            "learned_does_not_characterise",
+            "unknown_context_is_not_similarity",
+            "membership_not_factorsThrough_signature",
+            "geometryOnly_fails_gate",
+            "gate_not_factorsThrough_geometry",
+            "incompatiblePair_fails_gate",
+            "conditionalPair_fails_gate",
+            "enactMerge_eq_of_not_approved",
+            "geometryOnly_never_edits"
+          ],
+          "definitions": 27,
+          "examples": 0,
+          "decided_by_computation": 9,
+          "sorries": 0,
+          "module": "RequestProject/Wikidata/Learning.lean"
+        }
+      ]
+    },
+    "agda-frontend": {
+      "lines": 727,
+      "theorems": 18,
+      "negative_results": 1,
+      "definitions": 51,
+      "examples": 0,
+      "decided_by_computation": 0,
+      "sorries": 0,
+      "label": "Agda-subset front end (prelude, syntax)",
+      "side": "rest",
+      "colour": "#d29922",
+      "files": 2,
+      "modules": [
+        {
+          "lines": 335,
+          "theorems": 18,
+          "negative_results": 1,
+          "negative_names": [
+            "not_of_arrow_bot"
+          ],
+          "definitions": 39,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Agda/Prelude.lean"
+        },
+        {
+          "lines": 392,
+          "theorems": 0,
+          "negative_results": 0,
+          "negative_names": [],
+          "definitions": 12,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Agda/Syntax.lean"
+        }
+      ]
+    },
+    "harness": {
+      "lines": 216,
+      "theorems": 0,
+      "negative_results": 0,
+      "definitions": 1,
+      "examples": 0,
+      "decided_by_computation": 0,
+      "sorries": 0,
+      "label": "Harness (imports, entry point)",
+      "side": "rest",
+      "colour": "#8b949e",
+      "files": 2,
+      "modules": [
+        {
+          "lines": 192,
+          "theorems": 0,
+          "negative_results": 0,
+          "negative_names": [],
+          "definitions": 1,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/All.lean"
+        },
+        {
+          "lines": 24,
+          "theorems": 0,
+          "negative_results": 0,
+          "negative_names": [],
+          "definitions": 0,
+          "examples": 0,
+          "decided_by_computation": 0,
+          "sorries": 0,
+          "module": "RequestProject/Main.lean"
+        }
+      ]
+    }
+  },
+  "totals": {
+    "files": 60,
+    "lines": 14543,
+    "theorems": 972,
+    "negative_results": 220,
+    "definitions": 771,
+    "examples": 2,
+    "decided_by_computation": 202,
+    "sorries": 0
+  },
+  "sides": {
+    "wikidata": {
+      "files": 33,
+      "lines": 8621,
+      "theorems": 584,
+      "negative_results": 121,
+      "definitions": 493,
+      "decided_by_computation": 160
+    },
+    "rest": {
+      "files": 27,
+      "lines": 5922,
+      "theorems": 388,
+      "negative_results": 99,
+      "definitions": 278,
+      "decided_by_computation": 42
+    }
+  },
+  "upstream": {
+    "invariants": {
+      "total": 11,
+      "proved_here": 9,
+      "dissolved_by_porting": 2,
+      "open": 0
+    },
+    "surfaces": [
+      {
+        "name": "class order (P279) / instance (P31)",
+        "status": "ported",
+        "where": "Wikidata/Core.lean"
+      },
+      {
+        "name": "ranks and the truthy projection",
+        "status": "ported",
+        "where": "Wikidata/Core.lean, Wikidata/Layers.lean"
+      },
+      {
+        "name": "class algebra (union / intersection / disjointness)",
+        "status": "ported",
+        "where": "Wikidata/ClassAlgebra.lean"
+      },
+      {
+        "name": "diagnostics and validity",
+        "status": "ported",
+        "where": "Wikidata/Diagnostics.lean"
+      },
+      {
+        "name": "redundancy pruning",
+        "status": "ported",
+        "where": "Wikidata/Redundancy.lean"
+      },
+      {
+        "name": "cross-ontology alignment",
+        "status": "ported",
+        "where": "Wikidata/Alignment.lean"
+      },
+      {
+        "name": "provenance and temporal slices",
+        "status": "ported",
+        "where": "Wikidata/Provenance.lean, Wikidata/Slices.lean"
+      },
+      {
+        "name": "statement-layer tower",
+        "status": "ported",
+        "where": "Wikidata/Layers.lean"
+      },
+      {
+        "name": "reified / direct RDF layers",
+        "status": "ported",
+        "where": "Wikidata/Rdf.lean"
+      },
+      {
+        "name": "property and schema constraints",
+        "status": "ported",
+        "where": "Wikidata/Constraints.lean"
+      },
+      {
+        "name": "mereology (part-of) separation",
+        "status": "ported",
+        "where": "Wikidata/Constraints.lean"
+      },
+      {
+        "name": "identity: matching, sitelinks, IDs, lexemes",
+        "status": "ported",
+        "where": "Wikidata/Identity.lean"
+      },
+      {
+        "name": "three-valued evidence trit",
+        "status": "ported",
+        "where": "Epistemic/Trit.lean"
+      },
+      {
+        "name": "four-cornered support square",
+        "status": "ported",
+        "where": "Epistemic/Tetralemma.lean"
+      },
+      {
+        "name": "lens / view-family transitions",
+        "status": "ported",
+        "where": "Epistemic/Lens.lean, Wikidata/Lens.lean"
+      },
+      {
+        "name": "review-only repair boundary",
+        "status": "ported",
+        "where": "Epistemic/Repair.lean"
+      },
+      {
+        "name": "parent slots (P22 / P25 / P8810 / P1531) and descent",
+        "status": "ported",
+        "where": "Wikidata/Parenting.lean"
+      },
+      {
+        "name": "progeniture carrier and genetic cardinality cap",
+        "status": "ported",
+        "where": "Wikidata/Parenting.lean"
+      },
+      {
+        "name": "flat parenting-role vocabulary",
+        "status": "ported",
+        "where": "Wikidata/ParentingRoles.lean"
+      },
+      {
+        "name": "observer refinement lattice and fibre dynamics",
+        "status": "ported",
+        "where": "Epistemic/Observer.lean"
+      },
+      {
+        "name": "sections, residuals and exact reopening",
+        "status": "ported",
+        "where": "Epistemic/Quotient.lean"
+      },
+      {
+        "name": "consumer / policy future safety and delegated authority",
+        "status": "ported",
+        "where": "Epistemic/Authority.lean, Wikidata/ParentingAuthority.lean"
+      },
+      {
+        "name": "authority-routing non-factorability",
+        "status": "ported",
+        "where": "Wikidata/ParentingFibres.lean"
+      },
+      {
+        "name": "claim-centred derivation fibres and axis subfibres",
+        "status": "ported",
+        "where": "Wikidata/DerivationFibres.lean"
+      },
+      {
+        "name": "link strength gating fact / identity transfer",
+        "status": "ported",
+        "where": "Wikidata/DerivationFibres.lean"
+      },
+      {
+        "name": "four-layer cross-ontology contradiction attribution",
+        "status": "ported",
+        "where": "Wikidata/Attribution.lean"
+      },
+      {
+        "name": "BFO continuant/occurrent Wikidata attribution case",
+        "status": "ported",
+        "where": "Wikidata/Attribution.lean"
+      },
+      {
+        "name": "inference-language-indexed alignment safety",
+        "status": "ported",
+        "where": "Wikidata/AlignmentSafety.lean"
+      },
+      {
+        "name": "disjoint-union diagnostic coordinates",
+        "status": "ported",
+        "where": "Wikidata/DisjointUnionDiagnostics.lean"
+      },
+      {
+        "name": "RDF view information order (no reconstruction)",
+        "status": "ported",
+        "where": "Wikidata/RdfInformationOrder.lean"
+      },
+      {
+        "name": "four-view disagreement matrix and its boundary",
+        "status": "ported",
+        "where": "Epistemic/FourView.lean"
+      },
+      {
+        "name": "evidence / obligation / authority separation",
+        "status": "ported",
+        "where": "Epistemic/ObligationAuthority.lean"
+      },
+      {
+        "name": "conditional / marginal reversal under context erasure",
+        "status": "ported",
+        "where": "Epistemic/ContextErasure.lean"
+      },
+      {
+        "name": "balanced-ternary interaction carrier and its exact counts",
+        "status": "ported",
+        "where": "Ternary/Balanced.lean"
+      },
+      {
+        "name": "base-3/6/9 blockwise vs. aggregate readings",
+        "status": "ported",
+        "where": "Ternary/Base369.lean"
+      },
+      {
+        "name": "binary / balanced-ternary aggregate loss",
+        "status": "ported",
+        "where": "Ternary/Aggregate.lean"
+      },
+      {
+        "name": "transverse observers and their least common refinement",
+        "status": "ported",
+        "where": "Epistemic/ObserverJoin.lean"
+      },
+      {
+        "name": "claim-indexed evidence polarity (operator roles, fibre pooling)",
+        "status": "ported",
+        "where": "Epistemic/Opposition.lean"
+      },
+      {
+        "name": "required evidence axes and non-compensation",
+        "status": "ported",
+        "where": "Epistemic/AxisSupport.lean"
+      },
+      {
+        "name": "polarity and required axes on the Wikidata surface",
+        "status": "ported",
+        "where": "Wikidata/EvidencePolarity.lean"
+      },
+      {
+        "name": "layer and slice as transverse readings of a base",
+        "status": "ported",
+        "where": "Wikidata/ViewJoin.lean"
+      },
+      {
+        "name": "governed residual ontology learning (cohorts, merges)",
+        "status": "ported",
+        "where": "Wikidata/Learning.lean"
+      },
+      {
+        "name": "Agda-subset front end for Lean",
+        "status": "ported",
+        "where": "Agda/Prelude.lean, Agda/Syntax.lean, Agda/Verbatim.lean, AgdaVendor/, AgdaCheck/, tools/agda2lean.py, tools/agdacheck.py"
+      },
+      {
+        "name": "receipt architecture (source hashes, manifests)",
+        "status": "declined",
+        "where": "one kernel here: a pinned hash would add ceremony, not assurance"
+      },
+      {
+        "name": "boolean boundary records",
+        "status": "declined",
+        "where": "restated as theorems where they constrained data"
+      },
+      {
+        "name": "wider DASHI mathematics (Moonshine, Hecke, ...)",
+        "status": "out-of-scope",
+        "where": "unrelated to the Wikidata surface"
+      },
+      {
+        "name": "quantity / time / coordinate value types",
+        "status": "ported",
+        "where": "Wikidata/Values.lean"
+      },
+      {
+        "name": "qualifiers and references as first-class objects",
+        "status": "ported",
+        "where": "Wikidata/Qualifiers.lean"
+      },
+      {
+        "name": "evidence at an instant over the value surfaces",
+        "status": "ported",
+        "where": "Epistemic/ValueEvidence.lean"
+      },
+      {
+        "name": "unit conversion between quantity units",
+        "status": "declined",
+        "where": "the comparison refuses to compare across units rather than converting"
+      },
+      {
+        "name": "SPARQL core fragment and answer monotonicity",
+        "status": "ported",
+        "where": "Wikidata/Sparql.lean"
+      },
+      {
+        "name": "query answers as imported evidence",
+        "status": "ported",
+        "where": "Epistemic/QueryEvidence.lean"
+      },
+      {
+        "name": "SPARQL property paths and named graphs",
+        "status": "ported",
+        "where": "Wikidata/SparqlPaths.lean, Wikidata/NamedGraphs.lean"
+      },
+      {
+        "name": "property-path answers as imported evidence",
+        "status": "ported",
+        "where": "Epistemic/PathEvidence.lean"
+      },
+      {
+        "name": "SELECT DISTINCT, GROUP BY / COUNT / HAVING and where monotonicity stops",
+        "status": "ported",
+        "where": "Wikidata/SparqlAggregation.lean"
+      },
+      {
+        "name": "MINUS vs FILTER NOT EXISTS: two negations that differ",
+        "status": "ported",
+        "where": "Wikidata/SparqlNegation.lean"
+      },
+      {
+        "name": "SPARQL expression language (arithmetic and string FILTERs, subqueries, federation)",
+        "status": "ported",
+        "where": "Wikidata/SparqlExpressions.lean"
+      },
+      {
+        "name": "property characteristics (transitive / symmetric / inverse)",
+        "status": "ported",
+        "where": "Wikidata/Owl.lean"
+      },
+      {
+        "name": "OWL class expressions (intersection, union, complement, restrictions)",
+        "status": "ported",
+        "where": "Wikidata/ClassExpressions.lean"
+      },
+      {
+        "name": "OWL beyond the class and property fragments (nominals, cardinality, datatypes)",
+        "status": "ported",
+        "where": "Wikidata/OwlCardinality.lean"
+      },
+      {
+        "name": "RDF blank nodes and simple entailment (interpolation lemma, decision procedure)",
+        "status": "ported",
+        "where": "Wikidata/BlankNodes.lean"
+      }
+    ],
+    "notes": "Three upstream pull requests are covered: the original Agda bridge, the parent/progenitor tranche and the evidence-polarity cross-pollination tranche; the Wikidata-facing parts are what is ported here.",
+    "status_counts": {
+      "ported": 57,
+      "declined": 3,
+      "out-of-scope": 1
+    }
+  }
+}

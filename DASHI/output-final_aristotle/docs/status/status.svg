@@ -1,0 +1,370 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="2554" viewBox="0 0 1240 2554">
+<rect x="0" y="0" width="1240" height="2554" rx="0" fill="#0d1117" opacity="1.0"/>
+<text x="40" y="58" font-family="Helvetica, Arial, sans-serif" font-size="30" fill="#e6edf3" font-weight="bold" text-anchor="start">Lean 4 Wikidata port — status report</text>
+<text x="40" y="86" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#8b949e" font-weight="normal" text-anchor="start">the Wikidata import next to the rest of the development, and next to the upstream Agda bridge it came from</text>
+<rect x="40" y="108" width="152" height="78" rx="6" fill="#161b22" opacity="1.0"/>
+<text x="54" y="146" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#e6edf3" font-weight="bold" text-anchor="start">60</text>
+<text x="54" y="170" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">Lean modules</text>
+<rect x="208" y="108" width="152" height="78" rx="6" fill="#161b22" opacity="1.0"/>
+<text x="222" y="146" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#e6edf3" font-weight="bold" text-anchor="start">14,543</text>
+<text x="222" y="170" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">lines of Lean</text>
+<rect x="376" y="108" width="152" height="78" rx="6" fill="#161b22" opacity="1.0"/>
+<text x="390" y="146" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#e6edf3" font-weight="bold" text-anchor="start">972</text>
+<text x="390" y="170" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">theorems</text>
+<rect x="544" y="108" width="152" height="78" rx="6" fill="#161b22" opacity="1.0"/>
+<text x="558" y="146" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#e6edf3" font-weight="bold" text-anchor="start">220</text>
+<text x="558" y="170" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">negative results</text>
+<rect x="712" y="108" width="152" height="78" rx="6" fill="#161b22" opacity="1.0"/>
+<text x="726" y="146" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#e6edf3" font-weight="bold" text-anchor="start">771</text>
+<text x="726" y="170" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">definitions</text>
+<rect x="880" y="108" width="152" height="78" rx="6" fill="#161b22" opacity="1.0"/>
+<text x="894" y="146" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#e6edf3" font-weight="bold" text-anchor="start">202</text>
+<text x="894" y="170" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">machine-decided</text>
+<rect x="1048" y="108" width="152" height="78" rx="6" fill="#161b22" opacity="1.0"/>
+<text x="1062" y="146" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#e6edf3" font-weight="bold" text-anchor="start">0</text>
+<text x="1062" y="170" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">sorries</text>
+<text x="40" y="212" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">toolchain leanprover/lean4:v4.28.0  ·  builds clean  ·  axioms: propext, Classical.choice, Quot.sound</text>
+<rect x="40" y="250" width="1160" height="874" rx="6" fill="#161b22" opacity="1.0"/>
+<text x="64" y="284" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#e6edf3" font-weight="bold" text-anchor="start">1 · The Wikidata import vs. the rest of the development</text>
+<text x="64" y="306" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">bars are lines of Lean; counters on the right: theorems / negative results / definitions / proofs closed by computation</text>
+<text x="64" y="356" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="normal" text-anchor="start">Wikidata engine (core)</text>
+<text x="64" y="374" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">7 modules  ·  Wikidata import</text>
+<rect x="470" y="346" width="440" height="26" rx="4" fill="#30363d" opacity="0.35"/>
+<rect x="470" y="346" width="158" height="26" rx="4" fill="#1f6feb" opacity="1.0"/>
+<text x="638" y="365" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">1194 lines</text>
+<text x="1176" y="365" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">68 thm · 5 neg · 57 def · 1 decided</text>
+<text x="64" y="418" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="normal" text-anchor="start">Wikidata surfaces (layers, slices, RDF, constraints, identity)</text>
+<text x="64" y="436" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">11 modules  ·  Wikidata import</text>
+<rect x="470" y="408" width="440" height="26" rx="4" fill="#30363d" opacity="0.35"/>
+<rect x="470" y="408" width="440" height="26" rx="4" fill="#388bfd" opacity="1.0"/>
+<text x="900" y="427" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" font-weight="normal" text-anchor="end">3313 lines</text>
+<text x="1176" y="427" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">243 thm · 38 neg · 187 def · 29 decided</text>
+<text x="64" y="480" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="normal" text-anchor="start">Fifth pass (fibres, attribution, alignment safety, diagnostics)</text>
+<text x="64" y="498" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">5 modules  ·  Wikidata import</text>
+<rect x="470" y="470" width="440" height="26" rx="4" fill="#30363d" opacity="0.35"/>
+<rect x="470" y="470" width="169" height="26" rx="4" fill="#79c0ff" opacity="1.0"/>
+<text x="649" y="489" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">1277 lines</text>
+<text x="1176" y="489" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">71 thm · 18 neg · 72 def · 16 decided</text>
+<text x="64" y="542" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="normal" text-anchor="start">Parenting surface (slots, carrier, fibres, authority)</text>
+<text x="64" y="560" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">4 modules  ·  Wikidata import</text>
+<rect x="470" y="532" width="440" height="26" rx="4" fill="#30363d" opacity="0.35"/>
+<rect x="470" y="532" width="176" height="26" rx="4" fill="#58a6ff" opacity="1.0"/>
+<text x="656" y="551" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">1327 lines</text>
+<text x="1176" y="551" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">78 thm · 24 neg · 101 def · 43 decided</text>
+<text x="64" y="604" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="normal" text-anchor="start">Evidence / epistemic layer</text>
+<text x="64" y="622" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">14 modules  ·  rest of the development</text>
+<rect x="470" y="594" width="440" height="26" rx="4" fill="#30363d" opacity="0.35"/>
+<rect x="470" y="594" width="357" height="26" rx="4" fill="#8957e5" opacity="1.0"/>
+<text x="837" y="613" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">2694 lines</text>
+<text x="1176" y="613" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">201 thm · 58 neg · 123 def · 24 decided</text>
+<text x="64" y="666" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="normal" text-anchor="start">Projection cores (observers, residuals, authority)</text>
+<text x="64" y="684" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">3 modules  ·  rest of the development</text>
+<rect x="470" y="656" width="440" height="26" rx="4" fill="#30363d" opacity="0.35"/>
+<rect x="470" y="656" width="105" height="26" rx="4" fill="#a371f7" opacity="1.0"/>
+<text x="585" y="675" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">797 lines</text>
+<text x="1176" y="675" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">63 thm · 16 neg · 41 def · 1 decided</text>
+<text x="64" y="728" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="normal" text-anchor="start">Worked regression (artist / painter / sculptor)</text>
+<text x="64" y="746" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">3 modules  ·  Wikidata import</text>
+<rect x="470" y="718" width="440" height="26" rx="4" fill="#30363d" opacity="0.35"/>
+<rect x="470" y="718" width="88" height="26" rx="4" fill="#3fb950" opacity="1.0"/>
+<text x="568" y="737" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">664 lines</text>
+<text x="1176" y="737" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">66 thm · 17 neg · 30 def · 49 decided</text>
+<text x="64" y="790" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="normal" text-anchor="start">Evidence polarity, axes and observer joins (PR #582)</text>
+<text x="64" y="808" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">3 modules  ·  rest of the development</text>
+<rect x="470" y="780" width="440" height="26" rx="4" fill="#30363d" opacity="0.35"/>
+<rect x="470" y="780" width="81" height="26" rx="4" fill="#bc8cff" opacity="1.0"/>
+<text x="561" y="799" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">610 lines</text>
+<text x="1176" y="799" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">41 thm · 14 neg · 27 def · 5 decided</text>
+<text x="64" y="852" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="normal" text-anchor="start">Balanced-ternary carrier and its quotients (PR #582)</text>
+<text x="64" y="870" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">3 modules  ·  rest of the development</text>
+<rect x="470" y="842" width="440" height="26" rx="4" fill="#30363d" opacity="0.35"/>
+<rect x="470" y="842" width="116" height="26" rx="4" fill="#e3b341" opacity="1.0"/>
+<text x="596" y="861" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">878 lines</text>
+<text x="1176" y="861" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">65 thm · 10 neg · 35 def · 12 decided</text>
+<text x="64" y="914" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="normal" text-anchor="start">Polarity and view joins on the Wikidata surface (PR #582)</text>
+<text x="64" y="932" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">3 modules  ·  Wikidata import</text>
+<rect x="470" y="904" width="440" height="26" rx="4" fill="#30363d" opacity="0.35"/>
+<rect x="470" y="904" width="112" height="26" rx="4" fill="#7ee787" opacity="1.0"/>
+<text x="592" y="923" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">846 lines</text>
+<text x="1176" y="923" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">58 thm · 19 neg · 46 def · 22 decided</text>
+<text x="64" y="976" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="normal" text-anchor="start">Agda-subset front end (prelude, syntax)</text>
+<text x="64" y="994" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">2 modules  ·  rest of the development</text>
+<rect x="470" y="966" width="440" height="26" rx="4" fill="#30363d" opacity="0.35"/>
+<rect x="470" y="966" width="96" height="26" rx="4" fill="#d29922" opacity="1.0"/>
+<text x="576" y="985" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">727 lines</text>
+<text x="1176" y="985" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">18 thm · 1 neg · 51 def · 0 decided</text>
+<text x="64" y="1038" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="normal" text-anchor="start">Harness (imports, entry point)</text>
+<text x="64" y="1056" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">2 modules  ·  rest of the development</text>
+<rect x="470" y="1028" width="440" height="26" rx="4" fill="#30363d" opacity="0.35"/>
+<rect x="470" y="1028" width="28" height="26" rx="4" fill="#8b949e" opacity="1.0"/>
+<text x="508" y="1047" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">216 lines</text>
+<text x="1176" y="1047" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">0 thm · 0 neg · 1 def · 0 decided</text>
+<text x="64" y="1113" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3" font-weight="bold" text-anchor="start">share of the development</text>
+<rect x="470" y="1094" width="260" height="26" rx="4" fill="#1f6feb" opacity="1.0"/>
+<rect x="730" y="1094" width="180" height="26" rx="4" fill="#8957e5" opacity="1.0"/>
+<text x="480" y="1113" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" font-weight="bold" text-anchor="start">Wikidata 59%</text>
+<text x="740" y="1113" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#ffffff" font-weight="bold" text-anchor="start">rest 41%</text>
+<text x="1176" y="1113" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="end">584 thm vs 388 thm</text>
+<rect x="40" y="1154" width="1160" height="1340" rx="6" fill="#161b22" opacity="1.0"/>
+<text x="64" y="1188" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#e6edf3" font-weight="bold" text-anchor="start">2 · Coverage of the upstream Agda bridge's Wikidata surface</text>
+<text x="64" y="1210" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">11 stated bridge invariants: 9 proved here, 2 dissolved by porting, 0 open</text>
+<rect x="64" y="1238" width="1039" height="22" rx="4" fill="#3fb950" opacity="1.0"/>
+<text x="72" y="1254" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0d1117" font-weight="bold" text-anchor="start">57</text>
+<rect x="1103" y="1238" width="54" height="22" rx="4" fill="#d29922" opacity="1.0"/>
+<text x="1111" y="1254" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0d1117" font-weight="bold" text-anchor="start">3</text>
+<rect x="1157" y="1238" width="18" height="22" rx="4" fill="#6e7681" opacity="1.0"/>
+<rect x="64" y="1272" width="11" height="11" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="82" y="1282" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">ported and proved (57)</text>
+<rect x="250" y="1272" width="11" height="11" rx="2" fill="#d29922" opacity="1.0"/>
+<text x="268" y="1282" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">deliberately declined (3)</text>
+<rect x="462" y="1272" width="11" height="11" rx="2" fill="#6e7681" opacity="1.0"/>
+<text x="480" y="1282" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">out of scope (1)</text>
+<rect x="616" y="1272" width="11" height="11" rx="2" fill="#f85149" opacity="1.0"/>
+<text x="634" y="1282" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start">known gap (0)</text>
+<rect x="64" y="1312" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1312" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1326" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">class order (P279) / instance (P31)</text>
+<text x="80" y="1338" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Core.lean</text>
+<rect x="64" y="1348" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1348" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1362" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">ranks and the truthy projection</text>
+<text x="80" y="1374" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Core.lean, Wikidata/Layers.lean</text>
+<rect x="64" y="1384" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1384" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1398" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">class algebra (union / intersection / disjointness)</text>
+<text x="80" y="1410" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/ClassAlgebra.lean</text>
+<rect x="64" y="1420" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1420" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1434" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">diagnostics and validity</text>
+<text x="80" y="1446" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Diagnostics.lean</text>
+<rect x="64" y="1456" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1456" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1470" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">redundancy pruning</text>
+<text x="80" y="1482" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Redundancy.lean</text>
+<rect x="64" y="1492" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1492" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1506" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">cross-ontology alignment</text>
+<text x="80" y="1518" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Alignment.lean</text>
+<rect x="64" y="1528" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1528" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1542" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">provenance and temporal slices</text>
+<text x="80" y="1554" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Provenance.lean, Wikidata/Slices.lean</text>
+<rect x="64" y="1564" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1564" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1578" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">statement-layer tower</text>
+<text x="80" y="1590" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Layers.lean</text>
+<rect x="64" y="1600" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1600" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1614" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">reified / direct RDF layers</text>
+<text x="80" y="1626" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Rdf.lean</text>
+<rect x="64" y="1636" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1636" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1650" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">property and schema constraints</text>
+<text x="80" y="1662" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Constraints.lean</text>
+<rect x="64" y="1672" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1672" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1686" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">mereology (part-of) separation</text>
+<text x="80" y="1698" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Constraints.lean</text>
+<rect x="64" y="1708" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1708" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1722" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">identity: matching, sitelinks, IDs, lexemes</text>
+<text x="80" y="1734" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Identity.lean</text>
+<rect x="64" y="1744" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1744" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1758" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">three-valued evidence trit</text>
+<text x="80" y="1770" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/Trit.lean</text>
+<rect x="64" y="1780" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1780" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1794" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">four-cornered support square</text>
+<text x="80" y="1806" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/Tetralemma.lean</text>
+<rect x="64" y="1816" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1816" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1830" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">lens / view-family transitions</text>
+<text x="80" y="1842" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/Lens.lean, Wikidata/Lens.lean</text>
+<rect x="64" y="1852" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1852" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1866" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">review-only repair boundary</text>
+<text x="80" y="1878" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/Repair.lean</text>
+<rect x="64" y="1888" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1888" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1902" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">parent slots (P22 / P25 / P8810 / P1531) and descent</text>
+<text x="80" y="1914" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Parenting.lean</text>
+<rect x="64" y="1924" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1924" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1938" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">progeniture carrier and genetic cardinality cap</text>
+<text x="80" y="1950" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Parenting.lean</text>
+<rect x="64" y="1960" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1960" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="1974" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">flat parenting-role vocabulary</text>
+<text x="80" y="1986" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/ParentingRoles.lean</text>
+<rect x="64" y="1996" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="1996" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="2010" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">observer refinement lattice and fibre dynamics</text>
+<text x="80" y="2022" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/Observer.lean</text>
+<rect x="64" y="2032" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="2032" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="2046" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">sections, residuals and exact reopening</text>
+<text x="80" y="2058" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/Quotient.lean</text>
+<rect x="64" y="2068" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="2068" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="2082" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">consumer / policy future safety and delegated authority</text>
+<text x="80" y="2094" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/Authority.lean, Wikidata/ParentingAuthority.lean</text>
+<rect x="64" y="2104" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="2104" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="2118" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">authority-routing non-factorability</text>
+<text x="80" y="2130" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/ParentingFibres.lean</text>
+<rect x="64" y="2140" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="2140" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="2154" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">claim-centred derivation fibres and axis subfibres</text>
+<text x="80" y="2166" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/DerivationFibres.lean</text>
+<rect x="64" y="2176" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="2176" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="2190" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">link strength gating fact / identity transfer</text>
+<text x="80" y="2202" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/DerivationFibres.lean</text>
+<rect x="64" y="2212" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="2212" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="2226" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">four-layer cross-ontology contradiction attribution</text>
+<text x="80" y="2238" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Attribution.lean</text>
+<rect x="64" y="2248" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="2248" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="2262" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">BFO continuant/occurrent Wikidata attribution case</text>
+<text x="80" y="2274" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Attribution.lean</text>
+<rect x="64" y="2284" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="2284" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="2298" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">inference-language-indexed alignment safety</text>
+<text x="80" y="2310" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/AlignmentSafety.lean</text>
+<rect x="64" y="2320" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="2320" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="2334" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">disjoint-union diagnostic coordinates</text>
+<text x="80" y="2346" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/DisjointUnionDiagnostics.lean</text>
+<rect x="64" y="2356" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="2356" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="2370" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">RDF view information order (no reconstruction)</text>
+<text x="80" y="2382" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/RdfInformationOrder.lean</text>
+<rect x="64" y="2392" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="64" y="2392" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="80" y="2406" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">four-view disagreement matrix and its boundary</text>
+<text x="80" y="2418" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/FourView.lean</text>
+<rect x="640" y="1312" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1312" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1326" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">evidence / obligation / authority separation</text>
+<text x="656" y="1338" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/ObligationAuthority.lean</text>
+<rect x="640" y="1348" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1348" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1362" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">conditional / marginal reversal under context erasure</text>
+<text x="656" y="1374" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/ContextErasure.lean</text>
+<rect x="640" y="1384" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1384" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1398" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">balanced-ternary interaction carrier and its exact counts</text>
+<text x="656" y="1410" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Ternary/Balanced.lean</text>
+<rect x="640" y="1420" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1420" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1434" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">base-3/6/9 blockwise vs. aggregate readings</text>
+<text x="656" y="1446" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Ternary/Base369.lean</text>
+<rect x="640" y="1456" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1456" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1470" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">binary / balanced-ternary aggregate loss</text>
+<text x="656" y="1482" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Ternary/Aggregate.lean</text>
+<rect x="640" y="1492" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1492" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1506" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">transverse observers and their least common refinement</text>
+<text x="656" y="1518" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/ObserverJoin.lean</text>
+<rect x="640" y="1528" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1528" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1542" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">claim-indexed evidence polarity (operator roles, fibre pooling)</text>
+<text x="656" y="1554" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/Opposition.lean</text>
+<rect x="640" y="1564" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1564" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1578" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">required evidence axes and non-compensation</text>
+<text x="656" y="1590" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/AxisSupport.lean</text>
+<rect x="640" y="1600" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1600" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1614" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">polarity and required axes on the Wikidata surface</text>
+<text x="656" y="1626" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/EvidencePolarity.lean</text>
+<rect x="640" y="1636" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1636" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1650" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">layer and slice as transverse readings of a base</text>
+<text x="656" y="1662" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/ViewJoin.lean</text>
+<rect x="640" y="1672" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1672" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1686" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">governed residual ontology learning (cohorts, merges)</text>
+<text x="656" y="1698" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Learning.lean</text>
+<rect x="640" y="1708" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1708" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1722" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">Agda-subset front end for Lean</text>
+<text x="656" y="1734" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Agda/Prelude.lean, Agda/Syntax.lean, Agda/Verbatim.lean, AgdaVendor/, AgdaCheck/, tools/agda2lean.py, tools/agdacheck.py</text>
+<rect x="640" y="1744" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1744" width="5" height="30" rx="2" fill="#d29922" opacity="1.0"/>
+<text x="656" y="1758" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">receipt architecture (source hashes, manifests)</text>
+<text x="656" y="1770" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">one kernel here: a pinned hash would add ceremony, not assurance</text>
+<rect x="640" y="1780" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1780" width="5" height="30" rx="2" fill="#d29922" opacity="1.0"/>
+<text x="656" y="1794" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">boolean boundary records</text>
+<text x="656" y="1806" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">restated as theorems where they constrained data</text>
+<rect x="640" y="1816" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1816" width="5" height="30" rx="2" fill="#6e7681" opacity="1.0"/>
+<text x="656" y="1830" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">wider DASHI mathematics (Moonshine, Hecke, ...)</text>
+<text x="656" y="1842" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">unrelated to the Wikidata surface</text>
+<rect x="640" y="1852" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1852" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1866" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">quantity / time / coordinate value types</text>
+<text x="656" y="1878" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Values.lean</text>
+<rect x="640" y="1888" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1888" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1902" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">qualifiers and references as first-class objects</text>
+<text x="656" y="1914" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Qualifiers.lean</text>
+<rect x="640" y="1924" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1924" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="1938" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">evidence at an instant over the value surfaces</text>
+<text x="656" y="1950" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/ValueEvidence.lean</text>
+<rect x="640" y="1960" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1960" width="5" height="30" rx="2" fill="#d29922" opacity="1.0"/>
+<text x="656" y="1974" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">unit conversion between quantity units</text>
+<text x="656" y="1986" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">the comparison refuses to compare across units rather than converting</text>
+<rect x="640" y="1996" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="1996" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="2010" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">SPARQL core fragment and answer monotonicity</text>
+<text x="656" y="2022" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Sparql.lean</text>
+<rect x="640" y="2032" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="2032" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="2046" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">query answers as imported evidence</text>
+<text x="656" y="2058" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/QueryEvidence.lean</text>
+<rect x="640" y="2068" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="2068" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="2082" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">SPARQL property paths and named graphs</text>
+<text x="656" y="2094" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/SparqlPaths.lean, Wikidata/NamedGraphs.lean</text>
+<rect x="640" y="2104" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="2104" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="2118" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">property-path answers as imported evidence</text>
+<text x="656" y="2130" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Epistemic/PathEvidence.lean</text>
+<rect x="640" y="2140" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="2140" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="2154" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">SELECT DISTINCT, GROUP BY / COUNT / HAVING and where monotonicity stops</text>
+<text x="656" y="2166" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/SparqlAggregation.lean</text>
+<rect x="640" y="2176" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="2176" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="2190" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">MINUS vs FILTER NOT EXISTS: two negations that differ</text>
+<text x="656" y="2202" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/SparqlNegation.lean</text>
+<rect x="640" y="2212" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="2212" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="2226" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">SPARQL expression language (arithmetic and string FILTERs, subqueries, federation)</text>
+<text x="656" y="2238" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/SparqlExpressions.lean</text>
+<rect x="640" y="2248" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="2248" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="2262" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">property characteristics (transitive / symmetric / inverse)</text>
+<text x="656" y="2274" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/Owl.lean</text>
+<rect x="640" y="2284" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="2284" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="2298" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">OWL class expressions (intersection, union, complement, restrictions)</text>
+<text x="656" y="2310" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/ClassExpressions.lean</text>
+<rect x="640" y="2320" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="2320" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="2334" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">OWL beyond the class and property fragments (nominals, cardinality, datatypes)</text>
+<text x="656" y="2346" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/OwlCardinality.lean</text>
+<rect x="640" y="2356" width="536" height="30" rx="4" fill="#0d1117" opacity="1.0"/>
+<rect x="640" y="2356" width="5" height="30" rx="2" fill="#3fb950" opacity="1.0"/>
+<text x="656" y="2370" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#e6edf3" font-weight="normal" text-anchor="start">RDF blank nodes and simple entailment (interpolation lemma, decision procedure)</text>
+<text x="656" y="2382" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="start">Wikidata/BlankNodes.lean</text>
+<text x="64" y="2474" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">Three upstream pull requests are covered: the original Agda bridge, the parent/progenitor tranche and the evidence-polarity cross-pollination tranche; the Wikidata-facing parts are what is ported here.</text>
+<text x="40" y="2524" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start">generated by tools/status_report.py from the Lean sources; the numbers are also in docs/status/status.json</text>
+</svg>

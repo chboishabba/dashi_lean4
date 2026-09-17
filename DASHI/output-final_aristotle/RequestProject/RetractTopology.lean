@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.PullbackRetraction
 import RequestProject.PullbackComparison
 

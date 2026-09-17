@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "first level administrative country subdivision",
+  "first-order administrative division",
+  "first order administrative division",
+  "ADM1",
+  "adm1st"
+ ],
+ "canonical": "Q10864048",
+ "description": "administrative division directly subordinate to or under administration of a national government",
+ "id": "Q10864048",
+ "label": "first-level administrative division"
+}

@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "human action",
+  "human impact",
+  "human activities",
+  "activity",
+  "activities",
+  "pastime"
+ ],
+ "canonical": "Q24902509",
+ "description": "activity initiated by a human, intentionally or unintentionally",
+ "id": "Q24902509",
+ "label": "human activity"
+}

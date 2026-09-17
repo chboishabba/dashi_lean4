@@ -1,0 +1,8 @@
+{
+ "article": "Wikipedia article",
+ "canonical": "Q50081413",
+ "description": "article in the main space of a Wikipedia site (note: only wikipedia, do NOT use this together with \"instance of\")",
+ "id": "Q50081413",
+ "kind": "item",
+ "label": "Wikipedia article page"
+}

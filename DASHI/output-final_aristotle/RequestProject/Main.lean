@@ -1,7 +1,5 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import Mathlib
-import RequestProject.YangMillsClosure
-import RequestProject.NavierStokesClosure
-import RequestProject.SpectralClosure
 
 open scoped BigOperators
 open scoped Real

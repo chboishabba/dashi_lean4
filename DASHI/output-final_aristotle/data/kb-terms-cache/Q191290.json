@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "(a, b)",
+  "couple",
+  "double",
+  "pair",
+  "2-tuple"
+ ],
+ "canonical": "Q191290",
+ "description": "pair of mathematical objects; tuple of specific length (tuple length n=2)",
+ "id": "Q191290",
+ "label": "ordered pair"
+}

@@ -1,0 +1,27 @@
+{
+ "aliases": [
+  "medical condition",
+  "medical disorder",
+  "illness",
+  "sickness",
+  "disease of anatomical entity",
+  "condition",
+  "disorder",
+  "other disease",
+  "diseases and disorders",
+  "disease or disorder",
+  "disease or disorder, non-neoplastic",
+  "diseases",
+  "disorders",
+  "diseased condition",
+  "ailment",
+  "ailments",
+  "MedicalCondition",
+  "pox",
+  "malady"
+ ],
+ "canonical": "Q12136",
+ "description": "abnormal biological process in an organism driven by a specific pathophysiological mechanism",
+ "id": "Q12136",
+ "label": "disease"
+}

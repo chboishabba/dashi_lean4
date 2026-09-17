@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "taxa",
+  "taxonomic unit"
+ ],
+ "canonical": "Q16521",
+ "description": "group of one or more organism(s), which a taxonomist adjudges to be a unit",
+ "id": "Q16521",
+ "label": "taxon"
+}

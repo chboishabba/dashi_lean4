@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "FCA"
+ ],
+ "canonical": "Q1437394",
+ "description": "a rigorous method of deriving an ontology from a collection of objects and their properties",
+ "id": "Q1437394",
+ "label": "formal concept analysis"
+}

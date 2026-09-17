@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.FastEval
 import RequestProject.Cli.Codegen
 

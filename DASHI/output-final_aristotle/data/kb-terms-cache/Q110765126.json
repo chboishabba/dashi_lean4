@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "FO query",
+  "FOL query"
+ ],
+ "canonical": "Q110765126",
+ "description": "query using first-order logic as query language",
+ "id": "Q110765126",
+ "label": "first-order query"
+}

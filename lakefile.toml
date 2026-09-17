@@ -90,3 +90,20 @@ globs = ["Welds", "Welds.*"]
 [[lean_lib]]
 name = "TriadicKernelAlgebra"
 srcDir = "DASHI/Klüver’s Form Constants_aristotle"
+
+# Archive 1: DASHI↔Lean bridge (Agda vendor + direct Agda checking).
+[[lean_lib]]
+name = "AgdaVendor"
+srcDir = "DASHI/output-final_aristotle"
+globs = ["AgdaVendor", "AgdaVendor.*"]
+
+[[lean_lib]]
+name = "AgdaCheck"
+srcDir = "DASHI/output-final_aristotle"
+globs = ["AgdaCheck", "AgdaCheck.*"]
+
+# Archive 2: executable Wikidata ontology engine CLI.
+[[lean_exe]]
+name = "wikidata"
+root = "RequestProject.Cli.Tool"
+srcDir = "DASHI/output-final_aristotle"

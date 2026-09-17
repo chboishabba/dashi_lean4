@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js"><!--<![endif]-->
+<head>
+<title>Ronald Brown, Emeritus Professor,  web site: Topology, Groupoids, publications, Grotheindick.</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<link href='http://fonts.googleapis.com/css?family=Arvo:400' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+
+
+<script src="js/modernizr.js"></script>
+</head>
+
+
+<body>
+<div class="wrapper">
+
+ <header class="cf">
+   
+		 <div id="logo"><a href="index.html"><img src="images/header1.gif" alt="" width="741" height="" style="margin-bottom:10px;"></a>
+		
+	</div>
+    <ul id="social-bar" class="cf">
+      <li class="dribbble"><a href="#" title="Dribbble"></a></li>
+      <li class="facebook"><a href="#" title="Facebook"></a></li>
+      <li class="googleplus"><a href="#" title="googleplus"></a></li>
+      <li class="twitter"><a href="#" title="twitter"></a></li>
+    </ul>
+  </header>
+	
+	<!-- NAVIGATION -->
+  <nav class="cf">
+    <ul id="nav" class="sf-menu">
+      <li class="current-menu-item"><a href="index.html">HOME</a></li>
+      <li><a href="blog.html">BLOG</a></li>
+      <li><a href="#">MATHEMATICS</a>
+        <ul>
+          <li><a href="gpdsweb.html">Groupoids</a></li>
+          <li><a href="hdaweb2.html">Higher Dimensional Group Theory</a></li>
+          <li><a href="lever.html">Crossed Complexes and  Homotopy Groupoids</a></li>
+					 <li><a href="page-elements.html">Elements</a></li> 
+					 
+					
+        </ul>
+      </li>
+      <li><a href="work.html">RESEARCH</a>
+			 <ul>
+           <li><a href="topgpds.html">BOOK - Topology and Groupoids</a></li> 
+					 <li><a href="nonab-a-t.html">BOOK - Nonabelian Algebraic Topology</a></li>					 
+					 <li><a href="publicfull.htm">Published Papers</a></li> 
+						  <li><a href="brownpr.html">Preprints and Presentations</a></li>  
+							<li><a href="nonabtens.html">Nonabelian Tensor Products</a></li> 
+								<li><a href="doctorates.html">Doctoral Supervision</a></li>
+								<li><a href="nonlnpub.html">Nonabelian Homotopical Algebra</a></li> 
+									<li><a href="hdaweb2.html">Higher Dimensional Group Theory</a></li>    
+        </ul>
+			
+			</li>
+			 <li><a href="work.html">TEACHING</a>
+			 <ul>
+			 <li><a href="publar.html">Popularisation and Teaching</a></li>
+			  <li><a href="icmi89.html">Making an Exhibition</a></li>
+          <!-- <li><a href="icmi44.html">Mathematical Education</a></li>
+          <li><a href="promotingmaths.html">Promoting Maths</a></li>					
+					 <li><a href="quality.html">Quality in Higher Education</a></li> 
+					 -->
+					</ul>
+			 </li>
+			 
+			 <li><a href="work.html">GROTHENDIECK</a>
+			 <ul>
+			  <li><a href="pstacks.html">Pursuing Stacks</a></li>
+				<!--  <li><a href="page-elements.html">Elements</a></li>  -->
+				 </ul>
+					</li>
+					
+      <li><a href="contact.html">CONTACT</a></li>
+			
+      <li class="important"><a href="orderbook.html">BOOK ORDER</a>
+			<ul>
+			 <li><a href="bookreviews.html">Reviews</a></li> 
+			 <li><a href="newbookstorydec07.html">About</a></li> 
+    </ul>
+		</li>
+  </nav>
+	
+	
+  <div id="main" class="cf">
+    <div class="page-content">
+      <div class="entry-content cf">
+			
+			
+			<H1>
+BOOK: TOPOLOGY and GROUPOIDS <br />
+ by Ronald Brown
+</H1>
+
+ <div class="one-half">
+<p class="italic bold" style="font-size:80%"> "......people
+      are accustomed to work with fundamental groups and generators and relations
+      for these and stick to it, even in contexts when this is wholly inadequate,
+      namely when you get a clear description by generators and relations only
+      when working simultaneously with a whole bunch of base-points chosen with
+      care - or equivalently working in the algebraic context of <I>groupoids</I>,
+      rather than groups. Choosing paths for connecting the base points natural
+      to the situation to one among them, and reducing the groupoid to a single
+      &nbsp;group, will then hopelessly destroy the structure and inner symmetries
+      of the situation, and result in a mess of generators and relations no one
+      dares to write down, because everyone feels they won't be of any use whatever,
+      and just confuse the picture rather than clarify it. I have known such perplexity
+      myself a long time ago, namely in Van Kampen type situations, whose only
+      understandable formulation is in terms of (amalgamated sums of)
+      groupoids."</p>
+
+			
+			</div>
+
+          <div class="one-half last">
+      <h4>  Alexander Grothendieck</h4>
+
+	<p>(for more of his comments on mathematics <A HREF="pstacks.html">click here</A>)
+   </p>
+
+	 
+	 	 </div>
+ <div class="cf"></div>
+		 
+		 
+<h2 style="margin-top:0">The Book</h2>
+
+<p>
+<span class="pullquote-right" style="font-weight:bold; font-size:200%;background-color:#fff;padding:10px;">
+<A HREF="orderbook.html">Order </A>
+</span>ISBN: 1-4196-2722-8; Library
+of Congess Control Number: 2006901092<BR>
+There are over 500 exercises, 114 figures, numerous diagrams.<BR>
+Printed and Distributed by Createspace, March 2006. &nbsp;Price: &dollar;31.99
+&nbsp;xxv+512 pages<BR>
+</p>
+	
+	 
+
+	 
+
+					 <div class="one-half">
+	<IMG src="images/bookcover.jpg" border="0"><br />
+
+	<p> A geometric account 	of general topology, 	homotopy types,	and the
+	fundamental groupoid.</p>
+	</div>
+	
+	
+	   <div class="one-half last">
+		 <h4 style="margin-top:0;">Chapters</h4>
+
+<OL  style="margin-left:35px;" >
+
+   <li style="margin:0;list-style-type:upper-roman;"> &nbsp;Some topology on the real line</li>
+ 
+  <li style="margin:0;list-style-type:upper-roman;">&nbsp;  Topological spaces</li>
+
+  <li style="margin:0;list-style-type:upper-roman;">&nbsp;  Connected spaces, compact spaces</li>
+
+  <li style="margin:0;list-style-type:upper-roman;">  &nbsp; Identification spaces and cell complexes</li>
+  <li style="margin:0;list-style-type:upper-roman;">  &nbsp;  Projective and other spaces</li>
+
+  <li style="margin:0;list-style-type:upper-roman;"> &nbsp; The fundamental groupoid</li>
+
+  <li style="margin:0;list-style-type:upper-roman;"> &nbsp;  Some combinatorial groupoid theory</li>
+
+  <li style="margin:0;list-style-type:upper-roman;">&nbsp;  Cofibrations</li>
+
+  <li style="margin:0;list-style-type:upper-roman;"> &nbsp;<A NAME="Ch9"> <A HREF="topgpds-ch9.pdf">Computation of the fundamental groupoid</A> [pdf]</li>
+
+  <li style="margin:0;list-style-type:upper-roman;"> &nbsp;  Covering spaces, covering groupoids</li>
+
+  <li style="margin:0;list-style-type:upper-roman;"> &nbsp;  Orbit spaces, orbit groupoids</li>
+
+  <li style="margin:0;list-style-type:upper-roman;">  &nbsp; Conclusion</li>
+</OL>
+
+	 
+</div><br />
+
+
+ <div class="cf"></div>
+	 <div class="one-half">
+	 <IMG SRC="images/fig6_10cs.jpg" width="" height="" border="0" ><br />
+
+	 	Many base points
+	</div>
+	
+	
+	   <div class="one-half last">
+	 <img src="images/pushouts4.jpg" width="" height="" border="0"> <br />
+
+	  <p align="center"> <b>I</b>= &pi;<sub>1</sub>([0,1],{0,1})  is the groupoid with two objects 0,1 
+		 and 4 arrows (see p.xxi)
+</div>
+ <div class="cf"></div>
+ 
+
+
+
+<B> January 2020 </B> <p>
+
+<a href="https://ac.els-cdn.com/S0019357717300460/1-s2.0-S0019357717300460-main.pdf?_tid=dab6ddb2-0fe4-11e8-8221-00000aacb35f&acdnat=1518433803_b37f42e62845819c93468ea5c90355ae"><b> Modelling and Computing Homotopy Types: I</b></a> <br> 
+
+
+Clicking on the above link   will   take you  to the Science Direct published  version of this   article, which is part of a volume of Indagationes Math,  "Virtual Special Issue 
+ - L.E.J. Brouwer after 50 years". The article gives more background to the book "Topology and Groupoids", and its sequel, 
+ <a href="href=nonab-a-t.html"> Nonabelian Algebraic Topology</a>  The link <a href="/pdffiles/brouwer-hon-fin.pdf ">preprint version</a> will take you to a preprint pdf version with hyperref. 
+ . <p> 
+
+
+<br> 
+<P>The book is available through
+<A href="http://www.amazon.com/s/ref=nb_ss_gw/103-0478800-5560662?url=search-alias%3Daps&amp;field-keywords=topology+and+groupoids&amp;x=0&amp;y=0">amazon.com</A>
+(printed in USA) &nbsp;or UK and Europe amazon sites (printed in these countries).  To get the printed  book to you at these low prices has been accomplished through
+printing outside a conventional scientific publishing house. This also means
+all publicity has been initiated by me. <BR>
+
+<P>
+<a href="bookreviews.html"><b>Link to Reviews</b></a>
+<p>
+<FONT color="maroon"><SPAN style="font-size:14pt;">If you like the book,
+please help by telling people, giving more recommendations on the amazon
+sites, and if possible arranging further reviews, or even
+translations.</SPAN><SPAN style="font-size:14pt;"> <BR>
+What possibilities are there for public development of this material, based
+on the LaTeX files? </SPAN></p>
+
+
+ <b>Excellent perspective on topology</b><br>
+ <i>Staffan Angere, Lund University</i><p>
+
+This is an introductory book on topology, with a focus on homotopy theory. It is written from a 
+largely category-theoretical viewpoint. However, unlike other such treatments, 
+such as May's "Concise course", it always keeps geometric intuition close at hand.
+ This makes the category theory come very naturally, and also makes the book easier 
+ to understand for the non-category theorist. Since it also has very few prerequisites 
+ (e.g. no previous knowledge of topology or category theory is required), 
+ it would work very well for a first undergraduate course on topology. However, 
+ because of its insightful and slightly uncommon take on topology as a whole, I would 
+ guess that even some working mathematicians might learn a thing or two, or find new things 
+ to think about. The book as a whole indicates very well how a groupoidal way of doing 
+ one-dimensional homotopy theory is far more natural than the standard group-theoretical one. 
+ Now all we need is an equally natural and accessible extension to the higher homotopy groups.<br>
+<i>amazon.com review:, February 11, 2013 </i>
+
+
+
+<P>
+<p><B>Free pdf</b></p>
+
+A pdf of the book with full hyperref and some colour was available through a firm called kagi, who have gone bankrupt, 
+with many creditors, so I am now making it freely  available at <a href="pdffiles/topgrpds-e.pdf"> Topology and Groupoids-e</a>. 
+Corrections have been made on the current version, January 20, 2020. For further corrections see the Errata list below. 
+		
+	
+
+  
+		
+		
+<!--		 through Kagi
+</SPAN><A href="https://store.kagi.com/cgi-bin/store.cgi?storeID=6FEPD_LIVE"><SPAN
+    style="font-size:14pt;">https://store.kagi.com/cgi-bin/store.cgi?storeID=6FEPD_LIVE</SPAN></A>
+<BR>
+(this version has full hyperref with full internal links, which many will
+find convenient for study, and some colour).<BR>
+(Problem: Unarchive using Mac OS 10+. The standard Mac utility Archive does
+not succeed even before it gets to requesting any password. Solution: Download
+Zipeg from the Internet. It is Shareware and reported to work a treat.)</p>
+<form target="paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post" >
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+">
+<input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal  The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+</form>
+-->
+
+
+
+
+
+<p>
+Here is a link to a
+<A HREF="http://poncelet.sciences.univ-metz.fr/~tu/IHP/overview.html">review
+of groupoids in the context of stacks in geometry and physics</A>.
+<P>
+<A HREF="pdffiles/groupoidsurvey.pdf">From groups to groupoids: a brief survey
+</A>&nbsp;Bull LMS 19 (1987) 113-134. &nbsp; &nbsp;Link to pdf file.
+<P>
+
+
+
+<P>
+This is a retitled, &nbsp;revised, updated and extended edition of a classic
+text, first published in 1968. (Sample Chapter as pdf file:
+<A HREF="pdffiles/topgpds-ch9.pdf">9 Computation of the fundamental groupoid</A>).
+<P>
+<A HREF="newedition.html">The new edition</A>
+<P>
+Its first half gives a geometric account of general topology appropriate
+to a beginning course in algebraic topology. For example, it includes
+identification spaces, adjunction spaces and finite cell complexes, and a
+convenient category of spaces.
+<P>
+The second half introduces the algebra of
+<A href="gpdsweb.html">groupoids</A> and shows the utility of this algebra
+for modelling geometry. It is also one of the few basic topology texts to
+emphasise the importance
+of<A href="http://plato.stanford.edu/entries/category-theory/"> categorical
+methods</A> and universal properties in allowing
+<A href="pdffiles/Analogy-and-Comparison.pdf">analogies</A> between different mathematical structures. Thus the
+notion of pushout is used to describe (i) ways of constructing topological
+spaces from basic examples, and (ii) how a variety of modelling and of
+calculations follows from the way the#0000ff>fundamental groupoid
+on a set of base points preserves certain pushouts of spaces. Some
+of the proofs of results on the fundamental groupoid would be difficult to
+envisage except in the form given:#8000ff>`We verify the required
+universal property'. An example is the main result on
+<A HREF="pdffiles/rbpjh-orbit0212271v1.pdf">orbit spaces and orbit groupoids
+</A>in Chapter 11 (this is published nowhere else).
+<P>
+The overall aim was to give the best context for the required theorems, so
+that they seem natural, simpler to prove and in the strongest form; in other
+words, to understand the mathematics! &nbsp;The resulting exposition is non
+standard, and has been described as `idiosyncratic'! So be it!
+<P>
+Here are some examples of topics covered not available in other texts at
+this level:
+<UL>
+
+   <li style="list-style-type:disc;"> the <b>initial </b> topology on joins of spaces;</li>
+
+   <li style="list-style-type:disc;"> the convenient category of <B>k</B>-spaces,  in the non Hausdorff case;</li>
+<li style="list-style-type:disc;">
+    a <b>gluing theorem</b>  for homotopy equivalences (this result has now become a standard lemma in abstract homotopy theory, but first appeared in the 1968 edition of this book; 
+		the proof here, which generalises the standard result that a homotopy equivalence of spaces induces isomorphisms of the (pointed, of course) homotopy groups,  has the advantage of giving control of the homotopies involved);
+		<LI> the notion of a path in a space <i>X</i> as a map from [0,<i>r</i>] to <i>X</i>, for <i>r</i> &ge; 0, gives a <b>category of paths</b>. This  
+		 makes the work easier for students, 	since associativity comes for free, 	and also 
+		shows a purely  algebraic use of categories: (this approach is also taken in the book on "Knot Theory" by Crowell and Fox);
+		<LI> this book is the <b>only</b> topology text in English to prove a version, dating from 1967,  of the van Kampen Theorem for the fundamental groupoid
+		 on a <b>set of base points</b> ,
+		 and so deduce the fundamental group of the circle - for more discussion on many base points see 
+		 <a href="http://mathoverflow.net/questions/40945/compelling-evidence-that-two-basepoints-are-better-than-one">this mathoverflow discussion </a>; 
+</li>
+		<li style="list-style-type:disc;"> the
+   Jordan
+    Curve theorem, proved via the  <A href="pdffiles/brouwer-cor-fin.pdf">Phragmen-Brouwer property</A>, and as a consequence
+    of the groupoid (many base point) van Kampen theorem;
+	</li>
+<li style="list-style-type:disc;">
+    the equivalence between the categories of covering maps of spaces and covering
+    morphisms of groupoids  (this is surely the right base point free approach to covering space  theory, since a <b>covering map</b>
+		 is modelled by a <b>covering morphism</b>, which makes it easier to deal with lifting problems for maps);
+  </li>
+
+  <li style="list-style-type:disc;">  the fundamental groupoid of an orbit space by a discontinuous action of a
+    group as the <b>orbit groupoid </b> of the fundamental groupoid (this
+    is a powerful result not generally recognised). Ross Geoghegan in his 1986 review (MR0760769) of two papers by M.A. Armstrong on the fundamental groups of orbit spaces 
+wrote: "These two papers show which parts of elementary covering space theory carry over from the free to the nonfree case. 
+This is the kind of basic material that ought to have been in standard textbooks on fundamental groups for the last fifty years." At present, 
+to my knowledge,  "Topology and Groupoids" 
+is the only topology text to treat such results. 
+</li>
+</UL>
+<P>
+I hope that the availability of this text will help further investigation
+of related topics. For example: can these orbit groupoid methods be applied to areas such
+as braid groups and mapping class groups? Also, this text should be a useful
+foundation for those wishing to study the applications of <A HREF="hdaweb2.html">
+higher homotopy groupoids</A> to <A HREF="nonab-a-t.html">
+Nonabelian algebraic topology</A> . This is quite an open field with not much
+competition in algebraic topology, as the workers there hardly use groupoids
+at all. However groupoids are widely used in noncommutative geometry, certain
+areas of differential topology and the theory of stacks and gerbes.
+<P>
+
+<P>
+Also included: Prefaces; Appendix on set theory and cardinality; Glossary
+of terms from set theory; Glossary of symbols. The bibliography, notes and
+other discussions are intended to put the work in context.
+<P>
+<P>
+Here is a<big> <a href="pdffiles/TopGpdsCh6-supplement.pdf">supplement to Chapter 6 </a></big> with more on the
+van Kampen theorem for groupoids, and its applications. (September 14, 2011). 
+<P>
+<IMG height=155 src="images/gpdsdiag7.jpg" width=244>&nbsp;&nbsp;&nbsp;<iMG src="images/fig7.8cextract.jpg">
+<!-- <P>
+Licenses for the use of the e-version for class use may be negotiated with
+the author.-->
+<P>
+The author is indebted to Tony Bak and Peter May for their strong support
+of the proposal for a Leverhulme Fellowship, 2002-2004, for which work on
+this book formed the first part. He also thanks John Robinson and Ben Dickens
+for the cover design, derived from John Robinson's sculpture
+<A HREF="popmath/cpm/sculpture/pages/3journey.html">`Journey'</A>.
+<P>
+ERRATA (Updated January 20, 2020)
+<P>
+&nbsp; Given as <A href="topologygpdserrata.html">html</A> file.
+ This list gives all detailed errata onwards from the first printing. 
+
+A further availability is of a bibliography, which is better ordered than the current one. 
+This may be 
+downloaded as pdf file <a href="pdffiles/topgrpdsbib.pdf"> here.</a> 
+  </p>
+
+	
+
+</div>
+</div>
+<!-- FOOTER -->
+  <ul  class="widget-cols cf">
+    <li class="first-col">
+      <div class="widget-block">
+        <h4>NEW WEBSITE 2016</h4>
+        <p>Web content moved from university servers, revised an re-presented. Hope you like it.</p>
+				
+				<h4>ACTIVITY</h4>
+				<ul>
+				<li class="cat-item"><a href="file:///C:/Users/Ronnie/Documents/DadWebSite/_mas010/SeminarsBrown.html">Seminars etc 2002-9</a></li>
+      </ul>
+				
+				
+      </div>
+    </li>
+    <li class="second-col">
+      <div class="widget-block">
+      <h4>PERSONAL</h4>
+			 <ul>
+          <li class="cat-item"><a href="#">Acoustic Neuroma</a></li>
+          <li class="cat-item"><a href="#"></a></li>
+        </ul> 
+				
+				
+					
+      </div>
+    </li>
+    <li class="third-col">
+      <div class="widget-block">
+        <h4>LINKS</h4>
+         <ul>
+          <li class="cat-item"><a href="http://hopf.math.purdue.edu/">Hopf Archive</a></li>
+          <li class="cat-item"><a href="http://www.maths.gla.ac.uk/~ajb/btop.html">British Topology</a></li>
+          <li class="cat-item"><a href="http://www.math.uiuc.edu/K-theory/">K Theory Archive</a></li>
+          <li class="cat-item"><a href="http://www.groupactionforum.org/gafportal/">IMA Group Action Forum</a></li>
+          <li class="cat-item"><a href="https://www.lms.ac.uk/">L.M.S.</a></li>
+          <li class="cat-item"><a href="http://www.maths.soton.ac.uk/EMIS/index.html">E.M.S.</a></li>
+					<li class="cat-item"><a href="http://mssrc.com/lambe/">MSSRC: Larry Lambe</a></li>
+					<li class="cat-item"><a href="http://bradshawfoundation.com/jr/">John Robinson, Sculptor</a>
+					
+        </ul>  </div>
+    </li>
+    <li class="fourth-col">
+      <div class="widget-block">
+   <h4>LINKS</h4>
+        <ul>
+          <li class="cat-item"><a href="http://www2.mat.dtu.dk/people/V.L.Hansen/rpa.html">Raising Public Awareness of Mathematics</a></li>
+          <li class="cat-item"><a href="https://golem.ph.utexas.edu/category/">n-Category Cafe</a></li>
+          <li class="cat-item"><a href="#"></a></li>
+          <li class="cat-item"><a href="#"></a></li>
+          <li class="cat-item"><a href="#"></a></li>
+            </ul> 
+      </div>
+	
+			
+			
+			
+    </li>
+    <li class="scroll"></li>
+  </ul>	
+  <div class="footer-divider"></div>
+  <footer class="cf">Copyright &copy; Ronald Brown | webwork: Marcus Brown | Design by: <a href="http://www.luiszuno.com">luiszuno.com</a></footer>
+</div>
+
+
+<script src="js/jquery.js"></script>
+<script src="js/custom.js"></script>
+<script src="js/superfish-1.4.8/js/hoverIntent.js"></script>
+<script src="js/superfish-1.4.8/js/superfish.js"></script>
+<script src="js/superfish-1.4.8/js/supersubs.js"></script>
+<script src="js/css3-mediaqueries.js"></script>
+<script src="js/nivoslider.js"></script>
+<script src="js/tabs.js"></script>
+<!-- Start of StatCounter Code -->
+<SCRIPT type="text/javascript" language="javascript"> var sc_project=710482;
+var sc_partition=5; var sc_security="118df683"; </SCRIPT>
+<SCRIPT type="text/javascript" language="javascript" src="http://www.statcounter.com/counter/counter.js"></SCRIPT><noscript><A
+    href="http://www.statcounter.com/" target="_blank"><IMG src="http://c6.statcounter.com/counter.php?sc_project=710482&amp;java=0&amp;security=118df683"
+    alt="counter stats" border="0"></A> </noscript>
+<!-- End of StatCounter Code -->
+
+
+</body>
+</html>
+
+<!-- http://xahlee.info/comp/unicode_math_operators.html -->

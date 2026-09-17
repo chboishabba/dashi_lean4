@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "centralizer abelian group"
+ ],
+ "canonical": "Q5008459",
+ "description": "group in which the centralizer of a non-identity element is abelian",
+ "id": "Q5008459",
+ "label": "CA-group"
+}

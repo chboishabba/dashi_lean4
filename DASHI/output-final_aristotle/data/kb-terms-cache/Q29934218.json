@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "Wikidata property as value",
+  "wikibase:WikibaseProperty",
+  "WikibaseProperty propertytype"
+ ],
+ "canonical": "Q29934218",
+ "description": "entity type in Wikibase",
+ "id": "Q29934218",
+ "label": "Wikibase property"
+}

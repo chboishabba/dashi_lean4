@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "RDF-S",
+  "RDFS",
+  "RDF(S)",
+  "RDF/S",
+  "RDF schema"
+ ],
+ "canonical": "Q1751819",
+ "description": "schema for knowledge representation",
+ "id": "Q1751819",
+ "label": "RDF Schema"
+}

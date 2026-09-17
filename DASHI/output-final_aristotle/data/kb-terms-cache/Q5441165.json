@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "lightly compact space"
+ ],
+ "canonical": "Q5441165",
+ "description": "topological space in which every locally finite family of open sets is finite",
+ "id": "Q5441165",
+ "label": "feebly compact space"
+}

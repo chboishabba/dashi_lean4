@@ -1,0 +1,18 @@
+{
+ "aliases": [
+  "place of origin",
+  "origination location",
+  "source material",
+  "origin",
+  "resource",
+  "place of origination",
+  "producer",
+  "origination place",
+  "location of origination",
+  "location of origin"
+ ],
+ "canonical": "Q31464082",
+ "description": "entity (person, place, text, thing, etc.) from which something (information, goods, etc.) comes or is acquired",
+ "id": "Q31464082",
+ "label": "source entity"
+}

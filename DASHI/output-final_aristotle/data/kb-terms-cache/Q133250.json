@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "ordered list",
+  "ordered set"
+ ],
+ "canonical": "Q133250",
+ "description": "ordered list of the same type of elements (finite or infinite)",
+ "id": "Q133250",
+ "label": "sequence"
+}

@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "circumstance of death",
+  "type of death",
+  "death manner",
+  "death type"
+ ],
+ "canonical": "Q2438541",
+ "description": "type of death (natural / not natural)",
+ "id": "Q2438541",
+ "label": "manner of death"
+}

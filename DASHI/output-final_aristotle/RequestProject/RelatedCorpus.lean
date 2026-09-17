@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Generated.RelatedStructures
 import RequestProject.Generated.RelatedStructures2
 import RequestProject.Generated.KnowledgeRepresentation

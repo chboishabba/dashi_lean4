@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Generated.Glossary
 import RequestProject.Vocabulary
 import RequestProject.Generated.Core

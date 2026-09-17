@@ -1,0 +1,73 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <!-- Meta http equivalent was here   -->
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../spring.css">
+   <title>Oleg Viro's home page </title>
+</head>
+<body>
+<div align="center">
+<span class="lpic"><table  align=left bgcolor="#ffffff" >
+<tr><td>
+<IMG
+ ALIGN="LEFT" BORDER="0" 
+ SRC="authors.jpg"
+ ALT="authors"></td></tr>
+<tr><td align=left>&nbsp; Viro, &nbsp; Kharlamov, &nbsp; Netsvetaev, 
+&nbsp;Ivanov</td> </tr> </table></span>
+<b>Oleg Viro's home page, texts for student</b> 
+</div>
+<center><h2>  Elementary Topology. Textbook in Problems 
+ </h2>         
+<b> by O.Ya.Viro, O.A.Ivanov, V.M.Kharlamov, N.Y.Netsvetaev </b>  
+</center>  
+<br><br>
+
+<span class="toc">
+<table align=left cellspacing=4 bgcolor="#ffffff">
+<tr><td><a href="rus-index.html"><img src="../RUS.png"></a> &nbsp; &nbsp; 
+<a href="../index.html"><img src="../go-home.png"></a> &nbsp; 
+<a href="../educ-texts.html"><img src="../go-up.png"></a>
+</td></tr>
+<tr><td><a href="../onme.html">about myself</a> </td></tr>
+<tr><td><a href="../math.html">mathematics</a></td></tr>
+<tr><td><a href="../educ-texts.html"><b>for students</b></a></td></tr>
+<tr><td><a href="../talks.html">talks</a> </td></tr>
+<tr><td><a href="../teaching.html">teaching</a></td></tr>
+</table>
+</span>
+</table>
+</span>
+<br>
+
+This book includes basic material on <b>general topology</b>, introduces
+algebraic topology via the <b>fundamental group</b> and covering spaces.
+
+<p>
+There were two editions in Russian, in 1988 and 2000. The
+<b><font size=+1><a href="http://www.ams.org/bookstore-getitem/item=mbk-54">
+first English</a></font></b>
+edition was published in 2008. Here is its 
+<b><font size=+1><a href="eng-book-nopfs.pdf"> abridged version</a></b> with
+proofs and solutions removed.
+The <b><font size=+1><a href="rus-book.pdf">third Russian</a></font></b>
+edition is to be published in 2009-2010.
+
+
+<p>The book is written mainly for students with a limited experience
+in mathematics, but determined to study the subject actively.
+The material is presented in a concise form, proofs are presented
+separately from formulations.
+Theorems, however, are formulated in detail, and the reader is expected
+to treat them as problems. This is done in order to emphasize the role of
+formulations and proofs.
+
+<p>More about the book can be found in the
+<b><font size=+1><a href="e-intro.html">Introduction</a></font></b>, where
+we describe its other specific features and the ideas behind
+them. To learn more, take a look on
+<b><font size=+1><a href="e-toc.pdf">Table of Contents</a></font></b>.
+
+</body>
+</html>

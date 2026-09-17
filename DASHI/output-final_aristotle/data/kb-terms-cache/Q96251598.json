@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "class of object",
+  "object type",
+  "object category",
+  "category of object"
+ ],
+ "canonical": "Q96251598",
+ "description": "Wikidata metaclass of object, which could be concrete or abstract",
+ "id": "Q96251598",
+ "label": "type of object"
+}

@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Vocabulary
 import RequestProject.OntologyLimits
 import RequestProject.OntologySheaves

@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "framed manifold",
+  "parallelized manifold",
+  "parallelizable"
+ ],
+ "canonical": "Q1014612",
+ "description": "a differentiable manifold whose (co)tangent bundle is topologically trivial",
+ "id": "Q1014612",
+ "label": "parallelizable manifold"
+}

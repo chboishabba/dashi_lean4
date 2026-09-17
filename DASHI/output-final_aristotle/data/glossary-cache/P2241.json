@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P2241",
+ "description": "qualifier to indicate why a particular statement should have deprecated rank",
+ "id": "P2241",
+ "kind": "property",
+ "label": "reason for deprecated rank"
+}

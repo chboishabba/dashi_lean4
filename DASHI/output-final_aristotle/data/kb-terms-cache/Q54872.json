@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "RDF"
+ ],
+ "canonical": "Q54872",
+ "description": "data model for describing resources on the Web",
+ "id": "Q54872",
+ "label": "Resource Description Framework"
+}

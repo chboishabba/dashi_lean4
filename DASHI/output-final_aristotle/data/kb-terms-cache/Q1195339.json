@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "DAG structure",
+  "DAG",
+  "dag",
+  "acyclic directed graph",
+  "acyclic digraph"
+ ],
+ "canonical": "Q1195339",
+ "description": "directed graph with no directed cycles",
+ "id": "Q1195339",
+ "label": "directed acyclic graph"
+}

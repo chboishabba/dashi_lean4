@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "homeomorphic",
+  "homeomorphic map",
+  "topological equivalence",
+  "bi continuous function"
+ ],
+ "canonical": "Q202906",
+ "description": "isomorphism between topological spaces; continuous bijection with continuous inverse",
+ "id": "Q202906",
+ "label": "homeomorphism"
+}

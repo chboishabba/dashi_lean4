@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "types of sports",
+  "sport type",
+  "sports type",
+  "sport types",
+  "sports types"
+ ],
+ "canonical": "Q31629",
+ "description": "specific sport. Do not use with P279 (subclass of)",
+ "id": "Q31629",
+ "label": "type of sport"
+}

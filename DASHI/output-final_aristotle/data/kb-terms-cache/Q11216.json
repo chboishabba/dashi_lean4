@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "numerical computation",
+  "numerical mathematics",
+  "numerical modelling",
+  "computer-assisted analysis"
+ ],
+ "canonical": "Q11216",
+ "description": "study of algorithms that use numerical approximation for the problems of mathematical analysis",
+ "id": "Q11216",
+ "label": "numerical analysis"
+}

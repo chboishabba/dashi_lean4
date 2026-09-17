@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="fr">
+    
+        <head prefix="og: http://ogp.me/ns#">
+    
+        <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="https://data.bnf.fr/fr/data/icons/favicon.ico">
+<title>Topologie</title>
+
+
+
+
+  <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
+  
+    <meta name="DC.title" content="Topologie" />
+  
+    <meta name="DC.identifier" content="ark:/12148/cb119445977" />
+  
+
+
+
+  <meta property="og:url" content="https://data.bnf.fr/fr/ark:/12148/cb119445977" />
+
+  <meta property="og:title" content="Topologie - Rameau - Ressources de la Bibliothèque nationale de France" />
+
+  <meta property="og:description" content="Toutes les informations de la Bibliothèque Nationale de France sur : Topologie" />
+
+  <meta property="og:site_name" content="data.bnf.fr" />
+
+  <meta property="og:type" content="article" />
+
+  <meta property="og:image" content="https://gallica.bnf.fr/ark:/12148/bpt6k33495977.thumbnail" />
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org/",
+  "@type": "DefinedTerm",
+  "@id": "https://data.bnf.fr/ark:/12148/cb119445977",
+  "name": "Topologie",
+  "inDefinedTermSet": "https://data.bnf.fr/vocabulary/rameau",
+  "alternateName": [
+    {
+      "@value": "Topologie",
+      "@language": "fr"
+    }
+  ],
+  "subjectOf": [
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb31631410t",
+      "@title": "Sur les espaces \u00e0 structure uniforme et sur la topologie g\u00e9n\u00e9rale"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb343071848",
+      "@title": "Cha\u00eenes et n\u0153uds"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb361464044",
+      "@title": "Topologie et perception 1"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb36199370d",
+      "@title": "Topologie"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb37353442n",
+      "@title": "Geometry, topology and physics"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb37354931m",
+      "@title": "Computers in geometry and topology"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb37362271n",
+      "@title": "Introduction to topology and modern analysis"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb373793249",
+      "@title": "Lehrbuch der Topologie"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb373805675",
+      "@title": "Topological phases in quantum theory"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb37386598w",
+      "@title": "Partition problems in topology"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb37387843p",
+      "@title": "Differential geometry and topology"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb38806559b",
+      "@title": "Length and area"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb388570535",
+      "@title": "Elementary topology and applications"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb388854762",
+      "@title": "Topology optimization"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb38940198p",
+      "@title": "The infinite-dimensional topology of function spaces"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb39156767g",
+      "@title": "Dimensions of apeiron"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb40182468h",
+      "@title": "Topology now !"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb41309145j",
+      "@title": "Riemann, topology, and physics"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb42617382p",
+      "@title": "Topologie"
+    },
+    {
+      "url": "https://data.bnf.fr/ark:/12148/cb42666249c",
+      "@title": "\u0152uvres choisies"
+    }
+  ],
+  "image": "https://gallica.bnf.fr/ark:/12148/bpt6k33495977",
+  "sameAs": [
+    "http://datos.bne.es/resource/XX4576271",
+    "http://fr.dbpedia.org/resource/Topologie",
+    "http://d-nb.info/gnd/4060425-1",
+    "http://d-nb.info/gnd/4156724-9",
+    "http://www.idref.fr/027394247/id",
+    "http://id.loc.gov/authorities/sh85136089",
+    "http://id.loc.gov/authorities/subjects/sh85136089",
+    "http://purl.org/bncf/tid/4969",
+    "http://wikidata.org/entity/Q42989",
+    "http://fr.wikipedia.org/wiki/Topologie"
+  ]
+}
+   </script>
+<script>
+    
+      var BASE_URL = "https://data.bnf.fr/fr/";
+    
+      var DATADIR_URL = "https://data.bnf.fr/data/1da1deddbabfd357292a84b1e93d82fd/";
+    
+</script>
+
+
+    <link rel="stylesheet" href="https://data.bnf.fr/data/1da1deddbabfd357292a84b1e93d82fd/v2/fontawesome/font-awesome.min.css" type="text/css" media="all" async/>
+
+    <link rel="stylesheet" href="https://data.bnf.fr/data/1da1deddbabfd357292a84b1e93d82fd/v2/main.css" type="text/css" media="all" async/>
+
+    <link rel="stylesheet" href="https://data.bnf.fr/data/1da1deddbabfd357292a84b1e93d82fd/v2/searchbar.css" type="text/css" media="all" async/>
+
+    <link rel="stylesheet" href="https://data.bnf.fr/data/1da1deddbabfd357292a84b1e93d82fd/v2/header.css" type="text/css" media="all" async/>
+
+    <link rel="stylesheet" href="https://data.bnf.fr/data/1da1deddbabfd357292a84b1e93d82fd/v2/footer.css" type="text/css" media="all" async/>
+
+
+
+    <link rel="stylesheet" href="https://data.bnf.fr/data/1da1deddbabfd357292a84b1e93d82fd/v2/databnf_print.css" type="text/css" media="print" async/>
+
+
+
+    <link rel="preconnect" href="https://gallica.bnf.fr" />
+
+    </head>
+    <body id="">
+        <header id="header">
+    <div class="content-header">
+        <div class="logos">
+            <a id="bnf-logo" href="http://www.bnf.fr" aria-label="Lien vers le site institutionnel www.bnf.fr" target="_blank">
+                <img src="https://data.bnf.fr/data/1da1deddbabfd357292a84b1e93d82fd/v2/databnf_logo.svg" alt="Bnf" />
+            </a>
+            <a id="databnf-logo" href="https://data.bnf.fr/fr/"
+               aria-label="Lien vers la page d&#39;accueil du site data.bnf.fr">
+                Data
+            </a>
+        </div>
+        
+            <div id="searchform" data-search-url="https://data.bnf.fr/fr/search"></div>
+        
+        <div class="liens-transverses">
+            <div class="dropdown widescreen-only">
+                <div class="dropdown-title">Données</div>
+                <ul class="dropdown-content">
+                    <li>
+                        <a href="https://data.bnf.fr/fr/sparql_sparna_doc" rel="nofollow">
+                            Documentation sur SPARQL et Sparnatural
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://data.bnf.fr/sparql/" rel="nofollow">
+                            Sparql
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://data.bnf.fr/sparnatural/" rel="nofollow">
+                            Sparnatural
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://api.bnf.fr/fr/dumps-de-databnffr" rel="nofollow">
+                            Dumps des données
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://data.bnf.fr/fr/semanticweb" rel="nofollow">
+                            Web sémantique et modèle de données
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://data.bnf.fr/fr/vocabulary" rel="nofollow">
+                            Pages de vocabulaire
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://data.bnf.fr/fr/dataviz" rel="nofollow">
+                            Visualisation de données
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <div id="consultation" class="dropdown-title"></div>
+                <ul class="dropdown-content">
+                    <li>
+                        <a href="https://data.bnf.fr/fr/summary" rel="nofollow">
+                            Se repérer sur data
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://data.bnf.fr/fr/askdata" rel="nofollow">
+                            Que demander à data
+                        </a>
+                    </li>
+                    <li class="widescreen-only">
+                        <a href="https://data.bnf.fr/fr/about" rel="nofollow">
+                            Le projet data
+                        </a>
+                    </li>
+                    <li class="widescreen-only">
+                        <a href="https://data.bnf.fr/fr/videotutorial" rel="nofollow">
+                            Tutoriel vidéo
+                        </a>
+                    </li>
+                    <li class="widescreen-only">
+                        <a href="https://data.bnf.fr/fr/valorisation" rel="nofollow">
+                            Valorisation
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="separator"></div>
+            <div class="dropdown">
+                
+                    
+                        <div class="dropdown-title"><u>FR</u></div>
+                    
+                
+                    
+                
+                    
+                
+                <ul class="dropdown-content">
+                
+                    
+                
+                    
+                    <li>
+                        <a href="https://data.bnf.fr/en/ark:/12148/cb119445977" rel="nofollow">EN</a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        <a href="https://data.bnf.fr/de/ark:/12148/cb119445977" rel="nofollow">DE</a>
+                    </li>
+                    
+                
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+        
+
+    <main>
+        
+<div id="reactapp-sections" data-eid="11944597"></div>
+
+    </main>
+
+    
+<div id="returntop">
+    <a href="#"
+       class="fa fa-arrow-up"
+       role="button"
+       aria-label="Back to top"
+    >
+    </a>
+</div>
+<script>
+let returnTopBtn = document
+    .getElementById('returntop');
+
+window.addEventListener('scroll', function () {
+    if (document.body.scrollTop > 20
+        || document.documentElement.scrollTop > 20) {
+        returnTopBtn.style.display = 'block';
+    } else {
+        returnTopBtn.style.display = 'none';
+    }
+});
+</script>
+
+
+<footer>
+
+  <div class="footer-links">
+      <div>informations mises à jour le 28-04-2026</div>
+      <div><a href="https://data.bnf.fr/fr/licence">Mentions légales</a></div>
+      <div><a href="https://data.bnf.fr/fr/privacy">Politique de confidentialité</a></div>
+      <div><a href="https://data.bnf.fr/fr/contact">Contact</a></div>
+      <div>version 4.6.1</div>
+  </div>
+
+
+
+    <script src="https://data.bnf.fr/data/1da1deddbabfd357292a84b1e93d82fd/i18n/translations.js"></script>
+
+
+
+    
+        <script src="https://data.bnf.fr/data/1da1deddbabfd357292a84b1e93d82fd/v2/bundle-v2_searchbar.js" defer></script>
+    
+
+    
+        <script src="https://data.bnf.fr/data/1da1deddbabfd357292a84b1e93d82fd/v2/bundle-v2_du.js" defer></script>
+    
+
+
+
+</footer>
+
+    
+        
+            
+<!-- Appel à bnf_marquage.js -->
+<!-- marquage cf. #92133 -->
+
+<script async defer type="text/javascript" src="https://multimedia-ext.bnf.fr/bnf_marquage/bnf_marquage.js?version=1.0&domaine=data_p.bnf.fr">
+</script>
+
+
+<!-- balise div de class "marquage-page" avec les attributs data-*  -->        
+    <div class="marquage-page"                 
+        data-siten1="18798"        
+        data-level2="37"                
+        data-chapitre1="" 
+        data-titre="PageSujet::topologie::11944597" 
+    >
+
+    </div>
+
+
+  <script>
+    // Obtenir la référence du div
+    
+    const divMarquage = document.querySelector('.marquage-page');
+    //console.log(divMarquage)
+    if (divMarquage) {
+      // Modifier le contenu du div
+      divMarquage.setAttribute('data-titre', "PageSujet::topologie::11944597");
+     } else {
+      console.error("Aucun élément avec la classe 'marquage-page' trouvé.");
+    }    
+ //   console.log(divMarquage)
+
+    </script>
+
+
+
+    
+
+    </body>
+</html>

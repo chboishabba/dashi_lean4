@@ -1,0 +1,110 @@
+#
+#
+#     Lean token from inside a declaration;
+#     `Type`) has a `Prop` body;
+#     `≤-refl`/`z≤n`, negative float literals);
+#     argument, matching on `refl` to force an index).
+#     as bare names; Lean has no such scoping, so those names are unbound;
+#     but then a user-written abbreviation declared to land in `Set` (Lean's
+#     operator scoped to that record, which the front end cannot introduce as a
+#     propositional `False` and `Eq`, which is what the upstream proofs need,
+#   * Prop versus Set — the prelude renders Agda's `⊥` and `_≡_` by Lean's
+#   * `open R v` — Agda's record modules put a record value's fields into scope
+#   * genuine dependent pattern matching (absurd patterns away from the last
+#   * record-local mixfix — a record field named `_+_`, `_≤_` or `-_` is a new
+#   * vocabulary the prelude does not carry (`Data.Vec`, the standard library's
+# The reasons fall into a small number of classes, and every one of them is a
+# Upstream modules that pass the front end's syntactic gate — Lean reads and
+# a defect of the transliteration:
+# hidden.  Format:  Module.Name  # reason
+# module and reading Lean's own error, so the gap is documented rather than
+# parses them — but that do not *elaborate*, so `AgdaCheck` does not attempt
+# place where Agda's foundation or its scoping differs from Lean's rather than
+# them.  Each line records the module and the reason, measured by building the
+Contraction  # Prop versus Set in `x ≢ y = x ≡ y → ⊥`, and `open UMetric.Ultrametric U` inside the record body, which is what puts `d` in scope
+DASHI.Arithmetic.NatBoolEquality  # Prop versus Set in `_≢_`, and dependent pattern matching: an absurd pattern away from the last argument
+DASHI.Biology.Levin.CompetentGoalExecution  # a universe level applied explicitly (`R {ℓs}`), and Lean's levels are not terms
+DASHI.Biology.Levin.MultiscaleIdentityDissociation  # a universe level applied explicitly (`R {ℓs}`), and Lean's levels are not terms
+DASHI.Biology.OEFMultiFibreFeedbackHyperfabric  # Prop versus Set: an abbreviation declared to land in `Set` has an equation as its body, and Lean's equality is `Prop`-valued
+DASHI.Cognition.PNF.DependencyDerivedOccurrenceIdentityExact  # Prop versus Set: a `Set`-valued abbreviation of `_≡_ → ⊥`
+DASHI.Cognition.PNF.FreshReplayAuthorityAdmissionExact  # Prop versus Set: a `Set`-valued abbreviation of an equation, so `refl` no longer inhabits it
+DASHI.Cognition.PNF.ProducerCompleteDependencyProjectionExact  # Prop versus Set: a `Set`-valued abbreviation of an equation, so `refl` no longer inhabits it
+DASHI.Core.ObserverRefinementCore  # Prop versus Set: a `Set`-valued abbreviation of `_≡_ → ⊥` and of a quantified equation
+DASHI.Core.ProvenanceBearingQuotient  # `_≡_` is passed where a `Set`-valued relation is expected, and Lean's equality is `Prop`-valued
+DASHI.Core.ReopenableProjectionComposition  # precedence: an Agda `λ` body extends across the pair comma, so `(λ x → a , b)` is read by Lean as the pair `(fun x => a, b)` and the bound variable escapes
+DASHI.Core.TypedResidualBasisDecomposition  # `⊥` appears where a `Set` is expected, and Lean's `False` is `Prop`-valued
+DASHI.Energy.Energy  # the record field `_≤_` is a record-local mixfix operator, used through `open Preorder P` inside a later record
+DASHI.Execution.Contract  # a signature with no clauses (a postulate), which the front end refuses by design, together with names taken from an opened record module
+DASHI.Geometry.DefectCollapse  # implicit universe-level binders `{ℓx ℓe}` in a record telescope, which Lean cannot infer since its levels are not terms
+DASHI.Geometry.FiberContraction  # Prop versus Set in `_≢_`, and `open Ultrametric U` inside the record body
+DASHI.Geometry.ParallelogramLaw  # the record fields `_+_` and `-_` are record-local mixfix operators
+DASHI.Geometry.ProjectionDefect  # qualified projections of record-local mixfix fields (`Additive._+_`, `Additive.-_`)
+DASHI.Geometry.SignatureCombinatorics  # Prop versus Set: a record field of type `_≡_` declared in `Set`
+DASHI.Governance.AmalekProvenanceRoleBinding  # an implicit argument supplied positionally in braces (`f {Actor} p`), which Lean spells `f (Actor := _) p`
+DASHI.Physics.Chemistry.AtomicOrbitDiameterControl  # `open AtomicOrbitDiameterControl D` inside a record body puts the fields in scope as bare names
+DASHI.Physics.Closure.NSAncientVortexStretchingMaximumPrincipleNoGoExact  # Lean's `Rat` arithmetic does not reduce in the kernel, so an Agda proof by `refl` of a rational computation has no transliteration
+DASHI.Physics.Closure.NSLyapunovFunctionIsLane7OnlyReceipt  # uses the Agda standard library's `≤-refl` and `z≤n`, which the prelude does not carry
+DASHI.Physics.Closure.NavierStokesWeakSolutionInterface  # every interface record opens its parameter record, so the field names are used unqualified
+DASHI.Physics.Closure.PDFCarrierLogRatioDiagnostic  # the negative float literal `-0`
+DASHI.Physics.RealTernaryCarrier  # `Data.Vec` (length-indexed vectors) is not in the prelude
+DASHI.Physics.SignedPerm4  # `Data.Vec` (length-indexed vectors) is not in the prelude
+Kernel.Algebra  # Agda's `with`-abstraction rewrites the goal by the scrutinee; the transliterated Lean `match` does not, so the `refl` clauses no longer type-check
+Ontology.DNA.Supervoxel4Adic  # `Data.Vec` (length-indexed vectors) is not in the prelude
+DASHI.Analysis.FiniteWeightedKernelSums   # does not elaborate (recovered upstream module)
+DASHI.Analysis.RiemannHermitianLocalizationAmplificationExact   # does not elaborate (recovered upstream module)
+DASHI.Analysis.RiemannReflectionOrbitDefectExact   # does not elaborate (recovered upstream module)
+DASHI.Analysis.WeightedKernelSchurTest   # does not elaborate (recovered upstream module)
+DASHI.Biology.IntrospectiveEmbodiedHyperformalismObservationExact   # does not elaborate (recovered upstream module)
+DASHI.Cognition.PNF.BoundedEvidenceCommitmentExact   # does not elaborate (recovered upstream module)
+DASHI.Cognition.PNF.ContextualDecisionSubspaceExact   # does not elaborate (recovered upstream module)
+DASHI.Cognition.PNF.NoncommutativeDecisionUpdateQQExact   # does not elaborate (recovered upstream module)
+DASHI.Cognition.PNF.SetwiseGroupedFibreProjectionExact   # does not elaborate (recovered upstream module)
+DASHI.Cognition.PNF.StratifiedFibrewiseSupportLocalityExact   # does not elaborate (recovered upstream module)
+DASHI.Combinatorics.String.LieAlgebra   # does not elaborate (recovered upstream module)
+DASHI.Physics.BianchiEinsteinAssumptions   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSAncientVelocityScaleEnergyKinematicNoGoExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSMigrationInitiationThresholdConstantsReceipt   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSNormalizedAlignmentBudgetDerivative   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSPressureVsDepthLPClarificationReceipt   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSSprint136HouLuoSymmetricSourceSignReceipt   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTailFluxAbsorptionMarginReceipt   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNCommutingPhysicalCarrierSelectorRound28Exact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNCutoffUniformCotlarSteinRound30Exact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNFoiasRosaTemamSojournBoundaryRound80Exact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNFullShellIncidenceFunctionalityNoGoRound63Exact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNGrafakosTorresPowerLawOrientation   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNGrafakosTorresThreeFunctionSchurProgram   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNHHBadZetaMarginRound50Exact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNHardDyadicShellOwner   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNLiteralNonlinearEnergyCancellationRound30Exact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNLuoFiniteEnergyContinuationRound27Exact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNLuoFixedShiftRecursionReductionExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNLuoPublishedContinuationAuthorityExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNPeriodicScalingFrameProductNoGoRound77Exact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNPhysicalCarlesonFundingRound73Exact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNPressureEigenframeRotationGapBudgetRound79Exact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNResidueNormModel   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNRestrictedTransverseUniqueness   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.NSTriadKNScaleNormalisedAmplitudeAuditRound29Exact   # does not elaborate (recovered upstream module)
+DASHI.Physics.Closure.YMKPAbsorptionMarginReceipt   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.Balaban1989Theorem1UVStabilityExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanClayExactOSPullbackRecombinationExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanClayGate4CombinedRGUVIterationExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanClayGate4FiniteDimensionalFrechetChainProductExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanClayGate4SU2PrincipalLogBallExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanClayT5OSGramTopologyExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanClayT5PhysicalMassTransportExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanErikssonDLRUniformityAuditExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanMarkedSourceNuclearCompositeFieldExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanNormalizedExpectationCrossNumeratorExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanOPECoefficientRGRecurrenceUniquenessExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanP33WilsonPlaquetteSecondVariationPlacementsExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanSU2GaugeFixedHessianQuadraticExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanWilsonBooleanFourCubeExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.BalabanYM4RGInvariantRegionPhysicalGapExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.YangMillsClayProblemContractExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.YangMillsLocalChargeQuadraticFormCoreExact   # does not elaborate (recovered upstream module)
+DASHI.Physics.YangMills.YangMillsStressChargeLocalCoreCutoffStabilizationExact   # does not elaborate (recovered upstream module)
+Monster.Mask   # does not elaborate (recovered upstream module)
+DASHI.Governance.TraumaExploitationAttractor   # does not elaborate (recovered upstream module)
+DASHI.Interop.AristotleMathSourceParityExact   # does not elaborate (recovered upstream module)

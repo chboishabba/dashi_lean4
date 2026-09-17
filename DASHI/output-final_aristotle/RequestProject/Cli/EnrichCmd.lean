@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Cli.Enrich
 import RequestProject.Cli.Derive
 import RequestProject.FastEval

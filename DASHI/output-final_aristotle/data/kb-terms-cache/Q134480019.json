@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "prototypical agent",
+  "agent"
+ ],
+ "canonical": "Q134480019",
+ "description": "semantic label for the most agent-like argument - something that acts or is treated like it performs actions, even if it can't consciously or intentionally do so",
+ "id": "Q134480019",
+ "label": "proto-agent"
+}

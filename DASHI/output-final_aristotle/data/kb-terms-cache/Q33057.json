@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "ISBN-10",
+  "ISBN-13",
+  "ISBN number",
+  "ISO 2108",
+  "urn:isbn:",
+  "ISBN (identifier)"
+ ],
+ "canonical": "Q33057",
+ "description": "unique numeric book identifier",
+ "id": "Q33057",
+ "label": "International Standard Book Number"
+}

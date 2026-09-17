@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P1647",
+ "description": "all resources related by this property are also related by that property",
+ "id": "P1647",
+ "kind": "property",
+ "label": "subproperty of"
+}

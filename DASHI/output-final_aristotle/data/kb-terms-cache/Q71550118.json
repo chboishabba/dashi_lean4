@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "particular quantity",
+  "quantity"
+ ],
+ "canonical": "Q71550118",
+ "description": "superclass of physical, chemical, ... quantity; members are individual quantities like 5 kg, 2 apples, ...",
+ "id": "Q71550118",
+ "label": "individual quantity"
+}

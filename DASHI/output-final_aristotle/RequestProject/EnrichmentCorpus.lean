@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Generated.TheorySources
 import RequestProject.Generated.TheorySitelinks
 import RequestProject.Generated.Enriched

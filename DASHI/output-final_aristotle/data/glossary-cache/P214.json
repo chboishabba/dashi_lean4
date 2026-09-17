@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P214",
+ "description": "identifier for the Virtual International Authority File database [format: up to 22 digits]; please note: VIAF is a cluster, the ID can include multiple items",
+ "id": "P214",
+ "kind": "property",
+ "label": "VIAF cluster ID"
+}

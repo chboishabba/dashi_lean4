@@ -1,8 +1,8 @@
-This project was edited by [Aristotle](https://aristotle.harmonic.fun).
+This project was edited by [JMD](https://github.com/meta-introspector).
 
 To cite Aristotle:
-- Tag @Aristotle-Harmonic on GitHub PRs/issues
+- Tag @meta-introspector on GitHub PRs/issues
 - Add as co-author to commits:
 ```
-Co-authored-by: Aristotle (Harmonic) <aristotle-harmonic@harmonic.fun>
+Co-authored-by: JMD (meta-introspector) <meta-introspector@github.com>
 ```

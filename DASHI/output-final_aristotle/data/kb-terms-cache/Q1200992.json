@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "abstraction level"
+ ],
+ "canonical": "Q1200992",
+ "description": "way of hiding details of a computing subsystem, allowing separation of concerns and interoperability",
+ "id": "Q1200992",
+ "label": "abstraction layer"
+}

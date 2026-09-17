@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "operations",
+  "math operation",
+  "operation"
+ ],
+ "canonical": "Q3884033",
+ "description": "mathematical procedure which produces a result from one or more input values",
+ "id": "Q3884033",
+ "label": "mathematical operation"
+}

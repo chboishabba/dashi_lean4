@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.ItemMerge
 import RequestProject.SelfDescription
 import RequestProject.Reflection

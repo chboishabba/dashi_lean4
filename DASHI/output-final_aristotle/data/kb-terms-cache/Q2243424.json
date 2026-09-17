@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "idempotent"
+ ],
+ "canonical": "Q2243424",
+ "description": "element x of a ring such that x² = x",
+ "id": "Q2243424",
+ "label": "idempotent element"
+}

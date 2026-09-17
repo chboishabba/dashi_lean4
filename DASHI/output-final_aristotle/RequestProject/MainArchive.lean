@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import Mathlib
 import RequestProject.Core
 import RequestProject.Engine

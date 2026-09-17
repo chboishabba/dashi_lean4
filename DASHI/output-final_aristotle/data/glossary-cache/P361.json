@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P361",
+ "description": "object of which the subject is a part (if this subject is already part of object A which is a part of object B, then please only make the subject part of object A), inverse property of \"has part\" (P527, see also \"has parts of the class\" (P2670))",
+ "id": "P361",
+ "kind": "property",
+ "label": "part of"
+}

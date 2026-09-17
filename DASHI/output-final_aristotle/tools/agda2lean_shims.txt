@@ -1,0 +1,4 @@
+# Upstream modules the front end cannot transliterate, for which a hand-written
+# Lean module under AgdaVendor/ provides the same interface.  Each shim states
+# in its docstring what it stands in for and why the rendering is faithful.
+DASHI.Foundations.Base369Nat

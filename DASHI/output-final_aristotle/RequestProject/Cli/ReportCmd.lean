@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Fixes
 import RequestProject.Cli.SeriesFormat
 import RequestProject.Cli.TaxaFormat

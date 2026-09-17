@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Generated.Core
 import RequestProject.Generated.Frontier
 import RequestProject.Generated.Frontier2

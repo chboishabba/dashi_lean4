@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "type of group with a fixed-size",
+  "type of fixed-size group"
+ ],
+ "canonical": "Q99469810",
+ "description": "type of collection of entities that is defined by the number of elements or parts",
+ "id": "Q99469810",
+ "label": "type of fixed-size set or group"
+}

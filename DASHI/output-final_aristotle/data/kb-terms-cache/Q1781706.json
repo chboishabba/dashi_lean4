@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "CQ"
+ ],
+ "canonical": "Q1781706",
+ "description": "restricted form of first-order query using the logical conjunction operator",
+ "id": "Q1781706",
+ "label": "conjunctive query"
+}

@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "recurrence",
+  "recurrent"
+ ],
+ "canonical": "Q28314507",
+ "description": "temporal entity that recurs",
+ "id": "Q28314507",
+ "label": "recurring entity"
+}

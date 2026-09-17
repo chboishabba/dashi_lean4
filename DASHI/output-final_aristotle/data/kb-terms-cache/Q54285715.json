@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "word sense",
+  "lexicographic sense",
+  "sense",
+  "Wikidata sense"
+ ],
+ "canonical": "Q54285715",
+ "description": "Wikibase entity type for lexicographic senses",
+ "id": "Q54285715",
+ "label": "Wikibase sense"
+}

@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Qualifiers
 import RequestProject.FormatConstraints
 import RequestProject.ContemporaryConstraint

@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Generated.Theories
 import RequestProject.Vocabulary
 import RequestProject.HomotopyTypes

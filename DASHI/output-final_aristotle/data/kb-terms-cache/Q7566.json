@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "parents",
+  "guardian"
+ ],
+ "canonical": "Q7566",
+ "description": "progenitor or caregiver of the offspring in their own species, inverse label for property P40",
+ "id": "Q7566",
+ "label": "parent"
+}

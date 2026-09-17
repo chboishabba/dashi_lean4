@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Publish
 import RequestProject.Reports
 import RequestProject.Cli.Query

@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "organisms known by a particular vernacular name",
+  "taxon known by a particular common name",
+  "organism known by a particular common name"
+ ],
+ "canonical": "Q55983715",
+ "description": "organisms which have been assigned common names in addition to their taxon name",
+ "id": "Q55983715",
+ "label": "organisms known by a particular common name"
+}

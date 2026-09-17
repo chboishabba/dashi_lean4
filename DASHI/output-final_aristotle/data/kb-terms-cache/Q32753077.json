@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "entity",
+  "WD entity"
+ ],
+ "canonical": "Q32753077",
+ "description": "Wikidata data model element",
+ "id": "Q32753077",
+ "label": "Wikidata entity"
+}

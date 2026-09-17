@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Terms
 import RequestProject.Generated.KbTerms
 import RequestProject.DefectReport

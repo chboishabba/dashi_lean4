@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Cli.Import
 import RequestProject.Cli.Format
 

@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P155",
+ "description": "immediately prior item in a series of which the subject is a part, preferably use as qualifier of P179 [if the subject has replaced the preceding item, e.g. political offices, use \"replaces\" (P1365)]",
+ "id": "P155",
+ "kind": "property",
+ "label": "follows"
+}

@@ -1,3 +1,4 @@
+/- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Core
 import RequestProject.Engine
 import RequestProject.Temporal

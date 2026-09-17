@@ -1,0 +1,1 @@
+The source-written quantitative status remains false until a concrete theorem inhabits the same-object residual and the downstream adapter.

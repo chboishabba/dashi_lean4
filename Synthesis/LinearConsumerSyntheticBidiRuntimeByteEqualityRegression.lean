@@ -1,4 +1,5 @@
 import Synthesis.LinearConsumerSyntheticBidiRuntimeByteEquality
+import Synthesis.LinearConsumerSyntheticBidiTwoVJointKernelCertificateRegression
 
 namespace Synthesis
 

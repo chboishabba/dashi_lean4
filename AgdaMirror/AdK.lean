@@ -1,1 +1,8 @@
+import AgdaMirror.AdK.Attribution
+import AgdaMirror.AdK.AtomisticConfiguration
+import AgdaMirror.AdK.SourceSelections
+import AgdaMirror.AdK.CanonicalSelectionContent
+import AgdaMirror.AdK.COMGeometry
+import AgdaMirror.AdK.CVProjection
+import AgdaMirror.AdK.NonFactorability
 import AgdaMirror.AdK.KernelValidation

@@ -1,0 +1,1 @@
+Checkpoint: RED regressions and fail-closed status shells exist. Next work is theorem search in the existing imported R571/frontier/control surfaces; no status promotion has occurred.

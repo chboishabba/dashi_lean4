@@ -1,0 +1,29 @@
+name: AdK Lean Kernel CI
+
+on:
+  push:
+    branches:
+      - agent/adk-exact-cv-kernel-mirror
+  pull_request:
+    paths:
+      - 'AgdaMirror/AdK/**'
+      - 'AgdaMirror/AdK.lean'
+      - 'AgdaMirror.lean'
+      - '.github/workflows/adk_lean_ci.yml'
+      - 'lakefile.toml'
+      - 'lean-toolchain'
+  workflow_dispatch:
+
+jobs:
+  adk-kernel:
+    runs-on: ubuntu-latest
+    env:
+      LEAN_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+        with:
+          build: true
+          build-args: 'AgdaMirror'
+          axiom-audit: true
+          axiom-audit-root: 'AgdaMirror.AdK'

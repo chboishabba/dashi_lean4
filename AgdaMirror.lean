@@ -97,6 +97,7 @@ import AgdaMirror.Core
 import AgdaMirror.Algebra
 import AgdaMirror.Analysis
 import AgdaMirror.Physics.YangMills
+import AgdaMirror.AdK
 
 /-!
 # `AgdaMirror`: Lean transcriptions of the non-NS/YM root Agda modules
@@ -118,4 +119,9 @@ provides faithful Lean mirrors:
   (which also *proves* fixed-point uniqueness), and `Scaffolding`
   (abstract entropy systems, restoration, completion law — with the genuinely
   provable 3-adic, `ℤ/6`-regularity, and no-infinite-descent facts proved).
+
+* **AdK exact-CV mirror**: the source-facing residue/domain roles and mass
+  convention retain their upstream attribution, while exact rational selected
+  content, COM extensionality, projection collision, and non-factorability are
+  DASHI reconstruction/theorems under `AgdaMirror.AdK`.
 -/

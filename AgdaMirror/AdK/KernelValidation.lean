@@ -7,6 +7,10 @@ This validation root is intentionally committed before the production theorem
 spine.  It requires the terminal constructive non-factorability theorem and
 serves as the narrow Lean elaboration/axiom-audit entry point.
 
+The next commit after the workflow exists is intentionally validation-only so
+GitHub Actions can record a genuine compiler RED against the absent production
+module before implementation begins.
+
 Attribution remains upstream:
 - Li-Liu-Ji 2015 owns the source-facing CV selection/domain roles.
 - Prohaska et al. owns the adopted rounded atomic-mass convention.

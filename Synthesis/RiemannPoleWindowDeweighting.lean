@@ -45,41 +45,24 @@ theorem positive_unweighted_of_separated_weighted_cancellation
     (hP2lower : cInner * (-A2) ≤ -P2)
     (hlam : lam = -P2 / P1) :
     0 < A2 + lam * A1 := by
-  have hP1pos : 0 < cOuter * A1 := lt_of_lt_of_le hP1 hP1upper
+  have hnegA2 : 0 < -A2 := by linarith
   have hcInner : 0 < cInner := lt_trans hcOuter hsep
-  have hratio :
-      (-P2 / P1) * A1 > -A2 := by
-    have hnegA2 : 0 < -A2 := by linarith
-    have hleft :
-        cInner * (-A2) / (cOuter * A1)
-          < (-P2) / P1 := by
-      have hP1le : P1 ≤ cOuter * A1 := hP1upper
-      have hnum : cInner * (-A2) ≤ -P2 := hP2lower
-      have hdenpos : 0 < cOuter * A1 := hP1pos
-      have hP1pos' : 0 < P1 := hP1
-      have hstep1 :
-          cInner * (-A2) / (cOuter * A1)
-            < cInner * (-A2) / P1 := by
-        exact (div_lt_div_iff₀ hdenpos hP1pos').2 (by
-          have hp : 0 < cInner * (-A2) := mul_pos hcInner hnegA2
-          nlinarith)
-      have hstep2 :
-          cInner * (-A2) / P1 ≤ (-P2) / P1 :=
-        (div_le_div_iff_of_pos_right hP1).2 hnum
-      exact lt_of_lt_of_le hstep1 hstep2
-    have hfactor :
-        (-A2) / A1
-          < cInner * (-A2) / (cOuter * A1) := by
-      have hden : 0 < A1 := hA1
-      field_simp [ne_of_gt hA1, ne_of_gt hcOuter] at *
-      nlinarith [mul_pos hcOuter hA1, mul_pos hcInner hA1]
-    have hmain : (-A2) / A1 < (-P2) / P1 :=
-      lt_trans hfactor hleft
-    have hA1pos := hA1
-    exact (div_lt_iff₀ hA1pos).mp (by
-      have := (lt_div_iff₀ hP1).mp ?_
-      · nlinarith
-      · exact (div_lt_iff₀ hA1pos).2 (by nlinarith))
+  have hP1lt : P1 < cInner * A1 := by
+    have hc : cOuter * A1 < cInner * A1 :=
+      mul_lt_mul_of_pos_right hsep hA1
+    exact lt_of_le_of_lt hP1upper hc
+  have hcross1 :
+      (-A2) * P1 < (-A2) * (cInner * A1) :=
+    mul_lt_mul_of_pos_left hP1lt hnegA2
+  have hcross2 :
+      (-A2) * (cInner * A1) ≤ (-P2) * A1 := by
+    have h := mul_le_mul_of_nonneg_right hP2lower hA1.le
+    nlinarith
+  have hcross : (-A2) * P1 < (-P2) * A1 :=
+    lt_of_lt_of_le hcross1 hcross2
+  have hratio : -A2 < (-P2 / P1) * A1 := by
+    rw [div_mul_eq_mul_div]
+    exact (lt_div_iff₀ hP1).2 (by nlinarith)
   rw [hlam]
   linarith
 
@@ -100,7 +83,7 @@ theorem outerCosUpper_lt_innerCosLower :
     outerCosUpper < innerCosLower := by
   unfold outerCosUpper innerCosLower
   obtain ⟨h0,h57,h7pi⟩ := outer_angle_lt_inner_pi
-  exact Real.strictAntiOn_cos h0 h7pi h57
+  exact Real.cos_lt_cos_of_nonneg_of_le_pi h0 h7pi h57
 
 theorem outerCosUpper_pos : 0 < outerCosUpper := by
   unfold outerCosUpper

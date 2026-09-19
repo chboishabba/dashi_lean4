@@ -18,6 +18,8 @@ open AgdaMirror.AdK.CanonicalSelectionContent
 
 #check fourAKEChainA
 #check oneAKEChainA
+#check fourAKEChainB
+#check oneAKEChainB
 #check fourAKEChainA.configuration
 #check oneAKEChainA.configuration
 
@@ -25,10 +27,14 @@ example : fourAKEChainA.canonicalArchiveByteEqualityObserved = false := rfl
 example : oneAKEChainA.canonicalArchiveByteEqualityObserved = false := rfl
 example : fourAKEChainA.scientificAuthorityPromotedFromMirror = false := rfl
 example : oneAKEChainA.scientificAuthorityPromotedFromMirror = false := rfl
+example : fourAKEChainB.canonicalArchiveByteEqualityObserved = false := rfl
+example : oneAKEChainB.scientificAuthorityPromotedFromMirror = false := rfl
 
 #check canonicalContent fourAKEChainA.configuration theta1Lid
 #check canonicalContent oneAKEChainA.configuration theta1Lid
 #check canonicalContent fourAKEChainA.configuration (dlnLid .heavy)
 #check canonicalContent oneAKEChainA.configuration (dlnNmp .heavy)
+#check canonicalContent fourAKEChainB.configuration theta1Lid
+#check canonicalContent oneAKEChainB.configuration (dlnNmp .heavy)
 
 end AgdaMirror.AdK.PDBMirrorSelectedFixtureValidation

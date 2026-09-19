@@ -56,6 +56,12 @@ theorem gammaCenteredTaper_continuous {g : ℝ → ℝ} (hg : Continuous g) (r :
   unfold gammaCenteredTaper
   fun_prop
 
+theorem gammaCenteredTaper_contDiff {g : ℝ → ℝ}
+    (hgs : ContDiff ℝ 2 g) (r : ℝ) :
+    ContDiff ℝ 2 (gammaCenteredTaper g r) := by
+  unfold gammaCenteredTaper
+  fun_prop
+
 theorem gammaCenteredTaper_hasCompactSupport {g : ℝ → ℝ}
     (hgc : HasCompactSupport g) (r : ℝ) :
     HasCompactSupport (gammaCenteredTaper g r) := by
@@ -126,8 +132,7 @@ theorem gammaResp_centered_radius {g : ℝ → ℝ} {Λ : ℝ}
     (hgs : ContDiff ℝ 2 g) (hgc : HasCompactSupport g)
     (heven : ∀ u, g (-u) = g u)
     (hsupp : ∀ u, g u ≠ 0 → |u| ≤ Λ) (hΛ : 0 ≤ Λ)
-    (t r : ℝ)
-    (hcenterC2 : ContDiff ℝ 2 (gammaCenteredTaper g r)) :
+    (t r : ℝ) :
     gammaResp g t r + gammaResp g t (-r) - 2 * gammaResp g t 0
       = 2 * gammaResp (gammaCenteredTaper g r) t 0 := by
   have hcgc : HasCompactSupport (gammaCenteredTaper g r) :=
@@ -143,6 +148,7 @@ theorem gammaResp_centered_radius {g : ℝ → ℝ} {Λ : ℝ}
   have i1 := integrable_gammaIntegrand hgs hgc heven hsupp hΛ t r
   have i2 := integrable_gammaIntegrand hgs hgc heven hsupp hΛ t (-r)
   have i0 := integrable_gammaIntegrand hgs hgc heven hsupp hΛ t 0
+  have hcenterC2 := gammaCenteredTaper_contDiff hgs r
   have ic := integrable_gammaIntegrand hcenterC2 hcgc hceven hcsupp hΛ t 0
   unfold gammaResp
   have hpt : ∀ x : ℝ,
@@ -167,14 +173,13 @@ theorem gammaConeValue_centered_exact {g : ℝ → ℝ} {Λ : ℝ}
     (hgs : ContDiff ℝ 2 g) (hgc : HasCompactSupport g)
     (heven : ∀ u, g (-u) = g u)
     (hsupp : ∀ u, g u ≠ 0 → |u| ≤ Λ) (hΛ : 0 ≤ Λ)
-    (t r : ℝ)
-    (hcenterC2 : ContDiff ℝ 2 (gammaCenteredTaper g r)) :
+    (t r : ℝ) :
     evenConeFunctional (gammaVec (sampleFam g t r))
       = -2 * gammaResp g t 0
         - 2 * gammaResp (gammaCenteredTaper g r) t 0 := by
   have hcone := gammaConeValue_exact hgs.continuous hgc heven t r
   have hcenter :=
-    gammaResp_centered_radius hgs hgc heven hsupp hΛ t r hcenterC2
+    gammaResp_centered_radius hgs hgc heven hsupp hΛ t r
   rw [hcone]
   linarith
 

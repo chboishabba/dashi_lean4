@@ -43,7 +43,7 @@ theorem cos_gap_nonneg_on_support
 theorem reflectionPairWeight_nonpos_inside_window
     {h : ℝ -> ℝ} {a delta Lambda u : ℝ}
     (hh : ∀ x, h x <= 0)
-    (hsupp : h u != 0 -> |u| <= Lambda)
+    (hsupp : h u ≠ 0 -> |u| <= Lambda)
     (hLambda : 0 <= Lambda)
     (hwindow : |delta| * Lambda <= Real.pi / 2) :
     reflectionPairWeight h a delta u <= 0 := by
@@ -64,7 +64,7 @@ theorem integral_reflectionPairWeight_nonpos_inside_window
     (hhc : Continuous h)
     (hhcs : HasCompactSupport h)
     (hh : ∀ x, h x <= 0)
-    (hsupp : ∀ u, h u != 0 -> |u| <= Lambda)
+    (hsupp : ∀ u, h u ≠ 0 -> |u| <= Lambda)
     (hLambda : 0 <= Lambda)
     (hwindow : |delta| * Lambda <= Real.pi / 2) :
     (∫ u : ℝ, reflectionPairWeight h a delta u) <= 0 := by
@@ -92,7 +92,7 @@ theorem centeredPairTerm_nonpos_inside_window
     (hgc : HasCompactSupport g)
     (heven : ∀ u, g (-u) = g u)
     (hnn : ∀ u, 0 <= g u)
-    (hsupp : ∀ u, g u != 0 -> |u| <= Lambda)
+    (hsupp : ∀ u, g u ≠ 0 -> |u| <= Lambda)
     (hLambda : 0 <= Lambda)
     (rho : Zeros)
     (hwindow : |((rho : ℂ).im - t)| * Lambda <= Real.pi / 2) :
@@ -101,7 +101,7 @@ theorem centeredPairTerm_nonpos_inside_window
   have hh2 := gammaCenteredTaper_contDiff hgs r
   have hhc := gammaCenteredTaper_hasCompactSupport hgc r
   have hhe := gammaCenteredTaper_even heven r
-  have hhsupp : ∀ u, gammaCenteredTaper g r u != 0 -> |u| <= Lambda := by
+  have hhsupp : ∀ u, gammaCenteredTaper g r u ≠ 0 -> |u| <= Lambda := by
     intro u hu
     apply hsupp u
     intro hgu

@@ -1,0 +1,1 @@
+A quantitative payment is admissible only when attached to the literal fixed-output physical triad fibre and the signed four-helicity recombination used by the downstream R568/A1-channel consumer.

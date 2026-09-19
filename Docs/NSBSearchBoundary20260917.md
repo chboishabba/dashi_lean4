@@ -1,0 +1,1 @@
+The theorem search stays inside the imported R571/frontier/control surfaces and the existing R568 consumer; no parallel carrier hierarchy is introduced.

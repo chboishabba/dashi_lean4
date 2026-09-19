@@ -1,0 +1,1 @@
+Any quantitative constant used by the S2b2d1b2 local payment or the downstream R568/S2b2d2 aggregation must be explicit and independent of the Galerkin cutoff.

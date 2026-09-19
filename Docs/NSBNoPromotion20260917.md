@@ -1,0 +1,1 @@
+Periodic-B work on this branch does not promote whole-space A. Forced C/D are provenance and donor lanes only. Any cross-lane reuse requires a typed same-object transport.

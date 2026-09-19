@@ -1,0 +1,1 @@
+Until the quantitative same-object theorem is inhabited and checked, the branch continues to report S2b2d1b2 as open. Routing and documentation are not proof payment.

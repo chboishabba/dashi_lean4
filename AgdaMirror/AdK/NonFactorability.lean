@@ -1,17 +1,25 @@
 import Mathlib
+import AgdaMirror.IntersectionalNonFactorability
 import AgdaMirror.AdK.CVProjection
 
 /-!
 # Constructive AdK three-CV non-factorability
 
-This file contains DASHI-original bridge mathematics.  Li-Liu-Ji source-pay the
-selection/domain roles and Prohaska et al. source-pay the adopted working-mass
-convention; neither source is attributed with the collision/non-factorability
-theorem proved here.
+This file instantiates the repository-wide
+`AgdaMirror.IntersectionalNonFactorability` spine rather than defining a
+lane-local factorisation calculus.
+
+Attribution:
+- Li-Liu-Ji source-pay the selection/domain roles.
+- Prohaska et al. source-pay the adopted working-mass convention.
+- Crenshaw 1991 conceptually motivates the generic intersectional warning in the
+  canonical source owner.
+- The exact rational AdK reconstruction and the collision/non-factorability
+  theorem instantiated here are DASHI mathematics.
 
 The concrete witness uses the DASHI `.backbone` dLN evaluator convention solely
-to inhabit one explicit projection.  It does **not** resolve the source-level
-dLN atom-subset ambiguity.
+to inhabit one explicit projection. It does **not** resolve the source-level dLN
+atom-subset ambiguity.
 -/
 
 namespace AgdaMirror.AdK.NonFactorability
@@ -21,32 +29,7 @@ open AgdaMirror.AdK.SourceSelections
 open AgdaMirror.AdK.CanonicalSelectionContent
 open AgdaMirror.AdK.CVProjection
 
-/-- Generic evidence that a projection identifies two distinct source objects. -/
-structure ProjectionCollision (X Y : Type*) (proj : X → Y) where
-  left : X
-  right : X
-  distinct : left ≠ right
-  sameProjection : proj left = proj right
-
-/-- Full recovery of `X` through a projection `proj : X → Y`. -/
-structure FactorsThrough (X Y : Type*) (proj : X → Y) where
-  recover : Y → X
-  leftInverse : Function.LeftInverse recover proj
-
-/-- A witnessed projection collision rules out full recovery/factorisation. -/
-theorem collision_not_factors_through
-    {X Y : Type*}
-    {proj : X → Y}
-    (collision : ProjectionCollision X Y proj) :
-    ¬ FactorsThrough X Y proj := by
-  intro factorisation
-  apply collision.distinct
-  calc
-    collision.left = factorisation.recover (proj collision.left) :=
-      (factorisation.leftInverse collision.left).symm
-    _ = factorisation.recover (proj collision.right) :=
-      congrArg factorisation.recover collision.sameProjection
-    _ = collision.right := factorisation.leftInverse collision.right
+namespace NF := AgdaMirror.IntersectionalNonFactorability
 
 private def atomId
     (residue : Int)
@@ -68,8 +51,6 @@ private def carbonAtom
     mass := massC
     position := pdbMilliVec x y z }
 
-/-- One CORE atom, one NMP atom, one LID atom, and one hinge atom make every
-source-facing COM selection used by the witness non-empty. -/
 private def coreAtom : Atom := carbonAtom 1 1 0 0 0
 private def nmpAtom : Atom := carbonAtom 50 2 1000 0 0
 private def lidAtom : Atom := carbonAtom 123 3 2000 0 0
@@ -89,7 +70,6 @@ theorem collisionConfigurationsDistinct :
     collisionLeftConfiguration ≠ collisionRightConfiguration := by
   decide
 
-/-- The residual perturbation is erased by each source-facing selection. -/
 theorem collisionTheta1LidContent :
     canonicalContent collisionLeftConfiguration theta1Lid =
       canonicalContent collisionRightConfiguration theta1Lid := by
@@ -132,27 +112,42 @@ theorem collisionThreeCVInputEqual :
     collisionDlnLidBackboneContent
     collisionDlnNmpBackboneContent
 
-/-- The concrete same-CV/different-configuration collision. -/
-def adkThreeCVInputCollision :
-    ProjectionCollision
-      Configuration
-      ThreeCVInputSurface
-      (fun configuration => threeCVInputSurface configuration .backbone) :=
+/-- Canonical repository-wide non-factorability witness:
+same three-CV input surface, different full atomistic configuration. -/
+def adkConfigurationNonFactorabilityWitness :
+    NF.NonFactorabilityWitness
+      (fun configuration =>
+        threeCVInputSurface configuration .backbone)
+      (fun configuration : Configuration => configuration) :=
   { left := collisionLeftConfiguration
     right := collisionRightConfiguration
-    distinct := collisionConfigurationsDistinct
-    sameProjection := collisionThreeCVInputEqual }
+    sameFlatProjection := collisionThreeCVInputEqual
+    situatedOutcomesDiffer := collisionConfigurationsDistinct }
 
-/-- Full atomistic configuration recovery cannot factor through this explicit
-three-CV input projection. -/
+/-- Full atomistic identity cannot factor through this explicit three-CV input
+projection. This is now an instance of the canonical repository-wide
+`FactorsThrough` predicate. -/
 theorem adkThreeCVInput_not_factors_through :
-    ¬ FactorsThrough
-      Configuration
-      ThreeCVInputSurface
-      (fun configuration => threeCVInputSurface configuration .backbone) :=
-  collision_not_factors_through adkThreeCVInputCollision
+    ¬ NF.FactorsThrough
+      (fun configuration =>
+        threeCVInputSurface configuration .backbone)
+      (fun configuration : Configuration => configuration) := by
+  intro factor
+  exact NF.witnessRulesOutEveryFlatFactorisation
+    adkConfigurationNonFactorabilityWitness factor
 
-/-- Scientific/source attribution does not create this DASHI theorem. -/
+/-- Any deterministic recharting of the already-collapsed three-CV surface also
+cannot recover full atomistic identity for the witnessed pair. -/
+theorem adkThreeCVRecharting_not_factors_through
+    {Recharted : Type*}
+    (rechart : ThreeCVInputSurface → Recharted) :
+    ¬ NF.FactorsThrough
+      (fun configuration =>
+        rechart (threeCVInputSurface configuration .backbone))
+      (fun configuration : Configuration => configuration) :=
+  NF.rechartingCannotRecoverErasedPhenomenon
+    rechart adkConfigurationNonFactorabilityWitness
+
 def sourceAttributionCreatesDASHINonFactorabilityTheorem : Bool := false
 
 example : sourceAttributionCreatesDASHINonFactorabilityTheorem = false := rfl

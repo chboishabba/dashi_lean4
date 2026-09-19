@@ -4,30 +4,23 @@ import AgdaMirror.AdK.AtomisticConfiguration
 /-!
 # Transparent CV-relevant PDB mirror fixtures for AdK
 
-These fixtures are generated from the two transport mirrors already recorded by
-the AdK acquisition lane:
-
+Generated from observed transport mirrors:
 - YueHuLab/LieRMSD/4AKE.pdb, Git blob a6990f8befb52ca25ca0b65674e0861f53dd7ee5
 - YueHuLab/LieRMSD/1AKE.pdb, Git blob 407ebf46f707592958aaa34df06785d7880ca02a
 
-Only chain A ATOM records in the union of residue spans needed by the current
+Both chain A and chain B are retained because Li-Liu-Ji does not source-pay a
+chain choice. Only ATOM records in the residue union required by the current
 three-CV evaluator are retained:
 
   1–8, 30–59, 79–85, 104–110, 122–165, 190–198.
 
-Coordinates are embedded exactly as PDB decimal thousandths using `pdbMilliVec`;
-masses use the separately attributed Prohaska working convention from the AdK
-carrier.
+Coordinates are exact PDB decimal thousandths. Masses use the separately
+attributed Prohaska working convention.
 
-This owner is deliberately **not** a complete PDB manifestation and does not
-claim:
-- equality with canonical wwPDB archive bytes,
-- a pinned source-byte SHA-256,
-- that chain A is source-selected by Li-Liu-Ji,
-- that mirror transport creates scientific authority.
-
-The retained rows are transparent theorem input.  Mirror Git blob identity stays
-transport provenance only.
+These are transparent **CV-relevant selected manifestations**, not complete PDB
+objects. They do not establish canonical wwPDB byte parity, source-byte SHA-256,
+a source-authoritative chain choice, or scientific authority from mirror
+transport.
 -/
 
 namespace AgdaMirror.AdK.PDBMirrorSelectedFixture
@@ -50,6 +43,7 @@ structure PDBMirrorSelectedFixture where
   deriving Repr
 
 private def pdbAtom
+    (chain : String)
     (serial : Nat)
     (residue : Int)
     (residueName atomName altloc element : String)
@@ -57,7 +51,7 @@ private def pdbAtom
     (mass : ℚ) : Atom :=
   { id :=
       { model := 1
-        chain := "A"
+        chain := chain
         residue := residue
         residueName := residueName
         atomName := atomName
@@ -69,1629 +63,3256 @@ private def pdbAtom
 
 def fourAKEChainAConfiguration : Configuration :=
   [
-    pdbAtom 1 1 "MET" "N" "" "N" -10928 -24892 -9518 massN
-  ,     pdbAtom 2 1 "MET" "CA" "" "C" -9901 -24422 -10479 massC
-  ,     pdbAtom 3 1 "MET" "C" "" "C" -9168 -23266 -9813 massC
-  ,     pdbAtom 4 1 "MET" "O" "" "O" -9802 -22323 -9346 massO
-  ,     pdbAtom 5 1 "MET" "CB" "" "C" -10585 -23970 -11774 massC
-  ,     pdbAtom 6 1 "MET" "CG" "" "C" -9650 -23497 -12856 massC
-  ,     pdbAtom 7 1 "MET" "SD" "" "S" -8384 -24690 -13251 massS
-  ,     pdbAtom 8 1 "MET" "CE" "" "C" -9002 -25277 -14812 massC
-  ,     pdbAtom 9 2 "ARG" "N" "" "N" -7851 -23394 -9673 massN
-  ,     pdbAtom 10 2 "ARG" "CA" "" "C" -7028 -22352 -9051 massC
-  ,     pdbAtom 11 2 "ARG" "C" "" "C" -6001 -21906 -10072 massC
-  ,     pdbAtom 12 2 "ARG" "O" "" "O" -5150 -22680 -10492 massO
-  ,     pdbAtom 13 2 "ARG" "CB" "" "C" -6337 -22868 -7801 massC
-  ,     pdbAtom 14 2 "ARG" "CG" "" "C" -7222 -22919 -6621 massC
-  ,     pdbAtom 15 2 "ARG" "CD" "" "C" -6632 -23799 -5576 massC
-  ,     pdbAtom 16 2 "ARG" "NE" "" "N" -7440 -23763 -4372 massN
-  ,     pdbAtom 17 2 "ARG" "CZ" "" "C" -6965 -23881 -3138 massC
-  ,     pdbAtom 18 2 "ARG" "NH1" "" "N" -5664 -24050 -2932 massN
-  ,     pdbAtom 19 2 "ARG" "NH2" "" "N" -7806 -23818 -2112 massN
-  ,     pdbAtom 20 3 "ILE" "N" "" "N" -6082 -20641 -10448 massN
-  ,     pdbAtom 21 3 "ILE" "CA" "" "C" -5227 -20106 -11463 massC
-  ,     pdbAtom 22 3 "ILE" "C" "" "C" -4540 -18831 -10985 massC
-  ,     pdbAtom 23 3 "ILE" "O" "" "O" -5118 -18060 -10228 massO
-  ,     pdbAtom 24 3 "ILE" "CB" "" "C" -6098 -19813 -12702 massC
-  ,     pdbAtom 25 3 "ILE" "CG1" "" "C" -6670 -21108 -13263 massC
-  ,     pdbAtom 26 3 "ILE" "CG2" "" "C" -5337 -19077 -13744 massC
-  ,     pdbAtom 27 3 "ILE" "CD1" "" "C" -7875 -20870 -14122 massC
-  ,     pdbAtom 28 4 "ILE" "N" "" "N" -3263 -18691 -11331 massN
-  ,     pdbAtom 29 4 "ILE" "CA" "" "C" -2477 -17496 -11033 massC
-  ,     pdbAtom 30 4 "ILE" "C" "" "C" -2299 -16916 -12455 massC
-  ,     pdbAtom 31 4 "ILE" "O" "" "O" -1920 -17651 -13376 massO
-  ,     pdbAtom 32 4 "ILE" "CB" "" "C" -1088 -17867 -10428 massC
-  ,     pdbAtom 33 4 "ILE" "CG1" "" "C" -1254 -18305 -8975 massC
-  ,     pdbAtom 34 4 "ILE" "CG2" "" "C" -134 -16690 -10511 massC
-  ,     pdbAtom 35 4 "ILE" "CD1" "" "C" -1 -18800 -8363 massC
-  ,     pdbAtom 36 5 "LEU" "N" "" "N" -2663 -15647 -12649 massN
-  ,     pdbAtom 37 5 "LEU" "CA" "" "C" -2565 -14983 -13957 massC
-  ,     pdbAtom 38 5 "LEU" "C" "" "C" -1444 -13957 -13914 massC
-  ,     pdbAtom 39 5 "LEU" "O" "" "O" -1535 -12986 -13177 massO
-  ,     pdbAtom 40 5 "LEU" "CB" "" "C" -3905 -14287 -14286 massC
-  ,     pdbAtom 41 5 "LEU" "CG" "" "C" -4199 -13784 -15709 massC
-  ,     pdbAtom 42 5 "LEU" "CD1" "" "C" -4065 -14897 -16723 massC
-  ,     pdbAtom 43 5 "LEU" "CD2" "" "C" -5602 -13212 -15783 massC
-  ,     pdbAtom 44 6 "LEU" "N" "" "N" -381 -14186 -14680 massN
-  ,     pdbAtom 45 6 "LEU" "CA" "" "C" 768 -13265 -14734 massC
-  ,     pdbAtom 46 6 "LEU" "C" "" "C" 775 -12442 -16033 massC
-  ,     pdbAtom 47 6 "LEU" "O" "" "O" 313 -12896 -17077 massO
-  ,     pdbAtom 48 6 "LEU" "CB" "" "C" 2097 -14034 -14657 massC
-  ,     pdbAtom 49 6 "LEU" "CG" "" "C" 2441 -14999 -13526 massC
-  ,     pdbAtom 50 6 "LEU" "CD1" "" "C" 3800 -15554 -13804 massC
-  ,     pdbAtom 51 6 "LEU" "CD2" "" "C" 2436 -14323 -12202 massC
-  ,     pdbAtom 52 7 "GLY" "N" "" "N" 1347 -11252 -15980 massN
-  ,     pdbAtom 53 7 "GLY" "CA" "" "C" 1394 -10431 -17162 massC
-  ,     pdbAtom 54 7 "GLY" "C" "" "C" 1994 -9074 -16883 massC
-  ,     pdbAtom 55 7 "GLY" "O" "" "O" 1782 -8467 -15829 massO
-  ,     pdbAtom 56 8 "ALA" "N" "" "N" 2748 -8581 -17852 massN
-  ,     pdbAtom 57 8 "ALA" "CA" "" "C" 3395 -7286 -17735 massC
-  ,     pdbAtom 58 8 "ALA" "C" "" "C" 2367 -6186 -17693 massC
-  ,     pdbAtom 59 8 "ALA" "O" "" "O" 1232 -6380 -18111 massO
-  ,     pdbAtom 60 8 "ALA" "CB" "" "C" 4341 -7053 -18932 massC
-  ,     pdbAtom 217 30 "SER" "N" "" "N" -7388 -9976 -6103 massN
-  ,     pdbAtom 218 30 "SER" "CA" "" "C" -6192 -9217 -6380 massC
-  ,     pdbAtom 219 30 "SER" "C" "" "C" -5840 -8669 -4993 massC
-  ,     pdbAtom 220 30 "SER" "O" "" "O" -6728 -8414 -4181 massO
-  ,     pdbAtom 221 30 "SER" "CB" "" "C" -6471 -8124 -7404 massC
-  ,     pdbAtom 222 30 "SER" "OG" "" "O" -6760 -6891 -6774 massO
-  ,     pdbAtom 223 31 "THR" "N" "" "N" -4555 -8536 -4691 massN
-  ,     pdbAtom 224 31 "THR" "CA" "" "C" -4144 -8071 -3369 massC
-  ,     pdbAtom 225 31 "THR" "C" "" "C" -4637 -6676 -2996 massC
-  ,     pdbAtom 226 31 "THR" "O" "" "O" -4948 -6412 -1835 massO
-  ,     pdbAtom 227 31 "THR" "CB" "" "C" -2593 -8247 -3148 massC
-  ,     pdbAtom 228 31 "THR" "OG1" "" "O" -1849 -7434 -4063 massO
-  ,     pdbAtom 229 31 "THR" "CG2" "" "C" -2210 -9695 -3398 massC
-  ,     pdbAtom 230 32 "GLY" "N" "" "N" -4779 -5802 -3983 massN
-  ,     pdbAtom 231 32 "GLY" "CA" "" "C" -5246 -4466 -3685 massC
-  ,     pdbAtom 232 32 "GLY" "C" "" "C" -6683 -4515 -3226 massC
-  ,     pdbAtom 233 32 "GLY" "O" "" "O" -7057 -3825 -2293 massO
-  ,     pdbAtom 234 33 "ASP" "N" "" "N" -7482 -5373 -3848 massN
-  ,     pdbAtom 235 33 "ASP" "CA" "" "C" -8898 -5497 -3509 massC
-  ,     pdbAtom 236 33 "ASP" "C" "" "C" -9059 -6134 -2161 massC
-  ,     pdbAtom 237 33 "ASP" "O" "" "O" -9866 -5709 -1347 massO
-  ,     pdbAtom 238 33 "ASP" "CB" "" "C" -9636 -6366 -4537 massC
-  ,     pdbAtom 239 33 "ASP" "CG" "" "C" -9907 -5641 -5870 massC
-  ,     pdbAtom 240 33 "ASP" "OD1" "" "O" -9956 -4385 -5901 massO
-  ,     pdbAtom 241 33 "ASP" "OD2" "" "O" -10093 -6345 -6897 massO
-  ,     pdbAtom 242 34 "MET" "N" "" "N" -8293 -7191 -1959 massN
-  ,     pdbAtom 243 34 "MET" "CA" "" "C" -8292 -7982 -738 massC
-  ,     pdbAtom 244 34 "MET" "C" "" "C" -7916 -7163 471 massC
-  ,     pdbAtom 245 34 "MET" "O" "" "O" -8541 -7301 1510 massO
-  ,     pdbAtom 246 34 "MET" "CB" "" "C" -7297 -9099 -907 massC
-  ,     pdbAtom 247 34 "MET" "CG" "" "C" -7453 -10222 27 massC
-  ,     pdbAtom 248 34 "MET" "SD" "" "S" -6315 -11395 -602 massS
-  ,     pdbAtom 249 34 "MET" "CE" "" "C" -4810 -10551 -80 massC
-  ,     pdbAtom 250 35 "LEU" "N" "" "N" -6861 -6358 341 massN
-  ,     pdbAtom 251 35 "LEU" "CA" "" "C" -6401 -5481 1410 massC
-  ,     pdbAtom 252 35 "LEU" "C" "" "C" -7534 -4558 1789 massC
-  ,     pdbAtom 253 35 "LEU" "O" "" "O" -7998 -4564 2925 massO
-  ,     pdbAtom 254 35 "LEU" "CB" "" "C" -5237 -4629 933 massC
-  ,     pdbAtom 255 35 "LEU" "CG" "" "C" -3833 -5097 1279 massC
-  ,     pdbAtom 256 35 "LEU" "CD1" "" "C" -2837 -4144 655 massC
-  ,     pdbAtom 257 35 "LEU" "CD2" "" "C" -3660 -5108 2778 massC
-  ,     pdbAtom 258 36 "ARG" "N" "" "N" -7993 -3785 812 massN
-  ,     pdbAtom 259 36 "ARG" "CA" "" "C" -9098 -2856 993 massC
-  ,     pdbAtom 260 36 "ARG" "C" "" "C" -10378 -3506 1573 massC
-  ,     pdbAtom 261 36 "ARG" "O" "" "O" -11255 -2819 2072 massO
-  ,     pdbAtom 262 36 "ARG" "CB" "" "C" -9389 -2132 -335 massC
-  ,     pdbAtom 263 36 "ARG" "CG" "" "C" -8223 -1237 -798 massC
-  ,     pdbAtom 264 36 "ARG" "CD" "" "C" -8593 -309 -1969 massC
-  ,     pdbAtom 265 36 "ARG" "NE" "" "N" -8576 -973 -3275 massN
-  ,     pdbAtom 266 36 "ARG" "CZ" "" "C" -7488 -1132 -4035 massC
-  ,     pdbAtom 267 36 "ARG" "NH1" "" "N" -6310 -669 -3637 massN
-  ,     pdbAtom 268 36 "ARG" "NH2" "" "N" -7573 -1752 -5206 massN
-  ,     pdbAtom 269 37 "ALA" "N" "" "N" -10457 -4828 1555 massN
-  ,     pdbAtom 270 37 "ALA" "CA" "" "C" -11616 -5549 2081 massC
-  ,     pdbAtom 271 37 "ALA" "C" "" "C" -11402 -6114 3499 massC
-  ,     pdbAtom 272 37 "ALA" "O" "" "O" -12363 -6482 4188 massO
-  ,     pdbAtom 273 37 "ALA" "CB" "" "C" -11990 -6680 1131 massC
-  ,     pdbAtom 274 38 "ALA" "N" "" "N" -10144 -6235 3917 massN
-  ,     pdbAtom 275 38 "ALA" "CA" "" "C" -9824 -6758 5244 massC
-  ,     pdbAtom 276 38 "ALA" "C" "" "C" -10029 -5651 6272 massC
-  ,     pdbAtom 277 38 "ALA" "O" "" "O" -10565 -5876 7363 massO
-  ,     pdbAtom 278 38 "ALA" "CB" "" "C" -8382 -7254 5269 massC
-  ,     pdbAtom 279 39 "VAL" "N" "" "N" -9582 -4457 5901 massN
-  ,     pdbAtom 280 39 "VAL" "CA" "" "C" -9687 -3275 6731 massC
-  ,     pdbAtom 281 39 "VAL" "C" "" "C" -11142 -3086 7134 massC
-  ,     pdbAtom 282 39 "VAL" "O" "" "O" -11490 -3199 8307 massO
-  ,     pdbAtom 283 39 "VAL" "CB" "" "C" -9160 -2079 5948 massC
-  ,     pdbAtom 284 39 "VAL" "CG1" "" "C" -9642 -774 6535 massC
-  ,     pdbAtom 285 39 "VAL" "CG2" "" "C" -7659 -2132 5929 massC
-  ,     pdbAtom 286 40 "LYS" "N" "" "N" -11982 -2853 6134 massN
-  ,     pdbAtom 287 40 "LYS" "CA" "" "C" -13424 -2667 6301 massC
-  ,     pdbAtom 288 40 "LYS" "C" "" "C" -13987 -3665 7299 massC
-  ,     pdbAtom 289 40 "LYS" "O" "" "O" -14480 -3278 8357 massO
-  ,     pdbAtom 290 40 "LYS" "CB" "" "C" -14113 -2850 4943 massC
-  ,     pdbAtom 291 40 "LYS" "CG" "" "C" -15614 -3110 4970 massC
-  ,     pdbAtom 292 40 "LYS" "CD" "" "C" -16107 -3601 3596 massC
-  ,     pdbAtom 293 40 "LYS" "CE" "" "C" -15513 -4978 3218 massC
-  ,     pdbAtom 294 40 "LYS" "NZ" "" "N" -15876 -5463 1844 massN
-  ,     pdbAtom 295 41 "SER" "N" "" "N" -13931 -4945 6951 massN
-  ,     pdbAtom 296 41 "SER" "CA" "" "C" -14424 -5983 7834 massC
-  ,     pdbAtom 297 41 "SER" "C" "" "C" -13399 -6205 8925 massC
-  ,     pdbAtom 298 41 "SER" "O" "" "O" -12667 -7199 8912 massO
-  ,     pdbAtom 299 41 "SER" "CB" "" "C" -14679 -7278 7069 massC
-  ,     pdbAtom 300 41 "SER" "OG" "" "O" -15944 -7229 6426 massO
-  ,     pdbAtom 301 42 "GLY" "N" "" "N" -13357 -5249 9851 massN
-  ,     pdbAtom 302 42 "GLY" "CA" "" "C" -12442 -5274 10976 massC
-  ,     pdbAtom 303 42 "GLY" "C" "" "C" -12241 -6624 11622 massC
-  ,     pdbAtom 304 42 "GLY" "O" "" "O" -12844 -6951 12639 massO
-  ,     pdbAtom 305 43 "SER" "N" "" "N" -11419 -7427 10973 massN
-  ,     pdbAtom 306 43 "SER" "CA" "" "C" -11066 -8743 11442 massC
-  ,     pdbAtom 307 43 "SER" "C" "" "C" -9662 -8524 12000 massC
-  ,     pdbAtom 308 43 "SER" "O" "" "O" -9067 -7474 11767 massO
-  ,     pdbAtom 309 43 "SER" "CB" "" "C" -11052 -9710 10255 massC
-  ,     pdbAtom 310 43 "SER" "OG" "" "O" -10553 -9075 9084 massO
-  ,     pdbAtom 311 44 "GLU" "N" "" "N" -9130 -9491 12735 massN
-  ,     pdbAtom 312 44 "GLU" "CA" "" "C" -7796 -9348 13305 massC
-  ,     pdbAtom 313 44 "GLU" "C" "" "C" -6751 -8878 12279 massC
-  ,     pdbAtom 314 44 "GLU" "O" "" "O" -6111 -7846 12473 massO
-  ,     pdbAtom 315 44 "GLU" "CB" "" "C" -7367 -10660 13969 massC
-  ,     pdbAtom 316 44 "GLU" "CG" "" "C" -5881 -10754 14342 massC
-  ,     pdbAtom 317 44 "GLU" "CD" "" "C" -5455 -9816 15470 massC
-  ,     pdbAtom 318 44 "GLU" "OE1" "" "O" -6331 -9186 16117 massO
-  ,     pdbAtom 319 44 "GLU" "OE2" "" "O" -4227 -9727 15711 massO
-  ,     pdbAtom 320 45 "LEU" "N" "" "N" -6608 -9602 11174 massN
-  ,     pdbAtom 321 45 "LEU" "CA" "" "C" -5639 -9232 10148 massC
-  ,     pdbAtom 322 45 "LEU" "C" "" "C" -5967 -7886 9489 massC
-  ,     pdbAtom 323 45 "LEU" "O" "" "O" -5061 -7085 9213 massO
-  ,     pdbAtom 324 45 "LEU" "CB" "" "C" -5546 -10327 9087 massC
-  ,     pdbAtom 325 45 "LEU" "CG" "" "C" -4790 -11604 9463 massC
-  ,     pdbAtom 326 45 "LEU" "CD1" "" "C" -3305 -11337 9507 massC
-  ,     pdbAtom 327 45 "LEU" "CD2" "" "C" -5269 -12129 10809 massC
-  ,     pdbAtom 328 46 "GLY" "N" "" "N" -7263 -7635 9274 massN
-  ,     pdbAtom 329 46 "GLY" "CA" "" "C" -7720 -6400 8646 massC
-  ,     pdbAtom 330 46 "GLY" "C" "" "C" -7338 -5168 9421 massC
-  ,     pdbAtom 331 46 "GLY" "O" "" "O" -7028 -4119 8856 massO
-  ,     pdbAtom 332 47 "LYS" "N" "" "N" -7381 -5307 10737 massN
-  ,     pdbAtom 333 47 "LYS" "CA" "" "C" -7018 -4236 11637 massC
-  ,     pdbAtom 334 47 "LYS" "C" "" "C" -5508 -4052 11520 massC
-  ,     pdbAtom 335 47 "LYS" "O" "" "O" -5031 -2925 11418 massO
-  ,     pdbAtom 336 47 "LYS" "CB" "" "C" -7391 -4610 13074 massC
-  ,     pdbAtom 337 47 "LYS" "CG" "" "C" -8827 -5132 13273 massC
-  ,     pdbAtom 338 47 "LYS" "CD" "" "C" -9840 -4035 13570 massC
-  ,     pdbAtom 339 47 "LYS" "CE" "" "C" -10096 -3117 12383 massC
-  ,     pdbAtom 340 47 "LYS" "NZ" "" "N" -10995 -1993 12789 massN
-  ,     pdbAtom 341 48 "GLN" "N" "" "N" -4765 -5164 11506 massN
-  ,     pdbAtom 342 48 "GLN" "CA" "" "C" -3304 -5133 11385 massC
-  ,     pdbAtom 343 48 "GLN" "C" "" "C" -2917 -4401 10116 massC
-  ,     pdbAtom 344 48 "GLN" "O" "" "O" -2051 -3533 10137 massO
-  ,     pdbAtom 345 48 "GLN" "CB" "" "C" -2722 -6553 11345 massC
-  ,     pdbAtom 346 48 "GLN" "CG" "" "C" -2593 -7208 12705 massC
-  ,     pdbAtom 347 48 "GLN" "CD" "" "C" -2196 -8673 12645 massC
-  ,     pdbAtom 348 48 "GLN" "OE1" "" "O" -1031 -9014 12438 massO
-  ,     pdbAtom 349 48 "GLN" "NE2" "" "N" -3165 -9548 12858 massN
-  ,     pdbAtom 350 49 "ALA" "N" "" "N" -3613 -4714 9030 massN
-  ,     pdbAtom 351 49 "ALA" "CA" "" "C" -3366 -4114 7718 massC
-  ,     pdbAtom 352 49 "ALA" "C" "" "C" -3857 -2676 7563 massC
-  ,     pdbAtom 353 49 "ALA" "O" "" "O" -3302 -1915 6761 massO
-  ,     pdbAtom 354 49 "ALA" "CB" "" "C" -3973 -4981 6632 massC
-  ,     pdbAtom 355 50 "LYS" "N" "" "N" -4921 -2320 8284 massN
-  ,     pdbAtom 356 50 "LYS" "CA" "" "C" -5455 -962 8228 massC
-  ,     pdbAtom 357 50 "LYS" "C" "" "C" -4451 26 8809 massC
-  ,     pdbAtom 358 50 "LYS" "O" "" "O" -4229 1096 8246 massO
-  ,     pdbAtom 359 50 "LYS" "CB" "" "C" -6772 -858 8981 massC
-  ,     pdbAtom 360 50 "LYS" "CG" "" "C" -7296 548 9059 massC
-  ,     pdbAtom 361 50 "LYS" "CD" "" "C" -8631 593 9767 massC
-  ,     pdbAtom 362 50 "LYS" "CE" "" "C" -9003 2007 10225 massC
-  ,     pdbAtom 363 50 "LYS" "NZ" "" "N" -8335 2379 11514 massN
-  ,     pdbAtom 364 51 "ASP" "N" "" "N" -3843 -341 9934 massN
-  ,     pdbAtom 365 51 "ASP" "CA" "" "C" -2842 502 10588 massC
-  ,     pdbAtom 366 51 "ASP" "C" "" "C" -1627 707 9707 massC
-  ,     pdbAtom 367 51 "ASP" "O" "" "O" -1145 1817 9567 massO
-  ,     pdbAtom 368 51 "ASP" "CB" "" "C" -2390 -104 11922 massC
-  ,     pdbAtom 369 51 "ASP" "CG" "" "C" -3425 57 13023 massC
-  ,     pdbAtom 370 51 "ASP" "OD1" "" "O" -3719 1214 13417 massO
-  ,     pdbAtom 371 51 "ASP" "OD2" "" "O" -3930 -982 13500 massO
-  ,     pdbAtom 372 52 "ILE" "N" "" "N" -1118 -375 9135 massN
-  ,     pdbAtom 373 52 "ILE" "CA" "" "C" 45 -309 8254 massC
-  ,     pdbAtom 374 52 "ILE" "C" "" "C" -174 666 7106 massC
-  ,     pdbAtom 375 52 "ILE" "O" "" "O" 651 1538 6882 massO
-  ,     pdbAtom 376 52 "ILE" "CB" "" "C" 419 -1720 7722 massC
-  ,     pdbAtom 377 52 "ILE" "CG1" "" "C" 1155 -2494 8817 massC
-  ,     pdbAtom 378 52 "ILE" "CG2" "" "C" 1261 -1628 6457 massC
-  ,     pdbAtom 379 52 "ILE" "CD1" "" "C" 1478 -3889 8438 massC
-  ,     pdbAtom 380 53 "MET" "N" "" "N" -1283 505 6392 massN
-  ,     pdbAtom 381 53 "MET" "CA" "" "C" -1643 1374 5281 massC
-  ,     pdbAtom 382 53 "MET" "C" "" "C" -1760 2811 5757 massC
-  ,     pdbAtom 383 53 "MET" "O" "" "O" -1244 3733 5120 massO
-  ,     pdbAtom 384 53 "MET" "CB" "" "C" -3012 1010 4758 massC
-  ,     pdbAtom 385 53 "MET" "CG" "" "C" -3118 -228 3941 massC
-  ,     pdbAtom 386 53 "MET" "SD" "" "S" -4859 -224 3434 massS
-  ,     pdbAtom 387 53 "MET" "CE" "" "C" -4960 1325 2436 massC
-  ,     pdbAtom 388 54 "ASP" "N" "" "N" -2531 2991 6828 massN
-  ,     pdbAtom 389 54 "ASP" "CA" "" "C" -2778 4300 7444 massC
-  ,     pdbAtom 390 54 "ASP" "C" "" "C" -1495 5000 7869 massC
-  ,     pdbAtom 391 54 "ASP" "O" "" "O" -1418 6228 7825 massO
-  ,     pdbAtom 392 54 "ASP" "CB" "" "C" -3704 4174 8667 massC
-  ,     pdbAtom 393 54 "ASP" "CG" "" "C" -5158 3935 8289 massC
-  ,     pdbAtom 394 54 "ASP" "OD1" "" "O" -5433 3561 7129 massO
-  ,     pdbAtom 395 54 "ASP" "OD2" "" "O" -6026 4124 9167 massO
-  ,     pdbAtom 396 55 "ALA" "N" "" "N" -505 4224 8306 massN
-  ,     pdbAtom 397 55 "ALA" "CA" "" "C" 787 4770 8728 massC
-  ,     pdbAtom 398 55 "ALA" "C" "" "C" 1707 4959 7530 massC
-  ,     pdbAtom 399 55 "ALA" "O" "" "O" 2870 5356 7683 massO
-  ,     pdbAtom 400 55 "ALA" "CB" "" "C" 1438 3848 9733 massC
-  ,     pdbAtom 401 56 "GLY" "N" "" "N" 1181 4654 6344 massN
-  ,     pdbAtom 402 56 "GLY" "CA" "" "C" 1935 4782 5112 massC
-  ,     pdbAtom 403 56 "GLY" "C" "" "C" 3056 3775 5051 massC
-  ,     pdbAtom 404 56 "GLY" "O" "" "O" 4089 4041 4440 massO
-  ,     pdbAtom 405 57 "LYS" "N" "" "N" 2875 2656 5753 massN
-  ,     pdbAtom 406 57 "LYS" "CA" "" "C" 3856 1578 5797 massC
-  ,     pdbAtom 407 57 "LYS" "C" "" "C" 3436 536 4783 massC
-  ,     pdbAtom 408 57 "LYS" "O" "" "O" 2258 425 4414 massO
-  ,     pdbAtom 409 57 "LYS" "CB" "" "C" 3954 953 7194 massC
-  ,     pdbAtom 410 57 "LYS" "CG" "" "C" 4758 1772 8203 massC
-  ,     pdbAtom 411 57 "LYS" "CD" "" "C" 4726 1146 9600 massC
-  ,     pdbAtom 412 57 "LYS" "CE" "" "C" 3291 1013 10158 massC
-  ,     pdbAtom 413 57 "LYS" "NZ" "" "N" 3199 297 11484 massN
-  ,     pdbAtom 414 58 "LEU" "N" "" "N" 4411 -233 4332 massN
-  ,     pdbAtom 415 58 "LEU" "CA" "" "C" 4156 -1240 3331 massC
-  ,     pdbAtom 416 58 "LEU" "C" "" "C" 3811 -2553 4010 massC
-  ,     pdbAtom 417 58 "LEU" "O" "" "O" 4354 -2881 5063 massO
-  ,     pdbAtom 418 58 "LEU" "CB" "" "C" 5388 -1350 2429 massC
-  ,     pdbAtom 419 58 "LEU" "CG" "" "C" 5291 -1952 1032 massC
-  ,     pdbAtom 420 58 "LEU" "CD1" "" "C" 4016 -1505 294 massC
-  ,     pdbAtom 421 58 "LEU" "CD2" "" "C" 6545 -1541 293 massC
-  ,     pdbAtom 422 59 "VAL" "N" "" "N" 2833 -3244 3441 massN
-  ,     pdbAtom 423 59 "VAL" "CA" "" "C" 2365 -4528 3951 massC
-  ,     pdbAtom 424 59 "VAL" "C" "" "C" 3391 -5614 3689 massC
-  ,     pdbAtom 425 59 "VAL" "O" "" "O" 3815 -5824 2555 massO
-  ,     pdbAtom 426 59 "VAL" "CB" "" "C" 1038 -4958 3272 massC
-  ,     pdbAtom 427 59 "VAL" "CG1" "" "C" 553 -6298 3842 massC
-  ,     pdbAtom 428 59 "VAL" "CG2" "" "C" -18 -3866 3440 massC
-  ,     pdbAtom 581 79 "ASN" "N" "" "N" -14994 -22988 -5447 massN
-  ,     pdbAtom 582 79 "ASN" "CA" "" "C" -14722 -23611 -6752 massC
-  ,     pdbAtom 583 79 "ASN" "C" "" "C" -13300 -23366 -7236 massC
-  ,     pdbAtom 584 79 "ASN" "O" "" "O" -12859 -23924 -8236 massO
-  ,     pdbAtom 585 79 "ASN" "CB" "" "C" -15694 -23098 -7811 massC
-  ,     pdbAtom 586 79 "ASN" "CG" "" "C" -17134 -23479 -7525 massC
-  ,     pdbAtom 587 79 "ASN" "OD1" "" "O" -17501 -24650 -7589 massO
-  ,     pdbAtom 588 79 "ASN" "ND2" "" "N" -17963 -22482 -7234 massN
-  ,     pdbAtom 589 80 "GLY" "N" "" "N" -12593 -22506 -6525 massN
-  ,     pdbAtom 590 80 "GLY" "CA" "" "C" -11233 -22180 -6869 massC
-  ,     pdbAtom 591 80 "GLY" "C" "" "C" -11157 -20677 -6854 massC
-  ,     pdbAtom 592 80 "GLY" "O" "" "O" -11969 -20005 -6206 massO
-  ,     pdbAtom 593 81 "PHE" "N" "" "N" -10239 -20129 -7628 massN
-  ,     pdbAtom 594 81 "PHE" "CA" "" "C" -10086 -18686 -7664 massC
-  ,     pdbAtom 595 81 "PHE" "C" "" "C" -9076 -18251 -8718 massC
-  ,     pdbAtom 596 81 "PHE" "O" "" "O" -8280 -19066 -9186 massO
-  ,     pdbAtom 597 81 "PHE" "CB" "" "C" -9692 -18157 -6275 massC
-  ,     pdbAtom 598 81 "PHE" "CG" "" "C" -8501 -18869 -5645 massC
-  ,     pdbAtom 599 81 "PHE" "CD1" "" "C" -7199 -18586 -6059 massC
-  ,     pdbAtom 600 81 "PHE" "CD2" "" "C" -8687 -19781 -4598 massC
-  ,     pdbAtom 601 81 "PHE" "CE1" "" "C" -6105 -19194 -5440 massC
-  ,     pdbAtom 602 81 "PHE" "CE2" "" "C" -7607 -20386 -3978 massC
-  ,     pdbAtom 603 81 "PHE" "CZ" "" "C" -6312 -20097 -4396 massC
-  ,     pdbAtom 604 82 "LEU" "N" "" "N" -9150 -16980 -9112 massN
-  ,     pdbAtom 605 82 "LEU" "CA" "" "C" -8252 -16401 -10097 massC
-  ,     pdbAtom 606 82 "LEU" "C" "" "C" -7502 -15317 -9375 massC
-  ,     pdbAtom 607 82 "LEU" "O" "" "O" -8066 -14298 -9018 massO
-  ,     pdbAtom 608 82 "LEU" "CB" "" "C" -9026 -15798 -11273 massC
-  ,     pdbAtom 609 82 "LEU" "CG" "" "C" -8299 -15043 -12386 massC
-  ,     pdbAtom 610 82 "LEU" "CD1" "" "C" -7291 -15935 -13096 massC
-  ,     pdbAtom 611 82 "LEU" "CD2" "" "C" -9336 -14557 -13376 massC
-  ,     pdbAtom 612 83 "LEU" "N" "" "N" -6247 -15610 -9077 massN
-  ,     pdbAtom 613 83 "LEU" "CA" "" "C" -5348 -14700 -8398 massC
-  ,     pdbAtom 614 83 "LEU" "C" "" "C" -4661 -13917 -9523 massC
-  ,     pdbAtom 615 83 "LEU" "O" "" "O" -3934 -14455 -10362 massO
-  ,     pdbAtom 616 83 "LEU" "CB" "" "C" -4371 -15520 -7551 massC
-  ,     pdbAtom 617 83 "LEU" "CG" "" "C" -3488 -14850 -6517 massC
-  ,     pdbAtom 618 83 "LEU" "CD1" "" "C" -4285 -13921 -5611 massC
-  ,     pdbAtom 619 83 "LEU" "CD2" "" "C" -2822 -15949 -5732 massC
-  ,     pdbAtom 620 84 "ASP" "N" "" "N" -4938 -12634 -9551 massN
-  ,     pdbAtom 621 84 "ASP" "CA" "" "C" -4443 -11758 -10590 massC
-  ,     pdbAtom 622 84 "ASP" "C" "" "C" -3178 -11011 -10155 massC
-  ,     pdbAtom 623 84 "ASP" "O" "" "O" -3237 -10195 -9246 massO
-  ,     pdbAtom 624 84 "ASP" "CB" "" "C" -5602 -10799 -10929 massC
-  ,     pdbAtom 625 84 "ASP" "CG" "" "C" -5197 -9652 -11811 massC
-  ,     pdbAtom 626 84 "ASP" "OD1" "" "O" -5003 -9859 -13021 massO
-  ,     pdbAtom 627 84 "ASP" "OD2" "" "O" -5125 -8519 -11300 massO
-  ,     pdbAtom 628 85 "GLY" "N" "" "N" -2033 -11320 -10770 massN
-  ,     pdbAtom 629 85 "GLY" "CA" "" "C" -781 -10634 -10440 massC
-  ,     pdbAtom 630 85 "GLY" "C" "" "C" -128 -10839 -9076 massC
-  ,     pdbAtom 631 85 "GLY" "O" "" "O" 513 -9917 -8536 massO
-  ,     pdbAtom 768 104 "ASP" "N" "" "N" -3549 -24871 -9570 massN
-  ,     pdbAtom 769 104 "ASP" "CA" "" "C" -3511 -25770 -10690 massC
-  ,     pdbAtom 770 104 "ASP" "C" "" "C" -2793 -25183 -11873 massC
-  ,     pdbAtom 771 104 "ASP" "O" "" "O" -2163 -25923 -12613 massO
-  ,     pdbAtom 772 104 "ASP" "CB" "" "C" -4927 -26120 -11113 massC
-  ,     pdbAtom 773 104 "ASP" "CG" "" "C" -5708 -26712 -10012 massC
-  ,     pdbAtom 774 104 "ASP" "OD1" "" "O" -5427 -27881 -9675 massO
-  ,     pdbAtom 775 104 "ASP" "OD2" "" "O" -6568 -26002 -9460 massO
-  ,     pdbAtom 776 105 "TYR" "N" "" "N" -2969 -23881 -12112 massN
-  ,     pdbAtom 777 105 "TYR" "CA" "" "C" -2364 -23232 -13265 massC
-  ,     pdbAtom 778 105 "TYR" "C" "" "C" -1754 -21901 -13021 massC
-  ,     pdbAtom 779 105 "TYR" "O" "" "O" -2283 -21077 -12308 massO
-  ,     pdbAtom 780 105 "TYR" "CB" "" "C" -3374 -23004 -14358 massC
-  ,     pdbAtom 781 105 "TYR" "CG" "" "C" -3932 -24246 -14907 massC
-  ,     pdbAtom 782 105 "TYR" "CD1" "" "C" -5070 -24809 -14333 massC
-  ,     pdbAtom 783 105 "TYR" "CD2" "" "C" -3347 -24877 -16002 massC
-  ,     pdbAtom 784 105 "TYR" "CE1" "" "C" -5624 -25978 -14826 massC
-  ,     pdbAtom 785 105 "TYR" "CE2" "" "C" -3896 -26061 -16515 massC
-  ,     pdbAtom 786 105 "TYR" "CZ" "" "C" -5041 -26598 -15909 massC
-  ,     pdbAtom 787 105 "TYR" "OH" "" "O" -5623 -27759 -16356 massO
-  ,     pdbAtom 788 106 "VAL" "N" "" "N" -694 -21659 -13763 massN
-  ,     pdbAtom 789 106 "VAL" "CA" "" "C" 38 -20419 -13718 massC
-  ,     pdbAtom 790 106 "VAL" "C" "" "C" 133 -20080 -15186 massC
-  ,     pdbAtom 791 106 "VAL" "O" "" "O" 763 -20799 -15979 massO
-  ,     pdbAtom 792 106 "VAL" "CB" "" "C" 1436 -20615 -13159 massC
-  ,     pdbAtom 793 106 "VAL" "CG1" "" "C" 2163 -19304 -13179 massC
-  ,     pdbAtom 794 106 "VAL" "CG2" "" "C" 1362 -21183 -11754 massC
-  ,     pdbAtom 795 107 "LEU" "N" "" "N" -591 -19041 -15559 massN
-  ,     pdbAtom 796 107 "LEU" "CA" "" "C" -631 -18614 -16936 massC
-  ,     pdbAtom 797 107 "LEU" "C" "" "C" 114 -17314 -17072 massC
-  ,     pdbAtom 798 107 "LEU" "O" "" "O" -49 -16424 -16259 massO
-  ,     pdbAtom 799 107 "LEU" "CB" "" "C" -2079 -18414 -17370 massC
-  ,     pdbAtom 800 107 "LEU" "CG" "" "C" -3071 -19535 -17051 massC
-  ,     pdbAtom 801 107 "LEU" "CD1" "" "C" -4463 -19069 -17428 massC
-  ,     pdbAtom 802 107 "LEU" "CD2" "" "C" -2724 -20799 -17807 massC
-  ,     pdbAtom 803 108 "GLU" "N" "" "N" 979 -17227 -18069 massN
-  ,     pdbAtom 804 108 "GLU" "CA" "" "C" 1720 -16011 -18301 massC
-  ,     pdbAtom 805 108 "GLU" "C" "" "C" 1173 -15440 -19582 massC
-  ,     pdbAtom 806 108 "GLU" "O" "" "O" 1270 -16058 -20626 massO
-  ,     pdbAtom 807 108 "GLU" "CB" "" "C" 3209 -16288 -18472 massC
-  ,     pdbAtom 808 108 "GLU" "CG" "" "C" 4021 -14992 -18546 massC
-  ,     pdbAtom 809 108 "GLU" "CD" "" "C" 5425 -15174 -19060 massC
-  ,     pdbAtom 810 108 "GLU" "OE1" "" "O" 5861 -16335 -19245 massO
-  ,     pdbAtom 811 108 "GLU" "OE2" "" "O" 6082 -14131 -19290 massO
-  ,     pdbAtom 812 109 "PHE" "N" "" "N" 566 -14273 -19489 massN
-  ,     pdbAtom 813 109 "PHE" "CA" "" "C" -8 -13621 -20634 massC
-  ,     pdbAtom 814 109 "PHE" "C" "" "C" 1117 -12841 -21283 massC
-  ,     pdbAtom 815 109 "PHE" "O" "" "O" 1519 -11794 -20802 massO
-  ,     pdbAtom 816 109 "PHE" "CB" "" "C" -1113 -12712 -20156 massC
-  ,     pdbAtom 817 109 "PHE" "CG" "" "C" -2099 -12358 -21208 massC
-  ,     pdbAtom 818 109 "PHE" "CD1" "" "C" -3182 -13183 -21451 massC
-  ,     pdbAtom 819 109 "PHE" "CD2" "" "C" -2016 -11127 -21873 massC
-  ,     pdbAtom 820 109 "PHE" "CE1" "" "C" -4186 -12790 -22330 massC
-  ,     pdbAtom 821 109 "PHE" "CE2" "" "C" -3020 -10713 -22763 massC
-  ,     pdbAtom 822 109 "PHE" "CZ" "" "C" -4107 -11546 -22987 massC
-  ,     pdbAtom 823 110 "ASP" "N" "" "N" 1596 -13334 -22412 massN
-  ,     pdbAtom 824 110 "ASP" "CA" "" "C" 2733 -12724 -23092 massC
-  ,     pdbAtom 825 110 "ASP" "C" "" "C" 2493 -11719 -24225 massC
-  ,     pdbAtom 826 110 "ASP" "O" "" "O" 1869 -12055 -25224 massO
-  ,     pdbAtom 827 110 "ASP" "CB" "" "C" 3603 -13856 -23615 massC
-  ,     pdbAtom 828 110 "ASP" "CG" "" "C" 4915 -13381 -24131 massC
-  ,     pdbAtom 829 110 "ASP" "OD1" "" "O" 5602 -12653 -23394 massO
-  ,     pdbAtom 830 110 "ASP" "OD2" "" "O" 5255 -13743 -25276 massO
-  ,     pdbAtom 919 122 "GLY" "N" "" "N" 1727 6045 -27355 massN
-  ,     pdbAtom 920 122 "GLY" "CA" "" "C" 963 6738 -28375 massC
-  ,     pdbAtom 921 122 "GLY" "C" "" "C" -485 7032 -28044 massC
-  ,     pdbAtom 922 122 "GLY" "O" "" "O" -1349 6906 -28917 massO
-  ,     pdbAtom 923 123 "ARG" "N" "" "N" -785 7399 -26803 massN
-  ,     pdbAtom 924 123 "ARG" "CA" "" "C" -2167 7692 -26465 massC
-  ,     pdbAtom 925 123 "ARG" "C" "" "C" -2349 9062 -25856 massC
-  ,     pdbAtom 926 123 "ARG" "O" "" "O" -1581 9486 -24985 massO
-  ,     pdbAtom 927 123 "ARG" "CB" "" "C" -2818 6581 -25616 massC
-  ,     pdbAtom 928 123 "ARG" "CG" "" "C" -2507 6553 -24137 massC
-  ,     pdbAtom 929 123 "ARG" "CD" "" "C" -3358 5488 -23448 massC
-  ,     pdbAtom 930 123 "ARG" "NE" "" "N" -2966 5312 -22058 massN
-  ,     pdbAtom 931 123 "ARG" "CZ" "" "C" -2623 4145 -21522 massC
-  ,     pdbAtom 932 123 "ARG" "NH1" "" "N" -2660 3036 -22248 massN
-  ,     pdbAtom 933 123 "ARG" "NH2" "" "N" -2262 4081 -20248 massN
-  ,     pdbAtom 934 124 "ARG" "N" "" "N" -3333 9767 -26416 massN
-  ,     pdbAtom 935 124 "ARG" "CA" "" "C" -3720 11125 -26034 massC
-  ,     pdbAtom 936 124 "ARG" "C" "" "C" -5060 11016 -25300 massC
-  ,     pdbAtom 937 124 "ARG" "O" "" "O" -5944 10262 -25718 massO
-  ,     pdbAtom 938 124 "ARG" "CB" "" "C" -3900 11999 -27286 massC
-  ,     pdbAtom 939 124 "ARG" "CG" "" "C" -2811 11864 -28356 massC
-  ,     pdbAtom 940 124 "ARG" "CD" "" "C" -1474 12515 -27972 massC
-  ,     pdbAtom 941 124 "ARG" "NE" "" "N" -534 12491 -29098 massN
-  ,     pdbAtom 942 124 "ARG" "CZ" "" "C" 496 11652 -29205 massC
-  ,     pdbAtom 943 124 "ARG" "NH1" "" "N" 753 10780 -28236 massN
-  ,     pdbAtom 944 124 "ARG" "NH2" "" "N" 1286 11701 -30273 massN
-  ,     pdbAtom 945 125 "VAL" "N" "" "N" -5232 11816 -24257 massN
-  ,     pdbAtom 946 125 "VAL" "CA" "" "C" -6439 11778 -23450 massC
-  ,     pdbAtom 947 125 "VAL" "C" "" "C" -7066 13153 -23227 massC
-  ,     pdbAtom 948 125 "VAL" "O" "" "O" -6369 14167 -23167 massO
-  ,     pdbAtom 949 125 "VAL" "CB" "" "C" -6127 11154 -22049 massC
-  ,     pdbAtom 950 125 "VAL" "CG1" "" "C" -5422 9809 -22206 massC
-  ,     pdbAtom 951 125 "VAL" "CG2" "" "C" -5255 12093 -21214 massC
-  ,     pdbAtom 952 126 "HIS" "N" "" "N" -8388 13205 -23159 massN
-  ,     pdbAtom 953 126 "HIS" "CA" "" "C" -9028 14474 -22864 massC
-  ,     pdbAtom 954 126 "HIS" "C" "" "C" -9128 14522 -21346 massC
-  ,     pdbAtom 955 126 "HIS" "O" "" "O" -10022 13905 -20756 massO
-  ,     pdbAtom 956 126 "HIS" "CB" "" "C" -10424 14602 -23466 massC
-  ,     pdbAtom 957 126 "HIS" "CG" "" "C" -11085 15901 -23122 massC
-  ,     pdbAtom 958 126 "HIS" "ND1" "" "N" -10399 17097 -23110 massN
-  ,     pdbAtom 959 126 "HIS" "CD2" "" "C" -12338 16183 -22694 massC
-  ,     pdbAtom 960 126 "HIS" "CE1" "" "C" -11198 18057 -22679 massC
-  ,     pdbAtom 961 126 "HIS" "NE2" "" "N" -12380 17529 -22421 massN
-  ,     pdbAtom 962 127 "ALA" "N" "" "N" -8212 15261 -20728 massN
-  ,     pdbAtom 963 127 "ALA" "CA" "" "C" -8159 15378 -19275 massC
-  ,     pdbAtom 964 127 "ALA" "C" "" "C" -9507 15494 -18525 massC
-  ,     pdbAtom 965 127 "ALA" "O" "" "O" -9860 14582 -17767 massO
-  ,     pdbAtom 966 127 "ALA" "CB" "" "C" -7180 16486 -18863 massC
-  ,     pdbAtom 967 128 "PRO" "N" "" "N" -10279 16596 -18727 massN
-  ,     pdbAtom 968 128 "PRO" "CA" "" "C" -11571 16743 -18026 massC
-  ,     pdbAtom 969 128 "PRO" "C" "" "C" -12766 15958 -18619 massC
-  ,     pdbAtom 970 128 "PRO" "O" "" "O" -13784 16548 -19003 massO
-  ,     pdbAtom 971 128 "PRO" "CB" "" "C" -11828 18266 -18082 massC
-  ,     pdbAtom 972 128 "PRO" "CG" "" "C" -10467 18874 -18375 massC
-  ,     pdbAtom 973 128 "PRO" "CD" "" "C" -9903 17877 -19357 massC
-  ,     pdbAtom 974 129 "SER" "N" "" "N" -12644 14634 -18672 massN
-  ,     pdbAtom 975 129 "SER" "CA" "" "C" -13695 13757 -19199 massC
-  ,     pdbAtom 976 129 "SER" "C" "" "C" -13192 12322 -19119 massC
-  ,     pdbAtom 977 129 "SER" "O" "" "O" -13970 11374 -18959 massO
-  ,     pdbAtom 978 129 "SER" "CB" "" "C" -14011 14096 -20656 massC
-  ,     pdbAtom 979 129 "SER" "OG" "" "O" -12925 13771 -21517 massO
-  ,     pdbAtom 980 130 "GLY" "N" "" "N" -11878 12185 -19285 massN
-  ,     pdbAtom 981 130 "GLY" "CA" "" "C" -11241 10889 -19225 massC
-  ,     pdbAtom 982 130 "GLY" "C" "" "C" -11185 10173 -20557 massC
-  ,     pdbAtom 983 130 "GLY" "O" "" "O" -10603 9090 -20632 massO
-  ,     pdbAtom 984 131 "ARG" "N" "" "N" -11774 10759 -21601 massN
-  ,     pdbAtom 985 131 "ARG" "CA" "" "C" -11770 10135 -22926 massC
-  ,     pdbAtom 986 131 "ARG" "C" "" "C" -10342 9841 -23385 massC
-  ,     pdbAtom 987 131 "ARG" "O" "" "O" -9442 10669 -23203 massO
-  ,     pdbAtom 988 131 "ARG" "CB" "" "C" -12491 11014 -23946 massC
-  ,     pdbAtom 989 131 "ARG" "CG" "" "C" -13945 10619 -24193 massC
-  ,     pdbAtom 990 131 "ARG" "CD" "" "C" -14923 11593 -23556 massC
-  ,     pdbAtom 991 131 "ARG" "NE" "" "N" -14716 12969 -24006 massN
-  ,     pdbAtom 992 131 "ARG" "CZ" "" "C" -15408 14007 -23552 massC
-  ,     pdbAtom 993 131 "ARG" "NH1" "" "N" -16351 13835 -22635 massN
-  ,     pdbAtom 994 131 "ARG" "NH2" "" "N" -15154 15222 -24004 massN
-  ,     pdbAtom 995 132 "VAL" "N" "" "N" -10145 8673 -23995 massN
-  ,     pdbAtom 996 132 "VAL" "CA" "" "C" -8814 8251 -24434 massC
-  ,     pdbAtom 997 132 "VAL" "C" "" "C" -8738 7874 -25911 massC
-  ,     pdbAtom 998 132 "VAL" "O" "" "O" -9602 7166 -26442 massO
-  ,     pdbAtom 999 132 "VAL" "CB" "" "C" -8275 7077 -23548 massC
-  ,     pdbAtom 1000 132 "VAL" "CG1" "" "C" -9055 5801 -23814 massC
-  ,     pdbAtom 1001 132 "VAL" "CG2" "" "C" -6796 6860 -23781 massC
-  ,     pdbAtom 1002 133 "TYR" "N" "" "N" -7678 8344 -26555 massN
-  ,     pdbAtom 1003 133 "TYR" "CA" "" "C" -7447 8105 -27966 massC
-  ,     pdbAtom 1004 133 "TYR" "C" "" "C" -6090 7485 -28117 massC
-  ,     pdbAtom 1005 133 "TYR" "O" "" "O" -5314 7447 -27164 massO
-  ,     pdbAtom 1006 133 "TYR" "CB" "" "C" -7451 9437 -28726 massC
-  ,     pdbAtom 1007 133 "TYR" "CG" "" "C" -8713 10218 -28511 massC
-  ,     pdbAtom 1008 133 "TYR" "CD1" "" "C" -9834 10002 -29313 massC
-  ,     pdbAtom 1009 133 "TYR" "CD2" "" "C" -8823 11106 -27445 massC
-  ,     pdbAtom 1010 133 "TYR" "CE1" "" "C" -11035 10641 -29050 massC
-  ,     pdbAtom 1011 133 "TYR" "CE2" "" "C" -10020 11754 -27170 massC
-  ,     pdbAtom 1012 133 "TYR" "CZ" "" "C" -11122 11516 -27973 massC
-  ,     pdbAtom 1013 133 "TYR" "OH" "" "O" -12316 12143 -27681 massO
-  ,     pdbAtom 1014 134 "HIS" "N" "" "N" -5839 6950 -29305 massN
-  ,     pdbAtom 1015 134 "HIS" "CA" "" "C" -4543 6390 -29661 massC
-  ,     pdbAtom 1016 134 "HIS" "C" "" "C" -4231 6776 -31115 massC
-  ,     pdbAtom 1017 134 "HIS" "O" "" "O" -4827 6234 -32049 massO
-  ,     pdbAtom 1018 134 "HIS" "CB" "" "C" -4474 4871 -29497 massC
-  ,     pdbAtom 1019 134 "HIS" "CG" "" "C" -3086 4333 -29676 massC
-  ,     pdbAtom 1020 134 "HIS" "ND1" "" "N" -2531 4095 -30911 massN
-  ,     pdbAtom 1021 134 "HIS" "CD2" "" "C" -2116 4060 -28770 massC
-  ,     pdbAtom 1022 134 "HIS" "CE1" "" "C" -1281 3697 -30765 massC
-  ,     pdbAtom 1023 134 "HIS" "NE2" "" "N" -1002 3667 -29476 massN
-  ,     pdbAtom 1024 135 "VAL" "N" "" "N" -3272 7685 -31284 massN
-  ,     pdbAtom 1025 135 "VAL" "CA" "" "C" -2851 8189 -32585 massC
-  ,     pdbAtom 1026 135 "VAL" "C" "" "C" -2996 7184 -33721 massC
-  ,     pdbAtom 1027 135 "VAL" "O" "" "O" -3278 7567 -34853 massO
-  ,     pdbAtom 1028 135 "VAL" "CB" "" "C" -1408 8723 -32548 massC
-  ,     pdbAtom 1029 135 "VAL" "CG1" "" "C" -1332 9958 -31659 massC
-  ,     pdbAtom 1030 135 "VAL" "CG2" "" "C" -450 7652 -32057 massC
-  ,     pdbAtom 1031 136 "LYS" "N" "" "N" -2780 5904 -33431 massN
-  ,     pdbAtom 1032 136 "LYS" "CA" "" "C" -2947 4882 -34453 massC
-  ,     pdbAtom 1033 136 "LYS" "C" "" "C" -4286 4175 -34306 massC
-  ,     pdbAtom 1034 136 "LYS" "O" "" "O" -5138 4279 -35180 massO
-  ,     pdbAtom 1035 136 "LYS" "CB" "" "C" -1819 3841 -34415 massC
-  ,     pdbAtom 1036 136 "LYS" "CG" "" "C" -456 4320 -34899 massC
-  ,     pdbAtom 1037 136 "LYS" "CD" "" "C" 394 4850 -33739 massC
-  ,     pdbAtom 1038 136 "LYS" "CE" "" "C" 1769 5375 -34187 massC
-  ,     pdbAtom 1039 136 "LYS" "NZ" "" "N" 2563 5925 -33036 massN
-  ,     pdbAtom 1040 137 "PHE" "N" "" "N" -4489 3535 -33154 massN
-  ,     pdbAtom 1041 137 "PHE" "CA" "" "C" -5691 2739 -32873 massC
-  ,     pdbAtom 1042 137 "PHE" "C" "" "C" -7058 3406 -32864 massC
-  ,     pdbAtom 1043 137 "PHE" "O" "" "O" -8012 2839 -33395 massO
-  ,     pdbAtom 1044 137 "PHE" "CB" "" "C" -5481 1891 -31611 massC
-  ,     pdbAtom 1045 137 "PHE" "CG" "" "C" -4126 1228 -31557 massC
-  ,     pdbAtom 1046 137 "PHE" "CD1" "" "C" -3505 785 -32722 massC
-  ,     pdbAtom 1047 137 "PHE" "CD2" "" "C" -3428 1143 -30360 massC
-  ,     pdbAtom 1048 137 "PHE" "CE1" "" "C" -2213 285 -32700 massC
-  ,     pdbAtom 1049 137 "PHE" "CE2" "" "C" -2128 640 -30327 massC
-  ,     pdbAtom 1050 137 "PHE" "CZ" "" "C" -1519 214 -31500 massC
-  ,     pdbAtom 1051 138 "ASN" "N" "" "N" -7182 4560 -32215 massN
-  ,     pdbAtom 1052 138 "ASN" "CA" "" "C" -8460 5283 -32185 massC
-  ,     pdbAtom 1053 138 "ASN" "C" "" "C" -8200 6783 -32173 massC
-  ,     pdbAtom 1054 138 "ASN" "O" "" "O" -8435 7476 -31183 massO
-  ,     pdbAtom 1055 138 "ASN" "CB" "" "C" -9377 4838 -31017 massC
-  ,     pdbAtom 1056 138 "ASN" "CG" "" "C" -8969 5414 -29658 massC
-  ,     pdbAtom 1057 138 "ASN" "OD1" "" "O" -7824 5268 -29218 massO
-  ,     pdbAtom 1058 138 "ASN" "ND2" "" "N" -9916 6064 -28988 massN
-  ,     pdbAtom 1059 139 "PRO" "N" "" "N" -7686 7302 -33290 massN
-  ,     pdbAtom 1060 139 "PRO" "CA" "" "C" -7389 8735 -33401 massC
-  ,     pdbAtom 1061 139 "PRO" "C" "" "C" -8636 9594 -33286 massC
-  ,     pdbAtom 1062 139 "PRO" "O" "" "O" -9752 9120 -33508 massO
-  ,     pdbAtom 1063 139 "PRO" "CB" "" "C" -6777 8842 -34796 massC
-  ,     pdbAtom 1064 139 "PRO" "CG" "" "C" -7479 7737 -35565 massC
-  ,     pdbAtom 1065 139 "PRO" "CD" "" "C" -7448 6604 -34570 massC
-  ,     pdbAtom 1066 140 "PRO" "N" "" "N" -8482 10835 -32815 massN
-  ,     pdbAtom 1067 140 "PRO" "CA" "" "C" -9686 11650 -32732 massC
-  ,     pdbAtom 1068 140 "PRO" "C" "" "C" -9997 12139 -34146 massC
-  ,     pdbAtom 1069 140 "PRO" "O" "" "O" -9114 12147 -35011 massO
-  ,     pdbAtom 1070 140 "PRO" "CB" "" "C" -9262 12784 -31800 massC
-  ,     pdbAtom 1071 140 "PRO" "CG" "" "C" -7821 12918 -32060 massC
-  ,     pdbAtom 1072 140 "PRO" "CD" "" "C" -7352 11488 -32142 massC
-  ,     pdbAtom 1073 141 "LYS" "N" "" "N" -11262 12472 -34399 massN
-  ,     pdbAtom 1074 141 "LYS" "CA" "" "C" -11703 12964 -35707 massC
-  ,     pdbAtom 1075 141 "LYS" "C" "" "C" -10806 14130 -36090 massC
-  ,     pdbAtom 1076 141 "LYS" "O" "" "O" -10231 14159 -37175 massO
-  ,     pdbAtom 1077 141 "LYS" "CB" "" "C" -13167 13419 -35650 massC
-  ,     pdbAtom 1078 141 "LYS" "CG" "" "C" -14184 12303 -35414 massC
-  ,     pdbAtom 1079 141 "LYS" "CD" "" "C" -15564 12893 -35191 massC
-  ,     pdbAtom 1080 141 "LYS" "CE" "" "C" -16506 11889 -34550 massC
-  ,     pdbAtom 1081 141 "LYS" "NZ" "" "N" -17664 12574 -33885 massN
-  ,     pdbAtom 1082 142 "VAL" "N" "" "N" -10726 15110 -35202 massN
-  ,     pdbAtom 1083 142 "VAL" "CA" "" "C" -9854 16249 -35428 massC
-  ,     pdbAtom 1084 142 "VAL" "C" "" "C" -8649 15832 -34602 massC
-  ,     pdbAtom 1085 142 "VAL" "O" "" "O" -8681 15895 -33366 massO
-  ,     pdbAtom 1086 142 "VAL" "CB" "" "C" -10444 17559 -34864 massC
-  ,     pdbAtom 1087 142 "VAL" "CG1" "" "C" -9603 18746 -35315 massC
-  ,     pdbAtom 1088 142 "VAL" "CG2" "" "C" -11891 17722 -35304 massC
-  ,     pdbAtom 1089 143 "GLU" "N" "" "N" -7644 15288 -35279 massN
-  ,     pdbAtom 1090 143 "GLU" "CA" "" "C" -6442 14821 -34608 massC
-  ,     pdbAtom 1091 143 "GLU" "C" "" "C" -5853 15885 -33671 massC
-  ,     pdbAtom 1092 143 "GLU" "O" "" "O" -5673 17045 -34060 massO
-  ,     pdbAtom 1093 143 "GLU" "CB" "" "C" -5416 14328 -35634 massC
-  ,     pdbAtom 1094 143 "GLU" "CG" "" "C" -4122 13746 -35038 massC
-  ,     pdbAtom 1095 143 "GLU" "CD" "" "C" -4235 12312 -34514 massC
-  ,     pdbAtom 1096 143 "GLU" "OE1" "" "O" -4635 11406 -35287 massO
-  ,     pdbAtom 1097 143 "GLU" "OE2" "" "O" -3869 12094 -33333 massO
-  ,     pdbAtom 1098 144 "GLY" "N" "" "N" -5607 15473 -32423 massN
-  ,     pdbAtom 1099 144 "GLY" "CA" "" "C" -5069 16360 -31402 massC
-  ,     pdbAtom 1100 144 "GLY" "C" "" "C" -6166 17117 -30671 massC
-  ,     pdbAtom 1101 144 "GLY" "O" "" "O" -5901 17828 -29699 massO
-  ,     pdbAtom 1102 145 "LYS" "N" "" "N" -7410 16904 -31095 massN
-  ,     pdbAtom 1103 145 "LYS" "CA" "" "C" -8567 17580 -30522 massC
-  ,     pdbAtom 1104 145 "LYS" "C" "" "C" -9608 16576 -30057 massC
-  ,     pdbAtom 1105 145 "LYS" "O" "" "O" -9902 15601 -30760 massO
-  ,     pdbAtom 1106 145 "LYS" "CB" "" "C" -9214 18463 -31592 massC
-  ,     pdbAtom 1107 145 "LYS" "CG" "" "C" -8310 19494 -32221 massC
-  ,     pdbAtom 1108 145 "LYS" "CD" "" "C" -8319 20766 -31424 massC
-  ,     pdbAtom 1109 145 "LYS" "CE" "" "C" -7701 21899 -32218 massC
-  ,     pdbAtom 1110 145 "LYS" "NZ" "" "N" -7916 23232 -31575 massN
-  ,     pdbAtom 1111 146 "ASP" "N" "" "N" -10194 16838 -28895 massN
-  ,     pdbAtom 1112 146 "ASP" "CA" "" "C" -11239 15970 -28344 massC
-  ,     pdbAtom 1113 146 "ASP" "C" "" "C" -12524 16157 -29148 massC
-  ,     pdbAtom 1114 146 "ASP" "O" "" "O" -13059 17270 -29250 massO
-  ,     pdbAtom 1115 146 "ASP" "CB" "" "C" -11481 16269 -26856 massC
-  ,     pdbAtom 1116 146 "ASP" "CG" "" "C" -12724 15589 -26316 massC
-  ,     pdbAtom 1117 146 "ASP" "OD1" "" "O" -12882 14359 -26481 massO
-  ,     pdbAtom 1118 146 "ASP" "OD2" "" "O" -13559 16306 -25732 massO
-  ,     pdbAtom 1119 147 "ASP" "N" "" "N" -13040 15045 -29658 massN
-  ,     pdbAtom 1120 147 "ASP" "CA" "" "C" -14240 15020 -30488 massC
-  ,     pdbAtom 1121 147 "ASP" "C" "" "C" -15532 15569 -29907 massC
-  ,     pdbAtom 1122 147 "ASP" "O" "" "O" -16393 16040 -30651 massO
-  ,     pdbAtom 1123 147 "ASP" "CB" "" "C" -14476 13600 -30987 massC
-  ,     pdbAtom 1124 147 "ASP" "CG" "" "C" -13333 13093 -31828 massC
-  ,     pdbAtom 1125 147 "ASP" "OD1" "" "O" -12535 13937 -32319 massO
-  ,     pdbAtom 1126 147 "ASP" "OD2" "" "O" -13241 11853 -31997 massO
-  ,     pdbAtom 1127 148 "VAL" "N" "" "N" -15682 15487 -28589 massN
-  ,     pdbAtom 1128 148 "VAL" "CA" "" "C" -16894 15968 -27932 massC
-  ,     pdbAtom 1129 148 "VAL" "C" "" "C" -16886 17437 -27503 massC
-  ,     pdbAtom 1130 148 "VAL" "O" "" "O" -17931 18080 -27500 massO
-  ,     pdbAtom 1131 148 "VAL" "CB" "" "C" -17278 15031 -26761 massC
-  ,     pdbAtom 1132 148 "VAL" "CG1" "" "C" -18016 15785 -25652 massC
-  ,     pdbAtom 1133 148 "VAL" "CG2" "" "C" -18137 13895 -27300 massC
-  ,     pdbAtom 1134 149 "THR" "N" "" "N" -15712 17982 -27203 massN
-  ,     pdbAtom 1135 149 "THR" "CA" "" "C" -15623 19374 -26767 massC
-  ,     pdbAtom 1136 149 "THR" "C" "" "C" -14811 20278 -27701 massC
-  ,     pdbAtom 1137 149 "THR" "O" "" "O" -14901 21510 -27626 massO
-  ,     pdbAtom 1138 149 "THR" "CB" "" "C" -15000 19457 -25376 massC
-  ,     pdbAtom 1139 149 "THR" "OG1" "" "O" -13665 18948 -25437 massO
-  ,     pdbAtom 1140 149 "THR" "CG2" "" "C" -15801 18634 -24384 massC
-  ,     pdbAtom 1141 150 "GLY" "N" "" "N" -14050 19672 -28606 massN
-  ,     pdbAtom 1142 150 "GLY" "CA" "" "C" -13222 20470 -29487 massC
-  ,     pdbAtom 1143 150 "GLY" "C" "" "C" -12180 21096 -28583 massC
-  ,     pdbAtom 1144 150 "GLY" "O" "" "O" -11793 22256 -28745 massO
-  ,     pdbAtom 1145 151 "GLU" "N" "" "N" -11765 20314 -27589 massN
-  ,     pdbAtom 1146 151 "GLU" "CA" "" "C" -10771 20738 -26611 massC
-  ,     pdbAtom 1147 151 "GLU" "C" "" "C" -9517 19890 -26810 massC
-  ,     pdbAtom 1148 151 "GLU" "O" "" "O" -9610 18696 -27093 massO
-  ,     pdbAtom 1149 151 "GLU" "CB" "" "C" -11327 20553 -25196 massC
-  ,     pdbAtom 1150 151 "GLU" "CG" "" "C" -10614 21343 -24100 massC
-  ,     pdbAtom 1151 151 "GLU" "CD" "" "C" -11304 21226 -22742 massC
-  ,     pdbAtom 1152 151 "GLU" "OE1" "" "O" -12533 20991 -22707 massO
-  ,     pdbAtom 1153 151 "GLU" "OE2" "" "O" -10616 21362 -21706 massO
-  ,     pdbAtom 1154 152 "GLU" "N" "" "N" -8349 20504 -26668 massN
-  ,     pdbAtom 1155 152 "GLU" "CA" "" "C" -7096 19788 -26860 massC
-  ,     pdbAtom 1156 152 "GLU" "C" "" "C" -6891 18600 -25926 massC
-  ,     pdbAtom 1157 152 "GLU" "O" "" "O" -7337 18588 -24770 massO
-  ,     pdbAtom 1158 152 "GLU" "CB" "" "C" -5902 20743 -26784 massC
-  ,     pdbAtom 1159 152 "GLU" "CG" "" "C" -5801 21704 -27972 massC
-  ,     pdbAtom 1160 152 "GLU" "CD" "" "C" -4757 21297 -29007 massC
-  ,     pdbAtom 1161 152 "GLU" "OE1" "" "O" -4731 20115 -29418 massO
-  ,     pdbAtom 1162 152 "GLU" "OE2" "" "O" -3965 22177 -29416 massO
-  ,     pdbAtom 1163 153 "LEU" "N" "" "N" -6240 17584 -26472 massN
-  ,     pdbAtom 1164 153 "LEU" "CA" "" "C" -5950 16369 -25742 massC
-  ,     pdbAtom 1165 153 "LEU" "C" "" "C" -4543 16448 -25172 massC
-  ,     pdbAtom 1166 153 "LEU" "O" "" "O" -3738 17289 -25586 massO
-  ,     pdbAtom 1167 153 "LEU" "CB" "" "C" -6064 15169 -26679 massC
-  ,     pdbAtom 1168 153 "LEU" "CG" "" "C" -7386 14988 -27419 massC
-  ,     pdbAtom 1169 153 "LEU" "CD1" "" "C" -7268 13807 -28357 massC
-  ,     pdbAtom 1170 153 "LEU" "CD2" "" "C" -8505 14780 -26427 massC
-  ,     pdbAtom 1171 154 "THR" "N" "" "N" -4235 15526 -24266 massN
-  ,     pdbAtom 1172 154 "THR" "CA" "" "C" -2938 15471 -23603 massC
-  ,     pdbAtom 1173 154 "THR" "C" "" "C" -2388 14047 -23503 massC
-  ,     pdbAtom 1174 154 "THR" "O" "" "O" -2965 13100 -24023 massO
-  ,     pdbAtom 1175 154 "THR" "CB" "" "C" -3065 16032 -22181 massC
-  ,     pdbAtom 1176 154 "THR" "OG1" "" "O" -4289 15558 -21597 massO
-  ,     pdbAtom 1177 154 "THR" "CG2" "" "C" -3070 17550 -22206 massC
-  ,     pdbAtom 1178 155 "THR" "N" "" "N" -1233 13906 -22881 massN
-  ,     pdbAtom 1179 155 "THR" "CA" "" "C" -653 12593 -22699 massC
-  ,     pdbAtom 1180 155 "THR" "C" "" "C" -515 12445 -21207 massC
-  ,     pdbAtom 1181 155 "THR" "O" "" "O" -205 13421 -20521 massO
-  ,     pdbAtom 1182 155 "THR" "CB" "" "C" 724 12480 -23352 massC
-  ,     pdbAtom 1183 155 "THR" "OG1" "" "O" 1319 13783 -23447 massO
-  ,     pdbAtom 1184 155 "THR" "CG2" "" "C" 593 11861 -24730 massC
-  ,     pdbAtom 1185 156 "ARG" "N" "" "N" -852 11271 -20692 massN
-  ,     pdbAtom 1186 156 "ARG" "CA" "" "C" -733 11036 -19264 massC
-  ,     pdbAtom 1187 156 "ARG" "C" "" "C" 770 10912 -18943 massC
-  ,     pdbAtom 1188 156 "ARG" "O" "" "O" 1577 10587 -19823 massO
-  ,     pdbAtom 1189 156 "ARG" "CB" "" "C" -1477 9753 -18886 massC
-  ,     pdbAtom 1190 156 "ARG" "CG" "" "C" -2244 9818 -17571 massC
-  ,     pdbAtom 1191 156 "ARG" "CD" "" "C" -2705 8424 -17089 massC
-  ,     pdbAtom 1192 156 "ARG" "NE" "" "N" -3553 7709 -18048 massN
-  ,     pdbAtom 1193 156 "ARG" "CZ" "" "C" -4870 7878 -18184 massC
-  ,     pdbAtom 1194 156 "ARG" "NH1" "" "N" -5530 8759 -17440 massN
-  ,     pdbAtom 1195 156 "ARG" "NH2" "" "N" -5533 7167 -19088 massN
-  ,     pdbAtom 1196 157 "LYS" "N" "" "N" 1151 11196 -17698 massN
-  ,     pdbAtom 1197 157 "LYS" "CA" "" "C" 2560 11095 -17291 massC
-  ,     pdbAtom 1198 157 "LYS" "C" "" "C" 3022 9646 -17408 massC
-  ,     pdbAtom 1199 157 "LYS" "O" "" "O" 4129 9364 -17868 massO
-  ,     pdbAtom 1200 157 "LYS" "CB" "" "C" 2747 11587 -15846 massC
-  ,     pdbAtom 1201 157 "LYS" "CG" "" "C" 4131 11285 -15234 massC
-  ,     pdbAtom 1202 157 "LYS" "CD" "" "C" 5283 11938 -16010 massC
-  ,     pdbAtom 1203 157 "LYS" "CE" "" "C" 5409 13437 -15727 massC
-  ,     pdbAtom 1204 157 "LYS" "NZ" "" "N" 5938 13743 -14360 massN
-  ,     pdbAtom 1205 158 "ASP" "N" "" "N" 2135 8743 -17007 massN
-  ,     pdbAtom 1206 158 "ASP" "CA" "" "C" 2384 7312 -17042 massC
-  ,     pdbAtom 1207 158 "ASP" "C" "" "C" 2666 6839 -18456 massC
-  ,     pdbAtom 1208 158 "ASP" "O" "" "O" 3540 6005 -18671 massO
-  ,     pdbAtom 1209 158 "ASP" "CB" "" "C" 1166 6556 -16501 massC
-  ,     pdbAtom 1210 158 "ASP" "CG" "" "C" 770 6994 -15101 massC
-  ,     pdbAtom 1211 158 "ASP" "OD1" "" "O" 1650 7439 -14330 massO
-  ,     pdbAtom 1212 158 "ASP" "OD2" "" "O" -433 6886 -14776 massO
-  ,     pdbAtom 1213 159 "ASP" "N" "" "N" 1926 7390 -19413 massN
-  ,     pdbAtom 1214 159 "ASP" "CA" "" "C" 2061 7029 -20815 massC
-  ,     pdbAtom 1215 159 "ASP" "C" "" "C" 3418 7376 -21411 massC
-  ,     pdbAtom 1216 159 "ASP" "O" "" "O" 3785 6866 -22464 massO
-  ,     pdbAtom 1217 159 "ASP" "CB" "" "C" 956 7696 -21618 massC
-  ,     pdbAtom 1218 159 "ASP" "CG" "" "C" -430 7410 -21060 massC
-  ,     pdbAtom 1219 159 "ASP" "OD1" "" "O" -545 6562 -20141 massO
-  ,     pdbAtom 1220 159 "ASP" "OD2" "" "O" -1397 8047 -21550 massO
-  ,     pdbAtom 1221 160 "GLN" "N" "" "N" 4169 8225 -20721 massN
-  ,     pdbAtom 1222 160 "GLN" "CA" "" "C" 5498 8640 -21167 massC
-  ,     pdbAtom 1223 160 "GLN" "C" "" "C" 6410 7457 -21454 massC
-  ,     pdbAtom 1224 160 "GLN" "O" "" "O" 6620 6609 -20599 massO
-  ,     pdbAtom 1225 160 "GLN" "CB" "" "C" 6140 9535 -20111 massC
-  ,     pdbAtom 1226 160 "GLN" "CG" "" "C" 6023 11016 -20398 massC
-  ,     pdbAtom 1227 160 "GLN" "CD" "" "C" 7370 11642 -20734 massC
-  ,     pdbAtom 1228 160 "GLN" "OE1" "" "O" 8332 10948 -21103 massO
-  ,     pdbAtom 1229 160 "GLN" "NE2" "" "N" 7449 12960 -20601 massN
-  ,     pdbAtom 1230 161 "GLU" "N" "" "N" 7031 7468 -22622 massN
-  ,     pdbAtom 1231 161 "GLU" "CA" "" "C" 7901 6382 -23030 massC
-  ,     pdbAtom 1232 161 "GLU" "C" "" "C" 8967 5994 -22019 massC
-  ,     pdbAtom 1233 161 "GLU" "O" "" "O" 9193 4806 -21782 massO
-  ,     pdbAtom 1234 161 "GLU" "CB" "" "C" 8530 6693 -24382 massC
-  ,     pdbAtom 1235 161 "GLU" "CG" "" "C" 8932 5445 -25173 massC
-  ,     pdbAtom 1236 161 "GLU" "CD" "" "C" 9304 5744 -26624 massC
-  ,     pdbAtom 1237 161 "GLU" "OE1" "" "O" 8419 6173 -27403 massO
-  ,     pdbAtom 1238 161 "GLU" "OE2" "" "O" 10484 5536 -26988 massO
-  ,     pdbAtom 1239 162 "GLU" "N" "" "N" 9612 6989 -21418 massN
-  ,     pdbAtom 1240 162 "GLU" "CA" "" "C" 10659 6758 -20410 massC
-  ,     pdbAtom 1241 162 "GLU" "C" "" "C" 10104 6027 -19182 massC
-  ,     pdbAtom 1242 162 "GLU" "O" "" "O" 10739 5128 -18631 massO
-  ,     pdbAtom 1243 162 "GLU" "CB" "" "C" 11269 8094 -19971 massC
-  ,     pdbAtom 1244 162 "GLU" "CG" "" "C" 12210 8006 -18762 massC
-  ,     pdbAtom 1245 162 "GLU" "CD" "" "C" 11938 9091 -17718 massC
-  ,     pdbAtom 1246 162 "GLU" "OE1" "" "O" 11062 8874 -16841 massO
-  ,     pdbAtom 1247 162 "GLU" "OE2" "" "O" 12598 10157 -17783 massO
-  ,     pdbAtom 1248 163 "THR" "N" "" "N" 8924 6446 -18747 massN
-  ,     pdbAtom 1249 163 "THR" "CA" "" "C" 8260 5844 -17612 massC
-  ,     pdbAtom 1250 163 "THR" "C" "" "C" 7837 4416 -17961 massC
-  ,     pdbAtom 1251 163 "THR" "O" "" "O" 8109 3485 -17202 massO
-  ,     pdbAtom 1252 163 "THR" "CB" "" "C" 7045 6688 -17227 massC
-  ,     pdbAtom 1253 163 "THR" "OG1" "" "O" 7485 8028 -16966 massO
-  ,     pdbAtom 1254 163 "THR" "CG2" "" "C" 6362 6138 -15994 massC
-  ,     pdbAtom 1255 164 "VAL" "N" "" "N" 7248 4229 -19142 massN
-  ,     pdbAtom 1256 164 "VAL" "CA" "" "C" 6785 2908 -19578 massC
-  ,     pdbAtom 1257 164 "VAL" "C" "" "C" 7927 1908 -19662 massC
-  ,     pdbAtom 1258 164 "VAL" "O" "" "O" 7876 853 -19029 massO
-  ,     pdbAtom 1259 164 "VAL" "CB" "" "C" 6044 2970 -20940 massC
-  ,     pdbAtom 1260 164 "VAL" "CG1" "" "C" 5581 1579 -21380 massC
-  ,     pdbAtom 1261 164 "VAL" "CG2" "" "C" 4849 3876 -20825 massC
-  ,     pdbAtom 1262 165 "ARG" "N" "" "N" 8968 2244 -20412 massN
-  ,     pdbAtom 1263 165 "ARG" "CA" "" "C" 10107 1349 -20547 massC
-  ,     pdbAtom 1264 165 "ARG" "C" "" "C" 10772 989 -19219 massC
-  ,     pdbAtom 1265 165 "ARG" "O" "" "O" 11308 -107 -19067 massO
-  ,     pdbAtom 1266 165 "ARG" "CB" "" "C" 11116 1922 -21526 massC
-  ,     pdbAtom 1267 165 "ARG" "CG" "" "C" 10627 1835 -22941 massC
-  ,     pdbAtom 1268 165 "ARG" "CD" "" "C" 11782 1568 -23884 massC
-  ,     pdbAtom 1269 165 "ARG" "NE" "" "N" 11329 1024 -25161 massN
-  ,     pdbAtom 1270 165 "ARG" "CZ" "" "C" 11159 1750 -26254 massC
-  ,     pdbAtom 1271 165 "ARG" "NH1" "" "N" 11400 3053 -26222 massN
-  ,     pdbAtom 1272 165 "ARG" "NH2" "" "N" 10743 1176 -27375 massN
-  ,     pdbAtom 1466 190 "ASN" "N" "" "N" 3949 -30254 -9715 massN
-  ,     pdbAtom 1467 190 "ASN" "CA" "" "C" 3218 -29550 -8655 massC
-  ,     pdbAtom 1468 190 "ASN" "C" "" "C" 2159 -28546 -9137 massC
-  ,     pdbAtom 1469 190 "ASN" "O" "" "O" 1306 -28099 -8354 massO
-  ,     pdbAtom 1470 190 "ASN" "CB" "" "C" 4202 -28836 -7710 massC
-  ,     pdbAtom 1471 190 "ASN" "CG" "" "C" 4907 -29791 -6746 massC
-  ,     pdbAtom 1472 190 "ASN" "OD1" "" "O" 4269 -30606 -6073 massO
-  ,     pdbAtom 1473 190 "ASN" "ND2" "" "N" 6230 -29675 -6666 massN
-  ,     pdbAtom 1474 191 "THR" "N" "" "N" 2214 -28193 -10417 massN
-  ,     pdbAtom 1475 191 "THR" "CA" "" "C" 1293 -27230 -10992 massC
-  ,     pdbAtom 1476 191 "THR" "C" "" "C" 1523 -27295 -12481 massC
-  ,     pdbAtom 1477 191 "THR" "O" "" "O" 2388 -28052 -12939 massO
-  ,     pdbAtom 1478 191 "THR" "CB" "" "C" 1601 -25817 -10464 massC
-  ,     pdbAtom 1479 191 "THR" "OG1" "" "O" 610 -24893 -10917 massO
-  ,     pdbAtom 1480 191 "THR" "CG2" "" "C" 2976 -25353 -10913 massC
-  ,     pdbAtom 1481 192 "LYS" "N" "" "N" 695 -26594 -13248 massN
-  ,     pdbAtom 1482 192 "LYS" "CA" "" "C" 851 -26553 -14706 massC
-  ,     pdbAtom 1483 192 "LYS" "C" "" "C" 1141 -25109 -15085 massC
-  ,     pdbAtom 1484 192 "LYS" "O" "" "O" 479 -24195 -14619 massO
-  ,     pdbAtom 1485 192 "LYS" "CB" "" "C" -409 -27041 -15444 massC
-  ,     pdbAtom 1486 192 "LYS" "CG" "" "C" -716 -28532 -15305 massC
-  ,     pdbAtom 1487 192 "LYS" "CD" "" "C" -1678 -28843 -14134 massC
-  ,     pdbAtom 1488 192 "LYS" "CE" "" "C" -3153 -28883 -14580 massC
-  ,     pdbAtom 1489 192 "LYS" "NZ" "" "N" -4138 -29125 -13471 massN
-  ,     pdbAtom 1490 193 "TYR" "N" "" "N" 2153 -24894 -15900 massN
-  ,     pdbAtom 1491 193 "TYR" "CA" "" "C" 2499 -23551 -16307 massC
-  ,     pdbAtom 1492 193 "TYR" "C" "" "C" 2250 -23437 -17807 massC
-  ,     pdbAtom 1493 193 "TYR" "O" "" "O" 2465 -24400 -18535 massO
-  ,     pdbAtom 1494 193 "TYR" "CB" "" "C" 3971 -23290 -15951 massC
-  ,     pdbAtom 1495 193 "TYR" "CG" "" "C" 4549 -22097 -16641 massC
-  ,     pdbAtom 1496 193 "TYR" "CD1" "" "C" 4256 -20799 -16230 massC
-  ,     pdbAtom 1497 193 "TYR" "CD2" "" "C" 5327 -22266 -17772 massC
-  ,     pdbAtom 1498 193 "TYR" "CE1" "" "C" 4729 -19697 -16959 massC
-  ,     pdbAtom 1499 193 "TYR" "CE2" "" "C" 5796 -21187 -18490 massC
-  ,     pdbAtom 1500 193 "TYR" "CZ" "" "C" 5500 -19915 -18091 massC
-  ,     pdbAtom 1501 193 "TYR" "OH" "" "O" 5993 -18892 -18874 massO
-  ,     pdbAtom 1502 194 "ALA" "N" "" "N" 1763 -22298 -18278 massN
-  ,     pdbAtom 1503 194 "ALA" "CA" "" "C" 1534 -22156 -19717 massC
-  ,     pdbAtom 1504 194 "ALA" "C" "" "C" 1722 -20723 -20148 massC
-  ,     pdbAtom 1505 194 "ALA" "O" "" "O" 1369 -19819 -19411 massO
-  ,     pdbAtom 1506 194 "ALA" "CB" "" "C" 134 -22651 -20103 massC
-  ,     pdbAtom 1507 195 "LYS" "N" "" "N" 2332 -20517 -21309 massN
-  ,     pdbAtom 1508 195 "LYS" "CA" "" "C" 2555 -19171 -21832 massC
-  ,     pdbAtom 1509 195 "LYS" "C" "" "C" 1497 -18899 -22896 massC
-  ,     pdbAtom 1510 195 "LYS" "O" "" "O" 1286 -19711 -23792 massO
-  ,     pdbAtom 1511 195 "LYS" "CB" "" "C" 3954 -19047 -22427 massC
-  ,     pdbAtom 1512 195 "LYS" "CG" "" "C" 4236 -17687 -23059 massC
-  ,     pdbAtom 1513 195 "LYS" "CD" "" "C" 5502 -17017 -22510 massC
-  ,     pdbAtom 1514 195 "LYS" "CE" "" "C" 6779 -17815 -22769 massC
-  ,     pdbAtom 1515 195 "LYS" "NZ" "" "N" 7039 -18869 -21736 massN
-  ,     pdbAtom 1516 196 "VAL" "N" "" "N" 880 -17730 -22825 massN
-  ,     pdbAtom 1517 196 "VAL" "CA" "" "C" -205 -17357 -23721 massC
-  ,     pdbAtom 1518 196 "VAL" "C" "" "C" 193 -16182 -24590 massC
-  ,     pdbAtom 1519 196 "VAL" "O" "" "O" 638 -15158 -24084 massO
-  ,     pdbAtom 1520 196 "VAL" "CB" "" "C" -1473 -16997 -22864 massC
-  ,     pdbAtom 1521 196 "VAL" "CG1" "" "C" -2439 -16129 -23616 massC
-  ,     pdbAtom 1522 196 "VAL" "CG2" "" "C" -2169 -18258 -22399 massC
-  ,     pdbAtom 1523 197 "ASP" "N" "" "N" 50 -16323 -25902 massN
-  ,     pdbAtom 1524 197 "ASP" "CA" "" "C" 406 -15231 -26795 massC
-  ,     pdbAtom 1525 197 "ASP" "C" "" "C" -721 -14227 -26707 massC
-  ,     pdbAtom 1526 197 "ASP" "O" "" "O" -1811 -14478 -27173 massO
-  ,     pdbAtom 1527 197 "ASP" "CB" "" "C" 589 -15738 -28238 massC
-  ,     pdbAtom 1528 197 "ASP" "CG" "" "C" 1167 -14664 -29194 massC
-  ,     pdbAtom 1529 197 "ASP" "OD1" "" "O" 1892 -13746 -28748 massO
-  ,     pdbAtom 1530 197 "ASP" "OD2" "" "O" 918 -14759 -30414 massO
-  ,     pdbAtom 1531 198 "GLY" "N" "" "N" -470 -13123 -26032 massN
-  ,     pdbAtom 1532 198 "GLY" "CA" "" "C" -1480 -12100 -25886 massC
-  ,     pdbAtom 1533 198 "GLY" "C" "" "C" -1593 -11200 -27092 massC
-  ,     pdbAtom 1534 198 "GLY" "O" "" "O" -2343 -10226 -27081 massO
+    pdbAtom "A" 1 1 "MET" "N" "" "N" -10928 -24892 -9518 massN
+  ,     pdbAtom "A" 2 1 "MET" "CA" "" "C" -9901 -24422 -10479 massC
+  ,     pdbAtom "A" 3 1 "MET" "C" "" "C" -9168 -23266 -9813 massC
+  ,     pdbAtom "A" 4 1 "MET" "O" "" "O" -9802 -22323 -9346 massO
+  ,     pdbAtom "A" 5 1 "MET" "CB" "" "C" -10585 -23970 -11774 massC
+  ,     pdbAtom "A" 6 1 "MET" "CG" "" "C" -9650 -23497 -12856 massC
+  ,     pdbAtom "A" 7 1 "MET" "SD" "" "S" -8384 -24690 -13251 massS
+  ,     pdbAtom "A" 8 1 "MET" "CE" "" "C" -9002 -25277 -14812 massC
+  ,     pdbAtom "A" 9 2 "ARG" "N" "" "N" -7851 -23394 -9673 massN
+  ,     pdbAtom "A" 10 2 "ARG" "CA" "" "C" -7028 -22352 -9051 massC
+  ,     pdbAtom "A" 11 2 "ARG" "C" "" "C" -6001 -21906 -10072 massC
+  ,     pdbAtom "A" 12 2 "ARG" "O" "" "O" -5150 -22680 -10492 massO
+  ,     pdbAtom "A" 13 2 "ARG" "CB" "" "C" -6337 -22868 -7801 massC
+  ,     pdbAtom "A" 14 2 "ARG" "CG" "" "C" -7222 -22919 -6621 massC
+  ,     pdbAtom "A" 15 2 "ARG" "CD" "" "C" -6632 -23799 -5576 massC
+  ,     pdbAtom "A" 16 2 "ARG" "NE" "" "N" -7440 -23763 -4372 massN
+  ,     pdbAtom "A" 17 2 "ARG" "CZ" "" "C" -6965 -23881 -3138 massC
+  ,     pdbAtom "A" 18 2 "ARG" "NH1" "" "N" -5664 -24050 -2932 massN
+  ,     pdbAtom "A" 19 2 "ARG" "NH2" "" "N" -7806 -23818 -2112 massN
+  ,     pdbAtom "A" 20 3 "ILE" "N" "" "N" -6082 -20641 -10448 massN
+  ,     pdbAtom "A" 21 3 "ILE" "CA" "" "C" -5227 -20106 -11463 massC
+  ,     pdbAtom "A" 22 3 "ILE" "C" "" "C" -4540 -18831 -10985 massC
+  ,     pdbAtom "A" 23 3 "ILE" "O" "" "O" -5118 -18060 -10228 massO
+  ,     pdbAtom "A" 24 3 "ILE" "CB" "" "C" -6098 -19813 -12702 massC
+  ,     pdbAtom "A" 25 3 "ILE" "CG1" "" "C" -6670 -21108 -13263 massC
+  ,     pdbAtom "A" 26 3 "ILE" "CG2" "" "C" -5337 -19077 -13744 massC
+  ,     pdbAtom "A" 27 3 "ILE" "CD1" "" "C" -7875 -20870 -14122 massC
+  ,     pdbAtom "A" 28 4 "ILE" "N" "" "N" -3263 -18691 -11331 massN
+  ,     pdbAtom "A" 29 4 "ILE" "CA" "" "C" -2477 -17496 -11033 massC
+  ,     pdbAtom "A" 30 4 "ILE" "C" "" "C" -2299 -16916 -12455 massC
+  ,     pdbAtom "A" 31 4 "ILE" "O" "" "O" -1920 -17651 -13376 massO
+  ,     pdbAtom "A" 32 4 "ILE" "CB" "" "C" -1088 -17867 -10428 massC
+  ,     pdbAtom "A" 33 4 "ILE" "CG1" "" "C" -1254 -18305 -8975 massC
+  ,     pdbAtom "A" 34 4 "ILE" "CG2" "" "C" -134 -16690 -10511 massC
+  ,     pdbAtom "A" 35 4 "ILE" "CD1" "" "C" -1 -18800 -8363 massC
+  ,     pdbAtom "A" 36 5 "LEU" "N" "" "N" -2663 -15647 -12649 massN
+  ,     pdbAtom "A" 37 5 "LEU" "CA" "" "C" -2565 -14983 -13957 massC
+  ,     pdbAtom "A" 38 5 "LEU" "C" "" "C" -1444 -13957 -13914 massC
+  ,     pdbAtom "A" 39 5 "LEU" "O" "" "O" -1535 -12986 -13177 massO
+  ,     pdbAtom "A" 40 5 "LEU" "CB" "" "C" -3905 -14287 -14286 massC
+  ,     pdbAtom "A" 41 5 "LEU" "CG" "" "C" -4199 -13784 -15709 massC
+  ,     pdbAtom "A" 42 5 "LEU" "CD1" "" "C" -4065 -14897 -16723 massC
+  ,     pdbAtom "A" 43 5 "LEU" "CD2" "" "C" -5602 -13212 -15783 massC
+  ,     pdbAtom "A" 44 6 "LEU" "N" "" "N" -381 -14186 -14680 massN
+  ,     pdbAtom "A" 45 6 "LEU" "CA" "" "C" 768 -13265 -14734 massC
+  ,     pdbAtom "A" 46 6 "LEU" "C" "" "C" 775 -12442 -16033 massC
+  ,     pdbAtom "A" 47 6 "LEU" "O" "" "O" 313 -12896 -17077 massO
+  ,     pdbAtom "A" 48 6 "LEU" "CB" "" "C" 2097 -14034 -14657 massC
+  ,     pdbAtom "A" 49 6 "LEU" "CG" "" "C" 2441 -14999 -13526 massC
+  ,     pdbAtom "A" 50 6 "LEU" "CD1" "" "C" 3800 -15554 -13804 massC
+  ,     pdbAtom "A" 51 6 "LEU" "CD2" "" "C" 2436 -14323 -12202 massC
+  ,     pdbAtom "A" 52 7 "GLY" "N" "" "N" 1347 -11252 -15980 massN
+  ,     pdbAtom "A" 53 7 "GLY" "CA" "" "C" 1394 -10431 -17162 massC
+  ,     pdbAtom "A" 54 7 "GLY" "C" "" "C" 1994 -9074 -16883 massC
+  ,     pdbAtom "A" 55 7 "GLY" "O" "" "O" 1782 -8467 -15829 massO
+  ,     pdbAtom "A" 56 8 "ALA" "N" "" "N" 2748 -8581 -17852 massN
+  ,     pdbAtom "A" 57 8 "ALA" "CA" "" "C" 3395 -7286 -17735 massC
+  ,     pdbAtom "A" 58 8 "ALA" "C" "" "C" 2367 -6186 -17693 massC
+  ,     pdbAtom "A" 59 8 "ALA" "O" "" "O" 1232 -6380 -18111 massO
+  ,     pdbAtom "A" 60 8 "ALA" "CB" "" "C" 4341 -7053 -18932 massC
+  ,     pdbAtom "A" 217 30 "SER" "N" "" "N" -7388 -9976 -6103 massN
+  ,     pdbAtom "A" 218 30 "SER" "CA" "" "C" -6192 -9217 -6380 massC
+  ,     pdbAtom "A" 219 30 "SER" "C" "" "C" -5840 -8669 -4993 massC
+  ,     pdbAtom "A" 220 30 "SER" "O" "" "O" -6728 -8414 -4181 massO
+  ,     pdbAtom "A" 221 30 "SER" "CB" "" "C" -6471 -8124 -7404 massC
+  ,     pdbAtom "A" 222 30 "SER" "OG" "" "O" -6760 -6891 -6774 massO
+  ,     pdbAtom "A" 223 31 "THR" "N" "" "N" -4555 -8536 -4691 massN
+  ,     pdbAtom "A" 224 31 "THR" "CA" "" "C" -4144 -8071 -3369 massC
+  ,     pdbAtom "A" 225 31 "THR" "C" "" "C" -4637 -6676 -2996 massC
+  ,     pdbAtom "A" 226 31 "THR" "O" "" "O" -4948 -6412 -1835 massO
+  ,     pdbAtom "A" 227 31 "THR" "CB" "" "C" -2593 -8247 -3148 massC
+  ,     pdbAtom "A" 228 31 "THR" "OG1" "" "O" -1849 -7434 -4063 massO
+  ,     pdbAtom "A" 229 31 "THR" "CG2" "" "C" -2210 -9695 -3398 massC
+  ,     pdbAtom "A" 230 32 "GLY" "N" "" "N" -4779 -5802 -3983 massN
+  ,     pdbAtom "A" 231 32 "GLY" "CA" "" "C" -5246 -4466 -3685 massC
+  ,     pdbAtom "A" 232 32 "GLY" "C" "" "C" -6683 -4515 -3226 massC
+  ,     pdbAtom "A" 233 32 "GLY" "O" "" "O" -7057 -3825 -2293 massO
+  ,     pdbAtom "A" 234 33 "ASP" "N" "" "N" -7482 -5373 -3848 massN
+  ,     pdbAtom "A" 235 33 "ASP" "CA" "" "C" -8898 -5497 -3509 massC
+  ,     pdbAtom "A" 236 33 "ASP" "C" "" "C" -9059 -6134 -2161 massC
+  ,     pdbAtom "A" 237 33 "ASP" "O" "" "O" -9866 -5709 -1347 massO
+  ,     pdbAtom "A" 238 33 "ASP" "CB" "" "C" -9636 -6366 -4537 massC
+  ,     pdbAtom "A" 239 33 "ASP" "CG" "" "C" -9907 -5641 -5870 massC
+  ,     pdbAtom "A" 240 33 "ASP" "OD1" "" "O" -9956 -4385 -5901 massO
+  ,     pdbAtom "A" 241 33 "ASP" "OD2" "" "O" -10093 -6345 -6897 massO
+  ,     pdbAtom "A" 242 34 "MET" "N" "" "N" -8293 -7191 -1959 massN
+  ,     pdbAtom "A" 243 34 "MET" "CA" "" "C" -8292 -7982 -738 massC
+  ,     pdbAtom "A" 244 34 "MET" "C" "" "C" -7916 -7163 471 massC
+  ,     pdbAtom "A" 245 34 "MET" "O" "" "O" -8541 -7301 1510 massO
+  ,     pdbAtom "A" 246 34 "MET" "CB" "" "C" -7297 -9099 -907 massC
+  ,     pdbAtom "A" 247 34 "MET" "CG" "" "C" -7453 -10222 27 massC
+  ,     pdbAtom "A" 248 34 "MET" "SD" "" "S" -6315 -11395 -602 massS
+  ,     pdbAtom "A" 249 34 "MET" "CE" "" "C" -4810 -10551 -80 massC
+  ,     pdbAtom "A" 250 35 "LEU" "N" "" "N" -6861 -6358 341 massN
+  ,     pdbAtom "A" 251 35 "LEU" "CA" "" "C" -6401 -5481 1410 massC
+  ,     pdbAtom "A" 252 35 "LEU" "C" "" "C" -7534 -4558 1789 massC
+  ,     pdbAtom "A" 253 35 "LEU" "O" "" "O" -7998 -4564 2925 massO
+  ,     pdbAtom "A" 254 35 "LEU" "CB" "" "C" -5237 -4629 933 massC
+  ,     pdbAtom "A" 255 35 "LEU" "CG" "" "C" -3833 -5097 1279 massC
+  ,     pdbAtom "A" 256 35 "LEU" "CD1" "" "C" -2837 -4144 655 massC
+  ,     pdbAtom "A" 257 35 "LEU" "CD2" "" "C" -3660 -5108 2778 massC
+  ,     pdbAtom "A" 258 36 "ARG" "N" "" "N" -7993 -3785 812 massN
+  ,     pdbAtom "A" 259 36 "ARG" "CA" "" "C" -9098 -2856 993 massC
+  ,     pdbAtom "A" 260 36 "ARG" "C" "" "C" -10378 -3506 1573 massC
+  ,     pdbAtom "A" 261 36 "ARG" "O" "" "O" -11255 -2819 2072 massO
+  ,     pdbAtom "A" 262 36 "ARG" "CB" "" "C" -9389 -2132 -335 massC
+  ,     pdbAtom "A" 263 36 "ARG" "CG" "" "C" -8223 -1237 -798 massC
+  ,     pdbAtom "A" 264 36 "ARG" "CD" "" "C" -8593 -309 -1969 massC
+  ,     pdbAtom "A" 265 36 "ARG" "NE" "" "N" -8576 -973 -3275 massN
+  ,     pdbAtom "A" 266 36 "ARG" "CZ" "" "C" -7488 -1132 -4035 massC
+  ,     pdbAtom "A" 267 36 "ARG" "NH1" "" "N" -6310 -669 -3637 massN
+  ,     pdbAtom "A" 268 36 "ARG" "NH2" "" "N" -7573 -1752 -5206 massN
+  ,     pdbAtom "A" 269 37 "ALA" "N" "" "N" -10457 -4828 1555 massN
+  ,     pdbAtom "A" 270 37 "ALA" "CA" "" "C" -11616 -5549 2081 massC
+  ,     pdbAtom "A" 271 37 "ALA" "C" "" "C" -11402 -6114 3499 massC
+  ,     pdbAtom "A" 272 37 "ALA" "O" "" "O" -12363 -6482 4188 massO
+  ,     pdbAtom "A" 273 37 "ALA" "CB" "" "C" -11990 -6680 1131 massC
+  ,     pdbAtom "A" 274 38 "ALA" "N" "" "N" -10144 -6235 3917 massN
+  ,     pdbAtom "A" 275 38 "ALA" "CA" "" "C" -9824 -6758 5244 massC
+  ,     pdbAtom "A" 276 38 "ALA" "C" "" "C" -10029 -5651 6272 massC
+  ,     pdbAtom "A" 277 38 "ALA" "O" "" "O" -10565 -5876 7363 massO
+  ,     pdbAtom "A" 278 38 "ALA" "CB" "" "C" -8382 -7254 5269 massC
+  ,     pdbAtom "A" 279 39 "VAL" "N" "" "N" -9582 -4457 5901 massN
+  ,     pdbAtom "A" 280 39 "VAL" "CA" "" "C" -9687 -3275 6731 massC
+  ,     pdbAtom "A" 281 39 "VAL" "C" "" "C" -11142 -3086 7134 massC
+  ,     pdbAtom "A" 282 39 "VAL" "O" "" "O" -11490 -3199 8307 massO
+  ,     pdbAtom "A" 283 39 "VAL" "CB" "" "C" -9160 -2079 5948 massC
+  ,     pdbAtom "A" 284 39 "VAL" "CG1" "" "C" -9642 -774 6535 massC
+  ,     pdbAtom "A" 285 39 "VAL" "CG2" "" "C" -7659 -2132 5929 massC
+  ,     pdbAtom "A" 286 40 "LYS" "N" "" "N" -11982 -2853 6134 massN
+  ,     pdbAtom "A" 287 40 "LYS" "CA" "" "C" -13424 -2667 6301 massC
+  ,     pdbAtom "A" 288 40 "LYS" "C" "" "C" -13987 -3665 7299 massC
+  ,     pdbAtom "A" 289 40 "LYS" "O" "" "O" -14480 -3278 8357 massO
+  ,     pdbAtom "A" 290 40 "LYS" "CB" "" "C" -14113 -2850 4943 massC
+  ,     pdbAtom "A" 291 40 "LYS" "CG" "" "C" -15614 -3110 4970 massC
+  ,     pdbAtom "A" 292 40 "LYS" "CD" "" "C" -16107 -3601 3596 massC
+  ,     pdbAtom "A" 293 40 "LYS" "CE" "" "C" -15513 -4978 3218 massC
+  ,     pdbAtom "A" 294 40 "LYS" "NZ" "" "N" -15876 -5463 1844 massN
+  ,     pdbAtom "A" 295 41 "SER" "N" "" "N" -13931 -4945 6951 massN
+  ,     pdbAtom "A" 296 41 "SER" "CA" "" "C" -14424 -5983 7834 massC
+  ,     pdbAtom "A" 297 41 "SER" "C" "" "C" -13399 -6205 8925 massC
+  ,     pdbAtom "A" 298 41 "SER" "O" "" "O" -12667 -7199 8912 massO
+  ,     pdbAtom "A" 299 41 "SER" "CB" "" "C" -14679 -7278 7069 massC
+  ,     pdbAtom "A" 300 41 "SER" "OG" "" "O" -15944 -7229 6426 massO
+  ,     pdbAtom "A" 301 42 "GLY" "N" "" "N" -13357 -5249 9851 massN
+  ,     pdbAtom "A" 302 42 "GLY" "CA" "" "C" -12442 -5274 10976 massC
+  ,     pdbAtom "A" 303 42 "GLY" "C" "" "C" -12241 -6624 11622 massC
+  ,     pdbAtom "A" 304 42 "GLY" "O" "" "O" -12844 -6951 12639 massO
+  ,     pdbAtom "A" 305 43 "SER" "N" "" "N" -11419 -7427 10973 massN
+  ,     pdbAtom "A" 306 43 "SER" "CA" "" "C" -11066 -8743 11442 massC
+  ,     pdbAtom "A" 307 43 "SER" "C" "" "C" -9662 -8524 12000 massC
+  ,     pdbAtom "A" 308 43 "SER" "O" "" "O" -9067 -7474 11767 massO
+  ,     pdbAtom "A" 309 43 "SER" "CB" "" "C" -11052 -9710 10255 massC
+  ,     pdbAtom "A" 310 43 "SER" "OG" "" "O" -10553 -9075 9084 massO
+  ,     pdbAtom "A" 311 44 "GLU" "N" "" "N" -9130 -9491 12735 massN
+  ,     pdbAtom "A" 312 44 "GLU" "CA" "" "C" -7796 -9348 13305 massC
+  ,     pdbAtom "A" 313 44 "GLU" "C" "" "C" -6751 -8878 12279 massC
+  ,     pdbAtom "A" 314 44 "GLU" "O" "" "O" -6111 -7846 12473 massO
+  ,     pdbAtom "A" 315 44 "GLU" "CB" "" "C" -7367 -10660 13969 massC
+  ,     pdbAtom "A" 316 44 "GLU" "CG" "" "C" -5881 -10754 14342 massC
+  ,     pdbAtom "A" 317 44 "GLU" "CD" "" "C" -5455 -9816 15470 massC
+  ,     pdbAtom "A" 318 44 "GLU" "OE1" "" "O" -6331 -9186 16117 massO
+  ,     pdbAtom "A" 319 44 "GLU" "OE2" "" "O" -4227 -9727 15711 massO
+  ,     pdbAtom "A" 320 45 "LEU" "N" "" "N" -6608 -9602 11174 massN
+  ,     pdbAtom "A" 321 45 "LEU" "CA" "" "C" -5639 -9232 10148 massC
+  ,     pdbAtom "A" 322 45 "LEU" "C" "" "C" -5967 -7886 9489 massC
+  ,     pdbAtom "A" 323 45 "LEU" "O" "" "O" -5061 -7085 9213 massO
+  ,     pdbAtom "A" 324 45 "LEU" "CB" "" "C" -5546 -10327 9087 massC
+  ,     pdbAtom "A" 325 45 "LEU" "CG" "" "C" -4790 -11604 9463 massC
+  ,     pdbAtom "A" 326 45 "LEU" "CD1" "" "C" -3305 -11337 9507 massC
+  ,     pdbAtom "A" 327 45 "LEU" "CD2" "" "C" -5269 -12129 10809 massC
+  ,     pdbAtom "A" 328 46 "GLY" "N" "" "N" -7263 -7635 9274 massN
+  ,     pdbAtom "A" 329 46 "GLY" "CA" "" "C" -7720 -6400 8646 massC
+  ,     pdbAtom "A" 330 46 "GLY" "C" "" "C" -7338 -5168 9421 massC
+  ,     pdbAtom "A" 331 46 "GLY" "O" "" "O" -7028 -4119 8856 massO
+  ,     pdbAtom "A" 332 47 "LYS" "N" "" "N" -7381 -5307 10737 massN
+  ,     pdbAtom "A" 333 47 "LYS" "CA" "" "C" -7018 -4236 11637 massC
+  ,     pdbAtom "A" 334 47 "LYS" "C" "" "C" -5508 -4052 11520 massC
+  ,     pdbAtom "A" 335 47 "LYS" "O" "" "O" -5031 -2925 11418 massO
+  ,     pdbAtom "A" 336 47 "LYS" "CB" "" "C" -7391 -4610 13074 massC
+  ,     pdbAtom "A" 337 47 "LYS" "CG" "" "C" -8827 -5132 13273 massC
+  ,     pdbAtom "A" 338 47 "LYS" "CD" "" "C" -9840 -4035 13570 massC
+  ,     pdbAtom "A" 339 47 "LYS" "CE" "" "C" -10096 -3117 12383 massC
+  ,     pdbAtom "A" 340 47 "LYS" "NZ" "" "N" -10995 -1993 12789 massN
+  ,     pdbAtom "A" 341 48 "GLN" "N" "" "N" -4765 -5164 11506 massN
+  ,     pdbAtom "A" 342 48 "GLN" "CA" "" "C" -3304 -5133 11385 massC
+  ,     pdbAtom "A" 343 48 "GLN" "C" "" "C" -2917 -4401 10116 massC
+  ,     pdbAtom "A" 344 48 "GLN" "O" "" "O" -2051 -3533 10137 massO
+  ,     pdbAtom "A" 345 48 "GLN" "CB" "" "C" -2722 -6553 11345 massC
+  ,     pdbAtom "A" 346 48 "GLN" "CG" "" "C" -2593 -7208 12705 massC
+  ,     pdbAtom "A" 347 48 "GLN" "CD" "" "C" -2196 -8673 12645 massC
+  ,     pdbAtom "A" 348 48 "GLN" "OE1" "" "O" -1031 -9014 12438 massO
+  ,     pdbAtom "A" 349 48 "GLN" "NE2" "" "N" -3165 -9548 12858 massN
+  ,     pdbAtom "A" 350 49 "ALA" "N" "" "N" -3613 -4714 9030 massN
+  ,     pdbAtom "A" 351 49 "ALA" "CA" "" "C" -3366 -4114 7718 massC
+  ,     pdbAtom "A" 352 49 "ALA" "C" "" "C" -3857 -2676 7563 massC
+  ,     pdbAtom "A" 353 49 "ALA" "O" "" "O" -3302 -1915 6761 massO
+  ,     pdbAtom "A" 354 49 "ALA" "CB" "" "C" -3973 -4981 6632 massC
+  ,     pdbAtom "A" 355 50 "LYS" "N" "" "N" -4921 -2320 8284 massN
+  ,     pdbAtom "A" 356 50 "LYS" "CA" "" "C" -5455 -962 8228 massC
+  ,     pdbAtom "A" 357 50 "LYS" "C" "" "C" -4451 26 8809 massC
+  ,     pdbAtom "A" 358 50 "LYS" "O" "" "O" -4229 1096 8246 massO
+  ,     pdbAtom "A" 359 50 "LYS" "CB" "" "C" -6772 -858 8981 massC
+  ,     pdbAtom "A" 360 50 "LYS" "CG" "" "C" -7296 548 9059 massC
+  ,     pdbAtom "A" 361 50 "LYS" "CD" "" "C" -8631 593 9767 massC
+  ,     pdbAtom "A" 362 50 "LYS" "CE" "" "C" -9003 2007 10225 massC
+  ,     pdbAtom "A" 363 50 "LYS" "NZ" "" "N" -8335 2379 11514 massN
+  ,     pdbAtom "A" 364 51 "ASP" "N" "" "N" -3843 -341 9934 massN
+  ,     pdbAtom "A" 365 51 "ASP" "CA" "" "C" -2842 502 10588 massC
+  ,     pdbAtom "A" 366 51 "ASP" "C" "" "C" -1627 707 9707 massC
+  ,     pdbAtom "A" 367 51 "ASP" "O" "" "O" -1145 1817 9567 massO
+  ,     pdbAtom "A" 368 51 "ASP" "CB" "" "C" -2390 -104 11922 massC
+  ,     pdbAtom "A" 369 51 "ASP" "CG" "" "C" -3425 57 13023 massC
+  ,     pdbAtom "A" 370 51 "ASP" "OD1" "" "O" -3719 1214 13417 massO
+  ,     pdbAtom "A" 371 51 "ASP" "OD2" "" "O" -3930 -982 13500 massO
+  ,     pdbAtom "A" 372 52 "ILE" "N" "" "N" -1118 -375 9135 massN
+  ,     pdbAtom "A" 373 52 "ILE" "CA" "" "C" 45 -309 8254 massC
+  ,     pdbAtom "A" 374 52 "ILE" "C" "" "C" -174 666 7106 massC
+  ,     pdbAtom "A" 375 52 "ILE" "O" "" "O" 651 1538 6882 massO
+  ,     pdbAtom "A" 376 52 "ILE" "CB" "" "C" 419 -1720 7722 massC
+  ,     pdbAtom "A" 377 52 "ILE" "CG1" "" "C" 1155 -2494 8817 massC
+  ,     pdbAtom "A" 378 52 "ILE" "CG2" "" "C" 1261 -1628 6457 massC
+  ,     pdbAtom "A" 379 52 "ILE" "CD1" "" "C" 1478 -3889 8438 massC
+  ,     pdbAtom "A" 380 53 "MET" "N" "" "N" -1283 505 6392 massN
+  ,     pdbAtom "A" 381 53 "MET" "CA" "" "C" -1643 1374 5281 massC
+  ,     pdbAtom "A" 382 53 "MET" "C" "" "C" -1760 2811 5757 massC
+  ,     pdbAtom "A" 383 53 "MET" "O" "" "O" -1244 3733 5120 massO
+  ,     pdbAtom "A" 384 53 "MET" "CB" "" "C" -3012 1010 4758 massC
+  ,     pdbAtom "A" 385 53 "MET" "CG" "" "C" -3118 -228 3941 massC
+  ,     pdbAtom "A" 386 53 "MET" "SD" "" "S" -4859 -224 3434 massS
+  ,     pdbAtom "A" 387 53 "MET" "CE" "" "C" -4960 1325 2436 massC
+  ,     pdbAtom "A" 388 54 "ASP" "N" "" "N" -2531 2991 6828 massN
+  ,     pdbAtom "A" 389 54 "ASP" "CA" "" "C" -2778 4300 7444 massC
+  ,     pdbAtom "A" 390 54 "ASP" "C" "" "C" -1495 5000 7869 massC
+  ,     pdbAtom "A" 391 54 "ASP" "O" "" "O" -1418 6228 7825 massO
+  ,     pdbAtom "A" 392 54 "ASP" "CB" "" "C" -3704 4174 8667 massC
+  ,     pdbAtom "A" 393 54 "ASP" "CG" "" "C" -5158 3935 8289 massC
+  ,     pdbAtom "A" 394 54 "ASP" "OD1" "" "O" -5433 3561 7129 massO
+  ,     pdbAtom "A" 395 54 "ASP" "OD2" "" "O" -6026 4124 9167 massO
+  ,     pdbAtom "A" 396 55 "ALA" "N" "" "N" -505 4224 8306 massN
+  ,     pdbAtom "A" 397 55 "ALA" "CA" "" "C" 787 4770 8728 massC
+  ,     pdbAtom "A" 398 55 "ALA" "C" "" "C" 1707 4959 7530 massC
+  ,     pdbAtom "A" 399 55 "ALA" "O" "" "O" 2870 5356 7683 massO
+  ,     pdbAtom "A" 400 55 "ALA" "CB" "" "C" 1438 3848 9733 massC
+  ,     pdbAtom "A" 401 56 "GLY" "N" "" "N" 1181 4654 6344 massN
+  ,     pdbAtom "A" 402 56 "GLY" "CA" "" "C" 1935 4782 5112 massC
+  ,     pdbAtom "A" 403 56 "GLY" "C" "" "C" 3056 3775 5051 massC
+  ,     pdbAtom "A" 404 56 "GLY" "O" "" "O" 4089 4041 4440 massO
+  ,     pdbAtom "A" 405 57 "LYS" "N" "" "N" 2875 2656 5753 massN
+  ,     pdbAtom "A" 406 57 "LYS" "CA" "" "C" 3856 1578 5797 massC
+  ,     pdbAtom "A" 407 57 "LYS" "C" "" "C" 3436 536 4783 massC
+  ,     pdbAtom "A" 408 57 "LYS" "O" "" "O" 2258 425 4414 massO
+  ,     pdbAtom "A" 409 57 "LYS" "CB" "" "C" 3954 953 7194 massC
+  ,     pdbAtom "A" 410 57 "LYS" "CG" "" "C" 4758 1772 8203 massC
+  ,     pdbAtom "A" 411 57 "LYS" "CD" "" "C" 4726 1146 9600 massC
+  ,     pdbAtom "A" 412 57 "LYS" "CE" "" "C" 3291 1013 10158 massC
+  ,     pdbAtom "A" 413 57 "LYS" "NZ" "" "N" 3199 297 11484 massN
+  ,     pdbAtom "A" 414 58 "LEU" "N" "" "N" 4411 -233 4332 massN
+  ,     pdbAtom "A" 415 58 "LEU" "CA" "" "C" 4156 -1240 3331 massC
+  ,     pdbAtom "A" 416 58 "LEU" "C" "" "C" 3811 -2553 4010 massC
+  ,     pdbAtom "A" 417 58 "LEU" "O" "" "O" 4354 -2881 5063 massO
+  ,     pdbAtom "A" 418 58 "LEU" "CB" "" "C" 5388 -1350 2429 massC
+  ,     pdbAtom "A" 419 58 "LEU" "CG" "" "C" 5291 -1952 1032 massC
+  ,     pdbAtom "A" 420 58 "LEU" "CD1" "" "C" 4016 -1505 294 massC
+  ,     pdbAtom "A" 421 58 "LEU" "CD2" "" "C" 6545 -1541 293 massC
+  ,     pdbAtom "A" 422 59 "VAL" "N" "" "N" 2833 -3244 3441 massN
+  ,     pdbAtom "A" 423 59 "VAL" "CA" "" "C" 2365 -4528 3951 massC
+  ,     pdbAtom "A" 424 59 "VAL" "C" "" "C" 3391 -5614 3689 massC
+  ,     pdbAtom "A" 425 59 "VAL" "O" "" "O" 3815 -5824 2555 massO
+  ,     pdbAtom "A" 426 59 "VAL" "CB" "" "C" 1038 -4958 3272 massC
+  ,     pdbAtom "A" 427 59 "VAL" "CG1" "" "C" 553 -6298 3842 massC
+  ,     pdbAtom "A" 428 59 "VAL" "CG2" "" "C" -18 -3866 3440 massC
+  ,     pdbAtom "A" 581 79 "ASN" "N" "" "N" -14994 -22988 -5447 massN
+  ,     pdbAtom "A" 582 79 "ASN" "CA" "" "C" -14722 -23611 -6752 massC
+  ,     pdbAtom "A" 583 79 "ASN" "C" "" "C" -13300 -23366 -7236 massC
+  ,     pdbAtom "A" 584 79 "ASN" "O" "" "O" -12859 -23924 -8236 massO
+  ,     pdbAtom "A" 585 79 "ASN" "CB" "" "C" -15694 -23098 -7811 massC
+  ,     pdbAtom "A" 586 79 "ASN" "CG" "" "C" -17134 -23479 -7525 massC
+  ,     pdbAtom "A" 587 79 "ASN" "OD1" "" "O" -17501 -24650 -7589 massO
+  ,     pdbAtom "A" 588 79 "ASN" "ND2" "" "N" -17963 -22482 -7234 massN
+  ,     pdbAtom "A" 589 80 "GLY" "N" "" "N" -12593 -22506 -6525 massN
+  ,     pdbAtom "A" 590 80 "GLY" "CA" "" "C" -11233 -22180 -6869 massC
+  ,     pdbAtom "A" 591 80 "GLY" "C" "" "C" -11157 -20677 -6854 massC
+  ,     pdbAtom "A" 592 80 "GLY" "O" "" "O" -11969 -20005 -6206 massO
+  ,     pdbAtom "A" 593 81 "PHE" "N" "" "N" -10239 -20129 -7628 massN
+  ,     pdbAtom "A" 594 81 "PHE" "CA" "" "C" -10086 -18686 -7664 massC
+  ,     pdbAtom "A" 595 81 "PHE" "C" "" "C" -9076 -18251 -8718 massC
+  ,     pdbAtom "A" 596 81 "PHE" "O" "" "O" -8280 -19066 -9186 massO
+  ,     pdbAtom "A" 597 81 "PHE" "CB" "" "C" -9692 -18157 -6275 massC
+  ,     pdbAtom "A" 598 81 "PHE" "CG" "" "C" -8501 -18869 -5645 massC
+  ,     pdbAtom "A" 599 81 "PHE" "CD1" "" "C" -7199 -18586 -6059 massC
+  ,     pdbAtom "A" 600 81 "PHE" "CD2" "" "C" -8687 -19781 -4598 massC
+  ,     pdbAtom "A" 601 81 "PHE" "CE1" "" "C" -6105 -19194 -5440 massC
+  ,     pdbAtom "A" 602 81 "PHE" "CE2" "" "C" -7607 -20386 -3978 massC
+  ,     pdbAtom "A" 603 81 "PHE" "CZ" "" "C" -6312 -20097 -4396 massC
+  ,     pdbAtom "A" 604 82 "LEU" "N" "" "N" -9150 -16980 -9112 massN
+  ,     pdbAtom "A" 605 82 "LEU" "CA" "" "C" -8252 -16401 -10097 massC
+  ,     pdbAtom "A" 606 82 "LEU" "C" "" "C" -7502 -15317 -9375 massC
+  ,     pdbAtom "A" 607 82 "LEU" "O" "" "O" -8066 -14298 -9018 massO
+  ,     pdbAtom "A" 608 82 "LEU" "CB" "" "C" -9026 -15798 -11273 massC
+  ,     pdbAtom "A" 609 82 "LEU" "CG" "" "C" -8299 -15043 -12386 massC
+  ,     pdbAtom "A" 610 82 "LEU" "CD1" "" "C" -7291 -15935 -13096 massC
+  ,     pdbAtom "A" 611 82 "LEU" "CD2" "" "C" -9336 -14557 -13376 massC
+  ,     pdbAtom "A" 612 83 "LEU" "N" "" "N" -6247 -15610 -9077 massN
+  ,     pdbAtom "A" 613 83 "LEU" "CA" "" "C" -5348 -14700 -8398 massC
+  ,     pdbAtom "A" 614 83 "LEU" "C" "" "C" -4661 -13917 -9523 massC
+  ,     pdbAtom "A" 615 83 "LEU" "O" "" "O" -3934 -14455 -10362 massO
+  ,     pdbAtom "A" 616 83 "LEU" "CB" "" "C" -4371 -15520 -7551 massC
+  ,     pdbAtom "A" 617 83 "LEU" "CG" "" "C" -3488 -14850 -6517 massC
+  ,     pdbAtom "A" 618 83 "LEU" "CD1" "" "C" -4285 -13921 -5611 massC
+  ,     pdbAtom "A" 619 83 "LEU" "CD2" "" "C" -2822 -15949 -5732 massC
+  ,     pdbAtom "A" 620 84 "ASP" "N" "" "N" -4938 -12634 -9551 massN
+  ,     pdbAtom "A" 621 84 "ASP" "CA" "" "C" -4443 -11758 -10590 massC
+  ,     pdbAtom "A" 622 84 "ASP" "C" "" "C" -3178 -11011 -10155 massC
+  ,     pdbAtom "A" 623 84 "ASP" "O" "" "O" -3237 -10195 -9246 massO
+  ,     pdbAtom "A" 624 84 "ASP" "CB" "" "C" -5602 -10799 -10929 massC
+  ,     pdbAtom "A" 625 84 "ASP" "CG" "" "C" -5197 -9652 -11811 massC
+  ,     pdbAtom "A" 626 84 "ASP" "OD1" "" "O" -5003 -9859 -13021 massO
+  ,     pdbAtom "A" 627 84 "ASP" "OD2" "" "O" -5125 -8519 -11300 massO
+  ,     pdbAtom "A" 628 85 "GLY" "N" "" "N" -2033 -11320 -10770 massN
+  ,     pdbAtom "A" 629 85 "GLY" "CA" "" "C" -781 -10634 -10440 massC
+  ,     pdbAtom "A" 630 85 "GLY" "C" "" "C" -128 -10839 -9076 massC
+  ,     pdbAtom "A" 631 85 "GLY" "O" "" "O" 513 -9917 -8536 massO
+  ,     pdbAtom "A" 768 104 "ASP" "N" "" "N" -3549 -24871 -9570 massN
+  ,     pdbAtom "A" 769 104 "ASP" "CA" "" "C" -3511 -25770 -10690 massC
+  ,     pdbAtom "A" 770 104 "ASP" "C" "" "C" -2793 -25183 -11873 massC
+  ,     pdbAtom "A" 771 104 "ASP" "O" "" "O" -2163 -25923 -12613 massO
+  ,     pdbAtom "A" 772 104 "ASP" "CB" "" "C" -4927 -26120 -11113 massC
+  ,     pdbAtom "A" 773 104 "ASP" "CG" "" "C" -5708 -26712 -10012 massC
+  ,     pdbAtom "A" 774 104 "ASP" "OD1" "" "O" -5427 -27881 -9675 massO
+  ,     pdbAtom "A" 775 104 "ASP" "OD2" "" "O" -6568 -26002 -9460 massO
+  ,     pdbAtom "A" 776 105 "TYR" "N" "" "N" -2969 -23881 -12112 massN
+  ,     pdbAtom "A" 777 105 "TYR" "CA" "" "C" -2364 -23232 -13265 massC
+  ,     pdbAtom "A" 778 105 "TYR" "C" "" "C" -1754 -21901 -13021 massC
+  ,     pdbAtom "A" 779 105 "TYR" "O" "" "O" -2283 -21077 -12308 massO
+  ,     pdbAtom "A" 780 105 "TYR" "CB" "" "C" -3374 -23004 -14358 massC
+  ,     pdbAtom "A" 781 105 "TYR" "CG" "" "C" -3932 -24246 -14907 massC
+  ,     pdbAtom "A" 782 105 "TYR" "CD1" "" "C" -5070 -24809 -14333 massC
+  ,     pdbAtom "A" 783 105 "TYR" "CD2" "" "C" -3347 -24877 -16002 massC
+  ,     pdbAtom "A" 784 105 "TYR" "CE1" "" "C" -5624 -25978 -14826 massC
+  ,     pdbAtom "A" 785 105 "TYR" "CE2" "" "C" -3896 -26061 -16515 massC
+  ,     pdbAtom "A" 786 105 "TYR" "CZ" "" "C" -5041 -26598 -15909 massC
+  ,     pdbAtom "A" 787 105 "TYR" "OH" "" "O" -5623 -27759 -16356 massO
+  ,     pdbAtom "A" 788 106 "VAL" "N" "" "N" -694 -21659 -13763 massN
+  ,     pdbAtom "A" 789 106 "VAL" "CA" "" "C" 38 -20419 -13718 massC
+  ,     pdbAtom "A" 790 106 "VAL" "C" "" "C" 133 -20080 -15186 massC
+  ,     pdbAtom "A" 791 106 "VAL" "O" "" "O" 763 -20799 -15979 massO
+  ,     pdbAtom "A" 792 106 "VAL" "CB" "" "C" 1436 -20615 -13159 massC
+  ,     pdbAtom "A" 793 106 "VAL" "CG1" "" "C" 2163 -19304 -13179 massC
+  ,     pdbAtom "A" 794 106 "VAL" "CG2" "" "C" 1362 -21183 -11754 massC
+  ,     pdbAtom "A" 795 107 "LEU" "N" "" "N" -591 -19041 -15559 massN
+  ,     pdbAtom "A" 796 107 "LEU" "CA" "" "C" -631 -18614 -16936 massC
+  ,     pdbAtom "A" 797 107 "LEU" "C" "" "C" 114 -17314 -17072 massC
+  ,     pdbAtom "A" 798 107 "LEU" "O" "" "O" -49 -16424 -16259 massO
+  ,     pdbAtom "A" 799 107 "LEU" "CB" "" "C" -2079 -18414 -17370 massC
+  ,     pdbAtom "A" 800 107 "LEU" "CG" "" "C" -3071 -19535 -17051 massC
+  ,     pdbAtom "A" 801 107 "LEU" "CD1" "" "C" -4463 -19069 -17428 massC
+  ,     pdbAtom "A" 802 107 "LEU" "CD2" "" "C" -2724 -20799 -17807 massC
+  ,     pdbAtom "A" 803 108 "GLU" "N" "" "N" 979 -17227 -18069 massN
+  ,     pdbAtom "A" 804 108 "GLU" "CA" "" "C" 1720 -16011 -18301 massC
+  ,     pdbAtom "A" 805 108 "GLU" "C" "" "C" 1173 -15440 -19582 massC
+  ,     pdbAtom "A" 806 108 "GLU" "O" "" "O" 1270 -16058 -20626 massO
+  ,     pdbAtom "A" 807 108 "GLU" "CB" "" "C" 3209 -16288 -18472 massC
+  ,     pdbAtom "A" 808 108 "GLU" "CG" "" "C" 4021 -14992 -18546 massC
+  ,     pdbAtom "A" 809 108 "GLU" "CD" "" "C" 5425 -15174 -19060 massC
+  ,     pdbAtom "A" 810 108 "GLU" "OE1" "" "O" 5861 -16335 -19245 massO
+  ,     pdbAtom "A" 811 108 "GLU" "OE2" "" "O" 6082 -14131 -19290 massO
+  ,     pdbAtom "A" 812 109 "PHE" "N" "" "N" 566 -14273 -19489 massN
+  ,     pdbAtom "A" 813 109 "PHE" "CA" "" "C" -8 -13621 -20634 massC
+  ,     pdbAtom "A" 814 109 "PHE" "C" "" "C" 1117 -12841 -21283 massC
+  ,     pdbAtom "A" 815 109 "PHE" "O" "" "O" 1519 -11794 -20802 massO
+  ,     pdbAtom "A" 816 109 "PHE" "CB" "" "C" -1113 -12712 -20156 massC
+  ,     pdbAtom "A" 817 109 "PHE" "CG" "" "C" -2099 -12358 -21208 massC
+  ,     pdbAtom "A" 818 109 "PHE" "CD1" "" "C" -3182 -13183 -21451 massC
+  ,     pdbAtom "A" 819 109 "PHE" "CD2" "" "C" -2016 -11127 -21873 massC
+  ,     pdbAtom "A" 820 109 "PHE" "CE1" "" "C" -4186 -12790 -22330 massC
+  ,     pdbAtom "A" 821 109 "PHE" "CE2" "" "C" -3020 -10713 -22763 massC
+  ,     pdbAtom "A" 822 109 "PHE" "CZ" "" "C" -4107 -11546 -22987 massC
+  ,     pdbAtom "A" 823 110 "ASP" "N" "" "N" 1596 -13334 -22412 massN
+  ,     pdbAtom "A" 824 110 "ASP" "CA" "" "C" 2733 -12724 -23092 massC
+  ,     pdbAtom "A" 825 110 "ASP" "C" "" "C" 2493 -11719 -24225 massC
+  ,     pdbAtom "A" 826 110 "ASP" "O" "" "O" 1869 -12055 -25224 massO
+  ,     pdbAtom "A" 827 110 "ASP" "CB" "" "C" 3603 -13856 -23615 massC
+  ,     pdbAtom "A" 828 110 "ASP" "CG" "" "C" 4915 -13381 -24131 massC
+  ,     pdbAtom "A" 829 110 "ASP" "OD1" "" "O" 5602 -12653 -23394 massO
+  ,     pdbAtom "A" 830 110 "ASP" "OD2" "" "O" 5255 -13743 -25276 massO
+  ,     pdbAtom "A" 919 122 "GLY" "N" "" "N" 1727 6045 -27355 massN
+  ,     pdbAtom "A" 920 122 "GLY" "CA" "" "C" 963 6738 -28375 massC
+  ,     pdbAtom "A" 921 122 "GLY" "C" "" "C" -485 7032 -28044 massC
+  ,     pdbAtom "A" 922 122 "GLY" "O" "" "O" -1349 6906 -28917 massO
+  ,     pdbAtom "A" 923 123 "ARG" "N" "" "N" -785 7399 -26803 massN
+  ,     pdbAtom "A" 924 123 "ARG" "CA" "" "C" -2167 7692 -26465 massC
+  ,     pdbAtom "A" 925 123 "ARG" "C" "" "C" -2349 9062 -25856 massC
+  ,     pdbAtom "A" 926 123 "ARG" "O" "" "O" -1581 9486 -24985 massO
+  ,     pdbAtom "A" 927 123 "ARG" "CB" "" "C" -2818 6581 -25616 massC
+  ,     pdbAtom "A" 928 123 "ARG" "CG" "" "C" -2507 6553 -24137 massC
+  ,     pdbAtom "A" 929 123 "ARG" "CD" "" "C" -3358 5488 -23448 massC
+  ,     pdbAtom "A" 930 123 "ARG" "NE" "" "N" -2966 5312 -22058 massN
+  ,     pdbAtom "A" 931 123 "ARG" "CZ" "" "C" -2623 4145 -21522 massC
+  ,     pdbAtom "A" 932 123 "ARG" "NH1" "" "N" -2660 3036 -22248 massN
+  ,     pdbAtom "A" 933 123 "ARG" "NH2" "" "N" -2262 4081 -20248 massN
+  ,     pdbAtom "A" 934 124 "ARG" "N" "" "N" -3333 9767 -26416 massN
+  ,     pdbAtom "A" 935 124 "ARG" "CA" "" "C" -3720 11125 -26034 massC
+  ,     pdbAtom "A" 936 124 "ARG" "C" "" "C" -5060 11016 -25300 massC
+  ,     pdbAtom "A" 937 124 "ARG" "O" "" "O" -5944 10262 -25718 massO
+  ,     pdbAtom "A" 938 124 "ARG" "CB" "" "C" -3900 11999 -27286 massC
+  ,     pdbAtom "A" 939 124 "ARG" "CG" "" "C" -2811 11864 -28356 massC
+  ,     pdbAtom "A" 940 124 "ARG" "CD" "" "C" -1474 12515 -27972 massC
+  ,     pdbAtom "A" 941 124 "ARG" "NE" "" "N" -534 12491 -29098 massN
+  ,     pdbAtom "A" 942 124 "ARG" "CZ" "" "C" 496 11652 -29205 massC
+  ,     pdbAtom "A" 943 124 "ARG" "NH1" "" "N" 753 10780 -28236 massN
+  ,     pdbAtom "A" 944 124 "ARG" "NH2" "" "N" 1286 11701 -30273 massN
+  ,     pdbAtom "A" 945 125 "VAL" "N" "" "N" -5232 11816 -24257 massN
+  ,     pdbAtom "A" 946 125 "VAL" "CA" "" "C" -6439 11778 -23450 massC
+  ,     pdbAtom "A" 947 125 "VAL" "C" "" "C" -7066 13153 -23227 massC
+  ,     pdbAtom "A" 948 125 "VAL" "O" "" "O" -6369 14167 -23167 massO
+  ,     pdbAtom "A" 949 125 "VAL" "CB" "" "C" -6127 11154 -22049 massC
+  ,     pdbAtom "A" 950 125 "VAL" "CG1" "" "C" -5422 9809 -22206 massC
+  ,     pdbAtom "A" 951 125 "VAL" "CG2" "" "C" -5255 12093 -21214 massC
+  ,     pdbAtom "A" 952 126 "HIS" "N" "" "N" -8388 13205 -23159 massN
+  ,     pdbAtom "A" 953 126 "HIS" "CA" "" "C" -9028 14474 -22864 massC
+  ,     pdbAtom "A" 954 126 "HIS" "C" "" "C" -9128 14522 -21346 massC
+  ,     pdbAtom "A" 955 126 "HIS" "O" "" "O" -10022 13905 -20756 massO
+  ,     pdbAtom "A" 956 126 "HIS" "CB" "" "C" -10424 14602 -23466 massC
+  ,     pdbAtom "A" 957 126 "HIS" "CG" "" "C" -11085 15901 -23122 massC
+  ,     pdbAtom "A" 958 126 "HIS" "ND1" "" "N" -10399 17097 -23110 massN
+  ,     pdbAtom "A" 959 126 "HIS" "CD2" "" "C" -12338 16183 -22694 massC
+  ,     pdbAtom "A" 960 126 "HIS" "CE1" "" "C" -11198 18057 -22679 massC
+  ,     pdbAtom "A" 961 126 "HIS" "NE2" "" "N" -12380 17529 -22421 massN
+  ,     pdbAtom "A" 962 127 "ALA" "N" "" "N" -8212 15261 -20728 massN
+  ,     pdbAtom "A" 963 127 "ALA" "CA" "" "C" -8159 15378 -19275 massC
+  ,     pdbAtom "A" 964 127 "ALA" "C" "" "C" -9507 15494 -18525 massC
+  ,     pdbAtom "A" 965 127 "ALA" "O" "" "O" -9860 14582 -17767 massO
+  ,     pdbAtom "A" 966 127 "ALA" "CB" "" "C" -7180 16486 -18863 massC
+  ,     pdbAtom "A" 967 128 "PRO" "N" "" "N" -10279 16596 -18727 massN
+  ,     pdbAtom "A" 968 128 "PRO" "CA" "" "C" -11571 16743 -18026 massC
+  ,     pdbAtom "A" 969 128 "PRO" "C" "" "C" -12766 15958 -18619 massC
+  ,     pdbAtom "A" 970 128 "PRO" "O" "" "O" -13784 16548 -19003 massO
+  ,     pdbAtom "A" 971 128 "PRO" "CB" "" "C" -11828 18266 -18082 massC
+  ,     pdbAtom "A" 972 128 "PRO" "CG" "" "C" -10467 18874 -18375 massC
+  ,     pdbAtom "A" 973 128 "PRO" "CD" "" "C" -9903 17877 -19357 massC
+  ,     pdbAtom "A" 974 129 "SER" "N" "" "N" -12644 14634 -18672 massN
+  ,     pdbAtom "A" 975 129 "SER" "CA" "" "C" -13695 13757 -19199 massC
+  ,     pdbAtom "A" 976 129 "SER" "C" "" "C" -13192 12322 -19119 massC
+  ,     pdbAtom "A" 977 129 "SER" "O" "" "O" -13970 11374 -18959 massO
+  ,     pdbAtom "A" 978 129 "SER" "CB" "" "C" -14011 14096 -20656 massC
+  ,     pdbAtom "A" 979 129 "SER" "OG" "" "O" -12925 13771 -21517 massO
+  ,     pdbAtom "A" 980 130 "GLY" "N" "" "N" -11878 12185 -19285 massN
+  ,     pdbAtom "A" 981 130 "GLY" "CA" "" "C" -11241 10889 -19225 massC
+  ,     pdbAtom "A" 982 130 "GLY" "C" "" "C" -11185 10173 -20557 massC
+  ,     pdbAtom "A" 983 130 "GLY" "O" "" "O" -10603 9090 -20632 massO
+  ,     pdbAtom "A" 984 131 "ARG" "N" "" "N" -11774 10759 -21601 massN
+  ,     pdbAtom "A" 985 131 "ARG" "CA" "" "C" -11770 10135 -22926 massC
+  ,     pdbAtom "A" 986 131 "ARG" "C" "" "C" -10342 9841 -23385 massC
+  ,     pdbAtom "A" 987 131 "ARG" "O" "" "O" -9442 10669 -23203 massO
+  ,     pdbAtom "A" 988 131 "ARG" "CB" "" "C" -12491 11014 -23946 massC
+  ,     pdbAtom "A" 989 131 "ARG" "CG" "" "C" -13945 10619 -24193 massC
+  ,     pdbAtom "A" 990 131 "ARG" "CD" "" "C" -14923 11593 -23556 massC
+  ,     pdbAtom "A" 991 131 "ARG" "NE" "" "N" -14716 12969 -24006 massN
+  ,     pdbAtom "A" 992 131 "ARG" "CZ" "" "C" -15408 14007 -23552 massC
+  ,     pdbAtom "A" 993 131 "ARG" "NH1" "" "N" -16351 13835 -22635 massN
+  ,     pdbAtom "A" 994 131 "ARG" "NH2" "" "N" -15154 15222 -24004 massN
+  ,     pdbAtom "A" 995 132 "VAL" "N" "" "N" -10145 8673 -23995 massN
+  ,     pdbAtom "A" 996 132 "VAL" "CA" "" "C" -8814 8251 -24434 massC
+  ,     pdbAtom "A" 997 132 "VAL" "C" "" "C" -8738 7874 -25911 massC
+  ,     pdbAtom "A" 998 132 "VAL" "O" "" "O" -9602 7166 -26442 massO
+  ,     pdbAtom "A" 999 132 "VAL" "CB" "" "C" -8275 7077 -23548 massC
+  ,     pdbAtom "A" 1000 132 "VAL" "CG1" "" "C" -9055 5801 -23814 massC
+  ,     pdbAtom "A" 1001 132 "VAL" "CG2" "" "C" -6796 6860 -23781 massC
+  ,     pdbAtom "A" 1002 133 "TYR" "N" "" "N" -7678 8344 -26555 massN
+  ,     pdbAtom "A" 1003 133 "TYR" "CA" "" "C" -7447 8105 -27966 massC
+  ,     pdbAtom "A" 1004 133 "TYR" "C" "" "C" -6090 7485 -28117 massC
+  ,     pdbAtom "A" 1005 133 "TYR" "O" "" "O" -5314 7447 -27164 massO
+  ,     pdbAtom "A" 1006 133 "TYR" "CB" "" "C" -7451 9437 -28726 massC
+  ,     pdbAtom "A" 1007 133 "TYR" "CG" "" "C" -8713 10218 -28511 massC
+  ,     pdbAtom "A" 1008 133 "TYR" "CD1" "" "C" -9834 10002 -29313 massC
+  ,     pdbAtom "A" 1009 133 "TYR" "CD2" "" "C" -8823 11106 -27445 massC
+  ,     pdbAtom "A" 1010 133 "TYR" "CE1" "" "C" -11035 10641 -29050 massC
+  ,     pdbAtom "A" 1011 133 "TYR" "CE2" "" "C" -10020 11754 -27170 massC
+  ,     pdbAtom "A" 1012 133 "TYR" "CZ" "" "C" -11122 11516 -27973 massC
+  ,     pdbAtom "A" 1013 133 "TYR" "OH" "" "O" -12316 12143 -27681 massO
+  ,     pdbAtom "A" 1014 134 "HIS" "N" "" "N" -5839 6950 -29305 massN
+  ,     pdbAtom "A" 1015 134 "HIS" "CA" "" "C" -4543 6390 -29661 massC
+  ,     pdbAtom "A" 1016 134 "HIS" "C" "" "C" -4231 6776 -31115 massC
+  ,     pdbAtom "A" 1017 134 "HIS" "O" "" "O" -4827 6234 -32049 massO
+  ,     pdbAtom "A" 1018 134 "HIS" "CB" "" "C" -4474 4871 -29497 massC
+  ,     pdbAtom "A" 1019 134 "HIS" "CG" "" "C" -3086 4333 -29676 massC
+  ,     pdbAtom "A" 1020 134 "HIS" "ND1" "" "N" -2531 4095 -30911 massN
+  ,     pdbAtom "A" 1021 134 "HIS" "CD2" "" "C" -2116 4060 -28770 massC
+  ,     pdbAtom "A" 1022 134 "HIS" "CE1" "" "C" -1281 3697 -30765 massC
+  ,     pdbAtom "A" 1023 134 "HIS" "NE2" "" "N" -1002 3667 -29476 massN
+  ,     pdbAtom "A" 1024 135 "VAL" "N" "" "N" -3272 7685 -31284 massN
+  ,     pdbAtom "A" 1025 135 "VAL" "CA" "" "C" -2851 8189 -32585 massC
+  ,     pdbAtom "A" 1026 135 "VAL" "C" "" "C" -2996 7184 -33721 massC
+  ,     pdbAtom "A" 1027 135 "VAL" "O" "" "O" -3278 7567 -34853 massO
+  ,     pdbAtom "A" 1028 135 "VAL" "CB" "" "C" -1408 8723 -32548 massC
+  ,     pdbAtom "A" 1029 135 "VAL" "CG1" "" "C" -1332 9958 -31659 massC
+  ,     pdbAtom "A" 1030 135 "VAL" "CG2" "" "C" -450 7652 -32057 massC
+  ,     pdbAtom "A" 1031 136 "LYS" "N" "" "N" -2780 5904 -33431 massN
+  ,     pdbAtom "A" 1032 136 "LYS" "CA" "" "C" -2947 4882 -34453 massC
+  ,     pdbAtom "A" 1033 136 "LYS" "C" "" "C" -4286 4175 -34306 massC
+  ,     pdbAtom "A" 1034 136 "LYS" "O" "" "O" -5138 4279 -35180 massO
+  ,     pdbAtom "A" 1035 136 "LYS" "CB" "" "C" -1819 3841 -34415 massC
+  ,     pdbAtom "A" 1036 136 "LYS" "CG" "" "C" -456 4320 -34899 massC
+  ,     pdbAtom "A" 1037 136 "LYS" "CD" "" "C" 394 4850 -33739 massC
+  ,     pdbAtom "A" 1038 136 "LYS" "CE" "" "C" 1769 5375 -34187 massC
+  ,     pdbAtom "A" 1039 136 "LYS" "NZ" "" "N" 2563 5925 -33036 massN
+  ,     pdbAtom "A" 1040 137 "PHE" "N" "" "N" -4489 3535 -33154 massN
+  ,     pdbAtom "A" 1041 137 "PHE" "CA" "" "C" -5691 2739 -32873 massC
+  ,     pdbAtom "A" 1042 137 "PHE" "C" "" "C" -7058 3406 -32864 massC
+  ,     pdbAtom "A" 1043 137 "PHE" "O" "" "O" -8012 2839 -33395 massO
+  ,     pdbAtom "A" 1044 137 "PHE" "CB" "" "C" -5481 1891 -31611 massC
+  ,     pdbAtom "A" 1045 137 "PHE" "CG" "" "C" -4126 1228 -31557 massC
+  ,     pdbAtom "A" 1046 137 "PHE" "CD1" "" "C" -3505 785 -32722 massC
+  ,     pdbAtom "A" 1047 137 "PHE" "CD2" "" "C" -3428 1143 -30360 massC
+  ,     pdbAtom "A" 1048 137 "PHE" "CE1" "" "C" -2213 285 -32700 massC
+  ,     pdbAtom "A" 1049 137 "PHE" "CE2" "" "C" -2128 640 -30327 massC
+  ,     pdbAtom "A" 1050 137 "PHE" "CZ" "" "C" -1519 214 -31500 massC
+  ,     pdbAtom "A" 1051 138 "ASN" "N" "" "N" -7182 4560 -32215 massN
+  ,     pdbAtom "A" 1052 138 "ASN" "CA" "" "C" -8460 5283 -32185 massC
+  ,     pdbAtom "A" 1053 138 "ASN" "C" "" "C" -8200 6783 -32173 massC
+  ,     pdbAtom "A" 1054 138 "ASN" "O" "" "O" -8435 7476 -31183 massO
+  ,     pdbAtom "A" 1055 138 "ASN" "CB" "" "C" -9377 4838 -31017 massC
+  ,     pdbAtom "A" 1056 138 "ASN" "CG" "" "C" -8969 5414 -29658 massC
+  ,     pdbAtom "A" 1057 138 "ASN" "OD1" "" "O" -7824 5268 -29218 massO
+  ,     pdbAtom "A" 1058 138 "ASN" "ND2" "" "N" -9916 6064 -28988 massN
+  ,     pdbAtom "A" 1059 139 "PRO" "N" "" "N" -7686 7302 -33290 massN
+  ,     pdbAtom "A" 1060 139 "PRO" "CA" "" "C" -7389 8735 -33401 massC
+  ,     pdbAtom "A" 1061 139 "PRO" "C" "" "C" -8636 9594 -33286 massC
+  ,     pdbAtom "A" 1062 139 "PRO" "O" "" "O" -9752 9120 -33508 massO
+  ,     pdbAtom "A" 1063 139 "PRO" "CB" "" "C" -6777 8842 -34796 massC
+  ,     pdbAtom "A" 1064 139 "PRO" "CG" "" "C" -7479 7737 -35565 massC
+  ,     pdbAtom "A" 1065 139 "PRO" "CD" "" "C" -7448 6604 -34570 massC
+  ,     pdbAtom "A" 1066 140 "PRO" "N" "" "N" -8482 10835 -32815 massN
+  ,     pdbAtom "A" 1067 140 "PRO" "CA" "" "C" -9686 11650 -32732 massC
+  ,     pdbAtom "A" 1068 140 "PRO" "C" "" "C" -9997 12139 -34146 massC
+  ,     pdbAtom "A" 1069 140 "PRO" "O" "" "O" -9114 12147 -35011 massO
+  ,     pdbAtom "A" 1070 140 "PRO" "CB" "" "C" -9262 12784 -31800 massC
+  ,     pdbAtom "A" 1071 140 "PRO" "CG" "" "C" -7821 12918 -32060 massC
+  ,     pdbAtom "A" 1072 140 "PRO" "CD" "" "C" -7352 11488 -32142 massC
+  ,     pdbAtom "A" 1073 141 "LYS" "N" "" "N" -11262 12472 -34399 massN
+  ,     pdbAtom "A" 1074 141 "LYS" "CA" "" "C" -11703 12964 -35707 massC
+  ,     pdbAtom "A" 1075 141 "LYS" "C" "" "C" -10806 14130 -36090 massC
+  ,     pdbAtom "A" 1076 141 "LYS" "O" "" "O" -10231 14159 -37175 massO
+  ,     pdbAtom "A" 1077 141 "LYS" "CB" "" "C" -13167 13419 -35650 massC
+  ,     pdbAtom "A" 1078 141 "LYS" "CG" "" "C" -14184 12303 -35414 massC
+  ,     pdbAtom "A" 1079 141 "LYS" "CD" "" "C" -15564 12893 -35191 massC
+  ,     pdbAtom "A" 1080 141 "LYS" "CE" "" "C" -16506 11889 -34550 massC
+  ,     pdbAtom "A" 1081 141 "LYS" "NZ" "" "N" -17664 12574 -33885 massN
+  ,     pdbAtom "A" 1082 142 "VAL" "N" "" "N" -10726 15110 -35202 massN
+  ,     pdbAtom "A" 1083 142 "VAL" "CA" "" "C" -9854 16249 -35428 massC
+  ,     pdbAtom "A" 1084 142 "VAL" "C" "" "C" -8649 15832 -34602 massC
+  ,     pdbAtom "A" 1085 142 "VAL" "O" "" "O" -8681 15895 -33366 massO
+  ,     pdbAtom "A" 1086 142 "VAL" "CB" "" "C" -10444 17559 -34864 massC
+  ,     pdbAtom "A" 1087 142 "VAL" "CG1" "" "C" -9603 18746 -35315 massC
+  ,     pdbAtom "A" 1088 142 "VAL" "CG2" "" "C" -11891 17722 -35304 massC
+  ,     pdbAtom "A" 1089 143 "GLU" "N" "" "N" -7644 15288 -35279 massN
+  ,     pdbAtom "A" 1090 143 "GLU" "CA" "" "C" -6442 14821 -34608 massC
+  ,     pdbAtom "A" 1091 143 "GLU" "C" "" "C" -5853 15885 -33671 massC
+  ,     pdbAtom "A" 1092 143 "GLU" "O" "" "O" -5673 17045 -34060 massO
+  ,     pdbAtom "A" 1093 143 "GLU" "CB" "" "C" -5416 14328 -35634 massC
+  ,     pdbAtom "A" 1094 143 "GLU" "CG" "" "C" -4122 13746 -35038 massC
+  ,     pdbAtom "A" 1095 143 "GLU" "CD" "" "C" -4235 12312 -34514 massC
+  ,     pdbAtom "A" 1096 143 "GLU" "OE1" "" "O" -4635 11406 -35287 massO
+  ,     pdbAtom "A" 1097 143 "GLU" "OE2" "" "O" -3869 12094 -33333 massO
+  ,     pdbAtom "A" 1098 144 "GLY" "N" "" "N" -5607 15473 -32423 massN
+  ,     pdbAtom "A" 1099 144 "GLY" "CA" "" "C" -5069 16360 -31402 massC
+  ,     pdbAtom "A" 1100 144 "GLY" "C" "" "C" -6166 17117 -30671 massC
+  ,     pdbAtom "A" 1101 144 "GLY" "O" "" "O" -5901 17828 -29699 massO
+  ,     pdbAtom "A" 1102 145 "LYS" "N" "" "N" -7410 16904 -31095 massN
+  ,     pdbAtom "A" 1103 145 "LYS" "CA" "" "C" -8567 17580 -30522 massC
+  ,     pdbAtom "A" 1104 145 "LYS" "C" "" "C" -9608 16576 -30057 massC
+  ,     pdbAtom "A" 1105 145 "LYS" "O" "" "O" -9902 15601 -30760 massO
+  ,     pdbAtom "A" 1106 145 "LYS" "CB" "" "C" -9214 18463 -31592 massC
+  ,     pdbAtom "A" 1107 145 "LYS" "CG" "" "C" -8310 19494 -32221 massC
+  ,     pdbAtom "A" 1108 145 "LYS" "CD" "" "C" -8319 20766 -31424 massC
+  ,     pdbAtom "A" 1109 145 "LYS" "CE" "" "C" -7701 21899 -32218 massC
+  ,     pdbAtom "A" 1110 145 "LYS" "NZ" "" "N" -7916 23232 -31575 massN
+  ,     pdbAtom "A" 1111 146 "ASP" "N" "" "N" -10194 16838 -28895 massN
+  ,     pdbAtom "A" 1112 146 "ASP" "CA" "" "C" -11239 15970 -28344 massC
+  ,     pdbAtom "A" 1113 146 "ASP" "C" "" "C" -12524 16157 -29148 massC
+  ,     pdbAtom "A" 1114 146 "ASP" "O" "" "O" -13059 17270 -29250 massO
+  ,     pdbAtom "A" 1115 146 "ASP" "CB" "" "C" -11481 16269 -26856 massC
+  ,     pdbAtom "A" 1116 146 "ASP" "CG" "" "C" -12724 15589 -26316 massC
+  ,     pdbAtom "A" 1117 146 "ASP" "OD1" "" "O" -12882 14359 -26481 massO
+  ,     pdbAtom "A" 1118 146 "ASP" "OD2" "" "O" -13559 16306 -25732 massO
+  ,     pdbAtom "A" 1119 147 "ASP" "N" "" "N" -13040 15045 -29658 massN
+  ,     pdbAtom "A" 1120 147 "ASP" "CA" "" "C" -14240 15020 -30488 massC
+  ,     pdbAtom "A" 1121 147 "ASP" "C" "" "C" -15532 15569 -29907 massC
+  ,     pdbAtom "A" 1122 147 "ASP" "O" "" "O" -16393 16040 -30651 massO
+  ,     pdbAtom "A" 1123 147 "ASP" "CB" "" "C" -14476 13600 -30987 massC
+  ,     pdbAtom "A" 1124 147 "ASP" "CG" "" "C" -13333 13093 -31828 massC
+  ,     pdbAtom "A" 1125 147 "ASP" "OD1" "" "O" -12535 13937 -32319 massO
+  ,     pdbAtom "A" 1126 147 "ASP" "OD2" "" "O" -13241 11853 -31997 massO
+  ,     pdbAtom "A" 1127 148 "VAL" "N" "" "N" -15682 15487 -28589 massN
+  ,     pdbAtom "A" 1128 148 "VAL" "CA" "" "C" -16894 15968 -27932 massC
+  ,     pdbAtom "A" 1129 148 "VAL" "C" "" "C" -16886 17437 -27503 massC
+  ,     pdbAtom "A" 1130 148 "VAL" "O" "" "O" -17931 18080 -27500 massO
+  ,     pdbAtom "A" 1131 148 "VAL" "CB" "" "C" -17278 15031 -26761 massC
+  ,     pdbAtom "A" 1132 148 "VAL" "CG1" "" "C" -18016 15785 -25652 massC
+  ,     pdbAtom "A" 1133 148 "VAL" "CG2" "" "C" -18137 13895 -27300 massC
+  ,     pdbAtom "A" 1134 149 "THR" "N" "" "N" -15712 17982 -27203 massN
+  ,     pdbAtom "A" 1135 149 "THR" "CA" "" "C" -15623 19374 -26767 massC
+  ,     pdbAtom "A" 1136 149 "THR" "C" "" "C" -14811 20278 -27701 massC
+  ,     pdbAtom "A" 1137 149 "THR" "O" "" "O" -14901 21510 -27626 massO
+  ,     pdbAtom "A" 1138 149 "THR" "CB" "" "C" -15000 19457 -25376 massC
+  ,     pdbAtom "A" 1139 149 "THR" "OG1" "" "O" -13665 18948 -25437 massO
+  ,     pdbAtom "A" 1140 149 "THR" "CG2" "" "C" -15801 18634 -24384 massC
+  ,     pdbAtom "A" 1141 150 "GLY" "N" "" "N" -14050 19672 -28606 massN
+  ,     pdbAtom "A" 1142 150 "GLY" "CA" "" "C" -13222 20470 -29487 massC
+  ,     pdbAtom "A" 1143 150 "GLY" "C" "" "C" -12180 21096 -28583 massC
+  ,     pdbAtom "A" 1144 150 "GLY" "O" "" "O" -11793 22256 -28745 massO
+  ,     pdbAtom "A" 1145 151 "GLU" "N" "" "N" -11765 20314 -27589 massN
+  ,     pdbAtom "A" 1146 151 "GLU" "CA" "" "C" -10771 20738 -26611 massC
+  ,     pdbAtom "A" 1147 151 "GLU" "C" "" "C" -9517 19890 -26810 massC
+  ,     pdbAtom "A" 1148 151 "GLU" "O" "" "O" -9610 18696 -27093 massO
+  ,     pdbAtom "A" 1149 151 "GLU" "CB" "" "C" -11327 20553 -25196 massC
+  ,     pdbAtom "A" 1150 151 "GLU" "CG" "" "C" -10614 21343 -24100 massC
+  ,     pdbAtom "A" 1151 151 "GLU" "CD" "" "C" -11304 21226 -22742 massC
+  ,     pdbAtom "A" 1152 151 "GLU" "OE1" "" "O" -12533 20991 -22707 massO
+  ,     pdbAtom "A" 1153 151 "GLU" "OE2" "" "O" -10616 21362 -21706 massO
+  ,     pdbAtom "A" 1154 152 "GLU" "N" "" "N" -8349 20504 -26668 massN
+  ,     pdbAtom "A" 1155 152 "GLU" "CA" "" "C" -7096 19788 -26860 massC
+  ,     pdbAtom "A" 1156 152 "GLU" "C" "" "C" -6891 18600 -25926 massC
+  ,     pdbAtom "A" 1157 152 "GLU" "O" "" "O" -7337 18588 -24770 massO
+  ,     pdbAtom "A" 1158 152 "GLU" "CB" "" "C" -5902 20743 -26784 massC
+  ,     pdbAtom "A" 1159 152 "GLU" "CG" "" "C" -5801 21704 -27972 massC
+  ,     pdbAtom "A" 1160 152 "GLU" "CD" "" "C" -4757 21297 -29007 massC
+  ,     pdbAtom "A" 1161 152 "GLU" "OE1" "" "O" -4731 20115 -29418 massO
+  ,     pdbAtom "A" 1162 152 "GLU" "OE2" "" "O" -3965 22177 -29416 massO
+  ,     pdbAtom "A" 1163 153 "LEU" "N" "" "N" -6240 17584 -26472 massN
+  ,     pdbAtom "A" 1164 153 "LEU" "CA" "" "C" -5950 16369 -25742 massC
+  ,     pdbAtom "A" 1165 153 "LEU" "C" "" "C" -4543 16448 -25172 massC
+  ,     pdbAtom "A" 1166 153 "LEU" "O" "" "O" -3738 17289 -25586 massO
+  ,     pdbAtom "A" 1167 153 "LEU" "CB" "" "C" -6064 15169 -26679 massC
+  ,     pdbAtom "A" 1168 153 "LEU" "CG" "" "C" -7386 14988 -27419 massC
+  ,     pdbAtom "A" 1169 153 "LEU" "CD1" "" "C" -7268 13807 -28357 massC
+  ,     pdbAtom "A" 1170 153 "LEU" "CD2" "" "C" -8505 14780 -26427 massC
+  ,     pdbAtom "A" 1171 154 "THR" "N" "" "N" -4235 15526 -24266 massN
+  ,     pdbAtom "A" 1172 154 "THR" "CA" "" "C" -2938 15471 -23603 massC
+  ,     pdbAtom "A" 1173 154 "THR" "C" "" "C" -2388 14047 -23503 massC
+  ,     pdbAtom "A" 1174 154 "THR" "O" "" "O" -2965 13100 -24023 massO
+  ,     pdbAtom "A" 1175 154 "THR" "CB" "" "C" -3065 16032 -22181 massC
+  ,     pdbAtom "A" 1176 154 "THR" "OG1" "" "O" -4289 15558 -21597 massO
+  ,     pdbAtom "A" 1177 154 "THR" "CG2" "" "C" -3070 17550 -22206 massC
+  ,     pdbAtom "A" 1178 155 "THR" "N" "" "N" -1233 13906 -22881 massN
+  ,     pdbAtom "A" 1179 155 "THR" "CA" "" "C" -653 12593 -22699 massC
+  ,     pdbAtom "A" 1180 155 "THR" "C" "" "C" -515 12445 -21207 massC
+  ,     pdbAtom "A" 1181 155 "THR" "O" "" "O" -205 13421 -20521 massO
+  ,     pdbAtom "A" 1182 155 "THR" "CB" "" "C" 724 12480 -23352 massC
+  ,     pdbAtom "A" 1183 155 "THR" "OG1" "" "O" 1319 13783 -23447 massO
+  ,     pdbAtom "A" 1184 155 "THR" "CG2" "" "C" 593 11861 -24730 massC
+  ,     pdbAtom "A" 1185 156 "ARG" "N" "" "N" -852 11271 -20692 massN
+  ,     pdbAtom "A" 1186 156 "ARG" "CA" "" "C" -733 11036 -19264 massC
+  ,     pdbAtom "A" 1187 156 "ARG" "C" "" "C" 770 10912 -18943 massC
+  ,     pdbAtom "A" 1188 156 "ARG" "O" "" "O" 1577 10587 -19823 massO
+  ,     pdbAtom "A" 1189 156 "ARG" "CB" "" "C" -1477 9753 -18886 massC
+  ,     pdbAtom "A" 1190 156 "ARG" "CG" "" "C" -2244 9818 -17571 massC
+  ,     pdbAtom "A" 1191 156 "ARG" "CD" "" "C" -2705 8424 -17089 massC
+  ,     pdbAtom "A" 1192 156 "ARG" "NE" "" "N" -3553 7709 -18048 massN
+  ,     pdbAtom "A" 1193 156 "ARG" "CZ" "" "C" -4870 7878 -18184 massC
+  ,     pdbAtom "A" 1194 156 "ARG" "NH1" "" "N" -5530 8759 -17440 massN
+  ,     pdbAtom "A" 1195 156 "ARG" "NH2" "" "N" -5533 7167 -19088 massN
+  ,     pdbAtom "A" 1196 157 "LYS" "N" "" "N" 1151 11196 -17698 massN
+  ,     pdbAtom "A" 1197 157 "LYS" "CA" "" "C" 2560 11095 -17291 massC
+  ,     pdbAtom "A" 1198 157 "LYS" "C" "" "C" 3022 9646 -17408 massC
+  ,     pdbAtom "A" 1199 157 "LYS" "O" "" "O" 4129 9364 -17868 massO
+  ,     pdbAtom "A" 1200 157 "LYS" "CB" "" "C" 2747 11587 -15846 massC
+  ,     pdbAtom "A" 1201 157 "LYS" "CG" "" "C" 4131 11285 -15234 massC
+  ,     pdbAtom "A" 1202 157 "LYS" "CD" "" "C" 5283 11938 -16010 massC
+  ,     pdbAtom "A" 1203 157 "LYS" "CE" "" "C" 5409 13437 -15727 massC
+  ,     pdbAtom "A" 1204 157 "LYS" "NZ" "" "N" 5938 13743 -14360 massN
+  ,     pdbAtom "A" 1205 158 "ASP" "N" "" "N" 2135 8743 -17007 massN
+  ,     pdbAtom "A" 1206 158 "ASP" "CA" "" "C" 2384 7312 -17042 massC
+  ,     pdbAtom "A" 1207 158 "ASP" "C" "" "C" 2666 6839 -18456 massC
+  ,     pdbAtom "A" 1208 158 "ASP" "O" "" "O" 3540 6005 -18671 massO
+  ,     pdbAtom "A" 1209 158 "ASP" "CB" "" "C" 1166 6556 -16501 massC
+  ,     pdbAtom "A" 1210 158 "ASP" "CG" "" "C" 770 6994 -15101 massC
+  ,     pdbAtom "A" 1211 158 "ASP" "OD1" "" "O" 1650 7439 -14330 massO
+  ,     pdbAtom "A" 1212 158 "ASP" "OD2" "" "O" -433 6886 -14776 massO
+  ,     pdbAtom "A" 1213 159 "ASP" "N" "" "N" 1926 7390 -19413 massN
+  ,     pdbAtom "A" 1214 159 "ASP" "CA" "" "C" 2061 7029 -20815 massC
+  ,     pdbAtom "A" 1215 159 "ASP" "C" "" "C" 3418 7376 -21411 massC
+  ,     pdbAtom "A" 1216 159 "ASP" "O" "" "O" 3785 6866 -22464 massO
+  ,     pdbAtom "A" 1217 159 "ASP" "CB" "" "C" 956 7696 -21618 massC
+  ,     pdbAtom "A" 1218 159 "ASP" "CG" "" "C" -430 7410 -21060 massC
+  ,     pdbAtom "A" 1219 159 "ASP" "OD1" "" "O" -545 6562 -20141 massO
+  ,     pdbAtom "A" 1220 159 "ASP" "OD2" "" "O" -1397 8047 -21550 massO
+  ,     pdbAtom "A" 1221 160 "GLN" "N" "" "N" 4169 8225 -20721 massN
+  ,     pdbAtom "A" 1222 160 "GLN" "CA" "" "C" 5498 8640 -21167 massC
+  ,     pdbAtom "A" 1223 160 "GLN" "C" "" "C" 6410 7457 -21454 massC
+  ,     pdbAtom "A" 1224 160 "GLN" "O" "" "O" 6620 6609 -20599 massO
+  ,     pdbAtom "A" 1225 160 "GLN" "CB" "" "C" 6140 9535 -20111 massC
+  ,     pdbAtom "A" 1226 160 "GLN" "CG" "" "C" 6023 11016 -20398 massC
+  ,     pdbAtom "A" 1227 160 "GLN" "CD" "" "C" 7370 11642 -20734 massC
+  ,     pdbAtom "A" 1228 160 "GLN" "OE1" "" "O" 8332 10948 -21103 massO
+  ,     pdbAtom "A" 1229 160 "GLN" "NE2" "" "N" 7449 12960 -20601 massN
+  ,     pdbAtom "A" 1230 161 "GLU" "N" "" "N" 7031 7468 -22622 massN
+  ,     pdbAtom "A" 1231 161 "GLU" "CA" "" "C" 7901 6382 -23030 massC
+  ,     pdbAtom "A" 1232 161 "GLU" "C" "" "C" 8967 5994 -22019 massC
+  ,     pdbAtom "A" 1233 161 "GLU" "O" "" "O" 9193 4806 -21782 massO
+  ,     pdbAtom "A" 1234 161 "GLU" "CB" "" "C" 8530 6693 -24382 massC
+  ,     pdbAtom "A" 1235 161 "GLU" "CG" "" "C" 8932 5445 -25173 massC
+  ,     pdbAtom "A" 1236 161 "GLU" "CD" "" "C" 9304 5744 -26624 massC
+  ,     pdbAtom "A" 1237 161 "GLU" "OE1" "" "O" 8419 6173 -27403 massO
+  ,     pdbAtom "A" 1238 161 "GLU" "OE2" "" "O" 10484 5536 -26988 massO
+  ,     pdbAtom "A" 1239 162 "GLU" "N" "" "N" 9612 6989 -21418 massN
+  ,     pdbAtom "A" 1240 162 "GLU" "CA" "" "C" 10659 6758 -20410 massC
+  ,     pdbAtom "A" 1241 162 "GLU" "C" "" "C" 10104 6027 -19182 massC
+  ,     pdbAtom "A" 1242 162 "GLU" "O" "" "O" 10739 5128 -18631 massO
+  ,     pdbAtom "A" 1243 162 "GLU" "CB" "" "C" 11269 8094 -19971 massC
+  ,     pdbAtom "A" 1244 162 "GLU" "CG" "" "C" 12210 8006 -18762 massC
+  ,     pdbAtom "A" 1245 162 "GLU" "CD" "" "C" 11938 9091 -17718 massC
+  ,     pdbAtom "A" 1246 162 "GLU" "OE1" "" "O" 11062 8874 -16841 massO
+  ,     pdbAtom "A" 1247 162 "GLU" "OE2" "" "O" 12598 10157 -17783 massO
+  ,     pdbAtom "A" 1248 163 "THR" "N" "" "N" 8924 6446 -18747 massN
+  ,     pdbAtom "A" 1249 163 "THR" "CA" "" "C" 8260 5844 -17612 massC
+  ,     pdbAtom "A" 1250 163 "THR" "C" "" "C" 7837 4416 -17961 massC
+  ,     pdbAtom "A" 1251 163 "THR" "O" "" "O" 8109 3485 -17202 massO
+  ,     pdbAtom "A" 1252 163 "THR" "CB" "" "C" 7045 6688 -17227 massC
+  ,     pdbAtom "A" 1253 163 "THR" "OG1" "" "O" 7485 8028 -16966 massO
+  ,     pdbAtom "A" 1254 163 "THR" "CG2" "" "C" 6362 6138 -15994 massC
+  ,     pdbAtom "A" 1255 164 "VAL" "N" "" "N" 7248 4229 -19142 massN
+  ,     pdbAtom "A" 1256 164 "VAL" "CA" "" "C" 6785 2908 -19578 massC
+  ,     pdbAtom "A" 1257 164 "VAL" "C" "" "C" 7927 1908 -19662 massC
+  ,     pdbAtom "A" 1258 164 "VAL" "O" "" "O" 7876 853 -19029 massO
+  ,     pdbAtom "A" 1259 164 "VAL" "CB" "" "C" 6044 2970 -20940 massC
+  ,     pdbAtom "A" 1260 164 "VAL" "CG1" "" "C" 5581 1579 -21380 massC
+  ,     pdbAtom "A" 1261 164 "VAL" "CG2" "" "C" 4849 3876 -20825 massC
+  ,     pdbAtom "A" 1262 165 "ARG" "N" "" "N" 8968 2244 -20412 massN
+  ,     pdbAtom "A" 1263 165 "ARG" "CA" "" "C" 10107 1349 -20547 massC
+  ,     pdbAtom "A" 1264 165 "ARG" "C" "" "C" 10772 989 -19219 massC
+  ,     pdbAtom "A" 1265 165 "ARG" "O" "" "O" 11308 -107 -19067 massO
+  ,     pdbAtom "A" 1266 165 "ARG" "CB" "" "C" 11116 1922 -21526 massC
+  ,     pdbAtom "A" 1267 165 "ARG" "CG" "" "C" 10627 1835 -22941 massC
+  ,     pdbAtom "A" 1268 165 "ARG" "CD" "" "C" 11782 1568 -23884 massC
+  ,     pdbAtom "A" 1269 165 "ARG" "NE" "" "N" 11329 1024 -25161 massN
+  ,     pdbAtom "A" 1270 165 "ARG" "CZ" "" "C" 11159 1750 -26254 massC
+  ,     pdbAtom "A" 1271 165 "ARG" "NH1" "" "N" 11400 3053 -26222 massN
+  ,     pdbAtom "A" 1272 165 "ARG" "NH2" "" "N" 10743 1176 -27375 massN
+  ,     pdbAtom "A" 1466 190 "ASN" "N" "" "N" 3949 -30254 -9715 massN
+  ,     pdbAtom "A" 1467 190 "ASN" "CA" "" "C" 3218 -29550 -8655 massC
+  ,     pdbAtom "A" 1468 190 "ASN" "C" "" "C" 2159 -28546 -9137 massC
+  ,     pdbAtom "A" 1469 190 "ASN" "O" "" "O" 1306 -28099 -8354 massO
+  ,     pdbAtom "A" 1470 190 "ASN" "CB" "" "C" 4202 -28836 -7710 massC
+  ,     pdbAtom "A" 1471 190 "ASN" "CG" "" "C" 4907 -29791 -6746 massC
+  ,     pdbAtom "A" 1472 190 "ASN" "OD1" "" "O" 4269 -30606 -6073 massO
+  ,     pdbAtom "A" 1473 190 "ASN" "ND2" "" "N" 6230 -29675 -6666 massN
+  ,     pdbAtom "A" 1474 191 "THR" "N" "" "N" 2214 -28193 -10417 massN
+  ,     pdbAtom "A" 1475 191 "THR" "CA" "" "C" 1293 -27230 -10992 massC
+  ,     pdbAtom "A" 1476 191 "THR" "C" "" "C" 1523 -27295 -12481 massC
+  ,     pdbAtom "A" 1477 191 "THR" "O" "" "O" 2388 -28052 -12939 massO
+  ,     pdbAtom "A" 1478 191 "THR" "CB" "" "C" 1601 -25817 -10464 massC
+  ,     pdbAtom "A" 1479 191 "THR" "OG1" "" "O" 610 -24893 -10917 massO
+  ,     pdbAtom "A" 1480 191 "THR" "CG2" "" "C" 2976 -25353 -10913 massC
+  ,     pdbAtom "A" 1481 192 "LYS" "N" "" "N" 695 -26594 -13248 massN
+  ,     pdbAtom "A" 1482 192 "LYS" "CA" "" "C" 851 -26553 -14706 massC
+  ,     pdbAtom "A" 1483 192 "LYS" "C" "" "C" 1141 -25109 -15085 massC
+  ,     pdbAtom "A" 1484 192 "LYS" "O" "" "O" 479 -24195 -14619 massO
+  ,     pdbAtom "A" 1485 192 "LYS" "CB" "" "C" -409 -27041 -15444 massC
+  ,     pdbAtom "A" 1486 192 "LYS" "CG" "" "C" -716 -28532 -15305 massC
+  ,     pdbAtom "A" 1487 192 "LYS" "CD" "" "C" -1678 -28843 -14134 massC
+  ,     pdbAtom "A" 1488 192 "LYS" "CE" "" "C" -3153 -28883 -14580 massC
+  ,     pdbAtom "A" 1489 192 "LYS" "NZ" "" "N" -4138 -29125 -13471 massN
+  ,     pdbAtom "A" 1490 193 "TYR" "N" "" "N" 2153 -24894 -15900 massN
+  ,     pdbAtom "A" 1491 193 "TYR" "CA" "" "C" 2499 -23551 -16307 massC
+  ,     pdbAtom "A" 1492 193 "TYR" "C" "" "C" 2250 -23437 -17807 massC
+  ,     pdbAtom "A" 1493 193 "TYR" "O" "" "O" 2465 -24400 -18535 massO
+  ,     pdbAtom "A" 1494 193 "TYR" "CB" "" "C" 3971 -23290 -15951 massC
+  ,     pdbAtom "A" 1495 193 "TYR" "CG" "" "C" 4549 -22097 -16641 massC
+  ,     pdbAtom "A" 1496 193 "TYR" "CD1" "" "C" 4256 -20799 -16230 massC
+  ,     pdbAtom "A" 1497 193 "TYR" "CD2" "" "C" 5327 -22266 -17772 massC
+  ,     pdbAtom "A" 1498 193 "TYR" "CE1" "" "C" 4729 -19697 -16959 massC
+  ,     pdbAtom "A" 1499 193 "TYR" "CE2" "" "C" 5796 -21187 -18490 massC
+  ,     pdbAtom "A" 1500 193 "TYR" "CZ" "" "C" 5500 -19915 -18091 massC
+  ,     pdbAtom "A" 1501 193 "TYR" "OH" "" "O" 5993 -18892 -18874 massO
+  ,     pdbAtom "A" 1502 194 "ALA" "N" "" "N" 1763 -22298 -18278 massN
+  ,     pdbAtom "A" 1503 194 "ALA" "CA" "" "C" 1534 -22156 -19717 massC
+  ,     pdbAtom "A" 1504 194 "ALA" "C" "" "C" 1722 -20723 -20148 massC
+  ,     pdbAtom "A" 1505 194 "ALA" "O" "" "O" 1369 -19819 -19411 massO
+  ,     pdbAtom "A" 1506 194 "ALA" "CB" "" "C" 134 -22651 -20103 massC
+  ,     pdbAtom "A" 1507 195 "LYS" "N" "" "N" 2332 -20517 -21309 massN
+  ,     pdbAtom "A" 1508 195 "LYS" "CA" "" "C" 2555 -19171 -21832 massC
+  ,     pdbAtom "A" 1509 195 "LYS" "C" "" "C" 1497 -18899 -22896 massC
+  ,     pdbAtom "A" 1510 195 "LYS" "O" "" "O" 1286 -19711 -23792 massO
+  ,     pdbAtom "A" 1511 195 "LYS" "CB" "" "C" 3954 -19047 -22427 massC
+  ,     pdbAtom "A" 1512 195 "LYS" "CG" "" "C" 4236 -17687 -23059 massC
+  ,     pdbAtom "A" 1513 195 "LYS" "CD" "" "C" 5502 -17017 -22510 massC
+  ,     pdbAtom "A" 1514 195 "LYS" "CE" "" "C" 6779 -17815 -22769 massC
+  ,     pdbAtom "A" 1515 195 "LYS" "NZ" "" "N" 7039 -18869 -21736 massN
+  ,     pdbAtom "A" 1516 196 "VAL" "N" "" "N" 880 -17730 -22825 massN
+  ,     pdbAtom "A" 1517 196 "VAL" "CA" "" "C" -205 -17357 -23721 massC
+  ,     pdbAtom "A" 1518 196 "VAL" "C" "" "C" 193 -16182 -24590 massC
+  ,     pdbAtom "A" 1519 196 "VAL" "O" "" "O" 638 -15158 -24084 massO
+  ,     pdbAtom "A" 1520 196 "VAL" "CB" "" "C" -1473 -16997 -22864 massC
+  ,     pdbAtom "A" 1521 196 "VAL" "CG1" "" "C" -2439 -16129 -23616 massC
+  ,     pdbAtom "A" 1522 196 "VAL" "CG2" "" "C" -2169 -18258 -22399 massC
+  ,     pdbAtom "A" 1523 197 "ASP" "N" "" "N" 50 -16323 -25902 massN
+  ,     pdbAtom "A" 1524 197 "ASP" "CA" "" "C" 406 -15231 -26795 massC
+  ,     pdbAtom "A" 1525 197 "ASP" "C" "" "C" -721 -14227 -26707 massC
+  ,     pdbAtom "A" 1526 197 "ASP" "O" "" "O" -1811 -14478 -27173 massO
+  ,     pdbAtom "A" 1527 197 "ASP" "CB" "" "C" 589 -15738 -28238 massC
+  ,     pdbAtom "A" 1528 197 "ASP" "CG" "" "C" 1167 -14664 -29194 massC
+  ,     pdbAtom "A" 1529 197 "ASP" "OD1" "" "O" 1892 -13746 -28748 massO
+  ,     pdbAtom "A" 1530 197 "ASP" "OD2" "" "O" 918 -14759 -30414 massO
+  ,     pdbAtom "A" 1531 198 "GLY" "N" "" "N" -470 -13123 -26032 massN
+  ,     pdbAtom "A" 1532 198 "GLY" "CA" "" "C" -1480 -12100 -25886 massC
+  ,     pdbAtom "A" 1533 198 "GLY" "C" "" "C" -1593 -11200 -27092 massC
+  ,     pdbAtom "A" 1534 198 "GLY" "O" "" "O" -2343 -10226 -27081 massO
+  ]
+
+def fourAKEChainBConfiguration : Configuration :=
+  [
+    pdbAtom "B" 1658 1 "MET" "N" "" "N" -12005 26032 10335 massN
+  ,     pdbAtom "B" 1659 1 "MET" "CA" "" "C" -10923 25531 11222 massC
+  ,     pdbAtom "B" 1660 1 "MET" "C" "" "C" -10230 24337 10556 massC
+  ,     pdbAtom "B" 1661 1 "MET" "O" "" "O" -10873 23346 10220 massO
+  ,     pdbAtom "B" 1662 1 "MET" "CB" "" "C" -11533 25126 12567 massC
+  ,     pdbAtom "B" 1663 1 "MET" "CG" "" "C" -10535 24741 13644 massC
+  ,     pdbAtom "B" 1664 1 "MET" "SD" "" "S" -9444 26082 14089 massS
+  ,     pdbAtom "B" 1665 1 "MET" "CE" "" "C" -10504 27013 15130 massC
+  ,     pdbAtom "B" 1666 2 "ARG" "N" "" "N" -8936 24453 10288 massN
+  ,     pdbAtom "B" 1667 2 "ARG" "CA" "" "C" -8218 23350 9673 massC
+  ,     pdbAtom "B" 1668 2 "ARG" "C" "" "C" -7190 22993 10705 massC
+  ,     pdbAtom "B" 1669 2 "ARG" "O" "" "O" -6390 23834 11104 massO
+  ,     pdbAtom "B" 1670 2 "ARG" "CB" "" "C" -7579 23807 8386 massC
+  ,     pdbAtom "B" 1671 2 "ARG" "CG" "" "C" -8599 24218 7370 massC
+  ,     pdbAtom "B" 1672 2 "ARG" "CD" "" "C" -7997 25173 6382 massC
+  ,     pdbAtom "B" 1673 2 "ARG" "NE" "" "N" -8464 24887 5031 massN
+  ,     pdbAtom "B" 1674 2 "ARG" "CZ" "" "C" -7733 25043 3934 massC
+  ,     pdbAtom "B" 1675 2 "ARG" "NH1" "" "N" -6489 25516 4008 massN
+  ,     pdbAtom "B" 1676 2 "ARG" "NH2" "" "N" -8264 24740 2757 massN
+  ,     pdbAtom "B" 1677 3 "ILE" "N" "" "N" -7237 21752 11159 massN
+  ,     pdbAtom "B" 1678 3 "ILE" "CA" "" "C" -6373 21292 12227 massC
+  ,     pdbAtom "B" 1679 3 "ILE" "C" "" "C" -5632 20031 11855 massC
+  ,     pdbAtom "B" 1680 3 "ILE" "O" "" "O" -6176 19184 11181 massO
+  ,     pdbAtom "B" 1681 3 "ILE" "CB" "" "C" -7262 20975 13449 massC
+  ,     pdbAtom "B" 1682 3 "ILE" "CG1" "" "C" -7823 22257 14064 massC
+  ,     pdbAtom "B" 1683 3 "ILE" "CG2" "" "C" -6531 20150 14477 massC
+  ,     pdbAtom "B" 1684 3 "ILE" "CD1" "" "C" -9119 22014 14806 massC
+  ,     pdbAtom "B" 1685 4 "ILE" "N" "" "N" -4375 19922 12267 massN
+  ,     pdbAtom "B" 1686 4 "ILE" "CA" "" "C" -3583 18706 12039 massC
+  ,     pdbAtom "B" 1687 4 "ILE" "C" "" "C" -3406 18108 13439 massC
+  ,     pdbAtom "B" 1688 4 "ILE" "O" "" "O" -2974 18798 14357 massO
+  ,     pdbAtom "B" 1689 4 "ILE" "CB" "" "C" -2179 19000 11430 massC
+  ,     pdbAtom "B" 1690 4 "ILE" "CG1" "" "C" -2298 19278 9933 massC
+  ,     pdbAtom "B" 1691 4 "ILE" "CG2" "" "C" -1218 17810 11677 massC
+  ,     pdbAtom "B" 1692 4 "ILE" "CD1" "" "C" -1039 19856 9359 massC
+  ,     pdbAtom "B" 1693 5 "LEU" "N" "" "N" -3787 16850 13606 massN
+  ,     pdbAtom "B" 1694 5 "LEU" "CA" "" "C" -3693 16182 14889 massC
+  ,     pdbAtom "B" 1695 5 "LEU" "C" "" "C" -2594 15143 14825 massC
+  ,     pdbAtom "B" 1696 5 "LEU" "O" "" "O" -2735 14141 14112 massO
+  ,     pdbAtom "B" 1697 5 "LEU" "CB" "" "C" -5032 15515 15207 massC
+  ,     pdbAtom "B" 1698 5 "LEU" "CG" "" "C" -5168 15012 16636 massC
+  ,     pdbAtom "B" 1699 5 "LEU" "CD1" "" "C" -5124 16164 17618 massC
+  ,     pdbAtom "B" 1700 5 "LEU" "CD2" "" "C" -6453 14248 16777 massC
+  ,     pdbAtom "B" 1701 6 "LEU" "N" "" "N" -1477 15411 15506 massN
+  ,     pdbAtom "B" 1702 6 "LEU" "CA" "" "C" -323 14483 15537 massC
+  ,     pdbAtom "B" 1703 6 "LEU" "C" "" "C" -269 13808 16917 massC
+  ,     pdbAtom "B" 1704 6 "LEU" "O" "" "O" -665 14402 17926 massO
+  ,     pdbAtom "B" 1705 6 "LEU" "CB" "" "C" 1009 15230 15274 massC
+  ,     pdbAtom "B" 1706 6 "LEU" "CG" "" "C" 1124 16178 14057 massC
+  ,     pdbAtom "B" 1707 6 "LEU" "CD1" "" "C" 2502 16818 14005 massC
+  ,     pdbAtom "B" 1708 6 "LEU" "CD2" "" "C" 819 15457 12744 massC
+  ,     pdbAtom "B" 1709 7 "GLY" "N" "" "N" 206 12574 16969 massN
+  ,     pdbAtom "B" 1710 7 "GLY" "CA" "" "C" 283 11871 18235 massC
+  ,     pdbAtom "B" 1711 7 "GLY" "C" "" "C" 890 10516 17985 massC
+  ,     pdbAtom "B" 1712 7 "GLY" "O" "" "O" 747 9972 16893 massO
+  ,     pdbAtom "B" 1713 8 "ALA" "N" "" "N" 1588 9985 18986 massN
+  ,     pdbAtom "B" 1714 8 "ALA" "CA" "" "C" 2255 8682 18907 massC
+  ,     pdbAtom "B" 1715 8 "ALA" "C" "" "C" 1304 7536 18700 massC
+  ,     pdbAtom "B" 1716 8 "ALA" "O" "" "O" 116 7607 19057 massO
+  ,     pdbAtom "B" 1717 8 "ALA" "CB" "" "C" 3093 8412 20193 massC
+  ,     pdbAtom "B" 1874 30 "SER" "N" "" "N" -8285 11104 7235 massN
+  ,     pdbAtom "B" 1875 30 "SER" "CA" "" "C" -7089 10326 7370 massC
+  ,     pdbAtom "B" 1876 30 "SER" "C" "" "C" -6764 9923 5939 massC
+  ,     pdbAtom "B" 1877 30 "SER" "O" "" "O" -7655 9736 5114 massO
+  ,     pdbAtom "B" 1878 30 "SER" "CB" "" "C" -7328 9128 8261 massC
+  ,     pdbAtom "B" 1879 30 "SER" "OG" "" "O" -8471 8458 7825 massO
+  ,     pdbAtom "B" 1880 31 "THR" "N" "" "N" -5482 9848 5626 massN
+  ,     pdbAtom "B" 1881 31 "THR" "CA" "" "C" -5072 9510 4288 massC
+  ,     pdbAtom "B" 1882 31 "THR" "C" "" "C" -5409 8072 3943 massC
+  ,     pdbAtom "B" 1883 31 "THR" "O" "" "O" -5708 7773 2785 massO
+  ,     pdbAtom "B" 1884 31 "THR" "CB" "" "C" -3588 9828 4089 massC
+  ,     pdbAtom "B" 1885 31 "THR" "OG1" "" "O" -2806 9015 4962 massO
+  ,     pdbAtom "B" 1886 31 "THR" "CG2" "" "C" -3343 11300 4429 massC
+  ,     pdbAtom "B" 1887 32 "GLY" "N" "" "N" -5390 7195 4944 massN
+  ,     pdbAtom "B" 1888 32 "GLY" "CA" "" "C" -5734 5807 4719 massC
+  ,     pdbAtom "B" 1889 32 "GLY" "C" "" "C" -7152 5672 4176 massC
+  ,     pdbAtom "B" 1890 32 "GLY" "O" "" "O" -7373 5000 3178 massO
+  ,     pdbAtom "B" 1891 33 "ASP" "N" "" "N" -8118 6320 4819 massN
+  ,     pdbAtom "B" 1892 33 "ASP" "CA" "" "C" -9514 6261 4370 massC
+  ,     pdbAtom "B" 1893 33 "ASP" "C" "" "C" -9589 6844 2990 massC
+  ,     pdbAtom "B" 1894 33 "ASP" "O" "" "O" -10107 6224 2066 massO
+  ,     pdbAtom "B" 1895 33 "ASP" "CB" "" "C" -10440 7083 5286 massC
+  ,     pdbAtom "B" 1896 33 "ASP" "CG" "" "C" -10843 6338 6557 massC
+  ,     pdbAtom "B" 1897 33 "ASP" "OD1" "" "O" -10682 5093 6627 massO
+  ,     pdbAtom "B" 1898 33 "ASP" "OD2" "" "O" -11331 7013 7492 massO
+  ,     pdbAtom "B" 1899 34 "MET" "N" "" "N" -9065 8061 2901 massN
+  ,     pdbAtom "B" 1900 34 "MET" "CA" "" "C" -8983 8876 1693 massC
+  ,     pdbAtom "B" 1901 34 "MET" "C" "" "C" -8526 8086 474 massC
+  ,     pdbAtom "B" 1902 34 "MET" "O" "" "O" -9004 8312 -634 massO
+  ,     pdbAtom "B" 1903 34 "MET" "CB" "" "C" -8011 10013 1956 massC
+  ,     pdbAtom "B" 1904 34 "MET" "CG" "" "C" -8319 11265 1231 massC
+  ,     pdbAtom "B" 1905 34 "MET" "SD" "" "S" -7091 12418 1689 massS
+  ,     pdbAtom "B" 1906 34 "MET" "CE" "" "C" -5596 11496 1118 massC
+  ,     pdbAtom "B" 1907 35 "LEU" "N" "" "N" -7565 7194 683 massN
+  ,     pdbAtom "B" 1908 35 "LEU" "CA" "" "C" -7060 6339 -377 massC
+  ,     pdbAtom "B" 1909 35 "LEU" "C" "" "C" -8094 5256 -661 massC
+  ,     pdbAtom "B" 1910 35 "LEU" "O" "" "O" -8500 5081 -1803 massO
+  ,     pdbAtom "B" 1911 35 "LEU" "CB" "" "C" -5725 5707 23 massC
+  ,     pdbAtom "B" 1912 35 "LEU" "CG" "" "C" -4532 6663 26 massC
+  ,     pdbAtom "B" 1913 35 "LEU" "CD1" "" "C" -3457 6157 974 massC
+  ,     pdbAtom "B" 1914 35 "LEU" "CD2" "" "C" -3995 6821 -1386 massC
+  ,     pdbAtom "B" 1915 36 "ARG" "N" "" "N" -8546 4543 364 massN
+  ,     pdbAtom "B" 1916 36 "ARG" "CA" "" "C" -9551 3509 151 massC
+  ,     pdbAtom "B" 1917 36 "ARG" "C" "" "C" -10771 4045 -594 massC
+  ,     pdbAtom "B" 1918 36 "ARG" "O" "" "O" -11248 3428 -1534 massO
+  ,     pdbAtom "B" 1919 36 "ARG" "CB" "" "C" -9950 2865 1471 massC
+  ,     pdbAtom "B" 1920 36 "ARG" "CG" "" "C" -8889 1894 1948 massC
+  ,     pdbAtom "B" 1921 36 "ARG" "CD" "" "C" -9309 1142 3188 massC
+  ,     pdbAtom "B" 1922 36 "ARG" "NE" "" "N" -9185 1944 4398 massN
+  ,     pdbAtom "B" 1923 36 "ARG" "CZ" "" "C" -8033 2206 5011 massC
+  ,     pdbAtom "B" 1924 36 "ARG" "NH1" "" "N" -6887 1743 4530 massN
+  ,     pdbAtom "B" 1925 36 "ARG" "NH2" "" "N" -8027 2945 6109 massN
+  ,     pdbAtom "B" 1926 37 "ALA" "N" "" "N" -11213 5237 -248 massN
+  ,     pdbAtom "B" 1927 37 "ALA" "CA" "" "C" -12362 5810 -913 massC
+  ,     pdbAtom "B" 1928 37 "ALA" "C" "" "C" -12139 6238 -2376 massC
+  ,     pdbAtom "B" 1929 37 "ALA" "O" "" "O" -13004 6008 -3219 massO
+  ,     pdbAtom "B" 1930 37 "ALA" "CB" "" "C" -12906 6971 -102 massC
+  ,     pdbAtom "B" 1931 38 "ALA" "N" "" "N" -11007 6867 -2685 massN
+  ,     pdbAtom "B" 1932 38 "ALA" "CA" "" "C" -10726 7324 -4059 massC
+  ,     pdbAtom "B" 1933 38 "ALA" "C" "" "C" -10621 6214 -5111 massC
+  ,     pdbAtom "B" 1934 38 "ALA" "O" "" "O" -10937 6431 -6282 massO
+  ,     pdbAtom "B" 1935 38 "ALA" "CB" "" "C" -9471 8179 -4083 massC
+  ,     pdbAtom "B" 1936 39 "VAL" "N" "" "N" -10110 5057 -4695 massN
+  ,     pdbAtom "B" 1937 39 "VAL" "CA" "" "C" -9953 3894 -5562 massC
+  ,     pdbAtom "B" 1938 39 "VAL" "C" "" "C" -11343 3386 -5891 massC
+  ,     pdbAtom "B" 1939 39 "VAL" "O" "" "O" -11656 3111 -7049 massO
+  ,     pdbAtom "B" 1940 39 "VAL" "CB" "" "C" -9165 2774 -4855 massC
+  ,     pdbAtom "B" 1941 39 "VAL" "CG1" "" "C" -9307 1480 -5615 massC
+  ,     pdbAtom "B" 1942 39 "VAL" "CG2" "" "C" -7692 3156 -4740 massC
+  ,     pdbAtom "B" 1943 40 "LYS" "N" "" "N" -12165 3280 -4850 massN
+  ,     pdbAtom "B" 1944 40 "LYS" "CA" "" "C" -13553 2826 -4944 massC
+  ,     pdbAtom "B" 1945 40 "LYS" "C" "" "C" -14255 3598 -6057 massC
+  ,     pdbAtom "B" 1946 40 "LYS" "O" "" "O" -14612 3020 -7085 massO
+  ,     pdbAtom "B" 1947 40 "LYS" "CB" "" "C" -14246 3016 -3575 massC
+  ,     pdbAtom "B" 1948 40 "LYS" "CG" "" "C" -15790 3010 -3531 massC
+  ,     pdbAtom "B" 1949 40 "LYS" "CD" "" "C" -16382 4444 -3390 massC
+  ,     pdbAtom "B" 1950 40 "LYS" "CE" "" "C" -15990 5152 -2078 massC
+  ,     pdbAtom "B" 1951 40 "LYS" "NZ" "" "N" -16312 6618 -2063 massN
+  ,     pdbAtom "B" 1952 41 "SER" "N" "" "N" -14442 4900 -5864 massN
+  ,     pdbAtom "B" 1953 41 "SER" "CA" "" "C" -15073 5708 -6896 massC
+  ,     pdbAtom "B" 1954 41 "SER" "C" "" "C" -13968 6151 -7844 massC
+  ,     pdbAtom "B" 1955 41 "SER" "O" "" "O" -13354 7217 -7681 massO
+  ,     pdbAtom "B" 1956 41 "SER" "CB" "" "C" -15863 6896 -6313 massC
+  ,     pdbAtom "B" 1957 41 "SER" "OG" "" "O" -15141 7591 -5312 massO
+  ,     pdbAtom "B" 1958 42 "GLY" "N" "" "N" -13665 5252 -8775 massN
+  ,     pdbAtom "B" 1959 42 "GLY" "CA" "" "C" -12648 5493 -9771 massC
+  ,     pdbAtom "B" 1960 42 "GLY" "C" "" "C" -12627 6899 -10342 massC
+  ,     pdbAtom "B" 1961 42 "GLY" "O" "" "O" -13522 7326 -11072 massO
+  ,     pdbAtom "B" 1962 43 "SER" "N" "" "N" -11627 7647 -9908 massN
+  ,     pdbAtom "B" 1963 43 "SER" "CA" "" "C" -11382 8995 -10373 massC
+  ,     pdbAtom "B" 1964 43 "SER" "C" "" "C" -9971 8841 -10949 massC
+  ,     pdbAtom "B" 1965 43 "SER" "O" "" "O" -9360 7782 -10797 massO
+  ,     pdbAtom "B" 1966 43 "SER" "CB" "" "C" -11416 9975 -9190 massC
+  ,     pdbAtom "B" 1967 43 "SER" "OG" "" "O" -10834 9424 -8013 massO
+  ,     pdbAtom "B" 1968 44 "GLU" "N" "" "N" -9461 9845 -11648 massN
+  ,     pdbAtom "B" 1969 44 "GLU" "CA" "" "C" -8109 9755 -12206 massC
+  ,     pdbAtom "B" 1970 44 "GLU" "C" "" "C" -7133 9267 -11115 massC
+  ,     pdbAtom "B" 1971 44 "GLU" "O" "" "O" -6630 8145 -11180 massO
+  ,     pdbAtom "B" 1972 44 "GLU" "CB" "" "C" -7684 11130 -12750 massC
+  ,     pdbAtom "B" 1973 44 "GLU" "CG" "" "C" -6251 11224 -13283 massC
+  ,     pdbAtom "B" 1974 44 "GLU" "CD" "" "C" -6028 10449 -14574 massC
+  ,     pdbAtom "B" 1975 44 "GLU" "OE1" "" "O" -6901 10499 -15474 massO
+  ,     pdbAtom "B" 1976 44 "GLU" "OE2" "" "O" -4964 9798 -14688 massO
+  ,     pdbAtom "B" 1977 45 "LEU" "N" "" "N" -6956 10084 -10076 massN
+  ,     pdbAtom "B" 1978 45 "LEU" "CA" "" "C" -6074 9781 -8948 massC
+  ,     pdbAtom "B" 1979 45 "LEU" "C" "" "C" -6317 8405 -8325 massC
+  ,     pdbAtom "B" 1980 45 "LEU" "O" "" "O" -5384 7615 -8193 massO
+  ,     pdbAtom "B" 1981 45 "LEU" "CB" "" "C" -6208 10869 -7886 massC
+  ,     pdbAtom "B" 1982 45 "LEU" "CG" "" "C" -5492 12207 -8112 massC
+  ,     pdbAtom "B" 1983 45 "LEU" "CD1" "" "C" -4947 12311 -9522 massC
+  ,     pdbAtom "B" 1984 45 "LEU" "CD2" "" "C" -6423 13377 -7793 massC
+  ,     pdbAtom "B" 1985 46 "GLY" "N" "" "N" -7568 8113 -7973 massN
+  ,     pdbAtom "B" 1986 46 "GLY" "CA" "" "C" -7911 6829 -7381 massC
+  ,     pdbAtom "B" 1987 46 "GLY" "C" "" "C" -7534 5651 -8258 massC
+  ,     pdbAtom "B" 1988 46 "GLY" "O" "" "O" -7369 4521 -7770 massO
+  ,     pdbAtom "B" 1989 47 "LYS" "N" "" "N" -7469 5905 -9563 massN
+  ,     pdbAtom "B" 1990 47 "LYS" "CA" "" "C" -7080 4898 -10537 massC
+  ,     pdbAtom "B" 1991 47 "LYS" "C" "" "C" -5564 4800 -10461 massC
+  ,     pdbAtom "B" 1992 47 "LYS" "O" "" "O" -5003 3720 -10579 massO
+  ,     pdbAtom "B" 1993 47 "LYS" "CB" "" "C" -7506 5293 -11954 massC
+  ,     pdbAtom "B" 1994 47 "LYS" "CG" "" "C" -9007 5185 -12271 massC
+  ,     pdbAtom "B" 1995 47 "LYS" "CD" "" "C" -9456 3761 -12645 massC
+  ,     pdbAtom "B" 1996 47 "LYS" "CE" "" "C" -9798 2894 -11420 massC
+  ,     pdbAtom "B" 1997 47 "LYS" "NZ" "" "N" -10388 1565 -11797 massN
+  ,     pdbAtom "B" 1998 48 "GLN" "N" "" "N" -4892 5926 -10270 massN
+  ,     pdbAtom "B" 1999 48 "GLN" "CA" "" "C" -3447 5881 -10147 massC
+  ,     pdbAtom "B" 2000 48 "GLN" "C" "" "C" -3068 5193 -8836 massC
+  ,     pdbAtom "B" 2001 48 "GLN" "O" "" "O" -2136 4395 -8798 massO
+  ,     pdbAtom "B" 2002 48 "GLN" "CB" "" "C" -2849 7281 -10219 massC
+  ,     pdbAtom "B" 2003 48 "GLN" "CG" "" "C" -3182 7988 -11522 massC
+  ,     pdbAtom "B" 2004 48 "GLN" "CD" "" "C" -2276 9169 -11810 massC
+  ,     pdbAtom "B" 2005 48 "GLN" "OE1" "" "O" -1261 9364 -11145 massO
+  ,     pdbAtom "B" 2006 48 "GLN" "NE2" "" "N" -2622 9946 -12831 massN
+  ,     pdbAtom "B" 2007 49 "ALA" "N" "" "N" -3835 5449 -7783 massN
+  ,     pdbAtom "B" 2008 49 "ALA" "CA" "" "C" -3586 4861 -6467 massC
+  ,     pdbAtom "B" 2009 49 "ALA" "C" "" "C" -3800 3363 -6466 massC
+  ,     pdbAtom "B" 2010 49 "ALA" "O" "" "O" -2941 2614 -6010 massO
+  ,     pdbAtom "B" 2011 49 "ALA" "CB" "" "C" -4478 5504 -5423 massC
+  ,     pdbAtom "B" 2012 50 "LYS" "N" "" "N" -4960 2943 -6963 massN
+  ,     pdbAtom "B" 2013 50 "LYS" "CA" "" "C" -5327 1534 -7056 massC
+  ,     pdbAtom "B" 2014 50 "LYS" "C" "" "C" -4260 687 -7758 massC
+  ,     pdbAtom "B" 2015 50 "LYS" "O" "" "O" -4031 -463 -7383 massO
+  ,     pdbAtom "B" 2016 50 "LYS" "CB" "" "C" -6643 1404 -7811 massC
+  ,     pdbAtom "B" 2017 50 "LYS" "CG" "" "C" -6999 -13 -8182 massC
+  ,     pdbAtom "B" 2018 50 "LYS" "CD" "" "C" -8304 -66 -8960 massC
+  ,     pdbAtom "B" 2019 50 "LYS" "CE" "" "C" -8658 -1495 -9412 massC
+  ,     pdbAtom "B" 2020 50 "LYS" "NZ" "" "N" -8020 -1934 -10694 massN
+  ,     pdbAtom "B" 2021 51 "ASP" "N" "" "N" -3635 1245 -8793 massN
+  ,     pdbAtom "B" 2022 51 "ASP" "CA" "" "C" -2587 555 -9559 massC
+  ,     pdbAtom "B" 2023 51 "ASP" "C" "" "C" -1335 303 -8746 massC
+  ,     pdbAtom "B" 2024 51 "ASP" "O" "" "O" -758 -783 -8786 massO
+  ,     pdbAtom "B" 2025 51 "ASP" "CB" "" "C" -2190 1373 -10791 massC
+  ,     pdbAtom "B" 2026 51 "ASP" "CG" "" "C" -2885 912 -12057 massC
+  ,     pdbAtom "B" 2027 51 "ASP" "OD1" "" "O" -3272 -279 -12133 massO
+  ,     pdbAtom "B" 2028 51 "ASP" "OD2" "" "O" -3021 1743 -12984 massO
+  ,     pdbAtom "B" 2029 52 "ILE" "N" "" "N" -876 1348 -8072 massN
+  ,     pdbAtom "B" 2030 52 "ILE" "CA" "" "C" 305 1281 -7234 massC
+  ,     pdbAtom "B" 2031 52 "ILE" "C" "" "C" 116 243 -6133 massC
+  ,     pdbAtom "B" 2032 52 "ILE" "O" "" "O" 934 -645 -5970 massO
+  ,     pdbAtom "B" 2033 52 "ILE" "CB" "" "C" 594 2669 -6663 massC
+  ,     pdbAtom "B" 2034 52 "ILE" "CG1" "" "C" 1294 3511 -7730 massC
+  ,     pdbAtom "B" 2035 52 "ILE" "CG2" "" "C" 1406 2573 -5410 massC
+  ,     pdbAtom "B" 2036 52 "ILE" "CD1" "" "C" 1619 4910 -7286 massC
+  ,     pdbAtom "B" 2037 53 "MET" "N" "" "N" -1008 327 -5438 massN
+  ,     pdbAtom "B" 2038 53 "MET" "CA" "" "C" -1344 -594 -4363 massC
+  ,     pdbAtom "B" 2039 53 "MET" "C" "" "C" -1467 -2036 -4839 massC
+  ,     pdbAtom "B" 2040 53 "MET" "O" "" "O" -1115 -2986 -4130 massO
+  ,     pdbAtom "B" 2041 53 "MET" "CB" "" "C" -2664 -160 -3718 massC
+  ,     pdbAtom "B" 2042 53 "MET" "CG" "" "C" -2631 1247 -3122 massC
+  ,     pdbAtom "B" 2043 53 "MET" "SD" "" "S" -4043 1557 -2039 massS
+  ,     pdbAtom "B" 2044 53 "MET" "CE" "" "C" -4386 -126 -1411 massC
+  ,     pdbAtom "B" 2045 54 "ASP" "N" "" "N" -2042 -2206 -6018 massN
+  ,     pdbAtom "B" 2046 54 "ASP" "CA" "" "C" -2188 -3533 -6580 massC
+  ,     pdbAtom "B" 2047 54 "ASP" "C" "" "C" -820 -4083 -6975 massC
+  ,     pdbAtom "B" 2048 54 "ASP" "O" "" "O" -621 -5291 -6981 massO
+  ,     pdbAtom "B" 2049 54 "ASP" "CB" "" "C" -3143 -3516 -7775 massC
+  ,     pdbAtom "B" 2050 54 "ASP" "CG" "" "C" -4571 -3890 -7386 massC
+  ,     pdbAtom "B" 2051 54 "ASP" "OD1" "" "O" -4768 -5019 -6872 massO
+  ,     pdbAtom "B" 2052 54 "ASP" "OD2" "" "O" -5490 -3063 -7592 massO
+  ,     pdbAtom "B" 2053 55 "ALA" "N" "" "N" 128 -3202 -7293 massN
+  ,     pdbAtom "B" 2054 55 "ALA" "CA" "" "C" 1483 -3621 -7666 massC
+  ,     pdbAtom "B" 2055 55 "ALA" "C" "" "C" 2376 -3784 -6437 massC
+  ,     pdbAtom "B" 2056 55 "ALA" "O" "" "O" 3583 -4008 -6571 massO
+  ,     pdbAtom "B" 2057 55 "ALA" "CB" "" "C" 2092 -2610 -8596 massC
+  ,     pdbAtom "B" 2058 56 "GLY" "N" "" "N" 1798 -3593 -5248 massN
+  ,     pdbAtom "B" 2059 56 "GLY" "CA" "" "C" 2546 -3722 -4008 massC
+  ,     pdbAtom "B" 2060 56 "GLY" "C" "" "C" 3564 -2631 -3761 massC
+  ,     pdbAtom "B" 2061 56 "GLY" "O" "" "O" 4499 -2813 -2973 massO
+  ,     pdbAtom "B" 2062 57 "LYS" "N" "" "N" 3379 -1501 -4436 massN
+  ,     pdbAtom "B" 2063 57 "LYS" "CA" "" "C" 4262 -341 -4318 massC
+  ,     pdbAtom "B" 2064 57 "LYS" "C" "" "C" 3633 654 -3347 massC
+  ,     pdbAtom "B" 2065 57 "LYS" "O" "" "O" 2416 653 -3132 massO
+  ,     pdbAtom "B" 2066 57 "LYS" "CB" "" "C" 4412 365 -5665 massC
+  ,     pdbAtom "B" 2067 57 "LYS" "CG" "" "C" 5067 -422 -6768 massC
+  ,     pdbAtom "B" 2068 57 "LYS" "CD" "" "C" 4753 232 -8101 massC
+  ,     pdbAtom "B" 2069 57 "LYS" "CE" "" "C" 5128 -661 -9275 massC
+  ,     pdbAtom "B" 2070 57 "LYS" "NZ" "" "N" 4610 -127 -10580 massN
+  ,     pdbAtom "B" 2071 58 "LEU" "N" "" "N" 4452 1548 -2816 massN
+  ,     pdbAtom "B" 2072 58 "LEU" "CA" "" "C" 3975 2548 -1883 massC
+  ,     pdbAtom "B" 2073 58 "LEU" "C" "" "C" 3458 3731 -2676 massC
+  ,     pdbAtom "B" 2074 58 "LEU" "O" "" "O" 4012 4079 -3724 massO
+  ,     pdbAtom "B" 2075 58 "LEU" "CB" "" "C" 5112 2963 -949 massC
+  ,     pdbAtom "B" 2076 58 "LEU" "CG" "" "C" 4809 3919 204 massC
+  ,     pdbAtom "B" 2077 58 "LEU" "CD1" "" "C" 5637 3496 1395 massC
+  ,     pdbAtom "B" 2078 58 "LEU" "CD2" "" "C" 5117 5373 -176 massC
+  ,     pdbAtom "B" 2079 59 "VAL" "N" "" "N" 2393 4347 -2184 massN
+  ,     pdbAtom "B" 2080 59 "VAL" "CA" "" "C" 1834 5484 -2886 massC
+  ,     pdbAtom "B" 2081 59 "VAL" "C" "" "C" 2748 6683 -2735 massC
+  ,     pdbAtom "B" 2082 59 "VAL" "O" "" "O" 3202 7013 -1643 massO
+  ,     pdbAtom "B" 2083 59 "VAL" "CB" "" "C" 416 5837 -2416 massC
+  ,     pdbAtom "B" 2084 59 "VAL" "CG1" "" "C" -266 6725 -3463 massC
+  ,     pdbAtom "B" 2085 59 "VAL" "CG2" "" "C" -391 4563 -2194 massC
+  ,     pdbAtom "B" 2238 79 "ASN" "N" "" "N" -16219 24317 6362 massN
+  ,     pdbAtom "B" 2239 79 "ASN" "CA" "" "C" -15882 24847 7694 massC
+  ,     pdbAtom "B" 2240 79 "ASN" "C" "" "C" -14448 24521 8088 massC
+  ,     pdbAtom "B" 2241 79 "ASN" "O" "" "O" -13927 25035 9076 massO
+  ,     pdbAtom "B" 2242 79 "ASN" "CB" "" "C" -16808 24272 8767 massC
+  ,     pdbAtom "B" 2243 79 "ASN" "CG" "" "C" -18212 24814 8685 massC
+  ,     pdbAtom "B" 2244 79 "ASN" "OD1" "" "O" -18437 25923 8211 massO
+  ,     pdbAtom "B" 2245 79 "ASN" "ND2" "" "N" -19167 24043 9176 massN
+  ,     pdbAtom "B" 2246 80 "GLY" "N" "" "N" -13842 23598 7357 massN
+  ,     pdbAtom "B" 2247 80 "GLY" "CA" "" "C" -12481 23217 7645 massC
+  ,     pdbAtom "B" 2248 80 "GLY" "C" "" "C" -12362 21714 7647 massC
+  ,     pdbAtom "B" 2249 80 "GLY" "O" "" "O" -13183 21026 7057 massO
+  ,     pdbAtom "B" 2250 81 "PHE" "N" "" "N" -11378 21198 8369 massN
+  ,     pdbAtom "B" 2251 81 "PHE" "CA" "" "C" -11155 19758 8429 massC
+  ,     pdbAtom "B" 2252 81 "PHE" "C" "" "C" -10206 19372 9569 massC
+  ,     pdbAtom "B" 2253 81 "PHE" "O" "" "O" -9482 20214 10098 massO
+  ,     pdbAtom "B" 2254 81 "PHE" "CB" "" "C" -10567 19302 7110 massC
+  ,     pdbAtom "B" 2255 81 "PHE" "CG" "" "C" -9316 20041 6710 massC
+  ,     pdbAtom "B" 2256 81 "PHE" "CD1" "" "C" -8079 19689 7250 massC
+  ,     pdbAtom "B" 2257 81 "PHE" "CD2" "" "C" -9375 21074 5784 massC
+  ,     pdbAtom "B" 2258 81 "PHE" "CE1" "" "C" -6938 20351 6878 massC
+  ,     pdbAtom "B" 2259 81 "PHE" "CE2" "" "C" -8236 21743 5400 massC
+  ,     pdbAtom "B" 2260 81 "PHE" "CZ" "" "C" -7012 21387 5947 massC
+  ,     pdbAtom "B" 2261 82 "LEU" "N" "" "N" -10231 18108 9965 massN
+  ,     pdbAtom "B" 2262 82 "LEU" "CA" "" "C" -9339 17646 11008 massC
+  ,     pdbAtom "B" 2263 82 "LEU" "C" "" "C" -8566 16532 10336 massC
+  ,     pdbAtom "B" 2264 82 "LEU" "O" "" "O" -9111 15475 10063 massO
+  ,     pdbAtom "B" 2265 82 "LEU" "CB" "" "C" -10113 17133 12224 massC
+  ,     pdbAtom "B" 2266 82 "LEU" "CG" "" "C" -9366 16307 13277 massC
+  ,     pdbAtom "B" 2267 82 "LEU" "CD1" "" "C" -8508 17194 14123 massC
+  ,     pdbAtom "B" 2268 82 "LEU" "CD2" "" "C" -10373 15558 14158 massC
+  ,     pdbAtom "B" 2269 83 "LEU" "N" "" "N" -7326 16840 9965 massN
+  ,     pdbAtom "B" 2270 83 "LEU" "CA" "" "C" -6422 15905 9306 massC
+  ,     pdbAtom "B" 2271 83 "LEU" "C" "" "C" -5675 15151 10390 massC
+  ,     pdbAtom "B" 2272 83 "LEU" "O" "" "O" -4863 15689 11147 massO
+  ,     pdbAtom "B" 2273 83 "LEU" "CB" "" "C" -5463 16644 8357 massC
+  ,     pdbAtom "B" 2274 83 "LEU" "CG" "" "C" -4590 15919 7327 massC
+  ,     pdbAtom "B" 2275 83 "LEU" "CD1" "" "C" -5338 14900 6502 massC
+  ,     pdbAtom "B" 2276 83 "LEU" "CD2" "" "C" -3961 16966 6435 massC
+  ,     pdbAtom "B" 2277 84 "ASP" "N" "" "N" -6016 13885 10463 massN
+  ,     pdbAtom "B" 2278 84 "ASP" "CA" "" "C" -5505 12951 11428 massC
+  ,     pdbAtom "B" 2279 84 "ASP" "C" "" "C" -4211 12283 10984 massC
+  ,     pdbAtom "B" 2280 84 "ASP" "O" "" "O" -4229 11499 10038 massO
+  ,     pdbAtom "B" 2281 84 "ASP" "CB" "" "C" -6616 11904 11639 massC
+  ,     pdbAtom "B" 2282 84 "ASP" "CG" "" "C" -6240 10807 12601 massC
+  ,     pdbAtom "B" 2283 84 "ASP" "OD1" "" "O" -6040 11105 13795 massO
+  ,     pdbAtom "B" 2284 84 "ASP" "OD2" "" "O" -6178 9636 12156 massO
+  ,     pdbAtom "B" 2285 85 "GLY" "N" "" "N" -3088 12612 11629 massN
+  ,     pdbAtom "B" 2286 85 "GLY" "CA" "" "C" -1824 11955 11308 massC
+  ,     pdbAtom "B" 2287 85 "GLY" "C" "" "C" -1203 12073 9924 massC
+  ,     pdbAtom "B" 2288 85 "GLY" "O" "" "O" -704 11082 9351 massO
+  ,     pdbAtom "B" 2425 104 "ASP" "N" "" "N" -4533 25959 10562 massN
+  ,     pdbAtom "B" 2426 104 "ASP" "CA" "" "C" -4533 26954 11607 massC
+  ,     pdbAtom "B" 2427 104 "ASP" "C" "" "C" -3818 26471 12844 massC
+  ,     pdbAtom "B" 2428 104 "ASP" "O" "" "O" -3246 27266 13585 massO
+  ,     pdbAtom "B" 2429 104 "ASP" "CB" "" "C" -5984 27289 11977 massC
+  ,     pdbAtom "B" 2430 104 "ASP" "CG" "" "C" -6798 27719 10778 massC
+  ,     pdbAtom "B" 2431 104 "ASP" "OD1" "" "O" -6460 28771 10203 massO
+  ,     pdbAtom "B" 2432 104 "ASP" "OD2" "" "O" -7747 26997 10393 massO
+  ,     pdbAtom "B" 2433 105 "TYR" "N" "" "N" -3903 25176 13104 massN
+  ,     pdbAtom "B" 2434 105 "TYR" "CA" "" "C" -3305 24624 14295 massC
+  ,     pdbAtom "B" 2435 105 "TYR" "C" "" "C" -2706 23264 14036 massC
+  ,     pdbAtom "B" 2436 105 "TYR" "O" "" "O" -3231 22471 13262 massO
+  ,     pdbAtom "B" 2437 105 "TYR" "CB" "" "C" -4361 24428 15383 massC
+  ,     pdbAtom "B" 2438 105 "TYR" "CG" "" "C" -4929 25689 15950 massC
+  ,     pdbAtom "B" 2439 105 "TYR" "CD1" "" "C" -6006 26329 15327 massC
+  ,     pdbAtom "B" 2440 105 "TYR" "CD2" "" "C" -4397 26259 17097 massC
+  ,     pdbAtom "B" 2441 105 "TYR" "CE1" "" "C" -6535 27519 15830 massC
+  ,     pdbAtom "B" 2442 105 "TYR" "CE2" "" "C" -4921 27449 17613 massC
+  ,     pdbAtom "B" 2443 105 "TYR" "CZ" "" "C" -5989 28075 16971 massC
+  ,     pdbAtom "B" 2444 105 "TYR" "OH" "" "O" -6501 29271 17446 massO
+  ,     pdbAtom "B" 2445 106 "VAL" "N" "" "N" -1599 23001 14703 massN
+  ,     pdbAtom "B" 2446 106 "VAL" "CA" "" "C" -955 21720 14623 massC
+  ,     pdbAtom "B" 2447 106 "VAL" "C" "" "C" -931 21322 16079 massC
+  ,     pdbAtom "B" 2448 106 "VAL" "O" "" "O" -348 22015 16908 massO
+  ,     pdbAtom "B" 2449 106 "VAL" "CB" "" "C" 439 21833 14083 massC
+  ,     pdbAtom "B" 2450 106 "VAL" "CG1" "" "C" 1051 20458 14054 massC
+  ,     pdbAtom "B" 2451 106 "VAL" "CG2" "" "C" 388 22416 12686 massC
+  ,     pdbAtom "B" 2452 107 "LEU" "N" "" "N" -1668 20277 16411 massN
+  ,     pdbAtom "B" 2453 107 "LEU" "CA" "" "C" -1756 19835 17791 massC
+  ,     pdbAtom "B" 2454 107 "LEU" "C" "" "C" -985 18561 18012 massC
+  ,     pdbAtom "B" 2455 107 "LEU" "O" "" "O" -1258 17550 17377 massO
+  ,     pdbAtom "B" 2456 107 "LEU" "CB" "" "C" -3231 19606 18206 massC
+  ,     pdbAtom "B" 2457 107 "LEU" "CG" "" "C" -4253 20755 18166 massC
+  ,     pdbAtom "B" 2458 107 "LEU" "CD1" "" "C" -5624 20256 18613 massC
+  ,     pdbAtom "B" 2459 107 "LEU" "CD2" "" "C" -3795 21912 19040 massC
+  ,     pdbAtom "B" 2460 108 "GLU" "N" "" "N" 3 18617 18889 massN
+  ,     pdbAtom "B" 2461 108 "GLU" "CA" "" "C" 747 17416 19214 massC
+  ,     pdbAtom "B" 2462 108 "GLU" "C" "" "C" 205 16871 20529 massC
+  ,     pdbAtom "B" 2463 108 "GLU" "O" "" "O" 300 17519 21563 massO
+  ,     pdbAtom "B" 2464 108 "GLU" "CB" "" "C" 2241 17671 19341 massC
+  ,     pdbAtom "B" 2465 108 "GLU" "CG" "" "C" 2949 16372 19640 massC
+  ,     pdbAtom "B" 2466 108 "GLU" "CD" "" "C" 4404 16531 19860 massC
+  ,     pdbAtom "B" 2467 108 "GLU" "OE1" "" "O" 4839 17679 20080 massO
+  ,     pdbAtom "B" 2468 108 "GLU" "OE2" "" "O" 5109 15497 19812 massO
+  ,     pdbAtom "B" 2469 109 "PHE" "N" "" "N" -377 15689 20465 massN
+  ,     pdbAtom "B" 2470 109 "PHE" "CA" "" "C" -964 15038 21619 massC
+  ,     pdbAtom "B" 2471 109 "PHE" "C" "" "C" 120 14208 22299 massC
+  ,     pdbAtom "B" 2472 109 "PHE" "O" "" "O" 448 13113 21870 massO
+  ,     pdbAtom "B" 2473 109 "PHE" "CB" "" "C" -2096 14165 21117 massC
+  ,     pdbAtom "B" 2474 109 "PHE" "CG" "" "C" -3056 13762 22177 massC
+  ,     pdbAtom "B" 2475 109 "PHE" "CD1" "" "C" -4168 14556 22454 massC
+  ,     pdbAtom "B" 2476 109 "PHE" "CD2" "" "C" -2879 12557 22870 massC
+  ,     pdbAtom "B" 2477 109 "PHE" "CE1" "" "C" -5088 14158 23388 massC
+  ,     pdbAtom "B" 2478 109 "PHE" "CE2" "" "C" -3802 12137 23820 massC
+  ,     pdbAtom "B" 2479 109 "PHE" "CZ" "" "C" -4913 12937 24081 massC
+  ,     pdbAtom "B" 2480 110 "ASP" "N" "" "N" 604 14683 23424 massN
+  ,     pdbAtom "B" 2481 110 "ASP" "CA" "" "C" 1717 14033 24095 massC
+  ,     pdbAtom "B" 2482 110 "ASP" "C" "" "C" 1506 13086 25282 massC
+  ,     pdbAtom "B" 2483 110 "ASP" "O" "" "O" 1074 13515 26342 massO
+  ,     pdbAtom "B" 2484 110 "ASP" "CB" "" "C" 2691 15147 24485 massC
+  ,     pdbAtom "B" 2485 110 "ASP" "CG" "" "C" 4039 14638 24927 massC
+  ,     pdbAtom "B" 2486 110 "ASP" "OD1" "" "O" 4559 13680 24313 massO
+  ,     pdbAtom "B" 2487 110 "ASP" "OD2" "" "O" 4587 15230 25880 massO
+  ,     pdbAtom "B" 2576 122 "GLY" "N" "" "N" -253 -4295 29115 massN
+  ,     pdbAtom "B" 2577 122 "GLY" "CA" "" "C" -1175 -4826 30102 massC
+  ,     pdbAtom "B" 2578 122 "GLY" "C" "" "C" -2566 -4903 29497 massC
+  ,     pdbAtom "B" 2579 122 "GLY" "O" "" "O" -3533 -4442 30091 massO
+  ,     pdbAtom "B" 2580 123 "ARG" "N" "" "N" -2668 -5511 28323 massN
+  ,     pdbAtom "B" 2581 123 "ARG" "CA" "" "C" -3929 -5634 27609 massC
+  ,     pdbAtom "B" 2582 123 "ARG" "C" "" "C" -4206 -7092 27222 massC
+  ,     pdbAtom "B" 2583 123 "ARG" "O" "" "O" -3387 -7745 26565 massO
+  ,     pdbAtom "B" 2584 123 "ARG" "CB" "" "C" -3888 -4725 26375 massC
+  ,     pdbAtom "B" 2585 123 "ARG" "CG" "" "C" -4998 -4939 25391 massC
+  ,     pdbAtom "B" 2586 123 "ARG" "CD" "" "C" -5348 -3655 24674 massC
+  ,     pdbAtom "B" 2587 123 "ARG" "NE" "" "N" -4411 -3305 23615 massN
+  ,     pdbAtom "B" 2588 123 "ARG" "CZ" "" "C" -4344 -2100 23053 massC
+  ,     pdbAtom "B" 2589 123 "ARG" "NH1" "" "N" -5153 -1127 23467 massN
+  ,     pdbAtom "B" 2590 123 "ARG" "NH2" "" "N" -3458 -1863 22089 massN
+  ,     pdbAtom "B" 2591 124 "ARG" "N" "" "N" -5349 -7603 27674 massN
+  ,     pdbAtom "B" 2592 124 "ARG" "CA" "" "C" -5765 -8979 27404 massC
+  ,     pdbAtom "B" 2593 124 "ARG" "C" "" "C" -6963 -8961 26454 massC
+  ,     pdbAtom "B" 2594 124 "ARG" "O" "" "O" -7742 -7998 26427 massO
+  ,     pdbAtom "B" 2595 124 "ARG" "CB" "" "C" -6164 -9694 28706 massC
+  ,     pdbAtom "B" 2596 124 "ARG" "CG" "" "C" -5092 -9761 29782 massC
+  ,     pdbAtom "B" 2597 124 "ARG" "CD" "" "C" -4065 -10839 29507 massC
+  ,     pdbAtom "B" 2598 124 "ARG" "NE" "" "N" -2971 -10843 30482 massN
+  ,     pdbAtom "B" 2599 124 "ARG" "CZ" "" "C" -2000 -9928 30544 massC
+  ,     pdbAtom "B" 2600 124 "ARG" "NH1" "" "N" -1982 -8895 29708 massN
+  ,     pdbAtom "B" 2601 124 "ARG" "NH2" "" "N" -1048 -10033 31466 massN
+  ,     pdbAtom "B" 2602 125 "VAL" "N" "" "N" -7132 -10044 25706 massN
+  ,     pdbAtom "B" 2603 125 "VAL" "CA" "" "C" -8225 -10138 24756 massC
+  ,     pdbAtom "B" 2604 125 "VAL" "C" "" "C" -8790 -11527 24651 massC
+  ,     pdbAtom "B" 2605 125 "VAL" "O" "" "O" -8076 -12508 24789 massO
+  ,     pdbAtom "B" 2606 125 "VAL" "CB" "" "C" -7805 -9724 23330 massC
+  ,     pdbAtom "B" 2607 125 "VAL" "CG1" "" "C" -7956 -8230 23146 massC
+  ,     pdbAtom "B" 2608 125 "VAL" "CG2" "" "C" -6372 -10178 23044 massC
+  ,     pdbAtom "B" 2609 126 "HIS" "N" "" "N" -10097 -11595 24429 massN
+  ,     pdbAtom "B" 2610 126 "HIS" "CA" "" "C" -10768 -12864 24250 massC
+  ,     pdbAtom "B" 2611 126 "HIS" "C" "" "C" -10626 -13139 22770 massC
+  ,     pdbAtom "B" 2612 126 "HIS" "O" "" "O" -11407 -12635 21957 massO
+  ,     pdbAtom "B" 2613 126 "HIS" "CB" "" "C" -12249 -12789 24601 massC
+  ,     pdbAtom "B" 2614 126 "HIS" "CG" "" "C" -12970 -14064 24314 massC
+  ,     pdbAtom "B" 2615 126 "HIS" "ND1" "" "N" -12757 -15214 25043 massN
+  ,     pdbAtom "B" 2616 126 "HIS" "CD2" "" "C" -13817 -14405 23314 massC
+  ,     pdbAtom "B" 2617 126 "HIS" "CE1" "" "C" -13435 -16208 24501 massC
+  ,     pdbAtom "B" 2618 126 "HIS" "NE2" "" "N" -14090 -15743 23452 massN
+  ,     pdbAtom "B" 2619 127 "ALA" "N" "" "N" -9640 -13961 22440 massN
+  ,     pdbAtom "B" 2620 127 "ALA" "CA" "" "C" -9332 -14299 21060 massC
+  ,     pdbAtom "B" 2621 127 "ALA" "C" "" "C" -10516 -14492 20099 massC
+  ,     pdbAtom "B" 2622 127 "ALA" "O" "" "O" -10623 -13772 19100 massO
+  ,     pdbAtom "B" 2623 127 "ALA" "CB" "" "C" -8380 -15494 21015 massC
+  ,     pdbAtom "B" 2624 128 "PRO" "N" "" "N" -11453 -15410 20418 massN
+  ,     pdbAtom "B" 2625 128 "PRO" "CA" "" "C" -12612 -15658 19545 massC
+  ,     pdbAtom "B" 2626 128 "PRO" "C" "" "C" -13568 -14493 19223 massC
+  ,     pdbAtom "B" 2627 128 "PRO" "O" "" "O" -14286 -14544 18222 massO
+  ,     pdbAtom "B" 2628 128 "PRO" "CB" "" "C" -13338 -16800 20267 massC
+  ,     pdbAtom "B" 2629 128 "PRO" "CG" "" "C" -12220 -17538 20940 massC
+  ,     pdbAtom "B" 2630 128 "PRO" "CD" "" "C" -11420 -16396 21516 massC
+  ,     pdbAtom "B" 2631 129 "SER" "N" "" "N" -13580 -13449 20046 massN
+  ,     pdbAtom "B" 2632 129 "SER" "CA" "" "C" -14481 -12318 19815 massC
+  ,     pdbAtom "B" 2633 129 "SER" "C" "" "C" -13752 -10988 19705 massC
+  ,     pdbAtom "B" 2634 129 "SER" "O" "" "O" -14355 -9965 19348 massO
+  ,     pdbAtom "B" 2635 129 "SER" "CB" "" "C" -15476 -12222 20963 massC
+  ,     pdbAtom "B" 2636 129 "SER" "OG" "" "O" -14784 -12090 22196 massO
+  ,     pdbAtom "B" 2637 130 "GLY" "N" "" "N" -12472 -11006 20066 massN
+  ,     pdbAtom "B" 2638 130 "GLY" "CA" "" "C" -11669 -9803 20036 massC
+  ,     pdbAtom "B" 2639 130 "GLY" "C" "" "C" -12024 -8860 21175 massC
+  ,     pdbAtom "B" 2640 130 "GLY" "O" "" "O" -11605 -7699 21160 massO
+  ,     pdbAtom "B" 2641 131 "ARG" "N" "" "N" -12786 -9343 22162 massN
+  ,     pdbAtom "B" 2642 131 "ARG" "CA" "" "C" -13185 -8518 23311 massC
+  ,     pdbAtom "B" 2643 131 "ARG" "C" "" "C" -11974 -8143 24166 massC
+  ,     pdbAtom "B" 2644 131 "ARG" "O" "" "O" -11232 -9005 24639 massO
+  ,     pdbAtom "B" 2645 131 "ARG" "CB" "" "C" -14262 -9213 24155 massC
+  ,     pdbAtom "B" 2646 131 "ARG" "CG" "" "C" -15670 -9136 23555 massC
+  ,     pdbAtom "B" 2647 131 "ARG" "CD" "" "C" -16721 -9788 24456 massC
+  ,     pdbAtom "B" 2648 131 "ARG" "NE" "" "N" -16543 -11237 24598 massN
+  ,     pdbAtom "B" 2649 131 "ARG" "CZ" "" "C" -17201 -12153 23887 massC
+  ,     pdbAtom "B" 2650 131 "ARG" "NH1" "" "N" -18062 -11783 22948 massN
+  ,     pdbAtom "B" 2651 131 "ARG" "NH2" "" "N" -16974 -13444 24090 massN
+  ,     pdbAtom "B" 2652 132 "VAL" "N" "" "N" -11796 -6846 24366 massN
+  ,     pdbAtom "B" 2653 132 "VAL" "CA" "" "C" -10664 -6319 25103 massC
+  ,     pdbAtom "B" 2654 132 "VAL" "C" "" "C" -10863 -6139 26606 massC
+  ,     pdbAtom "B" 2655 132 "VAL" "O" "" "O" -11958 -5800 27068 massO
+  ,     pdbAtom "B" 2656 132 "VAL" "CB" "" "C" -10211 -4976 24464 massC
+  ,     pdbAtom "B" 2657 132 "VAL" "CG1" "" "C" -9101 -4325 25282 massC
+  ,     pdbAtom "B" 2658 132 "VAL" "CG2" "" "C" -9744 -5206 23023 massC
+  ,     pdbAtom "B" 2659 133 "TYR" "N" "" "N" -9774 -6346 27344 massN
+  ,     pdbAtom "B" 2660 133 "TYR" "CA" "" "C" -9712 -6204 28795 massC
+  ,     pdbAtom "B" 2661 133 "TYR" "C" "" "C" -8345 -5589 29105 massC
+  ,     pdbAtom "B" 2662 133 "TYR" "O" "" "O" -7392 -5788 28352 massO
+  ,     pdbAtom "B" 2663 133 "TYR" "CB" "" "C" -9788 -7581 29484 massC
+  ,     pdbAtom "B" 2664 133 "TYR" "CG" "" "C" -11111 -8279 29341 massC
+  ,     pdbAtom "B" 2665 133 "TYR" "CD1" "" "C" -12260 -7725 29893 massC
+  ,     pdbAtom "B" 2666 133 "TYR" "CD2" "" "C" -11234 -9439 28588 massC
+  ,     pdbAtom "B" 2667 133 "TYR" "CE1" "" "C" -13511 -8296 29690 massC
+  ,     pdbAtom "B" 2668 133 "TYR" "CE2" "" "C" -12483 -10028 28374 massC
+  ,     pdbAtom "B" 2669 133 "TYR" "CZ" "" "C" -13626 -9445 28925 massC
+  ,     pdbAtom "B" 2670 133 "TYR" "OH" "" "O" -14893 -9954 28678 massO
+  ,     pdbAtom "B" 2671 134 "HIS" "N" "" "N" -8253 -4822 30187 massN
+  ,     pdbAtom "B" 2672 134 "HIS" "CA" "" "C" -6982 -4239 30595 massC
+  ,     pdbAtom "B" 2673 134 "HIS" "C" "" "C" -6734 -4382 32097 massC
+  ,     pdbAtom "B" 2674 134 "HIS" "O" "" "O" -7240 -3596 32906 massO
+  ,     pdbAtom "B" 2675 134 "HIS" "CB" "" "C" -6834 -2772 30184 massC
+  ,     pdbAtom "B" 2676 134 "HIS" "CG" "" "C" -5433 -2271 30337 massC
+  ,     pdbAtom "B" 2677 134 "HIS" "ND1" "" "N" -4798 -2210 31560 massN
+  ,     pdbAtom "B" 2678 134 "HIS" "CD2" "" "C" -4495 -1946 29416 massC
+  ,     pdbAtom "B" 2679 134 "HIS" "CE1" "" "C" -3531 -1884 31384 massC
+  ,     pdbAtom "B" 2680 134 "HIS" "NE2" "" "N" -3321 -1718 30093 massN
+  ,     pdbAtom "B" 2681 135 "VAL" "N" "" "N" -5824 -5296 32424 massN
+  ,     pdbAtom "B" 2682 135 "VAL" "CA" "" "C" -5435 -5638 33800 massC
+  ,     pdbAtom "B" 2683 135 "VAL" "C" "" "C" -5466 -4554 34886 massC
+  ,     pdbAtom "B" 2684 135 "VAL" "O" "" "O" -5882 -4810 36014 massO
+  ,     pdbAtom "B" 2685 135 "VAL" "CB" "" "C" -4058 -6384 33838 massC
+  ,     pdbAtom "B" 2686 135 "VAL" "CG1" "" "C" -4161 -7696 33091 massC
+  ,     pdbAtom "B" 2687 135 "VAL" "CG2" "" "C" -2954 -5537 33246 massC
+  ,     pdbAtom "B" 2688 136 "LYS" "N" "" "N" -5010 -3355 34559 massN
+  ,     pdbAtom "B" 2689 136 "LYS" "CA" "" "C" -5013 -2290 35544 massC
+  ,     pdbAtom "B" 2690 136 "LYS" "C" "" "C" -6251 -1418 35406 massC
+  ,     pdbAtom "B" 2691 136 "LYS" "O" "" "O" -6789 -927 36397 massO
+  ,     pdbAtom "B" 2692 136 "LYS" "CB" "" "C" -3747 -1433 35412 massC
+  ,     pdbAtom "B" 2693 136 "LYS" "CG" "" "C" -2427 -2192 35578 massC
+  ,     pdbAtom "B" 2694 136 "LYS" "CD" "" "C" -1840 -2613 34237 massC
+  ,     pdbAtom "B" 2695 136 "LYS" "CE" "" "C" -521 -3364 34399 massC
+  ,     pdbAtom "B" 2696 136 "LYS" "NZ" "" "N" 111 -3672 33077 massN
+  ,     pdbAtom "B" 2697 137 "PHE" "N" "" "N" -6680 -1215 34166 massN
+  ,     pdbAtom "B" 2698 137 "PHE" "CA" "" "C" -7832 -385 33894 massC
+  ,     pdbAtom "B" 2699 137 "PHE" "C" "" "C" -9052 -1246 34055 massC
+  ,     pdbAtom "B" 2700 137 "PHE" "O" "" "O" -9438 -1557 35166 massO
+  ,     pdbAtom "B" 2701 137 "PHE" "CB" "" "C" -7789 165 32473 massC
+  ,     pdbAtom "B" 2702 137 "PHE" "CG" "" "C" -6649 1094 32209 massC
+  ,     pdbAtom "B" 2703 137 "PHE" "CD1" "" "C" -5414 913 32834 massC
+  ,     pdbAtom "B" 2704 137 "PHE" "CD2" "" "C" -6804 2154 31313 massC
+  ,     pdbAtom "B" 2705 137 "PHE" "CE1" "" "C" -4351 1767 32577 massC
+  ,     pdbAtom "B" 2706 137 "PHE" "CE2" "" "C" -5748 3023 31042 massC
+  ,     pdbAtom "B" 2707 137 "PHE" "CZ" "" "C" -4516 2827 31676 massC
+  ,     pdbAtom "B" 2708 138 "ASN" "N" "" "N" -9608 -1680 32933 massN
+  ,     pdbAtom "B" 2709 138 "ASN" "CA" "" "C" -10812 -2503 32883 massC
+  ,     pdbAtom "B" 2710 138 "ASN" "C" "" "C" -10501 -3999 32961 massC
+  ,     pdbAtom "B" 2711 138 "ASN" "O" "" "O" -10472 -4699 31939 massO
+  ,     pdbAtom "B" 2712 138 "ASN" "CB" "" "C" -11575 -2201 31585 massC
+  ,     pdbAtom "B" 2713 138 "ASN" "CG" "" "C" -10683 -2294 30338 massC
+  ,     pdbAtom "B" 2714 138 "ASN" "OD1" "" "O" -9687 -1569 30215 massO
+  ,     pdbAtom "B" 2715 138 "ASN" "ND2" "" "N" -11029 -3194 29419 massN
+  ,     pdbAtom "B" 2716 139 "PRO" "N" "" "N" -10321 -4525 34172 massN
+  ,     pdbAtom "B" 2717 139 "PRO" "CA" "" "C" -10017 -5948 34258 massC
+  ,     pdbAtom "B" 2718 139 "PRO" "C" "" "C" -11247 -6801 33986 massC
+  ,     pdbAtom "B" 2719 139 "PRO" "O" "" "O" -12383 -6298 33971 massO
+  ,     pdbAtom "B" 2720 139 "PRO" "CB" "" "C" -9573 -6085 35699 massC
+  ,     pdbAtom "B" 2721 139 "PRO" "CG" "" "C" -10537 -5192 36394 massC
+  ,     pdbAtom "B" 2722 139 "PRO" "CD" "" "C" -10567 -3967 35512 massC
+  ,     pdbAtom "B" 2723 140 "PRO" "N" "" "N" -11037 -8087 33669 massN
+  ,     pdbAtom "B" 2724 140 "PRO" "CA" "" "C" -12222 -8903 33427 massC
+  ,     pdbAtom "B" 2725 140 "PRO" "C" "" "C" -12771 -9174 34824 massC
+  ,     pdbAtom "B" 2726 140 "PRO" "O" "" "O" -11993 -9313 35774 massO
+  ,     pdbAtom "B" 2727 140 "PRO" "CB" "" "C" -11643 -10154 32770 massC
+  ,     pdbAtom "B" 2728 140 "PRO" "CG" "" "C" -10293 -10269 33386 massC
+  ,     pdbAtom "B" 2729 140 "PRO" "CD" "" "C" -9799 -8850 33429 massC
+  ,     pdbAtom "B" 2730 141 "LYS" "N" "" "N" -14091 -9139 34983 massN
+  ,     pdbAtom "B" 2731 141 "LYS" "CA" "" "C" -14688 -9391 36293 massC
+  ,     pdbAtom "B" 2732 141 "LYS" "C" "" "C" -14061 -10658 36878 massC
+  ,     pdbAtom "B" 2733 141 "LYS" "O" "" "O" -13668 -10697 38044 massO
+  ,     pdbAtom "B" 2734 141 "LYS" "CB" "" "C" -16212 -9565 36188 massC
+  ,     pdbAtom "B" 2735 141 "LYS" "CG" "" "C" -17006 -8331 35728 massC
+  ,     pdbAtom "B" 2736 141 "LYS" "CD" "" "C" -18426 -8346 36330 massC
+  ,     pdbAtom "B" 2737 141 "LYS" "CE" "" "C" -19371 -7328 35687 massC
+  ,     pdbAtom "B" 2738 141 "LYS" "NZ" "" "N" -19838 -7755 34331 massN
+  ,     pdbAtom "B" 2739 142 "VAL" "N" "" "N" -13922 -11664 36019 massN
+  ,     pdbAtom "B" 2740 142 "VAL" "CA" "" "C" -13336 -12952 36378 massC
+  ,     pdbAtom "B" 2741 142 "VAL" "C" "" "C" -11871 -12904 35922 massC
+  ,     pdbAtom "B" 2742 142 "VAL" "O" "" "O" -11602 -12915 34717 massO
+  ,     pdbAtom "B" 2743 142 "VAL" "CB" "" "C" -14060 -14113 35638 massC
+  ,     pdbAtom "B" 2744 142 "VAL" "CG1" "" "C" -14181 -15329 36554 massC
+  ,     pdbAtom "B" 2745 142 "VAL" "CG2" "" "C" -15432 -13665 35120 massC
+  ,     pdbAtom "B" 2746 143 "GLU" "N" "" "N" -10940 -12858 36878 massN
+  ,     pdbAtom "B" 2747 143 "GLU" "CA" "" "C" -9499 -12765 36590 massC
+  ,     pdbAtom "B" 2748 143 "GLU" "C" "" "C" -8899 -13766 35585 massC
+  ,     pdbAtom "B" 2749 143 "GLU" "O" "" "O" -8846 -14973 35829 massO
+  ,     pdbAtom "B" 2750 143 "GLU" "CB" "" "C" -8684 -12760 37889 massC
+  ,     pdbAtom "B" 2751 143 "GLU" "CG" "" "C" -8871 -13994 38771 massC
+  ,     pdbAtom "B" 2752 143 "GLU" "CD" "" "C" -7823 -14103 39876 massC
+  ,     pdbAtom "B" 2753 143 "GLU" "OE1" "" "O" -7479 -13071 40498 massO
+  ,     pdbAtom "B" 2754 143 "GLU" "OE2" "" "O" -7343 -15231 40123 massO
+  ,     pdbAtom "B" 2755 144 "GLY" "N" "" "N" -8409 -13221 34470 massN
+  ,     pdbAtom "B" 2756 144 "GLY" "CA" "" "C" -7817 -14014 33404 massC
+  ,     pdbAtom "B" 2757 144 "GLY" "C" "" "C" -8868 -14690 32543 massC
+  ,     pdbAtom "B" 2758 144 "GLY" "O" "" "O" -8528 -15412 31607 massO
+  ,     pdbAtom "B" 2759 145 "LYS" "N" "" "N" -10137 -14367 32789 massN
+  ,     pdbAtom "B" 2760 145 "LYS" "CA" "" "C" -11251 -14991 32083 massC
+  ,     pdbAtom "B" 2761 145 "LYS" "C" "" "C" -12266 -14055 31451 massC
+  ,     pdbAtom "B" 2762 145 "LYS" "O" "" "O" -12566 -12975 31970 massO
+  ,     pdbAtom "B" 2763 145 "LYS" "CB" "" "C" -12019 -15901 33040 massC
+  ,     pdbAtom "B" 2764 145 "LYS" "CG" "" "C" -11159 -16720 33993 massC
+  ,     pdbAtom "B" 2765 145 "LYS" "CD" "" "C" -10792 -18057 33423 massC
+  ,     pdbAtom "B" 2766 145 "LYS" "CE" "" "C" -10148 -18904 34476 massC
+  ,     pdbAtom "B" 2767 145 "LYS" "NZ" "" "N" -10035 -20275 33945 massN
+  ,     pdbAtom "B" 2768 146 "ASP" "N" "" "N" -12843 -14539 30354 massN
+  ,     pdbAtom "B" 2769 146 "ASP" "CA" "" "C" -13870 -13828 29605 massC
+  ,     pdbAtom "B" 2770 146 "ASP" "C" "" "C" -15162 -13940 30418 massC
+  ,     pdbAtom "B" 2771 146 "ASP" "O" "" "O" -15769 -15000 30497 massO
+  ,     pdbAtom "B" 2772 146 "ASP" "CB" "" "C" -14046 -14465 28212 massC
+  ,     pdbAtom "B" 2773 146 "ASP" "CG" "" "C" -14933 -13640 27281 massC
+  ,     pdbAtom "B" 2774 146 "ASP" "OD1" "" "O" -14850 -12394 27285 massO
+  ,     pdbAtom "B" 2775 146 "ASP" "OD2" "" "O" -15711 -14242 26518 massO
+  ,     pdbAtom "B" 2776 147 "ASP" "N" "" "N" -15563 -12831 31018 massN
+  ,     pdbAtom "B" 2777 147 "ASP" "CA" "" "C" -16764 -12747 31842 massC
+  ,     pdbAtom "B" 2778 147 "ASP" "C" "" "C" -17962 -13477 31235 massC
+  ,     pdbAtom "B" 2779 147 "ASP" "O" "" "O" -18767 -14099 31935 massO
+  ,     pdbAtom "B" 2780 147 "ASP" "CB" "" "C" -17111 -11274 32039 massC
+  ,     pdbAtom "B" 2781 147 "ASP" "CG" "" "C" -15921 -10448 32468 massC
+  ,     pdbAtom "B" 2782 147 "ASP" "OD1" "" "O" -14844 -11022 32729 massO
+  ,     pdbAtom "B" 2783 147 "ASP" "OD2" "" "O" -16064 -9217 32553 massO
+  ,     pdbAtom "B" 2784 148 "VAL" "N" "" "N" -18081 -13355 29920 massN
+  ,     pdbAtom "B" 2785 148 "VAL" "CA" "" "C" -19159 -13987 29176 massC
+  ,     pdbAtom "B" 2786 148 "VAL" "C" "" "C" -18917 -15480 28954 massC
+  ,     pdbAtom "B" 2787 148 "VAL" "O" "" "O" -19411 -16308 29714 massO
+  ,     pdbAtom "B" 2788 148 "VAL" "CB" "" "C" -19483 -13216 27825 massC
+  ,     pdbAtom "B" 2789 148 "VAL" "CG1" "" "C" -18236 -12559 27260 massC
+  ,     pdbAtom "B" 2790 148 "VAL" "CG2" "" "C" -20139 -14142 26772 massC
+  ,     pdbAtom "B" 2791 149 "THR" "N" "" "N" -18102 -15824 27968 massN
+  ,     pdbAtom "B" 2792 149 "THR" "CA" "" "C" -17860 -17225 27668 massC
+  ,     pdbAtom "B" 2793 149 "THR" "C" "" "C" -17197 -17985 28812 massC
+  ,     pdbAtom "B" 2794 149 "THR" "O" "" "O" -17469 -19165 29042 massO
+  ,     pdbAtom "B" 2795 149 "THR" "CB" "" "C" -16999 -17374 26394 massC
+  ,     pdbAtom "B" 2796 149 "THR" "OG1" "" "O" -15724 -16750 26600 massO
+  ,     pdbAtom "B" 2797 149 "THR" "CG2" "" "C" -17695 -16730 25195 massC
+  ,     pdbAtom "B" 2798 150 "GLY" "N" "" "N" -16321 -17292 29525 massN
+  ,     pdbAtom "B" 2799 150 "GLY" "CA" "" "C" -15587 -17917 30603 massC
+  ,     pdbAtom "B" 2800 150 "GLY" "C" "" "C" -14194 -18225 30076 massC
+  ,     pdbAtom "B" 2801 150 "GLY" "O" "" "O" -13224 -18206 30831 massO
+  ,     pdbAtom "B" 2802 151 "GLU" "N" "" "N" -14097 -18462 28765 massN
+  ,     pdbAtom "B" 2803 151 "GLU" "CA" "" "C" -12833 -18782 28088 massC
+  ,     pdbAtom "B" 2804 151 "GLU" "C" "" "C" -11696 -17805 28404 massC
+  ,     pdbAtom "B" 2805 151 "GLU" "O" "" "O" -11888 -16582 28390 massO
+  ,     pdbAtom "B" 2806 151 "GLU" "CB" "" "C" -13058 -18887 26576 massC
+  ,     pdbAtom "B" 2807 151 "GLU" "CG" "" "C" -14173 -19864 26207 massC
+  ,     pdbAtom "B" 2808 151 "GLU" "CD" "" "C" -14352 -20033 24715 massC
+  ,     pdbAtom "B" 2809 151 "GLU" "OE1" "" "O" -13696 -20931 24149 massO
+  ,     pdbAtom "B" 2810 151 "GLU" "OE2" "" "O" -15154 -19286 24112 massO
+  ,     pdbAtom "B" 2811 152 "GLU" "N" "" "N" -10515 -18366 28664 massN
+  ,     pdbAtom "B" 2812 152 "GLU" "CA" "" "C" -9321 -17603 29021 massC
+  ,     pdbAtom "B" 2813 152 "GLU" "C" "" "C" -8821 -16610 27985 massC
+  ,     pdbAtom "B" 2814 152 "GLU" "O" "" "O" -8782 -16894 26778 massO
+  ,     pdbAtom "B" 2815 152 "GLU" "CB" "" "C" -8182 -18538 29413 massC
+  ,     pdbAtom "B" 2816 152 "GLU" "CG" "" "C" -6970 -17810 29973 massC
+  ,     pdbAtom "B" 2817 152 "GLU" "CD" "" "C" -5823 -18745 30303 massC
+  ,     pdbAtom "B" 2818 152 "GLU" "OE1" "" "O" -5066 -19112 29374 massO
+  ,     pdbAtom "B" 2819 152 "GLU" "OE2" "" "O" -5679 -19106 31494 massO
+  ,     pdbAtom "B" 2820 153 "LEU" "N" "" "N" -8396 -15459 28495 massN
+  ,     pdbAtom "B" 2821 153 "LEU" "CA" "" "C" -7895 -14367 27682 massC
+  ,     pdbAtom "B" 2822 153 "LEU" "C" "" "C" -6480 -14617 27181 massC
+  ,     pdbAtom "B" 2823 153 "LEU" "O" "" "O" -5656 -15247 27852 massO
+  ,     pdbAtom "B" 2824 153 "LEU" "CB" "" "C" -7925 -13057 28473 massC
+  ,     pdbAtom "B" 2825 153 "LEU" "CG" "" "C" -9247 -12720 29154 massC
+  ,     pdbAtom "B" 2826 153 "LEU" "CD1" "" "C" -9110 -11473 30009 massC
+  ,     pdbAtom "B" 2827 153 "LEU" "CD2" "" "C" -10310 -12555 28104 massC
+  ,     pdbAtom "B" 2828 154 "THR" "N" "" "N" -6226 -14122 25975 massN
+  ,     pdbAtom "B" 2829 154 "THR" "CA" "" "C" -4932 -14222 25316 massC
+  ,     pdbAtom "B" 2830 154 "THR" "C" "" "C" -4451 -12794 25090 massC
+  ,     pdbAtom "B" 2831 154 "THR" "O" "" "O" -5191 -11821 25300 massO
+  ,     pdbAtom "B" 2832 154 "THR" "CB" "" "C" -5042 -14907 23939 massC
+  ,     pdbAtom "B" 2833 154 "THR" "OG1" "" "O" -5920 -14146 23094 massO
+  ,     pdbAtom "B" 2834 154 "THR" "CG2" "" "C" -5571 -16325 24089 massC
+  ,     pdbAtom "B" 2835 155 "THR" "N" "" "N" -3217 -12669 24639 massN
+  ,     pdbAtom "B" 2836 155 "THR" "CA" "" "C" -2657 -11364 24389 massC
+  ,     pdbAtom "B" 2837 155 "THR" "C" "" "C" -2389 -11315 22889 massC
+  ,     pdbAtom "B" 2838 155 "THR" "O" "" "O" -2195 -12361 22258 massO
+  ,     pdbAtom "B" 2839 155 "THR" "CB" "" "C" -1382 -11169 25235 massC
+  ,     pdbAtom "B" 2840 155 "THR" "OG1" "" "O" -774 -9908 24932 massO
+  ,     pdbAtom "B" 2841 155 "THR" "CG2" "" "C" -404 -12304 24993 massC
+  ,     pdbAtom "B" 2842 156 "ARG" "N" "" "N" -2475 -10123 22305 massN
+  ,     pdbAtom "B" 2843 156 "ARG" "CA" "" "C" -2228 -9971 20877 massC
+  ,     pdbAtom "B" 2844 156 "ARG" "C" "" "C" -740 -9861 20552 massC
+  ,     pdbAtom "B" 2845 156 "ARG" "O" "" "O" 22 -9168 21229 massO
+  ,     pdbAtom "B" 2846 156 "ARG" "CB" "" "C" -2947 -8753 20330 massC
+  ,     pdbAtom "B" 2847 156 "ARG" "CG" "" "C" -3086 -8780 18828 massC
+  ,     pdbAtom "B" 2848 156 "ARG" "CD" "" "C" -3494 -7426 18258 massC
+  ,     pdbAtom "B" 2849 156 "ARG" "NE" "" "N" -4110 -6559 19256 massN
+  ,     pdbAtom "B" 2850 156 "ARG" "CZ" "" "C" -5344 -6700 19724 massC
+  ,     pdbAtom "B" 2851 156 "ARG" "NH1" "" "N" -6125 -7681 19281 massN
+  ,     pdbAtom "B" 2852 156 "ARG" "NH2" "" "N" -5794 -5852 20641 massN
+  ,     pdbAtom "B" 2853 157 "LYS" "N" "" "N" -340 -10542 19488 massN
+  ,     pdbAtom "B" 2854 157 "LYS" "CA" "" "C" 1044 -10539 19031 massC
+  ,     pdbAtom "B" 2855 157 "LYS" "C" "" "C" 1538 -9094 18968 massC
+  ,     pdbAtom "B" 2856 157 "LYS" "O" "" "O" 2636 -8771 19413 massO
+  ,     pdbAtom "B" 2857 157 "LYS" "CB" "" "C" 1105 -11168 17634 massC
+  ,     pdbAtom "B" 2858 157 "LYS" "CG" "" "C" 2503 -11440 17102 massC
+  ,     pdbAtom "B" 2859 157 "LYS" "CD" "" "C" 3170 -12601 17838 massC
+  ,     pdbAtom "B" 2860 157 "LYS" "CE" "" "C" 4573 -12888 17297 massC
+  ,     pdbAtom "B" 2861 157 "LYS" "NZ" "" "N" 4570 -13311 15863 massN
+  ,     pdbAtom "B" 2862 158 "ASP" "N" "" "N" 647 -8224 18511 massN
+  ,     pdbAtom "B" 2863 158 "ASP" "CA" "" "C" 916 -6803 18332 massC
+  ,     pdbAtom "B" 2864 158 "ASP" "C" "" "C" 1176 -5973 19580 massC
+  ,     pdbAtom "B" 2865 158 "ASP" "O" "" "O" 1882 -4962 19513 massO
+  ,     pdbAtom "B" 2866 158 "ASP" "CB" "" "C" -233 -6174 17556 massC
+  ,     pdbAtom "B" 2867 158 "ASP" "CG" "" "C" -486 -6864 16228 massC
+  ,     pdbAtom "B" 2868 158 "ASP" "OD1" "" "O" -731 -8100 16219 massO
+  ,     pdbAtom "B" 2869 158 "ASP" "OD2" "" "O" -444 -6160 15191 massO
+  ,     pdbAtom "B" 2870 159 "ASP" "N" "" "N" 599 -6375 20706 massN
+  ,     pdbAtom "B" 2871 159 "ASP" "CA" "" "C" 770 -5630 21947 massC
+  ,     pdbAtom "B" 2872 159 "ASP" "C" "" "C" 2023 -6005 22728 massC
+  ,     pdbAtom "B" 2873 159 "ASP" "O" "" "O" 2137 -5703 23910 massO
+  ,     pdbAtom "B" 2874 159 "ASP" "CB" "" "C" -463 -5796 22826 massC
+  ,     pdbAtom "B" 2875 159 "ASP" "CG" "" "C" -1737 -5408 22115 massC
+  ,     pdbAtom "B" 2876 159 "ASP" "OD1" "" "O" -1675 -4544 21211 massO
+  ,     pdbAtom "B" 2877 159 "ASP" "OD2" "" "O" -2805 -5960 22467 massO
+  ,     pdbAtom "B" 2878 160 "GLN" "N" "" "N" 2961 -6674 22077 massN
+  ,     pdbAtom "B" 2879 160 "GLN" "CA" "" "C" 4193 -7053 22746 massC
+  ,     pdbAtom "B" 2880 160 "GLN" "C" "" "C" 5106 -5878 22995 massC
+  ,     pdbAtom "B" 2881 160 "GLN" "O" "" "O" 5487 -5185 22069 massO
+  ,     pdbAtom "B" 2882 160 "GLN" "CB" "" "C" 4949 -8083 21932 massC
+  ,     pdbAtom "B" 2883 160 "GLN" "CG" "" "C" 4302 -9420 21962 massC
+  ,     pdbAtom "B" 2884 160 "GLN" "CD" "" "C" 5102 -10427 21204 massC
+  ,     pdbAtom "B" 2885 160 "GLN" "OE1" "" "O" 6131 -10096 20605 massO
+  ,     pdbAtom "B" 2886 160 "GLN" "NE2" "" "N" 4652 -11680 21232 massN
+  ,     pdbAtom "B" 2887 161 "GLU" "N" "" "N" 5494 -5703 24248 massN
+  ,     pdbAtom "B" 2888 161 "GLU" "CA" "" "C" 6388 -4634 24668 massC
+  ,     pdbAtom "B" 2889 161 "GLU" "C" "" "C" 7527 -4373 23682 massC
+  ,     pdbAtom "B" 2890 161 "GLU" "O" "" "O" 7889 -3222 23448 massO
+  ,     pdbAtom "B" 2891 161 "GLU" "CB" "" "C" 6947 -4953 26062 massC
+  ,     pdbAtom "B" 2892 161 "GLU" "CG" "" "C" 7820 -3872 26697 massC
+  ,     pdbAtom "B" 2893 161 "GLU" "CD" "" "C" 7970 -4043 28202 massC
+  ,     pdbAtom "B" 2894 161 "GLU" "OE1" "" "O" 6958 -4275 28891 massO
+  ,     pdbAtom "B" 2895 161 "GLU" "OE2" "" "O" 9098 -3921 28713 massO
+  ,     pdbAtom "B" 2896 162 "GLU" "N" "" "N" 8075 -5419 23076 massN
+  ,     pdbAtom "B" 2897 162 "GLU" "CA" "" "C" 9161 -5223 22116 massC
+  ,     pdbAtom "B" 2898 162 "GLU" "C" "" "C" 8631 -4510 20871 massC
+  ,     pdbAtom "B" 2899 162 "GLU" "O" "" "O" 9131 -3451 20484 massO
+  ,     pdbAtom "B" 2900 162 "GLU" "CB" "" "C" 9791 -6557 21709 massC
+  ,     pdbAtom "B" 2901 162 "GLU" "CG" "" "C" 10879 -6397 20633 massC
+  ,     pdbAtom "B" 2902 162 "GLU" "CD" "" "C" 11432 -7721 20114 massC
+  ,     pdbAtom "B" 2903 162 "GLU" "OE1" "" "O" 10642 -8683 19946 massO
+  ,     pdbAtom "B" 2904 162 "GLU" "OE2" "" "O" 12660 -7790 19867 massO
+  ,     pdbAtom "B" 2905 163 "THR" "N" "" "N" 7612 -5098 20255 massN
+  ,     pdbAtom "B" 2906 163 "THR" "CA" "" "C" 7007 -4533 19068 massC
+  ,     pdbAtom "B" 2907 163 "THR" "C" "" "C" 6532 -3112 19336 massC
+  ,     pdbAtom "B" 2908 163 "THR" "O" "" "O" 6780 -2224 18521 massO
+  ,     pdbAtom "B" 2909 163 "THR" "CB" "" "C" 5842 -5398 18604 massC
+  ,     pdbAtom "B" 2910 163 "THR" "OG1" "" "O" 6271 -6765 18551 massO
+  ,     pdbAtom "B" 2911 163 "THR" "CG2" "" "C" 5389 -4976 17227 massC
+  ,     pdbAtom "B" 2912 164 "VAL" "N" "" "N" 5912 -2888 20500 massN
+  ,     pdbAtom "B" 2913 164 "VAL" "CA" "" "C" 5415 -1563 20887 massC
+  ,     pdbAtom "B" 2914 164 "VAL" "C" "" "C" 6572 -587 21006 massC
+  ,     pdbAtom "B" 2915 164 "VAL" "O" "" "O" 6503 521 20503 massO
+  ,     pdbAtom "B" 2916 164 "VAL" "CB" "" "C" 4628 -1592 22224 massC
+  ,     pdbAtom "B" 2917 164 "VAL" "CG1" "" "C" 4325 -167 22728 massC
+  ,     pdbAtom "B" 2918 164 "VAL" "CG2" "" "C" 3349 -2383 22048 massC
+  ,     pdbAtom "B" 2919 165 "ARG" "N" "" "N" 7665 -1002 21614 massN
+  ,     pdbAtom "B" 2920 165 "ARG" "CA" "" "C" 8769 -89 21751 massC
+  ,     pdbAtom "B" 2921 165 "ARG" "C" "" "C" 9453 225 20443 massC
+  ,     pdbAtom "B" 2922 165 "ARG" "O" "" "O" 10041 1290 20300 massO
+  ,     pdbAtom "B" 2923 165 "ARG" "CB" "" "C" 9748 -590 22781 massC
+  ,     pdbAtom "B" 2924 165 "ARG" "CG" "" "C" 9190 -500 24169 massC
+  ,     pdbAtom "B" 2925 165 "ARG" "CD" "" "C" 10328 -420 25154 massC
+  ,     pdbAtom "B" 2926 165 "ARG" "NE" "" "N" 9968 411 26296 massN
+  ,     pdbAtom "B" 2927 165 "ARG" "CZ" "" "C" 9516 -69 27445 massC
+  ,     pdbAtom "B" 2928 165 "ARG" "NH1" "" "N" 9379 -1377 27607 massN
+  ,     pdbAtom "B" 2929 165 "ARG" "NH2" "" "N" 9213 755 28428 massN
+  ,     pdbAtom "B" 3123 190 "ASN" "N" "" "N" 3063 31380 10440 massN
+  ,     pdbAtom "B" 3124 190 "ASN" "CA" "" "C" 2244 30752 9408 massC
+  ,     pdbAtom "B" 3125 190 "ASN" "C" "" "C" 1166 29788 9924 massC
+  ,     pdbAtom "B" 3126 190 "ASN" "O" "" "O" 235 29435 9202 massO
+  ,     pdbAtom "B" 3127 190 "ASN" "CB" "" "C" 3140 30065 8375 massC
+  ,     pdbAtom "B" 3128 190 "ASN" "CG" "" "C" 4140 31016 7747 massC
+  ,     pdbAtom "B" 3129 190 "ASN" "OD1" "" "O" 3886 32216 7642 massO
+  ,     pdbAtom "B" 3130 190 "ASN" "ND2" "" "N" 5294 30493 7352 massN
+  ,     pdbAtom "B" 3131 191 "THR" "N" "" "N" 1279 29387 11182 massN
+  ,     pdbAtom "B" 3132 191 "THR" "CA" "" "C" 322 28473 11791 massC
+  ,     pdbAtom "B" 3133 191 "THR" "C" "" "C" 539 28581 13305 massC
+  ,     pdbAtom "B" 3134 191 "THR" "O" "" "O" 1345 29390 13752 massO
+  ,     pdbAtom "B" 3135 191 "THR" "CB" "" "C" 561 27024 11285 massC
+  ,     pdbAtom "B" 3136 191 "THR" "OG1" "" "O" -542 26176 11639 massO
+  ,     pdbAtom "B" 3137 191 "THR" "CG2" "" "C" 1834 26458 11875 massC
+  ,     pdbAtom "B" 3138 192 "LYS" "N" "" "N" -262 27882 14098 massN
+  ,     pdbAtom "B" 3139 192 "LYS" "CA" "" "C" -93 27886 15554 massC
+  ,     pdbAtom "B" 3140 192 "LYS" "C" "" "C" 147 26426 15907 massC
+  ,     pdbAtom "B" 3141 192 "LYS" "O" "" "O" -481 25543 15358 massO
+  ,     pdbAtom "B" 3142 192 "LYS" "CB" "" "C" -1331 28413 16282 massC
+  ,     pdbAtom "B" 3143 192 "LYS" "CG" "" "C" -1465 29918 16315 massC
+  ,     pdbAtom "B" 3144 192 "LYS" "CD" "" "C" -2097 30466 15041 massC
+  ,     pdbAtom "B" 3145 192 "LYS" "CE" "" "C" -3618 30223 14985 massC
+  ,     pdbAtom "B" 3146 192 "LYS" "NZ" "" "N" -4220 30572 13655 massN
+  ,     pdbAtom "B" 3147 193 "TYR" "N" "" "N" 1077 26170 16803 massN
+  ,     pdbAtom "B" 3148 193 "TYR" "CA" "" "C" 1420 24810 17171 massC
+  ,     pdbAtom "B" 3149 193 "TYR" "C" "" "C" 1173 24654 18665 massC
+  ,     pdbAtom "B" 3150 193 "TYR" "O" "" "O" 1429 25569 19434 massO
+  ,     pdbAtom "B" 3151 193 "TYR" "CB" "" "C" 2889 24572 16781 massC
+  ,     pdbAtom "B" 3152 193 "TYR" "CG" "" "C" 3504 23378 17421 massC
+  ,     pdbAtom "B" 3153 193 "TYR" "CD1" "" "C" 3299 22101 16913 massC
+  ,     pdbAtom "B" 3154 193 "TYR" "CD2" "" "C" 4186 23510 18619 massC
+  ,     pdbAtom "B" 3155 193 "TYR" "CE1" "" "C" 3747 20988 17601 massC
+  ,     pdbAtom "B" 3156 193 "TYR" "CE2" "" "C" 4628 22413 19312 massC
+  ,     pdbAtom "B" 3157 193 "TYR" "CZ" "" "C" 4408 21164 18812 massC
+  ,     pdbAtom "B" 3158 193 "TYR" "OH" "" "O" 4826 20099 19571 massO
+  ,     pdbAtom "B" 3159 194 "ALA" "N" "" "N" 619 23526 19094 massN
+  ,     pdbAtom "B" 3160 194 "ALA" "CA" "" "C" 379 23348 20512 massC
+  ,     pdbAtom "B" 3161 194 "ALA" "C" "" "C" 559 21915 20968 massC
+  ,     pdbAtom "B" 3162 194 "ALA" "O" "" "O" 146 20984 20300 massO
+  ,     pdbAtom "B" 3163 194 "ALA" "CB" "" "C" -1013 23855 20885 massC
+  ,     pdbAtom "B" 3164 195 "LYS" "N" "" "N" 1231 21745 22097 massN
+  ,     pdbAtom "B" 3165 195 "LYS" "CA" "" "C" 1450 20421 22664 massC
+  ,     pdbAtom "B" 3166 195 "LYS" "C" "" "C" 302 20249 23657 massC
+  ,     pdbAtom "B" 3167 195 "LYS" "O" "" "O" -86 21205 24336 massO
+  ,     pdbAtom "B" 3168 195 "LYS" "CB" "" "C" 2790 20385 23388 massC
+  ,     pdbAtom "B" 3169 195 "LYS" "CG" "" "C" 3225 19012 23836 massC
+  ,     pdbAtom "B" 3170 195 "LYS" "CD" "" "C" 4356 18517 22964 massC
+  ,     pdbAtom "B" 3171 195 "LYS" "CE" "" "C" 5534 19493 22948 massC
+  ,     pdbAtom "B" 3172 195 "LYS" "NZ" "" "N" 6666 19045 22064 massN
+  ,     pdbAtom "B" 3173 196 "VAL" "N" "" "N" -256 19050 23726 massN
+  ,     pdbAtom "B" 3174 196 "VAL" "CA" "" "C" -1378 18782 24608 massC
+  ,     pdbAtom "B" 3175 196 "VAL" "C" "" "C" -951 17624 25493 massC
+  ,     pdbAtom "B" 3176 196 "VAL" "O" "" "O" -577 16572 24993 massO
+  ,     pdbAtom "B" 3177 196 "VAL" "CB" "" "C" -2677 18414 23772 massC
+  ,     pdbAtom "B" 3178 196 "VAL" "CG1" "" "C" -3800 17974 24666 massC
+  ,     pdbAtom "B" 3179 196 "VAL" "CG2" "" "C" -3138 19605 22950 massC
+  ,     pdbAtom "B" 3180 197 "ASP" "N" "" "N" -897 17866 26799 massN
+  ,     pdbAtom "B" 3181 197 "ASP" "CA" "" "C" -536 16847 27785 massC
+  ,     pdbAtom "B" 3182 197 "ASP" "C" "" "C" -1742 15902 27827 massC
+  ,     pdbAtom "B" 3183 197 "ASP" "O" "" "O" -2793 16246 28361 massO
+  ,     pdbAtom "B" 3184 197 "ASP" "CB" "" "C" -336 17519 29143 massC
+  ,     pdbAtom "B" 3185 197 "ASP" "CG" "" "C" -13 16544 30253 massC
+  ,     pdbAtom "B" 3186 197 "ASP" "OD1" "" "O" 162 15336 30000 massO
+  ,     pdbAtom "B" 3187 197 "ASP" "OD2" "" "O" 71 17012 31403 massO
+  ,     pdbAtom "B" 3188 198 "GLY" "N" "" "N" -1585 14732 27226 massN
+  ,     pdbAtom "B" 3189 198 "GLY" "CA" "" "C" -2666 13775 27161 massC
+  ,     pdbAtom "B" 3190 198 "GLY" "C" "" "C" -2662 12792 28290 massC
+  ,     pdbAtom "B" 3191 198 "GLY" "O" "" "O" -3199 11689 28174 massO
   ]
 
 def oneAKEChainAConfiguration : Configuration :=
   [
-    pdbAtom 1 1 "MET" "N" "" "N" 26981 53977 40085 massN
-  ,     pdbAtom 2 1 "MET" "CA" "" "C" 26091 52849 39889 massC
-  ,     pdbAtom 3 1 "MET" "C" "" "C" 26679 52163 38675 massC
-  ,     pdbAtom 4 1 "MET" "O" "" "O" 27020 52865 37715 massO
-  ,     pdbAtom 5 1 "MET" "CB" "" "C" 24677 53310 39580 massC
-  ,     pdbAtom 6 1 "MET" "CG" "" "C" 23624 52189 39442 massC
-  ,     pdbAtom 7 1 "MET" "SD" "" "S" 21917 52816 39301 massS
-  ,     pdbAtom 8 1 "MET" "CE" "" "C" 21930 53926 37910 massC
-  ,     pdbAtom 9 2 "ARG" "N" "" "N" 26861 50841 38803 massN
-  ,     pdbAtom 10 2 "ARG" "CA" "" "C" 27437 49969 37786 massC
-  ,     pdbAtom 11 2 "ARG" "C" "" "C" 26336 48959 37429 massC
-  ,     pdbAtom 12 2 "ARG" "O" "" "O" 25745 48313 38312 massO
-  ,     pdbAtom 13 2 "ARG" "CB" "" "C" 28653 49266 38349 massC
-  ,     pdbAtom 14 2 "ARG" "CG" "" "C" 29870 50188 38416 massC
-  ,     pdbAtom 15 2 "ARG" "CD" "" "C" 31033 49532 39173 massC
-  ,     pdbAtom 16 2 "ARG" "NE" "" "N" 32318 50244 39125 massN
-  ,     pdbAtom 17 2 "ARG" "CZ" "" "C" 33462 49750 39679 massC
-  ,     pdbAtom 18 2 "ARG" "NH1" "" "N" 33522 48572 40308 massN
-  ,     pdbAtom 19 2 "ARG" "NH2" "" "N" 34610 50427 39597 massN
-  ,     pdbAtom 20 3 "ILE" "N" "" "N" 26039 48836 36139 massN
-  ,     pdbAtom 21 3 "ILE" "CA" "" "C" 24961 47988 35671 massC
-  ,     pdbAtom 22 3 "ILE" "C" "" "C" 25374 47080 34537 massC
-  ,     pdbAtom 23 3 "ILE" "O" "" "O" 26029 47614 33642 massO
-  ,     pdbAtom 24 3 "ILE" "CB" "" "C" 23802 48880 35202 massC
-  ,     pdbAtom 25 3 "ILE" "CG1" "" "C" 23317 49724 36378 massC
-  ,     pdbAtom 26 3 "ILE" "CG2" "" "C" 22660 48010 34642 massC
-  ,     pdbAtom 27 3 "ILE" "CD1" "" "C" 22436 50890 35992 massC
-  ,     pdbAtom 28 4 "ILE" "N" "" "N" 25062 45774 34541 massN
-  ,     pdbAtom 29 4 "ILE" "CA" "" "C" 25194 44925 33360 massC
-  ,     pdbAtom 30 4 "ILE" "C" "" "C" 23804 44715 32751 massC
-  ,     pdbAtom 31 4 "ILE" "O" "" "O" 22824 44536 33484 massO
-  ,     pdbAtom 32 4 "ILE" "CB" "" "C" 25789 43561 33720 massC
-  ,     pdbAtom 33 4 "ILE" "CG1" "" "C" 27206 43753 34233 massC
-  ,     pdbAtom 34 4 "ILE" "CG2" "" "C" 25829 42650 32463 massC
-  ,     pdbAtom 35 4 "ILE" "CD1" "" "C" 27967 42486 34621 massC
-  ,     pdbAtom 36 5 "LEU" "N" "" "N" 23655 44874 31424 massN
-  ,     pdbAtom 37 5 "LEU" "CA" "" "C" 22428 44503 30712 massC
-  ,     pdbAtom 38 5 "LEU" "C" "" "C" 22668 43134 30012 massC
-  ,     pdbAtom 39 5 "LEU" "O" "" "O" 23614 42932 29232 massO
-  ,     pdbAtom 40 5 "LEU" "CB" "" "C" 22088 45547 29675 massC
-  ,     pdbAtom 41 5 "LEU" "CG" "" "C" 22076 47021 30069 massC
-  ,     pdbAtom 42 5 "LEU" "CD1" "" "C" 21735 47848 28817 massC
-  ,     pdbAtom 43 5 "LEU" "CD2" "" "C" 21088 47249 31193 massC
-  ,     pdbAtom 44 6 "LEU" "N" "" "N" 21787 42178 30248 massN
-  ,     pdbAtom 45 6 "LEU" "CA" "" "C" 21933 40811 29752 massC
-  ,     pdbAtom 46 6 "LEU" "C" "" "C" 20711 40529 28870 massC
-  ,     pdbAtom 47 6 "LEU" "O" "" "O" 19602 40977 29220 massO
-  ,     pdbAtom 48 6 "LEU" "CB" "" "C" 21919 39891 30945 massC
-  ,     pdbAtom 49 6 "LEU" "CG" "" "C" 22847 38789 31103 massC
-  ,     pdbAtom 50 6 "LEU" "CD1" "" "C" 24254 39345 31210 massC
-  ,     pdbAtom 51 6 "LEU" "CD2" "" "C" 22465 38042 32355 massC
-  ,     pdbAtom 52 7 "GLY" "N" "" "N" 20800 39799 27764 massN
-  ,     pdbAtom 53 7 "GLY" "CA" "" "C" 19604 39512 26973 massC
-  ,     pdbAtom 54 7 "GLY" "C" "" "C" 19959 39035 25585 massC
-  ,     pdbAtom 55 7 "GLY" "O" "" "O" 21049 39324 25122 massO
-  ,     pdbAtom 56 8 "ALA" "N" "" "N" 19117 38232 24936 massN
-  ,     pdbAtom 57 8 "ALA" "CA" "" "C" 19324 37742 23567 massC
-  ,     pdbAtom 58 8 "ALA" "C" "" "C" 19530 38886 22568 massC
-  ,     pdbAtom 59 8 "ALA" "O" "" "O" 19158 40013 22889 massO
-  ,     pdbAtom 60 8 "ALA" "CB" "" "C" 18092 36960 23169 massC
-  ,     pdbAtom 217 30 "SER" "N" "" "N" 29386 50098 25234 massN
-  ,     pdbAtom 218 30 "SER" "CA" "" "C" 28780 49070 24408 massC
-  ,     pdbAtom 219 30 "SER" "C" "" "C" 29856 48513 23484 massC
-  ,     pdbAtom 220 30 "SER" "O" "" "O" 30450 49195 22628 massO
-  ,     pdbAtom 221 30 "SER" "CB" "" "C" 27641 49674 23614 massC
-  ,     pdbAtom 222 30 "SER" "OG" "" "O" 27393 49012 22382 massO
-  ,     pdbAtom 223 31 "THR" "N" "" "N" 30102 47225 23695 massN
-  ,     pdbAtom 224 31 "THR" "CA" "" "C" 31156 46587 22987 massC
-  ,     pdbAtom 225 31 "THR" "C" "" "C" 30787 46464 21542 massC
-  ,     pdbAtom 226 31 "THR" "O" "" "O" 31720 46622 20766 massO
-  ,     pdbAtom 227 31 "THR" "CB" "" "C" 31489 45205 23617 massC
-  ,     pdbAtom 228 31 "THR" "OG1" "" "O" 30313 44530 23975 massO
-  ,     pdbAtom 229 31 "THR" "CG2" "" "C" 32316 45409 24879 massC
-  ,     pdbAtom 230 32 "GLY" "N" "" "N" 29544 46231 21122 massN
-  ,     pdbAtom 231 32 "GLY" "CA" "" "C" 29191 46253 19704 massC
-  ,     pdbAtom 232 32 "GLY" "C" "" "C" 29525 47627 19099 massC
-  ,     pdbAtom 233 32 "GLY" "O" "" "O" 30121 47705 18019 massO
-  ,     pdbAtom 234 33 "ASP" "N" "" "N" 29237 48726 19826 massN
-  ,     pdbAtom 235 33 "ASP" "CA" "" "C" 29487 50042 19273 massC
-  ,     pdbAtom 236 33 "ASP" "C" "" "C" 30983 50250 19161 massC
-  ,     pdbAtom 237 33 "ASP" "O" "" "O" 31454 50638 18077 massO
-  ,     pdbAtom 238 33 "ASP" "CB" "" "C" 28914 51173 20141 massC
-  ,     pdbAtom 239 33 "ASP" "CG" "" "C" 27419 51446 19994 massC
-  ,     pdbAtom 240 33 "ASP" "OD1" "" "O" 26816 50961 19027 massO
-  ,     pdbAtom 241 33 "ASP" "OD2" "" "O" 26880 52176 20852 massO
-  ,     pdbAtom 242 34 "MET" "N" "" "N" 31738 49947 20223 massN
-  ,     pdbAtom 243 34 "MET" "CA" "" "C" 33184 50074 20161 massC
-  ,     pdbAtom 244 34 "MET" "C" "" "C" 33787 49222 19073 massC
-  ,     pdbAtom 245 34 "MET" "O" "" "O" 34703 49685 18386 massO
-  ,     pdbAtom 246 34 "MET" "CB" "" "C" 33832 49679 21452 massC
-  ,     pdbAtom 247 34 "MET" "CG" "" "C" 33464 50634 22545 massC
-  ,     pdbAtom 248 34 "MET" "SD" "" "S" 34415 50284 24035 massS
-  ,     pdbAtom 249 34 "MET" "CE" "" "C" 33371 49008 24702 massC
-  ,     pdbAtom 250 35 "LEU" "N" "" "N" 33336 48008 18816 massN
-  ,     pdbAtom 251 35 "LEU" "CA" "" "C" 33940 47195 17763 massC
-  ,     pdbAtom 252 35 "LEU" "C" "" "C" 33532 47687 16374 massC
-  ,     pdbAtom 253 35 "LEU" "O" "" "O" 34397 47686 15499 massO
-  ,     pdbAtom 254 35 "LEU" "CB" "" "C" 33538 45702 17921 massC
-  ,     pdbAtom 255 35 "LEU" "CG" "" "C" 34178 44933 19144 massC
-  ,     pdbAtom 256 35 "LEU" "CD1" "" "C" 33426 43634 19487 massC
-  ,     pdbAtom 257 35 "LEU" "CD2" "" "C" 35633 44683 18796 massC
-  ,     pdbAtom 258 36 "ARG" "N" "" "N" 32291 48095 16040 massN
-  ,     pdbAtom 259 36 "ARG" "CA" "" "C" 31961 48619 14693 massC
-  ,     pdbAtom 260 36 "ARG" "C" "" "C" 32777 49890 14437 massC
-  ,     pdbAtom 261 36 "ARG" "O" "" "O" 33328 50113 13362 massO
-  ,     pdbAtom 262 36 "ARG" "CB" "" "C" 30469 48931 14605 massC
-  ,     pdbAtom 263 36 "ARG" "CG" "" "C" 29578 47699 14429 massC
-  ,     pdbAtom 264 36 "ARG" "CD" "" "C" 28058 47971 14453 massC
-  ,     pdbAtom 265 36 "ARG" "NE" "" "N" 27555 48398 15764 massN
-  ,     pdbAtom 266 36 "ARG" "CZ" "" "C" 27064 47570 16706 massC
-  ,     pdbAtom 267 36 "ARG" "NH1" "" "N" 27106 46256 16575 massN
-  ,     pdbAtom 268 36 "ARG" "NH2" "" "N" 26547 48043 17839 massN
-  ,     pdbAtom 269 37 "ALA" "N" "" "N" 32963 50707 15460 massN
-  ,     pdbAtom 270 37 "ALA" "CA" "" "C" 33778 51895 15373 massC
-  ,     pdbAtom 271 37 "ALA" "C" "" "C" 35212 51490 15060 massC
-  ,     pdbAtom 272 37 "ALA" "O" "" "O" 35775 51983 14083 massO
-  ,     pdbAtom 273 37 "ALA" "CB" "" "C" 33764 52668 16691 massC
-  ,     pdbAtom 274 38 "ALA" "N" "" "N" 35832 50581 15801 massN
-  ,     pdbAtom 275 38 "ALA" "CA" "" "C" 37207 50146 15498 massC
-  ,     pdbAtom 276 38 "ALA" "C" "" "C" 37350 49607 14071 massC
-  ,     pdbAtom 277 38 "ALA" "O" "" "O" 38315 49935 13355 massO
-  ,     pdbAtom 278 38 "ALA" "CB" "" "C" 37658 49037 16499 massC
-  ,     pdbAtom 279 39 "VAL" "N" "" "N" 36370 48833 13594 massN
-  ,     pdbAtom 280 39 "VAL" "CA" "" "C" 36426 48279 12266 massC
-  ,     pdbAtom 281 39 "VAL" "C" "" "C" 36378 49421 11306 massC
-  ,     pdbAtom 282 39 "VAL" "O" "" "O" 37180 49428 10380 massO
-  ,     pdbAtom 283 39 "VAL" "CB" "" "C" 35264 47365 12049 massC
-  ,     pdbAtom 284 39 "VAL" "CG1" "" "C" 35016 47117 10563 massC
-  ,     pdbAtom 285 39 "VAL" "CG2" "" "C" 35625 46029 12675 massC
-  ,     pdbAtom 286 40 "LYS" "N" "" "N" 35526 50417 11553 massN
-  ,     pdbAtom 287 40 "LYS" "CA" "" "C" 35384 51553 10650 massC
-  ,     pdbAtom 288 40 "LYS" "C" "" "C" 36590 52492 10671 massC
-  ,     pdbAtom 289 40 "LYS" "O" "" "O" 36908 53028 9605 massO
-  ,     pdbAtom 290 40 "LYS" "CB" "" "C" 34110 52246 11044 massC
-  ,     pdbAtom 291 40 "LYS" "CG" "" "C" 33417 53311 10207 massC
-  ,     pdbAtom 292 40 "LYS" "CD" "" "C" 32105 53543 10986 massC
-  ,     pdbAtom 293 40 "LYS" "CE" "" "C" 32307 53985 12477 massC
-  ,     pdbAtom 294 40 "LYS" "NZ" "" "N" 31158 53781 13360 massN
-  ,     pdbAtom 295 41 "SER" "N" "" "N" 37272 52721 11806 massN
-  ,     pdbAtom 296 41 "SER" "CA" "" "C" 38507 53491 11905 massC
-  ,     pdbAtom 297 41 "SER" "C" "" "C" 39777 52736 11541 massC
-  ,     pdbAtom 298 41 "SER" "O" "" "O" 40837 53367 11412 massO
-  ,     pdbAtom 299 41 "SER" "CB" "" "C" 38784 53990 13294 massC
-  ,     pdbAtom 300 41 "SER" "OG" "" "O" 37700 54780 13703 massO
-  ,     pdbAtom 301 42 "GLY" "N" "" "N" 39746 51404 11382 massN
-  ,     pdbAtom 302 42 "GLY" "CA" "" "C" 40955 50617 11185 massC
-  ,     pdbAtom 303 42 "GLY" "C" "" "C" 41822 50731 12450 massC
-  ,     pdbAtom 304 42 "GLY" "O" "" "O" 43052 50709 12332 massO
-  ,     pdbAtom 305 43 "SER" "N" "" "N" 41232 50910 13656 massN
-  ,     pdbAtom 306 43 "SER" "CA" "" "C" 41976 50997 14916 massC
-  ,     pdbAtom 307 43 "SER" "C" "" "C" 42661 49644 15134 massC
-  ,     pdbAtom 308 43 "SER" "O" "" "O" 42039 48580 14922 massO
-  ,     pdbAtom 309 43 "SER" "CB" "" "C" 41035 51263 16084 massC
-  ,     pdbAtom 310 43 "SER" "OG" "" "O" 40232 52405 15825 massO
-  ,     pdbAtom 311 44 "GLU" "N" "" "N" 43932 49643 15550 massN
-  ,     pdbAtom 312 44 "GLU" "CA" "" "C" 44618 48368 15772 massC
-  ,     pdbAtom 313 44 "GLU" "C" "" "C" 43907 47521 16842 massC
-  ,     pdbAtom 314 44 "GLU" "O" "" "O" 43847 46298 16691 massO
-  ,     pdbAtom 315 44 "GLU" "CB" "" "C" 46104 48609 16173 massC
-  ,     pdbAtom 316 44 "GLU" "CG" "" "C" 46901 47312 16527 massC
-  ,     pdbAtom 317 44 "GLU" "CD" "" "C" 46976 46124 15533 massC
-  ,     pdbAtom 318 44 "GLU" "OE1" "" "O" 46829 46355 14334 massO
-  ,     pdbAtom 319 44 "GLU" "OE2" "" "O" 47197 44971 15941 massO
-  ,     pdbAtom 320 45 "LEU" "N" "" "N" 43369 48073 17935 massN
-  ,     pdbAtom 321 45 "LEU" "CA" "" "C" 42604 47255 18836 massC
-  ,     pdbAtom 322 45 "LEU" "C" "" "C" 41154 47218 18387 massC
-  ,     pdbAtom 323 45 "LEU" "O" "" "O" 40358 48129 18639 massO
-  ,     pdbAtom 324 45 "LEU" "CB" "" "C" 42682 47763 20285 massC
-  ,     pdbAtom 325 45 "LEU" "CG" "" "C" 42073 46942 21452 massC
-  ,     pdbAtom 326 45 "LEU" "CD1" "" "C" 42721 45578 21647 massC
-  ,     pdbAtom 327 45 "LEU" "CD2" "" "C" 42367 47680 22716 massC
-  ,     pdbAtom 328 46 "GLY" "N" "" "N" 40826 46179 17622 massN
-  ,     pdbAtom 329 46 "GLY" "CA" "" "C" 39438 45942 17303 massC
-  ,     pdbAtom 330 46 "GLY" "C" "" "C" 39168 45842 15824 massC
-  ,     pdbAtom 331 46 "GLY" "O" "" "O" 38144 45232 15468 massO
-  ,     pdbAtom 332 47 "LYS" "N" "" "N" 39996 46362 14895 massN
-  ,     pdbAtom 333 47 "LYS" "CA" "" "C" 39679 46226 13467 massC
-  ,     pdbAtom 334 47 "LYS" "C" "" "C" 39573 44757 13054 massC
-  ,     pdbAtom 335 47 "LYS" "O" "" "O" 38879 44398 12105 massO
-  ,     pdbAtom 336 47 "LYS" "CB" "" "C" 40745 46915 12592 massC
-  ,     pdbAtom 337 47 "LYS" "CG" "" "C" 42100 46284 12693 massC
-  ,     pdbAtom 338 47 "LYS" "CD" "" "C" 43176 46843 11807 massC
-  ,     pdbAtom 339 47 "LYS" "CE" "" "C" 44309 45903 12225 massC
-  ,     pdbAtom 340 47 "LYS" "NZ" "" "N" 45613 46363 11795 massN
-  ,     pdbAtom 341 48 "GLN" "N" "" "N" 40174 43863 13838 massN
-  ,     pdbAtom 342 48 "GLN" "CA" "" "C" 40193 42426 13556 massC
-  ,     pdbAtom 343 48 "GLN" "C" "" "C" 38799 41803 13641 massC
-  ,     pdbAtom 344 48 "GLN" "O" "" "O" 38628 40680 13160 massO
-  ,     pdbAtom 345 48 "GLN" "CB" "" "C" 41091 41651 14550 massC
-  ,     pdbAtom 346 48 "GLN" "CG" "" "C" 42545 42077 14615 massC
-  ,     pdbAtom 347 48 "GLN" "CD" "" "C" 42764 43318 15409 massC
-  ,     pdbAtom 348 48 "GLN" "OE1" "" "O" 41872 43870 16081 massO
-  ,     pdbAtom 349 48 "GLN" "NE2" "" "N" 43995 43740 15370 massN
-  ,     pdbAtom 350 49 "ALA" "N" "" "N" 37806 42475 14253 massN
-  ,     pdbAtom 351 49 "ALA" "CA" "" "C" 36488 41903 14418 massC
-  ,     pdbAtom 352 49 "ALA" "C" "" "C" 35659 41895 13161 massC
-  ,     pdbAtom 353 49 "ALA" "O" "" "O" 34709 41109 13072 massO
-  ,     pdbAtom 354 49 "ALA" "CB" "" "C" 35759 42659 15487 massC
-  ,     pdbAtom 355 50 "LYS" "N" "" "N" 36097 42602 12125 massN
-  ,     pdbAtom 356 50 "LYS" "CA" "" "C" 35308 42759 10917 massC
-  ,     pdbAtom 357 50 "LYS" "C" "" "C" 34650 41524 10384 massC
-  ,     pdbAtom 358 50 "LYS" "O" "" "O" 33426 41471 10278 massO
-  ,     pdbAtom 359 50 "LYS" "CB" "" "C" 36143 43316 9800 massC
-  ,     pdbAtom 360 50 "LYS" "CG" "" "C" 35224 43799 8664 massC
-  ,     pdbAtom 361 50 "LYS" "CD" "" "C" 36154 44209 7561 massC
-  ,     pdbAtom 362 50 "LYS" "CE" "" "C" 35425 44373 6250 massC
-  ,     pdbAtom 363 50 "LYS" "NZ" "" "N" 36415 44386 5180 massN
-  ,     pdbAtom 364 51 "ASP" "N" "" "N" 35416 40493 10111 massN
-  ,     pdbAtom 365 51 "ASP" "CA" "" "C" 34849 39271 9552 massC
-  ,     pdbAtom 366 51 "ASP" "C" "" "C" 34045 38338 10448 massC
-  ,     pdbAtom 367 51 "ASP" "O" "" "O" 33120 37663 10011 massO
-  ,     pdbAtom 368 51 "ASP" "CB" "" "C" 35989 38504 8921 massC
-  ,     pdbAtom 369 51 "ASP" "CG" "" "C" 36454 39059 7573 massC
-  ,     pdbAtom 370 51 "ASP" "OD1" "" "O" 35853 40016 7050 massO
-  ,     pdbAtom 371 51 "ASP" "OD2" "" "O" 37423 38492 7051 massO
-  ,     pdbAtom 372 52 "ILE" "N" "" "N" 34418 38333 11713 massN
-  ,     pdbAtom 373 52 "ILE" "CA" "" "C" 33759 37591 12753 massC
-  ,     pdbAtom 374 52 "ILE" "C" "" "C" 32335 38163 12892 massC
-  ,     pdbAtom 375 52 "ILE" "O" "" "O" 31372 37397 12769 massO
-  ,     pdbAtom 376 52 "ILE" "CB" "" "C" 34522 37749 14102 massC
-  ,     pdbAtom 377 52 "ILE" "CG1" "" "C" 36035 37435 13963 massC
-  ,     pdbAtom 378 52 "ILE" "CG2" "" "C" 33881 36769 15110 massC
-  ,     pdbAtom 379 52 "ILE" "CD1" "" "C" 36841 37512 15303 massC
-  ,     pdbAtom 380 53 "MET" "N" "" "N" 32175 39479 13080 massN
-  ,     pdbAtom 381 53 "MET" "CA" "" "C" 30854 40075 13253 massC
-  ,     pdbAtom 382 53 "MET" "C" "" "C" 29979 39860 12019 massC
-  ,     pdbAtom 383 53 "MET" "O" "" "O" 28783 39588 12107 massO
-  ,     pdbAtom 384 53 "MET" "CB" "" "C" 30924 41555 13495 massC
-  ,     pdbAtom 385 53 "MET" "CG" "" "C" 31597 41967 14781 massC
-  ,     pdbAtom 386 53 "MET" "SD" "" "S" 31472 43709 15259 massS
-  ,     pdbAtom 387 53 "MET" "CE" "" "C" 32499 44502 14091 massC
-  ,     pdbAtom 388 54 "ASP" "N" "" "N" 30589 39897 10843 massN
-  ,     pdbAtom 389 54 "ASP" "CA" "" "C" 29903 39620 9595 massC
-  ,     pdbAtom 390 54 "ASP" "C" "" "C" 29341 38234 9548 massC
-  ,     pdbAtom 391 54 "ASP" "O" "" "O" 28271 38002 8980 massO
-  ,     pdbAtom 392 54 "ASP" "CB" "" "C" 30846 39759 8427 massC
-  ,     pdbAtom 393 54 "ASP" "CG" "" "C" 30564 41029 7641 massC
-  ,     pdbAtom 394 54 "ASP" "OD1" "" "O" 29567 41055 6910 massO
-  ,     pdbAtom 395 54 "ASP" "OD2" "" "O" 31337 41984 7762 massO
-  ,     pdbAtom 396 55 "ALA" "N" "" "N" 30099 37277 10090 massN
-  ,     pdbAtom 397 55 "ALA" "CA" "" "C" 29654 35907 10111 massC
-  ,     pdbAtom 398 55 "ALA" "C" "" "C" 28643 35688 11231 massC
-  ,     pdbAtom 399 55 "ALA" "O" "" "O" 27968 34667 11178 massO
-  ,     pdbAtom 400 55 "ALA" "CB" "" "C" 30846 34979 10311 massC
-  ,     pdbAtom 401 56 "GLY" "N" "" "N" 28424 36586 12210 massN
-  ,     pdbAtom 402 56 "GLY" "CA" "" "C" 27438 36396 13278 massC
-  ,     pdbAtom 403 56 "GLY" "C" "" "C" 28029 35715 14500 massC
-  ,     pdbAtom 404 56 "GLY" "O" "" "O" 27354 35184 15394 massO
-  ,     pdbAtom 405 57 "LYS" "N" "" "N" 29353 35725 14527 massN
-  ,     pdbAtom 406 57 "LYS" "CA" "" "C" 30045 35011 15563 massC
-  ,     pdbAtom 407 57 "LYS" "C" "" "C" 30554 35895 16685 massC
-  ,     pdbAtom 408 57 "LYS" "O" "" "O" 30776 37065 16459 massO
-  ,     pdbAtom 409 57 "LYS" "CB" "" "C" 31199 34244 14906 massC
-  ,     pdbAtom 410 57 "LYS" "CG" "" "C" 30657 32925 14399 massC
-  ,     pdbAtom 411 57 "LYS" "CD" "" "C" 31789 32009 13997 massC
-  ,     pdbAtom 412 57 "LYS" "CE" "" "C" 31195 30661 13561 massC
-  ,     pdbAtom 413 57 "LYS" "NZ" "" "N" 32082 29917 12671 massN
-  ,     pdbAtom 414 58 "LEU" "N" "" "N" 30876 35344 17855 massN
-  ,     pdbAtom 415 58 "LEU" "CA" "" "C" 31439 36126 18922 massC
-  ,     pdbAtom 416 58 "LEU" "C" "" "C" 32927 36378 18633 massC
-  ,     pdbAtom 417 58 "LEU" "O" "" "O" 33598 35546 18015 massO
-  ,     pdbAtom 418 58 "LEU" "CB" "" "C" 31221 35381 20215 massC
-  ,     pdbAtom 419 58 "LEU" "CG" "" "C" 29766 35311 20615 massC
-  ,     pdbAtom 420 58 "LEU" "CD1" "" "C" 29660 34685 22003 massC
-  ,     pdbAtom 421 58 "LEU" "CD2" "" "C" 29175 36702 20724 massC
-  ,     pdbAtom 422 59 "VAL" "N" "" "N" 33396 37616 18899 massN
-  ,     pdbAtom 423 59 "VAL" "CA" "" "C" 34805 38036 18787 massC
-  ,     pdbAtom 424 59 "VAL" "C" "" "C" 35544 37378 20008 massC
-  ,     pdbAtom 425 59 "VAL" "O" "" "O" 34935 37144 21071 massO
-  ,     pdbAtom 426 59 "VAL" "CB" "" "C" 34761 39591 18806 massC
-  ,     pdbAtom 427 59 "VAL" "CG1" "" "C" 36142 40223 18968 massC
-  ,     pdbAtom 428 59 "VAL" "CG2" "" "C" 34130 40031 17478 massC
-  ,     pdbAtom 581 79 "ASN" "N" "" "N" 32968 57042 38246 massN
-  ,     pdbAtom 582 79 "ASN" "CA" "" "C" 31688 57065 38942 massC
-  ,     pdbAtom 583 79 "ASN" "C" "" "C" 30547 56203 38348 massC
-  ,     pdbAtom 584 79 "ASN" "O" "" "O" 29333 56432 38474 massO
-  ,     pdbAtom 585 79 "ASN" "CB" "" "C" 31248 58516 39083 massC
-  ,     pdbAtom 586 79 "ASN" "CG" "" "C" 31876 59229 40281 massC
-  ,     pdbAtom 587 79 "ASN" "OD1" "" "O" 32717 58723 41031 massO
-  ,     pdbAtom 588 79 "ASN" "ND2" "" "N" 31493 60483 40481 massN
-  ,     pdbAtom 589 80 "GLY" "N" "" "N" 30893 55065 37766 massN
-  ,     pdbAtom 590 80 "GLY" "CA" "" "C" 29874 54162 37301 massC
-  ,     pdbAtom 591 80 "GLY" "C" "" "C" 29876 54131 35806 massC
-  ,     pdbAtom 592 80 "GLY" "O" "" "O" 30481 54954 35108 massO
-  ,     pdbAtom 593 81 "PHE" "N" "" "N" 29175 53126 35339 massN
-  ,     pdbAtom 594 81 "PHE" "CA" "" "C" 29106 52875 33933 massC
-  ,     pdbAtom 595 81 "PHE" "C" "" "C" 28054 51772 33789 massC
-  ,     pdbAtom 596 81 "PHE" "O" "" "O" 27708 51011 34721 massO
-  ,     pdbAtom 597 81 "PHE" "CB" "" "C" 30488 52437 33455 massC
-  ,     pdbAtom 598 81 "PHE" "CG" "" "C" 31144 51301 34244 massC
-  ,     pdbAtom 599 81 "PHE" "CD1" "" "C" 30709 49987 34151 massC
-  ,     pdbAtom 600 81 "PHE" "CD2" "" "C" 32177 51582 35106 massC
-  ,     pdbAtom 601 81 "PHE" "CE1" "" "C" 31276 48981 34900 massC
-  ,     pdbAtom 602 81 "PHE" "CE2" "" "C" 32753 50572 35859 massC
-  ,     pdbAtom 603 81 "PHE" "CZ" "" "C" 32307 49275 35761 massC
-  ,     pdbAtom 604 82 "LEU" "N" "" "N" 27572 51677 32576 massN
-  ,     pdbAtom 605 82 "LEU" "CA" "" "C" 26566 50720 32180 massC
-  ,     pdbAtom 606 82 "LEU" "C" "" "C" 27232 49795 31129 massC
-  ,     pdbAtom 607 82 "LEU" "O" "" "O" 27737 50305 30120 massO
-  ,     pdbAtom 608 82 "LEU" "CB" "" "C" 25443 51611 31676 massC
-  ,     pdbAtom 609 82 "LEU" "CG" "" "C" 24393 51169 30711 massC
-  ,     pdbAtom 610 82 "LEU" "CD1" "" "C" 23487 50154 31356 massC
-  ,     pdbAtom 611 82 "LEU" "CD2" "" "C" 23647 52397 30272 massC
-  ,     pdbAtom 612 83 "LEU" "N" "" "N" 27322 48468 31312 massN
-  ,     pdbAtom 613 83 "LEU" "CA" "" "C" 27916 47525 30373 massC
-  ,     pdbAtom 614 83 "LEU" "C" "" "C" 26790 46979 29510 massC
-  ,     pdbAtom 615 83 "LEU" "O" "" "O" 25890 46273 29957 massO
-  ,     pdbAtom 616 83 "LEU" "CB" "" "C" 28647 46397 31158 massC
-  ,     pdbAtom 617 83 "LEU" "CG" "" "C" 29913 46836 31911 massC
-  ,     pdbAtom 618 83 "LEU" "CD1" "" "C" 30399 45707 32742 massC
-  ,     pdbAtom 619 83 "LEU" "CD2" "" "C" 30969 47306 30942 massC
-  ,     pdbAtom 620 84 "ASP" "N" "" "N" 26821 47301 28234 massN
-  ,     pdbAtom 621 84 "ASP" "CA" "" "C" 25834 46813 27329 massC
-  ,     pdbAtom 622 84 "ASP" "C" "" "C" 26538 45908 26331 massC
-  ,     pdbAtom 623 84 "ASP" "O" "" "O" 27279 46353 25444 massO
-  ,     pdbAtom 624 84 "ASP" "CB" "" "C" 25219 48071 26753 massC
-  ,     pdbAtom 625 84 "ASP" "CG" "" "C" 24284 47851 25579 massC
-  ,     pdbAtom 626 84 "ASP" "OD1" "" "O" 23727 46759 25479 massO
-  ,     pdbAtom 627 84 "ASP" "OD2" "" "O" 24147 48769 24756 massO
-  ,     pdbAtom 628 85 "GLY" "N" "" "N" 26338 44610 26441 massN
-  ,     pdbAtom 629 85 "GLY" "CA" "" "C" 26933 43697 25483 massC
-  ,     pdbAtom 630 85 "GLY" "C" "" "C" 28144 42984 25997 massC
-  ,     pdbAtom 631 85 "GLY" "O" "" "O" 28746 42135 25324 massO
-  ,     pdbAtom 768 104 "ASP" "N" "" "N" 26464 46759 40530 massN
-  ,     pdbAtom 769 104 "ASP" "CA" "" "C" 25332 46877 41404 massC
-  ,     pdbAtom 770 104 "ASP" "C" "" "C" 24124 46100 40979 massC
-  ,     pdbAtom 771 104 "ASP" "O" "" "O" 23498 45493 41846 massO
-  ,     pdbAtom 772 104 "ASP" "CB" "" "C" 24986 48303 41522 massC
-  ,     pdbAtom 773 104 "ASP" "CG" "" "C" 26128 49007 42261 massC
-  ,     pdbAtom 774 104 "ASP" "OD1" "" "O" 26394 48723 43441 massO
-  ,     pdbAtom 775 104 "ASP" "OD2" "" "O" 26773 49834 41630 massO
-  ,     pdbAtom 776 105 "TYR" "N" "" "N" 23831 46089 39678 massN
-  ,     pdbAtom 777 105 "TYR" "CA" "" "C" 22614 45492 39142 massC
-  ,     pdbAtom 778 105 "TYR" "C" "" "C" 22931 44745 37883 massC
-  ,     pdbAtom 779 105 "TYR" "O" "" "O" 23764 45224 37097 massO
-  ,     pdbAtom 780 105 "TYR" "CB" "" "C" 21548 46495 38715 massC
-  ,     pdbAtom 781 105 "TYR" "CG" "" "C" 20839 47286 39803 massC
-  ,     pdbAtom 782 105 "TYR" "CD1" "" "C" 21434 48446 40274 massC
-  ,     pdbAtom 783 105 "TYR" "CD2" "" "C" 19604 46881 40304 massC
-  ,     pdbAtom 784 105 "TYR" "CE1" "" "C" 20809 49220 41239 massC
-  ,     pdbAtom 785 105 "TYR" "CE2" "" "C" 18972 47644 41280 massC
-  ,     pdbAtom 786 105 "TYR" "CZ" "" "C" 19583 48816 41737 massC
-  ,     pdbAtom 787 105 "TYR" "OH" "" "O" 18989 49616 42708 massO
-  ,     pdbAtom 788 106 "VAL" "N" "" "N" 22320 43572 37739 massN
-  ,     pdbAtom 789 106 "VAL" "CA" "" "C" 22348 42878 36473 massC
-  ,     pdbAtom 790 106 "VAL" "C" "" "C" 20870 42849 36044 massC
-  ,     pdbAtom 791 106 "VAL" "O" "" "O" 19967 42515 36823 massO
-  ,     pdbAtom 792 106 "VAL" "CB" "" "C" 22942 41493 36681 massC
-  ,     pdbAtom 793 106 "VAL" "CG1" "" "C" 22901 40759 35332 massC
-  ,     pdbAtom 794 106 "VAL" "CG2" "" "C" 24412 41568 37146 massC
-  ,     pdbAtom 795 107 "LEU" "N" "" "N" 20543 43290 34837 massN
-  ,     pdbAtom 796 107 "LEU" "CA" "" "C" 19163 43331 34358 massC
-  ,     pdbAtom 797 107 "LEU" "C" "" "C" 19072 42441 33134 massC
-  ,     pdbAtom 798 107 "LEU" "O" "" "O" 19839 42522 32166 massO
-  ,     pdbAtom 799 107 "LEU" "CB" "" "C" 18781 44770 34012 massC
-  ,     pdbAtom 800 107 "LEU" "CG" "" "C" 19037 45845 35123 massC
-  ,     pdbAtom 801 107 "LEU" "CD1" "" "C" 18745 47167 34547 massC
-  ,     pdbAtom 802 107 "LEU" "CD2" "" "C" 18136 45687 36346 massC
-  ,     pdbAtom 803 108 "GLU" "N" "" "N" 18168 41477 33207 massN
-  ,     pdbAtom 804 108 "GLU" "CA" "" "C" 17976 40535 32145 massC
-  ,     pdbAtom 805 108 "GLU" "C" "" "C" 16739 41024 31406 massC
-  ,     pdbAtom 806 108 "GLU" "O" "" "O" 15736 41348 32022 massO
-  ,     pdbAtom 807 108 "GLU" "CB" "" "C" 17795 39197 32772 massC
-  ,     pdbAtom 808 108 "GLU" "CG" "" "C" 17479 38112 31769 massC
-  ,     pdbAtom 809 108 "GLU" "CD" "" "C" 16878 36862 32373 massC
-  ,     pdbAtom 810 108 "GLU" "OE1" "" "O" 16949 36652 33582 massO
-  ,     pdbAtom 811 108 "GLU" "OE2" "" "O" 16327 36092 31607 massO
-  ,     pdbAtom 812 109 "PHE" "N" "" "N" 16860 41159 30095 massN
-  ,     pdbAtom 813 109 "PHE" "CA" "" "C" 15795 41545 29219 massC
-  ,     pdbAtom 814 109 "PHE" "C" "" "C" 15347 40241 28577 massC
-  ,     pdbAtom 815 109 "PHE" "O" "" "O" 16033 39691 27704 massO
-  ,     pdbAtom 816 109 "PHE" "CB" "" "C" 16303 42506 28144 massC
-  ,     pdbAtom 817 109 "PHE" "CG" "" "C" 16534 43943 28597 massC
-  ,     pdbAtom 818 109 "PHE" "CD1" "" "C" 17292 44250 29712 massC
-  ,     pdbAtom 819 109 "PHE" "CD2" "" "C" 15962 44982 27878 massC
-  ,     pdbAtom 820 109 "PHE" "CE1" "" "C" 17484 45555 30122 massC
-  ,     pdbAtom 821 109 "PHE" "CE2" "" "C" 16160 46290 28294 massC
-  ,     pdbAtom 822 109 "PHE" "CZ" "" "C" 16916 46586 29411 massC
-  ,     pdbAtom 823 110 "ASP" "N" "" "N" 14196 39690 28948 massN
-  ,     pdbAtom 824 110 "ASP" "CA" "" "C" 13724 38460 28356 massC
-  ,     pdbAtom 825 110 "ASP" "C" "" "C" 12796 38645 27163 massC
-  ,     pdbAtom 826 110 "ASP" "O" "" "O" 11750 39309 27235 massO
-  ,     pdbAtom 827 110 "ASP" "CB" "" "C" 13057 37683 29461 massC
-  ,     pdbAtom 828 110 "ASP" "CG" "" "C" 12395 36407 28943 massC
-  ,     pdbAtom 829 110 "ASP" "OD1" "" "O" 13069 35651 28223 massO
-  ,     pdbAtom 830 110 "ASP" "OD2" "" "O" 11211 36195 29261 massO
-  ,     pdbAtom 919 122 "GLY" "N" "" "N" 13725 45594 11052 massN
-  ,     pdbAtom 920 122 "GLY" "CA" "" "C" 13285 46970 11062 massC
-  ,     pdbAtom 921 122 "GLY" "C" "" "C" 14309 47830 11795 massC
-  ,     pdbAtom 922 122 "GLY" "O" "" "O" 14030 49017 11944 massO
-  ,     pdbAtom 923 123 "ARG" "N" "" "N" 15453 47336 12286 massN
-  ,     pdbAtom 924 123 "ARG" "CA" "" "C" 16370 48198 12993 massC
-  ,     pdbAtom 925 123 "ARG" "C" "" "C" 17171 49081 12041 massC
-  ,     pdbAtom 926 123 "ARG" "O" "" "O" 17626 48652 10981 massO
-  ,     pdbAtom 927 123 "ARG" "CB" "" "C" 17314 47379 13834 massC
-  ,     pdbAtom 928 123 "ARG" "CG" "" "C" 18432 48166 14505 massC
-  ,     pdbAtom 929 123 "ARG" "CD" "" "C" 19062 47450 15704 massC
-  ,     pdbAtom 930 123 "ARG" "NE" "" "N" 19820 46254 15332 massN
-  ,     pdbAtom 931 123 "ARG" "CZ" "" "C" 20399 45419 16211 massC
-  ,     pdbAtom 932 123 "ARG" "NH1" "" "N" 20319 45627 17515 massN
-  ,     pdbAtom 933 123 "ARG" "NH2" "" "N" 21068 44353 15795 massN
-  ,     pdbAtom 934 124 "ARG" "N" "" "N" 17329 50354 12446 massN
-  ,     pdbAtom 935 124 "ARG" "CA" "" "C" 18075 51418 11759 massC
-  ,     pdbAtom 936 124 "ARG" "C" "" "C" 18848 52144 12874 massC
-  ,     pdbAtom 937 124 "ARG" "O" "" "O" 18380 52374 14014 massO
-  ,     pdbAtom 938 124 "ARG" "CB" "" "C" 17102 52390 11080 massC
-  ,     pdbAtom 939 124 "ARG" "CG" "" "C" 16056 51719 10134 massC
-  ,     pdbAtom 940 124 "ARG" "CD" "" "C" 16756 51250 8837 massC
-  ,     pdbAtom 941 124 "ARG" "NE" "" "N" 15849 50731 7802 massN
-  ,     pdbAtom 942 124 "ARG" "CZ" "" "C" 15457 49451 7820 massC
-  ,     pdbAtom 943 124 "ARG" "NH1" "" "N" 15860 48603 8760 massN
-  ,     pdbAtom 944 124 "ARG" "NH2" "" "N" 14671 48979 6874 massN
-  ,     pdbAtom 945 125 "VAL" "N" "" "N" 20088 52483 12559 massN
-  ,     pdbAtom 946 125 "VAL" "CA" "" "C" 20966 53077 13531 massC
-  ,     pdbAtom 947 125 "VAL" "C" "" "C" 21605 54366 12987 massC
-  ,     pdbAtom 948 125 "VAL" "O" "" "O" 21692 54631 11783 massO
-  ,     pdbAtom 949 125 "VAL" "CB" "" "C" 22074 52053 13931 massC
-  ,     pdbAtom 950 125 "VAL" "CG1" "" "C" 21467 50733 14377 massC
-  ,     pdbAtom 951 125 "VAL" "CG2" "" "C" 22950 51736 12737 massC
-  ,     pdbAtom 952 126 "HIS" "N" "" "N" 21928 55220 13949 massN
-  ,     pdbAtom 953 126 "HIS" "CA" "" "C" 22804 56339 13735 massC
-  ,     pdbAtom 954 126 "HIS" "C" "" "C" 24189 55862 14226 massC
-  ,     pdbAtom 955 126 "HIS" "O" "" "O" 24537 55932 15416 massO
-  ,     pdbAtom 956 126 "HIS" "CB" "" "C" 22295 57498 14554 massC
-  ,     pdbAtom 957 126 "HIS" "CG" "" "C" 23213 58665 14288 massC
-  ,     pdbAtom 958 126 "HIS" "ND1" "" "N" 23867 59380 15198 massN
-  ,     pdbAtom 959 126 "HIS" "CD2" "" "C" 23473 59169 13019 massC
-  ,     pdbAtom 960 126 "HIS" "CE1" "" "C" 24521 60319 14545 massC
-  ,     pdbAtom 961 126 "HIS" "NE2" "" "N" 24272 60172 13258 massN
-  ,     pdbAtom 962 127 "ALA" "N" "" "N" 25066 55475 13319 massN
-  ,     pdbAtom 963 127 "ALA" "CA" "" "C" 26322 54841 13688 massC
-  ,     pdbAtom 964 127 "ALA" "C" "" "C" 27277 55648 14511 massC
-  ,     pdbAtom 965 127 "ALA" "O" "" "O" 27802 55137 15509 massO
-  ,     pdbAtom 966 127 "ALA" "CB" "" "C" 27041 54387 12447 massC
-  ,     pdbAtom 967 128 "PRO" "N" "" "N" 27458 56954 14262 massN
-  ,     pdbAtom 968 128 "PRO" "CA" "" "C" 28355 57764 15058 massC
-  ,     pdbAtom 969 128 "PRO" "C" "" "C" 27943 57745 16524 massC
-  ,     pdbAtom 970 128 "PRO" "O" "" "O" 28805 57752 17407 massO
-  ,     pdbAtom 971 128 "PRO" "CB" "" "C" 28277 59143 14438 massC
-  ,     pdbAtom 972 128 "PRO" "CG" "" "C" 27812 58895 13050 massC
-  ,     pdbAtom 973 128 "PRO" "CD" "" "C" 26822 57781 13235 massC
-  ,     pdbAtom 974 129 "SER" "N" "" "N" 26656 57667 16849 massN
-  ,     pdbAtom 975 129 "SER" "CA" "" "C" 26333 57776 18239 massC
-  ,     pdbAtom 976 129 "SER" "C" "" "C" 25926 56464 18824 massC
-  ,     pdbAtom 977 129 "SER" "O" "" "O" 25808 56334 20061 massO
-  ,     pdbAtom 978 129 "SER" "CB" "" "C" 25223 58760 18417 massC
-  ,     pdbAtom 979 129 "SER" "OG" "" "O" 24044 58377 17705 massO
-  ,     pdbAtom 980 130 "GLY" "N" "" "N" 25612 55532 17923 massN
-  ,     pdbAtom 981 130 "GLY" "CA" "" "C" 25086 54264 18402 massC
-  ,     pdbAtom 982 130 "GLY" "C" "" "C" 23598 54425 18751 massC
-  ,     pdbAtom 983 130 "GLY" "O" "" "O" 23027 53495 19323 massO
-  ,     pdbAtom 984 131 "ARG" "N" "" "N" 22885 55539 18455 massN
-  ,     pdbAtom 985 131 "ARG" "CA" "" "C" 21452 55561 18766 massC
-  ,     pdbAtom 986 131 "ARG" "C" "" "C" 20753 54602 17792 massC
-  ,     pdbAtom 987 131 "ARG" "O" "" "O" 21124 54515 16607 massO
-  ,     pdbAtom 988 131 "ARG" "CB" "" "C" 20834 56943 18600 massC
-  ,     pdbAtom 989 131 "ARG" "CG" "" "C" 21186 57787 19786 massC
-  ,     pdbAtom 990 131 "ARG" "CD" "" "C" 20561 59179 19746 massC
-  ,     pdbAtom 991 131 "ARG" "NE" "" "N" 21221 59976 18723 massN
-  ,     pdbAtom 992 131 "ARG" "CZ" "" "C" 22354 60630 18959 massC
-  ,     pdbAtom 993 131 "ARG" "NH1" "" "N" 22938 60617 20160 massN
-  ,     pdbAtom 994 131 "ARG" "NH2" "" "N" 22908 61281 17947 massN
-  ,     pdbAtom 995 132 "VAL" "N" "" "N" 19743 53897 18296 massN
-  ,     pdbAtom 996 132 "VAL" "CA" "" "C" 18996 52896 17538 massC
-  ,     pdbAtom 997 132 "VAL" "C" "" "C" 17477 53158 17515 massC
-  ,     pdbAtom 998 132 "VAL" "O" "" "O" 16814 53564 18478 massO
-  ,     pdbAtom 999 132 "VAL" "CB" "" "C" 19419 51464 18159 massC
-  ,     pdbAtom 1000 132 "VAL" "CG1" "" "C" 19165 51388 19655 massC
-  ,     pdbAtom 1001 132 "VAL" "CG2" "" "C" 18586 50364 17565 massC
-  ,     pdbAtom 1002 133 "TYR" "N" "" "N" 16916 52890 16343 massN
-  ,     pdbAtom 1003 133 "TYR" "CA" "" "C" 15513 53093 16026 massC
-  ,     pdbAtom 1004 133 "TYR" "C" "" "C" 14915 51820 15394 massC
-  ,     pdbAtom 1005 133 "TYR" "O" "" "O" 15625 50920 14954 massO
-  ,     pdbAtom 1006 133 "TYR" "CB" "" "C" 15433 54267 15027 massC
-  ,     pdbAtom 1007 133 "TYR" "CG" "" "C" 16013 55579 15528 massC
-  ,     pdbAtom 1008 133 "TYR" "CD1" "" "C" 15224 56455 16286 massC
-  ,     pdbAtom 1009 133 "TYR" "CD2" "" "C" 17316 55908 15188 massC
-  ,     pdbAtom 1010 133 "TYR" "CE1" "" "C" 15785 57673 16667 massC
-  ,     pdbAtom 1011 133 "TYR" "CE2" "" "C" 17887 57132 15588 massC
-  ,     pdbAtom 1012 133 "TYR" "CZ" "" "C" 17104 58005 16323 massC
-  ,     pdbAtom 1013 133 "TYR" "OH" "" "O" 17628 59229 16733 massO
-  ,     pdbAtom 1014 134 "HIS" "N" "" "N" 13592 51753 15260 massN
-  ,     pdbAtom 1015 134 "HIS" "CA" "" "C" 12920 50671 14575 massC
-  ,     pdbAtom 1016 134 "HIS" "C" "" "C" 11872 51327 13699 massC
-  ,     pdbAtom 1017 134 "HIS" "O" "" "O" 11007 52053 14215 massO
-  ,     pdbAtom 1018 134 "HIS" "CB" "" "C" 12210 49730 15557 massC
-  ,     pdbAtom 1019 134 "HIS" "CG" "" "C" 11706 48501 14821 massC
-  ,     pdbAtom 1020 134 "HIS" "ND1" "" "N" 10556 48276 14167 massN
-  ,     pdbAtom 1021 134 "HIS" "CD2" "" "C" 12468 47369 14712 massC
-  ,     pdbAtom 1022 134 "HIS" "CE1" "" "C" 10613 47062 13668 massC
-  ,     pdbAtom 1023 134 "HIS" "NE2" "" "N" 11757 46532 13999 massN
-  ,     pdbAtom 1024 135 "VAL" "N" "" "N" 11820 50979 12420 massN
-  ,     pdbAtom 1025 135 "VAL" "CA" "" "C" 10854 51600 11529 massC
-  ,     pdbAtom 1026 135 "VAL" "C" "" "C" 9394 51546 11945 massC
-  ,     pdbAtom 1027 135 "VAL" "O" "" "O" 8615 52427 11555 massO
-  ,     pdbAtom 1028 135 "VAL" "CB" "" "C" 10957 51010 10116 massC
-  ,     pdbAtom 1029 135 "VAL" "CG1" "" "C" 12323 51398 9568 massC
-  ,     pdbAtom 1030 135 "VAL" "CG2" "" "C" 10715 49521 10097 massC
-  ,     pdbAtom 1031 136 "LYS" "N" "" "N" 9031 50478 12695 massN
-  ,     pdbAtom 1032 136 "LYS" "CA" "" "C" 7667 50304 13237 massC
-  ,     pdbAtom 1033 136 "LYS" "C" "" "C" 7568 50589 14724 massC
-  ,     pdbAtom 1034 136 "LYS" "O" "" "O" 6735 51363 15188 massO
-  ,     pdbAtom 1035 136 "LYS" "CB" "" "C" 7130 48860 13071 massC
-  ,     pdbAtom 1036 136 "LYS" "CG" "" "C" 7245 48246 11697 massC
-  ,     pdbAtom 1037 136 "LYS" "CD" "" "C" 6950 46762 11781 massC
-  ,     pdbAtom 1038 136 "LYS" "CE" "" "C" 6657 46207 10383 massC
-  ,     pdbAtom 1039 136 "LYS" "NZ" "" "N" 6469 44763 10438 massN
-  ,     pdbAtom 1040 137 "PHE" "N" "" "N" 8501 50023 15507 massN
-  ,     pdbAtom 1041 137 "PHE" "CA" "" "C" 8263 49977 16941 massC
-  ,     pdbAtom 1042 137 "PHE" "C" "" "C" 8764 51187 17679 massC
-  ,     pdbAtom 1043 137 "PHE" "O" "" "O" 8381 51422 18832 massO
-  ,     pdbAtom 1044 137 "PHE" "CB" "" "C" 8914 48710 17552 massC
-  ,     pdbAtom 1045 137 "PHE" "CG" "" "C" 8346 47450 16934 massC
-  ,     pdbAtom 1046 137 "PHE" "CD1" "" "C" 6992 47346 16631 massC
-  ,     pdbAtom 1047 137 "PHE" "CD2" "" "C" 9194 46386 16624 massC
-  ,     pdbAtom 1048 137 "PHE" "CE1" "" "C" 6489 46191 16029 massC
-  ,     pdbAtom 1049 137 "PHE" "CE2" "" "C" 8688 45235 16023 massC
-  ,     pdbAtom 1050 137 "PHE" "CZ" "" "C" 7333 45131 15713 massC
-  ,     pdbAtom 1051 138 "ASN" "N" "" "N" 9642 51947 17056 massN
-  ,     pdbAtom 1052 138 "ASN" "CA" "" "C" 10221 53056 17749 massC
-  ,     pdbAtom 1053 138 "ASN" "C" "" "C" 10871 53923 16696 massC
-  ,     pdbAtom 1054 138 "ASN" "O" "" "O" 12104 54056 16622 massO
-  ,     pdbAtom 1055 138 "ASN" "CB" "" "C" 11246 52544 18729 massC
-  ,     pdbAtom 1056 138 "ASN" "CG" "" "C" 11698 53585 19740 massC
-  ,     pdbAtom 1057 138 "ASN" "OD1" "" "O" 12777 53462 20329 massO
-  ,     pdbAtom 1058 138 "ASN" "ND2" "" "N" 10944 54633 20051 massN
-  ,     pdbAtom 1059 139 "PRO" "N" "" "N" 10068 54516 15808 massN
-  ,     pdbAtom 1060 139 "PRO" "CA" "" "C" 10584 55204 14637 massC
-  ,     pdbAtom 1061 139 "PRO" "C" "" "C" 11249 56549 14973 massC
-  ,     pdbAtom 1062 139 "PRO" "O" "" "O" 10957 57118 16053 massO
-  ,     pdbAtom 1063 139 "PRO" "CB" "" "C" 9361 55282 13743 massC
-  ,     pdbAtom 1064 139 "PRO" "CG" "" "C" 8226 55412 14673 massC
-  ,     pdbAtom 1065 139 "PRO" "CD" "" "C" 8622 54613 15916 massC
-  ,     pdbAtom 1066 140 "PRO" "N" "" "N" 12156 57097 14143 massN
-  ,     pdbAtom 1067 140 "PRO" "CA" "" "C" 12639 58484 14325 massC
-  ,     pdbAtom 1068 140 "PRO" "C" "" "C" 11489 59513 14106 massC
-  ,     pdbAtom 1069 140 "PRO" "O" "" "O" 10477 59167 13475 massO
-  ,     pdbAtom 1070 140 "PRO" "CB" "" "C" 13777 58555 13334 massC
-  ,     pdbAtom 1071 140 "PRO" "CG" "" "C" 13249 57750 12177 massC
-  ,     pdbAtom 1072 140 "PRO" "CD" "" "C" 12651 56529 12894 massC
-  ,     pdbAtom 1073 141 "LYS" "N" "" "N" 11577 60786 14571 massN
-  ,     pdbAtom 1074 141 "LYS" "CA" "" "C" 10533 61820 14450 massC
-  ,     pdbAtom 1075 141 "LYS" "C" "" "C" 10428 62236 13006 massC
-  ,     pdbAtom 1076 141 "LYS" "O" "" "O" 9377 62640 12524 massO
-  ,     pdbAtom 1077 141 "LYS" "CB" "" "C" 10883 63022 15357 massC
-  ,     pdbAtom 1078 141 "LYS" "CG" "" "C" 10754 62565 16817 massC
-  ,     pdbAtom 1079 141 "LYS" "CD" "" "C" 11473 63536 17715 massC
-  ,     pdbAtom 1080 141 "LYS" "CE" "" "C" 11519 63023 19151 massC
-  ,     pdbAtom 1081 141 "LYS" "NZ" "" "N" 12323 63885 20020 massN
-  ,     pdbAtom 1082 142 "VAL" "N" "" "N" 11505 62114 12251 massN
-  ,     pdbAtom 1083 142 "VAL" "CA" "" "C" 11505 62370 10828 massC
-  ,     pdbAtom 1084 142 "VAL" "C" "" "C" 12110 61082 10227 massC
-  ,     pdbAtom 1085 142 "VAL" "O" "" "O" 13252 60661 10498 massO
-  ,     pdbAtom 1086 142 "VAL" "CB" "" "C" 12377 63646 10539 massC
-  ,     pdbAtom 1087 142 "VAL" "CG1" "" "C" 12325 63850 9046 massC
-  ,     pdbAtom 1088 142 "VAL" "CG2" "" "C" 11957 64872 11407 massC
-  ,     pdbAtom 1089 143 "GLU" "N" "" "N" 11321 60416 9410 massN
-  ,     pdbAtom 1090 143 "GLU" "CA" "" "C" 11718 59172 8801 massC
-  ,     pdbAtom 1091 143 "GLU" "C" "" "C" 13096 59198 8139 massC
-  ,     pdbAtom 1092 143 "GLU" "O" "" "O" 13448 60073 7340 massO
-  ,     pdbAtom 1093 143 "GLU" "CB" "" "C" 10606 58810 7824 massC
-  ,     pdbAtom 1094 143 "GLU" "CG" "" "C" 10749 57508 7007 massC
-  ,     pdbAtom 1095 143 "GLU" "CD" "" "C" 9483 57011 6281 massC
-  ,     pdbAtom 1096 143 "GLU" "OE1" "" "O" 8626 57820 5890 massO
-  ,     pdbAtom 1097 143 "GLU" "OE2" "" "O" 9362 55790 6107 massO
-  ,     pdbAtom 1098 144 "GLY" "N" "" "N" 13927 58251 8571 massN
-  ,     pdbAtom 1099 144 "GLY" "CA" "" "C" 15260 58064 8028 massC
-  ,     pdbAtom 1100 144 "GLY" "C" "" "C" 16320 58957 8633 massC
-  ,     pdbAtom 1101 144 "GLY" "O" "" "O" 17474 58897 8193 massO
-  ,     pdbAtom 1102 145 "LYS" "N" "" "N" 16033 59770 9638 massN
-  ,     pdbAtom 1103 145 "LYS" "CA" "" "C" 17037 60722 10089 massC
-  ,     pdbAtom 1104 145 "LYS" "C" "" "C" 17154 60573 11575 massC
-  ,     pdbAtom 1105 145 "LYS" "O" "" "O" 16188 60303 12293 massO
-  ,     pdbAtom 1106 145 "LYS" "CB" "" "C" 16659 62186 9822 massC
-  ,     pdbAtom 1107 145 "LYS" "CG" "" "C" 16244 62558 8408 massC
-  ,     pdbAtom 1108 145 "LYS" "CD" "" "C" 17425 62505 7529 massC
-  ,     pdbAtom 1109 145 "LYS" "CE" "" "C" 16816 62743 6193 massC
-  ,     pdbAtom 1110 145 "LYS" "NZ" "" "N" 17869 62607 5232 massN
-  ,     pdbAtom 1111 146 "ASP" "N" "" "N" 18354 60773 12087 massN
-  ,     pdbAtom 1112 146 "ASP" "CA" "" "C" 18527 60716 13497 massC
-  ,     pdbAtom 1113 146 "ASP" "C" "" "C" 17902 61992 14096 massC
-  ,     pdbAtom 1114 146 "ASP" "O" "" "O" 18118 63080 13573 massO
-  ,     pdbAtom 1115 146 "ASP" "CB" "" "C" 20019 60587 13695 massC
-  ,     pdbAtom 1116 146 "ASP" "CG" "" "C" 20437 60730 15135 massC
-  ,     pdbAtom 1117 146 "ASP" "OD1" "" "O" 20070 59919 15991 massO
-  ,     pdbAtom 1118 146 "ASP" "OD2" "" "O" 21164 61676 15393 massO
-  ,     pdbAtom 1119 147 "ASP" "N" "" "N" 17190 61879 15213 massN
-  ,     pdbAtom 1120 147 "ASP" "CA" "" "C" 16517 62933 15961 massC
-  ,     pdbAtom 1121 147 "ASP" "C" "" "C" 17370 64106 16391 massC
-  ,     pdbAtom 1122 147 "ASP" "O" "" "O" 16985 65266 16259 massO
-  ,     pdbAtom 1123 147 "ASP" "CB" "" "C" 15898 62337 17210 massC
-  ,     pdbAtom 1124 147 "ASP" "CG" "" "C" 14693 61426 16990 massC
-  ,     pdbAtom 1125 147 "ASP" "OD1" "" "O" 14242 61247 15880 massO
-  ,     pdbAtom 1126 147 "ASP" "OD2" "" "O" 14187 60871 17943 massO
-  ,     pdbAtom 1127 148 "VAL" "N" "" "N" 18572 63785 16853 massN
-  ,     pdbAtom 1128 148 "VAL" "CA" "" "C" 19530 64752 17344 massC
-  ,     pdbAtom 1129 148 "VAL" "C" "" "C" 20308 65445 16239 massC
-  ,     pdbAtom 1130 148 "VAL" "O" "" "O" 20359 66663 16142 massO
-  ,     pdbAtom 1131 148 "VAL" "CB" "" "C" 20453 63990 18325 massC
-  ,     pdbAtom 1132 148 "VAL" "CG1" "" "C" 21535 64842 18981 massC
-  ,     pdbAtom 1133 148 "VAL" "CG2" "" "C" 19558 63529 19462 massC
-  ,     pdbAtom 1134 149 "THR" "N" "" "N" 20915 64727 15344 massN
-  ,     pdbAtom 1135 149 "THR" "CA" "" "C" 21763 65360 14392 massC
-  ,     pdbAtom 1136 149 "THR" "C" "" "C" 21109 65528 13059 massC
-  ,     pdbAtom 1137 149 "THR" "O" "" "O" 21721 66135 12166 massO
-  ,     pdbAtom 1138 149 "THR" "CB" "" "C" 23067 64545 14212 massC
-  ,     pdbAtom 1139 149 "THR" "OG1" "" "O" 22740 63377 13487 massO
-  ,     pdbAtom 1140 149 "THR" "CG2" "" "C" 23714 64169 15499 massC
-  ,     pdbAtom 1141 150 "GLY" "N" "" "N" 19955 64916 12789 massN
-  ,     pdbAtom 1142 150 "GLY" "CA" "" "C" 19389 65023 11444 massC
-  ,     pdbAtom 1143 150 "GLY" "C" "" "C" 20135 64251 10365 massC
-  ,     pdbAtom 1144 150 "GLY" "O" "" "O" 19877 64351 9159 massO
-  ,     pdbAtom 1145 151 "GLU" "N" "" "N" 21081 63418 10801 massN
-  ,     pdbAtom 1146 151 "GLU" "CA" "" "C" 21826 62570 9898 massC
-  ,     pdbAtom 1147 151 "GLU" "C" "" "C" 21047 61311 9535 massC
-  ,     pdbAtom 1148 151 "GLU" "O" "" "O" 20270 60766 10319 massO
-  ,     pdbAtom 1149 151 "GLU" "CB" "" "C" 23117 62205 10560 massC
-  ,     pdbAtom 1150 151 "GLU" "CG" "" "C" 24145 63317 10561 massC
-  ,     pdbAtom 1151 151 "GLU" "CD" "" "C" 25317 63047 11493 massC
-  ,     pdbAtom 1152 151 "GLU" "OE1" "" "O" 25895 61969 11408 massO
-  ,     pdbAtom 1153 151 "GLU" "OE2" "" "O" 25664 63907 12303 massO
-  ,     pdbAtom 1154 152 "GLU" "N" "" "N" 21328 60861 8327 massN
-  ,     pdbAtom 1155 152 "GLU" "CA" "" "C" 20683 59723 7720 massC
-  ,     pdbAtom 1156 152 "GLU" "C" "" "C" 20987 58437 8522 massC
-  ,     pdbAtom 1157 152 "GLU" "O" "" "O" 22117 58203 9003 massO
-  ,     pdbAtom 1158 152 "GLU" "CB" "" "C" 21194 59697 6283 massC
-  ,     pdbAtom 1159 152 "GLU" "CG" "" "C" 20390 58891 5261 massC
-  ,     pdbAtom 1160 152 "GLU" "CD" "" "C" 19048 59446 4773 massC
-  ,     pdbAtom 1161 152 "GLU" "OE1" "" "O" 18109 59534 5550 massO
-  ,     pdbAtom 1162 152 "GLU" "OE2" "" "O" 18918 59765 3590 massO
-  ,     pdbAtom 1163 153 "LEU" "N" "" "N" 19934 57666 8790 massN
-  ,     pdbAtom 1164 153 "LEU" "CA" "" "C" 20090 56412 9516 massC
-  ,     pdbAtom 1165 153 "LEU" "C" "" "C" 20514 55309 8534 massC
-  ,     pdbAtom 1166 153 "LEU" "O" "" "O" 20252 55401 7326 massO
-  ,     pdbAtom 1167 153 "LEU" "CB" "" "C" 18781 56079 10188 massC
-  ,     pdbAtom 1168 153 "LEU" "CG" "" "C" 18374 57112 11221 massC
-  ,     pdbAtom 1169 153 "LEU" "CD1" "" "C" 17029 56729 11739 massC
-  ,     pdbAtom 1170 153 "LEU" "CD2" "" "C" 19407 57231 12302 massC
-  ,     pdbAtom 1171 154 "THR" "N" "" "N" 21202 54249 8973 massN
-  ,     pdbAtom 1172 154 "THR" "CA" "" "C" 21658 53190 8095 massC
-  ,     pdbAtom 1173 154 "THR" "C" "" "C" 21204 51862 8721 massC
-  ,     pdbAtom 1174 154 "THR" "O" "" "O" 20647 51837 9850 massO
-  ,     pdbAtom 1175 154 "THR" "CB" "" "C" 23240 53250 7944 massC
-  ,     pdbAtom 1176 154 "THR" "OG1" "" "O" 23887 53318 9212 massO
-  ,     pdbAtom 1177 154 "THR" "CG2" "" "C" 23697 54526 7287 massC
-  ,     pdbAtom 1178 155 "THR" "N" "" "N" 21420 50764 7992 massN
-  ,     pdbAtom 1179 155 "THR" "CA" "" "C" 21171 49444 8553 massC
-  ,     pdbAtom 1180 155 "THR" "C" "" "C" 22511 48807 8882 massC
-  ,     pdbAtom 1181 155 "THR" "O" "" "O" 23544 49124 8298 massO
-  ,     pdbAtom 1182 155 "THR" "CB" "" "C" 20398 48630 7547 massC
-  ,     pdbAtom 1183 155 "THR" "OG1" "" "O" 21165 48608 6369 massO
-  ,     pdbAtom 1184 155 "THR" "CG2" "" "C" 19135 49291 7127 massC
-  ,     pdbAtom 1185 156 "ARG" "N" "" "N" 22602 47980 9890 massN
-  ,     pdbAtom 1186 156 "ARG" "CA" "" "C" 23818 47270 10158 massC
-  ,     pdbAtom 1187 156 "ARG" "C" "" "C" 23937 46129 9152 massC
-  ,     pdbAtom 1188 156 "ARG" "O" "" "O" 22965 45487 8692 massO
-  ,     pdbAtom 1189 156 "ARG" "CB" "" "C" 23770 46767 11585 massC
-  ,     pdbAtom 1190 156 "ARG" "CG" "" "C" 24197 47879 12528 massC
-  ,     pdbAtom 1191 156 "ARG" "CD" "" "C" 24163 47484 13977 massC
-  ,     pdbAtom 1192 156 "ARG" "NE" "" "N" 24554 46097 14182 massN
-  ,     pdbAtom 1193 156 "ARG" "CZ" "" "C" 24321 45507 15337 massC
-  ,     pdbAtom 1194 156 "ARG" "NH1" "" "N" 23810 46190 16331 massN
-  ,     pdbAtom 1195 156 "ARG" "NH2" "" "N" 24583 44231 15522 massN
-  ,     pdbAtom 1196 157 "LYS" "N" "" "N" 25209 45893 8840 massN
-  ,     pdbAtom 1197 157 "LYS" "CA" "" "C" 25618 44885 7852 massC
-  ,     pdbAtom 1198 157 "LYS" "C" "" "C" 25246 43470 8313 massC
-  ,     pdbAtom 1199 157 "LYS" "O" "" "O" 24904 42622 7505 massO
-  ,     pdbAtom 1200 157 "LYS" "CB" "" "C" 27139 44916 7632 massC
-  ,     pdbAtom 1201 157 "LYS" "CG" "" "C" 27925 46171 7166 massC
-  ,     pdbAtom 1202 157 "LYS" "CD" "" "C" 27832 47491 7978 massC
-  ,     pdbAtom 1203 157 "LYS" "CE" "" "C" 28295 47435 9433 massC
-  ,     pdbAtom 1204 157 "LYS" "NZ" "" "N" 27330 48130 10268 massN
-  ,     pdbAtom 1205 158 "ASP" "N" "" "N" 25330 43207 9631 massN
-  ,     pdbAtom 1206 158 "ASP" "CA" "" "C" 25037 41923 10230 massC
-  ,     pdbAtom 1207 158 "ASP" "C" "" "C" 23558 41788 10628 massC
-  ,     pdbAtom 1208 158 "ASP" "O" "" "O" 23137 40888 11347 massO
-  ,     pdbAtom 1209 158 "ASP" "CB" "" "C" 26023 41808 11400 massC
-  ,     pdbAtom 1210 158 "ASP" "CG" "" "C" 25801 42776 12548 massC
-  ,     pdbAtom 1211 158 "ASP" "OD1" "" "O" 25283 43851 12308 massO
-  ,     pdbAtom 1212 158 "ASP" "OD2" "" "O" 26141 42476 13699 massO
-  ,     pdbAtom 1213 159 "ASP" "N" "" "N" 22670 42699 10221 massN
-  ,     pdbAtom 1214 159 "ASP" "CA" "" "C" 21262 42561 10522 massC
-  ,     pdbAtom 1215 159 "ASP" "C" "" "C" 20494 42016 9332 massC
-  ,     pdbAtom 1216 159 "ASP" "O" "" "O" 19650 42689 8724 massO
-  ,     pdbAtom 1217 159 "ASP" "CB" "" "C" 20648 43890 10940 massC
-  ,     pdbAtom 1218 159 "ASP" "CG" "" "C" 21002 44350 12347 massC
-  ,     pdbAtom 1219 159 "ASP" "OD1" "" "O" 21619 43630 13123 massO
-  ,     pdbAtom 1220 159 "ASP" "OD2" "" "O" 20672 45479 12638 massO
-  ,     pdbAtom 1221 160 "GLN" "N" "" "N" 20899 40828 8874 massN
-  ,     pdbAtom 1222 160 "GLN" "CA" "" "C" 20054 40082 7944 massC
-  ,     pdbAtom 1223 160 "GLN" "C" "" "C" 19689 38809 8687 massC
-  ,     pdbAtom 1224 160 "GLN" "O" "" "O" 20435 38358 9585 massO
-  ,     pdbAtom 1225 160 "GLN" "CB" "" "C" 20728 39640 6676 massC
-  ,     pdbAtom 1226 160 "GLN" "CG" "" "C" 21152 40744 5745 massC
-  ,     pdbAtom 1227 160 "GLN" "CD" "" "C" 22649 40914 5852 massC
-  ,     pdbAtom 1228 160 "GLN" "OE1" "" "O" 23385 40029 6315 massO
-  ,     pdbAtom 1229 160 "GLN" "NE2" "" "N" 23142 42076 5456 massN
-  ,     pdbAtom 1230 161 "GLU" "N" "" "N" 18553 38261 8255 massN
-  ,     pdbAtom 1231 161 "GLU" "CA" "" "C" 17942 37066 8799 massC
-  ,     pdbAtom 1232 161 "GLU" "C" "" "C" 18925 35929 9092 massC
-  ,     pdbAtom 1233 161 "GLU" "O" "" "O" 18945 35421 10227 massO
-  ,     pdbAtom 1234 161 "GLU" "CB" "" "C" 16920 36733 7795 massC
-  ,     pdbAtom 1235 161 "GLU" "CG" "" "C" 15999 35552 8012 massC
-  ,     pdbAtom 1236 161 "GLU" "CD" "" "C" 14748 35661 7126 massC
-  ,     pdbAtom 1237 161 "GLU" "OE1" "" "O" 14858 35852 5898 massO
-  ,     pdbAtom 1238 161 "GLU" "OE2" "" "O" 13649 35573 7684 massO
-  ,     pdbAtom 1239 162 "GLU" "N" "" "N" 19847 35559 8181 massN
-  ,     pdbAtom 1240 162 "GLU" "CA" "" "C" 20712 34443 8506 massC
-  ,     pdbAtom 1241 162 "GLU" "C" "" "C" 21809 34739 9498 massC
-  ,     pdbAtom 1242 162 "GLU" "O" "" "O" 22129 33853 10290 massO
-  ,     pdbAtom 1243 162 "GLU" "CB" "" "C" 21297 33885 7242 massC
-  ,     pdbAtom 1244 162 "GLU" "CG" "" "C" 20162 33253 6378 massC
-  ,     pdbAtom 1245 162 "GLU" "CD" "" "C" 19068 32377 7051 massC
-  ,     pdbAtom 1246 162 "GLU" "OE1" "" "O" 19372 31314 7615 massO
-  ,     pdbAtom 1247 162 "GLU" "OE2" "" "O" 17891 32766 6989 massO
-  ,     pdbAtom 1248 163 "THR" "N" "" "N" 22382 35951 9529 massN
-  ,     pdbAtom 1249 163 "THR" "CA" "" "C" 23378 36312 10514 massC
-  ,     pdbAtom 1250 163 "THR" "C" "" "C" 22699 36426 11855 massC
-  ,     pdbAtom 1251 163 "THR" "O" "" "O" 23332 35982 12797 massO
-  ,     pdbAtom 1252 163 "THR" "CB" "" "C" 24024 37637 10229 massC
-  ,     pdbAtom 1253 163 "THR" "OG1" "" "O" 24370 37534 8871 massO
-  ,     pdbAtom 1254 163 "THR" "CG2" "" "C" 25227 37972 11077 massC
-  ,     pdbAtom 1255 164 "VAL" "N" "" "N" 21460 36915 11989 massN
-  ,     pdbAtom 1256 164 "VAL" "CA" "" "C" 20732 36952 13256 massC
-  ,     pdbAtom 1257 164 "VAL" "C" "" "C" 20535 35509 13773 massC
-  ,     pdbAtom 1258 164 "VAL" "O" "" "O" 20627 35211 14964 massO
-  ,     pdbAtom 1259 164 "VAL" "CB" "" "C" 19358 37625 12994 massC
-  ,     pdbAtom 1260 164 "VAL" "CG1" "" "C" 18500 37663 14231 massC
-  ,     pdbAtom 1261 164 "VAL" "CG2" "" "C" 19575 39045 12591 massC
-  ,     pdbAtom 1262 165 "ARG" "N" "" "N" 20189 34559 12910 massN
-  ,     pdbAtom 1263 165 "ARG" "CA" "" "C" 20001 33162 13347 massC
-  ,     pdbAtom 1264 165 "ARG" "C" "" "C" 21249 32540 13966 massC
-  ,     pdbAtom 1265 165 "ARG" "O" "" "O" 21232 31882 15043 massO
-  ,     pdbAtom 1266 165 "ARG" "CB" "" "C" 19529 32365 12146 massC
-  ,     pdbAtom 1267 165 "ARG" "CG" "" "C" 18077 32631 12181 massC
-  ,     pdbAtom 1268 165 "ARG" "CD" "" "C" 17291 31953 11104 massC
-  ,     pdbAtom 1269 165 "ARG" "NE" "" "N" 15902 32196 11468 massN
-  ,     pdbAtom 1270 165 "ARG" "CZ" "" "C" 14909 32325 10581 massC
-  ,     pdbAtom 1271 165 "ARG" "NH1" "" "N" 15099 32226 9250 massN
-  ,     pdbAtom 1272 165 "ARG" "NH2" "" "N" 13692 32568 11074 massN
-  ,     pdbAtom 1471 190 "ASN" "N" "" "N" 26374 39541 46221 massN
-  ,     pdbAtom 1472 190 "ASN" "CA" "" "C" 27363 40312 45461 massC
-  ,     pdbAtom 1473 190 "ASN" "C" "" "C" 26836 41319 44448 massC
-  ,     pdbAtom 1474 190 "ASN" "O" "" "O" 27599 42167 44016 massO
-  ,     pdbAtom 1475 190 "ASN" "CB" "" "C" 28307 39357 44735 massC
-  ,     pdbAtom 1476 190 "ASN" "CG" "" "C" 29016 38341 45616 massC
-  ,     pdbAtom 1477 190 "ASN" "OD1" "" "O" 29153 38496 46827 massO
-  ,     pdbAtom 1478 190 "ASN" "ND2" "" "N" 29479 37218 45112 massN
-  ,     pdbAtom 1479 191 "THR" "N" "" "N" 25556 41263 44069 massN
-  ,     pdbAtom 1480 191 "THR" "CA" "" "C" 24855 42119 43112 massC
-  ,     pdbAtom 1481 191 "THR" "C" "" "C" 23337 41897 43350 massC
-  ,     pdbAtom 1482 191 "THR" "O" "" "O" 22924 40980 44099 massO
-  ,     pdbAtom 1483 191 "THR" "CB" "" "C" 25234 41732 41612 massC
-  ,     pdbAtom 1484 191 "THR" "OG1" "" "O" 24835 42853 40815 massO
-  ,     pdbAtom 1485 191 "THR" "CG2" "" "C" 24563 40464 41070 massC
-  ,     pdbAtom 1486 192 "LYS" "N" "" "N" 22520 42760 42707 massN
-  ,     pdbAtom 1487 192 "LYS" "CA" "" "C" 21066 42643 42614 massC
-  ,     pdbAtom 1488 192 "LYS" "C" "" "C" 20766 42082 41200 massC
-  ,     pdbAtom 1489 192 "LYS" "O" "" "O" 21477 42422 40243 massO
-  ,     pdbAtom 1490 192 "LYS" "CB" "" "C" 20449 44043 42842 massC
-  ,     pdbAtom 1491 192 "LYS" "CG" "" "C" 20470 44348 44357 massC
-  ,     pdbAtom 1492 192 "LYS" "CD" "" "C" 20175 45801 44791 massC
-  ,     pdbAtom 1493 192 "LYS" "CE" "" "C" 19401 45922 46117 massC
-  ,     pdbAtom 1494 192 "LYS" "NZ" "" "N" 17996 45547 45934 massN
-  ,     pdbAtom 1495 193 "TYR" "N" "" "N" 19780 41212 40951 massN
-  ,     pdbAtom 1496 193 "TYR" "CA" "" "C" 19512 40627 39611 massC
-  ,     pdbAtom 1497 193 "TYR" "C" "" "C" 18078 41014 39353 massC
-  ,     pdbAtom 1498 193 "TYR" "O" "" "O" 17328 40851 40302 massO
-  ,     pdbAtom 1499 193 "TYR" "CB" "" "C" 19649 39084 39628 massC
-  ,     pdbAtom 1500 193 "TYR" "CG" "" "C" 19616 38390 38306 massC
-  ,     pdbAtom 1501 193 "TYR" "CD1" "" "C" 18419 38015 37750 massC
-  ,     pdbAtom 1502 193 "TYR" "CD2" "" "C" 20768 38216 37613 massC
-  ,     pdbAtom 1503 193 "TYR" "CE1" "" "C" 18368 37484 36473 massC
-  ,     pdbAtom 1504 193 "TYR" "CE2" "" "C" 20734 37682 36334 massC
-  ,     pdbAtom 1505 193 "TYR" "CZ" "" "C" 19534 37328 35772 massC
-  ,     pdbAtom 1506 193 "TYR" "OH" "" "O" 19490 36855 34496 massO
-  ,     pdbAtom 1507 194 "ALA" "N" "" "N" 17604 41586 38241 massN
-  ,     pdbAtom 1508 194 "ALA" "CA" "" "C" 16181 41854 38027 massC
-  ,     pdbAtom 1509 194 "ALA" "C" "" "C" 15867 41433 36601 massC
-  ,     pdbAtom 1510 194 "ALA" "O" "" "O" 16666 41662 35701 massO
-  ,     pdbAtom 1511 194 "ALA" "CB" "" "C" 15820 43324 38124 massC
-  ,     pdbAtom 1512 195 "LYS" "N" "" "N" 14803 40679 36385 massN
-  ,     pdbAtom 1513 195 "LYS" "CA" "" "C" 14390 40266 35066 massC
-  ,     pdbAtom 1514 195 "LYS" "C" "" "C" 13277 41223 34553 massC
-  ,     pdbAtom 1515 195 "LYS" "O" "" "O" 12415 41677 35322 massO
-  ,     pdbAtom 1516 195 "LYS" "CB" "" "C" 13973 38819 35238 massC
-  ,     pdbAtom 1517 195 "LYS" "CG" "" "C" 13755 38186 33909 massC
-  ,     pdbAtom 1518 195 "LYS" "CD" "" "C" 13211 36799 34127 massC
-  ,     pdbAtom 1519 195 "LYS" "CE" "" "C" 12745 36343 32751 massC
-  ,     pdbAtom 1520 195 "LYS" "NZ" "" "N" 12355 34938 32727 massN
-  ,     pdbAtom 1521 196 "VAL" "N" "" "N" 13287 41732 33311 massN
-  ,     pdbAtom 1522 196 "VAL" "CA" "" "C" 12218 42589 32815 massC
-  ,     pdbAtom 1523 196 "VAL" "C" "" "C" 11666 41946 31524 massC
-  ,     pdbAtom 1524 196 "VAL" "O" "" "O" 12321 41203 30767 massO
-  ,     pdbAtom 1525 196 "VAL" "CB" "" "C" 12717 44035 32521 massC
-  ,     pdbAtom 1526 196 "VAL" "CG1" "" "C" 13508 44521 33736 massC
-  ,     pdbAtom 1527 196 "VAL" "CG2" "" "C" 13623 44112 31315 massC
-  ,     pdbAtom 1528 197 "ASP" "N" "" "N" 10384 42181 31309 massN
-  ,     pdbAtom 1529 197 "ASP" "CA" "" "C" 9688 41664 30175 massC
-  ,     pdbAtom 1530 197 "ASP" "C" "" "C" 10000 42516 28963 massC
-  ,     pdbAtom 1531 197 "ASP" "O" "" "O" 9359 43537 28745 massO
-  ,     pdbAtom 1532 197 "ASP" "CB" "" "C" 8206 41681 30416 massC
-  ,     pdbAtom 1533 197 "ASP" "CG" "" "C" 7386 41039 29288 massC
-  ,     pdbAtom 1534 197 "ASP" "OD1" "" "O" 7877 40724 28216 massO
-  ,     pdbAtom 1535 197 "ASP" "OD2" "" "O" 6214 40837 29484 massO
-  ,     pdbAtom 1536 198 "GLY" "N" "" "N" 10921 42068 28123 massN
-  ,     pdbAtom 1537 198 "GLY" "CA" "" "C" 11316 42835 26964 massC
-  ,     pdbAtom 1538 198 "GLY" "C" "" "C" 10257 42800 25859 massC
-  ,     pdbAtom 1539 198 "GLY" "O" "" "O" 10499 43434 24830 massO
+    pdbAtom "A" 1 1 "MET" "N" "" "N" 26981 53977 40085 massN
+  ,     pdbAtom "A" 2 1 "MET" "CA" "" "C" 26091 52849 39889 massC
+  ,     pdbAtom "A" 3 1 "MET" "C" "" "C" 26679 52163 38675 massC
+  ,     pdbAtom "A" 4 1 "MET" "O" "" "O" 27020 52865 37715 massO
+  ,     pdbAtom "A" 5 1 "MET" "CB" "" "C" 24677 53310 39580 massC
+  ,     pdbAtom "A" 6 1 "MET" "CG" "" "C" 23624 52189 39442 massC
+  ,     pdbAtom "A" 7 1 "MET" "SD" "" "S" 21917 52816 39301 massS
+  ,     pdbAtom "A" 8 1 "MET" "CE" "" "C" 21930 53926 37910 massC
+  ,     pdbAtom "A" 9 2 "ARG" "N" "" "N" 26861 50841 38803 massN
+  ,     pdbAtom "A" 10 2 "ARG" "CA" "" "C" 27437 49969 37786 massC
+  ,     pdbAtom "A" 11 2 "ARG" "C" "" "C" 26336 48959 37429 massC
+  ,     pdbAtom "A" 12 2 "ARG" "O" "" "O" 25745 48313 38312 massO
+  ,     pdbAtom "A" 13 2 "ARG" "CB" "" "C" 28653 49266 38349 massC
+  ,     pdbAtom "A" 14 2 "ARG" "CG" "" "C" 29870 50188 38416 massC
+  ,     pdbAtom "A" 15 2 "ARG" "CD" "" "C" 31033 49532 39173 massC
+  ,     pdbAtom "A" 16 2 "ARG" "NE" "" "N" 32318 50244 39125 massN
+  ,     pdbAtom "A" 17 2 "ARG" "CZ" "" "C" 33462 49750 39679 massC
+  ,     pdbAtom "A" 18 2 "ARG" "NH1" "" "N" 33522 48572 40308 massN
+  ,     pdbAtom "A" 19 2 "ARG" "NH2" "" "N" 34610 50427 39597 massN
+  ,     pdbAtom "A" 20 3 "ILE" "N" "" "N" 26039 48836 36139 massN
+  ,     pdbAtom "A" 21 3 "ILE" "CA" "" "C" 24961 47988 35671 massC
+  ,     pdbAtom "A" 22 3 "ILE" "C" "" "C" 25374 47080 34537 massC
+  ,     pdbAtom "A" 23 3 "ILE" "O" "" "O" 26029 47614 33642 massO
+  ,     pdbAtom "A" 24 3 "ILE" "CB" "" "C" 23802 48880 35202 massC
+  ,     pdbAtom "A" 25 3 "ILE" "CG1" "" "C" 23317 49724 36378 massC
+  ,     pdbAtom "A" 26 3 "ILE" "CG2" "" "C" 22660 48010 34642 massC
+  ,     pdbAtom "A" 27 3 "ILE" "CD1" "" "C" 22436 50890 35992 massC
+  ,     pdbAtom "A" 28 4 "ILE" "N" "" "N" 25062 45774 34541 massN
+  ,     pdbAtom "A" 29 4 "ILE" "CA" "" "C" 25194 44925 33360 massC
+  ,     pdbAtom "A" 30 4 "ILE" "C" "" "C" 23804 44715 32751 massC
+  ,     pdbAtom "A" 31 4 "ILE" "O" "" "O" 22824 44536 33484 massO
+  ,     pdbAtom "A" 32 4 "ILE" "CB" "" "C" 25789 43561 33720 massC
+  ,     pdbAtom "A" 33 4 "ILE" "CG1" "" "C" 27206 43753 34233 massC
+  ,     pdbAtom "A" 34 4 "ILE" "CG2" "" "C" 25829 42650 32463 massC
+  ,     pdbAtom "A" 35 4 "ILE" "CD1" "" "C" 27967 42486 34621 massC
+  ,     pdbAtom "A" 36 5 "LEU" "N" "" "N" 23655 44874 31424 massN
+  ,     pdbAtom "A" 37 5 "LEU" "CA" "" "C" 22428 44503 30712 massC
+  ,     pdbAtom "A" 38 5 "LEU" "C" "" "C" 22668 43134 30012 massC
+  ,     pdbAtom "A" 39 5 "LEU" "O" "" "O" 23614 42932 29232 massO
+  ,     pdbAtom "A" 40 5 "LEU" "CB" "" "C" 22088 45547 29675 massC
+  ,     pdbAtom "A" 41 5 "LEU" "CG" "" "C" 22076 47021 30069 massC
+  ,     pdbAtom "A" 42 5 "LEU" "CD1" "" "C" 21735 47848 28817 massC
+  ,     pdbAtom "A" 43 5 "LEU" "CD2" "" "C" 21088 47249 31193 massC
+  ,     pdbAtom "A" 44 6 "LEU" "N" "" "N" 21787 42178 30248 massN
+  ,     pdbAtom "A" 45 6 "LEU" "CA" "" "C" 21933 40811 29752 massC
+  ,     pdbAtom "A" 46 6 "LEU" "C" "" "C" 20711 40529 28870 massC
+  ,     pdbAtom "A" 47 6 "LEU" "O" "" "O" 19602 40977 29220 massO
+  ,     pdbAtom "A" 48 6 "LEU" "CB" "" "C" 21919 39891 30945 massC
+  ,     pdbAtom "A" 49 6 "LEU" "CG" "" "C" 22847 38789 31103 massC
+  ,     pdbAtom "A" 50 6 "LEU" "CD1" "" "C" 24254 39345 31210 massC
+  ,     pdbAtom "A" 51 6 "LEU" "CD2" "" "C" 22465 38042 32355 massC
+  ,     pdbAtom "A" 52 7 "GLY" "N" "" "N" 20800 39799 27764 massN
+  ,     pdbAtom "A" 53 7 "GLY" "CA" "" "C" 19604 39512 26973 massC
+  ,     pdbAtom "A" 54 7 "GLY" "C" "" "C" 19959 39035 25585 massC
+  ,     pdbAtom "A" 55 7 "GLY" "O" "" "O" 21049 39324 25122 massO
+  ,     pdbAtom "A" 56 8 "ALA" "N" "" "N" 19117 38232 24936 massN
+  ,     pdbAtom "A" 57 8 "ALA" "CA" "" "C" 19324 37742 23567 massC
+  ,     pdbAtom "A" 58 8 "ALA" "C" "" "C" 19530 38886 22568 massC
+  ,     pdbAtom "A" 59 8 "ALA" "O" "" "O" 19158 40013 22889 massO
+  ,     pdbAtom "A" 60 8 "ALA" "CB" "" "C" 18092 36960 23169 massC
+  ,     pdbAtom "A" 217 30 "SER" "N" "" "N" 29386 50098 25234 massN
+  ,     pdbAtom "A" 218 30 "SER" "CA" "" "C" 28780 49070 24408 massC
+  ,     pdbAtom "A" 219 30 "SER" "C" "" "C" 29856 48513 23484 massC
+  ,     pdbAtom "A" 220 30 "SER" "O" "" "O" 30450 49195 22628 massO
+  ,     pdbAtom "A" 221 30 "SER" "CB" "" "C" 27641 49674 23614 massC
+  ,     pdbAtom "A" 222 30 "SER" "OG" "" "O" 27393 49012 22382 massO
+  ,     pdbAtom "A" 223 31 "THR" "N" "" "N" 30102 47225 23695 massN
+  ,     pdbAtom "A" 224 31 "THR" "CA" "" "C" 31156 46587 22987 massC
+  ,     pdbAtom "A" 225 31 "THR" "C" "" "C" 30787 46464 21542 massC
+  ,     pdbAtom "A" 226 31 "THR" "O" "" "O" 31720 46622 20766 massO
+  ,     pdbAtom "A" 227 31 "THR" "CB" "" "C" 31489 45205 23617 massC
+  ,     pdbAtom "A" 228 31 "THR" "OG1" "" "O" 30313 44530 23975 massO
+  ,     pdbAtom "A" 229 31 "THR" "CG2" "" "C" 32316 45409 24879 massC
+  ,     pdbAtom "A" 230 32 "GLY" "N" "" "N" 29544 46231 21122 massN
+  ,     pdbAtom "A" 231 32 "GLY" "CA" "" "C" 29191 46253 19704 massC
+  ,     pdbAtom "A" 232 32 "GLY" "C" "" "C" 29525 47627 19099 massC
+  ,     pdbAtom "A" 233 32 "GLY" "O" "" "O" 30121 47705 18019 massO
+  ,     pdbAtom "A" 234 33 "ASP" "N" "" "N" 29237 48726 19826 massN
+  ,     pdbAtom "A" 235 33 "ASP" "CA" "" "C" 29487 50042 19273 massC
+  ,     pdbAtom "A" 236 33 "ASP" "C" "" "C" 30983 50250 19161 massC
+  ,     pdbAtom "A" 237 33 "ASP" "O" "" "O" 31454 50638 18077 massO
+  ,     pdbAtom "A" 238 33 "ASP" "CB" "" "C" 28914 51173 20141 massC
+  ,     pdbAtom "A" 239 33 "ASP" "CG" "" "C" 27419 51446 19994 massC
+  ,     pdbAtom "A" 240 33 "ASP" "OD1" "" "O" 26816 50961 19027 massO
+  ,     pdbAtom "A" 241 33 "ASP" "OD2" "" "O" 26880 52176 20852 massO
+  ,     pdbAtom "A" 242 34 "MET" "N" "" "N" 31738 49947 20223 massN
+  ,     pdbAtom "A" 243 34 "MET" "CA" "" "C" 33184 50074 20161 massC
+  ,     pdbAtom "A" 244 34 "MET" "C" "" "C" 33787 49222 19073 massC
+  ,     pdbAtom "A" 245 34 "MET" "O" "" "O" 34703 49685 18386 massO
+  ,     pdbAtom "A" 246 34 "MET" "CB" "" "C" 33832 49679 21452 massC
+  ,     pdbAtom "A" 247 34 "MET" "CG" "" "C" 33464 50634 22545 massC
+  ,     pdbAtom "A" 248 34 "MET" "SD" "" "S" 34415 50284 24035 massS
+  ,     pdbAtom "A" 249 34 "MET" "CE" "" "C" 33371 49008 24702 massC
+  ,     pdbAtom "A" 250 35 "LEU" "N" "" "N" 33336 48008 18816 massN
+  ,     pdbAtom "A" 251 35 "LEU" "CA" "" "C" 33940 47195 17763 massC
+  ,     pdbAtom "A" 252 35 "LEU" "C" "" "C" 33532 47687 16374 massC
+  ,     pdbAtom "A" 253 35 "LEU" "O" "" "O" 34397 47686 15499 massO
+  ,     pdbAtom "A" 254 35 "LEU" "CB" "" "C" 33538 45702 17921 massC
+  ,     pdbAtom "A" 255 35 "LEU" "CG" "" "C" 34178 44933 19144 massC
+  ,     pdbAtom "A" 256 35 "LEU" "CD1" "" "C" 33426 43634 19487 massC
+  ,     pdbAtom "A" 257 35 "LEU" "CD2" "" "C" 35633 44683 18796 massC
+  ,     pdbAtom "A" 258 36 "ARG" "N" "" "N" 32291 48095 16040 massN
+  ,     pdbAtom "A" 259 36 "ARG" "CA" "" "C" 31961 48619 14693 massC
+  ,     pdbAtom "A" 260 36 "ARG" "C" "" "C" 32777 49890 14437 massC
+  ,     pdbAtom "A" 261 36 "ARG" "O" "" "O" 33328 50113 13362 massO
+  ,     pdbAtom "A" 262 36 "ARG" "CB" "" "C" 30469 48931 14605 massC
+  ,     pdbAtom "A" 263 36 "ARG" "CG" "" "C" 29578 47699 14429 massC
+  ,     pdbAtom "A" 264 36 "ARG" "CD" "" "C" 28058 47971 14453 massC
+  ,     pdbAtom "A" 265 36 "ARG" "NE" "" "N" 27555 48398 15764 massN
+  ,     pdbAtom "A" 266 36 "ARG" "CZ" "" "C" 27064 47570 16706 massC
+  ,     pdbAtom "A" 267 36 "ARG" "NH1" "" "N" 27106 46256 16575 massN
+  ,     pdbAtom "A" 268 36 "ARG" "NH2" "" "N" 26547 48043 17839 massN
+  ,     pdbAtom "A" 269 37 "ALA" "N" "" "N" 32963 50707 15460 massN
+  ,     pdbAtom "A" 270 37 "ALA" "CA" "" "C" 33778 51895 15373 massC
+  ,     pdbAtom "A" 271 37 "ALA" "C" "" "C" 35212 51490 15060 massC
+  ,     pdbAtom "A" 272 37 "ALA" "O" "" "O" 35775 51983 14083 massO
+  ,     pdbAtom "A" 273 37 "ALA" "CB" "" "C" 33764 52668 16691 massC
+  ,     pdbAtom "A" 274 38 "ALA" "N" "" "N" 35832 50581 15801 massN
+  ,     pdbAtom "A" 275 38 "ALA" "CA" "" "C" 37207 50146 15498 massC
+  ,     pdbAtom "A" 276 38 "ALA" "C" "" "C" 37350 49607 14071 massC
+  ,     pdbAtom "A" 277 38 "ALA" "O" "" "O" 38315 49935 13355 massO
+  ,     pdbAtom "A" 278 38 "ALA" "CB" "" "C" 37658 49037 16499 massC
+  ,     pdbAtom "A" 279 39 "VAL" "N" "" "N" 36370 48833 13594 massN
+  ,     pdbAtom "A" 280 39 "VAL" "CA" "" "C" 36426 48279 12266 massC
+  ,     pdbAtom "A" 281 39 "VAL" "C" "" "C" 36378 49421 11306 massC
+  ,     pdbAtom "A" 282 39 "VAL" "O" "" "O" 37180 49428 10380 massO
+  ,     pdbAtom "A" 283 39 "VAL" "CB" "" "C" 35264 47365 12049 massC
+  ,     pdbAtom "A" 284 39 "VAL" "CG1" "" "C" 35016 47117 10563 massC
+  ,     pdbAtom "A" 285 39 "VAL" "CG2" "" "C" 35625 46029 12675 massC
+  ,     pdbAtom "A" 286 40 "LYS" "N" "" "N" 35526 50417 11553 massN
+  ,     pdbAtom "A" 287 40 "LYS" "CA" "" "C" 35384 51553 10650 massC
+  ,     pdbAtom "A" 288 40 "LYS" "C" "" "C" 36590 52492 10671 massC
+  ,     pdbAtom "A" 289 40 "LYS" "O" "" "O" 36908 53028 9605 massO
+  ,     pdbAtom "A" 290 40 "LYS" "CB" "" "C" 34110 52246 11044 massC
+  ,     pdbAtom "A" 291 40 "LYS" "CG" "" "C" 33417 53311 10207 massC
+  ,     pdbAtom "A" 292 40 "LYS" "CD" "" "C" 32105 53543 10986 massC
+  ,     pdbAtom "A" 293 40 "LYS" "CE" "" "C" 32307 53985 12477 massC
+  ,     pdbAtom "A" 294 40 "LYS" "NZ" "" "N" 31158 53781 13360 massN
+  ,     pdbAtom "A" 295 41 "SER" "N" "" "N" 37272 52721 11806 massN
+  ,     pdbAtom "A" 296 41 "SER" "CA" "" "C" 38507 53491 11905 massC
+  ,     pdbAtom "A" 297 41 "SER" "C" "" "C" 39777 52736 11541 massC
+  ,     pdbAtom "A" 298 41 "SER" "O" "" "O" 40837 53367 11412 massO
+  ,     pdbAtom "A" 299 41 "SER" "CB" "" "C" 38784 53990 13294 massC
+  ,     pdbAtom "A" 300 41 "SER" "OG" "" "O" 37700 54780 13703 massO
+  ,     pdbAtom "A" 301 42 "GLY" "N" "" "N" 39746 51404 11382 massN
+  ,     pdbAtom "A" 302 42 "GLY" "CA" "" "C" 40955 50617 11185 massC
+  ,     pdbAtom "A" 303 42 "GLY" "C" "" "C" 41822 50731 12450 massC
+  ,     pdbAtom "A" 304 42 "GLY" "O" "" "O" 43052 50709 12332 massO
+  ,     pdbAtom "A" 305 43 "SER" "N" "" "N" 41232 50910 13656 massN
+  ,     pdbAtom "A" 306 43 "SER" "CA" "" "C" 41976 50997 14916 massC
+  ,     pdbAtom "A" 307 43 "SER" "C" "" "C" 42661 49644 15134 massC
+  ,     pdbAtom "A" 308 43 "SER" "O" "" "O" 42039 48580 14922 massO
+  ,     pdbAtom "A" 309 43 "SER" "CB" "" "C" 41035 51263 16084 massC
+  ,     pdbAtom "A" 310 43 "SER" "OG" "" "O" 40232 52405 15825 massO
+  ,     pdbAtom "A" 311 44 "GLU" "N" "" "N" 43932 49643 15550 massN
+  ,     pdbAtom "A" 312 44 "GLU" "CA" "" "C" 44618 48368 15772 massC
+  ,     pdbAtom "A" 313 44 "GLU" "C" "" "C" 43907 47521 16842 massC
+  ,     pdbAtom "A" 314 44 "GLU" "O" "" "O" 43847 46298 16691 massO
+  ,     pdbAtom "A" 315 44 "GLU" "CB" "" "C" 46104 48609 16173 massC
+  ,     pdbAtom "A" 316 44 "GLU" "CG" "" "C" 46901 47312 16527 massC
+  ,     pdbAtom "A" 317 44 "GLU" "CD" "" "C" 46976 46124 15533 massC
+  ,     pdbAtom "A" 318 44 "GLU" "OE1" "" "O" 46829 46355 14334 massO
+  ,     pdbAtom "A" 319 44 "GLU" "OE2" "" "O" 47197 44971 15941 massO
+  ,     pdbAtom "A" 320 45 "LEU" "N" "" "N" 43369 48073 17935 massN
+  ,     pdbAtom "A" 321 45 "LEU" "CA" "" "C" 42604 47255 18836 massC
+  ,     pdbAtom "A" 322 45 "LEU" "C" "" "C" 41154 47218 18387 massC
+  ,     pdbAtom "A" 323 45 "LEU" "O" "" "O" 40358 48129 18639 massO
+  ,     pdbAtom "A" 324 45 "LEU" "CB" "" "C" 42682 47763 20285 massC
+  ,     pdbAtom "A" 325 45 "LEU" "CG" "" "C" 42073 46942 21452 massC
+  ,     pdbAtom "A" 326 45 "LEU" "CD1" "" "C" 42721 45578 21647 massC
+  ,     pdbAtom "A" 327 45 "LEU" "CD2" "" "C" 42367 47680 22716 massC
+  ,     pdbAtom "A" 328 46 "GLY" "N" "" "N" 40826 46179 17622 massN
+  ,     pdbAtom "A" 329 46 "GLY" "CA" "" "C" 39438 45942 17303 massC
+  ,     pdbAtom "A" 330 46 "GLY" "C" "" "C" 39168 45842 15824 massC
+  ,     pdbAtom "A" 331 46 "GLY" "O" "" "O" 38144 45232 15468 massO
+  ,     pdbAtom "A" 332 47 "LYS" "N" "" "N" 39996 46362 14895 massN
+  ,     pdbAtom "A" 333 47 "LYS" "CA" "" "C" 39679 46226 13467 massC
+  ,     pdbAtom "A" 334 47 "LYS" "C" "" "C" 39573 44757 13054 massC
+  ,     pdbAtom "A" 335 47 "LYS" "O" "" "O" 38879 44398 12105 massO
+  ,     pdbAtom "A" 336 47 "LYS" "CB" "" "C" 40745 46915 12592 massC
+  ,     pdbAtom "A" 337 47 "LYS" "CG" "" "C" 42100 46284 12693 massC
+  ,     pdbAtom "A" 338 47 "LYS" "CD" "" "C" 43176 46843 11807 massC
+  ,     pdbAtom "A" 339 47 "LYS" "CE" "" "C" 44309 45903 12225 massC
+  ,     pdbAtom "A" 340 47 "LYS" "NZ" "" "N" 45613 46363 11795 massN
+  ,     pdbAtom "A" 341 48 "GLN" "N" "" "N" 40174 43863 13838 massN
+  ,     pdbAtom "A" 342 48 "GLN" "CA" "" "C" 40193 42426 13556 massC
+  ,     pdbAtom "A" 343 48 "GLN" "C" "" "C" 38799 41803 13641 massC
+  ,     pdbAtom "A" 344 48 "GLN" "O" "" "O" 38628 40680 13160 massO
+  ,     pdbAtom "A" 345 48 "GLN" "CB" "" "C" 41091 41651 14550 massC
+  ,     pdbAtom "A" 346 48 "GLN" "CG" "" "C" 42545 42077 14615 massC
+  ,     pdbAtom "A" 347 48 "GLN" "CD" "" "C" 42764 43318 15409 massC
+  ,     pdbAtom "A" 348 48 "GLN" "OE1" "" "O" 41872 43870 16081 massO
+  ,     pdbAtom "A" 349 48 "GLN" "NE2" "" "N" 43995 43740 15370 massN
+  ,     pdbAtom "A" 350 49 "ALA" "N" "" "N" 37806 42475 14253 massN
+  ,     pdbAtom "A" 351 49 "ALA" "CA" "" "C" 36488 41903 14418 massC
+  ,     pdbAtom "A" 352 49 "ALA" "C" "" "C" 35659 41895 13161 massC
+  ,     pdbAtom "A" 353 49 "ALA" "O" "" "O" 34709 41109 13072 massO
+  ,     pdbAtom "A" 354 49 "ALA" "CB" "" "C" 35759 42659 15487 massC
+  ,     pdbAtom "A" 355 50 "LYS" "N" "" "N" 36097 42602 12125 massN
+  ,     pdbAtom "A" 356 50 "LYS" "CA" "" "C" 35308 42759 10917 massC
+  ,     pdbAtom "A" 357 50 "LYS" "C" "" "C" 34650 41524 10384 massC
+  ,     pdbAtom "A" 358 50 "LYS" "O" "" "O" 33426 41471 10278 massO
+  ,     pdbAtom "A" 359 50 "LYS" "CB" "" "C" 36143 43316 9800 massC
+  ,     pdbAtom "A" 360 50 "LYS" "CG" "" "C" 35224 43799 8664 massC
+  ,     pdbAtom "A" 361 50 "LYS" "CD" "" "C" 36154 44209 7561 massC
+  ,     pdbAtom "A" 362 50 "LYS" "CE" "" "C" 35425 44373 6250 massC
+  ,     pdbAtom "A" 363 50 "LYS" "NZ" "" "N" 36415 44386 5180 massN
+  ,     pdbAtom "A" 364 51 "ASP" "N" "" "N" 35416 40493 10111 massN
+  ,     pdbAtom "A" 365 51 "ASP" "CA" "" "C" 34849 39271 9552 massC
+  ,     pdbAtom "A" 366 51 "ASP" "C" "" "C" 34045 38338 10448 massC
+  ,     pdbAtom "A" 367 51 "ASP" "O" "" "O" 33120 37663 10011 massO
+  ,     pdbAtom "A" 368 51 "ASP" "CB" "" "C" 35989 38504 8921 massC
+  ,     pdbAtom "A" 369 51 "ASP" "CG" "" "C" 36454 39059 7573 massC
+  ,     pdbAtom "A" 370 51 "ASP" "OD1" "" "O" 35853 40016 7050 massO
+  ,     pdbAtom "A" 371 51 "ASP" "OD2" "" "O" 37423 38492 7051 massO
+  ,     pdbAtom "A" 372 52 "ILE" "N" "" "N" 34418 38333 11713 massN
+  ,     pdbAtom "A" 373 52 "ILE" "CA" "" "C" 33759 37591 12753 massC
+  ,     pdbAtom "A" 374 52 "ILE" "C" "" "C" 32335 38163 12892 massC
+  ,     pdbAtom "A" 375 52 "ILE" "O" "" "O" 31372 37397 12769 massO
+  ,     pdbAtom "A" 376 52 "ILE" "CB" "" "C" 34522 37749 14102 massC
+  ,     pdbAtom "A" 377 52 "ILE" "CG1" "" "C" 36035 37435 13963 massC
+  ,     pdbAtom "A" 378 52 "ILE" "CG2" "" "C" 33881 36769 15110 massC
+  ,     pdbAtom "A" 379 52 "ILE" "CD1" "" "C" 36841 37512 15303 massC
+  ,     pdbAtom "A" 380 53 "MET" "N" "" "N" 32175 39479 13080 massN
+  ,     pdbAtom "A" 381 53 "MET" "CA" "" "C" 30854 40075 13253 massC
+  ,     pdbAtom "A" 382 53 "MET" "C" "" "C" 29979 39860 12019 massC
+  ,     pdbAtom "A" 383 53 "MET" "O" "" "O" 28783 39588 12107 massO
+  ,     pdbAtom "A" 384 53 "MET" "CB" "" "C" 30924 41555 13495 massC
+  ,     pdbAtom "A" 385 53 "MET" "CG" "" "C" 31597 41967 14781 massC
+  ,     pdbAtom "A" 386 53 "MET" "SD" "" "S" 31472 43709 15259 massS
+  ,     pdbAtom "A" 387 53 "MET" "CE" "" "C" 32499 44502 14091 massC
+  ,     pdbAtom "A" 388 54 "ASP" "N" "" "N" 30589 39897 10843 massN
+  ,     pdbAtom "A" 389 54 "ASP" "CA" "" "C" 29903 39620 9595 massC
+  ,     pdbAtom "A" 390 54 "ASP" "C" "" "C" 29341 38234 9548 massC
+  ,     pdbAtom "A" 391 54 "ASP" "O" "" "O" 28271 38002 8980 massO
+  ,     pdbAtom "A" 392 54 "ASP" "CB" "" "C" 30846 39759 8427 massC
+  ,     pdbAtom "A" 393 54 "ASP" "CG" "" "C" 30564 41029 7641 massC
+  ,     pdbAtom "A" 394 54 "ASP" "OD1" "" "O" 29567 41055 6910 massO
+  ,     pdbAtom "A" 395 54 "ASP" "OD2" "" "O" 31337 41984 7762 massO
+  ,     pdbAtom "A" 396 55 "ALA" "N" "" "N" 30099 37277 10090 massN
+  ,     pdbAtom "A" 397 55 "ALA" "CA" "" "C" 29654 35907 10111 massC
+  ,     pdbAtom "A" 398 55 "ALA" "C" "" "C" 28643 35688 11231 massC
+  ,     pdbAtom "A" 399 55 "ALA" "O" "" "O" 27968 34667 11178 massO
+  ,     pdbAtom "A" 400 55 "ALA" "CB" "" "C" 30846 34979 10311 massC
+  ,     pdbAtom "A" 401 56 "GLY" "N" "" "N" 28424 36586 12210 massN
+  ,     pdbAtom "A" 402 56 "GLY" "CA" "" "C" 27438 36396 13278 massC
+  ,     pdbAtom "A" 403 56 "GLY" "C" "" "C" 28029 35715 14500 massC
+  ,     pdbAtom "A" 404 56 "GLY" "O" "" "O" 27354 35184 15394 massO
+  ,     pdbAtom "A" 405 57 "LYS" "N" "" "N" 29353 35725 14527 massN
+  ,     pdbAtom "A" 406 57 "LYS" "CA" "" "C" 30045 35011 15563 massC
+  ,     pdbAtom "A" 407 57 "LYS" "C" "" "C" 30554 35895 16685 massC
+  ,     pdbAtom "A" 408 57 "LYS" "O" "" "O" 30776 37065 16459 massO
+  ,     pdbAtom "A" 409 57 "LYS" "CB" "" "C" 31199 34244 14906 massC
+  ,     pdbAtom "A" 410 57 "LYS" "CG" "" "C" 30657 32925 14399 massC
+  ,     pdbAtom "A" 411 57 "LYS" "CD" "" "C" 31789 32009 13997 massC
+  ,     pdbAtom "A" 412 57 "LYS" "CE" "" "C" 31195 30661 13561 massC
+  ,     pdbAtom "A" 413 57 "LYS" "NZ" "" "N" 32082 29917 12671 massN
+  ,     pdbAtom "A" 414 58 "LEU" "N" "" "N" 30876 35344 17855 massN
+  ,     pdbAtom "A" 415 58 "LEU" "CA" "" "C" 31439 36126 18922 massC
+  ,     pdbAtom "A" 416 58 "LEU" "C" "" "C" 32927 36378 18633 massC
+  ,     pdbAtom "A" 417 58 "LEU" "O" "" "O" 33598 35546 18015 massO
+  ,     pdbAtom "A" 418 58 "LEU" "CB" "" "C" 31221 35381 20215 massC
+  ,     pdbAtom "A" 419 58 "LEU" "CG" "" "C" 29766 35311 20615 massC
+  ,     pdbAtom "A" 420 58 "LEU" "CD1" "" "C" 29660 34685 22003 massC
+  ,     pdbAtom "A" 421 58 "LEU" "CD2" "" "C" 29175 36702 20724 massC
+  ,     pdbAtom "A" 422 59 "VAL" "N" "" "N" 33396 37616 18899 massN
+  ,     pdbAtom "A" 423 59 "VAL" "CA" "" "C" 34805 38036 18787 massC
+  ,     pdbAtom "A" 424 59 "VAL" "C" "" "C" 35544 37378 20008 massC
+  ,     pdbAtom "A" 425 59 "VAL" "O" "" "O" 34935 37144 21071 massO
+  ,     pdbAtom "A" 426 59 "VAL" "CB" "" "C" 34761 39591 18806 massC
+  ,     pdbAtom "A" 427 59 "VAL" "CG1" "" "C" 36142 40223 18968 massC
+  ,     pdbAtom "A" 428 59 "VAL" "CG2" "" "C" 34130 40031 17478 massC
+  ,     pdbAtom "A" 581 79 "ASN" "N" "" "N" 32968 57042 38246 massN
+  ,     pdbAtom "A" 582 79 "ASN" "CA" "" "C" 31688 57065 38942 massC
+  ,     pdbAtom "A" 583 79 "ASN" "C" "" "C" 30547 56203 38348 massC
+  ,     pdbAtom "A" 584 79 "ASN" "O" "" "O" 29333 56432 38474 massO
+  ,     pdbAtom "A" 585 79 "ASN" "CB" "" "C" 31248 58516 39083 massC
+  ,     pdbAtom "A" 586 79 "ASN" "CG" "" "C" 31876 59229 40281 massC
+  ,     pdbAtom "A" 587 79 "ASN" "OD1" "" "O" 32717 58723 41031 massO
+  ,     pdbAtom "A" 588 79 "ASN" "ND2" "" "N" 31493 60483 40481 massN
+  ,     pdbAtom "A" 589 80 "GLY" "N" "" "N" 30893 55065 37766 massN
+  ,     pdbAtom "A" 590 80 "GLY" "CA" "" "C" 29874 54162 37301 massC
+  ,     pdbAtom "A" 591 80 "GLY" "C" "" "C" 29876 54131 35806 massC
+  ,     pdbAtom "A" 592 80 "GLY" "O" "" "O" 30481 54954 35108 massO
+  ,     pdbAtom "A" 593 81 "PHE" "N" "" "N" 29175 53126 35339 massN
+  ,     pdbAtom "A" 594 81 "PHE" "CA" "" "C" 29106 52875 33933 massC
+  ,     pdbAtom "A" 595 81 "PHE" "C" "" "C" 28054 51772 33789 massC
+  ,     pdbAtom "A" 596 81 "PHE" "O" "" "O" 27708 51011 34721 massO
+  ,     pdbAtom "A" 597 81 "PHE" "CB" "" "C" 30488 52437 33455 massC
+  ,     pdbAtom "A" 598 81 "PHE" "CG" "" "C" 31144 51301 34244 massC
+  ,     pdbAtom "A" 599 81 "PHE" "CD1" "" "C" 30709 49987 34151 massC
+  ,     pdbAtom "A" 600 81 "PHE" "CD2" "" "C" 32177 51582 35106 massC
+  ,     pdbAtom "A" 601 81 "PHE" "CE1" "" "C" 31276 48981 34900 massC
+  ,     pdbAtom "A" 602 81 "PHE" "CE2" "" "C" 32753 50572 35859 massC
+  ,     pdbAtom "A" 603 81 "PHE" "CZ" "" "C" 32307 49275 35761 massC
+  ,     pdbAtom "A" 604 82 "LEU" "N" "" "N" 27572 51677 32576 massN
+  ,     pdbAtom "A" 605 82 "LEU" "CA" "" "C" 26566 50720 32180 massC
+  ,     pdbAtom "A" 606 82 "LEU" "C" "" "C" 27232 49795 31129 massC
+  ,     pdbAtom "A" 607 82 "LEU" "O" "" "O" 27737 50305 30120 massO
+  ,     pdbAtom "A" 608 82 "LEU" "CB" "" "C" 25443 51611 31676 massC
+  ,     pdbAtom "A" 609 82 "LEU" "CG" "" "C" 24393 51169 30711 massC
+  ,     pdbAtom "A" 610 82 "LEU" "CD1" "" "C" 23487 50154 31356 massC
+  ,     pdbAtom "A" 611 82 "LEU" "CD2" "" "C" 23647 52397 30272 massC
+  ,     pdbAtom "A" 612 83 "LEU" "N" "" "N" 27322 48468 31312 massN
+  ,     pdbAtom "A" 613 83 "LEU" "CA" "" "C" 27916 47525 30373 massC
+  ,     pdbAtom "A" 614 83 "LEU" "C" "" "C" 26790 46979 29510 massC
+  ,     pdbAtom "A" 615 83 "LEU" "O" "" "O" 25890 46273 29957 massO
+  ,     pdbAtom "A" 616 83 "LEU" "CB" "" "C" 28647 46397 31158 massC
+  ,     pdbAtom "A" 617 83 "LEU" "CG" "" "C" 29913 46836 31911 massC
+  ,     pdbAtom "A" 618 83 "LEU" "CD1" "" "C" 30399 45707 32742 massC
+  ,     pdbAtom "A" 619 83 "LEU" "CD2" "" "C" 30969 47306 30942 massC
+  ,     pdbAtom "A" 620 84 "ASP" "N" "" "N" 26821 47301 28234 massN
+  ,     pdbAtom "A" 621 84 "ASP" "CA" "" "C" 25834 46813 27329 massC
+  ,     pdbAtom "A" 622 84 "ASP" "C" "" "C" 26538 45908 26331 massC
+  ,     pdbAtom "A" 623 84 "ASP" "O" "" "O" 27279 46353 25444 massO
+  ,     pdbAtom "A" 624 84 "ASP" "CB" "" "C" 25219 48071 26753 massC
+  ,     pdbAtom "A" 625 84 "ASP" "CG" "" "C" 24284 47851 25579 massC
+  ,     pdbAtom "A" 626 84 "ASP" "OD1" "" "O" 23727 46759 25479 massO
+  ,     pdbAtom "A" 627 84 "ASP" "OD2" "" "O" 24147 48769 24756 massO
+  ,     pdbAtom "A" 628 85 "GLY" "N" "" "N" 26338 44610 26441 massN
+  ,     pdbAtom "A" 629 85 "GLY" "CA" "" "C" 26933 43697 25483 massC
+  ,     pdbAtom "A" 630 85 "GLY" "C" "" "C" 28144 42984 25997 massC
+  ,     pdbAtom "A" 631 85 "GLY" "O" "" "O" 28746 42135 25324 massO
+  ,     pdbAtom "A" 768 104 "ASP" "N" "" "N" 26464 46759 40530 massN
+  ,     pdbAtom "A" 769 104 "ASP" "CA" "" "C" 25332 46877 41404 massC
+  ,     pdbAtom "A" 770 104 "ASP" "C" "" "C" 24124 46100 40979 massC
+  ,     pdbAtom "A" 771 104 "ASP" "O" "" "O" 23498 45493 41846 massO
+  ,     pdbAtom "A" 772 104 "ASP" "CB" "" "C" 24986 48303 41522 massC
+  ,     pdbAtom "A" 773 104 "ASP" "CG" "" "C" 26128 49007 42261 massC
+  ,     pdbAtom "A" 774 104 "ASP" "OD1" "" "O" 26394 48723 43441 massO
+  ,     pdbAtom "A" 775 104 "ASP" "OD2" "" "O" 26773 49834 41630 massO
+  ,     pdbAtom "A" 776 105 "TYR" "N" "" "N" 23831 46089 39678 massN
+  ,     pdbAtom "A" 777 105 "TYR" "CA" "" "C" 22614 45492 39142 massC
+  ,     pdbAtom "A" 778 105 "TYR" "C" "" "C" 22931 44745 37883 massC
+  ,     pdbAtom "A" 779 105 "TYR" "O" "" "O" 23764 45224 37097 massO
+  ,     pdbAtom "A" 780 105 "TYR" "CB" "" "C" 21548 46495 38715 massC
+  ,     pdbAtom "A" 781 105 "TYR" "CG" "" "C" 20839 47286 39803 massC
+  ,     pdbAtom "A" 782 105 "TYR" "CD1" "" "C" 21434 48446 40274 massC
+  ,     pdbAtom "A" 783 105 "TYR" "CD2" "" "C" 19604 46881 40304 massC
+  ,     pdbAtom "A" 784 105 "TYR" "CE1" "" "C" 20809 49220 41239 massC
+  ,     pdbAtom "A" 785 105 "TYR" "CE2" "" "C" 18972 47644 41280 massC
+  ,     pdbAtom "A" 786 105 "TYR" "CZ" "" "C" 19583 48816 41737 massC
+  ,     pdbAtom "A" 787 105 "TYR" "OH" "" "O" 18989 49616 42708 massO
+  ,     pdbAtom "A" 788 106 "VAL" "N" "" "N" 22320 43572 37739 massN
+  ,     pdbAtom "A" 789 106 "VAL" "CA" "" "C" 22348 42878 36473 massC
+  ,     pdbAtom "A" 790 106 "VAL" "C" "" "C" 20870 42849 36044 massC
+  ,     pdbAtom "A" 791 106 "VAL" "O" "" "O" 19967 42515 36823 massO
+  ,     pdbAtom "A" 792 106 "VAL" "CB" "" "C" 22942 41493 36681 massC
+  ,     pdbAtom "A" 793 106 "VAL" "CG1" "" "C" 22901 40759 35332 massC
+  ,     pdbAtom "A" 794 106 "VAL" "CG2" "" "C" 24412 41568 37146 massC
+  ,     pdbAtom "A" 795 107 "LEU" "N" "" "N" 20543 43290 34837 massN
+  ,     pdbAtom "A" 796 107 "LEU" "CA" "" "C" 19163 43331 34358 massC
+  ,     pdbAtom "A" 797 107 "LEU" "C" "" "C" 19072 42441 33134 massC
+  ,     pdbAtom "A" 798 107 "LEU" "O" "" "O" 19839 42522 32166 massO
+  ,     pdbAtom "A" 799 107 "LEU" "CB" "" "C" 18781 44770 34012 massC
+  ,     pdbAtom "A" 800 107 "LEU" "CG" "" "C" 19037 45845 35123 massC
+  ,     pdbAtom "A" 801 107 "LEU" "CD1" "" "C" 18745 47167 34547 massC
+  ,     pdbAtom "A" 802 107 "LEU" "CD2" "" "C" 18136 45687 36346 massC
+  ,     pdbAtom "A" 803 108 "GLU" "N" "" "N" 18168 41477 33207 massN
+  ,     pdbAtom "A" 804 108 "GLU" "CA" "" "C" 17976 40535 32145 massC
+  ,     pdbAtom "A" 805 108 "GLU" "C" "" "C" 16739 41024 31406 massC
+  ,     pdbAtom "A" 806 108 "GLU" "O" "" "O" 15736 41348 32022 massO
+  ,     pdbAtom "A" 807 108 "GLU" "CB" "" "C" 17795 39197 32772 massC
+  ,     pdbAtom "A" 808 108 "GLU" "CG" "" "C" 17479 38112 31769 massC
+  ,     pdbAtom "A" 809 108 "GLU" "CD" "" "C" 16878 36862 32373 massC
+  ,     pdbAtom "A" 810 108 "GLU" "OE1" "" "O" 16949 36652 33582 massO
+  ,     pdbAtom "A" 811 108 "GLU" "OE2" "" "O" 16327 36092 31607 massO
+  ,     pdbAtom "A" 812 109 "PHE" "N" "" "N" 16860 41159 30095 massN
+  ,     pdbAtom "A" 813 109 "PHE" "CA" "" "C" 15795 41545 29219 massC
+  ,     pdbAtom "A" 814 109 "PHE" "C" "" "C" 15347 40241 28577 massC
+  ,     pdbAtom "A" 815 109 "PHE" "O" "" "O" 16033 39691 27704 massO
+  ,     pdbAtom "A" 816 109 "PHE" "CB" "" "C" 16303 42506 28144 massC
+  ,     pdbAtom "A" 817 109 "PHE" "CG" "" "C" 16534 43943 28597 massC
+  ,     pdbAtom "A" 818 109 "PHE" "CD1" "" "C" 17292 44250 29712 massC
+  ,     pdbAtom "A" 819 109 "PHE" "CD2" "" "C" 15962 44982 27878 massC
+  ,     pdbAtom "A" 820 109 "PHE" "CE1" "" "C" 17484 45555 30122 massC
+  ,     pdbAtom "A" 821 109 "PHE" "CE2" "" "C" 16160 46290 28294 massC
+  ,     pdbAtom "A" 822 109 "PHE" "CZ" "" "C" 16916 46586 29411 massC
+  ,     pdbAtom "A" 823 110 "ASP" "N" "" "N" 14196 39690 28948 massN
+  ,     pdbAtom "A" 824 110 "ASP" "CA" "" "C" 13724 38460 28356 massC
+  ,     pdbAtom "A" 825 110 "ASP" "C" "" "C" 12796 38645 27163 massC
+  ,     pdbAtom "A" 826 110 "ASP" "O" "" "O" 11750 39309 27235 massO
+  ,     pdbAtom "A" 827 110 "ASP" "CB" "" "C" 13057 37683 29461 massC
+  ,     pdbAtom "A" 828 110 "ASP" "CG" "" "C" 12395 36407 28943 massC
+  ,     pdbAtom "A" 829 110 "ASP" "OD1" "" "O" 13069 35651 28223 massO
+  ,     pdbAtom "A" 830 110 "ASP" "OD2" "" "O" 11211 36195 29261 massO
+  ,     pdbAtom "A" 919 122 "GLY" "N" "" "N" 13725 45594 11052 massN
+  ,     pdbAtom "A" 920 122 "GLY" "CA" "" "C" 13285 46970 11062 massC
+  ,     pdbAtom "A" 921 122 "GLY" "C" "" "C" 14309 47830 11795 massC
+  ,     pdbAtom "A" 922 122 "GLY" "O" "" "O" 14030 49017 11944 massO
+  ,     pdbAtom "A" 923 123 "ARG" "N" "" "N" 15453 47336 12286 massN
+  ,     pdbAtom "A" 924 123 "ARG" "CA" "" "C" 16370 48198 12993 massC
+  ,     pdbAtom "A" 925 123 "ARG" "C" "" "C" 17171 49081 12041 massC
+  ,     pdbAtom "A" 926 123 "ARG" "O" "" "O" 17626 48652 10981 massO
+  ,     pdbAtom "A" 927 123 "ARG" "CB" "" "C" 17314 47379 13834 massC
+  ,     pdbAtom "A" 928 123 "ARG" "CG" "" "C" 18432 48166 14505 massC
+  ,     pdbAtom "A" 929 123 "ARG" "CD" "" "C" 19062 47450 15704 massC
+  ,     pdbAtom "A" 930 123 "ARG" "NE" "" "N" 19820 46254 15332 massN
+  ,     pdbAtom "A" 931 123 "ARG" "CZ" "" "C" 20399 45419 16211 massC
+  ,     pdbAtom "A" 932 123 "ARG" "NH1" "" "N" 20319 45627 17515 massN
+  ,     pdbAtom "A" 933 123 "ARG" "NH2" "" "N" 21068 44353 15795 massN
+  ,     pdbAtom "A" 934 124 "ARG" "N" "" "N" 17329 50354 12446 massN
+  ,     pdbAtom "A" 935 124 "ARG" "CA" "" "C" 18075 51418 11759 massC
+  ,     pdbAtom "A" 936 124 "ARG" "C" "" "C" 18848 52144 12874 massC
+  ,     pdbAtom "A" 937 124 "ARG" "O" "" "O" 18380 52374 14014 massO
+  ,     pdbAtom "A" 938 124 "ARG" "CB" "" "C" 17102 52390 11080 massC
+  ,     pdbAtom "A" 939 124 "ARG" "CG" "" "C" 16056 51719 10134 massC
+  ,     pdbAtom "A" 940 124 "ARG" "CD" "" "C" 16756 51250 8837 massC
+  ,     pdbAtom "A" 941 124 "ARG" "NE" "" "N" 15849 50731 7802 massN
+  ,     pdbAtom "A" 942 124 "ARG" "CZ" "" "C" 15457 49451 7820 massC
+  ,     pdbAtom "A" 943 124 "ARG" "NH1" "" "N" 15860 48603 8760 massN
+  ,     pdbAtom "A" 944 124 "ARG" "NH2" "" "N" 14671 48979 6874 massN
+  ,     pdbAtom "A" 945 125 "VAL" "N" "" "N" 20088 52483 12559 massN
+  ,     pdbAtom "A" 946 125 "VAL" "CA" "" "C" 20966 53077 13531 massC
+  ,     pdbAtom "A" 947 125 "VAL" "C" "" "C" 21605 54366 12987 massC
+  ,     pdbAtom "A" 948 125 "VAL" "O" "" "O" 21692 54631 11783 massO
+  ,     pdbAtom "A" 949 125 "VAL" "CB" "" "C" 22074 52053 13931 massC
+  ,     pdbAtom "A" 950 125 "VAL" "CG1" "" "C" 21467 50733 14377 massC
+  ,     pdbAtom "A" 951 125 "VAL" "CG2" "" "C" 22950 51736 12737 massC
+  ,     pdbAtom "A" 952 126 "HIS" "N" "" "N" 21928 55220 13949 massN
+  ,     pdbAtom "A" 953 126 "HIS" "CA" "" "C" 22804 56339 13735 massC
+  ,     pdbAtom "A" 954 126 "HIS" "C" "" "C" 24189 55862 14226 massC
+  ,     pdbAtom "A" 955 126 "HIS" "O" "" "O" 24537 55932 15416 massO
+  ,     pdbAtom "A" 956 126 "HIS" "CB" "" "C" 22295 57498 14554 massC
+  ,     pdbAtom "A" 957 126 "HIS" "CG" "" "C" 23213 58665 14288 massC
+  ,     pdbAtom "A" 958 126 "HIS" "ND1" "" "N" 23867 59380 15198 massN
+  ,     pdbAtom "A" 959 126 "HIS" "CD2" "" "C" 23473 59169 13019 massC
+  ,     pdbAtom "A" 960 126 "HIS" "CE1" "" "C" 24521 60319 14545 massC
+  ,     pdbAtom "A" 961 126 "HIS" "NE2" "" "N" 24272 60172 13258 massN
+  ,     pdbAtom "A" 962 127 "ALA" "N" "" "N" 25066 55475 13319 massN
+  ,     pdbAtom "A" 963 127 "ALA" "CA" "" "C" 26322 54841 13688 massC
+  ,     pdbAtom "A" 964 127 "ALA" "C" "" "C" 27277 55648 14511 massC
+  ,     pdbAtom "A" 965 127 "ALA" "O" "" "O" 27802 55137 15509 massO
+  ,     pdbAtom "A" 966 127 "ALA" "CB" "" "C" 27041 54387 12447 massC
+  ,     pdbAtom "A" 967 128 "PRO" "N" "" "N" 27458 56954 14262 massN
+  ,     pdbAtom "A" 968 128 "PRO" "CA" "" "C" 28355 57764 15058 massC
+  ,     pdbAtom "A" 969 128 "PRO" "C" "" "C" 27943 57745 16524 massC
+  ,     pdbAtom "A" 970 128 "PRO" "O" "" "O" 28805 57752 17407 massO
+  ,     pdbAtom "A" 971 128 "PRO" "CB" "" "C" 28277 59143 14438 massC
+  ,     pdbAtom "A" 972 128 "PRO" "CG" "" "C" 27812 58895 13050 massC
+  ,     pdbAtom "A" 973 128 "PRO" "CD" "" "C" 26822 57781 13235 massC
+  ,     pdbAtom "A" 974 129 "SER" "N" "" "N" 26656 57667 16849 massN
+  ,     pdbAtom "A" 975 129 "SER" "CA" "" "C" 26333 57776 18239 massC
+  ,     pdbAtom "A" 976 129 "SER" "C" "" "C" 25926 56464 18824 massC
+  ,     pdbAtom "A" 977 129 "SER" "O" "" "O" 25808 56334 20061 massO
+  ,     pdbAtom "A" 978 129 "SER" "CB" "" "C" 25223 58760 18417 massC
+  ,     pdbAtom "A" 979 129 "SER" "OG" "" "O" 24044 58377 17705 massO
+  ,     pdbAtom "A" 980 130 "GLY" "N" "" "N" 25612 55532 17923 massN
+  ,     pdbAtom "A" 981 130 "GLY" "CA" "" "C" 25086 54264 18402 massC
+  ,     pdbAtom "A" 982 130 "GLY" "C" "" "C" 23598 54425 18751 massC
+  ,     pdbAtom "A" 983 130 "GLY" "O" "" "O" 23027 53495 19323 massO
+  ,     pdbAtom "A" 984 131 "ARG" "N" "" "N" 22885 55539 18455 massN
+  ,     pdbAtom "A" 985 131 "ARG" "CA" "" "C" 21452 55561 18766 massC
+  ,     pdbAtom "A" 986 131 "ARG" "C" "" "C" 20753 54602 17792 massC
+  ,     pdbAtom "A" 987 131 "ARG" "O" "" "O" 21124 54515 16607 massO
+  ,     pdbAtom "A" 988 131 "ARG" "CB" "" "C" 20834 56943 18600 massC
+  ,     pdbAtom "A" 989 131 "ARG" "CG" "" "C" 21186 57787 19786 massC
+  ,     pdbAtom "A" 990 131 "ARG" "CD" "" "C" 20561 59179 19746 massC
+  ,     pdbAtom "A" 991 131 "ARG" "NE" "" "N" 21221 59976 18723 massN
+  ,     pdbAtom "A" 992 131 "ARG" "CZ" "" "C" 22354 60630 18959 massC
+  ,     pdbAtom "A" 993 131 "ARG" "NH1" "" "N" 22938 60617 20160 massN
+  ,     pdbAtom "A" 994 131 "ARG" "NH2" "" "N" 22908 61281 17947 massN
+  ,     pdbAtom "A" 995 132 "VAL" "N" "" "N" 19743 53897 18296 massN
+  ,     pdbAtom "A" 996 132 "VAL" "CA" "" "C" 18996 52896 17538 massC
+  ,     pdbAtom "A" 997 132 "VAL" "C" "" "C" 17477 53158 17515 massC
+  ,     pdbAtom "A" 998 132 "VAL" "O" "" "O" 16814 53564 18478 massO
+  ,     pdbAtom "A" 999 132 "VAL" "CB" "" "C" 19419 51464 18159 massC
+  ,     pdbAtom "A" 1000 132 "VAL" "CG1" "" "C" 19165 51388 19655 massC
+  ,     pdbAtom "A" 1001 132 "VAL" "CG2" "" "C" 18586 50364 17565 massC
+  ,     pdbAtom "A" 1002 133 "TYR" "N" "" "N" 16916 52890 16343 massN
+  ,     pdbAtom "A" 1003 133 "TYR" "CA" "" "C" 15513 53093 16026 massC
+  ,     pdbAtom "A" 1004 133 "TYR" "C" "" "C" 14915 51820 15394 massC
+  ,     pdbAtom "A" 1005 133 "TYR" "O" "" "O" 15625 50920 14954 massO
+  ,     pdbAtom "A" 1006 133 "TYR" "CB" "" "C" 15433 54267 15027 massC
+  ,     pdbAtom "A" 1007 133 "TYR" "CG" "" "C" 16013 55579 15528 massC
+  ,     pdbAtom "A" 1008 133 "TYR" "CD1" "" "C" 15224 56455 16286 massC
+  ,     pdbAtom "A" 1009 133 "TYR" "CD2" "" "C" 17316 55908 15188 massC
+  ,     pdbAtom "A" 1010 133 "TYR" "CE1" "" "C" 15785 57673 16667 massC
+  ,     pdbAtom "A" 1011 133 "TYR" "CE2" "" "C" 17887 57132 15588 massC
+  ,     pdbAtom "A" 1012 133 "TYR" "CZ" "" "C" 17104 58005 16323 massC
+  ,     pdbAtom "A" 1013 133 "TYR" "OH" "" "O" 17628 59229 16733 massO
+  ,     pdbAtom "A" 1014 134 "HIS" "N" "" "N" 13592 51753 15260 massN
+  ,     pdbAtom "A" 1015 134 "HIS" "CA" "" "C" 12920 50671 14575 massC
+  ,     pdbAtom "A" 1016 134 "HIS" "C" "" "C" 11872 51327 13699 massC
+  ,     pdbAtom "A" 1017 134 "HIS" "O" "" "O" 11007 52053 14215 massO
+  ,     pdbAtom "A" 1018 134 "HIS" "CB" "" "C" 12210 49730 15557 massC
+  ,     pdbAtom "A" 1019 134 "HIS" "CG" "" "C" 11706 48501 14821 massC
+  ,     pdbAtom "A" 1020 134 "HIS" "ND1" "" "N" 10556 48276 14167 massN
+  ,     pdbAtom "A" 1021 134 "HIS" "CD2" "" "C" 12468 47369 14712 massC
+  ,     pdbAtom "A" 1022 134 "HIS" "CE1" "" "C" 10613 47062 13668 massC
+  ,     pdbAtom "A" 1023 134 "HIS" "NE2" "" "N" 11757 46532 13999 massN
+  ,     pdbAtom "A" 1024 135 "VAL" "N" "" "N" 11820 50979 12420 massN
+  ,     pdbAtom "A" 1025 135 "VAL" "CA" "" "C" 10854 51600 11529 massC
+  ,     pdbAtom "A" 1026 135 "VAL" "C" "" "C" 9394 51546 11945 massC
+  ,     pdbAtom "A" 1027 135 "VAL" "O" "" "O" 8615 52427 11555 massO
+  ,     pdbAtom "A" 1028 135 "VAL" "CB" "" "C" 10957 51010 10116 massC
+  ,     pdbAtom "A" 1029 135 "VAL" "CG1" "" "C" 12323 51398 9568 massC
+  ,     pdbAtom "A" 1030 135 "VAL" "CG2" "" "C" 10715 49521 10097 massC
+  ,     pdbAtom "A" 1031 136 "LYS" "N" "" "N" 9031 50478 12695 massN
+  ,     pdbAtom "A" 1032 136 "LYS" "CA" "" "C" 7667 50304 13237 massC
+  ,     pdbAtom "A" 1033 136 "LYS" "C" "" "C" 7568 50589 14724 massC
+  ,     pdbAtom "A" 1034 136 "LYS" "O" "" "O" 6735 51363 15188 massO
+  ,     pdbAtom "A" 1035 136 "LYS" "CB" "" "C" 7130 48860 13071 massC
+  ,     pdbAtom "A" 1036 136 "LYS" "CG" "" "C" 7245 48246 11697 massC
+  ,     pdbAtom "A" 1037 136 "LYS" "CD" "" "C" 6950 46762 11781 massC
+  ,     pdbAtom "A" 1038 136 "LYS" "CE" "" "C" 6657 46207 10383 massC
+  ,     pdbAtom "A" 1039 136 "LYS" "NZ" "" "N" 6469 44763 10438 massN
+  ,     pdbAtom "A" 1040 137 "PHE" "N" "" "N" 8501 50023 15507 massN
+  ,     pdbAtom "A" 1041 137 "PHE" "CA" "" "C" 8263 49977 16941 massC
+  ,     pdbAtom "A" 1042 137 "PHE" "C" "" "C" 8764 51187 17679 massC
+  ,     pdbAtom "A" 1043 137 "PHE" "O" "" "O" 8381 51422 18832 massO
+  ,     pdbAtom "A" 1044 137 "PHE" "CB" "" "C" 8914 48710 17552 massC
+  ,     pdbAtom "A" 1045 137 "PHE" "CG" "" "C" 8346 47450 16934 massC
+  ,     pdbAtom "A" 1046 137 "PHE" "CD1" "" "C" 6992 47346 16631 massC
+  ,     pdbAtom "A" 1047 137 "PHE" "CD2" "" "C" 9194 46386 16624 massC
+  ,     pdbAtom "A" 1048 137 "PHE" "CE1" "" "C" 6489 46191 16029 massC
+  ,     pdbAtom "A" 1049 137 "PHE" "CE2" "" "C" 8688 45235 16023 massC
+  ,     pdbAtom "A" 1050 137 "PHE" "CZ" "" "C" 7333 45131 15713 massC
+  ,     pdbAtom "A" 1051 138 "ASN" "N" "" "N" 9642 51947 17056 massN
+  ,     pdbAtom "A" 1052 138 "ASN" "CA" "" "C" 10221 53056 17749 massC
+  ,     pdbAtom "A" 1053 138 "ASN" "C" "" "C" 10871 53923 16696 massC
+  ,     pdbAtom "A" 1054 138 "ASN" "O" "" "O" 12104 54056 16622 massO
+  ,     pdbAtom "A" 1055 138 "ASN" "CB" "" "C" 11246 52544 18729 massC
+  ,     pdbAtom "A" 1056 138 "ASN" "CG" "" "C" 11698 53585 19740 massC
+  ,     pdbAtom "A" 1057 138 "ASN" "OD1" "" "O" 12777 53462 20329 massO
+  ,     pdbAtom "A" 1058 138 "ASN" "ND2" "" "N" 10944 54633 20051 massN
+  ,     pdbAtom "A" 1059 139 "PRO" "N" "" "N" 10068 54516 15808 massN
+  ,     pdbAtom "A" 1060 139 "PRO" "CA" "" "C" 10584 55204 14637 massC
+  ,     pdbAtom "A" 1061 139 "PRO" "C" "" "C" 11249 56549 14973 massC
+  ,     pdbAtom "A" 1062 139 "PRO" "O" "" "O" 10957 57118 16053 massO
+  ,     pdbAtom "A" 1063 139 "PRO" "CB" "" "C" 9361 55282 13743 massC
+  ,     pdbAtom "A" 1064 139 "PRO" "CG" "" "C" 8226 55412 14673 massC
+  ,     pdbAtom "A" 1065 139 "PRO" "CD" "" "C" 8622 54613 15916 massC
+  ,     pdbAtom "A" 1066 140 "PRO" "N" "" "N" 12156 57097 14143 massN
+  ,     pdbAtom "A" 1067 140 "PRO" "CA" "" "C" 12639 58484 14325 massC
+  ,     pdbAtom "A" 1068 140 "PRO" "C" "" "C" 11489 59513 14106 massC
+  ,     pdbAtom "A" 1069 140 "PRO" "O" "" "O" 10477 59167 13475 massO
+  ,     pdbAtom "A" 1070 140 "PRO" "CB" "" "C" 13777 58555 13334 massC
+  ,     pdbAtom "A" 1071 140 "PRO" "CG" "" "C" 13249 57750 12177 massC
+  ,     pdbAtom "A" 1072 140 "PRO" "CD" "" "C" 12651 56529 12894 massC
+  ,     pdbAtom "A" 1073 141 "LYS" "N" "" "N" 11577 60786 14571 massN
+  ,     pdbAtom "A" 1074 141 "LYS" "CA" "" "C" 10533 61820 14450 massC
+  ,     pdbAtom "A" 1075 141 "LYS" "C" "" "C" 10428 62236 13006 massC
+  ,     pdbAtom "A" 1076 141 "LYS" "O" "" "O" 9377 62640 12524 massO
+  ,     pdbAtom "A" 1077 141 "LYS" "CB" "" "C" 10883 63022 15357 massC
+  ,     pdbAtom "A" 1078 141 "LYS" "CG" "" "C" 10754 62565 16817 massC
+  ,     pdbAtom "A" 1079 141 "LYS" "CD" "" "C" 11473 63536 17715 massC
+  ,     pdbAtom "A" 1080 141 "LYS" "CE" "" "C" 11519 63023 19151 massC
+  ,     pdbAtom "A" 1081 141 "LYS" "NZ" "" "N" 12323 63885 20020 massN
+  ,     pdbAtom "A" 1082 142 "VAL" "N" "" "N" 11505 62114 12251 massN
+  ,     pdbAtom "A" 1083 142 "VAL" "CA" "" "C" 11505 62370 10828 massC
+  ,     pdbAtom "A" 1084 142 "VAL" "C" "" "C" 12110 61082 10227 massC
+  ,     pdbAtom "A" 1085 142 "VAL" "O" "" "O" 13252 60661 10498 massO
+  ,     pdbAtom "A" 1086 142 "VAL" "CB" "" "C" 12377 63646 10539 massC
+  ,     pdbAtom "A" 1087 142 "VAL" "CG1" "" "C" 12325 63850 9046 massC
+  ,     pdbAtom "A" 1088 142 "VAL" "CG2" "" "C" 11957 64872 11407 massC
+  ,     pdbAtom "A" 1089 143 "GLU" "N" "" "N" 11321 60416 9410 massN
+  ,     pdbAtom "A" 1090 143 "GLU" "CA" "" "C" 11718 59172 8801 massC
+  ,     pdbAtom "A" 1091 143 "GLU" "C" "" "C" 13096 59198 8139 massC
+  ,     pdbAtom "A" 1092 143 "GLU" "O" "" "O" 13448 60073 7340 massO
+  ,     pdbAtom "A" 1093 143 "GLU" "CB" "" "C" 10606 58810 7824 massC
+  ,     pdbAtom "A" 1094 143 "GLU" "CG" "" "C" 10749 57508 7007 massC
+  ,     pdbAtom "A" 1095 143 "GLU" "CD" "" "C" 9483 57011 6281 massC
+  ,     pdbAtom "A" 1096 143 "GLU" "OE1" "" "O" 8626 57820 5890 massO
+  ,     pdbAtom "A" 1097 143 "GLU" "OE2" "" "O" 9362 55790 6107 massO
+  ,     pdbAtom "A" 1098 144 "GLY" "N" "" "N" 13927 58251 8571 massN
+  ,     pdbAtom "A" 1099 144 "GLY" "CA" "" "C" 15260 58064 8028 massC
+  ,     pdbAtom "A" 1100 144 "GLY" "C" "" "C" 16320 58957 8633 massC
+  ,     pdbAtom "A" 1101 144 "GLY" "O" "" "O" 17474 58897 8193 massO
+  ,     pdbAtom "A" 1102 145 "LYS" "N" "" "N" 16033 59770 9638 massN
+  ,     pdbAtom "A" 1103 145 "LYS" "CA" "" "C" 17037 60722 10089 massC
+  ,     pdbAtom "A" 1104 145 "LYS" "C" "" "C" 17154 60573 11575 massC
+  ,     pdbAtom "A" 1105 145 "LYS" "O" "" "O" 16188 60303 12293 massO
+  ,     pdbAtom "A" 1106 145 "LYS" "CB" "" "C" 16659 62186 9822 massC
+  ,     pdbAtom "A" 1107 145 "LYS" "CG" "" "C" 16244 62558 8408 massC
+  ,     pdbAtom "A" 1108 145 "LYS" "CD" "" "C" 17425 62505 7529 massC
+  ,     pdbAtom "A" 1109 145 "LYS" "CE" "" "C" 16816 62743 6193 massC
+  ,     pdbAtom "A" 1110 145 "LYS" "NZ" "" "N" 17869 62607 5232 massN
+  ,     pdbAtom "A" 1111 146 "ASP" "N" "" "N" 18354 60773 12087 massN
+  ,     pdbAtom "A" 1112 146 "ASP" "CA" "" "C" 18527 60716 13497 massC
+  ,     pdbAtom "A" 1113 146 "ASP" "C" "" "C" 17902 61992 14096 massC
+  ,     pdbAtom "A" 1114 146 "ASP" "O" "" "O" 18118 63080 13573 massO
+  ,     pdbAtom "A" 1115 146 "ASP" "CB" "" "C" 20019 60587 13695 massC
+  ,     pdbAtom "A" 1116 146 "ASP" "CG" "" "C" 20437 60730 15135 massC
+  ,     pdbAtom "A" 1117 146 "ASP" "OD1" "" "O" 20070 59919 15991 massO
+  ,     pdbAtom "A" 1118 146 "ASP" "OD2" "" "O" 21164 61676 15393 massO
+  ,     pdbAtom "A" 1119 147 "ASP" "N" "" "N" 17190 61879 15213 massN
+  ,     pdbAtom "A" 1120 147 "ASP" "CA" "" "C" 16517 62933 15961 massC
+  ,     pdbAtom "A" 1121 147 "ASP" "C" "" "C" 17370 64106 16391 massC
+  ,     pdbAtom "A" 1122 147 "ASP" "O" "" "O" 16985 65266 16259 massO
+  ,     pdbAtom "A" 1123 147 "ASP" "CB" "" "C" 15898 62337 17210 massC
+  ,     pdbAtom "A" 1124 147 "ASP" "CG" "" "C" 14693 61426 16990 massC
+  ,     pdbAtom "A" 1125 147 "ASP" "OD1" "" "O" 14242 61247 15880 massO
+  ,     pdbAtom "A" 1126 147 "ASP" "OD2" "" "O" 14187 60871 17943 massO
+  ,     pdbAtom "A" 1127 148 "VAL" "N" "" "N" 18572 63785 16853 massN
+  ,     pdbAtom "A" 1128 148 "VAL" "CA" "" "C" 19530 64752 17344 massC
+  ,     pdbAtom "A" 1129 148 "VAL" "C" "" "C" 20308 65445 16239 massC
+  ,     pdbAtom "A" 1130 148 "VAL" "O" "" "O" 20359 66663 16142 massO
+  ,     pdbAtom "A" 1131 148 "VAL" "CB" "" "C" 20453 63990 18325 massC
+  ,     pdbAtom "A" 1132 148 "VAL" "CG1" "" "C" 21535 64842 18981 massC
+  ,     pdbAtom "A" 1133 148 "VAL" "CG2" "" "C" 19558 63529 19462 massC
+  ,     pdbAtom "A" 1134 149 "THR" "N" "" "N" 20915 64727 15344 massN
+  ,     pdbAtom "A" 1135 149 "THR" "CA" "" "C" 21763 65360 14392 massC
+  ,     pdbAtom "A" 1136 149 "THR" "C" "" "C" 21109 65528 13059 massC
+  ,     pdbAtom "A" 1137 149 "THR" "O" "" "O" 21721 66135 12166 massO
+  ,     pdbAtom "A" 1138 149 "THR" "CB" "" "C" 23067 64545 14212 massC
+  ,     pdbAtom "A" 1139 149 "THR" "OG1" "" "O" 22740 63377 13487 massO
+  ,     pdbAtom "A" 1140 149 "THR" "CG2" "" "C" 23714 64169 15499 massC
+  ,     pdbAtom "A" 1141 150 "GLY" "N" "" "N" 19955 64916 12789 massN
+  ,     pdbAtom "A" 1142 150 "GLY" "CA" "" "C" 19389 65023 11444 massC
+  ,     pdbAtom "A" 1143 150 "GLY" "C" "" "C" 20135 64251 10365 massC
+  ,     pdbAtom "A" 1144 150 "GLY" "O" "" "O" 19877 64351 9159 massO
+  ,     pdbAtom "A" 1145 151 "GLU" "N" "" "N" 21081 63418 10801 massN
+  ,     pdbAtom "A" 1146 151 "GLU" "CA" "" "C" 21826 62570 9898 massC
+  ,     pdbAtom "A" 1147 151 "GLU" "C" "" "C" 21047 61311 9535 massC
+  ,     pdbAtom "A" 1148 151 "GLU" "O" "" "O" 20270 60766 10319 massO
+  ,     pdbAtom "A" 1149 151 "GLU" "CB" "" "C" 23117 62205 10560 massC
+  ,     pdbAtom "A" 1150 151 "GLU" "CG" "" "C" 24145 63317 10561 massC
+  ,     pdbAtom "A" 1151 151 "GLU" "CD" "" "C" 25317 63047 11493 massC
+  ,     pdbAtom "A" 1152 151 "GLU" "OE1" "" "O" 25895 61969 11408 massO
+  ,     pdbAtom "A" 1153 151 "GLU" "OE2" "" "O" 25664 63907 12303 massO
+  ,     pdbAtom "A" 1154 152 "GLU" "N" "" "N" 21328 60861 8327 massN
+  ,     pdbAtom "A" 1155 152 "GLU" "CA" "" "C" 20683 59723 7720 massC
+  ,     pdbAtom "A" 1156 152 "GLU" "C" "" "C" 20987 58437 8522 massC
+  ,     pdbAtom "A" 1157 152 "GLU" "O" "" "O" 22117 58203 9003 massO
+  ,     pdbAtom "A" 1158 152 "GLU" "CB" "" "C" 21194 59697 6283 massC
+  ,     pdbAtom "A" 1159 152 "GLU" "CG" "" "C" 20390 58891 5261 massC
+  ,     pdbAtom "A" 1160 152 "GLU" "CD" "" "C" 19048 59446 4773 massC
+  ,     pdbAtom "A" 1161 152 "GLU" "OE1" "" "O" 18109 59534 5550 massO
+  ,     pdbAtom "A" 1162 152 "GLU" "OE2" "" "O" 18918 59765 3590 massO
+  ,     pdbAtom "A" 1163 153 "LEU" "N" "" "N" 19934 57666 8790 massN
+  ,     pdbAtom "A" 1164 153 "LEU" "CA" "" "C" 20090 56412 9516 massC
+  ,     pdbAtom "A" 1165 153 "LEU" "C" "" "C" 20514 55309 8534 massC
+  ,     pdbAtom "A" 1166 153 "LEU" "O" "" "O" 20252 55401 7326 massO
+  ,     pdbAtom "A" 1167 153 "LEU" "CB" "" "C" 18781 56079 10188 massC
+  ,     pdbAtom "A" 1168 153 "LEU" "CG" "" "C" 18374 57112 11221 massC
+  ,     pdbAtom "A" 1169 153 "LEU" "CD1" "" "C" 17029 56729 11739 massC
+  ,     pdbAtom "A" 1170 153 "LEU" "CD2" "" "C" 19407 57231 12302 massC
+  ,     pdbAtom "A" 1171 154 "THR" "N" "" "N" 21202 54249 8973 massN
+  ,     pdbAtom "A" 1172 154 "THR" "CA" "" "C" 21658 53190 8095 massC
+  ,     pdbAtom "A" 1173 154 "THR" "C" "" "C" 21204 51862 8721 massC
+  ,     pdbAtom "A" 1174 154 "THR" "O" "" "O" 20647 51837 9850 massO
+  ,     pdbAtom "A" 1175 154 "THR" "CB" "" "C" 23240 53250 7944 massC
+  ,     pdbAtom "A" 1176 154 "THR" "OG1" "" "O" 23887 53318 9212 massO
+  ,     pdbAtom "A" 1177 154 "THR" "CG2" "" "C" 23697 54526 7287 massC
+  ,     pdbAtom "A" 1178 155 "THR" "N" "" "N" 21420 50764 7992 massN
+  ,     pdbAtom "A" 1179 155 "THR" "CA" "" "C" 21171 49444 8553 massC
+  ,     pdbAtom "A" 1180 155 "THR" "C" "" "C" 22511 48807 8882 massC
+  ,     pdbAtom "A" 1181 155 "THR" "O" "" "O" 23544 49124 8298 massO
+  ,     pdbAtom "A" 1182 155 "THR" "CB" "" "C" 20398 48630 7547 massC
+  ,     pdbAtom "A" 1183 155 "THR" "OG1" "" "O" 21165 48608 6369 massO
+  ,     pdbAtom "A" 1184 155 "THR" "CG2" "" "C" 19135 49291 7127 massC
+  ,     pdbAtom "A" 1185 156 "ARG" "N" "" "N" 22602 47980 9890 massN
+  ,     pdbAtom "A" 1186 156 "ARG" "CA" "" "C" 23818 47270 10158 massC
+  ,     pdbAtom "A" 1187 156 "ARG" "C" "" "C" 23937 46129 9152 massC
+  ,     pdbAtom "A" 1188 156 "ARG" "O" "" "O" 22965 45487 8692 massO
+  ,     pdbAtom "A" 1189 156 "ARG" "CB" "" "C" 23770 46767 11585 massC
+  ,     pdbAtom "A" 1190 156 "ARG" "CG" "" "C" 24197 47879 12528 massC
+  ,     pdbAtom "A" 1191 156 "ARG" "CD" "" "C" 24163 47484 13977 massC
+  ,     pdbAtom "A" 1192 156 "ARG" "NE" "" "N" 24554 46097 14182 massN
+  ,     pdbAtom "A" 1193 156 "ARG" "CZ" "" "C" 24321 45507 15337 massC
+  ,     pdbAtom "A" 1194 156 "ARG" "NH1" "" "N" 23810 46190 16331 massN
+  ,     pdbAtom "A" 1195 156 "ARG" "NH2" "" "N" 24583 44231 15522 massN
+  ,     pdbAtom "A" 1196 157 "LYS" "N" "" "N" 25209 45893 8840 massN
+  ,     pdbAtom "A" 1197 157 "LYS" "CA" "" "C" 25618 44885 7852 massC
+  ,     pdbAtom "A" 1198 157 "LYS" "C" "" "C" 25246 43470 8313 massC
+  ,     pdbAtom "A" 1199 157 "LYS" "O" "" "O" 24904 42622 7505 massO
+  ,     pdbAtom "A" 1200 157 "LYS" "CB" "" "C" 27139 44916 7632 massC
+  ,     pdbAtom "A" 1201 157 "LYS" "CG" "" "C" 27925 46171 7166 massC
+  ,     pdbAtom "A" 1202 157 "LYS" "CD" "" "C" 27832 47491 7978 massC
+  ,     pdbAtom "A" 1203 157 "LYS" "CE" "" "C" 28295 47435 9433 massC
+  ,     pdbAtom "A" 1204 157 "LYS" "NZ" "" "N" 27330 48130 10268 massN
+  ,     pdbAtom "A" 1205 158 "ASP" "N" "" "N" 25330 43207 9631 massN
+  ,     pdbAtom "A" 1206 158 "ASP" "CA" "" "C" 25037 41923 10230 massC
+  ,     pdbAtom "A" 1207 158 "ASP" "C" "" "C" 23558 41788 10628 massC
+  ,     pdbAtom "A" 1208 158 "ASP" "O" "" "O" 23137 40888 11347 massO
+  ,     pdbAtom "A" 1209 158 "ASP" "CB" "" "C" 26023 41808 11400 massC
+  ,     pdbAtom "A" 1210 158 "ASP" "CG" "" "C" 25801 42776 12548 massC
+  ,     pdbAtom "A" 1211 158 "ASP" "OD1" "" "O" 25283 43851 12308 massO
+  ,     pdbAtom "A" 1212 158 "ASP" "OD2" "" "O" 26141 42476 13699 massO
+  ,     pdbAtom "A" 1213 159 "ASP" "N" "" "N" 22670 42699 10221 massN
+  ,     pdbAtom "A" 1214 159 "ASP" "CA" "" "C" 21262 42561 10522 massC
+  ,     pdbAtom "A" 1215 159 "ASP" "C" "" "C" 20494 42016 9332 massC
+  ,     pdbAtom "A" 1216 159 "ASP" "O" "" "O" 19650 42689 8724 massO
+  ,     pdbAtom "A" 1217 159 "ASP" "CB" "" "C" 20648 43890 10940 massC
+  ,     pdbAtom "A" 1218 159 "ASP" "CG" "" "C" 21002 44350 12347 massC
+  ,     pdbAtom "A" 1219 159 "ASP" "OD1" "" "O" 21619 43630 13123 massO
+  ,     pdbAtom "A" 1220 159 "ASP" "OD2" "" "O" 20672 45479 12638 massO
+  ,     pdbAtom "A" 1221 160 "GLN" "N" "" "N" 20899 40828 8874 massN
+  ,     pdbAtom "A" 1222 160 "GLN" "CA" "" "C" 20054 40082 7944 massC
+  ,     pdbAtom "A" 1223 160 "GLN" "C" "" "C" 19689 38809 8687 massC
+  ,     pdbAtom "A" 1224 160 "GLN" "O" "" "O" 20435 38358 9585 massO
+  ,     pdbAtom "A" 1225 160 "GLN" "CB" "" "C" 20728 39640 6676 massC
+  ,     pdbAtom "A" 1226 160 "GLN" "CG" "" "C" 21152 40744 5745 massC
+  ,     pdbAtom "A" 1227 160 "GLN" "CD" "" "C" 22649 40914 5852 massC
+  ,     pdbAtom "A" 1228 160 "GLN" "OE1" "" "O" 23385 40029 6315 massO
+  ,     pdbAtom "A" 1229 160 "GLN" "NE2" "" "N" 23142 42076 5456 massN
+  ,     pdbAtom "A" 1230 161 "GLU" "N" "" "N" 18553 38261 8255 massN
+  ,     pdbAtom "A" 1231 161 "GLU" "CA" "" "C" 17942 37066 8799 massC
+  ,     pdbAtom "A" 1232 161 "GLU" "C" "" "C" 18925 35929 9092 massC
+  ,     pdbAtom "A" 1233 161 "GLU" "O" "" "O" 18945 35421 10227 massO
+  ,     pdbAtom "A" 1234 161 "GLU" "CB" "" "C" 16920 36733 7795 massC
+  ,     pdbAtom "A" 1235 161 "GLU" "CG" "" "C" 15999 35552 8012 massC
+  ,     pdbAtom "A" 1236 161 "GLU" "CD" "" "C" 14748 35661 7126 massC
+  ,     pdbAtom "A" 1237 161 "GLU" "OE1" "" "O" 14858 35852 5898 massO
+  ,     pdbAtom "A" 1238 161 "GLU" "OE2" "" "O" 13649 35573 7684 massO
+  ,     pdbAtom "A" 1239 162 "GLU" "N" "" "N" 19847 35559 8181 massN
+  ,     pdbAtom "A" 1240 162 "GLU" "CA" "" "C" 20712 34443 8506 massC
+  ,     pdbAtom "A" 1241 162 "GLU" "C" "" "C" 21809 34739 9498 massC
+  ,     pdbAtom "A" 1242 162 "GLU" "O" "" "O" 22129 33853 10290 massO
+  ,     pdbAtom "A" 1243 162 "GLU" "CB" "" "C" 21297 33885 7242 massC
+  ,     pdbAtom "A" 1244 162 "GLU" "CG" "" "C" 20162 33253 6378 massC
+  ,     pdbAtom "A" 1245 162 "GLU" "CD" "" "C" 19068 32377 7051 massC
+  ,     pdbAtom "A" 1246 162 "GLU" "OE1" "" "O" 19372 31314 7615 massO
+  ,     pdbAtom "A" 1247 162 "GLU" "OE2" "" "O" 17891 32766 6989 massO
+  ,     pdbAtom "A" 1248 163 "THR" "N" "" "N" 22382 35951 9529 massN
+  ,     pdbAtom "A" 1249 163 "THR" "CA" "" "C" 23378 36312 10514 massC
+  ,     pdbAtom "A" 1250 163 "THR" "C" "" "C" 22699 36426 11855 massC
+  ,     pdbAtom "A" 1251 163 "THR" "O" "" "O" 23332 35982 12797 massO
+  ,     pdbAtom "A" 1252 163 "THR" "CB" "" "C" 24024 37637 10229 massC
+  ,     pdbAtom "A" 1253 163 "THR" "OG1" "" "O" 24370 37534 8871 massO
+  ,     pdbAtom "A" 1254 163 "THR" "CG2" "" "C" 25227 37972 11077 massC
+  ,     pdbAtom "A" 1255 164 "VAL" "N" "" "N" 21460 36915 11989 massN
+  ,     pdbAtom "A" 1256 164 "VAL" "CA" "" "C" 20732 36952 13256 massC
+  ,     pdbAtom "A" 1257 164 "VAL" "C" "" "C" 20535 35509 13773 massC
+  ,     pdbAtom "A" 1258 164 "VAL" "O" "" "O" 20627 35211 14964 massO
+  ,     pdbAtom "A" 1259 164 "VAL" "CB" "" "C" 19358 37625 12994 massC
+  ,     pdbAtom "A" 1260 164 "VAL" "CG1" "" "C" 18500 37663 14231 massC
+  ,     pdbAtom "A" 1261 164 "VAL" "CG2" "" "C" 19575 39045 12591 massC
+  ,     pdbAtom "A" 1262 165 "ARG" "N" "" "N" 20189 34559 12910 massN
+  ,     pdbAtom "A" 1263 165 "ARG" "CA" "" "C" 20001 33162 13347 massC
+  ,     pdbAtom "A" 1264 165 "ARG" "C" "" "C" 21249 32540 13966 massC
+  ,     pdbAtom "A" 1265 165 "ARG" "O" "" "O" 21232 31882 15043 massO
+  ,     pdbAtom "A" 1266 165 "ARG" "CB" "" "C" 19529 32365 12146 massC
+  ,     pdbAtom "A" 1267 165 "ARG" "CG" "" "C" 18077 32631 12181 massC
+  ,     pdbAtom "A" 1268 165 "ARG" "CD" "" "C" 17291 31953 11104 massC
+  ,     pdbAtom "A" 1269 165 "ARG" "NE" "" "N" 15902 32196 11468 massN
+  ,     pdbAtom "A" 1270 165 "ARG" "CZ" "" "C" 14909 32325 10581 massC
+  ,     pdbAtom "A" 1271 165 "ARG" "NH1" "" "N" 15099 32226 9250 massN
+  ,     pdbAtom "A" 1272 165 "ARG" "NH2" "" "N" 13692 32568 11074 massN
+  ,     pdbAtom "A" 1471 190 "ASN" "N" "" "N" 26374 39541 46221 massN
+  ,     pdbAtom "A" 1472 190 "ASN" "CA" "" "C" 27363 40312 45461 massC
+  ,     pdbAtom "A" 1473 190 "ASN" "C" "" "C" 26836 41319 44448 massC
+  ,     pdbAtom "A" 1474 190 "ASN" "O" "" "O" 27599 42167 44016 massO
+  ,     pdbAtom "A" 1475 190 "ASN" "CB" "" "C" 28307 39357 44735 massC
+  ,     pdbAtom "A" 1476 190 "ASN" "CG" "" "C" 29016 38341 45616 massC
+  ,     pdbAtom "A" 1477 190 "ASN" "OD1" "" "O" 29153 38496 46827 massO
+  ,     pdbAtom "A" 1478 190 "ASN" "ND2" "" "N" 29479 37218 45112 massN
+  ,     pdbAtom "A" 1479 191 "THR" "N" "" "N" 25556 41263 44069 massN
+  ,     pdbAtom "A" 1480 191 "THR" "CA" "" "C" 24855 42119 43112 massC
+  ,     pdbAtom "A" 1481 191 "THR" "C" "" "C" 23337 41897 43350 massC
+  ,     pdbAtom "A" 1482 191 "THR" "O" "" "O" 22924 40980 44099 massO
+  ,     pdbAtom "A" 1483 191 "THR" "CB" "" "C" 25234 41732 41612 massC
+  ,     pdbAtom "A" 1484 191 "THR" "OG1" "" "O" 24835 42853 40815 massO
+  ,     pdbAtom "A" 1485 191 "THR" "CG2" "" "C" 24563 40464 41070 massC
+  ,     pdbAtom "A" 1486 192 "LYS" "N" "" "N" 22520 42760 42707 massN
+  ,     pdbAtom "A" 1487 192 "LYS" "CA" "" "C" 21066 42643 42614 massC
+  ,     pdbAtom "A" 1488 192 "LYS" "C" "" "C" 20766 42082 41200 massC
+  ,     pdbAtom "A" 1489 192 "LYS" "O" "" "O" 21477 42422 40243 massO
+  ,     pdbAtom "A" 1490 192 "LYS" "CB" "" "C" 20449 44043 42842 massC
+  ,     pdbAtom "A" 1491 192 "LYS" "CG" "" "C" 20470 44348 44357 massC
+  ,     pdbAtom "A" 1492 192 "LYS" "CD" "" "C" 20175 45801 44791 massC
+  ,     pdbAtom "A" 1493 192 "LYS" "CE" "" "C" 19401 45922 46117 massC
+  ,     pdbAtom "A" 1494 192 "LYS" "NZ" "" "N" 17996 45547 45934 massN
+  ,     pdbAtom "A" 1495 193 "TYR" "N" "" "N" 19780 41212 40951 massN
+  ,     pdbAtom "A" 1496 193 "TYR" "CA" "" "C" 19512 40627 39611 massC
+  ,     pdbAtom "A" 1497 193 "TYR" "C" "" "C" 18078 41014 39353 massC
+  ,     pdbAtom "A" 1498 193 "TYR" "O" "" "O" 17328 40851 40302 massO
+  ,     pdbAtom "A" 1499 193 "TYR" "CB" "" "C" 19649 39084 39628 massC
+  ,     pdbAtom "A" 1500 193 "TYR" "CG" "" "C" 19616 38390 38306 massC
+  ,     pdbAtom "A" 1501 193 "TYR" "CD1" "" "C" 18419 38015 37750 massC
+  ,     pdbAtom "A" 1502 193 "TYR" "CD2" "" "C" 20768 38216 37613 massC
+  ,     pdbAtom "A" 1503 193 "TYR" "CE1" "" "C" 18368 37484 36473 massC
+  ,     pdbAtom "A" 1504 193 "TYR" "CE2" "" "C" 20734 37682 36334 massC
+  ,     pdbAtom "A" 1505 193 "TYR" "CZ" "" "C" 19534 37328 35772 massC
+  ,     pdbAtom "A" 1506 193 "TYR" "OH" "" "O" 19490 36855 34496 massO
+  ,     pdbAtom "A" 1507 194 "ALA" "N" "" "N" 17604 41586 38241 massN
+  ,     pdbAtom "A" 1508 194 "ALA" "CA" "" "C" 16181 41854 38027 massC
+  ,     pdbAtom "A" 1509 194 "ALA" "C" "" "C" 15867 41433 36601 massC
+  ,     pdbAtom "A" 1510 194 "ALA" "O" "" "O" 16666 41662 35701 massO
+  ,     pdbAtom "A" 1511 194 "ALA" "CB" "" "C" 15820 43324 38124 massC
+  ,     pdbAtom "A" 1512 195 "LYS" "N" "" "N" 14803 40679 36385 massN
+  ,     pdbAtom "A" 1513 195 "LYS" "CA" "" "C" 14390 40266 35066 massC
+  ,     pdbAtom "A" 1514 195 "LYS" "C" "" "C" 13277 41223 34553 massC
+  ,     pdbAtom "A" 1515 195 "LYS" "O" "" "O" 12415 41677 35322 massO
+  ,     pdbAtom "A" 1516 195 "LYS" "CB" "" "C" 13973 38819 35238 massC
+  ,     pdbAtom "A" 1517 195 "LYS" "CG" "" "C" 13755 38186 33909 massC
+  ,     pdbAtom "A" 1518 195 "LYS" "CD" "" "C" 13211 36799 34127 massC
+  ,     pdbAtom "A" 1519 195 "LYS" "CE" "" "C" 12745 36343 32751 massC
+  ,     pdbAtom "A" 1520 195 "LYS" "NZ" "" "N" 12355 34938 32727 massN
+  ,     pdbAtom "A" 1521 196 "VAL" "N" "" "N" 13287 41732 33311 massN
+  ,     pdbAtom "A" 1522 196 "VAL" "CA" "" "C" 12218 42589 32815 massC
+  ,     pdbAtom "A" 1523 196 "VAL" "C" "" "C" 11666 41946 31524 massC
+  ,     pdbAtom "A" 1524 196 "VAL" "O" "" "O" 12321 41203 30767 massO
+  ,     pdbAtom "A" 1525 196 "VAL" "CB" "" "C" 12717 44035 32521 massC
+  ,     pdbAtom "A" 1526 196 "VAL" "CG1" "" "C" 13508 44521 33736 massC
+  ,     pdbAtom "A" 1527 196 "VAL" "CG2" "" "C" 13623 44112 31315 massC
+  ,     pdbAtom "A" 1528 197 "ASP" "N" "" "N" 10384 42181 31309 massN
+  ,     pdbAtom "A" 1529 197 "ASP" "CA" "" "C" 9688 41664 30175 massC
+  ,     pdbAtom "A" 1530 197 "ASP" "C" "" "C" 10000 42516 28963 massC
+  ,     pdbAtom "A" 1531 197 "ASP" "O" "" "O" 9359 43537 28745 massO
+  ,     pdbAtom "A" 1532 197 "ASP" "CB" "" "C" 8206 41681 30416 massC
+  ,     pdbAtom "A" 1533 197 "ASP" "CG" "" "C" 7386 41039 29288 massC
+  ,     pdbAtom "A" 1534 197 "ASP" "OD1" "" "O" 7877 40724 28216 massO
+  ,     pdbAtom "A" 1535 197 "ASP" "OD2" "" "O" 6214 40837 29484 massO
+  ,     pdbAtom "A" 1536 198 "GLY" "N" "" "N" 10921 42068 28123 massN
+  ,     pdbAtom "A" 1537 198 "GLY" "CA" "" "C" 11316 42835 26964 massC
+  ,     pdbAtom "A" 1538 198 "GLY" "C" "" "C" 10257 42800 25859 massC
+  ,     pdbAtom "A" 1539 198 "GLY" "O" "" "O" 10499 43434 24830 massO
   ]
+
+def oneAKEChainBConfiguration : Configuration :=
+  [
+    pdbAtom "B" 1663 1 "MET" "N" "" "N" 12440 6614 -1137 massN
+  ,     pdbAtom "B" 1664 1 "MET" "CA" "" "C" 13491 5717 -668 massC
+  ,     pdbAtom "B" 1665 1 "MET" "C" "" "C" 13148 5442 796 massC
+  ,     pdbAtom "B" 1666 1 "MET" "O" "" "O" 12868 6366 1556 massO
+  ,     pdbAtom "B" 1667 1 "MET" "CB" "" "C" 14812 6448 -874 massC
+  ,     pdbAtom "B" 1668 1 "MET" "CG" "" "C" 15976 5572 -1280 massC
+  ,     pdbAtom "B" 1669 1 "MET" "SD" "" "S" 17080 5513 137 massS
+  ,     pdbAtom "B" 1670 1 "MET" "CE" "" "C" 18072 6943 -151 massC
+  ,     pdbAtom "B" 1671 2 "ARG" "N" "" "N" 13034 4158 1147 massN
+  ,     pdbAtom "B" 1672 2 "ARG" "CA" "" "C" 12484 3732 2434 massC
+  ,     pdbAtom "B" 1673 2 "ARG" "C" "" "C" 13498 2869 3183 massC
+  ,     pdbAtom "B" 1674 2 "ARG" "O" "" "O" 14114 1992 2555 massO
+  ,     pdbAtom "B" 1675 2 "ARG" "CB" "" "C" 11195 2956 2146 massC
+  ,     pdbAtom "B" 1676 2 "ARG" "CG" "" "C" 10165 3697 1313 massC
+  ,     pdbAtom "B" 1677 2 "ARG" "CD" "" "C" 9624 2850 185 massC
+  ,     pdbAtom "B" 1678 2 "ARG" "NE" "" "N" 8201 3110 140 massN
+  ,     pdbAtom "B" 1679 2 "ARG" "CZ" "" "C" 7320 2313 -472 massC
+  ,     pdbAtom "B" 1680 2 "ARG" "NH1" "" "N" 7700 1235 -1169 massN
+  ,     pdbAtom "B" 1681 2 "ARG" "NH2" "" "N" 6024 2633 -378 massN
+  ,     pdbAtom "B" 1682 3 "ILE" "N" "" "N" 13757 3053 4467 massN
+  ,     pdbAtom "B" 1683 3 "ILE" "CA" "" "C" 14820 2298 5099 massC
+  ,     pdbAtom "B" 1684 3 "ILE" "C" "" "C" 14372 2025 6524 massC
+  ,     pdbAtom "B" 1685 3 "ILE" "O" "" "O" 13660 2825 7142 massO
+  ,     pdbAtom "B" 1686 3 "ILE" "CB" "" "C" 16126 3129 5107 massC
+  ,     pdbAtom "B" 1687 3 "ILE" "CG1" "" "C" 16572 3543 3735 massC
+  ,     pdbAtom "B" 1688 3 "ILE" "CG2" "" "C" 17243 2280 5656 massC
+  ,     pdbAtom "B" 1689 3 "ILE" "CD1" "" "C" 17526 4738 3782 massC
+  ,     pdbAtom "B" 1690 4 "ILE" "N" "" "N" 14732 846 7026 massN
+  ,     pdbAtom "B" 1691 4 "ILE" "CA" "" "C" 14527 452 8416 massC
+  ,     pdbAtom "B" 1692 4 "ILE" "C" "" "C" 15955 383 9003 massC
+  ,     pdbAtom "B" 1693 4 "ILE" "O" "" "O" 16934 0 8324 massO
+  ,     pdbAtom "B" 1694 4 "ILE" "CB" "" "C" 13839 -968 8544 massC
+  ,     pdbAtom "B" 1695 4 "ILE" "CG1" "" "C" 12411 -962 8018 massC
+  ,     pdbAtom "B" 1696 4 "ILE" "CG2" "" "C" 13787 -1370 10010 massC
+  ,     pdbAtom "B" 1697 4 "ILE" "CD1" "" "C" 11690 -2343 8025 massC
+  ,     pdbAtom "B" 1698 5 "LEU" "N" "" "N" 16113 790 10258 massN
+  ,     pdbAtom "B" 1699 5 "LEU" "CA" "" "C" 17364 610 10949 massC
+  ,     pdbAtom "B" 1700 5 "LEU" "C" "" "C" 17066 -411 12013 massC
+  ,     pdbAtom "B" 1701 5 "LEU" "O" "" "O" 16071 -292 12735 massO
+  ,     pdbAtom "B" 1702 5 "LEU" "CB" "" "C" 17817 1896 11571 massC
+  ,     pdbAtom "B" 1703 5 "LEU" "CG" "" "C" 17955 3057 10600 massC
+  ,     pdbAtom "B" 1704 5 "LEU" "CD1" "" "C" 18514 4244 11389 massC
+  ,     pdbAtom "B" 1705 5 "LEU" "CD2" "" "C" 18845 2684 9406 massC
+  ,     pdbAtom "B" 1706 6 "LEU" "N" "" "N" 17961 -1390 12084 massN
+  ,     pdbAtom "B" 1707 6 "LEU" "CA" "" "C" 17873 -2565 12933 massC
+  ,     pdbAtom "B" 1708 6 "LEU" "C" "" "C" 19120 -2684 13799 massC
+  ,     pdbAtom "B" 1709 6 "LEU" "O" "" "O" 20227 -2447 13301 massO
+  ,     pdbAtom "B" 1710 6 "LEU" "CB" "" "C" 17758 -3744 12031 massC
+  ,     pdbAtom "B" 1711 6 "LEU" "CG" "" "C" 16842 -4871 12331 massC
+  ,     pdbAtom "B" 1712 6 "LEU" "CD1" "" "C" 15402 -4380 12555 massC
+  ,     pdbAtom "B" 1713 6 "LEU" "CD2" "" "C" 16983 -5852 11167 massC
+  ,     pdbAtom "B" 1714 7 "GLY" "N" "" "N" 19057 -3003 15080 massN
+  ,     pdbAtom "B" 1715 7 "GLY" "CA" "" "C" 20272 -3070 15888 massC
+  ,     pdbAtom "B" 1716 7 "GLY" "C" "" "C" 19954 -2918 17356 massC
+  ,     pdbAtom "B" 1717 7 "GLY" "O" "" "O" 18844 -2521 17735 massO
+  ,     pdbAtom "B" 1718 8 "ALA" "N" "" "N" 20929 -3294 18183 massN
+  ,     pdbAtom "B" 1719 8 "ALA" "CA" "" "C" 20758 -3337 19621 massC
+  ,     pdbAtom "B" 1720 8 "ALA" "C" "" "C" 20475 -1974 20190 massC
+  ,     pdbAtom "B" 1721 8 "ALA" "O" "" "O" 20799 -992 19522 massO
+  ,     pdbAtom "B" 1722 8 "ALA" "CB" "" "C" 22035 -3915 20266 massC
+  ,     pdbAtom "B" 1879 30 "SER" "N" "" "N" 10761 7798 14008 massN
+  ,     pdbAtom "B" 1880 30 "SER" "CA" "" "C" 11332 7135 15151 massC
+  ,     pdbAtom "B" 1881 30 "SER" "C" "" "C" 10293 6883 16240 massC
+  ,     pdbAtom "B" 1882 30 "SER" "O" "" "O" 9831 7812 16932 massO
+  ,     pdbAtom "B" 1883 30 "SER" "CB" "" "C" 12486 8009 15664 massC
+  ,     pdbAtom "B" 1884 30 "SER" "OG" "" "O" 12863 7872 17046 massO
+  ,     pdbAtom "B" 1885 31 "THR" "N" "" "N" 9905 5621 16468 massN
+  ,     pdbAtom "B" 1886 31 "THR" "CA" "" "C" 8911 5306 17473 massC
+  ,     pdbAtom "B" 1887 31 "THR" "C" "" "C" 9309 5682 18870 massC
+  ,     pdbAtom "B" 1888 31 "THR" "O" "" "O" 8414 5905 19663 massO
+  ,     pdbAtom "B" 1889 31 "THR" "CB" "" "C" 8583 3831 17460 massC
+  ,     pdbAtom "B" 1890 31 "THR" "OG1" "" "O" 9767 3088 17284 massO
+  ,     pdbAtom "B" 1891 31 "THR" "CG2" "" "C" 7681 3521 16314 massC
+  ,     pdbAtom "B" 1892 32 "GLY" "N" "" "N" 10580 5793 19220 massN
+  ,     pdbAtom "B" 1893 32 "GLY" "CA" "" "C" 10958 6188 20552 massC
+  ,     pdbAtom "B" 1894 32 "GLY" "C" "" "C" 10749 7689 20740 massC
+  ,     pdbAtom "B" 1895 32 "GLY" "O" "" "O" 10201 8174 21744 massO
+  ,     pdbAtom "B" 1896 33 "ASP" "N" "" "N" 11152 8457 19730 massN
+  ,     pdbAtom "B" 1897 33 "ASP" "CA" "" "C" 10994 9894 19767 massC
+  ,     pdbAtom "B" 1898 33 "ASP" "C" "" "C" 9496 10192 19774 massC
+  ,     pdbAtom "B" 1899 33 "ASP" "O" "" "O" 9056 11057 20535 massO
+  ,     pdbAtom "B" 1900 33 "ASP" "CB" "" "C" 11707 10528 18538 massC
+  ,     pdbAtom "B" 1901 33 "ASP" "CG" "" "C" 13263 10632 18532 massC
+  ,     pdbAtom "B" 1902 33 "ASP" "OD1" "" "O" 13922 10356 19548 massO
+  ,     pdbAtom "B" 1903 33 "ASP" "OD2" "" "O" 13828 11004 17487 massO
+  ,     pdbAtom "B" 1904 34 "MET" "N" "" "N" 8671 9451 19020 massN
+  ,     pdbAtom "B" 1905 34 "MET" "CA" "" "C" 7221 9637 19070 massC
+  ,     pdbAtom "B" 1906 34 "MET" "C" "" "C" 6636 9262 20413 massC
+  ,     pdbAtom "B" 1907 34 "MET" "O" "" "O" 5726 9945 20879 massO
+  ,     pdbAtom "B" 1908 34 "MET" "CB" "" "C" 6461 8809 18056 massC
+  ,     pdbAtom "B" 1909 34 "MET" "CG" "" "C" 6756 9341 16691 massC
+  ,     pdbAtom "B" 1910 34 "MET" "SD" "" "S" 5799 8544 15390 massS
+  ,     pdbAtom "B" 1911 34 "MET" "CE" "" "C" 7099 7506 14808 massC
+  ,     pdbAtom "B" 1912 35 "LEU" "N" "" "N" 7104 8194 21055 massN
+  ,     pdbAtom "B" 1913 35 "LEU" "CA" "" "C" 6569 7770 22340 massC
+  ,     pdbAtom "B" 1914 35 "LEU" "C" "" "C" 6937 8754 23435 massC
+  ,     pdbAtom "B" 1915 35 "LEU" "O" "" "O" 6074 9184 24198 massO
+  ,     pdbAtom "B" 1916 35 "LEU" "CB" "" "C" 7097 6375 22686 massC
+  ,     pdbAtom "B" 1917 35 "LEU" "CG" "" "C" 6388 5204 22029 massC
+  ,     pdbAtom "B" 1918 35 "LEU" "CD1" "" "C" 7211 3945 22230 massC
+  ,     pdbAtom "B" 1919 35 "LEU" "CD2" "" "C" 4986 5061 22624 massC
+  ,     pdbAtom "B" 1920 36 "ARG" "N" "" "N" 8198 9161 23466 massN
+  ,     pdbAtom "B" 1921 36 "ARG" "CA" "" "C" 8667 10117 24416 massC
+  ,     pdbAtom "B" 1922 36 "ARG" "C" "" "C" 7979 11474 24392 massC
+  ,     pdbAtom "B" 1923 36 "ARG" "O" "" "O" 7697 12078 25452 massO
+  ,     pdbAtom "B" 1924 36 "ARG" "CB" "" "C" 10143 10267 24207 massC
+  ,     pdbAtom "B" 1925 36 "ARG" "CG" "" "C" 10814 9212 25063 massC
+  ,     pdbAtom "B" 1926 36 "ARG" "CD" "" "C" 12282 9577 25135 massC
+  ,     pdbAtom "B" 1927 36 "ARG" "NE" "" "N" 12877 9364 23836 massN
+  ,     pdbAtom "B" 1928 36 "ARG" "CZ" "" "C" 13272 8150 23436 massC
+  ,     pdbAtom "B" 1929 36 "ARG" "NH1" "" "N" 13234 7081 24267 massN
+  ,     pdbAtom "B" 1930 36 "ARG" "NH2" "" "N" 13729 8029 22179 massN
+  ,     pdbAtom "B" 1931 37 "ALA" "N" "" "N" 7701 11931 23172 massN
+  ,     pdbAtom "B" 1932 37 "ALA" "CA" "" "C" 6975 13176 22941 massC
+  ,     pdbAtom "B" 1933 37 "ALA" "C" "" "C" 5509 13082 23384 massC
+  ,     pdbAtom "B" 1934 37 "ALA" "O" "" "O" 5050 13907 24176 massO
+  ,     pdbAtom "B" 1935 37 "ALA" "CB" "" "C" 6990 13540 21458 massC
+  ,     pdbAtom "B" 1936 38 "ALA" "N" "" "N" 4775 12045 22956 massN
+  ,     pdbAtom "B" 1937 38 "ALA" "CA" "" "C" 3400 11801 23354 massC
+  ,     pdbAtom "B" 1938 38 "ALA" "C" "" "C" 3314 11682 24854 massC
+  ,     pdbAtom "B" 1939 38 "ALA" "O" "" "O" 2391 12202 25447 massO
+  ,     pdbAtom "B" 1940 38 "ALA" "CB" "" "C" 2875 10516 22745 massC
+  ,     pdbAtom "B" 1941 39 "VAL" "N" "" "N" 4292 11129 25525 massN
+  ,     pdbAtom "B" 1942 39 "VAL" "CA" "" "C" 4238 11005 26952 massC
+  ,     pdbAtom "B" 1943 39 "VAL" "C" "" "C" 4357 12370 27603 massC
+  ,     pdbAtom "B" 1944 39 "VAL" "O" "" "O" 3553 12697 28481 massO
+  ,     pdbAtom "B" 1945 39 "VAL" "CB" "" "C" 5356 10051 27348 massC
+  ,     pdbAtom "B" 1946 39 "VAL" "CG1" "" "C" 5677 10089 28836 massC
+  ,     pdbAtom "B" 1947 39 "VAL" "CG2" "" "C" 4877 8665 26992 massC
+  ,     pdbAtom "B" 1948 40 "LYS" "N" "" "N" 5289 13199 27126 massN
+  ,     pdbAtom "B" 1949 40 "LYS" "CA" "" "C" 5546 14510 27721 massC
+  ,     pdbAtom "B" 1950 40 "LYS" "C" "" "C" 4438 15511 27407 massC
+  ,     pdbAtom "B" 1951 40 "LYS" "O" "" "O" 3980 16237 28289 massO
+  ,     pdbAtom "B" 1952 40 "LYS" "CB" "" "C" 6898 15004 27210 massC
+  ,     pdbAtom "B" 1953 40 "LYS" "CG" "" "C" 7519 16263 27791 massC
+  ,     pdbAtom "B" 1954 40 "LYS" "CD" "" "C" 8835 16514 27057 massC
+  ,     pdbAtom "B" 1955 40 "LYS" "CE" "" "C" 8650 16761 25545 massC
+  ,     pdbAtom "B" 1956 40 "LYS" "NZ" "" "N" 9293 15742 24715 massN
+  ,     pdbAtom "B" 1957 41 "SER" "N" "" "N" 3968 15591 26168 massN
+  ,     pdbAtom "B" 1958 41 "SER" "CA" "" "C" 2819 16413 25859 massC
+  ,     pdbAtom "B" 1959 41 "SER" "C" "" "C" 1571 15797 26495 massC
+  ,     pdbAtom "B" 1960 41 "SER" "O" "" "O" 571 16489 26698 massO
+  ,     pdbAtom "B" 1961 41 "SER" "CB" "" "C" 2627 16523 24332 massC
+  ,     pdbAtom "B" 1962 41 "SER" "OG" "" "O" 2808 15317 23584 massO
+  ,     pdbAtom "B" 1963 42 "GLY" "N" "" "N" 1596 14512 26853 massN
+  ,     pdbAtom "B" 1964 42 "GLY" "CA" "" "C" 438 13857 27405 massC
+  ,     pdbAtom "B" 1965 42 "GLY" "C" "" "C" -532 13598 26266 massC
+  ,     pdbAtom "B" 1966 42 "GLY" "O" "" "O" -1731 13779 26429 massO
+  ,     pdbAtom "B" 1967 43 "SER" "N" "" "N" -70 13240 25071 massN
+  ,     pdbAtom "B" 1968 43 "SER" "CA" "" "C" -939 12910 23957 massC
+  ,     pdbAtom "B" 1969 43 "SER" "C" "" "C" -1754 11654 24247 massC
+  ,     pdbAtom "B" 1970 43 "SER" "O" "" "O" -1260 10659 24783 massO
+  ,     pdbAtom "B" 1971 43 "SER" "CB" "" "C" -109 12688 22705 massC
+  ,     pdbAtom "B" 1972 43 "SER" "OG" "" "O" 685 13818 22337 massO
+  ,     pdbAtom "B" 1973 44 "GLU" "N" "" "N" -3028 11687 23872 massN
+  ,     pdbAtom "B" 1974 44 "GLU" "CA" "" "C" -3914 10574 24145 massC
+  ,     pdbAtom "B" 1975 44 "GLU" "C" "" "C" -3350 9314 23546 massC
+  ,     pdbAtom "B" 1976 44 "GLU" "O" "" "O" -3311 8312 24250 massO
+  ,     pdbAtom "B" 1977 44 "GLU" "CB" "" "C" -5301 10879 23579 massC
+  ,     pdbAtom "B" 1978 44 "GLU" "CG" "" "C" -6371 9765 23612 massC
+  ,     pdbAtom "B" 1979 44 "GLU" "CD" "" "C" -6927 9266 24950 massC
+  ,     pdbAtom "B" 1980 44 "GLU" "OE1" "" "O" -7222 10088 25819 massO
+  ,     pdbAtom "B" 1981 44 "GLU" "OE2" "" "O" -7105 8050 25099 massO
+  ,     pdbAtom "B" 1982 45 "LEU" "N" "" "N" -2848 9360 22309 massN
+  ,     pdbAtom "B" 1983 45 "LEU" "CA" "" "C" -2279 8167 21707 massC
+  ,     pdbAtom "B" 1984 45 "LEU" "C" "" "C" -802 8174 22016 massC
+  ,     pdbAtom "B" 1985 45 "LEU" "O" "" "O" -68 8944 21391 massO
+  ,     pdbAtom "B" 1986 45 "LEU" "CB" "" "C" -2454 8169 20207 massC
+  ,     pdbAtom "B" 1987 45 "LEU" "CG" "" "C" -1929 6973 19433 massC
+  ,     pdbAtom "B" 1988 45 "LEU" "CD1" "" "C" -2779 5761 19740 massC
+  ,     pdbAtom "B" 1989 45 "LEU" "CD2" "" "C" -1925 7306 17946 massC
+  ,     pdbAtom "B" 1990 46 "GLY" "N" "" "N" -397 7440 23040 massN
+  ,     pdbAtom "B" 1991 46 "GLY" "CA" "" "C" 994 7330 23385 massC
+  ,     pdbAtom "B" 1992 46 "GLY" "C" "" "C" 1269 7591 24845 massC
+  ,     pdbAtom "B" 1993 46 "GLY" "O" "" "O" 2190 6959 25366 massO
+  ,     pdbAtom "B" 1994 47 "LYS" "N" "" "N" 516 8409 25583 massN
+  ,     pdbAtom "B" 1995 47 "LYS" "CA" "" "C" 896 8739 26955 massC
+  ,     pdbAtom "B" 1996 47 "LYS" "C" "" "C" 986 7551 27909 massC
+  ,     pdbAtom "B" 1997 47 "LYS" "O" "" "O" 1601 7636 28977 massO
+  ,     pdbAtom "B" 1998 47 "LYS" "CB" "" "C" -83 9749 27598 massC
+  ,     pdbAtom "B" 1999 47 "LYS" "CG" "" "C" -1349 9152 28257 massC
+  ,     pdbAtom "B" 2000 47 "LYS" "CD" "" "C" -2120 10148 29094 massC
+  ,     pdbAtom "B" 2001 47 "LYS" "CE" "" "C" -3090 10878 28186 massC
+  ,     pdbAtom "B" 2002 47 "LYS" "NZ" "" "N" -4131 9974 27738 massN
+  ,     pdbAtom "B" 2003 48 "GLN" "N" "" "N" 329 6442 27545 massN
+  ,     pdbAtom "B" 2004 48 "GLN" "CA" "" "C" 249 5192 28309 massC
+  ,     pdbAtom "B" 2005 48 "GLN" "C" "" "C" 1612 4507 28445 massC
+  ,     pdbAtom "B" 2006 48 "GLN" "O" "" "O" 1938 3797 29409 massO
+  ,     pdbAtom "B" 2007 48 "GLN" "CB" "" "C" -726 4229 27614 massC
+  ,     pdbAtom "B" 2008 48 "GLN" "CG" "" "C" -2144 4711 27249 massC
+  ,     pdbAtom "B" 2009 48 "GLN" "CD" "" "C" -2333 5574 25995 massC
+  ,     pdbAtom "B" 2010 48 "GLN" "OE1" "" "O" -1390 5994 25310 massO
+  ,     pdbAtom "B" 2011 48 "GLN" "NE2" "" "N" -3569 5901 25655 massN
+  ,     pdbAtom "B" 2012 49 "ALA" "N" "" "N" 2453 4788 27452 massN
+  ,     pdbAtom "B" 2013 49 "ALA" "CA" "" "C" 3783 4237 27335 massC
+  ,     pdbAtom "B" 2014 49 "ALA" "C" "" "C" 4777 4553 28453 massC
+  ,     pdbAtom "B" 2015 49 "ALA" "O" "" "O" 5685 3765 28719 massO
+  ,     pdbAtom "B" 2016 49 "ALA" "CB" "" "C" 4312 4711 26016 massC
+  ,     pdbAtom "B" 2017 50 "LYS" "N" "" "N" 4582 5631 29194 massN
+  ,     pdbAtom "B" 2018 50 "LYS" "CA" "" "C" 5489 6087 30234 massC
+  ,     pdbAtom "B" 2019 50 "LYS" "C" "" "C" 6086 5036 31138 massC
+  ,     pdbAtom "B" 2020 50 "LYS" "O" "" "O" 7301 4954 31288 massO
+  ,     pdbAtom "B" 2021 50 "LYS" "CB" "" "C" 4783 7096 31108 massC
+  ,     pdbAtom "B" 2022 50 "LYS" "CG" "" "C" 5626 7789 32161 massC
+  ,     pdbAtom "B" 2023 50 "LYS" "CD" "" "C" 4632 8683 32840 massC
+  ,     pdbAtom "B" 2024 50 "LYS" "CE" "" "C" 5178 9299 34103 massC
+  ,     pdbAtom "B" 2025 50 "LYS" "NZ" "" "N" 4081 9929 34828 massN
+  ,     pdbAtom "B" 2026 51 "ASP" "N" "" "N" 5260 4164 31669 massN
+  ,     pdbAtom "B" 2027 51 "ASP" "CA" "" "C" 5736 3198 32630 massC
+  ,     pdbAtom "B" 2028 51 "ASP" "C" "" "C" 6553 2095 32011 massC
+  ,     pdbAtom "B" 2029 51 "ASP" "O" "" "O" 7607 1717 32519 massO
+  ,     pdbAtom "B" 2030 51 "ASP" "CB" "" "C" 4541 2635 33335 massC
+  ,     pdbAtom "B" 2031 51 "ASP" "CG" "" "C" 3647 3750 33845 massC
+  ,     pdbAtom "B" 2032 51 "ASP" "OD1" "" "O" 4113 4530 34688 massO
+  ,     pdbAtom "B" 2033 51 "ASP" "OD2" "" "O" 2511 3838 33359 massO
+  ,     pdbAtom "B" 2034 52 "ILE" "N" "" "N" 6092 1683 30844 massN
+  ,     pdbAtom "B" 2035 52 "ILE" "CA" "" "C" 6692 600 30082 massC
+  ,     pdbAtom "B" 2036 52 "ILE" "C" "" "C" 8089 1046 29623 massC
+  ,     pdbAtom "B" 2037 52 "ILE" "O" "" "O" 9080 350 29847 massO
+  ,     pdbAtom "B" 2038 52 "ILE" "CB" "" "C" 5754 262 28869 massC
+  ,     pdbAtom "B" 2039 52 "ILE" "CG1" "" "C" 4294 -25 29286 massC
+  ,     pdbAtom "B" 2040 52 "ILE" "CG2" "" "C" 6323 -968 28208 massC
+  ,     pdbAtom "B" 2041 52 "ILE" "CD1" "" "C" 3223 -134 28157 massC
+  ,     pdbAtom "B" 2042 53 "MET" "N" "" "N" 8216 2245 29064 massN
+  ,     pdbAtom "B" 2043 53 "MET" "CA" "" "C" 9509 2727 28650 massC
+  ,     pdbAtom "B" 2044 53 "MET" "C" "" "C" 10389 2778 29871 massC
+  ,     pdbAtom "B" 2045 53 "MET" "O" "" "O" 11467 2196 29842 massO
+  ,     pdbAtom "B" 2046 53 "MET" "CB" "" "C" 9432 4104 28065 massC
+  ,     pdbAtom "B" 2047 53 "MET" "CG" "" "C" 8669 4061 26775 massC
+  ,     pdbAtom "B" 2048 53 "MET" "SD" "" "S" 8836 5554 25762 massS
+  ,     pdbAtom "B" 2049 53 "MET" "CE" "" "C" 8063 6762 26802 massC
+  ,     pdbAtom "B" 2050 54 "ASP" "N" "" "N" 9915 3315 30994 massN
+  ,     pdbAtom "B" 2051 54 "ASP" "CA" "" "C" 10705 3391 32218 massC
+  ,     pdbAtom "B" 2052 54 "ASP" "C" "" "C" 11149 2033 32755 massC
+  ,     pdbAtom "B" 2053 54 "ASP" "O" "" "O" 12149 1951 33468 massO
+  ,     pdbAtom "B" 2054 54 "ASP" "CB" "" "C" 9923 4099 33359 massC
+  ,     pdbAtom "B" 2055 54 "ASP" "CG" "" "C" 9581 5599 33232 massC
+  ,     pdbAtom "B" 2056 54 "ASP" "OD1" "" "O" 9976 6243 32249 massO
+  ,     pdbAtom "B" 2057 54 "ASP" "OD2" "" "O" 8904 6122 34135 massO
+  ,     pdbAtom "B" 2058 55 "ALA" "N" "" "N" 10424 945 32456 massN
+  ,     pdbAtom "B" 2059 55 "ALA" "CA" "" "C" 10773 -390 32953 massC
+  ,     pdbAtom "B" 2060 55 "ALA" "C" "" "C" 11801 -1140 32117 massC
+  ,     pdbAtom "B" 2061 55 "ALA" "O" "" "O" 12313 -2195 32516 massO
+  ,     pdbAtom "B" 2062 55 "ALA" "CB" "" "C" 9520 -1262 33034 massC
+  ,     pdbAtom "B" 2063 56 "GLY" "N" "" "N" 12033 -566 30923 massN
+  ,     pdbAtom "B" 2064 56 "GLY" "CA" "" "C" 12958 -1089 29927 massC
+  ,     pdbAtom "B" 2065 56 "GLY" "C" "" "C" 12318 -2202 29137 massC
+  ,     pdbAtom "B" 2066 56 "GLY" "O" "" "O" 12985 -3089 28638 massO
+  ,     pdbAtom "B" 2067 57 "LYS" "N" "" "N" 11002 -2152 29032 massN
+  ,     pdbAtom "B" 2068 57 "LYS" "CA" "" "C" 10224 -3170 28370 massC
+  ,     pdbAtom "B" 2069 57 "LYS" "C" "" "C" 9640 -2444 27192 massC
+  ,     pdbAtom "B" 2070 57 "LYS" "O" "" "O" 9420 -1227 27247 massO
+  ,     pdbAtom "B" 2071 57 "LYS" "CB" "" "C" 9088 -3641 29225 massC
+  ,     pdbAtom "B" 2072 57 "LYS" "CG" "" "C" 9416 -4276 30563 massC
+  ,     pdbAtom "B" 2073 57 "LYS" "CD" "" "C" 8061 -4546 31235 massC
+  ,     pdbAtom "B" 2074 57 "LYS" "CE" "" "C" 8138 -5684 32268 massC
+  ,     pdbAtom "B" 2075 57 "LYS" "NZ" "" "N" 6831 -6094 32775 massN
+  ,     pdbAtom "B" 2076 58 "LEU" "N" "" "N" 9365 -3223 26158 massN
+  ,     pdbAtom "B" 2077 58 "LEU" "CA" "" "C" 8770 -2710 24929 massC
+  ,     pdbAtom "B" 2078 58 "LEU" "C" "" "C" 7281 -2432 25132 massC
+  ,     pdbAtom "B" 2079 58 "LEU" "O" "" "O" 6558 -3036 25947 massO
+  ,     pdbAtom "B" 2080 58 "LEU" "CB" "" "C" 8884 -3712 23801 massC
+  ,     pdbAtom "B" 2081 58 "LEU" "CG" "" "C" 10140 -4492 23547 massC
+  ,     pdbAtom "B" 2082 58 "LEU" "CD1" "" "C" 9792 -5698 22701 massC
+  ,     pdbAtom "B" 2083 58 "LEU" "CD2" "" "C" 11170 -3594 22932 massC
+  ,     pdbAtom "B" 2084 59 "VAL" "N" "" "N" 6813 -1491 24345 massN
+  ,     pdbAtom "B" 2085 59 "VAL" "CA" "" "C" 5426 -1105 24382 massC
+  ,     pdbAtom "B" 2086 59 "VAL" "C" "" "C" 4610 -2098 23555 massC
+  ,     pdbAtom "B" 2087 59 "VAL" "O" "" "O" 5188 -2787 22697 massO
+  ,     pdbAtom "B" 2088 59 "VAL" "CB" "" "C" 5419 333 23862 massC
+  ,     pdbAtom "B" 2089 59 "VAL" "CG1" "" "C" 4086 900 23403 massC
+  ,     pdbAtom "B" 2090 59 "VAL" "CG2" "" "C" 5898 1110 25053 massC
+  ,     pdbAtom "B" 2243 79 "ASN" "N" "" "N" 7530 10285 -343 massN
+  ,     pdbAtom "B" 2244 79 "ASN" "CA" "" "C" 8736 9884 -1063 massC
+  ,     pdbAtom "B" 2245 79 "ASN" "C" "" "C" 9784 9053 -323 massC
+  ,     pdbAtom "B" 2246 79 "ASN" "O" "" "O" 10985 8945 -651 massO
+  ,     pdbAtom "B" 2247 79 "ASN" "CB" "" "C" 9353 11143 -1637 massC
+  ,     pdbAtom "B" 2248 79 "ASN" "CG" "" "C" 8667 11358 -2977 massC
+  ,     pdbAtom "B" 2249 79 "ASN" "OD1" "" "O" 8837 10570 -3905 massO
+  ,     pdbAtom "B" 2250 79 "ASN" "ND2" "" "N" 7827 12376 -3147 massN
+  ,     pdbAtom "B" 2251 80 "GLY" "N" "" "N" 9251 8280 608 massN
+  ,     pdbAtom "B" 2252 80 "GLY" "CA" "" "C" 10068 7470 1453 massC
+  ,     pdbAtom "B" 2253 80 "GLY" "C" "" "C" 10187 8180 2776 massC
+  ,     pdbAtom "B" 2254 80 "GLY" "O" "" "O" 9901 9373 2958 massO
+  ,     pdbAtom "B" 2255 81 "PHE" "N" "" "N" 10719 7328 3636 massN
+  ,     pdbAtom "B" 2256 81 "PHE" "CA" "" "C" 10833 7550 5056 massC
+  ,     pdbAtom "B" 2257 81 "PHE" "C" "" "C" 11969 6653 5523 massC
+  ,     pdbAtom "B" 2258 81 "PHE" "O" "" "O" 12493 5775 4826 massO
+  ,     pdbAtom "B" 2259 81 "PHE" "CB" "" "C" 9539 7153 5746 massC
+  ,     pdbAtom "B" 2260 81 "PHE" "CG" "" "C" 9045 5786 5292 massC
+  ,     pdbAtom "B" 2261 81 "PHE" "CD1" "" "C" 8279 5682 4145 massC
+  ,     pdbAtom "B" 2262 81 "PHE" "CD2" "" "C" 9384 4641 5984 massC
+  ,     pdbAtom "B" 2263 81 "PHE" "CE1" "" "C" 7857 4453 3685 massC
+  ,     pdbAtom "B" 2264 81 "PHE" "CE2" "" "C" 8957 3412 5518 massC
+  ,     pdbAtom "B" 2265 81 "PHE" "CZ" "" "C" 8199 3315 4372 massC
+  ,     pdbAtom "B" 2266 82 "LEU" "N" "" "N" 12312 6876 6760 massN
+  ,     pdbAtom "B" 2267 82 "LEU" "CA" "" "C" 13355 6159 7442 massC
+  ,     pdbAtom "B" 2268 82 "LEU" "C" "" "C" 12555 5719 8633 massC
+  ,     pdbAtom "B" 2269 82 "LEU" "O" "" "O" 11788 6504 9200 massO
+  ,     pdbAtom "B" 2270 82 "LEU" "CB" "" "C" 14439 7148 7791 massC
+  ,     pdbAtom "B" 2271 82 "LEU" "CG" "" "C" 15647 6746 8563 massC
+  ,     pdbAtom "B" 2272 82 "LEU" "CD1" "" "C" 16451 5698 7822 massC
+  ,     pdbAtom "B" 2273 82 "LEU" "CD2" "" "C" 16485 7985 8743 massC
+  ,     pdbAtom "B" 2274 83 "LEU" "N" "" "N" 12681 4457 8964 massN
+  ,     pdbAtom "B" 2275 83 "LEU" "CA" "" "C" 11948 3880 10053 massC
+  ,     pdbAtom "B" 2276 83 "LEU" "C" "" "C" 13062 3526 11000 massC
+  ,     pdbAtom "B" 2277 83 "LEU" "O" "" "O" 14007 2831 10612 massO
+  ,     pdbAtom "B" 2278 83 "LEU" "CB" "" "C" 11184 2659 9556 massC
+  ,     pdbAtom "B" 2279 83 "LEU" "CG" "" "C" 9743 2935 9132 massC
+  ,     pdbAtom "B" 2280 83 "LEU" "CD1" "" "C" 9077 1657 8722 massC
+  ,     pdbAtom "B" 2281 83 "LEU" "CD2" "" "C" 8918 3419 10298 massC
+  ,     pdbAtom "B" 2282 84 "ASP" "N" "" "N" 12970 4035 12218 massN
+  ,     pdbAtom "B" 2283 84 "ASP" "CA" "" "C" 14011 3954 13209 massC
+  ,     pdbAtom "B" 2284 84 "ASP" "C" "" "C" 13350 3462 14465 massC
+  ,     pdbAtom "B" 2285 84 "ASP" "O" "" "O" 12627 4208 15132 massO
+  ,     pdbAtom "B" 2286 84 "ASP" "CB" "" "C" 14591 5354 13432 massC
+  ,     pdbAtom "B" 2287 84 "ASP" "CG" "" "C" 15772 5476 14380 massC
+  ,     pdbAtom "B" 2288 84 "ASP" "OD1" "" "O" 16560 4538 14440 massO
+  ,     pdbAtom "B" 2289 84 "ASP" "OD2" "" "O" 15905 6514 15041 massO
+  ,     pdbAtom "B" 2290 85 "GLY" "N" "" "N" 13579 2204 14796 massN
+  ,     pdbAtom "B" 2291 85 "GLY" "CA" "" "C" 12986 1631 15992 massC
+  ,     pdbAtom "B" 2292 85 "GLY" "C" "" "C" 11720 821 15721 massC
+  ,     pdbAtom "B" 2293 85 "GLY" "O" "" "O" 11130 257 16651 massO
+  ,     pdbAtom "B" 2430 104 "ASP" "N" "" "N" 13277 -603 644 massN
+  ,     pdbAtom "B" 2431 104 "ASP" "CA" "" "C" 14312 -823 -343 massC
+  ,     pdbAtom "B" 2432 104 "ASP" "C" "" "C" 15606 -1218 402 massC
+  ,     pdbAtom "B" 2433 104 "ASP" "O" "" "O" 16433 -2007 -71 massO
+  ,     pdbAtom "B" 2434 104 "ASP" "CB" "" "C" 14404 508 -1196 massC
+  ,     pdbAtom "B" 2435 104 "ASP" "CG" "" "C" 13138 894 -2019 massC
+  ,     pdbAtom "B" 2436 104 "ASP" "OD1" "" "O" 12965 416 -3144 massO
+  ,     pdbAtom "B" 2437 104 "ASP" "OD2" "" "O" 12304 1672 -1544 massO
+  ,     pdbAtom "B" 2438 105 "TYR" "N" "" "N" 15800 -719 1617 massN
+  ,     pdbAtom "B" 2439 105 "TYR" "CA" "" "C" 16959 -1061 2412 massC
+  ,     pdbAtom "B" 2440 105 "TYR" "C" "" "C" 16556 -1402 3813 massC
+  ,     pdbAtom "B" 2441 105 "TYR" "O" "" "O" 15613 -818 4374 massO
+  ,     pdbAtom "B" 2442 105 "TYR" "CB" "" "C" 17906 56 2575 massC
+  ,     pdbAtom "B" 2443 105 "TYR" "CG" "" "C" 18581 343 1284 massC
+  ,     pdbAtom "B" 2444 105 "TYR" "CD1" "" "C" 19722 -361 957 massC
+  ,     pdbAtom "B" 2445 105 "TYR" "CD2" "" "C" 18034 1306 469 massC
+  ,     pdbAtom "B" 2446 105 "TYR" "CE1" "" "C" 20351 -90 -235 massC
+  ,     pdbAtom "B" 2447 105 "TYR" "CE2" "" "C" 18662 1577 -727 massC
+  ,     pdbAtom "B" 2448 105 "TYR" "CZ" "" "C" 19813 880 -1070 massC
+  ,     pdbAtom "B" 2449 105 "TYR" "OH" "" "O" 20447 1201 -2259 massO
+  ,     pdbAtom "B" 2450 106 "VAL" "N" "" "N" 17291 -2389 4299 massN
+  ,     pdbAtom "B" 2451 106 "VAL" "CA" "" "C" 17284 -2747 5686 massC
+  ,     pdbAtom "B" 2452 106 "VAL" "C" "" "C" 18760 -2588 6110 massC
+  ,     pdbAtom "B" 2453 106 "VAL" "O" "" "O" 19643 -3228 5509 massO
+  ,     pdbAtom "B" 2454 106 "VAL" "CB" "" "C" 16816 -4195 5893 massC
+  ,     pdbAtom "B" 2455 106 "VAL" "CG1" "" "C" 16648 -4367 7406 massC
+  ,     pdbAtom "B" 2456 106 "VAL" "CG2" "" "C" 15483 -4508 5246 massC
+  ,     pdbAtom "B" 2457 107 "LEU" "N" "" "N" 19099 -1712 7079 massN
+  ,     pdbAtom "B" 2458 107 "LEU" "CA" "" "C" 20493 -1515 7508 massC
+  ,     pdbAtom "B" 2459 107 "LEU" "C" "" "C" 20603 -1926 8990 massC
+  ,     pdbAtom "B" 2460 107 "LEU" "O" "" "O" 19865 -1405 9840 massO
+  ,     pdbAtom "B" 2461 107 "LEU" "CB" "" "C" 20885 -22 7259 massC
+  ,     pdbAtom "B" 2462 107 "LEU" "CG" "" "C" 20726 431 5773 massC
+  ,     pdbAtom "B" 2463 107 "LEU" "CD1" "" "C" 20850 1917 5624 massC
+  ,     pdbAtom "B" 2464 107 "LEU" "CD2" "" "C" 21783 -222 4932 massC
+  ,     pdbAtom "B" 2465 108 "GLU" "N" "" "N" 21483 -2907 9264 massN
+  ,     pdbAtom "B" 2466 108 "GLU" "CA" "" "C" 21731 -3555 10555 massC
+  ,     pdbAtom "B" 2467 108 "GLU" "C" "" "C" 22957 -2949 11187 massC
+  ,     pdbAtom "B" 2468 108 "GLU" "O" "" "O" 24027 -3103 10613 massO
+  ,     pdbAtom "B" 2469 108 "GLU" "CB" "" "C" 22032 -5027 10389 massC
+  ,     pdbAtom "B" 2470 108 "GLU" "CG" "" "C" 21858 -5893 11607 massC
+  ,     pdbAtom "B" 2471 108 "GLU" "CD" "" "C" 22557 -7238 11487 massC
+  ,     pdbAtom "B" 2472 108 "GLU" "OE1" "" "O" 22493 -7901 10446 massO
+  ,     pdbAtom "B" 2473 108 "GLU" "OE2" "" "O" 23200 -7623 12461 massO
+  ,     pdbAtom "B" 2474 109 "PHE" "N" "" "N" 22934 -2279 12324 massN
+  ,     pdbAtom "B" 2475 109 "PHE" "CA" "" "C" 24139 -1689 12885 massC
+  ,     pdbAtom "B" 2476 109 "PHE" "C" "" "C" 24705 -2732 13815 massC
+  ,     pdbAtom "B" 2477 109 "PHE" "O" "" "O" 24063 -3072 14798 massO
+  ,     pdbAtom "B" 2478 109 "PHE" "CB" "" "C" 23772 -415 13615 massC
+  ,     pdbAtom "B" 2479 109 "PHE" "CG" "" "C" 23404 679 12598 massC
+  ,     pdbAtom "B" 2480 109 "PHE" "CD1" "" "C" 22303 549 11752 massC
+  ,     pdbAtom "B" 2481 109 "PHE" "CD2" "" "C" 24206 1797 12469 massC
+  ,     pdbAtom "B" 2482 109 "PHE" "CE1" "" "C" 22019 1499 10804 massC
+  ,     pdbAtom "B" 2483 109 "PHE" "CE2" "" "C" 23911 2745 11516 massC
+  ,     pdbAtom "B" 2484 109 "PHE" "CZ" "" "C" 22826 2594 10690 massC
+  ,     pdbAtom "B" 2485 110 "ASP" "N" "" "N" 25850 -3347 13547 massN
+  ,     pdbAtom "B" 2486 110 "ASP" "CA" "" "C" 26364 -4400 14404 massC
+  ,     pdbAtom "B" 2487 110 "ASP" "C" "" "C" 27362 -3876 15402 massC
+  ,     pdbAtom "B" 2488 110 "ASP" "O" "" "O" 28427 -3360 15052 massO
+  ,     pdbAtom "B" 2489 110 "ASP" "CB" "" "C" 27035 -5468 13597 massC
+  ,     pdbAtom "B" 2490 110 "ASP" "CG" "" "C" 27481 -6621 14476 massC
+  ,     pdbAtom "B" 2491 110 "ASP" "OD1" "" "O" 26665 -7388 14986 massO
+  ,     pdbAtom "B" 2492 110 "ASP" "OD2" "" "O" 28677 -6722 14676 massO
+  ,     pdbAtom "B" 2581 122 "GLY" "N" "" "N" 26465 7746 28585 massN
+  ,     pdbAtom "B" 2582 122 "GLY" "CA" "" "C" 27035 9055 28248 massC
+  ,     pdbAtom "B" 2583 122 "GLY" "C" "" "C" 26214 9840 27224 massC
+  ,     pdbAtom "B" 2584 122 "GLY" "O" "" "O" 26672 10873 26679 massO
+  ,     pdbAtom "B" 2585 123 "ARG" "N" "" "N" 25030 9294 26930 massN
+  ,     pdbAtom "B" 2586 123 "ARG" "CA" "" "C" 24140 9867 25935 massC
+  ,     pdbAtom "B" 2587 123 "ARG" "C" "" "C" 23374 11020 26529 massC
+  ,     pdbAtom "B" 2588 123 "ARG" "O" "" "O" 22845 10909 27650 massO
+  ,     pdbAtom "B" 2589 123 "ARG" "CB" "" "C" 23138 8817 25421 massC
+  ,     pdbAtom "B" 2590 123 "ARG" "CG" "" "C" 22053 9254 24411 massC
+  ,     pdbAtom "B" 2591 123 "ARG" "CD" "" "C" 21391 8062 23694 massC
+  ,     pdbAtom "B" 2592 123 "ARG" "NE" "" "N" 20478 7240 24478 massN
+  ,     pdbAtom "B" 2593 123 "ARG" "CZ" "" "C" 19871 6156 23971 massC
+  ,     pdbAtom "B" 2594 123 "ARG" "NH1" "" "N" 20080 5741 22722 massN
+  ,     pdbAtom "B" 2595 123 "ARG" "NH2" "" "N" 19040 5452 24747 massN
+  ,     pdbAtom "B" 2596 124 "ARG" "N" "" "N" 23303 12066 25701 massN
+  ,     pdbAtom "B" 2597 124 "ARG" "CA" "" "C" 22607 13305 25984 massC
+  ,     pdbAtom "B" 2598 124 "ARG" "C" "" "C" 21782 13602 24736 massC
+  ,     pdbAtom "B" 2599 124 "ARG" "O" "" "O" 22257 13394 23603 massO
+  ,     pdbAtom "B" 2600 124 "ARG" "CB" "" "C" 23605 14441 26221 massC
+  ,     pdbAtom "B" 2601 124 "ARG" "CG" "" "C" 24593 14247 27367 massC
+  ,     pdbAtom "B" 2602 124 "ARG" "CD" "" "C" 23828 14216 28659 massC
+  ,     pdbAtom "B" 2603 124 "ARG" "NE" "" "N" 24734 13927 29751 massN
+  ,     pdbAtom "B" 2604 124 "ARG" "CZ" "" "C" 25078 12686 30158 massC
+  ,     pdbAtom "B" 2605 124 "ARG" "NH1" "" "N" 24557 11551 29679 massN
+  ,     pdbAtom "B" 2606 124 "ARG" "NH2" "" "N" 25962 12562 31148 massN
+  ,     pdbAtom "B" 2607 125 "VAL" "N" "" "N" 20540 14065 24919 massN
+  ,     pdbAtom "B" 2608 125 "VAL" "CA" "" "C" 19590 14301 23845 massC
+  ,     pdbAtom "B" 2609 125 "VAL" "C" "" "C" 19139 15755 23760 massC
+  ,     pdbAtom "B" 2610 125 "VAL" "O" "" "O" 19062 16483 24766 massO
+  ,     pdbAtom "B" 2611 125 "VAL" "CB" "" "C" 18289 13448 23977 massC
+  ,     pdbAtom "B" 2612 125 "VAL" "CG1" "" "C" 18653 11999 23812 massC
+  ,     pdbAtom "B" 2613 125 "VAL" "CG2" "" "C" 17638 13577 25336 massC
+  ,     pdbAtom "B" 2614 126 "HIS" "N" "" "N" 18876 16219 22526 massN
+  ,     pdbAtom "B" 2615 126 "HIS" "CA" "" "C" 18272 17509 22302 massC
+  ,     pdbAtom "B" 2616 126 "HIS" "C" "" "C" 16845 17001 22198 massC
+  ,     pdbAtom "B" 2617 126 "HIS" "O" "" "O" 16393 16660 21097 massO
+  ,     pdbAtom "B" 2618 126 "HIS" "CB" "" "C" 18685 18188 20972 massC
+  ,     pdbAtom "B" 2619 126 "HIS" "CG" "" "C" 17915 19500 20737 massC
+  ,     pdbAtom "B" 2620 126 "HIS" "ND1" "" "N" 17300 19946 19649 massN
+  ,     pdbAtom "B" 2621 126 "HIS" "CD2" "" "C" 17676 20445 21702 massC
+  ,     pdbAtom "B" 2622 126 "HIS" "CE1" "" "C" 16699 21070 19893 massC
+  ,     pdbAtom "B" 2623 126 "HIS" "NE2" "" "N" 16934 21357 21130 massN
+  ,     pdbAtom "B" 2624 127 "ALA" "N" "" "N" 16142 16928 23335 massN
+  ,     pdbAtom "B" 2625 127 "ALA" "CA" "" "C" 14792 16394 23401 massC
+  ,     pdbAtom "B" 2626 127 "ALA" "C" "" "C" 13877 16966 22319 massC
+  ,     pdbAtom "B" 2627 127 "ALA" "O" "" "O" 13399 16134 21540 massO
+  ,     pdbAtom "B" 2628 127 "ALA" "CB" "" "C" 14196 16666 24773 massC
+  ,     pdbAtom "B" 2629 128 "PRO" "N" "" "N" 13721 18288 22061 massN
+  ,     pdbAtom "B" 2630 128 "PRO" "CA" "" "C" 12902 18822 20986 massC
+  ,     pdbAtom "B" 2631 128 "PRO" "C" "" "C" 13081 18205 19595 massC
+  ,     pdbAtom "B" 2632 128 "PRO" "O" "" "O" 12116 18126 18824 massO
+  ,     pdbAtom "B" 2633 128 "PRO" "CB" "" "C" 13215 20282 20966 massC
+  ,     pdbAtom "B" 2634 128 "PRO" "CG" "" "C" 13567 20562 22379 massC
+  ,     pdbAtom "B" 2635 128 "PRO" "CD" "" "C" 14412 19389 22716 massC
+  ,     pdbAtom "B" 2636 129 "SER" "N" "" "N" 14296 17787 19236 massN
+  ,     pdbAtom "B" 2637 129 "SER" "CA" "" "C" 14521 17305 17886 massC
+  ,     pdbAtom "B" 2638 129 "SER" "C" "" "C" 14991 15838 17898 massC
+  ,     pdbAtom "B" 2639 129 "SER" "O" "" "O" 15152 15197 16845 massO
+  ,     pdbAtom "B" 2640 129 "SER" "CB" "" "C" 15554 18239 17225 massC
+  ,     pdbAtom "B" 2641 129 "SER" "OG" "" "O" 16855 18188 17836 massO
+  ,     pdbAtom "B" 2642 130 "GLY" "N" "" "N" 15239 15279 19083 massN
+  ,     pdbAtom "B" 2643 130 "GLY" "CA" "" "C" 15742 13931 19193 massC
+  ,     pdbAtom "B" 2644 130 "GLY" "C" "" "C" 17189 13834 18794 massC
+  ,     pdbAtom "B" 2645 130 "GLY" "O" "" "O" 17622 12707 18632 massO
+  ,     pdbAtom "B" 2646 131 "ARG" "N" "" "N" 17964 14927 18674 massN
+  ,     pdbAtom "B" 2647 131 "ARG" "CA" "" "C" 19364 14806 18256 massC
+  ,     pdbAtom "B" 2648 131 "ARG" "C" "" "C" 20167 14217 19397 massC
+  ,     pdbAtom "B" 2649 131 "ARG" "O" "" "O" 19945 14558 20566 massO
+  ,     pdbAtom "B" 2650 131 "ARG" "CB" "" "C" 19996 16164 17868 massC
+  ,     pdbAtom "B" 2651 131 "ARG" "CG" "" "C" 19943 16482 16356 massC
+  ,     pdbAtom "B" 2652 131 "ARG" "CD" "" "C" 20590 17820 15973 massC
+  ,     pdbAtom "B" 2653 131 "ARG" "NE" "" "N" 19891 18947 16591 massN
+  ,     pdbAtom "B" 2654 131 "ARG" "CZ" "" "C" 18871 19640 16074 massC
+  ,     pdbAtom "B" 2655 131 "ARG" "NH1" "" "N" 18421 19392 14866 massN
+  ,     pdbAtom "B" 2656 131 "ARG" "NH2" "" "N" 18260 20585 16782 massN
+  ,     pdbAtom "B" 2657 132 "VAL" "N" "" "N" 21112 13339 19084 massN
+  ,     pdbAtom "B" 2658 132 "VAL" "CA" "" "C" 21838 12646 20118 massC
+  ,     pdbAtom "B" 2659 132 "VAL" "C" "" "C" 23356 12824 20074 massC
+  ,     pdbAtom "B" 2660 132 "VAL" "O" "" "O" 23951 13112 19043 massO
+  ,     pdbAtom "B" 2661 132 "VAL" "CB" "" "C" 21302 11219 19990 massC
+  ,     pdbAtom "B" 2662 132 "VAL" "CG1" "" "C" 21630 10620 18649 massC
+  ,     pdbAtom "B" 2663 132 "VAL" "CG2" "" "C" 21894 10390 21082 massC
+  ,     pdbAtom "B" 2664 133 "TYR" "N" "" "N" 23972 12853 21255 massN
+  ,     pdbAtom "B" 2665 133 "TYR" "CA" "" "C" 25388 13170 21440 massC
+  ,     pdbAtom "B" 2666 133 "TYR" "C" "" "C" 25885 12214 22476 massC
+  ,     pdbAtom "B" 2667 133 "TYR" "O" "" "O" 25074 11497 23085 massO
+  ,     pdbAtom "B" 2668 133 "TYR" "CB" "" "C" 25564 14592 21977 massC
+  ,     pdbAtom "B" 2669 133 "TYR" "CG" "" "C" 24999 15668 21044 massC
+  ,     pdbAtom "B" 2670 133 "TYR" "CD1" "" "C" 23691 16096 21128 massC
+  ,     pdbAtom "B" 2671 133 "TYR" "CD2" "" "C" 25814 16230 20099 massC
+  ,     pdbAtom "B" 2672 133 "TYR" "CE1" "" "C" 23196 17078 20277 massC
+  ,     pdbAtom "B" 2673 133 "TYR" "CE2" "" "C" 25331 17203 19258 massC
+  ,     pdbAtom "B" 2674 133 "TYR" "CZ" "" "C" 24029 17631 19339 massC
+  ,     pdbAtom "B" 2675 133 "TYR" "OH" "" "O" 23571 18597 18442 massO
+  ,     pdbAtom "B" 2676 134 "HIS" "N" "" "N" 27178 12177 22747 massN
+  ,     pdbAtom "B" 2677 134 "HIS" "CA" "" "C" 27706 11313 23813 massC
+  ,     pdbAtom "B" 2678 134 "HIS" "C" "" "C" 28769 12148 24506 massC
+  ,     pdbAtom "B" 2679 134 "HIS" "O" "" "O" 29676 12574 23782 massO
+  ,     pdbAtom "B" 2680 134 "HIS" "CB" "" "C" 28364 10010 23238 massC
+  ,     pdbAtom "B" 2681 134 "HIS" "CG" "" "C" 28741 8968 24284 massC
+  ,     pdbAtom "B" 2682 134 "HIS" "ND1" "" "N" 29740 8911 25177 massN
+  ,     pdbAtom "B" 2683 134 "HIS" "CD2" "" "C" 27936 7896 24553 massC
+  ,     pdbAtom "B" 2684 134 "HIS" "CE1" "" "C" 29537 7883 25969 massC
+  ,     pdbAtom "B" 2685 134 "HIS" "NE2" "" "N" 28454 7281 25581 massN
+  ,     pdbAtom "B" 2686 135 "VAL" "N" "" "N" 28846 12384 25822 massN
+  ,     pdbAtom "B" 2687 135 "VAL" "CA" "" "C" 29908 13254 26376 massC
+  ,     pdbAtom "B" 2688 135 "VAL" "C" "" "C" 31381 12953 26141 massC
+  ,     pdbAtom "B" 2689 135 "VAL" "O" "" "O" 32258 13816 26262 massO
+  ,     pdbAtom "B" 2690 135 "VAL" "CB" "" "C" 29781 13422 27902 massC
+  ,     pdbAtom "B" 2691 135 "VAL" "CG1" "" "C" 28515 14181 28186 massC
+  ,     pdbAtom "B" 2692 135 "VAL" "CG2" "" "C" 29802 12078 28593 massC
+  ,     pdbAtom "B" 2693 136 "LYS" "N" "" "N" 31622 11679 25876 massN
+  ,     pdbAtom "B" 2694 136 "LYS" "CA" "" "C" 32946 11172 25557 massC
+  ,     pdbAtom "B" 2695 136 "LYS" "C" "" "C" 33166 10760 24108 massC
+  ,     pdbAtom "B" 2696 136 "LYS" "O" "" "O" 34252 11018 23615 massO
+  ,     pdbAtom "B" 2697 136 "LYS" "CB" "" "C" 33267 9960 26456 massC
+  ,     pdbAtom "B" 2698 136 "LYS" "CG" "" "C" 33536 10300 27921 massC
+  ,     pdbAtom "B" 2699 136 "LYS" "CD" "" "C" 32832 9334 28858 massC
+  ,     pdbAtom "B" 2700 136 "LYS" "CE" "" "C" 33353 7907 28723 massC
+  ,     pdbAtom "B" 2701 136 "LYS" "NZ" "" "N" 32519 7004 29495 massN
+  ,     pdbAtom "B" 2702 137 "PHE" "N" "" "N" 32216 10164 23345 massN
+  ,     pdbAtom "B" 2703 137 "PHE" "CA" "" "C" 32538 9569 22025 massC
+  ,     pdbAtom "B" 2704 137 "PHE" "C" "" "C" 32005 10344 20843 massC
+  ,     pdbAtom "B" 2705 137 "PHE" "O" "" "O" 32415 10145 19704 massO
+  ,     pdbAtom "B" 2706 137 "PHE" "CB" "" "C" 31992 8139 21864 massC
+  ,     pdbAtom "B" 2707 137 "PHE" "CG" "" "C" 32371 7151 22971 massC
+  ,     pdbAtom "B" 2708 137 "PHE" "CD1" "" "C" 33554 7288 23693 massC
+  ,     pdbAtom "B" 2709 137 "PHE" "CD2" "" "C" 31469 6153 23298 massC
+  ,     pdbAtom "B" 2710 137 "PHE" "CE1" "" "C" 33832 6450 24746 massC
+  ,     pdbAtom "B" 2711 137 "PHE" "CE2" "" "C" 31754 5308 24359 massC
+  ,     pdbAtom "B" 2712 137 "PHE" "CZ" "" "C" 32928 5461 25079 massC
+  ,     pdbAtom "B" 2713 138 "ASN" "N" "" "N" 31030 11205 21093 massN
+  ,     pdbAtom "B" 2714 138 "ASN" "CA" "" "C" 30466 12065 20072 massC
+  ,     pdbAtom "B" 2715 138 "ASN" "C" "" "C" 29951 13366 20733 massC
+  ,     pdbAtom "B" 2716 138 "ASN" "O" "" "O" 28750 13588 20862 massO
+  ,     pdbAtom "B" 2717 138 "ASN" "CB" "" "C" 29335 11326 19348 massC
+  ,     pdbAtom "B" 2718 138 "ASN" "CG" "" "C" 28924 12115 18108 massC
+  ,     pdbAtom "B" 2719 138 "ASN" "OD1" "" "O" 27803 12025 17614 massO
+  ,     pdbAtom "B" 2720 138 "ASN" "ND2" "" "N" 29776 12920 17473 massN
+  ,     pdbAtom "B" 2721 139 "PRO" "N" "" "N" 30828 14224 21266 massN
+  ,     pdbAtom "B" 2722 139 "PRO" "CA" "" "C" 30443 15390 22040 massC
+  ,     pdbAtom "B" 2723 139 "PRO" "C" "" "C" 29913 16537 21186 massC
+  ,     pdbAtom "B" 2724 139 "PRO" "O" "" "O" 30223 16700 20002 massO
+  ,     pdbAtom "B" 2725 139 "PRO" "CB" "" "C" 31686 15772 22829 massC
+  ,     pdbAtom "B" 2726 139 "PRO" "CG" "" "C" 32578 14577 22627 massC
+  ,     pdbAtom "B" 2727 139 "PRO" "CD" "" "C" 32277 14112 21209 massC
+  ,     pdbAtom "B" 2728 140 "PRO" "N" "" "N" 29051 17359 21776 massN
+  ,     pdbAtom "B" 2729 140 "PRO" "CA" "" "C" 28602 18595 21180 massC
+  ,     pdbAtom "B" 2730 140 "PRO" "C" "" "C" 29760 19550 21096 massC
+  ,     pdbAtom "B" 2731 140 "PRO" "O" "" "O" 30818 19372 21733 massO
+  ,     pdbAtom "B" 2732 140 "PRO" "CB" "" "C" 27507 19042 22087 massC
+  ,     pdbAtom "B" 2733 140 "PRO" "CG" "" "C" 27945 18520 23440 massC
+  ,     pdbAtom "B" 2734 140 "PRO" "CD" "" "C" 28454 17143 23099 massC
+  ,     pdbAtom "B" 2735 141 "LYS" "N" "" "N" 29464 20637 20403 massN
+  ,     pdbAtom "B" 2736 141 "LYS" "CA" "" "C" 30475 21610 20043 massC
+  ,     pdbAtom "B" 2737 141 "LYS" "C" "" "C" 30850 22385 21278 massC
+  ,     pdbAtom "B" 2738 141 "LYS" "O" "" "O" 32027 22616 21522 massO
+  ,     pdbAtom "B" 2739 141 "LYS" "CB" "" "C" 29934 22563 18957 massC
+  ,     pdbAtom "B" 2740 141 "LYS" "CG" "" "C" 30883 23559 18263 massC
+  ,     pdbAtom "B" 2741 141 "LYS" "CD" "" "C" 30248 24182 16995 massC
+  ,     pdbAtom "B" 2742 141 "LYS" "CE" "" "C" 29980 23128 15890 massC
+  ,     pdbAtom "B" 2743 141 "LYS" "NZ" "" "N" 29267 23674 14747 massN
+  ,     pdbAtom "B" 2744 142 "VAL" "N" "" "N" 29832 22751 22041 massN
+  ,     pdbAtom "B" 2745 142 "VAL" "CA" "" "C" 29911 23495 23270 massC
+  ,     pdbAtom "B" 2746 142 "VAL" "C" "" "C" 29234 22499 24171 massC
+  ,     pdbAtom "B" 2747 142 "VAL" "O" "" "O" 28174 21971 23824 massO
+  ,     pdbAtom "B" 2748 142 "VAL" "CB" "" "C" 29118 24792 23113 massC
+  ,     pdbAtom "B" 2749 142 "VAL" "CG1" "" "C" 28884 25453 24478 massC
+  ,     pdbAtom "B" 2750 142 "VAL" "CG2" "" "C" 29883 25678 22101 massC
+  ,     pdbAtom "B" 2751 143 "GLU" "N" "" "N" 29874 22230 25302 massN
+  ,     pdbAtom "B" 2752 143 "GLU" "CA" "" "C" 29446 21224 26254 massC
+  ,     pdbAtom "B" 2753 143 "GLU" "C" "" "C" 28045 21449 26699 massC
+  ,     pdbAtom "B" 2754 143 "GLU" "O" "" "O" 27754 22594 27000 massO
+  ,     pdbAtom "B" 2755 143 "GLU" "CB" "" "C" 30333 21240 27486 massC
+  ,     pdbAtom "B" 2756 143 "GLU" "CG" "" "C" 29889 20258 28600 massC
+  ,     pdbAtom "B" 2757 143 "GLU" "CD" "" "C" 30834 20004 29787 massC
+  ,     pdbAtom "B" 2758 143 "GLU" "OE1" "" "O" 31778 20773 30004 massO
+  ,     pdbAtom "B" 2759 143 "GLU" "OE2" "" "O" 30618 19016 30502 massO
+  ,     pdbAtom "B" 2760 144 "GLY" "N" "" "N" 27213 20408 26690 massN
+  ,     pdbAtom "B" 2761 144 "GLY" "CA" "" "C" 25846 20427 27192 massC
+  ,     pdbAtom "B" 2762 144 "GLY" "C" "" "C" 24869 21255 26379 massC
+  ,     pdbAtom "B" 2763 144 "GLY" "O" "" "O" 23755 21498 26851 massO
+  ,     pdbAtom "B" 2764 145 "LYS" "N" "" "N" 25196 21720 25168 massN
+  ,     pdbAtom "B" 2765 145 "LYS" "CA" "" "C" 24281 22525 24346 massC
+  ,     pdbAtom "B" 2766 145 "LYS" "C" "" "C" 24153 21818 23020 massC
+  ,     pdbAtom "B" 2767 145 "LYS" "O" "" "O" 25057 21096 22616 massO
+  ,     pdbAtom "B" 2768 145 "LYS" "CB" "" "C" 24833 23878 24089 massC
+  ,     pdbAtom "B" 2769 145 "LYS" "CG" "" "C" 25291 24655 25316 massC
+  ,     pdbAtom "B" 2770 145 "LYS" "CD" "" "C" 24107 25003 26163 massC
+  ,     pdbAtom "B" 2771 145 "LYS" "CE" "" "C" 24742 25629 27384 massC
+  ,     pdbAtom "B" 2772 145 "LYS" "NZ" "" "N" 23677 26437 27909 massN
+  ,     pdbAtom "B" 2773 146 "ASP" "N" "" "N" 23048 21968 22326 massN
+  ,     pdbAtom "B" 2774 146 "ASP" "CA" "" "C" 22827 21388 21006 massC
+  ,     pdbAtom "B" 2775 146 "ASP" "C" "" "C" 23612 22216 19961 massC
+  ,     pdbAtom "B" 2776 146 "ASP" "O" "" "O" 23630 23469 19938 massO
+  ,     pdbAtom "B" 2777 146 "ASP" "CB" "" "C" 21323 21429 20754 massC
+  ,     pdbAtom "B" 2778 146 "ASP" "CG" "" "C" 20879 20889 19419 massC
+  ,     pdbAtom "B" 2779 146 "ASP" "OD1" "" "O" 21223 19771 19110 massO
+  ,     pdbAtom "B" 2780 146 "ASP" "OD2" "" "O" 20197 21579 18682 massO
+  ,     pdbAtom "B" 2781 147 "ASP" "N" "" "N" 24208 21508 19001 massN
+  ,     pdbAtom "B" 2782 147 "ASP" "CA" "" "C" 25028 22183 17990 massC
+  ,     pdbAtom "B" 2783 147 "ASP" "C" "" "C" 24154 23088 17114 massC
+  ,     pdbAtom "B" 2784 147 "ASP" "O" "" "O" 24425 24252 16843 massO
+  ,     pdbAtom "B" 2785 147 "ASP" "CB" "" "C" 25775 21140 17087 massC
+  ,     pdbAtom "B" 2786 147 "ASP" "CG" "" "C" 27007 20454 17664 massC
+  ,     pdbAtom "B" 2787 147 "ASP" "OD1" "" "O" 27418 20835 18734 massO
+  ,     pdbAtom "B" 2788 147 "ASP" "OD2" "" "O" 27571 19544 17057 massO
+  ,     pdbAtom "B" 2789 148 "VAL" "N" "" "N" 23003 22568 16758 massN
+  ,     pdbAtom "B" 2790 148 "VAL" "CA" "" "C" 22139 23263 15847 massC
+  ,     pdbAtom "B" 2791 148 "VAL" "C" "" "C" 21385 24438 16457 massC
+  ,     pdbAtom "B" 2792 148 "VAL" "O" "" "O" 21281 25467 15796 massO
+  ,     pdbAtom "B" 2793 148 "VAL" "CB" "" "C" 21238 22125 15242 massC
+  ,     pdbAtom "B" 2794 148 "VAL" "CG1" "" "C" 20046 22730 14500 massC
+  ,     pdbAtom "B" 2795 148 "VAL" "CG2" "" "C" 22068 21257 14271 massC
+  ,     pdbAtom "B" 2796 149 "THR" "N" "" "N" 20840 24323 17680 massN
+  ,     pdbAtom "B" 2797 149 "THR" "CA" "" "C" 20057 25380 18293 massC
+  ,     pdbAtom "B" 2798 149 "THR" "C" "" "C" 20768 26113 19440 massC
+  ,     pdbAtom "B" 2799 149 "THR" "O" "" "O" 20324 27172 19895 massO
+  ,     pdbAtom "B" 2800 149 "THR" "CB" "" "C" 18709 24816 18829 massC
+  ,     pdbAtom "B" 2801 149 "THR" "OG1" "" "O" 18992 23739 19702 massO
+  ,     pdbAtom "B" 2802 149 "THR" "CG2" "" "C" 17832 24189 17768 massC
+  ,     pdbAtom "B" 2803 150 "GLY" "N" "" "N" 21860 25539 19930 massN
+  ,     pdbAtom "B" 2804 150 "GLY" "CA" "" "C" 22493 26051 21123 massC
+  ,     pdbAtom "B" 2805 150 "GLY" "C" "" "C" 21703 25719 22405 massC
+  ,     pdbAtom "B" 2806 150 "GLY" "O" "" "O" 22092 26144 23493 massO
+  ,     pdbAtom "B" 2807 151 "GLU" "N" "" "N" 20598 24968 22318 massN
+  ,     pdbAtom "B" 2808 151 "GLU" "CA" "" "C" 19745 24695 23463 massC
+  ,     pdbAtom "B" 2809 151 "GLU" "C" "" "C" 20320 23634 24393 massC
+  ,     pdbAtom "B" 2810 151 "GLU" "O" "" "O" 21089 22760 23954 massO
+  ,     pdbAtom "B" 2811 151 "GLU" "CB" "" "C" 18391 24248 22976 massC
+  ,     pdbAtom "B" 2812 151 "GLU" "CG" "" "C" 17493 25339 22380 massC
+  ,     pdbAtom "B" 2813 151 "GLU" "CD" "" "C" 16198 24780 21786 massC
+  ,     pdbAtom "B" 2814 151 "GLU" "OE1" "" "O" 15615 23895 22415 massO
+  ,     pdbAtom "B" 2815 151 "GLU" "OE2" "" "O" 15763 25210 20709 massO
+  ,     pdbAtom "B" 2816 152 "GLU" "N" "" "N" 19915 23692 25662 massN
+  ,     pdbAtom "B" 2817 152 "GLU" "CA" "" "C" 20404 22756 26668 massC
+  ,     pdbAtom "B" 2818 152 "GLU" "C" "" "C" 20117 21261 26416 massC
+  ,     pdbAtom "B" 2819 152 "GLU" "O" "" "O" 19004 20855 26091 massO
+  ,     pdbAtom "B" 2820 152 "GLU" "CB" "" "C" 19816 23206 28015 massC
+  ,     pdbAtom "B" 2821 152 "GLU" "CG" "" "C" 20623 22930 29324 massC
+  ,     pdbAtom "B" 2822 152 "GLU" "CD" "" "C" 21785 23886 29666 massC
+  ,     pdbAtom "B" 2823 152 "GLU" "OE1" "" "O" 21514 25015 30098 massO
+  ,     pdbAtom "B" 2824 152 "GLU" "OE2" "" "O" 22956 23492 29523 massO
+  ,     pdbAtom "B" 2825 153 "LEU" "N" "" "N" 21077 20362 26524 massN
+  ,     pdbAtom "B" 2826 153 "LEU" "CA" "" "C" 20847 18946 26292 massC
+  ,     pdbAtom "B" 2827 153 "LEU" "C" "" "C" 20431 18233 27574 massC
+  ,     pdbAtom "B" 2828 153 "LEU" "O" "" "O" 20893 18604 28659 massO
+  ,     pdbAtom "B" 2829 153 "LEU" "CB" "" "C" 22105 18300 25787 massC
+  ,     pdbAtom "B" 2830 153 "LEU" "CG" "" "C" 22803 18847 24580 massC
+  ,     pdbAtom "B" 2831 153 "LEU" "CD1" "" "C" 24156 18190 24532 massC
+  ,     pdbAtom "B" 2832 153 "LEU" "CD2" "" "C" 22005 18588 23317 massC
+  ,     pdbAtom "B" 2833 154 "THR" "N" "" "N" 19612 17181 27494 massN
+  ,     pdbAtom "B" 2834 154 "THR" "CA" "" "C" 19166 16487 28672 massC
+  ,     pdbAtom "B" 2835 154 "THR" "C" "" "C" 19550 15014 28642 massC
+  ,     pdbAtom "B" 2836 154 "THR" "O" "" "O" 20181 14534 27695 massO
+  ,     pdbAtom "B" 2837 154 "THR" "CB" "" "C" 17653 16662 28776 massC
+  ,     pdbAtom "B" 2838 154 "THR" "OG1" "" "O" 16995 16186 27592 massO
+  ,     pdbAtom "B" 2839 154 "THR" "CG2" "" "C" 17365 18127 29040 massC
+  ,     pdbAtom "B" 2840 155 "THR" "N" "" "N" 19185 14296 29710 massN
+  ,     pdbAtom "B" 2841 155 "THR" "CA" "" "C" 19397 12867 29824 massC
+  ,     pdbAtom "B" 2842 155 "THR" "C" "" "C" 18040 12186 29714 massC
+  ,     pdbAtom "B" 2843 155 "THR" "O" "" "O" 17044 12702 30243 massO
+  ,     pdbAtom "B" 2844 155 "THR" "CB" "" "C" 20069 12552 31184 massC
+  ,     pdbAtom "B" 2845 155 "THR" "OG1" "" "O" 19251 13032 32270 massO
+  ,     pdbAtom "B" 2846 155 "THR" "CG2" "" "C" 21416 13246 31264 massC
+  ,     pdbAtom "B" 2847 156 "ARG" "N" "" "N" 17922 11068 29011 massN
+  ,     pdbAtom "B" 2848 156 "ARG" "CA" "" "C" 16674 10333 28929 massC
+  ,     pdbAtom "B" 2849 156 "ARG" "C" "" "C" 16485 9530 30207 massC
+  ,     pdbAtom "B" 2850 156 "ARG" "O" "" "O" 17411 8882 30702 massO
+  ,     pdbAtom "B" 2851 156 "ARG" "CB" "" "C" 16710 9399 27735 massC
+  ,     pdbAtom "B" 2852 156 "ARG" "CG" "" "C" 16310 10053 26426 massC
+  ,     pdbAtom "B" 2853 156 "ARG" "CD" "" "C" 16517 9095 25251 massC
+  ,     pdbAtom "B" 2854 156 "ARG" "NE" "" "N" 16025 7760 25551 massN
+  ,     pdbAtom "B" 2855 156 "ARG" "CZ" "" "C" 16214 6733 24736 massC
+  ,     pdbAtom "B" 2856 156 "ARG" "NH1" "" "N" 16626 6898 23497 massN
+  ,     pdbAtom "B" 2857 156 "ARG" "NH2" "" "N" 15885 5514 25108 massN
+  ,     pdbAtom "B" 2858 157 "LYS" "N" "" "N" 15259 9633 30714 massN
+  ,     pdbAtom "B" 2859 157 "LYS" "CA" "" "C" 14694 8965 31896 massC
+  ,     pdbAtom "B" 2860 157 "LYS" "C" "" "C" 15167 7522 32015 massC
+  ,     pdbAtom "B" 2861 157 "LYS" "O" "" "O" 15755 7112 33017 massO
+  ,     pdbAtom "B" 2862 157 "LYS" "CB" "" "C" 13152 8873 31856 massC
+  ,     pdbAtom "B" 2863 157 "LYS" "CG" "" "C" 12188 10078 31762 massC
+  ,     pdbAtom "B" 2864 157 "LYS" "CD" "" "C" 12290 11037 30548 massC
+  ,     pdbAtom "B" 2865 157 "LYS" "CE" "" "C" 12116 10478 29139 massC
+  ,     pdbAtom "B" 2866 157 "LYS" "NZ" "" "N" 12446 11518 28179 massN
+  ,     pdbAtom "B" 2867 158 "ASP" "N" "" "N" 14918 6767 30949 massN
+  ,     pdbAtom "B" 2868 158 "ASP" "CA" "" "C" 15297 5383 30894 massC
+  ,     pdbAtom "B" 2869 158 "ASP" "C" "" "C" 16790 5104 30770 massC
+  ,     pdbAtom "B" 2870 158 "ASP" "O" "" "O" 17196 3942 30761 massO
+  ,     pdbAtom "B" 2871 158 "ASP" "CB" "" "C" 14512 4761 29730 massC
+  ,     pdbAtom "B" 2872 158 "ASP" "CG" "" "C" 14760 5292 28320 massC
+  ,     pdbAtom "B" 2873 158 "ASP" "OD1" "" "O" 15547 6211 28136 massO
+  ,     pdbAtom "B" 2874 158 "ASP" "OD2" "" "O" 14146 4776 27390 massO
+  ,     pdbAtom "B" 2875 159 "ASP" "N" "" "N" 17706 6068 30699 massN
+  ,     pdbAtom "B" 2876 159 "ASP" "CA" "" "C" 19097 5725 30419 massC
+  ,     pdbAtom "B" 2877 159 "ASP" "C" "" "C" 19989 5377 31570 massC
+  ,     pdbAtom "B" 2878 159 "ASP" "O" "" "O" 20870 6157 31926 massO
+  ,     pdbAtom "B" 2879 159 "ASP" "CB" "" "C" 19760 6857 29627 massC
+  ,     pdbAtom "B" 2880 159 "ASP" "CG" "" "C" 19439 6912 28148 massC
+  ,     pdbAtom "B" 2881 159 "ASP" "OD1" "" "O" 18840 5994 27583 massO
+  ,     pdbAtom "B" 2882 159 "ASP" "OD2" "" "O" 19817 7904 27552 massO
+  ,     pdbAtom "B" 2883 160 "GLN" "N" "" "N" 19804 4259 32239 massN
+  ,     pdbAtom "B" 2884 160 "GLN" "CA" "" "C" 20776 3883 33253 massC
+  ,     pdbAtom "B" 2885 160 "GLN" "C" "" "C" 21076 2402 33110 massC
+  ,     pdbAtom "B" 2886 160 "GLN" "O" "" "O" 20263 1698 32497 massO
+  ,     pdbAtom "B" 2887 160 "GLN" "CB" "" "C" 20257 4215 34668 massC
+  ,     pdbAtom "B" 2888 160 "GLN" "CG" "" "C" 18855 3771 35123 massC
+  ,     pdbAtom "B" 2889 160 "GLN" "CD" "" "C" 17686 4680 34751 massC
+  ,     pdbAtom "B" 2890 160 "GLN" "OE1" "" "O" 16530 4251 34735 massO
+  ,     pdbAtom "B" 2891 160 "GLN" "NE2" "" "N" 17903 5958 34457 massN
+  ,     pdbAtom "B" 2892 161 "GLU" "N" "" "N" 22240 1959 33620 massN
+  ,     pdbAtom "B" 2893 161 "GLU" "CA" "" "C" 22768 606 33508 massC
+  ,     pdbAtom "B" 2894 161 "GLU" "C" "" "C" 21725 -489 33583 massC
+  ,     pdbAtom "B" 2895 161 "GLU" "O" "" "O" 21591 -1266 32636 massO
+  ,     pdbAtom "B" 2896 161 "GLU" "CB" "" "C" 23803 424 34604 massC
+  ,     pdbAtom "B" 2897 161 "GLU" "CG" "" "C" 24375 -969 34875 massC
+  ,     pdbAtom "B" 2898 161 "GLU" "CD" "" "C" 25309 -1090 36094 massC
+  ,     pdbAtom "B" 2899 161 "GLU" "OE1" "" "O" 26277 -334 36139 massO
+  ,     pdbAtom "B" 2900 161 "GLU" "OE2" "" "O" 25093 -1934 36983 massO
+  ,     pdbAtom "B" 2901 162 "GLU" "N" "" "N" 20920 -481 34655 massN
+  ,     pdbAtom "B" 2902 162 "GLU" "CA" "" "C" 19908 -1502 34881 massC
+  ,     pdbAtom "B" 2903 162 "GLU" "C" "" "C" 18739 -1492 33908 massC
+  ,     pdbAtom "B" 2904 162 "GLU" "O" "" "O" 18377 -2571 33421 massO
+  ,     pdbAtom "B" 2905 162 "GLU" "CB" "" "C" 19392 -1405 36350 massC
+  ,     pdbAtom "B" 2906 162 "GLU" "CG" "" "C" 20480 -1758 37428 massC
+  ,     pdbAtom "B" 2907 162 "GLU" "CD" "" "C" 21249 -3110 37410 massC
+  ,     pdbAtom "B" 2908 162 "GLU" "OE1" "" "O" 20616 -4173 37456 massO
+  ,     pdbAtom "B" 2909 162 "GLU" "OE2" "" "O" 22488 -3105 37383 massO
+  ,     pdbAtom "B" 2910 163 "THR" "N" "" "N" 18165 -337 33564 massN
+  ,     pdbAtom "B" 2911 163 "THR" "CA" "" "C" 17121 -240 32544 massC
+  ,     pdbAtom "B" 2912 163 "THR" "C" "" "C" 17735 -685 31195 massC
+  ,     pdbAtom "B" 2913 163 "THR" "O" "" "O" 17141 -1495 30477 massO
+  ,     pdbAtom "B" 2914 163 "THR" "CB" "" "C" 16630 1209 32498 massC
+  ,     pdbAtom "B" 2915 163 "THR" "OG1" "" "O" 16605 1626 33852 massO
+  ,     pdbAtom "B" 2916 163 "THR" "CG2" "" "C" 15248 1407 31965 massC
+  ,     pdbAtom "B" 2917 164 "VAL" "N" "" "N" 18978 -299 30841 massN
+  ,     pdbAtom "B" 2918 164 "VAL" "CA" "" "C" 19632 -704 29595 massC
+  ,     pdbAtom "B" 2919 164 "VAL" "C" "" "C" 19774 -2216 29565 massC
+  ,     pdbAtom "B" 2920 164 "VAL" "O" "" "O" 19489 -2848 28541 massO
+  ,     pdbAtom "B" 2921 164 "VAL" "CB" "" "C" 21019 -70 29476 massC
+  ,     pdbAtom "B" 2922 164 "VAL" "CG1" "" "C" 21717 -396 28155 massC
+  ,     pdbAtom "B" 2923 164 "VAL" "CG2" "" "C" 20816 1411 29543 massC
+  ,     pdbAtom "B" 2924 165 "ARG" "N" "" "N" 20161 -2839 30681 massN
+  ,     pdbAtom "B" 2925 165 "ARG" "CA" "" "C" 20266 -4286 30739 massC
+  ,     pdbAtom "B" 2926 165 "ARG" "C" "" "C" 18939 -4951 30454 massC
+  ,     pdbAtom "B" 2927 165 "ARG" "O" "" "O" 18881 -5828 29582 massO
+  ,     pdbAtom "B" 2928 165 "ARG" "CB" "" "C" 20775 -4648 32073 massC
+  ,     pdbAtom "B" 2929 165 "ARG" "CG" "" "C" 22230 -4255 31945 massC
+  ,     pdbAtom "B" 2930 165 "ARG" "CD" "" "C" 22947 -4202 33268 massC
+  ,     pdbAtom "B" 2931 165 "ARG" "NE" "" "N" 24351 -4016 32956 massN
+  ,     pdbAtom "B" 2932 165 "ARG" "CZ" "" "C" 25333 -4245 33834 massC
+  ,     pdbAtom "B" 2933 165 "ARG" "NH1" "" "N" 25101 -4613 35108 massN
+  ,     pdbAtom "B" 2934 165 "ARG" "NH2" "" "N" 26582 -4060 33403 massN
+  ,     pdbAtom "B" 3128 190 "ASN" "N" "" "N" 12734 -8731 -2054 massN
+  ,     pdbAtom "B" 3129 190 "ASN" "CA" "" "C" 11857 -7621 -1673 massC
+  ,     pdbAtom "B" 3130 190 "ASN" "C" "" "C" 12427 -6494 -779 massC
+  ,     pdbAtom "B" 3131 190 "ASN" "O" "" "O" 11682 -5679 -192 massO
+  ,     pdbAtom "B" 3132 190 "ASN" "CB" "" "C" 10626 -8230 -1010 massC
+  ,     pdbAtom "B" 3133 190 "ASN" "CG" "" "C" 9830 -9076 -1984 massC
+  ,     pdbAtom "B" 3134 190 "ASN" "OD1" "" "O" 10391 -9813 -2800 massO
+  ,     pdbAtom "B" 3135 190 "ASN" "ND2" "" "N" 8509 -8997 -1943 massN
+  ,     pdbAtom "B" 3136 191 "THR" "N" "" "N" 13768 -6447 -673 massN
+  ,     pdbAtom "B" 3137 191 "THR" "CA" "" "C" 14517 -5469 95 massC
+  ,     pdbAtom "B" 3138 191 "THR" "C" "" "C" 16001 -5700 -165 massC
+  ,     pdbAtom "B" 3139 191 "THR" "O" "" "O" 16378 -6717 -770 massO
+  ,     pdbAtom "B" 3140 191 "THR" "CB" "" "C" 14198 -5634 1584 massC
+  ,     pdbAtom "B" 3141 191 "THR" "OG1" "" "O" 14298 -4283 1981 massO
+  ,     pdbAtom "B" 3142 191 "THR" "CG2" "" "C" 15057 -6599 2433 massC
+  ,     pdbAtom "B" 3143 192 "LYS" "N" "" "N" 16855 -4768 252 massN
+  ,     pdbAtom "B" 3144 192 "LYS" "CA" "" "C" 18291 -4952 111 massC
+  ,     pdbAtom "B" 3145 192 "LYS" "C" "" "C" 18764 -4923 1548 massC
+  ,     pdbAtom "B" 3146 192 "LYS" "O" "" "O" 18313 -4056 2304 massO
+  ,     pdbAtom "B" 3147 192 "LYS" "CB" "" "C" 18900 -3812 -684 massC
+  ,     pdbAtom "B" 3148 192 "LYS" "CG" "" "C" 20250 -4146 -1329 massC
+  ,     pdbAtom "B" 3149 192 "LYS" "CD" "" "C" 20300 -3481 -2721 massC
+  ,     pdbAtom "B" 3150 192 "LYS" "CE" "" "C" 21563 -3796 -3543 massC
+  ,     pdbAtom "B" 3151 192 "LYS" "NZ" "" "N" 21475 -3263 -4900 massN
+  ,     pdbAtom "B" 3152 193 "TYR" "N" "" "N" 19605 -5870 1956 massN
+  ,     pdbAtom "B" 3153 193 "TYR" "CA" "" "C" 20007 -5995 3348 massC
+  ,     pdbAtom "B" 3154 193 "TYR" "C" "" "C" 21475 -5674 3399 massC
+  ,     pdbAtom "B" 3155 193 "TYR" "O" "" "O" 22225 -6113 2528 massO
+  ,     pdbAtom "B" 3156 193 "TYR" "CB" "" "C" 19789 -7448 3901 massC
+  ,     pdbAtom "B" 3157 193 "TYR" "CG" "" "C" 19830 -7589 5443 massC
+  ,     pdbAtom "B" 3158 193 "TYR" "CD1" "" "C" 21034 -7723 6129 massC
+  ,     pdbAtom "B" 3159 193 "TYR" "CD2" "" "C" 18638 -7507 6159 massC
+  ,     pdbAtom "B" 3160 193 "TYR" "CE1" "" "C" 21019 -7750 7509 massC
+  ,     pdbAtom "B" 3161 193 "TYR" "CE2" "" "C" 18622 -7541 7537 massC
+  ,     pdbAtom "B" 3162 193 "TYR" "CZ" "" "C" 19816 -7657 8200 massC
+  ,     pdbAtom "B" 3163 193 "TYR" "OH" "" "O" 19808 -7665 9580 massO
+  ,     pdbAtom "B" 3164 194 "ALA" "N" "" "N" 21911 -4909 4387 massN
+  ,     pdbAtom "B" 3165 194 "ALA" "CA" "" "C" 23319 -4659 4592 massC
+  ,     pdbAtom "B" 3166 194 "ALA" "C" "" "C" 23613 -4445 6074 massC
+  ,     pdbAtom "B" 3167 194 "ALA" "O" "" "O" 22818 -3873 6829 massO
+  ,     pdbAtom "B" 3168 194 "ALA" "CB" "" "C" 23763 -3418 3867 massC
+  ,     pdbAtom "B" 3169 195 "LYS" "N" "" "N" 24736 -4965 6522 massN
+  ,     pdbAtom "B" 3170 195 "LYS" "CA" "" "C" 25150 -4813 7904 massC
+  ,     pdbAtom "B" 3171 195 "LYS" "C" "" "C" 26296 -3810 7979 massC
+  ,     pdbAtom "B" 3172 195 "LYS" "O" "" "O" 27131 -3770 7067 massO
+  ,     pdbAtom "B" 3173 195 "LYS" "CB" "" "C" 25571 -6185 8392 massC
+  ,     pdbAtom "B" 3174 195 "LYS" "CG" "" "C" 26011 -6336 9829 massC
+  ,     pdbAtom "B" 3175 195 "LYS" "CD" "" "C" 26525 -7749 9787 massC
+  ,     pdbAtom "B" 3176 195 "LYS" "CE" "" "C" 27016 -8210 11116 massC
+  ,     pdbAtom "B" 3177 195 "LYS" "NZ" "" "N" 27672 -9479 10905 massN
+  ,     pdbAtom "B" 3178 196 "VAL" "N" "" "N" 26387 -2977 9004 massN
+  ,     pdbAtom "B" 3179 196 "VAL" "CA" "" "C" 27505 -2054 9101 massC
+  ,     pdbAtom "B" 3180 196 "VAL" "C" "" "C" 28178 -2349 10421 massC
+  ,     pdbAtom "B" 3181 196 "VAL" "O" "" "O" 27534 -2805 11368 massO
+  ,     pdbAtom "B" 3182 196 "VAL" "CB" "" "C" 27062 -525 9050 massC
+  ,     pdbAtom "B" 3183 196 "VAL" "CG1" "" "C" 26316 -307 7727 massC
+  ,     pdbAtom "B" 3184 196 "VAL" "CG2" "" "C" 26160 -104 10220 massC
+  ,     pdbAtom "B" 3185 197 "ASP" "N" "" "N" 29478 -2141 10509 massN
+  ,     pdbAtom "B" 3186 197 "ASP" "CA" "" "C" 30176 -2289 11771 massC
+  ,     pdbAtom "B" 3187 197 "ASP" "C" "" "C" 29876 -1025 12567 massC
+  ,     pdbAtom "B" 3188 197 "ASP" "O" "" "O" 30469 31 12315 massO
+  ,     pdbAtom "B" 3189 197 "ASP" "CB" "" "C" 31681 -2416 11515 massC
+  ,     pdbAtom "B" 3190 197 "ASP" "CG" "" "C" 32619 -2512 12723 massC
+  ,     pdbAtom "B" 3191 197 "ASP" "OD1" "" "O" 32148 -2531 13857 massO
+  ,     pdbAtom "B" 3192 197 "ASP" "OD2" "" "O" 33829 -2595 12509 massO
+  ,     pdbAtom "B" 3193 198 "GLY" "N" "" "N" 28996 -1106 13556 massN
+  ,     pdbAtom "B" 3194 198 "GLY" "CA" "" "C" 28672 58 14330 massC
+  ,     pdbAtom "B" 3195 198 "GLY" "C" "" "C" 29810 469 15275 massC
+  ,     pdbAtom "B" 3196 198 "GLY" "O" "" "O" 29575 1415 16029 massO
+  ]
+
 
 def fourAKEChainA : PDBMirrorSelectedFixture :=
   { pdbLabel := "4AKE"
@@ -1707,6 +3328,20 @@ def fourAKEChainA : PDBMirrorSelectedFixture :=
     scientificAuthorityPromotedFromMirror := false
     configuration := fourAKEChainAConfiguration }
 
+def fourAKEChainB : PDBMirrorSelectedFixture :=
+  { pdbLabel := "4AKE"
+    pdbDepositionDOI := "10.2210/pdb4AKE/pdb"
+    mirrorRepository := "YueHuLab/LieRMSD"
+    mirrorPath := "4AKE.pdb"
+    mirrorGitBlobSha := "a6990f8befb52ca25ca0b65674e0861f53dd7ee5"
+    chain := "B"
+    selectedResidueUnionOnly := true
+    selectedAtomCount := 809
+    sourceByteSha256Pinned := false
+    canonicalArchiveByteEqualityObserved := false
+    scientificAuthorityPromotedFromMirror := false
+    configuration := fourAKEChainBConfiguration }
+
 def oneAKEChainA : PDBMirrorSelectedFixture :=
   { pdbLabel := "1AKE"
     pdbDepositionDOI := "10.2210/pdb1AKE/pdb"
@@ -1721,9 +3356,25 @@ def oneAKEChainA : PDBMirrorSelectedFixture :=
     scientificAuthorityPromotedFromMirror := false
     configuration := oneAKEChainAConfiguration }
 
+def oneAKEChainB : PDBMirrorSelectedFixture :=
+  { pdbLabel := "1AKE"
+    pdbDepositionDOI := "10.2210/pdb1AKE/pdb"
+    mirrorRepository := "YueHuLab/LieRMSD"
+    mirrorPath := "1AKE.pdb"
+    mirrorGitBlobSha := "407ebf46f707592958aaa34df06785d7880ca02a"
+    chain := "B"
+    selectedResidueUnionOnly := true
+    selectedAtomCount := 809
+    sourceByteSha256Pinned := false
+    canonicalArchiveByteEqualityObserved := false
+    scientificAuthorityPromotedFromMirror := false
+    configuration := oneAKEChainBConfiguration }
+
 example : fourAKEChainA.selectedResidueUnionOnly = true := rfl
+example : fourAKEChainB.selectedResidueUnionOnly = true := rfl
 example : oneAKEChainA.selectedResidueUnionOnly = true := rfl
+example : oneAKEChainB.selectedResidueUnionOnly = true := rfl
 example : fourAKEChainA.canonicalArchiveByteEqualityObserved = false := rfl
-example : oneAKEChainA.scientificAuthorityPromotedFromMirror = false := rfl
+example : oneAKEChainB.scientificAuthorityPromotedFromMirror = false := rfl
 
 end AgdaMirror.AdK.PDBMirrorSelectedFixture

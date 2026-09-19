@@ -69,6 +69,12 @@ theorem exists_finalComplementBudgetExcessReduction :
     abs_sub_abs_le_abs_sub
       (evenConeFunctional (offOrdVec (sampleFam g t r) t))
       (evenConeFunctional (offOrdVec (sampleFam g t 0) t))
+  have hOffDir :
+      |evenConeFunctional (offOrdVec (sampleFam g t r) t)|
+        - |evenConeFunctional (offOrdVec (sampleFam g t 0) t)|
+      ≤ |evenConeFunctional (offOrdVec (sampleFam g t r) t)
+          - evenConeFunctional (offOrdVec (sampleFam g t 0) t)| :=
+    le_trans (le_abs_self _) hOffTri
   have hOff :
       |evenConeFunctional (offOrdVec (sampleFam g t r) t)|
         ≤ |evenConeFunctional (offOrdVec (sampleFam g t 0) t)|
@@ -98,6 +104,12 @@ theorem exists_finalComplementBudgetExcessReduction :
     have htwo : |2 * gammaResp g t 0| = 2 * |gammaResp g t 0| := by
       rw [abs_mul, show |(2 : ℝ)| = 2 by norm_num]
     rw [htwo] at hGammaTri
+    have hGammaDir :
+        |gammaResp g t r + gammaResp g t (-r)|
+          - 2 * |gammaResp g t 0|
+        ≤ |(gammaResp g t r + gammaResp g t (-r))
+            - 2 * gammaResp g t 0| :=
+      le_trans (le_abs_self _) hGammaTri
     linarith
 
   unfold radiusZeroComplementBudget

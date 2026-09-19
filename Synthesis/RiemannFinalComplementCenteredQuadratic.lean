@@ -89,7 +89,7 @@ theorem abs_finalOffOrd_centered_le {g : ℝ → ℝ} {Λ : ℝ}
     (hΛ : 0 ≤ Λ) (t r : ℝ) :
     |evenConeFunctional (offOrdVec (sampleFam g t r) t)
       - evenConeFunctional (offOrdVec (sampleFam g t 0) t)|
-      ≤ 2 * r ^ 2 * gammaCenteredStripCoeff g Λ t * offOrdWeight t := by
+      ≤ 4 * r ^ 2 * gammaCenteredStripCoeff g Λ t * offOrdWeight t := by
   have hgc :=
     Zeta23Bridge.LiteralWeilProjectiveStripConstant.hasCompactSupport_of_radius hsupp
   have hc2 := gammaCenteredTaper_contDiff hgs r

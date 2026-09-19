@@ -55,6 +55,7 @@ import AgdaMirror.SignatureDerivation
 import AgdaMirror.PhysicsConformance
 import AgdaMirror.QuotientSetoidSurface
 import AgdaMirror.AuthorityBoundary
+import AgdaMirror.IntersectionalNonFactorability
 import AgdaMirror.GodelLattice
 import AgdaMirror.Vec15Order
 import AgdaMirror.Vec15Descriptive
@@ -120,8 +121,10 @@ provides faithful Lean mirrors:
   (abstract entropy systems, restoration, completion law — with the genuinely
   provable 3-adic, `ℤ/6`-regularity, and no-infinite-descent facts proved).
 
+* **Canonical non-factorability spine**: `IntersectionalNonFactorability` faithfully mirrors the generic Agda factorisation/witness calculus, retaining Crenshaw 1991 as conceptual motivation while keeping the mathematics DASHI-owned.
+
 * **AdK exact-CV mirror**: the source-facing residue/domain roles and mass
   convention retain their upstream attribution, while exact rational selected
-  content, COM extensionality, projection collision, and non-factorability are
+  content, COM extensionality, canonical non-factorability, and recharting obstruction are
   DASHI reconstruction/theorems under `AgdaMirror.AdK`.
 -/

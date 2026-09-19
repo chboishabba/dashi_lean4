@@ -46,7 +46,7 @@ theorem exists_canonical_taper_with_negative_radiusZero_pole
       ∧ (∀ a : ℝ, 0 < evenResp g a r)
       ∧ (∀ u, g u ≠ 0 → |u| < 9 * Real.pi / (4 * |t|)) := by
   obtain ⟨g, r, hgs, hgc, heven, hr, hnn, hwin, -, hpole, hpole0, hA, hsupp⟩ :=
-    exists_positive_taper_poleEven_zero ht
+    exists_positive_taper_poleEven_zero_with_radiusZero_sign ht
   refine ⟨g, r, hgs, hgc, heven, hr, hnn, hwin, hpole, hpole0, ?_, hA, hsupp⟩
   exact radiusZero_pole_correction_negative_of_unweighted_positive
     hgs.continuous hgc heven hpole0

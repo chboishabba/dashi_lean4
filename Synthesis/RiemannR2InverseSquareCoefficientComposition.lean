@@ -61,4 +61,30 @@ theorem quarticFar_threeChannel_lt_cluster
   exact inverseSquare_threeChannel_lt_cluster
     htpos hNear hFar hGamma hCluster hCoeff
 
+/-- The consumer-faithful form recovered from the vendored 8889 theorem.
+Rather than comparing every channel with an absolute inverse-square cluster
+coefficient, compare the complement budget's excess over the shared positive
+baseline with the actual cluster surplus over that baseline. -/
+theorem baselineExcess_lt_cluster
+    {budget baseline excess margin cluster : ℝ}
+    (hBudget : budget ≤ baseline + excess)
+    (hCluster : baseline + margin ≤ cluster)
+    (hExcess : excess < margin) :
+    budget < cluster := by
+  linarith
+
+/-- The actual 8889 cluster surplus is quadratic in horizontal displacement.
+Any complement excess below that quadratic margin closes the strict R2 scalar
+comparison. -/
+theorem baselineExcess_lt_cluster_quadraticMargin
+    {budget baseline excess a secondMoment cluster : ℝ}
+    (hBudget : budget ≤ baseline + excess)
+    (hCluster :
+      baseline + (Real.sqrt 2 / 2) * (a ^ 2 * secondMoment) ≤ cluster)
+    (hExcess :
+      excess < (Real.sqrt 2 / 2) * (a ^ 2 * secondMoment)) :
+    budget < cluster :=
+  baselineExcess_lt_cluster hBudget hCluster hExcess
+
+
 end Synthesis

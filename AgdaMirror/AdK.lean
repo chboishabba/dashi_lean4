@@ -6,4 +6,10 @@ import AgdaMirror.AdK.COMGeometry
 import AgdaMirror.AdK.CVProjection
 import AgdaMirror.AdK.NonFactorability
 import AgdaMirror.AdK.CanonicalFactorisationValidation
+import AgdaMirror.AdK.PDBMirrorSelectedFixture
+import AgdaMirror.AdK.PDBMirrorSelectedFixtureValidation
+import AgdaMirror.AdK.PDBMirrorCVProjection
+import AgdaMirror.AdK.PDBMirrorCVProjectionValidation
+import AgdaMirror.AdK.PDBMirrorSourceEndpointAudit
+import AgdaMirror.AdK.PDBMirrorSourceEndpointAuditValidation
 import AgdaMirror.AdK.KernelValidation

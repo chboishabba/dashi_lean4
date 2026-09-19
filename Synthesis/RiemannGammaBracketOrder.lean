@@ -172,4 +172,85 @@ theorem gammaBracket_zero_le (x : ℝ) :
   have h := digamma_real_zero_le x
   simpa [gammaSeriesPoint] using h
 
+
+theorem real_reciprocal_mono_abs
+    {a x y : ℝ} (ha : 0 < a) (hxy : |x| <= |y|) :
+    (1 / ((a : ℂ) + Complex.I * (y : ℂ))).re
+      <= (1 / ((a : ℂ) + Complex.I * (x : ℂ))).re := by
+  rw [real_one_div_add_I (Or.inl ha.ne'),
+      real_one_div_add_I (Or.inl ha.ne')]
+  have hx2 : x^2 <= y^2 := by
+    simpa [sq_abs] using (sq_le_sq.mpr hxy)
+  have hdx : 0 < a^2 + x^2 := by nlinarith [sq_pos_of_pos ha, sq_nonneg x]
+  have hdy : 0 < a^2 + y^2 := by nlinarith [sq_pos_of_pos ha, sq_nonneg y]
+  exact div_le_div_of_nonneg_left ha.le hdx (by nlinarith)
+
+theorem digammaTailTerm_re_mono_abs
+    {x y : ℝ} (hxy : |x| <= |y|) (n : ℕ) :
+    (digammaTailTerm x n).re
+      <= (digammaTailTerm y n).re := by
+  unfold digammaTailTerm
+  simp only [map_sub]
+  have ha : 0 < (n : ℝ) + 5/4 := by positivity
+  have hx :
+      (gammaSeriesPoint x + n + 1)
+        =
+      (((n : ℝ) + 5/4 : ℝ) : ℂ)
+        + Complex.I * (((x/2 : ℝ)) : ℂ) := by
+    apply Complex.ext <;> simp [gammaSeriesPoint] <;> ring
+  have hy :
+      (gammaSeriesPoint y + n + 1)
+        =
+      (((n : ℝ) + 5/4 : ℝ) : ℂ)
+        + Complex.I * (((y/2 : ℝ)) : ℂ) := by
+    apply Complex.ext <;> simp [gammaSeriesPoint] <;> ring
+  rw [hx, hy]
+  have hxy2 : |x/2| <= |y/2| := by
+    simpa [abs_div] using
+      mul_le_mul_of_nonneg_right hxy (show (0:ℝ) <= 1/2 by norm_num)
+  have hrec :=
+    real_reciprocal_mono_abs
+      (a := (n : ℝ) + 5/4) (x := x/2) (y := y/2) ha hxy2
+  linarith
+
+theorem tsum_digammaTailTerm_re_mono_abs
+    {x y : ℝ} (hxy : |x| <= |y|) :
+    (∑' n : ℕ, (digammaTailTerm x n).re)
+      <= ∑' n : ℕ, (digammaTailTerm y n).re := by
+  have hx : Summable (fun n : ℕ => (digammaTailTerm x n).re) :=
+    (Complex.hasSum_re (summable_digammaTailTerm x).hasSum).summable
+  have hy : Summable (fun n : ℕ => (digammaTailTerm y n).re) :=
+    (Complex.hasSum_re (summable_digammaTailTerm y).hasSum).summable
+  exact hx.tsum_le_tsum (fun n => digammaTailTerm_re_mono_abs hxy n) hy
+
+theorem digamma_real_mono_abs
+    {x y : ℝ} (hxy : |x| <= |y|) :
+    (Complex.digamma (gammaSeriesPoint x)).re
+      <= (Complex.digamma (gammaSeriesPoint y)).re := by
+  rw [digammaSeriesPoint_re_formula, digammaSeriesPoint_re_formula]
+  have htail := tsum_digammaTailTerm_re_mono_abs hxy
+  have hhead :
+      (1 / gammaSeriesPoint y).re
+        <= (1 / gammaSeriesPoint x).re := by
+    have hx :
+        gammaSeriesPoint x
+          = ((1/4 : ℝ) : ℂ) + Complex.I * ((x/2 : ℝ) : ℂ) := by rfl
+    have hy :
+        gammaSeriesPoint y
+          = ((1/4 : ℝ) : ℂ) + Complex.I * ((y/2 : ℝ) : ℂ) := by rfl
+    rw [hx, hy]
+    have hxy2 : |x/2| <= |y/2| := by
+      simpa [abs_div] using
+        mul_le_mul_of_nonneg_right hxy (show (0:ℝ) <= 1/2 by norm_num)
+    exact real_reciprocal_mono_abs
+      (a := (1/4 : ℝ)) (x := x/2) (y := y/2) (by norm_num) hxy2
+  linarith
+
+theorem gammaBracket_mono_abs
+    {x y : ℝ} (hxy : |x| <= |y|) :
+    Zeta23.EF.gammaBracket x <= Zeta23.EF.gammaBracket y := by
+  unfold Zeta23.EF.gammaBracket
+  have h := digamma_real_mono_abs hxy
+  simpa [gammaSeriesPoint] using h
+
 end Synthesis

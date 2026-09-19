@@ -1,4 +1,5 @@
 import Synthesis.RiemannFinalLiteralComplementCenteredExact
+import Synthesis.RiemannFinalEvenConeNearFarSplit
 import Zeta23Bridge.LiteralWeilOffOrdinateReflectionPair
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
@@ -41,9 +42,9 @@ theorem cos_gap_nonneg_on_support
     by linarith [abs_le.mp habs |>.2]⟩
 
 theorem reflectionPairWeight_nonpos_inside_window
-    {h : ℝ -> ℝ} {a delta Lambda u : ℝ}
+    {h : ℝ → ℝ} {a delta Lambda u : ℝ}
     (hh : ∀ x, h x <= 0)
-    (hsupp : h u ≠ 0 -> |u| <= Lambda)
+    (hsupp : h u ≠ 0 → |u| <= Lambda)
     (hLambda : 0 <= Lambda)
     (hwindow : |delta| * Lambda <= Real.pi / 2) :
     reflectionPairWeight h a delta u <= 0 := by
@@ -60,11 +61,11 @@ theorem reflectionPairWeight_nonpos_inside_window
       hcos
 
 theorem integral_reflectionPairWeight_nonpos_inside_window
-    {h : ℝ -> ℝ} {a delta Lambda : ℝ}
+    {h : ℝ → ℝ} {a delta Lambda : ℝ}
     (hhc : Continuous h)
     (hhcs : HasCompactSupport h)
     (hh : ∀ x, h x <= 0)
-    (hsupp : ∀ u, h u ≠ 0 -> |u| <= Lambda)
+    (hsupp : ∀ u, h u ≠ 0 → |u| <= Lambda)
     (hLambda : 0 <= Lambda)
     (hwindow : |delta| * Lambda <= Real.pi / 2) :
     (∫ u : ℝ, reflectionPairWeight h a delta u) <= 0 := by
@@ -87,12 +88,12 @@ theorem integral_reflectionPairWeight_nonpos_inside_window
     (Filter.Eventually.of_forall hmono)
 
 theorem centeredPairTerm_nonpos_inside_window
-    {g : ℝ -> ℝ} {Lambda t r : ℝ}
+    {g : ℝ → ℝ} {Lambda t r : ℝ}
     (hgs : ContDiff ℝ 2 g)
     (hgc : HasCompactSupport g)
     (heven : ∀ u, g (-u) = g u)
     (hnn : ∀ u, 0 <= g u)
-    (hsupp : ∀ u, g u ≠ 0 -> |u| <= Lambda)
+    (hsupp : ∀ u, g u ≠ 0 → |u| <= Lambda)
     (hLambda : 0 <= Lambda)
     (rho : Zeros)
     (hwindow : |((rho : ℂ).im - t)| * Lambda <= Real.pi / 2) :
@@ -101,7 +102,7 @@ theorem centeredPairTerm_nonpos_inside_window
   have hh2 := gammaCenteredTaper_contDiff hgs r
   have hhc := gammaCenteredTaper_hasCompactSupport hgc r
   have hhe := gammaCenteredTaper_even heven r
-  have hhsupp : ∀ u, gammaCenteredTaper g r u ≠ 0 -> |u| <= Lambda := by
+  have hhsupp : ∀ u, gammaCenteredTaper g r u ≠ 0 → |u| <= Lambda := by
     intro u hu
     apply hsupp u
     intro hgu
@@ -121,5 +122,53 @@ theorem centeredPairTerm_nonpos_inside_window
       (delta := ((rho : ℂ).im - t))
   have hm : 0 <= ((Zeta23.zetaZeroConfig).mult rho : ℝ) := by positivity
   exact mul_nonpos_of_nonneg_of_nonpos hm hInt
+
+
+theorem centeredFinalPairTerm_nonpos_inside_window
+    {g : ℝ → ℝ} {Lambda t r : ℝ}
+    (hgs : ContDiff ℝ 2 g)
+    (hgc : HasCompactSupport g)
+    (heven : ∀ u, g (-u) = g u)
+    (hnn : ∀ u, 0 <= g u)
+    (hsupp : ∀ u, g u ≠ 0 → |u| <= Lambda)
+    (hLambda : 0 <= Lambda)
+    (sigma : ((SameOrd t)ᶜ : Set Zeros))
+    (hwindow : |((sigma : Zeros) : ℂ).im - t| * Lambda <= Real.pi / 2) :
+    finalPairTerm (gammaCenteredTaper g r) t 0 sigma <= 0 := by
+  have hreflect :
+      ((reflectOffOrdEquiv t sigma : ((SameOrd t)ᶜ : Set Zeros)) : Zeros)
+        = reflectZero (sigma : Zeros) := rfl
+  unfold finalPairTerm
+  rw [hreflect]
+  exact centeredPairTerm_nonpos_inside_window
+    hgs hgc heven hnn hsupp hLambda (sigma : Zeros) hwindow
+
+theorem centeredFiniteNearCore_nonpos
+    {g : ℝ → ℝ} {Lambda t r : ℝ}
+    (hgs : ContDiff ℝ 2 g)
+    (hgc : HasCompactSupport g)
+    (heven : ∀ u, g (-u) = g u)
+    (hnn : ∀ u, 0 <= g u)
+    (hsupp : ∀ u, g u ≠ 0 → |u| <= Lambda)
+    (hLambda : 0 <= Lambda)
+    (J : ℕ)
+    (hJwindow : (J : ℝ) * Lambda <= Real.pi / 2) :
+    (∑ sigma ∈ finalNearOffFinset t J,
+      finalPairTerm (gammaCenteredTaper g r) t 0 sigma) <= 0 := by
+  classical
+  apply Finset.sum_nonpos
+  intro sigma hsigma
+  have hgap :
+      |((sigma : Zeros) : ℂ).im - t| < (J : ℝ) :=
+    (mem_finalNearOffFinset_iff t J sigma).1 hsigma
+  have hgapLambda :
+      |((sigma : Zeros) : ℂ).im - t| * Lambda <= Real.pi / 2 := by
+    have hmul :
+        |((sigma : Zeros) : ℂ).im - t| * Lambda
+          <= (J : ℝ) * Lambda :=
+      mul_le_mul_of_nonneg_right hgap.le hLambda
+    exact le_trans hmul hJwindow
+  exact centeredFinalPairTerm_nonpos_inside_window
+    hgs hgc heven hnn hsupp hLambda sigma hgapLambda
 
 end Synthesis

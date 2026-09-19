@@ -389,4 +389,127 @@ theorem quantitativeCanonicalTaper_mass0_le
   have hlam := quantitativeLambda_le ht
   nlinarith [mul_nonneg hlam (unitBumpMass0_nonneg)]
 
+
+theorem quantitativeOuterBump_contDiff {t : ℝ} (ht : 0 < t) :
+    ContDiff ℝ 2 (quantitativeOuterBump t) := by
+  unfold quantitativeOuterBump quantitativeSymBump
+  exact symmetrize_contDiff
+    (scaledUnitBump_contDiff (quantitativeTaperR_pos ht).ne'
+      (quantitativeTaperOuterCenter t))
+
+theorem quantitativeInnerBump_contDiff {t : ℝ} (ht : 0 < t) :
+    ContDiff ℝ 2 (quantitativeInnerBump t) := by
+  unfold quantitativeInnerBump quantitativeSymBump
+  exact symmetrize_contDiff
+    (scaledUnitBump_contDiff (quantitativeTaperR_pos ht).ne'
+      (quantitativeTaperInnerCenter t))
+
+theorem quantitativeCanonicalTaper_contDiff
+    {t : ℝ} (ht : 18 <= t) :
+    ContDiff ℝ 2 (quantitativeCanonicalTaper t) := by
+  have ht0 : 0 < t := lt_of_lt_of_le (by norm_num) ht
+  unfold quantitativeCanonicalTaper
+  exact (quantitativeInnerBump_contDiff ht0).add
+    (contDiff_const.mul (quantitativeOuterBump_contDiff ht0))
+
+theorem deriv_quantitativeCanonicalTaper
+    {t : ℝ} (ht : 18 <= t) :
+    deriv (quantitativeCanonicalTaper t)
+      =
+    fun u =>
+      deriv (quantitativeInnerBump t) u
+        + quantitativeLambda t * deriv (quantitativeOuterBump t) u := by
+  have ht0 : 0 < t := lt_of_lt_of_le (by norm_num) ht
+  have hi : Differentiable ℝ (quantitativeInnerBump t) :=
+    (quantitativeInnerBump_contDiff ht0).differentiable (by norm_num)
+  have ho : Differentiable ℝ (quantitativeOuterBump t) :=
+    (quantitativeOuterBump_contDiff ht0).differentiable (by norm_num)
+  funext u
+  have hs :=
+    (hi u).hasDerivAt.add
+      ((ho u).hasDerivAt.const_mul (quantitativeLambda t))
+  rw [hs.deriv]
+  unfold quantitativeCanonicalTaper
+  ring
+
+theorem deriv2_quantitativeCanonicalTaper
+    {t : ℝ} (ht : 18 <= t) :
+    deriv (deriv (quantitativeCanonicalTaper t))
+      =
+    fun u =>
+      deriv (deriv (quantitativeInnerBump t)) u
+        + quantitativeLambda t *
+          deriv (deriv (quantitativeOuterBump t)) u := by
+  rw [deriv_quantitativeCanonicalTaper ht]
+  have ht0 : 0 < t := lt_of_lt_of_le (by norm_num) ht
+  have hi : Differentiable ℝ (deriv (quantitativeInnerBump t)) :=
+    (quantitativeInnerBump_contDiff ht0).differentiable_deriv_two
+  have ho : Differentiable ℝ (deriv (quantitativeOuterBump t)) :=
+    (quantitativeOuterBump_contDiff ht0).differentiable_deriv_two
+  funext u
+  have hs :=
+    (hi u).hasDerivAt.add
+      ((ho u).hasDerivAt.const_mul (quantitativeLambda t))
+  rw [hs.deriv]
+  ring
+
+theorem quantitativeCanonicalTaper_compact
+    {t : ℝ} (ht : 18 <= t) :
+    HasCompactSupport (quantitativeCanonicalTaper t) := by
+  have ht0 : 0 < t := lt_of_lt_of_le (by norm_num) ht
+  unfold quantitativeCanonicalTaper
+  exact (quantitativeInnerBump_compact ht0).add
+    (quantitativeOuterBump_compact ht0).mul_left
+
+theorem quantitativeCanonicalTaper_mass1_le
+    {t : ℝ} (ht : 18 <= t) :
+    taperMass (deriv (quantitativeCanonicalTaper t))
+      <= quantitativeTaperMass1Upper := by
+  have ht0 : 0 < t := lt_of_lt_of_le (by norm_num) ht
+  rw [deriv_quantitativeCanonicalTaper ht]
+  unfold quantitativeTaperMass1Upper
+  have hiC := (quantitativeInnerBump_contDiff ht0).deriv'.continuous
+  have hoC := (quantitativeOuterBump_contDiff ht0).deriv'.continuous
+  have hiK := (quantitativeInnerBump_compact ht0).deriv
+  have hoK := (quantitativeOuterBump_compact ht0).deriv
+  have h :=
+    taperMass_add_smul_le
+      hiC hiK hoC hoK (quantitativeLambda_pos ht).le
+  have hi := taperMass_deriv_quantitativeSymBump_le
+    (c := quantitativeTaperInnerCenter t) (quantitativeTaperR_pos ht0)
+  have ho := taperMass_deriv_quantitativeSymBump_le
+    (c := quantitativeTaperOuterCenter t) (quantitativeTaperR_pos ht0)
+  have hlam := quantitativeLambda_le ht
+  have hM := unitBumpMass1_nonneg
+  nlinarith [mul_nonneg hlam hM]
+
+theorem quantitativeCanonicalTaper_mass2_le
+    {t : ℝ} (ht : 18 <= t) :
+    taperMass (deriv (deriv (quantitativeCanonicalTaper t)))
+      <= quantitativeTaperMass2Upper t := by
+  have ht0 : 0 < t := lt_of_lt_of_le (by norm_num) ht
+  rw [deriv2_quantitativeCanonicalTaper ht]
+  unfold quantitativeTaperMass2Upper
+  have hiC :=
+    Zeta23Bridge.LiteralWeilProjectiveStripConstant.continuous_deriv2
+      (quantitativeInnerBump_contDiff ht0)
+  have hoC :=
+    Zeta23Bridge.LiteralWeilProjectiveStripConstant.continuous_deriv2
+      (quantitativeOuterBump_contDiff ht0)
+  have hiK := (quantitativeInnerBump_compact ht0).deriv.deriv
+  have hoK := (quantitativeOuterBump_compact ht0).deriv.deriv
+  have h :=
+    taperMass_add_smul_le
+      hiC hiK hoC hoK (quantitativeLambda_pos ht).le
+  have hi := taperMass_deriv2_quantitativeSymBump_le
+    (c := quantitativeTaperInnerCenter t) (quantitativeTaperR_pos ht0)
+  have ho := taperMass_deriv2_quantitativeSymBump_le
+    (c := quantitativeTaperOuterCenter t) (quantitativeTaperR_pos ht0)
+  have hlam := quantitativeLambda_le ht
+  have hM := unitBumpMass2_nonneg
+  have hRinv : 0 <= (quantitativeTaperR t)⁻¹ :=
+    (inv_pos.mpr (quantitativeTaperR_pos ht0)).le
+  nlinarith [mul_nonneg hlam (mul_nonneg hRinv hM)]
+
+
 end Synthesis

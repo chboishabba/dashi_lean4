@@ -59,8 +59,8 @@ theorem canonicalSignedWindowCutoff_lower
     |t| / 18 <= (canonicalSignedWindowCutoff t : ℝ) := by
   unfold canonicalSignedWindowCutoff
   have hfloorUpper :
-      |t| / 9 < (⌊|t| / 9⌋₊ : ℝ) + 1 := by
-    exact_mod_cast Nat.lt_floor_add_one (|t| / 9)
+      |t| / 9 - 1 < (⌊|t| / 9⌋₊ : ℝ) := by
+    exact Nat.sub_one_lt_floor (|t| / 9)
   have ht18 : 18 <= |t| := ht
   linarith
 
@@ -92,11 +92,12 @@ theorem inv_cutoff_le_eighteen_div_abs
     1 / (canonicalSignedWindowCutoff t : ℝ)
       <= 18 / |t| := by
   have htpos : 0 < |t| := lt_of_lt_of_le (by norm_num : (0:ℝ) < 18) ht
+  have hJnat : 0 < canonicalSignedWindowCutoff t :=
+    lt_of_lt_of_le Nat.zero_lt_one (canonicalSignedWindowCutoff_one_le ht)
   have hJpos : 0 < (canonicalSignedWindowCutoff t : ℝ) := by
-    exact_mod_cast Nat.zero_lt_of_lt
-      (canonicalSignedWindowCutoff_one_le ht)
+    exact_mod_cast hJnat
   have hlower := canonicalSignedWindowCutoff_lower ht
-  rw [div_le_iff₀ hJpos, div_eq_mul_inv]
+  rw [div_le_iff₀ hJpos]
   have hmul := mul_le_mul_of_nonneg_left hlower (18 / |t|) (by positivity)
   have hsimp : (18 / |t|) * (|t| / 18) = 1 := by
     field_simp [ne_of_gt htpos]
@@ -107,9 +108,10 @@ theorem inv_sqrt_cutoff_le_sqrt_eighteen_div_abs
     1 / Real.sqrt (canonicalSignedWindowCutoff t : ℝ)
       <= Real.sqrt (18 / |t|) := by
   have htpos : 0 < |t| := lt_of_lt_of_le (by norm_num : (0:ℝ) < 18) ht
+  have hJnat : 0 < canonicalSignedWindowCutoff t :=
+    lt_of_lt_of_le Nat.zero_lt_one (canonicalSignedWindowCutoff_one_le ht)
   have hJpos : 0 < (canonicalSignedWindowCutoff t : ℝ) := by
-    exact_mod_cast Nat.zero_lt_of_lt
-      (canonicalSignedWindowCutoff_one_le ht)
+    exact_mod_cast hJnat
   have hInv := inv_cutoff_le_eighteen_div_abs ht
   have hleft :
       1 / Real.sqrt (canonicalSignedWindowCutoff t : ℝ)

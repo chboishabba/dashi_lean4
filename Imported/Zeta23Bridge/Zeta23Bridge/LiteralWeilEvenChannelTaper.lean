@@ -112,6 +112,7 @@ theorem exists_positive_taper_poleEven_zero_pos {t : ℝ} (ht : 0 < t) :
       ∧ (∀ u, g u ≠ 0 → 2 * r * |u| < π / 2)
       ∧ (∃ u v : ℝ, 0 < g u ∧ 0 < g v ∧ |u| ≠ |v|)
       ∧ poleEvenResp g t r = 0
+      ∧ 0 < poleEvenResp g t 0
       ∧ (∀ a : ℝ, 0 < evenResp g a r)
       ∧ (∀ u, g u ≠ 0 → |u| < 9 * π / (4 * t)) := by
   have hpi := Real.pi_pos
@@ -298,7 +299,241 @@ theorem exists_positive_taper_poleEven_zero_pos {t : ℝ} (ht : 0 < t) :
   have hlampos : 0 < lam := by
     rw [hlam]
     exact div_pos (by linarith) hP₁
-  refine ⟨fun u => g₂ u + lam * g₁ u, r, ?_, ?_, ?_, hrpos, ?_, ?_, ?_, ?_, ?_, ?_⟩
+
+  -- Radius-zero pole sign.  The selected-radius cancellation is weighted by
+  -- cos(r u).  That weight is strictly smaller on the outer positive window
+  -- than on the inner negative window, so removing it leaves positive residue.
+  set w0 : ℝ → ℝ := fun u => Real.cosh (u / 2) * Real.cos (t * u) with hw0
+  have hw0c : Continuous w0 := by rw [hw0]; fun_prop
+  have hw0e : ∀ u, w0 (-u) = w0 u := by
+    intro u
+    rw [hw0]
+    simp only [show -u / 2 = -(u / 2) by ring, Real.cosh_neg,
+      show t * -u = -(t * u) by ring, Real.cos_neg]
+  have hA₁ : 0 < poleEvenResp g₁ t 0 := by
+    have heq : poleEvenResp g₁ t 0 = 2 * ∫ u : ℝ, φ₁ u * w0 u := by
+      rw [poleEvenResp]
+      simp only [Real.cos_zero, mul_one]
+      exact integral_symmetrize hφ₁c hφ₁s hw0c hw0e
+    have hpos : 0 < ∫ u : ℝ, φ₁ u * w0 u := by
+      apply hφ₁pos w0 hw0c
+      intro u hu
+      have hwin := hwin₁ u hu
+      rw [hw0]
+      have hcosru := hwin.2
+      have hwp0 := hwin.1
+      rw [hwp] at hwp0
+      have hcrpos : 0 < Real.cos (r * u) := hcosru
+      nlinarith [Real.cosh_pos (u / 2)]
+    rw [heq]
+    linarith
+  have hA₂ : poleEvenResp g₂ t 0 < 0 := by
+    have heq : poleEvenResp g₂ t 0 = 2 * ∫ u : ℝ, φ₂ u * w0 u := by
+      rw [poleEvenResp]
+      simp only [Real.cos_zero, mul_one]
+      exact integral_symmetrize hφ₂c hφ₂s hw0c hw0e
+    have hneg : 0 < ∫ u : ℝ, φ₂ u * (-w0 u) := by
+      apply hφ₂pos (fun u => -w0 u) (by fun_prop)
+      intro u hu
+      have hwin := hwin₂ u hu
+      rw [hw0]
+      have hwpneg := hwin.1
+      rw [hwp] at hwpneg
+      have hcrpos := hwin.2
+      nlinarith [Real.cosh_pos (u / 2)]
+    have hneg' : ∫ u : ℝ, φ₂ u * w0 u < 0 := by
+      have hrw : (fun u : ℝ => φ₂ u * (-w0 u))
+          = fun u : ℝ => -(φ₂ u * w0 u) := by funext u; ring
+      rw [hrw, integral_neg] at hneg
+      linarith
+    rw [heq]
+    linarith
+
+  let cOuter : ℝ := Real.cos (7 * π / 64)
+  let cInner : ℝ := Real.cos (5 * π / 64)
+  have hcOuterPos : 0 < cOuter := by
+    dsimp [cOuter]
+    apply Real.cos_pos_of_mem_Ioo
+    constructor <;> nlinarith [Real.pi_pos]
+  have hcSep : cOuter < cInner := by
+    dsimp [cOuter, cInner]
+    exact Real.cos_lt_cos_of_nonneg_of_le_pi
+      (by positivity)
+      (by nlinarith [Real.pi_pos])
+      (by nlinarith [Real.pi_pos])
+
+  have hP₁upper : poleEvenResp g₁ t r ≤ cOuter * poleEvenResp g₁ t 0 := by
+    have heqr : poleEvenResp g₁ t r = 2 * ∫ u : ℝ, φ₁ u * wp u := by
+      rw [poleEvenResp]
+      exact integral_symmetrize hφ₁c hφ₁s hwpc hwpe
+    have heq0 : poleEvenResp g₁ t 0 = 2 * ∫ u : ℝ, φ₁ u * w0 u := by
+      rw [poleEvenResp]
+      simp only [Real.cos_zero, mul_one]
+      exact integral_symmetrize hφ₁c hφ₁s hw0c hw0e
+    have hiL : Integrable (fun u : ℝ => φ₁ u * wp u) :=
+      taper_integrable hφ₁c hφ₁s hwpc
+    have hiR : Integrable (fun u : ℝ => cOuter * (φ₁ u * w0 u)) :=
+      (taper_integrable hφ₁c hφ₁s hw0c).const_mul _
+    have hpoint : ∀ u, φ₁ u * wp u ≤ cOuter * (φ₁ u * w0 u) := by
+      intro u
+      by_cases hφ : φ₁ u = 0
+      · simp [hφ]
+      · have hu := hφ₁supp u hφ
+        rw [abs_lt] at hu
+        have hlow : 7 * π / (4 * t) < u := by
+          rw [hc₁, hRdef] at hu
+          have hEq : 2 * π / t - π / (4 * t) = 7 * π / (4 * t) := by
+            field_simp; ring
+          linarith
+        have hhigh : u < 9 * π / (4 * t) := by
+          rw [hc₁, hRdef] at hu
+          have hEq : 2 * π / t + π / (4 * t) = 9 * π / (4 * t) := by
+            field_simp; ring
+          linarith
+        have hxLow : 7 * π / 64 ≤ r * u := by
+          rw [hr]
+          have := mul_le_mul_of_nonneg_left hlow.le (show 0 ≤ t / 16 by positivity)
+          nlinarith
+        have hxPi : r * u ≤ π := by
+          rw [hr]
+          have := mul_le_mul_of_nonneg_left hhigh.le (show 0 ≤ t / 16 by positivity)
+          nlinarith [Real.pi_pos]
+        have hcos : Real.cos (r * u) ≤ cOuter := by
+          dsimp [cOuter]
+          exact Real.cos_le_cos_of_nonneg_of_le_pi
+            (by positivity) hxPi hxLow
+        have hbase : 0 ≤ φ₁ u * w0 u := by
+          have hwp0 := (hwin₁ u hφ₁supp |> fun _ => True.intro)
+          rw [hw0]
+          have hct : 0 < Real.cos (t * u) := by
+            have htuLow : 7 * π / 4 < t * u := by
+              have := mul_lt_mul_of_pos_left hlow ht
+              have hEq : t * (7 * π / (4 * t)) = 7 * π / 4 := by field_simp
+              rwa [hEq] at this
+            have htuHigh : t * u < 9 * π / 4 := by
+              have := mul_lt_mul_of_pos_left hhigh ht
+              have hEq : t * (9 * π / (4 * t)) = 9 * π / 4 := by field_simp
+              rwa [hEq] at this
+            rw [← Real.cos_sub_two_pi]
+            apply Real.cos_nonneg_of_mem_Icc
+            constructor <;> linarith
+          positivity
+        rw [hwp, hw0]
+        have hfac : wp u = w0 u * Real.cos (r * u) := by
+          rw [hwp, hw0]
+          ring
+        rw [hfac]
+        nlinarith
+    have hint := integral_mono hiL hiR hpoint
+    rw [integral_const_mul] at hint
+    rw [heqr, heq0]
+    nlinarith
+
+  have hP₂lower :
+      cInner * (-poleEvenResp g₂ t 0) ≤ -poleEvenResp g₂ t r := by
+    have heqr : poleEvenResp g₂ t r = 2 * ∫ u : ℝ, φ₂ u * wp u := by
+      rw [poleEvenResp]
+      exact integral_symmetrize hφ₂c hφ₂s hwpc hwpe
+    have heq0 : poleEvenResp g₂ t 0 = 2 * ∫ u : ℝ, φ₂ u * w0 u := by
+      rw [poleEvenResp]
+      simp only [Real.cos_zero, mul_one]
+      exact integral_symmetrize hφ₂c hφ₂s hw0c hw0e
+    have hiL : Integrable (fun u : ℝ => φ₂ u * wp u) :=
+      taper_integrable hφ₂c hφ₂s hwpc
+    have hiR : Integrable (fun u : ℝ => cInner * (φ₂ u * w0 u)) :=
+      (taper_integrable hφ₂c hφ₂s hw0c).const_mul _
+    have hpoint : ∀ u, φ₂ u * wp u ≤ cInner * (φ₂ u * w0 u) := by
+      intro u
+      by_cases hφ : φ₂ u = 0
+      · simp [hφ]
+      · have hu := hφ₂supp u hφ
+        rw [abs_lt] at hu
+        have hlow : 3 * π / (4 * t) < u := by
+          rw [hc₂, hRdef] at hu
+          have hEq : π / t - π / (4 * t) = 3 * π / (4 * t) := by
+            field_simp; ring
+          linarith
+        have hhigh : u < 5 * π / (4 * t) := by
+          rw [hc₂, hRdef] at hu
+          have hEq : π / t + π / (4 * t) = 5 * π / (4 * t) := by
+            field_simp; ring
+          linarith
+        have hx0 : 0 ≤ r * u := by
+          rw [hr]
+          have huPos : 0 < u := lt_trans (by positivity) hlow
+          positivity
+        have hxHigh : r * u ≤ 5 * π / 64 := by
+          rw [hr]
+          have := mul_le_mul_of_nonneg_left hhigh.le (show 0 ≤ t / 16 by positivity)
+          nlinarith
+        have hcos : cInner ≤ Real.cos (r * u) := by
+          dsimp [cInner]
+          exact Real.cos_le_cos_of_nonneg_of_le_pi
+            hx0
+            (by nlinarith [Real.pi_pos])
+            hxHigh
+        have hbase : φ₂ u * w0 u ≤ 0 := by
+          rw [hw0]
+          have htuLow : 3 * π / 4 < t * u := by
+            have := mul_lt_mul_of_pos_left hlow ht
+            have hEq : t * (3 * π / (4 * t)) = 3 * π / 4 := by field_simp
+            rwa [hEq] at this
+          have htuHigh : t * u < 5 * π / 4 := by
+            have := mul_lt_mul_of_pos_left hhigh ht
+            have hEq : t * (5 * π / (4 * t)) = 5 * π / 4 := by field_simp
+            rwa [hEq] at this
+          have hct : Real.cos (t * u) ≤ 0 := by
+            have hshift : 0 ≤ Real.cos (t * u - π) := by
+              apply Real.cos_nonneg_of_mem_Icc
+              constructor <;> linarith
+            rw [Real.cos_sub_pi] at hshift
+            linarith
+          have hphi : 0 ≤ φ₂ u := hφ₂n u
+          have hch : 0 < Real.cosh (u / 2) := Real.cosh_pos _
+          nlinarith
+        have hfac : wp u = w0 u * Real.cos (r * u) := by
+          rw [hwp, hw0]
+          ring
+        rw [hfac]
+        nlinarith
+    have hint := integral_mono hiL hiR hpoint
+    rw [integral_const_mul] at hint
+    rw [heqr, heq0]
+    nlinarith
+
+  have hPole0 : 0 < poleEvenResp (fun u => g₂ u + lam * g₁ u) t 0 := by
+    rw [poleEvenResp_add_smul hg₂c hg₂s hg₁c hg₁s]
+    have hnegA₂ : 0 < -poleEvenResp g₂ t 0 := by linarith
+    have hcInnerPos : 0 < cInner := lt_trans hcOuterPos hcSep
+    have hP₁lt : poleEvenResp g₁ t r < cInner * poleEvenResp g₁ t 0 := by
+      have hstrict :
+          cOuter * poleEvenResp g₁ t 0
+            < cInner * poleEvenResp g₁ t 0 :=
+        mul_lt_mul_of_pos_right hcSep hA₁
+      exact lt_of_le_of_lt hP₁upper hstrict
+    have hcross1 :
+        (-poleEvenResp g₂ t 0) * poleEvenResp g₁ t r
+          < (-poleEvenResp g₂ t 0) * (cInner * poleEvenResp g₁ t 0) :=
+      mul_lt_mul_of_pos_left hP₁lt hnegA₂
+    have hcross2 :
+        (-poleEvenResp g₂ t 0) * (cInner * poleEvenResp g₁ t 0)
+          ≤ (-poleEvenResp g₂ t r) * poleEvenResp g₁ t 0 := by
+      have hmul := mul_le_mul_of_nonneg_right hP₂lower hA₁.le
+      nlinarith
+    have hcross :
+        (-poleEvenResp g₂ t 0) * poleEvenResp g₁ t r
+          < (-poleEvenResp g₂ t r) * poleEvenResp g₁ t 0 :=
+      lt_of_lt_of_le hcross1 hcross2
+    rw [hlam]
+    have hratio :
+        -poleEvenResp g₂ t 0
+          < (-poleEvenResp g₂ t r / poleEvenResp g₁ t r)
+              * poleEvenResp g₁ t 0 := by
+      rw [div_mul_eq_mul_div]
+      exact (lt_div_iff₀ hP₁).2 (by nlinarith)
+    linarith
+
+  refine ⟨fun u => g₂ u + lam * g₁ u, r, ?_, ?_, ?_, hrpos, ?_, ?_, ?_, ?_, hPole0, ?_, ?_⟩
   · exact (symmetrize_contDiff hφ₂d).add (contDiff_const.mul (symmetrize_contDiff hφ₁d))
   · have hsc : HasCompactSupport (fun u : ℝ => lam * g₁ u) := hg₁s.mul_left
     exact hg₂s.add hsc
@@ -373,7 +608,7 @@ of `exists_positive_taper_poleEven_zero_pos` used by the earlier development. -/
 theorem exists_taper_poleEven_zero_evenResp_ne_zero_pos {a t : ℝ} (ht : 0 < t) :
     ∃ (g : ℝ → ℝ) (r : ℝ), ContDiff ℝ 2 g ∧ HasCompactSupport g ∧ (∀ u, g (-u) = g u)
       ∧ 0 < r ∧ poleEvenResp g t r = 0 ∧ evenResp g a r ≠ 0 := by
-  obtain ⟨g, r, h1, h2, h3, h4, -, -, -, h5, h6, -⟩ := exists_positive_taper_poleEven_zero_pos ht
+  obtain ⟨g, r, h1, h2, h3, h4, -, -, -, h5, -, h6, -⟩ := exists_positive_taper_poleEven_zero_pos ht
   exact ⟨g, r, h1, h2, h3, h4, h5, (h6 a).ne'⟩
 
 
@@ -386,9 +621,9 @@ theorem exists_positive_taper_poleEven_zero {t : ℝ} (ht : t ≠ 0) :
       ∧ poleEvenResp g t r = 0
       ∧ (∀ a : ℝ, 0 < evenResp g a r)
       ∧ (∀ u, g u ≠ 0 → |u| < 9 * π / (4 * |t|)) := by
-  obtain ⟨g, r, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩ :=
+  obtain ⟨g, r, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11⟩ :=
     exists_positive_taper_poleEven_zero_pos (t := |t|) (abs_pos.mpr ht)
-  refine ⟨g, r, h1, h2, h3, h4, h5, h6, h7, ?_, h9, h10⟩
+  refine ⟨g, r, h1, h2, h3, h4, h5, h6, h7, ?_, h10, h11⟩
   rcases abs_cases t with ⟨he, -⟩ | ⟨he, -⟩
   · rwa [← he]
   · have hneg : t = -|t| := by rw [he]; ring

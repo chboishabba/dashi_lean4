@@ -1,0 +1,10 @@
+import Synthesis.Monster3BPhi3PowerBasis
+
+namespace Synthesis.Monster3BPhi3PowerBasisRegression
+
+#check Monster3BPhi3PowerBasis.phi3_relation
+#check Monster3BPhi3PowerBasis.coordinateEquiv
+#check Monster3BPhi3PowerBasis.uniquePairCoordinates
+#check Monster3BPhi3PowerBasis.pairToField_mul
+
+end Synthesis.Monster3BPhi3PowerBasisRegression

@@ -34,10 +34,10 @@ structure SelectionCardinalityProfile where
 
 def selectionCardinalityProfile
     (fixture : PDBMirrorSelectedFixture) : SelectionCardinalityProfile :=
-  { theta1Lid := (selectedAtoms fixture.configuration SourceSelections.theta1Lid).length
-    hinge := (selectedAtoms fixture.configuration SourceSelections.hinge).length
-    core := (selectedAtoms fixture.configuration SourceSelections.core).length
-    theta2Nmp := (selectedAtoms fixture.configuration SourceSelections.theta2Nmp).length
+  { theta1Lid := (selectedAtoms fixture.configuration AgdaMirror.AdK.SourceSelections.theta1Lid).length
+    hinge := (selectedAtoms fixture.configuration AgdaMirror.AdK.SourceSelections.hinge).length
+    core := (selectedAtoms fixture.configuration AgdaMirror.AdK.SourceSelections.core).length
+    theta2Nmp := (selectedAtoms fixture.configuration AgdaMirror.AdK.SourceSelections.theta2Nmp).length
     dlnLidBackbone :=
       (selectedAtoms fixture.configuration (dlnLid .backbone)).length
     dlnNmpBackbone :=

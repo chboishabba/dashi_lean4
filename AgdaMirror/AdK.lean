@@ -8,6 +8,8 @@ import AgdaMirror.AdK.NonFactorability
 import AgdaMirror.AdK.CanonicalFactorisationValidation
 import AgdaMirror.AdK.PDBMirrorSelectedFixture
 import AgdaMirror.AdK.PDBMirrorSelectedFixtureValidation
+import AgdaMirror.AdK.PDBMirrorSelectionCardinality
+import AgdaMirror.AdK.PDBMirrorSelectionCardinalityValidation
 import AgdaMirror.AdK.PDBMirrorCVProjection
 import AgdaMirror.AdK.PDBMirrorCVProjectionValidation
 import AgdaMirror.AdK.PDBMirrorSourceEndpointAudit

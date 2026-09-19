@@ -402,28 +402,28 @@ theorem exists_positive_taper_poleEven_zero_pos {t : ℝ} (ht : 0 < t) :
           dsimp [cOuter]
           exact Real.cos_le_cos_of_nonneg_of_le_pi
             (by positivity) hxPi hxLow
+        have hct : 0 ≤ Real.cos (t * u) := by
+          have htuLow : 7 * π / 4 < t * u := by
+            have := mul_lt_mul_of_pos_left hlow ht
+            have hEq : t * (7 * π / (4 * t)) = 7 * π / 4 := by field_simp
+            rwa [hEq] at this
+          have htuHigh : t * u < 9 * π / 4 := by
+            have := mul_lt_mul_of_pos_left hhigh ht
+            have hEq : t * (9 * π / (4 * t)) = 9 * π / 4 := by field_simp
+            rwa [hEq] at this
+          rw [← Real.cos_sub_two_pi]
+          apply Real.cos_nonneg_of_mem_Icc
+          constructor <;> linarith
         have hbase : 0 ≤ φ₁ u * w0 u := by
-          have hwp0 := (hwin₁ u hφ₁supp |> fun _ => True.intro)
           rw [hw0]
-          have hct : 0 < Real.cos (t * u) := by
-            have htuLow : 7 * π / 4 < t * u := by
-              have := mul_lt_mul_of_pos_left hlow ht
-              have hEq : t * (7 * π / (4 * t)) = 7 * π / 4 := by field_simp
-              rwa [hEq] at this
-            have htuHigh : t * u < 9 * π / 4 := by
-              have := mul_lt_mul_of_pos_left hhigh ht
-              have hEq : t * (9 * π / (4 * t)) = 9 * π / 4 := by field_simp
-              rwa [hEq] at this
-            rw [← Real.cos_sub_two_pi]
-            apply Real.cos_nonneg_of_mem_Icc
-            constructor <;> linarith
-          positivity
-        rw [hwp, hw0]
-        have hfac : wp u = w0 u * Real.cos (r * u) := by
+          exact mul_nonneg (hφ₁n u)
+            (mul_nonneg (Real.cosh_pos (u / 2)).le hct)
+        have hfac : φ₁ u * wp u
+            = (φ₁ u * w0 u) * Real.cos (r * u) := by
           rw [hwp, hw0]
           ring
         rw [hfac]
-        nlinarith
+        exact mul_le_mul_of_nonneg_left hcos hbase
     have hint := integral_mono hiL hiR hpoint
     rw [integral_const_mul] at hint
     rw [heqr, heq0]
@@ -472,30 +472,32 @@ theorem exists_positive_taper_poleEven_zero_pos {t : ℝ} (ht : 0 < t) :
             hx0
             (by nlinarith [Real.pi_pos])
             hxHigh
+        have htuLow : 3 * π / 4 < t * u := by
+          have := mul_lt_mul_of_pos_left hlow ht
+          have hEq : t * (3 * π / (4 * t)) = 3 * π / 4 := by field_simp
+          rwa [hEq] at this
+        have htuHigh : t * u < 5 * π / 4 := by
+          have := mul_lt_mul_of_pos_left hhigh ht
+          have hEq : t * (5 * π / (4 * t)) = 5 * π / 4 := by field_simp
+          rwa [hEq] at this
+        have hct : Real.cos (t * u) ≤ 0 := by
+          have hshift : 0 ≤ Real.cos (t * u - π) := by
+            apply Real.cos_nonneg_of_mem_Icc
+            constructor <;> linarith
+          rw [Real.cos_sub_pi] at hshift
+          linarith
         have hbase : φ₂ u * w0 u ≤ 0 := by
           rw [hw0]
-          have htuLow : 3 * π / 4 < t * u := by
-            have := mul_lt_mul_of_pos_left hlow ht
-            have hEq : t * (3 * π / (4 * t)) = 3 * π / 4 := by field_simp
-            rwa [hEq] at this
-          have htuHigh : t * u < 5 * π / 4 := by
-            have := mul_lt_mul_of_pos_left hhigh ht
-            have hEq : t * (5 * π / (4 * t)) = 5 * π / 4 := by field_simp
-            rwa [hEq] at this
-          have hct : Real.cos (t * u) ≤ 0 := by
-            have hshift : 0 ≤ Real.cos (t * u - π) := by
-              apply Real.cos_nonneg_of_mem_Icc
-              constructor <;> linarith
-            rw [Real.cos_sub_pi] at hshift
-            linarith
           have hphi : 0 ≤ φ₂ u := hφ₂n u
           have hch : 0 < Real.cosh (u / 2) := Real.cosh_pos _
-          nlinarith
-        have hfac : wp u = w0 u * Real.cos (r * u) := by
+          exact mul_nonpos_of_nonneg_of_nonpos
+            hphi (mul_nonpos_of_nonneg_of_nonpos hch.le hct)
+        have hfac : φ₂ u * wp u
+            = (φ₂ u * w0 u) * Real.cos (r * u) := by
           rw [hwp, hw0]
           ring
         rw [hfac]
-        nlinarith
+        exact mul_le_mul_of_nonpos_left hcos hbase
     have hint := integral_mono hiL hiR hpoint
     rw [integral_const_mul] at hint
     rw [heqr, heq0]

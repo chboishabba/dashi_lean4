@@ -5,4 +5,5 @@ import AgdaMirror.AdK.CanonicalSelectionContent
 import AgdaMirror.AdK.COMGeometry
 import AgdaMirror.AdK.CVProjection
 import AgdaMirror.AdK.NonFactorability
+import AgdaMirror.AdK.CanonicalFactorisationValidation
 import AgdaMirror.AdK.KernelValidation

@@ -466,7 +466,7 @@ theorem poleQuotientMarginWindow {ρstar : Zeros} {t : ℝ}
           ≤ baselineCluster g t r * (1 + Real.sqrt 2 * (Real.cosh (9 * π / (8 * |t|)) - 1)) := by
   have hpi := Real.pi_pos
   have htabs : 0 < |t| := abs_pos.mpr ht
-  obtain ⟨g, r, hgs, hgc, heven, hrpos, hnn, hwin, -, hpole, -, hA, hrad⟩ :=
+  obtain ⟨g, r, hgs, hgc, heven, hrpos, hnn, hwin, -, hpole, hA, hrad⟩ :=
     exists_positive_taper_poleEven_zero ht
   set Λ : ℝ := 9 * π / (4 * |t|) with hΛdef
   have hΛpos : 0 < Λ := by rw [hΛdef]; positivity

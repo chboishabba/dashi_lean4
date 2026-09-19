@@ -1,0 +1,12 @@
+import Synthesis.LinearConsumerSyntheticBidiRuntimeByteEquality
+import Synthesis.LinearConsumerSyntheticBidiTwoVJointKernelCertificateRegression
+
+namespace Synthesis
+
+example : syntheticBidiRuntimeSeedBytes = syntheticBidiSeedBytes :=
+  syntheticBidiRuntimeSeedBytes_eq_formal
+
+example : syntheticBidiRuntimeActionBytes = syntheticBidiBaselineActionBytes :=
+  syntheticBidiRuntimeActionBytes_eq_formal
+
+end Synthesis

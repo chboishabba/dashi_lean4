@@ -29,4 +29,23 @@ example
   quarticFar_threeChannel_lt_cluster
     hA ht hNear hGamma hCluster hCoeff
 
+example
+    {budget baseline excess margin cluster : ℝ}
+    (hBudget : budget ≤ baseline + excess)
+    (hCluster : baseline + margin ≤ cluster)
+    (hExcess : excess < margin) :
+    budget < cluster :=
+  baselineExcess_lt_cluster hBudget hCluster hExcess
+
+example
+    {budget baseline excess a secondMoment cluster : ℝ}
+    (hBudget : budget ≤ baseline + excess)
+    (hCluster :
+      baseline + (Real.sqrt 2 / 2) * (a ^ 2 * secondMoment) ≤ cluster)
+    (hExcess :
+      excess < (Real.sqrt 2 / 2) * (a ^ 2 * secondMoment)) :
+    budget < cluster :=
+  baselineExcess_lt_cluster_quadraticMargin hBudget hCluster hExcess
+
+
 end Synthesis

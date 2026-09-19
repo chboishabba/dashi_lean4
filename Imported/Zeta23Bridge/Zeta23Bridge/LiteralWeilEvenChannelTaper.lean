@@ -106,7 +106,7 @@ is strictly positive **at every height `a` simultaneously**, while the
 ordinate-modulated even pole response still vanishes.  The support and two-point
 positivity clauses are what later lets the same taper serve as a *positive even
 cone*: every reflection pair, whatever its height, responds with the same sign. -/
-theorem exists_positive_taper_poleEven_zero_pos {t : ℝ} (ht : 0 < t) :
+theorem exists_positive_taper_poleEven_zero_pos_with_radiusZero_sign {t : ℝ} (ht : 0 < t) :
     ∃ (g : ℝ → ℝ) (r : ℝ), ContDiff ℝ 2 g ∧ HasCompactSupport g ∧ (∀ u, g (-u) = g u)
       ∧ 0 < r ∧ (∀ u, 0 ≤ g u)
       ∧ (∀ u, g u ≠ 0 → 2 * r * |u| < π / 2)
@@ -605,17 +605,31 @@ theorem exists_positive_taper_poleEven_zero_pos {t : ℝ} (ht : 0 < t) :
       rw [hc₁, hRdef]; field_simp; ring
     linarith [hval ▸ habs]
 
+/-- Backward-compatible positive-ordinate constructor.  The strengthened
+variant above additionally exports the radius-zero pole sign. -/
+theorem exists_positive_taper_poleEven_zero_pos {t : ℝ} (ht : 0 < t) :
+    ∃ (g : ℝ → ℝ) (r : ℝ), ContDiff ℝ 2 g ∧ HasCompactSupport g ∧ (∀ u, g (-u) = g u)
+      ∧ 0 < r ∧ (∀ u, 0 ≤ g u)
+      ∧ (∀ u, g u ≠ 0 → 2 * r * |u| < π / 2)
+      ∧ (∃ u v : ℝ, 0 < g u ∧ 0 < g v ∧ |u| ≠ |v|)
+      ∧ poleEvenResp g t r = 0
+      ∧ (∀ a : ℝ, 0 < evenResp g a r)
+      ∧ (∀ u, g u ≠ 0 → |u| < 9 * π / (4 * t)) := by
+  obtain ⟨g, r, h1, h2, h3, h4, h5, h6, h7, h8, -, h10, h11⟩ :=
+    exists_positive_taper_poleEven_zero_pos_with_radiusZero_sign ht
+  exact ⟨g, r, h1, h2, h3, h4, h5, h6, h7, h8, h10, h11⟩
+
 /-- **The explicit even-channel taper**, for a positive ordinate: the special case
 of `exists_positive_taper_poleEven_zero_pos` used by the earlier development. -/
 theorem exists_taper_poleEven_zero_evenResp_ne_zero_pos {a t : ℝ} (ht : 0 < t) :
     ∃ (g : ℝ → ℝ) (r : ℝ), ContDiff ℝ 2 g ∧ HasCompactSupport g ∧ (∀ u, g (-u) = g u)
       ∧ 0 < r ∧ poleEvenResp g t r = 0 ∧ evenResp g a r ≠ 0 := by
-  obtain ⟨g, r, h1, h2, h3, h4, -, -, -, h5, -, h6, -⟩ := exists_positive_taper_poleEven_zero_pos ht
+  obtain ⟨g, r, h1, h2, h3, h4, -, -, -, h5, h6, -⟩ := exists_positive_taper_poleEven_zero_pos ht
   exact ⟨g, r, h1, h2, h3, h4, h5, (h6 a).ne'⟩
 
 
 /-- The strengthened positive construction, for an arbitrary nonzero ordinate. -/
-theorem exists_positive_taper_poleEven_zero {t : ℝ} (ht : t ≠ 0) :
+theorem exists_positive_taper_poleEven_zero_with_radiusZero_sign {t : ℝ} (ht : t ≠ 0) :
     ∃ (g : ℝ → ℝ) (r : ℝ), ContDiff ℝ 2 g ∧ HasCompactSupport g ∧ (∀ u, g (-u) = g u)
       ∧ 0 < r ∧ (∀ u, 0 ≤ g u)
       ∧ (∀ u, g u ≠ 0 → 2 * r * |u| < π / 2)
@@ -625,7 +639,7 @@ theorem exists_positive_taper_poleEven_zero {t : ℝ} (ht : t ≠ 0) :
       ∧ (∀ a : ℝ, 0 < evenResp g a r)
       ∧ (∀ u, g u ≠ 0 → |u| < 9 * π / (4 * |t|)) := by
   obtain ⟨g, r, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11⟩ :=
-    exists_positive_taper_poleEven_zero_pos (t := |t|) (abs_pos.mpr ht)
+    exists_positive_taper_poleEven_zero_pos_with_radiusZero_sign (t := |t|) (abs_pos.mpr ht)
   refine ⟨g, r, h1, h2, h3, h4, h5, h6, h7, ?_, ?_, h10, h11⟩
   · rcases abs_cases t with ⟨he, -⟩ | ⟨he, -⟩
     · rwa [← he]
@@ -636,6 +650,19 @@ theorem exists_positive_taper_poleEven_zero {t : ℝ} (ht : t ≠ 0) :
     · have hneg : t = -|t| := by rw [he]; ring
       rw [hneg, poleEvenResp_neg_ordinate]
       exact h9
+
+/-- Backward-compatible arbitrary-ordinate constructor. -/
+theorem exists_positive_taper_poleEven_zero {t : ℝ} (ht : t ≠ 0) :
+    ∃ (g : ℝ → ℝ) (r : ℝ), ContDiff ℝ 2 g ∧ HasCompactSupport g ∧ (∀ u, g (-u) = g u)
+      ∧ 0 < r ∧ (∀ u, 0 ≤ g u)
+      ∧ (∀ u, g u ≠ 0 → 2 * r * |u| < π / 2)
+      ∧ (∃ u v : ℝ, 0 < g u ∧ 0 < g v ∧ |u| ≠ |v|)
+      ∧ poleEvenResp g t r = 0
+      ∧ (∀ a : ℝ, 0 < evenResp g a r)
+      ∧ (∀ u, g u ≠ 0 → |u| < 9 * π / (4 * |t|)) := by
+  obtain ⟨g, r, h1, h2, h3, h4, h5, h6, h7, h8, -, h10, h11⟩ :=
+    exists_positive_taper_poleEven_zero_with_radiusZero_sign ht
+  exact ⟨g, r, h1, h2, h3, h4, h5, h6, h7, h8, h10, h11⟩
 
 /-- The construction for an arbitrary nonzero ordinate and an arbitrary height. -/
 theorem exists_taper_poleEven_zero_evenResp_ne_zero {a t : ℝ} (ht : t ≠ 0) :

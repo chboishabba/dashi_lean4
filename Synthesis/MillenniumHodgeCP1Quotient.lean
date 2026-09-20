@@ -63,6 +63,37 @@ theorem quotientLift_mk {α : Type*}
     quotientLift f hf (Projectivization.mk ℂ v hv) = f ⟨v, hv⟩ := by
   rfl
 
+/-- Every point of the actual projective quotient lies in one of the two
+standard affine charts.  The proof normalizes an arbitrary nonzero homogeneous
+representative by whichever coordinate is nonzero. -/
+theorem chart_cover (p : CP1) :
+    (∃ z : ℂ, firstChartClass z = p) ∨
+    (∃ w : ℂ, secondChartClass w = p) := by
+  induction p using Projectivization.ind with
+  | h v hv =>
+      by_cases h0 : v 0 = 0
+      · have h1 : v 1 ≠ 0 := by
+          intro hz
+          apply hv
+          funext i
+          fin_cases i <;> assumption
+        right
+        refine ⟨v 0 / v 1, ?_⟩
+        rw [secondChartClass, Projectivization.mk_eq_mk_iff' ℂ]
+        refine ⟨v 1, ?_⟩
+        funext i
+        fin_cases i
+        · simp [secondVec, h1]
+        · simp [secondVec]
+      · left
+        refine ⟨v 1 / v 0, ?_⟩
+        rw [firstChartClass, Projectivization.mk_eq_mk_iff' ℂ]
+        refine ⟨v 0, ?_⟩
+        funext i
+        fin_cases i
+        · simp [firstVec]
+        · simp [firstVec, h0]
+
 /-- The two affine representatives glue in the actual projective quotient when
 their coordinates satisfy the overlap equation `w*z = 1`. -/
 theorem chart_classes_eq_of_mul_eq_one

@@ -191,3 +191,13 @@ import Synthesis.MillenniumBSDHasseLocalCoefficientBound
 import Synthesis.MillenniumBSDHasseGlobalCoefficientBound
 
 import Synthesis.MillenniumBSDHasseEulerDirichletAgreement
+
+import Synthesis.MillenniumHodgeSphereSimplicialBoundaryH2
+
+import Synthesis.MillenniumBSDCMEta32Fricke
+
+import Synthesis.MillenniumBSDCMEta32Kernel
+
+import Synthesis.MillenniumBSDCMEta32QProduct
+
+import Synthesis.MillenniumBSDCMEta32Decay

@@ -80,19 +80,14 @@ theorem quarterTurn_covariance_forces_coefficient_zero
     (a : ℕ → ℂ)
     (n : ℕ)
     (hcoeff : Complex.I ^ n * a n = Complex.I * a n)
-    (hmod : n % 4 ≠ 1) :
+    (hphase : Complex.I ^ n ≠ Complex.I) :
     a n = 0 := by
-  have hI : Complex.I ^ n ≠ Complex.I := by
-    intro h
-    have hpow : Complex.I ^ (n % 4) = Complex.I := by
-      simpa [pow_eq_pow_mod_four] using h
-    interval_cases hrem : n % 4 <;> simp [hrem] at hpow hmod
-  apply (sub_eq_zero.mp ?_)
   have hmul : (Complex.I ^ n - Complex.I) * a n = 0 := by
     calc
       (Complex.I ^ n - Complex.I) * a n
           = Complex.I ^ n * a n - Complex.I * a n := by ring
       _ = 0 := by rw [hcoeff]; ring
-  exact (mul_eq_zero.mp hmul).resolve_left (sub_ne_zero.mpr hI)
+  exact (mul_eq_zero.mp hmul).resolve_left (sub_ne_zero.mpr hphase)
+
 
 end Synthesis.Millennium.BSD

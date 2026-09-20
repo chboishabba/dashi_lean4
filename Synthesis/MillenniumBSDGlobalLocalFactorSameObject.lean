@@ -120,8 +120,6 @@ theorem globalHeightOne_localEulerFactor_all_primePower
   · subst p
     unfold WeierstrassCurve.localEulerFactor
     rw [rationalPrimeResidueField_natCard]
-    rw [show rationalHeightOneNorm (rationalPrimePlace 2) = 2 by
-      simp [rationalHeightOneNorm, rationalPrimePlace]]
     unfold WeierstrassCurve.localPowerSeries
     rw [globalHeightOne_localPolynomial_two_eq_one]
     simp [explicitAllPrimePowerCoefficient]

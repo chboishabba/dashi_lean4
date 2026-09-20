@@ -108,7 +108,7 @@ theorem integral_normalizedProjectivePhysicalProfile_cosh_eq_literal
 
 /-- Exact normalized synthetic-height identity at q=0. -/
 theorem normalizedProjectiveHorizontalQuadratic_sq_eq_neg_heightDefect
-    {t alpha : ℝ} (ht : 0 < t) :
+    {t alpha : ℝ} (ht : 18 ≤ t) :
     alpha^2 * normalizedProjectiveHorizontalQuadratic t alpha 0
       =
     -4*t *
@@ -116,6 +116,7 @@ theorem normalizedProjectiveHorizontalQuadratic_sq_eq_neg_heightDefect
         (quantitativeCanonicalTaper t)
         (quantitativeSampleRadius t)
         (t*alpha) 0 := by
+  have ht0 : 0 < t := by linarith
   have hP :
       Integrable (normalizedProjectivePhysicalProfile t) :=
     normalizedProjectivePhysicalProfile_integrable t
@@ -134,7 +135,7 @@ theorem normalizedProjectiveHorizontalQuadratic_sq_eq_neg_heightDefect
   have hbase :=
     normalizedProjectiveBaseTransform_eq_physicalCosine t 0
   simp only [zero_mul, Real.cos_zero, mul_one] at hbase
-  have hbase0 := normalizedProjectiveBaseTransform_zero ht
+  have hbase0 := normalizedProjectiveBaseTransform_zero ht0
   have hPzero :
       (∫ v : ℝ, normalizedProjectivePhysicalProfile t v) = 0 := by
     linarith [hbase, hbase0]
@@ -177,7 +178,7 @@ theorem normalizedProjectiveHorizontalQuadratic_sq_eq_neg_heightDefect
             (quantitativeCanonicalTaper t)
             (quantitativeSampleRadius t))
           (t*alpha) 0 u :=
-      integral_normalizedProjectivePhysicalProfile_cosh_eq_literal ht
+      integral_normalizedProjectivePhysicalProfile_cosh_eq_literal ht0
     _ =
     -4*t *
       heightDefect
@@ -185,8 +186,8 @@ theorem normalizedProjectiveHorizontalQuadratic_sq_eq_neg_heightDefect
         (quantitativeSampleRadius t)
         (t*alpha) 0 := by
       rw [reflectionPairWeight_projTaper_zero_eq_neg_four_heightDefect
-        (quantitativeCanonicalTaper_contDiff (by linarith : 18 ≤ t)).continuous
-        (quantitativeCanonicalTaper_compact (by linarith : 18 ≤ t))]
+        (quantitativeCanonicalTaper_contDiff ht).continuous
+        (quantitativeCanonicalTaper_compact ht)]
       ring
 
 /--
@@ -216,7 +217,7 @@ theorem normalizedProjectiveHorizontalQuadratic_zero_neg
       hu0 hv0 huv hta
   have hid :=
     normalizedProjectiveHorizontalQuadratic_sq_eq_neg_heightDefect
-      (t := t) (alpha := alpha) ht0
+      (t := t) (alpha := alpha) ht
   have ha2 : 0 < alpha^2 := sq_pos_of_ne_zero halpha
   nlinarith
 

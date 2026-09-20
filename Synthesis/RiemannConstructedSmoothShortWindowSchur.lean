@@ -72,12 +72,10 @@ theorem exists_constructedSmoothShortWindowSchurCertificate
   let shortW : ShortNormalizedWindowTriple :=
     { triple := w.toNormalizedNarrowWindowTriple
       pUpperShort := by
-        exact lt_trans w.lowMiddleSeparated
-          (lt_trans (le_lt_of_le_of_lt w.middleOrdered w.middleTopSeparated)
-            (lt_of_le_of_lt (le_of_lt w.middleTopSeparated) htop))
+        linarith [w.lowMiddleSeparated, w.middleOrdered,
+          w.middleTopSeparated, htop]
       q0UpperShort := by
-        exact lt_trans w.middleTopSeparated
-          (lt_of_le_of_lt (by linarith : w.be2 ≤ w.be2) htop)
+        linarith [w.middleTopSeparated, htop]
       q1UpperShort := htop }
 
   let env :=

@@ -70,9 +70,9 @@ theorem chart_classes_eq_of_mul_eq_one
     firstChartClass z = secondChartClass w := by
   rw [firstChartClass, secondChartClass,
     Projectivization.mk_eq_mk_iff' ℂ]
-  refine ⟨w, ?_⟩
+  refine ⟨z, ?_⟩
   funext i
-  fin_cases i <;> simp [firstVec, secondVec, hwz]
+  fin_cases i <;> simp [firstVec, secondVec, hwz, mul_comm]
 
 /-- Symmetric form matching the Agda overlap theorem's `z*w=1` orientation. -/
 theorem chart_classes_eq_of_mul_eq_one'

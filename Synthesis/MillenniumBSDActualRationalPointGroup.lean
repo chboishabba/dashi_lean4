@@ -206,4 +206,57 @@ theorem totalGlobalKummer_localizes
           { x := x, y := y, onCurve := h,
             x_ne_zero := hx0, x_ne_one := hx1 }).symm
 
+theorem totalGlobalKummer_finite_local_condition
+    (P : RationalProjectivePoint)
+    (p : Nat.Primes) :
+    letI : Fact p.1.Prime := ⟨p.2⟩
+    localizeKummerPair p.1 (totalGlobalKummer P)
+      ∈ LocalKummerImage p.1 := by
+  letI : Fact p.1.Prime := ⟨p.2⟩
+  refine ⟨localizeRationalProjectivePoint p.1 P, ?_⟩
+  exact (totalGlobalKummer_localizes p.1 P).symm
+
+theorem totalGlobalKummer_real_local_condition
+    (P : RationalProjectivePoint) :
+    realKummerLocalization (totalGlobalKummer P)
+      ∈ RealKummerImage := by
+  cases P with
+  | infinity =>
+      exact torsionKummer_real_local_condition
+        RationalTwoTorsionPoint.infinity
+  | affine x y h =>
+      by_cases hx0 : x = 0
+      · subst x
+        have hy : y = 0 := rational_y_eq_zero_of_x_eq_zero h rfl
+        subst y
+        simpa [totalGlobalKummer] using
+          torsionKummer_real_local_condition
+            RationalTwoTorsionPoint.zero
+      by_cases hx1 : x = 1
+      · subst x
+        have hy : y = 0 := rational_y_eq_zero_of_x_eq_one h rfl
+        subst y
+        simpa [totalGlobalKummer] using
+          torsionKummer_real_local_condition
+            RationalTwoTorsionPoint.one
+      · have hreal :=
+          ordinaryKummer_real_local_condition
+            { x := x, y := y, onCurve := h,
+              x_ne_zero := hx0, x_ne_one := hx1 }
+        simpa [totalGlobalKummer, hx0, hx1] using hreal
+
+def actualRationalPointSelmerClass
+    (P : RationalProjectivePoint) :
+    ExplicitTwoSelmerClass where
+  globalClass := totalGlobalKummer P
+  realCondition := totalGlobalKummer_real_local_condition P
+  finiteCondition := totalGlobalKummer_finite_local_condition P
+
+theorem actualRationalPointSelmerClass_mem
+    (P : RationalProjectivePoint) :
+    (actualRationalPointSelmerClass P).globalClass
+      ∈ ExplicitTwoSelmerIntersection :=
+  explicitSelmerClass_iff_mem_intersection
+    (actualRationalPointSelmerClass P)
+
 end Synthesis.Millennium.BSD

@@ -126,4 +126,72 @@ theorem r571_galerkinHermitian_of_initialEnergy
   have h := r571_pairedSecondMoment_of_stateEnvelope s hw hk hstate
   convert h using 1 <;> ring
 
+/-- If the spectator is itself a Galerkin mode, the Hermitian scalar amplitude
+is bounded directly by the initial energy, with no square root remaining. -/
+theorem hermitianModePair_le_initialEnergy
+    (G : GalerkinFlow) {t₀ t : ℝ} (ht : t₀ ≤ t)
+    (k d : Wave) :
+    |hermitianStateScalar (G.u t k) (G.u t d)|
+      ≤ G.energy t₀ := by
+  have hk := galerkin_mode_le_initialEnergyNorm G ht k
+  have hd := galerkin_mode_le_initialEnergyNorm G ht d
+  have hpair := abs_hermitianStateScalar_le (G.u t k) (G.u t d)
+  have hL2 : 0 ≤ wienerL2 G.modes (G.u t₀) :=
+    wienerL2_nonneg G.modes (G.u t₀)
+  calc
+    |hermitianStateScalar (G.u t k) (G.u t d)|
+        ≤ nrm (G.u t k) * nrm (G.u t d) := hpair
+    _ ≤ wienerL2 G.modes (G.u t₀)
+          * wienerL2 G.modes (G.u t₀) :=
+      mul_le_mul hk hd (nrm_nonneg _) hL2
+    _ = (wienerL2 G.modes (G.u t₀)) ^ 2 := by ring
+    _ = G.energy t₀ := G.energy_eq_wienerL2_sq t₀
+
+/-- The actual scalar state used by the Hermitian pair with a physical
+spectator mode. -/
+def physicalHermitianScalarState
+    (G : GalerkinFlow) (t : ℝ) (spectator : Wave) : Wave → ℝ :=
+  fun k => hermitianStateScalar (G.u t k) (G.u t spectator)
+
+/-- Complete periodic state envelope with the cutoff-independent radical-free
+choice G1 = E0 and G2 = 2 E0. -/
+theorem physicalHermitianOppositeShiftEnvelope
+    (G : GalerkinFlow) {t₀ t : ℝ} (ht : t₀ ≤ t)
+    (spectator center shift : Wave) :
+    StateDerivativeEnvelope
+      (G.energy t₀)
+      (2 * G.energy t₀)
+      (physicalHermitianScalarState G t spectator (center + shift))
+      (physicalHermitianScalarState G t spectator (center - shift))
+      (wlen shift) := by
+  apply periodicOppositeShiftStateEnvelope
+  · exact G.energy_nonneg t₀
+  · intro mode
+    exact hermitianModePair_le_initialEnergy G ht mode spectator
+
+/-- R571 state-side payment with coefficient exactly 3 times the initial
+Galerkin energy.  No independent G1, G2, frequency derivative, or path-gradient
+authority remains. -/
+theorem r571_physicalHermitian_of_initialEnergy
+    (G : GalerkinFlow) {t₀ t : ℝ} (ht : t₀ ≤ t)
+    (spectator : Wave)
+    (s : DASHI.NS.Unforced.HelicitySign)
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    {k y : E} {center shift : Wave} {w : ℝ}
+    (hy : ‖y‖ = wlen shift)
+    (hw : 0 ≤ w)
+    (hk : 1 ≤ ‖k‖) :
+    w *
+        (|radialSymbol s (k + y) - radialSymbol s k|
+            * |physicalHermitianScalarState G t spectator (center + shift)
+                - physicalHermitianScalarState G t spectator (center - shift)|
+          + |centeredRadialDefect s k y|
+            * |physicalHermitianScalarState G t spectator (center - shift)|)
+      ≤ w * (‖y‖ * ‖y‖) * (3 * G.energy t₀) := by
+  have hstate := physicalHermitianOppositeShiftEnvelope
+    G ht spectator center shift
+  rw [← hy] at hstate
+  have h := r571_pairedSecondMoment_of_stateEnvelope s hw hk hstate
+  convert h using 1 <;> ring
+
 end RequestProject.NavierStokes.R571PeriodicHermitianEnergy

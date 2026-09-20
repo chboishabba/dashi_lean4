@@ -112,8 +112,8 @@ theorem inert_projectivePointCount_eq_p_add_one
     intro hp
     subst p
     norm_num at hmod
-  apply Int.ofNat_injective
-  change (projectivePointCount p : ℤ) = (p + 1 : ℕ)
+  apply Int.ofNat.inj
+  change (projectivePointCount p : ℤ) = ((p + 1 : ℕ) : ℤ)
   rw [projectivePointCount_cast_eq hp2,
     inert_cm_character_sum_zero hmod]
   norm_num

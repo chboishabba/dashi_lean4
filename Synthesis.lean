@@ -22,6 +22,7 @@ import Synthesis.EndToEnd
 import Synthesis.AxiomAudit
 import Synthesis.MillenniumHodgeCP1Quotient
 import Synthesis.MillenniumBSDRationalSquareBits
+import Synthesis.MillenniumBSDCMPrimeWitness
 
 /-!
 # Cross-domain synthesis spine

@@ -145,3 +145,11 @@ import Synthesis.MillenniumBSDActualRationalPointGroup
 import Synthesis.MillenniumBSDGlobalKummerBoundaryCases
 
 import Synthesis.MillenniumBSDGlobalKummerOrdinaryHom
+
+import Synthesis.MillenniumBSDGlobalKummerTorsionTriangle
+
+import Synthesis.MillenniumBSDGlobalKummerTorsionTranslate
+
+import Synthesis.MillenniumBSDGlobalKummerHomomorphism
+
+import Synthesis.MillenniumBSDGlobalKummerQuotientToSelmer

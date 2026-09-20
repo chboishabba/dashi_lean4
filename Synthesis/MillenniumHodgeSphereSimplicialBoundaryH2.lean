@@ -159,29 +159,23 @@ structure TetrahedralToSingularSphereComparison where
   leftInverse : Function.LeftInverse fromSingular toSingular
   rightInverse : Function.RightInverse fromSingular toSingular
 
-noncomputable def tetrahedralH2IsoSphereSingularH2
+/--
+The exact remaining same-object bridge, stated without smuggling in linearity:
+an equivalence from the explicit top homology of the tetrahedral simplicial
+sphere to the actual singular H₂ of the topological 2-sphere.
+-/
+noncomputable def tetrahedralH2EquivSphereSingularH2
     (comparison : TetrahedralToSingularSphereComparison) :
-    ModuleCat.of ℚ ℚ ≅ sphere2SingularH2 := by
-  let e : ℚ ≃ TetraH2Class := tetrahedralSphereH2EquivQ.symm
-  let e₂ : TetraH2Class ≃ sphere2SingularH2 :=
-    { toFun := comparison.toSingular
-      invFun := comparison.fromSingular
-      left_inv := comparison.leftInverse
-      right_inv := comparison.rightInverse }
-  exact ModuleCat.isoMk
-    { toFun := fun q => e₂ (e q)
-      map_add' := by
-        intro x y
-        -- linearity belongs to the comparison map; this bridge structure is
-        -- intentionally only an equivalence until that native comparison is built.
-        sorry
-      map_smul' := by
-        intro r x
-        sorry }
-    { toFun := fun h => tetraH2ToQ (comparison.fromSingular h)
-      map_add' := by intro x y; sorry
-      map_smul' := by intro r x; sorry }
-    (by ext q; simp [e, e₂, tetrahedralSphereH2EquivQ])
-    (by ext h; simp [e, e₂, comparison.rightInverse h])
+    TetraH2Class ≃ sphere2SingularH2 where
+  toFun := comparison.toSingular
+  invFun := comparison.fromSingular
+  left_inv := comparison.leftInverse
+  right_inv := comparison.rightInverse
+
+theorem sphereSingularH2_equiv_Q_of_tetrahedralComparison
+    (comparison : TetrahedralToSingularSphereComparison) :
+    Nonempty (sphere2SingularH2 ≃ ℚ) := by
+  exact ⟨(tetrahedralH2EquivSphereSingularH2 comparison).symm.trans
+    tetrahedralSphereH2EquivQ⟩
 
 end Synthesis.Millennium.Hodge

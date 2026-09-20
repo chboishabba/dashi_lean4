@@ -52,7 +52,7 @@ theorem splitQuadraticShadow_neg_one
   have hsquare : IsSquare (-1 : ZMod p) :=
     ZMod.exists_sq_eq_neg_one_iff.mpr (by omega)
   have hne : (-1 : ZMod p) ≠ 0 := neg_ne_zero.mpr one_ne_zero
-  rw [quadraticChar_one_iff_isSquare hne.mpr]
+  rw [quadraticChar_one_iff_isSquare hne]
   · simp
   · exact hsquare
 

@@ -367,6 +367,24 @@ theorem literalClayD_agdaContract : AgdaStyleClayOptionD :=
   AgdaStyleClayOptionD_iff_ClaySpec.mpr
     DASHILiteralClayNS.literalClayD
 
+
+/-- Exact four-way terminal sum on the Agda-style concrete semantic surface. -/
+inductive AgdaStyleAnyOneClayResolution : Prop
+  | resolvedA : AgdaStyleClayOptionA → AgdaStyleAnyOneClayResolution
+  | resolvedB : AgdaStyleClayOptionB → AgdaStyleAnyOneClayResolution
+  | resolvedC : AgdaStyleClayOptionC → AgdaStyleAnyOneClayResolution
+  | resolvedD : AgdaStyleClayOptionD → AgdaStyleAnyOneClayResolution
+
+/-- Actual terminal inhabitant on the concrete Agda-style surface, via C. -/
+theorem literalAgdaStyleAnyOneClayResolution :
+    AgdaStyleAnyOneClayResolution :=
+  AgdaStyleAnyOneClayResolution.resolvedC literalClayC_agdaContract
+
+/-- Independent terminal inhabitant on the same concrete surface, via D. -/
+theorem literalAgdaStyleAnyOneClayResolutionViaD :
+    AgdaStyleAnyOneClayResolution :=
+  AgdaStyleAnyOneClayResolution.resolvedD literalClayD_agdaContract
+
 theorem literalAnyOneViaAgdaContractC :
     DASHILiteralClayNS.AnyOneClayResolution :=
   DASHILiteralClayNS.AnyOneClayResolution.resolvedC
@@ -383,5 +401,7 @@ theorem literalAnyOneViaAgdaContractD :
 #print axioms AgdaStyleClayOptionD_iff_ClaySpec
 #print axioms literalClayC_agdaContract
 #print axioms literalClayD_agdaContract
+#print axioms literalAgdaStyleAnyOneClayResolution
+#print axioms literalAgdaStyleAnyOneClayResolutionViaD
 
 end AgdaConcreteClayContract

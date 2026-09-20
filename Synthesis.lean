@@ -31,6 +31,7 @@ import Synthesis.MillenniumBSDRationalKummerQuotient
 import Synthesis.MillenniumBSDCMInertCharacterSum
 import Synthesis.MillenniumBSDLocalSquareClass
 import Synthesis.MillenniumBSDFrobeniusPointCount
+import Synthesis.MillenniumBSDTotalLocalKummer
 
 /-!
 # Cross-domain synthesis spine

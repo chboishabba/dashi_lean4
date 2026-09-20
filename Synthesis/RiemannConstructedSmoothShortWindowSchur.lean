@@ -105,6 +105,7 @@ theorem exists_constructedSmoothShortWindowSchurCertificate
   refine ⟨{
     windows := shortW
     lam := 1
+    lam_pos := one_pos
     envelope := env
     sigmaHeight_pos := hsigma
     sigmaHeight_lt_target := hord

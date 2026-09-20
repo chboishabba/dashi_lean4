@@ -252,4 +252,115 @@ theorem oneTranslate_secondSquareClass
           * padicSquareClassOf p
               ⟨x - 1, sub_ne_zero.mpr hx1⟩ := rfl
 
+
+theorem totalLocalKummer_add_zeroTorsion_ordinary
+    {p : ℕ} [Fact p.Prime]
+    {x y : ℚ_[p]}
+    (hcurve : y ^ 2 = x ^ 3 - x)
+    (hx0 : x ≠ 0)
+    (hx1 : x ≠ 1)
+    (hxm1 : x ≠ -1) :
+    totalLocalKummer p
+      ((.affine x y hcurve : PadicProjectivePoint p)
+        + zeroTorsionPoint p)
+      =
+    totalLocalKummer p (.affine x y hcurve)
+      * totalLocalKummer p (zeroTorsionPoint p) := by
+  have hxR0 : secantSumX x y 0 0 ≠ 0 := by
+    rw [zeroTorsion_translate_x hcurve hx0]
+    exact neg_ne_zero.mpr (inv_ne_zero hx0)
+  have hxR1 : secantSumX x y 0 0 ≠ 1 := by
+    rw [zeroTorsion_translate_x hcurve hx0]
+    intro h
+    have : x = -1 := by
+      field_simp [hx0] at h
+      linear_combination h
+    exact hxm1 this
+  let Pin : OrdinaryPadicKummerPoint p :=
+    { x := x
+    , y := y
+    , onCurve := hcurve
+    , x_ne_zero := hx0
+    , x_ne_one := hx1 }
+  let Pout : OrdinaryPadicKummerPoint p :=
+    { x := secantSumX x y 0 0
+    , y := secantSumY x y 0 0
+    , onCurve := secantSum_onCurve hcurve (by norm_num) hx0
+    , x_ne_zero := hxR0
+    , x_ne_one := hxR1 }
+  rw [show zeroTorsionPoint p =
+      (.affine 0 0 (by norm_num) : PadicProjectivePoint p) by rfl]
+  rw [padicProjective_secant_add hcurve (by norm_num) hx0]
+  change totalLocalKummer p
+      (.affine Pout.x Pout.y Pout.onCurve)
+      =
+    totalLocalKummer p
+      (.affine Pin.x Pin.y Pin.onCurve)
+      * totalLocalKummer p (.affine 0 0 (by norm_num))
+  rw [totalLocalKummer_ordinary Pout,
+      totalLocalKummer_ordinary Pin,
+      totalLocalKummer_zero]
+  apply Prod.ext
+  · simpa [Pin, Pout, mul_comm] using
+      zeroTranslate_firstSquareClass hcurve hx0
+  · simpa [Pin, Pout, mul_comm] using
+      zeroTranslate_secondSquareClass hcurve hx0 hx1 hxm1
+
+theorem totalLocalKummer_add_oneTorsion_ordinary
+    {p : ℕ} [Fact p.Prime]
+    {x y : ℚ_[p]}
+    (hcurve : y ^ 2 = x ^ 3 - x)
+    (hx0 : x ≠ 0)
+    (hx1 : x ≠ 1)
+    (hxm1 : x ≠ -1) :
+    totalLocalKummer p
+      ((.affine x y hcurve : PadicProjectivePoint p)
+        + oneTorsionPoint p)
+      =
+    totalLocalKummer p (.affine x y hcurve)
+      * totalLocalKummer p (oneTorsionPoint p) := by
+  have hxR0 : secantSumX x y 1 0 ≠ 0 := by
+    rw [oneTorsion_translate_x hcurve hx1]
+    exact div_ne_zero
+      (by
+        intro h
+        exact hxm1 (by linear_combination h))
+      (sub_ne_zero.mpr hx1)
+  have hxR1 : secantSumX x y 1 0 ≠ 1 := by
+    rw [oneTorsion_translate_x hcurve hx1]
+    intro h
+    field_simp [sub_ne_zero.mpr hx1] at h
+    norm_num at h
+  let Pin : OrdinaryPadicKummerPoint p :=
+    { x := x
+    , y := y
+    , onCurve := hcurve
+    , x_ne_zero := hx0
+    , x_ne_one := hx1 }
+  let Pout : OrdinaryPadicKummerPoint p :=
+    { x := secantSumX x y 1 0
+    , y := secantSumY x y 1 0
+    , onCurve := secantSum_onCurve hcurve (by
+        exact sub_ne_zero.mpr hx1) 
+    , x_ne_zero := hxR0
+    , x_ne_one := hxR1 }
+  rw [show oneTorsionPoint p =
+      (.affine 1 0 (by norm_num) : PadicProjectivePoint p) by rfl]
+  rw [padicProjective_secant_add hcurve (by norm_num)
+      (sub_ne_zero.mpr hx1)]
+  change totalLocalKummer p
+      (.affine Pout.x Pout.y Pout.onCurve)
+      =
+    totalLocalKummer p
+      (.affine Pin.x Pin.y Pin.onCurve)
+      * totalLocalKummer p (.affine 1 0 (by norm_num))
+  rw [totalLocalKummer_ordinary Pout,
+      totalLocalKummer_ordinary Pin,
+      totalLocalKummer_one]
+  apply Prod.ext
+  · simpa [Pin, Pout, mul_comm] using
+      oneTranslate_firstSquareClass hcurve hx0 hx1 hxm1
+  · simpa [Pin, Pout, mul_comm] using
+      oneTranslate_secondSquareClass hcurve hx1 hxm1
+
 end Synthesis.Millennium.BSD

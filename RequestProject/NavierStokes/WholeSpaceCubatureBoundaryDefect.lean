@@ -168,6 +168,69 @@ theorem abs_convolutionBoundaryDefect_union_le_core_tail
         (mul_le_mul_of_nonneg_right hεtail hM)
 
 /--
+Asymptotic core/tail completion.
+
+A fixed energy ceiling, vanishing core translation error, and vanishing outer
+energy tail imply that the full weighted Euclidean boundary defect vanishes.
+This is the correct replacement for a globally uniform row-tail assumption.
+-/
+theorem convolutionBoundaryDefect_union_tendsto_zero
+    (core tail : ℕ → Finset ι)
+    (energy rowDefect : ℕ → ι → ℝ)
+    (τcore εtail : ℕ → ℝ)
+    (E M : ℝ)
+    (hdisjoint : ∀ n, Disjoint (core n) (tail n))
+    (henergy_core : ∀ n i, i ∈ core n → 0 ≤ energy n i)
+    (henergy_tail : ∀ n i, i ∈ tail n → 0 ≤ energy n i)
+    (hcore : ∀ n i, i ∈ core n → |rowDefect n i| ≤ τcore n)
+    (htail : ∀ n i, i ∈ tail n → |rowDefect n i| ≤ M)
+    (hτcore_nonneg : ∀ n, 0 ≤ τcore n)
+    (hεtail_nonneg : ∀ n, 0 ≤ εtail n)
+    (hM : 0 ≤ M)
+    (hcore_energy : ∀ n, cubatureEnergyMass (core n) (energy n) ≤ E)
+    (htail_energy : ∀ n, cubatureEnergyMass (tail n) (energy n) ≤ εtail n)
+    (hτcore_zero : Filter.Tendsto τcore Filter.atTop (nhds 0))
+    (hεtail_zero : Filter.Tendsto εtail Filter.atTop (nhds 0)) :
+    Filter.Tendsto
+      (fun n =>
+        convolutionBoundaryDefect
+          (core n ∪ tail n) (energy n) (rowDefect n))
+      Filter.atTop (nhds 0) := by
+  have hbound :
+      Filter.Tendsto
+        (fun n => E * τcore n + εtail n * M)
+        Filter.atTop (nhds 0) := by
+    have hleft :
+        Filter.Tendsto (fun n => E * τcore n) Filter.atTop (nhds 0) := by
+      simpa using (Filter.tendsto_const_nhds.mul hτcore_zero)
+    have hright :
+        Filter.Tendsto (fun n => εtail n * M) Filter.atTop (nhds 0) := by
+      simpa using (hεtail_zero.mul Filter.tendsto_const_nhds)
+    simpa using hleft.add hright
+  have habs :
+      Filter.Tendsto
+        (fun n =>
+          |convolutionBoundaryDefect
+            (core n ∪ tail n) (energy n) (rowDefect n)|)
+        Filter.atTop (nhds 0) := by
+    exact Filter.Tendsto.squeeze
+      (by simpa using (Filter.tendsto_const_nhds :
+        Filter.Tendsto (fun _ : ℕ => (0 : ℝ)) Filter.atTop (nhds 0)))
+      hbound
+      (fun n => abs_nonneg _)
+      (fun n =>
+        abs_convolutionBoundaryDefect_union_le_core_tail
+          (core n) (tail n) (hdisjoint n)
+          (energy n) (rowDefect n)
+          (τcore n) M E (εtail n)
+          (henergy_core n) (henergy_tail n)
+          (hcore n) (htail n)
+          (hτcore_nonneg n) hM
+          (hcore_energy n) (htail_energy n))
+  rw [tendsto_zero_iff_norm_tendsto_zero]
+  simpa [Real.norm_eq_abs] using habs
+
+/--
 Cutoff-independent energy control plus a vanishing nonnegative row-tail forces
 the complete Euclidean translation-boundary defect to vanish.
 

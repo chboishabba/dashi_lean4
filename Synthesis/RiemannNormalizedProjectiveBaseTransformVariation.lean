@@ -85,8 +85,9 @@ theorem normalizedProjectiveBaseTransform_abs_le_profileL1
     ∫ v : ℝ, |normalizedProjectivePhysicalProfile t v| := by
       apply integral_mono
       · exact
-          ((normalizedProjectivePhysicalProfile_integrable t).mul
-            (integrable_const (c := (1 : ℝ)))).abs
+          (Continuous.integrable_of_hasCompactSupport
+            (by fun_prop)
+            ((normalizedProjectivePhysicalProfile_compact t).mul_right)).abs
       · exact normalizedProjectiveProfile_abs_integrable t
       · intro v
         rw [abs_mul]

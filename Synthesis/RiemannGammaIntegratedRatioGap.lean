@@ -135,6 +135,10 @@ theorem integrated_canonicalRatioGap
     {t : ℝ} (ht : 18 <= t)
     {w : ℝ → ℝ}
     (hw : Integrable w)
+    (hratio : Integrable
+      (fun u : ℝ =>
+        (gammaToPoleRatio t (u + Real.pi/t)
+          - gammaToPoleRatio t u) * w u))
     (hnn : ∀ u, 0 <= w u)
     (hsupp : ∀ u, w u ≠ 0 →
       3 * Real.pi/(4*t) <= u ∧ u <= 5 * Real.pi/(4*t)) :
@@ -143,39 +147,9 @@ theorem integrated_canonicalRatioGap
     ∫ u : ℝ,
       (gammaToPoleRatio t (u + Real.pi/t)
         - gammaToPoleRatio t u) * w u := by
-  have hgap : 0 <= canonicalGammaRatioGap t :=
-    canonicalGammaRatioGap_nonneg ht
   have hleft : Integrable
       (fun u : ℝ => canonicalGammaRatioGap t * w u) :=
     hw.const_mul _
-  have hright : Integrable
-      (fun u : ℝ =>
-        (gammaToPoleRatio t (u + Real.pi/t)
-          - gammaToPoleRatio t u) * w u) := by
-    -- compact-support applications below provide this directly; keep the
-    -- generic theorem honest by deriving it from bounded support.
-    have hcontRatio :
-        ContinuousOn
-          (fun u : ℝ =>
-            gammaToPoleRatio t (u + Real.pi/t)
-              - gammaToPoleRatio t u)
-          (Set.Icc (3 * Real.pi/(4*t)) (5 * Real.pi/(4*t))) := by
-      fun_prop
-    have hcompact : IsCompact
-        (Set.Icc (3 * Real.pi/(4*t)) (5 * Real.pi/(4*t))) :=
-      isCompact_Icc
-    obtain ⟨C, hC⟩ := hcompact.bddAbove_image hcontRatio.continuousOn.norm
-    -- Rather than expose the bound, use compact support inherited from hsupp.
-    have hwsupp : HasCompactSupport w := by
-      refine ⟨Set.Icc (3 * Real.pi/(4*t)) (5 * Real.pi/(4*t)),
-        isCompact_Icc, ?_⟩
-      intro u hu
-      by_contra hne
-      have hs := hsupp u hne
-      exact hu hs
-    exact ((continuousOn_iff_continuous_restrict.mp hcontRatio).mul
-      hw.stronglyMeasurable.continuousOn).integrable_of_hasCompactSupport
-      hwsupp
   have hpoint : ∀ u,
       canonicalGammaRatioGap t * w u
         <=
@@ -188,7 +162,7 @@ theorem integrated_canonicalRatioGap
       exact mul_le_mul_of_nonneg_right
         (canonicalGammaRatioGap_le_matched_gap ht hs.1 hs.2)
         (hnn u)
-  have h := integral_mono hleft hright hpoint
+  have h := integral_mono hleft hratio hpoint
   rw [integral_const_mul] at h
   exact h
 

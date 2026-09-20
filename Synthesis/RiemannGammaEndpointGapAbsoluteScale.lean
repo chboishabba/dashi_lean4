@@ -229,7 +229,22 @@ theorem gammaToPoleRatio_five_upper
         <=
       ((10/19 : ℝ) * (5 * Real.pi/64)^2)
           / (5 * Real.pi/(2*t)) := by
-    exact div_le_div hphase (by positivity) hden0.le hH
+    rw [div_le_div_iff₀ hH0 hden0]
+    have h1 :
+        centeredPolePhaseRatio (5 * Real.pi/64)
+            * (5 * Real.pi/(2*t))
+          <=
+        ((10/19 : ℝ) * (5 * Real.pi/64)^2)
+            * (5 * Real.pi/(2*t)) := by
+      exact mul_le_mul_of_nonneg_right hphase hden0.le
+    have h2 :
+        ((10/19 : ℝ) * (5 * Real.pi/64)^2)
+            * (5 * Real.pi/(2*t))
+          <=
+        ((10/19 : ℝ) * (5 * Real.pi/64)^2)
+            * gammaPoleHyperbolicDenom u := by
+      exact mul_le_mul_of_nonneg_left hH (by positivity)
+    exact le_trans h1 h2
   calc
     centeredPolePhaseRatio (5 * Real.pi/64)
         / gammaPoleHyperbolicDenom u
@@ -269,7 +284,22 @@ theorem gammaToPoleRatio_seven_lower
         <=
       centeredPolePhaseRatio (7 * Real.pi/64)
           / gammaPoleHyperbolicDenom u := by
-    exact div_le_div hphase (by positivity) hH0.le hH
+    rw [div_le_div_iff₀ hdenU hH0]
+    have h1 :
+        (2 * (99/100 : ℝ)^2 * (7 * Real.pi/128)^2)
+            * gammaPoleHyperbolicDenom u
+          <=
+        (2 * (99/100 : ℝ)^2 * (7 * Real.pi/128)^2)
+            * (483 * Real.pi/(118*t)) := by
+      exact mul_le_mul_of_nonneg_left hH (by positivity)
+    have h2 :
+        (2 * (99/100 : ℝ)^2 * (7 * Real.pi/128)^2)
+            * (483 * Real.pi/(118*t))
+          <=
+        centeredPolePhaseRatio (7 * Real.pi/64)
+            * (483 * Real.pi/(118*t)) := by
+      exact mul_le_mul_of_nonneg_right hphase hdenU.le
+    exact le_trans h1 h2
   calc
     (2 * (99/100 : ℝ)^2 * (7 * Real.pi/128)^2)
         * (118*t/(483*Real.pi))
@@ -285,10 +315,31 @@ theorem canonicalGammaRatioGap_linear_lower
     {t : ℝ} (ht : 18 <= t) :
     canonicalGammaGapLinearConstant * t
       <= canonicalGammaRatioGap t := by
-  have h5 := gammaToPoleRatio_five_upper ht
-  have h7 := gammaToPoleRatio_seven_lower ht
+  have h5raw := gammaToPoleRatio_five_upper ht
+  have h7raw := gammaToPoleRatio_seven_lower ht
+  have ht0 : 0 < t := lt_of_lt_of_le (by norm_num) ht
+  have h5 :
+      gammaToPoleRatio t (5 * Real.pi/(4*t))
+        <= (25/19456 : ℝ) * Real.pi * t := by
+    calc
+      gammaToPoleRatio t (5 * Real.pi/(4*t))
+        <= ((10/19 : ℝ) * (5 * Real.pi/64)^2)
+            * (2*t/(5*Real.pi)) := h5raw
+      _ = (25/19456 : ℝ) * Real.pi * t := by
+        field_simp [ne_of_gt Real.pi_pos]
+        ring
+  have h7 :
+      (1349271/942080000 : ℝ) * Real.pi * t
+        <= gammaToPoleRatio t (7 * Real.pi/(4*t)) := by
+    calc
+      (1349271/942080000 : ℝ) * Real.pi * t
+        =
+      (2 * (99/100 : ℝ)^2 * (7 * Real.pi/128)^2)
+        * (118*t/(483*Real.pi)) := by
+          field_simp [ne_of_gt Real.pi_pos]
+          ring
+      _ <= gammaToPoleRatio t (7 * Real.pi/(4*t)) := h7raw
   unfold canonicalGammaRatioGap canonicalGammaGapLinearConstant
-  have hpi := Real.pi_pos
-  nlinarith
+  nlinarith [Real.pi_pos]
 
 end Synthesis

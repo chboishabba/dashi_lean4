@@ -42,6 +42,33 @@ def normalizedCanonicalFixedProfile (t v : ℝ) : ℝ :=
 def normalizedCenteredFixedProfile (t v : ℝ) : ℝ :=
   normalizedCanonicalFixedProfile t v * (Real.cos (v / 16) - 1)
 
+
+/-- The fixed normalized inner window is literally the symmetric affine bump
+with centre pi and radius pi/4. -/
+theorem normalizedInnerFixedProfile_eq_symBump :
+    normalizedInnerFixedProfile
+      = quantitativeSymBump Real.pi (Real.pi / 4) := by
+  funext v
+  unfold normalizedInnerFixedProfile quantitativeSymBump
+    Zeta23Bridge.LiteralWeilOddChannelTaper.symmetrize
+    scaledUnitBump
+  have hpi : Real.pi ≠ 0 := ne_of_gt Real.pi_pos
+  congr 1 <;> congr 1 <;>
+    field_simp [hpi] <;> ring
+
+/-- The fixed normalized outer window is literally the symmetric affine bump
+with centre 2*pi and radius pi/4. -/
+theorem normalizedOuterFixedProfile_eq_symBump :
+    normalizedOuterFixedProfile
+      = quantitativeSymBump (2 * Real.pi) (Real.pi / 4) := by
+  funext v
+  unfold normalizedOuterFixedProfile quantitativeSymBump
+    Zeta23Bridge.LiteralWeilOddChannelTaper.symmetrize
+    scaledUnitBump
+  have hpi : Real.pi ≠ 0 := ne_of_gt Real.pi_pos
+  congr 1 <;> congr 1 <;>
+    field_simp [hpi] <;> ring
+
 theorem normalized_inner_scaled_argument_pos
     {t v : ℝ} (ht : 0 < t) :
     ((v / t) - quantitativeTaperInnerCenter t) / quantitativeTaperR t

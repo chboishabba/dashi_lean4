@@ -175,3 +175,5 @@ import Synthesis.RiemannNormalizedOffRadiusZeroAtomicMeasure
 import Synthesis.RiemannNormalizedProjectiveOffAtomicMeasure
 
 import Synthesis.RiemannNormalizedProjectiveOffTsumAttachment
+
+import Synthesis.RiemannNormalizedProjectiveOffHorizontalSplit

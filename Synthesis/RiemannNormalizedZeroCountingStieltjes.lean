@@ -57,11 +57,13 @@ theorem normalizedFiniteCount_mono
     Monotone (normalizedFiniteCount t F) := by
   intro x y hxy
   unfold normalizedFiniteCount
-  apply Finset.sum_le_sum_of_subset
-  intro rho hrho
-  have hx := (Finset.mem_filter.mp hrho).2
-  exact Finset.mem_filter.mpr
-    ⟨(Finset.mem_filter.mp hrho).1, le_trans hx hxy⟩
+  apply Finset.sum_le_sum_of_subset_of_nonneg
+  · intro rho hrho
+    have hx := (Finset.mem_filter.mp hrho).2
+    exact Finset.mem_filter.mpr
+      ⟨(Finset.mem_filter.mp hrho).1, le_trans hx hxy⟩
+  · intro rho hrho hnot
+    positivity
 
 theorem normalizedBaseAtomicAggregate_eq_countingPair
     (t : ℝ) (F : Finset Zeros) :

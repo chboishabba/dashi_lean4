@@ -19,6 +19,9 @@ import Synthesis.MonsterCharacterMultiplicityRegression
 import Synthesis.RiemannFarShellQuarticCutoff
 import Synthesis.RiemannFarShellQuarticCutoffRegression
 import Synthesis.RiemannFarShellSignedWindowQuarticIncompatibility
+import Synthesis.RiemannGammaCanonicalRatioGap
+import Synthesis.RiemannGammaIntegratedRatioGap
+import Synthesis.RiemannGammaCanonicalIntegratedDeficit
 import Synthesis.Hyperfabric
 import Synthesis.CodecBridge
 import Synthesis.EndToEnd

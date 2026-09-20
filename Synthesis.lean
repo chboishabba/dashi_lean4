@@ -141,3 +141,7 @@ import Synthesis.MillenniumBSDExplicitSelmerSubgroup
 import Synthesis.MillenniumBSDLocalKummerQuotient
 
 import Synthesis.MillenniumBSDActualRationalPointGroup
+
+import Synthesis.MillenniumBSDGlobalKummerBoundaryCases
+
+import Synthesis.MillenniumBSDGlobalKummerOrdinaryHom

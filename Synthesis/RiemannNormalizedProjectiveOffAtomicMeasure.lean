@@ -124,6 +124,41 @@ def literalPairProjectiveDefect
     (g : ℝ → ℝ) (t r : ℝ) (rho : Zeros) : ℝ :=
   channelProjectiveDefect (literalPairRadiusChannel g t rho) g r
 
+
+/-- Radius-centering identity for one literal reflection pair, on the unrestricted
+actual zero carrier. -/
+theorem literalPairRadiusChannel_centered
+    {g : ℝ → ℝ}
+    (hgs : ContDiff ℝ 2 g)
+    (hgc : HasCompactSupport g)
+    (heven : ∀ u, g (-u) = g u)
+    (t s : ℝ) (rho : Zeros) :
+    radiusCenteredChannel (literalPairRadiusChannel g t rho) s
+      =
+    zeroConeValue (gammaCenteredTaper g s) t 0 rho
+      + zeroConeValue (gammaCenteredTaper g s) t 0 (reflectZero rho) := by
+  have hs :=
+    zeroConeValue_add_reflect_eq_integral
+      hgs.continuous hgc heven t s rho
+  have h0 :=
+    zeroConeValue_add_reflect_eq_integral
+      hgs.continuous hgc heven t 0 rho
+  have hc2 := gammaCenteredTaper_contDiff hgs s
+  have hcc := gammaCenteredTaper_hasCompactSupport hgc s
+  have hce := gammaCenteredTaper_even heven s
+  have hc :=
+    zeroConeValue_add_reflect_eq_integral
+      hc2.continuous hcc hce t 0 rho
+  unfold radiusCenteredChannel literalPairRadiusChannel
+  rw [hs, h0, hc]
+  simp only [zero_mul, Real.cos_zero, mul_one]
+  ring_nf
+  congr 2
+  apply integral_congr_ae
+  filter_upwards with u
+  unfold reflectionPairWeight gammaCenteredTaper
+  ring
+
 /-- The exact normalized per-pair projective atom. -/
 def normalizedProjectiveOffZeroAtom
     (t : ℝ) (rho : Zeros) : ℝ :=
@@ -176,28 +211,13 @@ theorem literalPairProjectiveDefect_eq_one_div_t_mul_normalizedAtom
   have hdelta1 :
       radiusCenteredChannel C r
         = (1 / t) * normalizedCenteredZeroAtomAtScale t 1 rho := by
-    unfold radiusCenteredChannel C literalPairRadiusChannel g r
-    have h :=
-      finalPairTerm_centered_radius hgs hgc heven t r
-        (show ((SameOrd t)ᶜ : Set Zeros) from
-          ⟨rho, by
-            intro hs
-            exact False.elim (by
-              have : (rho : ℂ).im = t := by
-                simpa [SameOrd] using congrArg Complex.im hs
-              exact by
-                by_cases hEq : (rho : ℂ).im = t
-                · exact (show False from by contradiction)
-                · exact hEq this)⟩)
-    -- This local channel identity is algebraically the same centered-pair
-    -- statement; use the literal pair theorem directly.
-    unfold C literalPairRadiusChannel radiusCenteredChannel
+    rw [literalPairRadiusChannel_centered hgs hgc heven t r rho]
     simpa [g, r] using hcenter1
 
   have hdelta2 :
       radiusCenteredChannel C (2*r)
         = (1 / t) * normalizedCenteredZeroAtomAtScale t 2 rho := by
-    unfold C literalPairRadiusChannel radiusCenteredChannel
+    rw [literalPairRadiusChannel_centered hgs hgc heven t (2*r) rho]
     simpa [g, r, mul_assoc] using hcenter2
 
   have hC0 :

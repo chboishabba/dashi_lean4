@@ -33,6 +33,7 @@ import Synthesis.MillenniumBSDLocalSquareClass
 import Synthesis.MillenniumBSDFrobeniusPointCount
 import Synthesis.MillenniumBSDTotalLocalKummer
 import Synthesis.MillenniumBSDMathlibLFunctionWeld
+import Synthesis.MillenniumHodgeCP1CellularH2
 
 /-!
 # Cross-domain synthesis spine

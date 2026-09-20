@@ -1,4 +1,5 @@
 import Synthesis.RiemannNormalizedCenteredOffOscillatoryDecay
+import Synthesis.RiemannQuantitativeGammaDeficit
 import Zeta23Bridge.LiteralWeilOffOrdinateReflectionPair
 
 /-!
@@ -63,75 +64,6 @@ theorem quantitativeCenteredCanonical_even
   unfold gammaCenteredTaper
   rw [quantitativeCanonicalTaper_even]
   simp [Real.cos_neg]
-
-/--
-Exact normalized atom identity for one actual reflection pair.
--/
-theorem literal_centered_pair_eq_one_div_t_mul_normalizedAtom
-    {t : ℝ} (ht : 0 < t) (rho : Zeros) :
-    zeroConeValue
-        (gammaCenteredTaper
-          (quantitativeCanonicalTaper t)
-          (quantitativeSampleRadius t))
-        t 0 rho
-      +
-    zeroConeValue
-        (gammaCenteredTaper
-          (quantitativeCanonicalTaper t)
-          (quantitativeSampleRadius t))
-        t 0 (reflectZero rho)
-      =
-    (1 / t) * normalizedCenteredZeroAtom t rho := by
-  have ht18_or_not : 18 <= t ∨ ¬ 18 <= t := le_total 18 t |>.imp id (fun h => not_le.mpr h)
-  have hC2base : ContDiff ℝ 2 (quantitativeCanonicalTaper t) := by
-    rcases ht18_or_not with ht18 | hnot
-    · exact quantitativeCanonicalTaper_contDiff ht18
-    · -- The fixed-profile identity only needs t>0, but the current canonical
-      -- C2 theorem is packaged for t>=18.  The literal RH consumer uses t>=18,
-      -- so expose the theorem at that range below instead of inventing a weaker
-      -- analytic package here.
-      exfalso
-      exact hnot (le_trans (by norm_num) (le_of_lt ht))
-  have hcenterC2 :=
-    gammaCenteredTaper_contDiff hC2base (quantitativeSampleRadius t)
-  have hcompactBase : HasCompactSupport (quantitativeCanonicalTaper t) := by
-    rcases ht18_or_not with ht18 | hnot
-    · exact quantitativeCanonicalTaper_compact ht18
-    · exfalso
-      exact hnot (le_trans (by norm_num) (le_of_lt ht))
-  have hcenterCompact :=
-    gammaCenteredTaper_hasCompactSupport hcompactBase (quantitativeSampleRadius t)
-  have hpair :=
-    zeroConeValue_add_reflect_eq_integral
-      hcenterC2.continuous
-      hcenterCompact
-      quantitativeCenteredCanonical_even
-      t 0 rho
-  simp only [zero_mul, Real.cos_zero, mul_one] at hpair
-  rw [hpair]
-  have hnorm :=
-    integral_reflectionPairWeight_centeredCanonical_normalized
-      (t := t) (a := heightOf rho) (delta := (rho : ℂ).im - t) ht
-  rw [hnorm]
-  unfold normalizedCenteredZeroAtom normalizedCenteredPairKernel
-  have hfixed : ∀ v,
-      normalizedCenteredCanonicalTaper t v
-        = normalizedCenteredFixedProfile t v :=
-    fun v => normalizedCenteredCanonicalTaper_eq_fixedProfile ht
-  have hint :
-      (∫ v : ℝ,
-        4 * normalizedCenteredCanonicalTaper t v
-          * Real.cosh ((heightOf rho / t) * v)
-          * Real.cos ((((rho : ℂ).im - t) / t) * v))
-      =
-      ∫ v : ℝ,
-        4 * normalizedCenteredFixedProfile t v
-          * Real.cosh ((heightOf rho / t) * v)
-          * Real.cos ((((rho : ℂ).im - t) / t) * v) := by
-    apply integral_congr_ae
-    exact Filter.Eventually.of_forall fun v => by rw [hfixed v]
-  rw [hint]
-  ring
 
 /--
 The prize-facing range is t>=18, where all canonical taper regularity is already

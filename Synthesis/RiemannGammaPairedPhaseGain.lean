@@ -112,8 +112,8 @@ theorem three_sin_inner_sq_lt_sin_outer_sq
         < Real.sin ((theta + Real.pi/16)/2)^2 := by
     have hleft0 : 0 <= (891/500 : ℝ) * (theta/2) := by positivity
     have hright0 :
-        0 < Real.sin ((theta + Real.pi/16)/2) := by
-      exact lt_of_lt_of_le houterLower.le ?_
+        0 < Real.sin ((theta + Real.pi/16)/2) :=
+      lt_of_le_of_lt hleft0 houterLower
     nlinarith
   have hinnerSq : Real.sin (theta/2)^2 <= (theta/2)^2 := by
     nlinarith
@@ -142,12 +142,24 @@ theorem three_phaseRatio_inner_lt_outer
     exact Real.cos_lt_cos_of_nonneg_of_le_pi
       ht0.le (by linarith [Real.pi_pos]) (by linarith [Real.pi_pos])
   have hsinSq := three_sin_inner_sq_lt_sin_outer_sq hlo hhi
+  have hso0 : 0 < Real.sin ((theta + Real.pi/16)/2) := by
+    have hleft0 : 0 <= (891/500 : ℝ) * (theta/2) := by positivity
+    exact lt_of_le_of_lt hleft0 (paired_half_phase_ratio_gt hlo hhi)
+  have hstep1 :
+      3 * Real.sin (theta/2)^2 * Real.cos (theta + Real.pi/16)
+        < Real.sin ((theta + Real.pi/16)/2)^2
+            * Real.cos (theta + Real.pi/16) :=
+    mul_lt_mul_of_pos_right hsinSq hco
+  have hstep2 :
+      Real.sin ((theta + Real.pi/16)/2)^2
+          * Real.cos (theta + Real.pi/16)
+        < Real.sin ((theta + Real.pi/16)/2)^2 * Real.cos theta :=
+    mul_lt_mul_of_pos_left hcosOrder (sq_pos_of_pos hso0)
+  have hcross := lt_trans hstep1 hstep2
   rw [centeredPolePhaseRatio, centeredPolePhaseRatio,
       one_sub_cos_eq_two_sin_half_sq,
       one_sub_cos_eq_two_sin_half_sq]
-  rw [div_lt_div_iff₀ hct hco]
-  have hcosOuter0 : 0 < Real.cos (theta + Real.pi/16) := hco
-  have hcosInner0 : 0 < Real.cos theta := hct
-  nlinarith [mul_pos hcosOuter0 hcosInner0]
+  field_simp [hct.ne', hco.ne']
+  nlinarith
 
 end Synthesis

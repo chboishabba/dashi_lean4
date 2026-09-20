@@ -8,6 +8,7 @@ import Synthesis.RiemannProjectiveCenteredGaugeBridge
 import Synthesis.RiemannNormalizedCenteredOffTwoRadius
 import Synthesis.RiemannNormalizedOffRadiusZeroAtomicMeasure
 import Synthesis.RiemannNormalizedProjectiveOffTsumAttachment
+import Synthesis.RiemannNormalizedProjectiveRvMConsumer
 import Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector
 
 /-!
@@ -70,6 +71,9 @@ structure ActualHighAnalyticMinCutStatus where
   literalInfiniteProjectiveTsumAttachmentPaid : Bool
   projectiveNormalizedHorizontalSplitPaid : Bool
   normalizedRvMProjectiveAttachmentPaid : Bool
+  projectiveWholeLineZeroModePaid : Bool
+  projectivePhysicalDomainTailIdentityPaid : Bool
+  projectivePhysicalConstantModeCancellationPaid : Bool
 
   farResidualRetainsHeightSquare : Bool
   targetDependentResidualSuppressionPaid : Bool
@@ -93,6 +97,9 @@ def actualHighAnalyticMinCutStatus : ActualHighAnalyticMinCutStatus :=
     literalInfiniteProjectiveTsumAttachmentPaid := true
     projectiveNormalizedHorizontalSplitPaid := true
     normalizedRvMProjectiveAttachmentPaid := false
+    projectiveWholeLineZeroModePaid := true
+    projectivePhysicalDomainTailIdentityPaid := true
+    projectivePhysicalConstantModeCancellationPaid := false
 
     farResidualRetainsHeightSquare := false
     targetDependentResidualSuppressionPaid := false
@@ -130,6 +137,18 @@ theorem projectiveNormalizedHorizontalSplitNowPaid :
 
 theorem normalizedRvMProjectiveAttachmentStillOpen :
     actualHighAnalyticMinCutStatus.normalizedRvMProjectiveAttachmentPaid = false :=
+  rfl
+
+theorem projectiveWholeLineZeroModeNowPaid :
+    actualHighAnalyticMinCutStatus.projectiveWholeLineZeroModePaid = true :=
+  rfl
+
+theorem projectivePhysicalDomainTailIdentityNowPaid :
+    actualHighAnalyticMinCutStatus.projectivePhysicalDomainTailIdentityPaid = true :=
+  rfl
+
+theorem projectivePhysicalConstantModeCancellationStillOpen :
+    actualHighAnalyticMinCutStatus.projectivePhysicalConstantModeCancellationPaid = false :=
   rfl
 
 

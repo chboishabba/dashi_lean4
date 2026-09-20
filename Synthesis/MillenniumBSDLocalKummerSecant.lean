@@ -138,4 +138,74 @@ theorem secant_second_squareClass_mul
   simpa [nzPadicMul, mul_assoc] using
     secant_x_sub_one_square_identity h₁ h₂ hx
 
+
+theorem secantKummerWitnessZero_ne_zero
+    {p : ℕ} [Fact p.Prime]
+    {x₁ y₁ x₂ y₂ : ℚ_[p]}
+    (h₁ : y₁ ^ 2 = x₁ ^ 3 - x₁)
+    (h₂ : y₂ ^ 2 = x₂ ^ 3 - x₂)
+    (hx : x₁ ≠ x₂)
+    (hx₁ : x₁ ≠ 0) (hx₂ : x₂ ≠ 0)
+    (hxR : secantSumX x₁ y₁ x₂ y₂ ≠ 0) :
+    secantKummerWitnessZero x₁ y₁ x₂ y₂ ≠ 0 := by
+  intro hw
+  have hsq := secant_x_square_identity h₁ h₂ hx
+  rw [hw, zero_pow (by norm_num : (2 : ℕ) ≠ 0)] at hsq
+  exact mul_ne_zero (mul_ne_zero hxR hx₁) hx₂ hsq
+
+theorem secantKummerWitnessOne_ne_zero
+    {p : ℕ} [Fact p.Prime]
+    {x₁ y₁ x₂ y₂ : ℚ_[p]}
+    (h₁ : y₁ ^ 2 = x₁ ^ 3 - x₁)
+    (h₂ : y₂ ^ 2 = x₂ ^ 3 - x₂)
+    (hx : x₁ ≠ x₂)
+    (hx₁ : x₁ ≠ 1) (hx₂ : x₂ ≠ 1)
+    (hxR : secantSumX x₁ y₁ x₂ y₂ ≠ 1) :
+    secantKummerWitnessOne x₁ y₁ x₂ y₂ ≠ 0 := by
+  intro hw
+  have hsq := secant_x_sub_one_square_identity h₁ h₂ hx
+  rw [hw, zero_pow (by norm_num : (2 : ℕ) ≠ 0)] at hsq
+  exact
+    mul_ne_zero
+      (mul_ne_zero
+        (sub_ne_zero.mpr hxR)
+        (sub_ne_zero.mpr hx₁))
+      (sub_ne_zero.mpr hx₂) hsq
+
+theorem secant_first_squareClass_mul_auto
+    {p : ℕ} [Fact p.Prime]
+    {x₁ y₁ x₂ y₂ : ℚ_[p]}
+    (h₁ : y₁ ^ 2 = x₁ ^ 3 - x₁)
+    (h₂ : y₂ ^ 2 = x₂ ^ 3 - x₂)
+    (hx : x₁ ≠ x₂)
+    (hx₁ : x₁ ≠ 0) (hx₂ : x₂ ≠ 0)
+    (hxR : secantSumX x₁ y₁ x₂ y₂ ≠ 0) :
+    padicSquareClassOf p
+      ⟨secantSumX x₁ y₁ x₂ y₂, hxR⟩
+      =
+    padicSquareClassOf p ⟨x₁, hx₁⟩
+      * padicSquareClassOf p ⟨x₂, hx₂⟩ :=
+  secant_first_squareClass_mul
+    h₁ h₂ hx hx₁ hx₂ hxR
+    (secantKummerWitnessZero_ne_zero
+      h₁ h₂ hx hx₁ hx₂ hxR)
+
+theorem secant_second_squareClass_mul_auto
+    {p : ℕ} [Fact p.Prime]
+    {x₁ y₁ x₂ y₂ : ℚ_[p]}
+    (h₁ : y₁ ^ 2 = x₁ ^ 3 - x₁)
+    (h₂ : y₂ ^ 2 = x₂ ^ 3 - x₂)
+    (hx : x₁ ≠ x₂)
+    (hx₁ : x₁ ≠ 1) (hx₂ : x₂ ≠ 1)
+    (hxR : secantSumX x₁ y₁ x₂ y₂ ≠ 1) :
+    padicSquareClassOf p
+      ⟨secantSumX x₁ y₁ x₂ y₂ - 1, sub_ne_zero.mpr hxR⟩
+      =
+    padicSquareClassOf p ⟨x₁ - 1, sub_ne_zero.mpr hx₁⟩
+      * padicSquareClassOf p ⟨x₂ - 1, sub_ne_zero.mpr hx₂⟩ :=
+  secant_second_squareClass_mul
+    h₁ h₂ hx hx₁ hx₂ hxR
+    (secantKummerWitnessOne_ne_zero
+      h₁ h₂ hx hx₁ hx₂ hxR)
+
 end Synthesis.Millennium.BSD

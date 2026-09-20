@@ -423,6 +423,51 @@ theorem quantitativeCanonicalTaper_doubled_pole_nonpos
   have hcancel := canonical_selectedPoleIntegral_cancels ht
   nlinarith [mul_le_mul_of_nonneg_left ho hlam]
 
+theorem gate_onLineRadiusResp_pos
+    {g : ℝ → ℝ} {t r Λ : ℝ}
+    (hd : GateData g t r Λ) :
+    0 < evenResp g 0 r := by
+  let F : ℝ → ℝ := fun u => g u * Real.cos (r*u)
+  have hFcont : Continuous F := by
+    dsimp [F]
+    fun_prop
+  have hFcpt : HasCompactSupport F := by
+    dsimp [F]
+    exact hd.compactSupport.mul_right
+  have hFint : Integrable F :=
+    hFcont.integrable_of_hasCompactSupport hFcpt
+  have hFnn : ∀ u, 0 ≤ F u := by
+    intro u
+    by_cases hg0 : g u = 0
+    · simp [F, hg0]
+    · have hc :
+          0 < Real.cos (r*u) := by
+        exact Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.cos_pos_of_radial
+          hd.radiusPos (hd.radial u hg0)
+      exact mul_nonneg (hd.nonneg u) hc.le
+  obtain ⟨u0, v0, hu0, hv0, huv⟩ := hd.twoPoint
+  have hFu0 : 0 < F u0 := by
+    have hc :
+        0 < Real.cos (r*u0) :=
+      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.cos_pos_of_radial
+        hd.radiusPos (hd.radial u0 (ne_of_gt hu0))
+    exact mul_pos hu0 hc
+  have hopen : IsOpen {u : ℝ | 0 < F u} :=
+    isOpen_lt continuous_const hFcont
+  have hmeas :
+      0 < volume {u : ℝ | 0 < F u} :=
+    hopen.measure_pos volume ⟨u0, hFu0⟩
+  have hsub :
+      {u : ℝ | 0 < F u} ⊆ Function.support F := by
+    intro u hu
+    exact ne_of_gt hu
+  have hpos : 0 < ∫ u : ℝ, F u := by
+    rw [integral_pos_iff_support_of_nonneg hFnn hFint]
+    exact lt_of_lt_of_le hmeas (measure_mono hsub)
+  unfold evenResp
+  simp only [zero_mul, Real.cosh_zero, one_mul]
+  simpa [F] using hpos
+
 theorem quantitativeCanonical_projectivePoleDefect_nonneg
     {t : ℝ} (ht : 18 ≤ t) :
     0 ≤
@@ -436,8 +481,8 @@ theorem quantitativeCanonical_projectivePoleDefect_nonneg
   have hA :
       0 <
       evenResp (quantitativeCanonicalTaper t) 0
-        (quantitativeSampleRadius t) := by
-    exact hd.onLineRadiusPos
+        (quantitativeSampleRadius t) :=
+    gate_onLineRadiusResp_pos hd
   rw [poleProjectiveDefect_eq
     hd.smooth.continuous hd.compactSupport hd.isEven
     t (quantitativeSampleRadius t), hp1]

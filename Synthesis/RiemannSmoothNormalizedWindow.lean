@@ -157,4 +157,38 @@ theorem smoothWindow_short
   have hw := (smoothWindow_normalizedWindow hc he).window.supp u hu
   exact lt_of_le_of_lt hw.2 hupper
 
+
+theorem smoothWindowRaw_pos_at_center
+    {c e : ℝ} (he : 0 < e) :
+    0 < smoothWindowRaw c e c := by
+  unfold smoothWindowRaw quantitativeSymBump
+    Zeta23Bridge.LiteralWeilOddChannelTaper.symmetrize
+  rw [scaledUnitBump_at_center he.ne']
+  have hother : 0 ≤ scaledUnitBump c e (-c) :=
+    scaledUnitBump_nonneg c e (-c)
+  linarith
+
+theorem smoothWindow_pos_at_center
+    {c e : ℝ} (he : 0 < e) :
+    0 < smoothWindow c e c := by
+  unfold smoothWindow
+    Zeta23Bridge.LiteralWeilNormalizedWindowBounds.normalized
+  have hmass := smoothWindowRaw_mass_pos (c := c) he
+  have hinv : 0 < (∫ u : ℝ, smoothWindowRaw c e u)⁻¹ :=
+    inv_pos.mpr hmass
+  exact mul_pos hinv (smoothWindowRaw_pos_at_center (c := c) he)
+
+theorem smoothWindow_nonneg
+    (c e u : ℝ) :
+    0 ≤ smoothWindow c e u := by
+  unfold smoothWindow
+    Zeta23Bridge.LiteralWeilNormalizedWindowBounds.normalized
+  by_cases hm : (∫ x : ℝ, smoothWindowRaw c e x) = 0
+  · simp [hm]
+  · have hraw : 0 ≤ smoothWindowRaw c e u :=
+      smoothWindowRaw_nonneg c e u
+    have hmass : 0 ≤ ∫ x : ℝ, smoothWindowRaw c e x := by
+      exact integral_nonneg (fun x => smoothWindowRaw_nonneg c e x)
+    exact mul_nonneg (inv_nonneg.mpr hmass) hraw
+
 end Synthesis

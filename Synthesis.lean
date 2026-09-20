@@ -153,3 +153,9 @@ import Synthesis.MillenniumBSDGlobalKummerTorsionTranslate
 import Synthesis.MillenniumBSDGlobalKummerHomomorphism
 
 import Synthesis.MillenniumBSDGlobalKummerQuotientToSelmer
+
+import Synthesis.MillenniumBSDGlobalKummerKernelHalfPoint
+
+import Synthesis.MillenniumBSDGlobalKummerKernelExact
+
+import Synthesis.MillenniumBSDExplicitSelmerCokernelExact

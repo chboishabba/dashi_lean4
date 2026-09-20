@@ -183,3 +183,11 @@ import Synthesis.MillenniumBSDCMSplitCharacterSum
 import Synthesis.MillenniumBSDCMHasseBound
 
 import Synthesis.MillenniumBSDHasseEulerConvergence
+
+import Synthesis.MillenniumBSDChebyshevUBound
+
+import Synthesis.MillenniumBSDHasseLocalCoefficientBound
+
+import Synthesis.MillenniumBSDHasseGlobalCoefficientBound
+
+import Synthesis.MillenniumBSDHasseEulerDirichletAgreement

@@ -1,4 +1,5 @@
 import Synthesis.RiemannSelectedRadiusClusterReduction
+import Synthesis.RiemannCanonicalCompletedResidualMinCut
 import Zeta23Bridge.LiteralWeilProjectiveSeparationGate
 
 /-!
@@ -114,3 +115,70 @@ theorem high_zero_realPart_eq_half_of_projective_gate
   linarith
 
 end Synthesis
+
+
+/-!
+## 2026-09 completed-density frontier
+
+The later projective tranche sharpens the old envelope-facing surface above.
+
+Paid at source level:
+* Gamma = the theorem-bearing mu pairing on the exact projective test;
+* pole = the theorem-bearing Pi_X pairing on that same test;
+* full zero carrier = completed smooth density (prime invisible);
+* full reflection-pair zero carrier = normalized projective atom tsum;
+* SameOrd q-only base vanishes exactly;
+* SameOrd normalized atoms are -2 t times the positive height defect;
+* the divided-square horizontal consumer is one physical cosine profile;
+* strict q=0 sign, q-Lipschitz control, and q^-2 far decay are source-written;
+* actual zeta zeros lie in the normalized strip |alpha| <= 1/(2t).
+
+Crucial firewall:
+  canonicalOffCompletedResidual t = clusterHeightDefect(g_t,t,r_t).
+
+Hence under an actual off-line target,
+  0 < 2 D_rho <= canonicalOffCompletedResidual t.
+
+So the remaining high theorem is genuinely a strict signed estimate on the
+off-ordinate completed residual obtained independently of the full-carrier
+explicit-formula replacement.  A fixed positive absolute budget cannot close
+uniformly as a_rho -> 0.
+-/
+
+structure CompletedProjectiveHighFrontierStatus where
+  gammaMuSameObjectPaid : Bool
+  polePiXSameObjectPaid : Bool
+  completedSmoothCollapsePaid : Bool
+  fullCarrierCancellationPaid : Bool
+  fullNormalizedCarrierPaid : Bool
+  sameOrdBaseZeroPaid : Bool
+  sameOrdHeightDefectSignPaid : Bool
+  horizontalSingleProfilePaid : Bool
+  horizontalNearSignPaid : Bool
+  horizontalFarDecayPaid : Bool
+  actualAlphaStripPaid : Bool
+  independentSignedCompletedResidualEstimatePaid : Bool
+  uniformHighContradictionPaid : Bool
+
+def completedProjectiveHighFrontierStatus :
+    CompletedProjectiveHighFrontierStatus :=
+  { gammaMuSameObjectPaid := true
+    polePiXSameObjectPaid := true
+    completedSmoothCollapsePaid := true
+    fullCarrierCancellationPaid := true
+    fullNormalizedCarrierPaid := true
+    sameOrdBaseZeroPaid := true
+    sameOrdHeightDefectSignPaid := true
+    horizontalSingleProfilePaid := true
+    horizontalNearSignPaid := true
+    horizontalFarDecayPaid := true
+    actualAlphaStripPaid := true
+    independentSignedCompletedResidualEstimatePaid := false
+    uniformHighContradictionPaid := false }
+
+theorem independentSignedCompletedResidualEstimateStillOpen :
+    completedProjectiveHighFrontierStatus
+      .independentSignedCompletedResidualEstimatePaid = false := rfl
+
+theorem uniformHighContradictionStillOpen_completed :
+    completedProjectiveHighFrontierStatus.uniformHighContradictionPaid = false := rfl

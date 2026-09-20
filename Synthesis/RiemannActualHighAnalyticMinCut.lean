@@ -10,6 +10,8 @@ import Synthesis.RiemannNormalizedOffRadiusZeroAtomicMeasure
 import Synthesis.RiemannNormalizedProjectiveOffTsumAttachment
 import Synthesis.RiemannNormalizedProjectiveRvMConsumer
 import Synthesis.RiemannNormalizedProjectiveHorizontalQuadraticFactor
+import Synthesis.RiemannProjectiveRvMMuGammaSameObject
+import Synthesis.RiemannNormalizedProjectiveRvMMissingTailBound
 import Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector
 
 /-!
@@ -76,6 +78,9 @@ structure ActualHighAnalyticMinCutStatus where
   projectivePhysicalDomainTailIdentityPaid : Bool
   projectivePhysicalConstantModeCancellationPaid : Bool
   projectiveHorizontalQuadraticFactorPaid : Bool
+  projectiveRvMMuGammaSameObjectPaid : Bool
+  projectiveMissingTailAbsoluteBoundPaid : Bool
+  projectiveRvMMuToNamedGammaDefectPaid : Bool
 
   farResidualRetainsHeightSquare : Bool
   targetDependentResidualSuppressionPaid : Bool
@@ -103,6 +108,9 @@ def actualHighAnalyticMinCutStatus : ActualHighAnalyticMinCutStatus :=
     projectivePhysicalDomainTailIdentityPaid := true
     projectivePhysicalConstantModeCancellationPaid := false
     projectiveHorizontalQuadraticFactorPaid := true
+    projectiveRvMMuGammaSameObjectPaid := true
+    projectiveMissingTailAbsoluteBoundPaid := true
+    projectiveRvMMuToNamedGammaDefectPaid := false
 
     farResidualRetainsHeightSquare := false
     targetDependentResidualSuppressionPaid := false
@@ -161,4 +169,17 @@ theorem projectiveHorizontalQuadraticFactorNowPaid :
 
 theorem normalizedRadiusZeroBaseAttachmentNowPaid :
     actualHighAnalyticMinCutStatus.normalizedRadiusZeroBaseAttachmentPaid = true :=
+  rfl
+
+
+theorem projectiveRvMMuGammaSameObjectNowPaid :
+    actualHighAnalyticMinCutStatus.projectiveRvMMuGammaSameObjectPaid = true :=
+  rfl
+
+theorem projectiveMissingTailAbsoluteBoundNowPaid :
+    actualHighAnalyticMinCutStatus.projectiveMissingTailAbsoluteBoundPaid = true :=
+  rfl
+
+theorem projectiveRvMMuToNamedGammaDefectStillOpen :
+    actualHighAnalyticMinCutStatus.projectiveRvMMuToNamedGammaDefectPaid = false :=
   rfl

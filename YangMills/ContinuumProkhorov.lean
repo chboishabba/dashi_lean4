@@ -2,6 +2,7 @@ import Mathlib.MeasureTheory.Measure.Prokhorov
 import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
 import Mathlib.Topology.Sequences
+import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 
 open Filter Set MeasureTheory
 
@@ -75,6 +76,99 @@ theorem exists_subsequence_with_all_boundedContinuous_expectations
     (ProbabilityMeasure.tendsto_iff_forall_integral_tendsto).1 hconv
   intro f
   simpa [Function.comp_def] using hExpect f
+
+
+
+/--
+A uniform coercive moment bound gives tightness of the actual finite-volume
+probability measures.
+
+The only Yang--Mills-specific input is the coercive observable `cost`: its
+sublevel sets must be compact, and its `lintegral` must be bounded uniformly
+over the cutoff family.  Tightness then follows from Markov's inequality.
+
+The explicit threshold hypothesis isolates only elementary ENNReal arithmetic;
+in concrete applications it is discharged by choosing a sufficiently large
+finite radius.
+-/
+theorem isTightMeasureSet_of_uniform_coercive_lintegral_bound
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    [TopologicalSpace Ω]
+    (μ : ℕ → ProbabilityMeasure Ω)
+    (cost : Ω → ENNReal)
+    (hcost : Measurable cost)
+    (M : ENNReal)
+    (hmoment :
+      ∀ n : ℕ,
+        (∫⁻ x : Ω, cost x ∂((μ n : ProbabilityMeasure Ω) : Measure Ω)) ≤ M)
+    (hcompact :
+      ∀ R : ENNReal, R ≠ ⊤ → IsCompact {x : Ω | cost x ≤ R})
+    (hthreshold :
+      ∀ ε : ENNReal, 0 < ε →
+        ∃ R : ENNReal, R ≠ 0 ∧ R ≠ ⊤ ∧ M / R ≤ ε) :
+    IsTightMeasureSet
+      {m : Measure Ω | ∃ p ∈ Set.range μ, (p : Measure Ω) = m} := by
+  rw [isTightMeasureSet_iff_exists_isCompact_measure_compl_le]
+  intro ε hε
+  rcases hthreshold ε hε with ⟨R, hR0, hRtop, hMR⟩
+  let K : Set Ω := {x : Ω | cost x ≤ R}
+  refine ⟨K, hcompact R hRtop, ?_⟩
+  intro ν hν
+  rcases hν with ⟨p, ⟨n, rfl⟩, rfl⟩
+  have hsubset : Kᶜ ⊆ {x : Ω | R ≤ cost x} := by
+    intro x hx
+    have hx' : ¬ cost x ≤ R := by
+      simpa [K] using hx
+    exact (lt_of_not_ge hx').le
+  calc
+    ((μ n : ProbabilityMeasure Ω) : Measure Ω) Kᶜ
+        ≤ ((μ n : ProbabilityMeasure Ω) : Measure Ω) {x : Ω | R ≤ cost x} :=
+      measure_mono hsubset
+    _ ≤ (∫⁻ x : Ω, cost x ∂((μ n : ProbabilityMeasure Ω) : Measure Ω)) / R :=
+      meas_ge_le_lintegral_div hcost.aemeasurable hR0 hRtop
+    _ ≤ M / R :=
+      ENNReal.div_le_div_right (hmoment n) R
+    _ ≤ ε := hMR
+
+/--
+Coercivity + a uniform moment bound already produce a continuum measure
+subsequence and convergence of every bounded continuous expectation.
+
+This is the A2 -> A3 continuum producer used by the literal YM lane.
+-/
+theorem exists_continuum_measure_of_uniform_coercive_lintegral_bound
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    [TopologicalSpace Ω]
+    [T2Space Ω]
+    [BorelSpace Ω]
+    [FirstCountableTopology (ProbabilityMeasure Ω)]
+    (μ : ℕ → ProbabilityMeasure Ω)
+    (cost : Ω → ENNReal)
+    (hcost : Measurable cost)
+    (M : ENNReal)
+    (hmoment :
+      ∀ n : ℕ,
+        (∫⁻ x : Ω, cost x ∂((μ n : ProbabilityMeasure Ω) : Measure Ω)) ≤ M)
+    (hcompact :
+      ∀ R : ENNReal, R ≠ ⊤ → IsCompact {x : Ω | cost x ≤ R})
+    (hthreshold :
+      ∀ ε : ENNReal, 0 < ε →
+        ∃ R : ENNReal, R ≠ 0 ∧ R ≠ ⊤ ∧ M / R ≤ ε) :
+    ∃ μ∞ : ProbabilityMeasure Ω,
+      ∃ φ : ℕ → ℕ,
+        StrictMono φ ∧
+        Tendsto (μ ∘ φ) atTop (𝓝 μ∞) ∧
+        ∀ f : BoundedContinuousFunction Ω ℝ,
+          Tendsto
+            (fun n =>
+              ∫ x : Ω, f x ∂((μ (φ n) : ProbabilityMeasure Ω) : Measure Ω))
+            atTop
+            (𝓝 (∫ x : Ω, f x ∂((μ∞ : ProbabilityMeasure Ω) : Measure Ω))) := by
+  apply exists_subsequence_with_all_boundedContinuous_expectations μ
+  exact isTightMeasureSet_of_uniform_coercive_lintegral_bound
+    μ cost hcost M hmoment hcompact hthreshold
 
 
 /--

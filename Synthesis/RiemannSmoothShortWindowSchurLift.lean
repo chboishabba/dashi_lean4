@@ -72,6 +72,12 @@ structure SmoothShortWindowSchurCertificate
     ∀ j, ContDiff ℝ 2
       (windowPair windows.triple.p windows.triple.q0 windows.triple.q1 lam j)
 
+  evenPair :
+    ∀ j u,
+      windowPair windows.triple.p windows.triple.q0 windows.triple.q1 lam j (-u)
+        =
+      windowPair windows.triple.p windows.triple.q0 windows.triple.q1 lam j u
+
 namespace SmoothShortWindowSchurCertificate
 
 variable {sigma rho : Zeros}

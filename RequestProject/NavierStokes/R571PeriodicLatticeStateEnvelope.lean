@@ -99,4 +99,46 @@ theorem stateEnvelope_zeroShift_of_same_sample
       difference_le := ?_ }
   simp
 
+/-- Full periodic opposite-shift state envelope.  This theorem has no G2
+hypothesis at all: zero shift is exact equality; nonzero shift uses integer
+lattice discreteness. -/
+theorem periodicOppositeShiftStateEnvelope
+    (state : Wave → ℝ) (center shift : Wave) {g1 : ℝ}
+    (hg1 : 0 ≤ g1)
+    (hamp : ∀ mode, |state mode| ≤ g1) :
+    StateDerivativeEnvelope g1 (2 * g1)
+      (state (center + shift))
+      (state (center - shift))
+      (wlen shift) := by
+  by_cases hshift : shift = 0
+  · subst hshift
+    simpa using
+      (stateEnvelope_zeroShift_of_same_sample
+        (g := state center) hg1 (hamp center))
+  · exact stateEnvelope_nonzeroWave_of_amplitude
+      hshift hg1 (hamp (center + shift)) (hamp (center - shift))
+
+/-- The R571 radial payment on the literal periodic opposite-shift scalar state.
+The independent G2 leaf has disappeared; only a G1 amplitude envelope remains. -/
+theorem r571_periodicOppositeShift_of_amplitude
+    (s : DASHI.NS.Unforced.HelicitySign)
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    {k y : E} {center shift : Wave} {w g1 : ℝ}
+    (state : Wave → ℝ)
+    (hy : ‖y‖ = wlen shift)
+    (hw : 0 ≤ w)
+    (hk : 1 ≤ ‖k‖)
+    (hg1 : 0 ≤ g1)
+    (hamp : ∀ mode, |state mode| ≤ g1) :
+    w * (|radialSymbol s (k + y) - radialSymbol s k|
+            * |state (center + shift) - state (center - shift)|
+          + |centeredRadialDefect s k y|
+            * |state (center - shift)|)
+      ≤ w * (‖y‖ * ‖y‖) * (3 * g1) := by
+  have hstate := periodicOppositeShiftStateEnvelope
+    state center shift hg1 hamp
+  rw [← hy] at hstate
+  have h := r571_pairedSecondMoment_of_stateEnvelope s hw hk hstate
+  convert h using 1 <;> ring
+
 end RequestProject.NavierStokes.R571PeriodicLattice

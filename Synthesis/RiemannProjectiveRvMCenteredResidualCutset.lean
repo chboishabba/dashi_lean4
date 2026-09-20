@@ -36,6 +36,8 @@ namespace Synthesis
 open Zeta23
 open Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition
 open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilTwoRadiusSeparationGate
+open Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile
 
 def projectiveZeroMuResidual
     (g : ℝ → ℝ) (t r : ℝ) : ℝ :=

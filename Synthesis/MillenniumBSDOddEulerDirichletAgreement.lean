@@ -105,7 +105,7 @@ theorem explicitPrimePowerSeries_hasSum_at_cpow
 
 theorem explicitPrimePowerSeries_eval_mul_denominator
     {p : ℕ} [Fact hp : p.Prime]
-    (hp2 : p ≠ 2) {s : ℂ} (hs : 2 < s.re) :
+    (hp2 : p ≠ 2) {s : ℂ} (hs : 0 < s.re) :
     explicitEulerDenominator ⟨p, hp.out⟩ s
       * PowerSeries.eval₂ (Int.castRingHom ℂ)
           ((p : ℂ) ^ (-s)) (explicitPrimePowerSeries p)

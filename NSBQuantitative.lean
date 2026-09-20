@@ -3,3 +3,5 @@ import RequestProject.NavierStokes.R571StateVariation
 import RequestProject.NavierStokes.S2b2d1b2QuantitativePayment
 import RequestProject.NavierStokes.R571HermitianStateVariation
 import RequestProject.NavierStokes.R571VectorStateVariation
+import RequestProject.NavierStokes.R571PeriodicLatticeStateEnvelope
+import RequestProject.NavierStokes.R571PeriodicHermitianEnergyEnvelope

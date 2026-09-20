@@ -105,11 +105,9 @@ theorem canonical_outer_windowTaper
   have hR : 0 < quantitativeTaperR t := quantitativeTaperR_pos ht
   have hpos : 0 < canonicalOuterLo t := by
     have hgeom := canonical_window_geometry ht
-    exact lt_trans hgeom.1 (lt_trans (lt_of_le_of_lt hgeom.2.1 hgeom.2.2) (by
-      unfold canonicalOuterLo canonicalInnerHi
-        quantitativeTaperOuterCenter quantitativeTaperInnerCenter quantitativeTaperR
-      field_simp [ne_of_gt ht]
-      nlinarith [Real.pi_pos]))
+    have hinnerHi : 0 < canonicalInnerHi t :=
+      lt_of_lt_of_le hgeom.1 hgeom.2.1
+    exact lt_trans hinnerHi hgeom.2.2
   unfold canonicalOuterLo canonicalOuterHi
   exact smoothWindowRaw_windowTaper hpos hR
 
@@ -120,17 +118,15 @@ theorem canonicalCrossSignalFloor_pos
   have hgeom := canonical_window_geometry ht0
   have hinner := canonical_inner_windowTaper ht0
   have houter := canonical_outer_windowTaper ht0
+  have hinnerHi : 0 < canonicalInnerHi t :=
+    lt_of_lt_of_le hgeom.1 hgeom.2.1
   have houterLo : 0 < canonicalOuterLo t :=
-    lt_trans hgeom.1 (lt_trans (lt_of_le_of_lt hgeom.2.1 hgeom.2.2) (le_refl _))
+    lt_trans hinnerHi hgeom.2.2
   have harea :
       0 < (canonicalOuterLo t) ^ 2 - (canonicalInnerHi t) ^ 2 := by
-    have hinnerHi : 0 < canonicalInnerHi t :=
-      lt_of_lt_of_le hgeom.1 hgeom.2.1
     nlinarith [hgeom.2.2]
   have hcosh :
       0 < coshDiff a (canonicalInnerHi t) (canonicalOuterLo t) := by
-    have hinnerHi : 0 < canonicalInnerHi t :=
-      lt_of_lt_of_le hgeom.1 hgeom.2.1
     exact coshDiff_pos ha hinnerHi hgeom.2.2
   have hmi : 0 < ∫ u : ℝ, quantitativeInnerBump t u := hinner.mass
   have hmo : 0 < ∫ u : ℝ, quantitativeOuterBump t u := houter.mass

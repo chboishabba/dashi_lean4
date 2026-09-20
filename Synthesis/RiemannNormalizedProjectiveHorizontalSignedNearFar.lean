@@ -190,10 +190,7 @@ theorem sum_normalizedProjectiveHorizontalSourceTerm_le_signedMajorant
     ∑ sigma ∈ F,
       normalizedProjectiveHorizontalSourceSignedMajorant t sigma := by
   classical
-  apply Finset.sum_le_sum
-  intro sigma hsigma
-  apply Finset.sum_le_sum
-  intro _ _
-  exact normalizedProjectiveHorizontalSourceTerm_le_signedMajorant ht sigma
+  exact Finset.sum_le_sum fun sigma hsigma =>
+    normalizedProjectiveHorizontalSourceTerm_le_signedMajorant ht sigma
 
 end Synthesis

@@ -49,9 +49,6 @@ def normalizedProjectivePhysicalProfile (t v : ℝ) : ℝ :=
      onLineRadiusProfile (quantitativeCanonicalTaper t)
         (2 * quantitativeSampleRadius t) * Real.cos (v / 16))
 
-def normalizedProjectiveBaseIntegrand (t q v : ℝ) : ℝ :=
-  4 * normalizedProjectivePhysicalProfile t v / 4 * Real.cos (q * v)
-
 theorem normalizedCanonicalFixedProfile_zero_of_abs_le
     (t v : ℝ) (hv : |v| <= 3 * Real.pi / 4) :
     normalizedCanonicalFixedProfile t v = 0 := by
@@ -124,6 +121,12 @@ theorem normalizedProjectiveBaseTransform_eq_physicalCosine
       =
     ∫ v : ℝ,
       normalizedProjectivePhysicalProfile t v * Real.cos (q*v) := by
+  let A : ℝ :=
+    onLineRadiusProfile (quantitativeCanonicalTaper t)
+      (quantitativeSampleRadius t)
+  let B : ℝ :=
+    onLineRadiusProfile (quantitativeCanonicalTaper t)
+      (2 * quantitativeSampleRadius t)
   let f2 : ℝ → ℝ := fun v =>
     4 * normalizedCenteredFixedProfileAtScale t 2 v * Real.cos (q*v)
   let f1 : ℝ → ℝ := fun v =>
@@ -147,16 +150,36 @@ theorem normalizedProjectiveBaseTransform_eq_physicalCosine
       (by fun_prop)
       ((normalizedCanonicalFixedProfile_compact t).mul_left.mul_right)
 
-  unfold normalizedProjectiveBaseTransform
-    normalizedCenteredBaseTransformAtScale
-    normalizedRadiusZeroBaseTransform
-  rw [← integral_mul_const, ← integral_mul_const, ← integral_mul_const]
-  rw [← integral_sub (hf2.mul_const _) (hf1.mul_const _)]
-  rw [← integral_add (hf2.mul_const _).sub (hf1.mul_const _) (hf0.mul_const _)]
-  apply integral_congr_ae
-  exact Filter.Eventually.of_forall fun v => by
-    dsimp [f2, f1, f0]
-    exact normalizedProjective_base_integrand_collapse t q v
+  have hcombine :
+      A * (∫ v : ℝ, f2 v)
+        - B * (∫ v : ℝ, f1 v)
+        + (A-B) * (∫ v : ℝ, f0 v)
+      =
+      ∫ v : ℝ, A * f2 v - B * f1 v + (A-B) * f0 v := by
+    rw [integral_add ((hf2.const_mul A).sub (hf1.const_mul B))
+          (hf0.const_mul (A-B))]
+    rw [integral_sub (hf2.const_mul A) (hf1.const_mul B)]
+    rw [integral_const_mul, integral_const_mul, integral_const_mul]
+
+  calc
+    normalizedProjectiveBaseTransform t q
+        =
+      A * (∫ v : ℝ, f2 v)
+        - B * (∫ v : ℝ, f1 v)
+        + (A-B) * (∫ v : ℝ, f0 v) := by
+          unfold normalizedProjectiveBaseTransform
+            normalizedCenteredBaseTransformAtScale
+            normalizedRadiusZeroBaseTransform
+          dsimp [A, B, f2, f1, f0]
+          ring
+    _ = ∫ v : ℝ, A * f2 v - B * f1 v + (A-B) * f0 v := hcombine
+    _ = ∫ v : ℝ,
+          normalizedProjectivePhysicalProfile t v * Real.cos (q*v) := by
+          apply integral_congr_ae
+          exact Filter.Eventually.of_forall fun v => by
+            dsimp [A, B, f2, f1, f0]
+            rw [← normalizedProjective_base_integrand_collapse t q v]
+            ring
 
 def normalizedProjectiveComplexProfile (t : ℝ) : ℝ → ℂ :=
   fun v => (normalizedProjectivePhysicalProfile t v : ℝ)
@@ -166,11 +189,22 @@ theorem normalizedProjectiveComplexProfile_continuous (t : ℝ) :
   unfold normalizedProjectiveComplexProfile
   fun_prop
 
+theorem normalizedProjectiveComplexProfile_compact (t : ℝ) :
+    HasCompactSupport (normalizedProjectiveComplexProfile t) := by
+  apply HasCompactSupport.intro
+    (K := tsupport (normalizedProjectivePhysicalProfile t))
+    (normalizedProjectivePhysicalProfile_compact t)
+  intro x hx
+  have hzero :
+      normalizedProjectivePhysicalProfile t x = 0 :=
+    image_eq_zero_of_notMem_tsupport hx
+  simp [normalizedProjectiveComplexProfile, hzero]
+
 theorem normalizedProjectiveComplexProfile_integrable (t : ℝ) :
     Integrable (normalizedProjectiveComplexProfile t) := by
   exact (normalizedProjectiveComplexProfile_continuous t)
     .integrable_of_hasCompactSupport
-      ((normalizedProjectivePhysicalProfile_compact t).coe)
+      (normalizedProjectiveComplexProfile_compact t)
 
 theorem normalizedProjectiveComplexProfile_zero (t : ℝ) :
     normalizedProjectiveComplexProfile t 0 = 0 := by

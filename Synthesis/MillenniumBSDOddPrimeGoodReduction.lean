@@ -126,4 +126,88 @@ instance cmPadicWeierstrass_hasGoodReduction
   goodReduction :=
     cmPadicWeierstrass_discriminant_valuation_eq_one hp2
 
+
+noncomputable def cmChosenMinimal
+    (p : ℕ) [Fact p.Prime] :
+    WeierstrassCurve ℚ_[p] :=
+  (cmPadicWeierstrass p).minimal ℤ_[p]
+
+instance cmChosenMinimal_isMinimal
+    (p : ℕ) [Fact p.Prime] :
+    WeierstrassCurve.IsMinimal ℤ_[p]
+      (cmChosenMinimal p) := by
+  dsimp [cmChosenMinimal]
+  infer_instance
+
+instance cmChosenMinimal_isIntegral
+    (p : ℕ) [Fact p.Prime] :
+    WeierstrassCurve.IsIntegral ℤ_[p]
+      (cmChosenMinimal p) := by
+  infer_instance
+
+theorem cmChosenMinimal_aux_eq_one
+    {p : ℕ} [Fact p.Prime]
+    (hp2 : p ≠ 2) :
+    WeierstrassCurve.valuation_Δ_aux ℤ_[p]
+      (cmChosenMinimal p)
+      =
+    (⟨1, le_rfl⟩ : {v : ℤᵐ⁰ // v ≤ 1}) := by
+  let W := cmPadicWeierstrass p
+  let M := cmChosenMinimal p
+  have hWmin :
+      WeierstrassCurve.IsMinimal ℤ_[p] W :=
+    cmPadicWeierstrass_isMinimal hp2
+  have hMmin :
+      WeierstrassCurve.IsMinimal ℤ_[p] M := by
+    dsimp [M]
+    infer_instance
+  have hWaux :
+      WeierstrassCurve.valuation_Δ_aux ℤ_[p] W
+        =
+      (⟨1, le_rfl⟩ : {v : ℤᵐ⁰ // v ≤ 1}) := by
+    apply Subtype.ext
+    rw [WeierstrassCurve.valuation_Δ_aux_eq_of_isIntegral]
+    exact cmPadicWeierstrass_discriminant_valuation_eq_one hp2
+  have hM_le_W :
+      WeierstrassCurve.valuation_Δ_aux ℤ_[p] M
+        ≤
+      WeierstrassCurve.valuation_Δ_aux ℤ_[p] W := by
+    rw [hWaux]
+    exact
+      (WeierstrassCurve.valuation_Δ_aux ℤ_[p] M).property
+  have hW_le_M :
+      WeierstrassCurve.valuation_Δ_aux ℤ_[p] W
+        ≤
+      WeierstrassCurve.valuation_Δ_aux ℤ_[p] M := by
+    let C :=
+      (cmPadicWeierstrass p).exists_isMinimal ℤ_[p] |>.choose
+    have hMC :
+        M = C • W := by
+      rfl
+    subst M
+    exact hWmin.val_Δ_maximal.2
+      (by infer_instance)
+      hM_le_W
+  exact le_antisymm hM_le_W hW_le_M
+
+theorem cmChosenMinimal_discriminant_valuation_eq_one
+    {p : ℕ} [Fact p.Prime]
+    (hp2 : p ≠ 2) :
+    valuation ℚ_[p] (maximalIdeal ℤ_[p])
+      (cmChosenMinimal p).Δ = 1 := by
+  have haux := congrArg
+    (fun v : {v : ℤᵐ⁰ // v ≤ 1} => (v : ℤᵐ⁰))
+    (cmChosenMinimal_aux_eq_one hp2)
+  rw [WeierstrassCurve.valuation_Δ_aux_eq_of_isIntegral] at haux
+  simpa using haux
+
+instance cmChosenMinimal_hasGoodReduction
+    {p : ℕ} [Fact p.Prime]
+    (hp2 : p ≠ 2) :
+    WeierstrassCurve.HasGoodReduction ℤ_[p]
+      (cmChosenMinimal p) where
+  toIsMinimal := by infer_instance
+  goodReduction :=
+    cmChosenMinimal_discriminant_valuation_eq_one hp2
+
 end Synthesis.Millennium.BSD

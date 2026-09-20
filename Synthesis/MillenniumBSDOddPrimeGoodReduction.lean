@@ -210,4 +210,92 @@ instance cmChosenMinimal_hasGoodReduction
   goodReduction :=
     cmChosenMinimal_discriminant_valuation_eq_one hp2
 
+
+noncomputable def cmChosenMinimalChange
+    (p : ℕ) [Fact p.Prime] :
+    WeierstrassCurve.VariableChange ℚ_[p] :=
+  (cmPadicWeierstrass p).exists_isMinimal ℤ_[p] |>.choose
+
+theorem cmChosenMinimal_eq_change
+    (p : ℕ) [Fact p.Prime] :
+    cmChosenMinimal p =
+      cmChosenMinimalChange p • cmPadicWeierstrass p :=
+  rfl
+
+theorem cmChosenMinimalChange_u_inv_valuation_pow_eq_one
+    {p : ℕ} [Fact p.Prime]
+    (hp2 : p ≠ 2) :
+    (valuation ℚ_[p] (maximalIdeal ℤ_[p])
+      ((cmChosenMinimalChange p).u⁻¹ : ℚ_[p])) ^ 12 = 1 := by
+  let C := cmChosenMinimalChange p
+  let W := cmPadicWeierstrass p
+  have hM :
+      valuation ℚ_[p] (maximalIdeal ℤ_[p])
+        (C • W).Δ = 1 := by
+    simpa [C, W, cmChosenMinimal_eq_change] using
+      cmChosenMinimal_discriminant_valuation_eq_one hp2
+  have hW :
+      valuation ℚ_[p] (maximalIdeal ℤ_[p]) W.Δ = 1 := by
+    simpa [W] using
+      cmPadicWeierstrass_discriminant_valuation_eq_one hp2
+  rw [WeierstrassCurve.variableChange_Δ] at hM
+  simpa [map_mul, map_pow, hW] using hM
+
+theorem cmChosenMinimalChange_u_inv_valuation_eq_one
+    {p : ℕ} [Fact p.Prime]
+    (hp2 : p ≠ 2) :
+    valuation ℚ_[p] (maximalIdeal ℤ_[p])
+      ((cmChosenMinimalChange p).u⁻¹ : ℚ_[p]) = 1 := by
+  apply pow_left_injective (by norm_num : (12 : ℕ) ≠ 0)
+  simpa using
+    cmChosenMinimalChange_u_inv_valuation_pow_eq_one hp2
+
+theorem cmChosenMinimalChange_u_valuation_eq_one
+    {p : ℕ} [Fact p.Prime]
+    (hp2 : p ≠ 2) :
+    valuation ℚ_[p] (maximalIdeal ℤ_[p])
+      ((cmChosenMinimalChange p).u : ℚ_[p]) = 1 := by
+  have hinv :=
+    cmChosenMinimalChange_u_inv_valuation_eq_one hp2
+  rw [map_inv₀] at hinv
+  have := congrArg Inv.inv hinv
+  simpa using this
+
+theorem cmChosenMinimalChange_u_descends_to_unit
+    {p : ℕ} [Fact p.Prime]
+    (hp2 : p ≠ 2) :
+    ∃ u : ℤ_[p]ˣ,
+      algebraMap ℤ_[p] ℚ_[p] u =
+        (cmChosenMinimalChange p).u := by
+  have hval :
+      valuation ℚ_[p] (maximalIdeal ℤ_[p]) (1 : ℚ_[p])
+        =
+      valuation ℚ_[p] (maximalIdeal ℤ_[p])
+        ((cmChosenMinimalChange p).u : ℚ_[p]) := by
+    simpa using
+      (cmChosenMinimalChange_u_valuation_eq_one hp2).symm
+  obtain ⟨u, hu⟩ :=
+    IsDiscreteValuationRing.associated_of_valuation_eq
+      (A := ℤ_[p]) (K := ℚ_[p]) (1 : ℚ_[p])
+      ((cmChosenMinimalChange p).u : ℚ_[p]) hval
+  refine ⟨u, ?_⟩
+  simpa [Algebra.smul_def] using hu
+
+theorem cmChosenMinimalChange_descends
+    {p : ℕ} [Fact p.Prime]
+    (hp2 : p ≠ 2) :
+    ∃ CR : WeierstrassCurve.VariableChange ℤ_[p],
+      CR.baseChange ℚ_[p] =
+        cmChosenMinimalChange p := by
+  obtain ⟨u, hu⟩ :=
+    cmChosenMinimalChange_u_descends_to_unit hp2
+  exact WeierstrassCurve.variableChange_integral_of_u_integral
+    (R := ℤ_[p]) (K := ℚ_[p])
+    (W := cmPadicWeierstrass p)
+    (W' := cmChosenMinimal p)
+    (CK := cmChosenMinimalChange p)
+    (cmChosenMinimal_eq_change p).symm
+    hu
+
+
 end Synthesis.Millennium.BSD

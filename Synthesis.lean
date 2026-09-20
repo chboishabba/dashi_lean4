@@ -205,3 +205,5 @@ import Synthesis.RiemannNormalizedProjectiveProfileScaling
 import Synthesis.RiemannCanonicalDoubledRadiusPoleSign
 
 import Synthesis.RiemannProjectiveZetaMuExplicitScaling
+
+import Synthesis.RiemannCanonicalNearLineAbsoluteBudgetNoGo

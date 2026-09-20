@@ -9,6 +9,7 @@ import Synthesis.RiemannNormalizedCenteredOffTwoRadius
 import Synthesis.RiemannNormalizedOffRadiusZeroAtomicMeasure
 import Synthesis.RiemannNormalizedProjectiveOffTsumAttachment
 import Synthesis.RiemannNormalizedProjectiveRvMConsumer
+import Synthesis.RiemannNormalizedProjectiveHorizontalQuadraticFactor
 import Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector
 
 /-!
@@ -74,6 +75,7 @@ structure ActualHighAnalyticMinCutStatus where
   projectiveWholeLineZeroModePaid : Bool
   projectivePhysicalDomainTailIdentityPaid : Bool
   projectivePhysicalConstantModeCancellationPaid : Bool
+  projectiveHorizontalQuadraticFactorPaid : Bool
 
   farResidualRetainsHeightSquare : Bool
   targetDependentResidualSuppressionPaid : Bool
@@ -100,6 +102,7 @@ def actualHighAnalyticMinCutStatus : ActualHighAnalyticMinCutStatus :=
     projectiveWholeLineZeroModePaid := true
     projectivePhysicalDomainTailIdentityPaid := true
     projectivePhysicalConstantModeCancellationPaid := false
+    projectiveHorizontalQuadraticFactorPaid := true
 
     farResidualRetainsHeightSquare := false
     targetDependentResidualSuppressionPaid := false
@@ -149,6 +152,10 @@ theorem projectivePhysicalDomainTailIdentityNowPaid :
 
 theorem projectivePhysicalConstantModeCancellationStillOpen :
     actualHighAnalyticMinCutStatus.projectivePhysicalConstantModeCancellationPaid = false :=
+  rfl
+
+theorem projectiveHorizontalQuadraticFactorNowPaid :
+    actualHighAnalyticMinCutStatus.projectiveHorizontalQuadraticFactorPaid = true :=
   rfl
 
 

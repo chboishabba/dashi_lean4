@@ -216,14 +216,22 @@ theorem cmEulerProduct_primePower
   have hev := ArithmeticFunction.tendsTo_eulerProduct_ofPowerSeries
     rationalHeightOneNorm cmHeightOneLocalSeries
     cmHeightOneLocalSeries_constantCoeff (p ^ k)
-  filter_upwards [hev] with s hs
-  rw [← hs]
-  have hs' :
-      (∏ v ∈ (insert (rationalPrimePlace p) s), cmHeightOneLocalFactor v) (p ^ k)
-        = ArithmeticFunction.eulerProduct cmHeightOneLocalFactor (p ^ k) := by
-    exact (Filter.Eventually.of_forall fun _ => rfl)
-  rw [cmFiniteLocalProduct_primePower hp]
-  simp
+  rw [Filter.eventually_atTop] at hev
+  rcases hev with ⟨t, ht⟩
+  let s := insert (rationalPrimePlace p) t
+  have hs : t ⊆ s := Finset.subset_insert _ _
+  have hprod := ht s hs
+  have hfamily :
+      (fun v : HeightOneSpectrum (𝓞 ℚ) =>
+        ArithmeticFunction.ofPowerSeries
+          (rationalHeightOneNorm v) (cmHeightOneLocalSeries v))
+        = cmHeightOneLocalFactor := by
+    funext v
+    exact (cmHeightOneLocalFactor_eq_ofPowerSeries v).symm
+  rw [hfamily] at hprod
+  have hvmem : rationalPrimePlace p ∈ s := Finset.mem_insert_self _ _
+  rw [cmFiniteLocalProduct_primePower hp s k, if_pos hvmem] at hprod
+  exact hprod.symm
 
 theorem cmFormalLFunction_eq_heightOneEulerProduct :
     cmFormalLFunction = ArithmeticFunction.eulerProduct cmHeightOneLocalFactor := by

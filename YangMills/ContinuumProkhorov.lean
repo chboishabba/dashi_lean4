@@ -129,4 +129,66 @@ theorem nonnegative_boundedContinuous_expectation_of_weak_limit
     (ProbabilityMeasure.tendsto_iff_forall_integral_tendsto).1 hconv f
   exact ge_of_tendsto hExpect (Filter.Eventually.of_forall hfinite)
 
+
+/--
+Every continuous finite-dimensional projection of the extracted continuum
+measure is the weak limit of the corresponding projected finite measures.
+
+This is the cylinder-law bridge used to attach Schwinger / finite-dimensional
+distributions to the SAME continuum measure.
+-/
+theorem tendsto_continuous_marginals_of_weak_limit
+    {Ω E : Type*}
+    [MeasurableSpace Ω]
+    [TopologicalSpace Ω]
+    [OpensMeasurableSpace Ω]
+    [MeasurableSpace E]
+    [TopologicalSpace E]
+    [BorelSpace E]
+    {μs : ℕ → ProbabilityMeasure Ω}
+    {μ∞ : ProbabilityMeasure Ω}
+    (hconv : Tendsto μs atTop (𝓝 μ∞))
+    {projection : Ω → E}
+    (hprojection : Continuous projection) :
+    Tendsto
+      (fun n => (μs n).map projection)
+      atTop
+      (𝓝 (μ∞.map projection)) :=
+  ProbabilityMeasure.tendsto_map_of_tendsto_of_continuous
+    μs μ∞ hconv hprojection
+
+/--
+An exact continuous symmetry of every finite measure survives in the SAME weak
+limit measure.
+
+This is the generic Euclidean/gauge-symmetry closure step for the A lane.
+-/
+theorem invariant_under_continuous_map_of_weak_limit
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    [TopologicalSpace Ω]
+    [OpensMeasurableSpace Ω]
+    [BorelSpace Ω]
+    [T2Space (ProbabilityMeasure Ω)]
+    {μs : ℕ → ProbabilityMeasure Ω}
+    {μ∞ : ProbabilityMeasure Ω}
+    (hconv : Tendsto μs atTop (𝓝 μ∞))
+    {symmetry : Ω → Ω}
+    (hsymmetry : Continuous symmetry)
+    (hinvariant : ∀ n : ℕ, (μs n).map symmetry = μs n) :
+    μ∞.map symmetry = μ∞ := by
+  have hmap :
+      Tendsto
+        (fun n => (μs n).map symmetry)
+        atTop
+        (𝓝 (μ∞.map symmetry)) :=
+    ProbabilityMeasure.tendsto_map_of_tendsto_of_continuous
+      μs μ∞ hconv hsymmetry
+  have hsame :
+      (fun n => (μs n).map symmetry) = μs := by
+    funext n
+    exact hinvariant n
+  rw [hsame] at hmap
+  exact tendsto_nhds_unique hmap hconv
+
 end RequestProject.YangMills

@@ -109,29 +109,63 @@ theorem exists_radius_targetProjected_ne_zero :
   exact hsurvive r hr hrle
 
 /--
-At every admitted small radius the response of the selected nuisance itself is
-nonzero.  Otherwise the transverse target would equal the target trivially but
-the positive Gram wedge used by the admission theorem could not hold.
+The stronger admission receipt keeps the positive Gram wedge.  It therefore
+supplies both facts needed by the exact cutset: the nuisance response is nonzero
+and the target survives its orthogonal removal.
 -/
 theorem exists_radius_nuisance_ne_zero_and_target_survives :
     ∃ r0 : ℝ, 0 < r0 ∧ r0 ≤ 1 ∧
       ∀ r : ℝ, 0 < r → r ≤ r0 →
         zeroRespVec C.g r sigma ≠ 0
           ∧ targetProjected C.g r rho sigma ≠ 0 := by
+  have hdom :
+      |Zeta23Bridge.LiteralWeilLeadingCoefficientCovariance.detRest
+          C.windows.triple.p C.windows.triple.q0 C.windows.triple.q1
+          C.lam (heightOf sigma) (heightOf rho)|
+        <
+      crossMargin C.windows.triple C.lam (heightOf sigma) (heightOf rho) :=
+    hdom_of_endpointComparison C.envelope C.lam C.endpointStrict
+
+  have hL : leadingCrossDet C.g sigma rho ≠ 0 := by
+    change leadingCrossDet
+      (windowPair C.windows.triple.p C.windows.triple.q0
+        C.windows.triple.q1 C.lam) sigma rho ≠ 0
+    exact
+      (leadingCrossDet_windowPair_ne_zero
+        C.windows.triple.pWindow
+        C.windows.triple.q0Window
+        C.windows.triple.q1Window
+        C.windows.triple.lowPositive
+        C.windows.triple.lowOrdered
+        C.windows.triple.lowMiddleSeparated
+        C.windows.triple.middleOrdered
+        C.windows.triple.middleTopSeparated
+        C.sigmaHeight_pos
+        C.sigmaHeight_lt_target
+        C.endpointGate
+        hdom
+        C.sigmaMult_pos
+        C.targetMult_pos).2
+
   obtain ⟨r0, hr0, hr01, hwedge⟩ :=
-    Zeta23Bridge.WindowSchurSharedCertificate.exists_radius_transverseComp_ne_zero_of_endpointComparison
-      C.envelope C.lam
-      C.sigmaHeight_pos C.sigmaHeight_lt_target
-      C.endpointGate C.endpointStrict
-      C.sigmaMult_pos C.targetMult_pos
+    exists_radius_wedgeSq_pos
+      C.continuousPair C.compactPair hL
+
   refine ⟨r0, hr0, hr01, ?_⟩
   intro r hr hrle
-  have ht := hwedge r hr hrle
+  have hw :
+      0 < wedgeSq
+        (zeroRespVec C.g r sigma)
+        (zeroRespVec C.g r rho) :=
+    hwedge r hr hrle
   have hn : zeroRespVec C.g r sigma ≠ 0 := by
     intro hz
-    unfold targetProjected at ht
-    rw [hz] at ht
-    simp [transverseComp, dotP, normSqP] at ht
+    rw [hz] at hw
+    simp [wedgeSq, normSqP, dotP] at hw
+  have ht :
+      targetProjected C.g r rho sigma ≠ 0 := by
+    unfold targetProjected
+    exact transverseComp_ne_zero_of_wedgeSq_pos hw
   exact ⟨hn, ht⟩
 
 end SmoothShortWindowSchurCertificate

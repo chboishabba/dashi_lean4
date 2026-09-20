@@ -223,4 +223,58 @@ theorem false_of_oneZeroSchurResidualPayment
   rw [hz] at hscalar
   exact hnot hscalar
 
+
+/-! ## Prize-facing one-zero Schur witness -/
+
+structure HighOneZeroSchurWitness (rhoStar : Zeros) (t : ℝ) where
+  nuisance : Zeros
+  nuisance_sameOrd : (nuisance : ℂ).im = t
+
+  g : Fin 2 → ℝ → ℝ
+  r : ℝ
+
+  smooth : ∀ j, ContDiff ℝ 2 (g j)
+  compact : ∀ j, HasCompactSupport (g j)
+  even : ∀ j u, g j (-u) = g j u
+  short : ∀ j u, g j u ≠ 0 → |u| < Real.log 2
+
+  nuisanceResponse_ne :
+    zeroRespVec g r nuisance ≠ 0
+
+  residualPayment :
+    HighOneZeroSchurResidualPayment
+      (g := g) (t := t) (r := r) rhoStar nuisance
+
+theorem false_of_highOneZeroSchurWitness
+    {rhoStar : Zeros} {t : ℝ}
+    (him : (rhoStar : ℂ).im = t)
+    (W : HighOneZeroSchurWitness rhoStar t) :
+    False := by
+  exact false_of_oneZeroSchurResidualPayment
+    W.smooth W.compact W.even W.short
+    W.nuisanceResponse_ne W.residualPayment
+
+/--
+Uniform high compiler on the corrected Schur cutset.
+
+The producer is invoked only under the off-line hypothesis.  It must return an
+actual same-ordinate nuisance zero, an admissible short C^2 two-taper family, and
+the signed projected residual payment on that exact substrate.
+-/
+theorem high_zero_realPart_eq_half_of_oneZeroSchurProducer
+    {rhoStar : Zeros} {t : ℝ}
+    (him : (rhoStar : ℂ).im = t)
+    (ht : 18 ≤ t)
+    (producer :
+      heightOf rhoStar ≠ 0 →
+        HighOneZeroSchurWitness rhoStar t) :
+    (rhoStar : ℂ).re = 1 / 2 := by
+  by_contra hre
+  have hoff : heightOf rhoStar ≠ 0 := by
+    intro hz
+    apply hre
+    unfold heightOf at hz
+    linarith
+  exact false_of_highOneZeroSchurWitness him (producer hoff)
+
 end Synthesis

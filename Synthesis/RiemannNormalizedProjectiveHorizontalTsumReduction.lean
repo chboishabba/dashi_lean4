@@ -45,11 +45,11 @@ theorem normalizedProjectiveHorizontalLocalTerm_summable
   classical
   apply summable_of_ne_finset_zero (s := nearFinset t 1)
   intro rho hrho
-  unfold normalizedProjectiveHorizontalLocalTerm
-  rw [if_neg]
-  intro hlt
-  apply hrho
-  exact (mem_nearFinset_iff t 1 rho).2 (by simpa using hlt)
+  by_cases hlt : |(rho : ℂ).im - t| < 1
+  · exfalso
+    apply hrho
+    exact (mem_nearFinset_iff t 1 rho).2 (by simpa using hlt)
+  · simp [normalizedProjectiveHorizontalLocalTerm, hlt]
 
 theorem normalizedProjectiveHorizontalSourceTerm_eq_local_add_far
     (t : ℝ) (rho : Zeros) :
@@ -137,10 +137,10 @@ theorem tsum_normalizedProjectiveHorizontalMiddleTerm
       normalizedProjectiveHorizontalSourceTerm t (sigma : Zeros) := by
   classical
   rw [tsum_eq_sum
-    (s := normalizedProjectiveHorizontalMiddleFinset t)]
-  · simp [normalizedProjectiveHorizontalMiddleTerm]
-  · intro sigma hsigma
-    simp [normalizedProjectiveHorizontalMiddleTerm, hsigma]
+    (s := normalizedProjectiveHorizontalMiddleFinset t)
+    (fun sigma hsigma => by
+      simp [normalizedProjectiveHorizontalMiddleTerm, hsigma])]
+  simp [normalizedProjectiveHorizontalMiddleTerm]
 
 /-- Pointwise one-sided decomposition on the off-ordinate carrier: signed-near
 sources cost zero, local failures are retained exactly in the finite middle

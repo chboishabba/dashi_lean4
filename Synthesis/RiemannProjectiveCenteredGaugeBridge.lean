@@ -1,4 +1,5 @@
 import Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition
+import Synthesis.RiemannFinalComplementCenteredQuadratic
 
 /-!
 # Exact projective-to-centered gauge bridge
@@ -151,3 +152,74 @@ theorem offOrdProjectiveDefect_eq_centeredGauge
   exact channelProjectiveDefect_eq_centeredGauge hA0 r
 
 end Synthesis
+
+
+/--
+A denominator-free exact decomposition of the projective defect into the two
+radius-centered channel differences plus one radius-zero base term:
+
+  D_C(r)
+    = ΔC(2r) A0(r) - ΔC(r) A0(2r)
+      + C(0) (A0(r)-A0(2r)).
+
+This is often the most convenient analytic interface because each ΔC term can
+be represented by a centered taper while the remaining C(0) term is a single
+base spectral pairing.
+-/
+theorem channelProjectiveDefect_eq_centeredRadiusDecomposition
+    (C : ℝ → ℝ) (g : ℝ → ℝ) (r : ℝ) :
+    channelProjectiveDefect C g r
+      =
+    radiusCenteredChannel C (2*r) * onLineRadiusProfile g r
+      - radiusCenteredChannel C r * onLineRadiusProfile g (2*r)
+      + C 0 *
+          (onLineRadiusProfile g r - onLineRadiusProfile g (2*r)) := by
+  unfold channelProjectiveDefect radiusCenteredChannel onLineRadiusProfile
+  ring
+
+def literalCenteredOffResponse
+    (g : ℝ → ℝ) (t s : ℝ) : ℝ :=
+  evenConeFunctional
+    (offOrdVec (sampleFam (gammaCenteredTaper g s) t 0) t)
+
+/--
+The radius-centered literal Off channel is exactly the Off response of the
+centered taper at sample radius zero.
+-/
+theorem radiusCentered_offOrdChannel_eq_literalCenteredOffResponse
+    {g : ℝ → ℝ}
+    (hgs : ContDiff ℝ 2 g)
+    (hgc : HasCompactSupport g)
+    (heven : ∀ u, g (-u) = g u)
+    (t s : ℝ) :
+    radiusCenteredChannel (offOrdChannel g t) s
+      = literalCenteredOffResponse g t s := by
+  unfold radiusCenteredChannel literalCenteredOffResponse offOrdChannel
+  exact finalOffOrd_centered_radius hgs hgc heven t s
+
+/--
+Exact literal projective Off decomposition into:
+  * the centered Off response at 2r,
+  * the centered Off response at r,
+  * one radius-zero Off base response.
+
+This is the direct same-object bridge from the projective reflection-pair cutset
+to the normalized centered/RvM analysis.
+-/
+theorem offOrdProjectiveDefect_eq_twoCentered_plus_base
+    {g : ℝ → ℝ}
+    (hgs : ContDiff ℝ 2 g)
+    (hgc : HasCompactSupport g)
+    (heven : ∀ u, g (-u) = g u)
+    (t r : ℝ) :
+    offOrdProjectiveDefect g t r
+      =
+    literalCenteredOffResponse g t (2*r) * onLineRadiusProfile g r
+      - literalCenteredOffResponse g t r * onLineRadiusProfile g (2*r)
+      + offOrdChannel g t 0 *
+          (onLineRadiusProfile g r - onLineRadiusProfile g (2*r)) := by
+  unfold offOrdProjectiveDefect
+  rw [channelProjectiveDefect_eq_centeredRadiusDecomposition]
+  rw [radiusCentered_offOrdChannel_eq_literalCenteredOffResponse hgs hgc heven,
+      radiusCentered_offOrdChannel_eq_literalCenteredOffResponse hgs hgc heven]
+

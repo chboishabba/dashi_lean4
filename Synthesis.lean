@@ -133,3 +133,5 @@ import Synthesis.MillenniumBSDLocalKummerTorsionTriangle
 import Synthesis.MillenniumBSDLocalKummerOrdinaryHom
 
 import Synthesis.MillenniumBSDLocalKummerTorsionTranslateAll
+
+import Synthesis.MillenniumBSDLocalKummerHomomorphism

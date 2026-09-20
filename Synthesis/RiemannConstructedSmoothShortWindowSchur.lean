@@ -114,6 +114,51 @@ theorem exists_constructedSmoothShortWindowSchurCertificate
     targetMult_pos := zeroMultiplicity_pos rho
     smoothPair := hsmooth
     evenPair := heven
+    nonnegPair := by
+      intro j u
+      fin_cases j
+      · rw [windowPair_zero]
+        have hp := w.pNorm.nonneg u
+        have hq := w.q0Norm.nonneg u
+        linarith
+      · rw [windowPair_one]
+        have hp := w.pNorm.nonneg u
+        have hq := w.q1Norm.nonneg u
+        linarith
+    twoPointPositive := by
+      intro j
+      fin_cases j
+      · refine ⟨schurCenter0, schurCenter1, ?_, ?_, ?_⟩
+        · rw [windowPair_zero]
+          have hp : 0 < w.p schurCenter0 := by
+            dsimp [w, w0, p]
+            exact smoothWindow_pos_at_center hepos
+          have hq : 0 ≤ w.q0 schurCenter0 := w.q0Norm.nonneg _
+          linarith
+        · rw [windowPair_zero]
+          have hp : 0 ≤ w.p schurCenter1 := w.pNorm.nonneg _
+          have hq : 0 < w.q0 schurCenter1 := by
+            dsimp [w, w0, q0]
+            exact smoothWindow_pos_at_center hepos
+          linarith
+        · rw [abs_of_pos schurCenter0_pos, abs_of_pos (lt_trans schurCenter0_pos schurCenter01)]
+          exact ne_of_lt schurCenter01
+      · refine ⟨schurCenter0, schurCenter2, ?_, ?_, ?_⟩
+        · rw [windowPair_one]
+          have hp : 0 < w.p schurCenter0 := by
+            dsimp [w, w0, p]
+            exact smoothWindow_pos_at_center hepos
+          have hq : 0 ≤ w.q1 schurCenter0 := w.q1Norm.nonneg _
+          linarith
+        · rw [windowPair_one]
+          have hp : 0 ≤ w.p schurCenter2 := w.pNorm.nonneg _
+          have hq : 0 < w.q1 schurCenter2 := by
+            dsimp [w, w0, q1]
+            exact smoothWindow_pos_at_center hepos
+          linarith
+        · rw [abs_of_pos schurCenter0_pos,
+            abs_of_pos (lt_trans (lt_trans schurCenter0_pos schurCenter01) schurCenter12)]
+          exact ne_of_lt (lt_trans schurCenter01 schurCenter12)
   }⟩
   simpa [env, shortW] using hstrict
 

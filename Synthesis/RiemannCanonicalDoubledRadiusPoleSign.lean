@@ -488,4 +488,230 @@ theorem quantitativeCanonical_projectivePoleDefect_nonneg
     t (quantitativeSampleRadius t), hp1]
   nlinarith
 
+def doubledPoleInnerRatioLower : ℝ :=
+  doubleSampleAttenuation (5 * Real.pi / 64)
+
+def doubledPoleOuterRatioUpper : ℝ :=
+  doubleSampleAttenuation (7 * Real.pi / 64)
+
+theorem doubledPoleOuterRatioUpper_lt_innerRatioLower :
+    doubledPoleOuterRatioUpper < doubledPoleInnerRatioLower := by
+  unfold doubledPoleOuterRatioUpper doubledPoleInnerRatioLower
+  apply doubleSampleAttenuation_strictAnti
+  · positivity
+  · nlinarith [Real.pi_pos]
+  · nlinarith [Real.pi_pos]
+
+theorem inner_doubleSampleAttenuation_ge_lower
+    {t u : ℝ} (ht : 0 < t)
+    (hlo : 3 * Real.pi / (4*t) < u)
+    (hhi : u < 5 * Real.pi / (4*t)) :
+    doubledPoleInnerRatioLower
+      ≤ doubleSampleAttenuation ((t/16)*u) := by
+  have hx0 : 0 ≤ (t/16)*u := by
+    have hu0 : 0 < u := lt_trans (by positivity) hlo
+    positivity
+  have hxhi : (t/16)*u < 5 * Real.pi / 64 := by
+    have h := mul_lt_mul_of_pos_left hhi (show 0 < t/16 by positivity)
+    field_simp [ne_of_gt ht] at h
+    nlinarith [Real.pi_pos]
+  have h5pi : 5 * Real.pi / 64 < Real.pi/2 := by
+    nlinarith [Real.pi_pos]
+  exact (doubleSampleAttenuation_strictAnti hx0 hxhi h5pi).le
+
+theorem outer_doubleSampleAttenuation_le_upper
+    {t u : ℝ} (ht : 0 < t)
+    (hlo : 7 * Real.pi / (4*t) < u)
+    (hhi : u < 9 * Real.pi / (4*t)) :
+    doubleSampleAttenuation ((t/16)*u)
+      ≤ doubledPoleOuterRatioUpper := by
+  have h70 : 0 ≤ 7 * Real.pi / 64 := by positivity
+  have hxlo : 7 * Real.pi / 64 < (t/16)*u := by
+    have h := mul_lt_mul_of_pos_left hlo (show 0 < t/16 by positivity)
+    field_simp [ne_of_gt ht] at h
+    nlinarith [Real.pi_pos]
+  have hxhi : (t/16)*u < 9 * Real.pi / 64 := by
+    have h := mul_lt_mul_of_pos_left hhi (show 0 < t/16 by positivity)
+    field_simp [ne_of_gt ht] at h
+    nlinarith [Real.pi_pos]
+  have hxpi : (t/16)*u < Real.pi/2 := by
+    nlinarith [Real.pi_pos]
+  exact (doubleSampleAttenuation_strictAnti h70 hxlo hxpi).le
+
+theorem outerDoubledPoleIntegral_le_upper
+    {t : ℝ} (ht : 18 ≤ t) :
+    (∫ u : ℝ, quantitativeOuterDoubledPoleDensity t u)
+      ≤
+    doubledPoleOuterRatioUpper
+      * ∫ u : ℝ, quantitativeOuterSelectedPoleDensity t u := by
+  have ht0 : 0 < t := by linarith
+  have hsel : Integrable (quantitativeOuterSelectedPoleDensity t) := by
+    unfold quantitativeOuterSelectedPoleDensity
+    exact (quantitativeOuterPoleBaseWeight_integrable ht).mul (by fun_prop)
+  have hdbl : Integrable (quantitativeOuterDoubledPoleDensity t) := by
+    unfold quantitativeOuterDoubledPoleDensity
+    exact (quantitativeOuterPoleBaseWeight_integrable ht).mul (by fun_prop)
+  have hrhs : Integrable
+      (fun u => doubledPoleOuterRatioUpper
+        * quantitativeOuterSelectedPoleDensity t u) :=
+    hsel.const_mul _
+  calc
+    (∫ u : ℝ, quantitativeOuterDoubledPoleDensity t u)
+      ≤
+    ∫ u : ℝ,
+      doubledPoleOuterRatioUpper
+        * quantitativeOuterSelectedPoleDensity t u := by
+      apply integral_mono hdbl hrhs
+      intro u
+      by_cases hF : quantitativeOuterPoleBaseWeight t u = 0
+      · simp [quantitativeOuterDoubledPoleDensity,
+          quantitativeOuterSelectedPoleDensity, hF]
+      · have hs := quantitativeOuterPoleBaseWeight_support ht u hF
+        have heq :=
+          doubledPoleDensity_eq_selected_mul_attenuation
+            (F := quantitativeOuterPoleBaseWeight t)
+            ht0
+            (fun h => ⟨lt_trans (by positivity)
+                (quantitativeOuterPoleBaseWeight_support ht u h).1,
+              (quantitativeOuterPoleBaseWeight_support ht u h).2⟩)
+        rw [quantitativeOuterDoubledPoleDensity,
+          quantitativeOuterSelectedPoleDensity, heq]
+        exact mul_le_mul_of_nonneg_right
+          (outer_doubleSampleAttenuation_le_upper ht0 hs.1 hs.2)
+          (outerSelectedPoleDensity_nonneg ht u)
+    _ =
+    doubledPoleOuterRatioUpper
+      * ∫ u : ℝ, quantitativeOuterSelectedPoleDensity t u := by
+      rw [integral_const_mul]
+
+theorem innerDoubledPoleIntegral_le_lower
+    {t : ℝ} (ht : 18 ≤ t) :
+    (∫ u : ℝ, quantitativeInnerDoubledPoleDensity t u)
+      ≤
+    doubledPoleInnerRatioLower
+      * ∫ u : ℝ, quantitativeInnerSelectedPoleDensity t u := by
+  have ht0 : 0 < t := by linarith
+  have hsel : Integrable (quantitativeInnerSelectedPoleDensity t) := by
+    unfold quantitativeInnerSelectedPoleDensity
+    exact (quantitativeInnerPoleBaseWeight_integrable ht).mul (by fun_prop)
+  have hdbl : Integrable (quantitativeInnerDoubledPoleDensity t) := by
+    unfold quantitativeInnerDoubledPoleDensity
+    exact (quantitativeInnerPoleBaseWeight_integrable ht).mul (by fun_prop)
+  have hrhs : Integrable
+      (fun u => doubledPoleInnerRatioLower
+        * quantitativeInnerSelectedPoleDensity t u) :=
+    hsel.const_mul _
+  calc
+    (∫ u : ℝ, quantitativeInnerDoubledPoleDensity t u)
+      ≤
+    ∫ u : ℝ,
+      doubledPoleInnerRatioLower
+        * quantitativeInnerSelectedPoleDensity t u := by
+      apply integral_mono hdbl hrhs
+      intro u
+      by_cases hF : quantitativeInnerPoleBaseWeight t u = 0
+      · simp [quantitativeInnerDoubledPoleDensity,
+          quantitativeInnerSelectedPoleDensity, hF]
+      · have hs := quantitativeInnerPoleBaseWeight_support ht u hF
+        have heq :=
+          doubledPoleDensity_eq_selected_mul_attenuation
+            (F := quantitativeInnerPoleBaseWeight t)
+            ht0
+            (fun h => ⟨lt_trans (by positivity)
+                (quantitativeInnerPoleBaseWeight_support ht u h).1,
+              lt_trans
+                (quantitativeInnerPoleBaseWeight_support ht u h).2
+                (by positivity :
+                  5 * Real.pi / (4*t) < 9 * Real.pi / (4*t))⟩)
+        rw [quantitativeInnerDoubledPoleDensity,
+          quantitativeInnerSelectedPoleDensity, heq]
+        exact mul_le_mul_of_nonpos_left
+          (inner_doubleSampleAttenuation_ge_lower ht0 hs.1 hs.2)
+          (innerSelectedPoleDensity_nonpos ht u)
+    _ =
+    doubledPoleInnerRatioLower
+      * ∫ u : ℝ, quantitativeInnerSelectedPoleDensity t u := by
+      rw [integral_const_mul]
+
+theorem quantitativeCanonicalTaper_doubled_pole_neg
+    {t : ℝ} (ht : 18 ≤ t) :
+    poleEvenResp (quantitativeCanonicalTaper t) t
+      (2 * quantitativeSampleRadius t) < 0 := by
+  have ht0 : 0 < t := by linarith
+  let Pin : ℝ :=
+    ∫ u : ℝ, quantitativeInnerSelectedPoleDensity t u
+  let Pout : ℝ :=
+    ∫ u : ℝ, quantitativeOuterSelectedPoleDensity t u
+  let Din : ℝ :=
+    ∫ u : ℝ, quantitativeInnerDoubledPoleDensity t u
+  let Dout : ℝ :=
+    ∫ u : ℝ, quantitativeOuterDoubledPoleDensity t u
+  have hPin : Pin < 0 := by
+    dsimp [Pin, quantitativeInnerSelectedPoleDensity]
+    rw [quantitativeInnerPole_weighted_eq_half ht]
+    linarith [quantitativeInnerPole_neg ht]
+  have hPout : 0 < Pout := by
+    dsimp [Pout, quantitativeOuterSelectedPoleDensity]
+    rw [quantitativeOuterPole_weighted_eq_half ht]
+    linarith [quantitativeOuterPole_pos ht]
+  have hcancel : Pin + quantitativeLambda t * Pout = 0 := by
+    dsimp [Pin, Pout]
+    exact canonical_selectedPoleIntegral_cancels ht
+  have hDin : Din ≤ doubledPoleInnerRatioLower * Pin := by
+    dsimp [Din, Pin]
+    exact innerDoubledPoleIntegral_le_lower ht
+  have hDout : Dout ≤ doubledPoleOuterRatioUpper * Pout := by
+    dsimp [Dout, Pout]
+    exact outerDoubledPoleIntegral_le_upper ht
+  have hlam : 0 < quantitativeLambda t := quantitativeLambda_pos ht
+  have hgap :
+      doubledPoleOuterRatioUpper < doubledPoleInnerRatioLower :=
+    doubledPoleOuterRatioUpper_lt_innerRatioLower
+  have hstrict :
+      doubledPoleInnerRatioLower * Pin
+        + quantitativeLambda t * (doubledPoleOuterRatioUpper * Pout)
+        < 0 := by
+    have hLP : 0 < quantitativeLambda t * Pout := mul_pos hlam hPout
+    have hPinEq : Pin = -(quantitativeLambda t * Pout) := by
+      linarith
+    rw [hPinEq]
+    nlinarith
+  have hsum : Din + quantitativeLambda t * Dout < 0 := by
+    have hs1 := add_le_add hDin
+      (mul_le_mul_of_nonneg_left hDout hlam.le)
+    exact lt_of_le_of_lt hs1 hstrict
+  have hlin :=
+    poleEvenResp_add_smul
+      (quantitativeInnerBump_continuous ht0)
+      (quantitativeInnerBump_compact ht0)
+      (quantitativeOuterBump_continuous ht0)
+      (quantitativeOuterBump_compact ht0)
+      (t := t) (s := 2 * quantitativeSampleRadius t)
+      (lam := quantitativeLambda t)
+  unfold quantitativeCanonicalTaper
+  rw [hlin,
+      quantitativeInnerPole_doubled_eq_two_integral ht,
+      quantitativeOuterPole_doubled_eq_two_integral ht]
+  dsimp [Din, Dout] at hsum
+  nlinarith
+
+theorem quantitativeCanonical_projectivePoleDefect_pos
+    {t : ℝ} (ht : 18 ≤ t) :
+    0 <
+    poleProjectiveDefect
+      (quantitativeCanonicalTaper t)
+      t (quantitativeSampleRadius t) := by
+  have hd := quantitativeCanonicalGateData ht
+  have hp2 := quantitativeCanonicalTaper_doubled_pole_neg ht
+  have hp1 := quantitativeCanonicalTaper_pole_zero ht
+  have hA :
+      0 <
+      evenResp (quantitativeCanonicalTaper t) 0
+        (quantitativeSampleRadius t) :=
+    gate_onLineRadiusResp_pos hd
+  rw [poleProjectiveDefect_eq
+    hd.smooth.continuous hd.compactSupport hd.isEven
+    t (quantitativeSampleRadius t), hp1]
+  nlinarith
+
 end Synthesis

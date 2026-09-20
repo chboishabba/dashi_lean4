@@ -213,3 +213,7 @@ import Synthesis.MillenniumBSDCMEta32Kernel
 import Synthesis.MillenniumBSDCMEta32QProduct
 
 import Synthesis.MillenniumBSDCMEta32Decay
+
+import Synthesis.MillenniumHodgeTetrahedralBoundaryNative
+
+import Synthesis.MillenniumBSDSelmerShaCohomologicalBoundary

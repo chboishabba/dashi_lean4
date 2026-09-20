@@ -94,7 +94,7 @@ theorem totalLocalKummer_infinity
       localInfinityKummer p :=
   rfl
 
-theorem totalLocalKummer_zero
+theorem totalLocalKummer_zeroTorsion
     (p : ℕ) [Fact p.Prime] :
     totalLocalKummer p
       (.affine 0 0 (by norm_num)) =

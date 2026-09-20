@@ -12,6 +12,13 @@ import Synthesis.RiemannNormalizedProjectiveRvMConsumer
 import Synthesis.RiemannNormalizedProjectiveHorizontalQuadraticFactor
 import Synthesis.RiemannProjectiveRvMMuGammaSameObject
 import Synthesis.RiemannNormalizedProjectiveRvMMissingTailBound
+import Synthesis.RiemannProjectiveRvMMuNamedGammaDefect
+import Synthesis.RiemannZetaMuExactAbel
+import Synthesis.RiemannZeta23RvMArbitraryEndpointDiscrepancy
+import Synthesis.RiemannProjectiveZetaMuContinuousAbel
+import Synthesis.RiemannProjectiveZetaMuExplicitScaling
+import Synthesis.RiemannCanonicalDoubledRadiusPoleSign
+import Synthesis.RiemannCanonicalNearLineAbsoluteBudgetNoGo
 import Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector
 
 /-!
@@ -51,8 +58,26 @@ The next mathematical producer must therefore do at least one of:
 3. expose additional exact signed cancellation beyond the first cosine sign
    change, eliminating the a-independent far term.
 
-This file is a status firewall: it prevents the uniform curvature bound from
-being mistaken for a prize-facing near-line closure.
+The later projective/RvM tranche has now sharpened this further:
+
+* the exact theorem-bearing mu pairing is the named Gamma projective defect;
+* literal N-mu has an exact continuous Abel identity;
+* the actual Zeta23 cumulative N-mu discrepancy has an arbitrary-endpoint
+  O(log A + log B) theorem;
+* the exact projective physical profile has explicit inverse-t L1/first/second
+  moment scaling;
+* the canonical doubled-radius pole response is strictly negative, hence the
+  projective pole defect is strictly positive;
+* therefore any componentwise absolute high-side budget is formally impossible
+  uniformly near a=0.
+
+The remaining high theorem must therefore use signed cancellation in the
+combined N-mu + horizontal + pole consumer, or a genuinely target-height-
+dependent test/taper.  Constant/log/missing-tail pieces are no longer primitive
+proof debts after the Gamma-mu same-object weld.
+
+This file is a status firewall: it prevents superseded absolute decompositions
+from being mistaken for a prize-facing near-line closure.
 -/
 
 namespace Synthesis
@@ -81,6 +106,12 @@ structure ActualHighAnalyticMinCutStatus where
   projectiveRvMMuGammaSameObjectPaid : Bool
   projectiveMissingTailAbsoluteBoundPaid : Bool
   projectiveRvMMuToNamedGammaDefectPaid : Bool
+  literalZetaMuExactAbelPaid : Bool
+  literalZetaMuArbitraryEndpointDiscrepancyPaid : Bool
+  projectiveContinuousZetaMuAbelPaid : Bool
+  projectiveProfileInvTScalingPaid : Bool
+  canonicalProjectivePoleStrictPositivePaid : Bool
+  componentwiseNearLineAbsoluteBudgetPruned : Bool
 
   farResidualRetainsHeightSquare : Bool
   targetDependentResidualSuppressionPaid : Bool
@@ -110,7 +141,13 @@ def actualHighAnalyticMinCutStatus : ActualHighAnalyticMinCutStatus :=
     projectiveHorizontalQuadraticFactorPaid := true
     projectiveRvMMuGammaSameObjectPaid := true
     projectiveMissingTailAbsoluteBoundPaid := true
-    projectiveRvMMuToNamedGammaDefectPaid := false
+    projectiveRvMMuToNamedGammaDefectPaid := true
+    literalZetaMuExactAbelPaid := true
+    literalZetaMuArbitraryEndpointDiscrepancyPaid := true
+    projectiveContinuousZetaMuAbelPaid := true
+    projectiveProfileInvTScalingPaid := true
+    canonicalProjectivePoleStrictPositivePaid := true
+    componentwiseNearLineAbsoluteBudgetPruned := true
 
     farResidualRetainsHeightSquare := false
     targetDependentResidualSuppressionPaid := false
@@ -129,6 +166,7 @@ theorem uniformNearLineClosureStillOpen :
 
 end Synthesis
 
+namespace Synthesis
 
 theorem projectiveCenteredGaugeBridgeNowPaid :
     actualHighAnalyticMinCutStatus.projectiveCenteredGaugeBridgePaid = true :=
@@ -180,6 +218,32 @@ theorem projectiveMissingTailAbsoluteBoundNowPaid :
     actualHighAnalyticMinCutStatus.projectiveMissingTailAbsoluteBoundPaid = true :=
   rfl
 
-theorem projectiveRvMMuToNamedGammaDefectStillOpen :
-    actualHighAnalyticMinCutStatus.projectiveRvMMuToNamedGammaDefectPaid = false :=
+theorem projectiveRvMMuToNamedGammaDefectNowPaid :
+    actualHighAnalyticMinCutStatus.projectiveRvMMuToNamedGammaDefectPaid = true :=
   rfl
+
+theorem literalZetaMuExactAbelNowPaid :
+    actualHighAnalyticMinCutStatus.literalZetaMuExactAbelPaid = true :=
+  rfl
+
+theorem literalZetaMuArbitraryEndpointDiscrepancyNowPaid :
+    actualHighAnalyticMinCutStatus.literalZetaMuArbitraryEndpointDiscrepancyPaid = true :=
+  rfl
+
+theorem projectiveContinuousZetaMuAbelNowPaid :
+    actualHighAnalyticMinCutStatus.projectiveContinuousZetaMuAbelPaid = true :=
+  rfl
+
+theorem projectiveProfileInvTScalingNowPaid :
+    actualHighAnalyticMinCutStatus.projectiveProfileInvTScalingPaid = true :=
+  rfl
+
+theorem canonicalProjectivePoleStrictPositiveNowPaid :
+    actualHighAnalyticMinCutStatus.canonicalProjectivePoleStrictPositivePaid = true :=
+  rfl
+
+theorem componentwiseNearLineAbsoluteBudgetNowPruned :
+    actualHighAnalyticMinCutStatus.componentwiseNearLineAbsoluteBudgetPruned = true :=
+  rfl
+
+end Synthesis

@@ -1,6 +1,7 @@
 import Synthesis.RiemannFinalLiteralComplementSignedReduction
 import Synthesis.RiemannQuantitativeCanonicalTaper
 import Synthesis.RiemannCanonicalCenteredClusterPoleReduction
+import Synthesis.RiemannCanonicalTaperRadiusZeroPoleSign
 import Zeta23Bridge.LiteralWeilPrimeEvenCone
 
 /-!
@@ -187,6 +188,52 @@ theorem quantitativeCanonical_selectedRadius_complement_neg_of_cluster_pos
   rw [quantitativeCanonical_selectedRadius_complement_eq_neg_cluster
     ht hheight]
   linarith
+
+
+/--
+Existential high-side closure on the already-proved positive pole-killing taper
+family.
+
+For an actual zero rhoStar at ordinate t, sufficiently large |t| makes the
+constructor's support prime-invisible.  The same-ordinate cluster is strictly
+positive by the literal Zeta23 cone theorem, while the selected pole channel is
+zero by construction.  Hence the literal complement is strictly negative.
+-/
+theorem exists_selectedRadius_literalComplement_neg_at_zero
+    {rhoStar : Zeta23.Zeros} {t : ℝ}
+    (him : (rhoStar : ℂ).im = t)
+    (ht : t ≠ 0)
+    (hhigh : 9 * Real.pi < 4 * |t| * Real.log 2) :
+    ∃ (g : ℝ → ℝ) (r : ℝ),
+      ContDiff ℝ 2 g
+      ∧ HasCompactSupport g
+      ∧ (∀ u, g (-u) = g u)
+      ∧ 0 < r
+      ∧ poleEvenResp g t r = 0
+      ∧ (∀ a : ℝ, 0 < evenResp g a r)
+      ∧ finalLiteralComplement g t r < 0 := by
+  obtain ⟨g, r, hgs, hgc, heven, hr, hnn, hrad,
+      hkill, hpole0, hpoleVec0, hA, hsupp⟩ :=
+    exists_canonical_taper_with_negative_radiusZero_pole ht
+  have habst0 : 0 < |t| := abs_pos.mpr ht
+  have hshort : ∀ u, g u ≠ 0 -> |u| < Real.log 2 := by
+    intro u hu
+    have hs := hsupp u hu
+    have hupper : 9 * Real.pi / (4 * |t|) < Real.log 2 := by
+      rw [div_lt_iff₀ (by positivity : 0 < 4 * |t|)]
+      exact hhigh
+    exact lt_trans hs hupper
+  have hcluster :
+      0 <
+      evenConeFunctional
+        (clusterVec (sampleFam g t r) t) := by
+    exact sameOrdinateClusterConePositive
+      hgs hgc heven hA ⟨rhoStar, him⟩
+  have hneg :
+      finalLiteralComplement g t r < 0 :=
+    selectedRadius_literalComplement_lt_zero_of_cluster_pos
+      hgs hgc heven hshort hkill hcluster
+  exact ⟨g, r, hgs, hgc, heven, hr, hkill, hA, hneg⟩
 
 
 end Synthesis

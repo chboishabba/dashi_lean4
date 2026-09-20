@@ -220,7 +220,7 @@ instance padicSquareClassCommGroup
     apply padicSquareRel_of_eq
     apply Subtype.ext
     simp [nzPadicMul, nzPadicOne]
-  inv_mul_cancel₀ := by
+  inv_mul_cancel := by
     rintro ⟨a⟩
     apply Quotient.sound
     apply padicSquareRel_of_eq

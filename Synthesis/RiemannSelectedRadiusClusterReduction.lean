@@ -1,5 +1,6 @@
 import Synthesis.RiemannFinalLiteralComplementSignedReduction
 import Synthesis.RiemannQuantitativeCanonicalTaper
+import Synthesis.RiemannCanonicalCenteredClusterPoleReduction
 import Zeta23Bridge.LiteralWeilPrimeEvenCone
 
 /-!
@@ -115,5 +116,77 @@ theorem selectedRadius_literalComplement_lt_zero_of_cluster_pos
   rw [selectedRadius_literalComplement_eq_neg_cluster
     hgs hgc heven hshort hkill]
   linarith
+
+/--
+The literal quantitative canonical taper is itself prime-invisible once the
+high-height support criterion is met.
+-/
+theorem quantitativeCanonicalTaper_short
+    {t : ℝ}
+    (ht : 18 <= t)
+    (hheight : 9 * Real.pi <= 4 * t * Real.log 2) :
+    ∀ u, quantitativeCanonicalTaper t u ≠ 0 -> |u| < Real.log 2 := by
+  intro u hu
+  have ht0 : 0 < t := by linarith
+  have hs := quantitativeCanonicalTaper_support_abs_lt ht hu
+  have hupper :
+      9 * Real.pi / (4 * t) <= Real.log 2 := by
+    rw [div_le_iff₀ (by positivity : 0 < 4 * t)]
+    exact hheight
+  exact lt_of_lt_of_le hs hupper
+
+/--
+Fully instantiated selected-radius identity for the actual quantitative
+canonical taper.  All prime/pole/support plumbing is discharged.
+-/
+theorem quantitativeCanonical_selectedRadius_complement_eq_neg_cluster
+    {t : ℝ}
+    (ht : 18 <= t)
+    (hheight : 9 * Real.pi <= 4 * t * Real.log 2) :
+    finalLiteralComplement
+        (quantitativeCanonicalTaper t)
+        t
+        (quantitativeSampleRadius t)
+      =
+    - evenConeFunctional
+        (clusterVec
+          (sampleFam
+            (quantitativeCanonicalTaper t)
+            t
+            (quantitativeSampleRadius t))
+          t) := by
+  exact selectedRadius_literalComplement_eq_neg_cluster
+    (quantitativeCanonicalTaper_contDiff ht)
+    (quantitativeCanonicalTaper_compact ht)
+    (quantitativeCanonicalTaper_even (t := t))
+    (quantitativeCanonicalTaper_short ht hheight)
+    (quantitativeCanonicalTaper_pole_zero ht)
+
+/--
+Canonical terminal sign compiler: after the exact selected-radius reduction,
+strict negativity is equivalent to the single same-ordinate cluster positivity
+leaf.
+-/
+theorem quantitativeCanonical_selectedRadius_complement_neg_of_cluster_pos
+    {t : ℝ}
+    (ht : 18 <= t)
+    (hheight : 9 * Real.pi <= 4 * t * Real.log 2)
+    (hcluster :
+      0 <
+      evenConeFunctional
+        (clusterVec
+          (sampleFam
+            (quantitativeCanonicalTaper t)
+            t
+            (quantitativeSampleRadius t))
+          t)) :
+    finalLiteralComplement
+        (quantitativeCanonicalTaper t)
+        t
+        (quantitativeSampleRadius t) < 0 := by
+  rw [quantitativeCanonical_selectedRadius_complement_eq_neg_cluster
+    ht hheight]
+  linarith
+
 
 end Synthesis

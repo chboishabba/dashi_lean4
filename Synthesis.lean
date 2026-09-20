@@ -178,3 +178,4 @@ import Synthesis.RiemannNormalizedProjectiveOffTsumAttachment
 
 import Synthesis.RiemannNormalizedProjectiveOffHorizontalSplit
 import Synthesis.RiemannNormalizedProjectiveBaseProfile
+import Synthesis.RiemannNormalizedProjectiveRvMConsumer

@@ -47,14 +47,5 @@ theorem cp1_topologically_is_sphere :
     Nonempty (CP1 ≃ₜ UnitSphere2) :=
   ⟨cp1HomeomorphSphere⟩
 
-theorem cp1_compact :
-    CompactSpace CP1 := by
-  letI : CompactSpace UnitSphere2 := inferInstance
-  exact cp1HomeomorphSphere.symm.compactSpace
-
-theorem cp1_connected :
-    ConnectedSpace CP1 := by
-  letI : ConnectedSpace UnitSphere2 := inferInstance
-  exact cp1HomeomorphSphere.symm.connectedSpace
 
 end Synthesis.Millennium.Hodge

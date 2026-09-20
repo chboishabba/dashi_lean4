@@ -40,7 +40,7 @@ theorem gammaProjectiveDefect_eq_two_projectiveRvMMuSignedPair
     (hgs : ContDiff ℝ 2 g)
     (heven : ∀ u, g (-u) = g u)
     (hsupp : ∀ u, g u ≠ 0 → |u| ≤ Λ)
-    (hΛ : 0 < Λ)
+    (hΛ : 0 ≤ Λ)
     (t r : ℝ) :
     gammaProjectiveDefect g t r
       = 2 * projectiveRvMMuSignedPair g t r := by

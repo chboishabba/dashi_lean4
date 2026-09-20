@@ -33,6 +33,7 @@ import Synthesis.RiemannRvMMuGammaEvenConeWeld
 import Synthesis.RiemannRvMCenteredResidual
 import Synthesis.RiemannRvMClusterDeletionFirewall
 import Synthesis.RiemannCenteredClusterPoleReduction
+import Synthesis.RiemannCanonicalCenteredClusterPoleReduction
 import Synthesis.RiemannRvMMuGammaSameObject
 import Synthesis.RiemannZeta23RvMProducerBridge
 import Synthesis.RiemannZeta23RvMIntervalDiscrepancy

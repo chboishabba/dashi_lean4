@@ -127,3 +127,5 @@ obligations.
 -/
 
 import Synthesis.MillenniumHodgeCPnLinearCycles
+
+import Synthesis.MillenniumBSDLocalKummerTorsionTriangle

@@ -37,6 +37,7 @@ import Synthesis.MillenniumBSDMathlibLFunctionWeld
 import Synthesis.MillenniumBSDExplicitLocalRecurrence
 import Synthesis.MillenniumBSDExplicitEulerConvergence
 import Synthesis.MillenniumHodgeCP1CellularH2
+import Synthesis.MillenniumHodgeCP1SingularTransport
 
 /-!
 # Cross-domain synthesis spine

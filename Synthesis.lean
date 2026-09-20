@@ -159,3 +159,9 @@ import Synthesis.MillenniumBSDGlobalKummerKernelHalfPoint
 import Synthesis.MillenniumBSDGlobalKummerKernelExact
 
 import Synthesis.MillenniumBSDExplicitSelmerCokernelExact
+
+import Synthesis.MillenniumBSDGlobalCompletionGoodReduction
+
+import Synthesis.MillenniumBSDGlobalCompletionReductionWeld
+
+import Synthesis.MillenniumBSDGlobalLocalFactorSameObject

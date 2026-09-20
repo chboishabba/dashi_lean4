@@ -43,7 +43,8 @@ theorem exists_smoothNormalizedTriple_endpointComparison
     {lam a b c0 c1 c2 : ℝ}
     (hlam : lam ≠ 0)
     (ha : 0 < a) (hab : a < b)
-    (hc0 : 0 < c0) (h01 : c0 < c1) (h12 : c1 < c2) :
+    (hc0 : 0 < c0) (h01 : c0 < c1) (h12 : c1 < c2)
+    (hc2short : c2 < Real.log 2) :
     ∃ w : SmoothNormalizedNarrowWindowTriple,
       coshDiff b w.be0 w.be1 * coshDiff a w.al0 w.al2
         < coshDiff b w.al0 w.al2 * coshDiff a w.be0 w.be1
@@ -52,13 +53,23 @@ theorem exists_smoothNormalizedTriple_endpointComparison
         (Zeta23Bridge.LiteralWeilWindowSchurInstance.exactEnvelope w.toNormalizedNarrowWindowTriple a b)
         lam
         <
-      crossMargin w.toNormalizedNarrowWindowTriple lam a b := by
+      crossMargin w.toNormalizedNarrowWindowTriple lam a b
+      ∧ w.be2 < Real.log 2 := by
   obtain ⟨e0, he0pos, hall⟩ :=
     exists_narrow_radius hlam ha hab hc0 h01 h12
+  let e : ℝ := min e0 ((Real.log 2 - c2) / 2)
+  have hloggap : 0 < Real.log 2 - c2 := by linarith
+  have hepos : 0 < e := by
+    dsimp [e]
+    exact lt_min he0pos (by linarith)
+  have hele0 : e ≤ e0 := by
+    dsimp [e]
+    exact min_le_left _ _
+  have heshort : e ≤ (Real.log 2 - c2) / 2 := by
+    dsimp [e]
+    exact min_le_right _ _
   obtain ⟨hec0, hord1, hord2, hgate, hdefect⟩ :=
-    hall e0 he0pos le_rfl
-  let e : ℝ := e0
-  have hepos : 0 < e := by simpa [e] using he0pos
+    hall e hepos hele0
   have hp0 : 0 < c0 - e := by simpa [e] using hec0
   have hp1 : 0 < c1 - e := by
     dsimp [e]
@@ -249,8 +260,10 @@ theorem exists_smoothNormalizedTriple_endpointComparison
       q0Even := by intro u; dsimp [w0, q0]; exact smoothWindow_even c1 e u
       q1Even := by intro u; dsimp [w0, q1]; exact smoothWindow_even c2 e u }
 
-  refine ⟨w, hgate', ?_⟩
-  rw [Zeta23Bridge.LiteralWeilWindowSchurInstance.envelopeBudget_exactEnvelope]
-  exact hstrict
+  refine ⟨w, hgate', ?_, ?_⟩
+  · rw [Zeta23Bridge.LiteralWeilWindowSchurInstance.envelopeBudget_exactEnvelope]
+    exact hstrict
+  · dsimp [w, w0]
+    linarith
 
 end Synthesis

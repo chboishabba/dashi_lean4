@@ -26,10 +26,7 @@ theorem signBit_mul_sq
     (q s : ℚ) (hs : s ≠ 0) :
     signBit (q * s ^ 2) = signBit q := by
   have hspos : 0 < s ^ 2 := sq_pos_of_ne_zero hs
-  simp only [signBit, Bool.decide_eq_decide]
-  constructor <;> intro h
-  · exact (mul_neg_iff_of_pos_right hspos).mp h
-  · exact (mul_neg_iff_of_pos_right hspos).mpr h
+  simp [signBit, hspos]
 
 theorem v2Parity_mul_sq
     (q s : ℚ) (hq : q ≠ 0) (hs : s ≠ 0) :

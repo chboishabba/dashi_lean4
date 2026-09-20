@@ -166,3 +166,5 @@ obligations.
 -/
 
 import Synthesis.RiemannNormalizedCenteredOffShell
+
+import Synthesis.RiemannProjectiveCenteredGaugeBridge

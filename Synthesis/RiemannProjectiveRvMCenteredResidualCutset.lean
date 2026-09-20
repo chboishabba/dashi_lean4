@@ -102,7 +102,7 @@ theorem false_of_projectiveZeroMuResidual_add_pole_lt_two_target
         + poleProjectiveDefect g t r := by
     exact clusterHeightDefect_eq_projectiveZeroMuResidual_add_pole
       hd.smooth hd.compactSupport hd.isEven hd.short
-      hsupp (le_of_lt hd.radiusPos) t r
+      hsupp hd.lambdaNonneg t r
   have hlo :
       2 * zeroHeightDefect g r rho
         <= clusterHeightDefect g t r :=

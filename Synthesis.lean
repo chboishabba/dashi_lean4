@@ -211,3 +211,6 @@ import Synthesis.RiemannCanonicalNearLineAbsoluteBudgetNoGo
 import Synthesis.RiemannProjectiveCompletedSmoothResidual
 
 import Synthesis.RiemannProjectiveFullCompletedCancellation
+
+import Synthesis.RiemannNormalizedProjectiveFullCarrier
+import Synthesis.RiemannNormalizedProjectiveSameOrdinateCollapse

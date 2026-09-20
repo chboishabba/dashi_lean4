@@ -194,4 +194,50 @@ theorem r571_physicalHermitian_of_initialEnergy
   have h := r571_pairedSecondMoment_of_stateEnvelope s hw hk hstate
   convert h using 1 <;> ring
 
+/-- Finite physical R571 family: all state-side leaves are paid uniformly by
+the initial Galerkin energy.  Only the geometric second-moment sum remains. -/
+theorem r571_finite_physicalHermitian_of_initialEnergy
+    (G : GalerkinFlow) {t₀ t : ℝ} (ht : t₀ ≤ t)
+    {ι : Type*} (fam : Finset ι)
+    (sgn : ι → DASHI.NS.Unforced.HelicitySign)
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    (kv yv : ι → E)
+    (center shift spectator : ι → Wave)
+    (w : ι → ℝ)
+    (hy : ∀ i ∈ fam, ‖yv i‖ = wlen (shift i))
+    (hw : ∀ i ∈ fam, 0 ≤ w i)
+    (hk : ∀ i ∈ fam, 1 ≤ ‖kv i‖) :
+    ∑ i ∈ fam, w i *
+        (|radialSymbol (sgn i) (kv i + yv i)
+            - radialSymbol (sgn i) (kv i)|
+            * |physicalHermitianScalarState G t (spectator i)
+                (center i + shift i)
+                - physicalHermitianScalarState G t (spectator i)
+                (center i - shift i)|
+          + |centeredRadialDefect (sgn i) (kv i) (yv i)|
+            * |physicalHermitianScalarState G t (spectator i)
+                (center i - shift i)|)
+      ≤ (3 * G.energy t₀)
+          * ∑ i ∈ fam, w i * (‖yv i‖ * ‖yv i‖) := by
+  rw [Finset.mul_sum]
+  refine Finset.sum_le_sum fun i hi => ?_
+  have h := r571_physicalHermitian_of_initialEnergy
+    G ht (spectator i) (sgn i)
+    (hy i hi) (hw i hi) (hk i hi)
+  calc
+    w i *
+        (|radialSymbol (sgn i) (kv i + yv i)
+            - radialSymbol (sgn i) (kv i)|
+            * |physicalHermitianScalarState G t (spectator i)
+                (center i + shift i)
+                - physicalHermitianScalarState G t (spectator i)
+                (center i - shift i)|
+          + |centeredRadialDefect (sgn i) (kv i) (yv i)|
+            * |physicalHermitianScalarState G t (spectator i)
+                (center i - shift i)|)
+        ≤ w i * (‖yv i‖ * ‖yv i‖)
+            * (3 * G.energy t₀) := h
+    _ = (3 * G.energy t₀)
+          * (w i * (‖yv i‖ * ‖yv i‖)) := by ring
+
 end RequestProject.NavierStokes.R571PeriodicHermitianEnergy

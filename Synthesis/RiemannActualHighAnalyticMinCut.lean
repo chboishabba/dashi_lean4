@@ -2,6 +2,8 @@ import Synthesis.RiemannCanonicalReflectionCoefficientGate
 import Synthesis.RiemannSupportScaledTargetRemainder
 import Synthesis.RiemannCenteredNearPairSign
 import Synthesis.RiemannCenteredOffExplicitFarOnly
+import Synthesis.RiemannFarShellDisplacementAdaptiveCutoff
+import Synthesis.RiemannAdaptiveCutoffNearSignNoGo
 import Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector
 
 /-!
@@ -27,11 +29,19 @@ uniform in |a|<=1/2 and does not retain that vanishing.  Therefore a fixed
 a-independent positive far budget cannot be compared uniformly against the
 near-line signal.
 
-The next mathematical producer must do at least one of:
-1. retain an explicit a^2 factor in the far/projective residual;
-2. give a target-dependent taper/cutoff whose residual shrinks with a;
-3. expose an additional exact signed cancellation eliminating the a-independent
-   far term.
+The displacement-adaptive real-analysis atom is now available, but it cannot be
+plugged directly into the existing centered-near sign proof: the latter requires
+J*Lambda <= pi/2, while the arbitrarily-large adaptive selector eventually has
+pi/2 < J*Lambda.  On the canonical support Lambda=9*pi/(4*t), the sign window
+forces J <= 2*t/9.
+
+The next mathematical producer must therefore do at least one of:
+1. retain an explicit a^2 factor in the literal far/projective residual while
+   staying inside the cosine-sign window;
+2. give a target-dependent taper whose support Lambda shrinks with a strongly
+   enough that a large cutoff still satisfies J*Lambda <= pi/2;
+3. expose additional exact signed cancellation beyond the first cosine sign
+   change, eliminating the a-independent far term.
 
 This file is a status firewall: it prevents the uniform curvature bound from
 being mistaken for a prize-facing near-line closure.
@@ -48,6 +58,8 @@ structure ActualHighAnalyticMinCutStatus where
   supportScaledRemainderPaid : Bool
   centeredNearOffSignPaid : Bool
   centeredFarOnlyReductionPaid : Bool
+  displacementAdaptiveFarAtomPaid : Bool
+  adaptiveCutoffDirectNearSignWeldPruned : Bool
 
   farResidualRetainsHeightSquare : Bool
   targetDependentResidualSuppressionPaid : Bool
@@ -63,6 +75,8 @@ def actualHighAnalyticMinCutStatus : ActualHighAnalyticMinCutStatus :=
     supportScaledRemainderPaid := true
     centeredNearOffSignPaid := true
     centeredFarOnlyReductionPaid := true
+    displacementAdaptiveFarAtomPaid := true
+    adaptiveCutoffDirectNearSignWeldPruned := true
 
     farResidualRetainsHeightSquare := false
     targetDependentResidualSuppressionPaid := false

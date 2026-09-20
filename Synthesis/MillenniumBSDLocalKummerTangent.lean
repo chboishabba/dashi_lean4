@@ -54,7 +54,8 @@ theorem tangent_x_square_identity
     (tangentKummerWitnessZero x y) ^ 2 := by
   unfold tangentSumX tangentSlope tangentKummerWitnessZero
   field_simp [hy]
-  nlinarith [hcurve]
+  linear_combination
+    -8 * x ^ 3 * (hcurve)
 
 theorem tangent_x_sub_one_square_identity
     {p : ℕ} [Fact p.Prime]
@@ -66,7 +67,8 @@ theorem tangent_x_sub_one_square_identity
     (tangentKummerWitnessOne x y) ^ 2 := by
   unfold tangentSumX tangentSlope tangentKummerWitnessOne
   field_simp [hy]
-  nlinarith [hcurve]
+  linear_combination
+    -4 * (x - 1) ^ 2 * (2 * x + 1) * (hcurve)
 
 theorem padicSquareClass_eq_one_of_mul_self_square
     {p : ℕ} [Fact p.Prime]

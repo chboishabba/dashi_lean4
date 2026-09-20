@@ -252,4 +252,19 @@ theorem cmAllNCoefficient_odd_primePower
   rw [cmFormalLFunction_primePower hp.out k]
   exact globalHeightOne_localEulerFactor_primePower hp2 k
 
+theorem cmAllNCoefficient_primePower
+    {p : ℕ} [Fact hp : p.Prime] (k : ℕ) :
+    cmAllNCoefficient (p ^ k) = explicitAllPrimePowerCoefficient p k := by
+  unfold cmAllNCoefficient
+  rw [cmFormalLFunction_primePower hp.out k]
+  exact globalHeightOne_localEulerFactor_all_primePower k
+
+theorem cmAllNCoefficient_twoPower
+    (k : ℕ) :
+    cmAllNCoefficient (2 ^ k) = if k = 0 then 1 else 0 := by
+  letI : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+  rw [cmAllNCoefficient_primePower]
+  exact explicitAllPrimePowerCoefficient_two k
+
+
 end Synthesis.Millennium.BSD

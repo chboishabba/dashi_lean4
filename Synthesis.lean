@@ -23,6 +23,9 @@ import Synthesis.AxiomAudit
 import Synthesis.MillenniumHodgeCP1Quotient
 import Synthesis.MillenniumBSDRationalSquareBits
 import Synthesis.MillenniumBSDCMPrimeWitness
+import Synthesis.MillenniumHodgeCP1NormalForm
+import Synthesis.MillenniumBSDRationalSquareClassQuotient
+import Synthesis.MillenniumBSDCMPrimeClassification
 
 /-!
 # Cross-domain synthesis spine

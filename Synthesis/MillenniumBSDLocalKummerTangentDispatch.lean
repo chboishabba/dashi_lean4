@@ -39,8 +39,11 @@ theorem cmPadic_y_ne_negY_of_ne_zero
     y ≠ (cmPadicWeierstrass p).toAffine.negY x y := by
   rw [cmPadic_negY_eq_neg]
   intro h
-  have h2 : 2 * y = 0 := by linarith
-  exact hy (by nlinarith)
+  have h2 : (2 : ℚ_[p]) * y = 0 := by
+    linear_combination h
+  rcases mul_eq_zero.mp h2 with htwo | hy0
+  · norm_num at htwo
+  · exact hy hy0
 
 theorem cmPadic_tangent_slope_eq
     {p : ℕ} [Fact p.Prime]

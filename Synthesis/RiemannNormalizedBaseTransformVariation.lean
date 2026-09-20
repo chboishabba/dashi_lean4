@@ -349,35 +349,9 @@ theorem normalizedBaseTransform_abelVariation_le
       _ =
       normalizedBaseTransformLipschitzUpper
         * (q n - q 0) := by
-          rw [← Finset.mul_sum]
-          induction n with
-          | zero => simp
-          | succ n ih =>
-              rw [Finset.sum_range_succ, ih]
-              ring
+          rw [← Finset.mul_sum, Finset.sum_range_sub]
   unfold abelVariation
-  have hq0zero : q 0 = 0 := hq0
-  rw [hq0zero] at hsum
-  have hQ0 : 0 <= Q := by
-    have hqn0 : 0 <= q n := by
-      by_cases hn : n = 0
-      · subst n
-        simpa [hq0] using le_rfl
-      · have hchain : q 0 <= q n := by
-          exact MonotoneOn.monotoneOn
-            (s := Set.Icc 0 n)
-            (fun a ha b hb hab => by
-              induction b, hab using a with
-              | refl => exact le_rfl
-              | @step b hab ih =>
-                  by_cases hbn : b < n
-                  · exact le_trans ih (hmono b hbn)
-                  · have : b = n := by omega
-                    subst b
-                    exact ih)
-            ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ (by omega)
-        simpa [hq0] using hchain
-    linarith
+  rw [hq0] at hsum
   have hsumQ :
       (∑ i ∈ Finset.range n,
         |normalizedCenteredBaseTransform t (q i)

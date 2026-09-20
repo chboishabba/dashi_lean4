@@ -270,14 +270,13 @@ theorem normalizedProjectiveHorizontalQuadratic_neg_of_near_zero
   have hlip :=
     normalizedProjectiveHorizontalQuadratic_lipschitz t alpha 0 q
   rw [sub_zero, abs_sub_comm q 0, sub_zero] at hlip
-  have hupper :
+  have hdiff :
       normalizedProjectiveHorizontalQuadratic t alpha q
-        ≤ normalizedProjectiveHorizontalQuadratic t alpha 0
-          + normalizedProjectiveHorizontalFirstMoment t alpha * |q| := by
-    exact (le_abs_self
+        - normalizedProjectiveHorizontalQuadratic t alpha 0
+        ≤ normalizedProjectiveHorizontalFirstMoment t alpha * |q| :=
+    (le_abs_self
       (normalizedProjectiveHorizontalQuadratic t alpha q
         - normalizedProjectiveHorizontalQuadratic t alpha 0)).trans hlip
-      |> fun h => by linarith
   linarith
 
 /-- Actual-zero specialization of the signed near-q criterion. -/

@@ -135,3 +135,5 @@ import Synthesis.MillenniumBSDLocalKummerOrdinaryHom
 import Synthesis.MillenniumBSDLocalKummerTorsionTranslateAll
 
 import Synthesis.MillenniumBSDLocalKummerHomomorphism
+
+import Synthesis.MillenniumBSDExplicitSelmerSubgroup

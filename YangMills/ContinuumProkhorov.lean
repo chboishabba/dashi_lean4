@@ -171,6 +171,112 @@ theorem exists_continuum_measure_of_uniform_coercive_lintegral_bound
     μ cost hcost M hmoment hcompact hthreshold
 
 
+
+/--
+Tightness plus already-existing scalar expectation limits identify a UNIQUE
+continuum measure and upgrade subsequential convergence to convergence of the
+whole probability-measure sequence.
+
+This is the key A3 same-object theorem for the literal YM programme.  The
+functional `L` can be the scalar limits already produced by the RG/diagonal
+lane.  Tightness extracts some weak limit; uniqueness of real limits identifies
+all of its bounded-continuous expectations with `L`; the portmanteau
+characterization then gives weak convergence of the full finite-measure family.
+-/
+theorem tendsto_unique_continuum_measure_of_tight_and_bcf_limits
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    [TopologicalSpace Ω]
+    [T2Space Ω]
+    [BorelSpace Ω]
+    [FirstCountableTopology (ProbabilityMeasure Ω)]
+    (μ : ℕ → ProbabilityMeasure Ω)
+    (L : BoundedContinuousFunction Ω ℝ → ℝ)
+    (hTight :
+      IsTightMeasureSet
+        {m : Measure Ω | ∃ p ∈ Set.range μ, (p : Measure Ω) = m})
+    (hScalar :
+      ∀ f : BoundedContinuousFunction Ω ℝ,
+        Tendsto
+          (fun n =>
+            ∫ x : Ω, f x ∂((μ n : ProbabilityMeasure Ω) : Measure Ω))
+          atTop
+          (𝓝 (L f))) :
+    ∃! μ∞ : ProbabilityMeasure Ω,
+      Tendsto μ atTop (𝓝 μ∞) ∧
+      ∀ f : BoundedContinuousFunction Ω ℝ,
+        (∫ x : Ω, f x ∂((μ∞ : ProbabilityMeasure Ω) : Measure Ω)) = L f := by
+  rcases exists_subsequence_with_all_boundedContinuous_expectations μ hTight with
+    ⟨μ∞, φ, hφ, hsub, hsubExpect⟩
+  have hidentify :
+      ∀ f : BoundedContinuousFunction Ω ℝ,
+        (∫ x : Ω, f x ∂((μ∞ : ProbabilityMeasure Ω) : Measure Ω)) = L f := by
+    intro f
+    have hLsub :
+        Tendsto
+          (fun n =>
+            ∫ x : Ω, f x ∂((μ (φ n) : ProbabilityMeasure Ω) : Measure Ω))
+          atTop
+          (𝓝 (L f)) := by
+      simpa [Function.comp_def] using
+        (hScalar f).comp hφ.tendsto_atTop
+    exact tendsto_nhds_unique (hsubExpect f) hLsub
+  have hfullExpect :
+      ∀ f : BoundedContinuousFunction Ω ℝ,
+        Tendsto
+          (fun n =>
+            ∫ x : Ω, f x ∂((μ n : ProbabilityMeasure Ω) : Measure Ω))
+          atTop
+          (𝓝 (∫ x : Ω, f x ∂((μ∞ : ProbabilityMeasure Ω) : Measure Ω))) := by
+    intro f
+    simpa [hidentify f] using hScalar f
+  have hfull : Tendsto μ atTop (𝓝 μ∞) :=
+    (ProbabilityMeasure.tendsto_iff_forall_integral_tendsto).2 hfullExpect
+  refine ⟨μ∞, ⟨hfull, hidentify⟩, ?_⟩
+  intro ν hν
+  exact tendsto_nhds_unique hν.1 hfull
+
+/--
+The same unique-measure conclusion, with tightness generated internally from a
+uniform coercive moment estimate.
+-/
+theorem tendsto_unique_continuum_measure_of_coercive_moment_and_bcf_limits
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    [TopologicalSpace Ω]
+    [T2Space Ω]
+    [BorelSpace Ω]
+    [FirstCountableTopology (ProbabilityMeasure Ω)]
+    (μ : ℕ → ProbabilityMeasure Ω)
+    (cost : Ω → ENNReal)
+    (hcost : Measurable cost)
+    (M : ENNReal)
+    (hmoment :
+      ∀ n : ℕ,
+        (∫⁻ x : Ω, cost x ∂((μ n : ProbabilityMeasure Ω) : Measure Ω)) ≤ M)
+    (hcompact :
+      ∀ R : ENNReal, R ≠ ⊤ → IsCompact {x : Ω | cost x ≤ R})
+    (hthreshold :
+      ∀ ε : ENNReal, 0 < ε →
+        ∃ R : ENNReal, R ≠ 0 ∧ R ≠ ⊤ ∧ M / R ≤ ε)
+    (L : BoundedContinuousFunction Ω ℝ → ℝ)
+    (hScalar :
+      ∀ f : BoundedContinuousFunction Ω ℝ,
+        Tendsto
+          (fun n =>
+            ∫ x : Ω, f x ∂((μ n : ProbabilityMeasure Ω) : Measure Ω))
+          atTop
+          (𝓝 (L f))) :
+    ∃! μ∞ : ProbabilityMeasure Ω,
+      Tendsto μ atTop (𝓝 μ∞) ∧
+      ∀ f : BoundedContinuousFunction Ω ℝ,
+        (∫ x : Ω, f x ∂((μ∞ : ProbabilityMeasure Ω) : Measure Ω)) = L f := by
+  apply tendsto_unique_continuum_measure_of_tight_and_bcf_limits μ L
+  · exact isTightMeasureSet_of_uniform_coercive_lintegral_bound
+      μ cost hcost M hmoment hcompact hthreshold
+  · exact hScalar
+
+
 /--
 Bounded continuous expectations determine the continuum probability measure.
 

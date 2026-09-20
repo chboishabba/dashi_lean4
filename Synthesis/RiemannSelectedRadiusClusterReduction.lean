@@ -236,4 +236,139 @@ theorem exists_selectedRadius_literalComplement_neg_at_zero
   exact ⟨g, r, hgs, hgc, heven, hr, hkill, hA, hneg⟩
 
 
+/-! ## Literal quantitative canonical taper: positivity and terminal sign -/
+
+theorem quantitativeCanonicalTaper_nonneg
+    {t : ℝ} (ht : 18 <= t) :
+    ∀ u, 0 <= quantitativeCanonicalTaper t u := by
+  intro u
+  unfold quantitativeCanonicalTaper
+  have hi :
+      0 <= quantitativeInnerBump t u := by
+    unfold quantitativeInnerBump
+    exact quantitativeSymBump_nonneg _ _ _
+  have ho :
+      0 <= quantitativeOuterBump t u := by
+    unfold quantitativeOuterBump
+    exact quantitativeSymBump_nonneg _ _ _
+  have hlam : 0 <= quantitativeLambda t :=
+    (quantitativeLambda_pos ht).le
+  positivity
+
+theorem quantitativeInnerBump_pos_at_center
+    {t : ℝ} (ht : 18 <= t) :
+    0 <
+      quantitativeInnerBump t
+        (quantitativeTaperInnerCenter t) := by
+  have ht0 : 0 < t := by linarith
+  have hR : 0 < quantitativeTaperR t :=
+    quantitativeTaperR_pos ht0
+  unfold quantitativeInnerBump quantitativeSymBump
+    Zeta23Bridge.LiteralWeilOddChannelTaper.symmetrize
+  rw [scaledUnitBump_at_center hR.ne']
+  have hother :
+      0 <=
+      scaledUnitBump
+        (quantitativeTaperInnerCenter t)
+        (quantitativeTaperR t)
+        (- quantitativeTaperInnerCenter t) :=
+    scaledUnitBump_nonneg _ _ _
+  linarith
+
+theorem quantitativeCanonicalTaper_pos_at_innerCenter
+    {t : ℝ} (ht : 18 <= t) :
+    0 <
+      quantitativeCanonicalTaper t
+        (quantitativeTaperInnerCenter t) := by
+  unfold quantitativeCanonicalTaper
+  have hi := quantitativeInnerBump_pos_at_center ht
+  have ho :
+      0 <=
+      quantitativeOuterBump t
+        (quantitativeTaperInnerCenter t) := by
+    unfold quantitativeOuterBump
+    exact quantitativeSymBump_nonneg _ _ _
+  have hlam : 0 <= quantitativeLambda t :=
+    (quantitativeLambda_pos ht).le
+  nlinarith [mul_nonneg hlam ho]
+
+theorem quantitativeCanonicalTaper_radial_admissible
+    {t : ℝ} (ht : 18 <= t) :
+    ∀ u, quantitativeCanonicalTaper t u ≠ 0 ->
+      |quantitativeSampleRadius t * u| < Real.pi / 2 := by
+  intro u hu
+  have ht0 : 0 < t := by linarith
+  have hs := quantitativeCanonicalTaper_support_abs_lt ht hu
+  unfold quantitativeSampleRadius
+  have habs :
+      |(t / 16) * u| = (t / 16) * |u| := by
+    rw [abs_mul, abs_of_pos (by positivity : 0 < t / 16)]
+  rw [habs]
+  have hscaled :
+      (t / 16) * |u| < 9 * Real.pi / 64 := by
+    have hmul := mul_lt_mul_of_pos_left hs (by positivity : 0 < t / 16)
+    field_simp [ne_of_gt ht0] at hmul ⊢
+    nlinarith [Real.pi_pos]
+  have hconst : 9 * Real.pi / 64 < Real.pi / 2 := by
+    nlinarith [Real.pi_pos]
+  exact lt_trans hscaled hconst
+
+theorem quantitativeCanonical_evenResp_pos
+    {t : ℝ} (ht : 18 <= t) :
+    ∀ a : ℝ,
+      0 <
+      evenResp
+        (quantitativeCanonicalTaper t)
+        a
+        (quantitativeSampleRadius t) := by
+  intro a
+  exact evenResp_pos_of_nonneg
+    (quantitativeCanonicalTaper_contDiff ht).continuous
+    (quantitativeCanonicalTaper_compact ht)
+    (quantitativeCanonicalTaper_nonneg ht)
+    (quantitativeCanonicalTaper_radial_admissible ht)
+    (quantitativeCanonicalTaper_pos_at_innerCenter ht)
+    a
+
+theorem quantitativeCanonical_clusterConePositive_at_zero
+    {rhoStar : Zeta23.Zeros} {t : ℝ}
+    (ht : 18 <= t)
+    (him : (rhoStar : ℂ).im = t) :
+    0 <
+    evenConeFunctional
+      (clusterVec
+        (sampleFam
+          (quantitativeCanonicalTaper t)
+          t
+          (quantitativeSampleRadius t))
+        t) := by
+  exact sameOrdinateClusterConePositive
+    (quantitativeCanonicalTaper_contDiff ht)
+    (quantitativeCanonicalTaper_compact ht)
+    (quantitativeCanonicalTaper_even (t := t))
+    (quantitativeCanonical_evenResp_pos ht)
+    ⟨rhoStar, him⟩
+
+/--
+Prize-facing canonical high sign at the selected radius.
+
+Once the canonical support is short enough to kill primes, the exact selected
+radius kills the pole channel and the actual target zero makes the
+same-ordinate cone strictly positive.  The literal complement is therefore
+strictly negative, with no RvM remainder estimate.
+-/
+theorem quantitativeCanonical_selectedRadius_complement_neg_at_zero
+    {rhoStar : Zeta23.Zeros} {t : ℝ}
+    (ht : 18 <= t)
+    (him : (rhoStar : ℂ).im = t)
+    (hheight : 9 * Real.pi <= 4 * t * Real.log 2) :
+    finalLiteralComplement
+        (quantitativeCanonicalTaper t)
+        t
+        (quantitativeSampleRadius t) < 0 := by
+  exact quantitativeCanonical_selectedRadius_complement_neg_of_cluster_pos
+    ht hheight
+    (quantitativeCanonical_clusterConePositive_at_zero ht him)
+
+
 end Synthesis

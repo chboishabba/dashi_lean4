@@ -18,6 +18,7 @@ import Synthesis.MonsterCharacterDetermination
 import Synthesis.MonsterCharacterMultiplicityRegression
 import Synthesis.RiemannFarShellQuarticCutoff
 import Synthesis.RiemannFarShellQuarticCutoffRegression
+import Synthesis.RiemannFarShellSignedWindowQuarticIncompatibility
 import Synthesis.Hyperfabric
 import Synthesis.CodecBridge
 import Synthesis.EndToEnd

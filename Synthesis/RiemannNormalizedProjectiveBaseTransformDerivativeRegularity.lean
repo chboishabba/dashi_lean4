@@ -123,13 +123,16 @@ theorem normalizedProjectiveBaseTransformDeriv_lipschitz
 theorem normalizedProjectiveBaseTransformDeriv_continuous
     (t : ℝ) :
     Continuous (normalizedProjectiveBaseTransformDeriv t) := by
-  apply continuous_iff_continuousAt.2
-  intro q
-  apply continuousAt_of_locally_lipschitz
-  refine ⟨normalizedProjectiveProfileSecondMoment t, ?_⟩
-  filter_upwards with p
-  simpa [Real.dist_eq] using
-    normalizedProjectiveBaseTransformDeriv_lipschitz t q p
+  let K : NNReal :=
+    ⟨normalizedProjectiveProfileSecondMoment t,
+      normalizedProjectiveProfileSecondMoment_nonneg t⟩
+  have hLip :
+      LipschitzWith K (normalizedProjectiveBaseTransformDeriv t) := by
+    intro p q
+    have h :=
+      normalizedProjectiveBaseTransformDeriv_lipschitz t p q
+    simpa [K, Real.dist_eq, abs_sub_comm] using h
+  exact hLip.continuous
 
 theorem normalizedProjectiveOrdinateTestDeriv_continuous
     {t : ℝ} (ht : t ≠ 0) :

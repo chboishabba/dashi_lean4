@@ -113,4 +113,4 @@ srcDir = "DASHI/output-final_aristotle"
 # consumes NSBFrontier/NSUnforced through their retained source modules.
 [[lean_lib]]
 name = "NSBQuantitative"
-globs = ["NSBQuantitative", "RequestProject.NavierStokes.S2b2d1b2StateCovariance", "RequestProject.NavierStokes.R571StateVariation", "RequestProject.NavierStokes.S2b2d1b2QuantitativePayment"]
+globs = ["NSBQuantitative", "RequestProject.NavierStokes.S2b2d1b2StateCovariance", "RequestProject.NavierStokes.R571StateVariation", "RequestProject.NavierStokes.R571HermitianStateVariation", "RequestProject.NavierStokes.R571VectorStateVariation", "RequestProject.NavierStokes.S2b2d1b2QuantitativePayment"]

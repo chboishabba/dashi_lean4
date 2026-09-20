@@ -223,3 +223,13 @@ import Synthesis.MillenniumHodgeTetrahedralRealizationUnit
 import Synthesis.MillenniumBSDCMTwoTorsionGaloisModule
 
 import Synthesis.MillenniumBSDCMEta32QuarterTurn
+
+import Synthesis.MillenniumHodgeTetrahedralNormalizedToSingular
+
+import Synthesis.MillenniumBSDRationalTwoTorsionExact
+
+import Synthesis.MillenniumBSDRationalTwoTorsionEquiv
+
+import Synthesis.MillenniumBSDCMEta32QuarterFactor
+
+import Synthesis.MillenniumBSDCMGlobalLacunarityInert

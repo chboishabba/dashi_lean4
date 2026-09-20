@@ -19,54 +19,43 @@ set to a literal subgroup of (Q*/Q*²)².
 
 namespace Synthesis.Millennium.BSD
 
-theorem signBit_eq_iff_same_sign
+theorem signBit_mul
     {a b : ℚ}
     (ha0 : a ≠ 0) (hb0 : b ≠ 0) :
-    signBit a = signBit b
-      ↔
-    ((0 < a ∧ 0 < b) ∨ (a < 0 ∧ b < 0)) := by
-  unfold signBit
-  by_cases ha : a < 0 <;> by_cases hb : b < 0 <;>
-    simp [ha, hb] at *
-  · exact Or.inr ⟨ha, hb⟩
-  · exfalso
-    exact hb (lt_of_le_of_ne
-      (le_of_not_gt hb)
-      (Ne.symm hb0))
-  · exfalso
-    exact ha (lt_of_le_of_ne
-      (le_of_not_gt ha)
-      (Ne.symm ha0))
-  · exact Or.inl
-      ⟨lt_of_le_of_ne (le_of_not_gt ha) (Ne.symm ha0),
-       lt_of_le_of_ne (le_of_not_gt hb) (Ne.symm hb0)⟩
+    signBit (a * b) = Bool.xor (signBit a) (signBit b) := by
+  by_cases ha : a < 0
+  · by_cases hb : b < 0
+    · have hab : 0 < a * b :=
+        mul_pos_of_neg_of_neg ha hb
+      simp [signBit, ha, hb, not_lt_of_ge hab.le]
+    · have hbpos : 0 < b :=
+        lt_of_le_of_ne (le_of_not_gt hb) (Ne.symm hb0)
+      have hab : a * b < 0 :=
+        mul_neg_of_neg_of_pos ha hbpos
+      simp [signBit, ha, hb, hab]
+  · have hapos : 0 < a :=
+      lt_of_le_of_ne (le_of_not_gt ha) (Ne.symm ha0)
+    by_cases hb : b < 0
+    · have hab : a * b < 0 :=
+        mul_neg_of_pos_of_neg hapos hb
+      simp [signBit, ha, hb, hab]
+    · have hbpos : 0 < b :=
+        lt_of_le_of_ne (le_of_not_gt hb) (Ne.symm hb0)
+      have hab : 0 < a * b :=
+        mul_pos hapos hbpos
+      simp [signBit, ha, hb, not_lt_of_ge hab.le]
 
-theorem signBit_mul_preserves_pair_equality
-    {a₁ a₂ b₁ b₂ : ℚ}
-    (ha₁ : a₁ ≠ 0) (ha₂ : a₂ ≠ 0)
-    (hb₁ : b₁ ≠ 0) (hb₂ : b₂ ≠ 0)
-    (ha : signBit a₁ = signBit a₂)
-    (hb : signBit b₁ = signBit b₂) :
-    signBit (a₁ * b₁) = signBit (a₂ * b₂) := by
-  rw [signBit_eq_iff_same_sign ha₁ ha₂] at ha
-  rw [signBit_eq_iff_same_sign hb₁ hb₂] at hb
-  rw [signBit_eq_iff_same_sign
-    (mul_ne_zero ha₁ hb₁)
-    (mul_ne_zero ha₂ hb₂)]
-  rcases ha with hapos | haneg <;>
-    rcases hb with hbpos | hbneg
-  · exact Or.inl
-      ⟨mul_pos hapos.1 hbpos.1,
-       mul_pos hapos.2 hbpos.2⟩
-  · exact Or.inr
-      ⟨mul_neg_of_pos_of_neg hapos.1 hbneg.1,
-       mul_neg_of_pos_of_neg hapos.2 hbneg.2⟩
-  · exact Or.inr
-      ⟨mul_neg_of_neg_of_pos haneg.1 hbpos.1,
-       mul_neg_of_neg_of_pos haneg.2 hbpos.2⟩
-  · exact Or.inl
-      ⟨mul_pos_of_neg_of_neg haneg.1 hbneg.1,
-       mul_pos_of_neg_of_neg haneg.2 hbneg.2⟩
+theorem squareClassSignBit_mul
+    (a b : RatSquareClass) :
+    squareClassSignBit (a * b)
+      =
+    Bool.xor (squareClassSignBit a) (squareClassSignBit b) := by
+  refine Quotient.inductionOn₂ a b ?_
+  intro ar br
+  change signBit ((ar : ℚ) * (br : ℚ))
+      =
+    Bool.xor (signBit (ar : ℚ)) (signBit (br : ℚ))
+  exact signBit_mul ar.property br.property
 
 theorem realKummerCondition_mul
     {a b : RatSquareClass × RatSquareClass}
@@ -75,25 +64,11 @@ theorem realKummerCondition_mul
     (hb :
       realKummerLocalization b ∈ RealKummerImage) :
     realKummerLocalization (a * b) ∈ RealKummerImage := by
-  rcases a with ⟨a₁, a₂⟩
-  rcases b with ⟨b₁, b₂⟩
-  refine Quotient.inductionOn a₁ ?_
-  intro ar₁
-  refine Quotient.inductionOn a₂ ?_
-  intro ar₂
-  refine Quotient.inductionOn b₁ ?_
-  intro br₁
-  refine Quotient.inductionOn b₂ ?_
-  intro br₂
-  change
-    signBit ((ar₁ : ℚ) * (br₁ : ℚ))
-      =
-    signBit ((ar₂ : ℚ) * (br₂ : ℚ))
-  change signBit (ar₁ : ℚ) = signBit (ar₂ : ℚ) at ha
-  change signBit (br₁ : ℚ) = signBit (br₂ : ℚ) at hb
-  exact signBit_mul_preserves_pair_equality
-    ar₁.property ar₂.property br₁.property br₂.property
-    ha hb
+  change squareClassSignBit (a.1 * b.1)
+      = squareClassSignBit (a.2 * b.2)
+  change squareClassSignBit a.1 = squareClassSignBit a.2 at ha
+  change squareClassSignBit b.1 = squareClassSignBit b.2 at hb
+  rw [squareClassSignBit_mul, squareClassSignBit_mul, ha, hb]
 
 theorem ratSquareClassPair_inv_eq_self
     (a : RatSquareClass × RatSquareClass) :

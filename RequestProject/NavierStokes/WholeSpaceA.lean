@@ -1,6 +1,7 @@
 import RequestProject.NavierStokes.WholeSpaceCubatureBoundaryDefect
 import RequestProject.NavierStokes.WholeSpaceL1BochnerCompletion
 import RequestProject.NavierStokes.WholeSpaceL1Tail
+import RequestProject.NavierStokes.WholeSpaceL2InteractionIntegrability
 
 /-!
 # Navier–Stokes whole-space A analytic producer

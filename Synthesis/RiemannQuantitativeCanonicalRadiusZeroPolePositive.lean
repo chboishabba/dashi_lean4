@@ -207,58 +207,30 @@ theorem quantitativeOuterPoleBaseWeight_integral_pos
     (quantitativeTaperR_pos ht0)
   · fun_prop
   · intro u hu
-    have hs :=
-      quantitativeOuterPoleBaseWeight_support ht
-        (u := u) (by
-          unfold quantitativeOuterPoleBaseWeight
-          exact mul_ne_zero hu (by
-            have hs0 := scaledUnitBump_support
-              (quantitativeTaperR_pos ht0) hu
-            unfold quantitativeTaperOuterCenter quantitativeTaperR at hs0
-            rw [abs_lt] at hs0
-            have hlo : 7 * Real.pi / (4 * t) < u := by
-              field_simp [ne_of_gt ht0] at hs0 ⊢
-              nlinarith [Real.pi_pos]
-            have hhi : u < 9 * Real.pi / (4 * t) := by
-              field_simp [ne_of_gt ht0] at hs0 ⊢
-              nlinarith [Real.pi_pos]
-            have htuL : 7 * Real.pi / 4 < t * u := by
-              have h := mul_lt_mul_of_pos_left hlo ht0
-              field_simp [ne_of_gt ht0] at h
-              exact h
-            have htuH : t * u < 9 * Real.pi / 4 := by
-              have h := mul_lt_mul_of_pos_left hhi ht0
-              field_simp [ne_of_gt ht0] at h
-              exact h
-            have hc : 0 < Real.cos (t*u) := by
-              have hx : -(Real.pi/2) < t*u-2*Real.pi
-                  ∧ t*u-2*Real.pi < Real.pi/2 := by
-                constructor <;> linarith
-              have hh := Real.cos_pos_of_mem_Ioo hx
-              simpa [Real.cos_sub_int_mul_two_pi] using hh
-            exact mul_ne_zero (Real.cosh_pos _).ne' hc.ne'))
-    unfold quantitativeOuterPoleBaseWeight at hs
-    have hbnn :=
-      scaledUnitBump_nonneg
-        (quantitativeTaperOuterCenter t)
-        (quantitativeTaperR t) u
-    have hcosh := Real.cosh_pos (u/2)
-    have hcos : 0 < Real.cos (t*u) := by
-      rcases hs with ⟨hlo,hhi⟩
-      have htuL : 7*Real.pi/4 < t*u := by
-        have h := mul_lt_mul_of_pos_left hlo ht0
-        field_simp [ne_of_gt ht0] at h
-        exact h
-      have htuH : t*u < 9*Real.pi/4 := by
-        have h := mul_lt_mul_of_pos_left hhi ht0
-        field_simp [ne_of_gt ht0] at h
-        exact h
-      have hx : -(Real.pi/2) < t*u-2*Real.pi
-          ∧ t*u-2*Real.pi < Real.pi/2 := by
-        constructor <;> linarith
-      have hh := Real.cos_pos_of_mem_Ioo hx
-      simpa [Real.cos_sub_int_mul_two_pi] using hh
-    positivity
+    unfold quantitativeTaperOuterCenter quantitativeTaperR at hu
+    rw [abs_lt] at hu
+    have hlo : 7 * Real.pi / (4 * t) < u := by
+      field_simp [ne_of_gt ht0] at hu ⊢
+      nlinarith [Real.pi_pos]
+    have hhi : u < 9 * Real.pi / (4 * t) := by
+      field_simp [ne_of_gt ht0] at hu ⊢
+      nlinarith [Real.pi_pos]
+    have htuL : 7 * Real.pi / 4 < t * u := by
+      have h := mul_lt_mul_of_pos_left hlo ht0
+      field_simp [ne_of_gt ht0] at h
+      exact h
+    have htuH : t * u < 9 * Real.pi / 4 := by
+      have h := mul_lt_mul_of_pos_left hhi ht0
+      field_simp [ne_of_gt ht0] at h
+      exact h
+    have hx :
+        -(Real.pi / 2) < t * u - 2 * Real.pi
+          ∧ t * u - 2 * Real.pi < Real.pi / 2 := by
+      constructor <;> linarith
+    have hc := Real.cos_pos_of_mem_Ioo hx
+    have hc' : 0 < Real.cos (t * u) := by
+      simpa [Real.cos_sub_int_mul_two_pi] using hc
+    exact mul_pos (Real.cosh_pos _) hc'
 
 theorem quantitativeInnerPoleBaseWeight_integral_neg
     {t : ℝ} (ht : 18 <= t) :
@@ -331,6 +303,60 @@ theorem quantitativeInnerPole_weighted_eq_half
     quantitativeSampleRadius
   ring_nf
 
+theorem quantitativeInnerPole_radiusZero_eq_two_base
+    {t : ℝ} (ht : 18 <= t) :
+    poleEvenResp (quantitativeInnerBump t) t 0
+      =
+    2 * ∫ u : ℝ, quantitativeInnerPoleBaseWeight t u := by
+  have ht0 : 0 < t := by linarith
+  unfold quantitativeInnerBump quantitativeSymBump
+  rw [poleEvenResp]
+  simp only [Real.cos_zero, mul_one]
+  have hs :=
+    integral_symmetrize
+      (scaledUnitBump_continuous
+        (quantitativeTaperR_pos ht0).ne'
+        (quantitativeTaperInnerCenter t))
+      (scaledUnitBump_hasCompactSupport
+        (quantitativeTaperR_pos ht0))
+      (by fun_prop :
+        Continuous
+          (fun u : ℝ =>
+            Real.cosh (u / 2) * Real.cos (t * u)))
+      (by
+        intro u
+        simp [Real.cosh_neg, Real.cos_neg])
+  unfold Zeta23Bridge.LiteralWeilOddChannelTaper.symmetrize
+    quantitativeInnerPoleBaseWeight
+  simpa [mul_assoc] using hs
+
+theorem quantitativeOuterPole_radiusZero_eq_two_base
+    {t : ℝ} (ht : 18 <= t) :
+    poleEvenResp (quantitativeOuterBump t) t 0
+      =
+    2 * ∫ u : ℝ, quantitativeOuterPoleBaseWeight t u := by
+  have ht0 : 0 < t := by linarith
+  unfold quantitativeOuterBump quantitativeSymBump
+  rw [poleEvenResp]
+  simp only [Real.cos_zero, mul_one]
+  have hs :=
+    integral_symmetrize
+      (scaledUnitBump_continuous
+        (quantitativeTaperR_pos ht0).ne'
+        (quantitativeTaperOuterCenter t))
+      (scaledUnitBump_hasCompactSupport
+        (quantitativeTaperR_pos ht0))
+      (by fun_prop :
+        Continuous
+          (fun u : ℝ =>
+            Real.cosh (u / 2) * Real.cos (t * u)))
+      (by
+        intro u
+        simp [Real.cosh_neg, Real.cos_neg])
+  unfold Zeta23Bridge.LiteralWeilOddChannelTaper.symmetrize
+    quantitativeOuterPoleBaseWeight
+  simpa [mul_assoc] using hs
+
 theorem quantitativeCanonicalTaper_radiusZero_pole_pos
     {t : ℝ} (ht : 18 <= t) :
     0 < poleEvenResp (quantitativeCanonicalTaper t) t 0 := by
@@ -369,110 +395,18 @@ theorem quantitativeCanonicalTaper_radiusZero_pole_pos
       (quantitativeOuterPoleBaseWeight_support ht)
       (quantitativeInnerPoleBaseWeight_support ht)
       hA1 hA2 hP1 hP2 hlam
-  have hcanonical :
-      poleEvenResp (quantitativeCanonicalTaper t) t 0
-        =
-      2 * ((∫ u : ℝ, F2 u)
-        + quantitativeLambda t * ∫ u : ℝ, F1 u) := by
-    have hi :=
-      quantitativeInnerPole_eq_two_integral ht0
-    have ho :=
-      quantitativeOuterPole_eq_two_integral ht0
-    unfold poleEvenResp quantitativeCanonicalTaper
-    simp only [Real.cos_zero, mul_one]
-    unfold F1 F2 quantitativeInnerPoleBaseWeight
-      quantitativeOuterPoleBaseWeight
-    have hIi :
-      Integrable
-        (fun u : ℝ =>
-          quantitativeInnerBump t u
-            * (Real.cosh (u/2) * Real.cos (t*u))) := by
-      exact
-        ((quantitativeInnerBump_continuous ht0).mul (by fun_prop))
-          .integrable_of_hasCompactSupport
-            (quantitativeInnerBump_compact ht0).mul_right
-    have hIo :
-      Integrable
-        (fun u : ℝ =>
-          quantitativeOuterBump t u
-            * (Real.cosh (u/2) * Real.cos (t*u))) := by
-      exact
-        ((quantitativeOuterBump_continuous ht0).mul (by fun_prop))
-          .integrable_of_hasCompactSupport
-            (quantitativeOuterBump_compact ht0).mul_right
-    rw [show
-      (fun u : ℝ =>
-        (quantitativeInnerBump t u
-          + quantitativeLambda t * quantitativeOuterBump t u)
-          * (Real.cosh (u / 2) * Real.cos (t * u)))
-      =
-      fun u : ℝ =>
-        quantitativeInnerBump t u
-          * (Real.cosh (u / 2) * Real.cos (t*u))
-        + quantitativeLambda t *
-          (quantitativeOuterBump t u
-            * (Real.cosh (u / 2) * Real.cos (t*u))) by
-        funext u
-        ring]
-    rw [integral_add hIi (hIo.const_mul _), integral_const_mul]
-    -- unfold the symmetric bumps and reflect the even base weight
-    unfold quantitativeInnerBump quantitativeOuterBump
-      quantitativeSymBump
-      Zeta23Bridge.LiteralWeilOddChannelTaper.symmetrize
-    have hbaseEven :
-        ∀ u : ℝ,
-          Real.cosh ((-u)/2) * Real.cos (t*(-u))
-            =
-          Real.cosh (u/2) * Real.cos (t*u) := by
-      intro u
-      simp [Real.cosh_neg, Real.cos_neg]
-    have hinnerSym :
-      (∫ u : ℝ,
-        (scaledUnitBump
-            (quantitativeTaperInnerCenter t)
-            (quantitativeTaperR t) u
-          + scaledUnitBump
-            (quantitativeTaperInnerCenter t)
-            (quantitativeTaperR t) (-u))
-        * (Real.cosh (u/2) * Real.cos (t*u)))
-      =
-      2 * ∫ u : ℝ,
-        scaledUnitBump
-          (quantitativeTaperInnerCenter t)
-          (quantitativeTaperR t) u
-        * (Real.cosh (u/2) * Real.cos (t*u)) := by
-      exact integral_symmetrize
-        (scaledUnitBump_continuous
-          (quantitativeTaperR_pos ht0).ne' _)
-        (scaledUnitBump_hasCompactSupport
-          (quantitativeTaperR_pos ht0))
-        (by fun_prop)
-        hbaseEven
-    have houterSym :
-      (∫ u : ℝ,
-        (scaledUnitBump
-            (quantitativeTaperOuterCenter t)
-            (quantitativeTaperR t) u
-          + scaledUnitBump
-            (quantitativeTaperOuterCenter t)
-            (quantitativeTaperR t) (-u))
-        * (Real.cosh (u/2) * Real.cos (t*u)))
-      =
-      2 * ∫ u : ℝ,
-        scaledUnitBump
-          (quantitativeTaperOuterCenter t)
-          (quantitativeTaperR t) u
-        * (Real.cosh (u/2) * Real.cos (t*u)) := by
-      exact integral_symmetrize
-        (scaledUnitBump_continuous
-          (quantitativeTaperR_pos ht0).ne' _)
-        (scaledUnitBump_hasCompactSupport
-          (quantitativeTaperR_pos ht0))
-        (by fun_prop)
-        hbaseEven
-    rw [hinnerSym, houterSym]
-    ring
-  rw [hcanonical]
+  have hlin :=
+    poleEvenResp_add_smul
+      (quantitativeInnerBump_continuous ht0)
+      (quantitativeInnerBump_compact ht0)
+      (quantitativeOuterBump_continuous ht0)
+      (quantitativeOuterBump_compact ht0)
+      (t := t) (s := 0) (lam := quantitativeLambda t)
+  have hi := quantitativeInnerPole_radiusZero_eq_two_base ht
+  have ho := quantitativeOuterPole_radiusZero_eq_two_base ht
+  unfold quantitativeCanonicalTaper
+  rw [hlin, hi, ho]
+  dsimp [F1, F2] at hres
   nlinarith
 
 end Synthesis

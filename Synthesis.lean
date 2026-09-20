@@ -201,3 +201,5 @@ import Synthesis.RiemannNormalizedProjectiveBaseTransformDerivativeRegularity
 import Synthesis.RiemannProjectiveZetaMuContinuousAbel
 
 import Synthesis.RiemannNormalizedProjectiveProfileScaling
+
+import Synthesis.RiemannCanonicalDoubledRadiusPoleSign

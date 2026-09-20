@@ -21,7 +21,7 @@ theorem splitPrimeWitness_of_mod_four_eq_one
     {p : ℕ} (hp : p.Prime) (hmod : p % 4 = 1) :
     Nonempty (SplitPrimeWitness p) := by
   letI : Fact p.Prime := ⟨hp⟩
-  obtain ⟨u, v, huv⟩ := hp.sq_add_sq (by omega)
+  obtain ⟨u, v, huv⟩ := Nat.Prime.sq_add_sq (p := p) (by omega)
   exact ⟨⟨u, v, huv.symm⟩⟩
 
 def cmMagnitude {p : ℕ} (w : SplitPrimeWitness p) : ℕ :=

@@ -172,3 +172,4 @@ import Synthesis.RiemannProjectiveCenteredGaugeBridge
 import Synthesis.RiemannNormalizedCenteredOffTwoRadius
 
 import Synthesis.RiemannNormalizedOffRadiusZeroAtomicMeasure
+import Synthesis.RiemannNormalizedProjectiveOffAtomicMeasure

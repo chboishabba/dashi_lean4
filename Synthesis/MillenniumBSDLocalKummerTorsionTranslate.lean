@@ -299,7 +299,7 @@ theorem totalLocalKummer_add_zeroTorsion_ordinary
       * totalLocalKummer p (.affine 0 0 (by norm_num))
   rw [totalLocalKummer_ordinary Pout,
       totalLocalKummer_ordinary Pin,
-      totalLocalKummer_zero]
+      totalLocalKummer_zeroTorsion]
   apply Prod.ext
   · simpa [Pin, Pout, mul_comm] using
       zeroTranslate_firstSquareClass hcurve hx0

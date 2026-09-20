@@ -147,9 +147,9 @@ theorem centeredLiteralComplement_eq_neg_cluster_minus_four_pole
     (hgs : ContDiff ℝ 2 g)
     (hgc : HasCompactSupport g)
     (heven : ∀ u, g (-u) = g u)
+    {t r : ℝ}
     (hshortCentered :
       ∀ u, gammaCenteredTaper g r u ≠ 0 -> |u| < Real.log 2)
-    {t r : ℝ}
     (hkill : poleEvenResp g t r = 0) :
     finalLiteralComplement (gammaCenteredTaper g r) t 0
       =

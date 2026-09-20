@@ -195,3 +195,7 @@ import Synthesis.RiemannNormalizedProjectiveRvMAbelResidualBound
 import Synthesis.RiemannZetaMuExactAbel
 
 import Synthesis.RiemannNormalizedProjectiveBaseTransformDerivative
+
+import Synthesis.RiemannNormalizedProjectiveBaseTransformDerivativeRegularity
+
+import Synthesis.RiemannProjectiveZetaMuContinuousAbel

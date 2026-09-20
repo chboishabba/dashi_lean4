@@ -4,6 +4,7 @@ import Synthesis.RiemannCenteredNearPairSign
 import Synthesis.RiemannCenteredOffExplicitFarOnly
 import Synthesis.RiemannFarShellDisplacementAdaptiveCutoff
 import Synthesis.RiemannAdaptiveCutoffNearSignNoGo
+import Synthesis.RiemannProjectiveCenteredGaugeBridge
 import Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector
 
 /-!
@@ -60,6 +61,9 @@ structure ActualHighAnalyticMinCutStatus where
   centeredFarOnlyReductionPaid : Bool
   displacementAdaptiveFarAtomPaid : Bool
   adaptiveCutoffDirectNearSignWeldPruned : Bool
+  projectiveCenteredGaugeBridgePaid : Bool
+  normalizedSecondRadiusAttachmentPaid : Bool
+  normalizedRvMProjectiveAttachmentPaid : Bool
 
   farResidualRetainsHeightSquare : Bool
   targetDependentResidualSuppressionPaid : Bool
@@ -77,6 +81,9 @@ def actualHighAnalyticMinCutStatus : ActualHighAnalyticMinCutStatus :=
     centeredFarOnlyReductionPaid := true
     displacementAdaptiveFarAtomPaid := true
     adaptiveCutoffDirectNearSignWeldPruned := true
+    projectiveCenteredGaugeBridgePaid := true
+    normalizedSecondRadiusAttachmentPaid := false
+    normalizedRvMProjectiveAttachmentPaid := false
 
     farResidualRetainsHeightSquare := false
     targetDependentResidualSuppressionPaid := false
@@ -94,3 +101,16 @@ theorem uniformNearLineClosureStillOpen :
   rfl
 
 end Synthesis
+
+
+theorem projectiveCenteredGaugeBridgeNowPaid :
+    actualHighAnalyticMinCutStatus.projectiveCenteredGaugeBridgePaid = true :=
+  rfl
+
+theorem normalizedSecondRadiusAttachmentStillOpen :
+    actualHighAnalyticMinCutStatus.normalizedSecondRadiusAttachmentPaid = false :=
+  rfl
+
+theorem normalizedRvMProjectiveAttachmentStillOpen :
+    actualHighAnalyticMinCutStatus.normalizedRvMProjectiveAttachmentPaid = false :=
+  rfl

@@ -363,4 +363,53 @@ theorem totalLocalKummer_add_oneTorsion_ordinary
   · simpa [Pin, Pout, mul_comm] using
       oneTranslate_secondSquareClass hcurve hx1 hxm1
 
+
+theorem minusOneTorsion_translate_x
+    {p : ℕ} [Fact p.Prime]
+    {x y : ℚ_[p]}
+    (hcurve : y ^ 2 = x ^ 3 - x)
+    (hxm1 : x ≠ -1) :
+    secantSumX x y (-1) 0 = (1 - x) / (x + 1) := by
+  unfold secantSumX secantSlope
+  field_simp [show x + 1 ≠ 0 by
+    intro h
+    exact hxm1 (by linear_combination h)]
+  linear_combination -hcurve
+
+theorem totalLocalKummer_add_minusOneTorsion_ordinary
+    {p : ℕ} [Fact p.Prime]
+    {x y : ℚ_[p]}
+    (hcurve : y ^ 2 = x ^ 3 - x)
+    (hx0 : x ≠ 0)
+    (hx1 : x ≠ 1)
+    (hxm1 : x ≠ -1) :
+    totalLocalKummer p
+      ((.affine x y hcurve : PadicProjectivePoint p)
+        + .affine (-1) 0 (by norm_num))
+      =
+    totalLocalKummer p (.affine x y hcurve)
+      * totalLocalKummer p (.affine (-1) 0 (by norm_num)) := by
+  have hx : x ≠ (-1 : ℚ_[p]) := hxm1
+  have hxR0 : secantSumX x y (-1) 0 ≠ 0 := by
+    rw [minusOneTorsion_translate_x hcurve hxm1]
+    apply div_ne_zero
+    · intro h
+      exact hx1 (by linear_combination h)
+    · intro h
+      exact hxm1 (by linear_combination h)
+  have hxR1 : secantSumX x y (-1) 0 ≠ 1 := by
+    rw [minusOneTorsion_translate_x hcurve hxm1]
+    intro h
+    have : x = 0 := by
+      field_simp [show x + 1 ≠ 0 by
+        intro hx'
+        exact hxm1 (by linear_combination hx')] at h
+      linear_combination h
+    exact hx0 this
+  exact totalLocalKummer_secant_ordinary
+    hcurve (by norm_num) hx
+    hx0 hx1
+    (by norm_num) (by norm_num)
+    hxR0 hxR1
+
 end Synthesis.Millennium.BSD

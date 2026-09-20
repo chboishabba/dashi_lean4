@@ -246,6 +246,50 @@ theorem euclideanGlobalSolution_iff_claySolutionR3
       boundedEnergy := by simpa [BoundedKineticEnergy]
     }, trivial⟩
 
+
+theorem AgdaStyleClayOptionA_iff_Literal :
+    AgdaStyleClayOptionA ↔ DASHILiteralClayNS.ClayOptionA := by
+  constructor
+  · intro h ν hν u₀ hdata
+    obtain s := h ν hν u₀ hdata.1 hdata.2.1 hdata.2.2
+    refine ⟨toVelocity s.velocity, toPressure s.pressure, ?_⟩
+    exact ⟨s.velocitySmooth, s.pressureSmooth, s.solvesMomentumEquation,
+      s.incompressible, s.initialTrace, s.boundedEnergy⟩
+  · intro h ν hν u₀ hs hd hr
+    obtain ⟨u,p,hsol⟩ := h ν hν u₀ ⟨hs,hd,hr⟩
+    rcases hsol with ⟨hu,hp,heq,hdiv,hinit,henergy⟩
+    exact {
+      velocity := fromVelocity u
+      pressure := fromPressure p
+      velocitySmooth := by simpa [SmoothVelocityHistory]
+      pressureSmooth := by simpa [SmoothPressureHistory]
+      solvesMomentumEquation := by
+        simpa [SolvesUnforcedNS, SolvesForcedNS, zeroForcing, toForce]
+      incompressible := by simpa [DivergenceFreeHistory]
+      initialTrace := by simpa [AttainsInitialDatum]
+      boundedEnergy := by simpa [BoundedKineticEnergy]
+    }
+
+theorem AgdaStyleClayOptionB_iff_Literal :
+    AgdaStyleClayOptionB ↔ DASHILiteralClayNS.ClayOptionB := by
+  constructor
+  · intro h ν hν u₀ hdata
+    obtain ⟨u,p,hu,hp,huper,hpper,heq,hdiv,hinit⟩ :=
+      h ν hν u₀ hdata.1 hdata.2.1 hdata.2.2
+    refine ⟨toVelocity u, toPressure p, ?_⟩
+    exact ⟨hu,hp,heq,hdiv,hinit,huper,hpper⟩
+  · intro h ν hν u₀ hs hd hper
+    obtain ⟨u,p,hsol⟩ := h ν hν u₀ ⟨hs,hd,hper⟩
+    rcases hsol with ⟨hu,hp,heq,hdiv,hinit,huper,hpper⟩
+    refine ⟨fromVelocity u, fromPressure p, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · simpa [SmoothVelocityHistory]
+    · simpa [SmoothPressureHistory]
+    · simpa [UnitPeriodicVelocity]
+    · simpa [UnitPeriodicPressure]
+    · simpa [SolvesUnforcedNS, SolvesForcedNS, zeroForcing, toForce]
+    · simpa [DivergenceFreeHistory]
+    · simpa [AttainsInitialDatum]
+
 theorem AgdaStyleClayOptionC_iff_ClaySpec :
     AgdaStyleClayOptionC ↔ ClaySpec.ClayOptionC := by
   constructor
@@ -272,7 +316,7 @@ theorem AgdaStyleClayOptionC_iff_ClaySpec :
     obtain ⟨u₀,f,hdata,hno⟩ := h ν hν
     refine ⟨u₀, fromForce f, hdata.1, hdata.2.1, hdata.2.2.1,
       hdata.2.2.2.1, ?_, ?_⟩
-    · simpa [RapidSpaceTimeDecay]
+    · simpa [RapidSpaceTimeDecay] using hdata.2.2.2.2
     · intro s
       apply hno
       refine ⟨toVelocity s.velocity, toPressure s.pressure, ?_⟩
@@ -293,22 +337,22 @@ theorem AgdaStyleClayOptionD_iff_ClaySpec :
       velocitySmooth := by simpa [SmoothVelocityHistory] using hsol.1
       pressureSmooth := by simpa [SmoothPressureHistory] using hsol.2.1
       velocityPeriodic := by
-        simpa [UnitPeriodicVelocity] using hsol.2.2.2.2.1
+        simpa [UnitPeriodicVelocity] using hsol.2.2.2.2.2.1
       pressurePeriodic := by
-        simpa [UnitPeriodicPressure] using hsol.2.2.2.2.2
+        simpa [UnitPeriodicPressure] using hsol.2.2.2.2.2.2
       solvesEquation := by
         simpa [SolvesForcedNS] using hsol.2.2.1
       incompressible := by
         simpa [DivergenceFreeHistory] using hsol.2.2.2.1
       initialTrace := by
-        simpa [AttainsInitialDatum] using hsol.2.2.2.2.2.1
+        simpa [AttainsInitialDatum] using hsol.2.2.2.2.1
     }
   · intro h ν hν
     obtain ⟨u₀,f,hdata,hno⟩ := h ν hν
     refine ⟨u₀, fromForce f, hdata.1, hdata.2.1, hdata.2.2.1,
       hdata.2.2.2.1, ?_, ?_, ?_⟩
-    · simpa [UnitPeriodicForcing]
-    · simpa [RapidTimeDecayAllForcingDerivatives]
+    · simpa [UnitPeriodicForcing] using hdata.2.2.2.2.2.1
+    · simpa [RapidTimeDecayAllForcingDerivatives] using hdata.2.2.2.2.2.2
     · intro s
       apply hno
       refine ⟨toVelocity s.velocity, toPressure s.pressure, ?_⟩
@@ -333,6 +377,8 @@ theorem literalAnyOneViaAgdaContractD :
   DASHILiteralClayNS.AnyOneClayResolution.resolvedD
     (AgdaStyleClayOptionD_iff_ClaySpec.mp literalClayD_agdaContract)
 
+#print axioms AgdaStyleClayOptionA_iff_Literal
+#print axioms AgdaStyleClayOptionB_iff_Literal
 #print axioms AgdaStyleClayOptionC_iff_ClaySpec
 #print axioms AgdaStyleClayOptionD_iff_ClaySpec
 #print axioms literalClayC_agdaContract

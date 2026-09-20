@@ -166,3 +166,20 @@ import Synthesis.MillenniumBSDGlobalCompletionReductionWeld
 
 import Synthesis.MillenniumBSDGlobalLocalFactorSameObject
 \nimport Synthesis.MillenniumBSDGlobalEulerPrimePower\n\nimport Synthesis.MillenniumBSDGlobalCoefficientReconstruction\n\nimport Synthesis.MillenniumBSDGlobalAnalyticEulerWeld\n\nimport Synthesis.MillenniumBSDOddDirichletConvergence\n\nimport Synthesis.MillenniumBSDOddEulerDirichletAgreement\n\nimport Synthesis.MillenniumBSDOddAnalyticHalfPlane\n
+import Synthesis.MillenniumBSDBadPrimeTwoReduction
+
+import Synthesis.MillenniumBSDGlobalBadPrimeTwo
+
+import Synthesis.MillenniumBSDFullyExplicitGlobalCoefficients
+
+import Synthesis.MillenniumBSDFullGlobalAnalyticLFunction
+
+import Synthesis.MillenniumBSDCMQuarticJacobi
+
+import Synthesis.MillenniumBSDCMQuarticQuadraticBridge
+
+import Synthesis.MillenniumBSDCMSplitCharacterSum
+
+import Synthesis.MillenniumBSDCMHasseBound
+
+import Synthesis.MillenniumBSDHasseEulerConvergence

@@ -39,6 +39,7 @@ structure SmoothShortWindowSchurCertificate
     (sigma rho : Zeros) where
   windows : ShortNormalizedWindowTriple
   lam : ℝ
+  lam_pos : 0 < lam
   envelope :
     ResponseEnvelope windows.triple (heightOf sigma) (heightOf rho)
 

@@ -209,3 +209,5 @@ import Synthesis.RiemannProjectiveZetaMuExplicitScaling
 import Synthesis.RiemannCanonicalNearLineAbsoluteBudgetNoGo
 
 import Synthesis.RiemannProjectiveCompletedSmoothResidual
+
+import Synthesis.RiemannProjectiveFullCompletedCancellation

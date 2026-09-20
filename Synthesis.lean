@@ -24,6 +24,8 @@ import Synthesis.RiemannNormalizedCanonicalFixedProfile
 import Synthesis.RiemannGammaCanonicalRatioGap
 import Synthesis.RiemannGammaIntegratedRatioGap
 import Synthesis.RiemannGammaCanonicalIntegratedDeficit
+import Synthesis.RiemannQuantitativeGammaDeficit
+import Synthesis.RiemannGammaCenteredKernelCompactBridge
 import Synthesis.Hyperfabric
 import Synthesis.CodecBridge
 import Synthesis.EndToEnd

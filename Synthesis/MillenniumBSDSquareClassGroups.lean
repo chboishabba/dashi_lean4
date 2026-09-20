@@ -116,6 +116,24 @@ instance ratSquareClassCommGroup : CommGroup RatSquareClass where
     apply Subtype.ext
     simp [nzRatMul, mul_comm]
 
+
+
+theorem ratSquareClass_sq_eq_one
+    (c : RatSquareClass) :
+    c * c = 1 := by
+  refine Quotient.inductionOn c ?_
+  intro a
+  apply Quotient.sound
+  refine ⟨nzRatOne, a, ?_⟩
+  dsimp [nzRatMul, nzRatOne]
+  ring
+
+theorem ratSquareClass_inv_eq_self
+    (c : RatSquareClass) :
+    c⁻¹ = c := by
+  rw [← mul_one c⁻¹, ← ratSquareClass_sq_eq_one c,
+    ← mul_assoc, inv_mul_cancel, one_mul]
+
 def nzPadicMul
     (p : ℕ) [Fact p.Prime]
     (a b : NonzeroPadic p) :
@@ -232,6 +250,26 @@ instance padicSquareClassCommGroup
     apply padicSquareRel_of_eq
     apply Subtype.ext
     simp [nzPadicMul, mul_comm]
+
+
+
+theorem padicSquareClass_sq_eq_one
+    (p : ℕ) [Fact p.Prime]
+    (c : PadicSquareClass p) :
+    c * c = 1 := by
+  refine Quotient.inductionOn c ?_
+  intro a
+  apply Quotient.sound
+  refine ⟨nzPadicOne p, a, ?_⟩
+  dsimp [nzPadicMul, nzPadicOne]
+  ring
+
+theorem padicSquareClass_inv_eq_self
+    (p : ℕ) [Fact p.Prime]
+    (c : PadicSquareClass p) :
+    c⁻¹ = c := by
+  rw [← mul_one c⁻¹, ← padicSquareClass_sq_eq_one p c,
+    ← mul_assoc, inv_mul_cancel, one_mul]
 
 theorem localizeNonzeroRat_mul
     (p : ℕ) [Fact p.Prime]

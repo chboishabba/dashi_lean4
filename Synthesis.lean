@@ -184,3 +184,6 @@ import Synthesis.RiemannNormalizedProjectiveHorizontalQuadraticFactor
 import Synthesis.RiemannProjectiveRvMMuGammaSameObject
 
 import Synthesis.RiemannNormalizedProjectiveRvMMissingTailBound
+
+import Synthesis.RiemannProjectiveRvMMuNamedGammaDefect
+import Synthesis.RiemannProjectiveRvMCenteredResidualCutset

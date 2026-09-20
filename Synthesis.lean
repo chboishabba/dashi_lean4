@@ -26,6 +26,8 @@ import Synthesis.MillenniumBSDCMPrimeWitness
 import Synthesis.MillenniumHodgeCP1NormalForm
 import Synthesis.MillenniumBSDRationalSquareClassQuotient
 import Synthesis.MillenniumBSDCMPrimeClassification
+import Synthesis.MillenniumHodgeCP1TopologicalSphere
+import Synthesis.MillenniumBSDRationalKummerQuotient
 
 /-!
 # Cross-domain synthesis spine

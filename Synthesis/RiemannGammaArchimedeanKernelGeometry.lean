@@ -65,7 +65,7 @@ theorem gammaArchKernel_strictAntiOn_pos :
   have hsx : 0 < Real.sinh x := Real.sinh_pos_iff.mpr hx
   have hsy : 0 < Real.sinh y := Real.sinh_pos_iff.mpr hy
   have hsxy : Real.sinh x < Real.sinh y :=
-    Real.strictMono_sinh hxy
+    Real.sinh_lt_sinh.mpr hxy
   exact one_div_lt_one_div_of_lt
     (mul_pos (by norm_num) hsx)
     (mul_lt_mul_of_pos_left hsxy (by norm_num))

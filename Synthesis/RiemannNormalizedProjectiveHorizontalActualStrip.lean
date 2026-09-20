@@ -61,9 +61,13 @@ theorem abs_normalizedHorizontalHeight_le
   unfold normalizedHorizontalHeight
   rw [abs_div, abs_of_pos ht]
   have h := abs_heightOf_le_half rho
-  have ht0 : 0 < 2 * t := by positivity
-  rw [div_le_iff₀ ht, div_eq_div_iff (by positivity : (2:ℝ) ≠ 0) (ne_of_gt ht)]
-  nlinarith
+  calc
+    |heightOf rho| / t
+      ≤ (1 / 2 : ℝ) / t := by
+        exact (div_le_div_iff_of_pos_right ht).2 h
+    _ = 1 / (2 * t) := by
+        field_simp [ne_of_gt ht]
+        ring
 
 /-- Uniform small-alpha strip in the canonical high region. -/
 theorem abs_normalizedHorizontalHeight_le_one_div_36

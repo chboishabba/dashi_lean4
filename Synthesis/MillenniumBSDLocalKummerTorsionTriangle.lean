@@ -209,7 +209,7 @@ theorem totalLocalKummer_one_add_minusOne_torsion
     totalLocalKummer p (oneTorsionPoint p)
       * totalLocalKummer p (minusOneTorsionPoint p) := by
   rw [one_add_minusOne_torsion,
-      totalLocalKummer_zero,
+      totalLocalKummer_zeroTorsion,
       totalLocalKummer_minusOne]
   rw [show totalLocalKummer p (oneTorsionPoint p) =
       localOneKummer p by exact totalLocalKummer_one p]

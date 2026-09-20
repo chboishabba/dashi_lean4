@@ -59,8 +59,7 @@ theorem normIntegral_compl_closedBall_tendsto_zero
         atTop
         (nhds 0) := by
     simpa using (tendsto_const_nhds.sub hinside)
-  apply hdiff.congr'
-  filter_upwards [] with n
+  refine hdiff.congr' (Filter.Eventually.of_forall fun n => ?_)
   exact
     (setIntegral_compl
       (Metric.measurableSet_closedBall :

@@ -86,4 +86,70 @@ theorem r571_finite_pairedSecondMoment_of_lipschitzState
         ≤ w i * (‖yv i‖ * ‖yv i‖) * (2 * (K : ℝ) + g1) := h
     _ = (2 * (K : ℝ) + g1) * (w i * (‖yv i‖ * ‖yv i‖)) := by ring
 
+/-- A uniform Fréchet-derivative bound pays the Lipschitz hypothesis by
+Mathlib's mean-value inequality.  This is the analytic form wanted by the
+R290/R503 state-derivative slot. -/
+theorem stateDerivativeEnvelope_of_fderivBound
+    {g : E → ℝ} {k y : E} {g1 : ℝ} {K : NNReal}
+    (hg1 : ∀ x, |g x| ≤ g1)
+    (hDiff : Differentiable ℝ g)
+    (hDeriv : ∀ x, ‖fderiv ℝ g x‖₊ ≤ K) :
+    StateDerivativeEnvelope g1 (2 * (K : ℝ))
+      (g (k + y)) (g (k - y)) ‖y‖ := by
+  exact stateDerivativeEnvelope_of_lipschitz hg1
+    (lipschitzWith_of_nnnorm_fderiv_le hDiff hDeriv)
+
+/-- R571 pointwise second-moment payment directly from a uniform derivative
+bound on the transported state.  At this point G2 is no longer an independent
+two-point assumption: it is 2K, with K the operator-norm bound on fderiv g. -/
+theorem r571_pairedSecondMoment_of_fderivBound
+    [InnerProductSpace ℝ E]
+    (s : DASHI.NS.Unforced.HelicitySign)
+    {k y : E} {w g1 : ℝ} {K : NNReal} {g : E → ℝ}
+    (hw : 0 ≤ w) (hk : 1 ≤ ‖k‖)
+    (hg1 : ∀ x, |g x| ≤ g1)
+    (hDiff : Differentiable ℝ g)
+    (hDeriv : ∀ x, ‖fderiv ℝ g x‖₊ ≤ K) :
+    w * (|radialSymbol s (k + y) - radialSymbol s k|
+            * |g (k + y) - g (k - y)|
+          + |centeredRadialDefect s k y| * |g (k - y)|)
+      ≤ w * (‖y‖ * ‖y‖) * (2 * (K : ℝ) + g1) := by
+  exact r571_pairedSecondMoment_of_stateEnvelope s hw hk
+    (stateDerivativeEnvelope_of_fderivBound hg1 hDiff hDeriv)
+
+/-- Finite-family derivative form.  This is the source shape needed by a
+same-object R290/R503 adapter: one cutoff-independent derivative bound K and
+one amplitude envelope g1 suffice for every cell. -/
+theorem r571_finite_pairedSecondMoment_of_fderivBound
+    [InnerProductSpace ℝ E]
+    {ι : Type*} (fam : Finset ι)
+    (sgn : ι → DASHI.NS.Unforced.HelicitySign)
+    (kv yv : ι → E) (w : ι → ℝ)
+    (g : ι → E → ℝ) {g1 : ℝ} {K : NNReal}
+    (hw : ∀ i ∈ fam, 0 ≤ w i)
+    (hk : ∀ i ∈ fam, 1 ≤ ‖kv i‖)
+    (hg1 : ∀ i ∈ fam, ∀ x, |g i x| ≤ g1)
+    (hDiff : ∀ i ∈ fam, Differentiable ℝ (g i))
+    (hDeriv : ∀ i ∈ fam, ∀ x, ‖fderiv ℝ (g i) x‖₊ ≤ K) :
+    ∑ i ∈ fam, w i *
+        (|radialSymbol (sgn i) (kv i + yv i) - radialSymbol (sgn i) (kv i)|
+            * |g i (kv i + yv i) - g i (kv i - yv i)|
+          + |centeredRadialDefect (sgn i) (kv i) (yv i)|
+            * |g i (kv i - yv i)|)
+      ≤ (2 * (K : ℝ) + g1)
+          * ∑ i ∈ fam, w i * (‖yv i‖ * ‖yv i‖) := by
+  rw [Finset.mul_sum]
+  refine Finset.sum_le_sum fun i hi => ?_
+  have h := r571_pairedSecondMoment_of_fderivBound
+    (sgn i) (hw i hi) (hk i hi) (hg1 i hi)
+    (hDiff i hi) (hDeriv i hi)
+  calc
+    w i *
+        (|radialSymbol (sgn i) (kv i + yv i) - radialSymbol (sgn i) (kv i)|
+            * |g i (kv i + yv i) - g i (kv i - yv i)|
+          + |centeredRadialDefect (sgn i) (kv i) (yv i)|
+            * |g i (kv i - yv i)|)
+        ≤ w i * (‖yv i‖ * ‖yv i‖) * (2 * (K : ℝ) + g1) := h
+    _ = (2 * (K : ℝ) + g1) * (w i * (‖yv i‖ * ‖yv i‖)) := by ring
+
 end RequestProject.NavierStokes.R571StateVariation

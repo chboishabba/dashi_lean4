@@ -84,4 +84,34 @@ theorem globalCurve_completion_isElliptic
         ((rationalPrimePlace p).adicCompletion ℚ)) := by
   infer_instance
 
+
+noncomputable def rationalPrimeResidueFieldEquiv
+    (p : ℕ) [Fact p.Prime] :
+    IsLocalRing.ResidueField
+        ((rationalPrimePlace p).adicCompletionIntegers ℚ)
+      ≃+*
+    IsLocalRing.ResidueField ℤ_[p] :=
+  IsLocalRing.ResidueField.mapEquiv
+    (rationalPrimeIntegerEquiv p).toRingEquiv
+
+noncomputable def rationalPrimeResidueFieldEquivZMod
+    (p : ℕ) [Fact p.Prime] :
+    IsLocalRing.ResidueField
+        ((rationalPrimePlace p).adicCompletionIntegers ℚ)
+      ≃+*
+    ZMod p :=
+  (rationalPrimeResidueFieldEquiv p).trans
+    (padicResidueEquivZMod p)
+
+theorem rationalPrimeResidueField_natCard
+    (p : ℕ) [Fact p.Prime] :
+    Nat.card
+      (IsLocalRing.ResidueField
+        ((rationalPrimePlace p).adicCompletionIntegers ℚ))
+      =
+    p := by
+  rw [Nat.card_congr
+    (rationalPrimeResidueFieldEquivZMod p).toEquiv]
+  simp
+
 end Synthesis.Millennium.BSD

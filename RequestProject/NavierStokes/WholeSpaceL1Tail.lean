@@ -66,6 +66,22 @@ theorem normIntegral_compl_closedBall_tendsto_zero
         MeasurableSet (Metric.closedBall (0 : R3) n))
       hnorm).symm
 
+/-- Fourier kinetic-energy mass vanishes outside expanding balls from the physical L² hypothesis. -/
+theorem kineticEnergy_compl_closedBall_tendsto_zero
+    (uHat : R3 → E)
+    (hu : MemLp uHat 2 volume) :
+    Tendsto
+      (fun n : ℕ =>
+        ∫ ξ : R3 in (Metric.closedBall (0 : R3) n)ᶜ,
+          ‖uHat ξ‖ ^ 2)
+      atTop
+      (nhds 0) := by
+  have henergy : Integrable (fun ξ : R3 => ‖uHat ξ‖ ^ 2) volume :=
+    (memLp_two_iff_integrable_sq_norm hu.aestronglyMeasurable).1 hu
+  have htail :=
+    normIntegral_compl_closedBall_tendsto_zero
+      (fun ξ : R3 => ‖uHat ξ‖ ^ 2) henergy
+  simpa [Real.norm_eq_abs, abs_of_nonneg] using htail
 end L1Tail
 
 /-- The coherent six-real-coordinate representation of C³ has vanishing norm tail whenever the literal convolution integrand is Bochner-integrable. -/

@@ -1,3 +1,4 @@
+import Synthesis.NavierStokesCauchyLaplace
 import Synthesis.ToneCore
 import Synthesis.DialecticTone
 import Synthesis.RelationSeam

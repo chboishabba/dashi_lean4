@@ -54,14 +54,10 @@ theorem squareRel_inv
     (h : SquareRel a b) :
     SquareRel (nzRatInv a) (nzRatInv b) := by
   rcases h with ⟨s, t, hst⟩
-  refine ⟨nzRatInv t, nzRatInv s, ?_⟩
+  refine ⟨t, s, ?_⟩
   dsimp [nzRatInv]
-  have ha : (a : ℚ) ≠ 0 := a.property
-  have hb : (b : ℚ) ≠ 0 := b.property
-  have hs : (s : ℚ) ≠ 0 := s.property
-  have ht : (t : ℚ) ≠ 0 := t.property
-  field_simp [ha, hb, hs, ht]
-  nlinarith [hst]
+  field_simp [a.property, b.property]
+  simpa [mul_comm] using hst.symm
 
 instance ratSquareClassOne : One RatSquareClass where
   one := squareClassOf nzRatOne
@@ -107,7 +103,7 @@ instance ratSquareClassCommGroup : CommGroup RatSquareClass where
     apply squareRel_of_eq
     apply Subtype.ext
     simp [nzRatMul, nzRatOne]
-  inv_mul_cancel₀ := by
+  inv_mul_cancel := by
     rintro ⟨a⟩
     apply Quotient.sound
     apply squareRel_of_eq
@@ -179,10 +175,10 @@ theorem padicSquareRel_inv
       (nzPadicInv p a)
       (nzPadicInv p b) := by
   rcases h with ⟨s, t, hst⟩
-  refine ⟨nzPadicInv p t, nzPadicInv p s, ?_⟩
+  refine ⟨t, s, ?_⟩
   dsimp [nzPadicInv]
-  field_simp [a.property, b.property, s.property, t.property]
-  nlinarith [hst]
+  field_simp [a.property, b.property]
+  simpa [mul_comm] using hst.symm
 
 instance padicSquareClassOne
     (p : ℕ) [Fact p.Prime] :

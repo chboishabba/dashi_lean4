@@ -39,7 +39,7 @@ theorem integrable_fixedOutput_bilinear_of_memLp_two
     (ξ : R3) :
     Integrable (fun η : R3 => L (f η) (g (ξ - η))) volume := by
   have hconv : ConvolutionExists f g L volume :=
-    ConvolutionExists.of_memLp_memLp L hf hg
+    ConvolutionExists.of_memLp_memLp hf hg
   exact (hconv ξ).integrable
 
 /-- The physical L¹ tail of the fixed-output bilinear interaction vanishes. -/

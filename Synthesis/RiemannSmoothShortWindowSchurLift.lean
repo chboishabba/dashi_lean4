@@ -78,6 +78,18 @@ structure SmoothShortWindowSchurCertificate
         =
       windowPair windows.triple.p windows.triple.q0 windows.triple.q1 lam j u
 
+  nonnegPair :
+    ∀ j u, 0 ≤
+      windowPair windows.triple.p windows.triple.q0 windows.triple.q1 lam j u
+
+  twoPointPositive :
+    ∀ j, ∃ u v : ℝ,
+      0 <
+        windowPair windows.triple.p windows.triple.q0 windows.triple.q1 lam j u
+      ∧ 0 <
+        windowPair windows.triple.p windows.triple.q0 windows.triple.q1 lam j v
+      ∧ |u| ≠ |v|
+
 namespace SmoothShortWindowSchurCertificate
 
 variable {sigma rho : Zeros}

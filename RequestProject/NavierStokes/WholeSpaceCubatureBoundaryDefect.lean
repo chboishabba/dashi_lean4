@@ -112,6 +112,62 @@ theorem convolutionBoundaryDefect_eq_zero_of_zero_tail
 
 
 /--
+Correct whole-space core/tail estimate.
+
+Uniform translation control is required only on a fixed/core set of outer
+frequencies.  The outer tail is paid by its own small energy mass.  This is the
+finite statement appropriate to expanding Euclidean windows, where a uniform
+row defect over every outer node is generally too strong.
+
+If
+* core row defect ≤ `τcore`,
+* arbitrary tail row defect ≤ `M`,
+* core energy mass ≤ `E`,
+* tail energy mass ≤ `εtail`,
+
+then
+
+`|Δ(core ∪ tail)| ≤ E τcore + εtail M`.
+-/
+theorem abs_convolutionBoundaryDefect_union_le_core_tail
+    (core tail : Finset ι)
+    (hdisjoint : Disjoint core tail)
+    (energy rowDefect : ι → ℝ)
+    (τcore M E εtail : ℝ)
+    (henergy_core : ∀ i ∈ core, 0 ≤ energy i)
+    (henergy_tail : ∀ i ∈ tail, 0 ≤ energy i)
+    (hcore : ∀ i ∈ core, |rowDefect i| ≤ τcore)
+    (htail : ∀ i ∈ tail, |rowDefect i| ≤ M)
+    (hτcore : 0 ≤ τcore)
+    (hM : 0 ≤ M)
+    (hE : cubatureEnergyMass core energy ≤ E)
+    (hεtail : cubatureEnergyMass tail energy ≤ εtail) :
+    |convolutionBoundaryDefect (core ∪ tail) energy rowDefect|
+      ≤ E * τcore + εtail * M := by
+  have hsplit :
+      convolutionBoundaryDefect (core ∪ tail) energy rowDefect =
+        convolutionBoundaryDefect core energy rowDefect +
+        convolutionBoundaryDefect tail energy rowDefect := by
+    simp [convolutionBoundaryDefect, Finset.sum_union hdisjoint]
+  rw [hsplit]
+  calc
+    |convolutionBoundaryDefect core energy rowDefect +
+        convolutionBoundaryDefect tail energy rowDefect|
+        ≤ |convolutionBoundaryDefect core energy rowDefect| +
+          |convolutionBoundaryDefect tail energy rowDefect| := abs_add _ _
+    _ ≤ cubatureEnergyMass core energy * τcore +
+          cubatureEnergyMass tail energy * M := by
+      exact add_le_add
+        (abs_convolutionBoundaryDefect_le_energyMass_mul_tail
+          core energy rowDefect τcore henergy_core hcore)
+        (abs_convolutionBoundaryDefect_le_energyMass_mul_tail
+          tail energy rowDefect M henergy_tail htail)
+    _ ≤ E * τcore + εtail * M := by
+      exact add_le_add
+        (mul_le_mul_of_nonneg_right hE hτcore)
+        (mul_le_mul_of_nonneg_right hεtail hM)
+
+/--
 Cutoff-independent energy control plus a vanishing nonnegative row-tail forces
 the complete Euclidean translation-boundary defect to vanish.
 

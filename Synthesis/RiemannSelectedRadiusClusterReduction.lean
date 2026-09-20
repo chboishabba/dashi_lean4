@@ -3,6 +3,7 @@ import Synthesis.RiemannQuantitativeCanonicalTaper
 import Synthesis.RiemannCanonicalCenteredClusterPoleReduction
 import Synthesis.RiemannCanonicalTaperRadiusZeroPoleSign
 import Zeta23Bridge.LiteralWeilPrimeEvenCone
+import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
 # Selected-radius pole annihilation and direct cluster reduction
@@ -369,6 +370,40 @@ theorem quantitativeCanonical_selectedRadius_complement_neg_at_zero
   exact quantitativeCanonical_selectedRadius_complement_neg_of_cluster_pos
     ht hheight
     (quantitativeCanonical_clusterConePositive_at_zero ht him)
+
+
+theorem quantitativeCanonical_primeInvisible_height
+    {t : ℝ} (ht : 18 <= t) :
+    9 * Real.pi <= 4 * t * Real.log 2 := by
+  have hlog : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have htlog : 18 * Real.log 2 <= t * Real.log 2 :=
+    mul_le_mul_of_nonneg_right ht hlog.le
+  have hpi : Real.pi < 4 := Real.pi_lt_four
+  have hlognum : (0.6931471803 : ℝ) < Real.log 2 :=
+    Real.log_two_gt_d9
+  nlinarith
+
+theorem quantitativeCanonicalTaper_short_high
+    {t : ℝ} (ht : 18 <= t) :
+    ∀ u, quantitativeCanonicalTaper t u ≠ 0 -> |u| < Real.log 2 :=
+  quantitativeCanonicalTaper_short ht
+    (quantitativeCanonical_primeInvisible_height ht)
+
+/--
+The literal canonical selected-radius sign is already valid throughout the
+repository's quantitative high regime t >= 18; no additional support inequality
+needs to be supplied by the consumer.
+-/
+theorem quantitativeCanonical_selectedRadius_complement_neg_at_zero_high
+    {rhoStar : Zeta23.Zeros} {t : ℝ}
+    (ht : 18 <= t)
+    (him : (rhoStar : ℂ).im = t) :
+    finalLiteralComplement
+        (quantitativeCanonicalTaper t)
+        t
+        (quantitativeSampleRadius t) < 0 := by
+  exact quantitativeCanonical_selectedRadius_complement_neg_at_zero
+    ht him (quantitativeCanonical_primeInvisible_height ht)
 
 
 end Synthesis

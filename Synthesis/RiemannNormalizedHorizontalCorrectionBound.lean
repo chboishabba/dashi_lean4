@@ -224,19 +224,22 @@ theorem normalizedHorizontalCorrection_abs_le
         rw [abs_mul, abs_mul, abs_mul,
           abs_of_nonneg (by norm_num : (0:ℝ) <= 4),
           abs_of_nonneg hch0]
-        have hmul :
-            |normalizedCenteredFixedProfile t v|
+        calc
+          4 * |normalizedCenteredFixedProfile t v|
               * (Real.cosh (alpha * v) - 1)
               * |Real.cos (q * v)|
             <=
-            |normalizedCenteredFixedProfile t v| * (alpha * v) ^ 2 := by
-          have h1 := mul_le_mul_of_nonneg_left hch
-            (abs_nonneg (normalizedCenteredFixedProfile t v))
-          have h2 := mul_le_mul_of_nonneg_left hcos
-            (mul_nonneg (abs_nonneg _)
-              (cosh_sub_one_nonneg (alpha * v)))
-          nlinarith
-        nlinarith [sq_nonneg alpha, sq_nonneg v]
+          4 * |normalizedCenteredFixedProfile t v|
+              * (Real.cosh (alpha * v) - 1) := by
+                gcongr
+          _ <=
+          4 * |normalizedCenteredFixedProfile t v|
+              * (alpha * v) ^ 2 := by
+                gcongr
+          _ =
+          4 * alpha ^ 2 *
+              (|normalizedCenteredFixedProfile t v| * v ^ 2) := by
+                ring
     _ = 4 * alpha ^ 2 * normalizedCenteredSecondMoment t := by
       rw [integral_const_mul]
       rfl
@@ -251,14 +254,23 @@ theorem normalized_actual_zero_small_horizontal
   have hvU := normalizedCenteredFixedProfile_support_upper hv
   unfold normalizedHorizontalHeight
   rw [abs_mul, abs_div, abs_of_pos ht0]
+  have hprod1 :
+      |heightOf rho| * |v|
+        <= |heightOf rho| * (9 * Real.pi / 4) := by
+    exact mul_le_mul_of_nonneg_left hvU.le (abs_nonneg _)
+  have hprod2 :
+      |heightOf rho| * (9 * Real.pi / 4)
+        <= (1 / 2 : ℝ) * (9 * Real.pi / 4) := by
+    exact mul_le_mul_of_nonneg_right ha (by positivity)
   have hpi : Real.pi < 4 := Real.pi_lt_four
-  have hnum :
-      |heightOf rho| * |v| < (1 / 2 : ℝ) * (9 * 4 / 4) := by
-    exact mul_lt_mul_of_le_of_lt ha hvU (abs_nonneg _) (by positivity)
-  have ht18 : (18 : ℝ) <= t := ht
-  have : |heightOf rho| * |v| <= t := by
-    nlinarith
-  exact (div_le_one ht0).2 this
+  have hsmallnum : |heightOf rho| * |v| <= t := by
+    calc
+      |heightOf rho| * |v|
+        <= (1 / 2 : ℝ) * (9 * Real.pi / 4) :=
+          le_trans hprod1 hprod2
+      _ < 18 := by nlinarith
+      _ <= t := ht
+  exact (div_le_one ht0).2 hsmallnum
 
 theorem normalizedHorizontalCorrection_actual_zero_le
     {t : ℝ} (ht : 18 <= t) (rho : Zeros) :
@@ -279,8 +291,12 @@ theorem normalizedHorizontalCorrection_actual_zero_le
     have hs : (heightOf rho) ^ 2 <= (1 / 2 : ℝ) ^ 2 := by
       nlinarith [sq_abs (heightOf rho)]
     have ht2 : 0 < t ^ 2 := by positivity
-    field_simp [ne_of_gt ht0]
-    nlinarith
+    calc
+      (heightOf rho / t) ^ 2
+          = (heightOf rho) ^ 2 / t ^ 2 := by ring
+      _ <= ((1 / 2 : ℝ) ^ 2) / t ^ 2 :=
+        (div_le_div_iff_of_pos_right ht2).2 hs
+      _ = 1 / (4 * t ^ 2) := by ring
   have hm := normalizedCenteredSecondMoment_nonneg t
   calc
     |normalizedCenteredHorizontalCorrection t
@@ -290,9 +306,13 @@ theorem normalizedHorizontalCorrection_actual_zero_le
           * normalizedCenteredSecondMoment t := h0
     _ <= normalizedCenteredSecondMoment t / t ^ 2 := by
       have hmul := mul_le_mul_of_nonneg_right ha2 hm
-      have ht2 : 0 < t ^ 2 := by positivity
-      field_simp [ne_of_gt ht0]
-      nlinarith
+      calc
+        4 * (normalizedHorizontalHeight t rho) ^ 2
+            * normalizedCenteredSecondMoment t
+          <= 4 * (1 / (4 * t ^ 2))
+            * normalizedCenteredSecondMoment t := by
+              nlinarith
+        _ = normalizedCenteredSecondMoment t / t ^ 2 := by ring
 
 theorem finiteZeroMultiplicity_nonneg (F : Finset Zeros) :
     0 <= finiteZeroMultiplicity F := by

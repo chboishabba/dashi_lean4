@@ -149,16 +149,8 @@ theorem sum_middle_le_sum_refinedMiddle
         =
       ∑ sigma ∈ G,
         normalizedProjectiveHorizontalSourceTerm t (sigma : Zeros) := by
-    exact Finset.sum_ite_irrel
-      (s := F) (p := fun sigma => sigma ∈ G)
-      (f := fun sigma =>
-        normalizedProjectiveHorizontalSourceTerm t (sigma : Zeros))
-      |>.trans (by
-        rw [Finset.filter_mem_eq_inter]
-        have hfilter : F.filter (fun sigma => sigma ∈ G) = G := by
-          ext sigma
-          simp [hFG]
-        rw [hfilter])
+    dsimp [F, G]
+    simp [normalizedProjectiveHorizontalRefinedMiddleFinset]
   exact hsum.trans_eq hrw
 
 /--

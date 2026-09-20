@@ -28,6 +28,7 @@ namespace Synthesis
 open Zeta23 Zeta23.EF
 open Zeta23Bridge.LiteralWeilGammaChannel
 open Zeta23Bridge.LiteralWeilGammaProjectiveBound
+open Zeta23Bridge.LiteralWeilGammaConeBound
 open Zeta23Bridge.LiteralWeilProjectiveTaper
 open Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition
 

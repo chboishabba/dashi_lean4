@@ -52,8 +52,7 @@ theorem normalizedCenteredFixedProfile_contDiff_top (t : ℝ) :
 theorem normalizedCenteredComplexProfile_contDiff_top (t : ℝ) :
     ContDiff ℝ (⊤ : ℕ∞) (normalizedCenteredComplexProfile t) := by
   unfold normalizedCenteredComplexProfile
-  exact (contDiff_const.mul
-    (normalizedCenteredFixedProfile_contDiff_top t)).ofReal
+  fun_prop
 
 def normalizedCenteredSchwartz (t : ℝ) : SchwartzMap ℝ ℂ :=
   (normalizedCenteredComplexProfile_compact t).toSchwartzMap
@@ -68,7 +67,6 @@ theorem normalizedCenteredSchwartz_fourier_coe (t : ℝ) :
       (FourierTransform.fourier (normalizedCenteredSchwartz t)) w)
       =
     FourierTransform.fourier (normalizedCenteredComplexProfile t) := by
-  funext w
   rw [SchwartzMap.fourier_coe]
   rfl
 

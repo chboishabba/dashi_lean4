@@ -202,8 +202,8 @@ theorem totalGlobalKummer_localizes
           exact_mod_cast hx1
         simp [localizeRationalProjectivePoint, totalGlobalKummer,
           totalLocalKummer, hx0, hx1, hx0p, hx1p]
-        exact ordinaryKummer_localizes p
+        exact (ordinaryKummer_localizes p
           { x := x, y := y, onCurve := h,
-            x_ne_zero := hx0, x_ne_one := hx1 }
+            x_ne_zero := hx0, x_ne_one := hx1 }).symm
 
 end Synthesis.Millennium.BSD

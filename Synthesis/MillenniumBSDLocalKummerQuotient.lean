@@ -138,4 +138,38 @@ theorem localKummerQuotientHom_range_eq
       ⟨QuotientGroup.mk'
           (localDoubleSubgroup p) P, rfl⟩
 
+noncomputable def localKummerQuotientToImage
+    (p : ℕ) [Fact p.Prime] :
+    (Multiplicative (PadicProjectivePoint p) ⧸ localDoubleSubgroup p) →*
+      localKummerImageSubgroup p :=
+  (localKummerQuotientHom p).codRestrict
+    (localKummerImageSubgroup p)
+    (fun q => by
+      have h :
+          localKummerQuotientHom p q ∈
+            (localKummerQuotientHom p).range :=
+        ⟨q, rfl⟩
+      rwa [localKummerQuotientHom_range_eq p] at h)
+
+theorem localKummerQuotientToImage_surjective
+    (p : ℕ) [Fact p.Prime] :
+    Function.Surjective (localKummerQuotientToImage p) := by
+  intro y
+  rcases y with ⟨y, hy⟩
+  have hyrange :
+      y ∈ (localKummerQuotientHom p).range := by
+    rwa [localKummerQuotientHom_range_eq p]
+  rcases hyrange with ⟨q, hq⟩
+  refine ⟨q, ?_⟩
+  apply Subtype.ext
+  exact hq
+
+theorem localKummerImage_is_quotient_image
+    (p : ℕ) [Fact p.Prime] :
+    ∀ y : localKummerImageSubgroup p,
+      ∃ q :
+        Multiplicative (PadicProjectivePoint p) ⧸ localDoubleSubgroup p,
+        localKummerQuotientToImage p q = y :=
+  localKummerQuotientToImage_surjective p
+
 end Synthesis.Millennium.BSD

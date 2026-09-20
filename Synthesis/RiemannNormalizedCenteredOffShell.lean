@@ -153,4 +153,74 @@ theorem normalized_support_pulls_back
     have h : |v| < 9 * Real.pi / 4 := hv
     simpa [div_eq_mul_inv] using h)
 
+/--
+Exact integral normalization of the literal centered reflection-pair response.
+
+This is the key H2 coordinate change: all t-dependence from support shrinkage is
+moved into the explicit Jacobian 1/t, the dimensionless horizontal parameter
+a/t, the normalized frequency delta/t, and the (bounded) canonical mixing
+coefficient inside normalizedCanonicalTaper.
+-/
+theorem integral_reflectionPairWeight_centeredCanonical_normalized
+    {t a delta : ℝ} (ht : 0 < t) :
+    (∫ u : ℝ,
+      reflectionPairWeight
+        (gammaCenteredTaper
+          (quantitativeCanonicalTaper t)
+          (quantitativeSampleRadius t))
+        a delta u)
+      =
+    (1 / t) *
+      ∫ v : ℝ, normalizedCenteredPairKernel t a delta v := by
+  let F : ℝ → ℝ := fun v => normalizedCenteredPairKernel t a delta v
+  have hpoint :
+      (fun u : ℝ =>
+        reflectionPairWeight
+          (gammaCenteredTaper
+            (quantitativeCanonicalTaper t)
+            (quantitativeSampleRadius t))
+          a delta u)
+        =
+      fun u : ℝ => F (t * u) := by
+    funext u
+    dsimp [F]
+    have htne : t ≠ 0 := ne_of_gt ht
+    have htu : (t * u) / t = u := by
+      field_simp [htne]
+    rw [← htu]
+    exact reflectionPairWeight_centeredCanonical_normalized htne
+  rw [hpoint]
+  have hscale :=
+    Measure.integral_comp_mul_left F t
+  have habs : |t⁻¹| = 1 / t := by
+    rw [abs_of_pos (inv_pos.mpr ht)]
+    rfl
+  simpa [habs, smul_eq_mul] using hscale
+
+/--
+If the gap is written delta=q*t, the normalized integral has literal Fourier
+frequency q on the fixed v-support.
+-/
+theorem integral_reflectionPairWeight_centeredCanonical_gap_q
+    {t a delta q : ℝ} (ht : 0 < t)
+    (hq : delta = q * t) :
+    (∫ u : ℝ,
+      reflectionPairWeight
+        (gammaCenteredTaper
+          (quantitativeCanonicalTaper t)
+          (quantitativeSampleRadius t))
+        a delta u)
+      =
+    (1 / t) *
+      ∫ v : ℝ,
+        4 * normalizedCenteredCanonicalTaper t v
+          * Real.cosh ((a / t) * v)
+          * Real.cos (q * v) := by
+  rw [integral_reflectionPairWeight_centeredCanonical_normalized ht]
+  congr 1
+  apply integral_congr_ae
+  exact Filter.Eventually.of_forall fun v =>
+    normalizedPairKernel_of_gap_eq_q_mul_t (ne_of_gt ht) hq
+
+
 end Synthesis

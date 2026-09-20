@@ -32,6 +32,24 @@ theorem zetaMuPrimitive_self (A : ℝ) :
     zetaMuPrimitive A A = 0 := by
   simp [zetaMuPrimitive]
 
+
+theorem zetaMuPrimitive_continuous (A : ℝ) :
+    Continuous (zetaMuPrimitive A) := by
+  have hcont : Continuous Zeta23.mu :=
+    Zeta23.RvM.mu_continuous Zeta23.gammaFacts
+  unfold zetaMuPrimitive
+  exact intervalIntegral.continuous_primitive
+    (fun a b => hcont.intervalIntegrable a b) A
+
+theorem phi_mul_zetaMuPrimitive_intervalIntegrable
+    {A B : ℝ} {phi' : ℝ -> ℝ}
+    (hint : IntervalIntegrable phi' volume A B) :
+    IntervalIntegrable
+      (fun x => phi' x * zetaMuPrimitive A x)
+      volume A B := by
+  exact hint.mul_continuousOn
+    (zetaMuPrimitive_continuous A).continuousOn
+
 theorem zetaMuPrimitive_hasDerivAt
     (A x : ℝ) :
     HasDerivAt (zetaMuPrimitive A) (Zeta23.mu x) x := by

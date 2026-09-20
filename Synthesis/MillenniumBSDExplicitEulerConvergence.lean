@@ -1,6 +1,7 @@
 import Synthesis.MillenniumBSDExplicitLocalRecurrence
 import Mathlib.NumberTheory.SumPrimeReciprocals
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Analysis.SpecialFunctions.Log.Summable
 import Mathlib.Tactic
 
 /-!
@@ -138,5 +139,104 @@ theorem explicitEulerPerturbation_summable
     (hmajor.of_nonneg_of_le
       (fun p => norm_nonneg (explicitEulerPerturbation p s))
       (explicitEulerPerturbation_norm_le_majorant hs)).of_norm
+
+theorem explicitEulerMajorant_lt_one
+    {s : ℂ} (hs : 2 < s.re)
+    (p : Nat.Primes) :
+    (p.1 : ℝ) ^ (1 - s.re)
+      + (p.1 : ℝ) ^ (1 - 2 * s.re) < 1 := by
+  have hp1 : (1 : ℝ) < p.1 := by
+    exact_mod_cast p.2.one_lt
+  have hp2R : (2 : ℝ) ≤ p.1 := by
+    exact_mod_cast p.2.two_le
+  have hfirst :
+      (p.1 : ℝ) ^ (1 - s.re) < (1 / 2 : ℝ) := by
+    calc
+      (p.1 : ℝ) ^ (1 - s.re)
+          < (p.1 : ℝ) ^ (-1 : ℝ) :=
+            Real.rpow_lt_rpow_of_exponent_lt hp1 (by linarith)
+      _ = 1 / (p.1 : ℝ) := by
+            rw [one_div, Real.rpow_neg_one]
+      _ ≤ 1 / 2 := by
+            exact one_div_le_one_div_of_le (by norm_num) hp2R
+  have hsecond :
+      (p.1 : ℝ) ^ (1 - 2 * s.re) < (1 / 2 : ℝ) := by
+    calc
+      (p.1 : ℝ) ^ (1 - 2 * s.re)
+          < (p.1 : ℝ) ^ (-1 : ℝ) :=
+            Real.rpow_lt_rpow_of_exponent_lt hp1 (by linarith)
+      _ = 1 / (p.1 : ℝ) := by
+            rw [one_div, Real.rpow_neg_one]
+      _ ≤ 1 / 2 := by
+            exact one_div_le_one_div_of_le (by norm_num) hp2R
+  linarith
+
+theorem explicitEulerPerturbation_norm_lt_one
+    {s : ℂ} (hs : 2 < s.re)
+    (p : Nat.Primes) :
+    ‖explicitEulerPerturbation p s‖ < 1 :=
+  (explicitEulerPerturbation_norm_le_majorant hs p).trans_lt
+    (explicitEulerMajorant_lt_one hs p)
+
+theorem explicitEulerDenominator_ne_zero
+    {s : ℂ} (hs : 2 < s.re)
+    (p : Nat.Primes) :
+    explicitEulerDenominator p s ≠ 0 := by
+  intro hzero
+  have hu :
+      explicitEulerPerturbation p s = -1 := by
+    have h := hzero
+    simp only [explicitEulerDenominator] at h
+    exact eq_neg_of_add_eq_zero_left h
+  have hnorm :
+      ‖explicitEulerPerturbation p s‖ = 1 := by
+    rw [hu]
+    simp
+  have hlt := explicitEulerPerturbation_norm_lt_one hs p
+  linarith
+
+theorem explicitEulerDenominators_multipliable
+    {s : ℂ} (hs : 2 < s.re) :
+    Multipliable fun p : Nat.Primes =>
+      explicitEulerDenominator p s := by
+  simpa [explicitEulerDenominator] using
+    (multipliable_one_add_of_summable
+      (explicitEulerPerturbation_summable hs).norm)
+
+noncomputable def explicitEulerDenominatorProduct
+    (s : ℂ) : ℂ :=
+  ∏' p : Nat.Primes, explicitEulerDenominator p s
+
+theorem explicitEulerDenominator_hasProd
+    {s : ℂ} (hs : 2 < s.re) :
+    HasProd
+      (fun p : Nat.Primes => explicitEulerDenominator p s)
+      (explicitEulerDenominatorProduct s) := by
+  exact (explicitEulerDenominators_multipliable hs).hasProd
+
+theorem explicitEulerDenominatorProduct_ne_zero
+    {s : ℂ} (hs : 2 < s.re) :
+    explicitEulerDenominatorProduct s ≠ 0 := by
+  unfold explicitEulerDenominatorProduct
+  apply tprod_one_add_ne_zero_of_summable
+  · intro p
+    simpa [explicitEulerDenominator] using
+      explicitEulerDenominator_ne_zero hs p
+  · exact (explicitEulerPerturbation_summable hs).norm
+
+noncomputable def explicitAnalyticEulerProduct
+    (s : ℂ) : ℂ :=
+  (explicitEulerDenominatorProduct s)⁻¹
+
+theorem explicitAnalyticEulerProduct_ne_zero
+    {s : ℂ} (hs : 2 < s.re) :
+    explicitAnalyticEulerProduct s ≠ 0 := by
+  exact inv_ne_zero (explicitEulerDenominatorProduct_ne_zero hs)
+
+theorem explicitAnalyticEulerProduct_mul_denominator
+    {s : ℂ} (hs : 2 < s.re) :
+    explicitAnalyticEulerProduct s
+      * explicitEulerDenominatorProduct s = 1 := by
+  exact inv_mul_cancel₀ (explicitEulerDenominatorProduct_ne_zero hs)
 
 end Synthesis.Millennium.BSD

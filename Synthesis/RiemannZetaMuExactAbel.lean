@@ -89,9 +89,6 @@ theorem zetaWindowMinusMuPair_eq_discrepancyAbel
   rw [hzero, htail, hmu]
   unfold zetaMuCumulativeDiscrepancy
   rw [← intervalIntegral.integral_sub hNint hMint]
-  apply congrArg
-  · ring
-  · funext x
-    ring
+  ring
 
 end Synthesis

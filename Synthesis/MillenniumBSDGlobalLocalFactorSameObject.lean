@@ -1,4 +1,5 @@
 import Synthesis.MillenniumBSDGlobalCompletionReductionWeld
+import Synthesis.MillenniumBSDGlobalBadPrimeTwo
 import Synthesis.MillenniumBSDLocalEulerFactorSameObject
 import Mathlib.Tactic
 
@@ -89,5 +90,54 @@ theorem globalHeightOne_localPowerSeries_eq_padic
       = (cmPadicWeierstrass p).localPowerSeries ℤ_[p] := by
   rw [cmGlobalPrime_localPowerSeries_eq_explicit hp2,
     cmPadic_localPowerSeries_eq_explicit hp2]
+
+/-- The actual local polynomial at every rational prime, including the bad prime 2. -/
+theorem globalHeightOne_localPolynomial_all_primes
+    {p : ℕ} [Fact hp : p.Prime] :
+    (cmWeierstrass.baseChange ((rationalPrimePlace p).adicCompletion ℚ)).localPolynomial
+      ((rationalPrimePlace p).adicCompletionIntegers ℚ)
+      =
+    if p = 2 then 1 else explicitGoodLocalPolynomial p := by
+  by_cases hp2 : p = 2
+  · subst p
+    simp [globalHeightOne_localPolynomial_two_eq_one]
+  · simp [hp2, globalHeightOne_localPolynomial_eq_explicit hp2]
+
+/-- Full prime-power coefficient for the actual local factor.
+At p=2 the additive local factor is 1, hence only k=0 survives. -/
+noncomputable def explicitAllPrimePowerCoefficient
+    (p : ℕ) [Fact p.Prime] (k : ℕ) : ℤ :=
+  if p = 2 then
+    if k = 0 then 1 else 0
+  else explicitPrimePowerCoefficient p k
+
+theorem globalHeightOne_localEulerFactor_all_primePower
+    {p : ℕ} [Fact hp : p.Prime] (k : ℕ) :
+    (cmWeierstrass.baseChange ((rationalPrimePlace p).adicCompletion ℚ)).localEulerFactor
+      ((rationalPrimePlace p).adicCompletionIntegers ℚ) (p ^ k)
+      = explicitAllPrimePowerCoefficient p k := by
+  by_cases hp2 : p = 2
+  · subst p
+    unfold WeierstrassCurve.localEulerFactor
+    rw [rationalPrimeResidueField_natCard]
+    rw [show rationalHeightOneNorm (rationalPrimePlace 2) = 2 by
+      simp [rationalHeightOneNorm, rationalPrimePlace]]
+    unfold WeierstrassCurve.localPowerSeries
+    rw [globalHeightOne_localPolynomial_two_eq_one]
+    simp [explicitAllPrimePowerCoefficient]
+  · rw [globalHeightOne_localEulerFactor_primePower hp2 k]
+    simp [explicitAllPrimePowerCoefficient, hp2]
+
+theorem explicitAllPrimePowerCoefficient_two
+    (k : ℕ) :
+    @explicitAllPrimePowerCoefficient 2 ⟨Nat.prime_two⟩ k
+      = if k = 0 then 1 else 0 := by
+  simp [explicitAllPrimePowerCoefficient]
+
+theorem explicitAllPrimePowerCoefficient_odd
+    {p : ℕ} [Fact hp : p.Prime] (hp2 : p ≠ 2) (k : ℕ) :
+    explicitAllPrimePowerCoefficient p k = explicitPrimePowerCoefficient p k := by
+  simp [explicitAllPrimePowerCoefficient, hp2]
+
 
 end Synthesis.Millennium.BSD

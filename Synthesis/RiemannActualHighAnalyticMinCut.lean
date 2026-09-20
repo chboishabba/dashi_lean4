@@ -68,6 +68,7 @@ structure ActualHighAnalyticMinCutStatus where
   normalizedSecondRadiusAttachmentPaid : Bool
   normalizedRadiusZeroBaseAttachmentPaid : Bool
   literalInfiniteProjectiveTsumAttachmentPaid : Bool
+  projectiveNormalizedHorizontalSplitPaid : Bool
   normalizedRvMProjectiveAttachmentPaid : Bool
 
   farResidualRetainsHeightSquare : Bool
@@ -90,6 +91,7 @@ def actualHighAnalyticMinCutStatus : ActualHighAnalyticMinCutStatus :=
     normalizedSecondRadiusAttachmentPaid := true
     normalizedRadiusZeroBaseAttachmentPaid := true
     literalInfiniteProjectiveTsumAttachmentPaid := true
+    projectiveNormalizedHorizontalSplitPaid := true
     normalizedRvMProjectiveAttachmentPaid := false
 
     farResidualRetainsHeightSquare := false
@@ -120,6 +122,10 @@ theorem normalizedSecondRadiusAttachmentNowPaid :
 
 theorem literalInfiniteProjectiveTsumAttachmentNowPaid :
     actualHighAnalyticMinCutStatus.literalInfiniteProjectiveTsumAttachmentPaid = true :=
+  rfl
+
+theorem projectiveNormalizedHorizontalSplitNowPaid :
+    actualHighAnalyticMinCutStatus.projectiveNormalizedHorizontalSplitPaid = true :=
   rfl
 
 theorem normalizedRvMProjectiveAttachmentStillOpen :

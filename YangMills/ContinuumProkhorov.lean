@@ -1,5 +1,6 @@
 import Mathlib.MeasureTheory.Measure.Prokhorov
 import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
 import Mathlib.Topology.Sequences
 
 open Filter Set MeasureTheory
@@ -74,5 +75,58 @@ theorem exists_subsequence_with_all_boundedContinuous_expectations
     (ProbabilityMeasure.tendsto_iff_forall_integral_tendsto).1 hconv
   intro f
   simpa [Function.comp_def] using hExpect f
+
+
+/--
+Bounded continuous expectations determine the continuum probability measure.
+
+This removes a separate "same-limit measure" assumption once the candidate
+continuum measure and the complete bounded-continuous expectation functional
+have been identified.
+-/
+theorem probabilityMeasure_ext_of_all_boundedContinuous_integrals_eq
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    [TopologicalSpace Ω]
+    [HasOuterApproxClosed Ω]
+    [BorelSpace Ω]
+    (μ ν : ProbabilityMeasure Ω)
+    (h :
+      ∀ f : BoundedContinuousFunction Ω ℝ,
+        (∫ x : Ω, f x ∂((μ : ProbabilityMeasure Ω) : Measure Ω)) =
+        (∫ x : Ω, f x ∂((ν : ProbabilityMeasure Ω) : Measure Ω))) :
+    μ = ν := by
+  apply Subtype.ext
+  exact ext_of_forall_integral_eq_of_IsFiniteMeasure h
+
+/--
+Closed positivity inequalities survive weak convergence.
+
+For OS reconstruction this is the generic analytic step: once a reflection
+quadratic form has been represented by a bounded continuous observable and is
+nonnegative at every finite cutoff, its expectation is nonnegative in the same
+weak limit measure.
+-/
+theorem nonnegative_boundedContinuous_expectation_of_weak_limit
+    {Ω : Type*}
+    [MeasurableSpace Ω]
+    [TopologicalSpace Ω]
+    [OpensMeasurableSpace Ω]
+    {μs : ℕ → ProbabilityMeasure Ω}
+    {μ∞ : ProbabilityMeasure Ω}
+    (hconv : Tendsto μs atTop (𝓝 μ∞))
+    (f : BoundedContinuousFunction Ω ℝ)
+    (hfinite :
+      ∀ n : ℕ,
+        0 ≤ ∫ x : Ω, f x ∂((μs n : ProbabilityMeasure Ω) : Measure Ω)) :
+    0 ≤ ∫ x : Ω, f x ∂((μ∞ : ProbabilityMeasure Ω) : Measure Ω) := by
+  have hExpect :
+      Tendsto
+        (fun n =>
+          ∫ x : Ω, f x ∂((μs n : ProbabilityMeasure Ω) : Measure Ω))
+        atTop
+        (𝓝 (∫ x : Ω, f x ∂((μ∞ : ProbabilityMeasure Ω) : Measure Ω))) :=
+    (ProbabilityMeasure.tendsto_iff_forall_integral_tendsto).1 hconv f
+  exact ge_of_tendsto hExpect (Filter.Eventually.of_forall hfinite)
 
 end RequestProject.YangMills

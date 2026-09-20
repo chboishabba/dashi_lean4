@@ -20,10 +20,12 @@ For an actual zero, alpha = heightOf(rho)/t, hence the correction is exactly
 
   (heightOf(rho)^2 / t^2) Q_proj(...).
 
-This does not by itself produce the target zero's a_rho^2 in the q-only base
-term.  It proves that the horizontal strip is not the source of the
-target-independent obstruction; that obstruction is isolated in the projective
-base/RvM consumer.
+Crucial scope note: for an aggregate over source zeros sigma, this factor is
+a_sigma^2, not the hypothetical target zero's a_rho^2.  Therefore this
+factorization removes the critical-line constant part of each source atom, but
+does NOT by itself solve the uniform near-line comparison against D_rho ~
+a_rho^2.  A signed aggregate theorem or an additional relation between source
+and target displacements is still required.
 -/
 
 noncomputable section

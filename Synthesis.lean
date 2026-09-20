@@ -207,3 +207,5 @@ import Synthesis.RiemannCanonicalDoubledRadiusPoleSign
 import Synthesis.RiemannProjectiveZetaMuExplicitScaling
 
 import Synthesis.RiemannCanonicalNearLineAbsoluteBudgetNoGo
+
+import Synthesis.RiemannProjectiveCompletedSmoothResidual

@@ -42,6 +42,18 @@ theorem integrable_fixedOutput_bilinear_of_memLp_two
     ConvolutionExists.of_memLp_memLp hf hg
   exact (hconv ξ).integrable
 
+/-- Quantitative fixed-output L²×L²→L¹ bound, uniform in the output frequency. -/
+theorem eLpNorm_one_fixedOutput_bilinear_le
+    (L : E →L[ℝ] E' →L[ℝ] F)
+    (f : R3 → E)
+    (g : R3 → E')
+    (hf : MemLp f 2 volume)
+    (hg : MemLp g 2 volume)
+    (ξ : R3) :
+    eLpNorm (fun η : R3 => L (f η) (g (ξ - η))) 1 volume
+      ≤ ‖L‖ₑ * eLpNorm f 2 volume * eLpNorm g 2 volume :=
+  eLpNorm_convolution_integrand_le L
+    hf.aestronglyMeasurable hg.aestronglyMeasurable ξ
 /-- The physical L¹ tail of the fixed-output bilinear interaction vanishes. -/
 theorem fixedOutput_bilinear_normTail_tendsto_zero
     (L : E →L[ℝ] E' →L[ℝ] F)

@@ -39,8 +39,14 @@ theorem normalizedCenteredComplexProfile_continuous (t : ℝ) :
 
 theorem normalizedCenteredComplexProfile_compact (t : ℝ) :
     HasCompactSupport (normalizedCenteredComplexProfile t) := by
-  unfold normalizedCenteredComplexProfile
-  exact (normalizedCenteredFixedProfile_compact t).mul_left.ofReal
+  apply HasCompactSupport.intro
+    (K := tsupport (normalizedCenteredFixedProfile t))
+    (normalizedCenteredFixedProfile_compact t)
+  intro x hx
+  have hzero :
+      normalizedCenteredFixedProfile t x = 0 :=
+    image_eq_zero_of_notMem_tsupport hx
+  simp [normalizedCenteredComplexProfile, hzero]
 
 theorem normalizedCenteredComplexProfile_integrable (t : ℝ) :
     Integrable (normalizedCenteredComplexProfile t) := by

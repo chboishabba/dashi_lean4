@@ -58,7 +58,9 @@ theorem secant_x_square_identity
     (secantKummerWitnessZero x₁ y₁ x₂ y₂) ^ 2 := by
   unfold secantSumX secantSlope secantKummerWitnessZero
   field_simp [sub_ne_zero.mpr hx]
-  nlinarith [h₁, h₂]
+  linear_combination
+    (x₁ - x₂) * x₂ * (h₁)
+      - (x₁ - x₂) * x₁ * (h₂)
 
 theorem secant_x_sub_one_square_identity
     {p : ℕ} [Fact p.Prime]
@@ -72,7 +74,9 @@ theorem secant_x_sub_one_square_identity
     (secantKummerWitnessOne x₁ y₁ x₂ y₂) ^ 2 := by
   unfold secantSumX secantSlope secantKummerWitnessOne
   field_simp [sub_ne_zero.mpr hx]
-  nlinarith [h₁, h₂]
+  linear_combination
+    -(x₁ - x₂) * (1 - x₂) * (h₁)
+      - (x₁ - x₂) * (x₁ - 1) * (h₂)
 
 theorem padicSquareClass_eq_of_product_square
     {p : ℕ} [Fact p.Prime]

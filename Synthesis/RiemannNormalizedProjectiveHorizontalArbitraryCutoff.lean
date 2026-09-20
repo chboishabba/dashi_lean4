@@ -103,8 +103,9 @@ theorem normalizedProjectiveHorizontalSource_abs_le_K_tailTermFrom
     (hfar : (J : ℝ) ≤ |(rho : ℂ).im - t|) :
     |normalizedProjectiveHorizontalSourceTerm t rho|
       ≤ K * tailTermFrom t J rho := by
+  have hJr : (1 : ℝ) ≤ (J : ℝ) := by
+    exact_mod_cast hJ
   have hfar1 : 1 ≤ |(rho : ℂ).im - t| := by
-    exact_mod_cast hJ at hJ
     linarith
   have hfarEq :
       normalizedProjectiveHorizontalFarTerm t rho

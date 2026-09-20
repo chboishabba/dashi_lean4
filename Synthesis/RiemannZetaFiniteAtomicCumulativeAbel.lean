@@ -247,4 +247,72 @@ theorem zetaWindowWeightedTailIntegral_eq_cumulativeCountIntegral
       rw [show F = (zetaZeroConfig.finite_window A B).toFinset by rfl,
           hxN hx]
 
+
+theorem phi_mul_Ncount_intervalIntegrable
+    {A B : ℝ} {phi' : ℝ -> ℝ}
+    (hAB : A ≤ B)
+    (hint : IntervalIntegrable phi' volume A B) :
+    IntervalIntegrable
+      (fun x => phi' x * (Ncount A x : ℝ))
+      volume A B := by
+  classical
+  let F : Finset ℂ := (zetaZeroConfig.finite_window A B).toFinset
+  have hterm :
+      ∀ rho ∈ F,
+        IntervalIntegrable
+          (fun x =>
+            (zetaZeroConfig.mult rho : ℝ)
+              * (if rho.im < x then phi' x else 0))
+          volume A B := by
+    intro rho hrho
+    have hi :
+        IntervalIntegrable
+          (fun x => if rho.im < x then phi' x else 0)
+          volume A B := by
+      exact hint.indicator measurableSet_Ioi
+    exact hi.const_mul _
+  have hsum :
+      IntervalIntegrable
+        (fun x =>
+          ∑ rho ∈ F,
+            (zetaZeroConfig.mult rho : ℝ)
+              * (if rho.im < x then phi' x else 0))
+        volume A B := by
+    classical
+    induction F using Finset.induction_on with
+    | empty =>
+        simpa using
+          (intervalIntegrable_zero :
+            IntervalIntegrable (fun _ : ℝ => (0 : ℝ)) volume A B)
+    | @insert rho F hrho ih =>
+        have hρ := hterm rho (by simp)
+        have hrest :
+            IntervalIntegrable
+              (fun x =>
+                ∑ sigma ∈ F,
+                  (zetaZeroConfig.mult sigma : ℝ)
+                    * (if sigma.im < x then phi' x else 0))
+              volume A B := by
+          apply ih
+          intro sigma hsigma
+          exact hterm sigma (by simp [hsigma])
+        simpa [Finset.sum_insert, hrho] using hρ.add hrest
+  have hstrict :
+      IntervalIntegrable
+        (fun x => phi' x * strictWindowCountFinset F x)
+        volume A B := by
+    refine hsum.congr_ae ?_
+    rw [Filter.EventuallyEq, MeasureTheory.ae_restrict_iff' measurableSet_uIoc]
+    filter_upwards with x hx
+    unfold strictWindowCountFinset
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro rho hrho
+    by_cases hlt : rho.im < x <;> simp [hlt]
+  refine hstrict.congr_ae ?_
+  rw [Filter.EventuallyEq, MeasureTheory.ae_restrict_iff' measurableSet_uIoc]
+  filter_upwards [strictWindowCountFinset_eq_Ncount_ae hAB] with x hxN hx
+  rw [show F = (zetaZeroConfig.finite_window A B).toFinset by rfl,
+      hxN hx]
+
 end Synthesis

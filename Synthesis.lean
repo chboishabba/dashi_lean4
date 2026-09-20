@@ -233,3 +233,11 @@ import Synthesis.MillenniumBSDRationalTwoTorsionEquiv
 import Synthesis.MillenniumBSDCMEta32QuarterFactor
 
 import Synthesis.MillenniumBSDCMGlobalLacunarityInert
+
+import Synthesis.MillenniumHodgeTetrahedralNativeFundamentalChain
+
+import Synthesis.MillenniumHodgeTetrahedralNativeFaces
+
+import Synthesis.MillenniumBSDCMGlobalLacunarityModFour
+
+import Synthesis.MillenniumBSDCMTwoTorsionFieldGeneric

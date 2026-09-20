@@ -108,7 +108,7 @@ theorem cmEta32_fricke
 theorem cmEta32_fricke_on_imaginary_axis
     {y : ℝ} (hy : 0 < y) :
     cmEta32 (Complex.I * y⁻¹ / 32)
-      = (y ^ 2 / 32) * cmEta32 (Complex.I * y) := by
+      = 32 * y ^ 2 * cmEta32 (Complex.I * y) := by
   have hz : (Complex.I * (y : ℂ)) ∈ upperHalfPlaneSet := by
     change 0 < (Complex.I * (y : ℂ)).im
     simp [hy]

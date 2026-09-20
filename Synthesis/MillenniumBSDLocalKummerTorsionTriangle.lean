@@ -181,7 +181,7 @@ theorem totalLocalKummer_zero_add_one_torsion
       totalLocalKummer_minusOne]
   rw [show totalLocalKummer p (zeroTorsionPoint p) =
       localZeroKummer p by
-        exact totalLocalKummer_zero p]
+        exact totalLocalKummer_zeroTorsion p]
   rw [show totalLocalKummer p (oneTorsionPoint p) =
       localOneKummer p by
         exact totalLocalKummer_one p]
@@ -198,7 +198,7 @@ theorem totalLocalKummer_zero_add_minusOne_torsion
       totalLocalKummer_one,
       totalLocalKummer_minusOne]
   rw [show totalLocalKummer p (zeroTorsionPoint p) =
-      localZeroKummer p by exact totalLocalKummer_zero p]
+      localZeroKummer p by exact totalLocalKummer_zeroTorsion p]
   exact (localZero_mul_localMinusOne p).symm
 
 theorem totalLocalKummer_one_add_minusOne_torsion

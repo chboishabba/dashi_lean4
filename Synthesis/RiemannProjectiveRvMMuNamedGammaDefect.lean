@@ -46,11 +46,7 @@ theorem gammaProjectiveDefect_eq_two_projectiveRvMMuSignedPair
       = 2 * projectiveRvMMuSignedPair g t r := by
   have hproj :=
     gammaProjectiveDefect_eq hgs heven hsupp hΛ t r
-  have hpc : ContDiff ℝ 2 (projTaper g r) :=
-    projTaper_contDiff hgs r
-  have hpcpt : HasCompactSupport (projTaper g r) :=
-    projTaper_hasCompactSupport
-      (hgs.continuous.hasCompactSupport_of_isClosed ?_) r
+  have hgc : HasCompactSupport g := hasCompactSupport_of_radius hsupp
   rw [hproj]
   unfold projectiveRvMMuSignedPair
   rw [projectiveRvMMuPair_eq_literalGammaTerm]
@@ -59,23 +55,7 @@ theorem gammaProjectiveDefect_eq_two_projectiveRvMMuSignedPair
         = gammaResp (projTaper g r) t 0 := by
     exact reim_gammaTerm_sampleTest
       (projTaper_continuous hgs.continuous r)
-      (projTaper_hasCompactSupport
-        (by
-          -- compact support is inherited from g; derive it from the support
-          -- hypothesis and closed bounded interval.
-          apply HasCompactSupport.intro (K := Set.Icc (-Λ) Λ)
-          · exact isCompact_Icc
-          · intro x hx
-            by_contra hgx
-            have hs := hsupp x hgx
-            simp only [Set.mem_Icc, not_and_or] at hx
-            rcases hx with hx | hx
-            · have habs : -Λ ≤ x := by
-                have := neg_le_of_abs_le hs
-                linarith
-              exact hx habs
-            · have habs : x ≤ Λ := le_of_abs_le hs
-              exact hx habs) r)
+      (projTaper_hasCompactSupport hgc r)
       (projTaper_even heven r)
       t 0
   rw [hgamma]

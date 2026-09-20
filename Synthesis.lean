@@ -30,6 +30,7 @@ import Synthesis.MillenniumHodgeCP1TopologicalSphere
 import Synthesis.MillenniumBSDRationalKummerQuotient
 import Synthesis.MillenniumBSDCMInertCharacterSum
 import Synthesis.MillenniumBSDLocalSquareClass
+import Synthesis.MillenniumBSDFrobeniusPointCount
 
 /-!
 # Cross-domain synthesis spine

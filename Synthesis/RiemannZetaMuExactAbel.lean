@@ -52,6 +52,8 @@ theorem zetaMuCumulativeDiscrepancy_endpoint
 Exact same-object Abel identity for the literal zero count centered by the
 actual theorem-bearing RvM density mu.
 -/
+
+
 theorem zetaWindowMinusMuPair_eq_discrepancyAbel
     {A B : ℝ}
     {phi phi' : ℝ -> ℝ}
@@ -73,25 +75,23 @@ theorem zetaWindowMinusMuPair_eq_discrepancyAbel
   have hmu :=
     zetaMu_integrationByParts
       (A := A) (B := B) hderiv hphiInt
+  have hNint :
+      IntervalIntegrable
+        (fun x => phi' x * (Ncount A x : ℝ))
+        volume A B :=
+    phi_mul_Ncount_intervalIntegrable hAB hphiInt
+  have hMint :
+      IntervalIntegrable
+        (fun x => phi' x * zetaMuPrimitive A x)
+        volume A B :=
+    phi_mul_zetaMuPrimitive_intervalIntegrable hphiInt
   unfold zetaWindowMinusMuPair
   rw [hzero, htail, hmu]
   unfold zetaMuCumulativeDiscrepancy
-  ring_nf
-  rw [← intervalIntegral.integral_sub]
-  · apply intervalIntegral.integral_congr
-    intro x hx
+  rw [← intervalIntegral.integral_sub hNint hMint]
+  apply congrArg
+  · ring
+  · funext x
     ring
-  · exact hphiInt.mul_continuousOn
-      (by
-        have hNlocal :
-            ContinuousOn (fun _ : ℝ => (0 : ℝ)) (Set.uIcc A B) :=
-          continuousOn_const
-        -- only measurability/integrability of the product is needed here;
-        -- the actual N term is handled as the already-proved cumulative
-        -- atomic integral, so this branch is never used analytically.
-        exact continuousOn_const)
-  · exact hphiInt.mul_continuousOn
-      ((Zeta23.RvM.mu_continuous Zeta23.gammaFacts).continuousOn
-        .intervalIntegral_right)
 
 end Synthesis

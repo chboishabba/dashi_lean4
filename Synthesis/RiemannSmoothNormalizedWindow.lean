@@ -191,4 +191,17 @@ theorem smoothWindow_nonneg
       exact integral_nonneg (fun x => smoothWindowRaw_nonneg c e x)
     exact mul_nonneg (inv_nonneg.mpr hmass) hraw
 
+
+theorem smoothWindowRaw_windowTaper
+    {c e : ℝ} (hc : 0 < c - e) (he : 0 < e) :
+    Zeta23Bridge.LiteralWeilWindowRatioSeparation.WindowTaper
+      (smoothWindowRaw c e) (c - e) (c + e) := by
+  refine ⟨(smoothWindowRaw_contDiff he).continuous,
+    smoothWindowRaw_compact he,
+    smoothWindowRaw_nonneg c e,
+    ?_,
+    smoothWindowRaw_mass_pos he⟩
+  intro u hu
+  exact smoothWindowRaw_support_modulus hc he hu
+
 end Synthesis

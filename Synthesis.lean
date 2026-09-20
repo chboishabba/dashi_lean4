@@ -35,6 +35,7 @@ import Synthesis.MillenniumBSDTotalLocalKummer
 import Synthesis.MillenniumBSDExplicitSelmerIntersection
 import Synthesis.MillenniumBSDMathlibLFunctionWeld
 import Synthesis.MillenniumBSDExplicitLocalRecurrence
+import Synthesis.MillenniumBSDExplicitEulerConvergence
 import Synthesis.MillenniumHodgeCP1CellularH2
 
 /-!

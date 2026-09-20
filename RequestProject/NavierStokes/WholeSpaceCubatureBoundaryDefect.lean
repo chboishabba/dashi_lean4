@@ -110,6 +110,47 @@ theorem convolutionBoundaryDefect_eq_zero_of_zero_tail
   simp only [mul_zero] at h
   exact abs_eq_zero.mp (le_antisymm h (abs_nonneg _))
 
+
+/--
+Cutoff-independent energy control plus a vanishing nonnegative row-tail forces
+the complete Euclidean translation-boundary defect to vanish.
+
+This is the continuum compiler promised by the finite estimate:
+`|Δₙ| ≤ E τₙ`, `τₙ → 0` implies `Δₙ → 0`.
+-/
+theorem convolutionBoundaryDefect_tendsto_zero
+    (s : ℕ → Finset ι)
+    (energy rowDefect : ℕ → ι → ℝ)
+    (tail : ℕ → ℝ)
+    (E : ℝ)
+    (hE : 0 ≤ E)
+    (henergy : ∀ n i, i ∈ s n → 0 ≤ energy n i)
+    (htail_nonneg : ∀ n, 0 ≤ tail n)
+    (htail : ∀ n i, i ∈ s n → |rowDefect n i| ≤ tail n)
+    (hceiling : ∀ n, cubatureEnergyMass (s n) (energy n) ≤ E)
+    (htail_zero : Filter.Tendsto tail Filter.atTop (nhds 0)) :
+    Filter.Tendsto
+      (fun n => convolutionBoundaryDefect (s n) (energy n) (rowDefect n))
+      Filter.atTop (nhds 0) := by
+  have hprod :
+      Filter.Tendsto (fun n => E * tail n) Filter.atTop (nhds 0) := by
+    simpa using (Filter.tendsto_const_nhds.mul htail_zero)
+  have habs :
+      Filter.Tendsto
+        (fun n => |convolutionBoundaryDefect (s n) (energy n) (rowDefect n)|)
+        Filter.atTop (nhds 0) := by
+    exact Filter.Tendsto.squeeze
+      (by simpa using (Filter.tendsto_const_nhds :
+        Filter.Tendsto (fun _ : ℕ => (0 : ℝ)) Filter.atTop (nhds 0)))
+      hprod
+      (fun n => abs_nonneg _)
+      (fun n =>
+        abs_convolutionBoundaryDefect_le_ceiling_mul_tail
+          (s n) (energy n) (rowDefect n) (tail n) E
+          (henergy n) (htail n) (htail_nonneg n) (hceiling n))
+  rw [tendsto_zero_iff_norm_tendsto_zero]
+  simpa [Real.norm_eq_abs] using habs
+
 end FiniteBoundaryDefect
 
 end RequestProject.NavierStokes

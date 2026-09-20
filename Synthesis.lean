@@ -38,6 +38,7 @@ import Synthesis.RiemannSelectedRadiusClusterReduction
 import Synthesis.RiemannHighProjectiveFrontier
 import Synthesis.RiemannHighSchurFrontier
 import Synthesis.RiemannShortWindowSchurCompiler
+import Synthesis.RiemannHighSchurMinCut
 import Synthesis.RiemannRvMMuGammaSameObject
 import Synthesis.RiemannZeta23RvMProducerBridge
 import Synthesis.RiemannZeta23RvMIntervalDiscrepancy

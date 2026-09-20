@@ -36,16 +36,9 @@ theorem exp_neg_abs_integrable {c : ℝ} (hc : 0 < c) :
     rw [← (Measure.measurePreserving_neg (volume : Measure ℝ)).integrableOn_comp_preimage
       (Homeomorph.neg ℝ).measurableEmbedding]
     simp only [Function.comp_def, neg_preimage, neg_Iic, neg_zero]
-    have hpeq : (fun x : ℝ => Real.exp (-c * |-x|))
-        = fun x : ℝ => Real.exp (-c*x) := by
-      funext x
-      have hx : 0 < x := by
-        -- equality is only used under the Ioi restriction below
-        sorry
-      rw [abs_neg, abs_of_pos hx]
-    apply Integrable.congr hp
+    apply hp.congr
     filter_upwards [ae_restrict_mem measurableSet_Ioi] with x hx
-    simp [abs_of_pos hx]
+    simp [abs_neg, abs_of_pos hx]
   have hpos : IntegrableOn
       (fun x : ℝ => Real.exp (-c*|x|)) (Set.Ioi 0) := by
     apply hp.congr

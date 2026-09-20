@@ -1,5 +1,6 @@
 import Synthesis.MillenniumBSDFrobeniusPointCount
 import Mathlib.AlgebraicGeometry.EllipticCurve.LFunction
+import Mathlib.FieldTheory.Cardinality
 import Mathlib.Tactic
 
 /-!
@@ -46,9 +47,35 @@ theorem cmWeierstrass_equation_iff
   simp [cmWeierstrass]
   ring_nf
 
+theorem localEulerFactor_isMultiplicative
+    (R : Type*) [CommRing R] [IsDomain R]
+    [IsDiscreteValuationRing R]
+    {K : Type*} [Field K] [Algebra R K]
+    [IsFractionRing R K]
+    [Finite (IsLocalRing.ResidueField R)]
+    (W : WeierstrassCurve K) :
+    ArithmeticFunction.IsMultiplicative
+      (W.localEulerFactor R) := by
+  letI : Fintype (IsLocalRing.ResidueField R) :=
+    Fintype.ofFinite (IsLocalRing.ResidueField R)
+  apply ArithmeticFunction.isMultiplicative_ofPowerSeries_of_isPrimePow
+  · simpa [Nat.card_eq_fintype_card] using
+      (Fintype.isPrimePow_card_of_field
+        (α := IsLocalRing.ResidueField R))
+  · simp [WeierstrassCurve.localPowerSeries]
+
 noncomputable def cmFormalLFunction :
     ArithmeticFunction ℤ :=
   cmWeierstrass.LFunction
+
+theorem cmFormalLFunction_isMultiplicative :
+    ArithmeticFunction.IsMultiplicative cmFormalLFunction := by
+  unfold cmFormalLFunction WeierstrassCurve.LFunction
+  apply ArithmeticFunction.isMultiplicative_eulerProduct
+  intro p
+  exact localEulerFactor_isMultiplicative
+    (p.adicCompletionIntegers ℚ)
+    (cmWeierstrass.baseChange (p.adicCompletion ℚ))
 
 noncomputable def cmAllNCoefficient (n : ℕ) : ℤ :=
   cmFormalLFunction n
@@ -56,6 +83,16 @@ noncomputable def cmAllNCoefficient (n : ℕ) : ℤ :=
 @[simp] theorem cmAllNCoefficient_zero :
     cmAllNCoefficient 0 = 0 := by
   simp [cmAllNCoefficient, cmFormalLFunction]
+
+theorem cmAllNCoefficient_one :
+    cmAllNCoefficient 1 = 1 := by
+  exact cmFormalLFunction_isMultiplicative.map_one
+
+theorem cmAllNCoefficient_coprime_mul
+    {m n : ℕ} (h : m.Coprime n) :
+    cmAllNCoefficient (m * n) =
+      cmAllNCoefficient m * cmAllNCoefficient n := by
+  exact cmFormalLFunction_isMultiplicative.map_mul_of_coprime h
 
 noncomputable def cmLSeries (s : ℂ) : ℂ :=
   cmWeierstrass.LSeries s

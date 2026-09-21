@@ -275,4 +275,88 @@ theorem not_exists_normalizedProjectiveBaseTransform_nonpos_punctured
   have hnonpos := hbadSign q (by simpa [abs_of_pos hqpos] using hqpos) hqBad
   linarith
 
+
+/--
+Positive curvature gives a punctured neighbourhood on which the derivative has
+the sign of q.  This is the Abel-facing local form of the positive-lobe theorem.
+-/
+theorem exists_normalizedProjectiveBaseTransformDeriv_sign_punctured
+    {t : ℝ} (ht : 18 ≤ t) :
+    ∃ eps : ℝ, 0 < eps ∧
+      (∀ q : ℝ, 0 < q → q < eps →
+        0 < normalizedProjectiveBaseTransformDeriv t q) ∧
+      (∀ q : ℝ, -eps < q → q < 0 →
+        normalizedProjectiveBaseTransformDeriv t q < 0) := by
+  have hcurv :
+      0 < normalizedProjectiveBaseTransformSecondDeriv t 0 :=
+    normalizedProjectiveBaseTransformSecondDeriv_zero_pos ht
+  have hopen :
+      IsOpen {q : ℝ | 0 < normalizedProjectiveBaseTransformSecondDeriv t q} :=
+    isOpen_lt continuous_const
+      (normalizedProjectiveBaseTransformSecondDeriv_continuous t)
+  have hmem :
+      (0 : ℝ) ∈ {q : ℝ |
+        0 < normalizedProjectiveBaseTransformSecondDeriv t q} := hcurv
+  obtain ⟨eps, heps, hball⟩ :=
+    (Metric.isOpen_iff.1 hopen) 0 hmem
+  have hsecond :
+      ∀ x : ℝ, |x| < eps →
+        0 < normalizedProjectiveBaseTransformSecondDeriv t x := by
+    intro x hx
+    apply hball
+    simpa [Metric.mem_ball, Real.dist_eq, abs_sub_comm] using hx
+  have hmono :
+      StrictMonoOn (normalizedProjectiveBaseTransformDeriv t)
+        (Set.Icc (-eps) eps) := by
+    apply strictMonoOn_of_deriv_pos (convex_Icc (-eps) eps)
+    · exact
+        (normalizedProjectiveBaseTransformDeriv_continuous t).continuousOn
+    · intro x hx
+      rw [interior_Icc] at hx
+      rw [(normalizedProjectiveBaseTransformDeriv_hasDerivAt t x).deriv]
+      apply hsecond x
+      exact abs_lt.2 hx
+  refine ⟨eps, heps, ?_, ?_⟩
+  · intro q hq0 hqeps
+    have h0mem : (0 : ℝ) ∈ Set.Icc (-eps) eps := by
+      constructor <;> linarith
+    have hqmem : q ∈ Set.Icc (-eps) eps := by
+      constructor <;> linarith
+    have h := hmono h0mem hqmem hq0
+    rw [normalizedProjectiveBaseTransformDeriv_zero] at h
+    exact h
+  · intro q hqlo hq0
+    have hqmem : q ∈ Set.Icc (-eps) eps := by
+      constructor <;> linarith
+    have h0mem : (0 : ℝ) ∈ Set.Icc (-eps) eps := by
+      constructor <;> linarith
+    have h := hmono hqmem h0mem hq0
+    rw [normalizedProjectiveBaseTransformDeriv_zero] at h
+    exact h
+
+/--
+Equivalent sign-product form: sufficiently near q=0, q * Phi_t'(q) is
+strictly positive away from q=0.
+-/
+theorem exists_normalizedProjectiveBaseTransformDeriv_radial_pos
+    {t : ℝ} (ht : 18 ≤ t) :
+    ∃ eps : ℝ, 0 < eps ∧
+      ∀ q : ℝ, 0 < |q| → |q| < eps →
+        0 < q * normalizedProjectiveBaseTransformDeriv t q := by
+  obtain ⟨eps, heps, hpos, hneg⟩ :=
+    exists_normalizedProjectiveBaseTransformDeriv_sign_punctured ht
+  refine ⟨eps, heps, ?_⟩
+  intro q hq0 hqeps
+  by_cases hq : 0 < q
+  · exact mul_pos hq (hpos q hq (by simpa [abs_of_pos hq] using hqeps))
+  · have hqn : q < 0 := by
+      have hqne : q ≠ 0 := by
+        intro hz
+        simpa [hz] using hq0
+      exact lt_of_le_of_ne (le_of_not_gt hq) (Ne.symm hqne)
+    have hleft : -eps < q := by
+      rw [abs_of_neg hqn] at hqeps
+      linarith
+    exact mul_pos_of_neg_of_neg hqn (hneg q hleft hqn)
+
 end Synthesis

@@ -145,4 +145,75 @@ theorem false_of_quarticBasePole_positiveCone_horizontal_strict
   rw [quarticBasePoleCombinedCluster_eq_horizontal W1 W2 W3 ht] at hlo
   linarith
 
+
+/--
+Under the positive cone, a nonzero base/pole target determinant forces the
+combined target signal to be strictly positive for every off-line target in the
+common high band.
+-/
+theorem quarticBasePoleCombinedTarget_pos_of_det_ne_zero
+    (W1 W2 W3 : QuarticHighWitness)
+    {t : ℝ} (ht : 0 < t)
+    (hhigh1 : 8/t < W1.eps)
+    (hhigh2 : 8/t < W2.eps)
+    (hhigh3 : 8/t < W3.eps)
+    (rho : Zeros)
+    (hoff : heightOf rho ≠ 0)
+    (hc1 : 0 <= quarticBasePoleCoeff1 W1 W2 W3 t)
+    (hc2 : 0 <= quarticBasePoleCoeff2 W1 W2 W3 t)
+    (hc3 : 0 <= quarticBasePoleCoeff3 W1 W2 W3 t)
+    (hdet : quarticBasePoleTargetDet W1 W2 W3 t ≠ 0) :
+    0 < quarticBasePoleCombinedTarget W1 W2 W3 t rho := by
+  have hD1 := W1.zeroHeightDefect_pos_of_offLine ht hhigh1 rho hoff
+  have hD2 := W2.zeroHeightDefect_pos_of_offLine ht hhigh2 rho hoff
+  have hD3 := W3.zeroHeightDefect_pos_of_offLine ht hhigh3 rho hoff
+  have hsome :
+      0 < quarticBasePoleCoeff1 W1 W2 W3 t
+        ∨ 0 < quarticBasePoleCoeff2 W1 W2 W3 t
+        ∨ 0 < quarticBasePoleCoeff3 W1 W2 W3 t := by
+    by_contra h
+    push_neg at h
+    have h1 : quarticBasePoleCoeff1 W1 W2 W3 t = 0 :=
+      le_antisymm h.1 hc1
+    have h2 : quarticBasePoleCoeff2 W1 W2 W3 t = 0 :=
+      le_antisymm h.2.1 hc2
+    have h3 : quarticBasePoleCoeff3 W1 W2 W3 t = 0 :=
+      le_antisymm h.2.2 hc3
+    apply hdet
+    unfold quarticBasePoleTargetDet
+    rw [h1,h2,h3]
+    ring
+  unfold quarticBasePoleCombinedTarget
+  rcases hsome with h1 | h2 | h3
+  · have h1D : 0 < quarticBasePoleCoeff1 W1 W2 W3 t *
+        zeroHeightDefect (quarticPhysicalDetector W1.R W1.lam t) (t/16) rho :=
+      mul_pos h1 hD1
+    have h2D : 0 <= quarticBasePoleCoeff2 W1 W2 W3 t *
+        zeroHeightDefect (quarticPhysicalDetector W2.R W2.lam t) (t/16) rho :=
+      mul_nonneg hc2 hD2.le
+    have h3D : 0 <= quarticBasePoleCoeff3 W1 W2 W3 t *
+        zeroHeightDefect (quarticPhysicalDetector W3.R W3.lam t) (t/16) rho :=
+      mul_nonneg hc3 hD3.le
+    linarith
+  · have h1D : 0 <= quarticBasePoleCoeff1 W1 W2 W3 t *
+        zeroHeightDefect (quarticPhysicalDetector W1.R W1.lam t) (t/16) rho :=
+      mul_nonneg hc1 hD1.le
+    have h2D : 0 < quarticBasePoleCoeff2 W1 W2 W3 t *
+        zeroHeightDefect (quarticPhysicalDetector W2.R W2.lam t) (t/16) rho :=
+      mul_pos h2 hD2
+    have h3D : 0 <= quarticBasePoleCoeff3 W1 W2 W3 t *
+        zeroHeightDefect (quarticPhysicalDetector W3.R W3.lam t) (t/16) rho :=
+      mul_nonneg hc3 hD3.le
+    linarith
+  · have h1D : 0 <= quarticBasePoleCoeff1 W1 W2 W3 t *
+        zeroHeightDefect (quarticPhysicalDetector W1.R W1.lam t) (t/16) rho :=
+      mul_nonneg hc1 hD1.le
+    have h2D : 0 <= quarticBasePoleCoeff2 W1 W2 W3 t *
+        zeroHeightDefect (quarticPhysicalDetector W2.R W2.lam t) (t/16) rho :=
+      mul_nonneg hc2 hD2.le
+    have h3D : 0 < quarticBasePoleCoeff3 W1 W2 W3 t *
+        zeroHeightDefect (quarticPhysicalDetector W3.R W3.lam t) (t/16) rho :=
+      mul_pos h3 hD3
+    linarith
+
 end Synthesis

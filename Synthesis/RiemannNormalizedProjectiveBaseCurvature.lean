@@ -38,7 +38,7 @@ open Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition
 open Zeta23Bridge.LiteralWeilProjectiveTaper
 open Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector
 
-def normalizedProjectiveProfileSecondMoment (t : ℝ) : ℝ :=
+def normalizedProjectiveProfileSignedSecondMoment (t : ℝ) : ℝ :=
   ∫ v : ℝ, normalizedProjectivePhysicalProfile t v * v^2
 
 theorem canonical_u_sq_projective_covariance_neg
@@ -69,9 +69,9 @@ theorem canonical_u_sq_projective_covariance_neg
     rw [← sq_abs v0, ← sq_abs u0]
     exact sq_lt_sq₀ (abs_nonneg v0) hvult
 
-theorem normalizedProjectiveProfileSecondMoment_scaled
+theorem normalizedProjectiveProfileSignedSecondMoment_scaled
     {t : ℝ} (ht : 18 ≤ t) :
-    normalizedProjectiveProfileSecondMoment t
+    normalizedProjectiveProfileSignedSecondMoment t
       =
     4 * t^3 *
       (∫ u : ℝ,
@@ -115,14 +115,14 @@ theorem normalizedProjectiveProfileSecondMoment_scaled
         = (1/t) * ∫ v : ℝ, F v := by
     simpa [habs, smul_eq_mul] using hscale
   rw [hpoint, integral_const_mul] at hscaled
-  unfold normalizedProjectiveProfileSecondMoment
+  unfold normalizedProjectiveProfileSignedSecondMoment
   field_simp [ht0] at hscaled ⊢
   nlinarith
 
-theorem normalizedProjectiveProfileSecondMoment_neg
+theorem normalizedProjectiveProfileSignedSecondMoment_neg
     {t : ℝ} (ht : 18 ≤ t) :
-    normalizedProjectiveProfileSecondMoment t < 0 := by
-  rw [normalizedProjectiveProfileSecondMoment_scaled ht]
+    normalizedProjectiveProfileSignedSecondMoment t < 0 := by
+  rw [normalizedProjectiveProfileSignedSecondMoment_scaled ht]
   have hcov := canonical_u_sq_projective_covariance_neg ht
   have htpos : 0 < t := by linarith
   have hfac : 0 < 4 * t^3 := by positivity
@@ -194,9 +194,9 @@ theorem normalizedProjectiveBaseTransformDeriv_hasDerivAt
 theorem normalizedProjectiveBaseTransformSecondDeriv_zero
     (t : ℝ) :
     normalizedProjectiveBaseTransformSecondDeriv t 0
-      = - normalizedProjectiveProfileSecondMoment t := by
+      = - normalizedProjectiveProfileSignedSecondMoment t := by
   unfold normalizedProjectiveBaseTransformSecondDeriv
-    normalizedProjectiveProfileSecondMoment
+    normalizedProjectiveProfileSignedSecondMoment
   simp only [zero_mul, Real.cos_zero, mul_one]
   rw [← integral_neg]
   apply integral_congr_ae
@@ -206,6 +206,6 @@ theorem normalizedProjectiveBaseTransformSecondDeriv_zero_pos
     {t : ℝ} (ht : 18 ≤ t) :
     0 < normalizedProjectiveBaseTransformSecondDeriv t 0 := by
   rw [normalizedProjectiveBaseTransformSecondDeriv_zero]
-  exact neg_pos.mpr (normalizedProjectiveProfileSecondMoment_neg ht)
+  exact neg_pos.mpr (normalizedProjectiveProfileSignedSecondMoment_neg ht)
 
 end Synthesis

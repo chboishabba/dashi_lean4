@@ -248,3 +248,5 @@ import Synthesis.RiemannNormalizedProjectiveBaseCurvature
 
 import Synthesis.RiemannNormalizedProjectiveBaseLocalSign
 import Synthesis.RiemannProjectiveCurvatureRadialGateNoGo
+
+import Synthesis.RiemannProjectiveHeightBaseCurvatureDuality

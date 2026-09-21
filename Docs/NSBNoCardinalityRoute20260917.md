@@ -1,0 +1,1 @@
+The four-sign same-output Gram route must not be replaced by a fibre-cardinality estimate that introduces cutoff dependence.

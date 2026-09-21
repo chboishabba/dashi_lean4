@@ -1,0 +1,1 @@
+Status: source-written only. The local sandbox cannot clone GitHub and no matching Lean toolchain build has been observed here. Imported Aristotle/TOE receipts remain provenance; this branch does not promote conditional hypotheses to a theorem.

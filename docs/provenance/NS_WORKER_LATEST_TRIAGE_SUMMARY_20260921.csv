@@ -1,0 +1,2 @@
+archive_filename,tranche_title,sha256,spine_identical,spine_divergent,spine_staged_only,request_identical,request_divergent,request_staged_only
+ns-abcd-output-20260916.tar.gz,Summary of changes for run 83c905e8-3c66-4d3b-9bef-08d3be7e1165,e1b70739f181fba801ca095e970e4411a0a0d020e763718371882a3f6f814563,26,2,0,0,2,0

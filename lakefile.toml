@@ -144,4 +144,4 @@ globs = ["NSBQuantitative", "RequestProject.NavierStokes.S2b2d1b2StateCovariance
 # is materially stronger in mathlib than in the Agda foundation.
 [[lean_lib]]
 name = "YMContinuum"
-globs = ["YangMills.*"]
+globs = ["YangMills.ContinuumProkhorov"]

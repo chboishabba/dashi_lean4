@@ -1,0 +1,4 @@
+archive_filename,tranche_title,sha256,spine_identical,spine_divergent,spine_staged_only,request_identical,request_divergent,request_staged_only
+toe-agda-lean-consolidation-20260913.tar.gz,TOE source-only consolidation tranche,bf25f24ac5b129e1383290495ead4ef592e2302370d5701742d7245b560a41d6,26,1,0,0,199,1
+toe-output-final-20260914.tar.gz,Summary of changes for run 887a07e5-0d87-4fba-9626-9722f56d1995,1518b2c8252eb73f82ff4ee5e42c75ea9460d58eee57e24d8e15cbd681f07277,26,1,0,0,195,1
+toe-ns-unforced-output-20260915.tar.gz,Summary of changes for run 759f2a06-f7cf-415a-bc5e-cc15ccb72acc,e70b30737ce878a464a3706e536cc67025d910e6233a4de44ce760c2ddb73307,26,1,0,0,195,1

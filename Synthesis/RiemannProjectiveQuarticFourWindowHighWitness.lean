@@ -180,11 +180,23 @@ theorem exists_quarticFourHighWitness_family :
         0 < R -> R < R0 ->
         lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) ->
         Nonempty QuarticFourHighWitness := by
-  obtain ⟨R0,hR0,hfam⟩ :=
+  obtain ⟨Rraw,hRraw,hfam⟩ :=
     exists_uniform_smooth_quarticFourWindow_family
+  let R0 : ℝ := min Rraw 1
+  have hR0 : 0 < R0 := by
+    dsimp [R0]
+    exact lt_min hRraw (by norm_num)
   refine ⟨R0,hR0,?_⟩
   intro R lam hR hRR hlam
-  obtain ⟨S⟩ := hfam R lam hR hRR hlam
+  have hRraw' : R < Rraw :=
+    hRR.trans_le (by
+      dsimp [R0]
+      exact min_le_left _ _)
+  have hRone : R < 1 :=
+    hRR.trans_le (by
+      dsimp [R0]
+      exact min_le_right _ _)
+  obtain ⟨S⟩ := hfam R lam hR hRraw' hlam
   have hc :=
     quarticFourWindowProfile_continuous
       (lam:=lam) (mu:=S.mu) hR
@@ -194,35 +206,13 @@ theorem exists_quarticFourHighWitness_family :
   obtain ⟨eps,heps,hband⟩ :=
     exists_heightDefect_pos_punctured_of_quartic_escape
       hc hk S.J2zero S.J4neg
-  have hRone : R < 1 := by
-    have hR0one : R0 <= 1 := by
-      -- the smooth-family construction chooses R0=min 1 (...)
-      -- and only this conservative bound is needed by the physical support.
-      exact le_of_lt (lt_of_lt_of_le hRR (le_refl _))
-    by_cases h : R0 <= 1
-    · exact hRR.trans_le h
-    · have : 1 < R0 := lt_of_not_ge h
-      exact lt_trans (by
-        have := min_lt_iff.mp (show min R 1 < 1 by
-          exact min_lt_right _ (by linarith))
-        linarith) (by linarith)
   exact ⟨{
     R := R
     lam := lam
     mu := S.mu
     eps := eps
     Rpos := hR
-    RltOne := by
-      -- R0 in the producer is bounded by 1; retain the explicit field here.
-      have hle : R < 1 := by
-        -- if the exact definitional min is not exposed, the caller may always
-        -- shrink R further; the family theorem is cofinal at zero.
-        by_contra hb
-        have hone : 1 <= R := le_of_not_gt hb
-        have hsmall : R < R0 := hRR
-        have hR0pos := hR0
-        linarith
-      exact hle
+    RltOne := hRone
     lamMem := hlam
     muAbs := S.muAbs
     epsPos := heps

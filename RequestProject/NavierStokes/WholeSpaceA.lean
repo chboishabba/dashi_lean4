@@ -2,6 +2,7 @@ import RequestProject.NavierStokes.WholeSpaceCubatureBoundaryDefect
 import RequestProject.NavierStokes.WholeSpaceL1BochnerCompletion
 import RequestProject.NavierStokes.WholeSpaceL1Tail
 import RequestProject.NavierStokes.WholeSpaceL2InteractionIntegrability
+import RequestProject.NavierStokes.WholeSpaceWeightedInteractionIntegrability
 
 /-!
 # Navier–Stokes whole-space A analytic producer
@@ -15,7 +16,9 @@ Current payments:
   |Δₙ| ≤ Eₙ τₙ;
 * scalar energy integral convergence from L¹ approximation;
 * coherent six-real-coordinate C³ Bochner integral convergence from L¹
-  approximation.
+  approximation;
+* bounded measurable high-frequency multipliers preserve the fixed-output
+  L²×L² → L¹ interaction.
 
 No global regularity or Clay inhabitant is asserted here.
 -/

@@ -241,3 +241,9 @@ import Synthesis.MillenniumHodgeTetrahedralNativeFaces
 import Synthesis.MillenniumBSDCMGlobalLacunarityModFour
 
 import Synthesis.MillenniumBSDCMTwoTorsionFieldGeneric
+
+import Synthesis.MillenniumHodgeTetrahedralNativeFaceExhaustion
+
+import Synthesis.MillenniumBSDActualAlgClosureTwoTorsionExact
+
+import Synthesis.MillenniumBSDEtaEllipticOneModFourReduction

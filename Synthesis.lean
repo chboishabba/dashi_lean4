@@ -250,3 +250,6 @@ import Synthesis.RiemannNormalizedProjectiveBaseLocalSign
 import Synthesis.RiemannProjectiveCurvatureRadialGateNoGo
 
 import Synthesis.RiemannProjectiveHeightBaseCurvatureDuality
+
+import Synthesis.RiemannRvMMuHighPositive
+import Synthesis.RiemannProjectiveZetaMuLocalNegative

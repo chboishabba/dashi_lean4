@@ -242,4 +242,37 @@ theorem exists_normalizedProjectiveBaseSourceTerm_pos_punctured
     positivity
   exact mul_pos hm (hphi (normalizedGap t sigma) hq0 hqeps)
 
+/--
+No punctured neighbourhood of q=0 can carry a pointwise nonpositive canonical
+base kernel.  Thus the desired one-sided restricted N-mu estimate, if true,
+must use the signed measure interaction rather than a local fixed-sign kernel.
+-/
+theorem not_exists_normalizedProjectiveBaseTransform_nonpos_punctured
+    {t : ℝ} (ht : 18 ≤ t) :
+    ¬ ∃ eps : ℝ, 0 < eps ∧
+      ∀ q : ℝ, 0 < |q| → |q| < eps →
+        normalizedProjectiveBaseTransform t q ≤ 0 := by
+  intro hbad
+  obtain ⟨epsBad, hBadPos, hbadSign⟩ := hbad
+  obtain ⟨epsGood, hGoodPos, hgoodSign⟩ :=
+    exists_normalizedProjectiveBaseTransform_pos_punctured ht
+  let q : ℝ := min epsBad epsGood / 2
+  have hqpos : 0 < q := by
+    dsimp [q]
+    have hmin : 0 < min epsBad epsGood := lt_min hBadPos hGoodPos
+    linarith
+  have hqBad : |q| < epsBad := by
+    rw [abs_of_pos hqpos]
+    dsimp [q]
+    have hle := min_le_left epsBad epsGood
+    nlinarith
+  have hqGood : |q| < epsGood := by
+    rw [abs_of_pos hqpos]
+    dsimp [q]
+    have hle := min_le_right epsBad epsGood
+    nlinarith
+  have hpos := hgoodSign q (by simpa [abs_of_pos hqpos] using hqpos) hqGood
+  have hnonpos := hbadSign q (by simpa [abs_of_pos hqpos] using hqpos) hqBad
+  linarith
+
 end Synthesis

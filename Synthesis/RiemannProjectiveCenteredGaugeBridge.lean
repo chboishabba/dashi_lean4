@@ -222,4 +222,3 @@ theorem offOrdProjectiveDefect_eq_twoCentered_plus_base
   rw [channelProjectiveDefect_eq_centeredRadiusDecomposition]
   rw [radiusCentered_offOrdChannel_eq_literalCenteredOffResponse hgs hgc heven,
       radiusCentered_offOrdChannel_eq_literalCenteredOffResponse hgs hgc heven]
-

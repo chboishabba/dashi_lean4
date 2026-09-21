@@ -243,3 +243,5 @@ import Synthesis.RiemannNormalizedProjectiveOffInfiniteSplit
 import Synthesis.RiemannNormalizedProjectiveBaseCarrierCollapse
 import Synthesis.RiemannCanonicalCompletedBaseResidual
 import Synthesis.RiemannCanonicalTargetPairResidual
+
+import Synthesis.RiemannNormalizedProjectiveBaseCurvature

@@ -216,4 +216,70 @@ theorem projectiveSecondMomentRootPlus_cancels
     hJh hdisc
   linarith
 
+
+theorem projectiveMixedTaper_continuous
+    {f h : ℝ → ℝ}
+    (hf : Continuous f) (hh : Continuous h)
+    (lam : ℝ) :
+    Continuous (projectiveMixedTaper f h lam) := by
+  unfold projectiveMixedTaper
+  fun_prop
+
+theorem projectiveMixedTaper_compact
+    {f h : ℝ → ℝ}
+    (hfc : HasCompactSupport f) (hhc : HasCompactSupport h)
+    (lam : ℝ) :
+    HasCompactSupport (projectiveMixedTaper f h lam) := by
+  unfold projectiveMixedTaper
+  exact hfc.add hhc.mul_left
+
+/--
+A concrete design certificate for the plus quadratic root.
+
+Once the scalar J2-discriminant conditions select the moment-cancelling mixed
+profile, a negative J4 at that same profile automatically yields both useful
+local observables:
+* a two-sided punctured negative q-base lobe;
+* a two-sided punctured positive target-height defect.
+-/
+theorem projectiveSecondMomentRootPlus_quartic_escape_local_signs
+    {f h : ℝ → ℝ}
+    (hf : Continuous f) (hfc : HasCompactSupport f)
+    (hh : Continuous h) (hhc : HasCompactSupport h)
+    {r : ℝ}
+    (hJh : projectiveBracketSecondMoment h r ≠ 0)
+    (hdisc : 0 ≤ projectiveSecondMomentDiscriminant f h r)
+    (hJ4 :
+      projectiveBracketFourthMoment
+        (projectiveMixedTaper f h (projectiveSecondMomentRootPlus f h r)) r < 0) :
+    (∃ eps : ℝ, 0 < eps ∧
+      ∀ q : ℝ, 0 < |q| → |q| < eps →
+        genericProjectiveBaseKernel
+          (projectiveMixedTaper f h (projectiveSecondMomentRootPlus f h r))
+          r q < 0)
+    ∧
+    (∃ eps : ℝ, 0 < eps ∧
+      ∀ a : ℝ, 0 < |a| → |a| < eps →
+        0 <
+        heightDefect
+          (projectiveMixedTaper f h (projectiveSecondMomentRootPlus f h r))
+          r a 0) := by
+  let lam := projectiveSecondMomentRootPlus f h r
+  have hcont : Continuous (projectiveMixedTaper f h lam) :=
+    projectiveMixedTaper_continuous hf hh lam
+  have hcomp : HasCompactSupport (projectiveMixedTaper f h lam) :=
+    projectiveMixedTaper_compact hfc hhc lam
+  have hJ2 :
+      projectiveBracketSecondMoment (projectiveMixedTaper f h lam) r = 0 := by
+    simpa [lam] using
+      projectiveSecondMomentRootPlus_cancels
+        hf hfc hh hhc hJh hdisc
+  constructor
+  · exact
+      exists_genericProjectiveBaseKernel_neg_punctured_of_quartic_escape
+        hcont hcomp hJ2 (by simpa [lam] using hJ4)
+  · exact
+      exists_heightDefect_pos_punctured_of_quartic_escape
+        hcont hcomp hJ2 (by simpa [lam] using hJ4)
+
 end Synthesis

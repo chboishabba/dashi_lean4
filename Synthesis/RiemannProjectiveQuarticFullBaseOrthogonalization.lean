@@ -197,4 +197,107 @@ theorem orientedQuarticFullBaseOrthogonalProfile_fourth_neg
       quarticFullBaseOrthogonalProfile_fourth]
     nlinarith
 
+
+theorem quarticFullBaseOrthogonalProfile_continuous
+    (W1 W2 : QuarticHighWitness) (t : ℝ) :
+    Continuous (quarticFullBaseOrthogonalProfile W1 W2 t) := by
+  unfold quarticFullBaseOrthogonalProfile
+  exact profileLinearCombination_continuous
+    (quarticWitnessNormalizedProfile_continuous W1)
+    (quarticWitnessNormalizedProfile_continuous W2)
+    _ _
+
+theorem quarticFullBaseOrthogonalProfile_compact
+    (W1 W2 : QuarticHighWitness) (t : ℝ) :
+    HasCompactSupport (quarticFullBaseOrthogonalProfile W1 W2 t) := by
+  unfold quarticFullBaseOrthogonalProfile
+  exact profileLinearCombination_compact
+    (quarticWitnessNormalizedProfile_compact W1)
+    (quarticWitnessNormalizedProfile_compact W2)
+    _ _
+
+theorem orientedQuarticFullBaseOrthogonalProfile_continuous
+    (W1 W2 : QuarticHighWitness) (t : ℝ) :
+    Continuous (orientedQuarticFullBaseOrthogonalProfile W1 W2 t) := by
+  unfold orientedQuarticFullBaseOrthogonalProfile
+  split_ifs
+  · exact quarticFullBaseOrthogonalProfile_continuous W1 W2 t
+  · exact (quarticFullBaseOrthogonalProfile_continuous W1 W2 t).neg
+
+theorem orientedQuarticFullBaseOrthogonalProfile_compact
+    (W1 W2 : QuarticHighWitness) (t : ℝ) :
+    HasCompactSupport
+      (orientedQuarticFullBaseOrthogonalProfile W1 W2 t) := by
+  unfold orientedQuarticFullBaseOrthogonalProfile
+  split_ifs
+  · exact quarticFullBaseOrthogonalProfile_compact W1 W2 t
+  · exact (quarticFullBaseOrthogonalProfile_compact W1 W2 t).neg
+
+theorem orientedQuarticFullBaseOrthogonalProfile_zeroth_zero
+    (W1 W2 : QuarticHighWitness) (t : ℝ) :
+    profileZerothMoment
+      (orientedQuarticFullBaseOrthogonalProfile W1 W2 t) = 0 := by
+  unfold orientedQuarticFullBaseOrthogonalProfile
+  split_ifs
+  · exact quarticFullBaseOrthogonalProfile_zeroth_zero W1 W2 t
+  · unfold profileZerothMoment
+    rw [integral_neg]
+    rw [show
+      (∫ u : ℝ, quarticFullBaseOrthogonalProfile W1 W2 t u)
+        = 0 by
+      exact quarticFullBaseOrthogonalProfile_zeroth_zero W1 W2 t]
+    simp
+
+theorem orientedQuarticFullBaseOrthogonalProfile_second_zero
+    (W1 W2 : QuarticHighWitness) (t : ℝ) :
+    profileSecondMoment
+      (orientedQuarticFullBaseOrthogonalProfile W1 W2 t) = 0 := by
+  unfold orientedQuarticFullBaseOrthogonalProfile
+  split_ifs
+  · exact quarticFullBaseOrthogonalProfile_second_zero W1 W2 t
+  · unfold profileSecondMoment
+    rw [show
+      (fun u : ℝ => -quarticFullBaseOrthogonalProfile W1 W2 t u*u^2)
+        =
+      fun u => -(quarticFullBaseOrthogonalProfile W1 W2 t u*u^2) by
+        funext u
+        ring,
+      integral_neg]
+    rw [show
+      (∫ u : ℝ,
+        quarticFullBaseOrthogonalProfile W1 W2 t u*u^2)=0 by
+      exact quarticFullBaseOrthogonalProfile_second_zero W1 W2 t]
+    simp
+
+theorem exists_orientedQuarticFullBaseOrthogonalProfile_local_signs
+    (W1 W2 : QuarticHighWitness)
+    {t : ℝ}
+    (htrans : quarticFullBaseTransversality W1 W2 t ≠ 0) :
+    (∃ eps : ℝ, 0 < eps ∧
+      ∀ q : ℝ, 0 < q -> q < eps ->
+        compactCosineTransform
+          (orientedQuarticFullBaseOrthogonalProfile W1 W2 t) q < 0)
+    ∧
+    (∃ eps : ℝ, 0 < eps ∧
+      ∀ a : ℝ, 0 < a -> a < eps ->
+        compactCoshTransform
+          (orientedQuarticFullBaseOrthogonalProfile W1 W2 t) a < 0) := by
+  let P := orientedQuarticFullBaseOrthogonalProfile W1 W2 t
+  have hP : Continuous P :=
+    orientedQuarticFullBaseOrthogonalProfile_continuous W1 W2 t
+  have hPc : HasCompactSupport P :=
+    orientedQuarticFullBaseOrthogonalProfile_compact W1 W2 t
+  have hP0 : profileZerothMoment P = 0 :=
+    orientedQuarticFullBaseOrthogonalProfile_zeroth_zero W1 W2 t
+  have hP2 : profileSecondMoment P = 0 :=
+    orientedQuarticFullBaseOrthogonalProfile_second_zero W1 W2 t
+  have hP4 : profileFourthMoment P < 0 :=
+    orientedQuarticFullBaseOrthogonalProfile_fourth_neg W1 W2 htrans
+  exact ⟨
+    exists_profile_cosine_neg_right_of_quartic_moments
+      hP hPc hP0 hP2 hP4,
+    exists_profile_cosh_neg_right_of_quartic_moments
+      hP hPc hP0 hP2 hP4
+  ⟩
+
 end Synthesis

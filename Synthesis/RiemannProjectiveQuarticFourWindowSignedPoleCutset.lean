@@ -250,29 +250,6 @@ theorem QuarticFourSignedPolePair.combinedCluster_eq_offGamma
        gammaProjectiveDefect
           (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
           t (t/16)) := by
-  have h1 :=
-    quarticFour_cluster_eq_threeProjectiveChannels
-      ({ R := W.R
-         lam := (1/2 : ℝ)
-         mu := W.muHalf
-         eps := 1
-         Rpos := W.Rpos
-         RltOne := W.RltOne
-         lamMem := ⟨le_rfl, by norm_num⟩
-         muAbs := quarticFourAtomicMu_corridor_abs_lt_tenth
-           (by norm_num) (by norm_num) W.muHalfNear
-         epsPos := by norm_num
-         J2zero := W.J2Half
-         J4neg := by
-           rw [projectiveBracketFourthMoment_fourWindow_one W.Rpos]
-           exact quarticFourAtomicJ4_neg_in_corridor
-             (by norm_num) (by norm_num) W.muHalfNear
-         targetBand := by
-           intro a ha0 ha1
-           -- This dummy record field is not consumed by the cluster identity.
-           exfalso
-           linarith [ha1] })
-      ht
   -- Avoid manufacturing target-band data: use the literal cluster identity
   -- directly for the two physical profiles.
   have htpos : 0 < t := by linarith

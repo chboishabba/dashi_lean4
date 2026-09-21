@@ -253,3 +253,4 @@ import Synthesis.RiemannProjectiveHeightBaseCurvatureDuality
 
 import Synthesis.RiemannRvMMuHighPositive
 import Synthesis.RiemannProjectiveZetaMuLocalNegative
+import Synthesis.RiemannProjectiveZetaMuWindowAdditivity

@@ -19,11 +19,7 @@ open CategoryTheory Limits
 open AlgebraicTopology HomologicalComplex
 open scoped Simplicial
 
-noncomputable def deltaThreeFreeExtraDegeneracy :
-    SimplicialObject.Augmented.ExtraDegeneracy
-      ((((SimplicialObject.Augmented.whiskering _ _).obj
-          (sigmaConst.obj rationalCoefficientObject)).obj
-        (SSet.Augmented.stdSimplex.obj ⦋3⦌))) :=
+noncomputable def deltaThreeFreeExtraDegeneracy :=
   (SSet.Augmented.StandardSimplex.extraDegeneracy ⦋3⦌).map
     (sigmaConst.obj rationalCoefficientObject)
 

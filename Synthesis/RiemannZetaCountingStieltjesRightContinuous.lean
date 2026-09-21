@@ -171,4 +171,46 @@ theorem zetaCountingMeasureFrom_Ioc_literal
     (zetaCumulativeCountFrom_rightContinuous A a)
     (zetaCumulativeCountFrom_rightContinuous A b)
 
+
+/--
+Public zero-isolation form needed by the signed projective discrepancy consumer.
+
+For every ordinate x there is a genuine right interval (x,x+eps] containing no
+literal Zeta23 zero ordinates.  This is extracted only from local finiteness of
+the actual zero carrier.
+-/
+theorem exists_right_zero_free_literal_window (x : ℝ) :
+    ∃ eps : ℝ, 0 < eps ∧ eps ≤ 1 ∧
+      ∀ y : ℝ, x < y → y < x + eps →
+        zetaZeroConfig.window x y = ∅ := by
+  obtain ⟨eps, heps, heps1, hfree⟩ :=
+    exists_right_zero_free_radius x
+  refine ⟨eps, heps, heps1, ?_⟩
+  intro y hxy hy
+  ext rho
+  constructor
+  · intro hrho
+    exfalso
+    have him : rho.im ∈ localFutureZeroOrdinates x := by
+      refine ⟨rho, ?_, rfl⟩
+      exact ⟨hrho.1, hrho.2.1, hrho.2.2.trans (by linarith [heps1])⟩
+    exact (hfree rho.im hrho.2.1 (lt_of_le_of_lt hrho.2.2 hy)) him
+  · intro h
+    simp at h
+
+/-- Every such right zero-free interval has literal count zero. -/
+theorem exists_right_zero_free_Ncount (x : ℝ) :
+    ∃ eps : ℝ, 0 < eps ∧ eps ≤ 1 ∧
+      ∀ y : ℝ, x < y → y < x + eps →
+        Ncount x y = 0 := by
+  obtain ⟨eps, heps, heps1, hwin⟩ :=
+    exists_right_zero_free_literal_window x
+  refine ⟨eps, heps, heps1, ?_⟩
+  intro y hxy hy
+  unfold Ncount
+  rw [show zerosIn x y = zetaZeroConfig.window x y by rfl,
+      hwin y hxy hy]
+  simp
+
+
 end Synthesis

@@ -475,3 +475,177 @@ above has either:
 
 This is the Goal-1 boundary.  Reconstructing ordinary analysis in a second proof
 assistant is not part of the stopping criterion.
+
+
+---
+
+# Independent source inspection log — 2026-09-21
+
+The following items have now been checked by reading the pinned source proofs,
+not merely by following theorem names.
+
+## D audit: first substantive pass
+
+### D-UNI — arbitrary-viscosity periodic uniqueness: inspected
+
+`PeriodicViscosityUniqueness.classical_uniqueness_on_Icc` does not assume a
+positive-viscosity uniqueness theorem.  It explicitly rescales both candidate
+solutions and pressures by
+
+```text
+u  ↦ rescale ν⁻¹ ν⁻¹ u
+p  ↦ rescale (ν⁻¹)^2 ν⁻¹ p
+```
+
+and proves the transformed viscosity-`ν` residual is the viscosity-one
+residual.  Smoothness, velocity periodicity, pressure periodicity,
+divergence-free conditions, equal force and equal initial data are transported
+through the same change of variables.  It then invokes the separately proved
+`PeriodicUniqueness.classical_uniqueness_on_Icc` and rescales the velocity
+equality back.
+
+The viscosity-one theorem itself derives its energy inequality from the PDE:
+`energy_balance`, the nonlinear gradient bound, compact-cell gradient
+boundedness, differentiation under the spatial integral, and the internally
+proved zero-data Gronwall lemma.  Its hypotheses are only smoothness,
+periodicity of both velocities and pressures, divergence freedom, the same
+forced residual, and the same initial velocity.
+
+**Audit result:** no circular global-regularity or pre-assumed uniqueness input
+was found in this layer.  Pressure equality is not required; pressure enters
+only through the periodic energy cancellation hypotheses.
+
+### D-DECAY — all force derivatives: inspected
+
+`CandidateConsequences.futureJet_decay` quantifies over arbitrary derivative
+order `m : ℕ` and arbitrary polynomial exponent `K ≥ 0`.  It obtains a
+uniform-in-space bound for the full `m`th future jet on a compact time slab by
+periodicity and continuity.  Beyond the compact future-time support endpoint,
+`iteratedFDeriv_eq_zero_after` kills the jet.  Thus the proof is genuinely an
+all-orders, arbitrary-polynomial decay statement, not a finite-order proxy.
+
+`full_forceMixed_decay` then evaluates those full multilinear derivative
+bounds on arbitrary ordered spacetime coordinate directions and output
+components.  This is at least as strong as the mixed-coordinate derivative
+family used by the independent Clay specification.
+
+**Audit result:** the force-decay arrow in D is mathematically substantive and
+source-proved at all derivative orders.
+
+### D-BLOW — selected candidate speed obstruction: traced to explicit formula
+
+The unbounded-speed property is not inserted as an axiom at the terminal
+candidate layer.  The source chain is:
+
+```text
+FinalSlowBase.origin
+  -> BaseResidual.baseVelocity_at_origin
+  -> FinalSlowBase.axis_tendsto
+  -> BaseResidual.baseVelocity_axis_tendsto_atTop
+  -> MixedAxisPreservation.local_initialized_final_origin_blowup
+  -> GermCandidateAssembly.origin_blowup / selected witness
+  -> CandidateProperties.speed_unbounded
+```
+
+The exact axis formula is
+
+```text
+u(t,0) = ((1-t)^(-A(h)) * j) e_3,
+```
+
+with `A(h) > 0` and the selected leading coefficient `j > 0`.  The source
+proves the norm tends to `+∞` as `t → 1⁻` using the elementary negative-power
+limit.  `NaturalCore.speedUnbounded_of_axis_tendsto` then converts this limit
+into the quantified `SpeedUnboundedAtOne` predicate.  The mixed perturbation
+series does not merely inherit an abstract blow-up flag: local axis-zero germ
+results prove the final mixed velocity eventually agrees with the anchored slow
+base at the origin.
+
+**Audit result:** the terminal obstruction is reduced to an explicit singular
+axis formula plus proved exact/eventual axis agreement.  The remaining hostile
+referee task is now upstream of that formula: independently check the
+construction of the selected slow-base coefficients/profile and the schedule
+hypotheses used to preserve that axis value.
+
+## C audit: first substantive pass
+
+### C-SCALE — arbitrary viscosity and same candidate: inspected
+
+`R3.ViscosityScaling.rescale_candidate` performs a spatial-only dilation, so
+time and the singular time `t=1` are unchanged.  It transports the same
+velocity, pressure and force by explicit formulas, along with compact support,
+smoothness, divergence freedom, the exact forced PDE, the energy bound and
+`SpeedUnboundedAtOne`.
+
+For target `ν>0`, `candidate_at_viscosity` chooses the scale
+`a = sqrt ν`.  Conversely, `normalized_global_solution` proves that any global
+finite-energy solution for the transformed force at viscosity `ν` rescales to
+a viscosity-one global solution for the original force.  Thus the
+nonexistence argument uses a genuine inverse transport and not a changed or
+surrogate force.
+
+**Audit result:** the arbitrary-`ν` quantifier and same-object viscosity seam
+for C is source-proved.
+
+### C-UNIQ — whole-space pre-singular uniqueness: inspected
+
+`R3.WholeSpaceUniqueness.classical_uniqueness_on_Icc` takes as hypotheses:
+
+- smooth candidate and competitor velocity/pressure on a finite slab;
+- one compact spatial support for the reference velocity;
+- uniform finite kinetic energy of the competitor;
+- divergence freedom;
+- equality of the exact viscosity-one residuals;
+- equal initial velocity.
+
+It derives finite energy of the compact reference field, recovers and bounds
+the actual pressure flux, obtains a uniform candidate gradient bound, and feeds
+those derived estimates to `WholeSpaceComparisonClosure.eq_of_pressure_flux_bound`.
+No global existence theorem is an input to this statement.
+
+`R3FiniteEnergyComparison.GlobalSolutionRn.uniformFiniteEnergy` supplies the
+needed slab-wise finite-energy hypothesis from the comparator/Clay global
+bounded-energy assumption.  `compact_candidate_excludes_global_solution` then
+applies uniqueness for every pre-singular time and feeds the resulting
+agreement into the candidate's terminal obstruction.
+
+**Audit result:** the direction of implication is correct: hypothetical global
+bounded-energy competitor ⇒ the finite-energy hypotheses needed for uniqueness.
+No converse assumption is used.
+
+### C-BLOW — whole-space terminal obstruction: inspected through localization
+
+`R3CompactCandidate.local_model_unbounded` transports
+`SpeedUnboundedAtOne` from the periodic local model to the compact R³
+candidate by choosing a periodic representative inside the localization cube
+and using exact local equality there.  `Properties.not_global_agreement` then
+shows that any smooth global velocity agreeing with the compact candidate on
+all pre-one times is bounded on the compact support × closed time slab, which
+contradicts the candidate's unbounded speed.
+
+The actual R³ selected candidate is built by
+`R3.ActualCandidate.selected_candidate_one_with_initial_rest` from the same
+`ActualCandidateAssembly.selected_witness`; the localization theorem preserves
+that same unbounded-speed property.
+
+**Audit result:** the C terminal contradiction is not pressure-gauge dependent
+and does not require continuation of the candidate through `t=1`.
+
+## Remaining source-critical validation after this pass
+
+The audit has moved past the generic uniqueness/decay/scaling questions.  The
+shared source-specific min-cut for C and D is now the candidate-production
+chain underneath `ActualCandidateAssembly.selected_witness`:
+
+```text
+finite-stage construction / selected schedule
+  -> actual slow-base coefficients and j > 0
+  -> residual-jet limits and endpoint extensions
+  -> exact mixed candidate fields
+  -> same force and PDE
+```
+
+The next hostile-referee pass should therefore focus on
+`ActualCandidateConstruction`, `GermCandidateAssembly`, and the concrete
+finite-stage estimates/schedule feeding `selected_witness`, rather than
+rechecking standard uniqueness or Gronwall machinery.

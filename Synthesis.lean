@@ -245,3 +245,5 @@ import Synthesis.RiemannCanonicalCompletedBaseResidual
 import Synthesis.RiemannCanonicalTargetPairResidual
 
 import Synthesis.RiemannNormalizedProjectiveBaseCurvature
+
+import Synthesis.RiemannNormalizedProjectiveBaseLocalSign

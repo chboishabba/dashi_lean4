@@ -247,3 +247,11 @@ import Synthesis.MillenniumHodgeTetrahedralNativeFaceExhaustion
 import Synthesis.MillenniumBSDActualAlgClosureTwoTorsionExact
 
 import Synthesis.MillenniumBSDEtaEllipticOneModFourReduction
+
+import Synthesis.MillenniumBSDActualE2GaloisFixed
+
+import Synthesis.MillenniumHodgeTetrahedralNativeDifferential
+
+import Synthesis.MillenniumHodgeTetrahedralNativeAmbientMono
+
+import Synthesis.MillenniumBSDEtaEllipticFirstCoefficient

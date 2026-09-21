@@ -139,4 +139,16 @@ theorem zetaWindowWeightedPair_eq_endpoint_sub_tail
           rw [Finset.mul_sum]
           ring
 
+
+/-- If the literal Zeta23 window is empty, every weighted atomic pairing on it
+vanishes exactly. -/
+theorem zetaWindowWeightedPair_eq_zero_of_window_eq_empty
+    {A B : ℝ} {phi : ℝ → ℝ}
+    (hwin : zetaZeroConfig.window A B = ∅) :
+    zetaWindowWeightedPair A B phi = 0 := by
+  unfold zetaWindowWeightedPair
+  rw [hwin]
+  simp
+
+
 end Synthesis

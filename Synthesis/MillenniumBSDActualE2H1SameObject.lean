@@ -1,4 +1,5 @@
 import Synthesis.MillenniumBSDActualE2TopRepSameObject
+import Synthesis.MillenniumBSDRationalSquareClassQuotient
 import Mathlib.RepresentationTheory.Homological.ContCohomology.Functoriality
 
 /-!
@@ -57,27 +58,25 @@ noncomputable def cmActualE2H1IsoTrivial :
 
 /--
 Exact remaining global scalar Kummer theorem after all elliptic E[2] geometry
-has been removed.  This is intentionally the smallest prize-facing producer.
+has been removed.  The target is the *literal* rational square-class quotient
+already used by the explicit descent map.
 -/
 def RationalQuadraticContinuousKummerProducer : Prop :=
-  ∃ squareClass : Type,
-    Nonempty
-      ((continuousCohomology 1 cmTwoTorsionRepresentation) ≃
-        (squareClass × squareClass))
+  Nonempty
+    ((continuousCohomology 1 cmTwoTorsionRepresentation) ≃
+      (RatSquareClass × RatSquareClass))
 
 /--
-The full descent comparison additionally requires the same scalar theorem at
-every rational place and commutation with localization.  No general Kummer
-framework is asserted here.
+Consequently, once the scalar Kummer producer is supplied, the actual geometric
+E[2] cohomology is immediately identified with the same literal square-class
+pair.  No elliptic geometry remains in this step.
 -/
-structure ScalarKummerLocalizationProducer where
-  globalSquareClass : Type
-  localSquareClass : RationalPlace → Type
-  globalH1Equiv :
-    (continuousCohomology 1 cmTwoTorsionRepresentation) ≃
-      (globalSquareClass × globalSquareClass)
-  localH1Equiv : ∀ v : RationalPlace,
-    Type
-  localizationCompatibility : Prop
+noncomputable def cmActualE2H1EquivRatSquareClasses
+    (kummer : RationalQuadraticContinuousKummerProducer) :
+    (continuousCohomology 1 cmActualE2Representation) ≃
+      (RatSquareClass × RatSquareClass) := by
+  rcases kummer with ⟨e⟩
+  exact cmActualE2H1IsoTrivial.toEquiv.trans e
+
 
 end Synthesis.Millennium.BSD

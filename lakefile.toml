@@ -121,3 +121,10 @@ globs = ["RequestProject.NavierStokes.WholeSpaceA", "RequestProject.NavierStokes
 [[lean_lib]]
 name = "NSBQuantitative"
 globs = ["NSBQuantitative", "RequestProject.NavierStokes.S2b2d1b2StateCovariance", "RequestProject.NavierStokes.R571StateVariation", "RequestProject.NavierStokes.R571HermitianStateVariation", "RequestProject.NavierStokes.R571VectorStateVariation", "RequestProject.NavierStokes.R571PeriodicLatticeStateEnvelope", "RequestProject.NavierStokes.R571PeriodicHermitianEnergyEnvelope", "RequestProject.NavierStokes.S2b2d1b2QuantitativePayment"]
+
+# Native mathlib-backed continuum Yang--Mills analysis.  This lane is reserved
+# for genuine measure/topology/spectral theorems whose supporting infrastructure
+# is materially stronger in mathlib than in the Agda foundation.
+[[lean_lib]]
+name = "YMContinuum"
+globs = ["YangMills.*"]

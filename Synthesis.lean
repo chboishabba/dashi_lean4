@@ -247,6 +247,7 @@ import Synthesis.RiemannCanonicalTargetPairResidual
 import Synthesis.RiemannNormalizedProjectiveBaseCurvature
 
 import Synthesis.RiemannNormalizedProjectiveBaseLocalSign
+import Synthesis.RiemannProjectiveZetaMuSignedCorrelation
 import Synthesis.RiemannProjectiveCurvatureRadialGateNoGo
 
 import Synthesis.RiemannProjectiveHeightBaseCurvatureDuality

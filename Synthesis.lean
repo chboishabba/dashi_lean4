@@ -255,3 +255,13 @@ import Synthesis.MillenniumHodgeTetrahedralNativeDifferential
 import Synthesis.MillenniumHodgeTetrahedralNativeAmbientMono
 
 import Synthesis.MillenniumBSDEtaEllipticFirstCoefficient
+
+import Synthesis.MillenniumHodgeTetrahedralNativeH2
+
+import Synthesis.MillenniumBSDActualE2TopRepSameObject
+
+import Synthesis.MillenniumBSDEtaCoefficientFiveFormal
+
+import Synthesis.MillenniumBSDEtaCoefficientFiveWeld
+
+import Synthesis.MillenniumBSDEllipticCoefficientFive

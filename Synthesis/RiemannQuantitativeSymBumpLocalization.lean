@@ -145,4 +145,59 @@ theorem quantitativeSymBump_weighted_localization
     exact mul_le_mul_of_nonneg_left hsingle (by norm_num)
   convert htwo using 1 <;> ring
 
+
+def normalizedSymBumpPairing
+    (c R : ℝ) (w : ℝ → ℝ) : ℝ :=
+  (∫ u : ℝ, quantitativeSymBump c R u * w u)
+    / (2 * R * unitBumpMass0)
+
+/--
+For every continuous even weight, the mass-normalized symmetric bump pairing
+approaches evaluation at its centre as the radius shrinks from the right.
+This epsilon-radius form is convenient for finite families of moment weights.
+-/
+theorem exists_radius_normalizedSymBumpPairing_close
+    {c : ℝ} {w : ℝ → ℝ}
+    (hw : Continuous w)
+    (heven : ∀ u, w (-u) = w u)
+    {eps : ℝ} (heps : 0 < eps) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ R : ℝ, 0 < R → R < delta →
+        |normalizedSymBumpPairing c R w - w c| ≤ eps := by
+  have hca := hw.continuousAt
+  rw [Metric.continuousAt_iff] at hca
+  obtain ⟨delta, hdelta, hclose⟩ := hca eps heps
+  refine ⟨delta, hdelta, ?_⟩
+  intro R hR hRdelta
+  have hosc :
+      ∀ u : ℝ, scaledUnitBump c R u ≠ 0 ->
+        |w u - w c| ≤ eps := by
+    intro u hu
+    have hsup := scaledUnitBump_support hR hu
+    have hdist : dist u c < delta := by
+      rw [Real.dist_eq]
+      exact hsup.trans hRdelta
+    have hwclose := hclose hdist
+    simpa [Real.dist_eq] using hwclose.le
+  have hloc :=
+    quantitativeSymBump_weighted_localization
+      (c := c) hR heps.le hw heven hosc
+  have hmass : 0 < 2 * R * unitBumpMass0 := by
+    have hM := unitBumpMass0_pos
+    positivity
+  unfold normalizedSymBumpPairing
+  rw [abs_sub_comm] at hloc ⊢
+  have hrewrite :
+      (∫ u : ℝ, quantitativeSymBump c R u * w u)
+          - (2 * R * unitBumpMass0) * w c
+        =
+      (2 * R * unitBumpMass0) *
+        ((∫ u : ℝ, quantitativeSymBump c R u * w u)
+            / (2 * R * unitBumpMass0) - w c) := by
+    field_simp [ne_of_gt hmass]
+    ring
+  rw [hrewrite, abs_mul, abs_of_pos hmass] at hloc
+  have := (mul_le_mul_left hmass).mp hloc
+  simpa [abs_sub_comm] using this
+
 end Synthesis

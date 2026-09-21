@@ -66,6 +66,7 @@ Existence of a literal smooth moment-cancelled quartic-escape profile.
 theorem exists_smooth_quartic_escape_threeWindow :
     ∃ R lam : ℝ,
       0 < R
+      ∧ R < 1
       ∧ lam ∈ Set.Icc (1/2 : ℝ) (3/4 : ℝ)
       ∧ projectiveBracketSecondMoment
           (quarticThreeWindowProfile R lam) 1 = 0
@@ -85,21 +86,24 @@ theorem exists_smooth_quartic_escape_threeWindow :
   obtain ⟨d4, hd4, hclose4⟩ :=
     exists_radius_quarticThreeWindowJ4_close_atomic heps4
 
-  let R : ℝ := min d2 d4 / 2
+  let R : ℝ := min 1 (min d2 d4) / 2
+  have hmin : 0 < min 1 (min d2 d4) := by
+    exact lt_min (by norm_num) (lt_min hd2 hd4)
   have hR : 0 < R := by
     dsimp [R]
-    have hm : 0 < min d2 d4 := lt_min hd2 hd4
     linarith
-  have hRd2 : R < d2 := by
+  have hRone : R < 1 := by
     dsimp [R]
-    have hm := min_le_left d2 d4
-    have hp : 0 < min d2 d4 := lt_min hd2 hd4
+    have hm := min_le_left (1 : ℝ) (min d2 d4)
     linarith
-  have hRd4 : R < d4 := by
+  have hRrest : R < min d2 d4 := by
     dsimp [R]
-    have hm := min_le_right d2 d4
-    have hp : 0 < min d2 d4 := lt_min hd2 hd4
+    have hm := min_le_right (1 : ℝ) (min d2 d4)
     linarith
+  have hRd2 : R < d2 :=
+    hRrest.trans_le (min_le_left d2 d4)
+  have hRd4 : R < d4 :=
+    hRrest.trans_le (min_le_right d2 d4)
 
   have hhalfMem : (1/2 : ℝ) ∈ Set.Icc (1/2 : ℝ) (3/4 : ℝ) := by
     constructor <;> norm_num
@@ -157,7 +161,7 @@ theorem exists_smooth_quartic_escape_threeWindow :
     dsimp [eps4] at hhi
     linarith [quarticJ4UniformMargin_pos]
 
-  refine ⟨R, lam, hR, hlam, ?_, ?_⟩
+  refine ⟨R, lam, hR, hRone, hlam, ?_, ?_⟩
   · rw [projectiveBracketSecondMoment_threeWindow_one hR]
     exact hlamzero.symm
   · rw [projectiveBracketFourthMoment_threeWindow_one hR]
@@ -170,6 +174,7 @@ route.
 theorem exists_smooth_quartic_escape_with_local_signs :
     ∃ R lam : ℝ,
       0 < R
+      ∧ R < 1
       ∧ lam ∈ Set.Icc (1/2 : ℝ) (3/4 : ℝ)
       ∧ (∃ eps : ℝ, 0 < eps ∧
           ∀ q : ℝ, 0 < |q| → |q| < eps →
@@ -180,7 +185,7 @@ theorem exists_smooth_quartic_escape_with_local_signs :
             0 <
             Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
               (quarticThreeWindowProfile R lam) 1 a 0) := by
-  obtain ⟨R, lam, hR, hlam, hJ2, hJ4⟩ :=
+  obtain ⟨R, lam, hR, hRone, hlam, hJ2, hJ4⟩ :=
     exists_smooth_quartic_escape_threeWindow
   have hc := quarticThreeWindowProfile_continuous (lam := lam) hR
   have hk := quarticThreeWindowProfile_compact (lam := lam) hR
@@ -190,6 +195,6 @@ theorem exists_smooth_quartic_escape_with_local_signs :
   have htarget :=
     exists_heightDefect_pos_punctured_of_quartic_escape
       hc hk hJ2 hJ4
-  exact ⟨R, lam, hR, hlam, hbase, htarget⟩
+  exact ⟨R, lam, hR, hRone, hlam, hbase, htarget⟩
 
 end Synthesis

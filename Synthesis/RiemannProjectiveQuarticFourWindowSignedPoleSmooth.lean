@@ -131,7 +131,7 @@ theorem quarticFourAtomicFinitePole_twoThirds_le_five_halves
   norm_num
   nlinarith
 
-theorem exists_radius_quarticFourSmooth_signedPoleTarget_pos
+theorem exists_radius_quarticFourSmooth_signedPoleTarget_ge_margin
     {t : ℝ} (ht : 200 <= t) :
     ∃ delta : ℝ, 0 < delta ∧
       ∀ R muHalf muTwoThirds : ℝ,
@@ -140,8 +140,9 @@ theorem exists_radius_quarticFourSmooth_signedPoleTarget_pos
           <= quarticFourAtomicMuRadius ->
         |muTwoThirds-quarticFourAtomicMu (2/3)|
           <= quarticFourAtomicMuRadius ->
-        0 < quarticFourSmoothPoleCancelledTarget
-          R muHalf muTwoThirds t := by
+        7 * Real.pi^4 / 1600 <=
+          quarticFourSmoothPoleCancelledTarget
+            R muHalf muTwoThirds t := by
   let margin : ℝ := 7 * Real.pi^4 / 800
   let M : ℝ := 10 + Real.pi^4
   let eta : ℝ := min 1 (margin / (2*(4*M+2)))
@@ -286,5 +287,25 @@ theorem exists_radius_quarticFourSmooth_signedPoleTarget_pos
   have hlo := (abs_le.mp herr).1
   unfold margin at *
   nlinarith [Real.pi_pos]
+
+theorem exists_radius_quarticFourSmooth_signedPoleTarget_pos
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ R muHalf muTwoThirds : ℝ,
+        0 < R -> R < delta ->
+        |muHalf-quarticFourAtomicMu (1/2)|
+          <= quarticFourAtomicMuRadius ->
+        |muTwoThirds-quarticFourAtomicMu (2/3)|
+          <= quarticFourAtomicMuRadius ->
+        0 < quarticFourSmoothPoleCancelledTarget
+          R muHalf muTwoThirds t := by
+  obtain ⟨delta,hdelta,hmargin⟩ :=
+    exists_radius_quarticFourSmooth_signedPoleTarget_ge_margin ht
+  refine ⟨delta,hdelta,?_⟩
+  intro R muHalf muTwo hR hRd hmuHalf hmuTwo
+  have h :=
+    hmargin R muHalf muTwo hR hRd hmuHalf hmuTwo
+  have hp : 0 < Real.pi^4 := by positivity
+  nlinarith
 
 end Synthesis

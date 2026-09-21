@@ -1,6 +1,7 @@
 import Synthesis.RiemannNormalizedProjectiveBaseCurvature
 import Synthesis.RiemannNormalizedProjectiveBaseTransformDerivativeRegularity
 import Synthesis.RiemannNormalizedProjectiveRvMAbelResidualBound
+import Synthesis.RiemannNormalizedProjectiveOffInfiniteSplit
 
 /-!
 # Local positive lobe of the canonical projective base transform
@@ -218,5 +219,27 @@ theorem exists_normalizedProjectiveBaseTransform_pos_punctured
     have hp := hright (-q) (by linarith) (by simpa [habs] using hqeps)
     rw [normalizedProjectiveBaseTransform_neg] at hp
     exact hp
+
+/--
+The same local positive lobe appears on the actual atomic zero carrier:
+every zero with sufficiently small but nonzero normalized ordinate gap contributes
+a strictly positive q-only base source term.
+-/
+theorem exists_normalizedProjectiveBaseSourceTerm_pos_punctured
+    {t : ℝ} (ht : 18 ≤ t) :
+    ∃ eps : ℝ, 0 < eps ∧
+      ∀ sigma : Zeta23.Zeros,
+        0 < |normalizedGap t sigma| →
+        |normalizedGap t sigma| < eps →
+        0 < normalizedProjectiveBaseSourceTerm t sigma := by
+  obtain ⟨eps, heps, hphi⟩ :=
+    exists_normalizedProjectiveBaseTransform_pos_punctured ht
+  refine ⟨eps, heps, ?_⟩
+  intro sigma hq0 hqeps
+  unfold normalizedProjectiveBaseSourceTerm
+  have hm :
+      0 < ((Zeta23.zetaZeroConfig).mult (sigma : ℂ) : ℝ) := by
+    positivity
+  exact mul_pos hm (hphi (normalizedGap t sigma) hq0 hqeps)
 
 end Synthesis

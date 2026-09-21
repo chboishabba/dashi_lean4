@@ -1,0 +1,8 @@
+import Welds.YMPhysicalClosureNormalForm
+
+open scoped InnerProductSpace
+
+#check Welds.YMPhysicalClosureNormalForm.RowA1CutoffFamily
+#check Welds.YMPhysicalClosureNormalForm.rowA1UniformCutoffFormGap
+#check Welds.YMPhysicalClosureNormalForm.rowA1ContinuumZeroShiftBound
+#check Welds.YMPhysicalClosureNormalForm.rowA1SameObjectContinuumZeroShiftBound

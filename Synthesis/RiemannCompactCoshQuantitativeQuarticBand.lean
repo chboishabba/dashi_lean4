@@ -241,7 +241,7 @@ theorem compactCoshD4_sub_zero_abs_le
     obtain ⟨c,hc,hslope⟩ :=
       exists_hasDerivAt_eq_slope
         (compactCoshD4 P) (compactCoshD5 P)
-        hneg.neg hcont hder
+        hneg hcont hder
     have hcabs : |c| <= 1 := by
       have hca : a <= c := hc.1.le
       have hc0 : c <= 0 := hc.2.le

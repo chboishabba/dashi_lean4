@@ -301,3 +301,5 @@ import Synthesis.RiemannProjectiveResidualOrthogonalizedQuartic
 import Synthesis.RiemannProjectiveQuarticFullBaseOrthogonalization
 
 import Synthesis.RiemannProjectiveQuarticBasePolePositiveConeCutset
+
+import Synthesis.RiemannProjectiveQuarticWitnessFamily

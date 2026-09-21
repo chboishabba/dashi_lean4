@@ -269,3 +269,5 @@ import Synthesis.MillenniumBSDEllipticCoefficientFive
 import Synthesis.MillenniumHodgeCP1PrizeFacingClosure
 
 import Synthesis.MillenniumBSDEtaEllipticSturmEightBoundary
+
+import Synthesis.MillenniumBSDClassicalShaTwoBoundary

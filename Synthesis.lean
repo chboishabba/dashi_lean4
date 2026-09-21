@@ -271,3 +271,7 @@ import Synthesis.MillenniumHodgeCP1PrizeFacingClosure
 import Synthesis.MillenniumBSDEtaEllipticSturmEightBoundary
 
 import Synthesis.MillenniumBSDClassicalShaTwoBoundary
+
+import Synthesis.MillenniumBSDActualE2H1SameObject
+
+import Synthesis.MillenniumBSDJacobiEta32Reduction

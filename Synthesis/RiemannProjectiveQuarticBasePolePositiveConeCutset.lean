@@ -217,3 +217,159 @@ theorem quarticBasePoleCombinedTarget_pos_of_det_ne_zero
     linarith
 
 end Synthesis
+
+
+/-!
+## Pole-sign firewall for nontrivial positive-cone orthogonalization
+
+Exact pole cancellation is
+
+  c₁ P₁ + c₂ P₂ + c₃ P₃ = 0.
+
+If all cᵢ are nonnegative and at least one is strictly positive, the three pole
+residuals cannot all be strictly positive and cannot all be strictly negative.
+Thus a prize-facing positive-cone triple necessarily witnesses a pole-sign
+crossing (or a zero pole channel) across the selected quartic family.
+
+This is stronger and simpler than asking abstractly for variation of the
+base/pole ratios: before ratio geometry matters, the pole coordinate itself must
+straddle zero.
+-/
+
+namespace Synthesis
+
+theorem not_all_quarticPoleResidual_pos_of_positiveCone_det_ne_zero
+    (W1 W2 W3 : QuarticHighWitness)
+    {t : ℝ}
+    (hc1 : 0 <= quarticBasePoleCoeff1 W1 W2 W3 t)
+    (hc2 : 0 <= quarticBasePoleCoeff2 W1 W2 W3 t)
+    (hc3 : 0 <= quarticBasePoleCoeff3 W1 W2 W3 t)
+    (hdet : quarticBasePoleTargetDet W1 W2 W3 t ≠ 0) :
+    ¬ (0 < quarticPoleResidual W1 t
+      ∧ 0 < quarticPoleResidual W2 t
+      ∧ 0 < quarticPoleResidual W3 t) := by
+  intro hp
+  have hsome :
+      0 < quarticBasePoleCoeff1 W1 W2 W3 t
+        ∨ 0 < quarticBasePoleCoeff2 W1 W2 W3 t
+        ∨ 0 < quarticBasePoleCoeff3 W1 W2 W3 t := by
+    by_contra h
+    push_neg at h
+    have h1 : quarticBasePoleCoeff1 W1 W2 W3 t = 0 :=
+      le_antisymm h.1 hc1
+    have h2 : quarticBasePoleCoeff2 W1 W2 W3 t = 0 :=
+      le_antisymm h.2.1 hc2
+    have h3 : quarticBasePoleCoeff3 W1 W2 W3 t = 0 :=
+      le_antisymm h.2.2 hc3
+    apply hdet
+    unfold quarticBasePoleTargetDet
+    rw [h1,h2,h3]
+    ring
+  have hcancel := quarticBasePoleCoeffs_cancel_pole W1 W2 W3 t
+  rcases hsome with h1 | h2 | h3
+  · have h1p : 0 < quarticBasePoleCoeff1 W1 W2 W3 t * quarticPoleResidual W1 t :=
+      mul_pos h1 hp.1
+    have h2p : 0 <= quarticBasePoleCoeff2 W1 W2 W3 t * quarticPoleResidual W2 t :=
+      mul_nonneg hc2 hp.2.1.le
+    have h3p : 0 <= quarticBasePoleCoeff3 W1 W2 W3 t * quarticPoleResidual W3 t :=
+      mul_nonneg hc3 hp.2.2.le
+    linarith
+  · have h1p : 0 <= quarticBasePoleCoeff1 W1 W2 W3 t * quarticPoleResidual W1 t :=
+      mul_nonneg hc1 hp.1.le
+    have h2p : 0 < quarticBasePoleCoeff2 W1 W2 W3 t * quarticPoleResidual W2 t :=
+      mul_pos h2 hp.2.1
+    have h3p : 0 <= quarticBasePoleCoeff3 W1 W2 W3 t * quarticPoleResidual W3 t :=
+      mul_nonneg hc3 hp.2.2.le
+    linarith
+  · have h1p : 0 <= quarticBasePoleCoeff1 W1 W2 W3 t * quarticPoleResidual W1 t :=
+      mul_nonneg hc1 hp.1.le
+    have h2p : 0 <= quarticBasePoleCoeff2 W1 W2 W3 t * quarticPoleResidual W2 t :=
+      mul_nonneg hc2 hp.2.1.le
+    have h3p : 0 < quarticBasePoleCoeff3 W1 W2 W3 t * quarticPoleResidual W3 t :=
+      mul_pos h3 hp.2.2
+    linarith
+
+theorem not_all_quarticPoleResidual_neg_of_positiveCone_det_ne_zero
+    (W1 W2 W3 : QuarticHighWitness)
+    {t : ℝ}
+    (hc1 : 0 <= quarticBasePoleCoeff1 W1 W2 W3 t)
+    (hc2 : 0 <= quarticBasePoleCoeff2 W1 W2 W3 t)
+    (hc3 : 0 <= quarticBasePoleCoeff3 W1 W2 W3 t)
+    (hdet : quarticBasePoleTargetDet W1 W2 W3 t ≠ 0) :
+    ¬ (quarticPoleResidual W1 t < 0
+      ∧ quarticPoleResidual W2 t < 0
+      ∧ quarticPoleResidual W3 t < 0) := by
+  intro hp
+  have hsome :
+      0 < quarticBasePoleCoeff1 W1 W2 W3 t
+        ∨ 0 < quarticBasePoleCoeff2 W1 W2 W3 t
+        ∨ 0 < quarticBasePoleCoeff3 W1 W2 W3 t := by
+    by_contra h
+    push_neg at h
+    have h1 : quarticBasePoleCoeff1 W1 W2 W3 t = 0 :=
+      le_antisymm h.1 hc1
+    have h2 : quarticBasePoleCoeff2 W1 W2 W3 t = 0 :=
+      le_antisymm h.2.1 hc2
+    have h3 : quarticBasePoleCoeff3 W1 W2 W3 t = 0 :=
+      le_antisymm h.2.2 hc3
+    apply hdet
+    unfold quarticBasePoleTargetDet
+    rw [h1,h2,h3]
+    ring
+  have hcancel := quarticBasePoleCoeffs_cancel_pole W1 W2 W3 t
+  rcases hsome with h1 | h2 | h3
+  · have h1p : quarticBasePoleCoeff1 W1 W2 W3 t * quarticPoleResidual W1 t < 0 :=
+      mul_neg_of_pos_of_neg h1 hp.1
+    have h2p : quarticBasePoleCoeff2 W1 W2 W3 t * quarticPoleResidual W2 t <= 0 :=
+      mul_nonpos_of_nonneg_of_nonpos hc2 hp.2.1.le
+    have h3p : quarticBasePoleCoeff3 W1 W2 W3 t * quarticPoleResidual W3 t <= 0 :=
+      mul_nonpos_of_nonneg_of_nonpos hc3 hp.2.2.le
+    linarith
+  · have h1p : quarticBasePoleCoeff1 W1 W2 W3 t * quarticPoleResidual W1 t <= 0 :=
+      mul_nonpos_of_nonneg_of_nonpos hc1 hp.1.le
+    have h2p : quarticBasePoleCoeff2 W1 W2 W3 t * quarticPoleResidual W2 t < 0 :=
+      mul_neg_of_pos_of_neg h2 hp.2.1
+    have h3p : quarticBasePoleCoeff3 W1 W2 W3 t * quarticPoleResidual W3 t <= 0 :=
+      mul_nonpos_of_nonneg_of_nonpos hc3 hp.2.2.le
+    linarith
+  · have h1p : quarticBasePoleCoeff1 W1 W2 W3 t * quarticPoleResidual W1 t <= 0 :=
+      mul_nonpos_of_nonneg_of_nonpos hc1 hp.1.le
+    have h2p : quarticBasePoleCoeff2 W1 W2 W3 t * quarticPoleResidual W2 t <= 0 :=
+      mul_nonpos_of_nonneg_of_nonpos hc2 hp.2.1.le
+    have h3p : quarticBasePoleCoeff3 W1 W2 W3 t * quarticPoleResidual W3 t < 0 :=
+      mul_neg_of_pos_of_neg h3 hp.2.2
+    linarith
+
+/--
+A nontrivial positive-cone triple must contain at least one nonpositive pole
+channel and at least one nonnegative pole channel.
+-/
+theorem quartic_positiveCone_det_ne_zero_forces_pole_straddle
+    (W1 W2 W3 : QuarticHighWitness)
+    {t : ℝ}
+    (hc1 : 0 <= quarticBasePoleCoeff1 W1 W2 W3 t)
+    (hc2 : 0 <= quarticBasePoleCoeff2 W1 W2 W3 t)
+    (hc3 : 0 <= quarticBasePoleCoeff3 W1 W2 W3 t)
+    (hdet : quarticBasePoleTargetDet W1 W2 W3 t ≠ 0) :
+    (quarticPoleResidual W1 t <= 0
+      ∨ quarticPoleResidual W2 t <= 0
+      ∨ quarticPoleResidual W3 t <= 0)
+    ∧
+    (0 <= quarticPoleResidual W1 t
+      ∨ 0 <= quarticPoleResidual W2 t
+      ∨ 0 <= quarticPoleResidual W3 t) := by
+  constructor
+  · by_contra h
+    push_neg at h
+    exact
+      not_all_quarticPoleResidual_pos_of_positiveCone_det_ne_zero
+        W1 W2 W3 hc1 hc2 hc3 hdet
+        ⟨h.1,h.2.1,h.2.2⟩
+  · by_contra h
+    push_neg at h
+    exact
+      not_all_quarticPoleResidual_neg_of_positiveCone_det_ne_zero
+        W1 W2 W3 hc1 hc2 hc3 hdet
+        ⟨h.1,h.2.1,h.2.2⟩
+
+end Synthesis

@@ -1,0 +1,71 @@
+import Synthesis.MillenniumBSDActualE2TopRepSameObject
+import Synthesis.MillenniumBSDSelmerShaCohomologicalBoundary
+import Synthesis.MillenniumBSDExplicitSelmerCokernelExact
+
+/-!
+# Correct classical Sha[2] boundary for the CM curve
+
+The finite Galois module `E[2]` is now completely identified in the repo, but
+`Sha¹(E[2])` is not the classical Tate--Shafarevich group of the elliptic
+curve.  The classical two-descent exact sequence is
+
+  0 → E(Q)/2E(Q) → Sel₂(E/Q) → Sha(E/Q)[2] → 0,
+
+and its right-hand term is the two-torsion in the localization kernel for the
+*full elliptic point module* `E(Qbar)`, reached from `H¹(G_Q,E[2])` through
+the Kummer long exact sequence.
+
+This file records that prize-facing target correctly.  It deliberately does
+not replace the missing continuous Kummer theorem by an E[2]-Sha surrogate.
+-/
+
+namespace Synthesis.Millennium.BSD
+
+/-- The finite-module Sha target is useful cohomology, but is not classical Sha(E)[2]. -/
+noncomputable abbrev cmE2FiniteModuleShaOne :=
+  rationalTateShafarevichOne cmActualE2Representation
+
+noncomputable abbrev cmE2FiniteModuleShaTwo :=
+  rationalTateShafarevichTwoTorsion cmActualE2Representation
+
+/--
+For any actual continuous representation of the full elliptic point group,
+this is the correct classical degree-one Sha localization kernel.
+-/
+noncomputable def classicalEllipticShaOne
+    (Ebar : TopRep ℤ RationalAbsoluteGalois) :=
+  rationalTateShafarevichOne Ebar
+
+/-- The literal two-torsion subgroup of the classical elliptic Sha target. -/
+noncomputable def classicalEllipticShaTwo
+    (Ebar : TopRep ℤ RationalAbsoluteGalois) :=
+  rationalTateShafarevichTwoTorsion Ebar
+
+/--
+Exact remaining arithmetic producer after the explicit 2-descent work.
+
+`ellipticPointRepresentation` must be the full `E(Qbar)` Galois module, not
+`E[2]`.  The equivalence is precisely what continuous Kummer + local Kummer
+compatibility prove in the classical descent argument.
+-/
+structure ClassicalTwoDescentShaComparison where
+  ellipticPointRepresentation : TopRep ℤ RationalAbsoluteGalois
+  explicitCokernelEquivClassicalShaTwo :
+    ExplicitTwoSelmerCokernel ≃
+      classicalEllipticShaTwo ellipticPointRepresentation
+
+noncomputable def explicitSelmerCokernelEquivClassicalShaTwo
+    (comparison : ClassicalTwoDescentShaComparison) :
+    ExplicitTwoSelmerCokernel ≃
+      classicalEllipticShaTwo comparison.ellipticPointRepresentation :=
+  comparison.explicitCokernelEquivClassicalShaTwo
+
+/--
+The prize-facing BA4--BA6 boundary: continuous Kummer must construct the
+comparison above from the already-paid actual E[2] representation and the
+explicit local square-class Selmer conditions.
+-/
+def ContinuousKummerTwoDescentProducer : Prop :=
+  Nonempty ClassicalTwoDescentShaComparison
+
+end Synthesis.Millennium.BSD

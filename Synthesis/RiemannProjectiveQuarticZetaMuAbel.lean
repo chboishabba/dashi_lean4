@@ -91,11 +91,31 @@ theorem quarticNegativeOrdinateTestDeriv_continuous
     (W : QuarticHighWitness)
     {t : ℝ} (ht : 0 < t) :
     Continuous (quarticNegativeOrdinateTestDeriv W t) := by
-  apply continuous_of_forall_continuousAt
-  intro gamma
-  have h :=
-    quarticNegativeOrdinateTest_hasDerivAt W ht gamma
-  exact h.deriv.continuousAt
+  let r : ℝ := quarticNegativeWindowRadius t
+  let P : ℝ → ℝ :=
+    genericProjectivePhysicalProfile
+      (quarticThreeWindowProfile W.R W.lam) 1
+  have hr : 0 < r := by
+    dsimp [r, quarticNegativeWindowRadius]
+    positivity
+  have hG :
+      Continuous (quarticThreeWindowProfile W.R W.lam) :=
+    quarticThreeWindowProfile_continuous W.Rpos
+  have hGc :
+      HasCompactSupport (quarticThreeWindowProfile W.R W.lam) :=
+    quarticThreeWindowProfile_compact W.Rpos
+  have hP : Continuous P := by
+    dsimp [P]
+    exact genericProjectivePhysicalProfile_continuous hG 1
+  have hPc : HasCompactSupport P := by
+    dsimp [P]
+    exact genericProjectivePhysicalProfile_compact hGc 1
+  have hD1 : Continuous (compactCosineD1 P) :=
+    continuous_of_forall_continuousAt fun q =>
+      (compactCosineD1_deriv hP hPc q).continuousAt
+  unfold quarticNegativeOrdinateTestDeriv
+  dsimp [r, P]
+  fun_prop
 
 theorem quarticNegativeOrdinateTestDeriv_intervalIntegrable
     (W : QuarticHighWitness)

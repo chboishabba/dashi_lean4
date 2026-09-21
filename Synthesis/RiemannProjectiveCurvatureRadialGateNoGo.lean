@@ -1,4 +1,5 @@
 import Synthesis.RiemannProjectiveMonotoneWeightCovariance
+import Zeta23Bridge.LiteralWeilTwoRadiusSeparationGate
 
 /-!
 # Generic curvature firewall for projective two-radius tapers
@@ -41,6 +42,7 @@ namespace Synthesis
 
 open Zeta23Bridge.LiteralWeilProjectiveTaper
 open Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector
+open Zeta23Bridge.LiteralWeilTwoRadiusSeparationGate
 
 /--
 Generic strict second-moment sign for every nonnegative radially-admissible
@@ -120,6 +122,36 @@ theorem projective_u_sq_covariance_not_nonneg_of_radial_gate
   have hneg :=
     projective_u_sq_covariance_neg_of_radial_gate
       hg hgc hnn hr hrad hu0 hv0 hne
+  linarith
+
+/--
+Direct GateData corollary.  In particular, making the taper depend on the target
+horizontal displacement does not change this sign as long as each member of the
+family remains inside the same GateData class.
+-/
+theorem GateData.projective_u_sq_covariance_neg
+    {g : ℝ → ℝ} {t r Lambda : ℝ}
+    (hd : GateData g t r Lambda) :
+    (∫ u : ℝ,
+      g u * u^2 * twoRadiusBracket g r u) < 0 := by
+  obtain ⟨u0, v0, hu0, hv0, hne⟩ := hd.twoPoint
+  exact projective_u_sq_covariance_neg_of_radial_gate
+    hd.smooth.continuous hd.compactSupport hd.nonneg
+    hd.radiusPos hd.radial hu0 hv0 hne
+
+/--
+There is no GateData inhabitant with the opposite projective second-moment sign.
+This rules out the naive Route-B curvature reversal without changing the gate
+geometry itself.
+-/
+theorem not_exists_gateData_with_projective_u_sq_covariance_pos
+    {t r Lambda : ℝ} :
+    ¬ ∃ g : ℝ → ℝ,
+      GateData g t r Lambda ∧
+      0 < (∫ u : ℝ,
+        g u * u^2 * twoRadiusBracket g r u) := by
+  rintro ⟨g, hd, hpos⟩
+  have hneg := hd.projective_u_sq_covariance_neg
   linarith
 
 end Synthesis

@@ -93,7 +93,7 @@ theorem neg_right_of_fourth_deriv_lipschitz
     (hf30 : f3 0 = 0)
     (hf40 : f4 0 <= -m)
     (hLip4 :
-      ∀ x : ℝ,
+      ∀ x : ℝ, |x| <= 1 ->
         |f4 x - f4 0| <= K * |x|) :
     ∀ x : ℝ,
       0 < x ->
@@ -109,7 +109,10 @@ theorem neg_right_of_fourth_deriv_lipschitz
       ∀ x : ℝ, 0 < x -> x < eps -> f4 x < 0 := by
     intro x hx0 hxe
     have habs : |x| = x := abs_of_pos hx0
-    have hvar := hLip4 x
+    have hxone : |x| <= 1 := by
+      rw [abs_of_pos hx0]
+      exact hxe.le.trans (quantitativeFourthOrderRadius_le_one m K)
+    have hvar := hLip4 x hxone
     have hupp : f4 x - f4 0 <= K*x := by
       have := (abs_le.mp hvar).2
       simpa [habs] using this

@@ -202,4 +202,70 @@ theorem projectiveFourthEvenResp_threeWindow
   rw [quarticThreeWindowProfile_pairing_eq hR (by fun_prop)]
   rfl
 
+
+theorem evenResp_zero_threeWindow
+    {R lam s : ℝ} (hR : 0 < R) :
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+        (quarticThreeWindowProfile R lam) 0 s
+      = quarticThreeWindowMomentResp R lam 0 s := by
+  unfold Zeta23Bridge.LiteralWeilParityBalance.evenResp
+    quarticThreeWindowMomentResp
+  simp only [zero_mul, Real.cosh_zero, one_mul, pow_zero]
+  rw [quarticThreeWindowProfile_pairing_eq hR (by fun_prop)]
+  rfl
+
+theorem projectiveBracketSecondMoment_threeWindow
+    {R lam r : ℝ} (hR : 0 < R) :
+    projectiveBracketSecondMoment
+        (quarticThreeWindowProfile R lam) r
+      =
+    quarticThreeWindowMomentResp R lam 0 r
+        * quarticThreeWindowMomentResp R lam 2 (2*r)
+      -
+    quarticThreeWindowMomentResp R lam 0 (2*r)
+        * quarticThreeWindowMomentResp R lam 2 r := by
+  rw [projectiveBracketSecondMoment_eq_response_det
+      (quarticThreeWindowProfile_continuous hR)
+      (quarticThreeWindowProfile_compact hR) r,
+    evenResp_zero_threeWindow hR,
+    evenResp_zero_threeWindow hR,
+    projectiveSqEvenResp_threeWindow hR,
+    projectiveSqEvenResp_threeWindow hR]
+
+theorem projectiveBracketFourthMoment_threeWindow
+    {R lam r : ℝ} (hR : 0 < R) :
+    projectiveBracketFourthMoment
+        (quarticThreeWindowProfile R lam) r
+      =
+    quarticThreeWindowMomentResp R lam 0 r
+        * quarticThreeWindowMomentResp R lam 4 (2*r)
+      -
+    quarticThreeWindowMomentResp R lam 0 (2*r)
+        * quarticThreeWindowMomentResp R lam 4 r := by
+  rw [projectiveBracketFourthMoment_eq_response_det
+      (quarticThreeWindowProfile_continuous hR)
+      (quarticThreeWindowProfile_compact hR) r,
+    evenResp_zero_threeWindow hR,
+    evenResp_zero_threeWindow hR,
+    projectiveFourthEvenResp_threeWindow hR,
+    projectiveFourthEvenResp_threeWindow hR]
+
+theorem projectiveBracketSecondMoment_threeWindow_one
+    {R lam : ℝ} (hR : 0 < R) :
+    projectiveBracketSecondMoment
+        (quarticThreeWindowProfile R lam) 1
+      = quarticThreeWindowJ R lam 2 := by
+  rw [projectiveBracketSecondMoment_threeWindow hR]
+  unfold quarticThreeWindowJ
+  norm_num
+
+theorem projectiveBracketFourthMoment_threeWindow_one
+    {R lam : ℝ} (hR : 0 < R) :
+    projectiveBracketFourthMoment
+        (quarticThreeWindowProfile R lam) 1
+      = quarticThreeWindowJ R lam 4 := by
+  rw [projectiveBracketFourthMoment_threeWindow hR]
+  unfold quarticThreeWindowJ
+  norm_num
+
 end Synthesis

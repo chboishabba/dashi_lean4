@@ -228,4 +228,58 @@ theorem quarticFourSmoothPoleResidual_pos_of_close_atomic
   have hlo := (abs_le.mp hclose).1
   linarith
 
+/--
+At the conservative four-window high threshold t >= 200 the largest atomic pole
+cosh excess is far below one.
+-/
+theorem quarticFour_cosh_excess_le_one_of_twoHundred
+    {t : ℝ} (ht : 200 <= t) :
+    Real.cosh (8 * Real.pi / t) - 1 <= 1 := by
+  have htpos : 0 < t := by linarith
+  have hargpos : 0 <= 8 * Real.pi / t := by positivity
+  have hpi : Real.pi < 4 := Real.pi_lt_four
+  have harglt : 8 * Real.pi / t < (2/5 : ℝ) := by
+    rw [div_lt_iff₀ htpos]
+    nlinarith
+  have hlog : (2/5 : ℝ) < Real.log 2 := by
+    have h := Real.log_two_gt_d9
+    norm_num at h ⊢
+    linarith
+  have hlogpos : 0 < Real.log 2 := by
+    exact Real.log_pos (by norm_num)
+  have habs :
+      |8 * Real.pi / t| < |Real.log 2| := by
+    rw [abs_of_nonneg hargpos, abs_of_pos hlogpos]
+    exact harglt.trans hlog
+  have hcosh :
+      Real.cosh (8 * Real.pi / t) < Real.cosh (Real.log 2) := by
+    exact (Real.cosh_lt_cosh).2 habs
+  have hcoshlog : Real.cosh (Real.log 2) = 5/4 := by
+    rw [Real.cosh_eq, Real.exp_log (by norm_num : (0:ℝ) < 2),
+      Real.exp_neg, Real.exp_log (by norm_num : (0:ℝ) < 2)]
+    norm_num
+  rw [hcoshlog] at hcosh
+  linarith
+
+theorem quarticFourAtomicFinitePoleResidual_ge_seventeen_twentieths_of_twoHundred
+    {t lam mu : ℝ}
+    (ht : 200 <= t)
+    (hlam : lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ))
+    (hmu : |mu| <= 1/10) :
+    17/20 <= quarticFourAtomicFinitePoleResidual t lam mu := by
+  exact quarticFourAtomicFinitePoleResidual_ge_seventeen_twentieths
+    hlam.1 hlam.2 hmu
+    (quarticFour_cosh_excess_le_one_of_twoHundred ht)
+
+theorem quarticFourAtomicFinitePoleResidual_pos_of_twoHundred
+    {t lam mu : ℝ}
+    (ht : 200 <= t)
+    (hlam : lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ))
+    (hmu : |mu| <= 1/10) :
+    0 < quarticFourAtomicFinitePoleResidual t lam mu := by
+  have h :=
+    quarticFourAtomicFinitePoleResidual_ge_seventeen_twentieths_of_twoHundred
+      ht hlam hmu
+  linarith
+
 end Synthesis

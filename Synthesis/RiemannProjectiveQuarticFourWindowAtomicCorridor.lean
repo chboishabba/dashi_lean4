@@ -149,4 +149,98 @@ theorem quarticFourAtomicJ4_neg_in_corridor
     (abs_le.mp habsDiff).2
   linarith
 
+
+def quarticFourAtomicJ2CorridorMargin : ℝ := 1/1000
+
+theorem quarticFourAtomicJ2CorridorMargin_pos :
+    0 < quarticFourAtomicJ2CorridorMargin := by
+  norm_num [quarticFourAtomicJ2CorridorMargin]
+
+theorem quarticFourAtomicJ2_add_radius_ge_margin
+    {lam : ℝ}
+    (hlam1 : 1/2 <= lam)
+    (hlam2 : lam <= 2/3) :
+    quarticFourAtomicJ2CorridorMargin
+      <
+    quarticFourAtomicJAt lam
+      (quarticFourAtomicMu lam + quarticFourAtomicMuRadius) 2 := by
+  rw [quarticFourAtomicJAt_two_formula]
+  unfold quarticFourAtomicMu quarticFourAtomicMuRadius
+    quarticFourAtomicJ2CorridorMargin
+  have hden : 0 < 144-54*lam :=
+    quarticFourAtomicMu_den_pos hlam2
+  have hden0 : 144-54*lam ≠ 0 := ne_of_gt hden
+  field_simp [hden0]
+  have hpi2 : 9 < Real.pi^2 := by
+    nlinarith [Real.pi_gt_three]
+  nlinarith
+
+theorem quarticFourAtomicJ2_sub_radius_le_neg_margin
+    {lam : ℝ}
+    (hlam1 : 1/2 <= lam)
+    (hlam2 : lam <= 2/3) :
+    quarticFourAtomicJAt lam
+      (quarticFourAtomicMu lam - quarticFourAtomicMuRadius) 2
+      <
+    -quarticFourAtomicJ2CorridorMargin := by
+  rw [quarticFourAtomicJAt_two_formula]
+  unfold quarticFourAtomicMu quarticFourAtomicMuRadius
+    quarticFourAtomicJ2CorridorMargin
+  have hden : 0 < 144-54*lam :=
+    quarticFourAtomicMu_den_pos hlam2
+  have hden0 : 144-54*lam ≠ 0 := ne_of_gt hden
+  field_simp [hden0]
+  have hpi2 : 9 < Real.pi^2 := by
+    nlinarith [Real.pi_gt_three]
+  nlinarith
+
+def quarticFourAtomicJ4CorridorMargin : ℝ :=
+  Real.pi^4 / 300
+
+theorem quarticFourAtomicJ4CorridorMargin_pos :
+    0 < quarticFourAtomicJ4CorridorMargin := by
+  unfold quarticFourAtomicJ4CorridorMargin
+  positivity
+
+theorem quarticFourAtomicJ4_le_neg_corridorMargin
+    {lam mu : ℝ}
+    (hlam1 : 1/2 <= lam)
+    (hlam2 : lam <= 2/3)
+    (hmu :
+      |mu-quarticFourAtomicMu lam|
+        <= quarticFourAtomicMuRadius) :
+    quarticFourAtomicJAt lam mu 4
+      <
+    -quarticFourAtomicJ4CorridorMargin := by
+  have hnull :=
+    quarticFourAtomicJ4_null_le_uniform hlam1 hlam2
+  have hdiff :=
+    quarticFourAtomicJ4_mu_difference lam mu
+  have hcoef0 : 0 < (32-15*lam)/16 := by
+    nlinarith
+  have hcoefUpper : (32-15*lam)/16 <= 49/32 := by
+    nlinarith
+  have hp : 0 < Real.pi^4 := by positivity
+  have habsDiff :
+      |quarticFourAtomicJAt lam mu 4
+        - quarticFourAtomicJAt lam (quarticFourAtomicMu lam) 4|
+      <=
+      Real.pi^4 * (49/32)
+        * quarticFourAtomicMuRadius := by
+    rw [hdiff, abs_mul, abs_mul,
+      abs_of_pos hp, abs_of_pos hcoef0]
+    exact mul_le_mul_of_nonneg_left
+      (mul_le_mul hcoefUpper hmu (abs_nonneg _)
+        hcoef0.le)
+      hp.le
+  have hsmall :
+      Real.pi^4 * (49/32) * quarticFourAtomicMuRadius
+        < Real.pi^4 * (1/243 - 1/300) := by
+    unfold quarticFourAtomicMuRadius
+    have hp0 : 0 < Real.pi^4 := by positivity
+    nlinarith
+  have hupper := (abs_le.mp habsDiff).2
+  unfold quarticFourAtomicJ4CorridorMargin
+  linarith
+
 end Synthesis

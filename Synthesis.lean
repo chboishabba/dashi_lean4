@@ -257,3 +257,7 @@ import Synthesis.RiemannProjectiveZetaMuLocalNegative
 import Synthesis.RiemannProjectiveZetaMuWindowAdditivity
 
 import Synthesis.RiemannProjectiveQuarticMomentEscape
+
+import Synthesis.RiemannProjectiveZetaMuEndpointDecay
+import Synthesis.RiemannProjectiveZetaMuDerivativeTailDecay
+import Synthesis.RiemannProjectiveZetaMuCorrelationTail

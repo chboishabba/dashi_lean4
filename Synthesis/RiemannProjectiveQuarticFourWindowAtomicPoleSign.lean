@@ -143,13 +143,13 @@ nonnegative.  If the largest cosh excess is at most one, the potentially
 negative fourth-window correction cannot consume the unit high-ordinate pole
 margin.
 -/
-theorem quarticFourAtomicFinitePoleResidual_pos_of_cosh_excess_le_one
+theorem quarticFourAtomicFinitePoleResidual_ge_seventeen_twentieths
     {t lam mu : ℝ}
     (hlam1 : 1/2 <= lam)
     (hlam2 : lam <= 2/3)
     (hmu : |mu| <= 1/10)
     (hcosh3 : Real.cosh (8 * Real.pi / t) - 1 <= 1) :
-    0 < quarticFourAtomicFinitePoleResidual t lam mu := by
+    17/20 <= quarticFourAtomicFinitePoleResidual t lam mu := by
   have hhigh :
       1 <= quarticFourAtomicHighPoleResidual lam mu :=
     quarticFourAtomicHighPoleResidual_ge_one hlam2
@@ -194,6 +194,38 @@ theorem quarticFourAtomicFinitePoleResidual_pos_of_cosh_excess_le_one
         nlinarith
       exact le_trans (by norm_num) (mul_nonneg h3non hcoef3)
   rw [← quarticFourAtomicFinitePoleResidual_sub_high t lam mu]
+  linarith
+
+theorem quarticFourAtomicFinitePoleResidual_pos_of_cosh_excess_le_one
+    {t lam mu : ℝ}
+    (hlam1 : 1/2 <= lam)
+    (hlam2 : lam <= 2/3)
+    (hmu : |mu| <= 1/10)
+    (hcosh3 : Real.cosh (8 * Real.pi / t) - 1 <= 1) :
+    0 < quarticFourAtomicFinitePoleResidual t lam mu := by
+  have h :=
+    quarticFourAtomicFinitePoleResidual_ge_seventeen_twentieths
+      hlam1 hlam2 hmu hcosh3
+  linarith
+
+/--
+A smooth determinant within half of the finite atomic margin is still strictly
+positive.  This is the target consumed by the four-window localization layer.
+-/
+theorem quarticFourSmoothPoleResidual_pos_of_close_atomic
+    {t lam mu smoothPole : ℝ}
+    (hlam1 : 1/2 <= lam)
+    (hlam2 : lam <= 2/3)
+    (hmu : |mu| <= 1/10)
+    (hcosh3 : Real.cosh (8 * Real.pi / t) - 1 <= 1)
+    (hclose :
+      |smoothPole - quarticFourAtomicFinitePoleResidual t lam mu|
+        <= 17/40) :
+    0 < smoothPole := by
+  have hatom :=
+    quarticFourAtomicFinitePoleResidual_ge_seventeen_twentieths
+      hlam1 hlam2 hmu hcosh3
+  have hlo := (abs_le.mp hclose).1
   linarith
 
 end Synthesis

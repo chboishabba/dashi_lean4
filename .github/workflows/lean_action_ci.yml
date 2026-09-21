@@ -12,3 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
+
+  external-clay-ns:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build pinned literal Clay NS project
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: ExternalClayNS

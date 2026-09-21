@@ -265,3 +265,7 @@ import Synthesis.MillenniumBSDEtaCoefficientFiveFormal
 import Synthesis.MillenniumBSDEtaCoefficientFiveWeld
 
 import Synthesis.MillenniumBSDEllipticCoefficientFive
+
+import Synthesis.MillenniumHodgeCP1PrizeFacingClosure
+
+import Synthesis.MillenniumBSDEtaEllipticSturmEightBoundary

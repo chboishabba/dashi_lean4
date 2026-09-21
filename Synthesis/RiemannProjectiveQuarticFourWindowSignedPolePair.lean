@@ -78,19 +78,25 @@ theorem exists_quarticFourSignedPolePair
     exists_uniform_smooth_quarticFourWindow_family
   obtain ⟨d,hd,htrans⟩ :=
     exists_radius_quarticFourSmooth_signedPoleTarget_pos ht
-  let R : ℝ := min R0 d / 2
-  have hmin : 0 < min R0 d := lt_min hR0 hd
+  let R : ℝ := min 1 (min R0 d) / 2
+  have hinner : 0 < min R0 d := lt_min hR0 hd
+  have hmin : 0 < min 1 (min R0 d) :=
+    lt_min (by norm_num) hinner
   have hR : 0 < R := by
     dsimp [R]
     linarith
-  have hRR0 : R < R0 := by
+  have hRone : R < 1 := by
     dsimp [R]
-    have hle := min_le_left R0 d
+    have hle := min_le_left 1 (min R0 d)
     linarith
-  have hRd : R < d := by
+  have hRinner : R < min R0 d := by
     dsimp [R]
-    have hle := min_le_right R0 d
+    have hle := min_le_right 1 (min R0 d)
     linarith
+  have hRR0 : R < R0 :=
+    hRinner.trans_le (min_le_left R0 d)
+  have hRd : R < d :=
+    hRinner.trans_le (min_le_right R0 d)
 
   have hlamHalf : (1/2 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
     ⟨le_rfl, by norm_num⟩
@@ -108,17 +114,6 @@ theorem exists_quarticFourSignedPolePair
   obtain ⟨eps,heps,hband⟩ :=
     exists_quarticFourSignedPoleCombinedHeightDefect_pos_punctured
       hR S1.J2zero S2.J2zero htransPos
-
-  have hRone : R < 1 := by
-    have hR0le : R0 <= 1 := by
-      obtain ⟨Rraw,hRraw,hfamRaw⟩ :=
-        exists_uniform_smooth_quarticFourWindow_family
-      -- We only need a harmless shrink; the pair remains valid at the chosen R.
-      by_cases h : R0 <= 1
-      · exact h
-      · have : 1 < R0 := lt_of_not_ge h
-        exact le_of_lt this
-    exact hRR0.trans_le hR0le
 
   exact ⟨{
     R := R

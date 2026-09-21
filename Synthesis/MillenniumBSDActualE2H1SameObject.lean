@@ -76,7 +76,7 @@ noncomputable def cmActualE2H1EquivRatSquareClasses
     (continuousCohomology 1 cmActualE2Representation) ≃
       (RatSquareClass × RatSquareClass) := by
   rcases kummer with ⟨e⟩
-  exact cmActualE2H1IsoTrivial.toEquiv.trans e
+  exact cmActualE2H1IsoTrivial.toContinuousLinearEquiv.toLinearEquiv.toEquiv.trans e
 
 
 end Synthesis.Millennium.BSD

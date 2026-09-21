@@ -55,19 +55,14 @@ theorem canonical_u_sq_projective_covariance_neg
     (by fun_prop : Continuous (fun u : ℝ => u^2))
     hd.radiusPos hd.radial
   · intro u v hu hv huvle
-    have hs : u^2 ≤ v^2 := by
-      rw [← sq_abs u, ← sq_abs v]
-      exact sq_le_sq₀ (abs_nonneg u) huvle
-    exact hs
+    nlinarith [sq_abs u, sq_abs v, abs_nonneg u, abs_nonneg v]
   · exact hu0
   · exact hv0
   · exact huv
   · intro huvlt
-    rw [← sq_abs u0, ← sq_abs v0]
-    exact sq_lt_sq₀ (abs_nonneg u0) huvlt
+    nlinarith [sq_abs u0, sq_abs v0, abs_nonneg u0, abs_nonneg v0]
   · intro hvult
-    rw [← sq_abs v0, ← sq_abs u0]
-    exact sq_lt_sq₀ (abs_nonneg v0) hvult
+    nlinarith [sq_abs u0, sq_abs v0, abs_nonneg u0, abs_nonneg v0]
 
 theorem normalizedProjectiveProfileSignedSecondMoment_scaled
     {t : ℝ} (ht : 18 ≤ t) :

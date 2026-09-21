@@ -154,4 +154,36 @@ theorem not_exists_gateData_with_projective_u_sq_covariance_pos
   have hneg := hd.projective_u_sq_covariance_neg
   linarith
 
+/--
+Family-level firewall.  No target-dependent family whose every member remains
+GateData can realize the positive second moment proposed by curvature-reversal
+Route B at any parameter value.
+-/
+theorem no_gateData_family_with_positive_projective_second_moment
+    {I : Type*}
+    {t r Lambda : I → ℝ}
+    {g : I → ℝ → ℝ}
+    (hd : ∀ i, GateData (g i) (t i) (r i) (Lambda i)) :
+    ¬ ∃ i : I,
+      0 < (∫ u : ℝ,
+        g i u * u^2 * twoRadiusBracket (g i) (r i) u) := by
+  rintro ⟨i, hpos⟩
+  have hneg := (hd i).projective_u_sq_covariance_neg
+  linarith
+
+/--
+Equivalent pointwise formulation useful for a target-height-indexed family:
+every admissible member has strictly negative projective signed second moment.
+-/
+theorem gateData_family_projective_second_moment_neg
+    {I : Type*}
+    {t r Lambda : I → ℝ}
+    {g : I → ℝ → ℝ}
+    (hd : ∀ i, GateData (g i) (t i) (r i) (Lambda i))
+    (i : I) :
+    (∫ u : ℝ,
+      g i u * u^2 * twoRadiusBracket (g i) (r i) u) < 0 :=
+  (hd i).projective_u_sq_covariance_neg
+
+
 end Synthesis

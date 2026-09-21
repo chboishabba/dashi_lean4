@@ -279,3 +279,6 @@ import Synthesis.RiemannRvMMuHighUniformLower
 import Synthesis.RiemannRvMMuIntervalLower
 import Synthesis.RiemannProjectiveQuarticNegativeMassScale
 import Synthesis.RiemannProjectiveQuarticCompletedResidual
+
+import Synthesis.RiemannProjectivePhysicalMuNormalization
+import Synthesis.RiemannProjectiveQuarticNMuSameObject

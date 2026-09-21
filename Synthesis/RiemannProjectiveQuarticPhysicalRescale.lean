@@ -209,4 +209,58 @@ theorem exists_quartic_escape_at_radius
     have hfac : 0 < 1/r^6 := by positivity
     exact mul_neg_of_pos_of_neg hfac hJ4
 
+
+theorem evenResp_projectiveRescale_height
+    {G : ℝ → ℝ} {r : ℝ} (hr : 0 < r)
+    (a c : ℝ) :
+    evenResp (projectiveRescaleProfile G r) a (c*r)
+      = (1/r) * evenResp G (a/r) c := by
+  unfold evenResp projectiveRescaleProfile
+  let F : ℝ → ℝ := fun x =>
+    G x * (Real.cosh ((a/r)*x) * Real.cos (c*x))
+  have hr0 : r ≠ 0 := ne_of_gt hr
+  have hpoint :
+      (fun u : ℝ =>
+        G (r*u) * (Real.cosh (a*u) * Real.cos ((c*r)*u)))
+        = fun u => F (r*u) := by
+    funext u
+    dsimp [F]
+    have ha : (a/r)*(r*u) = a*u := by
+      field_simp [hr0]
+    have hc : c*(r*u) = (c*r)*u := by ring
+    rw [ha, hc]
+  rw [hpoint, integral_rescale_mul hr]
+  rfl
+
+theorem heightDefect_projectiveRescale
+    {G : ℝ → ℝ} {r : ℝ} (hr : 0 < r)
+    (a b : ℝ) :
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
+        (projectiveRescaleProfile G r) r a b
+      =
+    (1/r^2) *
+      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
+        G 1 (a/r) (b/r) := by
+  unfold Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
+  rw [show r = (1:ℝ)*r by ring,
+      show 2*r = (2:ℝ)*r by ring,
+      evenResp_projectiveRescale_height hr a 1,
+      evenResp_projectiveRescale_height hr a 2,
+      evenResp_projectiveRescale_height hr b 1,
+      evenResp_projectiveRescale_height hr b 2]
+  field_simp [hr.ne']
+  ring
+
+theorem heightDefect_projectiveRescale_zero
+    {G : ℝ → ℝ} {r : ℝ} (hr : 0 < r)
+    (a : ℝ) :
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
+        (projectiveRescaleProfile G r) r a 0
+      =
+    (1/r^2) *
+      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
+        G 1 (a/r) 0 := by
+  rw [heightDefect_projectiveRescale hr a 0]
+  simp [hr.ne']
+
 end Synthesis

@@ -47,7 +47,7 @@ theorem rationalKummerRoot_ne_zero (a : NonzeroRat) :
   have hs := rationalKummerRoot_spec a
   rw [h, zero_mul] at hs
   have : a.1 = 0 := by
-    exact (FaithfulSMul.algebraMap_injective ℚ (AlgebraicClosure ℚ)) hs.symm
+    exact (algebraMap ℚ (AlgebraicClosure ℚ)).injective hs.symm
   exact a.2 this
 
 theorem galois_kummerRoot_eq_or_neg
@@ -150,13 +150,13 @@ theorem rationalKummerBit_isLocallyConstant (a : NonzeroRat) :
         (MulAction.stabilizer RationalAbsoluteGalois
           (rationalKummerRoot a) : Set RationalAbsoluteGalois) :=
       stabilizer_isOpen_of_isIntegral
-        ℚ (AlgebraicClosure ℚ) (rationalKummerRoot a)
+        (K := ℚ) (L := AlgebraicClosure ℚ) (rationalKummerRoot a)
     simpa [MulAction.mem_stabilizer_iff, rationalKummerBit_eq_zero_iff] using hopen
   · have hopen : IsOpen
         (MulAction.stabilizer RationalAbsoluteGalois
           (rationalKummerRoot a) : Set RationalAbsoluteGalois) :=
       stabilizer_isOpen_of_isIntegral
-        ℚ (AlgebraicClosure ℚ) (rationalKummerRoot a)
+        (K := ℚ) (L := AlgebraicClosure ℚ) (rationalKummerRoot a)
     have hclosed : IsClosed
         (MulAction.stabilizer RationalAbsoluteGalois
           (rationalKummerRoot a) : Set RationalAbsoluteGalois) :=

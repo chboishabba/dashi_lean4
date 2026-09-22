@@ -96,6 +96,7 @@ theorem primaryCubeCongruence_coordinates
     {p : ℕ} (hp : p.Prime) (hmod : p % 4 = 1) :
     ∃ a b : ℤ,
       a ^ 2 + b ^ 2 = (p : ℤ) ∧
+      Odd a ∧ Even b ∧
       Int.ModEq 4 (a + b) (-1) ∧
       splitJacobiPlus p hmod = (a : ℂ) + (b : ℂ) * Complex.I := by
   letI : Fact p.Prime := ⟨hp⟩
@@ -116,11 +117,17 @@ theorem primaryCubeCongruence_coordinates
     have hr : (((a ^ 2 + b ^ 2 : ℤ) : ℝ)) = p := by
       simpa [Complex.normSq_apply] using hnorm
     exact_mod_cast hr
-  refine ⟨a,b,hab,?_,hcoords⟩
-  rw [Int.modEq_iff_dvd]
-  use c
-  dsimp [a,b]
-  ring
+  refine ⟨a,b,hab,?_,?_,?_,hcoords⟩
+  · refine ⟨c - d - 1, ?_⟩
+    dsimp [a]
+    ring
+  · refine ⟨c + d, ?_⟩
+    dsimp [b]
+    ring
+  · rw [Int.modEq_iff_dvd]
+    use c
+    dsimp [a,b]
+    ring
 
 /--
 After the cube congruence, the remaining conversion to the Jacobi theta
@@ -134,6 +141,8 @@ def SplitPrimeRepresentationSignCompiler : Prop :=
     p = (2 * r + 1) ^ 2 + 4 * s ^ 2 →
     ∀ a b : ℤ,
       a ^ 2 + b ^ 2 = (p : ℤ) →
+      Odd a →
+      Even b →
       Int.ModEq 4 (a + b) (-1) →
       -2 * a = 2 * ((-1 : ℤ) ^ (r + s)) * (2 * r + 1)
 
@@ -147,7 +156,7 @@ theorem split_frobenius_signed_of_primary_and_representation
       2 * ((-1 : ℤ) ^ (r + s)) * (2 * r + 1) := by
   letI : Fact p.Prime := ⟨hp⟩
   rcases primaryCubeCongruence_coordinates hprimary hp hmod with
-    ⟨a,b,hnorm,hcong,hJ⟩
+    ⟨a,b,hnorm,haodd,hbeven,hcong,hJ⟩
   have htrace := split_frobeniusCoefficient_eq_neg_plus_star hmod
   rw [hJ] at htrace
   apply_fun Complex.re at htrace
@@ -155,6 +164,6 @@ theorem split_frobenius_signed_of_primary_and_representation
   have hfa : frobeniusCoefficient p = -2 * a := by
     exact_mod_cast htrace
   rw [hfa]
-  exact hsign p r s hp hrep a b hnorm hcong
+  exact hsign p r s hp hrep a b hnorm haodd hbeven hcong
 
 end Synthesis.Millennium.BSD

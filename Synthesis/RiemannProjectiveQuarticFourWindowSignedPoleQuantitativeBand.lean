@@ -38,6 +38,10 @@ open scoped Real
 namespace Synthesis
 
 open Zeta23
+open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile
+open Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition
+open Zeta23Bridge.LiteralWeilOffOrdinateReflectionPair
 
 def QuarticFourSignedPolePair.quantitativeTargetRadius
     {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=

@@ -5,6 +5,7 @@ import Integration.MoonshineEisensteinPrimitiveExtraction
 import Integration.BishopVendoredRealEvaluation
 import Integration.BishopVendoredOrderConvergenceEvaluation
 import Integration.BishopVendoredExponentialSemantics
+import Integration.BishopVendoredTrigSemantics
 import Integration.BishopVendoredTranscendentalExtraction
 import Integration.MoonshineEisensteinWeld
 import Integration.TernaryHub

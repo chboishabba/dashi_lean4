@@ -132,6 +132,63 @@ theorem eval_respects_equiv
     · exact (by simpa [dist_comm] using hdist).add hxDist
   exact tendsto_nhds_unique hyToX (tendsto_eval y)
 
+/-- Every nonzero source sample lies within 1/n of the canonical Lean value.
+
+This is the sharp completion estimate implicit in Bishop regularity: fix n and
+send the comparison index m to infinity in
+  |x_n - x_m| <= 1/n + 1/m.
+-/
+theorem sample_dist_eval_le
+    (x : RegularRatReal)
+    (n : ℕ)
+    (hn : n ≠ 0) :
+    |((x.seq n : ℝ) - eval x)| ≤ 1 / (n : ℝ) := by
+  have hleft :
+      Tendsto
+        (fun m : ℕ => |((x.seq n : ℝ) - shifted x m)|)
+        atTop
+        (𝓝 |((x.seq n : ℝ) - eval x)|) :=
+    (tendsto_const_nhds.sub (tendsto_eval x)).abs
+  have hright :
+      Tendsto
+        (fun m : ℕ => 1 / (n : ℝ) + 1 / (m + 1 : ℝ))
+        atTop
+        (𝓝 (1 / (n : ℝ))) := by
+    have hzero :=
+      (tendsto_one_div_atTop_nhds_zero_nat (𝕜 := ℝ)).comp
+        (tendsto_add_atTop_nat 1)
+    simpa using tendsto_const_nhds.add hzero
+  apply le_of_tendsto_of_tendsto' hleft hright
+  intro m
+  simpa [shifted] using
+    x.regular n (m + 1) hn (by omega)
+
+/-- Equality of evaluated classical reals reflects the exact Bishop setoid
+relation.  Thus the completion map is faithful on Bishop equivalence classes. -/
+theorem equiv_of_eval_eq
+    {x y : RegularRatReal}
+    (hxy : eval x = eval y) :
+    Equiv x y := by
+  intro n hn
+  have hx := sample_dist_eval_le x n hn
+  have hy := sample_dist_eval_le y n hn
+  calc
+    |((x.seq n : ℝ) - (y.seq n : ℝ))|
+        ≤ |((x.seq n : ℝ) - eval x)| +
+            |eval y - (y.seq n : ℝ)| := by
+          rw [hxy]
+          exact abs_sub_le _ _ _
+    _ ≤ 1 / (n : ℝ) + 1 / (n : ℝ) := by
+          gcongr
+          simpa [abs_sub_comm] using hy
+    _ = 2 / (n : ℝ) := by ring
+
+/-- The evaluator identifies Bishop setoid classes exactly. -/
+theorem eval_eq_iff_equiv
+    {x y : RegularRatReal} :
+    eval x = eval y ↔ Equiv x y :=
+  ⟨equiv_of_eval_eq, eval_respects_equiv⟩
+
 /-- Index used to view the Bishop a*n resampling as a subsequence of shifted. -/
 def resampleIndex (a : ℕ) (n : ℕ) : ℕ :=
   a * n + (a - 1)
@@ -261,6 +318,8 @@ structure VendorEvaluationBoundary where
   bishopSetoidFormulaMirrored : Bool
   evaluatorIntoLeanRealOwned : Bool
   setoidRepresentativeIndependenceOwned : Bool
+  sampleToLimitOneOverNBoundOwned : Bool
+  evaluatorReflectsBishopEquivalence : Bool
   positiveResamplingInvariantOwned : Bool
   vendoredZeroOneNegAddPreservationOwned : Bool
   vendoredCanonicalBoundMulPreservationOwned : Bool
@@ -277,6 +336,8 @@ def vendorEvaluationBoundary : VendorEvaluationBoundary where
   bishopSetoidFormulaMirrored := true
   evaluatorIntoLeanRealOwned := true
   setoidRepresentativeIndependenceOwned := true
+  sampleToLimitOneOverNBoundOwned := true
+  evaluatorReflectsBishopEquivalence := true
   positiveResamplingInvariantOwned := true
   vendoredZeroOneNegAddPreservationOwned := true
   vendoredCanonicalBoundMulPreservationOwned := true

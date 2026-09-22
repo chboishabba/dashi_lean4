@@ -229,7 +229,7 @@ theorem eval_add (x y : RegularRatReal) :
   have hx := tendsto_resample x (by norm_num : 0 < 2)
   have hy := tendsto_resample y (by norm_num : 0 < 2)
   have hsum := hx.add hy
-  simpa [shifted, A.seq_add, Rat.cast_add] using hsum
+  simpa [shifted, A.seq_add] using hsum
 
 /-- The actual Bishop multiplication resampling factor is positive. -/
 private theorem mulFactor_pos (x y : RegularRatReal) :
@@ -250,7 +250,7 @@ theorem eval_mul (x y : RegularRatReal) :
   have hx := tendsto_resample x ha
   have hy := tendsto_resample y ha
   have hprod := hx.mul hy
-  simpa [shifted, A.seq_mul, a, Rat.cast_mul] using hprod
+  simpa [shifted, A.seq_mul, a] using hprod
 
 end VendoredArithmeticMirror
 

@@ -25,7 +25,7 @@ namespace Integration.MoonshineEisensteinAgdaTarget
 open Complex Real
 open UpperHalfPlane hiding I
 open ArithmeticFunction
-open scoped Real Nat ArithmeticFunction.sigma BigOperators
+open scoped Real Nat ArithmeticFunction.sigma BigOperators MatrixGroups
 
 noncomputable section
 
@@ -260,6 +260,32 @@ theorem normalizedDeltaAt_tendsto (τ : ℍ) :
 theorem complex_1728_ne_zero : (1728 : ℂ) ≠ 0 := by
   norm_num
 
+/-- Weight-12 modular form obtained from the pinned Mathlib E4/E6 objects
+without using the later discriminant package. -/
+def e4CubeWeight12 : ModularForm 𝒮ℒ 12 :=
+  ModularForm.mcast (by norm_num)
+    ((Integration.MoonshineEisensteinAnalytic.E4.mul
+      Integration.MoonshineEisensteinAnalytic.E4).mul
+      Integration.MoonshineEisensteinAnalytic.E4)
+
+/-- Weight-12 E6 square. -/
+def e6SquareWeight12 : ModularForm 𝒮ℒ 12 :=
+  ModularForm.mcast (by norm_num)
+    (Integration.MoonshineEisensteinAnalytic.E6.mul
+      Integration.MoonshineEisensteinAnalytic.E6)
+
+/-- The normalized E4/E6 Delta candidate is itself a genuine level-one
+weight-12 modular form at the pinned Mathlib version. -/
+def normalizedDeltaForm : ModularForm 𝒮ℒ 12 :=
+  ((1728 : ℂ)⁻¹) • (e4CubeWeight12 - e6SquareWeight12)
+
+/-- The packaged modular form evaluates to the route-B normalized Delta limit. -/
+theorem normalizedDeltaForm_apply (τ : ℍ) :
+    normalizedDeltaForm τ = normalizedDeltaLimit τ := by
+  simp [normalizedDeltaForm, normalizedDeltaLimit, discriminantNumeratorLimit,
+    e4CubeWeight12, e6SquareWeight12, div_eq_mul_inv]
+  ring
+
 /-- Machine-readable seam. -/
 structure AgdaTargetBoundary where
   literalQTargetOwned : Bool
@@ -273,6 +299,7 @@ structure AgdaTargetBoundary where
   infiniteLimitIdentifiedWithMathlibE4E6 : Bool
   discriminantNumeratorLimitCompiled : Bool
   normalizedDeltaLimitCompiled : Bool
+  normalizedDeltaPackagedAsWeight12ModularForm : Bool
 
 def agdaTargetBoundary : AgdaTargetBoundary where
   literalQTargetOwned := true
@@ -286,6 +313,7 @@ def agdaTargetBoundary : AgdaTargetBoundary where
   infiniteLimitIdentifiedWithMathlibE4E6 := true
   discriminantNumeratorLimitCompiled := true
   normalizedDeltaLimitCompiled := true
+  normalizedDeltaPackagedAsWeight12ModularForm := true
 
 end
 

@@ -1168,4 +1168,114 @@ theorem quarticSignedPole_uniform_combinedMass_to_uniform_K
   refine ⟨W,hS,?_⟩
   exact W.fourthLipschitz_le_of_combined_mass hM
 
+
+/--
+Explicit uniform L1 bound for the exact signed combined profile.
+-/
+def quarticFourCombinedProfileMassBound : ℝ :=
+  2 * quarticFourSmoothPoleBound * quarticFourProjectiveMassBound
+
+theorem QuarticFourSignedPolePair.combinedProfile_taperMass_le_explicit
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    taperMass
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t)
+      <= quarticFourCombinedProfileMassBound := by
+  unfold quarticFourCombinedProfileMassBound
+  exact W.combinedProfile_taperMass_le_of_pole_bound
+    (by
+      unfold quarticFourSmoothPoleBound
+      positivity)
+    (W.poleHalf_abs_le ht)
+    (W.poleTwo_abs_le ht)
+
+/--
+A completely explicit high-t uniform bound for K(W).
+-/
+def quarticSignedPoleExplicitK0 : ℝ :=
+  quarticFourCombinedProfileMassBound
+    * Real.cosh (Real.pi + 1)
+    * (Real.pi + 1)^5
+
+theorem quarticSignedPoleExplicitK0_nonneg :
+    0 <= quarticSignedPoleExplicitK0 := by
+  unfold quarticSignedPoleExplicitK0
+    quarticFourCombinedProfileMassBound
+    quarticFourSmoothPoleBound
+    quarticFourProjectiveMassBound
+  positivity
+
+theorem QuarticFourSignedPolePair.fourthLipschitz_le_explicitK0
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.fourthLipschitz <= quarticSignedPoleExplicitK0 := by
+  unfold quarticSignedPoleExplicitK0
+  exact W.fourthLipschitz_le_of_combined_mass
+    (W.combinedProfile_taperMass_le_explicit ht)
+
+/--
+The preferred existential G1 K-source is now compiler-owned from the
+floor-certified constructor plus the explicit uniform norm bound.
+-/
+theorem quarticSignedPole_constructedWitness_uniform_K_explicit :
+    quarticSignedPole_constructedWitness_uniform_K
+      quarticSignedPoleExplicitK0 := by
+  intro t ht
+  obtain ⟨W,hS⟩ :=
+    exists_quarticFourSignedPolePair_strengthFloor ht
+  refine ⟨W,hS,?_⟩
+  exact W.fourthLipschitz_le_explicitK0 ht
+
+theorem quarticSignedPole_goodWitness_uniform_K_explicit :
+    quarticSignedPole_goodWitness_uniform_K
+      200 quarticSignedPoleExplicitK0 :=
+  quarticSignedPole_constructedWitness_uniform_K_to_goodWitness
+    quarticSignedPole_constructedWitness_uniform_K_explicit
+
+/--
+The single scalar threshold left by G1 after all witness/norm bookkeeping.
+-/
+def quarticSignedPoleQuantitativeThreshold : ℝ :=
+  4 * (quarticSignedPoleExplicitK0 + 1)
+    / quarticSignedPoleStrengthFloor
+
+theorem quarticSignedPoleQuantitativeThreshold_pos :
+    0 < quarticSignedPoleQuantitativeThreshold := by
+  unfold quarticSignedPoleQuantitativeThreshold
+  have hK := quarticSignedPoleExplicitK0_nonneg
+  have hS := quarticSignedPoleStrengthFloor_pos
+  positivity
+
+theorem quarticSignedPole_scalar_threshold_of_gt
+    {t : ℝ}
+    (ht : quarticSignedPoleQuantitativeThreshold < t) :
+    4 * (quarticSignedPoleExplicitK0 + 1) / t
+      < quarticSignedPoleStrengthFloor := by
+  have ht0 : 0 < t :=
+    lt_trans quarticSignedPoleQuantitativeThreshold_pos ht
+  have hS := quarticSignedPoleStrengthFloor_pos
+  unfold quarticSignedPoleQuantitativeThreshold at ht
+  rw [div_lt_iff₀ hS] at ht
+  rw [div_lt_iff₀ ht0]
+  nlinarith
+
+/--
+G1 above the explicit quantitative threshold.
+
+At this point no profile-analysis theorem remains as an input.
+-/
+theorem exists_quarticSignedPolePair_quantitativeBand_of_threshold
+    {t : ℝ}
+    (ht200 : 200 <= t)
+    (htQ : quarticSignedPoleQuantitativeThreshold < t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧ 8/t < W.quantitativeTargetRadius := by
+  have ht8 : 8 < t := by linarith
+  exact exists_quarticSignedPolePair_quantitativeBand_covers_strip
+    ht200 ht8 quarticSignedPoleExplicitK0_nonneg
+    quarticSignedPole_goodWitness_uniform_K_explicit
+    (quarticSignedPole_scalar_threshold_of_gt htQ)
+
 end Synthesis

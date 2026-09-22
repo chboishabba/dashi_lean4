@@ -36,6 +36,91 @@ theorem memLp_fourThird_of_memLp_two
     MemLp f (ENNReal.ofReal (4 / 3 : ℝ)) μ := by
   exact hf.mono_exponent (ENNReal.ofReal_le_ofReal (by norm_num))
 
+
+/--
+Hölder in time for the critical nonlinear term.  This is the exact reusable
+L^4_t × L^2_t -> L^(4/3)_t step; all spatial Sobolev information is carried by
+the continuous bilinear map B.
+-/
+theorem memLp_bilinear_four_two_fourThird
+    {α E F G : Type*} [MeasurableSpace α] {μ : Measure α}
+    [NormedAddCommGroup E] [NormedAddCommGroup F] [NormedAddCommGroup G]
+    [NormedSpace ℝ E] [NormedSpace ℝ F] [NormedSpace ℝ G]
+    (B : E →L[ℝ] F →L[ℝ] G)
+    {f : α → E} {g : α → F}
+    (hHolder :
+      ENNReal.HolderTriple
+        (ENNReal.ofReal 4)
+        (ENNReal.ofReal 2)
+        (ENNReal.ofReal (4 / 3 : ℝ)))
+    (hf : MemLp f (ENNReal.ofReal 4) μ)
+    (hg : MemLp g (ENNReal.ofReal 2) μ) :
+    MemLp (fun t => B (f t) (g t))
+      (ENNReal.ofReal (4 / 3 : ℝ)) μ := by
+  letI := hHolder
+  exact B.memLp_of_bilin (ENNReal.ofReal (4 / 3 : ℝ)) hf hg
+
+/-- Continuous spatial embeddings preserve the time Lp membership. -/
+theorem memLp_comp_continuousLinearMap
+    {α E F : Type*} [MeasurableSpace α] {μ : Measure α}
+    [NormedAddCommGroup E] [NormedAddCommGroup F]
+    [NormedSpace ℝ E] [NormedSpace ℝ F]
+    {p : ENNReal} (L : E →L[ℝ] F) {f : α → E}
+    (hf : MemLp f p μ) :
+    MemLp (fun t => L (f t)) p μ := by
+  simpa [Function.comp_def] using L.comp_memLp' hf
+
+/--
+B1+B2 compiler on typed spatial carriers.
+
+The viscous map represents H^(3/2) -> H^(-1/2), while nonlinearMap represents
+the spatial Sobolev/Hölder product H^1 × H^(1/2) -> H^(-1/2).  Thus the only
+remaining carrier-specific work is to instantiate these continuous maps and
+the L^4_t H^1 / L^2_t H^(1/2) bounds.
+-/
+theorem critical_timeDerivative_of_linear_bilinear
+    {α HThreeHalf HOne HGradientHalf HMinusHalf : Type*}
+    [MeasurableSpace α] {μ : Measure α} [IsFiniteMeasure μ]
+    [NormedAddCommGroup HThreeHalf] [NormedAddCommGroup HOne]
+    [NormedAddCommGroup HGradientHalf] [NormedAddCommGroup HMinusHalf]
+    [NormedSpace ℝ HThreeHalf] [NormedSpace ℝ HOne]
+    [NormedSpace ℝ HGradientHalf] [NormedSpace ℝ HMinusHalf]
+    (viscousMap : HThreeHalf →L[ℝ] HMinusHalf)
+    (nonlinearMap : HOne →L[ℝ] HGradientHalf →L[ℝ] HMinusHalf)
+    (uThreeHalf : α → HThreeHalf)
+    (uOne : α → HOne)
+    (gradHalf : α → HGradientHalf)
+    (timeDerivative : α → HMinusHalf)
+    (hHolder :
+      ENNReal.HolderTriple
+        (ENNReal.ofReal 4)
+        (ENNReal.ofReal 2)
+        (ENNReal.ofReal (4 / 3 : ℝ)))
+    (huThreeHalf : MemLp uThreeHalf (ENNReal.ofReal 2) μ)
+    (huOne : MemLp uOne (ENNReal.ofReal 4) μ)
+    (hgradHalf : MemLp gradHalf (ENNReal.ofReal 2) μ)
+    (hEquation :
+      timeDerivative =
+        (fun t =>
+          viscousMap (uThreeHalf t) +
+            nonlinearMap (uOne t) (gradHalf t))) :
+    MemLp timeDerivative (ENNReal.ofReal (4 / 3 : ℝ)) μ := by
+  have hviscous2 :
+      MemLp (fun t => viscousMap (uThreeHalf t))
+        (ENNReal.ofReal 2) μ :=
+    memLp_comp_continuousLinearMap viscousMap huThreeHalf
+  have hviscous :
+      MemLp (fun t => viscousMap (uThreeHalf t))
+        (ENNReal.ofReal (4 / 3 : ℝ)) μ :=
+    memLp_fourThird_of_memLp_two hviscous2
+  have hnonlinear :
+      MemLp (fun t => nonlinearMap (uOne t) (gradHalf t))
+        (ENNReal.ofReal (4 / 3 : ℝ)) μ :=
+    memLp_bilinear_four_two_fourThird
+      nonlinearMap hHolder huOne hgradHalf
+  rw [hEquation]
+  exact hviscous.add hnonlinear
+
 /-- Exact decomposition surface for the Galerkin time derivative in H^(-1/2). -/
 structure CriticalTimeDerivativeDecomposition
     (α HMinusHalf : Type*) [MeasurableSpace α]
@@ -115,6 +200,27 @@ theorem weakStar_closedBall_seqCompact
   simpa using
     (WeakDual.isSeqCompact_closedBall ℝ E
       (0 : StrongDual ℝ E) r)
+
+
+/--
+Concrete sequential Banach--Alaoglu extraction for any sequence lying in one
+weak-* closed dual ball.
+-/
+theorem weakStar_closedBall_has_subsequence
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace.SeparableSpace E]
+    (r : ℝ) (u : ℕ → WeakDual ℝ E)
+    (hu :
+      ∀ n,
+        WeakDual.toStrongDual (u n) ∈
+          Metric.closedBall (0 : StrongDual ℝ E) r) :
+    ∃ u∞ : WeakDual ℝ E,
+      WeakDual.toStrongDual u∞ ∈
+        Metric.closedBall (0 : StrongDual ℝ E) r ∧
+      ∃ φ : ℕ → ℕ,
+        StrictMono φ ∧ Tendsto (u ∘ φ) atTop (𝓝 u∞) := by
+  simpa only [Set.mem_preimage] using
+    (weakStar_closedBall_seqCompact r hu)
 
 /-- The dual norm is lower semicontinuous for the weak-* topology. -/
 theorem weakStar_dualNorm_lowerSemicontinuous

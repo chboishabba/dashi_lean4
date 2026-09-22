@@ -158,33 +158,58 @@ conclusion is indexed by the concrete Galerkin sequence, limit object, and
 selected Sobolev carriers. This records the published theorem boundary without
 asserting that DASHI's concrete carriers have already instantiated it.
 -/
+/--
+Concrete operator realization of the critical Sobolev triple.  B3 is exactly
+the compactness proof for highToCritical; B4 is represented by the actual
+continuous linear map criticalToNegative, whose continuity is part of its type.
+-/
+structure CriticalSobolevTriple
+    (HThreeHalf HOneHalf HMinusHalf : Type*)
+    [NormedAddCommGroup HThreeHalf] [NormedSpace ℝ HThreeHalf]
+    [NormedAddCommGroup HOneHalf] [NormedSpace ℝ HOneHalf]
+    [NormedAddCommGroup HMinusHalf] [NormedSpace ℝ HMinusHalf] where
+  highToCritical : HThreeHalf →L[ℝ] HOneHalf
+  highToCriticalCompact : IsCompactOperator highToCritical
+  criticalToNegative : HOneHalf →L[ℝ] HMinusHalf
+
+theorem CriticalSobolevTriple.criticalToNegative_continuous
+    {HThreeHalf HOneHalf HMinusHalf : Type*}
+    [NormedAddCommGroup HThreeHalf] [NormedSpace ℝ HThreeHalf]
+    [NormedAddCommGroup HOneHalf] [NormedSpace ℝ HOneHalf]
+    [NormedAddCommGroup HMinusHalf] [NormedSpace ℝ HMinusHalf]
+    (T : CriticalSobolevTriple HThreeHalf HOneHalf HMinusHalf) :
+    Continuous T.criticalToNegative :=
+  T.criticalToNegative.continuous
+
+/--
+The selected Simon/Aubin--Lions source contract.  The compact and continuous
+embeddings are concrete operators, not caller-selected propositions.  The
+remaining source theorem is exactly the published compactness implication on
+this sequence and selected limit.
+-/
 structure CriticalSimonSourceInstance
     (Galerkin LimitState HThreeHalf HOneHalf HMinusHalf : Type*)
+    [NormedAddCommGroup HThreeHalf] [NormedSpace ℝ HThreeHalf]
+    [NormedAddCommGroup HOneHalf] [NormedSpace ℝ HOneHalf]
+    [NormedAddCommGroup HMinusHalf] [NormedSpace ℝ HMinusHalf]
     (galerkins : ℕ → Galerkin)
     (limit : LimitState)
-    (UniformL2In :
-      (ℕ → Galerkin) → Type* → Prop)
+    (triple : CriticalSobolevTriple HThreeHalf HOneHalf HMinusHalf)
+    (UniformL2In : (ℕ → Galerkin) → Type* → Prop)
     (UniformTimeDerivativeLFourThirdIn :
       (ℕ → Galerkin) → Type* → Prop)
-    (CompactEmbedding : Type* → Type* → Prop)
-    (ContinuousEmbedding : Type* → Type* → Prop)
     (StrongL2SubsequenceIn :
       (ℕ → Galerkin) → LimitState → Type* → Prop) : Prop where
   uniformlyBoundedL2HThreeHalf :
     UniformL2In galerkins HThreeHalf
   uniformlyBoundedTimeDerivativeLFourThirdHMinusHalf :
     UniformTimeDerivativeLFourThirdIn galerkins HMinusHalf
-  compactEmbeddingHThreeHalfToHOneHalf :
-    CompactEmbedding HThreeHalf HOneHalf
-  continuousEmbeddingHOneHalfToHMinusHalf :
-    ContinuousEmbedding HOneHalf HMinusHalf
   strongL2HOneHalfSubsequence :
     StrongL2SubsequenceIn galerkins limit HOneHalf
   sourceImplication :
     UniformL2In galerkins HThreeHalf →
     UniformTimeDerivativeLFourThirdIn galerkins HMinusHalf →
-    CompactEmbedding HThreeHalf HOneHalf →
-    ContinuousEmbedding HOneHalf HMinusHalf →
+    IsCompactOperator triple.highToCritical →
     StrongL2SubsequenceIn galerkins limit HOneHalf
 
 /-! ## P5: weak-* compactness and norm lower semicontinuity -/

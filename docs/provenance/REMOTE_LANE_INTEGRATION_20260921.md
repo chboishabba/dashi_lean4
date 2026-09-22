@@ -38,3 +38,15 @@ surfaces against the pre-merge active tree.
 
 The reports remain provenance evidence and do not authorize destructive archive
 deduplication or deletion.
+
+## Recursive TOE snapshot accounting
+
+`TOE_RECURSIVE_INTAKE_SUMMARY_20260922.csv` and its member catalogue classify
+the Sep 12 TOE output without extraction. Its 11,876 Lean members contain only
+5,123 unique content hashes; 6,753 members are exact internal copies. The
+largest recursive families are `Lean/ImportedLeans` (3,887), `Lean/outputs`
+(3,097), `Provenance` (2,855), and `Lean/Imported` (1,341). This explains the
+inflated repository-wide `ImportedLeans` count: of 15,945 files and 5,338
+unique hashes in that subtree, the TOE snapshot supplies 11,876 files and
+5,123 hashes. It is an immutable nested artifact mirror, not a 15k-module
+canonical Lean library.

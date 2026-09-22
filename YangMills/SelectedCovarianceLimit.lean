@@ -1,5 +1,4 @@
-import Mathlib.Topology.Algebra.Order
-import Mathlib.Topology.Instances.Real
+import Mathlib
 
 open Filter
 

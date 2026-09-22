@@ -379,6 +379,31 @@ theorem normalizedDelta_inv_conj (τ : ℍ) :
   simp [negConj, map_mul, map_pow]
   ring
 
+/-- Unit norm is the concrete reciprocal-conjugate fixed-locus condition. -/
+theorem S_negConj_fixed_of_normSq_one
+    (τ : ℍ)
+    (hunit : Complex.normSq (τ : ℂ) = 1) :
+    ModularGroup.S • negConj τ = τ := by
+  apply UpperHalfPlane.ext
+  rw [S_negConj_coe]
+  have hconj : conj (τ : ℂ) ≠ 0 := by
+    exact map_ne_zero Complex.conj (UpperHalfPlane.ne_zero τ)
+  apply (div_eq_iff hconj).2
+  calc
+    (1 : ℂ) = (Complex.normSq (τ : ℂ) : ℂ) := by simp [hunit]
+    _ = conj (τ : ℂ) * (τ : ℂ) := Complex.normSq_eq_conj_mul_self
+    _ = (τ : ℂ) * conj (τ : ℂ) := by ring
+
+/-- Fixed-locus value identity consumed by the Agda sixfold phase compiler. -/
+theorem normalizedDelta_unitCircle_fixed
+    (τ : ℍ)
+    (hunit : Complex.normSq (τ : ℂ) = 1) :
+    normalizedDeltaLimit τ =
+      conj ((τ : ℂ) ^ 12 * normalizedDeltaLimit τ) := by
+  have hfix := S_negConj_fixed_of_normSq_one τ hunit
+  rw [← hfix]
+  exact normalizedDelta_inv_conj τ
+
 /-- Machine-readable seam. -/
 structure AgdaTargetBoundary where
   literalQTargetOwned : Bool
@@ -396,6 +421,8 @@ structure AgdaTargetBoundary where
   realStructureConjugationLawOwned : Bool
   weight12SActionOwned : Bool
   concreteInvConjReflectionOwned : Bool
+  unitNormFixedLocusOwned : Bool
+  fixedLocusValueIdentityOwned : Bool
 
 def agdaTargetBoundary : AgdaTargetBoundary where
   literalQTargetOwned := true
@@ -413,6 +440,8 @@ def agdaTargetBoundary : AgdaTargetBoundary where
   realStructureConjugationLawOwned := true
   weight12SActionOwned := true
   concreteInvConjReflectionOwned := true
+  unitNormFixedLocusOwned := true
+  fixedLocusValueIdentityOwned := true
 
 end
 

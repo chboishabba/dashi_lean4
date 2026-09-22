@@ -281,3 +281,9 @@ import Synthesis.MillenniumBSDCMSplitJacobiRealTrace
 import Synthesis.MillenniumBSDCMSplitJacobiGaussianNorm
 
 import Synthesis.MillenniumBSDCMSplitJacobiPrimaryResidual
+
+import Synthesis.MillenniumBSDRationalQuadraticKummerDescent
+
+import Synthesis.MillenniumBSDRationalQuadraticKummerHom
+
+import Synthesis.MillenniumBSDRationalQuadraticKummerInjective

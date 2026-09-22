@@ -248,4 +248,114 @@ theorem false_of_quarticFourSignedPole_external_strict_quantitative
   rw [W.combinedCluster_eq_offGamma ht] at hlo
   linarith
 
+
+/-!
+## Uniform-bound source cut for G1
+
+The preferred G1 search can now be factored into two source estimates rather
+than another existential-radius theorem:
+
+* a uniform lower bound on the signed target strength S(W_t);
+* a uniform upper bound on the fourth-derivative Lipschitz constant K(W_t).
+
+The definitions below are obligation surfaces, not fabricated estimates.
+The threshold compiler following them is elementary.
+-/
+
+def quarticSignedPole_targetStrength_uniform_lower
+    (T S0 : ℝ) : Prop :=
+  ∀ {t : ℝ}, T <= t ->
+    ∀ W : QuarticFourSignedPolePair t,
+      S0 <= W.signedTargetStrength
+
+def quarticSignedPole_fourthLipschitz_uniform_upper
+    (T K0 : ℝ) : Prop :=
+  ∀ {t : ℝ}, T <= t ->
+    ∀ W : QuarticFourSignedPolePair t,
+      compactCoshFourthLipschitzConstant
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+        <= K0
+
+/--
+Elementary G1 threshold compiler.
+
+For t>8, if
+  S0 <= S(W),
+  K(W) <= K0,
+and
+  4 (K0+1) / t < S0,
+then
+  8/t < quantitativeTargetRadius(W).
+
+Thus any coarse uniform S-lower/K-upper pair is enough once t is large.
+-/
+theorem quarticSignedPole_quantitativeBand_covers_strip
+    {t S0 K0 : ℝ}
+    (ht8 : 8 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hS0 : 0 < S0)
+    (hK0 : 0 <= K0)
+    (hS : S0 <= W.signedTargetStrength)
+    (hK :
+      compactCoshFourthLipschitzConstant
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+        <= K0)
+    (hthreshold : 4 * (K0 + 1) / t < S0) :
+    8/t < W.quantitativeTargetRadius := by
+  let K :=
+    compactCoshFourthLipschitzConstant
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t)
+  have ht : 0 < t := by linarith
+  have hKnonneg : 0 <= K := by
+    dsimp [K]
+    exact compactCoshFourthLipschitzConstant_nonneg _
+  have hK1 : 0 < K + 1 := by linarith
+  have hK0one : 0 <= K0 + 1 := by linarith
+  have hmono :
+      4 * (K + 1) / t <= 4 * (K0 + 1) / t := by
+    rw [div_le_div_iff₀ ht ht]
+    nlinarith
+  have hcore :
+      4 * (K + 1) / t < W.signedTargetStrength :=
+    lt_of_le_of_lt hmono (hthreshold.trans_le hS)
+  have hcross :
+      4 * (K + 1) < W.signedTargetStrength * t := by
+    rwa [div_lt_iff₀ ht] at hcore
+  unfold QuarticFourSignedPolePair.quantitativeTargetRadius
+    quantitativeFourthOrderRadius
+  apply lt_min
+  · rw [div_lt_one ht]
+    exact ht8
+  · have hden : 0 < 2 * (K + 1) := by positivity
+    rw [div_lt_div_iff₀ ht hden]
+    nlinarith
+
+/--
+Uniform-source form of the G1 compiler.
+
+This consumes the two candidate source obligations directly and leaves only
+the scalar threshold on the chosen coarse constants.
+-/
+theorem quarticSignedPole_quantitativeBand_covers_strip_of_uniform_bounds
+    {T t S0 K0 : ℝ}
+    (htT : T <= t)
+    (ht8 : 8 < t)
+    (hS0 : 0 < S0)
+    (hK0 : 0 <= K0)
+    (hS :
+      quarticSignedPole_targetStrength_uniform_lower T S0)
+    (hK :
+      quarticSignedPole_fourthLipschitz_uniform_upper T K0)
+    (hthreshold : 4 * (K0 + 1) / t < S0)
+    (W : QuarticFourSignedPolePair t) :
+    8/t < W.quantitativeTargetRadius := by
+  exact quarticSignedPole_quantitativeBand_covers_strip
+    ht8 W hS0 hK0
+    (hS htT W)
+    (hK htT W)
+    hthreshold
+
 end Synthesis

@@ -43,6 +43,7 @@ open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
 open Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile
 open Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition
 open Zeta23Bridge.LiteralWeilOffOrdinateReflectionPair
+open Zeta23Bridge.LiteralWeilProjectiveStripConstant
 
 def QuarticFourSignedPolePair.quantitativeTargetRadius
     {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
@@ -409,6 +410,221 @@ theorem quarticSignedPole_constructedWitness_uniform_K_to_goodWitness
     quarticSignedPole_goodWitness_uniform_K 200 K0 := by
   intro t ht
   exact hK ht
+
+/--
+Basic L1 triangle compiler on continuous compact profiles.
+-/
+theorem taperMass_add_le
+    {P Q : ℝ -> ℝ}
+    (hP : Continuous P) (hPc : HasCompactSupport P)
+    (hQ : Continuous Q) (hQc : HasCompactSupport Q) :
+    taperMass (fun u => P u + Q u)
+      <= taperMass P + taperMass Q := by
+  unfold taperMass
+  have hPi : Integrable (fun u : ℝ => |P u|) :=
+    hP.abs.integrable_of_hasCompactSupport hPc.abs
+  have hQi : Integrable (fun u : ℝ => |Q u|) :=
+    hQ.abs.integrable_of_hasCompactSupport hQc.abs
+  have hsum :
+      Integrable (fun u : ℝ => |P u + Q u|) :=
+    (hP.add hQ).abs.integrable_of_hasCompactSupport (hPc.add hQc).abs
+  calc
+    (∫ u : ℝ, |P u + Q u|)
+      <= ∫ u : ℝ, (|P u| + |Q u|) := by
+        apply integral_mono hsum (hPi.add hQi)
+        intro u
+        exact abs_add _ _
+    _ = (∫ u : ℝ, |P u|) + (∫ u : ℝ, |Q u|) := by
+      rw [integral_add hPi hQi]
+
+theorem taperMass_sub_le
+    {P Q : ℝ -> ℝ}
+    (hP : Continuous P) (hPc : HasCompactSupport P)
+    (hQ : Continuous Q) (hQc : HasCompactSupport Q) :
+    taperMass (fun u => P u - Q u)
+      <= taperMass P + taperMass Q := by
+  unfold taperMass
+  have hPi : Integrable (fun u : ℝ => |P u|) :=
+    hP.abs.integrable_of_hasCompactSupport hPc.abs
+  have hQi : Integrable (fun u : ℝ => |Q u|) :=
+    hQ.abs.integrable_of_hasCompactSupport hQc.abs
+  have hsub :
+      Integrable (fun u : ℝ => |P u - Q u|) :=
+    (hP.sub hQ).abs.integrable_of_hasCompactSupport (hPc.sub hQc).abs
+  calc
+    (∫ u : ℝ, |P u - Q u|)
+      <= ∫ u : ℝ, (|P u| + |Q u|) := by
+        apply integral_mono hsub (hPi.add hQi)
+        intro u
+        exact abs_sub _ _
+    _ = (∫ u : ℝ, |P u|) + (∫ u : ℝ, |Q u|) := by
+      rw [integral_add hPi hQi]
+
+theorem taperMass_const_mul
+    (a : ℝ)
+    {P : ℝ -> ℝ}
+    (hP : Continuous P) (hPc : HasCompactSupport P) :
+    taperMass (fun u => a * P u)
+      = |a| * taperMass P := by
+  unfold taperMass
+  simp_rw [abs_mul]
+  rw [integral_const_mul]
+
+/--
+Uniform L1 bound for the normalized four-window taper in the design corridor.
+
+The constant is deliberately coarse:
+  1 + 1 + 2/3 + 1/10 = 83/30.
+-/
+theorem quarticFourWindowProfile_taperMass_le_eightyThree_thirtieths
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (hlam0 : 0 <= lam)
+    (hlam : lam <= 2/3)
+    (hmu : |mu| <= 1/10) :
+    taperMass (quarticFourWindowProfile R lam mu)
+      <= 83/30 := by
+  let b0 : ℝ -> ℝ := quantitativeSymBump 0 R
+  let b1 : ℝ -> ℝ := quantitativeSymBump (Real.pi/3) R
+  let b2 : ℝ -> ℝ := quantitativeSymBump (Real.pi/2) R
+  let b3 : ℝ -> ℝ := quantitativeSymBump Real.pi R
+  have h0c : Continuous b0 :=
+    (quantitativeSymBump_contDiff (c:=0) (R:=R) hR.ne').continuous
+  have h1c : Continuous b1 :=
+    (quantitativeSymBump_contDiff (c:=Real.pi/3) (R:=R) hR.ne').continuous
+  have h2c : Continuous b2 :=
+    (quantitativeSymBump_contDiff (c:=Real.pi/2) (R:=R) hR.ne').continuous
+  have h3c : Continuous b3 :=
+    (quantitativeSymBump_contDiff (c:=Real.pi) (R:=R) hR.ne').continuous
+  have h0k : HasCompactSupport b0 :=
+    quantitativeSymBump_hasCompactSupport (c:=0) hR
+  have h1k : HasCompactSupport b1 :=
+    quantitativeSymBump_hasCompactSupport (c:=Real.pi/3) hR
+  have h2k : HasCompactSupport b2 :=
+    quantitativeSymBump_hasCompactSupport (c:=Real.pi/2) hR
+  have h3k : HasCompactSupport b3 :=
+    quantitativeSymBump_hasCompactSupport (c:=Real.pi) hR
+  have h0m : taperMass b0 <= quarticWindowMass R := by
+    simpa [b0, quarticWindowMass] using
+      taperMass_quantitativeSymBump_le (c:=0) hR
+  have h1m : taperMass b1 <= quarticWindowMass R := by
+    simpa [b1, quarticWindowMass] using
+      taperMass_quantitativeSymBump_le (c:=Real.pi/3) hR
+  have h2m : taperMass b2 <= quarticWindowMass R := by
+    simpa [b2, quarticWindowMass] using
+      taperMass_quantitativeSymBump_le (c:=Real.pi/2) hR
+  have h3m : taperMass b3 <= quarticWindowMass R := by
+    simpa [b3, quarticWindowMass] using
+      taperMass_quantitativeSymBump_le (c:=Real.pi) hR
+  have hmasspos : 0 < quarticWindowMass R := quarticWindowMass_pos hR
+  have hraw :
+      taperMass (quarticFourWindowRaw R lam mu)
+        <= (2 + lam + |mu|) * quarticWindowMass R := by
+    -- triangle inequality on the four signed/scaled windows
+    have h01 :=
+      taperMass_sub_le h0c h0k h1c h1k
+    let p01 : ℝ -> ℝ := fun u => b0 u - b1 u
+    have hp01c : Continuous p01 := h0c.sub h1c
+    have hp01k : HasCompactSupport p01 := h0k.sub h1k
+    have h2scaled :
+        taperMass (fun u => lam * b2 u)
+          = lam * taperMass b2 := by
+      rw [taperMass_const_mul lam h2c h2k, abs_of_nonneg hlam0]
+    have hmuScaled :
+        taperMass (fun u => mu * b3 u)
+          = |mu| * taperMass b3 := by
+      exact taperMass_const_mul mu h3c h3k
+    have h012 :=
+      taperMass_add_le hp01c hp01k
+        (continuous_const.mul h2c) h2k.mul_left
+    let p012 : ℝ -> ℝ :=
+      fun u => p01 u + lam * b2 u
+    have hp012c : Continuous p012 :=
+      hp01c.add (continuous_const.mul h2c)
+    have hp012k : HasCompactSupport p012 :=
+      hp01k.add h2k.mul_left
+    have h0123 :=
+      taperMass_add_le hp012c hp012k
+        (continuous_const.mul h3c) h3k.mul_left
+    unfold quarticFourWindowRaw
+    change taperMass
+      (fun u => (b0 u - b1 u + lam*b2 u) + mu*b3 u)
+      <= _ 
+    calc
+      taperMass (fun u => (b0 u - b1 u + lam*b2 u) + mu*b3 u)
+        <= taperMass (fun u => b0 u - b1 u + lam*b2 u)
+          + taperMass (fun u => mu*b3 u) := h0123
+      _ <=
+        (taperMass b0 + taperMass b1 + lam*taperMass b2)
+          + |mu|*taperMass b3 := by
+        rw [hmuScaled]
+        have h012' :
+            taperMass (fun u => b0 u - b1 u + lam*b2 u)
+              <= taperMass b0 + taperMass b1 + lam*taperMass b2 := by
+          calc
+            taperMass (fun u => b0 u - b1 u + lam*b2 u)
+              <= taperMass (fun u => b0 u - b1 u)
+                + taperMass (fun u => lam*b2 u) := h012
+            _ <= (taperMass b0 + taperMass b1)
+                + lam*taperMass b2 := by
+              rw [h2scaled]
+              linarith
+        linarith
+      _ <= (2 + lam + |mu|) * quarticWindowMass R := by
+        have hlamnon : 0 <= lam := hlam0
+        have hmunon : 0 <= |mu| := abs_nonneg _
+        nlinarith
+  have hprofile :
+      taperMass (quarticFourWindowProfile R lam mu)
+        =
+      (quarticWindowMass R)⁻¹
+        * taperMass (quarticFourWindowRaw R lam mu) := by
+    unfold quarticFourWindowProfile
+    rw [taperMass_const_mul
+      (quarticWindowMass R)⁻¹
+      (quarticFourWindowRaw_continuous hR)
+      (quarticFourWindowRaw_compact hR)]
+    rw [abs_of_pos (inv_pos.mpr hmasspos)]
+  rw [hprofile]
+  have hscaled :=
+    mul_le_mul_of_nonneg_left hraw (inv_nonneg.mpr hmasspos.le)
+  have hcancel :
+      (quarticWindowMass R)⁻¹ * quarticWindowMass R = 1 := by
+    field_simp [ne_of_gt hmasspos]
+  have hcoef : 2 + lam + |mu| <= 83/30 := by
+    linarith
+  calc
+    (quarticWindowMass R)⁻¹
+        * taperMass (quarticFourWindowRaw R lam mu)
+      <= (quarticWindowMass R)⁻¹
+          * ((2 + lam + |mu|) * quarticWindowMass R) := hscaled
+    _ = 2 + lam + |mu| := by
+      field_simp [ne_of_gt hmasspos]
+    _ <= 83/30 := hcoef
+
+theorem QuarticFourSignedPolePair.halfWindow_taperMass_le
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    taperMass
+      (quarticFourWindowProfile W.R (1/2) W.muHalf)
+      <= 83/30 := by
+  have hmu :
+      |W.muHalf| <= 1/10 :=
+    (quarticFourAtomicMu_corridor_abs_lt_tenth
+      (by norm_num) (by norm_num) W.muHalfNear).le
+  exact quarticFourWindowProfile_taperMass_le_eightyThree_thirtieths
+    W.Rpos (by norm_num) (by norm_num) hmu
+
+theorem QuarticFourSignedPolePair.twoWindow_taperMass_le
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    taperMass
+      (quarticFourWindowProfile W.R (2/3) W.muTwo)
+      <= 83/30 := by
+  have hmu :
+      |W.muTwo| <= 1/10 :=
+    (quarticFourAtomicMu_corridor_abs_lt_tenth
+      (by norm_num) (by norm_num) W.muTwoNear).le
+  exact quarticFourWindowProfile_taperMass_le_eightyThree_thirtieths
+    W.Rpos (by norm_num) (by norm_num) hmu
 
 /--
 The projective physical multiplier does not enlarge the four-window support.

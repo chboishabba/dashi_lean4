@@ -6,6 +6,7 @@ import Integration.BishopVendoredRealEvaluation
 import Integration.BishopVendoredOrderConvergenceEvaluation
 import Integration.BishopVendoredExponentialSemantics
 import Integration.BishopVendoredTrigSemantics
+import Integration.BishopVendoredMachinPiSemantics
 import Integration.BishopVendoredTranscendentalExtraction
 import Integration.MoonshineEisensteinWeld
 import Integration.TernaryHub

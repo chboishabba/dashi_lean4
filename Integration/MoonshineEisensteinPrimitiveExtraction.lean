@@ -32,6 +32,7 @@ noncomputable section
 Agda's ConcreteComplex package. -/
 structure SourceRealTranscendental where
   Carrier : Type
+  equiv : Carrier → Carrier → Prop
   zero one : Carrier
   add sub mul : Carrier → Carrier → Carrier
   neg : Carrier → Carrier
@@ -75,12 +76,16 @@ structure SourceComplexPackage where
   expC : SourceComplex real → SourceComplex real
   expCartesian : ∀ z, expC z = SourceComplex.expCartesian z
 
-/-- Primitive faithful interpretation into Lean Real.  Injectivity is retained
-because route B ultimately wants a same-object embedding rather than merely a
-homomorphic collapse. -/
+/-- Primitive setoid-respecting interpretation into Lean Real.
+
+The source carrier may be a presentation by representatives (as Bishop reals
+are), so raw Function.Injective would be the wrong contract.  Same-object
+faithfulness is expressed through the source equivalence relation instead. -/
 structure PrimitiveRealExtraction (S : SourceRealTranscendental) where
   map : S.Carrier → ℝ
-  injective : Function.Injective map
+
+  respects_equiv : ∀ {x y}, S.equiv x y → map x = map y
+  reflects_equiv : ∀ {x y}, map x = map y → S.equiv x y
 
   map_zero : map S.zero = 0
   map_one : map S.one = 1
@@ -264,6 +269,8 @@ structure PrimitiveExtractionBoundary where
   literalE6TransportOwned : Bool
   actualAgdaMirrorPackageInhabited : Bool
   primitiveAgdaRealToLeanRealExtractionInhabited : Bool
+  rawRepresentativeInjectivityRequired : Bool
+  setoidFaithfulnessRequired : Bool
 
 def primitiveExtractionBoundary : PrimitiveExtractionBoundary where
   componentwiseComplexMapOwned := true
@@ -274,6 +281,8 @@ def primitiveExtractionBoundary : PrimitiveExtractionBoundary where
   literalE6TransportOwned := true
   actualAgdaMirrorPackageInhabited := false
   primitiveAgdaRealToLeanRealExtractionInhabited := false
+  rawRepresentativeInjectivityRequired := false
+  setoidFaithfulnessRequired := true
 
 end
 

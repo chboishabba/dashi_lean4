@@ -49,6 +49,7 @@ namespace Synthesis
 open Zeta23
 open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
 open Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition
+open Zeta23Bridge.LiteralWeilOffOrdinateReflectionPair
 open Zeta23Bridge.ProjectedZeroTailSummability
 open Zeta23Bridge.NearFarCarrierSplit
 

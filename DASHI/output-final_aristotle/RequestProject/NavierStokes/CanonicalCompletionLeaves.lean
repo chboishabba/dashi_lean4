@@ -68,23 +68,39 @@ and is not replaced here by an unrelated abstract norm inequality.
 /-! ## P4: exact Simon source contract -/
 
 /--
-The selected Simon/Aubin--Lions source theorem contract. This records the
-published theorem boundary; it does not assert that the concrete DASHI
-Sobolev carriers have already instantiated it.
+The selected Simon/Aubin--Lions source theorem contract. Every hypothesis and
+conclusion is indexed by the concrete Galerkin sequence, limit object, and
+selected Sobolev carriers. This records the published theorem boundary without
+asserting that DASHI's concrete carriers have already instantiated it.
 -/
 structure CriticalSimonSourceInstance
-    (Galerkin LimitState HThreeHalf HOneHalf HMinusHalf : Type*) : Prop where
-  uniformlyBoundedL2HThreeHalf : Prop
-  uniformlyBoundedTimeDerivativeLFourThirdHMinusHalf : Prop
-  compactEmbeddingHThreeHalfToHOneHalf : Prop
-  continuousEmbeddingHOneHalfToHMinusHalf : Prop
-  strongL2HOneHalfSubsequence : Prop
+    (Galerkin LimitState HThreeHalf HOneHalf HMinusHalf : Type*)
+    (galerkins : ℕ → Galerkin)
+    (limit : LimitState)
+    (UniformL2HThreeHalf : (ℕ → Galerkin) → Prop)
+    (UniformTimeDerivativeLFourThirdHMinusHalf : (ℕ → Galerkin) → Prop)
+    (CompactEmbedding : HThreeHalf → HOneHalf → Prop)
+    (ContinuousEmbedding : HOneHalf → HMinusHalf → Prop)
+    (StrongL2HOneHalfSubsequence :
+      (ℕ → Galerkin) → LimitState → Prop)
+    (hThreeHalf : HThreeHalf)
+    (hOneHalf : HOneHalf)
+    (hMinusHalf : HMinusHalf) : Prop where
+  uniformlyBoundedL2HThreeHalf : UniformL2HThreeHalf galerkins
+  uniformlyBoundedTimeDerivativeLFourThirdHMinusHalf :
+    UniformTimeDerivativeLFourThirdHMinusHalf galerkins
+  compactEmbeddingHThreeHalfToHOneHalf :
+    CompactEmbedding hThreeHalf hOneHalf
+  continuousEmbeddingHOneHalfToHMinusHalf :
+    ContinuousEmbedding hOneHalf hMinusHalf
+  strongL2HOneHalfSubsequence :
+    StrongL2HOneHalfSubsequence galerkins limit
   sourceImplication :
-    uniformlyBoundedL2HThreeHalf →
-    uniformlyBoundedTimeDerivativeLFourThirdHMinusHalf →
-    compactEmbeddingHThreeHalfToHOneHalf →
-    continuousEmbeddingHOneHalfToHMinusHalf →
-    strongL2HOneHalfSubsequence
+    UniformL2HThreeHalf galerkins →
+    UniformTimeDerivativeLFourThirdHMinusHalf galerkins →
+    CompactEmbedding hThreeHalf hOneHalf →
+    ContinuousEmbedding hOneHalf hMinusHalf →
+    StrongL2HOneHalfSubsequence galerkins limit
 
 /-! ## P5: weak-* compactness and norm lower semicontinuity -/
 
@@ -127,16 +143,21 @@ theorem weakStar_norm_eventually_gt_of_lt_limit
   exact hu.eventually
     ((weakStar_dualNorm_lowerSemicontinuous (E := E)) u∞ c hc)
 
-/-- Adapter for identifying the concrete critical Linfinity carrier with a weak-* dual. -/
+/-- Typed adapter for weak-* convergence and the critical liminf on one concrete sequence/limit. -/
 structure CriticalWeakStarLiminfSourceInstance
-    (Sequence LimitState : Type*) : Prop where
-  weakStarConverges : Prop
-  uniformCriticalBound : Prop
-  weakStarCriticalLowerSemicontinuity : Prop
+    (Sequence LimitState : Type*)
+    (sequence : ℕ → Sequence)
+    (limit : LimitState)
+    (WeakStarConverges : (ℕ → Sequence) → LimitState → Prop)
+    (UniformCriticalBound : (ℕ → Sequence) → Prop)
+    (CriticalNormLiminf : (ℕ → Sequence) → LimitState → Prop) : Prop where
+  weakStarConverges : WeakStarConverges sequence limit
+  uniformCriticalBound : UniformCriticalBound sequence
+  weakStarCriticalLowerSemicontinuity : CriticalNormLiminf sequence limit
   sourceImplication :
-    weakStarConverges →
-    uniformCriticalBound →
-    weakStarCriticalLowerSemicontinuity
+    WeakStarConverges sequence limit →
+    UniformCriticalBound sequence →
+    CriticalNormLiminf sequence limit
 
 /-! ## Hard mathematical boundary -/
 

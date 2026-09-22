@@ -287,3 +287,13 @@ import Synthesis.MillenniumBSDRationalQuadraticKummerDescent
 import Synthesis.MillenniumBSDRationalQuadraticKummerHom
 
 import Synthesis.MillenniumBSDRationalQuadraticKummerInjective
+
+import Synthesis.MillenniumBSDQuadraticCharacterFiniteFieldReduction
+
+import Synthesis.MillenniumBSDQuadraticCharacterDegreeTwo
+
+import Synthesis.MillenniumBSDQuadraticCharacterSquareRootGenerator
+
+import Synthesis.MillenniumBSDRationalQuadraticKummerSurjective
+
+import Synthesis.MillenniumBSDCMSplitJacobiPrimaryCube

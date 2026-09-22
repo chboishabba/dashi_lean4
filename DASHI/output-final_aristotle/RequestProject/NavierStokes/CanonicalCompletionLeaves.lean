@@ -249,6 +249,35 @@ theorem weakStar_norm_eventually_gt_of_lt_limit
   exact hu.eventually
     ((weakStar_dualNorm_lowerSemicontinuous (E := E)) u∞ c hc)
 
+
+/--
+Literal liminf form used by the critical barrier.  A uniform closed-ball bound
+supplies the upper coboundedness needed by liminf on ℝ; norm nonnegativity
+supplies the lower boundedness.
+-/
+theorem weakStar_norm_le_liminf
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {u : ℕ → WeakDual ℝ E} {u∞ : WeakDual ℝ E}
+    (hu : Tendsto u atTop (𝓝 u∞))
+    (r : ℝ)
+    (hbound : ∀ n, ‖WeakDual.toStrongDual (u n)‖ ≤ r) :
+    ‖WeakDual.toStrongDual u∞‖ ≤
+      Filter.liminf
+        (fun n => ‖WeakDual.toStrongDual (u n)‖) atTop := by
+  have hcob :
+      IsCoboundedUnder (· ≥ ·) atTop
+        (fun n => ‖WeakDual.toStrongDual (u n)‖) :=
+    IsCoboundedUnder.of_frequently_le
+      (Filter.Frequently.of_forall hbound)
+  have hbdd :
+      IsBoundedUnder (· ≥ ·) atTop
+        (fun n => ‖WeakDual.toStrongDual (u n)‖) :=
+    isBoundedUnder_of_eventually_ge
+      (Filter.Eventually.of_forall fun n => norm_nonneg _)
+  exact (le_liminf_iff hcob hbdd).2
+    (fun c hc =>
+      weakStar_norm_eventually_gt_of_lt_limit hu hc)
+
 /-- Typed adapter for weak-* convergence and the critical liminf on one concrete sequence/limit. -/
 structure CriticalWeakStarLiminfSourceInstance
     (Sequence LimitState : Type*)

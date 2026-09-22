@@ -73,31 +73,88 @@ theorem splitJacobiPlus_norm_with_parity
   · simpa [a,b] using hJ
 
 /--
-The exact remaining split-prime sign theorem.  The norm and parity are already
-proved above; only the primary real-coordinate congruence is missing.
--/
-def SplitJacobiPrimaryRealCongruence : Prop :=
-  ∀ (p : ℕ) (_hp : p.Prime) (hmod : p % 4 = 1),
-    ∃ a b : ℤ,
-      a ^ 2 + b ^ 2 = (p : ℤ) ∧
-      a % 4 = 1 ∧
-      Even b ∧
-      splitJacobiPlus p hmod = (a : ℂ) + (b : ℂ) * Complex.I
+The exact remaining split-prime sign theorem.
 
-theorem split_frobenius_signed_of_primaryRealCongruence
-    (hprimary : SplitJacobiPrimaryRealCongruence)
+For the mixed quartic/quadratic Jacobi sum the classical primary normalization
+is the cube congruence
+
+  J ≡ -1 mod (i-1)^3.
+
+The generic mathlib theorem supplies only the square congruence.  This stronger
+specialized cube congruence is exactly the remaining phase datum.
+-/
+def SplitJacobiPrimaryCubeCongruence : Prop :=
+  ∀ (p : ℕ) (_hp : p.Prime) (hmod : p % 4 = 1),
+    ∃ c d : ℤ,
+      splitJacobiPlus p hmod =
+        -1 +
+          ((c : ℂ) + (d : ℂ) * Complex.I) *
+            (Complex.I - 1) ^ 3
+
+theorem primaryCubeCongruence_coordinates
+    (hprimary : SplitJacobiPrimaryCubeCongruence)
     {p : ℕ} (hp : p.Prime) (hmod : p % 4 = 1) :
     ∃ a b : ℤ,
       a ^ 2 + b ^ 2 = (p : ℤ) ∧
-      a % 4 = 1 ∧ Even b ∧
-      frobeniusCoefficient p = -2 * a := by
+      Int.ModEq 4 (a + b) (-1) ∧
+      splitJacobiPlus p hmod = (a : ℂ) + (b : ℂ) * Complex.I := by
   letI : Fact p.Prime := ⟨hp⟩
-  rcases hprimary p hp hmod with ⟨a,b,hnorm,ha4,hbeven,hJ⟩
-  refine ⟨a,b,hnorm,ha4,hbeven,?_⟩
+  rcases hprimary p hp hmod with ⟨c,d,hcube⟩
+  let a : ℤ := -1 + 2 * (c - d)
+  let b : ℤ := 2 * (c + d)
+  have hcoords :
+      splitJacobiPlus p hmod =
+        (a : ℂ) + (b : ℂ) * Complex.I := by
+    rw [hcube]
+    dsimp [a,b]
+    push_cast
+    rw [Complex.I_sq]
+    ring
+  have hnorm := normSq_splitJacobiPlus hmod
+  rw [hcoords] at hnorm
+  have hab : a ^ 2 + b ^ 2 = (p : ℤ) := by
+    have hr : (((a ^ 2 + b ^ 2 : ℤ) : ℝ)) = p := by
+      simpa [Complex.normSq_apply] using hnorm
+    exact_mod_cast hr
+  refine ⟨a,b,hab,?_,hcoords⟩
+  rw [Int.modEq_iff_dvd]
+  use c
+  dsimp [a,b]
+  ring
+
+/--
+After the cube congruence, the remaining conversion to the Jacobi theta
+coefficient sign is only the uniqueness/associate statement for a prime
+sum-of-two-squares representation.  We keep that as a separate arithmetic
+owner instead of folding it into the character-sum theorem.
+-/
+def SplitPrimeRepresentationSignCompiler : Prop :=
+  ∀ (p r s : ℕ),
+    p.Prime →
+    p = (2 * r + 1) ^ 2 + 4 * s ^ 2 →
+    ∀ a b : ℤ,
+      a ^ 2 + b ^ 2 = (p : ℤ) →
+      Int.ModEq 4 (a + b) (-1) →
+      -2 * a = 2 * ((-1 : ℤ) ^ (r + s)) * (2 * r + 1)
+
+theorem split_frobenius_signed_of_primary_and_representation
+    (hprimary : SplitJacobiPrimaryCubeCongruence)
+    (hsign : SplitPrimeRepresentationSignCompiler)
+    {p r s : ℕ} (hp : p.Prime)
+    (hrep : p = (2 * r + 1) ^ 2 + 4 * s ^ 2)
+    (hmod : p % 4 = 1) :
+    frobeniusCoefficient p =
+      2 * ((-1 : ℤ) ^ (r + s)) * (2 * r + 1) := by
+  letI : Fact p.Prime := ⟨hp⟩
+  rcases primaryCubeCongruence_coordinates hprimary hp hmod with
+    ⟨a,b,hnorm,hcong,hJ⟩
   have htrace := split_frobeniusCoefficient_eq_neg_plus_star hmod
   rw [hJ] at htrace
   apply_fun Complex.re at htrace
   norm_num at htrace
-  exact_mod_cast htrace
+  have hfa : frobeniusCoefficient p = -2 * a := by
+    exact_mod_cast htrace
+  rw [hfa]
+  exact hsign p r s hp hrep a b hnorm hcong
 
 end Synthesis.Millennium.BSD

@@ -78,6 +78,49 @@ theorem summable_sextic_geometric (τ : ℍ) :
       (n : ℂ) ^ 6 * qParam τ ^ n) := by
   simpa [qParam] using (summable_pow_mul_cexp 6 1 τ)
 
+/-- Exact sigma_3-weighted q-series summability at the pinned Mathlib version.
+
+This is the literal divisor-sum growth family used by the normalized weight-4
+Eisenstein q-expansion, not merely a polynomial upper majorant. -/
+theorem summable_sigma3_q (τ : ℍ) :
+    Summable (fun n : ℕ =>
+      (σ 3 n : ℂ) * qParam τ ^ n) := by
+  apply Summable.of_norm_bounded
+    (summable_norm_pow_mul_geometric_of_norm_lt_one 4
+      (norm_qParam_lt_one τ))
+  intro n
+  simp only [norm_mul, Complex.norm_natCast, norm_pow]
+  gcongr
+  exact_mod_cast
+    (ArithmeticFunction.sigma_le_pow_succ 3 n).trans_eq
+      (by congr 1; omega)
+
+/-- Exact sigma_5-weighted q-series summability. -/
+theorem summable_sigma5_q (τ : ℍ) :
+    Summable (fun n : ℕ =>
+      (σ 5 n : ℂ) * qParam τ ^ n) := by
+  apply Summable.of_norm_bounded
+    (summable_norm_pow_mul_geometric_of_norm_lt_one 6
+      (norm_qParam_lt_one τ))
+  intro n
+  simp only [norm_mul, Complex.norm_natCast, norm_pow]
+  gcongr
+  exact_mod_cast
+    (ArithmeticFunction.sigma_le_pow_succ 5 n).trans_eq
+      (by congr 1; omega)
+
+/-- Scaling by the literal E4 coefficient preserves summability. -/
+theorem summable_240_sigma3_q (τ : ℍ) :
+    Summable (fun n : ℕ =>
+      (240 : ℂ) * ((σ 3 n : ℂ) * qParam τ ^ n)) :=
+  (summable_sigma3_q τ).mul_left 240
+
+/-- Scaling by the literal E6 coefficient preserves summability. -/
+theorem summable_504_sigma5_q (τ : ℍ) :
+    Summable (fun n : ℕ =>
+      (504 : ℂ) * ((σ 5 n : ℂ) * qParam τ ^ n)) :=
+  (summable_sigma5_q τ).mul_left 504
+
 /-- The pinned Mathlib normalized weight-four Eisenstein series. -/
 abbrev E4 := ModularForm.E (by norm_num : 3 ≤ 4)
 
@@ -125,6 +168,10 @@ structure AnalyticBridgeBoundary where
   qDiskPaid : Bool
   quarticGeometricSummable : Bool
   sexticGeometricSummable : Bool
+  sigma3QSeriesSummable : Bool
+  sigma5QSeriesSummable : Bool
+  literal240Sigma3QSeriesSummable : Bool
+  literal504Sigma5QSeriesSummable : Bool
   E4ConvergedQExpansionOwned : Bool
   E6ConvergedQExpansionOwned : Bool
   eta24NonvanishingOwned : Bool
@@ -137,6 +184,10 @@ def analyticBridgeBoundary : AnalyticBridgeBoundary where
   qDiskPaid := true
   quarticGeometricSummable := true
   sexticGeometricSummable := true
+  sigma3QSeriesSummable := true
+  sigma5QSeriesSummable := true
+  literal240Sigma3QSeriesSummable := true
+  literal504Sigma5QSeriesSummable := true
   E4ConvergedQExpansionOwned := true
   E6ConvergedQExpansionOwned := true
   eta24NonvanishingOwned := true

@@ -1,6 +1,7 @@
 import Integration.BishopVendoredRealEvaluation
 import Integration.BishopVendoredExponentialSemantics
 import Integration.BishopVendoredTrigSemantics
+import Integration.BishopVendoredMachinPiSemantics
 import Integration.MoonshineEisensteinPrimitiveExtraction
 
 /-!
@@ -18,10 +19,15 @@ The ring part and the exp/sin/cos semantic identifications are compiler output:
 the latter are derived from the actual Bishop convergence witnesses and
 Mathlib's classical power-series theorems.
 
-The only independent transcendental same-object leaf retained here is the
-selected Bishop pi object with Real.pi.  Once the source convergence mirrors
-and that pi identity are supplied, the full PrimitiveRealExtraction is
-constructed and the q/E4/E6/Delta reflection transport compiler is available.
+The pi semantic identification is also compiler output: the selected source
+pi is fixed to the constructed Bishop Machin real and its two arctangent
+convergence witnesses are transported to Real.arctan before applying Mathlib's
+formal Machin identity.
+
+Accordingly, no independent transcendental semantic equality remains in this
+wrapper.  Once the source convergence mirrors are supplied, the full
+PrimitiveRealExtraction is constructed and the q/E4/E6/Delta reflection
+transport compiler is available.
 -/
 
 namespace Integration.BishopVendoredTranscendentalExtraction
@@ -29,6 +35,7 @@ namespace Integration.BishopVendoredTranscendentalExtraction
 open Integration.BishopVendoredRealEvaluation
 open Integration.BishopVendoredExponentialSemantics
 open Integration.BishopVendoredTrigSemantics
+open Integration.BishopVendoredMachinPiSemantics
 open Integration.MoonshineEisensteinPrimitiveExtraction
 
 noncomputable section
@@ -41,9 +48,7 @@ structure VendoredTranscendentalConvergenceMirror
     (A : VendoredArithmeticMirror) where
   expMirror : VendoredExpLimitMirror A
   trigMirror : VendoredTrigLimitMirror A
-
-  piB : RegularRatReal
-  eval_pi : eval piB = Real.pi
+  machinMirror : VendoredMachinSourceMirror A
 
 open VendoredTranscendentalConvergenceMirror public
 
@@ -75,12 +80,12 @@ def semanticMirrorFromConvergence
   expB := C.expMirror.expB
   sinB := C.trigMirror.sinB
   cosB := C.trigMirror.cosB
-  piB := C.piB
+  piB := machinPiB A C.machinMirror
 
   eval_exp := eval_exp_eq_real_exp A C.expMirror
   eval_sin := eval_sin_eq_real_sin A C.trigMirror
   eval_cos := eval_cos_eq_real_cos A C.trigMirror
-  eval_pi := C.eval_pi
+  eval_pi := eval_machinPi_eq_real_pi A C.machinMirror
 
 /-- The actual vendored algebra and chosen Bishop transcendental operations
 presented in the source shape expected by the route-B compiler. -/
@@ -156,7 +161,8 @@ structure VendoredTranscendentalExtractionBoundary where
 
   bishopExpConvergenceMirrorInhabited : Bool
   bishopTrigConvergenceMirrorInhabited : Bool
-  bishopPiClassicalSemanticWeldOwned : Bool
+  bishopMachinPiClassicalSemanticCompilerOwned : Bool
+  bishopMachinAtanConvergenceMirrorInhabited : Bool
   actualAgdaVendorMirrorPackageInhabited : Bool
 
 def vendoredTranscendentalExtractionBoundary :
@@ -172,7 +178,8 @@ def vendoredTranscendentalExtractionBoundary :
 
   bishopExpConvergenceMirrorInhabited := false
   bishopTrigConvergenceMirrorInhabited := false
-  bishopPiClassicalSemanticWeldOwned := false
+  bishopMachinPiClassicalSemanticCompilerOwned := true
+  bishopMachinAtanConvergenceMirrorInhabited := false
   actualAgdaVendorMirrorPackageInhabited := false
 
 end

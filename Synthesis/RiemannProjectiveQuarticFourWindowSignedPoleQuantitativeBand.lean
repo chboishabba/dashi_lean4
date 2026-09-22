@@ -411,6 +411,70 @@ theorem quarticSignedPole_constructedWitness_uniform_K_to_goodWitness
   exact hK ht
 
 /--
+The projective physical multiplier does not enlarge the four-window support.
+-/
+theorem quarticFourNormalizedProjectiveProfile_support_abs_lt
+    {R lam mu u : ℝ}
+    (hR : 0 < R)
+    (hu :
+      quarticFourNormalizedProjectiveProfile R lam mu u ≠ 0) :
+    |u| < Real.pi + R := by
+  have hg :
+      quarticFourWindowProfile R lam mu u ≠ 0 := by
+    intro hz
+    apply hu
+    unfold quarticFourNormalizedProjectiveProfile
+      genericProjectivePhysicalProfile
+    rw [hz]
+    ring
+  exact quarticFourWindowProfile_support_abs_lt hR hg
+
+/--
+Every signed combined profile carried by a witness is supported in
+|u| < pi+1.
+-/
+theorem QuarticFourSignedPolePair.combinedProfile_support_abs_lt_pi_add_one
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    {u : ℝ}
+    (hu :
+      quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t u ≠ 0) :
+    |u| < Real.pi + 1 := by
+  have hcomponent :
+      quarticFourNormalizedProjectiveProfile
+          W.R (1/2) W.muHalf u ≠ 0
+      ∨
+      quarticFourNormalizedProjectiveProfile
+          W.R (2/3) W.muTwo u ≠ 0 := by
+    by_contra h
+    push_neg at h
+    apply hu
+    unfold quarticFourSignedPoleCombinedProfile
+      profileLinearCombination
+    rw [h.1, h.2]
+    ring
+  cases hcomponent with
+  | inl hhalf =>
+      have hs :=
+        quarticFourNormalizedProjectiveProfile_support_abs_lt
+          W.Rpos hhalf
+      linarith
+  | inr htwo =>
+      have hs :=
+        quarticFourNormalizedProjectiveProfile_support_abs_lt
+          W.Rpos htwo
+      linarith
+
+theorem QuarticFourSignedPolePair.combinedProfile_support_abs_le_pi_add_one
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (u : ℝ)
+    (hu :
+      quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t u ≠ 0) :
+    |u| <= Real.pi + 1 :=
+  (W.combinedProfile_support_abs_lt_pi_add_one hu).le
+
+/--
 Support/L1 reduction for the remaining K estimate.
 
 Any selected witness whose combined profile is supported in |u| <= L and has
@@ -439,5 +503,51 @@ theorem QuarticFourSignedPolePair.fourthLipschitz_le_of_support_mass
     (quarticFourSignedPoleCombinedProfile_continuous W.Rpos)
     (quarticFourSignedPoleCombinedProfile_compact W.Rpos)
     hL hsupp hmass
+
+
+/--
+After the support theorem, the sole remaining input for K is the L1 mass of
+the exact signed combined profile.
+-/
+theorem QuarticFourSignedPolePair.fourthLipschitz_le_of_combined_mass
+    {t M : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hmass :
+      Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+        <= M) :
+    W.fourthLipschitz
+      <= M * Real.cosh (Real.pi + 1) * (Real.pi + 1)^5 := by
+  exact W.fourthLipschitz_le_of_support_mass
+    (by positivity)
+    W.combinedProfile_support_abs_le_pi_add_one
+    hmass
+
+/--
+Preferred final G1 norm obligation after support and target strength have been
+compiled away.
+-/
+def quarticSignedPole_constructedWitness_uniform_combinedMass
+    (M0 : ℝ) : Prop :=
+  ∀ {t : ℝ}, 200 <= t ->
+    ∃ W : QuarticFourSignedPolePair t,
+      quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧
+      Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+        <= M0
+
+theorem quarticSignedPole_uniform_combinedMass_to_uniform_K
+    {M0 : ℝ}
+    (hmass :
+      quarticSignedPole_constructedWitness_uniform_combinedMass M0) :
+    quarticSignedPole_constructedWitness_uniform_K
+      (M0 * Real.cosh (Real.pi + 1) * (Real.pi + 1)^5) := by
+  intro t ht
+  obtain ⟨W,hS,hM⟩ := hmass ht
+  refine ⟨W,hS,?_⟩
+  exact W.fourthLipschitz_le_of_combined_mass hM
 
 end Synthesis

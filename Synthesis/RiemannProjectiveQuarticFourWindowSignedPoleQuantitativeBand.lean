@@ -627,6 +627,193 @@ theorem QuarticFourSignedPolePair.twoWindow_taperMass_le
     W.Rpos (by norm_num) (by norm_num) hmu
 
 /--
+At zero hyperbolic parameter, every cosine response is bounded by the L1 mass
+of the underlying taper.
+-/
+theorem abs_evenResp_zero_le_taperMass
+    {g : ℝ -> ℝ}
+    (hg : Continuous g)
+    (hgc : HasCompactSupport g)
+    (s : ℝ) :
+    |Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 s|
+      <= taperMass g := by
+  unfold Zeta23Bridge.LiteralWeilParityBalance.evenResp taperMass
+  simp only [zero_mul, Real.cosh_zero, one_mul]
+  have hi :
+      Integrable (fun u : ℝ => g u * Real.cos (s*u)) :=
+    (hg.mul (by fun_prop)).integrable_of_hasCompactSupport hgc.mul_right
+  have habsi : Integrable (fun u : ℝ => |g u|) :=
+    hg.abs.integrable_of_hasCompactSupport hgc.abs
+  calc
+    |∫ u : ℝ, g u * Real.cos (s*u)|
+      <= ∫ u : ℝ, |g u * Real.cos (s*u)| :=
+        abs_integral_le_integral_abs
+    _ <= ∫ u : ℝ, |g u| := by
+      apply integral_mono hi.abs habsi
+      intro u
+      rw [abs_mul]
+      have hc : |Real.cos (s*u)| <= 1 := abs_cos_le_one _
+      nlinarith [abs_nonneg (g u)]
+
+/--
+Generic L1 compiler for the exact two-radius physical projective profile.
+
+If ||g||_1 <= M, then
+  ||4 g B_r||_1 <= 8 M^2.
+
+No positivity of g is needed.
+-/
+theorem taperMass_genericProjectivePhysicalProfile_le
+    {g : ℝ -> ℝ} {r M : ℝ}
+    (hg : Continuous g)
+    (hgc : HasCompactSupport g)
+    (hM : 0 <= M)
+    (hmass : taperMass g <= M) :
+    taperMass (genericProjectivePhysicalProfile g r)
+      <= 8 * M^2 := by
+  have hAr :
+      |Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r|
+        <= M :=
+    (abs_evenResp_zero_le_taperMass hg hgc r).trans hmass
+  have hA2r :
+      |Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r)|
+        <= M :=
+    (abs_evenResp_zero_le_taperMass hg hgc (2*r)).trans hmass
+  have hgi : Integrable (fun u : ℝ => |g u|) :=
+    hg.abs.integrable_of_hasCompactSupport hgc.abs
+  have hproj :
+      Integrable
+        (fun u : ℝ => |genericProjectivePhysicalProfile g r u|) :=
+    (genericProjectivePhysicalProfile_continuous hg r).abs
+      .integrable_of_hasCompactSupport
+        (genericProjectivePhysicalProfile_compact hgc r).abs
+  unfold taperMass
+  calc
+    (∫ u : ℝ, |genericProjectivePhysicalProfile g r u|)
+      <= ∫ u : ℝ, (8*M) * |g u| := by
+        apply integral_mono hproj (hgi.const_mul (8*M))
+        intro u
+        unfold genericProjectivePhysicalProfile
+          Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+        rw [abs_mul, abs_mul]
+        have hc1 : |Real.cos (2*r*u)| <= 1 := abs_cos_le_one _
+        have hc2 : |Real.cos (r*u)| <= 1 := abs_cos_le_one _
+        have hb :
+            |Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r
+                * Real.cos (2*r*u)
+              -
+              Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r)
+                * Real.cos (r*u)|
+              <= 2*M := by
+          calc
+            |_ - _|
+              <=
+            |Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r
+                * Real.cos (2*r*u)|
+              +
+            |Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r)
+                * Real.cos (r*u)| := abs_sub _ _
+            _ <= M + M := by
+              rw [abs_mul, abs_mul]
+              constructor <;> nlinarith [abs_nonneg
+                (Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r),
+                abs_nonneg
+                (Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r))]
+            _ = 2*M := by ring
+        norm_num
+        nlinarith [abs_nonneg (g u)]
+    _ = (8*M) * taperMass g := by
+      rw [integral_const_mul]
+      rfl
+    _ <= (8*M) * M := by
+      exact mul_le_mul_of_nonneg_left hmass (by positivity)
+    _ = 8*M^2 := by ring
+
+def quarticFourProjectiveMassBound : ℝ :=
+  8 * (83/30 : ℝ)^2
+
+theorem QuarticFourSignedPolePair.halfProjective_taperMass_le
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    taperMass
+      (quarticFourNormalizedProjectiveProfile W.R (1/2) W.muHalf)
+      <= quarticFourProjectiveMassBound := by
+  unfold quarticFourNormalizedProjectiveProfile
+    quarticFourProjectiveMassBound
+  exact taperMass_genericProjectivePhysicalProfile_le
+    (quarticFourWindowProfile_continuous W.Rpos)
+    (quarticFourWindowProfile_compact W.Rpos)
+    (by norm_num)
+    W.halfWindow_taperMass_le
+
+theorem QuarticFourSignedPolePair.twoProjective_taperMass_le
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    taperMass
+      (quarticFourNormalizedProjectiveProfile W.R (2/3) W.muTwo)
+      <= quarticFourProjectiveMassBound := by
+  unfold quarticFourNormalizedProjectiveProfile
+    quarticFourProjectiveMassBound
+  exact taperMass_genericProjectivePhysicalProfile_le
+    (quarticFourWindowProfile_continuous W.Rpos)
+    (quarticFourWindowProfile_compact W.Rpos)
+    (by norm_num)
+    W.twoWindow_taperMass_le
+
+/--
+Combined-profile mass compiler from any coarse uniform bound on the two smooth
+pole coordinates.
+-/
+theorem QuarticFourSignedPolePair.combinedProfile_taperMass_le_of_pole_bound
+    {t B : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hB : 0 <= B)
+    (hhalf : |W.poleHalf| <= B)
+    (htwo : |W.poleTwo| <= B) :
+    taperMass
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t)
+      <= 2 * B * quarticFourProjectiveMassBound := by
+  let P1 :=
+    quarticFourNormalizedProjectiveProfile W.R (1/2) W.muHalf
+  let P2 :=
+    quarticFourNormalizedProjectiveProfile W.R (2/3) W.muTwo
+  have hP1c : Continuous P1 :=
+    quarticFourNormalizedProjectiveProfile_continuous W.Rpos
+  have hP2c : Continuous P2 :=
+    quarticFourNormalizedProjectiveProfile_continuous W.Rpos
+  have hP1k : HasCompactSupport P1 :=
+    quarticFourNormalizedProjectiveProfile_compact W.Rpos
+  have hP2k : HasCompactSupport P2 :=
+    quarticFourNormalizedProjectiveProfile_compact W.Rpos
+  have hlin :=
+    taperMass_add_le
+      (continuous_const.mul hP1c) hP1k.mul_left
+      (continuous_const.mul hP2c) hP2k.mul_left
+  have hscale1 :=
+    taperMass_const_mul W.poleTwo hP1c hP1k
+  have hscale2 :=
+    taperMass_const_mul (-W.poleHalf) hP2c hP2k
+  unfold quarticFourSignedPoleCombinedProfile profileLinearCombination
+  change taperMass
+      (fun u => W.poleTwo * P1 u + (-W.poleHalf) * P2 u)
+      <= _
+  calc
+    taperMass
+        (fun u => W.poleTwo * P1 u + (-W.poleHalf) * P2 u)
+      <= taperMass (fun u => W.poleTwo * P1 u)
+        + taperMass (fun u => (-W.poleHalf) * P2 u) := hlin
+    _ =
+      |W.poleTwo| * taperMass P1
+        + |W.poleHalf| * taperMass P2 := by
+      rw [hscale1, hscale2, abs_neg]
+    _ <=
+      B * quarticFourProjectiveMassBound
+        + B * quarticFourProjectiveMassBound := by
+      have h1 := W.halfProjective_taperMass_le
+      have h2 := W.twoProjective_taperMass_le
+      nlinarith [taperMass_nonneg P1, taperMass_nonneg P2]
+    _ = 2 * B * quarticFourProjectiveMassBound := by ring
+
+/--
 The projective physical multiplier does not enlarge the four-window support.
 -/
 theorem quarticFourNormalizedProjectiveProfile_support_abs_lt

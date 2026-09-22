@@ -319,6 +319,87 @@ structure CriticalWeakStarLiminfSourceInstance
     UniformCriticalBound sequence →
     CriticalNormLiminf sequence limit
 
+
+/-! ### B6: concrete weak-dual realization -/
+
+/-- Actual weak-* convergence predicate on one predual. -/
+def WeakStarConvergesDual
+    (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (sequence : ℕ → WeakDual ℝ E) (limit : WeakDual ℝ E) : Prop :=
+  Tendsto sequence atTop (𝓝 limit)
+
+/-- Uniform dual-norm boundedness of the concrete critical sequence. -/
+def UniformDualNormBound
+    (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (sequence : ℕ → WeakDual ℝ E) : Prop :=
+  ∃ r : ℝ, ∀ n, ‖WeakDual.toStrongDual (sequence n)‖ ≤ r
+
+/-- Literal critical norm liminf statement on the weak-dual carrier. -/
+def DualNormLiminf
+    (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (sequence : ℕ → WeakDual ℝ E) (limit : WeakDual ℝ E) : Prop :=
+  ‖WeakDual.toStrongDual limit‖ ≤
+    Filter.liminf
+      (fun n => ‖WeakDual.toStrongDual (sequence n)‖) atTop
+
+/--
+Fully concrete B6 source instance on a weak-dual carrier.  The only remaining
+application-specific step is to identify the physical critical sequence and its
+selected limit with such a weak-dual representation.
+-/
+theorem criticalWeakStarDualLiminfSourceInstance
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {sequence : ℕ → WeakDual ℝ E} {limit : WeakDual ℝ E}
+    (hconv : WeakStarConvergesDual E sequence limit)
+    (hbound : UniformDualNormBound E sequence) :
+    CriticalWeakStarLiminfSourceInstance
+      (WeakDual ℝ E) (WeakDual ℝ E)
+      sequence limit
+      (WeakStarConvergesDual E)
+      (UniformDualNormBound E)
+      (DualNormLiminf E) := by
+  refine
+    { weakStarConverges := hconv
+      uniformCriticalBound := hbound
+      weakStarCriticalLowerSemicontinuity := ?_
+      sourceImplication := ?_ }
+  · rcases hbound with ⟨r, hr⟩
+    exact weakStar_norm_le_liminf hconv r hr
+  · intro hconv' hbound'
+    rcases hbound' with ⟨r, hr⟩
+    exact weakStar_norm_le_liminf hconv' r hr
+
+/--
+Bounded weak-* sequences in a separable-predual dual admit a subsequence and a
+limit that already satisfy the concrete B6 source instance.
+-/
+theorem exists_criticalWeakStarDualLiminfSourceInstance
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [TopologicalSpace.SeparableSpace E]
+    (r : ℝ) (sequence : ℕ → WeakDual ℝ E)
+    (hbound :
+      ∀ n, ‖WeakDual.toStrongDual (sequence n)‖ ≤ r) :
+    ∃ limit : WeakDual ℝ E, ∃ φ : ℕ → ℕ,
+      StrictMono φ ∧
+      CriticalWeakStarLiminfSourceInstance
+        (WeakDual ℝ E) (WeakDual ℝ E)
+        (sequence ∘ φ) limit
+        (WeakStarConvergesDual E)
+        (UniformDualNormBound E)
+        (DualNormLiminf E) := by
+  have hmem :
+      ∀ n,
+        WeakDual.toStrongDual (sequence n) ∈
+          Metric.closedBall (0 : StrongDual ℝ E) r := by
+    intro n
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hbound n
+  obtain ⟨limit, _, φ, hφ, hconv⟩ :=
+    weakStar_closedBall_has_subsequence r sequence hmem
+  refine ⟨limit, φ, hφ, ?_⟩
+  apply criticalWeakStarDualLiminfSourceInstance hconv
+  exact ⟨r, fun n => by
+    simpa [Function.comp_apply] using hbound (φ n)⟩
+
 /-! ## Hard mathematical boundary -/
 
 def R503CutoffUniformDirectOffDiagonalBudgetIsSeparate : Prop := True

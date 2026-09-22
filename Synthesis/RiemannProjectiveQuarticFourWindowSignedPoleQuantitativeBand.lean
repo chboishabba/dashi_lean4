@@ -1278,4 +1278,42 @@ theorem exists_quarticSignedPolePair_quantitativeBand_of_threshold
     quarticSignedPole_goodWitness_uniform_K_explicit
     (quarticSignedPole_scalar_threshold_of_gt htQ)
 
+
+/--
+The published Platt--Trudgian verified-height ceiling used by the RH low/high
+partition.
+-/
+def quarticPlattTrudgianCutoff : ℝ :=
+  3000175332800
+
+theorem quarticPlattTrudgianCutoff_gt_twoHundred :
+    200 < quarticPlattTrudgianCutoff := by
+  norm_num [quarticPlattTrudgianCutoff]
+
+/--
+The final scalar G1 payment.
+
+This is intentionally isolated from the analytic construction.  Once certified,
+every Clay-high ordinate automatically lies above the explicit quartic
+quantitative threshold.
+-/
+def quarticSignedPoleThresholdBelowPlattTrudgian : Prop :=
+  quarticSignedPoleQuantitativeThreshold
+    < quarticPlattTrudgianCutoff
+
+theorem exists_quarticSignedPolePair_quantitativeBand_of_clayHigh
+    {t : ℝ}
+    (hQTPT : quarticSignedPoleThresholdBelowPlattTrudgian)
+    (htPT : quarticPlattTrudgianCutoff < t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧ 8/t < W.quantitativeTargetRadius := by
+  have ht200 : 200 <= t := by
+    have h200 := quarticPlattTrudgianCutoff_gt_twoHundred
+    linarith
+  have htQ : quarticSignedPoleQuantitativeThreshold < t := by
+    exact lt_trans hQTPT htPT
+  exact exists_quarticSignedPolePair_quantitativeBand_of_threshold
+    ht200 htQ
+
 end Synthesis

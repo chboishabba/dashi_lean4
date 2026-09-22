@@ -77,30 +77,30 @@ structure CriticalSimonSourceInstance
     (Galerkin LimitState HThreeHalf HOneHalf HMinusHalf : Type*)
     (galerkins : ℕ → Galerkin)
     (limit : LimitState)
-    (UniformL2HThreeHalf : (ℕ → Galerkin) → Prop)
-    (UniformTimeDerivativeLFourThirdHMinusHalf : (ℕ → Galerkin) → Prop)
-    (CompactEmbedding : HThreeHalf → HOneHalf → Prop)
-    (ContinuousEmbedding : HOneHalf → HMinusHalf → Prop)
-    (StrongL2HOneHalfSubsequence :
-      (ℕ → Galerkin) → LimitState → Prop)
-    (hThreeHalf : HThreeHalf)
-    (hOneHalf : HOneHalf)
-    (hMinusHalf : HMinusHalf) : Prop where
-  uniformlyBoundedL2HThreeHalf : UniformL2HThreeHalf galerkins
+    (UniformL2In :
+      (ℕ → Galerkin) → Type* → Prop)
+    (UniformTimeDerivativeLFourThirdIn :
+      (ℕ → Galerkin) → Type* → Prop)
+    (CompactEmbedding : Type* → Type* → Prop)
+    (ContinuousEmbedding : Type* → Type* → Prop)
+    (StrongL2SubsequenceIn :
+      (ℕ → Galerkin) → LimitState → Type* → Prop) : Prop where
+  uniformlyBoundedL2HThreeHalf :
+    UniformL2In galerkins HThreeHalf
   uniformlyBoundedTimeDerivativeLFourThirdHMinusHalf :
-    UniformTimeDerivativeLFourThirdHMinusHalf galerkins
+    UniformTimeDerivativeLFourThirdIn galerkins HMinusHalf
   compactEmbeddingHThreeHalfToHOneHalf :
-    CompactEmbedding hThreeHalf hOneHalf
+    CompactEmbedding HThreeHalf HOneHalf
   continuousEmbeddingHOneHalfToHMinusHalf :
-    ContinuousEmbedding hOneHalf hMinusHalf
+    ContinuousEmbedding HOneHalf HMinusHalf
   strongL2HOneHalfSubsequence :
-    StrongL2HOneHalfSubsequence galerkins limit
+    StrongL2SubsequenceIn galerkins limit HOneHalf
   sourceImplication :
-    UniformL2HThreeHalf galerkins →
-    UniformTimeDerivativeLFourThirdHMinusHalf galerkins →
-    CompactEmbedding hThreeHalf hOneHalf →
-    ContinuousEmbedding hOneHalf hMinusHalf →
-    StrongL2HOneHalfSubsequence galerkins limit
+    UniformL2In galerkins HThreeHalf →
+    UniformTimeDerivativeLFourThirdIn galerkins HMinusHalf →
+    CompactEmbedding HThreeHalf HOneHalf →
+    ContinuousEmbedding HOneHalf HMinusHalf →
+    StrongL2SubsequenceIn galerkins limit HOneHalf
 
 /-! ## P5: weak-* compactness and norm lower semicontinuity -/
 

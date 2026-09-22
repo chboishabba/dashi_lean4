@@ -1,4 +1,5 @@
 import Integration.MoonshineEisensteinAnalytic
+import Integration.MoonshineEisensteinAgdaTarget
 import Integration.PromotionDiscipline
 
 /-!
@@ -184,6 +185,53 @@ theorem delta_eq_e4_cube_sub_e6_sq_of_full_weld
     D.delta τ = (S.e4 τ ^ 3 - S.e6 τ ^ 2) / 1728 :=
   W.deltaNormalization τ
 
+/-- Exact same-object weld to the route-B normalized E4/E6 Delta target.
+
+This is deliberately distinct from the eta^24 weld: the reflection theorem is
+already proved for the normalized E4/E6 target at the pinned dependency, so it
+can be transported before eta^24 itself is identified. -/
+structure DeltaNormalizedE4E6SameObjectWeld
+    (D : ExtractedDeltaSurface) : Prop where
+  delta_same :
+    ∀ τ, D.delta τ =
+      Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaLimit τ
+
+/-- The concrete inverse-conjugation reflection identity transports through the
+same-object weld with no additional analytic assumptions. -/
+theorem delta_inv_conj_of_normalized_weld
+    {D : ExtractedDeltaSurface}
+    (W : DeltaNormalizedE4E6SameObjectWeld D)
+    (τ : ℍ) :
+    D.delta (ModularGroup.S •
+      Integration.MoonshineEisensteinAgdaTarget.negConj τ) =
+      conj ((τ : ℂ) ^ 12 * D.delta τ) := by
+  rw [W.delta_same, W.delta_same]
+  exact Integration.MoonshineEisensteinAgdaTarget.normalizedDelta_inv_conj τ
+
+/-- Unit norm gives the exact fixed-locus value equation required by the Agda
+phase compiler, transported to any extracted Delta surface. -/
+theorem delta_unitCircle_fixed_of_normalized_weld
+    {D : ExtractedDeltaSurface}
+    (W : DeltaNormalizedE4E6SameObjectWeld D)
+    (τ : ℍ)
+    (hunit : Complex.normSq (τ : ℂ) = 1) :
+    D.delta τ = conj ((τ : ℂ) ^ 12 * D.delta τ) := by
+  rw [W.delta_same, W.delta_same]
+  exact
+    Integration.MoonshineEisensteinAgdaTarget.normalizedDelta_unitCircle_fixed
+      τ hunit
+
+/-- Once both normalizations are known, the normalized E4/E6 target and eta^24
+are definitionally the same extracted Delta surface pointwise. -/
+theorem normalized_target_eq_eta24_of_two_welds
+    {D : ExtractedDeltaSurface}
+    (WE : DeltaNormalizedE4E6SameObjectWeld D)
+    (Wη : DeltaEta24SameObjectWeld D)
+    (τ : ℍ) :
+    Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaLimit τ =
+      Analytic.deltaEta24 τ := by
+  rw [← WE.delta_same τ, Wη.delta_same τ]
+
 /-- Machine-readable promotion boundary. -/
 structure WeldBoundary where
   mathlibAnalyticTargetOwned : Bool
@@ -191,6 +239,8 @@ structure WeldBoundary where
   literalSigma3Sigma5TransportCompilerOwned : Bool
   literal240And504TransportCompilerOwned : Bool
   eta24NonvanishingTransportCompilerOwned : Bool
+  normalizedDeltaReflectionTransportCompilerOwned : Bool
+  normalizedDeltaFixedLocusTransportCompilerOwned : Bool
   extractedAgdaSurfaceInhabited : Bool
   exactAgdaLeanSameObjectWeldInhabited : Bool
   deltaE4E6NormalizationOwnedAtPinnedMathlib : Bool
@@ -201,6 +251,8 @@ def weldBoundary : WeldBoundary where
   literalSigma3Sigma5TransportCompilerOwned := true
   literal240And504TransportCompilerOwned := true
   eta24NonvanishingTransportCompilerOwned := true
+  normalizedDeltaReflectionTransportCompilerOwned := true
+  normalizedDeltaFixedLocusTransportCompilerOwned := true
   extractedAgdaSurfaceInhabited := false
   exactAgdaLeanSameObjectWeldInhabited := false
   deltaE4E6NormalizationOwnedAtPinnedMathlib := false

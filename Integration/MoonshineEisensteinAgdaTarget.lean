@@ -346,6 +346,39 @@ theorem normalizedDeltaLimit_negConj (τ : ℍ) :
   simp [normalizedDeltaLimit, discriminantNumeratorLimit,
     mathlib_E4_negConj, mathlib_E6_negConj, map_sub, map_pow, map_div]
 
+/-- The normalized route-B Delta target has the genuine weight-12 S law. -/
+theorem normalizedDeltaLimit_S (τ : ℍ) :
+    normalizedDeltaLimit (ModularGroup.S • τ) =
+      (τ : ℂ) ^ 12 * normalizedDeltaLimit τ := by
+  have hS :
+      (ModularGroup.S : GL (Fin 2) ℝ) ∈ 𝒮ℒ :=
+    ⟨ModularGroup.S, rfl⟩
+  have h :=
+    SlashInvariantForm.slash_action_eqn''
+      normalizedDeltaForm hS τ
+  simpa [normalizedDeltaForm_apply, ModularGroup.denom_S] using h
+
+/-- The S-image of -conj(tau) is literally 1/conj(tau). -/
+theorem S_negConj_coe (τ : ℍ) :
+    (((ModularGroup.S • negConj τ : ℍ) : ℂ)) =
+      1 / conj (τ : ℂ) := by
+  rw [UpperHalfPlane.modular_S_smul]
+  simp [negConj, one_div]
+
+/-- Concrete reflection identity for the normalized E4/E6 Delta target.
+
+This is the analytic identity isolated by the JMD fixed-locus image, now
+derived from two independent machine-formalized facts:
+1. weight-12 S modularity;
+2. real Fourier-coefficient conjugation.
+-/
+theorem normalizedDelta_inv_conj (τ : ℍ) :
+    normalizedDeltaLimit (ModularGroup.S • negConj τ) =
+      conj ((τ : ℂ) ^ 12 * normalizedDeltaLimit τ) := by
+  rw [normalizedDeltaLimit_S, normalizedDeltaLimit_negConj]
+  simp [negConj, map_mul, map_pow]
+  ring
+
 /-- Machine-readable seam. -/
 structure AgdaTargetBoundary where
   literalQTargetOwned : Bool
@@ -361,6 +394,8 @@ structure AgdaTargetBoundary where
   normalizedDeltaLimitCompiled : Bool
   normalizedDeltaPackagedAsWeight12ModularForm : Bool
   realStructureConjugationLawOwned : Bool
+  weight12SActionOwned : Bool
+  concreteInvConjReflectionOwned : Bool
 
 def agdaTargetBoundary : AgdaTargetBoundary where
   literalQTargetOwned := true
@@ -376,6 +411,8 @@ def agdaTargetBoundary : AgdaTargetBoundary where
   normalizedDeltaLimitCompiled := true
   normalizedDeltaPackagedAsWeight12ModularForm := true
   realStructureConjugationLawOwned := true
+  weight12SActionOwned := true
+  concreteInvConjReflectionOwned := true
 
 end
 

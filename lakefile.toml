@@ -107,3 +107,10 @@ globs = ["AgdaCheck", "AgdaCheck.*"]
 name = "wikidata"
 root = "RequestProject.Cli.Tool"
 srcDir = "DASHI/output-final_aristotle"
+
+
+# Canonical periodic-NS standard-analysis leaves (R393/R104 source surface).
+[[lean_lib]]
+name = "NSCanonicalLeaves"
+srcDir = "DASHI/output-final_aristotle"
+globs = ["RequestProject.NavierStokes.CanonicalCompletionLeaves"]

@@ -286,6 +286,66 @@ theorem normalizedDeltaForm_apply (τ : ℍ) :
     e4CubeWeight12, e6SquareWeight12, div_eq_mul_inv]
   ring
 
+/-- Upper-half-plane reflection preserving positive imaginary part. -/
+def negConj (τ : ℍ) : ℍ :=
+  ⟨-conj (τ : ℂ), by simpa using τ.2⟩
+
+@[simp]
+theorem negConj_coe (τ : ℍ) :
+    ((negConj τ : ℍ) : ℂ) = -conj (τ : ℂ) := rfl
+
+/-- q respects the upper-half-plane real-structure reflection. -/
+theorem qOfTarget_negConj (τ : ℍ) :
+    qOfTarget (negConj τ) = conj (qOfTarget τ) := by
+  unfold qOfTarget
+  rw [← Complex.exp_conj]
+  congr 1
+  simp [negConj]
+  ring
+
+/-- The canonical E4 limit has real Fourier coefficients. -/
+theorem e4Limit_negConj (τ : ℍ) :
+    e4Limit (negConj τ) = conj (e4Limit τ) := by
+  unfold e4Limit
+  rw [map_add, map_one, RCLike.conjCLE.map_tsum]
+  congr 1
+  apply tsum_congr
+  intro n
+  simp [e4Term, scaleNatTarget, qOfTarget_negConj, map_mul, map_pow]
+
+/-- The canonical E6 limit has real Fourier coefficients. -/
+theorem e6Limit_negConj (τ : ℍ) :
+    e6Limit (negConj τ) = conj (e6Limit τ) := by
+  unfold e6Limit
+  rw [map_sub, map_one, RCLike.conjCLE.map_tsum]
+  congr 1
+  apply tsum_congr
+  intro n
+  simp [e6Term, scaleNatTarget, qOfTarget_negConj, map_mul, map_pow]
+
+/-- Mathlib E4 inherits the same real-structure conjugation law. -/
+theorem mathlib_E4_negConj (τ : ℍ) :
+    Integration.MoonshineEisensteinAnalytic.E4 (negConj τ) =
+      conj (Integration.MoonshineEisensteinAnalytic.E4 τ) := by
+  rw [← e4Limit_eq_mathlib_E4 (negConj τ),
+      ← e4Limit_eq_mathlib_E4 τ]
+  exact e4Limit_negConj τ
+
+/-- Mathlib E6 inherits the same real-structure conjugation law. -/
+theorem mathlib_E6_negConj (τ : ℍ) :
+    Integration.MoonshineEisensteinAnalytic.E6 (negConj τ) =
+      conj (Integration.MoonshineEisensteinAnalytic.E6 τ) := by
+  rw [← e6Limit_eq_mathlib_E6 (negConj τ),
+      ← e6Limit_eq_mathlib_E6 τ]
+  exact e6Limit_negConj τ
+
+/-- The normalized E4/E6 Delta target has the required conjugation symmetry. -/
+theorem normalizedDeltaLimit_negConj (τ : ℍ) :
+    normalizedDeltaLimit (negConj τ) =
+      conj (normalizedDeltaLimit τ) := by
+  simp [normalizedDeltaLimit, discriminantNumeratorLimit,
+    mathlib_E4_negConj, mathlib_E6_negConj, map_sub, map_pow, map_div]
+
 /-- Machine-readable seam. -/
 structure AgdaTargetBoundary where
   literalQTargetOwned : Bool
@@ -300,6 +360,7 @@ structure AgdaTargetBoundary where
   discriminantNumeratorLimitCompiled : Bool
   normalizedDeltaLimitCompiled : Bool
   normalizedDeltaPackagedAsWeight12ModularForm : Bool
+  realStructureConjugationLawOwned : Bool
 
 def agdaTargetBoundary : AgdaTargetBoundary where
   literalQTargetOwned := true
@@ -314,6 +375,7 @@ def agdaTargetBoundary : AgdaTargetBoundary where
   discriminantNumeratorLimitCompiled := true
   normalizedDeltaLimitCompiled := true
   normalizedDeltaPackagedAsWeight12ModularForm := true
+  realStructureConjugationLawOwned := true
 
 end
 

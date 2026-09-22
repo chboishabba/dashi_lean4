@@ -275,3 +275,9 @@ import Synthesis.MillenniumBSDClassicalShaTwoBoundary
 import Synthesis.MillenniumBSDActualE2H1SameObject
 
 import Synthesis.MillenniumBSDJacobiEta32Reduction
+
+import Synthesis.MillenniumBSDCMSplitJacobiRealTrace
+
+import Synthesis.MillenniumBSDCMSplitJacobiGaussianNorm
+
+import Synthesis.MillenniumBSDCMSplitJacobiPrimaryResidual

@@ -1,4 +1,5 @@
 import Synthesis.RiemannCompactCoshQuantitativeQuarticBand
+import Synthesis.RiemannCompactCoshSupportMassBound
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleCutset
 
 /-!
@@ -13,12 +14,12 @@ For the combined signed profile P we already know
 
   M0(P) = 0,
   M2(P) = 0,
-  M4(P) = -4 * signedTargetStrength.
+  M4(P) = -4 * targetStrength.
 
 The generic compact-cosh fourth-order compiler therefore gives the explicit
 radius
 
-  min 1 ((4 * signedTargetStrength) /
+  min 1 ((4 * targetStrength) /
     (2 * (compactCoshFourthLipschitzConstant P + 1))).
 
 This file installs that radius on the exact signed-pole witness and rebuilds the
@@ -46,7 +47,7 @@ open Zeta23Bridge.LiteralWeilOffOrdinateReflectionPair
 def QuarticFourSignedPolePair.quantitativeTargetRadius
     {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
   quantitativeFourthOrderRadius
-    (4 * W.signedTargetStrength)
+    (4 * W.targetStrength)
     (compactCoshFourthLipschitzConstant
       (quarticFourSignedPoleCombinedProfile
         W.R W.muHalf W.muTwo t))
@@ -56,7 +57,7 @@ theorem QuarticFourSignedPolePair.quantitativeTargetRadius_pos
     0 < W.quantitativeTargetRadius := by
   unfold QuarticFourSignedPolePair.quantitativeTargetRadius
   exact quantitativeFourthOrderRadius_pos
-    (by nlinarith [W.signedTargetStrength])
+    (by nlinarith [W.targetStrength])
     (compactCoshFourthLipschitzConstant_nonneg _)
 
 /--
@@ -76,10 +77,10 @@ theorem QuarticFourSignedPolePair.quantitativeCombinedTargetBand
   let P : ℝ -> ℝ :=
     quarticFourSignedPoleCombinedProfile
       W.R W.muHalf W.muTwo t
-  let m : ℝ := 4 * W.signedTargetStrength
+  let m : ℝ := 4 * W.targetStrength
   have hm : 0 < m := by
     dsimp [m]
-    nlinarith [W.signedTargetStrength]
+    nlinarith [W.targetStrength]
   have hP : Continuous P := by
     dsimp [P]
     exact quarticFourSignedPoleCombinedProfile_continuous W.Rpos
@@ -250,45 +251,85 @@ theorem false_of_quarticFourSignedPole_external_strict_quantitative
 
 
 /-!
-## Uniform-bound source cut for G1
+## Existential quantitative-witness cut for G1
 
-The preferred G1 search can now be factored into two source estimates rather
-than another existential-radius theorem:
+The preferred G1 quantifier is existential in the witness:
 
-* a uniform lower bound on the signed target strength S(W_t);
-* a uniform upper bound on the fourth-derivative Lipschitz constant K(W_t).
+  for every sufficiently high t, choose one narrow signed-pole witness W_t
 
-The definitions below are obligation surfaces, not fabricated estimates.
-The threshold compiler following them is elementary.
+with the explicit strength floor and a uniform K bound.
+
+This is strictly weaker, and exactly what the terminal argument consumes.
+The old universal-over-all-witnesses predicates are retained below only as
+strong donor interfaces; they are not the preferred Goal-1 obligation.
 -/
 
+def quarticSignedPoleStrengthFloor : ℝ :=
+  7 * Real.pi^4 / 1600
+
+def QuarticFourSignedPolePair.fourthLipschitz
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  compactCoshFourthLipschitzConstant
+    (quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t)
+
+theorem quarticSignedPoleStrengthFloor_pos :
+    0 < quarticSignedPoleStrengthFloor := by
+  unfold quarticSignedPoleStrengthFloor
+  positivity
+
+/--
+The strength part of G1 is already paid by the narrow smooth construction.
+-/
+theorem exists_quarticFourSignedPolePair_strengthFloor
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      quarticSignedPoleStrengthFloor <= W.targetStrength := by
+  simpa [quarticSignedPoleStrengthFloor] using
+    exists_quarticFourSignedPolePair_with_strength_floor ht
+
+/--
+Preferred remaining G1 source obligation.
+
+A single constant K0 must work for one floor-certified constructed witness at
+each high ordinate.  No bound is requested for arbitrary inhabitants of
+`QuarticFourSignedPolePair t`.
+-/
+def quarticSignedPole_goodWitness_uniform_K
+    (T K0 : ℝ) : Prop :=
+  ∀ {t : ℝ}, T <= t ->
+    ∃ W : QuarticFourSignedPolePair t,
+      quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧ W.fourthLipschitz <= K0
+
+/--
+Historical stronger donor interface.  This is no longer the preferred G1
+quantifier shape.
+-/
 def quarticSignedPole_targetStrength_uniform_lower
     (T S0 : ℝ) : Prop :=
   ∀ {t : ℝ}, T <= t ->
     ∀ W : QuarticFourSignedPolePair t,
-      S0 <= W.signedTargetStrength
+      S0 <= W.targetStrength
 
+/--
+Historical stronger donor interface.  The preferred G1 theorem only needs K
+on one constructed floor-certified witness per t.
+-/
 def quarticSignedPole_fourthLipschitz_uniform_upper
     (T K0 : ℝ) : Prop :=
   ∀ {t : ℝ}, T <= t ->
     ∀ W : QuarticFourSignedPolePair t,
-      compactCoshFourthLipschitzConstant
-        (quarticFourSignedPoleCombinedProfile
-          W.R W.muHalf W.muTwo t)
-        <= K0
+      W.fourthLipschitz <= K0
 
 /--
-Elementary G1 threshold compiler.
+Elementary G1 threshold compiler for one selected witness.
 
-For t>8, if
-  S0 <= S(W),
-  K(W) <= K0,
-and
+For t>8, if S0 <= S(W), K(W) <= K0, and
+
   4 (K0+1) / t < S0,
-then
-  8/t < quantitativeTargetRadius(W).
 
-Thus any coarse uniform S-lower/K-upper pair is enough once t is large.
+then 8/t lies inside the explicit quantitative target radius.
 -/
 theorem quarticSignedPole_quantitativeBand_covers_strip
     {t S0 K0 : ℝ}
@@ -296,33 +337,24 @@ theorem quarticSignedPole_quantitativeBand_covers_strip
     (W : QuarticFourSignedPolePair t)
     (hS0 : 0 < S0)
     (hK0 : 0 <= K0)
-    (hS : S0 <= W.signedTargetStrength)
-    (hK :
-      compactCoshFourthLipschitzConstant
-        (quarticFourSignedPoleCombinedProfile
-          W.R W.muHalf W.muTwo t)
-        <= K0)
+    (hS : S0 <= W.targetStrength)
+    (hK : W.fourthLipschitz <= K0)
     (hthreshold : 4 * (K0 + 1) / t < S0) :
     8/t < W.quantitativeTargetRadius := by
-  let K :=
-    compactCoshFourthLipschitzConstant
-      (quarticFourSignedPoleCombinedProfile
-        W.R W.muHalf W.muTwo t)
+  let K := W.fourthLipschitz
   have ht : 0 < t := by linarith
   have hKnonneg : 0 <= K := by
-    dsimp [K]
+    dsimp [K, QuarticFourSignedPolePair.fourthLipschitz]
     exact compactCoshFourthLipschitzConstant_nonneg _
   have hK1 : 0 < K + 1 := by linarith
-  have hK0one : 0 <= K0 + 1 := by linarith
   have hmono :
       4 * (K + 1) / t <= 4 * (K0 + 1) / t := by
-    rw [div_le_div_iff₀ ht ht]
-    nlinarith
+    exact div_le_div_of_nonneg_right (by nlinarith) ht.le
   have hcore :
-      4 * (K + 1) / t < W.signedTargetStrength :=
+      4 * (K + 1) / t < W.targetStrength :=
     lt_of_le_of_lt hmono (hthreshold.trans_le hS)
   have hcross :
-      4 * (K + 1) < W.signedTargetStrength * t := by
+      4 * (K + 1) < W.targetStrength * t := by
     rwa [div_lt_iff₀ ht] at hcore
   unfold QuarticFourSignedPolePair.quantitativeTargetRadius
     quantitativeFourthOrderRadius
@@ -330,32 +362,82 @@ theorem quarticSignedPole_quantitativeBand_covers_strip
   · rw [div_lt_one ht]
     exact ht8
   · have hden : 0 < 2 * (K + 1) := by positivity
+    change
+      8 / t <
+        (4 * W.targetStrength) / (2 * (K + 1))
     rw [div_lt_div_iff₀ ht hden]
     nlinarith
 
 /--
-Uniform-source form of the G1 compiler.
+Preferred existential G1 compiler.
 
-This consumes the two candidate source obligations directly and leaves only
-the scalar threshold on the chosen coarse constants.
+Once `quarticSignedPole_goodWitness_uniform_K T K0` is proved, every
+t >= T satisfying the scalar threshold admits a concrete witness whose
+explicit quantitative radius covers the whole normalized critical strip.
 -/
-theorem quarticSignedPole_quantitativeBand_covers_strip_of_uniform_bounds
-    {T t S0 K0 : ℝ}
+theorem exists_quarticSignedPolePair_quantitativeBand_covers_strip
+    {T t K0 : ℝ}
     (htT : T <= t)
     (ht8 : 8 < t)
-    (hS0 : 0 < S0)
     (hK0 : 0 <= K0)
-    (hS :
-      quarticSignedPole_targetStrength_uniform_lower T S0)
-    (hK :
-      quarticSignedPole_fourthLipschitz_uniform_upper T K0)
-    (hthreshold : 4 * (K0 + 1) / t < S0)
-    (W : QuarticFourSignedPolePair t) :
-    8/t < W.quantitativeTargetRadius := by
+    (hgood : quarticSignedPole_goodWitness_uniform_K T K0)
+    (hthreshold :
+      4 * (K0 + 1) / t < quarticSignedPoleStrengthFloor) :
+    ∃ W : QuarticFourSignedPolePair t,
+      quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧ 8/t < W.quantitativeTargetRadius := by
+  obtain ⟨W,hS,hK⟩ := hgood htT
+  refine ⟨W,hS,?_⟩
   exact quarticSignedPole_quantitativeBand_covers_strip
-    ht8 W hS0 hK0
-    (hS htT W)
-    (hK htT W)
-    hthreshold
+    ht8 W quarticSignedPoleStrengthFloor_pos hK0 hS hK hthreshold
+
+/--
+The remaining G1 debt can be isolated even more narrowly: if a uniform K
+theorem can be proved for the witnesses produced by the strength-floor
+constructor, it packages directly into the preferred source obligation.
+-/
+def quarticSignedPole_constructedWitness_uniform_K
+    (K0 : ℝ) : Prop :=
+  ∀ {t : ℝ}, 200 <= t ->
+    ∃ W : QuarticFourSignedPolePair t,
+      quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧ W.fourthLipschitz <= K0
+
+theorem quarticSignedPole_constructedWitness_uniform_K_to_goodWitness
+    {K0 : ℝ}
+    (hK : quarticSignedPole_constructedWitness_uniform_K K0) :
+    quarticSignedPole_goodWitness_uniform_K 200 K0 := by
+  intro t ht
+  exact hK ht
+
+/--
+Support/L1 reduction for the remaining K estimate.
+
+Any selected witness whose combined profile is supported in |u| <= L and has
+L1 mass at most M automatically satisfies
+
+  K(W) <= M * cosh(L) * L^5.
+-/
+theorem QuarticFourSignedPolePair.fourthLipschitz_le_of_support_mass
+    {t L M : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hL : 0 <= L)
+    (hsupp :
+      ∀ u : ℝ,
+        quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t u ≠ 0 ->
+        |u| <= L)
+    (hmass :
+      Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+        <= M) :
+    W.fourthLipschitz
+      <= M * Real.cosh L * L^5 := by
+  unfold QuarticFourSignedPolePair.fourthLipschitz
+  exact compactCoshFourthLipschitzConstant_le_support_mass
+    (quarticFourSignedPoleCombinedProfile_continuous W.Rpos)
+    (quarticFourSignedPoleCombinedProfile_compact W.Rpos)
+    hL hsupp hmass
 
 end Synthesis

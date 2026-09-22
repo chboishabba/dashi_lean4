@@ -71,13 +71,41 @@ structure QuarticFourSignedPolePair (t : ℝ) where
       quarticFourSignedPoleCombinedHeightDefect
         R muHalf muTwo t a
 
-theorem exists_quarticFourSignedPolePair
+/--
+The scalar signed quartic target strength carried by a witness.
+
+The pre-existing `signedTargetStrength` structure field is deliberately kept
+as the positivity proof for compatibility. Quantitative consumers should use
+this scalar definition.
+-/
+def QuarticFourSignedPolePair.targetStrength
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  quarticFourSmoothPoleCancelledTarget
+    W.R W.muHalf W.muTwo t
+
+theorem QuarticFourSignedPolePair.targetStrength_pos
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    0 < W.targetStrength := by
+  exact W.signedTargetStrength
+
+
+/--
+For every t >= 200 there exists a signed-pole pair selected from the narrow
+smooth robustness corridor whose scalar target strength retains the explicit
+7*pi^4/1600 floor.
+
+This is the quantitative witness needed by G1.  The quantifier is existential:
+no claim is made that every arbitrary inhabitant of
+`QuarticFourSignedPolePair t` satisfies the floor.
+-/
+theorem exists_quarticFourSignedPolePair_with_strength_floor
     {t : ℝ} (ht : 200 <= t) :
-    Nonempty (QuarticFourSignedPolePair t) := by
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 <= W.targetStrength := by
   obtain ⟨R0,hR0,hfamily⟩ :=
     exists_uniform_smooth_quarticFourWindow_family
   obtain ⟨d,hd,htrans⟩ :=
-    exists_radius_quarticFourSmooth_signedPoleTarget_pos ht
+    exists_radius_quarticFourSmooth_signedPoleTarget_ge_margin ht
   let R : ℝ := min 1 (min R0 d) / 2
   have hinner : 0 < min R0 d := lt_min hR0 hd
   have hmin : 0 < min 1 (min R0 d) :=
@@ -106,16 +134,23 @@ theorem exists_quarticFourSignedPolePair
   obtain ⟨S1⟩ := hfamily R (1/2) hR hRR0 hlamHalf
   obtain ⟨S2⟩ := hfamily R (2/3) hR hRR0 hlamTwo
 
+  have hfloor :
+      7 * Real.pi^4 / 1600 <=
+        quarticFourSmoothPoleCancelledTarget
+          R S1.mu S2.mu t :=
+    htrans R S1.mu S2.mu hR hRd S1.muNear S2.muNear
+
   have htransPos :
       0 < quarticFourSmoothPoleCancelledTarget
-        R S1.mu S2.mu t :=
-    htrans R S1.mu S2.mu hR hRd S1.muNear S2.muNear
+        R S1.mu S2.mu t := by
+    have hp4 : 0 < Real.pi^4 := by positivity
+    nlinarith
 
   obtain ⟨eps,heps,hband⟩ :=
     exists_quarticFourSignedPoleCombinedHeightDefect_pos_punctured
       hR S1.J2zero S2.J2zero htransPos
 
-  exact ⟨{
+  let W : QuarticFourSignedPolePair t := {
     R := R
     muHalf := S1.mu
     muTwo := S2.mu
@@ -129,7 +164,19 @@ theorem exists_quarticFourSignedPolePair
     signedTargetStrength := htransPos
     epsPos := heps
     combinedTargetBand := hband
-  }⟩
+  }
+  refine ⟨W, ?_⟩
+  simpa [W, QuarticFourSignedPolePair.targetStrength] using hfloor
+
+/--
+Compatibility constructor retained for older consumers.
+-/
+theorem exists_quarticFourSignedPolePair
+    {t : ℝ} (ht : 200 <= t) :
+    Nonempty (QuarticFourSignedPolePair t) := by
+  obtain ⟨W, _⟩ :=
+    exists_quarticFourSignedPolePair_with_strength_floor ht
+  exact ⟨W⟩
 
 def QuarticFourSignedPolePair.poleHalf
     {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=

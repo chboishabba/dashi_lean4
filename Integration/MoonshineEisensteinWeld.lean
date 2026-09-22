@@ -83,6 +83,40 @@ theorem summable_sextic_of_weld
     Summable (fun n : ℕ => (n : ℂ) ^ 6 * S.q τ ^ n) := by
   simpa [W.q_same τ] using Analytic.summable_sextic_geometric τ
 
+/-- Literal sigma_3 q-series summability transports through q identification. -/
+theorem summable_sigma3_q_of_weld
+    {S : ExtractedEisensteinSurface}
+    (W : EisensteinSameObjectWeld S)
+    (τ : ℍ) :
+    Summable (fun n : ℕ => (σ 3 n : ℂ) * S.q τ ^ n) := by
+  simpa [W.q_same τ] using Analytic.summable_sigma3_q τ
+
+/-- Literal sigma_5 q-series summability transports through q identification. -/
+theorem summable_sigma5_q_of_weld
+    {S : ExtractedEisensteinSurface}
+    (W : EisensteinSameObjectWeld S)
+    (τ : ℍ) :
+    Summable (fun n : ℕ => (σ 5 n : ℂ) * S.q τ ^ n) := by
+  simpa [W.q_same τ] using Analytic.summable_sigma5_q τ
+
+/-- The literal Agda E4 coefficient scale preserves summability after the weld. -/
+theorem summable_240_sigma3_q_of_weld
+    {S : ExtractedEisensteinSurface}
+    (W : EisensteinSameObjectWeld S)
+    (τ : ℍ) :
+    Summable (fun n : ℕ =>
+      (240 : ℂ) * ((σ 3 n : ℂ) * S.q τ ^ n)) := by
+  simpa [W.q_same τ] using Analytic.summable_240_sigma3_q τ
+
+/-- The literal Agda E6 coefficient scale preserves summability after the weld. -/
+theorem summable_504_sigma5_q_of_weld
+    {S : ExtractedEisensteinSurface}
+    (W : EisensteinSameObjectWeld S)
+    (τ : ℍ) :
+    Summable (fun n : ℕ =>
+      (504 : ℂ) * ((σ 5 n : ℂ) * S.q τ ^ n)) := by
+  simpa [W.q_same τ] using Analytic.summable_504_sigma5_q τ
+
 /-- The converged normalized E4 q-expansion transports through the exact weld. -/
 theorem e4_qExpansion_of_weld
     {S : ExtractedEisensteinSurface}
@@ -154,6 +188,8 @@ theorem delta_eq_e4_cube_sub_e6_sq_of_full_weld
 structure WeldBoundary where
   mathlibAnalyticTargetOwned : Bool
   qE4E6TransportCompilerOwned : Bool
+  literalSigma3Sigma5TransportCompilerOwned : Bool
+  literal240And504TransportCompilerOwned : Bool
   eta24NonvanishingTransportCompilerOwned : Bool
   extractedAgdaSurfaceInhabited : Bool
   exactAgdaLeanSameObjectWeldInhabited : Bool
@@ -162,6 +198,8 @@ structure WeldBoundary where
 def weldBoundary : WeldBoundary where
   mathlibAnalyticTargetOwned := true
   qE4E6TransportCompilerOwned := true
+  literalSigma3Sigma5TransportCompilerOwned := true
+  literal240And504TransportCompilerOwned := true
   eta24NonvanishingTransportCompilerOwned := true
   extractedAgdaSurfaceInhabited := false
   exactAgdaLeanSameObjectWeldInhabited := false

@@ -224,6 +224,42 @@ theorem e6At_tendsto_mathlib_E6 (τ : ℍ) :
       (𝓝 (Integration.MoonshineEisensteinAnalytic.E6 τ)) := by
   simpa [e6Limit_eq_mathlib_E6 τ] using e6At_tendsto_limit τ
 
+/-- Literal finite discriminant numerator carried by the Agda recurrence. -/
+def discriminantNumeratorAt (N : ℕ) (τ : ℍ) : ℂ :=
+  e4At N τ ^ 3 - e6At N τ ^ 2
+
+/-- Normalized finite Delta candidate used by the source-facing Klein formula. -/
+def normalizedDeltaAt (N : ℕ) (τ : ℍ) : ℂ :=
+  discriminantNumeratorAt N τ / 1728
+
+/-- Mathlib E4/E6 discriminant numerator target. -/
+def discriminantNumeratorLimit (τ : ℍ) : ℂ :=
+  Integration.MoonshineEisensteinAnalytic.E4 τ ^ 3 -
+    Integration.MoonshineEisensteinAnalytic.E6 τ ^ 2
+
+/-- Normalized E4/E6 Delta target. -/
+def normalizedDeltaLimit (τ : ℍ) : ℂ :=
+  discriminantNumeratorLimit τ / 1728
+
+/-- The literal finite discriminant numerators converge to the E4/E6 numerator. -/
+theorem discriminantNumeratorAt_tendsto (τ : ℍ) :
+    Tendsto (fun N => discriminantNumeratorAt N τ) atTop
+      (𝓝 (discriminantNumeratorLimit τ)) := by
+  exact
+    (e4At_tendsto_mathlib_E4 τ).pow 3 |>.sub
+      ((e6At_tendsto_mathlib_E6 τ).pow 2)
+
+/-- The normalized finite Delta candidates converge to the normalized E4/E6 expression. -/
+theorem normalizedDeltaAt_tendsto (τ : ℍ) :
+    Tendsto (fun N => normalizedDeltaAt N τ) atTop
+      (𝓝 (normalizedDeltaLimit τ)) := by
+  simpa [normalizedDeltaAt, normalizedDeltaLimit, div_eq_mul_inv] using
+    (discriminantNumeratorAt_tendsto τ).mul_const ((1728 : ℂ)⁻¹)
+
+/-- Nonvanishing of the denominator is finite arithmetic, not an analytic seam. -/
+theorem complex_1728_ne_zero : (1728 : ℂ) ≠ 0 := by
+  norm_num
+
 /-- Machine-readable seam. -/
 structure AgdaTargetBoundary where
   literalQTargetOwned : Bool
@@ -235,6 +271,8 @@ structure AgdaTargetBoundary where
   finiteRecurrenceBoundToExtractedAgdaObject : Bool
   finiteToInfiniteLimitTransportPaid : Bool
   infiniteLimitIdentifiedWithMathlibE4E6 : Bool
+  discriminantNumeratorLimitCompiled : Bool
+  normalizedDeltaLimitCompiled : Bool
 
 def agdaTargetBoundary : AgdaTargetBoundary where
   literalQTargetOwned := true
@@ -246,6 +284,8 @@ def agdaTargetBoundary : AgdaTargetBoundary where
   finiteRecurrenceBoundToExtractedAgdaObject := false
   finiteToInfiniteLimitTransportPaid := true
   infiniteLimitIdentifiedWithMathlibE4E6 := true
+  discriminantNumeratorLimitCompiled := true
+  normalizedDeltaLimitCompiled := true
 
 end
 

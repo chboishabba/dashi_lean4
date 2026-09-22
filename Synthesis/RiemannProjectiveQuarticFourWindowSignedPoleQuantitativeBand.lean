@@ -759,6 +759,221 @@ theorem QuarticFourSignedPolePair.twoProjective_taperMass_le
     W.twoWindow_taperMass_le
 
 /--
+On the four-window support and for t>=200, the normalized pole weight is
+uniformly bounded by cosh(1).  The bound is intentionally very coarse.
+-/
+theorem quarticFourNormalizedPoleWeight_abs_le_cosh_one
+    {R t c u : ℝ}
+    (hR : R < 1)
+    (ht : 200 <= t)
+    (hu : |u| < Real.pi + R) :
+    |quarticFourNormalizedPoleWeight t c u|
+      <= Real.cosh 1 := by
+  have ht0 : 0 < t := by linarith
+  have hpi : Real.pi < 4 := Real.pi_lt_four
+  have hu5 : |u| < 5 := by linarith
+  have hxnon : 0 <= |8*u/t| := abs_nonneg _
+  have hx : |8*u/t| <= 1 := by
+    rw [abs_div, abs_mul, abs_of_pos ht0, abs_of_nonneg (by norm_num : (0:ℝ) <= 8)]
+    rw [div_le_iff₀ ht0]
+    nlinarith
+  have hcosh :
+      Real.cosh (8*u/t) <= Real.cosh 1 := by
+    exact (Real.cosh_le_cosh).2 (by simpa using hx)
+  have hc1 : |Real.cos (16*u)| <= 1 := abs_cos_le_one _
+  have hc2 : |Real.cos (c*u)| <= 1 := abs_cos_le_one _
+  unfold quarticFourNormalizedPoleWeight
+  rw [abs_mul, abs_mul, abs_of_pos (Real.cosh_pos _)]
+  have hcosh0 : 0 <= Real.cosh (8*u/t) := (Real.cosh_pos _).le
+  have hone : 0 <= Real.cosh 1 := (Real.cosh_pos 1).le
+  nlinarith
+
+/--
+Pairing against the on-line cosine weight is controlled by taper mass.
+-/
+theorem quarticFourWindowPairing_onLine_abs_le_taperMass
+    {R lam mu c : ℝ}
+    (hR : 0 < R) :
+    |quarticFourWindowPairing R lam mu
+        (quarticFourNormalizedOnLineWeight c)|
+      <= taperMass (quarticFourWindowProfile R lam mu) := by
+  have hpair :=
+    quarticFourWindowProfile_pairing_eq
+      (lam:=lam) (mu:=mu) hR
+      (quarticFourNormalizedOnLineWeight_continuous c)
+  rw [← hpair]
+  have hi :
+      Integrable
+        (fun u : ℝ =>
+          quarticFourWindowProfile R lam mu u
+            * quarticFourNormalizedOnLineWeight c u) :=
+    ((quarticFourWindowProfile_continuous hR).mul
+      (quarticFourNormalizedOnLineWeight_continuous c))
+      .integrable_of_hasCompactSupport
+        (quarticFourWindowProfile_compact hR).mul_right
+  have hm :
+      Integrable
+        (fun u : ℝ => |quarticFourWindowProfile R lam mu u|) :=
+    (quarticFourWindowProfile_continuous hR).abs
+      .integrable_of_hasCompactSupport
+        (quarticFourWindowProfile_compact hR).abs
+  unfold taperMass
+  calc
+    |∫ u : ℝ,
+        quarticFourWindowProfile R lam mu u
+          * quarticFourNormalizedOnLineWeight c u|
+      <=
+    ∫ u : ℝ,
+      |quarticFourWindowProfile R lam mu u
+        * quarticFourNormalizedOnLineWeight c u| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ u : ℝ, |quarticFourWindowProfile R lam mu u| := by
+      apply integral_mono hi.abs hm
+      intro u
+      unfold quarticFourNormalizedOnLineWeight
+      rw [abs_mul]
+      have hc : |Real.cos (c*u)| <= 1 := abs_cos_le_one _
+      nlinarith [abs_nonneg (quarticFourWindowProfile R lam mu u)]
+
+/--
+Pairing against the high-t pole weight is controlled by cosh(1) times taper
+mass.
+-/
+theorem quarticFourWindowPairing_pole_abs_le_cosh_one_mul_taperMass
+    {R lam mu t c : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1)
+    (ht : 200 <= t) :
+    |quarticFourWindowPairing R lam mu
+        (quarticFourNormalizedPoleWeight t c)|
+      <= Real.cosh 1 * taperMass (quarticFourWindowProfile R lam mu) := by
+  have hpair :=
+    quarticFourWindowProfile_pairing_eq
+      (lam:=lam) (mu:=mu) hR
+      (quarticFourNormalizedPoleWeight_continuous t c)
+  rw [← hpair]
+  have hi :
+      Integrable
+        (fun u : ℝ =>
+          quarticFourWindowProfile R lam mu u
+            * quarticFourNormalizedPoleWeight t c u) :=
+    ((quarticFourWindowProfile_continuous hR).mul
+      (quarticFourNormalizedPoleWeight_continuous t c))
+      .integrable_of_hasCompactSupport
+        (quarticFourWindowProfile_compact hR).mul_right
+  have hm :
+      Integrable
+        (fun u : ℝ =>
+          Real.cosh 1 * |quarticFourWindowProfile R lam mu u|) :=
+    ((quarticFourWindowProfile_continuous hR).abs
+      .integrable_of_hasCompactSupport
+        (quarticFourWindowProfile_compact hR).abs).const_mul _
+  calc
+    |∫ u : ℝ,
+        quarticFourWindowProfile R lam mu u
+          * quarticFourNormalizedPoleWeight t c u|
+      <=
+    ∫ u : ℝ,
+      |quarticFourWindowProfile R lam mu u
+        * quarticFourNormalizedPoleWeight t c u| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ u : ℝ,
+      Real.cosh 1 * |quarticFourWindowProfile R lam mu u| := by
+      apply integral_mono hi.abs hm
+      intro u
+      by_cases hz : quarticFourWindowProfile R lam mu u = 0
+      · simp [hz, (Real.cosh_pos 1).le]
+      · have hs :=
+          quarticFourWindowProfile_support_abs_lt hR hz
+        have hw :=
+          quarticFourNormalizedPoleWeight_abs_le_cosh_one
+            hRone ht hs
+        rw [abs_mul]
+        exact mul_le_mul_of_nonneg_left hw (abs_nonneg _)
+    _ =
+      Real.cosh 1
+        * taperMass (quarticFourWindowProfile R lam mu) := by
+      rw [integral_const_mul]
+      rfl
+
+def quarticFourSmoothPoleBound : ℝ :=
+  2 * Real.cosh 1 * (83/30 : ℝ)^2
+
+theorem QuarticFourSignedPolePair.poleHalf_abs_le
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    |W.poleHalf| <= quarticFourSmoothPoleBound := by
+  have hp1 :=
+    quarticFourWindowPairing_pole_abs_le_cosh_one_mul_taperMass
+      W.Rpos W.RltOne ht
+      (lam:=(1/2 : ℝ)) (mu:=W.muHalf) (c:=1)
+  have ho2 :=
+    quarticFourWindowPairing_onLine_abs_le_taperMass
+      W.Rpos (lam:=(1/2 : ℝ)) (mu:=W.muHalf) (c:=2)
+  have hp2 :=
+    quarticFourWindowPairing_pole_abs_le_cosh_one_mul_taperMass
+      W.Rpos W.RltOne ht
+      (lam:=(1/2 : ℝ)) (mu:=W.muHalf) (c:=2)
+  have ho1 :=
+    quarticFourWindowPairing_onLine_abs_le_taperMass
+      W.Rpos (lam:=(1/2 : ℝ)) (mu:=W.muHalf) (c:=1)
+  have hm := W.halfWindow_taperMass_le
+  unfold QuarticFourSignedPolePair.poleHalf
+    quarticFourSmoothFinitePoleResidual
+    quarticFourSmoothPoleBound
+  calc
+    |_ * _ - _ * _|
+      <= |_ * _| + |_ * _| := abs_sub _ _
+    _ =
+      |_ | * |_ | + |_ | * |_ | := by
+        rw [abs_mul, abs_mul]
+    _ <=
+      (Real.cosh 1 * (83/30)) * (83/30)
+        + (Real.cosh 1 * (83/30)) * (83/30) := by
+      have hC : 0 <= Real.cosh 1 := (Real.cosh_pos 1).le
+      nlinarith [taperMass_nonneg
+        (quarticFourWindowProfile W.R (1/2) W.muHalf)]
+    _ = 2 * Real.cosh 1 * (83/30)^2 := by ring
+
+theorem QuarticFourSignedPolePair.poleTwo_abs_le
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    |W.poleTwo| <= quarticFourSmoothPoleBound := by
+  have hp1 :=
+    quarticFourWindowPairing_pole_abs_le_cosh_one_mul_taperMass
+      W.Rpos W.RltOne ht
+      (lam:=(2/3 : ℝ)) (mu:=W.muTwo) (c:=1)
+  have ho2 :=
+    quarticFourWindowPairing_onLine_abs_le_taperMass
+      W.Rpos (lam:=(2/3 : ℝ)) (mu:=W.muTwo) (c:=2)
+  have hp2 :=
+    quarticFourWindowPairing_pole_abs_le_cosh_one_mul_taperMass
+      W.Rpos W.RltOne ht
+      (lam:=(2/3 : ℝ)) (mu:=W.muTwo) (c:=2)
+  have ho1 :=
+    quarticFourWindowPairing_onLine_abs_le_taperMass
+      W.Rpos (lam:=(2/3 : ℝ)) (mu:=W.muTwo) (c:=1)
+  have hm := W.twoWindow_taperMass_le
+  unfold QuarticFourSignedPolePair.poleTwo
+    quarticFourSmoothFinitePoleResidual
+    quarticFourSmoothPoleBound
+  calc
+    |_ * _ - _ * _|
+      <= |_ * _| + |_ * _| := abs_sub _ _
+    _ =
+      |_ | * |_ | + |_ | * |_ | := by
+        rw [abs_mul, abs_mul]
+    _ <=
+      (Real.cosh 1 * (83/30)) * (83/30)
+        + (Real.cosh 1 * (83/30)) * (83/30) := by
+      have hC : 0 <= Real.cosh 1 := (Real.cosh_pos 1).le
+      nlinarith [taperMass_nonneg
+        (quarticFourWindowProfile W.R (2/3) W.muTwo)]
+    _ = 2 * Real.cosh 1 * (83/30)^2 := by ring
+
+/--
 Combined-profile mass compiler from any coarse uniform bound on the two smooth
 pole coordinates.
 -/

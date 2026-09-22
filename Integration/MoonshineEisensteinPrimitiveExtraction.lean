@@ -85,7 +85,6 @@ structure PrimitiveRealExtraction (S : SourceRealTranscendental) where
   map : S.Carrier → ℝ
 
   respects_equiv : ∀ {x y}, S.equiv x y → map x = map y
-  reflects_equiv : ∀ {x y}, map x = map y → S.equiv x y
 
   map_zero : map S.zero = 0
   map_one : map S.one = 1
@@ -98,6 +97,13 @@ structure PrimitiveRealExtraction (S : SourceRealTranscendental) where
   map_sin : ∀ x, map (S.sin x) = Real.sin (map x)
   map_cos : ∀ x, map (S.cos x) = Real.cos (map x)
   map_pi : map S.pi = Real.pi
+
+/-- Optional stronger same-object faithfulness theorem.  It is deliberately
+separate from the extraction needed to transport q/E4/E6. -/
+structure FaithfulPrimitiveRealExtraction
+    (S : SourceRealTranscendental)
+    (E : PrimitiveRealExtraction S) : Prop where
+  reflects_equiv : ∀ {x y}, E.map x = E.map y → S.equiv x y
 
 variable {P : SourceComplexPackage}
 
@@ -270,7 +276,8 @@ structure PrimitiveExtractionBoundary where
   actualAgdaMirrorPackageInhabited : Bool
   primitiveAgdaRealToLeanRealExtractionInhabited : Bool
   rawRepresentativeInjectivityRequired : Bool
-  setoidFaithfulnessRequired : Bool
+  setoidRespectRequiredForTransport : Bool
+  setoidFaithfulnessRequiredForSameObjectEquivalence : Bool
 
 def primitiveExtractionBoundary : PrimitiveExtractionBoundary where
   componentwiseComplexMapOwned := true
@@ -282,7 +289,8 @@ def primitiveExtractionBoundary : PrimitiveExtractionBoundary where
   actualAgdaMirrorPackageInhabited := false
   primitiveAgdaRealToLeanRealExtractionInhabited := false
   rawRepresentativeInjectivityRequired := false
-  setoidFaithfulnessRequired := true
+  setoidRespectRequiredForTransport := true
+  setoidFaithfulnessRequiredForSameObjectEquivalence := true
 
 end
 

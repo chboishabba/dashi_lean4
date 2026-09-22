@@ -9,6 +9,7 @@ import Integration.BishopVendoredTrigSemantics
 import Integration.BishopVendoredMachinPiSemantics
 import Integration.BishopVendoredTranscendentalExtraction
 import Integration.BishopRound11MachinSourceBinding
+import Integration.MoonshineEisensteinRound11RouteB
 import Integration.MoonshineEisensteinWeld
 import Integration.TernaryHub
 import Integration.Base369Group

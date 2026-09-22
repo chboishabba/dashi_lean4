@@ -135,6 +135,28 @@ def primitiveExtraction
   map_cos := T.eval_cos
   map_pi := T.eval_pi
 
+/-- Direct compiler from source convergence mirrors to the primitive route-B
+real extraction.  No transcendental semantic equality is an input. -/
+def primitiveExtractionFromConvergence
+    (A : VendoredArithmeticMirror)
+    (C : VendoredTranscendentalConvergenceMirror A) :
+    PrimitiveRealExtraction
+      (bishopSourceReal A (semanticMirrorFromConvergence A C)) :=
+  primitiveExtraction A (semanticMirrorFromConvergence A C)
+
+/-- Direct compiler from source convergence mirrors to the componentwise
+complex extraction used by the q/E4/E6 route. -/
+def complexExtractionFromConvergence
+    (A : VendoredArithmeticMirror)
+    (C : VendoredTranscendentalConvergenceMirror A) :=
+  Integration.MoonshineEisensteinPrimitiveExtraction.mapComplex
+    (P := {
+      real := bishopSourceReal A (semanticMirrorFromConvergence A C)
+      expC := SourceComplex.expCartesian
+      expCartesian := fun _ => rfl
+    })
+    (primitiveExtractionFromConvergence A C)
+
 /-- Once the selected Bishop package is mirrored, its componentwise complex
 extraction into Lean Complex is automatic. -/
 def complexExtraction
@@ -153,6 +175,8 @@ structure VendoredTranscendentalExtractionBoundary where
   vendoredArithmeticEvaluationOwned : Bool
   routeBPrimitiveExtractionCompilerOwned : Bool
   routeBComplexExtractionCompilerOwned : Bool
+  sourceConvergenceToPrimitiveExtractionOwned : Bool
+  sourceConvergenceToComplexExtractionOwned : Bool
 
   bishopExpClassicalSemanticCompilerOwned : Bool
   bishopSinClassicalSemanticCompilerOwned : Bool
@@ -170,6 +194,8 @@ def vendoredTranscendentalExtractionBoundary :
   vendoredArithmeticEvaluationOwned := true
   routeBPrimitiveExtractionCompilerOwned := true
   routeBComplexExtractionCompilerOwned := true
+  sourceConvergenceToPrimitiveExtractionOwned := true
+  sourceConvergenceToComplexExtractionOwned := true
 
   bishopExpClassicalSemanticCompilerOwned := true
   bishopSinClassicalSemanticCompilerOwned := true

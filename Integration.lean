@@ -3,6 +3,7 @@ import Integration.MoonshineEisensteinAnalytic
 import Integration.MoonshineEisensteinAgdaTarget
 import Integration.MoonshineEisensteinPrimitiveExtraction
 import Integration.BishopVendoredRealEvaluation
+import Integration.BishopVendoredTranscendentalExtraction
 import Integration.MoonshineEisensteinWeld
 import Integration.TernaryHub
 import Integration.Base369Group

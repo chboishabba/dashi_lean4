@@ -197,7 +197,7 @@ def RationalQuadraticKummerCharacterDescent : Prop :=
   ∃ κ : MathlibRatSquareClass →
       (RationalAbsoluteGalois →ₜ* RationalQuadraticSign),
     ∀ a : NonzeroRat,
-      κ (explicitToMathlibSquareClass a) =
+      κ (mathlibSquareClassOf a) =
         rationalQuadraticKummerCharacter a
 
 end Synthesis.Millennium.BSD

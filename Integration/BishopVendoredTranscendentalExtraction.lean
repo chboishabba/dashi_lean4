@@ -1,4 +1,6 @@
 import Integration.BishopVendoredRealEvaluation
+import Integration.BishopVendoredExponentialSemantics
+import Integration.BishopVendoredTrigSemantics
 import Integration.MoonshineEisensteinPrimitiveExtraction
 
 /-!
@@ -12,23 +14,38 @@ The ring part is no longer an assumption.  Given the exact vendored arithmetic
 sequence equations, evaluation into Lean Real preserves zero, one, addition,
 subtraction, negation and the canonical-bound-resampled multiplication.
 
-Only the semantic identification of the already-constructed Bishop
-transcendentals remains:
-* Bishop exp with Real.exp;
-* Bishop sine with Real.sin;
-* Bishop cosine with Real.cos;
-* the selected Bishop pi object with Real.pi.
+The ring part and the exp/sin/cos semantic identifications are compiler output:
+the latter are derived from the actual Bishop convergence witnesses and
+Mathlib's classical power-series theorems.
 
-Once those four facts are supplied, the full PrimitiveRealExtraction is
+The only independent transcendental same-object leaf retained here is the
+selected Bishop pi object with Real.pi.  Once the source convergence mirrors
+and that pi identity are supplied, the full PrimitiveRealExtraction is
 constructed and the q/E4/E6/Delta reflection transport compiler is available.
 -/
 
 namespace Integration.BishopVendoredTranscendentalExtraction
 
 open Integration.BishopVendoredRealEvaluation
+open Integration.BishopVendoredExponentialSemantics
+open Integration.BishopVendoredTrigSemantics
 open Integration.MoonshineEisensteinPrimitiveExtraction
 
 noncomputable section
+
+/-- Source-facing convergence data for the actual Bishop exp/sin/cos
+constructions, plus the selected Bishop pi object.
+
+No exp/sin/cos semantic equality is assumed here. -/
+structure VendoredTranscendentalConvergenceMirror
+    (A : VendoredArithmeticMirror) where
+  expMirror : VendoredExpLimitMirror A
+  trigMirror : VendoredTrigLimitMirror A
+
+  piB : RegularRatReal
+  eval_pi : eval piB = Real.pi
+
+open VendoredTranscendentalConvergenceMirror public
 
 /-- Exact transcendental operations selected on the vendored Bishop carrier,
 plus their remaining semantic identifications with Lean's classical functions. -/
@@ -48,6 +65,22 @@ structure VendoredTranscendentalMirror
 
   eval_pi :
     eval piB = Real.pi
+
+/-- Compile the classical semantics of exp/sin/cos from the actual source
+convergence mirrors. -/
+def semanticMirrorFromConvergence
+    (A : VendoredArithmeticMirror)
+    (C : VendoredTranscendentalConvergenceMirror A) :
+    VendoredTranscendentalMirror A where
+  expB := C.expMirror.expB
+  sinB := C.trigMirror.sinB
+  cosB := C.trigMirror.cosB
+  piB := C.piB
+
+  eval_exp := eval_exp_eq_real_exp A C.expMirror
+  eval_sin := eval_sin_eq_real_sin A C.trigMirror
+  eval_cos := eval_cos_eq_real_cos A C.trigMirror
+  eval_pi := C.eval_pi
 
 /-- The actual vendored algebra and chosen Bishop transcendental operations
 presented in the source shape expected by the route-B compiler. -/
@@ -116,9 +149,13 @@ structure VendoredTranscendentalExtractionBoundary where
   routeBPrimitiveExtractionCompilerOwned : Bool
   routeBComplexExtractionCompilerOwned : Bool
 
-  bishopExpClassicalSemanticWeldOwned : Bool
-  bishopSinClassicalSemanticWeldOwned : Bool
-  bishopCosClassicalSemanticWeldOwned : Bool
+  bishopExpClassicalSemanticCompilerOwned : Bool
+  bishopSinClassicalSemanticCompilerOwned : Bool
+  bishopCosClassicalSemanticCompilerOwned : Bool
+  convergenceToSemanticMirrorCompilerOwned : Bool
+
+  bishopExpConvergenceMirrorInhabited : Bool
+  bishopTrigConvergenceMirrorInhabited : Bool
   bishopPiClassicalSemanticWeldOwned : Bool
   actualAgdaVendorMirrorPackageInhabited : Bool
 
@@ -128,9 +165,13 @@ def vendoredTranscendentalExtractionBoundary :
   routeBPrimitiveExtractionCompilerOwned := true
   routeBComplexExtractionCompilerOwned := true
 
-  bishopExpClassicalSemanticWeldOwned := false
-  bishopSinClassicalSemanticWeldOwned := false
-  bishopCosClassicalSemanticWeldOwned := false
+  bishopExpClassicalSemanticCompilerOwned := true
+  bishopSinClassicalSemanticCompilerOwned := true
+  bishopCosClassicalSemanticCompilerOwned := true
+  convergenceToSemanticMirrorCompilerOwned := true
+
+  bishopExpConvergenceMirrorInhabited := false
+  bishopTrigConvergenceMirrorInhabited := false
   bishopPiClassicalSemanticWeldOwned := false
   actualAgdaVendorMirrorPackageInhabited := false
 

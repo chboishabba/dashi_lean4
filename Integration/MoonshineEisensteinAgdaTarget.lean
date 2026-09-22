@@ -184,6 +184,46 @@ theorem e6At_tendsto_limit (τ : ℍ) :
     Tendsto (fun N => e6At N τ) atTop (𝓝 (e6Limit τ)) := by
   simpa [e6Limit] using e6At_tendsto τ
 
+/-- The canonical infinite target of the literal Agda E4 recurrence is
+exactly Mathlib's normalized weight-four Eisenstein series. -/
+theorem e4Limit_eq_mathlib_E4 (τ : ℍ) :
+    e4Limit τ = Integration.MoonshineEisensteinAnalytic.E4 τ := by
+  rw [Integration.MoonshineEisensteinAnalytic.E4_qExpansion,
+    tsum_pnat_eq_tsum_succ
+      (f := fun n : ℕ =>
+        (σ 3 n : ℂ) *
+          Integration.MoonshineEisensteinAnalytic.qParam τ ^ n)]
+  simp_rw [← qOfTarget_eq_qParam τ]
+  unfold e4Limit e4Term scaleNatTarget
+  norm_num [show bernoulli 4 = -1 / 30 by decide +kernel]
+  ring
+
+/-- The canonical infinite target of the literal Agda E6 recurrence is
+exactly Mathlib's normalized weight-six Eisenstein series. -/
+theorem e6Limit_eq_mathlib_E6 (τ : ℍ) :
+    e6Limit τ = Integration.MoonshineEisensteinAnalytic.E6 τ := by
+  rw [Integration.MoonshineEisensteinAnalytic.E6_qExpansion,
+    tsum_pnat_eq_tsum_succ
+      (f := fun n : ℕ =>
+        (σ 5 n : ℂ) *
+          Integration.MoonshineEisensteinAnalytic.qParam τ ^ n)]
+  simp_rw [← qOfTarget_eq_qParam τ]
+  unfold e6Limit e6Term scaleNatTarget
+  norm_num [show bernoulli 6 = 1 / 42 by decide +kernel]
+  ring
+
+/-- Therefore the exact Agda-shaped finite E4 recurrence converges to Mathlib E4. -/
+theorem e4At_tendsto_mathlib_E4 (τ : ℍ) :
+    Tendsto (fun N => e4At N τ) atTop
+      (𝓝 (Integration.MoonshineEisensteinAnalytic.E4 τ)) := by
+  simpa [e4Limit_eq_mathlib_E4 τ] using e4At_tendsto_limit τ
+
+/-- Therefore the exact Agda-shaped finite E6 recurrence converges to Mathlib E6. -/
+theorem e6At_tendsto_mathlib_E6 (τ : ℍ) :
+    Tendsto (fun N => e6At N τ) atTop
+      (𝓝 (Integration.MoonshineEisensteinAnalytic.E6 τ)) := by
+  simpa [e6Limit_eq_mathlib_E6 τ] using e6At_tendsto_limit τ
+
 /-- Machine-readable seam. -/
 structure AgdaTargetBoundary where
   literalQTargetOwned : Bool
@@ -205,7 +245,7 @@ def agdaTargetBoundary : AgdaTargetBoundary where
   agdaPrimitiveExtractionInhabited := false
   finiteRecurrenceBoundToExtractedAgdaObject := false
   finiteToInfiniteLimitTransportPaid := true
-  infiniteLimitIdentifiedWithMathlibE4E6 := false
+  infiniteLimitIdentifiedWithMathlibE4E6 := true
 
 end
 

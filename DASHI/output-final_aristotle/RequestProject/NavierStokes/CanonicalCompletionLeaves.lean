@@ -37,6 +37,15 @@ theorem memLp_fourThird_of_memLp_two
   exact hf.mono_exponent (ENNReal.ofReal_le_ofReal (by norm_num))
 
 
+/-- The exact critical Hölder exponent arithmetic: 1/4 + 1/2 = 3/4. -/
+theorem holderTriple_four_two_fourThird :
+    ENNReal.HolderTriple
+      (ENNReal.ofReal 4)
+      (ENNReal.ofReal 2)
+      (ENNReal.ofReal (4 / 3 : ℝ)) := by
+  rw [ENNReal.holderTriple_iff]
+  norm_num
+
 /--
 Hölder in time for the critical nonlinear term.  This is the exact reusable
 L^4_t × L^2_t -> L^(4/3)_t step; all spatial Sobolev information is carried by
@@ -59,6 +68,20 @@ theorem memLp_bilinear_four_two_fourThird
       (ENNReal.ofReal (4 / 3 : ℝ)) μ := by
   letI := hHolder
   exact B.memLp_of_bilin (ENNReal.ofReal (4 / 3 : ℝ)) hf hg
+
+/-- Critical Hölder with the exponent relation discharged internally. -/
+theorem memLp_bilinear_four_two_fourThird_canonical
+    {α E F G : Type*} [MeasurableSpace α] {μ : Measure α}
+    [NormedAddCommGroup E] [NormedAddCommGroup F] [NormedAddCommGroup G]
+    [NormedSpace ℝ E] [NormedSpace ℝ F] [NormedSpace ℝ G]
+    (B : E →L[ℝ] F →L[ℝ] G)
+    {f : α → E} {g : α → F}
+    (hf : MemLp f (ENNReal.ofReal 4) μ)
+    (hg : MemLp g (ENNReal.ofReal 2) μ) :
+    MemLp (fun t => B (f t) (g t))
+      (ENNReal.ofReal (4 / 3 : ℝ)) μ :=
+  memLp_bilinear_four_two_fourThird
+    B holderTriple_four_two_fourThird hf hg
 
 /-- Continuous spatial embeddings preserve the time Lp membership. -/
 theorem memLp_comp_continuousLinearMap
@@ -149,6 +172,37 @@ The remaining spatial estimate feeding nonlinearLFourThird is the standard
 Sobolev/Holder chain from the critical barrier. It remains carrier-specific
 and is not replaced here by an unrelated abstract norm inequality.
 -/
+
+/--
+B1+B2 with the critical Hölder exponent arithmetic discharged internally.
+-/
+theorem critical_timeDerivative_of_linear_bilinear_canonical
+    {α HThreeHalf HOne HGradientHalf HMinusHalf : Type*}
+    [MeasurableSpace α] {μ : Measure α} [IsFiniteMeasure μ]
+    [NormedAddCommGroup HThreeHalf] [NormedAddCommGroup HOne]
+    [NormedAddCommGroup HGradientHalf] [NormedAddCommGroup HMinusHalf]
+    [NormedSpace ℝ HThreeHalf] [NormedSpace ℝ HOne]
+    [NormedSpace ℝ HGradientHalf] [NormedSpace ℝ HMinusHalf]
+    (viscousMap : HThreeHalf →L[ℝ] HMinusHalf)
+    (nonlinearMap : HOne →L[ℝ] HGradientHalf →L[ℝ] HMinusHalf)
+    (uThreeHalf : α → HThreeHalf)
+    (uOne : α → HOne)
+    (gradHalf : α → HGradientHalf)
+    (timeDerivative : α → HMinusHalf)
+    (huThreeHalf : MemLp uThreeHalf (ENNReal.ofReal 2) μ)
+    (huOne : MemLp uOne (ENNReal.ofReal 4) μ)
+    (hgradHalf : MemLp gradHalf (ENNReal.ofReal 2) μ)
+    (hEquation :
+      timeDerivative =
+        (fun t =>
+          viscousMap (uThreeHalf t) +
+            nonlinearMap (uOne t) (gradHalf t))) :
+    MemLp timeDerivative (ENNReal.ofReal (4 / 3 : ℝ)) μ :=
+  critical_timeDerivative_of_linear_bilinear
+    viscousMap nonlinearMap
+    uThreeHalf uOne gradHalf timeDerivative
+    holderTriple_four_two_fourThird
+    huThreeHalf huOne hgradHalf hEquation
 
 /-! ## P4: exact Simon source contract -/
 

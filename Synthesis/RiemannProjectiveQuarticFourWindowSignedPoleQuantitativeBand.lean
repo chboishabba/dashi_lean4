@@ -57,7 +57,7 @@ theorem QuarticFourSignedPolePair.quantitativeTargetRadius_pos
     0 < W.quantitativeTargetRadius := by
   unfold QuarticFourSignedPolePair.quantitativeTargetRadius
   exact quantitativeFourthOrderRadius_pos
-    (by nlinarith [W.targetStrength])
+    (by nlinarith [W.targetStrength_pos])
     (compactCoshFourthLipschitzConstant_nonneg _)
 
 /--
@@ -80,7 +80,7 @@ theorem QuarticFourSignedPolePair.quantitativeCombinedTargetBand
   let m : ℝ := 4 * W.targetStrength
   have hm : 0 < m := by
     dsimp [m]
-    nlinarith [W.targetStrength]
+    nlinarith [W.targetStrength_pos]
   have hP : Continuous P := by
     dsimp [P]
     exact quarticFourSignedPoleCombinedProfile_continuous W.Rpos

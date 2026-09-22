@@ -387,7 +387,7 @@ theorem S_negConj_fixed_of_normSq_one
   apply UpperHalfPlane.ext
   rw [S_negConj_coe]
   have hconj : conj (τ : ℂ) ≠ 0 := by
-    exact map_ne_zero Complex.conj (UpperHalfPlane.ne_zero τ)
+    simpa only [map_ne_zero] using UpperHalfPlane.ne_zero τ
   apply (div_eq_iff hconj).2
   calc
     (1 : ℂ) = (Complex.normSq (τ : ℂ) : ℂ) := by simp [hunit]
@@ -401,8 +401,12 @@ theorem normalizedDelta_unitCircle_fixed
     normalizedDeltaLimit τ =
       conj ((τ : ℂ) ^ 12 * normalizedDeltaLimit τ) := by
   have hfix := S_negConj_fixed_of_normSq_one τ hunit
-  rw [← hfix]
-  exact normalizedDelta_inv_conj τ
+  calc
+    normalizedDeltaLimit τ =
+        normalizedDeltaLimit (ModularGroup.S • negConj τ) := by
+      exact congrArg normalizedDeltaLimit hfix.symm
+    _ = conj ((τ : ℂ) ^ 12 * normalizedDeltaLimit τ) :=
+      normalizedDelta_inv_conj τ
 
 /-- Machine-readable seam. -/
 structure AgdaTargetBoundary where

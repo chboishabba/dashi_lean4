@@ -125,6 +125,65 @@ def e4At (N : ℕ) (τ : ℍ) : ℂ :=
 def e6At (N : ℕ) (τ : ℍ) : ℂ :=
   e6TruncatedTarget N (qOfTarget τ)
 
+/-- Literal shifted E4 term used by the Agda recurrence. -/
+def e4Term (τ : ℍ) (n : ℕ) : ℂ :=
+  scaleNatTarget (240 * σ 3 (n + 1)) (qOfTarget τ ^ (n + 1))
+
+/-- Literal shifted E6 term used by the Agda recurrence. -/
+def e6Term (τ : ℍ) (n : ℕ) : ℂ :=
+  scaleNatTarget (504 * σ 5 (n + 1)) (qOfTarget τ ^ (n + 1))
+
+/-- The exact shifted E4 term family is summable. -/
+theorem summable_e4Term (τ : ℍ) :
+    Summable (e4Term τ) := by
+  have hs :=
+    (summable_nat_add_iff 1).mpr
+      (Integration.MoonshineEisensteinAnalytic.summable_240_sigma3_q τ)
+  simpa [e4Term, scaleNatTarget,
+    qOfTarget_eq_qParam, Nat.cast_mul, mul_assoc] using hs
+
+/-- The exact shifted E6 term family is summable. -/
+theorem summable_e6Term (τ : ℍ) :
+    Summable (e6Term τ) := by
+  have hs :=
+    (summable_nat_add_iff 1).mpr
+      (Integration.MoonshineEisensteinAnalytic.summable_504_sigma5_q τ)
+  simpa [e6Term, scaleNatTarget,
+    qOfTarget_eq_qParam, Nat.cast_mul, mul_assoc] using hs
+
+/-- The literal Agda E4 truncations converge to their canonical infinite sum. -/
+theorem e4At_tendsto (τ : ℍ) :
+    Tendsto (fun N => e4At N τ) atTop
+      (𝓝 (1 + ∑' n : ℕ, e4Term τ n)) := by
+  have hs := summable_e4Term τ
+  have ht := hs.hasSum.tendsto_sum_nat
+  simpa [e4At, e4TruncatedTarget_eq_sum, e4Term] using
+    tendsto_const_nhds.add ht
+
+/-- The literal Agda E6 truncations converge to their canonical infinite sum. -/
+theorem e6At_tendsto (τ : ℍ) :
+    Tendsto (fun N => e6At N τ) atTop
+      (𝓝 (1 - ∑' n : ℕ, e6Term τ n)) := by
+  have hs := summable_e6Term τ
+  have ht := hs.hasSum.tendsto_sum_nat
+  simpa [e6At, e6TruncatedTarget_eq_sum, e6Term] using
+    tendsto_const_nhds.sub ht
+
+/-- Canonical infinite targets selected by the actual Agda recurrences. -/
+def e4Limit (τ : ℍ) : ℂ :=
+  1 + ∑' n : ℕ, e4Term τ n
+
+def e6Limit (τ : ℍ) : ℂ :=
+  1 - ∑' n : ℕ, e6Term τ n
+
+theorem e4At_tendsto_limit (τ : ℍ) :
+    Tendsto (fun N => e4At N τ) atTop (𝓝 (e4Limit τ)) := by
+  simpa [e4Limit] using e4At_tendsto τ
+
+theorem e6At_tendsto_limit (τ : ℍ) :
+    Tendsto (fun N => e6At N τ) atTop (𝓝 (e6Limit τ)) := by
+  simpa [e6Limit] using e6At_tendsto τ
+
 /-- Machine-readable seam. -/
 structure AgdaTargetBoundary where
   literalQTargetOwned : Bool
@@ -145,7 +204,7 @@ def agdaTargetBoundary : AgdaTargetBoundary where
   qTargetIdentifiedWithMathlibQ := true
   agdaPrimitiveExtractionInhabited := false
   finiteRecurrenceBoundToExtractedAgdaObject := false
-  finiteToInfiniteLimitTransportPaid := false
+  finiteToInfiniteLimitTransportPaid := true
   infiniteLimitIdentifiedWithMathlibE4E6 := false
 
 end

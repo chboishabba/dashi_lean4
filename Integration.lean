@@ -1,4 +1,5 @@
 import Integration.Levels
+import Integration.MoonshineEisensteinAnalytic
 import Integration.TernaryHub
 import Integration.Base369Group
 import Integration.Address

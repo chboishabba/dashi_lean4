@@ -147,6 +147,15 @@ def primitiveExtractionDirect
       (bishopSourceReal A (semanticMirror A B)) :=
   primitiveExtractionFromConvergence A (convergenceMirror A B)
 
+/-- The compiled primitive extraction is faithful on Bishop setoid classes. -/
+def faithfulPrimitiveExtraction
+    (A : VendoredArithmeticMirror)
+    (B : Round11MachinSourceBinding A) :
+    FaithfulPrimitiveRealExtraction
+      (bishopSourceReal A (semanticMirror A B))
+      (primitiveExtraction A B) where
+  reflects_equiv := equiv_of_eval_eq
+
 structure Round11MachinBindingBoundary where
   expBindingCompilerOwned : Bool
   trigBindingCompilerOwned : Bool
@@ -155,6 +164,7 @@ structure Round11MachinBindingBoundary where
   classicalSemanticMirrorCompilerOwned : Bool
   machinPiClassicalValueCompilerOwned : Bool
   primitiveExtractionCompilerOwned : Bool
+  faithfulSetoidEmbeddingCompilerOwned : Bool
 
   actualRound11MachinSourceBindingInhabited : Bool
 
@@ -166,6 +176,7 @@ def round11MachinBindingBoundary : Round11MachinBindingBoundary where
   classicalSemanticMirrorCompilerOwned := true
   machinPiClassicalValueCompilerOwned := true
   primitiveExtractionCompilerOwned := true
+  faithfulSetoidEmbeddingCompilerOwned := true
 
   actualRound11MachinSourceBindingInhabited := false
 

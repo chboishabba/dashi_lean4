@@ -252,7 +252,32 @@ structure UniversalBSDRankProof where
 def UniversalBSDRankTheorem : Prop :=
   Nonempty UniversalBSDRankProof
 
+/-- Package one chosen pair of valid same-object bindings and the universal
+rank equality on that pair. -/
+theorem universalBSDRankTheorem_of_bound
+    (a : BSDAnalyticRankBinding)
+    (m : BSDMordellWeilRankBinding)
+    (hRank : UniversalBSDRankEqualityProducer a m) :
+    UniversalBSDRankTheorem :=
+  ⟨
+    { bound := { analytic := a, algebraic := m }
+      rankWeld := hRank }⟩
+
+/-- Existence-shaped max-cut: it is enough to construct one valid analytic
+binding, one valid Mordell--Weil binding, and prove BSD rank equality on
+those same objects. -/
 theorem universalBSDRankTheorem_of_producers
+    (h :
+      ∃ (a : BSDAnalyticRankBinding)
+        (m : BSDMordellWeilRankBinding),
+        UniversalBSDRankEqualityProducer a m) :
+    UniversalBSDRankTheorem := by
+  rcases h with ⟨a, m, hRank⟩
+  exact universalBSDRankTheorem_of_bound a m hRank
+
+/-- The older split producer view compiles to the existence-shaped theorem
+when the rank theorem is supplied uniformly; retained as a convenience. -/
+theorem universalBSDRankTheorem_of_uniform_producers
     (hA : UniversalBSDAnalyticBindingProducer)
     (hM : UniversalBSDMordellWeilBindingProducer)
     (hRank :
@@ -262,9 +287,7 @@ theorem universalBSDRankTheorem_of_producers
     UniversalBSDRankTheorem := by
   rcases hA with ⟨a⟩
   rcases hM with ⟨m⟩
-  exact ⟨
-    { bound := { analytic := a, algebraic := m }
-      rankWeld := hRank a m }⟩
+  exact universalBSDRankTheorem_of_bound a m (hRank a m)
 
 /-! ## Same-object CM specialization and scope guard -/
 

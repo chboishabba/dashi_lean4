@@ -1,4 +1,5 @@
 import Synthesis.MillenniumBSDEtaEllipticSturmEightBoundary
+import Synthesis.MillenniumBSDJacobiEta32Reduction
 import Synthesis.MillenniumBSDCMEta32Decay
 import Synthesis.MillenniumBSDHasseGlobalCoefficientBound
 import Synthesis.MillenniumBSDFullGlobalAnalyticLFunction
@@ -52,6 +53,25 @@ theorem etaElliptic_allCoefficientAgreement_of_level32Sturm
       rw [cmAllNCoefficient_eq_fullyExplicit, cmFullyExplicitCoefficient_zero]
     simp [cmEllipticCoefficientComplex, heta, hell]
   · exact etaElliptic_positiveAgreement_of_level32Sturm sturm (n + 1) (by omega)
+
+/-- The Jacobi route feeds exactly the same all-coefficient interface.  The
+positive coefficients come from the two specialized q-product identities plus
+the finite representation/elliptic arithmetic theorem; the zero coefficient is
+the already-proved support fact. -/
+theorem etaElliptic_allCoefficientAgreement_of_jacobi
+    (hOdd : cmJacobiOddProductIdentity)
+    (hEven : cmJacobiEvenProductIdentity)
+    (hArithmetic : JacobiRepresentationMatchesElliptic) :
+    EtaEllipticAllCoefficientAgreement := by
+  intro n
+  rcases n with _ | n
+  · have heta : cmEta32TaylorCoeff 0 = 0 :=
+      cmEta32TaylorCoeff_eq_zero_of_mod_four_ne_one (by norm_num)
+    have hell : cmAllNCoefficient 0 = 0 := by
+      rw [cmAllNCoefficient_eq_fullyExplicit, cmFullyExplicitCoefficient_zero]
+    simp [cmEllipticCoefficientComplex, heta, hell]
+  · exact etaEllipticPositiveAgreement_of_jacobi hOdd hEven hArithmetic
+      (n + 1) (by omega)
 
 /-- The normalized eta kernel has the actual elliptic coefficients as its
 exponential series from any all-coefficient producer. -/

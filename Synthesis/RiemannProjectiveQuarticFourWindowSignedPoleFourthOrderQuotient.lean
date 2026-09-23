@@ -398,4 +398,197 @@ theorem QuarticFourSignedPolePair.centeredCompletedResidualAt_eq_generic
     QuarticFourSignedPolePair.centeredCompletedFunctionalAt
   rw [W.combinedCenteredAbelPartial_eq_generic ht]
 
+
+/--
+Centered odd and cubic low-mode carriers.
+-/
+def centeredOddLowMode
+    (t a1 a3 x : ℝ) : ℝ :=
+  a1 * (x-t) + a3 * (x-t)^3
+
+def centeredCubicLowMode
+    (t a0 a1 a2 a3 x : ℝ) : ℝ :=
+  centeredEvenLowMode t a0 a2 x
+    + centeredOddLowMode t a1 a3 x
+
+/--
+The odd low-mode integral is exactly the linear combination of the centered
+mode-1 and mode-3 defects.
+-/
+theorem QuarticFourSignedPolePair.centeredOddLowMode_integral_eq
+    {t a1 a3 : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    (∫ x in (t - (n : ℝ))..(t + (n : ℝ)),
+      W.signedOrdinateTestDeriv x
+        * centeredOddLowMode t a1 a3 x)
+      =
+    a1 * W.centeredModeDefectAt n 1
+      + a3 * W.centeredModeDefectAt n 3 := by
+  have hD := W.signedOrdinateTestDeriv_continuous ht
+  have h1 :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          a1 * (W.signedOrdinateTestDeriv x * (x-t)))
+        volume (t - (n : ℝ)) (t + (n : ℝ)) := by
+    fun_prop
+  have h3 :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          a3 * (W.signedOrdinateTestDeriv x * (x-t)^3))
+        volume (t - (n : ℝ)) (t + (n : ℝ)) := by
+    fun_prop
+  unfold centeredOddLowMode
+  have hpoint :
+      (fun x : ℝ =>
+        W.signedOrdinateTestDeriv x
+          * (a1 * (x-t) + a3 * (x-t)^3))
+      =
+      fun x =>
+        a1 * (W.signedOrdinateTestDeriv x * (x-t))
+          +
+        a3 * (W.signedOrdinateTestDeriv x * (x-t)^3) := by
+    funext x
+    ring
+  rw [hpoint, intervalIntegral.integral_add h1 h3,
+      intervalIntegral.integral_const_mul,
+      intervalIntegral.integral_const_mul]
+  unfold QuarticFourSignedPolePair.centeredModeDefectAt centeredMonomial
+  rfl
+
+/--
+The full centered cubic shift has no constant or quadratic contribution.  Its
+entire finite Abel effect is carried by the two odd obstruction coordinates.
+-/
+theorem QuarticFourSignedPolePair.centeredCubicLowMode_integral_eq_oddDefects
+    {t a0 a1 a2 a3 : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    (∫ x in (t - (n : ℝ))..(t + (n : ℝ)),
+      W.signedOrdinateTestDeriv x
+        * centeredCubicLowMode t a0 a1 a2 a3 x)
+      =
+    a1 * W.centeredModeDefectAt n 1
+      + a3 * W.centeredModeDefectAt n 3 := by
+  have heven :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          W.signedOrdinateTestDeriv x
+            * centeredEvenLowMode t a0 a2 x)
+        volume (t - (n : ℝ)) (t + (n : ℝ)) := by
+    have hD := W.signedOrdinateTestDeriv_continuous ht
+    unfold centeredEvenLowMode
+    fun_prop
+  have hodd :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          W.signedOrdinateTestDeriv x
+            * centeredOddLowMode t a1 a3 x)
+        volume (t - (n : ℝ)) (t + (n : ℝ)) := by
+    have hD := W.signedOrdinateTestDeriv_continuous ht
+    unfold centeredOddLowMode
+    fun_prop
+  unfold centeredCubicLowMode
+  have hpoint :
+      (fun x : ℝ =>
+        W.signedOrdinateTestDeriv x
+          * (centeredEvenLowMode t a0 a2 x
+            + centeredOddLowMode t a1 a3 x))
+      =
+      fun x =>
+        W.signedOrdinateTestDeriv x
+            * centeredEvenLowMode t a0 a2 x
+          +
+        W.signedOrdinateTestDeriv x
+            * centeredOddLowMode t a1 a3 x := by
+    funext x
+    ring
+  rw [hpoint, intervalIntegral.integral_add heven hodd,
+      W.centeredEvenLowMode_integral_zero ht,
+      W.centeredOddLowMode_integral_eq ht]
+  ring
+
+/--
+Exact obstruction normal form for the complete finite G3 functional under a
+centered cubic discrepancy shift.
+
+The horizontal remainder is deliberately left coupled to the functional and
+is not split or bounded here.  Since this synthetic shift changes only the
+discrepancy carrier, H_comb is unchanged; therefore the only quotient defects
+are the two odd Abel modes.
+-/
+theorem QuarticFourSignedPolePair.centeredCompletedFunctionalAt_add_cubicLowMode
+    {t a0 a1 a2 a3 : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (E : ℝ -> ℝ)
+    (hE :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          W.signedOrdinateTestDeriv x * E x)
+        volume (t - (n : ℝ)) (t + (n : ℝ))) :
+    W.centeredCompletedFunctionalAt n
+        (fun x => E x + centeredCubicLowMode t a0 a1 a2 a3 x)
+      =
+    W.centeredCompletedFunctionalAt n E
+      -
+    (1/2 : ℝ) *
+      (a1 * W.centeredModeDefectAt n 1
+        + a3 * W.centeredModeDefectAt n 3) := by
+  unfold QuarticFourSignedPolePair.centeredCompletedFunctionalAt
+    QuarticFourSignedPolePair.centeredAbelCorrelationAt
+  have hcubic :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          W.signedOrdinateTestDeriv x
+            * centeredCubicLowMode t a0 a1 a2 a3 x)
+        volume (t - (n : ℝ)) (t + (n : ℝ)) := by
+    have hD := W.signedOrdinateTestDeriv_continuous ht
+    unfold centeredCubicLowMode centeredEvenLowMode centeredOddLowMode
+    fun_prop
+  have hpoint :
+      (fun x : ℝ =>
+        W.signedOrdinateTestDeriv x
+          * (E x + centeredCubicLowMode t a0 a1 a2 a3 x))
+      =
+      fun x =>
+        W.signedOrdinateTestDeriv x * E x
+          +
+        W.signedOrdinateTestDeriv x
+          * centeredCubicLowMode t a0 a1 a2 a3 x := by
+    funext x
+    ring
+  rw [hpoint, intervalIntegral.integral_add hE hcubic,
+      W.centeredCubicLowMode_integral_eq_oddDefects ht]
+  ring
+
+/--
+A full cubic quotient for the completed finite functional is available exactly
+when both odd mode defects vanish.
+-/
+theorem QuarticFourSignedPolePair.completedFunctional_cubic_invariant_of_oddModes
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (h1 : W.centeredModeDefectAt n 1 = 0)
+    (h3 : W.centeredModeDefectAt n 3 = 0)
+    (E : ℝ -> ℝ)
+    (hE :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          W.signedOrdinateTestDeriv x * E x)
+        volume (t - (n : ℝ)) (t + (n : ℝ)))
+    (a0 a1 a2 a3 : ℝ) :
+    W.centeredCompletedFunctionalAt n
+        (fun x => E x + centeredCubicLowMode t a0 a1 a2 a3 x)
+      =
+    W.centeredCompletedFunctionalAt n E := by
+  rw [W.centeredCompletedFunctionalAt_add_cubicLowMode
+      ht n E hE, h1, h3]
+  ring
+
 end Synthesis

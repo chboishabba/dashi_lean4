@@ -1068,21 +1068,24 @@ q↦q², z↦-q carries the finite Jacobi products to the base theta4 series in
 the coefficientwise power-series topology. -/
 def JacobiSquareThetaDiagonalTransfer : Prop :=
   JacobiTripleProductFormal →
-    Tendsto jacobiSquareThetaFiniteProduct atTop
+    Tendsto (fun M : ℕ => jacobiSquareThetaFiniteProduct (M + 1)) atTop
       (𝓝 jacobiSquareThetaBaseSeries)
 
 /-- Once the weighted diagonal limit is known, the base theta4 identity is
 forced by uniqueness of limits and the already-paid finite product identity. -/
 theorem jacobiSquareThetaBaseIdentity_of_diagonalLimit
     (hDiag :
-      Tendsto jacobiSquareThetaFiniteProduct atTop
+      Tendsto (fun M : ℕ => jacobiSquareThetaFiniteProduct (M + 1)) atTop
         (𝓝 jacobiSquareThetaBaseSeries)) :
     JacobiSquareThetaBaseIdentity := by
   unfold JacobiSquareThetaBaseIdentity
-  have hLeft :=
-    hDiag.mul tendsto_jacobiEvenEulerFiniteProduct
+  have hShift : Tendsto (fun M : ℕ => M + 1) atTop atTop :=
+    tendsto_add_atTop_nat 1
+  have hEven :=
+    tendsto_jacobiEvenEulerFiniteProduct.comp hShift
+  have hLeft := hDiag.mul hEven
   have hRight :=
-    tendsto_jacobiSquareThetaFiniteProduct_mul_evenEuler
+    tendsto_jacobiSquareThetaFiniteProduct_mul_evenEuler.comp hShift
   exact tendsto_nhds_unique hLeft hRight
 
 /-- J0→base-theta4 compiler from the single weighted diagonal-transfer

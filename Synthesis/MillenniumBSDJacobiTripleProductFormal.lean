@@ -1629,7 +1629,7 @@ theorem jacobiWeightedDiagonal_neg
   ext N
   simp only [jacobiWeightedDiagonal_coeff, PowerSeries.coeff_neg]
   unfold jacobiWeightedDiagonalCoeff
-  simp_rw [map_neg, HahnSeries.coeff_neg]
+  simp_rw [map_neg, HahnSeries.coeff_neg', Pi.neg_apply]
   rw [Finset.sum_neg_distrib]
 
 theorem jacobiWeightedDiagonal_sub

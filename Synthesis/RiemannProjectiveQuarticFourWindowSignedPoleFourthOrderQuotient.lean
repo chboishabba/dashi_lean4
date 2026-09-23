@@ -54,6 +54,18 @@ def QuarticFourSignedPolePair.centeredCompletedFunctionalAt
     + W.signedHorizontalRemainder
 
 /--
+The compact cosine transform is even in its frequency variable.
+-/
+theorem compactCosineTransform_even
+    (P : ℝ -> ℝ) (q : ℝ) :
+    compactCosineTransform P (-q)
+      = compactCosineTransform P q := by
+  unfold compactCosineTransform
+  apply integral_congr_ae
+  exact Filter.Eventually.of_forall fun u => by
+    rw [show (-q) * u = -(q*u) by ring, Real.cos_neg]
+
+/--
 Psi' is odd about the target ordinate t.
 -/
 theorem QuarticFourSignedPolePair.signedOrdinateTestDeriv_center_reflection
@@ -131,16 +143,12 @@ theorem QuarticFourSignedPolePair.centeredModeDefectAt_zero
     rw [W.signedOrdinateTest_eq_combinedCosine,
         W.signedOrdinateTest_eq_combinedCosine]
     dsimp
-    unfold compactCosineTransform
-    apply congrArg (fun z : ℝ => (1 / (t/16)^2) * z)
-    apply integral_congr_ae
-    exact Filter.Eventually.of_forall fun u => by
-      have harg :
-          ((t - (n : ℝ) - t) / (t/16)) * u
-            =
-          - (((t + (n : ℝ) - t) / (t/16)) * u) := by
-        ring
-      rw [harg, Real.cos_neg]
+    have harg :
+        (t - (n : ℝ) - t) / (t/16)
+          =
+        - ((t + (n : ℝ) - t) / (t/16)) := by
+      ring
+    rw [harg, compactCosineTransform_even]
   rw [hFTC, hreflect]
   ring
 
@@ -317,17 +325,10 @@ theorem QuarticFourSignedPolePair.centeredCompletedFunctionalAt_add_evenLowMode
   rw [W.centeredAbelCorrelationAt_add_evenLowMode ht n E hE]
 
 /--
-Four explicit centered polynomial mode defects.  A full quotient modulo all
-polynomials of degree <=3 requires every one of these to vanish.
+A full quotient modulo all centered polynomials of degree <= 3 requires every
+mode defect 0,1,2,3 to vanish.  Modes 0 and 2 are paid below by symmetry;
+modes 1 and 3 are retained as explicit global obstructions.
 -/
-structure QuarticFourSignedPolePair.CubicModeDefects
-    {t : ℝ} (W : QuarticFourSignedPolePair t)
-    (n : ℕ) where
-  mode0 : ℝ := W.centeredModeDefectAt n 0
-  mode1 : ℝ := W.centeredModeDefectAt n 1
-  mode2 : ℝ := W.centeredModeDefectAt n 2
-  mode3 : ℝ := W.centeredModeDefectAt n 3
-
 def QuarticFourSignedPolePair.fullCubicQuotientAt
     {t : ℝ} (W : QuarticFourSignedPolePair t)
     (n : ℕ) : Prop :=

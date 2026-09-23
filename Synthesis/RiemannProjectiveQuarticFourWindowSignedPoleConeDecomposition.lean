@@ -1148,10 +1148,10 @@ theorem QuarticFourSignedPolePair.globalOffOrd_lt_margin_of_eventual_compensatio
     (∑' rho : Zeros, W.literalOffOrdSource rho) <= margin := by
   have hfinite :
       ∀ᶠ n : ℕ in atTop,
-        W.literalOffOrdExactAt n < margin := by
+        W.literalOffOrdExactAt n <= margin := by
     filter_upwards [hgap] with n hn
-    exact W.literalOffOrdExactAt_lt_margin_of_compensation_gap
-      ht n hn
+    exact (W.literalOffOrdExactAt_lt_margin_of_compensation_gap
+      ht n hn).le
   have hlim :=
     W.literalOffOrdExactAt_tendsto_tsum ht
   exact le_of_tendsto hlim hfinite

@@ -1276,6 +1276,24 @@ theorem jacobiCoeff_mul_C_T_mul_X_pow
   · rw [jacobiCoeff_mul_C]
   · rfl
 
+/-- Local term formula for the balanced monomial z^(t-n) q^n under the
+weighted diagonal. -/
+theorem jacobiWeightedDiagonal_balancedMonomial_term
+    (F : JacobiBivariateFormal) (n t e N : ℕ) :
+    (jacobiDiagonalCoeffHom
+      ((F * (C (LaurentPolynomial.T ((t : ℤ) - (n : ℤ))) * X ^ n)).coeff
+        (n + e))).coeff
+        ((N : ℤ) - 2 * ((n + e : ℕ) : ℤ)) =
+      (jacobiDiagonalCoeffHom (F.coeff e)).coeff
+          ((N : ℤ) - ((n + t : ℕ) : ℤ) - 2 * (e : ℤ)) *
+        ((-1 : ℂ) ^ ((t : ℤ) - (n : ℤ))) := by
+  rw [jacobiCoeff_mul_C_T_mul_X_pow]
+  simp only [Nat.le_add_right, if_true, Nat.add_sub_cancel_left]
+  rw [jacobiDiagonalCoeffHom_mul_T_coeff]
+  congr 2
+  push_cast
+  ring
+
 /-- Weighted diagonal coefficient implementing q↦q² and z↦-q
 coefficientwise.  For target degree N only outer q-degrees d≤N are inspected;
 this is exactly the finite-dependency property needed to transfer J0's

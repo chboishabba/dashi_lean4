@@ -257,19 +257,22 @@ def encodeSignedMultiplicityResidual :
   | .zero => ⟨1, 0⟩
   | .positive n => ⟨2, n⟩
 
-def decodeSignedMultiplicityResidual :
-    SignedMultiplicityResidualCode → SignedMultiplicity
-  | ⟨0, n⟩ => .negative n
-  | ⟨1, _⟩ => .zero
-  | ⟨2, n⟩ => .positive n
+def decodeSignedMultiplicityResidual
+    (code : SignedMultiplicityResidualCode) : SignedMultiplicity :=
+  if code.sign = (0 : Trit) then .negative code.magnitude
+  else if code.sign = (1 : Trit) then .zero
+  else .positive code.magnitude
 
 theorem signedMultiplicityResidual_roundtrip :
     ∀ multiplicity,
       decodeSignedMultiplicityResidual
         (encodeSignedMultiplicityResidual multiplicity) = multiplicity
-  | .negative n => rfl
-  | .zero => rfl
-  | .positive n => rfl
+  | .negative n => by
+      simp [decodeSignedMultiplicityResidual, encodeSignedMultiplicityResidual]
+  | .zero => by
+      simp [decodeSignedMultiplicityResidual, encodeSignedMultiplicityResidual]
+  | .positive n => by
+      simp [decodeSignedMultiplicityResidual, encodeSignedMultiplicityResidual]
 
 /-! Stage-12 semantic extension, kept distinct from the 0..11 twelve-axis base. -/
 

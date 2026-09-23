@@ -3940,4 +3940,246 @@ theorem quarticFourAtomicLinearOnLineObstructionAt_neg
   linarith
 
 
+
+def quarticFourSmoothLinearOnLineObstruction
+    (R t muHalf muTwo : ℝ) : ℝ :=
+  quarticFourSmoothFinitePoleResidual R (2/3) muTwo t
+    * quarticFourOnLineResponseDifference R (1/2) muHalf
+  -
+  quarticFourSmoothFinitePoleResidual R (1/2) muHalf t
+    * quarticFourOnLineResponseDifference R (2/3) muTwo
+
+theorem QuarticFourSignedPolePair.linearOnLineObstruction_eq_smooth
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.linearOnLineObstruction
+      =
+    quarticFourSmoothLinearOnLineObstruction
+      W.R t W.muHalf W.muTwo := by
+  rfl
+
+theorem exists_radius_quarticFourOnLineResponseDifference_close_atomic_thousandth :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ R lam mu : ℝ,
+        0 < R -> R < delta ->
+        lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) ->
+        |mu| <= 1/10 ->
+        |quarticFourOnLineResponseDifference R lam mu
+          - quarticFourAtomicOnLineResponseDifference lam mu|
+          <= 1/1000 := by
+  obtain ⟨d1,hd1,h1⟩ :=
+    exists_radius_quarticFourWindowPairing_close_atomic
+      (quarticFourNormalizedOnLineWeight_continuous 1)
+      (quarticFourNormalizedOnLineWeight_even 1)
+      (by norm_num : (0:ℝ) < 1/2000)
+  obtain ⟨d2,hd2,h2⟩ :=
+    exists_radius_quarticFourWindowPairing_close_atomic
+      (quarticFourNormalizedOnLineWeight_continuous 2)
+      (quarticFourNormalizedOnLineWeight_even 2)
+      (by norm_num : (0:ℝ) < 1/2000)
+  let delta := min d1 d2
+  refine ⟨delta, lt_min hd1 hd2, ?_⟩
+  intro R lam mu hR hRd hlam hmu
+  have hR1 : R < d1 := hRd.trans_le (min_le_left _ _)
+  have hR2 : R < d2 := hRd.trans_le (min_le_right _ _)
+  have e1 := h1 R lam mu hR hR1 hlam hmu
+  have e2 := h2 R lam mu hR hR2 hlam hmu
+  unfold quarticFourOnLineResponseDifference
+    quarticFourAtomicOnLineResponseDifference
+  have hrewrite :
+      (quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 1)
+        -
+       quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 2))
+      -
+      (quarticFourAtomicPairingAt lam mu
+          (quarticFourNormalizedOnLineWeight 1)
+        -
+       quarticFourAtomicPairingAt lam mu
+          (quarticFourNormalizedOnLineWeight 2))
+      =
+      (quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 1)
+        -
+       quarticFourAtomicPairingAt lam mu
+          (quarticFourNormalizedOnLineWeight 1))
+      -
+      (quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 2)
+        -
+       quarticFourAtomicPairingAt lam mu
+          (quarticFourNormalizedOnLineWeight 2)) := by
+    ring
+  rw [hrewrite]
+  calc
+    |_ - _| <= |_|
+        + |quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedOnLineWeight 2)
+          -
+          quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedOnLineWeight 2)| :=
+      abs_sub _ _
+    _ <= (1/2000 : ℝ) + 1/2000 := by
+      gcongr
+    _ = 1/1000 := by norm_num
+
+theorem quarticFourAtomicPole_corridor_abs_le_six
+    {t lam mu : ℝ}
+    (ht : 200 <= t)
+    (hlam : lam = (1/2 : ℝ) ∨ lam = (2/3 : ℝ))
+    (hmu :
+      |mu-quarticFourAtomicMu lam|
+        <= quarticFourAtomicMuRadius) :
+    |quarticFourAtomicFinitePoleResidual t lam mu| <= 6 := by
+  rcases hlam with rfl | rfl
+  · have hclose :=
+      quarticFourAtomicFinitePoleResidual_corridor_close_null
+        ht ⟨by norm_num, by norm_num⟩ hmu
+    have hbase :=
+      quarticFourAtomicNullPole_half_abs_le_five ht
+    calc
+      |quarticFourAtomicFinitePoleResidual t (1/2) mu|
+        <=
+      |quarticFourAtomicFinitePoleResidual
+          t (1/2) (quarticFourAtomicMu (1/2))|
+        +
+      |quarticFourAtomicFinitePoleResidual t (1/2) mu
+        - quarticFourAtomicFinitePoleResidual
+            t (1/2) (quarticFourAtomicMu (1/2))| := by
+          have := abs_add
+            (quarticFourAtomicFinitePoleResidual
+              t (1/2) (quarticFourAtomicMu (1/2)))
+            (quarticFourAtomicFinitePoleResidual t (1/2) mu
+              - quarticFourAtomicFinitePoleResidual
+                  t (1/2) (quarticFourAtomicMu (1/2)))
+          simpa [add_sub_cancel_left] using this
+      _ <= 5 + 1/1000 := by gcongr
+      _ <= 6 := by norm_num
+  · have hclose :=
+      quarticFourAtomicFinitePoleResidual_corridor_close_null
+        ht ⟨by norm_num, by norm_num⟩ hmu
+    have hbase :=
+      quarticFourAtomicNullPole_two_abs_le_five ht
+    calc
+      |quarticFourAtomicFinitePoleResidual t (2/3) mu|
+        <=
+      |quarticFourAtomicFinitePoleResidual
+          t (2/3) (quarticFourAtomicMu (2/3))|
+        +
+      |quarticFourAtomicFinitePoleResidual t (2/3) mu
+        - quarticFourAtomicFinitePoleResidual
+            t (2/3) (quarticFourAtomicMu (2/3))| := by
+          have := abs_add
+            (quarticFourAtomicFinitePoleResidual
+              t (2/3) (quarticFourAtomicMu (2/3)))
+            (quarticFourAtomicFinitePoleResidual t (2/3) mu
+              - quarticFourAtomicFinitePoleResidual
+                  t (2/3) (quarticFourAtomicMu (2/3)))
+          simpa [add_sub_cancel_left] using this
+      _ <= 5 + 1/1000 := by gcongr
+      _ <= 6 := by norm_num
+
+theorem quarticFourAtomicOnLineDiff_corridor_abs_le_six
+    {lam mu : ℝ}
+    (hlam : lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ))
+    (hmu : |mu| <= 1/10) :
+    |quarticFourAtomicOnLineResponseDifference lam mu| <= 6 := by
+  rw [quarticFourAtomicOnLineResponseDifference_formula, abs_le]
+  constructor <;> nlinarith [hlam.1, hlam.2, (abs_le.mp hmu).1, (abs_le.mp hmu).2]
+
+theorem exists_radius_quarticFourSmoothLinearOnLineObstruction_close_atomic :
+    ∀ {t : ℝ}, 200 <= t ->
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ R muHalf muTwo : ℝ,
+        0 < R -> R < delta ->
+        |muHalf-quarticFourAtomicMu (1/2)|
+          <= quarticFourAtomicMuRadius ->
+        |muTwo-quarticFourAtomicMu (2/3)|
+          <= quarticFourAtomicMuRadius ->
+        |quarticFourSmoothLinearOnLineObstruction
+            R t muHalf muTwo
+          -
+          quarticFourAtomicLinearOnLineObstructionAt
+            t muHalf muTwo|
+          <= 26/1000 := by
+  intro t ht
+  obtain ⟨dPole,hdPole,hPole⟩ :=
+    exists_radius_quarticFourSmoothPole_close_atomic
+      ht (by norm_num : (0:ℝ) < 1/1000)
+  obtain ⟨dLine,hdLine,hLine⟩ :=
+    exists_radius_quarticFourOnLineResponseDifference_close_atomic_thousandth
+  let delta := min dPole dLine
+  refine ⟨delta, lt_min hdPole hdLine, ?_⟩
+  intro R muHalf muTwo hR hRd hmuHalf hmuTwo
+  have hRP : R < dPole := hRd.trans_le (min_le_left _ _)
+  have hRL : R < dLine := hRd.trans_le (min_le_right _ _)
+  have hlamHalf : (1/2 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨le_rfl, by norm_num⟩
+  have hlamTwo : (2/3 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨by norm_num, le_rfl⟩
+  have hmuHalfAbs :
+      |muHalf| < 1/10 :=
+    quarticFourAtomicMu_corridor_abs_lt_tenth
+      (by norm_num) (by norm_num) hmuHalf
+  have hmuTwoAbs :
+      |muTwo| < 1/10 :=
+    quarticFourAtomicMu_corridor_abs_lt_tenth
+      (by norm_num) (by norm_num) hmuTwo
+  have ha :=
+    hPole R (2/3) muTwo hR hRP hlamTwo hmuTwoAbs.le
+  have hb :=
+    hLine R (1/2) muHalf hR hRL hlamHalf hmuHalfAbs.le
+  have hc :=
+    hPole R (1/2) muHalf hR hRP hlamHalf hmuHalfAbs.le
+  have hd :=
+    hLine R (2/3) muTwo hR hRL hlamTwo hmuTwoAbs.le
+  have ha0 :=
+    quarticFourAtomicPole_corridor_abs_le_six
+      ht (Or.inr rfl) hmuTwo
+  have hb0 :=
+    quarticFourAtomicOnLineDiff_corridor_abs_le_six
+      hlamHalf hmuHalfAbs.le
+  have hc0 :=
+    quarticFourAtomicPole_corridor_abs_le_six
+      ht (Or.inl rfl) hmuHalf
+  have hd0 :=
+    quarticFourAtomicOnLineDiff_corridor_abs_le_six
+      hlamTwo hmuTwoAbs.le
+  have hdet :=
+    abs_det_sub_det_le
+      (by norm_num : (0:ℝ) <= 6)
+      (by norm_num : (0:ℝ) <= 1/1000)
+      (by norm_num : (1/1000 : ℝ) <= 1)
+      ha0 hb0 hc0 hd0
+      ha hb hc hd
+  unfold quarticFourSmoothLinearOnLineObstruction
+    quarticFourAtomicLinearOnLineObstructionAt at hdet ⊢
+  norm_num at hdet ⊢
+  exact hdet
+
+theorem exists_radius_quarticFourSmoothLinearOnLineObstruction_neg
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ R muHalf muTwo : ℝ,
+        0 < R -> R < delta ->
+        |muHalf-quarticFourAtomicMu (1/2)|
+          <= quarticFourAtomicMuRadius ->
+        |muTwo-quarticFourAtomicMu (2/3)|
+          <= quarticFourAtomicMuRadius ->
+        quarticFourSmoothLinearOnLineObstruction
+          R t muHalf muTwo < -(1/100 : ℝ) := by
+  obtain ⟨delta,hdelta,hclose⟩ :=
+    exists_radius_quarticFourSmoothLinearOnLineObstruction_close_atomic ht
+  refine ⟨delta,hdelta,?_⟩
+  intro R muHalf muTwo hR hRd hmuHalf hmuTwo
+  have hc := hclose R muHalf muTwo hR hRd hmuHalf hmuTwo
+  have ha :=
+    quarticFourAtomicLinearOnLineObstructionAt_neg
+      ht hmuHalf hmuTwo
+  have hu := (abs_le.mp hc).2
+  norm_num at *
+  linarith
+
+
 end Synthesis

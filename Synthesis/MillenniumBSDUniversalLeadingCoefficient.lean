@@ -113,60 +113,58 @@ def UniversalBSDShaFiniteness
     (S : BSDUniversalShaCarrier) : Prop :=
   ∀ E : RationalEllipticCurve, Finite (S.Sha E)
 
-/-- A finite Sha binding is only the combination needed at the point where
-cardinality enters the refined formula. -/
-structure BSDUniversalShaFiniteBinding where
-  carrier : BSDUniversalShaCarrier
-  finiteSha : UniversalBSDShaFiniteness carrier
-
 /-- Once finiteness has been supplied as a separate conjectural theorem,
 Sha cardinality is canonical. -/
-noncomputable def BSDUniversalShaFiniteBinding.order
-    (S : BSDUniversalShaFiniteBinding)
+noncomputable def BSDUniversalShaCarrier.order
+    (S : BSDUniversalShaCarrier)
+    (hFinite : UniversalBSDShaFiniteness S)
     (E : RationalEllipticCurve) : ℕ := by
-  letI : Finite (S.carrier.Sha E) := S.finiteSha E
-  exact Nat.card (S.carrier.Sha E)
+  letI : Finite (S.Sha E) := hFinite E
+  exact Nat.card (S.Sha E)
 
-/-- Full same-object data needed to state the refined formula after Sha
-finiteness has been supplied separately. -/
+/-- Same-object refined carriers only.  Sha finiteness is deliberately not
+stored here. -/
 structure BSDBoundRefinedData where
   rank : BSDBoundRankObservers
   arithmetic : BSDRefinedArithmeticBinding
-  sha : BSDUniversalShaFiniteBinding
+  sha : BSDUniversalShaCarrier
 
-/-- Right-hand side of the refined BSD formula on the currently bound data.
-The expression is cast to C to compare directly with the analytic leading
-Taylor coefficient. -/
+/-- Right-hand side of the refined BSD formula once Sha finiteness is supplied
+as a separate theorem. -/
 noncomputable def BSDRefinedArithmeticSide
     (b : BSDBoundRefinedData)
+    (hShaFinite : UniversalBSDShaFiniteness b.sha)
     (E : RationalEllipticCurve) : ℂ :=
   ((b.arithmetic.period E : ℂ) *
       (b.arithmetic.regulator E : ℂ) *
-      (b.sha.order E : ℂ) *
+      (b.sha.order hShaFinite E : ℂ) *
       (b.arithmetic.tamagawaProduct E : ℂ)) /
     (rationalEllipticCurveTorsionOrder E : ℂ) ^ 2
 
 /-- Literal leading-coefficient identity for one arbitrary rational elliptic
-curve, using the same analytic continuation/rank binding as the rank theorem. -/
+curve, parameterized by the separate Sha-finiteness theorem. -/
 def BSDLeadingCoefficientIdentityAt
     (b : BSDBoundRefinedData)
+    (hShaFinite : UniversalBSDShaFiniteness b.sha)
     (E : RationalEllipticCurve) : Prop :=
   (b.rank.analytic.continuation E).normalizedLeadingCoefficient =
-    BSDRefinedArithmeticSide b E
+    BSDRefinedArithmeticSide b hShaFinite E
 
 /-- Universal normalized leading-coefficient identity. -/
 def UniversalBSDLeadingCoefficientIdentity
-    (b : BSDBoundRefinedData) : Prop :=
+    (b : BSDBoundRefinedData)
+    (hShaFinite : UniversalBSDShaFiniteness b.sha) : Prop :=
   ∀ E : RationalEllipticCurve,
-    BSDLeadingCoefficientIdentityAt b E
+    BSDLeadingCoefficientIdentityAt b hShaFinite E
 
-/-- Prize-facing refined BSD package.  Sha finiteness is now an explicit
-separate theorem carried by bound.sha.finiteSha; it is not part of merely
-constructing the Sha carrier. -/
+/-- Refined BSD has two distinct universal conjectural layers after object
+binding: Sha finiteness and the normalized leading-coefficient identity. -/
 structure UniversalBSDRefinedProof where
   bound : BSDBoundRefinedData
+  shaFinite : UniversalBSDShaFiniteness bound.sha
   rankWeld : UniversalBSDBoundRankWeld bound.rank
-  leadingCoefficient : UniversalBSDLeadingCoefficientIdentity bound
+  leadingCoefficient :
+    UniversalBSDLeadingCoefficientIdentity bound shaFinite
 
 def UniversalBSDRefinedTheorem : Prop :=
   Nonempty UniversalBSDRefinedProof
@@ -179,6 +177,23 @@ theorem universalBSDRankTheorem_of_refined
   exact ⟨
     { bound := p.bound.rank
       rankWeld := p.rankWeld }⟩
+
+/-- The two conjectural refined obligations are separately readable from a
+refined proof package. -/
+theorem universalBSDShaFiniteness_of_refined
+    (h : UniversalBSDRefinedTheorem) :
+    ∃ b : BSDBoundRefinedData,
+      UniversalBSDShaFiniteness b.sha := by
+  rcases h with ⟨p⟩
+  exact ⟨p.bound, p.shaFinite⟩
+
+theorem universalBSDLeadingCoefficient_of_refined
+    (h : UniversalBSDRefinedTheorem) :
+    ∃ (b : BSDBoundRefinedData)
+      (hSha : UniversalBSDShaFiniteness b.sha),
+      UniversalBSDLeadingCoefficientIdentity b hSha := by
+  rcases h with ⟨p⟩
+  exact ⟨p.bound, p.shaFinite, p.leadingCoefficient⟩
 
 /-- Machine-readable refined max-cut. -/
 structure BSDUniversalRefinedMaxCutStatus where

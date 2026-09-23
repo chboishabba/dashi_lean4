@@ -1,4 +1,5 @@
 import Synthesis.MillenniumBSDUniversalRankWeld
+import Synthesis.MillenniumBSDUniversalEllipticPointTopRep
 import Synthesis.MillenniumBSDSelmerShaCohomologicalBoundary
 import Mathlib.NumberTheory.Height.EllipticCurve
 import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
@@ -114,6 +115,17 @@ structure BSDUniversalEllipticPointRepresentationBinding where
 module, uniformly over all rational elliptic curves. -/
 def UniversalBSDEllipticPointRepresentationProducer : Prop :=
   Nonempty BSDUniversalEllipticPointRepresentationBinding
+
+
+/-- Canonical universal binding supplied by the generic actual E(Qbar)
+TopRep construction. -/
+noncomputable def canonicalBSDEllipticPointRepresentationBinding :
+    BSDUniversalEllipticPointRepresentationBinding where
+  representation := rationalEllipticCurvePointRepresentation
+
+theorem universalBSDEllipticPointRepresentationProducer_paid :
+    UniversalBSDEllipticPointRepresentationProducer :=
+  ⟨canonicalBSDEllipticPointRepresentationBinding⟩
 
 /-- The classical degree-one Sha carrier is then not arbitrary: it is the
 repo's literal global-to-local continuous-cohomology kernel for the supplied
@@ -320,6 +332,6 @@ structure BSDUniversalRefinedMaxCutStatus where
 def bsdUniversalRefinedMaxCutStatus :
     BSDUniversalRefinedMaxCutStatus :=
   ⟨true, true, true, true,
-    false, false, false, false, true, true, true, false, false⟩
+    false, false, false, true, true, true, true, false, false⟩
 
 end Synthesis.Millennium.BSD

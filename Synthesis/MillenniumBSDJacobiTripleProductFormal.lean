@@ -1611,6 +1611,83 @@ theorem jacobiWeightedDiagonalCoeff_tripleSeries_eq_zero_of_not_square
     simp [hpos, hneg]
   · exact jacobiWeightedDiagonal_nontriangularSummand htri
 
+theorem jacobiWeightedDiagonal_add
+    (F G : JacobiBivariateFormal) :
+    jacobiWeightedDiagonal (F + G) =
+      jacobiWeightedDiagonal F + jacobiWeightedDiagonal G := by
+  ext N
+  simp only [jacobiWeightedDiagonal_coeff]
+  unfold jacobiWeightedDiagonalCoeff
+  rw [PowerSeries.coeff_add]
+  simp_rw [map_add, HahnSeries.coeff_add]
+  rw [Finset.sum_add_distrib]
+
+theorem jacobiWeightedDiagonal_neg
+    (F : JacobiBivariateFormal) :
+    jacobiWeightedDiagonal (-F) =
+      -jacobiWeightedDiagonal F := by
+  ext N
+  simp only [jacobiWeightedDiagonal_coeff, PowerSeries.coeff_neg]
+  unfold jacobiWeightedDiagonalCoeff
+  simp_rw [map_neg, HahnSeries.coeff_neg]
+  rw [Finset.sum_neg_distrib]
+
+theorem jacobiWeightedDiagonal_sub
+    (F G : JacobiBivariateFormal) :
+    jacobiWeightedDiagonal (F - G) =
+      jacobiWeightedDiagonal F - jacobiWeightedDiagonal G := by
+  rw [sub_eq_add_neg, jacobiWeightedDiagonal_add,
+    jacobiWeightedDiagonal_neg, sub_eq_add_neg]
+
+@[simp] theorem jacobiWeightedDiagonal_one :
+    jacobiWeightedDiagonal (1 : JacobiBivariateFormal) = 1 := by
+  ext N
+  rw [jacobiWeightedDiagonal_coeff]
+  unfold jacobiWeightedDiagonalCoeff
+  rcases N with _ | N
+  · simp [jacobiDiagonalCoeffHom, jacobiDiagonalZUnit]
+  · apply Finset.sum_eq_zero
+    intro d hd
+    rw [PowerSeries.coeff_one]
+    by_cases hd0 : d = 0
+    · subst d
+      simp [jacobiDiagonalCoeffHom, jacobiDiagonalZUnit]
+    · simp [hd0]
+
+/-- Scalar q^m shifts to q^(2m) under the weighted diagonal. -/
+theorem jacobiWeightedDiagonal_mul_qPow
+    (F : JacobiBivariateFormal) (hF : JacobiLowerSupported F)
+    (m : ℕ) :
+    jacobiWeightedDiagonal (F * X ^ m) =
+      X ^ (2 * m) * jacobiWeightedDiagonal F := by
+  have h :=
+    jacobiWeightedDiagonal_mul_balancedMonomial F hF m m
+  simpa [two_mul, add_comm, add_left_comm, add_assoc] using h
+
+/-- z q^n specializes to -q^(2n+1). -/
+theorem jacobiWeightedDiagonal_mul_z_qPow
+    (F : JacobiBivariateFormal) (hF : JacobiLowerSupported F)
+    (n : ℕ) :
+    jacobiWeightedDiagonal
+        (F * (C (LaurentPolynomial.T (1 : ℤ)) * X ^ n)) =
+      -(X ^ (2 * n + 1) * jacobiWeightedDiagonal F) := by
+  have h :=
+    jacobiWeightedDiagonal_mul_balancedMonomial F hF n (n + 1)
+  simpa [Int.ofNat_add, zpow_one, two_mul, add_assoc, add_comm,
+    add_left_comm] using h
+
+/-- z^-1 q^(n+1) specializes to -q^(2n+1). -/
+theorem jacobiWeightedDiagonal_mul_zInv_qPowSucc
+    (F : JacobiBivariateFormal) (hF : JacobiLowerSupported F)
+    (n : ℕ) :
+    jacobiWeightedDiagonal
+        (F * (C (LaurentPolynomial.T (-1 : ℤ)) * X ^ (n + 1))) =
+      -(X ^ (2 * n + 1) * jacobiWeightedDiagonal F) := by
+  have h :=
+    jacobiWeightedDiagonal_mul_balancedMonomial F hF (n + 1) n
+  simpa [zpow_neg, inv_neg, inv_one, two_mul, add_assoc, add_comm,
+    add_left_comm] using h
+
 /-- J0 coefficientwise equality transfers automatically through the finite
 weighted diagonal operator. -/
 theorem tendsto_jacobiWeightedDiagonal_finiteProduct_of_tripleProduct

@@ -968,6 +968,23 @@ noncomputable def jacobiDiagonalCoeffHom :
       (jacobiDiagonalZUnit : LaurentSeries ℂ) ^ k := by
   simp [jacobiDiagonalCoeffHom]
 
+/-- Explicit Laurent coefficient of the diagonal monomial z^k↦(-X)^k. -/
+theorem jacobiDiagonalCoeffHom_T_coeff (k j : ℤ) :
+    (jacobiDiagonalCoeffHom (LaurentPolynomial.T k)).coeff j =
+      if j = k then ((-1 : ℂ) ^ k) else 0 := by
+  rw [jacobiDiagonalCoeffHom_T]
+  rw [Units.val_zpow_eq_zpow_val]
+  change ((-(HahnSeries.single (1 : ℤ) (1 : ℂ))) ^ k).coeff j =
+    if j = k then ((-1 : ℂ) ^ k) else 0
+  rw [show (-(HahnSeries.single (1 : ℤ) (1 : ℂ))) =
+      HahnSeries.C (-1 : ℂ) * HahnSeries.single (1 : ℤ) 1 by simp]
+  rw [mul_zpow]
+  rw [← RatFunc.single_zpow k]
+  rw [← HahnSeries.single_zero_zpow]
+  rw [← HahnSeries.single_mul_single]
+  simp [HahnSeries.coeff_single]
+
+
 /-- Apply z↦-X coefficientwise, while retaining the outer q-variable. -/
 noncomputable def jacobiDiagonalCoeffMap
     (F : JacobiBivariateFormal) :

@@ -216,6 +216,36 @@ noncomputable def jacobiDifferentiateZAtNegOne
       jacobiLaurentDerivativeAtNegOne (F.coeff N) := by
   simp [jacobiDifferentiateZAtNegOne]
 
+@[simp] theorem jacobiEvalNegOne_T_one :
+    jacobiEvalNegOneHom (LaurentPolynomial.T (1 : ℤ)) = -1 := by
+  simp [jacobiEvalNegOneHom, jacobiNegOneUnit]
+
+@[simp] theorem jacobiEvalNegOne_T_neg_one :
+    jacobiEvalNegOneHom (LaurentPolynomial.T (-1 : ℤ)) = -1 := by
+  simp [jacobiEvalNegOneHom, jacobiNegOneUnit]
+
+/-- At z=-1 the n-th Jacobi factor becomes the expected three Euler factors. -/
+theorem jacobiEvalZAtNegOne_factor (n : ℕ) :
+    jacobiEvalZAtNegOne (jacobiTripleFactor n) =
+      (1 - X ^ (n + 1)) * (1 - X ^ n) * (1 - X ^ (n + 1)) := by
+  simp [jacobiEvalZAtNegOne, jacobiTripleFactor, jacobiEvalNegOneHom]
+
+@[simp] theorem jacobiEvalZAtNegOne_factor_zero :
+    jacobiEvalZAtNegOne (jacobiTripleFactor 0) = 0 := by
+  rw [jacobiEvalZAtNegOne_factor]
+  simp
+
+/-- Consequently any finite Jacobi product containing the zero-index factor
+vanishes under z=-1 evaluation. -/
+theorem jacobiEvalZAtNegOne_finsetProduct_eq_zero
+    {s : Finset ℕ} (h0 : 0 ∈ s) :
+    jacobiEvalZAtNegOne (∏ n ∈ s, jacobiTripleFactor n) = 0 := by
+  rw [show (∏ n ∈ s, jacobiTripleFactor n) =
+      jacobiTripleFactor 0 * ∏ n ∈ s.erase 0, jacobiTripleFactor n by
+        rw [Finset.prod_eq_mul_prod_diff_singleton h0]
+        simp]
+  simp [jacobiEvalZAtNegOne]
+
 /-- J0: formal Jacobi triple product, in the same coefficientwise eventual
 product form as the formal pentagonal theorem.
 

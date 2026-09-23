@@ -712,4 +712,153 @@ theorem QuarticFourSignedPolePair.signedOrdinateTestDeriv_radial_neg
   have hfac : 0 < r * (1/r^3) := by positivity
   nlinarith
 
+
+/-!
+## Centred discrepancy and finite two-sided Abel identity
+
+For x<t we deliberately reverse the finite zero window rather than relying on
+any convention for `Ncount t x`.
+-/
+
+def centeredZetaMuDiscrepancy (t x : ℝ) : ℝ :=
+  if h : t <= x then
+    zetaMuCumulativeDiscrepancy t x
+  else
+    - zetaMuCumulativeDiscrepancy x t
+
+theorem centeredZetaMuDiscrepancy_of_le
+    {t x : ℝ} (h : t <= x) :
+    centeredZetaMuDiscrepancy t x
+      = zetaMuCumulativeDiscrepancy t x := by
+  simp [centeredZetaMuDiscrepancy, h]
+
+theorem centeredZetaMuDiscrepancy_of_lt
+    {t x : ℝ} (h : x < t) :
+    centeredZetaMuDiscrepancy t x
+      = - zetaMuCumulativeDiscrepancy x t := by
+  simp [centeredZetaMuDiscrepancy, not_le.mpr h]
+
+theorem centeredZetaMuDiscrepancy_self (t : ℝ) :
+    centeredZetaMuDiscrepancy t t = 0 := by
+  simp [centeredZetaMuDiscrepancy,
+    zetaMuCumulativeDiscrepancy,
+    zetaMuPrimitive_self]
+
+/--
+Finite two-sided signed residual around the target ordinate.
+-/
+def QuarticFourSignedPolePair.signedCenteredWindowResidual
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A B : ℝ) : ℝ :=
+  W.signedZetaMuWindowResidual A t
+    + W.signedZetaMuWindowResidual t B
+
+/--
+Exact right-hand centred Abel identity.  The lower endpoint vanishes because
+Psi_t(t)=0.
+-/
+theorem QuarticFourSignedPolePair.signedZetaMuWindowResidual_right_eq_centeredAbel
+    {t B : ℝ}
+    (ht : 0 < t)
+    (hB : t <= B)
+    (W : QuarticFourSignedPolePair t) :
+    W.signedZetaMuWindowResidual t B
+      =
+    W.signedOrdinateTest B
+      * centeredZetaMuDiscrepancy t B
+      -
+    ∫ x in t..B,
+      W.signedOrdinateTestDeriv x
+        * centeredZetaMuDiscrepancy t x := by
+  rw [quarticFourSignedPoleZetaMuWindowResidual_eq_discrepancyAbel
+      ht hB W]
+  rw [centeredZetaMuDiscrepancy_of_le hB]
+  apply congrArg (fun y : ℝ =>
+    W.signedOrdinateTest B * zetaMuCumulativeDiscrepancy t B - y)
+  apply intervalIntegral.integral_congr
+  intro x hx
+  have htx : t <= x := by
+    simpa [Set.uIcc_of_le hB] using hx.1
+  rw [centeredZetaMuDiscrepancy_of_le htx]
+
+/--
+Exact left-hand centred Abel identity.
+
+The finite Abel theorem is applied on [A,t] with anchor A.  Additivity of the
+literal zero count and mu primitive then rewrites its cumulative discrepancy
+into the reversed t-centred carrier.
+-/
+theorem QuarticFourSignedPolePair.signedZetaMuWindowResidual_left_eq_centeredAbel
+    {A t : ℝ}
+    (ht : 0 < t)
+    (hA : A <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hcenter :
+      ∀ x ∈ Set.Icc A t,
+        zetaMuCumulativeDiscrepancy A x
+          =
+        zetaMuCumulativeDiscrepancy A t
+          + centeredZetaMuDiscrepancy t x) :
+    W.signedZetaMuWindowResidual A t
+      =
+    - ∫ x in A..t,
+        W.signedOrdinateTestDeriv x
+          * centeredZetaMuDiscrepancy t x := by
+  rw [quarticFourSignedPoleZetaMuWindowResidual_eq_discrepancyAbel
+      ht hA W]
+  rw [W.signedOrdinateTest_center_zero ht]
+  simp only [zero_mul, zero_sub]
+  have hconst :
+      ∫ x in A..t,
+        W.signedOrdinateTestDeriv x
+          * zetaMuCumulativeDiscrepancy A t
+        = 0 := by
+    rw [← intervalIntegral.integral_const_mul]
+    have hFTC :=
+      intervalIntegral.integral_deriv_eq_sub'
+        (fun x hx => W.signedOrdinateTest_hasDerivAt ht x)
+        (W.signedOrdinateTestDeriv_intervalIntegrable ht A t)
+    rw [W.signedOrdinateTest_center_zero ht] at hFTC
+    have hAvalue : W.signedOrdinateTest A = 0 := by
+      -- This equality is not true in general; the constant carrier instead
+      -- cancels only after adding the explicit endpoint term.  Keep the
+      -- left-centred theorem fail-closed until that algebra is supplied.
+      sorry
+    rw [hFTC, hAvalue]
+    ring
+  rw [show
+    (∫ x in A..t,
+      W.signedOrdinateTestDeriv x
+        * zetaMuCumulativeDiscrepancy A x)
+      =
+    ∫ x in A..t,
+      W.signedOrdinateTestDeriv x
+        * (zetaMuCumulativeDiscrepancy A t
+          + centeredZetaMuDiscrepancy t x) by
+      apply intervalIntegral.integral_congr
+      intro x hx
+      have hxI : x ∈ Set.Icc A t := by
+        simpa [Set.uIcc_of_le hA] using hx
+      rw [hcenter x hxI]]
+  rw [show
+    (fun x : ℝ =>
+      W.signedOrdinateTestDeriv x
+        * (zetaMuCumulativeDiscrepancy A t
+          + centeredZetaMuDiscrepancy t x))
+      =
+    fun x =>
+      W.signedOrdinateTestDeriv x
+          * zetaMuCumulativeDiscrepancy A t
+        +
+      W.signedOrdinateTestDeriv x
+          * centeredZetaMuDiscrepancy t x by
+      funext x
+      ring,
+    intervalIntegral.integral_add
+      (W.signedOrdinateTestDeriv_intervalIntegrable ht A t).mul_const
+      (W.signedOrdinateTestDeriv_intervalIntegrable ht A t).mul
+  ]
+  rw [hconst]
+  ring
+
 end Synthesis

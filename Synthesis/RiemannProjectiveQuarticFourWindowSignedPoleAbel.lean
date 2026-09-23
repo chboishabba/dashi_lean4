@@ -2010,4 +2010,248 @@ theorem exists_quarticFourSignedPole_centeredAbelIntegrand_left_bound :
     positivity
   exact mul_le_mul hder hdisc (abs_nonneg _) hfac
 
+
+/-!
+## Generic finite-interval tail-majorant compiler
+
+This deliberately avoids requiring global measurability of the staircase
+discrepancy.  The centered integrand is already interval-integrable on every
+bounded window.  A single globally integrable nonnegative tail majorant is
+enough to make the partial-integral sequences Cauchy.
+-/
+
+record QuarticFourSignedPolePair.CenteredAbelTailMajorants
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : Type where
+  field
+    rightMajorant : ℝ -> ℝ
+    leftMajorant : ℝ -> ℝ
+
+    rightMajorant_nonneg : ∀ x, 0 <= rightMajorant x
+    leftMajorant_nonneg : ∀ x, 0 <= leftMajorant x
+
+    rightMajorant_integrable : Integrable rightMajorant
+    leftMajorant_integrable : Integrable leftMajorant
+
+    rightDominates :
+      ∀ x, t + 1 <= x ->
+        |W.centeredAbelIntegrand x| <= rightMajorant x
+
+    leftDominates :
+      ∀ x, x <= t - 1 ->
+        |W.centeredAbelIntegrand x| <= leftMajorant x
+
+open QuarticFourSignedPolePair.CenteredAbelTailMajorants
+
+theorem QuarticFourSignedPolePair.centeredAbelIntegrand_intervalIntegrable
+    {t A B : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    IntervalIntegrable W.centeredAbelIntegrand volume A B := by
+  unfold QuarticFourSignedPolePair.centeredAbelIntegrand
+  by_cases hAB : A <= B
+  · by_cases hBt : B <= t
+    · have hD :=
+        phi_mul_Ncount_intervalIntegrable hAB
+          (W.signedOrdinateTestDeriv_intervalIntegrable ht A B)
+      have hM :=
+        phi_mul_zetaMuPrimitive_intervalIntegrable
+          (W.signedOrdinateTestDeriv_intervalIntegrable ht A B)
+      have hAnch :
+          IntervalIntegrable
+            (fun x =>
+              W.signedOrdinateTestDeriv x
+                * zetaMuCumulativeDiscrepancy A x)
+            volume A B := by
+        unfold zetaMuCumulativeDiscrepancy
+        simpa [mul_sub] using hD.sub hM
+      have hConst :
+          IntervalIntegrable
+            (fun x =>
+              W.signedOrdinateTestDeriv x
+                * zetaMuCumulativeDiscrepancy A t)
+            volume A B := by
+        simpa [mul_comm] using
+          (W.signedOrdinateTestDeriv_intervalIntegrable ht A B).const_mul
+            (zetaMuCumulativeDiscrepancy A t)
+      have hSub := hAnch.sub hConst
+      refine hSub.congr_ae ?_
+      rw [Filter.EventuallyEq,
+        MeasureTheory.ae_restrict_iff' measurableSet_uIoc]
+      filter_upwards with x hx
+      rw [Set.uIoc_of_le hAB] at hx
+      have hxt : x <= t := hx.2.trans hBt
+      rw [zetaMuCumulativeDiscrepancy_left_eq_centered hx.1.le hxt]
+      ring
+    · have htB : t < B := lt_of_not_ge hBt
+      by_cases hAt : A <= t
+      · have hLeft :=
+          W.centeredAbelIntegrand_intervalIntegrable
+            ht (A:=A) (B:=t)
+        have hRight :
+            IntervalIntegrable W.centeredAbelIntegrand volume t B := by
+          unfold QuarticFourSignedPolePair.centeredAbelIntegrand
+          have hD :=
+            phi_mul_Ncount_intervalIntegrable htB.le
+              (W.signedOrdinateTestDeriv_intervalIntegrable ht t B)
+          have hM :=
+            phi_mul_zetaMuPrimitive_intervalIntegrable
+              (W.signedOrdinateTestDeriv_intervalIntegrable ht t B)
+          unfold centeredZetaMuDiscrepancy
+          have hAnch :
+              IntervalIntegrable
+                (fun x =>
+                  W.signedOrdinateTestDeriv x
+                    * zetaMuCumulativeDiscrepancy t x)
+                volume t B := by
+            unfold zetaMuCumulativeDiscrepancy
+            simpa [mul_sub] using hD.sub hM
+          exact hAnch.congr_ae <| by
+            rw [Filter.EventuallyEq,
+              MeasureTheory.ae_restrict_iff' measurableSet_uIoc]
+            filter_upwards with x hx
+            rw [Set.uIoc_of_le htB.le] at hx
+            simp [centeredZetaMuDiscrepancy, hx.1.le]
+        exact hLeft.trans hRight
+      · have htA : t < A := lt_of_not_ge hAt
+        unfold QuarticFourSignedPolePair.centeredAbelIntegrand
+        have hD :=
+          phi_mul_Ncount_intervalIntegrable hAB
+            (W.signedOrdinateTestDeriv_intervalIntegrable ht A B)
+        have hM :=
+          phi_mul_zetaMuPrimitive_intervalIntegrable
+            (W.signedOrdinateTestDeriv_intervalIntegrable ht A B)
+        have hAnch :
+            IntervalIntegrable
+              (fun x =>
+                W.signedOrdinateTestDeriv x
+                  * zetaMuCumulativeDiscrepancy A x)
+              volume A B := by
+          unfold zetaMuCumulativeDiscrepancy
+          simpa [mul_sub] using hD.sub hM
+        have hConst :
+            IntervalIntegrable
+              (fun x =>
+                W.signedOrdinateTestDeriv x
+                  * zetaMuCumulativeDiscrepancy A t)
+              volume A B := by
+          simpa [mul_comm] using
+            (W.signedOrdinateTestDeriv_intervalIntegrable ht A B).const_mul
+              (zetaMuCumulativeDiscrepancy A t)
+        -- On the wholly-right window, rewrite through additivity from t.
+        have hTarget :
+            IntervalIntegrable
+              (fun x =>
+                W.signedOrdinateTestDeriv x
+                  * zetaMuCumulativeDiscrepancy t x)
+              volume A B := by
+          have hSub := hAnch.sub hConst
+          refine hSub.congr_ae ?_
+          rw [Filter.EventuallyEq,
+            MeasureTheory.ae_restrict_iff' measurableSet_uIoc]
+          filter_upwards with x hx
+          rw [Set.uIoc_of_le hAB] at hx
+          have hadd :=
+            zetaMuCumulativeDiscrepancy_add htA.le hx.1.le
+          rw [hadd]
+          ring
+        exact hTarget.congr_ae <| by
+          rw [Filter.EventuallyEq,
+            MeasureTheory.ae_restrict_iff' measurableSet_uIoc]
+          filter_upwards with x hx
+          rw [Set.uIoc_of_le hAB] at hx
+          simp [centeredZetaMuDiscrepancy, (htA.le.trans hx.1.le)]
+  · simpa [intervalIntegrable_iff, Set.uIoc_of_ge (le_of_not_ge hAB)]
+      using W.centeredAbelIntegrand_intervalIntegrable ht (A:=B) (B:=A)
+
+/--
+A right partial-integral sequence converges from any integrable tail majorant.
+-/
+theorem QuarticFourSignedPolePair.exists_rightCenteredAbelPartial_limit
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (M : W.CenteredAbelTailMajorants) :
+    ∃ L : ℝ,
+      Tendsto W.rightCenteredAbelPartial atTop (𝓝 L) := by
+  have hC : CauchySeq W.rightCenteredAbelPartial := by
+    rw [Metric.cauchySeq_iff]
+    intro eps heps
+    have htail :
+        Tendsto
+          (fun n : ℕ =>
+            ∫ x in Set.Ici (t + n : ℝ), M.rightMajorant x)
+          atTop (𝓝 0) := by
+      have hAnti : Antitone (fun n : ℕ => Set.Ici (t + n : ℝ)) := by
+        intro m n hmn
+        exact Set.Ici_subset_Ici.2 (by exact_mod_cast add_le_add_left hmn t)
+      have hIntOn :
+          IntegrableOn M.rightMajorant (Set.Ici (t + 0 : ℝ)) :=
+        M.rightMajorant_integrable.integrableOn
+      have hlim :=
+        hAnti.tendsto_setIntegral
+          (fun n => measurableSet_Ici) hAnti hIntOn
+      have hinter :
+          (⋂ n : ℕ, Set.Ici (t + n : ℝ)) = (∅ : Set ℝ) := by
+        ext x
+        simp only [Set.mem_iInter, Set.mem_Ici, Set.mem_empty_iff_false]
+        constructor
+        · intro h
+          obtain ⟨n, hn⟩ := exists_nat_gt (x - t)
+          linarith [h n]
+        · simp
+      rw [hinter, integral_empty] at hlim
+      exact hlim
+    have hev := htail.eventually (Metric.ball_mem_nhds 0 heps)
+    rcases (eventually_atTop.1 hev) with ⟨N,hN⟩
+    refine ⟨max N 1, ?_⟩
+    intro m hm n hn
+    wlog hmn : m <= n generalizing m n with hsym
+    · rw [dist_comm]
+      exact hsym n hn m hm (le_of_not_ge hmn)
+    have hm1 : 1 <= m := le_trans (le_max_right N 1) hm
+    have htm : t + 1 <= t + m := by exact add_le_add_left (by exact_mod_cast hm1) t
+    have hIntM :
+        IntervalIntegrable M.rightMajorant volume (t+m) (t+n) :=
+      M.rightMajorant_integrable.intervalIntegrable
+    have hIntF :
+        IntervalIntegrable W.centeredAbelIntegrand volume (t+m) (t+n) :=
+      W.centeredAbelIntegrand_intervalIntegrable ht
+    have hdiff :
+        W.rightCenteredAbelPartial n
+          - W.rightCenteredAbelPartial m
+          =
+        ∫ x in (t+m)..(t+n), W.centeredAbelIntegrand x := by
+      unfold QuarticFourSignedPolePair.rightCenteredAbelPartial
+      rw [← intervalIntegral.integral_add_adjacent_intervals
+        (W.centeredAbelIntegrand_intervalIntegrable ht (A:=t) (B:=t+m))
+        hIntF]
+      ring
+    rw [Real.dist_eq, ← abs_sub, hdiff]
+    have hnorm :=
+      intervalIntegral.norm_integral_le_of_norm_le
+        (f:=W.centeredAbelIntegrand)
+        (g:=M.rightMajorant)
+        (by
+          intro x hx
+          rw [Real.norm_eq_abs]
+          apply M.rightDominates x
+          rw [Set.uIoc_of_le (by exact_mod_cast add_le_add_left hmn t)] at hx
+          exact htm.trans hx.1.le)
+        hIntM
+    rw [Real.norm_eq_abs] at hnorm
+    have hset :
+        (∫ x in (t+m)..(t+n), M.rightMajorant x)
+          <=
+        ∫ x in Set.Ici (t+m : ℝ), M.rightMajorant x := by
+      rw [intervalIntegral.integral_of_le (by exact_mod_cast add_le_add_left hmn t)]
+      exact setIntegral_mono_set M.rightMajorant_integrable
+        (by
+          intro x hx
+          exact hx.1.le)
+    have hball := hN m (le_trans (le_max_left N 1) hm)
+    rw [Real.dist_eq, sub_zero, abs_of_nonneg
+      (integral_nonneg fun x => M.rightMajorant_nonneg x)] at hball
+    exact lt_of_le_of_le hnorm (hset.trans hball.le)
+  exact cauchySeq_tendsto_of_complete hC
+
+
 end Synthesis

@@ -2328,4 +2328,281 @@ theorem secondDeriv_complexifyRealProfile_eq
   exact deriv_complexifyRealProfile_eq
     (hPd1.differentiable (by norm_num))
 
+
+/--
+The weighted cosine-transform moment is the local second derivative of the
+profile, with the exact sign and 2*pi normalization fixed by Mathlib's Fourier
+convention.
+-/
+theorem integral_sq_mul_compactCosineTransform_eq_neg_two_pi_mul_secondDeriv
+    {P : ℝ -> ℝ}
+    (hP4 : ContDiff ℝ 4 P)
+    (hPc : HasCompactSupport P)
+    (heven : ∀ u : ℝ, P (-u) = P u) :
+    (∫ q : ℝ, q^2 * compactCosineTransform P q)
+      =
+    - (2 * Real.pi) * deriv (deriv P) 0 := by
+  let Pc : ℝ -> ℂ := complexifyRealProfile P
+  have hPc4 : ContDiff ℝ 4 Pc := by
+    dsimp [Pc, complexifyRealProfile]
+    exact Complex.ofRealCLM.contDiff.comp hP4
+  have hPcInt : Integrable Pc := by
+    dsimp [Pc]
+    exact complexifyRealProfile_integrable hP4.continuous hPc
+  have hD1eq :
+      deriv Pc = fun x => (deriv P x : ℂ) := by
+    dsimp [Pc]
+    exact deriv_complexifyRealProfile_eq
+      (hP4.differentiable (by norm_num))
+  have hP1 : ContDiff ℝ 3 (deriv P) :=
+    ContDiff.deriv' hP4
+  have hD1Int : Integrable (deriv Pc) := by
+    rw [hD1eq]
+    exact
+      ((hP1.continuous.integrable_of_hasCompactSupport hPc.deriv)
+        .ofReal (𝕜 := ℂ))
+  have hD2eq :
+      deriv (deriv Pc)
+        =
+      fun x => (deriv (deriv P) x : ℂ) := by
+    dsimp [Pc]
+    exact secondDeriv_complexifyRealProfile_eq
+      (hP4.of_le (by norm_num))
+  have hP2 : ContDiff ℝ 2 (deriv (deriv P)) :=
+    ContDiff.deriv' hP1
+  have hD2Int : Integrable (deriv (deriv Pc)) := by
+    rw [hD2eq]
+    exact
+      ((hP2.continuous.integrable_of_hasCompactSupport
+        hPc.deriv.deriv).ofReal (𝕜 := ℂ))
+  have hPcDiff : Differentiable ℝ Pc :=
+    hPc4.differentiable (by norm_num)
+  have hD1Diff : Differentiable ℝ (deriv Pc) :=
+    (ContDiff.deriv' hPc4).differentiable (by norm_num)
+  have hF1 :=
+    Real.fourier_deriv hPcInt hPcDiff hD1Int
+  have hF2 :=
+    Real.fourier_deriv hD1Int hD1Diff hD2Int
+  have hF2point :
+      ∀ xi : ℝ,
+      𝓕 (deriv (deriv Pc)) xi
+        =
+      (- ((2 * Real.pi * xi)^2)
+        * compactCosineTransform P
+            (2 * Real.pi * xi) : ℂ) := by
+    intro xi
+    rw [congrFun hF2 xi, congrFun hF1 xi]
+    dsimp [Pc]
+    rw [fourier_complexify_even_eq_compactCosine
+      hP4.continuous hPc heven xi]
+    simp only [smul_eq_mul]
+    rw [Complex.I_mul_I]
+    push_cast
+    ring
+  have hSq :
+      Integrable
+        (fun q : ℝ =>
+          q^2 * compactCosineTransform P q) :=
+    compactCosineTransform_sqWeight_integrable_of_contDiff_four hP4 hPc
+  have h2pi : (2 * Real.pi : ℝ) ≠ 0 := by positivity
+  have hSqScaled :
+      Integrable
+        (fun xi : ℝ =>
+          (xi * (2 * Real.pi))^2
+            * compactCosineTransform P
+                (xi * (2 * Real.pi))) :=
+    hSq.comp_mul_right' h2pi
+  have hSqScaledC :
+      Integrable
+        (fun xi : ℝ =>
+          (- ((2 * Real.pi * xi)^2)
+            * compactCosineTransform P
+                (2 * Real.pi * xi) : ℂ)) := by
+    have h :=
+      (hSqScaled.neg).ofReal (𝕜 := ℂ)
+    simpa [mul_comm, mul_left_comm, mul_assoc] using h
+  have hFD2Int :
+      Integrable (𝓕 (deriv (deriv Pc))) := by
+    refine hSqScaledC.congr ?_
+    exact ae_of_all _ fun xi => (hF2point xi).symm
+  have hD2cont :
+      Continuous (deriv (deriv Pc)) :=
+    (ContDiff.deriv' (ContDiff.deriv' hPc4)).continuous
+  have hinv :=
+    hD2Int.fourierInv_fourier_eq
+      hFD2Int (v := (0 : ℝ)) hD2cont.continuousAt
+  rw [Real.fourierInv_eq'] at hinv
+  simp only [inner_zero_right, mul_zero, neg_zero,
+    Complex.ofReal_zero, zero_mul, Complex.exp_zero, one_smul] at hinv
+  have hfun :
+      (fun xi : ℝ => 𝓕 (deriv (deriv Pc)) xi)
+        =
+      fun xi =>
+        (- ((2 * Real.pi * xi)^2)
+          * compactCosineTransform P
+              (2 * Real.pi * xi) : ℂ) := by
+    funext xi
+    exact hF2point xi
+  rw [hfun] at hinv
+  have hleftReal :
+      (∫ xi : ℝ,
+        - ((2 * Real.pi * xi)^2)
+          * compactCosineTransform P
+              (2 * Real.pi * xi))
+        =
+      deriv (deriv P) 0 := by
+    rw [← integral_ofReal]
+    rw [hD2eq] at hinv
+    simpa using hinv
+  have hscale :=
+    Measure.integral_comp_mul_right
+      (fun q : ℝ =>
+        q^2 * compactCosineTransform P q)
+      (2 * Real.pi)
+  have h2pipos : 0 < (2 * Real.pi : ℝ) := by positivity
+  have hscaledReal :
+      (∫ xi : ℝ,
+        (2 * Real.pi * xi)^2
+          * compactCosineTransform P
+              (2 * Real.pi * xi))
+        =
+      (2 * Real.pi)⁻¹
+        *
+      (∫ q : ℝ,
+        q^2 * compactCosineTransform P q) := by
+    calc
+      (∫ xi : ℝ,
+        (2 * Real.pi * xi)^2
+          * compactCosineTransform P
+              (2 * Real.pi * xi))
+        =
+      (∫ xi : ℝ,
+        (xi * (2 * Real.pi))^2
+          * compactCosineTransform P
+              (xi * (2 * Real.pi))) := by
+          apply integral_congr_ae
+          exact ae_of_all _ fun xi => by
+            congr 2 <;> ring
+      _ =
+      |(2 * Real.pi)⁻¹| •
+      (∫ q : ℝ,
+        q^2 * compactCosineTransform P q) := hscale
+      _ =
+      (2 * Real.pi)⁻¹
+        *
+      (∫ q : ℝ,
+        q^2 * compactCosineTransform P q) := by
+          rw [abs_of_pos (inv_pos.mpr h2pipos)]
+          rfl
+  have hnegscaled :
+      -
+      (∫ xi : ℝ,
+        (2 * Real.pi * xi)^2
+          * compactCosineTransform P
+              (2 * Real.pi * xi))
+        =
+      deriv (deriv P) 0 := by
+    rw [← hleftReal]
+    rw [integral_neg]
+  rw [hscaledReal] at hnegscaled
+  have h2pine : (2 * Real.pi : ℝ) ≠ 0 := ne_of_gt h2pipos
+  field_simp [h2pine] at hnegscaled ⊢
+  nlinarith
+
+/--
+Physical weighted second moment:
+  integral Psi_t(x) (x-t)^2 dx = -2*pi*r*P_comb''(0).
+-/
+theorem QuarticFourSignedPolePair.integral_signedOrdinateTest_centeredSq_eq_profile_secondDeriv
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    (∫ x : ℝ,
+      W.signedOrdinateTest x * (x-t)^2)
+      =
+    - (2 * Real.pi) * (t/16)
+      * deriv (deriv
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)) 0 := by
+  let r : ℝ := t/16
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  let G : ℝ -> ℝ :=
+    fun q => q^2 * compactCosineTransform P q
+  have hr : 0 < r := by
+    dsimp [r]
+    positivity
+  have hGInt : Integrable G := by
+    dsimp [G,P]
+    exact
+      compactCosineTransform_sqWeight_integrable_of_contDiff_four
+        (quarticFourSignedPoleCombinedProfile_contDiff_four W.Rpos)
+        (quarticFourSignedPoleCombinedProfile_compact W.Rpos)
+  have hGmass :
+      (∫ q : ℝ, G q)
+        =
+      - (2 * Real.pi)
+        * deriv (deriv P) 0 := by
+    dsimp [G,P]
+    exact
+      integral_sq_mul_compactCosineTransform_eq_neg_two_pi_mul_secondDeriv
+        (quarticFourSignedPoleCombinedProfile_contDiff_four W.Rpos)
+        (quarticFourSignedPoleCombinedProfile_compact W.Rpos)
+        W.combinedProfile_even
+  have hpoint :
+      (fun x : ℝ =>
+        W.signedOrdinateTest x * (x-t)^2)
+      =
+      fun x =>
+        G ((x-t)/r) := by
+    funext x
+    rw [W.signedOrdinateTest_eq_combinedCosine]
+    dsimp [G,r,P]
+    field_simp [ne_of_gt hr]
+    ring
+  rw [hpoint]
+  have hshift :
+      (∫ x : ℝ, G ((x-t)/r))
+        =
+      ∫ y : ℝ, G (y/r) := by
+    simpa [sub_eq_add_neg] using
+      (integral_sub_right_eq_self
+        (fun y : ℝ => G (y/r)) t).symm
+  have hscale :=
+    Measure.integral_comp_div G r
+  rw [hshift, hscale, abs_of_pos hr, hGmass]
+  dsimp [r,P]
+  ring
+
+/--
+The global centered-cubic quotient defect is exactly the zero-frequency second
+derivative of the signed combined profile.
+-/
+theorem QuarticFourSignedPolePair.globalCubicModeDefect_eq_profile_secondDeriv
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.globalCubicModeDefect
+      =
+    6 * Real.pi * (t/16)
+      * deriv (deriv
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)) 0 := by
+  unfold QuarticFourSignedPolePair.globalCubicModeDefect
+  rw [W.integral_signedOrdinateTest_centeredSq_eq_profile_secondDeriv ht]
+  ring
+
+theorem QuarticFourSignedPolePair.globalCubicModeDefect_eq_zero_iff
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.globalCubicModeDefect = 0
+      ↔
+    deriv (deriv
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t)) 0 = 0 := by
+  rw [W.globalCubicModeDefect_eq_profile_secondDeriv ht]
+  have hcoef :
+      6 * Real.pi * (t/16) ≠ 0 := by
+    positivity
+  exact mul_eq_zero_iff_right_nonzero hcoef
+
 end Synthesis

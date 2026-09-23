@@ -136,6 +136,49 @@ theorem sixfold_not_phase6 :
 theorem rank13_not_stage13_semantics :
     ¬ Rank13CreatesStage13Semantics := by intro h; cases h
 
+/-! Generic intersectional/non-factorability reuse. -/
+
+structure NonFactorabilityWitness
+    {Situated Flat Outcome : Type}
+    (flatten : Situated → Flat)
+    (phenomenon : Situated → Outcome) where
+  left right : Situated
+  sameFlat : flatten left = flatten right
+  outcomesDiffer : phenomenon left ≠ phenomenon right
+
+theorem postcompose_nonfactorability
+    {Situated Flat Recharted Outcome : Type}
+    {flatten : Situated → Flat}
+    {phenomenon : Situated → Outcome}
+    (rechart : Flat → Recharted)
+    (w : NonFactorabilityWitness flatten phenomenon) :
+    NonFactorabilityWitness (fun x => rechart (flatten x)) phenomenon where
+  left := w.left
+  right := w.right
+  sameFlat := congrArg rechart w.sameFlat
+  outcomesDiffer := w.outcomesDiffer
+
+theorem rechart_cannot_recover_erased_phenomenon
+    {Situated Flat Recharted Outcome : Type}
+    {flatten : Situated → Flat}
+    {phenomenon : Situated → Outcome}
+    (rechart : Flat → Recharted)
+    (w : NonFactorabilityWitness flatten phenomenon) :
+    ¬ FactorsThrough (fun x => rechart (flatten x)) phenomenon := by
+  intro h
+  exact w.outcomesDiffer <|
+    calc
+      phenomenon w.left = h.factor (rechart (flatten w.left)) := h.law w.left
+      _ = h.factor (rechart (flatten w.right)) := by rw [w.sameFlat]
+      _ = phenomenon w.right := (h.law w.right).symm
+
+inductive SeparateAxesAutoCreateIntersectionalSufficiency : Prop
+
+theorem separate_axes_do_not_auto_create_intersectional_sufficiency :
+    ¬ SeparateAxesAutoCreateIntersectionalSufficiency := by
+  intro h
+  cases h
+
 structure Boundary where
   exactRows0to13 : Bool
   rank12Address110 : Bool
@@ -153,6 +196,8 @@ structure Boundary where
   tetralemmaEqualsTernaryCarrier : Bool
   sixfoldEqualsModularPhase6 : Bool
   rank13CreatesStage13Semantics : Bool
+  intersectionalNonfactorabilityReused : Bool
+  separateAxesAutoCreateIntersectionalSufficiency : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
@@ -172,5 +217,7 @@ def canonicalBoundary : Boundary where
   tetralemmaEqualsTernaryCarrier := false
   sixfoldEqualsModularPhase6 := false
   rank13CreatesStage13Semantics := false
+  intersectionalNonfactorabilityReused := true
+  separateAxesAutoCreateIntersectionalSufficiency := false
 
 end Integration.JInvariant369ZeroToThirteenTetralemmaQualification

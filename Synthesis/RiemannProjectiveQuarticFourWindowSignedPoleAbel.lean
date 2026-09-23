@@ -2162,7 +2162,7 @@ theorem QuarticFourSignedPolePair.exists_rightCenteredAbelPartial_limit
         M.rightMajorant_integrable.integrableOn
       have hlim :=
         hAnti.tendsto_setIntegral
-          (fun n => measurableSet_Ici) hAnti hIntOn
+          (fun n => measurableSet_Ici) hIntOn
       have hinter :
           (⋂ n : ℕ, Set.Ici (t + n : ℝ)) = (∅ : Set ℝ) := by
         ext x
@@ -2200,15 +2200,17 @@ theorem QuarticFourSignedPolePair.exists_rightCenteredAbelPartial_limit
         hIntF]
       ring
     rw [Real.dist_eq, ← abs_sub, hdiff]
+    have hmnR : t + m <= t + n := by
+      exact add_le_add_left (by exact_mod_cast hmn) t
     have hnorm :=
       intervalIntegral.norm_integral_le_of_norm_le
         (f:=W.centeredAbelIntegrand)
         (g:=M.rightMajorant)
-        (by
-          intro x hx
+        hmnR
+        (Filter.Eventually.of_forall fun x => by
+          intro hx
           rw [Real.norm_eq_abs]
           apply M.rightDominates x
-          rw [Set.uIoc_of_le (by exact_mod_cast add_le_add_left hmn t)] at hx
           exact htm.trans hx.1.le)
         hIntM
     rw [Real.norm_eq_abs] at hnorm
@@ -2216,11 +2218,11 @@ theorem QuarticFourSignedPolePair.exists_rightCenteredAbelPartial_limit
         (∫ x in (t+m)..(t+n), M.rightMajorant x)
           <=
         ∫ x in Set.Ici (t+m : ℝ), M.rightMajorant x := by
-      rw [intervalIntegral.integral_of_le (by exact_mod_cast add_le_add_left hmn t)]
-      exact setIntegral_mono_set M.rightMajorant_integrable
-        (by
-          intro x hx
-          exact hx.1.le)
+      rw [intervalIntegral.integral_of_le hmnR]
+      exact setIntegral_mono_set
+        M.rightMajorant_integrable.integrableOn
+        (Filter.Eventually.of_forall fun x => M.rightMajorant_nonneg x)
+        Set.Ioc_subset_Ici_self.eventuallySubset
     have hball := hN m (le_trans (le_max_left N 1) hm)
     rw [Real.dist_eq, sub_zero, abs_of_nonneg
       (integral_nonneg fun x => M.rightMajorant_nonneg x)] at hball

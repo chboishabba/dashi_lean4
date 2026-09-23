@@ -1094,16 +1094,15 @@ theorem jacobiDiagonalCoeffHom_coeff
         AddMonoidAlgebra.coeff_add]
       ring
   | C_mul_T k a =>
-      rw [map_mul]
-      simp only [map_apply, jacobiDiagonalCoeffHom_T_eq_single]
+      rw [map_mul, jacobiDiagonalCoeffHom_T_eq_single]
       rw [show jacobiDiagonalCoeffHom (LaurentPolynomial.C a) =
           HahnSeries.C a by simp [jacobiDiagonalCoeffHom]]
-      rw [← HahnSeries.single_zero_one_eq_C]
-      rw [HahnSeries.single_mul_single]
+      rw [HahnSeries.coeff_mul_single]
+      rw [← LaurentPolynomial.single_eq_C_mul_T]
       by_cases h : j = k
       · subst j
         simp
-      · simp [LaurentPolynomial.C_apply, LaurentPolynomial.T_apply,
+      · simp [HahnSeries.C_apply, AddMonoidAlgebra.coeff_single,
           h, Ne.symm h]
 
 /-- Apply z↦-X coefficientwise, while retaining the outer q-variable. -/

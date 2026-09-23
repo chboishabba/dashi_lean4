@@ -513,4 +513,45 @@ theorem false_of_quarticFourSignedPole_NMu_horizontal_strict
   rw [quarticFourSignedPole_external_eq_NMu_add_horizontal ht W]
   exact hstrict
 
+
+/--
+The single completed scalar consumed by the Clay-facing G3 theorem.
+-/
+def QuarticFourSignedPolePair.completedSignedResidual
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  (1/2 : ℝ) * W.signedNMuPair
+    + W.signedHorizontalRemainder
+
+/--
+Exact compiler identity: the completed G3 residual is the already-defined
+combined cluster.  Therefore any strict G3 bound is genuinely new information,
+not a consequence of further explicit-formula rearrangement.
+-/
+theorem QuarticFourSignedPolePair.completedSignedResidual_eq_combinedCluster
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.completedSignedResidual = W.combinedCluster := by
+  unfold QuarticFourSignedPolePair.completedSignedResidual
+  rw [W.combinedCluster_eq_offGamma ht]
+  symm
+  exact quarticFourSignedPole_external_eq_NMu_add_horizontal ht W
+
+/--
+Equivalent Clay-facing terminal theorem stated directly on the completed
+residual object.
+-/
+theorem false_of_quarticFourSignedPole_completedResidual_strict
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hhigh : 8/t < W.quantitativeTargetRadius)
+    {rho : Zeros}
+    (him : (rho : ℂ).im = t)
+    (hoff : heightOf rho ≠ 0)
+    (hstrict :
+      W.completedSignedResidual
+        < 2 * W.combinedZeroHeightDefect rho) :
+    False := by
+  exact false_of_quarticFourSignedPole_NMu_horizontal_strict
+    ht W hhigh him hoff hstrict
+
 end Synthesis

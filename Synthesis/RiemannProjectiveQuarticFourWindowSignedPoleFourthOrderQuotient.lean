@@ -3170,4 +3170,85 @@ theorem quarticFourNormalizedProjectiveProfile_secondDeriv_zero
   ring
 
 
+
+def quarticFourOnLineCurvatureResponse
+    (R lam mu : ℝ) : ℝ :=
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineWeight 2)
+    -
+  4 * quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineWeight 1)
+
+def QuarticFourSignedPolePair.cubicTaperCurvatureObstruction
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.poleTwo *
+      (deriv (deriv
+        (quarticFourWindowProfile W.R (1/2) W.muHalf)) 0
+        * quarticFourOnLineResponseDifference W.R (1/2) W.muHalf)
+    +
+  (-W.poleHalf) *
+      (deriv (deriv
+        (quarticFourWindowProfile W.R (2/3) W.muTwo)) 0
+        * quarticFourOnLineResponseDifference W.R (2/3) W.muTwo)
+
+def QuarticFourSignedPolePair.cubicOnLineCurvatureObstruction
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.poleTwo *
+      (quarticFourWindowProfile W.R (1/2) W.muHalf 0
+        * quarticFourOnLineCurvatureResponse W.R (1/2) W.muHalf)
+    +
+  (-W.poleHalf) *
+      (quarticFourWindowProfile W.R (2/3) W.muTwo 0
+        * quarticFourOnLineCurvatureResponse W.R (2/3) W.muTwo)
+
+theorem QuarticFourSignedPolePair.cubicProfileObstruction_eq_split
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.cubicProfileObstruction
+      =
+    4 *
+      (W.cubicTaperCurvatureObstruction
+        + W.cubicOnLineCurvatureObstruction) := by
+  unfold QuarticFourSignedPolePair.cubicProfileObstruction
+    quarticFourEndpointProfileSecondDeriv
+    QuarticFourSignedPolePair.cubicTaperCurvatureObstruction
+    QuarticFourSignedPolePair.cubicOnLineCurvatureObstruction
+    quarticFourOnLineCurvatureResponse
+  rw [quarticFourNormalizedProjectiveProfile_secondDeriv_zero
+        (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos,
+      quarticFourNormalizedProjectiveProfile_secondDeriv_zero
+        (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos]
+  ring
+
+/--
+The full cubic quotient criterion can therefore be read as:
+  * the linear on-line determinant vanishes; and
+  * the sum of the taper-curvature and on-line-curvature cubic obstructions
+    vanishes.
+
+No implication between these conditions is asserted.
+-/
+theorem QuarticFourSignedPolePair.globalFullCubicQuotient_iff_splitObstructions_zero
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.globalFullCubicQuotient
+      ↔
+    W.linearOnLineObstruction = 0
+      ∧
+    W.cubicTaperCurvatureObstruction
+        + W.cubicOnLineCurvatureObstruction = 0 := by
+  rw [W.globalFullCubicQuotient_iff_obstructionDeterminants_zero ht,
+      W.linearProfileObstruction_eq_zero_iff,
+      W.cubicProfileObstruction_eq_split]
+  constructor
+  · rintro ⟨h1,hc⟩
+    refine ⟨h1,?_⟩
+    have h4 : (4 : ℝ) ≠ 0 := by norm_num
+    exact (mul_eq_zero.mp hc).resolve_left h4
+  · rintro ⟨h1,hc⟩
+    refine ⟨h1,?_⟩
+    rw [hc]
+    ring
+
+
 end Synthesis

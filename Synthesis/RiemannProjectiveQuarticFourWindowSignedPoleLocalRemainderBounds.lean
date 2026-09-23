@@ -70,10 +70,14 @@ theorem QuarticFourSignedPolePair.abs_q_mul_u_le_one_of_local
   have hpi : 0 < Real.pi + 1 := by positivity
   have hq' :
       |q| * (Real.pi + 1) <= 1 := by
-    rw [div_eq_mul_inv] at hq
-    have := mul_le_mul_of_nonneg_right hq hpi.le
-    field_simp [hpi.ne'] at this
-    simpa [mul_comm, mul_left_comm, mul_assoc] using this
+    calc
+      |q| * (Real.pi + 1)
+        <= quarticSignedPoleCanonicalLocalRadius
+          * (Real.pi + 1) :=
+        mul_le_mul_of_nonneg_right hq hpi.le
+      _ = 1 := by
+        unfold quarticSignedPoleCanonicalLocalRadius
+        field_simp [hpi.ne']
   exact (mul_le_mul_of_nonneg_left hus (abs_nonneg q)).trans hq'
 
 theorem QuarticFourSignedPolePair.horizontalQuadraticKernel_referenceIntegral
@@ -150,7 +154,6 @@ theorem QuarticFourSignedPolePair.horizontalQuadraticJetRemainder_eq_integral
     Continuous.integrable_of_hasCompactSupport
       (by fun_prop) ((hPc.mul_right).mul_right)
   unfold QuarticFourSignedPolePair.horizontalQuadraticJetRemainder
-    QuarticFourSignedPolePair.signedHorizontalQuadraticKernel
   rw [W.signedHorizontalQuadraticKernel_eq_neg_D2]
   unfold compactCosineD2
   have hQ :

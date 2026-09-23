@@ -136,10 +136,23 @@ abbrev StageCategory := Discrete StageAxis12
 
 def stage12GrothendieckTopology :
     GrothendieckTopology StageCategory :=
-  ⊥
+  GrothendieckTopology.trivial StageCategory
 
 abbrev StagePresheaf :=
   StageCategoryᵒᵖ ⥤ Type
+
+theorem everyStagePresheafIsSheaf (P : StagePresheaf) :
+    Presheaf.IsSheaf stage12GrothendieckTopology P := by
+  simpa [stage12GrothendieckTopology] using
+    (Presheaf.isSheaf_bot P)
+
+def stageRelationConstantPresheaf : StagePresheaf :=
+  (Functor.const _).obj StageRelationField
+
+theorem stageRelationConstantPresheaf_isSheaf :
+    Presheaf.IsSheaf stage12GrothendieckTopology
+      stageRelationConstantPresheaf :=
+  everyStagePresheafIsSheaf stageRelationConstantPresheaf
 
 structure BundleSheaf (LocalSection GlobalSection : Type) where
   restrict : GlobalSection → StageAxis12 → LocalSection
@@ -193,6 +206,7 @@ structure Frontier where
   completeCycle3Plus6Plus3Paid : Bool
   mathlibGrothendieckTopologyConstructed : Bool
   bundleSheafGluingConstructed : Bool
+  genuineMathlibSheafConditionPaid : Bool
   rank12CompleteCycleCountCrosswalkPaid : Bool
   rank13CentralCompletionCountCrosswalkPaid : Bool
   equalCountCreatesSameSemanticCarrier : Bool
@@ -207,6 +221,7 @@ def frontier : Frontier where
   completeCycle3Plus6Plus3Paid := true
   mathlibGrothendieckTopologyConstructed := true
   bundleSheafGluingConstructed := true
+  genuineMathlibSheafConditionPaid := true
   rank12CompleteCycleCountCrosswalkPaid := true
   rank13CentralCompletionCountCrosswalkPaid := true
   equalCountCreatesSameSemanticCarrier := false

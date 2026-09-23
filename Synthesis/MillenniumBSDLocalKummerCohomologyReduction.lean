@@ -30,6 +30,13 @@ abbrev PadicAbsoluteGalois (p : ℕ) [Fact p.Prime] :=
 abbrev PadicQuadraticCharacter (p : ℕ) [Fact p.Prime] :=
   GenericQuadraticCharacter (PadicAbsoluteGalois p)
 
+/-- Continuous restriction homomorphism G_{Q_p} -> G_Q. -/
+noncomputable def padicAbsoluteGaloisRestriction
+    (p : ℕ) [Fact p.Prime] :
+    PadicAbsoluteGalois p →ₜ* RationalAbsoluteGalois :=
+  Field.absoluteGaloisGroup.map
+    (algebraMap ℚ ℚ_[p])
+
 /-- Exact scalar local arithmetic theorem still required at a p-adic place. -/
 def PadicQuadraticKummerProducer (p : ℕ) [Fact p.Prime] : Prop :=
   Nonempty
@@ -42,9 +49,7 @@ noncomputable def restrictQuadraticCharacterToPadic
     (p : ℕ) [Fact p.Prime]
     (χ : RationalQuadraticCharacter) :
     PadicQuadraticCharacter p :=
-  χ.comp
-    (Field.absoluteGaloisGroup.map
-      (algebraMap ℚ ℚ_[p]))
+  χ.comp (padicAbsoluteGaloisRestriction p)
 
 /-- The real local owner is not an arbitrary scalar bijection but the
 naturality square: local square-class Kummer must agree with restriction of
@@ -157,13 +162,6 @@ theorem padicKummerPair_localize_commutes
   apply Prod.ext
   · exact h.localize_commutes c.1
   · exact h.localize_commutes c.2
-
-/-- Continuous restriction homomorphism G_{Q_p} -> G_Q. -/
-noncomputable def padicAbsoluteGaloisRestriction
-    (p : ℕ) [Fact p.Prime] :
-    PadicAbsoluteGalois p →ₜ* RationalAbsoluteGalois :=
-  Field.absoluteGaloisGroup.map
-    (algebraMap ℚ ℚ_[p])
 
 /-- Restriction of the actual global E(Qbar) representation to G_{Q_p}. -/
 noncomputable abbrev padicRestrictedEllipticPointRepresentation

@@ -2,6 +2,7 @@ import Synthesis.MillenniumBSDActualE2H1SameObject
 import Synthesis.MillenniumBSDQuadraticKummerPair
 import Mathlib.RepresentationTheory.Homological.ContCohomology.LowDegree
 import Mathlib.Topology.CompactOpen
+import Mathlib.Algebra.Group.Equiv.TypeTags
 import Mathlib.Tactic
 
 /-!
@@ -305,6 +306,42 @@ noncomputable def cmTwoTorsionContinuousCharacterEquivPair :
       apply Multiplicative.toAdd_injective
       rfl
 
+/-- Multiplicative strengthening of the cocycle/character normalization.
+The additive law on cocycles is exactly pointwise multiplication of the
+corresponding multiplicative characters. -/
+noncomputable def cmContinuousOneCocycleMulEquivCharacter :
+    Multiplicative CMTwoTorsionContinuousOneCocycle ≃*
+      CMTwoTorsionContinuousCharacter where
+  toFun σ := cmContinuousOneCocycleToCharacter σ.toAdd
+  invFun χ := Multiplicative.ofAdd (cmCharacterToContinuousOneCocycle χ)
+  left_inv σ := by
+    apply Multiplicative.toAdd_injective
+    exact cmContinuousOneCocycleToCharacter_rightInverse σ.toAdd
+  right_inv χ :=
+    cmContinuousOneCocycleToCharacter_leftInverse χ
+  map_mul' σ τ := by
+    apply ContinuousMonoidHom.ext
+    intro g
+    apply Multiplicative.toAdd_injective
+    rfl
+
+/-- Product-valued characters split multiplicatively into their two scalar
+quadratic-character coordinates. -/
+noncomputable def cmTwoTorsionContinuousCharacterMulEquivPair :
+    CMTwoTorsionContinuousCharacter ≃*
+      (RationalQuadraticCharacter × RationalQuadraticCharacter) where
+  toEquiv := cmTwoTorsionContinuousCharacterEquivPair
+  map_mul' χ ψ := by
+    apply Prod.ext
+    · apply ContinuousMonoidHom.ext
+      intro g
+      apply Multiplicative.toAdd_injective
+      rfl
+    · apply ContinuousMonoidHom.ext
+      intro g
+      apply Multiplicative.toAdd_injective
+      rfl
+
 /-- The categorical cycles object in degree one is the literal kernel used
 above. -/
 noncomputable abbrev cmContinuousCocyclesOneIso :
@@ -355,6 +392,21 @@ theorem cmActualE2ContinuousH1_exponent_two
   simp only [map_nsmul, map_zero]
   exact cmTwoTorsionContinuousH1_exponent_two _
 
+/-- Additive low-degree equivalence from continuous H¹ to the literal
+homogeneous one-cocycle kernel. -/
+noncomputable def cmContinuousH1AddEquivOneCocycle :
+    continuousCohomology 1 cmTwoTorsionRepresentation ≃+
+      CMTwoTorsionContinuousOneCocycle :=
+  cmContinuousH1IsoCocyclesOne.toContinuousLinearEquiv.toLinearEquiv.toAddEquiv.trans
+    cmContinuousCocyclesOneIso.toContinuousLinearEquiv.toLinearEquiv.toAddEquiv
+
+/-- Multiplicative form of the full low-degree H¹/character theorem. -/
+noncomputable def cmTrivialE2H1ContinuousHomMulEquiv :
+    Multiplicative (continuousCohomology 1 cmTwoTorsionRepresentation) ≃*
+      CMTwoTorsionContinuousCharacter :=
+  (AddEquiv.toMultiplicative cmContinuousH1AddEquivOneCocycle).trans
+    cmContinuousOneCocycleMulEquivCharacter
+
 /-- Full continuous low-degree theorem for the literal trivial two-torsion
 coefficient object. -/
 noncomputable def cmTrivialE2H1ContinuousHomEquiv :
@@ -396,6 +448,17 @@ noncomputable theorem rationalQuadraticContinuousKummerProducer_paid :
   exact cmTrivialE2H1ContinuousHomEquiv.trans
     (cmTwoTorsionContinuousCharacterEquivPair.trans
       quadraticCharacterPairEquivRatSquareClasses)
+
+/-- The actual geometric E[2] H¹ comparison with the literal square-class
+pair, retaining the full group law. -/
+noncomputable def cmActualE2H1MulEquivRatSquareClasses_paid :
+    Multiplicative (continuousCohomology 1 cmActualE2Representation) ≃*
+      (RatSquareClass × RatSquareClass) :=
+  (AddEquiv.toMultiplicative
+      cmActualE2H1IsoTrivial.toContinuousLinearEquiv.toLinearEquiv.toAddEquiv).trans
+    (cmTrivialE2H1ContinuousHomMulEquiv.trans
+      (cmTwoTorsionContinuousCharacterMulEquivPair.trans
+        quadraticCharacterPairMulEquivRatSquareClasses))
 
 /-- The actual geometric E[2] H¹ is now identified with the literal
 square-class pair used by the explicit descent lane. -/

@@ -1,6 +1,7 @@
 import Synthesis.MillenniumBSDTrivialTwoTorsionH1Generic
 import Synthesis.MillenniumBSDSquareClassGroups
 import Synthesis.MillenniumBSDRationalQuadraticKummerHom
+import Synthesis.MillenniumBSDQuadraticKummerPair
 import Synthesis.MillenniumBSDActualEllipticPointTopRep
 import Synthesis.MillenniumBSDActualE2TopRepSameObject
 import Mathlib.RepresentationTheory.Homological.ContCohomology.Functoriality
@@ -91,6 +92,46 @@ noncomputable def padicTwoTorsionH1MulEquivSquareClassPair
       (PadicSquareClass p × PadicSquareClass p) :=
   (absoluteGaloisTrivialTwoTorsionH1QuadraticPairMulEquiv ℚ_[p]).trans
     (padicSquareClassPairMulEquivQuadraticCharacters p h).symm
+
+/-- Global generic H¹ in the repo's literal rational square-class pair,
+retaining the group law. -/
+noncomputable def rationalGenericTwoTorsionH1MulEquivSquareClassPair :
+    Multiplicative
+      (ContinuousCohomology.continuousCohomology 1
+        (genericTwoTorsionRepresentation RationalAbsoluteGalois)) ≃*
+      (RatSquareClass × RatSquareClass) :=
+  (absoluteGaloisTrivialTwoTorsionH1QuadraticPairMulEquiv ℚ).trans
+    quadraticCharacterPairMulEquivRatSquareClasses
+
+/-- Local generic H¹ in the literal p-adic square-class pair, using the
+specified compatible scalar Kummer equivalence rather than an arbitrary
+witness extracted from Nonempty. -/
+noncomputable def padicCompatibleTwoTorsionH1MulEquivSquareClassPair
+    (p : ℕ) [Fact p.Prime]
+    (h : PadicQuadraticKummerCompatibility p) :
+    Multiplicative
+      (ContinuousCohomology.continuousCohomology 1
+        (genericTwoTorsionRepresentation (PadicAbsoluteGalois p))) ≃*
+      (PadicSquareClass p × PadicSquareClass p) :=
+  (absoluteGaloisTrivialTwoTorsionH1QuadraticPairMulEquiv ℚ_[p]).trans
+    (h.kummerEquiv.prodCongr h.kummerEquiv).symm
+
+/-- Exact pair-valued H¹/square-class localization square. -/
+def PadicH1SquareClassNaturality
+    (p : ℕ) [Fact p.Prime]
+    (h : PadicQuadraticKummerCompatibility p) : Prop :=
+  ∀ x :
+      ContinuousCohomology.continuousCohomology 1
+        (genericTwoTorsionRepresentation RationalAbsoluteGalois),
+    padicCompatibleTwoTorsionH1MulEquivSquareClassPair p h
+      (Multiplicative.ofAdd
+        (genericTwoTorsionH1Restrict
+          (G := RationalAbsoluteGalois)
+          (padicAbsoluteGaloisRestriction p) x))
+      =
+    localizeKummerPairHom p
+      (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+        (Multiplicative.ofAdd x))
 
 /-- Componentwise local Kummer equivalence supplied by compatible scalar
 Kummer data. -/

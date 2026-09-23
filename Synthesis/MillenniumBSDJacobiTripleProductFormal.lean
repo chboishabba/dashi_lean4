@@ -134,6 +134,45 @@ noncomputable def jacobiLaurentEulerAtNegOne
   LaurentPolynomial.eval₂ (RingHom.id ℂ) jacobiNegOneUnit
     (jacobiLaurentEuler p)
 
+/-- Laurent evaluation at z=-1 as a ring homomorphism. -/
+noncomputable def jacobiEvalNegOneHom : JacobiLaurentCoeff →+* ℂ :=
+  LaurentPolynomial.eval₂ (RingHom.id ℂ) jacobiNegOneUnit
+
+/-- Coefficientwise evaluation z=-1 on the bivariate q-series. -/
+noncomputable def jacobiEvalZAtNegOne
+    (F : JacobiBivariateFormal) : PowerSeries ℂ :=
+  PowerSeries.map jacobiEvalNegOneHom F
+
+@[simp] theorem jacobiEvalZAtNegOne_coeff
+    (F : JacobiBivariateFormal) (N : ℕ) :
+    (jacobiEvalZAtNegOne F).coeff N =
+      jacobiEvalNegOneHom (F.coeff N) := by
+  simp [jacobiEvalZAtNegOne]
+
+theorem jacobiLaurentEulerAtNegOne_add
+    (p q : JacobiLaurentCoeff) :
+    jacobiLaurentEulerAtNegOne (p + q) =
+      jacobiLaurentEulerAtNegOne p + jacobiLaurentEulerAtNegOne q := by
+  simp [jacobiLaurentEulerAtNegOne, jacobiLaurentEuler_add,
+    jacobiEvalNegOneHom]
+
+theorem jacobiLaurentEulerAtNegOne_mul
+    (p q : JacobiLaurentCoeff) :
+    jacobiLaurentEulerAtNegOne (p * q) =
+      jacobiLaurentEulerAtNegOne p * jacobiEvalNegOneHom q +
+        jacobiEvalNegOneHom p * jacobiLaurentEulerAtNegOne q := by
+  simp [jacobiLaurentEulerAtNegOne, jacobiLaurentEuler_mul,
+    jacobiEvalNegOneHom, mul_add, add_mul]
+
+theorem jacobiLaurentEulerAtNegOne_sum
+    {ι : Type*} (s : Finset ι) (f : ι → JacobiLaurentCoeff) :
+    jacobiLaurentEulerAtNegOne (∑ i ∈ s, f i) =
+      ∑ i ∈ s, jacobiLaurentEulerAtNegOne (f i) := by
+  induction s using Finset.induction_on with
+  | empty => simp [jacobiLaurentEulerAtNegOne, jacobiLaurentEuler_zero]
+  | insert a s ha ih =>
+      simp [ha, jacobiLaurentEulerAtNegOne_add, ih]
+
 /-- Coefficientwise Euler derivation/evaluation on the bivariate q-series. -/
 noncomputable def jacobiEulerZAtNegOne
     (F : JacobiBivariateFormal) : PowerSeries ℂ :=
@@ -144,6 +183,21 @@ noncomputable def jacobiEulerZAtNegOne
     (jacobiEulerZAtNegOne F).coeff N =
       jacobiLaurentEulerAtNegOne (F.coeff N) := by
   simp [jacobiEulerZAtNegOne]
+
+/-- The coefficientwise Euler-at-minus-one operator is a derivation relative
+to the coefficient evaluation homomorphism. -/
+theorem jacobiEulerZAtNegOne_mul
+    (F G : JacobiBivariateFormal) :
+    jacobiEulerZAtNegOne (F * G) =
+      jacobiEulerZAtNegOne F * jacobiEvalZAtNegOne G +
+        jacobiEvalZAtNegOne F * jacobiEulerZAtNegOne G := by
+  ext N
+  rw [jacobiEulerZAtNegOne_coeff, PowerSeries.coeff_mul]
+  rw [jacobiLaurentEulerAtNegOne_sum]
+  simp only [jacobiLaurentEulerAtNegOne_mul]
+  rw [PowerSeries.coeff_add, PowerSeries.coeff_mul, PowerSeries.coeff_mul]
+  simp only [jacobiEulerZAtNegOne_coeff, jacobiEvalZAtNegOne_coeff]
+  rw [Finset.sum_add_distrib]
 
 /-- Differentiate a Laurent polynomial and evaluate at z=-1. -/
 noncomputable def jacobiLaurentDerivativeAtNegOne

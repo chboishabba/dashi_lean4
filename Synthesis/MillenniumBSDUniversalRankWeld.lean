@@ -112,6 +112,29 @@ def UniversalBSDBoundRankWeld
     (b : BSDBoundRankObservers) : Prop :=
   UniversalBSDRankWeld b.toRankObservers
 
+
+/-- Prize-facing rank-theorem package: canonical same-object rank bindings
+for every rational elliptic curve together with the universal equality. -/
+structure UniversalBSDRankProof where
+  bound : BSDBoundRankObservers
+  rankWeld : UniversalBSDBoundRankWeld bound
+
+/-- The actual universal rank theorem as a proposition. -/
+def UniversalBSDRankTheorem : Prop :=
+  Nonempty UniversalBSDRankProof
+
+/-- A universal proof yields the rank equality for any literal selected curve,
+including the repo's CM example. -/
+theorem BSDRankWeldAt.of_universalProof
+    (h : UniversalBSDRankTheorem)
+    (E : RationalEllipticCurve) :
+    ∃ b : BSDBoundRankObservers,
+      BSDRankWeldAt b.toRankObservers E := by
+  rcases h with ⟨p⟩
+  exact ⟨p.bound,
+    bsdRankWeldAt_of_universal
+      p.bound.toRankObservers p.rankWeld E⟩
+
 /-- BSD rank equality restricted to a specified family of rational elliptic
 curves. -/
 def BSDRankWeldOn
@@ -197,6 +220,18 @@ theorem cmBSDRankWeld_of_universal
     (h : UniversalBSDRankWeld obs) :
     CMBSDRankWeld obs :=
   bsdRankWeldAt_of_universal obs h cmRationalEllipticCurve
+
+
+/-- Prize-facing universal package specializes to a canonically bound
+CM-curve rank equality. -/
+theorem cmBSDBoundRankWeld_of_universalProof
+    (h : UniversalBSDRankTheorem) :
+    ∃ b : BSDBoundRankObservers,
+      CMBSDRankWeld b.toRankObservers := by
+  rcases h with ⟨p⟩
+  exact ⟨p.bound,
+    cmBSDRankWeld_of_universal
+      p.bound.toRankObservers p.rankWeld⟩
 
 /-- Conversely, a CM-only theorem can produce the universal theorem only if
 one separately proves that every rational elliptic curve is that CM curve.

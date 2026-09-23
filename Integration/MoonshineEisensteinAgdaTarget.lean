@@ -408,6 +408,70 @@ theorem normalizedDelta_unitCircle_fixed
     _ = conj ((τ : ℂ) ^ 12 * normalizedDeltaLimit τ) :=
       normalizedDelta_inv_conj τ
 
+/-- Weight-zero j target built from the same normalized E4 and Delta target.
+
+This is the standard normalized quotient E4^3 / Delta.  The definition is total
+as a field expression; nonvanishing is only needed for inverse-style
+rearrangements, not for the conjugation theorem below. -/
+def jTarget (τ : ℍ) : ℂ :=
+  Integration.MoonshineEisensteinAnalytic.E4 τ ^ 3 /
+    normalizedDeltaLimit τ
+
+/-- E4 carries the expected weight-four S transformation. -/
+theorem mathlib_E4_S (τ : ℍ) :
+    Integration.MoonshineEisensteinAnalytic.E4 (ModularGroup.S • τ) =
+      (τ : ℂ) ^ 4 *
+        Integration.MoonshineEisensteinAnalytic.E4 τ := by
+  have hS :
+      (ModularGroup.S : GL (Fin 2) ℝ) ∈ 𝒮ℒ :=
+    ⟨ModularGroup.S, rfl⟩
+  have h :=
+    SlashInvariantForm.slash_action_eqn''
+      Integration.MoonshineEisensteinAnalytic.E4 hS τ
+  simpa [ModularGroup.denom_S] using h
+
+/-- The weight factors cancel: j is S-invariant. -/
+theorem jTarget_S_invariant (τ : ℍ) :
+    jTarget (ModularGroup.S • τ) = jTarget τ := by
+  have hτ : (τ : ℂ) ≠ 0 := UpperHalfPlane.ne_zero τ
+  rw [jTarget, jTarget, mathlib_E4_S, normalizedDeltaLimit_S]
+  field_simp
+  ring
+
+/-- j has the real-structure conjugation law inherited from E4 and Delta. -/
+theorem jTarget_negConj (τ : ℍ) :
+    jTarget (negConj τ) = conj (jTarget τ) := by
+  simp [jTarget, mathlib_E4_negConj, normalizedDeltaLimit_negConj,
+    map_div, map_pow]
+
+/-- Reciprocal-conjugate reflection for weight-zero j. -/
+theorem jTarget_inv_conj (τ : ℍ) :
+    jTarget (ModularGroup.S • negConj τ) =
+      conj (jTarget τ) := by
+  rw [jTarget_S_invariant, jTarget_negConj]
+
+/-- On the reciprocal-conjugate fixed locus, j is fixed by conjugation. -/
+theorem jTarget_unitCircle_conj_fixed
+    (τ : ℍ)
+    (hunit : Complex.normSq (τ : ℂ) = 1) :
+    jTarget τ = conj (jTarget τ) := by
+  have hfix := S_negConj_fixed_of_normSq_one τ hunit
+  calc
+    jTarget τ =
+        jTarget (ModularGroup.S • negConj τ) := by
+      exact congrArg jTarget hfix.symm
+    _ = conj (jTarget τ) := jTarget_inv_conj τ
+
+/-- Equivalent real-axis statement on the modular boundary fixed locus. -/
+theorem jTarget_unitCircle_im_zero
+    (τ : ℍ)
+    (hunit : Complex.normSq (τ : ℂ) = 1) :
+    (jTarget τ).im = 0 := by
+  have h := jTarget_unitCircle_conj_fixed τ hunit
+  apply_fun Complex.im at h
+  simp only [map_eq_zero, Complex.conj_im] at h
+  linarith
+
 /-- Machine-readable seam. -/
 structure AgdaTargetBoundary where
   literalQTargetOwned : Bool
@@ -427,6 +491,11 @@ structure AgdaTargetBoundary where
   concreteInvConjReflectionOwned : Bool
   unitNormFixedLocusOwned : Bool
   fixedLocusValueIdentityOwned : Bool
+  jWeightZeroTargetOwned : Bool
+  jSInvariantOwned : Bool
+  jConjugationOwned : Bool
+  jInverseConjugationOwned : Bool
+  jUnitCircleRealityOwned : Bool
 
 def agdaTargetBoundary : AgdaTargetBoundary where
   literalQTargetOwned := true
@@ -446,6 +515,11 @@ def agdaTargetBoundary : AgdaTargetBoundary where
   concreteInvConjReflectionOwned := true
   unitNormFixedLocusOwned := true
   fixedLocusValueIdentityOwned := true
+  jWeightZeroTargetOwned := true
+  jSInvariantOwned := true
+  jConjugationOwned := true
+  jInverseConjugationOwned := true
+  jUnitCircleRealityOwned := true
 
 end
 

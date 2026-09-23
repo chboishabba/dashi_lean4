@@ -2,6 +2,7 @@ import Mathlib.NumberTheory.ModularForms.DedekindEta
 import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Transform
 import Mathlib.Analysis.Calculus.LogDeriv
 import Integration.MoonshineEisensteinAnalytic
+import Integration.MoonshineEisensteinAgdaTarget
 
 /-!
 # eta^24 modularity at the pinned Mathlib v4.28.0 dependency
@@ -199,12 +200,13 @@ theorem etaInv24_eq_weighted_on :
   simpa [hcOne] using hzEq
 
 /-- Upper-half-plane reflection preserving positive imaginary part. -/
-def negConj (z : ℍ) : ℍ :=
-  ⟨-conj (z : ℂ), by simpa using z.2⟩
+abbrev negConj :=
+  Integration.MoonshineEisensteinAgdaTarget.negConj
 
 @[simp]
 theorem negConj_coe (z : ℍ) :
-    ((negConj z : ℍ) : ℂ) = -conj (z : ℂ) := rfl
+    ((negConj z : ℍ) : ℂ) = -conj (z : ℂ) :=
+  Integration.MoonshineEisensteinAgdaTarget.negConj_coe z
 
 /-- Every eta q-product factor has the expected real-coefficient conjugation
 symmetry under z -> -conj z. -/
@@ -289,13 +291,9 @@ theorem eta24_inv_conj (z : ℍ) :
 theorem S_negConj_fixed_of_normSq_one
     (z : ℍ)
     (hunit : Complex.normSq (z : ℂ) = 1) :
-    ModularGroup.S • negConj z = z := by
-  apply UpperHalfPlane.ext
-  rw [UpperHalfPlane.modular_S_smul]
-  simp [negConj, one_div, Complex.normSq_apply, hunit]
-  field_simp [UpperHalfPlane.ne_zero z]
-  rw [← Complex.normSq_eq_conj_mul_self]
-  simp [hunit]
+    ModularGroup.S • negConj z = z :=
+  Integration.MoonshineEisensteinAgdaTarget.S_negConj_fixed_of_normSq_one
+    z hunit
 
 /-- Exact fixed-locus value equation for eta^24. -/
 theorem eta24_unitCircle_fixed

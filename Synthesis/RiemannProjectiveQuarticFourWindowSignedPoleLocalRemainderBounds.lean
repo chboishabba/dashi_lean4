@@ -655,4 +655,89 @@ theorem QuarticFourSignedPolePair.jointQuarticJetRemainder_abs_le
     _ = W.localJointQuarticRemainderBound alpha q := by
       rfl
 
+
+/-!
+## Automatic local-radius transport for every mixed-cone zero
+-/
+
+theorem one_fifth_lt_quarticSignedPoleCanonicalLocalRadius :
+    (1/5 : ℝ) < quarticSignedPoleCanonicalLocalRadius := by
+  unfold quarticSignedPoleCanonicalLocalRadius
+  have hpi : 0 < Real.pi + 1 := by positivity
+  rw [lt_div_iff₀ hpi]
+  nlinarith [Real.pi_lt_four]
+
+theorem quarticSignedPoleLocalCone_alpha_abs_le_canonicalRadius
+    {t eta : ℝ}
+    (ht : 200 <= t)
+    {rho : Zeros}
+    (hc : quarticSignedPoleLocalCone t eta rho) :
+    |heightOf rho / (t/16)|
+      <= quarticSignedPoleCanonicalLocalRadius := by
+  have hr : 0 < t/16 := by linarith
+  have hrlo : (25/2 : ℝ) <= t/16 := by linarith
+  have hstrip := zetaZero_height_abs_le_half rho
+  have heta := one_fifth_lt_quarticSignedPoleCanonicalLocalRadius
+  have hetaPos : 0 < quarticSignedPoleCanonicalLocalRadius := by
+    exact quarticSignedPoleCanonicalLocalRadius_pos
+  have hprod :
+      (1/2 : ℝ)
+        < quarticSignedPoleCanonicalLocalRadius * (t/16) := by
+    have hmul :=
+      mul_lt_mul_of_pos_right heta hr
+    have hlo :
+        (5/2 : ℝ) <= (1/5 : ℝ) * (t/16) := by
+      nlinarith
+    linarith
+  rw [abs_div, abs_of_pos hr]
+  rw [div_le_iff₀ hr]
+  exact hstrip.trans_lt hprod |>.le
+
+theorem quarticSignedPoleLocalCone_q_abs_le_canonicalRadius
+    {t eta : ℝ}
+    (ht : 200 <= t)
+    {rho : Zeros}
+    (hc : quarticSignedPoleLocalCone t eta rho) :
+    |quarticSignedPoleNormalizedOrdinateOffset t rho|
+      <= quarticSignedPoleCanonicalLocalRadius := by
+  have hr : 0 < t/16 := by linarith
+  have hrlo : (25/2 : ℝ) <= t/16 := by linarith
+  have hdelta :=
+    quarticSignedPoleLocalCone_abs_delta_le_three_halves hc
+  have heta := one_fifth_lt_quarticSignedPoleCanonicalLocalRadius
+  have hprod :
+      (3/2 : ℝ)
+        < quarticSignedPoleCanonicalLocalRadius * (t/16) := by
+    have hmul :=
+      mul_lt_mul_of_pos_right heta hr
+    have hlo :
+        (5/2 : ℝ) <= (1/5 : ℝ) * (t/16) := by
+      nlinarith
+    linarith
+  unfold quarticSignedPoleNormalizedOrdinateOffset
+  rw [abs_div, abs_of_pos hr]
+  rw [div_le_iff₀ hr]
+  exact hdelta.trans_lt hprod |>.le
+
+/--
+Every mixed-cone zero at t>=200 satisfies the complete local same-object
+remainder estimate automatically.
+-/
+theorem QuarticFourSignedPolePair.jointQuarticJetRemainder_abs_le_of_localCone
+    {t eta : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hc : quarticSignedPoleLocalCone t eta rho) :
+    |W.jointQuarticJetRemainder
+        (heightOf rho / (t/16))
+        (quarticSignedPoleNormalizedOrdinateOffset t rho)|
+      <=
+    W.localJointQuarticRemainderBound
+      (heightOf rho / (t/16))
+      (quarticSignedPoleNormalizedOrdinateOffset t rho) := by
+  exact W.jointQuarticJetRemainder_abs_le
+    (quarticSignedPoleLocalCone_alpha_abs_le_canonicalRadius ht hc)
+    (quarticSignedPoleLocalCone_q_abs_le_canonicalRadius ht hc)
+
 end Synthesis

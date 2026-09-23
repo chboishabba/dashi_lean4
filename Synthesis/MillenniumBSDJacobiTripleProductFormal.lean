@@ -1082,6 +1082,30 @@ theorem jacobiDiagonalCoeffHom_mul_T_coeff
   rw [map_mul, jacobiDiagonalCoeffHom_T_eq_single,
     HahnSeries.coeff_mul_single]
 
+/-- Diagonal evaluation preserves Laurent support and multiplies the
+j-th coefficient by the unit sign (-1)^j. -/
+theorem jacobiDiagonalCoeffHom_coeff
+    (p : JacobiLaurentCoeff) (j : ℤ) :
+    (jacobiDiagonalCoeffHom p).coeff j =
+      p.coeff j * ((-1 : ℂ) ^ j) := by
+  induction p using LaurentPolynomial.induction_on' with
+  | add p q hp hq =>
+      rw [map_add, HahnSeries.coeff_add, hp, hq,
+        AddMonoidAlgebra.coeff_add]
+      ring
+  | C_mul_T k a =>
+      rw [map_mul]
+      simp only [map_apply, jacobiDiagonalCoeffHom_T_eq_single]
+      rw [show jacobiDiagonalCoeffHom (LaurentPolynomial.C a) =
+          HahnSeries.C a by simp [jacobiDiagonalCoeffHom]]
+      rw [← HahnSeries.single_zero_one_eq_C]
+      rw [HahnSeries.single_mul_single]
+      by_cases h : j = k
+      · subst j
+        simp
+      · simp [LaurentPolynomial.C_apply, LaurentPolynomial.T_apply,
+          h, Ne.symm h]
+
 /-- Apply z↦-X coefficientwise, while retaining the outer q-variable. -/
 noncomputable def jacobiDiagonalCoeffMap
     (F : JacobiBivariateFormal) :

@@ -198,6 +198,76 @@ theorem etaInv24_eq_weighted_on :
   have hzEq := hEq z hz
   simpa [hcOne] using hzEq
 
+/-- Upper-half-plane reflection preserving positive imaginary part. -/
+def negConj (z : ℍ) : ℍ :=
+  ⟨-conj (z : ℂ), by simpa using z.2⟩
+
+@[simp]
+theorem negConj_coe (z : ℍ) :
+    ((negConj z : ℍ) : ℂ) = -conj (z : ℂ) := rfl
+
+/-- Every eta q-product factor has the expected real-coefficient conjugation
+symmetry under z -> -conj z. -/
+theorem eta_q_negConj (n : ℕ) (z : ℍ) :
+    ModularForm.eta_q n (-(conj (z : ℂ))) =
+      conj (ModularForm.eta_q n (z : ℂ)) := by
+  rw [ModularForm.eta_q_eq_cexp, ModularForm.eta_q_eq_cexp, ← Complex.exp_conj]
+  congr 1
+  simp
+  ring
+
+/-- The infinite Euler product in eta commutes with the upper-half-plane
+real-structure reflection. -/
+theorem eta_tprod_negConj (z : ℍ) :
+    (∏' n, (1 - ModularForm.eta_q n (-(conj (z : ℂ))))) =
+      conj (∏' n, (1 - ModularForm.eta_q n (z : ℂ))) := by
+  have hz :
+      HasProd
+        (fun n => 1 - ModularForm.eta_q n (z : ℂ))
+        (∏' n, (1 - ModularForm.eta_q n (z : ℂ))) :=
+    ModularForm.multipliableLocallyUniformlyOn_eta
+      |>.hasProdLocallyUniformlyOn
+      |>.hasProd z.2
+  have hmap :=
+    hz.map Complex.conjAe.toMonoidHom Complex.continuous_conj
+  have hneg :
+      HasProd
+        (fun n => 1 - ModularForm.eta_q n (-(conj (z : ℂ))))
+        (∏' n, (1 - ModularForm.eta_q n (-(conj (z : ℂ))))) :=
+    ModularForm.multipliableLocallyUniformlyOn_eta
+      |>.hasProdLocallyUniformlyOn
+      |>.hasProd (by simpa using z.2)
+  apply hneg.unique
+  convert hmap using 1
+  funext n
+  simp [Function.comp_apply, eta_q_negConj]
+
+/-- The q^(1/24) prefactor has the same conjugation symmetry. -/
+theorem qParam24_negConj (z : ℍ) :
+    Periodic.qParam 24 (-(conj (z : ℂ))) =
+      conj (Periodic.qParam 24 (z : ℂ)) := by
+  unfold Periodic.qParam
+  rw [← Complex.exp_conj]
+  congr 1
+  simp
+  ring
+
+/-- Dedekind eta itself has the expected real-structure symmetry on the upper
+half-plane. -/
+theorem eta_negConj (z : ℍ) :
+    ModularForm.eta (-(conj (z : ℂ))) =
+      conj (ModularForm.eta (z : ℂ)) := by
+  unfold ModularForm.eta
+  rw [qParam24_negConj, eta_tprod_negConj]
+  simp
+
+/-- Consequently eta^24 has real Fourier/product structure. -/
+theorem eta24_negConj (z : ℍ) :
+    eta24 (negConj z) = conj (eta24 z) := by
+  unfold eta24
+  rw [eta_negConj]
+  simp
+
 /-- Direct pointwise weight-12 S transformation of eta^24. -/
 theorem eta24_S_pointwise (z : ℍ) :
     eta24 (ModularGroup.S • z) =
@@ -205,6 +275,39 @@ theorem eta24_S_pointwise (z : ℍ) :
   have h := etaInv24_eq_weighted_on (z : ℂ) z.2
   simpa [etaInv24, etaInv, weightedEta24,
     UpperHalfPlane.modular_S_smul, neg_div] using h
+
+/-- Concrete inverse-conjugation reflection identity for eta^24 at the pinned
+Mathlib dependency. -/
+theorem eta24_inv_conj (z : ℍ) :
+    eta24 (ModularGroup.S • negConj z) =
+      conj ((z : ℂ) ^ 12 * eta24 z) := by
+  rw [eta24_S_pointwise, eta24_negConj]
+  simp [negConj, map_mul, map_pow]
+  ring
+
+/-- Unit norm gives the reciprocal-conjugate fixed locus. -/
+theorem S_negConj_fixed_of_normSq_one
+    (z : ℍ)
+    (hunit : Complex.normSq (z : ℂ) = 1) :
+    ModularGroup.S • negConj z = z := by
+  apply UpperHalfPlane.ext
+  rw [UpperHalfPlane.modular_S_smul]
+  simp [negConj, one_div, Complex.normSq_apply, hunit]
+  field_simp [UpperHalfPlane.ne_zero z]
+  rw [← Complex.normSq_eq_conj_mul_self]
+  simp [hunit]
+
+/-- Exact fixed-locus value equation for eta^24. -/
+theorem eta24_unitCircle_fixed
+    (z : ℍ)
+    (hunit : Complex.normSq (z : ℂ) = 1) :
+    eta24 z = conj ((z : ℂ) ^ 12 * eta24 z) := by
+  have hfix := S_negConj_fixed_of_normSq_one z hunit
+  calc
+    eta24 z = eta24 (ModularGroup.S • negConj z) := by
+      exact congrArg eta24 hfix.symm
+    _ = conj ((z : ℂ) ^ 12 * eta24 z) :=
+      eta24_inv_conj z
 
 /-- T invariance follows directly from the q-product definition after raising
 eta to the 24th power. -/
@@ -222,6 +325,9 @@ structure Eta24PinnedBoundary where
   e2STransformReused : Bool
   eta24SWeight12Owned : Bool
   eta24TInvariantOwned : Bool
+  etaRealStructureConjugationOwned : Bool
+  eta24InverseConjugationReflectionOwned : Bool
+  eta24UnitCircleFixedLocusOwned : Bool
   dependencyBumpUsed : Bool
   eta24EqualsNormalizedE4E6Delta : Bool
 
@@ -231,6 +337,9 @@ def eta24PinnedBoundary : Eta24PinnedBoundary where
   e2STransformReused := true
   eta24SWeight12Owned := true
   eta24TInvariantOwned := true
+  etaRealStructureConjugationOwned := true
+  eta24InverseConjugationReflectionOwned := true
+  eta24UnitCircleFixedLocusOwned := true
   dependencyBumpUsed := false
   eta24EqualsNormalizedE4E6Delta := false
 

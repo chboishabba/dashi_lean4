@@ -2626,4 +2626,128 @@ theorem QuarticFourSignedPolePair.globalFullCubicQuotient_iff_profile_obstructio
   rw [W.globalLinearModeDefect_eq_zero_iff ht,
       W.globalCubicModeDefect_eq_zero_iff ht]
 
+
+/-!
+## Exact endpoint obstruction determinants
+
+The two global odd-mode defects are now known to be Fourier-dual to the local
+coordinates P_comb(0) and P_comb''(0).  We expose those coordinates directly
+as the same signed 2x2 determinants carried by the pole-orthogonalized pair.
+
+This does not assert either determinant vanishes.
+-/
+
+def quarticFourEndpointProfileValue
+    (R lam mu : ℝ) : ℝ :=
+  quarticFourNormalizedProjectiveProfile R lam mu 0
+
+def quarticFourEndpointProfileSecondDeriv
+    (R lam mu : ℝ) : ℝ :=
+  deriv (deriv
+    (quarticFourNormalizedProjectiveProfile R lam mu)) 0
+
+def QuarticFourSignedPolePair.linearProfileObstruction
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.poleTwo *
+      quarticFourEndpointProfileValue W.R (1/2) W.muHalf
+    +
+  (-W.poleHalf) *
+      quarticFourEndpointProfileValue W.R (2/3) W.muTwo
+
+def QuarticFourSignedPolePair.cubicProfileObstruction
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.poleTwo *
+      quarticFourEndpointProfileSecondDeriv W.R (1/2) W.muHalf
+    +
+  (-W.poleHalf) *
+      quarticFourEndpointProfileSecondDeriv W.R (2/3) W.muTwo
+
+theorem secondDeriv_profileLinearCombination_at_zero
+    {P Q : ℝ -> ℝ}
+    (hP : ContDiff ℝ 2 P)
+    (hQ : ContDiff ℝ 2 Q)
+    (a b : ℝ) :
+    deriv (deriv (profileLinearCombination a b P Q)) 0
+      =
+    a * deriv (deriv P) 0
+      + b * deriv (deriv Q) 0 := by
+  have hPdiff : Differentiable ℝ P :=
+    hP.differentiable (by norm_num)
+  have hQdiff : Differentiable ℝ Q :=
+    hQ.differentiable (by norm_num)
+  have hfirst :
+      deriv (profileLinearCombination a b P Q)
+        =
+      fun x => a * deriv P x + b * deriv Q x := by
+    funext x
+    unfold profileLinearCombination
+    have hp := (hPdiff x).hasDerivAt.const_mul a
+    have hq := (hQdiff x).hasDerivAt.const_mul b
+    exact (hp.add hq).deriv
+  rw [hfirst]
+  have hPd1 : ContDiff ℝ 1 (deriv P) :=
+    ContDiff.deriv' hP
+  have hQd1 : ContDiff ℝ 1 (deriv Q) :=
+    ContDiff.deriv' hQ
+  have hp2 :=
+    ((hPd1.differentiable (by norm_num)) 0).hasDerivAt.const_mul a
+  have hq2 :=
+    ((hQd1.differentiable (by norm_num)) 0).hasDerivAt.const_mul b
+  exact (hp2.add hq2).deriv
+
+theorem QuarticFourSignedPolePair.combinedProfile_zero_eq_linearProfileObstruction
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t 0
+      =
+    W.linearProfileObstruction := by
+  rfl
+
+theorem QuarticFourSignedPolePair.combinedProfile_secondDeriv_eq_cubicProfileObstruction
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    deriv (deriv
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t)) 0
+      =
+    W.cubicProfileObstruction := by
+  unfold QuarticFourSignedPoleCombinedProfile
+    QuarticFourSignedPolePair.cubicProfileObstruction
+    quarticFourEndpointProfileSecondDeriv
+  exact secondDeriv_profileLinearCombination_at_zero
+    ((quarticFourNormalizedProjectiveProfile_contDiff_four
+      (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos).of_le (by norm_num))
+    ((quarticFourNormalizedProjectiveProfile_contDiff_four
+      (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos).of_le (by norm_num))
+    W.poleTwo (-W.poleHalf)
+
+/--
+The proposed full cubic discrepancy quotient is exactly the simultaneous
+vanishing of two explicit signed endpoint determinants.
+-/
+theorem QuarticFourSignedPolePair.globalFullCubicQuotient_iff_obstructionDeterminants_zero
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.globalFullCubicQuotient
+      ↔
+    W.linearProfileObstruction = 0
+      ∧ W.cubicProfileObstruction = 0 := by
+  rw [W.globalFullCubicQuotient_iff_profile_obstructions_zero ht,
+      W.combinedProfile_zero_eq_linearProfileObstruction,
+      W.combinedProfile_secondDeriv_eq_cubicProfileObstruction]
+
+/--
+The pole-orthogonalization determinant itself vanishes tautologically because
+the signed coefficients are the crossed pole coordinates.  This theorem is a
+diagnostic comparison only: it does not rewrite either profile obstruction.
+-/
+theorem QuarticFourSignedPolePair.poleCoordinateDeterminant_zero
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.poleTwo * W.poleHalf
+      + (-W.poleHalf) * W.poleTwo = 0 := by
+  ring
+
+
 end Synthesis

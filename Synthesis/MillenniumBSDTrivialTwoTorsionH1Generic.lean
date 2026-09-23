@@ -405,6 +405,73 @@ noncomputable def genericTrivialTwoTorsionH1CharacterEquiv :
   Multiplicative.ofAdd.trans
     (genericTrivialTwoTorsionH1CharacterMulEquiv G).toEquiv
 
+/-! ### Naturality under restriction -/
+
+variable {H : Type*} [Group H] [TopologicalSpace H]
+  [IsTopologicalGroup H] [LocallyCompactSpace H]
+
+/-- Identity coefficient morphism from the restriction of the trivial
+G-representation to the trivial H-representation. -/
+noncomputable def genericTwoTorsionRestrictionHom
+    (φ : H →ₜ* G) :
+    TopRep.res (φ : H →* G)
+        (genericTwoTorsionRepresentation G) ⟶
+      genericTwoTorsionRepresentation H :=
+  TopRep.ofHom
+  { __ := ContinuousLinearMap.id ℤ CMTwoTorsionCarrier
+    isIntertwining' h := by
+      ext x
+      rfl }
+
+/-- Mathlib's canonical continuous-H¹ restriction map for the generic
+trivial two-torsion coefficient object. -/
+noncomputable def genericTwoTorsionH1Restrict
+    (φ : H →ₜ* G) :
+    continuousCohomology 1 (genericTwoTorsionRepresentation G) ⟶
+      continuousCohomology 1 (genericTwoTorsionRepresentation H) :=
+  ContinuousCohomology.map φ
+    (genericTwoTorsionRestrictionHom (G := G) φ) 1
+
+/-- Restriction of scalar quadratic characters is ordinary precomposition. -/
+noncomputable def genericQuadraticCharacterRestrict
+    (φ : H →ₜ* G) :
+    GenericQuadraticCharacter G →*
+      GenericQuadraticCharacter H where
+  toFun χ := χ.comp φ
+  map_one' := by
+    apply ContinuousMonoidHom.ext
+    intro h
+    rfl
+  map_mul' χ ψ := by
+    apply ContinuousMonoidHom.ext
+    intro h
+    rfl
+
+/-- Componentwise restriction for the pair of scalar characters. -/
+noncomputable def genericQuadraticCharacterPairRestrict
+    (φ : H →ₜ* G) :
+    (GenericQuadraticCharacter G × GenericQuadraticCharacter G) →*
+      (GenericQuadraticCharacter H × GenericQuadraticCharacter H) :=
+  (genericQuadraticCharacterRestrict (G := G) φ).prod
+    (genericQuadraticCharacterRestrict (G := G) φ)
+
+/-- Single generic naturality seam for the low-degree theorem.
+
+This replaces a separate representation-theoretic localization theorem at
+every place.  Once paid, H¹ restriction under any continuous H -> G is
+literally precomposition of the two scalar quadratic characters. -/
+def GenericTrivialTwoTorsionH1RestrictionNaturality
+    (φ : H →ₜ* G) : Prop :=
+  ∀ x :
+      continuousCohomology 1 (genericTwoTorsionRepresentation G),
+    genericTrivialTwoTorsionH1QuadraticPairMulEquiv H
+      (Multiplicative.ofAdd
+        (genericTwoTorsionH1Restrict (G := G) φ x))
+      =
+    genericQuadraticCharacterPairRestrict (G := G) φ
+      (genericTrivialTwoTorsionH1QuadraticPairMulEquiv G
+        (Multiplicative.ofAdd x))
+
 /-! ### Absolute Galois specialization -/
 
 variable (K : Type*) [Field K]

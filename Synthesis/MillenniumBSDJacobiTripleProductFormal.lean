@@ -331,6 +331,43 @@ theorem jacobiEvalZAtNegOne_finsetProduct_eq_zero
         simp]
   simp [jacobiEvalZAtNegOne]
 
+/-- Finite initial Jacobi product used to pass from the coefficientwise
+atTop statement to concrete range truncations. -/
+noncomputable def jacobiFiniteProduct (M : ℕ) : JacobiBivariateFormal :=
+  ∏ n ∈ Finset.range M, jacobiTripleFactor n
+
+@[simp] theorem jacobiFiniteProduct_zero :
+    jacobiFiniteProduct 0 = 1 := by
+  simp [jacobiFiniteProduct]
+
+theorem jacobiFiniteProduct_succ (M : ℕ) :
+    jacobiFiniteProduct (M + 1) =
+      jacobiFiniteProduct M * jacobiTripleFactor M := by
+  simp [jacobiFiniteProduct, Finset.prod_range_succ]
+
+theorem jacobiEvalZAtNegOne_finiteProduct_eq_zero
+    {M : ℕ} (hM : 0 < M) :
+    jacobiEvalZAtNegOne (jacobiFiniteProduct M) = 0 := by
+  apply jacobiEvalZAtNegOne_finsetProduct_eq_zero
+  simp [Finset.mem_range, hM]
+
+@[simp] theorem jacobiEulerZAtNegOne_finiteProduct_one :
+    jacobiEulerZAtNegOne (jacobiFiniteProduct 1) =
+      -((1 - X : PowerSeries ℂ) ^ 2) := by
+  simp [jacobiFiniteProduct, jacobiEulerZAtNegOne_factor_zero]
+
+/-- After the zero-index factor has entered the product, adjoining another
+Jacobi factor simply multiplies the Euler derivative by that factor's
+z=-1 evaluation; the second Leibniz term vanishes. -/
+theorem jacobiEulerZAtNegOne_finiteProduct_succ
+    {M : ℕ} (hM : 0 < M) :
+    jacobiEulerZAtNegOne (jacobiFiniteProduct (M + 1)) =
+      jacobiEulerZAtNegOne (jacobiFiniteProduct M) *
+        jacobiEvalZAtNegOne (jacobiTripleFactor M) := by
+  rw [jacobiFiniteProduct_succ, jacobiEulerZAtNegOne_mul]
+  rw [jacobiEvalZAtNegOne_finiteProduct_eq_zero hM]
+  simp
+
 /-- J0: formal Jacobi triple product, in the same coefficientwise eventual
 product form as the formal pentagonal theorem.
 

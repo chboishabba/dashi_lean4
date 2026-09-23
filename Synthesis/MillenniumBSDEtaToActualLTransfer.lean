@@ -1,6 +1,7 @@
 import Synthesis.MillenniumBSDEtaEllipticSturmEightBoundary
 import Synthesis.MillenniumBSDJacobiEta32Reduction
 import Synthesis.MillenniumBSDJacobiArithmeticReconstruction
+import Synthesis.MillenniumBSDJacobiTripleProductFormal
 import Synthesis.MillenniumBSDCMEta32Decay
 import Synthesis.MillenniumBSDHasseGlobalCoefficientBound
 import Synthesis.MillenniumBSDFullGlobalAnalyticLFunction
@@ -309,6 +310,20 @@ theorem cmCompletedEllipticLContinuation_agrees_initial_of_jacobiCMData
   cmCompletedEllipticLContinuation_agrees_initial_of_coefficientAgreement
     (etaElliptic_allCoefficientAgreement_of_jacobiCMData
       hOdd hEven hCM) hs
+
+/-- Public analytic endgame after both recuts.  The q-series side is owned by
+one formal Jacobi triple product plus its two algebraic specializations; the
+arithmetic side is owned only by CM-theta multiplicativity and the local
+prime-power recurrence.  Everything below coefficient agreement is already
+paid. -/
+theorem cmCompletedEllipticLContinuation_agrees_initial_of_tripleProductCMData
+    (hJ : JacobiEta32FromTripleProductProducer)
+    (hCM : JacobiCMReconstructionData)
+    {s : ℂ} (hs : (5 : ℝ) / 2 < s.re) :
+    cmCompletedEllipticLContinuation s = cmCompletedEllipticLInitial s := by
+  rcases jacobiEta32Products_of_tripleProductProducer hJ with ⟨hOdd, hEven⟩
+  exact cmCompletedEllipticLContinuation_agrees_initial_of_jacobiCMData
+    hOdd hEven hCM hs
 
 theorem cmCompletedEllipticLContinuation_functional_equation (s : ℂ) :
     cmCompletedEllipticLContinuation (2 - s) =

@@ -1117,6 +1117,26 @@ noncomputable def jacobiDiagonalCoeffMap
       jacobiDiagonalCoeffHom (F.coeff N) := by
   simp [jacobiDiagonalCoeffMap]
 
+/-- Weighted diagonal coefficient implementing q↦q² and z↦-q
+coefficientwise.  For target degree N only outer q-degrees d≤N are inspected;
+this is exactly the finite-dependency property needed to transfer J0's
+eventual coefficient equalities. -/
+noncomputable def jacobiWeightedDiagonalCoeff
+    (F : JacobiBivariateFormal) (N : ℕ) : ℂ :=
+  ∑ d in Finset.range (N + 1),
+    (jacobiDiagonalCoeffHom (F.coeff d)).coeff
+      ((N : ℤ) - 2 * (d : ℤ))
+
+noncomputable def jacobiWeightedDiagonal
+    (F : JacobiBivariateFormal) : PowerSeries ℂ :=
+  PowerSeries.mk (jacobiWeightedDiagonalCoeff F)
+
+@[simp] theorem jacobiWeightedDiagonal_coeff
+    (F : JacobiBivariateFormal) (N : ℕ) :
+    (jacobiWeightedDiagonal F).coeff N =
+      jacobiWeightedDiagonalCoeff F N := by
+  simp [jacobiWeightedDiagonal]
+
 /-- Lower-support invariant for the weighted diagonal: every Laurent
 exponent k occurring in outer q-degree d satisfies k ≥ -d. -/
 def JacobiLowerSupported (F : JacobiBivariateFormal) : Prop :=
@@ -1420,26 +1440,6 @@ theorem jacobiWeightedDiagonal_mul_balancedMonomial
     jacobiWeightedDiagonalCoeff_mul_balancedMonomial F hF n t N,
     PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow_mul']
   split_ifs <;> rfl
-
-/-- Weighted diagonal coefficient implementing q↦q² and z↦-q
-coefficientwise.  For target degree N only outer q-degrees d≤N are inspected;
-this is exactly the finite-dependency property needed to transfer J0's
-eventual coefficient equalities. -/
-noncomputable def jacobiWeightedDiagonalCoeff
-    (F : JacobiBivariateFormal) (N : ℕ) : ℂ :=
-  ∑ d in Finset.range (N + 1),
-    (jacobiDiagonalCoeffHom (F.coeff d)).coeff
-      ((N : ℤ) - 2 * (d : ℤ))
-
-noncomputable def jacobiWeightedDiagonal
-    (F : JacobiBivariateFormal) : PowerSeries ℂ :=
-  PowerSeries.mk (jacobiWeightedDiagonalCoeff F)
-
-@[simp] theorem jacobiWeightedDiagonal_coeff
-    (F : JacobiBivariateFormal) (N : ℕ) :
-    (jacobiWeightedDiagonal F).coeff N =
-      jacobiWeightedDiagonalCoeff F N := by
-  simp [jacobiWeightedDiagonal]
 
 theorem jacobiWeightedDiagonal_posBranch_iff
     (N r : ℕ) :

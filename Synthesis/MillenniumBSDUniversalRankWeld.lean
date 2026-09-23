@@ -119,6 +119,42 @@ structure UniversalBSDRankProof where
   bound : BSDBoundRankObservers
   rankWeld : UniversalBSDBoundRankWeld bound
 
+
+/-- Universal analytic same-object binding producer.  Mathematically this is
+the modularity/analytic-continuation side plus the definition of exact order
+of vanishing, not the BSD rank equality itself. -/
+def UniversalBSDAnalyticBindingProducer : Prop :=
+  Nonempty BSDAnalyticRankBinding
+
+/-- Universal Mordell--Weil binding producer: every actual rational point
+group modulo torsion is identified with a finite-rank free abelian group. -/
+def UniversalBSDMordellWeilBindingProducer : Prop :=
+  Nonempty BSDMordellWeilRankBinding
+
+/-- The genuinely Clay-facing weld once concrete analytic and algebraic rank
+bindings are fixed. -/
+def UniversalBSDRankEqualityProducer
+    (a : BSDAnalyticRankBinding)
+    (m : BSDMordellWeilRankBinding) : Prop :=
+  UniversalBSDBoundRankWeld
+    { analytic := a, algebraic := m }
+
+/-- The two same-object binding producers plus the universal rank equality
+compile to the packaged universal BSD rank theorem. -/
+theorem universalBSDRankTheorem_of_producers
+    (hA : UniversalBSDAnalyticBindingProducer)
+    (hM : UniversalBSDMordellWeilBindingProducer)
+    (hRank :
+      ∀ (a : BSDAnalyticRankBinding)
+        (m : BSDMordellWeilRankBinding),
+        UniversalBSDRankEqualityProducer a m) :
+    UniversalBSDRankTheorem := by
+  rcases hA with ⟨a⟩
+  rcases hM with ⟨m⟩
+  exact ⟨
+    { bound := { analytic := a, algebraic := m }
+      rankWeld := hRank a m }⟩
+
 /-- The actual universal rank theorem as a proposition. -/
 def UniversalBSDRankTheorem : Prop :=
   Nonempty UniversalBSDRankProof

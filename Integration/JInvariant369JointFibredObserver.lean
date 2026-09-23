@@ -129,18 +129,18 @@ theorem negateSignedMultiplicity_involutive (m : SignedMultiplicity) :
 theorem joint_RTR (x : Joint369FiniteFibre) :
     reflectJoint (translateJoint (reflectJoint x))
       = translateJointInverse x := by
-  cases x with
-  | mk phase level signed =>
-      cases signed <;>
-        simp [reflectJoint, translateJoint, translateJointInverse,
-          negateSignedMultiplicity]
-      <;> ring
+  rcases x with ⟨phase, level, signed⟩
+  cases signed <;>
+    ext <;>
+    simp [reflectJoint, translateJoint, translateJointInverse,
+      negateSignedMultiplicity] <;>
+    ring
 
 def jointLevel9 (x : Joint369FiniteFibre) : ZMod 9 :=
-  x.level27.castHom (by norm_num)
+  (x.level27.val % 9 : Nat)
 
 def jointLevel3 (x : Joint369FiniteFibre) : ZMod 3 :=
-  x.level27.castHom (by norm_num)
+  (x.level27.val % 3 : Nat)
 
 /-!
 Generic lifted state: translation changes level data while the declared base

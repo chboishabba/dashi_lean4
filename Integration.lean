@@ -2,6 +2,7 @@ import Integration.SmithChartComplexReflection
 import Integration.Levels
 import Integration.MoonshineEisensteinAnalytic
 import Integration.MoonshineEisensteinAgdaTarget
+import Integration.MoonshineNormalizedJPhaseReadout
 import Integration.MoonshineEta24Pinned
 import Integration.MoonshineEta24SixfoldPhase
 import Integration.MoonshineDeltaFinalMinCut

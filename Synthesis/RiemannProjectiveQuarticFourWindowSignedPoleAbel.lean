@@ -1403,4 +1403,134 @@ theorem exists_quarticFourSignedPole_leftBoundary_gap_sq_log_bound :
   rw [abs_mul]
   exact mul_le_mul hphi hdisc (abs_nonneg _) hfactor
 
+
+/--
+For every sufficiently high fixed target t, the exact left centred boundary is
+eventually O(1/n) on the canonical exhaustion A=t-n.
+
+This is deliberately coarse: all logarithms are bounded linearly before the
+quadratic kernel gap is used.
+-/
+theorem exists_quarticFourSignedPole_leftBoundary_eventually_inv_bound :
+    ∃ T0 : ℝ,
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        T0 <= t ->
+        ∃ K : ℝ, 0 <= K ∧
+          ∀ᶠ n : ℕ in atTop,
+            |W.leftCenteredBoundary n|
+              <= K / (n : ℝ) := by
+  obtain ⟨C,T1,A0,hC,hA01,hbound⟩ :=
+    exists_quarticFourSignedPole_leftBoundary_gap_sq_log_bound
+  refine ⟨max T1 4, ?_⟩
+  intro t W ht
+  have ht1 : max T1 4 <= t := ht
+  have ht4 : 4 <= t := (le_max_right T1 4).trans ht
+  let D0 : ℝ := |zetaMuWindowDiscrepancy (-t) t|
+  let K : ℝ :=
+    W.signedOrdinateCurvature * (2*C + 3*A0 + 1)
+  have hK : 0 <= K := by
+    dsimp [K]
+    have hcurv := W.signedOrdinateCurvature_nonneg
+    nlinarith
+  refine ⟨K,hK,?_⟩
+
+  have hcast :
+      Tendsto (fun n : ℕ => (n : ℝ)) atTop atTop :=
+    tendsto_natCast_atTop_atTop
+  filter_upwards
+    [hcast.eventually (eventually_gt_atTop (2*t)),
+     hcast.eventually (eventually_ge_atTop (Real.log (t+3))),
+     hcast.eventually (eventually_ge_atTop (Real.log (|t-1|+3))),
+     hcast.eventually (eventually_ge_atTop D0),
+     hcast.eventually (eventually_ge_atTop (|t-1|+2)),
+     hcast.eventually (eventually_ge_atTop 1)]
+    with n hn2t hnlogt hnlogtm1 hnD hnshift hn1
+
+  let N : ℝ := (n : ℝ)
+  have hNpos : 0 < N := lt_of_lt_of_le zero_lt_one hn1
+  have hAt : t - N < -t := by
+    dsimp [N] at hn2t ⊢
+    linarith
+  have hraw :=
+    hbound W ht1 (t-N) hAt
+
+  have hlogMove1 :
+      Real.log (-(t-N)+4) <= N := by
+    have hy : 0 < -(t-N)+4 := by
+      dsimp [N] at *
+      linarith
+    have h := Real.log_le_sub_one_of_pos hy
+    linarith
+
+  have habsShift :
+      |t-N-1| <= |t-1| + N := by
+    calc
+      |t-N-1| = |(t-1) + (-N)| := by ring_nf
+      _ <= |t-1| + |-N| := abs_add _ _
+      _ = |t-1| + N := by
+        rw [abs_neg, abs_of_pos hNpos]
+
+  have hlogMove2 :
+      Real.log (|t-N-1|+3) <= 2*N := by
+    have hy : 0 < |t-N-1|+3 := by positivity
+    have hlog := Real.log_le_sub_one_of_pos hy
+    have hlin : |t-N-1| + 2 <= 2*N := by
+      calc
+        |t-N-1| + 2
+          <= |t-1| + N + 2 := by linarith [habsShift]
+        _ <= 2*N := by
+          dsimp [N] at hnshift ⊢
+          linarith
+    linarith
+
+  have hparent :
+      C * (Real.log (t+3) + Real.log (-(t-N)+4))
+        + A0 * Real.log (|t-1|+3)
+        + A0 * Real.log (|t-N-1|+3)
+        + D0
+      <=
+      (2*C + 3*A0 + 1) * N := by
+    have hA00 : 0 <= A0 := le_trans (by norm_num) hA01
+    have hD0 : D0 <= N := by simpa [D0, N] using hnD
+    have hlt : Real.log (t+3) <= N := by simpa [N] using hnlogt
+    have hltm1 : Real.log (|t-1|+3) <= N := by
+      simpa [N] using hnlogtm1
+    nlinarith
+
+  unfold QuarticFourSignedPolePair.leftCenteredBoundary
+  have hgap : ((t-N)-t)^2 = N^2 := by ring
+  rw [show t - (n : ℝ) = t-N by rfl] at hraw
+  rw [hgap] at hraw
+  have hfac :
+      0 <= W.signedOrdinateCurvature / N^2 := by
+    have hc := W.signedOrdinateCurvature_nonneg
+    positivity
+  have hdom :=
+    mul_le_mul_of_nonneg_left hparent hfac
+  have hmain :
+      |W.signedOrdinateTest (t-N)
+        * zetaMuCumulativeDiscrepancy (t-N) t|
+        <=
+      K / N := by
+    calc
+      |W.signedOrdinateTest (t-N)
+        * zetaMuCumulativeDiscrepancy (t-N) t|
+        <=
+      (W.signedOrdinateCurvature / N^2)
+        *
+      (C * (Real.log (t+3) + Real.log (-(t-N)+4))
+        + A0 * Real.log (|t-1|+3)
+        + A0 * Real.log (|t-N-1|+3)
+        + D0) := by
+          simpa [N, D0] using hraw
+      _ <=
+      (W.signedOrdinateCurvature / N^2)
+        * ((2*C + 3*A0 + 1)*N) := hdom
+      _ = K / N := by
+        dsimp [K]
+        field_simp [ne_of_gt hNpos]
+        ring
+  simpa [N] using hmain
+
 end Synthesis

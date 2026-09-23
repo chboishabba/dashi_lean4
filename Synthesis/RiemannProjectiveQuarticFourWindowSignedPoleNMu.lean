@@ -49,6 +49,7 @@ namespace Synthesis
 
 open Zeta23
 open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilParityBalance
 open Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition
 open Zeta23Bridge.LiteralWeilOffOrdinateReflectionPair
 open Zeta23Bridge.ProjectedZeroTailSummability
@@ -516,10 +517,10 @@ theorem quarticFourOrdinateTest_mul_mu_integrable
           (quarticFourPhysicalDetector_even R lam mu t)
           t (t/16) tau
       dsimp [k, g] at hpaper
-      rw [hpaper]
-      simp only [map_mul, ofReal_re]
-      rw [quarticFourPhysicalBaseKernel_eq_ordinateTest
-        (R:=R) (lam:=lam) (mu:=mu) ht tau]
+      rw [hpaper,
+        quarticFourPhysicalBaseKernel_eq_ordinateTest
+          (R:=R) (lam:=lam) (mu:=mu) ht tau]
+      simp
       ring
     rw [hfun] at hre
     exact hre

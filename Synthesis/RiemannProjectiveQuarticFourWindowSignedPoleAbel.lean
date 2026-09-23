@@ -1253,12 +1253,19 @@ theorem QuarticFourSignedPolePair.signedOrdinateTest_abs_le_gap_sq
       + (-W.poleHalf) *
         quarticFourOrdinateTest W.R (2/3) W.muTwo t x|
       <=
+    |W.poleTwo *
+        quarticFourOrdinateTest W.R (1/2) W.muHalf t x|
+      +
+    |(-W.poleHalf) *
+        quarticFourOrdinateTest W.R (2/3) W.muTwo t x| :=
+      abs_add _ _
+    _ =
     |W.poleTwo| *
         |quarticFourOrdinateTest W.R (1/2) W.muHalf t x|
       +
     |W.poleHalf| *
         |quarticFourOrdinateTest W.R (2/3) W.muTwo t x| := by
-      rw [abs_add, abs_mul, abs_mul, abs_neg]
+      rw [abs_mul, abs_mul, abs_neg]
     _ <=
     |W.poleTwo| *
       (genericProjectiveBaseCurvature

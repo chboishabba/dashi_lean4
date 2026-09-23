@@ -30,7 +30,9 @@ abbrev PadicQuadraticCharacter (p : ℕ) [Fact p.Prime] :=
 def PadicQuadraticKummerProducer (p : ℕ) [Fact p.Prime] : Prop :=
   Nonempty
     (PadicSquareClass p ≃*
-      PadicQuadraticCharacter p)/-- Restrict a global quadratic character along
+      PadicQuadraticCharacter p)
+
+/-- Restrict a global quadratic character along
 G_{Q_p} -> G_Q induced by Q -> Q_p. -/
 noncomputable def restrictQuadraticCharacterToPadic
     (p : ℕ) [Fact p.Prime]

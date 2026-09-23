@@ -1218,6 +1218,23 @@ theorem jacobiLowerSupported_finiteProduct (M : ℕ) :
       exact jacobiLowerSupported_mul ih
         (jacobiLowerSupported_tripleFactor M)
 
+theorem jacobiCoeff_mul_C
+    (F : JacobiBivariateFormal) (a : JacobiLaurentCoeff) (d : ℕ) :
+    (F * C a).coeff d = F.coeff d * a := by
+  rw [PowerSeries.coeff_mul]
+  simp
+
+theorem jacobiCoeff_mul_C_T_mul_X_pow
+    (F : JacobiBivariateFormal) (k : ℤ) (n d : ℕ) :
+    (F * (C (LaurentPolynomial.T k) * X ^ n)).coeff d =
+      if n ≤ d then
+        F.coeff (d - n) * LaurentPolynomial.T k
+      else 0 := by
+  rw [← mul_assoc, PowerSeries.coeff_mul_X_pow']
+  split_ifs with hnd
+  · rw [jacobiCoeff_mul_C]
+  · rfl
+
 /-- Weighted diagonal coefficient implementing q↦q² and z↦-q
 coefficientwise.  For target degree N only outer q-degrees d≤N are inspected;
 this is exactly the finite-dependency property needed to transfer J0's

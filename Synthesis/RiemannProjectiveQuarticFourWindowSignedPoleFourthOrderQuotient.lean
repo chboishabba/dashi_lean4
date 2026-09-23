@@ -3454,4 +3454,143 @@ theorem QuarticFourSignedPolePair.globalFullCubicQuotient_iff_twoOnLineObstructi
       (W.cubicProfileObstruction_eq_zero_of_linear_iff hlin).2 hcurv
 
 
+
+/-!
+## Atomic obstruction diagnostic
+
+Evaluate the two on-line obstruction coordinates on the exact atomic J2-null
+endpoints lambda=1/2 and lambda=2/3.  The linear obstruction is uniformly
+strictly negative for t>=200, so the hoped-for full cubic quotient is not an
+identity already present in the atomic signed-pole architecture.
+-/
+
+def quarticFourAtomicOnLineResponseDifference
+    (lam mu : ℝ) : ℝ :=
+  quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedOnLineWeight 1)
+    -
+  quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedOnLineWeight 2)
+
+def quarticFourAtomicOnLineCurvatureResponse
+    (lam mu : ℝ) : ℝ :=
+  quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedOnLineWeight 2)
+    -
+  4 * quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedOnLineWeight 1)
+
+theorem quarticFourAtomicOnLineResponseDifference_formula
+    (lam mu : ℝ) :
+    quarticFourAtomicOnLineResponseDifference lam mu
+      = lam - 1 - 2*mu := by
+  unfold quarticFourAtomicOnLineResponseDifference
+  rw [quarticFourAtomicOnLinePairing_one,
+      quarticFourAtomicOnLinePairing_two]
+  ring
+
+theorem quarticFourAtomicOnLineCurvatureResponse_formula
+    (lam mu : ℝ) :
+    quarticFourAtomicOnLineCurvatureResponse lam mu
+      = -(1/2 : ℝ) - lam + 5*mu := by
+  unfold quarticFourAtomicOnLineCurvatureResponse
+  rw [quarticFourAtomicOnLinePairing_one,
+      quarticFourAtomicOnLinePairing_two]
+  ring
+
+theorem quarticFourAtomicMu_half :
+    quarticFourAtomicMu (1/2) = -(1/78 : ℝ) := by
+  unfold quarticFourAtomicMu
+  norm_num
+
+theorem quarticFourAtomicMu_twoThirds :
+    quarticFourAtomicMu (2/3) = (1/162 : ℝ) := by
+  unfold quarticFourAtomicMu
+  norm_num
+
+def quarticFourAtomicLinearOnLineObstruction
+    (t : ℝ) : ℝ :=
+  quarticFourAtomicFinitePoleResidual
+      t (2/3) (quarticFourAtomicMu (2/3))
+    * quarticFourAtomicOnLineResponseDifference
+        (1/2) (quarticFourAtomicMu (1/2))
+  -
+  quarticFourAtomicFinitePoleResidual
+      t (1/2) (quarticFourAtomicMu (1/2))
+    * quarticFourAtomicOnLineResponseDifference
+        (2/3) (quarticFourAtomicMu (2/3))
+
+def quarticFourAtomicCubicOnLineObstruction
+    (t : ℝ) : ℝ :=
+  quarticFourAtomicFinitePoleResidual
+      t (2/3) (quarticFourAtomicMu (2/3))
+    * quarticFourAtomicOnLineCurvatureResponse
+        (1/2) (quarticFourAtomicMu (1/2))
+  -
+  quarticFourAtomicFinitePoleResidual
+      t (1/2) (quarticFourAtomicMu (1/2))
+    * quarticFourAtomicOnLineCurvatureResponse
+        (2/3) (quarticFourAtomicMu (2/3))
+
+theorem quarticFourAtomicLinearOnLineObstruction_formula
+    {t : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicLinearOnLineObstruction t
+      =
+    -(10/9477 : ℝ) *
+      (27 * Real.cosh (8*Real.pi/(3*t))
+        + 64 * Real.cosh (4*Real.pi/t)
+        - 10 * Real.cosh (8*Real.pi/t)) := by
+  unfold quarticFourAtomicLinearOnLineObstruction
+  rw [quarticFourAtomicMu_half,
+      quarticFourAtomicMu_twoThirds,
+      quarticFourAtomicOnLineResponseDifference_formula,
+      quarticFourAtomicOnLineResponseDifference_formula]
+  unfold quarticFourAtomicFinitePoleResidual
+  norm_num
+  ring
+
+theorem quarticFourAtomicCubicOnLineObstruction_formula
+    {t : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicCubicOnLineObstruction t
+      =
+    (5/9477 : ℝ) *
+      (135 * Real.cosh (8*Real.pi/(3*t))
+        - 112 * Real.cosh (4*Real.pi/t)
+        + 58 * Real.cosh (8*Real.pi/t)
+        + 324) := by
+  unfold quarticFourAtomicCubicOnLineObstruction
+  rw [quarticFourAtomicMu_half,
+      quarticFourAtomicMu_twoThirds,
+      quarticFourAtomicOnLineCurvatureResponse_formula,
+      quarticFourAtomicOnLineCurvatureResponse_formula]
+  unfold quarticFourAtomicFinitePoleResidual
+  norm_num
+  ring
+
+theorem quarticFourAtomicLinearOnLineObstruction_neg
+    {t : ℝ} (ht : 200 <= t) :
+    quarticFourAtomicLinearOnLineObstruction t < 0 := by
+  have htpos : 0 < t := by linarith
+  rw [quarticFourAtomicLinearOnLineObstruction_formula htpos.ne']
+  have h1 :
+      1 <= Real.cosh (8*Real.pi/(3*t)) :=
+    Real.one_le_cosh _
+  have h2 :
+      1 <= Real.cosh (4*Real.pi/t) :=
+    Real.one_le_cosh _
+  have h3ex :=
+    quarticFour_cosh_excess_le_one_of_twoHundred ht
+  have h3 :
+      Real.cosh (8*Real.pi/t) <= 2 := by
+    linarith
+  have hbracket :
+      0 <
+      27 * Real.cosh (8*Real.pi/(3*t))
+        + 64 * Real.cosh (4*Real.pi/t)
+        - 10 * Real.cosh (8*Real.pi/t) := by
+    nlinarith
+  norm_num
+  nlinarith
+
+
 end Synthesis

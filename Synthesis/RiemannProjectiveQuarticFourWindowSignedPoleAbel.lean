@@ -128,8 +128,12 @@ theorem QuarticFourSignedPolePair.signedOrdinateTest_hasDerivAt
     QuarticFourSignedPolePair.ordinateTestHalf
     QuarticFourSignedPolePair.ordinateTestTwo
   exact
-    ((quarticFourOrdinateTest_hasDerivAt W.Rpos ht x).const_mul W.poleTwo).add
-      ((quarticFourOrdinateTest_hasDerivAt W.Rpos ht x).const_mul (-W.poleHalf))
+    ((quarticFourOrdinateTest_hasDerivAt
+        (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos ht x).const_mul
+      W.poleTwo).add
+      ((quarticFourOrdinateTest_hasDerivAt
+        (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos ht x).const_mul
+      (-W.poleHalf))
 
 theorem QuarticFourSignedPolePair.signedOrdinateTestDeriv_continuous
     {t : ℝ} (ht : 0 < t)
@@ -429,7 +433,7 @@ theorem QuarticFourSignedPolePair.signedOrdinateTestDeriv4_center
         (quarticFourSignedPoleCombinedProfile
           W.R W.muHalf W.muTwo t) by rfl,
       quarticFourSignedPoleCombinedProfile_fourth W.Rpos]
-  field_simp [show t/16 != 0 by positivity]
+  field_simp [show t/16 ≠ 0 by positivity]
   ring
 
 theorem QuarticFourSignedPolePair.signedOrdinateTestDeriv4_center_neg

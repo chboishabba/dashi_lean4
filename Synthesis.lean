@@ -315,6 +315,7 @@ import Synthesis.MillenniumBSDCMSplitPrimeSignReduction
 import Synthesis.MillenniumBSDCMSplitPrimeCanonicalWitness
 
 import Synthesis.MillenniumBSDUniversalRankWeld
+import Synthesis.MillenniumBSDUniversalEllipticPointTopRep
 
 import Synthesis.MillenniumBSDCMWorkedCaseBoundary
 

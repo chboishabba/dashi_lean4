@@ -1032,4 +1032,108 @@ theorem QuarticFourSignedPolePair.signedOrdinateTest_abs_le_gap_four
         field_simp [ne_of_gt ht, sub_ne_zero.mpr hxt]
         ring
 
+
+/--
+The cubic boundary contribution vanishes on the canonical symmetric
+exhaustion.  C4 regularity is exactly what upgrades the old 1/n^2 kernel tail
+to the 1/n^4 decay needed here.
+-/
+theorem QuarticFourSignedPolePair.cubicBoundary_tendsto_zero
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto
+      (fun n : ℕ =>
+        (n : ℝ)^3 *
+          W.signedOrdinateTest (t + (n : ℝ)))
+      atTop (𝓝 0) := by
+  let K : ℝ :=
+    (t/16)^2
+      * compactCosineFourthDecayCurvature
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)
+  have hK : 0 <= K := by
+    dsimp [K]
+    have hC :=
+      compactCosineFourthDecayCurvature_nonneg
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+    positivity
+  apply tendsto_zero_of_eventually_abs_le_const_div_nat hK
+  filter_upwards [eventually_ge_atTop (1 : ℕ)] with n hn
+  have hnpos : 0 < (n : ℝ) := by
+    exact_mod_cast (lt_of_lt_of_le Nat.zero_lt_one hn)
+  have hneq : t + (n : ℝ) ≠ t := by
+    linarith
+  have hdec :=
+    W.signedOrdinateTest_abs_le_gap_four ht hneq
+  have hgap :
+      (t + (n : ℝ) - t)^4 = (n : ℝ)^4 := by
+    ring
+  rw [hgap] at hdec
+  rw [abs_mul, abs_of_nonneg (pow_nonneg (by positivity) 3)]
+  have hmul :=
+    mul_le_mul_of_nonneg_left hdec
+      (pow_nonneg (by positivity) 3)
+  calc
+    (n : ℝ)^3 *
+        |W.signedOrdinateTest (t + (n : ℝ))|
+      <=
+    (n : ℝ)^3 * (K / (n : ℝ)^4) := by
+      simpa [K] using hmul
+    _ = K / (n : ℝ) := by
+      field_simp [ne_of_gt hnpos]
+      ring
+
+/--
+The linear boundary contribution vanishes a fortiori.
+-/
+theorem QuarticFourSignedPolePair.linearBoundary_tendsto_zero
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto
+      (fun n : ℕ =>
+        (n : ℝ) *
+          W.signedOrdinateTest (t + (n : ℝ)))
+      atTop (𝓝 0) := by
+  let K : ℝ :=
+    (t/16)^2
+      * compactCosineFourthDecayCurvature
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)
+  have hK : 0 <= K := by
+    dsimp [K]
+    have hC :=
+      compactCosineFourthDecayCurvature_nonneg
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+    positivity
+  have hstrong :
+      ∀ᶠ n : ℕ in atTop,
+        |(n : ℝ) *
+          W.signedOrdinateTest (t + (n : ℝ))|
+          <= K / (n : ℝ) := by
+    filter_upwards [eventually_ge_atTop (1 : ℕ)] with n hn
+    have hnpos : 0 < (n : ℝ) := by
+      exact_mod_cast (lt_of_lt_of_le Nat.zero_lt_one hn)
+    have hneq : t + (n : ℝ) ≠ t := by linarith
+    have hdec :=
+      W.signedOrdinateTest_abs_le_gap_four ht hneq
+    have hgap :
+        (t + (n : ℝ) - t)^4 = (n : ℝ)^4 := by ring
+    rw [hgap] at hdec
+    rw [abs_mul, abs_of_pos hnpos]
+    have hmul :=
+      mul_le_mul_of_nonneg_left hdec hnpos.le
+    calc
+      (n : ℝ) *
+          |W.signedOrdinateTest (t + (n : ℝ))|
+        <= (n : ℝ) * (K / (n : ℝ)^4) := by
+          simpa [K] using hmul
+      _ <= K / (n : ℝ) := by
+        have hn1 : (1 : ℝ) <= n := by exact_mod_cast hn
+        have hKnon := hK
+        field_simp [ne_of_gt hnpos]
+        nlinarith [sq_nonneg ((n : ℝ)^2 - 1)]
+  exact tendsto_zero_of_eventually_abs_le_const_div_nat hK hstrong
+
 end Synthesis

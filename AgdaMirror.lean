@@ -121,3 +121,5 @@ provides faithful Lean mirrors:
   (abstract entropy systems, restoration, completion law — with the genuinely
   provable 3-adic, `ℤ/6`-regularity, and no-infinite-descent facts proved).
 -/
+
+import AgdaMirror.JInvariant369ConsolidatedNextStage

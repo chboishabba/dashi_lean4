@@ -179,6 +179,31 @@ theorem cmJacobiOddCoeff_succ_eq_zero_of_not_eight_dvd
   · rfl
 
 
+theorem jacobiTripleCoefficient_triangular (r : ℕ) :
+    jacobiTripleCoefficient (jacobiTriangularNat r) =
+      LaurentPolynomial.T ((r + 1 : ℕ) : ℤ) +
+        LaurentPolynomial.T (-(r : ℤ)) := by
+  unfold jacobiTripleCoefficient
+  rw [Finset.sum_eq_single r]
+  · simp
+  · intro s hs hsr
+    have hne : jacobiTriangularNat s ≠ jacobiTriangularNat r :=
+      fun h => hsr (jacobiTriangularNat_injective h)
+    simp [hne]
+  · intro hnot
+    exfalso
+    apply hnot
+    rw [Finset.mem_range]
+    exact Nat.lt_succ_of_le (jacobiTriangularNat_ge r)
+
+theorem jacobiTripleCoefficient_eq_zero_of_not_triangular
+    {N : ℕ} (hN : ¬ ∃ r : ℕ, jacobiTriangularNat r = N) :
+    jacobiTripleCoefficient N = 0 := by
+  unfold jacobiTripleCoefficient
+  apply Finset.sum_eq_zero
+  intro r hr
+  simp [hN]
+
 /-- The bilateral side as a formal q-series with Laurent-polynomial
 coefficients in z. -/
 noncomputable def jacobiTripleSeries : JacobiBivariateFormal :=

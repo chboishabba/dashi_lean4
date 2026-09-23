@@ -138,6 +138,31 @@ def PadicH1SquareClassNaturality
       (rationalGenericTwoTorsionH1MulEquivSquareClassPair
         (Multiplicative.ofAdd x))
 
+/-- Componentwise local Kummer equivalence supplied by compatible scalar
+Kummer data. -/
+noncomputable def padicCompatibleSquareClassPairMulEquivCharacters
+    (p : ℕ) [Fact p.Prime]
+    (h : PadicQuadraticKummerCompatibility p) :
+    (PadicSquareClass p × PadicSquareClass p) ≃*
+      (PadicQuadraticCharacter p × PadicQuadraticCharacter p) :=
+  h.kummerEquiv.prodCongr h.kummerEquiv
+
+/-- The scalar naturality square compiles to the pair-valued localization
+square used by explicit two-descent. -/
+theorem padicKummerPair_localize_commutes
+    (p : ℕ) [Fact p.Prime]
+    (h : PadicQuadraticKummerCompatibility p)
+    (c : RatSquareClass × RatSquareClass) :
+    padicCompatibleSquareClassPairMulEquivCharacters p h
+        (localizeKummerPairHom p c) =
+      (restrictQuadraticCharacterToPadic p
+          (ratSquareClassKummerHom c.1),
+       restrictQuadraticCharacterToPadic p
+          (ratSquareClassKummerHom c.2)) := by
+  apply Prod.ext
+  · exact h.localize_commutes c.1
+  · exact h.localize_commutes c.2
+
 /-- The universal H¹ restriction naturality seam plus scalar local Kummer
 naturality compile the full pair-valued H¹/square-class localization square. -/
 theorem padicH1SquareClassNaturality_of_generic
@@ -164,31 +189,6 @@ theorem padicH1SquareClassNaturality_of_generic
     ratSquareClassPairMulEquivQuadraticCharacters,
     rationalQuadraticKummerCharacterPairMulEquiv,
     rationalQuadraticKummerCharacterMulEquiv] using hH1
-
-/-- Componentwise local Kummer equivalence supplied by compatible scalar
-Kummer data. -/
-noncomputable def padicCompatibleSquareClassPairMulEquivCharacters
-    (p : ℕ) [Fact p.Prime]
-    (h : PadicQuadraticKummerCompatibility p) :
-    (PadicSquareClass p × PadicSquareClass p) ≃*
-      (PadicQuadraticCharacter p × PadicQuadraticCharacter p) :=
-  h.kummerEquiv.prodCongr h.kummerEquiv
-
-/-- The scalar naturality square compiles to the pair-valued localization
-square used by explicit two-descent. -/
-theorem padicKummerPair_localize_commutes
-    (p : ℕ) [Fact p.Prime]
-    (h : PadicQuadraticKummerCompatibility p)
-    (c : RatSquareClass × RatSquareClass) :
-    padicCompatibleSquareClassPairMulEquivCharacters p h
-        (localizeKummerPairHom p c) =
-      (restrictQuadraticCharacterToPadic p
-          (ratSquareClassKummerHom c.1),
-       restrictQuadraticCharacterToPadic p
-          (ratSquareClassKummerHom c.2)) := by
-  apply Prod.ext
-  · exact h.localize_commutes c.1
-  · exact h.localize_commutes c.2
 
 /-- Restriction of the actual global E(Qbar) representation to G_{Q_p}. -/
 noncomputable abbrev padicRestrictedEllipticPointRepresentation

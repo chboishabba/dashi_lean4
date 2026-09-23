@@ -1,6 +1,7 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleNMu
 import Synthesis.RiemannZetaMuExactAbel
 import Synthesis.RiemannCompactCosineFourthDerivative
+import Synthesis.RiemannProjectiveQuarticDerivativeSign
 
 /-!
 # Exact Abel and centered jet for the signed four-window quartic test

@@ -1,5 +1,6 @@
 import Synthesis.RiemannCompactCoshQuantitativeQuarticBand
 import Synthesis.RiemannCompactCoshSupportMassBound
+import Mathlib.Analysis.Complex.ExponentialBounds
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleCutset
 
 /-!
@@ -1315,5 +1316,144 @@ theorem exists_quarticSignedPolePair_quantitativeBand_of_clayHigh
     exact lt_trans hQTPT htPT
   exact exists_quarticSignedPolePair_quantitativeBand_of_threshold
     ht200 htQ
+
+
+/-!
+## Certified scalar closure of G1
+
+The following proof deliberately uses very coarse bounds.  No decimal
+approximation to T_Q is part of the theorem.
+-/
+
+theorem quarticSignedPole_cosh_one_lt_two :
+    Real.cosh 1 < 2 := by
+  rw [Real.cosh_eq]
+  have hpos := Real.exp_one_lt_three
+  have hneg : Real.exp (-1) < 1 := by
+    exact Real.exp_lt_one_iff.mpr (by norm_num)
+  linarith
+
+theorem quarticSignedPole_exp_five_lt_243 :
+    Real.exp 5 < 243 := by
+  have hpow :
+      Real.exp 1 ^ (5 : ℕ) < (3 : ℝ)^5 :=
+    pow_lt_pow_left₀ Real.exp_one_lt_three
+      (Real.exp_pos 1).le (by norm_num)
+  have heq : Real.exp 5 = Real.exp 1 ^ (5 : ℕ) := by
+    rw [show (5 : ℝ) = (5 : ℕ) * 1 by norm_num,
+      Real.exp_nat_mul]
+  rw [heq]
+  norm_num at hpow ⊢
+  exact hpow
+
+theorem quarticSignedPole_cosh_pi_add_one_lt_243 :
+    Real.cosh (Real.pi + 1) < 243 := by
+  have hx0 : 0 < Real.pi + 1 := by positivity
+  have hx5 : Real.pi + 1 < 5 := by
+    linarith [Real.pi_lt_four]
+  have hpos :
+      Real.exp (Real.pi + 1) < Real.exp 5 :=
+    Real.exp_strictMono hx5
+  have hneg :
+      Real.exp (-(Real.pi + 1))
+        < Real.exp (Real.pi + 1) := by
+    apply Real.exp_strictMono
+    linarith
+  rw [Real.cosh_eq]
+  have h5 := quarticSignedPole_exp_five_lt_243
+  linarith
+
+theorem quarticFourProjectiveMassBound_lt_72 :
+    quarticFourProjectiveMassBound < 72 := by
+  unfold quarticFourProjectiveMassBound
+  norm_num
+
+theorem quarticFourSmoothPoleBound_lt_36 :
+    quarticFourSmoothPoleBound < 36 := by
+  unfold quarticFourSmoothPoleBound
+  have hc := quarticSignedPole_cosh_one_lt_two
+  norm_num at ⊢
+  nlinarith
+
+theorem quarticFourCombinedProfileMassBound_lt_5184 :
+    quarticFourCombinedProfileMassBound < 5184 := by
+  unfold quarticFourCombinedProfileMassBound
+  have hs := quarticFourSmoothPoleBound_lt_36
+  have hp := quarticFourProjectiveMassBound_lt_72
+  have hs0 : 0 <= quarticFourSmoothPoleBound := by
+    unfold quarticFourSmoothPoleBound
+    positivity
+  have hp0 : 0 <= quarticFourProjectiveMassBound := by
+    unfold quarticFourProjectiveMassBound
+    positivity
+  calc
+    2 * quarticFourSmoothPoleBound * quarticFourProjectiveMassBound
+      < 2 * 36 * quarticFourProjectiveMassBound := by
+        gcongr
+    _ < 2 * 36 * 72 := by
+        gcongr
+    _ = 5184 := by norm_num
+
+theorem quarticSignedPoleExplicitK0_lt_four_billion :
+    quarticSignedPoleExplicitK0 < 4000000000 := by
+  unfold quarticSignedPoleExplicitK0
+  have hm := quarticFourCombinedProfileMassBound_lt_5184
+  have hc := quarticSignedPole_cosh_pi_add_one_lt_243
+  have hp : (Real.pi + 1)^5 < (5 : ℝ)^5 :=
+    pow_lt_pow_left₀
+      (by linarith [Real.pi_lt_four])
+      (by positivity)
+      (by norm_num)
+  have hm0 : 0 <= quarticFourCombinedProfileMassBound := by
+    unfold quarticFourCombinedProfileMassBound
+      quarticFourSmoothPoleBound
+      quarticFourProjectiveMassBound
+    positivity
+  have hc0 : 0 <= Real.cosh (Real.pi + 1) :=
+    (Real.cosh_pos _).le
+  calc
+    quarticFourCombinedProfileMassBound
+        * Real.cosh (Real.pi + 1)
+        * (Real.pi + 1)^5
+      < 5184 * 243 * (5 : ℝ)^5 := by
+        gcongr
+    _ < 4000000000 := by norm_num
+
+theorem quarticSignedPoleStrengthFloor_gt_one_third :
+    (1/3 : ℝ) < quarticSignedPoleStrengthFloor := by
+  unfold quarticSignedPoleStrengthFloor
+  have hp4 :
+      (3 : ℝ)^4 < Real.pi^4 :=
+    pow_lt_pow_left₀ Real.pi_gt_three
+      (by norm_num) (by norm_num)
+  norm_num at hp4 ⊢
+  nlinarith
+
+theorem quarticSignedPoleQuantitativeThreshold_lt_fifty_billion :
+    quarticSignedPoleQuantitativeThreshold < 50000000000 := by
+  unfold quarticSignedPoleQuantitativeThreshold
+  rw [div_lt_iff₀ quarticSignedPoleStrengthFloor_pos]
+  have hK := quarticSignedPoleExplicitK0_lt_four_billion
+  have hS := quarticSignedPoleStrengthFloor_gt_one_third
+  nlinarith
+
+theorem quarticSignedPoleThresholdBelowPlattTrudgian_proved :
+    quarticSignedPoleThresholdBelowPlattTrudgian := by
+  unfold quarticSignedPoleThresholdBelowPlattTrudgian
+    quarticPlattTrudgianCutoff
+  exact quarticSignedPoleQuantitativeThreshold_lt_fifty_billion.trans
+    (by norm_num)
+
+/--
+Clay-high quantitative-band witness with no remaining G1 hypothesis.
+-/
+theorem exists_quarticSignedPolePair_band_of_above_PT
+    {t : ℝ}
+    (htPT : quarticPlattTrudgianCutoff < t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧ 8/t < W.quantitativeTargetRadius := by
+  exact exists_quarticSignedPolePair_quantitativeBand_of_clayHigh
+    quarticSignedPoleThresholdBelowPlattTrudgian_proved htPT
 
 end Synthesis

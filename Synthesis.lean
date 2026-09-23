@@ -299,3 +299,7 @@ import Synthesis.MillenniumBSDRationalQuadraticKummerSurjective
 import Synthesis.MillenniumBSDCMSplitJacobiPrimaryCube
 
 import Synthesis.MoonshineConstructiveRealAdapter
+
+import Synthesis.MillenniumBSDQuadraticKummerPair
+
+import Synthesis.MillenniumBSDActualE2H1CharacterReduction

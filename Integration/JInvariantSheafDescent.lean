@@ -152,6 +152,91 @@ theorem relativeFineMustSeparateDistinctStates
   intro hf
   exact hne (coarseAndRelativeFineDetermineState g hc hf)
 
+def ConsumerSufficient
+    {State Surface Outcome : Type}
+    (observe : State → Surface)
+    (consumer : State → Outcome) : Prop :=
+  ∀ left right, observe left = observe right → consumer left = consumer right
+
+theorem factorsThrough_sufficient
+    {State Surface Outcome : Type}
+    {observe : State → Surface}
+    {consumer : State → Outcome}
+    (h : FactorsThrough observe consumer) :
+    ConsumerSufficient observe consumer := by
+  intro left right same
+  calc
+    consumer left = h.factor (observe left) := h.law left
+    _ = h.factor (observe right) := by rw [same]
+    _ = consumer right := (h.law right).symm
+
+theorem local27_not_sufficient_for_q11 :
+    ¬ ConsumerSufficient localObserver (fineFieldAt q11) := by
+  intro h
+  exact q11ConsumerDiffers (h leftJState rightJState sameLocal27)
+
+def fullObserver : JAbs → JAbs := id
+
+theorem fullObserver_sufficient_for_q11 :
+    ConsumerSufficient fullObserver (fineFieldAt q11) := by
+  intro left right same
+  simpa [fullObserver] using congrArg (fineFieldAt q11) same
+
+inductive JObserverModel
+  | local27
+  | fullField
+  deriving DecidableEq, Repr
+
+def JObserverAdmissible : JObserverModel → Prop
+  | .local27 => True
+  | .fullField => True
+
+def JObserverAdequate : JObserverModel → Prop
+  | .local27 => ConsumerSufficient localObserver (fineFieldAt q11)
+  | .fullField => ConsumerSufficient fullObserver (fineFieldAt q11)
+
+def JObserverEligible (m : JObserverModel) : Prop :=
+  JObserverAdmissible m ∧ JObserverAdequate m
+
+theorem local27_not_eligible :
+    ¬ JObserverEligible .local27 := by
+  intro h
+  exact local27_not_sufficient_for_q11 h.2
+
+theorem fullField_eligible :
+    JObserverEligible .fullField := by
+  exact ⟨trivial, fullObserver_sufficient_for_q11⟩
+
+def jObserverDescriptionLength : JObserverModel → Nat
+  | .local27 => 3
+  | .fullField => 11
+
+theorem shorter_local_does_not_override_adequacy :
+    jObserverDescriptionLength .local27 <
+      jObserverDescriptionLength .fullField ∧
+    ¬ JObserverEligible .local27 ∧
+    JObserverEligible .fullField := by
+  exact ⟨by decide, local27_not_eligible, fullField_eligible⟩
+
+inductive JRepairMove
+  | reopenFullFine
+  deriving DecidableEq, Repr
+
+inductive JRepairEnabled : JRepairMove → JObserverModel → Prop
+  | q11Collision : JRepairEnabled .reopenFullFine .local27
+
+def jRepairStep : JRepairMove → JObserverModel → JObserverModel
+  | .reopenFullFine, .local27 => .fullField
+  | .reopenFullFine, .fullField => .fullField
+
+theorem q11_repair_is_enabled :
+    JRepairEnabled .reopenFullFine .local27 :=
+  .q11Collision
+
+theorem q11_repair_reaches_eligible_full_field :
+    JObserverEligible (jRepairStep .reopenFullFine .local27) := by
+  simpa [jRepairStep] using fullField_eligible
+
 structure AdmissibleOverlap
     {Left Right Boundary : Type}
     (leftBoundary : Left → Boundary)
@@ -357,6 +442,9 @@ structure Frontier where
   arithmeticAnalyticOwnersLinked : Bool
   square144PromotedToModularInvariant : Bool
   oeisCreatesSemanticIdentity : Bool
+  admissibleConsumerRepairInstantiated : Bool
+  shorterLocalModelExcludedForQ11 : Bool
+  fullFineRepairEligible : Bool
 
 def frontier : Frontier where
   localObserverExact := true
@@ -371,5 +459,8 @@ def frontier : Frontier where
   arithmeticAnalyticOwnersLinked := true
   square144PromotedToModularInvariant := false
   oeisCreatesSemanticIdentity := false
+  admissibleConsumerRepairInstantiated := true
+  shorterLocalModelExcludedForQ11 := true
+  fullFineRepairEligible := true
 
 end Integration.JInvariantSheafDescent

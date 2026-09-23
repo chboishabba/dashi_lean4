@@ -3593,4 +3593,51 @@ theorem quarticFourAtomicLinearOnLineObstruction_neg
   nlinarith
 
 
+
+theorem quarticFourAtomicCubicOnLineObstruction_pos
+    {t : ℝ} (ht : 200 <= t) :
+    0 < quarticFourAtomicCubicOnLineObstruction t := by
+  have htpos : 0 < t := by linarith
+  rw [quarticFourAtomicCubicOnLineObstruction_formula htpos.ne']
+  have h1 :
+      1 <= Real.cosh (8*Real.pi/(3*t)) :=
+    Real.one_le_cosh _
+  have h3lo :
+      1 <= Real.cosh (8*Real.pi/t) :=
+    Real.one_le_cosh _
+  have h3ex :=
+    quarticFour_cosh_excess_le_one_of_twoHundred ht
+  have h3hi :
+      Real.cosh (8*Real.pi/t) <= 2 := by
+    linarith
+  have hx2 :
+      |4*Real.pi/t| <= |8*Real.pi/t| := by
+    have h4non : 0 <= 4*Real.pi/t := by positivity
+    have h8non : 0 <= 8*Real.pi/t := by positivity
+    rw [abs_of_nonneg h4non, abs_of_nonneg h8non]
+    field_simp [ne_of_gt htpos]
+    nlinarith [Real.pi_pos]
+  have h2hi :
+      Real.cosh (4*Real.pi/t) <= 2 :=
+    ((Real.cosh_le_cosh).2 hx2).trans h3hi
+  have hbracket :
+      0 <
+      135 * Real.cosh (8*Real.pi/(3*t))
+        - 112 * Real.cosh (4*Real.pi/t)
+        + 58 * Real.cosh (8*Real.pi/t)
+        + 324 := by
+    nlinarith
+  norm_num
+  nlinarith
+
+theorem quarticFourAtomicFullCubicObstructions_nonzero
+    {t : ℝ} (ht : 200 <= t) :
+    quarticFourAtomicLinearOnLineObstruction t ≠ 0
+      ∧ quarticFourAtomicCubicOnLineObstruction t ≠ 0 := by
+  exact ⟨
+    ne_of_lt (quarticFourAtomicLinearOnLineObstruction_neg ht),
+    ne_of_gt (quarticFourAtomicCubicOnLineObstruction_pos ht)
+  ⟩
+
+
 end Synthesis

@@ -175,9 +175,11 @@ private theorem eventually_qParam_mem_halfDisc :
     ∀ᶠ z : ℍ in atImInfty,
       𝕢 1 z ∈ Metric.closedBall (0 : ℂ) (1 / 2 : ℝ) := by
   have hq := UpperHalfPlane.qParam_tendsto_atImInfty (h := 1) zero_lt_one
-  exact
-    hq.eventually
-      (Metric.closedBall_mem_nhds 0 (by norm_num : (0 : ℝ) < 1 / 2))
+  filter_upwards
+    [hq.eventually
+      (Metric.ball_mem_nhds 0 (by norm_num : (0 : ℝ) < 1 / 2))]
+    with z hz
+  exact Metric.ball_subset_closedBall hz
 
 /-- The Euler product tends to 1 at i-infinity. -/
 theorem etaEulerProduct_tendsto_atImInfty :
@@ -220,10 +222,7 @@ def eta24CuspForm : CuspForm 𝒮ℒ 12 where
     obtain ⟨γ, rfl⟩ := hA
     exact eta24_slash_all γ
   holo' := eta24_mdifferentiable
-  zero_at_cusps' {c} hc := by
-    rw [Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z] at hc
-    rw [OnePoint.isZeroAt_iff_forall_SL2Z hc]
-    intro γ _
+  zero_at_cusps' {c} hc γ hγ := by
     rw [eta24_slash_all γ]
     exact eta24_isZeroAtImInfty
 
@@ -239,7 +238,7 @@ theorem exp_isBigO_eta24 :
     (fun z : ℍ => η24 z) := by
   refine .of_bound 2 ?_
   have hprod :=
-    etaEulerProduct_tendsto_atImInfty.eventually
+    (etaEulerProduct_tendsto_atImInfty.pow 24).eventually
       (Metric.ball_mem_nhds 1
         (by norm_num : (0 : ℝ) < 1 / 2))
   filter_upwards [hprod] with z hz
@@ -250,31 +249,23 @@ theorem exp_isBigO_eta24 :
         Real.exp (-2 * Real.pi * z.im) := by
     simp [Periodic.qParam, Complex.norm_exp]
   rw [← hq]
-  have hp : 1 / 2 ≤ ‖etaEulerProduct (𝕢 1 z)‖ := by
+  have hp24 :
+      1 / 2 ≤ ‖etaEulerProduct (𝕢 1 z) ^ 24‖ := by
     have hsub :
-        ‖etaEulerProduct (𝕢 1 z) - 1‖ < 1 / 2 := by
+        ‖etaEulerProduct (𝕢 1 z) ^ 24 - 1‖ < 1 / 2 := by
       rwa [Complex.dist_eq] at hz
     have h1 :=
-      norm_sub_norm_le 1 (etaEulerProduct (𝕢 1 z))
+      norm_sub_norm_le 1 (etaEulerProduct (𝕢 1 z) ^ 24)
     grind [norm_one, norm_sub_rev]
-  have hp24 : 1 / 2 ≤ ‖etaEulerProduct (𝕢 1 z) ^ 24‖ := by
-    rw [norm_pow]
-    have : (1 / 2 : ℝ) ^ 24 ≤ ‖etaEulerProduct (𝕢 1 z)‖ ^ 24 :=
-      pow_le_pow_left₀ (by positivity) hp 24
-    norm_num at this ⊢
-    exact le_trans (by norm_num) this
-  linarith [norm_nonneg (𝕢 1 z),
+  nlinarith [norm_nonneg (𝕢 1 z),
     mul_le_mul_of_nonneg_left hp24 (norm_nonneg (𝕢 1 z))]
 
 /-- Any level-one cusp form is O(eta^24) at i-infinity. -/
 theorem cusp_isBigO_eta24 {k : ℤ}
     (f : CuspForm 𝒮ℒ k) :
     f =O[atImInfty] (fun z : ℍ => η24 z) :=
-  (CuspFormClass.exp_decay_atImInfty
-      (h := 1) f
-      CuspFormClass.zero_at_infty
-      one_pos
-      (by simp))
+  ((CuspFormClass.zero_at_infty f).exp_decay_atImInfty
+      (h := 1) one_pos (by simp))
     |>.trans
       (by simpa using exp_isBigO_eta24)
 

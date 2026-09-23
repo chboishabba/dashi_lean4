@@ -1,6 +1,8 @@
 import Synthesis.MillenniumBSDMathlibLFunctionWeld
 import Mathlib.AlgebraicGeometry.EllipticCurve.LFunction
 import Mathlib.Data.Set.Basic
+import Mathlib.Analysis.Analytic.Basic
+import Mathlib.GroupTheory.Torsion
 
 /-!
 # Universal BSD rank-weld proof surface
@@ -48,6 +50,67 @@ same-object welded to this exact curve carrier. -/
 structure BSDRankObservers where
   analyticRank : RationalEllipticCurve → ℕ
   algebraicRank : RationalEllipticCurve → ℕ
+
+
+/-- A holomorphic function has a zero of exact order r at s = 1 when it
+locally factors as (s - 1)^r times a holomorphic nonvanishing factor. -/
+def HasZeroOfOrderAtOne
+    (F : ℂ → ℂ) (r : ℕ) : Prop :=
+  ∃ G : ℂ → ℂ,
+    AnalyticAt ℂ G 1 ∧
+    G 1 ≠ 0 ∧
+    ∀ᶠ s in 𝓝 (1 : ℂ),
+      F s = (s - 1) ^ r * G s
+
+/-- Same-object analytic-rank binding. The continuation must agree with the
+literal mathlib elliptic L-series on some right half-plane, be holomorphic
+everywhere, and have the declared exact order at s = 1. -/
+structure BSDAnalyticRankBinding where
+  continuation : RationalEllipticCurve → ℂ → ℂ
+  rightHalfPlane : RationalEllipticCurve → ℝ
+  agreesLSeries :
+    ∀ E s,
+      rightHalfPlane E < s.re →
+      continuation E s = rationalEllipticCurveLSeries E s
+  entire :
+    ∀ E s, AnalyticAt ℂ (continuation E) s
+  rank : RationalEllipticCurve → ℕ
+  rank_is_order :
+    ∀ E, HasZeroOfOrderAtOne (continuation E) (rank E)
+
+/-- Canonical algebraic-rank specification on the actual mathlib rational
+point group: modulo torsion, E(Q) is free abelian on exactly r generators. -/
+def IsMordellWeilRank
+    (E : RationalEllipticCurve) (r : ℕ) : Prop :=
+  letI : E.1.IsElliptic := E.2
+  Nonempty
+    ((E.1.toAffine.Point ⧸
+        AddCommGroup.torsion E.1.toAffine.Point) ≃+
+      (Fin r → ℤ))
+
+/-- Same-object algebraic-rank binding for every rational elliptic curve. -/
+structure BSDMordellWeilRankBinding where
+  rank : RationalEllipticCurve → ℕ
+  rank_spec : ∀ E, IsMordellWeilRank E (rank E)
+
+/-- Both canonical rank observers, tied to the literal L-series and literal
+rational point group. -/
+structure BSDBoundRankObservers where
+  analytic : BSDAnalyticRankBinding
+  algebraic : BSDMordellWeilRankBinding
+
+/-- Forget only the binding certificates, retaining the ranks themselves. -/
+def BSDBoundRankObservers.toRankObservers
+    (b : BSDBoundRankObservers) :
+    BSDRankObservers where
+  analyticRank := b.analytic.rank
+  algebraicRank := b.algebraic.rank
+
+/-- Clay-facing universal rank equality after both observers have been bound
+to their actual same-curve objects. -/
+def UniversalBSDBoundRankWeld
+    (b : BSDBoundRankObservers) : Prop :=
+  UniversalBSDRankWeld b.toRankObservers
 
 /-- BSD rank equality restricted to a specified family of rational elliptic
 curves. -/
@@ -177,6 +240,9 @@ remain open. The CM curve is explicitly not a universal coverage theorem. -/
 structure BSDUniversalMaxCutStatus where
   rationalEllipticCurveCarrierPaid : Bool
   mathlibLSeriesCarrierPaid : Bool
+  analyticRankSpecificationPaid : Bool
+  mordellWeilRankSpecificationPaid : Bool
+  boundObserverCompilerPaid : Bool
   cmCurveSameObjectPaid : Bool
   scopeRestrictionCompilerPaid : Bool
   familyCoverageCompilerPaid : Bool
@@ -189,6 +255,7 @@ structure BSDUniversalMaxCutStatus where
 
 def bsdUniversalMaxCutStatus : BSDUniversalMaxCutStatus :=
   ⟨true, true, true, true, true,
+    true, true, true,
     false, false, false, false, false⟩
 
 end Synthesis.Millennium.BSD

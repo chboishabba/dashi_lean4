@@ -1,6 +1,6 @@
 import Synthesis.MillenniumBSDJacobiEta32Reduction
 import Synthesis.MillenniumBSDGlobalCoefficientReconstruction
-import Synthesis.MillenniumBSDCMSplitPrimeSignReduction
+import Synthesis.MillenniumBSDCMSplitPrimeCanonicalWitness
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.Tactic
 
@@ -87,6 +87,33 @@ def JacobiOddPrimeAgreement : Prop :=
     cmJacobiArithmeticFunction p =
       ((@frobeniusCoefficient p ⟨hp⟩ : ℤ) : ℂ)
 
+/-- The only nontrivial prime-value owner after paying inert-prime support. -/
+def JacobiSplitPrimeAgreement : Prop :=
+  ∀ (p : ℕ) (hp : p.Prime) (hmod : p % 4 = 1),
+    cmJacobiArithmeticFunction p =
+      ((@frobeniusCoefficient p ⟨hp⟩ : ℤ) : ℂ)
+
+theorem jacobi_inertPrimeAgreement_paid
+    {p : ℕ} (hp : p.Prime) (hmod : p % 4 = 3) :
+    cmJacobiArithmeticFunction p =
+      ((@frobeniusCoefficient p ⟨hp⟩ : ℤ) : ℂ) := by
+  have hj : cmJacobiArithmeticFunction p = 0 := by
+    exact cmJacobiArithmeticCoefficient_eq_zero_of_mod_four_ne_one (by omega)
+  letI : Fact p.Prime := ⟨hp⟩
+  have he : frobeniusCoefficient p = 0 :=
+    inert_frobeniusCoefficient_eq_zero hmod
+  rw [hj, he]
+  norm_num
+
+theorem jacobiOddPrimeAgreement_of_split
+    (hsplit : JacobiSplitPrimeAgreement) :
+    JacobiOddPrimeAgreement := by
+  intro p hp hp2
+  rcases (Nat.odd_mod_four_iff.mp
+      (hp.eq_two_or_odd.resolve_left hp2)) with h1 | h3
+  · exact hsplit p hp h1
+  · exact jacobi_inertPrimeAgreement_paid hp h3
+
 /-- J3c: the Jacobi prime-power coefficients obey the same degree-two Euler
 recurrence as the elliptic coefficients at every odd prime. -/
 def JacobiOddPrimePowerRecurrence : Prop :=
@@ -150,6 +177,58 @@ theorem cmJacobiArithmeticCoefficient_eq_zero_of_even
       omega
     rw [cmJacobiEvenCoeff_eq_zero_of_odd hj, mul_zero]
 
+theorem cmJacobiOddCoeff_eq_zero_of_mod_four_ne_one
+    {N : ℕ} (hN : N % 4 ≠ 1) :
+    cmJacobiOddCoeff N = 0 := by
+  unfold cmJacobiOddCoeff
+  apply Finset.sum_eq_zero
+  intro r hr
+  split_ifs with hsq
+  · have hsquare : (2 * r + 1) ^ 2 % 4 = 1 := by
+      have hid : (2 * r + 1) ^ 2 = 4 * (r ^ 2 + r) + 1 := by ring
+      rw [hid]
+      omega
+    exact (hN (by simpa [hsq] using hsquare)).elim
+  · rfl
+
+theorem cmJacobiEvenCoeff_eq_zero_of_mod_four_ne_zero
+    {N : ℕ} (hN : N % 4 ≠ 0) :
+    cmJacobiEvenCoeff N = 0 := by
+  unfold cmJacobiEvenCoeff
+  have hN0 : N ≠ 0 := by
+    intro h
+    subst N
+    exact hN (by norm_num)
+  rw [if_neg hN0, zero_add]
+  apply Finset.sum_eq_zero
+  intro s hs
+  split_ifs with hterm
+  · rcases hterm with ⟨hspos, hsq⟩
+    apply (hN ?_).elim
+    rw [← hsq]
+    omega
+  · rfl
+
+/-- The full Jacobi convolution is supported on the CM residue class
+N ≡ 1 (mod 4). -/
+theorem cmJacobiArithmeticCoefficient_eq_zero_of_mod_four_ne_one
+    {N : ℕ} (hN : N % 4 ≠ 1) :
+    cmJacobiArithmeticCoefficient N = 0 := by
+  unfold cmJacobiArithmeticCoefficient
+  apply Finset.sum_eq_zero
+  intro ij hij
+  rcases ij with ⟨i,j⟩
+  have hijsum : i + j = N := by
+    simpa using Finset.mem_antidiagonal.mp hij
+  by_cases hi : i % 4 = 1
+  · by_cases hj : j % 4 = 0
+    · exfalso
+      apply hN
+      rw [← hijsum, Nat.add_mod, hi, hj]
+      norm_num
+    · rw [cmJacobiEvenCoeff_eq_zero_of_mod_four_ne_zero hj, mul_zero]
+  · rw [cmJacobiOddCoeff_eq_zero_of_mod_four_ne_one hi, zero_mul]
+
 @[simp] theorem cmJacobiArithmeticFunction_one :
     cmJacobiArithmeticFunction 1 = 1 := by
   simp [cmJacobiArithmeticFunction, cmJacobiArithmeticCoefficient,
@@ -184,8 +263,13 @@ structure JacobiLocalReconstructionData : Prop where
 Only the genuinely CM-theta local mathematics remains. -/
 structure JacobiCMReconstructionData : Prop where
   multiplicative : JacobiArithmeticMultiplicativity
-  oddPrime : JacobiOddPrimeAgreement
+  splitPrime : JacobiSplitPrimeAgreement
   oddPrimePowerRecurrence : JacobiOddPrimePowerRecurrence
+
+theorem JacobiCMReconstructionData.oddPrime
+    (h : JacobiCMReconstructionData) :
+    JacobiOddPrimeAgreement :=
+  jacobiOddPrimeAgreement_of_split h.splitPrime
 
 theorem JacobiCMReconstructionData.toLocalData
     (h : JacobiCMReconstructionData) :
@@ -263,12 +347,13 @@ structure JacobiArithmeticBoundaryStatus where
   ellipticPrimeDataPaid : Bool
   ellipticPrimePowerRecurrencePaid : Bool
   jacobiMultiplicativityPaid : Bool
-  jacobiOddPrimeAgreementPaid : Bool
+  jacobiInertPrimeAgreementPaid : Bool
+  jacobiSplitPrimeAgreementPaid : Bool
   jacobiPrimePowerRecurrencePaid : Bool
   jacobiTwoPowerAgreementPaid : Bool
   deriving DecidableEq, Repr
 
 def jacobiArithmeticBoundaryStatus : JacobiArithmeticBoundaryStatus :=
-  ⟨true, true, true, false, false, false, true⟩
+  ⟨true, true, true, false, true, false, false, true⟩
 
 end Synthesis.Millennium.BSD

@@ -24,6 +24,7 @@ open UpperHalfPlane hiding I
 open scoped Topology
 
 open Integration.BishopVendoredRealEvaluation
+open Integration.BishopVendoredOrderConvergenceEvaluation
 open Integration.BishopRound11MachinSourceBinding
 open Integration.BishopVendoredTranscendentalExtraction
 open Integration.MoonshineEisensteinPrimitiveExtraction
@@ -191,6 +192,65 @@ theorem map_sourceDiscriminantNumerator
     map_sourceE6_eq_e6At τs τ hτ]
   rfl
 
+/-- Exact Bishop rational coefficient used by the Agda normalized finite Delta. -/
+def sourceOneOver1728
+    {A : VendoredArithmeticMirror}
+    {B : Round11MachinSourceBinding A} :
+    RouteComplex A B :=
+  ⟨rational (1 / 1728 : ℚ), A.zero⟩
+
+theorem map_sourceOneOver1728
+    {A : VendoredArithmeticMirror}
+    {B : Round11MachinSourceBinding A} :
+    mapRouteComplex (sourceOneOver1728 (A := A) (B := B)) =
+      (1 / 1728 : ℂ) := by
+  change
+    (⟨eval (rational (1 / 1728 : ℚ)), eval A.zero⟩ : ℂ) =
+      (1 / 1728 : ℂ)
+  rw [eval_rational, A.eval_zero]
+  norm_num
+
+/-- Literal source normalized finite Delta, matching the Bishop rational
+embedding used in Agda. -/
+def sourceNormalizedDelta
+    {A : VendoredArithmeticMirror}
+    {B : Round11MachinSourceBinding A}
+    (N : ℕ)
+    (τs : RouteComplex A B) :
+    RouteComplex A B :=
+  SourceComplex.mul
+    sourceOneOver1728
+    (sourceDiscriminantNumerator N τs)
+
+theorem map_sourceNormalizedDelta
+    {A : VendoredArithmeticMirror}
+    {B : Round11MachinSourceBinding A}
+    (τs : RouteComplex A B)
+    (τ : ℍ)
+    (hτ : mapRouteComplex τs = (τ : ℂ))
+    (N : ℕ) :
+    mapRouteComplex (sourceNormalizedDelta N τs) =
+      normalizedDeltaAt N τ := by
+  unfold sourceNormalizedDelta
+  rw [mapRouteComplex, mapComplex_mul,
+      map_sourceOneOver1728,
+      map_sourceDiscriminantNumerator τs τ hτ]
+  simp [normalizedDeltaAt, div_eq_mul_inv]
+  ring
+
+theorem mapped_sourceNormalizedDelta_tendsto
+    {A : VendoredArithmeticMirror}
+    {B : Round11MachinSourceBinding A}
+    (τs : RouteComplex A B)
+    (τ : ℍ)
+    (hτ : mapRouteComplex τs = (τ : ℂ)) :
+    Tendsto
+      (fun N => mapRouteComplex (sourceNormalizedDelta N τs))
+      atTop
+      (𝓝 (normalizedDeltaLimit τ)) := by
+  simpa only [map_sourceNormalizedDelta τs τ hτ] using
+    normalizedDeltaAt_tendsto τ
+
 theorem mapped_sourceDiscriminantNumerator_tendsto
     {A : VendoredArithmeticMirror}
     {B : Round11MachinSourceBinding A}
@@ -212,9 +272,10 @@ structure Round11RouteBBoundary where
   mappedSourceE4ConvergesToMathlibE4 : Bool
   mappedSourceE6ConvergesToMathlibE6 : Bool
   mappedSourceDiscriminantNumeratorConverges : Bool
+  sourceNormalizedDeltaObjectBound : Bool
+  mappedSourceNormalizedDeltaConverges : Bool
 
   actualAgdaRound11MachinBindingInhabited : Bool
-  sourceNormalizedDeltaObjectBound : Bool
   eta24SameObjectWithNormalizedE4E6Delta : Bool
 
 def round11RouteBBoundary : Round11RouteBBoundary where
@@ -225,9 +286,10 @@ def round11RouteBBoundary : Round11RouteBBoundary where
   mappedSourceE4ConvergesToMathlibE4 := true
   mappedSourceE6ConvergesToMathlibE6 := true
   mappedSourceDiscriminantNumeratorConverges := true
+  sourceNormalizedDeltaObjectBound := true
+  mappedSourceNormalizedDeltaConverges := true
 
   actualAgdaRound11MachinBindingInhabited := false
-  sourceNormalizedDeltaObjectBound := false
   eta24SameObjectWithNormalizedE4E6Delta := false
 
 end

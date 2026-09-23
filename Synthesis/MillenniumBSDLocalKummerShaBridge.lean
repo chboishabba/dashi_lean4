@@ -146,6 +146,29 @@ theorem cmExplicitSelmerClassToEllipticH1_padic_zero
       hCompat hVan s p
   simpa using happ.trans hzero
 
+/-- Prize-facing p-adic vanishing from the minimal restricted-global
+local Kummer theorem. -/
+theorem cmExplicitSelmerClassToEllipticH1_padic_zero_restrictedGlobal
+    (hLocal :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicRestrictedGlobalKummerImageVanishing p.1)
+    (s : explicitTwoSelmerSubgroup)
+    (p : Nat.Primes) :
+    letI : Fact p.1.Prime := ⟨p.2⟩
+    padicEllipticPointH1Restrict p.1
+      (cmExplicitSelmerClassToEllipticH1 s) = 0 := by
+  letI : Fact p.1.Prime := ⟨p.2⟩
+  rw [← explicitSelmerGenericClassToEllipticH1_eq_prizeFacing]
+  unfold explicitSelmerGenericClassToEllipticH1
+  have hsquare := padicGenericE2EllipticH1_restriction_square p.1
+  have happ := congrArg
+    (fun f => f.hom (explicitSelmerToGenericTwoTorsionH1 s)) hsquare
+  have hzero :=
+    explicitSelmer_finite_localizations_vanish_restrictedGlobal
+      hLocal s p
+  simpa using happ.trans hzero
+
 /-- Canonical restriction of the full elliptic-point H¹ class to the real
 absolute Galois group. -/
 noncomputable def realEllipticPointH1Restrict :
@@ -254,6 +277,31 @@ theorem cmExplicitSelmerClassToEllipticH1_localization_zero_of_localKummer
           hCompat hVan s p
 
 
+/-- Sharp localization compiler from the minimal finite-place theorem and
+the real equal-sign image theorem. -/
+theorem cmExplicitSelmerClassToEllipticH1_localization_zero_restrictedGlobal
+    (hLocal :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicRestrictedGlobalKummerImageVanishing p.1)
+    (hReal : RealEllipticKummerImageVanishing)
+    (s : explicitTwoSelmerSubgroup) :
+    cmExplicitSelmerClassToEllipticH1 s ∈
+      classicalEllipticShaOne cmEllipticPointRepresentation := by
+  rw [mem_rationalTateShafarevichOne_iff]
+  intro v
+  cases v with
+  | infinite =>
+      simpa [realEllipticPointH1Restrict, rationalLocalField] using
+        cmExplicitSelmerClassToEllipticH1_real_zero hReal s
+  | padic p =>
+      letI : Fact p.1.Prime := ⟨p.2⟩
+      simpa [padicEllipticPointH1Restrict,
+        padicAbsoluteGaloisRestriction,
+        rationalLocalField] using
+        cmExplicitSelmerClassToEllipticH1_padic_zero_restrictedGlobal
+          hLocal s p
+
 /-- After local Kummer theory pays localization, only the two genuinely global
 classical two-descent exactness laws remain. -/
 structure ClassicalTwoDescentGlobalExactnessLaws where
@@ -287,6 +335,25 @@ noncomputable def classicalTwoDescentLocalizationExactnessLaws_of_localKummer
     hGlobal.kernel_iff_globalKummerImage
   surjective_on_sha_two :=
     hGlobal.surjective_on_sha_two
+
+/-- Minimal max-cut compiler: no full local p-adic Kummer equivalence is
+visible at the prize-facing boundary. -/
+theorem actualClassicalTwoDescentShaComparison_of_restrictedGlobalKummer
+    (hLocal :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicRestrictedGlobalKummerImageVanishing p.1)
+    (hReal : RealEllipticKummerImageVanishing)
+    (hGlobal : ClassicalTwoDescentGlobalExactnessLaws) :
+    ActualClassicalTwoDescentShaComparison :=
+  actualClassicalTwoDescentShaComparison_of_localizationExactness
+    { localization_zero :=
+        cmExplicitSelmerClassToEllipticH1_localization_zero_restrictedGlobal
+          hLocal hReal
+      kernel_iff_globalKummerImage :=
+        hGlobal.kernel_iff_globalKummerImage
+      surjective_on_sha_two :=
+        hGlobal.surjective_on_sha_two }
 
 /-- Max-cut prize-facing compiler from local Kummer theory and the two global
 exactness laws directly to the fixed-representation classical Sha comparison. -/

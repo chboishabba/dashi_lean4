@@ -273,8 +273,10 @@ import Synthesis.MillenniumBSDEtaEllipticSturmEightBoundary
 import Synthesis.MillenniumBSDClassicalShaTwoBoundary
 
 import Synthesis.MillenniumBSDActualE2H1SameObject
+import Synthesis.MillenniumBSDActualE2H1LowDegreeReduction
 
 import Synthesis.MillenniumBSDJacobiEta32Reduction
+import Synthesis.MillenniumBSDEtaToActualLTransfer
 
 import Synthesis.MillenniumBSDCMSplitJacobiRealTrace
 

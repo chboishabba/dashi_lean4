@@ -2802,8 +2802,20 @@ theorem exists_quarticFourSignedPole_centeredCompletedResidualAt_tendsto :
   refine ⟨T0,?_⟩
   intro t W ht
   have hAbel := hT0 W ht
-  have hlim :=
-    (tendsto_const_nhds.mul hAbel).add tendsto_const_nhds
+  have hscaled :
+      Tendsto
+        (fun n : ℕ =>
+          -(1/2 : ℝ) * W.combinedCenteredAbelPartial n)
+        atTop
+        (𝓝 (-(1/2 : ℝ) * (-W.signedNMuPair))) :=
+    (tendsto_const_nhds.mul hAbel)
+  have hhorizontal :
+      Tendsto
+        (fun _ : ℕ => W.signedHorizontalRemainder)
+        atTop
+        (𝓝 W.signedHorizontalRemainder) :=
+    tendsto_const_nhds
+  have hlim := hscaled.add hhorizontal
   unfold QuarticFourSignedPolePair.centeredCompletedResidualAt
     QuarticFourSignedPolePair.completedSignedResidual
   convert hlim using 1 <;> ring

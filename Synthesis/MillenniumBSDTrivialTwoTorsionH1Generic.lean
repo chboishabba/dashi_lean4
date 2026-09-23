@@ -1,4 +1,5 @@
 import Synthesis.MillenniumBSDCMTwoTorsionGaloisModule
+import Synthesis.MillenniumBSDRationalQuadraticKummerHom
 import Mathlib.RepresentationTheory.Homological.ContCohomology.LowDegree
 import Mathlib.Topology.CompactOpen
 import Mathlib.Algebra.Group.Equiv.TypeTags

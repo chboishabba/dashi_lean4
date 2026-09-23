@@ -213,6 +213,28 @@ This does not include Sha finiteness or the leading-coefficient conjecture. -/
 def UniversalBSDRefinedCarrierProducer : Prop :=
   Nonempty BSDBoundRefinedData
 
+
+/-- Known-math same-object producer for the period/regulator/Tamagawa layer. -/
+def UniversalBSDRefinedArithmeticBindingProducer : Prop :=
+  Nonempty BSDRefinedArithmeticBinding
+
+/-- The complete refined carrier is compiled from four independent
+same-object/known-theorem bindings.  No refined BSD conjecture is used. -/
+theorem universalBSDRefinedCarrierProducer_of_components
+    (hA : UniversalBSDAnalyticBindingProducer)
+    (hMW : UniversalBSDMordellWeilBindingProducer)
+    (hArithmetic : UniversalBSDRefinedArithmeticBindingProducer)
+    (hPoints : UniversalBSDEllipticPointRepresentationProducer) :
+    UniversalBSDRefinedCarrierProducer := by
+  rcases hA with ⟨a⟩
+  rcases hMW with ⟨m⟩
+  rcases hArithmetic with ⟨arith⟩
+  rcases hPoints with ⟨points⟩
+  exact ⟨
+    { rank := { analytic := a, algebraic := m }
+      arithmetic := arith
+      sha := BSDUniversalShaCarrier.ofEllipticPoints points }⟩
+
 /-- Explicit Sha-finiteness producer on a chosen classical Sha carrier. -/
 def UniversalBSDShaFinitenessProducer
     (b : BSDBoundRefinedData) : Prop :=

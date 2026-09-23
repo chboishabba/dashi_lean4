@@ -301,4 +301,163 @@ theorem QuarticFourSignedPolePair.signedHorizontalQuadraticKernel_secondDeriv_ze
   rw [W.signedHorizontalQuadraticKernel_secondDeriv_zero]
   nlinarith [W.targetStrength_pos]
 
+
+def QuarticFourSignedPolePair.signedNormalizedBaseKernel
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (q : ℝ) : ℝ :=
+  W.poleTwo *
+      genericProjectiveBaseKernel
+        (quarticFourWindowProfile W.R (1/2) W.muHalf) 1 q
+    +
+  (-W.poleHalf) *
+      genericProjectiveBaseKernel
+        (quarticFourWindowProfile W.R (2/3) W.muTwo) 1 q
+
+def QuarticFourSignedPolePair.signedNormalizedPairKernel
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha q : ℝ) : ℝ :=
+  W.poleTwo *
+      genericProjectivePairKernel
+        (quarticFourWindowProfile W.R (1/2) W.muHalf) alpha q
+    +
+  (-W.poleHalf) *
+      genericProjectivePairKernel
+        (quarticFourWindowProfile W.R (2/3) W.muTwo) alpha q
+
+theorem QuarticFourSignedPolePair.signedNormalizedBaseKernel_eq_compactCosine
+    {t q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNormalizedBaseKernel q
+      =
+    compactCosineTransform
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t) q := by
+  unfold QuarticFourSignedPolePair.signedNormalizedBaseKernel
+    genericProjectiveBaseKernel compactCosineTransform
+    quarticFourSignedPoleCombinedProfile profileLinearCombination
+  have h1 :
+      Integrable
+        (fun x : ℝ =>
+          quarticFourNormalizedProjectiveProfile
+            W.R (1/2) W.muHalf x * Real.cos (q*x)) :=
+    Continuous.integrable_of_hasCompactSupport (by fun_prop)
+      (quarticFourNormalizedProjectiveProfile_compact W.Rpos).mul_right
+  have h2 :
+      Integrable
+        (fun x : ℝ =>
+          quarticFourNormalizedProjectiveProfile
+            W.R (2/3) W.muTwo x * Real.cos (q*x)) :=
+    Continuous.integrable_of_hasCompactSupport (by fun_prop)
+      (quarticFourNormalizedProjectiveProfile_compact W.Rpos).mul_right
+  rw [show
+      (fun x : ℝ =>
+        (W.poleTwo *
+            quarticFourNormalizedProjectiveProfile
+              W.R (1/2) W.muHalf x
+          + (-W.poleHalf) *
+            quarticFourNormalizedProjectiveProfile
+              W.R (2/3) W.muTwo x)
+          * Real.cos (q*x))
+      =
+      fun x =>
+        W.poleTwo *
+          (quarticFourNormalizedProjectiveProfile
+            W.R (1/2) W.muHalf x * Real.cos (q*x))
+        +
+        (-W.poleHalf) *
+          (quarticFourNormalizedProjectiveProfile
+            W.R (2/3) W.muTwo x * Real.cos (q*x)) by
+      funext x
+      ring,
+      integral_add (h1.const_mul _) (h2.const_mul _),
+      integral_const_mul, integral_const_mul]
+  ring
+
+theorem QuarticFourSignedPolePair.signedNormalizedPairKernel_eq_base_add_horizontal
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNormalizedPairKernel alpha q
+      =
+    W.signedNormalizedBaseKernel q
+      + W.signedNormalizedHorizontalKernel alpha q := by
+  unfold QuarticFourSignedPolePair.signedNormalizedPairKernel
+    QuarticFourSignedPolePair.signedNormalizedBaseKernel
+    QuarticFourSignedPolePair.signedNormalizedHorizontalKernel
+  rw [genericProjectivePairKernel_eq_base_add_horizontal
+        (quarticFourWindowProfile_continuous W.Rpos)
+        (quarticFourWindowProfile_compact W.Rpos),
+      genericProjectivePairKernel_eq_base_add_horizontal
+        (quarticFourWindowProfile_continuous W.Rpos)
+        (quarticFourWindowProfile_compact W.Rpos)]
+  ring
+
+theorem QuarticFourSignedPolePair.signedNormalizedPairKernel_eq_jointJet
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNormalizedPairKernel alpha q
+      =
+    compactCosineTransform
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t) q
+      +
+    (alpha^2/2) * W.signedHorizontalQuadraticKernel q
+      +
+    W.signedHorizontalQuarticRemainder alpha q := by
+  rw [W.signedNormalizedPairKernel_eq_base_add_horizontal,
+      W.signedNormalizedBaseKernel_eq_compactCosine,
+      W.signedNormalizedHorizontalKernel_eq]
+  ring
+
+/--
+Exact same-object transport of the literal off-ordinate G3 summand to the
+normalized joint pair kernel.
+-/
+theorem QuarticFourSignedPolePair.signedLiteralPairSourceTerm_eq_normalizedPairKernel
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : ((SameOrd t)ᶜ : Set Zeros)) :
+    W.signedLiteralPairSourceTerm sigma
+      =
+    ((zetaZeroConfig).mult ((sigma : Zeros) : ℂ) : ℝ) / (t/16)^2
+      *
+    W.signedNormalizedPairKernel
+      (heightOf (sigma : Zeros) / (t/16))
+      ((((sigma : Zeros) : ℂ).im - t) / (t/16)) := by
+  unfold QuarticFourSignedPolePair.signedLiteralPairSourceTerm
+    QuarticFourSignedPolePair.signedNormalizedPairKernel
+    quarticFourPhysicalDetector
+  rw [literalPairProjectiveDefect_rescale
+        (quarticFourWindowProfile_contDiff
+          (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos)
+        (quarticFourWindowProfile_compact W.Rpos)
+        (quarticFourWindowProfile_even W.R (1/2) W.muHalf)
+        (by positivity : 0 < t/16) t (sigma : Zeros),
+      literalPairProjectiveDefect_rescale
+        (quarticFourWindowProfile_contDiff
+          (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos)
+        (quarticFourWindowProfile_compact W.Rpos)
+        (quarticFourWindowProfile_even W.R (2/3) W.muTwo)
+        (by positivity : 0 < t/16) t (sigma : Zeros)]
+  ring
+
+theorem QuarticFourSignedPolePair.signedLiteralPairSourceTerm_eq_jointJet
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : ((SameOrd t)ᶜ : Set Zeros)) :
+    W.signedLiteralPairSourceTerm sigma
+      =
+    let r := t/16
+    let alpha := heightOf (sigma : Zeros) / r
+    let q := (((sigma : Zeros) : ℂ).im - t) / r
+    ((zetaZeroConfig).mult ((sigma : Zeros) : ℂ) : ℝ) / r^2
+      *
+    (compactCosineTransform
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t) q
+      + (alpha^2/2) * W.signedHorizontalQuadraticKernel q
+      + W.signedHorizontalQuarticRemainder alpha q) := by
+  rw [W.signedLiteralPairSourceTerm_eq_normalizedPairKernel ht]
+  dsimp
+  rw [W.signedNormalizedPairKernel_eq_jointJet]
+
 end Synthesis

@@ -5,6 +5,7 @@ on:
     paths:
       - 'Integration/JInvariantSheafDescent.lean'
       - 'Integration/StageTwelveGrothendieckRelation.lean'
+      - 'Integration/JInvariant369JointFibredObserver.lean'
       - 'Integration.lean'
       - 'AgdaMirror/JInvariantSheafDescent.lean'
       - 'AgdaMirror/StageTwelveGrothendieckRelation.lean'
@@ -14,6 +15,7 @@ on:
     paths:
       - 'Integration/JInvariantSheafDescent.lean'
       - 'Integration/StageTwelveGrothendieckRelation.lean'
+      - 'Integration/JInvariant369JointFibredObserver.lean'
       - 'Integration.lean'
       - 'AgdaMirror/JInvariantSheafDescent.lean'
       - 'AgdaMirror/StageTwelveGrothendieckRelation.lean'
@@ -35,6 +37,7 @@ jobs:
       - name: Check focused J/369 bridge
         run: |
           lake env lean Integration/StageTwelveGrothendieckRelation.lean
+          lake env lean Integration/JInvariant369JointFibredObserver.lean
           lake env lean Integration/JInvariantSheafDescent.lean
           lake env lean AgdaMirror/StageTwelveGrothendieckRelation.lean
           lake env lean AgdaMirror/JInvariantSheafDescent.lean

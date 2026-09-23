@@ -690,4 +690,123 @@ theorem QuarticFourSignedPolePair.literalHorizontalQuadraticTerm_ge_targetScale
   dsimp
   exact mul_le_mul_of_nonneg_left hq.le hfac
 
+
+/-!
+## Literal joint gain/remainder normal form
+
+The positive alpha^2 q^2 horizontal jet is useful only if the rest of the
+literal pair source remains coupled.  These definitions keep the base cosine
+term and the quartic horizontal remainder together as one joint remainder.
+-/
+
+def QuarticFourSignedPolePair.literalBaseTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2
+    *
+  compactCosineTransform
+    (quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t) q
+
+def QuarticFourSignedPolePair.literalHorizontalQuarticRemainderTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let alpha := heightOf sigma / r
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2
+    *
+  W.signedHorizontalQuarticRemainder alpha q
+
+def QuarticFourSignedPolePair.literalJointNonquadraticRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  W.literalBaseTerm sigma
+    + W.literalHorizontalQuarticRemainderTerm sigma
+
+theorem QuarticFourSignedPolePair.signedLiteralPairSourceTerm_eq_literalJet
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : ((SameOrd t)ᶜ : Set Zeros)) :
+    W.signedLiteralPairSourceTerm sigma
+      =
+    W.literalBaseTerm (sigma : Zeros)
+      + W.literalHorizontalQuadraticTerm (sigma : Zeros)
+      + W.literalHorizontalQuarticRemainderTerm (sigma : Zeros) := by
+  rw [W.signedLiteralPairSourceTerm_eq_jointJet ht]
+  unfold QuarticFourSignedPolePair.literalBaseTerm
+    QuarticFourSignedPolePair.literalHorizontalQuadraticTerm
+    QuarticFourSignedPolePair.literalHorizontalQuarticRemainderTerm
+  dsimp
+  ring
+
+theorem QuarticFourSignedPolePair.signedLiteralPairSourceTerm_eq_quadratic_add_jointRemainder
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : ((SameOrd t)ᶜ : Set Zeros)) :
+    W.signedLiteralPairSourceTerm sigma
+      =
+    W.literalHorizontalQuadraticTerm (sigma : Zeros)
+      + W.literalJointNonquadraticRemainder (sigma : Zeros) := by
+  rw [W.signedLiteralPairSourceTerm_eq_literalJet ht]
+  unfold QuarticFourSignedPolePair.literalJointNonquadraticRemainder
+  ring
+
+/--
+Local per-zero lower normal form on the horizontal q^2 gain band.
+
+This deliberately does not assign a sign to the joint remainder.  It says
+exactly that the paid horizontal quadratic term contributes at least the
+explicit a^2 delta^2 / r^6 target scale, with every other effect retained in
+one same-object remainder.
+-/
+theorem QuarticFourSignedPolePair.literalTargetScale_add_jointRemainder_le_pairSource
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    {sigma : ((SameOrd t)ᶜ : Set Zeros)}
+    {eps : ℝ}
+    (hband :
+      ∀ q : ℝ, 0 < |q| -> |q| < eps ->
+        W.targetStrength*q^2
+          < W.signedHorizontalQuadraticKernel q)
+    (hq0 :
+      0 < |(((sigma : Zeros) : ℂ).im-t)/(t/16)|)
+    (hqe :
+      |(((sigma : Zeros) : ℂ).im-t)/(t/16)| < eps) :
+    W.literalHorizontalTargetScale (sigma : Zeros)
+      + W.literalJointNonquadraticRemainder (sigma : Zeros)
+      <=
+    W.signedLiteralPairSourceTerm sigma := by
+  have hgain :=
+    W.literalHorizontalQuadraticTerm_ge_targetScale
+      ht W hband hq0 hqe
+  rw [W.signedLiteralPairSourceTerm_eq_quadratic_add_jointRemainder ht]
+  linarith
+
+/--
+Canonical local gain radius for the joint literal source.
+
+This packages the existing horizontal quadratic jet theorem into the exact
+per-zero normal form consumed by G3.
+-/
+theorem QuarticFourSignedPolePair.exists_literalTargetScale_add_jointRemainder_le_pairSource
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    ∃ eps : ℝ, 0 < eps ∧
+      ∀ sigma : ((SameOrd t)ᶜ : Set Zeros),
+        0 < |(((sigma : Zeros) : ℂ).im-t)/(t/16)| ->
+        |(((sigma : Zeros) : ℂ).im-t)/(t/16)| < eps ->
+        W.literalHorizontalTargetScale (sigma : Zeros)
+          + W.literalJointNonquadraticRemainder (sigma : Zeros)
+          <=
+        W.signedLiteralPairSourceTerm sigma := by
+  obtain ⟨eps,heps,hband⟩ :=
+    W.exists_horizontalQuadraticKernel_gt_target_sq
+  refine ⟨eps,heps,?_⟩
+  intro sigma hq0 hqe
+  exact W.literalTargetScale_add_jointRemainder_le_pairSource
+    ht W hband hq0 hqe
+
 end Synthesis

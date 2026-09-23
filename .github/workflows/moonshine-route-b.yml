@@ -2,6 +2,16 @@ name: Moonshine Route B
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - agent/moonshine-eisenstein-analytic-20260922
+    paths:
+      - "Integration/Bishop*.lean"
+      - "Integration/Moonshine*.lean"
+      - "Integration.lean"
+      - "lakefile.toml"
+      - "lean-toolchain"
+      - ".github/workflows/moonshine-route-b.yml"
   pull_request:
     paths:
       - "Integration/Bishop*.lean"

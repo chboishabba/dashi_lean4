@@ -554,4 +554,105 @@ theorem QuarticFourSignedPolePair.signedHorizontalQuarticRemainder_abs_le
       * W.signedProfileAbsMomentFour := by
       rfl
 
+
+/-!
+## One same-object bound for the complete local joint remainder
+-/
+
+def QuarticFourSignedPolePair.localJointQuarticRemainderBound
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha q : ℝ) : ℝ :=
+  |q|^4 *
+      ((5/96 : ℝ) * W.signedProfileAbsMomentFour
+        + W.targetStrength/6)
+    +
+  (alpha^2/2) *
+      ((5/96 : ℝ) * |q|^4 * W.signedProfileAbsMomentSix)
+    +
+  (5/96 : ℝ) * |alpha|^4 * W.signedProfileAbsMomentFour
+
+theorem QuarticFourSignedPolePair.localJointQuarticRemainderBound_nonneg
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    0 <= W.localJointQuarticRemainderBound alpha q := by
+  unfold QuarticFourSignedPolePair.localJointQuarticRemainderBound
+  have h4 := W.signedProfileAbsMomentFour_nonneg
+  have h6 := W.signedProfileAbsMomentSix_nonneg
+  have hS := W.targetStrength_pos.le
+  positivity
+
+theorem QuarticFourSignedPolePair.baseQuarticJetRemainder_abs_le
+    {t q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hq : |q| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.baseQuarticJetRemainder q|
+      <=
+    |q|^4 *
+      ((5/96 : ℝ) * W.signedProfileAbsMomentFour
+        + W.targetStrength/6) := by
+  have hb :=
+    W.signedNormalizedBaseKernel_abs_le_local_quartic hq
+  have heq :
+      W.baseQuarticJetRemainder q
+        =
+      W.signedNormalizedBaseKernel q
+        + (W.targetStrength/6) * q^4 := by
+    unfold QuarticFourSignedPolePair.baseQuarticJetRemainder
+    rw [W.signedNormalizedBaseKernel_eq_compactCosine]
+  rw [heq]
+  calc
+    |W.signedNormalizedBaseKernel q
+        + (W.targetStrength/6) * q^4|
+      <=
+    |W.signedNormalizedBaseKernel q|
+      + |(W.targetStrength/6) * q^4| :=
+      abs_add _ _
+    _ <=
+    (5/96 : ℝ) * |q|^4 * W.signedProfileAbsMomentFour
+      + (W.targetStrength/6) * |q|^4 := by
+      gcongr
+      rw [abs_mul, abs_pow,
+        abs_of_nonneg (by positivity : 0 <= W.targetStrength/6)]
+    _ =
+    |q|^4 *
+      ((5/96 : ℝ) * W.signedProfileAbsMomentFour
+        + W.targetStrength/6) := by ring
+
+theorem QuarticFourSignedPolePair.jointQuarticJetRemainder_abs_le
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (ha : |alpha| <= quarticSignedPoleCanonicalLocalRadius)
+    (hq : |q| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.jointQuarticJetRemainder alpha q|
+      <=
+    W.localJointQuarticRemainderBound alpha q := by
+  have hb := W.baseQuarticJetRemainder_abs_le hq
+  have hqerr := W.horizontalQuadraticJetRemainder_abs_le hq
+  have hh := W.signedHorizontalQuarticRemainder_abs_le ha
+  unfold QuarticFourSignedPolePair.jointQuarticJetRemainder
+  have ha2 : 0 <= alpha^2/2 := by positivity
+  calc
+    |W.baseQuarticJetRemainder q
+      + (alpha^2/2) * W.horizontalQuadraticJetRemainder q
+      + W.signedHorizontalQuarticRemainder alpha q|
+      <=
+    |W.baseQuarticJetRemainder q|
+      + |(alpha^2/2) * W.horizontalQuadraticJetRemainder q|
+      + |W.signedHorizontalQuarticRemainder alpha q| := by
+        exact (abs_add _ _).trans
+          (add_le_add (abs_add _ _) le_rfl)
+    _ <=
+    |q|^4 *
+        ((5/96 : ℝ) * W.signedProfileAbsMomentFour
+          + W.targetStrength/6)
+      +
+    (alpha^2/2) *
+        ((5/96 : ℝ) * |q|^4 * W.signedProfileAbsMomentSix)
+      +
+    (5/96 : ℝ) * |alpha|^4 * W.signedProfileAbsMomentFour := by
+        rw [abs_mul, abs_of_nonneg ha2]
+        gcongr
+    _ = W.localJointQuarticRemainderBound alpha q := by
+      rfl
+
 end Synthesis

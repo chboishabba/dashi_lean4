@@ -1,3 +1,4 @@
+import Integration.StageTwelveGrothendieckRelation
 import Integration.JInvariantSheafDescent
 import Integration.Levels
 import Integration.TernaryHub

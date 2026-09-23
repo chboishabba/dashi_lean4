@@ -3640,4 +3640,28 @@ theorem quarticFourAtomicFullCubicObstructions_nonzero
   ⟩
 
 
+
+def quarticFourAtomicFullCubicQuotient
+    (t : ℝ) : Prop :=
+  quarticFourAtomicLinearOnLineObstruction t = 0
+    ∧ quarticFourAtomicCubicOnLineObstruction t = 0
+
+theorem quarticFourAtomicFullCubicQuotient_not_hold
+    {t : ℝ} (ht : 200 <= t) :
+    ¬ quarticFourAtomicFullCubicQuotient t := by
+  intro hQ
+  exact
+    (quarticFourAtomicLinearOnLineObstruction_neg ht).ne
+      hQ.1
+
+theorem quarticFourAtomicObstructions_opposite_signs
+    {t : ℝ} (ht : 200 <= t) :
+    quarticFourAtomicLinearOnLineObstruction t < 0
+      ∧ 0 < quarticFourAtomicCubicOnLineObstruction t := by
+  exact ⟨
+    quarticFourAtomicLinearOnLineObstruction_neg ht,
+    quarticFourAtomicCubicOnLineObstruction_pos ht
+  ⟩
+
+
 end Synthesis

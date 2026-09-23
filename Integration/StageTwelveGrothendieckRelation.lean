@@ -264,6 +264,16 @@ structure BundleSheaf (LocalSection GlobalSection : Type) where
     ∀ locals witness point,
       restrict (glue locals witness) point = locals point
 
+def relationCellBundleSheaf :
+    BundleSheaf Trit StageRelationField where
+  restrict := fun field cellIndex =>
+    field (cellIndex, cellIndex)
+  compatible := fun _ => True
+  glue := fun locals _ cell => locals cell.1
+  glueRestricts := by
+    intro locals witness point
+    rfl
+
 /-- Explicit finite sheaf-like instance for a relation field:
     the global field restricts to its complete row at an axis. -/
 abbrev RelationRow := StageAxis12 → Trit
@@ -306,6 +316,7 @@ structure Frontier where
   mathlibGrothendieckTopologyConstructed : Bool
   bundleSheafGluingConstructed : Bool
   genuineMathlibSheafConditionPaid : Bool
+  concreteRelationCellBundleSheafConstructed : Bool
   stage12RelationAtNewScalePaid : Bool
   stage12CarryPlusTwoPaid : Bool
   rank12CompleteCycleCountCrosswalkPaid : Bool
@@ -326,6 +337,7 @@ def frontier : Frontier where
   mathlibGrothendieckTopologyConstructed := true
   bundleSheafGluingConstructed := true
   genuineMathlibSheafConditionPaid := true
+  concreteRelationCellBundleSheafConstructed := true
   stage12RelationAtNewScalePaid := true
   stage12CarryPlusTwoPaid := true
   rank12CompleteCycleCountCrosswalkPaid := true

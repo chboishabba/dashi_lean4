@@ -809,4 +809,94 @@ theorem QuarticFourSignedPolePair.literalConeDebtAt_le_fixedWindowN
   exact hdebt.trans
     (mul_le_mul_of_nonneg_left (by exact_mod_cast hmult) hC)
 
+
+/--
+Unconditional finite cone-debt bound at the correct physical t^-6 scale.
+
+The witness-dependent constant is deliberately left explicit.  The theorem is
+intended as a fail-fast scaling diagnostic, not a constant-optimization result.
+-/
+theorem exists_quarticFourSignedPole_literalConeDebtAt_le_log_over_r6 :
+    ∃ A0 : ℝ, 0 <= A0 ∧
+      ∀ {t eta : ℝ},
+        200 <= t ->
+        (W : QuarticFourSignedPolePair t) ->
+        ∀ n : ℕ,
+          W.literalConeDebtAt eta n
+            <=
+          3 * A0 * W.literalConeEnvelopeConstant
+            * Real.log (t + 5)
+            / (t/16)^6 := by
+  obtain ⟨A0,hA0,hcount⟩ :=
+    exists_quarticSignedPole_fixedConeWindow_zeroCount_bound
+  refine ⟨A0,hA0,?_⟩
+  intro t eta ht W n
+  have hdebt :=
+    W.literalConeDebtAt_le_fixedWindowN
+      (eta:=eta) ht n
+  have hN := hcount ht
+  have hC :
+      0 <= W.literalConeEnvelopeConstant / (t/16)^6 := by
+    positivity
+  have hmul :=
+    mul_le_mul_of_nonneg_left hN hC
+  calc
+    W.literalConeDebtAt eta n
+      <=
+    W.literalConeEnvelopeConstant / (t/16)^6
+      *
+    (zetaZeroConfig.N
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ) := hdebt
+    _ <=
+    W.literalConeEnvelopeConstant / (t/16)^6
+      * (3 * A0 * Real.log (t+5)) := hmul
+    _ =
+    3 * A0 * W.literalConeEnvelopeConstant
+      * Real.log (t+5) / (t/16)^6 := by ring
+
+/--
+Canonical coefficient appearing after the common r^-6 factor is cancelled
+against any target lower bound of the form c*S(W)*a^4/r^6.
+-/
+def QuarticFourSignedPolePair.coneLogCoefficient
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A0 : ℝ) : ℝ :=
+  3 * A0 * W.literalConeEnvelopeConstant * Real.log (t+5)
+
+theorem QuarticFourSignedPolePair.coneDebt_le_coneLogCoefficient_over_r6
+    {t eta A0 : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hA0 :
+      (zetaZeroConfig.N
+        (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ)
+        <= 3 * A0 * Real.log (t+5))
+    (hA0nonneg : 0 <= A0) :
+    W.literalConeDebtAt eta n
+      <=
+    W.coneLogCoefficient A0 / (t/16)^6 := by
+  have hdebt :=
+    W.literalConeDebtAt_le_fixedWindowN
+      (eta:=eta) ht n
+  have hC :
+      0 <= W.literalConeEnvelopeConstant / (t/16)^6 := by
+    positivity
+  have hmul :=
+    mul_le_mul_of_nonneg_left hA0 hC
+  unfold QuarticFourSignedPolePair.coneLogCoefficient
+  calc
+    W.literalConeDebtAt eta n
+      <=
+    W.literalConeEnvelopeConstant / (t/16)^6
+      *
+    (zetaZeroConfig.N
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ) := hdebt
+    _ <=
+    W.literalConeEnvelopeConstant / (t/16)^6
+      * (3 * A0 * Real.log (t+5)) := hmul
+    _ =
+    (3 * A0 * W.literalConeEnvelopeConstant * Real.log (t+5))
+      / (t/16)^6 := by ring
+
 end Synthesis

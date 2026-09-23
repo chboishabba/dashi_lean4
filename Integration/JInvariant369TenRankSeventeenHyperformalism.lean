@@ -190,6 +190,20 @@ theorem rank15_standard : rankNat .r15 = 0 + 6 + 9 := by norm_num [rankNat]
 theorem rank16_standard : rankNat .r16 = 1 + 6 + 9 := by norm_num [rankNat]
 theorem rank17_standard : rankNat .r17 = 2 + 6 + 9 := by norm_num [rankNat]
 
+def balancedPositiveCapacity : Nat → Nat
+  | 0 => 0
+  | n+1 => balancedPositiveCapacity n + 3^n
+
+theorem balanced_capacity_successor (n : Nat) :
+    balancedPositiveCapacity (n+1) = balancedPositiveCapacity n + 3^n := by
+  rfl
+
+theorem balanced_capacity_three :
+    balancedPositiveCapacity 3 = 13 := by norm_num [balancedPositiveCapacity]
+
+theorem balanced_capacity_four :
+    balancedPositiveCapacity 4 = 40 := by norm_num [balancedPositiveCapacity]
+
 def threeBalancedDigitPositiveCapacity : Nat := 1 + 3 + 9
 
 theorem three_balanced_digit_capacity :
@@ -326,6 +340,7 @@ structure Boundary where
   humanBaseTenExplainsCarrier : Bool
   rankZeroToSeventeen : Bool
   balancedCarryAtFourteen : Bool
+  balancedCapacityGenerator : Bool
   genericFinitePantsCodec : Bool
   stageTwelveRelation144 : Bool
   atlasDepthEight : Bool
@@ -345,6 +360,7 @@ def canonicalBoundary : Boundary where
   humanBaseTenExplainsCarrier := false
   rankZeroToSeventeen := true
   balancedCarryAtFourteen := true
+  balancedCapacityGenerator := true
   genericFinitePantsCodec := true
   stageTwelveRelation144 := true
   atlasDepthEight := true

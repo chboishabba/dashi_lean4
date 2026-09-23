@@ -2587,6 +2587,7 @@ the matching smooth mu window.
 -/
 theorem QuarticFourSignedPolePair.centeredWindowResidualAt_eq_zero_sub_mu
     {t : ℝ}
+    (ht : 0 < t)
     (W : QuarticFourSignedPolePair t)
     (n : ℕ) :
     W.centeredWindowResidualAt n
@@ -2640,6 +2641,8 @@ theorem QuarticFourSignedPolePair.centeredWindowResidualAt_eq_zero_sub_mu
       (zetaZeroConfig.finite_window _ _)
       (zetaZeroConfig.finite_window _ _),
       hunion]
+  have hmuInt :=
+    (W.signedOrdinateTest_mul_mu_integrable ht).intervalIntegrable
   have hmuadd :
       (∫ x in (t - (n : ℝ))..t,
         W.signedOrdinateTest x * Zeta23.mu x)
@@ -2650,15 +2653,7 @@ theorem QuarticFourSignedPolePair.centeredWindowResidualAt_eq_zero_sub_mu
       ∫ x in (t - (n : ℝ))..(t + (n : ℝ)),
         W.signedOrdinateTest x * Zeta23.mu x := by
     symm
-    exact intervalIntegral.integral_add_adjacent_intervals
-      ((W.signedOrdinateTest_mul_mu_integrable
-        (by
-          have : 0 <= (n:ℝ) := by positivity
-          linarith [show 0 < t by assumption])).intervalIntegrable)
-      ((W.signedOrdinateTest_mul_mu_integrable
-        (by
-          have : 0 <= (n:ℝ) := by positivity
-          linarith [show 0 < t by assumption])).intervalIntegrable)
+    exact intervalIntegral.integral_add_adjacent_intervals hmuInt hmuInt
   rw [hzadd,hmuadd]
   ring
 
@@ -2690,6 +2685,6 @@ theorem QuarticFourSignedPolePair.centeredWindowResidualAt_tendsto_signedNMuPair
   rw [← hpoint]
   apply hdiff.congr'
   filter_upwards with n
-  exact W.centeredWindowResidualAt_eq_zero_sub_mu n
+  exact W.centeredWindowResidualAt_eq_zero_sub_mu ht n
 
 end Synthesis

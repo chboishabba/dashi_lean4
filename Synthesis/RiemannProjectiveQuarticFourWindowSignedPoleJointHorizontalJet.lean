@@ -809,4 +809,138 @@ theorem QuarticFourSignedPolePair.exists_literalTargetScale_add_jointRemainder_l
   exact W.literalTargetScale_add_jointRemainder_le_pairSource
     ht W hband hq0 hqe
 
+
+/-!
+## Exact two-variable quartic joint jet
+
+The base cosine channel and the horizontal quadratic channel have complementary
+quartic geometry.  Rather than estimate them separately, extract their exact
+joint polynomial and keep every higher-order term in one same-object remainder.
+-/
+
+def QuarticFourSignedPolePair.baseQuarticJetRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (q : ℝ) : ℝ :=
+  compactCosineTransform
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t) q
+    + (W.targetStrength/6) * q^4
+
+def QuarticFourSignedPolePair.horizontalQuadraticJetRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (q : ℝ) : ℝ :=
+  W.signedHorizontalQuadraticKernel q
+    - 2 * W.targetStrength * q^2
+
+def QuarticFourSignedPolePair.jointQuarticJetRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha q : ℝ) : ℝ :=
+  W.baseQuarticJetRemainder q
+    + (alpha^2/2) * W.horizontalQuadraticJetRemainder q
+    + W.signedHorizontalQuarticRemainder alpha q
+
+def QuarticFourSignedPolePair.jointQuarticJetPolynomial
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha q : ℝ) : ℝ :=
+  W.targetStrength * (alpha^2 * q^2 - q^4/6)
+
+theorem QuarticFourSignedPolePair.signedNormalizedPairKernel_eq_quarticJet
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNormalizedPairKernel alpha q
+      =
+    W.jointQuarticJetPolynomial alpha q
+      + W.jointQuarticJetRemainder alpha q := by
+  rw [W.signedNormalizedPairKernel_eq_jointJet]
+  unfold QuarticFourSignedPolePair.jointQuarticJetPolynomial
+    QuarticFourSignedPolePair.jointQuarticJetRemainder
+    QuarticFourSignedPolePair.baseQuarticJetRemainder
+    QuarticFourSignedPolePair.horizontalQuadraticJetRemainder
+  ring
+
+/--
+Physical quartic polynomial carried by one literal off-ordinate zero.
+
+Writing
+  a = beta - 1/2,
+  delta = gamma - t,
+  r = t/16,
+this is exactly
+  m_sigma * S(W) * (a^2 delta^2 - delta^4/6) / r^6.
+-/
+def QuarticFourSignedPolePair.literalJointQuarticPolynomial
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let r := t/16
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+    * W.targetStrength
+    * (heightOf sigma ^ 2 * ((sigma : ℂ).im-t)^2
+        - ((sigma : ℂ).im-t)^4 / 6)
+    / r^6
+
+def QuarticFourSignedPolePair.literalJointQuarticRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let alpha := heightOf sigma / r
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2
+    * W.jointQuarticJetRemainder alpha q
+
+theorem QuarticFourSignedPolePair.literalJointQuarticPolynomial_eq_normalized
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    W.literalJointQuarticPolynomial sigma
+      =
+    let r := t/16
+    let alpha := heightOf sigma / r
+    let q := ((sigma : ℂ).im-t) / r
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2
+      * W.jointQuarticJetPolynomial alpha q := by
+  unfold QuarticFourSignedPolePair.literalJointQuarticPolynomial
+    QuarticFourSignedPolePair.jointQuarticJetPolynomial
+  dsimp
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
+theorem QuarticFourSignedPolePair.signedLiteralPairSourceTerm_eq_literalQuarticJet
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : ((SameOrd t)ᶜ : Set Zeros)) :
+    W.signedLiteralPairSourceTerm sigma
+      =
+    W.literalJointQuarticPolynomial (sigma : Zeros)
+      + W.literalJointQuarticRemainder (sigma : Zeros) := by
+  rw [W.signedLiteralPairSourceTerm_eq_normalizedPairKernel ht]
+  rw [W.signedNormalizedPairKernel_eq_quarticJet]
+  rw [W.literalJointQuarticPolynomial_eq_normalized ht]
+  unfold QuarticFourSignedPolePair.literalJointQuarticRemainder
+  dsimp
+  ring
+
+/--
+The leading physical polynomial separates into the positive mixed
+horizontal/ordinate gain and the negative pure-ordinate quartic term.
+-/
+theorem QuarticFourSignedPolePair.literalJointQuarticPolynomial_eq_mixed_sub_ordinate
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    W.literalJointQuarticPolynomial sigma
+      =
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+      * W.targetStrength
+      * heightOf sigma^2
+      * ((sigma : ℂ).im-t)^2
+      / (t/16)^6
+      -
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+      * W.targetStrength
+      * ((sigma : ℂ).im-t)^4
+      / (6 * (t/16)^6) := by
+  unfold QuarticFourSignedPolePair.literalJointQuarticPolynomial
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
 end Synthesis

@@ -86,7 +86,8 @@ theorem etaElliptic_allCoefficientAgreement_of_jacobiLocalData
     (jacobiRepresentationMatchesElliptic_of_localData hLocal)
 
 /-- Prize-facing version: the p=2 Jacobi coefficients are paid internally, so
-only the three substantive CM-theta local producers are required. -/
+only the two substantive CM-theta compatibility laws are required:
+multiplicativity and the odd-prime prime-power recurrence. -/
 theorem etaElliptic_allCoefficientAgreement_of_jacobiCMData
     (hOdd : cmJacobiOddProductIdentity)
     (hEven : cmJacobiEvenProductIdentity)

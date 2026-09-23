@@ -10,6 +10,8 @@ on:
       - 'Integration/JInvariant369ConsolidatedNextStage.lean'
       - 'AgdaMirror/JInvariant369ZeroToThirteenTetralemmaQualification.lean'
       - 'Integration/JInvariant369ZeroToThirteenTetralemmaQualification.lean'
+      - 'AgdaMirror/JInvariant369Zeta6561MonsterCrosswalk.lean'
+      - 'Integration/JInvariant369Zeta6561MonsterCrosswalk.lean'
       - 'Integration.lean'
       - 'AgdaMirror/JInvariantSheafDescent.lean'
       - 'AgdaMirror/StageTwelveGrothendieckRelation.lean'
@@ -46,6 +48,8 @@ jobs:
           lake env lean AgdaMirror/JInvariant369ConsolidatedNextStage.lean
           lake env lean Integration/JInvariant369ZeroToThirteenTetralemmaQualification.lean
           lake env lean AgdaMirror/JInvariant369ZeroToThirteenTetralemmaQualification.lean
+          lake env lean Integration/JInvariant369Zeta6561MonsterCrosswalk.lean
+          lake env lean AgdaMirror/JInvariant369Zeta6561MonsterCrosswalk.lean
           lake env lean Integration/JInvariantSheafDescent.lean
           lake env lean AgdaMirror/StageTwelveGrothendieckRelation.lean
           lake env lean AgdaMirror/JInvariantSheafDescent.lean

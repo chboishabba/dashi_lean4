@@ -245,4 +245,57 @@ theorem cmExplicitSelmerClassToEllipticH1_localization_zero_of_localKummer
         cmExplicitSelmerClassToEllipticH1_padic_zero
           hCompat hVan s p
 
+
+/-- After local Kummer theory pays localization, only the two genuinely global
+classical two-descent exactness laws remain. -/
+structure ClassicalTwoDescentGlobalExactnessLaws where
+  kernel_iff_globalKummerImage :
+    ∀ s : explicitTwoSelmerSubgroup,
+      cmExplicitSelmerClassToEllipticH1 s = 0 ↔
+        s ∈ globalKummerImageSubgroup
+  surjective_on_sha_two :
+    ∀ x : classicalEllipticShaTwo cmEllipticPointRepresentation,
+      ∃ s : explicitTwoSelmerSubgroup,
+        cmExplicitSelmerClassToEllipticH1 s = x.1.1
+
+/-- Local Kummer image theorems plus the two global exactness laws inhabit
+the older three-law localization/exactness boundary. -/
+noncomputable def classicalTwoDescentLocalizationExactnessLaws_of_localKummer
+    (hCompat :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicQuadraticKummerCompatibility p.1)
+    (hVan :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicEllipticKummerImageVanishing p.1 (hCompat p))
+    (hReal : RealEllipticKummerImageVanishing)
+    (hGlobal : ClassicalTwoDescentGlobalExactnessLaws) :
+    ClassicalTwoDescentLocalizationExactnessLaws where
+  localization_zero :=
+    cmExplicitSelmerClassToEllipticH1_localization_zero_of_localKummer
+      hCompat hVan hReal
+  kernel_iff_globalKummerImage :=
+    hGlobal.kernel_iff_globalKummerImage
+  surjective_on_sha_two :=
+    hGlobal.surjective_on_sha_two
+
+/-- Max-cut prize-facing compiler from local Kummer theory and the two global
+exactness laws directly to the fixed-representation classical Sha comparison. -/
+theorem actualClassicalTwoDescentShaComparison_of_localKummer
+    (hCompat :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicQuadraticKummerCompatibility p.1)
+    (hVan :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicEllipticKummerImageVanishing p.1 (hCompat p))
+    (hReal : RealEllipticKummerImageVanishing)
+    (hGlobal : ClassicalTwoDescentGlobalExactnessLaws) :
+    ActualClassicalTwoDescentShaComparison :=
+  actualClassicalTwoDescentShaComparison_of_localizationExactness
+    (classicalTwoDescentLocalizationExactnessLaws_of_localKummer
+      hCompat hVan hReal hGlobal)
+
 end Synthesis.Millennium.BSD

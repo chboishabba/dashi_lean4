@@ -899,4 +899,90 @@ theorem QuarticFourSignedPolePair.coneDebt_le_coneLogCoefficient_over_r6
     (3 * A0 * W.literalConeEnvelopeConstant * Real.log (t+5))
       / (t/16)^6 := by ring
 
+
+/-!
+## Fail-fast target-scaling diagnostic
+
+The absolute cone estimate has the correct r^-6 scale.  What it does not
+supply is a quartic floor in the target horizontal displacement a.
+
+The elementary lemma below is deliberately not a statement about existence of
+zeta zeros at arbitrary horizontal coordinates.  It only records that the
+strip hypothesis 0<|a|<=1/2, by itself, cannot imply a uniform positive lower
+bound for a^4.
+-/
+
+theorem exists_punctured_half_with_quartic_below
+    {B : ℝ} (hB : 0 < B) :
+    ∃ a : ℝ,
+      0 < |a| ∧
+      |a| <= (1/2 : ℝ) ∧
+      a^4 < B := by
+  let a : ℝ := min (1/4 : ℝ) ((B/2)^(1/4 : ℝ))
+  have hroot : 0 < (B/2)^(1/4 : ℝ) := by positivity
+  have haPos : 0 < a := by
+    dsimp [a]
+    exact lt_min (by norm_num) hroot
+  have haQuarter : a <= (1/4 : ℝ) := by
+    dsimp [a]
+    exact min_le_left _ _
+  have haRoot : a <= (B/2)^(1/4 : ℝ) := by
+    dsimp [a]
+    exact min_le_right _ _
+  refine ⟨a,?_,?_,?_⟩
+  · simpa [abs_of_pos haPos]
+  · rw [abs_of_pos haPos]
+    linarith
+  · have hpow :
+        a^4 <= (((B/2)^(1/4 : ℝ))^4) := by
+      exact pow_le_pow_left₀ haPos.le haRoot 4
+    have hrootpow :
+        (((B/2)^(1/4 : ℝ))^4) = B/2 := by
+      rw [← Real.rpow_natCast]
+      rw [← Real.rpow_mul (by positivity : 0 <= B/2)]
+      norm_num
+      simp
+    rw [hrootpow] at hpow
+    linarith
+
+def QuarticFourSignedPolePair.absoluteConeTargetCoefficientCondition
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A0 c a : ℝ) : Prop :=
+  W.coneLogCoefficient A0
+    < c * W.targetStrength * a^4
+
+/--
+If a future target theorem supplies
+  target >= c*S(W)*a^4/r^6,
+then the absolute cone estimate is paid exactly by the scalar coefficient
+condition above.  This theorem intentionally leaves that target lower bound
+as an explicit hypothesis because the current quantitative target compiler
+only proves positivity.
+-/
+theorem QuarticFourSignedPolePair.literalConeDebtAt_lt_target_of_quartic_floor
+    {t eta A0 c a target : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hcount :
+      (zetaZeroConfig.N
+        (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ)
+        <= 3 * A0 * Real.log (t+5))
+    (hA0 : 0 <= A0)
+    (hcoef : W.absoluteConeTargetCoefficientCondition A0 c a)
+    (htarget :
+      c * W.targetStrength * a^4 / (t/16)^6 <= target) :
+    W.literalConeDebtAt eta n < target := by
+  have hdebt :=
+    W.coneDebt_le_coneLogCoefficient_over_r6
+      ht n hcount hA0
+  have hr6 : 0 < (t/16)^6 := by positivity
+  have hcoefScaled :
+      W.coneLogCoefficient A0 / (t/16)^6
+        <
+      c * W.targetStrength * a^4 / (t/16)^6 := by
+    exact div_lt_div_of_pos_right hcoef hr6
+  exact lt_of_le_of_lt hdebt
+    (hcoefScaled.trans_le htarget)
+
 end Synthesis

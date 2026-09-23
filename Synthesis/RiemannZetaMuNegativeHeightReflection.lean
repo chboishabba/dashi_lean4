@@ -186,21 +186,21 @@ theorem reflectedHalfOpen_split_standard
     · by_cases hLB : rho.im = -B
       · by_cases hRA : rho.im = -A
         · simp [reflectedHalfOpenZeros, interior, left, right,
-            zerosIn, hz, hLB, hRA]
+            zerosIn, hz, hLB, hRA, hAB]
         · simp [reflectedHalfOpenZeros, interior, left, right,
-            zerosIn, hz, hLB, hRA]
+            zerosIn, hz, hLB, hRA, hAB]
       · by_cases hRA : rho.im = -A
         · simp [reflectedHalfOpenZeros, interior, left, right,
-            zerosIn, hz, hLB, hRA]
+            zerosIn, hz, hLB, hRA, hAB]
         · by_cases h1 : -B < rho.im
           · by_cases h2 : rho.im < -A
             · simp [reflectedHalfOpenZeros, interior, left, right,
-                zerosIn, hz, hLB, hRA, h1, h2]
+                zerosIn, hz, hLB, hRA, h1, h2, hAB]
             · simp [reflectedHalfOpenZeros, interior, left, right,
-                zerosIn, hz, hLB, hRA, h1, h2,
+                zerosIn, hz, hLB, hRA, h1, h2, hAB,
                 le_of_not_gt h2]
           · simp [reflectedHalfOpenZeros, interior, left, right,
-              zerosIn, hz, hLB, hRA, h1, le_of_not_gt h1]
+              zerosIn, hz, hLB, hRA, h1, hAB, le_of_not_gt h1]
     · simp [reflectedHalfOpenZeros, interior, left, right, zerosIn, hz]
 
   unfold zetaZeroOrdinateMultiplicity Ncount
@@ -336,7 +336,7 @@ theorem zetaZeroOrdinateMultiplicity_le_unitWindow
     exact ⟨h.1, by linarith [h.2], h.2.le⟩
   have hmono :=
     zetaZeroConfig.finsum_mult_mono
-      (T-1) T hsub (by intro rho h; exact h)
+      (T-1) T hsub subset_rfl
   simpa [zetaZeroOrdinateMultiplicity,
     zetaZeroConfig_N, ZeroConfig.N] using hmono
 

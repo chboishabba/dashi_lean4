@@ -524,6 +524,54 @@ noncomputable def padicRestrictedGlobalKummerImageVanishing_of_localKummer
     padicRestrictedGenericH1_maps_to_zero_of_localCondition_imageVanishing
       p hCompat hVan x hx
 
+/-- Minimal reverse finite-place theorem needed when lifting a classical
+Sha[2] class back into the explicit Selmer intersection. -/
+structure PadicRestrictedGlobalKummerKernelToImage
+    (p : ℕ) [Fact p.Prime] where
+  zero_implies_local_image :
+    ∀ x :
+      ContinuousCohomology.continuousCohomology 1
+        (genericTwoTorsionRepresentation RationalAbsoluteGalois),
+      padicGenericE2H1ToEllipticPointH1 p
+        (genericTwoTorsionH1Restrict
+          (G := RationalAbsoluteGalois)
+          (padicAbsoluteGaloisRestriction p) x) = 0 →
+      localizeKummerPairHom p
+        (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+          (Multiplicative.ofAdd x))
+        ∈ localKummerImageSubgroup p
+
+/-- Full scalar compatibility plus local Kummer exactness compiles to the
+minimal reverse restricted-global theorem. -/
+noncomputable def padicRestrictedGlobalKummerKernelToImage_of_exactness
+    (p : ℕ) [Fact p.Prime]
+    (hCompat : PadicQuadraticKummerCompatibility p)
+    (hExact : PadicEllipticKummerExactness p hCompat) :
+    PadicRestrictedGlobalKummerKernelToImage p where
+  zero_implies_local_image x hx := by
+    let e :=
+      padicCompatibleTwoTorsionH1MulEquivSquareClassPair p hCompat
+    let cLocal :=
+      e (Multiplicative.ofAdd
+        (genericTwoTorsionH1Restrict
+          (G := RationalAbsoluteGalois)
+          (padicAbsoluteGaloisRestriction p) x))
+    have hcLocal : cLocal ∈ localKummerImageSubgroup p := by
+      apply (hExact.kernel_iff_explicitKummerImage cLocal).2
+      change
+        padicGenericE2H1ToEllipticPointH1 p
+          ((e.symm cLocal).toAdd) = 0
+      simpa [cLocal, e] using hx
+    have hSq :=
+      padicH1SquareClassNaturality_paid p hCompat x
+    change
+      localizeKummerPairHom p
+        (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+          (Multiplicative.ofAdd x))
+        ∈ localKummerImageSubgroup p
+    rw [← hSq]
+    exact hcLocal
+
 /-- Generic global H¹ class represented by an explicit Selmer square-class
 pair. -/
 noncomputable def explicitSelmerToGenericTwoTorsionH1

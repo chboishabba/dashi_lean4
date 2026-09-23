@@ -4182,4 +4182,127 @@ theorem exists_radius_quarticFourSmoothLinearOnLineObstruction_neg
   linarith
 
 
+
+/--
+There are genuine G1-quality signed-pole witnesses inside the same narrow
+smooth construction for which the proposed full cubic quotient fails.
+
+The radius is chosen below:
+  * the smooth J2-family radius;
+  * the signed target-strength robustness radius;
+  * the smooth linear-obstruction sign radius.
+-/
+theorem exists_quarticFourSignedPolePair_with_strength_floor_and_linear_obstruction
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 <= W.targetStrength
+        ∧ W.linearOnLineObstruction < -(1/100 : ℝ) := by
+  obtain ⟨R0,hR0,hfamily⟩ :=
+    exists_uniform_smooth_quarticFourWindow_family
+  obtain ⟨dTarget,hdTarget,hTarget⟩ :=
+    exists_radius_quarticFourSmooth_signedPoleTarget_ge_margin ht
+  obtain ⟨dObs,hdObs,hObs⟩ :=
+    exists_radius_quarticFourSmoothLinearOnLineObstruction_neg ht
+
+  let R : ℝ :=
+    min 1 (min R0 (min dTarget dObs)) / 2
+  have hinner :
+      0 < min R0 (min dTarget dObs) :=
+    lt_min hR0 (lt_min hdTarget hdObs)
+  have hmin :
+      0 < min 1 (min R0 (min dTarget dObs)) :=
+    lt_min (by norm_num) hinner
+  have hR : 0 < R := by
+    dsimp [R]
+    linarith
+  have hRone : R < 1 := by
+    dsimp [R]
+    have hle :=
+      min_le_left 1 (min R0 (min dTarget dObs))
+    linarith
+  have hRinner :
+      R < min R0 (min dTarget dObs) := by
+    dsimp [R]
+    have hle :=
+      min_le_right 1 (min R0 (min dTarget dObs))
+    linarith
+  have hRR0 : R < R0 :=
+    hRinner.trans_le (min_le_left R0 (min dTarget dObs))
+  have hRrest : R < min dTarget dObs :=
+    hRinner.trans_le (min_le_right R0 (min dTarget dObs))
+  have hRTarget : R < dTarget :=
+    hRrest.trans_le (min_le_left dTarget dObs)
+  have hRObs : R < dObs :=
+    hRrest.trans_le (min_le_right dTarget dObs)
+
+  have hlamHalf : (1/2 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨le_rfl, by norm_num⟩
+  have hlamTwo : (2/3 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨by norm_num, le_rfl⟩
+
+  obtain ⟨S1⟩ :=
+    hfamily R (1/2) hR hRR0 hlamHalf
+  obtain ⟨S2⟩ :=
+    hfamily R (2/3) hR hRR0 hlamTwo
+
+  have hfloor :
+      7 * Real.pi^4 / 1600 <=
+        quarticFourSmoothPoleCancelledTarget
+          R S1.mu S2.mu t :=
+    hTarget R S1.mu S2.mu hR hRTarget
+      S1.muNear S2.muNear
+
+  have htransPos :
+      0 < quarticFourSmoothPoleCancelledTarget
+        R S1.mu S2.mu t := by
+    have hp4 : 0 < Real.pi^4 := by positivity
+    nlinarith
+
+  have hlin :
+      quarticFourSmoothLinearOnLineObstruction
+        R t S1.mu S2.mu < -(1/100 : ℝ) :=
+    hObs R S1.mu S2.mu hR hRObs
+      S1.muNear S2.muNear
+
+  obtain ⟨eps,heps,hband⟩ :=
+    exists_quarticFourSignedPoleCombinedHeightDefect_pos_punctured
+      hR S1.J2zero S2.J2zero htransPos
+
+  let W : QuarticFourSignedPolePair t := {
+    R := R
+    muHalf := S1.mu
+    muTwo := S2.mu
+    eps := eps
+    Rpos := hR
+    RltOne := hRone
+    muHalfNear := S1.muNear
+    muTwoNear := S2.muNear
+    J2Half := S1.J2zero
+    J2Two := S2.J2zero
+    signedTargetStrength := htransPos
+    epsPos := heps
+    combinedTargetBand := hband
+  }
+
+  refine ⟨W, ?_, ?_⟩
+  · simpa [W, QuarticFourSignedPolePair.targetStrength] using hfloor
+  · rw [W.linearOnLineObstruction_eq_smooth]
+    simpa [W] using hlin
+
+theorem exists_quarticFourSignedPolePair_with_strength_floor_without_full_cubic_quotient
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 <= W.targetStrength
+        ∧ ¬ W.globalFullCubicQuotient := by
+  obtain ⟨W,hfloor,hlin⟩ :=
+    exists_quarticFourSignedPolePair_with_strength_floor_and_linear_obstruction ht
+  refine ⟨W,hfloor,?_⟩
+  intro hQ
+  have hzero :
+      W.linearOnLineObstruction = 0 :=
+    (W.globalFullCubicQuotient_iff_twoOnLineObstructions_zero
+      (by linarith : 0 < t)).1 hQ |>.1
+  linarith
+
+
 end Synthesis

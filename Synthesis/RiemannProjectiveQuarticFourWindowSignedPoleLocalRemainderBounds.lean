@@ -367,4 +367,191 @@ theorem QuarticFourSignedPolePair.signedNormalizedBaseKernel_abs_le_local_quarti
     (5/96 : ℝ) * |q|^4 * W.signedProfileAbsMomentFour := by
       rfl
 
+
+/-!
+## Certified quartic hyperbolic remainder
+-/
+
+open Finset
+
+/--
+Real-hyperbolic analogue of Mathlib's certified cosine fourth-order bound.
+-/
+theorem real_cosh_sub_one_sub_sq_half_abs_le
+    {x : ℝ}
+    (hx : |x| <= 1) :
+    |Real.cosh x - 1 - x^2/2|
+      <= |x|^4 * (5/96 : ℝ) := by
+  calc
+    |Real.cosh x - 1 - x^2/2|
+      =
+    |(Real.exp x
+        - ∑ m ∈ Finset.range 4, x^m / m.factorial) / 2
+      +
+      (Real.exp (-x)
+        - ∑ m ∈ Finset.range 4, (-x)^m / m.factorial) / 2| := by
+        rw [Real.cosh_eq]
+        simp [Finset.sum_range_succ, Nat.factorial]
+        ring
+    _ <=
+      |Real.exp x
+        - ∑ m ∈ Finset.range 4, x^m / m.factorial| / 2
+      +
+      |Real.exp (-x)
+        - ∑ m ∈ Finset.range 4, (-x)^m / m.factorial| / 2 := by
+        have h2 : (0:ℝ) < 2 := by norm_num
+        calc
+          |(Real.exp x
+              - ∑ m ∈ Finset.range 4, x^m / m.factorial) / 2
+            +
+            (Real.exp (-x)
+              - ∑ m ∈ Finset.range 4, (-x)^m / m.factorial) / 2|
+            <=
+          |(Real.exp x
+              - ∑ m ∈ Finset.range 4, x^m / m.factorial) / 2|
+            +
+          |(Real.exp (-x)
+              - ∑ m ∈ Finset.range 4, (-x)^m / m.factorial) / 2| :=
+            abs_add _ _
+          _ =
+          |Real.exp x
+              - ∑ m ∈ Finset.range 4, x^m / m.factorial| / 2
+            +
+          |Real.exp (-x)
+              - ∑ m ∈ Finset.range 4, (-x)^m / m.factorial| / 2 := by
+            rw [abs_div, abs_div, abs_of_pos h2]
+    _ <=
+      (|x|^4 * (5/96 : ℝ)) / 2
+        + (|-x|^4 * (5/96 : ℝ)) / 2 := by
+      gcongr
+      · exact Real.exp_bound hx (by norm_num)
+      · exact Real.exp_bound (by simpa [abs_neg] using hx) (by norm_num)
+    _ = |x|^4 * (5/96 : ℝ) := by
+      rw [abs_neg]
+      ring
+
+/--
+The signed horizontal quartic remainder is literally the hyperbolic
+fourth-order remainder integrated against the same combined profile.
+-/
+theorem QuarticFourSignedPolePair.signedHorizontalQuarticRemainder_eq_integral
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedHorizontalQuarticRemainder alpha q
+      =
+    ∫ u : ℝ,
+      quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t u
+        * (Real.cosh (alpha*u) - 1 - (alpha*u)^2/2)
+        * Real.cos (q*u) := by
+  let P1 :=
+    quarticFourNormalizedProjectiveProfile
+      W.R (1/2) W.muHalf
+  let P2 :=
+    quarticFourNormalizedProjectiveProfile
+      W.R (2/3) W.muTwo
+  let H : ℝ -> ℝ :=
+    fun u =>
+      (Real.cosh (alpha*u) - 1 - (alpha*u)^2/2)
+        * Real.cos (q*u)
+  have h1 :
+      Integrable (fun u : ℝ => P1 u * H u) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by dsimp [P1,H]; fun_prop)
+      (quarticFourNormalizedProjectiveProfile_compact W.Rpos).mul_right
+  have h2 :
+      Integrable (fun u : ℝ => P2 u * H u) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by dsimp [P2,H]; fun_prop)
+      (quarticFourNormalizedProjectiveProfile_compact W.Rpos).mul_right
+  unfold QuarticFourSignedPolePair.signedHorizontalQuarticRemainder
+    genericProjectiveHorizontalQuarticRemainder
+    quarticFourSignedPoleCombinedProfile profileLinearCombination
+    quarticFourNormalizedProjectiveProfile
+  change
+    W.poleTwo * (∫ u : ℝ, P1 u * H u)
+      + (-W.poleHalf) * (∫ u : ℝ, P2 u * H u)
+      =
+    ∫ u : ℝ,
+      (W.poleTwo * P1 u + (-W.poleHalf) * P2 u) * H u
+  rw [show
+      (fun u : ℝ =>
+        (W.poleTwo * P1 u + (-W.poleHalf) * P2 u) * H u)
+      =
+      fun u =>
+        W.poleTwo * (P1 u * H u)
+          + (-W.poleHalf) * (P2 u * H u) by
+      funext u
+      ring,
+      integral_add (h1.const_mul _) (h2.const_mul _),
+      integral_const_mul, integral_const_mul]
+
+/--
+Explicit alpha^4 local bound for the exact signed horizontal remainder.
+-/
+theorem QuarticFourSignedPolePair.signedHorizontalQuarticRemainder_abs_le
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (ha : |alpha| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.signedHorizontalQuarticRemainder alpha q|
+      <=
+    (5/96 : ℝ) * |alpha|^4 * W.signedProfileAbsMomentFour := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hi :
+      Integrable
+        (fun u : ℝ =>
+          P u
+            * (Real.cosh (alpha*u) - 1 - (alpha*u)^2/2)
+            * Real.cos (q*u)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) ((hPc.mul_right).mul_right)
+  have hmaj :
+      Integrable
+        (fun u : ℝ =>
+          (5/96 : ℝ) * |alpha|^4 * (|P u| * |u|^4)) :=
+    (compactProfile_absMoment_integrable hP hPc 4).const_mul
+      ((5/96 : ℝ) * |alpha|^4)
+  rw [W.signedHorizontalQuarticRemainder_eq_integral]
+  calc
+    |∫ u : ℝ,
+      P u * (Real.cosh (alpha*u) - 1 - (alpha*u)^2/2)
+        * Real.cos (q*u)|
+      <=
+    ∫ u : ℝ,
+      |P u * (Real.cosh (alpha*u) - 1 - (alpha*u)^2/2)
+        * Real.cos (q*u)| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ u : ℝ,
+      (5/96 : ℝ) * |alpha|^4 * (|P u| * |u|^4) := by
+      apply integral_mono hi.abs hmaj
+      intro u
+      by_cases hzero : P u = 0
+      · simp [hzero]
+      · have hau := W.abs_q_mul_u_le_one_of_local
+          (q:=alpha) (u:=u) ha hzero
+        have hh :=
+          real_cosh_sub_one_sub_sq_half_abs_le hau
+        have hc := Real.abs_cos_le_one (q*u)
+        rw [abs_mul, abs_mul]
+        have haupow :
+            |alpha*u|^4 = |alpha|^4 * |u|^4 := by
+          rw [abs_mul, mul_pow]
+        rw [haupow] at hh
+        nlinarith [abs_nonneg (P u), abs_nonneg u]
+    _ =
+    (5/96 : ℝ) * |alpha|^4
+      * compactProfileAbsMoment P 4 := by
+      rw [integral_const_mul]
+      rfl
+    _ =
+    (5/96 : ℝ) * |alpha|^4
+      * W.signedProfileAbsMomentFour := by
+      rfl
+
 end Synthesis

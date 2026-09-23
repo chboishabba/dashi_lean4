@@ -297,4 +297,224 @@ theorem QuarticFourSignedPolePair.literalGoodQuarticGainAt_nonneg
         (W.literalJointQuarticPolynomial_nonpos_of_localGood ht hg)]
   · simp [hg]
 
+
+/-!
+## Finite local remainder debt and the Clay-facing scalar budget
+-/
+
+def QuarticFourSignedPolePair.literalJointQuarticRemainderOffOrd
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) : ℝ := by
+  classical
+  exact if h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+    W.literalJointQuarticRemainder rho
+  else
+    0
+
+def quarticSignedPoleLocal
+    (t eta : ℝ) (rho : Zeros) : Prop :=
+  |quarticSignedPoleNormalizedOrdinateOffset t rho| <= eta
+
+def QuarticFourSignedPolePair.literalLocalRemainderDebtAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      |W.literalJointQuarticRemainderOffOrd rho|
+    else
+      0
+
+theorem QuarticFourSignedPolePair.literalLocalRemainderDebtAt_nonneg
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    0 <= W.literalLocalRemainderDebtAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalRemainderDebtAt
+  exact Finset.sum_nonneg fun rho _ => by
+    by_cases hl : quarticSignedPoleLocal t eta rho
+    · simp [hl]
+    · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalOffOrdSource_eq_polynomial_add_remainderOffOrd
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.literalOffOrdSource rho
+      =
+    (if h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+      W.literalJointQuarticPolynomial rho
+        + W.literalJointQuarticRemainderOffOrd rho
+     else
+      0) := by
+  classical
+  by_cases h : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+  · have hs :=
+      W.signedLiteralPairSourceTerm_eq_literalQuarticJet ht
+        (⟨rho,h⟩ : ((SameOrd t)ᶜ : Set Zeros))
+    simp [QuarticFourSignedPolePair.literalOffOrdSource,
+      QuarticFourSignedPolePair.literalJointQuarticRemainderOffOrd,
+      h] at hs ⊢
+    exact hs
+  · simp [QuarticFourSignedPolePair.literalOffOrdSource,
+      QuarticFourSignedPolePair.literalJointQuarticRemainderOffOrd,
+      h]
+
+/--
+Pointwise local budget on the cone lane:
+exact source <= positive-part cone debt + absolute joint remainder.
+-/
+theorem QuarticFourSignedPolePair.literalConeExactTerm_le_debt_add_remainder
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.literalConeExactTerm eta rho
+      <=
+    (if quarticSignedPoleLocalCone t eta rho then
+      max (W.literalOffOrdSource rho) 0
+     else 0)
+      +
+    (if quarticSignedPoleLocal t eta rho then
+      |W.literalJointQuarticRemainderOffOrd rho|
+     else 0) := by
+  classical
+  by_cases hc : quarticSignedPoleLocalCone t eta rho
+  · have hl : quarticSignedPoleLocal t eta rho := hc.1
+    simp [QuarticFourSignedPolePair.literalConeExactTerm, hc, hl]
+    exact le_add_of_nonneg_right (abs_nonneg _)
+  · simp [QuarticFourSignedPolePair.literalConeExactTerm, hc]
+
+/--
+Pointwise local budget on the good lane:
+the nonpositive quartic polynomial supplies a gain, while the exact joint
+remainder is charged only by absolute value.
+-/
+theorem QuarticFourSignedPolePair.literalGoodExactTerm_add_gain_le_remainder
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.literalGoodExactTerm eta rho
+      +
+    (if quarticSignedPoleLocalGood t eta rho then
+      - W.literalJointQuarticPolynomial rho
+     else 0)
+      <=
+    (if quarticSignedPoleLocal t eta rho then
+      |W.literalJointQuarticRemainderOffOrd rho|
+     else 0) := by
+  classical
+  by_cases hg : quarticSignedPoleLocalGood t eta rho
+  · have hl : quarticSignedPoleLocal t eta rho := hg.1
+    by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · have hs :=
+        W.signedLiteralPairSourceTerm_eq_literalQuarticJet ht
+          (⟨rho,hoff⟩ : ((SameOrd t)ᶜ : Set Zeros))
+      simp [QuarticFourSignedPolePair.literalGoodExactTerm,
+        QuarticFourSignedPolePair.literalOffOrdSource,
+        QuarticFourSignedPolePair.literalJointQuarticRemainderOffOrd,
+        hg,hl,hoff] at hs ⊢
+      rw [hs]
+      linarith [le_abs_self
+        (W.literalJointQuarticRemainder rho)]
+    · simp [QuarticFourSignedPolePair.literalGoodExactTerm,
+        QuarticFourSignedPolePair.literalOffOrdSource,
+        QuarticFourSignedPolePair.literalJointQuarticRemainderOffOrd,
+        hg,hl,hoff]
+      have hpoly :=
+        W.literalJointQuarticPolynomial_nonpos_of_localGood ht hg
+      linarith
+  · simp [QuarticFourSignedPolePair.literalGoodExactTerm, hg]
+
+theorem QuarticFourSignedPolePair.literalCone_add_good_le_debt_sub_gain_add_remainder
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalConeExactAt eta n
+      + W.literalGoodExactAt eta n
+      <=
+    W.literalConeDebtAt eta n
+      - W.literalGoodQuarticGainAt eta n
+      + W.literalLocalRemainderDebtAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalConeExactAt
+    QuarticFourSignedPolePair.literalGoodExactAt
+    QuarticFourSignedPolePair.literalConeDebtAt
+    QuarticFourSignedPolePair.literalGoodQuarticGainAt
+    QuarticFourSignedPolePair.literalLocalRemainderDebtAt
+  rw [← Finset.sum_add_distrib]
+  rw [show
+      (∑ x ∈ centeredZeroFinset t n,
+        (if quarticSignedPoleLocalCone t eta x then
+            max (W.literalOffOrdSource x) 0 else 0))
+        -
+      (∑ x ∈ centeredZeroFinset t n,
+        (if quarticSignedPoleLocalGood t eta x then
+            -W.literalJointQuarticPolynomial x else 0))
+        +
+      (∑ x ∈ centeredZeroFinset t n,
+        (if quarticSignedPoleLocal t eta x then
+            |W.literalJointQuarticRemainderOffOrd x| else 0))
+      =
+      ∑ x ∈ centeredZeroFinset t n,
+        ((if quarticSignedPoleLocalCone t eta x then
+            max (W.literalOffOrdSource x) 0 else 0)
+          -
+         (if quarticSignedPoleLocalGood t eta x then
+            -W.literalJointQuarticPolynomial x else 0)
+          +
+         (if quarticSignedPoleLocal t eta x then
+            |W.literalJointQuarticRemainderOffOrd x| else 0)) by
+        rw [Finset.sum_sub_distrib, Finset.sum_add_distrib]]
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hc : quarticSignedPoleLocalCone t eta rho
+  · have hng := quarticSignedPoleLocalCone_not_good hc
+    have hl : quarticSignedPoleLocal t eta rho := hc.1
+    simp [QuarticFourSignedPolePair.literalConeExactTerm,
+      QuarticFourSignedPolePair.literalGoodExactTerm,
+      hc,hng,hl]
+    exact le_add_of_nonneg_right (abs_nonneg _)
+  · by_cases hg : quarticSignedPoleLocalGood t eta rho
+    · have hnc := quarticSignedPoleLocalGood_not_cone hg
+      have hl : quarticSignedPoleLocal t eta rho := hg.1
+      have h :=
+        W.literalGoodExactTerm_add_gain_le_remainder
+          ht rho
+      simp [QuarticFourSignedPolePair.literalConeExactTerm,
+        hc,hg,hl] at h ⊢
+      exact h
+    · have hnotlocal :
+          ¬ quarticSignedPoleLocal t eta rho := by
+        intro hl
+        by_cases hcone :
+            ((rho : ℂ).im-t)^2 <= 6 * heightOf rho^2
+        · exact hc ⟨hl,hcone⟩
+        · exact hg ⟨hl,lt_of_not_ge hcone⟩
+      simp [QuarticFourSignedPolePair.literalConeExactTerm,
+        QuarticFourSignedPolePair.literalGoodExactTerm,
+        hc,hg,hnotlocal]
+
+/--
+Finite Clay-facing G3 budget.
+
+The far lane remains the exact decaying literal kernel.  Only the local lanes
+are charged by cone debt / good quartic gain / local absolute remainder debt.
+-/
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_coneDebt_sub_goodGain_add_remainder_add_far
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalOffOrdExactAt n
+      <=
+    W.literalConeDebtAt eta n
+      - W.literalGoodQuarticGainAt eta n
+      + W.literalLocalRemainderDebtAt eta n
+      + W.literalFarExactAt eta n := by
+  rw [W.literalOffOrdExactAt_eq_cone_add_good_add_far
+      (eta:=eta)]
+  have hlocal :=
+    W.literalCone_add_good_le_debt_sub_gain_add_remainder
+      ht n
+  linarith
+
 end Synthesis

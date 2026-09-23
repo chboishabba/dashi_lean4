@@ -50,7 +50,7 @@ private theorem even_prime_multiple_eq_zero_of_sq_le
   have hpOdd : Odd (p : ℤ) := hpOddNat.natCast
   have hkEven : Even k := by
     rw [Int.even_mul] at hxEven
-    exact hxEven.resolve_left hpOdd.not_even
+    exact hxEven.resolve_left (Int.not_even_iff_odd.mpr hpOdd)
   rw [even_iff_exists_two_mul] at hkEven
   rcases hkEven with ⟨m, rfl⟩
   have hp0 : (0 : ℤ) < p := by exact_mod_cast hp.pos

@@ -2750,4 +2750,129 @@ theorem QuarticFourSignedPolePair.poleCoordinateDeterminant_zero
   ring
 
 
+
+/-!
+## Central-window factorization of the linear obstruction
+
+For every witness R<1, the off-centre windows at pi/3, pi/2 and pi vanish at
+u=0.  Hence both endpoint tapers have the same value at the origin, and the
+linear profile obstruction factors through a distinct on-line-response
+determinant.
+-/
+
+theorem quantitativeSymBump_zero_at_zero_of_radius_lt_one
+    {c R : ℝ}
+    (hR : 0 < R)
+    (hR1 : R < 1)
+    (hc : 1 <= c) :
+    quantitativeSymBump c R 0 = 0 := by
+  have hc0 : 0 <= c := by linarith
+  have hz : scaledUnitBump c R 0 = 0 := by
+    by_contra hne
+    have hs := scaledUnitBump_support hR hne
+    have habs : |(0 : ℝ) - c| = c := by
+      rw [zero_sub, abs_neg, abs_of_nonneg hc0]
+    rw [habs] at hs
+    linarith
+  unfold quantitativeSymBump
+    Zeta23Bridge.LiteralWeilParityBalance.symmetrize
+  simp [hz]
+
+theorem quarticFourWindowProfile_zero_common
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (hR1 : R < 1) :
+    quarticFourWindowProfile R lam mu 0
+      =
+    (quarticWindowMass R)⁻¹
+      * quantitativeSymBump 0 R 0 := by
+  have hpi3 : (1 : ℝ) <= Real.pi / 3 := by
+    nlinarith [Real.pi_gt_three]
+  have hpi2 : (1 : ℝ) <= Real.pi / 2 := by
+    nlinarith [Real.pi_gt_three]
+  have hpi : (1 : ℝ) <= Real.pi := by
+    nlinarith [Real.pi_gt_three]
+  have h1 :=
+    quantitativeSymBump_zero_at_zero_of_radius_lt_one
+      (c:=Real.pi/3) hR hR1 hpi3
+  have h2 :=
+    quantitativeSymBump_zero_at_zero_of_radius_lt_one
+      (c:=Real.pi/2) hR hR1 hpi2
+  have h3 :=
+    quantitativeSymBump_zero_at_zero_of_radius_lt_one
+      (c:=Real.pi) hR hR1 hpi
+  unfold quarticFourWindowProfile quarticFourWindowRaw
+  rw [h1,h2,h3]
+  ring
+
+def quarticFourOnLineResponseDifference
+    (R lam mu : ℝ) : ℝ :=
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineWeight 1)
+    -
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineWeight 2)
+
+def QuarticFourSignedPolePair.linearOnLineObstruction
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.poleTwo *
+      quarticFourOnLineResponseDifference W.R (1/2) W.muHalf
+    +
+  (-W.poleHalf) *
+      quarticFourOnLineResponseDifference W.R (2/3) W.muTwo
+
+theorem quarticFourNormalizedProjectiveProfile_zero_factor
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (hR1 : R < 1) :
+    quarticFourNormalizedProjectiveProfile R lam mu 0
+      =
+    4 *
+      ((quarticWindowMass R)⁻¹
+        * quantitativeSymBump 0 R 0)
+      * quarticFourOnLineResponseDifference R lam mu := by
+  rw [quarticFourNormalizedProjectiveProfile_zero hR,
+      quarticFourWindowProfile_zero_common hR hR1]
+  unfold quarticFourOnLineResponseDifference
+  ring
+
+theorem QuarticFourSignedPolePair.linearProfileObstruction_factor
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.linearProfileObstruction
+      =
+    4 *
+      ((quarticWindowMass W.R)⁻¹
+        * quantitativeSymBump 0 W.R 0)
+      * W.linearOnLineObstruction := by
+  unfold QuarticFourSignedPolePair.linearProfileObstruction
+    quarticFourEndpointProfileValue
+    QuarticFourSignedPolePair.linearOnLineObstruction
+  rw [quarticFourNormalizedProjectiveProfile_zero_factor
+        W.Rpos W.RltOne,
+      quarticFourNormalizedProjectiveProfile_zero_factor
+        W.Rpos W.RltOne]
+  ring
+
+/--
+Consequently the global centered-linear defect factors through the distinct
+on-line-response determinant, up to the explicit common central-window scale.
+No vanishing of that determinant is currently assumed or proved.
+-/
+theorem QuarticFourSignedPolePair.globalLinearModeDefect_eq_onLineObstruction
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.globalLinearModeDefect
+      =
+    -(2 * Real.pi / (t/16))
+      *
+    (4 *
+      ((quarticWindowMass W.R)⁻¹
+        * quantitativeSymBump 0 W.R 0)
+      * W.linearOnLineObstruction) := by
+  rw [W.globalLinearModeDefect_eq_profile_zero ht,
+      W.combinedProfile_zero_eq_linearProfileObstruction,
+      W.linearProfileObstruction_factor]
+
+
 end Synthesis

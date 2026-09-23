@@ -3348,4 +3348,110 @@ theorem quarticFourWindowProfile_secondDeriv_zero_common
   exact Filter.EventuallyEq.deriv_eq hD
 
 
+
+def QuarticFourSignedPolePair.cubicOnLineResponseObstruction
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.poleTwo *
+      quarticFourOnLineCurvatureResponse W.R (1/2) W.muHalf
+    +
+  (-W.poleHalf) *
+      quarticFourOnLineCurvatureResponse W.R (2/3) W.muTwo
+
+theorem QuarticFourSignedPolePair.cubicTaperCurvatureObstruction_factor
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.cubicTaperCurvatureObstruction
+      =
+    quarticFourCentralTaperSecondDeriv W.R
+      * W.linearOnLineObstruction := by
+  unfold QuarticFourSignedPolePair.cubicTaperCurvatureObstruction
+    QuarticFourSignedPolePair.linearOnLineObstruction
+  rw [quarticFourWindowProfile_secondDeriv_zero_common
+        (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos W.RltOne,
+      quarticFourWindowProfile_secondDeriv_zero_common
+        (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos W.RltOne]
+  ring
+
+theorem QuarticFourSignedPolePair.cubicOnLineCurvatureObstruction_factor
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.cubicOnLineCurvatureObstruction
+      =
+    ((quarticWindowMass W.R)⁻¹
+      * quantitativeSymBump 0 W.R 0)
+      * W.cubicOnLineResponseObstruction := by
+  unfold QuarticFourSignedPolePair.cubicOnLineCurvatureObstruction
+    QuarticFourSignedPolePair.cubicOnLineResponseObstruction
+  rw [quarticFourWindowProfile_zero_common
+        (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos W.RltOne,
+      quarticFourWindowProfile_zero_common
+        (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos W.RltOne]
+  ring
+
+theorem QuarticFourSignedPolePair.cubicProfileObstruction_eq_reduced
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.cubicProfileObstruction
+      =
+    4 *
+      (quarticFourCentralTaperSecondDeriv W.R
+          * W.linearOnLineObstruction
+        +
+       ((quarticWindowMass W.R)⁻¹
+          * quantitativeSymBump 0 W.R 0)
+          * W.cubicOnLineResponseObstruction) := by
+  rw [W.cubicProfileObstruction_eq_split,
+      W.cubicTaperCurvatureObstruction_factor,
+      W.cubicOnLineCurvatureObstruction_factor]
+
+theorem QuarticFourSignedPolePair.cubicProfileObstruction_eq_zero_of_linear_iff
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hlin : W.linearOnLineObstruction = 0) :
+    W.cubicProfileObstruction = 0
+      ↔
+    W.cubicOnLineResponseObstruction = 0 := by
+  rw [W.cubicProfileObstruction_eq_reduced, hlin]
+  simp only [mul_zero, zero_add]
+  have hm : 0 < quarticWindowMass W.R :=
+    quarticWindowMass_pos W.Rpos
+  have hb :
+      quantitativeSymBump 0 W.R 0 = 2 :=
+    quantitativeSymBump_zero_center_eq_two W.Rpos.ne'
+  rw [hb]
+  have hcoef :
+      4 * ((quarticWindowMass W.R)⁻¹ * 2) ≠ 0 := by
+    positivity
+  exact mul_eq_zero_iff_right_nonzero hcoef
+
+/--
+Sharp obstruction criterion for the proposed global fourth-order quotient.
+
+After the common central-window geometry is compiled away, the quotient exists
+exactly when two distinct crossed response determinants vanish:
+  1. the on-line response-difference determinant;
+  2. the on-line curvature-response determinant.
+
+These are not the already-paid pole determinant.
+-/
+theorem QuarticFourSignedPolePair.globalFullCubicQuotient_iff_twoOnLineObstructions_zero
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.globalFullCubicQuotient
+      ↔
+    W.linearOnLineObstruction = 0
+      ∧ W.cubicOnLineResponseObstruction = 0 := by
+  rw [W.globalFullCubicQuotient_iff_obstructionDeterminants_zero ht,
+      W.linearProfileObstruction_eq_zero_iff]
+  constructor
+  · rintro ⟨hlin,hcub⟩
+    refine ⟨hlin,?_⟩
+    exact
+      (W.cubicProfileObstruction_eq_zero_of_linear_iff hlin).1 hcub
+  · rintro ⟨hlin,hcurv⟩
+    refine ⟨hlin,?_⟩
+    exact
+      (W.cubicProfileObstruction_eq_zero_of_linear_iff hlin).2 hcurv
+
+
 end Synthesis

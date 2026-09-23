@@ -3664,4 +3664,124 @@ theorem quarticFourAtomicObstructions_opposite_signs
   ⟩
 
 
+
+theorem quarticFourAtomicLinearOnLineObstruction_le_neg_seven_hundredths
+    {t : ℝ} (ht : 200 <= t) :
+    quarticFourAtomicLinearOnLineObstruction t <= -(7/100 : ℝ) := by
+  have htpos : 0 < t := by linarith
+  rw [quarticFourAtomicLinearOnLineObstruction_formula htpos.ne']
+  have h1 :
+      1 <= Real.cosh (8*Real.pi/(3*t)) :=
+    Real.one_le_cosh _
+  have h2 :
+      1 <= Real.cosh (4*Real.pi/t) :=
+    Real.one_le_cosh _
+  have h3ex :=
+    quarticFour_cosh_excess_le_one_of_twoHundred ht
+  have h3 :
+      Real.cosh (8*Real.pi/t) <= 2 := by
+    linarith
+  have hbracket :
+      71 <=
+      27 * Real.cosh (8*Real.pi/(3*t))
+        + 64 * Real.cosh (4*Real.pi/t)
+        - 10 * Real.cosh (8*Real.pi/t) := by
+    nlinarith
+  norm_num
+  nlinarith
+
+theorem quarticFourAtomicFinitePoleResidual_formula_general
+    {t lam mu : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicFinitePoleResidual t lam mu
+      =
+    -(
+      Real.cosh (8*Real.pi/(3*t)) * lam
+        - 2 * Real.cosh (8*Real.pi/(3*t))
+        + 4 * Real.cosh (4*Real.pi/t) * lam * mu
+        - 2 * Real.cosh (4*Real.pi/t) * lam
+        - 4 * Real.cosh (8*Real.pi/t) * lam * mu
+        + 8 * Real.cosh (8*Real.pi/t) * mu
+        + 4 * lam - 8 * mu - 4
+      ) / 4 := by
+  unfold quarticFourAtomicFinitePoleResidual
+  rw [quarticFourAtomicPolePairing_one ht,
+      quarticFourAtomicPolePairing_two ht,
+      quarticFourAtomicOnLinePairing_one,
+      quarticFourAtomicOnLinePairing_two]
+  ring
+
+theorem quarticFourAtomicFinitePoleResidual_mu_difference
+    {t lam mu nu : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicFinitePoleResidual t lam mu
+      - quarticFourAtomicFinitePoleResidual t lam nu
+      =
+    (-(Real.cosh (4*Real.pi/t) * lam)
+      + Real.cosh (8*Real.pi/t) * lam
+      - 2 * Real.cosh (8*Real.pi/t)
+      + 2)
+      * (mu-nu) := by
+  rw [quarticFourAtomicFinitePoleResidual_formula_general ht,
+      quarticFourAtomicFinitePoleResidual_formula_general ht]
+  ring
+
+theorem quarticFourAtomicFinitePoleResidual_mu_lipschitz_ten
+    {t lam mu nu : ℝ}
+    (ht : 200 <= t)
+    (hlam : lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ)) :
+    |quarticFourAtomicFinitePoleResidual t lam mu
+      - quarticFourAtomicFinitePoleResidual t lam nu|
+      <= 10 * |mu-nu| := by
+  have htpos : 0 < t := by linarith
+  rw [quarticFourAtomicFinitePoleResidual_mu_difference htpos.ne',
+      abs_mul]
+  have h3ex :=
+    quarticFour_cosh_excess_le_one_of_twoHundred ht
+  have h3lo : 1 <= Real.cosh (8*Real.pi/t) :=
+    Real.one_le_cosh _
+  have h3hi : Real.cosh (8*Real.pi/t) <= 2 := by
+    linarith
+  have hx2 :
+      |4*Real.pi/t| <= |8*Real.pi/t| := by
+    have h4non : 0 <= 4*Real.pi/t := by positivity
+    have h8non : 0 <= 8*Real.pi/t := by positivity
+    rw [abs_of_nonneg h4non, abs_of_nonneg h8non]
+    field_simp [ne_of_gt htpos]
+    nlinarith [Real.pi_pos]
+  have h2lo : 1 <= Real.cosh (4*Real.pi/t) :=
+    Real.one_le_cosh _
+  have h2hi :
+      Real.cosh (4*Real.pi/t) <= 2 :=
+    ((Real.cosh_le_cosh).2 hx2).trans h3hi
+  have hlam0 : 0 <= lam := by linarith [hlam.1]
+  have hlamHi : lam <= 2/3 := hlam.2
+  have hcoef :
+      |-(Real.cosh (4*Real.pi/t) * lam)
+        + Real.cosh (8*Real.pi/t) * lam
+        - 2 * Real.cosh (8*Real.pi/t)
+        + 2|
+        <= 10 := by
+    rw [abs_le]
+    constructor <;> nlinarith
+  exact mul_le_mul_of_nonneg_right hcoef (abs_nonneg _)
+
+theorem quarticFourAtomicFinitePoleResidual_corridor_close_null
+    {t lam mu : ℝ}
+    (ht : 200 <= t)
+    (hlam : lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ))
+    (hmu :
+      |mu-quarticFourAtomicMu lam|
+        <= quarticFourAtomicMuRadius) :
+    |quarticFourAtomicFinitePoleResidual t lam mu
+      - quarticFourAtomicFinitePoleResidual
+          t lam (quarticFourAtomicMu lam)|
+      <= 1/1000 := by
+  have h :=
+    quarticFourAtomicFinitePoleResidual_mu_lipschitz_ten
+      ht hlam (mu:=mu) (nu:=quarticFourAtomicMu lam)
+  have hr :
+      |mu-quarticFourAtomicMu lam| <= 1/10000 := by
+    simpa [quarticFourAtomicMuRadius] using hmu
+  nlinarith
+
+
 end Synthesis

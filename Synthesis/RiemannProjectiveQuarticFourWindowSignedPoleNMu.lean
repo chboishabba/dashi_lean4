@@ -436,6 +436,53 @@ def QuarticFourSignedPolePair.signedOrdinateTest
       + (-W.poleHalf) * W.ordinateTestTwo tau
 
 /--
+The literal combined zero source term seen by the actual signed test.
+-/
+def QuarticFourSignedPolePair.signedZeroSourceTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+    * W.signedOrdinateTest (sigma : ℂ).im
+
+theorem QuarticFourSignedPolePair.signedZeroSourceTerm_eq_linear
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    W.signedZeroSourceTerm sigma
+      =
+    W.poleTwo *
+      quarticFourBaseSourceTerm
+        W.R (1/2) W.muHalf t sigma
+      +
+    (-W.poleHalf) *
+      quarticFourBaseSourceTerm
+        W.R (2/3) W.muTwo t sigma := by
+  unfold QuarticFourSignedPolePair.signedZeroSourceTerm
+    QuarticFourSignedPolePair.signedOrdinateTest
+    QuarticFourSignedPolePair.ordinateTestHalf
+    QuarticFourSignedPolePair.ordinateTestTwo
+    quarticFourBaseSourceTerm
+  ring
+
+theorem QuarticFourSignedPolePair.signedZeroSourceTerm_summable
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Summable W.signedZeroSourceTerm := by
+  have h1 :=
+    (quarticFourBaseSourceTerm_summable_full
+      (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf)
+      W.Rpos ht).mul_left W.poleTwo
+  have h2 :=
+    (quarticFourBaseSourceTerm_summable_full
+      (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo)
+      W.Rpos ht).mul_left (-W.poleHalf)
+  have h := h1.add h2
+  refine h.congr ?_
+  intro sigma
+  symm
+  exact W.signedZeroSourceTerm_eq_linear sigma
+
+/--
 The literal signed N-mu functional, retained in endpoint-linearized normal form.
 The exposed pointwise test is `W.signedOrdinateTest`.
 -/

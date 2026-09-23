@@ -77,6 +77,31 @@ def JacobiTripleProductFormal : Prop :=
       (∏ n ∈ s, jacobiTripleFactor n).coeff N =
         jacobiTripleSeries.coeff N
 
+/-- J0→J1 compiler: formal differentiation in the Laurent variable followed
+by evaluation at z=-1 gives Jacobi's cube identity, then q↦X^8 gives the
+eta32 odd factor.  This is an algebraic specialization obligation, not a
+second independent q-product theorem. -/
+def JacobiCubeSpecializationCompiler : Prop :=
+  JacobiTripleProductFormal → cmJacobiOddProductIdentity
+
+/-- J0→J2 compiler: the diagonal specialization q↦q², z↦-q gives the
+alternating square theta product, then q↦X^4 gives the eta32 even factor. -/
+def JacobiSquareThetaSpecializationCompiler : Prop :=
+  JacobiTripleProductFormal → cmJacobiEvenProductIdentity
+
+/-- Complete q-series producer after the recut: one reusable Jacobi theorem
+plus its two explicit specialization compilers. -/
+def JacobiEta32FromTripleProductProducer : Prop :=
+  JacobiTripleProductFormal ∧
+    JacobiCubeSpecializationCompiler ∧
+    JacobiSquareThetaSpecializationCompiler
+
+theorem jacobiEta32Products_of_tripleProductProducer
+    (h : JacobiEta32FromTripleProductProducer) :
+    cmJacobiOddProductIdentity ∧ cmJacobiEvenProductIdentity := by
+  rcases h with ⟨hJTP, hCube, hTheta⟩
+  exact ⟨hCube hJTP, hTheta hJTP⟩
+
 /-- Machine-readable J0/J1/J2 boundary. formalCarrierPaid records that the
 correct Laurent/power-series same-object carrier is now implemented; the
 actual triple-product proof and its two specialization compilers remain

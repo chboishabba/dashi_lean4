@@ -190,6 +190,46 @@ theorem padicH1SquareClassNaturality_of_generic
     rationalQuadraticKummerCharacterPairMulEquiv,
     rationalQuadraticKummerCharacterMulEquiv] using hH1
 
+/-- Direct global coefficient morphism from the generic trivial (C₂)²
+module to the actual E(Qbar) module.  This is the same carrier map used in
+the local construction below. -/
+noncomputable def globalGenericE2ToEllipticPoint :
+    genericTwoTorsionRepresentation RationalAbsoluteGalois ⟶
+      cmEllipticPointRepresentation :=
+  TopRep.ofHom
+  { __ :=
+      localActualE2InclusionCLM.comp
+        cmActualE2ContinuousLinearEquiv.toContinuousLinearMap
+    isIntertwining' σ := by
+      ext x
+      change
+        (cmActualE2ContinuousLinearEquiv x).1 =
+          cmAlgClosureGaloisAction σ
+            (cmActualE2ContinuousLinearEquiv x).1
+      exact
+        (cmAlgClosure_twoTorsionSubgroup_pointwise_fixed
+          σ (cmActualE2ContinuousLinearEquiv x)).symm }
+
+/-- Global H¹ arrow from the generic trivial E[2] presentation to the actual
+elliptic-point coefficient module. -/
+noncomputable def globalGenericE2H1ToEllipticPointH1 :
+    ContinuousCohomology.continuousCohomology 1
+        (genericTwoTorsionRepresentation RationalAbsoluteGalois) ⟶
+      ContinuousCohomology.continuousCohomology 1
+        cmEllipticPointRepresentation :=
+  ContinuousCohomology.map
+    (ContinuousMonoidHom.id RationalAbsoluteGalois)
+    globalGenericE2ToEllipticPoint 1
+
+/-- Prize-facing elliptic H¹ class attached directly to the generic global
+E[2] class underlying an explicit Selmer class. -/
+noncomputable def explicitSelmerGenericClassToEllipticH1
+    (s : explicitTwoSelmerSubgroup) :
+    ContinuousCohomology.continuousCohomology 1
+      cmEllipticPointRepresentation :=
+  globalGenericE2H1ToEllipticPointH1
+    (explicitSelmerToGenericTwoTorsionH1 s)
+
 /-- Restriction of the actual global E(Qbar) representation to G_{Q_p}. -/
 noncomputable abbrev padicRestrictedEllipticPointRepresentation
     (p : ℕ) [Fact p.Prime] :

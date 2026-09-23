@@ -111,5 +111,66 @@ theorem padicGenericE2EllipticH1_restriction_square
   rw [padicGenericE2ToRestrictedEllipticPoint_naturality]
   rfl
 
+/-- Every finite explicit Selmer condition now implies vanishing of the
+*prize-facing* elliptic H¹ class after p-adic restriction. -/
+theorem cmExplicitSelmerClassToEllipticH1_padic_zero
+    (hCompat :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicQuadraticKummerCompatibility p.1)
+    (hVan :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicEllipticKummerImageVanishing p.1 (hCompat p))
+    (s : explicitTwoSelmerSubgroup)
+    (p : Nat.Primes) :
+    letI : Fact p.1.Prime := ⟨p.2⟩
+    padicEllipticPointH1Restrict p.1
+      (cmExplicitSelmerClassToEllipticH1 s) = 0 := by
+  letI : Fact p.1.Prime := ⟨p.2⟩
+  rw [← explicitSelmerGenericClassToEllipticH1_eq_prizeFacing]
+  unfold explicitSelmerGenericClassToEllipticH1
+  have hsquare := padicGenericE2EllipticH1_restriction_square p.1
+  have happ := congrArg
+    (fun f => f.hom (explicitSelmerToGenericTwoTorsionH1 s)) hsquare
+  have hzero :=
+    explicitSelmer_finite_localizations_vanish_imageVanishing
+      hCompat hVan s p
+  simpa using happ.trans hzero
+
+/-- The full classical localization law is now reduced to one real-place
+payment plus the two genuinely arithmetic finite-place Kummer families. -/
+theorem cmExplicitSelmerClassToEllipticH1_localization_zero_of_real
+    (hCompat :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicQuadraticKummerCompatibility p.1)
+    (hVan :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicEllipticKummerImageVanishing p.1 (hCompat p))
+    (hReal :
+      ∀ s : explicitTwoSelmerSubgroup,
+        (ContinuousCohomology.map
+          (Field.absoluteGaloisGroup.map (algebraMap ℚ ℝ))
+          (𝟙 _) 1).hom
+          (cmExplicitSelmerClassToEllipticH1 s) = 0)
+    (s : explicitTwoSelmerSubgroup) :
+    cmExplicitSelmerClassToEllipticH1 s ∈
+      classicalEllipticShaOne cmEllipticPointRepresentation := by
+  rw [mem_rationalTateShafarevichOne_iff]
+  intro v
+  cases v with
+  | infinite =>
+      exact hReal s
+  | padic p =>
+      letI : Fact p.1.Prime := ⟨p.2⟩
+      simpa [padicEllipticPointH1Restrict,
+        padicAbsoluteGaloisRestriction,
+        rationalLocalField] using
+        cmExplicitSelmerClassToEllipticH1_padic_zero
+          hCompat hVan s p
+
+
 
 end Synthesis.Millennium.BSD

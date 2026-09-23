@@ -513,6 +513,58 @@ def JacobiTripleProductFormal : Prop :=
       (∏ n ∈ s, jacobiTripleFactor n).coeff N =
         jacobiTripleSeries.coeff N
 
+theorem tendsto_jacobiFiniteProduct_coeff_of_tripleProduct
+    (hJ : JacobiTripleProductFormal) (N : ℕ) :
+    Tendsto
+      (fun M : ℕ => (jacobiFiniteProduct (M + 1)).coeff N)
+      atTop (𝓝 (jacobiTripleSeries.coeff N)) := by
+  have hRange :
+      Tendsto (fun M : ℕ => Finset.range (M + 1)) atTop atTop :=
+    tendsto_finset_range.comp (tendsto_add_atTop_nat 1)
+  have hEventually :
+      ∀ᶠ M : ℕ in atTop,
+        (jacobiFiniteProduct (M + 1)).coeff N =
+          jacobiTripleSeries.coeff N := by
+    filter_upwards [hRange.eventually (hJ N)] with M hM
+    simpa [jacobiFiniteProduct] using hM
+  exact tendsto_const_nhds.congr' hEventually.symm
+
+theorem tendsto_jacobiEulerZAtNegOne_finiteProduct_of_tripleProduct
+    (hJ : JacobiTripleProductFormal) :
+    Tendsto
+      (fun M : ℕ =>
+        jacobiEulerZAtNegOne (jacobiFiniteProduct (M + 1)))
+      atTop (𝓝 (jacobiEulerZAtNegOne jacobiTripleSeries)) := by
+  rw [PowerSeries.WithPiTopology.tendsto_iff_coeff_tendsto]
+  intro N
+  have hRange :
+      Tendsto (fun M : ℕ => Finset.range (M + 1)) atTop atTop :=
+    tendsto_finset_range.comp (tendsto_add_atTop_nat 1)
+  have hEventually :
+      ∀ᶠ M : ℕ in atTop,
+        (jacobiEulerZAtNegOne (jacobiFiniteProduct (M + 1))).coeff N =
+          (jacobiEulerZAtNegOne jacobiTripleSeries).coeff N := by
+    filter_upwards [hRange.eventually (hJ N)] with M hM
+    simp only [jacobiEulerZAtNegOne_coeff]
+    rw [hM]
+  exact tendsto_const_nhds.congr' hEventually.symm
+
+/-- J0 already forces the classical Jacobi cube identity in the base
+q-variable.  Both sides are identified as the unique limit of the same
+Euler-differentiated finite products. -/
+theorem jacobiCubeBaseSeries_eq_eulerCube
+    (hJ : JacobiTripleProductFormal) :
+    jacobiCubeBaseSeries = cmEtaEulerFormal ^ 3 := by
+  have hFromJ :=
+    tendsto_jacobiEulerZAtNegOne_finiteProduct_of_tripleProduct hJ
+  have hFromEuler := tendsto_jacobiEulerZAtNegOne_finiteProduct
+  have hEq :
+      jacobiEulerZAtNegOne jacobiTripleSeries =
+        -(cmEtaEulerFormal ^ 3) :=
+    tendsto_nhds_unique hFromJ hFromEuler
+  rw [jacobiEulerZAtNegOne_tripleSeries] at hEq
+  exact neg_injective hEq
+
 /-- J0→J1 compiler: formal differentiation in the Laurent variable followed
 by evaluation at z=-1 gives Jacobi's cube identity, then q↦X^8 gives the
 eta32 odd factor.  This is an algebraic specialization obligation, not a

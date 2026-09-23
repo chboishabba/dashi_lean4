@@ -2230,4 +2230,118 @@ theorem QuarticFourSignedPolePair.exists_rightCenteredAbelPartial_limit
   exact cauchySeq_tendsto_of_complete hC
 
 
+
+/--
+A left partial-integral sequence converges from any integrable tail majorant.
+-/
+theorem QuarticFourSignedPolePair.exists_leftCenteredAbelPartial_limit
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (M : W.CenteredAbelTailMajorants) :
+    ∃ L : ℝ,
+      Tendsto W.leftCenteredAbelPartial atTop (𝓝 L) := by
+  have hC : CauchySeq W.leftCenteredAbelPartial := by
+    rw [Metric.cauchySeq_iff]
+    intro eps heps
+    have htail :
+        Tendsto
+          (fun n : ℕ =>
+            ∫ x in Set.Iic (t - n : ℝ), M.leftMajorant x)
+          atTop (𝓝 0) := by
+      have hAnti : Antitone (fun n : ℕ => Set.Iic (t - n : ℝ)) := by
+        intro m n hmn
+        exact Set.Iic_subset_Iic.2 (by
+          have hcast : (m : ℝ) <= n := by exact_mod_cast hmn
+          linarith)
+      have hIntOn :
+          IntegrableOn M.leftMajorant (Set.Iic (t - 0 : ℝ)) :=
+        M.leftMajorant_integrable.integrableOn
+      have hlim :=
+        hAnti.tendsto_setIntegral
+          (fun n => measurableSet_Iic) hIntOn
+      have hinter :
+          (⋂ n : ℕ, Set.Iic (t - n : ℝ)) = (∅ : Set ℝ) := by
+        ext x
+        simp only [Set.mem_iInter, Set.mem_Iic, Set.mem_empty_iff_false]
+        constructor
+        · intro h
+          obtain ⟨n, hn⟩ := exists_nat_gt (t - x)
+          linarith [h n]
+        · simp
+      rw [hinter, integral_empty] at hlim
+      exact hlim
+    have hev := htail.eventually (Metric.ball_mem_nhds 0 heps)
+    rcases (eventually_atTop.1 hev) with ⟨N,hN⟩
+    refine ⟨max N 1, ?_⟩
+    intro m hm n hn
+    wlog hmn : m <= n generalizing m n with hsym
+    · rw [dist_comm]
+      exact hsym n hn m hm (le_of_not_ge hmn)
+    have hm1 : 1 <= m := le_trans (le_max_right N 1) hm
+    have htm : t - m <= t - 1 := by
+      have hm1R : (1 : ℝ) <= m := by exact_mod_cast hm1
+      linarith
+    have hnmR : t - n <= t - m := by
+      have hmnR : (m : ℝ) <= n := by exact_mod_cast hmn
+      linarith
+    have hIntM :
+        IntervalIntegrable M.leftMajorant volume (t-n) (t-m) :=
+      M.leftMajorant_integrable.intervalIntegrable
+    have hIntF :
+        IntervalIntegrable W.centeredAbelIntegrand volume (t-n) (t-m) :=
+      W.centeredAbelIntegrand_intervalIntegrable ht
+    have hdiff :
+        W.leftCenteredAbelPartial n
+          - W.leftCenteredAbelPartial m
+          =
+        ∫ x in (t-n)..(t-m), W.centeredAbelIntegrand x := by
+      unfold QuarticFourSignedPolePair.leftCenteredAbelPartial
+      rw [← intervalIntegral.integral_add_adjacent_intervals
+        hIntF
+        (W.centeredAbelIntegrand_intervalIntegrable ht (A:=t-m) (B:=t))]
+      ring
+    rw [Real.dist_eq, ← abs_sub, hdiff]
+    have hnorm :=
+      intervalIntegral.norm_integral_le_of_norm_le
+        (f:=W.centeredAbelIntegrand)
+        (g:=M.leftMajorant)
+        hnmR
+        (Filter.Eventually.of_forall fun x => by
+          intro hx
+          rw [Real.norm_eq_abs]
+          apply M.leftDominates x
+          exact hx.2.trans htm)
+        hIntM
+    rw [Real.norm_eq_abs] at hnorm
+    have hset :
+        (∫ x in (t-n)..(t-m), M.leftMajorant x)
+          <=
+        ∫ x in Set.Iic (t-m : ℝ), M.leftMajorant x := by
+      rw [intervalIntegral.integral_of_le hnmR]
+      exact setIntegral_mono_set
+        M.leftMajorant_integrable.integrableOn
+        (Filter.Eventually.of_forall fun x => M.leftMajorant_nonneg x)
+        Set.Ioc_subset_Iic_self.eventuallySubset
+    have hball := hN m (le_trans (le_max_left N 1) hm)
+    rw [Real.dist_eq, sub_zero, abs_of_nonneg
+      (integral_nonneg fun x => M.leftMajorant_nonneg x)] at hball
+    exact lt_of_le_of_le hnorm (hset.trans hball.le)
+  exact cauchySeq_tendsto_of_complete hC
+
+/--
+Construct both correlation-integral limit fields from one pair of integrable
+tail majorants.
+-/
+theorem QuarticFourSignedPolePair.exists_centeredAbelIntegralLimits
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (M : W.CenteredAbelTailMajorants) :
+    ∃ L R : ℝ,
+      Tendsto W.leftCenteredAbelPartial atTop (𝓝 L)
+      ∧
+      Tendsto W.rightCenteredAbelPartial atTop (𝓝 R) := by
+  obtain ⟨L,hL⟩ := W.exists_leftCenteredAbelPartial_limit ht M
+  obtain ⟨R,hR⟩ := W.exists_rightCenteredAbelPartial_limit ht M
+  exact ⟨L,R,hL,hR⟩
+
 end Synthesis

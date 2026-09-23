@@ -175,10 +175,7 @@ theorem phase_mod_pi_of_fixed
   obtain ⟨k, hk⟩ := Complex.exp_eq_one_iff.mp hexp
   refine ⟨k, ?_⟩
   have hkIm := congrArg Complex.im hk
-  simp only [mul_im, ofReal_re, ofReal_im, I_re, I_im,
-    mul_zero, mul_one, zero_add, Int.cast_ofNat,
-    Complex.ofReal_mul, Complex.ofReal_ofNat] at hkIm
-  norm_num at hkIm ⊢
+  simp at hkIm
   linarith
 
 /-- Sixfold phase law for eta^24 on the unit-circle fixed locus. -/

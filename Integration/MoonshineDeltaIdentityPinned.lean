@@ -186,13 +186,10 @@ def normalizedDeltaCuspForm :
   holo' :=
     Target.normalizedDeltaForm.holo'
   zero_at_cusps' {c} hc γ hγ := by
-    rw [Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z] at hc
-    rw [OnePoint.isZeroAt_iff_forall_SL2Z hc]
-    intro δ _
     rw [show
-      ((Target.normalizedDeltaForm : ℍ → ℂ) ∣[(12 : ℤ)] δ) =
+      ((Target.normalizedDeltaForm : ℍ → ℂ) ∣[(12 : ℤ)] γ) =
         (Target.normalizedDeltaForm : ℍ → ℂ) from
-      Target.normalizedDeltaForm.slash_action_eq' _ ⟨δ, rfl⟩]
+      Target.normalizedDeltaForm.slash_action_eq' _ ⟨γ, rfl⟩]
     exact normalizedDeltaForm_isZeroAtImInfty
 
 @[simp]

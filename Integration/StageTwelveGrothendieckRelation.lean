@@ -234,6 +234,43 @@ def signedRelationMagnitudeWrongTypeReceipt : RelationWrongTypeReceipt where
   rejection := "same relation cell and positive coarse sign / distinct FRACTRAN multiplicity magnitude"
   candidateMayStillExist := true
 
+def signedMagnitudeRefinedObserver
+    (state : SignedRelationCellState) :
+    (StageRelation144 × Trit) × Nat :=
+  (signedRelationCellObserver state, signedMagnitudeConsumer state)
+
+theorem signedMagnitude_refines_coarse_cell_sufficient :
+    ConsumerSufficient
+      signedMagnitudeRefinedObserver
+      signedMagnitudeConsumer := by
+  intro left right h
+  exact congrArg Prod.snd h
+
+structure SignedMultiplicityResidualCode where
+  sign : Trit
+  magnitude : Nat
+  deriving DecidableEq, Repr
+
+def encodeSignedMultiplicityResidual :
+    SignedMultiplicity → SignedMultiplicityResidualCode
+  | .negative n => ⟨0, n⟩
+  | .zero => ⟨1, 0⟩
+  | .positive n => ⟨2, n⟩
+
+def decodeSignedMultiplicityResidual :
+    SignedMultiplicityResidualCode → SignedMultiplicity
+  | ⟨0, n⟩ => .negative n
+  | ⟨1, _⟩ => .zero
+  | ⟨2, n⟩ => .positive n
+
+theorem signedMultiplicityResidual_roundtrip :
+    ∀ multiplicity,
+      decodeSignedMultiplicityResidual
+        (encodeSignedMultiplicityResidual multiplicity) = multiplicity
+  | .negative n => rfl
+  | .zero => rfl
+  | .positive n => rfl
+
 /-! Stage-12 semantic extension, kept distinct from the 0..11 twelve-axis base. -/
 
 abbrev ExtendedStage012 := Fin 13
@@ -414,6 +451,8 @@ structure Frontier where
   signedMagnitudeNonDescentPaid : Bool
   coarseSignedCellFactorsThroughMagnitude : Bool
   signedMagnitudeWrongTypeReceiptPaid : Bool
+  signedMagnitudeResidualRepairPaid : Bool
+  signedMultiplicityResidualCodecPaid : Bool
   analyticModularSiteIdentified : Bool
   stageTwelveEqualsModularWeightTwelveByDefinition : Bool
   deriving Repr
@@ -439,6 +478,8 @@ def frontier : Frontier where
   signedMagnitudeNonDescentPaid := true
   coarseSignedCellFactorsThroughMagnitude := false
   signedMagnitudeWrongTypeReceiptPaid := true
+  signedMagnitudeResidualRepairPaid := true
+  signedMultiplicityResidualCodecPaid := true
   analyticModularSiteIdentified := false
   stageTwelveEqualsModularWeightTwelveByDefinition := false
 

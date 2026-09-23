@@ -109,15 +109,17 @@ abbrev tamagawaProduct (a : BSDRefinedArithmeticBinding) :=
 end BSDRefinedArithmeticBinding
 
 /-- The universal actual elliptic-point Galois representation is now a
-canonical construction, not a supplied binding. -/
+canonical construction, not a supplied binding.  The receipt names that
+literal representation so it cannot be discharged by an unrelated TopRep. -/
 def UniversalBSDEllipticPointRepresentationPaid : Prop :=
   ∀ E : RationalEllipticCurve,
-    Nonempty (TopRep ℤ RationalAbsoluteGalois)
+    ∃ A : TopRep ℤ RationalAbsoluteGalois,
+      A = rationalEllipticCurvePointRepresentation E
 
 theorem universalBSDEllipticPointRepresentation_paid :
     UniversalBSDEllipticPointRepresentationPaid := by
   intro E
-  exact ⟨rationalEllipticCurvePointRepresentation E⟩
+  exact ⟨rationalEllipticCurvePointRepresentation E, rfl⟩
 
 /-- Canonical classical Sha carrier on the actual universal E(Qbar)
 representation. -/

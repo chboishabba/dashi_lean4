@@ -319,7 +319,7 @@ inductive TwelveConstructor
   deriving DecidableEq, Repr
 
 structure TwelveConstructorReceipt where
-  constructor : TwelveConstructor
+  operation : TwelveConstructor
   inputTwelve : Nat
   output : Nat
   exactArithmetic : Bool

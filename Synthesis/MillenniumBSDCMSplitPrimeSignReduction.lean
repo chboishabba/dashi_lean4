@@ -14,16 +14,17 @@ For a supplied prime representation
 
   p=(2r+1)²+(2s)²,
 
-the only genuinely Gaussian/UFD statement still needed is that the odd/even
-coordinates agree in *absolute value* with `2r+1,2s`.
+the remaining absolute-coordinate statement is that the odd/even coordinates
+agree in *absolute value* with `2r+1,2s`.  It is proved below directly from
+primality, parity, and Lagrange's two-square identity; no Gaussian-UFD API is
+needed.
 
-Once that is known, the primary congruence determines the sign of `a`
-elementarily:
+The primary congruence then determines the sign of `a` elementarily:
 
   a = -(-1)^(r+s) (2r+1).
 
-This file proves that second step and exposes absolute-coordinate uniqueness as
-the sole residual owner.
+This file now proves both steps and exports the unconditional split-prime sign
+compiler.
 -/
 
 namespace Synthesis.Millennium.BSD
@@ -233,6 +234,13 @@ theorem splitPrimeRepresentationSignCompiler_of_absoluteUniqueness
   push_cast
   ring
 
+/-- The complete split-prime representation sign compiler: the former
+absolute-coordinate producer is now discharged by the elementary theorem above. -/
+theorem splitPrimeRepresentationSignCompiler_paid :
+    SplitPrimeRepresentationSignCompiler :=
+  splitPrimeRepresentationSignCompiler_of_absoluteUniqueness
+    splitPrimeAbsoluteCoordinateUniqueness_paid
+
 /-- Prize-facing split trace now needs only the absolute-coordinate uniqueness
 lemma; the Jacobi cube congruence itself is already paid. -/
 theorem split_frobenius_signed_of_absoluteUniqueness
@@ -246,6 +254,16 @@ theorem split_frobenius_signed_of_absoluteUniqueness
     splitJacobiPrimaryCubeCongruence_paid
     (splitPrimeRepresentationSignCompiler_of_absoluteUniqueness huniq)
     hp hrep hmod
+
+/-- Unconditional prize-facing signed split-prime Frobenius coefficient. -/
+theorem split_frobenius_signed
+    {p r s : ℕ} (hp : p.Prime)
+    (hrep : p = (2 * r + 1) ^ 2 + 4 * s ^ 2)
+    (hmod : p % 4 = 1) :
+    frobeniusCoefficient p =
+      2 * ((-1 : ℤ) ^ (r + s)) * (2 * r + 1) :=
+  split_frobenius_signed_of_absoluteUniqueness
+    splitPrimeAbsoluteCoordinateUniqueness_paid hp hrep hmod
 
 /-- Machine-readable residual after the specialized Jacobi cube proof. -/
 structure SplitPrimeSignBoundaryStatus where

@@ -1,5 +1,6 @@
 import Synthesis.MillenniumBSDEtaEllipticSturmEightBoundary
 import Synthesis.MillenniumBSDJacobiEta32Reduction
+import Synthesis.MillenniumBSDJacobiArithmeticReconstruction
 import Synthesis.MillenniumBSDCMEta32Decay
 import Synthesis.MillenniumBSDHasseGlobalCoefficientBound
 import Synthesis.MillenniumBSDFullGlobalAnalyticLFunction
@@ -72,6 +73,17 @@ theorem etaElliptic_allCoefficientAgreement_of_jacobi
     simp [cmEllipticCoefficientComplex, heta, hell]
   · exact etaEllipticPositiveAgreement_of_jacobi hOdd hEven hArithmetic
       (n + 1) (by omega)
+
+/-- Prize-facing Jacobi route after the local-to-global arithmetic recut.
+The old arbitrary-N coefficient producer is now compiled from the local CM
+arithmetic record. -/
+theorem etaElliptic_allCoefficientAgreement_of_jacobiLocalData
+    (hOdd : cmJacobiOddProductIdentity)
+    (hEven : cmJacobiEvenProductIdentity)
+    (hLocal : JacobiLocalReconstructionData) :
+    EtaEllipticAllCoefficientAgreement :=
+  etaElliptic_allCoefficientAgreement_of_jacobi hOdd hEven
+    (jacobiRepresentationMatchesElliptic_of_localData hLocal)
 
 /-- The normalized eta kernel has the actual elliptic coefficients as its
 exponential series from any all-coefficient producer. -/
@@ -262,6 +274,18 @@ theorem cmCompletedEllipticLContinuation_agrees_initial_of_level32Sturm
     cmCompletedEllipticLContinuation s = cmCompletedEllipticLInitial s :=
   cmCompletedEllipticLContinuation_agrees_initial_of_coefficientAgreement
     (etaElliptic_allCoefficientAgreement_of_level32Sturm sturm) hs
+
+/-- The full initial-domain same-object theorem from the Jacobi products plus
+the reconstructed local CM arithmetic data. -/
+theorem cmCompletedEllipticLContinuation_agrees_initial_of_jacobiLocalData
+    (hOdd : cmJacobiOddProductIdentity)
+    (hEven : cmJacobiEvenProductIdentity)
+    (hLocal : JacobiLocalReconstructionData)
+    {s : ℂ} (hs : (5 : ℝ) / 2 < s.re) :
+    cmCompletedEllipticLContinuation s = cmCompletedEllipticLInitial s :=
+  cmCompletedEllipticLContinuation_agrees_initial_of_coefficientAgreement
+    (etaElliptic_allCoefficientAgreement_of_jacobiLocalData
+      hOdd hEven hLocal) hs
 
 theorem cmCompletedEllipticLContinuation_functional_equation (s : ℂ) :
     cmCompletedEllipticLContinuation (2 - s) =

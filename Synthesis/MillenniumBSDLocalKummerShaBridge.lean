@@ -547,4 +547,31 @@ theorem actualClassicalTwoDescentShaComparison_of_kummerPieces
         cmExplicitSelmerClassToEllipticH1_surjective_on_sha_two_of_lifts
           hLift hFiniteReverse hRealReverse }
 
+
+/-- Machine-readable receipt for the current max-cut classical two-descent
+boundary.  True fields are internal source compilers; false fields are
+the directed arithmetic Kummer theorems still requiring proof. -/
+structure ClassicalTwoDescentKummerMaxCutStatus where
+  genericH1RestrictionNaturalityPaid : Bool
+  specializedGenericH1CoherencePaid : Bool
+  actualGenericE2ClassCoherencePaid : Bool
+  padicRestrictionSquarePaid : Bool
+  finiteLocalizationCompilerPaid : Bool
+  globalKummerImageVanishingPaid : Bool
+  globalKummerKernelToImagePaid : Bool
+  shaTwoGlobalE2LiftPaid : Bool
+  padicRestrictedImageVanishingPaid : Bool
+  padicRestrictedKernelToImagePaid : Bool
+  realImageVanishingPaid : Bool
+  realKernelToImagePaid : Bool
+  finalClassicalShaCompilerPaid : Bool
+  deriving DecidableEq, Repr
+
+def classicalTwoDescentKummerMaxCutStatus :
+    ClassicalTwoDescentKummerMaxCutStatus :=
+  ⟨true, true, true, true, true,
+    false, false, false,
+    false, false, false, false,
+    true⟩
+
 end Synthesis.Millennium.BSD

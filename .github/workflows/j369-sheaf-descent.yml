@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'Integration/JInvariantSheafDescent.lean'
+      - 'Integration/StageTwelveGrothendieckRelation.lean'
       - 'Integration.lean'
       - 'AgdaMirror/JInvariantSheafDescent.lean'
       - 'AgdaMirror.lean'
@@ -11,6 +12,7 @@ on:
   pull_request:
     paths:
       - 'Integration/JInvariantSheafDescent.lean'
+      - 'Integration/StageTwelveGrothendieckRelation.lean'
       - 'Integration.lean'
       - '.github/workflows/j369-sheaf-descent.yml'
   workflow_dispatch:
@@ -23,5 +25,6 @@ jobs:
       - uses: leanprover/lean-action@v1
       - name: Check focused J/369 bridge
         run: |
+          lake env lean Integration/StageTwelveGrothendieckRelation.lean
           lake env lean Integration/JInvariantSheafDescent.lean
           lake env lean AgdaMirror/JInvariantSheafDescent.lean

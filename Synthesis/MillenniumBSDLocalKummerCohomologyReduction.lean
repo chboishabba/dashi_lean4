@@ -1,5 +1,6 @@
 import Synthesis.MillenniumBSDTrivialTwoTorsionH1Generic
 import Synthesis.MillenniumBSDSquareClassGroups
+import Synthesis.MillenniumBSDRationalQuadraticKummerHom
 import Mathlib.Tactic
 
 /-!
@@ -29,7 +30,38 @@ abbrev PadicQuadraticCharacter (p : ℕ) [Fact p.Prime] :=
 def PadicQuadraticKummerProducer (p : ℕ) [Fact p.Prime] : Prop :=
   Nonempty
     (PadicSquareClass p ≃*
-      PadicQuadraticCharacter p)
+      PadicQuadraticCharacter p)/-- Restrict a global quadratic character along
+G_{Q_p} -> G_Q induced by Q -> Q_p. -/
+noncomputable def restrictQuadraticCharacterToPadic
+    (p : ℕ) [Fact p.Prime]
+    (χ : RationalQuadraticCharacter) :
+    PadicQuadraticCharacter p :=
+  χ.comp
+    (Field.absoluteGaloisGroup.map
+      (algebraMap ℚ ℚ_[p]))
+
+/-- The real local owner is not an arbitrary scalar bijection but the
+naturality square: local square-class Kummer must agree with restriction of
+the already-paid global Kummer character. -/
+structure PadicQuadraticKummerCompatibility
+    (p : ℕ) [Fact p.Prime] where
+  kummerEquiv :
+    PadicSquareClass p ≃*
+      PadicQuadraticCharacter p
+  localize_commutes :
+    ∀ c : RatSquareClass,
+      kummerEquiv (localizeSquareClassHom p c) =
+        restrictQuadraticCharacterToPadic p
+          (ratSquareClassKummerHom c)
+
+/-- Compatibility data implies the weaker local scalar Kummer producer. -/
+theorem padicQuadraticKummerProducer_of_compatibility
+    (p : ℕ) [Fact p.Prime]
+    (h : PadicQuadraticKummerCompatibility p) :
+    PadicQuadraticKummerProducer p :=
+  ⟨h.kummerEquiv⟩
+
+
 
 /-- A paid scalar local Kummer equivalence automatically gives the pair-valued
 square-class/character equivalence used by full rational two-descent. -/
@@ -55,6 +87,31 @@ noncomputable def padicTwoTorsionH1MulEquivSquareClassPair
   (absoluteGaloisTrivialTwoTorsionH1QuadraticPairMulEquiv ℚ_[p]).trans
     (padicSquareClassPairMulEquivQuadraticCharacters p h).symm
 
+/-- Componentwise local Kummer equivalence supplied by compatible scalar
+Kummer data. -/
+noncomputable def padicCompatibleSquareClassPairMulEquivCharacters
+    (p : ℕ) [Fact p.Prime]
+    (h : PadicQuadraticKummerCompatibility p) :
+    (PadicSquareClass p × PadicSquareClass p) ≃*
+      (PadicQuadraticCharacter p × PadicQuadraticCharacter p) :=
+  h.kummerEquiv.prodCongr h.kummerEquiv
+
+/-- The scalar naturality square compiles to the pair-valued localization
+square used by explicit two-descent. -/
+theorem padicKummerPair_localize_commutes
+    (p : ℕ) [Fact p.Prime]
+    (h : PadicQuadraticKummerCompatibility p)
+    (c : RatSquareClass × RatSquareClass) :
+    padicCompatibleSquareClassPairMulEquivCharacters p h
+        (localizeKummerPairHom p c) =
+      (restrictQuadraticCharacterToPadic p
+          (ratSquareClassKummerHom c.1),
+       restrictQuadraticCharacterToPadic p
+          (ratSquareClassKummerHom c.2)) := by
+  apply Prod.ext
+  · exact h.localize_commutes c.1
+  · exact h.localize_commutes c.2
+
 /-- Machine-readable local frontier: the continuous H¹ normalization and
 pair decomposition are paid uniformly; scalar local Kummer and compatibility
 with the explicit elliptic Kummer coordinates remain. -/
@@ -64,11 +121,13 @@ structure PadicKummerCohomologyBoundaryStatus where
   explicitPadicSquareClassCarrierPaid : Bool
   explicitEllipticLocalKummerHomPaid : Bool
   scalarPadicKummerPaid : Bool
+  scalarGlobalLocalNaturalityPaid : Bool
+  pairGlobalLocalNaturalityCompilerPaid : Bool
   explicitToCohomologicalCompatibilityPaid : Bool
   deriving DecidableEq, Repr
 
 def padicKummerCohomologyBoundaryStatus :
     PadicKummerCohomologyBoundaryStatus :=
-  ⟨true, true, true, true, false, false⟩
+  ⟨true, true, true, true, false, false, true, false⟩
 
 end Synthesis.Millennium.BSD

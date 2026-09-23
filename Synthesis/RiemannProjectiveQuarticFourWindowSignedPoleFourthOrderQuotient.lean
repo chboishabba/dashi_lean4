@@ -3123,10 +3123,17 @@ theorem genericProjectivePhysicalProfile_secondDeriv_zero
   have hconst :=
     secondDeriv_const_mul_at_zero
       (hg.mul hB) 4
-  unfold genericProjectivePhysicalProfile
-  dsimp [B] at hprod hconst ⊢
-  rw [hconst, hprod,
-      projectiveTwoRadiusBracket_value_zero,
+  have hprofile :
+      genericProjectivePhysicalProfile g r
+        =
+      fun u => 4 * (g u * B u) := by
+    funext u
+    unfold genericProjectivePhysicalProfile
+    dsimp [B]
+    ring
+  rw [hprofile, hconst, hprod]
+  dsimp [B]
+  rw [projectiveTwoRadiusBracket_value_zero,
       projectiveTwoRadiusBracket_deriv_zero,
       projectiveTwoRadiusBracket_secondDeriv_zero]
   ring

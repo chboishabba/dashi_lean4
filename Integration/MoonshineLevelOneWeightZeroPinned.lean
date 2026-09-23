@@ -131,46 +131,6 @@ theorem levelOne_weight_zero_const
     ∃ c : ℂ, (f : ℍ → ℂ) = Function.const ℍ c :=
   ⟨_, levelOne_nonpos_wt_const le_rfl f⟩
 
-/-- Every negative-weight level-one modular form vanishes. -/
-theorem levelOne_neg_weight_eq_zero
-    [ModularFormClass F 𝒮ℒ k]
-    (hk : k < 0)
-    (f : F) :
-    (f : ℍ → ℂ) = 0 := by
-  have hf := levelOne_nonpos_wt_const hk.le f
-  have hS :
-      f (ModularGroup.S • UpperHalfPlane.I) =
-        (ModularGroup.denom ModularGroup.S UpperHalfPlane.I) ^ k *
-          f UpperHalfPlane.I :=
-    SlashInvariantForm.slash_action_eqn''
-      f
-      (show ((ModularGroup.S : SL(2, ℤ)) : GL (Fin 2) ℝ) ∈ 𝒮ℒ from
-        ⟨ModularGroup.S, rfl⟩)
-      UpperHalfPlane.I
-  by_cases hc :
-      SlashInvariantFormClass.cuspFunction 1 f 0 = 0
-  · simpa [hf, hc]
-  · exfalso
-    have hfix : ModularGroup.S • UpperHalfPlane.I = UpperHalfPlane.I := by
-      ext
-      simp [UpperHalfPlane.modular_S_smul]
-    rw [hfix, hf] at hS
-    simp only [Function.const_apply] at hS
-    have hden :
-        ModularGroup.denom ModularGroup.S UpperHalfPlane.I =
-          (Complex.I : ℂ) := by
-      simp [ModularGroup.denom_S]
-    rw [hden] at hS
-    have hne :
-        (Complex.I : ℂ) ^ k ≠ 1 := by
-      intro hi
-      have habs := congrArg Complex.abs hi
-      simp at habs
-    exact hc (by
-      have := hS
-      field_simp at this
-      aesop)
-
 structure WeightZeroPinnedBoundary where
   fundamentalDomainNormReductionOwned : Bool
   cuspMaximumModulusReductionOwned : Bool

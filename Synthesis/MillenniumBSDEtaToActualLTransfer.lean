@@ -32,10 +32,19 @@ open Complex Set Filter
 noncomputable def cmCompletedEllipticLInitial (s : ℂ) : ℂ :=
   Gamma s * (cmEta32DecayRate : ℂ) ^ (-s) * cmLSeries s
 
-/-- Sturm equality, together with the already-proved n=0 vanishing, gives all coefficients. -/
+/-- The only same-object datum consumed by the Mellin transfer: equality of every
+canonical eta Taylor coefficient with the literal elliptic coefficient.  This is
+deliberately producer-agnostic, so Sturm and Jacobi proofs can feed the same
+analytic continuation compiler. -/
+def EtaEllipticAllCoefficientAgreement : Prop :=
+  ∀ n : ℕ, cmEta32TaylorCoeff n = cmEllipticCoefficientComplex n
+
+/-- Sturm equality, together with the already-proved n=0 vanishing, gives the
+producer-agnostic all-coefficient datum. -/
 theorem etaElliptic_allCoefficientAgreement_of_level32Sturm
-    (sturm : Level32Weight2SturmPrinciple) (n : ℕ) :
-    cmEta32TaylorCoeff n = cmEllipticCoefficientComplex n := by
+    (sturm : Level32Weight2SturmPrinciple) :
+    EtaEllipticAllCoefficientAgreement := by
+  intro n
   rcases n with _ | n
   · have heta : cmEta32TaylorCoeff 0 = 0 :=
       cmEta32TaylorCoeff_eq_zero_of_mod_four_ne_one (by norm_num)
@@ -44,9 +53,10 @@ theorem etaElliptic_allCoefficientAgreement_of_level32Sturm
     simp [cmEllipticCoefficientComplex, heta, hell]
   · exact etaElliptic_positiveAgreement_of_level32Sturm sturm (n + 1) (by omega)
 
-/-- The normalized eta kernel has the actual elliptic coefficients as its exponential series. -/
-theorem cmEta32Kernel_hasSum_ellipticCoefficients_of_level32Sturm
-    (sturm : Level32Weight2SturmPrinciple)
+/-- The normalized eta kernel has the actual elliptic coefficients as its
+exponential series from any all-coefficient producer. -/
+theorem cmEta32Kernel_hasSum_ellipticCoefficients_of_coefficientAgreement
+    (hcoeff : EtaEllipticAllCoefficientAgreement)
     {t : ℝ} (ht : 0 < t) :
     HasSum
       (fun n : ℕ =>
@@ -66,13 +76,26 @@ theorem cmEta32Kernel_hasSum_ellipticCoefficients_of_level32Sturm
   refine hformal.congr_fun ?_
   intro n
   rw [cmEta32_formal_coeff_eq_TaylorCoeff]
-  rw [etaElliptic_allCoefficientAgreement_of_level32Sturm sturm n]
+  rw [hcoeff n]
   congr 1
   change q ^ n = (Real.exp (-(cmEta32DecayRate * (n : ℝ)) * t) : ℂ)
   simp only [q, ← Complex.ofReal_pow, ← Real.exp_nat_mul]
   congr 2
   push_cast
   ring
+
+/-- Sturm remains available as a compatibility wrapper, but is no longer
+load-bearing in the analytic transfer. -/
+theorem cmEta32Kernel_hasSum_ellipticCoefficients_of_level32Sturm
+    (sturm : Level32Weight2SturmPrinciple)
+    {t : ℝ} (ht : 0 < t) :
+    HasSum
+      (fun n : ℕ =>
+        cmEllipticCoefficientComplex n *
+          Real.exp (-(cmEta32DecayRate * (n : ℝ)) * t))
+      (cmEta32Kernel t) :=
+  cmEta32Kernel_hasSum_ellipticCoefficients_of_coefficientAgreement
+    (etaElliptic_allCoefficientAgreement_of_level32Sturm sturm) ht
 
 /-- Hasse growth makes the scaled Mellin coefficient series absolutely summable. -/
 theorem cmElliptic_scaledMellin_norm_summable
@@ -114,8 +137,8 @@ theorem cmElliptic_scaledMellin_norm_summable
             ring
 
 /-- The Mellin transform of the eta kernel equals the completed actual elliptic L-expression. -/
-theorem cmEta32_mellin_eq_completedEllipticLInitial_of_level32Sturm
-    (sturm : Level32Weight2SturmPrinciple)
+theorem cmEta32_mellin_eq_completedEllipticLInitial_of_coefficientAgreement
+    (hcoeff : EtaEllipticAllCoefficientAgreement)
     {s : ℂ} (hs : (5 : ℝ) / 2 < s.re) :
     mellin cmEta32Kernel s = cmCompletedEllipticLInitial s := by
   have hs0 : 0 < s.re := by linarith
@@ -136,7 +159,7 @@ theorem cmEta32_mellin_eq_completedEllipticLInitial_of_level32Sturm
     (s := s)
     hp hs0
     (fun t ht =>
-      cmEta32Kernel_hasSum_ellipticCoefficients_of_level32Sturm sturm ht)
+      cmEta32Kernel_hasSum_ellipticCoefficients_of_coefficientAgreement hcoeff ht)
     (cmElliptic_scaledMellin_norm_summable hs)
   have hLsum : HasSum
       (fun n : ℕ => LSeries.term ((↑) ∘ cmAllNCoefficient) s n)
@@ -170,13 +193,30 @@ theorem cmEta32_mellin_eq_completedEllipticLInitial_of_level32Sturm
   have hvalue := hm.unique hscaled
   simpa [cmCompletedEllipticLInitial] using hvalue
 
-/-- On the initial half-plane, the already-entire eta completion is the actual completed L. -/
-theorem cmEta32CompletedMellin_eq_completedEllipticLInitial_of_level32Sturm
+/-- Compatibility wrapper for the historical Sturm producer. -/
+theorem cmEta32_mellin_eq_completedEllipticLInitial_of_level32Sturm
     (sturm : Level32Weight2SturmPrinciple)
+    {s : ℂ} (hs : (5 : ℝ) / 2 < s.re) :
+    mellin cmEta32Kernel s = cmCompletedEllipticLInitial s :=
+  cmEta32_mellin_eq_completedEllipticLInitial_of_coefficientAgreement
+    (etaElliptic_allCoefficientAgreement_of_level32Sturm sturm) hs
+
+/-- On the initial half-plane, the already-entire eta completion is the actual
+completed L from any coefficient-equality producer. -/
+theorem cmEta32CompletedMellin_eq_completedEllipticLInitial_of_coefficientAgreement
+    (hcoeff : EtaEllipticAllCoefficientAgreement)
     {s : ℂ} (hs : (5 : ℝ) / 2 < s.re) :
     cmEta32CompletedMellin s = cmCompletedEllipticLInitial s := by
   rw [cmEta32CompletedMellin_eq_mellin]
-  exact cmEta32_mellin_eq_completedEllipticLInitial_of_level32Sturm sturm hs
+  exact cmEta32_mellin_eq_completedEllipticLInitial_of_coefficientAgreement hcoeff hs
+
+/-- Compatibility wrapper for the historical Sturm producer. -/
+theorem cmEta32CompletedMellin_eq_completedEllipticLInitial_of_level32Sturm
+    (sturm : Level32Weight2SturmPrinciple)
+    {s : ℂ} (hs : (5 : ℝ) / 2 < s.re) :
+    cmEta32CompletedMellin s = cmCompletedEllipticLInitial s :=
+  cmEta32CompletedMellin_eq_completedEllipticLInitial_of_coefficientAgreement
+    (etaElliptic_allCoefficientAgreement_of_level32Sturm sturm) hs
 
 /--
 Prize-facing analytic continuation object for the actual completed elliptic L-function.
@@ -190,11 +230,18 @@ theorem cmCompletedEllipticLContinuation_entire :
     Differentiable ℂ cmCompletedEllipticLContinuation := by
   exact cmEta32CompletedMellin_entire
 
+theorem cmCompletedEllipticLContinuation_agrees_initial_of_coefficientAgreement
+    (hcoeff : EtaEllipticAllCoefficientAgreement)
+    {s : ℂ} (hs : (5 : ℝ) / 2 < s.re) :
+    cmCompletedEllipticLContinuation s = cmCompletedEllipticLInitial s :=
+  cmEta32CompletedMellin_eq_completedEllipticLInitial_of_coefficientAgreement hcoeff hs
+
 theorem cmCompletedEllipticLContinuation_agrees_initial_of_level32Sturm
     (sturm : Level32Weight2SturmPrinciple)
     {s : ℂ} (hs : (5 : ℝ) / 2 < s.re) :
     cmCompletedEllipticLContinuation s = cmCompletedEllipticLInitial s :=
-  cmEta32CompletedMellin_eq_completedEllipticLInitial_of_level32Sturm sturm hs
+  cmCompletedEllipticLContinuation_agrees_initial_of_coefficientAgreement
+    (etaElliptic_allCoefficientAgreement_of_level32Sturm sturm) hs
 
 theorem cmCompletedEllipticLContinuation_functional_equation (s : ℂ) :
     cmCompletedEllipticLContinuation (2 - s) =

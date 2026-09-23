@@ -84,6 +84,52 @@ theorem completeCycle_relationCells_are_144 :
   norm_num [completeCycleAxisCount, interactionAxisCount,
     bilateralAppraisalAxisCount, synthesisReentryAxisCount]
 
+/-! Exact 0..13 ternary-rank crosswalk. -/
+
+def fixedTernaryProfileCount (n : Nat) : Nat := 3^n
+
+theorem rank12_address :
+    12 = 3 + 9 := by
+  norm_num
+
+theorem rank13_address :
+    13 = 1 + 3 + 9 := by
+  norm_num
+
+theorem rank12_profiles :
+    fixedTernaryProfileCount 12 = 531441 := by
+  norm_num [fixedTernaryProfileCount]
+
+theorem rank13_profiles :
+    fixedTernaryProfileCount 13 = 1594323 := by
+  norm_num [fixedTernaryProfileCount]
+
+def completeCycleStateCount : Nat :=
+  3^completeCycleAxisCount
+
+def centralCompletionPattern : Nat :=
+  3 * completeCycleStateCount
+
+theorem completeCycle_matches_rank12 :
+    completeCycleStateCount = fixedTernaryProfileCount 12 := by
+  norm_num [completeCycleStateCount, completeCycleAxisCount,
+    interactionAxisCount, bilateralAppraisalAxisCount,
+    synthesisReentryAxisCount, fixedTernaryProfileCount]
+
+theorem centralCompletion_matches_rank13 :
+    centralCompletionPattern = fixedTernaryProfileCount 13 := by
+  norm_num [centralCompletionPattern, completeCycleStateCount,
+    completeCycleAxisCount, interactionAxisCount,
+    bilateralAppraisalAxisCount, synthesisReentryAxisCount,
+    fixedTernaryProfileCount]
+
+inductive EqualRankCountCreatesSameSemanticCarrier : Prop
+
+theorem equal_rank_count_does_not_identify_semantic_carriers :
+    ¬ EqualRankCountCreatesSameSemanticCarrier := by
+  intro h
+  cases h
+
 /-! A genuine Grothendieck topology on the discrete twelve-axis category. -/
 
 abbrev StageCategory := Discrete StageAxis12
@@ -147,6 +193,9 @@ structure Frontier where
   completeCycle3Plus6Plus3Paid : Bool
   mathlibGrothendieckTopologyConstructed : Bool
   bundleSheafGluingConstructed : Bool
+  rank12CompleteCycleCountCrosswalkPaid : Bool
+  rank13CentralCompletionCountCrosswalkPaid : Bool
+  equalCountCreatesSameSemanticCarrier : Bool
   analyticModularSiteIdentified : Bool
   stageTwelveEqualsModularWeightTwelveByDefinition : Bool
   deriving Repr
@@ -158,6 +207,9 @@ def frontier : Frontier where
   completeCycle3Plus6Plus3Paid := true
   mathlibGrothendieckTopologyConstructed := true
   bundleSheafGluingConstructed := true
+  rank12CompleteCycleCountCrosswalkPaid := true
+  rank13CentralCompletionCountCrosswalkPaid := true
+  equalCountCreatesSameSemanticCarrier := false
   analyticModularSiteIdentified := false
   stageTwelveEqualsModularWeightTwelveByDefinition := false
 

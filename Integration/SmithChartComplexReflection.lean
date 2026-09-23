@@ -56,7 +56,9 @@ theorem gamma_admittance
   · have hzp : z + 1 ≠ 0 := by
       intro hz1
       apply h
-      linarith
+      calc
+        z = (z + 1) - 1 := by ring
+        _ = -1 := by rw [hz1]; ring
     field_simp [hz, hzp]
     ring
 

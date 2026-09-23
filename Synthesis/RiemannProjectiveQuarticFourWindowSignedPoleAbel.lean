@@ -2,6 +2,7 @@ import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleNMu
 import Synthesis.RiemannZetaMuExactAbel
 import Synthesis.RiemannCompactCosineFourthDerivative
 import Synthesis.RiemannProjectiveQuarticDerivativeSign
+import Synthesis.RiemannZetaMuNegativeHeightReflection
 
 /-!
 # Exact Abel and centered jet for the signed four-window quartic test
@@ -1322,6 +1323,82 @@ theorem exists_quarticFourSignedPole_rightBoundary_gap_sq_bound :
   have hfactor :
       0 <= W.signedOrdinateCurvature / (B-t)^2 := by
     have hcurv := W.signedOrdinateCurvature_nonneg
+    positivity
+  rw [abs_mul]
+  exact mul_le_mul hphi hdisc (abs_nonneg _) hfactor
+
+
+/-!
+## Far-left centred boundary envelope
+-/
+
+/--
+The t-anchored cumulative discrepancy on a far-negative left endpoint is the
+reflected growing segment plus the fixed central segment [-t,t].
+-/
+theorem zetaMuCumulativeDiscrepancy_farLeft_split
+    {A t : ℝ}
+    (ht : 0 <= t)
+    (hA : A <= -t) :
+    zetaMuCumulativeDiscrepancy A t
+      =
+    zetaMuWindowDiscrepancy A (-t)
+      + zetaMuWindowDiscrepancy (-t) t := by
+  have hadd :=
+    zetaMuCumulativeDiscrepancy_add hA (by linarith : -t <= t)
+  rw [zetaMuCumulativeDiscrepancy_endpoint,
+      zetaMuCumulativeDiscrepancy_endpoint,
+      zetaMuCumulativeDiscrepancy_endpoint] at hadd
+  exact hadd
+
+/--
+Explicit logarithmic-over-quadratic envelope for the actual left centred Abel
+boundary.
+
+The central discrepancy D(-t,t) is fixed once t is fixed; all A-growth has
+been reflected to the positive RvM window.
+-/
+theorem exists_quarticFourSignedPole_leftBoundary_gap_sq_log_bound :
+    ∃ C T0 A0 : ℝ, 0 <= C ∧ 1 <= A0 ∧
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        max T0 4 <= t ->
+        ∀ A : ℝ,
+          A < -t ->
+          |W.signedOrdinateTest A
+            * zetaMuCumulativeDiscrepancy A t|
+          <=
+          (W.signedOrdinateCurvature / (A-t)^2)
+            *
+          (C * (Real.log (t+3) + Real.log (-A+4))
+            + A0 * Real.log (|t-1|+3)
+            + A0 * Real.log (|A-1|+3)
+            + |zetaMuWindowDiscrepancy (-t) t|) := by
+  obtain ⟨C,T0,A0,hC,hA01,hneg⟩ :=
+    exists_zetaMuWindowDiscrepancy_negativeSegment_bound
+  refine ⟨C,T0,A0,hC,hA01,?_⟩
+  intro t W ht A hAt
+  have ht4 : 4 <= t := (le_max_right T0 4).trans ht
+  have htpos : 0 < t := by linarith
+  have hAle : A <= -t := hAt.le
+  have hAt' : A ≠ t := by linarith
+  have hphi :=
+    W.signedOrdinateTest_abs_le_gap_sq htpos hAt'
+  have hseg := hneg t A ht hAt
+  have hsplit :=
+    zetaMuCumulativeDiscrepancy_farLeft_split htpos.le hAle
+  have hdisc :
+      |zetaMuCumulativeDiscrepancy A t|
+        <=
+      C * (Real.log (t+3) + Real.log (-A+4))
+        + A0 * Real.log (|t-1|+3)
+        + A0 * Real.log (|A-1|+3)
+        + |zetaMuWindowDiscrepancy (-t) t| := by
+    rw [hsplit]
+    exact (abs_add _ _).trans (add_le_add hseg le_rfl)
+  have hfactor :
+      0 <= W.signedOrdinateCurvature / (A-t)^2 := by
+    have hc := W.signedOrdinateCurvature_nonneg
     positivity
   rw [abs_mul]
   exact mul_le_mul hphi hdisc (abs_nonneg _) hfactor

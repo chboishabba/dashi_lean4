@@ -178,45 +178,42 @@ noncomputable def Sha
 
 end BSDUniversalShaCarrier
 
-/-- Refined BSD finiteness conjecture, kept separate from construction of the
-classical cohomological Sha carrier. -/
-def UniversalBSDShaFiniteness
-    (S : BSDUniversalShaCarrier) : Prop :=
-  ∀ E : RationalEllipticCurve, Finite (S.Sha E)
+/-- Refined BSD finiteness conjecture for the canonical classical
+cohomological Sha carrier constructed above. -/
+def UniversalBSDCanonicalShaFiniteness : Prop :=
+  ∀ E : RationalEllipticCurve, Finite (rationalEllipticCurveSha E)
 
-/-- Once finiteness has been supplied as a separate conjectural theorem,
-Sha cardinality is canonical. -/
-noncomputable def BSDUniversalShaCarrier.order
-    (S : BSDUniversalShaCarrier)
-    (hFinite : UniversalBSDShaFiniteness S)
+/-- Once canonical Sha finiteness is supplied as a separate conjectural
+theorem, its cardinality is canonical. -/
+noncomputable def rationalEllipticCurveShaOrder
+    (hFinite : UniversalBSDCanonicalShaFiniteness)
     (E : RationalEllipticCurve) : ℕ := by
-  letI : Finite (S.Sha E) := hFinite E
-  exact Nat.card (S.Sha E)
+  letI : Finite (rationalEllipticCurveSha E) := hFinite E
+  exact Nat.card (rationalEllipticCurveSha E)
 
-/-- Same-object refined carriers only.  Sha finiteness is deliberately not
-stored here. -/
+/-- Same-object refined carriers only.  The Sha carrier is no longer a field:
+it is globally fixed to the canonical cohomological carrier above. -/
 structure BSDBoundRefinedData where
   rank : BSDBoundRankObservers
   arithmetic : BSDRefinedArithmeticBinding
-  sha : BSDUniversalShaCarrier
 
-/-- Right-hand side of the refined BSD formula once Sha finiteness is supplied
-as a separate theorem. -/
+/-- Right-hand side of the refined BSD formula on the canonical Sha carrier,
+once its finiteness conjecture is supplied separately. -/
 noncomputable def BSDRefinedArithmeticSide
     (b : BSDBoundRefinedData)
-    (hShaFinite : UniversalBSDShaFiniteness b.sha)
+    (hShaFinite : UniversalBSDCanonicalShaFiniteness)
     (E : RationalEllipticCurve) : ℂ :=
   ((b.arithmetic.period E : ℂ) *
       (b.arithmetic.regulator E : ℂ) *
-      (b.sha.order hShaFinite E : ℂ) *
+      (rationalEllipticCurveShaOrder hShaFinite E : ℂ) *
       (b.arithmetic.tamagawaProduct E : ℂ)) /
     (rationalEllipticCurveTorsionOrder E : ℂ) ^ 2
 
 /-- Literal leading-coefficient identity for one arbitrary rational elliptic
-curve, parameterized by the separate Sha-finiteness theorem. -/
+curve on the canonical Sha carrier. -/
 def BSDLeadingCoefficientIdentityAt
     (b : BSDBoundRefinedData)
-    (hShaFinite : UniversalBSDShaFiniteness b.sha)
+    (hShaFinite : UniversalBSDCanonicalShaFiniteness)
     (E : RationalEllipticCurve) : Prop :=
   (b.rank.analytic.continuation E).normalizedLeadingCoefficient =
     BSDRefinedArithmeticSide b hShaFinite E
@@ -224,15 +221,16 @@ def BSDLeadingCoefficientIdentityAt
 /-- Universal normalized leading-coefficient identity. -/
 def UniversalBSDLeadingCoefficientIdentity
     (b : BSDBoundRefinedData)
-    (hShaFinite : UniversalBSDShaFiniteness b.sha) : Prop :=
+    (hShaFinite : UniversalBSDCanonicalShaFiniteness) : Prop :=
   ∀ E : RationalEllipticCurve,
     BSDLeadingCoefficientIdentityAt b hShaFinite E
 
-/-- Refined BSD has two distinct universal conjectural layers after object
-binding: Sha finiteness and the normalized leading-coefficient identity. -/
+/-- Refined BSD has three universal mathematical obligations on one fixed
+same-object carrier: rank equality, canonical Sha finiteness, and the
+normalized leading-coefficient identity. -/
 structure UniversalBSDRefinedProof where
   bound : BSDBoundRefinedData
-  shaFinite : UniversalBSDShaFiniteness bound.sha
+  shaFinite : UniversalBSDCanonicalShaFiniteness
   rankWeld : UniversalBSDBoundRankWeld bound.rank
   leadingCoefficient :
     UniversalBSDLeadingCoefficientIdentity bound shaFinite
@@ -240,51 +238,47 @@ structure UniversalBSDRefinedProof where
 def UniversalBSDRefinedTheorem : Prop :=
   Nonempty UniversalBSDRefinedProof
 
-
 /-- Known-math/object-binding surface for the refined arithmetic symbols.
-This does not include Sha finiteness or the leading-coefficient conjecture. -/
+This does not include Sha finiteness or either BSD equality. -/
 def UniversalBSDRefinedCarrierProducer : Prop :=
   Nonempty BSDBoundRefinedData
-
 
 /-- Known-math same-object producer for the period/regulator/Tamagawa layer. -/
 def UniversalBSDRefinedArithmeticBindingProducer : Prop :=
   Nonempty BSDRefinedArithmeticBinding
 
-/-- The complete refined carrier is compiled from four independent
-same-object/known-theorem bindings.  No refined BSD conjecture is used. -/
+/-- The complete refined carrier is compiled from the rank bindings and the
+period/regulator/Tamagawa same-object binding.  The elliptic-point/Sha carrier
+is canonical globally and no longer supplied here. -/
 theorem universalBSDRefinedCarrierProducer_of_components
     (hA : UniversalBSDAnalyticBindingProducer)
     (hMW : UniversalBSDMordellWeilBindingProducer)
-    (hArithmetic : UniversalBSDRefinedArithmeticBindingProducer)
-    (hPoints : UniversalBSDEllipticPointRepresentationProducer) :
+    (hArithmetic : UniversalBSDRefinedArithmeticBindingProducer) :
     UniversalBSDRefinedCarrierProducer := by
   rcases hA with ⟨a⟩
   rcases hMW with ⟨m⟩
   rcases hArithmetic with ⟨arith⟩
-  rcases hPoints with ⟨points⟩
   exact ⟨
     { rank := { analytic := a, algebraic := m }
-      arithmetic := arith
-      sha := BSDUniversalShaCarrier.ofEllipticPoints points }⟩
+      arithmetic := arith }⟩
 
-/-- Explicit Sha-finiteness producer on a chosen classical Sha carrier. -/
-def UniversalBSDShaFinitenessProducer
-    (b : BSDBoundRefinedData) : Prop :=
-  UniversalBSDShaFiniteness b.sha
+/-- Explicit Sha-finiteness producer on the fixed canonical classical Sha
+carrier. -/
+def UniversalBSDShaFinitenessProducer : Prop :=
+  UniversalBSDCanonicalShaFiniteness
 
-/-- Explicit universal leading-coefficient producer after Sha finiteness is
-available on the same carrier. -/
+/-- Explicit universal leading-coefficient producer after canonical Sha
+finiteness is available. -/
 def UniversalBSDLeadingCoefficientProducer
     (b : BSDBoundRefinedData)
-    (hSha : UniversalBSDShaFinitenessProducer b) : Prop :=
+    (hSha : UniversalBSDShaFinitenessProducer) : Prop :=
   UniversalBSDLeadingCoefficientIdentity b hSha
 
-/-- Fully separated compiler for refined BSD on one chosen
-same-object carrier.  No statement is required for arbitrary junk bindings. -/
+/-- Fully separated compiler for refined BSD on one chosen same-object
+rank/arithmetic carrier and the fixed canonical Sha carrier. -/
 theorem universalBSDRefinedTheorem_of_bound
     (b : BSDBoundRefinedData)
-    (hSha : UniversalBSDShaFinitenessProducer b)
+    (hSha : UniversalBSDShaFinitenessProducer)
     (hRank : UniversalBSDBoundRankWeld b.rank)
     (hLeading : UniversalBSDLeadingCoefficientProducer b hSha) :
     UniversalBSDRefinedTheorem :=
@@ -294,16 +288,15 @@ theorem universalBSDRefinedTheorem_of_bound
       rankWeld := hRank
       leadingCoefficient := hLeading }⟩
 
-/-- Existence-shaped producer form: known same-object carrier construction
-plus the three conjectural statements on that same carrier. -/
+/-- Existence-shaped producer form. -/
 theorem universalBSDRefinedTheorem_of_producers
     (h :
-      ∃ (b : BSDBoundRefinedData)
-        (hSha : UniversalBSDShaFinitenessProducer b),
+      ∃ (b : BSDBoundRefinedData),
         UniversalBSDBoundRankWeld b.rank ∧
-          UniversalBSDLeadingCoefficientProducer b hSha) :
+          ∃ hSha : UniversalBSDShaFinitenessProducer,
+            UniversalBSDLeadingCoefficientProducer b hSha) :
     UniversalBSDRefinedTheorem := by
-  rcases h with ⟨b, hSha, hRank, hLeading⟩
+  rcases h with ⟨b, hRank, hSha, hLeading⟩
   exact universalBSDRefinedTheorem_of_bound
     b hSha hRank hLeading
 
@@ -316,19 +309,18 @@ theorem universalBSDRankTheorem_of_refined
     { bound := p.bound.rank
       rankWeld := p.rankWeld }⟩
 
-/-- The two conjectural refined obligations are separately readable from a
+/-- The two refined conjectural obligations are separately readable from a
 refined proof package. -/
 theorem universalBSDShaFiniteness_of_refined
     (h : UniversalBSDRefinedTheorem) :
-    ∃ b : BSDBoundRefinedData,
-      UniversalBSDShaFiniteness b.sha := by
+    UniversalBSDCanonicalShaFiniteness := by
   rcases h with ⟨p⟩
-  exact ⟨p.bound, p.shaFinite⟩
+  exact p.shaFinite
 
 theorem universalBSDLeadingCoefficient_of_refined
     (h : UniversalBSDRefinedTheorem) :
     ∃ (b : BSDBoundRefinedData)
-      (hSha : UniversalBSDShaFiniteness b.sha),
+      (hSha : UniversalBSDCanonicalShaFiniteness),
       UniversalBSDLeadingCoefficientIdentity b hSha := by
   rcases h with ⟨p⟩
   exact ⟨p.bound, p.shaFinite, p.leadingCoefficient⟩

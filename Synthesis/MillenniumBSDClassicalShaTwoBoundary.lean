@@ -1,4 +1,5 @@
 import Synthesis.MillenniumBSDActualE2TopRepSameObject
+import Synthesis.MillenniumBSDActualEllipticPointTopRep
 import Synthesis.MillenniumBSDSelmerShaCohomologicalBoundary
 import Synthesis.MillenniumBSDExplicitSelmerCokernelExact
 
@@ -67,5 +68,39 @@ explicit local square-class Selmer conditions.
 -/
 def ContinuousKummerTwoDescentProducer : Prop :=
   Nonempty ClassicalTwoDescentShaComparison
+
+/--
+Sharpened prize-facing boundary with the full elliptic-point representation
+already fixed internally.  The only remaining datum is the actual continuous
+Kummer/localization equivalence from the explicit Selmer cokernel to
+classical Sha(E)[2].
+-/
+def ActualClassicalTwoDescentShaComparison : Prop :=
+  Nonempty
+    (ExplicitTwoSelmerCokernel ≃
+      classicalEllipticShaTwo cmEllipticPointRepresentation)
+
+/-- The fixed-representation comparison compiles back to the older
+structure-shaped producer. -/
+theorem continuousKummerTwoDescentProducer_of_actualComparison
+    (h : ActualClassicalTwoDescentShaComparison) :
+    ContinuousKummerTwoDescentProducer := by
+  rcases h with ⟨e⟩
+  exact ⟨
+    { ellipticPointRepresentation := cmEllipticPointRepresentation
+      explicitCokernelEquivClassicalShaTwo := e }⟩
+
+/-- Machine-readable sharpening of the classical Sha boundary. -/
+structure ClassicalShaTwoBoundaryStatus where
+  fullEllipticPointCarrierPaid : Bool
+  coordinateGaloisActionPaid : Bool
+  additiveGaloisActionPaid : Bool
+  fullEllipticPointTopRepPaid : Bool
+  continuousKummerLocalizationComparisonPaid : Bool
+  deriving DecidableEq, Repr
+
+def classicalShaTwoBoundaryStatus : ClassicalShaTwoBoundaryStatus :=
+  ⟨true, true, true, true, false⟩
+
 
 end Synthesis.Millennium.BSD

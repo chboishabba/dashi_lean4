@@ -1,4 +1,5 @@
 import Integration.MoonshineEta24SixfoldPhase
+import Integration.MoonshineDeltaIdentityPinned
 import Integration.MoonshineEisensteinWeld
 
 /-!
@@ -7,17 +8,17 @@ import Integration.MoonshineEisensteinWeld
 All standard analysis, Bishop semantics, Eisenstein convergence, modular
 reflection, and phase readout are already compiler-owned on this branch.
 
-The remaining mathematical seam between the two independently constructed
-classical Delta targets is exactly the pointwise proposition
+The former mathematical seam between the two independently constructed
+classical Delta targets was the pointwise proposition
 
   eta(tau)^24 = (E4(tau)^3 - E6(tau)^2) / 1728.
 
-This file makes that proposition the single load-bearing input and compiles all
-remaining consequences from it.  It does not prove the proposition itself.
+Integration.MoonshineDeltaIdentityPinned now proves that identity locally at
+Mathlib v4.28.0 without a dependency bump, using only the eta^24 cusp package,
+the pin-local weight-zero constancy theorem, and first q coefficients.
 
-At Mathlib v4.28.0 the later level-one dimension/discriminant package that proves
-this identity is absent, so keeping this min-cut explicit prevents downstream
-results from being misreported as separate open leaves.
+This file retains the old parameterized compiler surface for compatibility and
+adds canonical hypothesis-free inhabitants/consequences.
 -/
 
 namespace Integration.MoonshineDeltaFinalMinCut
@@ -44,6 +45,11 @@ end Phase
 def Eta24NormalizedDeltaSameObject : Prop :=
   ∀ τ : ℍ,
     Eta.eta24 τ = Target.normalizedDeltaLimit τ
+
+/-- Canonical inhabitant of the former final same-object min-cut. -/
+theorem canonicalEta24NormalizedDeltaSameObject :
+    Eta24NormalizedDeltaSameObject :=
+  Integration.MoonshineDeltaIdentityPinned.eta24_eq_normalizedDelta
 
 /-- Symmetric orientation of the same min-cut. -/
 theorem normalizedDelta_eq_eta24
@@ -87,6 +93,36 @@ theorem normalizedDelta_arg_congruent_neg_six
           (k : ℝ) * Real.pi :=
   Phase.normalizedDelta_arg_congruent_neg_six_of_ne
     τ hunit (normalizedDelta_ne_zero W τ)
+
+/-- Hypothesis-free normalized Delta nonvanishing from the now-proved weld. -/
+theorem normalizedDelta_ne_zero_canonical
+    (τ : ℍ) :
+    Target.normalizedDeltaLimit τ ≠ 0 :=
+  normalizedDelta_ne_zero canonicalEta24NormalizedDeltaSameObject τ
+
+/-- Hypothesis-free sixfold phase theorem for normalized E4/E6 Delta. -/
+theorem normalizedDelta_sixfold_phase_canonical
+    (τ : ℍ)
+    (hunit : Complex.normSq (τ : ℂ) = 1) :
+    ∃ k : ℤ,
+      Complex.arg (Target.normalizedDeltaLimit τ)
+        + 6 * Complex.arg (τ : ℂ)
+      =
+        (k : ℝ) * Real.pi :=
+  normalizedDelta_sixfold_phase
+    canonicalEta24NormalizedDeltaSameObject τ hunit
+
+/-- Hypothesis-free modulo-pi phase presentation. -/
+theorem normalizedDelta_arg_congruent_neg_six_canonical
+    (τ : ℍ)
+    (hunit : Complex.normSq (τ : ℂ) = 1) :
+    ∃ k : ℤ,
+      Complex.arg (Target.normalizedDeltaLimit τ)
+      =
+        -6 * Complex.arg (τ : ℂ) +
+          (k : ℝ) * Real.pi :=
+  normalizedDelta_arg_congruent_neg_six
+    canonicalEta24NormalizedDeltaSameObject τ hunit
 
 /-- The two independently proved inverse-conjugation owners agree pointwise
 after the same-object weld. -/
@@ -159,7 +195,7 @@ def finalDeltaMinCutBoundary : FinalDeltaMinCutBoundary where
   parallelReflectionOwnersCollapseAfterWeld := true
   typedEta24WeldEquivalentToMinCut := true
 
-  eta24NormalizedDeltaSameObjectProvedAtPinnedMathlib := false
+  eta24NormalizedDeltaSameObjectProvedAtPinnedMathlib := true
   dependencyBumpUsed := false
 
 end

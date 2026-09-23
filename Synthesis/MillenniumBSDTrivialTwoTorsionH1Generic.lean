@@ -487,6 +487,16 @@ theorem genericContinuousOneCocycleToCharacter_restrict_natural
   apply Multiplicative.toAdd_injective
   exact hEval σ h
 
+/-- The representative-level restriction square is definitional: in degree
+one, the cochain map precomposes both homogeneous variables by φ and the
+coefficient morphism is the identity. -/
+theorem genericTrivialTwoTorsionOneCocycleRestrictionNaturality_paid
+    (φ : H →ₜ* G) :
+    GenericTrivialTwoTorsionOneCocycleRestrictionNaturality φ := by
+  intro σ h
+  rfl
+
+
 
 
 /-- Restriction of scalar quadratic characters is ordinary precomposition. -/

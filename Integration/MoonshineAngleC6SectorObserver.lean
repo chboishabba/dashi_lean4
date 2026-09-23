@@ -28,7 +28,13 @@ open scoped Real
 noncomputable section
 
 namespace J
-open Integration.MoonshineNormalizedJPhaseReadout
+abbrev jPhase := Integration.MoonshineNormalizedJPhaseReadout.jPhase
+abbrev jValue := Integration.MoonshineNormalizedJPhaseReadout.jValue
+abbrev reflectTau (τ : ℍ) : ℍ :=
+  ModularGroup.S • Integration.MoonshineEisensteinAgdaTarget.negConj τ
+
+theorem jPhase_reflects :=
+  Integration.MoonshineNormalizedJPhaseReadout.jPhase_reflects
 end J
 
 /-- Six oriented phase sectors. -/
@@ -110,13 +116,13 @@ theorem observe6_reflects (x : BoundarySafePhase) :
 
 /-- A normalized-j point with a certified C6 sector. -/
 structure SafeJPhasePoint where
-  tau : UpperHalfPlane
+  tau : ℍ
   sector : C6Sector
   interior : InSector (J.jPhase tau) sector
 
 /-- Canonical analytic reflection point used by the normalized-j lane. -/
-def reflectTau (τ : UpperHalfPlane) : UpperHalfPlane :=
-  ModularGroup.S • J.Target.negConj τ
+def reflectTau (τ : ℍ) : ℍ :=
+  J.reflectTau τ
 
 /-- Continuous normalized-j reflection carries an interior C6 sector to its
 finite reflected sector. -/

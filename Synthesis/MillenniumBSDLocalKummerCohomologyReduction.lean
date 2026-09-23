@@ -274,6 +274,64 @@ theorem padicLocalKummerImage_maps_to_zero
         0 :=
   (hExact.kernel_iff_explicitKummerImage c).1 hc
 
+/-- A global generic E[2] H¹ class whose literal square-class localization
+lies in the explicit local Kummer image maps to zero under the local
+E[2] -> E(Qbar) H¹ arrow.  This is the finite-place Selmer-local-condition
+compiler. -/
+theorem padicRestrictedGenericH1_maps_to_zero_of_localCondition
+    (p : ℕ) [Fact p.Prime]
+    (hCompat : PadicQuadraticKummerCompatibility p)
+    (hNat :
+      GenericTrivialTwoTorsionH1RestrictionNaturality
+        (padicAbsoluteGaloisRestriction p))
+    (hExact : PadicEllipticKummerExactness p hCompat)
+    (x :
+      ContinuousCohomology.continuousCohomology 1
+        (genericTwoTorsionRepresentation RationalAbsoluteGalois))
+    (hLocal :
+      localizeKummerPairHom p
+        (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+          (Multiplicative.ofAdd x))
+        ∈ localKummerImageSubgroup p) :
+    padicGenericE2H1ToEllipticPointH1 p
+      (genericTwoTorsionH1Restrict
+        (G := RationalAbsoluteGalois)
+        (padicAbsoluteGaloisRestriction p) x) = 0 := by
+  have hSq :
+      padicCompatibleTwoTorsionH1MulEquivSquareClassPair p hCompat
+        (Multiplicative.ofAdd
+          (genericTwoTorsionH1Restrict
+            (G := RationalAbsoluteGalois)
+            (padicAbsoluteGaloisRestriction p) x))
+        =
+      localizeKummerPairHom p
+        (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+          (Multiplicative.ofAdd x)) :=
+    padicH1SquareClassNaturality_of_generic p hCompat hNat x
+  let e :=
+    padicCompatibleTwoTorsionH1MulEquivSquareClassPair p hCompat
+  have hMul :
+      Multiplicative.ofAdd
+          (genericTwoTorsionH1Restrict
+            (G := RationalAbsoluteGalois)
+            (padicAbsoluteGaloisRestriction p) x)
+        =
+      e.symm
+        (localizeKummerPairHom p
+          (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+            (Multiplicative.ofAdd x))) := by
+    apply e.injective
+    simpa [e] using hSq
+  have hAdd := congrArg Multiplicative.toAdd hMul
+  have hZero :=
+    padicLocalKummerImage_maps_to_zero p hCompat hExact
+      (localizeKummerPairHom p
+        (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+          (Multiplicative.ofAdd x)))
+      hLocal
+  rw [hAdd]
+  exact hZero
+
 /-- Machine-readable local frontier: the continuous H¹ normalization and
 pair decomposition are paid uniformly; scalar local Kummer and compatibility
 with the explicit elliptic Kummer coordinates remain. -/

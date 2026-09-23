@@ -67,9 +67,7 @@ def centre : C6Sector → Real.Angle
 @[simp] theorem centre_reflect (s : C6Sector) :
     centre (reflect6 s) = - centre s := by
   cases s <;>
-    simp [centre, reflect6, ← Real.Angle.coe_neg, ← Real.Angle.coe_add,
-      ← Real.Angle.coe_sub] <;>
-    ring_nf
+    simp [centre, reflect6, ← Real.Angle.coe_neg]
 
 /-- Strict sector interior: angular distance from the selected centre is < π/6.
 

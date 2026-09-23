@@ -261,6 +261,20 @@ structure AdmissiblePushoutInterface
       (fromRight : Right → Target),
       (∀ s, fromLeft (seamLeft s) = fromRight (seamRight s)) →
       Glued → Target
+  descend_left :
+    ∀ {Target : Type}
+      (fromLeft : Left → Target)
+      (fromRight : Right → Target)
+      (h : ∀ s, fromLeft (seamLeft s) = fromRight (seamRight s))
+      (x : Left),
+      descend fromLeft fromRight h (includeLeft x) = fromLeft x
+  descend_right :
+    ∀ {Target : Type}
+      (fromLeft : Left → Target)
+      (fromRight : Right → Target)
+      (h : ∀ s, fromLeft (seamLeft s) = fromRight (seamRight s))
+      (y : Right),
+      descend fromLeft fromRight h (includeRight y) = fromRight y
 
 inductive WrongTypeMismatch
   | nonFactorableRepresentation

@@ -1846,4 +1846,160 @@ theorem compactCosineTransform_integrable_of_contDiff_four
       simpa [mul_comm, mul_left_comm, mul_assoc] using hshape
     exact hcos.trans hfar
 
+
+/-!
+## Fourier-normalization bridge for the global linear defect
+-/
+
+theorem genericProjectivePhysicalProfile_even_of_even
+    {g : ℝ -> ℝ}
+    (hg : ∀ u : ℝ, g (-u) = g u)
+    (r u : ℝ) :
+    genericProjectivePhysicalProfile g r (-u)
+      =
+    genericProjectivePhysicalProfile g r u := by
+  unfold genericProjectivePhysicalProfile
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+  rw [hg]
+  simp only [mul_neg, Real.cos_neg]
+  ring
+
+theorem quarticFourNormalizedProjectiveProfile_even
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (u : ℝ) :
+    quarticFourNormalizedProjectiveProfile R lam mu (-u)
+      =
+    quarticFourNormalizedProjectiveProfile R lam mu u := by
+  unfold quarticFourNormalizedProjectiveProfile
+  exact genericProjectivePhysicalProfile_even_of_even
+    (quarticFourWindowProfile_even
+      (R:=R) (lam:=lam) (mu:=mu) hR) 1 u
+
+theorem QuarticFourSignedPolePair.combinedProfile_even
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (u : ℝ) :
+    quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t (-u)
+      =
+    quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t u := by
+  unfold quarticFourSignedPoleCombinedProfile profileLinearCombination
+  rw [quarticFourNormalizedProjectiveProfile_even
+        (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos,
+      quarticFourNormalizedProjectiveProfile_even
+        (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos]
+
+theorem integral_mul_sin_eq_zero_of_even_compact
+    {P : ℝ -> ℝ}
+    (hP : Continuous P)
+    (hPc : HasCompactSupport P)
+    (heven : ∀ u : ℝ, P (-u) = P u)
+    (q : ℝ) :
+    (∫ u : ℝ, P u * Real.sin (q*u)) = 0 := by
+  let f : ℝ -> ℝ := fun u => P u * Real.sin (q*u)
+  have hf : Integrable f := by
+    dsimp [f]
+    exact
+      (hP.mul (by fun_prop)).integrable_of_hasCompactSupport
+        hPc.mul_right
+  have hreflect :
+      (∫ u : ℝ, f (-u)) = ∫ u : ℝ, f u := by
+    exact integral_neg_eq_self
+  have hodd : ∀ u : ℝ, f (-u) = - f u := by
+    intro u
+    dsimp [f]
+    rw [heven]
+    simp
+    ring
+  have hneg :
+      (∫ u : ℝ, f (-u)) = - ∫ u : ℝ, f u := by
+    calc
+      (∫ u : ℝ, f (-u))
+        = ∫ u : ℝ, - f u := by
+          apply integral_congr_ae
+          exact ae_of_all _ hodd
+      _ = - ∫ u : ℝ, f u := by
+          rw [integral_neg]
+  have hz : (∫ u : ℝ, f u) = 0 := by
+    linarith
+  simpa [f] using hz
+
+def complexifyRealProfile
+    (P : ℝ -> ℝ) : ℝ -> ℂ :=
+  fun u => (P u : ℂ)
+
+theorem complexifyRealProfile_integrable
+    {P : ℝ -> ℝ}
+    (hP : Continuous P)
+    (hPc : HasCompactSupport P) :
+    Integrable (complexifyRealProfile P) := by
+  unfold complexifyRealProfile
+  exact
+    (Complex.continuous_ofReal.comp hP)
+      .integrable_of_hasCompactSupport hPc
+
+/--
+For an even real compact profile, Mathlib's 2pi-normalized complex Fourier
+transform is exactly the real cosine transform at frequency 2*pi*xi.
+-/
+theorem fourier_complexify_even_eq_compactCosine
+    {P : ℝ -> ℝ}
+    (hP : Continuous P)
+    (hPc : HasCompactSupport P)
+    (heven : ∀ u : ℝ, P (-u) = P u)
+    (xi : ℝ) :
+    𝓕 (complexifyRealProfile P) xi
+      =
+    (compactCosineTransform P (2 * Real.pi * xi) : ℂ) := by
+  have hsin :
+      (∫ u : ℝ,
+        P u * Real.sin ((2 * Real.pi * xi) * u)) = 0 :=
+    integral_mul_sin_eq_zero_of_even_compact
+      hP hPc heven (2 * Real.pi * xi)
+  have hcosInt :
+      Integrable
+        (fun u : ℝ =>
+          P u * Real.cos ((2 * Real.pi * xi) * u)) :=
+    (hP.mul (by fun_prop)).integrable_of_hasCompactSupport hPc.mul_right
+  have hsinInt :
+      Integrable
+        (fun u : ℝ =>
+          P u * Real.sin ((2 * Real.pi * xi) * u)) :=
+    (hP.mul (by fun_prop)).integrable_of_hasCompactSupport hPc.mul_right
+  rw [Real.fourier_eq']
+  apply Complex.ext
+  · rw [← integral_re]
+    · unfold compactCosineTransform
+      simp only [Complex.smul_re, Complex.ofReal_re]
+      congr with u
+      simp [Complex.exp_mul_I, real_inner_comm]
+      ring
+    · exact
+        ((Complex.continuous_exp.comp
+          (by fun_prop)).smul
+          (Complex.continuous_ofReal.comp hP))
+          .integrable_of_hasCompactSupport hPc.smul_left
+  · rw [← integral_im]
+    · simp only [Complex.smul_im, Complex.ofReal_re]
+      have him :
+          (fun u : ℝ =>
+            (Complex.exp
+              ((↑(-2 * Real.pi * ⟪u, xi⟫_ℝ) * Complex.I))
+              • (P u : ℂ)).im)
+          =
+          fun u =>
+            - (P u * Real.sin ((2 * Real.pi * xi) * u)) := by
+        funext u
+        simp [Complex.exp_mul_I, real_inner_comm]
+        ring
+      rw [him, integral_neg, hsin]
+      simp
+    · exact
+        ((Complex.continuous_exp.comp
+          (by fun_prop)).smul
+          (Complex.continuous_ofReal.comp hP))
+          .integrable_of_hasCompactSupport hPc.smul_left
+
 end Synthesis

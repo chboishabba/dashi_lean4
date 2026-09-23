@@ -103,6 +103,17 @@ noncomputable def cmExplicitSelmerClassToEllipticH1
   cmActualE2H1ToEllipticPointH1
     (cmActualE2H1EquivRatSquareClasses_paid.symm s.1)
 
+/-- The canonical explicit-Selmer class lands in a two-torsion class of
+H¹(E(Qbar)) because it comes from H¹(E[2]), which is already proved
+exponent two, and continuous cohomology functoriality is additive. -/
+theorem cmExplicitSelmerClassToEllipticH1_two_torsion_paid
+    (s : explicitTwoSelmerSubgroup) :
+    (2 : ℕ) • cmExplicitSelmerClassToEllipticH1 s = 0 := by
+  unfold cmExplicitSelmerClassToEllipticH1
+  rw [← map_nsmul]
+  rw [cmActualE2ContinuousH1_exponent_two]
+  simp
+
 /--
 The genuinely remaining laws for the canonical global class above.
 

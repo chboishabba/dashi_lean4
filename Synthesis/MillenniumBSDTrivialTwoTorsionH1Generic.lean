@@ -432,6 +432,25 @@ noncomputable def genericTwoTorsionH1Restrict
   ContinuousCohomology.map φ
     (genericTwoTorsionRestrictionHom (G := G) φ) 1
 
+/-- Naturality of the canonical H¹-to-cycles identification under
+restriction.  Since the incoming differential is zero, the identification
+is the inverse of the canonical projection π, so this follows directly from
+mathlib's π_map square. -/
+theorem genericContinuousH1IsoCocyclesOne_hom_naturality
+    (φ : H →ₜ* G) :
+    genericTwoTorsionH1Restrict (G := G) φ ≫
+        (genericContinuousH1IsoCocyclesOne H).hom
+      =
+    (genericContinuousH1IsoCocyclesOne G).hom ≫
+      ContinuousCohomology.cocyclesMap φ
+        (genericTwoTorsionRestrictionHom (G := G) φ) 1 := by
+  rw [← cancel_epi
+    (ContinuousCohomology.π
+      (genericTwoTorsionRepresentation G) 1)]
+  rw [Category.assoc, ContinuousCohomology.π_map]
+  simp [genericContinuousH1IsoCocyclesOne]
+
+
 /-- Restriction of scalar quadratic characters is ordinary precomposition. -/
 noncomputable def genericQuadraticCharacterRestrict
     (φ : H →ₜ* G) :

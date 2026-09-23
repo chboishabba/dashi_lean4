@@ -1094,4 +1094,66 @@ theorem QuarticFourSignedPolePair.literalLocalDebtAt_nonneg
     (W.literalConeDebtAt_nonneg n)
     (W.literalLocalRemainderDebtAt_nonneg n)
 
+
+/-!
+## Cofinal limit of the exact off-ordinate source
+
+The exact off-ordinate source is extended by zero across SameOrd(t).  This
+extension is summable because its restriction to the complement is exactly the
+already-summable literal pair source.
+-/
+
+theorem QuarticFourSignedPolePair.literalOffOrdSource_summable
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Summable W.literalOffOrdSource := by
+  classical
+  let s : Set Zeros := ((SameOrd t)ᶜ : Set Zeros)
+  have hsub :
+      Summable (fun rho : s => W.literalOffOrdSource (rho : Zeros)) := by
+    refine (W.signedLiteralPairSourceTerm_summable ht).congr ?_
+    intro rho
+    simp [QuarticFourSignedPolePair.literalOffOrdSource, s, rho.2]
+  have hind :
+      Summable (s.indicator W.literalOffOrdSource) :=
+    (summable_subtype_iff_indicator (s:=s)).mp hsub
+  refine hind.congr ?_
+  intro rho
+  by_cases h : rho ∈ s
+  · simp [Set.indicator, h,
+      QuarticFourSignedPolePair.literalOffOrdSource]
+  · simp [Set.indicator, h,
+      QuarticFourSignedPolePair.literalOffOrdSource, s] at *
+
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_tendsto_tsum
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto W.literalOffOrdExactAt atTop
+      (𝓝 (∑' rho : Zeros, W.literalOffOrdSource rho)) := by
+  have hsum := (W.literalOffOrdSource_summable ht).hasSum
+  have hcofinal := centeredZeroFinset_tendsto_atTop t
+  exact hsum.comp hcofinal
+
+/--
+A cofinal eventual signed-compensation payment compiles directly to a global
+upper bound for the exact off-ordinate source limit.
+-/
+theorem QuarticFourSignedPolePair.globalOffOrd_lt_margin_of_eventual_compensation_gap
+    {t eta margin : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hgap :
+      ∀ᶠ n : ℕ in atTop,
+        margin + W.literalSignedCompensationAt eta n
+          - W.literalLocalDebtAt eta n > 0) :
+    (∑' rho : Zeros, W.literalOffOrdSource rho) <= margin := by
+  have hfinite :
+      ∀ᶠ n : ℕ in atTop,
+        W.literalOffOrdExactAt n < margin := by
+    filter_upwards [hgap] with n hn
+    exact W.literalOffOrdExactAt_lt_margin_of_compensation_gap
+      ht n hn
+  have hlim :=
+    W.literalOffOrdExactAt_tendsto_tsum ht
+  exact le_of_tendsto hlim hfinite
+
 end Synthesis

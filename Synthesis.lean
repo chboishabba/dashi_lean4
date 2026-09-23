@@ -297,3 +297,5 @@ import Synthesis.MillenniumBSDQuadraticCharacterSquareRootGenerator
 import Synthesis.MillenniumBSDRationalQuadraticKummerSurjective
 
 import Synthesis.MillenniumBSDCMSplitJacobiPrimaryCube
+
+import Synthesis.MoonshineConstructiveRealAdapter

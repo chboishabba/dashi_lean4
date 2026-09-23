@@ -979,8 +979,8 @@ theorem jacobiDiagonalCoeffHom_T_coeff (k j : ℤ) :
   rw [show (-(HahnSeries.single (1 : ℤ) (1 : ℂ))) =
       HahnSeries.C (-1 : ℂ) * HahnSeries.single (1 : ℤ) 1 by simp]
   rw [mul_zpow]
+  rw [← map_zpow₀ (HahnSeries.C : ℂ →+* LaurentSeries ℂ) (-1 : ℂ) k]
   rw [← RatFunc.single_zpow k]
-  rw [← HahnSeries.single_zero_zpow]
   rw [← HahnSeries.single_mul_single]
   simp [HahnSeries.coeff_single]
 

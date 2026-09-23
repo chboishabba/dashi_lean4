@@ -43,6 +43,31 @@ abbrev JacobiBivariateFormal := PowerSeries JacobiLaurentCoeff
 def jacobiTriangularNat (r : ℕ) : ℕ :=
   r * (r + 1) / 2
 
+theorem two_mul_jacobiTriangularNat (r : ℕ) :
+    2 * jacobiTriangularNat r = r * (r + 1) := by
+  unfold jacobiTriangularNat
+  exact Nat.two_mul_div_two_of_even (Nat.even_mul_succ_self r)
+
+theorem eight_mul_jacobiTriangularNat_add_one (r : ℕ) :
+    8 * jacobiTriangularNat r + 1 = (2 * r + 1) ^ 2 := by
+  have h := two_mul_jacobiTriangularNat r
+  nlinarith
+
+theorem jacobiTriangularNat_injective :
+    Function.Injective jacobiTriangularNat := by
+  intro r s hrs
+  have hr := eight_mul_jacobiTriangularNat_add_one r
+  have hs := eight_mul_jacobiTriangularNat_add_one s
+  rw [hrs] at hr
+  nlinarith
+
+theorem jacobiTriangularNat_ge (r : ℕ) :
+    r ≤ jacobiTriangularNat r := by
+  rcases r with _ | r
+  · simp [jacobiTriangularNat]
+  · have h := two_mul_jacobiTriangularNat (r + 1)
+    nlinarith
+
 /-- Finite coefficient formula for the bilateral Jacobi series, already
 paired under the canonical integer decomposition k=r+1 or k=-r.  Thus the
 coefficient at q^(r(r+1)/2) contains z^(r+1)+z^(-r). -/
@@ -67,6 +92,31 @@ noncomputable def jacobiCubeBaseSeries : PowerSeries ℂ :=
 @[simp] theorem jacobiCubeBaseSeries_coeff (N : ℕ) :
     jacobiCubeBaseSeries.coeff N = jacobiCubeBaseCoeff N := by
   simp [jacobiCubeBaseSeries]
+
+theorem jacobiCubeBaseCoeff_triangular (r : ℕ) :
+    jacobiCubeBaseCoeff (jacobiTriangularNat r) =
+      ((-1 : ℂ) ^ r) * (2 * r + 1) := by
+  unfold jacobiCubeBaseCoeff
+  rw [Finset.sum_eq_single r]
+  · simp
+  · intro s hs hsr
+    have hne : jacobiTriangularNat s ≠ jacobiTriangularNat r :=
+      fun h => hsr (jacobiTriangularNat_injective h)
+    simp [hne]
+  · intro hnot
+    exfalso
+    apply hnot
+    rw [Finset.mem_range]
+    exact Nat.lt_succ_of_le (jacobiTriangularNat_ge r)
+
+theorem jacobiCubeBaseCoeff_eq_zero_of_not_triangular
+    {N : ℕ} (hN : ¬ ∃ r : ℕ, jacobiTriangularNat r = N) :
+    jacobiCubeBaseCoeff N = 0 := by
+  unfold jacobiCubeBaseCoeff
+  apply Finset.sum_eq_zero
+  intro r hr
+  simp [hN]
+
 
 /-- The bilateral side as a formal q-series with Laurent-polynomial
 coefficients in z. -/

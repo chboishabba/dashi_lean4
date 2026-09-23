@@ -1,0 +1,23 @@
+name: J369 sheaf descent Lean
+
+on:
+  push:
+    paths:
+      - 'Integration/JInvariantSheafDescent.lean'
+      - 'Integration.lean'
+      - '.github/workflows/j369-sheaf-descent.yml'
+  pull_request:
+    paths:
+      - 'Integration/JInvariantSheafDescent.lean'
+      - 'Integration.lean'
+      - '.github/workflows/j369-sheaf-descent.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Check focused J/369 bridge
+        run: lake env lean Integration/JInvariantSheafDescent.lean

@@ -3,6 +3,7 @@ import Integration.MoonshineEisensteinAnalytic
 import Integration.MoonshineEisensteinAgdaTarget
 import Integration.MoonshineEta24Pinned
 import Integration.MoonshineEta24SixfoldPhase
+import Integration.MoonshineDeltaFinalMinCut
 import Integration.MoonshineEisensteinPrimitiveExtraction
 import Integration.BishopVendoredRealEvaluation
 import Integration.BishopVendoredOrderConvergenceEvaluation

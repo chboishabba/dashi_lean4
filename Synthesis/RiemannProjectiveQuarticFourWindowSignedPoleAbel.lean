@@ -1160,4 +1160,163 @@ theorem QuarticFourSignedPolePair.outwardCenteredDiscrepancy_mul_deriv_nonpos
       nlinarith
     exact mul_nonpos_of_nonneg_of_nonpos hD.le hE
 
+
+/-!
+## Right-tail decay on the exact signed Psi test
+-/
+
+def QuarticFourSignedPolePair.signedOrdinateCurvature
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  |W.poleTwo| *
+      genericProjectiveBaseCurvature
+        (quarticFourWindowProfile W.R (1/2) W.muHalf)
+    +
+  |W.poleHalf| *
+      genericProjectiveBaseCurvature
+        (quarticFourWindowProfile W.R (2/3) W.muTwo)
+
+theorem QuarticFourSignedPolePair.signedOrdinateCurvature_nonneg
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    0 <= W.signedOrdinateCurvature := by
+  unfold QuarticFourSignedPolePair.signedOrdinateCurvature
+  positivity
+
+theorem quarticFourOrdinateTest_abs_le_gap_sq
+    {R lam mu t x : ℝ}
+    (hR : 0 < R)
+    (ht : 0 < t)
+    (hxt : x ≠ t) :
+    |quarticFourOrdinateTest R lam mu t x|
+      <=
+    genericProjectiveBaseCurvature
+        (quarticFourWindowProfile R lam mu)
+      / (x-t)^2 := by
+  let r : ℝ := t/16
+  let G := quarticFourWindowProfile R lam mu
+  have hr : 0 < r := by
+    dsimp [r]
+    positivity
+  have hq : (x-t)/r ≠ 0 := by
+    exact div_ne_zero (sub_ne_zero.mpr hxt) hr.ne'
+  have hdec :=
+    genericProjectiveBaseKernel_abs_le_invSq
+      (G:=G)
+      (quarticFourWindowProfile_contDiff
+        (lam:=lam) (mu:=mu) hR)
+      (quarticFourWindowProfile_compact
+        (lam:=lam) (mu:=mu) hR)
+      hq
+  unfold quarticFourOrdinateTest
+  dsimp [r, G]
+  rw [abs_mul, abs_of_pos (by positivity : 0 < 1/(t/16)^2)]
+  have hscale :=
+    mul_le_mul_of_nonneg_left hdec (by positivity : 0 <= 1/(t/16)^2)
+  calc
+    (1/(t/16)^2)
+        * |genericProjectiveBaseKernel
+            (quarticFourWindowProfile R lam mu) 1
+            ((x-t)/(t/16))|
+      <=
+    (1/(t/16)^2)
+      * (genericProjectiveBaseCurvature
+          (quarticFourWindowProfile R lam mu)
+        / (((x-t)/(t/16))^2)) := hscale
+    _ =
+    genericProjectiveBaseCurvature
+        (quarticFourWindowProfile R lam mu)
+      / (x-t)^2 := by
+        field_simp [sub_ne_zero.mpr hxt, ne_of_gt ht]
+        ring
+
+theorem QuarticFourSignedPolePair.signedOrdinateTest_abs_le_gap_sq
+    {t x : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hxt : x ≠ t) :
+    |W.signedOrdinateTest x|
+      <= W.signedOrdinateCurvature / (x-t)^2 := by
+  have h1 :=
+    quarticFourOrdinateTest_abs_le_gap_sq
+      (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf)
+      W.Rpos ht hxt
+  have h2 :=
+    quarticFourOrdinateTest_abs_le_gap_sq
+      (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo)
+      W.Rpos ht hxt
+  unfold QuarticFourSignedPolePair.signedOrdinateTest
+    QuarticFourSignedPolePair.ordinateTestHalf
+    QuarticFourSignedPolePair.ordinateTestTwo
+    QuarticFourSignedPolePair.signedOrdinateCurvature
+  calc
+    |W.poleTwo *
+        quarticFourOrdinateTest W.R (1/2) W.muHalf t x
+      + (-W.poleHalf) *
+        quarticFourOrdinateTest W.R (2/3) W.muTwo t x|
+      <=
+    |W.poleTwo| *
+        |quarticFourOrdinateTest W.R (1/2) W.muHalf t x|
+      +
+    |W.poleHalf| *
+        |quarticFourOrdinateTest W.R (2/3) W.muTwo t x| := by
+      rw [abs_add, abs_mul, abs_mul, abs_neg]
+    _ <=
+    |W.poleTwo| *
+      (genericProjectiveBaseCurvature
+        (quarticFourWindowProfile W.R (1/2) W.muHalf)
+        / (x-t)^2)
+      +
+    |W.poleHalf| *
+      (genericProjectiveBaseCurvature
+        (quarticFourWindowProfile W.R (2/3) W.muTwo)
+        / (x-t)^2) := by
+      gcongr
+    _ =
+    (|W.poleTwo| *
+        genericProjectiveBaseCurvature
+          (quarticFourWindowProfile W.R (1/2) W.muHalf)
+      +
+      |W.poleHalf| *
+        genericProjectiveBaseCurvature
+          (quarticFourWindowProfile W.R (2/3) W.muTwo))
+      / (x-t)^2 := by ring
+
+/--
+The exact right Abel boundary has the expected logarithmic-over-quadratic
+envelope from the theorem-bearing arbitrary-endpoint discrepancy bound.
+-/
+theorem exists_quarticFourSignedPole_rightBoundary_gap_sq_bound :
+    ∃ C T0 : ℝ, 0 <= C ∧
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        max T0 4 <= t ->
+        ∀ B : ℝ,
+          t < B ->
+          |W.signedOrdinateTest B
+            * centeredZetaMuDiscrepancy t B|
+          <=
+          (W.signedOrdinateCurvature / (B-t)^2)
+            *
+          (C * (Real.log (t+3) + Real.log (B+4))) := by
+  obtain ⟨C,T0,hC,hD⟩ :=
+    exists_zetaMuWindowDiscrepancy_arbitrary_bound
+  refine ⟨C,T0,hC,?_⟩
+  intro t W ht B htB
+  have htpos : 0 < t := by
+    have ht4 : 4 <= t := (le_max_right T0 4).trans ht
+    linarith
+  have hphi :=
+    W.signedOrdinateTest_abs_le_gap_sq htpos (ne_of_gt htB)
+  have hdisc :
+      |centeredZetaMuDiscrepancy t B|
+        <= C * (Real.log (t+3) + Real.log (B+4)) := by
+    rw [centeredZetaMuDiscrepancy_of_le htB.le,
+        zetaMuCumulativeDiscrepancy_endpoint]
+    exact hD t B ht htB
+  have hfactor :
+      0 <= W.signedOrdinateCurvature / (B-t)^2 := by
+    have hcurv := W.signedOrdinateCurvature_nonneg
+    positivity
+  rw [abs_mul]
+  exact mul_le_mul hphi hdisc (abs_nonneg _) hfactor
+
 end Synthesis

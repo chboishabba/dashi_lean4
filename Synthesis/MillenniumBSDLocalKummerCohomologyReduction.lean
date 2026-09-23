@@ -133,26 +133,20 @@ noncomputable abbrev padicRestrictedEllipticPointRepresentation
       RationalAbsoluteGalois)
     cmEllipticPointRepresentation
 
+/-- Literal additive inclusion of actual E[2] into E(Qbar). -/
+noncomputable def localActualE2InclusionAddHom :
+    cmAlgClosureTwoTorsionSubgroup →+
+      CMAlgClosureProjectivePoint where
+  toFun P := P.1
+  map_zero' := rfl
+  map_add' _ _ := rfl
+
 /-- Literal inclusion of actual E[2] into E(Qbar), used locally after the
 paid carrier equivalence from (C₂)² to the geometric two-torsion subgroup. -/
 noncomputable def localActualE2InclusionCLM :
     cmAlgClosureTwoTorsionSubgroup →L[ℤ]
       CMAlgClosureProjectivePoint where
-  toLinearMap :=
-    { toFun := fun P => P.1
-      map_add' := fun _ _ => rfl
-      map_smul' := by
-        intro n P
-        induction n using Int.induction_on with
-        | ofNat n =>
-            induction n with
-            | zero => simp
-            | succ n ih =>
-                simp only [Int.ofNat_eq_coe, Int.ofNat_eq_coe,
-                  Int.natCast_smul_eq_nsmul]
-                simp [add_nsmul]
-        | negSucc n =>
-            simp }
+  toLinearMap := localActualE2InclusionAddHom.toIntLinearMap
   cont := continuous_of_discreteTopology
 
 /-- Direct local coefficient morphism from the generic trivial (C₂)² module

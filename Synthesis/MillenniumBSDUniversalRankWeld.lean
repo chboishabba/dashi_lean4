@@ -182,6 +182,15 @@ noncomputable def BSDMordellWeilFiniteGeneration.rank
 abbrev BSDMordellWeilRankBinding :=
   BSDMordellWeilFiniteGeneration
 
+/-- The algebraic rank is independent of the finite-generation proof witness:
+both bindings compute the free rank of the same actual point group. -/
+theorem BSDMordellWeilFiniteGeneration.rank_eq
+    (m₁ m₂ : BSDMordellWeilFiniteGeneration) :
+    m₁.rank = m₂.rank := by
+  funext E
+  simp only [BSDMordellWeilFiniteGeneration.rank]
+  congr
+
 /-! ## Bound observers and the genuine universal weld -/
 
 structure BSDBoundRankObservers where
@@ -203,6 +212,19 @@ def UniversalBSDRankEqualityProducer
     (m : BSDMordellWeilRankBinding) : Prop :=
   UniversalBSDBoundRankWeld
     { analytic := a, algebraic := m }
+
+
+/-- The truth of the universal rank equality does not depend on which valid
+same-object binding witnesses are chosen. -/
+theorem universalBSDRankEqualityProducer_congr
+    (a₁ a₂ : BSDAnalyticRankBinding)
+    (m₁ m₂ : BSDMordellWeilRankBinding)
+    (h : UniversalBSDRankEqualityProducer a₁ m₁) :
+    UniversalBSDRankEqualityProducer a₂ m₂ := by
+  intro E _
+  have ha := congrFun (BSDAnalyticRankBinding.rank_eq a₁ a₂) E
+  have hm := congrFun (BSDMordellWeilFiniteGeneration.rank_eq m₁ m₂) E
+  exact ha.symm.trans ((h E (Set.mem_univ E)).trans hm)
 
 def UniversalBSDAnalyticBindingProducer : Prop :=
   Nonempty BSDAnalyticRankBinding

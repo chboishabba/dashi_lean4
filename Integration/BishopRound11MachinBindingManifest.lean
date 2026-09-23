@@ -1,4 +1,6 @@
 import Integration.BishopRound11MachinSourceBinding
+import Integration.BishopVendoredArithmeticConcrete
+import Integration.BishopRound11MachinConcreteBinding
 import Integration.MoonshineEisensteinRound11RouteB
 
 /-!
@@ -137,6 +139,8 @@ structure ManifestBoundary where
   sourceToLeanDeclarationTableOwned : Bool
   primitiveExtractionCompilerAlreadyOwned : Bool
   endToEndEisensteinCompilerAlreadyOwned : Bool
+  concretePinnedArithmeticMirrorOwned : Bool
+  round11BindingSpecializedToPinnedArithmetic : Bool
 
   generatedAgdaReplayObserved : Bool
   leanKernelReceiptObserved : Bool
@@ -147,6 +151,8 @@ def manifestBoundary : ManifestBoundary where
   sourceToLeanDeclarationTableOwned := true
   primitiveExtractionCompilerAlreadyOwned := true
   endToEndEisensteinCompilerAlreadyOwned := true
+  concretePinnedArithmeticMirrorOwned := true
+  round11BindingSpecializedToPinnedArithmetic := true
 
   generatedAgdaReplayObserved := false
   leanKernelReceiptObserved := false

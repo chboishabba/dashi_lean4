@@ -305,6 +305,35 @@ noncomputable def cmTwoTorsionContinuousCharacterEquivPair :
       apply Multiplicative.toAdd_injective
       rfl
 
+/-- The categorical cycles object in degree one is the literal kernel used
+above. -/
+noncomputable abbrev cmContinuousCocyclesOneIso :
+    ContinuousCohomology.cocycles cmTwoTorsionRepresentation 1 ≅
+      CMTwoTorsionContinuousOneCocycle :=
+  Limits.KernelFork.mapIsoOfIsLimit
+    ((TopRep.homogeneousCochains cmTwoTorsionRepresentation).cyclesIsKernel
+      1 2 (by simp))
+    (TopModuleCat.isLimitKer _) (Iso.refl _)
+
+/-- Since the incoming differential is zero, degree-one continuous cohomology
+is literally the degree-one cycles object. -/
+noncomputable def cmContinuousH1IsoCocyclesOne :
+    continuousCohomology 1 cmTwoTorsionRepresentation ≅
+      ContinuousCohomology.cocycles cmTwoTorsionRepresentation 1 :=
+  (HomologicalComplex.isoHomologyπ
+    (TopRep.homogeneousCochains cmTwoTorsionRepresentation)
+    0 1 (CochainComplex.prev_nat_succ 0)
+    cmHomogeneousCochains_d_zero_one).symm
+
+/-- Full continuous low-degree theorem for the literal trivial two-torsion
+coefficient object. -/
+noncomputable def cmTrivialE2H1ContinuousHomEquiv :
+    (continuousCohomology 1 cmTwoTorsionRepresentation) ≃
+      CMTwoTorsionContinuousCharacter :=
+  cmContinuousH1IsoCocyclesOne.toContinuousLinearEquiv.toEquiv.trans
+    (cmContinuousCocyclesOneIso.toContinuousLinearEquiv.toEquiv.trans
+      cmContinuousOneCocycleEquivCharacter)
+
 /-- Canonical remaining low-degree theorem: for this literal trivial
 coefficient module, continuous H¹ is continuous homomorphisms into the
 underlying additive group. -/
@@ -312,6 +341,13 @@ def TrivialE2H1ContinuousHomProducer : Prop :=
   Nonempty
     ((continuousCohomology 1 cmTwoTorsionRepresentation) ≃
       CMTwoTorsionContinuousCharacter)
+
+/-- The continuous trivial-action H¹ theorem is paid internally for the
+literal E[2] coefficient object. -/
+theorem trivialE2H1ContinuousHomProducer_paid :
+    TrivialE2H1ContinuousHomProducer :=
+  ⟨cmTrivialE2H1ContinuousHomEquiv⟩
+
 
 /-- The canonical low-degree theorem immediately supplies the older
 pair-of-quadratic-characters boundary. -/

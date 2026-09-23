@@ -13,9 +13,10 @@ statement on the literal mathlib rational elliptic-curve carrier.
 
 The two ranks are no longer arbitrary supplied natural numbers.
 
-* The analytic rank is derived from analyticOrderNatAt of an entire
-  continuation of the literal W.LSeries, with right-half-plane agreement
-  and finite order at s = 1.
+* The analytic rank is derived from analyticOrderNatAt of an entire nonzero
+  continuation of the literal W.LSeries, with right-half-plane agreement.
+  Finite order at s = 1 is then derived from global nonvanishing plus
+  analyticity rather than supplied independently.
 * The algebraic rank is derived from AddCommGroup.freeRank of the literal
   rational point group W.toAffine.Point, once Mordell--Weil finite generation
   is supplied.
@@ -99,7 +100,7 @@ structure BSDEllipticLContinuation (E : RationalEllipticCurve) where
     ∀ s, rightHalfPlane < s.re →
       toFun s = rationalEllipticCurveLSeries E s
   entire : ∀ s, AnalyticAt ℂ toFun s
-  finiteOrderAtOne : analyticOrderAt toFun (1 : ℂ) ≠ ⊤
+  nonzero : toFun ≠ 0
 
 instance (E : RationalEllipticCurve) :
     CoeFun (BSDEllipticLContinuation E) (fun _ => ℂ → ℂ) :=
@@ -109,6 +110,18 @@ noncomputable def BSDEllipticLContinuation.analyticRank
     {E : RationalEllipticCurve}
     (L : BSDEllipticLContinuation E) : ℕ :=
   analyticOrderNatAt L.toFun (1 : ℂ)
+
+
+/-- Entire nonzero continuations have finite order at s = 1.  Thus local
+finiteness of analytic order is derived rather than supplied independently. -/
+theorem BSDEllipticLContinuation.finiteOrderAtOne
+    {E : RationalEllipticCurve}
+    (L : BSDEllipticLContinuation E) :
+    analyticOrderAt L.toFun (1 : ℂ) ≠ ⊤ := by
+  intro htop
+  have hz : L.toFun = 0 := by
+    exact (analyticOrderAt_eq_top_iff_eq_zero (1 : ℂ) L.entire).mp htop
+  exact L.nonzero hz
 
 theorem BSDEllipticLContinuation.rank_factorization
     {E : RationalEllipticCurve}

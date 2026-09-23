@@ -980,33 +980,59 @@ noncomputable def jacobiDiagonalCoeffMap
       jacobiDiagonalCoeffHom (F.coeff N) := by
   simp [jacobiDiagonalCoeffMap]
 
-/-- Remaining J0→J2 mathematical owner, stripped of all level-32
-transport: diagonal specialization q↦q², z↦-q yields the standard theta4
-base identity. -/
-def JacobiSquareThetaBaseSpecializationCompiler : Prop :=
-  JacobiTripleProductFormal → JacobiSquareThetaBaseIdentity
+/-- The exact remaining J0→J2 seam: the weighted diagonal
+q↦q², z↦-q carries the finite Jacobi products to the base theta4 series in
+the coefficientwise power-series topology. -/
+def JacobiSquareThetaDiagonalTransfer : Prop :=
+  JacobiTripleProductFormal →
+    Tendsto jacobiSquareThetaFiniteProduct atTop
+      (𝓝 jacobiSquareThetaBaseSeries)
 
-/-- The former level-32 J2 compiler is now internally compiled from the base
-theta4 specialization. -/
-theorem jacobiSquareThetaSpecializationCompiler_paid_of_base
-    (hBase : JacobiSquareThetaBaseSpecializationCompiler) :
+/-- Once the weighted diagonal limit is known, the base theta4 identity is
+forced by uniqueness of limits and the already-paid finite product identity. -/
+theorem jacobiSquareThetaBaseIdentity_of_diagonalLimit
+    (hDiag :
+      Tendsto jacobiSquareThetaFiniteProduct atTop
+        (𝓝 jacobiSquareThetaBaseSeries)) :
+    JacobiSquareThetaBaseIdentity := by
+  unfold JacobiSquareThetaBaseIdentity
+  have hLeft :=
+    hDiag.mul tendsto_jacobiEvenEulerFiniteProduct
+  have hRight :=
+    tendsto_jacobiSquareThetaFiniteProduct_mul_evenEuler
+  exact tendsto_nhds_unique hLeft hRight
+
+/-- J0→base-theta4 compiler from the single weighted diagonal-transfer
+owner. -/
+theorem jacobiSquareThetaBaseSpecializationCompiler_paid_of_diagonal
+    (hDiag : JacobiSquareThetaDiagonalTransfer) :
+    JacobiTripleProductFormal → JacobiSquareThetaBaseIdentity := by
+  intro hJ
+  exact jacobiSquareThetaBaseIdentity_of_diagonalLimit (hDiag hJ)
+
+/-- The former level-32 J2 compiler is internally compiled from the weighted
+diagonal transfer. -/
+theorem jacobiSquareThetaSpecializationCompiler_paid_of_diagonal
+    (hDiag : JacobiSquareThetaDiagonalTransfer) :
     JacobiTripleProductFormal → cmJacobiEvenProductIdentity := by
   intro hJ
-  exact cmJacobiEvenProductIdentity_of_squareThetaBase (hBase hJ)
+  exact cmJacobiEvenProductIdentity_of_squareThetaBase
+    (jacobiSquareThetaBaseIdentity_of_diagonalLimit (hDiag hJ))
 
-/-- Complete q-series producer after paying J1 and the J2 level transport
-internally.  Its only classical q-series inputs are J0 itself and the
-standard theta4 diagonal specialization of J0. -/
+/-- Complete q-series producer after paying J1, the J2 product-side limit,
+and the level-32 transport internally.  Its only remaining q-series
+compatibility input is the weighted diagonal transfer of J0. -/
 def JacobiEta32FromTripleProductProducer : Prop :=
   JacobiTripleProductFormal ∧
-    JacobiSquareThetaBaseSpecializationCompiler
+    JacobiSquareThetaDiagonalTransfer
 
 theorem jacobiEta32Products_of_tripleProductProducer
     (h : JacobiEta32FromTripleProductProducer) :
     cmJacobiOddProductIdentity ∧ cmJacobiEvenProductIdentity := by
-  rcases h with ⟨hJTP, hThetaBase⟩
+  rcases h with ⟨hJTP, hDiag⟩
   exact ⟨jacobiCubeSpecializationCompiler_paid hJTP,
-    cmJacobiEvenProductIdentity_of_squareThetaBase (hThetaBase hJTP)⟩
+    cmJacobiEvenProductIdentity_of_squareThetaBase
+      (jacobiSquareThetaBaseIdentity_of_diagonalLimit (hDiag hJTP))⟩
 
 /-- Machine-readable J0/J1/J2 boundary. formalCarrierPaid records that the
 correct Laurent/power-series same-object carrier is now implemented; the

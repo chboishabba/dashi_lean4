@@ -704,23 +704,35 @@ second independent q-product theorem. -/
 def JacobiCubeSpecializationCompiler : Prop :=
   JacobiTripleProductFormal → cmJacobiOddProductIdentity
 
+/-- J1 is now internally paid from J0: the base cube identity is transported
+through q↦X^8 and the leading X. -/
+theorem jacobiCubeSpecializationCompiler_paid :
+    JacobiCubeSpecializationCompiler := by
+  intro hJ
+  unfold cmJacobiOddProductIdentity
+  rw [cmJacobiOddSeries_eq_X_subst_jacobiCubeBase,
+    jacobiCubeBaseSeries_eq_eulerCube hJ]
+  rw [PowerSeries.subst_pow
+    (PowerSeries.HasSubst.X_pow (by norm_num : (8 : ℕ) ≠ 0))
+    cmEtaEulerFormal 3]
+
+
 /-- J0→J2 compiler: the diagonal specialization q↦q², z↦-q gives the
 alternating square theta product, then q↦X^4 gives the eta32 even factor. -/
 def JacobiSquareThetaSpecializationCompiler : Prop :=
   JacobiTripleProductFormal → cmJacobiEvenProductIdentity
 
-/-- Complete q-series producer after the recut: one reusable Jacobi theorem
-plus its two explicit specialization compilers. -/
+/-- Complete q-series producer after paying J1 internally.  The external
+q-series boundary is now only J0 plus the J2 square-theta specialization. -/
 def JacobiEta32FromTripleProductProducer : Prop :=
   JacobiTripleProductFormal ∧
-    JacobiCubeSpecializationCompiler ∧
     JacobiSquareThetaSpecializationCompiler
 
 theorem jacobiEta32Products_of_tripleProductProducer
     (h : JacobiEta32FromTripleProductProducer) :
     cmJacobiOddProductIdentity ∧ cmJacobiEvenProductIdentity := by
-  rcases h with ⟨hJTP, hCube, hTheta⟩
-  exact ⟨hCube hJTP, hTheta hJTP⟩
+  rcases h with ⟨hJTP, hTheta⟩
+  exact ⟨jacobiCubeSpecializationCompiler_paid hJTP, hTheta hJTP⟩
 
 /-- Machine-readable J0/J1/J2 boundary. formalCarrierPaid records that the
 correct Laurent/power-series same-object carrier is now implemented; the
@@ -734,6 +746,6 @@ structure JacobiTripleProductBoundaryStatus where
   deriving DecidableEq, Repr
 
 def jacobiTripleProductBoundaryStatus : JacobiTripleProductBoundaryStatus :=
-  ⟨true, false, false, false⟩
+  ⟨true, false, true, false⟩
 
 end Synthesis.Millennium.BSD

@@ -311,6 +311,7 @@ structure BSDUniversalRefinedMaxCutStatus where
   universalTamagawaBindingPaid : Bool
   universalEllipticPointRepresentationPaid : Bool
   universalClassicalShaCarrierCompilerPaid : Bool
+  refinedCarrierCompilerPaid : Bool
   shaCarrierFinitenessSeparatedPaid : Bool
   universalShaFinitenessPaid : Bool
   universalLeadingCoefficientIdentityPaid : Bool
@@ -319,6 +320,6 @@ structure BSDUniversalRefinedMaxCutStatus where
 def bsdUniversalRefinedMaxCutStatus :
     BSDUniversalRefinedMaxCutStatus :=
   ⟨true, true, true, true,
-    false, false, false, false, true, true, false, false⟩
+    false, false, false, false, true, true, true, false, false⟩
 
 end Synthesis.Millennium.BSD

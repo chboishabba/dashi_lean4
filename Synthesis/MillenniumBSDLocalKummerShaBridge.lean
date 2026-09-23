@@ -302,6 +302,124 @@ theorem cmExplicitSelmerClassToEllipticH1_localization_zero_restrictedGlobal
         cmExplicitSelmerClassToEllipticH1_padic_zero_restrictedGlobal
           hLocal s p
 
+/-- Reverse real-place theorem needed only for lifting a classical Sha
+class back into the explicit Selmer intersection. -/
+structure RealRestrictedGlobalKummerKernelToImage where
+  zero_implies_equal_sign :
+    ∀ x :
+      ContinuousCohomology.continuousCohomology 1
+        (genericTwoTorsionRepresentation RationalAbsoluteGalois),
+      realEllipticPointH1Restrict
+        (globalGenericE2H1ToEllipticPointH1 x) = 0 →
+      realKummerLocalization
+        (cmGenericTrivialE2H1MulEquivRatSquareClasses
+          (Multiplicative.ofAdd x))
+        ∈ RealKummerImage
+
+/-- Global Kummer long-exact-sequence input needed for Sha[2] surjectivity:
+every two-torsion classical Sha class lifts through H¹(E[2]). -/
+structure ClassicalShaTwoGlobalE2Lift where
+  lift_sha_two :
+    ∀ x : classicalEllipticShaTwo cmEllipticPointRepresentation,
+      ∃ y :
+        ContinuousCohomology.continuousCohomology 1
+          (genericTwoTorsionRepresentation RationalAbsoluteGalois),
+        globalGenericE2H1ToEllipticPointH1 y = x.1.1
+
+/-- A lifted Sha[2] class satisfies the literal explicit Selmer local
+conditions once the reverse restricted-global Kummer theorems are supplied. -/
+theorem classicalShaTwo_lift_mem_explicitSelmer
+    (hLift : ClassicalShaTwoGlobalE2Lift)
+    (hPadic :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicRestrictedGlobalKummerKernelToImage p.1)
+    (hReal : RealRestrictedGlobalKummerKernelToImage)
+    (x : classicalEllipticShaTwo cmEllipticPointRepresentation) :
+    ∃ y :
+      ContinuousCohomology.continuousCohomology 1
+        (genericTwoTorsionRepresentation RationalAbsoluteGalois),
+      globalGenericE2H1ToEllipticPointH1 y = x.1.1 ∧
+      cmGenericTrivialE2H1MulEquivRatSquareClasses
+          (Multiplicative.ofAdd y)
+        ∈ explicitTwoSelmerSubgroup := by
+  rcases hLift.lift_sha_two x with ⟨y, hy⟩
+  let cY : RatSquareClass × RatSquareClass :=
+    cmGenericTrivialE2H1MulEquivRatSquareClasses
+      (Multiplicative.ofAdd y)
+  have hSha :=
+    (mem_rationalTateShafarevichOne_iff
+      cmEllipticPointRepresentation x.1.1).1 x.1.2
+  have hRealZero :
+      realEllipticPointH1Restrict
+        (globalGenericE2H1ToEllipticPointH1 y) = 0 := by
+    rw [hy]
+    simpa [realEllipticPointH1Restrict, rationalLocalField] using
+      hSha RationalPlace.infinite
+  have hcReal :
+      realKummerLocalization cY ∈ RealKummerImage := by
+    exact hReal.zero_implies_equal_sign y hRealZero
+  have hcFinite :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        localizeKummerPair p.1 cY ∈ LocalKummerImage p.1 := by
+    intro p
+    letI : Fact p.1.Prime := ⟨p.2⟩
+    have hGlobalZero :
+        padicEllipticPointH1Restrict p.1
+          (globalGenericE2H1ToEllipticPointH1 y) = 0 := by
+      rw [hy]
+      simpa [padicEllipticPointH1Restrict,
+        padicAbsoluteGaloisRestriction, rationalLocalField] using
+        hSha (RationalPlace.padic p)
+    have hsquare := padicGenericE2EllipticH1_restriction_square p.1
+    have happ := congrArg (fun f => f.hom y) hsquare
+    have hLocalZero :
+        padicGenericE2H1ToEllipticPointH1 p.1
+          (genericTwoTorsionH1Restrict
+            (G := RationalAbsoluteGalois)
+            (padicAbsoluteGaloisRestriction p.1) y) = 0 :=
+      happ.symm.trans hGlobalZero
+    have hmem :=
+      (hPadic p).zero_implies_local_image y hLocalZero
+    simpa [cY, cmGenericTrivialE2H1MulEquivRatSquareClasses,
+      rationalGenericTwoTorsionH1MulEquivSquareClassPair] using hmem
+  refine ⟨y, hy, ?_⟩
+  exact ⟨hcReal, hcFinite⟩
+
+/-- The global lift plus reverse local Kummer theorems compile Sha[2]
+surjectivity of the canonical explicit-Selmer map. -/
+theorem cmExplicitSelmerClassToEllipticH1_surjective_on_sha_two_of_lifts
+    (hLift : ClassicalShaTwoGlobalE2Lift)
+    (hPadic :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicRestrictedGlobalKummerKernelToImage p.1)
+    (hReal : RealRestrictedGlobalKummerKernelToImage) :
+    ∀ x : classicalEllipticShaTwo cmEllipticPointRepresentation,
+      ∃ s : explicitTwoSelmerSubgroup,
+        cmExplicitSelmerClassToEllipticH1 s = x.1.1 := by
+  intro x
+  rcases classicalShaTwo_lift_mem_explicitSelmer
+    hLift hPadic hReal x with ⟨y, hy, hSel⟩
+  let cY : RatSquareClass × RatSquareClass :=
+    cmGenericTrivialE2H1MulEquivRatSquareClasses
+      (Multiplicative.ofAdd y)
+  let s : explicitTwoSelmerSubgroup := ⟨cY, hSel⟩
+  refine ⟨s, ?_⟩
+  rw [← explicitSelmerGenericClassToEllipticH1_eq_prizeFacing]
+  unfold explicitSelmerGenericClassToEllipticH1
+  rw [explicitSelmerToGenericTwoTorsionH1_eq_cmGeneric]
+  change
+    globalGenericE2H1ToEllipticPointH1
+      ((cmGenericTrivialE2H1MulEquivRatSquareClasses.symm cY).toAdd)
+      = x.1.1
+  rw [show
+    cmGenericTrivialE2H1MulEquivRatSquareClasses.symm cY =
+      Multiplicative.ofAdd y by
+        simp [cY]]
+  exact hy
+
 /-- After local Kummer theory pays localization, only the two genuinely global
 classical two-descent exactness laws remain. -/
 structure ClassicalTwoDescentGlobalExactnessLaws where

@@ -302,7 +302,7 @@ noncomputable def genericTrivialTwoTorsionH1CharacterMulEquiv :
 noncomputable def genericTrivialTwoTorsionH1CharacterEquiv :
     continuousCohomology 1 (genericTwoTorsionRepresentation G) ≃
       GenericTwoTorsionContinuousCharacter G :=
-  (genericTrivialTwoTorsionH1CharacterMulEquiv G).toEquiv.trans
-    (Equiv.multiplicative _).symm
+  Multiplicative.ofAdd.trans
+    (genericTrivialTwoTorsionH1CharacterMulEquiv G).toEquiv
 
 end Synthesis.Millennium.BSD

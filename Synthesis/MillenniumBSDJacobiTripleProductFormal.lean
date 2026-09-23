@@ -946,6 +946,88 @@ theorem tendsto_jacobiSquareThetaFiniteProduct_mul_evenEuler :
   simpa [jacobiSquareThetaFiniteProduct_exact] using
     (tendsto_jacobiEulerFiniteProduct_two_mul.pow 2)
 
+/-- Weighted diagonal coefficient implementing q↦q² and z↦-q
+coefficientwise.  For target degree N only outer q-degrees d≤N are inspected;
+this is exactly the finite-dependency property needed to transfer J0's
+eventual coefficient equalities. -/
+noncomputable def jacobiWeightedDiagonalCoeff
+    (F : JacobiBivariateFormal) (N : ℕ) : ℂ :=
+  ∑ d in Finset.range (N + 1),
+    (jacobiDiagonalCoeffHom (F.coeff d)).coeff
+      ((N : ℤ) - 2 * (d : ℤ))
+
+noncomputable def jacobiWeightedDiagonal
+    (F : JacobiBivariateFormal) : PowerSeries ℂ :=
+  PowerSeries.mk (jacobiWeightedDiagonalCoeff F)
+
+@[simp] theorem jacobiWeightedDiagonal_coeff
+    (F : JacobiBivariateFormal) (N : ℕ) :
+    (jacobiWeightedDiagonal F).coeff N =
+      jacobiWeightedDiagonalCoeff F N := by
+  simp [jacobiWeightedDiagonal]
+
+/-- J0 coefficientwise equality transfers automatically through the finite
+weighted diagonal operator. -/
+theorem tendsto_jacobiWeightedDiagonal_finiteProduct_of_tripleProduct
+    (hJ : JacobiTripleProductFormal) :
+    Tendsto
+      (fun M : ℕ =>
+        jacobiWeightedDiagonal (jacobiFiniteProduct (M + 1)))
+      atTop
+      (𝓝 (jacobiWeightedDiagonal jacobiTripleSeries)) := by
+  rw [PowerSeries.WithPiTopology.tendsto_iff_coeff_tendsto]
+  intro N
+  have hRange :
+      Tendsto (fun M : ℕ => Finset.range (M + 1)) atTop atTop :=
+    tendsto_finset_range.comp (tendsto_add_atTop_nat 1)
+  have hEach :
+      ∀ d ∈ Finset.range (N + 1),
+        ∀ᶠ M : ℕ in atTop,
+          (jacobiFiniteProduct (M + 1)).coeff d =
+            jacobiTripleSeries.coeff d := by
+    intro d hd
+    filter_upwards [hRange.eventually (hJ d)] with M hM
+    simpa [jacobiFiniteProduct] using hM
+  have hAll :
+      ∀ᶠ M : ℕ in atTop,
+        ∀ d ∈ Finset.range (N + 1),
+          (jacobiFiniteProduct (M + 1)).coeff d =
+            jacobiTripleSeries.coeff d :=
+    (Filter.eventually_all_finset (Finset.range (N + 1))).2 hEach
+  apply tendsto_atTop_of_eventually_const
+  filter_upwards [hAll] with M hM
+  rw [jacobiWeightedDiagonal_coeff, jacobiWeightedDiagonal_coeff]
+  unfold jacobiWeightedDiagonalCoeff
+  apply Finset.sum_congr rfl
+  intro d hd
+  rw [hM d hd]
+
+/-- First algebraic identification still required by J2: the weighted
+diagonal of each finite bivariate Jacobi product is the explicit finite
+theta4 product. -/
+def JacobiWeightedDiagonalFiniteProductAgreement : Prop :=
+  ∀ M : ℕ,
+    jacobiWeightedDiagonal (jacobiFiniteProduct M) =
+      jacobiSquareThetaFiniteProduct M
+
+/-- Second algebraic identification still required by J2: the weighted
+diagonal of the paired bilateral Jacobi series is the standard theta4
+series. -/
+def JacobiWeightedDiagonalTripleSeriesAgreement : Prop :=
+  jacobiWeightedDiagonal jacobiTripleSeries =
+    jacobiSquareThetaBaseSeries
+
+/-- The weighted diagonal transfer follows from J0 once the two purely
+algebraic identification lemmas above are paid. -/
+theorem jacobiSquareThetaDiagonalTransfer_of_weightedDiagonalAgreements
+    (hFinite : JacobiWeightedDiagonalFiniteProductAgreement)
+    (hSeries : JacobiWeightedDiagonalTripleSeriesAgreement) :
+    JacobiSquareThetaDiagonalTransfer := by
+  intro hJ
+  have h :=
+    tendsto_jacobiWeightedDiagonal_finiteProduct_of_tripleProduct hJ
+  simpa [hFinite, hSeries] using h
+
 /-- The Laurent-series monomial X, packaged as a unit. -/
 noncomputable def jacobiLaurentXUnit : (LaurentSeries ℂ)ˣ where
   val := HahnSeries.single (1 : ℤ) 1

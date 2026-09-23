@@ -1266,27 +1266,6 @@ theorem jacobiWeightedDiagonalCoeff_tripleSeries_eq_zero_of_not_square
     simp [hpos, hneg]
   · exact jacobiWeightedDiagonal_nontriangularSummand htri
 
-/-- The bilateral Jacobi series specializes exactly to the standard theta4
-series under the weighted diagonal q↦q², z↦-q. -/
-theorem jacobiWeightedDiagonal_tripleSeries_paid :
-    JacobiWeightedDiagonalTripleSeriesAgreement := by
-  unfold JacobiWeightedDiagonalTripleSeriesAgreement
-  ext N
-  rw [jacobiWeightedDiagonal_coeff,
-    jacobiSquareThetaBaseSeries_coeff]
-  by_cases hN0 : N = 0
-  · subst N
-    simp
-  · by_cases hSq : ∃ s : ℕ, 0 < s ∧ s ^ 2 = N
-    · rcases hSq with ⟨s, hs, rfl⟩
-      rcases s with _ | r
-      · omega
-      · rw [jacobiWeightedDiagonalCoeff_tripleSeries_square_succ,
-          jacobiSquareThetaBaseCoeff_square (by omega)]
-    · rw [jacobiWeightedDiagonalCoeff_tripleSeries_eq_zero_of_not_square
-          hN0 hSq,
-        jacobiSquareThetaBaseCoeff_eq_zero_of_not_square hN0 hSq]
-
 /-- J0 coefficientwise equality transfers automatically through the finite
 weighted diagonal operator. -/
 theorem tendsto_jacobiWeightedDiagonal_finiteProduct_of_tripleProduct
@@ -1345,6 +1324,28 @@ series. -/
 def JacobiWeightedDiagonalTripleSeriesAgreement : Prop :=
   jacobiWeightedDiagonal jacobiTripleSeries =
     jacobiSquareThetaBaseSeries
+
+/-- The bilateral Jacobi series specializes exactly to the standard theta4
+series under the weighted diagonal q↦q², z↦-q. -/
+theorem jacobiWeightedDiagonal_tripleSeries_paid :
+    JacobiWeightedDiagonalTripleSeriesAgreement := by
+  unfold JacobiWeightedDiagonalTripleSeriesAgreement
+  ext N
+  rw [jacobiWeightedDiagonal_coeff,
+    jacobiSquareThetaBaseSeries_coeff]
+  by_cases hN0 : N = 0
+  · subst N
+    simp
+  · by_cases hSq : ∃ s : ℕ, 0 < s ∧ s ^ 2 = N
+    · rcases hSq with ⟨s, hs, rfl⟩
+      rcases s with _ | r
+      · omega
+      · rw [jacobiWeightedDiagonalCoeff_tripleSeries_square_succ,
+          jacobiSquareThetaBaseCoeff_square (by omega)]
+    · rw [jacobiWeightedDiagonalCoeff_tripleSeries_eq_zero_of_not_square
+          hN0 hSq,
+        jacobiSquareThetaBaseCoeff_eq_zero_of_not_square hN0 hSq]
+
 
 /-- The weighted diagonal transfer follows from J0 once the two purely
 algebraic identification lemmas above are paid. -/

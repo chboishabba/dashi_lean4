@@ -92,8 +92,34 @@ noncomputable def cmActualE2H1ToEllipticPointH1 :
     (ContinuousMonoidHom.id RationalAbsoluteGalois)
     cmActualE2TopRepInclusion 1
 
+/-- Canonical actual-E[2] H¹ class attached to an explicit Selmer class,
+using the paid multiplicative H¹/square-class equivalence. -/
+noncomputable def cmExplicitSelmerClassToActualE2H1
+    (s : explicitTwoSelmerSubgroup) :
+    ContinuousCohomology.continuousCohomology 1
+      cmActualE2Representation :=
+  (cmActualE2H1MulEquivRatSquareClasses_paid.symm s.1).toAdd
+
+@[simp] theorem cmExplicitSelmerClassToActualE2H1_one :
+    cmExplicitSelmerClassToActualE2H1 1 = 0 := by
+  change (cmActualE2H1MulEquivRatSquareClasses_paid.symm 1).toAdd = 0
+  rw [map_one]
+  rfl
+
+theorem cmExplicitSelmerClassToActualE2H1_mul
+    (s t : explicitTwoSelmerSubgroup) :
+    cmExplicitSelmerClassToActualE2H1 (s * t) =
+      cmExplicitSelmerClassToActualE2H1 s +
+        cmExplicitSelmerClassToActualE2H1 t := by
+  change
+    (cmActualE2H1MulEquivRatSquareClasses_paid.symm (s.1 * t.1)).toAdd =
+      (cmActualE2H1MulEquivRatSquareClasses_paid.symm s.1).toAdd +
+        (cmActualE2H1MulEquivRatSquareClasses_paid.symm t.1).toAdd
+  rw [map_mul]
+  rfl
+
 /-- Canonical global cohomology class attached to an explicit Selmer class:
-use the paid E[2]-H¹/square-class equivalence, then the actual inclusion
+first recover its actual E[2] H¹ class, then apply the literal inclusion
 E[2] -> E(Qbar).  No classical Kummer exactness is assumed in this
 definition. -/
 noncomputable def cmExplicitSelmerClassToEllipticH1
@@ -101,7 +127,22 @@ noncomputable def cmExplicitSelmerClassToEllipticH1
     ContinuousCohomology.continuousCohomology 1
       cmEllipticPointRepresentation :=
   cmActualE2H1ToEllipticPointH1
-    (cmActualE2H1EquivRatSquareClasses_paid.symm s.1)
+    (cmExplicitSelmerClassToActualE2H1 s)
+
+@[simp] theorem cmExplicitSelmerClassToEllipticH1_one_paid :
+    cmExplicitSelmerClassToEllipticH1 1 = 0 := by
+  unfold cmExplicitSelmerClassToEllipticH1
+  rw [cmExplicitSelmerClassToActualE2H1_one]
+  simp
+
+theorem cmExplicitSelmerClassToEllipticH1_mul_paid
+    (s t : explicitTwoSelmerSubgroup) :
+    cmExplicitSelmerClassToEllipticH1 (s * t) =
+      cmExplicitSelmerClassToEllipticH1 s +
+        cmExplicitSelmerClassToEllipticH1 t := by
+  unfold cmExplicitSelmerClassToEllipticH1
+  rw [cmExplicitSelmerClassToActualE2H1_mul]
+  exact map_add _ _ _
 
 /-- The canonical explicit-Selmer class lands in a two-torsion class of
 H¹(E(Qbar)) because it comes from H¹(E[2]), which is already proved

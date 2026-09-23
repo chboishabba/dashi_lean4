@@ -184,6 +184,79 @@ noncomputable def jacobiEulerZAtNegOne
       jacobiLaurentEulerAtNegOne (F.coeff N) := by
   simp [jacobiEulerZAtNegOne]
 
+theorem jacobiEulerZAtNegOne_add
+    (F G : JacobiBivariateFormal) :
+    jacobiEulerZAtNegOne (F + G) =
+      jacobiEulerZAtNegOne F + jacobiEulerZAtNegOne G := by
+  ext N
+  simp [jacobiEulerZAtNegOne, jacobiLaurentEulerAtNegOne_add]
+
+theorem jacobiEulerZAtNegOne_neg
+    (F : JacobiBivariateFormal) :
+    jacobiEulerZAtNegOne (-F) = -jacobiEulerZAtNegOne F := by
+  have h := jacobiEulerZAtNegOne_add F (-F)
+  rw [add_neg_cancel, jacobiEulerZAtNegOne_add] at h
+  have hz : jacobiEulerZAtNegOne (0 : JacobiBivariateFormal) = 0 := by
+    ext N
+    simp [jacobiEulerZAtNegOne, jacobiLaurentEulerAtNegOne,
+      jacobiLaurentEuler_zero]
+  rw [hz] at h
+  exact eq_neg_of_add_eq_zero_left h
+
+theorem jacobiEulerZAtNegOne_sub
+    (F G : JacobiBivariateFormal) :
+    jacobiEulerZAtNegOne (F - G) =
+      jacobiEulerZAtNegOne F - jacobiEulerZAtNegOne G := by
+  rw [sub_eq_add_neg, jacobiEulerZAtNegOne_add,
+    jacobiEulerZAtNegOne_neg, sub_eq_add_neg]
+
+@[simp] theorem jacobiLaurentEulerAtNegOne_T_one :
+    jacobiLaurentEulerAtNegOne (LaurentPolynomial.T (1 : ℤ)) = -1 := by
+  simp [jacobiLaurentEulerAtNegOne, jacobiLaurentEuler_T,
+    jacobiNegOneUnit]
+
+@[simp] theorem jacobiLaurentEulerAtNegOne_T_neg_one :
+    jacobiLaurentEulerAtNegOne (LaurentPolynomial.T (-1 : ℤ)) = 1 := by
+  simp [jacobiLaurentEulerAtNegOne, jacobiLaurentEuler_T,
+    jacobiNegOneUnit]
+
+theorem jacobiEulerZAtNegOne_C_T_mul_X_pow
+    (k : ℤ) (n : ℕ) :
+    jacobiEulerZAtNegOne
+        (C (LaurentPolynomial.T k) * X ^ n : JacobiBivariateFormal) =
+      C (jacobiLaurentEulerAtNegOne (LaurentPolynomial.T k)) * X ^ n := by
+  ext N
+  simp [jacobiEulerZAtNegOne, PowerSeries.coeff_C_mul_X_pow]
+
+@[simp] theorem jacobiEulerZAtNegOne_one :
+    jacobiEulerZAtNegOne (1 : JacobiBivariateFormal) = 0 := by
+  ext N
+  simp [jacobiEulerZAtNegOne, jacobiLaurentEulerAtNegOne,
+    jacobiLaurentEuler]
+
+@[simp] theorem jacobiEulerZAtNegOne_X_pow (n : ℕ) :
+    jacobiEulerZAtNegOne (X ^ n : JacobiBivariateFormal) = 0 := by
+  rw [show (X ^ n : JacobiBivariateFormal) =
+      C (LaurentPolynomial.T (0 : ℤ)) * X ^ n by simp]
+  rw [jacobiEulerZAtNegOne_C_T_mul_X_pow]
+  simp [jacobiLaurentEulerAtNegOne, jacobiLaurentEuler_T]
+
+@[simp] theorem jacobiEulerZAtNegOne_T_one_mul_X_pow (n : ℕ) :
+    jacobiEulerZAtNegOne
+        (C (LaurentPolynomial.T (1 : ℤ)) * X ^ n :
+          JacobiBivariateFormal) =
+      -(X ^ n : PowerSeries ℂ) := by
+  rw [jacobiEulerZAtNegOne_C_T_mul_X_pow]
+  simp
+
+@[simp] theorem jacobiEulerZAtNegOne_T_neg_one_mul_X_pow (n : ℕ) :
+    jacobiEulerZAtNegOne
+        (C (LaurentPolynomial.T (-1 : ℤ)) * X ^ n :
+          JacobiBivariateFormal) =
+      (X ^ n : PowerSeries ℂ) := by
+  rw [jacobiEulerZAtNegOne_C_T_mul_X_pow]
+  simp
+
 /-- The coefficientwise Euler-at-minus-one operator is a derivation relative
 to the coefficient evaluation homomorphism. -/
 theorem jacobiEulerZAtNegOne_mul
@@ -234,6 +307,18 @@ theorem jacobiEvalZAtNegOne_factor (n : ℕ) :
     jacobiEvalZAtNegOne (jacobiTripleFactor 0) = 0 := by
   rw [jacobiEvalZAtNegOne_factor]
   simp
+
+/-- The unique vanishing zero-index factor supplies the entire Euler
+derivative of the infinite product at z=-1.  Its own derivative seed is
+minus the square of the first Euler factor. -/
+theorem jacobiEulerZAtNegOne_factor_zero :
+    jacobiEulerZAtNegOne (jacobiTripleFactor 0) =
+      -((1 - X : PowerSeries ℂ) ^ 2) := by
+  unfold jacobiTripleFactor
+  rw [jacobiEulerZAtNegOne_mul, jacobiEulerZAtNegOne_mul]
+  simp [jacobiEvalZAtNegOne_factor, jacobiEvalZAtNegOne,
+    jacobiEvalNegOneHom]
+  ring
 
 /-- Consequently any finite Jacobi product containing the zero-index factor
 vanishes under z=-1 evaluation. -/

@@ -157,7 +157,7 @@ theorem cmJacobiOddCoeff_canonicalSquare (r : ℕ) :
     exfalso
     apply hnot
     rw [Finset.mem_range]
-    nlinarith [sq_nonneg (2 * r + 1 : ℤ)]
+    nlinarith
 
 theorem cmJacobiEvenCoeff_canonicalSquare
     {s : ℕ} (hs : 0 < s) :

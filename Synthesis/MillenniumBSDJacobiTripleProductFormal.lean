@@ -1120,8 +1120,9 @@ theorem jacobiLowerSupported_neg
     (hF : JacobiLowerSupported F) :
     JacobiLowerSupported (-F) := by
   intro d k hk
-  rw [PowerSeries.coeff_neg, AddMonoidAlgebra.coeff_neg] at hk
-  exact hF d k (by simpa using hk)
+  rw [PowerSeries.coeff_neg] at hk
+  exact hF d k (by
+    simpa using hk)
 
 theorem jacobiLowerSupported_sub
     {F G : JacobiBivariateFormal}

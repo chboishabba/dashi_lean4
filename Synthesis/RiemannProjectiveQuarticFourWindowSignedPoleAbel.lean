@@ -3,6 +3,7 @@ import Synthesis.RiemannZetaMuExactAbel
 import Synthesis.RiemannCompactCosineFourthDerivative
 import Synthesis.RiemannProjectiveQuarticDerivativeSign
 import Synthesis.RiemannZetaMuNegativeHeightReflection
+import Zeta23Bridge.OscillatoryKernelDecay
 
 /-!
 # Exact Abel and centered jet for the signed four-window quartic test
@@ -1672,5 +1673,190 @@ theorem exists_quarticFourSignedPole_rightBoundary_tendsto_zero :
   intro t W ht
   obtain ⟨K,hK,hbound⟩ := hT0 W ht
   exact tendsto_zero_of_eventually_abs_le_const_div_nat hK hbound
+
+
+/-!
+## Quadratic derivative decay for the exact combined Psi test
+-/
+
+open Zeta23Bridge.OscillatoryKernelDecay
+
+theorem genericProjectivePhysicalProfile_contDiff_two
+    {g : ℝ -> ℝ}
+    (hg : ContDiff ℝ 2 g)
+    (r : ℝ) :
+    ContDiff ℝ 2 (genericProjectivePhysicalProfile g r) := by
+  unfold genericProjectivePhysicalProfile
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+  fun_prop
+
+theorem quarticFourNormalizedProjectiveProfile_contDiff_two
+    {R lam mu : ℝ}
+    (hR : 0 < R) :
+    ContDiff ℝ 2
+      (quarticFourNormalizedProjectiveProfile R lam mu) := by
+  unfold quarticFourNormalizedProjectiveProfile
+  exact genericProjectivePhysicalProfile_contDiff_two
+    (quarticFourWindowProfile_contDiff
+      (lam:=lam) (mu:=mu) hR) 1
+
+theorem quarticFourSignedPoleCombinedProfile_contDiff_two
+    {R muHalf muTwo t : ℝ}
+    (hR : 0 < R) :
+    ContDiff ℝ 2
+      (quarticFourSignedPoleCombinedProfile R muHalf muTwo t) := by
+  unfold quarticFourSignedPoleCombinedProfile profileLinearCombination
+  exact
+    (contDiff_const.mul
+      (quarticFourNormalizedProjectiveProfile_contDiff_two
+        (lam:=(1/2 : ℝ)) (mu:=muHalf) hR)).add
+    (contDiff_const.mul
+      (quarticFourNormalizedProjectiveProfile_contDiff_two
+        (lam:=(2/3 : ℝ)) (mu:=muTwo) hR))
+
+def compactCosineD1DecayWeight
+    (P : ℝ -> ℝ) (u : ℝ) : ℝ :=
+  - P u * u
+
+def compactCosineD1DecayCurvature
+    (P : ℝ -> ℝ) : ℝ :=
+  ∫ u : ℝ, |deriv (deriv (compactCosineD1DecayWeight P)) u|
+
+theorem compactCosineD1DecayCurvature_nonneg
+    (P : ℝ -> ℝ) :
+    0 <= compactCosineD1DecayCurvature P := by
+  unfold compactCosineD1DecayCurvature
+  positivity
+
+theorem compactCosineD1DecayWeight_contDiff_two
+    {P : ℝ -> ℝ}
+    (hP : ContDiff ℝ 2 P) :
+    ContDiff ℝ 2 (compactCosineD1DecayWeight P) := by
+  unfold compactCosineD1DecayWeight
+  exact hP.neg.mul contDiff_id
+
+theorem compactCosineD1DecayWeight_compact
+    {P : ℝ -> ℝ}
+    (hPc : HasCompactSupport P) :
+    HasCompactSupport (compactCosineD1DecayWeight P) := by
+  unfold compactCosineD1DecayWeight
+  exact hPc.neg.mul_right
+
+theorem compactCosineD1_abs_le_invSq
+    {P : ℝ -> ℝ}
+    (hP : ContDiff ℝ 2 P)
+    (hPc : HasCompactSupport P)
+    {q : ℝ}
+    (hq : q ≠ 0) :
+    |compactCosineD1 P q|
+      <= compactCosineD1DecayCurvature P / q^2 := by
+  let w : ℝ -> ℝ := compactCosineD1DecayWeight P
+  have hw2 : ContDiff ℝ 2 w :=
+    compactCosineD1DecayWeight_contDiff_two hP
+  have hw1 : ContDiff ℝ 1 w := hw2.of_le (by norm_num)
+  have hw1d : ContDiff ℝ 1 (deriv w) := ContDiff.deriv' hw2
+  have hws : HasCompactSupport w :=
+    compactCosineD1DecayWeight_compact hPc
+  have h1 := integral_mul_sin_eq hw1 hws hq
+  have h2 := integral_mul_cos_eq hw1d hws.deriv hq
+  have hsecond :
+      (∫ u : ℝ, w u * Real.sin (q*u))
+        =
+      -(1 / q^2) *
+        ∫ u : ℝ, deriv (deriv w) u * Real.sin (q*u) := by
+    rw [h1,h2]
+    field_simp
+    ring
+  have hd2c : Continuous (deriv (deriv w)) :=
+    hw1d.continuous_deriv le_rfl
+  have hd2s : HasCompactSupport (deriv (deriv w)) :=
+    hws.deriv.deriv
+  have hi :
+      Integrable
+        (fun u : ℝ => deriv (deriv w) u * Real.sin (q*u)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (hd2c.mul (by fun_prop)) hd2s.mul_right
+  have hiabs :
+      Integrable (fun u : ℝ => |deriv (deriv w) u|) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hd2s.abs
+  have hbound :
+      |∫ u : ℝ, deriv (deriv w) u * Real.sin (q*u)|
+        <= ∫ u : ℝ, |deriv (deriv w) u| := by
+    calc
+      |∫ u : ℝ, deriv (deriv w) u * Real.sin (q*u)|
+        <=
+      ∫ u : ℝ, |deriv (deriv w) u * Real.sin (q*u)| :=
+        abs_integral_le_integral_abs
+      _ <= ∫ u : ℝ, |deriv (deriv w) u| := by
+        apply integral_mono hi.abs hiabs
+        intro u
+        rw [abs_mul]
+        exact mul_le_of_le_one_right
+          (abs_nonneg _) (Real.abs_sin_le_one _)
+  unfold compactCosineD1
+  change
+    |∫ u : ℝ, w u * Real.sin (q*u)|
+      <= compactCosineD1DecayCurvature P / q^2
+  rw [hsecond, abs_mul, abs_neg,
+      abs_of_nonneg (by positivity : 0 <= 1/q^2)]
+  unfold compactCosineD1DecayCurvature
+  exact mul_le_mul_of_nonneg_left hbound (by positivity)
+
+/--
+Physical derivative decay for the actual signed combined Psi test.
+-/
+theorem QuarticFourSignedPolePair.signedOrdinateTestDeriv_abs_le_gap_sq
+    {t x : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hxt : x ≠ t) :
+    |W.signedOrdinateTestDeriv x|
+      <=
+    (16 / t)
+      * compactCosineD1DecayCurvature
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)
+      / (x-t)^2 := by
+  let r : ℝ := t/16
+  let P :=
+    quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t
+  have hr : 0 < r := by
+    dsimp [r]
+    positivity
+  have hq : (x-t)/r ≠ 0 :=
+    div_ne_zero (sub_ne_zero.mpr hxt) hr.ne'
+  have hdec :=
+    compactCosineD1_abs_le_invSq
+      (quarticFourSignedPoleCombinedProfile_contDiff_two W.Rpos)
+      (quarticFourSignedPoleCombinedProfile_compact W.Rpos)
+      hq
+  rw [W.signedOrdinateTestDeriv_eq_combinedD1 ht]
+  dsimp [r, P]
+  rw [abs_mul, abs_of_pos (by positivity : 0 < 1/(t/16)^3)]
+  have hmul :=
+    mul_le_mul_of_nonneg_left hdec
+      (by positivity : 0 <= 1/(t/16)^3)
+  calc
+    (1/(t/16)^3)
+      * |compactCosineD1
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)
+          ((x-t)/(t/16))|
+      <=
+    (1/(t/16)^3)
+      * (compactCosineD1DecayCurvature
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)
+        / (((x-t)/(t/16))^2)) := hmul
+    _ =
+    (16/t)
+      * compactCosineD1DecayCurvature
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)
+      / (x-t)^2 := by
+        field_simp [ne_of_gt ht, sub_ne_zero.mpr hxt]
+        ring
 
 end Synthesis

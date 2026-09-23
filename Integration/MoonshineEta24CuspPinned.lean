@@ -5,6 +5,7 @@ import Mathlib.NumberTheory.ModularForms.QExpansion
 import Mathlib.NumberTheory.ModularForms.Cusps
 import Integration.MoonshineEta24Pinned
 import Integration.MoonshineLevelOneWeightZeroPinned
+import Integration.MoonshineEtaProductPinned
 
 /-!
 # eta^24 as a level-one cusp form at the pinned Mathlib v4.28.0 dependency
@@ -215,6 +216,57 @@ theorem eta24_mdifferentiable :
     ((ModularForm.differentiableAt_eta_of_mem_upperHalfPlaneSet hz).pow 24)
       |>.differentiableWithinAt
 
+/-- q-domain formula for eta^24 on the open unit disc. -/
+theorem eta24_cuspFunction_eqOn :
+    Set.EqOn
+      (cuspFunction 1 (fun z : ℍ => η24 z))
+      (fun q : ℂ ↦ q * ∏' i : ℕ, (1 - q ^ (i + 1)) ^ 24)
+      (Metric.ball 0 1) := by
+  intro q hq
+  by_cases hq0 : q = 0
+  · simpa [hq0] using!
+      Periodic.cuspFunction_zero_of_zero_at_inf one_pos
+        eta24_isZeroAtImInfty.zero_at_infty_comp_ofComplex
+  · have him :=
+      Periodic.im_invQParam_pos_of_norm_lt_one
+        one_pos
+        (by simpa [dist_zero_right] using hq)
+        hq0
+    simp [cuspFunction, Periodic.cuspFunction_eq_of_nonzero 1 _ hq0,
+      ofComplex_apply_of_im_pos him,
+      eta24_eq_q_mul_eulerProduct_pow ⟨_, him⟩,
+      Periodic.qParam_right_inv one_ne_zero hq0,
+      etaEulerProduct, ModularForm.eta_q]
+
+/-- The first q-expansion coefficient of the pinned eta^24 cusp form is 1. -/
+theorem eta24_qExpansion_coeff_one :
+    (qExpansion 1 (fun z : ℍ => η24 z)).coeff 1 = 1 := by
+  have hmem : (0 : ℂ) ∈ Metric.ball (0 : ℂ) 1 :=
+    Metric.mem_ball_self one_pos
+  calc
+    (qExpansion 1 (fun z : ℍ => η24 z)).coeff 1
+        =
+      derivWithin
+        (cuspFunction 1 (fun z : ℍ => η24 z))
+        (Metric.ball 0 1)
+        0 := by
+          simp [qExpansion_coeff,
+            ← derivWithin_of_isOpen Metric.isOpen_ball hmem]
+    _ =
+      derivWithin
+        (fun q : ℂ ↦ q * ∏' i : ℕ, (1 - q ^ (i + 1)) ^ 24)
+        (Metric.ball 0 1)
+        0 :=
+      derivWithin_congr
+        eta24_cuspFunction_eqOn
+        (eta24_cuspFunction_eqOn hmem)
+    _ = 1 := by
+      simp [derivWithin_fun_mul differentiableWithinAt_fun_id
+        (Integration.MoonshineEtaProductPinned
+          .differentiableOn_tprod_one_sub_pow_pow 24 _ hmem),
+        derivWithin_id' _ _
+          (Metric.isOpen_ball.uniqueDiffWithinAt hmem)]
+
 /-- eta^24 packaged as a genuine level-one cusp form of weight 12. -/
 def eta24CuspForm : CuspForm 𝒮ℒ 12 where
   toFun := fun z => η24 z
@@ -274,6 +326,7 @@ structure Eta24CuspPinnedBoundary where
   eulerProductContinuityAtZeroOwned : Bool
   eta24ZeroAtImInftyOwned : Bool
   eta24CuspFormOwned : Bool
+  eta24FirstQCoefficientOwned : Bool
   eta24CuspDominationOwned : Bool
   dependencyBumpUsed : Bool
 
@@ -282,6 +335,7 @@ def eta24CuspPinnedBoundary : Eta24CuspPinnedBoundary where
   eulerProductContinuityAtZeroOwned := true
   eta24ZeroAtImInftyOwned := true
   eta24CuspFormOwned := true
+  eta24FirstQCoefficientOwned := true
   eta24CuspDominationOwned := true
   dependencyBumpUsed := false
 

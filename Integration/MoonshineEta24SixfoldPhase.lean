@@ -178,6 +178,42 @@ theorem phase_mod_pi_of_fixed
   simp at hkIm
   linarith
 
+/-- The same sixfold phase compiler applies to the normalized E4/E6 Delta
+target as soon as nonvanishing is supplied.  Reflection/fixed-locus mathematics
+is already owned; this theorem isolates nonvanishing as the only additional
+input for the unconditional phase statement on that target. -/
+theorem normalizedDelta_sixfold_phase_of_ne
+    (z : ℍ)
+    (hunit : Complex.normSq (z : ℂ) = 1)
+    (hne :
+      Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaLimit z ≠ 0) :
+    ∃ k : ℤ,
+      Complex.arg
+          (Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaLimit z)
+        + 6 * Complex.arg (z : ℂ)
+      =
+        (k : ℝ) * Real.pi := by
+  apply phase_mod_pi_of_fixed hunit hne
+  exact
+    Integration.MoonshineEisensteinAgdaTarget.normalizedDelta_unitCircle_fixed
+      z hunit
+
+/-- Equivalent normalized-Delta congruence form. -/
+theorem normalizedDelta_arg_congruent_neg_six_of_ne
+    (z : ℍ)
+    (hunit : Complex.normSq (z : ℂ) = 1)
+    (hne :
+      Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaLimit z ≠ 0) :
+    ∃ k : ℤ,
+      Complex.arg
+          (Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaLimit z)
+      =
+        -6 * Complex.arg (z : ℂ) +
+          (k : ℝ) * Real.pi := by
+  obtain ⟨k, hk⟩ :=
+    normalizedDelta_sixfold_phase_of_ne z hunit hne
+  exact ⟨k, by linarith⟩
+
 /-- Sixfold phase law for eta^24 on the unit-circle fixed locus. -/
 theorem eta24_sixfold_phase
     (z : ℍ)
@@ -208,6 +244,8 @@ theorem eta24_arg_congruent_neg_six
 structure Eta24SixfoldPhaseBoundary where
   branchFreePhaseExponentialOwned : Bool
   integerPiCongruenceOwned : Bool
+  normalizedDeltaConditionalSixfoldCompilerOwned : Bool
+  normalizedDeltaNonvanishingStillRequired : Bool
   eta24NonvanishingUsed : Bool
   eta24UnitCircleFixedValueUsed : Bool
   concreteSixfoldPhaseTheoremOwned : Bool
@@ -216,6 +254,8 @@ structure Eta24SixfoldPhaseBoundary where
 def eta24SixfoldPhaseBoundary : Eta24SixfoldPhaseBoundary where
   branchFreePhaseExponentialOwned := true
   integerPiCongruenceOwned := true
+  normalizedDeltaConditionalSixfoldCompilerOwned := true
+  normalizedDeltaNonvanishingStillRequired := true
   eta24NonvanishingUsed := true
   eta24UnitCircleFixedValueUsed := true
   concreteSixfoldPhaseTheoremOwned := true

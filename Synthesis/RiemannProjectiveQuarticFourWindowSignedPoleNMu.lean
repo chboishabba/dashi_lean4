@@ -456,12 +456,23 @@ def QuarticFourSignedPolePair.signedHorizontalRemainder
 /--
 Exact pointwise normal form for the global signed N-mu scalar.
 
-This welds the endpoint-linearized storage representation to the actual
-combined test Psi_t used by the Abel consumer.
+The two endpoint mu-integrability facts are explicit hypotheses here.  They are
+part of the remaining global-exhaustion assembly seam and must be discharged
+from tail decay, not inferred from local derivative regularity.
 -/
 theorem QuarticFourSignedPolePair.signedNMuPair_eq_pointwise
     {t : ℝ} (ht : 0 < t)
-    (W : QuarticFourSignedPolePair t) :
+    (W : QuarticFourSignedPolePair t)
+    (hiHalf :
+      Integrable
+        (fun tau : ℝ =>
+          quarticFourOrdinateTest W.R (1/2) W.muHalf t tau
+            * Zeta23.mu tau))
+    (hiTwo :
+      Integrable
+        (fun tau : ℝ =>
+          quarticFourOrdinateTest W.R (2/3) W.muTwo t tau
+            * Zeta23.mu tau)) :
     W.signedNMuPair
       =
     (∑' sigma : Zeros,
@@ -492,57 +503,28 @@ theorem QuarticFourSignedPolePair.signedNMuPair_eq_pointwise
         (∑' sigma : Zeros,
           quarticFourBaseSourceTerm
             W.R (2/3) W.muTwo t sigma) := by
-    rw [show
-      (fun sigma : Zeros =>
-        ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
-          * W.signedOrdinateTest (sigma : ℂ).im)
-      =
-      fun sigma =>
-        W.poleTwo *
-          quarticFourBaseSourceTerm
-            W.R (1/2) W.muHalf t sigma
-        +
-        (-W.poleHalf) *
-          quarticFourBaseSourceTerm
-            W.R (2/3) W.muTwo t sigma by
+    have hpoint :
+        (fun sigma : Zeros =>
+          ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+            * W.signedOrdinateTest (sigma : ℂ).im)
+        =
+        fun sigma =>
+          W.poleTwo *
+            quarticFourBaseSourceTerm
+              W.R (1/2) W.muHalf t sigma
+          +
+          (-W.poleHalf) *
+            quarticFourBaseSourceTerm
+              W.R (2/3) W.muTwo t sigma := by
       funext sigma
       unfold QuarticFourSignedPolePair.signedOrdinateTest
         QuarticFourSignedPolePair.ordinateTestHalf
         QuarticFourSignedPolePair.ordinateTestTwo
         quarticFourBaseSourceTerm
-      ring]
-    rw [(hs1.mul_left W.poleTwo).tsum_add
-      (hs2.mul_left (-W.poleHalf)),
-      hs1.tsum_mul_left,
-      hs2.tsum_mul_left]
-  have hi1 :
-      Integrable
-        (fun tau : ℝ =>
-          quarticFourOrdinateTest W.R (1/2) W.muHalf t tau
-            * Zeta23.mu tau) := by
-    have hEq :=
-      quarticFourRvMMuSignedPair_eq_neg_quarter_ordinate_mu
-        (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf)
-        W.Rpos ht
-    exact
-      (quarticFourOrdinateTestDeriv_continuous
-        (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf)
-        W.Rpos ht).integrable_of_hasCompactSupport
-        hasCompactSupport_zero
-  have hi2 :
-      Integrable
-        (fun tau : ℝ =>
-          quarticFourOrdinateTest W.R (2/3) W.muTwo t tau
-            * Zeta23.mu tau) := by
-    have hEq :=
-      quarticFourRvMMuSignedPair_eq_neg_quarter_ordinate_mu
-        (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo)
-        W.Rpos ht
-    exact
-      (quarticFourOrdinateTestDeriv_continuous
-        (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo)
-        W.Rpos ht).integrable_of_hasCompactSupport
-        hasCompactSupport_zero
+      ring
+    rw [hpoint, (hs1.mul_left W.poleTwo).tsum_add
+      (hs2.mul_left (-W.poleHalf))]
+    rw [tsum_mul_left, tsum_mul_left]
   have hint :
       (∫ tau : ℝ,
         W.signedOrdinateTest tau * Zeta23.mu tau)
@@ -579,12 +561,13 @@ theorem QuarticFourSignedPolePair.signedNMuPair_eq_pointwise
       funext tau
       ring
     rw [hpoint,
-      integral_add (hi1.const_mul _) (hi2.const_mul _),
+      integral_add (hiHalf.const_mul _) (hiTwo.const_mul _),
       integral_const_mul, integral_const_mul]
   unfold QuarticFourSignedPolePair.signedNMuPair
     quarticFourFullNMinusMu
   rw [htsum, hint]
   ring
+
 
 /--
 The handoff's missing G2 assembly lemma.

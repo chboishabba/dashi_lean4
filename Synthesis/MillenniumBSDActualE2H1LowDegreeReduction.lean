@@ -505,6 +505,49 @@ theorem cmGenericTrivialE2H1SquareClass_coherence
   rw [cmGenericTrivialE2H1Character_coherence x,
     cmGenericTwoTorsionCharacterPair_coherence]
 
+/-- Field-generic rational trivial-E[2] H¹ comparison, written on the
+same literal square-class target as the specialized BA4 construction. -/
+noncomputable def cmGenericTrivialE2H1MulEquivRatSquareClasses :
+    Multiplicative (continuousCohomology 1 cmTwoTorsionRepresentation) ≃*
+      (RatSquareClass × RatSquareClass) :=
+  (absoluteGaloisTrivialTwoTorsionH1QuadraticPairMulEquiv ℚ).trans
+    quadraticCharacterPairMulEquivRatSquareClasses
+
+/-- Pointwise coherence of the two rational trivial-E[2] square-class
+comparisons. -/
+theorem cmGenericTrivialE2H1MulEquivRatSquareClasses_apply
+    (x : continuousCohomology 1 cmTwoTorsionRepresentation) :
+    (cmTrivialE2H1ContinuousHomMulEquiv.trans
+      (cmTwoTorsionContinuousCharacterMulEquivPair.trans
+        quadraticCharacterPairMulEquivRatSquareClasses))
+      (Multiplicative.ofAdd x)
+      =
+    cmGenericTrivialE2H1MulEquivRatSquareClasses
+      (Multiplicative.ofAdd x) :=
+  cmGenericTrivialE2H1SquareClass_coherence x
+
+/-- The inverse reconstructions from a rational square-class pair therefore
+agree as literal H¹ classes. -/
+theorem cmGenericTrivialE2H1MulEquivRatSquareClasses_symm_coherence
+    (c : RatSquareClass × RatSquareClass) :
+    (cmTrivialE2H1ContinuousHomMulEquiv.trans
+      (cmTwoTorsionContinuousCharacterMulEquivPair.trans
+        quadraticCharacterPairMulEquivRatSquareClasses)).symm c
+      =
+    cmGenericTrivialE2H1MulEquivRatSquareClasses.symm c := by
+  let eSpec :=
+    cmTrivialE2H1ContinuousHomMulEquiv.trans
+      (cmTwoTorsionContinuousCharacterMulEquivPair.trans
+        quadraticCharacterPairMulEquivRatSquareClasses)
+  let eGen := cmGenericTrivialE2H1MulEquivRatSquareClasses
+  apply eSpec.injective
+  rw [eSpec.apply_symm_apply]
+  have h :=
+    cmGenericTrivialE2H1MulEquivRatSquareClasses_apply
+      (eGen.symm c).toAdd
+  change eSpec (eGen.symm c) = eGen (eGen.symm c) at h
+  simpa [eSpec, eGen] using h.symm
+
 /-- The actual geometric E[2] H¹ comparison with the literal square-class
 pair, retaining the full group law. -/
 noncomputable def cmActualE2H1MulEquivRatSquareClasses_paid :

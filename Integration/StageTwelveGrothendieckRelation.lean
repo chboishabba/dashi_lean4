@@ -227,15 +227,6 @@ theorem ternaryRelationCell_cannot_factor_signedMagnitude :
     _ = h.factor (signedRelationCellObserver right) := by rw [same]
     _ = signedMagnitudeConsumer right := (h.law right).symm
 
-def signedRelationCellBundleSheaf :
-    BundleSheaf StageRelation144 SignedMultiplicity SignedRelationField where
-  restrict := fun field cell => field cell
-  compatible := fun _ => True
-  glue := fun locals _ => locals
-  glueRestricts := by
-    intro locals witness point
-    rfl
-
 def signedRelationMagnitudeWrongTypeReceipt : RelationWrongTypeReceipt where
   obligation := "Stage12Relation144:signedMagnitude"
   candidate := "relation cell plus coarse ternary SSP sign"
@@ -352,6 +343,15 @@ structure BundleSheaf (Base LocalSection GlobalSection : Type) where
 
 def relationCellBundleSheaf :
     BundleSheaf StageRelation144 Trit StageRelationField where
+  restrict := fun field cell => field cell
+  compatible := fun _ => True
+  glue := fun locals _ => locals
+  glueRestricts := by
+    intro locals witness point
+    rfl
+
+def signedRelationCellBundleSheaf :
+    BundleSheaf StageRelation144 SignedMultiplicity SignedRelationField where
   restrict := fun field cell => field cell
   compatible := fun _ => True
   glue := fun locals _ => locals

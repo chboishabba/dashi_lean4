@@ -946,6 +946,40 @@ theorem tendsto_jacobiSquareThetaFiniteProduct_mul_evenEuler :
   simpa [jacobiSquareThetaFiniteProduct_exact] using
     (tendsto_jacobiEulerFiniteProduct_two_mul.pow 2)
 
+/-- The Laurent-series monomial X, packaged as a unit. -/
+noncomputable def jacobiLaurentXUnit : (LaurentSeries ℂ)ˣ where
+  val := HahnSeries.single (1 : ℤ) 1
+  inv := HahnSeries.single (-1 : ℤ) 1
+  val_inv := by simp
+  inv_val := by simp
+
+/-- The diagonal value z=-X in the Laurent-series target. -/
+noncomputable def jacobiDiagonalZUnit : (LaurentSeries ℂ)ˣ :=
+  -jacobiLaurentXUnit
+
+/-- Coefficient-ring specialization z↦-X. -/
+noncomputable def jacobiDiagonalCoeffHom :
+    JacobiLaurentCoeff →+* LaurentSeries ℂ :=
+  LaurentPolynomial.eval₂ (HahnSeries.C : ℂ →+* LaurentSeries ℂ)
+    jacobiDiagonalZUnit
+
+@[simp] theorem jacobiDiagonalCoeffHom_T (k : ℤ) :
+    jacobiDiagonalCoeffHom (LaurentPolynomial.T k) =
+      (jacobiDiagonalZUnit : LaurentSeries ℂ) ^ k := by
+  simp [jacobiDiagonalCoeffHom]
+
+/-- Apply z↦-X coefficientwise, while retaining the outer q-variable. -/
+noncomputable def jacobiDiagonalCoeffMap
+    (F : JacobiBivariateFormal) :
+    PowerSeries (LaurentSeries ℂ) :=
+  PowerSeries.map jacobiDiagonalCoeffHom F
+
+@[simp] theorem jacobiDiagonalCoeffMap_coeff
+    (F : JacobiBivariateFormal) (N : ℕ) :
+    (jacobiDiagonalCoeffMap F).coeff N =
+      jacobiDiagonalCoeffHom (F.coeff N) := by
+  simp [jacobiDiagonalCoeffMap]
+
 /-- Weighted diagonal coefficient implementing q↦q² and z↦-q
 coefficientwise.  For target degree N only outer q-degrees d≤N are inspected;
 this is exactly the finite-dependency property needed to transfer J0's
@@ -1028,39 +1062,6 @@ theorem jacobiSquareThetaDiagonalTransfer_of_weightedDiagonalAgreements
     tendsto_jacobiWeightedDiagonal_finiteProduct_of_tripleProduct hJ
   simpa [hFinite, hSeries] using h
 
-/-- The Laurent-series monomial X, packaged as a unit. -/
-noncomputable def jacobiLaurentXUnit : (LaurentSeries ℂ)ˣ where
-  val := HahnSeries.single (1 : ℤ) 1
-  inv := HahnSeries.single (-1 : ℤ) 1
-  val_inv := by simp
-  inv_val := by simp
-
-/-- The diagonal value z=-X in the Laurent-series target. -/
-noncomputable def jacobiDiagonalZUnit : (LaurentSeries ℂ)ˣ :=
-  -jacobiLaurentXUnit
-
-/-- Coefficient-ring specialization z↦-X. -/
-noncomputable def jacobiDiagonalCoeffHom :
-    JacobiLaurentCoeff →+* LaurentSeries ℂ :=
-  LaurentPolynomial.eval₂ (HahnSeries.C : ℂ →+* LaurentSeries ℂ)
-    jacobiDiagonalZUnit
-
-@[simp] theorem jacobiDiagonalCoeffHom_T (k : ℤ) :
-    jacobiDiagonalCoeffHom (LaurentPolynomial.T k) =
-      (jacobiDiagonalZUnit : LaurentSeries ℂ) ^ k := by
-  simp [jacobiDiagonalCoeffHom]
-
-/-- Apply z↦-X coefficientwise, while retaining the outer q-variable. -/
-noncomputable def jacobiDiagonalCoeffMap
-    (F : JacobiBivariateFormal) :
-    PowerSeries (LaurentSeries ℂ) :=
-  PowerSeries.map jacobiDiagonalCoeffHom F
-
-@[simp] theorem jacobiDiagonalCoeffMap_coeff
-    (F : JacobiBivariateFormal) (N : ℕ) :
-    (jacobiDiagonalCoeffMap F).coeff N =
-      jacobiDiagonalCoeffHom (F.coeff N) := by
-  simp [jacobiDiagonalCoeffMap]
 
 /-- The exact remaining J0→J2 seam: the weighted diagonal
 q↦q², z↦-q carries the finite Jacobi products to the base theta4 series in

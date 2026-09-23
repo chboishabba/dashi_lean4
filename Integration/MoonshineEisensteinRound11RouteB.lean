@@ -1,5 +1,6 @@
 import Integration.BishopRound11MachinSourceBinding
 import Integration.MoonshineEisensteinAgdaTarget
+import Integration.MoonshineDeltaFinalMinCut
 
 /-!
 # End-to-end Round11/Machin route-B compiler
@@ -264,6 +265,24 @@ theorem mapped_sourceDiscriminantNumerator_tendsto
   simpa only [map_sourceDiscriminantNumerator τs τ hτ] using
     discriminantNumeratorAt_tendsto τ
 
+/-- The formerly independent classical same-object seam is closed on the
+Lean target by the pin-local theorem; this does not depend on inhabiting the
+Agda source binding. -/
+theorem eta24_eq_normalizedDelta_target
+    (τ : ℍ) :
+    Integration.MoonshineEta24Pinned.eta24 τ =
+      normalizedDeltaLimit τ :=
+  Integration.MoonshineDeltaFinalMinCut
+    .canonicalEta24NormalizedDeltaSameObject τ
+
+/-- Hence normalized-Delta nonvanishing and sixfold phase are already
+hypothesis-free on the target side before the cross-language replay is paid. -/
+theorem normalizedDelta_target_ne_zero
+    (τ : ℍ) :
+    normalizedDeltaLimit τ ≠ 0 :=
+  Integration.MoonshineDeltaFinalMinCut
+    .normalizedDelta_ne_zero_canonical τ
+
 structure Round11RouteBBoundary where
   oneSourceBindingBuildsPrimitiveExtraction : Bool
   sourceQTransportOwned : Bool
@@ -290,7 +309,7 @@ def round11RouteBBoundary : Round11RouteBBoundary where
   mappedSourceNormalizedDeltaConverges := true
 
   actualAgdaRound11MachinBindingInhabited := false
-  eta24SameObjectWithNormalizedE4E6Delta := false
+  eta24SameObjectWithNormalizedE4E6Delta := true
 
 end
 

@@ -51,21 +51,22 @@ inductive StageRole
   | scalePromoted | crossScaleFresh | relationOpenedAtScale
   deriving DecidableEq, Repr
 
-def stageRole : Fin 13 → StageRole
-  | ⟨0, _⟩ => .root
-  | ⟨1, _⟩ => .unit
-  | ⟨2, _⟩ => .relationOpened
-  | ⟨3, _⟩ => .localClosure
-  | ⟨4, _⟩ => .tetralemmaInterpolation
-  | ⟨5, _⟩ => .decisionGate
-  | ⟨6, _⟩ => .reflexiveClosure
-  | ⟨7, _⟩ => .orbitProliferation
-  | ⟨8, _⟩ => .gluingResidual
-  | ⟨9, _⟩ => .systemicClosure
-  | ⟨10, _⟩ => .scalePromoted
-  | ⟨11, _⟩ => .crossScaleFresh
-  | ⟨12, _⟩ => .relationOpenedAtScale
-  | ⟨n+13, h⟩ => by omega
+def stageRole (s : Fin 13) : StageRole :=
+  match s.val with
+  | 0 => .root
+  | 1 => .unit
+  | 2 => .relationOpened
+  | 3 => .localClosure
+  | 4 => .tetralemmaInterpolation
+  | 5 => .decisionGate
+  | 6 => .reflexiveClosure
+  | 7 => .orbitProliferation
+  | 8 => .gluingResidual
+  | 9 => .systemicClosure
+  | 10 => .scalePromoted
+  | 11 => .crossScaleFresh
+  | 12 => .relationOpenedAtScale
+  | _ => .root
 
 theorem stage4_tetralemma :
     stageRole (4 : Fin 13) = .tetralemmaInterpolation := rfl

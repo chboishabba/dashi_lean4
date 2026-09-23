@@ -3251,4 +3251,101 @@ theorem QuarticFourSignedPolePair.globalFullCubicQuotient_iff_splitObstructions_
     ring
 
 
+
+/-!
+## Local central-window normal form near u=0
+
+For R<c, the symmetric bump centered at ±c vanishes on a whole neighborhood
+of zero.  Thus for witness radii R<1<pi/3 all off-centre four-window terms
+vanish locally, not merely pointwise.  Every local derivative at zero of the
+endpoint taper is therefore independent of lambda and mu.
+-/
+
+theorem quantitativeSymBump_eventuallyEq_zero_at_zero
+    {c R : ℝ}
+    (hR : 0 < R)
+    (hRc : R < c) :
+    quantitativeSymBump c R =ᶠ[𝓝 (0 : ℝ)] (0 : ℝ -> ℝ) := by
+  have hgap : 0 < c - R := by linarith
+  let U : Set ℝ := Set.Ioo (-(c-R)) (c-R)
+  have hUopen : IsOpen U := isOpen_Ioo
+  have h0U : (0 : ℝ) ∈ U := by
+    dsimp [U]
+    constructor <;> linarith
+  refine Filter.eventuallyEq_of_mem (hUopen.mem_nhds h0U) ?_
+  intro u hu
+  dsimp [U] at hu
+  have hpos : scaledUnitBump c R u = 0 := by
+    by_contra hne
+    have hs := scaledUnitBump_support hR hne
+    have hs' := (abs_lt.mp hs).1
+    linarith
+  have hneg : scaledUnitBump c R (-u) = 0 := by
+    by_contra hne
+    have hs := scaledUnitBump_support hR hne
+    have hs' := (abs_lt.mp hs).1
+    linarith
+  unfold quantitativeSymBump
+    Zeta23Bridge.LiteralWeilParityBalance.symmetrize
+  rw [hpos,hneg]
+  ring
+
+theorem quarticFourWindowProfile_eventuallyEq_central_at_zero
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (hR1 : R < 1) :
+    quarticFourWindowProfile R lam mu
+      =ᶠ[𝓝 (0 : ℝ)]
+    (fun u =>
+      (quarticWindowMass R)⁻¹
+        * quantitativeSymBump 0 R u) := by
+  have hpi3 : R < Real.pi/3 := by
+    nlinarith [Real.pi_gt_three]
+  have hpi2 : R < Real.pi/2 := by
+    nlinarith [Real.pi_gt_three]
+  have hpi : R < Real.pi := by
+    nlinarith [Real.pi_gt_three]
+  have h1 :=
+    quantitativeSymBump_eventuallyEq_zero_at_zero
+      hR hpi3
+  have h2 :=
+    quantitativeSymBump_eventuallyEq_zero_at_zero
+      hR hpi2
+  have h3 :=
+    quantitativeSymBump_eventuallyEq_zero_at_zero
+      hR hpi
+  filter_upwards [h1,h2,h3] with u hu1 hu2 hu3
+  unfold quarticFourWindowProfile quarticFourWindowRaw
+  rw [hu1,hu2,hu3]
+  ring
+
+def quarticFourCentralTaperSecondDeriv
+    (R : ℝ) : ℝ :=
+  deriv (deriv
+    (fun u =>
+      (quarticWindowMass R)⁻¹
+        * quantitativeSymBump 0 R u)) 0
+
+theorem quarticFourWindowProfile_secondDeriv_zero_common
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (hR1 : R < 1) :
+    deriv (deriv (quarticFourWindowProfile R lam mu)) 0
+      =
+    quarticFourCentralTaperSecondDeriv R := by
+  have hEq :=
+    quarticFourWindowProfile_eventuallyEq_central_at_zero
+      (lam:=lam) (mu:=mu) hR hR1
+  have hD :
+      deriv (quarticFourWindowProfile R lam mu)
+        =ᶠ[𝓝 (0 : ℝ)]
+      deriv
+        (fun u =>
+          (quarticWindowMass R)⁻¹
+            * quantitativeSymBump 0 R u) :=
+    hEq.deriv
+  unfold quarticFourCentralTaperSecondDeriv
+  exact Filter.EventuallyEq.deriv_eq hD
+
+
 end Synthesis

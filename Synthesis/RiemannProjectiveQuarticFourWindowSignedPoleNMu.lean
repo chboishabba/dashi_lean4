@@ -664,6 +664,24 @@ theorem QuarticFourSignedPolePair.signedNMuPair_eq_pointwise
 
 
 /--
+The actual combined signed test is globally integrable against mu.
+-/
+theorem QuarticFourSignedPolePair.signedOrdinateTest_mul_mu_integrable
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Integrable
+      (fun tau : ℝ =>
+        W.signedOrdinateTest tau * Zeta23.mu tau) := by
+  obtain ⟨hiHalf, hiTwo⟩ := W.endpointMuIntegrable ht
+  unfold QuarticFourSignedPolePair.signedOrdinateTest
+    QuarticFourSignedPolePair.ordinateTestHalf
+    QuarticFourSignedPolePair.ordinateTestTwo
+  have h1 := hiHalf.const_mul W.poleTwo
+  have h2 := hiTwo.const_mul (-W.poleHalf)
+  have hadd := h1.add h2
+  simpa only [mul_add, add_mul, neg_mul, mul_assoc] using hadd
+
+/--
 Hypothesis-free same-object weld for the actual combined Psi test.
 
 The endpoint full-line mu-integrability obligations are discharged by the

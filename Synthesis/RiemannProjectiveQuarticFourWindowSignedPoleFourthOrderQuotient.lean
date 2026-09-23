@@ -35,6 +35,11 @@ open scoped Interval Real
 
 namespace Synthesis
 
+open Zeta23
+open Zeta23Bridge.LiteralWeilSameOrdinateEvenCone
+open Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition
+open Zeta23Bridge.LiteralWeilOffOrdinateReflectionPair
+
 def centeredMonomial (t : ℝ) (k : ℕ) (x : ℝ) : ℝ :=
   (x - t)^k
 
@@ -4400,11 +4405,13 @@ theorem QuarticFourSignedPolePair.signedLiteralPairSourceTerm_summable
     (W : QuarticFourSignedPolePair t) :
     Summable W.signedLiteralPairSourceTerm := by
   have h1 :=
-    (quarticFourPairDefect_summable_offOrd W.Rpos ht).mul_left
-      W.poleTwo
+    (quarticFourPairDefect_summable_offOrd
+      (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf)
+      W.Rpos ht).mul_left W.poleTwo
   have h2 :=
-    (quarticFourPairDefect_summable_offOrd W.Rpos ht).mul_left
-      (-W.poleHalf)
+    (quarticFourPairDefect_summable_offOrd
+      (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo)
+      W.Rpos ht).mul_left (-W.poleHalf)
   exact h1.add h2
 
 theorem QuarticFourSignedPolePair.signedOffOrdProjectiveDefect_eq_half_pair_tsum

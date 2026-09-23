@@ -101,7 +101,6 @@ structure FaithfulStandardRealInterpretation
 /-- Componentwise complex carrier over the target real algebra. -/
 structure StandardComplex (T : StandardRealTranscendental) where
   re im : T.Carrier
-  deriving DecidableEq
 
 /-- Componentwise complex transport induced by a real interpretation. -/
 def mapComplex

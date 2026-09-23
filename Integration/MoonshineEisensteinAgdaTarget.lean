@@ -467,9 +467,8 @@ theorem jTarget_unitCircle_im_zero
     (τ : ℍ)
     (hunit : Complex.normSq (τ : ℂ) = 1) :
     (jTarget τ).im = 0 := by
-  have h := jTarget_unitCircle_conj_fixed τ hunit
-  apply_fun Complex.im at h
-  simp only [map_eq_zero, Complex.conj_im] at h
+  have h := congrArg Complex.im (jTarget_unitCircle_conj_fixed τ hunit)
+  simp only [Complex.conj_im] at h
   linarith
 
 /-- Machine-readable seam. -/

@@ -1688,6 +1688,107 @@ theorem jacobiWeightedDiagonal_mul_zInv_qPowSucc
   simpa [zpow_neg, inv_neg, inv_one, two_mul, add_assoc, add_comm,
     add_left_comm] using h
 
+theorem jacobiLowerSupported_one_sub_qPow (m : ℕ) :
+    JacobiLowerSupported
+      (1 - X ^ m : JacobiBivariateFormal) :=
+  jacobiLowerSupported_sub jacobiLowerSupported_one
+    (jacobiLowerSupported_X_pow m)
+
+theorem jacobiLowerSupported_one_add_z_qPow (n : ℕ) :
+    JacobiLowerSupported
+      (1 + C (LaurentPolynomial.T (1 : ℤ)) * X ^ n :
+        JacobiBivariateFormal) :=
+  jacobiLowerSupported_add jacobiLowerSupported_one
+    (jacobiLowerSupported_C_T_mul_X_pow (by omega))
+
+theorem jacobiLowerSupported_one_add_zInv_qPowSucc (n : ℕ) :
+    JacobiLowerSupported
+      (1 + C (LaurentPolynomial.T (-1 : ℤ)) * X ^ (n + 1) :
+        JacobiBivariateFormal) :=
+  jacobiLowerSupported_add jacobiLowerSupported_one
+    (jacobiLowerSupported_C_T_mul_X_pow (by omega))
+
+theorem jacobiWeightedDiagonal_mul_one_sub_qPow
+    (F : JacobiBivariateFormal) (hF : JacobiLowerSupported F)
+    (m : ℕ) :
+    jacobiWeightedDiagonal (F * (1 - X ^ m)) =
+      jacobiWeightedDiagonal F * (1 - X ^ (2 * m)) := by
+  rw [mul_sub, mul_one, jacobiWeightedDiagonal_sub,
+    jacobiWeightedDiagonal_mul_qPow F hF]
+  ring
+
+theorem jacobiWeightedDiagonal_mul_one_add_z_qPow
+    (F : JacobiBivariateFormal) (hF : JacobiLowerSupported F)
+    (n : ℕ) :
+    jacobiWeightedDiagonal
+      (F * (1 + C (LaurentPolynomial.T (1 : ℤ)) * X ^ n)) =
+      jacobiWeightedDiagonal F * (1 - X ^ (2 * n + 1)) := by
+  rw [mul_add, mul_one, jacobiWeightedDiagonal_add,
+    jacobiWeightedDiagonal_mul_z_qPow F hF]
+  ring
+
+theorem jacobiWeightedDiagonal_mul_one_add_zInv_qPowSucc
+    (F : JacobiBivariateFormal) (hF : JacobiLowerSupported F)
+    (n : ℕ) :
+    jacobiWeightedDiagonal
+      (F * (1 + C (LaurentPolynomial.T (-1 : ℤ)) * X ^ (n + 1))) =
+      jacobiWeightedDiagonal F * (1 - X ^ (2 * n + 1)) := by
+  rw [mul_add, mul_one, jacobiWeightedDiagonal_add,
+    jacobiWeightedDiagonal_mul_zInv_qPowSucc F hF]
+  ring
+
+/-- Whole-factor weighted diagonal compiler. -/
+theorem jacobiWeightedDiagonal_mul_tripleFactor
+    (F : JacobiBivariateFormal) (hF : JacobiLowerSupported F)
+    (n : ℕ) :
+    jacobiWeightedDiagonal (F * jacobiTripleFactor n) =
+      jacobiWeightedDiagonal F *
+        ((1 - X ^ (2 * n + 2)) * (1 - X ^ (2 * n + 1)) ^ 2) := by
+  unfold jacobiTripleFactor
+  rw [← mul_assoc, ← mul_assoc]
+  let F₀ : JacobiBivariateFormal := F * (1 - X ^ (n + 1))
+  have hF₀ : JacobiLowerSupported F₀ :=
+    jacobiLowerSupported_mul hF
+      (jacobiLowerSupported_one_sub_qPow (n + 1))
+  let F₁ : JacobiBivariateFormal :=
+    F₀ * (1 + C (LaurentPolynomial.T (1 : ℤ)) * X ^ n)
+  have hF₁ : JacobiLowerSupported F₁ :=
+    jacobiLowerSupported_mul hF₀
+      (jacobiLowerSupported_one_add_z_qPow n)
+  change jacobiWeightedDiagonal
+      (F₁ * (1 + C (LaurentPolynomial.T (-1 : ℤ)) * X ^ (n + 1))) = _
+  rw [jacobiWeightedDiagonal_mul_one_add_zInv_qPowSucc F₁ hF₁ n]
+  change jacobiWeightedDiagonal F₁ * _ = _
+  rw [show jacobiWeightedDiagonal F₁ =
+      jacobiWeightedDiagonal F₀ * (1 - X ^ (2 * n + 1)) by
+        exact jacobiWeightedDiagonal_mul_one_add_z_qPow F₀ hF₀ n]
+  change (jacobiWeightedDiagonal F₀ * _) * _ = _
+  rw [show jacobiWeightedDiagonal F₀ =
+      jacobiWeightedDiagonal F * (1 - X ^ (2 * (n + 1))) by
+        exact jacobiWeightedDiagonal_mul_one_sub_qPow F hF (n + 1)]
+  ring_nf
+  congr 3 <;> omega
+
+theorem jacobiSquareThetaFiniteProduct_succ (M : ℕ) :
+    jacobiSquareThetaFiniteProduct (M + 1) =
+      jacobiSquareThetaFiniteProduct M *
+        ((1 - X ^ (2 * M + 2)) * (1 - X ^ (2 * M + 1)) ^ 2) := by
+  simp [jacobiSquareThetaFiniteProduct, Finset.prod_range_succ]
+
+/-- The finite weighted diagonal algebraic agreement is paid. -/
+theorem jacobiWeightedDiagonal_finiteProduct_paid :
+    JacobiWeightedDiagonalFiniteProductAgreement := by
+  intro M
+  induction M with
+  | zero =>
+      simp [jacobiFiniteProduct_zero, jacobiSquareThetaFiniteProduct,
+        jacobiWeightedDiagonal_one]
+  | succ M ih =>
+      rw [jacobiFiniteProduct_succ]
+      rw [jacobiWeightedDiagonal_mul_tripleFactor
+        (jacobiFiniteProduct M) (jacobiLowerSupported_finiteProduct M) M]
+      rw [ih, jacobiSquareThetaFiniteProduct_succ]
+
 /-- J0 coefficientwise equality transfers automatically through the finite
 weighted diagonal operator. -/
 theorem tendsto_jacobiWeightedDiagonal_finiteProduct_of_tripleProduct

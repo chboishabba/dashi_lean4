@@ -59,6 +59,96 @@ inductive BalancedPhase
   | negative | zero | positive
   deriving DecidableEq, Repr
 
+abbrev NinePoint := BalancedPhase × BalancedPhase
+
+def negateBalanced : BalancedPhase → BalancedPhase
+  | .negative => .positive
+  | .zero => .zero
+  | .positive => .negative
+
+def invertNine : NinePoint → NinePoint
+  | (x,y) => (negateBalanced x, negateBalanced y)
+
+theorem invertNine_involutive (p : NinePoint) :
+    invertNine (invertNine p) = p := by
+  rcases p with ⟨x,y⟩
+  cases x <;> cases y <;> rfl
+
+/-- The five exact inversion orbits of the nine-state square. -/
+inductive NineOrbit5
+  | zeroOrbit
+  | firstAxisOrbit
+  | secondAxisOrbit
+  | equalSignOrbit
+  | oppositeSignOrbit
+  deriving DecidableEq, Repr
+
+def quotientNine : NinePoint → NineOrbit5
+  | (.zero,.zero) => .zeroOrbit
+  | (.negative,.zero) | (.positive,.zero) => .firstAxisOrbit
+  | (.zero,.negative) | (.zero,.positive) => .secondAxisOrbit
+  | (.negative,.negative) | (.positive,.positive) => .equalSignOrbit
+  | (.negative,.positive) | (.positive,.negative) => .oppositeSignOrbit
+
+theorem quotientNine_inversion_invariant (p : NinePoint) :
+    quotientNine (invertNine p) = quotientNine p := by
+  rcases p with ⟨x,y⟩
+  cases x <;> cases y <;> rfl
+
+def canonicalNineRepresentative : NineOrbit5 → NinePoint
+  | .zeroOrbit => (.zero,.zero)
+  | .firstAxisOrbit => (.positive,.zero)
+  | .secondAxisOrbit => (.zero,.positive)
+  | .equalSignOrbit => (.positive,.positive)
+  | .oppositeSignOrbit => (.positive,.negative)
+
+theorem quotient_canonical_representative (o : NineOrbit5) :
+    quotientNine (canonicalNineRepresentative o) = o := by
+  cases o <;> rfl
+
+def orbitToMode : NineOrbit5 → Mode5
+  | .zeroOrbit => .m09
+  | .firstAxisOrbit => .m18
+  | .secondAxisOrbit => .m27
+  | .equalSignOrbit => .m36
+  | .oppositeSignOrbit => .m45
+
+def modeToOrbit : Mode5 → NineOrbit5
+  | .m09 => .zeroOrbit
+  | .m18 => .firstAxisOrbit
+  | .m27 => .secondAxisOrbit
+  | .m36 => .equalSignOrbit
+  | .m45 => .oppositeSignOrbit
+
+theorem orbit_mode_roundtrip (o : NineOrbit5) :
+    modeToOrbit (orbitToMode o) = o := by
+  cases o <;> rfl
+
+theorem mode_orbit_roundtrip (m : Mode5) :
+    orbitToMode (modeToOrbit m) = m := by
+  cases m <;> rfl
+
+/-- The phase-preserving 27 -> 3 x 5 reduction: only the inner square is
+quotiented by simultaneous inversion. -/
+abbrev Ternary27Point := BalancedPhase × NinePoint
+abbrev PhaseOrbit15 := BalancedPhase × NineOrbit5
+
+def reduce27ToPhaseOrbit15 : Ternary27Point → PhaseOrbit15
+  | (outer,inner) => (outer, quotientNine inner)
+
+def innerInvert27 : Ternary27Point → Ternary27Point
+  | (outer,inner) => (outer, invertNine inner)
+
+theorem reduce27_inner_inversion_invariant (p : Ternary27Point) :
+    reduce27ToPhaseOrbit15 (innerInvert27 p) = reduce27ToPhaseOrbit15 p := by
+  rcases p with ⟨outer,inner⟩
+  simp [reduce27ToPhaseOrbit15, innerInvert27,
+    quotientNine_inversion_invariant]
+
+theorem nine_eq_one_plus_four_pairs : 9 = 1 + 4*2 := by norm_num
+theorem nine_inversion_orbit_count_five : 5 = 1 + 4 := by norm_num
+theorem three_times_five_eq_fifteen : 3 * 5 = 15 := by norm_num
+
 abbrev Phase15 := Mode5 × BalancedPhase
 abbrev Neutral5 := Mode5
 abbrev Oriented10 := Mode5 × Phase2

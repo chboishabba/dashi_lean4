@@ -517,4 +517,48 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_coneDebt_sub_goodGain_
       ht n
   linarith
 
+
+/-!
+## Fixed-width containment of the unfavorable cone
+
+Every nontrivial zeta zero lies in the critical strip, so
+|beta-1/2| <= 1/2.  Therefore the mixed cone delta^2 <= 6 a^2 is contained in
+an ordinate window of fixed width, independent of t.
+-/
+
+theorem quarticSignedPoleLocalCone_delta_sq_le_three_halves
+    {t eta : ℝ} {rho : Zeros}
+    (hc : quarticSignedPoleLocalCone t eta rho) :
+    ((rho : ℂ).im-t)^2 <= (3/2 : ℝ) := by
+  have hstrip := zetaZero_height_abs_le_half rho
+  have ha2 :
+      heightOf rho^2 <= (1/2 : ℝ)^2 := by
+    nlinarith [sq_nonneg (heightOf rho),
+      sq_nonneg ((1/2 : ℝ) - |heightOf rho|)]
+  nlinarith [hc.2]
+
+theorem quarticSignedPoleLocalCone_abs_delta_le_three_halves
+    {t eta : ℝ} {rho : Zeros}
+    (hc : quarticSignedPoleLocalCone t eta rho) :
+    |(rho : ℂ).im-t| <= (3/2 : ℝ) := by
+  have hsq :=
+    quarticSignedPoleLocalCone_delta_sq_le_three_halves hc
+  have habs2 :
+      |(rho : ℂ).im-t|^2 = ((rho : ℂ).im-t)^2 := by
+    rw [sq_abs]
+  rw [← habs2] at hsq
+  have habs0 : 0 <= |(rho : ℂ).im-t| := abs_nonneg _
+  nlinarith
+
+theorem quarticSignedPoleLocalCone_mem_fixed_window
+    {t eta : ℝ} {rho : Zeros}
+    (hc : quarticSignedPoleLocalCone t eta rho) :
+    t - (3/2 : ℝ) <= (rho : ℂ).im
+      ∧
+    (rho : ℂ).im <= t + (3/2 : ℝ) := by
+  have h :=
+    quarticSignedPoleLocalCone_abs_delta_le_three_halves hc
+  rw [abs_le] at h
+  constructor <;> linarith
+
 end Synthesis

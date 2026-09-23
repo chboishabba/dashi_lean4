@@ -943,4 +943,112 @@ theorem QuarticFourSignedPolePair.literalJointQuarticPolynomial_eq_mixed_sub_ord
   field_simp [show t/16 ≠ 0 by positivity]
   ring
 
+
+/-!
+## Sign cone of the leading joint quartic polynomial
+-/
+
+theorem QuarticFourSignedPolePair.jointQuarticJetPolynomial_pos_of_sq_lt_six_sq
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hq : q ≠ 0)
+    (hcone : q^2 < 6 * alpha^2) :
+    0 < W.jointQuarticJetPolynomial alpha q := by
+  unfold QuarticFourSignedPolePair.jointQuarticJetPolynomial
+  have hS := W.targetStrength_pos
+  have hq2 : 0 < q^2 := sq_pos_of_ne_zero hq
+  have hbr :
+      0 < alpha^2 * q^2 - q^4/6 := by
+    have h6 : (0:ℝ) < 6 := by norm_num
+    have hq4 : q^4 = q^2 * q^2 := by ring
+    rw [hq4]
+    have :
+        q^2 / 6 < alpha^2 := by
+      rw [div_lt_iff₀ h6]
+      simpa [mul_comm] using hcone
+    nlinarith
+  exact mul_pos hS hbr
+
+theorem QuarticFourSignedPolePair.jointQuarticJetPolynomial_neg_of_six_sq_lt_sq
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hcone : 6 * alpha^2 < q^2) :
+    W.jointQuarticJetPolynomial alpha q < 0 := by
+  unfold QuarticFourSignedPolePair.jointQuarticJetPolynomial
+  have hS := W.targetStrength_pos
+  have h6 : (0:ℝ) < 6 := by norm_num
+  have hbr :
+      alpha^2 * q^2 - q^4/6 < 0 := by
+    have hq2 : 0 < q^2 := by
+      have : 0 < 6 * alpha^2 + (q^2 - 6 * alpha^2) := by
+        rw [add_sub_cancel]
+        exact lt_of_le_of_lt (sq_nonneg _) hcone
+      exact this
+    have hq4 : q^4 = q^2 * q^2 := by ring
+    rw [hq4]
+    have :
+        alpha^2 < q^2 / 6 := by
+      rw [lt_div_iff₀ h6]
+      simpa [mul_comm] using hcone
+    nlinarith
+  exact mul_neg_of_pos_of_neg hS hbr
+
+theorem QuarticFourSignedPolePair.jointQuarticJetPolynomial_zero_of_sq_eq_six_sq
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hcone : q^2 = 6 * alpha^2) :
+    W.jointQuarticJetPolynomial alpha q = 0 := by
+  unfold QuarticFourSignedPolePair.jointQuarticJetPolynomial
+  rw [hcone]
+  ring
+
+theorem QuarticFourSignedPolePair.literalJointQuarticPolynomial_nonneg_of_delta_sq_le_six_height_sq
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros)
+    (hcone :
+      ((sigma : ℂ).im-t)^2 <= 6 * heightOf sigma^2) :
+    0 <= W.literalJointQuarticPolynomial sigma := by
+  unfold QuarticFourSignedPolePair.literalJointQuarticPolynomial
+  have hm :
+      0 <= ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) := by positivity
+  have hS : 0 <= W.targetStrength := W.targetStrength_pos.le
+  have hr : 0 < (t/16)^6 := by positivity
+  have hbr :
+      0 <=
+        heightOf sigma^2 * ((sigma : ℂ).im-t)^2
+          - ((sigma : ℂ).im-t)^4 / 6 := by
+    have h6 : (0:ℝ) < 6 := by norm_num
+    have hd2 : 0 <= ((sigma : ℂ).im-t)^2 := sq_nonneg _
+    have hd4 :
+        ((sigma : ℂ).im-t)^4
+          = ((sigma : ℂ).im-t)^2 * ((sigma : ℂ).im-t)^2 := by ring
+    rw [hd4]
+    nlinarith
+  exact div_nonneg (mul_nonneg (mul_nonneg hm hS) hbr) hr.le
+
+theorem QuarticFourSignedPolePair.literalJointQuarticPolynomial_nonpos_of_six_height_sq_le_delta_sq
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros)
+    (hcone :
+      6 * heightOf sigma^2 <= ((sigma : ℂ).im-t)^2) :
+    W.literalJointQuarticPolynomial sigma <= 0 := by
+  unfold QuarticFourSignedPolePair.literalJointQuarticPolynomial
+  have hm :
+      0 <= ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) := by positivity
+  have hS : 0 <= W.targetStrength := W.targetStrength_pos.le
+  have hr : 0 < (t/16)^6 := by positivity
+  have hbr :
+      heightOf sigma^2 * ((sigma : ℂ).im-t)^2
+        - ((sigma : ℂ).im-t)^4 / 6 <= 0 := by
+    have hd2 : 0 <= ((sigma : ℂ).im-t)^2 := sq_nonneg _
+    have hd4 :
+        ((sigma : ℂ).im-t)^4
+          = ((sigma : ℂ).im-t)^2 * ((sigma : ℂ).im-t)^2 := by ring
+    rw [hd4]
+    nlinarith
+  exact div_nonpos_of_nonneg_of_nonpos
+    (mul_nonneg hm hS) hbr hr.le
+
 end Synthesis

@@ -136,6 +136,25 @@ theorem ratSquareClassEquivMathlib_mk (q : NonzeroRat) :
     ratSquareClassEquivMathlib (squareClassOf q) =
       mathlibSquareClassOf q := rfl
 
+/-- Multiplicative strengthening of the same-object square-class weld.  The
+inverse map was already a MonoidHom; the forward map therefore preserves
+multiplication by injectivity of that inverse. -/
+noncomputable def ratSquareClassMulEquivMathlib :
+    RatSquareClass ≃* MathlibRatSquareClass where
+  toEquiv := ratSquareClassEquivMathlib
+  map_mul' a b := by
+    apply mathlibSquareClassToRat_rightInverse.injective
+    simp [ratSquareClassEquivMathlib,
+      mathlibSquareClassToRat_leftInverse]
+
+/-- Pair-valued multiplicative same-object weld used by the E[2] Kummer lane. -/
+noncomputable def ratKummerPairMulEquivMathlib :
+    (RatSquareClass × RatSquareClass) ≃*
+      (MathlibRatSquareClass × MathlibRatSquareClass) :=
+  ratSquareClassMulEquivMathlib.prodCongr
+    ratSquareClassMulEquivMathlib
+
+
 /-- The same-object weld for the pair-valued 2-descent carrier. -/
 noncomputable def ratKummerPairEquivMathlib :
     (RatSquareClass × RatSquareClass) ≃

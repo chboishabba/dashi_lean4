@@ -84,6 +84,79 @@ theorem completeCycle_relationCells_are_144 :
   norm_num [completeCycleAxisCount, interactionAxisCount,
     bilateralAppraisalAxisCount, synthesisReentryAxisCount]
 
+/-! Consumer-indexed non-descent on the 144 relation fabric. -/
+
+def flatRelation : StageRelationField :=
+  fun _ => (1 : Trit)
+
+def offDiagonalRaisedRelation : StageRelationField :=
+  fun p => if p = ((0 : StageAxis12), (1 : StageAxis12))
+    then (2 : Trit) else (1 : Trit)
+
+theorem sameDiagonalObservation :
+    diagonalObservation flatRelation =
+      diagonalObservation offDiagonalRaisedRelation := by
+  funext axis
+  fin_cases axis <;>
+    simp [diagonalObservation, flatRelation, offDiagonalRaisedRelation]
+
+def offDiagonal01 (field : StageRelationField) : Trit :=
+  field ((0 : StageAxis12), (1 : StageAxis12))
+
+theorem offDiagonal01Differs :
+    offDiagonal01 flatRelation ≠
+      offDiagonal01 offDiagonalRaisedRelation := by
+  decide
+
+def ConsumerSufficient
+    {State Surface Outcome : Type}
+    (observe : State → Surface)
+    (consumer : State → Outcome) : Prop :=
+  ∀ left right, observe left = observe right →
+    consumer left = consumer right
+
+theorem diagonal_not_sufficient_for_offDiagonal01 :
+    ¬ ConsumerSufficient diagonalObservation offDiagonal01 := by
+  intro h
+  exact offDiagonal01Differs
+    (h flatRelation offDiagonalRaisedRelation sameDiagonalObservation)
+
+structure FactorsThrough
+    {State Surface Outcome : Type}
+    (observe : State → Surface)
+    (consumer : State → Outcome) where
+  factor : Surface → Outcome
+  law : ∀ state, consumer state = factor (observe state)
+
+theorem diagonal_cannot_factor_offDiagonal01 :
+    ¬ FactorsThrough diagonalObservation offDiagonal01 := by
+  intro h
+  apply diagonal_not_sufficient_for_offDiagonal01
+  intro left right same
+  calc
+    offDiagonal01 left = h.factor (diagonalObservation left) := h.law left
+    _ = h.factor (diagonalObservation right) := by rw [same]
+    _ = offDiagonal01 right := (h.law right).symm
+
+inductive RelationWrongTypeMismatch
+  | nonFactorableRepresentation
+  deriving DecidableEq, Repr
+
+structure RelationWrongTypeReceipt where
+  obligation : String
+  candidate : String
+  mismatch : RelationWrongTypeMismatch
+  rejection : String
+  candidateMayStillExist : Bool
+  deriving Repr
+
+def relationDiagonalWrongTypeReceipt : RelationWrongTypeReceipt where
+  obligation := "Stage12Relation144:offDiagonal01"
+  candidate := "12-cell diagonal observation"
+  mismatch := .nonFactorableRepresentation
+  rejection := "same diagonal / different off-diagonal (0,1) witness"
+  candidateMayStillExist := true
+
 /-! Exact 0..13 ternary-rank crosswalk. -/
 
 def fixedTernaryProfileCount (n : Nat) : Nat := 3^n
@@ -210,6 +283,9 @@ structure Frontier where
   rank12CompleteCycleCountCrosswalkPaid : Bool
   rank13CentralCompletionCountCrosswalkPaid : Bool
   equalCountCreatesSameSemanticCarrier : Bool
+  diagonalNonDescentWitnessPaid : Bool
+  diagonalFactorsThroughOffDiagonalConsumer : Bool
+  diagonalWrongTypeReceiptPaid : Bool
   analyticModularSiteIdentified : Bool
   stageTwelveEqualsModularWeightTwelveByDefinition : Bool
   deriving Repr
@@ -225,6 +301,9 @@ def frontier : Frontier where
   rank12CompleteCycleCountCrosswalkPaid := true
   rank13CentralCompletionCountCrosswalkPaid := true
   equalCountCreatesSameSemanticCarrier := false
+  diagonalNonDescentWitnessPaid := true
+  diagonalFactorsThroughOffDiagonalConsumer := false
+  diagonalWrongTypeReceiptPaid := true
   analyticModularSiteIdentified := false
   stageTwelveEqualsModularWeightTwelveByDefinition := false
 

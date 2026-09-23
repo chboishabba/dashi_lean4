@@ -368,6 +368,37 @@ theorem jacobiEulerZAtNegOne_finiteProduct_succ
   rw [jacobiEvalZAtNegOne_finiteProduct_eq_zero hM]
   simp
 
+/-- Finite Euler product P_M = ∏_{m=1}^M (1-X^m). -/
+noncomputable def jacobiEulerFiniteProduct (M : ℕ) : PowerSeries ℂ :=
+  ∏ n ∈ Finset.range M, (1 - X ^ (n + 1))
+
+@[simp] theorem jacobiEulerFiniteProduct_zero :
+    jacobiEulerFiniteProduct 0 = 1 := by
+  simp [jacobiEulerFiniteProduct]
+
+theorem jacobiEulerFiniteProduct_succ (M : ℕ) :
+    jacobiEulerFiniteProduct (M + 1) =
+      jacobiEulerFiniteProduct M * (1 - X ^ (M + 1)) := by
+  simp [jacobiEulerFiniteProduct, Finset.prod_range_succ]
+
+/-- Exact finite product-side cube formula.  The only discrepancy from
+-P_M^3 is the last boundary factor, which disappears coefficientwise as
+M→∞. -/
+theorem jacobiEulerZAtNegOne_finiteProduct_exact (M : ℕ) :
+    jacobiEulerZAtNegOne (jacobiFiniteProduct (M + 1)) =
+      -(jacobiEulerFiniteProduct M ^ 3) *
+        (1 - X ^ (M + 1)) ^ 2 := by
+  induction M with
+  | zero =>
+      simp [jacobiEulerZAtNegOne_finiteProduct_one]
+  | succ M ih =>
+      have hpos : 0 < M + 1 := by omega
+      rw [show M + 2 = (M + 1) + 1 by omega,
+        jacobiEulerZAtNegOne_finiteProduct_succ hpos,
+        ih, jacobiEvalZAtNegOne_factor,
+        jacobiEulerFiniteProduct_succ]
+      ring
+
 /-- J0: formal Jacobi triple product, in the same coefficientwise eventual
 product form as the formal pentagonal theorem.
 

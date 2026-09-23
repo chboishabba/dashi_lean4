@@ -253,11 +253,11 @@ theorem stageRelationConstantPresheaf_isSheaf :
       stageRelationConstantPresheaf :=
   everyStagePresheafIsSheaf stageRelationConstantPresheaf
 
-structure BundleSheaf (LocalSection GlobalSection : Type) where
-  restrict : GlobalSection → StageAxis12 → LocalSection
-  compatible : (StageAxis12 → LocalSection) → Prop
+structure BundleSheaf (Base LocalSection GlobalSection : Type) where
+  restrict : GlobalSection → Base → LocalSection
+  compatible : (Base → LocalSection) → Prop
   glue :
-    (locals : StageAxis12 → LocalSection) →
+    (locals : Base → LocalSection) →
     compatible locals →
     GlobalSection
   glueRestricts :
@@ -265,11 +265,10 @@ structure BundleSheaf (LocalSection GlobalSection : Type) where
       restrict (glue locals witness) point = locals point
 
 def relationCellBundleSheaf :
-    BundleSheaf Trit StageRelationField where
-  restrict := fun field cellIndex =>
-    field (cellIndex, cellIndex)
+    BundleSheaf StageRelation144 Trit StageRelationField where
+  restrict := fun field cell => field cell
   compatible := fun _ => True
-  glue := fun locals _ cell => locals cell.1
+  glue := fun locals _ => locals
   glueRestricts := by
     intro locals witness point
     rfl
@@ -279,7 +278,7 @@ def relationCellBundleSheaf :
 abbrev RelationRow := StageAxis12 → Trit
 
 def relationFieldBundleSheaf :
-    BundleSheaf RelationRow StageRelationField where
+    BundleSheaf StageAxis12 RelationRow StageRelationField where
   restrict := fun field left right => field (left, right)
   compatible := fun _ => True
   glue := fun locals _ cell => locals cell.1 cell.2

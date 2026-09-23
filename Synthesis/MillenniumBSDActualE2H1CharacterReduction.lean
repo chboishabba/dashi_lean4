@@ -7,17 +7,18 @@ All arithmetic in the quadratic Kummer comparison is now paid.  The scalar
 square-class map is a bijection, and its two-coordinate product identifies the
 literal descent carrier with a pair of continuous quadratic characters.
 
-The product decomposition of continuous characters is now paid separately.
-Therefore the remaining global BA4 producer is exactly the canonical
-low-degree continuous-cohomology theorem for the literal trivial module:
+The product decomposition of continuous characters and the canonical
+low-degree continuous-cohomology theorem for the literal trivial module are
+now both paid internally:
 
   H¹_cont(G_Q,(C₂)^2_triv)
     ≃ Hom_cont(G_Q,(C₂)^2).
 
 The target then splits functorially into the two existing quadratic-character
 coordinates, and the paid Kummer equivalence carries those to the literal
-square-class pair.  No Hilbert 90, square-class descent, product decomposition,
-or elliptic two-torsion geometry remains in this seam.
+square-class pair.  Thus the global finite-E[2] BA4 representation/Kummer seam
+is closed; the remaining classical Sha boundary lies later, at the full
+elliptic-point continuous Kummer/localization comparison.
 -/
 
 namespace Synthesis.Millennium.BSD
@@ -60,7 +61,7 @@ noncomputable def cmActualE2H1EquivRatSquareClasses_of_characterPair
   cmActualE2H1EquivRatSquareClasses
     (rationalQuadraticContinuousKummerProducer_of_characterPair h)
 
-/-- Machine-readable statement of the narrowed BA4 boundary. -/
+/-- Machine-readable statement of the now-paid finite-E[2] BA4 boundary. -/
 structure BA4KummerBoundaryStatus where
   scalarSquareClassDescentPaid : Bool
   scalarCharacterInjectivityPaid : Bool
@@ -71,10 +72,10 @@ structure BA4KummerBoundaryStatus where
   deriving DecidableEq, Repr
 
 def ba4KummerBoundaryStatus : BA4KummerBoundaryStatus :=
-  ⟨true, true, true, true, true, false⟩
+  ⟨true, true, true, true, true, true⟩
 
-theorem ba4_only_lowDegree_continuousHom_representation_unpaid :
+theorem ba4_finiteE2_globalKummer_paid :
     ba4KummerBoundaryStatus =
-      ⟨true, true, true, true, true, false⟩ := rfl
+      ⟨true, true, true, true, true, true⟩ := rfl
 
 end Synthesis.Millennium.BSD

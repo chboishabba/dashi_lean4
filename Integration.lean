@@ -943,3 +943,5 @@ import Integration.JInvariant369ConsolidatedNextStage
 import Integration.JInvariant369ZeroToThirteenTetralemmaQualification
 
 import Integration.JInvariant369Zeta6561MonsterCrosswalk
+
+import Integration.JInvariant369TenRankSeventeenHyperformalism

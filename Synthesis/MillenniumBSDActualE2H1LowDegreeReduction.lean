@@ -26,6 +26,33 @@ namespace Synthesis.Millennium.BSD
 open CategoryTheory ContRepresentation
 open ContinuousCohomology TopRep
 
+/-- A degree-zero homogeneous cochain for the literal trivial
+two-torsion representation is constant. -/
+theorem cmHomogeneousZeroCochain_eq_at_one
+    (σ : (TopRep.homogeneousCochains cmTwoTorsionRepresentation).X 0)
+    (g : RationalAbsoluteGalois) :
+    σ.1 g = σ.1 1 := by
+  have hσ := DFunLike.ext_iff.1 (σ.2 g) g
+  simp only [coind₁_apply_apply, cmTwoTorsionRepresentation_action] at hσ
+  simpa using hσ.symm
+
+/-- For the trivial coefficient action the incoming differential to degree
+one vanishes, so degree-one coboundaries are zero. -/
+theorem cmHomogeneousCochains_d_zero_one :
+    (TopRep.homogeneousCochains cmTwoTorsionRepresentation).d 0 1 = 0 := by
+  ext σ
+  apply Subtype.ext
+  ext x y
+  rw [TopRep.homogeneousCochains.d_apply]
+  simp only [Nat.reduceAdd, TopRep.d_succ, TopRep.d_zero,
+    ConcreteCategory.hom_ofHom, hom_sub,
+    ContIntertwiningMap.sub_apply, coind₁ι_toFun, coind₁Map_toFun,
+    ContinuousMap.const_apply, ContinuousMap.comp_apply,
+    ContinuousMap.coe_mk, ZeroMemClass.coe_zero]
+  rw [cmHomogeneousZeroCochain_eq_at_one σ x,
+    cmHomogeneousZeroCochain_eq_at_one σ y]
+  simp
+
 /-- Literal kernel model for continuous homogeneous 1-cocycles. -/
 noncomputable abbrev CMTwoTorsionContinuousOneCocycle :=
   ↧(((TopRep.homogeneousCochains cmTwoTorsionRepresentation).d 1 2).hom.ker)

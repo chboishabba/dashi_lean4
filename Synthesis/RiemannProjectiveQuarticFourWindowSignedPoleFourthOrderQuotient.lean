@@ -2662,6 +2662,23 @@ def QuarticFourSignedPolePair.cubicProfileObstruction
   (-W.poleHalf) *
       quarticFourEndpointProfileSecondDeriv W.R (2/3) W.muTwo
 
+theorem firstDeriv_profileLinearCombination_at_zero
+    {P Q : ℝ -> ℝ}
+    (hP : ContDiff ℝ 1 P)
+    (hQ : ContDiff ℝ 1 Q)
+    (a b : ℝ) :
+    deriv (profileLinearCombination a b P Q) 0
+      =
+    a * deriv P 0 + b * deriv Q 0 := by
+  have hPd : Differentiable ℝ P :=
+    hP.differentiable (by norm_num)
+  have hQd : Differentiable ℝ Q :=
+    hQ.differentiable (by norm_num)
+  unfold profileLinearCombination
+  exact
+    (((hPd 0).hasDerivAt.const_mul a).add
+      ((hQd 0).hasDerivAt.const_mul b)).deriv
+
 theorem secondDeriv_profileLinearCombination_at_zero
     {P Q : ℝ -> ℝ}
     (hP : ContDiff ℝ 2 P)

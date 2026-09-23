@@ -303,3 +303,5 @@ import Synthesis.MoonshineConstructiveRealAdapter
 import Synthesis.MillenniumBSDQuadraticKummerPair
 
 import Synthesis.MillenniumBSDActualE2H1CharacterReduction
+
+import Synthesis.MillenniumBSDCMSplitPrimeSignReduction

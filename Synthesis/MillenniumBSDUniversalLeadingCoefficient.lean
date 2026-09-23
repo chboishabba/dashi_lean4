@@ -76,24 +76,37 @@ structure BSDRefinedArithmeticBinding where
   tamagawaProduct_pos : ∀ E, 0 < tamagawaProduct E
 
 /-- Object-level interface required before refined BSD can be stated literally:
-a classical Sha carrier for every arbitrary rational elliptic curve, together
-with a proof that the carrier is the same Sha object used by the conjecture. -/
-structure BSDUniversalShaBinding where
+the classical Tate--Shafarevich carrier attached to each actual rational
+elliptic curve.  No finiteness assumption is included here. -/
+structure BSDUniversalShaCarrier where
   Sha : RationalEllipticCurve → Type
-  finiteSha : ∀ E, Finite (Sha E)
 
-/-- Once a universal Sha carrier is bound, its cardinality is canonical. -/
-noncomputable def BSDUniversalShaBinding.order
-    (S : BSDUniversalShaBinding)
+/-- Refined BSD finiteness conjecture, kept separate from construction of the
+classical Sha carrier. -/
+def UniversalBSDShaFiniteness
+    (S : BSDUniversalShaCarrier) : Prop :=
+  ∀ E : RationalEllipticCurve, Finite (S.Sha E)
+
+/-- A finite Sha binding is only the combination needed at the point where
+cardinality enters the refined formula. -/
+structure BSDUniversalShaFiniteBinding where
+  carrier : BSDUniversalShaCarrier
+  finiteSha : UniversalBSDShaFiniteness carrier
+
+/-- Once finiteness has been supplied as a separate conjectural theorem,
+Sha cardinality is canonical. -/
+noncomputable def BSDUniversalShaFiniteBinding.order
+    (S : BSDUniversalShaFiniteBinding)
     (E : RationalEllipticCurve) : ℕ := by
-  letI : Finite (S.Sha E) := S.finiteSha E
-  exact Nat.card (S.Sha E)
+  letI : Finite (S.carrier.Sha E) := S.finiteSha E
+  exact Nat.card (S.carrier.Sha E)
 
-/-- Full same-object data needed to state the refined formula. -/
+/-- Full same-object data needed to state the refined formula after Sha
+finiteness has been supplied separately. -/
 structure BSDBoundRefinedData where
   rank : BSDBoundRankObservers
   arithmetic : BSDRefinedArithmeticBinding
-  sha : BSDUniversalShaBinding
+  sha : BSDUniversalShaFiniteBinding
 
 /-- Right-hand side of the refined BSD formula on the currently bound data.
 The expression is cast to C to compare directly with the analytic leading
@@ -121,9 +134,9 @@ def UniversalBSDLeadingCoefficientIdentity
   ∀ E : RationalEllipticCurve,
     BSDLeadingCoefficientIdentityAt b E
 
-/-- Prize-facing refined BSD package.  Sha finiteness is present in the Sha
-binding itself; the rank equality and leading coefficient are separate
-universal mathematical obligations. -/
+/-- Prize-facing refined BSD package.  Sha finiteness is now an explicit
+separate theorem carried by bound.sha.finiteSha; it is not part of merely
+constructing the Sha carrier. -/
 structure UniversalBSDRefinedProof where
   bound : BSDBoundRefinedData
   rankWeld : UniversalBSDBoundRankWeld bound.rank
@@ -150,6 +163,7 @@ structure BSDUniversalRefinedMaxCutStatus where
   universalRegulatorBindingPaid : Bool
   universalTamagawaBindingPaid : Bool
   universalClassicalShaCarrierPaid : Bool
+  shaCarrierFinitenessSeparatedPaid : Bool
   universalShaFinitenessPaid : Bool
   universalLeadingCoefficientIdentityPaid : Bool
   deriving DecidableEq, Repr
@@ -157,6 +171,6 @@ structure BSDUniversalRefinedMaxCutStatus where
 def bsdUniversalRefinedMaxCutStatus :
     BSDUniversalRefinedMaxCutStatus :=
   ⟨true, true, true,
-    false, false, false, false, false, false⟩
+    false, false, false, false, true, false, false⟩
 
 end Synthesis.Millennium.BSD

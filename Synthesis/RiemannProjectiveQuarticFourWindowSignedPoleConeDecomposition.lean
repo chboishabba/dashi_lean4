@@ -1156,4 +1156,86 @@ theorem QuarticFourSignedPolePair.globalOffOrd_lt_margin_of_eventual_compensatio
     W.literalOffOrdExactAt_tendsto_tsum ht
   exact le_of_tendsto hlim hfinite
 
+
+/-!
+## Same-object global tsum weld and completed-residual compiler
+-/
+
+theorem QuarticFourSignedPolePair.literalOffOrdSource_tsum_eq_signedLiteralPairSource_tsum
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    (∑' rho : Zeros, W.literalOffOrdSource rho)
+      =
+    ∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+      W.signedLiteralPairSourceTerm sigma := by
+  classical
+  let s : Set Zeros := ((SameOrd t)ᶜ : Set Zeros)
+  calc
+    (∑' rho : Zeros, W.literalOffOrdSource rho)
+      =
+    ∑' rho : Zeros,
+      s.indicator W.literalOffOrdSource rho := by
+        apply tsum_congr
+        intro rho
+        by_cases h : rho ∈ s
+        · simp [Set.indicator, h]
+        · simp [Set.indicator, h,
+            QuarticFourSignedPolePair.literalOffOrdSource, s] at *
+    _ =
+    ∑' sigma : s,
+      W.literalOffOrdSource (sigma : Zeros) := by
+        rw [← tsum_subtype]
+    _ =
+    ∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+      W.signedLiteralPairSourceTerm sigma := by
+        apply tsum_congr
+        intro sigma
+        simp [QuarticFourSignedPolePair.literalOffOrdSource,
+          s, sigma.2]
+
+theorem QuarticFourSignedPolePair.globalSignedLiteralPairSource_le_margin_of_eventual_compensation_gap
+    {t eta margin : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hgap :
+      ∀ᶠ n : ℕ in atTop,
+        margin + W.literalSignedCompensationAt eta n
+          - W.literalLocalDebtAt eta n > 0) :
+    (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+      W.signedLiteralPairSourceTerm sigma)
+      <= margin := by
+  rw [← W.literalOffOrdSource_tsum_eq_signedLiteralPairSource_tsum]
+  exact W.globalOffOrd_lt_margin_of_eventual_compensation_gap
+    ht hgap
+
+/--
+Clay-facing compiler from one eventual signed-compensation statement to G3.
+
+The scalar margin is compared against the exact smooth-mu correction appearing
+in completedSignedResidual_eq_jointPairSource; no N-mu/horizontal absolute
+split is reintroduced.
+-/
+theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_eventual_compensation_gap
+    {t eta margin : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hgap :
+      ∀ᶠ n : ℕ in atTop,
+        margin + W.literalSignedCompensationAt eta n
+          - W.literalLocalDebtAt eta n > 0)
+    (hmargin :
+      margin
+        <
+      4 * W.combinedZeroHeightDefect rho
+        +
+      ∫ tau : ℝ,
+        W.signedOrdinateTest tau * Zeta23.mu tau) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho := by
+  have htpos : 0 < t := by linarith
+  have hsum :=
+    W.globalSignedLiteralPairSource_le_margin_of_eventual_compensation_gap
+      htpos hgap
+  rw [W.completedSignedResidual_eq_jointPairSource ht]
+  linarith
+
 end Synthesis

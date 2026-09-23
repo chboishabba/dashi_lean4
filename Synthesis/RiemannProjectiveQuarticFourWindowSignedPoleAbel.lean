@@ -4,6 +4,7 @@ import Synthesis.RiemannCompactCosineFourthDerivative
 import Synthesis.RiemannProjectiveQuarticDerivativeSign
 import Synthesis.RiemannZetaMuNegativeHeightReflection
 import Zeta23Bridge.OscillatoryKernelDecay
+import Zeta23Bridge.NearFarCarrierSplit
 
 /-!
 # Exact Abel and centered jet for the signed four-window quartic test
@@ -2391,5 +2392,304 @@ theorem QuarticFourSignedPolePair.centeredMuWindowAt_tendsto_full
   rw [hsUnion] at hlim
   simpa [QuarticFourSignedPolePair.centeredMuWindowAt,
     s, intervalIntegral.integral_of_le] using hlim
+
+
+/-!
+## Cofinal symmetric exhaustion of the literal zero pairing
+
+The literal Zeta23 window convention is half-open:
+  (t-n, t+n].
+We mirror that convention exactly on the subtype carrier `Zeros`.
+-/
+
+def centeredZeroSet (t : ℝ) (n : ℕ) : Set Zeros :=
+  {rho : Zeros |
+    t - (n : ℝ) < (rho : ℂ).im
+      ∧ (rho : ℂ).im <= t + (n : ℝ)}
+
+theorem centeredZeroSet_finite
+    (t : ℝ) (n : ℕ) :
+    (centeredZeroSet t n).Finite := by
+  have hfin :
+      (zetaZeroConfig.window
+        (t - (n : ℝ)) (t + (n : ℝ))).Finite :=
+    zetaZeroConfig.finite_window _ _
+  have hinj :
+      Set.InjOn
+        (fun rho : Zeros => (rho : ℂ))
+        ((fun rho : Zeros => (rho : ℂ)) ⁻¹'
+          zetaZeroConfig.window
+            (t - (n : ℝ)) (t + (n : ℝ))) :=
+    fun x _ y _ h => Subtype.ext h
+  have hpre := hfin.preimage hinj
+  refine hpre.subset ?_
+  intro rho hrho
+  exact ⟨rho.2, hrho.1, hrho.2⟩
+
+def centeredZeroFinset (t : ℝ) (n : ℕ) : Finset Zeros :=
+  (centeredZeroSet_finite t n).toFinset
+
+theorem mem_centeredZeroFinset_iff
+    (t : ℝ) (n : ℕ) (rho : Zeros) :
+    rho ∈ centeredZeroFinset t n
+      ↔
+    t - (n : ℝ) < (rho : ℂ).im
+      ∧ (rho : ℂ).im <= t + (n : ℝ) := by
+  unfold centeredZeroFinset
+  rw [Set.Finite.mem_toFinset]
+  rfl
+
+theorem centeredZeroFinset_tendsto_atTop
+    (t : ℝ) :
+    Tendsto (centeredZeroFinset t) atTop atTop := by
+  refine tendsto_atTop.2 ?_
+  intro s
+  have hs :
+      ∀ rho ∈ s,
+        ∀ᶠ n : ℕ in atTop,
+          rho ∈ centeredZeroFinset t n := by
+    intro rho hrho
+    obtain ⟨N,hN⟩ :=
+      exists_nat_gt |(rho : ℂ).im - t|
+    refine eventually_atTop.2 ⟨N,?_⟩
+    intro n hn
+    have hNn : (N : ℝ) <= (n : ℝ) := by
+      exact_mod_cast hn
+    have habs :
+        |(rho : ℂ).im - t| < (n : ℝ) :=
+      lt_of_lt_of_le hN hNn
+    have hlt := neg_lt_of_abs_lt habs
+    have hgt := lt_of_abs_lt habs
+    rw [mem_centeredZeroFinset_iff]
+    constructor
+    · linarith
+    · linarith
+  have hall :
+      ∀ᶠ n : ℕ in atTop,
+        s ⊆ centeredZeroFinset t n := by
+    classical
+    induction s using Finset.induction_on with
+    | empty =>
+        exact Filter.Eventually.of_forall
+          (fun n => by simp)
+    | @insert rho s hrho ih =>
+        have hρ := hs rho (by simp)
+        filter_upwards [ih,hρ] with n hn hρn
+        intro sigma hsigma
+        simp only [Finset.mem_insert] at hsigma
+        rcases hsigma with rfl | hsigma
+        · exact hρn
+        · exact hn hsigma
+  exact hall
+
+def QuarticFourSignedPolePair.centeredZeroWindowSumAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    W.signedZeroSourceTerm rho
+
+theorem QuarticFourSignedPolePair.centeredZeroWindowSumAt_tendsto_tsum
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto W.centeredZeroWindowSumAt atTop
+      (𝓝 (∑' rho : Zeros, W.signedZeroSourceTerm rho)) := by
+  have hsum := (W.signedZeroSourceTerm_summable ht).hasSum
+  have hcofinal := centeredZeroFinset_tendsto_atTop t
+  exact hsum.comp hcofinal
+
+/--
+Exact finite-carrier weld between the subtype sum and the literal Zeta23
+complex zero window.
+-/
+theorem QuarticFourSignedPolePair.centeredZeroWindowSumAt_eq_windowPair
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.centeredZeroWindowSumAt n
+      =
+    zetaWindowWeightedPair
+      (t - (n : ℝ)) (t + (n : ℝ))
+      W.signedOrdinateTest := by
+  classical
+  let A : ℝ := t - (n : ℝ)
+  let B : ℝ := t + (n : ℝ)
+  let F : Finset Zeros := centeredZeroFinset t n
+  let G : Finset ℂ :=
+    (zetaZeroConfig.finite_window A B).toFinset
+  unfold QuarticFourSignedPolePair.centeredZeroWindowSumAt
+    zetaWindowWeightedPair
+  rw [finsum_mem_eq_finite_toFinset_sum _
+    (zetaZeroConfig.finite_window A B)]
+  change
+    (∑ rho ∈ F, W.signedZeroSourceTerm rho)
+      =
+    ∑ z ∈ G,
+      (zetaZeroConfig.mult z : ℝ)
+        * W.signedOrdinateTest z.im
+  have hmap :
+      F.image (fun rho : Zeros => (rho : ℂ)) = G := by
+    ext z
+    simp only [Finset.mem_image, Set.Finite.mem_toFinset]
+    constructor
+    · rintro ⟨rho,hrho,rfl⟩
+      have hmem :
+          t - (n : ℝ) < (rho : ℂ).im
+            ∧ (rho : ℂ).im <= t + (n : ℝ) := by
+        simpa [F] using
+          (mem_centeredZeroFinset_iff t n rho).1 hrho
+      exact ⟨rho.2,hmem.1,hmem.2⟩
+    · intro hz
+      let rho : Zeros := ⟨z,hz.1⟩
+      refine ⟨rho,?_,rfl⟩
+      apply (mem_centeredZeroFinset_iff t n rho).2
+      exact ⟨hz.2.1,hz.2.2⟩
+  calc
+    (∑ rho ∈ F, W.signedZeroSourceTerm rho)
+      =
+    ∑ rho ∈ F,
+      (zetaZeroConfig.mult (rho : ℂ) : ℝ)
+        * W.signedOrdinateTest (rho : ℂ).im := by
+      apply Finset.sum_congr rfl
+      intro rho hrho
+      rfl
+    _ =
+    ∑ z ∈ F.image (fun rho : Zeros => (rho : ℂ)),
+      (zetaZeroConfig.mult z : ℝ)
+        * W.signedOrdinateTest z.im := by
+      rw [Finset.sum_image]
+      intro a ha b hb hab
+      exact Subtype.ext hab
+    _ =
+    ∑ z ∈ G,
+      (zetaZeroConfig.mult z : ℝ)
+        * W.signedOrdinateTest z.im := by
+      rw [hmap]
+
+theorem QuarticFourSignedPolePair.centeredZeroWindowPair_tendsto_full
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto
+      (fun n : ℕ =>
+        zetaWindowWeightedPair
+          (t - (n : ℝ)) (t + (n : ℝ))
+          W.signedOrdinateTest)
+      atTop
+      (𝓝 (∑' rho : Zeros, W.signedZeroSourceTerm rho)) := by
+  have h :=
+    W.centeredZeroWindowSumAt_tendsto_tsum ht
+  apply h.congr'
+  filter_upwards with n
+  exact W.centeredZeroWindowSumAt_eq_windowPair n
+
+/--
+The finite centred literal residual is exactly the zero-window pairing minus
+the matching smooth mu window.
+-/
+theorem QuarticFourSignedPolePair.centeredWindowResidualAt_eq_zero_sub_mu
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.centeredWindowResidualAt n
+      =
+    zetaWindowWeightedPair
+      (t - (n : ℝ)) (t + (n : ℝ))
+      W.signedOrdinateTest
+      -
+    W.centeredMuWindowAt n := by
+  unfold QuarticFourSignedPolePair.centeredWindowResidualAt
+    QuarticFourSignedPolePair.signedCenteredWindowResidual
+    QuarticFourSignedPolePair.signedZetaMuWindowResidual
+    zetaWindowMinusMuPair
+    QuarticFourSignedPolePair.centeredMuWindowAt
+  have hA : t - (n : ℝ) <= t := by positivity
+  have hB : t <= t + (n : ℝ) := by positivity
+  have hzadd :
+      zetaWindowWeightedPair
+          (t - (n : ℝ)) t W.signedOrdinateTest
+        +
+      zetaWindowWeightedPair
+          t (t + (n : ℝ)) W.signedOrdinateTest
+      =
+      zetaWindowWeightedPair
+          (t - (n : ℝ)) (t + (n : ℝ))
+          W.signedOrdinateTest := by
+    unfold zetaWindowWeightedPair
+    have hdis :
+        Disjoint
+          (zetaZeroConfig.window (t - (n : ℝ)) t)
+          (zetaZeroConfig.window t (t + (n : ℝ))) := by
+      rw [Set.disjoint_left]
+      intro z hz1 hz2
+      linarith [hz1.2.2, hz2.2.1]
+    have hunion :
+        zetaZeroConfig.window (t - (n : ℝ)) t
+          ∪ zetaZeroConfig.window t (t + (n : ℝ))
+        =
+        zetaZeroConfig.window
+          (t - (n : ℝ)) (t + (n : ℝ)) := by
+      ext z
+      constructor
+      · rintro (hz | hz)
+        · exact ⟨hz.1,hz.2.1,hz.2.2.trans hB⟩
+        · exact ⟨hz.1,hA.trans_lt hz.2.1,hz.2.2⟩
+      · intro hz
+        by_cases hzt : z.im <= t
+        · exact Or.inl ⟨hz.1,hz.2.1,hzt⟩
+        · exact Or.inr ⟨hz.1,lt_of_not_ge hzt,hz.2.2⟩
+    rw [← finsum_mem_union hdis
+      (zetaZeroConfig.finite_window _ _)
+      (zetaZeroConfig.finite_window _ _),
+      hunion]
+  have hmuadd :
+      (∫ x in (t - (n : ℝ))..t,
+        W.signedOrdinateTest x * Zeta23.mu x)
+      +
+      (∫ x in t..(t + (n : ℝ)),
+        W.signedOrdinateTest x * Zeta23.mu x)
+      =
+      ∫ x in (t - (n : ℝ))..(t + (n : ℝ)),
+        W.signedOrdinateTest x * Zeta23.mu x := by
+    symm
+    exact intervalIntegral.integral_add_adjacent_intervals
+      ((W.signedOrdinateTest_mul_mu_integrable
+        (by
+          have : 0 <= (n:ℝ) := by positivity
+          linarith [show 0 < t by assumption])).intervalIntegrable)
+      ((W.signedOrdinateTest_mul_mu_integrable
+        (by
+          have : 0 <= (n:ℝ) := by positivity
+          linarith [show 0 < t by assumption])).intervalIntegrable)
+  rw [hzadd,hmuadd]
+  ring
+
+/--
+Cofinal finite residuals converge to the exact global signed N-mu scalar.
+-/
+theorem QuarticFourSignedPolePair.centeredWindowResidualAt_tendsto_signedNMuPair
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto W.centeredWindowResidualAt atTop
+      (𝓝 W.signedNMuPair) := by
+  have hz :=
+    W.centeredZeroWindowPair_tendsto_full ht
+  have hmu :=
+    W.centeredMuWindowAt_tendsto_full ht
+  have hdiff := hz.sub hmu
+  have hpoint :=
+    W.signedNMuPair_eq_pointwise_closed ht
+  have htsum :
+      (∑' rho : Zeros, W.signedZeroSourceTerm rho)
+        =
+      ∑' rho : Zeros,
+        ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+          * W.signedOrdinateTest (rho : ℂ).im := by
+    apply tsum_congr
+    intro rho
+    rfl
+  rw [htsum] at hdiff
+  rw [← hpoint]
+  apply hdiff.congr'
+  filter_upwards with n
+  exact W.centeredWindowResidualAt_eq_zero_sub_mu n
 
 end Synthesis

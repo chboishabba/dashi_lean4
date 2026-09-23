@@ -718,6 +718,122 @@ theorem jacobiCubeSpecializationCompiler_paid :
     cmEtaEulerFormal 3]
 
 
+/-- Base square-theta coefficient before the level-32 substitution q↦X^4.
+The deliberately generous finite range matches the already-existing
+level-32 coefficient definition and avoids a separate range-reindexing
+lemma. -/
+noncomputable def jacobiSquareThetaBaseCoeff (N : ℕ) : ℂ :=
+  (if N = 0 then 1 else 0) +
+    ∑ s in Finset.range (4 * N + 1),
+      if 0 < s ∧ s ^ 2 = N then
+        2 * ((-1 : ℂ) ^ s)
+      else 0
+
+noncomputable def jacobiSquareThetaBaseSeries : PowerSeries ℂ :=
+  PowerSeries.mk jacobiSquareThetaBaseCoeff
+
+@[simp] theorem jacobiSquareThetaBaseSeries_coeff (N : ℕ) :
+    jacobiSquareThetaBaseSeries.coeff N =
+      jacobiSquareThetaBaseCoeff N := by
+  simp [jacobiSquareThetaBaseSeries]
+
+/-- The base square-theta coefficient is exactly the existing level-32
+coefficient with its exponent divided by four. -/
+theorem jacobiSquareThetaBaseCoeff_eq_cmJacobiEvenCoeff_four_mul
+    (N : ℕ) :
+    jacobiSquareThetaBaseCoeff N = cmJacobiEvenCoeff (4 * N) := by
+  unfold jacobiSquareThetaBaseCoeff cmJacobiEvenCoeff
+  congr 1
+  · congr
+    omega
+  · apply Finset.sum_congr rfl
+    intro s hs
+    by_cases hpos : 0 < s
+    · have hiff : 4 * s ^ 2 = 4 * N ↔ s ^ 2 = N := by omega
+      simp [hpos, hiff]
+    · simp [hpos]
+
+/-- The existing even-square coefficient has support only on exponents
+divisible by four. -/
+theorem cmJacobiEvenCoeff_eq_zero_of_four_not_dvd
+    {N : ℕ} (h4 : ¬ 4 ∣ N) :
+    cmJacobiEvenCoeff N = 0 := by
+  unfold cmJacobiEvenCoeff
+  have hN0 : N ≠ 0 := by
+    intro hN
+    subst N
+    exact h4 (dvd_zero 4)
+  rw [if_neg hN0, zero_add]
+  apply Finset.sum_eq_zero
+  intro s hs
+  split_ifs with hterm
+  · rcases hterm with ⟨hspos, hsq⟩
+    exfalso
+    apply h4
+    refine ⟨s ^ 2, ?_⟩
+    exact hsq.symm
+  · rfl
+
+/-- The level-32 even-square series is literally the base theta4 series after
+q↦X^4. -/
+theorem cmJacobiEvenSeries_eq_subst_jacobiSquareThetaBase :
+    cmJacobiEvenSeries =
+      jacobiSquareThetaBaseSeries.subst (X ^ 4) := by
+  ext N
+  rw [cmJacobiEvenSeries_coeff,
+    PowerSeries.coeff_subst_X_pow (R := ℂ) (S := ℂ)
+      (by norm_num : (4 : ℕ) ≠ 0)]
+  by_cases h4 : 4 ∣ N
+  · rw [if_pos h4]
+    obtain ⟨m, rfl⟩ := h4
+    simp [jacobiSquareThetaBaseSeries_coeff,
+      jacobiSquareThetaBaseCoeff_eq_cmJacobiEvenCoeff_four_mul]
+  · rw [if_neg h4, cmJacobiEvenCoeff_eq_zero_of_four_not_dvd h4]
+
+/-- The base square-theta identity whose q↦X^4 transport is exactly J2. -/
+def JacobiSquareThetaBaseIdentity : Prop :=
+  jacobiSquareThetaBaseSeries *
+      (cmEtaEulerFormal.subst (X ^ 2)) =
+    cmEtaEulerFormal ^ 2
+
+/-- Transport the base theta4 identity to the exact level-32 even-product
+identity already consumed by the eta32 weld. -/
+theorem cmJacobiEvenProductIdentity_of_squareThetaBase
+    (hTheta : JacobiSquareThetaBaseIdentity) :
+    cmJacobiEvenProductIdentity := by
+  unfold JacobiSquareThetaBaseIdentity at hTheta
+  unfold cmJacobiEvenProductIdentity
+  rw [cmJacobiEvenSeries_eq_subst_jacobiSquareThetaBase]
+  have h4 : PowerSeries.HasSubst (X ^ 4 : PowerSeries ℂ) :=
+    PowerSeries.HasSubst.X_pow (by norm_num)
+  have h2 : PowerSeries.HasSubst (X ^ 2 : PowerSeries ℂ) :=
+    PowerSeries.HasSubst.X_pow (by norm_num)
+  have h8 : PowerSeries.HasSubst (X ^ 8 : PowerSeries ℂ) :=
+    PowerSeries.HasSubst.X_pow (by norm_num)
+  have hTransport := congrArg (PowerSeries.subst (X ^ 4)) hTheta
+  rw [PowerSeries.subst_mul h4,
+    PowerSeries.subst_pow h4] at hTransport
+  rw [PowerSeries.subst_comp_subst_apply h2 h4,
+    PowerSeries.subst_comp_subst_apply
+      (PowerSeries.HasSubst.X_pow (by norm_num : (4 : ℕ) ≠ 0))
+      h4] at hTransport
+  simp only [PowerSeries.X_subst] at hTransport
+  have hx24 :
+      PowerSeries.subst (X ^ 4 : PowerSeries ℂ)
+          (X ^ 2 : PowerSeries ℂ) =
+        (X ^ 8 : PowerSeries ℂ) := by
+    rw [PowerSeries.subst_pow h4]
+    simp [pow_mul]
+  have hx44 :
+      PowerSeries.subst (X ^ 4 : PowerSeries ℂ)
+          (X ^ 4 : PowerSeries ℂ) =
+        (X ^ 16 : PowerSeries ℂ) := by
+    rw [PowerSeries.subst_pow h4]
+    simp [pow_mul]
+  -- Normalize the composed substitutions directly.
+  simpa [PowerSeries.subst_comp_subst_apply, hx24, hx44,
+    PowerSeries.subst_mul, PowerSeries.subst_pow] using hTransport
+
 /-- The Laurent-series monomial X, packaged as a unit. -/
 noncomputable def jacobiLaurentXUnit : (LaurentSeries ℂ)ˣ where
   val := HahnSeries.single (1 : ℤ) 1

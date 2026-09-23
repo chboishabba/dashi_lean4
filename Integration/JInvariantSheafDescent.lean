@@ -274,6 +274,76 @@ theorem secondary54 :
     6 * 9 = 54 ∧ 53 + 1 = 54 := by
   norm_num
 
+theorem weightTwelveSquare144 :
+    12^2 = 144 := by
+  norm_num
+
+theorem weightTwelveCube1728 :
+    12^3 = 1728 := by
+  norm_num
+
+theorem bulkCyclotomicQuotient :
+    196830 = 3 * 65610 := by
+  norm_num
+
+theorem monsterRegularResidual :
+    196883 = 3 * 65610 + 53 := by
+  norm_num
+
+/-- Exponent-level mirror of the Agda C3 cyclotomic lane.
+    This records the phase arithmetic only; it does not replace the Agda
+    cyclotomic amplitude algebra or assert a Monster action. -/
+abbrev C3Exponent := Fin 3
+
+def zetaExponent : C3Exponent := 1
+def inverseZetaExponent : C3Exponent := 2
+
+theorem inverseZetaExponent_is_square :
+    inverseZetaExponent = (2 : C3Exponent) := rfl
+
+theorem zetaPlusInverseExponentCloses :
+    ((zetaExponent.val + inverseZetaExponent.val) % 3) = 0 := by
+  decide
+
+structure OEISCoordinate where
+  sequence : String
+  role : String
+  createsSemanticIdentity : Bool
+
+def bulkOEIS : OEISCoordinate where
+  sequence := "A005052"
+  role := "10 * 3^n numerical family; n=9 gives 196830"
+  createsSemanticIdentity := false
+
+def monsterDegreeOEIS : OEISCoordinate where
+  sequence := "A001379"
+  role := "Monster irreducible degree numerical coordinate"
+  createsSemanticIdentity := false
+
+structure ArithmeticAnalyticLinks where
+  inverseZetaOwnerLinked : Bool
+  oeisOwnerLinked : Bool
+  finiteEisensteinQSeriesOwnerLinked : Bool
+  deltaWeightTwelveOwnerLinked : Bool
+  jWeightZeroQuotientOwnerLinked : Bool
+  weight12IsCanonical : Bool
+  square144IsAutomaticModularInvariant : Bool
+  cube1728IsJNormalizationCoordinate : Bool
+  finiteQSeriesAutomaticallyEqualsAnalyticJ : Bool
+  oeisMatchCreatesSemanticIdentity : Bool
+
+def arithmeticAnalyticLinks : ArithmeticAnalyticLinks where
+  inverseZetaOwnerLinked := true
+  oeisOwnerLinked := true
+  finiteEisensteinQSeriesOwnerLinked := true
+  deltaWeightTwelveOwnerLinked := true
+  jWeightZeroQuotientOwnerLinked := true
+  weight12IsCanonical := true
+  square144IsAutomaticModularInvariant := false
+  cube1728IsJNormalizationCoordinate := true
+  finiteQSeriesAutomaticallyEqualsAnalyticJ := false
+  oeisMatchCreatesSemanticIdentity := false
+
 structure Frontier where
   localObserverExact : Bool
   localSectionExact : Bool
@@ -284,6 +354,9 @@ structure Frontier where
   standardPresheafVocabularyExposed : Bool
   literalAnalyticGrothendieckSiteConstructed : Bool
   literalMonsterModuleIntertwinerConstructed : Bool
+  arithmeticAnalyticOwnersLinked : Bool
+  square144PromotedToModularInvariant : Bool
+  oeisCreatesSemanticIdentity : Bool
 
 def frontier : Frontier where
   localObserverExact := true
@@ -295,5 +368,8 @@ def frontier : Frontier where
   standardPresheafVocabularyExposed := true
   literalAnalyticGrothendieckSiteConstructed := false
   literalMonsterModuleIntertwinerConstructed := false
+  arithmeticAnalyticOwnersLinked := true
+  square144PromotedToModularInvariant := false
+  oeisCreatesSemanticIdentity := false
 
 end Integration.JInvariantSheafDescent

@@ -48,7 +48,6 @@ private theorem primary_congruence_selects_real_sign
     a = -((-1 : ℤ) ^ (r + s)) * (2 * (r : ℤ) + 1) := by
   rcases Nat.even_or_odd (r + s) with hev | hod
   · have hp : ((-1 : ℤ) ^ (r + s)) = 1 := hev.neg_one_pow
-    rw [hp, one_mul]
     rcases ha with ha | ha
     · rcases hb with hb | hb
       · exfalso
@@ -59,12 +58,10 @@ private theorem primary_congruence_selects_real_sign
         rcases (Int.modEq_iff_add_fac.mp hprimary) with ⟨t, ht⟩
         rcases hev with ⟨k, hk⟩
         omega
-    · exact ha
+    · simpa [hp] using ha
   · have hp : ((-1 : ℤ) ^ (r + s)) = -1 := hod.neg_one_pow
-    rw [hp]
-    ring_nf
     rcases ha with ha | ha
-    · exact ha
+    · simpa [hp] using ha
     · rcases hb with hb | hb
       · exfalso
         rcases (Int.modEq_iff_add_fac.mp hprimary) with ⟨t, ht⟩

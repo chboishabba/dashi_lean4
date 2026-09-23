@@ -91,3 +91,6 @@ jobs:
           lake env lean Integration/MoonshineEta24Pinned.lean
           lake env lean Integration/MoonshineEta24SixfoldPhase.lean
           lake env lean Integration/MoonshineDeltaFinalMinCut.lean
+          lake env lean Integration/MoonshineNormalizedJPhaseReadout.lean
+          lake env lean Integration/MoonshineAngleC6SectorObserver.lean
+          lake env lean Integration/MoonshineC6TenRankWeightTwelveCrossPollination.lean

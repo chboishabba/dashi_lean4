@@ -1581,4 +1581,96 @@ theorem exists_quarticFourSignedPole_leftBoundary_tendsto_zero :
   obtain ⟨K,hK,hbound⟩ := hT0 W ht
   exact tendsto_zero_of_eventually_abs_le_const_div_nat hK hbound
 
+
+/--
+The right centred boundary is eventually O(1/n) on B=t+n.
+-/
+theorem exists_quarticFourSignedPole_rightBoundary_eventually_inv_bound :
+    ∃ T0 : ℝ,
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        T0 <= t ->
+        ∃ K : ℝ, 0 <= K ∧
+          ∀ᶠ n : ℕ in atTop,
+            |W.rightCenteredBoundary n|
+              <= K / (n : ℝ) := by
+  obtain ⟨C,T1,hC,hbound⟩ :=
+    exists_quarticFourSignedPole_rightBoundary_gap_sq_bound
+  refine ⟨max T1 4,?_⟩
+  intro t W ht
+  have ht1 : max T1 4 <= t := ht
+  have ht4 : 4 <= t := (le_max_right T1 4).trans ht
+  let K : ℝ := 3*C*W.signedOrdinateCurvature
+  have hK : 0 <= K := by
+    dsimp [K]
+    have hc := W.signedOrdinateCurvature_nonneg
+    positivity
+  refine ⟨K,hK,?_⟩
+  have hcast :
+      Tendsto (fun n : ℕ => (n : ℝ)) atTop atTop :=
+    tendsto_natCast_atTop_atTop
+  filter_upwards
+    [hcast.eventually (eventually_ge_atTop (Real.log (t+3))),
+     hcast.eventually (eventually_ge_atTop (t+3)),
+     hcast.eventually (eventually_ge_atTop 1)]
+    with n hnlog hnshift hn1
+  let N : ℝ := (n : ℝ)
+  have hNpos : 0 < N := lt_of_lt_of_le zero_lt_one hn1
+  have htB : t < t+N := by linarith
+  have hraw := hbound W ht1 (t+N) htB
+  have hlogMove :
+      Real.log (t+N+4) <= 2*N := by
+    have hy : 0 < t+N+4 := by linarith
+    have hlog := Real.log_le_sub_one_of_pos hy
+    have hlin : t+N+3 <= 2*N := by
+      dsimp [N] at hnshift ⊢
+      linarith
+    linarith
+  have hparent :
+      C * (Real.log (t+3) + Real.log (t+N+4))
+        <= 3*C*N := by
+    have hfixed : Real.log (t+3) <= N := by
+      simpa [N] using hnlog
+    nlinarith
+  unfold QuarticFourSignedPolePair.rightCenteredBoundary
+  have hgap : ((t+N)-t)^2 = N^2 := by ring
+  rw [show t + (n : ℝ) = t+N by rfl] at hraw
+  rw [hgap] at hraw
+  have hfac :
+      0 <= W.signedOrdinateCurvature / N^2 := by
+    have hc := W.signedOrdinateCurvature_nonneg
+    positivity
+  have hdom := mul_le_mul_of_nonneg_left hparent hfac
+  have hmain :
+      |W.signedOrdinateTest (t+N)
+        * centeredZetaMuDiscrepancy t (t+N)|
+        <= K / N := by
+    calc
+      |W.signedOrdinateTest (t+N)
+        * centeredZetaMuDiscrepancy t (t+N)|
+        <=
+      (W.signedOrdinateCurvature / N^2)
+        * (C * (Real.log (t+3) + Real.log (t+N+4))) := by
+          simpa [N] using hraw
+      _ <=
+      (W.signedOrdinateCurvature / N^2) * (3*C*N) := hdom
+      _ = K / N := by
+        dsimp [K]
+        field_simp [ne_of_gt hNpos]
+        ring
+  simpa [N] using hmain
+
+theorem exists_quarticFourSignedPole_rightBoundary_tendsto_zero :
+    ∃ T0 : ℝ,
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        T0 <= t ->
+        Tendsto W.rightCenteredBoundary atTop (𝓝 0) := by
+  obtain ⟨T0,hT0⟩ :=
+    exists_quarticFourSignedPole_rightBoundary_eventually_inv_bound
+  refine ⟨T0,?_⟩
+  intro t W ht
+  obtain ⟨K,hK,hbound⟩ := hT0 W ht
+  exact tendsto_zero_of_eventually_abs_le_const_div_nat hK hbound
+
 end Synthesis

@@ -1096,6 +1096,60 @@ noncomputable def jacobiWeightedDiagonal
       jacobiWeightedDiagonalCoeff F N := by
   simp [jacobiWeightedDiagonal]
 
+theorem jacobiWeightedDiagonal_posBranch_iff
+    (N r : ℕ) :
+    (N : ℤ) - 2 * (jacobiTriangularNat r : ℤ) =
+        ((r + 1 : ℕ) : ℤ) ↔
+      N = (r + 1) ^ 2 := by
+  have htri := two_mul_jacobiTriangularNat r
+  norm_num at *
+  constructor <;> intro h
+  · norm_cast at h
+    nlinarith
+  · subst N
+    norm_cast
+    nlinarith
+
+theorem jacobiWeightedDiagonal_negBranch_iff
+    (N r : ℕ) :
+    (N : ℤ) - 2 * (jacobiTriangularNat r : ℤ) =
+        -(r : ℤ) ↔
+      N = r ^ 2 := by
+  have htri := two_mul_jacobiTriangularNat r
+  constructor <;> intro h
+  · norm_cast at h ⊢
+    nlinarith
+  · subst N
+    norm_cast
+    nlinarith
+
+/-- A triangular outer q-degree contributes exactly to the two adjacent
+squares r² and (r+1)² under the weighted diagonal. -/
+theorem jacobiWeightedDiagonal_triangularSummand
+    (N r : ℕ) :
+    (jacobiDiagonalCoeffHom
+      (jacobiTripleSeries.coeff (jacobiTriangularNat r))).coeff
+        ((N : ℤ) - 2 * (jacobiTriangularNat r : ℤ)) =
+      (if N = (r + 1) ^ 2 then
+        ((-1 : ℂ) ^ (r + 1)) else 0) +
+      (if N = r ^ 2 then
+        ((-1 : ℂ) ^ r) else 0) := by
+  rw [jacobiTripleSeries_coeff, jacobiTripleCoefficient_triangular,
+    jacobiDiagonalCoeffHom_pairedTerm_coeff]
+  rw [if_congr (jacobiWeightedDiagonal_posBranch_iff N r) rfl rfl,
+    if_congr (jacobiWeightedDiagonal_negBranch_iff N r) rfl rfl]
+
+/-- A non-triangular outer q-degree contributes nothing to the weighted
+diagonal of the bilateral Jacobi series. -/
+theorem jacobiWeightedDiagonal_nontriangularSummand
+    {N d : ℕ} (hd : ¬ ∃ r : ℕ, jacobiTriangularNat r = d) :
+    (jacobiDiagonalCoeffHom
+      (jacobiTripleSeries.coeff d)).coeff
+        ((N : ℤ) - 2 * (d : ℤ)) = 0 := by
+  rw [jacobiTripleSeries_coeff,
+    jacobiTripleCoefficient_eq_zero_of_not_triangular hd]
+  simp
+
 /-- J0 coefficientwise equality transfers automatically through the finite
 weighted diagonal operator. -/
 theorem tendsto_jacobiWeightedDiagonal_finiteProduct_of_tripleProduct

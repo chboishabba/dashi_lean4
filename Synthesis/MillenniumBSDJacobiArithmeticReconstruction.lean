@@ -114,6 +114,140 @@ theorem jacobiOddPrimeAgreement_of_split
   · exact hsplit p hp h1
   · exact jacobi_inertPrimeAgreement_paid hp h3
 
+theorem cmJacobiOddCoeff_ne_zero_exists_square
+    {N : ℕ} (h : cmJacobiOddCoeff N ≠ 0) :
+    ∃ r : ℕ, (2 * r + 1) ^ 2 = N := by
+  by_contra hnone
+  push_neg at hnone
+  apply h
+  unfold cmJacobiOddCoeff
+  apply Finset.sum_eq_zero
+  intro r hr
+  simp [hnone r]
+
+theorem cmJacobiEvenCoeff_ne_zero_exists_square
+    {N : ℕ} (hN0 : N ≠ 0) (h : cmJacobiEvenCoeff N ≠ 0) :
+    ∃ s : ℕ, 0 < s ∧ 4 * s ^ 2 = N := by
+  by_contra hnone
+  push_neg at hnone
+  apply h
+  unfold cmJacobiEvenCoeff
+  rw [if_neg hN0, zero_add]
+  apply Finset.sum_eq_zero
+  intro s hs
+  by_cases hs0 : 0 < s
+  · have hsq : 4 * s ^ 2 ≠ N := hnone s hs0
+    simp [hs0, hsq]
+  · simp [hs0]
+
+theorem cmJacobiOddCoeff_canonicalSquare (r : ℕ) :
+    cmJacobiOddCoeff ((2 * r + 1) ^ 2) =
+      ((-1 : ℂ) ^ r) * (2 * r + 1) := by
+  unfold cmJacobiOddCoeff
+  rw [Finset.sum_eq_single r]
+  · simp
+  · intro r' hr' hne
+    have hsq : (2 * r' + 1) ^ 2 ≠ (2 * r + 1) ^ 2 := by
+      intro h
+      have hbase : 2 * r' + 1 = 2 * r + 1 :=
+        Nat.pow_left_injective (by norm_num : (2 : ℕ) ≠ 0) h
+      exact hne (by omega)
+    simp [hsq]
+  · intro hnot
+    exfalso
+    apply hnot
+    rw [Finset.mem_range]
+    nlinarith [sq_nonneg (2 * r + 1 : ℤ)]
+
+theorem cmJacobiEvenCoeff_canonicalSquare
+    {s : ℕ} (hs : 0 < s) :
+    cmJacobiEvenCoeff (4 * s ^ 2) =
+      2 * ((-1 : ℂ) ^ s) := by
+  unfold cmJacobiEvenCoeff
+  have hN0 : 4 * s ^ 2 ≠ 0 := by positivity
+  rw [if_neg hN0, zero_add, Finset.sum_eq_single s]
+  · simp [hs]
+  · intro s' hs' hne
+    have hsq : 4 * s' ^ 2 ≠ 4 * s ^ 2 := by
+      intro h
+      have h' : s' ^ 2 = s ^ 2 := by omega
+      have : s' = s :=
+        Nat.pow_left_injective (by norm_num : (2 : ℕ) ≠ 0) h'
+      exact hne this
+    simp [hsq]
+  · intro hnot
+    exfalso
+    apply hnot
+    rw [Finset.mem_range]
+    nlinarith
+
+theorem splitPrimeCanonicalCompanion_pos
+    {p r s : ℕ} (hp : p.Prime)
+    (hrep : p = (2 * r + 1) ^ 2 + 4 * s ^ 2) :
+    0 < s := by
+  by_contra hs
+  have hs0 : s = 0 := Nat.eq_zero_of_not_pos hs
+  apply hp.not_isSquare
+  refine ⟨2 * r + 1, ?_⟩
+  simpa [hs0, pow_two] using hrep
+
+/-- At a split prime the finite Jacobi convolution has exactly one surviving
+odd-square/even-square representation, namely the canonical one. -/
+theorem cmJacobiArithmeticCoefficient_splitPrime
+    {p r s : ℕ} (hp : p.Prime)
+    (hrep : p = (2 * r + 1) ^ 2 + 4 * s ^ 2) :
+    cmJacobiArithmeticCoefficient p =
+      (2 : ℂ) * ((-1 : ℂ) ^ (r + s)) * (2 * r + 1) := by
+  let I : ℕ := (2 * r + 1) ^ 2
+  let J : ℕ := 4 * s ^ 2
+  have hs : 0 < s := splitPrimeCanonicalCompanion_pos hp hrep
+  have hmem : (I, J) ∈ Finset.Nat.antidiagonal p := by
+    rw [Finset.mem_antidiagonal]
+    simpa [I, J] using hrep.symm
+  unfold cmJacobiArithmeticCoefficient
+  rw [Finset.sum_eq_single_of_mem (I, J) hmem]
+  · rw [cmJacobiOddCoeff_canonicalSquare r,
+      cmJacobiEvenCoeff_canonicalSquare hs]
+    dsimp [I, J]
+    rw [pow_add]
+    ring
+  · rintro ⟨i,j⟩ hij hne
+    simp only [Prod.fst, Prod.snd]
+    by_cases hi0 : cmJacobiOddCoeff i = 0
+    · simp [hi0]
+    by_cases hj0 : cmJacobiEvenCoeff j = 0
+    · simp [hj0]
+    obtain ⟨r', hr'⟩ := cmJacobiOddCoeff_ne_zero_exists_square hi0
+    have hjne : j ≠ 0 := by
+      intro hj
+      subst j
+      have hip : i = p := by
+        simpa using Finset.mem_antidiagonal.mp hij
+      apply hp.not_isSquare
+      refine ⟨2 * r' + 1, ?_⟩
+      simpa [hip, pow_two] using hr'.symm
+    obtain ⟨s', hs'pos, hs'⟩ :=
+      cmJacobiEvenCoeff_ne_zero_exists_square hjne hj0
+    have hsum : i + j = p := Finset.mem_antidiagonal.mp hij
+    have hrep' : p = (2 * r' + 1) ^ 2 + 4 * s' ^ 2 := by
+      omega
+    have hrs := splitPrimeCanonicalCoordinates_unique hp hrep hrep'
+    rcases hrs with ⟨rfl, rfl⟩
+    apply hne
+    ext <;> simp [I, J, hr', hs']
+
+/-- The split-prime Jacobi coefficient is already the signed elliptic trace. -/
+theorem jacobi_splitPrimeAgreement_paid :
+    JacobiSplitPrimeAgreement := by
+  intro p hp hmod
+  obtain ⟨w⟩ := splitPrimeCanonicalWitness_of_mod_four_eq_one hp hmod
+  rw [cmJacobiArithmeticFunction_apply,
+    cmJacobiArithmeticCoefficient_splitPrime hp w.normExact]
+  letI : Fact p.Prime := ⟨hp⟩
+  rw [split_frobenius_signed hp w.normExact hmod]
+  push_cast
+  ring
+
 /-- J3c: the Jacobi prime-power coefficients obey the same degree-two Euler
 recurrence as the elliptic coefficients at every odd prime. -/
 def JacobiOddPrimePowerRecurrence : Prop :=
@@ -354,6 +488,6 @@ structure JacobiArithmeticBoundaryStatus where
   deriving DecidableEq, Repr
 
 def jacobiArithmeticBoundaryStatus : JacobiArithmeticBoundaryStatus :=
-  ⟨true, true, true, false, true, false, false, true⟩
+  ⟨true, true, true, false, true, true, false, true⟩
 
 end Synthesis.Millennium.BSD

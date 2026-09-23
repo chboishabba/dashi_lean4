@@ -106,6 +106,59 @@ theorem ten_eq_five_times_two : 10 = 5 * 2 := by norm_num
 theorem ten_eq_one_three_six : 10 = 1 + 3 + 6 := by norm_num
 theorem ten_eq_ternary_101 : 10 = 1 + 0*3 + 1*9 := by norm_num
 
+
+/-! ## 2b. Shared binary-orientation reallocation
+
+The same binary coordinate can be carried on the C6 side or on the ten-state
+side:
+
+    C6 × Mode5  ≃  C3 × Completion10.
+
+This is stronger than the cardinal equation 6*5 = 3*10.
+-/
+
+def c6ToPhase2 : C6Sector → C3Phase × Phase2
+  | .s0 => (.p0,.direct) | .s1 => (.p1,.direct) | .s2 => (.p2,.direct)
+  | .s3 => (.p0,.counter) | .s4 => (.p1,.counter) | .s5 => (.p2,.counter)
+
+def phase2ToC6 : C3Phase × Phase2 → C6Sector
+  | (.p0,.direct) => .s0 | (.p1,.direct) => .s1 | (.p2,.direct) => .s2
+  | (.p0,.counter) => .s3 | (.p1,.counter) => .s4 | (.p2,.counter) => .s5
+
+theorem c6_phase2_roundtrip (x : C6Sector) :
+    phase2ToC6 (c6ToPhase2 x) = x := by cases x <;> rfl
+
+theorem phase2_c6_roundtrip (x : C3Phase × Phase2) :
+    c6ToPhase2 (phase2ToC6 x) = x := by
+  rcases x with ⟨p,o⟩
+  cases p <;> cases o <;> rfl
+
+abbrev C6Mode5 := C6Sector × Mode5
+abbrev C3Ten := C3Phase × Completion10
+
+def reallocateC6ModeToC3Ten : C6Mode5 → C3Ten
+  | (hex,mode) =>
+      let po := c6ToPhase2 hex
+      (po.1, modePhaseToTen (mode,po.2))
+
+def reallocateC3TenToC6Mode : C3Ten → C6Mode5
+  | (phase,ten) =>
+      let mo := tenToModePhase ten
+      (phase2ToC6 (phase,mo.2), mo.1)
+
+theorem c6_mode_reallocation_roundtrip (x : C6Mode5) :
+    reallocateC3TenToC6Mode (reallocateC6ModeToC3Ten x) = x := by
+  rcases x with ⟨h,m⟩
+  cases h <;> cases m <;> rfl
+
+theorem c3_ten_reallocation_roundtrip (x : C3Ten) :
+    reallocateC6ModeToC3Ten (reallocateC3TenToC6Mode x) = x := by
+  rcases x with ⟨p,t⟩
+  cases p <;> cases t <;> rfl
+
+theorem six_times_five_eq_three_times_ten : 6*5 = 3*10 := by norm_num
+
+
 /-! ## 3. Monster-side arithmetic shell -/
 
 theorem sixFiveSixOne : 3^8 = 6561 := by norm_num

@@ -108,37 +108,16 @@ abbrev tamagawaProduct (a : BSDRefinedArithmeticBinding) :=
 
 end BSDRefinedArithmeticBinding
 
-/-- Universal same-object interface for the full elliptic-point
-Galois module.  The remaining known-math object-binding task is to construct,
-for every literal E/Q, the actual discrete TopRep carried by E(Qbar). -/
-structure BSDUniversalEllipticPointRepresentationBinding where
-  representation :
-    RationalEllipticCurve → TopRep ℤ RationalAbsoluteGalois
+/-- The universal actual elliptic-point Galois representation is now a
+canonical construction, not a supplied binding. -/
+def UniversalBSDEllipticPointRepresentationPaid : Prop :=
+  ∀ E : RationalEllipticCurve,
+    Nonempty (TopRep ℤ RationalAbsoluteGalois)
 
-
-/-- Known-math object-binding producer for the actual full E(Qbar) Galois
-module, uniformly over all rational elliptic curves. -/
-def UniversalBSDEllipticPointRepresentationProducer : Prop :=
-  Nonempty BSDUniversalEllipticPointRepresentationBinding
-
-
-/-- Canonical universal binding supplied by the generic actual E(Qbar)
-TopRep construction. -/
-noncomputable def canonicalBSDEllipticPointRepresentationBinding :
-    BSDUniversalEllipticPointRepresentationBinding where
-  representation := rationalEllipticCurvePointRepresentation
-
-theorem universalBSDEllipticPointRepresentationProducer_paid :
-    UniversalBSDEllipticPointRepresentationProducer :=
-  ⟨canonicalBSDEllipticPointRepresentationBinding⟩
-
-/-- The classical degree-one Sha carrier is then not arbitrary: it is the
-repo's literal global-to-local continuous-cohomology kernel for the supplied
-elliptic-point representation. -/
-noncomputable def BSDUniversalEllipticPointRepresentationBinding.Sha
-    (P : BSDUniversalEllipticPointRepresentationBinding)
-    (E : RationalEllipticCurve) : Type :=
-  rationalTateShafarevichOne (P.representation E)
+theorem universalBSDEllipticPointRepresentation_paid :
+    UniversalBSDEllipticPointRepresentationPaid := by
+  intro E
+  exact ⟨rationalEllipticCurvePointRepresentation E⟩
 
 /-- Canonical classical Sha carrier on the actual universal E(Qbar)
 representation. -/

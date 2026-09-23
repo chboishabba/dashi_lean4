@@ -737,6 +737,44 @@ noncomputable def jacobiSquareThetaBaseSeries : PowerSeries ℂ :=
       jacobiSquareThetaBaseCoeff N := by
   simp [jacobiSquareThetaBaseSeries]
 
+@[simp] theorem jacobiSquareThetaBaseCoeff_zero :
+    jacobiSquareThetaBaseCoeff 0 = 1 := by
+  simp [jacobiSquareThetaBaseCoeff]
+
+theorem jacobiSquareThetaBaseCoeff_square
+    {s : ℕ} (hs : 0 < s) :
+    jacobiSquareThetaBaseCoeff (s ^ 2) =
+      2 * ((-1 : ℂ) ^ s) := by
+  unfold jacobiSquareThetaBaseCoeff
+  rw [if_neg (pow_ne_zero 2 (Nat.ne_of_gt hs))]
+  rw [zero_add]
+  rw [Finset.sum_eq_single s]
+  · simp [hs]
+  · intro t ht hts
+    have hsq : t ^ 2 ≠ s ^ 2 := by
+      intro h
+      apply hts
+      nlinarith
+    simp [hsq]
+  · intro hnot
+    exfalso
+    apply hnot
+    rw [Finset.mem_range]
+    nlinarith [hs]
+
+theorem jacobiSquareThetaBaseCoeff_eq_zero_of_not_square
+    {N : ℕ} (hN0 : N ≠ 0)
+    (hNSq : ¬ ∃ s : ℕ, 0 < s ∧ s ^ 2 = N) :
+    jacobiSquareThetaBaseCoeff N = 0 := by
+  unfold jacobiSquareThetaBaseCoeff
+  rw [if_neg hN0, zero_add]
+  apply Finset.sum_eq_zero
+  intro s hs
+  simp only
+  split_ifs with hterm
+  · exact False.elim (hNSq ⟨s, hterm.1, hterm.2⟩)
+  · rfl
+
 /-- The base square-theta coefficient is exactly the existing level-32
 coefficient with its exponent divided by four. -/
 theorem jacobiSquareThetaBaseCoeff_eq_cmJacobiEvenCoeff_four_mul
@@ -983,6 +1021,22 @@ theorem jacobiDiagonalCoeffHom_T_coeff (k j : ℤ) :
   rw [← RatFunc.single_zpow k]
   rw [← HahnSeries.single_mul_single]
   simp [HahnSeries.coeff_single]
+
+/-- Under z↦-X the canonical paired term has exactly the two expected
+Laurent coefficients. -/
+theorem jacobiDiagonalCoeffHom_pairedTerm_coeff
+    (r : ℕ) (j : ℤ) :
+    (jacobiDiagonalCoeffHom
+      (LaurentPolynomial.T ((r + 1 : ℕ) : ℤ) +
+        LaurentPolynomial.T (-(r : ℤ)))).coeff j =
+      (if j = ((r + 1 : ℕ) : ℤ) then
+        ((-1 : ℂ) ^ (r + 1)) else 0) +
+      (if j = -(r : ℤ) then
+        ((-1 : ℂ) ^ r) else 0) := by
+  rw [map_add, HahnSeries.coeff_add,
+    jacobiDiagonalCoeffHom_T_coeff,
+    jacobiDiagonalCoeffHom_T_coeff]
+  simp [zpow_natCast, zpow_neg, inv_pow]
 
 
 /-- Apply z↦-X coefficientwise, while retaining the outer q-variable. -/

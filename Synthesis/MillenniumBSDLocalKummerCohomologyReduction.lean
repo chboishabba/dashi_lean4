@@ -1,6 +1,9 @@
 import Synthesis.MillenniumBSDTrivialTwoTorsionH1Generic
 import Synthesis.MillenniumBSDSquareClassGroups
 import Synthesis.MillenniumBSDRationalQuadraticKummerHom
+import Synthesis.MillenniumBSDActualEllipticPointTopRep
+import Synthesis.MillenniumBSDActualE2TopRepSameObject
+import Mathlib.RepresentationTheory.Homological.ContCohomology.Functoriality
 import Mathlib.Tactic
 
 /-!
@@ -114,6 +117,91 @@ theorem padicKummerPair_localize_commutes
   · exact h.localize_commutes c.1
   · exact h.localize_commutes c.2
 
+/-- Continuous restriction homomorphism G_{Q_p} -> G_Q. -/
+noncomputable def padicAbsoluteGaloisRestriction
+    (p : ℕ) [Fact p.Prime] :
+    PadicAbsoluteGalois p →ₜ* RationalAbsoluteGalois :=
+  Field.absoluteGaloisGroup.map
+    (algebraMap ℚ ℚ_[p])
+
+/-- Restriction of the actual global E(Qbar) representation to G_{Q_p}. -/
+noncomputable abbrev padicRestrictedEllipticPointRepresentation
+    (p : ℕ) [Fact p.Prime] :
+    TopRep ℤ (PadicAbsoluteGalois p) :=
+  TopRep.res
+    (padicAbsoluteGaloisRestriction p : PadicAbsoluteGalois p →*
+      RationalAbsoluteGalois)
+    cmEllipticPointRepresentation
+
+/-- Literal inclusion of actual E[2] into E(Qbar), used locally after the
+paid carrier equivalence from (C₂)² to the geometric two-torsion subgroup. -/
+noncomputable def localActualE2InclusionCLM :
+    cmAlgClosureTwoTorsionSubgroup →L[ℤ]
+      CMAlgClosureProjectivePoint where
+  toLinearMap :=
+    { toFun := fun P => P.1
+      map_add' := fun _ _ => rfl
+      map_smul' := by
+        intro n P
+        induction n using Int.induction_on with
+        | ofNat n =>
+            induction n with
+            | zero => simp
+            | succ n ih =>
+                simp only [Int.ofNat_eq_coe, Int.ofNat_eq_coe,
+                  Int.natCast_smul_eq_nsmul]
+                simp [add_nsmul]
+        | negSucc n =>
+            simp }
+  cont := continuous_of_discreteTopology
+
+/-- Direct local coefficient morphism from the generic trivial (C₂)² module
+to the restriction of the actual E(Qbar) module. -/
+noncomputable def padicGenericE2ToRestrictedEllipticPoint
+    (p : ℕ) [Fact p.Prime] :
+    genericTwoTorsionRepresentation (PadicAbsoluteGalois p) ⟶
+      padicRestrictedEllipticPointRepresentation p :=
+  TopRep.ofHom
+  { __ :=
+      localActualE2InclusionCLM.comp
+        cmActualE2ContinuousLinearEquiv.toContinuousLinearMap
+    isIntertwining' σ := by
+      ext x
+      change
+        (cmActualE2ContinuousLinearEquiv x).1 =
+          cmAlgClosureGaloisAction
+            (padicAbsoluteGaloisRestriction p σ)
+            (cmActualE2ContinuousLinearEquiv x).1
+      exact
+        (cmAlgClosure_twoTorsionSubgroup_pointwise_fixed
+          (padicAbsoluteGaloisRestriction p σ)
+          (cmActualE2ContinuousLinearEquiv x)).symm }
+
+/-- The exact local cohomology arrow occurring in Kummer exactness. -/
+noncomputable def padicGenericE2H1ToEllipticPointH1
+    (p : ℕ) [Fact p.Prime] :
+    ContinuousCohomology.continuousCohomology 1
+        (genericTwoTorsionRepresentation (PadicAbsoluteGalois p)) ⟶
+      ContinuousCohomology.continuousCohomology 1
+        (padicRestrictedEllipticPointRepresentation p) :=
+  ContinuousCohomology.map
+    (ContinuousMonoidHom.id (PadicAbsoluteGalois p))
+    (padicGenericE2ToRestrictedEllipticPoint p) 1
+
+/-- Local Kummer exactness stated against the repo's literal explicit Kummer
+image.  This is the actual p-adic elliptic theorem still missing once scalar
+quadratic Kummer and its global/local naturality are supplied. -/
+structure PadicEllipticKummerExactness
+    (p : ℕ) [Fact p.Prime]
+    (h : PadicQuadraticKummerCompatibility p) where
+  kernel_iff_explicitKummerImage :
+    ∀ c : PadicSquareClass p × PadicSquareClass p,
+      c ∈ localKummerImageSubgroup p ↔
+        padicGenericE2H1ToEllipticPointH1 p
+          ((padicTwoTorsionH1MulEquivSquareClassPair p
+              (padicQuadraticKummerProducer_of_compatibility p h)).symm c).toAdd =
+            0
+
 /-- Machine-readable local frontier: the continuous H¹ normalization and
 pair decomposition are paid uniformly; scalar local Kummer and compatibility
 with the explicit elliptic Kummer coordinates remain. -/
@@ -125,11 +213,13 @@ structure PadicKummerCohomologyBoundaryStatus where
   scalarPadicKummerPaid : Bool
   scalarGlobalLocalNaturalityPaid : Bool
   pairGlobalLocalNaturalityCompilerPaid : Bool
+  localE2ToEllipticH1ArrowPaid : Bool
+  localEllipticKummerExactnessPaid : Bool
   explicitToCohomologicalCompatibilityPaid : Bool
   deriving DecidableEq, Repr
 
 def padicKummerCohomologyBoundaryStatus :
     PadicKummerCohomologyBoundaryStatus :=
-  ⟨true, true, true, true, false, false, true, false⟩
+  ⟨true, true, true, true, false, false, true, true, false, false⟩
 
 end Synthesis.Millennium.BSD

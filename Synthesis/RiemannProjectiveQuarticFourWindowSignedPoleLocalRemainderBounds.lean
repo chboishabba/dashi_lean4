@@ -230,4 +230,141 @@ theorem QuarticFourSignedPolePair.horizontalQuadraticJetRemainder_abs_le
     (5/96 : ℝ) * |q|^4 * W.signedProfileAbsMomentSix := by
       rfl
 
+
+/-!
+## Direct quartic local bound for the base cosine channel
+
+Because the signed combined profile has M0=M2=0, the same certified cosine
+bound controls the exact base channel at quartic scale.  No sixth-order Taylor
+remainder is needed for this debt estimate.
+-/
+
+def QuarticFourSignedPolePair.signedProfileAbsMomentFour
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  compactProfileAbsMoment
+    (quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t) 4
+
+theorem QuarticFourSignedPolePair.signedProfileAbsMomentFour_nonneg
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    0 <= W.signedProfileAbsMomentFour := by
+  unfold QuarticFourSignedPolePair.signedProfileAbsMomentFour
+    compactProfileAbsMoment
+  positivity
+
+theorem QuarticFourSignedPolePair.signedNormalizedBaseKernel_eq_cosineRemainder
+    {t q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNormalizedBaseKernel q
+      =
+    ∫ u : ℝ,
+      quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t u
+        *
+      (Real.cos (q*u) - (1 - (q*u)^2/2)) := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hcos :
+      Integrable (fun u : ℝ => P u * Real.cos (q*u)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have href :
+      Integrable
+        (fun u : ℝ => P u * (1 - (q*u)^2/2)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have hM0 :
+      ∫ u : ℝ, P u = 0 := by
+    change profileZerothMoment P = 0
+    exact quarticFourSignedPoleCombinedProfile_zeroth_zero W.Rpos
+  have hM2 :
+      ∫ u : ℝ, P u * u^2 = 0 := by
+    change profileSecondMoment P = 0
+    exact quarticFourSignedPoleCombinedProfile_second_zero
+      W.Rpos W.J2Half W.J2Two
+  have href0 :
+      ∫ u : ℝ, P u * (1 - (q*u)^2/2) = 0 := by
+    rw [show
+        (fun u : ℝ => P u * (1 - (q*u)^2/2))
+        =
+        fun u => P u - (q^2/2) * (P u * u^2) by
+      funext u
+      ring]
+    have hPint :
+        Integrable P :=
+      hP.integrable_of_hasCompactSupport hPc
+    have h2 :
+        Integrable (fun u : ℝ => P u * u^2) :=
+      Continuous.integrable_of_hasCompactSupport
+        (by fun_prop) hPc.mul_right
+    rw [integral_sub hPint (h2.const_mul _),
+      integral_const_mul, hM0, hM2]
+    ring
+  rw [W.signedNormalizedBaseKernel_eq_compactCosine]
+  unfold compactCosineTransform
+  rw [← sub_zero (∫ u : ℝ, P u * Real.cos (q*u)), ← href0]
+  rw [← integral_sub hcos href]
+  apply integral_congr_ae
+  exact Filter.Eventually.of_forall fun u => by ring
+
+theorem QuarticFourSignedPolePair.signedNormalizedBaseKernel_abs_le_local_quartic
+    {t q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hq : |q| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.signedNormalizedBaseKernel q|
+      <=
+    (5/96 : ℝ) * |q|^4 * W.signedProfileAbsMomentFour := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hi :
+      Integrable
+        (fun u : ℝ =>
+          P u * (Real.cos (q*u) - (1 - (q*u)^2/2))) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have hmaj :
+      Integrable
+        (fun u : ℝ =>
+          (5/96 : ℝ) * |q|^4 * (|P u| * |u|^4)) :=
+    (compactProfile_absMoment_integrable hP hPc 4).const_mul
+      ((5/96 : ℝ) * |q|^4)
+  rw [W.signedNormalizedBaseKernel_eq_cosineRemainder]
+  calc
+    |∫ u : ℝ,
+      P u * (Real.cos (q*u) - (1 - (q*u)^2/2))|
+      <=
+    ∫ u : ℝ,
+      |P u * (Real.cos (q*u) - (1 - (q*u)^2/2))| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ u : ℝ,
+      (5/96 : ℝ) * |q|^4 * (|P u| * |u|^4) := by
+      apply integral_mono hi.abs hmaj
+      intro u
+      by_cases hzero : P u = 0
+      · simp [hzero]
+      · have hqu := W.abs_q_mul_u_le_one_of_local hq hzero
+        have hc := Real.cos_bound hqu
+        rw [abs_mul]
+        have hqupow : |q*u|^4 = |q|^4 * |u|^4 := by
+          rw [abs_mul, mul_pow]
+        rw [hqupow] at hc
+        nlinarith [abs_nonneg (P u), abs_nonneg u]
+    _ =
+    (5/96 : ℝ) * |q|^4
+      * compactProfileAbsMoment P 4 := by
+      rw [integral_const_mul]
+      rfl
+    _ =
+    (5/96 : ℝ) * |q|^4 * W.signedProfileAbsMomentFour := by
+      rfl
+
 end Synthesis

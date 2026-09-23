@@ -352,6 +352,8 @@ structure BSDUniversalMaxCutStatus where
   rationalEllipticCurveCarrierPaid : Bool
   mathlibLSeriesCarrierPaid : Bool
   analyticOrderCarrierPaid : Bool
+  finiteAnalyticOrderDerivedPaid : Bool
+  continuationNonzeroFromLiteralLSeriesPaid : Bool
   analyticContinuationUniquenessPaid : Bool
   analyticRankWitnessIndependencePaid : Bool
   mordellWeilFreeRankCarrierPaid : Bool
@@ -366,7 +368,7 @@ structure BSDUniversalMaxCutStatus where
   deriving DecidableEq, Repr
 
 def bsdUniversalMaxCutStatus : BSDUniversalMaxCutStatus :=
-  ⟨true, true, true, true, true, true, true, true, true,
+  ⟨true, true, true, true, false, true, true, true, true, true, true,
     false, false, false, false, false⟩
 
 end Synthesis.Millennium.BSD

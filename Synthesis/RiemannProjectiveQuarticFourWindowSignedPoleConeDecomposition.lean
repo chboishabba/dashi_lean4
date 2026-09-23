@@ -561,4 +561,96 @@ theorem quarticSignedPoleLocalCone_mem_fixed_window
   rw [abs_le] at h
   constructor <;> linarith
 
+
+/--
+Unconditional O(log t) envelope for the entire fixed-width window containing
+the mixed cone.
+
+This is deliberately a count envelope, not yet a payment of the weighted
+literal cone debt.
+-/
+theorem exists_quarticSignedPole_fixedConeWindow_zeroCount_bound :
+    ∃ A0 : ℝ, 0 <= A0 ∧
+      ∀ {t : ℝ}, 200 <= t ->
+        (zetaZeroConfig.N
+          (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ)
+          <=
+        3 * A0 * Real.log (t + 5) := by
+  obtain ⟨A0,hA01,hA0⟩ :=
+    Zeta23.RvM.zeta_local_zero_count
+  have hA0nonneg : 0 <= A0 := by linarith
+  refine ⟨A0,hA0nonneg,?_⟩
+  intro t ht
+  let A : ℝ := t - 3/2
+  let B : ℝ := t - 1/2
+  let C : ℝ := t + 1/2
+  let D : ℝ := t + 3/2
+  have hApos : 0 < A := by dsimp [A]; linarith
+  have hBpos : 0 < B := by dsimp [B]; linarith
+  have hCpos : 0 < C := by dsimp [C]; linarith
+  have hAB : A <= B := by dsimp [A,B]; linarith
+  have hBC : B <= C := by dsimp [B,C]; linarith
+  have hCD : C <= D := by dsimp [C,D]; linarith
+  have hB : B = A + 1 := by dsimp [A,B]; ring
+  have hC : C = B + 1 := by dsimp [B,C]; ring
+  have hD : D = C + 1 := by dsimp [C,D]; ring
+  have eAB :=
+    Zeta23.Ncount_add (a:=A) (b:=B) (c:=D)
+      hAB (hBC.trans hCD)
+  have eBCD :=
+    Zeta23.Ncount_add (a:=B) (b:=C) (c:=D)
+      hBC hCD
+  have hsplit :
+      (zetaZeroConfig.N A D : ℝ)
+        =
+      (zetaZeroConfig.N A B : ℝ)
+        + (zetaZeroConfig.N B C : ℝ)
+        + (zetaZeroConfig.N C D : ℝ) := by
+    simpa only [Zeta23.zetaZeroConfig_N] using by
+      rw [eAB, eBCD]
+      push_cast
+      ring
+  have h1 :
+      (zetaZeroConfig.N A B : ℝ)
+        <= A0 * Real.log (A + 3) := by
+    rw [hB]
+    simpa [abs_of_pos hApos] using hA0 A
+  have h2 :
+      (zetaZeroConfig.N B C : ℝ)
+        <= A0 * Real.log (B + 3) := by
+    rw [hC]
+    simpa [abs_of_pos hBpos] using hA0 B
+  have h3 :
+      (zetaZeroConfig.N C D : ℝ)
+        <= A0 * Real.log (C + 3) := by
+    rw [hD]
+    simpa [abs_of_pos hCpos] using hA0 C
+  have hlog1 :
+      Real.log (A+3) <= Real.log (t+5) := by
+    apply Real.log_le_log
+    · dsimp [A]
+      linarith
+    · dsimp [A]
+      linarith
+  have hlog2 :
+      Real.log (B+3) <= Real.log (t+5) := by
+    apply Real.log_le_log
+    · dsimp [B]
+      linarith
+    · dsimp [B]
+      linarith
+  have hlog3 :
+      Real.log (C+3) <= Real.log (t+5) := by
+    apply Real.log_le_log
+    · dsimp [C]
+      linarith
+    · dsimp [C]
+      linarith
+  rw [hsplit]
+  have hb1 := mul_le_mul_of_nonneg_left hlog1 hA0nonneg
+  have hb2 := mul_le_mul_of_nonneg_left hlog2 hA0nonneg
+  have hb3 := mul_le_mul_of_nonneg_left hlog3 hA0nonneg
+  dsimp [A,B,C,D] at *
+  nlinarith
+
 end Synthesis

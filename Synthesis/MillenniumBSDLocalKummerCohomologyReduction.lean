@@ -138,6 +138,33 @@ def PadicH1SquareClassNaturality
       (rationalGenericTwoTorsionH1MulEquivSquareClassPair
         (Multiplicative.ofAdd x))
 
+/-- The universal H¹ restriction naturality seam plus scalar local Kummer
+naturality compile the full pair-valued H¹/square-class localization square. -/
+theorem padicH1SquareClassNaturality_of_generic
+    (p : ℕ) [Fact p.Prime]
+    (h : PadicQuadraticKummerCompatibility p)
+    (hNat :
+      GenericTrivialTwoTorsionH1RestrictionNaturality
+        (padicAbsoluteGaloisRestriction p)) :
+    PadicH1SquareClassNaturality p h := by
+  intro x
+  apply (h.kummerEquiv.prodCongr h.kummerEquiv).injective
+  have hH1 := hNat x
+  have hLoc :=
+    padicKummerPair_localize_commutes p h
+      (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+        (Multiplicative.ofAdd x))
+  rw [hLoc]
+  simpa [padicCompatibleTwoTorsionH1MulEquivSquareClassPair,
+    rationalGenericTwoTorsionH1MulEquivSquareClassPair,
+    restrictQuadraticCharacterToPadic,
+    genericQuadraticCharacterPairRestrict,
+    genericQuadraticCharacterRestrict,
+    quadraticCharacterPairMulEquivRatSquareClasses,
+    ratSquareClassPairMulEquivQuadraticCharacters,
+    rationalQuadraticKummerCharacterPairMulEquiv,
+    rationalQuadraticKummerCharacterMulEquiv] using hH1
+
 /-- Componentwise local Kummer equivalence supplied by compatible scalar
 Kummer data. -/
 noncomputable def padicCompatibleSquareClassPairMulEquivCharacters

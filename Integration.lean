@@ -3,6 +3,8 @@ import Integration.Levels
 import Integration.MoonshineEisensteinAnalytic
 import Integration.MoonshineEisensteinAgdaTarget
 import Integration.MoonshineNormalizedJPhaseReadout
+import Integration.MoonshineC6TenRankWeightTwelveCrossPollination
+import Integration.MoonshineAngleC6SectorObserver
 import Integration.MoonshineEta24Pinned
 import Integration.MoonshineEta24SixfoldPhase
 import Integration.MoonshineDeltaFinalMinCut

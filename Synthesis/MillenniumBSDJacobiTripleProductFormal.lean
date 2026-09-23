@@ -1150,6 +1150,143 @@ theorem jacobiWeightedDiagonal_nontriangularSummand
     jacobiTripleCoefficient_eq_zero_of_not_triangular hd]
   simp
 
+
+@[simp] theorem jacobiWeightedDiagonalCoeff_tripleSeries_zero :
+    jacobiWeightedDiagonalCoeff jacobiTripleSeries 0 = 1 := by
+  unfold jacobiWeightedDiagonalCoeff
+  simp only [Finset.sum_range_succ, Finset.sum_range_zero, zero_add]
+  rw [show (0 : ℕ) = jacobiTriangularNat 0 by
+    simp [jacobiTriangularNat]]
+  rw [jacobiWeightedDiagonal_triangularSummand]
+  simp
+
+theorem jacobiWeightedDiagonalCoeff_tripleSeries_square_succ
+    (r : ℕ) :
+    jacobiWeightedDiagonalCoeff jacobiTripleSeries ((r + 1) ^ 2) =
+      2 * ((-1 : ℂ) ^ (r + 1)) := by
+  let N : ℕ := (r + 1) ^ 2
+  let a : ℕ := jacobiTriangularNat r
+  let b : ℕ := jacobiTriangularNat (r + 1)
+  let F : ℕ → ℂ := fun d =>
+    (jacobiDiagonalCoeffHom
+      (jacobiTripleSeries.coeff d)).coeff
+        ((N : ℤ) - 2 * (d : ℤ))
+  have haN : a ∈ Finset.range (N + 1) := by
+    rw [Finset.mem_range]
+    dsimp [a, N]
+    have htri := two_mul_jacobiTriangularNat r
+    nlinarith
+  have hbN : b ∈ Finset.range (N + 1) := by
+    rw [Finset.mem_range]
+    dsimp [b, N]
+    have htri := two_mul_jacobiTriangularNat (r + 1)
+    nlinarith
+  have hab : a ≠ b := by
+    dsimp [a, b]
+    intro h
+    have := jacobiTriangularNat_injective h
+    omega
+  have hbErase :
+      b ∈ (Finset.range (N + 1)).erase a := by
+    exact Finset.mem_erase.mpr ⟨hab.symm, hbN⟩
+  have hrest :
+      ∑ d ∈ ((Finset.range (N + 1)).erase a).erase b, F d = 0 := by
+    apply Finset.sum_eq_zero
+    intro d hd
+    have hda : d ≠ a := by
+      exact fun h => (Finset.mem_erase.mp (Finset.mem_erase.mp hd).2).1 h
+    have hdb : d ≠ b := (Finset.mem_erase.mp hd).1
+    by_cases htri : ∃ t : ℕ, jacobiTriangularNat t = d
+    · rcases htri with ⟨t, rfl⟩
+      have htr : t ≠ r := by
+        intro h
+        subst t
+        exact hda rfl
+      have htr1 : t ≠ r + 1 := by
+        intro h
+        subst t
+        exact hdb rfl
+      have hpos :
+          N ≠ (t + 1) ^ 2 := by
+        intro h
+        dsimp [N] at h
+        have : t = r := by nlinarith
+        exact htr this
+      have hneg :
+          N ≠ t ^ 2 := by
+        intro h
+        dsimp [N] at h
+        have : t = r + 1 := by nlinarith
+        exact htr1 this
+      dsimp [F]
+      rw [jacobiWeightedDiagonal_triangularSummand]
+      simp [hpos, hneg]
+    · dsimp [F]
+      exact jacobiWeightedDiagonal_nontriangularSummand htri
+  unfold jacobiWeightedDiagonalCoeff
+  change ∑ d ∈ Finset.range (N + 1), F d =
+    2 * ((-1 : ℂ) ^ (r + 1))
+  rw [← Finset.sum_erase_add _ F haN]
+  rw [← Finset.sum_erase_add _ F hbErase]
+  rw [hrest, zero_add]
+  have hFa :
+      F a = ((-1 : ℂ) ^ (r + 1)) := by
+    dsimp [F, a, N]
+    rw [jacobiWeightedDiagonal_triangularSummand]
+    have hne : (r + 1) ^ 2 ≠ r ^ 2 := by nlinarith
+    simp [hne]
+  have hFb :
+      F b = ((-1 : ℂ) ^ (r + 1)) := by
+    dsimp [F, b, N]
+    rw [jacobiWeightedDiagonal_triangularSummand]
+    have hne : (r + 1) ^ 2 ≠ (r + 2) ^ 2 := by nlinarith
+    simp [hne]
+  rw [hFa, hFb]
+  ring
+
+theorem jacobiWeightedDiagonalCoeff_tripleSeries_eq_zero_of_not_square
+    {N : ℕ} (hN0 : N ≠ 0)
+    (hNSq : ¬ ∃ s : ℕ, 0 < s ∧ s ^ 2 = N) :
+    jacobiWeightedDiagonalCoeff jacobiTripleSeries N = 0 := by
+  unfold jacobiWeightedDiagonalCoeff
+  apply Finset.sum_eq_zero
+  intro d hd
+  by_cases htri : ∃ r : ℕ, jacobiTriangularNat r = d
+  · rcases htri with ⟨r, rfl⟩
+    rw [jacobiWeightedDiagonal_triangularSummand]
+    have hpos : N ≠ (r + 1) ^ 2 := by
+      intro h
+      exact hNSq ⟨r + 1, by omega, h.symm⟩
+    have hneg : N ≠ r ^ 2 := by
+      intro h
+      rcases r with _ | r
+      · simp at h
+        exact hN0 h
+      · exact hNSq ⟨r + 1, by omega, h.symm⟩
+    simp [hpos, hneg]
+  · exact jacobiWeightedDiagonal_nontriangularSummand htri
+
+/-- The bilateral Jacobi series specializes exactly to the standard theta4
+series under the weighted diagonal q↦q², z↦-q. -/
+theorem jacobiWeightedDiagonal_tripleSeries_paid :
+    JacobiWeightedDiagonalTripleSeriesAgreement := by
+  unfold JacobiWeightedDiagonalTripleSeriesAgreement
+  ext N
+  rw [jacobiWeightedDiagonal_coeff,
+    jacobiSquareThetaBaseSeries_coeff]
+  by_cases hN0 : N = 0
+  · subst N
+    simp
+  · by_cases hSq : ∃ s : ℕ, 0 < s ∧ s ^ 2 = N
+    · rcases hSq with ⟨s, hs, rfl⟩
+      rcases s with _ | r
+      · omega
+      · rw [jacobiWeightedDiagonalCoeff_tripleSeries_square_succ,
+          jacobiSquareThetaBaseCoeff_square (by omega)]
+    · rw [jacobiWeightedDiagonalCoeff_tripleSeries_eq_zero_of_not_square
+          hN0 hSq,
+        jacobiSquareThetaBaseCoeff_eq_zero_of_not_square hN0 hSq]
+
 /-- J0 coefficientwise equality transfers automatically through the finite
 weighted diagonal operator. -/
 theorem tendsto_jacobiWeightedDiagonal_finiteProduct_of_tripleProduct

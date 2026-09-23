@@ -247,28 +247,32 @@ def UniversalBSDLeadingCoefficientProducer
     (hSha : UniversalBSDShaFinitenessProducer b) : Prop :=
   UniversalBSDLeadingCoefficientIdentity b hSha
 
-/-- Fully separated compiler for refined BSD: object bindings, Sha
-finiteness, rank equality, and the leading coefficient remain distinct
-inputs until the final package. -/
-theorem universalBSDRefinedTheorem_of_producers
-    (hCarrier : UniversalBSDRefinedCarrierProducer)
-    (hSha :
-      ∀ b : BSDBoundRefinedData,
-        UniversalBSDShaFinitenessProducer b)
-    (hRank :
-      ∀ b : BSDBoundRefinedData,
-        UniversalBSDBoundRankWeld b.rank)
-    (hLeading :
-      ∀ (b : BSDBoundRefinedData)
-        (hs : UniversalBSDShaFinitenessProducer b),
-        UniversalBSDLeadingCoefficientProducer b hs) :
-    UniversalBSDRefinedTheorem := by
-  rcases hCarrier with ⟨b⟩
-  exact ⟨
+/-- Fully separated compiler for refined BSD on one chosen
+same-object carrier.  No statement is required for arbitrary junk bindings. -/
+theorem universalBSDRefinedTheorem_of_bound
+    (b : BSDBoundRefinedData)
+    (hSha : UniversalBSDShaFinitenessProducer b)
+    (hRank : UniversalBSDBoundRankWeld b.rank)
+    (hLeading : UniversalBSDLeadingCoefficientProducer b hSha) :
+    UniversalBSDRefinedTheorem :=
+  ⟨
     { bound := b
-      shaFinite := hSha b
-      rankWeld := hRank b
-      leadingCoefficient := hLeading b (hSha b) }⟩
+      shaFinite := hSha
+      rankWeld := hRank
+      leadingCoefficient := hLeading }⟩
+
+/-- Existence-shaped producer form: known same-object carrier construction
+plus the three conjectural statements on that same carrier. -/
+theorem universalBSDRefinedTheorem_of_producers
+    (h :
+      ∃ (b : BSDBoundRefinedData)
+        (hSha : UniversalBSDShaFinitenessProducer b),
+        UniversalBSDBoundRankWeld b.rank ∧
+          UniversalBSDLeadingCoefficientProducer b hSha) :
+    UniversalBSDRefinedTheorem := by
+  rcases h with ⟨b, hSha, hRank, hLeading⟩
+  exact universalBSDRefinedTheorem_of_bound
+    b hSha hRank hLeading
 
 /-- Refined BSD implies the universal rank theorem on the same bound ranks. -/
 theorem universalBSDRankTheorem_of_refined

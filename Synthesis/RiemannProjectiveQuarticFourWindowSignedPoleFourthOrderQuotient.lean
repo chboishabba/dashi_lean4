@@ -2923,4 +2923,227 @@ theorem QuarticFourSignedPolePair.globalLinearModeDefect_eq_zero_iff_onLineObstr
       W.linearProfileObstruction_eq_zero_iff]
 
 
+
+/-!
+## Local curvature normal form for one projective endpoint
+-/
+
+theorem deriv_cos_scale_zero (a : ℝ) :
+    deriv (fun x : ℝ => Real.cos (a*x)) 0 = 0 := by
+  have hinner :
+      HasDerivAt (fun x : ℝ => a*x) a 0 := by
+    convert (hasDerivAt_id 0).const_mul a using 1 <;> ring
+  have h :=
+    (hasDerivAt_cos (a*0)).comp 0 hinner
+  simpa using h.deriv
+
+theorem secondDeriv_cos_scale_zero (a : ℝ) :
+    deriv (deriv (fun x : ℝ => Real.cos (a*x))) 0
+      = -a^2 := by
+  have hfirst :
+      deriv (fun x : ℝ => Real.cos (a*x))
+        =
+      fun x => -a * Real.sin (a*x) := by
+    funext x
+    have hinner :
+        HasDerivAt (fun y : ℝ => a*y) a x := by
+      convert (hasDerivAt_id x).const_mul a using 1 <;> ring
+    have h :=
+      (hasDerivAt_cos (a*x)).comp x hinner
+    rw [h.deriv]
+    ring
+  rw [hfirst]
+  have hinner :
+      HasDerivAt (fun x : ℝ => a*x) a 0 := by
+    convert (hasDerivAt_id 0).const_mul a using 1 <;> ring
+  have hs :=
+    (hasDerivAt_sin (a*0)).comp 0 hinner
+  have hscaled := hs.const_mul (-a)
+  simpa using hscaled.deriv
+
+theorem secondDeriv_mul_at_zero
+    {f g : ℝ -> ℝ}
+    (hf : ContDiff ℝ 2 f)
+    (hg : ContDiff ℝ 2 g) :
+    deriv (deriv (fun x => f x * g x)) 0
+      =
+    deriv (deriv f) 0 * g 0
+      + 2 * deriv f 0 * deriv g 0
+      + f 0 * deriv (deriv g) 0 := by
+  have hfd : Differentiable ℝ f :=
+    hf.differentiable (by norm_num)
+  have hgd : Differentiable ℝ g :=
+    hg.differentiable (by norm_num)
+  have hfirst :
+      deriv (fun x => f x * g x)
+        =
+      fun x => deriv f x * g x + f x * deriv g x := by
+    funext x
+    exact ((hfd x).hasDerivAt.mul (hgd x).hasDerivAt).deriv
+  rw [hfirst]
+  have hfd1 : ContDiff ℝ 1 (deriv f) :=
+    ContDiff.deriv' hf
+  have hgd1 : ContDiff ℝ 1 (deriv g) :=
+    ContDiff.deriv' hg
+  have h1 :=
+    ((hfd1.differentiable (by norm_num)) 0).hasDerivAt.mul
+      (hgd 0).hasDerivAt
+  have h2 :=
+    (hfd 0).hasDerivAt.mul
+      ((hgd1.differentiable (by norm_num)) 0).hasDerivAt
+  have hsum := h1.add h2
+  convert hsum.deriv using 1 <;> ring
+
+theorem secondDeriv_const_mul_at_zero
+    {f : ℝ -> ℝ}
+    (hf : ContDiff ℝ 2 f)
+    (a : ℝ) :
+    deriv (deriv (fun x => a * f x)) 0
+      =
+    a * deriv (deriv f) 0 := by
+  have hfd : Differentiable ℝ f :=
+    hf.differentiable (by norm_num)
+  have hfirst :
+      deriv (fun x => a * f x)
+        =
+      fun x => a * deriv f x := by
+    funext x
+    exact ((hfd x).hasDerivAt.const_mul a).deriv
+  rw [hfirst]
+  have hfd1 : ContDiff ℝ 1 (deriv f) :=
+    ContDiff.deriv' hf
+  exact
+    (((hfd1.differentiable (by norm_num)) 0).hasDerivAt.const_mul a).deriv
+
+theorem projectiveTwoRadiusBracket_value_zero
+    {g : ℝ -> ℝ} (r : ℝ) :
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+        g r 0
+      =
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r
+      -
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r) := by
+  unfold Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+  simp
+
+theorem projectiveTwoRadiusBracket_deriv_zero
+    {g : ℝ -> ℝ} (r : ℝ) :
+    deriv
+      (Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+        g r) 0
+      = 0 := by
+  let A1 :=
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r
+  let A2 :=
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r)
+  have h1 :=
+    deriv_cos_scale_zero (2*r)
+  have h2 :=
+    deriv_cos_scale_zero r
+  unfold Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+  have hc1 : ContDiff ℝ 2 (fun x : ℝ => Real.cos ((2*r)*x)) := by
+    fun_prop
+  have hc2 : ContDiff ℝ 2 (fun x : ℝ => Real.cos (r*x)) := by
+    fun_prop
+  have hlin :=
+    firstDeriv_profileLinearCombination_at_zero
+      hc1 hc2 A1 (-A2)
+  dsimp [A1,A2] at hlin
+  simpa [h1,h2] using hlin
+
+theorem projectiveTwoRadiusBracket_secondDeriv_zero
+    {g : ℝ -> ℝ} (r : ℝ) :
+    deriv (deriv
+      (Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+        g r)) 0
+      =
+    r^2 *
+      (Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r)
+        -
+       4 * Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r) := by
+  let A1 :=
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r
+  let A2 :=
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r)
+  have hc1 : ContDiff ℝ 2 (fun x : ℝ => Real.cos ((2*r)*x)) := by
+    fun_prop
+  have hc2 : ContDiff ℝ 2 (fun x : ℝ => Real.cos (r*x)) := by
+    fun_prop
+  have hlin :=
+    secondDeriv_profileLinearCombination_at_zero
+      hc1 hc2 A1 (-A2)
+  unfold Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+  dsimp [A1,A2] at hlin
+  rw [secondDeriv_cos_scale_zero,
+      secondDeriv_cos_scale_zero] at hlin
+  nlinarith
+
+theorem genericProjectivePhysicalProfile_secondDeriv_zero
+    {g : ℝ -> ℝ}
+    (hg : ContDiff ℝ 2 g)
+    (r : ℝ) :
+    deriv (deriv (genericProjectivePhysicalProfile g r)) 0
+      =
+    4 *
+      (deriv (deriv g) 0 *
+          (Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r
+            -
+           Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r))
+        +
+       g 0 * r^2 *
+          (Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r)
+            -
+           4 * Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r)) := by
+  let B :=
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket g r
+  have hB : ContDiff ℝ 2 B := by
+    dsimp [B]
+    unfold Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+      Zeta23Bridge.LiteralWeilParityBalance.evenResp
+    fun_prop
+  have hprod :=
+    secondDeriv_mul_at_zero hg hB
+  have hconst :=
+    secondDeriv_const_mul_at_zero
+      (hg.mul hB) 4
+  unfold genericProjectivePhysicalProfile
+  dsimp [B] at hprod hconst ⊢
+  rw [hconst, hprod,
+      projectiveTwoRadiusBracket_value_zero,
+      projectiveTwoRadiusBracket_deriv_zero,
+      projectiveTwoRadiusBracket_secondDeriv_zero]
+  ring
+
+theorem quarticFourNormalizedProjectiveProfile_secondDeriv_zero
+    {R lam mu : ℝ}
+    (hR : 0 < R) :
+    quarticFourEndpointProfileSecondDeriv R lam mu
+      =
+    4 *
+      (deriv (deriv (quarticFourWindowProfile R lam mu)) 0 *
+          quarticFourOnLineResponseDifference R lam mu
+        +
+       quarticFourWindowProfile R lam mu 0 *
+          (quarticFourWindowPairing R lam mu
+              (quarticFourNormalizedOnLineWeight 2)
+            -
+           4 * quarticFourWindowPairing R lam mu
+              (quarticFourNormalizedOnLineWeight 1))) := by
+  unfold quarticFourEndpointProfileSecondDeriv
+    quarticFourNormalizedProjectiveProfile
+    quarticFourOnLineResponseDifference
+  rw [genericProjectivePhysicalProfile_secondDeriv_zero
+        ((quarticFourWindowProfile_contDiff_four
+          (lam:=lam) (mu:=mu) hR).of_le (by norm_num)) 1]
+  unfold Zeta23Bridge.LiteralWeilParityBalance.evenResp
+  rw [quarticFourWindowProfile_pairing_eq
+      (R:=R) (lam:=lam) (mu:=mu) hR
+      (quarticFourNormalizedOnLineWeight_continuous 1),
+      quarticFourWindowProfile_pairing_eq
+      (R:=R) (lam:=lam) (mu:=mu) hR
+      (quarticFourNormalizedOnLineWeight_continuous 2)]
+  unfold quarticFourNormalizedOnLineWeight
+  ring
+
+
 end Synthesis

@@ -1840,7 +1840,8 @@ theorem compactCosineTransform_integrable_of_contDiff_four
       nlinarith [mul_nonneg hB (pow_nonneg q 4)]
     have hfar :
         A / q^4 <= C / (1+q^2) := by
-      have hq4pos : 0 < q^4 := pow_pos (lt_or_gt_of_ne hqne).elim id (fun h => h) 4
+      have hq4pos : 0 < q^4 := by
+        positivity
       rw [div_le_div_iff₀ hq4pos hden]
       simpa [mul_comm, mul_left_comm, mul_assoc] using hshape
     exact hcos.trans hfar

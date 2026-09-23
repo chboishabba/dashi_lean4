@@ -173,12 +173,27 @@ theorem jacobiTwoPowerAgreement_paid :
       simp [pow_succ, two_mul]
     exact cmJacobiArithmeticCoefficient_eq_zero_of_even heven
 
-/-- The four local/compatibility owners of the CM theta arithmetic seam. -/
+/-- Internal four-field record consumed by the generic reconstruction compiler. -/
 structure JacobiLocalReconstructionData : Prop where
   multiplicative : JacobiArithmeticMultiplicativity
   oddPrime : JacobiOddPrimeAgreement
   oddPrimePowerRecurrence : JacobiOddPrimePowerRecurrence
   twoPower : JacobiTwoPowerAgreement
+
+/-- Prize-facing J3 input after paying the bad-prime-two support internally.
+Only the genuinely CM-theta local mathematics remains. -/
+structure JacobiCMReconstructionData : Prop where
+  multiplicative : JacobiArithmeticMultiplicativity
+  oddPrime : JacobiOddPrimeAgreement
+  oddPrimePowerRecurrence : JacobiOddPrimePowerRecurrence
+
+theorem JacobiCMReconstructionData.toLocalData
+    (h : JacobiCMReconstructionData) :
+    JacobiLocalReconstructionData where
+  multiplicative := h.multiplicative
+  oddPrime := h.oddPrime
+  oddPrimePowerRecurrence := h.oddPrimePowerRecurrence
+  twoPower := jacobiTwoPowerAgreement_paid
 
 /-- Local equality at every prime power follows from prime agreement plus the
 shared recurrence; p=2 is dispatched separately. -/
@@ -235,6 +250,12 @@ theorem jacobiRepresentationMatchesElliptic_of_localData
   intro N hN
   change cmJacobiArithmeticCoefficient N = cmEllipticCoefficientComplex N
   simpa using cmJacobiArithmeticFunction_eq_elliptic_of_localData h hN
+
+/-- Final J3 compiler from the three substantive CM-theta producers. -/
+theorem jacobiRepresentationMatchesElliptic_of_cmData
+    (h : JacobiCMReconstructionData) :
+    JacobiRepresentationMatchesElliptic :=
+  jacobiRepresentationMatchesElliptic_of_localData h.toLocalData
 
 /-- Machine-readable statement of the recut analytic arithmetic boundary. -/
 structure JacobiArithmeticBoundaryStatus where

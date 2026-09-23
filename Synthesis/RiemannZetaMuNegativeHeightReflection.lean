@@ -44,6 +44,31 @@ theorem zetaZeroOrdinateSet_finite (T : ℝ) :
   intro rho h
   exact ⟨h.1, by linarith, h.2.le⟩
 
+theorem zetaNcount_cast_eq_finsum
+    (A B : ℝ) :
+    (Ncount A B : ℝ)
+      =
+    ∑ᶠ rho ∈ zerosIn A B, (zeroMult rho : ℝ) := by
+  have hfin := zerosIn_finite A B
+  rw [Ncount,
+    finsum_mem_eq_finite_toFinset_sum _ hfin,
+    finsum_mem_eq_finite_toFinset_sum _ hfin]
+  push_cast
+  rfl
+
+theorem zetaZeroOrdinateMultiplicity_cast_eq_finsum
+    (T : ℝ) :
+    (zetaZeroOrdinateMultiplicity T : ℝ)
+      =
+    ∑ᶠ rho ∈ {rho : ℂ | IsNontrivialZero rho ∧ rho.im = T},
+      (zeroMult rho : ℝ) := by
+  have hfin := zetaZeroOrdinateSet_finite T
+  rw [zetaZeroOrdinateMultiplicity,
+    finsum_mem_eq_finite_toFinset_sum _ hfin,
+    finsum_mem_eq_finite_toFinset_sum _ hfin]
+  push_cast
+  rfl
+
 theorem isNontrivialZero_conj
     {rho : ℂ} (h : IsNontrivialZero rho) :
     IsNontrivialZero (conj rho) := by
@@ -118,10 +143,10 @@ theorem zetaCount_eq_reflectedHalfOpen
     ∑ᶠ rho ∈ reflectedHalfOpenZeros A B,
       (zeroMult rho : ℝ) := by
   classical
+  rw [zetaNcount_cast_eq_finsum]
   have hsrc := zerosIn_finite A B
   have htgt := reflectedHalfOpenZeros_finite A B
-  rw [Ncount,
-      finsum_mem_eq_finite_toFinset_sum _ hsrc,
+  rw [finsum_mem_eq_finite_toFinset_sum _ hsrc,
       finsum_mem_eq_finite_toFinset_sum _ htgt]
   let F := hsrc.toFinset
   let G := htgt.toFinset
@@ -246,6 +271,9 @@ theorem reflectedHalfOpen_split_standard
       (∑ᶠ rho ∈ left, (zeroMult rho : ℝ)) := by
     rw [← hleftUnion, hunion, hrightUnion]
 
+  rw [zetaNcount_cast_eq_finsum,
+      zetaZeroOrdinateMultiplicity_cast_eq_finsum,
+      zetaZeroOrdinateMultiplicity_cast_eq_finsum]
   change
     (∑ᶠ rho ∈ reflected, (zeroMult rho : ℝ))
       =

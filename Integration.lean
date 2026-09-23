@@ -216,6 +216,12 @@ import Integration.AxiomAuditVariation
 import Integration.AxiomAuditKernel
 import Integration.AxiomAuditAristotle
 import Integration.AxiomAuditBase369
+import Integration.RiemannSmoothNormalizedWindow
+import Integration.RiemannAdaptiveCutoffCrossingCompatibility
+import Integration.RiemannPoleQuotientTerminal
+import Integration.RiemannPoleQuotientAdaptiveSelection
+import Integration.RiemannPoleQuotientReduction
+import Integration.AxiomAuditPoleQuotient
 
 /-!
 # The DASHI integration / TOE spine

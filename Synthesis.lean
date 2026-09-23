@@ -20,6 +20,7 @@ import Synthesis.Hyperfabric
 import Synthesis.CodecBridge
 import Synthesis.EndToEnd
 import Synthesis.AxiomAudit
+import Synthesis.MillenniumBSDTwoTorsionGalois
 
 /-!
 # Cross-domain synthesis spine

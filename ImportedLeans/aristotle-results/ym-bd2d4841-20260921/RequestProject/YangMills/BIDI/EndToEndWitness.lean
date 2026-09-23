@@ -1,0 +1,51 @@
+/-
+# The end-to-end chain is not vacuous
+
+`bidi_end_to_end` is an implication with many hypotheses; this file shows that
+they can all be met simultaneously, so the implication has content.
+
+The witness is the projection Hamiltonian `m·P_{Ω^⊥}` of
+`VacuumSectorSpectralGap`, with the Dirac spectral measures of
+`BIDI.Witnesses.clusteringWitness`, the constant cutoff family, and the
+correlation function `‖ψ‖²e^{-mt}` — that is, a model in which every step of the
+chain holds with equality.  The conclusion delivered is the genuine one: no
+spectrum below `m` on the vacuum complement, and the vacuum form gap `m`.
+-/
+import Mathlib
+import RequestProject.YangMills.BIDI.EndToEnd
+import RequestProject.YangMills.BIDI.Witnesses
+
+namespace RequestProject.YangMills.BIDI
+
+open Filter Topology MeasureTheory
+open RequestProject.YangMills.VacuumSectorSpectralGap
+open RequestProject.YangMills.ContinuumGapTransport
+open scoped InnerProductSpace
+
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
+
+/-- All hypotheses of `bidi_end_to_end` are simultaneously satisfiable, and the
+conclusion they deliver is the spectral gap statement. -/
+theorem end_to_end_nonvacuous (vac : E) (hunit : ‖vac‖ = 1) {m : ℝ} (hm : 0 < m)
+    {lam : ℝ} (hlt : lam < m) {y : E} (hy : ⟪vac, y⟫_ℂ = 0) :
+    (∃! psi : (projHam vac m).domain, ⟪vac, (psi : E)⟫_ℂ = 0 ∧
+        (projHam vac m) psi - (lam : ℂ) • (psi : E) = y) ∧
+      HasVacuumFormGap (projHam vac m) vac m := by
+  have hnorm : ∀ psi : (projHam vac m).domain, ∀ t : ℝ,
+      ‖((‖(psi : E)‖ ^ 2 * Real.exp (-(m * t)) : ℝ) : ℂ)‖
+        = ‖(psi : E)‖ ^ 2 * Real.exp (-(m * t)) := by
+    intro psi t
+    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+  refine bidi_end_to_end hm
+    (fun _ : ℕ => (clusteringWitness vac hm).toSpectralRepresentation)
+    (fun _ psi t => ((‖(psi : E)‖ ^ 2 * Real.exp (-(m * t)) : ℝ) : ℂ))
+    (fun _ psi => ‖(psi : E)‖ ^ 2) ?_ ?_ (isVacuumGraphLimit_const _ _)
+    (isSelfAdjoint_projHam vac m) Submodule.mem_top hunit (projHam_vac vac m) hlt hy
+  · intro _ psi _ t _
+    rw [hnorm psi t]
+    simp [clusteringWitness, diracSpectralMeasure, integral_smul_measure, smul_eq_mul,
+      mul_comm]
+  · intro _ psi t _
+    exact le_of_eq (hnorm psi t)
+
+end RequestProject.YangMills.BIDI

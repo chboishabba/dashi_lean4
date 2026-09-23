@@ -1238,4 +1238,104 @@ theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_eventual_
   rw [W.completedSignedResidual_eq_jointPairSource ht]
   linarith
 
+
+/-!
+## Human-facing uniform compensation theorem
+
+The auxiliary scalar margin used by the compiler is not part of the preferred
+Clay-facing statement.  The actual analytic min-cut is a uniform positive gap
+between the finite signed budget and the exact target threshold.
+-/
+
+def QuarticFourSignedPolePair.compensationTargetThreshold
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) : ℝ :=
+  4 * W.combinedZeroHeightDefect rho
+    +
+  ∫ tau : ℝ,
+    W.signedOrdinateTest tau * Zeta23.mu tau
+
+def QuarticFourSignedPolePair.UniformSignedCompensationGap
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) : Prop :=
+  ∃ eps : ℝ, 0 < eps ∧
+    ∃ N : ℕ, ∀ n : ℕ, N <= n ->
+      W.literalLocalDebtAt
+          quarticSignedPoleCanonicalLocalRadius n
+        -
+      W.literalSignedCompensationAt
+          quarticSignedPoleCanonicalLocalRadius n
+      <=
+      W.compensationTargetThreshold rho - eps
+
+/--
+The one conventional analytic theorem now sufficient for G3.
+
+The compiler chooses the old auxiliary margin internally:
+  M = T_W(rho) - eps/2.
+-/
+theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_uniform_compensation_gap
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hC : W.UniformSignedCompensationGap rho) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho := by
+  rcases hC with ⟨eps,heps,N,hN⟩
+  let T : ℝ := W.compensationTargetThreshold rho
+  let M : ℝ := T - eps/2
+  have hgap :
+      ∀ᶠ n : ℕ in atTop,
+        M
+          + W.literalSignedCompensationAt
+              quarticSignedPoleCanonicalLocalRadius n
+          - W.literalLocalDebtAt
+              quarticSignedPoleCanonicalLocalRadius n
+        > 0 := by
+    rw [eventually_atTop]
+    refine ⟨N,?_⟩
+    intro n hn
+    have h := hN n hn
+    dsimp [T, M] at h ⊢
+    linarith
+  have hmargin :
+      M
+        <
+      4 * W.combinedZeroHeightDefect rho
+        +
+      ∫ tau : ℝ,
+        W.signedOrdinateTest tau * Zeta23.mu tau := by
+    dsimp [M, T, QuarticFourSignedPolePair.compensationTargetThreshold]
+    linarith
+  exact
+    W.completedSignedResidual_lt_target_of_eventual_compensation_gap
+      ht hgap hmargin
+
+/--
+Expanded form of the preferred analytic hypothesis, useful for papers and
+downstream modules that should not mention the auxiliary proposition name.
+-/
+theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_uniform_compensation_gap_explicit
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hC :
+      ∃ eps : ℝ, 0 < eps ∧
+        ∃ N : ℕ, ∀ n : ℕ, N <= n ->
+          W.literalLocalDebtAt
+              quarticSignedPoleCanonicalLocalRadius n
+            -
+          W.literalSignedCompensationAt
+              quarticSignedPoleCanonicalLocalRadius n
+          <=
+          (4 * W.combinedZeroHeightDefect rho
+            +
+           ∫ tau : ℝ,
+             W.signedOrdinateTest tau * Zeta23.mu tau)
+            - eps) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho := by
+  apply W.completedSignedResidual_lt_target_of_uniform_compensation_gap ht
+  exact hC
+
 end Synthesis

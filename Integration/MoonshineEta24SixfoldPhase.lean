@@ -174,12 +174,12 @@ theorem phase_mod_pi_of_fixed
     phase_exp_eq_one_of_fixed hunit hv hfixed
   obtain ⟨k, hk⟩ := Complex.exp_eq_one_iff.mp hexp
   refine ⟨k, ?_⟩
-  apply Complex.ofReal_injective
-  have hI : (I : ℂ) ≠ 0 := Complex.I_ne_zero
-  have hk' := hk
-  field_simp [hI] at hk'
-  push_cast at hk'
-  linear_combination hk' / 2
+  have hkIm := congrArg Complex.im hk
+  simp only [mul_im, ofReal_re, ofReal_im, I_re, I_im,
+    mul_zero, mul_one, zero_add, Int.cast_ofNat,
+    Complex.ofReal_mul, Complex.ofReal_ofNat] at hkIm
+  norm_num at hkIm ⊢
+  linarith
 
 /-- Sixfold phase law for eta^24 on the unit-circle fixed locus. -/
 theorem eta24_sixfold_phase

@@ -2875,4 +2875,52 @@ theorem QuarticFourSignedPolePair.globalLinearModeDefect_eq_onLineObstruction
       W.linearProfileObstruction_factor]
 
 
+
+theorem quantitativeSymBump_zero_center_eq_two
+    {R : ℝ} (hR : R ≠ 0) :
+    quantitativeSymBump 0 R 0 = 2 := by
+  unfold quantitativeSymBump
+    Zeta23Bridge.LiteralWeilParityBalance.symmetrize
+  rw [scaledUnitBump_at_center (c:=0) hR]
+  norm_num
+
+theorem quarticFourWindowProfile_zero_common_pos
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (hR1 : R < 1) :
+    0 < quarticFourWindowProfile R lam mu 0 := by
+  rw [quarticFourWindowProfile_zero_common hR hR1,
+      quantitativeSymBump_zero_center_eq_two hR.ne']
+  have hm := quarticWindowMass_pos hR
+  positivity
+
+theorem QuarticFourSignedPolePair.linearProfileObstruction_eq_zero_iff
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.linearProfileObstruction = 0
+      ↔
+    W.linearOnLineObstruction = 0 := by
+  rw [W.linearProfileObstruction_factor]
+  have hm : 0 < quarticWindowMass W.R :=
+    quarticWindowMass_pos W.Rpos
+  have hb :
+      quantitativeSymBump 0 W.R 0 = 2 :=
+    quantitativeSymBump_zero_center_eq_two W.Rpos.ne'
+  rw [hb]
+  have hcoef :
+      4 * ((quarticWindowMass W.R)⁻¹ * 2) ≠ 0 := by
+    positivity
+  exact mul_eq_zero_iff_right_nonzero hcoef
+
+theorem QuarticFourSignedPolePair.globalLinearModeDefect_eq_zero_iff_onLineObstruction
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.globalLinearModeDefect = 0
+      ↔
+    W.linearOnLineObstruction = 0 := by
+  rw [W.globalLinearModeDefect_eq_zero_iff ht,
+      W.combinedProfile_zero_eq_linearProfileObstruction,
+      W.linearProfileObstruction_eq_zero_iff]
+
+
 end Synthesis

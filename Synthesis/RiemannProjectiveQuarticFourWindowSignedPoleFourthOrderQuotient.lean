@@ -4373,4 +4373,240 @@ theorem exists_quarticFourSignedPole_centeredCompletedResidualCubicShift_tendsto
   unfold QuarticFourSignedPolePair.oddModeCorrectedCompletedResidual
   ring
 
+
+/-!
+## Joint literal zero-source normal form for G3
+
+The N-mu / horizontal split is useful for Abel analysis but destroys the
+per-zero coupling between ordinate and horizontal displacement.  The literal
+pair-projective source keeps that information together.
+-/
+
+def QuarticFourSignedPolePair.signedLiteralPairSourceTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : ((SameOrd t)ᶜ : Set Zeros)) : ℝ :=
+  W.poleTwo *
+      literalPairProjectiveDefect
+        (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+        t (t/16) (sigma : Zeros)
+    +
+  (-W.poleHalf) *
+      literalPairProjectiveDefect
+        (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+        t (t/16) (sigma : Zeros)
+
+theorem QuarticFourSignedPolePair.signedLiteralPairSourceTerm_summable
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Summable W.signedLiteralPairSourceTerm := by
+  have h1 :=
+    (quarticFourPairDefect_summable_offOrd W.Rpos ht).mul_left
+      W.poleTwo
+  have h2 :=
+    (quarticFourPairDefect_summable_offOrd W.Rpos ht).mul_left
+      (-W.poleHalf)
+  exact h1.add h2
+
+theorem QuarticFourSignedPolePair.signedOffOrdProjectiveDefect_eq_half_pair_tsum
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.poleTwo *
+        offOrdProjectiveDefect
+          (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+          t (t/16)
+      +
+    (-W.poleHalf) *
+        offOrdProjectiveDefect
+          (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+          t (t/16)
+      =
+    (1/2 : ℝ) *
+      (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+        W.signedLiteralPairSourceTerm sigma) := by
+  have hHalf :=
+    offOrdProjectiveDefect_eq_half_literalPair_tsum
+      (quarticFourPhysicalDetector_contDiff
+        (lam:=(1/2 : ℝ)) (mu:=W.muHalf) (t:=t) W.Rpos)
+      (quarticFourPhysicalDetector_compact
+        (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos ht)
+      (quarticFourPhysicalDetector_even W.R (1/2) W.muHalf t)
+      t (t/16)
+  have hTwo :=
+    offOrdProjectiveDefect_eq_half_literalPair_tsum
+      (quarticFourPhysicalDetector_contDiff
+        (lam:=(2/3 : ℝ)) (mu:=W.muTwo) (t:=t) W.Rpos)
+      (quarticFourPhysicalDetector_compact
+        (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos ht)
+      (quarticFourPhysicalDetector_even W.R (2/3) W.muTwo t)
+      t (t/16)
+  have hs1 :=
+    quarticFourPairDefect_summable_offOrd
+      (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos ht
+  have hs2 :=
+    quarticFourPairDefect_summable_offOrd
+      (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos ht
+  rw [hHalf,hTwo]
+  have hsum :
+      (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+        W.signedLiteralPairSourceTerm sigma)
+        =
+      W.poleTwo *
+        (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+          literalPairProjectiveDefect
+            (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+            t (t/16) (sigma : Zeros))
+        +
+      (-W.poleHalf) *
+        (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+          literalPairProjectiveDefect
+            (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+            t (t/16) (sigma : Zeros)) := by
+    unfold QuarticFourSignedPolePair.signedLiteralPairSourceTerm
+    rw [(hs1.mul_left W.poleTwo).tsum_add
+      (hs2.mul_left (-W.poleHalf)),
+      tsum_mul_left, tsum_mul_left]
+  rw [hsum]
+  ring
+
+theorem QuarticFourSignedPolePair.signedGammaProjectiveDefect_eq_neg_half_mu
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.poleTwo *
+        gammaProjectiveDefect
+          (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+          t (t/16)
+      +
+    (-W.poleHalf) *
+        gammaProjectiveDefect
+          (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+          t (t/16)
+      =
+    -(1/2 : ℝ) *
+      ∫ tau : ℝ,
+        W.signedOrdinateTest tau * Zeta23.mu tau := by
+  rw [gammaProjectiveDefect_eq_two_projectiveRvMMuSignedPair
+      (quarticFourPhysicalDetector_contDiff
+        (lam:=(1/2 : ℝ)) (mu:=W.muHalf) (t:=t) W.Rpos)
+      (quarticFourPhysicalDetector_even W.R (1/2) W.muHalf t)
+      (quarticFourPhysicalDetector_support_completedRadius
+        (lam:=(1/2 : ℝ)) (mu:=W.muHalf)
+        W.Rpos W.RltOne ht)
+      (quarticFourCompletedRadius_pos ht).le
+      t (t/16),
+    gammaProjectiveDefect_eq_two_projectiveRvMMuSignedPair
+      (quarticFourPhysicalDetector_contDiff
+        (lam:=(2/3 : ℝ)) (mu:=W.muTwo) (t:=t) W.Rpos)
+      (quarticFourPhysicalDetector_even W.R (2/3) W.muTwo t)
+      (quarticFourPhysicalDetector_support_completedRadius
+        (lam:=(2/3 : ℝ)) (mu:=W.muTwo)
+        W.Rpos W.RltOne ht)
+      (quarticFourCompletedRadius_pos ht).le
+      t (t/16)]
+  rw [quarticFourRvMMuSignedPair_eq_neg_quarter_ordinate_mu
+        (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos ht,
+      quarticFourRvMMuSignedPair_eq_neg_quarter_ordinate_mu
+        (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos ht]
+  have hiHalf :=
+    quarticFourOrdinateTest_mul_mu_integrable
+      (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos ht
+  have hiTwo :=
+    quarticFourOrdinateTest_mul_mu_integrable
+      (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos ht
+  unfold QuarticFourSignedPolePair.signedOrdinateTest
+    QuarticFourSignedPolePair.ordinateTestHalf
+    QuarticFourSignedPolePair.ordinateTestTwo
+  rw [show
+      (fun tau : ℝ =>
+        (W.poleTwo *
+            quarticFourOrdinateTest W.R (1/2) W.muHalf t tau
+          +
+         (-W.poleHalf) *
+            quarticFourOrdinateTest W.R (2/3) W.muTwo t tau)
+          * Zeta23.mu tau)
+      =
+      fun tau =>
+        W.poleTwo *
+          (quarticFourOrdinateTest W.R (1/2) W.muHalf t tau
+            * Zeta23.mu tau)
+        +
+        (-W.poleHalf) *
+          (quarticFourOrdinateTest W.R (2/3) W.muTwo t tau
+            * Zeta23.mu tau) by
+      funext tau
+      ring,
+      integral_add (hiHalf.const_mul _) (hiTwo.const_mul _),
+      integral_const_mul, integral_const_mul]
+  ring
+
+/--
+Joint completed-residual representation retaining the literal per-zero
+horizontal/ordinate coupling.
+
+This is equivalent to the N-mu + H_comb form, but it is a better research
+carrier for G3 because each off-ordinate zero remains inside its complete
+pair-projective source term until after summation.
+-/
+theorem QuarticFourSignedPolePair.completedSignedResidual_eq_jointPairSource
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.completedSignedResidual
+      =
+    (1/2 : ℝ) *
+      (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+        W.signedLiteralPairSourceTerm sigma)
+      -
+    (1/2 : ℝ) *
+      ∫ tau : ℝ,
+        W.signedOrdinateTest tau * Zeta23.mu tau := by
+  have htpos : 0 < t := by linarith
+  have hExt :=
+    quarticFourSignedPole_external_eq_NMu_add_horizontal ht W
+  have hOff :=
+    W.signedOffOrdProjectiveDefect_eq_half_pair_tsum htpos
+  have hGamma :=
+    W.signedGammaProjectiveDefect_eq_neg_half_mu htpos
+  unfold QuarticFourSignedPolePair.completedSignedResidual
+  rw [← hExt]
+  rw [show
+      W.poleTwo *
+        (offOrdProjectiveDefect
+            (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+            t (t/16)
+          +
+         gammaProjectiveDefect
+            (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+            t (t/16))
+        +
+      (-W.poleHalf) *
+        (offOrdProjectiveDefect
+            (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+            t (t/16)
+          +
+         gammaProjectiveDefect
+            (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+            t (t/16))
+      =
+      (W.poleTwo *
+        offOrdProjectiveDefect
+          (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+          t (t/16)
+       +
+       (-W.poleHalf) *
+        offOrdProjectiveDefect
+          (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+          t (t/16))
+      +
+      (W.poleTwo *
+        gammaProjectiveDefect
+          (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+          t (t/16)
+       +
+       (-W.poleHalf) *
+        gammaProjectiveDefect
+          (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+          t (t/16)) by ring,
+      hOff,hGamma]
+  ring
+
+
 end Synthesis

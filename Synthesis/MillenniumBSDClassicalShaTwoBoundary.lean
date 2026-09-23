@@ -204,6 +204,17 @@ structure ClassicalTwoDescentExactMapBoundary where
     selmerToSha.ker = globalKummerImageSubgroup
   surjective : Function.Surjective selmerToSha
 
+/-- The canonical Kummer/localization laws inhabit the exact-map boundary
+without any further mathematical assumptions. -/
+noncomputable def classicalTwoDescentExactMapBoundary_of_canonicalLaws
+    (h : ClassicalTwoDescentCanonicalMapLaws) :
+    ClassicalTwoDescentExactMapBoundary where
+  selmerToSha := cmExplicitSelmerToClassicalShaTwo h
+  kernel_eq_globalKummerImage :=
+    cmExplicitSelmerToClassicalShaTwo_kernel h
+  surjective :=
+    cmExplicitSelmerToClassicalShaTwo_surjective h
+
 /-- The exact-map boundary compiles to the literal explicit Selmer cokernel
 equivalence by the first isomorphism theorem. -/
 noncomputable def explicitSelmerCokernelEquivClassicalShaTwo_of_exactMap

@@ -1,6 +1,7 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleAbel
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.Analysis.Fourier.Inversion
+import Mathlib.Analysis.Fourier.FourierTransformDeriv
 
 /-!
 # Low-mode quotient diagnostics for the exact signed four-window G3 consumer
@@ -2195,5 +2196,136 @@ theorem QuarticFourSignedPolePair.globalLinearModeDefect_eq_zero_iff
     have hr : t/16 ≠ 0 := by positivity
     positivity
   exact mul_eq_zero_iff_right_nonzero hcoef
+
+
+theorem compactCosineTransform_sqWeight_integrable_of_contDiff_four
+    {P : ℝ -> ℝ}
+    (hP : ContDiff ℝ 4 P)
+    (hPc : HasCompactSupport P) :
+    Integrable
+      (fun q : ℝ => q^2 * compactCosineTransform P q) := by
+  let A : ℝ := compactCosineFourthDecayCurvature P
+  let B : ℝ :=
+    Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass P
+  let C : ℝ := 2 * (A + B)
+  have hA : 0 <= A := by
+    dsimp [A]
+    exact compactCosineFourthDecayCurvature_nonneg P
+  have hB : 0 <= B := by
+    dsimp [B]
+    exact
+      Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass_nonneg P
+  have hC : 0 <= C := by
+    dsimp [C]
+    positivity
+  have hbase :
+      Integrable (fun q : ℝ => (1 + q^2)⁻¹) :=
+    integrable_inv_one_add_sq
+  have hmajor :
+      Integrable (fun q : ℝ => C * (1 + q^2)⁻¹) :=
+    hbase.const_mul C
+  have hCT :
+      Continuous (compactCosineTransform P) :=
+    continuous_of_forall_continuousAt fun q =>
+      (compactCosineTransform_hasDerivAt
+        hP.continuous hPc q).continuousAt
+  have htargetC :
+      Continuous
+        (fun q : ℝ => q^2 * compactCosineTransform P q) := by
+    fun_prop
+  refine Integrable.mono' hmajor htargetC.aestronglyMeasurable
+    (ae_of_all _ fun q => ?_)
+  have hden : 0 < 1 + q^2 := by positivity
+  have hmajorAbs :
+      |C * (1 + q^2)⁻¹|
+        = C / (1 + q^2) := by
+    rw [abs_mul, abs_of_nonneg hC, abs_inv,
+        abs_of_pos hden]
+    rfl
+  rw [Real.norm_eq_abs, Real.norm_eq_abs,
+      abs_mul, abs_pow, hmajorAbs]
+  by_cases hq : q^2 <= 1
+  · have hcos :
+        |compactCosineTransform P q| <= B := by
+      dsimp [B]
+      exact compactCosineTransform_abs_le_taperMass
+        hP.continuous hPc q
+    have hlocal :
+        q^2 * |compactCosineTransform P q| * (1+q^2)
+          <= C := by
+      have hqnon : 0 <= q^2 := sq_nonneg q
+      have h1 :=
+        mul_le_mul_of_nonneg_left hcos hqnon
+      have hshape : q^2 * (1+q^2) <= 2 := by
+        nlinarith [sq_nonneg (1-q^2)]
+      have h2 :
+          q^2 * |compactCosineTransform P q| * (1+q^2)
+            <= B * (q^2 * (1+q^2)) := by
+        nlinarith [abs_nonneg (compactCosineTransform P q)]
+      have h3 :
+          B * (q^2 * (1+q^2)) <= 2*B :=
+        mul_le_mul_of_nonneg_left hshape hB
+      dsimp [C]
+      nlinarith
+    exact (le_div_iff₀ hden).2
+      (by simpa [mul_assoc] using hlocal)
+  · have hq' : 1 < q^2 := lt_of_not_ge hq
+    have hqne : q ≠ 0 := by
+      intro hz
+      subst q
+      norm_num at hq'
+    have hcos :
+        |compactCosineTransform P q| <= A / q^4 := by
+      dsimp [A]
+      exact compactCosineTransform_abs_le_invPowFour hP hPc hqne
+    have hweighted :
+        q^2 * |compactCosineTransform P q|
+          <= A / q^2 := by
+      have hm :=
+        mul_le_mul_of_nonneg_left hcos (sq_nonneg q)
+      calc
+        q^2 * |compactCosineTransform P q|
+          <= q^2 * (A / q^4) := hm
+        _ = A / q^2 := by
+          field_simp [hqne]
+          ring
+    have hshape :
+        A * (1+q^2) <= C * q^2 := by
+      have htwo : 1+q^2 <= 2*q^2 := by linarith
+      have h1 := mul_le_mul_of_nonneg_left htwo hA
+      dsimp [C]
+      nlinarith [mul_nonneg hB (sq_nonneg q)]
+    have hfar :
+        A / q^2 <= C / (1+q^2) := by
+      have hq2pos : 0 < q^2 := sq_pos_of_ne_zero hqne
+      rw [div_le_div_iff₀ hq2pos hden]
+      simpa [mul_comm, mul_left_comm, mul_assoc] using hshape
+    exact hweighted.trans hfar
+
+theorem deriv_complexifyRealProfile_eq
+    {P : ℝ -> ℝ}
+    (hP : Differentiable ℝ P) :
+    deriv (complexifyRealProfile P)
+      =
+    fun x => (deriv P x : ℂ) := by
+  funext x
+  have hx := (hP x).hasDerivAt
+  have hc :=
+    Complex.ofRealCLM.hasDerivAt.scomp x hx
+  simpa [complexifyRealProfile] using hc.deriv
+
+theorem secondDeriv_complexifyRealProfile_eq
+    {P : ℝ -> ℝ}
+    (hP2 : ContDiff ℝ 2 P) :
+    deriv (deriv (complexifyRealProfile P))
+      =
+    fun x => (deriv (deriv P) x : ℂ) := by
+  have hPdiff : Differentiable ℝ P :=
+    hP2.differentiable (by norm_num)
+  have hPd1 : ContDiff ℝ 1 (deriv P) :=
+    (ContDiff.deriv' hP2)
+  rw [deriv_complexifyRealProfile_eq hPdiff]
+  exact deriv_complexifyRealProfile_eq
+    (hPd1.differentiable (by norm_num))
 
 end Synthesis

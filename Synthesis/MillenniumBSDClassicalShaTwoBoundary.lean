@@ -149,6 +149,39 @@ structure ClassicalTwoDescentCanonicalMapLaws where
       ∃ s : explicitTwoSelmerSubgroup,
         cmExplicitSelmerClassToEllipticH1 s = x.1.1
 
+/-- Reduced classical Kummer boundary after paying the 2-torsion law internally. -/
+structure ClassicalTwoDescentCanonicalCoreLaws where
+  map_one :
+    cmExplicitSelmerClassToEllipticH1 1 = 0
+  map_mul :
+    ∀ s t : explicitTwoSelmerSubgroup,
+      cmExplicitSelmerClassToEllipticH1 (s * t) =
+        cmExplicitSelmerClassToEllipticH1 s +
+          cmExplicitSelmerClassToEllipticH1 t
+  localization_zero :
+    ∀ s : explicitTwoSelmerSubgroup,
+      cmExplicitSelmerClassToEllipticH1 s ∈
+        classicalEllipticShaOne cmEllipticPointRepresentation
+  kernel_iff_globalKummerImage :
+    ∀ s : explicitTwoSelmerSubgroup,
+      cmExplicitSelmerClassToEllipticH1 s = 0 ↔
+        s ∈ globalKummerImageSubgroup
+  surjective_on_sha_two :
+    ∀ x : classicalEllipticShaTwo cmEllipticPointRepresentation,
+      ∃ s : explicitTwoSelmerSubgroup,
+        cmExplicitSelmerClassToEllipticH1 s = x.1.1
+
+/-- Fill the full canonical-law record from the reduced core boundary. -/
+noncomputable def classicalTwoDescentCanonicalMapLaws_of_core
+    (h : ClassicalTwoDescentCanonicalCoreLaws) :
+    ClassicalTwoDescentCanonicalMapLaws where
+  map_one := h.map_one
+  map_mul := h.map_mul
+  localization_zero := h.localization_zero
+  two_torsion := cmExplicitSelmerClassToEllipticH1_two_torsion_paid
+  kernel_iff_globalKummerImage := h.kernel_iff_globalKummerImage
+  surjective_on_sha_two := h.surjective_on_sha_two
+
 /-- Package the canonical global class as an actual homomorphism to classical
 Sha[2] once the remaining Kummer/localization laws are supplied. -/
 noncomputable def cmExplicitSelmerToClassicalShaTwo

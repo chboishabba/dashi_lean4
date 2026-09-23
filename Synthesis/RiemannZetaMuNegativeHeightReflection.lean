@@ -153,7 +153,8 @@ theorem zetaCount_eq_reflectedHalfOpen
     _ = ∑ rho ∈ G, (zeroMult rho : ℝ) := by rw [hmap]
 
 theorem reflectedHalfOpen_split_standard
-    {A B : ℝ} :
+    {A B : ℝ}
+    (hAB : A <= B) :
     (∑ᶠ rho ∈ reflectedHalfOpenZeros A B,
       (zeroMult rho : ℝ))
       =
@@ -272,14 +273,15 @@ theorem zetaZeroOrdinateMultiplicity_neg (T : ℝ) :
 Endpoint-correct conjugation reflection for the literal (A,B] zero count.
 -/
 theorem zetaNcount_reflection_endpoint_correct
-    (A B : ℝ) :
+    {A B : ℝ}
+    (hAB : A <= B) :
     (Ncount A B : ℝ)
       =
     (Ncount (-B) (-A) : ℝ)
       + (zetaZeroOrdinateMultiplicity B : ℝ)
       - (zetaZeroOrdinateMultiplicity A : ℝ) := by
   rw [zetaCount_eq_reflectedHalfOpen,
-      reflectedHalfOpen_split_standard,
+      reflectedHalfOpen_split_standard hAB,
       zetaZeroOrdinateMultiplicity_neg,
       zetaZeroOrdinateMultiplicity_neg]
 
@@ -305,14 +307,15 @@ theorem zetaMuIntegral_reflection
 Endpoint-correct reflection of the literal N-mu discrepancy.
 -/
 theorem zetaMuWindowDiscrepancy_reflection_endpoint_correct
-    (A B : ℝ) :
+    {A B : ℝ}
+    (hAB : A <= B) :
     zetaMuWindowDiscrepancy A B
       =
     zetaMuWindowDiscrepancy (-B) (-A)
       + (zetaZeroOrdinateMultiplicity B : ℝ)
       - (zetaZeroOrdinateMultiplicity A : ℝ) := by
   unfold zetaMuWindowDiscrepancy
-  rw [zetaNcount_reflection_endpoint_correct,
+  rw [zetaNcount_reflection_endpoint_correct hAB,
       zetaMuIntegral_reflection]
   ring
 
@@ -364,14 +367,15 @@ The growing negative segment (A,-t] is transported to the positive window
 (A,B] convention.
 -/
 theorem zetaMuWindowDiscrepancy_negativeSegment_reflected
-    (A t : ℝ) :
+    {A t : ℝ}
+    (hAt : A <= -t) :
     zetaMuWindowDiscrepancy A (-t)
       =
     zetaMuWindowDiscrepancy t (-A)
       + (zetaZeroOrdinateMultiplicity t : ℝ)
       - (zetaZeroOrdinateMultiplicity A : ℝ) := by
   have h :=
-    zetaMuWindowDiscrepancy_reflection_endpoint_correct A (-t)
+    zetaMuWindowDiscrepancy_reflection_endpoint_correct hAt
   simpa using h
 
 /--
@@ -398,7 +402,7 @@ theorem exists_zetaMuWindowDiscrepancy_negativeSegment_bound :
   intro t A ht hAt
   have htA : t < -A := by linarith
   have href :=
-    zetaMuWindowDiscrepancy_negativeSegment_reflected A t
+    zetaMuWindowDiscrepancy_negativeSegment_reflected hAt.le
   rw [href]
   have hpos :
       |zetaMuWindowDiscrepancy t (-A)|

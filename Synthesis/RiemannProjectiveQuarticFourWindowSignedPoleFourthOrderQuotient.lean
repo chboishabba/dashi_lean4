@@ -1706,7 +1706,8 @@ theorem genericProjectivePhysicalProfile_zero
   simp
 
 theorem quarticFourNormalizedProjectiveProfile_zero
-    {R lam mu : ℝ} :
+    {R lam mu : ℝ}
+    (hR : 0 < R) :
     quarticFourNormalizedProjectiveProfile R lam mu 0
       =
     4 * quarticFourWindowProfile R lam mu 0 *
@@ -1719,22 +1720,45 @@ theorem quarticFourNormalizedProjectiveProfile_zero
   rw [genericProjectivePhysicalProfile_zero]
   unfold Zeta23Bridge.LiteralWeilParityBalance.evenResp
   rw [quarticFourWindowProfile_pairing_eq
-      (R:=R) (lam:=lam) (mu:=mu)
-      (by
-        by_cases hR : 0 < R
-        · exact hR
-        · simp [quarticFourWindowProfile, quarticWindowMass] at *
-          positivity)
+      (R:=R) (lam:=lam) (mu:=mu) hR
       (quarticFourNormalizedOnLineWeight_continuous 1),
       quarticFourWindowProfile_pairing_eq
-      (R:=R) (lam:=lam) (mu:=mu)
-      (by
-        by_cases hR : 0 < R
-        · exact hR
-        · simp [quarticFourWindowProfile, quarticWindowMass] at *
-          positivity)
+      (R:=R) (lam:=lam) (mu:=mu) hR
       (quarticFourNormalizedOnLineWeight_continuous 2)]
   unfold quarticFourNormalizedOnLineWeight
   simp
+
+/--
+Exact local profile value carried by the signed-pole combination.
+
+Nothing in the already-paid pole cancellation rewrites this expression to
+zero: it is a distinct same-object coordinate.
+-/
+theorem QuarticFourSignedPolePair.combinedProfile_zero_eq
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t 0
+      =
+    W.poleTwo *
+      (4 * quarticFourWindowProfile W.R (1/2) W.muHalf 0 *
+        (quarticFourWindowPairing W.R (1/2) W.muHalf
+            (quarticFourNormalizedOnLineWeight 1)
+          -
+         quarticFourWindowPairing W.R (1/2) W.muHalf
+            (quarticFourNormalizedOnLineWeight 2)))
+      +
+    (-W.poleHalf) *
+      (4 * quarticFourWindowProfile W.R (2/3) W.muTwo 0 *
+        (quarticFourWindowPairing W.R (2/3) W.muTwo
+            (quarticFourNormalizedOnLineWeight 1)
+          -
+         quarticFourWindowPairing W.R (2/3) W.muTwo
+            (quarticFourNormalizedOnLineWeight 2))) := by
+  unfold quarticFourSignedPoleCombinedProfile profileLinearCombination
+  rw [quarticFourNormalizedProjectiveProfile_zero
+        (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos,
+      quarticFourNormalizedProjectiveProfile_zero
+        (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos]
 
 end Synthesis

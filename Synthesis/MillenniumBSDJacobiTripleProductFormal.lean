@@ -1205,6 +1205,16 @@ theorem jacobiLowerSupported_mul
   push_cast
   linarith
 
+theorem jacobiDiagonalCoeffHom_coeff_eq_zero_below
+    {F : JacobiBivariateFormal} (hF : JacobiLowerSupported F)
+    {d : ℕ} {j : ℤ} (hj : j < -(d : ℤ)) :
+    (jacobiDiagonalCoeffHom (F.coeff d)).coeff j = 0 := by
+  rw [jacobiDiagonalCoeffHom_coeff]
+  have hz : (F.coeff d).coeff j = 0 := by
+    by_contra hne
+    exact (not_le_of_gt hj) (hF d j hne)
+  rw [hz, zero_mul]
+
 theorem jacobiLowerSupported_C_T_mul_X_pow
     {n : ℕ} {k : ℤ} (hk : -(n : ℤ) ≤ k) :
     JacobiLowerSupported

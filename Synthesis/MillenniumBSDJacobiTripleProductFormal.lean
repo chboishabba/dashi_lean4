@@ -1064,6 +1064,24 @@ theorem jacobiDiagonalCoeffHom_pairedTerm_coeff
   simp [zpow_natCast, zpow_neg, inv_pow]
 
 
+theorem jacobiDiagonalCoeffHom_T_eq_single (k : ℤ) :
+    jacobiDiagonalCoeffHom (LaurentPolynomial.T k) =
+      HahnSeries.single k ((-1 : ℂ) ^ k) := by
+  ext j
+  rw [jacobiDiagonalCoeffHom_T_coeff]
+  by_cases h : j = k
+  · subst j
+    simp
+  · simp [h, Ne.symm h]
+
+theorem jacobiDiagonalCoeffHom_mul_T_coeff
+    (p : JacobiLaurentCoeff) (k j : ℤ) :
+    (jacobiDiagonalCoeffHom (p * LaurentPolynomial.T k)).coeff j =
+      (jacobiDiagonalCoeffHom p).coeff (j - k) *
+        ((-1 : ℂ) ^ k) := by
+  rw [map_mul, jacobiDiagonalCoeffHom_T_eq_single,
+    HahnSeries.coeff_mul_single]
+
 /-- Apply z↦-X coefficientwise, while retaining the outer q-variable. -/
 noncomputable def jacobiDiagonalCoeffMap
     (F : JacobiBivariateFormal) :

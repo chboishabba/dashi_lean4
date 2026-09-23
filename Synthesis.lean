@@ -277,6 +277,7 @@ import Synthesis.MillenniumBSDActualE2H1LowDegreeReduction
 
 import Synthesis.MillenniumBSDJacobiEta32Reduction
 import Synthesis.MillenniumBSDJacobiArithmeticReconstruction
+import Synthesis.MillenniumBSDJacobiTripleProductFormal
 import Synthesis.MillenniumBSDEtaToActualLTransfer
 
 import Synthesis.MillenniumBSDCMSplitJacobiRealTrace

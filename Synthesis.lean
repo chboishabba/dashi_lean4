@@ -274,6 +274,7 @@ import Synthesis.MillenniumBSDClassicalShaTwoBoundary
 
 import Synthesis.MillenniumBSDActualE2H1SameObject
 import Synthesis.MillenniumBSDActualE2H1LowDegreeReduction
+import Synthesis.MillenniumBSDTrivialTwoTorsionH1Generic
 
 import Synthesis.MillenniumBSDJacobiEta32Reduction
 import Synthesis.MillenniumBSDJacobiArithmeticReconstruction

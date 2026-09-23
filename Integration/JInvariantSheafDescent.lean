@@ -2,6 +2,8 @@ import Mathlib
 
 namespace Integration.JInvariantSheafDescent
 
+universe u v
+
 /-!
 Finite Lean mirror of the DASHI Agda J/369 coarse/fine, descent, admissibility,
 and sheaf-facing surface.
@@ -213,40 +215,48 @@ theorem cardinalCompatibilityDoesNotSupplyAdmissibility :
    C^op -> Set formalism.  No concrete analytic modular site is asserted. -/
 open CategoryTheory
 
-abbrev Presheaf (C : Type) [Category C] :=
-  Cᵒᵖ ⥤ Type
+abbrev Presheaf (C : Type u) [Category C] :=
+  Cᵒᵖ ⥤ Type v
 
-abbrev SiteTopology (C : Type) [Category C] :=
+abbrev SiteTopology (C : Type u) [Category C] :=
   GrothendieckTopology C
 
 abbrev PantsPath (n : Nat) := Fin n → Trit
 
 def nineToPants2 : JCoarse → PantsPath 2
-  | (a, b) => fun
-      | ⟨0, _⟩ => a
-      | ⟨1, _⟩ => b
+  | (a, b) => fun i => if i = (0 : Fin 2) then a else b
 
 def pants2ToNine : PantsPath 2 → JCoarse :=
-  fun p => (p ⟨0, by decide⟩, p ⟨1, by decide⟩)
+  fun p => (p (0 : Fin 2), p (1 : Fin 2))
 
 theorem pants2_nine_roundtrip (q : JCoarse) :
     pants2ToNine (nineToPants2 q) = q := by
-  cases q
-  rfl
+  rcases q with ⟨a, b⟩
+  simp [pants2ToNine, nineToPants2]
+
+theorem nine_pants2_roundtrip (p : PantsPath 2) :
+    nineToPants2 (pants2ToNine p) = p := by
+  funext i
+  fin_cases i <;> simp [nineToPants2, pants2ToNine]
 
 def local27ToPants3 : Local27 → PantsPath 3
-  | ((a, b), c) => fun
-      | ⟨0, _⟩ => a
-      | ⟨1, _⟩ => b
-      | ⟨2, _⟩ => c
+  | ((a, b), c) => fun i =>
+      if i = (0 : Fin 3) then a
+      else if i = (1 : Fin 3) then b
+      else c
 
 def pants3ToLocal27 : PantsPath 3 → Local27 :=
-  fun p => ((p ⟨0, by decide⟩, p ⟨1, by decide⟩), p ⟨2, by decide⟩)
+  fun p => ((p (0 : Fin 3), p (1 : Fin 3)), p (2 : Fin 3))
 
 theorem pants3_local27_roundtrip (v : Local27) :
     pants3ToLocal27 (local27ToPants3 v) = v := by
-  rcases v with ⟨⟨a,b⟩,c⟩
-  rfl
+  rcases v with ⟨⟨a, b⟩, c⟩
+  simp [pants3ToLocal27, local27ToPants3]
+
+theorem local27_pants3_roundtrip (p : PantsPath 3) :
+    local27ToPants3 (pants3ToLocal27 p) = p := by
+  funext i
+  fin_cases i <;> simp [local27ToPants3, pants3ToLocal27]
 
 theorem bulk196830 :
     3^11 + 3^9 = 196830 := by

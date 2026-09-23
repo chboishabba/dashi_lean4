@@ -621,7 +621,7 @@ theorem QuarticFourSignedPolePair.exists_horizontalQuadraticKernel_gt_target_sq
     have hmabs : |-q| < eps := by simpa [abs_neg] using hqe
     have h := hpos (-q) hmq (by simpa [abs_of_pos hmq] using hmabs)
     dsimp [F,S] at h
-    rw [W.signedHorizontalQuadraticKernel_even (-q)] at h
+    rw [W.signedHorizontalQuadraticKernel_even q] at h
     have hsq : (-q)^2 = q^2 := by ring
     rw [hsq] at h
     exact sub_pos.mp h

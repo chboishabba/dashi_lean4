@@ -451,9 +451,16 @@ noncomputable def genericQuadraticCharacterRestrict
 noncomputable def genericQuadraticCharacterPairRestrict
     (φ : H →ₜ* G) :
     (GenericQuadraticCharacter G × GenericQuadraticCharacter G) →*
-      (GenericQuadraticCharacter H × GenericQuadraticCharacter H) :=
-  (genericQuadraticCharacterRestrict (G := G) φ).prod
-    (genericQuadraticCharacterRestrict (G := G) φ)
+      (GenericQuadraticCharacter H × GenericQuadraticCharacter H) where
+  toFun χ :=
+    (genericQuadraticCharacterRestrict (G := G) φ χ.1,
+      genericQuadraticCharacterRestrict (G := G) φ χ.2)
+  map_one' := by
+    apply Prod.ext <;>
+      simp [genericQuadraticCharacterRestrict]
+  map_mul' χ ψ := by
+    apply Prod.ext <;>
+      simp [genericQuadraticCharacterRestrict]
 
 /-- Single generic naturality seam for the low-degree theorem.
 

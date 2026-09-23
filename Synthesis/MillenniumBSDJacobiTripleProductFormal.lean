@@ -1304,6 +1304,123 @@ theorem jacobiWeightedDiagonal_balancedMonomial_term
   push_cast
   ring
 
+/-- Coefficient form of the balanced monomial shift under the weighted
+diagonal.  Lower support is exactly what kills the finite-range tail. -/
+theorem jacobiWeightedDiagonalCoeff_mul_balancedMonomial
+    (F : JacobiBivariateFormal) (hF : JacobiLowerSupported F)
+    (n t N : ℕ) :
+    jacobiWeightedDiagonalCoeff
+        (F * (C (LaurentPolynomial.T ((t : ℤ) - (n : ℤ))) * X ^ n)) N =
+      if n + t ≤ N then
+        ((-1 : ℂ) ^ ((t : ℤ) - (n : ℤ))) *
+          jacobiWeightedDiagonalCoeff F (N - (n + t))
+      else 0 := by
+  let term : ℕ → ℂ := fun d =>
+    (jacobiDiagonalCoeffHom
+      ((F * (C (LaurentPolynomial.T ((t : ℤ) - (n : ℤ))) * X ^ n)).coeff d)).coeff
+        ((N : ℤ) - 2 * (d : ℤ))
+  unfold jacobiWeightedDiagonalCoeff
+  change (∑ d in Finset.range (N + 1), term d) = _
+  split_ifs with hs
+  · let R : ℕ := N - (n + t)
+    have hR : N = R + (n + t) := by
+      dsimp [R]
+      omega
+    have hnN : n ≤ N + 1 := by omega
+    rw [Finset.sum_range_add_sum_Ico _ hnN]
+    have hfirst : ∑ d in Finset.range n, term d = 0 := by
+      apply Finset.sum_eq_zero
+      intro d hd
+      have hdn : ¬ n ≤ d := by
+        rw [Finset.mem_range] at hd
+        omega
+      dsimp [term]
+      rw [jacobiCoeff_mul_C_T_mul_X_pow]
+      rw [if_neg hdn]
+      simp
+    rw [hfirst, zero_add]
+    rw [Finset.sum_Ico_eq_sum_range]
+    have hlen : N + 1 - n = (R + 1) + t := by
+      omega
+    rw [hlen, Finset.sum_range_add]
+    have hmain :
+        ∑ e in Finset.range (R + 1), term (e + n) =
+          ((-1 : ℂ) ^ ((t : ℤ) - (n : ℤ))) *
+            jacobiWeightedDiagonalCoeff F R := by
+      have hterm (e : ℕ) :
+          term (e + n) =
+            (jacobiDiagonalCoeffHom (F.coeff e)).coeff
+                ((R : ℤ) - 2 * (e : ℤ)) *
+              ((-1 : ℂ) ^ ((t : ℤ) - (n : ℤ))) := by
+        dsimp [term]
+        rw [Nat.add_comm e n,
+          jacobiWeightedDiagonal_balancedMonomial_term]
+        congr 2
+        rw [hR]
+        push_cast
+        ring
+      simp_rw [hterm]
+      rw [← Finset.sum_mul]
+      unfold jacobiWeightedDiagonalCoeff
+      rw [mul_comm]
+    have htail :
+        ∑ i in Finset.range t, term ((R + 1 + i) + n) = 0 := by
+      apply Finset.sum_eq_zero
+      intro i hi
+      dsimp [term]
+      rw [Nat.add_comm (R + 1 + i) n,
+        jacobiWeightedDiagonal_balancedMonomial_term]
+      have hz :
+          (jacobiDiagonalCoeffHom (F.coeff (R + 1 + i))).coeff
+              ((N : ℤ) - ((n + t : ℕ) : ℤ) -
+                2 * ((R + 1 + i : ℕ) : ℤ)) = 0 := by
+        apply jacobiDiagonalCoeffHom_coeff_eq_zero_below hF
+        rw [hR]
+        push_cast
+        omega
+      rw [hz, zero_mul]
+    rw [hmain]
+    have htail' :
+        ∑ x in Finset.range t, term (x + (R + 1) + n) = 0 := by
+      convert htail using 1
+      apply Finset.sum_congr rfl
+      intro i hi
+      congr 2
+      omega
+    rw [htail', add_zero]
+  · apply Finset.sum_eq_zero
+    intro d hd
+    by_cases hnd : n ≤ d
+    · have hdrep : d = n + (d - n) := by omega
+      dsimp [term]
+      rw [hdrep, jacobiWeightedDiagonal_balancedMonomial_term]
+      have hz :
+          (jacobiDiagonalCoeffHom (F.coeff (d - n))).coeff
+              ((N : ℤ) - ((n + t : ℕ) : ℤ) -
+                2 * ((d - n : ℕ) : ℤ)) = 0 := by
+        apply jacobiDiagonalCoeffHom_coeff_eq_zero_below hF
+        push_cast
+        omega
+      rw [hz, zero_mul]
+    · dsimp [term]
+      rw [jacobiCoeff_mul_C_T_mul_X_pow, if_neg hnd]
+      simp
+
+/-- Power-series form of the balanced monomial shift:
+z^(t-n) q^n contributes sign (-1)^(t-n) and total degree n+t. -/
+theorem jacobiWeightedDiagonal_mul_balancedMonomial
+    (F : JacobiBivariateFormal) (hF : JacobiLowerSupported F)
+    (n t : ℕ) :
+    jacobiWeightedDiagonal
+        (F * (C (LaurentPolynomial.T ((t : ℤ) - (n : ℤ))) * X ^ n)) =
+      C ((-1 : ℂ) ^ ((t : ℤ) - (n : ℤ))) *
+        (X ^ (n + t) * jacobiWeightedDiagonal F) := by
+  ext N
+  rw [jacobiWeightedDiagonal_coeff,
+    jacobiWeightedDiagonalCoeff_mul_balancedMonomial F hF n t N,
+    PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow_mul']
+  split_ifs <;> rfl
+
 /-- Weighted diagonal coefficient implementing q↦q² and z↦-q
 coefficientwise.  For target degree N only outer q-degrees d≤N are inspected;
 this is exactly the finite-dependency property needed to transfer J0's

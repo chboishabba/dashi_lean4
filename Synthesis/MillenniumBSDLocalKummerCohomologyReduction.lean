@@ -196,6 +196,20 @@ structure PadicEllipticKummerExactness
               (padicQuadraticKummerProducer_of_compatibility p h)).symm c).toAdd =
             0
 
+/-- Immediate local-exactness consequence consumed by the global Selmer
+localization compiler. -/
+theorem padicLocalKummerImage_maps_to_zero
+    (p : ℕ) [Fact p.Prime]
+    (hCompat : PadicQuadraticKummerCompatibility p)
+    (hExact : PadicEllipticKummerExactness p hCompat)
+    (c : PadicSquareClass p × PadicSquareClass p)
+    (hc : c ∈ localKummerImageSubgroup p) :
+    padicGenericE2H1ToEllipticPointH1 p
+      ((padicTwoTorsionH1MulEquivSquareClassPair p
+          (padicQuadraticKummerProducer_of_compatibility p hCompat)).symm c).toAdd =
+        0 :=
+  (hExact.kernel_iff_explicitKummerImage c).1 hc
+
 /-- Machine-readable local frontier: the continuous H¹ normalization and
 pair decomposition are paid uniformly; scalar local Kummer and compatibility
 with the explicit elliptic Kummer coordinates remain. -/

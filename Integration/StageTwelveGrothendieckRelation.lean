@@ -157,6 +157,32 @@ def relationDiagonalWrongTypeReceipt : RelationWrongTypeReceipt where
   rejection := "same diagonal / different off-diagonal (0,1) witness"
   candidateMayStillExist := true
 
+/-! Stage-12 semantic extension, kept distinct from the 0..11 twelve-axis base. -/
+
+abbrev ExtendedStage012 := Fin 13
+
+inductive RecursiveStageRole
+  | rootAtScale
+  | unitAtScale
+  | relationOpenedAtScale
+  | interiorStage
+  deriving DecidableEq, Repr
+
+def stage12 : ExtendedStage012 := 12
+def decimalCarryUnit : Nat := 10
+def localJUnit : Nat := 1
+def stage12Role : RecursiveStageRole := .relationOpenedAtScale
+
+theorem stage12_index_is_twelve :
+    stage12.val = 12 := rfl
+
+theorem stage12_opens_relation_at_new_scale :
+    stage12Role = .relationOpenedAtScale := rfl
+
+theorem stage12_is_one_carry_plus_two_local_units :
+    decimalCarryUnit + 2 * localJUnit = stage12.val := by
+  norm_num [decimalCarryUnit, localJUnit, stage12]
+
 /-! Exact 0..13 ternary-rank crosswalk. -/
 
 def fixedTernaryProfileCount (n : Nat) : Nat := 3^n
@@ -280,6 +306,8 @@ structure Frontier where
   mathlibGrothendieckTopologyConstructed : Bool
   bundleSheafGluingConstructed : Bool
   genuineMathlibSheafConditionPaid : Bool
+  stage12RelationAtNewScalePaid : Bool
+  stage12CarryPlusTwoPaid : Bool
   rank12CompleteCycleCountCrosswalkPaid : Bool
   rank13CentralCompletionCountCrosswalkPaid : Bool
   equalCountCreatesSameSemanticCarrier : Bool
@@ -298,6 +326,8 @@ def frontier : Frontier where
   mathlibGrothendieckTopologyConstructed := true
   bundleSheafGluingConstructed := true
   genuineMathlibSheafConditionPaid := true
+  stage12RelationAtNewScalePaid := true
+  stage12CarryPlusTwoPaid := true
   rank12CompleteCycleCountCrosswalkPaid := true
   rank13CentralCompletionCountCrosswalkPaid := true
   equalCountCreatesSameSemanticCarrier := false

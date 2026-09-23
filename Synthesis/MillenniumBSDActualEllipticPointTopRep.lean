@@ -1,5 +1,4 @@
 import Synthesis.MillenniumBSDActualE2GaloisFixed
-import Synthesis.MillenniumBSDClassicalShaTwoBoundary
 import Mathlib.RepresentationTheory.Continuous.TopRep
 import Mathlib.Topology.Instances.Discrete
 

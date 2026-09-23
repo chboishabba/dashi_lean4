@@ -85,6 +85,16 @@ theorem etaElliptic_allCoefficientAgreement_of_jacobiLocalData
   etaElliptic_allCoefficientAgreement_of_jacobi hOdd hEven
     (jacobiRepresentationMatchesElliptic_of_localData hLocal)
 
+/-- Prize-facing version: the p=2 Jacobi coefficients are paid internally, so
+only the three substantive CM-theta local producers are required. -/
+theorem etaElliptic_allCoefficientAgreement_of_jacobiCMData
+    (hOdd : cmJacobiOddProductIdentity)
+    (hEven : cmJacobiEvenProductIdentity)
+    (hCM : JacobiCMReconstructionData) :
+    EtaEllipticAllCoefficientAgreement :=
+  etaElliptic_allCoefficientAgreement_of_jacobi hOdd hEven
+    (jacobiRepresentationMatchesElliptic_of_cmData hCM)
+
 /-- The normalized eta kernel has the actual elliptic coefficients as its
 exponential series from any all-coefficient producer. -/
 theorem cmEta32Kernel_hasSum_ellipticCoefficients_of_coefficientAgreement
@@ -286,6 +296,18 @@ theorem cmCompletedEllipticLContinuation_agrees_initial_of_jacobiLocalData
   cmCompletedEllipticLContinuation_agrees_initial_of_coefficientAgreement
     (etaElliptic_allCoefficientAgreement_of_jacobiLocalData
       hOdd hEven hLocal) hs
+
+/-- End-to-end analytic compiler from the two q-product identities and the
+three surviving CM-theta arithmetic producers. -/
+theorem cmCompletedEllipticLContinuation_agrees_initial_of_jacobiCMData
+    (hOdd : cmJacobiOddProductIdentity)
+    (hEven : cmJacobiEvenProductIdentity)
+    (hCM : JacobiCMReconstructionData)
+    {s : ℂ} (hs : (5 : ℝ) / 2 < s.re) :
+    cmCompletedEllipticLContinuation s = cmCompletedEllipticLInitial s :=
+  cmCompletedEllipticLContinuation_agrees_initial_of_coefficientAgreement
+    (etaElliptic_allCoefficientAgreement_of_jacobiCMData
+      hOdd hEven hCM) hs
 
 theorem cmCompletedEllipticLContinuation_functional_equation (s : ℂ) :
     cmCompletedEllipticLContinuation (2 - s) =

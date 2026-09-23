@@ -549,6 +549,49 @@ theorem genericTrivialTwoTorsionH1CharacterRestrictionNaturality_paid
         (G := G) φ)
       (genericContinuousH1AddEquivOneCocycle G x)
 
+/-- Splitting a two-torsion-valued character into its two scalar coordinates
+commutes with restriction. -/
+theorem genericTwoTorsionCharacterPairRestrictionNaturality_paid
+    (φ : H →ₜ* G)
+    (χ : GenericTwoTorsionContinuousCharacter G) :
+    genericTwoTorsionCharacterMulEquivPair H (χ.comp φ)
+      =
+    genericQuadraticCharacterPairRestrict (G := G) φ
+      (genericTwoTorsionCharacterMulEquivPair G χ) := by
+  apply Prod.ext
+  · apply ContinuousMonoidHom.ext
+    intro h
+    apply Multiplicative.toAdd_injective
+    rfl
+  · apply ContinuousMonoidHom.ext
+    intro h
+    apply Multiplicative.toAdd_injective
+    rfl
+
+/-- The generic low-degree equivalence is fully natural under restriction.
+This pays the former universal representation-theoretic localization seam. -/
+theorem genericTrivialTwoTorsionH1RestrictionNaturality_paid
+    (φ : H →ₜ* G) :
+    GenericTrivialTwoTorsionH1RestrictionNaturality φ := by
+  intro x
+  rw [show
+    genericTrivialTwoTorsionH1QuadraticPairMulEquiv H
+        (Multiplicative.ofAdd
+          (genericTwoTorsionH1Restrict (G := G) φ x))
+      =
+    genericTwoTorsionCharacterMulEquivPair H
+      (genericTrivialTwoTorsionH1CharacterMulEquiv H
+        (Multiplicative.ofAdd
+          (genericTwoTorsionH1Restrict (G := G) φ x)) by rfl]
+  rw [genericTrivialTwoTorsionH1CharacterRestrictionNaturality_paid
+    (G := G) φ x]
+  exact
+    genericTwoTorsionCharacterPairRestrictionNaturality_paid
+      (G := G) φ
+      (genericTrivialTwoTorsionH1CharacterMulEquiv G
+        (Multiplicative.ofAdd x))
+
+
 
 
 

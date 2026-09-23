@@ -496,6 +496,60 @@ theorem genericTrivialTwoTorsionOneCocycleRestrictionNaturality_paid
   intro σ h
   rfl
 
+/-- The additive H¹-to-cocycle normalization commutes with restriction. -/
+theorem genericContinuousH1AddEquivOneCocycle_natural
+    (φ : H →ₜ* G)
+    (x : continuousCohomology 1 (genericTwoTorsionRepresentation G)) :
+    genericContinuousH1AddEquivOneCocycle H
+        (genericTwoTorsionH1Restrict (G := G) φ x)
+      =
+    genericContinuousOneCocycleRestrict (G := G) φ
+      (genericContinuousH1AddEquivOneCocycle G x) := by
+  have hNat :=
+    genericContinuousH1IsoCocyclesOne_hom_naturality
+      (G := G) φ
+  have hx := congrArg (fun f => f.hom x) hNat
+  change
+    (genericContinuousCocyclesOneIso H).hom
+      ((genericContinuousH1IsoCocyclesOne H).hom
+        (genericTwoTorsionH1Restrict (G := G) φ x))
+      =
+    (genericContinuousCocyclesOneIso H).hom
+      (ContinuousCohomology.cocyclesMap φ
+        (genericTwoTorsionRestrictionHom (G := G) φ) 1
+        ((genericContinuousCocyclesOneIso G).inv
+          ((genericContinuousCocyclesOneIso G).hom
+            ((genericContinuousH1IsoCocyclesOne G).hom x)))
+  rw [Iso.inv_hom_id_apply]
+  simpa using congrArg
+    (fun z => (genericContinuousCocyclesOneIso H).hom z) hx
+
+/-- Character-valued form of generic H¹ restriction naturality. -/
+theorem genericTrivialTwoTorsionH1CharacterRestrictionNaturality_paid
+    (φ : H →ₜ* G)
+    (x : continuousCohomology 1 (genericTwoTorsionRepresentation G)) :
+    genericTrivialTwoTorsionH1CharacterMulEquiv H
+        (Multiplicative.ofAdd
+          (genericTwoTorsionH1Restrict (G := G) φ x))
+      =
+    (genericTrivialTwoTorsionH1CharacterMulEquiv G
+        (Multiplicative.ofAdd x)).comp φ := by
+  change
+    genericContinuousOneCocycleToCharacter H
+      (genericContinuousH1AddEquivOneCocycle H
+        (genericTwoTorsionH1Restrict (G := G) φ x))
+      =
+    (genericContinuousOneCocycleToCharacter G
+      (genericContinuousH1AddEquivOneCocycle G x)).comp φ
+  rw [genericContinuousH1AddEquivOneCocycle_natural (G := G) φ x]
+  exact
+    genericContinuousOneCocycleToCharacter_restrict_natural
+      (G := G) φ
+      (genericTrivialTwoTorsionOneCocycleRestrictionNaturality_paid
+        (G := G) φ)
+      (genericContinuousH1AddEquivOneCocycle G x)
+
+
 
 
 

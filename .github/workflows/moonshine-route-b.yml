@@ -95,3 +95,4 @@ jobs:
           lake env lean Integration/MoonshineAngleC6SectorObserver.lean
           lake env lean Integration/MoonshineC6TenRankWeightTwelveCrossPollination.lean
           lake env lean Integration/MonsterAtlas6561X8RecognitionObligation.lean
+          lake env lean Integration/MoonshineNeutralCuspRelationCrossPollination.lean

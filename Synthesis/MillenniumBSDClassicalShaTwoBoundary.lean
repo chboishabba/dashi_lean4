@@ -90,13 +90,6 @@ noncomputable def explicitSelmerCokernelEquivClassicalShaTwo_of_exactMap
         intro s
         simp [e] }
 
-/-- Exact-map data therefore pays the older fixed-representation comparison
-boundary without asking for an independent equivalence producer. -/
-theorem actualClassicalTwoDescentShaComparison_of_exactMap
-    (h : ClassicalTwoDescentExactMapBoundary) :
-    ActualClassicalTwoDescentShaComparison :=
-  ⟨explicitSelmerCokernelEquivClassicalShaTwo_of_exactMap h⟩
-
 /--
 Exact remaining arithmetic producer after the explicit 2-descent work.
 
@@ -134,6 +127,14 @@ def ActualClassicalTwoDescentShaComparison : Prop :=
   Nonempty
     (ExplicitTwoSelmerCokernel ≃
       classicalEllipticShaTwo cmEllipticPointRepresentation)
+
+/-- Exact-map data therefore pays the older fixed-representation comparison
+boundary without asking for an independent equivalence producer. -/
+theorem actualClassicalTwoDescentShaComparison_of_exactMap
+    (h : ClassicalTwoDescentExactMapBoundary) :
+    ActualClassicalTwoDescentShaComparison :=
+  ⟨explicitSelmerCokernelEquivClassicalShaTwo_of_exactMap h⟩
+
 
 /-- The fixed-representation comparison compiles back to the older
 structure-shaped producer. -/

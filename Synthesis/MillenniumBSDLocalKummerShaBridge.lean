@@ -29,12 +29,15 @@ theorem globalGenericE2ToEllipticPoint_factor :
 theorem globalGenericE2H1ToEllipticPointH1_factor :
     globalGenericE2H1ToEllipticPointH1 =
       cmE2H1ToActual ≫ cmActualE2H1ToEllipticPointH1 := by
-  rw [← ContinuousCohomology.map_comp]
   simpa [globalGenericE2H1ToEllipticPointH1, cmE2H1ToActual,
-    cmActualE2H1ToEllipticPointH1, globalGenericE2ToEllipticPoint_factor]
+    cmActualE2H1ToEllipticPointH1,
+    globalGenericE2ToEllipticPoint_factor]
     using
-      (ContinuousCohomology.map_id
-        (genericTwoTorsionRepresentation RationalAbsoluteGalois) 1).symm
+      (ContinuousCohomology.map_comp
+        (ContinuousMonoidHom.id RationalAbsoluteGalois)
+        (ContinuousMonoidHom.id RationalAbsoluteGalois)
+        cmTwoTorsionTopRepToActual
+        cmActualE2TopRepInclusion 1).symm
 
 /-- The generic square-class inverse used by the local lane is the same
 generic inverse isolated in the low-degree coherence module. -/
@@ -50,7 +53,12 @@ theorem cmExplicitSelmerClassToActualE2H1_eq_generic
     (s : explicitTwoSelmerSubgroup) :
     cmExplicitSelmerClassToActualE2H1 s =
       cmE2H1ToActual (explicitSelmerToGenericTwoTorsionH1 s) := by
-  apply cmActualE2H1ToTrivial.injective
+  apply cmActualE2H1IsoTrivial.toContinuousLinearEquiv.injective
+  change
+    cmActualE2H1ToTrivial (cmExplicitSelmerClassToActualE2H1 s)
+      =
+    cmActualE2H1ToTrivial
+      (cmE2H1ToActual (explicitSelmerToGenericTwoTorsionH1 s))
   rw [cmE2H1_maps_inverse_forward]
   rw [explicitSelmerToGenericTwoTorsionH1_eq_cmGeneric]
   exact cmActualE2H1ToTrivial_squareClass_inverse_coherence s.1

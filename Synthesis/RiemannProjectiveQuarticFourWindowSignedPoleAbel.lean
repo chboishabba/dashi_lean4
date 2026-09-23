@@ -478,4 +478,237 @@ theorem quarticFourSignedPoleZetaMuWindowResidual_eq_discrepancyAbel
         exact W.signedOrdinateTest_hasDerivAt ht x)
       (W.signedOrdinateTestDeriv_intervalIntegrable ht A B)
 
+
+/--
+The cosine fifth-moment Lipschitz constant is dominated by the cosh envelope
+already used to define the quantitative target radius.
+-/
+theorem compactProfileAbsMoment_five_le_compactCoshFourthLipschitzConstant
+    {P : ℝ -> ℝ}
+    (hP : Continuous P)
+    (hPc : HasCompactSupport P) :
+    compactProfileAbsMoment P 5
+      <= compactCoshFourthLipschitzConstant P := by
+  unfold compactProfileAbsMoment compactCoshFourthLipschitzConstant
+  have hleft :
+      Integrable (fun u : ℝ => |P u| * |u|^5) :=
+    compactProfile_absMoment_integrable hP hPc 5
+  have hright :=
+    compactCoshFourthLipschitzMajorant_integrable hP hPc
+  apply integral_mono hleft hright
+  intro u
+  have hc : 1 <= Real.cosh |u| := Real.one_le_cosh _
+  have hP0 : 0 <= |P u| := abs_nonneg _
+  have hu0 : 0 <= |u|^5 := pow_nonneg (abs_nonneg u) _
+  nlinarith
+
+/--
+Quantitative radial derivative sign for a compact cosine transform with
+vanishing quadratic moment and negative quartic margin.
+
+The radius is the same fourth-order radius built from the cosh envelope K.
+-/
+theorem compactCosineD1_radial_neg_of_quantitative_quartic_margin
+    {P : ℝ -> ℝ}
+    (hP : Continuous P)
+    (hPc : HasCompactSupport P)
+    {m : ℝ}
+    (hm : 0 < m)
+    (hM2 : profileSecondMoment P = 0)
+    (hM4 : profileFourthMoment P <= -m) :
+    ∀ q : ℝ,
+      0 < |q| ->
+      |q| <
+        quantitativeFourthOrderRadius
+          m (compactCoshFourthLipschitzConstant P) ->
+      q * compactCosineD1 P q < 0 := by
+  let K := compactCoshFourthLipschitzConstant P
+  let eps := quantitativeFourthOrderRadius m K
+  have hK : 0 <= K :=
+    compactCoshFourthLipschitzConstant_nonneg P
+  have heps : 0 < eps :=
+    quantitativeFourthOrderRadius_pos hm hK
+  have hKeps : K * eps < m/2 :=
+    quantitativeFourthOrderRadius_mul_K_le_half hm hK
+  have hM5 :
+      compactProfileAbsMoment P 5 <= K :=
+    compactProfileAbsMoment_five_le_compactCoshFourthLipschitzConstant hP hPc
+  have hD20 : compactCosineD2 P 0 = 0 := by
+    unfold compactCosineD2 profileSecondMoment at *
+    simpa using hM2
+  have hD30 : compactCosineD3 P 0 = 0 :=
+    compactCosineD3_zero P
+  have hD40 : compactCosineD4 P 0 <= -m := by
+    unfold compactCosineD4 profileFourthMoment at *
+    simpa using hM4
+
+  have hD4neg :
+      ∀ x : ℝ, 0 < x -> x < eps ->
+        compactCosineD4 P x < 0 := by
+    intro x hx0 hxe
+    have hxone : |x| <= 1 := by
+      rw [abs_of_pos hx0]
+      exact hxe.le.trans (quantitativeFourthOrderRadius_le_one m K)
+    have hvar0 :=
+      compactCosineD4_lipschitz hP hPc 0 x
+    have hvar :
+        |compactCosineD4 P x - compactCosineD4 P 0|
+          <= K * |x| := by
+      have hm5non : 0 <= compactProfileAbsMoment P 5 := by
+        unfold compactProfileAbsMoment
+        positivity
+      calc
+        |compactCosineD4 P x - compactCosineD4 P 0|
+          <= compactProfileAbsMoment P 5 * |x| := by
+            simpa using hvar0
+        _ <= K * |x| :=
+          mul_le_mul_of_nonneg_right hM5 (abs_nonneg x)
+    have hupp :
+        compactCosineD4 P x - compactCosineD4 P 0
+          <= K*x := by
+      have := (abs_le.mp hvar).2
+      simpa [abs_of_pos hx0] using this
+    have hKx : K*x <= K*eps :=
+      mul_le_mul_of_nonneg_left hxe.le hK
+    linarith
+
+  have hD3cont : Continuous (compactCosineD3 P) :=
+    continuous_of_forall_continuousAt fun x =>
+      (compactCosineD3_deriv hP hPc x).continuousAt
+  have hD2cont : Continuous (compactCosineD2 P) :=
+    continuous_of_forall_continuousAt fun x =>
+      (compactCosineD2_deriv hP hPc x).continuousAt
+  have hD1cont : Continuous (compactCosineD1 P) :=
+    continuous_of_forall_continuousAt fun x =>
+      (compactCosineD1_deriv hP hPc x).continuousAt
+
+  have hanti3 :
+      StrictAntiOn (compactCosineD3 P) (Set.Icc 0 eps) := by
+    apply strictAntiOn_of_deriv_neg (convex_Icc 0 eps)
+      hD3cont.continuousOn
+    intro x hx
+    rw [interior_Icc] at hx
+    rw [(compactCosineD3_deriv hP hPc x).deriv]
+    exact hD4neg x hx.1 hx.2
+
+  have hD3neg :
+      ∀ x : ℝ, 0 < x -> x < eps ->
+        compactCosineD3 P x < 0 := by
+    intro x hx0 hxe
+    have h0 : (0:ℝ) ∈ Set.Icc (0:ℝ) eps := ⟨le_rfl,heps.le⟩
+    have hx : x ∈ Set.Icc (0:ℝ) eps := ⟨hx0.le,hxe.le⟩
+    have h := hanti3 h0 hx hx0
+    rw [hD30] at h
+    exact h
+
+  have hanti2 :
+      StrictAntiOn (compactCosineD2 P) (Set.Icc 0 eps) := by
+    apply strictAntiOn_of_deriv_neg (convex_Icc 0 eps)
+      hD2cont.continuousOn
+    intro x hx
+    rw [interior_Icc] at hx
+    rw [(compactCosineD2_deriv hP hPc x).deriv]
+    exact hD3neg x hx.1 hx.2
+
+  have hD2neg :
+      ∀ x : ℝ, 0 < x -> x < eps ->
+        compactCosineD2 P x < 0 := by
+    intro x hx0 hxe
+    have h0 : (0:ℝ) ∈ Set.Icc (0:ℝ) eps := ⟨le_rfl,heps.le⟩
+    have hx : x ∈ Set.Icc (0:ℝ) eps := ⟨hx0.le,hxe.le⟩
+    have h := hanti2 h0 hx hx0
+    rw [hD20] at h
+    exact h
+
+  have hanti1 :
+      StrictAntiOn (compactCosineD1 P) (Set.Icc 0 eps) := by
+    apply strictAntiOn_of_deriv_neg (convex_Icc 0 eps)
+      hD1cont.continuousOn
+    intro x hx
+    rw [interior_Icc] at hx
+    rw [(compactCosineD1_deriv hP hPc x).deriv]
+    exact hD2neg x hx.1 hx.2
+
+  have hright :
+      ∀ x : ℝ, 0 < x -> x < eps ->
+        compactCosineD1 P x < 0 := by
+    intro x hx0 hxe
+    have h0 : (0:ℝ) ∈ Set.Icc (0:ℝ) eps := ⟨le_rfl,heps.le⟩
+    have hx : x ∈ Set.Icc (0:ℝ) eps := ⟨hx0.le,hxe.le⟩
+    have h := hanti1 h0 hx hx0
+    rw [compactCosineD1_zero P] at h
+    exact h
+
+  intro q hq0 hqe
+  by_cases hq : 0 <= q
+  · have hqpos : 0 < q := by
+      rw [abs_of_nonneg hq] at hq0
+      exact hq0
+    have hd := hright q hqpos (by simpa [abs_of_pos hqpos] using hqe)
+    exact mul_neg_of_pos_of_neg hqpos hd
+  · have hqneg : q < 0 := lt_of_not_ge hq
+    have hqpos : 0 < -q := by linarith
+    have hdneg :=
+      hright (-q) hqpos
+        (by simpa [abs_of_neg hqneg] using hqe)
+    have hodd := compactCosineD1_odd P q
+    have hdpos : 0 < compactCosineD1 P q := by
+      rw [show q = -(-q) by ring, compactCosineD1_odd]
+      linarith
+    exact mul_neg_of_neg_of_pos hqneg hdpos
+
+/--
+The exact signed G3 test has the favorable quartic radial derivative sign on
+the same quantitative radius used by G1.
+-/
+theorem QuarticFourSignedPolePair.signedOrdinateTestDeriv_radial_neg
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    {x : ℝ}
+    (hx0 : 0 < |x-t|)
+    (hx :
+      |x-t| < (t/16) * W.quantitativeTargetRadius) :
+    (x-t) * W.signedOrdinateTestDeriv x < 0 := by
+  let r : ℝ := t/16
+  let P :=
+    quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t
+  let q : ℝ := (x-t)/r
+  have hr : 0 < r := by dsimp [r]; positivity
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hq0 : 0 < |q| := by
+    dsimp [q]
+    rw [abs_div, abs_of_pos hr]
+    positivity
+  have hq :
+      |q| < W.quantitativeTargetRadius := by
+    dsimp [q]
+    rw [abs_div, abs_of_pos hr]
+    rw [div_lt_iff₀ hr]
+    simpa [r] using hx
+  have hrad :=
+    compactCosineD1_radial_neg_of_quantitative_quartic_margin
+      hP hPc
+      (m:=4*W.targetStrength)
+      (by nlinarith [W.targetStrength_pos])
+      (quarticFourSignedPoleCombinedProfile_second_zero
+        W.Rpos W.J2Half W.J2Two)
+      (by
+        rw [quarticFourSignedPoleCombinedProfile_fourth W.Rpos])
+      q hq0
+      (by
+        simpa [QuarticFourSignedPolePair.quantitativeTargetRadius, P]
+          using hq)
+  rw [W.signedOrdinateTestDeriv_eq_combinedD1 ht]
+  dsimp [q, r, P] at hrad ⊢
+  have hr3 : 0 < r^3 := by positivity
+  have hscale :
+      x-t = r * ((x-t)/r) := by
+    field_simp [hr.ne']
+  rw [hscale]
+  have hfac : 0 < r * (1/r^3) := by positivity
+  nlinarith
+
 end Synthesis

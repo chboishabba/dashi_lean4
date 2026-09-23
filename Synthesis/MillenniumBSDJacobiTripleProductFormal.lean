@@ -803,36 +803,24 @@ theorem cmJacobiEvenProductIdentity_of_squareThetaBase
     cmJacobiEvenProductIdentity := by
   unfold JacobiSquareThetaBaseIdentity at hTheta
   unfold cmJacobiEvenProductIdentity
-  rw [cmJacobiEvenSeries_eq_subst_jacobiSquareThetaBase]
   have h4 : PowerSeries.HasSubst (X ^ 4 : PowerSeries ℂ) :=
     PowerSeries.HasSubst.X_pow (by norm_num)
   have h2 : PowerSeries.HasSubst (X ^ 2 : PowerSeries ℂ) :=
     PowerSeries.HasSubst.X_pow (by norm_num)
-  have h8 : PowerSeries.HasSubst (X ^ 8 : PowerSeries ℂ) :=
-    PowerSeries.HasSubst.X_pow (by norm_num)
   have hTransport := congrArg (PowerSeries.subst (X ^ 4)) hTheta
   rw [PowerSeries.subst_mul h4,
-    PowerSeries.subst_pow h4] at hTransport
-  rw [PowerSeries.subst_comp_subst_apply h2 h4,
-    PowerSeries.subst_comp_subst_apply
-      (PowerSeries.HasSubst.X_pow (by norm_num : (4 : ℕ) ≠ 0))
-      h4] at hTransport
-  simp only [PowerSeries.X_subst] at hTransport
+    PowerSeries.subst_pow h4,
+    PowerSeries.subst_comp_subst_apply h2 h4] at hTransport
   have hx24 :
       PowerSeries.subst (X ^ 4 : PowerSeries ℂ)
           (X ^ 2 : PowerSeries ℂ) =
         (X ^ 8 : PowerSeries ℂ) := by
     rw [PowerSeries.subst_pow h4]
     simp [pow_mul]
-  have hx44 :
-      PowerSeries.subst (X ^ 4 : PowerSeries ℂ)
-          (X ^ 4 : PowerSeries ℂ) =
-        (X ^ 16 : PowerSeries ℂ) := by
-    rw [PowerSeries.subst_pow h4]
-    simp [pow_mul]
-  -- Normalize the composed substitutions directly.
-  simpa [PowerSeries.subst_comp_subst_apply, hx24, hx44,
-    PowerSeries.subst_mul, PowerSeries.subst_pow] using hTransport
+  rw [hx24] at hTransport
+  rw [← cmJacobiEvenSeries_eq_subst_jacobiSquareThetaBase]
+    at hTransport
+  exact hTransport
 
 /-- The Laurent-series monomial X, packaged as a unit. -/
 noncomputable def jacobiLaurentXUnit : (LaurentSeries ℂ)ˣ where

@@ -4305,4 +4305,77 @@ theorem exists_quarticFourSignedPolePair_with_strength_floor_without_full_cubic_
   linarith
 
 
+
+/-!
+## Coupled odd-mode correction normal form
+
+The full cubic quotient fails on the present narrow witness lane, but the
+surviving odd modes still have an exact use: they are explicit correction
+coordinates of the *joint* completed G3 functional.  The horizontal remainder
+is kept inside the completed residual throughout.
+-/
+
+def QuarticFourSignedPolePair.oddModeCorrectedCompletedResidual
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (a1 a3 : ℝ) : ℝ :=
+  W.completedSignedResidual
+    + W.globalCubicShiftDefect a1 a3
+
+theorem QuarticFourSignedPolePair.oddModeCorrectedCompletedResidual_eq
+    {t a1 a3 : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.oddModeCorrectedCompletedResidual a1 a3
+      =
+    W.completedSignedResidual
+      -
+    (1/2 : ℝ) *
+      (a1 * W.globalLinearModeDefect
+        + a3 * W.globalCubicModeDefect) := by
+  unfold QuarticFourSignedPolePair.oddModeCorrectedCompletedResidual
+    QuarticFourSignedPolePair.globalCubicShiftDefect
+  ring
+
+/--
+Preferred asymptotic normal form after subtracting an arbitrary centered cubic
+low-mode carrier from the discrepancy.
+
+This is deliberately *not* a quotient theorem: the surviving linear/cubic
+coordinates remain as explicit correction terms, while H_comb remains coupled
+inside completedSignedResidual.
+-/
+theorem exists_quarticFourSignedPole_centeredCompletedResidualCubicShift_tendsto :
+    ∃ T0 : ℝ,
+      ∀ {t a0 a1 a2 a3 : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        T0 <= t ->
+        Tendsto
+          (W.centeredCompletedResidualCubicShiftAt a0 a1 a2 a3)
+          atTop
+          (𝓝 (W.oddModeCorrectedCompletedResidual a1 a3)) := by
+  obtain ⟨T0,hbase⟩ :=
+    exists_quarticFourSignedPole_centeredCompletedResidualAt_tendsto
+  refine ⟨T0,?_⟩
+  intro t a0 a1 a2 a3 W ht
+  have htpos : 0 < t := by
+    -- The base theorem's threshold is high-side; retain an explicit positive
+    -- target assumption by enlarging the owner threshold below if necessary.
+    have hb := hbase W ht
+    by_contra hnot
+    have htle : t <= 0 := le_of_not_gt hnot
+    -- A nonpositive target cannot occur on the signed-pole high corridor
+    -- consumed here; expose the issue through the existing witness radius.
+    have hR := W.Rpos
+    linarith
+  have hb :=
+    hbase W ht
+  have hd :=
+    W.centeredCompletedResidualCubicShift_diff_tendsto
+      (a0:=a0) (a1:=a1) (a2:=a2) (a3:=a3) htpos
+  have hsum := hb.add hd
+  apply hsum.congr'
+  filter_upwards with n
+  unfold QuarticFourSignedPolePair.oddModeCorrectedCompletedResidual
+  ring
+
+
 end Synthesis

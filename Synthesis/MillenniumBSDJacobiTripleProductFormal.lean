@@ -856,27 +856,39 @@ noncomputable def jacobiDiagonalCoeffMap
       jacobiDiagonalCoeffHom (F.coeff N) := by
   simp [jacobiDiagonalCoeffMap]
 
-/-- J0→J2 compiler: the diagonal specialization q↦q², z↦-q gives the
-alternating square theta product, then q↦X^4 gives the eta32 even factor. -/
-def JacobiSquareThetaSpecializationCompiler : Prop :=
-  JacobiTripleProductFormal → cmJacobiEvenProductIdentity
+/-- Remaining J0→J2 mathematical owner, stripped of all level-32
+transport: diagonal specialization q↦q², z↦-q yields the standard theta4
+base identity. -/
+def JacobiSquareThetaBaseSpecializationCompiler : Prop :=
+  JacobiTripleProductFormal → JacobiSquareThetaBaseIdentity
 
-/-- Complete q-series producer after paying J1 internally.  The external
-q-series boundary is now only J0 plus the J2 square-theta specialization. -/
+/-- The former level-32 J2 compiler is now internally compiled from the base
+theta4 specialization. -/
+theorem jacobiSquareThetaSpecializationCompiler_paid_of_base
+    (hBase : JacobiSquareThetaBaseSpecializationCompiler) :
+    JacobiTripleProductFormal → cmJacobiEvenProductIdentity := by
+  intro hJ
+  exact cmJacobiEvenProductIdentity_of_squareThetaBase (hBase hJ)
+
+/-- Complete q-series producer after paying J1 and the J2 level transport
+internally.  Its only classical q-series inputs are J0 itself and the
+standard theta4 diagonal specialization of J0. -/
 def JacobiEta32FromTripleProductProducer : Prop :=
   JacobiTripleProductFormal ∧
-    JacobiSquareThetaSpecializationCompiler
+    JacobiSquareThetaBaseSpecializationCompiler
 
 theorem jacobiEta32Products_of_tripleProductProducer
     (h : JacobiEta32FromTripleProductProducer) :
     cmJacobiOddProductIdentity ∧ cmJacobiEvenProductIdentity := by
-  rcases h with ⟨hJTP, hTheta⟩
-  exact ⟨jacobiCubeSpecializationCompiler_paid hJTP, hTheta hJTP⟩
+  rcases h with ⟨hJTP, hThetaBase⟩
+  exact ⟨jacobiCubeSpecializationCompiler_paid hJTP,
+    cmJacobiEvenProductIdentity_of_squareThetaBase (hThetaBase hJTP)⟩
 
 /-- Machine-readable J0/J1/J2 boundary. formalCarrierPaid records that the
 correct Laurent/power-series same-object carrier is now implemented; the
-actual triple-product proof and its two specialization compilers remain
-mathematical obligations. -/
+actual triple-product proof and the base theta4 diagonal specialization remain
+mathematical obligations; the cube specialization and level-32 theta transport
+are paid internally. -/
 structure JacobiTripleProductBoundaryStatus where
   formalCarrierPaid : Bool
   tripleProductPaid : Bool

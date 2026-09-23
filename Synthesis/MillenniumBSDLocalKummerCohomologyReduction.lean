@@ -314,6 +314,30 @@ structure PadicEllipticKummerExactness
           ((padicCompatibleTwoTorsionH1MulEquivSquareClassPair p h).symm c).toAdd =
             0
 
+/-- Weaker finite-place theorem actually needed for Selmer localization:
+classes coming from the explicit local Kummer image vanish after
+E[2] -> E(Qbar).  The reverse kernel implication belongs to the later
+exact-kernel lane, not to localization-zero. -/
+structure PadicEllipticKummerImageVanishing
+    (p : ℕ) [Fact p.Prime]
+    (h : PadicQuadraticKummerCompatibility p) where
+  image_maps_to_zero :
+    ∀ c : PadicSquareClass p × PadicSquareClass p,
+      c ∈ localKummerImageSubgroup p →
+        padicGenericE2H1ToEllipticPointH1 p
+          ((padicCompatibleTwoTorsionH1MulEquivSquareClassPair p h).symm c).toAdd =
+            0
+
+/-- Full local Kummer exactness implies the weaker localization theorem. -/
+noncomputable def padicEllipticKummerImageVanishing_of_exactness
+    (p : ℕ) [Fact p.Prime]
+    (hCompat : PadicQuadraticKummerCompatibility p)
+    (hExact : PadicEllipticKummerExactness p hCompat) :
+    PadicEllipticKummerImageVanishing p hCompat where
+  image_maps_to_zero c hc :=
+    (hExact.kernel_iff_explicitKummerImage c).1 hc
+
+
 /-- Immediate local-exactness consequence consumed by the global Selmer
 localization compiler. -/
 theorem padicLocalKummerImage_maps_to_zero
@@ -326,6 +350,19 @@ theorem padicLocalKummerImage_maps_to_zero
       ((padicCompatibleTwoTorsionH1MulEquivSquareClassPair p hCompat).symm c).toAdd =
         0 :=
   (hExact.kernel_iff_explicitKummerImage c).1 hc
+
+/-- Same consequence from the weaker image-vanishing boundary. -/
+theorem padicLocalKummerImage_maps_to_zero_of_imageVanishing
+    (p : ℕ) [Fact p.Prime]
+    (hCompat : PadicQuadraticKummerCompatibility p)
+    (hVan : PadicEllipticKummerImageVanishing p hCompat)
+    (c : PadicSquareClass p × PadicSquareClass p)
+    (hc : c ∈ localKummerImageSubgroup p) :
+    padicGenericE2H1ToEllipticPointH1 p
+      ((padicCompatibleTwoTorsionH1MulEquivSquareClassPair p hCompat).symm c).toAdd =
+        0 :=
+  hVan.image_maps_to_zero c hc
+
 
 /-- A global generic E[2] H¹ class whose literal square-class localization
 lies in the explicit local Kummer image maps to zero under the local
@@ -412,6 +449,52 @@ theorem padicRestrictedGenericH1_maps_to_zero_of_localCondition_paid
       (padicAbsoluteGaloisRestriction p))
     hExact x hLocal
 
+
+/-- Finite-place Selmer-local-condition compiler using only image-vanishing,
+not the reverse local Kummer exactness implication. -/
+theorem padicRestrictedGenericH1_maps_to_zero_of_localCondition_imageVanishing
+    (p : ℕ) [Fact p.Prime]
+    (hCompat : PadicQuadraticKummerCompatibility p)
+    (hVan : PadicEllipticKummerImageVanishing p hCompat)
+    (x :
+      ContinuousCohomology.continuousCohomology 1
+        (genericTwoTorsionRepresentation RationalAbsoluteGalois))
+    (hLocal :
+      localizeKummerPairHom p
+        (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+          (Multiplicative.ofAdd x))
+        ∈ localKummerImageSubgroup p) :
+    padicGenericE2H1ToEllipticPointH1 p
+      (genericTwoTorsionH1Restrict
+        (G := RationalAbsoluteGalois)
+        (padicAbsoluteGaloisRestriction p) x) = 0 := by
+  have hSq :=
+    padicH1SquareClassNaturality_paid p hCompat x
+  let e :=
+    padicCompatibleTwoTorsionH1MulEquivSquareClassPair p hCompat
+  have hMul :
+      Multiplicative.ofAdd
+          (genericTwoTorsionH1Restrict
+            (G := RationalAbsoluteGalois)
+            (padicAbsoluteGaloisRestriction p) x)
+        =
+      e.symm
+        (localizeKummerPairHom p
+          (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+            (Multiplicative.ofAdd x))) := by
+    apply e.injective
+    simpa [e] using hSq
+  have hAdd := congrArg Multiplicative.toAdd hMul
+  have hZero :=
+    padicLocalKummerImage_maps_to_zero_of_imageVanishing
+      p hCompat hVan
+      (localizeKummerPairHom p
+        (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+          (Multiplicative.ofAdd x)))
+      hLocal
+  rw [hAdd]
+  exact hZero
+
 /-- Generic global H¹ class represented by an explicit Selmer square-class
 pair. -/
 noncomputable def explicitSelmerToGenericTwoTorsionH1
@@ -481,6 +564,31 @@ theorem explicitSelmer_finite_localizations_vanish_paid
   letI : Fact p.1.Prime := ⟨p.2⟩
   apply padicRestrictedGenericH1_maps_to_zero_of_localCondition_paid
     p.1 (hCompat p) (hExact p)
+  simpa [explicitSelmerToGenericTwoTorsionH1_squareClass] using s.2.2 p
+
+
+/-- All finite explicit Selmer conditions vanish in local elliptic H¹ from
+the weaker image-vanishing theorem at each prime. -/
+theorem explicitSelmer_finite_localizations_vanish_imageVanishing
+    (hCompat :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicQuadraticKummerCompatibility p.1)
+    (hVan :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicEllipticKummerImageVanishing p.1 (hCompat p))
+    (s : explicitTwoSelmerSubgroup)
+    (p : Nat.Primes) :
+    letI : Fact p.1.Prime := ⟨p.2⟩
+    padicGenericE2H1ToEllipticPointH1 p.1
+      (genericTwoTorsionH1Restrict
+        (G := RationalAbsoluteGalois)
+        (padicAbsoluteGaloisRestriction p.1)
+        (explicitSelmerToGenericTwoTorsionH1 s)) = 0 := by
+  letI : Fact p.1.Prime := ⟨p.2⟩
+  apply padicRestrictedGenericH1_maps_to_zero_of_localCondition_imageVanishing
+    p.1 (hCompat p) (hVan p)
   simpa [explicitSelmerToGenericTwoTorsionH1_squareClass] using s.2.2 p
 
 /-- Machine-readable local frontier: the continuous H¹ normalization and

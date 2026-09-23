@@ -21,7 +21,8 @@ With indexing n = 0,1,2,... the factor is
 
 and the bilateral series is
 
-  Σ_{k∈Z} z^k q^(k(k-1)/2).
+  Σ_{k∈Z} z^k q^(k(k-1)/2), represented coefficientwise by pairing
+  k=r+1 with k=-r.
 
 The remaining J0 mathematics is to prove this formal identity. The eta32
 cube identity is obtained by the standard z-derivative at z=-1; the square
@@ -38,17 +39,18 @@ open scoped LaurentPolynomial PowerSeries.WithPiTopology
 abbrev JacobiLaurentCoeff := LaurentPolynomial ℂ
 abbrev JacobiBivariateFormal := PowerSeries JacobiLaurentCoeff
 
-/-- The integer triangular exponent k(k-1)/2, known to be nonnegative. -/
-def jacobiTriangularInt (k : ℤ) : ℕ :=
-  Int.natAbs (k * (k - 1) / 2)
+/-- Natural triangular exponent r(r+1)/2. -/
+def jacobiTriangularNat (r : ℕ) : ℕ :=
+  r * (r + 1) / 2
 
-/-- A finite coefficient formula for the bilateral Jacobi series. Any
-solution of k(k-1)/2=N lies in [-N-1,N+1], so this interval contains every
-contributor. -/
+/-- Finite coefficient formula for the bilateral Jacobi series, already
+paired under the canonical integer decomposition k=r+1 or k=-r.  Thus the
+coefficient at q^(r(r+1)/2) contains z^(r+1)+z^(-r). -/
 noncomputable def jacobiTripleCoefficient (N : ℕ) : JacobiLaurentCoeff :=
-  ∑ k ∈ Finset.Icc (-(N : ℤ) - 1) ((N : ℤ) + 1),
-    if jacobiTriangularInt k = N then
-      LaurentPolynomial.T k
+  ∑ r ∈ Finset.range (N + 1),
+    if jacobiTriangularNat r = N then
+      LaurentPolynomial.T ((r + 1 : ℕ) : ℤ) +
+        LaurentPolynomial.T (-(r : ℤ))
     else 0
 
 /-- The bilateral side as a formal q-series with Laurent-polynomial

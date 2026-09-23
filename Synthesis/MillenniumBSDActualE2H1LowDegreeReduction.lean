@@ -1,5 +1,6 @@
 import Synthesis.MillenniumBSDActualE2H1SameObject
 import Synthesis.MillenniumBSDQuadraticKummerPair
+import Synthesis.MillenniumBSDTrivialTwoTorsionH1Generic
 import Mathlib.RepresentationTheory.Homological.ContCohomology.LowDegree
 import Mathlib.Topology.CompactOpen
 import Mathlib.Algebra.Group.Equiv.TypeTags
@@ -448,6 +449,61 @@ noncomputable theorem rationalQuadraticContinuousKummerProducer_paid :
   exact cmTrivialE2H1ContinuousHomEquiv.trans
     (cmTwoTorsionContinuousCharacterEquivPair.trans
       quadraticCharacterPairEquivRatSquareClasses)
+
+/-- The specialized and generic low-degree normalizations agree at the
+literal two-torsion character level.  Both are the canonical homogeneous
+one-cocycle normalization σ ↦ (g ↦ σ(1,g)). -/
+theorem cmGenericTrivialE2H1Character_coherence
+    (x : continuousCohomology 1 cmTwoTorsionRepresentation) :
+    cmTrivialE2H1ContinuousHomMulEquiv (Multiplicative.ofAdd x)
+      =
+    genericTrivialTwoTorsionH1CharacterMulEquiv RationalAbsoluteGalois
+      (Multiplicative.ofAdd x) := by
+  apply ContinuousMonoidHom.ext
+  intro g
+  apply Multiplicative.toAdd_injective
+  rfl
+
+/-- The specialized and generic decompositions of a two-torsion-valued
+character into its two scalar quadratic characters are the same. -/
+theorem cmGenericTwoTorsionCharacterPair_coherence
+    (χ : CMTwoTorsionContinuousCharacter) :
+    cmTwoTorsionContinuousCharacterMulEquivPair χ
+      =
+    genericTwoTorsionCharacterMulEquivPair RationalAbsoluteGalois χ := by
+  apply Prod.ext
+  · apply ContinuousMonoidHom.ext
+    intro g
+    apply Multiplicative.toAdd_injective
+    rfl
+  · apply ContinuousMonoidHom.ext
+    intro g
+    apply Multiplicative.toAdd_injective
+    rfl
+
+/-- Consequently the specialized and field-generic rational H¹-to-square-
+class comparisons agree pointwise. -/
+theorem cmGenericTrivialE2H1SquareClass_coherence
+    (x : continuousCohomology 1 cmTwoTorsionRepresentation) :
+    (cmTrivialE2H1ContinuousHomMulEquiv.trans
+      (cmTwoTorsionContinuousCharacterMulEquivPair.trans
+        quadraticCharacterPairMulEquivRatSquareClasses))
+      (Multiplicative.ofAdd x)
+      =
+    ((absoluteGaloisTrivialTwoTorsionH1QuadraticPairMulEquiv ℚ).trans
+      quadraticCharacterPairMulEquivRatSquareClasses)
+      (Multiplicative.ofAdd x) := by
+  change
+    quadraticCharacterPairMulEquivRatSquareClasses
+      (cmTwoTorsionContinuousCharacterMulEquivPair
+        (cmTrivialE2H1ContinuousHomMulEquiv (Multiplicative.ofAdd x)))
+      =
+    quadraticCharacterPairMulEquivRatSquareClasses
+      (genericTwoTorsionCharacterMulEquivPair RationalAbsoluteGalois
+        (genericTrivialTwoTorsionH1CharacterMulEquiv RationalAbsoluteGalois
+          (Multiplicative.ofAdd x)))
+  rw [cmGenericTrivialE2H1Character_coherence x,
+    cmGenericTwoTorsionCharacterPair_coherence]
 
 /-- The actual geometric E[2] H¹ comparison with the literal square-class
 pair, retaining the full group law. -/

@@ -349,6 +349,32 @@ theorem trivialE2H1ContinuousHomProducer_paid :
   ⟨cmTrivialE2H1ContinuousHomEquiv⟩
 
 
+/-- The older pair-of-quadratic-characters boundary is now paid. -/
+noncomputable theorem trivialE2H1QuadraticCharacterPairProducer_paid :
+    Nonempty
+      ((continuousCohomology 1 cmTwoTorsionRepresentation) ≃
+        (RationalQuadraticCharacter × RationalQuadraticCharacter)) :=
+  trivialE2H1QuadraticCharacterPairProducer_of_continuousHom
+    trivialE2H1ContinuousHomProducer_paid
+
+/-- The global rational quadratic continuous Kummer boundary is therefore
+paid by composing the continuous H¹ theorem with the already-paid scalar
+quadratic Kummer equivalence. -/
+noncomputable theorem rationalQuadraticContinuousKummerProducer_paid :
+    RationalQuadraticContinuousKummerProducer := by
+  refine ⟨?_⟩
+  exact cmTrivialE2H1ContinuousHomEquiv.trans
+    (cmTwoTorsionContinuousCharacterEquivPair.trans
+      quadraticCharacterPairEquivRatSquareClasses)
+
+/-- The actual geometric E[2] H¹ is now identified with the literal
+square-class pair used by the explicit descent lane. -/
+noncomputable def cmActualE2H1EquivRatSquareClasses_paid :
+    (continuousCohomology 1 cmActualE2Representation) ≃
+      (RatSquareClass × RatSquareClass) :=
+  cmActualE2H1EquivRatSquareClasses
+    rationalQuadraticContinuousKummerProducer_paid
+
 /-- The canonical low-degree theorem immediately supplies the older
 pair-of-quadratic-characters boundary. -/
 noncomputable theorem trivialE2H1QuadraticCharacterPairProducer_of_continuousHom

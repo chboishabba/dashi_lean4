@@ -41,16 +41,12 @@ def SplitPrimeAbsoluteCoordinateUniqueness : Prop :=
       (b = 2 * (s : ℤ) ∨ b = -(2 * (s : ℤ)))
 
 private theorem even_prime_multiple_eq_zero_of_sq_le
-    {p : ℕ} (hp : p.Prime) {x : ℤ}
+    {p : ℕ} (hp : p.Prime) (hpOddNat : Odd p) {x : ℤ}
     (hxEven : Even x)
     (hdvd : (p : ℤ) ∣ x)
     (hbound : x ^ 2 ≤ (p : ℤ) ^ 2) :
     x = 0 := by
   rcases hdvd with ⟨k, rfl⟩
-  have hpOddNat : Odd p := hp.eq_two_or_odd.resolve_left (by
-    intro h
-    subst p
-    norm_num at hp)
   have hpOdd : Odd (p : ℤ) := hpOddNat.natCast
   have hkEven : Even k := by
     rw [Int.even_mul] at hxEven
@@ -88,6 +84,15 @@ theorem splitPrimeAbsoluteCoordinateUniqueness_paid :
     nlinarith [hrep]
   have hrepZ : (p : ℤ) = (A : ℤ) ^ 2 + (B : ℤ) ^ 2 := by
     exact_mod_cast hrepAB
+  have hpOddNat : Odd p := by
+    rw [hrepAB]
+    have hAoddNat : Odd A := by
+      dsimp [A]
+      exact odd_two_mul_add_one r
+    have hBevenNat : Even B := by
+      dsimp [B]
+      exact even_two_mul s
+    exact hAoddNat.pow.add_even (hBevenNat.pow_of_ne_zero (by norm_num))
   have hAodd : Odd (A : ℤ) := by
     refine ⟨(r : ℤ), ?_⟩
     dsimp [A]
@@ -150,9 +155,9 @@ theorem splitPrimeAbsoluteCoordinateUniqueness_paid :
   have hfactor : xm = 0 ∨ xp = 0 := by
     rcases hdvd with hm | hp'
     · exact Or.inl
-        (even_prime_multiple_eq_zero_of_sq_le hp hxmEven hm hxmBound)
+        (even_prime_multiple_eq_zero_of_sq_le hp hpOddNat hxmEven hm hxmBound)
     · exact Or.inr
-        (even_prime_multiple_eq_zero_of_sq_le hp hxpEven hp' hxpBound)
+        (even_prime_multiple_eq_zero_of_sq_le hp hpOddNat hxpEven hp' hxpBound)
   have hcrossSq :
       a ^ 2 * (B : ℤ) ^ 2 = (A : ℤ) ^ 2 * b ^ 2 := by
     rcases hfactor with hm | hp'

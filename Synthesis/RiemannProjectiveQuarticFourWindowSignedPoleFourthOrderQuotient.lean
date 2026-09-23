@@ -1,4 +1,5 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleAbel
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 
 /-!
 # Low-mode quotient diagnostics for the exact signed four-window G3 consumer
@@ -1135,5 +1136,195 @@ theorem QuarticFourSignedPolePair.linearBoundary_tendsto_zero
         field_simp [ne_of_gt hnpos]
         nlinarith [sq_nonneg ((n : ℝ)^2 - 1)]
   exact tendsto_zero_of_eventually_abs_le_const_div_nat hK hstrong
+
+
+/--
+Uniform L1 bound for a compact cosine transform.
+-/
+theorem compactCosineTransform_abs_le_taperMass
+    {P : ℝ -> ℝ}
+    (hP : Continuous P)
+    (hPc : HasCompactSupport P)
+    (q : ℝ) :
+    |compactCosineTransform P q|
+      <= Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass P := by
+  unfold compactCosineTransform
+    Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass
+  have hi :
+      Integrable
+        (fun u : ℝ => P u * Real.cos (q*u)) :=
+    (hP.mul (by fun_prop)).integrable_of_hasCompactSupport hPc.mul_right
+  have hiabs :
+      Integrable (fun u : ℝ => |P u|) :=
+    hP.abs.integrable_of_hasCompactSupport hPc.abs
+  calc
+    |∫ u : ℝ, P u * Real.cos (q*u)|
+      <= ∫ u : ℝ, |P u * Real.cos (q*u)| :=
+        abs_integral_le_integral_abs
+    _ <= ∫ u : ℝ, |P u| := by
+      apply integral_mono hi.abs hiabs
+      intro u
+      rw [abs_mul]
+      exact mul_le_of_le_one_right
+        (abs_nonneg _) (Real.abs_cos_le_one _)
+
+/--
+A global, non-decaying bound for the actual physical signed test.
+-/
+theorem QuarticFourSignedPolePair.signedOrdinateTest_abs_le_global
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (x : ℝ) :
+    |W.signedOrdinateTest x|
+      <=
+    (1/(t/16)^2)
+      *
+    Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t) := by
+  have hP :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hC :=
+    compactCosineTransform_abs_le_taperMass
+      hP hPc ((x-t)/(t/16))
+  rw [W.signedOrdinateTest_eq_combinedCosine]
+  dsimp
+  rw [abs_mul, abs_of_pos (by positivity : 0 < 1/(t/16)^2)]
+  exact mul_le_mul_of_nonneg_left hC (by positivity)
+
+/--
+The weighted global Psi moment needed by the cubic quotient obstruction is
+absolutely integrable.
+
+The bounded middle is controlled by the transform L1 bound; the far tail uses
+the C4 inverse-fourth decay.  Both pieces are dominated by one translated
+Cauchy kernel C/(1+(x-t)^2).
+-/
+theorem QuarticFourSignedPolePair.signedOrdinateTest_mul_centeredSq_integrable
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Integrable
+      (fun x : ℝ =>
+        W.signedOrdinateTest x * (x-t)^2) := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  let A : ℝ :=
+    (t/16)^2 * compactCosineFourthDecayCurvature P
+  let B : ℝ :=
+    (1/(t/16)^2)
+      * Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass P
+  let C : ℝ := 2 * (A + B)
+  have hA : 0 <= A := by
+    dsimp [A,P]
+    have hcurv :=
+      compactCosineFourthDecayCurvature_nonneg
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+    positivity
+  have hB : 0 <= B := by
+    dsimp [B,P]
+    have hm :=
+      Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass_nonneg
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+    positivity
+  have hC : 0 <= C := by
+    dsimp [C]
+    positivity
+  have hbase :
+      Integrable (fun y : ℝ => (1 + y^2)⁻¹) :=
+    integrable_inv_one_add_sq
+  have hshift :
+      Integrable (fun x : ℝ => (1 + (x-t)^2)⁻¹) := by
+    simpa using Integrable.comp_sub_right hbase t
+  have hmajor :
+      Integrable
+        (fun x : ℝ => C * (1 + (x-t)^2)⁻¹) :=
+    hshift.const_mul C
+  have htargetC :
+      Continuous
+        (fun x : ℝ =>
+          W.signedOrdinateTest x * (x-t)^2) := by
+    have hPsi : Continuous W.signedOrdinateTest :=
+      continuous_of_forall_continuousAt fun x =>
+        (W.signedOrdinateTest_hasDerivAt ht x).continuousAt
+    fun_prop
+  refine Integrable.mono' hmajor
+    htargetC.aestronglyMeasurable
+    (ae_of_all _ fun x => ?_)
+  let y : ℝ := x-t
+  have hden : 0 < 1 + y^2 := by positivity
+  have hmajorAbs :
+      |C * (1 + y^2)⁻¹|
+        = C / (1 + y^2) := by
+    rw [abs_mul, abs_of_nonneg hC, abs_inv,
+        abs_of_pos hden]
+    rfl
+  rw [Real.norm_eq_abs, Real.norm_eq_abs,
+      abs_mul, abs_pow, abs_of_nonneg (sq_nonneg y),
+      show x-t = y by rfl, hmajorAbs]
+  by_cases hy : y^2 <= 1
+  · have hPsi :
+        |W.signedOrdinateTest x| <= B := by
+      dsimp [B,P]
+      exact W.signedOrdinateTest_abs_le_global ht x
+    have hz : 0 <= y^2 := sq_nonneg y
+    have hshape : y^2 * (1 + y^2) <= 2 := by
+      have hzprod :
+          0 <= (1-y^2) * y^2 :=
+        mul_nonneg (sub_nonneg.mpr hy) hz
+      nlinarith
+    have hlocal :
+        |W.signedOrdinateTest x| * y^2 * (1+y^2)
+          <= C := by
+      have h1 :=
+        mul_le_mul_of_nonneg_right hPsi hz
+      have h2 :
+          |W.signedOrdinateTest x| * y^2 * (1+y^2)
+            <= B * (y^2 * (1+y^2)) := by
+        nlinarith [h1, abs_nonneg (W.signedOrdinateTest x)]
+      have h3 :
+          B * (y^2 * (1+y^2)) <= 2*B :=
+        mul_le_mul_of_nonneg_left hshape hB
+      dsimp [C]
+      nlinarith
+    exact (le_div_iff₀ hden).2 (by simpa [mul_assoc] using hlocal)
+  · have hy' : 1 < y^2 := lt_of_not_ge hy
+    have hyne : y ≠ 0 := by
+      intro hz
+      subst y
+      norm_num at hy'
+    have hPsi :
+        |W.signedOrdinateTest x| <= A / y^4 := by
+      dsimp [A,P]
+      simpa [y] using
+        W.signedOrdinateTest_abs_le_gap_four ht
+          (sub_ne_zero.mp hyne)
+    have hweighted :
+        |W.signedOrdinateTest x| * y^2
+          <= A / y^2 := by
+      have hm :=
+        mul_le_mul_of_nonneg_right hPsi (sq_nonneg y)
+      calc
+        |W.signedOrdinateTest x| * y^2
+          <= (A / y^4) * y^2 := hm
+        _ = A / y^2 := by
+          field_simp [hyne]
+          ring
+    have hshape :
+        A * (1+y^2) <= C * y^2 := by
+      have htwo : 1 + y^2 <= 2*y^2 := by linarith
+      have h1 :=
+        mul_le_mul_of_nonneg_left htwo hA
+      dsimp [C]
+      nlinarith [mul_nonneg hB (sq_nonneg y)]
+    have hfar :
+        (A / y^2) <= C / (1+y^2) := by
+      rw [div_le_div_iff₀ (sq_pos_of_ne_zero hyne) hden]
+      simpa [mul_comm, mul_left_comm, mul_assoc] using hshape
+    exact hweighted.trans hfar
 
 end Synthesis

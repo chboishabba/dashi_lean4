@@ -4352,22 +4352,18 @@ theorem exists_quarticFourSignedPole_centeredCompletedResidualCubicShift_tendsto
           (W.centeredCompletedResidualCubicShiftAt a0 a1 a2 a3)
           atTop
           (𝓝 (W.oddModeCorrectedCompletedResidual a1 a3)) := by
-  obtain ⟨T0,hbase⟩ :=
+  obtain ⟨Tbase,hbase⟩ :=
     exists_quarticFourSignedPole_centeredCompletedResidualAt_tendsto
+  let T0 : ℝ := max 1 Tbase
   refine ⟨T0,?_⟩
   intro t a0 a1 a2 a3 W ht
-  have htpos : 0 < t := by
-    -- The base theorem's threshold is high-side; retain an explicit positive
-    -- target assumption by enlarging the owner threshold below if necessary.
-    have hb := hbase W ht
-    by_contra hnot
-    have htle : t <= 0 := le_of_not_gt hnot
-    -- A nonpositive target cannot occur on the signed-pole high corridor
-    -- consumed here; expose the issue through the existing witness radius.
-    have hR := W.Rpos
-    linarith
+  have h1 : 1 <= t :=
+    (le_max_left 1 Tbase).trans ht
+  have hbaseT : Tbase <= t :=
+    (le_max_right 1 Tbase).trans ht
+  have htpos : 0 < t := by linarith
   have hb :=
-    hbase W ht
+    hbase W hbaseT
   have hd :=
     W.centeredCompletedResidualCubicShift_diff_tendsto
       (a0:=a0) (a1:=a1) (a2:=a2) (a3:=a3) htpos
@@ -4376,6 +4372,5 @@ theorem exists_quarticFourSignedPole_centeredCompletedResidualCubicShift_tendsto
   filter_upwards with n
   unfold QuarticFourSignedPolePair.oddModeCorrectedCompletedResidual
   ring
-
 
 end Synthesis

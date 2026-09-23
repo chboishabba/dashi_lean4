@@ -1537,4 +1537,151 @@ theorem QuarticFourSignedPolePair.centeredModeDefectAt_three_tendsto_global
   unfold QuarticFourSignedPolePair.globalCubicModeDefect
   ring
 
+
+def QuarticFourSignedPolePair.centeredCompletedResidualCubicShiftAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (a0 a1 a2 a3 : ℝ)
+    (n : ℕ) : ℝ :=
+  W.centeredCompletedFunctionalAt n
+    (fun x =>
+      centeredZetaMuDiscrepancy t x
+        + centeredCubicLowMode t a0 a1 a2 a3 x)
+
+/--
+Exact finite shift formula on the actual G3 discrepancy carrier.
+-/
+theorem QuarticFourSignedPolePair.centeredCompletedResidualCubicShiftAt_eq
+    {t a0 a1 a2 a3 : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.centeredCompletedResidualCubicShiftAt a0 a1 a2 a3 n
+      =
+    W.centeredCompletedResidualAt n
+      -
+    (1/2 : ℝ) *
+      (a1 * W.centeredModeDefectAt n 1
+        + a3 * W.centeredModeDefectAt n 3) := by
+  unfold QuarticFourSignedPolePair.centeredCompletedResidualCubicShiftAt
+  have hE :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          W.signedOrdinateTestDeriv x
+            * centeredZetaMuDiscrepancy t x)
+        volume (t - (n : ℝ)) (t + (n : ℝ)) := by
+    exact W.centeredAbelIntegrand_intervalIntegrable ht
+  rw [W.centeredCompletedFunctionalAt_add_cubicLowMode
+      ht n (centeredZetaMuDiscrepancy t) hE]
+  rw [← W.centeredCompletedResidualAt_eq_generic ht n]
+
+def QuarticFourSignedPolePair.globalCubicShiftDefect
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (a1 a3 : ℝ) : ℝ :=
+  -(1/2 : ℝ) *
+    (a1 * W.globalLinearModeDefect
+      + a3 * W.globalCubicModeDefect)
+
+/--
+The finite cubic-shift defect converges to the exact linear combination of the
+two global odd-mode obstructions.
+-/
+theorem QuarticFourSignedPolePair.centeredCompletedResidualCubicShift_diff_tendsto
+    {t a0 a1 a2 a3 : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto
+      (fun n : ℕ =>
+        W.centeredCompletedResidualCubicShiftAt a0 a1 a2 a3 n
+          - W.centeredCompletedResidualAt n)
+      atTop
+      (𝓝 (W.globalCubicShiftDefect a1 a3)) := by
+  have h1 :=
+    W.centeredModeDefectAt_one_tendsto_global ht
+  have h3 :=
+    W.centeredModeDefectAt_three_tendsto_global ht
+  have hlin :
+      Tendsto
+        (fun n : ℕ =>
+          a1 * W.centeredModeDefectAt n 1
+            + a3 * W.centeredModeDefectAt n 3)
+        atTop
+        (𝓝 (a1 * W.globalLinearModeDefect
+          + a3 * W.globalCubicModeDefect)) :=
+    (tendsto_const_nhds.mul h1).add
+      (tendsto_const_nhds.mul h3)
+  have hscaled :
+      Tendsto
+        (fun n : ℕ =>
+          -(1/2 : ℝ) *
+            (a1 * W.centeredModeDefectAt n 1
+              + a3 * W.centeredModeDefectAt n 3))
+        atTop
+        (𝓝 (W.globalCubicShiftDefect a1 a3)) := by
+    unfold QuarticFourSignedPolePair.globalCubicShiftDefect
+    exact tendsto_const_nhds.mul hlin
+  apply hscaled.congr'
+  filter_upwards with n
+  rw [W.centeredCompletedResidualCubicShiftAt_eq ht]
+  ring
+
+def QuarticFourSignedPolePair.globalFullCubicQuotient
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : Prop :=
+  W.globalLinearModeDefect = 0
+    ∧ W.globalCubicModeDefect = 0
+
+/--
+If the two global odd defects vanish, every centered cubic discrepancy shift is
+asymptotically invisible to the complete finite G3 functional.
+-/
+theorem QuarticFourSignedPolePair.globalFullCubicQuotient_implies_shiftInvisible
+    {t a0 a1 a2 a3 : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hQ : W.globalFullCubicQuotient) :
+    Tendsto
+      (fun n : ℕ =>
+        W.centeredCompletedResidualCubicShiftAt a0 a1 a2 a3 n
+          - W.centeredCompletedResidualAt n)
+      atTop (𝓝 0) := by
+  have h :=
+    W.centeredCompletedResidualCubicShift_diff_tendsto
+      (a0:=a0) (a1:=a1) (a2:=a2) (a3:=a3) ht
+  unfold QuarticFourSignedPolePair.globalFullCubicQuotient at hQ
+  unfold QuarticFourSignedPolePair.globalCubicShiftDefect at h
+  rw [hQ.1,hQ.2] at h
+  simpa using h
+
+/--
+Conversely, asymptotic invisibility of the centered-linear and centered-cubic
+unit shifts forces the two global odd defects to vanish.
+-/
+theorem QuarticFourSignedPolePair.globalFullCubicQuotient_of_unitShiftInvisible
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (h1 :
+      Tendsto
+        (fun n : ℕ =>
+          W.centeredCompletedResidualCubicShiftAt 0 1 0 0 n
+            - W.centeredCompletedResidualAt n)
+        atTop (𝓝 0))
+    (h3 :
+      Tendsto
+        (fun n : ℕ =>
+          W.centeredCompletedResidualCubicShiftAt 0 0 0 1 n
+            - W.centeredCompletedResidualAt n)
+        atTop (𝓝 0)) :
+    W.globalFullCubicQuotient := by
+  have h1' :=
+    W.centeredCompletedResidualCubicShift_diff_tendsto
+      (a0:=0) (a1:=1) (a2:=0) (a3:=0) ht
+  have h3' :=
+    W.centeredCompletedResidualCubicShift_diff_tendsto
+      (a0:=0) (a1:=0) (a2:=0) (a3:=1) ht
+  have hu1 := tendsto_nhds_unique h1 h1'
+  have hu3 := tendsto_nhds_unique h3 h3'
+  unfold QuarticFourSignedPolePair.globalCubicShiftDefect at hu1 hu3
+  unfold QuarticFourSignedPolePair.globalFullCubicQuotient
+  constructor <;> nlinarith
+
 end Synthesis

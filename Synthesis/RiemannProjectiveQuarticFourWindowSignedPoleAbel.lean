@@ -2687,4 +2687,125 @@ theorem QuarticFourSignedPolePair.centeredWindowResidualAt_tendsto_signedNMuPair
   filter_upwards with n
   exact W.centeredWindowResidualAt_eq_zero_sub_mu ht n
 
+
+/-!
+## Preferred global centered-Abel consumer: symmetric combined exhaustion
+
+The terminal G3 theorem only consumes the sum of the left and right Abel
+correlations.  Individual improper limits are therefore a strictly stronger
+optional interface, not a prerequisite.
+-/
+
+def QuarticFourSignedPolePair.combinedCenteredAbelPartial
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  W.leftCenteredAbelPartial n + W.rightCenteredAbelPartial n
+
+theorem QuarticFourSignedPolePair.combinedCenteredAbelPartial_eq_boundaries_sub_residual
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.combinedCenteredAbelPartial n
+      =
+    W.leftCenteredBoundary n
+      + W.rightCenteredBoundary n
+      - W.centeredWindowResidualAt n := by
+  have h :=
+    W.centeredWindowResidualAt_eq ht n
+  unfold QuarticFourSignedPolePair.combinedCenteredAbelPartial
+  linarith
+
+/--
+Preferred global centered-Abel theorem.
+
+For every sufficiently high fixed target t, the symmetric finite Abel
+correlations converge to the exact negative global signed N-mu scalar:
+
+  L_n + R_n -> - <N-mu,Psi_t>.
+
+This closes the representation passage needed by G3 without separately
+constructing the two stronger one-sided improper limits.
+-/
+theorem exists_quarticFourSignedPole_combinedCenteredAbel_tendsto :
+    ∃ T0 : ℝ,
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        T0 <= t ->
+        Tendsto W.combinedCenteredAbelPartial atTop
+          (𝓝 (- W.signedNMuPair)) := by
+  obtain ⟨TL,hL⟩ :=
+    exists_quarticFourSignedPole_leftBoundary_tendsto_zero
+  obtain ⟨TR,hR⟩ :=
+    exists_quarticFourSignedPole_rightBoundary_tendsto_zero
+  let T0 : ℝ := max 1 (max TL TR)
+  refine ⟨T0,?_⟩
+  intro t W ht
+  have htpos : 0 < t := by
+    have h1 : 1 <= t :=
+      (le_max_left 1 (max TL TR)).trans ht
+    linarith
+  have htL : TL <= t :=
+    (le_trans (le_max_left TL TR)
+      (le_max_right 1 (max TL TR))).trans ht
+  have htR : TR <= t :=
+    (le_trans (le_max_right TL TR)
+      (le_max_right 1 (max TL TR))).trans ht
+  have hleft := hL W htL
+  have hright := hR W htR
+  have hres :=
+    W.centeredWindowResidualAt_tendsto_signedNMuPair htpos
+  have hlim :
+      Tendsto
+        (fun n : ℕ =>
+          W.leftCenteredBoundary n
+            + W.rightCenteredBoundary n
+            - W.centeredWindowResidualAt n)
+        atTop
+        (𝓝 (0 + 0 - W.signedNMuPair)) :=
+    (hleft.add hright).sub hres
+  have heq :
+      W.combinedCenteredAbelPartial
+        =
+      fun n =>
+        W.leftCenteredBoundary n
+          + W.rightCenteredBoundary n
+          - W.centeredWindowResidualAt n := by
+    funext n
+    exact W.combinedCenteredAbelPartial_eq_boundaries_sub_residual
+      htpos n
+  rw [heq]
+  simpa using hlim
+
+/--
+The literal G3 completed residual along the preferred symmetric finite
+centered-Abel exhaustion.
+-/
+def QuarticFourSignedPolePair.centeredCompletedResidualAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  -(1/2 : ℝ) * W.combinedCenteredAbelPartial n
+    + W.signedHorizontalRemainder
+
+/--
+The preferred finite centered G3 functional converges exactly to the already
+defined completed signed residual.
+-/
+theorem exists_quarticFourSignedPole_centeredCompletedResidualAt_tendsto :
+    ∃ T0 : ℝ,
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        T0 <= t ->
+        Tendsto W.centeredCompletedResidualAt atTop
+          (𝓝 W.completedSignedResidual) := by
+  obtain ⟨T0,hT0⟩ :=
+    exists_quarticFourSignedPole_combinedCenteredAbel_tendsto
+  refine ⟨T0,?_⟩
+  intro t W ht
+  have hAbel := hT0 W ht
+  have hlim :=
+    (tendsto_const_nhds.mul hAbel).add tendsto_const_nhds
+  unfold QuarticFourSignedPolePair.centeredCompletedResidualAt
+    QuarticFourSignedPolePair.completedSignedResidual
+  convert hlim using 1 <;> ring
+
 end Synthesis

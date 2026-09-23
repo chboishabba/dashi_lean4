@@ -5,6 +5,8 @@ on:
     paths:
       - 'Integration/JInvariantSheafDescent.lean'
       - 'Integration.lean'
+      - 'AgdaMirror/JInvariantSheafDescent.lean'
+      - 'AgdaMirror.lean'
       - '.github/workflows/j369-sheaf-descent.yml'
   pull_request:
     paths:
@@ -20,4 +22,6 @@ jobs:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
       - name: Check focused J/369 bridge
-        run: lake env lean Integration/JInvariantSheafDescent.lean
+        run: |
+          lake env lean Integration/JInvariantSheafDescent.lean
+          lake env lean AgdaMirror/JInvariantSheafDescent.lean

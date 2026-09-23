@@ -1,5 +1,7 @@
 import Synthesis.MillenniumBSDActualE2H1SameObject
 import Synthesis.MillenniumBSDQuadraticKummerPair
+import Mathlib.RepresentationTheory.Homological.ContCohomology.LowDegree
+import Mathlib.Topology.CompactOpen
 import Mathlib.Tactic
 
 /-!
@@ -21,9 +23,77 @@ for the single coefficient object `A = (C₂)^2`.
 
 namespace Synthesis.Millennium.BSD
 
+open CategoryTheory ContRepresentation
+open ContinuousCohomology TopRep
+
+/-- Literal kernel model for continuous homogeneous 1-cocycles. -/
+noncomputable abbrev CMTwoTorsionContinuousOneCocycle :=
+  ↧(((TopRep.homogeneousCochains cmTwoTorsionRepresentation).d 1 2).hom.ker)
+
+/-- Homogeneous 1-cocycle relation, extracted directly from the continuous
+cochain differential. -/
+theorem cmContinuousOneCocycle_relation
+    (σ : CMTwoTorsionContinuousOneCocycle)
+    (x y z : RationalAbsoluteGalois) :
+    σ.1.1 y z = σ.1.1 x z - σ.1.1 x y := by
+  have hσ := σ.2
+  simp only [LinearMap.mem_ker, ContinuousLinearMap.coe_coe,
+    Subtype.ext_iff, TopRep.homogeneousCochains.d_apply] at hσ
+  replace hσ :=
+    DFunLike.ext_iff.1
+      (DFunLike.ext_iff.1
+        (DFunLike.ext_iff.1 hσ x) y) z
+  simp only [Nat.reduceAdd, TopRep.d_succ, TopRep.d_zero,
+    ConcreteCategory.hom_ofHom, hom_sub,
+    ContIntertwiningMap.sub_apply, coind₁ι_toFun, coind₁Map_toFun,
+    ContinuousMap.const_apply, ContinuousMap.comp_apply,
+    ContinuousMap.coe_mk, ZeroMemClass.coe_zero] at hσ
+  simpa only [sub_eq_zero] using hσ
+
+/-- Homogeneous cochains are diagonally G-invariant; for the literal
+two-torsion representation the coefficient action disappears. -/
+theorem cmContinuousOneCocycle_leftInvariant
+    (σ : CMTwoTorsionContinuousOneCocycle)
+    (g x y : RationalAbsoluteGalois) :
+    σ.1.1 (g * x) (g * y) = σ.1.1 x y := by
+  have hσ := σ.1.2 g
+  replace hσ :=
+    DFunLike.ext_iff.1 (DFunLike.ext_iff.1 hσ (g * x)) (g * y)
+  simp only [coind₁_apply_apply, cmTwoTorsionRepresentation_action] at hσ
+  simpa [mul_assoc] using hσ.symm
+
+
 /-- Continuous characters with values in the literal two-torsion carrier. -/
 abbrev CMTwoTorsionContinuousCharacter :=
   RationalAbsoluteGalois →ₜ* Multiplicative CMTwoTorsionCarrier
+
+/-- Normalize a continuous homogeneous 1-cocycle at its first coordinate.
+The cocycle relation plus diagonal invariance makes this a continuous
+character. -/
+noncomputable def cmContinuousOneCocycleToCharacter
+    (σ : CMTwoTorsionContinuousOneCocycle) :
+    CMTwoTorsionContinuousCharacter where
+  toFun g := Multiplicative.ofAdd (σ.1.1 1 g)
+  map_one' := by
+    apply Multiplicative.toAdd_injective
+    change σ.1.1 1 1 = 0
+    have h := cmContinuousOneCocycle_relation σ 1 1 1
+    simpa using h
+  map_mul' g h := by
+    apply Multiplicative.toAdd_injective
+    change σ.1.1 1 (g * h) =
+      σ.1.1 1 g + σ.1.1 1 h
+    have hc := cmContinuousOneCocycle_relation σ 1 g (g * h)
+    have hi := cmContinuousOneCocycle_leftInvariant σ g 1 h
+    simp only [one_mul] at hi
+    rw [hi] at hc
+    have hr :
+        σ.1.1 1 (g * h) - σ.1.1 1 g =
+          σ.1.1 1 h := hc.symm
+    simpa [add_comm] using (sub_eq_iff_eq_add.mp hr)
+  continuous_toFun := by
+    exact (σ.1.1 1).continuous
+
 
 noncomputable def cmTwoTorsionCharacterFst
     (χ : CMTwoTorsionContinuousCharacter) :

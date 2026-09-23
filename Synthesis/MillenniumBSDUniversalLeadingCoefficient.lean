@@ -109,6 +109,12 @@ structure BSDUniversalEllipticPointRepresentationBinding where
   representation :
     RationalEllipticCurve → TopRep ℤ RationalAbsoluteGalois
 
+
+/-- Known-math object-binding producer for the actual full E(Qbar) Galois
+module, uniformly over all rational elliptic curves. -/
+def UniversalBSDEllipticPointRepresentationProducer : Prop :=
+  Nonempty BSDUniversalEllipticPointRepresentationBinding
+
 /-- The classical degree-one Sha carrier is then not arbitrary: it is the
 repo's literal global-to-local continuous-cohomology kernel for the supplied
 elliptic-point representation. -/
@@ -122,9 +128,17 @@ elliptic-point Galois representation.  No finiteness assumption occurs here. -/
 structure BSDUniversalShaCarrier where
   ellipticPoints : BSDUniversalEllipticPointRepresentationBinding
 
+
+/-- Once the universal elliptic-point representation is constructed, the
+classical Sha carrier is automatic. -/
+def BSDUniversalShaCarrier.ofEllipticPoints
+    (P : BSDUniversalEllipticPointRepresentationBinding) :
+    BSDUniversalShaCarrier :=
+  ⟨P⟩
+
 namespace BSDUniversalShaCarrier
 
-noncomputable abbrev Sha
+noncomputable def Sha
     (S : BSDUniversalShaCarrier)
     (E : RationalEllipticCurve) : Type :=
   S.ellipticPoints.Sha E

@@ -241,6 +241,95 @@ noncomputable def genericContinuousOneCocycleEquivCharacter :
   right_inv := genericContinuousOneCocycleToCharacter_leftInverse G
 
 /-- The cocycle/character equivalence retains the full group law. -/
+/-- Scalar continuous quadratic characters for an arbitrary acting group. -/
+abbrev GenericQuadraticCharacter :=
+  G →ₜ* RationalQuadraticSign
+
+noncomputable def genericTwoTorsionCharacterFst
+    (χ : GenericTwoTorsionContinuousCharacter G) :
+    GenericQuadraticCharacter G where
+  toFun g := Multiplicative.ofAdd (Multiplicative.toAdd (χ g)).1
+  map_one' := by
+    apply Multiplicative.toAdd_injective
+    have h := congrArg Multiplicative.toAdd χ.map_one
+    exact congrArg Prod.fst h
+  map_mul' g h := by
+    apply Multiplicative.toAdd_injective
+    have hm := congrArg Multiplicative.toAdd (χ.map_mul g h)
+    exact congrArg Prod.fst hm
+  continuous_toFun := by
+    change Continuous (fun g => (Multiplicative.toAdd (χ g)).1)
+    exact continuous_fst.comp χ.continuous_toFun
+
+noncomputable def genericTwoTorsionCharacterSnd
+    (χ : GenericTwoTorsionContinuousCharacter G) :
+    GenericQuadraticCharacter G where
+  toFun g := Multiplicative.ofAdd (Multiplicative.toAdd (χ g)).2
+  map_one' := by
+    apply Multiplicative.toAdd_injective
+    have h := congrArg Multiplicative.toAdd χ.map_one
+    exact congrArg Prod.snd h
+  map_mul' g h := by
+    apply Multiplicative.toAdd_injective
+    have hm := congrArg Multiplicative.toAdd (χ.map_mul g h)
+    exact congrArg Prod.snd hm
+  continuous_toFun := by
+    change Continuous (fun g => (Multiplicative.toAdd (χ g)).2)
+    exact continuous_snd.comp χ.continuous_toFun
+
+noncomputable def genericQuadraticCharacterPairToTwoTorsion
+    (χ : GenericQuadraticCharacter G × GenericQuadraticCharacter G) :
+    GenericTwoTorsionContinuousCharacter G where
+  toFun g :=
+    Multiplicative.ofAdd
+      (Multiplicative.toAdd (χ.1 g), Multiplicative.toAdd (χ.2 g))
+  map_one' := by
+    apply Multiplicative.toAdd_injective
+    ext <;> simp
+  map_mul' g h := by
+    apply Multiplicative.toAdd_injective
+    ext <;> simp
+  continuous_toFun := by
+    change Continuous (fun g =>
+      (Multiplicative.toAdd (χ.1 g), Multiplicative.toAdd (χ.2 g)))
+    exact χ.1.continuous_toFun.prod_mk χ.2.continuous_toFun
+
+/-- Product-valued continuous characters split into two scalar quadratic
+characters for every acting group. -/
+noncomputable def genericTwoTorsionCharacterMulEquivPair :
+    GenericTwoTorsionContinuousCharacter G ≃*
+      (GenericQuadraticCharacter G × GenericQuadraticCharacter G) where
+  toFun χ :=
+    (genericTwoTorsionCharacterFst G χ,
+      genericTwoTorsionCharacterSnd G χ)
+  invFun := genericQuadraticCharacterPairToTwoTorsion G
+  left_inv χ := by
+    apply ContinuousMonoidHom.ext
+    intro g
+    apply Multiplicative.toAdd_injective
+    ext <;> rfl
+  right_inv χ := by
+    rcases χ with ⟨χ₁, χ₂⟩
+    apply Prod.ext
+    · apply ContinuousMonoidHom.ext
+      intro g
+      apply Multiplicative.toAdd_injective
+      rfl
+    · apply ContinuousMonoidHom.ext
+      intro g
+      apply Multiplicative.toAdd_injective
+      rfl
+  map_mul' χ ψ := by
+    apply Prod.ext
+    · apply ContinuousMonoidHom.ext
+      intro g
+      apply Multiplicative.toAdd_injective
+      rfl
+    · apply ContinuousMonoidHom.ext
+      intro g
+      apply Multiplicative.toAdd_injective
+      rfl
+
 noncomputable def genericContinuousOneCocycleMulEquivCharacter :
     Multiplicative (GenericTwoTorsionContinuousOneCocycle G) ≃*
       GenericTwoTorsionContinuousCharacter G where
@@ -298,6 +387,15 @@ noncomputable def genericTrivialTwoTorsionH1CharacterMulEquiv :
   (AddEquiv.toMultiplicative
       (genericContinuousH1AddEquivOneCocycle G)).trans
     (genericContinuousOneCocycleMulEquivCharacter G)
+
+/-- Generic H¹ theorem already split into the two scalar quadratic-character
+coordinates used by two-descent. -/
+noncomputable def genericTrivialTwoTorsionH1QuadraticPairMulEquiv :
+    Multiplicative
+      (continuousCohomology 1 (genericTwoTorsionRepresentation G)) ≃*
+      (GenericQuadraticCharacter G × GenericQuadraticCharacter G) :=
+  (genericTrivialTwoTorsionH1CharacterMulEquiv G).trans
+    (genericTwoTorsionCharacterMulEquivPair G)
 
 /-- Plain-equivalence view for consumers that do not need the group law. -/
 noncomputable def genericTrivialTwoTorsionH1CharacterEquiv :

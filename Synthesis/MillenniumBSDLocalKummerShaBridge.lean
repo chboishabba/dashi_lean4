@@ -138,6 +138,47 @@ theorem cmExplicitSelmerClassToEllipticH1_padic_zero
       hCompat hVan s p
   simpa using happ.trans hzero
 
+/-- Canonical restriction of the full elliptic-point H¹ class to the real
+absolute Galois group. -/
+noncomputable def realEllipticPointH1Restrict :
+    ContinuousCohomology.continuousCohomology 1
+        cmEllipticPointRepresentation ⟶
+      ContinuousCohomology.continuousCohomology 1
+        (TopRep.res
+          (Field.absoluteGaloisGroup.map
+            (algebraMap ℚ ℝ) :
+              Field.absoluteGaloisGroup ℝ →*
+                RationalAbsoluteGalois)
+          cmEllipticPointRepresentation) :=
+  ContinuousCohomology.map
+    (Field.absoluteGaloisGroup.map (algebraMap ℚ ℝ))
+    (𝟙 _) 1
+
+/-- Exact infinite-place arithmetic owner.  The repo has already identified
+the explicit real Kummer image as the equal-sign subgroup; what remains is
+only to prove that those classes vanish after the local E[2] -> E(Qbar)
+cohomology map. -/
+structure RealEllipticKummerImageVanishing where
+  equal_sign_maps_to_zero :
+    ∀ c : RatSquareClass × RatSquareClass,
+      realKummerLocalization c ∈ RealKummerImage →
+        realEllipticPointH1Restrict
+          (globalGenericE2H1ToEllipticPointH1
+            ((cmGenericTrivialE2H1MulEquivRatSquareClasses.symm c).toAdd))
+          = 0
+
+/-- The explicit Selmer real condition therefore gives real-place vanishing
+of the prize-facing class. -/
+theorem cmExplicitSelmerClassToEllipticH1_real_zero
+    (hReal : RealEllipticKummerImageVanishing)
+    (s : explicitTwoSelmerSubgroup) :
+    realEllipticPointH1Restrict
+      (cmExplicitSelmerClassToEllipticH1 s) = 0 := by
+  rw [← explicitSelmerGenericClassToEllipticH1_eq_prizeFacing]
+  unfold explicitSelmerGenericClassToEllipticH1
+  rw [explicitSelmerToGenericTwoTorsionH1_eq_cmGeneric]
+  exact hReal.equal_sign_maps_to_zero s.1 s.2.1
+
 /-- The full classical localization law is now reduced to one real-place
 payment plus the two genuinely arithmetic finite-place Kummer families. -/
 theorem cmExplicitSelmerClassToEllipticH1_localization_zero_of_real
@@ -172,5 +213,36 @@ theorem cmExplicitSelmerClassToEllipticH1_localization_zero_of_real
           hCompat hVan s p
 
 
+
+
+/-- Sharp all-place localization compiler: the only remaining inputs are the
+scalar p-adic Kummer compatibility family, p-adic Kummer-image vanishing,
+and the real equal-sign Kummer-image vanishing theorem. -/
+theorem cmExplicitSelmerClassToEllipticH1_localization_zero_of_localKummer
+    (hCompat :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicQuadraticKummerCompatibility p.1)
+    (hVan :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicEllipticKummerImageVanishing p.1 (hCompat p))
+    (hReal : RealEllipticKummerImageVanishing)
+    (s : explicitTwoSelmerSubgroup) :
+    cmExplicitSelmerClassToEllipticH1 s ∈
+      classicalEllipticShaOne cmEllipticPointRepresentation := by
+  rw [mem_rationalTateShafarevichOne_iff]
+  intro v
+  cases v with
+  | infinite =>
+      simpa [realEllipticPointH1Restrict, rationalLocalField] using
+        cmExplicitSelmerClassToEllipticH1_real_zero hReal s
+  | padic p =>
+      letI : Fact p.1.Prime := ⟨p.2⟩
+      simpa [padicEllipticPointH1Restrict,
+        padicAbsoluteGaloisRestriction,
+        rationalLocalField] using
+        cmExplicitSelmerClassToEllipticH1_padic_zero
+          hCompat hVan s p
 
 end Synthesis.Millennium.BSD

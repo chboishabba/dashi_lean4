@@ -495,6 +495,35 @@ theorem padicRestrictedGenericH1_maps_to_zero_of_localCondition_imageVanishing
   rw [hAdd]
   exact hZero
 
+/-- Minimal finite-place theorem actually consumed by classical-Sha
+localization.  It is stated only for restrictions of global generic E[2]
+classes, so no full local square-class/H¹ equivalence is required. -/
+structure PadicRestrictedGlobalKummerImageVanishing
+    (p : ℕ) [Fact p.Prime] where
+  restricted_global_image_maps_to_zero :
+    ∀ x :
+      ContinuousCohomology.continuousCohomology 1
+        (genericTwoTorsionRepresentation RationalAbsoluteGalois),
+      localizeKummerPairHom p
+        (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+          (Multiplicative.ofAdd x))
+        ∈ localKummerImageSubgroup p →
+      padicGenericE2H1ToEllipticPointH1 p
+        (genericTwoTorsionH1Restrict
+          (G := RationalAbsoluteGalois)
+          (padicAbsoluteGaloisRestriction p) x) = 0
+
+/-- The stronger scalar-Kummer compatibility plus local image-vanishing
+theorem compiles to the minimal restricted-global boundary. -/
+noncomputable def padicRestrictedGlobalKummerImageVanishing_of_localKummer
+    (p : ℕ) [Fact p.Prime]
+    (hCompat : PadicQuadraticKummerCompatibility p)
+    (hVan : PadicEllipticKummerImageVanishing p hCompat) :
+    PadicRestrictedGlobalKummerImageVanishing p where
+  restricted_global_image_maps_to_zero x hx :=
+    padicRestrictedGenericH1_maps_to_zero_of_localCondition_imageVanishing
+      p hCompat hVan x hx
+
 /-- Generic global H¹ class represented by an explicit Selmer square-class
 pair. -/
 noncomputable def explicitSelmerToGenericTwoTorsionH1
@@ -589,6 +618,26 @@ theorem explicitSelmer_finite_localizations_vanish_imageVanishing
   letI : Fact p.1.Prime := ⟨p.2⟩
   apply padicRestrictedGenericH1_maps_to_zero_of_localCondition_imageVanishing
     p.1 (hCompat p) (hVan p)
+  simpa [explicitSelmerToGenericTwoTorsionH1_squareClass] using s.2.2 p
+
+/-- All finite explicit Selmer localizations vanish from the minimal
+restricted-global local Kummer theorem, with no scalar local Kummer
+equivalence exposed to downstream callers. -/
+theorem explicitSelmer_finite_localizations_vanish_restrictedGlobal
+    (hLocal :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicRestrictedGlobalKummerImageVanishing p.1)
+    (s : explicitTwoSelmerSubgroup)
+    (p : Nat.Primes) :
+    letI : Fact p.1.Prime := ⟨p.2⟩
+    padicGenericE2H1ToEllipticPointH1 p.1
+      (genericTwoTorsionH1Restrict
+        (G := RationalAbsoluteGalois)
+        (padicAbsoluteGaloisRestriction p.1)
+        (explicitSelmerToGenericTwoTorsionH1 s)) = 0 := by
+  letI : Fact p.1.Prime := ⟨p.2⟩
+  apply (hLocal p).restricted_global_image_maps_to_zero
   simpa [explicitSelmerToGenericTwoTorsionH1_squareClass] using s.2.2 p
 
 /-- Machine-readable local frontier: the continuous H¹ normalization and

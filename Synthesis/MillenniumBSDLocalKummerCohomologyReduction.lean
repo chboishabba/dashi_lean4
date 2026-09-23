@@ -190,6 +190,22 @@ theorem padicH1SquareClassNaturality_of_generic
     rationalQuadraticKummerCharacterPairMulEquiv,
     rationalQuadraticKummerCharacterMulEquiv] using hH1
 
+/-- Literal additive inclusion of actual E[2] into E(Qbar). -/
+noncomputable def localActualE2InclusionAddHom :
+    cmAlgClosureTwoTorsionSubgroup →+
+      CMAlgClosureProjectivePoint where
+  toFun P := P.1
+  map_zero' := rfl
+  map_add' _ _ := rfl
+
+/-- Literal inclusion of actual E[2] into E(Qbar), used locally after the
+paid carrier equivalence from (C₂)² to the geometric two-torsion subgroup. -/
+noncomputable def localActualE2InclusionCLM :
+    cmAlgClosureTwoTorsionSubgroup →L[ℤ]
+      CMAlgClosureProjectivePoint where
+  toLinearMap := localActualE2InclusionAddHom.toIntLinearMap
+  cont := continuous_of_discreteTopology
+
 /-- Direct global coefficient morphism from the generic trivial (C₂)²
 module to the actual E(Qbar) module.  This is the same carrier map used in
 the local construction below. -/
@@ -238,22 +254,6 @@ noncomputable abbrev padicRestrictedEllipticPointRepresentation
     (padicAbsoluteGaloisRestriction p : PadicAbsoluteGalois p →*
       RationalAbsoluteGalois)
     cmEllipticPointRepresentation
-
-/-- Literal additive inclusion of actual E[2] into E(Qbar). -/
-noncomputable def localActualE2InclusionAddHom :
-    cmAlgClosureTwoTorsionSubgroup →+
-      CMAlgClosureProjectivePoint where
-  toFun P := P.1
-  map_zero' := rfl
-  map_add' _ _ := rfl
-
-/-- Literal inclusion of actual E[2] into E(Qbar), used locally after the
-paid carrier equivalence from (C₂)² to the geometric two-torsion subgroup. -/
-noncomputable def localActualE2InclusionCLM :
-    cmAlgClosureTwoTorsionSubgroup →L[ℤ]
-      CMAlgClosureProjectivePoint where
-  toLinearMap := localActualE2InclusionAddHom.toIntLinearMap
-  cont := continuous_of_discreteTopology
 
 /-- Direct local coefficient morphism from the generic trivial (C₂)² module
 to the restriction of the actual E(Qbar) module. -/

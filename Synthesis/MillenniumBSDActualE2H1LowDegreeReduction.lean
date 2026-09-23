@@ -559,6 +559,28 @@ noncomputable def cmActualE2H1MulEquivRatSquareClasses_paid :
       (cmTwoTorsionContinuousCharacterMulEquivPair.trans
         quadraticCharacterPairMulEquivRatSquareClasses))
 
+/-- Transporting an actual geometric E[2] H¹ class reconstructed from square
+classes back to the trivial module gives exactly the field-generic rational
+reconstruction. -/
+theorem cmActualE2H1ToTrivial_squareClass_inverse_coherence
+    (c : RatSquareClass × RatSquareClass) :
+    cmActualE2H1ToTrivial
+      ((cmActualE2H1MulEquivRatSquareClasses_paid.symm c).toAdd)
+      =
+    (cmGenericTrivialE2H1MulEquivRatSquareClasses.symm c).toAdd := by
+  have hSpec :
+      cmActualE2H1ToTrivial
+        ((cmActualE2H1MulEquivRatSquareClasses_paid.symm c).toAdd)
+        =
+      ((cmTrivialE2H1ContinuousHomMulEquiv.trans
+        (cmTwoTorsionContinuousCharacterMulEquivPair.trans
+          quadraticCharacterPairMulEquivRatSquareClasses)).symm c).toAdd := by
+    rfl
+  rw [hSpec]
+  exact congrArg Multiplicative.toAdd
+    (cmGenericTrivialE2H1MulEquivRatSquareClasses_symm_coherence c)
+
+
 /-- The actual geometric E[2] H¹ is now identified with the literal
 square-class pair used by the explicit descent lane. -/
 noncomputable def cmActualE2H1EquivRatSquareClasses_paid :

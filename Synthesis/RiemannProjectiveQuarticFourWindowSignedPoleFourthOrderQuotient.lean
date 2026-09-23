@@ -1684,4 +1684,57 @@ theorem QuarticFourSignedPolePair.globalFullCubicQuotient_of_unitShiftInvisible
   unfold QuarticFourSignedPolePair.globalFullCubicQuotient
   constructor <;> nlinarith
 
+
+/-!
+## Frequency-space local obstruction coordinates
+
+These are the same-object profile coordinates which Fourier inversion would
+relate to the two global odd defects.  No Fourier normalization claim is made
+here.
+-/
+
+theorem genericProjectivePhysicalProfile_zero
+    (g : ℝ -> ℝ) (r : ℝ) :
+    genericProjectivePhysicalProfile g r 0
+      =
+    4 * g 0 *
+      (Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r
+        -
+       Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r)) := by
+  unfold genericProjectivePhysicalProfile
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+  simp
+
+theorem quarticFourNormalizedProjectiveProfile_zero
+    {R lam mu : ℝ} :
+    quarticFourNormalizedProjectiveProfile R lam mu 0
+      =
+    4 * quarticFourWindowProfile R lam mu 0 *
+      (quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 1)
+        -
+       quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 2)) := by
+  unfold quarticFourNormalizedProjectiveProfile
+  rw [genericProjectivePhysicalProfile_zero]
+  unfold Zeta23Bridge.LiteralWeilParityBalance.evenResp
+  rw [quarticFourWindowProfile_pairing_eq
+      (R:=R) (lam:=lam) (mu:=mu)
+      (by
+        by_cases hR : 0 < R
+        · exact hR
+        · simp [quarticFourWindowProfile, quarticWindowMass] at *
+          positivity)
+      (quarticFourNormalizedOnLineWeight_continuous 1),
+      quarticFourWindowProfile_pairing_eq
+      (R:=R) (lam:=lam) (mu:=mu)
+      (by
+        by_cases hR : 0 < R
+        · exact hR
+        · simp [quarticFourWindowProfile, quarticWindowMass] at *
+          positivity)
+      (quarticFourNormalizedOnLineWeight_continuous 2)]
+  unfold quarticFourNormalizedOnLineWeight
+  simp
+
 end Synthesis

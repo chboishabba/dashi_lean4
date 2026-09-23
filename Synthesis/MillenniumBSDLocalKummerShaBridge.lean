@@ -420,6 +420,32 @@ theorem cmExplicitSelmerClassToEllipticH1_surjective_on_sha_two_of_lifts
         simp [cY]]
   exact hy
 
+/-- Forward global Kummer exactness direction. -/
+structure GlobalKummerImageVanishing where
+  image_maps_to_zero :
+    ∀ s : explicitTwoSelmerSubgroup,
+      s ∈ globalKummerImageSubgroup →
+        cmExplicitSelmerClassToEllipticH1 s = 0
+
+/-- Reverse global Kummer exactness direction. -/
+structure GlobalKummerKernelToImage where
+  zero_implies_image :
+    ∀ s : explicitTwoSelmerSubgroup,
+      cmExplicitSelmerClassToEllipticH1 s = 0 →
+        s ∈ globalKummerImageSubgroup
+
+/-- The two directed global Kummer exactness statements compile to the
+kernel equality used by Noether I. -/
+theorem cmExplicitSelmerClassToEllipticH1_kernel_iff_of_kummer
+    (hForward : GlobalKummerImageVanishing)
+    (hReverse : GlobalKummerKernelToImage) :
+    ∀ s : explicitTwoSelmerSubgroup,
+      cmExplicitSelmerClassToEllipticH1 s = 0 ↔
+        s ∈ globalKummerImageSubgroup := by
+  intro s
+  exact ⟨hReverse.zero_implies_image s,
+    hForward.image_maps_to_zero s⟩
+
 /-- After local Kummer theory pays localization, only the two genuinely global
 classical two-descent exactness laws remain. -/
 structure ClassicalTwoDescentGlobalExactnessLaws where
@@ -490,5 +516,35 @@ theorem actualClassicalTwoDescentShaComparison_of_localKummer
   actualClassicalTwoDescentShaComparison_of_localizationExactness
     (classicalTwoDescentLocalizationExactnessLaws_of_localKummer
       hCompat hVan hReal hGlobal)
+
+
+/-- Full max-cut classical two-descent compiler expressed only in directed
+Kummer exactness/lifting statements.  All representation-theoretic,
+same-object, group-law, two-torsion, localization plumbing, and Noether-I
+steps are internal. -/
+theorem actualClassicalTwoDescentShaComparison_of_kummerPieces
+    (hFiniteForward :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicRestrictedGlobalKummerImageVanishing p.1)
+    (hRealForward : RealEllipticKummerImageVanishing)
+    (hGlobalForward : GlobalKummerImageVanishing)
+    (hGlobalReverse : GlobalKummerKernelToImage)
+    (hLift : ClassicalShaTwoGlobalE2Lift)
+    (hFiniteReverse :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicRestrictedGlobalKummerKernelToImage p.1)
+    (hRealReverse : RealRestrictedGlobalKummerKernelToImage) :
+    ActualClassicalTwoDescentShaComparison := by
+  apply actualClassicalTwoDescentShaComparison_of_restrictedGlobalKummer
+    hFiniteForward hRealForward
+  exact
+    { kernel_iff_globalKummerImage :=
+        cmExplicitSelmerClassToEllipticH1_kernel_iff_of_kummer
+          hGlobalForward hGlobalReverse
+      surjective_on_sha_two :=
+        cmExplicitSelmerClassToEllipticH1_surjective_on_sha_two_of_lifts
+          hLift hFiniteReverse hRealReverse }
 
 end Synthesis.Millennium.BSD

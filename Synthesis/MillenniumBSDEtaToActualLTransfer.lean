@@ -325,6 +325,17 @@ theorem cmCompletedEllipticLContinuation_agrees_initial_of_tripleProductCMData
   exact cmCompletedEllipticLContinuation_agrees_initial_of_jacobiCMData
     hOdd hEven hCM hs
 
+/-- J0-only analytic endgame: both Jacobi specializations are now internal,
+so the q-series boundary is the formal triple product itself. -/
+theorem cmCompletedEllipticLContinuation_agrees_initial_of_tripleProductOnlyCMData
+    (hJ : JacobiTripleProductFormal)
+    (hCM : JacobiCMReconstructionData)
+    {s : ℂ} (hs : (5 : ℝ) / 2 < s.re) :
+    cmCompletedEllipticLContinuation s = cmCompletedEllipticLInitial s := by
+  rcases jacobiEta32Products_of_tripleProduct hJ with ⟨hOdd, hEven⟩
+  exact cmCompletedEllipticLContinuation_agrees_initial_of_jacobiCMData
+    hOdd hEven hCM hs
+
 theorem cmCompletedEllipticLContinuation_functional_equation (s : ℂ) :
     cmCompletedEllipticLContinuation (2 - s) =
       cmCompletedEllipticLContinuation s := by

@@ -918,31 +918,31 @@ theorem exists_punctured_half_with_quartic_below
       0 < |a| ∧
       |a| <= (1/2 : ℝ) ∧
       a^4 < B := by
-  let a : ℝ := min (1/4 : ℝ) ((B/2)^(1/4 : ℝ))
-  have hroot : 0 < (B/2)^(1/4 : ℝ) := by positivity
+  let a : ℝ := min (1/4 : ℝ) (B/8)
   have haPos : 0 < a := by
     dsimp [a]
-    exact lt_min (by norm_num) hroot
+    exact lt_min (by norm_num) (by positivity)
   have haQuarter : a <= (1/4 : ℝ) := by
     dsimp [a]
     exact min_le_left _ _
-  have haRoot : a <= (B/2)^(1/4 : ℝ) := by
+  have haB : a <= B/8 := by
     dsimp [a]
     exact min_le_right _ _
+  have haOne : a <= 1 := by linarith
+  have haNonneg : 0 <= a := haPos.le
+  have ha2 : a^2 <= a := by
+    nlinarith [mul_nonneg haNonneg (sub_nonneg.mpr haOne)]
+  have ha2One : a^2 <= 1 := ha2.trans haOne
+  have ha4 : a^4 <= a^2 := by
+    have hnon2 : 0 <= a^2 := sq_nonneg a
+    have hprod :=
+      mul_nonneg hnon2 (sub_nonneg.mpr ha2One)
+    nlinarith [show a^4 = (a^2)^2 by ring]
   refine ⟨a,?_,?_,?_⟩
   · simpa [abs_of_pos haPos]
   · rw [abs_of_pos haPos]
     linarith
-  · have hpow :
-        a^4 <= (((B/2)^(1/4 : ℝ))^4) := by
-      exact pow_le_pow_left₀ haPos.le haRoot 4
-    have hrootpow :
-        (((B/2)^(1/4 : ℝ))^4) = B/2 := by
-      rw [← Real.rpow_natCast]
-      rw [← Real.rpow_mul (by positivity : 0 <= B/2)]
-      norm_num
-      simp
-    rw [hrootpow] at hpow
+  · have : a^4 <= a := ha4.trans ha2
     linarith
 
 def QuarticFourSignedPolePair.absoluteConeTargetCoefficientCondition

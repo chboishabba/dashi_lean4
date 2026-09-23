@@ -258,8 +258,7 @@ structure PadicEllipticKummerExactness
     ∀ c : PadicSquareClass p × PadicSquareClass p,
       c ∈ localKummerImageSubgroup p ↔
         padicGenericE2H1ToEllipticPointH1 p
-          ((padicTwoTorsionH1MulEquivSquareClassPair p
-              (padicQuadraticKummerProducer_of_compatibility p h)).symm c).toAdd =
+          ((padicCompatibleTwoTorsionH1MulEquivSquareClassPair p h).symm c).toAdd =
             0
 
 /-- Immediate local-exactness consequence consumed by the global Selmer
@@ -271,8 +270,7 @@ theorem padicLocalKummerImage_maps_to_zero
     (c : PadicSquareClass p × PadicSquareClass p)
     (hc : c ∈ localKummerImageSubgroup p) :
     padicGenericE2H1ToEllipticPointH1 p
-      ((padicTwoTorsionH1MulEquivSquareClassPair p
-          (padicQuadraticKummerProducer_of_compatibility p hCompat)).symm c).toAdd =
+      ((padicCompatibleTwoTorsionH1MulEquivSquareClassPair p hCompat).symm c).toAdd =
         0 :=
   (hExact.kernel_iff_explicitKummerImage c).1 hc
 

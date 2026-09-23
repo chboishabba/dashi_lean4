@@ -1136,8 +1136,8 @@ theorem jacobiWeightedDiagonal_triangularSummand
         ((-1 : ℂ) ^ r) else 0) := by
   rw [jacobiTripleSeries_coeff, jacobiTripleCoefficient_triangular,
     jacobiDiagonalCoeffHom_pairedTerm_coeff]
-  rw [if_congr (jacobiWeightedDiagonal_posBranch_iff N r) rfl rfl,
-    if_congr (jacobiWeightedDiagonal_negBranch_iff N r) rfl rfl]
+  simp only [jacobiWeightedDiagonal_posBranch_iff,
+    jacobiWeightedDiagonal_negBranch_iff]
 
 /-- A non-triangular outer q-degree contributes nothing to the weighted
 diagonal of the bilateral Jacobi series. -/

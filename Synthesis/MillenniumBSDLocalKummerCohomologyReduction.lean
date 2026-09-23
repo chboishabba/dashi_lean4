@@ -190,6 +190,19 @@ theorem padicH1SquareClassNaturality_of_generic
     rationalQuadraticKummerCharacterPairMulEquiv,
     rationalQuadraticKummerCharacterMulEquiv] using hH1
 
+/-- The p-adic H¹/square-class localization square no longer needs a
+place-specific representation-theoretic hypothesis: generic H¹ restriction
+naturality is paid uniformly. -/
+theorem padicH1SquareClassNaturality_paid
+    (p : ℕ) [Fact p.Prime]
+    (h : PadicQuadraticKummerCompatibility p) :
+    PadicH1SquareClassNaturality p h :=
+  padicH1SquareClassNaturality_of_generic p h
+    (genericTrivialTwoTorsionH1RestrictionNaturality_paid
+      (G := RationalAbsoluteGalois)
+      (padicAbsoluteGaloisRestriction p))
+
+
 /-- Literal additive inclusion of actual E[2] into E(Qbar). -/
 noncomputable def localActualE2InclusionAddHom :
     cmAlgClosureTwoTorsionSubgroup →+
@@ -372,6 +385,33 @@ theorem padicRestrictedGenericH1_maps_to_zero_of_localCondition
   rw [hAdd]
   exact hZero
 
+
+/-- Paid finite-place compiler: explicit local Kummer membership implies
+vanishing in local elliptic-point H¹ using the uniform generic H¹ naturality
+theorem internally. -/
+theorem padicRestrictedGenericH1_maps_to_zero_of_localCondition_paid
+    (p : ℕ) [Fact p.Prime]
+    (hCompat : PadicQuadraticKummerCompatibility p)
+    (hExact : PadicEllipticKummerExactness p hCompat)
+    (x :
+      ContinuousCohomology.continuousCohomology 1
+        (genericTwoTorsionRepresentation RationalAbsoluteGalois))
+    (hLocal :
+      localizeKummerPairHom p
+        (rationalGenericTwoTorsionH1MulEquivSquareClassPair
+          (Multiplicative.ofAdd x))
+        ∈ localKummerImageSubgroup p) :
+    padicGenericE2H1ToEllipticPointH1 p
+      (genericTwoTorsionH1Restrict
+        (G := RationalAbsoluteGalois)
+        (padicAbsoluteGaloisRestriction p) x) = 0 :=
+  padicRestrictedGenericH1_maps_to_zero_of_localCondition
+    p hCompat
+    (genericTrivialTwoTorsionH1RestrictionNaturality_paid
+      (G := RationalAbsoluteGalois)
+      (padicAbsoluteGaloisRestriction p))
+    hExact x hLocal
+
 /-- Generic global H¹ class represented by an explicit Selmer square-class
 pair. -/
 noncomputable def explicitSelmerToGenericTwoTorsionH1
@@ -416,6 +456,31 @@ theorem explicitSelmer_finite_localizations_vanish
   letI : Fact p.1.Prime := ⟨p.2⟩
   apply padicRestrictedGenericH1_maps_to_zero_of_localCondition
     p.1 (hCompat p) (hNat p) (hExact p)
+  simpa [explicitSelmerToGenericTwoTorsionH1_squareClass] using s.2.2 p
+
+
+/-- All finite explicit Selmer conditions compile simultaneously to local
+elliptic-H¹ vanishing without any additional H¹ restriction hypothesis. -/
+theorem explicitSelmer_finite_localizations_vanish_paid
+    (hCompat :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicQuadraticKummerCompatibility p.1)
+    (hExact :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicEllipticKummerExactness p.1 (hCompat p))
+    (s : explicitTwoSelmerSubgroup)
+    (p : Nat.Primes) :
+    letI : Fact p.1.Prime := ⟨p.2⟩
+    padicGenericE2H1ToEllipticPointH1 p.1
+      (genericTwoTorsionH1Restrict
+        (G := RationalAbsoluteGalois)
+        (padicAbsoluteGaloisRestriction p.1)
+        (explicitSelmerToGenericTwoTorsionH1 s)) = 0 := by
+  letI : Fact p.1.Prime := ⟨p.2⟩
+  apply padicRestrictedGenericH1_maps_to_zero_of_localCondition_paid
+    p.1 (hCompat p) (hExact p)
   simpa [explicitSelmerToGenericTwoTorsionH1_squareClass] using s.2.2 p
 
 /-- Machine-readable local frontier: the continuous H¹ normalization and

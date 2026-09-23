@@ -1076,6 +1076,93 @@ noncomputable def jacobiDiagonalCoeffMap
       jacobiDiagonalCoeffHom (F.coeff N) := by
   simp [jacobiDiagonalCoeffMap]
 
+/-- Lower-support invariant for the weighted diagonal: every Laurent
+exponent k occurring in outer q-degree d satisfies k ≥ -d. -/
+def JacobiLowerSupported (F : JacobiBivariateFormal) : Prop :=
+  ∀ d : ℕ, ∀ k : ℤ,
+    (F.coeff d).coeff k ≠ 0 → -(d : ℤ) ≤ k
+
+theorem jacobiLowerSupported_zero :
+    JacobiLowerSupported (0 : JacobiBivariateFormal) := by
+  intro d k hk
+  simp at hk
+
+theorem jacobiLowerSupported_one :
+    JacobiLowerSupported (1 : JacobiBivariateFormal) := by
+  intro d k hk
+  by_cases hd : d = 0
+  · subst d
+    simp only [PowerSeries.coeff_one] at hk
+    by_cases hk0 : k = 0
+    · subst k
+      simp
+    · simp [hk0] at hk
+  · simp [PowerSeries.coeff_one, hd] at hk
+
+theorem jacobiLowerSupported_add
+    {F G : JacobiBivariateFormal}
+    (hF : JacobiLowerSupported F)
+    (hG : JacobiLowerSupported G) :
+    JacobiLowerSupported (F + G) := by
+  intro d k hk
+  rw [PowerSeries.coeff_add, AddMonoidAlgebra.coeff_add] at hk
+  by_contra hlt
+  have hkF : (F.coeff d).coeff k = 0 := by
+    by_contra hne
+    exact hlt (hF d k hne)
+  have hkG : (G.coeff d).coeff k = 0 := by
+    by_contra hne
+    exact hlt (hG d k hne)
+  simp [hkF, hkG] at hk
+
+theorem jacobiLowerSupported_neg
+    {F : JacobiBivariateFormal}
+    (hF : JacobiLowerSupported F) :
+    JacobiLowerSupported (-F) := by
+  intro d k hk
+  rw [PowerSeries.coeff_neg, AddMonoidAlgebra.coeff_neg] at hk
+  exact hF d k (by simpa using hk)
+
+theorem jacobiLowerSupported_sub
+    {F G : JacobiBivariateFormal}
+    (hF : JacobiLowerSupported F)
+    (hG : JacobiLowerSupported G) :
+    JacobiLowerSupported (F - G) := by
+  rw [sub_eq_add_neg]
+  exact jacobiLowerSupported_add hF (jacobiLowerSupported_neg hG)
+
+/-- Lower support is multiplicative. -/
+theorem jacobiLowerSupported_mul
+    {F G : JacobiBivariateFormal}
+    (hF : JacobiLowerSupported F)
+    (hG : JacobiLowerSupported G) :
+    JacobiLowerSupported (F * G) := by
+  intro d k hk
+  rw [PowerSeries.coeff_mul] at hk
+  simp only [AddMonoidAlgebra.coeff_sum] at hk
+  obtain ⟨ij, hij, hijne⟩ :=
+    Finset.exists_ne_zero_of_sum_ne_zero hk
+  rcases ij with ⟨i, j⟩
+  have hijd : i + j = d := Finset.mem_antidiagonal.mp hij
+  have hksupp :
+      k ∈ ((F.coeff i) * (G.coeff j)).coeff.support := by
+    simpa [Finsupp.mem_support_iff] using hijne
+  obtain ⟨a, ha, b, hb, hab⟩ :
+      ∃ a ∈ (F.coeff i).coeff.support,
+        ∃ b ∈ (G.coeff j).coeff.support, a + b = k := by
+    exact Finset.mem_add.mp
+      (AddMonoidAlgebra.support_coeff_mul_subset
+        (F.coeff i) (G.coeff j) hksupp)
+  have hFa : -(i : ℤ) ≤ a := by
+    apply hF i a
+    simpa [Finsupp.mem_support_iff] using ha
+  have hGb : -(j : ℤ) ≤ b := by
+    apply hG j b
+    simpa [Finsupp.mem_support_iff] using hb
+  rw [← hab, ← hijd]
+  push_cast
+  linarith
+
 /-- Weighted diagonal coefficient implementing q↦q² and z↦-q
 coefficientwise.  For target degree N only outer q-degrees d≤N are inspected;
 this is exactly the finite-dependency property needed to transfer J0's

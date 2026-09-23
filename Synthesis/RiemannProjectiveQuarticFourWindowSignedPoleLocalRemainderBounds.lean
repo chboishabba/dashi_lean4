@@ -740,4 +740,50 @@ theorem QuarticFourSignedPolePair.jointQuarticJetRemainder_abs_le_of_localCone
     (quarticSignedPoleLocalCone_alpha_abs_le_canonicalRadius ht hc)
     (quarticSignedPoleLocalCone_q_abs_le_canonicalRadius ht hc)
 
+
+/-!
+## Physical literal remainder transport on the mixed cone
+-/
+
+theorem QuarticFourSignedPolePair.literalJointQuarticRemainder_abs_eq_normalized
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    |W.literalJointQuarticRemainder rho|
+      =
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ) / (t/16)^2
+      *
+    |W.jointQuarticJetRemainder
+        (heightOf rho / (t/16))
+        (quarticSignedPoleNormalizedOrdinateOffset t rho)| := by
+  unfold QuarticFourSignedPolePair.literalJointQuarticRemainder
+    quarticSignedPoleNormalizedOrdinateOffset
+  dsimp
+  have hm :
+      0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by positivity
+  have hr2 : 0 < (t/16)^2 := by positivity
+  rw [abs_mul, abs_div, abs_of_nonneg hm, abs_of_pos hr2]
+
+theorem QuarticFourSignedPolePair.literalJointQuarticRemainder_abs_le_of_localCone
+    {t eta : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hc : quarticSignedPoleLocalCone t eta rho) :
+    |W.literalJointQuarticRemainder rho|
+      <=
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ) / (t/16)^2
+      *
+    W.localJointQuarticRemainderBound
+      (heightOf rho / (t/16))
+      (quarticSignedPoleNormalizedOrdinateOffset t rho) := by
+  have htpos : 0 < t := by linarith
+  rw [W.literalJointQuarticRemainder_abs_eq_normalized htpos]
+  have hfac :
+      0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) / (t/16)^2 := by
+    positivity
+  exact mul_le_mul_of_nonneg_left
+    (W.jointQuarticJetRemainder_abs_le_of_localCone ht hc)
+    hfac
+
 end Synthesis

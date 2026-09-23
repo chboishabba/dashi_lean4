@@ -653,4 +653,160 @@ theorem exists_quarticSignedPole_fixedConeWindow_zeroCount_bound :
   dsimp [A,B,C,D] at *
   nlinarith
 
+
+/-!
+## Fail-fast weighted cone multiplicity compiler
+-/
+
+def QuarticFourSignedPolePair.literalConeMultiplicityAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℕ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocalCone t eta rho then
+      zetaZeroConfig.mult (rho : ℂ)
+    else
+      0
+
+theorem QuarticFourSignedPolePair.literalConeDebtAt_le_envelope_mul_multiplicity
+    {t eta : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalConeDebtAt eta n
+      <=
+    W.literalConeEnvelopeConstant / (t/16)^6
+      * (W.literalConeMultiplicityAt eta n : ℝ) := by
+  classical
+  unfold QuarticFourSignedPolePair.literalConeDebtAt
+    QuarticFourSignedPolePair.literalConeMultiplicityAt
+  rw [Nat.cast_sum]
+  rw [Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hc : quarticSignedPoleLocalCone t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · have hsrc :=
+        W.literalConeExactSource_le_envelope
+          ht hc hoff
+      have hC := W.literalConeEnvelopeConstant_nonneg
+      have hr6 : 0 < (t/16)^6 := by positivity
+      have hR :
+          0 <=
+            W.literalConeEnvelopeConstant / (t/16)^6
+              * (zetaZeroConfig.mult (rho : ℂ) : ℝ) := by
+        positivity
+      simp [hc,
+        QuarticFourSignedPolePair.literalOffOrdSource,
+        hoff]
+      apply max_le
+      · simpa [mul_comm, mul_left_comm, mul_assoc,
+          div_eq_mul_inv] using hsrc
+      · exact hR
+    · simp [hc,
+        QuarticFourSignedPolePair.literalOffOrdSource,
+        hoff]
+  · simp [hc]
+
+def quarticSignedPoleConeComplexSet
+    (t eta : ℝ) : Set ℂ :=
+  {z : ℂ |
+    ∃ hz : z ∈ zetaZeroConfig.carrier,
+      quarticSignedPoleLocalCone t eta (⟨z,hz⟩ : Zeros)}
+
+theorem quarticSignedPoleConeComplexSet_subset_fixedWindow
+    {t eta : ℝ} :
+    quarticSignedPoleConeComplexSet t eta
+      ⊆
+    zetaZeroConfig.window
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) := by
+  intro z hz
+  rcases hz with ⟨hzCarrier,hcone⟩
+  have hw :=
+    quarticSignedPoleLocalCone_mem_fixed_window hcone
+  exact ⟨hzCarrier,hw.1,hw.2⟩
+
+theorem QuarticFourSignedPolePair.literalConeMultiplicityAt_le_fixedWindowN
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalConeMultiplicityAt eta n
+      <=
+    zetaZeroConfig.N
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) := by
+  classical
+  let F : Finset Zeros :=
+    (centeredZeroFinset t n).filter
+      (quarticSignedPoleLocalCone t eta)
+  let s : Set ℂ :=
+    (fun rho : Zeros => (rho : ℂ)) '' (↑F : Set Zeros)
+  have hsWindow :
+      s ⊆
+        zetaZeroConfig.window
+          (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) := by
+    intro z hz
+    rcases hz with ⟨rho,hrho,rfl⟩
+    have hcone :
+        quarticSignedPoleLocalCone t eta rho := by
+      have := (Finset.mem_filter.mp hrho).2
+      exact this
+    exact quarticSignedPoleConeComplexSet_subset_fixedWindow
+      ⟨rho.2,hcone⟩
+  have hmono :=
+    zetaZeroConfig.finsum_mult_mono
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ))
+      hsWindow subset_rfl
+  have hsFinite :
+      s.Finite := by
+    exact Set.Finite.image F.finite_toSet _
+  have hsum :
+      W.literalConeMultiplicityAt eta n
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z := by
+    unfold QuarticFourSignedPolePair.literalConeMultiplicityAt
+    change
+      (∑ rho ∈ centeredZeroFinset t n,
+        if quarticSignedPoleLocalCone t eta rho then
+          zetaZeroConfig.mult (rho : ℂ) else 0)
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z
+    rw [← Finset.sum_filter]
+    change
+      (∑ rho ∈ F, zetaZeroConfig.mult (rho : ℂ))
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z
+    rw [finsum_mem_eq_finite_toFinset_sum _ hsFinite]
+    have himage :
+        hsFinite.toFinset
+          =
+        F.image (fun rho : Zeros => (rho : ℂ)) := by
+      ext z
+      simp [s]
+    rw [himage, Finset.sum_image]
+    intro a ha b hb hab
+    exact Subtype.ext hab
+  rw [hsum]
+  exact hmono
+
+theorem QuarticFourSignedPolePair.literalConeDebtAt_le_fixedWindowN
+    {t eta : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalConeDebtAt eta n
+      <=
+    W.literalConeEnvelopeConstant / (t/16)^6
+      *
+    (zetaZeroConfig.N
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ) := by
+  have hdebt :=
+    W.literalConeDebtAt_le_envelope_mul_multiplicity
+      ht n
+  have hmult :=
+    W.literalConeMultiplicityAt_le_fixedWindowN
+      (eta:=eta) n
+  have hC : 0 <= W.literalConeEnvelopeConstant / (t/16)^6 := by
+    positivity
+  exact hdebt.trans
+    (mul_le_mul_of_nonneg_left (by exact_mod_cast hmult) hC)
+
 end Synthesis

@@ -791,4 +791,245 @@ theorem QuarticFourSignedPolePair.centeredModeDefectAt_three_eq
   rw [hreflect] at hFTC
   linarith
 
+
+/-!
+## C4 regularity lift and quartic Fourier decay
+
+The historical quantitative bump API exposed only C2 because that was enough
+for the original explicit-formula construction.  The underlying Mathlib
+ContDiffBump is smooth.  We expose only the C4 slice needed to make the
+centered-cubic obstruction a legitimate global object.
+-/
+
+open Zeta23Bridge.LiteralWeilOddChannelTaper
+open Zeta23Bridge.OscillatoryKernelDecay
+
+theorem unitBump_contDiff_four :
+    ContDiff ℝ 4 unitBump :=
+  unitContDiffBump.contDiff (n := 4)
+
+theorem scaledUnitBump_contDiff_four
+    {R : ℝ} (hR : R ≠ 0) (c : ℝ) :
+    ContDiff ℝ 4 (scaledUnitBump c R) := by
+  unfold scaledUnitBump
+  exact unitBump_contDiff_four.comp
+    ((contDiff_id.sub contDiff_const).div_const hR)
+
+theorem quantitativeSymBump_contDiff_four
+    {c R : ℝ} (hR : R ≠ 0) :
+    ContDiff ℝ 4 (quantitativeSymBump c R) := by
+  unfold quantitativeSymBump
+  exact symmetrize_contDiff
+    (scaledUnitBump_contDiff_four hR c)
+
+theorem quarticFourWindowRaw_contDiff_four
+    {R lam mu : ℝ} (hR : 0 < R) :
+    ContDiff ℝ 4 (quarticFourWindowRaw R lam mu) := by
+  unfold quarticFourWindowRaw
+  exact
+    (((quantitativeSymBump_contDiff_four
+        (c:=0) hR.ne').sub
+      (quantitativeSymBump_contDiff_four
+        (c:=Real.pi/3) hR.ne')).add
+      (contDiff_const.mul
+        (quantitativeSymBump_contDiff_four
+          (c:=Real.pi/2) hR.ne'))).add
+      (contDiff_const.mul
+        (quantitativeSymBump_contDiff_four
+          (c:=Real.pi) hR.ne'))
+
+theorem quarticFourWindowProfile_contDiff_four
+    {R lam mu : ℝ} (hR : 0 < R) :
+    ContDiff ℝ 4 (quarticFourWindowProfile R lam mu) := by
+  unfold quarticFourWindowProfile
+  exact contDiff_const.mul
+    (quarticFourWindowRaw_contDiff_four
+      (lam:=lam) (mu:=mu) hR)
+
+theorem genericProjectivePhysicalProfile_contDiff_four
+    {g : ℝ -> ℝ}
+    (hg : ContDiff ℝ 4 g)
+    (r : ℝ) :
+    ContDiff ℝ 4 (genericProjectivePhysicalProfile g r) := by
+  unfold genericProjectivePhysicalProfile
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+  fun_prop
+
+theorem quarticFourNormalizedProjectiveProfile_contDiff_four
+    {R lam mu : ℝ}
+    (hR : 0 < R) :
+    ContDiff ℝ 4
+      (quarticFourNormalizedProjectiveProfile R lam mu) := by
+  unfold quarticFourNormalizedProjectiveProfile
+  exact genericProjectivePhysicalProfile_contDiff_four
+    (quarticFourWindowProfile_contDiff_four
+      (lam:=lam) (mu:=mu) hR) 1
+
+theorem quarticFourSignedPoleCombinedProfile_contDiff_four
+    {R muHalf muTwo t : ℝ}
+    (hR : 0 < R) :
+    ContDiff ℝ 4
+      (quarticFourSignedPoleCombinedProfile
+        R muHalf muTwo t) := by
+  unfold quarticFourSignedPoleCombinedProfile profileLinearCombination
+  exact
+    (contDiff_const.mul
+      (quarticFourNormalizedProjectiveProfile_contDiff_four
+        (lam:=(1/2 : ℝ)) (mu:=muHalf) hR)).add
+    (contDiff_const.mul
+      (quarticFourNormalizedProjectiveProfile_contDiff_four
+        (lam:=(2/3 : ℝ)) (mu:=muTwo) hR))
+
+def compactCosineFourthDecayCurvature
+    (P : ℝ -> ℝ) : ℝ :=
+  ∫ u : ℝ,
+    |deriv (deriv (deriv (deriv P))) u|
+
+theorem compactCosineFourthDecayCurvature_nonneg
+    (P : ℝ -> ℝ) :
+    0 <= compactCosineFourthDecayCurvature P := by
+  unfold compactCosineFourthDecayCurvature
+  positivity
+
+/--
+Four integrations by parts on a compact C4 profile.
+-/
+theorem compactCosineTransform_abs_le_invPowFour
+    {P : ℝ -> ℝ}
+    (hP : ContDiff ℝ 4 P)
+    (hPc : HasCompactSupport P)
+    {q : ℝ}
+    (hq : q ≠ 0) :
+    |compactCosineTransform P q|
+      <= compactCosineFourthDecayCurvature P / q^4 := by
+  have hP1 : ContDiff ℝ 1 P := hP.of_le (by norm_num)
+  have hD1_3 : ContDiff ℝ 3 (deriv P) := ContDiff.deriv' hP
+  have hD1_1 : ContDiff ℝ 1 (deriv P) :=
+    hD1_3.of_le (by norm_num)
+  have hD2_2 : ContDiff ℝ 2 (deriv (deriv P)) :=
+    ContDiff.deriv' hD1_3
+  have hD2_1 : ContDiff ℝ 1 (deriv (deriv P)) :=
+    hD2_2.of_le (by norm_num)
+  have hD3_1 : ContDiff ℝ 1 (deriv (deriv (deriv P))) :=
+    ContDiff.deriv' hD2_2
+  have h1 := integral_mul_cos_eq hP1 hPc hq
+  have h2 := integral_mul_sin_eq hD1_1 hPc.deriv hq
+  have h3 := integral_mul_cos_eq hD2_1 hPc.deriv.deriv hq
+  have h4 := integral_mul_sin_eq hD3_1 hPc.deriv.deriv.deriv hq
+  have hfourth :
+      (∫ u : ℝ, P u * Real.cos (q*u))
+        =
+      (1 / q^4) *
+        ∫ u : ℝ,
+          deriv (deriv (deriv (deriv P))) u
+            * Real.cos (q*u) := by
+    rw [h1,h2,h3,h4]
+    field_simp [hq]
+    ring
+  have hD4c :
+      Continuous (deriv (deriv (deriv (deriv P)))) :=
+    hD3_1.continuous_deriv le_rfl
+  have hD4s :
+      HasCompactSupport
+        (deriv (deriv (deriv (deriv P)))) :=
+    hPc.deriv.deriv.deriv.deriv
+  have hi :
+      Integrable
+        (fun u : ℝ =>
+          deriv (deriv (deriv (deriv P))) u
+            * Real.cos (q*u)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (hD4c.mul (by fun_prop)) hD4s.mul_right
+  have hiabs :
+      Integrable
+        (fun u : ℝ =>
+          |deriv (deriv (deriv (deriv P))) u|) :=
+    hD4c.abs.integrable_of_hasCompactSupport hD4s.abs
+  have hbound :
+      |∫ u : ℝ,
+        deriv (deriv (deriv (deriv P))) u
+          * Real.cos (q*u)|
+        <=
+      ∫ u : ℝ,
+        |deriv (deriv (deriv (deriv P))) u| := by
+    calc
+      |∫ u : ℝ,
+        deriv (deriv (deriv (deriv P))) u
+          * Real.cos (q*u)|
+        <=
+      ∫ u : ℝ,
+        |deriv (deriv (deriv (deriv P))) u
+          * Real.cos (q*u)| :=
+        abs_integral_le_integral_abs
+      _ <=
+      ∫ u : ℝ,
+        |deriv (deriv (deriv (deriv P))) u| := by
+        apply integral_mono hi.abs hiabs
+        intro u
+        rw [abs_mul]
+        exact mul_le_of_le_one_right
+          (abs_nonneg _) (Real.abs_cos_le_one _)
+  unfold compactCosineTransform
+  rw [hfourth, abs_mul,
+      abs_of_nonneg (by positivity : 0 <= 1/q^4)]
+  unfold compactCosineFourthDecayCurvature
+  exact mul_le_mul_of_nonneg_left hbound (by positivity)
+
+/--
+The actual physical signed test has inverse-fourth-power tail decay.
+-/
+theorem QuarticFourSignedPolePair.signedOrdinateTest_abs_le_gap_four
+    {t x : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hxt : x ≠ t) :
+    |W.signedOrdinateTest x|
+      <=
+    (t/16)^2
+      * compactCosineFourthDecayCurvature
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)
+      / (x-t)^4 := by
+  let r : ℝ := t/16
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hr : 0 < r := by
+    dsimp [r]
+    positivity
+  have hq : (x-t)/r ≠ 0 :=
+    div_ne_zero (sub_ne_zero.mpr hxt) hr.ne'
+  have hdec :=
+    compactCosineTransform_abs_le_invPowFour
+      (quarticFourSignedPoleCombinedProfile_contDiff_four W.Rpos)
+      (quarticFourSignedPoleCombinedProfile_compact W.Rpos)
+      hq
+  rw [W.signedOrdinateTest_eq_combinedCosine]
+  dsimp [r,P]
+  rw [abs_mul, abs_of_pos (by positivity : 0 < 1/(t/16)^2)]
+  have hmul :=
+    mul_le_mul_of_nonneg_left hdec
+      (by positivity : 0 <= 1/(t/16)^2)
+  calc
+    (1/(t/16)^2)
+      * |compactCosineTransform
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)
+          ((x-t)/(t/16))|
+      <=
+    (1/(t/16)^2)
+      * (compactCosineFourthDecayCurvature
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)
+        / (((x-t)/(t/16))^4)) := hmul
+    _ =
+    (t/16)^2
+      * compactCosineFourthDecayCurvature
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)
+      / (x-t)^4 := by
+        field_simp [ne_of_gt ht, sub_ne_zero.mpr hxt]
+        ring
+
 end Synthesis

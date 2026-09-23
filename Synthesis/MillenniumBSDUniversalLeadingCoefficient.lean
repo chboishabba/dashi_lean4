@@ -20,9 +20,14 @@ Still explicit bindings:
 * regulator;
 * Tamagawa product.
 
-Still missing at the object level:
-* a universal classical Tate--Shafarevich group attached to an arbitrary
-  rational elliptic curve.  We therefore do not invent an arbitrary Sha order.
+Now canonical at the object level:
+* the full E(Qbar) Galois representation for arbitrary E/Q;
+* the classical degree-one Sha carrier as the literal global-to-local
+  continuous-cohomology kernel.
+
+Still conjectural:
+* universal finiteness of that fixed Sha carrier;
+* the universal normalized leading-coefficient identity.
 -/
 
 namespace Synthesis.Millennium.BSD
@@ -135,32 +140,12 @@ noncomputable def BSDUniversalEllipticPointRepresentationBinding.Sha
     (E : RationalEllipticCurve) : Type :=
   rationalTateShafarevichOne (P.representation E)
 
-/-- Object-level classical Sha carrier, canonically derived from a bound
-elliptic-point Galois representation.  No finiteness assumption occurs here. -/
-structure BSDUniversalShaCarrier where
-  ellipticPoints : BSDUniversalEllipticPointRepresentationBinding
-
-
-/-- Once the universal elliptic-point representation is constructed, the
-classical Sha carrier is automatic. -/
-def BSDUniversalShaCarrier.ofEllipticPoints
-    (P : BSDUniversalEllipticPointRepresentationBinding) :
-    BSDUniversalShaCarrier :=
-  ⟨P⟩
-
-
 /-- Canonical classical Sha carrier on the actual universal E(Qbar)
 representation. -/
-noncomputable def canonicalBSDUniversalShaCarrier :
-    BSDUniversalShaCarrier :=
-  BSDUniversalShaCarrier.ofEllipticPoints
-    canonicalBSDEllipticPointRepresentationBinding
-
-/-- Literal classical degree-one Sha type for one arbitrary rational elliptic
-curve on the canonical universal carrier. -/
 noncomputable def rationalEllipticCurveSha
     (E : RationalEllipticCurve) : Type :=
-  canonicalBSDUniversalShaCarrier.Sha E
+  rationalTateShafarevichOne
+    (rationalEllipticCurvePointRepresentation E)
 
 theorem rationalEllipticCurveSha_sameObject
     (E : RationalEllipticCurve) :
@@ -168,15 +153,6 @@ theorem rationalEllipticCurveSha_sameObject
       rationalTateShafarevichOne
         (rationalEllipticCurvePointRepresentation E) := by
   rfl
-
-namespace BSDUniversalShaCarrier
-
-noncomputable def Sha
-    (S : BSDUniversalShaCarrier)
-    (E : RationalEllipticCurve) : Type :=
-  S.ellipticPoints.Sha E
-
-end BSDUniversalShaCarrier
 
 /-- Refined BSD finiteness conjecture for the canonical classical
 cohomological Sha carrier constructed above. -/

@@ -332,6 +332,52 @@ theorem padicRestrictedGenericH1_maps_to_zero_of_localCondition
   rw [hAdd]
   exact hZero
 
+/-- Generic global H¹ class represented by an explicit Selmer square-class
+pair. -/
+noncomputable def explicitSelmerToGenericTwoTorsionH1
+    (s : explicitTwoSelmerSubgroup) :
+    ContinuousCohomology.continuousCohomology 1
+      (genericTwoTorsionRepresentation RationalAbsoluteGalois) :=
+  (rationalGenericTwoTorsionH1MulEquivSquareClassPair.symm s.1).toAdd
+
+@[simp] theorem explicitSelmerToGenericTwoTorsionH1_squareClass
+    (s : explicitTwoSelmerSubgroup) :
+    rationalGenericTwoTorsionH1MulEquivSquareClassPair
+      (Multiplicative.ofAdd (explicitSelmerToGenericTwoTorsionH1 s)) =
+        s.1 := by
+  simp [explicitSelmerToGenericTwoTorsionH1]
+
+/-- All finite explicit Selmer conditions compile simultaneously to vanishing
+in the restricted elliptic-point H¹ groups, assuming the one generic H¹
+restriction-naturality theorem and the scalar/local elliptic Kummer theorems
+at each prime. -/
+theorem explicitSelmer_finite_localizations_vanish
+    (hNat :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        GenericTrivialTwoTorsionH1RestrictionNaturality
+          (padicAbsoluteGaloisRestriction p.1))
+    (hCompat :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicQuadraticKummerCompatibility p.1)
+    (hExact :
+      ∀ p : Nat.Primes,
+        letI : Fact p.1.Prime := ⟨p.2⟩
+        PadicEllipticKummerExactness p.1 (hCompat p))
+    (s : explicitTwoSelmerSubgroup)
+    (p : Nat.Primes) :
+    letI : Fact p.1.Prime := ⟨p.2⟩
+    padicGenericE2H1ToEllipticPointH1 p.1
+      (genericTwoTorsionH1Restrict
+        (G := RationalAbsoluteGalois)
+        (padicAbsoluteGaloisRestriction p.1)
+        (explicitSelmerToGenericTwoTorsionH1 s)) = 0 := by
+  letI : Fact p.1.Prime := ⟨p.2⟩
+  apply padicRestrictedGenericH1_maps_to_zero_of_localCondition
+    p.1 (hCompat p) (hNat p) (hExact p)
+  simpa [explicitSelmerToGenericTwoTorsionH1_squareClass] using s.2.2 p
+
 /-- Machine-readable local frontier: the continuous H¹ normalization and
 pair decomposition are paid uniformly; scalar local Kummer and compatibility
 with the explicit elliptic Kummer coordinates remain. -/

@@ -33,7 +33,7 @@ the latter is the reusable library result.
 namespace Synthesis.Millennium.BSD
 
 open Filter PowerSeries
-open scoped LaurentPolynomial
+open scoped LaurentPolynomial PowerSeries.WithPiTopology
 
 abbrev JacobiLaurentCoeff := LaurentPolynomial ℂ
 abbrev JacobiBivariateFormal := PowerSeries JacobiLaurentCoeff
@@ -398,6 +398,45 @@ theorem jacobiEulerZAtNegOne_finiteProduct_exact (M : ℕ) :
         ih, jacobiEvalZAtNegOne_factor,
         jacobiEulerFiniteProduct_succ]
       ring
+
+theorem tendsto_jacobiEulerFiniteProduct :
+    Tendsto jacobiEulerFiniteProduct atTop (𝓝 cmEtaEulerFormal) := by
+  simpa [jacobiEulerFiniteProduct, cmEtaEulerFormal] using
+    (PowerSeries.WithPiTopology.hasProd_one_sub_X_pow ℂ).tendsto_prod_nat
+
+theorem tendsto_X_pow_succ_zero :
+    Tendsto (fun M : ℕ => (X : PowerSeries ℂ) ^ (M + 1))
+      atTop (𝓝 0) := by
+  rw [PowerSeries.WithPiTopology.tendsto_iff_coeff_tendsto]
+  intro d
+  apply tendsto_atTop_of_eventually_const
+  filter_upwards [eventually_ge_atTop (d + 1)] with M hM
+  simp [PowerSeries.coeff_X_pow]
+  omega
+
+theorem tendsto_jacobiEulerBoundary :
+    Tendsto (fun M : ℕ => (1 - (X : PowerSeries ℂ) ^ (M + 1)) ^ 2)
+      atTop (𝓝 1) := by
+  have hsub :
+      Tendsto (fun M : ℕ => 1 - (X : PowerSeries ℂ) ^ (M + 1))
+        atTop (𝓝 (1 - 0)) :=
+    tendsto_const_nhds.sub tendsto_X_pow_succ_zero
+  simpa using hsub.pow 2
+
+/-- Product-side J0→J1 limit: differentiating the finite Jacobi products in
+the Laurent variable and evaluating at z=-1 converges to minus Euler's cube. -/
+theorem tendsto_jacobiEulerZAtNegOne_finiteProduct :
+    Tendsto
+      (fun M : ℕ =>
+        jacobiEulerZAtNegOne (jacobiFiniteProduct (M + 1)))
+      atTop (𝓝 (-(cmEtaEulerFormal ^ 3))) := by
+  have hmain :
+      Tendsto
+        (fun M : ℕ => -(jacobiEulerFiniteProduct M ^ 3))
+        atTop (𝓝 (-(cmEtaEulerFormal ^ 3))) :=
+    (tendsto_jacobiEulerFiniteProduct.pow 3).neg
+  have hmul := hmain.mul tendsto_jacobiEulerBoundary
+  simpa [jacobiEulerZAtNegOne_finiteProduct_exact] using hmul
 
 /-- J0: formal Jacobi triple product, in the same coefficientwise eventual
 product form as the formal pentagonal theorem.

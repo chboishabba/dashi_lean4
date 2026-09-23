@@ -66,6 +66,52 @@ noncomputable def jacobiTripleFactor (n : ℕ) : JacobiBivariateFormal :=
     (1 + C (LaurentPolynomial.T (1 : ℤ)) * X ^ n) *
     (1 + C (LaurentPolynomial.T (-1 : ℤ)) * X ^ (n + 1))
 
+/-- Euler derivation z*d/dz on Laurent polynomials.  Unlike the ordinary
+derivative it preserves the Laurent exponent, which makes the Leibniz proof
+on monomials especially simple. -/
+noncomputable def jacobiLaurentEuler
+    (p : JacobiLaurentCoeff) : JacobiLaurentCoeff :=
+  p.sum fun k a =>
+    LaurentPolynomial.C ((k : ℂ) * a) * LaurentPolynomial.T k
+
+@[simp] theorem jacobiLaurentEuler_C_mul_T
+    (a : ℂ) (k : ℤ) :
+    jacobiLaurentEuler
+        (LaurentPolynomial.C a * LaurentPolynomial.T k) =
+      LaurentPolynomial.C ((k : ℂ) * a) * LaurentPolynomial.T k := by
+  rw [← LaurentPolynomial.single_eq_C_mul_T]
+  simp [jacobiLaurentEuler]
+
+@[simp] theorem jacobiLaurentEuler_zero :
+    jacobiLaurentEuler (0 : JacobiLaurentCoeff) = 0 := by
+  simp [jacobiLaurentEuler]
+
+theorem jacobiLaurentEuler_add
+    (p q : JacobiLaurentCoeff) :
+    jacobiLaurentEuler (p + q) =
+      jacobiLaurentEuler p + jacobiLaurentEuler q := by
+  simp [jacobiLaurentEuler, Finsupp.sum_add_index, add_mul]
+
+/-- Leibniz rule for the Laurent Euler derivation. -/
+theorem jacobiLaurentEuler_mul
+    (p q : JacobiLaurentCoeff) :
+    jacobiLaurentEuler (p * q) =
+      jacobiLaurentEuler p * q + p * jacobiLaurentEuler q := by
+  induction p using LaurentPolynomial.induction_on' with
+  | add p₁ p₂ hp₁ hp₂ =>
+      simp only [add_mul, jacobiLaurentEuler_add, hp₁, hp₂]
+      ring
+  | C_mul_T m a =>
+      induction q using LaurentPolynomial.induction_on' with
+      | add q₁ q₂ hq₁ hq₂ =>
+          simp only [mul_add, jacobiLaurentEuler_add, hq₁, hq₂]
+          ring
+      | C_mul_T n b =>
+          simp only [← LaurentPolynomial.single_eq_C_mul_T]
+          ext j
+          simp [jacobiLaurentEuler, AddMonoidAlgebra.single_mul_single]
+          split_ifs <;> push_cast <;> ring
+
 /-- Formal derivative in the Laurent variable z. -/
 noncomputable def jacobiLaurentDerivative
     (p : JacobiLaurentCoeff) : JacobiLaurentCoeff :=
@@ -81,6 +127,23 @@ noncomputable def jacobiLaurentDerivative
 /-- The unit -1 used for Laurent evaluation. -/
 noncomputable def jacobiNegOneUnit : ℂˣ :=
   Units.mk0 (-1 : ℂ) (by norm_num)
+
+/-- Evaluate the Euler derivation at z=-1. -/
+noncomputable def jacobiLaurentEulerAtNegOne
+    (p : JacobiLaurentCoeff) : ℂ :=
+  LaurentPolynomial.eval₂ (RingHom.id ℂ) jacobiNegOneUnit
+    (jacobiLaurentEuler p)
+
+/-- Coefficientwise Euler derivation/evaluation on the bivariate q-series. -/
+noncomputable def jacobiEulerZAtNegOne
+    (F : JacobiBivariateFormal) : PowerSeries ℂ :=
+  PowerSeries.mk fun N => jacobiLaurentEulerAtNegOne (F.coeff N)
+
+@[simp] theorem jacobiEulerZAtNegOne_coeff
+    (F : JacobiBivariateFormal) (N : ℕ) :
+    (jacobiEulerZAtNegOne F).coeff N =
+      jacobiLaurentEulerAtNegOne (F.coeff N) := by
+  simp [jacobiEulerZAtNegOne]
 
 /-- Differentiate a Laurent polynomial and evaluate at z=-1. -/
 noncomputable def jacobiLaurentDerivativeAtNegOne

@@ -1533,4 +1533,52 @@ theorem exists_quarticFourSignedPole_leftBoundary_eventually_inv_bound :
         ring
   simpa [N] using hmain
 
+
+/--
+Generic compiler: an eventually K/n-bounded real sequence tends to zero.
+-/
+theorem tendsto_zero_of_eventually_abs_le_const_div_nat
+    {f : ℕ -> ℝ} {K : ℝ}
+    (hK : 0 <= K)
+    (hbound :
+      ∀ᶠ n : ℕ in atTop,
+        |f n| <= K / (n : ℝ)) :
+    Tendsto f atTop (𝓝 0) := by
+  have hcast :
+      Tendsto (fun n : ℕ => (n : ℝ)) atTop atTop :=
+    tendsto_natCast_atTop_atTop
+  have hinv :
+      Tendsto (fun n : ℕ => ((n : ℝ))⁻¹) atTop (𝓝 0) :=
+    hcast.inv_tendsto_atTop
+  have hmajor :
+      Tendsto (fun n : ℕ => K / (n : ℝ)) atTop (𝓝 0) := by
+    simpa [div_eq_mul_inv] using
+      (tendsto_const_nhds.mul hinv : Tendsto
+        (fun n : ℕ => K * ((n : ℝ))⁻¹) atTop (𝓝 (K*0)))
+  have habs :
+      Tendsto (fun n => |f n|) atTop (𝓝 0) := by
+    apply squeeze_zero'
+    · exact Filter.Eventually.of_forall fun n => abs_nonneg (f n)
+    · exact hbound
+    · exact hmajor
+  rw [tendsto_zero_iff_norm_tendsto_zero]
+  simpa [Real.norm_eq_abs] using habs
+
+/--
+The far-left centred Abel boundary vanishes on the canonical exhaustion for
+every sufficiently high fixed target t.
+-/
+theorem exists_quarticFourSignedPole_leftBoundary_tendsto_zero :
+    ∃ T0 : ℝ,
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        T0 <= t ->
+        Tendsto W.leftCenteredBoundary atTop (𝓝 0) := by
+  obtain ⟨T0,hT0⟩ :=
+    exists_quarticFourSignedPole_leftBoundary_eventually_inv_bound
+  refine ⟨T0,?_⟩
+  intro t W ht
+  obtain ⟨K,hK,hbound⟩ := hT0 W ht
+  exact tendsto_zero_of_eventually_abs_le_const_div_nat hK hbound
+
 end Synthesis

@@ -21,6 +21,7 @@ structure CrossProverReceipt where
   ternaryRelationFieldMirrored : Bool
   grothendieckTopologyMirrored : Bool
   bundleSheafGluingMirrored : Bool
+  genuineSheafConditionMirrored : Bool
   analyticModularSiteIdentified : Bool
   pathCorrespondenceIsProofEquivalence : Bool
   deriving Repr
@@ -31,6 +32,7 @@ def crossProverReceipt : CrossProverReceipt where
   ternaryRelationFieldMirrored := true
   grothendieckTopologyMirrored := true
   bundleSheafGluingMirrored := true
+  genuineSheafConditionMirrored := true
   analyticModularSiteIdentified := false
   pathCorrespondenceIsProofEquivalence := false
 
@@ -49,6 +51,11 @@ theorem completeCycleAxisCount_parity :
 theorem relationProfile_card_parity :
     Fintype.card RelationProfile = 3^144 :=
   relationProfile_card
+
+theorem relationConstantPresheaf_isSheaf_parity :
+    Presheaf.IsSheaf stage12GrothendieckTopology
+      stageRelationConstantPresheaf :=
+  stageRelationConstantPresheaf_isSheaf
 
 theorem analyticSite_not_claimed :
     frontier.analyticModularSiteIdentified = false := rfl

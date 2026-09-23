@@ -83,7 +83,8 @@ theorem rationalEllipticCurveAlgClosureGaloisAddHom_mul
       rationalEllipticCurveAlgClosureGaloisAddHom E σ
         (rationalEllipticCurveAlgClosureGaloisAddHom E τ P) := by
   letI : E.1.IsElliptic := E.2
-  simpa [rationalEllipticCurveAlgClosureGaloisAddHom] using
+  simpa [rationalEllipticCurveAlgClosureGaloisAddHom,
+    AlgEquiv.mul_apply] using
     (WeierstrassCurve.Affine.Point.map_map
       (W' := E.1.toAffine)
       τ.toAlgHom σ.toAlgHom P).symm

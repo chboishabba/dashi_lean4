@@ -925,4 +925,191 @@ theorem QuarticFourSignedPolePair.signedCenteredWindowResidual_eq_centeredAbel
       W.signedZetaMuWindowResidual_right_eq_centeredAbel ht hB]
   ring
 
+
+/-!
+## Global centred-Abel exhaustion compiler
+
+This record is intentionally analytic but not number-theoretic.  It says
+exactly what remains to pass the finite centred identity to the global
+`signedNMuPair` scalar.
+-/
+
+def QuarticFourSignedPolePair.centeredAbelIntegrand
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (x : ℝ) : ℝ :=
+  W.signedOrdinateTestDeriv x * centeredZetaMuDiscrepancy t x
+
+def QuarticFourSignedPolePair.leftCenteredAbelPartial
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) : ℝ :=
+  ∫ x in (t - n)..t, W.centeredAbelIntegrand x
+
+def QuarticFourSignedPolePair.rightCenteredAbelPartial
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) : ℝ :=
+  ∫ x in t..(t + n), W.centeredAbelIntegrand x
+
+def QuarticFourSignedPolePair.leftCenteredBoundary
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) : ℝ :=
+  W.signedOrdinateTest (t - n)
+    * zetaMuCumulativeDiscrepancy (t - n) t
+
+def QuarticFourSignedPolePair.rightCenteredBoundary
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) : ℝ :=
+  W.signedOrdinateTest (t + n)
+    * centeredZetaMuDiscrepancy t (t + n)
+
+def QuarticFourSignedPolePair.centeredWindowResidualAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) : ℝ :=
+  W.signedCenteredWindowResidual (t - n) (t + n)
+
+record QuarticFourSignedPolePair.CenteredAbelExhaustion
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : Type where
+  field
+    leftLimit : ℝ
+    rightLimit : ℝ
+
+    residual_tendsto :
+      Tendsto W.centeredWindowResidualAt atTop
+        (𝓝 W.signedNMuPair)
+
+    leftBoundary_tendsto_zero :
+      Tendsto W.leftCenteredBoundary atTop (𝓝 0)
+
+    rightBoundary_tendsto_zero :
+      Tendsto W.rightCenteredBoundary atTop (𝓝 0)
+
+    leftIntegral_tendsto :
+      Tendsto W.leftCenteredAbelPartial atTop (𝓝 leftLimit)
+
+    rightIntegral_tendsto :
+      Tendsto W.rightCenteredAbelPartial atTop (𝓝 rightLimit)
+
+open QuarticFourSignedPolePair.CenteredAbelExhaustion
+
+/--
+Finite centred Abel identity on the canonical symmetric exhaustion.
+-/
+theorem QuarticFourSignedPolePair.centeredWindowResidualAt_eq
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.centeredWindowResidualAt n
+      =
+    W.leftCenteredBoundary n
+      + W.rightCenteredBoundary n
+      - W.leftCenteredAbelPartial n
+      - W.rightCenteredAbelPartial n := by
+  unfold QuarticFourSignedPolePair.centeredWindowResidualAt
+    QuarticFourSignedPolePair.leftCenteredBoundary
+    QuarticFourSignedPolePair.rightCenteredBoundary
+    QuarticFourSignedPolePair.leftCenteredAbelPartial
+    QuarticFourSignedPolePair.rightCenteredAbelPartial
+    QuarticFourSignedPolePair.centeredAbelIntegrand
+  have hA : t - n <= t := by
+    norm_num
+  have hB : t <= t + n := by
+    norm_num
+  simpa using
+    W.signedCenteredWindowResidual_eq_centeredAbel
+      ht hA hB
+
+/--
+Global centred Abel compiler.
+
+Once the standard exhaustion limits are paid, the literal global signed N-mu
+scalar is exactly minus the two centred derivative-correlation limits.
+-/
+theorem QuarticFourSignedPolePair.signedNMuPair_eq_centeredAbel_limits
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (E : W.CenteredAbelExhaustion) :
+    W.signedNMuPair = - E.leftLimit - E.rightLimit := by
+  have hfinite :
+      (fun n : ℕ => W.centeredWindowResidualAt n)
+        =
+      fun n =>
+        W.leftCenteredBoundary n
+          + W.rightCenteredBoundary n
+          - W.leftCenteredAbelPartial n
+          - W.rightCenteredAbelPartial n := by
+    funext n
+    exact W.centeredWindowResidualAt_eq ht n
+  have hrhs :
+      Tendsto
+        (fun n =>
+          W.leftCenteredBoundary n
+            + W.rightCenteredBoundary n
+            - W.leftCenteredAbelPartial n
+            - W.rightCenteredAbelPartial n)
+        atTop
+        (𝓝 (0 + 0 - E.leftLimit - E.rightLimit)) :=
+    ((E.leftBoundary_tendsto_zero.add
+      E.rightBoundary_tendsto_zero).sub
+      E.leftIntegral_tendsto).sub
+      E.rightIntegral_tendsto
+  have hres :
+      Tendsto W.centeredWindowResidualAt atTop
+        (𝓝 (0 + 0 - E.leftLimit - E.rightLimit)) := by
+    rw [hfinite]
+    exact hrhs
+  have huniq :=
+    tendsto_nhds_unique E.residual_tendsto hres
+  simpa using huniq
+
+/--
+The joint G3 analytic functional after centred-Abel exhaustion.
+-/
+def QuarticFourSignedPolePair.centeredCompletedResidual
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (leftAbel rightAbel : ℝ) : ℝ :=
+  -(1/2 : ℝ) * leftAbel
+    - (1/2 : ℝ) * rightAbel
+    + W.signedHorizontalRemainder
+
+theorem QuarticFourSignedPolePair.completedSignedResidual_eq_centered
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (E : W.CenteredAbelExhaustion) :
+    W.completedSignedResidual
+      =
+    W.centeredCompletedResidual E.leftLimit E.rightLimit := by
+  unfold QuarticFourSignedPolePair.completedSignedResidual
+    QuarticFourSignedPolePair.centeredCompletedResidual
+  rw [W.signedNMuPair_eq_centeredAbel_limits ht E]
+  ring
+
+/--
+Diagnostic no-go: on the quantitative quartic band, an outward-pointing
+centred discrepancy has the wrong sign for making the Abel contribution
+negative.
+-/
+theorem QuarticFourSignedPolePair.outwardCenteredDiscrepancy_mul_deriv_nonpos
+    {t x : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hx0 : 0 < |x-t|)
+    (hx :
+      |x-t| < (t/16) * W.quantitativeTargetRadius)
+    (hout :
+      0 <= (x-t) * centeredZetaMuDiscrepancy t x) :
+    W.signedOrdinateTestDeriv x
+        * centeredZetaMuDiscrepancy t x
+      <= 0 := by
+  have hrad :=
+    W.signedOrdinateTestDeriv_radial_neg ht hx0 hx
+  by_cases hxt : 0 < x-t
+  · have hE : 0 <= centeredZetaMuDiscrepancy t x := by
+      nlinarith
+    have hD : W.signedOrdinateTestDeriv x < 0 := by
+      nlinarith
+    exact mul_nonpos_of_nonpos_of_nonneg hD.le hE
+  · have hxt' : x-t < 0 := by
+      have hne : x-t ≠ 0 := by
+        intro hz
+        rw [hz, abs_zero] at hx0
+        linarith
+      exact lt_of_not_ge (fun h => hxt (lt_of_le_of_ne h (Ne.symm hne)))
+    have hE : centeredZetaMuDiscrepancy t x <= 0 := by
+      nlinarith
+    have hD : 0 < W.signedOrdinateTestDeriv x := by
+      nlinarith
+    exact mul_nonpos_of_nonneg_of_nonpos hD.le hE
+
 end Synthesis

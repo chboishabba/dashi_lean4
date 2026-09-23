@@ -1048,7 +1048,11 @@ theorem QuarticFourSignedPolePair.literalJointQuarticPolynomial_nonpos_of_six_he
           = ((sigma : ℂ).im-t)^2 * ((sigma : ℂ).im-t)^2 := by ring
     rw [hd4]
     nlinarith
-  exact div_nonpos_of_nonneg_of_nonpos
-    (mul_nonneg hm hS) hbr hr.le
+  have hnum :
+      ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+        * W.targetStrength * hbr <= 0 := by
+    exact mul_nonpos_of_nonneg_of_nonpos
+      (mul_nonneg hm hS) hbr
+  exact div_nonpos_of_nonpos_of_nonneg hnum hr.le
 
 end Synthesis

@@ -148,6 +148,27 @@ def BSDUniversalShaCarrier.ofEllipticPoints
     BSDUniversalShaCarrier :=
   ⟨P⟩
 
+
+/-- Canonical classical Sha carrier on the actual universal E(Qbar)
+representation. -/
+noncomputable def canonicalBSDUniversalShaCarrier :
+    BSDUniversalShaCarrier :=
+  BSDUniversalShaCarrier.ofEllipticPoints
+    canonicalBSDEllipticPointRepresentationBinding
+
+/-- Literal classical degree-one Sha type for one arbitrary rational elliptic
+curve on the canonical universal carrier. -/
+noncomputable def rationalEllipticCurveSha
+    (E : RationalEllipticCurve) : Type :=
+  canonicalBSDUniversalShaCarrier.Sha E
+
+theorem rationalEllipticCurveSha_sameObject
+    (E : RationalEllipticCurve) :
+    rationalEllipticCurveSha E =
+      rationalTateShafarevichOne
+        (rationalEllipticCurvePointRepresentation E) := by
+  rfl
+
 namespace BSDUniversalShaCarrier
 
 noncomputable def Sha
@@ -322,7 +343,7 @@ structure BSDUniversalRefinedMaxCutStatus where
   universalRegulatorBindingPaid : Bool
   universalTamagawaBindingPaid : Bool
   universalEllipticPointRepresentationPaid : Bool
-  universalClassicalShaCarrierCompilerPaid : Bool
+  universalClassicalShaCarrierPaid : Bool
   refinedCarrierCompilerPaid : Bool
   shaCarrierFinitenessSeparatedPaid : Bool
   universalShaFinitenessPaid : Bool

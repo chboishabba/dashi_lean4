@@ -2,6 +2,7 @@ import Synthesis.MillenniumBSDActualE2TopRepSameObject
 import Synthesis.MillenniumBSDActualEllipticPointTopRep
 import Synthesis.MillenniumBSDSelmerShaCohomologicalBoundary
 import Synthesis.MillenniumBSDExplicitSelmerCokernelExact
+import Mathlib.GroupTheory.QuotientGroup.Basic
 
 /-!
 # Correct classical Sha[2] boundary for the CM curve
@@ -41,6 +42,60 @@ noncomputable def classicalEllipticShaOne
 noncomputable def classicalEllipticShaTwo
     (Ebar : TopRep ℤ RationalAbsoluteGalois) :=
   rationalTateShafarevichTwoTorsion Ebar
+
+/--
+Canonical exact-map form of the remaining classical two-descent theorem.
+
+Rather than asking for the final quotient equivalence as a black box, this
+records exactly what continuous Kummer exactness and localization must
+produce on the already-built explicit Selmer subgroup:
+
+* a homomorphism from the explicit Selmer group to classical Sha(E)[2];
+* kernel equal to the already-paid global Kummer image E(Q)/2E(Q);
+* surjectivity.
+
+Noether's first isomorphism theorem then constructs the desired cokernel
+equivalence automatically.
+-/
+structure ClassicalTwoDescentExactMapBoundary where
+  selmerToSha :
+    explicitTwoSelmerSubgroup →*
+      Multiplicative (classicalEllipticShaTwo cmEllipticPointRepresentation)
+  kernel_eq_globalKummerImage :
+    selmerToSha.ker = globalKummerImageSubgroup
+  surjective : Function.Surjective selmerToSha
+
+/-- The exact-map boundary compiles to the literal explicit Selmer cokernel
+equivalence by the first isomorphism theorem. -/
+noncomputable def explicitSelmerCokernelEquivClassicalShaTwo_of_exactMap
+    (h : ClassicalTwoDescentExactMapBoundary) :
+    ExplicitTwoSelmerCokernel ≃
+      classicalEllipticShaTwo cmEllipticPointRepresentation := by
+  let eKer :
+      ExplicitTwoSelmerCokernel ≃*
+        (explicitTwoSelmerSubgroup ⧸ h.selmerToSha.ker) :=
+    QuotientGroup.quotientMulEquivOfEq h.kernel_eq_globalKummerImage
+  let eSha :
+      (explicitTwoSelmerSubgroup ⧸ h.selmerToSha.ker) ≃*
+        Multiplicative (classicalEllipticShaTwo cmEllipticPointRepresentation) :=
+    QuotientGroup.quotientKerEquivOfSurjective h.selmerToSha h.surjective
+  let e := eKer.trans eSha
+  exact
+    { toFun := fun q => (e q).toAdd
+      invFun := fun s => e.symm (Multiplicative.ofAdd s)
+      left_inv := by
+        intro q
+        simp [e]
+      right_inv := by
+        intro s
+        simp [e] }
+
+/-- Exact-map data therefore pays the older fixed-representation comparison
+boundary without asking for an independent equivalence producer. -/
+theorem actualClassicalTwoDescentShaComparison_of_exactMap
+    (h : ClassicalTwoDescentExactMapBoundary) :
+    ActualClassicalTwoDescentShaComparison :=
+  ⟨explicitSelmerCokernelEquivClassicalShaTwo_of_exactMap h⟩
 
 /--
 Exact remaining arithmetic producer after the explicit 2-descent work.

@@ -1883,6 +1883,13 @@ theorem jacobiSquareThetaDiagonalTransfer_of_weightedDiagonalAgreements
   simpa [hFinite, hSeries] using h
 
 
+/-- The weighted diagonal transfer is now paid internally from J0. -/
+theorem jacobiSquareThetaDiagonalTransfer_paid :
+    JacobiSquareThetaDiagonalTransfer :=
+  jacobiSquareThetaDiagonalTransfer_of_weightedDiagonalAgreements
+    jacobiWeightedDiagonal_finiteProduct_paid
+    jacobiWeightedDiagonal_tripleSeries_paid
+
 /-- Once the weighted diagonal limit is known, the base theta4 identity is
 forced by uniqueness of limits and the already-paid finite product identity. -/
 theorem jacobiSquareThetaBaseIdentity_of_diagonalLimit
@@ -1917,26 +1924,51 @@ theorem jacobiSquareThetaSpecializationCompiler_paid_of_diagonal
   exact cmJacobiEvenProductIdentity_of_squareThetaBase
     (jacobiSquareThetaBaseIdentity_of_diagonalLimit (hDiag hJ))
 
-/-- Complete q-series producer after paying J1, the J2 product-side limit,
-and the level-32 transport internally.  Its only remaining q-series
-compatibility input is the weighted diagonal transfer of J0. -/
+/-- J0 alone now compiles to the base theta4 identity. -/
+theorem jacobiSquareThetaBaseIdentity_of_tripleProduct
+    (hJ : JacobiTripleProductFormal) :
+    JacobiSquareThetaBaseIdentity :=
+  jacobiSquareThetaBaseIdentity_of_diagonalLimit
+    (jacobiSquareThetaDiagonalTransfer_paid hJ)
+
+/-- J2 is now fully internal to J0. -/
+theorem jacobiSquareThetaSpecializationCompiler_paid :
+    JacobiTripleProductFormal → cmJacobiEvenProductIdentity := by
+  intro hJ
+  exact cmJacobiEvenProductIdentity_of_squareThetaBase
+    (jacobiSquareThetaBaseIdentity_of_tripleProduct hJ)
+
+/-- Both eta32 Jacobi products now follow from J0 alone. -/
+theorem jacobiEta32Products_of_tripleProduct
+    (hJ : JacobiTripleProductFormal) :
+    cmJacobiOddProductIdentity ∧ cmJacobiEvenProductIdentity :=
+  ⟨jacobiCubeSpecializationCompiler_paid hJ,
+    jacobiSquareThetaSpecializationCompiler_paid hJ⟩
+
+/-- Compatibility-shaped q-series producer.  The second field is now
+internally constructible from the first; it is retained only to avoid breaking
+existing downstream constructors. -/
 def JacobiEta32FromTripleProductProducer : Prop :=
   JacobiTripleProductFormal ∧
     JacobiSquareThetaDiagonalTransfer
 
+/-- J0 supplies the compatibility-shaped producer automatically. -/
+theorem jacobiEta32FromTripleProductProducer_of_tripleProduct
+    (hJ : JacobiTripleProductFormal) :
+    JacobiEta32FromTripleProductProducer :=
+  ⟨hJ, jacobiSquareThetaDiagonalTransfer_paid⟩
+
+
 theorem jacobiEta32Products_of_tripleProductProducer
     (h : JacobiEta32FromTripleProductProducer) :
     cmJacobiOddProductIdentity ∧ cmJacobiEvenProductIdentity := by
-  rcases h with ⟨hJTP, hDiag⟩
-  exact ⟨jacobiCubeSpecializationCompiler_paid hJTP,
-    cmJacobiEvenProductIdentity_of_squareThetaBase
-      (jacobiSquareThetaBaseIdentity_of_diagonalLimit (hDiag hJTP))⟩
+  rcases h with ⟨hJTP, _⟩
+  exact jacobiEta32Products_of_tripleProduct hJTP
 
 /-- Machine-readable J0/J1/J2 boundary. formalCarrierPaid records that the
 correct Laurent/power-series same-object carrier is now implemented; the
-actual triple-product proof and the base theta4 diagonal specialization remain
-mathematical obligations; the cube specialization and level-32 theta transport
-are paid internally. -/
+the actual triple-product proof remains the q-series mathematical obligation;
+both cube and square-theta specializations are paid internally. -/
 structure JacobiTripleProductBoundaryStatus where
   formalCarrierPaid : Bool
   tripleProductPaid : Bool
@@ -1945,6 +1977,6 @@ structure JacobiTripleProductBoundaryStatus where
   deriving DecidableEq, Repr
 
 def jacobiTripleProductBoundaryStatus : JacobiTripleProductBoundaryStatus :=
-  ⟨true, false, true, false⟩
+  ⟨true, false, true, true⟩
 
 end Synthesis.Millennium.BSD

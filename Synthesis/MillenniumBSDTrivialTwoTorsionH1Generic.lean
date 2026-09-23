@@ -2,6 +2,7 @@ import Synthesis.MillenniumBSDCMTwoTorsionGaloisModule
 import Mathlib.RepresentationTheory.Homological.ContCohomology.LowDegree
 import Mathlib.Topology.CompactOpen
 import Mathlib.Algebra.Group.Equiv.TypeTags
+import Mathlib.FieldTheory.Galois.Profinite
 import Mathlib.Tactic
 
 /-!
@@ -304,5 +305,41 @@ noncomputable def genericTrivialTwoTorsionH1CharacterEquiv :
       GenericTwoTorsionContinuousCharacter G :=
   Multiplicative.ofAdd.trans
     (genericTrivialTwoTorsionH1CharacterMulEquiv G).toEquiv
+
+/-! ### Absolute Galois specialization -/
+
+variable (K : Type*) [Field K]
+
+/-- The absolute Galois group of every field is a compact topological group
+in the Krull topology, hence the generic low-degree theorem applies without
+any field-specific cohomological argument. -/
+noncomputable def absoluteGaloisTrivialTwoTorsionH1CharacterMulEquiv :
+    Multiplicative
+      (continuousCohomology 1
+        (genericTwoTorsionRepresentation
+          (Field.absoluteGaloisGroup K))) ≃*
+      GenericTwoTorsionContinuousCharacter
+        (Field.absoluteGaloisGroup K) := by
+  letI : CompactSpace (Field.absoluteGaloisGroup K) := inferInstance
+  letI : LocallyCompactSpace (Field.absoluteGaloisGroup K) :=
+    IsCompact.locallyCompactSpace_of_mem_nhds_of_group
+      (K := Set.univ) isCompact_univ univ_mem
+  exact genericTrivialTwoTorsionH1CharacterMulEquiv
+    (Field.absoluteGaloisGroup K)
+
+/-- Plain equivalence form of the field-generic absolute-Galois theorem. -/
+noncomputable def absoluteGaloisTrivialTwoTorsionH1CharacterEquiv :
+    continuousCohomology 1
+        (genericTwoTorsionRepresentation
+          (Field.absoluteGaloisGroup K)) ≃
+      GenericTwoTorsionContinuousCharacter
+        (Field.absoluteGaloisGroup K) := by
+  letI : CompactSpace (Field.absoluteGaloisGroup K) := inferInstance
+  letI : LocallyCompactSpace (Field.absoluteGaloisGroup K) :=
+    IsCompact.locallyCompactSpace_of_mem_nhds_of_group
+      (K := Set.univ) isCompact_univ univ_mem
+  exact genericTrivialTwoTorsionH1CharacterEquiv
+    (Field.absoluteGaloisGroup K)
+
 
 end Synthesis.Millennium.BSD

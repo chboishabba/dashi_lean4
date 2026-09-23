@@ -1,6 +1,7 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleQuantitativeBand
 import Synthesis.RiemannProjectiveQuarticNMuSameObject
 import Synthesis.RiemannProjectiveRvMMuNamedGammaDefect
+import Zeta23.ExplicitFormula.Bridge
 
 /-!
 # Exact signed four-window N-mu assembly
@@ -454,6 +455,98 @@ def QuarticFourSignedPolePair.signedHorizontalRemainder
       quarticFourHorizontalRemainder W.R (2/3) W.muTwo t
 
 /--
+The literal four-window ordinate test is globally integrable against the exact
+RvM density mu.
+
+This is not a new tail estimate.  It is transported from
+`Zeta23.EF.integrable_paperFT_mul_mu` through the exact projective
+paperFT/base-kernel normalization and the physical rescaling theorem.
+-/
+theorem quarticFourOrdinateTest_mul_mu_integrable
+    {R lam mu t : ℝ}
+    (hR : 0 < R)
+    (ht : 0 < t) :
+    Integrable
+      (fun tau : ℝ =>
+        quarticFourOrdinateTest R lam mu t tau
+          * Zeta23.mu tau) := by
+  let g : ℝ -> ℝ :=
+    quarticFourPhysicalDetector R lam mu t
+  let k : ℝ -> ℂ :=
+    literalProjectiveSampleTest g t (t/16)
+  have hg2 : ContDiff ℝ 2 g := by
+    dsimp [g]
+    exact quarticFourPhysicalDetector_contDiff
+      (lam:=lam) (mu:=mu) (t:=t) hR
+  have hgc : HasCompactSupport g := by
+    dsimp [g]
+    exact quarticFourPhysicalDetector_compact
+      (lam:=lam) (mu:=mu) hR ht
+  have hk2 : ContDiff ℝ 2 k := by
+    dsimp [k]
+    exact sampleTest_contDiff hg2 t (t/16)
+  have hkc : HasCompactSupport k := by
+    dsimp [k]
+    exact sampleTest_hasCompactSupport hgc t (t/16)
+  have hiComplex :
+      Integrable
+        (fun tau : ℝ =>
+          paperFT k tau * (Zeta23.mu tau : ℂ)) :=
+    Zeta23.EF.integrable_paperFT_mul_mu
+      hk2 hkc Zeta23.gammaFacts
+  have hiReal :
+      Integrable
+        (fun tau : ℝ =>
+          (1/4 : ℝ)
+            * quarticFourOrdinateTest R lam mu t tau
+            * Zeta23.mu tau) := by
+    have hre := hiComplex.re
+    have hfun :
+        (fun tau : ℝ =>
+          (paperFT k tau * (Zeta23.mu tau : ℂ)).re)
+          =
+        fun tau : ℝ =>
+          (1/4 : ℝ)
+            * quarticFourOrdinateTest R lam mu t tau
+            * Zeta23.mu tau := by
+      funext tau
+      have hpaper :=
+        paperFT_literalProjectiveSampleTest_eq_quarter_baseKernel
+          hg2.continuous hgc
+          (quarticFourPhysicalDetector_even R lam mu t)
+          t (t/16) tau
+      dsimp [k, g] at hpaper
+      rw [hpaper]
+      simp only [map_mul, ofReal_re]
+      rw [quarticFourPhysicalBaseKernel_eq_ordinateTest
+        (R:=R) (lam:=lam) (mu:=mu) ht tau]
+      ring
+    rw [hfun] at hre
+    exact hre
+  have hscaled := hiReal.const_mul (4 : ℝ)
+  simpa only [mul_assoc] using hscaled
+
+/--
+Both endpoint tests carried by a signed-pole witness are globally mu-integrable.
+-/
+theorem QuarticFourSignedPolePair.endpointMuIntegrable
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Integrable
+      (fun tau : ℝ =>
+        quarticFourOrdinateTest W.R (1/2) W.muHalf t tau
+          * Zeta23.mu tau)
+    ∧
+    Integrable
+      (fun tau : ℝ =>
+        quarticFourOrdinateTest W.R (2/3) W.muTwo t tau
+          * Zeta23.mu tau) := by
+  exact ⟨
+    quarticFourOrdinateTest_mul_mu_integrable W.Rpos ht,
+    quarticFourOrdinateTest_mul_mu_integrable W.Rpos ht
+  ⟩
+
+/--
 Exact pointwise normal form for the global signed N-mu scalar.
 
 The two endpoint mu-integrability facts are explicit hypotheses here.  They are
@@ -567,6 +660,27 @@ theorem QuarticFourSignedPolePair.signedNMuPair_eq_pointwise
     quarticFourFullNMinusMu
   rw [htsum, hint]
   ring
+
+
+/--
+Hypothesis-free same-object weld for the actual combined Psi test.
+
+The endpoint full-line mu-integrability obligations are discharged by the
+Zeta23 explicit-formula bridge.
+-/
+theorem QuarticFourSignedPolePair.signedNMuPair_eq_pointwise_closed
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNMuPair
+      =
+    (∑' sigma : Zeros,
+      ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+        * W.signedOrdinateTest (sigma : ℂ).im)
+      -
+    ∫ tau : ℝ,
+      W.signedOrdinateTest tau * Zeta23.mu tau := by
+  obtain ⟨hiHalf, hiTwo⟩ := W.endpointMuIntegrable ht
+  exact W.signedNMuPair_eq_pointwise ht hiHalf hiTwo
 
 
 /--

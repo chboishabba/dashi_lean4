@@ -450,6 +450,44 @@ theorem genericContinuousH1IsoCocyclesOne_hom_naturality
   rw [Category.assoc, ContinuousCohomology.π_map]
   simp [genericContinuousH1IsoCocyclesOne]
 
+/-- Literal restriction of a homogeneous continuous one-cocycle.  This is
+defined through mathlib's cocyclesMap, then transported across the canonical
+cycles-kernel identifications already used by the low-degree theorem. -/
+noncomputable def genericContinuousOneCocycleRestrict
+    (φ : H →ₜ* G)
+    (σ : GenericTwoTorsionContinuousOneCocycle G) :
+    GenericTwoTorsionContinuousOneCocycle H :=
+  (genericContinuousCocyclesOneIso H).hom
+    (ContinuousCohomology.cocyclesMap φ
+      (genericTwoTorsionRestrictionHom (G := G) φ) 1
+      ((genericContinuousCocyclesOneIso G).inv σ))
+
+/-- Exact remaining representative-level naturality seam.  There is no
+homology quotient left here: restriction must simply turn evaluation at
+(1,h) into evaluation at (1,φ h). -/
+def GenericTrivialTwoTorsionOneCocycleRestrictionNaturality
+    (φ : H →ₜ* G) : Prop :=
+  ∀ (σ : GenericTwoTorsionContinuousOneCocycle G) (h : H),
+    (genericContinuousOneCocycleRestrict (G := G) φ σ).1.1 1 h =
+      σ.1.1 1 (φ h)
+
+/-- The representative-level evaluation square already implies naturality
+of the cocycle-to-character normalization. -/
+theorem genericContinuousOneCocycleToCharacter_restrict_natural
+    (φ : H →ₜ* G)
+    (hEval :
+      GenericTrivialTwoTorsionOneCocycleRestrictionNaturality φ)
+    (σ : GenericTwoTorsionContinuousOneCocycle G) :
+    genericContinuousOneCocycleToCharacter H
+        (genericContinuousOneCocycleRestrict (G := G) φ σ)
+      =
+    (genericContinuousOneCocycleToCharacter G σ).comp φ := by
+  apply ContinuousMonoidHom.ext
+  intro h
+  apply Multiplicative.toAdd_injective
+  exact hEval σ h
+
+
 
 /-- Restriction of scalar quadratic characters is ordinary precomposition. -/
 noncomputable def genericQuadraticCharacterRestrict

@@ -95,6 +95,116 @@ noncomputable def cmContinuousOneCocycleToCharacter
     exact (σ.1.1 1).continuous
 
 
+/-- Jointly continuous homogeneous cochain attached to a continuous
+character: σχ(x,y)=χ(x⁻¹y). -/
+noncomputable def cmCharacterHomogeneousRaw
+    (χ : CMTwoTorsionContinuousCharacter) :
+    C(RationalAbsoluteGalois × RationalAbsoluteGalois,
+      CMTwoTorsionCarrier) where
+  toFun p := Multiplicative.toAdd (χ (p.1⁻¹ * p.2))
+  continuous_toFun := by
+    change Continuous (fun p : RationalAbsoluteGalois × RationalAbsoluteGalois =>
+      Multiplicative.toAdd (χ (p.1⁻¹ * p.2)))
+    exact χ.continuous_toFun.comp
+      (continuous_fst.inv.mul continuous_snd)
+
+noncomputable def cmCharacterHomogeneousCochain
+    (χ : CMTwoTorsionContinuousCharacter) :
+    C(RationalAbsoluteGalois,
+      C(RationalAbsoluteGalois, CMTwoTorsionCarrier)) :=
+  (cmCharacterHomogeneousRaw χ).curry
+
+@[simp] theorem cmCharacterHomogeneousCochain_apply
+    (χ : CMTwoTorsionContinuousCharacter)
+    (x y : RationalAbsoluteGalois) :
+    cmCharacterHomogeneousCochain χ x y =
+      Multiplicative.toAdd (χ (x⁻¹ * y)) := rfl
+
+theorem cmCharacterHomogeneousCochain_invariant
+    (χ : CMTwoTorsionContinuousCharacter) :
+    cmCharacterHomogeneousCochain χ ∈
+      ((TopRep.resolution' cmTwoTorsionRepresentation).X 1).ρ.invariants := by
+  intro g
+  ext x y
+  simp only [coind₁_apply_apply, cmTwoTorsionRepresentation_action,
+    cmCharacterHomogeneousCochain_apply]
+  congr 2
+  group
+
+theorem cmCharacterHomogeneousRaw_relation
+    (χ : CMTwoTorsionContinuousCharacter)
+    (x y z : RationalAbsoluteGalois) :
+    cmCharacterHomogeneousCochain χ y z =
+      cmCharacterHomogeneousCochain χ x z -
+        cmCharacterHomogeneousCochain χ x y := by
+  have hmul :=
+    congrArg Multiplicative.toAdd
+      (χ.map_mul (x⁻¹ * y) (y⁻¹ * z))
+  have hgroup :
+      (x⁻¹ * y) * (y⁻¹ * z) = x⁻¹ * z := by
+    group
+  rw [hgroup] at hmul
+  simp only [map_mul, Multiplicative.toAdd_mul] at hmul
+  simp only [cmCharacterHomogeneousCochain_apply]
+  rw [← sub_eq_iff_eq_add]
+  simpa [add_comm] using hmul.symm
+
+/-- A continuous character produces a literal element of the homogeneous
+one-cocycle kernel. -/
+noncomputable def cmCharacterToContinuousOneCocycle
+    (χ : CMTwoTorsionContinuousCharacter) :
+    CMTwoTorsionContinuousOneCocycle := by
+  let σ :
+      (TopRep.homogeneousCochains cmTwoTorsionRepresentation).X 1 :=
+    ⟨cmCharacterHomogeneousCochain χ,
+      cmCharacterHomogeneousCochain_invariant χ⟩
+  refine ⟨σ, ?_⟩
+  rw [LinearMap.mem_ker]
+  apply Subtype.ext
+  ext x y z
+  rw [TopRep.homogeneousCochains.d_apply]
+  simp only [Nat.reduceAdd, TopRep.d_succ, TopRep.d_zero,
+    ConcreteCategory.hom_ofHom, hom_sub,
+    ContIntertwiningMap.sub_apply, coind₁ι_toFun, coind₁Map_toFun,
+    ContinuousMap.const_apply, ContinuousMap.comp_apply,
+    ContinuousMap.coe_mk, ZeroMemClass.coe_zero]
+  change cmCharacterHomogeneousCochain χ y z -
+      (cmCharacterHomogeneousCochain χ x z -
+        cmCharacterHomogeneousCochain χ x y) = 0
+  rw [cmCharacterHomogeneousRaw_relation]
+  abel
+
+theorem cmContinuousOneCocycleToCharacter_leftInverse
+    (χ : CMTwoTorsionContinuousCharacter) :
+    cmContinuousOneCocycleToCharacter
+      (cmCharacterToContinuousOneCocycle χ) = χ := by
+  apply ContinuousMonoidHom.ext
+  intro g
+  apply Multiplicative.toAdd_injective
+  simp [cmContinuousOneCocycleToCharacter,
+    cmCharacterToContinuousOneCocycle,
+    cmCharacterHomogeneousCochain]
+
+theorem cmContinuousOneCocycleToCharacter_rightInverse
+    (σ : CMTwoTorsionContinuousOneCocycle) :
+    cmCharacterToContinuousOneCocycle
+      (cmContinuousOneCocycleToCharacter σ) = σ := by
+  apply Subtype.ext
+  apply Subtype.ext
+  ext x y
+  change σ.1.1 1 (x⁻¹ * y) = σ.1.1 x y
+  have h := cmContinuousOneCocycle_leftInvariant σ x 1 (x⁻¹ * y)
+  simpa using h
+
+/-- Concrete low-degree equivalence before quotienting by coboundaries. -/
+noncomputable def cmContinuousOneCocycleEquivCharacter :
+    CMTwoTorsionContinuousOneCocycle ≃
+      CMTwoTorsionContinuousCharacter where
+  toFun := cmContinuousOneCocycleToCharacter
+  invFun := cmCharacterToContinuousOneCocycle
+  left_inv := cmContinuousOneCocycleToCharacter_rightInverse
+  right_inv := cmContinuousOneCocycleToCharacter_leftInverse
+
 noncomputable def cmTwoTorsionCharacterFst
     (χ : CMTwoTorsionContinuousCharacter) :
     RationalQuadraticCharacter where

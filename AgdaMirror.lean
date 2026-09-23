@@ -125,3 +125,5 @@ provides faithful Lean mirrors:
 import AgdaMirror.JInvariant369ConsolidatedNextStage
 
 import AgdaMirror.JInvariant369ZeroToThirteenTetralemmaQualification
+
+import AgdaMirror.JInvariant369Zeta6561MonsterCrosswalk

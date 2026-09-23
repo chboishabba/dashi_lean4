@@ -15,6 +15,9 @@ on:
       - 'Integration/JInvariantSheafDescent.lean'
       - 'Integration/StageTwelveGrothendieckRelation.lean'
       - 'Integration.lean'
+      - 'AgdaMirror/JInvariantSheafDescent.lean'
+      - 'AgdaMirror/StageTwelveGrothendieckRelation.lean'
+      - 'AgdaMirror.lean'
       - '.github/workflows/j369-sheaf-descent.yml'
   workflow_dispatch:
 

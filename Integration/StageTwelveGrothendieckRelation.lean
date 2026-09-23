@@ -157,6 +157,92 @@ def relationDiagonalWrongTypeReceipt : RelationWrongTypeReceipt where
   rejection := "same diagonal / different off-diagonal (0,1) witness"
   candidateMayStillExist := true
 
+/-! Signed SSP/FRACTRAN fine stalk over the 144 relation carrier. -/
+
+inductive SignedMultiplicity
+  | negative (magnitude : Nat)
+  | zero
+  | positive (magnitude : Nat)
+  deriving DecidableEq, Repr
+
+def signedMultiplicityToTrit : SignedMultiplicity → Trit
+  | .negative _ => 0
+  | .zero => 1
+  | .positive _ => 2
+
+abbrev SignedRelationField :=
+  StageRelation144 → SignedMultiplicity
+
+def coarseSignedRelationField (field : SignedRelationField) :
+    StageRelationField :=
+  fun cell => signedMultiplicityToTrit (field cell)
+
+abbrev SignedRelationCellState :=
+  StageRelation144 × SignedMultiplicity
+
+def signedRelationCellObserver (state : SignedRelationCellState) :
+    StageRelation144 × Trit :=
+  (state.1, signedMultiplicityToTrit state.2)
+
+def signedMagnitudeConsumer (state : SignedRelationCellState) : Nat :=
+  match state.2 with
+  | .negative n => n
+  | .zero => 0
+  | .positive n => n
+
+def cell01PositiveOne : SignedRelationCellState :=
+  (((0 : StageAxis12), (1 : StageAxis12)), .positive 1)
+
+def cell01PositiveTwo : SignedRelationCellState :=
+  (((0 : StageAxis12), (1 : StageAxis12)), .positive 2)
+
+theorem sameCellAndSameCoarsePositiveSign :
+    signedRelationCellObserver cell01PositiveOne =
+      signedRelationCellObserver cell01PositiveTwo := rfl
+
+theorem differentSignedMagnitudeAtSameCoarseCell :
+    signedMagnitudeConsumer cell01PositiveOne ≠
+      signedMagnitudeConsumer cell01PositiveTwo := by
+  decide
+
+theorem ternaryRelationCell_not_sufficient_for_signedMagnitude :
+    ¬ ConsumerSufficient
+      signedRelationCellObserver
+      signedMagnitudeConsumer := by
+  intro h
+  exact differentSignedMagnitudeAtSameCoarseCell
+    (h cell01PositiveOne cell01PositiveTwo
+      sameCellAndSameCoarsePositiveSign)
+
+theorem ternaryRelationCell_cannot_factor_signedMagnitude :
+    ¬ FactorsThrough
+      signedRelationCellObserver
+      signedMagnitudeConsumer := by
+  intro h
+  apply ternaryRelationCell_not_sufficient_for_signedMagnitude
+  intro left right same
+  calc
+    signedMagnitudeConsumer left =
+        h.factor (signedRelationCellObserver left) := h.law left
+    _ = h.factor (signedRelationCellObserver right) := by rw [same]
+    _ = signedMagnitudeConsumer right := (h.law right).symm
+
+def signedRelationCellBundleSheaf :
+    BundleSheaf StageRelation144 SignedMultiplicity SignedRelationField where
+  restrict := fun field cell => field cell
+  compatible := fun _ => True
+  glue := fun locals _ => locals
+  glueRestricts := by
+    intro locals witness point
+    rfl
+
+def signedRelationMagnitudeWrongTypeReceipt : RelationWrongTypeReceipt where
+  obligation := "Stage12Relation144:signedMagnitude"
+  candidate := "relation cell plus coarse ternary SSP sign"
+  mismatch := .nonFactorableRepresentation
+  rejection := "same relation cell and positive coarse sign / distinct FRACTRAN multiplicity magnitude"
+  candidateMayStillExist := true
+
 /-! Stage-12 semantic extension, kept distinct from the 0..11 twelve-axis base. -/
 
 abbrev ExtendedStage012 := Fin 13
@@ -324,6 +410,10 @@ structure Frontier where
   diagonalNonDescentWitnessPaid : Bool
   diagonalFactorsThroughOffDiagonalConsumer : Bool
   diagonalWrongTypeReceiptPaid : Bool
+  signedSSPFineStalkConstructed : Bool
+  signedMagnitudeNonDescentPaid : Bool
+  coarseSignedCellFactorsThroughMagnitude : Bool
+  signedMagnitudeWrongTypeReceiptPaid : Bool
   analyticModularSiteIdentified : Bool
   stageTwelveEqualsModularWeightTwelveByDefinition : Bool
   deriving Repr
@@ -345,6 +435,10 @@ def frontier : Frontier where
   diagonalNonDescentWitnessPaid := true
   diagonalFactorsThroughOffDiagonalConsumer := false
   diagonalWrongTypeReceiptPaid := true
+  signedSSPFineStalkConstructed := true
+  signedMagnitudeNonDescentPaid := true
+  coarseSignedCellFactorsThroughMagnitude := false
+  signedMagnitudeWrongTypeReceiptPaid := true
   analyticModularSiteIdentified := false
   stageTwelveEqualsModularWeightTwelveByDefinition := false
 

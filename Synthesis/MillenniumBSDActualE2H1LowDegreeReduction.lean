@@ -325,6 +325,36 @@ noncomputable def cmContinuousH1IsoCocyclesOne :
     0 1 (CochainComplex.prev_nat_succ 0)
     cmHomogeneousCochains_d_zero_one).symm
 
+/-- Every literal continuous degree-one cocycle with values in (C₂)²
+has exponent two, pointwise. -/
+theorem cmContinuousOneCocycle_exponent_two
+    (σ : CMTwoTorsionContinuousOneCocycle) :
+    (2 : ℕ) • σ = 0 := by
+  apply Subtype.ext
+  apply Subtype.ext
+  ext x y
+  exact cmTwoTorsion_exponent_two (σ.1.1 x y)
+
+/-- Consequently continuous H¹ for the literal trivial E[2] module is
+itself killed by two. -/
+theorem cmTwoTorsionContinuousH1_exponent_two
+    (x : continuousCohomology 1 cmTwoTorsionRepresentation) :
+    (2 : ℕ) • x = 0 := by
+  apply cmContinuousH1IsoCocyclesOne.toContinuousLinearEquiv.injective
+  simp only [map_nsmul, map_zero]
+  apply cmContinuousCocyclesOneIso.toContinuousLinearEquiv.injective
+  simp only [map_nsmul, map_zero]
+  exact cmContinuousOneCocycle_exponent_two _
+
+/-- Transporting across the actual-E[2] same-object isomorphism preserves the
+exponent-two property. -/
+theorem cmActualE2ContinuousH1_exponent_two
+    (x : continuousCohomology 1 cmActualE2Representation) :
+    (2 : ℕ) • x = 0 := by
+  apply cmActualE2H1IsoTrivial.toContinuousLinearEquiv.injective
+  simp only [map_nsmul, map_zero]
+  exact cmTwoTorsionContinuousH1_exponent_two _
+
 /-- Full continuous low-degree theorem for the literal trivial two-torsion
 coefficient object. -/
 noncomputable def cmTrivialE2H1ContinuousHomEquiv :

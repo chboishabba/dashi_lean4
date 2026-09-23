@@ -127,3 +127,5 @@ import AgdaMirror.JInvariant369ConsolidatedNextStage
 import AgdaMirror.JInvariant369ZeroToThirteenTetralemmaQualification
 
 import AgdaMirror.JInvariant369Zeta6561MonsterCrosswalk
+
+import AgdaMirror.JInvariant369TenRankSeventeenHyperformalism

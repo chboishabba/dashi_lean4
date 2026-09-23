@@ -73,6 +73,51 @@ theorem splitPrimeCanonicalWitness_of_mod_four_eq_one
       have heven : Even (w.u ^ 2 + w.v ^ 2) := hu2.add_odd hv2
       exact (odd_ne_even_nat hsumOdd heven).elim
 
+/-- The canonical odd/even natural representation is unique.  This is the
+nonnegative specialization of the already-paid integer ±-coordinate theorem. -/
+theorem splitPrimeCanonicalCoordinates_unique
+    {p r s r' s' : ℕ}
+    (hp : p.Prime)
+    (hrep : p = (2 * r + 1) ^ 2 + 4 * s ^ 2)
+    (hrep' : p = (2 * r' + 1) ^ 2 + 4 * s' ^ 2) :
+    r' = r ∧ s' = s := by
+  have hnorm :
+      ((2 * r' + 1 : ℕ) : ℤ) ^ 2 + ((2 * s' : ℕ) : ℤ) ^ 2 = (p : ℤ) := by
+    exact_mod_cast hrep'.symm
+  have haodd : Odd (((2 * r' + 1 : ℕ) : ℤ)) := by
+    refine ⟨(r' : ℤ), ?_⟩
+    push_cast
+    ring
+  have hbeven : Even (((2 * s' : ℕ) : ℤ)) := by
+    refine ⟨(s' : ℤ), ?_⟩
+    push_cast
+    ring
+  rcases splitPrimeAbsoluteCoordinateUniqueness_paid
+      p r s hp hrep
+      (((2 * r' + 1 : ℕ) : ℤ))
+      (((2 * s' : ℕ) : ℤ))
+      hnorm haodd hbeven with ⟨ha, hb⟩
+  have haPos : (0 : ℤ) < ((2 * r' + 1 : ℕ) : ℤ) := by positivity
+  have hAPos : (0 : ℤ) < 2 * (r : ℤ) + 1 := by positivity
+  have haeq : ((2 * r' + 1 : ℕ) : ℤ) = 2 * (r : ℤ) + 1 := by
+    rcases ha with h | h
+    · exact h
+    · exfalso
+      rw [h] at haPos
+      linarith
+  have hbeq : ((2 * s' : ℕ) : ℤ) = 2 * (s : ℤ) := by
+    rcases hb with h | h
+    · exact h
+    · by_cases hs : s = 0
+      · subst s
+        simpa using h
+      · exfalso
+        have hsPos : (0 : ℤ) < 2 * (s : ℤ) := by positivity
+        have hbNonneg : (0 : ℤ) ≤ ((2 * s' : ℕ) : ℤ) := by positivity
+        rw [h] at hbNonneg
+        linarith
+  constructor <;> omega
+
 /-- The paid split-prime sign theorem can now be invoked from residue-class
 information alone, with no externally supplied sum-of-two-squares witness. -/
 theorem split_frobenius_signed_exists

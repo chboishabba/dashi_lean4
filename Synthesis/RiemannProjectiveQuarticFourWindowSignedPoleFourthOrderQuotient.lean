@@ -1,5 +1,6 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleAbel
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+import Mathlib.Analysis.Fourier.Inversion
 
 /-!
 # Low-mode quotient diagnostics for the exact signed four-window G3 consumer
@@ -1760,5 +1761,88 @@ theorem QuarticFourSignedPolePair.combinedProfile_zero_eq
         (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos,
       quarticFourNormalizedProjectiveProfile_zero
         (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos]
+
+
+/--
+A compact C4 profile has an integrable cosine transform.
+-/
+theorem compactCosineTransform_integrable_of_contDiff_four
+    {P : ℝ -> ℝ}
+    (hP : ContDiff ℝ 4 P)
+    (hPc : HasCompactSupport P) :
+    Integrable (compactCosineTransform P) := by
+  let A : ℝ := compactCosineFourthDecayCurvature P
+  let B : ℝ :=
+    Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass P
+  let C : ℝ := 2 * (A + B)
+  have hA : 0 <= A := by
+    dsimp [A]
+    exact compactCosineFourthDecayCurvature_nonneg P
+  have hB : 0 <= B := by
+    dsimp [B]
+    exact
+      Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass_nonneg P
+  have hC : 0 <= C := by
+    dsimp [C]
+    positivity
+  have hbase :
+      Integrable (fun q : ℝ => (1 + q^2)⁻¹) :=
+    integrable_inv_one_add_sq
+  have hmajor :
+      Integrable (fun q : ℝ => C * (1 + q^2)⁻¹) :=
+    hbase.const_mul C
+  have hCT :
+      Continuous (compactCosineTransform P) := by
+    exact continuous_of_forall_continuousAt fun q =>
+      (compactCosineTransform_hasDerivAt
+        hP.continuous hPc q).continuousAt
+  refine Integrable.mono' hmajor hCT.aestronglyMeasurable
+    (ae_of_all _ fun q => ?_)
+  have hden : 0 < 1 + q^2 := by positivity
+  have hmajorAbs :
+      |C * (1 + q^2)⁻¹|
+        = C / (1 + q^2) := by
+    rw [abs_mul, abs_of_nonneg hC, abs_inv,
+        abs_of_pos hden]
+    rfl
+  rw [Real.norm_eq_abs, Real.norm_eq_abs, hmajorAbs]
+  by_cases hq : q^2 <= 1
+  · have hcos :
+        |compactCosineTransform P q| <= B := by
+      dsimp [B]
+      exact compactCosineTransform_abs_le_taperMass
+        hP.continuous hPc q
+    have hshape : B * (1+q^2) <= C := by
+      dsimp [C]
+      nlinarith [hA,hB]
+    apply (le_div_iff₀ hden).2
+    exact
+      (mul_le_mul_of_nonneg_right hcos hden.le).trans hshape
+  · have hq' : 1 < q^2 := lt_of_not_ge hq
+    have hqne : q ≠ 0 := by
+      intro hz
+      subst q
+      norm_num at hq'
+    have hcos :
+        |compactCosineTransform P q| <= A / q^4 := by
+      dsimp [A]
+      exact compactCosineTransform_abs_le_invPowFour hP hPc hqne
+    have hshape :
+        A * (1+q^2) <= C * q^4 := by
+      have hq2non : 0 <= q^2 := sq_nonneg q
+      have htwo : 1+q^2 <= 2*q^2 := by linarith
+      have hq4 : q^2 <= q^4 := by
+        have := mul_le_mul_of_nonneg_right hq'.le hq2non
+        nlinarith
+      have h1 :=
+        mul_le_mul_of_nonneg_left htwo hA
+      dsimp [C]
+      nlinarith [mul_nonneg hB (pow_nonneg q 4)]
+    have hfar :
+        A / q^4 <= C / (1+q^2) := by
+      have hq4pos : 0 < q^4 := pow_pos (lt_or_gt_of_ne hqne).elim id (fun h => h) 4
+      rw [div_le_div_iff₀ hq4pos hden]
+      simpa [mul_comm, mul_left_comm, mul_assoc] using hshape
+    exact hcos.trans hfar
 
 end Synthesis

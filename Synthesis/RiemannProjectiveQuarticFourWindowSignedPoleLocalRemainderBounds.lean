@@ -786,4 +786,288 @@ theorem QuarticFourSignedPolePair.literalJointQuarticRemainder_abs_le_of_localCo
     (W.jointQuarticJetRemainder_abs_le_of_localCone ht hc)
     hfac
 
+
+/-!
+## Fail-fast uniform cone envelope
+
+For a cone zero we use only the fixed strip bounds
+  |a| <= 1/2, |delta| <= 3/2
+and t>=200.  The constants below are intentionally coarse: the purpose is to
+expose the structural log(t) / a_target^4 comparison, not optimize factors.
+-/
+
+def QuarticFourSignedPolePair.literalConeEnvelopeConstant
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  (9/16 : ℝ) * W.targetStrength
+    +
+  (81/16 : ℝ) *
+    ((5/96 : ℝ) * W.signedProfileAbsMomentFour
+      + W.targetStrength/6)
+    +
+  (81/128 : ℝ) * (5/96 : ℝ) * W.signedProfileAbsMomentSix
+    +
+  (1/16 : ℝ) * (5/96 : ℝ) * W.signedProfileAbsMomentFour
+
+theorem QuarticFourSignedPolePair.literalConeEnvelopeConstant_nonneg
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    0 <= W.literalConeEnvelopeConstant := by
+  unfold QuarticFourSignedPolePair.literalConeEnvelopeConstant
+  have hS := W.targetStrength_pos.le
+  have h4 := W.signedProfileAbsMomentFour_nonneg
+  have h6 := W.signedProfileAbsMomentSix_nonneg
+  positivity
+
+theorem quarticSignedPoleLocalCone_height_abs_le_half
+    {t eta : ℝ} {rho : Zeros}
+    (hc : quarticSignedPoleLocalCone t eta rho) :
+    |heightOf rho| <= (1/2 : ℝ) := by
+  exact zetaZero_height_abs_le_half rho
+
+theorem QuarticFourSignedPolePair.localJointQuarticRemainderBound_le_cone_over_r4
+    {t eta : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hc : quarticSignedPoleLocalCone t eta rho) :
+    W.localJointQuarticRemainderBound
+      (heightOf rho / (t/16))
+      (quarticSignedPoleNormalizedOrdinateOffset t rho)
+      <=
+    (1/(t/16)^4) *
+      (
+        (81/16 : ℝ) *
+          ((5/96 : ℝ) * W.signedProfileAbsMomentFour
+            + W.targetStrength/6)
+        +
+        (81/128 : ℝ) * (5/96 : ℝ) * W.signedProfileAbsMomentSix
+        +
+        (1/16 : ℝ) * (5/96 : ℝ) * W.signedProfileAbsMomentFour
+      ) := by
+  have hr : 1 <= t/16 := by linarith
+  have hrpos : 0 < t/16 := by linarith
+  have ha :=
+    quarticSignedPoleLocalCone_height_abs_le_half hc
+  have hd :=
+    quarticSignedPoleLocalCone_abs_delta_le_three_halves hc
+  have hq :
+      |quarticSignedPoleNormalizedOrdinateOffset t rho|
+        <= (3/2 : ℝ) / (t/16) := by
+    unfold quarticSignedPoleNormalizedOrdinateOffset
+    rw [abs_div, abs_of_pos hrpos]
+    exact div_le_div_of_nonneg_right hd hrpos.le
+  have halpha :
+      |heightOf rho / (t/16)|
+        <= (1/2 : ℝ) / (t/16) := by
+    rw [abs_div, abs_of_pos hrpos]
+    exact div_le_div_of_nonneg_right ha hrpos.le
+  have hq4 :
+      |quarticSignedPoleNormalizedOrdinateOffset t rho|^4
+        <= (81/16 : ℝ) / (t/16)^4 := by
+    have hnon : 0 <= |quarticSignedPoleNormalizedOrdinateOffset t rho| :=
+      abs_nonneg _
+    have hpow := pow_le_pow_left₀ hnon hq 4
+    norm_num at hpow ⊢
+    simpa [div_pow] using hpow
+  have ha2 :
+      (heightOf rho / (t/16))^2
+        <= (1/4 : ℝ) / (t/16)^2 := by
+    have hnon : 0 <= |heightOf rho / (t/16)| := abs_nonneg _
+    have hpow := pow_le_pow_left₀ hnon halpha 2
+    rw [sq_abs] at hpow
+    norm_num at hpow ⊢
+    simpa [div_pow] using hpow
+  have ha4 :
+      |heightOf rho / (t/16)|^4
+        <= (1/16 : ℝ) / (t/16)^4 := by
+    have hnon : 0 <= |heightOf rho / (t/16)| := abs_nonneg _
+    have hpow := pow_le_pow_left₀ hnon halpha 4
+    norm_num at hpow ⊢
+    simpa [div_pow] using hpow
+  have hrInv : 1 / (t/16)^2 <= 1 := by
+    rw [div_le_one (by positivity : 0 < (t/16)^2)]
+    nlinarith [sq_nonneg (t/16 - 1)]
+  unfold QuarticFourSignedPolePair.localJointQuarticRemainderBound
+  have h4 := W.signedProfileAbsMomentFour_nonneg
+  have h6 := W.signedProfileAbsMomentSix_nonneg
+  have hS := W.targetStrength_pos.le
+  have hA0 :
+      0 <= (5/96 : ℝ) * W.signedProfileAbsMomentFour
+        + W.targetStrength/6 := by positivity
+  have hB0 :
+      0 <= (5/96 : ℝ) * W.signedProfileAbsMomentSix := by positivity
+  have hC0 :
+      0 <= (5/96 : ℝ) * W.signedProfileAbsMomentFour := by positivity
+  calc
+    |quarticSignedPoleNormalizedOrdinateOffset t rho|^4 * 
+        ((5/96 : ℝ) * W.signedProfileAbsMomentFour + W.targetStrength/6)
+      +
+      ((heightOf rho / (t/16))^2/2) *
+        ((5/96 : ℝ) *
+          |quarticSignedPoleNormalizedOrdinateOffset t rho|^4 *
+          W.signedProfileAbsMomentSix)
+      +
+      (5/96 : ℝ) * |heightOf rho / (t/16)|^4 *
+        W.signedProfileAbsMomentFour
+      <=
+    ((81/16 : ℝ) / (t/16)^4) * 
+        ((5/96 : ℝ) * W.signedProfileAbsMomentFour + W.targetStrength/6)
+      +
+      (((1/4 : ℝ) / (t/16)^2)/2) *
+        ((5/96 : ℝ) * ((81/16 : ℝ) / (t/16)^4) *
+          W.signedProfileAbsMomentSix)
+      +
+      (5/96 : ℝ) * ((1/16 : ℝ) / (t/16)^4) *
+        W.signedProfileAbsMomentFour := by
+          gcongr
+    _ <=
+    (1/(t/16)^4) *
+      (
+        (81/16 : ℝ) *
+          ((5/96 : ℝ) * W.signedProfileAbsMomentFour
+            + W.targetStrength/6)
+        +
+        (81/128 : ℝ) * (5/96 : ℝ) * W.signedProfileAbsMomentSix
+        +
+        (1/16 : ℝ) * (5/96 : ℝ) * W.signedProfileAbsMomentFour
+      ) := by
+        have hr4 : 0 < (t/16)^4 := by positivity
+        have hmid :
+            1 / (t/16)^6 <= 1 / (t/16)^4 := by
+          have hp : (t/16)^4 <= (t/16)^6 := by
+            nlinarith [sq_nonneg ((t/16)^2 - 1)]
+          exact one_div_le_one_div_of_le hr4 hp
+        field_simp [hrpos.ne']
+        nlinarith [h4,h6,hS]
+
+theorem QuarticFourSignedPolePair.literalJointQuarticPolynomial_le_cone_over_r6
+    {t eta : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hc : quarticSignedPoleLocalCone t eta rho) :
+    W.literalJointQuarticPolynomial rho
+      <=
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+      * ((9/16 : ℝ) * W.targetStrength)
+      / (t/16)^6 := by
+  have ha := quarticSignedPoleLocalCone_height_abs_le_half hc
+  have hd := quarticSignedPoleLocalCone_abs_delta_le_three_halves hc
+  have hm :
+      0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by positivity
+  have hS := W.targetStrength_pos.le
+  rw [W.literalJointQuarticPolynomial_eq_mixed_sub_ordinate
+      (by linarith : 0 < t)]
+  have ha2 : heightOf rho^2 <= (1/4 : ℝ) := by
+    nlinarith [sq_nonneg (heightOf rho), sq_abs (heightOf rho)]
+  have hd2 : ((rho : ℂ).im-t)^2 <= (9/4 : ℝ) := by
+    nlinarith [sq_nonneg ((rho : ℂ).im-t), sq_abs ((rho : ℂ).im-t)]
+  have hden : 0 < (t/16)^6 := by positivity
+  have hmix :
+      heightOf rho^2 * ((rho : ℂ).im-t)^2 <= (9/16 : ℝ) := by
+    nlinarith [sq_nonneg (heightOf rho), sq_nonneg ((rho : ℂ).im-t)]
+  have hneg :
+      0 <=
+      ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+        * W.targetStrength * ((rho : ℂ).im-t)^4
+        / (6 * (t/16)^6) := by positivity
+  have hmain :
+      ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+        * W.targetStrength * heightOf rho^2
+        * ((rho : ℂ).im-t)^2 / (t/16)^6
+      <=
+      ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+        * ((9/16 : ℝ) * W.targetStrength)
+        / (t/16)^6 := by
+    apply div_le_div_of_nonneg_right _ hden.le
+    nlinarith
+  linarith
+
+theorem QuarticFourSignedPolePair.literalConeExactSource_le_envelope
+    {t eta : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hc : quarticSignedPoleLocalCone t eta rho)
+    (hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)) :
+    W.signedLiteralPairSourceTerm
+        (⟨rho,hoff⟩ : ((SameOrd t)ᶜ : Set Zeros))
+      <=
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+      * W.literalConeEnvelopeConstant
+      / (t/16)^6 := by
+  have htpos : 0 < t := by linarith
+  rw [W.signedLiteralPairSourceTerm_eq_literalQuarticJet
+      htpos (⟨rho,hoff⟩ : ((SameOrd t)ᶜ : Set Zeros))]
+  have hp :=
+    W.literalJointQuarticPolynomial_le_cone_over_r6 ht hc
+  have hr0 :=
+    W.literalJointQuarticRemainder_abs_le_of_localCone ht hc
+  have hrBound :=
+    W.localJointQuarticRemainderBound_le_cone_over_r4 ht hc
+  have hm :
+      0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by positivity
+  have hr2 : 0 < (t/16)^2 := by positivity
+  have hr4 : 0 < (t/16)^4 := by positivity
+  have hrem :
+      W.literalJointQuarticRemainder rho
+      <=
+      ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+        *
+      (
+        (81/16 : ℝ) *
+          ((5/96 : ℝ) * W.signedProfileAbsMomentFour
+            + W.targetStrength/6)
+        +
+        (81/128 : ℝ) * (5/96 : ℝ) * W.signedProfileAbsMomentSix
+        +
+        (1/16 : ℝ) * (5/96 : ℝ) * W.signedProfileAbsMomentFour
+      )
+      / (t/16)^6 := by
+    have h1 := le_abs_self (W.literalJointQuarticRemainder rho)
+    have hfac :
+        0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) / (t/16)^2 := by
+      positivity
+    have h2 := mul_le_mul_of_nonneg_left hrBound hfac
+    calc
+      W.literalJointQuarticRemainder rho
+        <= |W.literalJointQuarticRemainder rho| := h1
+      _ <=
+        ((zetaZeroConfig).mult (rho : ℂ) : ℝ) / (t/16)^2
+          *
+        W.localJointQuarticRemainderBound
+          (heightOf rho / (t/16))
+          (quarticSignedPoleNormalizedOrdinateOffset t rho) := hr0
+      _ <=
+        ((zetaZeroConfig).mult (rho : ℂ) : ℝ) / (t/16)^2
+          *
+        ((1/(t/16)^4) *
+          (
+            (81/16 : ℝ) *
+              ((5/96 : ℝ) * W.signedProfileAbsMomentFour
+                + W.targetStrength/6)
+            +
+            (81/128 : ℝ) * (5/96 : ℝ) * W.signedProfileAbsMomentSix
+            +
+            (1/16 : ℝ) * (5/96 : ℝ) * W.signedProfileAbsMomentFour
+          )) := h2
+      _ =
+        ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+          *
+        (
+          (81/16 : ℝ) *
+            ((5/96 : ℝ) * W.signedProfileAbsMomentFour
+              + W.targetStrength/6)
+          +
+          (81/128 : ℝ) * (5/96 : ℝ) * W.signedProfileAbsMomentSix
+          +
+          (1/16 : ℝ) * (5/96 : ℝ) * W.signedProfileAbsMomentFour
+        )
+        / (t/16)^6 := by
+          field_simp [hr2.ne', hr4.ne']
+          ring
+  unfold QuarticFourSignedPolePair.literalConeEnvelopeConstant
+  linarith
+
+end Synthesis
+
 end Synthesis

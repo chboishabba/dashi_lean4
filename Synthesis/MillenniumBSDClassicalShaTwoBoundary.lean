@@ -407,6 +407,15 @@ theorem actualClassicalTwoDescentShaComparison_of_exactMap
   ⟨explicitSelmerCokernelEquivClassicalShaTwo_of_exactMap h⟩
 
 
+/-- The three remaining localization/exactness laws compile directly to the
+fixed-representation classical Sha comparison. -/
+theorem actualClassicalTwoDescentShaComparison_of_localizationExactness
+    (h : ClassicalTwoDescentLocalizationExactnessLaws) :
+    ActualClassicalTwoDescentShaComparison :=
+  actualClassicalTwoDescentShaComparison_of_exactMap
+    (classicalTwoDescentExactMapBoundary_of_canonicalLaws
+      (classicalTwoDescentCanonicalMapLaws_of_localizationExactness h))
+
 /-- The fixed-representation comparison compiles back to the older
 structure-shaped producer. -/
 theorem continuousKummerTwoDescentProducer_of_actualComparison
@@ -423,11 +432,22 @@ structure ClassicalShaTwoBoundaryStatus where
   coordinateGaloisActionPaid : Bool
   additiveGaloisActionPaid : Bool
   fullEllipticPointTopRepPaid : Bool
-  continuousKummerLocalizationComparisonPaid : Bool
+  actualE2InclusionTopRepPaid : Bool
+  inducedGlobalH1ArrowPaid : Bool
+  globalH1SquareClassGroupEquivPaid : Bool
+  canonicalSelmerMapHomLawPaid : Bool
+  canonicalSelmerMapTwoTorsionPaid : Bool
+  localizationZeroPaid : Bool
+  exactKernelPaid : Bool
+  shaTwoSurjectivityPaid : Bool
+  finalCokernelCompilerPaid : Bool
   deriving DecidableEq, Repr
 
 def classicalShaTwoBoundaryStatus : ClassicalShaTwoBoundaryStatus :=
-  ⟨true, true, true, true, false⟩
+  ⟨true, true, true, true,
+    true, true, true, true, true,
+    false, false, false,
+    true⟩
 
 
 end Synthesis.Millennium.BSD

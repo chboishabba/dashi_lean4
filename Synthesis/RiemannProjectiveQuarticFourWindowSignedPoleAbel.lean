@@ -2349,4 +2349,47 @@ theorem QuarticFourSignedPolePair.exists_centeredAbelIntegralLimits
   obtain ⟨R,hR⟩ := W.exists_rightCenteredAbelPartial_limit ht M
   exact ⟨L,R,hL,hR⟩
 
+
+/-!
+## Symmetric full-line exhaustion of the smooth mu pairing
+-/
+
+def QuarticFourSignedPolePair.centeredMuWindowAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) : ℝ :=
+  ∫ x in (t - n)..(t + n),
+    W.signedOrdinateTest x * Zeta23.mu x
+
+theorem QuarticFourSignedPolePair.centeredMuWindowAt_tendsto_full
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto W.centeredMuWindowAt atTop
+      (𝓝 (∫ x : ℝ,
+        W.signedOrdinateTest x * Zeta23.mu x)) := by
+  let s : ℕ -> Set ℝ :=
+    fun n => Set.Ioc (t - n) (t + n)
+  have hsMeas : ∀ n, MeasurableSet (s n) := fun _ => measurableSet_Ioc
+  have hsMono : Monotone s := by
+    intro m n hmn
+    intro x hx
+    dsimp [s] at hx ⊢
+    have hmnR : (m : ℝ) <= n := by exact_mod_cast hmn
+    constructor <;> linarith [hx.1, hx.2]
+  have hsUnion : (⋃ n : ℕ, s n) = (Set.univ : Set ℝ) := by
+    ext x
+    simp only [Set.mem_iUnion, Set.mem_univ, iff_true]
+    obtain ⟨n, hn⟩ := exists_nat_gt (|x - t| + 1)
+    refine ⟨n, ?_⟩
+    dsimp [s]
+    have habs := abs_lt.mp (lt_trans (lt_add_one _) (by exact_mod_cast hn))
+    constructor <;> linarith
+  have hInt :=
+    W.signedOrdinateTest_mul_mu_integrable ht
+  have hlim :=
+    tendsto_setIntegral_of_monotone
+      hsMeas hsMono
+      (by simpa [hsUnion] using hInt.integrableOn)
+  rw [hsUnion] at hlim
+  simpa [QuarticFourSignedPolePair.centeredMuWindowAt,
+    s, intervalIntegral.integral_of_le] using hlim
+
 end Synthesis

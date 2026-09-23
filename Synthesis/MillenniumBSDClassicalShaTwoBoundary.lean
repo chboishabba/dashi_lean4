@@ -3,6 +3,7 @@ import Synthesis.MillenniumBSDActualEllipticPointTopRep
 import Synthesis.MillenniumBSDSelmerShaCohomologicalBoundary
 import Synthesis.MillenniumBSDExplicitSelmerCokernelExact
 import Mathlib.GroupTheory.QuotientGroup.Basic
+import Mathlib.RepresentationTheory.Homological.ContCohomology.Functoriality
 
 /-!
 # Correct classical Sha[2] boundary for the CM curve
@@ -42,6 +43,53 @@ noncomputable def classicalEllipticShaOne
 noncomputable def classicalEllipticShaTwo
     (Ebar : TopRep ℤ RationalAbsoluteGalois) :=
   rationalTateShafarevichTwoTorsion Ebar
+
+/-- Literal additive inclusion of the actual E[2] subgroup into the full
+algebraic-closure elliptic point group. -/
+noncomputable def cmActualE2InclusionAddHom :
+    cmAlgClosureTwoTorsionSubgroup →+
+      CMAlgClosureProjectivePoint where
+  toFun P := P.1
+  map_zero' := rfl
+  map_add' _ _ := rfl
+
+/-- The E[2] inclusion as a continuous Z-linear map; both carriers use the
+discrete topology already installed in the repo. -/
+noncomputable def cmActualE2InclusionCLM :
+    cmAlgClosureTwoTorsionSubgroup →L[ℤ]
+      CMAlgClosureProjectivePoint where
+  toLinearMap := cmActualE2InclusionAddHom.toIntLinearMap
+  cont := continuous_of_discreteTopology
+
+@[simp] theorem cmActualE2InclusionCLM_apply
+    (P : cmAlgClosureTwoTorsionSubgroup) :
+    cmActualE2InclusionCLM P = P.1 := rfl
+
+/-- The literal subgroup inclusion is Galois-equivariant. -/
+noncomputable def cmActualE2InclusionIntertwining :
+    cmActualE2Representation.ρ →ⁱL
+      cmEllipticPointRepresentation.ρ where
+  __ := cmActualE2InclusionCLM
+  isIntertwining' σ := by
+    ext P
+    change P.1 = cmAlgClosureGaloisAction σ P.1
+    exact cmActualE2GaloisAction_eq_coordinate σ P
+
+/-- Actual E[2] -> E(Qbar) as a morphism of topological representations. -/
+noncomputable def cmActualE2TopRepInclusion :
+    cmActualE2Representation ⟶ cmEllipticPointRepresentation :=
+  TopRep.ofHom cmActualE2InclusionIntertwining
+
+/-- The global degree-one cohomology arrow induced by E[2] -> E(Qbar).
+This is the canonical right-hand Kummer map whose kernel is the global
+connecting-image E(Q)/2E(Q). -/
+noncomputable def cmActualE2H1ToEllipticPointH1 :
+    ContinuousCohomology.continuousCohomology 1 cmActualE2Representation ⟶
+      ContinuousCohomology.continuousCohomology 1
+        cmEllipticPointRepresentation :=
+  ContinuousCohomology.map
+    (ContinuousMonoidHom.id RationalAbsoluteGalois)
+    cmActualE2TopRepInclusion 1
 
 /--
 Canonical exact-map form of the remaining classical two-descent theorem.

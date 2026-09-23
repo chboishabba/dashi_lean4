@@ -855,6 +855,55 @@ theorem QuarticFourSignedPolePair.signedZetaMuWindowResidual_left_eq_centeredAbe
       ht hA W]
   rw [W.signedOrdinateTest_center_zero ht]
   simp only [zero_mul, zero_sub]
+
+  have hderInt :=
+    W.signedOrdinateTestDeriv_intervalIntegrable ht A t
+  have hN :
+      IntervalIntegrable
+        (fun x =>
+          W.signedOrdinateTestDeriv x * (Ncount A x : ℝ))
+        volume A t :=
+    phi_mul_Ncount_intervalIntegrable hA hderInt
+  have hM :
+      IntervalIntegrable
+        (fun x =>
+          W.signedOrdinateTestDeriv x * zetaMuPrimitive A x)
+        volume A t :=
+    phi_mul_zetaMuPrimitive_intervalIntegrable hderInt
+  have hD :
+      IntervalIntegrable
+        (fun x =>
+          W.signedOrdinateTestDeriv x
+            * zetaMuCumulativeDiscrepancy A x)
+        volume A t := by
+    unfold zetaMuCumulativeDiscrepancy
+    simpa [mul_sub] using hN.sub hM
+  have hconst :
+      IntervalIntegrable
+        (fun x =>
+          W.signedOrdinateTestDeriv x
+            * zetaMuCumulativeDiscrepancy A t)
+        volume A t := by
+    simpa [mul_comm] using
+      hderInt.const_mul (zetaMuCumulativeDiscrepancy A t)
+  have hcenter :
+      IntervalIntegrable
+        (fun x =>
+          W.signedOrdinateTestDeriv x
+            * centeredZetaMuDiscrepancy t x)
+        volume A t := by
+    have hsub := hD.sub hconst
+    refine hsub.congr_ae ?_
+    rw [Filter.EventuallyEq,
+      MeasureTheory.ae_restrict_iff' measurableSet_uIoc]
+    filter_upwards with x hx
+    have hxI : x ∈ Set.Icc A t := by
+      rw [Set.uIoc_of_le hA] at hx
+      exact ⟨hx.1.le, hx.2⟩
+    rw [zetaMuCumulativeDiscrepancy_left_eq_centered
+      hxI.1 hxI.2]
+    ring
+
   have hrewrite :
       (∫ x in A..t,
         W.signedOrdinateTestDeriv x
@@ -867,9 +916,7 @@ theorem QuarticFourSignedPolePair.signedZetaMuWindowResidual_left_eq_centeredAbe
       (∫ x in A..t,
         W.signedOrdinateTestDeriv x
           * centeredZetaMuDiscrepancy t x) := by
-    rw [← intervalIntegral.integral_add
-      ((W.signedOrdinateTestDeriv_intervalIntegrable ht A t).const_mul _)
-      ((W.signedOrdinateTestDeriv_intervalIntegrable ht A t))]
+    rw [← intervalIntegral.integral_add hconst hcenter]
     apply intervalIntegral.integral_congr
     intro x hx
     have hxI : x ∈ Set.Icc A t := by
@@ -878,12 +925,13 @@ theorem QuarticFourSignedPolePair.signedZetaMuWindowResidual_left_eq_centeredAbe
       hxI.1 hxI.2]
     ring
   rw [hrewrite]
+
   have hFTC :=
     intervalIntegral.integral_deriv_eq_sub'
       (fun x hx => W.signedOrdinateTest_hasDerivAt ht x)
-      (W.signedOrdinateTestDeriv_intervalIntegrable ht A t)
+      hderInt
   rw [W.signedOrdinateTest_center_zero ht] at hFTC
-  have hconst :
+  have hconstValue :
       (∫ x in A..t,
         W.signedOrdinateTestDeriv x
           * zetaMuCumulativeDiscrepancy A t)
@@ -893,7 +941,7 @@ theorem QuarticFourSignedPolePair.signedZetaMuWindowResidual_left_eq_centeredAbe
     rw [← intervalIntegral.integral_const_mul]
     rw [hFTC]
     ring
-  rw [hconst]
+  rw [hconstValue]
   ring
 
 /--

@@ -27,6 +27,33 @@ noncomputable def rationalQuadraticKummerCharacterEquiv :
     rationalQuadraticKummerCharacterEquiv a =
       rationalSquareClassKummerHom a := rfl
 
+/-- Multiplicative strengthening of the paid scalar Kummer bijection. -/
+noncomputable def rationalQuadraticKummerCharacterMulEquiv :
+    MathlibRatSquareClass ≃* RationalQuadraticCharacter :=
+  MulEquiv.ofBijective rationalSquareClassKummerHom
+    rationalQuadraticKummerCharacterBijection_paid
+
+/-- Componentwise multiplicative Kummer equivalence. -/
+noncomputable def rationalQuadraticKummerCharacterPairMulEquiv :
+    (MathlibRatSquareClass × MathlibRatSquareClass) ≃*
+      (RationalQuadraticCharacter × RationalQuadraticCharacter) :=
+  rationalQuadraticKummerCharacterMulEquiv.prodCongr
+    rationalQuadraticKummerCharacterMulEquiv
+
+/-- Repo square classes to quadratic-character pairs as a genuine MulEquiv. -/
+noncomputable def ratSquareClassPairMulEquivQuadraticCharacters :
+    (RatSquareClass × RatSquareClass) ≃*
+      (RationalQuadraticCharacter × RationalQuadraticCharacter) :=
+  ratKummerPairMulEquivMathlib.trans
+    rationalQuadraticKummerCharacterPairMulEquiv
+
+/-- Reverse multiplicative equivalence used by the H¹ lane. -/
+noncomputable def quadraticCharacterPairMulEquivRatSquareClasses :
+    (RationalQuadraticCharacter × RationalQuadraticCharacter) ≃*
+      (RatSquareClass × RatSquareClass) :=
+  ratSquareClassPairMulEquivQuadraticCharacters.symm
+
+
 /-- Componentwise paid Kummer equivalence on the canonical mathlib
 square-class carrier. -/
 noncomputable def rationalQuadraticKummerCharacterPairEquiv :

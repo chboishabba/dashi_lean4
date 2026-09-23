@@ -61,7 +61,7 @@ abbrev RelationProfile := StageRelation144 → Trit
 
 theorem relationProfile_card :
     Fintype.card RelationProfile = 3^144 := by
-  native_decide
+  simp [RelationProfile, StageRelation144, StageAxis12]
 
 /-!
 The relational-appraisal decomposition represented in Agda:

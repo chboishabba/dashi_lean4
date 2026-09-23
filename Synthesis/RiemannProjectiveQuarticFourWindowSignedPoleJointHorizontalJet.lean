@@ -460,4 +460,234 @@ theorem QuarticFourSignedPolePair.signedLiteralPairSourceTerm_eq_jointJet
   dsimp
   rw [W.signedNormalizedPairKernel_eq_jointJet]
 
+
+/-!
+## Quantitative local q² gain in the horizontal quadratic coefficient
+-/
+
+theorem exists_pos_right_of_second_deriv_pos
+    {f f1 f2 : ℝ -> ℝ}
+    (h01 : ∀ x : ℝ, HasDerivAt f (f1 x) x)
+    (h12 : ∀ x : ℝ, HasDerivAt f1 (f2 x) x)
+    (h2cont : Continuous f2)
+    (hf0 : f 0 = 0)
+    (hf10 : f1 0 = 0)
+    (hf20 : 0 < f2 0) :
+    ∃ eps : ℝ, 0 < eps ∧
+      ∀ x : ℝ, 0 < x -> x < eps -> 0 < f x := by
+  have hopen : IsOpen {x : ℝ | 0 < f2 x} :=
+    isOpen_lt continuous_const h2cont
+  have hmem : (0 : ℝ) ∈ {x : ℝ | 0 < f2 x} := hf20
+  obtain ⟨eps,heps,hball⟩ :=
+    (Metric.isOpen_iff.1 hopen) 0 hmem
+  have hf2pos : ∀ x : ℝ, |x| < eps -> 0 < f2 x := by
+    intro x hx
+    apply hball
+    simpa [Metric.mem_ball, Real.dist_eq, abs_sub_comm] using hx
+  have hf1cont : Continuous f1 :=
+    continuous_of_forall_continuousAt fun x => (h12 x).continuousAt
+  have hfcont : Continuous f :=
+    continuous_of_forall_continuousAt fun x => (h01 x).continuousAt
+  have hinc1 : StrictMonoOn f1 (Set.Icc (0 : ℝ) eps) := by
+    apply strictMonoOn_of_deriv_pos (convex_Icc 0 eps)
+      hf1cont.continuousOn
+    intro x hx
+    rw [interior_Icc] at hx
+    rw [(h12 x).deriv]
+    apply hf2pos x
+    rw [abs_of_pos hx.1]
+    exact hx.2
+  have hf1pos :
+      ∀ x : ℝ, 0 < x -> x < eps -> 0 < f1 x := by
+    intro x hx0 hxe
+    have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) eps := ⟨le_rfl,heps.le⟩
+    have hx : x ∈ Set.Icc (0 : ℝ) eps := ⟨hx0.le,hxe.le⟩
+    have h := hinc1 h0 hx hx0
+    rw [hf10] at h
+    exact h
+  have hinc : StrictMonoOn f (Set.Icc (0 : ℝ) eps) := by
+    apply strictMonoOn_of_deriv_pos (convex_Icc 0 eps)
+      hfcont.continuousOn
+    intro x hx
+    rw [interior_Icc] at hx
+    rw [(h01 x).deriv]
+    exact hf1pos x hx.1 hx.2
+  refine ⟨eps,heps,?_⟩
+  intro x hx0 hxe
+  have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) eps := ⟨le_rfl,heps.le⟩
+  have hx : x ∈ Set.Icc (0 : ℝ) eps := ⟨hx0.le,hxe.le⟩
+  have h := hinc h0 hx hx0
+  rw [hf0] at h
+  exact h
+
+theorem QuarticFourSignedPolePair.signedHorizontalQuadraticKernel_even
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (q : ℝ) :
+    W.signedHorizontalQuadraticKernel (-q)
+      = W.signedHorizontalQuadraticKernel q := by
+  unfold QuarticFourSignedPolePair.signedHorizontalQuadraticKernel
+    genericProjectiveHorizontalQuadraticKernel
+  simp only [neg_mul, Real.cos_neg]
+
+theorem QuarticFourSignedPolePair.exists_horizontalQuadraticKernel_gt_target_sq
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    ∃ eps : ℝ, 0 < eps ∧
+      ∀ q : ℝ,
+        0 < |q| -> |q| < eps ->
+        W.targetStrength * q^2
+          < W.signedHorizontalQuadraticKernel q := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t
+  let S := W.targetStrength
+  let F : ℝ -> ℝ :=
+    fun q => W.signedHorizontalQuadraticKernel q - S*q^2
+  let F1 : ℝ -> ℝ :=
+    fun q => -compactCosineD3 P q - 2*S*q
+  let F2 : ℝ -> ℝ :=
+    fun q => -compactCosineD4 P q - 2*S
+  have hP : Continuous P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have h01 : ∀ q : ℝ, HasDerivAt F (F1 q) q := by
+    intro q
+    dsimp [F,F1,S,P]
+    have hQ := W.signedHorizontalQuadraticKernel_hasDerivAt (q:=q)
+    have hsq : HasDerivAt (fun x : ℝ => W.targetStrength*x^2)
+        (2*W.targetStrength*q) q := by
+      convert ((hasDerivAt_id q).pow 2).const_mul W.targetStrength using 1 <;> ring
+    exact hQ.sub hsq
+  have h12 : ∀ q : ℝ, HasDerivAt F1 (F2 q) q := by
+    intro q
+    dsimp [F1,F2,S,P]
+    have hD :=
+      (compactCosineD3_deriv hP hPc q).neg
+    have hlin :
+        HasDerivAt (fun x : ℝ => 2*W.targetStrength*x)
+          (2*W.targetStrength) q := by
+      convert (hasDerivAt_id q).const_mul (2*W.targetStrength) using 1 <;> ring
+    exact hD.sub hlin
+  have h2cont : Continuous F2 := by
+    dsimp [F2,S,P]
+    exact (compactCosineD4_continuous hP hPc).neg.sub continuous_const
+  have hF0 : F 0 = 0 := by
+    dsimp [F,S]
+    rw [W.signedHorizontalQuadraticKernel_zero]
+    ring
+  have hF10 : F1 0 = 0 := by
+    dsimp [F1,S,P]
+    unfold compactCosineD3
+    simp
+  have hF20 : 0 < F2 0 := by
+    dsimp [F2,S,P]
+    have h4 :
+        compactCosineD4
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t) 0
+          = -4 * W.targetStrength := by
+      unfold compactCosineD4
+      simp only [zero_mul, Real.cos_zero, mul_one]
+      rw [show
+          (∫ x : ℝ,
+            quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t x * x^4)
+            =
+          profileFourthMoment
+            (quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t) by rfl,
+          quarticFourSignedPoleCombinedProfile_fourth W.Rpos]
+      unfold QuarticFourSignedPolePair.targetStrength
+      ring
+    rw [h4]
+    nlinarith [W.targetStrength_pos]
+  obtain ⟨eps,heps,hpos⟩ :=
+    exists_pos_right_of_second_deriv_pos
+      h01 h12 h2cont hF0 hF10 hF20
+  refine ⟨eps,heps,?_⟩
+  intro q hq0 hqe
+  by_cases hq : 0 <= q
+  · have hqp : 0 < q := by
+      rw [abs_of_nonneg hq] at hq0
+      exact hq0
+    have h := hpos q hqp (by simpa [abs_of_pos hqp] using hqe)
+    dsimp [F,S] at h
+    exact sub_pos.mp h
+  · have hqn : q < 0 := lt_of_not_ge hq
+    have hmq : 0 < -q := by linarith
+    have hmabs : |-q| < eps := by simpa [abs_neg] using hqe
+    have h := hpos (-q) hmq (by simpa [abs_of_pos hmq] using hmabs)
+    dsimp [F,S] at h
+    rw [W.signedHorizontalQuadraticKernel_even (-q)] at h
+    have hsq : (-q)^2 = q^2 := by ring
+    rw [hsq] at h
+    exact sub_pos.mp h
+
+def QuarticFourSignedPolePair.literalHorizontalQuadraticTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let alpha := heightOf sigma / r
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2
+    * ((alpha^2/2) * W.signedHorizontalQuadraticKernel q)
+
+def QuarticFourSignedPolePair.literalHorizontalTargetScale
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+    * W.targetStrength
+    * heightOf sigma ^ 2
+    * ((sigma : ℂ).im-t)^2
+    / (2 * (t/16)^6)
+
+theorem QuarticFourSignedPolePair.literalHorizontalTargetScale_eq_normalized
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    W.literalHorizontalTargetScale sigma
+      =
+    let r := t/16
+    let alpha := heightOf sigma / r
+    let q := ((sigma : ℂ).im-t) / r
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2
+      * ((alpha^2/2) * (W.targetStrength*q^2)) := by
+  dsimp [QuarticFourSignedPolePair.literalHorizontalTargetScale]
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
+theorem QuarticFourSignedPolePair.literalHorizontalQuadraticTerm_ge_targetScale
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    {sigma : Zeros}
+    {eps : ℝ}
+    (hband :
+      ∀ q : ℝ, 0 < |q| -> |q| < eps ->
+        W.targetStrength*q^2
+          < W.signedHorizontalQuadraticKernel q)
+    (hq0 :
+      0 < |((sigma : ℂ).im-t)/(t/16)|)
+    (hqe :
+      |((sigma : ℂ).im-t)/(t/16)| < eps) :
+    W.literalHorizontalTargetScale sigma
+      <= W.literalHorizontalQuadraticTerm sigma := by
+  have hq :=
+    hband (((sigma : ℂ).im-t)/(t/16)) hq0 hqe
+  have hm :
+      0 <= ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) := by positivity
+  have hr : 0 < t/16 := by positivity
+  have ha2 :
+      0 <= (heightOf sigma / (t/16))^2 / 2 := by positivity
+  have hfac :
+      0 <=
+      ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / (t/16)^2
+        * ((heightOf sigma / (t/16))^2 / 2) := by positivity
+  rw [W.literalHorizontalTargetScale_eq_normalized ht]
+  unfold QuarticFourSignedPolePair.literalHorizontalQuadraticTerm
+  dsimp
+  exact mul_le_mul_of_nonneg_left hq.le hfac
+
 end Synthesis

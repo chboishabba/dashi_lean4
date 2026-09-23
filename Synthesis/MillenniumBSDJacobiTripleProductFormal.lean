@@ -1053,6 +1053,14 @@ theorem tendsto_jacobiWeightedDiagonal_finiteProduct_of_tripleProduct
   intro d hd
   rw [hM d hd]
 
+/-- The exact remaining J0→J2 seam: the weighted diagonal
+q↦q², z↦-q carries the finite Jacobi products to the base theta4 series in
+the coefficientwise power-series topology. -/
+def JacobiSquareThetaDiagonalTransfer : Prop :=
+  JacobiTripleProductFormal →
+    Tendsto (fun M : ℕ => jacobiSquareThetaFiniteProduct (M + 1)) atTop
+      (𝓝 jacobiSquareThetaBaseSeries)
+
 /-- First algebraic identification still required by J2: the weighted
 diagonal of each finite bivariate Jacobi product is the explicit finite
 theta4 product. -/
@@ -1079,14 +1087,6 @@ theorem jacobiSquareThetaDiagonalTransfer_of_weightedDiagonalAgreements
     tendsto_jacobiWeightedDiagonal_finiteProduct_of_tripleProduct hJ
   simpa [hFinite, hSeries] using h
 
-
-/-- The exact remaining J0→J2 seam: the weighted diagonal
-q↦q², z↦-q carries the finite Jacobi products to the base theta4 series in
-the coefficientwise power-series topology. -/
-def JacobiSquareThetaDiagonalTransfer : Prop :=
-  JacobiTripleProductFormal →
-    Tendsto (fun M : ℕ => jacobiSquareThetaFiniteProduct (M + 1)) atTop
-      (𝓝 jacobiSquareThetaBaseSeries)
 
 /-- Once the weighted diagonal limit is known, the base theta4 identity is
 forced by uniqueness of limits and the already-paid finite product identity. -/

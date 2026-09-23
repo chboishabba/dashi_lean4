@@ -96,12 +96,77 @@ def JacobiOddPrimePowerRecurrence : Prop :=
           cmJacobiArithmeticFunction (p ^ (k + 1))
         - (p : ℂ) * cmJacobiArithmeticFunction (p ^ k)
 
+theorem cmJacobiOddCoeff_eq_zero_of_even
+    {N : ℕ} (hN : Even N) :
+    cmJacobiOddCoeff N = 0 := by
+  unfold cmJacobiOddCoeff
+  apply Finset.sum_eq_zero
+  intro r hr
+  split_ifs with hsq
+  · have hodd : Odd ((2 * r + 1) ^ 2) :=
+      (odd_two_mul_add_one r).pow
+    have : Odd N := by simpa [hsq] using hodd
+    exact (this.not_even hN).elim
+  · rfl
+
+theorem cmJacobiEvenCoeff_eq_zero_of_odd
+    {N : ℕ} (hN : Odd N) :
+    cmJacobiEvenCoeff N = 0 := by
+  unfold cmJacobiEvenCoeff
+  have hN0 : N ≠ 0 := by
+    intro h
+    subst N
+    simpa using hN
+  rw [if_neg hN0, zero_add]
+  apply Finset.sum_eq_zero
+  intro s hs
+  split_ifs with hterm
+  · rcases hterm with ⟨hspos, hsq⟩
+    have heven : Even (4 * s ^ 2) := by
+      exact ⟨2 * s ^ 2, by ring⟩
+    have : Even N := by simpa [hsq] using heven
+    exact (hN.not_even this).elim
+  · rfl
+
+theorem cmJacobiArithmeticCoefficient_eq_zero_of_even
+    {N : ℕ} (hN : Even N) :
+    cmJacobiArithmeticCoefficient N = 0 := by
+  unfold cmJacobiArithmeticCoefficient
+  apply Finset.sum_eq_zero
+  intro ij hij
+  rcases ij with ⟨i,j⟩
+  have hijsum : i + j = N := by
+    simpa using Finset.mem_antidiagonal.mp hij
+  rcases Nat.even_or_odd i with hi | hi
+  · rw [cmJacobiOddCoeff_eq_zero_of_even hi, zero_mul]
+  · have hj : Odd j := by
+      rcases hN with ⟨n, hn⟩
+      rcases hi with ⟨a, ha⟩
+      refine ⟨n - a - 1, ?_⟩
+      omega
+    rw [cmJacobiEvenCoeff_eq_zero_of_odd hj, mul_zero]
+
+@[simp] theorem cmJacobiArithmeticFunction_one :
+    cmJacobiArithmeticFunction 1 = 1 := by
+  simp [cmJacobiArithmeticFunction, cmJacobiArithmeticCoefficient,
+    cmJacobiOddCoeff, cmJacobiEvenCoeff]
+
 /-- J3d: the Jacobi system has the already-known additive local behavior at
 the bad prime 2. -/
 def JacobiTwoPowerAgreement : Prop :=
   ∀ k : ℕ,
     cmJacobiArithmeticFunction (2 ^ k) =
       if k = 0 then 1 else 0
+
+theorem jacobiTwoPowerAgreement_paid :
+    JacobiTwoPowerAgreement := by
+  intro k
+  rcases k with _ | k
+  · simp
+  · rw [if_neg (Nat.succ_ne_zero k)]
+    have heven : Even (2 ^ (k + 1)) := by
+      exact even_two.pow_of_ne_zero (by omega)
+    exact cmJacobiArithmeticCoefficient_eq_zero_of_even heven
 
 /-- The four local/compatibility owners of the CM theta arithmetic seam. -/
 structure JacobiLocalReconstructionData : Prop where
@@ -178,6 +243,6 @@ structure JacobiArithmeticBoundaryStatus where
   deriving DecidableEq, Repr
 
 def jacobiArithmeticBoundaryStatus : JacobiArithmeticBoundaryStatus :=
-  ⟨true, true, true, false, false, false, false⟩
+  ⟨true, true, true, false, false, false, true⟩
 
 end Synthesis.Millennium.BSD

@@ -2002,4 +2002,198 @@ theorem fourier_complexify_even_eq_compactCosine
           (Complex.continuous_ofReal.comp hP))
           .integrable_of_hasCompactSupport hPc.smul_left
 
+
+theorem fourier_complexify_even_integrable
+    {P : ℝ -> ℝ}
+    (hP4 : ContDiff ℝ 4 P)
+    (hPc : HasCompactSupport P)
+    (heven : ∀ u : ℝ, P (-u) = P u) :
+    Integrable (𝓕 (complexifyRealProfile P)) := by
+  have hC :
+      Integrable (compactCosineTransform P) :=
+    compactCosineTransform_integrable_of_contDiff_four hP4 hPc
+  have h2pi : (2 * Real.pi : ℝ) ≠ 0 := by positivity
+  have hscaled :
+      Integrable
+        (fun xi : ℝ =>
+          compactCosineTransform P (xi * (2 * Real.pi))) :=
+    hC.comp_mul_right' h2pi
+  have hscaledC :
+      Integrable
+        (fun xi : ℝ =>
+          (compactCosineTransform P
+            (2 * Real.pi * xi) : ℂ)) := by
+    have h := hscaled.ofReal (𝕜 := ℂ)
+    simpa [mul_comm, mul_left_comm, mul_assoc] using h
+  refine hscaledC.congr ?_
+  exact ae_of_all _ fun xi => by
+    rw [fourier_complexify_even_eq_compactCosine
+      hP4.continuous hPc heven xi]
+
+/--
+Fourier inversion with Mathlib's 2*pi convention gives the exact whole-line
+cosine-transform mass.
+-/
+theorem integral_compactCosineTransform_eq_two_pi_mul_value
+    {P : ℝ -> ℝ}
+    (hP4 : ContDiff ℝ 4 P)
+    (hPc : HasCompactSupport P)
+    (heven : ∀ u : ℝ, P (-u) = P u) :
+    (∫ q : ℝ, compactCosineTransform P q)
+      =
+    2 * Real.pi * P 0 := by
+  let Pc : ℝ -> ℂ := complexifyRealProfile P
+  have hPcInt : Integrable Pc := by
+    dsimp [Pc]
+    exact complexifyRealProfile_integrable hP4.continuous hPc
+  have hFInt : Integrable (𝓕 Pc) := by
+    dsimp [Pc]
+    exact fourier_complexify_even_integrable hP4 hPc heven
+  have hPcCont : Continuous Pc := by
+    dsimp [Pc, complexifyRealProfile]
+    exact Complex.continuous_ofReal.comp hP4.continuous
+  have hinv :=
+    hPcInt.fourierInv_fourier_eq
+      hFInt (v := (0 : ℝ)) hPcCont.continuousAt
+  rw [Real.fourierInv_eq'] at hinv
+  simp only [inner_zero_right, mul_zero, neg_zero,
+    Complex.ofReal_zero, zero_mul, Complex.exp_zero, one_smul] at hinv
+  have hfun :
+      (fun xi : ℝ => 𝓕 Pc xi)
+        =
+      fun xi =>
+        (compactCosineTransform P
+          (2 * Real.pi * xi) : ℂ) := by
+    funext xi
+    dsimp [Pc]
+    exact fourier_complexify_even_eq_compactCosine
+      hP4.continuous hPc heven xi
+  rw [hfun, integral_ofReal] at hinv
+  have hscaled :
+      (∫ xi : ℝ,
+        compactCosineTransform P
+          (2 * Real.pi * xi))
+        = P 0 := by
+    exact Complex.ofReal_injective hinv
+  have hscale :=
+    Measure.integral_comp_mul_right
+      (compactCosineTransform P) (2 * Real.pi)
+  have h2pi : 0 < (2 * Real.pi : ℝ) := by positivity
+  have hscale' :
+      P 0
+        =
+      (2 * Real.pi)⁻¹
+        * (∫ q : ℝ, compactCosineTransform P q) := by
+    rw [← hscaled]
+    calc
+      (∫ xi : ℝ,
+        compactCosineTransform P
+          (2 * Real.pi * xi))
+        =
+      (∫ xi : ℝ,
+        compactCosineTransform P
+          (xi * (2 * Real.pi))) := by
+          apply integral_congr_ae
+          exact ae_of_all _ fun xi => by
+            congr 1
+            ring
+      _ =
+      |(2 * Real.pi)⁻¹| •
+        (∫ q : ℝ, compactCosineTransform P q) := hscale
+      _ =
+      (2 * Real.pi)⁻¹ *
+        (∫ q : ℝ, compactCosineTransform P q) := by
+          rw [abs_of_pos (inv_pos.mpr h2pi)]
+          rfl
+  have h2pine : (2 * Real.pi : ℝ) ≠ 0 := ne_of_gt h2pi
+  field_simp [h2pine] at hscale' ⊢
+  nlinarith
+
+/--
+Physical rescaling of the exact signed test:
+  integral Psi_t = (2*pi/r) P_comb(0), r=t/16.
+-/
+theorem QuarticFourSignedPolePair.integral_signedOrdinateTest_eq_profile_zero
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    (∫ x : ℝ, W.signedOrdinateTest x)
+      =
+    (2 * Real.pi / (t/16))
+      *
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t 0 := by
+  let r : ℝ := t/16
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hr : 0 < r := by
+    dsimp [r]
+    positivity
+  have hCInt :
+      Integrable (compactCosineTransform P) :=
+    compactCosineTransform_integrable_of_contDiff_four
+      (quarticFourSignedPoleCombinedProfile_contDiff_four W.Rpos)
+      (quarticFourSignedPoleCombinedProfile_compact W.Rpos)
+  have hCmass :
+      (∫ q : ℝ, compactCosineTransform P q)
+        = 2 * Real.pi * P 0 := by
+    exact integral_compactCosineTransform_eq_two_pi_mul_value
+      (quarticFourSignedPoleCombinedProfile_contDiff_four W.Rpos)
+      (quarticFourSignedPoleCombinedProfile_compact W.Rpos)
+      W.combinedProfile_even
+  have hshift :
+      (∫ x : ℝ,
+        compactCosineTransform P ((x-t)/r))
+        =
+      ∫ y : ℝ, compactCosineTransform P (y/r) := by
+    simpa [sub_eq_add_neg] using
+      (integral_sub_right_eq_self
+        (fun y : ℝ => compactCosineTransform P (y/r)) t).symm
+  have hscale :=
+    Measure.integral_comp_div
+      (compactCosineTransform P) r
+  have hscaled :
+      (∫ x : ℝ,
+        compactCosineTransform P ((x-t)/r))
+        =
+      r * (∫ q : ℝ, compactCosineTransform P q) := by
+    rw [hshift, hscale, abs_of_pos hr]
+    rfl
+  rw [W.signedOrdinateTest_eq_combinedCosine]
+  dsimp [r,P]
+  rw [integral_const_mul, hscaled, hCmass]
+  field_simp [ne_of_gt hr]
+  ring
+
+/--
+The global centered-linear quotient defect is exactly the zero-frequency
+local profile obstruction.
+-/
+theorem QuarticFourSignedPolePair.globalLinearModeDefect_eq_profile_zero
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.globalLinearModeDefect
+      =
+    -(2 * Real.pi / (t/16))
+      *
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t 0 := by
+  unfold QuarticFourSignedPolePair.globalLinearModeDefect
+  rw [W.integral_signedOrdinateTest_eq_profile_zero ht]
+  ring
+
+theorem QuarticFourSignedPolePair.globalLinearModeDefect_eq_zero_iff
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.globalLinearModeDefect = 0
+      ↔
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t 0 = 0 := by
+  rw [W.globalLinearModeDefect_eq_profile_zero ht]
+  have hcoef :
+      -(2 * Real.pi / (t/16)) ≠ 0 := by
+    have hr : t/16 ≠ 0 := by positivity
+    positivity
+  exact mul_eq_zero_iff_right_nonzero hcoef
+
 end Synthesis

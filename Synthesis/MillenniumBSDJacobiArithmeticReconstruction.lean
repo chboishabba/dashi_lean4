@@ -105,8 +105,10 @@ theorem cmJacobiOddCoeff_eq_zero_of_even
   split_ifs with hsq
   · have hodd : Odd ((2 * r + 1) ^ 2) :=
       (odd_two_mul_add_one r).pow
-    have : Odd N := by simpa [hsq] using hodd
-    exact (this.not_even hN).elim
+    have hoddN : Odd N := by simpa [hsq] using hodd
+    rcases hN with ⟨a, ha⟩
+    rcases hoddN with ⟨b, hb⟩
+    omega
   · rfl
 
 theorem cmJacobiEvenCoeff_eq_zero_of_odd
@@ -124,8 +126,10 @@ theorem cmJacobiEvenCoeff_eq_zero_of_odd
   · rcases hterm with ⟨hspos, hsq⟩
     have heven : Even (4 * s ^ 2) := by
       exact ⟨2 * s ^ 2, by ring⟩
-    have : Even N := by simpa [hsq] using heven
-    exact (hN.not_even this).elim
+    have hevenN : Even N := by simpa [hsq] using heven
+    rcases hevenN with ⟨a, ha⟩
+    rcases hN with ⟨b, hb⟩
+    omega
   · rfl
 
 theorem cmJacobiArithmeticCoefficient_eq_zero_of_even
@@ -165,7 +169,8 @@ theorem jacobiTwoPowerAgreement_paid :
   · simp
   · rw [if_neg (Nat.succ_ne_zero k)]
     have heven : Even (2 ^ (k + 1)) := by
-      exact even_two.pow_of_ne_zero (by omega)
+      refine ⟨2 ^ k, ?_⟩
+      simp [pow_succ, two_mul]
     exact cmJacobiArithmeticCoefficient_eq_zero_of_even heven
 
 /-- The four local/compatibility owners of the CM theta arithmetic seam. -/

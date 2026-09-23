@@ -1,5 +1,6 @@
 import Synthesis.MillenniumBSDJacobiEta32Reduction
 import Mathlib.Algebra.Polynomial.Laurent
+import Mathlib.RingTheory.LaurentSeries
 import Mathlib.RingTheory.PowerSeries.PiTopology
 import Mathlib.Tactic
 
@@ -716,6 +717,40 @@ theorem jacobiCubeSpecializationCompiler_paid :
     (PowerSeries.HasSubst.X_pow (by norm_num : (8 : ℕ) ≠ 0))
     cmEtaEulerFormal 3]
 
+
+/-- The Laurent-series monomial X, packaged as a unit. -/
+noncomputable def jacobiLaurentXUnit : (LaurentSeries ℂ)ˣ where
+  val := HahnSeries.single (1 : ℤ) 1
+  inv := HahnSeries.single (-1 : ℤ) 1
+  val_inv := by simp
+  inv_val := by simp
+
+/-- The diagonal value z=-X in the Laurent-series target. -/
+noncomputable def jacobiDiagonalZUnit : (LaurentSeries ℂ)ˣ :=
+  -jacobiLaurentXUnit
+
+/-- Coefficient-ring specialization z↦-X. -/
+noncomputable def jacobiDiagonalCoeffHom :
+    JacobiLaurentCoeff →+* LaurentSeries ℂ :=
+  LaurentPolynomial.eval₂ (HahnSeries.C : ℂ →+* LaurentSeries ℂ)
+    jacobiDiagonalZUnit
+
+@[simp] theorem jacobiDiagonalCoeffHom_T (k : ℤ) :
+    jacobiDiagonalCoeffHom (LaurentPolynomial.T k) =
+      (jacobiDiagonalZUnit : LaurentSeries ℂ) ^ k := by
+  simp [jacobiDiagonalCoeffHom]
+
+/-- Apply z↦-X coefficientwise, while retaining the outer q-variable. -/
+noncomputable def jacobiDiagonalCoeffMap
+    (F : JacobiBivariateFormal) :
+    PowerSeries (LaurentSeries ℂ) :=
+  PowerSeries.map jacobiDiagonalCoeffHom F
+
+@[simp] theorem jacobiDiagonalCoeffMap_coeff
+    (F : JacobiBivariateFormal) (N : ℕ) :
+    (jacobiDiagonalCoeffMap F).coeff N =
+      jacobiDiagonalCoeffHom (F.coeff N) := by
+  simp [jacobiDiagonalCoeffMap]
 
 /-- J0→J2 compiler: the diagonal specialization q↦q², z↦-q gives the
 alternating square theta product, then q↦X^4 gives the eta32 even factor. -/

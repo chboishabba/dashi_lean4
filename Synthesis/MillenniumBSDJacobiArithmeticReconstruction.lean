@@ -393,17 +393,17 @@ structure JacobiLocalReconstructionData : Prop where
   oddPrimePowerRecurrence : JacobiOddPrimePowerRecurrence
   twoPower : JacobiTwoPowerAgreement
 
-/-- Prize-facing J3 input after paying the bad-prime-two support internally.
-Only the genuinely CM-theta local mathematics remains. -/
+/-- Prize-facing J3 input after paying all prime values internally.
+Only the two genuinely global CM-theta compatibility laws remain:
+multiplicativity and the good-prime second-order recurrence. -/
 structure JacobiCMReconstructionData : Prop where
   multiplicative : JacobiArithmeticMultiplicativity
-  splitPrime : JacobiSplitPrimeAgreement
   oddPrimePowerRecurrence : JacobiOddPrimePowerRecurrence
 
 theorem JacobiCMReconstructionData.oddPrime
-    (h : JacobiCMReconstructionData) :
+    (_h : JacobiCMReconstructionData) :
     JacobiOddPrimeAgreement :=
-  jacobiOddPrimeAgreement_of_split h.splitPrime
+  jacobiOddPrimeAgreement_of_split jacobi_splitPrimeAgreement_paid
 
 theorem JacobiCMReconstructionData.toLocalData
     (h : JacobiCMReconstructionData) :

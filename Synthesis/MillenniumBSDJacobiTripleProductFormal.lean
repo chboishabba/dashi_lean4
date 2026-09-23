@@ -1164,6 +1164,60 @@ theorem jacobiLowerSupported_mul
   push_cast
   linarith
 
+theorem jacobiLowerSupported_C_T_mul_X_pow
+    {n : ℕ} {k : ℤ} (hk : -(n : ℤ) ≤ k) :
+    JacobiLowerSupported
+      (C (LaurentPolynomial.T k) * X ^ n :
+        JacobiBivariateFormal) := by
+  intro d j hj
+  rw [PowerSeries.coeff_C_mul_X_pow] at hj
+  split_ifs at hj with hd
+  · subst d
+    simp only [LaurentPolynomial.T_apply] at hj
+    split_ifs at hj with hkj
+    · have : j = k := by omega
+      subst j
+      exact hk
+    · simp at hj
+  · simp at hj
+
+theorem jacobiLowerSupported_X_pow (n : ℕ) :
+    JacobiLowerSupported (X ^ n : JacobiBivariateFormal) := by
+  rw [show (X ^ n : JacobiBivariateFormal) =
+      C (LaurentPolynomial.T (0 : ℤ)) * X ^ n by simp]
+  exact jacobiLowerSupported_C_T_mul_X_pow (by omega)
+
+theorem jacobiLowerSupported_tripleFactor (n : ℕ) :
+    JacobiLowerSupported (jacobiTripleFactor n) := by
+  unfold jacobiTripleFactor
+  have hq : JacobiLowerSupported
+      (1 - X ^ (n + 1) : JacobiBivariateFormal) :=
+    jacobiLowerSupported_sub jacobiLowerSupported_one
+      (jacobiLowerSupported_X_pow (n + 1))
+  have hzpos : JacobiLowerSupported
+      (1 + C (LaurentPolynomial.T (1 : ℤ)) * X ^ n :
+        JacobiBivariateFormal) :=
+    jacobiLowerSupported_add jacobiLowerSupported_one
+      (jacobiLowerSupported_C_T_mul_X_pow (by omega))
+  have hzneg : JacobiLowerSupported
+      (1 + C (LaurentPolynomial.T (-1 : ℤ)) * X ^ (n + 1) :
+        JacobiBivariateFormal) :=
+    jacobiLowerSupported_add jacobiLowerSupported_one
+      (jacobiLowerSupported_C_T_mul_X_pow (by omega))
+  exact jacobiLowerSupported_mul
+    (jacobiLowerSupported_mul hq hzpos) hzneg
+
+theorem jacobiLowerSupported_finiteProduct (M : ℕ) :
+    JacobiLowerSupported (jacobiFiniteProduct M) := by
+  induction M with
+  | zero =>
+      rw [jacobiFiniteProduct_zero]
+      exact jacobiLowerSupported_one
+  | succ M ih =>
+      rw [show M + 1 = M + 1 by rfl, jacobiFiniteProduct_succ]
+      exact jacobiLowerSupported_mul ih
+        (jacobiLowerSupported_tripleFactor M)
+
 /-- Weighted diagonal coefficient implementing q↦q² and z↦-q
 coefficientwise.  For target degree N only outer q-degrees d≤N are inspected;
 this is exactly the finite-dependency property needed to transfer J0's

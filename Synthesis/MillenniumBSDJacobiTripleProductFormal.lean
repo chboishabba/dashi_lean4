@@ -53,6 +53,21 @@ noncomputable def jacobiTripleCoefficient (N : ℕ) : JacobiLaurentCoeff :=
         LaurentPolynomial.T (-(r : ℤ))
     else 0
 
+/-- The one-variable Jacobi cube series before the level-32
+substitution q↦X^8 and leading X factor. -/
+noncomputable def jacobiCubeBaseCoeff (N : ℕ) : ℂ :=
+  ∑ r ∈ Finset.range (N + 1),
+    if jacobiTriangularNat r = N then
+      ((-1 : ℂ) ^ r) * (2 * r + 1)
+    else 0
+
+noncomputable def jacobiCubeBaseSeries : PowerSeries ℂ :=
+  PowerSeries.mk jacobiCubeBaseCoeff
+
+@[simp] theorem jacobiCubeBaseSeries_coeff (N : ℕ) :
+    jacobiCubeBaseSeries.coeff N = jacobiCubeBaseCoeff N := by
+  simp [jacobiCubeBaseSeries]
+
 /-- The bilateral side as a formal q-series with Laurent-polynomial
 coefficients in z. -/
 noncomputable def jacobiTripleSeries : JacobiBivariateFormal :=
@@ -175,6 +190,36 @@ theorem jacobiLaurentEulerAtNegOne_sum
   | insert a s ha ih =>
       simp [ha, jacobiLaurentEulerAtNegOne_add, ih]
 
+theorem jacobiLaurentEulerAtNegOne_T_nat (n : ℕ) :
+    jacobiLaurentEulerAtNegOne
+        (LaurentPolynomial.T (n : ℤ) : JacobiLaurentCoeff) =
+      (n : ℂ) * ((-1 : ℂ) ^ n) := by
+  simp [jacobiLaurentEulerAtNegOne, jacobiLaurentEuler_T,
+    jacobiNegOneUnit, LaurentPolynomial.eval₂_T_n]
+
+theorem jacobiLaurentEulerAtNegOne_T_neg_nat (n : ℕ) :
+    jacobiLaurentEulerAtNegOne
+        (LaurentPolynomial.T (-(n : ℤ)) : JacobiLaurentCoeff) =
+      -(n : ℂ) * ((-1 : ℂ) ^ n) := by
+  simp [jacobiLaurentEulerAtNegOne, jacobiLaurentEuler_T,
+    jacobiNegOneUnit, LaurentPolynomial.eval₂_T_neg_n]
+  ring
+
+/-- The canonical pair k=r+1 and k=-r on the bilateral side produces
+exactly the signed odd coefficient of Jacobi's cube identity. -/
+theorem jacobiLaurentEulerAtNegOne_pairedTerm (r : ℕ) :
+    jacobiLaurentEulerAtNegOne
+      (LaurentPolynomial.T ((r + 1 : ℕ) : ℤ) +
+        LaurentPolynomial.T (-(r : ℤ))) =
+      -(((-1 : ℂ) ^ r) * (2 * r + 1)) := by
+  rw [jacobiLaurentEulerAtNegOne_add,
+    jacobiLaurentEulerAtNegOne_T_nat,
+    jacobiLaurentEulerAtNegOne_T_neg_nat]
+  rw [pow_succ]
+  push_cast
+  ring
+
+
 /-- Coefficientwise Euler derivation/evaluation on the bivariate q-series. -/
 noncomputable def jacobiEulerZAtNegOne
     (F : JacobiBivariateFormal) : PowerSeries ℂ :=
@@ -185,6 +230,23 @@ noncomputable def jacobiEulerZAtNegOne
     (jacobiEulerZAtNegOne F).coeff N =
       jacobiLaurentEulerAtNegOne (F.coeff N) := by
   simp [jacobiEulerZAtNegOne]
+
+/-- Bilateral-series half of the cube specialization. -/
+theorem jacobiEulerZAtNegOne_tripleSeries :
+    jacobiEulerZAtNegOne jacobiTripleSeries =
+      -jacobiCubeBaseSeries := by
+  ext N
+  rw [jacobiEulerZAtNegOne_coeff, jacobiTripleSeries_coeff,
+    PowerSeries.coeff_neg, jacobiCubeBaseSeries_coeff]
+  unfold jacobiTripleCoefficient jacobiCubeBaseCoeff
+  rw [jacobiLaurentEulerAtNegOne_sum]
+  rw [Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intro r hr
+  split_ifs with htri
+  · rw [jacobiLaurentEulerAtNegOne_pairedTerm]
+  · simp [jacobiLaurentEulerAtNegOne, jacobiLaurentEuler_zero]
+
 
 theorem jacobiEulerZAtNegOne_add
     (F G : JacobiBivariateFormal) :

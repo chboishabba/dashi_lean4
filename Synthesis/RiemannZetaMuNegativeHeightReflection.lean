@@ -161,76 +161,99 @@ theorem reflectedHalfOpen_split_standard
     (Ncount (-B) (-A) : ℝ)
       + zetaZeroOrdinateMultiplicity (-B)
       - zetaZeroOrdinateMultiplicity (-A) := by
-  classical
   let interior : Set ℂ := zerosIn (-B) (-A)
   let left : Set ℂ :=
     {rho : ℂ | IsNontrivialZero rho ∧ rho.im = -B}
   let right : Set ℂ :=
     {rho : ℂ | IsNontrivialZero rho ∧ rho.im = -A}
-  have hI := zerosIn_finite (-B) (-A)
-  have hL := zetaZeroOrdinateSet_finite (-B)
-  have hR := zetaZeroOrdinateSet_finite (-A)
-  have hraw := reflectedHalfOpenZeros_finite A B
+  let reflected : Set ℂ := reflectedHalfOpenZeros A B
 
-  have hpoint :
-      ∀ rho : ℂ,
-        (if rho ∈ reflectedHalfOpenZeros A B then (zeroMult rho : ℝ) else 0)
-          =
-        (if rho ∈ interior then (zeroMult rho : ℝ) else 0)
-          +
-        (if rho ∈ left then (zeroMult rho : ℝ) else 0)
-          -
-        (if rho ∈ right then (zeroMult rho : ℝ) else 0) := by
-    intro rho
-    by_cases hz : IsNontrivialZero rho
-    · by_cases hLB : rho.im = -B
-      · by_cases hRA : rho.im = -A
-        · simp [reflectedHalfOpenZeros, interior, left, right,
-            zerosIn, hz, hLB, hRA, hAB]
-        · simp [reflectedHalfOpenZeros, interior, left, right,
-            zerosIn, hz, hLB, hRA, hAB]
-      · by_cases hRA : rho.im = -A
-        · simp [reflectedHalfOpenZeros, interior, left, right,
-            zerosIn, hz, hLB, hRA, hAB]
-        · by_cases h1 : -B < rho.im
-          · by_cases h2 : rho.im < -A
-            · simp [reflectedHalfOpenZeros, interior, left, right,
-                zerosIn, hz, hLB, hRA, h1, h2, hAB]
-            · simp [reflectedHalfOpenZeros, interior, left, right,
-                zerosIn, hz, hLB, hRA, h1, h2, hAB,
-                le_of_not_gt h2]
-          · simp [reflectedHalfOpenZeros, interior, left, right,
-              zerosIn, hz, hLB, hRA, h1, hAB, le_of_not_gt h1]
-    · simp [reflectedHalfOpenZeros, interior, left, right, zerosIn, hz]
+  have hI : interior.Finite := zerosIn_finite (-B) (-A)
+  have hL : left.Finite := zetaZeroOrdinateSet_finite (-B)
+  have hR : right.Finite := zetaZeroOrdinateSet_finite (-A)
+  have hS : reflected.Finite := reflectedHalfOpenZeros_finite A B
 
-  unfold zetaZeroOrdinateMultiplicity Ncount
-  rw [show
-      (∑ᶠ rho ∈ reflectedHalfOpenZeros A B, (zeroMult rho : ℝ))
+  have hSR : Disjoint reflected right := by
+    rw [Set.disjoint_left]
+    intro rho hs hr
+    have hslt : rho.im < -A := hs.2.2
+    have hre : rho.im = -A := hr.2
+    linarith
+
+  have hIL : Disjoint interior left := by
+    rw [Set.disjoint_left]
+    intro rho hi hl
+    have hilt : -B < rho.im := hi.2.1
+    have hle : rho.im = -B := hl.2
+    linarith
+
+  have hunion :
+      reflected ∪ right = interior ∪ left := by
+    ext rho
+    constructor
+    · intro h
+      rcases h with hs | hr
+      · by_cases hy : rho.im = -B
+        · exact Or.inr ⟨hs.1, hy⟩
+        · exact Or.inl
+            ⟨hs.1,
+              lt_of_le_of_ne hs.2.1 (Ne.symm hy),
+              (le_of_lt hs.2.2)⟩
+      · by_cases hEq : A = B
+        · subst B
+          exact Or.inr ⟨hr.1, by simpa using hr.2⟩
+        · have hBA : -B < -A := by
+            exact neg_lt_neg (lt_of_le_of_ne hAB hEq)
+          exact Or.inl ⟨hr.1, by simpa [hr.2] using hBA, hr.2.le⟩
+    · intro h
+      rcases h with hi | hl
+      · by_cases hy : rho.im = -A
+        · exact Or.inr ⟨hi.1, hy⟩
+        · exact Or.inl
+            ⟨hi.1,
+              hi.2.1.le,
+              lt_of_le_of_ne hi.2.2 hy⟩
+      · by_cases hEq : A = B
+        · subst B
+          exact Or.inr ⟨hl.1, by simpa using hl.2⟩
+        · have hBA : -B < -A := by
+            exact neg_lt_neg (lt_of_le_of_ne hAB hEq)
+          exact Or.inl ⟨hl.1, hl.2.ge, by simpa [hl.2] using hBA⟩
+
+  have hleftUnion :
+      (∑ᶠ rho ∈ reflected ∪ right, (zeroMult rho : ℝ))
         =
-      ∑ᶠ rho : ℂ,
-        (if rho ∈ reflectedHalfOpenZeros A B then (zeroMult rho : ℝ) else 0) by
-          rw [finsum_mem_eq_finsum_ite]]
-  rw [show
+      (∑ᶠ rho ∈ reflected, (zeroMult rho : ℝ))
+        +
+      (∑ᶠ rho ∈ right, (zeroMult rho : ℝ)) :=
+    finsum_mem_union hSR hS hR
+
+  have hrightUnion :
+      (∑ᶠ rho ∈ interior ∪ left, (zeroMult rho : ℝ))
+        =
       (∑ᶠ rho ∈ interior, (zeroMult rho : ℝ))
-        =
-      ∑ᶠ rho : ℂ,
-        (if rho ∈ interior then (zeroMult rho : ℝ) else 0) by
-          rw [finsum_mem_eq_finsum_ite]]
-  rw [show
-      (∑ᶠ rho ∈ left, (zeroMult rho : ℝ))
-        =
-      ∑ᶠ rho : ℂ,
-        (if rho ∈ left then (zeroMult rho : ℝ) else 0) by
-          rw [finsum_mem_eq_finsum_ite]]
-  rw [show
+        +
+      (∑ᶠ rho ∈ left, (zeroMult rho : ℝ)) :=
+    finsum_mem_union hIL hI hL
+
+  have hbalance :
+      (∑ᶠ rho ∈ reflected, (zeroMult rho : ℝ))
+        +
       (∑ᶠ rho ∈ right, (zeroMult rho : ℝ))
-        =
-      ∑ᶠ rho : ℂ,
-        (if rho ∈ right then (zeroMult rho : ℝ) else 0) by
-          rw [finsum_mem_eq_finsum_ite]]
-  rw [← finsum_add_distrib, ← finsum_sub_distrib]
-  apply finsum_congr
-  exact hpoint
+      =
+      (∑ᶠ rho ∈ interior, (zeroMult rho : ℝ))
+        +
+      (∑ᶠ rho ∈ left, (zeroMult rho : ℝ)) := by
+    rw [← hleftUnion, hunion, hrightUnion]
+
+  change
+    (∑ᶠ rho ∈ reflected, (zeroMult rho : ℝ))
+      =
+    (∑ᶠ rho ∈ interior, (zeroMult rho : ℝ))
+      + (∑ᶠ rho ∈ left, (zeroMult rho : ℝ))
+      - (∑ᶠ rho ∈ right, (zeroMult rho : ℝ))
+  linarith
+
 
 theorem zetaZeroOrdinateMultiplicity_neg (T : ℝ) :
     zetaZeroOrdinateMultiplicity (-T)

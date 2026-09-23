@@ -66,6 +66,39 @@ noncomputable def jacobiTripleFactor (n : ℕ) : JacobiBivariateFormal :=
     (1 + C (LaurentPolynomial.T (1 : ℤ)) * X ^ n) *
     (1 + C (LaurentPolynomial.T (-1 : ℤ)) * X ^ (n + 1))
 
+/-- Formal derivative in the Laurent variable z. -/
+noncomputable def jacobiLaurentDerivative
+    (p : JacobiLaurentCoeff) : JacobiLaurentCoeff :=
+  p.sum fun k a =>
+    LaurentPolynomial.C ((k : ℂ) * a) *
+      LaurentPolynomial.T (k - 1)
+
+@[simp] theorem jacobiLaurentDerivative_T (k : ℤ) :
+    jacobiLaurentDerivative (LaurentPolynomial.T k : JacobiLaurentCoeff) =
+      LaurentPolynomial.C (k : ℂ) * LaurentPolynomial.T (k - 1) := by
+  simp [jacobiLaurentDerivative, LaurentPolynomial.T]
+
+/-- The unit -1 used for Laurent evaluation. -/
+noncomputable def jacobiNegOneUnit : ℂˣ :=
+  Units.mk0 (-1 : ℂ) (by norm_num)
+
+/-- Differentiate a Laurent polynomial and evaluate at z=-1. -/
+noncomputable def jacobiLaurentDerivativeAtNegOne
+    (p : JacobiLaurentCoeff) : ℂ :=
+  LaurentPolynomial.eval₂ (RingHom.id ℂ) jacobiNegOneUnit
+    (jacobiLaurentDerivative p)
+
+/-- Apply D_z|_{z=-1} coefficientwise to a bivariate formal q-series. -/
+noncomputable def jacobiDifferentiateZAtNegOne
+    (F : JacobiBivariateFormal) : PowerSeries ℂ :=
+  PowerSeries.mk fun N => jacobiLaurentDerivativeAtNegOne (F.coeff N)
+
+@[simp] theorem jacobiDifferentiateZAtNegOne_coeff
+    (F : JacobiBivariateFormal) (N : ℕ) :
+    (jacobiDifferentiateZAtNegOne F).coeff N =
+      jacobiLaurentDerivativeAtNegOne (F.coeff N) := by
+  simp [jacobiDifferentiateZAtNegOne]
+
 /-- J0: formal Jacobi triple product, in the same coefficientwise eventual
 product form as the formal pentagonal theorem.
 

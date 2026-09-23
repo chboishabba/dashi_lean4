@@ -22,6 +22,8 @@ structure CrossProverReceipt where
   grothendieckTopologyMirrored : Bool
   bundleSheafGluingMirrored : Bool
   genuineSheafConditionMirrored : Bool
+  rank12Rank13CrosswalkMirrored : Bool
+  diagonalNonDescentMirrored : Bool
   analyticModularSiteIdentified : Bool
   pathCorrespondenceIsProofEquivalence : Bool
   deriving Repr
@@ -33,6 +35,8 @@ def crossProverReceipt : CrossProverReceipt where
   grothendieckTopologyMirrored := true
   bundleSheafGluingMirrored := true
   genuineSheafConditionMirrored := true
+  rank12Rank13CrosswalkMirrored := true
+  diagonalNonDescentMirrored := true
   analyticModularSiteIdentified := false
   pathCorrespondenceIsProofEquivalence := false
 
@@ -51,6 +55,22 @@ theorem completeCycleAxisCount_parity :
 theorem relationProfile_card_parity :
     Fintype.card RelationProfile = 3^144 :=
   relationProfile_card
+
+theorem rank12_crosswalk_parity :
+    completeCycleStateCount = fixedTernaryProfileCount 12 :=
+  completeCycle_matches_rank12
+
+theorem rank13_crosswalk_parity :
+    centralCompletionPattern = fixedTernaryProfileCount 13 :=
+  centralCompletion_matches_rank13
+
+theorem diagonal_nonDescent_parity :
+    ¬ ConsumerSufficient diagonalObservation offDiagonal01 :=
+  diagonal_not_sufficient_for_offDiagonal01
+
+theorem diagonal_nonFactorization_parity :
+    ¬ FactorsThrough diagonalObservation offDiagonal01 :=
+  diagonal_cannot_factor_offDiagonal01
 
 theorem relationConstantPresheaf_isSheaf_parity :
     Presheaf.IsSheaf stage12GrothendieckTopology

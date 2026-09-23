@@ -591,4 +591,204 @@ theorem QuarticFourSignedPolePair.completedFunctional_cubic_invariant_of_oddMode
       ht n E hE, h1, h3]
   ring
 
+
+/--
+Finite symmetric zeroth and second moments of the actual signed test Psi_t.
+These are global-in-x moments of Psi_t itself, not the profile moments which
+control the centered jet.
+-/
+def QuarticFourSignedPolePair.centeredPsiMassAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  ∫ x in (t - (n : ℝ))..(t + (n : ℝ)),
+    W.signedOrdinateTest x
+
+def QuarticFourSignedPolePair.centeredPsiSecondMassAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  ∫ x in (t - (n : ℝ))..(t + (n : ℝ)),
+    W.signedOrdinateTest x * (x-t)^2
+
+/--
+Exact finite formula for the surviving centered-linear discrepancy defect:
+
+  D1(n) = 2 n Psi(t+n) - integral Psi.
+
+The local centered jet does not force the second term to vanish.
+-/
+theorem QuarticFourSignedPolePair.centeredModeDefectAt_one_eq
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.centeredModeDefectAt n 1
+      =
+    2 * (n : ℝ) * W.signedOrdinateTest (t + (n : ℝ))
+      - W.centeredPsiMassAt n := by
+  let a : ℝ := t - (n : ℝ)
+  let b : ℝ := t + (n : ℝ)
+  let F : ℝ -> ℝ :=
+    fun x => W.signedOrdinateTest x * (x-t)
+  let F' : ℝ -> ℝ :=
+    fun x =>
+      W.signedOrdinateTestDeriv x * (x-t)
+        + W.signedOrdinateTest x
+  have hderiv :
+      ∀ x ∈ Set.Icc a b, HasDerivAt F (F' x) x := by
+    intro x hx
+    dsimp [F,F']
+    convert
+      (W.signedOrdinateTest_hasDerivAt ht x).mul
+        ((hasDerivAt_id x).sub_const t) using 1 <;> ring
+  have hF'int : IntervalIntegrable F' volume a b := by
+    dsimp [F']
+    have hD := W.signedOrdinateTestDeriv_continuous ht
+    have hP : Continuous W.signedOrdinateTest := by
+      exact continuous_of_forall_continuousAt fun x =>
+        (W.signedOrdinateTest_hasDerivAt ht x).continuousAt
+    fun_prop
+  have hFTC :=
+    intervalIntegral.integral_deriv_eq_sub' hderiv hF'int
+  have hDint :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          W.signedOrdinateTestDeriv x * (x-t))
+        volume a b := by
+    have hD := W.signedOrdinateTestDeriv_continuous ht
+    fun_prop
+  have hPint :
+      IntervalIntegrable W.signedOrdinateTest volume a b := by
+    exact
+      (continuous_of_forall_continuousAt fun x =>
+        (W.signedOrdinateTest_hasDerivAt ht x).continuousAt)
+        .intervalIntegrable a b
+  have hsplit :
+      (∫ x in a..b, F' x)
+        =
+      (∫ x in a..b,
+        W.signedOrdinateTestDeriv x * (x-t))
+        +
+      (∫ x in a..b, W.signedOrdinateTest x) := by
+    dsimp [F']
+    rw [intervalIntegral.integral_add hDint hPint]
+  rw [hsplit] at hFTC
+  have hreflect :
+      W.signedOrdinateTest a = W.signedOrdinateTest b := by
+    dsimp [a,b]
+    rw [W.signedOrdinateTest_eq_combinedCosine,
+        W.signedOrdinateTest_eq_combinedCosine]
+    dsimp
+    have harg :
+        (t - (n : ℝ) - t) / (t/16)
+          =
+        - ((t + (n : ℝ) - t) / (t/16)) := by ring
+    rw [harg, compactCosineTransform_even]
+  unfold QuarticFourSignedPolePair.centeredModeDefectAt
+    centeredMonomial
+    QuarticFourSignedPolePair.centeredPsiMassAt
+  simp only [pow_one]
+  dsimp [a,b,F] at hFTC hreflect ⊢
+  rw [hreflect] at hFTC
+  linarith
+
+/--
+Exact finite formula for the surviving centered-cubic discrepancy defect:
+
+  D3(n) = 2 n^3 Psi(t+n)
+          - 3 integral Psi(x)(x-t)^2 dx.
+
+Again, the obstruction is a global moment of Psi_t, not a centered-jet datum.
+-/
+theorem QuarticFourSignedPolePair.centeredModeDefectAt_three_eq
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.centeredModeDefectAt n 3
+      =
+    2 * (n : ℝ)^3 * W.signedOrdinateTest (t + (n : ℝ))
+      - 3 * W.centeredPsiSecondMassAt n := by
+  let a : ℝ := t - (n : ℝ)
+  let b : ℝ := t + (n : ℝ)
+  let F : ℝ -> ℝ :=
+    fun x => W.signedOrdinateTest x * (x-t)^3
+  let F' : ℝ -> ℝ :=
+    fun x =>
+      W.signedOrdinateTestDeriv x * (x-t)^3
+        + 3 * W.signedOrdinateTest x * (x-t)^2
+  have hderiv :
+      ∀ x ∈ Set.Icc a b, HasDerivAt F (F' x) x := by
+    intro x hx
+    dsimp [F,F']
+    have hp := ((hasDerivAt_id x).sub_const t).pow 3
+    convert
+      (W.signedOrdinateTest_hasDerivAt ht x).mul hp
+      using 1 <;> ring
+  have hDint :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          W.signedOrdinateTestDeriv x * (x-t)^3)
+        volume a b := by
+    have hD := W.signedOrdinateTestDeriv_continuous ht
+    fun_prop
+  have hP2int :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          3 * W.signedOrdinateTest x * (x-t)^2)
+        volume a b := by
+    have hP : Continuous W.signedOrdinateTest :=
+      continuous_of_forall_continuousAt fun x =>
+        (W.signedOrdinateTest_hasDerivAt ht x).continuousAt
+    fun_prop
+  have hF'int : IntervalIntegrable F' volume a b := by
+    dsimp [F']
+    exact hDint.add hP2int
+  have hFTC :=
+    intervalIntegral.integral_deriv_eq_sub' hderiv hF'int
+  have hsplit :
+      (∫ x in a..b, F' x)
+        =
+      (∫ x in a..b,
+        W.signedOrdinateTestDeriv x * (x-t)^3)
+        +
+      3 *
+      (∫ x in a..b,
+        W.signedOrdinateTest x * (x-t)^2) := by
+    dsimp [F']
+    rw [intervalIntegral.integral_add hDint hP2int]
+    have hbase :
+        IntervalIntegrable
+          (fun x : ℝ =>
+            W.signedOrdinateTest x * (x-t)^2)
+          volume a b := by
+      have hP : Continuous W.signedOrdinateTest :=
+        continuous_of_forall_continuousAt fun x =>
+          (W.signedOrdinateTest_hasDerivAt ht x).continuousAt
+      fun_prop
+    rw [show
+        (∫ x in a..b,
+          3 * W.signedOrdinateTest x * (x-t)^2)
+          =
+        3 * ∫ x in a..b,
+          W.signedOrdinateTest x * (x-t)^2 by
+          rw [← intervalIntegral.integral_const_mul]
+          apply intervalIntegral.integral_congr
+          intro x hx
+          ring]
+  have hreflect :
+      W.signedOrdinateTest a = W.signedOrdinateTest b := by
+    dsimp [a,b]
+    rw [W.signedOrdinateTest_eq_combinedCosine,
+        W.signedOrdinateTest_eq_combinedCosine]
+    dsimp
+    have harg :
+        (t - (n : ℝ) - t) / (t/16)
+          =
+        - ((t + (n : ℝ) - t) / (t/16)) := by ring
+    rw [harg, compactCosineTransform_even]
+  unfold QuarticFourSignedPolePair.centeredModeDefectAt
+    centeredMonomial
+    QuarticFourSignedPolePair.centeredPsiSecondMassAt
+  dsimp [a,b,F] at hFTC hreflect ⊢
+  rw [hreflect] at hFTC
+  linarith
+
 end Synthesis

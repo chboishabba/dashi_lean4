@@ -64,16 +64,42 @@ noncomputable def rationalEllipticCurveTorsionOrder
     rationalEllipticCurve_torsion_finite E
   exact Nat.card (AddCommGroup.torsion E.1.toAffine.Point)
 
-/-- Universal binding surface for the arithmetic factors for which this repo
-does not yet have canonical arbitrary-curve objects.  These fields are
-deliberately labelled bindings rather than definitions. -/
-structure BSDRefinedArithmeticBinding where
+/-- Object slots for the three standard refined-BSD arithmetic factors not
+yet canonically constructed for every arbitrary curve in this repo.  This
+record says only which values are being bound to a curve; it does not confuse
+their side-properties with their object identity. -/
+structure BSDRefinedArithmeticCarrier where
   period : RationalEllipticCurve → ℝ
-  period_pos : ∀ E, 0 < period E
   regulator : RationalEllipticCurve → ℝ
-  regulator_nonneg : ∀ E, 0 ≤ regulator E
   tamagawaProduct : RationalEllipticCurve → ℕ
-  tamagawaProduct_pos : ∀ E, 0 < tamagawaProduct E
+
+/-- Standard elementary side-properties of a proposed refined arithmetic
+carrier.  These are separate from the same-object binding problem. -/
+structure BSDRefinedArithmeticCertification
+    (a : BSDRefinedArithmeticCarrier) : Prop where
+  period_pos : ∀ E, 0 < a.period E
+  regulator_nonneg : ∀ E, 0 ≤ a.regulator E
+  tamagawaProduct_pos : ∀ E, 0 < a.tamagawaProduct E
+
+/-- Certified refined arithmetic data.  The genuinely open infrastructure is
+still to bind these fields to the canonical period, Néron--Tate regulator,
+and product of Tamagawa numbers for the same literal curve. -/
+structure BSDRefinedArithmeticBinding where
+  carrier : BSDRefinedArithmeticCarrier
+  certified : BSDRefinedArithmeticCertification carrier
+
+namespace BSDRefinedArithmeticBinding
+
+abbrev period (a : BSDRefinedArithmeticBinding) :=
+  a.carrier.period
+
+abbrev regulator (a : BSDRefinedArithmeticBinding) :=
+  a.carrier.regulator
+
+abbrev tamagawaProduct (a : BSDRefinedArithmeticBinding) :=
+  a.carrier.tamagawaProduct
+
+end BSDRefinedArithmeticBinding
 
 /-- Object-level interface required before refined BSD can be stated literally:
 the classical Tate--Shafarevich carrier attached to each actual rational
@@ -159,6 +185,7 @@ structure BSDUniversalRefinedMaxCutStatus where
   normalizedLeadingCoefficientPaid : Bool
   leadingCoefficientWitnessIndependencePaid : Bool
   actualRationalTorsionOrderPaid : Bool
+  arithmeticCarrierSidePropertiesSeparatedPaid : Bool
   universalPeriodBindingPaid : Bool
   universalRegulatorBindingPaid : Bool
   universalTamagawaBindingPaid : Bool
@@ -170,7 +197,7 @@ structure BSDUniversalRefinedMaxCutStatus where
 
 def bsdUniversalRefinedMaxCutStatus :
     BSDUniversalRefinedMaxCutStatus :=
-  ⟨true, true, true,
+  ⟨true, true, true, true,
     false, false, false, false, true, false, false⟩
 
 end Synthesis.Millennium.BSD

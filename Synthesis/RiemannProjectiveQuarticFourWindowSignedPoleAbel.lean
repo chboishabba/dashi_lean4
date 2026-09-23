@@ -1859,4 +1859,155 @@ theorem QuarticFourSignedPolePair.signedOrdinateTestDeriv_abs_le_gap_sq
         field_simp [ne_of_gt ht, sub_ne_zero.mpr hxt]
         ring
 
+
+/-!
+## Pointwise correlation-tail envelopes on the exact centered integrand
+-/
+
+/--
+Positive/right centered discrepancy bound in the exact carrier used by G3.
+-/
+theorem exists_centeredZetaMuDiscrepancy_right_log_bound :
+    ∃ C T0 : ℝ, 0 <= C ∧
+      ∀ t x : ℝ,
+        max T0 4 <= t ->
+        t < x ->
+        |centeredZetaMuDiscrepancy t x|
+          <= C * (Real.log (t+3) + Real.log (x+4)) := by
+  obtain ⟨C,T0,hC,hD⟩ :=
+    exists_zetaMuWindowDiscrepancy_arbitrary_bound
+  refine ⟨C,T0,hC,?_⟩
+  intro t x ht htx
+  rw [centeredZetaMuDiscrepancy_of_le htx.le,
+      zetaMuCumulativeDiscrepancy_endpoint]
+  exact hD t x ht htx
+
+/--
+Far-left centered discrepancy bound obtained from the endpoint-correct
+negative-height reflection adapter.
+-/
+theorem exists_centeredZetaMuDiscrepancy_left_log_bound :
+    ∃ C T0 A0 : ℝ, 0 <= C ∧ 1 <= A0 ∧
+      ∀ t x : ℝ,
+        max T0 4 <= t ->
+        x < -t ->
+        |centeredZetaMuDiscrepancy t x|
+          <=
+        C * (Real.log (t+3) + Real.log (-x+4))
+          + A0 * Real.log (|t-1|+3)
+          + A0 * Real.log (|x-1|+3)
+          + |zetaMuWindowDiscrepancy (-t) t| := by
+  obtain ⟨C,T0,A0,hC,hA01,hneg⟩ :=
+    exists_zetaMuWindowDiscrepancy_negativeSegment_bound
+  refine ⟨C,T0,A0,hC,hA01,?_⟩
+  intro t x ht hxt
+  rw [centeredZetaMuDiscrepancy_of_lt (by linarith)]
+  rw [abs_neg]
+  rw [zetaMuCumulativeDiscrepancy_endpoint]
+  have hsplit :=
+    zetaMuCumulativeDiscrepancy_farLeft_split
+      (show 0 <= t by
+        have ht4 : 4 <= t := (le_max_right T0 4).trans ht
+        linarith)
+      hxt.le
+  rw [zetaMuCumulativeDiscrepancy_endpoint,
+      zetaMuCumulativeDiscrepancy_endpoint,
+      zetaMuCumulativeDiscrepancy_endpoint] at hsplit
+  rw [hsplit]
+  exact (abs_add _ _).trans
+    (add_le_add (hneg t x ht hxt) le_rfl)
+
+/--
+Right-tail pointwise envelope for the literal centered Abel integrand.
+-/
+theorem exists_quarticFourSignedPole_centeredAbelIntegrand_right_bound :
+    ∃ C T0 : ℝ, 0 <= C ∧
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        max T0 4 <= t ->
+        ∀ x : ℝ,
+          t < x ->
+          |W.centeredAbelIntegrand x|
+            <=
+          ((16/t) *
+            compactCosineD1DecayCurvature
+              (quarticFourSignedPoleCombinedProfile
+                W.R W.muHalf W.muTwo t)
+            / (x-t)^2)
+          *
+          (C * (Real.log (t+3) + Real.log (x+4))) := by
+  obtain ⟨C,T0,hC,hD⟩ :=
+    exists_centeredZetaMuDiscrepancy_right_log_bound
+  refine ⟨C,T0,hC,?_⟩
+  intro t W ht x htx
+  have ht4 : 4 <= t := (le_max_right T0 4).trans ht
+  have htpos : 0 < t := by linarith
+  have hder :=
+    W.signedOrdinateTestDeriv_abs_le_gap_sq
+      htpos (ne_of_gt htx)
+  have hdisc := hD t x ht htx
+  unfold QuarticFourSignedPolePair.centeredAbelIntegrand
+  rw [abs_mul]
+  have hfac :
+      0 <=
+      (16/t) *
+        compactCosineD1DecayCurvature
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)
+        / (x-t)^2 := by
+    have hc :=
+      compactCosineD1DecayCurvature_nonneg
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+    positivity
+  exact mul_le_mul hder hdisc (abs_nonneg _) hfac
+
+/--
+Left-tail pointwise envelope for the literal centered Abel integrand.
+-/
+theorem exists_quarticFourSignedPole_centeredAbelIntegrand_left_bound :
+    ∃ C T0 A0 : ℝ, 0 <= C ∧ 1 <= A0 ∧
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        max T0 4 <= t ->
+        ∀ x : ℝ,
+          x < -t ->
+          |W.centeredAbelIntegrand x|
+            <=
+          ((16/t) *
+            compactCosineD1DecayCurvature
+              (quarticFourSignedPoleCombinedProfile
+                W.R W.muHalf W.muTwo t)
+            / (x-t)^2)
+          *
+          (C * (Real.log (t+3) + Real.log (-x+4))
+            + A0 * Real.log (|t-1|+3)
+            + A0 * Real.log (|x-1|+3)
+            + |zetaMuWindowDiscrepancy (-t) t|) := by
+  obtain ⟨C,T0,A0,hC,hA01,hD⟩ :=
+    exists_centeredZetaMuDiscrepancy_left_log_bound
+  refine ⟨C,T0,A0,hC,hA01,?_⟩
+  intro t W ht x hxt
+  have ht4 : 4 <= t := (le_max_right T0 4).trans ht
+  have htpos : 0 < t := by linarith
+  have hder :=
+    W.signedOrdinateTestDeriv_abs_le_gap_sq
+      htpos (by linarith : x ≠ t)
+  have hdisc := hD t x ht hxt
+  unfold QuarticFourSignedPolePair.centeredAbelIntegrand
+  rw [abs_mul]
+  have hfac :
+      0 <=
+      (16/t) *
+        compactCosineD1DecayCurvature
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t)
+        / (x-t)^2 := by
+    have hc :=
+      compactCosineD1DecayCurvature_nonneg
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+    positivity
+  exact mul_le_mul hder hdisc (abs_nonneg _) hfac
+
 end Synthesis

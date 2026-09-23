@@ -425,6 +425,19 @@ noncomputable def absoluteGaloisTrivialTwoTorsionH1CharacterMulEquiv :
   exact genericTrivialTwoTorsionH1CharacterMulEquiv
     (Field.absoluteGaloisGroup K)
 
+/-- Field-generic absolute-Galois H¹ theorem in the two scalar
+quadratic-character coordinates used by two-descent. -/
+noncomputable def absoluteGaloisTrivialTwoTorsionH1QuadraticPairMulEquiv :
+    Multiplicative
+      (continuousCohomology 1
+        (genericTwoTorsionRepresentation
+          (Field.absoluteGaloisGroup K))) ≃*
+      (GenericQuadraticCharacter (Field.absoluteGaloisGroup K) ×
+        GenericQuadraticCharacter (Field.absoluteGaloisGroup K)) :=
+  (absoluteGaloisTrivialTwoTorsionH1CharacterMulEquiv K).trans
+    (genericTwoTorsionCharacterMulEquivPair
+      (Field.absoluteGaloisGroup K))
+
 /-- Plain equivalence form of the field-generic absolute-Galois theorem. -/
 noncomputable def absoluteGaloisTrivialTwoTorsionH1CharacterEquiv :
     continuousCohomology 1

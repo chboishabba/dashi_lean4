@@ -1775,20 +1775,6 @@ theorem jacobiSquareThetaFiniteProduct_succ (M : ℕ) :
         ((1 - X ^ (2 * M + 2)) * (1 - X ^ (2 * M + 1)) ^ 2) := by
   simp [jacobiSquareThetaFiniteProduct, Finset.prod_range_succ]
 
-/-- The finite weighted diagonal algebraic agreement is paid. -/
-theorem jacobiWeightedDiagonal_finiteProduct_paid :
-    JacobiWeightedDiagonalFiniteProductAgreement := by
-  intro M
-  induction M with
-  | zero =>
-      simp [jacobiFiniteProduct_zero, jacobiSquareThetaFiniteProduct,
-        jacobiWeightedDiagonal_one]
-  | succ M ih =>
-      rw [jacobiFiniteProduct_succ]
-      rw [jacobiWeightedDiagonal_mul_tripleFactor
-        (jacobiFiniteProduct M) (jacobiLowerSupported_finiteProduct M) M]
-      rw [ih, jacobiSquareThetaFiniteProduct_succ]
-
 /-- J0 coefficientwise equality transfers automatically through the finite
 weighted diagonal operator. -/
 theorem tendsto_jacobiWeightedDiagonal_finiteProduct_of_tripleProduct
@@ -1840,6 +1826,21 @@ def JacobiWeightedDiagonalFiniteProductAgreement : Prop :=
   ∀ M : ℕ,
     jacobiWeightedDiagonal (jacobiFiniteProduct M) =
       jacobiSquareThetaFiniteProduct M
+
+/-- The finite weighted diagonal algebraic agreement is paid. -/
+theorem jacobiWeightedDiagonal_finiteProduct_paid :
+    JacobiWeightedDiagonalFiniteProductAgreement := by
+  intro M
+  induction M with
+  | zero =>
+      simp [jacobiFiniteProduct_zero, jacobiSquareThetaFiniteProduct,
+        jacobiWeightedDiagonal_one]
+  | succ M ih =>
+      rw [jacobiFiniteProduct_succ]
+      rw [jacobiWeightedDiagonal_mul_tripleFactor
+        (jacobiFiniteProduct M) (jacobiLowerSupported_finiteProduct M) M]
+      rw [ih, jacobiSquareThetaFiniteProduct_succ]
+
 
 /-- Second algebraic identification still required by J2: the weighted
 diagonal of the paired bilateral Jacobi series is the standard theta4

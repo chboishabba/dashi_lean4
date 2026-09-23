@@ -1327,4 +1327,214 @@ theorem QuarticFourSignedPolePair.signedOrdinateTest_mul_centeredSq_integrable
       simpa [mul_comm, mul_left_comm, mul_assoc] using hshape
     exact hweighted.trans hfar
 
+
+/--
+The unweighted signed test is also globally integrable.
+-/
+theorem QuarticFourSignedPolePair.signedOrdinateTest_integrable
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Integrable W.signedOrdinateTest := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  let A : ℝ :=
+    (t/16)^2 * compactCosineFourthDecayCurvature P
+  let B : ℝ :=
+    (1/(t/16)^2)
+      * Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass P
+  let C : ℝ := 2 * (A + B)
+  have hA : 0 <= A := by
+    dsimp [A,P]
+    have hcurv :=
+      compactCosineFourthDecayCurvature_nonneg
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+    positivity
+  have hB : 0 <= B := by
+    dsimp [B,P]
+    have hm :=
+      Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass_nonneg
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t)
+    positivity
+  have hC : 0 <= C := by
+    dsimp [C]
+    positivity
+  have hbase :
+      Integrable (fun y : ℝ => (1 + y^2)⁻¹) :=
+    integrable_inv_one_add_sq
+  have hshift :
+      Integrable (fun x : ℝ => (1 + (x-t)^2)⁻¹) := by
+    simpa using Integrable.comp_sub_right hbase t
+  have hmajor :
+      Integrable
+        (fun x : ℝ => C * (1 + (x-t)^2)⁻¹) :=
+    hshift.const_mul C
+  have hPsiC : Continuous W.signedOrdinateTest :=
+    continuous_of_forall_continuousAt fun x =>
+      (W.signedOrdinateTest_hasDerivAt ht x).continuousAt
+  refine Integrable.mono' hmajor
+    hPsiC.aestronglyMeasurable
+    (ae_of_all _ fun x => ?_)
+  let y : ℝ := x-t
+  have hden : 0 < 1 + y^2 := by positivity
+  have hmajorAbs :
+      |C * (1 + y^2)⁻¹|
+        = C / (1 + y^2) := by
+    rw [abs_mul, abs_of_nonneg hC, abs_inv,
+        abs_of_pos hden]
+    rfl
+  rw [Real.norm_eq_abs, Real.norm_eq_abs,
+      show x-t = y by rfl, hmajorAbs]
+  by_cases hy : y^2 <= 1
+  · have hPsi :
+        |W.signedOrdinateTest x| <= B := by
+      dsimp [B,P]
+      exact W.signedOrdinateTest_abs_le_global ht x
+    have hshape : B * (1+y^2) <= C := by
+      dsimp [C]
+      nlinarith [hB,hA]
+    apply (le_div_iff₀ hden).2
+    exact (mul_le_mul_of_nonneg_right hPsi hden.le).trans hshape
+  · have hy' : 1 < y^2 := lt_of_not_ge hy
+    have hyne : y ≠ 0 := by
+      intro hz
+      subst y
+      norm_num at hy'
+    have hPsi :
+        |W.signedOrdinateTest x| <= A / y^4 := by
+      dsimp [A,P]
+      simpa [y] using
+        W.signedOrdinateTest_abs_le_gap_four ht
+          (sub_ne_zero.mp hyne)
+    have hshape :
+        A * (1+y^2) <= C * y^4 := by
+      have hy2non : 0 <= y^2 := sq_nonneg y
+      have htwo : 1+y^2 <= 2*y^2 := by linarith
+      have hy4 : y^2 <= y^4 := by
+        have := mul_le_mul_of_nonneg_right hy'.le hy2non
+        nlinarith
+      have h1 :=
+        mul_le_mul_of_nonneg_left htwo hA
+      dsimp [C]
+      nlinarith [mul_nonneg hB (pow_nonneg y 4)]
+    have hfar :
+        A / y^4 <= C / (1+y^2) := by
+      rw [div_le_div_iff₀ (pow_pos (by
+        exact lt_of_le_of_ne (sq_nonneg y) (Ne.symm (pow_ne_zero 2 hyne))) 2)
+        hden]
+      simpa [mul_comm, mul_left_comm, mul_assoc] using hshape
+    exact hPsi.trans hfar
+
+/--
+Symmetric interval exhaustion of any globally integrable real-line function.
+-/
+theorem symmetricIntervalIntegral_tendsto_full
+    {t : ℝ} {f : ℝ -> ℝ}
+    (hInt : Integrable f) :
+    Tendsto
+      (fun n : ℕ => ∫ x in (t-(n:ℝ))..(t+(n:ℝ)), f x)
+      atTop
+      (𝓝 (∫ x : ℝ, f x)) := by
+  let s : ℕ -> Set ℝ :=
+    fun n => Set.Ioc (t - n) (t + n)
+  have hsMeas : ∀ n, MeasurableSet (s n) :=
+    fun _ => measurableSet_Ioc
+  have hsMono : Monotone s := by
+    intro m n hmn
+    intro x hx
+    dsimp [s] at hx ⊢
+    have hmnR : (m : ℝ) <= n := by exact_mod_cast hmn
+    constructor <;> linarith [hx.1, hx.2]
+  have hsUnion : (⋃ n : ℕ, s n) = (Set.univ : Set ℝ) := by
+    ext x
+    simp only [Set.mem_iUnion, Set.mem_univ, iff_true]
+    obtain ⟨n, hn⟩ := exists_nat_gt (|x-t| + 1)
+    refine ⟨n,?_⟩
+    dsimp [s]
+    have habs :=
+      abs_lt.mp (lt_trans (lt_add_one _) (by exact_mod_cast hn))
+    constructor <;> linarith
+  have hlim :=
+    tendsto_setIntegral_of_monotone
+      hsMeas hsMono
+      (by simpa [hsUnion] using hInt.integrableOn)
+  rw [hsUnion] at hlim
+  simpa [s, intervalIntegral.integral_of_le] using hlim
+
+def QuarticFourSignedPolePair.globalLinearModeDefect
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  - ∫ x : ℝ, W.signedOrdinateTest x
+
+def QuarticFourSignedPolePair.globalCubicModeDefect
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  -3 * ∫ x : ℝ,
+    W.signedOrdinateTest x * (x-t)^2
+
+theorem QuarticFourSignedPolePair.centeredPsiMassAt_tendsto_full
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto W.centeredPsiMassAt atTop
+      (𝓝 (∫ x : ℝ, W.signedOrdinateTest x)) := by
+  unfold QuarticFourSignedPolePair.centeredPsiMassAt
+  exact symmetricIntervalIntegral_tendsto_full
+    (W.signedOrdinateTest_integrable ht)
+
+theorem QuarticFourSignedPolePair.centeredPsiSecondMassAt_tendsto_full
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto W.centeredPsiSecondMassAt atTop
+      (𝓝 (∫ x : ℝ,
+        W.signedOrdinateTest x * (x-t)^2)) := by
+  unfold QuarticFourSignedPolePair.centeredPsiSecondMassAt
+  exact symmetricIntervalIntegral_tendsto_full
+    (W.signedOrdinateTest_mul_centeredSq_integrable ht)
+
+/--
+The finite centered-linear quotient defect converges to one concrete global
+Psi moment.
+-/
+theorem QuarticFourSignedPolePair.centeredModeDefectAt_one_tendsto_global
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto
+      (fun n : ℕ => W.centeredModeDefectAt n 1)
+      atTop
+      (𝓝 W.globalLinearModeDefect) := by
+  have hb :=
+    (W.linearBoundary_tendsto_zero ht).const_mul 2
+  have hm :=
+    W.centeredPsiMassAt_tendsto_full ht
+  have h :=
+    hb.sub hm
+  apply h.congr'
+  filter_upwards with n
+  rw [W.centeredModeDefectAt_one_eq ht]
+  unfold QuarticFourSignedPolePair.globalLinearModeDefect
+  rfl
+
+/--
+The finite centered-cubic quotient defect converges to the weighted global Psi
+moment made legitimate by the C4 lift.
+-/
+theorem QuarticFourSignedPolePair.centeredModeDefectAt_three_tendsto_global
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto
+      (fun n : ℕ => W.centeredModeDefectAt n 3)
+      atTop
+      (𝓝 W.globalCubicModeDefect) := by
+  have hb :=
+    (W.cubicBoundary_tendsto_zero ht).const_mul 2
+  have hm :=
+    (W.centeredPsiSecondMassAt_tendsto_full ht).const_mul (-3)
+  have h :=
+    hb.add hm
+  apply h.congr'
+  filter_upwards with n
+  rw [W.centeredModeDefectAt_three_eq ht]
+  unfold QuarticFourSignedPolePair.globalCubicModeDefect
+  ring
+
 end Synthesis

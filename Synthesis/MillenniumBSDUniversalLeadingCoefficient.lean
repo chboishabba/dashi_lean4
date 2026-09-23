@@ -1,4 +1,5 @@
 import Synthesis.MillenniumBSDUniversalRankWeld
+import Synthesis.MillenniumBSDSelmerShaCohomologicalBoundary
 import Mathlib.NumberTheory.Height.EllipticCurve
 import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 
@@ -101,14 +102,37 @@ abbrev tamagawaProduct (a : BSDRefinedArithmeticBinding) :=
 
 end BSDRefinedArithmeticBinding
 
-/-- Object-level interface required before refined BSD can be stated literally:
-the classical Tate--Shafarevich carrier attached to each actual rational
-elliptic curve.  No finiteness assumption is included here. -/
+/-- Universal same-object interface for the full elliptic-point
+Galois module.  The remaining known-math object-binding task is to construct,
+for every literal E/Q, the actual discrete TopRep carried by E(Qbar). -/
+structure BSDUniversalEllipticPointRepresentationBinding where
+  representation :
+    RationalEllipticCurve → TopRep ℤ RationalAbsoluteGalois
+
+/-- The classical degree-one Sha carrier is then not arbitrary: it is the
+repo's literal global-to-local continuous-cohomology kernel for the supplied
+elliptic-point representation. -/
+noncomputable def BSDUniversalEllipticPointRepresentationBinding.Sha
+    (P : BSDUniversalEllipticPointRepresentationBinding)
+    (E : RationalEllipticCurve) : Type :=
+  rationalTateShafarevichOne (P.representation E)
+
+/-- Object-level classical Sha carrier, canonically derived from a bound
+elliptic-point Galois representation.  No finiteness assumption occurs here. -/
 structure BSDUniversalShaCarrier where
-  Sha : RationalEllipticCurve → Type
+  ellipticPoints : BSDUniversalEllipticPointRepresentationBinding
+
+namespace BSDUniversalShaCarrier
+
+noncomputable abbrev Sha
+    (S : BSDUniversalShaCarrier)
+    (E : RationalEllipticCurve) : Type :=
+  S.ellipticPoints.Sha E
+
+end BSDUniversalShaCarrier
 
 /-- Refined BSD finiteness conjecture, kept separate from construction of the
-classical Sha carrier. -/
+classical cohomological Sha carrier. -/
 def UniversalBSDShaFiniteness
     (S : BSDUniversalShaCarrier) : Prop :=
   ∀ E : RationalEllipticCurve, Finite (S.Sha E)
@@ -245,7 +269,8 @@ structure BSDUniversalRefinedMaxCutStatus where
   universalPeriodBindingPaid : Bool
   universalRegulatorBindingPaid : Bool
   universalTamagawaBindingPaid : Bool
-  universalClassicalShaCarrierPaid : Bool
+  universalEllipticPointRepresentationPaid : Bool
+  universalClassicalShaCarrierCompilerPaid : Bool
   shaCarrierFinitenessSeparatedPaid : Bool
   universalShaFinitenessPaid : Bool
   universalLeadingCoefficientIdentityPaid : Bool
@@ -254,6 +279,6 @@ structure BSDUniversalRefinedMaxCutStatus where
 def bsdUniversalRefinedMaxCutStatus :
     BSDUniversalRefinedMaxCutStatus :=
   ⟨true, true, true, true,
-    false, false, false, false, true, false, false⟩
+    false, false, false, false, true, true, false, false⟩
 
 end Synthesis.Millennium.BSD

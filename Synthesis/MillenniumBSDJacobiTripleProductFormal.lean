@@ -117,6 +117,66 @@ theorem jacobiCubeBaseCoeff_eq_zero_of_not_triangular
   intro r hr
   simp [hN]
 
+theorem cmJacobiOddCoeff_oddSquare_fromTriangular (r : ℕ) :
+    cmJacobiOddCoeff ((2 * r + 1) ^ 2) =
+      ((-1 : ℂ) ^ r) * (2 * r + 1) := by
+  unfold cmJacobiOddCoeff
+  rw [Finset.sum_eq_single r]
+  · simp
+  · intro s hs hsr
+    have hsq : (2 * s + 1) ^ 2 ≠ (2 * r + 1) ^ 2 := by
+      intro h
+      apply hsr
+      nlinarith
+    simp [hsq]
+  · intro hnot
+    exfalso
+    apply hnot
+    rw [Finset.mem_range]
+    nlinarith
+
+theorem oddSquare_eq_eight_mul_add_one_iff
+    (r m : ℕ) :
+    (2 * r + 1) ^ 2 = 8 * m + 1 ↔
+      jacobiTriangularNat r = m := by
+  have htri := eight_mul_jacobiTriangularNat_add_one r
+  constructor <;> intro h <;> nlinarith
+
+/-- The level-32 odd-square coefficient at 8m+1 is exactly the base Jacobi
+cube coefficient at m. -/
+theorem cmJacobiOddCoeff_eight_mul_add_one (m : ℕ) :
+    cmJacobiOddCoeff (8 * m + 1) = jacobiCubeBaseCoeff m := by
+  by_cases htri : ∃ r : ℕ, jacobiTriangularNat r = m
+  · rcases htri with ⟨r, hr⟩
+    have hsq : (2 * r + 1) ^ 2 = 8 * m + 1 :=
+      (oddSquare_eq_eight_mul_add_one_iff r m).2 hr
+    rw [← hsq, cmJacobiOddCoeff_oddSquare_fromTriangular,
+      ← hr, jacobiCubeBaseCoeff_triangular]
+  · rw [jacobiCubeBaseCoeff_eq_zero_of_not_triangular htri]
+    unfold cmJacobiOddCoeff
+    apply Finset.sum_eq_zero
+    intro r hrange
+    split_ifs with hsq
+    · exfalso
+      apply htri
+      refine ⟨r, ?_⟩
+      exact (oddSquare_eq_eight_mul_add_one_iff r m).1 hsq
+    · rfl
+
+theorem cmJacobiOddCoeff_succ_eq_zero_of_not_eight_dvd
+    {N : ℕ} (h8 : ¬ 8 ∣ N) :
+    cmJacobiOddCoeff (N + 1) = 0 := by
+  unfold cmJacobiOddCoeff
+  apply Finset.sum_eq_zero
+  intro r hrange
+  split_ifs with hsq
+  · exfalso
+    apply h8
+    refine ⟨jacobiTriangularNat r, ?_⟩
+    have htri := eight_mul_jacobiTriangularNat_add_one r
+    omega
+  · rfl
+
 
 /-- The bilateral side as a formal q-series with Laurent-polynomial
 coefficients in z. -/
@@ -280,6 +340,28 @@ noncomputable def jacobiEulerZAtNegOne
     (jacobiEulerZAtNegOne F).coeff N =
       jacobiLaurentEulerAtNegOne (F.coeff N) := by
   simp [jacobiEulerZAtNegOne]
+
+/-- The existing level-32 odd-square series is literally the base Jacobi
+cube series after q↦X^8 and multiplication by the leading X. -/
+theorem cmJacobiOddSeries_eq_X_subst_jacobiCubeBase :
+    cmJacobiOddSeries =
+      X * jacobiCubeBaseSeries.subst (X ^ 8) := by
+  ext N
+  rcases N with _ | N
+  · simp [cmJacobiOddSeries_coeff, cmJacobiOddCoeff]
+  · rw [cmJacobiOddSeries_coeff]
+    rw [show (X : PowerSeries ℂ) = X ^ 1 by simp,
+      PowerSeries.coeff_X_pow_mul']
+    simp only [Nat.one_le_iff_ne_zero, Nat.succ_ne_zero, if_true,
+      Nat.succ_sub_one]
+    rw [PowerSeries.coeff_subst_X_pow (R := ℂ) (S := ℂ)
+      (by norm_num : (8 : ℕ) ≠ 0)]
+    by_cases h8 : 8 ∣ N
+    · rcases h8 with ⟨m, rfl⟩
+      simp [cmJacobiOddCoeff_eight_mul_add_one,
+        jacobiCubeBaseSeries_coeff]
+    · rw [if_neg h8]
+      exact cmJacobiOddCoeff_succ_eq_zero_of_not_eight_dvd h8
 
 /-- Bilateral-series half of the cube specialization. -/
 theorem jacobiEulerZAtNegOne_tripleSeries :

@@ -169,6 +169,47 @@ structure UniversalBSDRefinedProof where
 def UniversalBSDRefinedTheorem : Prop :=
   Nonempty UniversalBSDRefinedProof
 
+
+/-- Known-math/object-binding surface for the refined arithmetic symbols.
+This does not include Sha finiteness or the leading-coefficient conjecture. -/
+def UniversalBSDRefinedCarrierProducer : Prop :=
+  Nonempty BSDBoundRefinedData
+
+/-- Explicit Sha-finiteness producer on a chosen classical Sha carrier. -/
+def UniversalBSDShaFinitenessProducer
+    (b : BSDBoundRefinedData) : Prop :=
+  UniversalBSDShaFiniteness b.sha
+
+/-- Explicit universal leading-coefficient producer after Sha finiteness is
+available on the same carrier. -/
+def UniversalBSDLeadingCoefficientProducer
+    (b : BSDBoundRefinedData)
+    (hSha : UniversalBSDShaFinitenessProducer b) : Prop :=
+  UniversalBSDLeadingCoefficientIdentity b hSha
+
+/-- Fully separated compiler for refined BSD: object bindings, Sha
+finiteness, rank equality, and the leading coefficient remain distinct
+inputs until the final package. -/
+theorem universalBSDRefinedTheorem_of_producers
+    (hCarrier : UniversalBSDRefinedCarrierProducer)
+    (hSha :
+      ∀ b : BSDBoundRefinedData,
+        UniversalBSDShaFinitenessProducer b)
+    (hRank :
+      ∀ b : BSDBoundRefinedData,
+        UniversalBSDBoundRankWeld b.rank)
+    (hLeading :
+      ∀ (b : BSDBoundRefinedData)
+        (hs : UniversalBSDShaFinitenessProducer b),
+        UniversalBSDLeadingCoefficientProducer b hs) :
+    UniversalBSDRefinedTheorem := by
+  rcases hCarrier with ⟨b⟩
+  exact ⟨
+    { bound := b
+      shaFinite := hSha b
+      rankWeld := hRank b
+      leadingCoefficient := hLeading b (hSha b) }⟩
+
 /-- Refined BSD implies the universal rank theorem on the same bound ranks. -/
 theorem universalBSDRankTheorem_of_refined
     (h : UniversalBSDRefinedTheorem) :

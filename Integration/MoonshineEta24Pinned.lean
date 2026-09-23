@@ -101,7 +101,7 @@ theorem weightedEta24_logDeriv (z : ℍ) :
 
 private theorem e2_S_pointwise (z : ℍ) :
     ((z : ℂ) ^ 2)⁻¹ * E2 (ModularGroup.S • z) =
-      E2 z - 6 / (Real.pi * I * (z : ℂ)) := by
+      E2 z + 6 / (Real.pi * I * (z : ℂ)) := by
   have hE2 := congrFun (E2_slash_action ModularGroup.S) z
   simp only [one_div, SL_slash_def, modular_S_smul,
     ModularGroup.denom_S, Int.reduceNeg, zpow_neg,
@@ -130,24 +130,22 @@ private theorem etaInv24_differentiableOn :
     DifferentiableOn ℂ etaInv24 upperHalfPlaneSet := by
   intro z hz
   unfold etaInv24 etaInv
-  apply DifferentiableWithinAt.pow
   exact
-    ((ModularForm.differentiableAt_eta_of_mem_upperHalfPlaneSet
+    (((ModularForm.differentiableAt_eta_of_mem_upperHalfPlaneSet
       (by
         have hpos : 0 < (-1 / z).im := by
           simpa [neg_div] using
             UpperHalfPlane.im_pnat_div_pos 1 ⟨z, hz⟩
         exact hpos)).comp z
-      (by fun_prop (disch := exact (⟨z, hz⟩ : ℍ).ne_zero))).differentiableWithinAt
-  exact 24
+      (by fun_prop (disch := exact (⟨z, hz⟩ : ℍ).ne_zero))).pow 24).differentiableWithinAt
 
 private theorem weightedEta24_differentiableOn :
     DifferentiableOn ℂ weightedEta24 upperHalfPlaneSet := by
   intro z hz
   unfold weightedEta24 eta24
   exact
-    (by fun_prop).mul
-      ((ModularForm.differentiableAt_eta_of_mem_upperHalfPlaneSet hz).pow 24)
+    ((by fun_prop : DifferentiableAt ℂ (fun w : ℂ => w ^ 12) z).mul
+      ((ModularForm.differentiableAt_eta_of_mem_upperHalfPlaneSet hz).pow 24))
       |>.differentiableWithinAt
 
 private theorem etaInv24_ne_zero_on :

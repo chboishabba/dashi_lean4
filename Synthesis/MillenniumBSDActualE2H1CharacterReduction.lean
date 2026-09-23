@@ -1,5 +1,4 @@
-import Synthesis.MillenniumBSDActualE2H1SameObject
-import Synthesis.MillenniumBSDQuadraticKummerPair
+import Synthesis.MillenniumBSDActualE2H1LowDegreeReduction
 
 /-!
 # BA4: isolate the sole remaining H¹ representation theorem
@@ -8,25 +7,32 @@ All arithmetic in the quadratic Kummer comparison is now paid.  The scalar
 square-class map is a bijection, and its two-coordinate product identifies the
 literal descent carrier with a pair of continuous quadratic characters.
 
-Therefore the remaining global BA4 producer is *only* the low-degree
-continuous-cohomology representation theorem for the trivial two-torsion
-module:
+The product decomposition of continuous characters is now paid separately.
+Therefore the remaining global BA4 producer is exactly the canonical
+low-degree continuous-cohomology theorem for the literal trivial module:
 
   H¹_cont(G_Q,(C₂)^2_triv)
-    ≃ Hom_cont(G_Q,C₂) × Hom_cont(G_Q,C₂).
+    ≃ Hom_cont(G_Q,(C₂)^2).
 
-Supplying that representation theorem compiles immediately to the existing
-`RationalQuadraticContinuousKummerProducer`; no Hilbert 90, square-class
-descent, or elliptic two-torsion geometry remains in this seam.
+The target then splits functorially into the two existing quadratic-character
+coordinates, and the paid Kummer equivalence carries those to the literal
+square-class pair.  No Hilbert 90, square-class descent, product decomposition,
+or elliptic two-torsion geometry remains in this seam.
 -/
 
 namespace Synthesis.Millennium.BSD
 
-/-- Exact remaining cohomological producer after scalar Kummer has been paid. -/
+/-- Compatibility name for the older pair-valued boundary.  This is now a
+derived interface rather than the primitive missing theorem. -/
 def TrivialE2H1QuadraticCharacterPairProducer : Prop :=
   Nonempty
     ((continuousCohomology 1 cmTwoTorsionRepresentation) ≃
       (RationalQuadraticCharacter × RationalQuadraticCharacter))
+
+theorem trivialE2H1QuadraticCharacterPairProducer_of_lowDegree
+    (h : TrivialE2H1ContinuousHomProducer) :
+    TrivialE2H1QuadraticCharacterPairProducer :=
+  trivialE2H1QuadraticCharacterPairProducer_of_continuousHom h
 
 /-- The only missing H¹ representation theorem compiles with the paid pair
 Kummer equivalence to the square-class producer expected by the existing BA4
@@ -36,6 +42,14 @@ noncomputable theorem rationalQuadraticContinuousKummerProducer_of_characterPair
     RationalQuadraticContinuousKummerProducer := by
   rcases h with ⟨e⟩
   exact ⟨e.trans quadraticCharacterPairEquivRatSquareClasses⟩
+
+/-- The canonical low-degree theorem now compiles all the way through the
+paid character-product and scalar Kummer equivalences. -/
+noncomputable theorem rationalQuadraticContinuousKummerProducer_of_lowDegree
+    (h : TrivialE2H1ContinuousHomProducer) :
+    RationalQuadraticContinuousKummerProducer :=
+  rationalQuadraticContinuousKummerProducer_of_characterPair
+    (trivialE2H1QuadraticCharacterPairProducer_of_lowDegree h)
 
 /-- Consequently the actual geometric `E[2]` H¹ is identified with the
 literal pair of rational square classes from exactly that one producer. -/
@@ -52,14 +66,15 @@ structure BA4KummerBoundaryStatus where
   scalarCharacterInjectivityPaid : Bool
   scalarCharacterSurjectivityPaid : Bool
   pairKummerEquivalencePaid : Bool
-  trivialH1CharacterPairRepresentationPaid : Bool
+  continuousCharacterProductDecompositionPaid : Bool
+  trivialH1ContinuousHomRepresentationPaid : Bool
   deriving DecidableEq, Repr
 
 def ba4KummerBoundaryStatus : BA4KummerBoundaryStatus :=
-  ⟨true, true, true, true, false⟩
+  ⟨true, true, true, true, true, false⟩
 
-theorem ba4_only_characterPair_representation_unpaid :
+theorem ba4_only_lowDegree_continuousHom_representation_unpaid :
     ba4KummerBoundaryStatus =
-      ⟨true, true, true, true, false⟩ := rfl
+      ⟨true, true, true, true, true, false⟩ := rfl
 
 end Synthesis.Millennium.BSD

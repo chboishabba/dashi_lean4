@@ -223,6 +223,42 @@ noncomputable def classicalTwoDescentCanonicalMapLaws_of_core
   kernel_iff_globalKummerImage := h.kernel_iff_globalKummerImage
   surjective_on_sha_two := h.surjective_on_sha_two
 
+/-- Final reduced classical two-descent boundary after paying the group law
+and 2-torsion internally.  These are precisely the localization/exactness
+statements still missing from the repo. -/
+structure ClassicalTwoDescentLocalizationExactnessLaws where
+  localization_zero :
+    ∀ s : explicitTwoSelmerSubgroup,
+      cmExplicitSelmerClassToEllipticH1 s ∈
+        classicalEllipticShaOne cmEllipticPointRepresentation
+  kernel_iff_globalKummerImage :
+    ∀ s : explicitTwoSelmerSubgroup,
+      cmExplicitSelmerClassToEllipticH1 s = 0 ↔
+        s ∈ globalKummerImageSubgroup
+  surjective_on_sha_two :
+    ∀ x : classicalEllipticShaTwo cmEllipticPointRepresentation,
+      ∃ s : explicitTwoSelmerSubgroup,
+        cmExplicitSelmerClassToEllipticH1 s = x.1.1
+
+/-- Fill the reduced-core law record from the three genuinely remaining
+localization/exactness statements. -/
+noncomputable def classicalTwoDescentCanonicalCoreLaws_of_localizationExactness
+    (h : ClassicalTwoDescentLocalizationExactnessLaws) :
+    ClassicalTwoDescentCanonicalCoreLaws where
+  map_one := cmExplicitSelmerClassToEllipticH1_one_paid
+  map_mul := cmExplicitSelmerClassToEllipticH1_mul_paid
+  localization_zero := h.localization_zero
+  kernel_iff_globalKummerImage := h.kernel_iff_globalKummerImage
+  surjective_on_sha_two := h.surjective_on_sha_two
+
+/-- The three remaining localization/exactness laws compile all the way to
+the full canonical-map law record. -/
+noncomputable def classicalTwoDescentCanonicalMapLaws_of_localizationExactness
+    (h : ClassicalTwoDescentLocalizationExactnessLaws) :
+    ClassicalTwoDescentCanonicalMapLaws :=
+  classicalTwoDescentCanonicalMapLaws_of_core
+    (classicalTwoDescentCanonicalCoreLaws_of_localizationExactness h)
+
 /-- Package the canonical global class as an actual homomorphism to classical
 Sha[2] once the remaining Kummer/localization laws are supplied. -/
 noncomputable def cmExplicitSelmerToClassicalShaTwo

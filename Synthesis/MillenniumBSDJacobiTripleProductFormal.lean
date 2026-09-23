@@ -822,6 +822,130 @@ theorem cmJacobiEvenProductIdentity_of_squareThetaBase
     at hTransport
   exact hTransport
 
+/-- Product-side finite specialization of Jacobi's triple product under
+q↦q² and z↦-q. -/
+noncomputable def jacobiSquareThetaFiniteProduct (M : ℕ) :
+    PowerSeries ℂ :=
+  ∏ n ∈ Finset.range M,
+    (1 - X ^ (2 * n + 2)) * (1 - X ^ (2 * n + 1)) ^ 2
+
+/-- Finite even Euler product ∏_{m=1}^M (1-q^(2m)). -/
+noncomputable def jacobiEvenEulerFiniteProduct (M : ℕ) :
+    PowerSeries ℂ :=
+  ∏ n ∈ Finset.range M, (1 - X ^ (2 * n + 2))
+
+/-- Finite odd Euler product ∏_{n=0}^{M-1} (1-q^(2n+1)). -/
+noncomputable def jacobiOddEulerFiniteProduct (M : ℕ) :
+    PowerSeries ℂ :=
+  ∏ n ∈ Finset.range M, (1 - X ^ (2 * n + 1))
+
+theorem jacobiSquareThetaFiniteProduct_factor (M : ℕ) :
+    jacobiSquareThetaFiniteProduct M =
+      jacobiEvenEulerFiniteProduct M *
+        jacobiOddEulerFiniteProduct M ^ 2 := by
+  unfold jacobiSquareThetaFiniteProduct
+    jacobiEvenEulerFiniteProduct jacobiOddEulerFiniteProduct
+  rw [← Finset.prod_mul_distrib]
+  simp only [mul_pow]
+  ring_nf
+  rw [Finset.prod_mul_distrib]
+  congr 1
+  ext n
+  simp [mul_assoc, mul_left_comm, mul_comm]
+
+/-- The first 2M Euler factors split into their even and odd parts. -/
+theorem jacobiEulerFiniteProduct_two_mul_split (M : ℕ) :
+    jacobiEulerFiniteProduct (2 * M) =
+      jacobiEvenEulerFiniteProduct M *
+        jacobiOddEulerFiniteProduct M := by
+  induction M with
+  | zero =>
+      simp [jacobiEulerFiniteProduct, jacobiEvenEulerFiniteProduct,
+        jacobiOddEulerFiniteProduct]
+  | succ M ih =>
+      rw [show 2 * (M + 1) = 2 * M + 2 by omega]
+      rw [show jacobiEulerFiniteProduct (2 * M + 2) =
+          jacobiEulerFiniteProduct (2 * M) *
+            (1 - X ^ (2 * M + 1)) *
+            (1 - X ^ (2 * M + 2)) by
+        rw [show 2 * M + 2 = (2 * M + 1) + 1 by omega,
+          jacobiEulerFiniteProduct_succ,
+          jacobiEulerFiniteProduct_succ]
+        ring]
+      rw [ih]
+      simp [jacobiEvenEulerFiniteProduct, jacobiOddEulerFiniteProduct,
+        Finset.prod_range_succ]
+      ring
+
+/-- Exact finite theta4 product identity; this is the product-side analogue
+of the finite cube formula used for J1. -/
+theorem jacobiSquareThetaFiniteProduct_exact (M : ℕ) :
+    jacobiSquareThetaFiniteProduct M *
+        jacobiEvenEulerFiniteProduct M =
+      jacobiEulerFiniteProduct (2 * M) ^ 2 := by
+  rw [jacobiSquareThetaFiniteProduct_factor,
+    jacobiEulerFiniteProduct_two_mul_split]
+  ring
+
+theorem tendsto_jacobiEvenEulerFiniteProduct :
+    Tendsto jacobiEvenEulerFiniteProduct atTop
+      (𝓝 (cmEtaEulerFormal.subst (X ^ 2))) := by
+  rw [PowerSeries.WithPiTopology.tendsto_iff_coeff_tendsto]
+  intro N
+  have hEuler :=
+    PowerSeries.WithPiTopology.hasProd_one_sub_X_pow ℂ
+  have hSub :
+      Tendsto
+        (fun M : ℕ =>
+          PowerSeries.subst (X ^ 2)
+            (jacobiEulerFiniteProduct M))
+        atTop
+        (𝓝 (PowerSeries.subst (X ^ 2) cmEtaEulerFormal)) := by
+    -- coefficientwise continuity of the X^2 substitution is immediate.
+    rw [PowerSeries.WithPiTopology.tendsto_iff_coeff_tendsto]
+    intro d
+    by_cases h2 : 2 ∣ d
+    · obtain ⟨k, rfl⟩ := h2
+      simp [jacobiEulerFiniteProduct,
+        PowerSeries.coeff_subst_X_pow (R := ℂ) (S := ℂ)
+          (by norm_num : (2 : ℕ) ≠ 0)]
+      exact
+        (PowerSeries.WithPiTopology.continuous_coeff ℂ k).tendsto.comp
+          tendsto_jacobiEulerFiniteProduct
+    · simp [PowerSeries.coeff_subst_X_pow (R := ℂ) (S := ℂ)
+        (by norm_num : (2 : ℕ) ≠ 0), h2]
+  have hFinite (M : ℕ) :
+      PowerSeries.subst (X ^ 2)
+          (jacobiEulerFiniteProduct M) =
+        jacobiEvenEulerFiniteProduct M := by
+    unfold jacobiEulerFiniteProduct jacobiEvenEulerFiniteProduct
+    have h2s : PowerSeries.HasSubst (X ^ 2 : PowerSeries ℂ) :=
+      PowerSeries.HasSubst.X_pow (by norm_num)
+    rw [map_prod]
+    apply Finset.prod_congr rfl
+    intro n hn
+    rw [PowerSeries.subst_sub h2s]
+    simp [PowerSeries.subst_pow h2s, pow_mul]
+  simpa [hFinite] using hSub
+
+theorem tendsto_jacobiEulerFiniteProduct_two_mul :
+    Tendsto (fun M : ℕ => jacobiEulerFiniteProduct (2 * M))
+      atTop (𝓝 cmEtaEulerFormal) :=
+  tendsto_jacobiEulerFiniteProduct.comp
+    (tendsto_nat_nhds_top.mpr fun N => ⟨N, fun M hM => by omega⟩)
+
+/-- Product-side limit relation for J2.  Any coefficientwise limit of the
+specialized Jacobi finite products must satisfy theta4 * P(q²)=P(q)². -/
+theorem tendsto_jacobiSquareThetaFiniteProduct_mul_evenEuler :
+    Tendsto
+      (fun M : ℕ =>
+        jacobiSquareThetaFiniteProduct M *
+          jacobiEvenEulerFiniteProduct M)
+      atTop
+      (𝓝 (cmEtaEulerFormal ^ 2)) := by
+  simpa [jacobiSquareThetaFiniteProduct_exact] using
+    (tendsto_jacobiEulerFiniteProduct_two_mul.pow 2)
+
 /-- The Laurent-series monomial X, packaged as a unit. -/
 noncomputable def jacobiLaurentXUnit : (LaurentSeries ℂ)ˣ where
   val := HahnSeries.single (1 : ℤ) 1

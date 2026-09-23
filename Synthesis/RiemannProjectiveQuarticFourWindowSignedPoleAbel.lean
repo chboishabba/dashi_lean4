@@ -2025,6 +2025,8 @@ record QuarticFourSignedPolePair.CenteredAbelTailMajorants
   field
     rightMajorant : ℝ -> ℝ
     leftMajorant : ℝ -> ℝ
+    rightStart : ℕ
+    leftStart : ℕ
 
     rightMajorant_nonneg : ∀ x, 0 <= rightMajorant x
     leftMajorant_nonneg : ∀ x, 0 <= leftMajorant x
@@ -2033,11 +2035,11 @@ record QuarticFourSignedPolePair.CenteredAbelTailMajorants
     leftMajorant_integrable : Integrable leftMajorant
 
     rightDominates :
-      ∀ x, t + 1 <= x ->
+      ∀ x, t + rightStart <= x ->
         |W.centeredAbelIntegrand x| <= rightMajorant x
 
     leftDominates :
-      ∀ x, x <= t - 1 ->
+      ∀ x, x <= t - leftStart ->
         |W.centeredAbelIntegrand x| <= leftMajorant x
 
 open QuarticFourSignedPolePair.CenteredAbelTailMajorants
@@ -2176,13 +2178,15 @@ theorem QuarticFourSignedPolePair.exists_rightCenteredAbelPartial_limit
       exact hlim
     have hev := htail.eventually (Metric.ball_mem_nhds 0 heps)
     rcases (eventually_atTop.1 hev) with ⟨N,hN⟩
-    refine ⟨max N 1, ?_⟩
+    refine ⟨max N M.rightStart, ?_⟩
     intro m hm n hn
     wlog hmn : m <= n generalizing m n with hsym
     · rw [dist_comm]
       exact hsym n hn m hm (le_of_not_ge hmn)
-    have hm1 : 1 <= m := le_trans (le_max_right N 1) hm
-    have htm : t + 1 <= t + m := by exact add_le_add_left (by exact_mod_cast hm1) t
+    have hmStart : M.rightStart <= m :=
+      le_trans (le_max_right N M.rightStart) hm
+    have htm : t + M.rightStart <= t + m := by
+      exact add_le_add_left (by exact_mod_cast hmStart) t
     have hIntM :
         IntervalIntegrable M.rightMajorant volume (t+m) (t+n) :=
       M.rightMajorant_integrable.intervalIntegrable
@@ -2223,7 +2227,7 @@ theorem QuarticFourSignedPolePair.exists_rightCenteredAbelPartial_limit
         M.rightMajorant_integrable.integrableOn
         (Filter.Eventually.of_forall fun x => M.rightMajorant_nonneg x)
         Set.Ioc_subset_Ici_self.eventuallySubset
-    have hball := hN m (le_trans (le_max_left N 1) hm)
+    have hball := hN m (le_trans (le_max_left N M.rightStart) hm)
     rw [Real.dist_eq, sub_zero, abs_of_nonneg
       (integral_nonneg fun x => M.rightMajorant_nonneg x)] at hball
     exact lt_of_le_of_le hnorm (hset.trans hball.le)
@@ -2272,14 +2276,15 @@ theorem QuarticFourSignedPolePair.exists_leftCenteredAbelPartial_limit
       exact hlim
     have hev := htail.eventually (Metric.ball_mem_nhds 0 heps)
     rcases (eventually_atTop.1 hev) with ⟨N,hN⟩
-    refine ⟨max N 1, ?_⟩
+    refine ⟨max N M.leftStart, ?_⟩
     intro m hm n hn
     wlog hmn : m <= n generalizing m n with hsym
     · rw [dist_comm]
       exact hsym n hn m hm (le_of_not_ge hmn)
-    have hm1 : 1 <= m := le_trans (le_max_right N 1) hm
-    have htm : t - m <= t - 1 := by
-      have hm1R : (1 : ℝ) <= m := by exact_mod_cast hm1
+    have hmStart : M.leftStart <= m :=
+      le_trans (le_max_right N M.leftStart) hm
+    have htm : t - m <= t - M.leftStart := by
+      have hmStartR : (M.leftStart : ℝ) <= m := by exact_mod_cast hmStart
       linarith
     have hnmR : t - n <= t - m := by
       have hmnR : (m : ℝ) <= n := by exact_mod_cast hmn
@@ -2322,7 +2327,7 @@ theorem QuarticFourSignedPolePair.exists_leftCenteredAbelPartial_limit
         M.leftMajorant_integrable.integrableOn
         (Filter.Eventually.of_forall fun x => M.leftMajorant_nonneg x)
         Set.Ioc_subset_Iic_self.eventuallySubset
-    have hball := hN m (le_trans (le_max_left N 1) hm)
+    have hball := hN m (le_trans (le_max_left N M.leftStart) hm)
     rw [Real.dist_eq, sub_zero, abs_of_nonneg
       (integral_nonneg fun x => M.leftMajorant_nonneg x)] at hball
     exact lt_of_le_of_le hnorm (hset.trans hball.le)

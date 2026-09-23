@@ -276,6 +276,7 @@ import Synthesis.MillenniumBSDActualE2H1SameObject
 import Synthesis.MillenniumBSDActualE2H1LowDegreeReduction
 
 import Synthesis.MillenniumBSDJacobiEta32Reduction
+import Synthesis.MillenniumBSDJacobiArithmeticReconstruction
 import Synthesis.MillenniumBSDEtaToActualLTransfer
 
 import Synthesis.MillenniumBSDCMSplitJacobiRealTrace
@@ -307,3 +308,4 @@ import Synthesis.MillenniumBSDQuadraticKummerPair
 import Synthesis.MillenniumBSDActualE2H1CharacterReduction
 
 import Synthesis.MillenniumBSDCMSplitPrimeSignReduction
+import Synthesis.MillenniumBSDCMSplitPrimeCanonicalWitness

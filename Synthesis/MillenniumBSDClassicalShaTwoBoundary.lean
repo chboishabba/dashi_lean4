@@ -1,4 +1,5 @@
 import Synthesis.MillenniumBSDActualE2TopRepSameObject
+import Synthesis.MillenniumBSDActualE2H1LowDegreeReduction
 import Synthesis.MillenniumBSDActualEllipticPointTopRep
 import Synthesis.MillenniumBSDSelmerShaCohomologicalBoundary
 import Synthesis.MillenniumBSDExplicitSelmerCokernelExact
@@ -90,6 +91,96 @@ noncomputable def cmActualE2H1ToEllipticPointH1 :
   ContinuousCohomology.map
     (ContinuousMonoidHom.id RationalAbsoluteGalois)
     cmActualE2TopRepInclusion 1
+
+/-- Canonical global cohomology class attached to an explicit Selmer class:
+use the paid E[2]-H¹/square-class equivalence, then the actual inclusion
+E[2] -> E(Qbar).  No classical Kummer exactness is assumed in this
+definition. -/
+noncomputable def cmExplicitSelmerClassToEllipticH1
+    (s : explicitTwoSelmerSubgroup) :
+    ContinuousCohomology.continuousCohomology 1
+      cmEllipticPointRepresentation :=
+  cmActualE2H1ToEllipticPointH1
+    (cmActualE2H1EquivRatSquareClasses_paid.symm s.1)
+
+/--
+The genuinely remaining laws for the canonical global class above.
+
+These are the continuous Kummer/localization assertions which are not yet in
+mathlib or the repo:
+* identity and product compatibility (so the canonical class is a hom);
+* every explicit Selmer class localizes trivially in H¹(E(Qbar));
+* its image is 2-torsion;
+* its kernel is exactly the paid global Kummer image E(Q)/2E(Q);
+* every classical Sha[2] class is represented by an explicit Selmer class.
+-/
+structure ClassicalTwoDescentCanonicalMapLaws where
+  map_one :
+    cmExplicitSelmerClassToEllipticH1 1 = 0
+  map_mul :
+    ∀ s t : explicitTwoSelmerSubgroup,
+      cmExplicitSelmerClassToEllipticH1 (s * t) =
+        cmExplicitSelmerClassToEllipticH1 s +
+          cmExplicitSelmerClassToEllipticH1 t
+  localization_zero :
+    ∀ s : explicitTwoSelmerSubgroup,
+      cmExplicitSelmerClassToEllipticH1 s ∈
+        classicalEllipticShaOne cmEllipticPointRepresentation
+  two_torsion :
+    ∀ s : explicitTwoSelmerSubgroup,
+      (2 : ℕ) • cmExplicitSelmerClassToEllipticH1 s = 0
+  kernel_iff_globalKummerImage :
+    ∀ s : explicitTwoSelmerSubgroup,
+      cmExplicitSelmerClassToEllipticH1 s = 0 ↔
+        s ∈ globalKummerImageSubgroup
+  surjective_on_sha_two :
+    ∀ x : classicalEllipticShaTwo cmEllipticPointRepresentation,
+      ∃ s : explicitTwoSelmerSubgroup,
+        cmExplicitSelmerClassToEllipticH1 s = x.1.1
+
+/-- Package the canonical global class as an actual homomorphism to classical
+Sha[2] once the remaining Kummer/localization laws are supplied. -/
+noncomputable def cmExplicitSelmerToClassicalShaTwo
+    (h : ClassicalTwoDescentCanonicalMapLaws) :
+    explicitTwoSelmerSubgroup →*
+      Multiplicative (classicalEllipticShaTwo cmEllipticPointRepresentation) where
+  toFun s :=
+    Multiplicative.ofAdd
+      ⟨⟨cmExplicitSelmerClassToEllipticH1 s, h.localization_zero s⟩,
+        by
+          apply Subtype.ext
+          exact h.two_torsion s⟩
+  map_one' := by
+    apply Multiplicative.toAdd_injective
+    apply Subtype.ext
+    apply Subtype.ext
+    exact h.map_one
+  map_mul' s t := by
+    apply Multiplicative.toAdd_injective
+    apply Subtype.ext
+    apply Subtype.ext
+    exact h.map_mul s t
+
+theorem cmExplicitSelmerToClassicalShaTwo_kernel
+    (h : ClassicalTwoDescentCanonicalMapLaws) :
+    (cmExplicitSelmerToClassicalShaTwo h).ker =
+      globalKummerImageSubgroup := by
+  ext s
+  rw [MonoidHom.mem_ker]
+  change cmExplicitSelmerClassToEllipticH1 s = 0 ↔
+    s ∈ globalKummerImageSubgroup
+  exact h.kernel_iff_globalKummerImage s
+
+theorem cmExplicitSelmerToClassicalShaTwo_surjective
+    (h : ClassicalTwoDescentCanonicalMapLaws) :
+    Function.Surjective (cmExplicitSelmerToClassicalShaTwo h) := by
+  intro x
+  rcases h.surjective_on_sha_two x.toAdd with ⟨s, hs⟩
+  refine ⟨s, ?_⟩
+  apply Multiplicative.toAdd_injective
+  apply Subtype.ext
+  apply Subtype.ext
+  exact hs
 
 /--
 Canonical exact-map form of the remaining classical two-descent theorem.

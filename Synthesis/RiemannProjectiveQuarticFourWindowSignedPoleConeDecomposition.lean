@@ -985,4 +985,113 @@ theorem QuarticFourSignedPolePair.literalConeDebtAt_lt_target_of_quartic_floor
   exact lt_of_le_of_lt hdebt
     (hcoefScaled.trans_le htarget)
 
+
+/-!
+## Signed compensation normal form
+
+Do not pay the exact far lane by absolute value.  The finite Clay-facing budget
+is compressed to
+
+  localDebt      = coneDebt + localRemainderDebt
+  compensation   = goodQuarticGain - farExact
+
+so the exact off-ordinate source obeys
+
+  offOrdExact <= localDebt - compensation.
+
+This is the fail-fast interface for the remaining conventional analysis.
+-/
+
+def QuarticFourSignedPolePair.literalLocalDebtAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  W.literalConeDebtAt eta n
+    + W.literalLocalRemainderDebtAt eta n
+
+def QuarticFourSignedPolePair.literalSignedCompensationAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  W.literalGoodQuarticGainAt eta n
+    - W.literalFarExactAt eta n
+
+def QuarticFourSignedPolePair.literalJointBudgetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  W.literalLocalDebtAt eta n
+    - W.literalSignedCompensationAt eta n
+
+theorem QuarticFourSignedPolePair.literalJointBudgetAt_eq
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalJointBudgetAt eta n
+      =
+    W.literalConeDebtAt eta n
+      - W.literalGoodQuarticGainAt eta n
+      + W.literalLocalRemainderDebtAt eta n
+      + W.literalFarExactAt eta n := by
+  unfold QuarticFourSignedPolePair.literalJointBudgetAt
+    QuarticFourSignedPolePair.literalLocalDebtAt
+    QuarticFourSignedPolePair.literalSignedCompensationAt
+  ring
+
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_jointBudget
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalOffOrdExactAt n
+      <= W.literalJointBudgetAt eta n := by
+  rw [W.literalJointBudgetAt_eq]
+  exact
+    W.literalOffOrdExactAt_le_coneDebt_sub_goodGain_add_remainder_add_far
+      ht n
+
+/--
+A target-margin compiler that preserves the sign of the good/far
+compensation.  No absolute estimate on the far exact carrier appears.
+-/
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_lt_margin_of_debt_lt_compensation_add
+    {t eta margin : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hpay :
+      W.literalLocalDebtAt eta n
+        < W.literalSignedCompensationAt eta n + margin) :
+    W.literalOffOrdExactAt n < margin := by
+  have hbudget :=
+    W.literalOffOrdExactAt_le_jointBudget ht n
+  unfold QuarticFourSignedPolePair.literalJointBudgetAt at hbudget
+  linarith
+
+/--
+Equivalent scalar payment form.  This is the preferred finite conventional
+research statement after the absolute cone estimate has failed to pay the
+target by itself.
+-/
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_lt_margin_of_compensation_gap
+    {t eta margin : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hgap :
+      margin + W.literalSignedCompensationAt eta n
+        - W.literalLocalDebtAt eta n > 0) :
+    W.literalOffOrdExactAt n < margin := by
+  apply W.literalOffOrdExactAt_lt_margin_of_debt_lt_compensation_add
+    ht n
+  linarith
+
+/--
+The local debt is nonnegative; all potentially useful negative information is
+therefore concentrated in the signed compensation coordinate.
+-/
+theorem QuarticFourSignedPolePair.literalLocalDebtAt_nonneg
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    0 <= W.literalLocalDebtAt eta n := by
+  unfold QuarticFourSignedPolePair.literalLocalDebtAt
+  exact add_nonneg
+    (W.literalConeDebtAt_nonneg n)
+    (W.literalLocalRemainderDebtAt_nonneg n)
+
 end Synthesis

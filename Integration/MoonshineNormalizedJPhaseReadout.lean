@@ -31,7 +31,17 @@ open scoped Real MatrixGroups
 noncomputable section
 
 namespace Target
-open Integration.MoonshineEisensteinAgdaTarget
+abbrev jTarget := Integration.MoonshineEisensteinAgdaTarget.jTarget
+abbrev negConj := Integration.MoonshineEisensteinAgdaTarget.negConj
+
+theorem jTarget_inv_conj :=
+  Integration.MoonshineEisensteinAgdaTarget.jTarget_inv_conj
+
+theorem S_negConj_fixed_of_normSq_one :=
+  Integration.MoonshineEisensteinAgdaTarget.S_negConj_fixed_of_normSq_one
+
+theorem jTarget_unitCircle_im_zero :=
+  Integration.MoonshineEisensteinAgdaTarget.jTarget_unitCircle_im_zero
 end Target
 
 /-- The concrete normalized modular-j value already owned by route B. -/

@@ -6,6 +6,8 @@ on:
       - 'Integration/JInvariantSheafDescent.lean'
       - 'Integration/StageTwelveGrothendieckRelation.lean'
       - 'Integration/JInvariant369JointFibredObserver.lean'
+      - 'AgdaMirror/JInvariant369ConsolidatedNextStage.lean'
+      - 'Integration/JInvariant369ConsolidatedNextStage.lean'
       - 'Integration.lean'
       - 'AgdaMirror/JInvariantSheafDescent.lean'
       - 'AgdaMirror/StageTwelveGrothendieckRelation.lean'
@@ -38,6 +40,8 @@ jobs:
         run: |
           lake env lean Integration/StageTwelveGrothendieckRelation.lean
           lake env lean Integration/JInvariant369JointFibredObserver.lean
+          lake env lean Integration/JInvariant369ConsolidatedNextStage.lean
+          lake env lean AgdaMirror/JInvariant369ConsolidatedNextStage.lean
           lake env lean Integration/JInvariantSheafDescent.lean
           lake env lean AgdaMirror/StageTwelveGrothendieckRelation.lean
           lake env lean AgdaMirror/JInvariantSheafDescent.lean

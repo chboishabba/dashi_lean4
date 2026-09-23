@@ -2605,4 +2605,25 @@ theorem QuarticFourSignedPolePair.globalCubicModeDefect_eq_zero_iff
     positivity
   exact mul_eq_zero_iff_right_nonzero hcoef
 
+
+/--
+Final same-object criterion for the proposed global fourth-order discrepancy
+quotient.  The full centered cubic quotient exists exactly when two local
+frequency-space coordinates of the signed combined profile vanish.
+-/
+theorem QuarticFourSignedPolePair.globalFullCubicQuotient_iff_profile_obstructions_zero
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.globalFullCubicQuotient
+      ↔
+    quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t 0 = 0
+      ∧
+    deriv (deriv
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t)) 0 = 0 := by
+  unfold QuarticFourSignedPolePair.globalFullCubicQuotient
+  rw [W.globalLinearModeDefect_eq_zero_iff ht,
+      W.globalCubicModeDefect_eq_zero_iff ht]
+
 end Synthesis

@@ -13,6 +13,13 @@ is why this rollup is not a default build target.
 -/
 import Welds.NSRateBlockPiWeld
 import Welds.ReachabilityCarrierWeld
+import Welds.YMVacuumGapBackwardBounds
+import Welds.YMFinitePhysicalInstantiation
+import Welds.YMPhysicalClosureNormalForm
+import Welds.YMBidiLatticeShell
+import Welds.YMCMP116SourceCovariance
+import Welds.YMSourceClusteringGap
+import Welds.YMClayAssembly
 
 #print axioms Welds.NSRateBlockPi.ns_herm_eq_euclidean_inner
 #print axioms Welds.NSRateBlockPi.ns_nrm_eq_euclidean_norm
@@ -29,3 +36,35 @@ import Welds.ReachabilityCarrierWeld
 #print axioms Welds.ReachabilityCarrier.reachB_false_of_invariant
 #print axioms Welds.ReachabilityCarrier.chemistry_language_index_available
 #print axioms Welds.ReachabilityCarrier.reachB_accept_not_language_free
+
+#print axioms Welds.YMVacuumGapBackwardBounds.zeroShiftResolventBound
+#print axioms Welds.YMVacuumGapBackwardBounds.weakenGapDatum
+#print axioms Welds.YMVacuumGapBackwardBounds.zeroShiftResolventBoundOfGapLowerBound
+#print axioms Welds.YMVacuumGapBackwardBounds.continuumZeroShiftResolventBound
+#print axioms Welds.YMVacuumGapBackwardBounds.sameObjectZeroShiftResolventBound
+#print axioms Welds.YMVacuumGapBackwardBounds.chainZeroShiftResolventBound
+#print axioms Welds.YMVacuumGapBackwardBounds.rowA1CandidateZeroShiftBound
+
+#print axioms Welds.YMFinitePhysicalInstantiation.rowA1GapDatumOfDirectFormBound
+#print axioms Welds.YMFinitePhysicalInstantiation.rowA1PhysicalGapInstanceOfDirectFormBound
+#print axioms Welds.YMFinitePhysicalInstantiation.rowA1GapPositive
+#print axioms Welds.YMFinitePhysicalInstantiation.rowA1GapDatum
+#print axioms Welds.YMFinitePhysicalInstantiation.rowA1VacuumFormGap
+#print axioms Welds.YMFinitePhysicalInstantiation.rowA1PhysicalZeroShiftBound
+
+#print axioms Welds.YMPhysicalClosureNormalForm.rowA1UniformGapPositive
+#print axioms Welds.YMPhysicalClosureNormalForm.rowA1UniformCutoffFormGap
+#print axioms Welds.YMPhysicalClosureNormalForm.rowA1ContinuumZeroShiftBound
+#print axioms Welds.YMPhysicalClosureNormalForm.rowA1SameObjectContinuumZeroShiftBound
+
+#print axioms Welds.YMBidiLatticeShell.lattice4ShellCardBound
+#print axioms Welds.YMBidiLatticeShell.lattice4FarShellEnergyTsumLe
+#print axioms Welds.YMBidiLatticeShell.lattice4CauchyShellEstimate
+#print axioms Welds.YMBidiLatticeShell.cmp116VolumeMarkedTotalEnergyLe
+#print axioms Welds.YMBidiLatticeShell.cmp116VolumeMarkedFarShellEnergyTsumLe
+#print axioms Welds.YMBidiLatticeShell.cmp116VolumeCauchyShellEstimate
+
+#print axioms Welds.YMCMP116SourceCovariance.cmp116VolumeSourceCovarianceBound
+#print axioms Welds.YMSourceClusteringGap.vacuumFormGapOfSourceCovariance
+#print axioms Welds.YMClayAssembly.massGapOfSourceCovariance
+#print axioms Welds.YMClayAssembly.massGapOfEnergyForms

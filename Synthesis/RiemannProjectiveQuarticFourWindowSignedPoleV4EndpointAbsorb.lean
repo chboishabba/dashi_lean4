@@ -878,6 +878,72 @@ theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_lower
       ht heta n
   linarith
 
+
+theorem QuarticFourSignedPolePair.literalLocalMultiplicityAt_le_expandedWindowN
+    {t eta : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalMultiplicityAt eta n
+      <=
+    zetaZeroConfig.N
+      (t - quarticSignedPoleLocalHalfWidth t eta - 1)
+      (t + quarticSignedPoleLocalHalfWidth t eta) := by
+  classical
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  let A : ℝ := t-r-1
+  let B : ℝ := t+r
+  let F : Finset Zeros :=
+    (centeredZeroFinset t n).filter
+      (quarticSignedPoleLocal t eta)
+  let s : Set ℂ :=
+    (fun rho : Zeros => (rho : ℂ)) '' (↑F : Set Zeros)
+  have hsWindow :
+      s ⊆ zetaZeroConfig.window A B := by
+    intro z hz
+    rcases hz with ⟨rho,hrho,rfl⟩
+    have hl : quarticSignedPoleLocal t eta rho :=
+      (Finset.mem_filter.mp hrho).2
+    have hclosed :=
+      (quarticSignedPoleLocal_iff_closed_ordinate_window
+        ht heta rho).mp hl
+    exact ⟨rho.2, by dsimp [A,r]; linarith,
+      by dsimp [B,r]; linarith⟩
+  have hmono :=
+    zetaZeroConfig.finsum_mult_mono A B hsWindow subset_rfl
+  have hsFinite : s.Finite :=
+    Set.Finite.image F.finite_toSet _
+  have hsum :
+      W.literalLocalMultiplicityAt eta n
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z := by
+    unfold QuarticFourSignedPolePair.literalLocalMultiplicityAt
+    change
+      (∑ rho ∈ centeredZeroFinset t n,
+        if quarticSignedPoleLocal t eta rho then
+          zetaZeroConfig.mult (rho : ℂ)
+        else 0)
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z
+    rw [← Finset.sum_filter]
+    change
+      (∑ rho ∈ F, zetaZeroConfig.mult (rho : ℂ))
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z
+    rw [finsum_mem_eq_finite_toFinset_sum _ hsFinite]
+    have himage :
+        hsFinite.toFinset
+          =
+        F.image (fun rho : Zeros => (rho : ℂ)) := by
+      ext z
+      simp [s]
+    rw [himage, Finset.sum_image]
+    intro a ha b hb hab
+    exact Subtype.ext hab
+  rw [hsum]
+  simpa [A,B,r] using hmono
+
 /--
 Correct-polarity explicit local G3 upper bound.
 
@@ -963,6 +1029,45 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_corrected_v4h4_budget
   have hscaled := mul_le_mul_of_nonneg_left hinside hcoef
   exact hsource.trans (by
     linarith)
+
+
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_corrected_v4h4_literalCountBudget
+    {t eta EV : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleLocalHalfWidth t eta < (n : ℝ))
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t (quarticSignedPoleLocalHalfWidth t eta)| <= EV) :
+    W.literalOffOrdExactAt n
+      <=
+    (W.targetStrength / (6 * (t/16)^6))
+      *
+    (
+      EV
+        +
+      ((1/16 : ℝ)
+        + (3/2 : ℝ)
+            * quarticSignedPoleLocalHalfWidth t eta ^ 2)
+        *
+      (zetaZeroConfig.N
+        (t - quarticSignedPoleLocalHalfWidth t eta - 1)
+        (t + quarticSignedPoleLocalHalfWidth t eta) : ℝ)
+        -
+      quarticSignedPoleLocalMuVerticalFourthMoment t eta
+    )
+      +
+    W.literalLocalRemainderDebtAt eta n
+      +
+    W.literalFarExactAt eta n := by
+  apply W.literalOffOrdExactAt_le_corrected_v4h4_budget
+    ht heta n hn hV
+  exact_mod_cast
+    W.literalLocalMultiplicityAt_le_expandedWindowN
+      ht heta (eta:=eta) n
 
 /-!
 ## Fail-closed explicit ABSORB surface

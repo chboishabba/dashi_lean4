@@ -19,6 +19,8 @@ on:
       - "Integration/Bishop*.lean"
       - "Integration/Moonshine*.lean"
       - "Integration.lean"
+      - "scripts/route_b_agda_replay_probe.py"
+      - "scripts/route_b_agda_kernel_replay.py"
       - "lakefile.toml"
       - "lean-toolchain"
       - ".github/workflows/moonshine-route-b.yml"

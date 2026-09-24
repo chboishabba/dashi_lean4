@@ -1675,4 +1675,60 @@ theorem quarticSignedPolePhysicalFourthPhaseReal_diag
   ring
 
 
+
+/-!
+## Critical-line direction is favorable for the complete literal quartic jet
+-/
+
+theorem QuarticFourSignedPolePair.literalCompleteJointQuarticPolynomial_of_height_zero
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros)
+    (ha : heightOf sigma = 0) :
+    W.literalCompleteJointQuarticPolynomial sigma
+      =
+    - (((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+        * W.targetStrength
+        * ((sigma : ℂ).im-t)^4)
+      / (6 * (t/16)^6) := by
+  unfold QuarticFourSignedPolePair.literalCompleteJointQuarticPolynomial
+  rw [ha]
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
+theorem QuarticFourSignedPolePair.literalCompleteJointQuarticPolynomial_nonpos_of_height_zero
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros)
+    (ha : heightOf sigma = 0) :
+    W.literalCompleteJointQuarticPolynomial sigma <= 0 := by
+  rw [W.literalCompleteJointQuarticPolynomial_of_height_zero ht sigma ha]
+  have hm : 0 <= ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) := by positivity
+  have hS : 0 <= W.targetStrength := W.targetStrength_pos.le
+  have hd : 0 <= ((sigma : ℂ).im-t)^4 := by positivity
+  have hr : 0 < 6 * (t/16)^6 := by positivity
+  exact div_nonpos_of_nonpos_of_nonneg
+    (neg_nonpos.mpr (mul_nonneg (mul_nonneg hm hS) hd))
+    hr.le
+
+theorem QuarticFourSignedPolePair.literalCompleteJointQuarticPolynomial_neg_of_height_zero
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros)
+    (ha : heightOf sigma = 0)
+    (hdelta : (sigma : ℂ).im ≠ t) :
+    W.literalCompleteJointQuarticPolynomial sigma < 0 := by
+  rw [W.literalCompleteJointQuarticPolynomial_of_height_zero ht sigma ha]
+  have hm :
+      0 < ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) := by
+    exact_mod_cast zetaZeroConfig.one_le_mult (sigma : ℂ) sigma.2
+  have hS := W.targetStrength_pos
+  have hd : 0 < ((sigma : ℂ).im-t)^4 := by
+    positivity
+  have hr : 0 < 6 * (t/16)^6 := by positivity
+  exact div_neg_of_neg_of_pos
+    (neg_neg.mpr (mul_pos (mul_pos hm hS) hd))
+    hr
+
+
 end Synthesis

@@ -1777,4 +1777,37 @@ def kottlerInteriorExteriorJunctionSolved : Bool := false
 def kottlerSIMagnitudeCalibrated : Bool := false
 
 
+/-!
+Exterior repulsion route synthesis.
+
+Standard positive-mass vacuum exterior is blocked in the literal TOV fixture.
+A positive-mass non-vacuum Kottler escape has an exact outward rational witness.
+-/
+
+inductive ExteriorRepulsionRouteStatus where
+  | standardVacuumBlocked
+  | nonVacuumKottlerConstructed
+  deriving DecidableEq, Repr
+
+structure ExteriorRepulsionRouteSynthesis : Prop where
+  standardVacuumRepulsionFalse :
+    finiteLiteralTOVStandardExteriorRepulsive = false
+  positiveMassNonVacuumEscape :
+    PositiveMassNonVacuumExteriorRepulsionWitness
+
+theorem canonical_exterior_repulsion_route_synthesis :
+    ExteriorRepulsionRouteSynthesis := by
+  exact {
+    standardVacuumRepulsionFalse := rfl
+    positiveMassNonVacuumEscape :=
+      canonical_positive_mass_nonvacuum_exterior_repulsion
+  }
+
+def positiveMassVacuumExteriorRepulsionBlocked : Bool := true
+def positiveMassNonVacuumExteriorRepulsionConstructed : Bool := true
+def negativeMetricMassRequiredForCurrentConstructedEscape : Bool := false
+def exteriorInteriorJunctionStillOpen : Bool := true
+def exteriorSIMagnitudeStillOpen : Bool := true
+
+
 end Integration.GRQFTPostMergeLocalization

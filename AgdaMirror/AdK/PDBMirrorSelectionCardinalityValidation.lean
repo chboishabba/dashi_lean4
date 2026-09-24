@@ -1,0 +1,18 @@
+import AgdaMirror.AdK.PDBMirrorSelectionCardinality
+
+namespace AgdaMirror.AdK.PDBMirrorSelectionCardinalityValidation
+
+open AgdaMirror.AdK.PDBMirrorSelectionCardinality
+
+#check canonicalMirrorSelectionCardinality
+#check fourAKEChainASelectionCardinality
+#check fourAKEChainBSelectionCardinality
+#check oneAKEChainASelectionCardinality
+#check oneAKEChainBSelectionCardinality
+
+#check fourAKEChainASelectionCardinalityExact
+#check fourAKEChainBSelectionCardinalityExact
+#check oneAKEChainASelectionCardinalityExact
+#check oneAKEChainBSelectionCardinalityExact
+
+end AgdaMirror.AdK.PDBMirrorSelectionCardinalityValidation

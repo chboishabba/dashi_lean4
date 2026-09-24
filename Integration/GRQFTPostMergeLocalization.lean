@@ -1100,9 +1100,17 @@ def sameSpatialAxis : SpatialAxis3 → SpatialAxis3 → Bool
   | .z, .z => true
   | _, _ => false
 
+def riemannFromScaleAcceleration :
+    ScaleAccelerationOrientation → CurvatureActionOrientation
+  | .zero => .zero
+  | .expanding => .negative
+
 def comovingRiemannTimeTidal
     (i j : SpatialAxis3) : CurvatureActionOrientation :=
-  if sameSpatialAxis i j then .negative else .zero
+  if sameSpatialAxis i j then
+    riemannFromScaleAcceleration finiteFLRWAccelerationOrientation
+  else
+    .zero
 
 inductive SeparationAccelerationOrientation where
   | inward | zero | outward

@@ -104,24 +104,22 @@ theorem second_cmp119_to_shared_stress_theorem_not_required :
     secondCMP119ToSharedStressTheoremRequired = false := rfl
 
 inductive PostMergeLeaf where
-  | grDiscreteToContinuumRealization
+  | grDiscreteToContinuumSameObjectRealization
   | cmp119StressToLiteralPinnedStressAttachment
   | pinnedLiteralYMToRecoveredQFTAttachment
-  | activePhysicalSectorTotalizationAndCommonVariation
-  | einsteinCommonMetricVariation
-  | commonMetricProducerLanguage
+  | activePhysicalSectorTotalization
+  | grAnchoredCMP119CrossSectorStressEquality
   | physicalDrellYanAbsoluteProjectionReplacement
   | acceptedMeasuredGAndEmpiricalAuthority
   | empiricalGRQFTDiscriminator
   deriving DecidableEq, Repr
 
 def remainingPostMergeLeaves : List PostMergeLeaf :=
-  [ .grDiscreteToContinuumRealization
+  [ .grDiscreteToContinuumSameObjectRealization
   , .cmp119StressToLiteralPinnedStressAttachment
   , .pinnedLiteralYMToRecoveredQFTAttachment
-  , .activePhysicalSectorTotalizationAndCommonVariation
-  , .einsteinCommonMetricVariation
-  , .commonMetricProducerLanguage
+  , .activePhysicalSectorTotalization
+  , .grAnchoredCMP119CrossSectorStressEquality
   , .physicalDrellYanAbsoluteProjectionReplacement
   , .acceptedMeasuredGAndEmpiricalAuthority
   , .empiricalGRQFTDiscriminator
@@ -249,5 +247,63 @@ def singleSectorCompilerManufacturesDeclaredTotal : Bool := false
 
 theorem single_sector_compiler_does_not_manufacture_total :
     singleSectorCompilerManufacturesDeclaredTotal = false := rfl
+
+/-!
+Shortest shared-source route.
+
+If the shared source is definitionally chosen to be the literal GR source, the
+GR factorisation is reflexive.  The only nontrivial stress theorem remaining is
+the cross-sector equality to the selected QFT/CMP119 stress, plus the physical
+active-sector totalisation witness.
+-/
+
+theorem gr_anchored_factorisation_is_reflexive
+    {Stress : Type u}
+    (grSource : Stress) :
+    grSource = grSource := rfl
+
+def primitiveGRSourceFactorisationLeafRequired : Bool := false
+
+theorem primitive_gr_source_factorisation_not_required :
+    primitiveGRSourceFactorisationLeafRequired = false := rfl
+
+def crossSectorGRToCMP119StressEqualityRequired : Bool := true
+
+theorem cross_sector_stress_equality_still_required :
+    crossSectorGRToCMP119StressEqualityRequired = true := rfl
+
+def commonEinsteinMetricVariationRequiredOnMinimalSharedSourceRoute : Bool := false
+def commonMetricProducerLanguageRequiredOnMinimalSharedSourceRoute : Bool := false
+
+theorem common_metric_variation_not_minimal :
+    commonEinsteinMetricVariationRequiredOnMinimalSharedSourceRoute = false := rfl
+
+theorem common_metric_language_not_minimal :
+    commonMetricProducerLanguageRequiredOnMinimalSharedSourceRoute = false := rfl
+
+/-!
+Generic recovered GR and Schwarzschild validation are distinct.
+
+The same-object composition theorem needs only literal=recovered and
+recovered=selected.  A Schwarzschild known-limit theorem is additional physical
+validation, not a premise of this equality.
+-/
+
+theorem generic_recovered_gr_selected
+    {GR : Type u}
+    {literal recovered selected : GR}
+    (hLiteralRecovered : literal = recovered)
+    (hRecoveredSelected : recovered = selected) :
+    literal = selected :=
+  hLiteralRecovered.trans hRecoveredSelected
+
+def schwarzschildRadialValuationRequiredForGenericAttachment : Bool := false
+def schwarzschildWeakFieldValidationStillPhysicallyRequired : Bool := true
+
+theorem schwarzschild_not_generic_recovery_premise :
+    schwarzschildRadialValuationRequiredForGenericAttachment = false := rfl
+
+theorem schwarzschild_known_limit_still_required :
+    schwarzschildWeakFieldValidationStillPhysicallyRequired = true := rfl
 
 end Integration.GRQFTPostMergeLocalization

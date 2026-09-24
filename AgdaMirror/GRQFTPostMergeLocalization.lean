@@ -49,4 +49,16 @@ theorem single_active_sector_source_factorisation_parity
   single_active_sector_source_factorisation
     hEffectiveCMP hCMPSelected hTotalSelected
 
+theorem gr_anchored_factorisation_boundary_parity :
+    primitiveGRSourceFactorisationLeafRequired = false :=
+  primitive_gr_source_factorisation_not_required
+
+theorem cross_sector_stress_leaf_parity :
+    crossSectorGRToCMP119StressEqualityRequired = true :=
+  cross_sector_stress_equality_still_required
+
+theorem schwarzschild_recovery_boundary_parity :
+    schwarzschildRadialValuationRequiredForGenericAttachment = false :=
+  schwarzschild_not_generic_recovery_premise
+
 end AgdaMirror.GRQFTPostMergeLocalization

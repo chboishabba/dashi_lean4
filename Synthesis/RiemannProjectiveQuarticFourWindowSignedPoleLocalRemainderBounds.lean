@@ -1056,4 +1056,338 @@ theorem QuarticFourSignedPolePair.literalConeExactSource_le_envelope
 
 end Synthesis
 
+
+/-!
+## Fail-fast weighted cone multiplicity compiler
+-/
+
+def QuarticFourSignedPolePair.literalConeMultiplicityAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℕ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocalCone t eta rho then
+      zetaZeroConfig.mult (rho : ℂ)
+    else
+      0
+
+theorem QuarticFourSignedPolePair.literalConeDebtAt_le_envelope_mul_multiplicity
+    {t eta : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalConeDebtAt eta n
+      <=
+    W.literalConeEnvelopeConstant / (t/16)^6
+      * (W.literalConeMultiplicityAt eta n : ℝ) := by
+  classical
+  unfold QuarticFourSignedPolePair.literalConeDebtAt
+    QuarticFourSignedPolePair.literalConeMultiplicityAt
+  rw [Nat.cast_sum]
+  rw [Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hc : quarticSignedPoleLocalCone t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · have hsrc :=
+        W.literalConeExactSource_le_envelope
+          ht hc hoff
+      have hC := W.literalConeEnvelopeConstant_nonneg
+      have hr6 : 0 < (t/16)^6 := by positivity
+      have hR :
+          0 <=
+            W.literalConeEnvelopeConstant / (t/16)^6
+              * (zetaZeroConfig.mult (rho : ℂ) : ℝ) := by
+        positivity
+      simp [hc,
+        QuarticFourSignedPolePair.literalOffOrdSource,
+        hoff]
+      apply max_le
+      · simpa [mul_comm, mul_left_comm, mul_assoc,
+          div_eq_mul_inv] using hsrc
+      · exact hR
+    · simp [hc,
+        QuarticFourSignedPolePair.literalOffOrdSource,
+        hoff]
+  · simp [hc]
+
+def quarticSignedPoleConeComplexSet
+    (t eta : ℝ) : Set ℂ :=
+  {z : ℂ |
+    ∃ hz : z ∈ zetaZeroConfig.carrier,
+      quarticSignedPoleLocalCone t eta (⟨z,hz⟩ : Zeros)}
+
+theorem quarticSignedPoleConeComplexSet_subset_fixedWindow
+    {t eta : ℝ} :
+    quarticSignedPoleConeComplexSet t eta
+      ⊆
+    zetaZeroConfig.window
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) := by
+  intro z hz
+  rcases hz with ⟨hzCarrier,hcone⟩
+  have hw :=
+    quarticSignedPoleLocalCone_mem_fixed_window hcone
+  exact ⟨hzCarrier,hw.1,hw.2⟩
+
+theorem QuarticFourSignedPolePair.literalConeMultiplicityAt_le_fixedWindowN
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalConeMultiplicityAt eta n
+      <=
+    zetaZeroConfig.N
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) := by
+  classical
+  let F : Finset Zeros :=
+    (centeredZeroFinset t n).filter
+      (quarticSignedPoleLocalCone t eta)
+  let s : Set ℂ :=
+    (fun rho : Zeros => (rho : ℂ)) '' (↑F : Set Zeros)
+  have hsWindow :
+      s ⊆
+        zetaZeroConfig.window
+          (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) := by
+    intro z hz
+    rcases hz with ⟨rho,hrho,rfl⟩
+    have hcone :
+        quarticSignedPoleLocalCone t eta rho := by
+      have := (Finset.mem_filter.mp hrho).2
+      exact this
+    exact quarticSignedPoleConeComplexSet_subset_fixedWindow
+      ⟨rho.2,hcone⟩
+  have hmono :=
+    zetaZeroConfig.finsum_mult_mono
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ))
+      hsWindow subset_rfl
+  have hsFinite :
+      s.Finite := by
+    exact Set.Finite.image F.finite_toSet _
+  have hsum :
+      W.literalConeMultiplicityAt eta n
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z := by
+    unfold QuarticFourSignedPolePair.literalConeMultiplicityAt
+    change
+      (∑ rho ∈ centeredZeroFinset t n,
+        if quarticSignedPoleLocalCone t eta rho then
+          zetaZeroConfig.mult (rho : ℂ) else 0)
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z
+    rw [← Finset.sum_filter]
+    change
+      (∑ rho ∈ F, zetaZeroConfig.mult (rho : ℂ))
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z
+    rw [finsum_mem_eq_finite_toFinset_sum _ hsFinite]
+    have himage :
+        hsFinite.toFinset
+          =
+        F.image (fun rho : Zeros => (rho : ℂ)) := by
+      ext z
+      simp [s]
+    rw [himage, Finset.sum_image]
+    intro a ha b hb hab
+    exact Subtype.ext hab
+  rw [hsum]
+  exact hmono
+
+theorem QuarticFourSignedPolePair.literalConeDebtAt_le_fixedWindowN
+    {t eta : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalConeDebtAt eta n
+      <=
+    W.literalConeEnvelopeConstant / (t/16)^6
+      *
+    (zetaZeroConfig.N
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ) := by
+  have hdebt :=
+    W.literalConeDebtAt_le_envelope_mul_multiplicity
+      ht n
+  have hmult :=
+    W.literalConeMultiplicityAt_le_fixedWindowN
+      (eta:=eta) n
+  have hC : 0 <= W.literalConeEnvelopeConstant / (t/16)^6 := by
+    positivity
+  exact hdebt.trans
+    (mul_le_mul_of_nonneg_left (by exact_mod_cast hmult) hC)
+
+
+/--
+Unconditional finite cone-debt bound at the correct physical t^-6 scale.
+
+The witness-dependent constant is deliberately left explicit.  The theorem is
+intended as a fail-fast scaling diagnostic, not a constant-optimization result.
+-/
+theorem exists_quarticFourSignedPole_literalConeDebtAt_le_log_over_r6 :
+    ∃ A0 : ℝ, 0 <= A0 ∧
+      ∀ {t eta : ℝ},
+        200 <= t ->
+        (W : QuarticFourSignedPolePair t) ->
+        ∀ n : ℕ,
+          W.literalConeDebtAt eta n
+            <=
+          3 * A0 * W.literalConeEnvelopeConstant
+            * Real.log (t + 5)
+            / (t/16)^6 := by
+  obtain ⟨A0,hA0,hcount⟩ :=
+    exists_quarticSignedPole_fixedConeWindow_zeroCount_bound
+  refine ⟨A0,hA0,?_⟩
+  intro t eta ht W n
+  have hdebt :=
+    W.literalConeDebtAt_le_fixedWindowN
+      (eta:=eta) ht n
+  have hN := hcount ht
+  have hC :
+      0 <= W.literalConeEnvelopeConstant / (t/16)^6 := by
+    positivity
+  have hmul :=
+    mul_le_mul_of_nonneg_left hN hC
+  calc
+    W.literalConeDebtAt eta n
+      <=
+    W.literalConeEnvelopeConstant / (t/16)^6
+      *
+    (zetaZeroConfig.N
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ) := hdebt
+    _ <=
+    W.literalConeEnvelopeConstant / (t/16)^6
+      * (3 * A0 * Real.log (t+5)) := hmul
+    _ =
+    3 * A0 * W.literalConeEnvelopeConstant
+      * Real.log (t+5) / (t/16)^6 := by ring
+
+/--
+Canonical coefficient appearing after the common r^-6 factor is cancelled
+against any target lower bound of the form c*S(W)*a^4/r^6.
+-/
+def QuarticFourSignedPolePair.coneLogCoefficient
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A0 : ℝ) : ℝ :=
+  3 * A0 * W.literalConeEnvelopeConstant * Real.log (t+5)
+
+theorem QuarticFourSignedPolePair.coneDebt_le_coneLogCoefficient_over_r6
+    {t eta A0 : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hA0 :
+      (zetaZeroConfig.N
+        (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ)
+        <= 3 * A0 * Real.log (t+5))
+    (hA0nonneg : 0 <= A0) :
+    W.literalConeDebtAt eta n
+      <=
+    W.coneLogCoefficient A0 / (t/16)^6 := by
+  have hdebt :=
+    W.literalConeDebtAt_le_fixedWindowN
+      (eta:=eta) ht n
+  have hC :
+      0 <= W.literalConeEnvelopeConstant / (t/16)^6 := by
+    positivity
+  have hmul :=
+    mul_le_mul_of_nonneg_left hA0 hC
+  unfold QuarticFourSignedPolePair.coneLogCoefficient
+  calc
+    W.literalConeDebtAt eta n
+      <=
+    W.literalConeEnvelopeConstant / (t/16)^6
+      *
+    (zetaZeroConfig.N
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ) := hdebt
+    _ <=
+    W.literalConeEnvelopeConstant / (t/16)^6
+      * (3 * A0 * Real.log (t+5)) := hmul
+    _ =
+    (3 * A0 * W.literalConeEnvelopeConstant * Real.log (t+5))
+      / (t/16)^6 := by ring
+
+
+/-!
+## Fail-fast target-scaling diagnostic
+
+The absolute cone estimate has the correct r^-6 scale.  What it does not
+supply is a quartic floor in the target horizontal displacement a.
+
+The elementary lemma below is deliberately not a statement about existence of
+zeta zeros at arbitrary horizontal coordinates.  It only records that the
+strip hypothesis 0<|a|<=1/2, by itself, cannot imply a uniform positive lower
+bound for a^4.
+-/
+
+theorem exists_punctured_half_with_quartic_below
+    {B : ℝ} (hB : 0 < B) :
+    ∃ a : ℝ,
+      0 < |a| ∧
+      |a| <= (1/2 : ℝ) ∧
+      a^4 < B := by
+  let a : ℝ := min (1/4 : ℝ) (B/8)
+  have haPos : 0 < a := by
+    dsimp [a]
+    exact lt_min (by norm_num) (by positivity)
+  have haQuarter : a <= (1/4 : ℝ) := by
+    dsimp [a]
+    exact min_le_left _ _
+  have haB : a <= B/8 := by
+    dsimp [a]
+    exact min_le_right _ _
+  have haOne : a <= 1 := by linarith
+  have haNonneg : 0 <= a := haPos.le
+  have ha2 : a^2 <= a := by
+    nlinarith [mul_nonneg haNonneg (sub_nonneg.mpr haOne)]
+  have ha2One : a^2 <= 1 := ha2.trans haOne
+  have ha4 : a^4 <= a^2 := by
+    have hnon2 : 0 <= a^2 := sq_nonneg a
+    have hprod :=
+      mul_nonneg hnon2 (sub_nonneg.mpr ha2One)
+    nlinarith [show a^4 = (a^2)^2 by ring]
+  refine ⟨a,?_,?_,?_⟩
+  · simpa [abs_of_pos haPos]
+  · rw [abs_of_pos haPos]
+    linarith
+  · have : a^4 <= a := ha4.trans ha2
+    linarith
+
+def QuarticFourSignedPolePair.absoluteConeTargetCoefficientCondition
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A0 c a : ℝ) : Prop :=
+  W.coneLogCoefficient A0
+    < c * W.targetStrength * a^4
+
+/--
+If a future target theorem supplies
+  target >= c*S(W)*a^4/r^6,
+then the absolute cone estimate is paid exactly by the scalar coefficient
+condition above.  This theorem intentionally leaves that target lower bound
+as an explicit hypothesis because the current quantitative target compiler
+only proves positivity.
+-/
+theorem QuarticFourSignedPolePair.literalConeDebtAt_lt_target_of_quartic_floor
+    {t eta A0 c a target : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hcount :
+      (zetaZeroConfig.N
+        (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ)
+        <= 3 * A0 * Real.log (t+5))
+    (hA0 : 0 <= A0)
+    (hcoef : W.absoluteConeTargetCoefficientCondition A0 c a)
+    (htarget :
+      c * W.targetStrength * a^4 / (t/16)^6 <= target) :
+    W.literalConeDebtAt eta n < target := by
+  have hdebt :=
+    W.coneDebt_le_coneLogCoefficient_over_r6
+      ht n hcount hA0
+  have hr6 : 0 < (t/16)^6 := by positivity
+  have hcoefScaled :
+      W.coneLogCoefficient A0 / (t/16)^6
+        <
+      c * W.targetStrength * a^4 / (t/16)^6 := by
+    exact div_lt_div_of_pos_right hcoef hr6
+  exact lt_of_le_of_lt hdebt
+    (hcoefScaled.trans_le htarget)
+
+
+
 end Synthesis

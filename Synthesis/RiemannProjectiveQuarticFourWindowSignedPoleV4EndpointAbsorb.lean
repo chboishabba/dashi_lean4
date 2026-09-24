@@ -1647,6 +1647,164 @@ theorem quarticSignedPoleExplicitSixthMomentBound_lt_eightyOneMillion :
     _ = 81000000 := by norm_num
 
 
+
+/-!
+## Two-sided target-strength envelope
+
+The fourth signed moment identity itself gives an upper bound on target
+strength.  This is the polarity-correct companion to the already-owned
+existential lower floor: positive local charges may use the upper envelope,
+while the favorable mu term may use the lower floor once positivity of that
+mu factor is established.
+-/
+
+theorem QuarticFourSignedPolePair.targetStrength_le_quarter_fourthAbsMoment
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.targetStrength
+      <= (1/4 : ℝ) * W.signedProfileAbsMomentFour := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hi :
+      Integrable (fun u : ℝ => P u * u^4) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have hM4 :
+      ∫ u : ℝ, P u * u^4 = -4 * W.targetStrength := by
+    change profileFourthMoment P = -4 * W.targetStrength
+    simpa [P, QuarticFourSignedPolePair.targetStrength] using
+      quarticFourSignedPoleCombinedProfile_fourth
+        (muHalf:=W.muHalf) (muTwo:=W.muTwo)
+        (t:=t) W.Rpos
+  have habs :=
+    abs_integral_le_integral_abs
+      (f := fun u : ℝ => P u * u^4)
+  have hpoint :
+      (∫ u : ℝ, |P u * u^4|)
+        =
+      W.signedProfileAbsMomentFour := by
+    unfold QuarticFourSignedPolePair.signedProfileAbsMomentFour
+      compactProfileAbsMoment
+    apply integral_congr_ae
+    exact Filter.Eventually.of_forall fun u => by
+      rw [abs_mul, abs_pow]
+      ring
+  rw [hM4, abs_neg,
+      abs_of_pos (by positivity : 0 < 4 * W.targetStrength),
+      hpoint] at habs
+  nlinarith
+
+theorem QuarticFourSignedPolePair.signedProfileAbsMomentFour_le_support_mass
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedProfileAbsMomentFour
+      <=
+    (Real.pi + 1)^4
+      *
+    Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t) := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hmoment :
+      Integrable (fun u : ℝ => |P u| * |u|^4) :=
+    compactProfile_absMoment_integrable hP hPc 4
+  have hmass :
+      Integrable (fun u : ℝ => (Real.pi+1)^4 * |P u|) :=
+    hP.abs.integrable_of_hasCompactSupport hPc.abs
+      |>.const_mul _
+  unfold QuarticFourSignedPolePair.signedProfileAbsMomentFour
+    compactProfileAbsMoment
+    Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass
+  change
+    (∫ u : ℝ, |P u| * |u|^4)
+      <=
+    (Real.pi+1)^4 * (∫ u : ℝ, |P u|)
+  calc
+    (∫ u : ℝ, |P u| * |u|^4)
+      <=
+    ∫ u : ℝ, (Real.pi+1)^4 * |P u| := by
+      apply integral_mono hmoment hmass
+      intro u
+      by_cases hzero : P u = 0
+      · simp [hzero]
+      · have hu :=
+          W.combinedProfile_support_abs_le_pi_add_one u hzero
+        have hpow :
+            |u|^4 <= (Real.pi+1)^4 := by
+          exact pow_le_pow_left₀
+            (abs_nonneg u) hu 4
+        have hPabs : 0 <= |P u| := abs_nonneg _
+        nlinarith
+    _ =
+    (Real.pi+1)^4 * (∫ u : ℝ, |P u|) := by
+      rw [integral_const_mul]
+
+def quarticSignedPoleExplicitTargetStrengthUpper : ℝ :=
+  (1/4 : ℝ)
+    * (Real.pi + 1)^4
+    * quarticFourCombinedProfileMassBound
+
+theorem quarticSignedPoleExplicitTargetStrengthUpper_nonneg :
+    0 <= quarticSignedPoleExplicitTargetStrengthUpper := by
+  unfold quarticSignedPoleExplicitTargetStrengthUpper
+    quarticFourCombinedProfileMassBound
+    quarticFourSmoothPoleBound
+    quarticFourProjectiveMassBound
+  positivity
+
+theorem QuarticFourSignedPolePair.targetStrength_le_explicit
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.targetStrength
+      <= quarticSignedPoleExplicitTargetStrengthUpper := by
+  have hS :=
+    W.targetStrength_le_quarter_fourthAbsMoment
+  have h4 :=
+    W.signedProfileAbsMomentFour_le_support_mass
+  have hmass :=
+    W.combinedProfile_taperMass_le_explicit ht
+  have hp4 : 0 <= (Real.pi+1)^4 := by positivity
+  have h4' :
+      W.signedProfileAbsMomentFour
+        <= (Real.pi+1)^4 * quarticFourCombinedProfileMassBound :=
+    h4.trans (mul_le_mul_of_nonneg_left hmass hp4)
+  unfold quarticSignedPoleExplicitTargetStrengthUpper
+  nlinarith
+
+theorem quarticSignedPoleExplicitTargetStrengthUpper_lt_eightHundredTenThousand :
+    quarticSignedPoleExplicitTargetStrengthUpper < 810000 := by
+  unfold quarticSignedPoleExplicitTargetStrengthUpper
+  have hm := quarticFourCombinedProfileMassBound_lt_5184
+  have hp :
+      (Real.pi+1)^4 < (5 : ℝ)^4 :=
+    pow_lt_pow_left₀
+      (by linarith [Real.pi_lt_four])
+      (by positivity)
+      (by norm_num)
+  have hp0 : 0 <= (Real.pi+1)^4 := by positivity
+  have hm0 : 0 <= quarticFourCombinedProfileMassBound := by
+    unfold quarticFourCombinedProfileMassBound
+      quarticFourSmoothPoleBound quarticFourProjectiveMassBound
+    positivity
+  calc
+    (1/4 : ℝ) * (Real.pi+1)^4 * quarticFourCombinedProfileMassBound
+      < (1/4 : ℝ) * (5 : ℝ)^4 * 5184 := by
+        gcongr
+    _ = 810000 := by norm_num
+
+
 /-!
 ## Deterministic V4 + count producer substitution
 

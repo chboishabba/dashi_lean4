@@ -3432,4 +3432,322 @@ theorem QuarticFourSignedPolePair.bidiMarkedPoleResidual_sub_trunc_abs_le
       quarticFourBidiDeterminantRemainderConstant at hdet ⊢
     simpa [B] using hdet
 
+
+/-!
+## Signed determinant remainder and punctured positive marked-pole band
+-/
+
+def QuarticFourSignedPolePair.bidiMarkedPoleNormalizedCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A : ℝ) : ℝ :=
+  W.poleTwo *
+      quarticFourSmoothBidiMarkedPoleResidual
+        W.R (1/2) W.muHalf t A
+    -
+  W.poleHalf *
+      quarticFourSmoothBidiMarkedPoleResidual
+        W.R (2/3) W.muTwo t A
+
+def quarticFourBidiSignedDeterminantRemainderConstant : ℝ :=
+  2 * quarticFourSmoothPoleBound
+    * quarticFourBidiDeterminantRemainderConstant
+
+theorem quarticFourBidiSignedDeterminantRemainderConstant_nonneg :
+    0 <= quarticFourBidiSignedDeterminantRemainderConstant := by
+  unfold quarticFourBidiSignedDeterminantRemainderConstant
+    quarticFourSmoothPoleBound
+    quarticFourBidiDeterminantRemainderConstant
+  positivity
+
+theorem QuarticFourSignedPolePair.bidiMarkedPoleCombination_eq_scaled_normalized
+    {t A : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.bidiMarkedPoleCombination A
+      =
+    4 * (16/t)^2
+      * W.bidiMarkedPoleNormalizedCombination A := by
+  rw [W.bidiMarkedPoleCombination_eq_normalized ht]
+  rfl
+
+theorem QuarticFourSignedPolePair.bidiMarkedPoleNormalizedCombination_sub_trunc_abs_le
+    {t A : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hB : |16*A/t| <= 1/5)
+    (heta :
+      quarticFourBidiCommonPairingRemainderConstant
+        * |16*A/t|^4 <= 1) :
+    |W.bidiMarkedPoleNormalizedCombination A
+      - W.bidiMarkedPoleCombinationTrunc (16*A/t)|
+      <=
+    quarticFourBidiSignedDeterminantRemainderConstant
+      * |16*A/t|^4 := by
+  have eHalf :=
+    W.bidiMarkedPoleResidual_sub_trunc_abs_le
+      ht (Or.inl ⟨rfl,rfl⟩) hB heta
+  have eTwo :=
+    W.bidiMarkedPoleResidual_sub_trunc_abs_le
+      ht (Or.inr ⟨rfl,rfl⟩) hB heta
+  have hpHalf := W.poleHalf_abs_le ht
+  have hpTwo := W.poleTwo_abs_le ht
+  unfold QuarticFourSignedPolePair.bidiMarkedPoleNormalizedCombination
+    QuarticFourSignedPolePair.bidiMarkedPoleCombinationTrunc
+    quarticFourBidiSignedDeterminantRemainderConstant
+  have htri :
+      |W.poleTwo *
+          (quarticFourSmoothBidiMarkedPoleResidual
+              W.R (1/2) W.muHalf t A
+            -
+           quarticFourSmoothBidiMarkedPoleResidualTrunc
+              W.R (1/2) W.muHalf t (16*A/t))
+        -
+        W.poleHalf *
+          (quarticFourSmoothBidiMarkedPoleResidual
+              W.R (2/3) W.muTwo t A
+            -
+           quarticFourSmoothBidiMarkedPoleResidualTrunc
+              W.R (2/3) W.muTwo t (16*A/t))|
+      <=
+      |W.poleTwo| * eHalf.rhs
+        + |W.poleHalf| * eTwo.rhs := by
+    rw [abs_sub, abs_mul, abs_mul]
+    exact add_le_add
+      (mul_le_mul_of_nonneg_left eHalf (abs_nonneg _))
+      (mul_le_mul_of_nonneg_left eTwo (abs_nonneg _))
+  have hrearr :
+      W.poleTwo *
+          quarticFourSmoothBidiMarkedPoleResidual
+            W.R (1/2) W.muHalf t A
+        -
+      W.poleHalf *
+          quarticFourSmoothBidiMarkedPoleResidual
+            W.R (2/3) W.muTwo t A
+        -
+      (W.poleTwo *
+          quarticFourSmoothBidiMarkedPoleResidualTrunc
+            W.R (1/2) W.muHalf t (16*A/t)
+        -
+       W.poleHalf *
+          quarticFourSmoothBidiMarkedPoleResidualTrunc
+            W.R (2/3) W.muTwo t (16*A/t))
+      =
+      W.poleTwo *
+          (quarticFourSmoothBidiMarkedPoleResidual
+              W.R (1/2) W.muHalf t A
+            -
+           quarticFourSmoothBidiMarkedPoleResidualTrunc
+              W.R (1/2) W.muHalf t (16*A/t))
+        -
+      W.poleHalf *
+          (quarticFourSmoothBidiMarkedPoleResidual
+              W.R (2/3) W.muTwo t A
+            -
+           quarticFourSmoothBidiMarkedPoleResidualTrunc
+              W.R (2/3) W.muTwo t (16*A/t)) := by
+    ring
+  rw [hrearr]
+  have hC :
+      0 <= quarticFourBidiDeterminantRemainderConstant
+        * |16*A/t|^4 := by positivity
+  calc
+    |_|
+      <=
+    |W.poleTwo| *
+        (quarticFourBidiDeterminantRemainderConstant
+          * |16*A/t|^4)
+      +
+    |W.poleHalf| *
+        (quarticFourBidiDeterminantRemainderConstant
+          * |16*A/t|^4) := by
+        exact htri
+    _ <=
+    quarticFourSmoothPoleBound *
+        (quarticFourBidiDeterminantRemainderConstant
+          * |16*A/t|^4)
+      +
+    quarticFourSmoothPoleBound *
+        (quarticFourBidiDeterminantRemainderConstant
+          * |16*A/t|^4) := by
+        gcongr
+    _ =
+    2 * quarticFourSmoothPoleBound
+      * quarticFourBidiDeterminantRemainderConstant
+      * |16*A/t|^4 := by ring
+
+theorem QuarticFourSignedPolePair.bidiMarkedPoleNormalizedCombination_pos_of_small
+    {t A : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hQ :
+      0 <
+      quarticFourSmoothSignedMarkedPoleQuadraticCarrier
+        W.R W.muHalf W.muTwo t)
+    (hB0 : 0 < |16*A/t|)
+    (hB : |16*A/t| <= 1/5)
+    (heta :
+      quarticFourBidiCommonPairingRemainderConstant
+        * |16*A/t|^4 <= 1)
+    (hsmall :
+      |16*A/t|^2
+        *
+        (quarticFourBidiSignedDeterminantRemainderConstant
+          + |W.signedMarkedPoleQuarticCrossCarrier|/4)
+        <
+      hQ/2) :
+    0 < W.bidiMarkedPoleNormalizedCombination A := by
+  let B : ℝ := 16*A/t
+  have herr :=
+    W.bidiMarkedPoleNormalizedCombination_sub_trunc_abs_le
+      ht hB heta
+  have htrunc :=
+    W.bidiMarkedPoleCombinationTrunc_eq (B:=B)
+  have hBsq : 0 < B^2 := by
+    have : B ≠ 0 := by
+      intro h
+      rw [h, abs_zero] at hB0
+      linarith
+    positivity
+  have hB4 :
+      |B|^4 = B^2 * |B|^2 := by
+    rw [show |B|^4 = |B|^2 * |B|^2 by ring,
+        sq_abs]
+  have hcross :
+      (B^4/4) * W.signedMarkedPoleQuarticCrossCarrier
+        >=
+      -(B^4/4) * |W.signedMarkedPoleQuarticCrossCarrier| := by
+    have hfac : 0 <= B^4/4 := by positivity
+    have h :=
+      neg_abs_le (W.signedMarkedPoleQuarticCrossCarrier)
+    exact mul_le_mul_of_nonneg_left h hfac
+  have herrLo := (abs_le.mp herr).1
+  rw [htrunc] at herrLo
+  dsimp [B] at hsmall hB4 ⊢
+  have hErrC :
+      0 <= quarticFourBidiSignedDeterminantRemainderConstant := 
+    quarticFourBidiSignedDeterminantRemainderConstant_nonneg
+  nlinarith [hcross, hBsq]
+
+theorem QuarticFourSignedPolePair.exists_bidiMarkedPoleCombination_pos_punctured
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hQ :
+      0 <
+      quarticFourSmoothSignedMarkedPoleQuadraticCarrier
+        W.R W.muHalf W.muTwo t) :
+    ∃ epsA : ℝ, 0 < epsA ∧
+      ∀ A : ℝ,
+        0 < |A| -> |A| < epsA ->
+        0 < W.bidiMarkedPoleCombination A := by
+  have htpos : 0 < t := by linarith
+  let K : ℝ :=
+    quarticFourBidiSignedDeterminantRemainderConstant
+      + |W.signedMarkedPoleQuarticCrossCarrier|/4
+  have hK : 0 <= K := by
+    dsimp [K]
+    exact add_nonneg
+      quarticFourBidiSignedDeterminantRemainderConstant_nonneg
+      (div_nonneg (abs_nonneg _) (by norm_num))
+  let C : ℝ := quarticFourBidiCommonPairingRemainderConstant
+  have hC : 0 <= C :=
+    quarticFourBidiCommonPairingRemainderConstant_nonneg
+  let epsB : ℝ :=
+    min (1/5 : ℝ)
+      (min (1/(C+1))
+        (min 1 (hQ/(4*(K+1)))))
+  have hepsB : 0 < epsB := by
+    dsimp [epsB,C,K]
+    positivity
+  let epsA : ℝ := (t/16) * epsB
+  have hepsA : 0 < epsA := mul_pos (by positivity) hepsB
+  refine ⟨epsA,hepsA,?_⟩
+  intro A hA0 hAe
+  let B : ℝ := 16*A/t
+  have hB0 : 0 < |B| := by
+    dsimp [B]
+    rw [abs_div, abs_mul]
+    have ht0 : |t| = t := abs_of_pos htpos
+    rw [ht0]
+    positivity
+  have hBA :
+      |B| = (16/t) * |A| := by
+    dsimp [B]
+    rw [abs_div, abs_mul, abs_of_pos htpos, abs_of_pos (by norm_num : (0:ℝ)<16)]
+    ring
+  have hBeps : |B| < epsB := by
+    rw [hBA]
+    dsimp [epsA] at hAe
+    have hfac : 0 < 16/t := by positivity
+    have hrewrite : (16/t) * ((t/16)*epsB) = epsB := by
+      field_simp [ne_of_gt htpos]
+      ring
+    rw [← hrewrite]
+    exact mul_lt_mul_of_pos_left hAe hfac
+  have hB : |B| <= 1/5 :=
+    (le_of_lt hBeps).trans (min_le_left _ _)
+  have hBC :
+      |B| < 1/(C+1) := by
+    exact hBeps.trans_le
+      ((min_le_right (1/5 : ℝ)
+        (min (1/(C+1)) (min 1 (hQ/(4*(K+1)))))).trans
+       (min_le_left _ _))
+  have hB1 :
+      |B| < 1 := by
+    exact hBeps.trans_le
+      ((min_le_right (1/5 : ℝ)
+        (min (1/(C+1)) (min 1 (hQ/(4*(K+1)))))).trans
+       ((min_le_right (1/(C+1)) (min 1 (hQ/(4*(K+1))))).trans
+        (min_le_left _ _)))
+  have hBQ :
+      |B| < hQ/(4*(K+1)) := by
+    exact hBeps.trans_le
+      ((min_le_right (1/5 : ℝ)
+        (min (1/(C+1)) (min 1 (hQ/(4*(K+1)))))).trans
+       ((min_le_right (1/(C+1)) (min 1 (hQ/(4*(K+1))))).trans
+        (min_le_right _ _)))
+  have heta :
+      C * |B|^4 <= 1 := by
+    have hB4le : |B|^4 <= |B| := by
+      have hBn : 0 <= |B| := abs_nonneg _
+      have hB1le : |B| <= 1 := le_of_lt hB1
+      nlinarith [pow_le_one₀ hBn hB1le 4]
+    have hBCprod : C * |B| < 1 := by
+      have hCp : 0 < C+1 := by linarith
+      have := (lt_div_iff₀ hCp).mp hBC
+      nlinarith
+    nlinarith
+  have hsmall :
+      |B|^2 * K < hQ/2 := by
+    have hB2le : |B|^2 <= |B| := by
+      have hBn : 0 <= |B| := abs_nonneg _
+      have hB1le : |B| <= 1 := le_of_lt hB1
+      nlinarith
+    have hKp : 0 < K+1 := by linarith
+    have hprod :
+        |B| * (K+1) < hQ/4 := by
+      exact (lt_div_iff₀ hKp).mp hBQ
+    nlinarith
+  have hnorm :=
+    W.bidiMarkedPoleNormalizedCombination_pos_of_small
+      ht hQ (by simpa [B]) (by simpa [B] using hB)
+      (by simpa [B,C] using heta)
+      (by simpa [B,K] using hsmall)
+  rw [W.bidiMarkedPoleCombination_eq_scaled_normalized
+      (by linarith)]
+  have hscale : 0 < 4*(16/t)^2 := by positivity
+  exact mul_pos hscale hnorm
+
+theorem exists_quarticFourSignedPolePair_with_strength_floor_and_positive_markedPole_band
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 <= W.targetStrength
+      ∧
+      ∃ epsA : ℝ, 0 < epsA ∧
+        ∀ A : ℝ,
+          0 < |A| -> |A| < epsA ->
+          0 < W.bidiMarkedPoleCombination A := by
+  obtain ⟨W,hfloor,hQ⟩ :=
+    exists_quarticFourSignedPolePair_with_strength_floor_and_markedPoleQuadratic
+      ht
+  obtain ⟨epsA,hepsA,hband⟩ :=
+    W.exists_bidiMarkedPoleCombination_pos_punctured ht hQ
+  exact ⟨W,hfloor,epsA,hepsA,hband⟩
+
 end Synthesis

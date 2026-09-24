@@ -2661,4 +2661,127 @@ theorem balanced_family_positive_radius_physical_signs
   · positivity
 
 
+/-!
+Exact asymmetric two-vacuum amplitude potential.
+
+V(phi) = phi^2(1-phi)^2 + 21/64 + (3/64)(3phi^2-2phi^3).
+
+It has vacuum levels 21/64 at phi=0 and 3/8 at phi=1, with an unstable
+barrier at 73/128.
+-/
+
+def twoVacuumPotential (phi : Rat) : Rat :=
+  phi^2*(1-phi)^2 + 21/64 + (3/64)*(3*phi^2 - 2*phi^3)
+
+def twoVacuumPotentialPrime (phi : Rat) : Rat :=
+  (73/32)*phi - (201/32)*phi^2 + 4*phi^3
+
+def twoVacuumPotentialSecond (phi : Rat) : Rat :=
+  73/32 - (201/16)*phi + 12*phi^2
+
+theorem two_vacuum_prime_factorization (phi : Rat) :
+    twoVacuumPotentialPrime phi
+      = phi*(phi-1)*(128*phi-73)/32 := by
+  ring
+
+theorem two_vacuum_interior_energy :
+    twoVacuumPotential 0 = 21/64 := by
+  norm_num [twoVacuumPotential]
+
+theorem two_vacuum_exterior_energy :
+    twoVacuumPotential 1 = 3/8 := by
+  norm_num [twoVacuumPotential]
+
+theorem two_vacuum_interior_stationary :
+    twoVacuumPotentialPrime 0 = 0 := by
+  norm_num [twoVacuumPotentialPrime]
+
+theorem two_vacuum_exterior_stationary :
+    twoVacuumPotentialPrime 1 = 0 := by
+  norm_num [twoVacuumPotentialPrime]
+
+theorem two_vacuum_barrier_stationary :
+    twoVacuumPotentialPrime (73/128) = 0 := by
+  norm_num [twoVacuumPotentialPrime]
+
+theorem two_vacuum_interior_second_positive :
+    twoVacuumPotentialSecond 0 = 73/32 := by
+  norm_num [twoVacuumPotentialSecond]
+
+theorem two_vacuum_exterior_second_positive :
+    twoVacuumPotentialSecond 1 = 55/32 := by
+  norm_num [twoVacuumPotentialSecond]
+
+theorem two_vacuum_barrier_second_negative :
+    twoVacuumPotentialSecond (73/128) = -4015/4096 := by
+  norm_num [twoVacuumPotentialSecond]
+
+theorem two_vacuum_interior_difference_factorization (phi : Rat) :
+    twoVacuumPotential phi - 21/64
+      = phi^2*(64*phi^2-134*phi+73)/64 := by
+  ring
+
+theorem two_vacuum_exterior_difference_factorization (phi : Rat) :
+    twoVacuumPotential phi - 3/8
+      = (phi-1)^2*(64*phi^2-6*phi-3)/64 := by
+  ring
+
+theorem two_vacuum_interior_quadratic_positive (phi : Rat) :
+    0 < 64*phi^2 - 134*phi + 73 := by
+  have hs : 0 ≤ (phi - 67/64)^2 := sq_nonneg _
+  nlinarith
+
+theorem two_vacuum_interior_global_minimum (phi : Rat) :
+    21/64 ≤ twoVacuumPotential phi := by
+  rw [← sub_nonneg]
+  rw [two_vacuum_interior_difference_factorization]
+  have hq := two_vacuum_interior_quadratic_positive phi
+  positivity
+
+theorem two_vacuum_exterior_quadratic_positive_on_basin
+    {phi : Rat} (hphi : 1/2 ≤ phi) :
+    0 < 64*phi^2 - 6*phi - 3 := by
+  have hprod : 0 ≤ phi*(phi-1/2) := mul_nonneg (by linarith) (by linarith)
+  nlinarith
+
+theorem two_vacuum_exterior_basin_minimum
+    {phi : Rat} (hphi : 1/2 ≤ phi) :
+    3/8 ≤ twoVacuumPotential phi := by
+  rw [← sub_nonneg]
+  rw [two_vacuum_exterior_difference_factorization]
+  have hq := two_vacuum_exterior_quadratic_positive_on_basin hphi
+  positivity
+
+structure TwoVacuumAmplitudePotentialWitness : Prop where
+  interiorEnergy : twoVacuumPotential 0 = 21/64
+  exteriorEnergy : twoVacuumPotential 1 = 3/8
+  interiorStationary : twoVacuumPotentialPrime 0 = 0
+  exteriorStationary : twoVacuumPotentialPrime 1 = 0
+  barrierStationary : twoVacuumPotentialPrime (73/128) = 0
+  interiorStableCurvature : twoVacuumPotentialSecond 0 = 73/32
+  exteriorStableCurvature : twoVacuumPotentialSecond 1 = 55/32
+  barrierUnstableCurvature : twoVacuumPotentialSecond (73/128) = -4015/4096
+  interiorGlobalMinimum : ∀ phi, 21/64 ≤ twoVacuumPotential phi
+  exteriorBasinMinimum : ∀ {phi}, 1/2 ≤ phi → 3/8 ≤ twoVacuumPotential phi
+
+theorem canonical_two_vacuum_amplitude_potential :
+    TwoVacuumAmplitudePotentialWitness := by
+  exact {
+    interiorEnergy := two_vacuum_interior_energy
+    exteriorEnergy := two_vacuum_exterior_energy
+    interiorStationary := two_vacuum_interior_stationary
+    exteriorStationary := two_vacuum_exterior_stationary
+    barrierStationary := two_vacuum_barrier_stationary
+    interiorStableCurvature := two_vacuum_interior_second_positive
+    exteriorStableCurvature := two_vacuum_exterior_second_positive
+    barrierUnstableCurvature := two_vacuum_barrier_second_negative
+    interiorGlobalMinimum := two_vacuum_interior_global_minimum
+    exteriorBasinMinimum := by intro phi h; exact two_vacuum_exterior_basin_minimum h
+  }
+
+def twoVacuumAmplitudeModelConstructed : Bool := true
+def sourceNativeCMP119PotentialDerived : Bool := false
+def continuumDomainWallSolutionConstructed : Bool := false
+
+
 end Integration.GRQFTPostMergeLocalization

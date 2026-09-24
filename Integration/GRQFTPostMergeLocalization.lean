@@ -2128,11 +2128,6 @@ Ten normalized GRQFT stress components are outputs of ten finite localized
 first-variation readouts, not independent stress assumptions.
 -/
 
-structure TenFiniteD1Readout
-    (Axis : Type u)
-    (finiteD1Readout : Axis → Axis → Rat) : Prop where
-  d100 : finiteD1Readout (by exact Classical.choice inferInstance) (by exact Classical.choice inferInstance) = 1
-
 def tenStressValuesIndependentOfFiniteD1Evaluation : Bool := false
 def tenFiniteLocalizedD1EvaluationsStillRequired : Bool := true
 

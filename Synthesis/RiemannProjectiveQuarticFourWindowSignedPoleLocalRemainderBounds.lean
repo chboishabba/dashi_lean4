@@ -464,6 +464,165 @@ theorem real_cosh_sub_quartic_abs_le_sixth
       ring
 
 
+
+/-!
+## Genuine sixth-order remainder for the circular/base channel
+-/
+
+theorem QuarticFourSignedPolePair.baseQuarticJetRemainder_eq_sixthCosineRemainder
+    {t q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.baseQuarticJetRemainder q
+      =
+    ∫ u : ℝ,
+      quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t u
+        *
+      (Real.cos (q*u)
+        - (1 - (q*u)^2/2 + (q*u)^4/24)) := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hcos :
+      Integrable (fun u : ℝ => P u * Real.cos (q*u)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have href :
+      Integrable
+        (fun u : ℝ =>
+          P u * (1 - (q*u)^2/2 + (q*u)^4/24)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have hM0 :
+      ∫ u : ℝ, P u = 0 := by
+    change profileZerothMoment P = 0
+    exact quarticFourSignedPoleCombinedProfile_zeroth_zero W.Rpos
+  have hM2 :
+      ∫ u : ℝ, P u * u^2 = 0 := by
+    change profileSecondMoment P = 0
+    exact quarticFourSignedPoleCombinedProfile_second_zero
+      W.Rpos W.J2Half W.J2Two
+  have hM4 :
+      ∫ u : ℝ, P u * u^4 = -4 * W.targetStrength := by
+    change profileFourthMoment P = -4 * W.targetStrength
+    simpa [QuarticFourSignedPolePair.targetStrength] using
+      quarticFourSignedPoleCombinedProfile_fourth
+        (muHalf:=W.muHalf) (muTwo:=W.muTwo)
+        (t:=t) W.Rpos
+  have hrefValue :
+      ∫ u : ℝ,
+        P u * (1 - (q*u)^2/2 + (q*u)^4/24)
+        =
+      -(W.targetStrength/6) * q^4 := by
+    rw [show
+        (fun u : ℝ =>
+          P u * (1 - (q*u)^2/2 + (q*u)^4/24))
+        =
+        fun u =>
+          (P u - (q^2/2) * (P u * u^2))
+            + (q^4/24) * (P u * u^4) by
+      funext u
+      ring]
+    have hPint : Integrable P :=
+      hP.integrable_of_hasCompactSupport hPc
+    have h2 :
+        Integrable (fun u : ℝ => P u * u^2) :=
+      Continuous.integrable_of_hasCompactSupport
+        (by fun_prop) hPc.mul_right
+    have h4 :
+        Integrable (fun u : ℝ => P u * u^4) :=
+      Continuous.integrable_of_hasCompactSupport
+        (by fun_prop) hPc.mul_right
+    rw [integral_add
+          (hPint.sub (h2.const_mul _))
+          (h4.const_mul _),
+        integral_sub hPint (h2.const_mul _),
+        integral_const_mul, integral_const_mul,
+        hM0,hM2,hM4]
+    ring
+  unfold QuarticFourSignedPolePair.baseQuarticJetRemainder
+  rw [W.signedNormalizedBaseKernel_eq_compactCosine]
+  unfold compactCosineTransform
+  rw [show
+      (W.targetStrength/6) * q^4
+        = - (∫ u : ℝ,
+          P u * (1 - (q*u)^2/2 + (q*u)^4/24)) by
+      rw [hrefValue]
+      ring]
+  rw [← integral_sub hcos href]
+  apply integral_congr_ae
+  exact Filter.Eventually.of_forall fun u => by ring
+
+theorem QuarticFourSignedPolePair.baseQuarticJetRemainder_abs_le_sixth
+    {t q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hq : |q| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.baseQuarticJetRemainder q|
+      <=
+    (7/4320 : ℝ) * |q|^6
+      * W.signedProfileAbsMomentSix := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hi :
+      Integrable
+        (fun u : ℝ =>
+          P u
+            * (Real.cos (q*u)
+              - (1 - (q*u)^2/2 + (q*u)^4/24))) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have hmaj :
+      Integrable
+        (fun u : ℝ =>
+          (7/4320 : ℝ) * |q|^6 * (|P u| * |u|^6)) :=
+    (compactProfile_absMoment_integrable hP hPc 6).const_mul
+      ((7/4320 : ℝ) * |q|^6)
+  rw [W.baseQuarticJetRemainder_eq_sixthCosineRemainder]
+  calc
+    |∫ u : ℝ,
+      P u
+        * (Real.cos (q*u)
+          - (1 - (q*u)^2/2 + (q*u)^4/24))|
+      <=
+    ∫ u : ℝ,
+      |P u
+        * (Real.cos (q*u)
+          - (1 - (q*u)^2/2 + (q*u)^4/24))| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ u : ℝ,
+      (7/4320 : ℝ) * |q|^6 * (|P u| * |u|^6) := by
+      apply integral_mono hi.abs hmaj
+      intro u
+      by_cases hzero : P u = 0
+      · simp [hzero]
+      · have hqu := W.abs_q_mul_u_le_one_of_local hq hzero
+        have hc :=
+          real_cos_sub_quartic_abs_le_sixth hqu
+        rw [abs_mul]
+        have hqupow :
+            |q*u|^6 = |q|^6 * |u|^6 := by
+          rw [abs_mul, mul_pow]
+        rw [hqupow] at hc
+        nlinarith [abs_nonneg (P u), abs_nonneg u]
+    _ =
+    (7/4320 : ℝ) * |q|^6
+      * compactProfileAbsMoment P 6 := by
+      rw [integral_const_mul]
+      rfl
+    _ =
+    (7/4320 : ℝ) * |q|^6
+      * W.signedProfileAbsMomentSix := by
+      rfl
+
+
 /-!
 ## Certified quartic hyperbolic remainder
 -/

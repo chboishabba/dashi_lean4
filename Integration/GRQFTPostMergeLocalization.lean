@@ -2909,4 +2909,124 @@ theorem domain_wall_family_pressure
   rw [domain_wall_family_sigma radius hR]
 
 
+/-!
+Nambu-shell-matched asymmetric two-vacuum potential.
+
+At R=2:
+  V(0)=21/64
+  V(1)=19/48
+with an unstable barrier at 77/128.
+-/
+
+def nambuTwoVacuumPotential (phi : Rat) : Rat :=
+  phi^2*(1-phi)^2 + 21/64 + (13/192)*(3*phi^2-2*phi^3)
+
+def nambuTwoVacuumPotentialPrime (phi : Rat) : Rat :=
+  (77/32)*phi - (205/32)*phi^2 + 4*phi^3
+
+def nambuTwoVacuumPotentialSecond (phi : Rat) : Rat :=
+  77/32 - (205/16)*phi + 12*phi^2
+
+theorem nambu_two_vacuum_prime_factorization (phi : Rat) :
+    nambuTwoVacuumPotentialPrime phi
+      = phi*(phi-1)*(128*phi-77)/32 := by
+  ring
+
+theorem nambu_two_vacuum_interior_energy :
+    nambuTwoVacuumPotential 0 = 21/64 := by
+  norm_num [nambuTwoVacuumPotential]
+
+theorem nambu_two_vacuum_exterior_energy :
+    nambuTwoVacuumPotential 1 = 19/48 := by
+  norm_num [nambuTwoVacuumPotential]
+
+theorem nambu_two_vacuum_interior_stationary :
+    nambuTwoVacuumPotentialPrime 0 = 0 := by
+  norm_num [nambuTwoVacuumPotentialPrime]
+
+theorem nambu_two_vacuum_exterior_stationary :
+    nambuTwoVacuumPotentialPrime 1 = 0 := by
+  norm_num [nambuTwoVacuumPotentialPrime]
+
+theorem nambu_two_vacuum_barrier_stationary :
+    nambuTwoVacuumPotentialPrime (77/128) = 0 := by
+  norm_num [nambuTwoVacuumPotentialPrime]
+
+theorem nambu_two_vacuum_interior_second :
+    nambuTwoVacuumPotentialSecond 0 = 77/32 := by
+  norm_num [nambuTwoVacuumPotentialSecond]
+
+theorem nambu_two_vacuum_exterior_second :
+    nambuTwoVacuumPotentialSecond 1 = 51/32 := by
+  norm_num [nambuTwoVacuumPotentialSecond]
+
+theorem nambu_two_vacuum_barrier_second :
+    nambuTwoVacuumPotentialSecond (77/128) = -3927/4096 := by
+  norm_num [nambuTwoVacuumPotentialSecond]
+
+theorem nambu_two_vacuum_interior_difference_factorization (phi : Rat) :
+    nambuTwoVacuumPotential phi - 21/64
+      = phi^2*(192*phi^2-410*phi+231)/192 := by
+  ring
+
+theorem nambu_two_vacuum_exterior_difference_factorization (phi : Rat) :
+    nambuTwoVacuumPotential phi - 19/48
+      = (phi-1)^2*(192*phi^2-26*phi-13)/192 := by
+  ring
+
+theorem nambu_two_vacuum_interior_quadratic_positive (phi : Rat) :
+    0 < 192*phi^2 - 410*phi + 231 := by
+  have hs : 0 ≤ (phi - 205/192)^2 := sq_nonneg _
+  nlinarith
+
+theorem nambu_two_vacuum_interior_global_minimum (phi : Rat) :
+    21/64 ≤ nambuTwoVacuumPotential phi := by
+  rw [← sub_nonneg]
+  rw [nambu_two_vacuum_interior_difference_factorization]
+  have hq := nambu_two_vacuum_interior_quadratic_positive phi
+  positivity
+
+theorem nambu_two_vacuum_exterior_quadratic_positive_on_basin
+    {phi : Rat} (hphi : 1/2 ≤ phi) :
+    0 < 192*phi^2 - 26*phi - 13 := by
+  have hprod : 0 ≤ phi*(phi-1/2) := mul_nonneg (by linarith) (by linarith)
+  nlinarith
+
+theorem nambu_two_vacuum_exterior_basin_minimum
+    {phi : Rat} (hphi : 1/2 ≤ phi) :
+    19/48 ≤ nambuTwoVacuumPotential phi := by
+  rw [← sub_nonneg]
+  rw [nambu_two_vacuum_exterior_difference_factorization]
+  have hq := nambu_two_vacuum_exterior_quadratic_positive_on_basin hphi
+  positivity
+
+def scaledNambuTwoVacuumPotential (scale phi : Rat) : Rat :=
+  scale * nambuTwoVacuumPotential phi
+
+theorem scaled_nambu_vacuum_levels (scale : Rat) :
+    scaledNambuTwoVacuumPotential scale 0 = scale*(21/64)
+    ∧ scaledNambuTwoVacuumPotential scale 1 = scale*(19/48) := by
+  constructor <;> norm_num [scaledNambuTwoVacuumPotential,
+    nambuTwoVacuumPotential]
+
+structure NambuTwoVacuumPotentialWitness : Prop where
+  interiorGlobalMinimum : ∀ phi, 21/64 ≤ nambuTwoVacuumPotential phi
+  exteriorBasinMinimum : ∀ {phi}, 1/2 ≤ phi → 19/48 ≤ nambuTwoVacuumPotential phi
+  interiorStationary : nambuTwoVacuumPotentialPrime 0 = 0
+  exteriorStationary : nambuTwoVacuumPotentialPrime 1 = 0
+  barrierStationary : nambuTwoVacuumPotentialPrime (77/128) = 0
+  barrierUnstable : nambuTwoVacuumPotentialSecond (77/128) = -3927/4096
+
+theorem canonical_nambu_two_vacuum_potential :
+    NambuTwoVacuumPotentialWitness := by
+  exact {
+    interiorGlobalMinimum := nambu_two_vacuum_interior_global_minimum
+    exteriorBasinMinimum := by intro phi h; exact nambu_two_vacuum_exterior_basin_minimum h
+    interiorStationary := nambu_two_vacuum_interior_stationary
+    exteriorStationary := nambu_two_vacuum_exterior_stationary
+    barrierStationary := nambu_two_vacuum_barrier_stationary
+    barrierUnstable := nambu_two_vacuum_barrier_second
+  }
+
+
 end Integration.GRQFTPostMergeLocalization

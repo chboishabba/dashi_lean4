@@ -703,6 +703,267 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_scaled_mass_sub_fourth
       ht (eta:=eta) n
   linarith
 
+
+/-!
+## Correct-polarity lower fourth-angular compiler
+
+The G3 upper source needs a LOWER bound on the local fourth-angular statistic.
+V4 already provides this because its theorem is absolute.  H4 has a simple
+unconditional lower envelope from the critical strip and the local ordinate
+radius:
+
+  a^2(a^2-6 delta^2) >= -3/2 r^2.
+
+This produces the correct source orientation without any Montgomery input.
+-/
+
+def QuarticFourSignedPolePair.literalLocalMultiplicityAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℕ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      zetaZeroConfig.mult (rho : ℂ)
+    else
+      0
+
+theorem QuarticFourSignedPolePair.literalLocalHorizontalFourthMassAt_le_sixteenth_multiplicity
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalHorizontalFourthMassAt eta n
+      <=
+    (1/16 : ℝ) * (W.literalLocalMultiplicityAt eta n : ℝ) := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalHorizontalFourthMassAt
+    QuarticFourSignedPolePair.literalLocalMultiplicityAt
+  rw [Nat.cast_sum, Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · have ha := zetaZero_height_abs_le_half rho
+    have ha2 : heightOf rho^2 <= (1/4 : ℝ) := by
+      nlinarith [sq_abs (heightOf rho), sq_nonneg (heightOf rho)]
+    have ha4 : heightOf rho^4 <= (1/16 : ℝ) := by
+      nlinarith [sq_nonneg (heightOf rho^2 - (1/4 : ℝ))]
+    by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl, hoff]
+      simpa [mul_comm] using
+        (mul_le_mul_of_nonneg_left ha4
+          (by positivity :
+            0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ)))
+    · simp [hl, hoff]
+      positivity
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalHorizontalFourthCorrectionAt_lower
+    {t eta : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    -(3/2 : ℝ)
+        * quarticSignedPoleLocalHalfWidth t eta ^ 2
+        * (W.literalLocalMultiplicityAt eta n : ℝ)
+      <=
+    W.literalLocalHorizontalFourthCorrectionAt eta n := by
+  classical
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  have hr0 : 0 <= r := by
+    dsimp [r, quarticSignedPoleLocalHalfWidth]
+    positivity
+  unfold QuarticFourSignedPolePair.literalLocalHorizontalFourthCorrectionAt
+    QuarticFourSignedPolePair.literalLocalMultiplicityAt
+  rw [Nat.cast_sum, Finset.mul_sum]
+  rw [show
+      -(3/2 : ℝ) * r^2
+        * (∑ rho ∈ centeredZeroFinset t n,
+          (if quarticSignedPoleLocal t eta rho then
+             (zetaZeroConfig.mult (rho : ℂ) : ℝ)
+           else 0))
+      =
+      ∑ rho ∈ centeredZeroFinset t n,
+        (-(3/2 : ℝ) * r^2)
+          * (if quarticSignedPoleLocal t eta rho then
+               (zetaZeroConfig.mult (rho : ℂ) : ℝ)
+             else 0) by
+        rw [Finset.mul_sum]]
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · have hclosed :=
+      (quarticSignedPoleLocal_iff_closed_ordinate_window
+        ht heta rho).mp hl
+    have hdeltaAbs :
+        |(rho : ℂ).im - t| <= r := by
+      rw [abs_le]
+      constructor <;> dsimp [r] at hclosed ⊢ <;> linarith
+    have hd2 :
+        ((rho : ℂ).im-t)^2 <= r^2 := by
+      nlinarith [sq_abs ((rho : ℂ).im-t),
+        sq_nonneg ((rho : ℂ).im-t)]
+    have ha := zetaZero_height_abs_le_half rho
+    have ha2 : heightOf rho^2 <= (1/4 : ℝ) := by
+      nlinarith [sq_abs (heightOf rho), sq_nonneg (heightOf rho)]
+    by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · have hterm :
+        -(3/2 : ℝ) * r^2
+          <=
+        heightOf rho^2
+          * (heightOf rho^2 - 6*((rho : ℂ).im-t)^2) := by
+        have ha20 : 0 <= heightOf rho^2 := sq_nonneg _
+        have hd20 : 0 <= ((rho : ℂ).im-t)^2 := sq_nonneg _
+        nlinarith
+      simp [hl, hoff]
+      exact mul_le_mul_of_nonneg_right hterm (by positivity)
+    · simp [hl, hoff]
+      have hnon :
+          -(3/2 : ℝ) * r^2
+            * ((zetaZeroConfig).mult (rho : ℂ) : ℝ) <= 0 := by
+        positivity
+      exact hnon
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalVerticalFourthDiscrepancy_ge_neg_rvm
+    {t eta EV : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleLocalHalfWidth t eta < (n : ℝ))
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t (quarticSignedPoleLocalHalfWidth t eta)| <= EV) :
+    -EV
+      <=
+    W.literalLocalVerticalFourthZeroMomentAt eta n
+      - quarticSignedPoleLocalMuVerticalFourthMoment t eta := by
+  rw [W.literalLocalVerticalFourthDiscrepancy_eq_rvm_add_leftAtom
+      ht heta n hn]
+  have hv :
+      -EV <=
+      quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t (quarticSignedPoleLocalHalfWidth t eta) :=
+    (abs_le.mp hV).1
+  have hatom :
+      0 <= W.literalLocalVerticalFourthLeftEndpointAtomAt eta n := by
+    rw [W.literalLocalVerticalFourthLeftEndpointAtomAt_eq]
+    positivity
+  linarith
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_lower
+    {t eta EV : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleLocalHalfWidth t eta < (n : ℝ))
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t (quarticSignedPoleLocalHalfWidth t eta)| <= EV) :
+    -EV
+      -
+    (3/2 : ℝ)
+      * quarticSignedPoleLocalHalfWidth t eta ^ 2
+      * (W.literalLocalMultiplicityAt eta n : ℝ)
+      <=
+    W.literalLocalCenteredFourthAngularAt eta n := by
+  rw [W.literalLocalCenteredFourthAngularAt_eq]
+  have hv :=
+    W.literalLocalVerticalFourthDiscrepancy_ge_neg_rvm
+      ht heta n hn hV
+  have hh :=
+    W.literalLocalHorizontalFourthCorrectionAt_lower
+      ht heta n
+  linarith
+
+/--
+Correct-polarity explicit local G3 upper bound.
+
+Unlike the earlier candidate ABSORB surface, this theorem is actually oriented
+toward the literal G3 upper-source compiler.  It needs only:
+* the absolute V4 estimate EV;
+* one bound M on the literal local multiplicity.
+
+The endpoint atom is favorable and disappears from the debt.
+-/
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_corrected_v4h4_budget
+    {t eta EV M : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleLocalHalfWidth t eta < (n : ℝ))
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t (quarticSignedPoleLocalHalfWidth t eta)| <= EV)
+    (hM :
+      (W.literalLocalMultiplicityAt eta n : ℝ) <= M) :
+    W.literalOffOrdExactAt n
+      <=
+    (W.targetStrength / (6 * (t/16)^6))
+      *
+    (
+      EV
+        +
+      ((1/16 : ℝ)
+        + (3/2 : ℝ)
+            * quarticSignedPoleLocalHalfWidth t eta ^ 2)
+        * M
+        -
+      quarticSignedPoleLocalMuVerticalFourthMoment t eta
+    )
+      +
+    W.literalLocalRemainderDebtAt eta n
+      +
+    W.literalFarExactAt eta n := by
+  have hsource :=
+    W.literalOffOrdExactAt_le_scaled_mass_sub_fourthPhase_add_remainder_add_far
+      ht (eta:=eta) n
+  have hmass :=
+    W.literalLocalHorizontalFourthMassAt_le_sixteenth_multiplicity
+      (eta:=eta) n
+  have hang :=
+    W.literalLocalCenteredFourthAngularAt_lower
+      ht heta n hn hV
+  have hcenter :
+      W.literalLocalFourthPhaseMomentAt eta n
+        =
+      W.literalLocalCenteredFourthAngularAt eta n
+        + quarticSignedPoleLocalMuVerticalFourthMoment t eta := by
+    unfold QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt
+    ring
+  have hM0 :
+      0 <= (W.literalLocalMultiplicityAt eta n : ℝ) := by positivity
+  have hcoef :
+      0 <= W.targetStrength / (6 * (t/16)^6) := by positivity
+  have hinside :
+      W.literalLocalHorizontalFourthMassAt eta n
+        - W.literalLocalFourthPhaseMomentAt eta n
+      <=
+      EV
+        +
+      ((1/16 : ℝ)
+        + (3/2 : ℝ)
+            * quarticSignedPoleLocalHalfWidth t eta ^ 2)
+        * M
+        -
+      quarticSignedPoleLocalMuVerticalFourthMoment t eta := by
+    rw [hcenter]
+    have hmM :=
+      mul_le_mul_of_nonneg_left hM (by norm_num : (0:ℝ) <= 1/16)
+    have hrM :=
+      mul_le_mul_of_nonneg_left hM
+        (by positivity :
+          0 <= (3/2 : ℝ)
+            * quarticSignedPoleLocalHalfWidth t eta ^ 2)
+    nlinarith
+  have hscaled := mul_le_mul_of_nonneg_left hinside hcoef
+  exact hsource.trans (by
+    linarith)
+
 /-!
 ## Fail-closed explicit ABSORB surface
 

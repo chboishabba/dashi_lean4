@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "majoring element",
+  "majorant",
+  "UB"
+ ],
+ "canonical": "Q42866132",
+ "description": "any element M of a partially ordered set A which includes a subset B, such that M is greater than or equal to every element of B",
+ "id": "Q42866132",
+ "label": "upper bound"
+}

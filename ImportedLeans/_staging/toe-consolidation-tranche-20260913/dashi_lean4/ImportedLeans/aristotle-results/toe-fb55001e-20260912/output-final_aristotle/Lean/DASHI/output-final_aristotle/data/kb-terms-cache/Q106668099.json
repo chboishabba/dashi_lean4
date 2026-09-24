@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "rdac:10005",
+  "corporate entity",
+  "corporate agent",
+  "rdac:C10005"
+ ],
+ "canonical": "Q106668099",
+ "description": "in library science, a collective agent that is composed of persons who are organized for a common purpose or activity; collective agent includes corporate bodies and families",
+ "id": "Q106668099",
+ "label": "corporate body"
+}

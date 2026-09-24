@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "lexical class",
+  "lexical category",
+  "word class"
+ ],
+ "canonical": "Q82042",
+ "description": "category of words based on shared grammatical properties in a clause",
+ "id": "Q82042",
+ "label": "part of speech"
+}

@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "alias",
+  "alternate name"
+ ],
+ "canonical": "Q7662595",
+ "description": "in a database, alternate name for a table, view, sequence, or other schema object in a database",
+ "id": "Q7662595",
+ "label": "synonym"
+}

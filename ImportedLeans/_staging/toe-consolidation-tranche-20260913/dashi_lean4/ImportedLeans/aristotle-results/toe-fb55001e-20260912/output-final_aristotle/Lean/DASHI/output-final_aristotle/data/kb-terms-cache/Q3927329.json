@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "quadruple",
+  "quad"
+ ],
+ "canonical": "Q3927329",
+ "description": "tuple of specific length (tuple length n=4)",
+ "id": "Q3927329",
+ "label": "4-tuple"
+}

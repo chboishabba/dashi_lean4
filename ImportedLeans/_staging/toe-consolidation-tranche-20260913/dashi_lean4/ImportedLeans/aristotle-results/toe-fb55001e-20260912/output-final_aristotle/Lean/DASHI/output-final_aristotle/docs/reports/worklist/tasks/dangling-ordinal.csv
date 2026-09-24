@@ -1,0 +1,2 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/defects.skb","series","dangling-ordinal","error","suggested-fix","V9","","","","","`series ordinal` (P1545) on an item that is not declared","declare the item, or delete the ordinal"

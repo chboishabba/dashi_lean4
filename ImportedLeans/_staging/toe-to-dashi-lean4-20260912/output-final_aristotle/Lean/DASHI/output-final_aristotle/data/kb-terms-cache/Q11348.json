@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "mathematical function",
+  "single-valued function",
+  "total function",
+  "map",
+  "application",
+  "mapping"
+ ],
+ "canonical": "Q11348",
+ "description": "association of a single output to each input",
+ "id": "Q11348",
+ "label": "function"
+}

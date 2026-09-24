@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "amalgamated sum"
+ ],
+ "canonical": "Q1633079",
+ "description": "category-theoretic colimit of a diagram of the form 𝑋←𝑍→𝑌",
+ "id": "Q1633079",
+ "label": "pushout"
+}

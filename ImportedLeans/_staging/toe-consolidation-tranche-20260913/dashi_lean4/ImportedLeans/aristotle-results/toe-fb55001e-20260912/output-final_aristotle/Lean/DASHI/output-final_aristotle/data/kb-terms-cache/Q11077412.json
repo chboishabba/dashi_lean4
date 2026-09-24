@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "irreflexive order",
+  "strict partial order",
+  "irreflexive partial order"
+ ],
+ "canonical": "Q11077412",
+ "description": "irreflexive transitive relation",
+ "id": "Q11077412",
+ "label": "strict order"
+}

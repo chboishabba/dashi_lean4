@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wikidata report — frontier-round-4</title>
+<style>
+body{font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;margin:2rem;color:#1b1b1f}
+h1{font-size:1.4rem} h2{font-size:1.05rem;margin-top:2rem}
+table{border-collapse:collapse;font-size:.85rem;width:100%}
+th,td{border:1px solid #d7d7de;padding:.25rem .5rem;text-align:left;vertical-align:top}
+th{background:#f2f2f5}
+tr.error td:nth-child(3){color:#a4262c;font-weight:600}
+tr.warning td:nth-child(3){color:#8a6d00;font-weight:600}
+tr.error:hover,tr.warning:hover{background:#f7f9ff}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.meta{color:#5b5b66;font-size:.85rem}
+</style>
+</head>
+<body>
+<h1>Wikidata report — frontier-round-4</h1>
+<p class="meta">9 issue(s) — 9 error(s), 0 warning(s) — found in data/frontier4.wdkb. Each row names the items the problem is about and the action suggested for it.</p>
+<h2>By error type</h2>
+<table>
+<tr><th>code</th><th>severity</th><th>status</th><th>count</th></tr>
+<tr class="error"><td>level-inst</td><td>error</td><td>needs-review</td><td>5</td></tr>
+<tr class="error"><td>level-sub</td><td>error</td><td>needs-review</td><td>4</td></tr>
+</table>
+<h2>Issues</h2>
+<table>
+<tr><th>source</th><th>layer</th><th>code</th><th>severity</th><th>status</th><th>subject</th><th>subject label</th><th>object</th><th>object label</th><th>extra</th><th>message</th><th>fix</th></tr>
+<tr class="error"><td>data/frontier4.wdkb</td><td>ontology</td><td>level-inst</td><td>error</td><td>needs-review</td><td>Q20026918</td><td>mathematical theory</td><td>Q24034552</td><td>mathematical concept</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>re-level one of the two items, or replace `instance of` by `subclass of`; level shifts affect the whole branch, so review by hand</td></tr>
+<tr class="error"><td>data/frontier4.wdkb</td><td>ontology</td><td>level-inst</td><td>error</td><td>needs-review</td><td>Q7048977</td><td>abstract entity</td><td>Q23958852</td><td>variable-order class</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>re-level one of the two items, or replace `instance of` by `subclass of`; level shifts affect the whole branch, so review by hand</td></tr>
+<tr class="error"><td>data/frontier4.wdkb</td><td>ontology</td><td>level-inst</td><td>error</td><td>needs-review</td><td>Q205464</td><td>algebraic structure</td><td>Q24034552</td><td>mathematical concept</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>re-level one of the two items, or replace `instance of` by `subclass of`; level shifts affect the whole branch, so review by hand</td></tr>
+<tr class="error"><td>data/frontier4.wdkb</td><td>ontology</td><td>level-inst</td><td>error</td><td>needs-review</td><td>Q24034552</td><td>mathematical concept</td><td>Q23958852</td><td>variable-order class</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>re-level one of the two items, or replace `instance of` by `subclass of`; level shifts affect the whole branch, so review by hand</td></tr>
+<tr class="error"><td>data/frontier4.wdkb</td><td>ontology</td><td>level-inst</td><td>error</td><td>needs-review</td><td>Q24034552</td><td>mathematical concept</td><td>Q137429456</td><td>type of concept</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>re-level one of the two items, or replace `instance of` by `subclass of`; level shifts affect the whole branch, so review by hand</td></tr>
+<tr class="error"><td>data/frontier4.wdkb</td><td>ontology</td><td>level-sub</td><td>error</td><td>needs-review</td><td>Q192276</td><td>measure</td><td>Q11348</td><td>function</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>re-level one of the two items, or replace `subclass of` by `instance of`; review by hand</td></tr>
+<tr class="error"><td>data/frontier4.wdkb</td><td>ontology</td><td>level-sub</td><td>error</td><td>needs-review</td><td>Q11348</td><td>function</td><td>Q130901</td><td>binary relation</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>re-level one of the two items, or replace `subclass of` by `instance of`; review by hand</td></tr>
+<tr class="error"><td>data/frontier4.wdkb</td><td>ontology</td><td>level-sub</td><td>error</td><td>needs-review</td><td>Q11348</td><td>function</td><td>Q1756942</td><td>partial function</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>re-level one of the two items, or replace `subclass of` by `instance of`; review by hand</td></tr>
+<tr class="error"><td>data/frontier4.wdkb</td><td>ontology</td><td>level-sub</td><td>error</td><td>needs-review</td><td>Q24034552</td><td>mathematical concept</td><td>Q151885</td><td>concept</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>re-level one of the two items, or replace `subclass of` by `instance of`; review by hand</td></tr>
+</table>
+</body>
+</html>

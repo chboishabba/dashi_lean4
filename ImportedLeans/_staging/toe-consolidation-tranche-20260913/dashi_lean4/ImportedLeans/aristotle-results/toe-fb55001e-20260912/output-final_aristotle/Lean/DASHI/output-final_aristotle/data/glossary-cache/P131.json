@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P131",
+ "description": "the item is located on the territory of the following administrative entity. Use P276 for specifying locations that are non-administrative places and for items about events. Use P1382 if the item falls only partially into the administrative entity",
+ "id": "P131",
+ "kind": "property",
+ "label": "located in the administrative territorial entity"
+}

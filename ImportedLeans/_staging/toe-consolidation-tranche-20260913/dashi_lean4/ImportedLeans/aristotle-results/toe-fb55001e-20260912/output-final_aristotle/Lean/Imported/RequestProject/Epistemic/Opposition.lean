@@ -1,0 +1,284 @@
+import RequestProject.Epistemic.Tetralemma
+
+/-!
+# Claim-indexed evidence polarity: what "evidence against" is evidence against
+
+The support square of `Tetralemma.lean` carries two coordinates, "supported"
+and "counter-supported".  The upstream tranche makes a sharp observation about
+the second coordinate: *it is not automatically the logical negation of the
+first claim*.  Something recorded as opposing may be the converse of a relation,
+the algebraic inverse of a quantity, a reading in another context, or the same
+claim through another lens — and only in the first of those does support for it
+refute the base claim.  Upstream this is enforced by tagging each opposition
+with an *operator role* and observing that the role constructors are distinct.
+
+Here the tags are kept, but the work is done semantically:
+
+* an `Epistemic.Opposition` records the base claim, the operator, the resulting
+  opposing claim (with a proof that the operator produces it) and the declared
+  role;
+* `Epistemic.Opposes` is the *semantic* condition — in a given interpretation,
+  the opposing claim holds exactly when the base claim fails;
+* under that condition, and only under it, opposing support refutes
+  (`Epistemic.not_holds_of_sound_against`) and a conflict corner is a real
+  inconsistency (`Epistemic.sound_ne_bothSupported`);
+* the declared role neither confers the condition nor rules it out
+  (`Epistemic.role_does_not_determine_opposition`), so a tag is a description,
+  never a licence;
+* the converse of a relation is a concrete counterexample: the base claim and
+  its converse can hold together, so support for the converse refutes nothing
+  (`Epistemic.converse_support_does_not_refute`).
+
+Evidence is then indexed by *fibre* — an opposition and a context — and pooled
+only inside a fibre (`Epistemic.FibreEvidence.pool`).  Pooling inside a fibre
+retains conflict and retains ignorance; pooling across fibres is exactly what
+manufactures a contradiction out of two consistent readings, both when the
+fibres differ in context (`Epistemic.crossContext_pool_manufactures_conflict`)
+and when they differ in the kind of opposition meant
+(`Epistemic.crossRole_pool_manufactures_conflict`).
+-/
+
+namespace Epistemic
+
+/-! ## Operator roles -/
+
+-- @source DASHI Agda bridge (PR #582): the relational operator role vocabulary
+/-- The role an operator is declared to play in relating a claim to its
+opposite. -/
+inductive OperatorRole
+  | logicalNegation
+  | algebraicInverse
+  | orientationReversal
+  | contextualCounterposition
+  | lensTransition
+  deriving DecidableEq, Repr, Inhabited
+
+-- @source DASHI Agda bridge (PR #582): the opposition descriptor
+/-- A declared opposition: a base claim, an operator applied to it, the opposing
+claim it produces, and the role the operator is declared to play. -/
+structure Opposition (Claim : Type) where
+  /-- The claim under discussion. -/
+  base : Claim
+  /-- The operator that produces the opposing claim. -/
+  op : Claim → Claim
+  /-- What kind of opposition the operator is declared to be. -/
+  role : OperatorRole
+  /-- The opposing claim. -/
+  opposing : Claim
+  /-- The opposing claim really is the operator applied to the base claim. -/
+  op_base : op base = opposing
+
+/-- An interpretation says which claims hold. -/
+abbrev Interpretation (Claim : Type) := Claim → Prop
+
+/-- **The semantic condition.**  In this interpretation, the opposing claim
+holds exactly when the base claim fails: only then is the second coordinate of
+the support square evidence *against* the first. -/
+def Opposes {Claim : Type} (holds : Interpretation Claim) (o : Opposition Claim) : Prop :=
+  holds o.opposing ↔ ¬ holds o.base
+
+/-! ## Evidence in a fibre -/
+
+-- @source DASHI Agda bridge (PR #582): claim/context-indexed fibre evidence
+/-- Evidence about one claim, in one context, under one declared opposition. -/
+structure FibreEvidence (Claim Ctx : Type) (o : Opposition Claim) (c : Ctx) where
+  /-- The two independent evidence coordinates. -/
+  square : SupportSquare
+  /-- Where the evidence came from. -/
+  provenance : List String
+
+namespace FibreEvidence
+
+variable {Claim Ctx : Type} {o : Opposition Claim} {c : Ctx}
+
+/-- Support for the base claim. -/
+def supportsBase (e : FibreEvidence Claim Ctx o c) : Bool := e.square.forPos
+
+/-- Support for the opposing claim. -/
+def supportsOpposing (e : FibreEvidence Claim Ctx o c) : Bool := e.square.against
+
+/-- Pooling two reports *in the same fibre*. -/
+def pool (e f : FibreEvidence Claim Ctx o c) : FibreEvidence Claim Ctx o c :=
+  ⟨SupportSquare.merge e.square f.square, e.provenance ++ f.provenance⟩
+
+@[simp] theorem pool_supportsBase (e f : FibreEvidence Claim Ctx o c) :
+    (pool e f).supportsBase = (e.supportsBase || f.supportsBase) := rfl
+
+@[simp] theorem pool_supportsOpposing (e f : FibreEvidence Claim Ctx o c) :
+    (pool e f).supportsOpposing = (e.supportsOpposing || f.supportsOpposing) := rfl
+
+@[simp] theorem pool_provenance (e f : FibreEvidence Claim Ctx o c) :
+    (pool e f).provenance = e.provenance ++ f.provenance := rfl
+
+theorem pool_square_comm (e f : FibreEvidence Claim Ctx o c) :
+    (pool e f).square = (pool f e).square := SupportSquare.merge_comm _ _
+
+/-- Pooling only ever adds information. -/
+theorem knows_pool_left (e f : FibreEvidence Claim Ctx o c) :
+    SupportSquare.Knows e.square (pool e f).square := SupportSquare.knows_merge_left _ _
+
+-- @source DASHI Agda bridge (PR #582): conflict retained before projection
+/-- **Conflict is retained.**  Pooling a report for the base claim with a report
+for the opposing claim lands in the conflict corner rather than collapsing. -/
+theorem pool_conflict (e f : FibreEvidence Claim Ctx o c)
+    (he : e.square = ⟨true, false⟩) (hf : f.square = ⟨false, true⟩) :
+    classify (pool e f).square = Corner.bothSupported := by
+  simp [pool, SupportSquare.merge, he, hf, classify]
+
+-- @source DASHI Agda bridge (PR #582): ignorance retained before projection
+/-- **Ignorance is retained.**  Pooling two silent reports stays silent. -/
+theorem pool_ignorance (e f : FibreEvidence Claim Ctx o c)
+    (he : e.square = SupportSquare.empty) (hf : f.square = SupportSquare.empty) :
+    classify (pool e f).square = Corner.neitherEstablished := by
+  simp [pool, SupportSquare.merge, he, hf, SupportSquare.empty, classify]
+
+/-- Evidence is *sound* for an interpretation when each recorded coordinate is
+true of the claim it is recorded about. -/
+def Sound (holds : Interpretation Claim) (e : FibreEvidence Claim Ctx o c) : Prop :=
+  (e.supportsBase = true → holds o.base) ∧ (e.supportsOpposing = true → holds o.opposing)
+
+end FibreEvidence
+
+open FibreEvidence
+
+/-! ## What opposing support licenses -/
+
+/-- **Opposing support refutes exactly when the opposition is semantic.**  If
+the opposing claim really is the failure of the base claim, sound counter-support
+refutes the base claim. -/
+theorem not_holds_of_sound_against {Claim Ctx : Type} {o : Opposition Claim} {c : Ctx}
+    {holds : Interpretation Claim} {e : FibreEvidence Claim Ctx o c}
+    (hopp : Opposes holds o) (hsound : e.Sound holds) (h : e.supportsOpposing = true) :
+    ¬ holds o.base := hopp.1 (hsound.2 h)
+
+/-- **Under a semantic opposition, sound evidence never reaches the conflict
+corner**: a recorded conflict is then a real inconsistency in the reports. -/
+theorem sound_ne_bothSupported {Claim Ctx : Type} {o : Opposition Claim} {c : Ctx}
+    {holds : Interpretation Claim} {e : FibreEvidence Claim Ctx o c}
+    (hopp : Opposes holds o) (hsound : e.Sound holds) :
+    classify e.square ≠ Corner.bothSupported := by
+  intro h
+  have hb : e.square.forPos = true ∧ e.square.against = true := by
+    rcases hsq : e.square with ⟨p, n⟩
+    rw [hsq] at h
+    cases p <;> cases n <;> simp_all [classify]
+  exact hopp.1 (hsound.2 hb.2) (hsound.1 hb.1)
+
+/-! ## The converse of a relation is not its negation -/
+
+/-- A claim is an ordered pair, read as "the first entry is at most the
+second". -/
+abbrev OrderClaim := ℕ × ℕ
+
+/-- The interpretation of an order claim. -/
+def orderHolds : Interpretation OrderClaim := fun p => p.1 ≤ p.2
+
+-- @source DASHI Agda bridge (PR #582): orientation reversal is not logical negation
+/-- The converse of an order claim, declared as an orientation reversal. -/
+def converseOpposition : Opposition OrderClaim :=
+  ⟨(1, 1), Prod.swap, OperatorRole.orientationReversal, (1, 1), rfl⟩
+
+/-- **The converse is not the negation**: a claim and its converse can hold
+together. -/
+theorem converse_not_opposes : ¬ Opposes orderHolds converseOpposition := by
+  intro h
+  exact h.1 (by simp [orderHolds, converseOpposition]) (by simp [orderHolds, converseOpposition])
+
+/-- **Support for the converse refutes nothing.**  There is sound evidence whose
+counter-coordinate is set while the base claim holds — so the second coordinate
+of the square may not be read as a refutation without the semantic condition. -/
+theorem converse_support_does_not_refute :
+    ∃ e : FibreEvidence OrderClaim Unit converseOpposition (),
+      e.Sound orderHolds ∧ e.supportsOpposing = true ∧ orderHolds converseOpposition.base := by
+  refine ⟨⟨⟨false, true⟩, []⟩, ⟨?_, ?_⟩, rfl, by simp [orderHolds, converseOpposition]⟩
+  · intro h; exact absurd h (by simp [FibreEvidence.supportsBase])
+  · intro _; simp [orderHolds, converseOpposition]
+
+/-! ## The declared role is a description, not a licence -/
+
+/-- An opposition tagged as a logical negation that is not one. -/
+def mislabelledOpposition : Opposition OrderClaim :=
+  ⟨(1, 1), Prod.swap, OperatorRole.logicalNegation, (1, 1), rfl⟩
+
+/-- An opposition tagged as a logical negation that really is one. -/
+def genuineOpposition : Opposition OrderClaim :=
+  ⟨(1, 2), Prod.swap, OperatorRole.logicalNegation, (2, 1), rfl⟩
+
+theorem mislabelled_not_opposes : ¬ Opposes orderHolds mislabelledOpposition := by
+  intro h
+  exact h.1 (by simp [orderHolds, mislabelledOpposition]) (by simp [orderHolds, mislabelledOpposition])
+
+theorem genuine_opposes : Opposes orderHolds genuineOpposition := by
+  constructor
+  · intro h
+    exact absurd h (by simp [orderHolds, genuineOpposition])
+  · intro h
+    exact absurd (by simp [orderHolds, genuineOpposition] : orderHolds genuineOpposition.base) h
+
+-- @source DASHI Agda bridge (PR #582): opposing support does not self-qualify as negation
+/-- **No function of the declared role decides whether the opposition is
+semantic.**  Two oppositions carry the same `logicalNegation` tag, and exactly
+one of them is a logical negation. -/
+theorem role_does_not_determine_opposition (g : OperatorRole → Bool) :
+    ¬ ∀ o : Opposition OrderClaim, g o.role = true ↔ Opposes orderHolds o := by
+  intro h
+  have h1 := (h genuineOpposition).2 genuine_opposes
+  have h2 := h mislabelledOpposition
+  rw [show mislabelledOpposition.role = genuineOpposition.role from rfl, h1] at h2
+  exact mislabelled_not_opposes (h2.1 rfl)
+
+/-! ## Pooling across fibres manufactures conflict -/
+
+/-- A context-dependent reading of an order claim: in one context it is read
+forwards, in the other backwards. -/
+def contextualHolds : Bool → Interpretation OrderClaim
+  | true => fun p => p.1 ≤ p.2
+  | false => fun p => p.2 ≤ p.1
+
+-- @source DASHI Agda bridge (PR #582): cross-context pooling requires alignment
+/-- **Two consistent readings in different contexts pool into a recorded
+conflict.**  Each report is sound *in its own context*, and neither context is
+inconsistent; merging their squares nevertheless lands in the conflict corner.
+This is why the fibre index has to be part of the evidence. -/
+theorem crossContext_pool_manufactures_conflict :
+    ∃ (e : FibreEvidence OrderClaim Bool genuineOpposition true)
+      (f : FibreEvidence OrderClaim Bool genuineOpposition false),
+      e.Sound (contextualHolds true) ∧ f.Sound (contextualHolds false) ∧
+      classify (SupportSquare.merge e.square f.square) = Corner.bothSupported ∧
+      Opposes (contextualHolds true) genuineOpposition ∧
+      Opposes (contextualHolds false) genuineOpposition := by
+  refine ⟨⟨⟨true, false⟩, []⟩, ⟨⟨false, true⟩, []⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩, rfl, ?_, ?_⟩
+  · intro _; simp [contextualHolds, genuineOpposition]
+  · intro h; exact absurd h (by simp [FibreEvidence.supportsOpposing])
+  · intro h; exact absurd h (by simp [FibreEvidence.supportsBase])
+  · intro _; simp [contextualHolds, genuineOpposition]
+  · constructor
+    · intro h; exact absurd h (by simp [contextualHolds, genuineOpposition])
+    · intro h
+      exact absurd (by simp [contextualHolds, genuineOpposition] :
+        contextualHolds true genuineOpposition.base) h
+  · constructor
+    · intro _
+      simp [contextualHolds, genuineOpposition]
+    · intro _
+      simp [contextualHolds, genuineOpposition]
+
+-- @source DASHI Agda bridge (PR #582): cross-opposition pooling requires alignment
+/-- **Pooling across two different kinds of opposition manufactures conflict
+too.**  Support for the base claim, merged with support for the *converse*,
+records a conflict although both claims hold. -/
+theorem crossRole_pool_manufactures_conflict :
+    ∃ (e : FibreEvidence OrderClaim Unit genuineOpposition ())
+      (f : FibreEvidence OrderClaim Unit converseOpposition ()),
+      e.Sound orderHolds ∧ f.Sound orderHolds ∧
+      genuineOpposition.role ≠ converseOpposition.role ∧
+      classify (SupportSquare.merge e.square f.square) = Corner.bothSupported ∧
+      orderHolds converseOpposition.base ∧ orderHolds converseOpposition.opposing := by
+  refine ⟨⟨⟨true, false⟩, []⟩, ⟨⟨false, true⟩, []⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩, by decide, rfl,
+    by simp [orderHolds, converseOpposition], by simp [orderHolds, converseOpposition]⟩
+  · intro _; simp [orderHolds, genuineOpposition]
+  · intro h; exact absurd h (by simp [FibreEvidence.supportsOpposing])
+  · intro h; exact absurd h (by simp [FibreEvidence.supportsBase])
+  · intro _; simp [orderHolds, converseOpposition]
+
+end Epistemic

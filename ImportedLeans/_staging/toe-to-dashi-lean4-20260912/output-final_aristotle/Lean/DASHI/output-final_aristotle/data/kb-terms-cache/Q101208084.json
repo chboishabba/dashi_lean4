@@ -1,0 +1,15 @@
+{
+ "aliases": [
+  "kind of risk",
+  "sort of risk",
+  "form of risk",
+  "risk type",
+  "risk kind",
+  "risk sort",
+  "risk form"
+ ],
+ "canonical": "Q101208084",
+ "description": "Wikidata metaclass for risk or hazard",
+ "id": "Q101208084",
+ "label": "type of risk"
+}

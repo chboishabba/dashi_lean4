@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P8810",
+ "description": "parent of the subject. Only use if neither father (P22) nor mother (P25) nor stepparent (P3448) is applicable.",
+ "id": "P8810",
+ "kind": "property",
+ "label": "parent"
+}

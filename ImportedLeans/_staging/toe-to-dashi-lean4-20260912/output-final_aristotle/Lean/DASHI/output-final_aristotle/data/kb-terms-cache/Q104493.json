@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "danger",
+  "risks",
+  "dangers"
+ ],
+ "canonical": "Q104493",
+ "description": "potential for uncontrolled loss due to underlying vulnerability or uncertainties",
+ "id": "Q104493",
+ "label": "risk"
+}

@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "meta-data",
+  "metacontent",
+  "meta-info",
+  "meta-content",
+  "metainfo"
+ ],
+ "canonical": "Q180160",
+ "description": "data about data",
+ "id": "Q180160",
+ "label": "metadata"
+}

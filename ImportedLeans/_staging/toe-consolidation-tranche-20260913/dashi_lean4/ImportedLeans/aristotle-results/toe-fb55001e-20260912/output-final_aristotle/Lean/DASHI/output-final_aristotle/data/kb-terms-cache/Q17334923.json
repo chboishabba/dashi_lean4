@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "place",
+  "site",
+  "location",
+  "position"
+ ],
+ "canonical": "Q17334923",
+ "description": "position of something in space",
+ "id": "Q17334923",
+ "label": "physical location"
+}

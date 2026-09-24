@@ -1,0 +1,8 @@
+{
+ "article": "Opposite category",
+ "canonical": "Q7098616",
+ "description": "category constructed from another category C, whose objects are the same as those of C, whose morphisms from X to Y are the same as the morphisms in C from Y to X",
+ "id": "Q7098616",
+ "kind": "item",
+ "label": "opposite category"
+}

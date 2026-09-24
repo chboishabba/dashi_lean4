@@ -1,0 +1,134 @@
+module DASHI.Culture.MissingDeceasedScientificWorkEverything where
+
+-- Focused aggregate for attribution-safe scientific-work reconstruction,
+-- source-exact citation, technical-intersection proof search, independent
+-- common-selector/visibility analysis, selector-discrimination search,
+-- higher-order capability synthesis, capability-indexed selector salience,
+-- denominator-aware matched-control enrichment, competing-hypothesis
+-- discrimination, critical-knowledge BIDI acquisition, viewpoint-provenance
+-- testing, open-science/knowledge-release and externalisation-boundary BIDI
+-- testing, science-to-capability-carrier reconstruction, application-
+-- transformation modelling, event-time alignment, organisational/custody
+-- confounders, capability resilience and reconstruction cost, science-driven
+-- acquisition compilation, disruption-benefit evidence testing, actor
+-- benefit/visibility/effect intersection, and matched disruption-impact controls.
+--
+-- The scientific formalisation is both memorial work and an investigative aid:
+-- it identifies the actual capability-bearing application transformations that
+-- later evidence must connect to people, access, replacement difficulty,
+-- observers and events. None of those bridges are inferred from scientific
+-- interest or public governing physics alone.
+--
+-- Amy Eskridge is kept outside the House-letter denominator but included in the
+-- full memorial application-transformation atlas and acquisition compiler so she
+-- is not dropped from the comparative scientific/investigative surface.
+
+import DASHI.Core.ScientificWorkAttributionExact
+import DASHI.Core.ScientificSourceCitationExact
+import DASHI.Core.ScientificMechanismEvidenceBidiExact
+import DASHI.Core.ScientificCapabilityCarrierBidiExact
+import DASHI.Core.ApplicationTransformationCapabilityBidiExact
+import DASHI.Core.DistributedApplicationSurfaceBidiExact
+import DASHI.Core.EventTimeCapabilityAlignmentBidiExact
+import DASHI.Core.CapabilityFragilityConfoundersBidiExact
+import DASHI.Core.CapabilityResilienceBidiExact
+import DASHI.Core.CapabilityReconstructionCostBidiExact
+import DASHI.Core.TechnicalDependencyHypergraphExact
+import DASHI.Core.CommonSelectorVisibilityHyperfabricExact
+import DASHI.Core.SelectorDiscriminationSearchExact
+import DASHI.Core.CapabilitySynthesisHypergraphExact
+import DASHI.Core.CapabilityIndexedSelectorSalienceExact
+import DASHI.Core.ReferencePopulationRosterEnrichmentExact
+import DASHI.Core.DisruptionBenefitHypothesisExact
+import DASHI.Core.ActorBenefitVisibilityDisruptionIntersectionExact
+import DASHI.Core.CounterfactualDisruptionImpactExact
+import DASHI.Core.CriticalKnowledgeConcentrationBidiExact
+import DASHI.Core.ViewpointProvenanceBidiExact
+import DASHI.Core.OpenScienceKnowledgeReleaseBidiExact
+import DASHI.Core.TechnicalExternalisationDepthBidiExact
+import DASHI.Core.ExternalisationBoundaryEnrichmentBidiExact
+import DASHI.Physics.BoundaryScienceEverything
+import DASHI.Culture.MissingDeceasedScientistWorkAttributionExact
+import DASHI.Culture.MissingDeceasedScientificWorkCrossPollinationExact
+import DASHI.Culture.MissingDeceasedScientificWorkSourceRegistryExact
+import DASHI.Culture.MissingDeceasedScientificWorkSourceRegistryExtendedExact
+import DASHI.Culture.MissingDeceasedTechnicalDependencyHypergraphExact
+import DASHI.Culture.MissingDeceasedTechnicalIntersectionAcquisitionExact
+import DASHI.Culture.MissingDeceasedCommonSelectorVisibilityExact
+import DASHI.Culture.MissingDeceasedSelectorAcquisitionExact
+import DASHI.Culture.MissingDeceasedSelectorDiscriminationFrontierExact
+import DASHI.Culture.MissingDeceasedCapabilitySynthesisExact
+import DASHI.Culture.MissingDeceasedCapabilityIndexedSelectorSalienceExact
+import DASHI.Culture.MissingDeceasedCapabilitySelectorAcquisitionExact
+import DASHI.Culture.MissingDeceasedScientificCapabilityCarrierMatrixExact
+import DASHI.Culture.MissingDeceasedScientificCapabilityPublicControlsExact
+import DASHI.Culture.MissingDeceasedScienceDrivenAcquisitionExact
+import DASHI.Culture.MissingDeceasedApplicationTransformationMatrixExact
+import DASHI.Culture.AmyEskridgeApplicationTransformationExact
+import DASHI.Culture.AmyEskridgeInstituteTeamSuccessionSurfaceExact
+import DASHI.Culture.MissingDeceasedFullApplicationTransformationAtlasExact
+import DASHI.Culture.MissingDeceasedFullApplicationAcquisitionExact
+import DASHI.Culture.ChavezApplicationTransformationPossessionExact
+import DASHI.Culture.LeBlancApplicationTransformationPossessionExact
+import DASHI.Culture.RezaApplicationTransformationPossessionExact
+import DASHI.Culture.MaiwaldActionSpectroscopyProjectSuccessionExact
+import DASHI.Culture.McCaslandEventTimeApplicationTransformationExact
+import DASHI.Culture.McCaslandOrganizationalTransitionSurfaceExact
+import DASHI.Culture.LoureiroEventAlternativeEvidenceExact
+import DASHI.Culture.MissingDeceasedOverlookedDimensionMatrixExact
+import DASHI.Culture.MissingDeceasedReconstructionCostMatrixExact
+import DASHI.Culture.MissingDeceasedApplicationSuccessionFrontierExact
+import DASHI.Culture.MissingDeceasedRosterEnrichmentDesignExact
+import DASHI.Culture.MissingDeceasedHypothesisDiscriminatorMatrixExact
+import DASHI.Culture.MissingDeceasedDisruptionBenefitEvidenceExact
+import DASHI.Culture.MissingDeceasedDisruptionBenefitAcquisitionExact
+import DASHI.Culture.MissingDeceasedActorIntersectionFrontierExact
+import DASHI.Culture.MissingDeceasedCounterfactualDisruptionImpactExact
+import DASHI.Culture.MissingDeceasedCriticalKnowledgeBidiExact
+import DASHI.Culture.MissingDeceasedViewpointEvidenceExact
+import DASHI.Culture.MissingDeceasedOpenScienceBidiExact
+import DASHI.Culture.MissingDeceasedOpenScienceEverything
+import DASHI.Core.FiniteObservationClosureBidiExact
+import DASHI.Core.InverseProblemIdentifiabilityBidiExact
+import DASHI.Culture.ScientificRosterInverseProblemCrossPollinationExact
+import DASHI.Culture.ScientificRosterWorkCoverageExact
+import DASHI.Culture.MissingDeceasedScientificWorkPublicationExpansionExact
+import DASHI.Culture.AmyEskridgeGravityMechanismCrossPollinationExact
+import DASHI.Culture.McCaslandTechnicalProgrammeBidiExact
+import DASHI.Control.McCaslandFaultTolerantFlexibleStructureControlBidiExact
+import DASHI.Control.McCaslandGramianPlacementAlgorithmDepthExact
+import DASHI.Control.McCaslandFailureSetPlacementCompilerExact
+import DASHI.Control.McCaslandFiniteFailureFamilyScoreExact
+import DASHI.Control.McCaslandBeamPlacementFiniteEngineExact
+import DASHI.Physics.Plasma.LoureiroViriatoPlasmoidBidiExact
+import DASHI.Physics.Plasma.LoureiroTearingMediatedMHDTurbulenceBidiExact
+import DASHI.Physics.Plasma.LoureiroKREHMHermiteEquationDepthExact
+import DASHI.Physics.Plasma.LoureiroTearingCrossoverCompilerExact
+import DASHI.Physics.Plasma.LoureiroHermiteClosureReceiptExact
+import DASHI.Physics.Plasma.LoureiroCrossoverExponentDerivationExact
+import DASHI.Physics.Plasma.LoureiroBetaZeroCrossoverComputationExact
+import DASHI.Physics.Nuclear.LeBlancFissionSurfacePowerICBidiExact
+import DASHI.Physics.Nuclear.LeBlancFSPICQualificationDepthExact
+import DASHI.Physics.Nuclear.LeBlancSensorQualificationMatrixExact
+import DASHI.Physics.Spectroscopy.MaiwaldActionSpectroscopyBidiExact
+import DASHI.Physics.Spectroscopy.MaiwaldQuadrupoleIonTrapMassSpectrometryBidiExact
+import DASHI.Physics.Spectroscopy.MaiwaldQITActionSpectroscopyEquationDepthExact
+import DASHI.Physics.Spectroscopy.MaiwaldMathieuStabilityAndActionResponseCompilerExact
+import DASHI.Physics.Materials.RezaBurnResistantAlloyBidiExact
+import DASHI.Physics.Materials.RezaGammaPrimeBurnStrengthTradeoffDepthExact
+import DASHI.Physics.Materials.RezaTestedAlloyTradeoffMatrixExact
+import DASHI.Physics.Materials.RezaParetoWitnessExact
+import DASHI.Physics.Materials.RezaExample12NonDominanceClosedExact
+import DASHI.Physics.Astrophysics.GrillmairStellarStreamBidiExact
+import DASHI.Physics.Astrophysics.GrillmairMatchedFilterOrbitDepthExact
+import DASHI.Physics.Astrophysics.GrillmairDistanceScanMatchedFilterCompilerExact
+import DASHI.Physics.Astrophysics.GrillmairExecutableDistanceScanExact
+import DASHI.Physics.Astrophysics.GrillmairFiniteDistanceGridOrderExact
+import DASHI.Physics.Planetary.HicksSmallBodyPhotometryBidiExact
+import DASHI.Physics.Planetary.HicksCometAsteroidSpecificWorksBidiExact
+import DASHI.Physics.Accelerator.AnthonyChavezScorpiusBidiExact
+import DASHI.Physics.Accelerator.AnthonyChavezPermanentMagnetSpectrometerCalibrationBidiExact
+import DASHI.Biology.JasonThomasSignallingBidiExact
+import DASHI.Biology.JasonThomasSTINGFerritinophagyMechanismDepthExact
+import DASHI.Biology.JasonThomasTargetDeconvolutionCompilerExact
+import DASHI.Culture.HouseOversightScientistRosterScopeExact

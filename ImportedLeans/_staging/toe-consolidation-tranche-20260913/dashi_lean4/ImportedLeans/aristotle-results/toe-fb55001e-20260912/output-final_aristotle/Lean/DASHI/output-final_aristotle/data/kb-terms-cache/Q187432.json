@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "script language",
+  "extension language",
+  "embedded language",
+  "embeddable language",
+  "glue language"
+ ],
+ "canonical": "Q187432",
+ "description": "programming language for run-time events",
+ "id": "Q187432",
+ "label": "scripting language"
+}

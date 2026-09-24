@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "sound",
+  "logically sound",
+  "logical soundness"
+ ],
+ "canonical": "Q693083",
+ "description": "logical term meaning that an argument is valid and its premises are true",
+ "id": "Q693083",
+ "label": "soundness"
+}

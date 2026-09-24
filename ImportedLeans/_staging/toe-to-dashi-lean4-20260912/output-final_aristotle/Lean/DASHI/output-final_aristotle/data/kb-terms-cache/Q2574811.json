@@ -1,0 +1,16 @@
+{
+ "aliases": [
+  "reason",
+  "trigger",
+  "parent",
+  "entry",
+  "motive",
+  "motivation",
+  "explanation",
+  "seed"
+ ],
+ "canonical": "Q2574811",
+ "description": "entity which forms causality for an event",
+ "id": "Q2574811",
+ "label": "cause"
+}

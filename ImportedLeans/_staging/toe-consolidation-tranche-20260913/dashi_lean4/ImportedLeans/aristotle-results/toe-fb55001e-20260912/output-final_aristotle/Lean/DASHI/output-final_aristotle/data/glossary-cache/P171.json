@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P171",
+ "description": "closest parent taxon of the taxon in question",
+ "id": "P171",
+ "kind": "property",
+ "label": "parent taxon"
+}

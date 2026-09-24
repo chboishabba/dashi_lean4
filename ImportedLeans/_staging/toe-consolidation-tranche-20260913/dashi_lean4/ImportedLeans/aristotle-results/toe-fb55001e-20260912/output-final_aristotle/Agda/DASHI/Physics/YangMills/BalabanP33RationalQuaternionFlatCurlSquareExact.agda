@@ -1,0 +1,3 @@
+module DASHI.Physics.YangMills.BalabanP33RationalQuaternionFlatCurlSquareExact where
+
+open import DASHI.Physics.YangMills.BalabanP33RationalQuaternionFlatCurlAtomTransportExact public

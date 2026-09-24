@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "composite entity",
+  "aggregate entity",
+  "collection entity",
+  "group or class",
+  "class or group"
+ ],
+ "canonical": "Q99527517",
+ "description": "entity that is a composite of other entities",
+ "id": "Q99527517",
+ "label": "collective entity"
+}

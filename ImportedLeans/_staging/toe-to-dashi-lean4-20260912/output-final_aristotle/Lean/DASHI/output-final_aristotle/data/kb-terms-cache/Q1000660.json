@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "algebra"
+ ],
+ "canonical": "Q1000660",
+ "description": "vector space equipped with a bilinear product",
+ "id": "Q1000660",
+ "label": "algebra over a field"
+}

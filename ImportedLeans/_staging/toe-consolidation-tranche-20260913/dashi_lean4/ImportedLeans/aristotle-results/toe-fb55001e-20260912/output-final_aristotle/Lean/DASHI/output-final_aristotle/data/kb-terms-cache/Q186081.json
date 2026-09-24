@@ -1,0 +1,16 @@
+{
+ "aliases": [
+  "temporal interval",
+  "timespan",
+  "stage",
+  "period of time",
+  "time frame",
+  "time period",
+  "interval",
+  "time span"
+ ],
+ "canonical": "Q186081",
+ "description": "temporal extent having a beginning, an end and a duration",
+ "id": "Q186081",
+ "label": "time interval"
+}

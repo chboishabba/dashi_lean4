@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "digraph"
+ ],
+ "canonical": "Q1137726",
+ "description": "graph with oriented edges",
+ "id": "Q1137726",
+ "label": "directed graph"
+}

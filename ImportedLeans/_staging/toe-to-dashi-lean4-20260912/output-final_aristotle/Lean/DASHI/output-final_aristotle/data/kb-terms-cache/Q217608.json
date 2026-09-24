@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "fixpoint",
+  "invariant point",
+  "equilibrium point"
+ ],
+ "canonical": "Q217608",
+ "description": "point that is left unchanged by a function",
+ "id": "Q217608",
+ "label": "fixed point"
+}

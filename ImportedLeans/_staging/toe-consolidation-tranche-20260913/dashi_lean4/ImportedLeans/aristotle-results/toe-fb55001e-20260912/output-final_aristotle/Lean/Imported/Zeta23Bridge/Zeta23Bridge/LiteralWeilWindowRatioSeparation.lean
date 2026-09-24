@@ -1,0 +1,802 @@
+/-
+# Window ratio separation for the leading response coefficients
+
+This is the step the multi-taper Schur programme called
+*localized-window separation of the two leading response ratios*.
+
+`LiteralWeilLeadingCoefficientCovariance` polarised the radius-free leading
+coefficient into the symmetric bilinear form `covForm`.  Here we
+
+* identify `covForm p q a` with the (iterated) double integral of the bilinear
+  covariance kernel
+
+      crossKernel p q a u v = p u * q v * ((u² - v²) * (cosh (a u) - cosh (a v))),
+
+  which needs no Fubini argument because the kernel is a finite sum of products of
+  one-dimensional moments;
+* prove that for **window tapers** — nonnegative, continuous, compactly supported
+  tapers whose support lies in a prescribed modulus window — the bilinear response
+  is squeezed between the extreme window values of the increment ratio;
+* conclude the **cross determinant is strictly positive**: with one shared low
+  window `p` and two disjoint higher windows `q₀ < q₁`, and two distinct heights
+  `0 < a < b`,
+
+      covForm p q₁ a * covForm p q₀ b  <  covForm p q₀ a * covForm p q₁ b,
+
+  under the four-endpoint gate of `CoshWindowSeparation`.
+
+That inequality is exactly the response-ratio separation
+`L_σ(g₀) / L_ρ(g₀) ≠ L_σ(g₁) / L_ρ(g₁)` at the level of the cross terms of the two
+window tapers, with no `W(t)`, no absolute zero mass, and no numerical input.
+
+No `sorry`, no `axiom`, no Boolean receipt, no numerical evidence.
+-/
+import Zeta23Bridge.LiteralWeilLeadingCoefficientCovariance
+import Zeta23Bridge.CoshWindowSeparation
+
+noncomputable section
+
+open scoped Real
+open MeasureTheory Set
+
+namespace Zeta23Bridge
+namespace LiteralWeilWindowRatioSeparation
+
+open Zeta23Bridge.LiteralWeilParityBalance
+open Zeta23Bridge.LiteralWeilTargetDefectLeadingCoefficient
+open Zeta23Bridge.LiteralWeilLeadingCoefficientCovariance
+open Zeta23Bridge.CoshWindowSeparation
+
+/-- The bilinear covariance kernel of two tapers. -/
+def crossKernel (p q : ℝ → ℝ) (a : ℝ) : ℝ → ℝ → ℝ := fun u v =>
+  p u * q v * ((u ^ 2 - v ^ 2) * (Real.cosh (a * u) - Real.cosh (a * v)))
+
+/-- The inner integral of the bilinear kernel, in closed form. -/
+theorem integral_crossKernel_inner {q : ℝ → ℝ} (hq : Continuous q) (hqc : HasCompactSupport q)
+    (p : ℝ → ℝ) (a u : ℝ) :
+    ∫ v : ℝ, crossKernel p q a u v
+      = p u * (u ^ 2 * Real.cosh (a * u) * coshMoment q 0 - u ^ 2 * coshMoment q a
+          - Real.cosh (a * u) * sqCoshMoment q 0 + sqCoshMoment q a) := by
+  have h1 : Integrable (fun v : ℝ => q v * Real.cosh (a * v)) :=
+    taper_integrable hq hqc (by fun_prop)
+  have h2 : Integrable (fun v : ℝ => q v * (v ^ 2 * Real.cosh (a * v))) :=
+    taper_integrable hq hqc (by fun_prop)
+  have h3 : Integrable (fun v : ℝ => q v * (v ^ 2 : ℝ)) := taper_integrable hq hqc (by fun_prop)
+  have h4 : Integrable q := hq.integrable_of_hasCompactSupport hqc
+  have hsplit : (fun v : ℝ => crossKernel p q a u v)
+      = fun v : ℝ => (p u * (u ^ 2 * Real.cosh (a * u))) * q v
+          - (p u * u ^ 2) * (q v * Real.cosh (a * v))
+          - (p u * Real.cosh (a * u)) * (q v * v ^ 2)
+          + p u * (q v * (v ^ 2 * Real.cosh (a * v))) := by
+    funext v
+    unfold crossKernel
+    ring
+  have hA : Integrable (fun v : ℝ => (p u * (u ^ 2 * Real.cosh (a * u))) * q v) := h4.const_mul _
+  have hB : Integrable (fun v : ℝ => (p u * u ^ 2) * (q v * Real.cosh (a * v))) := h1.const_mul _
+  have hC : Integrable (fun v : ℝ => (p u * Real.cosh (a * u)) * (q v * v ^ 2)) := h3.const_mul _
+  have hD : Integrable (fun v : ℝ => p u * (q v * (v ^ 2 * Real.cosh (a * v)))) := h2.const_mul _
+  have hAB : Integrable (fun v : ℝ => (p u * (u ^ 2 * Real.cosh (a * u))) * q v
+      - (p u * u ^ 2) * (q v * Real.cosh (a * v))) := hA.sub hB
+  have hABC : Integrable (fun v : ℝ => (p u * (u ^ 2 * Real.cosh (a * u))) * q v
+      - (p u * u ^ 2) * (q v * Real.cosh (a * v))
+      - (p u * Real.cosh (a * u)) * (q v * v ^ 2)) := hAB.sub hC
+  rw [hsplit, integral_add hABC hD, integral_sub hAB hC, integral_sub hA hB,
+    integral_const_mul, integral_const_mul, integral_const_mul, integral_const_mul]
+  unfold coshMoment sqCoshMoment
+  have hq0 : ∫ v : ℝ, q v = ∫ v : ℝ, q v * Real.cosh (0 * v) := by simp
+  rw [hq0]
+  have hq0' : (∫ v : ℝ, q v * (v ^ 2 : ℝ)) = ∫ v : ℝ, q v * (v ^ 2 * Real.cosh (0 * v)) := by
+    simp
+  rw [hq0']
+  ring
+
+/-- The closed form of the inner integral is continuous with compact support in `u`. -/
+theorem integrable_crossKernel_outer {p q : ℝ → ℝ} (hp : Continuous p)
+    (hpc : HasCompactSupport p) (hq : Continuous q) (hqc : HasCompactSupport q) (a : ℝ) :
+    Integrable (fun u : ℝ => ∫ v : ℝ, crossKernel p q a u v) := by
+  have hrw : (fun u : ℝ => ∫ v : ℝ, crossKernel p q a u v)
+      = fun u : ℝ => p u * (u ^ 2 * Real.cosh (a * u) * coshMoment q 0 - u ^ 2 * coshMoment q a
+          - Real.cosh (a * u) * sqCoshMoment q 0 + sqCoshMoment q a) := by
+    funext u
+    exact integral_crossKernel_inner hq hqc p a u
+  rw [hrw]
+  exact taper_integrable hp hpc (by fun_prop)
+
+theorem integrable_crossKernel_slice {q : ℝ → ℝ} (hq : Continuous q) (hqc : HasCompactSupport q)
+    (p : ℝ → ℝ) (a u : ℝ) : Integrable (fun v : ℝ => crossKernel p q a u v) := by
+  have hrw : (fun v : ℝ => crossKernel p q a u v)
+      = fun v : ℝ => q v * (p u * ((u ^ 2 - v ^ 2) * (Real.cosh (a * u) - Real.cosh (a * v)))) := by
+    funext v
+    unfold crossKernel
+    ring
+  rw [hrw]
+  exact taper_integrable hq hqc (by fun_prop)
+
+/-- **The bilinear covariance form is the double integral of the bilinear kernel.** -/
+theorem covForm_eq_crossIntegral {p q : ℝ → ℝ} (hp : Continuous p) (hpc : HasCompactSupport p)
+    (hq : Continuous q) (hqc : HasCompactSupport q) (a : ℝ) :
+    covForm p q a = 3 / 4 * ∫ u : ℝ, ∫ v : ℝ, crossKernel p q a u v := by
+  have hrw : (fun u : ℝ => ∫ v : ℝ, crossKernel p q a u v)
+      = fun u : ℝ => coshMoment q 0 * (p u * (u ^ 2 * Real.cosh (a * u)))
+          - coshMoment q a * (p u * u ^ 2)
+          - sqCoshMoment q 0 * (p u * Real.cosh (a * u))
+          + sqCoshMoment q a * p u := by
+    funext u
+    rw [integral_crossKernel_inner hq hqc p a u]
+    ring
+  rw [hrw]
+  have i1 : Integrable (fun u : ℝ => coshMoment q 0 * (p u * (u ^ 2 * Real.cosh (a * u)))) :=
+    (taper_integrable hp hpc (by fun_prop)).const_mul _
+  have i2 : Integrable (fun u : ℝ => coshMoment q a * (p u * u ^ 2)) :=
+    (taper_integrable hp hpc (by fun_prop)).const_mul _
+  have i3 : Integrable (fun u : ℝ => sqCoshMoment q 0 * (p u * Real.cosh (a * u))) :=
+    (taper_integrable hp hpc (by fun_prop)).const_mul _
+  have i4 : Integrable (fun u : ℝ => sqCoshMoment q a * p u) :=
+    (hp.integrable_of_hasCompactSupport hpc).const_mul _
+  have i12 : Integrable (fun u : ℝ => coshMoment q 0 * (p u * (u ^ 2 * Real.cosh (a * u)))
+      - coshMoment q a * (p u * u ^ 2)) := i1.sub i2
+  have i123 : Integrable (fun u : ℝ => coshMoment q 0 * (p u * (u ^ 2 * Real.cosh (a * u)))
+      - coshMoment q a * (p u * u ^ 2)
+      - sqCoshMoment q 0 * (p u * Real.cosh (a * u))) := i12.sub i3
+  rw [integral_add i123 i4, integral_sub i12 i3, integral_sub i1 i2,
+    integral_const_mul, integral_const_mul, integral_const_mul, integral_const_mul]
+  unfold covForm coshMoment sqCoshMoment
+  have h0 : (∫ u : ℝ, p u * (u ^ 2 : ℝ)) = ∫ u : ℝ, p u * (u ^ 2 * Real.cosh (0 * u)) := by simp
+  have h1 : (∫ u : ℝ, p u) = ∫ u : ℝ, p u * Real.cosh (0 * u) := by simp
+  rw [h0, h1]
+  ring
+
+/-! ## Window tapers -/
+
+/-- A **window taper**: a nonnegative continuous compactly supported taper of positive
+mass whose support is contained in the modulus window `[lo, hi]`. -/
+structure WindowTaper (f : ℝ → ℝ) (lo hi : ℝ) : Prop where
+  cont : Continuous f
+  cpt : HasCompactSupport f
+  nonneg : ∀ u, 0 ≤ f u
+  supp : ∀ u, f u ≠ 0 → |u| ∈ Icc lo hi
+  mass : 0 < ∫ u : ℝ, f u
+
+theorem cosh_mul_abs {x : ℝ} (hx : 0 ≤ x) (u : ℝ) : Real.cosh (x * u) = Real.cosh (x * |u|) := by
+  rw [← Real.cosh_abs (x * u), abs_mul, abs_of_nonneg hx]
+
+/-- The bilinear kernel written through the moduli. -/
+theorem crossKernel_abs {x : ℝ} (hx : 0 ≤ x) (p q : ℝ → ℝ) (u v : ℝ) :
+    crossKernel p q x u v = p u * q v * ((|v| ^ 2 - |u| ^ 2) * coshDiff x |u| |v|) := by
+  unfold crossKernel coshDiff
+  rw [cosh_mul_abs hx u, cosh_mul_abs hx v, sq_abs, sq_abs]
+  ring
+
+/-- Monotonicity of an iterated integral under a pointwise bound. -/
+theorem iterated_integral_mono {F G : ℝ → ℝ → ℝ}
+    (hFs : ∀ u, Integrable (F u)) (hGs : ∀ u, Integrable (G u))
+    (hFo : Integrable fun u : ℝ => ∫ v : ℝ, F u v)
+    (hGo : Integrable fun u : ℝ => ∫ v : ℝ, G u v)
+    (h : ∀ u v, F u v ≤ G u v) :
+    (∫ u : ℝ, ∫ v : ℝ, F u v) ≤ ∫ u : ℝ, ∫ v : ℝ, G u v :=
+  integral_mono hFo hGo fun u => integral_mono (hFs u) (hGs u) fun v => h u v
+
+/-- The double integral of the bilinear kernel of two tapers. -/
+def crossIntegral (p q : ℝ → ℝ) (x : ℝ) : ℝ := ∫ u : ℝ, ∫ v : ℝ, crossKernel p q x u v
+
+theorem covForm_eq_crossIntegral' {p q : ℝ → ℝ} (hp : Continuous p) (hpc : HasCompactSupport p)
+    (hq : Continuous q) (hqc : HasCompactSupport q) (a : ℝ) :
+    covForm p q a = 3 / 4 * crossIntegral p q a :=
+  covForm_eq_crossIntegral hp hpc hq hqc a
+
+/-- **Upper window bound.**  On the low/middle window pair the `b`-response is at most
+the endpoint ratio times the `a`-response. -/
+theorem crossIntegral_upper {p q : ℝ → ℝ} {al0 be0 al1 be1 a b : ℝ}
+    (hp : WindowTaper p al0 be0) (hq : WindowTaper q al1 be1)
+    (ha : 0 < a) (hab : a < b) (hal0 : 0 < al0) (h01 : be0 < al1) (h1 : al1 ≤ be1) :
+    crossIntegral p q b * coshDiff a be0 be1 ≤ coshDiff b be0 be1 * crossIntegral p q a := by
+  have hb : 0 < b := ha.trans hab
+  have hpt : ∀ u v : ℝ, crossKernel p q b u v * coshDiff a be0 be1
+      ≤ coshDiff b be0 be1 * crossKernel p q a u v := by
+    intro u v
+    by_cases hpu : p u = 0
+    · simp [crossKernel, hpu]
+    by_cases hqv : q v = 0
+    · simp [crossKernel, hqv]
+    have hu := hp.supp u hpu
+    have hv := hq.supp v hqv
+    have hU : 0 < |u| := hal0.trans_le hu.1
+    have hUV : |u| < |v| := by
+      have h1' := hu.2; have h2' := hv.1; linarith
+    have hbe0be1 : be0 < be1 := h01.trans_le h1
+    have hratio : coshDiff b |u| |v| * coshDiff a be0 be1
+        ≤ coshDiff b be0 be1 * coshDiff a |u| |v| :=
+      coshDiff_ratio_le ha hab hU hu.2 hUV hbe0be1 hv.2
+    have hmass : 0 ≤ p u * q v := mul_nonneg (hp.nonneg u) (hq.nonneg v)
+    have harea : 0 ≤ |v| ^ 2 - |u| ^ 2 := by nlinarith [hU, hUV]
+    rw [crossKernel_abs hb.le, crossKernel_abs ha.le]
+    nlinarith [hratio, mul_nonneg hmass harea]
+  have hFs : ∀ u : ℝ, Integrable fun v : ℝ => crossKernel p q b u v * coshDiff a be0 be1 :=
+    fun u => (integrable_crossKernel_slice hq.cont hq.cpt p b u).mul_const _
+  have hGs : ∀ u : ℝ, Integrable fun v : ℝ => coshDiff b be0 be1 * crossKernel p q a u v :=
+    fun u => (integrable_crossKernel_slice hq.cont hq.cpt p a u).const_mul _
+  have hFo : Integrable fun u : ℝ => ∫ v : ℝ, crossKernel p q b u v * coshDiff a be0 be1 := by
+    have hrw : (fun u : ℝ => ∫ v : ℝ, crossKernel p q b u v * coshDiff a be0 be1)
+        = fun u : ℝ => (∫ v : ℝ, crossKernel p q b u v) * coshDiff a be0 be1 := by
+      funext u; rw [integral_mul_const]
+    rw [hrw]
+    exact (integrable_crossKernel_outer hp.cont hp.cpt hq.cont hq.cpt b).mul_const _
+  have hGo : Integrable fun u : ℝ => ∫ v : ℝ, coshDiff b be0 be1 * crossKernel p q a u v := by
+    have hrw : (fun u : ℝ => ∫ v : ℝ, coshDiff b be0 be1 * crossKernel p q a u v)
+        = fun u : ℝ => coshDiff b be0 be1 * ∫ v : ℝ, crossKernel p q a u v := by
+      funext u; rw [integral_const_mul]
+    rw [hrw]
+    exact (integrable_crossKernel_outer hp.cont hp.cpt hq.cont hq.cpt a).const_mul _
+  have hmain := iterated_integral_mono hFs hGs hFo hGo hpt
+  have e1 : (∫ u : ℝ, ∫ v : ℝ, crossKernel p q b u v * coshDiff a be0 be1)
+      = crossIntegral p q b * coshDiff a be0 be1 := by
+    unfold crossIntegral
+    rw [← integral_mul_const]
+    congr 1
+    funext u
+    rw [integral_mul_const]
+  have e2 : (∫ u : ℝ, ∫ v : ℝ, coshDiff b be0 be1 * crossKernel p q a u v)
+      = coshDiff b be0 be1 * crossIntegral p q a := by
+    unfold crossIntegral
+    rw [← integral_const_mul]
+    congr 1
+    funext u
+    rw [integral_const_mul]
+  rw [e1, e2] at hmain
+  exact hmain
+
+/-- **Lower window bound.**  On the low/top window pair the `b`-response is at least the
+endpoint ratio times the `a`-response. -/
+theorem crossIntegral_lower {p q : ℝ → ℝ} {al0 be0 al2 be2 a b : ℝ}
+    (hp : WindowTaper p al0 be0) (hq : WindowTaper q al2 be2)
+    (ha : 0 < a) (hab : a < b) (hal0 : 0 < al0) (h0 : al0 ≤ be0) (h02 : be0 < al2) :
+    coshDiff b al0 al2 * crossIntegral p q a ≤ crossIntegral p q b * coshDiff a al0 al2 := by
+  have hb : 0 < b := ha.trans hab
+  have hpt : ∀ u v : ℝ, coshDiff b al0 al2 * crossKernel p q a u v
+      ≤ crossKernel p q b u v * coshDiff a al0 al2 := by
+    intro u v
+    by_cases hpu : p u = 0
+    · simp [crossKernel, hpu]
+    by_cases hqv : q v = 0
+    · simp [crossKernel, hqv]
+    have hu := hp.supp u hpu
+    have hv := hq.supp v hqv
+    have hU : 0 < |u| := hal0.trans_le hu.1
+    have hUV : |u| < |v| := by
+      have h1' := hu.2; have h2' := hv.1; linarith
+    have hal0al2 : al0 < al2 := lt_of_le_of_lt h0 h02
+    have hratio : coshDiff b al0 al2 * coshDiff a |u| |v|
+        ≤ coshDiff b |u| |v| * coshDiff a al0 al2 :=
+      coshDiff_ratio_le ha hab hal0 hu.1 hal0al2 hUV hv.1
+    have hmass : 0 ≤ p u * q v := mul_nonneg (hp.nonneg u) (hq.nonneg v)
+    have harea : 0 ≤ |v| ^ 2 - |u| ^ 2 := by nlinarith [hU, hUV]
+    rw [crossKernel_abs hb.le, crossKernel_abs ha.le]
+    nlinarith [hratio, mul_nonneg hmass harea]
+  have hFs : ∀ u : ℝ, Integrable fun v : ℝ => coshDiff b al0 al2 * crossKernel p q a u v :=
+    fun u => (integrable_crossKernel_slice hq.cont hq.cpt p a u).const_mul _
+  have hGs : ∀ u : ℝ, Integrable fun v : ℝ => crossKernel p q b u v * coshDiff a al0 al2 :=
+    fun u => (integrable_crossKernel_slice hq.cont hq.cpt p b u).mul_const _
+  have hFo : Integrable fun u : ℝ => ∫ v : ℝ, coshDiff b al0 al2 * crossKernel p q a u v := by
+    have hrw : (fun u : ℝ => ∫ v : ℝ, coshDiff b al0 al2 * crossKernel p q a u v)
+        = fun u : ℝ => coshDiff b al0 al2 * ∫ v : ℝ, crossKernel p q a u v := by
+      funext u; rw [integral_const_mul]
+    rw [hrw]
+    exact (integrable_crossKernel_outer hp.cont hp.cpt hq.cont hq.cpt a).const_mul _
+  have hGo : Integrable fun u : ℝ => ∫ v : ℝ, crossKernel p q b u v * coshDiff a al0 al2 := by
+    have hrw : (fun u : ℝ => ∫ v : ℝ, crossKernel p q b u v * coshDiff a al0 al2)
+        = fun u : ℝ => (∫ v : ℝ, crossKernel p q b u v) * coshDiff a al0 al2 := by
+      funext u; rw [integral_mul_const]
+    rw [hrw]
+    exact (integrable_crossKernel_outer hp.cont hp.cpt hq.cont hq.cpt b).mul_const _
+  have hmain := iterated_integral_mono hFs hGs hFo hGo hpt
+  have e1 : (∫ u : ℝ, ∫ v : ℝ, coshDiff b al0 al2 * crossKernel p q a u v)
+      = coshDiff b al0 al2 * crossIntegral p q a := by
+    unfold crossIntegral
+    rw [← integral_const_mul]
+    congr 1
+    funext u
+    rw [integral_const_mul]
+  have e2 : (∫ u : ℝ, ∫ v : ℝ, crossKernel p q b u v * coshDiff a al0 al2)
+      = crossIntegral p q b * coshDiff a al0 al2 := by
+    unfold crossIntegral
+    rw [← integral_mul_const]
+    congr 1
+    funext u
+    rw [integral_mul_const]
+  rw [e1, e2] at hmain
+  exact hmain
+
+/-- **Quantitative lower bound for the window response.**  Two disjoint modulus
+windows give a bilinear response at least the extreme kernel value on the gap times
+the product of the two masses. -/
+theorem crossIntegral_ge {p q : ℝ → ℝ} {al0 be0 al1 be1 a : ℝ}
+    (hp : WindowTaper p al0 be0) (hq : WindowTaper q al1 be1)
+    (ha : 0 < a) (hal0 : 0 < al0) (h0 : al0 ≤ be0) (h01 : be0 < al1) :
+    (al1 ^ 2 - be0 ^ 2) * coshDiff a be0 al1 * ((∫ u : ℝ, p u) * ∫ v : ℝ, q v)
+      ≤ crossIntegral p q a := by
+  obtain ⟨kap, hkapdef⟩ : ∃ x : ℝ, x = (al1 ^ 2 - be0 ^ 2) * coshDiff a be0 al1 := ⟨_, rfl⟩
+  have hbe0 : 0 < be0 := hal0.trans_le h0
+  have hcd0 : 0 < coshDiff a be0 al1 := coshDiff_pos ha hbe0 h01
+  have harea0 : 0 < al1 ^ 2 - be0 ^ 2 := by nlinarith
+  have hpt : ∀ u v : ℝ, kap * (p u * q v) ≤ crossKernel p q a u v := by
+    intro u v
+    by_cases hpu : p u = 0
+    · simp [crossKernel, hpu]
+    by_cases hqv : q v = 0
+    · simp [crossKernel, hqv]
+    have hu := hp.supp u hpu
+    have hv := hq.supp v hqv
+    have hU : 0 < |u| := hal0.trans_le hu.1
+    have hUV : |u| < |v| := by
+      have h1' := hu.2; have h2' := hv.1; linarith
+    have harea : al1 ^ 2 - be0 ^ 2 ≤ |v| ^ 2 - |u| ^ 2 := by
+      have h1' := hu.2
+      have h2' := hv.1
+      nlinarith [hU, hbe0]
+    have hcd : coshDiff a be0 al1 ≤ coshDiff a |u| |v| := by
+      unfold coshDiff
+      have hlow : Real.cosh (a * |u|) ≤ Real.cosh (a * be0) := by
+        apply Real.cosh_le_cosh.mpr
+        rw [abs_of_pos (mul_pos ha hU), abs_of_pos (mul_pos ha hbe0)]
+        exact mul_le_mul_of_nonneg_left hu.2 ha.le
+      have hhigh : Real.cosh (a * al1) ≤ Real.cosh (a * |v|) := by
+        apply Real.cosh_le_cosh.mpr
+        rw [abs_of_pos (mul_pos ha (hbe0.trans h01)), abs_of_pos (mul_pos ha (hU.trans hUV))]
+        exact mul_le_mul_of_nonneg_left hv.1 ha.le
+      linarith
+    have hmass : 0 ≤ p u * q v := mul_nonneg (hp.nonneg u) (hq.nonneg v)
+    have hprod : (al1 ^ 2 - be0 ^ 2) * coshDiff a be0 al1
+        ≤ (|v| ^ 2 - |u| ^ 2) * coshDiff a |u| |v| :=
+      mul_le_mul harea hcd hcd0.le (by linarith)
+    rw [crossKernel_abs ha.le, hkapdef]
+    nlinarith [hprod, hmass]
+  have hFs : ∀ u : ℝ, Integrable fun v : ℝ => kap * (p u * q v) := fun u =>
+    ((hq.cont.integrable_of_hasCompactSupport hq.cpt).const_mul (p u)).const_mul kap
+  have hGs : ∀ u : ℝ, Integrable fun v : ℝ => crossKernel p q a u v :=
+    fun u => integrable_crossKernel_slice hq.cont hq.cpt p a u
+  have hinner : (fun u : ℝ => ∫ v : ℝ, kap * (p u * q v))
+      = fun u : ℝ => p u * (kap * ∫ v : ℝ, q v) := by
+    funext u
+    rw [show (fun v : ℝ => kap * (p u * q v)) = fun v : ℝ => (kap * p u) * q v by
+      funext v; ring, integral_const_mul]
+    ring
+  have hFo : Integrable fun u : ℝ => ∫ v : ℝ, kap * (p u * q v) := by
+    rw [hinner]
+    exact taper_integrable hp.cont hp.cpt (by fun_prop)
+  have hGo : Integrable fun u : ℝ => ∫ v : ℝ, crossKernel p q a u v :=
+    integrable_crossKernel_outer hp.cont hp.cpt hq.cont hq.cpt a
+  have hmain := iterated_integral_mono hFs hGs hFo hGo hpt
+  have e1 : (∫ u : ℝ, ∫ v : ℝ, kap * (p u * q v))
+      = kap * ((∫ u : ℝ, p u) * ∫ v : ℝ, q v) := by
+    rw [hinner, integral_mul_const]
+    ring
+  rw [e1, hkapdef] at hmain
+  exact hmain
+
+/-- **Strict positivity of the window response.**  Two disjoint modulus windows give a
+strictly positive bilinear response at every positive height. -/
+theorem crossIntegral_pos {p q : ℝ → ℝ} {al0 be0 al1 be1 a : ℝ}
+    (hp : WindowTaper p al0 be0) (hq : WindowTaper q al1 be1)
+    (ha : 0 < a) (hal0 : 0 < al0) (h0 : al0 ≤ be0) (h01 : be0 < al1) :
+    0 < crossIntegral p q a := by
+  have hbe0 : 0 < be0 := hal0.trans_le h0
+  have hcd0 : 0 < coshDiff a be0 al1 := coshDiff_pos ha hbe0 h01
+  have harea0 : 0 < al1 ^ 2 - be0 ^ 2 := by nlinarith
+  exact lt_of_lt_of_le
+    (mul_pos (mul_pos harea0 hcd0) (mul_pos hp.mass hq.mass))
+    (crossIntegral_ge hp hq ha hal0 h0 h01)
+
+/-! ## The cross determinant -/
+
+/-- **Localized-window separation of the two leading response ratios.**
+
+Let `p` be a window taper in the low modulus window `[α₀, β₀]`, and let `q₀`, `q₁` be
+window tapers in the two disjoint higher windows `[α₁, β₁]` and `[α₂, β₂]`.  Let
+`0 < a < b` be two heights.  Under the four-endpoint gate of `CoshWindowSeparation`
+the cross determinant of the bilinear responses is **strictly positive**:
+
+    crossIntegral p q₁ a * crossIntegral p q₀ b < crossIntegral p q₀ a * crossIntegral p q₁ b.
+
+Equivalently, the two window tapers respond to the two heights with strictly different
+ratios.  No absolute zero mass, no tail estimate and no numerical input occur. -/
+theorem crossIntegral_det_lt {p q0 q1 : ℝ → ℝ} {al0 be0 al1 be1 al2 be2 a b : ℝ}
+    (hp : WindowTaper p al0 be0) (hq0 : WindowTaper q0 al1 be1) (hq1 : WindowTaper q1 al2 be2)
+    (ha : 0 < a) (hab : a < b) (hal0 : 0 < al0) (h0 : al0 ≤ be0) (h01 : be0 < al1)
+    (h1 : al1 ≤ be1) (h12 : be1 < al2)
+    (hgate : coshDiff b be0 be1 * coshDiff a al0 al2 < coshDiff b al0 al2 * coshDiff a be0 be1) :
+    crossIntegral p q1 a * crossIntegral p q0 b
+      < crossIntegral p q0 a * crossIntegral p q1 b := by
+  have hb : 0 < b := ha.trans hab
+  have hbe0 : 0 < be0 := hal0.trans_le h0
+  have h02 : be0 < al2 := h01.trans (h1.trans_lt h12)
+  -- the four responses
+  have hA0 : 0 < crossIntegral p q0 a := crossIntegral_pos hp hq0 ha hal0 h0 h01
+  have hA1 : 0 < crossIntegral p q1 a := crossIntegral_pos hp hq1 ha hal0 h0 h02
+  -- the two window bounds
+  have hupper := crossIntegral_upper hp hq0 ha hab hal0 h01 h1
+  have hlower := crossIntegral_lower hp hq1 ha hab hal0 h0 h02
+  -- the positive normalising increments
+  have hDa : 0 < coshDiff a be0 be1 := coshDiff_pos ha hbe0 (h01.trans_le h1)
+  have hEa : 0 < coshDiff a al0 al2 := coshDiff_pos ha hal0 (lt_of_le_of_lt h0 h02)
+  -- chain the comparisons after multiplying by the positive factor `Da * Ea`
+  have hstep : (crossIntegral p q1 a * crossIntegral p q0 b)
+      * (coshDiff a be0 be1 * coshDiff a al0 al2)
+      < (crossIntegral p q0 a * crossIntegral p q1 b)
+      * (coshDiff a be0 be1 * coshDiff a al0 al2) := by
+    have c1 : (crossIntegral p q1 a * crossIntegral p q0 b)
+        * (coshDiff a be0 be1 * coshDiff a al0 al2)
+        ≤ crossIntegral p q1 a * crossIntegral p q0 a
+          * (coshDiff b be0 be1 * coshDiff a al0 al2) := by
+      have hfac : 0 ≤ crossIntegral p q1 a * coshDiff a al0 al2 :=
+        mul_nonneg hA1.le hEa.le
+      nlinarith [hupper, hfac]
+    have c2 : crossIntegral p q1 a * crossIntegral p q0 a
+          * (coshDiff b be0 be1 * coshDiff a al0 al2)
+        < crossIntegral p q1 a * crossIntegral p q0 a
+          * (coshDiff b al0 al2 * coshDiff a be0 be1) := by
+      exact mul_lt_mul_of_pos_left hgate (mul_pos hA1 hA0)
+    have c3 : crossIntegral p q1 a * crossIntegral p q0 a
+          * (coshDiff b al0 al2 * coshDiff a be0 be1)
+        ≤ (crossIntegral p q0 a * crossIntegral p q1 b)
+          * (coshDiff a be0 be1 * coshDiff a al0 al2) := by
+      have hfac : 0 ≤ crossIntegral p q0 a * coshDiff a be0 be1 :=
+        mul_nonneg hA0.le hDa.le
+      nlinarith [hlower, hfac]
+    linarith
+  exact lt_of_mul_lt_mul_right (by linarith [hstep]) (mul_pos hDa hEa).le
+
+/-- The same separation for the polarised leading coefficient `covForm`. -/
+theorem covForm_det_lt {p q0 q1 : ℝ → ℝ} {al0 be0 al1 be1 al2 be2 a b : ℝ}
+    (hp : WindowTaper p al0 be0) (hq0 : WindowTaper q0 al1 be1) (hq1 : WindowTaper q1 al2 be2)
+    (ha : 0 < a) (hab : a < b) (hal0 : 0 < al0) (h0 : al0 ≤ be0) (h01 : be0 < al1)
+    (h1 : al1 ≤ be1) (h12 : be1 < al2)
+    (hgate : coshDiff b be0 be1 * coshDiff a al0 al2 < coshDiff b al0 al2 * coshDiff a be0 be1) :
+    covForm p q1 a * covForm p q0 b < covForm p q0 a * covForm p q1 b := by
+  have hdet := crossIntegral_det_lt hp hq0 hq1 ha hab hal0 h0 h01 h1 h12 hgate
+  rw [covForm_eq_crossIntegral' hp.cont hp.cpt hq0.cont hq0.cpt,
+    covForm_eq_crossIntegral' hp.cont hp.cpt hq0.cont hq0.cpt,
+    covForm_eq_crossIntegral' hp.cont hp.cpt hq1.cont hq1.cpt,
+    covForm_eq_crossIntegral' hp.cont hp.cpt hq1.cont hq1.cpt]
+  nlinarith [hdet]
+
+/-- Consequently the two cross-response ratios are different, which is the
+response-ratio separation the multi-taper Schur gate asks for. -/
+theorem covForm_ratio_ne {p q0 q1 : ℝ → ℝ} {al0 be0 al1 be1 al2 be2 a b : ℝ}
+    (hp : WindowTaper p al0 be0) (hq0 : WindowTaper q0 al1 be1) (hq1 : WindowTaper q1 al2 be2)
+    (ha : 0 < a) (hab : a < b) (hal0 : 0 < al0) (h0 : al0 ≤ be0) (h01 : be0 < al1)
+    (h1 : al1 ≤ be1) (h12 : be1 < al2)
+    (hgate : coshDiff b be0 be1 * coshDiff a al0 al2 < coshDiff b al0 al2 * coshDiff a be0 be1) :
+    covForm p q0 a * covForm p q1 b - covForm p q1 a * covForm p q0 b ≠ 0 := by
+  have := covForm_det_lt hp hq0 hq1 ha hab hal0 h0 h01 h1 h12 hgate
+  intro hzero
+  linarith [sub_eq_zero.mp hzero]
+
+/-! ## From the cross determinant to the full two-taper determinant -/
+
+/-- The part of the two-taper determinant that is *not* the cross determinant.  With
+`g_j = p + λ q_j` the full determinant of leading coefficients is
+`4 λ² · (cross determinant) + detRest`; every summand of `detRest` involves at least
+one *within-window* self-response `targetLeadingCoeff p ·` or
+`targetLeadingCoeff q_j ·`. -/
+def detRest (p q0 q1 : ℝ → ℝ) (lam a b : ℝ) : ℝ :=
+  2 * lam * (targetLeadingCoeff p a * (covForm p q1 b - covForm p q0 b)
+      + targetLeadingCoeff p b * (covForm p q0 a - covForm p q1 a))
+  + lam ^ 2 * (targetLeadingCoeff p a * (targetLeadingCoeff q1 b - targetLeadingCoeff q0 b)
+      + targetLeadingCoeff p b * (targetLeadingCoeff q0 a - targetLeadingCoeff q1 a))
+  + 2 * lam ^ 3 * (covForm p q0 a * targetLeadingCoeff q1 b
+      - covForm p q1 a * targetLeadingCoeff q0 b
+      + targetLeadingCoeff q0 a * covForm p q1 b - targetLeadingCoeff q1 a * covForm p q0 b)
+  + lam ^ 4 * (targetLeadingCoeff q0 a * targetLeadingCoeff q1 b
+      - targetLeadingCoeff q1 a * targetLeadingCoeff q0 b)
+
+/-- **Exact expansion of the two-taper determinant.**  For the two pole-null shaped
+tapers `g_j = p + λ q_j` the determinant of the leading response coefficients splits
+exactly into `4 λ²` times the cross determinant plus the self-response remainder. -/
+theorem targetLeadingCoeff_det_expand {p q0 q1 : ℝ → ℝ} (hp : Continuous p)
+    (hpc : HasCompactSupport p) (hq0 : Continuous q0) (hq0c : HasCompactSupport q0)
+    (hq1 : Continuous q1) (hq1c : HasCompactSupport q1) (lam a b : ℝ) :
+    targetLeadingCoeff (fun u => p u + lam * q0 u) a
+        * targetLeadingCoeff (fun u => p u + lam * q1 u) b
+      - targetLeadingCoeff (fun u => p u + lam * q1 u) a
+        * targetLeadingCoeff (fun u => p u + lam * q0 u) b
+      = 4 * lam ^ 2 * (covForm p q0 a * covForm p q1 b - covForm p q1 a * covForm p q0 b)
+        + detRest p q0 q1 lam a b := by
+  rw [targetLeadingCoeff_add_smul hp hpc hq0 hq0c, targetLeadingCoeff_add_smul hp hpc hq1 hq1c,
+    targetLeadingCoeff_add_smul hp hpc hq1 hq1c, targetLeadingCoeff_add_smul hp hpc hq0 hq0c]
+  unfold detRest
+  ring
+
+/-- **The remaining obligation, isolated.**  Once the self-response remainder is
+dominated by the (now proved, strictly positive) cross determinant, the two-taper
+determinant is nonzero — which is precisely the admission certificate
+`wedgeSq (N_σ, T_ρ) > 0` of the multi-taper Schur gate. -/
+theorem targetLeadingCoeff_det_ne_zero_of_cross_dominant {p q0 q1 : ℝ → ℝ} (hp : Continuous p)
+    (hpc : HasCompactSupport p) (hq0 : Continuous q0) (hq0c : HasCompactSupport q0)
+    (hq1 : Continuous q1) (hq1c : HasCompactSupport q1) {lam a b : ℝ}
+    (hdom : |detRest p q0 q1 lam a b|
+      < 4 * lam ^ 2 * (covForm p q0 a * covForm p q1 b - covForm p q1 a * covForm p q0 b)) :
+    targetLeadingCoeff (fun u => p u + lam * q0 u) a
+        * targetLeadingCoeff (fun u => p u + lam * q1 u) b
+      - targetLeadingCoeff (fun u => p u + lam * q1 u) a
+        * targetLeadingCoeff (fun u => p u + lam * q0 u) b ≠ 0 := by
+  rw [targetLeadingCoeff_det_expand hp hpc hq0 hq0c hq1 hq1c]
+  have habs := abs_lt.mp hdom
+  intro hzero
+  linarith [habs.1, habs.2]
+
+/-! ## Quantitative bounds
+
+The separation theorem above is qualitative.  For the downstream domination problem
+(bounding the within-window self responses of `detRest` against the cross
+determinant) one needs explicit two-sided bounds.  Both directions follow from the
+same pointwise sandwich of the kernel. -/
+
+/-- A window taper for a narrower window is a window taper for any wider one. -/
+theorem WindowTaper.mono {f : ℝ → ℝ} {lo hi lo' hi' : ℝ} (h : WindowTaper f lo hi)
+    (hlo : lo' ≤ lo) (hhi : hi ≤ hi') : WindowTaper f lo' hi' :=
+  { cont := h.cont
+    cpt := h.cpt
+    nonneg := h.nonneg
+    supp := fun u hu => ⟨hlo.trans (h.supp u hu).1, (h.supp u hu).2.trans hhi⟩
+    mass := h.mass }
+
+/-- **Uniform upper bound.**  Two tapers supported in the modulus bracket `[lo, hi]`
+have bilinear response at most the extreme kernel value times the product of masses. -/
+theorem crossIntegral_le {p q : ℝ → ℝ} {lo hi x : ℝ}
+    (hp : WindowTaper p lo hi) (hq : WindowTaper q lo hi) (hx : 0 < x) (hlo : 0 < lo) :
+    crossIntegral p q x
+      ≤ (hi ^ 2 - lo ^ 2) * coshDiff x lo hi * ((∫ u : ℝ, p u) * ∫ v : ℝ, q v) := by
+  obtain ⟨Kap, hKdef⟩ : ∃ y : ℝ, y = (hi ^ 2 - lo ^ 2) * coshDiff x lo hi := ⟨_, rfl⟩
+  have hpt : ∀ u v : ℝ, crossKernel p q x u v ≤ Kap * (p u * q v) := by
+    intro u v
+    by_cases hpu : p u = 0
+    · simp [crossKernel, hpu]
+    by_cases hqv : q v = 0
+    · simp [crossKernel, hqv]
+    have hu := hp.supp u hpu
+    have hv := hq.supp v hqv
+    have hU : 0 < |u| := hlo.trans_le hu.1
+    have hV : 0 < |v| := hlo.trans_le hv.1
+    have hmass : 0 ≤ p u * q v := mul_nonneg (hp.nonneg u) (hq.nonneg v)
+    have hcosh : ∀ {s t : ℝ}, 0 < s → s ≤ t → Real.cosh (x * s) ≤ Real.cosh (x * t) := by
+      intro s t hs hst
+      apply Real.cosh_le_cosh.mpr
+      rw [abs_of_pos (mul_pos hx hs), abs_of_pos (mul_pos hx (hs.trans_le hst))]
+      exact mul_le_mul_of_nonneg_left hst hx.le
+    have hbound : (|v| ^ 2 - |u| ^ 2) * coshDiff x |u| |v| ≤ Kap := by
+      rw [hKdef]
+      rcases le_total |u| |v| with h | h
+      · have h1 : |v| ^ 2 - |u| ^ 2 ≤ hi ^ 2 - lo ^ 2 := by
+          have := hv.2; have := hu.1
+          nlinarith [hU, hlo]
+        have h2 : coshDiff x |u| |v| ≤ coshDiff x lo hi := by
+          unfold coshDiff
+          have hA : Real.cosh (x * lo) ≤ Real.cosh (x * |u|) := hcosh hlo hu.1
+          have hB : Real.cosh (x * |v|) ≤ Real.cosh (x * hi) := hcosh hV hv.2
+          linarith
+        have h3 : 0 ≤ |v| ^ 2 - |u| ^ 2 := by nlinarith [hU]
+        have h4 : 0 ≤ coshDiff x |u| |v| := by
+          unfold coshDiff
+          have := hcosh hU h
+          linarith
+        nlinarith [h1, h2, h3, h4]
+      · have h1 : |u| ^ 2 - |v| ^ 2 ≤ hi ^ 2 - lo ^ 2 := by
+          have := hu.2; have := hv.1
+          nlinarith [hV, hlo]
+        have h2 : coshDiff x |v| |u| ≤ coshDiff x lo hi := by
+          unfold coshDiff
+          have hA : Real.cosh (x * lo) ≤ Real.cosh (x * |v|) := hcosh hlo hv.1
+          have hB : Real.cosh (x * |u|) ≤ Real.cosh (x * hi) := hcosh hU hu.2
+          linarith
+        have h3 : 0 ≤ |u| ^ 2 - |v| ^ 2 := by nlinarith [hV]
+        have h4 : 0 ≤ coshDiff x |v| |u| := by
+          unfold coshDiff
+          have := hcosh hV h
+          linarith
+        have hswap : (|v| ^ 2 - |u| ^ 2) * coshDiff x |u| |v|
+            = (|u| ^ 2 - |v| ^ 2) * coshDiff x |v| |u| := by
+          unfold coshDiff; ring
+        rw [hswap]
+        nlinarith [h1, h2, h3, h4]
+    rw [crossKernel_abs hx.le]
+    nlinarith [hbound, hmass]
+  have hFs : ∀ u : ℝ, Integrable fun v : ℝ => crossKernel p q x u v :=
+    fun u => integrable_crossKernel_slice hq.cont hq.cpt p x u
+  have hGs : ∀ u : ℝ, Integrable fun v : ℝ => Kap * (p u * q v) := fun u =>
+    ((hq.cont.integrable_of_hasCompactSupport hq.cpt).const_mul (p u)).const_mul Kap
+  have hinner : (fun u : ℝ => ∫ v : ℝ, Kap * (p u * q v))
+      = fun u : ℝ => p u * (Kap * ∫ v : ℝ, q v) := by
+    funext u
+    rw [show (fun v : ℝ => Kap * (p u * q v)) = fun v : ℝ => (Kap * p u) * q v by
+      funext v; ring, integral_const_mul]
+    ring
+  have hFo : Integrable fun u : ℝ => ∫ v : ℝ, crossKernel p q x u v :=
+    integrable_crossKernel_outer hp.cont hp.cpt hq.cont hq.cpt x
+  have hGo : Integrable fun u : ℝ => ∫ v : ℝ, Kap * (p u * q v) := by
+    rw [hinner]
+    exact taper_integrable hp.cont hp.cpt (by fun_prop)
+  have hmain := iterated_integral_mono hFs hGs hFo hGo hpt
+  have e1 : (∫ u : ℝ, ∫ v : ℝ, Kap * (p u * q v))
+      = Kap * ((∫ u : ℝ, p u) * ∫ v : ℝ, q v) := by
+    rw [hinner, integral_mul_const]
+    ring
+  rw [e1, hKdef] at hmain
+  exact hmain
+
+/-- **Quantitative separation.**  The cross determinant is bounded below by the
+product of the two `a`-responses times the strict gap between the two endpoint
+ratios. -/
+theorem crossIntegral_det_ge {p q0 q1 : ℝ → ℝ} {al0 be0 al1 be1 al2 be2 a b : ℝ}
+    (hp : WindowTaper p al0 be0) (hq0 : WindowTaper q0 al1 be1) (hq1 : WindowTaper q1 al2 be2)
+    (ha : 0 < a) (hab : a < b) (hal0 : 0 < al0) (h0 : al0 ≤ be0) (h01 : be0 < al1)
+    (h1 : al1 ≤ be1) (h12 : be1 < al2) :
+    crossIntegral p q0 a * crossIntegral p q1 a
+        * (coshDiff b al0 al2 / coshDiff a al0 al2 - coshDiff b be0 be1 / coshDiff a be0 be1)
+      ≤ crossIntegral p q0 a * crossIntegral p q1 b
+        - crossIntegral p q1 a * crossIntegral p q0 b := by
+  have hbe0 : 0 < be0 := hal0.trans_le h0
+  have h02 : be0 < al2 := h01.trans (h1.trans_lt h12)
+  have hA0 : 0 < crossIntegral p q0 a := crossIntegral_pos hp hq0 ha hal0 h0 h01
+  have hA1 : 0 < crossIntegral p q1 a := crossIntegral_pos hp hq1 ha hal0 h0 h02
+  have hDa : 0 < coshDiff a be0 be1 := coshDiff_pos ha hbe0 (h01.trans_le h1)
+  have hEa : 0 < coshDiff a al0 al2 := coshDiff_pos ha hal0 (lt_of_le_of_lt h0 h02)
+  have hupper := crossIntegral_upper hp hq0 ha hab hal0 h01 h1
+  have hlower := crossIntegral_lower hp hq1 ha hab hal0 h0 h02
+  have hB0 : crossIntegral p q0 b ≤ coshDiff b be0 be1 / coshDiff a be0 be1
+      * crossIntegral p q0 a := by
+    rw [div_mul_eq_mul_div, le_div_iff₀ hDa]
+    linarith [hupper]
+  have hB1 : coshDiff b al0 al2 / coshDiff a al0 al2 * crossIntegral p q1 a
+      ≤ crossIntegral p q1 b := by
+    rw [div_mul_eq_mul_div, div_le_iff₀ hEa]
+    linarith [hlower]
+  nlinarith [hB0, hB1, hA0, hA1]
+
+/-- The endpoint ratio gap is strictly positive exactly under the window gate. -/
+theorem ratio_gap_pos {a b al0 be0 al1 be1 al2 : ℝ} (ha : 0 < a) (hal0 : 0 < al0)
+    (h0 : al0 ≤ be0) (h01 : be0 < al1) (h1 : al1 ≤ be1) (h12 : be1 < al2)
+    (hgate : coshDiff b be0 be1 * coshDiff a al0 al2 < coshDiff b al0 al2 * coshDiff a be0 be1) :
+    0 < coshDiff b al0 al2 / coshDiff a al0 al2 - coshDiff b be0 be1 / coshDiff a be0 be1 := by
+  have hbe0 : 0 < be0 := hal0.trans_le h0
+  have hDa : 0 < coshDiff a be0 be1 := coshDiff_pos ha hbe0 (h01.trans_le h1)
+  have hEa : 0 < coshDiff a al0 al2 :=
+    coshDiff_pos ha hal0 (lt_of_le_of_lt h0 (h01.trans (h1.trans_lt h12)))
+  have : coshDiff b be0 be1 / coshDiff a be0 be1 < coshDiff b al0 al2 / coshDiff a al0 al2 := by
+    rw [div_lt_div_iff₀ hDa hEa]
+    linarith [hgate]
+  linarith
+
+/-! ## An explicit bound for the self-response remainder -/
+
+theorem abs_sub_le_add_of_nonneg {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) : |x - y| ≤ x + y := by
+  rw [abs_le]; constructor <;> linarith
+
+/-- The abstract triangle bound for the four `λ`-groups of `detRest`. -/
+theorem abs_quartic_combination_le {Sa Sb Ta0 Ta1 Tb0 Tb1 Ca0 Ca1 Cb0 Cb1 lam : ℝ}
+    (hSa : 0 ≤ Sa) (hSb : 0 ≤ Sb) (hTa0 : 0 ≤ Ta0) (hTa1 : 0 ≤ Ta1) (hTb0 : 0 ≤ Tb0)
+    (hTb1 : 0 ≤ Tb1) (hCa0 : 0 ≤ Ca0) (hCa1 : 0 ≤ Ca1) (hCb0 : 0 ≤ Cb0) (hCb1 : 0 ≤ Cb1) :
+    |2 * lam * (Sa * (Cb1 - Cb0) + Sb * (Ca0 - Ca1))
+      + lam ^ 2 * (Sa * (Tb1 - Tb0) + Sb * (Ta0 - Ta1))
+      + 2 * lam ^ 3 * (Ca0 * Tb1 - Ca1 * Tb0 + Ta0 * Cb1 - Ta1 * Cb0)
+      + lam ^ 4 * (Ta0 * Tb1 - Ta1 * Tb0)|
+      ≤ 2 * |lam| * (Sa * (Cb1 + Cb0) + Sb * (Ca0 + Ca1))
+        + lam ^ 2 * (Sa * (Tb1 + Tb0) + Sb * (Ta0 + Ta1))
+        + 2 * |lam| ^ 3 * (Ca0 * Tb1 + Ca1 * Tb0 + Ta0 * Cb1 + Ta1 * Cb0)
+        + lam ^ 4 * (Ta0 * Tb1 + Ta1 * Tb0) := by
+  have b1 : |Sa * (Cb1 - Cb0) + Sb * (Ca0 - Ca1)| ≤ Sa * (Cb1 + Cb0) + Sb * (Ca0 + Ca1) := by
+    refine (abs_add_le _ _).trans (add_le_add ?_ ?_)
+    · rw [abs_mul, abs_of_nonneg hSa]
+      exact mul_le_mul_of_nonneg_left (abs_sub_le_add_of_nonneg hCb1 hCb0) hSa
+    · rw [abs_mul, abs_of_nonneg hSb]
+      exact mul_le_mul_of_nonneg_left (abs_sub_le_add_of_nonneg hCa0 hCa1) hSb
+  have b2 : |Sa * (Tb1 - Tb0) + Sb * (Ta0 - Ta1)| ≤ Sa * (Tb1 + Tb0) + Sb * (Ta0 + Ta1) := by
+    refine (abs_add_le _ _).trans (add_le_add ?_ ?_)
+    · rw [abs_mul, abs_of_nonneg hSa]
+      exact mul_le_mul_of_nonneg_left (abs_sub_le_add_of_nonneg hTb1 hTb0) hSa
+    · rw [abs_mul, abs_of_nonneg hSb]
+      exact mul_le_mul_of_nonneg_left (abs_sub_le_add_of_nonneg hTa0 hTa1) hSb
+  have b3 : |Ca0 * Tb1 - Ca1 * Tb0 + Ta0 * Cb1 - Ta1 * Cb0|
+      ≤ Ca0 * Tb1 + Ca1 * Tb0 + Ta0 * Cb1 + Ta1 * Cb0 := by
+    have hre : Ca0 * Tb1 - Ca1 * Tb0 + Ta0 * Cb1 - Ta1 * Cb0
+        = (Ca0 * Tb1 - Ca1 * Tb0) + (Ta0 * Cb1 - Ta1 * Cb0) := by ring
+    have hstep : |(Ca0 * Tb1 - Ca1 * Tb0) + (Ta0 * Cb1 - Ta1 * Cb0)|
+        ≤ (Ca0 * Tb1 + Ca1 * Tb0) + (Ta0 * Cb1 + Ta1 * Cb0) :=
+      (abs_add_le _ _).trans (add_le_add (abs_sub_le_add_of_nonneg (mul_nonneg hCa0 hTb1)
+        (mul_nonneg hCa1 hTb0)) (abs_sub_le_add_of_nonneg (mul_nonneg hTa0 hCb1)
+        (mul_nonneg hTa1 hCb0)))
+    rw [hre]
+    linarith [hstep]
+  have b4 : |Ta0 * Tb1 - Ta1 * Tb0| ≤ Ta0 * Tb1 + Ta1 * Tb0 :=
+    abs_sub_le_add_of_nonneg (mul_nonneg hTa0 hTb1) (mul_nonneg hTa1 hTb0)
+  have g1 : |2 * lam * (Sa * (Cb1 - Cb0) + Sb * (Ca0 - Ca1))|
+      ≤ 2 * |lam| * (Sa * (Cb1 + Cb0) + Sb * (Ca0 + Ca1)) := by
+    rw [abs_mul, abs_mul, abs_two]
+    exact mul_le_mul_of_nonneg_left b1 (by positivity)
+  have g2 : |lam ^ 2 * (Sa * (Tb1 - Tb0) + Sb * (Ta0 - Ta1))|
+      ≤ lam ^ 2 * (Sa * (Tb1 + Tb0) + Sb * (Ta0 + Ta1)) := by
+    rw [abs_mul, abs_of_nonneg (by positivity : (0:ℝ) ≤ lam ^ 2)]
+    exact mul_le_mul_of_nonneg_left b2 (by positivity)
+  have g3 : |2 * lam ^ 3 * (Ca0 * Tb1 - Ca1 * Tb0 + Ta0 * Cb1 - Ta1 * Cb0)|
+      ≤ 2 * |lam| ^ 3 * (Ca0 * Tb1 + Ca1 * Tb0 + Ta0 * Cb1 + Ta1 * Cb0) := by
+    rw [abs_mul, abs_mul, abs_two, abs_pow]
+    exact mul_le_mul_of_nonneg_left b3 (by positivity)
+  have g4 : |lam ^ 4 * (Ta0 * Tb1 - Ta1 * Tb0)| ≤ lam ^ 4 * (Ta0 * Tb1 + Ta1 * Tb0) := by
+    rw [abs_mul, abs_of_nonneg (by positivity : (0:ℝ) ≤ lam ^ 4)]
+    exact mul_le_mul_of_nonneg_left b4 (by positivity)
+  have t1 := abs_add_le (2 * lam * (Sa * (Cb1 - Cb0) + Sb * (Ca0 - Ca1))
+      + lam ^ 2 * (Sa * (Tb1 - Tb0) + Sb * (Ta0 - Ta1))
+      + 2 * lam ^ 3 * (Ca0 * Tb1 - Ca1 * Tb0 + Ta0 * Cb1 - Ta1 * Cb0))
+      (lam ^ 4 * (Ta0 * Tb1 - Ta1 * Tb0))
+  have t2 := abs_add_le (2 * lam * (Sa * (Cb1 - Cb0) + Sb * (Ca0 - Ca1))
+      + lam ^ 2 * (Sa * (Tb1 - Tb0) + Sb * (Ta0 - Ta1)))
+      (2 * lam ^ 3 * (Ca0 * Tb1 - Ca1 * Tb0 + Ta0 * Cb1 - Ta1 * Cb0))
+  have t3 := abs_add_le (2 * lam * (Sa * (Cb1 - Cb0) + Sb * (Ca0 - Ca1)))
+      (lam ^ 2 * (Sa * (Tb1 - Tb0) + Sb * (Ta0 - Ta1)))
+  linarith [t1, t2, t3, g1, g2, g3, g4]
+
+theorem crossKernel_nonneg {p q : ℝ → ℝ} (hp : ∀ u, 0 ≤ p u) (hq : ∀ v, 0 ≤ q v) (x u v : ℝ) :
+    0 ≤ crossKernel p q x u v := by
+  have hpq : 0 ≤ p u * q v := mul_nonneg (hp u) (hq v)
+  have hsame : 0 ≤ (u ^ 2 - v ^ 2) * (Real.cosh (x * u) - Real.cosh (x * v)) := by
+    rcases le_total (v ^ 2) (u ^ 2) with h | h
+    · have hcosh := cosh_mono_sq x h
+      exact mul_nonneg (by linarith) (by linarith)
+    · have hcosh := cosh_mono_sq x h
+      nlinarith [h, hcosh]
+  unfold crossKernel
+  exact mul_nonneg hpq hsame
+
+theorem crossIntegral_nonneg {p q : ℝ → ℝ} (hp : ∀ u, 0 ≤ p u) (hq : ∀ v, 0 ≤ q v) (x : ℝ) :
+    0 ≤ crossIntegral p q x :=
+  integral_nonneg fun u => integral_nonneg fun v => crossKernel_nonneg hp hq x u v
+
+theorem covForm_nonneg {p q : ℝ → ℝ} (hpc : Continuous p) (hpcs : HasCompactSupport p)
+    (hqc : Continuous q) (hqcs : HasCompactSupport q) (hp : ∀ u, 0 ≤ p u) (hq : ∀ v, 0 ≤ q v)
+    (x : ℝ) : 0 ≤ covForm p q x := by
+  rw [covForm_eq_crossIntegral' hpc hpcs hqc hqcs]
+  have := crossIntegral_nonneg hp hq x
+  linarith
+
+/-- The explicit upper bound for the self-response remainder of the two-taper
+determinant. -/
+def detRestBound (p q0 q1 : ℝ → ℝ) (lam a b : ℝ) : ℝ :=
+  2 * |lam| * (targetLeadingCoeff p a * (covForm p q1 b + covForm p q0 b)
+      + targetLeadingCoeff p b * (covForm p q0 a + covForm p q1 a))
+  + lam ^ 2 * (targetLeadingCoeff p a * (targetLeadingCoeff q1 b + targetLeadingCoeff q0 b)
+      + targetLeadingCoeff p b * (targetLeadingCoeff q0 a + targetLeadingCoeff q1 a))
+  + 2 * |lam| ^ 3 * (covForm p q0 a * targetLeadingCoeff q1 b
+      + covForm p q1 a * targetLeadingCoeff q0 b
+      + targetLeadingCoeff q0 a * covForm p q1 b + targetLeadingCoeff q1 a * covForm p q0 b)
+  + lam ^ 4 * (targetLeadingCoeff q0 a * targetLeadingCoeff q1 b
+      + targetLeadingCoeff q1 a * targetLeadingCoeff q0 b)
+
+/-- **The self-response remainder is bounded by nonnegative window data.**  Every term
+of the bound is a product of within-window self responses and cross responses of
+nonnegative tapers, so it is amenable to the quantitative window bounds above. -/
+theorem abs_detRest_le {p q0 q1 : ℝ → ℝ} (hp : Continuous p) (hpc : HasCompactSupport p)
+    (hq0 : Continuous q0) (hq0c : HasCompactSupport q0) (hq1 : Continuous q1)
+    (hq1c : HasCompactSupport q1) (hpn : ∀ u, 0 ≤ p u) (hq0n : ∀ u, 0 ≤ q0 u)
+    (hq1n : ∀ u, 0 ≤ q1 u) (lam a b : ℝ) :
+    |detRest p q0 q1 lam a b| ≤ detRestBound p q0 q1 lam a b := by
+  unfold detRest detRestBound
+  exact abs_quartic_combination_le
+    (targetLeadingCoeff_nonneg hp hpc hpn a) (targetLeadingCoeff_nonneg hp hpc hpn b)
+    (targetLeadingCoeff_nonneg hq0 hq0c hq0n a) (targetLeadingCoeff_nonneg hq1 hq1c hq1n a)
+    (targetLeadingCoeff_nonneg hq0 hq0c hq0n b) (targetLeadingCoeff_nonneg hq1 hq1c hq1n b)
+    (covForm_nonneg hp hpc hq0 hq0c hpn hq0n a) (covForm_nonneg hp hpc hq1 hq1c hpn hq1n a)
+    (covForm_nonneg hp hpc hq0 hq0c hpn hq0n b) (covForm_nonneg hp hpc hq1 hq1c hpn hq1n b)
+
+/-- The domination hypothesis of the Schur admission gate follows from the explicit
+bound. -/
+theorem detRest_dominated_of_bound {p q0 q1 : ℝ → ℝ} (hp : Continuous p)
+    (hpc : HasCompactSupport p) (hq0 : Continuous q0) (hq0c : HasCompactSupport q0)
+    (hq1 : Continuous q1) (hq1c : HasCompactSupport q1) (hpn : ∀ u, 0 ≤ p u)
+    (hq0n : ∀ u, 0 ≤ q0 u) (hq1n : ∀ u, 0 ≤ q1 u) {lam a b : ℝ}
+    (hbound : detRestBound p q0 q1 lam a b
+      < 4 * lam ^ 2 * (covForm p q0 a * covForm p q1 b - covForm p q1 a * covForm p q0 b)) :
+    |detRest p q0 q1 lam a b|
+      < 4 * lam ^ 2 * (covForm p q0 a * covForm p q1 b - covForm p q1 a * covForm p q0 b) :=
+  lt_of_le_of_lt (abs_detRest_le hp hpc hq0 hq0c hq1 hq1c hpn hq0n hq1n lam a b) hbound
+
+end LiteralWeilWindowRatioSeparation
+end Zeta23Bridge

@@ -1,0 +1,7 @@
+{
+ "aliases": [],
+ "canonical": "Q110832792",
+ "description": "defined object in a database that is used to store or reference data. For example, a table or a sequence",
+ "id": "Q110832792",
+ "label": "database object"
+}

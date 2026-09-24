@@ -1,0 +1,118 @@
+name: Mirrors (Vercel, Cloudflare, Hugging Face, Toolforge, archive.org, IPFS)
+
+# One workflow per mirror, all fed by the same `site/` directory, all optional:
+# a job is skipped when its credentials are not configured, so a fork can enable
+# the mirrors it wants one secret at a time.
+#
+#   VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID   → Vercel
+#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID      → Cloudflare Pages
+#   HF_TOKEN                                          → Hugging Face dataset + Space
+#   TOOLFORGE_SSH_KEY, TOOLFORGE_TOOL                → Wikimedia Toolforge
+#   IA_ACCESS_KEY, IA_SECRET_KEY                     → archive.org
+#   IPFS_PIN_TOKEN (web3.storage-compatible)         → IPFS pinning
+
+on:
+  push:
+    branches: [main, master]
+    paths: ['site/**', 'hf/**', 'toolforge/**', '.github/workflows/mirrors.yml']
+  workflow_dispatch:
+  schedule:
+    - cron: '17 4 * * 1'   # a weekly re-sync, so mirrors cannot silently rot
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/verify_site.py site
+
+  vercel:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Vercel
+        if: ${{ secrets.VERCEL_TOKEN != '' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          npm i -g vercel@latest
+          vercel deploy --prod --yes --token "$VERCEL_TOKEN"
+
+  cloudflare:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Cloudflare Pages
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npm i -g wrangler@3
+          wrangler pages deploy site --project-name wikidata-ontology-lean --commit-dirty=true
+
+  huggingface:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Push the dataset and the Space
+        if: ${{ secrets.HF_TOKEN != '' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_DATASET_REPO: ${{ vars.HF_DATASET_REPO || 'wikidata-ontology-lean/wikidata-ontology' }}
+          HF_SPACE_REPO: ${{ vars.HF_SPACE_REPO || 'wikidata-ontology-lean/wikidata-ontology-browser' }}
+        run: |
+          pip install "huggingface_hub>=0.24"
+          python scripts/hf_sync.py --dataset "$HF_DATASET_REPO" --space "$HF_SPACE_REPO"
+
+  toolforge:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Wikimedia Toolforge
+        if: ${{ secrets.TOOLFORGE_SSH_KEY != '' }}
+        env:
+          TOOLFORGE_TOOL: ${{ vars.TOOLFORGE_TOOL || 'wikidata-ontology' }}
+          TOOLFORGE_USER: ${{ vars.TOOLFORGE_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.TOOLFORGE_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan login.toolforge.org >> ~/.ssh/known_hosts
+          ssh "$TOOLFORGE_USER@login.toolforge.org" \
+            "become $TOOLFORGE_TOOL bash -lc 'cd ~/www/python/src && git pull --ff-only && toolforge webservice python3.11 restart'"
+
+  archive_org:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Deposit the snapshots on archive.org
+        if: ${{ secrets.IA_ACCESS_KEY != '' }}
+        env:
+          IA_ACCESS_KEY: ${{ secrets.IA_ACCESS_KEY }}
+          IA_SECRET_KEY: ${{ secrets.IA_SECRET_KEY }}
+        run: |
+          pip install internetarchive
+          bash scripts/archive_upload.sh archive
+
+  ipfs:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin the site on IPFS and record the CID
+        if: ${{ secrets.IPFS_PIN_TOKEN != '' }}
+        env:
+          IPFS_PIN_TOKEN: ${{ secrets.IPFS_PIN_TOKEN }}
+        run: bash scripts/p2p_publish.sh site

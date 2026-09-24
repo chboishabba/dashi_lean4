@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "inversion semigroup"
+ ],
+ "canonical": "Q3022118",
+ "description": "regular semigroup in which every element has a unique inverse",
+ "id": "Q3022118",
+ "label": "inverse semigroup"
+}

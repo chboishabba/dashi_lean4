@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "commutative division ring",
+  "algebraic field"
+ ],
+ "canonical": "Q190109",
+ "description": "commutative ring in which every nonzero element is inversible",
+ "id": "Q190109",
+ "label": "field"
+}

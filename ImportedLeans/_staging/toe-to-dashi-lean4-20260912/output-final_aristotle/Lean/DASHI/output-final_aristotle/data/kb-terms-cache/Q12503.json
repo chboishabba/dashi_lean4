@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "whole number",
+  "integer number",
+  "integral number"
+ ],
+ "canonical": "Q12503",
+ "description": "number that can be written without a fractional or decimal component",
+ "id": "Q12503",
+ "label": "integer"
+}

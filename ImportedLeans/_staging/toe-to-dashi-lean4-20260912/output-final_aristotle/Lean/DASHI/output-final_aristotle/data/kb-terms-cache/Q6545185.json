@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "unique ID code",
+  "identifier",
+  "identification number",
+  "ID",
+  "UID",
+  "identifier system"
+ ],
+ "canonical": "Q6545185",
+ "description": "identifier which is unique and permanent within a subset of space and time",
+ "id": "Q6545185",
+ "label": "unique identifier"
+}

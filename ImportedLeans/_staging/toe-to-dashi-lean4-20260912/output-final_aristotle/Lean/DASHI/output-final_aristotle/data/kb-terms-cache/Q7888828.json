@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "Gaussian number"
+ ],
+ "canonical": "Q7888828",
+ "description": "complex number of the form p + qi, where p and q are both rational numbers",
+ "id": "Q7888828",
+ "label": "Gaussian rational"
+}

@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P156",
+ "description": "immediately following item in a series of which the subject is a part, preferably use as qualifier of P179 [if the subject has been replaced, e.g. political offices, use \"replaced by\" (P1366)]",
+ "id": "P156",
+ "kind": "property",
+ "label": "followed by"
+}

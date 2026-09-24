@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "linear space",
+  "vectors in space"
+ ],
+ "canonical": "Q125977",
+ "description": "the basic algebraic structure of linear algebra; a module over a field, such that its elements can be added together or scaled by elements of the field",
+ "id": "Q125977",
+ "label": "vector space"
+}

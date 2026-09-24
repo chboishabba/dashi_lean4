@@ -1,0 +1,211 @@
+import Mathlib
+
+/-!
+# Cuisine layer 2: the sauce derivation graph as a genuine partial order
+
+Lean mirror of the `Sauce` / `SauceDerivation` / `SaucePath` block of
+`DASHI.Culture.Cuisine.DishIdentityLineageCore`, and of the carbonara identity
+envelope.
+
+Unlike `ProcessRoute` (see `Cuisine.ProcessRoute`), `SauceDerivation` *is* a
+genuine inductive family: its three constructors constrain their indices.  The
+Agda file exhibits two paths and stops there.
+
+New content proved here:
+
+* `SaucePath` is reflexive and transitive (a preorder) and antisymmetric, hence
+  a partial order — the derivation graph is acyclic;
+* the graph has two connected components (`bechamel`-rooted and
+  `espagnole`-rooted) and no path crosses between them;
+* the specific negative facts the Agda module does not state: no path from
+  `mornay` back to `bechamel`, and none from `bechamel` to `bordelaise`;
+* for the carbonara envelope, the classification is a genuine four-way partition
+  of the eight listed ingredients, and `cream` is the unique canonically
+  excluded one.
+-/
+
+namespace Cuisine.Lineage
+
+/-! ## The sauce derivation graph -/
+
+inductive Sauce
+  | bechamel | mornay | espagnole | demiGlace | bordelaise
+  deriving DecidableEq, Fintype, Repr
+
+open Sauce
+
+/-- The three supplied derivation edges. -/
+inductive SauceDerivation : Sauce → Sauce → Prop
+  | bechamelToMornay : SauceDerivation bechamel mornay
+  | espagnoleToDemiGlace : SauceDerivation espagnole demiGlace
+  | demiGlaceToBordelaise : SauceDerivation demiGlace bordelaise
+
+/-- Reflexive-transitive closure of the derivation edges. -/
+inductive SaucePath : Sauce → Sauce → Prop
+  | pathStop {s : Sauce} : SaucePath s s
+  | pathStep {a b c : Sauce} : SauceDerivation a b → SaucePath b c → SaucePath a c
+
+namespace SaucePath
+
+theorem refl (s : Sauce) : SaucePath s s := .pathStop
+
+theorem trans {a b c : Sauce} (h₁ : SaucePath a b) (h₂ : SaucePath b c) : SaucePath a c := by
+  induction h₁ with
+  | pathStop => exact h₂
+  | pathStep e _ ih => exact .pathStep e (ih h₂)
+
+theorem single {a b : Sauce} (h : SauceDerivation a b) : SaucePath a b :=
+  .pathStep h .pathStop
+
+end SaucePath
+
+/-- Depth of a sauce in its family: a strictly increasing rank along edges. -/
+def sauceRank : Sauce → ℕ
+  | bechamel => 0
+  | mornay => 1
+  | espagnole => 0
+  | demiGlace => 1
+  | bordelaise => 2
+
+/-- The family (connected component) of a sauce. -/
+def sauceFamily : Sauce → ℕ
+  | bechamel => 0
+  | mornay => 0
+  | espagnole => 1
+  | demiGlace => 1
+  | bordelaise => 1
+
+theorem SauceDerivation.rank_lt {a b : Sauce} (h : SauceDerivation a b) :
+    sauceRank a < sauceRank b := by
+  cases h <;> decide
+
+theorem SauceDerivation.family_eq {a b : Sauce} (h : SauceDerivation a b) :
+    sauceFamily a = sauceFamily b := by
+  cases h <;> rfl
+
+theorem SaucePath.rank_le {a b : Sauce} (h : SaucePath a b) : sauceRank a ≤ sauceRank b := by
+  induction h with
+  | pathStop => exact le_rfl
+  | pathStep e _ ih => exact le_trans (le_of_lt e.rank_lt) ih
+
+theorem SaucePath.family_eq {a b : Sauce} (h : SaucePath a b) :
+    sauceFamily a = sauceFamily b := by
+  induction h with
+  | pathStop => rfl
+  | pathStep e _ ih => exact e.family_eq.trans ih
+
+/-- A path is either trivial or strictly increases the rank. -/
+theorem SaucePath.eq_or_rank_lt {a b : Sauce} (h : SaucePath a b) :
+    a = b ∨ sauceRank a < sauceRank b := by
+  cases h with
+  | pathStop => exact Or.inl rfl
+  | pathStep e p => exact Or.inr (lt_of_lt_of_le e.rank_lt p.rank_le)
+
+/-- **Acyclicity.**  The derivation graph has no directed cycles, so `SaucePath`
+is a partial order on `Sauce`.  The Agda module states no such fact. -/
+theorem SaucePath.antisymm {a b : Sauce} (h₁ : SaucePath a b) (h₂ : SaucePath b a) : a = b := by
+  rcases h₁.eq_or_rank_lt with h | h
+  · exact h
+  · rcases h₂.eq_or_rank_lt with h' | h'
+    · exact h'.symm
+    · omega
+
+/-- The derivation order, packaged. -/
+instance : PartialOrder Sauce where
+  le := SaucePath
+  le_refl := SaucePath.refl
+  le_trans _ _ _ := SaucePath.trans
+  le_antisymm _ _ h₁ h₂ := SaucePath.antisymm h₁ h₂
+
+/-! ### The two supplied paths, and the negative facts -/
+
+theorem mornayDerivesFromBechamel : SaucePath bechamel mornay :=
+  .single .bechamelToMornay
+
+theorem bordelaiseDerivesFromEspagnole : SaucePath espagnole bordelaise :=
+  .pathStep .espagnoleToDemiGlace (.single .demiGlaceToBordelaise)
+
+/-- Derivation is not reversible. -/
+theorem not_mornay_to_bechamel : ¬ SaucePath mornay bechamel := by
+  intro h
+  rcases h.eq_or_rank_lt with h' | h'
+  · exact absurd h' (by decide)
+  · exact absurd h' (by decide)
+
+/-- The two classical families are disconnected: no derivation path crosses
+between the béchamel line and the espagnole line. -/
+theorem not_bechamel_to_bordelaise : ¬ SaucePath bechamel bordelaise := by
+  intro h
+  exact absurd h.family_eq (by decide)
+
+/-- Exactly the reachability relation generated by the three edges: there are
+seven ordered pairs `(a, b)` with `SaucePath a b`, namely the five reflexive
+pairs plus `bechamel ≤ mornay`, `espagnole ≤ demiGlace`,
+`demiGlace ≤ bordelaise` and `espagnole ≤ bordelaise`. -/
+theorem saucePath_iff (a b : Sauce) :
+    SaucePath a b ↔
+      (a = b ∨ (a = bechamel ∧ b = mornay) ∨ (a = espagnole ∧ b = demiGlace) ∨
+        (a = demiGlace ∧ b = bordelaise) ∨ (a = espagnole ∧ b = bordelaise)) := by
+  constructor
+  · intro h
+    induction h with
+    | pathStop => exact Or.inl rfl
+    | @pathStep a b c e _ ih =>
+        cases e <;> rcases ih with h | ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩ <;>
+          subst_vars <;> simp_all
+  · rintro (rfl | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+    · exact .pathStop
+    · exact .single .bechamelToMornay
+    · exact .single .espagnoleToDemiGlace
+    · exact .single .demiGlaceToBordelaise
+    · exact bordelaiseDerivesFromEspagnole
+
+/-! ## The carbonara identity envelope -/
+
+inductive IngredientStatus
+  | identityCore | allowedAddition | contestedAddition | canonicallyExcluded
+  deriving DecidableEq, Fintype, Repr
+
+inductive CarbonaraIngredient
+  | pasta | egg | pecorino | guanciale | blackPepper | cream | pancetta | smokedBacon
+  deriving DecidableEq, Fintype, Repr
+
+open CarbonaraIngredient IngredientStatus in
+/-- The classification supplied in the Agda source. -/
+def carbonaraIngredientStatus : CarbonaraIngredient → IngredientStatus
+  | pasta => identityCore
+  | egg => identityCore
+  | pecorino => identityCore
+  | guanciale => identityCore
+  | blackPepper => identityCore
+  | cream => canonicallyExcluded
+  | pancetta => contestedAddition
+  | smokedBacon => contestedAddition
+
+/-- The Agda regression fact. -/
+theorem cream_outside_candidate_canon :
+    carbonaraIngredientStatus .cream = .canonicallyExcluded := rfl
+
+/-- `cream` is the *unique* canonically excluded ingredient of the envelope —
+a statement about the whole classification, not a single point check. -/
+theorem cream_unique_excluded (i : CarbonaraIngredient) :
+    carbonaraIngredientStatus i = .canonicallyExcluded ↔ i = .cream := by
+  cases i <;> decide
+
+/-- The classification uses only three of the four available statuses: no listed
+ingredient is an `allowedAddition`.  The envelope therefore records a
+three-block partition, and the Agda `IngredientStatus` carrier is not exhausted
+by the carbonara example. -/
+theorem no_allowed_addition (i : CarbonaraIngredient) :
+    carbonaraIngredientStatus i ≠ .allowedAddition := by
+  cases i <;> decide
+
+/-- Block sizes of the classification: five core ingredients, one exclusion,
+two contested. -/
+theorem carbonara_block_sizes :
+    (Finset.univ.filter (fun i => carbonaraIngredientStatus i = .identityCore)).card = 5 ∧
+    (Finset.univ.filter (fun i => carbonaraIngredientStatus i = .contestedAddition)).card = 2 ∧
+    (Finset.univ.filter (fun i => carbonaraIngredientStatus i = .canonicallyExcluded)).card = 1 := by
+  refine ⟨by decide, by decide, by decide⟩
+
+end Cuisine.Lineage

@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "semicategory",
+  "precategory"
+ ],
+ "canonical": "Q4164581",
+ "description": "partial algebra that satisfies the axioms for a small category",
+ "id": "Q4164581",
+ "label": "semigroupoid"
+}

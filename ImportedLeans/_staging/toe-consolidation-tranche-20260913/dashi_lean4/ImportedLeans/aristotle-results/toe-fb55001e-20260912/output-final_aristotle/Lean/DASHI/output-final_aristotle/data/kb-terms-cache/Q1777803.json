@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "co-algebra"
+ ],
+ "canonical": "Q1777803",
+ "description": "vector space V equipped with a linear map V → V ⊗ V",
+ "id": "Q1777803",
+ "label": "coalgebra"
+}

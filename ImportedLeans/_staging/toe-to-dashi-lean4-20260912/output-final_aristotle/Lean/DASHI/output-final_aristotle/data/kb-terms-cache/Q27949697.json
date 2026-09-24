@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "reason for deprecation (Wikidata)",
+  "Wikidata deprecation reason",
+  "deprecation reason (Wikidata)",
+  "Wikidata reason for deprecation",
+  "reason for deprecated rank (Wikidata)",
+  "Wikidata reason for deprecated rank"
+ ],
+ "canonical": "Q27949697",
+ "description": "used with \"reason for deprecated rank\" (P2241)",
+ "id": "Q27949697",
+ "label": "Wikibase reason for deprecated rank"
+}

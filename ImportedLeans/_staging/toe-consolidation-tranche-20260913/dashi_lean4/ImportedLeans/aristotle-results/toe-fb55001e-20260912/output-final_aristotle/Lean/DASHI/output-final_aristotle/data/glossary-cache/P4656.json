@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P4656",
+ "description": "URL of source to indicate the page or revision of an import source from another Wikimedia project (except actual references, such as Wikisource source texts). Use instead of \"reference URL\" (P854). Permalinks are preferred.",
+ "id": "P4656",
+ "kind": "property",
+ "label": "Wikimedia import URL"
+}

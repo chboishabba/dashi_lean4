@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "graded algebra"
+ ],
+ "canonical": "Q15534632",
+ "description": "graded module, where the grading has the structure of a monoid, in which ring multiplication respects the grading",
+ "id": "Q15534632",
+ "label": "graded ring"
+}

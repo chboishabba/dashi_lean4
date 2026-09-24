@@ -1,0 +1,71 @@
+name	a base with deliberate defects
+item	wd	Q1
+item	wd	Q2
+item	wd	Q3
+item	wd	Q4
+item	wd	Q5
+item	wd	Q6
+item	wd	Q7
+item	wd	Q8
+item	wd	Q9
+item	wd	Q10
+item	wd	Q11
+item	wd	Q12
+item	wd	Q13
+item	wd	Q14
+item	wd	C1
+item	wd	C2
+item	wd	V1
+item	wd	V2
+item	wd	V3
+item	wd	V4
+item	wd	V5
+item	wd	W1
+item	wd	W2
+item	wd	T
+item	wd	T2
+level	1	wd	Q1
+level	1	wd	Q2
+level	1	wd	Q3
+level	1	wd	Q4
+level	1	wd	Q5
+level	1	wd	Q6
+level	1	wd	Q8
+level	1	wd	Q9
+level	1	wd	Q10
+level	2	wd	Q12
+level	1	wd	Q13
+level	2	wd	Q14
+level	1	wd	C1
+level	1	wd	C2
+sub	wd	Q1	wd	Q2
+sub	wd	Q3	wd	Q4
+sub	wd	Q4	wd	Q3
+sub	wd	Q8	wd	Q9
+sub	wd	Q9	wd	Q10
+sub	wd	Q8	wd	Q10
+sub	wd	Q13	wd	Q14
+sub	wd	Q1	wd	Q999
+sub	wd	C1	wd	C2
+inst	wd	Q7	wd	Q5
+inst	wd	Q7	wd	Q6
+inst	wd	Q11	wd	Q12
+inst	wd	Q900	wd	Q1
+disj	wd	Q5	wd	Q6
+disj	wd	Q1	wd	Q998
+series	wd	V1	wd	T
+series	wd	V2	wd	T
+series	wd	V3	wd	T2
+series	wd	V8	wd	T
+follows	wd	V2	wd	V1
+follows	wd	V3	wd	V2
+follows	wd	V4	wd	V4
+follows	wd	V5	wd	V1
+follows	wd	V5	wd	V2
+follows	wd	V6	wd	V7
+follows	wd	W1	wd	W2
+follows	wd	W2	wd	W1
+follows	wd	C1	wd	C2
+ord	5	wd	V1
+ord	2	wd	V2
+ord	3	wd	V9

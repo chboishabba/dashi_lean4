@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P1366",
+ "description": "other person or item which continues the item by replacing it in its role. Use P156 (\"followed by\") if the item is not replaced nor identical, but adds to the series (e.g. books in a series).",
+ "id": "P1366",
+ "kind": "property",
+ "label": "replaced by"
+}

@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "quasicompact space",
+  "quasi-compact space",
+  "compact topological space"
+ ],
+ "canonical": "Q381892",
+ "description": "topological space in which from every open cover of the space, a finite cover can be extracted",
+ "id": "Q381892",
+ "label": "compact space"
+}

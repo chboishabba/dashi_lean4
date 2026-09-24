@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "use on lexemes",
+  "Wikidata lexeme",
+  "lexeme",
+  "wikibase:WikibaseLexeme"
+ ],
+ "canonical": "Q51885771",
+ "description": "Wikibase entity type for lexemes",
+ "id": "Q51885771",
+ "label": "Wikibase lexeme"
+}

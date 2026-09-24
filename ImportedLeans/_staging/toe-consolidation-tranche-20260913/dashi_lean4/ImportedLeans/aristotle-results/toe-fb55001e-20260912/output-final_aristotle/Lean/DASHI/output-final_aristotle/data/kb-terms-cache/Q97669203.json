@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "conformation",
+  "conformation of a macromolecule"
+ ],
+ "canonical": "Q97669203",
+ "description": "large-scale 3D shape of a macromolecule (or supramolecular assembly of macromolecules)",
+ "id": "Q97669203",
+ "label": "macromolecular conformation"
+}

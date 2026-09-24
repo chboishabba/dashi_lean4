@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P1630",
+ "description": "web page URL; URI template from which “$1” can be automatically replaced with the effective property value on items. If the site goes offline, set it to deprecated rank. If the formatter URL changes, add a new statement with preferred rank",
+ "id": "P1630",
+ "kind": "property",
+ "label": "formatter URL"
+}

@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "construct"
+ ],
+ "canonical": "Q1575634",
+ "description": "category equipped with a faithful functor to the category of sets",
+ "id": "Q1575634",
+ "label": "concrete category"
+}

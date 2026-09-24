@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "file system component",
+  "filesystem object",
+  "file or directory",
+  "file or folder",
+  "directory entry"
+ ],
+ "canonical": "Q37787110",
+ "description": "object in a computer filesystem, such as a file, directory, or symlink",
+ "id": "Q37787110",
+ "label": "file system object"
+}

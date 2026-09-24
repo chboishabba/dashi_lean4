@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "chemicals",
+  "chemical"
+ ],
+ "canonical": "Q79529",
+ "description": "matter of constant composition best characterized by the entities (molecules, formula units, atoms) it is composed of and characterized by physical properties like density",
+ "id": "Q79529",
+ "label": "chemical substance"
+}

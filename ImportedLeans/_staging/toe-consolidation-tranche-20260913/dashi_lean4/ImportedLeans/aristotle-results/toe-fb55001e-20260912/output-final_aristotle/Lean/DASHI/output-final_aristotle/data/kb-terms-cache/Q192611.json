@@ -1,0 +1,23 @@
+{
+ "aliases": [
+  "electoral area",
+  "riding",
+  "parliamentary seat",
+  "parliamentary constituency",
+  "electoral division",
+  "assembly constituency",
+  "political district",
+  "voting district",
+  "legislative district",
+  "electorate",
+  "precinct",
+  "constituency",
+  "electoral constituency",
+  "electoral district",
+  "district electoral area"
+ ],
+ "canonical": "Q192611",
+ "description": "territorial division made or used for elections",
+ "id": "Q192611",
+ "label": "electoral unit"
+}

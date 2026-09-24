@@ -1,0 +1,16 @@
+{
+ "aliases": [
+  "network",
+  "graphs",
+  "graph (graph theory)",
+  "graph (network)",
+  "points and lines",
+  "simple undirected graph",
+  "undirected simple graph",
+  "2-hypergraph"
+ ],
+ "canonical": "Q141488",
+ "description": "mathematical structure made of vertices connected in pairs by edges",
+ "id": "Q141488",
+ "label": "graph"
+}

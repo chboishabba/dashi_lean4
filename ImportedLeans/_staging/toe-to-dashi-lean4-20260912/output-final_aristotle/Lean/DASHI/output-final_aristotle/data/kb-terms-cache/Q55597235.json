@@ -1,0 +1,22 @@
+{
+ "aliases": [
+  "form",
+  "state",
+  "stage",
+  "organism forms",
+  "stage of development",
+  "developmental stage",
+  "life cycle stage",
+  "organism type",
+  "class of organism",
+  "kind of organism",
+  "type of organism",
+  "organism class",
+  "organism kind",
+  "organism form"
+ ],
+ "canonical": "Q55597235",
+ "description": "different stages, states, and types of an organism",
+ "id": "Q55597235",
+ "label": "class of living thing"
+}

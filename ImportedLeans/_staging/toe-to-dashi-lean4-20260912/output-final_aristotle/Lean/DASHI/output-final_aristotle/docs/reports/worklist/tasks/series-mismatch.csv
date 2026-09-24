@@ -1,0 +1,4 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/defects.skb","series","series-mismatch","error","needs-review","V3","","V2","","","neighbours in the chain belong to different series","correct one of the `part of the series` statements"
+"examples/defects.skb","series","series-mismatch","error","needs-review","V5","","V1","","","neighbours in the chain belong to different series","correct one of the `part of the series` statements"
+"examples/defects.skb","series","series-mismatch","error","needs-review","V5","","V2","","","neighbours in the chain belong to different series","correct one of the `part of the series` statements"

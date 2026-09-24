@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "element",
+  "atomic element",
+  "chemical elements"
+ ],
+ "canonical": "Q11344",
+ "description": "species of atoms having the same number of protons in the atomic nucleus and the same chemical properties, but not necessarily the same mass, or the same stability (or half-lifetime if they are unstable)",
+ "id": "Q11344",
+ "label": "chemical element"
+}

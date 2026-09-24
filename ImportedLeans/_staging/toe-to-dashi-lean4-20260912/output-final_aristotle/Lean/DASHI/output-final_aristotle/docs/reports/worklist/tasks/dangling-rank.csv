@@ -1,0 +1,2 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/taxa-defects.tkb","taxon","dangling-rank","error","suggested-fix","Q99","","","","","`taxon rank` (P105) on an item that is not declared","declare the item, or delete the rank"

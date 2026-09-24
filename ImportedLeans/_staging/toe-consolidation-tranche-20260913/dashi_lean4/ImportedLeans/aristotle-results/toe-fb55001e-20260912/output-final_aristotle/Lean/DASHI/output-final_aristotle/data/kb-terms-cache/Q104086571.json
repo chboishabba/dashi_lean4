@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "token-class",
+  "class of individuals",
+  "first-order type",
+  "Wikidata instance class",
+  "Wikidata simple class"
+ ],
+ "canonical": "Q104086571",
+ "description": "class whose instances are individuals and not classes",
+ "id": "Q104086571",
+ "label": "first-order class"
+}

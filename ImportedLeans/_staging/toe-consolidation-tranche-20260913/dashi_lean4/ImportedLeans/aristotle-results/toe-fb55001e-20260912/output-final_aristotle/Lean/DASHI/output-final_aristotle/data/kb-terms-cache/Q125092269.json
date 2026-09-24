@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "conflict type"
+ ],
+ "canonical": "Q125092269",
+ "description": "Wikidata metaclass for conflicts in various situations",
+ "id": "Q125092269",
+ "label": "type of conflict"
+}

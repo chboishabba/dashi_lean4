@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "International Article Number",
+  "EAN",
+  "Japanese Article Number",
+  "JAN"
+ ],
+ "canonical": "Q357404",
+ "description": "standard describing a barcode symbology and numbering",
+ "id": "Q357404",
+ "label": "European Article Number"
+}

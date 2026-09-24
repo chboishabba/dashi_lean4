@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="780" viewBox="0 0 860 780" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif">
+<rect width="860" height="780" fill="#ffffff"/>
+<style>.ttl{font-size:20px;font-weight:600;fill:#1b1b1f}.sub{font-size:12px;fill:#5b5b66}.lbl{font-size:12px;fill:#1b1b1f}.cnt{font-size:12px;fill:#5b5b66}</style>
+<text x="28" y="44" class="ttl">Wikidata worklist — By file</text>
+<text x="28" y="66" class="sub">25 task(s), 7398 item(s) of work</text>
+<line x1="261" y1="92" x2="261" y2="746" stroke="#d7d7de"/>
+<g class="bar"><text x="250" y="109" text-anchor="end" class="lbl">data/core.wdkb</text><rect x="262" y="99" width="520" height="16" rx="3" fill="#a4262c"/><text x="790" y="112" class="cnt">1163</text></g>
+<g class="bar"><text x="250" y="135" text-anchor="end" class="lbl">data/vocabulary.wdkb</text><rect x="262" y="125" width="464" height="16" rx="3" fill="#a4262c"/><text x="734" y="138" class="cnt">1039</text></g>
+<g class="bar"><text x="250" y="161" text-anchor="end" class="lbl">data/frontier.wdkb</text><rect x="262" y="151" width="415" height="16" rx="3" fill="#a4262c"/><text x="685" y="164" class="cnt">929</text></g>
+<g class="bar"><text x="250" y="187" text-anchor="end" class="lbl">data/enriched.wdkb</text><rect x="262" y="177" width="338" height="16" rx="3" fill="#a4262c"/><text x="608" y="190" class="cnt">757</text></g>
+<g class="bar"><text x="250" y="213" text-anchor="end" class="lbl">data/frontier2.wdkb</text><rect x="262" y="203" width="233" height="16" rx="3" fill="#a4262c"/><text x="503" y="216" class="cnt">522</text></g>
+<g class="bar"><text x="250" y="239" text-anchor="end" class="lbl">data/geography.wdkb</text><rect x="262" y="229" width="151" height="16" rx="3" fill="#a4262c"/><text x="421" y="242" class="cnt">338</text></g>
+<g class="bar"><text x="250" y="265" text-anchor="end" class="lbl">data/theories.wdkb</text><rect x="262" y="255" width="139" height="16" rx="3" fill="#a4262c"/><text x="409" y="268" class="cnt">311</text></g>
+<g class="bar"><text x="250" y="291" text-anchor="end" class="lbl">data/structures.wdkb</text><rect x="262" y="281" width="112" height="16" rx="3" fill="#a4262c"/><text x="382" y="294" class="cnt">251</text></g>
+<g class="bar"><text x="250" y="317" text-anchor="end" class="lbl">data/frontier3.wdkb</text><rect x="262" y="307" width="106" height="16" rx="3" fill="#a4262c"/><text x="376" y="320" class="cnt">239</text></g>
+<g class="bar"><text x="250" y="343" text-anchor="end" class="lbl">data/technology.wdkb</text><rect x="262" y="333" width="100" height="16" rx="3" fill="#a4262c"/><text x="370" y="346" class="cnt">225</text></g>
+<g class="bar"><text x="250" y="369" text-anchor="end" class="lbl">data/knowledge.wdkb</text><rect x="262" y="359" width="87" height="16" rx="3" fill="#a4262c"/><text x="357" y="372" class="cnt">196</text></g>
+<g class="bar"><text x="250" y="395" text-anchor="end" class="lbl">data/society.wdkb</text><rect x="262" y="385" width="86" height="16" rx="3" fill="#a4262c"/><text x="356" y="398" class="cnt">193</text></g>
+<g class="bar"><text x="250" y="421" text-anchor="end" class="lbl">data/creative.wdkb</text><rect x="262" y="411" width="75" height="16" rx="3" fill="#a4262c"/><text x="345" y="424" class="cnt">168</text></g>
+<g class="bar"><text x="250" y="447" text-anchor="end" class="lbl">data/life.wdkb</text><rect x="262" y="437" width="68" height="16" rx="3" fill="#a4262c"/><text x="338" y="450" class="cnt">154</text></g>
+<g class="bar"><text x="250" y="473" text-anchor="end" class="lbl">data/related.wdkb</text><rect x="262" y="463" width="64" height="16" rx="3" fill="#a4262c"/><text x="334" y="476" class="cnt">144</text></g>
+<g class="bar"><text x="250" y="499" text-anchor="end" class="lbl">data/science.wdkb</text><rect x="262" y="489" width="55" height="16" rx="3" fill="#a4262c"/><text x="325" y="502" class="cnt">125</text></g>
+<g class="bar"><text x="250" y="525" text-anchor="end" class="lbl">data/mathematics.wdkb</text><rect x="262" y="515" width="54" height="16" rx="3" fill="#a4262c"/><text x="324" y="528" class="cnt">121</text></g>
+<g class="bar"><text x="250" y="551" text-anchor="end" class="lbl">data/events.wdkb</text><rect x="262" y="541" width="49" height="16" rx="3" fill="#a4262c"/><text x="319" y="554" class="cnt">111</text></g>
+<g class="bar"><text x="250" y="577" text-anchor="end" class="lbl">data/upper.wdkb</text><rect x="262" y="567" width="38" height="16" rx="3" fill="#a4262c"/><text x="308" y="580" class="cnt">85</text></g>
+<g class="bar"><text x="250" y="603" text-anchor="end" class="lbl">data/chemistry.wdkb</text><rect x="262" y="593" width="36" height="16" rx="3" fill="#a4262c"/><text x="306" y="606" class="cnt">81</text></g>
+<g class="bar"><text x="250" y="629" text-anchor="end" class="lbl">data/frontier4.wdkb</text><rect x="262" y="619" width="32" height="16" rx="3" fill="#a4262c"/><text x="302" y="632" class="cnt">72</text></g>
+<g class="bar"><text x="250" y="655" text-anchor="end" class="lbl">data/related2.wdkb</text><rect x="262" y="645" width="31" height="16" rx="3" fill="#a4262c"/><text x="301" y="658" class="cnt">71</text></g>
+<g class="bar"><text x="250" y="681" text-anchor="end" class="lbl">examples/defects.skb</text><rect x="262" y="671" width="23" height="16" rx="3" fill="#a4262c"/><text x="293" y="684" class="cnt">52</text></g>
+<g class="bar"><text x="250" y="707" text-anchor="end" class="lbl">examples/taxa-defects.tkb</text><rect x="262" y="697" width="16" height="16" rx="3" fill="#a4262c"/><text x="286" y="710" class="cnt">37</text></g>
+<g class="bar"><text x="250" y="733" text-anchor="end" class="lbl">data/douglas.wdkb</text><rect x="262" y="723" width="6" height="16" rx="3" fill="#d8a200"/><text x="276" y="736" class="cnt">14</text></g>
+</svg>

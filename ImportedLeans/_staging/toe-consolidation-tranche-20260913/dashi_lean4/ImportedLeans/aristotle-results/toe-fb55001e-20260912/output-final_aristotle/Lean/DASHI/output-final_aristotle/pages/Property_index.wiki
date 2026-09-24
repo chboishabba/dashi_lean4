@@ -1,0 +1,53 @@
+This page is generated from the glossary of the formalization.
+
+{{P|P17}} — country
+{{P|P19}} — place of birth
+{{P|P22}} — father
+{{P|P25}} — mother
+{{P|P26}} — spouse
+{{P|P27}} — country of citizenship
+{{P|P31}} — instance of
+{{P|P36}} — capital
+{{P|P40}} — child
+{{P|P105}} — taxon rank
+{{P|P131}} — located in the administrative territorial entity
+{{P|P143}} — imported from Wikimedia project
+{{P|P155}} — follows
+{{P|P156}} — followed by
+{{P|P171}} — parent taxon
+{{P|P179}} — part of the series
+{{P|P214}} — VIAF cluster ID
+{{P|P225}} — taxon name
+{{P|P227}} — GND ID
+{{P|P248}} — stated in
+{{P|P279}} — subclass of
+{{P|P361}} — part of
+{{P|P460}} — said to be the same as
+{{P|P527}} — has part(s)
+{{P|P569}} — date of birth
+{{P|P571}} — inception
+{{P|P580}} — start time
+{{P|P582}} — end time
+{{P|P585}} — point in time
+{{P|P854}} — reference URL
+{{P|P1038}} — relative
+{{P|P1039}} — kinship to subject
+{{P|P1082}} — population
+{{P|P1376}} — capital of
+{{P|P1545}} — series ordinal
+{{P|P1628}} — equivalent property
+{{P|P1630}} — formatter URL
+{{P|P1647}} — subproperty of
+{{P|P1696}} — inverse property
+{{P|P1709}} — equivalent class
+{{P|P1889}} — different from
+{{P|P1963}} — properties for this type
+{{P|P2241}} — reason for deprecated rank
+{{P|P2370}} — փոխարկում ՄՀ միավորների
+{{P|P2670}} — has part(s) of the class
+{{P|P2737}} — union of
+{{P|P2738}} — disjoint union of
+{{P|P3448}} — stepparent
+{{P|P3831}} — object of statement has role
+{{P|P5137}} — item for this sense
+{{P|P8810}} — parent

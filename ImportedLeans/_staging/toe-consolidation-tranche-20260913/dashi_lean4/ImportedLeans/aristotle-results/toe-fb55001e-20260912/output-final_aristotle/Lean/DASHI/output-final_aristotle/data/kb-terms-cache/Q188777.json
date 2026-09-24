@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "acyl amide",
+  "oxoacyl amide",
+  "oxoacid amide"
+ ],
+ "canonical": "Q188777",
+ "description": "any derivative of an oxoacid in which a (possibly substituted) amino group replaces an acidic hydroxy group",
+ "id": "Q188777",
+ "label": "amides"
+}

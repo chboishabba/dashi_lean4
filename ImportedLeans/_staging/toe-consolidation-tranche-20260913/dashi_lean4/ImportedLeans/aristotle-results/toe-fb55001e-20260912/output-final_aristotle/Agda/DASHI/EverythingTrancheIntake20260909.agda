@@ -1,0 +1,162 @@
+module DASHI.EverythingTrancheIntake20260909 where
+
+------------------------------------------------------------------------
+-- ADDITIVE ROLLUP: 2026-09-09 COMBINED NS / YM / RH / TOE SOURCE TRANCHE
+--
+-- Donor: chboishabba/dashi_agda commit
+--   7f08c070a726a653e9da9419571cafe1b8cbd267  (master, 2026-09-09)
+-- delivered as `toe-ns-ym-rh-agda-handoff-20260909.tar.gz`
+--   sha256 860423a0df24e2d5b8e9cf36fa0b8c965638c26c676366bba2484701692eeb78
+--   6758 manifest entries, all 6758 SHA256SUMS entries verified OK.
+--
+-- This aggregate names exactly the NEW modules adopted from that tranche
+-- into this cutset: every one of them is *dependency-complete* here, i.e.
+-- each of its `DASHI.*` imports resolves against a file that is present in
+-- this tree.  Modules of the tranche that were reviewed but NOT adopted
+-- (Yang-Mills / Navier-Stokes paths, which this cutset excludes; modules
+-- with unresolved external dependencies; and files whose local version
+-- carries declarations the donor drops) are listed in
+-- `TOE_TRANCHE_INTAKE_20260909.md` together with the reason.
+--
+-- STATUS.  Source intake only.  No Agda toolchain exists in this
+-- environment, so NOTHING in this tranche carries an Agda kernel receipt
+-- and none is claimed.  What is mechanically checked is the delivery
+-- checksum, the path-level provenance ledger
+-- (`TOE_TRANCHE_INTAKE_20260909_LEDGER.csv`) and static import resolution
+-- (`scripts/agda_import_check.py`: 241 unresolved `DASHI.*` edges in 67
+-- files before and after intake -- unchanged).
+--
+-- The Boolean/route/compiler interfaces carried by these modules are
+-- conditional bookkeeping.  No physical Clay, Yang-Mills or Riemann
+-- result is asserted here.
+------------------------------------------------------------------------
+
+import DASHI.Analysis.NonArchimedeanGibbsFiniteProjectionUniquenessBidiExact
+import DASHI.Analysis.NonArchimedeanPadicCylinderBorelSourceExact
+import DASHI.Analysis.NonArchimedeanTaoConcentrationSameObjectNoGoExact
+import DASHI.Analysis.RiemannAristotleNearCoreDensityReturnRegression
+import DASHI.Analysis.RiemannAristotleQuarterPeriodDensityWindowLeanReturnExact
+import DASHI.Analysis.RiemannAristotleRHFinalAllowanceLeafSchedulerExact
+import DASHI.Analysis.RiemannAristotleZetaLocalCountLeanReturnExact
+import DASHI.Analysis.RiemannCriticalLineStabilityRefinementExact
+import DASHI.Analysis.RiemannExtendedSourceEntityQidBindingsExact
+import DASHI.Analysis.RiemannG2AlpogeFurmanClusteringNonDescentExact
+import DASHI.Analysis.RiemannG2BalanceFreeComplementContextExact
+import DASHI.Analysis.RiemannG2BudgetNormalizedAnalyticCoresExact
+import DASHI.Analysis.RiemannG2BudgetNormalizedFinalOrderTransportExact
+import DASHI.Analysis.RiemannG2ClayTerminalOneLeafCutExact
+import DASHI.Analysis.RiemannG2ConstructiveNegativeRHCompletionExact
+import DASHI.Analysis.RiemannG2CurrentDirectOneLeafFrontierExact
+import DASHI.Analysis.RiemannG2DirectClusterResponseContradictionExact
+import DASHI.Analysis.RiemannG2DirectComplementUnpaidContextExact
+import DASHI.Analysis.RiemannG2DirectIndependentComplementMarginExact
+import DASHI.Analysis.RiemannG2ExplicitCutoffNearFarAgdaTransportCompilerExact
+import DASHI.Analysis.RiemannG2FinalCutIntrospectionExact
+import DASHI.Analysis.RiemannG2FinalGammaRouteSchedulerRegression
+import DASHI.Analysis.RiemannG2FinalNearIndexedFiniteProducerExact
+import DASHI.Analysis.RiemannG2FinalNearIndexedLiteralModelCompilerExact
+import DASHI.Analysis.RiemannG2FinalNearLiteralKernelExact
+import DASHI.Analysis.RiemannG2FinalOffAllowanceFactorizationRegression
+import DASHI.Analysis.RiemannG2FinalPoleNearObserverRefinementExact
+import DASHI.Analysis.RiemannG2FinalPoleNearRouteReconciliationExact
+import DASHI.Analysis.RiemannG2FinalPoleNearRouteRegression
+import DASHI.Analysis.RiemannG2FinalPoleQuotientAnalyticCoreExact
+import DASHI.Analysis.RiemannG2FinalPoleQuotientAnalyticCoreRegression
+import DASHI.Analysis.RiemannG2FinalPoleQuotientMinimalAnalyticCutExact
+import DASHI.Analysis.RiemannG2FinalPoleQuotientTwoPaymentCutExact
+import DASHI.Analysis.RiemannG2FinalPoleQuotientTwoPaymentCutRegression
+import DASHI.Analysis.RiemannG2FinalSplitComplementAllowanceAssemblyExact
+import DASHI.Analysis.RiemannG2FinalSplitComplementOrderTransportCompilerExact
+import DASHI.Analysis.RiemannG2FiniteNearIndexedLiteralKernelCompilerExact
+import DASHI.Analysis.RiemannG2FreshGammaEnvelopeAnalyticCoreExact
+import DASHI.Analysis.RiemannG2FreshSameTaperGammaEnvelopeCompilerExact
+import DASHI.Analysis.RiemannG2FreshSameTaperGammaEnvelopeRegression
+import DASHI.Analysis.RiemannG2IndependentComplementMarginFinalExact
+import DASHI.Analysis.RiemannG2LiteralComplementDirectTargetExact
+import DASHI.Analysis.RiemannG2LiteralPhaseDirectClusterResponseExact
+import DASHI.Analysis.RiemannG2LiteralPhaseJointMarginCompilerExact
+import DASHI.Analysis.RiemannG2LiteralResponseNormalizedAnalyticCoresExact
+import DASHI.Analysis.RiemannG2LowGapClusteringMomentReductionExact
+import DASHI.Analysis.RiemannG2MinimalNearBudgetFinalOffSlackCompilerExact
+import DASHI.Analysis.RiemannG2MinimalStrictResponseConsumerExact
+import DASHI.Analysis.RiemannG2PoleQuotientChannelAllowanceExact
+import DASHI.Analysis.RiemannG2PoleQuotientFinalCutReconciliationExact
+import DASHI.Analysis.RiemannG2PoleQuotientGammaAllowanceDirectCompilerExact
+import DASHI.Analysis.RiemannG2PoleQuotientOffAllowanceDirectCompilerExact
+import DASHI.Analysis.RiemannG2PoleQuotientOffChosenCutoffCompilerExact
+import DASHI.Analysis.RiemannG2PoleQuotientOffIntermediateAllowanceCompilerExact
+import DASHI.Analysis.RiemannG2PoleQuotientProducerAllowanceTargetExact
+import DASHI.Analysis.RiemannG2ProofRelevantTargetTranslationModulationExact
+import DASHI.Analysis.RiemannG2SelectedDirectCutoffFinalOffSameObjectExact
+import DASHI.Analysis.RiemannG2SelectedDirectFiniteMomentBidiExact
+import DASHI.Analysis.RiemannG2SelectedFiniteNearBudgetMinimalConsumerExact
+import DASHI.Analysis.RiemannG2SelectedNearBudgetFinalOffSlackCompilerExact
+import DASHI.Analysis.RiemannG2SelectedNearBudgetFinalOffSlackRegression
+import DASHI.Analysis.RiemannG2SelectedTargetLocalMomentSameObjectExact
+import DASHI.Analysis.RiemannG2TargetModulationFinalOffCutoffCompilerExact
+import DASHI.Analysis.RiemannG2TransportedChosenCutoffDirectCombinedAllowanceExact
+import DASHI.Analysis.RiemannG2TransportedChosenCutoffOffAllowanceCompilerExact
+import DASHI.Analysis.RiemannG2TransportedDirectCombinedOffAnalyticCoreExact
+import DASHI.Analysis.RiemannG2TransverseVsOrdinateMomentNonDescentExact
+import DASHI.Analysis.RiemannG2UniformBudgetNormalizedHighProducerExact
+import DASHI.Analysis.RiemannG2UniformIndependentComplementHighProducerExact
+import DASHI.Analysis.RiemannG2UniformLiteralPhaseHighProducerExact
+import DASHI.Analysis.RiemannG2WindowBudgetDirectCombinedOffAllowanceCompilerExact
+import DASHI.Analysis.RiemannG2WindowBudgetDirectCombinedOffAnalyticCoreExact
+import DASHI.Analysis.RiemannG2WindowBudgetToTransportedNearUpperExact
+import DASHI.Analysis.RiemannG2WindowFreeDirectRepresentationFrontierExact
+import DASHI.Analysis.RiemannG2WindowFreeFiniteNearFinalModelCompilerExact
+import DASHI.Analysis.RiemannLowOrdinateSourceAtlasExact
+import DASHI.Analysis.RiemannPlattTrudgianCanonicalLowRegionExact
+import DASHI.Analysis.RiemannPlattTrudgianLowCompletionAdapterExact
+import DASHI.Analysis.RiemannSourceEntityQidBindingsExact
+import DASHI.Analysis.RiemannZetaTerminalPaymentCompressionExact
+import DASHI.Interop.AristotleConservativeTypeModuleBoundaryExact
+import DASHI.Interop.AristotleConstraintTableCoverageExact
+import DASHI.Interop.AristotleEvidenceSurfaceIdentityBoundaryExact
+import DASHI.Interop.AristotleRankQualifierPropertyEngineBoundary
+import DASHI.Interop.AristotleSnakStatementPresenceBoundaryExact
+import DASHI.Interop.ITIRSuiteNormalizedCompilerParityExact
+import DASHI.Interop.ITIRSuiteNormalizedCompilerStageParityWitnessExact
+import DASHI.Interop.SensibLawNatDualIdentityConfirmationExact
+import DASHI.Interop.SensibLawNatPeerPressureWeldExact
+import DASHI.Interop.SensibLawNatSourceMediaMaterializationExact
+import DASHI.Interop.SensibLawNatSourcePropositionVerificationExact
+import DASHI.Interop.SensibLawNatSourceSupportAcquisitionExact
+import DASHI.Interop.SensibLawNatZelphPeerCohortExact
+import DASHI.Interop.SensibLawNatZelphPipelineExact
+import DASHI.Interop.SensibLawWikibaseZelphItemSurfaceExact
+import DASHI.Interop.SensibLawWikidataBalancedTernaryAdmissibilityHyperfabricExact
+import DASHI.Interop.SensibLawWikidataItemPropertyEvidenceExact
+import DASHI.Interop.SensibLawWikidataReferenceRoleAuthorityExact
+import DASHI.Interop.SensibLawWikidataRequiredPropertyCoverageExact
+import DASHI.Interop.SourceAttributionShapePolicyExact
+import DASHI.Interop.ZelphBoundedGraphCoverageExact
+import DASHI.Interop.ZelphPrunedArtifactQueryPreservationExact
+import DASHI.Wikimedia.AristotleNativeModelSourceExact
+import DASHI.Wikimedia.ConceptEntityAlignmentExact
+import DASHI.Wikimedia.IdentifierExact
+import DASHI.Wikimedia.MaboConcreteQidGraphProjectionExact
+import DASHI.Wikimedia.MaboNativeWikimediaBridgeExact
+import DASHI.Wikimedia.MaboPropertyTripleProjectionExact
+import DASHI.Wikimedia.NativeConcreteQidGraphProjectionExact
+import DASHI.Wikimedia.NativeEpistemicProjectionExact
+import DASHI.Wikimedia.NativePropertyTripleProjectionExact
+import DASHI.Wikimedia.NativeReferenceAttributedSourceBridgeExact
+import DASHI.Wikimedia.NativeReferenceSemanticsExact
+import DASHI.Wikimedia.NativeSnakPNFLogicalForceExact
+import DASHI.Wikimedia.NativeStatementExact
+import DASHI.Wikimedia.SLRP854ExternalReferenceInspectionABIExact
+import DASHI.Wikimedia.SLRWikimediaHandoffABIExact
+import DASHI.Wikimedia.ScientificCitationQidBindingsExact
+import DASHI.Wikimedia.ScientificReferenceEntityAtlasExact
+import DASHI.Wikimedia.SensibLawBoundaryArtifactMorphismExact
+import DASHI.Wikimedia.SensibLawNatClimateReviewHandoffExact
+import DASHI.Wikimedia.SensibLawNatClimateSLRFixtureExact
+import DASHI.Wikimedia.SensibLawNatObservationClaimSLRExact
+import DASHI.Wikimedia.SensibLawSourceUnitReviewHandoffExact
+import DASHI.Wikimedia.SensibLawStatementBundleDiagnosisProofSearchExact
+import DASHI.Wikimedia.SensibLawStatementBundleSparseReopenExact
+import DASHI.Wikimedia.SensibLawWikipediaIngestContractExact
+import DASHI.Wikimedia.SourceProvenanceExact
+import DASHI.Wikimedia.WikidataPNFPredicateBridgeExact

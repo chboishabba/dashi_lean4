@@ -1,0 +1,22 @@
+{
+ "aliases": [
+  "is a",
+  "is an",
+  "is a[n]",
+  "unique individual of",
+  "unitary element of class",
+  "type",
+  "example of",
+  "is of type",
+  "has type",
+  "item of type",
+  "was a[n]",
+  "will be a[n] (use 'nature of statement' = 'expected')",
+  "rdf:type",
+  "∈"
+ ],
+ "canonical": "P31",
+ "description": "type to which this subject corresponds/belongs. Different from P279 (subclass of); for example: K2 is an instance of mountain; volcano is a subclass of mountain",
+ "id": "P31",
+ "label": "instance of"
+}

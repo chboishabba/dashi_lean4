@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "geographic feature type",
+  "type of feature",
+  "type of geographic feature",
+  "feature class",
+  "class of feature"
+ ],
+ "canonical": "Q12046615",
+ "description": "Wikidata metaclass for geographic feature",
+ "id": "Q12046615",
+ "label": "feature type"
+}

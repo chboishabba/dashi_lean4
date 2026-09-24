@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "descriptor",
+  "keyword (thesaurus)",
+  "subject term (thesaurus)",
+  "index term (descriptor)"
+ ],
+ "canonical": "Q1128340",
+ "description": "lexical unit of a thesaurus (word or phrase) used for indexing and that captures the essence of the topic of a document",
+ "id": "Q1128340",
+ "label": "subject heading"
+}

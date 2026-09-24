@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "software instance"
+ ],
+ "canonical": "Q115217689",
+ "description": "instance of a particular server software",
+ "id": "Q115217689",
+ "label": "server instance"
+}

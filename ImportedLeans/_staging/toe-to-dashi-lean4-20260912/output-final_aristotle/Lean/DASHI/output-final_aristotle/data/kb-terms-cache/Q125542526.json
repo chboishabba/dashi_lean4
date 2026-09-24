@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "activity type",
+  "kind of activity",
+  "human activity type",
+  "type of human activity"
+ ],
+ "canonical": "Q125542526",
+ "description": "meta class for activity",
+ "id": "Q125542526",
+ "label": "type of activity"
+}

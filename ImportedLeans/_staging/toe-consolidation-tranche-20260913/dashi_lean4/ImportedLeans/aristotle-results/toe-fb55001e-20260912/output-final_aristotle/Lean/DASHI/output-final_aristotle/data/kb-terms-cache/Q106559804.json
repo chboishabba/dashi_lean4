@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "person or organisation",
+  "organisation or person",
+  "organization or person",
+  "human or organization"
+ ],
+ "canonical": "Q106559804",
+ "description": "class of agents",
+ "id": "Q106559804",
+ "label": "person or organization"
+}

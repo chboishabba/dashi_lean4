@@ -1,0 +1,12 @@
+<metadata>
+  <identifier>wikidata-ontology-wdkb1-823d846c817b3298</identifier>
+  <title>Wikidata ontology snapshot: wikidata-core</title>
+  <description>A machine checked snapshot of a Wikidata-style ontology: 588 items, 725 `subclass of` and 477 `instance of` statements.</description>
+  <mediatype>data</mediatype>
+  <collection>opensource</collection>
+  <licenseurl>https://creativecommons.org/publicdomain/zero/1.0/</licenseurl>
+  <subject>wikidata</subject>
+  <subject>ontology</subject>
+  <subject>lean4</subject>
+  <subject>knowledge graph</subject>
+</metadata>

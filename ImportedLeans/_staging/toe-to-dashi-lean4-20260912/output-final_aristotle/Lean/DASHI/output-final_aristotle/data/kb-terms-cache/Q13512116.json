@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "non-associative ring",
+  "ring not necessarily associative"
+ ],
+ "canonical": "Q13512116",
+ "description": "generalization of a ring that does not require multiplication to be associative",
+ "id": "Q13512116",
+ "label": "nonassociative ring"
+}

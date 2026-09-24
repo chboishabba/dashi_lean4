@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "standing",
+  "level",
+  "ranking"
+ ],
+ "canonical": "Q4120621",
+ "description": "level in a hierarchy",
+ "id": "Q4120621",
+ "label": "rank"
+}

@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "platform",
+  "digital platform",
+  "computing environment",
+  "app layer",
+  "execution environment"
+ ],
+ "canonical": "Q241317",
+ "description": "environment in which a piece of software is executed",
+ "id": "Q241317",
+ "label": "computing platform"
+}

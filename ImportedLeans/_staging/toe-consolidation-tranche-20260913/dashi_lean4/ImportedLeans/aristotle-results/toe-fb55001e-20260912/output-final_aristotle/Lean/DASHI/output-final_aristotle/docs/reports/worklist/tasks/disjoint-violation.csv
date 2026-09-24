@@ -1,0 +1,2 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/defects.skb","ontology","disjoint-violation","error","needs-review","Q7","","Q5","human","Q6","an item is an instance of two classes declared disjoint","drop one of the two `instance of` statements, or the disjointness declaration"

@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "final object"
+ ],
+ "canonical": "Q91432273",
+ "description": "category object with exactly one morphism leading to it from every object of the category",
+ "id": "Q91432273",
+ "label": "terminal object"
+}

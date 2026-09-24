@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "Wikidata page",
+  "Wikidata project page",
+  "project page",
+  "Wikidata internal item",
+  "internal item",
+  "internal Wikidata entity"
+ ],
+ "canonical": "Q21281405",
+ "description": "instances of this entity are about some Wikidata-only content and should not refer to real world entities",
+ "id": "Q21281405",
+ "label": "Wikidata internal entity"
+}

@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "recursive number",
+  "computable real",
+  "computable reals"
+ ],
+ "canonical": "Q818895",
+ "description": "real number that can be computed to within any desired precision by a finite, terminating algorithm",
+ "id": "Q818895",
+ "label": "computable number"
+}

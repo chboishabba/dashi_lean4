@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Proposed repairs — frontier-round-4</title>
+<style>
+body{font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;margin:2rem;color:#1b1b1f}
+h1{font-size:1.4rem} h2{font-size:1.05rem;margin-top:2rem}
+table{border-collapse:collapse;font-size:.85rem;width:100%}
+th,td{border:1px solid #d7d7de;padding:.25rem .5rem;text-align:left;vertical-align:top}
+th{background:#f2f2f5}
+tr.error td:nth-child(3){color:#a4262c;font-weight:600}
+tr.warning td:nth-child(3){color:#8a6d00;font-weight:600}
+tr.error:hover,tr.warning:hover{background:#f7f9ff}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.meta{color:#5b5b66;font-size:.85rem}
+</style>
+</head>
+<body>
+<h1>Proposed repairs — frontier-round-4</h1>
+<p class="meta">32 candidate repair(s) for frontier-round-4 (data/frontier4.wdkb); 20 recommended, 12 left for review. Nothing has been applied: this is a proposal to read and act on by hand.</p>
+<h2>By error type</h2>
+<table>
+<tr><th>measure</th><th>value</th></tr>
+<tr class=""><td>candidates</td><td>32</td></tr>
+<tr class=""><td>recommended</td><td>20</td></tr>
+<tr class=""><td>left for review</td><td>12</td></tr>
+<tr class=""><td>repair debt now</td><td>137</td></tr>
+<tr class=""><td>repair debt if all recommended changes are made</td><td>97</td></tr>
+</table>
+<h2>Issues</h2>
+<table>
+<tr><th>code</th><th>severity</th><th>subject</th><th>object</th><th>extra</th><th>issue</th><th>change</th><th>rationale</th><th>verdict</th><th>score before</th><th>score after</th></tr>
+<tr class="error"><td>level-inst</td><td>error</td><td>Q20026918</td><td>Q24034552</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>set the metaclass level of Q24034552 to 2</td><td>the statement is believed and the level table is wrong: a class sits one level above its instances</td><td>rejected</td><td>137</td><td>137</td></tr>
+<tr class="error"><td>level-inst</td><td>error</td><td>Q20026918</td><td>Q24034552</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>set the metaclass level of Q20026918 to 33</td><td>the class is believed and the instance is mis-levelled: an instance sits one level below its class</td><td>rejected</td><td>137</td><td>137</td></tr>
+<tr class="error"><td>level-inst</td><td>error</td><td>Q20026918</td><td>Q24034552</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>replace `instance of` Q20026918 → Q24034552 by `subclass of`</td><td>the two items sit at the same level, so this is `subclass of` written as `instance of`</td><td>rejected</td><td>137</td><td>137</td></tr>
+<tr class="warning"><td>level-inst</td><td>error</td><td>Q20026918</td><td>Q24034552</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>delete `instance of` Q20026918 → Q24034552</td><td>if neither level is in doubt the statement itself is wrong</td><td>proven</td><td>137</td><td>132</td></tr>
+<tr class="warning"><td>level-inst</td><td>error</td><td>Q7048977</td><td>Q23958852</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>set the metaclass level of Q23958852 to 2</td><td>the statement is believed and the level table is wrong: a class sits one level above its instances</td><td>proven</td><td>137</td><td>133</td></tr>
+<tr class="error"><td>level-inst</td><td>error</td><td>Q7048977</td><td>Q23958852</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>set the metaclass level of Q7048977 to 33</td><td>the class is believed and the instance is mis-levelled: an instance sits one level below its class</td><td>rejected</td><td>137</td><td>145</td></tr>
+<tr class="error"><td>level-inst</td><td>error</td><td>Q7048977</td><td>Q23958852</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>replace `instance of` Q7048977 → Q23958852 by `subclass of`</td><td>the two items sit at the same level, so this is `subclass of` written as `instance of`</td><td>rejected</td><td>137</td><td>137</td></tr>
+<tr class="warning"><td>level-inst</td><td>error</td><td>Q7048977</td><td>Q23958852</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>delete `instance of` Q7048977 → Q23958852</td><td>if neither level is in doubt the statement itself is wrong</td><td>proven</td><td>137</td><td>132</td></tr>
+<tr class="error"><td>level-inst</td><td>error</td><td>Q205464</td><td>Q24034552</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>set the metaclass level of Q24034552 to 2</td><td>the statement is believed and the level table is wrong: a class sits one level above its instances</td><td>rejected</td><td>137</td><td>137</td></tr>
+<tr class="error"><td>level-inst</td><td>error</td><td>Q205464</td><td>Q24034552</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>set the metaclass level of Q205464 to 33</td><td>the class is believed and the instance is mis-levelled: an instance sits one level below its class</td><td>rejected</td><td>137</td><td>153</td></tr>
+<tr class="error"><td>level-inst</td><td>error</td><td>Q205464</td><td>Q24034552</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>replace `instance of` Q205464 → Q24034552 by `subclass of`</td><td>the two items sit at the same level, so this is `subclass of` written as `instance of`</td><td>rejected</td><td>137</td><td>137</td></tr>
+<tr class="warning"><td>level-inst</td><td>error</td><td>Q205464</td><td>Q24034552</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>delete `instance of` Q205464 → Q24034552</td><td>if neither level is in doubt the statement itself is wrong</td><td>proven</td><td>137</td><td>132</td></tr>
+<tr class="warning"><td>level-inst</td><td>error</td><td>Q24034552</td><td>Q23958852</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>set the metaclass level of Q23958852 to 35</td><td>the statement is believed and the level table is wrong: a class sits one level above its instances</td><td>proven</td><td>137</td><td>133</td></tr>
+<tr class="error"><td>level-inst</td><td>error</td><td>Q24034552</td><td>Q23958852</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>set the metaclass level of Q24034552 to 33</td><td>the class is believed and the instance is mis-levelled: an instance sits one level below its class</td><td>rejected</td><td>137</td><td>133</td></tr>
+<tr class="warning"><td>level-inst</td><td>error</td><td>Q24034552</td><td>Q23958852</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>replace `instance of` Q24034552 → Q23958852 by `subclass of`</td><td>the two items sit at the same level, so this is `subclass of` written as `instance of`</td><td>proven</td><td>137</td><td>133</td></tr>
+<tr class="warning"><td>level-inst</td><td>error</td><td>Q24034552</td><td>Q23958852</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>delete `instance of` Q24034552 → Q23958852</td><td>if neither level is in doubt the statement itself is wrong</td><td>proven</td><td>137</td><td>132</td></tr>
+<tr class="warning"><td>level-inst</td><td>error</td><td>Q24034552</td><td>Q137429456</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>set the metaclass level of Q137429456 to 35</td><td>the statement is believed and the level table is wrong: a class sits one level above its instances</td><td>proven</td><td>137</td><td>133</td></tr>
+<tr class="error"><td>level-inst</td><td>error</td><td>Q24034552</td><td>Q137429456</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>set the metaclass level of Q24034552 to 33</td><td>the class is believed and the instance is mis-levelled: an instance sits one level below its class</td><td>rejected</td><td>137</td><td>133</td></tr>
+<tr class="warning"><td>level-inst</td><td>error</td><td>Q24034552</td><td>Q137429456</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>replace `instance of` Q24034552 → Q137429456 by `subclass of`</td><td>the two items sit at the same level, so this is `subclass of` written as `instance of`</td><td>proven</td><td>137</td><td>133</td></tr>
+<tr class="warning"><td>level-inst</td><td>error</td><td>Q24034552</td><td>Q137429456</td><td></td><td>`instance of` whose value does not sit one metaclass level up</td><td>delete `instance of` Q24034552 → Q137429456</td><td>if neither level is in doubt the statement itself is wrong</td><td>proven</td><td>137</td><td>132</td></tr>
+<tr class="error"><td>level-sub</td><td>error</td><td>Q192276</td><td>Q11348</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>set the metaclass level of Q192276 to 33; set the metaclass level of Q11348 to 33</td><td>the statement is believed: a class and its superclasses share one level, and it is a class level</td><td>rejected</td><td>137</td><td>149</td></tr>
+<tr class="error"><td>level-sub</td><td>error</td><td>Q192276</td><td>Q11348</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>set the metaclass level of Q11348 to 32</td><td>the subclass is correctly levelled and the superclass is not: lift the superclass to its level</td><td>rejected</td><td>137</td><td>133</td></tr>
+<tr class="warning"><td>level-sub</td><td>error</td><td>Q192276</td><td>Q11348</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>delete `subclass of` Q192276 → Q11348</td><td>if both levels are right the statement crosses metaclass levels and is wrong</td><td>proven</td><td>137</td><td>132</td></tr>
+<tr class="warning"><td>level-sub</td><td>error</td><td>Q11348</td><td>Q130901</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>set the metaclass level of Q11348 to 33; set the metaclass level of Q130901 to 33</td><td>the statement is believed: a class and its superclasses share one level, and it is a class level</td><td>proven</td><td>137</td><td>133</td></tr>
+<tr class="warning"><td>level-sub</td><td>error</td><td>Q11348</td><td>Q130901</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>set the metaclass level of Q130901 to 33</td><td>the subclass is correctly levelled and the superclass is not: lift the superclass to its level</td><td>proven</td><td>137</td><td>133</td></tr>
+<tr class="warning"><td>level-sub</td><td>error</td><td>Q11348</td><td>Q130901</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>delete `subclass of` Q11348 → Q130901</td><td>if both levels are right the statement crosses metaclass levels and is wrong</td><td>proven</td><td>137</td><td>132</td></tr>
+<tr class="warning"><td>level-sub</td><td>error</td><td>Q11348</td><td>Q1756942</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>set the metaclass level of Q11348 to 33; set the metaclass level of Q1756942 to 33</td><td>the statement is believed: a class and its superclasses share one level, and it is a class level</td><td>proven</td><td>137</td><td>133</td></tr>
+<tr class="warning"><td>level-sub</td><td>error</td><td>Q11348</td><td>Q1756942</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>set the metaclass level of Q1756942 to 33</td><td>the subclass is correctly levelled and the superclass is not: lift the superclass to its level</td><td>proven</td><td>137</td><td>133</td></tr>
+<tr class="warning"><td>level-sub</td><td>error</td><td>Q11348</td><td>Q1756942</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>delete `subclass of` Q11348 → Q1756942</td><td>if both levels are right the statement crosses metaclass levels and is wrong</td><td>proven</td><td>137</td><td>132</td></tr>
+<tr class="warning"><td>level-sub</td><td>error</td><td>Q24034552</td><td>Q151885</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>set the metaclass level of Q24034552 to 34; set the metaclass level of Q151885 to 34</td><td>the statement is believed: a class and its superclasses share one level, and it is a class level</td><td>proven</td><td>137</td><td>133</td></tr>
+<tr class="warning"><td>level-sub</td><td>error</td><td>Q24034552</td><td>Q151885</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>set the metaclass level of Q151885 to 34</td><td>the subclass is correctly levelled and the superclass is not: lift the superclass to its level</td><td>proven</td><td>137</td><td>133</td></tr>
+<tr class="warning"><td>level-sub</td><td>error</td><td>Q24034552</td><td>Q151885</td><td></td><td>`subclass of` between items of different metaclass levels, or on an individual</td><td>delete `subclass of` Q24034552 → Q151885</td><td>if both levels are right the statement crosses metaclass levels and is wrong</td><td>proven</td><td>137</td><td>132</td></tr>
+</table>
+</body>
+</html>

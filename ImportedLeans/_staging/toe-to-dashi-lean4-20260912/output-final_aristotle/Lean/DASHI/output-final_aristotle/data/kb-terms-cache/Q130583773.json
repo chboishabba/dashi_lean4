@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "crime activity",
+  "crime type",
+  "type of illegal activities"
+ ],
+ "canonical": "Q130583773",
+ "description": "Wikimedia metaclass for crime activities",
+ "id": "Q130583773",
+ "label": "type of crime"
+}

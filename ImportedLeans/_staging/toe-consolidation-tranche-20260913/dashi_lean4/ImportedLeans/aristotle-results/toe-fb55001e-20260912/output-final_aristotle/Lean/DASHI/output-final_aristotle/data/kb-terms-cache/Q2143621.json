@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "topoi",
+  "toposes",
+  "elementary topos"
+ ],
+ "canonical": "Q2143621",
+ "description": "category admitting all finite limits and power objects, that can be viewed as either as a mathematical universe (replacing the category of sets) or as a generalized space (considered as a generalization of the category of sheaves on a space)",
+ "id": "Q2143621",
+ "label": "topos"
+}

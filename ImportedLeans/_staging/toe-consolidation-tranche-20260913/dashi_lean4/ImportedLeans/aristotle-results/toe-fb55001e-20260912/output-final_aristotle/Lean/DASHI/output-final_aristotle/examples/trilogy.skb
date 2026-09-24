@@ -1,0 +1,21 @@
+name	trilogy
+item	wd	Q277759
+item	wd	Q7725634
+item	wd	t
+item	wd	v1
+item	wd	v2
+item	wd	v3
+level	1	wd	Q277759
+level	1	wd	Q7725634
+inst	wd	t	wd	Q277759
+inst	wd	v1	wd	Q7725634
+inst	wd	v2	wd	Q7725634
+inst	wd	v3	wd	Q7725634
+series	wd	v1	wd	t
+series	wd	v2	wd	t
+series	wd	v3	wd	t
+follows	wd	v2	wd	v1
+follows	wd	v3	wd	v2
+ord	1	wd	v1
+ord	2	wd	v2
+ord	3	wd	v3

@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "recommendation",
+  "suggestion",
+  "guidance",
+  "guidelines",
+  "guide"
+ ],
+ "canonical": "Q1630279",
+ "description": "instruction as to the preferred, recommended, or approved way of performing a task, publication type",
+ "id": "Q1630279",
+ "label": "guideline"
+}

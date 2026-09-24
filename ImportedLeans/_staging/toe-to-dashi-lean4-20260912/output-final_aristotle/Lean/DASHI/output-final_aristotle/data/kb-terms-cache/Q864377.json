@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "bag",
+  "mset"
+ ],
+ "canonical": "Q864377",
+ "description": "set (in mathematics) with repetitions allowed",
+ "id": "Q864377",
+ "label": "multiset"
+}

@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "organismal physiological process",
+  "GO:0032501"
+ ],
+ "canonical": "Q22299433",
+ "description": "any biological process, occurring at the level of a multicellular organism, pertinent to its function",
+ "id": "Q22299433",
+ "label": "multicellular organismal process"
+}

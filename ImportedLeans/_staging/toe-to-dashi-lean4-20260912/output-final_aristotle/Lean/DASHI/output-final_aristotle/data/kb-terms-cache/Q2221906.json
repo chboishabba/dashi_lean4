@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "place",
+  "geographical location",
+  "setting",
+  "location"
+ ],
+ "canonical": "Q2221906",
+ "description": "point, line or area on or near Earth",
+ "id": "Q2221906",
+ "label": "geographic location"
+}

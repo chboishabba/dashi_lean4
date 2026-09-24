@@ -1,0 +1,8 @@
+{
+ "article": "Injective relation",
+ "canonical": "Q54933429",
+ "description": "binary relation such that every element of the left set has at most one corresponding element in the right set",
+ "id": "Q54933429",
+ "kind": "item",
+ "label": "left-unique relation"
+}

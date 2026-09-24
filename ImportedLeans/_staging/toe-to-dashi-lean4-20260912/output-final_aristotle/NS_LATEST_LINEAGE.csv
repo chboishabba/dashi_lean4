@@ -1,0 +1,71 @@
+module,kind,line,fully_qualified,name_in_public_openai_corpus,public_openai_examples,name_in_dashi_lean_corpus,dashi_examples
+RequestProject.NavierStokes.SpineRateBlockAdapter,theorem,71,ClayNS.SpineAdapter.spine_dyadicRateBlocks_iff,no,,no,
+RequestProject.NavierStokes.SpineRateBlockAdapter,theorem,77,ClayNS.SpineAdapter.spine_blockMultiplicity_iff,no,,no,
+RequestProject.NavierStokes.SpineRateBlockAdapter,theorem,87,ClayNS.SpineAdapter.sum_resForm_le_blockMultiplicity_ofSpine,no,,no,
+RequestProject.NavierStokes.SpineRateBlockAdapter,theorem,107,ClayNS.SpineAdapter.gramOperatorBound_of_rateBlockMultiplicity_ofSpine,no,,no,
+RequestProject.NavierStokes.SpineRateBlockAdapter,theorem,148,ClayNS.SpineAdapter.gramOperatorBound_ofSpine_eq_local,no,,no,
+RequestProject.NavierStokes.SpineRateBlockAdapter,theorem,169,ClayNS.SpineAdapter.spine_multiplicity_lower_bound,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,abbrev,47,ClayNS.GramConsumer.CellFamily,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,def,53,ClayNS.GramConsumer.gramProfile,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,def,57,ClayNS.GramConsumer.massProfile,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,def,61,ClayNS.GramConsumer.gramConsumer,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,def,65,ClayNS.GramConsumer.gramForm,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,def,74,ClayNS.GramConsumer.gramConsumer_factorsThrough_gramProfile,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,83,ClayNS.GramConsumer.gramConsumer_determined_by_gramProfile,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,def,88,ClayNS.GramConsumer.gramForm_factorsThrough_gramProfile,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,def,102,ClayNS.GramConsumer.wE0,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,def,105,ClayNS.GramConsumer.wE1,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,def,108,ClayNS.GramConsumer.cellV,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,def,111,ClayNS.GramConsumer.famPlus,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,def,114,ClayNS.GramConsumer.famMinus,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,116,ClayNS.GramConsumer.wE0_ne_wE1,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,121,ClayNS.GramConsumer.wsq_wE0,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,124,ClayNS.GramConsumer.wsq_wE1,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,127,ClayNS.GramConsumer.wsq_zero_sub_wE0,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,130,ClayNS.GramConsumer.wsq_zero_sub_wE1,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,133,ClayNS.GramConsumer.rate_wE0,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,136,ClayNS.GramConsumer.rate_wE1,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,139,ClayNS.GramConsumer.massProfile_famPlus_eq_famMinus,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,145,ClayNS.GramConsumer.gramForm_famPlus,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,152,ClayNS.GramConsumer.gramForm_famMinus,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,def,160,ClayNS.GramConsumer.massProfile_collision,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,169,ClayNS.GramConsumer.massProfile_not_factorising,no,,no,
+RequestProject.NavierStokes.GramConsumerFactorisation,theorem,173,ClayNS.GramConsumer.massProfile_not_determines,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,def,66,ClayNS.SlotKernel.bdot,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,theorem,68,ClayNS.SlotKernel.bdot_comm,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,theorem,71,ClayNS.SlotKernel.bdot_add_left,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,theorem,74,ClayNS.SlotKernel.bdot_add_right,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,theorem,77,ClayNS.SlotKernel.bdot_zero_left,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,theorem,80,ClayNS.SlotKernel.bdot_zero_right,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,def,86,ClayNS.SlotKernel.antiParallelDefect,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,def,89,ClayNS.SlotKernel.slotKernel,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,theorem,94,ClayNS.SlotKernel.slotKernel_bacCab,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,structure,105,ClayNS.SlotKernel.TransverseHighPair,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,theorem,115,ClayNS.SlotKernel.slotKernel_factorsThrough_antiParallelDefect,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,theorem,129,ClayNS.SlotKernel.slotKernel_eq_zero_of_antiParallel,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,theorem,139,ClayNS.SlotKernel.exists_transverse_antiParallel_nonzero,no,,no,
+RequestProject.NavierStokes.SlotKernelAntiParallel,theorem,153,ClayNS.SlotKernel.exists_transverse_slotKernel_ne_zero,no,,no,
+RequestProject.NavierStokes.RateBlockGramBound,theorem,58,ClayNS.RateBlocks.sum_half_pow_natAbs_le,no,,yes,Spine.RateBlockSchur.sum_half_pow_natAbs_le | ClayNS.RateBlocks.sum_half_pow_natAbs_le
+RequestProject.NavierStokes.RateBlockGramBound,theorem,94,ClayNS.RateBlocks.sum_half_pow_shift_le,no,,yes,Spine.RateBlockSchur.sum_half_pow_shift_le | ClayNS.RateBlocks.sum_half_pow_shift_le
+RequestProject.NavierStokes.RateBlockGramBound,def,110,ClayNS.RateBlocks.DyadicRateBlocks,no,,yes,Spine.RateBlockSchur.DyadicRateBlocks | ClayNS.RateBlocks.DyadicRateBlocks
+RequestProject.NavierStokes.RateBlockGramBound,def,114,ClayNS.RateBlocks.BlockMultiplicity,no,,yes,Spine.RateBlockSchur.BlockMultiplicity | ClayNS.RateBlocks.BlockMultiplicity
+RequestProject.NavierStokes.RateBlockGramBound,theorem,119,ClayNS.RateBlocks.rowsum_le,no,,yes,Spine.RateBlockSchur.rowsum_le | ClayNS.RateBlocks.rowsum_le
+RequestProject.NavierStokes.RateBlockGramBound,theorem,144,ClayNS.RateBlocks.amgm_block,no,,yes,Spine.RateBlockSchur.amgm_block | ClayNS.RateBlocks.amgm_block
+RequestProject.NavierStokes.RateBlockGramBound,theorem,178,ClayNS.RateBlocks.four_zpow_natAbs_mul,no,,yes,Spine.RateBlockSchur.four_zpow_natAbs_mul | ClayNS.RateBlocks.four_zpow_natAbs_mul
+RequestProject.NavierStokes.RateBlockGramBound,theorem,187,ClayNS.RateBlocks.pair_term_le,no,,yes,Spine.RateBlockSchur.pair_term_le | ClayNS.RateBlocks.pair_term_le
+RequestProject.NavierStokes.RateBlockGramBound,theorem,225,ClayNS.RateBlocks.sum_resForm_le_blockMultiplicity,no,,yes,ClayNS.RateBlocks.sum_resForm_le_blockMultiplicity
+RequestProject.NavierStokes.RateBlockGramBound,theorem,288,ClayNS.RateBlocks.gramOperatorBound_of_rateBlockMultiplicity,no,,yes,ClayNS.RateBlocks.gramOperatorBound_of_rateBlockMultiplicity
+RequestProject.NavierStokes.RateBlockGramBound,theorem,332,ClayNS.RateBlocks.gramBound_const_cells_lower_bound,no,,yes,ClayNS.RateBlocks.gramBound_const_cells_lower_bound
+RequestProject.NavierStokes.RateBlockGramBound,theorem,410,ClayNS.RateBlocks.wsq_axisWave',no,,yes,ClayNS.RateBlocks.wsq_axisWave'
+RequestProject.NavierStokes.RateBlockGramBound,theorem,412,ClayNS.RateBlocks.wsq_sub_axisWave,no,,yes,ClayNS.RateBlocks.wsq_sub_axisWave
+RequestProject.NavierStokes.RateBlockGramBound,theorem,427,ClayNS.RateBlocks.gramOperatorBound_fails_on_comparable_shells,no,,yes,ClayNS.RateBlocks.gramOperatorBound_fails_on_comparable_shells
+RequestProject.NavierStokes.RateBlockGramBound,theorem,515,ClayNS.RateBlocks.herm_sum_left,no,,yes,ClayNS.RateBlocks.herm_sum_left
+RequestProject.NavierStokes.RateBlockGramBound,theorem,521,ClayNS.RateBlocks.herm_sum_right,no,,yes,ClayNS.RateBlocks.herm_sum_right
+RequestProject.NavierStokes.RateBlockGramBound,theorem,530,ClayNS.RateBlocks.nsq_sum_eq_sum_sum_herm_re,no,,yes,ClayNS.RateBlocks.nsq_sum_eq_sum_sum_herm_re
+RequestProject.NavierStokes.RateBlockGramBound,theorem,540,ClayNS.RateBlocks.viscousPairRate_reflect,no,,yes,ClayNS.RateBlocks.viscousPairRate_reflect
+RequestProject.NavierStokes.RateBlockGramBound,theorem,547,ClayNS.RateBlocks.exists_two_mode_degenerate_cluster,no,,yes,ClayNS.RateBlocks.exists_two_mode_degenerate_cluster
+RequestProject.NavierStokes.RateBlockGramBound,theorem,577,ClayNS.RateBlocks.gramOperatorBound_of_cluster_cancellation,no,,yes,ClayNS.RateBlocks.gramOperatorBound_of_cluster_cancellation
+RequestProject.NavierStokes.RateBlockGramBound,theorem,630,ClayNS.RateBlocks.cluster_cancellation_of_gramOperatorBound,no,,yes,ClayNS.RateBlocks.cluster_cancellation_of_gramOperatorBound
+RequestProject.NavierStokes.RateBlockGramBound,theorem,707,ClayNS.RateBlocks.leray_sum,no,,yes,ClayNS.RateBlocks.leray_sum
+RequestProject.NavierStokes.RateBlockGramBound,theorem,717,ClayNS.RateBlocks.sum_outerCellVec_eq,no,,yes,ClayNS.RateBlocks.sum_outerCellVec_eq
+RequestProject.NavierStokes.RateBlockGramBound,theorem,727,ClayNS.RateBlocks.gramOperatorBound_outerCells_of_cluster_cancellation,no,,yes,ClayNS.RateBlocks.gramOperatorBound_outerCells_of_cluster_cancellation

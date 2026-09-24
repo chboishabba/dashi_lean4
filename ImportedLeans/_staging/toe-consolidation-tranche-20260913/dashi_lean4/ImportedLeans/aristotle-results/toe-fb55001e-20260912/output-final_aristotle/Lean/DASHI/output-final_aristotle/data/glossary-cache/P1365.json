@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P1365",
+ "description": "person, state or item replaced. Use \"structure replaces\" (P1398) for structures. Use \"follows\" (P155) if the previous item was not replaced or predecessor and successor are identical",
+ "id": "P1365",
+ "kind": "property",
+ "label": "replaces"
+}

@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P276",
+ "description": "location of the object, structure or event; use P131 to indicate the containing administrative entity, P8138 for statistical entities, or P706 for geographic entities; use P7153 for locations associated with the object",
+ "id": "P276",
+ "kind": "property",
+ "label": "location"
+}

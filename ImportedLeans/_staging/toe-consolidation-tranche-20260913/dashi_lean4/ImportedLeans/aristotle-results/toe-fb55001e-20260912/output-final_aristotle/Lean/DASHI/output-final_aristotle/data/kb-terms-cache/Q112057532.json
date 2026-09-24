@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "technology type"
+ ],
+ "canonical": "Q112057532",
+ "description": "Wikidata metaclass, used as \"instance of\" for every \"subclass of\" technology",
+ "id": "Q112057532",
+ "label": "type of technology"
+}

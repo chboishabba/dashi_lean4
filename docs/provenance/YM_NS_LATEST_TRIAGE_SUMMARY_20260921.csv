@@ -1,0 +1,3 @@
+archive_filename,tranche_title,sha256,spine_identical,spine_divergent,spine_staged_only,request_identical,request_divergent,request_staged_only
+ns-abcd-clay-final-tranche-20260916.tar.gz,Navier--Stokes ABCD Clay-final tranche — 2026-09-16,190a50e1bcf090b3d544fe5b68f28ba27252ef9da51020193d01b0e46d8f4b0f,26,1,0,0,195,1
+ym-current-master-20260917.tar.gz,Yang--Mills current-master replacement tranche — 2026-09-17,eed921e5026a495bb8e9cd0686fe38a5b8eaf5cf4119d6b1b7cc0f2bdeb9092b,0,0,0,0,0,0

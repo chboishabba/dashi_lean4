@@ -1,0 +1,5 @@
+"task","items","errors","warnings","proven-fix","suggested-fix","needs-review","layers","codes","example","what it takes"
+"ontology","5207","5132","75","75","3","5129","ontology","dangling-sub dangling-inst dangling-disj level-inst level-sub subclass-cycle disjoint-violation redundant-sub","Q11344 → Q24017414","mixed: part mechanical, part modelling decision"
+"gap","2160","0","2160","0","1541","619","gap","no-parent isolated childless-class","Q24027474","mixed: part mechanical, part modelling decision"
+"taxon","17","16","1","0","7","10","taxon","dangling-parent-taxon dangling-rank dangling-taxon-name self-parent-taxon taxon-cycle multiple-parent-taxa rank-inversion duplicate-taxon-name taxonomic-parent missing-rank","Q2 → Q97","mixed: part mechanical, part modelling decision"
+"series","14","13","1","0","6","8","series","dangling-series dangling-follows dangling-ordinal self-follows series-cycle forked-series series-mismatch taxonomic-follows ordinal-conflict","V8 → T","mixed: part mechanical, part modelling decision"

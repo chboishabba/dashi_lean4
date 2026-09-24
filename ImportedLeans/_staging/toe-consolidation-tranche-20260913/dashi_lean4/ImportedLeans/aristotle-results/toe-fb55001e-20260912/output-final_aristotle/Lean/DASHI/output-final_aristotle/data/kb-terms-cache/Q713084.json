@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "Artin ring"
+ ],
+ "canonical": "Q713084",
+ "description": "ring that satisfies the descending chain condition on ideals",
+ "id": "Q713084",
+ "label": "artinian ring"
+}

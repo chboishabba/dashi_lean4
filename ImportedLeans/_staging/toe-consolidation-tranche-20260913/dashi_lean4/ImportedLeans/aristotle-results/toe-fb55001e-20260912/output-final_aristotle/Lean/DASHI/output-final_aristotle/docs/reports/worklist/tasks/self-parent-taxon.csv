@@ -1,0 +1,2 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/taxa-defects.tkb","taxon","self-parent-taxon","error","suggested-fix","Q5","human","","","","a taxon is its own parent taxon","delete the `parent taxon` statement"

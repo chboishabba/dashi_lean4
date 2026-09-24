@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P3831",
+ "description": "(qualifier) role held by the predicate value (object) of a statement in the context of that statement; for the role of the item the statement appears on (subject), use P2868",
+ "id": "P3831",
+ "kind": "property",
+ "label": "object of statement has role"
+}

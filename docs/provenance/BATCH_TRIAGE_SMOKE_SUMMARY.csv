@@ -1,0 +1,2 @@
+archive_filename,tranche_title,sha256,spine_identical,spine_divergent,spine_staged_only,request_identical,request_divergent,request_staged_only
+toe-latest-output-20260912.tar.gz,DASHI all-TOE cutset — 2026-08-21,d2647f3ac2f9ba26efdb028ba4c28356cd7cf480f056d7376d2505d2dc10efc8,26,1,0,0,195,1

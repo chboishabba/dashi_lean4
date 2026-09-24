@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "pseudometric"
+ ],
+ "canonical": "Q1397059",
+ "description": "generalization of a metric space in which the distance between two distinct points can be zero",
+ "id": "Q1397059",
+ "label": "pseudometric space"
+}

@@ -1,0 +1,12 @@
+<metadata>
+  <identifier>wikidata-ontology-wdkb1-c17d817f0cde66ea</identifier>
+  <title>Wikidata ontology snapshot: wikidata-upper-ontology</title>
+  <description>A machine checked snapshot of a Wikidata-style ontology: 44 items, 50 `subclass of` and 44 `instance of` statements.</description>
+  <mediatype>data</mediatype>
+  <collection>opensource</collection>
+  <licenseurl>https://creativecommons.org/publicdomain/zero/1.0/</licenseurl>
+  <subject>wikidata</subject>
+  <subject>ontology</subject>
+  <subject>lean4</subject>
+  <subject>knowledge graph</subject>
+</metadata>

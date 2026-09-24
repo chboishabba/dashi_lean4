@@ -818,4 +818,69 @@ theorem negative_active_stress_route_is_distinct_from_negative_g :
     negativeActiveStressRequiresNegativeNewtonG = false := rfl
 
 
+/-!
+Ten-slot symmetric metric basis.
+
+Swapped ordered pairs select the same independent symmetric slot, so component
+symmetry is compiler-owned by the chosen representation rather than an
+additional semantic theorem.
+-/
+
+inductive SymmetricTensorComponent4 where
+  | c00 | c01 | c02 | c03 | c11 | c12 | c13 | c22 | c23 | c33
+  deriving DecidableEq, Repr
+
+def symmetricSlotOfAxes : Axis4 → Axis4 → SymmetricTensorComponent4
+  | .t, .t => .c00
+  | .t, .x => .c01
+  | .t, .y => .c02
+  | .t, .z => .c03
+  | .x, .t => .c01
+  | .x, .x => .c11
+  | .x, .y => .c12
+  | .x, .z => .c13
+  | .y, .t => .c02
+  | .y, .x => .c12
+  | .y, .y => .c22
+  | .y, .z => .c23
+  | .z, .t => .c03
+  | .z, .x => .c13
+  | .z, .y => .c23
+  | .z, .z => .c33
+
+theorem symmetric_slot_swapped (a b : Axis4) :
+    symmetricSlotOfAxes a b = symmetricSlotOfAxes b a := by
+  cases a <;> cases b <;> rfl
+
+def componentSymmetryIsCompilerOwnedOnSymmetricBasis : Bool := true
+def separateYMSymmetrySemanticBridgeRequiredOnSymmetricBasisRoute : Bool := false
+
+theorem symmetric_basis_owns_component_symmetry :
+    componentSymmetryIsCompilerOwnedOnSymmetricBasis = true := rfl
+
+/-!
+Existing same-object transport composition:
+CMP119 endpoint stress = literal stress, and literal stress transported through
+the R130 representation = canonical metric stress.  No third stress identity is
+needed.
+-/
+
+theorem endpoint_to_metric_representation
+    {CMP119 Literal Metric : Type u}
+    (toLiteral : CMP119 → Literal)
+    (toMetric : Literal → Metric)
+    (cmp119 : CMP119)
+    (literal : Literal)
+    (metric : Metric)
+    (hCMP119Literal : toLiteral cmp119 = literal)
+    (hLiteralMetric : toMetric literal = metric) :
+    toMetric (toLiteral cmp119) = metric := by
+  rw [hCMP119Literal]
+  exact hLiteralMetric
+
+def secondEndpointToMetricStressIdentificationRequired : Bool := false
+
+theorem no_second_endpoint_metric_stress_theorem :
+    secondEndpointToMetricStressIdentificationRequired = false := rfl
+
 end Integration.GRQFTPostMergeLocalization

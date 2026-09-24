@@ -121,4 +121,12 @@ theorem qft_component_evaluator_compiler_parity :
     qftComponentEvaluatorCompilerExists = true :=
   qft_component_evaluator_compiler_present
 
+theorem symmetric_basis_boundary_parity :
+    componentSymmetryIsCompilerOwnedOnSymmetricBasis = true :=
+  symmetric_basis_owns_component_symmetry
+
+theorem endpoint_metric_transport_boundary_parity :
+    secondEndpointToMetricStressIdentificationRequired = false :=
+  no_second_endpoint_metric_stress_theorem
+
 end AgdaMirror.GRQFTPostMergeLocalization

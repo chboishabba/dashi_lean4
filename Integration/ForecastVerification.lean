@@ -102,6 +102,100 @@ structure OddsComparisonReceipt (left right : Probability) where
         (oddsPair right).favourable * ratioNumerator
   comparisonReference : String
 
+/-! Provider-neutral world query algebra: typed intent before backend syntax. -/
+
+inductive WorldQueryExpr where
+  | term (value : String)
+  | phrase (value : String)
+  | andQ (left right : WorldQueryExpr)
+  | orQ (left right : WorldQueryExpr)
+  | notQ (query : WorldQueryExpr)
+  | nearQ (window : ℕ) (left right : WorldQueryExpr)
+  | entity (value : String)
+  | relation (value : String)
+  | property (value : String)
+  | location (value : String)
+  | dateRange (fromDate toDate : String)
+  | sourceType (value : String)
+  | site (value : String)
+  | identifier (value : String)
+  deriving Repr
+
+inductive WorldProbeKind where
+  | supporting
+  | defeater
+  | comparator
+  | contradiction
+  | counterexample
+  | vocabularyExploration
+  | authorityFamilyExploration
+  deriving DecidableEq, Repr
+
+structure WorldSearchHypothesis where
+  consumerReference : String
+  residualReference : String
+  hypothesisReference : String
+  expectedPropositionShape : String
+  probeKind : WorldProbeKind
+  query : WorldQueryExpr
+  exclusionReference : String
+  paymentConditionReference : String
+
+structure WorldSearchHypothesisFamily where
+  primary : WorldSearchHypothesis
+  alternatives : List WorldSearchHypothesis
+  defeaters : List WorldSearchHypothesis
+  comparators : List WorldSearchHypothesis
+  contradictions : List WorldSearchHypothesis
+  familyReference : String
+
+inductive WorldSearchProvider where
+  | localWorld
+  | wikidata
+  | wikipedia
+  | officialSource
+  | webSearch
+  | scholarlyIndex
+  | citationGraph
+  deriving DecidableEq, Repr
+
+structure WorldProviderCompiledQuery where
+  sourceQuery : WorldQueryExpr
+  provider : WorldSearchProvider
+  renderedQuery : String
+  semanticPreservationReference : String
+  providerLimitReference : String
+  compilationReference : String
+
+inductive CoordinateStatus where
+  | paid
+  | partial
+  | unresolved
+  | inapplicable
+  deriving DecidableEq, Repr
+
+structure ObjectDecompositionSystem (Object Consumer : Type) where
+  Coordinate : Object → Type
+  Value : (object : Object) → Coordinate object → Type
+  status : (object : Object) → Coordinate object → CoordinateStatus
+  requiredBy : Consumer → (object : Object) → Coordinate object → Prop
+  ownerReference : (object : Object) → Coordinate object → String
+  reverseAcquisitionReference :
+    Consumer → (object : Object) → Coordinate object → String
+
+structure ConsumerRelevantObjectResidual
+    {Object Consumer : Type}
+    (system : ObjectDecompositionSystem Object Consumer) where
+  consumer : Consumer
+  object : Object
+  coordinate : system.Coordinate object
+  required : system.requiredBy consumer object coordinate
+  currentStatus : CoordinateStatus
+  currentStatusMatches : currentStatus = system.status object coordinate
+  domainOwnerReference : String
+  reverseTargetReference : String
+  answerChangingReference : String
+
 inductive ResolutionState where
   | open
   | awaitingJudge
@@ -182,6 +276,49 @@ structure ReferenceForecastReceipt where
   score : ℚ
   referenceModelReference : String
 
+structure ForecastSkillAgainstReference where
+  forecastScore : ℚ
+  reference : ReferenceForecastReceipt
+  referenceScorePositive : 0 < reference.score
+  skillCoordinate : ℚ
+  skillReconstructs :
+    (1 - skillCoordinate) * reference.score = forecastScore
+  betterThanReferenceCreatesAbsoluteQuality : Bool
+  absoluteQualityFirewall :
+    betterThanReferenceCreatesAbsoluteQuality = false
+
+inductive ForecastOrigin where
+  | betEngine
+  | legacyDetector
+  | stateDerived
+  | unknown
+  | other
+  deriving DecidableEq, Repr
+
+def headlineOriginIncluded : ForecastOrigin → Bool
+  | .betEngine => false
+  | .stateDerived => false
+  | .legacyDetector => true
+  | .unknown => true
+  | .other => true
+
+@[simp] theorem headline_excludes_bet_engine :
+    headlineOriginIncluded .betEngine = false := rfl
+
+@[simp] theorem headline_excludes_state_derived :
+    headlineOriginIncluded .stateDerived = false := rfl
+
+@[simp] theorem headline_includes_unknown :
+    headlineOriginIncluded .unknown = true := rfl
+
+structure ResolutionRevisionReceipt where
+  forecastReference : String
+  previousStateReference : String
+  nextStateReference : String
+  supersedesReference : String
+  revisionEvidenceReference : String
+  revisionPolicyReference : String
+
 def worldMonitorLedgerCount : ℕ := 1058
 def worldMonitorResolvedCount : ℕ := 862
 def worldMonitorScoredCount : ℕ := 541
@@ -246,6 +383,21 @@ def nextProbabilityObservation : ForecastFineState → NextProbabilitySurface
 theorem same_current_probability :
     currentProbabilityProjection .stableMechanismWeakEvidence =
       currentProbabilityProjection .unstableRegimeTransientEvidence := rfl
+
+open Integration.FactorisationCollision
+
+def currentProbabilityCollision :
+    Collision currentProbabilityProjection nextProbabilityObservation where
+  left := .stableMechanismWeakEvidence
+  right := .unstableRegimeTransientEvidence
+  distinct := by decide
+  collide := rfl
+  separate := by decide
+
+theorem no_next_probability_algorithm_from_current
+    (f : CurrentProbabilitySurface → NextProbabilitySurface) :
+    ¬ ∀ s, nextProbabilityObservation s = f (currentProbabilityProjection s) :=
+  currentProbabilityCollision.no_reading f
 
 theorem different_next_probability :
     nextProbabilityObservation .stableMechanismWeakEvidence ≠

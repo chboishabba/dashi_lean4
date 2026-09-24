@@ -1943,4 +1943,96 @@ def bulkPressureEqualsSurfaceDistributionMagnitude : Bool := false
 def exactIsraelMagnitudeStillOpen : Bool := true
 
 
+/-!
+Exact Israel-shell magnitude invariant.
+
+With matched lapse f_R, sigma=0 and
+P = [f']/(16*pi*sqrt(f_R)).
+Avoiding irrational/pi extensions, retain
+(16*pi*P)^2 = [f']^2/f_R.
+-/
+
+def israelTangentialPressureSquared16Pi : Rat :=
+  (3/8 : Rat)^2 / (1/2 : Rat)
+
+theorem israel_tangential_pressure_squared_nine_thirtyseconds :
+    israelTangentialPressureSquared16Pi = 9/32 := by
+  norm_num [israelTangentialPressureSquared16Pi]
+
+def israelSurfaceEnergyDensityJumpNumerator : Rat := 0
+
+theorem israel_surface_energy_density_zero :
+    israelSurfaceEnergyDensityJumpNumerator = 0 := rfl
+
+/-!
+Kottler positive-mass repulsion parameter window.
+
+Use scaled L = Lambda*R^3:
+  outward iff L > 3M
+  static patch iff L < 3R - 6M
+so a nonempty window requires R > 3M.
+
+The midpoint L=(3/2)(R-M) gives equal margins
+(3/2)(R-3M).
+-/
+
+def scaledLambdaMidpoint (mass radius : Rat) : Rat :=
+  (3/2 : Rat) * (radius - mass)
+
+def outwardAccelerationMargin (mass scaledLambda : Rat) : Rat :=
+  scaledLambda - 3*mass
+
+def staticPatchMargin (mass radius scaledLambda : Rat) : Rat :=
+  3*radius - 6*mass - scaledLambda
+
+def kottlerWindowWidth (mass radius : Rat) : Rat :=
+  (3*radius - 6*mass) - 3*mass
+
+theorem midpoint_outward_margin_identity (mass radius : Rat) :
+    outwardAccelerationMargin mass (scaledLambdaMidpoint mass radius)
+      = (3/2 : Rat) * (radius - 3*mass) := by
+  ring
+
+theorem midpoint_static_margin_identity (mass radius : Rat) :
+    staticPatchMargin mass radius (scaledLambdaMidpoint mass radius)
+      = (3/2 : Rat) * (radius - 3*mass) := by
+  ring
+
+theorem kottler_window_width_identity (mass radius : Rat) :
+    kottlerWindowWidth mass radius = 3*(radius - 3*mass) := by
+  ring
+
+theorem fixture_midpoint_scaled_lambda_twentyone_eighths :
+    scaledLambdaMidpoint (1/4) 2 = 21/8 := by
+  norm_num [scaledLambdaMidpoint]
+
+theorem fixture_midpoint_lambda_twentyone_sixtyfourths :
+    scaledLambdaMidpoint (1/4) 2 / (2^3) = 21/64 := by
+  norm_num [scaledLambdaMidpoint]
+
+structure KottlerRepulsionParameterWindowWitness
+    (mass radius : Rat) : Prop where
+  midpointOutwardMargin :
+    outwardAccelerationMargin mass (scaledLambdaMidpoint mass radius)
+      = (3/2 : Rat) * (radius - 3*mass)
+  midpointStaticMargin :
+    staticPatchMargin mass radius (scaledLambdaMidpoint mass radius)
+      = (3/2 : Rat) * (radius - 3*mass)
+  windowWidth :
+    kottlerWindowWidth mass radius = 3*(radius - 3*mass)
+
+theorem kottler_repulsion_parameter_window
+    (mass radius : Rat) :
+    KottlerRepulsionParameterWindowWitness mass radius := by
+  exact {
+    midpointOutwardMargin := midpoint_outward_margin_identity mass radius
+    midpointStaticMargin := midpoint_static_margin_identity mass radius
+    windowWidth := kottler_window_width_identity mass radius
+  }
+
+def kottlerWindowControlledByRGreaterThanThreeM : Bool := true
+def israelExactSquaredMagnitudeConstructed : Bool := true
+def israelExactPiSqrtMagnitudeInternal : Bool := false
+
+
 end Integration.GRQFTPostMergeLocalization

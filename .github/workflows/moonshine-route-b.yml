@@ -87,7 +87,13 @@ jobs:
           set -euo pipefail
           lake env lean Integration/BishopRound11MachinBindingManifest.lean
           lake env lean Integration/BishopRound11MachinSourceBinding.lean
+          lake env lean Integration/BishopVendoredCompletionEquivalence.lean
+          lake env lean Integration/BishopVendoredCompletionAlgebraEquivalence.lean
+          lake env lean Integration/BishopRound11MachinCanonicalBinding.lean
+          lake env lean Integration/BishopRound11MachinReplayIrrelevance.lean
           lake env lean Integration/MoonshineEisensteinRound11RouteB.lean
+          lake env lean Integration/MoonshineEisensteinRound11CanonicalRouteB.lean
+          lake env lean Integration/MoonshineRouteBAxiomAudit.lean
           lake env lean Integration/MoonshineEta24Pinned.lean
           lake env lean Integration/MoonshineEta24SixfoldPhase.lean
           lake env lean Integration/MoonshineDeltaFinalMinCut.lean

@@ -42,6 +42,165 @@ theorem QuarticFourSignedPolePair.signedProfileAbsMomentSix_nonneg
     compactProfileAbsMoment
   positivity
 
+
+/-!
+## Sixth moment cross-weld with the already-paid G1 constant
+
+The terminal complete-jet remainder originally used the generic support/L1
+bound on the sixth absolute moment.  The selected witness already carries a
+stronger same-object quantity in G1:
+
+  K(W) = ∫ |P_W(u)| cosh(|u|) |u|^5 du.
+
+Since x <= sinh x < cosh x for x >= 0, pointwise
+
+  |u|^6 <= cosh(|u|) |u|^5.
+
+Hence M6_abs(W) <= K(W).  This does not by itself make the existing explicit
+G1 numerical K0 sharp enough for terminal ABSORB; it removes M6 as an
+independent witness invariant and lets any future sharpening of the selected
+G1 corridor feed the sixth-order lane directly.
+-/
+
+theorem QuarticFourSignedPolePair.signedProfileAbsMomentSix_le_fourthLipschitz
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    W.signedProfileAbsMomentSix <= W.fourthLipschitz := by
+  let P : ℝ -> ℝ :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have h6 :
+      Integrable (fun u : ℝ => |P u| * |u|^6) :=
+    compactProfile_absMoment_integrable hP hPc 6
+  have hK :
+      Integrable (fun u : ℝ => |P u| * Real.cosh |u| * |u|^5) :=
+    compactCoshFourthLipschitzMajorant_integrable hP hPc
+  unfold QuarticFourSignedPolePair.signedProfileAbsMomentSix
+    QuarticFourSignedPolePair.fourthLipschitz
+    compactProfileAbsMoment
+    compactCoshFourthLipschitzConstant
+  dsimp [P]
+  apply integral_mono h6 hK
+  intro u
+  have hu0 : 0 <= |u| := abs_nonneg u
+  have husinh : |u| <= Real.sinh |u| := by
+    exact Real.self_le_sinh_iff.mpr hu0
+  have hsinhcosh : Real.sinh |u| <= Real.cosh |u| :=
+    (Real.sinh_lt_cosh |u|).le
+  have hucosh : |u| <= Real.cosh |u| :=
+    husinh.trans hsinhcosh
+  have hfac : 0 <= |P u| * |u|^5 := by positivity
+  calc
+    |P u| * |u|^6
+        = (|P u| * |u|^5) * |u| := by ring
+    _ <= (|P u| * |u|^5) * Real.cosh |u| :=
+      mul_le_mul_of_nonneg_left hucosh hfac
+    _ = |P u| * Real.cosh |u| * |u|^5 := by ring
+
+
+/-!
+## Signed sixth harmonic surface
+
+Do not absolute-value the first term beyond the complete quartic jet.  The
+degree-six Taylor polynomial of cosh(alpha*u) cos(q*u) has angular factor
+
+  alpha^6 - 15 alpha^4 q^2 + 15 alpha^2 q^4 - q^6
+    = Re (alpha + i q)^6.
+
+The definitions below expose that signed carrier explicitly.  The final
+`completeJointBeyondSixthRemainder` is an exact algebraic residual.  No
+order-eight estimate is claimed here; proving such an estimate is the next
+analytic sharpening if the signed sixth carrier alone does not close ABSORB.
+-/
+
+def QuarticFourSignedPolePair.signedProfileMomentSix
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  ∫ u : ℝ,
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t u * u^6
+
+theorem QuarticFourSignedPolePair.signedProfileMomentSix_abs_le
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    |W.signedProfileMomentSix| <= W.signedProfileAbsMomentSix := by
+  let P : ℝ -> ℝ :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hi : Integrable (fun u : ℝ => P u * u^6) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  unfold QuarticFourSignedPolePair.signedProfileMomentSix
+    QuarticFourSignedPolePair.signedProfileAbsMomentSix
+    compactProfileAbsMoment
+  dsimp [P]
+  calc
+    |∫ u : ℝ, P u * u^6|
+      <= ∫ u : ℝ, |P u * u^6| :=
+        abs_integral_le_integral_abs
+    _ = ∫ u : ℝ, |P u| * |u|^6 := by
+      apply integral_congr_ae
+      exact Filter.Eventually.of_forall fun u => by
+        rw [abs_mul, abs_pow]
+    _ = ∫ u : ℝ,
+        |quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t u| * |u|^6 := by rfl
+
+def quarticSignedPoleSixthPhaseReal
+    (alpha q : ℝ) : ℝ :=
+  alpha^6 - 15*alpha^4*q^2 + 15*alpha^2*q^4 - q^6
+
+theorem quarticSignedPoleSixthPhaseReal_eq_complex_re
+    (alpha q : ℝ) :
+    quarticSignedPoleSixthPhaseReal alpha q
+      = (((alpha : ℂ) + (q : ℂ) * Complex.I)^6).re := by
+  unfold quarticSignedPoleSixthPhaseReal
+  norm_num [pow_succ, Complex.mul_re, Complex.add_re]
+  ring
+
+def QuarticFourSignedPolePair.completeJointSixthHarmonic
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha q : ℝ) : ℝ :=
+  (W.signedProfileMomentSix / 720)
+    * quarticSignedPoleSixthPhaseReal alpha q
+
+def QuarticFourSignedPolePair.completeJointBeyondSixthRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha q : ℝ) : ℝ :=
+  W.completeJointQuarticRemainder alpha q
+    - W.completeJointSixthHarmonic alpha q
+
+theorem QuarticFourSignedPolePair.completeJointQuarticRemainder_eq_sixth_add_beyond
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.completeJointQuarticRemainder alpha q
+      =
+    W.completeJointSixthHarmonic alpha q
+      + W.completeJointBeyondSixthRemainder alpha q := by
+  unfold QuarticFourSignedPolePair.completeJointBeyondSixthRemainder
+  ring
+
+theorem QuarticFourSignedPolePair.signedNormalizedPairKernel_eq_completeQuarticSixth
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNormalizedPairKernel alpha q
+      =
+    W.completeJointQuarticPolynomial alpha q
+      + W.completeJointSixthHarmonic alpha q
+      + W.completeJointBeyondSixthRemainder alpha q := by
+  rw [W.signedNormalizedPairKernel_eq_completeQuarticJet]
+  rw [W.completeJointQuarticRemainder_eq_sixth_add_beyond]
+  ring
+
 theorem QuarticFourSignedPolePair.abs_q_mul_u_le_one_of_local
     {t q u : ℝ}
     (W : QuarticFourSignedPolePair t)

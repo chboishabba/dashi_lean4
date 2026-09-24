@@ -531,6 +531,76 @@ theorem QuarticSignedPoleBidiMarkedJet.angular_sub
   ring
 
 
+/--
+Absolute consumer bound for the universal bidi angular operator.
+-/
+theorem QuarticSignedPoleBidiMarkedJet.abs_angular_le
+    (A : ℝ) (J : QuarticSignedPoleBidiMarkedJet) :
+    |J.angular A|
+      <=
+    (1/2 : ℝ) * |J.m4|
+      + 3 * A^2 * |J.m2|
+      + 5 * A^4 * |J.m0| := by
+  unfold QuarticSignedPoleBidiMarkedJet.angular
+    quarticSignedPoleBidiAngularOperator
+  rw [abs_le]
+  have h0u := le_abs_self J.m0
+  have h0l := neg_abs_le J.m0
+  have h2u := le_abs_self J.m2
+  have h2l := neg_abs_le J.m2
+  have h4u := le_abs_self J.m4
+  have h4l := neg_abs_le J.m4
+  have hA2 : 0 <= A^2 := sq_nonneg A
+  have hA4 : 0 <= A^4 := by positivity
+  constructor <;> nlinarith
+
+/--
+Coordinatewise 0/2/4 bounds compile directly to the single angular bound
+consumed by the RH lane.
+-/
+theorem QuarticSignedPoleBidiMarkedJet.abs_angular_le_of_coordinate_bounds
+    (A : ℝ) (J : QuarticSignedPoleBidiMarkedJet)
+    {E0 E2 E4 : ℝ}
+    (h0 : |J.m0| <= E0)
+    (h2 : |J.m2| <= E2)
+    (h4 : |J.m4| <= E4) :
+    |J.angular A|
+      <=
+    (1/2 : ℝ) * E4
+      + 3 * A^2 * E2
+      + 5 * A^4 * E0 := by
+  have hbase := J.abs_angular_le A
+  have hA2 : 0 <= A^2 := sq_nonneg A
+  have hA4 : 0 <= A^4 := by positivity
+  nlinarith
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_abs_le_of_bidi_coordinate_bounds
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    {E0 E2 E4 : ℝ}
+    (h0 :
+      |(W.literalLocalCenteredBidiMarkedJetAt eta A n).m0|
+        <= E0)
+    (h2 :
+      |(W.literalLocalCenteredBidiMarkedJetAt eta A n).m2|
+        <= E2)
+    (h4 :
+      |(W.literalLocalCenteredBidiMarkedJetAt eta A n).m4|
+        <= E4) :
+    |W.literalLocalCenteredFourthAngularAt eta n|
+      <=
+    (1/2 : ℝ) * E4
+      + 3 * A^2 * E2
+      + 5 * A^4 * E0 := by
+  rw [W.literalLocalCenteredFourthAngularAt_eq_bidi_discrepancy
+      (A:=A)]
+  exact
+    QuarticSignedPoleBidiMarkedJet.abs_angular_le_of_coordinate_bounds
+      A (W.literalLocalCenteredBidiMarkedJetAt eta A n)
+      h0 h2 h4
+
+
 /-!
 ## Arithmetic bidi jet from the literal cosh-twisted von Mangoldt moments
 

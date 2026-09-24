@@ -1077,4 +1077,327 @@ theorem QuarticFourSignedPolePair.bidiMarkedPoleCombination_zero
   simp only [quarticSignedPoleCoshMarkedDetector_zero]
   exact W.literalPole_cancel ht
 
+
+/-!
+## Marked-pole quadratic carrier
+
+For the normalized mark m_A(v)=cosh(16*A*v/t), the A^2 Taylor carrier inserts
+v^2 into each pole/on-line response.  Factor out the universal positive scalar
+(16/t)^2/2 and retain the determinant carrier below.
+-/
+
+def quarticFourNormalizedPoleSecondWeight
+    (t c v : ℝ) : ℝ :=
+  v^2 * quarticFourNormalizedPoleWeight t c v
+
+def quarticFourNormalizedOnLineSecondWeight
+    (c v : ℝ) : ℝ :=
+  v^2 * quarticFourNormalizedOnLineWeight c v
+
+def quarticFourSmoothMarkedPoleQuadraticCarrier
+    (R lam mu t : ℝ) : ℝ :=
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedPoleSecondWeight t 1)
+    * quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineWeight 2)
+  +
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedPoleWeight t 1)
+    * quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineSecondWeight 2)
+  -
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedPoleSecondWeight t 2)
+    * quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineWeight 1)
+  -
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedPoleWeight t 2)
+    * quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineSecondWeight 1)
+
+def quarticFourAtomicMarkedPoleQuadraticCarrier
+    (t lam mu : ℝ) : ℝ :=
+  quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedPoleSecondWeight t 1)
+    * quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedOnLineWeight 2)
+  +
+  quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedPoleWeight t 1)
+    * quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedOnLineSecondWeight 2)
+  -
+  quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedPoleSecondWeight t 2)
+    * quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedOnLineWeight 1)
+  -
+  quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedPoleWeight t 2)
+    * quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedOnLineSecondWeight 1)
+
+private theorem bidi_cos_two_pi_div_three :
+    Real.cos (2*Real.pi/3) = -1/2 := by
+  have harg : 2*Real.pi/3 = Real.pi - Real.pi/3 := by ring
+  rw [harg, Real.cos_pi_sub, Real.cos_pi_div_three]
+  norm_num
+
+private theorem bidi_cos_sixteen_pi_div_three :
+    Real.cos (16*(Real.pi/3)) = -1/2 := by
+  have harg :
+      16*(Real.pi/3)
+        = (-2*Real.pi/3) + (3:ℕ) * (2*Real.pi) := by ring
+  rw [harg, Real.cos_add_nat_mul_two_pi, Real.cos_neg]
+  exact bidi_cos_two_pi_div_three
+
+private theorem bidi_cos_eight_pi :
+    Real.cos (16*(Real.pi/2)) = 1 := by
+  have harg : 16*(Real.pi/2) = (4:ℕ) * (2*Real.pi) := by ring
+  rw [harg, Real.cos_nat_mul_two_pi]
+
+private theorem bidi_cos_sixteen_pi :
+    Real.cos (16*Real.pi) = 1 := by
+  have harg : 16*Real.pi = (8:ℕ) * (2*Real.pi) := by ring
+  rw [harg, Real.cos_nat_mul_two_pi]
+
+theorem quarticFourAtomicOnLineSecondPairing_one
+    (lam mu : ℝ) :
+    quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedOnLineSecondWeight 1)
+      =
+    -(Real.pi^2 * (18*mu + 1) / 18) := by
+  unfold quarticFourAtomicPairingAt
+    quarticFourNormalizedOnLineSecondWeight
+    quarticFourNormalizedOnLineWeight
+  simp only [zero_pow (by norm_num : 2 ≠ 0), zero_mul,
+    one_mul, Real.cos_zero, Real.cos_pi_div_three,
+    Real.cos_pi_div_two, Real.cos_pi]
+  ring
+
+theorem quarticFourAtomicOnLineSecondPairing_two
+    (lam mu : ℝ) :
+    quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedOnLineSecondWeight 2)
+      =
+    -(Real.pi^2 * (9*lam - 36*mu - 2) / 36) := by
+  unfold quarticFourAtomicPairingAt
+    quarticFourNormalizedOnLineSecondWeight
+    quarticFourNormalizedOnLineWeight
+  simp only [zero_pow (by norm_num : 2 ≠ 0), zero_mul,
+    mul_zero, Real.cos_zero]
+  rw [show 2*(Real.pi/3)=2*Real.pi/3 by ring,
+      bidi_cos_two_pi_div_three,
+      show 2*(Real.pi/2)=Real.pi by ring,
+      Real.cos_pi,
+      Real.cos_two_pi]
+  ring
+
+theorem quarticFourAtomicPoleSecondPairing_one
+    {t lam mu : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedPoleSecondWeight t 1)
+      =
+    -(Real.pi^2 *
+      (36*mu*Real.cosh (8*Real.pi/t)
+        - Real.cosh (8*Real.pi/(3*t))) / 36) := by
+  unfold quarticFourAtomicPairingAt
+    quarticFourNormalizedPoleSecondWeight
+    quarticFourNormalizedPoleWeight
+  simp only [zero_pow (by norm_num : 2 ≠ 0), zero_mul,
+    mul_zero, zero_div, Real.cosh_zero, Real.cos_zero,
+    one_mul, Real.cos_pi_div_three, Real.cos_pi_div_two,
+    Real.cos_pi]
+  rw [show 8*(Real.pi/3)/t = 8*Real.pi/(3*t) by
+        field_simp [ht]; ring,
+      bidi_cos_sixteen_pi_div_three,
+      bidi_cos_eight_pi,
+      bidi_cos_sixteen_pi]
+  ring
+
+theorem quarticFourAtomicPoleSecondPairing_two
+    {t lam mu : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicPairingAt lam mu
+      (quarticFourNormalizedPoleSecondWeight t 2)
+      =
+    -(Real.pi^2 *
+      (9*lam*Real.cosh (4*Real.pi/t)
+        - 36*mu*Real.cosh (8*Real.pi/t)
+        + Real.cosh (8*Real.pi/(3*t))) / 36) := by
+  unfold quarticFourAtomicPairingAt
+    quarticFourNormalizedPoleSecondWeight
+    quarticFourNormalizedPoleWeight
+  simp only [zero_pow (by norm_num : 2 ≠ 0), zero_mul,
+    mul_zero, zero_div, Real.cosh_zero, Real.cos_zero, one_mul]
+  rw [show 8*(Real.pi/3)/t = 8*Real.pi/(3*t) by
+        field_simp [ht]; ring,
+      bidi_cos_sixteen_pi_div_three,
+      show 2*(Real.pi/3)=2*Real.pi/3 by ring,
+      bidi_cos_two_pi_div_three,
+      show 8*(Real.pi/2)/t = 4*Real.pi/t by
+        field_simp [ht]; ring,
+      bidi_cos_eight_pi,
+      show 2*(Real.pi/2)=Real.pi by ring,
+      Real.cos_pi,
+      bidi_cos_sixteen_pi,
+      Real.cos_two_pi]
+  ring
+
+theorem quarticFourAtomicMu_half :
+    quarticFourAtomicMu (1/2 : ℝ) = -(1/78 : ℝ) := by
+  unfold quarticFourAtomicMu
+  norm_num
+
+theorem quarticFourAtomicMu_twoThird :
+    quarticFourAtomicMu (2/3 : ℝ) = (1/162 : ℝ) := by
+  unfold quarticFourAtomicMu
+  norm_num
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_half_formula
+    {t : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicMarkedPoleQuadraticCarrier
+      t (1/2) (quarticFourAtomicMu (1/2))
+      =
+    Real.pi^2 *
+      (39*Real.cosh (8*Real.pi/(3*t))
+        + 160*Real.cosh (4*Real.pi/t)
+        + 66*Real.cosh (8*Real.pi/t)
+        - 148) / 3744 := by
+  unfold quarticFourAtomicMarkedPoleQuadraticCarrier
+  rw [quarticFourAtomicPoleSecondPairing_one ht,
+      quarticFourAtomicPoleSecondPairing_two ht,
+      quarticFourAtomicOnLineSecondPairing_one,
+      quarticFourAtomicOnLineSecondPairing_two,
+      quarticFourAtomicPolePairing_one ht,
+      quarticFourAtomicPolePairing_two ht,
+      quarticFourAtomicOnLinePairing_one,
+      quarticFourAtomicOnLinePairing_two,
+      quarticFourAtomicMu_half]
+  ring
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_formula
+    {t : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicMarkedPoleQuadraticCarrier
+      t (2/3) (quarticFourAtomicMu (2/3))
+      =
+    Real.pi^2 *
+      (-9*Real.cosh (8*Real.pi/(3*t))
+        + 80*Real.cosh (4*Real.pi/t)
+        - 14*Real.cosh (8*Real.pi/t)
+        - 84) / 1944 := by
+  unfold quarticFourAtomicMarkedPoleQuadraticCarrier
+  rw [quarticFourAtomicPoleSecondPairing_one ht,
+      quarticFourAtomicPoleSecondPairing_two ht,
+      quarticFourAtomicOnLineSecondPairing_one,
+      quarticFourAtomicOnLineSecondPairing_two,
+      quarticFourAtomicPolePairing_one ht,
+      quarticFourAtomicPolePairing_two ht,
+      quarticFourAtomicOnLinePairing_one,
+      quarticFourAtomicOnLinePairing_two,
+      quarticFourAtomicMu_twoThird]
+  ring
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_half_pos
+    {t : ℝ} (ht : t ≠ 0) :
+    0 <
+    quarticFourAtomicMarkedPoleQuadraticCarrier
+      t (1/2) (quarticFourAtomicMu (1/2)) := by
+  rw [quarticFourAtomicMarkedPoleQuadraticCarrier_half_formula ht]
+  have h3 := Real.one_le_cosh (8*Real.pi/(3*t))
+  have h4 := Real.one_le_cosh (4*Real.pi/t)
+  have h8 := Real.one_le_cosh (8*Real.pi/t)
+  have hp : 0 < Real.pi^2 := by positivity
+  positivity
+  nlinarith
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_neg
+    {t : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicMarkedPoleQuadraticCarrier
+      t (2/3) (quarticFourAtomicMu (2/3)) < 0 := by
+  rw [quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_formula ht]
+  let C : ℝ := Real.cosh (4*Real.pi/t)
+  have h3 := Real.one_le_cosh (8*Real.pi/(3*t))
+  have hdouble :
+      Real.cosh (8*Real.pi/t) = 2*C^2 - 1 := by
+    have harg : 8*Real.pi/t = 2*(4*Real.pi/t) := by ring
+    rw [harg, Real.cosh_two_mul, Real.cosh_sq]
+    dsimp [C]
+    ring
+  have hquad :
+      -28*C^2 + 80*C - 79 < 0 := by
+    have hs : 0 <= (C - 10/7)^2 := sq_nonneg _
+    nlinarith
+  have hnum :
+      -9*Real.cosh (8*Real.pi/(3*t))
+        + 80*Real.cosh (4*Real.pi/t)
+        - 14*Real.cosh (8*Real.pi/t)
+        - 84 < 0 := by
+    rw [hdouble]
+    dsimp [C] at hquad ⊢
+    nlinarith
+  have hp : 0 < Real.pi^2 := by positivity
+  exact div_neg_of_neg_of_pos
+    (mul_neg_of_pos_of_neg hp hnum)
+    (by norm_num)
+
+def quarticFourAtomicSignedMarkedPoleQuadraticCarrier
+    (t : ℝ) : ℝ :=
+  quarticFourAtomicFinitePoleResidual
+      t (2/3) (quarticFourAtomicMu (2/3))
+    *
+  quarticFourAtomicMarkedPoleQuadraticCarrier
+      t (1/2) (quarticFourAtomicMu (1/2))
+  -
+  quarticFourAtomicFinitePoleResidual
+      t (1/2) (quarticFourAtomicMu (1/2))
+    *
+  quarticFourAtomicMarkedPoleQuadraticCarrier
+      t (2/3) (quarticFourAtomicMu (2/3))
+
+theorem quarticFourAtomicSignedMarkedPoleQuadraticCarrier_pos
+    {t : ℝ} (ht : 200 <= t) :
+    0 < quarticFourAtomicSignedMarkedPoleQuadraticCarrier t := by
+  have hhalfD :=
+    quarticFourAtomicFinitePoleResidual_pos_of_twoHundred
+      ht (by constructor <;> norm_num)
+      (by
+        have h :=
+          quarticFourAtomicMu_small_on_half_twoThirds
+            (by norm_num : (1/2 : ℝ) <= 1/2)
+            (by norm_num : (1/2 : ℝ) <= 2/3)
+        exact h.trans (by norm_num))
+  have htwoD :=
+    quarticFourAtomicFinitePoleResidual_pos_of_twoHundred
+      ht (by constructor <;> norm_num)
+      (by
+        have h :=
+          quarticFourAtomicMu_small_on_half_twoThirds
+            (by norm_num : (1/2 : ℝ) <= 2/3)
+            (by norm_num : (2/3 : ℝ) <= 2/3)
+        exact h.trans (by norm_num))
+  have hhalfQ :=
+    quarticFourAtomicMarkedPoleQuadraticCarrier_half_pos
+      (by linarith : t ≠ 0)
+  have htwoQ :=
+    quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_neg
+      (by linarith : t ≠ 0)
+  unfold quarticFourAtomicSignedMarkedPoleQuadraticCarrier
+  have h1 :
+      0 <
+      quarticFourAtomicFinitePoleResidual
+          t (2/3) (quarticFourAtomicMu (2/3))
+        *
+      quarticFourAtomicMarkedPoleQuadraticCarrier
+          t (1/2) (quarticFourAtomicMu (1/2)) :=
+    mul_pos htwoD hhalfQ
+  have h2 :
+      quarticFourAtomicFinitePoleResidual
+          t (1/2) (quarticFourAtomicMu (1/2))
+        *
+      quarticFourAtomicMarkedPoleQuadraticCarrier
+          t (2/3) (quarticFourAtomicMu (2/3)) < 0 :=
+    mul_neg_of_pos_of_neg hhalfD htwoQ
+  linarith
+
 end Synthesis

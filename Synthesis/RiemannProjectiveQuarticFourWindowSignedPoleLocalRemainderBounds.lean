@@ -1939,4 +1939,127 @@ theorem QuarticFourSignedPolePair.literalConeDebtAt_lt_target_of_quartic_floor
 
 
 
+
+/-!
+## Physical r^-8 transport of the complete sixth-order remainder
+-/
+
+def QuarticFourSignedPolePair.literalCompleteSixthPhysicalPolynomial
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  (7/4320 : ℝ)
+      * (|((sigma : ℂ).im-t)|^6 + |heightOf sigma|^6)
+    +
+  (5/192 : ℝ)
+      * heightOf sigma^2 * |((sigma : ℂ).im-t)|^4
+    +
+  (1/48 : ℝ)
+      * |heightOf sigma|^4 * |((sigma : ℂ).im-t)|^2
+
+def QuarticFourSignedPolePair.literalCompleteSixthRemainderBound
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+    * W.signedProfileAbsMomentSix
+    * W.literalCompleteSixthPhysicalPolynomial sigma
+    / (t/16)^8
+
+theorem QuarticFourSignedPolePair.literalCompleteSixthPhysicalPolynomial_nonneg
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    0 <= W.literalCompleteSixthPhysicalPolynomial sigma := by
+  unfold QuarticFourSignedPolePair.literalCompleteSixthPhysicalPolynomial
+  positivity
+
+theorem QuarticFourSignedPolePair.literalCompleteSixthRemainderBound_nonneg
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    0 <= W.literalCompleteSixthRemainderBound sigma := by
+  unfold QuarticFourSignedPolePair.literalCompleteSixthRemainderBound
+  have h6 := W.signedProfileAbsMomentSix_nonneg
+  positivity
+
+theorem QuarticFourSignedPolePair.completeJointSixthRemainderBound_physical_rescale
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    W.completeJointSixthRemainderBound
+        (heightOf sigma/(t/16))
+        (((sigma : ℂ).im-t)/(t/16))
+      =
+    W.signedProfileAbsMomentSix
+      * W.literalCompleteSixthPhysicalPolynomial sigma
+      / (t/16)^6 := by
+  unfold QuarticFourSignedPolePair.completeJointSixthRemainderBound
+    QuarticFourSignedPolePair.literalCompleteSixthPhysicalPolynomial
+  have hr : 0 < t/16 := by positivity
+  rw [abs_div, abs_div, abs_of_pos hr, abs_of_pos hr]
+  field_simp [hr.ne']
+  ring
+
+theorem QuarticFourSignedPolePair.literalCompleteJointQuarticRemainder_abs_eq_normalized
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    |W.literalCompleteJointQuarticRemainder sigma|
+      =
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / (t/16)^2
+      *
+    |W.completeJointQuarticRemainder
+        (heightOf sigma/(t/16))
+        (((sigma : ℂ).im-t)/(t/16))| := by
+  unfold QuarticFourSignedPolePair.literalCompleteJointQuarticRemainder
+  dsimp
+  have hm :
+      0 <= ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) := by positivity
+  have hr2 : 0 < (t/16)^2 := by positivity
+  rw [abs_mul, abs_div, abs_of_nonneg hm, abs_of_pos hr2]
+
+theorem QuarticFourSignedPolePair.literalCompleteJointQuarticRemainder_abs_le
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros)
+    (ha :
+      |heightOf sigma/(t/16)|
+        <= quarticSignedPoleCanonicalLocalRadius)
+    (hq :
+      |((sigma : ℂ).im-t)/(t/16)|
+        <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.literalCompleteJointQuarticRemainder sigma|
+      <=
+    W.literalCompleteSixthRemainderBound sigma := by
+  rw [W.literalCompleteJointQuarticRemainder_abs_eq_normalized ht]
+  have hnorm :=
+    W.completeJointQuarticRemainder_abs_le_sixth ha hq
+  have hfac :
+      0 <= ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / (t/16)^2 := by
+    positivity
+  have hscaled :=
+    mul_le_mul_of_nonneg_left hnorm hfac
+  rw [W.completeJointSixthRemainderBound_physical_rescale ht] at hscaled
+  unfold QuarticFourSignedPolePair.literalCompleteSixthRemainderBound
+  have hr : 0 < t/16 := by positivity
+  calc
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / (t/16)^2
+        *
+      |W.completeJointQuarticRemainder
+          (heightOf sigma/(t/16))
+          (((sigma : ℂ).im-t)/(t/16))|
+      <=
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / (t/16)^2
+        *
+      (W.signedProfileAbsMomentSix
+        * W.literalCompleteSixthPhysicalPolynomial sigma
+        / (t/16)^6) := hscaled
+    _ =
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+      * W.signedProfileAbsMomentSix
+      * W.literalCompleteSixthPhysicalPolynomial sigma
+      / (t/16)^8 := by
+        field_simp [hr.ne']
+        ring
+
+
 end Synthesis

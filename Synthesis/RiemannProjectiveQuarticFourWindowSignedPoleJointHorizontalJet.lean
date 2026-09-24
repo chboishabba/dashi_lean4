@@ -1446,4 +1446,84 @@ theorem QuarticFourSignedPolePair.completeJointQuarticPolynomial_mul_six
   unfold QuarticFourSignedPolePair.completeJointQuarticPolynomial
   ring
 
+
+/-!
+## Rational sign regions of the complete fourth-order form
+
+These avoid irrational root constants while already showing that the old
+q^2 <= 6 alpha^2 cone is far too coarse.
+-/
+
+theorem QuarticFourSignedPolePair.completeJointQuarticPolynomial_nonpos_inner
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hinner : 6 * q^2 <= alpha^2) :
+    W.completeJointQuarticPolynomial alpha q <= 0 := by
+  unfold QuarticFourSignedPolePair.completeJointQuarticPolynomial
+  have hS := W.targetStrength_pos.le
+  have hq2 : 0 <= q^2 := sq_nonneg q
+  have ha2 : 0 <= alpha^2 := sq_nonneg alpha
+  have hcore :
+      alpha^2 * q^2 - (alpha^4 + q^4)/6 <= 0 := by
+    have ha4 : alpha^4 = alpha^2 * alpha^2 := by ring
+    have hq4 : q^4 = q^2 * q^2 := by ring
+    rw [ha4,hq4]
+    nlinarith [mul_nonneg hq2 (sub_nonneg.mpr hinner)]
+  exact mul_nonpos_of_nonneg_of_nonpos hS hcore
+
+theorem QuarticFourSignedPolePair.completeJointQuarticPolynomial_nonpos_outer
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (houter : 6 * alpha^2 <= q^2) :
+    W.completeJointQuarticPolynomial alpha q <= 0 := by
+  unfold QuarticFourSignedPolePair.completeJointQuarticPolynomial
+  have hS := W.targetStrength_pos.le
+  have hq2 : 0 <= q^2 := sq_nonneg q
+  have ha2 : 0 <= alpha^2 := sq_nonneg alpha
+  have hcore :
+      alpha^2 * q^2 - (alpha^4 + q^4)/6 <= 0 := by
+    have ha4 : alpha^4 = alpha^2 * alpha^2 := by ring
+    have hq4 : q^4 = q^2 * q^2 := by ring
+    rw [ha4,hq4]
+    nlinarith [mul_nonneg ha2 (sub_nonneg.mpr houter)]
+  exact mul_nonpos_of_nonneg_of_nonpos hS hcore
+
+theorem QuarticFourSignedPolePair.completeJointQuarticPolynomial_pos_middle
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (ha : alpha ≠ 0)
+    (hlow : alpha^2 <= 2 * q^2)
+    (hhigh : q^2 <= 2 * alpha^2) :
+    0 < W.completeJointQuarticPolynomial alpha q := by
+  unfold QuarticFourSignedPolePair.completeJointQuarticPolynomial
+  have hS := W.targetStrength_pos
+  have ha2 : 0 < alpha^2 := sq_pos_of_ne_zero ha
+  have hq2 : 0 < q^2 := by
+    by_contra hq
+    have hqz : q^2 = 0 := le_antisymm (le_of_not_gt hq) (sq_nonneg q)
+    nlinarith
+  have hcore :
+      0 < alpha^2 * q^2 - (alpha^4 + q^4)/6 := by
+    have ha4 : alpha^4 = alpha^2 * alpha^2 := by ring
+    have hq4 : q^4 = q^2 * q^2 := by ring
+    rw [ha4,hq4]
+    nlinarith [
+      mul_pos ha2 hq2,
+      mul_nonneg ha2 (sub_nonneg.mpr hhigh),
+      mul_nonneg hq2 (sub_nonneg.mpr hlow)]
+  exact mul_pos hS hcore
+
+/--
+The old outer-good condition remains favorable for the complete quartic form,
+but there is now also an inner favorable region near the same ordinate.
+-/
+theorem QuarticFourSignedPolePair.completeQuartic_has_two_favorable_regions
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (h : 6*q^2 <= alpha^2 ∨ 6*alpha^2 <= q^2) :
+    W.completeJointQuarticPolynomial alpha q <= 0 := by
+  rcases h with hinner | houter
+  · exact W.completeJointQuarticPolynomial_nonpos_inner hinner
+  · exact W.completeJointQuarticPolynomial_nonpos_outer houter
+
 end Synthesis

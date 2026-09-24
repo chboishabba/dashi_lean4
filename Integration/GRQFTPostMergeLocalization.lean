@@ -2054,4 +2054,73 @@ theorem midpoint_static_margin_positive
   positivity
 
 
+/-!
+Parameterized repulsive junction design family.
+
+Let R = 3M + delta.  Then the midpoint Kottler choice has equal outward/static
+margins (3/2) delta and total scaled-Lambda window width 3 delta.  The junction
+derivative cost remains 6M/R^2, independent of Lambda_out after lapse matching.
+-/
+
+def radiusFromGap (mass gap : Rat) : Rat :=
+  3*mass + gap
+
+theorem gap_midpoint_outward_margin
+    (mass gap : Rat) :
+    outwardAccelerationMargin mass
+      (scaledLambdaMidpoint mass (radiusFromGap mass gap))
+      = (3/2 : Rat) * gap := by
+  ring
+
+theorem gap_midpoint_static_margin
+    (mass gap : Rat) :
+    staticPatchMargin mass (radiusFromGap mass gap)
+      (scaledLambdaMidpoint mass (radiusFromGap mass gap))
+      = (3/2 : Rat) * gap := by
+  ring
+
+theorem gap_window_width
+    (mass gap : Rat) :
+    kottlerWindowWidth mass (radiusFromGap mass gap)
+      = 3*gap := by
+  ring
+
+theorem matched_junction_derivative_jump
+    (mass radius lambdaOut : Rat)
+    (hR : radius ≠ 0) :
+    let lambdaIn := lambdaOut + 6*mass/radius^3
+    fExteriorPrimeJunction radius mass lambdaOut
+      - fInteriorPrimeJunction radius lambdaIn
+      = 6*mass/radius^2 := by
+  dsimp
+  field_simp [hR]
+  ring
+
+theorem fixture_gap_radius_two :
+    radiusFromGap (1/4) (5/4) = 2 := by
+  norm_num [radiusFromGap]
+
+structure ParameterizedRepulsiveJunctionDesign
+    (mass gap : Rat) : Prop where
+  outwardMargin :
+    outwardAccelerationMargin mass
+      (scaledLambdaMidpoint mass (radiusFromGap mass gap))
+      = (3/2 : Rat) * gap
+  staticMargin :
+    staticPatchMargin mass (radiusFromGap mass gap)
+      (scaledLambdaMidpoint mass (radiusFromGap mass gap))
+      = (3/2 : Rat) * gap
+  windowWidth :
+    kottlerWindowWidth mass (radiusFromGap mass gap) = 3*gap
+
+theorem parameterized_repulsive_junction_design
+    (mass gap : Rat) :
+    ParameterizedRepulsiveJunctionDesign mass gap := by
+  exact {
+    outwardMargin := gap_midpoint_outward_margin mass gap
+    staticMargin := gap_midpoint_static_margin mass gap
+    windowWidth := gap_window_width mass gap
+  }
+
+
 end Integration.GRQFTPostMergeLocalization

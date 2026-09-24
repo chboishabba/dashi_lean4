@@ -1231,4 +1231,46 @@ theorem localized_repulsion_uses_positive_g :
     localizedCriterionRequiresNegativeG = false := rfl
 
 
+/-!
+Localized positive-G antigravity max-cut.
+
+This is the strongest composed finite/conditional result in the current GRQFT
+mirror: positive coupling, negative-pressure active source, outward principal
+comoving deviation, and outward external-test-mass weak-field response.
+-/
+
+structure LocalizedPositiveGAntigravityMaxCut : Prop where
+  finiteDefocusing : FiniteDefocusingSolutionWitness
+  localizedExterior : LocalizedPositiveGRepulsiveSourceWitness
+  couplingPositive : CouplingSign = .positive
+  xPrincipalDeviationOutward :
+    principalDeviationAcceleration .x = .outward
+  yPrincipalDeviationOutward :
+    principalDeviationAcceleration .y = .outward
+  zPrincipalDeviationOutward :
+    principalDeviationAcceleration .z = .outward
+  externalTestMassResponseOutward :
+    exteriorResponse .positive .negative = .outward
+
+theorem canonical_localized_positive_g_antigravity_max_cut :
+    LocalizedPositiveGAntigravityMaxCut := by
+  refine
+    { finiteDefocusing := canonical_finite_defocusing_solution_witness
+      localizedExterior := canonical_localized_positive_g_repulsive_source_witness
+      couplingPositive := rfl
+      xPrincipalDeviationOutward := rfl
+      yPrincipalDeviationOutward := rfl
+      zPrincipalDeviationOutward := rfl
+      externalTestMassResponseOutward := rfl }
+
+def localizedMaxCutNegativeGRequired : Bool := false
+def localizedMaxCutNegativeInertialMassRequired : Bool := false
+def localizedMaxCutArbitraryStaticMetricSolved : Bool := false
+def localizedMaxCutFullTolmanKomarInternal : Bool := false
+def localizedMaxCutContinuumMagnitudeCalibrated : Bool := false
+
+theorem localized_max_cut_uses_positive_g :
+    localizedMaxCutNegativeGRequired = false := rfl
+
+
 end Integration.GRQFTPostMergeLocalization

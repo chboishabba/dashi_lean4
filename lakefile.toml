@@ -128,3 +128,10 @@ globs = ["NSBQuantitative", "RequestProject.NavierStokes.S2b2d1b2StateCovariance
 name = "NSCanonicalLeaves"
 srcDir = "DASHI/output-final_aristotle"
 globs = ["RequestProject.NavierStokes.CanonicalCompletionLeaves"]
+
+# Native mathlib-backed continuum Yang--Mills analysis.  This lane is reserved
+# for genuine measure/topology/spectral theorems whose supporting infrastructure
+# is materially stronger in mathlib than in the Agda foundation.
+[[lean_lib]]
+name = "YMContinuum"
+globs = ["YangMills.*"]

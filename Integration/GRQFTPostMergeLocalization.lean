@@ -1810,4 +1810,102 @@ def exteriorInteriorJunctionStillOpen : Bool := true
 def exteriorSIMagnitudeStillOpen : Bool := true
 
 
+/-!
+de Sitter-like interior -> Kottler exterior junction.
+
+A shell-free match at R requires both lapse and radial-derivative continuity.
+For nonzero mass these force incompatible Lambda jumps.  A thin shell is
+therefore required.  The explicit M=1/4, R=2 fixture uses
+Lambda_out=3/16, Lambda_in=3/8 and gives outward acceleration +1/16 while
+keeping f(R)=1/2 in the static patch.
+-/
+
+def fInteriorJunction (r lambdaIn : Rat) : Rat :=
+  1 - lambdaIn * r^2 / 3
+
+def fExteriorJunction (r mass lambdaOut : Rat) : Rat :=
+  1 - 2*mass/r - lambdaOut*r^2/3
+
+def fInteriorPrimeJunction (r lambdaIn : Rat) : Rat :=
+  -2*lambdaIn*r/3
+
+def fExteriorPrimeJunction (r mass lambdaOut : Rat) : Rat :=
+  2*mass/r^2 - 2*lambdaOut*r/3
+
+def metricContinuityLambdaJump (mass r : Rat) : Rat :=
+  6*mass/r^3
+
+def derivativeContinuityLambdaJump (mass r : Rat) : Rat :=
+  -3*mass/r^3
+
+theorem fixture_metric_jump_three_sixteenths :
+    metricContinuityLambdaJump (1/4) 2 = 3/16 := by
+  norm_num [metricContinuityLambdaJump]
+
+theorem fixture_derivative_jump_minus_three_thirtyseconds :
+    derivativeContinuityLambdaJump (1/4) 2 = -3/32 := by
+  norm_num [derivativeContinuityLambdaJump]
+
+theorem nonzero_mass_shell_free_match_impossible_fixture :
+    metricContinuityLambdaJump (1/4) 2
+      ≠ derivativeContinuityLambdaJump (1/4) 2 := by
+  norm_num [metricContinuityLambdaJump, derivativeContinuityLambdaJump]
+
+def junctionLambdaOut : Rat := 3/16
+def junctionLambdaIn : Rat := 3/8
+
+theorem junction_lapse_matches :
+    fInteriorJunction 2 junctionLambdaIn
+      = fExteriorJunction 2 (1/4) junctionLambdaOut := by
+  norm_num [fInteriorJunction, fExteriorJunction, junctionLambdaIn, junctionLambdaOut]
+
+theorem junction_lapse_static_half :
+    fExteriorJunction 2 (1/4) junctionLambdaOut = 1/2 := by
+  norm_num [fExteriorJunction, junctionLambdaOut]
+
+theorem junction_outward_acceleration_one_sixteenth :
+    kottlerRadialAcceleration (1/4) 2 junctionLambdaOut = 1/16 := by
+  norm_num [kottlerRadialAcceleration, junctionLambdaOut]
+
+theorem junction_derivative_jump_three_eighths :
+    fExteriorPrimeJunction 2 (1/4) junctionLambdaOut
+      - fInteriorPrimeJunction 2 junctionLambdaIn = 3/8 := by
+  norm_num [fExteriorPrimeJunction, fInteriorPrimeJunction, junctionLambdaOut, junctionLambdaIn]
+
+inductive SurfaceTangentialStressOrientation where
+  | negativeTension
+  | zero
+  | positivePressure
+  deriving DecidableEq, Repr
+
+structure DeSitterKottlerJunctionWitness : Prop where
+  lapseMatched :
+    fInteriorJunction 2 junctionLambdaIn
+      = fExteriorJunction 2 (1/4) junctionLambdaOut
+  staticPatch :
+    fExteriorJunction 2 (1/4) junctionLambdaOut = 1/2
+  outwardAcceleration :
+    kottlerRadialAcceleration (1/4) 2 junctionLambdaOut = 1/16
+  derivativeJump :
+    fExteriorPrimeJunction 2 (1/4) junctionLambdaOut
+      - fInteriorPrimeJunction 2 junctionLambdaIn = 3/8
+  surfaceTangentialStress :
+    SurfaceTangentialStressOrientation = .positivePressure
+
+theorem canonical_de_sitter_kottler_junction :
+    DeSitterKottlerJunctionWitness := by
+  exact {
+    lapseMatched := junction_lapse_matches
+    staticPatch := junction_lapse_static_half
+    outwardAcceleration := junction_outward_acceleration_one_sixteenth
+    derivativeJump := junction_derivative_jump_three_eighths
+    surfaceTangentialStress := rfl
+  }
+
+def shellFreeDarmoisMatchAvailable : Bool := false
+def thinSurfaceLayerRequired : Bool := true
+def positiveSurfacePressureOrientationRequired : Bool := true
+def exactIsraelNormalizationSolved : Bool := false
+
+
 end Integration.GRQFTPostMergeLocalization

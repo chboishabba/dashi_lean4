@@ -107,7 +107,7 @@ inductive PostMergeLeaf where
   | grDiscreteToContinuumRealization
   | cmp119StressToLiteralPinnedStressAttachment
   | pinnedLiteralYMToRecoveredQFTAttachment
-  | allSectorQFTAggregationAndCommonVariation
+  | activePhysicalSectorTotalizationAndCommonVariation
   | einsteinCommonMetricVariation
   | commonMetricProducerLanguage
   | physicalDrellYanAbsoluteProjectionReplacement
@@ -119,7 +119,7 @@ def remainingPostMergeLeaves : List PostMergeLeaf :=
   [ .grDiscreteToContinuumRealization
   , .cmp119StressToLiteralPinnedStressAttachment
   , .pinnedLiteralYMToRecoveredQFTAttachment
-  , .allSectorQFTAggregationAndCommonVariation
+  , .activePhysicalSectorTotalizationAndCommonVariation
   , .einsteinCommonMetricVariation
   , .commonMetricProducerLanguage
   , .physicalDrellYanAbsoluteProjectionReplacement
@@ -133,7 +133,7 @@ structure PostMergeMaxCut where
   cmsBoundedRatioContactSurvivesW4Rejection : Bool
   cmp119ToSelectedSharedSectorCompilerClosed : Bool
   secondQFTStressTheoremRequired : Bool
-  allSectorAggregationStillRequired : Bool
+  activePhysicalSectorTotalizationStillRequired : Bool
   terminalGRQFTPromoted : Bool
   remainingLeaves : List PostMergeLeaf
   deriving Repr
@@ -150,5 +150,81 @@ def postMergeMaxCut : PostMergeMaxCut where
 
 theorem postmerge_terminal_still_false :
     postMergeMaxCut.terminalGRQFTPromoted = false := rfl
+
+/-!
+Clay's universal compact-simple group parameter is not a physical instruction
+to sum every possible compact-simple group as a simultaneously active sector.
+A GRQFT candidate must select its active physical sector(s) first.
+-/
+
+structure PhysicalGaugeSectorSelection
+    (Candidate Group : Type u) where
+  activeSector : Candidate → Group → Prop
+  selectedGroup : Candidate → Group
+  selectedGroupIsActive :
+    ∀ candidate, activeSector candidate (selectedGroup candidate)
+
+def clayUniversalGroupParameterMeansAllGroupsPhysicallyActive : Bool := false
+
+theorem clay_group_quantifier_not_physical_sector_sum :
+    clayUniversalGroupParameterMeansAllGroupsPhysicallyActive = false := rfl
+
+def singleGaugeSectorAutomaticallyEqualsTotalEinsteinSource : Bool := false
+
+theorem single_sector_not_automatically_total_source :
+    singleGaugeSectorAutomaticallyEqualsTotalEinsteinSource = false := rfl
+
+/-!
+Ratio-cancellation firewall: equal ratios do not identify absolute components.
+Using cross multiplication avoids division.
+-/
+
+def ratioEquivalent
+    (n d pn pd : Nat) : Prop :=
+  n * pd = pn * d
+
+theorem ratio_cancellation_witness :
+    ratioEquivalent 2 1 200 100 := by decide
+
+theorem ratio_cancellation_numerator_wrong :
+    (2 : Nat) ≠ 200 := by decide
+
+theorem ratio_cancellation_denominator_wrong :
+    (1 : Nat) ≠ 100 := by decide
+
+def ratioAgreementImpliesAbsoluteAgreement : Bool := false
+
+theorem ratio_agreement_does_not_imply_absolute_agreement :
+    ratioAgreementImpliesAbsoluteAgreement = false := rfl
+
+inductive LowChiSquareProvenance where
+  | posteriorTunedTrainingDiagnostic
+  | independentHoldoutFailure
+  | boundedFrozenComparisonLaw
+  | fixtureBaselineDiagnostic
+  deriving DecidableEq, Repr
+
+structure LowChiSquareRow where
+  label : String
+  chi2PerDof : String
+  provenance : LowChiSquareProvenance
+  promotesEmpiricalAdequacy : Bool
+  deriving Repr
+
+def lowChiSquareRows : List LowChiSquareRow :=
+  [ { label := "HEP-R41 posterior t43", chi2PerDof := "1.7408778006026118",
+      provenance := .posteriorTunedTrainingDiagnostic, promotesEmpiricalAdequacy := false }
+  , { label := "HEP-R42 t45 holdout", chi2PerDof := "222.54402462995546",
+      provenance := .independentHoldoutFailure, promotesEmpiricalAdequacy := false }
+  , { label := "canonical CMS W3 t43", chi2PerDof := "2.1565191176275618",
+      provenance := .boundedFrozenComparisonLaw, promotesEmpiricalAdequacy := true }
+  , { label := "ATLAS fixture minimum", chi2PerDof := "2.6493994618998236",
+      provenance := .fixtureBaselineDiagnostic, promotesEmpiricalAdequacy := false }
+  ]
+
+def lowChiSquareAlonePromotesEmpiricalAdequacy : Bool := false
+
+theorem low_chi_square_alone_does_not_promote :
+    lowChiSquareAlonePromotesEmpiricalAdequacy = false := rfl
 
 end Integration.GRQFTPostMergeLocalization

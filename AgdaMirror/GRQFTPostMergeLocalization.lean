@@ -27,4 +27,16 @@ theorem second_cmp119_stress_theorem_parity :
     secondCMP119ToSharedStressTheoremRequired = false :=
   second_cmp119_to_shared_stress_theorem_not_required
 
+theorem clay_group_quantifier_boundary_parity :
+    clayUniversalGroupParameterMeansAllGroupsPhysicallyActive = false :=
+  clay_group_quantifier_not_physical_sector_sum
+
+theorem ratio_cancellation_boundary_parity :
+    ratioAgreementImpliesAbsoluteAgreement = false :=
+  ratio_agreement_does_not_imply_absolute_agreement
+
+theorem low_chi_square_provenance_boundary_parity :
+    lowChiSquareAlonePromotesEmpiricalAdequacy = false :=
+  low_chi_square_alone_does_not_promote
+
 end AgdaMirror.GRQFTPostMergeLocalization

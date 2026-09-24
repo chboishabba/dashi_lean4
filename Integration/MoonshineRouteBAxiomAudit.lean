@@ -1,0 +1,40 @@
+import Integration.BishopVendoredCompletionEquivalence
+import Integration.BishopVendoredCompletionAlgebraEquivalence
+import Integration.BishopRound11MachinCanonicalBinding
+import Integration.BishopRound11MachinReplayIrrelevance
+import Integration.MoonshineEisensteinRound11CanonicalRouteB
+
+/-!
+# Focused axiom audit for the Bishop-completion / canonical route-B closure
+
+This module is intentionally small enough to serve as a CI terminal receipt.
+It prints the Lean axiom dependencies of the load-bearing theorems added after
+the earlier route-B workflow surface.
+
+Expected dependencies are ordinary Lean/Mathlib logical infrastructure such as
+Classical.choice, Quot.sound and propext.  A future exact-head workflow receipt,
+not this source file by itself, is the validation event.
+-/
+
+#print axioms Integration.BishopVendoredCompletionEquivalence.eval_encode
+#print axioms Integration.BishopVendoredCompletionEquivalence.encode_eval_equiv
+#print axioms Integration.BishopVendoredCompletionEquivalence.bishopCompletionEquivReal
+
+#print axioms Integration.BishopVendoredOrderConvergenceEvaluation.eval_le_iff
+#print axioms Integration.BishopVendoredOrderConvergenceEvaluation.bishopConvergesTo_iff_eval_tendsto
+
+#print axioms Integration.BishopVendoredCompletionAlgebraEquivalence.encode_add_equiv
+#print axioms Integration.BishopVendoredCompletionAlgebraEquivalence.encode_mul_equiv
+#print axioms Integration.BishopVendoredCompletionAlgebraEquivalence.bishop_order_iff_real_order
+
+#print axioms Integration.BishopRound11MachinCanonicalBinding.canonicalBinding
+#print axioms Integration.BishopRound11MachinCanonicalBinding.everyBinding_agrees_setoid
+
+#print axioms Integration.MoonshineEisensteinRound11CanonicalRouteB.mapped_sourceE4_tendsto_mathlib_E4
+#print axioms Integration.MoonshineEisensteinRound11CanonicalRouteB.mapped_sourceE6_tendsto_mathlib_E6
+#print axioms Integration.MoonshineEisensteinRound11CanonicalRouteB.mapped_sourceNormalizedDelta_tendsto
+#print axioms Integration.MoonshineEisensteinRound11CanonicalRouteB.eta24_eq_canonical_route_delta
+#print axioms Integration.MoonshineEisensteinRound11CanonicalRouteB.canonical_target_inv_conj
+
+#print axioms Integration.BishopRound11MachinReplayIrrelevance.mapped_normalizedDelta_independent_of_binding
+#print axioms Integration.BishopRound11MachinReplayIrrelevance.mapped_normalizedDelta_eq_canonical

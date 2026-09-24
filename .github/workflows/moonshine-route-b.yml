@@ -1,0 +1,135 @@
+name: Moonshine Route B
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - agent/moonshine-eisenstein-analytic-20260922
+    paths:
+      - "Integration/Bishop*.lean"
+      - "Integration/Moonshine*.lean"
+      - "Integration.lean"
+      - "scripts/route_b_agda_replay_probe.py"
+      - "scripts/route_b_agda_kernel_replay.py"
+      - "lakefile.toml"
+      - "lean-toolchain"
+      - ".github/workflows/moonshine-route-b.yml"
+  pull_request:
+    paths:
+      - "Integration/Bishop*.lean"
+      - "Integration/Moonshine*.lean"
+      - "Integration.lean"
+      - "scripts/route_b_agda_replay_probe.py"
+      - "scripts/route_b_agda_kernel_replay.py"
+      - "lakefile.toml"
+      - "lean-toolchain"
+      - ".github/workflows/moonshine-route-b.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  route-b:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout dashi_lean4
+        uses: actions/checkout@v4
+
+      - name: Checkout bound dashi_agda source
+        uses: actions/checkout@v4
+        with:
+          repository: chboishabba/dashi_agda
+          ref: agent/jmd-archimedes-delta-369-bridge-20260922
+          path: agda-source
+          submodules: recursive
+
+      - name: Verify content-addressed Agda source binding
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          check_blob () {
+            local path="$1"
+            local expected="$2"
+            local actual
+            actual="$(git -C agda-source rev-parse "HEAD:${path}")"
+            if [[ "$actual" != "$expected" ]]; then
+              echo "::error file=${path}::Agda source blob drift: expected ${expected}, got ${actual}"
+              exit 1
+            fi
+            echo "verified ${path} ${actual}"
+          }
+
+          check_blob "DASHI/Moonshine/BishopRound11MachinSetoidComplexInstanceExact.agda"             "ec132e001eeb7836078561e88fe2b3f54438facb"
+          check_blob "DASHI/Foundations/BishopMachinArctanConstructionExact.agda"             "be11dee1db4eb6856346267134dcd85fed96fc2a"
+          check_blob "DASHI/Foundations/BishopExponentialSeriesConvergenceExact.agda"             "b62d767e74c6473e31bdf86458d93445656f6978"
+          check_blob "DASHI/Foundations/BishopConcreteTrigSeriesConvergenceExact.agda"             "75b8b72ea4e240bfde706272beb5ff5e5fba9af5"
+          check_blob "DASHI/Analysis/BishopSetoidComplexExact.agda"             "739af368ced4b730225db4177529b281f4e8c493"
+          check_blob "DASHI/Moonshine/JInvariantEisensteinBishopSetoidFiniteQSeriesExact.agda"             "4787feafbd9630dc439556543c42c6b75bf7fdbd"
+          check_blob "DASHI/Moonshine/JInvariantEisensteinBishopSetoidExtractionExact.agda"             "baee86e7085c9193227142eb9713df9d2e4a546e"
+
+          expected_bishop="240e38c7f6938f20f865b1f956c5f084da48bd54"
+          actual_bishop="$(git -C agda-source/vendor/bishop rev-parse HEAD)"
+          if [[ "$actual_bishop" != "$expected_bishop" ]]; then
+            echo "::error::vendor/bishop drift: expected ${expected_bishop}, got ${actual_bishop}"
+            exit 1
+          fi
+          echo "verified vendor/bishop ${actual_bishop}"
+
+      - name: Probe content-addressed Agda replay syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/route_b_agda_replay_probe.py \
+            --source-root agda-source \
+            --out /tmp/route-b-agda-replay
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+
+      - name: Generate live Agda replay dependency closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/route_b_agda_kernel_replay.py \
+            --source-root agda-source \
+            --dest DASHI/output-final_aristotle/AgdaVendor \
+            --roots-file /tmp/route-b-replay-roots.txt
+
+      - name: Kernel-elaborate generated Agda replay roots
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r root; do
+            echo "==> Lean elaborating generated replay root: ${root}"
+            lake env lean "${root}"
+          done < /tmp/route-b-replay-roots.txt
+
+      - name: Build Integration library
+        run: lake build Integration
+
+      - name: Check route-B terminal modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean Integration/BishopRound11MachinBindingManifest.lean
+          lake env lean Integration/BishopRound11MachinSourceBinding.lean
+          lake env lean Integration/BishopVendoredCompletionEquivalence.lean
+          lake env lean Integration/BishopVendoredCompletionAlgebraEquivalence.lean
+          lake env lean Integration/BishopRound11MachinCanonicalBinding.lean
+          lake env lean Integration/BishopRound11MachinReplayIrrelevance.lean
+          lake env lean Integration/MoonshineEisensteinRound11RouteB.lean
+          lake env lean Integration/MoonshineEisensteinRound11CanonicalRouteB.lean
+          lake env lean Integration/MoonshineRouteBAxiomAudit.lean
+          lake env lean Integration/MoonshineEta24Pinned.lean
+          lake env lean Integration/MoonshineEta24SixfoldPhase.lean
+          lake env lean Integration/MoonshineDeltaFinalMinCut.lean
+          lake env lean Integration/MoonshineNormalizedJPhaseReadout.lean
+          lake env lean Integration/MoonshineAngleC6SectorObserver.lean
+          lake env lean Integration/MoonshineC6TenRankWeightTwelveCrossPollination.lean
+          lake env lean Integration/MonsterAtlas6561X8RecognitionObligation.lean
+          lake env lean Integration/MoonshineNeutralCuspRelationCrossPollination.lean
+          lake env lean Integration/MoonshineSSP15SignedFRACTRANBranch.lean

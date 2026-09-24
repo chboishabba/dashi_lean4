@@ -129,4 +129,20 @@ theorem endpoint_metric_transport_boundary_parity :
     secondEndpointToMetricStressIdentificationRequired = false :=
   no_second_endpoint_metric_stress_theorem
 
+theorem corrected_d1_boundary_parity :
+    oldD1bTangentFibreEqualityRequired = false :=
+  old_d1b_not_required
+
+theorem ten_r116_terms_defined_parity :
+    tenRationalStressInsertionTermsDefined = true :=
+  ten_terms_are_defined
+
+theorem ten_r116_target_equalities_parity :
+    tenNormalizedGRTargetEqualitiesStillRequired = true :=
+  ten_target_equalities_remain
+
+theorem ten_target_tensor_compiler_parity :
+    additionalTensorTheoremAfterTenTargetEqualitiesRequired = false :=
+  no_tensor_theorem_after_ten_targets
+
 end AgdaMirror.GRQFTPostMergeLocalization

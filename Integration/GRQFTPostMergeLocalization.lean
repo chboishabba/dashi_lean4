@@ -3179,4 +3179,93 @@ def gravitatingIsraelWallIsValidEscapeRoute : Bool := true
 def noDomainWallOfAnyKindClaimedImpossible : Bool := false
 
 
+/-!
+Corrected D1 seam.
+
+The old D1b statement tried to equate values in two different tangent fibres.
+The source-native correction treats the physical tangent map and the local
+substitution derivative sequentially.  The remaining theorem-bearing semantics
+are the ordinary first-variation laws and the physical background-transport
+chain rule.
+-/
+
+def oldD1bTangentFibreEqualityRequired : Bool := false
+def sequentialTangentCompositionCompilerOwned : Bool := true
+def d1aFirstVariationSemanticsStillRequired : Bool := true
+def correctedD1bBackgroundTransportSemanticsStillRequired : Bool := true
+
+theorem old_d1b_not_required :
+    oldD1bTangentFibreEqualityRequired = false := rfl
+
+theorem sequential_tangent_compiler_owned :
+    sequentialTangentCompositionCompilerOwned = true := rfl
+
+/-!
+Ten literal rational source-native stress coordinates.
+
+This mirrors the Agda R116/R119 endpoint: the ten quantities are already
+well-defined rational stress insertion terms.  The final normalized payment is
+their equality to the checked GR target values.
+-/
+
+structure TenRationalStressInsertionTerms where
+  n00 n01 n02 n03 n11 n12 n13 n22 n23 n33 : Rat
+  deriving DecidableEq, Repr
+
+def tenTermsAsSymmetricTensor
+    (n : TenRationalStressInsertionTerms) : RationalTensor4
+  | .t, .t => n.n00
+  | .t, .x => n.n01
+  | .x, .t => n.n01
+  | .t, .y => n.n02
+  | .y, .t => n.n02
+  | .t, .z => n.n03
+  | .z, .t => n.n03
+  | .x, .x => n.n11
+  | .x, .y => n.n12
+  | .y, .x => n.n12
+  | .x, .z => n.n13
+  | .z, .x => n.n13
+  | .y, .y => n.n22
+  | .y, .z => n.n23
+  | .z, .y => n.n23
+  | .z, .z => n.n33
+
+structure TenNormalizedGRTargetEqualities
+    (n : TenRationalStressInsertionTerms) : Prop where
+  n00IsGR00 : n.n00 = 1
+  n01IsGR01 : n.n01 = 0
+  n02IsGR02 : n.n02 = 0
+  n03IsGR03 : n.n03 = 0
+  n11IsGR11 : n.n11 = -1
+  n12IsGR12 : n.n12 = 0
+  n13IsGR13 : n.n13 = 0
+  n22IsGR22 : n.n22 = -1
+  n23IsGR23 : n.n23 = 0
+  n33IsGR33 : n.n33 = -1
+
+theorem ten_target_equalities_compile_to_full_tensor_equality
+    {n : TenRationalStressInsertionTerms}
+    (h : TenNormalizedGRTargetEqualities n)
+    (a b : Axis4) :
+    finiteGRStressRational a b = tenTermsAsSymmetricTensor n a b := by
+  cases a <;> cases b <;>
+    simp [finiteGRStressRational, tenTermsAsSymmetricTensor,
+      h.n00IsGR00, h.n01IsGR01, h.n02IsGR02, h.n03IsGR03,
+      h.n11IsGR11, h.n12IsGR12, h.n13IsGR13,
+      h.n22IsGR22, h.n23IsGR23, h.n33IsGR33]
+
+def tenRationalStressInsertionTermsDefined : Bool := true
+def tenNormalizedGRTargetEqualitiesStillRequired : Bool := true
+def additionalTensorTheoremAfterTenTargetEqualitiesRequired : Bool := false
+
+theorem ten_terms_are_defined :
+    tenRationalStressInsertionTermsDefined = true := rfl
+
+theorem ten_target_equalities_remain :
+    tenNormalizedGRTargetEqualitiesStillRequired = true := rfl
+
+theorem no_tensor_theorem_after_ten_targets :
+    additionalTensorTheoremAfterTenTargetEqualitiesRequired = false := rfl
+
 end Integration.GRQFTPostMergeLocalization

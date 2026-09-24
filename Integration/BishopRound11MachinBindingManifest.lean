@@ -146,6 +146,10 @@ structure ManifestBoundary where
   canonicalLeanBindingInhabited : Bool
   everyAdmissibleBindingSetoidEquivalentToCanonical : Bool
   hypothesisFreeCanonicalRouteBConstructed : Bool
+  replaySyntaxProbeSourceOwned : Bool
+  recursiveReplayClosureGeneratorSourceOwned : Bool
+  replayKernelElaborationWorkflowStepOwned : Bool
+  focusedRouteBAxiomAuditSourceOwned : Bool
 
   generatedAgdaReplayObserved : Bool
   leanKernelReceiptObserved : Bool
@@ -161,6 +165,10 @@ def manifestBoundary : ManifestBoundary where
   canonicalLeanBindingInhabited := true
   everyAdmissibleBindingSetoidEquivalentToCanonical := true
   hypothesisFreeCanonicalRouteBConstructed := true
+  replaySyntaxProbeSourceOwned := true
+  recursiveReplayClosureGeneratorSourceOwned := true
+  replayKernelElaborationWorkflowStepOwned := true
+  focusedRouteBAxiomAuditSourceOwned := true
 
   generatedAgdaReplayObserved := false
   leanKernelReceiptObserved := false

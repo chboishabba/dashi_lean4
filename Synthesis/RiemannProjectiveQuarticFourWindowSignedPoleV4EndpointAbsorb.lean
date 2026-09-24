@@ -1182,6 +1182,215 @@ theorem zetaMu_ge_local_left_envelope
   exact zetaMu_ge_quarticSignedPoleMuLowerEnvelope
     hleft hx.1
 
+
+
+/-!
+## Integrated smooth-mu fourth-moment floor
+
+The pointwise Stirling envelope is now pushed through the exact quartic
+weight.  This exposes the favorable smooth background as a scalar term in the
+correct-polarity ABSORB budget.
+-/
+
+theorem quarticSignedPoleVerticalFourthWeight_intervalIntegral
+    {t r : ℝ} (hr : 0 <= r) :
+    (∫ x in (t-r)..(t+r), (x-t)^4)
+      = (2/5 : ℝ) * r^5 := by
+  have hderiv :
+      ∀ x : ℝ,
+        HasDerivAt
+          (fun y : ℝ => (y-t)^5 / 5)
+          ((x-t)^4) x := by
+    intro x
+    convert
+      ((((hasDerivAt_id x).sub_const t).pow 5).div_const 5)
+      using 1 <;> ring
+  have hint :
+      IntervalIntegrable
+        (fun x : ℝ => (x-t)^4) volume (t-r) (t+r) := by
+    have hc : Continuous (fun x : ℝ => (x-t)^4) := by
+      fun_prop
+    exact hc.intervalIntegrable _ _
+  have hFTC :
+      (∫ x in (t-r)..(t+r), (x-t)^4)
+        =
+      ((t+r-t)^5 / 5) - ((t-r-t)^5 / 5) := by
+    apply intervalIntegral.integral_eq_sub_of_hasDerivAt
+    · intro x hx
+      exact hderiv x
+    · exact hint
+  rw [hFTC]
+  ring
+
+theorem quarticSignedPoleLocalMuVerticalFourthMoment_ge_leftEnvelope
+    {t r : ℝ}
+    (hr : 0 <= r)
+    (hleft : 1 <= t-r) :
+    (2/5 : ℝ) * r^5
+        * quarticSignedPoleMuLowerEnvelope (t-r)
+      <=
+    ∫ x in Set.Icc (t-r) (t+r),
+      (x-t)^4 * Zeta23.mu x := by
+  have hAB : t-r <= t+r := by
+    linarith
+  let E : ℝ := quarticSignedPoleMuLowerEnvelope (t-r)
+  have hleftInt :
+      IntervalIntegrable
+        (fun x : ℝ => (x-t)^4 * E)
+        volume (t-r) (t+r) := by
+    have hc : Continuous (fun x : ℝ => (x-t)^4 * E) := by
+      fun_prop
+    exact hc.intervalIntegrable _ _
+  have hrightInt :
+      IntervalIntegrable
+        (fun x : ℝ => (x-t)^4 * Zeta23.mu x)
+        volume (t-r) (t+r) := by
+    have hmu : Continuous Zeta23.mu :=
+      Zeta23.RvM.mu_continuous Zeta23.gammaFacts
+    have hc : Continuous
+        (fun x : ℝ => (x-t)^4 * Zeta23.mu x) := by
+      fun_prop
+    exact hc.intervalIntegrable _ _
+  have hpoint :
+      ∀ x ∈ Set.Icc (t-r) (t+r),
+        (x-t)^4 * E
+          <= (x-t)^4 * Zeta23.mu x := by
+    intro x hx
+    have hmu :
+        E <= Zeta23.mu x := by
+      dsimp [E]
+      exact zetaMu_ge_local_left_envelope hleft hx
+    exact mul_le_mul_of_nonneg_left hmu (by positivity)
+  have hmono :=
+    intervalIntegral.integral_mono_on
+      hAB hleftInt hrightInt hpoint
+  have hweight :=
+    quarticSignedPoleVerticalFourthWeight_intervalIntegral
+      (t:=t) (r:=r) hr
+  have hleftEval :
+      (∫ x in (t-r)..(t+r), (x-t)^4 * E)
+        =
+      (2/5 : ℝ) * r^5 * E := by
+    rw [show
+      (fun x : ℝ => (x-t)^4 * E)
+        =
+      fun x : ℝ => E * (x-t)^4 by
+        funext x
+        ring]
+    rw [intervalIntegral.integral_const_mul, hweight]
+    ring
+  rw [hleftEval] at hmono
+  rw [intervalIntegral.integral_of_le hAB] at hmono
+  simpa [E] using hmono
+
+theorem quarticSignedPoleLocalMuVerticalFourthMoment_ge_leftEnvelope_local
+    {t eta : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (hleft :
+      1 <= t - quarticSignedPoleLocalHalfWidth t eta) :
+    (2/5 : ℝ)
+        * quarticSignedPoleLocalHalfWidth t eta ^ 5
+        * quarticSignedPoleMuLowerEnvelope
+            (t - quarticSignedPoleLocalHalfWidth t eta)
+      <=
+    quarticSignedPoleLocalMuVerticalFourthMoment t eta := by
+  have hr :
+      0 <= quarticSignedPoleLocalHalfWidth t eta := by
+    unfold quarticSignedPoleLocalHalfWidth
+    positivity
+  unfold quarticSignedPoleLocalMuVerticalFourthMoment
+  exact
+    quarticSignedPoleLocalMuVerticalFourthMoment_ge_leftEnvelope
+      (t:=t)
+      (r:=quarticSignedPoleLocalHalfWidth t eta)
+      hr hleft
+
+/--
+Correct-polarity V4/H4 source bound with the smooth-mu fourth moment replaced
+by its explicit Stirling lower envelope.  The only remaining finite terms are
+the literal zero count, the already-defined local remainder debt, and signed
+FarExact.
+-/
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_corrected_v4h4_muEnvelopeBudget
+    {t eta EV : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (hleft :
+      1 <= t - quarticSignedPoleLocalHalfWidth t eta)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleLocalHalfWidth t eta < (n : ℝ))
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t (quarticSignedPoleLocalHalfWidth t eta)| <= EV) :
+    W.literalOffOrdExactAt n
+      <=
+    (W.targetStrength / (6 * (t/16)^6))
+      *
+    (
+      EV
+        +
+      ((1/16 : ℝ)
+        + (3/2 : ℝ)
+            * quarticSignedPoleLocalHalfWidth t eta ^ 2)
+        *
+      (zetaZeroConfig.N
+        (t - quarticSignedPoleLocalHalfWidth t eta - 1)
+        (t + quarticSignedPoleLocalHalfWidth t eta) : ℝ)
+        -
+      (2/5 : ℝ)
+        * quarticSignedPoleLocalHalfWidth t eta ^ 5
+        * quarticSignedPoleMuLowerEnvelope
+            (t - quarticSignedPoleLocalHalfWidth t eta)
+    )
+      +
+    W.literalLocalRemainderDebtAt eta n
+      +
+    W.literalFarExactAt eta n := by
+  have hbase :=
+    W.literalOffOrdExactAt_le_corrected_v4h4_literalCountBudget
+      ht heta n hn hV
+  have hmu :=
+    quarticSignedPoleLocalMuVerticalFourthMoment_ge_leftEnvelope_local
+      ht heta hleft
+  have hcoef :
+      0 <= W.targetStrength / (6 * (t/16)^6) := by
+    positivity
+  have hinside :
+      EV
+        +
+      ((1/16 : ℝ)
+        + (3/2 : ℝ)
+            * quarticSignedPoleLocalHalfWidth t eta ^ 2)
+        *
+      (zetaZeroConfig.N
+        (t - quarticSignedPoleLocalHalfWidth t eta - 1)
+        (t + quarticSignedPoleLocalHalfWidth t eta) : ℝ)
+        -
+      quarticSignedPoleLocalMuVerticalFourthMoment t eta
+      <=
+      EV
+        +
+      ((1/16 : ℝ)
+        + (3/2 : ℝ)
+            * quarticSignedPoleLocalHalfWidth t eta ^ 2)
+        *
+      (zetaZeroConfig.N
+        (t - quarticSignedPoleLocalHalfWidth t eta - 1)
+        (t + quarticSignedPoleLocalHalfWidth t eta) : ℝ)
+        -
+      (2/5 : ℝ)
+        * quarticSignedPoleLocalHalfWidth t eta ^ 5
+        * quarticSignedPoleMuLowerEnvelope
+            (t - quarticSignedPoleLocalHalfWidth t eta) := by
+    linarith
+  have hscaled :=
+    mul_le_mul_of_nonneg_left hinside hcoef
+  exact hbase.trans (by
+    linarith)
+
 /-!
 ## Fail-closed explicit ABSORB surface
 

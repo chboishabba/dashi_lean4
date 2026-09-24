@@ -1043,4 +1043,39 @@ theorem finite_defocusing_mechanism_is_source_side :
     finiteWitnessNeedsNegativeG = false := rfl
 
 
+/-!
+Finite FLRW-like comoving acceleration orientation.
+
+Only the exact zero-Hdot fixture is compiled.  In that case
+a¨/a = H², so positive normalized curvature gives expanding acceleration.
+-/
+
+inductive CurvatureOrientation where
+  | zero | positive
+  deriving DecidableEq, Repr
+
+inductive ScaleAccelerationOrientation where
+  | zero | expanding
+  deriving DecidableEq, Repr
+
+def zeroHdotFLRWAccelerationOrientation :
+    CurvatureOrientation → ScaleAccelerationOrientation
+  | .zero => .zero
+  | .positive => .expanding
+
+def finiteFLRWAccelerationOrientation : ScaleAccelerationOrientation :=
+  zeroHdotFLRWAccelerationOrientation .positive
+
+theorem finite_flrw_acceleration_is_expanding :
+    finiteFLRWAccelerationOrientation = .expanding := rfl
+
+def positiveComovingAccelerationOrientationConstructed : Bool := true
+def finiteSignDepthAccelerationEqualsContinuumMagnitudePrediction : Bool := false
+def comovingFLRWAccelerationEqualsArbitraryLocalTestMassTrajectory : Bool := false
+def fullIndexedRiemannDeviationOperatorStillNeededForGeneralTrajectory : Bool := true
+
+theorem finite_flrw_acceleration_not_general_trajectory :
+    comovingFLRWAccelerationEqualsArbitraryLocalTestMassTrajectory = false := rfl
+
+
 end Integration.GRQFTPostMergeLocalization

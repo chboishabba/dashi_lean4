@@ -1391,6 +1391,216 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_corrected_v4h4_muEnvel
   exact hbase.trans (by
     linarith)
 
+
+/-!
+## Preferred complete-jet corrected ABSORB source bound
+
+The previous corrected-polarity theorem still passed through the older joint
+quartic normal form
+
+  horizontal fourth mass - fourth phase.
+
+The already-owned COMPLETE quartic jet is strictly sharper for the terminal
+Clay-facing test.  Its leading term is exactly
+
+  - S(W)/(6*(t/16)^6) * A4_local,
+
+and its remainder is sixth order.  Therefore no separate positive a^4 mass
+charge is needed.
+
+This theorem is the preferred finite source surface for STRICT-SCALAR-ABSORB.
+FarExact remains signed.
+-/
+
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_complete_v4h4_muEnvelopeBudget
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ))
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV) :
+    W.literalOffOrdExactAt n
+      <=
+    (W.targetStrength / (6 * (t/16)^6))
+      *
+    (
+      EV
+        +
+      (3/2 : ℝ)
+        * quarticSignedPoleLocalHalfWidth
+            t quarticSignedPoleCanonicalLocalRadius ^ 2
+        *
+      (zetaZeroConfig.N
+        (t
+          - quarticSignedPoleLocalHalfWidth
+              t quarticSignedPoleCanonicalLocalRadius
+          - 1)
+        (t
+          + quarticSignedPoleLocalHalfWidth
+              t quarticSignedPoleCanonicalLocalRadius) : ℝ)
+        -
+      (2/5 : ℝ)
+        * quarticSignedPoleLocalHalfWidth
+            t quarticSignedPoleCanonicalLocalRadius ^ 5
+        * quarticSignedPoleMuLowerEnvelope
+            (t
+              - quarticSignedPoleLocalHalfWidth
+                  t quarticSignedPoleCanonicalLocalRadius)
+    )
+      +
+    W.literalLocalSixthDebtAt
+        quarticSignedPoleCanonicalLocalRadius n
+      +
+    W.literalFarExactAt
+        quarticSignedPoleCanonicalLocalRadius n := by
+  have htpos : 0 < t := by linarith
+  have heta :
+      0 <= quarticSignedPoleCanonicalLocalRadius :=
+    quarticSignedPoleCanonicalLocalRadius_pos.le
+  have hleft :
+      1 <=
+        t
+          - quarticSignedPoleLocalHalfWidth
+              t quarticSignedPoleCanonicalLocalRadius := by
+    unfold quarticSignedPoleLocalHalfWidth
+      quarticSignedPoleCanonicalLocalRadius
+    have hpi : 3 < Real.pi := Real.pi_gt_three
+    have hden : 0 < Real.pi + 1 := by positivity
+    have hetaHi :
+        1 / (Real.pi + 1) <= 1/4 := by
+      rw [div_le_iff₀ hden]
+      nlinarith
+    nlinarith
+  have hbase :=
+    W.literalOffOrdExactAt_le_fourthHarmonic_add_sixthDebt_add_far
+      ht n
+  have hphase :=
+    W.literalLocalFourthHarmonicAt_eq_phaseMoment
+      htpos
+      (eta:=quarticSignedPoleCanonicalLocalRadius)
+      n
+  rw [hphase] at hbase
+  have hang :=
+    W.literalLocalCenteredFourthAngularAt_lower
+      htpos heta n hn hV
+  have hcenter :
+      W.literalLocalFourthPhaseMomentAt
+          quarticSignedPoleCanonicalLocalRadius n
+        =
+      W.literalLocalCenteredFourthAngularAt
+          quarticSignedPoleCanonicalLocalRadius n
+        +
+      quarticSignedPoleLocalMuVerticalFourthMoment
+        t quarticSignedPoleCanonicalLocalRadius := by
+    unfold QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt
+    ring
+  have hmultNat :=
+    W.literalLocalMultiplicityAt_le_expandedWindowN
+      htpos heta
+      (eta:=quarticSignedPoleCanonicalLocalRadius)
+      n
+  have hmult :
+      (W.literalLocalMultiplicityAt
+          quarticSignedPoleCanonicalLocalRadius n : ℝ)
+        <=
+      (zetaZeroConfig.N
+        (t
+          - quarticSignedPoleLocalHalfWidth
+              t quarticSignedPoleCanonicalLocalRadius
+          - 1)
+        (t
+          + quarticSignedPoleLocalHalfWidth
+              t quarticSignedPoleCanonicalLocalRadius) : ℝ) := by
+    exact_mod_cast hmultNat
+  have hmu :=
+    quarticSignedPoleLocalMuVerticalFourthMoment_ge_leftEnvelope_local
+      htpos heta hleft
+  have hcoef :
+      0 <= W.targetStrength / (6 * (t/16)^6) := by
+    positivity
+  have hr2 :
+      0 <=
+        (3/2 : ℝ)
+          * quarticSignedPoleLocalHalfWidth
+              t quarticSignedPoleCanonicalLocalRadius ^ 2 := by
+    positivity
+  have hmultScaled :=
+    mul_le_mul_of_nonneg_left hmult hr2
+  have hphaseLower :
+      -EV
+        -
+      (3/2 : ℝ)
+        * quarticSignedPoleLocalHalfWidth
+            t quarticSignedPoleCanonicalLocalRadius ^ 2
+        *
+      (zetaZeroConfig.N
+        (t
+          - quarticSignedPoleLocalHalfWidth
+              t quarticSignedPoleCanonicalLocalRadius
+          - 1)
+        (t
+          + quarticSignedPoleLocalHalfWidth
+              t quarticSignedPoleCanonicalLocalRadius) : ℝ)
+        +
+      (2/5 : ℝ)
+        * quarticSignedPoleLocalHalfWidth
+            t quarticSignedPoleCanonicalLocalRadius ^ 5
+        * quarticSignedPoleMuLowerEnvelope
+            (t
+              - quarticSignedPoleLocalHalfWidth
+                  t quarticSignedPoleCanonicalLocalRadius)
+      <=
+    W.literalLocalFourthPhaseMomentAt
+        quarticSignedPoleCanonicalLocalRadius n := by
+    rw [hcenter]
+    linarith
+  have hscaled :=
+    mul_le_mul_of_nonneg_left hphaseLower hcoef
+  have hlead :
+      - W.targetStrength / (6 * (t/16)^6)
+        *
+      W.literalLocalFourthPhaseMomentAt
+        quarticSignedPoleCanonicalLocalRadius n
+      <=
+      (W.targetStrength / (6 * (t/16)^6))
+        *
+      (
+        EV
+          +
+        (3/2 : ℝ)
+          * quarticSignedPoleLocalHalfWidth
+              t quarticSignedPoleCanonicalLocalRadius ^ 2
+          *
+        (zetaZeroConfig.N
+          (t
+            - quarticSignedPoleLocalHalfWidth
+                t quarticSignedPoleCanonicalLocalRadius
+            - 1)
+          (t
+            + quarticSignedPoleLocalHalfWidth
+                t quarticSignedPoleCanonicalLocalRadius) : ℝ)
+          -
+        (2/5 : ℝ)
+          * quarticSignedPoleLocalHalfWidth
+              t quarticSignedPoleCanonicalLocalRadius ^ 5
+          * quarticSignedPoleMuLowerEnvelope
+              (t
+                - quarticSignedPoleLocalHalfWidth
+                    t quarticSignedPoleCanonicalLocalRadius)
+      ) := by
+    nlinarith
+  exact hbase.trans (by
+    linarith)
+
+
 /-!
 ## Fail-closed explicit ABSORB surface
 

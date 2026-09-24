@@ -883,4 +883,99 @@ def secondEndpointToMetricStressIdentificationRequired : Bool := false
 theorem no_second_endpoint_metric_stress_theorem :
     secondEndpointToMetricStressIdentificationRequired = false := rfl
 
+/-!
+Timelike defocusing compiler.
+
+Convention:
+* signature (-,+,+,+)
+* local orthonormal comoving frame
+* Lambda = 0
+* normalized kappa = 1
+
+For the normalized diagonal stress diag(1,-1,-1,-1),
+T = -rho + px + py + pz = -4 and
+R_00 = T_00 - (1/2) g_00 T = -1.
+Therefore the Raychaudhuri curvature term -R_uu is +1.
+-/
+
+def stressTraceRestFrame (T : RationalTensor4) : Rat :=
+  - T .t .t + T .x .x + T .y .y + T .z .z
+
+def ricci00TraceReversed (T : RationalTensor4) : Rat :=
+  T .t .t - (1 / 2 : Rat) * (-1) * stressTraceRestFrame T
+
+theorem finite_gr_stress_trace_negative_four :
+    stressTraceRestFrame finiteGRStressRational = -4 := by
+  norm_num [stressTraceRestFrame, finiteGRStressRational]
+
+theorem finite_gr_ricci00_negative_one :
+    ricci00TraceReversed finiteGRStressRational = -1 := by
+  norm_num [ricci00TraceReversed, stressTraceRestFrame, finiteGRStressRational]
+
+def raychaudhuriCurvatureContribution (ricciUU : Rat) : Rat :=
+  -ricciUU
+
+theorem finite_gr_raychaudhuri_curvature_contribution_positive_one :
+    raychaudhuriCurvatureContribution
+      (ricci00TraceReversed finiteGRStressRational) = 1 := by
+  norm_num [raychaudhuriCurvatureContribution, ricci00TraceReversed,
+    stressTraceRestFrame, finiteGRStressRational]
+
+def raychaudhuriRHS
+    (thetaSquared shearSquared vorticitySquared ricciUU : Rat) : Rat :=
+  -(1 / 3 : Rat) * thetaSquared
+    - shearSquared
+    + vorticitySquared
+    - ricciUU
+
+theorem finite_gr_initial_parallel_shearfree_irrotational_defocusing :
+    raychaudhuriRHS 0 0 0
+      (ricci00TraceReversed finiteGRStressRational) = 1 := by
+  norm_num [raychaudhuriRHS, ricci00TraceReversed,
+    stressTraceRestFrame, finiteGRStressRational]
+
+def cmp119StressTraceRestFrame
+    {Stress : Type u}
+    (E : CMP119RationalStressComponentEvaluator Stress)
+    (stress : Stress) : Rat :=
+  - E.component stress .t .t
+    + E.component stress .x .x
+    + E.component stress .y .y
+    + E.component stress .z .z
+
+def cmp119Ricci00TraceReversed
+    {Stress : Type u}
+    (E : CMP119RationalStressComponentEvaluator Stress)
+    (stress : Stress) : Rat :=
+  E.component stress .t .t
+    - (1 / 2 : Rat) * (-1) * cmp119StressTraceRestFrame E stress
+
+theorem ten_components_compile_to_negative_ricci00
+    {Stress : Type u}
+    {E : CMP119RationalStressComponentEvaluator Stress}
+    {stress : Stress}
+    (h : NormalizedSymmetricTenComponentInstance E stress) :
+    cmp119Ricci00TraceReversed E stress = -1 := by
+  norm_num [cmp119Ricci00TraceReversed, cmp119StressTraceRestFrame,
+    h.qft00, h.qft11, h.qft22, h.qft33]
+
+theorem ten_components_compile_to_positive_initial_raychaudhuri_rhs
+    {Stress : Type u}
+    {E : CMP119RationalStressComponentEvaluator Stress}
+    {stress : Stress}
+    (h : NormalizedSymmetricTenComponentInstance E stress) :
+    raychaudhuriRHS 0 0 0 (cmp119Ricci00TraceReversed E stress) = 1 := by
+  rw [ten_components_compile_to_negative_ricci00 h]
+  norm_num [raychaudhuriRHS]
+
+def finiteTargetTraceReverseGivesNegativeRicciUU : Bool := true
+def negativeRicciUUGivesPositiveRaychaudhuriCurvatureTerm : Bool := true
+def zeroKinematicTermsGivePositiveExpansionDerivative : Bool := true
+def localDefocusingContributionEqualsGlobalOutwardTrajectory : Bool := false
+def solvedBoundaryValueGeometryStillRequiredForRemoteAcceleration : Bool := true
+
+theorem local_defocusing_not_yet_global_trajectory :
+    localDefocusingContributionEqualsGlobalOutwardTrajectory = false := rfl
+
+
 end Integration.GRQFTPostMergeLocalization

@@ -2632,4 +2632,70 @@ theorem quarticSignedPole_adverseFourthPhase_offline_offordinate
     quarticSignedPole_adverseFourthPhase_ordinate_ne_center hneg
   ⟩
 
+
+/-!
+## Fixed-width localization and absolute envelope of adverse angular mass
+-/
+
+theorem quarticSignedPole_adverseFourthPhase_delta_sq_lt_three_halves
+    {t : ℝ} {rho : Zeros}
+    (hneg : quarticSignedPolePhysicalFourthPhaseReal t rho < 0) :
+    ((rho : ℂ).im-t)^2 < (3/2 : ℝ) := by
+  have hcomp :=
+    quarticSignedPole_adverseFourthPhase_delta_sq_lt_six_height_sq hneg
+  have hstrip := zetaZero_height_abs_le_half rho
+  have hsquare :
+      heightOf rho^2 <= (1/2 : ℝ)^2 := by
+    nlinarith [sq_nonneg (heightOf rho)]
+  nlinarith
+
+theorem quarticSignedPole_adverseFourthPhase_abs_delta_lt_three_halves
+    {t : ℝ} {rho : Zeros}
+    (hneg : quarticSignedPolePhysicalFourthPhaseReal t rho < 0) :
+    |(rho : ℂ).im-t| < (3/2 : ℝ) := by
+  have hsquare :=
+    quarticSignedPole_adverseFourthPhase_delta_sq_lt_three_halves hneg
+  have habsSq :
+      |(rho : ℂ).im-t|^2 < (3/2 : ℝ) := by
+    simpa [sq_abs] using hsquare
+  have hnonneg : 0 <= |(rho : ℂ).im-t| := abs_nonneg _
+  by_contra h
+  have hge : (3/2 : ℝ) <= |(rho : ℂ).im-t| := le_of_not_gt h
+  nlinarith
+
+theorem quarticSignedPole_adverseFourthPhase_mem_fixed_window
+    {t : ℝ} {rho : Zeros}
+    (hneg : quarticSignedPolePhysicalFourthPhaseReal t rho < 0) :
+    t - (3/2 : ℝ) < (rho : ℂ).im
+      ∧ (rho : ℂ).im < t + (3/2 : ℝ) := by
+  have h :=
+    quarticSignedPole_adverseFourthPhase_abs_delta_lt_three_halves hneg
+  rw [abs_lt] at h
+  constructor <;> linarith
+
+theorem quarticSignedPole_neg_fourthPhase_le_four_mul_mixed
+    (t : ℝ) (rho : Zeros) :
+    - quarticSignedPolePhysicalFourthPhaseReal t rho
+      <=
+    4 * heightOf rho^2 * ((rho : ℂ).im-t)^2 := by
+  unfold quarticSignedPolePhysicalFourthPhaseReal
+  have hs :
+      0 <= (heightOf rho^2 - ((rho : ℂ).im-t)^2)^2 := sq_nonneg _
+  nlinarith
+
+theorem quarticSignedPole_adverseFourthPhase_abs_le_three_halves
+    {t : ℝ} {rho : Zeros}
+    (hneg : quarticSignedPolePhysicalFourthPhaseReal t rho < 0) :
+    - quarticSignedPolePhysicalFourthPhaseReal t rho
+      < (3/2 : ℝ) := by
+  have hmix :=
+    quarticSignedPole_neg_fourthPhase_le_four_mul_mixed t rho
+  have hstrip := zetaZero_height_abs_le_half rho
+  have ha2 :
+      heightOf rho^2 <= (1/2 : ℝ)^2 := by
+    nlinarith [sq_nonneg (heightOf rho)]
+  have hd2 :=
+    quarticSignedPole_adverseFourthPhase_delta_sq_lt_three_halves hneg
+  nlinarith [sq_nonneg ((rho : ℂ).im-t)]
+
 end Synthesis

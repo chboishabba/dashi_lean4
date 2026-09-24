@@ -382,4 +382,103 @@ def requestSurfaceAloneClosesCurvatureConvergence : Bool := false
 theorem request_surface_is_not_curvature_proof :
     requestSurfaceAloneClosesCurvatureConvergence = false := rfl
 
+/-!
+Same-object recovery mathematics without promotion payload.
+-/
+
+structure GRRecoveryCommutationCore
+    (Candidate Regime GR : Type u) where
+  recover : Candidate → GR
+  target : Candidate → GR
+  coarseGrain : Candidate → Regime → Candidate
+  grRegime : Regime → Prop
+  recoveryAfterCoarseGraining :
+    ∀ candidate regime, grRegime regime →
+      recover (coarseGrain candidate regime) =
+        target (coarseGrain candidate regime)
+
+structure QFTRecoveryCommutationCore
+    (Candidate Regime QFT : Type u) where
+  recover : Candidate → QFT
+  target : Candidate → QFT
+  coarseGrain : Candidate → Regime → Candidate
+  qftRegime : Regime → Prop
+  recoveryAfterCoarseGraining :
+    ∀ candidate regime, qftRegime regime →
+      recover (coarseGrain candidate regime) =
+        target (coarseGrain candidate regime)
+
+def fullRecoveryReceiptRequiredForSameObjectEquality : Bool := false
+
+theorem full_recovery_receipt_not_same_object_premise :
+    fullRecoveryReceiptRequiredForSameObjectEquality = false := rfl
+
+structure CommonRegimeMathematicalCore
+    (Candidate Regime : Type u) where
+  overlapRegime : Regime
+  overlapIsGR : Prop
+  overlapIsQFT : Prop
+  backreactionConsistency : Candidate → Prop
+  correctionControl : Candidate → Prop
+
+def regimePromotionTokenIsMathematicalOverlapPremise : Bool := false
+def commonOverlapBackreactionCorrectionsStillMathematical : Bool := true
+
+theorem regime_token_not_overlap_math :
+    regimePromotionTokenIsMathematicalOverlapPremise = false := rfl
+
+theorem common_overlap_is_theory_math :
+    commonOverlapBackreactionCorrectionsStillMathematical = true := rfl
+
+inductive TheoryCoreLeaf where
+  | grDiscreteToSmoothEvidence
+  | grRecoveryCommutationAndLiteralAttachment
+  | qftRecoveryCommutationAndPinnedAttachment
+  | cmp119StressLiteralSameObject
+  | grToSelectedQFTCrossSectorStressEquality
+  | commonOverlapBackreactionAndCorrectionControl
+  deriving DecidableEq, Repr
+
+def theoryCoreLeaves : List TheoryCoreLeaf :=
+  [ .grDiscreteToSmoothEvidence
+  , .grRecoveryCommutationAndLiteralAttachment
+  , .qftRecoveryCommutationAndPinnedAttachment
+  , .cmp119StressLiteralSameObject
+  , .grToSelectedQFTCrossSectorStressEquality
+  , .commonOverlapBackreactionAndCorrectionControl
+  ]
+
+inductive PhysicalValidationLeaf where
+  | recoveryPromotionAuthorities
+  | stressWeldAndRegimePromotionAuthorities
+  | acceptedMeasuredGAndUnitCalibration
+  | chosenColliderOrOtherEmpiricalCalibration
+  | novelObservableAgainstEstablishedGRQFT
+  | falsifiableMeasurement
+  | knownLimitValidationIncludingSchwarzschild
+  deriving DecidableEq, Repr
+
+def physicalValidationLeaves : List PhysicalValidationLeaf :=
+  [ .recoveryPromotionAuthorities
+  , .stressWeldAndRegimePromotionAuthorities
+  , .acceptedMeasuredGAndUnitCalibration
+  , .chosenColliderOrOtherEmpiricalCalibration
+  , .novelObservableAgainstEstablishedGRQFT
+  , .falsifiableMeasurement
+  , .knownLimitValidationIncludingSchwarzschild
+  ]
+
+def w4DrellYanIsPremiseOfMathematicalGRQFTCore : Bool := false
+def commonRegimeBackreactionIsPartOfTheoryCore : Bool := true
+def novelObservableIsPartOfTheoryConstructionCore : Bool := false
+
+theorem w4_not_theory_core_premise :
+    w4DrellYanIsPremiseOfMathematicalGRQFTCore = false := rfl
+
+theorem common_regime_backreaction_is_theory_core :
+    commonRegimeBackreactionIsPartOfTheoryCore = true := rfl
+
+theorem novel_observable_is_validation_not_theory_core :
+    novelObservableIsPartOfTheoryConstructionCore = false := rfl
+
 end Integration.GRQFTPostMergeLocalization

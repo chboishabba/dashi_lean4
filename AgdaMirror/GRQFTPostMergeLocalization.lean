@@ -77,4 +77,20 @@ theorem gr_request_vs_evidence_boundary_parity :
     requestSurfaceAloneClosesCurvatureConvergence = false :=
   request_surface_is_not_curvature_proof
 
+theorem recovery_core_boundary_parity :
+    fullRecoveryReceiptRequiredForSameObjectEquality = false :=
+  full_recovery_receipt_not_same_object_premise
+
+theorem regime_core_boundary_parity :
+    regimePromotionTokenIsMathematicalOverlapPremise = false :=
+  regime_token_not_overlap_math
+
+theorem w4_validation_split_parity :
+    w4DrellYanIsPremiseOfMathematicalGRQFTCore = false :=
+  w4_not_theory_core_premise
+
+theorem common_regime_theory_core_parity :
+    commonRegimeBackreactionIsPartOfTheoryCore = true :=
+  common_regime_backreaction_is_theory_core
+
 end AgdaMirror.GRQFTPostMergeLocalization

@@ -2378,6 +2378,61 @@ theorem QuarticFourSignedPolePair.literalLocalSixthDebtAt_le_expandedWindowN
     (mul_le_mul_of_nonneg_left hmult hcoef)
 
 
+/-!
+The terminal sixth debt can consume the already-paid selected-witness G1
+fourth-Lipschitz constant directly.  This is strictly a same-object
+cross-weld:
+
+  M6_abs(W) <= K(W).
+
+It does not use the coarse explicit K0 here, so a sharper selected-witness K
+receipt can be substituted without touching the terminal source theorem.
+-/
+
+theorem QuarticFourSignedPolePair.literalLocalSixthDebtAt_le_fourthLipschitz_expandedWindowN
+    {t eta : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalSixthDebtAt eta n
+      <=
+    (W.fourthLipschitz
+        * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+        / (t/16)^8)
+      *
+    (zetaZeroConfig.N
+      (t - quarticSignedPoleLocalHalfWidth t eta - 1)
+      (t + quarticSignedPoleLocalHalfWidth t eta) : ℝ) := by
+  have hbase :=
+    W.literalLocalSixthDebtAt_le_expandedWindowN
+      ht heta n
+  have hM6 :=
+    W.signedProfileAbsMomentSix_le_fourthLipschitz
+  have henv :
+      0 <= quarticSignedPoleLocalSixthPhysicalEnvelope t eta :=
+    quarticSignedPoleLocalSixthPhysicalEnvelope_nonneg ht.le heta
+  have hden : 0 < (t/16)^8 := by positivity
+  have hcoef :
+      W.signedProfileAbsMomentSix
+          * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+          / (t/16)^8
+        <=
+      W.fourthLipschitz
+          * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+          / (t/16)^8 := by
+    apply div_le_div_of_nonneg_right _ hden.le
+    exact mul_le_mul_of_nonneg_right hM6 henv
+  have hN :
+      0 <=
+      (zetaZeroConfig.N
+        (t - quarticSignedPoleLocalHalfWidth t eta - 1)
+        (t + quarticSignedPoleLocalHalfWidth t eta) : ℝ) := by
+    positivity
+  exact hbase.trans
+    (mul_le_mul_of_nonneg_right hcoef hN)
+
+
 /--
 The preferred finite STRICT-ABSORB budget after substituting the explicit
 sixth-order remainder envelope.  V4 remains the scalar EV producer; all H4 and
@@ -2406,6 +2461,97 @@ def QuarticFourSignedPolePair.completeV4H4AbsorbBudgetAt
     * NZ
     +
   W.literalFarExactAt eta n
+
+
+/--
+Preferred G1-cross-weld budget.  It is identical to
+`completeV4H4AbsorbBudgetAt` except that the sixth absolute moment has been
+replaced by the same selected-witness fourth-Lipschitz constant already used
+by the quantitative target-band construction.
+-/
+def QuarticFourSignedPolePair.completeV4H4LipschitzBudgetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (EV : ℝ) (n : ℕ) : ℝ :=
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  let NZ : ℝ :=
+    (zetaZeroConfig.N (t-r-1) (t+r) : ℝ)
+  (W.targetStrength / (6 * (t/16)^6))
+    *
+  (
+    EV
+      + (3/2 : ℝ) * r^2 * NZ
+      - (2/5 : ℝ) * r^5
+          * quarticSignedPoleMuLowerEnvelope (t-r)
+  )
+    +
+  (W.fourthLipschitz
+      * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+      / (t/16)^8)
+    * NZ
+    +
+  W.literalFarExactAt eta n
+
+theorem QuarticFourSignedPolePair.completeV4H4AbsorbBudgetAt_le_lipschitz
+    {t EV : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.completeV4H4AbsorbBudgetAt EV n
+      <= W.completeV4H4LipschitzBudgetAt EV n := by
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  let NZ : ℝ :=
+    (zetaZeroConfig.N (t-r-1) (t+r) : ℝ)
+  have hM6 :=
+    W.signedProfileAbsMomentSix_le_fourthLipschitz
+  have henv :
+      0 <= quarticSignedPoleLocalSixthPhysicalEnvelope t eta :=
+    quarticSignedPoleLocalSixthPhysicalEnvelope_nonneg
+      ht.le quarticSignedPoleCanonicalLocalRadius_pos.le
+  have hden : 0 < (t/16)^8 := by positivity
+  have hcoef :
+      W.signedProfileAbsMomentSix
+          * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+          / (t/16)^8
+        <=
+      W.fourthLipschitz
+          * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+          / (t/16)^8 := by
+    apply div_le_div_of_nonneg_right _ hden.le
+    exact mul_le_mul_of_nonneg_right hM6 henv
+  have hNZ : 0 <= NZ := by
+    dsimp [NZ]
+    positivity
+  have hsix := mul_le_mul_of_nonneg_right hcoef hNZ
+  unfold QuarticFourSignedPolePair.completeV4H4AbsorbBudgetAt
+    QuarticFourSignedPolePair.completeV4H4LipschitzBudgetAt
+  dsimp [eta,r,NZ]
+  linarith
+
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_completeV4H4LipschitzBudgetAt
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ))
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV) :
+    W.literalOffOrdExactAt n
+      <= W.completeV4H4LipschitzBudgetAt EV n := by
+  have hbase :=
+    W.literalOffOrdExactAt_le_completeV4H4AbsorbBudgetAt
+      ht n hn hV
+  exact hbase.trans
+    (W.completeV4H4AbsorbBudgetAt_le_lipschitz
+      (by linarith : 0 < t) n)
 
 theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_completeV4H4AbsorbBudgetAt
     {t EV : ℝ}

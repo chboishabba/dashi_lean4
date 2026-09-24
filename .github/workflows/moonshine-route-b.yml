@@ -10,6 +10,7 @@ on:
       - "Integration/Moonshine*.lean"
       - "Integration.lean"
       - "scripts/route_b_agda_replay_probe.py"
+      - "scripts/route_b_agda_kernel_replay.py"
       - "lakefile.toml"
       - "lean-toolchain"
       - ".github/workflows/moonshine-route-b.yml"
@@ -86,6 +87,24 @@ jobs:
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
+
+      - name: Generate live Agda replay dependency closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/route_b_agda_kernel_replay.py \
+            --source-root agda-source \
+            --dest DASHI/output-final_aristotle/AgdaVendor \
+            --roots-file /tmp/route-b-replay-roots.txt
+
+      - name: Kernel-elaborate generated Agda replay roots
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r root; do
+            echo "==> Lean elaborating generated replay root: ${root}"
+            lake env lean "${root}"
+          done < /tmp/route-b-replay-roots.txt
 
       - name: Build Integration library
         run: lake build Integration

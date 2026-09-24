@@ -245,6 +245,44 @@ def UniversalBSDAnalyticBindingProducer : Prop :=
 def UniversalBSDMordellWeilBindingProducer : Prop :=
   Nonempty BSDMordellWeilRankBinding
 
+/-! ## Clay-facing background / novel-obligation split
+
+The official BSD rank statement uses analytic continuation/modularity and
+Mordell--Weil finite generation as established background mathematics.  For a
+publishable Clay-facing proof these may be cited as known theorems; they are
+not themselves the novel BSD equality.  A fully self-contained Lean
+certification may later formalize them end-to-end.
+
+This package makes that boundary explicit without weakening same-object
+binding: both inputs still refer to the literal elliptic curve, literal
+mathlib L-series continuation, and literal rational point group above.
+-/
+
+structure BSDEstablishedBackground where
+  analytic : BSDAnalyticRankBinding
+  algebraic : BSDMordellWeilRankBinding
+
+def BSDEstablishedBackground.toBoundRankObservers
+    (bg : BSDEstablishedBackground) : BSDBoundRankObservers where
+  analytic := bg.analytic
+  algebraic := bg.algebraic
+
+/-- The sole novel Clay-facing BSD obligation once established background is
+bound: equality of the canonical analytic and Mordell--Weil ranks for every
+rational elliptic curve over Q. -/
+def BSDClayCoreObligation
+    (bg : BSDEstablishedBackground) : Prop :=
+  UniversalBSDRankEqualityProducer bg.analytic bg.algebraic
+
+/-- The core obligation is independent of the particular witnesses used to
+package the established analytic-continuation and finite-generation facts. -/
+theorem bsdClayCoreObligation_congr
+    (bg₁ bg₂ : BSDEstablishedBackground)
+    (h : BSDClayCoreObligation bg₁) :
+    BSDClayCoreObligation bg₂ :=
+  universalBSDRankEqualityProducer_congr
+    bg₁.analytic bg₂.analytic bg₁.algebraic bg₂.algebraic h
+
 structure UniversalBSDRankProof where
   bound : BSDBoundRankObservers
   rankWeld : UniversalBSDBoundRankWeld bound
@@ -262,6 +300,14 @@ theorem universalBSDRankTheorem_of_bound
   ⟨
     { bound := { analytic := a, algebraic := m }
       rankWeld := hRank }⟩
+
+/-- Compile the paper-facing split directly: established background plus the
+single novel rank-equality obligation yields the packaged universal theorem. -/
+theorem universalBSDRankTheorem_of_background
+    (bg : BSDEstablishedBackground)
+    (hRank : BSDClayCoreObligation bg) :
+    UniversalBSDRankTheorem :=
+  universalBSDRankTheorem_of_bound bg.analytic bg.algebraic hRank
 
 /-- Existence-shaped max-cut: it is enough to construct one valid analytic
 binding, one valid Mordell--Weil binding, and prove BSD rank equality on
@@ -370,5 +416,50 @@ structure BSDUniversalMaxCutStatus where
 def bsdUniversalMaxCutStatus : BSDUniversalMaxCutStatus :=
   ⟨true, true, true, true, false, true, true, true, true, true, true,
     false, false, false, false, false⟩
+
+/-! ## Canonical Clay / certification / refined dashboards
+
+`BSDUniversalMaxCutStatus` above is retained for compatibility with existing
+receipts.  The three records below are the preferred reporting surface: they
+prevent known-theorem certification work and refined BSD from being presented
+as blockers for the official rank conjecture.
+-/
+
+structure BSDClayCoreStatus where
+  literalRationalEllipticCurvePaid : Bool
+  literalHasseWeilLSeriesPaid : Bool
+  canonicalAnalyticOrderPaid : Bool
+  canonicalMordellWeilFreeRankPaid : Bool
+  establishedBackgroundBoundaryPaid : Bool
+  universalRankEqualityPaid : Bool
+  deriving DecidableEq, Repr
+
+/-- Clay-facing max-cut: every representation/boundary item is paid; the
+universal rank equality itself remains open. -/
+def bsdClayCoreStatus : BSDClayCoreStatus :=
+  ⟨true, true, true, true, true, false⟩
+
+structure BSDLeanCertificationStatus where
+  universalAnalyticContinuationFormalized : Bool
+  universalMordellWeilFiniteGenerationFormalized : Bool
+  exactHeadKernelReceipt : Bool
+  deriving DecidableEq, Repr
+
+/-- Optional end-to-end formal certification programme.  These are deliberately
+not fields of `BSDClayCoreStatus`. -/
+def bsdLeanCertificationStatus : BSDLeanCertificationStatus :=
+  ⟨false, false, false⟩
+
+structure BSDRefinedExtensionStatus where
+  canonicalShaCarrierPaid : Bool
+  shaFinitenessPaid : Bool
+  periodRegulatorTamagawaPaid : Bool
+  leadingCoefficientIdentityPaid : Bool
+  deriving DecidableEq, Repr
+
+/-- Refined BSD extension: useful mathematics, explicitly off the critical path
+for the official Millennium rank statement. -/
+def bsdRefinedExtensionStatus : BSDRefinedExtensionStatus :=
+  ⟨true, false, false, false⟩
 
 end Synthesis.Millennium.BSD

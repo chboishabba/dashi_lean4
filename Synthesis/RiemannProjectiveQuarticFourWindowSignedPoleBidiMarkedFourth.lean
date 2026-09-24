@@ -1,4 +1,6 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleLocalRemainderBounds
+import Synthesis.RiemannProjectiveQuarticFourWindowHighWitness
+import Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition
 import RiemannAnalytic.TwistedPrimeMoments
 
 /-!
@@ -905,5 +907,174 @@ theorem quarticSignedPoleLiteralWeilPrimeBidiAngular_coercive
           nlinarith [hscaled]
     _ <=
       (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A := hang
+
+
+/-!
+## Bidi cosh-marking of the actual short four-window detector
+
+Horizontal target/reflection marking is multiplication by cosh(Au) in the
+physical test variable.  It preserves support exactly, hence preserves literal
+prime invisibility.
+-/
+
+def quarticSignedPoleCoshMarkedDetector
+    (g : ℝ → ℝ) (A : ℝ) : ℝ → ℝ :=
+  fun u => g u * Real.cosh (A*u)
+
+theorem quarticSignedPoleCoshMarkedDetector_zero
+    (g : ℝ → ℝ) :
+    quarticSignedPoleCoshMarkedDetector g 0 = g := by
+  funext u
+  simp [quarticSignedPoleCoshMarkedDetector]
+
+theorem quarticSignedPoleCoshMarkedDetector_neg
+    (g : ℝ → ℝ) (A : ℝ) :
+    quarticSignedPoleCoshMarkedDetector g (-A)
+      = quarticSignedPoleCoshMarkedDetector g A := by
+  funext u
+  simp [quarticSignedPoleCoshMarkedDetector]
+
+theorem quarticSignedPoleCoshMarkedDetector_short
+    {g : ℝ → ℝ}
+    (hshort : ∀ u, g u ≠ 0 -> |u| < Real.log 2)
+    (A : ℝ) :
+    ∀ u, quarticSignedPoleCoshMarkedDetector g A u ≠ 0 ->
+      |u| < Real.log 2 := by
+  intro u hu
+  apply hshort u
+  intro hg
+  simp [quarticSignedPoleCoshMarkedDetector, hg] at hu
+
+theorem quarticSignedPoleCoshMarkedDetector_even
+    {g : ℝ → ℝ}
+    (heven : ∀ u, g (-u) = g u)
+    (A u : ℝ) :
+    quarticSignedPoleCoshMarkedDetector g A (-u)
+      = quarticSignedPoleCoshMarkedDetector g A u := by
+  simp [quarticSignedPoleCoshMarkedDetector, heven,
+    Real.cosh_neg]
+
+theorem quarticSignedPoleCoshMarkedDetector_contDiff
+    {g : ℝ → ℝ}
+    (hg : ContDiff ℝ 2 g)
+    (A : ℝ) :
+    ContDiff ℝ 2 (quarticSignedPoleCoshMarkedDetector g A) := by
+  unfold quarticSignedPoleCoshMarkedDetector
+  fun_prop
+
+theorem quarticSignedPoleCoshMarkedDetector_compact
+    {g : ℝ → ℝ}
+    (hg : HasCompactSupport g)
+    (A : ℝ) :
+    HasCompactSupport (quarticSignedPoleCoshMarkedDetector g A) := by
+  unfold quarticSignedPoleCoshMarkedDetector
+  exact hg.mul_right
+
+def quarticFourBidiMarkedPhysicalDetector
+    (R lam mu t A : ℝ) : ℝ → ℝ :=
+  quarticSignedPoleCoshMarkedDetector
+    (quarticFourPhysicalDetector R lam mu t) A
+
+theorem quarticFourBidiMarkedPhysicalDetector_short
+    {R lam mu t A : ℝ}
+    (hR : 0 < R) (hRone : R < 1)
+    (ht : 200 <= t) :
+    ∀ u, quarticFourBidiMarkedPhysicalDetector R lam mu t A u ≠ 0 ->
+      |u| < Real.log 2 := by
+  unfold quarticFourBidiMarkedPhysicalDetector
+  exact quarticSignedPoleCoshMarkedDetector_short
+    (quarticFourPhysicalDetector_short_of_twoHundred
+      hR hRone ht) A
+
+theorem quarticFourBidiMarkedPhysicalDetector_primeProjectiveDefect_eq_zero
+    {R lam mu t A : ℝ}
+    (hR : 0 < R) (hRone : R < 1)
+    (ht : 200 <= t) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector R lam mu t A)
+      t (t/16)
+      = 0 := by
+  exact
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect_eq_zero
+      (quarticFourBidiMarkedPhysicalDetector_short
+        hR hRone ht)
+      t (t/16)
+
+/--
+The signed two-endpoint pole channel after horizontal bidi marking.
+-/
+def QuarticFourSignedPolePair.bidiMarkedPoleCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A : ℝ) : ℝ :=
+  W.poleTwo *
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (1/2) W.muHalf t A)
+      t (t/16)
+  +
+  (-W.poleHalf) *
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (2/3) W.muTwo t A)
+      t (t/16)
+
+theorem QuarticFourSignedPolePair.bidiMarkedPrimeHalf_eq_zero
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (A : ℝ) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (1/2) W.muHalf t A)
+      t (t/16)
+      = 0 := by
+  exact
+    quarticFourBidiMarkedPhysicalDetector_primeProjectiveDefect_eq_zero
+      W.Rpos W.RltOne ht
+
+theorem QuarticFourSignedPolePair.bidiMarkedPrimeTwo_eq_zero
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (A : ℝ) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (2/3) W.muTwo t A)
+      t (t/16)
+      = 0 := by
+  exact
+    quarticFourBidiMarkedPhysicalDetector_primeProjectiveDefect_eq_zero
+      W.Rpos W.RltOne ht
+
+theorem QuarticFourSignedPolePair.bidiMarkedPoleCombination_even
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (A : ℝ) :
+    W.bidiMarkedPoleCombination (-A)
+      = W.bidiMarkedPoleCombination A := by
+  unfold QuarticFourSignedPolePair.bidiMarkedPoleCombination
+  rw [show
+      quarticFourBidiMarkedPhysicalDetector
+          W.R (1/2) W.muHalf t (-A)
+        =
+      quarticFourBidiMarkedPhysicalDetector
+          W.R (1/2) W.muHalf t A by
+        unfold quarticFourBidiMarkedPhysicalDetector
+        exact quarticSignedPoleCoshMarkedDetector_neg _ _]
+  rw [show
+      quarticFourBidiMarkedPhysicalDetector
+          W.R (2/3) W.muTwo t (-A)
+        =
+      quarticFourBidiMarkedPhysicalDetector
+          W.R (2/3) W.muTwo t A by
+        unfold quarticFourBidiMarkedPhysicalDetector
+        exact quarticSignedPoleCoshMarkedDetector_neg _ _]
+
+theorem QuarticFourSignedPolePair.bidiMarkedPoleCombination_zero
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.bidiMarkedPoleCombination 0 = 0 := by
+  unfold QuarticFourSignedPolePair.bidiMarkedPoleCombination
+    quarticFourBidiMarkedPhysicalDetector
+  simp only [quarticSignedPoleCoshMarkedDetector_zero]
+  exact W.literalPole_cancel ht
 
 end Synthesis

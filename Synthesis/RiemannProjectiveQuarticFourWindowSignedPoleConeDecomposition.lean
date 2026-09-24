@@ -1503,4 +1503,120 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_lt_margin_of_sharpened_co
   unfold QuarticFourSignedPolePair.literalSharpenedJointBudgetAt at hbudget
   linarith
 
+
+/-!
+## Global sharpened compensation compiler
+
+This reuses the already-paid exact-source cofinal limit.  No new
+representation layer is introduced.
+-/
+
+theorem QuarticFourSignedPolePair.globalOffOrd_le_margin_of_eventual_sharpened_compensation_gap
+    {t eta margin : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hgap :
+      ∀ᶠ n : ℕ in atTop,
+        margin + W.literalSharpenedSignedCompensationAt eta n
+          - W.literalSharpenedLocalDebtAt eta n > 0) :
+    (∑' rho : Zeros, W.literalOffOrdSource rho) <= margin := by
+  have hfinite :
+      ∀ᶠ n : ℕ in atTop,
+        W.literalOffOrdExactAt n <= margin := by
+    filter_upwards [hgap] with n hn
+    exact
+      (W.literalOffOrdExactAt_lt_margin_of_sharpened_compensation_gap
+        ht n hn).le
+  have hlim :=
+    W.literalOffOrdExactAt_tendsto_tsum ht
+  exact le_of_tendsto hlim hfinite
+
+theorem QuarticFourSignedPolePair.globalSignedLiteralPairSource_le_margin_of_eventual_sharpened_compensation_gap
+    {t eta margin : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hgap :
+      ∀ᶠ n : ℕ in atTop,
+        margin + W.literalSharpenedSignedCompensationAt eta n
+          - W.literalSharpenedLocalDebtAt eta n > 0) :
+    (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+      W.signedLiteralPairSourceTerm sigma)
+      <= margin := by
+  rw [← W.literalOffOrdSource_tsum_eq_signedLiteralPairSource_tsum]
+  exact
+    W.globalOffOrd_le_margin_of_eventual_sharpened_compensation_gap
+      ht hgap
+
+theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_eventual_sharpened_compensation_gap
+    {t eta margin : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hgap :
+      ∀ᶠ n : ℕ in atTop,
+        margin + W.literalSharpenedSignedCompensationAt eta n
+          - W.literalSharpenedLocalDebtAt eta n > 0)
+    (hmargin :
+      margin
+        <
+      4 * W.combinedZeroHeightDefect rho
+        +
+      ∫ tau : ℝ,
+        W.signedOrdinateTest tau * Zeta23.mu tau) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho := by
+  have htpos : 0 < t := by linarith
+  have hsum :=
+    W.globalSignedLiteralPairSource_le_margin_of_eventual_sharpened_compensation_gap
+      htpos hgap
+  rw [W.completedSignedResidual_eq_jointPairSource ht]
+  linarith
+
+def QuarticFourSignedPolePair.UniformSharpenedSignedCompensationGap
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) : Prop :=
+  ∃ eps : ℝ, 0 < eps ∧
+    ∃ N : ℕ, ∀ n : ℕ, N <= n ->
+      W.literalSharpenedLocalDebtAt
+          quarticSignedPoleCanonicalLocalRadius n
+        -
+      W.literalSharpenedSignedCompensationAt
+          quarticSignedPoleCanonicalLocalRadius n
+      <=
+      W.compensationTargetThreshold rho - eps
+
+theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_uniform_sharpened_compensation_gap
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hC : W.UniformSharpenedSignedCompensationGap rho) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho := by
+  rcases hC with ⟨eps,heps,N,hN⟩
+  let T : ℝ := W.compensationTargetThreshold rho
+  let M : ℝ := T - eps/2
+  have hgap :
+      ∀ᶠ n : ℕ in atTop,
+        M
+          + W.literalSharpenedSignedCompensationAt
+              quarticSignedPoleCanonicalLocalRadius n
+          - W.literalSharpenedLocalDebtAt
+              quarticSignedPoleCanonicalLocalRadius n
+        > 0 := by
+    rw [eventually_atTop]
+    refine ⟨N,?_⟩
+    intro n hn
+    have h := hN n hn
+    dsimp [T, M] at h ⊢
+    linarith
+  have hmargin :
+      M
+        <
+      4 * W.combinedZeroHeightDefect rho
+        +
+      ∫ tau : ℝ,
+        W.signedOrdinateTest tau * Zeta23.mu tau := by
+    dsimp [M, T, QuarticFourSignedPolePair.compensationTargetThreshold]
+    linarith
+  exact
+    W.completedSignedResidual_lt_target_of_eventual_sharpened_compensation_gap
+      ht hgap hmargin
+
 end Synthesis

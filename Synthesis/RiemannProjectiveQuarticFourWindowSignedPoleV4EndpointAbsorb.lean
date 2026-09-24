@@ -1533,6 +1533,138 @@ theorem exists_quarticSignedPoleCanonicalExpandedWindowCount_bound :
   convert h using 1 <;> ring
 
 
+
+/-!
+## Deterministic V4 + count producer substitution
+
+The next surface substitutes both theorem-bearing scalar producers:
+
+* V4 from the arbitrary-endpoint N-mu Abel theorem;
+* the expanded local zero count from the explicit mu upper envelope above.
+
+After this substitution the finite local budget has no opaque analytic
+quantity except the witness-dependent profile constants and signed FarExact.
+-/
+
+def quarticSignedPoleCanonicalV4Error
+    (CV t : ℝ) : ℝ :=
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  9 * r^4
+    * (CV * (Real.log (t-r+3) + Real.log (t+r+4)))
+
+def quarticSignedPoleCanonicalExpandedCountEnvelope
+    (CN t : ℝ) : ℝ :=
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  (2*r+1)
+      * quarticSignedPoleMuUpperEnvelope (t-r-1) (t+r)
+    +
+  CN * (Real.log (t-r+2) + Real.log (t+r+4))
+
+def QuarticFourSignedPolePair.completeV4H4DeterministicBudgetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (CV CN : ℝ) (n : ℕ) : ℝ :=
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  let EV := quarticSignedPoleCanonicalV4Error CV t
+  let NZ := quarticSignedPoleCanonicalExpandedCountEnvelope CN t
+  (W.targetStrength / (6 * (t/16)^6))
+    *
+  (
+    EV
+      + (3/2 : ℝ) * r^2 * NZ
+      - (2/5 : ℝ) * r^5
+          * quarticSignedPoleMuLowerEnvelope (t-r)
+  )
+    +
+  (W.signedProfileAbsMomentSix
+      * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+      / (t/16)^8)
+    * NZ
+    +
+  W.literalFarExactAt eta n
+
+theorem exists_quarticFourSignedPole_completeV4H4DeterministicSourceBound :
+    ∃ CV TV CN TN : ℝ,
+      0 <= CV ∧ 0 <= CN ∧
+      ∀ {t : ℝ},
+        200 <= t ->
+        (W : QuarticFourSignedPolePair t) ->
+        ∀ n : ℕ,
+          quarticSignedPoleLocalHalfWidth
+              t quarticSignedPoleCanonicalLocalRadius
+            < (n : ℝ) ->
+          max TV 4
+              <=
+            t - quarticSignedPoleLocalHalfWidth
+                  t quarticSignedPoleCanonicalLocalRadius ->
+          max TN 4
+              <=
+            t - quarticSignedPoleLocalHalfWidth
+                  t quarticSignedPoleCanonicalLocalRadius - 1 ->
+          W.literalOffOrdExactAt n
+            <= W.completeV4H4DeterministicBudgetAt CV CN n := by
+  obtain ⟨CV,TV,hCV,hVprod⟩ :=
+    exists_quarticSignedPoleRvMVerticalFourthDiscrepancy_bound
+  obtain ⟨CN,TN,hCN,hNprod⟩ :=
+    exists_quarticSignedPoleCanonicalExpandedWindowCount_bound
+  refine ⟨CV,TV,CN,TN,hCV,hCN,?_⟩
+  intro t ht W n hn hleftV hleftN
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  have heta : 0 < eta := by
+    dsimp [eta]
+    exact quarticSignedPoleCanonicalLocalRadius_pos
+  have htpos : 0 < t := by linarith
+  have hr : 0 < r := by
+    dsimp [r,eta,quarticSignedPoleLocalHalfWidth]
+    positivity
+  have hV :=
+    hVprod t r hr (by simpa [r,eta] using hleftV)
+  have hNraw := hNprod t
+  have hN :
+      (zetaZeroConfig.N (t-r-1) (t+r) : ℝ)
+        <= quarticSignedPoleCanonicalExpandedCountEnvelope CN t := by
+    have hh := hNraw (by simpa [r,eta] using hleftN)
+    simpa [quarticSignedPoleCanonicalExpandedCountEnvelope,r,eta] using hh
+  have hsource :=
+    W.literalOffOrdExactAt_le_completeV4H4AbsorbBudgetAt
+      ht n (by simpa [r,eta] using hn)
+      (by simpa [quarticSignedPoleCanonicalV4Error,r,eta] using hV)
+  have hmain :
+      0 <= W.targetStrength / (6 * (t/16)^6) := by
+    positivity
+  have hsix :
+      0 <=
+        W.signedProfileAbsMomentSix
+          * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+          / (t/16)^8 := by
+    have henv :=
+      quarticSignedPoleLocalSixthPhysicalEnvelope_nonneg
+        htpos.le heta.le
+    positivity
+  have hr2 : 0 <= (3/2 : ℝ) * r^2 := by
+    positivity
+  have hNZcoef :
+      0 <=
+        (W.targetStrength / (6 * (t/16)^6))
+            * ((3/2 : ℝ) * r^2)
+          +
+        W.signedProfileAbsMomentSix
+          * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+          / (t/16)^8 := by
+    exact add_nonneg
+      (mul_nonneg hmain hr2)
+      hsix
+  have hNscaled :=
+    mul_le_mul_of_nonneg_left hN hNZcoef
+  unfold QuarticFourSignedPolePair.completeV4H4AbsorbBudgetAt at hsource
+  unfold QuarticFourSignedPolePair.completeV4H4DeterministicBudgetAt
+  dsimp [eta,r] at hsource ⊢
+  nlinarith
+
+
 /-!
 ## Preferred complete-jet corrected ABSORB source bound
 

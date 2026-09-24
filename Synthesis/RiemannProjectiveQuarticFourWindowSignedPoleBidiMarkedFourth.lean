@@ -2577,4 +2577,107 @@ theorem QuarticFourSignedPolePair.bidiMarkedPoleCombination_eq_normalized
         W.Rpos ht]
   ring
 
+
+/-!
+## Exact quadratic truncation algebra for the normalized marked pole determinant
+-/
+
+def quarticFourBidiMarkedPolePairingTrunc
+    (R lam mu t B c : ℝ) : ℝ :=
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedPoleWeight t c)
+    +
+  (B^2/2) *
+    quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedPoleSecondWeight t c)
+
+def quarticFourBidiMarkedOnLinePairingTrunc
+    (R lam mu B c : ℝ) : ℝ :=
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineWeight c)
+    +
+  (B^2/2) *
+    quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineSecondWeight c)
+
+def quarticFourSmoothBidiMarkedPoleResidualTrunc
+    (R lam mu t B : ℝ) : ℝ :=
+  quarticFourBidiMarkedPolePairingTrunc R lam mu t B 1
+    * quarticFourBidiMarkedOnLinePairingTrunc R lam mu B 2
+  -
+  quarticFourBidiMarkedPolePairingTrunc R lam mu t B 2
+    * quarticFourBidiMarkedOnLinePairingTrunc R lam mu B 1
+
+def quarticFourSmoothMarkedPoleQuarticCrossCarrier
+    (R lam mu t : ℝ) : ℝ :=
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedPoleSecondWeight t 1)
+    * quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineSecondWeight 2)
+  -
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedPoleSecondWeight t 2)
+    * quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineSecondWeight 1)
+
+theorem quarticFourSmoothBidiMarkedPoleResidualTrunc_eq
+    (R lam mu t B : ℝ) :
+    quarticFourSmoothBidiMarkedPoleResidualTrunc R lam mu t B
+      =
+    quarticFourSmoothFinitePoleResidual R lam mu t
+      +
+    (B^2/2) *
+      quarticFourSmoothMarkedPoleQuadraticCarrier R lam mu t
+      +
+    (B^4/4) *
+      quarticFourSmoothMarkedPoleQuarticCrossCarrier R lam mu t := by
+  unfold quarticFourSmoothBidiMarkedPoleResidualTrunc
+    quarticFourBidiMarkedPolePairingTrunc
+    quarticFourBidiMarkedOnLinePairingTrunc
+    quarticFourSmoothFinitePoleResidual
+    quarticFourSmoothMarkedPoleQuadraticCarrier
+    quarticFourSmoothMarkedPoleQuarticCrossCarrier
+  ring
+
+def QuarticFourSignedPolePair.bidiMarkedPoleCombinationTrunc
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (B : ℝ) : ℝ :=
+  W.poleTwo *
+      quarticFourSmoothBidiMarkedPoleResidualTrunc
+        W.R (1/2) W.muHalf t B
+    -
+  W.poleHalf *
+      quarticFourSmoothBidiMarkedPoleResidualTrunc
+        W.R (2/3) W.muTwo t B
+
+def QuarticFourSignedPolePair.signedMarkedPoleQuarticCrossCarrier
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.poleTwo *
+      quarticFourSmoothMarkedPoleQuarticCrossCarrier
+        W.R (1/2) W.muHalf t
+    -
+  W.poleHalf *
+      quarticFourSmoothMarkedPoleQuarticCrossCarrier
+        W.R (2/3) W.muTwo t
+
+theorem QuarticFourSignedPolePair.bidiMarkedPoleCombinationTrunc_eq
+    {t B : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.bidiMarkedPoleCombinationTrunc B
+      =
+    (B^2/2) *
+      quarticFourSmoothSignedMarkedPoleQuadraticCarrier
+        W.R W.muHalf W.muTwo t
+      +
+    (B^4/4) *
+      W.signedMarkedPoleQuarticCrossCarrier := by
+  unfold QuarticFourSignedPolePair.bidiMarkedPoleCombinationTrunc
+  rw [quarticFourSmoothBidiMarkedPoleResidualTrunc_eq,
+      quarticFourSmoothBidiMarkedPoleResidualTrunc_eq]
+  unfold quarticFourSmoothSignedMarkedPoleQuadraticCarrier
+    QuarticFourSignedPolePair.signedMarkedPoleQuarticCrossCarrier
+    QuarticFourSignedPolePair.poleHalf
+    QuarticFourSignedPolePair.poleTwo
+  ring
+
 end Synthesis

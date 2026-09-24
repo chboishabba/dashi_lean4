@@ -108,3 +108,10 @@ globs = ["AgdaCheck", "AgdaCheck.*"]
 name = "wikidata"
 root = "RequestProject.Cli.Tool"
 srcDir = "DASHI/output-final_aristotle"
+
+# Independent whole-space R³ Navier--Stokes analytic producer for Clay A.
+# This uses Mathlib's concrete Lebesgue/Bochner analysis and exports only
+# theorem-bearing approximation receipts for consumption by dashi_agda.
+[[lean_lib]]
+name = "NSAWholeSpace"
+globs = ["RequestProject.NavierStokes.WholeSpaceA", "RequestProject.NavierStokes.WholeSpaceCubatureBoundaryDefect", "RequestProject.NavierStokes.WholeSpaceL1BochnerCompletion", "RequestProject.NavierStokes.WholeSpaceL1Tail", "RequestProject.NavierStokes.WholeSpaceL2InteractionIntegrability"]

@@ -499,4 +499,36 @@ def pinnedYMRecoveryStressParity : PinnedYMRecoveryStressParity where
   oneRecoveryAttachmentFeedsSelectedQFTStress := true
   allSectorAggregationStillApplicationOwned := true
 
+structure EinsteinFiniteToPhysicalCalibration (PhysicalCoefficient : Type u) where
+  curvatureToPhysical : SourceCoefficient → PhysicalCoefficient
+  stressToPhysical : SourceCoefficient → PhysicalCoefficient
+  applyPhysicalEinsteinCoupling : PhysicalCoefficient → PhysicalCoefficient
+  normalizedScaleCommutesWithPhysicalCoupling :
+    ∀ coefficient,
+      curvatureToPhysical coefficient =
+        applyPhysicalEinsteinCoupling (stressToPhysical coefficient)
+  acceptedMeasuredGCoupling : Bool
+  analyticContinuumRealization : Bool
+
+theorem finite_equation_transports_to_physical_equation
+    {PhysicalCoefficient : Type u}
+    (calibration : EinsteinFiniteToPhysicalCalibration PhysicalCoefficient)
+    (a b : Axis4) :
+    calibration.curvatureToPhysical (computedEinsteinTensor a b) =
+      calibration.applyPhysicalEinsteinCoupling
+        (calibration.stressToPhysical (computedMatterStress a b)) := by
+  rw [show computedEinsteinTensor a b = computedMatterStress a b by
+    cases a <;> cases b <;> rfl]
+  exact calibration.normalizedScaleCommutesWithPhysicalCoupling
+    (computedMatterStress a b)
+
+def normalizedKappaOneManufacturesMeasuredG : Bool := false
+def scaleCommutationManufacturesContinuumLimit : Bool := false
+
+theorem normalized_kappa_one_does_not_manufacture_measured_g :
+    normalizedKappaOneManufacturesMeasuredG = false := rfl
+
+theorem scale_commutation_does_not_manufacture_continuum_limit :
+    scaleCommutationManufacturesContinuumLimit = false := rfl
+
 end Integration.GRQFTExecutableResidual

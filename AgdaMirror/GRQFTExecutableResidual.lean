@@ -96,4 +96,8 @@ theorem w4_shape_replacement_required_parity :
     w4CalibrationFailureDiagnosis.replacementRequiresPhysicalShapeModel = true :=
   w4_failure_is_shape_not_scalar_unknown
 
+theorem finite_physical_calibration_boundary_parity :
+    normalizedKappaOneManufacturesMeasuredG = false :=
+  normalized_kappa_one_does_not_manufacture_measured_g
+
 end AgdaMirror.GRQFTExecutableResidual

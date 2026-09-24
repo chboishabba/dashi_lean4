@@ -39,4 +39,14 @@ theorem low_chi_square_provenance_boundary_parity :
     lowChiSquareAlonePromotesEmpiricalAdequacy = false :=
   low_chi_square_alone_does_not_promote
 
+theorem single_active_sector_source_factorisation_parity
+    {Stress : Type u}
+    {effective cmp119 selected total : Stress}
+    (hEffectiveCMP : effective = cmp119)
+    (hCMPSelected : cmp119 = selected)
+    (hTotalSelected : total = selected) :
+    effective = total :=
+  single_active_sector_source_factorisation
+    hEffectiveCMP hCMPSelected hTotalSelected
+
 end AgdaMirror.GRQFTPostMergeLocalization

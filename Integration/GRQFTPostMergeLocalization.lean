@@ -227,4 +227,27 @@ def lowChiSquareAlonePromotesEmpiricalAdequacy : Bool := false
 theorem low_chi_square_alone_does_not_promote :
     lowChiSquareAlonePromotesEmpiricalAdequacy = false := rfl
 
+/-!
+Single-active-sector source compiler, abstract mirror.
+
+The theorem does not identify a physical total with one sector.  It states that
+if the application has already supplied that equality and the selected CMP119
+stress equals the recovered/selected sector stress, then source factorisation is
+just equality composition.
+-/
+
+theorem single_active_sector_source_factorisation
+    {Stress : Type u}
+    {effective cmp119 selected total : Stress}
+    (hEffectiveCMP : effective = cmp119)
+    (hCMPSelected : cmp119 = selected)
+    (hTotalSelected : total = selected) :
+    effective = total := by
+  exact (hEffectiveCMP.trans hCMPSelected).trans hTotalSelected.symm
+
+def singleSectorCompilerManufacturesDeclaredTotal : Bool := false
+
+theorem single_sector_compiler_does_not_manufacture_total :
+    singleSectorCompilerManufacturesDeclaredTotal = false := rfl
+
 end Integration.GRQFTPostMergeLocalization

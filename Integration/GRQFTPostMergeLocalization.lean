@@ -1374,4 +1374,83 @@ theorem anisotropic_shell_does_not_require_negative_g :
     negativeGRequiredForAnisotropicShell = false := rfl
 
 
+/-!
+Finite normalized anisotropic TOV balance.
+
+The first shell with p_t=-1 fails the static-balance sign test.  A thin
+transition with p_r=0, p_t=+1 matches the normalized outward pressure step, and
+a half-weight transition remains net negative in active mass.
+-/
+
+def normalizedAnisotropicTOVRHS (z : SphericalStressZone) : Rat :=
+  -(z.rho + z.radialPressure)
+    + 2 * (z.tangentialPressure - z.radialPressure)
+
+theorem original_boundary_tov_rhs_negative_three :
+    normalizedAnisotropicTOVRHS boundaryZone = -3 := by
+  norm_num [normalizedAnisotropicTOVRHS, boundaryZone]
+
+def desiredOutwardRadialPressureStep : Rat := 1
+
+theorem original_boundary_does_not_match_desired_step :
+    normalizedAnisotropicTOVRHS boundaryZone ≠ desiredOutwardRadialPressureStep := by
+  norm_num [normalizedAnisotropicTOVRHS, boundaryZone, desiredOutwardRadialPressureStep]
+
+def balancedTransitionZone : SphericalStressZone where
+  rho := 1
+  radialPressure := 0
+  tangentialPressure := 1
+
+theorem balanced_transition_tov_rhs_positive_one :
+    normalizedAnisotropicTOVRHS balancedTransitionZone = 1 := by
+  norm_num [normalizedAnisotropicTOVRHS, balancedTransitionZone]
+
+theorem balanced_transition_active_stress_positive_three :
+    activeStressDensity balancedTransitionZone = 3 := by
+  norm_num [activeStressDensity, balancedTransitionZone]
+
+def transitionWeight : Rat := 1 / 2
+
+def balancedTwoZoneActiveMass : Rat :=
+  activeStressDensity coreZone
+    + transitionWeight * activeStressDensity balancedTransitionZone
+
+theorem balanced_two_zone_active_mass_negative_half :
+    balancedTwoZoneActiveMass = -(1 / 2 : Rat) := by
+  norm_num [balancedTwoZoneActiveMass, transitionWeight, activeStressDensity,
+    coreZone, balancedTransitionZone]
+
+structure FiniteAnisotropicTOVBalanceWitness : Prop where
+  transitionBalance :
+    normalizedAnisotropicTOVRHS balancedTransitionZone =
+      desiredOutwardRadialPressureStep
+  surfaceRadialPressureZero :
+    balancedTransitionZone.radialPressure = 0
+  integratedActiveMassNegative :
+    balancedTwoZoneActiveMass = -(1 / 2 : Rat)
+  couplingPositive : CouplingSign = .positive
+  exteriorResponseOutward :
+    exteriorResponse .positive .negative = .outward
+
+theorem canonical_finite_anisotropic_tov_balance :
+    FiniteAnisotropicTOVBalanceWitness := by
+  exact {
+    transitionBalance := balanced_transition_tov_rhs_positive_one
+    surfaceRadialPressureZero := rfl
+    integratedActiveMassNegative := balanced_two_zone_active_mass_negative_half
+    couplingPositive := rfl
+    exteriorResponseOutward := rfl
+  }
+
+def originalNegativeTangentialShellFailsBalanceSign : Bool := true
+def positiveTangentialTransitionRepairsNormalizedBalance : Bool := true
+def transitionMustBeThinEnoughForNetNegativeActiveMass : Bool := true
+def fullTOVMetricFactorDerived : Bool := false
+def continuumConservationSolved : Bool := false
+def junctionConditionsSolved : Bool := false
+
+theorem corrected_shell_still_repels_with_positive_g :
+    exteriorResponse .positive .negative = .outward := rfl
+
+
 end Integration.GRQFTPostMergeLocalization

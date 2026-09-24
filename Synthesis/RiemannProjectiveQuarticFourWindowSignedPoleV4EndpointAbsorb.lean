@@ -1534,6 +1534,119 @@ theorem exists_quarticSignedPoleCanonicalExpandedWindowCount_bound :
 
 
 
+
+/-!
+## Explicit sixth profile-moment bound from the already-paid G1 norm package
+
+The complete-jet remainder contains the exact sixth absolute moment of the
+signed combined profile.  No new witness regularity is needed: the G1 stack
+already proves support in |u| <= pi+1 and an explicit L1 mass bound.
+
+Hence
+
+  M6(W) <= (pi+1)^6 * ||P_W||_1
+
+and therefore an entirely explicit uniform constant is available.
+-/
+
+theorem QuarticFourSignedPolePair.signedProfileAbsMomentSix_le_support_mass
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedProfileAbsMomentSix
+      <=
+    (Real.pi + 1)^6
+      *
+    Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t) := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hmoment :
+      Integrable (fun u : ℝ => |P u| * |u|^6) :=
+    compactProfile_absMoment_integrable hP hPc 6
+  have hmass :
+      Integrable (fun u : ℝ => (Real.pi+1)^6 * |P u|) :=
+    hP.abs.integrable_of_hasCompactSupport hPc.abs
+      |>.const_mul _
+  unfold QuarticFourSignedPolePair.signedProfileAbsMomentSix
+    compactProfileAbsMoment
+    Zeta23Bridge.LiteralWeilProjectiveStripConstant.taperMass
+  change
+    (∫ u : ℝ, |P u| * |u|^6)
+      <=
+    (Real.pi+1)^6 * (∫ u : ℝ, |P u|)
+  calc
+    (∫ u : ℝ, |P u| * |u|^6)
+      <=
+    ∫ u : ℝ, (Real.pi+1)^6 * |P u| := by
+      apply integral_mono hmoment hmass
+      intro u
+      by_cases hzero : P u = 0
+      · simp [hzero]
+      · have hu :=
+          W.combinedProfile_support_abs_le_pi_add_one u hzero
+        have hpow :
+            |u|^6 <= (Real.pi+1)^6 := by
+          exact pow_le_pow_left₀
+            (abs_nonneg u) hu 6
+        have hPabs : 0 <= |P u| := abs_nonneg _
+        nlinarith
+    _ =
+    (Real.pi+1)^6 * (∫ u : ℝ, |P u|) := by
+      rw [integral_const_mul]
+
+def quarticSignedPoleExplicitSixthMomentBound : ℝ :=
+  (Real.pi + 1)^6 * quarticFourCombinedProfileMassBound
+
+theorem quarticSignedPoleExplicitSixthMomentBound_nonneg :
+    0 <= quarticSignedPoleExplicitSixthMomentBound := by
+  unfold quarticSignedPoleExplicitSixthMomentBound
+    quarticFourCombinedProfileMassBound
+    quarticFourSmoothPoleBound
+    quarticFourProjectiveMassBound
+  positivity
+
+theorem QuarticFourSignedPolePair.signedProfileAbsMomentSix_le_explicit
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.signedProfileAbsMomentSix
+      <= quarticSignedPoleExplicitSixthMomentBound := by
+  have hsupport :=
+    W.signedProfileAbsMomentSix_le_support_mass
+  have hmass :=
+    W.combinedProfile_taperMass_le_explicit ht
+  have hpow : 0 <= (Real.pi+1)^6 := by positivity
+  exact hsupport.trans
+    (mul_le_mul_of_nonneg_left hmass hpow)
+
+theorem quarticSignedPoleExplicitSixthMomentBound_lt_eightyOneMillion :
+    quarticSignedPoleExplicitSixthMomentBound < 81000000 := by
+  unfold quarticSignedPoleExplicitSixthMomentBound
+  have hm := quarticFourCombinedProfileMassBound_lt_5184
+  have hp :
+      (Real.pi+1)^6 < (5 : ℝ)^6 :=
+    pow_lt_pow_left₀
+      (by linarith [Real.pi_lt_four])
+      (by positivity)
+      (by norm_num)
+  have hp0 : 0 <= (Real.pi+1)^6 := by positivity
+  have hm0 : 0 <= quarticFourCombinedProfileMassBound := by
+    unfold quarticFourCombinedProfileMassBound
+      quarticFourSmoothPoleBound quarticFourProjectiveMassBound
+    positivity
+  calc
+    (Real.pi+1)^6 * quarticFourCombinedProfileMassBound
+      < (5 : ℝ)^6 * 5184 := by
+        gcongr
+    _ = 81000000 := by norm_num
+
+
 /-!
 ## Deterministic V4 + count producer substitution
 

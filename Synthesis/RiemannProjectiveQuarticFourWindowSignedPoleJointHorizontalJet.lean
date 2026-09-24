@@ -1055,4 +1055,64 @@ theorem QuarticFourSignedPolePair.literalJointQuarticPolynomial_nonpos_of_six_he
       (mul_nonneg hm hS) hbr
   exact div_nonpos_of_nonpos_of_nonneg hnum hr.le
 
+
+/-!
+## Same-ordinate joint kernel equals minus four times the target defect
+
+At q=0 the exact pair kernel is the hyperbolic/cosh channel used by the target
+height detector.  This is an exact same-object identity, not a Taylor
+approximation.
+-/
+
+theorem genericProjectivePairKernel_zero_eq_compactCosh
+    (G : ℝ -> ℝ) (alpha : ℝ) :
+    genericProjectivePairKernel G alpha 0
+      =
+    compactCoshTransform
+      (genericProjectivePhysicalProfile G 1) alpha := by
+  unfold genericProjectivePairKernel compactCoshTransform
+  simp
+
+theorem QuarticFourSignedPolePair.signedNormalizedPairKernel_zero_eq_neg_four_target
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNormalizedPairKernel alpha 0
+      =
+    -4 *
+      quarticFourSignedPoleCombinedHeightDefect
+        W.R W.muHalf W.muTwo t alpha := by
+  unfold QuarticFourSignedPolePair.signedNormalizedPairKernel
+  rw [genericProjectivePairKernel_zero_eq_compactCosh,
+      genericProjectivePairKernel_zero_eq_compactCosh]
+  rw [quarticFourSignedPoleCombinedHeightDefect_eq_cosh W.Rpos]
+  unfold quarticFourSignedPoleCombinedProfile
+    QuarticFourSignedPolePair.poleHalf
+    QuarticFourSignedPolePair.poleTwo
+  rw [compactCoshTransform_profileLinearCombination
+      (quarticFourNormalizedProjectiveProfile_continuous
+        (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos)
+      (quarticFourNormalizedProjectiveProfile_compact
+        (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos)
+      (quarticFourNormalizedProjectiveProfile_continuous
+        (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos)
+      (quarticFourNormalizedProjectiveProfile_compact
+        (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos)]
+  ring
+
+/--
+On the already-paid target band, the exact same-ordinate joint pair kernel is
+strictly negative.  Thus the nominal mixed cone contains a favorable core; the
+positive-part ConeDebt abstraction intentionally discards this negative mass.
+-/
+theorem QuarticFourSignedPolePair.signedNormalizedPairKernel_zero_neg_of_targetBand
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (ha0 : 0 < |alpha|)
+    (ha : |alpha| < W.eps) :
+    W.signedNormalizedPairKernel alpha 0 < 0 := by
+  rw [W.signedNormalizedPairKernel_zero_eq_neg_four_target]
+  have hD :=
+    W.combinedTargetBand alpha ha0 ha
+  nlinarith
+
 end Synthesis

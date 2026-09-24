@@ -2784,4 +2784,129 @@ def sourceNativeCMP119PotentialDerived : Bool := false
 def continuumDomainWallSolutionConstructed : Bool := false
 
 
+/-!
+Nambu-Goto-like repulsive Israel shell family.
+
+Impose P = -sigma.  In the rational-square shell variables this is exactly
+  3 M x = R (x-y).
+
+Thus choose
+  M = R(x-y)/(3x).
+
+For 0<y<x<1 this gives positive mass, positive surface energy, pure tension
+P=-sigma, NEC/DEC saturation, SEC violation, and outward exterior acceleration.
+-/
+
+def domainWallShellMass (radius x y : Rat) : Rat :=
+  radius*(x-y)/(3*x)
+
+theorem domain_wall_shell_mass_law
+    (radius x y : Rat) (hx : x ≠ 0) :
+    3*(domainWallShellMass radius x y)*x = radius*(x-y) := by
+  field_simp [domainWallShellMass, hx]
+  ring
+
+theorem domain_wall_shell_pressure_equals_minus_sigma
+    (radius x y : Rat)
+    (hR : radius ≠ 0) (hx : x ≠ 0) (hy : y ≠ 0) :
+    rationalSquareSurfacePressure8
+      (domainWallShellMass radius x y) radius x y
+      = - rationalSquareSurfaceSigma8 radius x y := by
+  field_simp [rationalSquareSurfacePressure8, rationalSquareSurfaceSigma8,
+    domainWallShellMass, surfaceGap, hR, hx, hy]
+  ring
+
+theorem domain_wall_shell_outward_margin
+    (radius x y : Rat) (hx : x ≠ 0) :
+    outwardAccelerationScaled
+      (domainWallShellMass radius x y) radius y
+      = radius*y*(1-x*y)/x := by
+  field_simp [outwardAccelerationScaled, domainWallShellMass, hx]
+  ring
+
+theorem domain_wall_shell_family_physical
+    {radius x y : Rat}
+    (hR : 0 < radius)
+    (hy : 0 < y)
+    (hyx : y < x)
+    (hx1 : x < 1) :
+    0 < domainWallShellMass radius x y
+    ∧ 0 < rationalSquareSurfaceSigma8 radius x y
+    ∧ rationalSquareSurfacePressure8
+        (domainWallShellMass radius x y) radius x y
+        = -rationalSquareSurfaceSigma8 radius x y
+    ∧ 0 < outwardAccelerationScaled
+        (domainWallShellMass radius x y) radius y := by
+  have hx : 0 < x := lt_trans hy hyx
+  have hy1 : y < 1 := lt_trans hyx hx1
+  have hxy : x*y < 1 := by nlinarith [mul_pos hx hy]
+  constructor
+  · unfold domainWallShellMass
+    positivity
+  constructor
+  · unfold rationalSquareSurfaceSigma8 surfaceGap
+    positivity
+  constructor
+  · exact domain_wall_shell_pressure_equals_minus_sigma radius x y
+      (ne_of_gt hR) (ne_of_gt hx) (ne_of_gt hy)
+  · rw [domain_wall_shell_outward_margin radius x y (ne_of_gt hx)]
+    positivity
+
+/-!
+Exact x=3/4,y=1/2 one-parameter domain-wall family:
+  M=R/9
+  Lambda_in=21/(16R^2)
+  Lambda_out=19/(12R^2)
+  a_out=5/(12R)
+  8pi sigma=1/(2R)
+  8pi P=-1/(2R).
+-/
+
+def domainWallFamilyMass (radius : Rat) : Rat := radius/9
+
+theorem domain_wall_family_mass_matches
+    (radius : Rat) :
+    domainWallFamilyMass radius
+      = domainWallShellMass radius (3/4) (1/2) := by
+  ring_nf [domainWallFamilyMass, domainWallShellMass]
+
+theorem domain_wall_family_lambda_in
+    (radius : Rat) (hR : radius ≠ 0) :
+    lambdaInFromSquareLapse radius (3/4)
+      = 21/(16*radius^2) := by
+  field_simp [lambdaInFromSquareLapse, hR]
+  ring
+
+theorem domain_wall_family_lambda_out
+    (radius : Rat) (hR : radius ≠ 0) :
+    lambdaOutFromSquareLapse (domainWallFamilyMass radius) radius (1/2)
+      = 19/(12*radius^2) := by
+  field_simp [lambdaOutFromSquareLapse, domainWallFamilyMass, hR]
+  ring
+
+theorem domain_wall_family_acceleration
+    (radius : Rat) (hR : radius ≠ 0) :
+    kottlerRadialAcceleration
+      (domainWallFamilyMass radius) radius (19/(12*radius^2))
+      = 5/(12*radius) := by
+  field_simp [kottlerRadialAcceleration, domainWallFamilyMass, hR]
+  ring
+
+theorem domain_wall_family_sigma
+    (radius : Rat) (hR : radius ≠ 0) :
+    rationalSquareSurfaceSigma8 radius (3/4) (1/2)
+      = 1/(2*radius) := by
+  field_simp [rationalSquareSurfaceSigma8, surfaceGap, hR]
+  ring
+
+theorem domain_wall_family_pressure
+    (radius : Rat) (hR : radius ≠ 0) :
+    rationalSquareSurfacePressure8
+      (domainWallFamilyMass radius) radius (3/4) (1/2)
+      = -1/(2*radius) := by
+  rw [domain_wall_shell_pressure_equals_minus_sigma radius (3/4) (1/2)
+      hR (by norm_num) (by norm_num)]
+  rw [domain_wall_family_sigma radius hR]
+
+
 end Integration.GRQFTPostMergeLocalization

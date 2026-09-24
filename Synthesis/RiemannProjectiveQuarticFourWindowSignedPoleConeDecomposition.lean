@@ -1619,4 +1619,63 @@ theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_uniform_s
     W.completedSignedResidual_lt_target_of_eventual_sharpened_compensation_gap
       ht hgap hmargin
 
+
+/-!
+## Sharpened budget dominates the conservative budget
+-/
+
+theorem QuarticFourSignedPolePair.literalGoodRemainderDebtAt_le_localRemainderDebtAt
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalGoodRemainderDebtAt eta n
+      <= W.literalLocalRemainderDebtAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalGoodRemainderDebtAt
+    QuarticFourSignedPolePair.literalLocalRemainderDebtAt
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hg : quarticSignedPoleLocalGood t eta rho
+  · have hl : quarticSignedPoleLocal t eta rho := hg.1
+    simp [hg,hl]
+  · by_cases hl : quarticSignedPoleLocal t eta rho
+    · simp [hg,hl]
+    · simp [hg,hl]
+
+theorem QuarticFourSignedPolePair.literalSharpenedJointBudgetAt_le_jointBudgetAt
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalSharpenedJointBudgetAt eta n
+      <= W.literalJointBudgetAt eta n := by
+  have hrem :=
+    W.literalGoodRemainderDebtAt_le_localRemainderDebtAt
+      (eta:=eta) n
+  have hgain :=
+    W.literalConeGainAt_nonneg (eta:=eta) n
+  unfold QuarticFourSignedPolePair.literalSharpenedJointBudgetAt
+    QuarticFourSignedPolePair.literalSharpenedLocalDebtAt
+    QuarticFourSignedPolePair.literalSharpenedSignedCompensationAt
+    QuarticFourSignedPolePair.literalJointBudgetAt
+    QuarticFourSignedPolePair.literalLocalDebtAt
+    QuarticFourSignedPolePair.literalSignedCompensationAt
+  linarith
+
+theorem QuarticFourSignedPolePair.uniformCompensationGap_implies_sharpened
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hC : W.UniformSignedCompensationGap rho) :
+    W.UniformSharpenedSignedCompensationGap rho := by
+  rcases hC with ⟨eps,heps,N,hN⟩
+  refine ⟨eps,heps,N,?_⟩
+  intro n hn
+  have hold := hN n hn
+  have hbud :=
+    W.literalSharpenedJointBudgetAt_le_jointBudgetAt
+      (eta:=quarticSignedPoleCanonicalLocalRadius) n
+  unfold QuarticFourSignedPolePair.literalSharpenedJointBudgetAt at hbud
+  unfold QuarticFourSignedPolePair.literalJointBudgetAt at hbud
+  exact hbud.trans hold
+
 end Synthesis

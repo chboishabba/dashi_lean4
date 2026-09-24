@@ -247,4 +247,170 @@ theorem QuarticFourSignedPolePair.literalLocalHorizontalFourthCorrectionAt_le_of
       (eta:=eta) n)
     hH
 
+
+/-!
+## Unconditional H4 payment from the existing broader cone count
+
+The adverse cone is strictly narrower than the already-owned local cone
+
+  delta^2 <= 6 a^2.
+
+Hence the existing strip and fixed-window counting theorems apply without any
+new horizontal-distribution hypothesis.
+-/
+
+theorem quarticSignedPoleHorizontalFourthAdverse_local_subset_localCone
+    {t eta : ℝ} {rho : Zeros}
+    (hl : quarticSignedPoleLocal t eta rho)
+    (hadv : quarticSignedPoleHorizontalFourthAdverse t rho) :
+    quarticSignedPoleLocalCone t eta rho := by
+  refine ⟨hl, ?_⟩
+  unfold quarticSignedPoleHorizontalFourthAdverse at hadv
+  have hd2 : 0 <= ((rho : ℂ).im - t)^2 := sq_nonneg _
+  have ha2 : 0 <= heightOf rho^2 := sq_nonneg _
+  nlinarith
+
+theorem QuarticFourSignedPolePair.literalLocalHorizontalFourthAdverseEnvelopeAt_le_sixteenth_coneMultiplicity
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalHorizontalFourthAdverseEnvelopeAt eta n
+      <=
+    (1/16 : ℝ) * (W.literalConeMultiplicityAt eta n : ℝ) := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalHorizontalFourthAdverseEnvelopeAt
+    QuarticFourSignedPolePair.literalConeMultiplicityAt
+  rw [Nat.cast_sum, Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · by_cases hadv : quarticSignedPoleHorizontalFourthAdverse t rho
+      · have hcone :=
+          quarticSignedPoleHorizontalFourthAdverse_local_subset_localCone
+            hl hadv
+        have ha :=
+          quarticSignedPoleLocalCone_height_abs_le_half hcone
+        have ha4 : heightOf rho^4 <= (1/16 : ℝ) := by
+          have ha2 : heightOf rho^2 <= (1/4 : ℝ) := by
+            nlinarith [sq_abs (heightOf rho), sq_nonneg (heightOf rho)]
+          have ha2non : 0 <= heightOf rho^2 := sq_nonneg _
+          nlinarith [sq_nonneg (heightOf rho^2 - (1/4 : ℝ))]
+        simp [hl, hoff, hadv, hcone]
+        exact mul_le_mul_of_nonneg_left ha4 (by positivity)
+      · simp [hl, hoff, hadv]
+        by_cases hcone : quarticSignedPoleLocalCone t eta rho
+        · positivity
+        · simp [hcone]
+    · simp [hl, hoff]
+      by_cases hcone : quarticSignedPoleLocalCone t eta rho
+      · positivity
+      · simp [hcone]
+  · have hnotcone : ¬ quarticSignedPoleLocalCone t eta rho := by
+      intro hcone
+      exact hl hcone.1
+    simp [hl, hnotcone]
+
+theorem QuarticFourSignedPolePair.literalLocalHorizontalFourthAdverseEnvelopeAt_le_fixedWindowN
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalHorizontalFourthAdverseEnvelopeAt eta n
+      <=
+    (1/16 : ℝ)
+      * (zetaZeroConfig.N
+          (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ) := by
+  have henv :=
+    W.literalLocalHorizontalFourthAdverseEnvelopeAt_le_sixteenth_coneMultiplicity
+      (eta:=eta) n
+  have hmult :=
+    W.literalConeMultiplicityAt_le_fixedWindowN
+      (eta:=eta) n
+  have hcast :
+      (W.literalConeMultiplicityAt eta n : ℝ)
+        <=
+      (zetaZeroConfig.N
+        (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ) := by
+    exact_mod_cast hmult
+  exact henv.trans
+    (mul_le_mul_of_nonneg_left hcast (by norm_num))
+
+theorem QuarticFourSignedPolePair.literalLocalHorizontalFourthCorrectionAt_le_fixedWindowN
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalHorizontalFourthCorrectionAt eta n
+      <=
+    (1/16 : ℝ)
+      * (zetaZeroConfig.N
+          (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ) := by
+  exact
+    (W.literalLocalHorizontalFourthCorrectionAt_le_adverseEnvelope
+      (eta:=eta) n).trans
+      (W.literalLocalHorizontalFourthAdverseEnvelopeAt_le_fixedWindowN
+        (eta:=eta) n)
+
+/--
+Unconditional finite H4 bound on the literal local carrier.
+
+No Montgomery/pair-correlation input appears: the only analytic producer is
+the already-owned fixed-window local zero count.
+-/
+theorem exists_quarticFourSignedPole_horizontalFourthAt_le_log :
+    ∃ A0 : ℝ, 0 <= A0 ∧
+      ∀ {t eta : ℝ},
+        200 <= t ->
+        (W : QuarticFourSignedPolePair t) ->
+        ∀ n : ℕ,
+          W.literalLocalHorizontalFourthCorrectionAt eta n
+            <=
+          (3/16 : ℝ) * A0 * Real.log (t + 5) := by
+  obtain ⟨A0,hA0,hcount⟩ :=
+    exists_quarticSignedPole_fixedConeWindow_zeroCount_bound
+  refine ⟨A0,hA0,?_⟩
+  intro t eta ht W n
+  have hH :=
+    W.literalLocalHorizontalFourthCorrectionAt_le_fixedWindowN
+      (eta:=eta) n
+  have hN := hcount ht
+  have hscaled :=
+    mul_le_mul_of_nonneg_left hN (by norm_num : (0:ℝ) <= 1/16)
+  exact hH.trans (by
+    calc
+      (1/16 : ℝ)
+          * (zetaZeroConfig.N
+              (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ)
+        <=
+      (1/16 : ℝ) * (3 * A0 * Real.log (t+5)) := hscaled
+      _ = (3/16 : ℝ) * A0 * Real.log (t+5) := by ring)
+
+/--
+Direct V4+H4 consumer shape before the final sixth-order/FarExact absorption.
+
+The vertical discrepancy may be estimated in absolute value, while H4 keeps its
+one-sided signed estimate.
+-/
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_le_verticalAbs_add_adverseEnvelope
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalCenteredFourthAngularAt eta n
+      <=
+    |W.literalLocalVerticalFourthZeroMomentAt eta n
+      - quarticSignedPoleLocalMuVerticalFourthMoment t eta|
+      +
+    W.literalLocalHorizontalFourthAdverseEnvelopeAt eta n := by
+  rw [W.literalLocalCenteredFourthAngularAt_eq]
+  have hv :
+      W.literalLocalVerticalFourthZeroMomentAt eta n
+        - quarticSignedPoleLocalMuVerticalFourthMoment t eta
+      <=
+      |W.literalLocalVerticalFourthZeroMomentAt eta n
+        - quarticSignedPoleLocalMuVerticalFourthMoment t eta| :=
+    le_abs_self _
+  have hh :=
+    W.literalLocalHorizontalFourthCorrectionAt_le_adverseEnvelope
+      (eta:=eta) n
+  linarith
+
 end Synthesis

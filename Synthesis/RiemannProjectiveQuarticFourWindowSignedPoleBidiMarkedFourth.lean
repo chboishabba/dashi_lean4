@@ -835,4 +835,75 @@ theorem quarticSignedPoleLiteralReflectedTilt_below_old_endpoint
     -A-(1/2 : ℝ) < -(1/2 : ℝ) := by
   linarith
 
+
+/-!
+## Literal prime mass scale
+
+The square-root-normalized cosh mass is exactly the average of the two
+functional-equation tilts.  A lower bound only needs the forward branch; the
+reflected branch is nonnegative.
+-/
+
+theorem quarticSignedPoleLiteralWeilPrimeMass_eq_tilt_pair
+    (N : ℕ) (A : ℝ) :
+    quarticSignedPoleLiteralWeilPrimeMoment N A 0
+      =
+    (RiemannAnalytic.tiltedMass N (A-(1/2 : ℝ))
+      + RiemannAnalytic.tiltedMass N (-A-(1/2 : ℝ))) / 2 := by
+  unfold quarticSignedPoleLiteralWeilPrimeMoment
+    RiemannAnalytic.tiltedMass
+  simp only [pow_zero, mul_one]
+  rw [← Finset.sum_add_distrib, Finset.sum_div]
+  apply Finset.sum_congr rfl
+  intro n hn
+  have hn1 : 1 <= n := (Finset.mem_Icc.mp hn).1
+  have hsplit :=
+    quarticSignedPoleLiteralWeilPrimeWeight_eq_tilt_pair
+      (A:=A) hn1
+  simpa [RiemannAnalytic.coshVonMangoldt] using hsplit
+
+theorem quarticSignedPoleLiteralWeilPrimeMass_lower
+    {N : ℕ} (hN : (10 : ℝ)^8 <= (N : ℝ))
+    {A : ℝ} (hA0 : 0 <= A) (hAhalf : A < 1/2) :
+    (N : ℝ)^((1/2 : ℝ)+A) / 32
+      <= quarticSignedPoleLiteralWeilPrimeMoment N A 0 := by
+  rw [quarticSignedPoleLiteralWeilPrimeMass_eq_tilt_pair]
+  have hvabs : |A-(1/2 : ℝ)| <= 1 := by
+    rw [abs_le]
+    constructor <;> linarith
+  have hf :=
+    RiemannAnalytic.tiltedMass_lower
+      (N:=N) hN (v:=A-(1/2 : ℝ)) hvabs
+  have hr :
+      0 <= RiemannAnalytic.tiltedMass N (-A-(1/2 : ℝ)) :=
+    RiemannAnalytic.tiltedMass_nonneg _ _
+  have hexp :
+      (1 + (A-(1/2 : ℝ)) : ℝ) = (1/2 : ℝ) + A := by
+    ring
+  rw [hexp] at hf
+  linarith
+
+theorem quarticSignedPoleLiteralWeilPrimeBidiAngular_coercive
+    {N : ℕ} (hN : (10 : ℝ)^8 <= (N : ℝ))
+    {A : ℝ} (hA0 : 0 <= A) (hAhalf : A < 1/2) :
+    A^4 * (N : ℝ)^((1/2 : ℝ)+A) / 64
+      <=
+    (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A := by
+  have hmass :=
+    quarticSignedPoleLiteralWeilPrimeMass_lower
+      (N:=N) hN hA0 hAhalf
+  have hang :=
+    quarticSignedPoleLiteralWeilPrimeBidiAngular_ge_half_A4_mass
+      N A
+  have hfac : 0 <= (1/2 : ℝ) * A^4 := by positivity
+  have hscaled := mul_le_mul_of_nonneg_left hmass hfac
+  calc
+    A^4 * (N : ℝ)^((1/2 : ℝ)+A) / 64
+        <=
+      (1/2 : ℝ) * A^4
+        * quarticSignedPoleLiteralWeilPrimeMoment N A 0 := by
+          nlinarith [hscaled]
+    _ <=
+      (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A := hang
+
 end Synthesis

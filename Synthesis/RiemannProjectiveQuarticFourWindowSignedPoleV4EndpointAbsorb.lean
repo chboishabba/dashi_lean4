@@ -1834,6 +1834,116 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_completeV4H4AbsorbBudg
   linarith
 
 
+
+/-!
+## Direct complete-jet strict scalar compiler to G3
+
+This is the authoritative compiler surface for the current preferred route.
+The analytic hypothesis is ONLY the eventual strict scalar inequality for
+completeV4H4AbsorbBudgetAt.  The finite source bound is already theorem-owned
+above, the cofinal exact-source limit is already owned by the cone
+decomposition stack, and compensationTargetThreshold is the exact scalar
+appearing in the completed-residual compiler.
+
+No legacy V4H4ExplicitAbsorb hypothesis and no Montgomery producer enters here.
+-/
+
+def QuarticFourSignedPolePair.CompleteV4H4StrictAbsorb
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (EV : ℝ) : Prop :=
+  ∃ eps : ℝ, 0 < eps ∧
+    ∃ N : ℕ, ∀ n : ℕ, N <= n ->
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ)
+      ∧
+      W.completeV4H4AbsorbBudgetAt EV n
+        <= W.compensationTargetThreshold rho - eps
+
+theorem QuarticFourSignedPolePair.completeV4H4StrictAbsorb_expanded
+    {t EV : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.CompleteV4H4StrictAbsorb rho EV
+      ↔
+    ∃ eps : ℝ, 0 < eps ∧
+      ∃ N : ℕ, ∀ n : ℕ, N <= n ->
+        quarticSignedPoleLocalHalfWidth
+            t quarticSignedPoleCanonicalLocalRadius
+          < (n : ℝ)
+        ∧
+        W.completeV4H4AbsorbBudgetAt EV n
+          <= W.compensationTargetThreshold rho - eps := by
+  rfl
+
+theorem QuarticFourSignedPolePair.globalOffOrd_le_target_sub_eps_of_completeV4H4StrictAbsorb
+    {t EV eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (heps : 0 < eps)
+    (N : ℕ)
+    (hN : ∀ n : ℕ, N <= n ->
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ)
+      ∧
+      W.completeV4H4AbsorbBudgetAt EV n
+        <= W.compensationTargetThreshold rho - eps)
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV) :
+    (∑' z : Zeros, W.literalOffOrdSource z)
+      <= W.compensationTargetThreshold rho - eps := by
+  have htpos : 0 < t := by linarith
+  have hfinite :
+      ∀ᶠ n : ℕ in atTop,
+        W.literalOffOrdExactAt n
+          <= W.compensationTargetThreshold rho - eps := by
+    rw [eventually_atTop]
+    refine ⟨N, ?_⟩
+    intro n hn
+    obtain ⟨hnRadius,hbudget⟩ := hN n hn
+    have hsource :=
+      W.literalOffOrdExactAt_le_completeV4H4AbsorbBudgetAt
+        ht n hnRadius hV
+    exact hsource.trans hbudget
+  have hlim :=
+    W.literalOffOrdExactAt_tendsto_tsum htpos
+  exact le_of_tendsto hlim hfinite
+
+theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_completeV4H4StrictAbsorb
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV)
+    (hC : W.CompleteV4H4StrictAbsorb rho EV) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho := by
+  rcases hC with ⟨eps,heps,N,hN⟩
+  have hglobal :=
+    W.globalOffOrd_le_target_sub_eps_of_completeV4H4StrictAbsorb
+      ht rho heps N hN hV
+  have hsum :
+      (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+        W.signedLiteralPairSourceTerm sigma)
+        <= W.compensationTargetThreshold rho - eps := by
+    rw [← W.literalOffOrdSource_tsum_eq_signedLiteralPairSource_tsum]
+    exact hglobal
+  rw [W.completedSignedResidual_eq_jointPairSource ht]
+  unfold QuarticFourSignedPolePair.compensationTargetThreshold at hsum
+  linarith
+
+
 /-!
 ## Fail-closed explicit ABSORB surface
 

@@ -553,4 +553,216 @@ theorem QuarticFourSignedPolePair.postSixthV4H4AbsorbBudgetAt_le_G1
   dsimp [eta,r,NZ]
   linarith
 
+
+/-!
+## Signed-sixth cone split
+
+The degree-six physical angular polynomial factors exactly as
+
+  (a^2-d^2) * (a^4 - 14*a^2*d^2 + d^4).
+
+Hence the outer cone 16*a^2 <= d^2 is favorable whenever the selected signed
+sixth profile moment is nonnegative.  We keep those terms signed and drop
+them only after proving their sum is nonpositive.
+
+The complementary potentially adverse carrier is much smaller than the
+canonical local window: since every zeta zero has |height| <= 1/2, failure of
+the outer-cone condition forces d^2 < 4.  Thus the remaining sixth payment is
+confined to the fixed physical strip |Im rho - t| < 2.
+-/
+
+def QuarticFourSignedPolePair.literalPhysicalSixthPhase
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let a := heightOf sigma
+  let d := (sigma : ℂ).im - t
+  a^6 - 15*a^4*d^2 + 15*a^2*d^4 - d^6
+
+theorem QuarticFourSignedPolePair.literalPhysicalSixthPhase_factor
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    W.literalPhysicalSixthPhase sigma
+      =
+    (heightOf sigma^2 - ((sigma : ℂ).im-t)^2)
+      *
+    (heightOf sigma^4
+      - 14*heightOf sigma^2*((sigma : ℂ).im-t)^2
+      + ((sigma : ℂ).im-t)^4) := by
+  unfold QuarticFourSignedPolePair.literalPhysicalSixthPhase
+  ring
+
+theorem QuarticFourSignedPolePair.literalPhysicalSixthPhase_nonpos_of_outerCone
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros)
+    (houter :
+      16 * heightOf sigma^2
+        <= ((sigma : ℂ).im-t)^2) :
+    W.literalPhysicalSixthPhase sigma <= 0 := by
+  rw [W.literalPhysicalSixthPhase_factor sigma]
+  let a2 := heightOf sigma^2
+  let d2 := ((sigma : ℂ).im-t)^2
+  have ha2 : 0 <= a2 := by
+    dsimp [a2]
+    positivity
+  have hd2 : 0 <= d2 := by
+    dsimp [d2]
+    positivity
+  have hfirst : a2 - d2 <= 0 := by
+    dsimp [a2,d2] at houter ⊢
+    nlinarith
+  have hmul : 16*a2*d2 <= d2*d2 := by
+    exact mul_le_mul_of_nonneg_right
+      (by simpa [a2,d2] using houter) hd2
+  have hsecond :
+      0 <=
+        heightOf sigma^4
+          - 14*heightOf sigma^2*((sigma : ℂ).im-t)^2
+          + ((sigma : ℂ).im-t)^4 := by
+    dsimp [a2,d2] at hmul
+    nlinarith [sq_nonneg (heightOf sigma^2)]
+  exact mul_nonpos_of_nonpos_of_nonneg hfirst hsecond
+
+theorem QuarticFourSignedPolePair.literalCompleteJointSixthHarmonic_eq_physical
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    W.literalCompleteJointSixthHarmonic sigma
+      =
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+      * W.signedProfileMomentSix
+      * W.literalPhysicalSixthPhase sigma
+      / (720 * (t/16)^8) := by
+  unfold QuarticFourSignedPolePair.literalCompleteJointSixthHarmonic
+    QuarticFourSignedPolePair.completeJointSixthHarmonic
+    QuarticFourSignedPolePair.literalPhysicalSixthPhase
+    quarticSignedPoleSixthPhaseReal
+  dsimp
+  have hr : t/16 ≠ 0 := by positivity
+  field_simp [hr]
+  ring
+
+def QuarticFourSignedPolePair.literalLocalSignedSixthOuterAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        if 16 * heightOf rho^2 <= ((rho : ℂ).im-t)^2 then
+          W.literalCompleteJointSixthHarmonic rho
+        else
+          0
+      else
+        0
+    else
+      0
+
+def QuarticFourSignedPolePair.literalLocalSignedSixthCentralAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        if 16 * heightOf rho^2 <= ((rho : ℂ).im-t)^2 then
+          0
+        else
+          W.literalCompleteJointSixthHarmonic rho
+      else
+        0
+    else
+      0
+
+theorem QuarticFourSignedPolePair.literalLocalSignedSixthHarmonicAt_eq_outer_add_central
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalSignedSixthHarmonicAt eta n
+      =
+    W.literalLocalSignedSixthOuterAt eta n
+      + W.literalLocalSignedSixthCentralAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalSignedSixthHarmonicAt
+    QuarticFourSignedPolePair.literalLocalSignedSixthOuterAt
+    QuarticFourSignedPolePair.literalLocalSignedSixthCentralAt
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · by_cases houter :
+        16 * heightOf rho^2 <= ((rho : ℂ).im-t)^2
+      · simp [hl,hoff,houter]
+      · simp [hl,hoff,houter]
+    · simp [hl,hoff]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalSignedSixthOuterAt_nonpos
+    {t eta : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hM6 : 0 <= W.signedProfileMomentSix)
+    (n : ℕ) :
+    W.literalLocalSignedSixthOuterAt eta n <= 0 := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalSignedSixthOuterAt
+  apply Finset.sum_nonpos
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · by_cases houter :
+        16 * heightOf rho^2 <= ((rho : ℂ).im-t)^2
+      · simp [hl,hoff,houter]
+        rw [W.literalCompleteJointSixthHarmonic_eq_physical ht rho]
+        have hm :
+            0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
+          positivity
+        have hp :=
+          W.literalPhysicalSixthPhase_nonpos_of_outerCone rho houter
+        have hnum :
+            ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+                * W.signedProfileMomentSix
+                * W.literalPhysicalSixthPhase rho
+              <= 0 := by
+          exact mul_nonpos_of_nonneg_of_nonpos
+            (mul_nonneg hm hM6) hp
+        have hden : 0 <= 720 * (t/16)^8 := by positivity
+        exact div_nonpos_of_nonpos_of_nonneg hnum hden
+      · simp [hl,hoff,houter]
+    · simp [hl,hoff]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalSignedSixthHarmonicAt_le_central
+    {t eta : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hM6 : 0 <= W.signedProfileMomentSix)
+    (n : ℕ) :
+    W.literalLocalSignedSixthHarmonicAt eta n
+      <= W.literalLocalSignedSixthCentralAt eta n := by
+  rw [W.literalLocalSignedSixthHarmonicAt_eq_outer_add_central]
+  have houter :=
+    W.literalLocalSignedSixthOuterAt_nonpos ht hM6 n
+  linarith
+
+theorem QuarticFourSignedPolePair.sixthCentral_vertical_sq_lt_four
+    {t : ℝ}
+    (rho : Zeros)
+    (hcentral :
+      ¬ 16 * heightOf rho^2 <= ((rho : ℂ).im-t)^2) :
+    ((rho : ℂ).im-t)^2 < 4 := by
+  have ha := zetaZero_height_abs_le_half rho
+  have ha2abs :
+      |heightOf rho|^2 <= (1/2 : ℝ)^2 := by
+    gcongr
+  have ha2 :
+      heightOf rho^2 <= (1/2 : ℝ)^2 := by
+    rw [← sq_abs]
+    exact ha2abs
+  have hc :
+      ((rho : ℂ).im-t)^2 < 16 * heightOf rho^2 := by
+    exact lt_of_not_ge hcentral
+  nlinarith
+
+
 end Synthesis

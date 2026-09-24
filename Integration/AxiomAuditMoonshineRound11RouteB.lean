@@ -1,0 +1,36 @@
+import Integration.BishopRound11MachinReplayProbe
+import Integration.BishopRound11MachinCanonicalBinding
+import Integration.MoonshineEisensteinRound11CanonicalRouteB
+import Integration.MoonshineDeltaFinalMinCut
+
+/-!
+# Focused axiom audit for the Round11/Machin Moonshine route B
+
+This file is meant to be run directly by Lean in CI. The print-axioms commands
+are the receipt surface: unexpected axioms are visible in the job log without
+requiring a full build of unrelated Integration modules.
+-/
+
+#print axioms Integration.BishopRound11MachinCanonicalBinding.canonicalExp_converges
+#print axioms Integration.BishopRound11MachinCanonicalBinding.canonicalSin_converges
+#print axioms Integration.BishopRound11MachinCanonicalBinding.canonicalCos_converges
+#print axioms Integration.BishopRound11MachinCanonicalBinding.canonicalAtanOneFifth_converges
+#print axioms Integration.BishopRound11MachinCanonicalBinding.canonicalAtan239_converges
+#print axioms Integration.BishopRound11MachinCanonicalBinding.limit_equiv_of_two_convergences
+
+#print axioms Integration.MoonshineEisensteinRound11CanonicalRouteB.map_sourceQ_eq_qOfTarget
+#print axioms Integration.MoonshineEisensteinRound11CanonicalRouteB.mapped_sourceE4_tendsto_mathlib_E4
+#print axioms Integration.MoonshineEisensteinRound11CanonicalRouteB.mapped_sourceE6_tendsto_mathlib_E6
+#print axioms Integration.MoonshineEisensteinRound11CanonicalRouteB.mapped_sourceDiscriminantNumerator_tendsto
+#print axioms Integration.MoonshineEisensteinRound11CanonicalRouteB.mapped_sourceNormalizedDelta_tendsto
+#print axioms Integration.MoonshineEisensteinRound11CanonicalRouteB.eta24_eq_canonical_route_delta
+#print axioms Integration.MoonshineEisensteinRound11CanonicalRouteB.canonical_target_inv_conj
+
+#print axioms Integration.MoonshineDeltaFinalMinCut.canonicalEta24NormalizedDeltaSameObject
+#print axioms Integration.MoonshineDeltaFinalMinCut.normalizedDelta_sixfold_phase_canonical
+#print axioms Integration.MoonshineDeltaFinalMinCut.normalizedDelta_arg_congruent_neg_six_canonical
+
+#print axioms Integration.BishopRound11MachinReplayProbe.source_manifest_literal_receipt
+#print axioms Integration.BishopRound11MachinReplayProbe.canonical_binding_inhabited
+#print axioms Integration.BishopRound11MachinReplayProbe.canonical_route_delta_same_object
+#print axioms Integration.BishopRound11MachinReplayProbe.canonical_sixfold_phase_available

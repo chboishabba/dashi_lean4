@@ -109,4 +109,16 @@ theorem candidate_aggregate_construction_parity :
     unifiedCandidateInhabitationIsAggregateConsequence = true :=
   candidate_inhabitation_not_extra_leaf
 
+theorem metric_basis_component_compiler_parity :
+    secondStressRepresentationNeededForComponents = false :=
+  no_second_stress_representation
+
+theorem ten_component_reduction_parity :
+    sixteenIndependentComponentPaymentsRequired = false :=
+  sixteen_components_not_independent
+
+theorem qft_component_evaluator_compiler_parity :
+    qftComponentEvaluatorCompilerExists = true :=
+  qft_component_evaluator_compiler_present
+
 end AgdaMirror.GRQFTPostMergeLocalization

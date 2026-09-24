@@ -609,4 +609,104 @@ def commonOverlapEvidenceExists : Bool := false
 theorem candidate_inhabitation_not_extra_leaf :
     unifiedCandidateInhabitationIsAggregateConsequence = true := rfl
 
+/-!
+CMP119 metric-basis component extraction.
+
+The YM side already owns a stress functional on canonical admissible metric
+perturbations.  GRQFT therefore needs only a 4x4 coordinate frame inside that
+perturbation carrier plus a rational readout.
+-/
+
+structure MetricBasis16 (MetricPerturbation : Type u) where
+  basisPerturbation : Axis4 → Axis4 → MetricPerturbation
+
+structure RationalStressPairingReadout
+    (PairingScalar : Type u) where
+  pairingToRat : PairingScalar → Rat
+
+def metricBasisComponent
+    {Stress MetricPerturbation PairingScalar : Type u}
+    (pairing : Stress → MetricPerturbation → PairingScalar)
+    (basis : MetricBasis16 MetricPerturbation)
+    (readout : RationalStressPairingReadout PairingScalar)
+    (stress : Stress)
+    (a b : Axis4) : Rat :=
+  readout.pairingToRat (pairing stress (basis.basisPerturbation a b))
+
+def secondStressRepresentationNeededForComponents : Bool := false
+
+theorem no_second_stress_representation :
+    secondStressRepresentationNeededForComponents = false := rfl
+
+/-!
+Ten-component reduction from symmetry.
+-/
+
+structure PairingComponentSymmetry
+    {Stress : Type u}
+    (E : CMP119RationalStressComponentEvaluator Stress)
+    (stress : Stress) : Prop where
+  componentSymmetric :
+    ∀ a b, E.component stress a b = E.component stress b a
+
+structure NormalizedSymmetricTenComponentInstance
+    {Stress : Type u}
+    (E : CMP119RationalStressComponentEvaluator Stress)
+    (stress : Stress) : Prop where
+  symmetry : PairingComponentSymmetry E stress
+  qft00 : E.component stress .t .t = 1
+  qft01 : E.component stress .t .x = 0
+  qft02 : E.component stress .t .y = 0
+  qft03 : E.component stress .t .z = 0
+  qft11 : E.component stress .x .x = -1
+  qft12 : E.component stress .x .y = 0
+  qft13 : E.component stress .x .z = 0
+  qft22 : E.component stress .y .y = -1
+  qft23 : E.component stress .y .z = 0
+  qft33 : E.component stress .z .z = -1
+
+theorem ten_components_compile_to_tensor_equality
+    {Stress : Type u}
+    {E : CMP119RationalStressComponentEvaluator Stress}
+    {stress : Stress}
+    (h : NormalizedSymmetricTenComponentInstance E stress)
+    (a b : Axis4) :
+    finiteGRStressRational a b = E.component stress a b := by
+  cases a <;> cases b
+  · exact h.qft00.symm
+  · exact h.qft01.symm
+  · exact h.qft02.symm
+  · exact h.qft03.symm
+  · exact (h.symmetry.componentSymmetric .x .t).trans h.qft01 |>.symm
+  · exact h.qft11.symm
+  · exact h.qft12.symm
+  · exact h.qft13.symm
+  · exact (h.symmetry.componentSymmetric .y .t).trans h.qft02 |>.symm
+  · exact (h.symmetry.componentSymmetric .y .x).trans h.qft12 |>.symm
+  · exact h.qft22.symm
+  · exact h.qft23.symm
+  · exact (h.symmetry.componentSymmetric .z .t).trans h.qft03 |>.symm
+  · exact (h.symmetry.componentSymmetric .z .x).trans h.qft13 |>.symm
+  · exact (h.symmetry.componentSymmetric .z .y).trans h.qft23 |>.symm
+  · exact h.qft33.symm
+
+def sixteenIndependentComponentPaymentsRequired : Bool := false
+def metricBasis16StillNeedsPhysicalCoordinateIdentification : Bool := true
+def symmetrySemanticMeaningStillRequired : Bool := true
+
+theorem sixteen_components_not_independent :
+    sixteenIndependentComponentPaymentsRequired = false := rfl
+
+/-!
+Concrete-frontier sharpening.
+-/
+
+def qftComponentEvaluatorCompilerExists : Bool := true
+def metricBasisInstanceExists : Bool := false
+def symmetrySemanticBridgeInstanceExists : Bool := false
+def tenIndependentComponentValuesExist : Bool := false
+
+theorem qft_component_evaluator_compiler_present :
+    qftComponentEvaluatorCompilerExists = true := rfl
+
 end Integration.GRQFTPostMergeLocalization

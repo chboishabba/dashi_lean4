@@ -318,4 +318,361 @@ theorem QuarticFourSignedPolePair.signedProfileAbsMomentEight_le_supportSq_mul_f
         W.signedProfileAbsMomentSix_le_fourthLipschitz
         (sq_nonneg (Real.pi + 1)))
 
+
+
+/-!
+## Same-object normalized kernel bound
+
+The mixed scalar theorem now feeds the actual selected signed profile.  The
+degree-six Taylor reference integrates exactly to the already-exposed
+quartic polynomial plus signed sixth harmonic because M0=M2=0, M4=-4S, and
+M6 is retained with sign.
+-/
+
+theorem QuarticFourSignedPolePair.mixedDegreeSix_referenceIntegral
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    (∫ u : ℝ,
+      quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t u
+        * quarticSignedPoleMixedDegreeSixTaylor (alpha*u) (q*u))
+      =
+    W.completeJointQuarticPolynomial alpha q
+      + W.completeJointSixthHarmonic alpha q := by
+  let P : ℝ -> ℝ :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  let c2 : ℝ := (alpha^2-q^2)/2
+  let c4 : ℝ :=
+    (alpha^4+q^4-6*alpha^2*q^2)/24
+  let c6 : ℝ :=
+    quarticSignedPoleSixthPhaseReal alpha q / 720
+
+  have hP : Continuous P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have h0 : Integrable P :=
+    hP.integrable_of_hasCompactSupport hPc
+  have h2 : Integrable (fun u : ℝ => P u * u^2) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have h4 : Integrable (fun u : ℝ => P u * u^4) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have h6 : Integrable (fun u : ℝ => P u * u^6) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+
+  have hM0 : ∫ u : ℝ, P u = 0 := by
+    change profileZerothMoment P = 0
+    exact quarticFourSignedPoleCombinedProfile_zeroth_zero W.Rpos
+  have hM2 : ∫ u : ℝ, P u * u^2 = 0 := by
+    change profileSecondMoment P = 0
+    exact quarticFourSignedPoleCombinedProfile_second_zero
+      W.Rpos W.J2Half W.J2Two
+  have hM4 :
+      ∫ u : ℝ, P u * u^4 = -4 * W.targetStrength := by
+    change profileFourthMoment P = -4 * W.targetStrength
+    rw [quarticFourSignedPoleCombinedProfile_fourth W.Rpos]
+    unfold QuarticFourSignedPolePair.targetStrength
+    ring
+  have hM6 :
+      ∫ u : ℝ, P u * u^6 = W.signedProfileMomentSix := by
+    rfl
+
+  rw [show
+      (fun u : ℝ =>
+        P u * quarticSignedPoleMixedDegreeSixTaylor (alpha*u) (q*u))
+      =
+      fun u =>
+        P u
+          + c2 * (P u * u^2)
+          + c4 * (P u * u^4)
+          + c6 * (P u * u^6) by
+    funext u
+    dsimp [c2,c4,c6]
+    unfold quarticSignedPoleMixedDegreeSixTaylor
+      quarticSignedPoleSixthPhaseReal
+    ring]
+  rw [integral_add
+        (h0.add (h2.const_mul c2)).add (h4.const_mul c4)
+        (h6.const_mul c6),
+      integral_add (h0.add (h2.const_mul c2)) (h4.const_mul c4),
+      integral_add h0 (h2.const_mul c2),
+      integral_const_mul, integral_const_mul, integral_const_mul,
+      hM0,hM2,hM4,hM6]
+  dsimp [c2,c4,c6]
+  unfold QuarticFourSignedPolePair.completeJointQuarticPolynomial
+    QuarticFourSignedPolePair.completeJointSixthHarmonic
+    quarticSignedPoleSixthPhaseReal
+  ring
+
+theorem QuarticFourSignedPolePair.completeJointBeyondSixthRemainder_eq_integral
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.completeJointBeyondSixthRemainder alpha q
+      =
+    ∫ u : ℝ,
+      quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t u
+        *
+      (Real.cosh (alpha*u) * Real.cos (q*u)
+        - quarticSignedPoleMixedDegreeSixTaylor (alpha*u) (q*u)) := by
+  let P : ℝ -> ℝ :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hexact :
+      Integrable
+        (fun u : ℝ =>
+          P u * Real.cosh (alpha*u) * Real.cos (q*u)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) ((hPc.mul_right).mul_right)
+  have href :
+      Integrable
+        (fun u : ℝ =>
+          P u * quarticSignedPoleMixedDegreeSixTaylor (alpha*u) (q*u)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by
+        dsimp [P]
+        unfold quarticSignedPoleMixedDegreeSixTaylor
+          quarticSignedPoleSixthPhaseReal
+        fun_prop)
+      hPc.mul_right
+
+  have hK :=
+    W.signedNormalizedPairKernel_eq_combinedIntegral
+      (alpha:=alpha) (q:=q)
+  have hT :=
+    W.mixedDegreeSix_referenceIntegral
+      (alpha:=alpha) (q:=q)
+  have hsplit :=
+    W.signedNormalizedPairKernel_eq_completeQuarticSixth
+      (alpha:=alpha) (q:=q)
+
+  unfold QuarticFourSignedPolePair.completeJointBeyondSixthRemainder
+  have hrem :
+      W.completeJointQuarticRemainder alpha q
+        - W.completeJointSixthHarmonic alpha q
+      =
+      W.signedNormalizedPairKernel alpha q
+        - (W.completeJointQuarticPolynomial alpha q
+            + W.completeJointSixthHarmonic alpha q) := by
+    rw [W.signedNormalizedPairKernel_eq_completeQuarticJet]
+    ring
+  rw [hrem,hK,← hT,← integral_sub hexact href]
+  apply integral_congr_ae
+  exact Filter.Eventually.of_forall fun u => by
+    dsimp [P]
+    ring
+
+theorem QuarticFourSignedPolePair.completeJointBeyondSixthRemainder_abs_le_eighth
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (ha : |alpha| <= quarticSignedPoleCanonicalLocalRadius)
+    (hq : |q| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.completeJointBeyondSixthRemainder alpha q|
+      <=
+    quarticSignedPoleMixedEighthEnvelope alpha q
+      * W.signedProfileAbsMomentEight := by
+  let P : ℝ -> ℝ :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  let E : ℝ := quarticSignedPoleMixedEighthEnvelope alpha q
+  have hP : Continuous P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hi :
+      Integrable
+        (fun u : ℝ =>
+          P u *
+          (Real.cosh (alpha*u) * Real.cos (q*u)
+            - quarticSignedPoleMixedDegreeSixTaylor (alpha*u) (q*u))) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by
+        dsimp [P]
+        unfold quarticSignedPoleMixedDegreeSixTaylor
+          quarticSignedPoleSixthPhaseReal
+        fun_prop)
+      hPc.mul_right
+  have hmaj :
+      Integrable
+        (fun u : ℝ => E * (|P u| * |u|^8)) :=
+    (compactProfile_absMoment_integrable hP hPc 8).const_mul E
+
+  rw [W.completeJointBeyondSixthRemainder_eq_integral]
+  calc
+    |∫ u : ℝ,
+      P u *
+      (Real.cosh (alpha*u) * Real.cos (q*u)
+        - quarticSignedPoleMixedDegreeSixTaylor (alpha*u) (q*u))|
+      <=
+    ∫ u : ℝ,
+      |P u *
+      (Real.cosh (alpha*u) * Real.cos (q*u)
+        - quarticSignedPoleMixedDegreeSixTaylor (alpha*u) (q*u))| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ u : ℝ, E * (|P u| * |u|^8) := by
+      apply integral_mono hi.abs hmaj
+      intro u
+      by_cases hz : P u = 0
+      · simp [hz]
+      · have hau :=
+          W.abs_q_mul_u_le_one_of_local
+            (q:=alpha) ha hz
+        have hqu :=
+          W.abs_q_mul_u_le_one_of_local
+            (q:=q) hq hz
+        have hmixed :=
+          real_cosh_mul_cos_sub_mixedSixth_abs_le_eighth
+            hau hqu
+        have hu8 : |u|^8 = u^8 := by
+          rw [← abs_pow, abs_of_nonneg (by positivity : 0 <= u^8)]
+        have hscale :
+            quarticSignedPoleMixedEighthEnvelope (alpha*u) (q*u)
+              =
+            E * |u|^8 := by
+          dsimp [E]
+          unfold quarticSignedPoleMixedEighthEnvelope
+          rw [hu8]
+          ring
+        rw [abs_mul,hscale] at *
+        exact mul_le_mul_of_nonneg_left hmixed (abs_nonneg (P u))
+    _ =
+    E * W.signedProfileAbsMomentEight := by
+      unfold QuarticFourSignedPolePair.signedProfileAbsMomentEight
+        compactProfileAbsMoment
+      dsimp [P,E]
+      rw [integral_const_mul]
+
+theorem QuarticFourSignedPolePair.completeJointBeyondSixthRemainder_abs_le_G1
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (ha : |alpha| <= quarticSignedPoleCanonicalLocalRadius)
+    (hq : |q| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.completeJointBeyondSixthRemainder alpha q|
+      <=
+    quarticSignedPoleMixedEighthEnvelope alpha q
+      * ((Real.pi+1)^2 * W.fourthLipschitz) := by
+  have hbase :=
+    W.completeJointBeyondSixthRemainder_abs_le_eighth ha hq
+  have hE :
+      0 <= quarticSignedPoleMixedEighthEnvelope alpha q := by
+    unfold quarticSignedPoleMixedEighthEnvelope
+    positivity
+  exact hbase.trans
+    (mul_le_mul_of_nonneg_left
+      W.signedProfileAbsMomentEight_le_supportSq_mul_fourthLipschitz
+      hE)
+
+
+/-!
+## Literal physical r^-10 transport
+
+After the outer pair normalization r^-2, the homogeneous eighth envelope
+contributes at physical scale r^-10.
+-/
+
+def QuarticFourSignedPolePair.literalCompleteEighthPhysicalPolynomial
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let a := heightOf sigma
+  let d := (sigma : ℂ).im - t
+  a^8 / 30000
+    + d^8 / 17000
+    + (1/300 : ℝ)
+        * (a^2*d^6 + a^4*d^4 + a^6*d^2)
+
+def QuarticFourSignedPolePair.literalCompleteEighthRemainderBound
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+    * W.signedProfileAbsMomentEight
+    * W.literalCompleteEighthPhysicalPolynomial sigma
+    / (t/16)^10
+
+theorem QuarticFourSignedPolePair.literalCompleteEighthPhysicalPolynomial_nonneg
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    0 <= W.literalCompleteEighthPhysicalPolynomial sigma := by
+  unfold QuarticFourSignedPolePair.literalCompleteEighthPhysicalPolynomial
+  positivity
+
+theorem QuarticFourSignedPolePair.mixedEighthEnvelope_physical_rescale
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    quarticSignedPoleMixedEighthEnvelope
+        (heightOf sigma/(t/16))
+        (((sigma : ℂ).im-t)/(t/16))
+      =
+    W.literalCompleteEighthPhysicalPolynomial sigma / (t/16)^8 := by
+  unfold quarticSignedPoleMixedEighthEnvelope
+    QuarticFourSignedPolePair.literalCompleteEighthPhysicalPolynomial
+  dsimp
+  have hr : t/16 != 0 := by positivity
+  field_simp [hr]
+  ring
+
+theorem QuarticFourSignedPolePair.literalCompleteJointBeyondSixthRemainder_abs_le
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros)
+    (ha :
+      |heightOf sigma/(t/16)|
+        <= quarticSignedPoleCanonicalLocalRadius)
+    (hq :
+      |((sigma : ℂ).im-t)/(t/16)|
+        <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.literalCompleteJointBeyondSixthRemainder sigma|
+      <= W.literalCompleteEighthRemainderBound sigma := by
+  unfold QuarticFourSignedPolePair.literalCompleteJointBeyondSixthRemainder
+  dsimp
+  have hr2 : 0 < (t/16)^2 := by positivity
+  have hm :
+      0 <= ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) := by positivity
+  rw [abs_mul, abs_div, abs_of_nonneg hm, abs_of_pos hr2]
+  have hnorm :=
+    W.completeJointBeyondSixthRemainder_abs_le_eighth ha hq
+  have hfac :
+      0 <= ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / (t/16)^2 := by
+    positivity
+  have hscaled :=
+    mul_le_mul_of_nonneg_left hnorm hfac
+  rw [W.mixedEighthEnvelope_physical_rescale ht sigma] at hscaled
+  unfold QuarticFourSignedPolePair.literalCompleteEighthRemainderBound
+  have hr : 0 < t/16 := by positivity
+  calc
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / (t/16)^2
+      *
+    |W.completeJointBeyondSixthRemainder
+      (heightOf sigma/(t/16))
+      (((sigma : ℂ).im-t)/(t/16))|
+      <=
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / (t/16)^2
+      *
+    (W.literalCompleteEighthPhysicalPolynomial sigma / (t/16)^8
+      * W.signedProfileAbsMomentEight) := by
+        simpa [mul_comm, mul_left_comm, mul_assoc] using hscaled
+    _ =
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+      * W.signedProfileAbsMomentEight
+      * W.literalCompleteEighthPhysicalPolynomial sigma
+      / (t/16)^10 := by
+        field_simp [hr.ne']
+        ring
+
 end Synthesis

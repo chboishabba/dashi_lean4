@@ -180,6 +180,50 @@ theorem eval_surjective :
     Function.Surjective eval :=
   fun r => ⟨encode r, eval_encode r⟩
 
+/-- The exact Bishop equivalence relation is an actual Lean Setoid. -/
+def bishopSetoid : Setoid RegularRatReal where
+  r := Equiv
+  iseqv := {
+    refl := fun x => equiv_of_eval_eq rfl
+    symm := fun h => equiv_of_eval_eq (eval_respects_equiv h).symm
+    trans := fun hxy hyz =>
+      equiv_of_eval_eq
+        ((eval_respects_equiv hxy).trans (eval_respects_equiv hyz))
+  }
+
+/-- Evaluation descends to the Bishop quotient. -/
+def evalQuot : Quotient bishopSetoid → ℝ :=
+  Quotient.lift eval (fun _ _ h => eval_respects_equiv h)
+
+/-- Canonical inclusion of Lean Real into the Bishop quotient. -/
+def encodeQuot (r : ℝ) : Quotient bishopSetoid :=
+  Quotient.mk bishopSetoid (encode r)
+
+@[simp]
+theorem evalQuot_encodeQuot (r : ℝ) :
+    evalQuot (encodeQuot r) = r :=
+  eval_encode r
+
+@[simp]
+theorem encodeQuot_evalQuot
+    (x : Quotient bishopSetoid) :
+    encodeQuot (evalQuot x) = x := by
+  refine Quotient.inductionOn x ?_
+  intro representative
+  apply Quotient.sound
+  exact encode_eval_equiv representative
+
+/-- The vendored Bishop completion quotient is equivalent to ordinary Lean Real.
+
+This is an equivalence of the completed carriers.  It does not identify raw
+regular-sequence representatives definitionally. -/
+def bishopCompletionEquivReal :
+    Quotient bishopSetoid ≃ ℝ where
+  toFun := evalQuot
+  invFun := encodeQuot
+  left_inv := encodeQuot_evalQuot
+  right_inv := evalQuot_encodeQuot
+
 /-- Setoid-faithful completion equivalence receipt. -/
 structure CompletionEquivalenceBoundary where
   rationalApproximationEncodingOwned : Bool
@@ -188,6 +232,8 @@ structure CompletionEquivalenceBoundary where
   encodeEvalBishopEquivalenceOwned : Bool
   evaluatorSurjective : Bool
   evaluatorFaithfulOnSetoidClasses : Bool
+  quotientSetoidConstructed : Bool
+  quotientEquivalentToLeanReal : Bool
   rawRepresentativeIdentityClaimed : Bool
 
 def completionEquivalenceBoundary : CompletionEquivalenceBoundary where
@@ -197,6 +243,8 @@ def completionEquivalenceBoundary : CompletionEquivalenceBoundary where
   encodeEvalBishopEquivalenceOwned := true
   evaluatorSurjective := true
   evaluatorFaithfulOnSetoidClasses := true
+  quotientSetoidConstructed := true
+  quotientEquivalentToLeanReal := true
   rawRepresentativeIdentityClaimed := false
 
 end

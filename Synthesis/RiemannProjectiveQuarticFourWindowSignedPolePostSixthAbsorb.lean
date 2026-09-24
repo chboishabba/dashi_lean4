@@ -765,4 +765,417 @@ theorem QuarticFourSignedPolePair.sixthCentral_vertical_sq_lt_four
   nlinarith
 
 
+
+/-!
+## Fixed-width central sixth debt
+
+The previous cone split reduces the potentially adverse signed-sixth carrier,
+under M6_signed(W) >= 0, to the complement of 16*a^2 <= d^2.  That complement
+satisfies |d| < 2.  We now enlarge it harmlessly to the closed fixed strip
+|d| <= 2 and pay only that strip.
+
+The normalized radius 32/t has physical half-width exactly 2.  Therefore the
+existing endpoint-safe local multiplicity theorem counts it by
+
+  N(t-3,t+2).
+
+No full canonical-local sixth count reappears.
+-/
+
+def quarticSignedPoleSixthFixedRadius (t : ℝ) : ℝ :=
+  32 / t
+
+theorem quarticSignedPoleSixthFixedRadius_nonneg
+    {t : ℝ} (ht : 0 < t) :
+    0 <= quarticSignedPoleSixthFixedRadius t := by
+  unfold quarticSignedPoleSixthFixedRadius
+  positivity
+
+theorem quarticSignedPoleSixthFixedHalfWidth
+    {t : ℝ} (ht : 0 < t) :
+    quarticSignedPoleLocalHalfWidth
+        t (quarticSignedPoleSixthFixedRadius t)
+      = 2 := by
+  unfold quarticSignedPoleLocalHalfWidth
+    quarticSignedPoleSixthFixedRadius
+  field_simp [ht.ne']
+  ring
+
+theorem quarticSignedPoleSixthCentral_mem_fixedLocal
+    {t : ℝ} (ht : 0 < t)
+    (rho : Zeros)
+    (hcentral :
+      ¬ 16 * heightOf rho^2 <= ((rho : ℂ).im-t)^2) :
+    quarticSignedPoleLocal
+      t (quarticSignedPoleSixthFixedRadius t) rho := by
+  have hsquare :=
+    QuarticFourSignedPolePair.sixthCentral_vertical_sq_lt_four
+      (t:=t) rho hcentral
+  have habs : |(rho : ℂ).im-t| < 2 := by
+    have h0 : 0 <= |(rho : ℂ).im-t| := abs_nonneg _
+    have heq :
+        |(rho : ℂ).im-t|^2 = ((rho : ℂ).im-t)^2 := by
+      rw [sq_abs]
+    rw [← heq] at hsquare
+    nlinarith
+  have heta :=
+    quarticSignedPoleSixthFixedRadius_nonneg ht
+  rw [quarticSignedPoleLocal_iff_closed_ordinate_window
+      ht heta rho]
+  rw [quarticSignedPoleSixthFixedHalfWidth ht]
+  rw [abs_lt] at habs
+  constructor <;> linarith
+
+theorem QuarticFourSignedPolePair.literalPhysicalSixthPhase_abs_le_128_of_fixedLocal
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hl :
+      quarticSignedPoleLocal
+        t (quarticSignedPoleSixthFixedRadius t) rho) :
+    |W.literalPhysicalSixthPhase rho| <= 128 := by
+  have heta :=
+    quarticSignedPoleSixthFixedRadius_nonneg ht
+  have hclosed :=
+    (quarticSignedPoleLocal_iff_closed_ordinate_window
+      ht heta rho).mp hl
+  rw [quarticSignedPoleSixthFixedHalfWidth ht] at hclosed
+  have hdabs : |(rho : ℂ).im-t| <= 2 := by
+    rw [abs_le]
+    constructor <;> linarith
+  have haabs := zetaZero_height_abs_le_half rho
+
+  have ha2 : heightOf rho^2 <= (1/2 : ℝ)^2 := by
+    have h := pow_le_pow_left₀ (abs_nonneg (heightOf rho)) haabs 2
+    rw [← abs_pow, abs_of_nonneg (sq_nonneg (heightOf rho))] at h
+    simpa using h
+  have ha4 : heightOf rho^4 <= (1/2 : ℝ)^4 := by
+    have h := pow_le_pow_left₀ (abs_nonneg (heightOf rho)) haabs 4
+    rw [← abs_pow, abs_of_nonneg (by positivity : 0 <= heightOf rho^4)] at h
+    simpa using h
+  have ha6 : heightOf rho^6 <= (1/2 : ℝ)^6 := by
+    have h := pow_le_pow_left₀ (abs_nonneg (heightOf rho)) haabs 6
+    rw [← abs_pow, abs_of_nonneg (by positivity : 0 <= heightOf rho^6)] at h
+    simpa using h
+
+  have hd2 : ((rho : ℂ).im-t)^2 <= (2 : ℝ)^2 := by
+    have h := pow_le_pow_left₀ (abs_nonneg ((rho : ℂ).im-t)) hdabs 2
+    rw [← abs_pow, abs_of_nonneg (sq_nonneg ((rho : ℂ).im-t))] at h
+    simpa using h
+  have hd4 : ((rho : ℂ).im-t)^4 <= (2 : ℝ)^4 := by
+    have h := pow_le_pow_left₀ (abs_nonneg ((rho : ℂ).im-t)) hdabs 4
+    rw [← abs_pow, abs_of_nonneg (by positivity :
+      0 <= ((rho : ℂ).im-t)^4)] at h
+    simpa using h
+  have hd6 : ((rho : ℂ).im-t)^6 <= (2 : ℝ)^6 := by
+    have h := pow_le_pow_left₀ (abs_nonneg ((rho : ℂ).im-t)) hdabs 6
+    rw [← abs_pow, abs_of_nonneg (by positivity :
+      0 <= ((rho : ℂ).im-t)^6)] at h
+    simpa using h
+
+  have ha4d2 :
+      heightOf rho^4 * ((rho : ℂ).im-t)^2 <= (1 : ℝ) := by
+    have h :=
+      mul_le_mul ha4 hd2
+        (by positivity : 0 <= ((rho : ℂ).im-t)^2)
+        (by positivity : 0 <= (1/2 : ℝ)^4)
+    norm_num at h ⊢
+    linarith
+  have ha2d4 :
+      heightOf rho^2 * ((rho : ℂ).im-t)^4 <= (4 : ℝ) := by
+    have h :=
+      mul_le_mul ha2 hd4
+        (by positivity : 0 <= ((rho : ℂ).im-t)^4)
+        (by positivity : 0 <= (1/2 : ℝ)^2)
+    norm_num at h ⊢
+    linarith
+
+  unfold QuarticFourSignedPolePair.literalPhysicalSixthPhase
+  rw [abs_le]
+  constructor
+  · nlinarith [sq_nonneg (heightOf rho),
+      sq_nonneg ((rho : ℂ).im-t),
+      ha4d2, ha2d4]
+  · nlinarith [sq_nonneg (heightOf rho),
+      sq_nonneg ((rho : ℂ).im-t),
+      ha4d2, ha2d4]
+
+def QuarticFourSignedPolePair.literalFixedStripSixthDebtAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal
+        t (quarticSignedPoleSixthFixedRadius t) rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        |W.literalCompleteJointSixthHarmonic rho|
+      else
+        0
+    else
+      0
+
+theorem QuarticFourSignedPolePair.literalLocalSignedSixthCentralAt_le_fixedStripDebt
+    {t eta : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalSignedSixthCentralAt eta n
+      <= W.literalFixedStripSixthDebtAt n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalSignedSixthCentralAt
+    QuarticFourSignedPolePair.literalFixedStripSixthDebtAt
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · by_cases houter :
+        16 * heightOf rho^2 <= ((rho : ℂ).im-t)^2
+      · simp [hl,hoff,houter]
+        positivity
+      · have hfixed :=
+          quarticSignedPoleSixthCentral_mem_fixedLocal
+            ht rho houter
+        simp [hl,hoff,houter,hfixed]
+        exact le_abs_self _
+    · simp [hl,hoff]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalCompleteJointSixthHarmonic_abs_le_fixed
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hl :
+      quarticSignedPoleLocal
+        t (quarticSignedPoleSixthFixedRadius t) rho) :
+    |W.literalCompleteJointSixthHarmonic rho|
+      <=
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+      * W.signedProfileAbsMomentSix
+      * 128
+      / (720 * (t/16)^8) := by
+  rw [W.literalCompleteJointSixthHarmonic_eq_physical ht rho]
+  rw [abs_div, abs_mul, abs_mul]
+  have hm :
+      |((zetaZeroConfig).mult (rho : ℂ) : ℝ)|
+        = ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
+    rw [abs_of_nonneg]
+    positivity
+  rw [hm]
+  have hM6 := W.signedProfileMomentSix_abs_le
+  have hphase :=
+    W.literalPhysicalSixthPhase_abs_le_128_of_fixedLocal
+      ht rho hl
+  have hden :
+      0 < |720 * (t/16)^8| := by
+    rw [abs_of_pos]
+    · positivity
+    · positivity
+  apply div_le_div_of_nonneg_right _ hden.le
+  have hm0 :
+      0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
+    positivity
+  exact mul_le_mul_of_nonneg_left
+    (mul_le_mul hM6 hphase
+      (abs_nonneg _)
+      W.signedProfileAbsMomentSix_nonneg)
+    hm0
+
+theorem QuarticFourSignedPolePair.literalFixedStripSixthDebtAt_le_multiplicity
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalFixedStripSixthDebtAt n
+      <=
+    (W.signedProfileAbsMomentSix * 128
+        / (720 * (t/16)^8))
+      *
+    (W.literalLocalMultiplicityAt
+      (quarticSignedPoleSixthFixedRadius t) n : ℝ) := by
+  classical
+  have hcoef :
+      0 <= W.signedProfileAbsMomentSix * 128
+        / (720 * (t/16)^8) := by
+    positivity
+  unfold QuarticFourSignedPolePair.literalFixedStripSixthDebtAt
+    QuarticFourSignedPolePair.literalLocalMultiplicityAt
+  rw [Nat.cast_sum, Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hl :
+      quarticSignedPoleLocal
+        t (quarticSignedPoleSixthFixedRadius t) rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl,hoff]
+      have hterm :=
+        W.literalCompleteJointSixthHarmonic_abs_le_fixed
+          ht rho hl
+      simpa [mul_assoc, mul_left_comm, mul_comm] using hterm
+    · simp [hl,hoff]
+      exact mul_nonneg hcoef (by positivity)
+  · simp [hl]
+    exact mul_nonneg hcoef (by positivity)
+
+theorem QuarticFourSignedPolePair.literalFixedStripSixthDebtAt_le_fixedWindowN
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalFixedStripSixthDebtAt n
+      <=
+    (W.signedProfileAbsMomentSix * 128
+        / (720 * (t/16)^8))
+      *
+    (zetaZeroConfig.N (t-3) (t+2) : ℝ) := by
+  have hbase :=
+    W.literalFixedStripSixthDebtAt_le_multiplicity ht n
+  have heta :=
+    quarticSignedPoleSixthFixedRadius_nonneg ht
+  have hcountNat :=
+    W.literalLocalMultiplicityAt_le_expandedWindowN
+      ht heta
+      (eta:=quarticSignedPoleSixthFixedRadius t) n
+  rw [quarticSignedPoleSixthFixedHalfWidth ht] at hcountNat
+  have hcount :
+      (W.literalLocalMultiplicityAt
+        (quarticSignedPoleSixthFixedRadius t) n : ℝ)
+        <=
+      (zetaZeroConfig.N (t-3) (t+2) : ℝ) := by
+    exact_mod_cast hcountNat
+  have hcoef :
+      0 <= W.signedProfileAbsMomentSix * 128
+        / (720 * (t/16)^8) := by
+    positivity
+  exact hbase.trans
+    (mul_le_mul_of_nonneg_left hcount hcoef)
+
+theorem QuarticFourSignedPolePair.literalFixedStripSixthDebtAt_le_G1_fixedWindowN
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalFixedStripSixthDebtAt n
+      <=
+    (W.fourthLipschitz * 128
+        / (720 * (t/16)^8))
+      *
+    (zetaZeroConfig.N (t-3) (t+2) : ℝ) := by
+  have hbase :=
+    W.literalFixedStripSixthDebtAt_le_fixedWindowN ht n
+  have hM6 :=
+    W.signedProfileAbsMomentSix_le_fourthLipschitz
+  have hden : 0 < 720 * (t/16)^8 := by positivity
+  have hcoef :
+      W.signedProfileAbsMomentSix * 128
+          / (720 * (t/16)^8)
+        <=
+      W.fourthLipschitz * 128
+          / (720 * (t/16)^8) := by
+    apply div_le_div_of_nonneg_right _ hden.le
+    exact mul_le_mul_of_nonneg_right hM6 (by norm_num)
+  have hN :
+      0 <= (zetaZeroConfig.N (t-3) (t+2) : ℝ) := by
+    positivity
+  exact hbase.trans
+    (mul_le_mul_of_nonneg_right hcoef hN)
+
+theorem QuarticFourSignedPolePair.literalLocalSignedSixthHarmonicAt_le_G1_fixedWindowN
+    {t eta : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hM6 : 0 <= W.signedProfileMomentSix)
+    (n : ℕ) :
+    W.literalLocalSignedSixthHarmonicAt eta n
+      <=
+    (W.fourthLipschitz * 128
+        / (720 * (t/16)^8))
+      *
+    (zetaZeroConfig.N (t-3) (t+2) : ℝ) := by
+  calc
+    W.literalLocalSignedSixthHarmonicAt eta n
+      <= W.literalLocalSignedSixthCentralAt eta n :=
+        W.literalLocalSignedSixthHarmonicAt_le_central
+          ht hM6 n
+    _ <= W.literalFixedStripSixthDebtAt n :=
+        W.literalLocalSignedSixthCentralAt_le_fixedStripDebt
+          ht n
+    _ <=
+      (W.fourthLipschitz * 128
+          / (720 * (t/16)^8))
+        *
+      (zetaZeroConfig.N (t-3) (t+2) : ℝ) :=
+        W.literalFixedStripSixthDebtAt_le_G1_fixedWindowN
+          ht n
+
+def QuarticFourSignedPolePair.postSixthFixedStripG1BudgetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (EV : ℝ) (n : ℕ) : ℝ :=
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  let NZ : ℝ :=
+    (zetaZeroConfig.N (t-r-1) (t+r) : ℝ)
+  let N6 : ℝ :=
+    (zetaZeroConfig.N (t-3) (t+2) : ℝ)
+  (W.targetStrength / (6 * (t/16)^6))
+    *
+  (
+    EV
+      + (3/2 : ℝ) * r^2 * NZ
+      - (2/5 : ℝ) * r^5
+          * quarticSignedPoleMuLowerEnvelope (t-r)
+  )
+    +
+  (W.fourthLipschitz * 128
+      / (720 * (t/16)^8)) * N6
+    +
+  (((Real.pi+1)^2 * W.fourthLipschitz)
+      * quarticSignedPoleLocalEighthPhysicalEnvelope t eta
+      / (t/16)^10) * NZ
+    +
+  W.literalFarExactAt eta n
+
+theorem QuarticFourSignedPolePair.postSixthV4H4G1BudgetAt_le_fixedStripG1_of_M6_nonneg
+    {t EV : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hM6 : 0 <= W.signedProfileMomentSix)
+    (n : ℕ) :
+    W.postSixthV4H4G1BudgetAt EV n
+      <= W.postSixthFixedStripG1BudgetAt EV n := by
+  have hsix :=
+    W.literalLocalSignedSixthHarmonicAt_le_G1_fixedWindowN
+      ht hM6
+      (eta:=quarticSignedPoleCanonicalLocalRadius) n
+  unfold QuarticFourSignedPolePair.postSixthV4H4G1BudgetAt
+    QuarticFourSignedPolePair.postSixthFixedStripG1BudgetAt
+  dsimp
+  linarith
+
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_postSixthFixedStripG1BudgetAt
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hM6 : 0 <= W.signedProfileMomentSix)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ))
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV) :
+    W.literalOffOrdExactAt n
+      <= W.postSixthFixedStripG1BudgetAt EV n := by
+  have h0 :=
+    W.literalOffOrdExactAt_le_postSixthV4H4AbsorbBudgetAt
+      ht n hn hV
+  have h1 :=
+    W.postSixthV4H4AbsorbBudgetAt_le_G1
+      (by linarith : 0 < t) n
+  have h2 :=
+    W.postSixthV4H4G1BudgetAt_le_fixedStripG1_of_M6_nonneg
+      (by linarith : 0 < t) hM6 n
+  exact h0.trans (h1.trans h2)
+
+
 end Synthesis

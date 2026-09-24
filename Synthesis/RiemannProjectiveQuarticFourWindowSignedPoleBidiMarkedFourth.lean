@@ -2680,4 +2680,152 @@ theorem QuarticFourSignedPolePair.bidiMarkedPoleCombinationTrunc_eq
     QuarticFourSignedPolePair.poleTwo
   ring
 
+
+/-!
+## Generic fourth-order Taylor control for marked four-window pairings
+
+This is the analytic bridge from the exact quadratic truncation algebra to the
+actual cosh-marked pairing.  It is deliberately stated for an arbitrary
+continuous weight bounded on the four-window support, so the same theorem
+handles all pole/on-line entries.
+-/
+
+theorem quarticFourWindowPairing_cosh_mark_sub_quadratic_abs_le
+    {R lam mu B K : ℝ}
+    {w : ℝ -> ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1)
+    (hw : Continuous w)
+    (hK : 0 <= K)
+    (hwBound :
+      ∀ v : ℝ,
+        quarticFourWindowProfile R lam mu v ≠ 0 ->
+        |w v| <= K)
+    (hB : |B| <= 1/5) :
+    |quarticFourWindowPairing R lam mu
+        (fun v => Real.cosh (B*v) * w v)
+      -
+      (quarticFourWindowPairing R lam mu w
+        + (B^2/2) *
+          quarticFourWindowPairing R lam mu
+            (fun v => v^2 * w v))|
+      <=
+    (5/96 : ℝ) * |B|^4 * 5^4 * K
+      * taperMass (quarticFourWindowProfile R lam mu) := by
+  let G : ℝ -> ℝ := quarticFourWindowProfile R lam mu
+  let wm : ℝ -> ℝ := fun v => Real.cosh (B*v) * w v
+  let w2 : ℝ -> ℝ := fun v => v^2 * w v
+
+  have hGc : Continuous G := quarticFourWindowProfile_continuous hR
+  have hGk : HasCompactSupport G := quarticFourWindowProfile_compact hR
+  have hwmc : Continuous wm := by
+    dsimp [wm]
+    fun_prop
+  have hw2c : Continuous w2 := by
+    dsimp [w2]
+    fun_prop
+
+  have hpairM :=
+    quarticFourWindowProfile_pairing_eq
+      (lam:=lam) (mu:=mu) hR hwmc
+  have hpair0 :=
+    quarticFourWindowProfile_pairing_eq
+      (lam:=lam) (mu:=mu) hR hw
+  have hpair2 :=
+    quarticFourWindowProfile_pairing_eq
+      (lam:=lam) (mu:=mu) hR hw2c
+
+  have hiM :
+      Integrable (fun v : ℝ => G v * wm v) :=
+    (hGc.mul hwmc).integrable_of_hasCompactSupport hGk.mul_right
+  have hi0 :
+      Integrable (fun v : ℝ => G v * w v) :=
+    (hGc.mul hw).integrable_of_hasCompactSupport hGk.mul_right
+  have hi2 :
+      Integrable (fun v : ℝ => G v * w2 v) :=
+    (hGc.mul hw2c).integrable_of_hasCompactSupport hGk.mul_right
+
+  have hdiff :
+      quarticFourWindowPairing R lam mu
+          (fun v => Real.cosh (B*v) * w v)
+        -
+        (quarticFourWindowPairing R lam mu w
+          + (B^2/2) *
+            quarticFourWindowPairing R lam mu
+              (fun v => v^2 * w v))
+      =
+      ∫ v : ℝ,
+        G v * w v
+          * (Real.cosh (B*v) - 1 - (B*v)^2/2) := by
+    change
+      quarticFourWindowPairing R lam mu wm
+        -
+        (quarticFourWindowPairing R lam mu w
+          + (B^2/2) * quarticFourWindowPairing R lam mu w2)
+      = _
+    rw [← hpairM, ← hpair0, ← hpair2]
+    rw [← integral_const_mul]
+    rw [← integral_add hi0 (hi2.const_mul _)]
+    rw [← integral_sub hiM (hi0.add (hi2.const_mul _))]
+    apply integral_congr_ae
+    exact Filter.Eventually.of_forall fun v => by
+      dsimp [G,wm,w2]
+      ring
+
+  rw [hdiff]
+  have hmaj :
+      Integrable
+        (fun v : ℝ =>
+          ((5/96 : ℝ) * |B|^4 * 5^4 * K) * |G v|) :=
+    (hGc.abs.integrable_of_hasCompactSupport hGk.abs).const_mul _
+
+  calc
+    |∫ v : ℝ,
+      G v * w v
+        * (Real.cosh (B*v) - 1 - (B*v)^2/2)|
+      <=
+    ∫ v : ℝ,
+      |G v * w v
+        * (Real.cosh (B*v) - 1 - (B*v)^2/2)| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ v : ℝ,
+      ((5/96 : ℝ) * |B|^4 * 5^4 * K) * |G v| := by
+      apply integral_mono hiM.abs hmaj
+      intro v
+      by_cases hz : G v = 0
+      · simp [hz]
+      · have hs :=
+          quarticFourWindowProfile_support_abs_lt hR hz
+        have hv5 : |v| < 5 := by
+          have hpi := Real.pi_lt_four
+          linarith
+        have hBv : |B*v| <= 1 := by
+          rw [abs_mul]
+          have hprod :=
+            mul_le_mul hB hv5.le (abs_nonneg v) (by norm_num : (0:ℝ) <= 1/5)
+          nlinarith
+        have hh :=
+          real_cosh_sub_one_sub_sq_half_abs_le hBv
+        have hwb := hwBound v hz
+        rw [abs_mul, abs_mul]
+        have hpow :
+            |B*v|^4 = |B|^4 * |v|^4 := by
+          rw [abs_mul, mul_pow]
+        rw [hpow] at hh
+        have hv4 : |v|^4 <= 5^4 := by
+          exact pow_le_pow_left₀ (abs_nonneg v) hv5.le 4
+        have hgw : 0 <= |G v| := abs_nonneg _
+        have hwv : 0 <= |w v| := abs_nonneg _
+        nlinarith
+    _ =
+    ((5/96 : ℝ) * |B|^4 * 5^4 * K)
+      * taperMass G := by
+      unfold taperMass
+      rw [integral_const_mul]
+    _ =
+    (5/96 : ℝ) * |B|^4 * 5^4 * K
+      * taperMass (quarticFourWindowProfile R lam mu) := by
+      rfl
+
 end Synthesis

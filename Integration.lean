@@ -30,6 +30,7 @@ import Integration.BishopRound11MachinConcreteBinding
 import Integration.BishopRound11MachinCanonicalBinding
 import Integration.BishopRound11MachinBindingManifest
 import Integration.MoonshineEisensteinRound11RouteB
+import Integration.MoonshineEisensteinRound11CanonicalRouteB
 import Integration.MoonshineEisensteinWeld
 import Integration.TernaryHub
 import Integration.Base369Group

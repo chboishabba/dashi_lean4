@@ -2544,4 +2544,110 @@ theorem balanced_shell_family_has_positive_mass
   exact balanced_shell_mass_positive hR (lt_trans hy hyx) hy hyx
 
 
+/-!
+One-parameter balanced DEC-compatible shell family.
+
+Fix x=3/4, y=1/2 and choose
+  M(R)=19R/144.
+
+For R>0:
+  Lambda_in  = 21/(16 R^2)
+  Lambda_out = 35/(24 R^2)
+  a_out(R)   = 17/(48 R)
+  8pi sigma  = 1/(2R)
+  8pi P      = -3/(8R)
+  NEC/DEC margin = 1/(8R)
+  SEC margin     = -1/(4R).
+-/
+
+def balancedFamilyX : Rat := 3/4
+def balancedFamilyY : Rat := 1/2
+def balancedFamilyMass (radius : Rat) : Rat := 19*radius/144
+
+theorem balanced_family_mass_matches_general_choice
+    (radius : Rat) :
+    balancedFamilyMass radius =
+      balancedShellMass radius balancedFamilyX balancedFamilyY := by
+  ring_nf [balancedFamilyMass, balancedShellMass, balancedFamilyX, balancedFamilyY]
+
+theorem balanced_family_lambda_in
+    (radius : Rat) (hR : radius ≠ 0) :
+    lambdaInFromSquareLapse radius balancedFamilyX
+      = 21/(16*radius^2) := by
+  field_simp [lambdaInFromSquareLapse, balancedFamilyX, hR]
+  ring
+
+theorem balanced_family_lambda_out
+    (radius : Rat) (hR : radius ≠ 0) :
+    lambdaOutFromSquareLapse
+      (balancedFamilyMass radius) radius balancedFamilyY
+      = 35/(24*radius^2) := by
+  field_simp [lambdaOutFromSquareLapse, balancedFamilyMass, balancedFamilyY, hR]
+  ring
+
+theorem balanced_family_outward_acceleration
+    (radius : Rat) (hR : radius ≠ 0) :
+    kottlerRadialAcceleration
+      (balancedFamilyMass radius) radius
+      (35/(24*radius^2))
+      = 17/(48*radius) := by
+  field_simp [kottlerRadialAcceleration, balancedFamilyMass, hR]
+  ring
+
+theorem balanced_family_surface_sigma
+    (radius : Rat) (hR : radius ≠ 0) :
+    rationalSquareSurfaceSigma8 radius balancedFamilyX balancedFamilyY
+      = 1/(2*radius) := by
+  field_simp [rationalSquareSurfaceSigma8, surfaceGap,
+    balancedFamilyX, balancedFamilyY, hR]
+  ring
+
+theorem balanced_family_surface_pressure
+    (radius : Rat) (hR : radius ≠ 0) :
+    rationalSquareSurfacePressure8
+      (balancedFamilyMass radius) radius balancedFamilyX balancedFamilyY
+      = -3/(8*radius) := by
+  field_simp [rationalSquareSurfacePressure8, surfaceGap,
+    balancedFamilyMass, balancedFamilyX, balancedFamilyY, hR]
+  ring
+
+theorem balanced_family_nec_dec_margin
+    (radius : Rat) (hR : radius ≠ 0) :
+    rationalSquareSurfaceSigma8 radius balancedFamilyX balancedFamilyY
+      + rationalSquareSurfacePressure8
+        (balancedFamilyMass radius) radius balancedFamilyX balancedFamilyY
+      = 1/(8*radius) := by
+  rw [balanced_family_surface_sigma radius hR,
+      balanced_family_surface_pressure radius hR]
+  field_simp [hR]
+  ring
+
+theorem balanced_family_sec_margin
+    (radius : Rat) (hR : radius ≠ 0) :
+    rationalSquareSurfaceSigma8 radius balancedFamilyX balancedFamilyY
+      + 2*rationalSquareSurfacePressure8
+        (balancedFamilyMass radius) radius balancedFamilyX balancedFamilyY
+      = -1/(4*radius) := by
+  rw [balanced_family_surface_sigma radius hR,
+      balanced_family_surface_pressure radius hR]
+  field_simp [hR]
+  ring
+
+theorem balanced_family_positive_radius_physical_signs
+    {radius : Rat} (hR : 0 < radius) :
+    0 < balancedFamilyMass radius
+    ∧ 0 < 21/(16*radius^2)
+    ∧ 0 < 35/(24*radius^2)
+    ∧ 0 < 17/(48*radius)
+    ∧ 0 < 1/(2*radius)
+    ∧ (-3/(8*radius) < 0)
+    ∧ 0 < 1/(8*radius)
+    ∧ (-1/(4*radius) < 0) := by
+  have hR0 : radius ≠ 0 := ne_of_gt hR
+  constructor
+  · unfold balancedFamilyMass
+    positivity
+  constructor <;> positivity
+
+
 end Integration.GRQFTPostMergeLocalization

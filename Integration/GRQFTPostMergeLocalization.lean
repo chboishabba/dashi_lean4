@@ -1078,4 +1078,67 @@ theorem finite_flrw_acceleration_not_general_trajectory :
     comovingFLRWAccelerationEqualsArbitraryLocalTestMassTrajectory = false := rfl
 
 
+/-!
+Indexed comoving Riemann / geodesic-deviation cut.
+
+For the finite FLRW-like fixture, positive a¨/a gives
+R^i_{0j0} = -(a¨/a) δ^i_j in the comoving orthonormal convention.
+We retain orientation only, not continuum magnitude.
+-/
+
+inductive SpatialAxis3 where
+  | x | y | z
+  deriving DecidableEq, Repr
+
+inductive CurvatureActionOrientation where
+  | negative | zero | positive
+  deriving DecidableEq, Repr
+
+def sameSpatialAxis : SpatialAxis3 → SpatialAxis3 → Bool
+  | .x, .x => true
+  | .y, .y => true
+  | .z, .z => true
+  | _, _ => false
+
+def comovingRiemannTimeTidal
+    (i j : SpatialAxis3) : CurvatureActionOrientation :=
+  if sameSpatialAxis i j then .negative else .zero
+
+inductive SeparationAccelerationOrientation where
+  | inward | zero | outward
+  deriving DecidableEq, Repr
+
+def deviationFromRiemann : CurvatureActionOrientation → SeparationAccelerationOrientation
+  | .negative => .outward
+  | .zero => .zero
+  | .positive => .inward
+
+def principalDeviationAcceleration
+    (i : SpatialAxis3) : SeparationAccelerationOrientation :=
+  deviationFromRiemann (comovingRiemannTimeTidal i i)
+
+theorem all_principal_comoving_deviation_directions_outward
+    (i : SpatialAxis3) :
+    principalDeviationAcceleration i = .outward := by
+  cases i <;> rfl
+
+theorem comoving_offdiagonal_xy_zero :
+    comovingRiemannTimeTidal .x .y = .zero := rfl
+
+theorem comoving_offdiagonal_xz_zero :
+    comovingRiemannTimeTidal .x .z = .zero := rfl
+
+theorem comoving_offdiagonal_yz_zero :
+    comovingRiemannTimeTidal .y .z = .zero := rfl
+
+def indexedComovingTimeTidalBlockConstructed : Bool := true
+def threePrincipalTidalEigenDirectionsOutward : Bool := true
+def resultIsArbitrarySpacetimeRiemannTensor : Bool := false
+def resultIsLocalizedStaticAntigravityField : Bool := false
+def arbitraryWorldlineDeviationStillRequiresGeneralRiemannCarrier : Bool := true
+
+theorem comoving_riemann_cut_not_general_static_field :
+    resultIsLocalizedStaticAntigravityField = false := rfl
+
+
 end Integration.GRQFTPostMergeLocalization

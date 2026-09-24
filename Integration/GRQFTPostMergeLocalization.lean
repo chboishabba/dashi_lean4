@@ -3029,4 +3029,118 @@ theorem canonical_nambu_two_vacuum_potential :
   }
 
 
+/-!
+Nambu-Goto repulsive bubble candidate.
+
+At R=2:
+  M=2/9
+  Lambda_in=21/64
+  Lambda_out=19/48
+  a_out=5/24
+  8pi sigma=1/4
+  8pi P=-1/4.
+
+One normalized CMP119 tensor supplies both vacuum-stress tensors by scalar
+amplitude.  The effective two-vacuum potential and positive-tension shell source
+are constructed; source-native derivation from YM/CMP119 remains open.
+-/
+
+def nambuBubbleInteriorAmplitude : Rat := 21/64
+def nambuBubbleExteriorAmplitude : Rat := 19/48
+def nambuBubbleRadius : Rat := 2
+def nambuBubbleMass : Rat := 2/9
+def nambuBubbleAcceleration : Rat := 5/24
+def nambuBubbleSurfaceTension8Pi : Rat := 1/4
+
+theorem nambu_bubble_cmp119_interior_transport
+    {Stress : Type u}
+    {E : CMP119RationalStressComponentEvaluator Stress}
+    {stress : Stress}
+    (h : NormalizedCrossSectorStressInstance E stress)
+    (i j : Axis4) :
+    vacuumStressAt nambuBubbleInteriorAmplitude i j
+      = scaledCMP119Tensor nambuBubbleInteriorAmplitude E stress i j :=
+  normalized_cmp119_scales_to_vacuum_stress h nambuBubbleInteriorAmplitude i j
+
+theorem nambu_bubble_cmp119_exterior_transport
+    {Stress : Type u}
+    {E : CMP119RationalStressComponentEvaluator Stress}
+    {stress : Stress}
+    (h : NormalizedCrossSectorStressInstance E stress)
+    (i j : Axis4) :
+    vacuumStressAt nambuBubbleExteriorAmplitude i j
+      = scaledCMP119Tensor nambuBubbleExteriorAmplitude E stress i j :=
+  normalized_cmp119_scales_to_vacuum_stress h nambuBubbleExteriorAmplitude i j
+
+theorem nambu_bubble_geometry_values :
+    domainWallFamilyMass nambuBubbleRadius = nambuBubbleMass
+    ∧ lambdaInFromSquareLapse nambuBubbleRadius (3/4)
+        = nambuBubbleInteriorAmplitude
+    ∧ lambdaOutFromSquareLapse nambuBubbleMass nambuBubbleRadius (1/2)
+        = nambuBubbleExteriorAmplitude
+    ∧ kottlerRadialAcceleration
+        nambuBubbleMass nambuBubbleRadius nambuBubbleExteriorAmplitude
+        = nambuBubbleAcceleration := by
+  constructor
+  · norm_num [domainWallFamilyMass, nambuBubbleRadius, nambuBubbleMass]
+  constructor
+  · norm_num [lambdaInFromSquareLapse, nambuBubbleRadius, nambuBubbleInteriorAmplitude]
+  constructor
+  · norm_num [lambdaOutFromSquareLapse, nambuBubbleMass, nambuBubbleRadius,
+      nambuBubbleExteriorAmplitude]
+  · norm_num [kottlerRadialAcceleration, nambuBubbleMass, nambuBubbleRadius,
+      nambuBubbleExteriorAmplitude, nambuBubbleAcceleration]
+
+theorem nambu_bubble_surface_action_values :
+    nambuBubbleSurfaceTension8Pi = 1/4
+    ∧ (-nambuBubbleSurfaceTension8Pi : Rat) = -1/4 := by
+  norm_num [nambuBubbleSurfaceTension8Pi]
+
+structure NambuGotoRepulsiveBubbleCandidate
+    {Stress : Type u}
+    (E : CMP119RationalStressComponentEvaluator Stress)
+    (stress : Stress)
+    (normalized : NormalizedCrossSectorStressInstance E stress) : Prop where
+  twoVacuumPotential : NambuTwoVacuumPotentialWitness
+  positiveMass : nambuBubbleMass = 2/9
+  interiorAmplitude : nambuBubbleInteriorAmplitude = 21/64
+  exteriorAmplitude : nambuBubbleExteriorAmplitude = 19/48
+  outwardAcceleration : nambuBubbleAcceleration = 5/24
+  surfaceEnergyPositive : nambuBubbleSurfaceTension8Pi = 1/4
+  surfacePressureTension : (-nambuBubbleSurfaceTension8Pi : Rat) = -1/4
+  interiorStressTransport :
+    ∀ i j,
+      vacuumStressAt nambuBubbleInteriorAmplitude i j
+        = scaledCMP119Tensor nambuBubbleInteriorAmplitude E stress i j
+  exteriorStressTransport :
+    ∀ i j,
+      vacuumStressAt nambuBubbleExteriorAmplitude i j
+        = scaledCMP119Tensor nambuBubbleExteriorAmplitude E stress i j
+
+theorem nambu_goto_repulsive_bubble_candidate
+    {Stress : Type u}
+    {E : CMP119RationalStressComponentEvaluator Stress}
+    {stress : Stress}
+    (normalized : NormalizedCrossSectorStressInstance E stress) :
+    NambuGotoRepulsiveBubbleCandidate E stress normalized := by
+  exact {
+    twoVacuumPotential := canonical_nambu_two_vacuum_potential
+    positiveMass := rfl
+    interiorAmplitude := rfl
+    exteriorAmplitude := rfl
+    outwardAcceleration := rfl
+    surfaceEnergyPositive := rfl
+    surfacePressureTension := rfl
+    interiorStressTransport := nambu_bubble_cmp119_interior_transport normalized
+    exteriorStressTransport := nambu_bubble_cmp119_exterior_transport normalized
+  }
+
+def nambuBubbleNegativeMetricMassRequired : Bool := false
+def nambuBubbleNegativeNewtonGRequired : Bool := false
+def nambuBubbleDECCompatible : Bool := true
+def nambuBubbleSourceNativeCMP119PotentialDerived : Bool := false
+def nambuBubbleFiniteThicknessWallDerived : Bool := false
+def nambuBubbleSIUnitsCalibrated : Bool := false
+
+
 end Integration.GRQFTPostMergeLocalization

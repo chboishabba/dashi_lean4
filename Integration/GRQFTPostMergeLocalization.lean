@@ -2123,4 +2123,111 @@ theorem parameterized_repulsive_junction_design
   }
 
 
+/-!
+General Israel shell with DEC-compatible exact fixture.
+
+M=1/4, R=2,
+Lambda_out=3/8 -> f_out=1/4, sqrt=1/2,
+Lambda_in=21/64 -> f_in=9/16, sqrt=3/4.
+
+The shell has:
+  8pi sigma = 1/4
+  8pi P     = -5/24
+so NEC/WEC/DEC pass while SEC fails.
+-/
+
+def generalShellMass : Rat := 1/4
+def generalShellRadius : Rat := 2
+def generalShellLambdaOut : Rat := 3/8
+def generalShellLambdaIn : Rat := 21/64
+def generalShellSqrtFOut : Rat := 1/2
+def generalShellSqrtFIn : Rat := 3/4
+
+theorem general_shell_fout_quarter :
+    fExteriorJunction generalShellRadius generalShellMass generalShellLambdaOut = 1/4 := by
+  norm_num [fExteriorJunction, generalShellRadius, generalShellMass, generalShellLambdaOut]
+
+theorem general_shell_fin_nine_sixteenths :
+    fInteriorJunction generalShellRadius generalShellLambdaIn = 9/16 := by
+  norm_num [fInteriorJunction, generalShellRadius, generalShellLambdaIn]
+
+theorem general_shell_outward_acceleration_three_sixteenths :
+    kottlerRadialAcceleration generalShellMass generalShellRadius generalShellLambdaOut
+      = 3/16 := by
+  norm_num [kottlerRadialAcceleration, generalShellMass, generalShellRadius,
+    generalShellLambdaOut]
+
+def generalKTauOut : Rat :=
+  fExteriorPrimeJunction generalShellRadius generalShellMass generalShellLambdaOut
+    / (2*generalShellSqrtFOut)
+
+def generalKTauIn : Rat :=
+  fInteriorPrimeJunction generalShellRadius generalShellLambdaIn
+    / (2*generalShellSqrtFIn)
+
+def generalKThetaOut : Rat := generalShellSqrtFOut / generalShellRadius
+def generalKThetaIn : Rat := generalShellSqrtFIn / generalShellRadius
+
+def generalSurfaceSigma8Pi : Rat :=
+  2*(generalShellSqrtFIn-generalShellSqrtFOut)/generalShellRadius
+
+def generalSurfacePressure8Pi : Rat :=
+  (generalKTauOut-generalKTauIn) + (generalKThetaOut-generalKThetaIn)
+
+theorem general_surface_sigma_quarter :
+    generalSurfaceSigma8Pi = 1/4 := by
+  norm_num [generalSurfaceSigma8Pi, generalShellSqrtFIn, generalShellSqrtFOut,
+    generalShellRadius]
+
+theorem general_surface_pressure_minus_five_twentyfourths :
+    generalSurfacePressure8Pi = -5/24 := by
+  norm_num [generalSurfacePressure8Pi, generalKTauOut, generalKTauIn,
+    generalKThetaOut, generalKThetaIn, fExteriorPrimeJunction,
+    fInteriorPrimeJunction, generalShellRadius, generalShellMass,
+    generalShellLambdaOut, generalShellLambdaIn, generalShellSqrtFOut,
+    generalShellSqrtFIn]
+
+theorem general_shell_nec_margin_one_twentyfourth :
+    generalSurfaceSigma8Pi + generalSurfacePressure8Pi = 1/24 := by
+  rw [general_surface_sigma_quarter, general_surface_pressure_minus_five_twentyfourths]
+  norm_num
+
+theorem general_shell_dec_margin_one_twentyfourth :
+    generalSurfaceSigma8Pi - 5/24 = 1/24 := by
+  rw [general_surface_sigma_quarter]
+  norm_num
+
+theorem general_shell_sec_margin_minus_one_sixth :
+    generalSurfaceSigma8Pi + 2*generalSurfacePressure8Pi = -1/6 := by
+  rw [general_surface_sigma_quarter, general_surface_pressure_minus_five_twentyfourths]
+  norm_num
+
+structure GeneralIsraelDECCompatibleShellWitness : Prop where
+  outwardAcceleration :
+    kottlerRadialAcceleration generalShellMass generalShellRadius generalShellLambdaOut
+      = 3/16
+  sigmaPositive : generalSurfaceSigma8Pi = 1/4
+  pressureTension : generalSurfacePressure8Pi = -5/24
+  necMargin : generalSurfaceSigma8Pi + generalSurfacePressure8Pi = 1/24
+  decMargin : generalSurfaceSigma8Pi - 5/24 = 1/24
+  secMargin : generalSurfaceSigma8Pi + 2*generalSurfacePressure8Pi = -1/6
+
+theorem canonical_general_israel_dec_compatible_shell :
+    GeneralIsraelDECCompatibleShellWitness := by
+  exact {
+    outwardAcceleration := general_shell_outward_acceleration_three_sixteenths
+    sigmaPositive := general_surface_sigma_quarter
+    pressureTension := general_surface_pressure_minus_five_twentyfourths
+    necMargin := general_shell_nec_margin_one_twentyfourth
+    decMargin := general_shell_dec_margin_one_twentyfourth
+    secMargin := general_shell_sec_margin_minus_one_sixth
+  }
+
+def generalShellNECCompatible : Bool := true
+def generalShellWECCompatible : Bool := true
+def generalShellDECCompatible : Bool := true
+def generalShellSECCompatible : Bool := false
+def generalShellNeedsNegativeSurfaceEnergy : Bool := false
+
+
 end Integration.GRQFTPostMergeLocalization

@@ -242,6 +242,28 @@ theorem universalBSDRankEqualityProducer_congr
 def UniversalBSDAnalyticBindingProducer : Prop :=
   Nonempty BSDAnalyticRankBinding
 
+/-- Literal universal analytic-continuation statement needed by the BSD rank
+surface: every rational elliptic curve's literal Mathlib L-series has one
+entire nonzero continuation agreeing on a right half-plane. -/
+def UniversalEllipticLContinuationStatement : Prop :=
+  ∀ E : RationalEllipticCurve, BSDEllipticLContinuation E
+
+def bsdAnalyticRankBinding_of_universalContinuation
+    (h : UniversalEllipticLContinuationStatement) :
+    BSDAnalyticRankBinding :=
+  ⟨h⟩
+
+/-- As on the algebraic side, the analytic binding wrapper contains no extra
+mathematical claim beyond universal existence of the literal continuation. -/
+theorem universalBSDAnalyticBindingProducer_iff :
+    UniversalBSDAnalyticBindingProducer ↔
+      UniversalEllipticLContinuationStatement := by
+  constructor
+  · rintro ⟨a⟩
+    exact a.continuation
+  · intro h
+    exact ⟨bsdAnalyticRankBinding_of_universalContinuation h⟩
+
 def UniversalBSDMordellWeilBindingProducer : Prop :=
   Nonempty BSDMordellWeilRankBinding
 
@@ -296,6 +318,25 @@ mathlib L-series continuation, and literal rational point group above.
 structure BSDEstablishedBackground where
   analytic : BSDAnalyticRankBinding
   algebraic : BSDMordellWeilRankBinding
+
+def UniversalBSDEstablishedBackgroundProducer : Prop :=
+  Nonempty BSDEstablishedBackground
+
+/-- The established-background package is exactly the conjunction of the two
+known universal theorem shapes.  In particular it introduces no third
+mathematical premise between known background and the BSD rank equality. -/
+theorem universalBSDEstablishedBackgroundProducer_iff :
+    UniversalBSDEstablishedBackgroundProducer ↔
+      UniversalEllipticLContinuationStatement ∧
+        UniversalMordellWeilFiniteGenerationStatement := by
+  constructor
+  · rintro ⟨bg⟩
+    exact ⟨bg.analytic.continuation, bg.algebraic.fg⟩
+  · rintro ⟨hA, hM⟩
+    exact ⟨
+      { analytic := bsdAnalyticRankBinding_of_universalContinuation hA
+        algebraic :=
+          bsdMordellWeilRankBinding_of_universalFiniteGeneration hM }⟩
 
 def BSDEstablishedBackground.toBoundRankObservers
     (bg : BSDEstablishedBackground) : BSDBoundRankObservers where

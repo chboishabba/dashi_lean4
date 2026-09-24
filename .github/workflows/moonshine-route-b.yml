@@ -9,6 +9,7 @@ on:
       - "Integration/Bishop*.lean"
       - "Integration/Moonshine*.lean"
       - "Integration.lean"
+      - "scripts/route_b_agda_replay_probe.py"
       - "lakefile.toml"
       - "lean-toolchain"
       - ".github/workflows/moonshine-route-b.yml"
@@ -72,6 +73,14 @@ jobs:
             exit 1
           fi
           echo "verified vendor/bishop ${actual_bishop}"
+
+      - name: Probe content-addressed Agda replay syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/route_b_agda_replay_probe.py \
+            --source-root agda-source \
+            --out /tmp/route-b-agda-replay
 
       - name: Set up Lean
         uses: leanprover/lean-action@v1

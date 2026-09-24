@@ -115,3 +115,10 @@ srcDir = "DASHI/output-final_aristotle"
 [[lean_lib]]
 name = "NSAWholeSpace"
 globs = ["RequestProject.NavierStokes.WholeSpaceA", "RequestProject.NavierStokes.WholeSpaceCubatureBoundaryDefect", "RequestProject.NavierStokes.WholeSpaceL1BochnerCompletion", "RequestProject.NavierStokes.WholeSpaceL1Tail", "RequestProject.NavierStokes.WholeSpaceL2InteractionIntegrability"]
+
+# Active periodic-B quantitative analysis.  This local library contains
+# theorem-bearing state-covariance and R571 state-variation reductions and
+# consumes NSBFrontier/NSUnforced through their retained source modules.
+[[lean_lib]]
+name = "NSBQuantitative"
+globs = ["NSBQuantitative", "RequestProject.NavierStokes.S2b2d1b2StateCovariance", "RequestProject.NavierStokes.R571StateVariation", "RequestProject.NavierStokes.R571HermitianStateVariation", "RequestProject.NavierStokes.R571VectorStateVariation", "RequestProject.NavierStokes.R571PeriodicLatticeStateEnvelope", "RequestProject.NavierStokes.R571PeriodicHermitianEnergyEnvelope", "RequestProject.NavierStokes.S2b2d1b2QuantitativePayment"]

@@ -1,6 +1,7 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleRvMFourth
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleHorizontalFourth
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleLocalRemainderBounds
+import Synthesis.RiemannZetaMuZeroCountOneSided
 
 /-!
 # RH V4 endpoint weld and explicit local ABSORB interface
@@ -1390,6 +1391,146 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_corrected_v4h4_muEnvel
     mul_le_mul_of_nonneg_left hinside hcoef
   exact hbase.trans (by
     linarith)
+
+
+
+/-!
+## Explicit long-window zero-count producer
+
+The corrected H4 polarity uses the full canonical local window, whose width is
+proportional to t.  The old fixed three-unit cone count is therefore not the
+right producer here.
+
+Use the already-owned arbitrary-endpoint literal N-mu discrepancy instead.
+The same explicit Stirling estimate that produced the favorable mu floor gives
+a monotone upper envelope on mu, hence
+
+  N(A,B)
+    <= (B-A) * muUpper(A,B)
+       + C * (log(A+3)+log(B+4)).
+
+This keeps the count on the literal Zeta23 carrier and exposes every
+t-dependent term needed by the terminal scalar audit.
+-/
+
+def quarticSignedPoleMuUpperEnvelope
+    (A B : ℝ) : ℝ :=
+  (1 / (2 * Real.pi)) * Real.log (B / (2 * Real.pi))
+    + (20 / (2 * Real.pi)) / A^2
+
+theorem zetaMu_le_quarticSignedPoleMuUpperEnvelope
+    {A B x : ℝ}
+    (hA : 1 <= A)
+    (hAx : A <= x)
+    (hxB : x <= B) :
+    Zeta23.mu x <= quarticSignedPoleMuUpperEnvelope A B := by
+  have hxpos : 0 < x := by linarith
+  have hBpos : 0 < B := by linarith
+  have hApos : 0 < A := by linarith
+  have hx1 : 1 <= |x| := by
+    rw [abs_of_pos hxpos]
+    exact hA.trans hAx
+  have hst := zetaMu_stirling_explicit hx1
+  rw [abs_of_pos hxpos] at hst
+  have hhi := (abs_le.mp hst).2
+  have hmain :
+      (1 / (2 * Real.pi)) * Real.log (x / (2 * Real.pi))
+        <=
+      (1 / (2 * Real.pi)) * Real.log (B / (2 * Real.pi)) := by
+    apply mul_le_mul_of_nonneg_left
+    · exact Real.log_le_log (by positivity)
+        (div_le_div_of_nonneg_right hxB Real.pi_pos.le)
+    · positivity
+  have herr :
+      (20 / (2 * Real.pi)) / x^2
+        <=
+      (20 / (2 * Real.pi)) / A^2 := by
+    apply div_le_div_of_nonneg_left
+    · positivity
+    · positivity
+    · nlinarith
+  unfold quarticSignedPoleMuUpperEnvelope
+  linarith
+
+theorem zetaMu_intervalIntegral_le_upperEnvelope
+    {A B : ℝ}
+    (hA : 1 <= A)
+    (hAB : A <= B) :
+    (∫ x in A..B, Zeta23.mu x)
+      <=
+    (B-A) * quarticSignedPoleMuUpperEnvelope A B := by
+  have hmu : Continuous Zeta23.mu :=
+    Zeta23.RvM.mu_continuous Zeta23.gammaFacts
+  have hconst :
+      IntervalIntegrable
+        (fun _ : ℝ => quarticSignedPoleMuUpperEnvelope A B)
+        volume A B := by
+    exact continuous_const.intervalIntegrable _ _
+  have hmuInt :
+      IntervalIntegrable Zeta23.mu volume A B :=
+    hmu.intervalIntegrable _ _
+  have hpoint :
+      ∀ x ∈ Set.Icc A B,
+        Zeta23.mu x <= quarticSignedPoleMuUpperEnvelope A B := by
+    intro x hx
+    exact zetaMu_le_quarticSignedPoleMuUpperEnvelope
+      hA hx.1 hx.2
+  have hmono :=
+    intervalIntegral.integral_mono_on
+      hAB hmuInt hconst hpoint
+  rw [intervalIntegral.integral_const] at hmono
+  simpa [smul_eq_mul, mul_comm] using hmono
+
+theorem exists_zetaCount_le_explicitMuUpperEnvelope_add_logError :
+    ∃ C T0 : ℝ, 0 <= C ∧
+      ∀ A B : ℝ,
+        max T0 4 <= A ->
+        A < B ->
+        (zetaZeroConfig.N A B : ℝ)
+          <=
+        (B-A) * quarticSignedPoleMuUpperEnvelope A B
+          + C * (Real.log (A+3) + Real.log (B+4)) := by
+  obtain ⟨C,T0,hC,hcount⟩ :=
+    exists_zetaCount_le_muIntegral_add_logError
+  refine ⟨C,T0,hC,?_⟩
+  intro A B hA hAB
+  have hA1 : 1 <= A := by
+    have h4 : 4 <= A := (le_max_right T0 4).trans hA
+    linarith
+  have hraw := hcount A B hA hAB
+  have hmu :=
+    zetaMu_intervalIntegral_le_upperEnvelope
+      hA1 hAB.le
+  linarith
+
+theorem exists_quarticSignedPoleCanonicalExpandedWindowCount_bound :
+    ∃ C T0 : ℝ, 0 <= C ∧
+      ∀ t : ℝ,
+        let eta := quarticSignedPoleCanonicalLocalRadius
+        let r := quarticSignedPoleLocalHalfWidth t eta
+        max T0 4 <= t-r-1 ->
+        (zetaZeroConfig.N (t-r-1) (t+r) : ℝ)
+          <=
+        (2*r+1)
+          * quarticSignedPoleMuUpperEnvelope (t-r-1) (t+r)
+          +
+        C * (Real.log (t-r+2) + Real.log (t+r+4)) := by
+  obtain ⟨C,T0,hC,hcount⟩ :=
+    exists_zetaCount_le_explicitMuUpperEnvelope_add_logError
+  refine ⟨C,T0,hC,?_⟩
+  intro t
+  dsimp
+  intro hleft
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  have hr0 : 0 <= r := by
+    dsimp [r,eta,quarticSignedPoleLocalHalfWidth]
+    positivity
+  have hAB : t-r-1 < t+r := by
+    linarith
+  have h := hcount (t-r-1) (t+r) hleft hAB
+  dsimp [r,eta] at h ⊢
+  convert h using 1 <;> ring
 
 
 /-!

@@ -118,6 +118,7 @@ import Integration.PromotionDiscipline
 import Integration.ConsumerGauge
 import Integration.PhysicsInstances
 import Integration.GRQFTExecutableResidual
+import Integration.GRQFTPostMergeLocalization
 import Integration.Registry
 import Integration.RiemannReflection
 import Integration.RiemannStrip

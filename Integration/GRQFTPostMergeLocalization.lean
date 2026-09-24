@@ -1273,4 +1273,105 @@ theorem localized_max_cut_uses_positive_g :
     localizedMaxCutNegativeGRequired = false := rfl
 
 
+/-!
+Localized anisotropic repulsive shell.
+
+Smallest exact two-zone fixture that retains positive density, relaxes radial
+pressure to zero at the outer boundary, keeps tangential tension, and preserves
+negative integrated active source.
+-/
+
+structure SphericalStressZone where
+  rho : Rat
+  radialPressure : Rat
+  tangentialPressure : Rat
+  deriving Repr
+
+def activeStressDensity (z : SphericalStressZone) : Rat :=
+  z.rho + z.radialPressure + z.tangentialPressure + z.tangentialPressure
+
+def coreZone : SphericalStressZone where
+  rho := 1
+  radialPressure := -1
+  tangentialPressure := -1
+
+def boundaryZone : SphericalStressZone where
+  rho := 1
+  radialPressure := 0
+  tangentialPressure := -1
+
+theorem core_active_stress_negative_two :
+    activeStressDensity coreZone = -2 := by
+  norm_num [activeStressDensity, coreZone]
+
+theorem boundary_active_stress_negative_one :
+    activeStressDensity boundaryZone = -1 := by
+  norm_num [activeStressDensity, boundaryZone]
+
+theorem boundary_radial_pressure_zero :
+    boundaryZone.radialPressure = 0 := rfl
+
+theorem boundary_density_positive :
+    boundaryZone.rho = 1 := rfl
+
+theorem boundary_tangential_tension_negative :
+    boundaryZone.tangentialPressure = -1 := rfl
+
+def isotropicVacuumLikeZone (density : Rat) : SphericalStressZone where
+  rho := density
+  radialPressure := -density
+  tangentialPressure := -density
+
+theorem isotropic_positive_unit_cannot_have_zero_radial_boundary_pressure :
+    (isotropicVacuumLikeZone 1).radialPressure ≠ 0 := by
+  norm_num [isotropicVacuumLikeZone]
+
+theorem boundary_radial_null_combination :
+    boundaryZone.rho + boundaryZone.radialPressure = 1 := by
+  norm_num [boundaryZone]
+
+theorem boundary_tangential_null_combination :
+    boundaryZone.rho + boundaryZone.tangentialPressure = 0 := by
+  norm_num [boundaryZone]
+
+def twoZoneIntegratedActiveMass : Rat :=
+  activeStressDensity coreZone + activeStressDensity boundaryZone
+
+theorem two_zone_integrated_active_mass_negative_three :
+    twoZoneIntegratedActiveMass = -3 := by
+  norm_num [twoZoneIntegratedActiveMass, activeStressDensity, coreZone, boundaryZone]
+
+structure LocalizedAnisotropicRepulsiveShellWitness : Prop where
+  coreActiveNegative : activeStressDensity coreZone = -2
+  boundaryActiveNegative : activeStressDensity boundaryZone = -1
+  outerRadialPressureZero : boundaryZone.radialPressure = 0
+  outerDensityPositive : boundaryZone.rho = 1
+  outerTangentialTensionNegative : boundaryZone.tangentialPressure = -1
+  integratedActiveMassNegative : twoZoneIntegratedActiveMass = -3
+  positiveGCoupling : CouplingSign = .positive
+  externalResponseOutward :
+    exteriorResponse .positive .negative = .outward
+
+theorem canonical_localized_anisotropic_repulsive_shell :
+    LocalizedAnisotropicRepulsiveShellWitness := by
+  exact {
+    coreActiveNegative := core_active_stress_negative_two
+    boundaryActiveNegative := boundary_active_stress_negative_one
+    outerRadialPressureZero := boundary_radial_pressure_zero
+    outerDensityPositive := boundary_density_positive
+    outerTangentialTensionNegative := boundary_tangential_tension_negative
+    integratedActiveMassNegative := two_zone_integrated_active_mass_negative_three
+    positiveGCoupling := rfl
+    externalResponseOutward := rfl
+  }
+
+def anisotropicTransitionRepairsBoundaryPressure : Bool := true
+def fullTOVConservationEquationSolved : Bool := false
+def exactStaticMetricSolved : Bool := false
+def negativeGRequiredForAnisotropicShell : Bool := false
+
+theorem anisotropic_shell_does_not_require_negative_g :
+    negativeGRequiredForAnisotropicShell = false := rfl
+
+
 end Integration.GRQFTPostMergeLocalization

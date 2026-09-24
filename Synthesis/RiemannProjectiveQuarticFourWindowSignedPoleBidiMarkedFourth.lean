@@ -411,35 +411,62 @@ theorem quarticSignedPoleLocalMuVerticalFourthMoment_eq_bidi_operator
       (quarticSignedPoleLocalMuMarkedMass t eta)
       (quarticSignedPoleLocalMuMarkedSecondPairMoment t eta A)
       (quarticSignedPoleLocalMuMarkedFourthPairMoment t eta A) := by
+  let K : Set ℝ :=
+    Set.Icc (t - eta * (t/16)) (t + eta * (t/16))
+  let f0 : ℝ → ℝ := fun x => Zeta23.mu x
+  let f2 : ℝ → ℝ := fun x =>
+    (quarticSignedPoleSecondPhaseReal (-A) (x-t)
+      + quarticSignedPoleSecondPhaseReal A (x-t))
+      * Zeta23.mu x
+  let f4 : ℝ → ℝ := fun x =>
+    (quarticSignedPoleFourthPhaseReal (-A) (x-t)
+      + quarticSignedPoleFourthPhaseReal A (x-t))
+      * Zeta23.mu x
+  have hmu : Continuous Zeta23.mu :=
+    Zeta23.RvM.mu_continuous Zeta23.gammaFacts
+  have h0 : IntegrableOn f0 K := by
+    exact ContinuousOn.integrableOn_compact isCompact_Icc
+      hmu.continuousOn
+  have h2 : IntegrableOn f2 K := by
+    exact ContinuousOn.integrableOn_compact isCompact_Icc (by
+      dsimp [f2]
+      fun_prop)
+  have h4 : IntegrableOn f4 K := by
+    exact ContinuousOn.integrableOn_compact isCompact_Icc (by
+      dsimp [f4]
+      fun_prop)
+  have hpoint :
+      (fun x : ℝ => (x-t)^4 * Zeta23.mu x)
+        =
+      fun x =>
+        ((1/2 : ℝ) * f4 x
+          - 3 * A^2 * f2 x
+          + 5 * A^4 * f0 x) := by
+    funext x
+    have h :=
+      quarticSignedPoleVerticalFourth_eq_bidi_operator A (x-t)
+    unfold quarticSignedPoleBidiAngularOperator at h
+    dsimp [f0, f2, f4]
+    rw [h]
+    ring
   unfold quarticSignedPoleLocalMuVerticalFourthMoment
     quarticSignedPoleLocalMuMarkedMass
     quarticSignedPoleLocalMuMarkedSecondPairMoment
     quarticSignedPoleLocalMuMarkedFourthPairMoment
     quarticSignedPoleBidiAngularOperator
-  rw [← MeasureTheory.integral_sub]
-  · rw [← MeasureTheory.integral_add]
-    · apply MeasureTheory.integral_congr_ae
-      filter_upwards [] with x
-      have h :=
-        quarticSignedPoleVerticalFourth_eq_bidi_operator A (x-t)
-      unfold quarticSignedPoleBidiAngularOperator at h
-      nlinarith
-    · exact
-        (intervalIntegrableOn_iff_integrableOn_Icc.1
-          (quarticFourSignedPole_mu_intervalIntegrable
-            (t - eta * (t/16)) (t + eta * (t/16)))).2
-    · exact
-        (intervalIntegrableOn_iff_integrableOn_Icc.1
-          (quarticFourSignedPole_mu_intervalIntegrable
-            (t - eta * (t/16)) (t + eta * (t/16)))).2
-  · exact
-      (intervalIntegrableOn_iff_integrableOn_Icc.1
-        (quarticFourSignedPole_mu_intervalIntegrable
-          (t - eta * (t/16)) (t + eta * (t/16)))).2
-  · exact
-      (intervalIntegrableOn_iff_integrableOn_Icc.1
-        (quarticFourSignedPole_mu_intervalIntegrable
-          (t - eta * (t/16)) (t + eta * (t/16)))).2
+  change (∫ x in K, (x-t)^4 * Zeta23.mu x)
+      =
+    (1/2 : ℝ) * (∫ x in K, f4 x)
+      - 3 * A^2 * (∫ x in K, f2 x)
+      + 5 * A^4 * (∫ x in K, f0 x)
+  rw [hpoint]
+  rw [integral_add
+      ((h4.const_mul (1/2 : ℝ)).sub (h2.const_mul (3*A^2)))
+      (h0.const_mul (5*A^4))]
+  rw [integral_sub
+      (h4.const_mul (1/2 : ℝ))
+      (h2.const_mul (3*A^2))]
+  rw [integral_const_mul, integral_const_mul, integral_const_mul]
 
 /--
 The centred fourth-angular statistic is exactly the universal bidi operator

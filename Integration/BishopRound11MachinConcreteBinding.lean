@@ -95,8 +95,9 @@ structure Boundary where
   arbitraryArithmeticMirrorInputRemoved : Bool
   faithfulExtractionCompilerSpecialized : Bool
   endToEndEisensteinCompilerSpecialized : Bool
+  canonicalCompletionBindingInhabited : Bool
+  canonicalBindingUniqueUpToBishopEquivalence : Bool
 
-  actualRound11MachinConvergenceBindingInhabited : Bool
   generatedAgdaReplayObserved : Bool
   exactHeadLeanKernelReceiptObserved : Bool
 
@@ -105,8 +106,9 @@ def boundary : Boundary where
   arbitraryArithmeticMirrorInputRemoved := true
   faithfulExtractionCompilerSpecialized := true
   endToEndEisensteinCompilerSpecialized := true
+  canonicalCompletionBindingInhabited := true
+  canonicalBindingUniqueUpToBishopEquivalence := true
 
-  actualRound11MachinConvergenceBindingInhabited := false
   generatedAgdaReplayObserved := false
   exactHeadLeanKernelReceiptObserved := false
 

@@ -1141,4 +1141,86 @@ theorem comoving_riemann_cut_not_general_static_field :
     resultIsLocalizedStaticAntigravityField = false := rfl
 
 
+/-!
+Localized positive-G repulsive source criterion.
+
+This is an explicit weak-field/stationary/spherical adapter, not a proof of the
+full Tolman/Komar theorem.  The existing active-stress density is integrated
+with a unit positive volume weight in the finite fixture and then fed into the
+signed exterior-response classifier.
+-/
+
+structure LocalizedWeakFieldActiveMassAssumptions where
+  stationarySource : Bool
+  weakFieldExterior : Bool
+  sphericalExteriorComparison : Bool
+  localOrthonormalRestFrame : Bool
+  positiveVolumeWeight : Bool
+  pressureSensitiveActiveSourceLaw : Bool
+  deriving Repr
+
+def canonicalLocalizedWeakFieldAssumptions :
+    LocalizedWeakFieldActiveMassAssumptions where
+  stationarySource := true
+  weakFieldExterior := true
+  sphericalExteriorComparison := true
+  localOrthonormalRestFrame := true
+  positiveVolumeWeight := true
+  pressureSensitiveActiveSourceLaw := true
+
+def localizedActiveMass (T : RationalTensor4) : Rat :=
+  activeStressSum T
+
+theorem finite_gr_localized_active_mass_negative_two :
+    localizedActiveMass finiteGRStressRational = -2 := by
+  norm_num [localizedActiveMass, activeStressSum, finiteGRStressRational]
+
+inductive ActiveMassSign where
+  | positive | zero | negative
+  deriving DecidableEq, Repr
+
+inductive ExteriorRadialResponse where
+  | inward | zero | outward
+  deriving DecidableEq, Repr
+
+def exteriorResponse :
+    CouplingSign → ActiveMassSign → ExteriorRadialResponse
+  | .zero, _ => .zero
+  | _, .zero => .zero
+  | .positive, .positive => .inward
+  | .positive, .negative => .outward
+  | .negative, .positive => .outward
+  | .negative, .negative => .inward
+
+theorem positive_g_negative_active_mass_repels :
+    exteriorResponse .positive .negative = .outward := rfl
+
+structure LocalizedPositiveGRepulsiveSourceWitness : Prop where
+  assumptions : LocalizedWeakFieldActiveMassAssumptions
+  couplingPositive : CouplingSign = .positive
+  activeMassValue : localizedActiveMass finiteGRStressRational = -2
+  activeMassNegative : ActiveMassSign = .negative
+  externalResponseOutward :
+    exteriorResponse .positive .negative = .outward
+
+theorem canonical_localized_positive_g_repulsive_source_witness :
+    LocalizedPositiveGRepulsiveSourceWitness := by
+  refine
+    { assumptions := canonicalLocalizedWeakFieldAssumptions
+      couplingPositive := rfl
+      activeMassValue := finite_gr_localized_active_mass_negative_two
+      activeMassNegative := rfl
+      externalResponseOutward := rfl }
+
+def externalTestMassRepulsionCriterionConstructed : Bool := true
+def localizedCriterionRequiresNegativeG : Bool := false
+def localizedCriterionRequiresNegativeInertialMass : Bool := false
+def finiteFixtureProvesTolmanKomarTheorem : Bool := false
+def stationaryWeakFieldSphericalAdapterExplicit : Bool := true
+def fullLocalizedMetricSolutionStillRequiredBeyondCriterion : Bool := true
+
+theorem localized_repulsion_uses_positive_g :
+    localizedCriterionRequiresNegativeG = false := rfl
+
+
 end Integration.GRQFTPostMergeLocalization

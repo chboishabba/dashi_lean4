@@ -3914,4 +3914,109 @@ theorem exists_quarticFourSignedPolePair_with_strength_floor_and_marked_channel_
     W.bidiMarkedOffOrd_add_gamma_lt_cluster_of_pole_pos
       ht (hPoleBand A hA0 hAe)
 
+
+/-!
+## Exact horizontal-shift law for cosh marking
+
+Multiplication by cosh(Au) is exactly the target/reflection symmetrization on
+the horizontal height coordinate of the even Weil response.
+-/
+
+theorem evenResp_coshMarked_eq_targetReflection_average
+    {g : ℝ -> ℝ}
+    (hg : Continuous g)
+    (hgc : HasCompactSupport g)
+    (A a s : ℝ) :
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+        (quarticSignedPoleCoshMarkedDetector g A) a s
+      =
+    (
+      Zeta23Bridge.LiteralWeilParityBalance.evenResp g (a+A) s
+      +
+      Zeta23Bridge.LiteralWeilParityBalance.evenResp g (a-A) s
+    ) / 2 := by
+  let Fp : ℝ -> ℝ := fun u =>
+    g u * (Real.cosh ((a+A)*u) * Real.cos (s*u))
+  let Fm : ℝ -> ℝ := fun u =>
+    g u * (Real.cosh ((a-A)*u) * Real.cos (s*u))
+  have hIp : Integrable Fp :=
+    Zeta23Bridge.LiteralWeilParityBalance.taper_integrable
+      hg hgc (by dsimp [Fp]; fun_prop)
+  have hIm : Integrable Fm :=
+    Zeta23Bridge.LiteralWeilParityBalance.taper_integrable
+      hg hgc (by dsimp [Fm]; fun_prop)
+  unfold Zeta23Bridge.LiteralWeilParityBalance.evenResp
+    quarticSignedPoleCoshMarkedDetector
+  rw [show
+      (fun u : ℝ =>
+        g u * Real.cosh (A*u)
+          * (Real.cosh (a*u) * Real.cos (s*u)))
+      =
+      fun u => (Fp u + Fm u)/2 by
+        funext u
+        dsimp [Fp,Fm]
+        rw [Real.cosh_add, Real.cosh_sub]
+        have h1 : (a+A)*u = a*u + A*u := by ring
+        have h2 : (a-A)*u = a*u - A*u := by ring
+        rw [h1,h2, Real.cosh_add, Real.cosh_sub]
+        ring]
+  rw [integral_div, integral_add hIp hIm]
+  rfl
+
+theorem evenResp_coshMarked_zero_eq
+    {g : ℝ -> ℝ}
+    (hg : Continuous g)
+    (hgc : HasCompactSupport g)
+    (A s : ℝ) :
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+        (quarticSignedPoleCoshMarkedDetector g A) 0 s
+      =
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp g A s := by
+  rw [evenResp_coshMarked_eq_targetReflection_average
+      hg hgc A 0 s]
+  have hneg :=
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp_neg
+      g A s
+  have hheight :
+      Zeta23Bridge.LiteralWeilParityBalance.evenResp g (-A) s
+        =
+      Zeta23Bridge.LiteralWeilParityBalance.evenResp g A s := by
+    unfold Zeta23Bridge.LiteralWeilParityBalance.evenResp
+    congr 1
+    funext u
+    rw [show (-A)*u = -(A*u) by ring, Real.cosh_neg]
+  rw [show 0+A=A by ring, show 0-A=-A by ring, hheight]
+  ring
+
+theorem heightDefect_coshMarked_eq_targetReflection
+    {g : ℝ -> ℝ}
+    (hg : Continuous g)
+    (hgc : HasCompactSupport g)
+    (A a r : ℝ) :
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
+        (quarticSignedPoleCoshMarkedDetector g A) r a 0
+      =
+    (
+      Zeta23Bridge.LiteralWeilParityBalance.evenResp g (a+A) (2*r)
+        +
+      Zeta23Bridge.LiteralWeilParityBalance.evenResp g (a-A) (2*r)
+    ) / 2
+      *
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp g A r
+      -
+    (
+      Zeta23Bridge.LiteralWeilParityBalance.evenResp g (a+A) r
+        +
+      Zeta23Bridge.LiteralWeilParityBalance.evenResp g (a-A) r
+    ) / 2
+      *
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp g A (2*r) := by
+  unfold Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
+  rw [evenResp_coshMarked_eq_targetReflection_average
+        hg hgc A a (2*r),
+      evenResp_coshMarked_eq_targetReflection_average
+        hg hgc A a r,
+      evenResp_coshMarked_zero_eq hg hgc A r,
+      evenResp_coshMarked_zero_eq hg hgc A (2*r)]
+
 end Synthesis

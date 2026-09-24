@@ -1338,4 +1338,169 @@ theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_uniform_c
   apply W.completedSignedResidual_lt_target_of_uniform_compensation_gap ht
   exact hC
 
+
+/-!
+## Sharpened cone compensation: keep the exact negative part
+
+The old LocalRemainderDebt charged the entire local cone by absolute remainder.
+That is safe but unnecessarily loses the exact negative cone source.  Since the
+joint kernel is now known to possess a favorable negative core, split the exact
+cone contribution itself into positive and negative parts.
+-/
+
+def QuarticFourSignedPolePair.literalConeGainAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocalCone t eta rho then
+      max (- W.literalOffOrdSource rho) 0
+    else
+      0
+
+theorem QuarticFourSignedPolePair.literalConeGainAt_nonneg
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    0 <= W.literalConeGainAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalConeGainAt
+  exact Finset.sum_nonneg fun rho _ => by
+    by_cases hc : quarticSignedPoleLocalCone t eta rho
+    · simp [hc]
+    · simp [hc]
+
+theorem real_eq_max_sub_max_neg (x : ℝ) :
+    x = max x 0 - max (-x) 0 := by
+  by_cases hx : 0 <= x
+  · simp [max_eq_left hx, max_eq_right (by linarith : -x <= 0)]
+  · have hx' : x <= 0 := le_of_not_ge hx
+    have hnx : 0 <= -x := by linarith
+    simp [max_eq_right hx', max_eq_left hnx]
+
+theorem QuarticFourSignedPolePair.literalConeExactAt_eq_debt_sub_gain
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalConeExactAt eta n
+      =
+    W.literalConeDebtAt eta n
+      - W.literalConeGainAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalConeExactAt
+    QuarticFourSignedPolePair.literalConeExactTerm
+    QuarticFourSignedPolePair.literalConeDebtAt
+    QuarticFourSignedPolePair.literalConeGainAt
+  rw [← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hc : quarticSignedPoleLocalCone t eta rho
+  · simp [hc, real_eq_max_sub_max_neg]
+  · simp [hc]
+
+def QuarticFourSignedPolePair.literalGoodRemainderDebtAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocalGood t eta rho then
+      |W.literalJointQuarticRemainderOffOrd rho|
+    else
+      0
+
+theorem QuarticFourSignedPolePair.literalGoodRemainderDebtAt_nonneg
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    0 <= W.literalGoodRemainderDebtAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalGoodRemainderDebtAt
+  exact Finset.sum_nonneg fun rho _ => by
+    by_cases hg : quarticSignedPoleLocalGood t eta rho
+    · simp [hg]
+    · simp [hg]
+
+theorem QuarticFourSignedPolePair.literalGoodExactAt_add_gain_le_goodRemainderDebt
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalGoodExactAt eta n
+      + W.literalGoodQuarticGainAt eta n
+      <= W.literalGoodRemainderDebtAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalGoodExactAt
+    QuarticFourSignedPolePair.literalGoodQuarticGainAt
+    QuarticFourSignedPolePair.literalGoodRemainderDebtAt
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_le_sum
+  intro rho hrho
+  have h :=
+    W.literalGoodExactTerm_add_gain_le_remainder
+      (eta:=eta) ht rho
+  by_cases hg : quarticSignedPoleLocalGood t eta rho
+  · have hl : quarticSignedPoleLocal t eta rho := hg.1
+    simpa [hg, hl] using h
+  · simp [QuarticFourSignedPolePair.literalGoodExactTerm, hg]
+
+def QuarticFourSignedPolePair.literalSharpenedLocalDebtAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  W.literalConeDebtAt eta n
+    + W.literalGoodRemainderDebtAt eta n
+
+def QuarticFourSignedPolePair.literalSharpenedSignedCompensationAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  W.literalConeGainAt eta n
+    + W.literalGoodQuarticGainAt eta n
+    - W.literalFarExactAt eta n
+
+def QuarticFourSignedPolePair.literalSharpenedJointBudgetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  W.literalSharpenedLocalDebtAt eta n
+    - W.literalSharpenedSignedCompensationAt eta n
+
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_sharpenedJointBudget
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalOffOrdExactAt n
+      <= W.literalSharpenedJointBudgetAt eta n := by
+  rw [W.literalOffOrdExactAt_eq_cone_add_good_add_far (eta:=eta)]
+  rw [W.literalConeExactAt_eq_debt_sub_gain]
+  have hg :=
+    W.literalGoodExactAt_add_gain_le_goodRemainderDebt
+      ht n
+  unfold QuarticFourSignedPolePair.literalSharpenedJointBudgetAt
+    QuarticFourSignedPolePair.literalSharpenedLocalDebtAt
+    QuarticFourSignedPolePair.literalSharpenedSignedCompensationAt
+  linarith
+
+theorem QuarticFourSignedPolePair.literalSharpenedLocalDebtAt_nonneg
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    0 <= W.literalSharpenedLocalDebtAt eta n := by
+  unfold QuarticFourSignedPolePair.literalSharpenedLocalDebtAt
+  exact add_nonneg
+    (W.literalConeDebtAt_nonneg n)
+    (W.literalGoodRemainderDebtAt_nonneg n)
+
+/--
+The sharpened budget is never worse merely because the cone has negative exact
+mass: ConeGain is retained as compensation and no absolute cone remainder is
+charged separately.
+-/
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_lt_margin_of_sharpened_compensation_gap
+    {t eta margin : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hgap :
+      margin + W.literalSharpenedSignedCompensationAt eta n
+        - W.literalSharpenedLocalDebtAt eta n > 0) :
+    W.literalOffOrdExactAt n < margin := by
+  have hbudget :=
+    W.literalOffOrdExactAt_le_sharpenedJointBudget ht n
+  unfold QuarticFourSignedPolePair.literalSharpenedJointBudgetAt at hbudget
+  linarith
+
 end Synthesis

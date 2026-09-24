@@ -1805,6 +1805,69 @@ theorem quarticSignedPoleExplicitTargetStrengthUpper_lt_eightHundredTenThousand 
     _ = 810000 := by norm_num
 
 
+
+/-!
+## Fail-fast dominant sixth-order coefficient diagnostic
+
+This does NOT say that the witness fails.  It says the generic G1 support/L1
+cap is far too coarse to certify the terminal ABSORB balance.
+
+After inserting the density-scale leading part of the long-window count, the
+sixth-order/local-mu coefficient comparison reduces to the dimensionless
+condition
+
+  (7/144) * M6 * eta0^2 < S.
+
+Replacing M6 by the coarse theorem cap 81,000,000 already violates even the
+uniform target-strength floor by an enormous margin.  Therefore the terminal
+proof must use a substantially sharper sixth moment/remainder estimate (or
+retain more sign), rather than the generic G1 L1 constant.
+-/
+
+def quarticSignedPoleCoarseSixthLeadingAllowance : ℝ :=
+  (7/144 : ℝ)
+    * 81000000
+    * quarticSignedPoleCanonicalLocalRadius^2
+
+theorem quarticSignedPoleCoarseSixthLeadingAllowance_gt_oneHundredThousand :
+    100000 < quarticSignedPoleCoarseSixthLeadingAllowance := by
+  have heta :=
+    one_fifth_lt_quarticSignedPoleCanonicalLocalRadius
+  have heta0 : 0 <= quarticSignedPoleCanonicalLocalRadius := by
+    exact quarticSignedPoleCanonicalLocalRadius_pos.le
+  have heta2 :
+      (1/25 : ℝ)
+        < quarticSignedPoleCanonicalLocalRadius^2 := by
+    nlinarith [sq_nonneg
+      (quarticSignedPoleCanonicalLocalRadius - (1/5 : ℝ))]
+  unfold quarticSignedPoleCoarseSixthLeadingAllowance
+  nlinarith
+
+theorem quarticSignedPoleStrengthFloor_lt_two :
+    quarticSignedPoleStrengthFloor < 2 := by
+  unfold quarticSignedPoleStrengthFloor
+  have hp4 :
+      Real.pi^4 < (4 : ℝ)^4 :=
+    pow_lt_pow_left₀ Real.pi_lt_four
+      (by positivity) (by norm_num)
+  norm_num at hp4 ⊢
+  nlinarith
+
+theorem quarticSignedPole_coarse_uniform_sixth_cap_fails_dominant_balance :
+    quarticSignedPoleStrengthFloor
+      < quarticSignedPoleCoarseSixthLeadingAllowance := by
+  have hS := quarticSignedPoleStrengthFloor_lt_two
+  have h6 :=
+    quarticSignedPoleCoarseSixthLeadingAllowance_gt_oneHundredThousand
+  linarith
+
+theorem quarticSignedPole_coarse_uniform_sixth_cap_not_sufficient :
+    ¬
+    (quarticSignedPoleCoarseSixthLeadingAllowance
+      < quarticSignedPoleStrengthFloor) := by
+  linarith [quarticSignedPole_coarse_uniform_sixth_cap_fails_dominant_balance]
+
+
 /-!
 ## Deterministic V4 + count producer substitution
 

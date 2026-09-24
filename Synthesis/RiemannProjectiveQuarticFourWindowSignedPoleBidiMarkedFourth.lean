@@ -2828,4 +2828,278 @@ theorem quarticFourWindowPairing_cosh_mark_sub_quadratic_abs_le
       * taperMass (quarticFourWindowProfile R lam mu) := by
       rfl
 
+
+/-!
+## Uniform second-weight pairing bounds on the four-window support
+-/
+
+theorem quarticFourWindowPairing_onLineSecond_abs_le_twentyFive_taperMass
+    {R lam mu c : ℝ}
+    (hR : 0 < R) (hRone : R < 1) :
+    |quarticFourWindowPairing R lam mu
+        (quarticFourNormalizedOnLineSecondWeight c)|
+      <=
+    25 * taperMass (quarticFourWindowProfile R lam mu) := by
+  have hpair :=
+    quarticFourWindowProfile_pairing_eq
+      (lam:=lam) (mu:=mu) hR
+      (quarticFourNormalizedOnLineSecondWeight_continuous c)
+  rw [← hpair]
+  let G := quarticFourWindowProfile R lam mu
+  have hi :
+      Integrable
+        (fun v : ℝ =>
+          G v * quarticFourNormalizedOnLineSecondWeight c v) :=
+    ((quarticFourWindowProfile_continuous hR).mul
+      (quarticFourNormalizedOnLineSecondWeight_continuous c))
+      .integrable_of_hasCompactSupport
+        (quarticFourWindowProfile_compact hR).mul_right
+  have hm :
+      Integrable (fun v : ℝ => 25 * |G v|) :=
+    ((quarticFourWindowProfile_continuous hR).abs
+      .integrable_of_hasCompactSupport
+        (quarticFourWindowProfile_compact hR).abs).const_mul _
+  calc
+    |∫ v : ℝ,
+      G v * quarticFourNormalizedOnLineSecondWeight c v|
+      <=
+    ∫ v : ℝ,
+      |G v * quarticFourNormalizedOnLineSecondWeight c v| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ v : ℝ, 25 * |G v| := by
+      apply integral_mono hi.abs hm
+      intro v
+      by_cases hz : G v = 0
+      · simp [hz]
+      · have hs := quarticFourWindowProfile_support_abs_lt hR hz
+        have hv5 : |v| < 5 := by
+          have hpi := Real.pi_lt_four
+          linarith
+        have hv2 : v^2 <= 25 := by
+          nlinarith [sq_abs v]
+        have hc := Real.abs_cos_le_one (c*v)
+        unfold quarticFourNormalizedOnLineSecondWeight
+          quarticFourNormalizedOnLineWeight
+        rw [abs_mul, abs_mul]
+        nlinarith [abs_nonneg (G v)]
+    _ =
+    25 * taperMass G := by
+      unfold taperMass
+      rw [integral_const_mul]
+    _ =
+    25 * taperMass (quarticFourWindowProfile R lam mu) := rfl
+
+theorem quarticFourWindowPairing_poleSecond_abs_le_twentyFive_cosh_one_taperMass
+    {R lam mu t c : ℝ}
+    (hR : 0 < R) (hRone : R < 1)
+    (ht : 200 <= t) :
+    |quarticFourWindowPairing R lam mu
+        (quarticFourNormalizedPoleSecondWeight t c)|
+      <=
+    25 * Real.cosh 1
+      * taperMass (quarticFourWindowProfile R lam mu) := by
+  have hpair :=
+    quarticFourWindowProfile_pairing_eq
+      (lam:=lam) (mu:=mu) hR
+      (quarticFourNormalizedPoleSecondWeight_continuous t c)
+  rw [← hpair]
+  let G := quarticFourWindowProfile R lam mu
+  have hi :
+      Integrable
+        (fun v : ℝ =>
+          G v * quarticFourNormalizedPoleSecondWeight t c v) :=
+    ((quarticFourWindowProfile_continuous hR).mul
+      (quarticFourNormalizedPoleSecondWeight_continuous t c))
+      .integrable_of_hasCompactSupport
+        (quarticFourWindowProfile_compact hR).mul_right
+  have hm :
+      Integrable
+        (fun v : ℝ => (25*Real.cosh 1) * |G v|) :=
+    ((quarticFourWindowProfile_continuous hR).abs
+      .integrable_of_hasCompactSupport
+        (quarticFourWindowProfile_compact hR).abs).const_mul _
+  calc
+    |∫ v : ℝ,
+      G v * quarticFourNormalizedPoleSecondWeight t c v|
+      <=
+    ∫ v : ℝ,
+      |G v * quarticFourNormalizedPoleSecondWeight t c v| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ v : ℝ, (25*Real.cosh 1) * |G v| := by
+      apply integral_mono hi.abs hm
+      intro v
+      by_cases hz : G v = 0
+      · simp [hz, (Real.cosh_pos 1).le]
+      · have hs := quarticFourWindowProfile_support_abs_lt hR hz
+        have hv5 : |v| < 5 := by
+          have hpi := Real.pi_lt_four
+          linarith
+        have hv2 : v^2 <= 25 := by
+          nlinarith [sq_abs v]
+        have hw :=
+          quarticFourNormalizedPoleWeight_abs_le_cosh_one
+            hRone ht hs
+        unfold quarticFourNormalizedPoleSecondWeight
+        rw [abs_mul]
+        have hG : 0 <= |G v| := abs_nonneg _
+        have hC : 0 <= Real.cosh 1 := (Real.cosh_pos 1).le
+        nlinarith
+    _ =
+    (25*Real.cosh 1) * taperMass G := by
+      unfold taperMass
+      rw [integral_const_mul]
+    _ =
+    25*Real.cosh 1
+      * taperMass (quarticFourWindowProfile R lam mu) := by ring
+
+def quarticFourBidiOnLinePairingBound : ℝ :=
+  5
+
+def quarticFourBidiPolePairingBound : ℝ :=
+  5 * Real.cosh 1
+
+theorem QuarticFourSignedPolePair.half_onLine_trunc_abs_le
+    {t B c : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hB : |B| <= 1/5) :
+    |quarticFourBidiMarkedOnLinePairingTrunc
+        W.R (1/2) W.muHalf B c|
+      <= quarticFourBidiOnLinePairingBound := by
+  have h0 :=
+    quarticFourWindowPairing_onLine_abs_le_taperMass
+      W.Rpos (lam:=(1/2 : ℝ)) (mu:=W.muHalf) (c:=c)
+  have h2 :=
+    quarticFourWindowPairing_onLineSecond_abs_le_twentyFive_taperMass
+      W.Rpos W.RltOne (lam:=(1/2 : ℝ)) (mu:=W.muHalf) (c:=c)
+  have hm := W.halfWindow_taperMass_le
+  unfold quarticFourBidiMarkedOnLinePairingTrunc
+    quarticFourBidiOnLinePairingBound
+  calc
+    |_ + (B^2/2)*_|
+      <= |_|
+        + |(B^2/2)*
+            quarticFourWindowPairing W.R (1/2) W.muHalf
+              (quarticFourNormalizedOnLineSecondWeight c)| :=
+        abs_add _ _
+    _ =
+      |_|
+        + (B^2/2)
+          * |quarticFourWindowPairing W.R (1/2) W.muHalf
+              (quarticFourNormalizedOnLineSecondWeight c)| := by
+        rw [abs_mul, abs_of_nonneg (by positivity : 0 <= B^2/2)]
+    _ <= 5 := by
+      have hB2 : B^2 <= 1/25 := by
+        nlinarith [sq_abs B]
+      nlinarith
+
+theorem QuarticFourSignedPolePair.two_onLine_trunc_abs_le
+    {t B c : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hB : |B| <= 1/5) :
+    |quarticFourBidiMarkedOnLinePairingTrunc
+        W.R (2/3) W.muTwo B c|
+      <= quarticFourBidiOnLinePairingBound := by
+  have h0 :=
+    quarticFourWindowPairing_onLine_abs_le_taperMass
+      W.Rpos (lam:=(2/3 : ℝ)) (mu:=W.muTwo) (c:=c)
+  have h2 :=
+    quarticFourWindowPairing_onLineSecond_abs_le_twentyFive_taperMass
+      W.Rpos W.RltOne (lam:=(2/3 : ℝ)) (mu:=W.muTwo) (c:=c)
+  have hm := W.twoWindow_taperMass_le
+  unfold quarticFourBidiMarkedOnLinePairingTrunc
+    quarticFourBidiOnLinePairingBound
+  calc
+    |_ + (B^2/2)*_|
+      <= |_|
+        + |(B^2/2)*
+            quarticFourWindowPairing W.R (2/3) W.muTwo
+              (quarticFourNormalizedOnLineSecondWeight c)| :=
+        abs_add _ _
+    _ =
+      |_|
+        + (B^2/2)
+          * |quarticFourWindowPairing W.R (2/3) W.muTwo
+              (quarticFourNormalizedOnLineSecondWeight c)| := by
+        rw [abs_mul, abs_of_nonneg (by positivity : 0 <= B^2/2)]
+    _ <= 5 := by
+      have hB2 : B^2 <= 1/25 := by
+        nlinarith [sq_abs B]
+      nlinarith
+
+theorem QuarticFourSignedPolePair.half_pole_trunc_abs_le
+    {t B c : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hB : |B| <= 1/5) :
+    |quarticFourBidiMarkedPolePairingTrunc
+        W.R (1/2) W.muHalf t B c|
+      <= quarticFourBidiPolePairingBound := by
+  have h0 :=
+    quarticFourWindowPairing_pole_abs_le_cosh_one_mul_taperMass
+      W.Rpos W.RltOne ht
+      (lam:=(1/2 : ℝ)) (mu:=W.muHalf) (c:=c)
+  have h2 :=
+    quarticFourWindowPairing_poleSecond_abs_le_twentyFive_cosh_one_taperMass
+      W.Rpos W.RltOne ht
+      (lam:=(1/2 : ℝ)) (mu:=W.muHalf) (c:=c)
+  have hm := W.halfWindow_taperMass_le
+  unfold quarticFourBidiMarkedPolePairingTrunc
+    quarticFourBidiPolePairingBound
+  calc
+    |_ + (B^2/2)*_|
+      <= |_|
+        + |(B^2/2)*
+            quarticFourWindowPairing W.R (1/2) W.muHalf
+              (quarticFourNormalizedPoleSecondWeight t c)| :=
+        abs_add _ _
+    _ =
+      |_|
+        + (B^2/2)
+          * |quarticFourWindowPairing W.R (1/2) W.muHalf
+              (quarticFourNormalizedPoleSecondWeight t c)| := by
+        rw [abs_mul, abs_of_nonneg (by positivity : 0 <= B^2/2)]
+    _ <= 5*Real.cosh 1 := by
+      have hB2 : B^2 <= 1/25 := by
+        nlinarith [sq_abs B]
+      have hC : 0 < Real.cosh 1 := Real.cosh_pos 1
+      nlinarith
+
+theorem QuarticFourSignedPolePair.two_pole_trunc_abs_le
+    {t B c : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hB : |B| <= 1/5) :
+    |quarticFourBidiMarkedPolePairingTrunc
+        W.R (2/3) W.muTwo t B c|
+      <= quarticFourBidiPolePairingBound := by
+  have h0 :=
+    quarticFourWindowPairing_pole_abs_le_cosh_one_mul_taperMass
+      W.Rpos W.RltOne ht
+      (lam:=(2/3 : ℝ)) (mu:=W.muTwo) (c:=c)
+  have h2 :=
+    quarticFourWindowPairing_poleSecond_abs_le_twentyFive_cosh_one_taperMass
+      W.Rpos W.RltOne ht
+      (lam:=(2/3 : ℝ)) (mu:=W.muTwo) (c:=c)
+  have hm := W.twoWindow_taperMass_le
+  unfold quarticFourBidiMarkedPolePairingTrunc
+    quarticFourBidiPolePairingBound
+  calc
+    |_ + (B^2/2)*_|
+      <= |_|
+        + |(B^2/2)*
+            quarticFourWindowPairing W.R (2/3) W.muTwo
+              (quarticFourNormalizedPoleSecondWeight t c)| :=
+        abs_add _ _
+    _ =
+      |_|
+        + (B^2/2)
+          * |quarticFourWindowPairing W.R (2/3) W.muTwo
+              (quarticFourNormalizedPoleSecondWeight t c)| := by
+        rw [abs_mul, abs_of_nonneg (by positivity : 0 <= B^2/2)]
+    _ <= 5*Real.cosh 1 := by
+      have hB2 : B^2 <= 1/25 := by
+        nlinarith [sq_abs B]
+      have hC : 0 < Real.cosh 1 := Real.cosh_pos 1
+      nlinarith
+
 end Synthesis

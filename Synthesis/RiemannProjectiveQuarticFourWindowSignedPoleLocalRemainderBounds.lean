@@ -1013,6 +1013,83 @@ theorem QuarticFourSignedPolePair.horizontalCenteredQuarticRemainder_abs_le_sixt
       rfl
 
 
+
+/-!
+## Sixth-order remainder for the complete bivariate quartic jet
+-/
+
+def QuarticFourSignedPolePair.completeJointSixthRemainderBound
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha q : ℝ) : ℝ :=
+  ((7/4320 : ℝ) * (|q|^6 + |alpha|^6)
+    + (5/192 : ℝ) * alpha^2 * |q|^4
+    + (1/48 : ℝ) * |alpha|^4 * |q|^2)
+    * W.signedProfileAbsMomentSix
+
+theorem QuarticFourSignedPolePair.completeJointSixthRemainderBound_nonneg
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    0 <= W.completeJointSixthRemainderBound alpha q := by
+  unfold QuarticFourSignedPolePair.completeJointSixthRemainderBound
+  have h6 := W.signedProfileAbsMomentSix_nonneg
+  positivity
+
+theorem QuarticFourSignedPolePair.completeJointQuarticRemainder_eq_components
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.completeJointQuarticRemainder alpha q
+      =
+    W.baseQuarticJetRemainder q
+      + (alpha^2/2) * W.horizontalQuadraticJetRemainder q
+      + W.horizontalCenteredQuarticRemainder alpha q := by
+  unfold QuarticFourSignedPolePair.completeJointQuarticRemainder
+    QuarticFourSignedPolePair.jointQuarticJetRemainder
+    QuarticFourSignedPolePair.horizontalCenteredQuarticRemainder
+  ring
+
+theorem QuarticFourSignedPolePair.completeJointQuarticRemainder_abs_le_sixth
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (ha : |alpha| <= quarticSignedPoleCanonicalLocalRadius)
+    (hq : |q| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.completeJointQuarticRemainder alpha q|
+      <=
+    W.completeJointSixthRemainderBound alpha q := by
+  have hb :=
+    W.baseQuarticJetRemainder_abs_le_sixth hq
+  have hqerr :=
+    W.horizontalQuadraticJetRemainder_abs_le hq
+  have hh :=
+    W.horizontalCenteredQuarticRemainder_abs_le_sixth ha hq
+  rw [W.completeJointQuarticRemainder_eq_components]
+  have ha2 : 0 <= alpha^2/2 := by positivity
+  calc
+    |W.baseQuarticJetRemainder q
+      + (alpha^2/2) * W.horizontalQuadraticJetRemainder q
+      + W.horizontalCenteredQuarticRemainder alpha q|
+      <=
+    |W.baseQuarticJetRemainder q|
+      + |(alpha^2/2) * W.horizontalQuadraticJetRemainder q|
+      + |W.horizontalCenteredQuarticRemainder alpha q| := by
+        exact (abs_add _ _).trans
+          (add_le_add (abs_add _ _) le_rfl)
+    _ <=
+    (7/4320 : ℝ) * |q|^6 * W.signedProfileAbsMomentSix
+      +
+    (alpha^2/2)
+      * ((5/96 : ℝ) * |q|^4 * W.signedProfileAbsMomentSix)
+      +
+    ((7/4320 : ℝ) * |alpha|^6
+      + (1/48 : ℝ) * |alpha|^4 * |q|^2)
+      * W.signedProfileAbsMomentSix := by
+        rw [abs_mul, abs_of_nonneg ha2]
+        gcongr
+    _ =
+    W.completeJointSixthRemainderBound alpha q := by
+      unfold QuarticFourSignedPolePair.completeJointSixthRemainderBound
+      ring
+
+
 /-!
 ## One same-object bound for the complete local joint remainder
 -/

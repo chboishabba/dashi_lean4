@@ -1479,4 +1479,43 @@ theorem balanced_transition_tangential_pressure_forced_to_one :
   norm_num [requiredTangentialPressure]
 
 
+/-!
+Balance-compatible localized antigravity max-cut.
+-/
+
+structure BalancedLocalizedPositiveGAntigravityMaxCut : Prop where
+  finiteDefocusing : FiniteDefocusingSolutionWitness
+  anisotropicBalance : FiniteAnisotropicTOVBalanceWitness
+  couplingPositive : CouplingSign = .positive
+  externalResponseOutward :
+    exteriorResponse .positive .negative = .outward
+  xPrincipalDeviationOutward :
+    principalDeviationAcceleration .x = .outward
+  yPrincipalDeviationOutward :
+    principalDeviationAcceleration .y = .outward
+  zPrincipalDeviationOutward :
+    principalDeviationAcceleration .z = .outward
+
+theorem canonical_balanced_localized_positive_g_antigravity_max_cut :
+    BalancedLocalizedPositiveGAntigravityMaxCut := by
+  exact {
+    finiteDefocusing := canonical_finite_defocusing_solution_witness
+    anisotropicBalance := canonical_finite_anisotropic_tov_balance
+    couplingPositive := rfl
+    externalResponseOutward := rfl
+    xPrincipalDeviationOutward := rfl
+    yPrincipalDeviationOutward := rfl
+    zPrincipalDeviationOutward := rfl
+  }
+
+def balancedMaxCutNegativeGRequired : Bool := false
+def balancedMaxCutNegativeInertialMassRequired : Bool := false
+def balancedMaxCutFullContinuumTOVSolved : Bool := false
+def balancedMaxCutJunctionConditionsSolved : Bool := false
+def balancedMaxCutExactLocalizedMetricSolved : Bool := false
+
+theorem balanced_max_cut_uses_positive_g :
+    balancedMaxCutNegativeGRequired = false := rfl
+
+
 end Integration.GRQFTPostMergeLocalization

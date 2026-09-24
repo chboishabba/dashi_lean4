@@ -61,4 +61,20 @@ theorem schwarzschild_recovery_boundary_parity :
     schwarzschildRadialValuationRequiredForGenericAttachment = false :=
   schwarzschild_not_generic_recovery_premise
 
+theorem single_sector_totalization_boundary_parity :
+    singleSectorTotalEqualityIsPrimitiveTheorem = false :=
+  single_sector_total_equality_not_primitive
+
+theorem aggregation_packaging_boundary_parity :
+    aggregationIsPremiseOfCrossSectorEquality = false :=
+  aggregation_not_cross_sector_equality_premise
+
+theorem promotion_packaging_boundary_parity :
+    promotionTokenIsPremiseOfCrossSectorEquality = false :=
+  promotion_not_cross_sector_equality_premise
+
+theorem gr_request_vs_evidence_boundary_parity :
+    requestSurfaceAloneClosesCurvatureConvergence = false :=
+  request_surface_is_not_curvature_proof
+
 end AgdaMirror.GRQFTPostMergeLocalization

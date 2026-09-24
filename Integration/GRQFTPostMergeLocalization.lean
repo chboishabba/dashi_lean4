@@ -104,10 +104,9 @@ theorem second_cmp119_to_shared_stress_theorem_not_required :
     secondCMP119ToSharedStressTheoremRequired = false := rfl
 
 inductive PostMergeLeaf where
-  | grDiscreteToContinuumSameObjectRealization
+  | grTheoremBearingDiscreteToSmoothAnalyticBundle
   | cmp119StressToLiteralPinnedStressAttachment
   | pinnedLiteralYMToRecoveredQFTAttachment
-  | activePhysicalSectorTotalization
   | grAnchoredCMP119CrossSectorStressEquality
   | physicalDrellYanAbsoluteProjectionReplacement
   | acceptedMeasuredGAndEmpiricalAuthority
@@ -118,7 +117,6 @@ def remainingPostMergeLeaves : List PostMergeLeaf :=
   [ .grDiscreteToContinuumSameObjectRealization
   , .cmp119StressToLiteralPinnedStressAttachment
   , .pinnedLiteralYMToRecoveredQFTAttachment
-  , .activePhysicalSectorTotalization
   , .grAnchoredCMP119CrossSectorStressEquality
   , .physicalDrellYanAbsoluteProjectionReplacement
   , .acceptedMeasuredGAndEmpiricalAuthority
@@ -305,5 +303,83 @@ theorem schwarzschild_not_generic_recovery_premise :
 
 theorem schwarzschild_known_limit_still_required :
     schwarzschildWeakFieldValidationStillPhysicallyRequired = true := rfl
+
+/-!
+Single-sector totalisation can be a model-construction choice.
+
+This generic Lean mirror captures the definitional idea without rebuilding the
+full Agda UnifiedCandidate record: select one sector, define total := selected,
+and define aggregation := equality with that selected value.
+-/
+
+structure SingleSectorTotalization (Candidate Group Stress : Type u) where
+  selectedGroup : Candidate → Group
+  sectorStress : Candidate → Group → Stress
+
+def SingleSectorTotalization.total
+    {Candidate Group Stress : Type u}
+    (S : SingleSectorTotalization Candidate Group Stress)
+    (c : Candidate) : Stress :=
+  S.sectorStress c (S.selectedGroup c)
+
+def SingleSectorTotalization.aggregates
+    {Candidate Group Stress : Type u}
+    (S : SingleSectorTotalization Candidate Group Stress)
+    (c : Candidate)
+    (sectorFamily : Group → Stress)
+    (total : Stress) : Prop :=
+  total = sectorFamily (S.selectedGroup c)
+
+theorem single_sector_total_is_selected
+    {Candidate Group Stress : Type u}
+    (S : SingleSectorTotalization Candidate Group Stress)
+    (c : Candidate) :
+    S.total c = S.sectorStress c (S.selectedGroup c) := rfl
+
+def singleSectorTotalEqualityIsPrimitiveTheorem : Bool := false
+
+theorem single_sector_total_equality_not_primitive :
+    singleSectorTotalEqualityIsPrimitiveTheorem = false := rfl
+
+/-!
+Stress-weld equality vs aggregation/promotion packaging.
+-/
+
+structure StressEnergyEqualityCore
+    (Candidate Regime Stress : Type u) where
+  sameStressEnergyOnOverlap :
+    Candidate → Regime → Stress → Stress → Prop
+
+def aggregationIsPremiseOfCrossSectorEquality : Bool := false
+def promotionTokenIsPremiseOfCrossSectorEquality : Bool := false
+
+theorem aggregation_not_cross_sector_equality_premise :
+    aggregationIsPremiseOfCrossSectorEquality = false := rfl
+
+theorem promotion_not_cross_sector_equality_premise :
+    promotionTokenIsPremiseOfCrossSectorEquality = false := rfl
+
+/-!
+Request surfaces are not theorem evidence.
+-/
+
+structure HolonomyTaylorRicciRequest where
+  holonomyTaylorExpansion : Prop
+  curvatureExtractionErrorBound : Prop
+  ricciContractionLimitCompatibility : Prop
+  uniformCurvatureDerivativeBound : Prop
+  discreteRicciConvergenceRate : Prop
+
+structure HolonomyTaylorRicciEvidence (R : HolonomyTaylorRicciRequest) : Prop where
+  holonomyTaylorExpansionEvidence : R.holonomyTaylorExpansion
+  curvatureExtractionErrorBoundEvidence : R.curvatureExtractionErrorBound
+  ricciContractionLimitCompatibilityEvidence : R.ricciContractionLimitCompatibility
+  uniformCurvatureDerivativeBoundEvidence : R.uniformCurvatureDerivativeBound
+  discreteRicciConvergenceRateEvidence : R.discreteRicciConvergenceRate
+
+def requestSurfaceAloneClosesCurvatureConvergence : Bool := false
+
+theorem request_surface_is_not_curvature_proof :
+    requestSurfaceAloneClosesCurvatureConvergence = false := rfl
 
 end Integration.GRQFTPostMergeLocalization

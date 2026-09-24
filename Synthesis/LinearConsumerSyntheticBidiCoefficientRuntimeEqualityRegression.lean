@@ -1,0 +1,9 @@
+import Synthesis.LinearConsumerSyntheticBidiCoefficientRuntimeEquality
+
+namespace Synthesis
+
+example : syntheticBidiRuntimeRecoveredCoefficientBytes =
+    syntheticBidiRecoveredCoefficientBytes :=
+  syntheticBidiRuntimeRecoveredCoefficientBytes_eq_formal
+
+end Synthesis

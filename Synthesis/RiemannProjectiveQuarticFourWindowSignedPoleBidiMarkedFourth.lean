@@ -961,6 +961,7 @@ theorem QuarticFourSignedPolePair.literalLocalVerticalFourthZeroMomentAt_eq_bidi
       have h :=
         quarticSignedPoleVerticalFourth_eq_bidi_operator
           A ((rho : ℂ).im-t)
+      unfold quarticSignedPoleBidiAngularOperator at h
       unfold quarticSignedPoleTargetReflectionSecondPairMarkOnLine
         quarticSignedPoleTargetReflectionFourthPairMarkOnLine
       rw [h]

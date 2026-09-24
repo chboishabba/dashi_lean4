@@ -4022,4 +4022,157 @@ theorem heightDefect_coshMarked_eq_targetReflection
       evenResp_coshMarked_zero_eq hg hgc A r,
       evenResp_coshMarked_zero_eq hg hgc A (2*r)]
 
+
+/-!
+## Literal target/reflection zero-sum form of the marked cluster
+
+The previous cosh-mark identity is pointwise in the height parameter.  Here it
+is pushed through the absolutely convergent same-ordinate zero sum.  This keeps
+the analytic frontier honest: the marked cluster is exposed as a literal sum
+of target/reflection-symmetrized per-zero defects rather than left behind the
+opaque clusterHeightDefect interface.
+-/
+
+def quarticSignedPoleTargetReflectionHeightDefect
+    (g : ℝ -> ℝ) (A r : ℝ) (rho : Zeros) : ℝ :=
+  (
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+        g (heightOf rho + A) (2*r)
+      +
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+        g (heightOf rho - A) (2*r)
+  ) / 2
+    *
+  Zeta23Bridge.LiteralWeilParityBalance.evenResp g A r
+    -
+  (
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+        g (heightOf rho + A) r
+      +
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+        g (heightOf rho - A) r
+  ) / 2
+    *
+  Zeta23Bridge.LiteralWeilParityBalance.evenResp g A (2*r)
+
+theorem heightDefect_coshMarked_eq_targetReflectionZero
+    {g : ℝ -> ℝ}
+    (hg : Continuous g)
+    (hgc : HasCompactSupport g)
+    (A r : ℝ) (rho : Zeros) :
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
+        (quarticSignedPoleCoshMarkedDetector g A)
+        r (heightOf rho) 0
+      =
+    quarticSignedPoleTargetReflectionHeightDefect g A r rho := by
+  unfold quarticSignedPoleTargetReflectionHeightDefect
+  simpa [add_comm] using
+    heightDefect_coshMarked_eq_targetReflection
+      hg hgc A (heightOf rho) r
+
+theorem clusterHeightDefect_coshMarked_eq_tsum_targetReflection
+    {g : ℝ -> ℝ}
+    (hgs : ContDiff ℝ 2 g)
+    (hgc : HasCompactSupport g)
+    (heven : ∀ u, g (-u) = g u)
+    (A t r : ℝ) :
+    Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile.clusterHeightDefect
+        (quarticSignedPoleCoshMarkedDetector g A) t r
+      =
+    ∑' rho : SameOrd t,
+      2 * ((Zeta23.zetaZeroConfig).mult (rho : Zeros) : ℝ)
+        * quarticSignedPoleTargetReflectionHeightDefect
+            g A r (rho : Zeros) := by
+  have hmarkedCD :
+      ContDiff ℝ 2 (quarticSignedPoleCoshMarkedDetector g A) :=
+    quarticSignedPoleCoshMarkedDetector_contDiff hgs A
+  have hmarkedK :
+      HasCompactSupport (quarticSignedPoleCoshMarkedDetector g A) :=
+    quarticSignedPoleCoshMarkedDetector_compact hgc A
+  have hmarkedEven :
+      ∀ u, quarticSignedPoleCoshMarkedDetector g A (-u)
+        = quarticSignedPoleCoshMarkedDetector g A u :=
+    quarticSignedPoleCoshMarkedDetector_even heven A
+  rw [
+    Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile.clusterHeightDefect_eq_tsum
+      hmarkedCD hmarkedK hmarkedEven t r
+  ]
+  apply tsum_congr
+  intro rho
+  unfold Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile.zeroHeightDefect
+  rw [heightDefect_coshMarked_eq_targetReflectionZero
+        hgs.continuous hgc A r (rho : Zeros)]
+
+def QuarticFourSignedPolePair.bidiMarkedClusterTargetReflectionCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A : ℝ) : ℝ :=
+  W.poleTwo *
+    (
+      ∑' rho : SameOrd t,
+        2 * ((Zeta23.zetaZeroConfig).mult (rho : Zeros) : ℝ)
+          * quarticSignedPoleTargetReflectionHeightDefect
+              (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+              A (t/16) (rho : Zeros)
+    )
+  +
+  (-W.poleHalf) *
+    (
+      ∑' rho : SameOrd t,
+        2 * ((Zeta23.zetaZeroConfig).mult (rho : Zeros) : ℝ)
+          * quarticSignedPoleTargetReflectionHeightDefect
+              (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+              A (t/16) (rho : Zeros)
+    )
+
+theorem QuarticFourSignedPolePair.bidiMarkedCluster_eq_targetReflection_tsum
+    {t A : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.bidiMarkedClusterCombination A
+      =
+    W.bidiMarkedClusterTargetReflectionCombination A := by
+  have hHalf :=
+    clusterHeightDefect_coshMarked_eq_tsum_targetReflection
+      (quarticFourPhysicalDetector_contDiff
+        (t:=t) (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos)
+      (quarticFourPhysicalDetector_compact
+        (t:=t) (lam:=(1/2 : ℝ)) (mu:=W.muHalf)
+        W.Rpos (by linarith))
+      (quarticFourPhysicalDetector_even
+        W.R (1/2) W.muHalf t)
+      A t (t/16)
+  have hTwo :=
+    clusterHeightDefect_coshMarked_eq_tsum_targetReflection
+      (quarticFourPhysicalDetector_contDiff
+        (t:=t) (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos)
+      (quarticFourPhysicalDetector_compact
+        (t:=t) (lam:=(2/3 : ℝ)) (mu:=W.muTwo)
+        W.Rpos (by linarith))
+      (quarticFourPhysicalDetector_even
+        W.R (2/3) W.muTwo t)
+      A t (t/16)
+  unfold QuarticFourSignedPolePair.bidiMarkedClusterCombination
+    QuarticFourSignedPolePair.bidiMarkedClusterTargetReflectionCombination
+    quarticFourBidiMarkedPhysicalDetector
+  rw [hHalf, hTwo]
+
+theorem exists_quarticFourSignedPolePair_with_strength_floor_and_targetReflection_bias
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 <= W.targetStrength
+      ∧
+      ∃ epsA : ℝ, 0 < epsA ∧
+        ∀ A : ℝ,
+          0 < |A| -> |A| < epsA ->
+          W.bidiMarkedOffOrdCombination A
+            + W.bidiMarkedGammaCombination A
+            <
+          W.bidiMarkedClusterTargetReflectionCombination A := by
+  obtain ⟨W,hfloor,epsA,hepsA,hbias⟩ :=
+    exists_quarticFourSignedPolePair_with_strength_floor_and_marked_channel_bias
+      ht
+  refine ⟨W,hfloor,epsA,hepsA,?_⟩
+  intro A hA0 hAe
+  rw [← W.bidiMarkedCluster_eq_targetReflection_tsum ht]
+  exact hbias A hA0 hAe
+
 end Synthesis

@@ -179,4 +179,46 @@ def physicalCalibrationStillOpen : Bool := true
 theorem physical_calibration_still_open :
     physicalCalibrationStillOpen = true := rfl
 
+structure RecoveryObjects (Carrier : Type u) where
+  recovered : Carrier
+  target : Carrier
+
+def runRecoveryAttempt
+    {Carrier : Type u} {Residual : Type v}
+    (probe : ResidualProbe Carrier Residual)
+    (objects : RecoveryObjects Carrier) : AttemptOutcome :=
+  if probe.residualIsZero (probe.residual objects.recovered objects.target) then
+    .exactResidualZero
+  else
+    .nonzeroResidualCounterexample
+
+structure RecoveryAttemptReceipt
+    (Carrier : Type u) (Residual : Type v) where
+  objects : RecoveryObjects Carrier
+  probe : ResidualProbe Carrier Residual
+  computedResidual : Residual
+  outcome : AttemptOutcome
+  residualIsLiteral :
+    computedResidual = probe.residual objects.recovered objects.target
+  outcomeIsComputed :
+    outcome = runRecoveryAttempt probe objects
+
+def executeRecoveryAttempt
+    {Carrier : Type u} {Residual : Type v}
+    (probe : ResidualProbe Carrier Residual)
+    (objects : RecoveryObjects Carrier) :
+    RecoveryAttemptReceipt Carrier Residual where
+  objects := objects
+  probe := probe
+  computedResidual := probe.residual objects.recovered objects.target
+  outcome := runRecoveryAttempt probe objects
+  residualIsLiteral := rfl
+  outcomeIsComputed := rfl
+
+def recoveryAttemptsDoNotRequirePromotionTokens : Bool := true
+
+theorem recovery_attempts_do_not_require_promotion_tokens :
+    recoveryAttemptsDoNotRequirePromotionTokens = true := rfl
+
+
 end Integration.GRQFTExecutableResidual

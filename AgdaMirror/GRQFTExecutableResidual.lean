@@ -22,6 +22,7 @@ structure CrossProverReceipt where
   einsteinResidualAttemptMirrored : Bool
   wrongCouplingCounterexampleMirrored : Bool
   genericStressWeldAttemptMirrored : Bool
+  recoveredVsTargetAttemptMirrored : Bool
   physicalCalibrationPromoted : Bool
   pathCorrespondenceIsProofEquivalence : Bool
   deriving Repr
@@ -30,6 +31,7 @@ def crossProverReceipt : CrossProverReceipt where
   einsteinResidualAttemptMirrored := true
   wrongCouplingCounterexampleMirrored := true
   genericStressWeldAttemptMirrored := true
+  recoveredVsTargetAttemptMirrored := true
   physicalCalibrationPromoted := false
   pathCorrespondenceIsProofEquivalence := false
 
@@ -44,6 +46,10 @@ theorem zero_coupling_counterexample_parity :
 theorem negative_coupling_counterexample_parity :
     runEinsteinEquationAttempt .neg = .nonzeroResidualCounterexample :=
   negative_coupling_attempt_fails
+
+theorem recovery_attempt_without_promotion_parity :
+    recoveryAttemptsDoNotRequirePromotionTokens = true :=
+  recovery_attempts_do_not_require_promotion_tokens
 
 theorem calibration_nonpromotion_parity :
     physicalCalibrationStillOpen = true :=

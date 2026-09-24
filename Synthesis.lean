@@ -394,6 +394,8 @@ import Synthesis.LinearConsumerSyntheticBidiRuntimeByteEquality
 import Synthesis.LinearConsumerSyntheticBidiRuntimeByteEqualityRegression
 import Synthesis.MonsterWholeCharacterSimpleSubobjectClassification
 import Synthesis.MonsterWholeCharacterSimpleSubobjectRegression
+import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleBidiMarkedFourth
+
 
 
 

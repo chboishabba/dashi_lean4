@@ -1069,6 +1069,119 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_corrected_v4h4_literal
     W.literalLocalMultiplicityAt_le_expandedWindowN
       ht heta (eta:=eta) n
 
+
+/-!
+## Explicit smooth-mu lower envelope
+
+Zeta23's vendored GammaFacts proof already contains the explicit Stirling
+constant 20/(2*pi).  Expose that concrete witness rather than retaining the
+existential GammaFacts field, because the final ABSORB test needs visible
+constants.
+-/
+
+theorem zetaMu_stirling_explicit
+    {tau : ℝ} (htau : 1 <= |tau|) :
+    |Zeta23.mu tau
+      - (1 / (2 * Real.pi))
+          * Real.log (|tau| / (2 * Real.pi))|
+      <=
+    (20 / (2 * Real.pi)) / tau^2 := by
+  have hpi := Real.pi_pos
+  have ht : 1 / 2 <= |tau / 2| := by
+    rw [abs_div, abs_two]
+    linarith
+  have h :=
+    Zeta23.StirlingVert.re_digamma_stirling'
+      (a := 1 / 4) (by norm_num) (by norm_num) ht
+  have htau0 : 0 < |tau| := by linarith
+  let D : ℝ :=
+    (Complex.digamma
+      ((((1:ℝ) / 4 : ℝ)) + Complex.I * ((tau / 2 : ℝ) : ℂ))).re
+      - Real.log |tau / 2|
+  have hD5 : |D| <= 5 / (tau / 2)^2 := by
+    simpa [D] using h
+  have hlogs :
+      Real.log (|tau| / (2 * Real.pi))
+        =
+      Real.log |tau / 2| - Real.log Real.pi := by
+    rw [abs_div, abs_two,
+      Real.log_div htau0.ne' (by positivity),
+      Real.log_div htau0.ne' two_ne_zero,
+      Real.log_mul two_ne_zero hpi.ne']
+    ring
+  have hkey :
+      Zeta23.mu tau
+        - (1 / (2 * Real.pi))
+            * Real.log (|tau| / (2 * Real.pi))
+      =
+      (1 / (2 * Real.pi)) * D := by
+    rw [Zeta23.MuFields.mu_eq tau, hlogs]
+    dsimp [D]
+    ring
+  rw [hkey, abs_mul,
+    abs_of_pos (by positivity : (0:ℝ) < 1 / (2 * Real.pi))]
+  calc
+    1 / (2 * Real.pi) * |D|
+      <= 1 / (2 * Real.pi) * (5 / (tau / 2)^2) := by
+        gcongr
+    _ = (20 / (2 * Real.pi)) / tau^2 := by
+        field_simp
+        ring
+
+def quarticSignedPoleMuLowerEnvelope
+    (T : ℝ) : ℝ :=
+  (1 / (2 * Real.pi)) * Real.log (T / (2 * Real.pi))
+    - (20 / (2 * Real.pi)) / T^2
+
+theorem zetaMu_ge_quarticSignedPoleMuLowerEnvelope
+    {T x : ℝ}
+    (hT : 1 <= T)
+    (hTx : T <= x) :
+    quarticSignedPoleMuLowerEnvelope T <= Zeta23.mu x := by
+  have hx1 : 1 <= |x| := by
+    rw [abs_of_pos (by linarith : 0 < x)]
+    linarith
+  have hst := zetaMu_stirling_explicit hx1
+  have hxpos : 0 < x := by linarith
+  have hTpos : 0 < T := by linarith
+  have hmainLower :
+      (1 / (2 * Real.pi)) * Real.log (T / (2 * Real.pi))
+        <=
+      (1 / (2 * Real.pi)) * Real.log (x / (2 * Real.pi)) := by
+    apply mul_le_mul_of_nonneg_left
+    · apply Real.log_le_log
+      · positivity
+      · exact div_le_div_of_nonneg_right hTx Real.pi_pos.le
+    · positivity
+  have herrMono :
+      (20 / (2 * Real.pi)) / x^2
+        <=
+      (20 / (2 * Real.pi)) / T^2 := by
+    have hT2 : 0 < T^2 := by positivity
+    have hx2 : 0 < x^2 := by positivity
+    apply div_le_div_of_nonneg_left
+    · positivity
+    · exact hT2
+    · nlinarith
+  have hlowerX :
+      (1 / (2 * Real.pi)) * Real.log (x / (2 * Real.pi))
+        - (20 / (2 * Real.pi)) / x^2
+      <= Zeta23.mu x := by
+    rw [abs_of_pos hxpos] at hst
+    have hlo := (abs_le.mp hst).1
+    linarith
+  unfold quarticSignedPoleMuLowerEnvelope
+  linarith
+
+theorem zetaMu_ge_local_left_envelope
+    {t r x : ℝ}
+    (hleft : 1 <= t-r)
+    (hx : x ∈ Set.Icc (t-r) (t+r)) :
+    quarticSignedPoleMuLowerEnvelope (t-r)
+      <= Zeta23.mu x := by
+  exact zetaMu_ge_quarticSignedPoleMuLowerEnvelope
+    hleft hx.1
+
 /-!
 ## Fail-closed explicit ABSORB surface
 

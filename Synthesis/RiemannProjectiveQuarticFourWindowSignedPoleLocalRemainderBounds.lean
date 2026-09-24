@@ -3143,4 +3143,121 @@ theorem exists_quarticFourSignedPole_literalLocalFourthAdverseMassAt_le_log :
       exact mul_le_mul_of_nonneg_left hN (by norm_num)
     _ = (9/2 : ℝ) * A0 * Real.log (t+5) := by ring
 
+
+/-!
+## Eighth-order scalar Taylor remainder after the signed sixth harmonic
+
+These are the certified scalar ingredients for the post-sixth ABSORB recut.
+They deliberately mirror the existing sixth-order proofs, but retain the full
+degree-six Taylor polynomial before taking absolute values.
+-/
+
+theorem complex_cos_sub_sixth_abs_le_eighth
+    {x : ℂ}
+    (hx : ‖x‖ <= 1) :
+    ‖Complex.cos x
+        - (1 - x^2/2 + x^4/24 - x^6/720)‖
+      <= ‖x‖^8 * (1/35840 : ℝ) := by
+  calc
+    ‖Complex.cos x
+        - (1 - x^2/2 + x^4/24 - x^6/720)‖
+      =
+    ‖(Complex.exp (-x * Complex.I)
+        - ∑ m ∈ Finset.range 8,
+            (-x * Complex.I)^m / m.factorial) / 2
+      +
+      (Complex.exp (x * Complex.I)
+        - ∑ m ∈ Finset.range 8,
+            (x * Complex.I)^m / m.factorial) / 2‖ := by
+        simp [Complex.cos, Finset.sum_range_succ, Nat.factorial]
+        grind [Complex.I_sq, two_ne_zero]
+    _ <=
+      ‖Complex.exp (-x * Complex.I)
+        - ∑ m ∈ Finset.range 8,
+            (-x * Complex.I)^m / m.factorial‖ / 2
+      +
+      ‖Complex.exp (x * Complex.I)
+        - ∑ m ∈ Finset.range 8,
+            (x * Complex.I)^m / m.factorial‖ / 2 := by
+        grw [norm_add_le]
+        simp
+    _ <=
+      ‖-x * Complex.I‖^8
+          * ((Nat.succ 8 : ℝ)
+            * (Nat.factorial 8 * (8 : ℕ) : ℝ)⁻¹) / 2
+      +
+      ‖x * Complex.I‖^8
+          * ((Nat.succ 8 : ℝ)
+            * (Nat.factorial 8 * (8 : ℕ) : ℝ)⁻¹) / 2 := by
+        grw [Complex.exp_bound (by simpa) (by norm_num),
+          Complex.exp_bound (by simpa) (by norm_num)]
+    _ <= ‖x‖^8 * (1/35840 : ℝ) := by
+        norm_num
+
+theorem real_cos_sub_sixth_abs_le_eighth
+    {x : ℝ}
+    (hx : |x| <= 1) :
+    |Real.cos x
+        - (1 - x^2/2 + x^4/24 - x^6/720)|
+      <= |x|^8 * (1/35840 : ℝ) := by
+  have h :=
+    complex_cos_sub_sixth_abs_le_eighth
+      (x := (x : ℂ)) (by simpa using hx)
+  simpa [Real.norm_eq_abs] using h
+
+theorem real_cosh_sub_sixth_abs_le_eighth
+    {x : ℝ}
+    (hx : |x| <= 1) :
+    |Real.cosh x - 1 - x^2/2 - x^4/24 - x^6/720|
+      <= |x|^8 * (1/35840 : ℝ) := by
+  calc
+    |Real.cosh x - 1 - x^2/2 - x^4/24 - x^6/720|
+      =
+    |(Real.exp x
+        - ∑ m ∈ Finset.range 8, x^m / m.factorial) / 2
+      +
+      (Real.exp (-x)
+        - ∑ m ∈ Finset.range 8, (-x)^m / m.factorial) / 2| := by
+        rw [Real.cosh_eq]
+        simp [Finset.sum_range_succ, Nat.factorial]
+        ring
+    _ <=
+      |Real.exp x
+        - ∑ m ∈ Finset.range 8, x^m / m.factorial| / 2
+      +
+      |Real.exp (-x)
+        - ∑ m ∈ Finset.range 8, (-x)^m / m.factorial| / 2 := by
+        have h2 : (0:ℝ) < 2 := by norm_num
+        calc
+          |(Real.exp x
+              - ∑ m ∈ Finset.range 8, x^m / m.factorial) / 2
+            +
+            (Real.exp (-x)
+              - ∑ m ∈ Finset.range 8, (-x)^m / m.factorial) / 2|
+            <=
+          |(Real.exp x
+              - ∑ m ∈ Finset.range 8, x^m / m.factorial) / 2|
+            +
+          |(Real.exp (-x)
+              - ∑ m ∈ Finset.range 8, (-x)^m / m.factorial) / 2| :=
+            abs_add _ _
+          _ =
+          |Real.exp x
+              - ∑ m ∈ Finset.range 8, x^m / m.factorial| / 2
+            +
+          |Real.exp (-x)
+              - ∑ m ∈ Finset.range 8, (-x)^m / m.factorial| / 2 := by
+            rw [abs_div, abs_div, abs_of_pos h2]
+    _ <=
+      (|x|^8 * (1/35840 : ℝ)) / 2
+        + (|-x|^8 * (1/35840 : ℝ)) / 2 := by
+      gcongr
+      · exact Real.exp_bound hx (by norm_num)
+      · exact Real.exp_bound
+          (by simpa [abs_neg] using hx) (by norm_num)
+    _ = |x|^8 * (1/35840 : ℝ) := by
+      rw [abs_neg]
+      ring
+
+
 end Synthesis

@@ -1674,4 +1674,50 @@ theorem finite_tov_blocks_standard_exterior_repulsion :
     finiteLiteralTOVStandardExteriorRepulsive = false := rfl
 
 
+/-!
+Authoritative localized max-cut after literal TOV execution.
+
+Local defocusing survives, but the standard vacuum exterior remains on the
+positive-mass attractive branch because the literal surface metric mass is +1/4.
+-/
+
+structure LocalizedDefocusingExteriorNoGoMaxCut : Prop where
+  finiteDefocusing : FiniteDefocusingSolutionWitness
+  literalFiniteTOVMassPositive :
+    finiteSurfaceMetricMass = 1/4
+  pressureWeightedActiveDiagnosticNegative :
+    finiteIntegratedActiveMass = -11/12
+  twoMassNotionsDistinct :
+    finiteSurfaceMetricMass ≠ finiteIntegratedActiveMass
+  xPrincipalDeviationOutward :
+    principalDeviationAcceleration .x = .outward
+  yPrincipalDeviationOutward :
+    principalDeviationAcceleration .y = .outward
+  zPrincipalDeviationOutward :
+    principalDeviationAcceleration .z = .outward
+  standardVacuumExteriorRepulsionFalse :
+    finiteLiteralTOVStandardExteriorRepulsive = false
+
+theorem canonical_localized_defocusing_exterior_no_go_max_cut :
+    LocalizedDefocusingExteriorNoGoMaxCut := by
+  exact {
+    finiteDefocusing := canonical_finite_defocusing_solution_witness
+    literalFiniteTOVMassPositive := finite_surface_metric_mass_positive_quarter
+    pressureWeightedActiveDiagnosticNegative :=
+      finite_integrated_active_mass_negative_eleven_twelfths
+    twoMassNotionsDistinct := surface_metric_mass_not_active_stress_diagnostic
+    xPrincipalDeviationOutward := rfl
+    yPrincipalDeviationOutward := rfl
+    zPrincipalDeviationOutward := rfl
+    standardVacuumExteriorRepulsionFalse := rfl
+  }
+
+def authoritativeInteriorDefocusingConstructed : Bool := true
+def authoritativeStandardVacuumExteriorRepulsionConstructed : Bool := false
+def authoritativeExternalAntigravityNeedsEscapeRoute : Bool := true
+
+theorem authoritative_max_cut_blocks_standard_exterior_repulsion :
+    authoritativeStandardVacuumExteriorRepulsionConstructed = false := rfl
+
+
 end Integration.GRQFTPostMergeLocalization

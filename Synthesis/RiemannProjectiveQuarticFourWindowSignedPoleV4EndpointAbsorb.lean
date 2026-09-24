@@ -422,12 +422,99 @@ theorem QuarticFourSignedPolePair.literalLocalVerticalFourthLeftEndpointAtomAt_l
     (by exact_mod_cast hN)
     (by positivity)
 
+
+/-!
+## Orientation firewall against the literal G3 quartic source
+
+The exact joint quartic source has the opposite fourth-angular orientation
+from the naive ABSORB reading.  Pointwise,
+
+  P_G3(rho)
+    = m_rho * S(W) / (6 r^6)
+        * (a_rho^4 - Re(a_rho+i delta_rho)^4).
+
+Thus an UPPER bound on the fourth-angular statistic produces a LOWER bound on
+the joint quartic polynomial.  It cannot by itself be substituted for the
+upper cone/source budget used by G3.
+
+This identity is the fail-fast test for the V4/H4 recut.
+-/
+
+theorem QuarticFourSignedPolePair.literalJointQuarticPolynomial_eq_horizontalFourth_sub_fourthPhase
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.literalJointQuarticPolynomial rho
+      =
+    (((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+        * W.targetStrength
+        / (6 * (t/16)^6))
+      *
+    (heightOf rho^4
+      - quarticSignedPolePhysicalFourthPhaseReal t rho) := by
+  unfold QuarticFourSignedPolePair.literalJointQuarticPolynomial
+    quarticSignedPolePhysicalFourthPhaseReal
+    quarticSignedPoleFourthPhaseReal
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
+theorem QuarticFourSignedPolePair.literalJointQuarticPolynomial_ge_of_fourthPhase_le
+    {t B : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hphase :
+      quarticSignedPolePhysicalFourthPhaseReal t rho <= B) :
+    (((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+        * W.targetStrength
+        / (6 * (t/16)^6))
+      * (heightOf rho^4 - B)
+      <=
+    W.literalJointQuarticPolynomial rho := by
+  rw [W.literalJointQuarticPolynomial_eq_horizontalFourth_sub_fourthPhase
+      ht]
+  have hcoef :
+      0 <=
+      ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+        * W.targetStrength
+        / (6 * (t/16)^6) := by
+    positivity
+  exact mul_le_mul_of_nonneg_left
+    (sub_le_sub_left hphase (heightOf rho^4))
+    hcoef
+
+/--
+Direction check: the V4/H4 upper estimate is naturally a lower-source
+producer after the exact G3 scaling identity.  Any upper-source ABSORB theorem
+must therefore obtain a lower fourth-angular estimate, exploit additional
+signed cancellation, or use a different exact normal form.
+-/
+theorem QuarticFourSignedPolePair.fourthAngularUpperBound_has_lowerG3Orientation
+    {t B : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hphase :
+      quarticSignedPolePhysicalFourthPhaseReal t rho <= B) :
+    (((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+        * W.targetStrength
+        / (6 * (t/16)^6))
+      * (heightOf rho^4 - B)
+      <=
+    W.literalJointQuarticPolynomial rho :=
+  W.literalJointQuarticPolynomial_ge_of_fourthPhase_le
+    ht rho hphase
+
 /-!
 ## Fail-closed explicit ABSORB surface
 
-This is the exact scalar shape we now want to test.  V4 and H4 are paid
-producers; the local sixth-order debt and FarExact stay on their existing
-literal finite carriers.  FarExact is deliberately signed.
+This is a fail-closed candidate scalar surface, not yet a proved upper-source
+budget.  V4 and H4 are paid upper-bound producers; the orientation firewall
+above shows that their fourth-angular upper bound points toward a lower bound
+for the leading G3 quartic polynomial.  Therefore the missing hsource premise
+below is mathematically substantive until a lower angular estimate, additional
+signed cancellation, or another exact normal form pays it.
+
+The local sixth-order debt and FarExact stay on their existing literal finite
+carriers.  FarExact is deliberately signed.
 -/
 
 def QuarticFourSignedPolePair.v4h4ExplicitAbsorbBudgetAt

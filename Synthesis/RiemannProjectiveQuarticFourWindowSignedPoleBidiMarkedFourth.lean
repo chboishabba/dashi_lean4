@@ -3750,4 +3750,168 @@ theorem exists_quarticFourSignedPolePair_with_strength_floor_and_positive_marked
     W.exists_bidiMarkedPoleCombination_pos_punctured ht hQ
   exact ⟨W,hfloor,epsA,hepsA,hband⟩
 
+
+/-!
+## Exact signed marked projective-channel decomposition
+
+For the actual short cosh-marked four-window family the prime channel is
+identically absent.  The positive marked-pole band therefore induces a strict
+signed inequality between the off-ordinate/gamma side and the marked cluster
+height defect.
+-/
+
+def QuarticFourSignedPolePair.bidiMarkedClusterCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A : ℝ) : ℝ :=
+  W.poleTwo *
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.clusterHeightDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (1/2) W.muHalf t A)
+      t (t/16)
+  +
+  (-W.poleHalf) *
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.clusterHeightDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (2/3) W.muTwo t A)
+      t (t/16)
+
+def QuarticFourSignedPolePair.bidiMarkedOffOrdCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A : ℝ) : ℝ :=
+  W.poleTwo *
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (1/2) W.muHalf t A)
+      t (t/16)
+  +
+  (-W.poleHalf) *
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (2/3) W.muTwo t A)
+      t (t/16)
+
+def QuarticFourSignedPolePair.bidiMarkedGammaCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A : ℝ) : ℝ :=
+  W.poleTwo *
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (1/2) W.muHalf t A)
+      t (t/16)
+  +
+  (-W.poleHalf) *
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (2/3) W.muTwo t A)
+      t (t/16)
+
+theorem QuarticFourSignedPolePair.bidiMarkedCluster_eq_offOrd_add_gamma_add_pole
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (A : ℝ) :
+    W.bidiMarkedClusterCombination A
+      =
+    W.bidiMarkedOffOrdCombination A
+      + W.bidiMarkedGammaCombination A
+      + W.bidiMarkedPoleCombination A := by
+  let gHalf :=
+    quarticFourBidiMarkedPhysicalDetector
+      W.R (1/2) W.muHalf t A
+  let gTwo :=
+    quarticFourBidiMarkedPhysicalDetector
+      W.R (2/3) W.muTwo t A
+  have hHalfCD :
+      ContDiff ℝ 2 gHalf := by
+    dsimp [gHalf, quarticFourBidiMarkedPhysicalDetector]
+    exact quarticSignedPoleCoshMarkedDetector_contDiff
+      (quarticFourPhysicalDetector_contDiff
+        (t:=t) (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos) A
+  have hTwoCD :
+      ContDiff ℝ 2 gTwo := by
+    dsimp [gTwo, quarticFourBidiMarkedPhysicalDetector]
+    exact quarticSignedPoleCoshMarkedDetector_contDiff
+      (quarticFourPhysicalDetector_contDiff
+        (t:=t) (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos) A
+  have hHalfK :
+      HasCompactSupport gHalf := by
+    dsimp [gHalf, quarticFourBidiMarkedPhysicalDetector]
+    exact quarticSignedPoleCoshMarkedDetector_compact
+      (quarticFourPhysicalDetector_compact
+        (t:=t) (lam:=(1/2 : ℝ)) (mu:=W.muHalf)
+        W.Rpos (by linarith)) A
+  have hTwoK :
+      HasCompactSupport gTwo := by
+    dsimp [gTwo, quarticFourBidiMarkedPhysicalDetector]
+    exact quarticSignedPoleCoshMarkedDetector_compact
+      (quarticFourPhysicalDetector_compact
+        (t:=t) (lam:=(2/3 : ℝ)) (mu:=W.muTwo)
+        W.Rpos (by linarith)) A
+  have hHalfE : ∀ u, gHalf (-u) = gHalf u := by
+    intro u
+    dsimp [gHalf, quarticFourBidiMarkedPhysicalDetector]
+    exact quarticSignedPoleCoshMarkedDetector_even
+      (quarticFourPhysicalDetector_even
+        W.R (1/2) W.muHalf t) A u
+  have hTwoE : ∀ u, gTwo (-u) = gTwo u := by
+    intro u
+    dsimp [gTwo, quarticFourBidiMarkedPhysicalDetector]
+    exact quarticSignedPoleCoshMarkedDetector_even
+      (quarticFourPhysicalDetector_even
+        W.R (2/3) W.muTwo t) A u
+  have hHalfS :
+      ∀ u, gHalf u ≠ 0 -> |u| < Real.log 2 := by
+    dsimp [gHalf]
+    exact quarticFourBidiMarkedPhysicalDetector_short
+      W.Rpos W.RltOne ht
+  have hTwoS :
+      ∀ u, gTwo u ≠ 0 -> |u| < Real.log 2 := by
+    dsimp [gTwo]
+    exact quarticFourBidiMarkedPhysicalDetector_short
+      W.Rpos W.RltOne ht
+  have hHalf :=
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition
+      .clusterHeightDefect_eq_threeProjectiveChannels
+      hHalfCD hHalfK hHalfE hHalfS t (t/16)
+  have hTwo :=
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition
+      .clusterHeightDefect_eq_threeProjectiveChannels
+      hTwoCD hTwoK hTwoE hTwoS t (t/16)
+  unfold QuarticFourSignedPolePair.bidiMarkedClusterCombination
+    QuarticFourSignedPolePair.bidiMarkedOffOrdCombination
+    QuarticFourSignedPolePair.bidiMarkedGammaCombination
+    QuarticFourSignedPolePair.bidiMarkedPoleCombination
+  dsimp [gHalf,gTwo] at hHalf hTwo
+  rw [hHalf,hTwo]
+  ring
+
+theorem QuarticFourSignedPolePair.bidiMarkedOffOrd_add_gamma_lt_cluster_of_pole_pos
+    {t A : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hPole : 0 < W.bidiMarkedPoleCombination A) :
+    W.bidiMarkedOffOrdCombination A
+      + W.bidiMarkedGammaCombination A
+      < W.bidiMarkedClusterCombination A := by
+  rw [W.bidiMarkedCluster_eq_offOrd_add_gamma_add_pole ht A]
+  linarith
+
+theorem exists_quarticFourSignedPolePair_with_strength_floor_and_marked_channel_bias
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 <= W.targetStrength
+      ∧
+      ∃ epsA : ℝ, 0 < epsA ∧
+        ∀ A : ℝ,
+          0 < |A| -> |A| < epsA ->
+          W.bidiMarkedOffOrdCombination A
+            + W.bidiMarkedGammaCombination A
+            < W.bidiMarkedClusterCombination A := by
+  obtain ⟨W,hfloor,epsA,hepsA,hPoleBand⟩ :=
+    exists_quarticFourSignedPolePair_with_strength_floor_and_positive_markedPole_band
+      ht
+  refine ⟨W,hfloor,epsA,hepsA,?_⟩
+  intro A hA0 hAe
+  exact
+    W.bidiMarkedOffOrd_add_gamma_lt_cluster_of_pole_pos
+      ht (hPoleBand A hA0 hAe)
+
 end Synthesis

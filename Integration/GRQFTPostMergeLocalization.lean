@@ -1453,4 +1453,30 @@ theorem corrected_shell_still_repels_with_positive_g :
     exteriorResponse .positive .negative = .outward := rfl
 
 
+/-!
+Constructive normalized anisotropic-TOV design equation.
+-/
+
+def requiredTangentialPressure
+    (rho pR pRPrime gravityFactor : Rat) : Rat :=
+  pR + (1 / 2 : Rat) * (pRPrime + gravityFactor * (rho + pR))
+
+def normalizedTOVRHSFromCoordinates
+    (rho pR pT gravityFactor : Rat) : Rat :=
+  -(gravityFactor * (rho + pR)) + 2 * (pT - pR)
+
+theorem required_tangential_pressure_closes_normalized_tov
+    (rho pR pRPrime gravityFactor : Rat) :
+    normalizedTOVRHSFromCoordinates
+      rho pR
+      (requiredTangentialPressure rho pR pRPrime gravityFactor)
+      gravityFactor
+      = pRPrime := by
+  ring
+
+theorem balanced_transition_tangential_pressure_forced_to_one :
+    requiredTangentialPressure 1 0 1 1 = 1 := by
+  norm_num [requiredTangentialPressure]
+
+
 end Integration.GRQFTPostMergeLocalization

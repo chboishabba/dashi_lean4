@@ -94,12 +94,19 @@ def encode (r : ℝ) : RegularRatReal where
             simpa [abs_sub_comm] using hn'
       _ ≤ 1 / (m : ℝ) + 1 / (n : ℝ) := by
             unfold radius
-            have hmpos : (0 : ℝ) < m := by exact_mod_cast Nat.pos_of_ne_zero hm
-            have hnpos : (0 : ℝ) < n := by exact_mod_cast Nat.pos_of_ne_zero hn
-            constructor
-            · positivity
-            · field_simp
+            have hmpos : (0 : ℝ) < m := by
+              exact_mod_cast Nat.pos_of_ne_zero hm
+            have hnpos : (0 : ℝ) < n := by
+              exact_mod_cast Nat.pos_of_ne_zero hn
+            have hmhalf :
+                1 / (2 * (m : ℝ)) ≤ 1 / (m : ℝ) := by
+              apply one_div_le_one_div_of_le hmpos
               nlinarith
+            have hnhalf :
+                1 / (2 * (n : ℝ)) ≤ 1 / (n : ℝ) := by
+              apply one_div_le_one_div_of_le hnpos
+              nlinarith
+            exact add_le_add hmhalf hnhalf
 
 private theorem encoded_shift_dist_le
     (r : ℝ) (n : ℕ) :

@@ -664,4 +664,175 @@ theorem QuarticFourSignedPolePair.centeredBidiAngular_nonpos_of_primeRepresentat
   exact mul_nonpos_of_nonpos_of_nonneg
     hc (quarticSignedPolePrimeBidiAngular_nonneg N A)
 
+
+/-!
+## Literal Weil-normalized bidi prime jet
+
+The actual zeta explicit formula carries a square-root denominator and the
+target/reflection pair carries the hyperbolic twist at parameter A, not 2A.
+Reuse the existing cosh von-Mangoldt carrier at half-parameter and keep the
+n^(-1/2) factor explicit.
+-/
+
+noncomputable def quarticSignedPoleLiteralWeilPrimeWeight
+    (A : ℝ) (n : ℕ) : ℝ :=
+  (n : ℝ)^(-(1/2 : ℝ))
+    * RiemannAnalytic.coshVonMangoldt (A/2) n
+
+noncomputable def quarticSignedPoleLiteralWeilPrimeMoment
+    (N : ℕ) (A : ℝ) (r : ℕ) : ℝ :=
+  ∑ n ∈ Finset.Icc 1 N,
+    quarticSignedPoleLiteralWeilPrimeWeight A n
+      * (Real.log n)^r
+
+def quarticSignedPoleLiteralWeilPrimeBidiJet
+    (N : ℕ) (A : ℝ) : QuarticSignedPoleBidiMarkedJet where
+  m0 := quarticSignedPoleLiteralWeilPrimeMoment N A 0
+  m2 := quarticSignedPoleLiteralWeilPrimeMoment N A 2
+  m4 := quarticSignedPoleLiteralWeilPrimeMoment N A 4
+
+theorem quarticSignedPoleLiteralWeilPrimeWeight_nonneg
+    (A : ℝ) (n : ℕ) :
+    0 <= quarticSignedPoleLiteralWeilPrimeWeight A n := by
+  unfold quarticSignedPoleLiteralWeilPrimeWeight
+  exact mul_nonneg
+    (Real.rpow_nonneg (Nat.cast_nonneg n) _)
+    (RiemannAnalytic.coshVonMangoldt_nonneg (A/2) n)
+
+theorem quarticSignedPoleLiteralWeilPrimeBidiAngular_eq_sum
+    (N : ℕ) (A : ℝ) :
+    (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A
+      =
+    ∑ n ∈ Finset.Icc 1 N,
+      quarticSignedPoleLiteralWeilPrimeWeight A n
+        * quarticSignedPolePrimeAngularPolynomial A (Real.log n) := by
+  unfold quarticSignedPoleLiteralWeilPrimeBidiJet
+    quarticSignedPoleLiteralWeilPrimeMoment
+    QuarticSignedPoleBidiMarkedJet.angular
+    quarticSignedPoleBidiAngularOperator
+    quarticSignedPolePrimeAngularPolynomial
+  rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum]
+  rw [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro n hn
+  ring
+
+theorem quarticSignedPoleLiteralWeilPrimeBidiAngular_nonneg
+    (N : ℕ) (A : ℝ) :
+    0 <= (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A := by
+  rw [quarticSignedPoleLiteralWeilPrimeBidiAngular_eq_sum]
+  exact Finset.sum_nonneg fun n hn => by
+    exact mul_nonneg
+      (quarticSignedPoleLiteralWeilPrimeWeight_nonneg A n)
+      (quarticSignedPolePrimeAngularPolynomial_nonneg A (Real.log n))
+
+theorem quarticSignedPoleLiteralWeilPrimeBidiAngular_ge_half_A4_mass
+    (N : ℕ) (A : ℝ) :
+    (1/2 : ℝ) * A^4
+        * quarticSignedPoleLiteralWeilPrimeMoment N A 0
+      <=
+    (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A := by
+  rw [quarticSignedPoleLiteralWeilPrimeBidiAngular_eq_sum]
+  unfold quarticSignedPoleLiteralWeilPrimeMoment
+  simp only [pow_zero, mul_one]
+  rw [Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro n hn
+  have hw := quarticSignedPoleLiteralWeilPrimeWeight_nonneg A n
+  have hp :=
+    quarticSignedPolePrimeAngularPolynomial_ge_half_A4
+      A (Real.log n)
+  nlinarith
+
+/--
+Exact functional-equation tilt split of the literal square-root-normalized
+prime weight.  This is the analytic domain split that the old unnormalized
+twisted-moment theorem does not see.
+-/
+theorem quarticSignedPoleLiteralWeilPrimeWeight_eq_two_tilts
+    {A : ℝ} {n : ℕ} (hn : 1 <= n) :
+    quarticSignedPoleLiteralWeilPrimeWeight A n
+      =
+    (1/2 : ℝ) *
+      ((n : ℝ)^(-(1/2 : ℝ))
+        * (RiemannAnalytic.coshVonMangoldt (A/2) n * 2)) := by
+  ring
+
+/--
+At the exponent level the literal target/reflection weight consists of the two
+branches A-1/2 and -A-1/2.  The equality is stated after dividing out the
+nonnegative von-Mangoldt coefficient so it can be reused by prime-moment
+estimates independently of notation for Lambda.
+-/
+theorem quarticSignedPoleLiteralCoshRpow_split
+    {A : ℝ} {n : ℕ} (hn : 1 <= n) :
+    (n : ℝ)^(-(1/2 : ℝ)) * Real.cosh (A * Real.log n)
+      =
+    (1/2 : ℝ) *
+      ((n : ℝ)^(A-(1/2 : ℝ))
+        + (n : ℝ)^(-A-(1/2 : ℝ))) := by
+  have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
+  rw [Real.cosh_eq]
+  have hA :
+      Real.exp (A * Real.log n) = (n : ℝ)^A := by
+    rw [Real.rpow_def_of_pos hn0]
+  have hnA :
+      Real.exp (-(A * Real.log n)) = (n : ℝ)^(-A) := by
+    rw [Real.rpow_def_of_pos hn0]
+    congr 1
+    ring
+  rw [hA, hnA]
+  have h1 :
+      (n : ℝ)^(-(1/2 : ℝ)) * (n : ℝ)^A
+        = (n : ℝ)^(A-(1/2 : ℝ)) := by
+    rw [← Real.rpow_add hn0]
+    congr 1
+    ring
+  have h2 :
+      (n : ℝ)^(-(1/2 : ℝ)) * (n : ℝ)^(-A)
+        = (n : ℝ)^(-A-(1/2 : ℝ)) := by
+    rw [← Real.rpow_add hn0]
+    congr 1
+    ring
+  rw [← h1, ← h2]
+  ring
+
+theorem quarticSignedPoleLiteralWeilPrimeWeight_eq_tilt_pair
+    {A : ℝ} {n : ℕ} (hn : 1 <= n) :
+    quarticSignedPoleLiteralWeilPrimeWeight A n
+      =
+    (1/2 : ℝ) *
+      (
+        RiemannAnalytic.coshVonMangoldt 0 n
+          * (n : ℝ)^(A-(1/2 : ℝ))
+        +
+        RiemannAnalytic.coshVonMangoldt 0 n
+          * (n : ℝ)^(-A-(1/2 : ℝ))
+      ) := by
+  unfold quarticSignedPoleLiteralWeilPrimeWeight
+  rw [RiemannAnalytic.coshVonMangoldt]
+  have hcosh0 : Real.cosh (2 * 0 * Real.log n) = 1 := by simp
+  rw [hcosh0, mul_one]
+  unfold RiemannAnalytic.coshVonMangoldt
+  rw [show 2 * (A/2) * Real.log n = A * Real.log n by ring]
+  rw [quarticSignedPoleLiteralCoshRpow_split hn]
+  ring
+
+/--
+The existing positive-tilt block estimate applies directly to the first branch
+for A>=0, while the reflected branch lies strictly below the old v=-1/2
+endpoint as soon as A>0.
+-/
+theorem quarticSignedPoleLiteralTiltDomains
+    {A : ℝ} (hA0 : 0 <= A) :
+    (-(1/2 : ℝ) <= A-(1/2 : ℝ))
+      ∧
+    (-A-(1/2 : ℝ) <= -(1/2 : ℝ)) := by
+  constructor <;> linarith
+
+theorem quarticSignedPoleLiteralReflectedTilt_below_old_endpoint
+    {A : ℝ} (hA : 0 < A) :
+    -A-(1/2 : ℝ) < -(1/2 : ℝ) := by
+  linarith
+
 end Synthesis

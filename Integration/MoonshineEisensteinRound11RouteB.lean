@@ -294,7 +294,9 @@ structure Round11RouteBBoundary where
   sourceNormalizedDeltaObjectBound : Bool
   mappedSourceNormalizedDeltaConverges : Bool
 
-  actualAgdaRound11MachinBindingInhabited : Bool
+  canonicalLeanRound11MachinBindingInhabited : Bool
+  canonicalBindingUniqueUpToBishopEquivalence : Bool
+  generatedAgdaRound11MachinReplayObserved : Bool
   eta24SameObjectWithNormalizedE4E6Delta : Bool
 
 def round11RouteBBoundary : Round11RouteBBoundary where
@@ -308,7 +310,9 @@ def round11RouteBBoundary : Round11RouteBBoundary where
   sourceNormalizedDeltaObjectBound := true
   mappedSourceNormalizedDeltaConverges := true
 
-  actualAgdaRound11MachinBindingInhabited := false
+  canonicalLeanRound11MachinBindingInhabited := true
+  canonicalBindingUniqueUpToBishopEquivalence := true
+  generatedAgdaRound11MachinReplayObserved := false
   eta24SameObjectWithNormalizedE4E6Delta := true
 
 end

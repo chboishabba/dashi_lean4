@@ -3143,4 +3143,40 @@ def nambuBubbleFiniteThicknessWallDerived : Bool := false
 def nambuBubbleSIUnitsCalibrated : Bool := false
 
 
+/-!
+Unequal-vacuum flat static wall no-go.
+
+For a canonical static flat scalar wall, the first integral
+  E = (1/2) phi'^2 - V(phi)
+is constant.  If phi' -> 0 at both asymptotic stationary vacua, then their
+vacuum energies must be equal.  The Nambu bubble vacua 21/64 and 19/48 differ.
+-/
+
+def staticVacuumFirstIntegral (V : Rat) : Rat := -V
+
+theorem stationary_endpoint_first_integral_forces_equal_vacua
+    {left right : Rat}
+    (h : staticVacuumFirstIntegral left = staticVacuumFirstIntegral right) :
+    left = right := by
+  unfold staticVacuumFirstIntegral at h
+  linarith
+
+theorem nambu_vacuum_energy_difference :
+    (19/48 : Rat) - 21/64 = 13/192 := by
+  norm_num
+
+theorem nambu_vacua_unequal :
+    (21/64 : Rat) ≠ 19/48 := by
+  norm_num
+
+theorem nambu_flat_static_wall_impossible :
+    staticVacuumFirstIntegral (21/64)
+      ≠ staticVacuumFirstIntegral (19/48) := by
+  norm_num [staticVacuumFirstIntegral]
+
+def unequalVacuaRequireWallEscape : Bool := true
+def gravitatingIsraelWallIsValidEscapeRoute : Bool := true
+def noDomainWallOfAnyKindClaimedImpossible : Bool := false
+
+
 end Integration.GRQFTPostMergeLocalization

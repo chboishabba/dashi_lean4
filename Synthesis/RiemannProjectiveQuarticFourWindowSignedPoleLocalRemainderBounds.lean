@@ -2698,4 +2698,198 @@ theorem quarticSignedPole_adverseFourthPhase_abs_le_three_halves
     quarticSignedPole_adverseFourthPhase_delta_sq_lt_three_halves hneg
   nlinarith [sq_nonneg ((rho : ℂ).im-t)]
 
+
+/-!
+## Count-only envelope for adverse fourth-harmonic mass
+
+This is deliberately a fail-fast theorem.  It shows what ordinary local zero
+counting can pay, and equally importantly what it cannot pay: the signed
+favorable-minus-adverse angular balance.
+-/
+
+def QuarticFourSignedPolePair.literalLocalFourthAdverseMultiplicityAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℕ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho
+        ∧ quarticSignedPolePhysicalFourthPhaseReal t rho < 0 then
+      zetaZeroConfig.mult (rho : ℂ)
+    else
+      0
+
+theorem QuarticFourSignedPolePair.literalLocalFourthAdverseMassAt_le_three_halves_mul_multiplicity
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalFourthAdverseMassAt eta n
+      <=
+    (3/2 : ℝ)
+      * (W.literalLocalFourthAdverseMultiplicityAt eta n : ℝ) := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalFourthAdverseMassAt
+    QuarticFourSignedPolePair.literalLocalFourthAdverseMultiplicityAt
+  rw [Nat.cast_sum, Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hp : quarticSignedPolePhysicalFourthPhaseReal t rho < 0
+    · have hoff :
+          rho ∈ ((SameOrd t)ᶜ : Set Zeros) := by
+        have hne :=
+          quarticSignedPole_adverseFourthPhase_ordinate_ne_center hp
+        simpa [SameOrd, hne]
+      have hphase :=
+        quarticSignedPole_adverseFourthPhase_abs_le_three_halves hp
+      have hm :
+          0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by positivity
+      have hmul :=
+        mul_le_mul_of_nonneg_left hphase.le hm
+      simp [hl,hp,hoff]
+      linarith
+    · have hnonneg :
+          0 <= quarticSignedPolePhysicalFourthPhaseReal t rho :=
+        le_of_not_gt hp
+      by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+      · simp [hl,hp,hoff,max_eq_right (neg_nonpos.mpr hnonneg)]
+      · simp [hl,hp,hoff]
+  · simp [hl]
+
+def quarticSignedPoleAdverseFourthComplexSet
+    (t eta : ℝ) : Set ℂ :=
+  {z : ℂ |
+    ∃ hz : z ∈ zetaZeroConfig.carrier,
+      quarticSignedPoleLocal t eta (⟨z,hz⟩ : Zeros)
+        ∧
+      quarticSignedPolePhysicalFourthPhaseReal
+        t (⟨z,hz⟩ : Zeros) < 0}
+
+theorem quarticSignedPoleAdverseFourthComplexSet_subset_fixedWindow
+    {t eta : ℝ} :
+    quarticSignedPoleAdverseFourthComplexSet t eta
+      ⊆
+    zetaZeroConfig.window
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) := by
+  intro z hz
+  rcases hz with ⟨hzCarrier,hl,hneg⟩
+  have hw :=
+    quarticSignedPole_adverseFourthPhase_mem_fixed_window hneg
+  exact ⟨hzCarrier,hw.1,hw.2.le⟩
+
+theorem QuarticFourSignedPolePair.literalLocalFourthAdverseMultiplicityAt_le_fixedWindowN
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalFourthAdverseMultiplicityAt eta n
+      <=
+    zetaZeroConfig.N
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) := by
+  classical
+  let F : Finset Zeros :=
+    (centeredZeroFinset t n).filter
+      (fun rho =>
+        quarticSignedPoleLocal t eta rho
+          ∧ quarticSignedPolePhysicalFourthPhaseReal t rho < 0)
+  let s : Set ℂ :=
+    (fun rho : Zeros => (rho : ℂ)) '' (↑F : Set Zeros)
+  have hsWindow :
+      s ⊆
+        zetaZeroConfig.window
+          (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) := by
+    intro z hz
+    rcases hz with ⟨rho,hrho,rfl⟩
+    have hpred := (Finset.mem_filter.mp hrho).2
+    exact
+      quarticSignedPoleAdverseFourthComplexSet_subset_fixedWindow
+        ⟨rho.2,hpred.1,hpred.2⟩
+  have hmono :=
+    zetaZeroConfig.finsum_mult_mono
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ))
+      hsWindow subset_rfl
+  have hsFinite : s.Finite :=
+    Set.Finite.image F.finite_toSet _
+  have hsum :
+      W.literalLocalFourthAdverseMultiplicityAt eta n
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z := by
+    unfold
+      QuarticFourSignedPolePair.literalLocalFourthAdverseMultiplicityAt
+    change
+      (∑ rho ∈ centeredZeroFinset t n,
+        if quarticSignedPoleLocal t eta rho
+            ∧ quarticSignedPolePhysicalFourthPhaseReal t rho < 0 then
+          zetaZeroConfig.mult (rho : ℂ)
+        else 0)
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z
+    rw [← Finset.sum_filter]
+    change
+      (∑ rho ∈ F, zetaZeroConfig.mult (rho : ℂ))
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z
+    rw [finsum_mem_eq_finite_toFinset_sum _ hsFinite]
+    have himage :
+        hsFinite.toFinset
+          =
+        F.image (fun rho : Zeros => (rho : ℂ)) := by
+      ext z
+      simp [s]
+    rw [himage, Finset.sum_image]
+    intro a ha b hb hab
+    exact Subtype.ext hab
+  rw [hsum]
+  exact hmono
+
+theorem QuarticFourSignedPolePair.literalLocalFourthAdverseMassAt_le_fixedWindowN
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalFourthAdverseMassAt eta n
+      <=
+    (3/2 : ℝ)
+      *
+    (zetaZeroConfig.N
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ) := by
+  have hmass :=
+    W.literalLocalFourthAdverseMassAt_le_three_halves_mul_multiplicity
+      (eta:=eta) n
+  have hmult :=
+    W.literalLocalFourthAdverseMultiplicityAt_le_fixedWindowN
+      (eta:=eta) n
+  have hcast :
+      (W.literalLocalFourthAdverseMultiplicityAt eta n : ℝ)
+        <=
+      (zetaZeroConfig.N
+        (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ) := by
+    exact_mod_cast hmult
+  linarith
+
+theorem exists_quarticFourSignedPole_literalLocalFourthAdverseMassAt_le_log :
+    ∃ A0 : ℝ, 0 <= A0 ∧
+      ∀ {t eta : ℝ},
+        200 <= t ->
+        (W : QuarticFourSignedPolePair t) ->
+        ∀ n : ℕ,
+          W.literalLocalFourthAdverseMassAt eta n
+            <=
+          (9/2 : ℝ) * A0 * Real.log (t+5) := by
+  obtain ⟨A0,hA0,hcount⟩ :=
+    exists_quarticSignedPole_fixedConeWindow_zeroCount_bound
+  refine ⟨A0,hA0,?_⟩
+  intro t eta ht W n
+  have hmass :=
+    W.literalLocalFourthAdverseMassAt_le_fixedWindowN
+      (eta:=eta) n
+  have hN := hcount ht
+  calc
+    W.literalLocalFourthAdverseMassAt eta n
+      <=
+    (3/2 : ℝ)
+      *
+    (zetaZeroConfig.N
+      (t - (3/2 : ℝ)) (t + (3/2 : ℝ)) : ℝ) := hmass
+    _ <=
+    (3/2 : ℝ) * (3 * A0 * Real.log (t+5)) := by
+      exact mul_le_mul_of_nonneg_left hN (by norm_num)
+    _ = (9/2 : ℝ) * A0 * Real.log (t+5) := by ring
+
 end Synthesis

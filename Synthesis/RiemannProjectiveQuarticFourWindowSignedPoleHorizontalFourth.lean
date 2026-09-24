@@ -175,8 +175,6 @@ theorem QuarticFourSignedPolePair.literalLocalHorizontalFourthFavorableAt_nonpos
   unfold QuarticFourSignedPolePair.literalLocalHorizontalFourthFavorableAt
   apply Finset.sum_nonpos
   intro rho hrho
-  apply Finset.sum_nonpos
-  intro _ hmem
   by_cases hl : quarticSignedPoleLocal t eta rho
   · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
     · by_cases hadv : quarticSignedPoleHorizontalFourthAdverse t rho
@@ -200,8 +198,6 @@ theorem QuarticFourSignedPolePair.literalLocalHorizontalFourthAdverseAt_le_envel
     QuarticFourSignedPolePair.literalLocalHorizontalFourthAdverseEnvelopeAt
   apply Finset.sum_le_sum
   intro rho hrho
-  apply Finset.sum_le_sum
-  intro _ hmem
   by_cases hl : quarticSignedPoleLocal t eta rho
   · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
     · by_cases hadv : quarticSignedPoleHorizontalFourthAdverse t rho

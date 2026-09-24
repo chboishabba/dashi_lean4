@@ -4,7 +4,7 @@ import Integration.Experiment.ProbabilityLayer
 import Integration.Base369Schrodinger
 
 /-!
-# Exact forecast verification and observation-state separation
+# Exact forecast verification and observation-state separation (validation root)
 
 Lean mirror of the thin forecast-verification kernel added to dashi_agda.
 

@@ -152,13 +152,7 @@ theorem QuarticFourSignedPolePair.literalLocalBeyondSixthRemainderAt_le_eighthDe
       simp [hl,hoff]
       exact (le_abs_self _).trans hrem
     · simp [hl,hoff]
-      exact W.literalCompleteEighthPhysicalPolynomial_nonneg rho
-        |> fun hp => by
-          unfold QuarticFourSignedPolePair.literalCompleteEighthRemainderBound
-          positivity
   · simp [hl]
-    unfold QuarticFourSignedPolePair.literalCompleteEighthRemainderBound
-    positivity
 
 theorem QuarticFourSignedPolePair.literalLocalEighthDebtAt_le_envelope_mul_multiplicity
     {t eta : ℝ}
@@ -321,7 +315,7 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_phase_add_signedSixth_
     W.literalFarExactAt
         quarticSignedPoleCanonicalLocalRadius n := by
   have htpos : 0 < t := by linarith
-  rw [W.literalOffOrdExactAt_eq_local_add_farExact]
+  rw [W.literalOffOrdExactAt_eq_local_add_far]
   rw [W.literalLocalExactAt_eq_fourthHarmonic_add_remainder htpos]
   rw [W.literalLocalCompleteRemainderAt_eq_signedSixth_add_beyond]
   rw [W.literalLocalFourthHarmonicAt_eq_phaseMoment

@@ -1044,6 +1044,90 @@ theorem QuarticFourSignedPolePair.bidiMarkedPrimeTwo_eq_zero
     quarticFourBidiMarkedPhysicalDetector_primeProjectiveDefect_eq_zero
       W.Rpos W.RltOne ht
 
+
+/-!
+## Prime-producer firewall for the short marked witness
+
+The auxiliary Weil-normalized 0/2/4 prime jet is useful arithmetic machinery,
+but it is not the literal prime channel of the present short-support witness.
+The latter vanishes identically because the physical detector is supported
+strictly inside log 2.
+-/
+
+def QuarticFourSignedPolePair.bidiMarkedPrimeCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A : ℝ) : ℝ :=
+  W.poleTwo *
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (1/2) W.muHalf t A)
+      t (t/16)
+  +
+  (-W.poleHalf) *
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (2/3) W.muTwo t A)
+      t (t/16)
+
+theorem QuarticFourSignedPolePair.bidiMarkedPrimeCombination_eq_zero
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (A : ℝ) :
+    W.bidiMarkedPrimeCombination A = 0 := by
+  unfold QuarticFourSignedPolePair.bidiMarkedPrimeCombination
+  rw [W.bidiMarkedPrimeHalf_eq_zero ht A,
+      W.bidiMarkedPrimeTwo_eq_zero ht A]
+  ring
+
+theorem quarticSignedPoleLiteralWeilPrimeBidiAngular_pos
+    {N : ℕ} (hN : (10 : ℝ)^8 <= (N : ℝ))
+    {A : ℝ} (hA : 0 < A) (hAhalf : A < 1/2) :
+    0 <
+    (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A := by
+  have hcoercive :=
+    quarticSignedPoleLiteralWeilPrimeBidiAngular_coercive
+      (N:=N) hN hA.le hAhalf
+  have hN0 : (0 : ℝ) < (N : ℝ) := by
+    nlinarith [pow_pos (by norm_num : (0 : ℝ) < 10) 8]
+  have hpow :
+      0 < (N : ℝ)^((1/2 : ℝ)+A) :=
+    Real.rpow_pos_of_pos hN0 _
+  have hfloor :
+      0 < A^4 * (N : ℝ)^((1/2 : ℝ)+A) / 64 := by
+    positivity
+  exact lt_of_lt_of_le hfloor hcoercive
+
+theorem QuarticFourSignedPolePair.bidiMarkedPrimeCombination_ne_literalWeilPrimeAngular
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {N : ℕ} (hN : (10 : ℝ)^8 <= (N : ℝ))
+    {A : ℝ} (hA : 0 < A) (hAhalf : A < 1/2) :
+    W.bidiMarkedPrimeCombination A
+      ≠
+    (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A := by
+  rw [W.bidiMarkedPrimeCombination_eq_zero ht A]
+  exact ne_of_lt
+    (quarticSignedPoleLiteralWeilPrimeBidiAngular_pos
+      (N:=N) hN hA hAhalf)
+
+theorem QuarticFourSignedPolePair.no_nonzero_literalPrimeCoefficient_for_actualMarkedPrime
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {N : ℕ} (hN : (10 : ℝ)^8 <= (N : ℝ))
+    {A cPrime : ℝ}
+    (hA : 0 < A) (hAhalf : A < 1/2)
+    (hc : cPrime ≠ 0) :
+    W.bidiMarkedPrimeCombination A
+      ≠
+    cPrime * (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A := by
+  rw [W.bidiMarkedPrimeCombination_eq_zero ht A]
+  have hp :
+      (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A ≠ 0 :=
+    ne_of_gt
+      (quarticSignedPoleLiteralWeilPrimeBidiAngular_pos
+        (N:=N) hN hA hAhalf)
+  exact (mul_ne_zero hc hp).symm
+
 theorem QuarticFourSignedPolePair.bidiMarkedPoleCombination_even
     {t : ℝ}
     (W : QuarticFourSignedPolePair t)

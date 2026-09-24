@@ -2230,4 +2230,163 @@ def generalShellSECCompatible : Bool := false
 def generalShellNeedsNegativeSurfaceEnergy : Bool := false
 
 
+/-!
+Rational-square Israel design family.
+
+Let x=sqrt(f_in(R)), y=sqrt(f_out(R)) with rational x,y.
+The de Sitter/Kottler amplitudes and shell conditions become exact rational
+expressions.  After clearing positive denominators:
+
+  pressure tension margin = R(x-y)(2xy+1) - 3Mx
+  NEC/DEC margin          = 3Mx - R(x-y)
+  SEC-violation margin    = R(x-y)(xy+1) - 3Mx
+  outward acceleration    = R(1-y^2) - 3M
+-/
+
+def lambdaInFromSquareLapse (radius x : Rat) : Rat :=
+  3 * (1 - x^2) / radius^2
+
+def lambdaOutFromSquareLapse (mass radius y : Rat) : Rat :=
+  3 * (1 - 2*mass/radius - y^2) / radius^2
+
+def outwardAccelerationScaled (mass radius y : Rat) : Rat :=
+  radius * (1-y^2) - 3*mass
+
+def surfaceGap (x y : Rat) : Rat := x-y
+
+def rationalSquareSurfaceSigma8 (radius x y : Rat) : Rat :=
+  2 * surfaceGap x y / radius
+
+def rationalSquareSurfacePressure8 (mass radius x y : Rat) : Rat :=
+  -(surfaceGap x y * (2*x*y+1)) / (radius*x*y)
+    + 3*mass/(radius^2*y)
+
+def pressureTensionMarginCleared (mass radius x y : Rat) : Rat :=
+  radius * surfaceGap x y * (2*x*y+1) - 3*mass*x
+
+def necDecMarginCleared (mass radius x y : Rat) : Rat :=
+  3*mass*x - radius*surfaceGap x y
+
+def secViolationMarginCleared (mass radius x y : Rat) : Rat :=
+  radius*surfaceGap x y*(x*y+1) - 3*mass*x
+
+theorem rational_square_pressure_cleared
+    (mass radius x y : Rat)
+    (hR : radius ≠ 0) (hx : x ≠ 0) (hy : y ≠ 0) :
+    rationalSquareSurfacePressure8 mass radius x y
+      * (radius^2*x*y)
+      = -pressureTensionMarginCleared mass radius x y := by
+  field_simp [rationalSquareSurfacePressure8, pressureTensionMarginCleared,
+    surfaceGap, hR, hx, hy]
+  ring
+
+theorem rational_square_nec_cleared
+    (mass radius x y : Rat)
+    (hR : radius ≠ 0) (hx : x ≠ 0) (hy : y ≠ 0) :
+    (rationalSquareSurfaceSigma8 radius x y
+      + rationalSquareSurfacePressure8 mass radius x y)
+      * (radius^2*x*y)
+      = necDecMarginCleared mass radius x y := by
+  field_simp [rationalSquareSurfaceSigma8, rationalSquareSurfacePressure8,
+    necDecMarginCleared, surfaceGap, hR, hx, hy]
+  ring
+
+theorem rational_square_sec_cleared
+    (mass radius x y : Rat)
+    (hR : radius ≠ 0) (hx : x ≠ 0) (hy : y ≠ 0) :
+    (rationalSquareSurfaceSigma8 radius x y
+      + 2*rationalSquareSurfacePressure8 mass radius x y)
+      * (radius^2*x*y)
+      = -2*secViolationMarginCleared mass radius x y := by
+  field_simp [rationalSquareSurfaceSigma8, rationalSquareSurfacePressure8,
+    secViolationMarginCleared, surfaceGap, hR, hx, hy]
+  ring
+
+theorem rational_square_fixture_lambda_in :
+    lambdaInFromSquareLapse 2 (3/4) = 21/64 := by
+  norm_num [lambdaInFromSquareLapse]
+
+theorem rational_square_fixture_lambda_out :
+    lambdaOutFromSquareLapse (1/4) 2 (1/2) = 3/8 := by
+  norm_num [lambdaOutFromSquareLapse]
+
+theorem rational_square_fixture_pressure_margin :
+    pressureTensionMarginCleared (1/4) 2 (3/4) (1/2) = 5/16 := by
+  norm_num [pressureTensionMarginCleared, surfaceGap]
+
+theorem rational_square_fixture_nec_dec_margin :
+    necDecMarginCleared (1/4) 2 (3/4) (1/2) = 1/16 := by
+  norm_num [necDecMarginCleared, surfaceGap]
+
+theorem rational_square_fixture_sec_violation_margin :
+    secViolationMarginCleared (1/4) 2 (3/4) (1/2) = 1/8 := by
+  norm_num [secViolationMarginCleared, surfaceGap]
+
+theorem rational_square_fixture_outward_margin :
+    outwardAccelerationScaled (1/4) 2 (1/2) = 3/4 := by
+  norm_num [outwardAccelerationScaled]
+
+structure RationalSquareIsraelAdmissible
+    (mass radius x y : Rat) : Prop where
+  radiusPositive : 0 < radius
+  xPositive : 0 < x
+  yPositive : 0 < y
+  innerLapseRootLarger : y < x
+  pressureTensionMarginPositive :
+    0 < pressureTensionMarginCleared mass radius x y
+  necDecMarginPositive :
+    0 < necDecMarginCleared mass radius x y
+  secViolationMarginPositive :
+    0 < secViolationMarginCleared mass radius x y
+  outwardMarginPositive :
+    0 < outwardAccelerationScaled mass radius y
+
+theorem rational_square_fixture_admissible :
+    RationalSquareIsraelAdmissible (1/4) 2 (3/4) (1/2) := by
+  constructor <;> norm_num [pressureTensionMarginCleared, necDecMarginCleared,
+    secViolationMarginCleared, outwardAccelerationScaled, surfaceGap]
+
+theorem admissible_shell_surface_energy_positive
+    {mass radius x y : Rat}
+    (h : RationalSquareIsraelAdmissible mass radius x y) :
+    0 < rationalSquareSurfaceSigma8 radius x y := by
+  dsimp [rationalSquareSurfaceSigma8, surfaceGap]
+  positivity
+
+theorem admissible_shell_pressure_is_tension
+    {mass radius x y : Rat}
+    (h : RationalSquareIsraelAdmissible mass radius x y) :
+    rationalSquareSurfacePressure8 mass radius x y < 0 := by
+  have hR : radius ≠ 0 := ne_of_gt h.radiusPositive
+  have hx : x ≠ 0 := ne_of_gt h.xPositive
+  have hy : y ≠ 0 := ne_of_gt h.yPositive
+  have hden : 0 < radius^2*x*y := by positivity
+  have heq := rational_square_pressure_cleared mass radius x y hR hx hy
+  nlinarith [h.pressureTensionMarginPositive]
+
+theorem admissible_shell_nec_dec_margin_positive
+    {mass radius x y : Rat}
+    (h : RationalSquareIsraelAdmissible mass radius x y) :
+    0 < rationalSquareSurfaceSigma8 radius x y
+      + rationalSquareSurfacePressure8 mass radius x y := by
+  have hR : radius ≠ 0 := ne_of_gt h.radiusPositive
+  have hx : x ≠ 0 := ne_of_gt h.xPositive
+  have hy : y ≠ 0 := ne_of_gt h.yPositive
+  have hden : 0 < radius^2*x*y := by positivity
+  have heq := rational_square_nec_cleared mass radius x y hR hx hy
+  nlinarith [h.necDecMarginPositive]
+
+theorem admissible_shell_sec_is_violated
+    {mass radius x y : Rat}
+    (h : RationalSquareIsraelAdmissible mass radius x y) :
+    rationalSquareSurfaceSigma8 radius x y
+      + 2*rationalSquareSurfacePressure8 mass radius x y < 0 := by
+  have hR : radius ≠ 0 := ne_of_gt h.radiusPositive
+  have hx : x ≠ 0 := ne_of_gt h.xPositive
+  have hy : y ≠ 0 := ne_of_gt h.yPositive
+  have hden : 0 < radius^2*x*y := by positivity
+  have heq := rational_square_sec_cleared mass radius x y hR hx hy
+  nlinarith [h.secViolationMarginPositive]
+
+
 end Integration.GRQFTPostMergeLocalization

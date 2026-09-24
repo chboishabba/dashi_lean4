@@ -709,4 +709,113 @@ def tenIndependentComponentValuesExist : Bool := false
 theorem qft_component_evaluator_compiler_present :
     qftComponentEvaluatorCompilerExists = true := rfl
 
+/-!
+Repulsion mechanism classifier.
+
+Within the two-sign Einstein/Newton source-product model, a negative effective
+source has exactly two nonzero sign origins: negative coupling with positive
+source, or positive coupling with negative source.  Positive-positive and
+negative-negative do not produce the negative branch.
+-/
+
+inductive CouplingSign where
+  | positive | zero | negative
+  deriving DecidableEq, Repr
+
+inductive SourceSign where
+  | positive | zero | negative
+  deriving DecidableEq, Repr
+
+inductive EffectiveSourceOrientation where
+  | positive | zero | negative
+  deriving DecidableEq, Repr
+
+def effectiveSourceOrientation :
+    CouplingSign → SourceSign → EffectiveSourceOrientation
+  | .zero, _ => .zero
+  | _, .zero => .zero
+  | .positive, .positive => .positive
+  | .positive, .negative => .negative
+  | .negative, .positive => .negative
+  | .negative, .negative => .positive
+
+inductive NegativeEffectiveSourceRoute where
+  | negativeCouplingPositiveSource
+  | positiveCouplingNegativeSource
+  deriving DecidableEq, Repr
+
+theorem classify_negative_effective_source
+    (g : CouplingSign)
+    (s : SourceSign)
+    (h : effectiveSourceOrientation g s = .negative) :
+    NegativeEffectiveSourceRoute := by
+  cases g <;> cases s <;> simp [effectiveSourceOrientation] at h
+  · exact .positiveCouplingNegativeSource
+  · exact .negativeCouplingPositiveSource
+
+theorem positive_coupling_positive_source_cannot_be_negative :
+    effectiveSourceOrientation .positive .positive ≠ .negative := by
+  decide
+
+theorem negative_coupling_negative_source_cannot_be_negative :
+    effectiveSourceOrientation .negative .negative ≠ .negative := by
+  decide
+
+/-!
+Negative active-stress route.
+
+Under the explicitly declared local orthonormal rest-frame diagonal stress
+interpretation, rho + p_x + p_y + p_z is the standard active-stress/focusing
+combination.  The normalized GR target diag(1,-1,-1,-1) therefore has value -2.
+
+This is an algebraic diagnostic, not by itself a solved repulsive spacetime.
+-/
+
+inductive DiagonalStressInterpretationConvention where
+  | localOrthonormalCovariantRestFrame
+  deriving DecidableEq, Repr
+
+def activeStressSum (T : RationalTensor4) : Rat :=
+  T .t .t + T .x .x + T .y .y + T .z .z
+
+theorem finite_gr_active_stress_sum_negative_two :
+    activeStressSum finiteGRStressRational = -2 := by
+  norm_num [activeStressSum, finiteGRStressRational]
+
+def cmp119ActiveStressSum
+    {Stress : Type u}
+    (E : CMP119RationalStressComponentEvaluator Stress)
+    (stress : Stress) : Rat :=
+  E.component stress .t .t
+    + E.component stress .x .x
+    + E.component stress .y .y
+    + E.component stress .z .z
+
+theorem ten_components_compile_to_negative_active_stress
+    {Stress : Type u}
+    {E : CMP119RationalStressComponentEvaluator Stress}
+    {stress : Stress}
+    (h : NormalizedSymmetricTenComponentInstance E stress) :
+    cmp119ActiveStressSum E stress = -2 := by
+  simp [cmp119ActiveStressSum, h.qft00, h.qft11, h.qft22, h.qft33]
+
+inductive GRQFTRepulsionMechanismCandidate where
+  | negativePressureTensionActiveSource
+  deriving DecidableEq, Repr
+
+def normalizedGRTargetRepulsionCandidate :
+    GRQFTRepulsionMechanismCandidate :=
+  .negativePressureTensionActiveSource
+
+def normalizedGRTargetHasNegativeActiveStressUnderDeclaredConvention : Bool := true
+def cmp119TenComponentPaymentTransportsNegativeActiveStress : Bool := true
+def negativeActiveStressEqualsNegativeInertialMass : Bool := false
+def negativeActiveStressRequiresNegativeNewtonG : Bool := false
+def algebraicNegativeActiveStressAloneSolvesRepulsiveGeometry : Bool := false
+def einsteinDynamicsAndGeometryStillRequired : Bool := true
+
+theorem negative_active_stress_route_is_distinct_from_negative_g :
+    negativeActiveStressRequiresNegativeNewtonG = false := rfl
+
+
 end Integration.GRQFTPostMergeLocalization

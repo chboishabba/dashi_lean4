@@ -548,8 +548,11 @@ theorem QuarticFourSignedPolePair.completeJointBeyondSixthRemainder_abs_le_eight
           unfold quarticSignedPoleMixedEighthEnvelope
           rw [hu8]
           ring
-        rw [abs_mul,hscale] at *
-        exact mul_le_mul_of_nonneg_left hmixed (abs_nonneg (P u))
+        rw [hscale] at hmixed
+        rw [abs_mul]
+        have hmul :=
+          mul_le_mul_of_nonneg_left hmixed (abs_nonneg (P u))
+        simpa [mul_comm, mul_left_comm, mul_assoc] using hmul
     _ =
     E * W.signedProfileAbsMomentEight := by
       unfold QuarticFourSignedPolePair.signedProfileAbsMomentEight
@@ -623,7 +626,7 @@ theorem QuarticFourSignedPolePair.mixedEighthEnvelope_physical_rescale
   unfold quarticSignedPoleMixedEighthEnvelope
     QuarticFourSignedPolePair.literalCompleteEighthPhysicalPolynomial
   dsimp
-  have hr : t/16 != 0 := by positivity
+  have hr : t/16 ≠ 0 := by positivity
   field_simp [hr]
   ring
 

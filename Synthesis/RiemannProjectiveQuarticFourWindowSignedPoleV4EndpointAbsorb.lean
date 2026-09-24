@@ -1601,6 +1601,239 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_complete_v4h4_muEnvelo
     linarith)
 
 
+
+/-!
+## Explicit canonical sixth-debt envelope
+
+On the canonical local radius every local zero satisfies
+
+  |delta| <= r,
+  |a| <= 1/2,
+
+with r = eta0*(t/16).  The complete sixth-order physical polynomial is
+therefore bounded by one scalar envelope.  Summing multiplicities then charges
+the sixth debt against the SAME expanded literal zero count already used by the
+correct-polarity H4 lower bound.
+-/
+
+def quarticSignedPoleLocalSixthPhysicalEnvelope
+    (t eta : ℝ) : ℝ :=
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  (7/4320 : ℝ) * (r^6 + (1/2 : ℝ)^6)
+    + (5/192 : ℝ) * (1/2 : ℝ)^2 * r^4
+    + (1/48 : ℝ) * (1/2 : ℝ)^4 * r^2
+
+theorem quarticSignedPoleLocalSixthPhysicalEnvelope_nonneg
+    {t eta : ℝ}
+    (ht : 0 <= t)
+    (heta : 0 <= eta) :
+    0 <= quarticSignedPoleLocalSixthPhysicalEnvelope t eta := by
+  unfold quarticSignedPoleLocalSixthPhysicalEnvelope
+    quarticSignedPoleLocalHalfWidth
+  positivity
+
+theorem QuarticFourSignedPolePair.literalCompleteSixthPhysicalPolynomial_le_localEnvelope
+    {t eta : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hl : quarticSignedPoleLocal t eta rho) :
+    W.literalCompleteSixthPhysicalPolynomial rho
+      <= quarticSignedPoleLocalSixthPhysicalEnvelope t eta := by
+  have hclosed :=
+    (quarticSignedPoleLocal_iff_closed_ordinate_window
+      ht heta rho).mp hl
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  have hr0 : 0 <= r := by
+    dsimp [r, quarticSignedPoleLocalHalfWidth]
+    positivity
+  have hdelta :
+      |(rho : ℂ).im - t| <= r := by
+    rw [abs_le]
+    constructor <;> dsimp [r] at hclosed ⊢ <;> linarith
+  have ha := zetaZero_height_abs_le_half rho
+  have hd2 : |(rho : ℂ).im-t|^2 <= r^2 := by
+    gcongr
+  have hd4 : |(rho : ℂ).im-t|^4 <= r^4 := by
+    gcongr
+  have hd6 : |(rho : ℂ).im-t|^6 <= r^6 := by
+    gcongr
+  have ha2abs : |heightOf rho|^2 <= (1/2 : ℝ)^2 := by
+    gcongr
+  have ha4 : |heightOf rho|^4 <= (1/2 : ℝ)^4 := by
+    gcongr
+  have ha6 : |heightOf rho|^6 <= (1/2 : ℝ)^6 := by
+    gcongr
+  have ha2 :
+      heightOf rho^2 <= (1/2 : ℝ)^2 := by
+    rw [← sq_abs]
+    exact ha2abs
+  unfold QuarticFourSignedPolePair.literalCompleteSixthPhysicalPolynomial
+    quarticSignedPoleLocalSixthPhysicalEnvelope
+  dsimp [r]
+  gcongr
+
+theorem QuarticFourSignedPolePair.literalLocalSixthDebtAt_le_envelope_mul_multiplicity
+    {t eta : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalSixthDebtAt eta n
+      <=
+    (W.signedProfileAbsMomentSix
+        * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+        / (t/16)^8)
+      * (W.literalLocalMultiplicityAt eta n : ℝ) := by
+  classical
+  have hcoef :
+      0 <=
+        W.signedProfileAbsMomentSix
+          * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+          / (t/16)^8 := by
+    have henv :=
+      quarticSignedPoleLocalSixthPhysicalEnvelope_nonneg
+        ht.le heta
+    positivity
+  unfold QuarticFourSignedPolePair.literalLocalSixthDebtAt
+    QuarticFourSignedPolePair.literalLocalMultiplicityAt
+  rw [Nat.cast_sum, Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · have hp :=
+        W.literalCompleteSixthPhysicalPolynomial_le_localEnvelope
+          ht heta hl
+      have hm :
+          0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
+        positivity
+      have hM6 : 0 <= W.signedProfileAbsMomentSix :=
+        W.signedProfileAbsMomentSix_nonneg
+      have hden : 0 < (t/16)^8 := by positivity
+      simp [hl, hoff,
+        QuarticFourSignedPolePair.literalCompleteSixthRemainderBound]
+      apply div_le_div_of_nonneg_right _ hden.le
+      have hscale :
+          ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+            * W.signedProfileAbsMomentSix
+            * W.literalCompleteSixthPhysicalPolynomial rho
+          <=
+          ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+            * W.signedProfileAbsMomentSix
+            * quarticSignedPoleLocalSixthPhysicalEnvelope t eta := by
+        gcongr
+      simpa [mul_assoc, mul_left_comm, mul_comm] using hscale
+    · simp [hl, hoff]
+      exact mul_nonneg hcoef (by positivity)
+  · simp [hl]
+    exact mul_nonneg hcoef (by positivity)
+
+theorem QuarticFourSignedPolePair.literalLocalSixthDebtAt_le_expandedWindowN
+    {t eta : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalSixthDebtAt eta n
+      <=
+    (W.signedProfileAbsMomentSix
+        * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+        / (t/16)^8)
+      *
+    (zetaZeroConfig.N
+      (t - quarticSignedPoleLocalHalfWidth t eta - 1)
+      (t + quarticSignedPoleLocalHalfWidth t eta) : ℝ) := by
+  have hdebt :=
+    W.literalLocalSixthDebtAt_le_envelope_mul_multiplicity
+      ht heta n
+  have hmultNat :=
+    W.literalLocalMultiplicityAt_le_expandedWindowN
+      ht heta (eta:=eta) n
+  have hmult :
+      (W.literalLocalMultiplicityAt eta n : ℝ)
+        <=
+      (zetaZeroConfig.N
+        (t - quarticSignedPoleLocalHalfWidth t eta - 1)
+        (t + quarticSignedPoleLocalHalfWidth t eta) : ℝ) := by
+    exact_mod_cast hmultNat
+  have hcoef :
+      0 <=
+        W.signedProfileAbsMomentSix
+          * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+          / (t/16)^8 := by
+    have henv :=
+      quarticSignedPoleLocalSixthPhysicalEnvelope_nonneg
+        ht.le heta
+    positivity
+  exact hdebt.trans
+    (mul_le_mul_of_nonneg_left hmult hcoef)
+
+
+/--
+The preferred finite STRICT-ABSORB budget after substituting the explicit
+sixth-order remainder envelope.  V4 remains the scalar EV producer; all H4 and
+sixth-order local information now shares one literal expanded zero count.
+FarExact remains signed.
+-/
+def QuarticFourSignedPolePair.completeV4H4AbsorbBudgetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (EV : ℝ) (n : ℕ) : ℝ :=
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  let NZ : ℝ :=
+    (zetaZeroConfig.N (t-r-1) (t+r) : ℝ)
+  (W.targetStrength / (6 * (t/16)^6))
+    *
+  (
+    EV
+      + (3/2 : ℝ) * r^2 * NZ
+      - (2/5 : ℝ) * r^5
+          * quarticSignedPoleMuLowerEnvelope (t-r)
+  )
+    +
+  (W.signedProfileAbsMomentSix
+      * quarticSignedPoleLocalSixthPhysicalEnvelope t eta
+      / (t/16)^8)
+    * NZ
+    +
+  W.literalFarExactAt eta n
+
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_completeV4H4AbsorbBudgetAt
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ))
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV) :
+    W.literalOffOrdExactAt n
+      <= W.completeV4H4AbsorbBudgetAt EV n := by
+  have hbase :=
+    W.literalOffOrdExactAt_le_complete_v4h4_muEnvelopeBudget
+      ht n hn hV
+  have heta :
+      0 <= quarticSignedPoleCanonicalLocalRadius :=
+    quarticSignedPoleCanonicalLocalRadius_pos.le
+  have hsixth :=
+    W.literalLocalSixthDebtAt_le_expandedWindowN
+      (by linarith : 0 < t)
+      heta
+      (eta:=quarticSignedPoleCanonicalLocalRadius)
+      n
+  unfold QuarticFourSignedPolePair.completeV4H4AbsorbBudgetAt
+  dsimp
+  linarith
+
+
 /-!
 ## Fail-closed explicit ABSORB surface
 

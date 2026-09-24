@@ -21,6 +21,41 @@ import Synthesis.CodecBridge
 import Synthesis.EndToEnd
 import Synthesis.AxiomAudit
 import Synthesis.MillenniumBSDTwoTorsionGalois
+import Synthesis.MillenniumHodgeCP1Quotient
+import Synthesis.MillenniumBSDRationalSquareBits
+import Synthesis.MillenniumBSDCMPrimeWitness
+import Synthesis.MillenniumHodgeCP1NormalForm
+import Synthesis.MillenniumBSDRationalSquareClassQuotient
+import Synthesis.MillenniumBSDCMPrimeClassification
+import Synthesis.MillenniumHodgeCP1TopologicalSphere
+import Synthesis.MillenniumBSDRationalKummerQuotient
+import Synthesis.MillenniumBSDCMInertCharacterSum
+import Synthesis.MillenniumBSDLocalSquareClass
+import Synthesis.MillenniumBSDFrobeniusPointCount
+import Synthesis.MillenniumBSDTotalLocalKummer
+import Synthesis.MillenniumBSDExplicitSelmerIntersection
+import Synthesis.MillenniumBSDSquareClassGroups
+import Synthesis.MillenniumBSDLocalKummerGroupClosure
+import Synthesis.MillenniumBSDActualLocalPointGroup
+import Synthesis.MillenniumBSDLocalKummerBoundaryCases
+import Synthesis.MillenniumBSDLocalKummerSecant
+import Synthesis.MillenniumBSDLocalKummerSecantDispatch
+import Synthesis.MillenniumBSDLocalKummerTorsionTranslate
+import Synthesis.MillenniumBSDLocalKummerTangent
+import Synthesis.MillenniumBSDLocalKummerTangentDispatch
+import Synthesis.MillenniumBSDOddPrimeGoodReduction
+import Synthesis.MillenniumBSDVariableChangePointEquiv
+import Synthesis.MillenniumBSDReductionPointCountWeld
+import Synthesis.MillenniumBSDLiteralReductionZMod
+import Synthesis.MillenniumBSDReductionPointCountExact
+import Synthesis.MillenniumBSDLocalPolynomialSameObject
+import Synthesis.MillenniumBSDLocalEulerFactorSameObject
+import Synthesis.MillenniumBSDGlobalPrimePlaceWeld
+import Synthesis.MillenniumBSDMathlibLFunctionWeld
+import Synthesis.MillenniumBSDExplicitLocalRecurrence
+import Synthesis.MillenniumBSDExplicitEulerConvergence
+import Synthesis.MillenniumHodgeCP1CellularH2
+import Synthesis.MillenniumHodgeCP1SingularTransport
 
 /-!
 # Cross-domain synthesis spine
@@ -91,3 +126,198 @@ Layers, in dependency order:
 See `DEPENDENCY_MAP.md` for the provenance map and the list of remaining proof
 obligations.
 -/
+
+import Synthesis.MillenniumHodgeCPnLinearCycles
+
+import Synthesis.MillenniumBSDLocalKummerTorsionTriangle
+
+import Synthesis.MillenniumBSDLocalKummerOrdinaryHom
+
+import Synthesis.MillenniumBSDLocalKummerTorsionTranslateAll
+
+import Synthesis.MillenniumBSDLocalKummerHomomorphism
+
+import Synthesis.MillenniumBSDExplicitSelmerSubgroup
+
+import Synthesis.MillenniumBSDLocalKummerQuotient
+
+import Synthesis.MillenniumBSDActualRationalPointGroup
+
+import Synthesis.MillenniumBSDGlobalKummerBoundaryCases
+
+import Synthesis.MillenniumBSDGlobalKummerOrdinaryHom
+
+import Synthesis.MillenniumBSDGlobalKummerTorsionTriangle
+
+import Synthesis.MillenniumBSDGlobalKummerTorsionTranslate
+
+import Synthesis.MillenniumBSDGlobalKummerHomomorphism
+
+import Synthesis.MillenniumBSDGlobalKummerQuotientToSelmer
+
+import Synthesis.MillenniumBSDGlobalKummerKernelHalfPoint
+
+import Synthesis.MillenniumBSDGlobalKummerKernelExact
+
+import Synthesis.MillenniumBSDExplicitSelmerCokernelExact
+
+import Synthesis.MillenniumBSDGlobalCompletionGoodReduction
+
+import Synthesis.MillenniumBSDGlobalCompletionReductionWeld
+
+import Synthesis.MillenniumBSDGlobalLocalFactorSameObject
+
+import Synthesis.MillenniumBSDGlobalEulerPrimePower
+
+import Synthesis.MillenniumBSDGlobalCoefficientReconstruction
+
+import Synthesis.MillenniumBSDGlobalAnalyticEulerWeld
+
+import Synthesis.MillenniumBSDOddDirichletConvergence
+
+import Synthesis.MillenniumBSDOddEulerDirichletAgreement
+
+import Synthesis.MillenniumBSDOddAnalyticHalfPlane
+
+import Synthesis.MillenniumBSDBadPrimeTwoReduction
+
+import Synthesis.MillenniumBSDGlobalBadPrimeTwo
+
+import Synthesis.MillenniumBSDFullyExplicitGlobalCoefficients
+
+import Synthesis.MillenniumBSDFullGlobalAnalyticLFunction
+
+import Synthesis.MillenniumBSDCMQuarticJacobi
+
+import Synthesis.MillenniumBSDCMQuarticQuadraticBridge
+
+import Synthesis.MillenniumBSDCMSplitCharacterSum
+
+import Synthesis.MillenniumBSDCMHasseBound
+
+import Synthesis.MillenniumBSDHasseEulerConvergence
+
+import Synthesis.MillenniumBSDChebyshevUBound
+
+import Synthesis.MillenniumBSDHasseLocalCoefficientBound
+
+import Synthesis.MillenniumBSDHasseGlobalCoefficientBound
+
+import Synthesis.MillenniumBSDHasseEulerDirichletAgreement
+
+import Synthesis.MillenniumHodgeSphereSimplicialBoundaryH2
+
+import Synthesis.MillenniumBSDCMEta32Fricke
+
+import Synthesis.MillenniumBSDCMEta32Kernel
+
+import Synthesis.MillenniumBSDCMEta32QProduct
+
+import Synthesis.MillenniumBSDCMEta32Decay
+
+import Synthesis.MillenniumHodgeTetrahedralBoundaryNative
+
+import Synthesis.MillenniumBSDSelmerShaCohomologicalBoundary
+
+import Synthesis.MillenniumHodgeTetrahedralRealizationUnit
+
+import Synthesis.MillenniumBSDCMTwoTorsionGaloisModule
+
+import Synthesis.MillenniumBSDCMEta32QuarterTurn
+
+import Synthesis.MillenniumHodgeTetrahedralNormalizedToSingular
+
+import Synthesis.MillenniumBSDRationalTwoTorsionExact
+
+import Synthesis.MillenniumBSDRationalTwoTorsionEquiv
+
+import Synthesis.MillenniumBSDCMEta32QuarterFactor
+
+import Synthesis.MillenniumBSDCMGlobalLacunarityInert
+
+import Synthesis.MillenniumHodgeTetrahedralNativeFundamentalChain
+
+import Synthesis.MillenniumHodgeTetrahedralNativeFaces
+
+import Synthesis.MillenniumBSDCMGlobalLacunarityModFour
+
+import Synthesis.MillenniumBSDCMTwoTorsionFieldGeneric
+
+import Synthesis.MillenniumHodgeTetrahedralNativeFaceExhaustion
+
+import Synthesis.MillenniumBSDActualAlgClosureTwoTorsionExact
+
+import Synthesis.MillenniumBSDEtaEllipticOneModFourReduction
+
+import Synthesis.MillenniumBSDActualE2GaloisFixed
+
+import Synthesis.MillenniumHodgeTetrahedralNativeDifferential
+
+import Synthesis.MillenniumHodgeTetrahedralNativeAmbientMono
+
+import Synthesis.MillenniumBSDEtaEllipticFirstCoefficient
+
+import Synthesis.MillenniumHodgeTetrahedralNativeH2
+
+import Synthesis.MillenniumBSDActualE2TopRepSameObject
+
+import Synthesis.MillenniumBSDEtaCoefficientFiveFormal
+
+import Synthesis.MillenniumBSDEtaCoefficientFiveWeld
+
+import Synthesis.MillenniumBSDEllipticCoefficientFive
+
+import Synthesis.MillenniumHodgeCP1PrizeFacingClosure
+
+import Synthesis.MillenniumBSDEtaEllipticSturmEightBoundary
+
+import Synthesis.MillenniumBSDClassicalShaTwoBoundary
+
+import Synthesis.MillenniumBSDActualE2H1SameObject
+import Synthesis.MillenniumBSDActualE2H1LowDegreeReduction
+import Synthesis.MillenniumBSDTrivialTwoTorsionH1Generic
+import Synthesis.MillenniumBSDLocalKummerCohomologyReduction
+import Synthesis.MillenniumBSDLocalKummerShaBridge
+
+import Synthesis.MillenniumBSDJacobiEta32Reduction
+import Synthesis.MillenniumBSDJacobiArithmeticReconstruction
+import Synthesis.MillenniumBSDJacobiTripleProductFormal
+import Synthesis.MillenniumBSDEtaToActualLTransfer
+
+import Synthesis.MillenniumBSDCMSplitJacobiRealTrace
+
+import Synthesis.MillenniumBSDCMSplitJacobiGaussianNorm
+
+import Synthesis.MillenniumBSDCMSplitJacobiPrimaryResidual
+
+import Synthesis.MillenniumBSDRationalQuadraticKummerDescent
+
+import Synthesis.MillenniumBSDRationalQuadraticKummerHom
+
+import Synthesis.MillenniumBSDRationalQuadraticKummerInjective
+
+import Synthesis.MillenniumBSDQuadraticCharacterFiniteFieldReduction
+
+import Synthesis.MillenniumBSDQuadraticCharacterDegreeTwo
+
+import Synthesis.MillenniumBSDQuadraticCharacterSquareRootGenerator
+
+import Synthesis.MillenniumBSDRationalQuadraticKummerSurjective
+
+import Synthesis.MillenniumBSDCMSplitJacobiPrimaryCube
+
+import Synthesis.MoonshineConstructiveRealAdapter
+
+import Synthesis.MillenniumBSDQuadraticKummerPair
+
+import Synthesis.MillenniumBSDActualE2H1CharacterReduction
+
+import Synthesis.MillenniumBSDCMSplitPrimeSignReduction
+import Synthesis.MillenniumBSDCMSplitPrimeCanonicalWitness
+
+import Synthesis.MillenniumBSDUniversalRankWeld
+import Synthesis.MillenniumBSDUniversalEllipticPointTopRep
+
+import Synthesis.MillenniumBSDCMWorkedCaseBoundary
+
+import Synthesis.MillenniumBSDUniversalLeadingCoefficient

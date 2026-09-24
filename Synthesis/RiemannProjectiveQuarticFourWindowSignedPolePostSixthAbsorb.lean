@@ -1178,4 +1178,91 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_postSixthFixedStripG1B
   exact h0.trans (h1.trans h2)
 
 
+
+/-!
+## Selected-witness sixth-moment determinant
+
+The remaining sign hypothesis is not left as an opaque integral.  Because the
+signed combined profile is the exact pole-residual-weighted linear combination
+of the two endpoint projective profiles, its sixth moment is the corresponding
+two-endpoint determinant.
+
+This is the preferred witness-analysis surface:
+
+  M6_signed(W)
+    = poleTwo(W) * M6_half(W)
+      - poleHalf(W) * M6_two(W).
+
+The pole residuals already have positive high-t certificates elsewhere.  Thus
+the unresolved sign has been reduced to a quantitative comparison of the two
+literal endpoint sixth moments; no new representation layer is introduced.
+-/
+
+def quarticFourNormalizedProjectiveProfileSixthMoment
+    (R lam mu : ℝ) : ℝ :=
+  ∫ u : ℝ,
+    quarticFourNormalizedProjectiveProfile R lam mu u * u^6
+
+def QuarticFourSignedPolePair.endpointHalfSixthMoment
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  quarticFourNormalizedProjectiveProfileSixthMoment
+    W.R (1/2) W.muHalf
+
+def QuarticFourSignedPolePair.endpointTwoSixthMoment
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  quarticFourNormalizedProjectiveProfileSixthMoment
+    W.R (2/3) W.muTwo
+
+theorem QuarticFourSignedPolePair.signedProfileMomentSix_eq_endpoint_determinant
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedProfileMomentSix
+      =
+    W.poleTwo * W.endpointHalfSixthMoment
+      - W.poleHalf * W.endpointTwoSixthMoment := by
+  have hHalfC :=
+    quarticFourNormalizedProjectiveProfile_continuous
+      (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos
+  have hHalfK :=
+    quarticFourNormalizedProjectiveProfile_compact
+      (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos
+  have hTwoC :=
+    quarticFourNormalizedProjectiveProfile_continuous
+      (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos
+  have hTwoK :=
+    quarticFourNormalizedProjectiveProfile_compact
+      (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos
+  unfold QuarticFourSignedPolePair.signedProfileMomentSix
+    QuarticFourSignedPolePair.endpointHalfSixthMoment
+    QuarticFourSignedPolePair.endpointTwoSixthMoment
+    quarticFourNormalizedProjectiveProfileSixthMoment
+    quarticFourSignedPoleCombinedProfile
+  rw [profileMoment_linearCombination
+      hHalfC hHalfK hTwoC hTwoK
+      W.poleTwo (-W.poleHalf) 6]
+  ring
+
+def QuarticFourSignedPolePair.endpointSixthDeterminant
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.poleTwo * W.endpointHalfSixthMoment
+    - W.poleHalf * W.endpointTwoSixthMoment
+
+theorem QuarticFourSignedPolePair.signedProfileMomentSix_eq_endpointSixthDeterminant
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedProfileMomentSix = W.endpointSixthDeterminant := by
+  rw [W.signedProfileMomentSix_eq_endpoint_determinant]
+  rfl
+
+theorem QuarticFourSignedPolePair.signedProfileMomentSix_nonneg_iff_endpoint
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    0 <= W.signedProfileMomentSix
+      ↔
+    W.poleHalf * W.endpointTwoSixthMoment
+      <= W.poleTwo * W.endpointHalfSixthMoment := by
+  rw [W.signedProfileMomentSix_eq_endpoint_determinant]
+  linarith
+
+
 end Synthesis

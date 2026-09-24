@@ -221,4 +221,121 @@ theorem recovery_attempts_do_not_require_promotion_tokens :
     recoveryAttemptsDoNotRequirePromotionTokens = true := rfl
 
 
+theorem normalized_coupling_unique
+    (coupling : Coupling)
+    (h : runEinsteinEquationAttempt coupling = .exactResidualZero) :
+    coupling = .pos := by
+  cases coupling <;> simp [runEinsteinEquationAttempt, allComponentsZero,
+    einsteinEquationResidual, computedEinsteinTensor, computedMatterStress,
+    addSource, negateSource, scaleSource] at h ⊢
+
+structure FiniteSourcedEinsteinLawReceipt where
+  selectedCoupling : Coupling
+  selectedCouplingIsNormalized : selectedCoupling = .pos
+  sourcedEquationResidualZero :
+    ∀ a b, einsteinEquationResidual selectedCoupling a b = .zero
+  normalizedCouplingIsUnique :
+    ∀ other,
+      runEinsteinEquationAttempt other = .exactResidualZero →
+      other = selectedCoupling
+  matterSourceNonzero : computedMatterStress .time .time = .pos
+  physicalW4CalibrationIdentified : Bool
+  physicalW4CalibrationIdentifiedIsFalse :
+    physicalW4CalibrationIdentified = false
+  continuumEinsteinLawPromoted : Bool
+  continuumEinsteinLawPromotedIsFalse :
+    continuumEinsteinLawPromoted = false
+  grqftPromoted : Bool
+  grqftPromotedIsFalse : grqftPromoted = false
+
+def finiteSourcedEinsteinLawReceipt : FiniteSourcedEinsteinLawReceipt where
+  selectedCoupling := .pos
+  selectedCouplingIsNormalized := rfl
+  sourcedEquationResidualZero := normalized_residual_pointwise
+  normalizedCouplingIsUnique := by
+    intro other h
+    exact normalized_coupling_unique other h
+  matterSourceNonzero := rfl
+  physicalW4CalibrationIdentified := false
+  physicalW4CalibrationIdentifiedIsFalse := rfl
+  continuumEinsteinLawPromoted := false
+  continuumEinsteinLawPromotedIsFalse := rfl
+  grqftPromoted := false
+  grqftPromotedIsFalse := rfl
+
+inductive W4CalibrationAttemptOutcome where
+  | currentCandidateRejectedByResidual
+  | candidatePassesLocalResidual
+  deriving DecidableEq, Repr
+
+structure W4CalibrationBidiReceipt where
+  attemptRan : Bool
+  outcome : W4CalibrationAttemptOutcome
+  fittedScale : String
+  chi2PerDof : String
+  firstBinPull : String
+  lastBinPull : String
+  adequacyDecision : Bool
+  externalDYAuthorityPresent : Bool
+  candidate256PhysicalCalibrationPromoted : Bool
+  replacementRequired : Bool
+  deriving Repr
+
+def w4CalibrationBidiReceipt : W4CalibrationBidiReceipt where
+  attemptRan := true
+  outcome := .currentCandidateRejectedByResidual
+  fittedScale := "230534508.31238452"
+  chi2PerDof := "298.8462841768543"
+  firstBinPull := "-67.35457265472463"
+  lastBinPull := "-51.62836040061707"
+  adequacyDecision := false
+  externalDYAuthorityPresent := false
+  candidate256PhysicalCalibrationPromoted := false
+  replacementRequired := true
+
+theorem current_w4_candidate_rejected :
+    w4CalibrationBidiReceipt.outcome =
+      .currentCandidateRejectedByResidual := rfl
+
+inductive ExecutableGapStatus where
+  | locallyClosed
+  | locallyRejected
+  | executableInterfaceReadyConcreteInstanceMissing
+  | externalInformationRequired
+  deriving DecidableEq, Repr
+
+structure GRQFTExecutableClosureMatrix where
+  finiteSourcedEinsteinEquation : ExecutableGapStatus
+  finiteNormalizedCouplingUniqueness : ExecutableGapStatus
+  currentW4DirtyCalibration : ExecutableGapStatus
+  sameCandidateGRRecovery : ExecutableGapStatus
+  sameCandidateQFTRecovery : ExecutableGapStatus
+  sameCarrierStressWeld : ExecutableGapStatus
+  physicalUnitCalibration : ExecutableGapStatus
+  continuumRecovery : ExecutableGapStatus
+  empiricalGRQFTValidation : ExecutableGapStatus
+  terminalPromotion : Bool
+  deriving Repr
+
+def executableClosureMatrix : GRQFTExecutableClosureMatrix where
+  finiteSourcedEinsteinEquation := .locallyClosed
+  finiteNormalizedCouplingUniqueness := .locallyClosed
+  currentW4DirtyCalibration := .locallyRejected
+  sameCandidateGRRecovery := .executableInterfaceReadyConcreteInstanceMissing
+  sameCandidateQFTRecovery := .executableInterfaceReadyConcreteInstanceMissing
+  sameCarrierStressWeld := .executableInterfaceReadyConcreteInstanceMissing
+  physicalUnitCalibration := .externalInformationRequired
+  continuumRecovery := .executableInterfaceReadyConcreteInstanceMissing
+  empiricalGRQFTValidation := .externalInformationRequired
+  terminalPromotion := false
+
+theorem finite_equation_locally_closed :
+    executableClosureMatrix.finiteSourcedEinsteinEquation =
+      .locallyClosed := rfl
+
+theorem current_w4_calibration_locally_rejected :
+    executableClosureMatrix.currentW4DirtyCalibration =
+      .locallyRejected := rfl
+
+
 end Integration.GRQFTExecutableResidual

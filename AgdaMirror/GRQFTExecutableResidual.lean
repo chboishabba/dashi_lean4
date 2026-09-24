@@ -51,6 +51,22 @@ theorem recovery_attempt_without_promotion_parity :
     recoveryAttemptsDoNotRequirePromotionTokens = true :=
   recovery_attempts_do_not_require_promotion_tokens
 
+theorem normalized_coupling_unique_parity
+    (coupling : Coupling)
+    (h : runEinsteinEquationAttempt coupling = .exactResidualZero) :
+    coupling = .pos :=
+  normalized_coupling_unique coupling h
+
+theorem w4_hard_negative_parity :
+    w4CalibrationBidiReceipt.outcome =
+      .currentCandidateRejectedByResidual :=
+  current_w4_candidate_rejected
+
+theorem closure_matrix_w4_rejected_parity :
+    executableClosureMatrix.currentW4DirtyCalibration =
+      .locallyRejected :=
+  current_w4_calibration_locally_rejected
+
 theorem calibration_nonpromotion_parity :
     physicalCalibrationStillOpen = true :=
   physical_calibration_still_open

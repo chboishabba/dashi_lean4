@@ -740,6 +740,203 @@ theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_abs_lt_of_
 
 
 /-!
+## Vertical RvM jet versus horizontal off-line correction
+
+The zero-side marked jet is not analytically homogeneous.  Its dependence on
+the ordinates is visible to Riemann--von Mangoldt/Abel machinery, while its
+dependence on horizontal displacement is precisely the genuinely off-line
+debt.
+
+For a = Re rho - 1/2 and delta = Im rho - t, subtracting the critical-line
+reference a=0 gives
+
+  M2(actual) - M2(line) = 2 a^2,
+
+  M4(actual) - M4(line)
+    = 2 a^2 (a^2 + 6 A^2 - 6 delta^2).
+
+The universal D_A combination cancels the auxiliary A dependence of this
+horizontal correction and returns a^2(a^2-6 delta^2), exactly the existing
+horizontal fourth-angular term.
+-/
+
+def QuarticSignedPoleBidiMarkedJet.add
+    (X Y : QuarticSignedPoleBidiMarkedJet) :
+    QuarticSignedPoleBidiMarkedJet where
+  m0 := X.m0 + Y.m0
+  m2 := X.m2 + Y.m2
+  m4 := X.m4 + Y.m4
+
+theorem QuarticSignedPoleBidiMarkedJet.angular_add
+    (A : ℝ) (X Y : QuarticSignedPoleBidiMarkedJet) :
+    (X.add Y).angular A = X.angular A + Y.angular A := by
+  unfold QuarticSignedPoleBidiMarkedJet.add
+    QuarticSignedPoleBidiMarkedJet.angular
+    quarticSignedPoleBidiAngularOperator
+  ring
+
+theorem QuarticSignedPoleBidiMarkedJet.maxAbs_add_le
+    (X Y : QuarticSignedPoleBidiMarkedJet) :
+    (X.add Y).maxAbs <= X.maxAbs + Y.maxAbs := by
+  have h0 :
+      |X.m0 + Y.m0| <= X.maxAbs + Y.maxAbs := by
+    exact (abs_add _ _).trans
+      (add_le_add X.abs_m0_le_maxAbs Y.abs_m0_le_maxAbs)
+  have h2 :
+      |X.m2 + Y.m2| <= X.maxAbs + Y.maxAbs := by
+    exact (abs_add _ _).trans
+      (add_le_add X.abs_m2_le_maxAbs Y.abs_m2_le_maxAbs)
+  have h4 :
+      |X.m4 + Y.m4| <= X.maxAbs + Y.maxAbs := by
+    exact (abs_add _ _).trans
+      (add_le_add X.abs_m4_le_maxAbs Y.abs_m4_le_maxAbs)
+  unfold QuarticSignedPoleBidiMarkedJet.add
+    QuarticSignedPoleBidiMarkedJet.maxAbs
+  exact max_le h0 (max_le h2 h4)
+
+def quarticSignedPoleTargetReflectionSecondPairMarkOnLine
+    (t A : ℝ) (rho : Zeros) : ℝ :=
+  quarticSignedPoleSecondPhaseReal (-A) ((rho : ℂ).im - t)
+    +
+  quarticSignedPoleSecondPhaseReal A ((rho : ℂ).im - t)
+
+def quarticSignedPoleTargetReflectionFourthPairMarkOnLine
+    (t A : ℝ) (rho : Zeros) : ℝ :=
+  quarticSignedPoleFourthPhaseReal (-A) ((rho : ℂ).im - t)
+    +
+  quarticSignedPoleFourthPhaseReal A ((rho : ℂ).im - t)
+
+theorem quarticSignedPoleTargetReflectionSecondPairMark_eq_onLine_add_horizontal
+    (t A : ℝ) (rho : Zeros) :
+    quarticSignedPoleTargetReflectionSecondPairMark t A rho
+      =
+    quarticSignedPoleTargetReflectionSecondPairMarkOnLine t A rho
+      + 2 * heightOf rho^2 := by
+  unfold quarticSignedPoleTargetReflectionSecondPairMark
+    quarticSignedPoleTargetReflectionSecondPairMarkOnLine
+    quarticSignedPoleSecondPhaseReal
+  ring
+
+theorem quarticSignedPoleTargetReflectionFourthPairMark_eq_onLine_add_horizontal
+    (t A : ℝ) (rho : Zeros) :
+    quarticSignedPoleTargetReflectionFourthPairMark t A rho
+      =
+    quarticSignedPoleTargetReflectionFourthPairMarkOnLine t A rho
+      +
+    2 * heightOf rho^2
+      * (heightOf rho^2 + 6*A^2 - 6*((rho : ℂ).im-t)^2) := by
+  unfold quarticSignedPoleTargetReflectionFourthPairMark
+    quarticSignedPoleTargetReflectionFourthPairMarkOnLine
+    quarticSignedPoleFourthPhaseReal
+  ring
+
+def QuarticFourSignedPolePair.literalLocalVerticalReferenceSecondPairMomentAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact
+    ∑ rho ∈ centeredZeroFinset t n,
+      if quarticSignedPoleLocal t eta rho then
+        if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+          ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+            * quarticSignedPoleTargetReflectionSecondPairMarkOnLine
+                t A rho
+        else
+          0
+      else
+        0
+
+def QuarticFourSignedPolePair.literalLocalVerticalReferenceFourthPairMomentAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact
+    ∑ rho ∈ centeredZeroFinset t n,
+      if quarticSignedPoleLocal t eta rho then
+        if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+          ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+            * quarticSignedPoleTargetReflectionFourthPairMarkOnLine
+                t A rho
+        else
+          0
+      else
+        0
+
+def QuarticFourSignedPolePair.literalLocalVerticalReferenceBidiMarkedJetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) (n : ℕ) : QuarticSignedPoleBidiMarkedJet where
+  m0 := W.literalLocalMarkedMassAt eta n
+  m2 := W.literalLocalVerticalReferenceSecondPairMomentAt eta A n
+  m4 := W.literalLocalVerticalReferenceFourthPairMomentAt eta A n
+
+def QuarticFourSignedPolePair.literalLocalCenteredVerticalReferenceBidiMarkedJetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) (n : ℕ) : QuarticSignedPoleBidiMarkedJet :=
+  (W.literalLocalVerticalReferenceBidiMarkedJetAt eta A n).sub
+    (quarticSignedPoleLocalMuBidiMarkedJet t eta A)
+
+def QuarticFourSignedPolePair.literalLocalHorizontalBidiCorrectionJetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) (n : ℕ) : QuarticSignedPoleBidiMarkedJet :=
+  (W.literalLocalZeroBidiMarkedJetAt eta A n).sub
+    (W.literalLocalVerticalReferenceBidiMarkedJetAt eta A n)
+
+theorem QuarticFourSignedPolePair.literalLocalHorizontalBidiCorrectionJetAt_m0
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    (W.literalLocalHorizontalBidiCorrectionJetAt eta A n).m0 = 0 := by
+  rfl
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredBidiMarkedJetAt_eq_vertical_add_horizontal
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalCenteredBidiMarkedJetAt eta A n
+      =
+    (W.literalLocalCenteredVerticalReferenceBidiMarkedJetAt eta A n).add
+      (W.literalLocalHorizontalBidiCorrectionJetAt eta A n) := by
+  apply QuarticSignedPoleBidiMarkedJet.ext <;>
+    unfold QuarticFourSignedPolePair.literalLocalCenteredBidiMarkedJetAt
+      QuarticFourSignedPolePair.literalLocalCenteredVerticalReferenceBidiMarkedJetAt
+      QuarticFourSignedPolePair.literalLocalHorizontalBidiCorrectionJetAt
+      QuarticFourSignedPolePair.literalLocalZeroBidiMarkedJetAt
+      QuarticFourSignedPolePair.literalLocalVerticalReferenceBidiMarkedJetAt
+      quarticSignedPoleLocalMuBidiMarkedJet
+      QuarticSignedPoleBidiMarkedJet.sub
+      QuarticSignedPoleBidiMarkedJet.add <;>
+    simp <;> ring
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredBidiMarkedErrorAt_le_vertical_add_horizontal
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalCenteredBidiMarkedErrorAt eta A n
+      <=
+    (W.literalLocalCenteredVerticalReferenceBidiMarkedJetAt eta A n).maxAbs
+      +
+    (W.literalLocalHorizontalBidiCorrectionJetAt eta A n).maxAbs := by
+  unfold QuarticFourSignedPolePair.literalLocalCenteredBidiMarkedErrorAt
+  rw [W.literalLocalCenteredBidiMarkedJetAt_eq_vertical_add_horizontal]
+  exact QuarticSignedPoleBidiMarkedJet.maxAbs_add_le _ _
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_eq_vertical_add_horizontal_bidi
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalCenteredFourthAngularAt eta n
+      =
+    (W.literalLocalCenteredVerticalReferenceBidiMarkedJetAt eta A n).angular A
+      +
+    (W.literalLocalHorizontalBidiCorrectionJetAt eta A n).angular A := by
+  rw [W.literalLocalCenteredFourthAngularAt_eq_bidi_discrepancy
+      (A:=A)]
+  rw [W.literalLocalCenteredBidiMarkedJetAt_eq_vertical_add_horizontal]
+  exact QuarticSignedPoleBidiMarkedJet.angular_add A _ _
+
+
+
+/-!
 ## Arithmetic bidi jet from the literal cosh-twisted von Mangoldt moments
 
 The target/reflection symmetrization on the prime side naturally produces the

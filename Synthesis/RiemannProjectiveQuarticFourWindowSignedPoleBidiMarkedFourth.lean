@@ -602,6 +602,144 @@ theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_abs_le_of_
 
 
 /-!
+## Single-scalar localized marked-correlation error
+
+The analytic producer does not need to expose three unrelated error budgets.
+Package the actual zero-minus-mu jet by its coordinate sup norm.  On the
+target/reflection strip |A| <= 1/2, the universal angular operator has norm at
+most 25/16 with respect to this carrier:
+
+  1/2 + 3 A^2 + 5 A^4 <= 25/16.
+
+Thus one scalar localized marked-correlation estimate controls the exact
+fourth-angular consumer.
+-/
+
+def QuarticSignedPoleBidiMarkedJet.maxAbs
+    (J : QuarticSignedPoleBidiMarkedJet) : ℝ :=
+  max |J.m0| (max |J.m2| |J.m4|)
+
+theorem QuarticSignedPoleBidiMarkedJet.maxAbs_nonneg
+    (J : QuarticSignedPoleBidiMarkedJet) :
+    0 <= J.maxAbs := by
+  unfold QuarticSignedPoleBidiMarkedJet.maxAbs
+  positivity
+
+theorem QuarticSignedPoleBidiMarkedJet.abs_m0_le_maxAbs
+    (J : QuarticSignedPoleBidiMarkedJet) :
+    |J.m0| <= J.maxAbs := by
+  unfold QuarticSignedPoleBidiMarkedJet.maxAbs
+  exact le_max_left _ _
+
+theorem QuarticSignedPoleBidiMarkedJet.abs_m2_le_maxAbs
+    (J : QuarticSignedPoleBidiMarkedJet) :
+    |J.m2| <= J.maxAbs := by
+  unfold QuarticSignedPoleBidiMarkedJet.maxAbs
+  exact le_trans (le_max_left _ _) (le_max_right _ _)
+
+theorem QuarticSignedPoleBidiMarkedJet.abs_m4_le_maxAbs
+    (J : QuarticSignedPoleBidiMarkedJet) :
+    |J.m4| <= J.maxAbs := by
+  unfold QuarticSignedPoleBidiMarkedJet.maxAbs
+  exact le_trans (le_max_right _ _) (le_max_right _ _)
+
+theorem QuarticSignedPoleBidiMarkedJet.abs_angular_le_maxAbs
+    (A : ℝ) (J : QuarticSignedPoleBidiMarkedJet) :
+    |J.angular A|
+      <=
+    ((1/2 : ℝ) + 3*A^2 + 5*A^4) * J.maxAbs := by
+  have h :=
+    J.abs_angular_le_of_coordinate_bounds A
+      J.abs_m0_le_maxAbs
+      J.abs_m2_le_maxAbs
+      J.abs_m4_le_maxAbs
+  nlinarith
+
+theorem quarticSignedPoleBidiAngularCoefficient_le_twentyFive_sixteenths
+    {A : ℝ} (hA : |A| <= 1/2) :
+    (1/2 : ℝ) + 3*A^2 + 5*A^4 <= 25/16 := by
+  have hA2 : A^2 <= (1/4 : ℝ) := by
+    nlinarith [sq_abs A]
+  have hplus : 0 <= (1/4 : ℝ) + A^2 := by
+    nlinarith [sq_nonneg A]
+  have hprod :
+      0 <= ((1/4 : ℝ) - A^2) * ((1/4 : ℝ) + A^2) :=
+    mul_nonneg (sub_nonneg.mpr hA2) hplus
+  have hA4 : A^4 <= (1/16 : ℝ) := by
+    nlinarith
+  nlinarith
+
+theorem QuarticSignedPoleBidiMarkedJet.abs_angular_le_twentyFive_sixteenths_maxAbs
+    {A : ℝ} (hA : |A| <= 1/2)
+    (J : QuarticSignedPoleBidiMarkedJet) :
+    |J.angular A| <= (25/16 : ℝ) * J.maxAbs := by
+  have hbase := J.abs_angular_le_maxAbs A
+  have hcoef :=
+    quarticSignedPoleBidiAngularCoefficient_le_twentyFive_sixteenths hA
+  exact hbase.trans
+    (mul_le_mul_of_nonneg_right hcoef J.maxAbs_nonneg)
+
+def QuarticFourSignedPolePair.literalLocalCenteredBidiMarkedErrorAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) (n : ℕ) : ℝ :=
+  (W.literalLocalCenteredBidiMarkedJetAt eta A n).maxAbs
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_abs_le_of_maxError
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hA : |A| <= 1/2) :
+    |W.literalLocalCenteredFourthAngularAt eta n|
+      <=
+    (25/16 : ℝ)
+      * W.literalLocalCenteredBidiMarkedErrorAt eta A n := by
+  rw [W.literalLocalCenteredFourthAngularAt_eq_bidi_discrepancy
+      (A:=A)]
+  exact
+    QuarticSignedPoleBidiMarkedJet.abs_angular_le_twentyFive_sixteenths_maxAbs
+      hA (W.literalLocalCenteredBidiMarkedJetAt eta A n)
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_abs_lt_of_maxError
+    {t eta A margin : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hA : |A| <= 1/2)
+    (hsmall :
+      (25/16 : ℝ)
+        * W.literalLocalCenteredBidiMarkedErrorAt eta A n
+        < margin) :
+    |W.literalLocalCenteredFourthAngularAt eta n| < margin := by
+  exact lt_of_le_of_lt
+    (W.literalLocalCenteredFourthAngularAt_abs_le_of_maxError
+      n hA)
+    hsmall
+
+/--
+Equivalent producer-facing threshold without the 25/16 coefficient on the
+left.  Positivity of the margin is explicit because this theorem is intended
+for direct use by the final absorption inequality.
+-/
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_abs_lt_of_maxError_lt_margin
+    {t eta A margin : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hA : |A| <= 1/2)
+    (hmargin : 0 < margin)
+    (herror :
+      W.literalLocalCenteredBidiMarkedErrorAt eta A n
+        < (16/25 : ℝ) * margin) :
+    |W.literalLocalCenteredFourthAngularAt eta n| < margin := by
+  apply W.literalLocalCenteredFourthAngularAt_abs_lt_of_maxError
+    n hA
+  have hscale : 0 < (25/16 : ℝ) := by norm_num
+  have hscaled :=
+    mul_lt_mul_of_pos_left herror hscale
+  norm_num at hscaled ⊢
+  nlinarith
+
+
+
+/-!
 ## Arithmetic bidi jet from the literal cosh-twisted von Mangoldt moments
 
 The target/reflection symmetrization on the prime side naturally produces the

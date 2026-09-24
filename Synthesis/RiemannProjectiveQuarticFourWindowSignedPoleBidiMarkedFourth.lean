@@ -2214,4 +2214,129 @@ theorem exists_radius_quarticFourSmoothMarkedPoleQuadraticCarrier_endpoint_signs
   dsimp [margin] at hHalfLo hTwoHi
   constructor <;> nlinarith [Real.pi_pos]
 
+
+/-!
+## Strengthened bidi witness existence
+
+The original witness constructor remains unchanged.  The bidi lane uses a
+stronger existential theorem choosing the same common radius below two
+additional robustness thresholds: positive individual pole coordinates and
+the marked-pole quadratic endpoint signs.
+-/
+
+theorem exists_quarticFourSignedPolePair_with_strength_floor_and_markedPoleQuadratic
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 <= W.targetStrength
+      ∧
+      0 <
+      quarticFourSmoothSignedMarkedPoleQuadraticCarrier
+        W.R W.muHalf W.muTwo t := by
+  obtain ⟨R0,hR0,hfamily⟩ :=
+    exists_uniform_smooth_quarticFourWindow_family
+  obtain ⟨dTarget,hdTarget,hTarget⟩ :=
+    exists_radius_quarticFourSmooth_signedPoleTarget_ge_margin ht
+  obtain ⟨dQ,hdQ,hQ⟩ :=
+    exists_radius_quarticFourSmoothMarkedPoleQuadraticCarrier_endpoint_signs ht
+  obtain ⟨dPole,hdPole,hPole⟩ :=
+    exists_radius_quarticFourSmoothPole_pos ht
+
+  let R : ℝ :=
+    min 1 (min R0 (min dTarget (min dQ dPole))) / 2
+  have hinner :
+      0 < min R0 (min dTarget (min dQ dPole)) :=
+    lt_min hR0 (lt_min hdTarget (lt_min hdQ hdPole))
+  have hmin :
+      0 < min 1 (min R0 (min dTarget (min dQ dPole))) :=
+    lt_min (by norm_num) hinner
+  have hR : 0 < R := by
+    dsimp [R]
+    linarith
+  have hRone : R < 1 := by
+    dsimp [R]
+    have hle :=
+      min_le_left 1 (min R0 (min dTarget (min dQ dPole)))
+    linarith
+  have hRinner :
+      R < min R0 (min dTarget (min dQ dPole)) := by
+    dsimp [R]
+    have hle :=
+      min_le_right 1 (min R0 (min dTarget (min dQ dPole)))
+    linarith
+  have hRR0 : R < R0 :=
+    hRinner.trans_le
+      (min_le_left R0 (min dTarget (min dQ dPole)))
+  have hRest :
+      R < min dTarget (min dQ dPole) :=
+    hRinner.trans_le
+      (min_le_right R0 (min dTarget (min dQ dPole)))
+  have hRTarget : R < dTarget :=
+    hRest.trans_le (min_le_left dTarget (min dQ dPole))
+  have hRestQP : R < min dQ dPole :=
+    hRest.trans_le (min_le_right dTarget (min dQ dPole))
+  have hRQ : R < dQ :=
+    hRestQP.trans_le (min_le_left dQ dPole)
+  have hRPole : R < dPole :=
+    hRestQP.trans_le (min_le_right dQ dPole)
+
+  have hlamHalf : (1/2 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨le_rfl, by norm_num⟩
+  have hlamTwo : (2/3 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨by norm_num, le_rfl⟩
+
+  obtain ⟨S1⟩ := hfamily R (1/2) hR hRR0 hlamHalf
+  obtain ⟨S2⟩ := hfamily R (2/3) hR hRR0 hlamTwo
+
+  have hfloor :
+      7 * Real.pi^4 / 1600 <=
+        quarticFourSmoothPoleCancelledTarget
+          R S1.mu S2.mu t :=
+    hTarget R S1.mu S2.mu hR hRTarget
+      S1.muNear S2.muNear
+
+  have htransPos :
+      0 < quarticFourSmoothPoleCancelledTarget
+        R S1.mu S2.mu t := by
+    have hp4 : 0 < Real.pi^4 := by positivity
+    nlinarith
+
+  obtain ⟨eps,heps,hband⟩ :=
+    exists_quarticFourSignedPoleCombinedHeightDefect_pos_punctured
+      hR S1.J2zero S2.J2zero htransPos
+
+  let W : QuarticFourSignedPolePair t := {
+    R := R
+    muHalf := S1.mu
+    muTwo := S2.mu
+    eps := eps
+    Rpos := hR
+    RltOne := hRone
+    muHalfNear := S1.muNear
+    muTwoNear := S2.muNear
+    J2Half := S1.J2zero
+    J2Two := S2.J2zero
+    signedTargetStrength := htransPos
+    epsPos := heps
+    combinedTargetBand := hband
+  }
+
+  have hQsigns :=
+    hQ R S1.mu S2.mu hR hRQ S1.muNear S2.muNear
+  have hPoleHalf :=
+    hPole R (1/2) S1.mu hR hRPole
+      hlamHalf S1.muAbs.le
+  have hPoleTwo :=
+    hPole R (2/3) S2.mu hR hRPole
+      hlamTwo S2.muAbs.le
+  have hMarked :
+      0 <
+      quarticFourSmoothSignedMarkedPoleQuadraticCarrier
+        R S1.mu S2.mu t :=
+    quarticFourSmoothSignedMarkedPoleQuadraticCarrier_pos_of_endpoint_signs
+      hPoleHalf hPoleTwo hQsigns.1 hQsigns.2
+
+  refine ⟨W,?_,?_⟩
+  · simpa [W, QuarticFourSignedPolePair.targetStrength] using hfloor
+  · simpa [W] using hMarked
+
 end Synthesis

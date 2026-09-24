@@ -2448,4 +2448,100 @@ def secondTensorWeldRequiredForDECExterior : Bool := false
 def qftAmplitudeDynamicsConstructed : Bool := false
 
 
+/-!
+Balanced DEC-compatible repulsive shell family.
+
+For R>0 and 0<y<x<1 choose
+
+  M = R (x-y) (x*y+2) / (6x).
+
+Then the cleared margins become
+
+  pressure-tension margin = (3/2) R (x-y) x y
+  NEC/DEC margin          = (1/2) R (x-y) x y
+  SEC-violation margin    = (1/2) R (x-y) x y
+
+and the outward-acceleration margin is
+
+  R*y*(2-x*(x+y))/(2x) > 0.
+
+Thus there is an open positive-mass family of DEC-compatible repulsive shells.
+-/
+
+def balancedShellMass (radius x y : Rat) : Rat :=
+  radius * (x-y) * (x*y+2) / (6*x)
+
+theorem balanced_shell_pressure_margin
+    (radius x y : Rat) (hx : x ≠ 0) :
+    pressureTensionMarginCleared (balancedShellMass radius x y) radius x y
+      = (3/2 : Rat) * radius * (x-y) * x * y := by
+  field_simp [balancedShellMass, pressureTensionMarginCleared, surfaceGap, hx]
+  ring
+
+theorem balanced_shell_nec_dec_margin
+    (radius x y : Rat) (hx : x ≠ 0) :
+    necDecMarginCleared (balancedShellMass radius x y) radius x y
+      = (1/2 : Rat) * radius * (x-y) * x * y := by
+  field_simp [balancedShellMass, necDecMarginCleared, surfaceGap, hx]
+  ring
+
+theorem balanced_shell_sec_violation_margin
+    (radius x y : Rat) (hx : x ≠ 0) :
+    secViolationMarginCleared (balancedShellMass radius x y) radius x y
+      = (1/2 : Rat) * radius * (x-y) * x * y := by
+  field_simp [balancedShellMass, secViolationMarginCleared, surfaceGap, hx]
+  ring
+
+theorem balanced_shell_outward_margin
+    (radius x y : Rat) (hx : x ≠ 0) :
+    outwardAccelerationScaled (balancedShellMass radius x y) radius y
+      = radius*y*(2-x*(x+y))/(2*x) := by
+  field_simp [balancedShellMass, outwardAccelerationScaled, hx]
+  ring
+
+theorem balanced_shell_mass_positive
+    {radius x y : Rat}
+    (hR : 0 < radius) (hx : 0 < x) (hy : 0 < y) (hyx : y < x) :
+    0 < balancedShellMass radius x y := by
+  unfold balancedShellMass
+  positivity
+
+theorem balanced_shell_family_admissible
+    {radius x y : Rat}
+    (hR : 0 < radius)
+    (hy : 0 < y)
+    (hyx : y < x)
+    (hx1 : x < 1) :
+    RationalSquareIsraelAdmissible
+      (balancedShellMass radius x y) radius x y := by
+  have hx : 0 < x := lt_trans hy hyx
+  have hxypos : 0 < x*y := mul_pos hx hy
+  have hgap : 0 < x-y := sub_pos.mpr hyx
+  have hshape : 0 < 2 - x*(x+y) := by
+    have hy1 : y < 1 := lt_trans hyx hx1
+    nlinarith [mul_pos hx (by linarith : 0 < x+y)]
+  constructor
+  · exact hR
+  · exact hx
+  · exact hy
+  · exact hyx
+  · rw [balanced_shell_pressure_margin radius x y (ne_of_gt hx)]
+    positivity
+  · rw [balanced_shell_nec_dec_margin radius x y (ne_of_gt hx)]
+    positivity
+  · rw [balanced_shell_sec_violation_margin radius x y (ne_of_gt hx)]
+    positivity
+  · rw [balanced_shell_outward_margin radius x y (ne_of_gt hx)]
+    positivity
+
+theorem balanced_shell_family_has_positive_mass
+    {radius x y : Rat}
+    (hR : 0 < radius)
+    (hy : 0 < y)
+    (hyx : y < x)
+    (hx1 : x < 1) :
+    0 < balancedShellMass radius x y := by
+  exact balanced_shell_mass_positive hR (lt_trans hy hyx) hy hyx
+
+
 end Integration.GRQFTPostMergeLocalization

@@ -2643,11 +2643,22 @@ theorem balanced_family_positive_radius_physical_signs
     ∧ (-3/(8*radius) < 0)
     ∧ 0 < 1/(8*radius)
     ∧ (-1/(4*radius) < 0) := by
-  have hR0 : radius ≠ 0 := ne_of_gt hR
   constructor
   · unfold balancedFamilyMass
     positivity
-  constructor <;> positivity
+  constructor
+  · positivity
+  constructor
+  · positivity
+  constructor
+  · positivity
+  constructor
+  · positivity
+  constructor
+  · positivity
+  constructor
+  · positivity
+  · positivity
 
 
 end Integration.GRQFTPostMergeLocalization

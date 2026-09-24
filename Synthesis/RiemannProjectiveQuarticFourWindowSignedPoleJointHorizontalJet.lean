@@ -1609,4 +1609,70 @@ theorem quarticSignedPoleFourthPhaseReal_eq_complex_re
   norm_num [pow_succ, Complex.mul_re, Complex.add_re]
   ring
 
+
+/-!
+## Fail-fast angular-sector obstruction to count-only arguments
+
+The complete fourth-order form is positive on the diagonal q=alpha.  Thus
+strip bounds and local multiplicity upper bounds alone cannot force the local
+fourth-harmonic contribution to be favorable: an arbitrarily small admissible
+point can lie in an adverse angular sector.
+-/
+
+theorem QuarticFourSignedPolePair.completeJointQuarticPolynomial_diag
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.completeJointQuarticPolynomial alpha alpha
+      =
+    (2/3 : ℝ) * W.targetStrength * alpha^4 := by
+  unfold QuarticFourSignedPolePair.completeJointQuarticPolynomial
+  ring
+
+theorem QuarticFourSignedPolePair.completeJointQuarticPolynomial_diag_pos
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (ha : alpha ≠ 0) :
+    0 < W.completeJointQuarticPolynomial alpha alpha := by
+  rw [W.completeJointQuarticPolynomial_diag]
+  have hS := W.targetStrength_pos
+  have ha4 : 0 < alpha^4 := by positivity
+  positivity
+
+/--
+There are arbitrarily small strip/window-compatible normalized displacements
+with adverse positive fourth-order contribution.  This is a geometry theorem,
+not an assertion that zeta actually realizes the chosen point.
+-/
+theorem QuarticFourSignedPolePair.exists_arbitrarily_small_adverse_fourth_phase
+    {t eps : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (heps : 0 < eps) :
+    ∃ alpha q : ℝ,
+      0 < |alpha|
+        ∧ |alpha| < eps
+        ∧ q = alpha
+        ∧ 0 < W.completeJointQuarticPolynomial alpha q := by
+  let alpha : ℝ := min (eps/2) (1/4)
+  have haPos : 0 < alpha := by
+    dsimp [alpha]
+    exact lt_min (by linarith) (by norm_num)
+  have haeps : alpha < eps := by
+    have hle : alpha <= eps/2 := min_le_left _ _
+    linarith
+  refine ⟨alpha,alpha,?_,?_,rfl,?_⟩
+  · simpa [abs_of_pos haPos] using haPos
+  · simpa [abs_of_pos haPos] using haeps
+  · exact W.completeJointQuarticPolynomial_diag_pos haPos.ne'
+
+/--
+The physical fourth-harmonic phase itself is negative on the diagonal
+delta=a, hence the literal leading source (which carries -S/6 times this
+phase) is positive.
+-/
+theorem quarticSignedPolePhysicalFourthPhaseReal_diag
+    (a : ℝ) :
+    a^4 - 6*a^2*a^2 + a^4 = -4*a^4 := by
+  ring
+
+
 end Synthesis

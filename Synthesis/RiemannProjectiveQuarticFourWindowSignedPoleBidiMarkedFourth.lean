@@ -936,6 +936,88 @@ theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_eq_vertica
 
 
 
+theorem QuarticFourSignedPolePair.literalLocalVerticalFourthZeroMomentAt_eq_bidi_verticalReference
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalVerticalFourthZeroMomentAt eta n
+      =
+    (W.literalLocalVerticalReferenceBidiMarkedJetAt eta A n).angular A := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalVerticalFourthZeroMomentAt
+    QuarticFourSignedPolePair.literalLocalVerticalReferenceBidiMarkedJetAt
+    QuarticFourSignedPolePair.literalLocalMarkedMassAt
+    QuarticFourSignedPolePair.literalLocalVerticalReferenceSecondPairMomentAt
+    QuarticFourSignedPolePair.literalLocalVerticalReferenceFourthPairMomentAt
+    QuarticSignedPoleBidiMarkedJet.angular
+    quarticSignedPoleBidiAngularOperator
+  rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum]
+  rw [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl, hoff]
+      have h :=
+        quarticSignedPoleVerticalFourth_eq_bidi_operator
+          A ((rho : ℂ).im-t)
+      unfold quarticSignedPoleTargetReflectionSecondPairMarkOnLine
+        quarticSignedPoleTargetReflectionFourthPairMarkOnLine
+      rw [h]
+      ring
+    · simp [hl, hoff]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredVerticalReferenceBidiMarkedJetAt_angular_eq_vertical_discrepancy
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    (W.literalLocalCenteredVerticalReferenceBidiMarkedJetAt eta A n).angular A
+      =
+    W.literalLocalVerticalFourthZeroMomentAt eta n
+      - quarticSignedPoleLocalMuVerticalFourthMoment t eta := by
+  unfold QuarticFourSignedPolePair.literalLocalCenteredVerticalReferenceBidiMarkedJetAt
+  rw [QuarticSignedPoleBidiMarkedJet.angular_sub]
+  rw [← W.literalLocalVerticalFourthZeroMomentAt_eq_bidi_verticalReference
+        (A:=A)]
+  rw [← quarticSignedPoleLocalMuVerticalFourthMoment_eq_bidi_operator
+        t eta A]
+  rfl
+
+theorem QuarticFourSignedPolePair.literalLocalHorizontalBidiCorrectionJetAt_angular_eq_horizontalFourth
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    (W.literalLocalHorizontalBidiCorrectionJetAt eta A n).angular A
+      =
+    W.literalLocalHorizontalFourthCorrectionAt eta n := by
+  have htotal :=
+    W.literalLocalCenteredFourthAngularAt_eq_vertical_add_horizontal_bidi
+      (eta:=eta) (A:=A) n
+  have hsplit :=
+    W.literalLocalCenteredFourthAngularAt_eq
+      (eta:=eta) n
+  have hvert :=
+    W.literalLocalCenteredVerticalReferenceBidiMarkedJetAt_angular_eq_vertical_discrepancy
+      (eta:=eta) (A:=A) n
+  rw [hvert] at htotal
+  linarith
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_abs_le_verticalDiscrepancy_add_horizontalDebt
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    |W.literalLocalCenteredFourthAngularAt eta n|
+      <=
+    |W.literalLocalVerticalFourthZeroMomentAt eta n
+      - quarticSignedPoleLocalMuVerticalFourthMoment t eta|
+      +
+    |W.literalLocalHorizontalFourthCorrectionAt eta n| := by
+  rw [W.literalLocalCenteredFourthAngularAt_eq]
+  exact abs_add _ _
+
+
+
 /-!
 ## Arithmetic bidi jet from the literal cosh-twisted von Mangoldt moments
 

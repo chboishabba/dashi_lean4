@@ -503,6 +503,206 @@ theorem QuarticFourSignedPolePair.fourthAngularUpperBound_has_lowerG3Orientation
   W.literalJointQuarticPolynomial_ge_of_fourthPhase_le
     ht rho hphase
 
+
+/-!
+## Same-carrier finite orientation identity
+
+Sum the pointwise orientation firewall before taking any absolute values.  This
+keeps the local exact G3 polynomial, the fourth-angular zero statistic, and the
+horizontal a^4 mass on the identical centered finite carrier.
+-/
+
+def QuarticFourSignedPolePair.literalLocalHorizontalFourthMassAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact
+    ∑ rho ∈ centeredZeroFinset t n,
+      if quarticSignedPoleLocal t eta rho then
+        if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+          ((zetaZeroConfig).mult (rho : ℂ) : ℝ) * heightOf rho^4
+        else
+          0
+      else
+        0
+
+def QuarticFourSignedPolePair.literalLocalJointQuarticPolynomialAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact
+    ∑ rho ∈ centeredZeroFinset t n,
+      if quarticSignedPoleLocal t eta rho then
+        if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+          W.literalJointQuarticPolynomial rho
+        else
+          0
+      else
+        0
+
+theorem QuarticFourSignedPolePair.literalLocalJointQuarticPolynomialAt_eq_scaled_mass_sub_fourthPhase
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalJointQuarticPolynomialAt eta n
+      =
+    (W.targetStrength / (6 * (t/16)^6))
+      *
+    (W.literalLocalHorizontalFourthMassAt eta n
+      - W.literalLocalFourthPhaseMomentAt eta n) := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalJointQuarticPolynomialAt
+    QuarticFourSignedPolePair.literalLocalHorizontalFourthMassAt
+    QuarticFourSignedPolePair.literalLocalFourthPhaseMomentAt
+  rw [← Finset.sum_sub_distrib, Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl, hoff]
+      rw [W.literalJointQuarticPolynomial_eq_horizontalFourth_sub_fourthPhase
+        ht rho]
+      ring
+    · simp [hl, hoff]
+  · simp [hl]
+
+def QuarticFourSignedPolePair.literalLocalOffOrdExactAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact
+    ∑ rho ∈ centeredZeroFinset t n,
+      if quarticSignedPoleLocal t eta rho then
+        W.literalOffOrdSource rho
+      else
+        0
+
+def QuarticFourSignedPolePair.literalLocalJointQuarticRemainderAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact
+    ∑ rho ∈ centeredZeroFinset t n,
+      if quarticSignedPoleLocal t eta rho then
+        W.literalJointQuarticRemainderOffOrd rho
+      else
+        0
+
+theorem QuarticFourSignedPolePair.literalLocalOffOrdExactAt_eq_polynomial_add_remainder
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalOffOrdExactAt eta n
+      =
+    W.literalLocalJointQuarticPolynomialAt eta n
+      + W.literalLocalJointQuarticRemainderAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalOffOrdExactAt
+    QuarticFourSignedPolePair.literalLocalJointQuarticPolynomialAt
+    QuarticFourSignedPolePair.literalLocalJointQuarticRemainderAt
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · have hsrc :=
+        W.literalOffOrdSource_eq_polynomial_add_remainderOffOrd
+          ht rho
+      simp [hl, hoff,
+        QuarticFourSignedPolePair.literalOffOrdSource,
+        QuarticFourSignedPolePair.literalJointQuarticRemainderOffOrd]
+        at hsrc ⊢
+      exact hsrc
+    · simp [hl, hoff,
+        QuarticFourSignedPolePair.literalOffOrdSource,
+        QuarticFourSignedPolePair.literalJointQuarticRemainderOffOrd]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalJointQuarticRemainderAt_le_debt
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalJointQuarticRemainderAt eta n
+      <= W.literalLocalRemainderDebtAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalJointQuarticRemainderAt
+    QuarticFourSignedPolePair.literalLocalRemainderDebtAt
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · simp [hl, le_abs_self]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalOffOrdExactAt_le_scaled_mass_sub_fourthPhase_add_remainder
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalOffOrdExactAt eta n
+      <=
+    (W.targetStrength / (6 * (t/16)^6))
+      *
+    (W.literalLocalHorizontalFourthMassAt eta n
+      - W.literalLocalFourthPhaseMomentAt eta n)
+      +
+    W.literalLocalRemainderDebtAt eta n := by
+  rw [W.literalLocalOffOrdExactAt_eq_polynomial_add_remainder
+      ht]
+  rw [W.literalLocalJointQuarticPolynomialAt_eq_scaled_mass_sub_fourthPhase
+      ht]
+  exact add_le_add_left
+    (W.literalLocalJointQuarticRemainderAt_le_debt
+      (eta:=eta) n) _
+
+/--
+The exact finite off-ordinate source splits into this local carrier plus the
+already-existing signed FarExact lane.
+-/
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_eq_local_add_farExact
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalOffOrdExactAt n
+      =
+    W.literalLocalOffOrdExactAt eta n
+      + W.literalFarExactAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalOffOrdExactAt
+    QuarticFourSignedPolePair.literalLocalOffOrdExactAt
+    QuarticFourSignedPolePair.literalFarExactAt
+    QuarticFourSignedPolePair.literalFarExactTerm
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · have hnf : ¬ quarticSignedPoleFar t eta rho := by
+      unfold quarticSignedPoleFar quarticSignedPoleLocal at *
+      linarith
+    simp [hl, hnf]
+  · have hf : quarticSignedPoleFar t eta rho := by
+      unfold quarticSignedPoleFar quarticSignedPoleLocal at *
+      exact lt_of_not_ge hl
+    simp [hl, hf]
+
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_scaled_mass_sub_fourthPhase_add_remainder_add_far
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalOffOrdExactAt n
+      <=
+    (W.targetStrength / (6 * (t/16)^6))
+      *
+    (W.literalLocalHorizontalFourthMassAt eta n
+      - W.literalLocalFourthPhaseMomentAt eta n)
+      +
+    W.literalLocalRemainderDebtAt eta n
+      +
+    W.literalFarExactAt eta n := by
+  rw [W.literalOffOrdExactAt_eq_local_add_farExact]
+  have hlocal :=
+    W.literalLocalOffOrdExactAt_le_scaled_mass_sub_fourthPhase_add_remainder
+      ht (eta:=eta) n
+  linarith
+
 /-!
 ## Fail-closed explicit ABSORB surface
 

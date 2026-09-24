@@ -1,0 +1,59 @@
+name: J369 sheaf descent Lean
+
+on:
+  push:
+    paths:
+      - 'Integration/JInvariantSheafDescent.lean'
+      - 'Integration/StageTwelveGrothendieckRelation.lean'
+      - 'Integration/JInvariant369JointFibredObserver.lean'
+      - 'AgdaMirror/JInvariant369ConsolidatedNextStage.lean'
+      - 'Integration/JInvariant369ConsolidatedNextStage.lean'
+      - 'AgdaMirror/JInvariant369ZeroToThirteenTetralemmaQualification.lean'
+      - 'Integration/JInvariant369ZeroToThirteenTetralemmaQualification.lean'
+      - 'AgdaMirror/JInvariant369Zeta6561MonsterCrosswalk.lean'
+      - 'Integration/JInvariant369Zeta6561MonsterCrosswalk.lean'
+      - 'AgdaMirror/JInvariant369TenRankSeventeenHyperformalism.lean'
+      - 'Integration/JInvariant369TenRankSeventeenHyperformalism.lean'
+      - 'Integration.lean'
+      - 'AgdaMirror/JInvariantSheafDescent.lean'
+      - 'AgdaMirror/StageTwelveGrothendieckRelation.lean'
+      - 'AgdaMirror.lean'
+      - '.github/workflows/j369-sheaf-descent.yml'
+  pull_request:
+    paths:
+      - 'Integration/JInvariantSheafDescent.lean'
+      - 'Integration/StageTwelveGrothendieckRelation.lean'
+      - 'Integration/JInvariant369JointFibredObserver.lean'
+      - 'Integration.lean'
+      - 'AgdaMirror/JInvariantSheafDescent.lean'
+      - 'AgdaMirror/StageTwelveGrothendieckRelation.lean'
+      - 'AgdaMirror.lean'
+      - '.github/workflows/j369-sheaf-descent.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: leanprover/lean-action@v1
+      - name: Check focused J/369 bridge
+        run: |
+          lake env lean Integration/StageTwelveGrothendieckRelation.lean
+          lake env lean Integration/JInvariant369JointFibredObserver.lean
+          lake env lean Integration/JInvariant369ConsolidatedNextStage.lean
+          lake env lean AgdaMirror/JInvariant369ConsolidatedNextStage.lean
+          lake env lean Integration/JInvariant369ZeroToThirteenTetralemmaQualification.lean
+          lake env lean AgdaMirror/JInvariant369ZeroToThirteenTetralemmaQualification.lean
+          lake env lean Integration/JInvariant369Zeta6561MonsterCrosswalk.lean
+          lake env lean AgdaMirror/JInvariant369Zeta6561MonsterCrosswalk.lean
+          lake env lean Integration/JInvariant369TenRankSeventeenHyperformalism.lean
+          lake env lean AgdaMirror/JInvariant369TenRankSeventeenHyperformalism.lean
+          lake env lean Integration/JInvariantSheafDescent.lean
+          lake env lean AgdaMirror/StageTwelveGrothendieckRelation.lean
+          lake env lean AgdaMirror/JInvariantSheafDescent.lean

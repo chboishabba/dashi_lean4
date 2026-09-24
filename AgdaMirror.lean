@@ -1,3 +1,5 @@
+import AgdaMirror.StageTwelveGrothendieckRelation
+import AgdaMirror.JInvariantSheafDescent
 import AgdaMirror.Moonshine
 import AgdaMirror.MoonshineEarn
 import AgdaMirror.JFixedPoint
@@ -128,3 +130,11 @@ provides faithful Lean mirrors:
   content, COM extensionality, canonical non-factorability, and recharting obstruction are
   DASHI reconstruction/theorems under `AgdaMirror.AdK`.
 -/
+
+import AgdaMirror.JInvariant369ConsolidatedNextStage
+
+import AgdaMirror.JInvariant369ZeroToThirteenTetralemmaQualification
+
+import AgdaMirror.JInvariant369Zeta6561MonsterCrosswalk
+
+import AgdaMirror.JInvariant369TenRankSeventeenHyperformalism

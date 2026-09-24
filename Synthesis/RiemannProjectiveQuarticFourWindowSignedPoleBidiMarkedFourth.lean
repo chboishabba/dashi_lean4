@@ -2339,4 +2339,242 @@ theorem exists_quarticFourSignedPolePair_with_strength_floor_and_markedPoleQuadr
   · simpa [W, QuarticFourSignedPolePair.targetStrength] using hfloor
   · simpa [W] using hMarked
 
+
+/-!
+## Exact normalized form of the cosh-marked pole channel
+-/
+
+def quarticFourBidiNormalizedMark
+    (t A v : ℝ) : ℝ :=
+  Real.cosh ((16*A/t) * v)
+
+def quarticFourBidiMarkedNormalizedPoleWeight
+    (t A c v : ℝ) : ℝ :=
+  quarticFourBidiNormalizedMark t A v
+    * quarticFourNormalizedPoleWeight t c v
+
+def quarticFourBidiMarkedNormalizedOnLineWeight
+    (t A c v : ℝ) : ℝ :=
+  quarticFourBidiNormalizedMark t A v
+    * quarticFourNormalizedOnLineWeight c v
+
+def quarticFourSmoothBidiMarkedPoleResidual
+    (R lam mu t A : ℝ) : ℝ :=
+  quarticFourWindowPairing R lam mu
+      (quarticFourBidiMarkedNormalizedPoleWeight t A 1)
+    * quarticFourWindowPairing R lam mu
+      (quarticFourBidiMarkedNormalizedOnLineWeight t A 2)
+  -
+  quarticFourWindowPairing R lam mu
+      (quarticFourBidiMarkedNormalizedPoleWeight t A 2)
+    * quarticFourWindowPairing R lam mu
+      (quarticFourBidiMarkedNormalizedOnLineWeight t A 1)
+
+theorem quarticFourBidiMarkedNormalizedPoleWeight_continuous
+    (t A c : ℝ) :
+    Continuous (quarticFourBidiMarkedNormalizedPoleWeight t A c) := by
+  unfold quarticFourBidiMarkedNormalizedPoleWeight
+    quarticFourBidiNormalizedMark
+  fun_prop
+
+theorem quarticFourBidiMarkedNormalizedOnLineWeight_continuous
+    (t A c : ℝ) :
+    Continuous (quarticFourBidiMarkedNormalizedOnLineWeight t A c) := by
+  unfold quarticFourBidiMarkedNormalizedOnLineWeight
+    quarticFourBidiNormalizedMark
+  fun_prop
+
+theorem poleEvenResp_quarticFourBidiMarkedPhysicalDetector_eq_pairing
+    {R lam mu t A : ℝ}
+    (hR : 0 < R) (ht : 0 < t)
+    (c : ℝ) :
+    Zeta23Bridge.LiteralWeilParityBalance.poleEvenResp
+        (quarticFourBidiMarkedPhysicalDetector R lam mu t A)
+        t (c*(t/16))
+      =
+    (16/t) *
+      quarticFourWindowPairing R lam mu
+        (quarticFourBidiMarkedNormalizedPoleWeight t A c) := by
+  let r : ℝ := t/16
+  have hr : 0 < r := by
+    dsimp [r]
+    positivity
+  let G : ℝ -> ℝ := quarticFourWindowProfile R lam mu
+  let F : ℝ -> ℝ := fun v =>
+    G v * quarticFourBidiMarkedNormalizedPoleWeight t A c v
+  have hpoint :
+      (fun u : ℝ =>
+        quarticFourBidiMarkedPhysicalDetector R lam mu t A u *
+          (Real.cosh (u/2) * Real.cos (t*u) * Real.cos ((c*(t/16))*u)))
+        =
+      fun u => F (r*u) := by
+    funext u
+    dsimp [F,G,r]
+    unfold quarticFourBidiMarkedPhysicalDetector
+      quarticSignedPoleCoshMarkedDetector
+      quarticFourPhysicalDetector
+      projectiveRescaleProfile
+      quarticFourBidiMarkedNormalizedPoleWeight
+      quarticFourBidiNormalizedMark
+      quarticFourNormalizedPoleWeight
+    have ht0 : t ≠ 0 := ne_of_gt ht
+    have hmark :
+        A*u = (16*A/t) * ((t/16)*u) := by
+      field_simp [ht0]
+      ring
+    have h1 : 8*((t/16)*u)/t = u/2 := by
+      field_simp [ht0]
+      ring
+    have h2 : 16*((t/16)*u) = t*u := by ring
+    have h3 : c*((t/16)*u) = (c*(t/16))*u := by ring
+    rw [hmark,h1,h2,h3]
+    ring
+  unfold Zeta23Bridge.LiteralWeilParityBalance.poleEvenResp
+  rw [hpoint]
+  have hscale := Measure.integral_comp_mul_left F r
+  have habs : |r⁻¹| = 1/r := by
+    rw [abs_of_pos (inv_pos.mpr hr)]
+    rfl
+  have hscale' :
+      (∫ u : ℝ, F (r*u))
+        = (1/r) * ∫ v : ℝ, F v := by
+    simpa [habs, smul_eq_mul] using hscale
+  rw [hscale']
+  have hpair :
+      (∫ v : ℝ, F v)
+        =
+      quarticFourWindowPairing R lam mu
+        (quarticFourBidiMarkedNormalizedPoleWeight t A c) := by
+    dsimp [F,G]
+    exact quarticFourWindowProfile_pairing_eq
+      hR (quarticFourBidiMarkedNormalizedPoleWeight_continuous t A c)
+  rw [hpair]
+  dsimp [r]
+  field_simp [ne_of_gt ht]
+  ring
+
+theorem evenResp_quarticFourBidiMarkedPhysicalDetector_eq_pairing
+    {R lam mu t A : ℝ}
+    (hR : 0 < R) (ht : 0 < t)
+    (c : ℝ) :
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+        (quarticFourBidiMarkedPhysicalDetector R lam mu t A)
+        0 (c*(t/16))
+      =
+    (16/t) *
+      quarticFourWindowPairing R lam mu
+        (quarticFourBidiMarkedNormalizedOnLineWeight t A c) := by
+  let r : ℝ := t/16
+  have hr : 0 < r := by
+    dsimp [r]
+    positivity
+  let G : ℝ -> ℝ := quarticFourWindowProfile R lam mu
+  let F : ℝ -> ℝ := fun v =>
+    G v * quarticFourBidiMarkedNormalizedOnLineWeight t A c v
+  have hpoint :
+      (fun u : ℝ =>
+        quarticFourBidiMarkedPhysicalDetector R lam mu t A u *
+          (Real.cosh (0*u) * Real.cos ((c*(t/16))*u)))
+        =
+      fun u => F (r*u) := by
+    funext u
+    dsimp [F,G,r]
+    unfold quarticFourBidiMarkedPhysicalDetector
+      quarticSignedPoleCoshMarkedDetector
+      quarticFourPhysicalDetector
+      projectiveRescaleProfile
+      quarticFourBidiMarkedNormalizedOnLineWeight
+      quarticFourBidiNormalizedMark
+      quarticFourNormalizedOnLineWeight
+    have ht0 : t ≠ 0 := ne_of_gt ht
+    have hmark :
+        A*u = (16*A/t) * ((t/16)*u) := by
+      field_simp [ht0]
+      ring
+    have h3 : c*((t/16)*u) = (c*(t/16))*u := by ring
+    rw [hmark,h3]
+    simp
+  unfold Zeta23Bridge.LiteralWeilParityBalance.evenResp
+  rw [hpoint]
+  have hscale := Measure.integral_comp_mul_left F r
+  have habs : |r⁻¹| = 1/r := by
+    rw [abs_of_pos (inv_pos.mpr hr)]
+    rfl
+  have hscale' :
+      (∫ u : ℝ, F (r*u))
+        = (1/r) * ∫ v : ℝ, F v := by
+    simpa [habs, smul_eq_mul] using hscale
+  rw [hscale']
+  have hpair :
+      (∫ v : ℝ, F v)
+        =
+      quarticFourWindowPairing R lam mu
+        (quarticFourBidiMarkedNormalizedOnLineWeight t A c) := by
+    dsimp [F,G]
+    exact quarticFourWindowProfile_pairing_eq
+      hR (quarticFourBidiMarkedNormalizedOnLineWeight_continuous t A c)
+  rw [hpair]
+  dsimp [r]
+  field_simp [ne_of_gt ht]
+  ring
+
+theorem poleProjectiveDefect_quarticFourBidiMarkedPhysicalDetector_eq
+    {R lam mu t A : ℝ}
+    (hR : 0 < R) (ht : 0 < t) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect
+        (quarticFourBidiMarkedPhysicalDetector R lam mu t A)
+        t (t/16)
+      =
+    4 * (16/t)^2 *
+      quarticFourSmoothBidiMarkedPoleResidual R lam mu t A := by
+  have hc :=
+    quarticSignedPoleCoshMarkedDetector_contDiff
+      (quarticFourPhysicalDetector_contDiff
+        (t:=t) (lam:=lam) (mu:=mu) hR) A
+  have hk :=
+    quarticSignedPoleCoshMarkedDetector_compact
+      (quarticFourPhysicalDetector_compact
+        (t:=t) (lam:=lam) (mu:=mu) hR ht) A
+  have he :
+      ∀ u,
+        quarticFourBidiMarkedPhysicalDetector R lam mu t A (-u)
+          =
+        quarticFourBidiMarkedPhysicalDetector R lam mu t A u := by
+    intro u
+    unfold quarticFourBidiMarkedPhysicalDetector
+    exact quarticSignedPoleCoshMarkedDetector_even
+      (quarticFourPhysicalDetector_even R lam mu t) A u
+  rw [Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect_eq
+      hc.continuous hk he t (t/16)]
+  rw [show 2*(t/16) = (2:ℝ)*(t/16) by ring,
+      show t/16 = (1:ℝ)*(t/16) by ring,
+      poleEvenResp_quarticFourBidiMarkedPhysicalDetector_eq_pairing hR ht 2,
+      poleEvenResp_quarticFourBidiMarkedPhysicalDetector_eq_pairing hR ht 1,
+      evenResp_quarticFourBidiMarkedPhysicalDetector_eq_pairing hR ht 1,
+      evenResp_quarticFourBidiMarkedPhysicalDetector_eq_pairing hR ht 2]
+  unfold quarticFourSmoothBidiMarkedPoleResidual
+  ring
+
+theorem QuarticFourSignedPolePair.bidiMarkedPoleCombination_eq_normalized
+    {t A : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.bidiMarkedPoleCombination A
+      =
+    4 * (16/t)^2 *
+      (
+        W.poleTwo *
+          quarticFourSmoothBidiMarkedPoleResidual
+            W.R (1/2) W.muHalf t A
+        -
+        W.poleHalf *
+          quarticFourSmoothBidiMarkedPoleResidual
+            W.R (2/3) W.muTwo t A
+      ) := by
+  unfold QuarticFourSignedPolePair.bidiMarkedPoleCombination
+  rw [poleProjectiveDefect_quarticFourBidiMarkedPhysicalDetector_eq
+        W.Rpos ht,
+      poleProjectiveDefect_quarticFourBidiMarkedPhysicalDetector_eq
+        W.Rpos ht]
+  ring
+
 end Synthesis

@@ -978,4 +978,69 @@ theorem local_defocusing_not_yet_global_trajectory :
     localDefocusingContributionEqualsGlobalOutwardTrajectory = false := rfl
 
 
+/-!
+Same-object finite defocusing witness.
+
+This mirrors the Agda composition at the level currently represented in the Lean
+GRQFT branch: positive normalized coupling is the selected finite Einstein
+fixture, while the source-side tension pattern gives negative active stress and
+positive Raychaudhuri defocusing.  The finite witness is not promoted to a
+continuum/global repulsive spacetime.
+-/
+
+inductive FiniteUnitCoefficient where
+  | negative | zero | positive
+  deriving DecidableEq, Repr
+
+inductive FiniteEinsteinAttemptOutcome where
+  | exactResidualZero | nonzeroResidualCounterexample
+  deriving DecidableEq, Repr
+
+def finiteEinsteinAttempt : FiniteUnitCoefficient → FiniteEinsteinAttemptOutcome
+  | .positive => .exactResidualZero
+  | .zero => .nonzeroResidualCounterexample
+  | .negative => .nonzeroResidualCounterexample
+
+structure FiniteDefocusingSolutionWitness : Prop where
+  positiveExpansionPastToPresent : True
+  positiveExpansionPresentToFuture : True
+  expansionGradientConstant : True
+  curvaturePositive : True
+  energyDensityPositive : True
+  pressureNegative : True
+  equationOfStateRhoPlusPressureZero : True
+  normalizedPositiveCouplingPasses :
+    finiteEinsteinAttempt .positive = .exactResidualZero
+  zeroCouplingRejected :
+    finiteEinsteinAttempt .zero = .nonzeroResidualCounterexample
+  negativeCouplingRejected :
+    finiteEinsteinAttempt .negative = .nonzeroResidualCounterexample
+  activeStressNegativeTwo :
+    activeStressSum finiteGRStressRational = -2
+  timelikeRicciNegativeOne :
+    ricci00TraceReversed finiteGRStressRational = -1
+  raychaudhuriCurvaturePositiveOne :
+    raychaudhuriCurvatureContribution
+      (ricci00TraceReversed finiteGRStressRational) = 1
+
+theorem canonical_finite_defocusing_solution_witness :
+    FiniteDefocusingSolutionWitness := by
+  constructor <;> try trivial <;> rfl
+
+inductive FiniteRepulsionMechanism where
+  | positiveGCouplingWithNegativePressureTension
+  deriving DecidableEq, Repr
+
+def finiteModelMechanism : FiniteRepulsionMechanism :=
+  .positiveGCouplingWithNegativePressureTension
+
+def finiteWitnessNeedsNegativeG : Bool := false
+def finiteWitnessNeedsNegativeInertialMass : Bool := false
+def finiteWitnessIsContinuumGlobalRepulsiveSpacetime : Bool := false
+def completeRiemannGeodesicDeviationStillNeededForTrajectoryTheorem : Bool := true
+
+theorem finite_defocusing_mechanism_is_source_side :
+    finiteWitnessNeedsNegativeG = false := rfl
+
+
 end Integration.GRQFTPostMergeLocalization

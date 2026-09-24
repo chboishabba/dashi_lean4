@@ -3102,4 +3102,334 @@ theorem QuarticFourSignedPolePair.two_pole_trunc_abs_le
       have hC : 0 < Real.cosh 1 := Real.cosh_pos 1
       nlinarith
 
+
+/-!
+## Determinant-level fourth-order remainder
+-/
+
+def quarticFourBidiOnLinePairingRemainderConstant : ℝ :=
+  (5/96 : ℝ) * 5^4 * (83/30 : ℝ)
+
+def quarticFourBidiPolePairingRemainderConstant : ℝ :=
+  Real.cosh 1 * quarticFourBidiOnLinePairingRemainderConstant
+
+def quarticFourBidiCommonPairingRemainderConstant : ℝ :=
+  (Real.cosh 1 + 1) * quarticFourBidiOnLinePairingRemainderConstant
+
+def quarticFourBidiDeterminantEntryBound : ℝ :=
+  quarticFourBidiPolePairingBound + quarticFourBidiOnLinePairingBound
+
+def quarticFourBidiDeterminantRemainderConstant : ℝ :=
+  (4*quarticFourBidiDeterminantEntryBound + 2)
+    * quarticFourBidiCommonPairingRemainderConstant
+
+theorem quarticFourBidiCommonPairingRemainderConstant_nonneg :
+    0 <= quarticFourBidiCommonPairingRemainderConstant := by
+  unfold quarticFourBidiCommonPairingRemainderConstant
+    quarticFourBidiOnLinePairingRemainderConstant
+  positivity
+
+theorem quarticFourBidiDeterminantEntryBound_nonneg :
+    0 <= quarticFourBidiDeterminantEntryBound := by
+  unfold quarticFourBidiDeterminantEntryBound
+    quarticFourBidiPolePairingBound
+    quarticFourBidiOnLinePairingBound
+  positivity
+
+theorem quarticFourWindowPairing_bidiMarkedOnLine_sub_trunc_abs_le
+    {R lam mu B c : ℝ}
+    (hR : 0 < R) (hRone : R < 1)
+    (hlam0 : 0 <= lam) (hlam : lam <= 2/3)
+    (hmu : |mu| <= 1/10)
+    (hB : |B| <= 1/5) :
+    |quarticFourWindowPairing R lam mu
+        (fun v =>
+          Real.cosh (B*v)
+            * quarticFourNormalizedOnLineWeight c v)
+      -
+      quarticFourBidiMarkedOnLinePairingTrunc
+        R lam mu B c|
+      <=
+    quarticFourBidiCommonPairingRemainderConstant * |B|^4 := by
+  have h :=
+    quarticFourWindowPairing_cosh_mark_sub_quadratic_abs_le
+      hR hRone
+      (quarticFourNormalizedOnLineWeight_continuous c)
+      (by norm_num : (0:ℝ) <= 1)
+      (fun v hv => by
+        unfold quarticFourNormalizedOnLineWeight
+        exact Real.abs_cos_le_one _)
+      hB
+  have hm :=
+    quarticFourWindowProfile_taperMass_le_eightyThree_thirtieths
+      hR hlam0 hlam hmu
+  unfold quarticFourBidiMarkedOnLinePairingTrunc
+    quarticFourBidiCommonPairingRemainderConstant
+    quarticFourBidiOnLinePairingRemainderConstant
+  have hC : 1 <= Real.cosh 1 + 1 := by
+    have hc := Real.one_le_cosh 1
+    linarith
+  calc
+    |quarticFourWindowPairing R lam mu
+        (fun v =>
+          Real.cosh (B*v)
+            * quarticFourNormalizedOnLineWeight c v)
+      -
+      (quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight c)
+        +
+        (B^2/2) *
+          quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedOnLineSecondWeight c))|
+      <=
+    (5/96 : ℝ) * |B|^4 * 5^4 * 1
+      * taperMass (quarticFourWindowProfile R lam mu) := h
+    _ <=
+    (5/96 : ℝ) * |B|^4 * 5^4 * (83/30 : ℝ) := by
+      have hfac :
+          0 <= (5/96 : ℝ) * |B|^4 * 5^4 := by positivity
+      nlinarith
+    _ <=
+    ((Real.cosh 1 + 1)
+      * ((5/96 : ℝ) * 5^4 * (83/30 : ℝ))) * |B|^4 := by
+      have hbase :
+          0 <= (5/96 : ℝ) * 5^4 * (83/30 : ℝ) := by positivity
+      nlinarith
+
+theorem quarticFourWindowPairing_bidiMarkedPole_sub_trunc_abs_le
+    {R lam mu t B c : ℝ}
+    (hR : 0 < R) (hRone : R < 1)
+    (ht : 200 <= t)
+    (hlam0 : 0 <= lam) (hlam : lam <= 2/3)
+    (hmu : |mu| <= 1/10)
+    (hB : |B| <= 1/5) :
+    |quarticFourWindowPairing R lam mu
+        (fun v =>
+          Real.cosh (B*v)
+            * quarticFourNormalizedPoleWeight t c v)
+      -
+      quarticFourBidiMarkedPolePairingTrunc
+        R lam mu t B c|
+      <=
+    quarticFourBidiCommonPairingRemainderConstant * |B|^4 := by
+  have h :=
+    quarticFourWindowPairing_cosh_mark_sub_quadratic_abs_le
+      hR hRone
+      (quarticFourNormalizedPoleWeight_continuous t c)
+      (Real.cosh_pos 1).le
+      (fun v hv =>
+        quarticFourNormalizedPoleWeight_abs_le_cosh_one
+          hRone ht (quarticFourWindowProfile_support_abs_lt hR hv))
+      hB
+  have hm :=
+    quarticFourWindowProfile_taperMass_le_eightyThree_thirtieths
+      hR hlam0 hlam hmu
+  unfold quarticFourBidiMarkedPolePairingTrunc
+    quarticFourBidiCommonPairingRemainderConstant
+    quarticFourBidiOnLinePairingRemainderConstant
+  have hc : 0 <= Real.cosh 1 := (Real.cosh_pos 1).le
+  calc
+    |quarticFourWindowPairing R lam mu
+        (fun v =>
+          Real.cosh (B*v)
+            * quarticFourNormalizedPoleWeight t c v)
+      -
+      (quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedPoleWeight t c)
+        +
+        (B^2/2) *
+          quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedPoleSecondWeight t c))|
+      <=
+    (5/96 : ℝ) * |B|^4 * 5^4 * Real.cosh 1
+      * taperMass (quarticFourWindowProfile R lam mu) := h
+    _ <=
+    (5/96 : ℝ) * |B|^4 * 5^4 * Real.cosh 1
+      * (83/30 : ℝ) := by
+      have hfac :
+          0 <= (5/96 : ℝ) * |B|^4 * 5^4 * Real.cosh 1 := by
+        positivity
+      nlinarith
+    _ <=
+    ((Real.cosh 1 + 1)
+      * ((5/96 : ℝ) * 5^4 * (83/30 : ℝ))) * |B|^4 := by
+      have hbase :
+          0 <= (5/96 : ℝ) * 5^4 * (83/30 : ℝ) := by positivity
+      nlinarith
+
+theorem QuarticFourSignedPolePair.bidiMarkedPoleResidual_sub_trunc_abs_le
+    {t A : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {lam mu : ℝ}
+    (hlam : lam = (1/2 : ℝ) ∧ mu = W.muHalf
+      ∨ lam = (2/3 : ℝ) ∧ mu = W.muTwo)
+    (hB : |16*A/t| <= 1/5)
+    (heta :
+      quarticFourBidiCommonPairingRemainderConstant
+        * |16*A/t|^4 <= 1) :
+    |quarticFourSmoothBidiMarkedPoleResidual
+        W.R lam mu t A
+      -
+      quarticFourSmoothBidiMarkedPoleResidualTrunc
+        W.R lam mu t (16*A/t)|
+      <=
+    quarticFourBidiDeterminantRemainderConstant
+      * |16*A/t|^4 := by
+  have htpos : 0 < t := by linarith
+  rcases hlam with hHalf | hTwo
+  · rcases hHalf with ⟨rfl,rfl⟩
+    have hmu :
+        |W.muHalf| <= 1/10 :=
+      (quarticFourAtomicMu_corridor_abs_lt_tenth
+        (by norm_num) (by norm_num) W.muHalfNear).le
+    let B := 16*A/t
+    have eP1 :=
+      quarticFourWindowPairing_bidiMarkedPole_sub_trunc_abs_le
+        W.Rpos W.RltOne ht
+        (by norm_num) (by norm_num) hmu hB
+        (c:=1)
+    have eP2 :=
+      quarticFourWindowPairing_bidiMarkedPole_sub_trunc_abs_le
+        W.Rpos W.RltOne ht
+        (by norm_num) (by norm_num) hmu hB
+        (c:=2)
+    have eO1 :=
+      quarticFourWindowPairing_bidiMarkedOnLine_sub_trunc_abs_le
+        W.Rpos W.RltOne
+        (by norm_num) (by norm_num) hmu hB
+        (c:=1)
+    have eO2 :=
+      quarticFourWindowPairing_bidiMarkedOnLine_sub_trunc_abs_le
+        W.Rpos W.RltOne
+        (by norm_num) (by norm_num) hmu hB
+        (c:=2)
+    have a0 := W.half_pole_trunc_abs_le ht hB (c:=1)
+    have b0 := W.half_onLine_trunc_abs_le hB (c:=2)
+    have c0 := W.half_pole_trunc_abs_le ht hB (c:=2)
+    have d0 := W.half_onLine_trunc_abs_le hB (c:=1)
+    have hM := quarticFourBidiDeterminantEntryBound_nonneg
+    have ha0 :
+        |quarticFourBidiMarkedPolePairingTrunc
+            W.R (1/2) W.muHalf t B 1|
+          <= quarticFourBidiDeterminantEntryBound := by
+      exact a0.trans (le_add_of_nonneg_right (by
+        unfold quarticFourBidiOnLinePairingBound
+        norm_num))
+    have hb0 :
+        |quarticFourBidiMarkedOnLinePairingTrunc
+            W.R (1/2) W.muHalf B 2|
+          <= quarticFourBidiDeterminantEntryBound := by
+      exact b0.trans (le_add_of_nonneg_left (by
+        unfold quarticFourBidiPolePairingBound
+        positivity))
+    have hc0 :
+        |quarticFourBidiMarkedPolePairingTrunc
+            W.R (1/2) W.muHalf t B 2|
+          <= quarticFourBidiDeterminantEntryBound := by
+      exact c0.trans (le_add_of_nonneg_right (by
+        unfold quarticFourBidiOnLinePairingBound
+        norm_num))
+    have hd0 :
+        |quarticFourBidiMarkedOnLinePairingTrunc
+            W.R (1/2) W.muHalf B 1|
+          <= quarticFourBidiDeterminantEntryBound := by
+      exact d0.trans (le_add_of_nonneg_left (by
+        unfold quarticFourBidiPolePairingBound
+        positivity))
+    have hdet :=
+      abs_det_sub_det_le hM
+        (quarticFourBidiCommonPairingRemainderConstant_nonneg.mul
+          (by positivity : 0 <= |B|^4))
+        (by simpa [B] using heta)
+        ha0 hb0 hc0 hd0
+        (by simpa [B, quarticFourBidiMarkedNormalizedPoleWeight,
+              quarticFourBidiNormalizedMark] using eP1)
+        (by simpa [B, quarticFourBidiMarkedNormalizedOnLineWeight,
+              quarticFourBidiNormalizedMark] using eO2)
+        (by simpa [B, quarticFourBidiMarkedNormalizedPoleWeight,
+              quarticFourBidiNormalizedMark] using eP2)
+        (by simpa [B, quarticFourBidiMarkedNormalizedOnLineWeight,
+              quarticFourBidiNormalizedMark] using eO1)
+    unfold quarticFourSmoothBidiMarkedPoleResidual
+      quarticFourSmoothBidiMarkedPoleResidualTrunc
+      quarticFourBidiDeterminantRemainderConstant at hdet ⊢
+    simpa [B] using hdet
+  · rcases hTwo with ⟨rfl,rfl⟩
+    have hmu :
+        |W.muTwo| <= 1/10 :=
+      (quarticFourAtomicMu_corridor_abs_lt_tenth
+        (by norm_num) (by norm_num) W.muTwoNear).le
+    let B := 16*A/t
+    have eP1 :=
+      quarticFourWindowPairing_bidiMarkedPole_sub_trunc_abs_le
+        W.Rpos W.RltOne ht
+        (by norm_num) (by norm_num) hmu hB
+        (c:=1)
+    have eP2 :=
+      quarticFourWindowPairing_bidiMarkedPole_sub_trunc_abs_le
+        W.Rpos W.RltOne ht
+        (by norm_num) (by norm_num) hmu hB
+        (c:=2)
+    have eO1 :=
+      quarticFourWindowPairing_bidiMarkedOnLine_sub_trunc_abs_le
+        W.Rpos W.RltOne
+        (by norm_num) (by norm_num) hmu hB
+        (c:=1)
+    have eO2 :=
+      quarticFourWindowPairing_bidiMarkedOnLine_sub_trunc_abs_le
+        W.Rpos W.RltOne
+        (by norm_num) (by norm_num) hmu hB
+        (c:=2)
+    have a0 := W.two_pole_trunc_abs_le ht hB (c:=1)
+    have b0 := W.two_onLine_trunc_abs_le hB (c:=2)
+    have c0 := W.two_pole_trunc_abs_le ht hB (c:=2)
+    have d0 := W.two_onLine_trunc_abs_le hB (c:=1)
+    have hM := quarticFourBidiDeterminantEntryBound_nonneg
+    have ha0 :
+        |quarticFourBidiMarkedPolePairingTrunc
+            W.R (2/3) W.muTwo t B 1|
+          <= quarticFourBidiDeterminantEntryBound := by
+      exact a0.trans (le_add_of_nonneg_right (by
+        unfold quarticFourBidiOnLinePairingBound
+        norm_num))
+    have hb0 :
+        |quarticFourBidiMarkedOnLinePairingTrunc
+            W.R (2/3) W.muTwo B 2|
+          <= quarticFourBidiDeterminantEntryBound := by
+      exact b0.trans (le_add_of_nonneg_left (by
+        unfold quarticFourBidiPolePairingBound
+        positivity))
+    have hc0 :
+        |quarticFourBidiMarkedPolePairingTrunc
+            W.R (2/3) W.muTwo t B 2|
+          <= quarticFourBidiDeterminantEntryBound := by
+      exact c0.trans (le_add_of_nonneg_right (by
+        unfold quarticFourBidiOnLinePairingBound
+        norm_num))
+    have hd0 :
+        |quarticFourBidiMarkedOnLinePairingTrunc
+            W.R (2/3) W.muTwo B 1|
+          <= quarticFourBidiDeterminantEntryBound := by
+      exact d0.trans (le_add_of_nonneg_left (by
+        unfold quarticFourBidiPolePairingBound
+        positivity))
+    have hdet :=
+      abs_det_sub_det_le hM
+        (quarticFourBidiCommonPairingRemainderConstant_nonneg.mul
+          (by positivity : 0 <= |B|^4))
+        (by simpa [B] using heta)
+        ha0 hb0 hc0 hd0
+        (by simpa [B, quarticFourBidiMarkedNormalizedPoleWeight,
+              quarticFourBidiNormalizedMark] using eP1)
+        (by simpa [B, quarticFourBidiMarkedNormalizedOnLineWeight,
+              quarticFourBidiNormalizedMark] using eO2)
+        (by simpa [B, quarticFourBidiMarkedNormalizedPoleWeight,
+              quarticFourBidiNormalizedMark] using eP2)
+        (by simpa [B, quarticFourBidiMarkedNormalizedOnLineWeight,
+              quarticFourBidiNormalizedMark] using eO1)
+    unfold quarticFourSmoothBidiMarkedPoleResidual
+      quarticFourSmoothBidiMarkedPoleResidualTrunc
+      quarticFourBidiDeterminantRemainderConstant at hdet ⊢
+    simpa [B] using hdet
+
 end Synthesis

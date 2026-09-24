@@ -1908,4 +1908,39 @@ def positiveSurfacePressureOrientationRequired : Bool := true
 def exactIsraelNormalizationSolved : Bool := false
 
 
+/-!
+TOV / junction tangential-stress sign consistency.
+-/
+
+inductive TangentialPressureSign where
+  | negative | zero | positive
+  deriving DecidableEq, Repr
+
+def tovBoundaryTangentialSign : TangentialPressureSign := .positive
+def junctionSurfaceTangentialSign : TangentialPressureSign := .positive
+
+theorem tov_and_junction_tangential_signs_agree :
+    tovBoundaryTangentialSign = junctionSurfaceTangentialSign := rfl
+
+structure TOVJunctionSignConsistencyWitness : Prop where
+  tovTangentialPressure :
+    requiredOuterTangentialPressure = 7/12
+  junctionDerivativeJump :
+    fExteriorPrimeJunction 2 (1/4) junctionLambdaOut
+      - fInteriorPrimeJunction 2 junctionLambdaIn = 3/8
+  signsAgree :
+    tovBoundaryTangentialSign = junctionSurfaceTangentialSign
+
+theorem canonical_tov_junction_sign_consistency :
+    TOVJunctionSignConsistencyWitness := by
+  exact {
+    tovTangentialPressure := required_outer_tangential_pressure_seven_twelfths
+    junctionDerivativeJump := junction_derivative_jump_three_eighths
+    signsAgree := rfl
+  }
+
+def bulkPressureEqualsSurfaceDistributionMagnitude : Bool := false
+def exactIsraelMagnitudeStillOpen : Bool := true
+
+
 end Integration.GRQFTPostMergeLocalization

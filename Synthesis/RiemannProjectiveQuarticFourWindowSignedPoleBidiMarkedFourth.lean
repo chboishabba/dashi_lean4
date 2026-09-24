@@ -371,6 +371,7 @@ def quarticSignedPoleLocalMuMarkedFourthPairMoment
       + quarticSignedPoleFourthPhaseReal A (x-t))
       * Zeta23.mu x
 
+@[ext]
 structure QuarticSignedPoleBidiMarkedJet where
   m0 : ℝ
   m2 : ℝ
@@ -659,7 +660,7 @@ theorem quarticSignedPoleBidiAngularCoefficient_le_twentyFive_sixteenths
     {A : ℝ} (hA : |A| <= 1/2) :
     (1/2 : ℝ) + 3*A^2 + 5*A^4 <= 25/16 := by
   have hA2 : A^2 <= (1/4 : ℝ) := by
-    nlinarith [sq_abs A]
+    nlinarith [sq_abs A, abs_nonneg A]
   have hplus : 0 <= (1/4 : ℝ) + A^2 := by
     nlinarith [sq_nonneg A]
   have hprod :
@@ -886,7 +887,7 @@ theorem QuarticFourSignedPolePair.literalLocalHorizontalBidiCorrectionJetAt_m0
     (W : QuarticFourSignedPolePair t)
     (n : ℕ) :
     (W.literalLocalHorizontalBidiCorrectionJetAt eta A n).m0 = 0 := by
-  rfl
+  exact sub_self _
 
 theorem QuarticFourSignedPolePair.literalLocalCenteredBidiMarkedJetAt_eq_vertical_add_horizontal
     {t eta A : ℝ}
@@ -981,7 +982,7 @@ theorem QuarticFourSignedPolePair.literalLocalCenteredVerticalReferenceBidiMarke
   rw [QuarticSignedPoleBidiMarkedJet.angular_sub]
   rw [← W.literalLocalVerticalFourthZeroMomentAt_eq_bidi_verticalReference
         (A:=A)]
-  rw [← quarticSignedPoleLocalMuVerticalFourthMoment_eq_bidi_operator
+  rw [quarticSignedPoleLocalMuVerticalFourthMoment_eq_bidi_operator
         t eta A]
   rfl
 

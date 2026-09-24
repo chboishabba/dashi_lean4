@@ -1375,4 +1375,75 @@ theorem QuarticFourSignedPolePair.exists_negative_pairKernel_core
       nlinarith
     linarith
 
+
+/-!
+## Complete homogeneous fourth-order joint jet
+
+The earlier quartic polynomial extracted the mixed alpha^2*q^2 and pure q^4
+terms, leaving the pure alpha^4 coefficient inside the horizontal remainder.
+The same-ordinate identity identifies that missing coefficient exactly.
+
+The complete fourth-order homogeneous form is
+
+  S(W) * (alpha^2*q^2 - (alpha^4 + q^4)/6).
+-/
+
+def QuarticFourSignedPolePair.completeJointQuarticPolynomial
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha q : ℝ) : ℝ :=
+  W.targetStrength
+    * (alpha^2 * q^2 - (alpha^4 + q^4)/6)
+
+def QuarticFourSignedPolePair.completeJointQuarticRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha q : ℝ) : ℝ :=
+  W.jointQuarticJetRemainder alpha q
+    + (W.targetStrength/6) * alpha^4
+
+theorem QuarticFourSignedPolePair.signedNormalizedPairKernel_eq_completeQuarticJet
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNormalizedPairKernel alpha q
+      =
+    W.completeJointQuarticPolynomial alpha q
+      + W.completeJointQuarticRemainder alpha q := by
+  rw [W.signedNormalizedPairKernel_eq_quarticJet]
+  unfold QuarticFourSignedPolePair.completeJointQuarticPolynomial
+    QuarticFourSignedPolePair.completeJointQuarticRemainder
+    QuarticFourSignedPolePair.jointQuarticJetPolynomial
+  ring
+
+theorem QuarticFourSignedPolePair.completeJointQuarticPolynomial_zeroLine
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.completeJointQuarticPolynomial alpha 0
+      =
+    -(W.targetStrength/6) * alpha^4 := by
+  unfold QuarticFourSignedPolePair.completeJointQuarticPolynomial
+  ring
+
+theorem QuarticFourSignedPolePair.completeJointQuarticPolynomial_alphaZero
+    {t q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.completeJointQuarticPolynomial 0 q
+      =
+    -(W.targetStrength/6) * q^4 := by
+  unfold QuarticFourSignedPolePair.completeJointQuarticPolynomial
+  ring
+
+/--
+Dimensionless sign polynomial in y=q^2/alpha^2:
+  6 alpha^4 * signcore = -(y^2 - 6 y + 1).
+This form avoids square roots and is suitable for exact cone refinements.
+-/
+theorem QuarticFourSignedPolePair.completeJointQuarticPolynomial_mul_six
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    6 * W.completeJointQuarticPolynomial alpha q
+      =
+    W.targetStrength
+      * (6*alpha^2*q^2 - alpha^4 - q^4) := by
+  unfold QuarticFourSignedPolePair.completeJointQuarticPolynomial
+  ring
+
 end Synthesis

@@ -144,7 +144,7 @@ def postMergeMaxCut : PostMergeMaxCut where
   cmsBoundedRatioContactSurvivesW4Rejection := true
   cmp119ToSelectedSharedSectorCompilerClosed := true
   secondQFTStressTheoremRequired := false
-  allSectorAggregationStillRequired := true
+  activePhysicalSectorTotalizationStillRequired := true
   terminalGRQFTPromoted := false
   remainingLeaves := remainingPostMergeLeaves
 

@@ -133,6 +133,22 @@ def theoremBindings : List SourceTheoremBinding :=
   , machinPiBinding
   ]
 
+/-- Concrete verification artifacts for the content-addressed provenance replay. -/
+def replayVerifierScript : String :=
+  "scripts/verify_round11_machin_route_b.py"
+
+def generatedReplayCertificatePath : String :=
+  "Generated/BishopRound11MachinReplayCertificate.lean"
+
+def focusedReplayProbeModule : String :=
+  "Integration/BishopRound11MachinReplayProbe.lean"
+
+def focusedAxiomAuditModule : String :=
+  "Integration/AxiomAuditMoonshineRound11RouteB.lean"
+
+def focusedReplayWorkflow : String :=
+  ".github/workflows/moonshine-round11-route-b.yml"
+
 /-- The manifest itself is fully concrete and contains no theorem-shaped
 placeholder. -/
 structure ManifestBoundary where

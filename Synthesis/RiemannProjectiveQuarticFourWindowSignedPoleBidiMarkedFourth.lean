@@ -1,4 +1,5 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleLocalRemainderBounds
+import RiemannAnalytic.TwistedPrimeMoments
 
 /-!
 # Bidi marked fourth-angular bridge for the quartic signed-pole RH lane
@@ -526,5 +527,141 @@ theorem QuarticSignedPoleBidiMarkedJet.angular_sub
     QuarticSignedPoleBidiMarkedJet.angular
     quarticSignedPoleBidiAngularOperator
   ring
+
+
+/-!
+## Arithmetic bidi jet from the literal cosh-twisted von Mangoldt moments
+
+The target/reflection symmetrization on the prime side naturally produces the
+cosh twist already owned by RiemannAnalytic.TwistedPrimeMoments.  Package its
+even 0/2/4 moments in the same jet carrier used by the local zero-minus-mu
+consumer.
+-/
+
+def quarticSignedPolePrimeBidiMarkedJet
+    (N : ℕ) (A : ℝ) : QuarticSignedPoleBidiMarkedJet where
+  m0 := RiemannAnalytic.twistedMoment N A 0
+  m2 := RiemannAnalytic.twistedMoment N A 2
+  m4 := RiemannAnalytic.twistedMoment N A 4
+
+def quarticSignedPolePrimeAngularPolynomial
+    (A x : ℝ) : ℝ :=
+  (1/2 : ℝ) * x^4 - 3 * A^2 * x^2 + 5 * A^4
+
+theorem quarticSignedPolePrimeAngularPolynomial_sq
+    (A x : ℝ) :
+    quarticSignedPolePrimeAngularPolynomial A x
+      =
+    (1/2 : ℝ) * (x^2 - 3*A^2)^2
+      + (1/2 : ℝ) * A^4 := by
+  unfold quarticSignedPolePrimeAngularPolynomial
+  ring
+
+theorem quarticSignedPolePrimeAngularPolynomial_nonneg
+    (A x : ℝ) :
+    0 <= quarticSignedPolePrimeAngularPolynomial A x := by
+  rw [quarticSignedPolePrimeAngularPolynomial_sq]
+  positivity
+
+theorem quarticSignedPolePrimeAngularPolynomial_pos_of_A_ne_zero
+    {A x : ℝ}
+    (hA : A ≠ 0) :
+    0 < quarticSignedPolePrimeAngularPolynomial A x := by
+  rw [quarticSignedPolePrimeAngularPolynomial_sq]
+  have hA4 : 0 < A^4 := by positivity
+  nlinarith [sq_nonneg (x^2 - 3*A^2)]
+
+theorem quarticSignedPolePrimeBidiAngular_eq_sum
+    (N : ℕ) (A : ℝ) :
+    (quarticSignedPolePrimeBidiMarkedJet N A).angular A
+      =
+    ∑ n ∈ Finset.Icc 1 N,
+      RiemannAnalytic.coshVonMangoldt A n
+        * quarticSignedPolePrimeAngularPolynomial A (Real.log n) := by
+  unfold quarticSignedPolePrimeBidiMarkedJet
+    QuarticSignedPoleBidiMarkedJet.angular
+    quarticSignedPoleBidiAngularOperator
+    RiemannAnalytic.twistedMoment
+    quarticSignedPolePrimeAngularPolynomial
+  rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum]
+  rw [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro n hn
+  ring
+
+theorem quarticSignedPolePrimeBidiAngular_nonneg
+    (N : ℕ) (A : ℝ) :
+    0 <= (quarticSignedPolePrimeBidiMarkedJet N A).angular A := by
+  rw [quarticSignedPolePrimeBidiAngular_eq_sum]
+  exact Finset.sum_nonneg fun n hn => by
+    exact mul_nonneg
+      (RiemannAnalytic.coshVonMangoldt_nonneg A n)
+      (quarticSignedPolePrimeAngularPolynomial_nonneg A (Real.log n))
+
+/--
+A useful exact coercive lower bound: the angular prime polynomial retains the
+pure A^4 floor pointwise.
+-/
+theorem quarticSignedPolePrimeAngularPolynomial_ge_half_A4
+    (A x : ℝ) :
+    (1/2 : ℝ) * A^4
+      <= quarticSignedPolePrimeAngularPolynomial A x := by
+  rw [quarticSignedPolePrimeAngularPolynomial_sq]
+  nlinarith [sq_nonneg (x^2 - 3*A^2)]
+
+theorem quarticSignedPolePrimeBidiAngular_ge_half_A4_mass
+    (N : ℕ) (A : ℝ) :
+    (1/2 : ℝ) * A^4 * RiemannAnalytic.twistedMoment N A 0
+      <=
+    (quarticSignedPolePrimeBidiMarkedJet N A).angular A := by
+  rw [quarticSignedPolePrimeBidiAngular_eq_sum]
+  rw [RiemannAnalytic.twistedMoment_zero]
+  rw [Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro n hn
+  have hw := RiemannAnalytic.coshVonMangoldt_nonneg A n
+  have hp :=
+    quarticSignedPolePrimeAngularPolynomial_ge_half_A4
+      A (Real.log n)
+  nlinarith
+
+/-!
+## Explicit-formula normalization seam
+
+At this point the arithmetic sign is no longer open: the literal cosh-twisted
+prime 0/2/4 angular combination is nonnegative and in fact carries an A^4
+mass floor.  The remaining analytic seam is the same-object localized explicit
+formula identifying the centred zero-minus-mu bidi jet with the correctly
+normalized prime bidi jet plus the already-explicit archimedean/boundary terms.
+-/
+
+def QuarticFourSignedPolePair.LocalizedBidiPrimeRepresentation
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) : Prop :=
+  ∃ cPrime : ℝ, ∃ primeCutoff : ℕ,
+    ∀ n : ℕ,
+      n >= primeCutoff ->
+      (W.literalLocalCenteredBidiMarkedJetAt eta A n).angular A
+        =
+      cPrime * (quarticSignedPolePrimeBidiMarkedJet n A).angular A
+
+/--
+If the eventual localized explicit-formula representation has a nonpositive
+prime coefficient, the arithmetic positivity immediately forces a favorable
+(nonpositive) centred fourth-angular contribution.
+-/
+theorem QuarticFourSignedPolePair.centeredBidiAngular_nonpos_of_primeRepresentation
+    {t eta A cPrime : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    {N : ℕ}
+    (hrep :
+      (W.literalLocalCenteredBidiMarkedJetAt eta A N).angular A
+        =
+      cPrime * (quarticSignedPolePrimeBidiMarkedJet N A).angular A)
+    (hc : cPrime <= 0) :
+    (W.literalLocalCenteredBidiMarkedJetAt eta A N).angular A <= 0 := by
+  rw [hrep]
+  exact mul_nonpos_of_nonpos_of_nonneg
+    hc (quarticSignedPolePrimeBidiAngular_nonneg N A)
 
 end Synthesis

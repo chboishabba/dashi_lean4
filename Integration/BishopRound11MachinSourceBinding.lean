@@ -166,7 +166,9 @@ structure Round11MachinBindingBoundary where
   primitiveExtractionCompilerOwned : Bool
   faithfulSetoidEmbeddingCompilerOwned : Bool
 
-  actualRound11MachinSourceBindingInhabited : Bool
+  canonicalLeanBindingInhabited : Bool
+  everyAdmissibleBindingUniqueUpToBishopEquivalence : Bool
+  actualRound11MachinSourceBindingReplayedFromAgda : Bool
 
 def round11MachinBindingBoundary : Round11MachinBindingBoundary where
   expBindingCompilerOwned := true
@@ -178,7 +180,9 @@ def round11MachinBindingBoundary : Round11MachinBindingBoundary where
   primitiveExtractionCompilerOwned := true
   faithfulSetoidEmbeddingCompilerOwned := true
 
-  actualRound11MachinSourceBindingInhabited := false
+  canonicalLeanBindingInhabited := true
+  everyAdmissibleBindingUniqueUpToBishopEquivalence := true
+  actualRound11MachinSourceBindingReplayedFromAgda := false
 
 end
 

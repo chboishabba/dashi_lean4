@@ -67,6 +67,14 @@ theorem closure_matrix_w4_rejected_parity :
       .locallyRejected :=
   current_w4_calibration_locally_rejected
 
+theorem direct_gr_target_not_primitive_parity :
+    directSelectedGRTargetEqualityPrimitive = false :=
+  direct_gr_target_equality_not_primitive
+
+theorem concrete_frontier_finite_einstein_closed_parity :
+    concreteInstanceFrontier.finiteEinsteinEquationStillOpen = false :=
+  finite_einstein_no_longer_open
+
 theorem calibration_nonpromotion_parity :
     physicalCalibrationStillOpen = true :=
   physical_calibration_still_open

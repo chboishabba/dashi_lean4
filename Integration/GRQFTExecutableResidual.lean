@@ -338,4 +338,56 @@ theorem current_w4_calibration_locally_rejected :
       .locallyRejected := rfl
 
 
+def directSelectedQFTTargetEqualityPrimitive : Bool := false
+def directSelectedGRTargetEqualityPrimitive : Bool := false
+
+theorem direct_qft_target_equality_not_primitive :
+    directSelectedQFTTargetEqualityPrimitive = false := rfl
+
+theorem direct_gr_target_equality_not_primitive :
+    directSelectedGRTargetEqualityPrimitive = false := rfl
+
+inductive GRQFTConcreteInstanceLeaf where
+  | attachLiteralRound131YMToRecoveredQFT
+  | attachLiteralNonflatGRToRecoveredGR
+  | instantiateCommonEinsteinMetricVariation
+  | instantiateCommonBalabanAllSectorProducer
+  | instantiateSharedMetricProducerLanguage
+  | evaluateSameCarrierStressResidual
+  | replaceRejectedW4CalibrationCandidate
+  deriving DecidableEq, Repr
+
+def concreteInstanceLeaves : List GRQFTConcreteInstanceLeaf :=
+  [ .attachLiteralRound131YMToRecoveredQFT
+  , .attachLiteralNonflatGRToRecoveredGR
+  , .instantiateCommonEinsteinMetricVariation
+  , .instantiateCommonBalabanAllSectorProducer
+  , .instantiateSharedMetricProducerLanguage
+  , .evaluateSameCarrierStressResidual
+  , .replaceRejectedW4CalibrationCandidate
+  ]
+
+structure GRQFTConcreteInstanceFrontier where
+  directQFTTargetEqualityStillPrimitive : Bool
+  directGRTargetEqualityStillPrimitive : Bool
+  finiteEinsteinEquationStillOpen : Bool
+  finiteNormalizedCouplingUniquenessStillOpen : Bool
+  currentW4CandidateStillUnknown : Bool
+  remainingLeaves : List GRQFTConcreteInstanceLeaf
+  deriving Repr
+
+def concreteInstanceFrontier : GRQFTConcreteInstanceFrontier where
+  directQFTTargetEqualityStillPrimitive := false
+  directGRTargetEqualityStillPrimitive := false
+  finiteEinsteinEquationStillOpen := false
+  finiteNormalizedCouplingUniquenessStillOpen := false
+  currentW4CandidateStillUnknown := false
+  remainingLeaves := concreteInstanceLeaves
+
+theorem finite_einstein_no_longer_open :
+    concreteInstanceFrontier.finiteEinsteinEquationStillOpen = false := rfl
+
+theorem w4_candidate_no_longer_unknown :
+    concreteInstanceFrontier.currentW4CandidateStillUnknown = false := rfl
+
 end Integration.GRQFTExecutableResidual

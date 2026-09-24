@@ -1424,4 +1424,125 @@ theorem QuarticFourSignedPolePair.signedProfileMomentSix_nonneg_iff_J6
   constructor <;> intro h <;> nlinarith
 
 
+
+/-!
+## Atomic J6 sign diagnostic
+
+The exact atomic sixth moment is already determined by the same four support
+points used for J2/J4.  Along the atomic J2-null curve its endpoint signs are
+opposite:
+
+  J6(1/2) < 0,
+  J6(2/3) > 0.
+
+Since the smooth endpoint pole residuals are positive in the high-t corridor,
+this diagnostic shows that the preferred witness should not be expected to
+satisfy M6_signed >= 0.  The positive-sign fixed-strip compiler above remains a
+valid conditional theorem, but it is not promoted as the selected-witness
+route.
+-/
+
+theorem quarticFourAtomicJAt_six_formula
+    (lam mu : ℝ) :
+    quarticFourAtomicJAt lam mu 6
+      =
+    -(Real.pi^6 *
+      (91854*lam*mu + 793*lam - 186624*mu - 128) / 93312) := by
+  unfold quarticFourAtomicJAt quarticFourAtomicRespAt
+    quarticFourAtomicMomentRespAt
+  have hc1 : Real.cos (Real.pi/3) = 1/2 := by
+    simpa using Real.cos_pi_div_three
+  have hc2 : Real.cos (Real.pi/2) = 0 := by
+    simpa using Real.cos_pi_div_two
+  have hcp : Real.cos Real.pi = -1 := Real.cos_pi
+  have h2c1 : Real.cos (2*(Real.pi/3)) = -1/2 := by
+    have harg : 2*(Real.pi/3) = Real.pi - Real.pi/3 := by ring
+    rw [harg, Real.cos_sub, Real.cos_pi, Real.sin_pi,
+      Real.cos_pi_div_three]
+    norm_num
+  have h2c2 : Real.cos (2*(Real.pi/2)) = -1 := by
+    have harg : 2*(Real.pi/2) = Real.pi := by ring
+    rw [harg, Real.cos_pi]
+  have h2cp : Real.cos (2*Real.pi) = 1 := by
+    have harg : 2*Real.pi = Real.pi + Real.pi := by ring
+    rw [harg, Real.cos_add, Real.cos_pi, Real.sin_pi]
+    norm_num
+  simp only [one_mul, mul_zero, Real.cos_zero,
+    zero_pow (by norm_num : 6 ≠ 0)]
+  rw [hc1,hc2,hcp,h2c1,h2c2,h2cp]
+  ring
+
+theorem quarticFourAtomicJ6_on_null_formula
+    {lam : ℝ} (hlam : lam <= 2/3) :
+    quarticFourAtomicJAt lam (quarticFourAtomicMu lam) 6
+      =
+    5 * Real.pi^6 * (lam-2) * (1599*lam-1024)
+      / (11664*(3*lam-8)) := by
+  rw [quarticFourAtomicJAt_six_formula]
+  unfold quarticFourAtomicMu
+  have hden : 144 - 54*lam ≠ 0 :=
+    ne_of_gt (quarticFourAtomicMu_den_pos hlam)
+  field_simp [hden]
+  ring
+
+theorem quarticFourAtomicMu_half :
+    quarticFourAtomicMu (1/2) = -(1/78 : ℝ) := by
+  unfold quarticFourAtomicMu
+  norm_num
+
+theorem quarticFourAtomicMu_twoThirds :
+    quarticFourAtomicMu (2/3) = (1/162 : ℝ) := by
+  unfold quarticFourAtomicMu
+  norm_num
+
+theorem quarticFourAtomicJ6_half_exact :
+    quarticFourAtomicJAt
+      (1/2) (quarticFourAtomicMu (1/2)) 6
+      =
+    -(2245/101088 : ℝ) * Real.pi^6 := by
+  rw [quarticFourAtomicJ6_on_null_formula (by norm_num : (1/2 : ℝ) <= 2/3)]
+  ring
+
+theorem quarticFourAtomicJ6_twoThirds_exact :
+    quarticFourAtomicJAt
+      (2/3) (quarticFourAtomicMu (2/3)) 6
+      =
+    (35/8748 : ℝ) * Real.pi^6 := by
+  rw [quarticFourAtomicJ6_on_null_formula (by norm_num : (2/3 : ℝ) <= 2/3)]
+  ring
+
+theorem quarticFourAtomicJ6_half_neg :
+    quarticFourAtomicJAt
+      (1/2) (quarticFourAtomicMu (1/2)) 6 < 0 := by
+  rw [quarticFourAtomicJ6_half_exact]
+  positivity
+
+theorem quarticFourAtomicJ6_twoThirds_pos :
+    0 <
+    quarticFourAtomicJAt
+      (2/3) (quarticFourAtomicMu (2/3)) 6 := by
+  rw [quarticFourAtomicJ6_twoThirds_exact]
+  positivity
+
+theorem quarticMomentWeight_even_six (s u : ℝ) :
+    quarticMomentWeight 6 s (-u)
+      = quarticMomentWeight 6 s u := by
+  unfold quarticMomentWeight
+  rw [show (-u)^6 = u^6 by ring]
+  rw [show s*(-u) = -(s*u) by ring, Real.cos_neg]
+
+theorem exists_radius_quarticFourWindowJ6_close_atomic
+    {eps : ℝ} (heps : 0 < eps) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ R lam mu : ℝ,
+        0 < R -> R < delta ->
+        lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) ->
+        |mu| <= 1/10 ->
+        |quarticFourWindowJ R lam mu 6
+          - quarticFourAtomicJAt lam mu 6| <= eps :=
+  exists_radius_quarticFourWindowJ_close_atomic
+    (quarticMomentWeight_even_six 1)
+    (quarticMomentWeight_even_six 2) heps
+
+
 end Synthesis

@@ -1115,4 +1115,264 @@ theorem QuarticFourSignedPolePair.signedNormalizedPairKernel_zero_neg_of_targetB
     W.combinedTargetBand alpha ha0 ha
   nlinarith
 
+
+/-!
+## Exact q-variation and the favorable core inside the mixed cone
+
+For fixed horizontal height alpha, the joint pair kernel is a cosine transform
+of the same combined profile weighted by cosh(alpha*x).  Its variation in q is
+therefore controlled by one first absolute moment.
+-/
+
+def QuarticFourSignedPolePair.signedPairQFirstMoment
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha : ℝ) : ℝ :=
+  ∫ x : ℝ,
+    |quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t x
+      * Real.cosh (alpha*x)| * |x|
+
+theorem QuarticFourSignedPolePair.signedPairQFirstMoment_nonneg
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    0 <= W.signedPairQFirstMoment alpha := by
+  unfold QuarticFourSignedPolePair.signedPairQFirstMoment
+  positivity
+
+theorem QuarticFourSignedPolePair.signedNormalizedPairKernel_eq_combinedIntegral
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNormalizedPairKernel alpha q
+      =
+    ∫ x : ℝ,
+      quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t x
+        * Real.cosh (alpha*x)
+        * Real.cos (q*x) := by
+  unfold QuarticFourSignedPolePair.signedNormalizedPairKernel
+    genericProjectivePairKernel
+    quarticFourSignedPoleCombinedProfile
+    profileLinearCombination
+    quarticFourNormalizedProjectiveProfile
+  have h1 :
+      Integrable
+        (fun x : ℝ =>
+          genericProjectivePhysicalProfile
+              (quarticFourWindowProfile W.R (1/2) W.muHalf) 1 x
+            * Real.cosh (alpha*x)
+            * Real.cos (q*x)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop)
+      (((quarticFourNormalizedProjectiveProfile_compact
+        (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos).mul_right).mul_right)
+  have h2 :
+      Integrable
+        (fun x : ℝ =>
+          genericProjectivePhysicalProfile
+              (quarticFourWindowProfile W.R (2/3) W.muTwo) 1 x
+            * Real.cosh (alpha*x)
+            * Real.cos (q*x)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop)
+      (((quarticFourNormalizedProjectiveProfile_compact
+        (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos).mul_right).mul_right)
+  rw [show
+      (fun x : ℝ =>
+        (quarticFourSmoothFinitePoleResidual W.R (2/3) W.muTwo t
+            * genericProjectivePhysicalProfile
+                (quarticFourWindowProfile W.R (1/2) W.muHalf) 1 x
+          +
+         (-quarticFourSmoothFinitePoleResidual W.R (1/2) W.muHalf t)
+            * genericProjectivePhysicalProfile
+                (quarticFourWindowProfile W.R (2/3) W.muTwo) 1 x)
+          * Real.cosh (alpha*x) * Real.cos (q*x))
+      =
+      fun x =>
+        quarticFourSmoothFinitePoleResidual W.R (2/3) W.muTwo t
+          * (genericProjectivePhysicalProfile
+              (quarticFourWindowProfile W.R (1/2) W.muHalf) 1 x
+              * Real.cosh (alpha*x) * Real.cos (q*x))
+        +
+        (-quarticFourSmoothFinitePoleResidual W.R (1/2) W.muHalf t)
+          * (genericProjectivePhysicalProfile
+              (quarticFourWindowProfile W.R (2/3) W.muTwo) 1 x
+              * Real.cosh (alpha*x) * Real.cos (q*x)) by
+      funext x
+      ring,
+      integral_add (h1.const_mul _) (h2.const_mul _),
+      integral_const_mul, integral_const_mul]
+  ring
+
+theorem QuarticFourSignedPolePair.signedPairQFirstMoment_integrable
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    Integrable
+      (fun x : ℝ =>
+        |quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t x
+          * Real.cosh (alpha*x)| * |x|) := by
+  exact
+    (((quarticFourSignedPoleCombinedProfile_continuous W.Rpos).mul
+      (by fun_prop)).abs.mul continuous_abs)
+      .integrable_of_hasCompactSupport
+        (((quarticFourSignedPoleCombinedProfile_compact W.Rpos).mul_right).abs.mul_right)
+
+theorem QuarticFourSignedPolePair.signedNormalizedPairKernel_lipschitz_q
+    {t alpha p q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    |W.signedNormalizedPairKernel alpha q
+      - W.signedNormalizedPairKernel alpha p|
+      <=
+    W.signedPairQFirstMoment alpha * |q-p| := by
+  rw [W.signedNormalizedPairKernel_eq_combinedIntegral,
+      W.signedNormalizedPairKernel_eq_combinedIntegral]
+  have hiq :
+      Integrable
+        (fun x : ℝ =>
+          quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t x
+            * Real.cosh (alpha*x) * Real.cos (q*x)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop)
+      (((quarticFourSignedPoleCombinedProfile_compact W.Rpos).mul_right).mul_right)
+  have hip :
+      Integrable
+        (fun x : ℝ =>
+          quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t x
+            * Real.cosh (alpha*x) * Real.cos (p*x)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop)
+      (((quarticFourSignedPoleCombinedProfile_compact W.Rpos).mul_right).mul_right)
+  rw [← integral_sub hiq hip]
+  have hdom :
+      Integrable
+        (fun x : ℝ =>
+          |q-p| *
+            (|quarticFourSignedPoleCombinedProfile
+                W.R W.muHalf W.muTwo t x
+              * Real.cosh (alpha*x)| * |x|)) :=
+    (W.signedPairQFirstMoment_integrable).const_mul |q-p|
+  calc
+    |∫ x : ℝ,
+      (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t x
+        * Real.cosh (alpha*x) * Real.cos (q*x)
+      -
+       quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t x
+        * Real.cosh (alpha*x) * Real.cos (p*x))|
+      <=
+    ∫ x : ℝ,
+      |quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t x
+        * Real.cosh (alpha*x) * Real.cos (q*x)
+      -
+       quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t x
+        * Real.cosh (alpha*x) * Real.cos (p*x)| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ x : ℝ,
+      |q-p| *
+        (|quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t x
+          * Real.cosh (alpha*x)| * |x|) := by
+      apply integral_mono (hiq.sub hip).abs hdom
+      intro x
+      have hc := Real.abs_cos_sub_cos_le (q*x) (p*x)
+      have hfactor : |q*x-p*x| = |q-p| * |x| := by
+        rw [← sub_mul, abs_mul]
+      calc
+        |quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t x
+          * Real.cosh (alpha*x) * Real.cos (q*x)
+        -
+         quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t x
+          * Real.cosh (alpha*x) * Real.cos (p*x)|
+          =
+        |quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t x
+          * Real.cosh (alpha*x)|
+          * |Real.cos (q*x)-Real.cos (p*x)| := by
+            rw [← mul_sub, abs_mul]
+        _ <=
+        |quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t x
+          * Real.cosh (alpha*x)| * |q*x-p*x| := by
+          gcongr
+        _ =
+        |q-p| *
+          (|quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t x
+            * Real.cosh (alpha*x)| * |x|) := by
+          rw [hfactor]
+          ring
+    _ =
+      |q-p| * W.signedPairQFirstMoment alpha := by
+        rw [integral_const_mul]
+        rfl
+    _ =
+      W.signedPairQFirstMoment alpha * |q-p| := by ring
+
+/--
+Every off-line target-band height has a nonempty q-neighborhood on which the
+exact pair kernel remains strictly negative.  The radius is chosen no larger
+than |alpha|, hence this favorable core lies strictly inside q^2 < 6 alpha^2.
+-/
+theorem QuarticFourSignedPolePair.exists_negative_pairKernel_core
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (ha0 : 0 < |alpha|)
+    (ha : |alpha| < W.eps) :
+    ∃ q0 : ℝ, 0 < q0 ∧ q0 <= |alpha| ∧
+      ∀ q : ℝ, |q| < q0 ->
+        W.signedNormalizedPairKernel alpha q < 0 := by
+  have hK0 :
+      W.signedNormalizedPairKernel alpha 0 < 0 :=
+    W.signedNormalizedPairKernel_zero_neg_of_targetBand ha0 ha
+  let M := W.signedPairQFirstMoment alpha
+  have hM : 0 <= M := W.signedPairQFirstMoment_nonneg
+  by_cases hM0 : M = 0
+  · refine ⟨|alpha|,ha0,le_rfl,?_⟩
+    intro q hq
+    have hvar :=
+      W.signedNormalizedPairKernel_lipschitz_q
+        (alpha:=alpha) (p:=0) (q:=q)
+    rw [hM0, zero_mul] at hvar
+    have heq :
+        W.signedNormalizedPairKernel alpha q
+          = W.signedNormalizedPairKernel alpha 0 := by
+      rw [abs_nonpos_iff] at hvar
+      exact sub_eq_zero.mp hvar
+    rw [heq]
+    exact hK0
+  · have hMpos : 0 < M := lt_of_le_of_ne hM (Ne.symm hM0)
+    let qstar := (-W.signedNormalizedPairKernel alpha 0) / (2*M)
+    have hqstar : 0 < qstar := by
+      dsimp [qstar]
+      positivity
+    let q0 := min |alpha| qstar
+    have hq0 : 0 < q0 := lt_min ha0 hqstar
+    refine ⟨q0,hq0,min_le_left _ _,?_⟩
+    intro q hq
+    have hqstar' : |q| < qstar :=
+      lt_of_lt_of_le hq (min_le_right _ _)
+    have hvar :=
+      W.signedNormalizedPairKernel_lipschitz_q
+        (alpha:=alpha) (p:=0) (q:=q)
+    have hdiff :
+        W.signedNormalizedPairKernel alpha q
+          - W.signedNormalizedPairKernel alpha 0
+          <= M * |q| := by
+      exact le_trans (le_abs_self _) (by simpa [M] using hvar)
+    have hsmall :
+        M * |q|
+          < -W.signedNormalizedPairKernel alpha 0 / 2 := by
+      dsimp [qstar] at hqstar'
+      rw [lt_div_iff₀ (show 0 < 2*M by positivity)] at hqstar'
+      nlinarith
+    linarith
+
 end Synthesis

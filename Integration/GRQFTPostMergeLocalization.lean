@@ -2389,4 +2389,63 @@ theorem admissible_shell_sec_is_violated
   nlinarith [h.secViolationMarginPositive]
 
 
+/-!
+Vacuum-stress amplitude / CMP119 transport.
+
+The normalized GRQFT tensor diag(1,-1,-1,-1) is the -g vacuum-stress
+direction.  Scalar amplitudes therefore generate the interior/exterior
+cosmological-stress tensors without a second tensor weld.
+-/
+
+def scaleRationalTensor (a : Rat) (T : RationalTensor4) : RationalTensor4 :=
+  fun i j => a * T i j
+
+def vacuumStressAt (a : Rat) : RationalTensor4 :=
+  scaleRationalTensor a finiteGRStressRational
+
+def scaledCMP119Tensor
+    {Stress : Type u}
+    (a : Rat)
+    (E : CMP119RationalStressComponentEvaluator Stress)
+    (stress : Stress) : RationalTensor4 :=
+  fun i j => a * E.component stress i j
+
+theorem normalized_cmp119_scales_to_vacuum_stress
+    {Stress : Type u}
+    {E : CMP119RationalStressComponentEvaluator Stress}
+    {stress : Stress}
+    (h : NormalizedCrossSectorStressInstance E stress)
+    (a : Rat) (i j : Axis4) :
+    vacuumStressAt a i j = scaledCMP119Tensor a E stress i j := by
+  unfold vacuumStressAt scaleRationalTensor scaledCMP119Tensor
+  rw [sixteen_components_compile_to_tensor_equality h i j]
+
+def decExteriorAmplitude : Rat := 3/8
+def decInteriorAmplitude : Rat := 21/64
+
+theorem cmp119_compiles_dec_exterior_stress
+    {Stress : Type u}
+    {E : CMP119RationalStressComponentEvaluator Stress}
+    {stress : Stress}
+    (h : NormalizedCrossSectorStressInstance E stress)
+    (i j : Axis4) :
+    vacuumStressAt decExteriorAmplitude i j
+      = scaledCMP119Tensor decExteriorAmplitude E stress i j :=
+  normalized_cmp119_scales_to_vacuum_stress h decExteriorAmplitude i j
+
+theorem cmp119_compiles_dec_interior_stress
+    {Stress : Type u}
+    {E : CMP119RationalStressComponentEvaluator Stress}
+    {stress : Stress}
+    (h : NormalizedCrossSectorStressInstance E stress)
+    (i j : Axis4) :
+    vacuumStressAt decInteriorAmplitude i j
+      = scaledCMP119Tensor decInteriorAmplitude E stress i j :=
+  normalized_cmp119_scales_to_vacuum_stress h decInteriorAmplitude i j
+
+def oneNormalizedCMP119TensorFeedsBothRegions : Bool := true
+def secondTensorWeldRequiredForDECExterior : Bool := false
+def qftAmplitudeDynamicsConstructed : Bool := false
+
+
 end Integration.GRQFTPostMergeLocalization

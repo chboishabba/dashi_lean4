@@ -245,6 +245,41 @@ def UniversalBSDAnalyticBindingProducer : Prop :=
 def UniversalBSDMordellWeilBindingProducer : Prop :=
   Nonempty BSDMordellWeilRankBinding
 
+/-! ## Exact Mordell--Weil import seam
+
+The external Mordell--Weil formalization by Michael Stoll states its theorem on
+the same Mathlib carrier used here: `WeierstrassCurve.Affine.Point` with
+conclusion `AddGroup.FG`.  We therefore expose the literal universal theorem
+shape separately from its one-field packaging.  This keeps future vendoring or
+version-porting entirely outside the Clay core.
+-/
+
+/-- Literal universal Mordell--Weil finite-generation statement needed by this
+file, with no DASHI-specific observer or rank wrapper. -/
+def UniversalMordellWeilFiniteGenerationStatement : Prop :=
+  ∀ E : RationalEllipticCurve,
+    letI : E.1.IsElliptic := E.2
+    AddGroup.FG E.1.toAffine.Point
+
+/-- Package a theorem on the literal Mathlib point group into the BSD algebraic
+background binding. -/
+def bsdMordellWeilRankBinding_of_universalFiniteGeneration
+    (h : UniversalMordellWeilFiniteGenerationStatement) :
+    BSDMordellWeilRankBinding :=
+  ⟨h⟩
+
+/-- No mathematical content is hidden in the Mordell--Weil binding wrapper:
+producing the wrapper is equivalent to proving finite generation of the actual
+rational point group for every rational elliptic curve. -/
+theorem universalBSDMordellWeilBindingProducer_iff :
+    UniversalBSDMordellWeilBindingProducer ↔
+      UniversalMordellWeilFiniteGenerationStatement := by
+  constructor
+  · rintro ⟨m⟩
+    exact m.fg
+  · intro h
+    exact ⟨bsdMordellWeilRankBinding_of_universalFiniteGeneration h⟩
+
 /-! ## Clay-facing background / novel-obligation split
 
 The official BSD rank statement uses analytic continuation/modularity and
@@ -449,6 +484,25 @@ structure BSDLeanCertificationStatus where
 not fields of `BSDClayCoreStatus`. -/
 def bsdLeanCertificationStatus : BSDLeanCertificationStatus :=
   ⟨false, false, false⟩
+
+/-! The current external Mordell--Weil implementation is a valuable
+certification input, but it is not yet a dependency of this project.  At the
+time this boundary was written, DASHI is pinned to Lean/mathlib 4.28 while the
+checked external theorem repository is pinned to 4.34.  The theorem statement
+itself is carrier-compatible; source/version compatibility and an exact-head
+DASHI build remain to be established before the certification flag above can
+be changed. -/
+structure BSDMordellWeilExternalBridgeStatus where
+  externalUniversalTheoremExists : Bool
+  sameMathlibPointCarrier : Bool
+  exactStatementImportSeamPaid : Bool
+  leanMathlibVersionCompatible : Bool
+  vendoredOrDependencyWired : Bool
+  deriving DecidableEq, Repr
+
+def bsdMordellWeilExternalBridgeStatus :
+    BSDMordellWeilExternalBridgeStatus :=
+  ⟨true, true, true, false, false⟩
 
 structure BSDRefinedExtensionStatus where
   canonicalShaCarrierPaid : Bool

@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "biomacromolecule",
+  "biomacromolecules",
+  "biopolymers"
+ ],
+ "canonical": "Q422649",
+ "description": "polymer produced by a living organism",
+ "id": "Q422649",
+ "label": "biopolymer"
+}

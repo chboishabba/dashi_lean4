@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "unit",
+  "measurement unit",
+  "unit of measure",
+  "physical unit"
+ ],
+ "canonical": "Q47574",
+ "description": "real scalar quantity, defined and adopted by convention, with which any other quantity of the same kind can be compared to express the ratio of the two quantities as a number (VIM)",
+ "id": "Q47574",
+ "label": "unit of measurement"
+}

@@ -1,0 +1,137 @@
+<div style="box-shadow: 0 0 .3em #999999; border-radius: .2em; margin: 0 0 2em 0; padding: 1px;">
+<div style="background: #339966; border-radius: .2em; color: #FFFFFF; padding: .4em .8em .5em; text-align: center;">
+<span style="font-size: 1.3em;">WikiProject Ontology</span>
+</div>
+<div style="text-align: left; padding: 1em; border-right: 1px solid #BBBBBB">
+[[File:Wikiproject Ontology Logo WO PNG.png|200px|frameless|right]]
+<br />
+
+The Wikidata Ontology organizes the entities in Wikidata into groups, or classes, such as {{Q|Q5}} or {{Q|Q223557}} or {{Q|Q16889133}}.
+Almost every entity in Wikidata is an {{P|P31}} one or more classes.
+
+The '''WikiProject [[Q324254|Ontology]]''' aims:
+* to improve the Wikidata ontology,
+* to help editors understand the Wikidata ontology,
+* to answer questions about the Wikidata Ontology,
+* to support a broad semantic interoperability between notable ontologies like DOLCE, BFO, SUMO, Lemon, RDA, etc.,
+* to build consensus around the main branches of our [http://tools.wmflabs.org/wikidata-todo/tree.html?q=Q35120&rp=279&lang=en&method=list&depth=2 core class tree] and how they relate to each other, and
+* to gain a deep understanding about the meaning of our [[Q3882785|upper ontology]] and to transfer this knowledge to others in practical terms.
+
+To ask a question about the Wikidata Ontology or to get guidance on how to work with the ontology, add a topic to [[Wikidata_talk:WikiProject_Ontology| the project's discussion page]] or
+post in the project's [https://t.me/+AZv0cRaY2oM2MjAx Telegram group].
+
+For specific subject areas, the class hierarchy and properties for that area may be covered in detail on a WikiProject page devoted to that subject - for example [[Wikidata:WikiProject Books|WikiProject Books]], [[Wikidata:WikiProject Names|WikiProject Names]] or [[Wikidata:WikiProject Chemistry|WikiProject Chemistry]].
+
+== Ongoing and Recent Activities ==
+
+The [[Wikidata:WikiProject_Ontology/Ontology_Course|Wikidata Ontology Course]] is an eight-week course, with exercises and a project.  The first offering was run during May and June 2025.  The second offering is being run in May and June of 2026.  A third offering is being planned for Fall of 2026, provided that funding can be arranged.
+The slides for all sessions of the first two offerings are available on the course page.
+Part of participating in the course is to participate in a project related to the Wikidata Ontology.  Information on the projects, many of which are continuing after the end of the course, is [[Wikidata:WikiProject_Ontology/Ontology_Course#Projects|available]].  
+
+The [[Wikidata:WikiProject Ontology/Cleaning Task Force|Cleaning Task Force]] meets most weeks at 11:30am ET (UTC-4 during US daylight savings time and UTC-5 otherwise).  The goal of the task force is to improve and extend the Wikidata ontology. For more information see the task force page.
+
+The [[Wikidata:WikiProject Ontology/Mereology Task Force|Mereology Task Force]] was set up to improve the modeling of part-whole relationships in Wikidata.  This task force is now disbanded.
+
+== Communications ==
+* [https://t.me/+AZv0cRaY2oM2MjAx Telegram group]
+* [https://phabricator.wikimedia.org/tag/wikidata-wikiproject-ontology/ Phabricator project]
+* [https://calendar.google.com/calendar/embed?src=90c4d393de6b606fdb90ba6da1f7c1cc7afdd084df7776c02e55170620807843%40group.calendar.google.com Online meeting calendar]
+
+==Past Efforts==
+* [[Wikidata:WikiProject_WordNet|WordNet-Wikidata Mappings]]
+* [[Wikidata:WikiProject Government|WikiProject Government]]
+* [[Wikidata:WikiProject_Ontology/Modelling Travel|Modelling Travel]]
+* [[Wikidata:WikiProject_Ontology/Mapping_Wikidata_To_BFO|Mapping Wikidata To BFO]]
+* Wikidata Ontology Course Projects
+** [[Wikidata:WikiProject Ontology/Ontology Course/Books|Books]]
+** [[Wikidata:WikiProject Ontology/Ontology Course/Project to enhance Wikidata using QUDT|Project to enhance Wikidata using QUDT]]
+** [[Wikidata:WikiProject Ontology/Ontology Course/Projects/SubclassPathTracing|SubclassPathTracing]]
+** [[Wikidata:WikiProject Ontology/Ontology Course/Projects/RoboData|RoboData]]
+** [[Wikidata:WikiProject Ontology/Ontology Course/Projects/institutions|Institutions]]
+** [[Wikidata:WikiProject_Ontology/Ontology_Course/Modeling_time|Modeling time]]
+** [[Wikidata:WikiProject_Ontology/Ontology_Course/Projects/CreatingShapeConstraints|Creating Shape Constraints]]
+
+== Interesting Subpages ==
+
+; [[Wikidata:WikiProject Ontology/Modelling|Modelling with classes in Wikidata]] : A discussion of how classes work in the Wikidata ontology
+
+; [[Wikidata:WikiProject Ontology/Metaclasses|Best Practices for Metaclasses in Wikidata]] : Suggestions on how to set up metaclasses
+
+; [[Wikidata:WikiProject Ontology/Classes|Classes]] : Summary of information on classes
+
+; [[Wikidata:WikiProject Ontology/Problems|Ontology Problems]] : A description of some of the problems in the Wikidata ontology.  There are multiple pages under this page with more information about some of the problems.
+
+; [[Wikidata:WikiProject Ontology/Problems|Ontology Problems/instances of instances of physical object]] : Problems relating to instances of instances of {{Q|223557}} and a suggestion to improve the Wikidata constraint system.
+
+; [[Wikidata:WikiProject Ontology/Issues|Issues]] : Overview of the main ontology issues found in Wikidata at a discussion during WikidataCon 2021
+
+; [[Wikidata:WikiProject Ontology/BFO|BFO]] : Wikidata classes corresponding to BFO classes
+
+; [[Wikidata:WikiProject Ontology/Mapping|Mapping to External Ontologies]] : Beginnings of information on how to link the Wikidata Ontology to external ontologies
+
+; [[Wikidata:WikiProject Ontology/Top-level ontology list|Most-general Classes]] : A list of the two most-general levels of classes in the Wikidata ontology
+
+All Subpages including redirects:
+[[Wikidata:WikiProject_Ontology/Pages]]
+
+== Resources ==
+===Authored by Wikiproject Ontology Participants===
+* {{Cite Q | Q130629352 }}
+===About Wikidata's Ontology===
+* {{Cite Q | Q27037396 }}
+
+==Tools==
+* [https://angryloki.github.io/wikidata-graph-builder Wikidata Graph Builder]: Makes it easy to visualize our ontology.
+* [[Wikidata:Tools/Enhance user interface#Classification.js|Classification.js]] : visualise the parent classes, reports problem on the WikiProject talk page, the classes an item is an instance of, detects loops in the class tree, detects and visualize class disjointedness violations issues.
+* [[User:Lectrician1/metaclass-check.js|metaclass-check.js]] This adds a warning text next to {{P|31}} statements on classes if their values are not metaclasses.
+* [https://w.wiki/8TiA WDQS query] to check if two classes violates a [[Special:MyLanguage/Help:P2738|{{Label|P2738}}]] statement
+
+==See Also==
+* [[Wikidata:Data model]]
+* [[Wikidata:Item classification]]
+* [[Wikidata:Ontology issues prioritization]]
+* [[Help:Basic membership properties]]
+
+== Userbox ==
+* See: [[Wikidata:Userboxes]]
+{{User Ontology}}
+{{-}}
+
+
+
+==Participants==
+{{participants}}
+
+===Inactive participants===
+<small>(More than one year of inactivity)</small>
+* {{u|I9606}}
+* {{u|Emw}}
+* {{u|Ruud Koot}}
+* {{u|Emitraka}}
+* {{u|Lechatpito}}
+* {{u|DavRosen}}
+* {{u|Fractaler}}
+* {{u|Ddelaiglesia}}
+* {{u|Alessandro Piscopo}}
+* {{u|Ptolusque}}
+* {{u|Malore}}
+* {{u|Wurstbruch}}
+* {{u|Ettorerizza}}
+* {{u|Ninokeys}}
+* {{u|Tris T7}}
+* {{u|Linuxo}}
+* {{u|Gq86}}
+* {{u|Meejies}}
+* {{u|Iwan.Aucamp}}
+* {{u|Tfrancart}}
+* {{u|Luis.ramos.pst.ag}}
+* {{u|Sylvain Leroux}}
+* {{u|Mkbergman}}
+* {{u|The-erinaceous-one}}
+* {{u|Cdo256}}
+* {{u|Rehman}}
+
+== Former Logo ==
+[[File:Wikidata-wikiproject-ontology.png|200px|frameless]]
+
+[[Category:WikiProject Ontology]]

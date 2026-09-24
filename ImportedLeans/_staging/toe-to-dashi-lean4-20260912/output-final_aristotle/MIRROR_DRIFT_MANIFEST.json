@@ -1,0 +1,101 @@
+{
+  "digestPrefixLength": 16,
+  "rows": [
+    {
+      "mirror": "Lean/AgdaMirror/MonsterOntos.lean",
+      "source": "Agda/MonsterOntos.agda",
+      "digest": "7cb03b70693d9f20",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/NonFactorabilityKernels.lean",
+      "source": "Agda/DASHI/Core/IntersectionalNonFactorability.agda",
+      "digest": "378ad3213f54624d",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/NonFactorabilityKernels.lean",
+      "source": "Agda/DASHI/Core/ReopenableConsumerInterventionKernelExact.agda",
+      "digest": "04e094c6c302284e",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/NonFactorabilityKernels.lean",
+      "source": "Agda/DASHI/Core/SocioEcologicalFeedbackExact.agda",
+      "digest": "72b7a86916f4f3d1",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/NonFactorabilityKernels.lean",
+      "source": "Agda/DASHI/Education/EarlyLearningIntersectionalCapabilityExact.agda",
+      "digest": "095aac740a85f8fe",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/NonFactorabilityKernels.lean",
+      "source": "Agda/DASHI/Education/EarlyLearningMultiOutcomeVectorExact.agda",
+      "digest": "9dd88a5d66a3c0f2",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/FibreAveraging.lean",
+      "source": "Agda/DASHI/Analysis/NormalizedFibreAveragingExact.agda",
+      "digest": "3b2111d0aebac062",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/FibreAveraging.lean",
+      "source": "Agda/DASHI/Analysis/WeightedCoarseFineOrthogonalExact.agda",
+      "digest": "79acdd1c040e9d1d",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/InteractionTables.lean",
+      "source": "Agda/DASHI/Visualisation/FiniteAnisotropicKernelExact.agda",
+      "digest": "d751ec3168189489",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/InteractionTables.lean",
+      "source": "Agda/DASHI/Visualisation/SelfConsistentEventRendererExact.agda",
+      "digest": "0d377836d82179d5",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/InteractionTables.lean",
+      "source": "Agda/DASHI/Visualisation/MeasureFieldAdapterExact.agda",
+      "digest": "f2b43ef03a8e2d15",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/AuthorityRoutes.lean",
+      "source": "Agda/DASHI/Promotion/ExplanationAuthorityBoundaryCore.agda",
+      "digest": "d23542a962bea8fd",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/AuthorityRoutes.lean",
+      "source": "Agda/DASHI/Culture/CulturalProvenanceBoundaryCore.agda",
+      "digest": "3280753e11c1a90d",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/AuthorityRoutes.lean",
+      "source": "Agda/DASHI/Philosophy/CulturalProvenanceAdapter.agda",
+      "digest": "6982101c088c8a20",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/AgdaMirror/EntitlementRoutes.lean",
+      "source": "Agda/DASHI/Education/EarlyLearningEntitlementRouteSeparationExact.agda",
+      "digest": "58f0cb623b6d3b48",
+      "status": "present"
+    },
+    {
+      "mirror": "Lean/Integration/ClaimTransportGeometry.lean",
+      "source": "FormalClaimTransportGeometryExact.agda",
+      "digest": null,
+      "status": "sourceAbsent"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "agda": {
+    "absent_from_tree_edges": 153,
+    "absent_from_tree_targets": 103,
+    "dependency_incomplete": 90,
+    "files": 17521,
+    "files_with_unresolved": 37,
+    "import_edges": 141057,
+    "internal_edges": 70327,
+    "unresolved_edges": 158,
+    "unresolved_targets": 108
+  },
+  "lean": {
+    "absent_from_tree_edges": 177,
+    "absent_from_tree_targets": 31,
+    "dependency_incomplete": 3037,
+    "files": 9017,
+    "files_with_unresolved": 3025,
+    "import_edges": 26574,
+    "internal_edges": 18775,
+    "unresolved_edges": 7273,
+    "unresolved_targets": 1213
+  }
+}

@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "tensor category"
+ ],
+ "canonical": "Q1945014",
+ "description": "category admitting tensor products",
+ "id": "Q1945014",
+ "label": "monoidal category"
+}

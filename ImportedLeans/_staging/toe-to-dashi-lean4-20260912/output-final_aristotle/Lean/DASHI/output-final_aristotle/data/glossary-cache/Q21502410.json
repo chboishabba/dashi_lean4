@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "Q21502410",
+ "description": "type of constraint for Wikidata properties: used to specify that the value for this property is likely to be different from all other items",
+ "id": "Q21502410",
+ "kind": "item",
+ "label": "distinct-values constraint"
+}

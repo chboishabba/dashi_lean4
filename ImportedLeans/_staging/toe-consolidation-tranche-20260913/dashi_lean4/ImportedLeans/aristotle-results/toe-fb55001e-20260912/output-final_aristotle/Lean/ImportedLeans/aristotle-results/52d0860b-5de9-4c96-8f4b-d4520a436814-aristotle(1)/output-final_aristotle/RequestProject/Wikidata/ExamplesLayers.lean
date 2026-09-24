@@ -1,0 +1,207 @@
+import RequestProject.Wikidata.Examples
+import RequestProject.Epistemic.Views
+
+/-!
+# Worked examples for the layers and slices
+
+The artist / painter / sculptor fragment of `Examples.lean`, run through the
+extracted layers and slices:
+
+* **layers** — a rank-shadowed variant whose truthy layer drops data yet derives
+  exactly the same class facts (`shadowKB_truthy_drops_statements`,
+  `shadowKB_subclass_unchanged`), and RDF entailment computed on the direct layer
+  (`painterSculptor_rdf_entailment`);
+* **constraints** — real violations on the fragment (`p279_not_single_valued`,
+  `p279_not_distinct_valued`) alongside a satisfied schema profile
+  (`artistKB_profile_complete`);
+* **mereology** — a part-of statement that leaves the class order untouched
+  (`part_statement_is_inert`, `ceiling_part_not_subclass`);
+* **identity** — an identifier property whose constraints hold, hence a partial
+  bijection (`isbnMatching_bijection`), which nevertheless licenses no class fact;
+* **views** — support at the whole view that is absent in a narrower slice
+  (`artist_support_not_in_empty_slice`), and the layer coordinate making no
+  difference (`artist_support_layer_independent`).
+-/
+
+namespace Wikidata
+
+namespace Example
+
+open Epistemic
+
+/-! ## Layers: rank shadowing -/
+
+/-- A variant of the fragment carrying rank distinctions: a deprecated claim
+that Leonardo is a sculptor, and a rank-shadowed pair of claims about
+`painterSculptor`. -/
+def shadowKB : KB where
+  entities := [artist, painter, sculptor, painterSculptor, michelangelo, leonardo]
+  statements :=
+    [ ⟨painter, P279, artist, Rank.normal⟩
+    , ⟨sculptor, P279, artist, Rank.normal⟩
+    , ⟨painterSculptor, P279, painter, Rank.preferred⟩
+    , ⟨painterSculptor, P279, sculptor, Rank.normal⟩
+    , ⟨michelangelo, P31, painterSculptor, Rank.normal⟩
+    , ⟨leonardo, P31, sculptor, Rank.deprecated⟩
+    , ⟨leonardo, P31, painter, Rank.normal⟩ ]
+
+/-- The truthy layer really does drop data. -/
+theorem shadowKB_truthy_drops_statements :
+    (truthyLayer shadowKB).statements.length < shadowKB.statements.length := by decide
+
+/-- The deprecated statement is invisible at the truthy layer. -/
+theorem shadowKB_deprecated_dropped :
+    (⟨leonardo, P31, sculptor, Rank.deprecated⟩ : Statement) ∉
+      (truthyLayer shadowKB).statements := by decide
+
+/-- Rank shadowing hides the normal `sculptor` superclass of `painterSculptor`. -/
+theorem shadowKB_shadowed_dropped :
+    (⟨painterSculptor, P279, sculptor, Rank.normal⟩ : Statement) ∉
+      (truthyLayer shadowKB).statements := by decide
+
+/-- Yet the class facts derived at the truthy layer are exactly those of the full
+layer — an instance of `subclassOf_truthyLayer_iff`. -/
+theorem shadowKB_subclass_unchanged (a b : Qid) :
+    SubclassOf (truthyLayer shadowKB) a b ↔ SubclassOf shadowKB a b :=
+  subclassOf_truthyLayer_iff shadowKB a b
+
+theorem shadowKB_leonardo_not_sculptor : ¬ InstanceOf shadowKB leonardo sculptor := by
+  intro h
+  have := (isInstanceOf_iff shadowKB leonardo sculptor).2 h
+  exact absurd this (by decide)
+
+/-! ## The RDF layers -/
+
+/-- Reification of the fragment is exactly invertible. -/
+theorem artistKB_rdf_lossless : Rdf.dereify (Rdf.reify artistKB) = artistKB.statements :=
+  Rdf.dereify_reify artistKB
+
+/-- The direct layer of the fragment entails that a painter-sculptor is an
+artist, via two `P279` steps. -/
+theorem painterSculptor_rdf_entailment :
+    Rdf.Entails (Rdf.directTriples artistKB)
+      ⟨Rdf.Term.item painterSculptor, Rdf.Term.prop P279, Rdf.Term.item artist⟩ :=
+  (Rdf.entailsSubclassOk_iff artistKB painterSculptor artist).1 (by decide)
+
+/-- Michelangelo is entailed to be an artist on the direct layer. -/
+theorem michelangelo_rdf_instance :
+    Rdf.Entails (Rdf.directTriples artistKB)
+      ⟨Rdf.Term.item michelangelo, Rdf.Term.prop P31, Rdf.Term.item artist⟩ :=
+  (Rdf.entailsInstanceOk_iff artistKB michelangelo artist).1 (by decide)
+
+/-- Nothing entails that an artist is a painter. -/
+theorem artist_not_rdf_painter :
+    ¬ Rdf.Entails (Rdf.directTriples artistKB)
+        ⟨Rdf.Term.item artist, Rdf.Term.prop P279, Rdf.Term.item painter⟩ := by
+  intro h
+  have := (Rdf.entailsSubclassOk_iff artistKB artist painter).2 h
+  exact absurd this (by decide)
+
+/-! ## Constraints -/
+
+/-- `P279` is not single-valued here: a painter-sculptor has two superclasses. -/
+theorem p279_not_single_valued : ¬ SingleValue artistKB P279 :=
+  Constraint.not_holds_of_check_false (con := Constraint.singleValue P279) (by decide)
+
+/-- Nor is it distinct-valued: painter and sculptor share the superclass artist. -/
+theorem p279_not_distinct_valued : ¬ DistinctValue artistKB P279 :=
+  Constraint.not_holds_of_check_false (con := Constraint.distinctValue P279) (by decide)
+
+/-- Every known instance of artist carries a `P31` statement. -/
+theorem artistKB_profile_complete : ProfileComplete artistKB artist [P31] :=
+  (profileCompleteOk_iff artistKB artist [P31]).1 (by decide)
+
+/-- The report over a list of constraints pinpoints exactly the failures. -/
+theorem artistKB_violations :
+    violations artistKB [Constraint.singleValue P279, Constraint.profile artist [P31]] =
+      [Constraint.singleValue P279] := by decide
+
+/-! ## Mereology -/
+
+/-- `Q2943`, the Sistine Chapel. -/
+def sistineChapel : Qid := ⟨2943⟩
+/-- `Q1140380`, the Sistine Chapel ceiling. -/
+def sistineCeiling : Qid := ⟨1140380⟩
+
+/-- The fragment extended with a part-of statement. -/
+def mereologyKB : KB :=
+  addStatement artistKB ⟨sistineCeiling, P361, sistineChapel, Rank.normal⟩
+
+theorem ceiling_part_of_chapel : PartOf mereologyKB sistineCeiling sistineChapel :=
+  (isPartOf_iff _ _ _).1 (by decide)
+
+/-- Parthood is not subclassing. -/
+theorem ceiling_part_not_subclass : ¬ SubclassOf mereologyKB sistineCeiling sistineChapel := by
+  intro h
+  have := (isSubclassOf_iff mereologyKB sistineCeiling sistineChapel).2 h
+  exact absurd this (by decide)
+
+/-- Adding the part-of statement changed no class fact at all. -/
+theorem part_statement_is_inert :
+    (∀ a b, SubclassOf mereologyKB a b ↔ SubclassOf artistKB a b) ∧
+      (∀ x c, InstanceOf mereologyKB x c ↔ InstanceOf artistKB x c) :=
+  partOf_inert (kb := artistKB) (x := sistineCeiling) (y := sistineChapel) (by decide)
+
+/-! ## Identity -/
+
+/-- A small knowledge base using an identifier property. -/
+def identifierProperty : Pid := ⟨214⟩
+
+/-- Two items, each with its own identifier value. -/
+def identifierKB : KB where
+  entities := [painter, sculptor, ⟨1⟩, ⟨2⟩]
+  statements :=
+    [ ⟨painter, identifierProperty, ⟨1⟩, Rank.normal⟩
+    , ⟨sculptor, identifierProperty, ⟨2⟩, Rank.normal⟩ ]
+
+theorem identifierKB_single_valued : SingleValue identifierKB identifierProperty :=
+  (singleValueOk_iff _ _).1 (by decide)
+
+theorem identifierKB_distinct_valued : DistinctValue identifierKB identifierProperty :=
+  (distinctValueOk_iff _ _).1 (by decide)
+
+/-- Hence the identifier property is a partial bijection. -/
+theorem isbnMatching_bijection (a b : Qid) :
+    (Identity.idMatching identifierKB identifierProperty).toFun a = some b ↔
+      (Identity.idMatching identifierKB identifierProperty).invFun b = some a :=
+  Identity.idMatching_partial_bijection identifierKB_single_valued
+    identifierKB_distinct_valued a b
+
+/-- The bijection resolves a concrete item. -/
+theorem painter_identifier :
+    (Identity.idMatching identifierKB identifierProperty).toFun painter = some ⟨1⟩ := by decide
+
+/-- Having an identifier is not being of a type: the identifier knowledge base
+derives no instance fact about painter. -/
+theorem identifier_gives_no_type : ∀ c : Qid, ¬ InstanceOf identifierKB painter c := by
+  rintro c ⟨c₀, hc₀, -⟩
+  simp [instanceEdges, identifierKB, IsTruthy, identifierProperty, P31] at hc₀
+
+/-! ## Views: layers and slices together -/
+
+/-- The empty slice: a view that trusts nothing. -/
+def emptyView : View := ⟨StatementLayer.full, fun _ => false⟩
+
+/-- The truthy-layer view of the whole base. -/
+def truthyView : View := ⟨StatementLayer.truthy, fun _ => true⟩
+
+theorem artist_supported_at_whole :
+    (viewClaim artistKB (ClassClaim.subclass painter artist) true []).stateAt View.whole =
+      Trit.supported := by decide
+
+/-- The very same claim has no support once the slice discards the evidence. -/
+theorem artist_support_not_in_empty_slice :
+    (viewClaim artistKB (ClassClaim.subclass painter artist) true []).stateAt emptyView =
+      Trit.unresolved := by decide
+
+/-- The layer coordinate makes no difference to a positive class claim. -/
+theorem artist_support_layer_independent :
+    (viewClaim shadowKB (ClassClaim.subclass painterSculptor artist) true []).stateAt truthyView =
+      (viewClaim shadowKB (ClassClaim.subclass painterSculptor artist) true []).stateAt
+        View.whole :=
+  viewClaim_layer_irrelevant shadowKB (ClassClaim.subclass painterSculptor artist) trivial
+    true [] (fun _ => true)
+
+end Example
+
+end Wikidata

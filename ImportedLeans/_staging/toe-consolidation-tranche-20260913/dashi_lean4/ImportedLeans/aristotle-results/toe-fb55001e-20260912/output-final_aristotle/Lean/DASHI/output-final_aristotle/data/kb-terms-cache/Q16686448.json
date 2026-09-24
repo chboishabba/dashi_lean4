@@ -1,0 +1,19 @@
+{
+ "aliases": [
+  "creation",
+  "human-made",
+  "man-made",
+  "man-made object",
+  "human-made object",
+  "non-natural object",
+  "product",
+  "work product",
+  "artificial entity",
+  "artefact",
+  "artifact"
+ ],
+ "canonical": "Q16686448",
+ "description": "anything created through intelligent or artificial means (either material or mental)",
+ "id": "Q16686448",
+ "label": "artificial object"
+}

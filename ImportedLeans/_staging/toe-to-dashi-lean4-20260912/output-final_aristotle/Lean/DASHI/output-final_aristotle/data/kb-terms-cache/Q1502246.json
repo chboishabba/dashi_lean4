@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "genitor",
+  "birth parent",
+  "birthparent",
+  "natural parent",
+  "bioparent",
+  "bio parent"
+ ],
+ "canonical": "Q1502246",
+ "description": "parent directly biologically related to their biological child",
+ "id": "Q1502246",
+ "label": "biological parent"
+}

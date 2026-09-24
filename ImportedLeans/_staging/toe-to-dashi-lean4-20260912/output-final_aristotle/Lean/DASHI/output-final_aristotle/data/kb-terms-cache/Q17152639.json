@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "information retrieval thesaurus",
+  "IR thesaurus",
+  "documentation thesaurus",
+  "thesaurus (IR)"
+ ],
+ "canonical": "Q17152639",
+ "description": "controlled vocabulary expanded with relations of broader, narrower and related terms, serving subject indexing and vocabulary control",
+ "id": "Q17152639",
+ "label": "thesaurus"
+}

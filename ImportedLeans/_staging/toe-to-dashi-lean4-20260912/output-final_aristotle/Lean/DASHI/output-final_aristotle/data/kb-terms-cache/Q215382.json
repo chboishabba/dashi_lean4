@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "disjoint set",
+  "mutually exclusive sets"
+ ],
+ "canonical": "Q215382",
+ "description": "sets with no element in common",
+ "id": "Q215382",
+ "label": "disjoint sets"
+}

@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "adjoint functors",
+  "adjunction",
+  "left adjunction",
+  "right adjunction"
+ ],
+ "canonical": "Q357858",
+ "description": "relationship that two functors may have",
+ "id": "Q357858",
+ "label": "adjoint functor"
+}

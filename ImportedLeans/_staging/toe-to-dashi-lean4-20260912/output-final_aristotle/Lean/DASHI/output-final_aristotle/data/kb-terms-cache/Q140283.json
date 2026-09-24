@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "dense functor"
+ ],
+ "canonical": "Q140283",
+ "description": "functor for which all objects of the codomain are isomorphic to some images",
+ "id": "Q140283",
+ "label": "essentially surjective functor"
+}

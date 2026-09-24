@@ -1,0 +1,7 @@
+{
+ "aliases": [],
+ "canonical": "Q23958852",
+ "description": "abstract entity representing classes whose instances may be classes of different orders or even non-classes",
+ "id": "Q23958852",
+ "label": "variable-order class"
+}

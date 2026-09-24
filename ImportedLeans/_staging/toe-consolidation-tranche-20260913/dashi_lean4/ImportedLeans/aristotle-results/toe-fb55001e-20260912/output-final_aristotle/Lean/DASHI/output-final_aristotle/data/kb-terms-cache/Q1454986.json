@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "physical subsystem",
+  "subsystem (physical)",
+  "system (physical)"
+ ],
+ "canonical": "Q1454986",
+ "description": "portion of the physical universe chosen for analysis; everything outside the system is known as the environment",
+ "id": "Q1454986",
+ "label": "physical system"
+}

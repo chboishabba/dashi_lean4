@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "vocabulary"
+ ],
+ "canonical": "Q115684393",
+ "description": "collection of IRIs meant to be used in an RDF graph",
+ "id": "Q115684393",
+ "label": "RDF vocabulary"
+}

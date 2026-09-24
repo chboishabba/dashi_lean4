@@ -1,0 +1,9 @@
+info: RequestProject: no previous manifest, creating one from scratch
+info: mathlib: cloning https://github.com/leanprover-community/mathlib4.git
+info: mathlib: checking out revision '8f9d9cff6bd728b17a24e163c9402775d9e6a365'
+info: updating toolchain to 'leanprover/lean4:v4.28.0'
+info: no Elan detected; you will need to manually restart Lake
+
+real	1m48.248s
+user	0m51.904s
+sys	0m11.992s

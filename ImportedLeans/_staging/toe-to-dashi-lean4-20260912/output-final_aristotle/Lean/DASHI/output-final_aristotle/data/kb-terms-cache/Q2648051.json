@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "binding",
+  "requirement",
+  "mandatory",
+  "duty",
+  "commitment"
+ ],
+ "canonical": "Q2648051",
+ "description": "legal or moral requirement to take a certain course of action",
+ "id": "Q2648051",
+ "label": "obligation"
+}

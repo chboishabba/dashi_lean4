@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="130" viewBox="0 0 860 130" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif">
+<rect width="860" height="130" fill="#ffffff"/>
+<style>.ttl{font-size:20px;font-weight:600;fill:#1b1b1f}.sub{font-size:12px;fill:#5b5b66}.lbl{font-size:12px;fill:#1b1b1f}.cnt{font-size:12px;fill:#5b5b66}</style>
+<text x="28" y="44" class="ttl">Wikidata report — douglas-adams</text>
+<text x="28" y="66" class="sub">0 error(s), 0 warning(s) in data/douglas.wdkb</text>
+<line x1="261" y1="92" x2="261" y2="96" stroke="#d7d7de"/>
+</svg>

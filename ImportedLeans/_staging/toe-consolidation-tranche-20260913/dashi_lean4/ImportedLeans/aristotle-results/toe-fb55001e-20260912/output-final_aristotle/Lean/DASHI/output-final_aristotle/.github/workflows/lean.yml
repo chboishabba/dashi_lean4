@@ -1,0 +1,39 @@
+name: Lean
+
+# Re-checks the formalisation, and re-checks that the published site is exactly
+# what the verified tool generates from `data/`.
+
+on:
+  push:
+    branches: [main, master]
+    paths: ['RequestProject/**', 'lakefile.toml', 'lean-toolchain', '.github/workflows/lean.yml']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          test: false
+      - name: No `sorry` in the sources
+        run: |
+          if grep -rn --include='*.lean' -E '(^|[^a-zA-Z_])sorry([^a-zA-Z_]|$)' RequestProject; then
+            echo "a sorry is left in the sources" >&2
+            exit 1
+          fi
+      - name: The published site is what the tool generates
+        run: |
+          lake build wikidata
+          ./.lake/build/bin/wikidata publish data/*.wdkb --out /tmp/site
+          diff -r /tmp/site/data site/data
+          diff -r /tmp/site/api site/api
+          python3 scripts/verify_site.py site
+      - name: The single page report is what the tool generates, and it works
+        run: |
+          ./.lake/build/bin/wikidata onepage data/*.wdkb --out /tmp/report.html --assets web
+          diff /tmp/report.html site/report.html
+          npm install --no-audit --no-fund jsdom
+          node scripts/verify_onepage.js site/report.html

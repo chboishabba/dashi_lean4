@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "Uniform Resource Name",
+  "Uniform Resource Names",
+  "urn"
+ ],
+ "canonical": "Q76497",
+ "description": "Uniform Resource Identifier (URI) that uses the urn scheme",
+ "id": "Q76497",
+ "label": "URN"
+}

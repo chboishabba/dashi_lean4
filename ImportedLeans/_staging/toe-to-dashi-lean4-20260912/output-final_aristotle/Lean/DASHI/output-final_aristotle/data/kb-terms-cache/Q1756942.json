@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "univalent relation",
+  "right-unique relation",
+  "right-definite relation",
+  "right unique relation",
+  "right definite relation",
+  "partial mapping"
+ ],
+ "canonical": "Q1756942",
+ "description": "function whose actual domain of definition may be smaller than its input set",
+ "id": "Q1756942",
+ "label": "partial function"
+}

@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "pseudo-ring",
+  "non-unital ring",
+  "nonunital ring",
+  "ring"
+ ],
+ "canonical": "Q17102802",
+ "description": "algebraic structure similar to ring but not necessarily having a multiplicative identity",
+ "id": "Q17102802",
+ "label": "rng"
+}

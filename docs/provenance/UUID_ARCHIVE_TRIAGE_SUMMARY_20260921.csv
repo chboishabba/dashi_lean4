@@ -1,0 +1,45 @@
+archive_filename,tranche_title,sha256,spine_identical,spine_divergent,spine_staged_only,request_identical,request_divergent,request_staged_only
+009295c6-6b8a-4ac4-818f-026ac05fdd77-aristotle (1).tar.gz,Summary of changes for run 1c2fed89-c564-4bf8-b84f-541f1e91134d,b8523088af8274a81a0056b8d9bdb2245d24b6dbaa2c24c63bd496bfa3d523fb,0,0,0,0,0,0
+009295c6-6b8a-4ac4-818f-026ac05fdd77-aristotle (2).tar.gz,Summary of changes for run 1e7840b4-17fe-4022-9058-d5ff55367c9e,15d27efbe72e91930ea16348219bd0620e447ba18e55acf52e32c4259b9644cf,0,0,0,0,0,0
+009295c6-6b8a-4ac4-818f-026ac05fdd77-aristotle (3).tar.gz,Summary of changes for run 1e7840b4-17fe-4022-9058-d5ff55367c9e,8968dc4b89cb09ce49fc40e597e2178f71ebf6085d93c8632d86f85342fa97ca,0,0,0,0,0,0
+009295c6-6b8a-4ac4-818f-026ac05fdd77-aristotle (4).tar.gz,Summary of changes for run 1e7840b4-17fe-4022-9058-d5ff55367c9e,83f6217c4604bb7b8c7ceb188fcf7cccc40660e06bf937bec0f266cabcf9d2cb,0,0,0,0,0,0
+009295c6-6b8a-4ac4-818f-026ac05fdd77-aristotle (5).tar.gz,Summary of changes for run 0105cf40-0829-4146-b512-1c35662c079e,9e0e87cdb890242599ca1443aa51196da9cad8ccfcd847e0fc44e205ba5b97b5,0,0,0,0,0,0
+009295c6-6b8a-4ac4-818f-026ac05fdd77-aristotle (6).tar.gz,Summary of changes for run 1fae90f3-f8e6-4c69-85f7-1253e168f500,48742324cb24e43e8dc120a858b2697b6633b3a29f9e588ab63ee239c567c099,0,0,0,0,0,0
+009295c6-6b8a-4ac4-818f-026ac05fdd77-aristotle (7).tar.gz,Summary of changes for run 6d9755e3-5af3-4c0a-a934-8b5ce0a2ab9f,8482425f292c519132d18fb964ce0491e15ea4b0bc3dae23c33f36bca2840b66,0,0,0,0,0,0
+009295c6-6b8a-4ac4-818f-026ac05fdd77-aristotle (8).tar.gz,Summary of changes for run 5da891b2-b165-4cf2-abd8-ba9a98ce7dd6,8e184d2ebd4936869e8740723b4b22435a0103ca69efba0581497d2bc851f07f,13,1,0,0,2,0
+009295c6-6b8a-4ac4-818f-026ac05fdd77-aristotle (9).tar.gz,Summary of changes for run cace951d-3086-49da-97ad-63c7d4c69dc2,6d6940d7aadcad92bfe46a8e97aabb7d9fc83a857d637d4292bc08414800d29e,13,1,0,0,2,0
+009295c6-6b8a-4ac4-818f-026ac05fdd77-aristotle.tar.gz,Summary of changes for run 1c2fed89-c564-4bf8-b84f-541f1e91134d,7ec3c99109e23cfe882402dcbb4adbf687978aa2848e1b18bfe09a61ea62b07d,0,0,0,0,0,0
+2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle (1).tar.gz,Summary of changes for run 9451ddaa-1724-4d58-9bc6-d903892620d5,f46e4eb135844e3746d1e01b3e306002dc29a9b1e6b043817d5c26259def5676,13,1,0,0,2,0
+2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle (10).tar.gz,DASHI all-TOE cutset — 2026-08-21,f83f34a23e6e4d2e0507843c6e27097b89897264aac838d3fa07ca2389bd3fc2,17,1,0,0,2,0
+2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle (11).tar.gz,DASHI all-TOE cutset — 2026-08-21,86de7cccf9977f2ab0a1b05c7eb1c18a43b29c0834247414c533bb79ad7d8893,17,1,0,0,191,1
+2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle (2).tar.gz,Summary of changes for run 8bd5c96c-db0d-4227-9b54-383117861827,e5844b3c8c8a746357ae0760af6ec5d4357bb61cf5d3d0c4370e42b93f9602ef,13,1,0,0,2,0
+2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle (3).tar.gz,Summary of changes for run 26dc64c1-3504-419d-8b73-32341e22b605,d5df06fb2f11b7419e3d42c2f5036c983bcff4a40f462268d159cd0d5650ebb7,17,1,0,0,2,0
+2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle (4).tar.gz,Summary of changes for run 4a134dc4-7b35-4880-82d4-de4d3d324b7b,6b356d99df32312eef8ab762f0ed37d3357ab172b32817e85bfcf36702724fc4,17,1,0,0,2,0
+2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle (5).tar.gz,DASHI all-TOE cutset — 2026-08-21,ea6dd6df90e097aeb6b8431669f448131325a531557e57459be04d7464fd1b66,17,1,0,0,2,0
+2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle (6).tar.gz,Summary of changes for run eda75d4a-df9b-406b-bc3a-785be51d2792,66d5dbfb5ccad2e6963b46401ecd0198b3a1e5d24c8e56b1ce4424471c9a8c5d,17,1,0,0,2,0
+2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle (7).tar.gz,Summary of changes for run eda75d4a-df9b-406b-bc3a-785be51d2792,d437d6843d4de577cc319ab28b1229745fcce79f7bb22bf8ba02baaba2d1cc68,17,1,0,0,2,0
+2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle (8).tar.gz,DASHI all-TOE cutset — 2026-08-21,ee8893e8f4b8649224ff78873b82b50e3a96c4d443cc738bd372c3de331f350b,17,1,0,0,2,0
+2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle (9).tar.gz,DASHI all-TOE cutset — 2026-08-21,4bb2bbd96e15650dcdf7be0981f56c38fb040ffd6780ab0bfc58933a9d37a3a3,17,1,0,0,2,0
+2c3d9d4c-d11e-4231-98a6-4465381841ad-aristotle.tar.gz,Summary of changes for run 9d3f0634-60a5-4353-9c93-dd7ed994b6ec,a69250379402557f90baba659a1b7bfa14fbf3188e543cb7f0d4b315b4480fe1,13,1,0,0,2,0
+abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle (1).tar.gz,Summary of changes for run e599b472-4cc2-40ce-8eb4-ac644885a7c3,d8812e39c3db79e50e815d6847a4c53c36963b9b33ca4a3036cd694b02149d9e,0,0,0,0,0,0
+abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle (10).tar.gz,Summary of changes for run f19ebadd-6e15-4f14-8116-22eb9e25690a,d1fb6526e2a33881bfe520848b2174505cc8d155dc542a2526c92f5f103d937f,0,0,0,0,8,0
+abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle (2).tar.gz,Summary of changes for run 7edc01a9-8337-46c2-9568-62385e803cc3,997cee2a3fabf477978e4f21dcba82acfe3daccfdb60ab38b75de4e98d9d818b,0,0,0,0,0,0
+abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle (3).tar.gz,Summary of changes for run 767cb066-79bb-4748-a7cc-6b9024e745e4,ce2019341dd9e2e54080f4597b475d2e049d06b5526c6755b1b50a569317c2ec,0,0,0,0,0,0
+abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle (4).tar.gz,Summary of changes for run e031b9c6-5d1a-4610-b109-b977ce39ed0c,ae67063d0e5e47b2b67a9bf4c4ac07b175995a1f3fcd4f359ceaa20c47a01e31,0,0,0,0,0,0
+abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle (5).tar.gz,Summary of changes for run ce971714-1334-42c8-98c2-29f81a8f600f,277e612770b36500130eacabd0870a1e0ed32d8f3adb9959c22aa3fef2772029,0,0,0,0,0,0
+abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle (6).tar.gz,Summary of changes for run 53b63a54-4ede-491b-b68c-0f40ab5c3c4a,3809da24a87269bc162af8613eb11ed7b2c0830c9d9c97c7a815078d8d2464ac,0,0,0,0,0,0
+abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle (7).tar.gz,Summary of changes for run 53b63a54-4ede-491b-b68c-0f40ab5c3c4a,6911c8e6f28678b9f064e06adc867ade5875d9b20f0712e9e762e358186db8d5,0,0,0,0,0,0
+abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle (8).tar.gz,Summary of changes for run 3c608816-42a3-4e58-81e9-5975081ee192,9dcf899923a4af6dcec584d22225204289215ba0cd55e3cf7d5c1e3da6f89c67,0,0,0,0,0,0
+abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle (9).tar.gz,Summary of changes for run 75977bc5-cb97-4769-a879-f488e2f4782a,3b8298da5ecc50a16f423d4d2f4ea483821dfc19d11374d04997c1b37ec5c9f0,0,0,0,0,8,0
+abf7a073-8aa0-4342-92bb-1f8e725d2820-aristotle.tar.gz,Summary of changes for run 5caee2a4-7f9c-46d2-9577-112afc89858b,ab89098c265941164f4c921e6afbf7b8d5219b1176664a18d9550cf7a9e84411,0,0,0,0,0,0
+bd585849-3e34-445c-965e-ff822be3aefd-aristotle (1).tar.gz,Summary of changes for run 9d57033f-1d66-4cbc-8173-3a037b2cb6b0,617cace210e7c709f2f8c9179c92a612b5c145d77d4bb8721b515c58e5995d3c,0,0,0,0,0,0
+bd585849-3e34-445c-965e-ff822be3aefd-aristotle (10).tar.gz,Summary of changes for run 3c35df32-fe83-467c-84ae-0ae910aadc2f,d863cf94d20acce286f750d964072bc883bedb6eb2fb889a81a2adfaa366d79e,13,1,0,0,2,0
+bd585849-3e34-445c-965e-ff822be3aefd-aristotle (2).tar.gz,Summary of changes for run 5fc90313-856d-41cf-a3ba-8509ae2b6b9a,6fef40021540b0075b80373abbe2f953a5920fcfd6f68498c505104a0783c307,0,0,0,0,0,0
+bd585849-3e34-445c-965e-ff822be3aefd-aristotle (3).tar.gz,Summary of changes for run 8759d9b3-bbcf-45e6-8bc0-1f6eb2b337c9,efceacf26feab4257fb6b43936bbfe1ec83027926e2aa214c23193f22c162c2d,0,0,0,0,0,0
+bd585849-3e34-445c-965e-ff822be3aefd-aristotle (4).tar.gz,Summary of changes for run 2e0d3ac5-38ca-48a2-b547-a1d42c1bd7cd,742d763e6134626fa2c13d04374684a440e11d8047a476218a8c99765b5f0ea7,0,0,0,0,0,0
+bd585849-3e34-445c-965e-ff822be3aefd-aristotle (5).tar.gz,Summary of changes for run 1387b766-f853-4231-a6c1-89e5eb30417e,21cccd343dc5bbd4ac11c0e952dc62cacf17ce0ab6cb8e9a7a5091b5efbee029,0,0,0,0,0,0
+bd585849-3e34-445c-965e-ff822be3aefd-aristotle (6).tar.gz,Summary of changes for run 1387b766-f853-4231-a6c1-89e5eb30417e,27c983447e9cea6ba0be054e693a8fa9836b08f50af9952353a193c915206b24,0,0,0,0,0,0
+bd585849-3e34-445c-965e-ff822be3aefd-aristotle (7).tar.gz,Summary of changes for run 1387b766-f853-4231-a6c1-89e5eb30417e,8c82e229b849007a9b91fe76ca1c052dda149c2329b0ebccadb3046f9e55eb8c,0,0,0,0,0,0
+bd585849-3e34-445c-965e-ff822be3aefd-aristotle (8).tar.gz,Summary of changes for run 63e4addd-f8ac-4afa-8214-f1b67afb2072,d3cda34964c17adee4e05323d2c0a3e360ba644ebaf28a4eda4ba7238ae91d86,13,1,0,0,2,0
+bd585849-3e34-445c-965e-ff822be3aefd-aristotle (9).tar.gz,Summary of changes for run a7d070ec-9b77-4f35-816d-956f29dd8b87,458b13cac99e665f3fe145f6d94c27095120ba9e37633c9677f2296169e0bbdc,13,1,0,0,2,0
+bd585849-3e34-445c-965e-ff822be3aefd-aristotle.tar.gz,Summary of changes for run 9d57033f-1d66-4cbc-8173-3a037b2cb6b0,3f4b416d22280cc052ff11470a0925f919d1c4342c1d552471b9875b4036c16d,0,0,0,0,0,0

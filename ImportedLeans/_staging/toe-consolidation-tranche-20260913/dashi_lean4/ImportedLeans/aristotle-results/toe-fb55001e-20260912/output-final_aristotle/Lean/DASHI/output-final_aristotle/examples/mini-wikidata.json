@@ -1,0 +1,41 @@
+{
+  "entities": {
+    "Q42": {
+      "id": "Q42",
+      "labels": { "en": { "language": "en", "value": "Douglas Adams" } },
+      "claims": {
+        "P31": [
+          { "mainsnak": { "snaktype": "value", "property": "P31",
+              "datavalue": { "value": { "entity-type": "item", "id": "Q5" },
+                             "type": "wikibase-entityid" } },
+            "rank": "normal" } ]
+      }
+    },
+    "Q5": {
+      "id": "Q5",
+      "labels": { "en": { "language": "en", "value": "human" } },
+      "claims": {
+        "P279": [
+          { "mainsnak": { "snaktype": "value", "property": "P279",
+              "datavalue": { "value": { "entity-type": "item", "id": "Q215627" },
+                             "type": "wikibase-entityid" } },
+            "rank": "normal" } ]
+      }
+    },
+    "Q215627": {
+      "id": "Q215627",
+      "labels": { "en": { "language": "en", "value": "person" } },
+      "claims": {
+        "P279": [
+          { "mainsnak": { "snaktype": "value", "property": "P279",
+              "datavalue": { "value": { "entity-type": "item", "id": "Q154954" },
+                             "type": "wikibase-entityid" } },
+            "rank": "normal" },
+          { "mainsnak": { "snaktype": "value", "property": "P279",
+              "datavalue": { "value": { "entity-type": "item", "id": "Q164509" },
+                             "type": "wikibase-entityid" } },
+            "rank": "deprecated" } ]
+      }
+    }
+  }
+}

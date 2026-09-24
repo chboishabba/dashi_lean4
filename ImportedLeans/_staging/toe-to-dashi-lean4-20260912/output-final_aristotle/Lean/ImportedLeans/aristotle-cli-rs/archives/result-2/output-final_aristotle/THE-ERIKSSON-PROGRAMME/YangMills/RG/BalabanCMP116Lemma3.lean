@@ -1,0 +1,186 @@
+/- Copyright (c) 2026 Lluis Eriksson. All rights reserved.
+Released under the GNU Affero General Public License v3.0
+as described in the file LICENSE.
+Authors: Lluis Eriksson -/
+
+import YangMills.RG.BalabanCMP116Lemma3Estimate
+
+/-!
+# CMP116 Lemma 3 finite resummation bridge
+
+This module starts the theorem-fed route from CMP116 pre-Lemma-3 summands to
+the isolated Lemma 3 activity estimate interface.
+
+Honest scope: this file does not prove the analytic CMP116 resummation from the
+paper's constants, construct the localized activities, prove support or
+measurability properties, identify a Wilson Hessian, construct a covariance or
+covariance root, prove a Gaussian pushforward, or reconstruct a covariance root
+from finite local pieces.  The finite resummation bridge below proves only the
+final norm step from explicitly supplied termwise summand bounds and an
+explicitly supplied summed-weight budget.
+-/
+
+namespace YangMills.RG
+
+open scoped BigOperators RealInnerProductSpace
+
+/-- Primitive CMP116 Lemma 3 parameters before the exact source hierarchy is
+formalized.
+
+The fields are intentionally primitive.  There is no `H_decay`,
+`raw_pointwise_decay`, or equivalent conclusion field here. -/
+structure CMP116Lemma3Parameters where
+  blockScale : ℕ
+  delta : ℝ
+  epsilon1 : ℝ
+  epsilon2 : ℝ
+  C3 : ℝ
+  kappa : ℝ
+  kappa1 : ℝ
+  amplitude_nonneg : 0 ≤ C3 * epsilon1
+  epsilon2_nonneg : 0 ≤ epsilon2
+  scale_margin :
+    2 * (blockScale : ℝ) * kappa ≤ (kappa1 - 1) / 2
+
+/-- Finite pre-Lemma resummation data for a fixed source polymer/activity
+label.
+
+The four finite index families model the successive source sums over the
+objects denoted around CMP116 Lemma 3 by `D`, `P`, `Z0`, and `Z0'`.  The later
+families depend on the earlier choices, matching the source-shaped summation
+order.  The summands and weights are not assumed to satisfy a final decay
+estimate in the record; that estimate is supplied to the theorem below as a
+separate pre-Lemma summed-weight budget. -/
+structure CMP116HResummation
+    (σ ιD ιP ιZ0 ιZ0' Ψ Φ : Type*) where
+  DIndex : σ → Finset ιD
+  PIndex : σ → ιD → Finset ιP
+  Z0Index : σ → ιD → ιP → Finset ιZ0
+  Z0PrimeIndex : σ → ιD → ιP → ιZ0 → Finset ιZ0'
+  summand : σ → ιD → ιP → ιZ0 → ιZ0' → Ψ → Φ → ℂ
+  termWeight : σ → ιD → ιP → ιZ0 → ιZ0' → ℝ
+
+/-- The flattened finite index set for the dependent source summations entering
+the resummed activity `H(Z)`. -/
+def cmp116HIndexFinset
+    {σ ιD ιP ιZ0 ιZ0' Ψ Φ : Type*}
+    [DecidableEq ιD] [DecidableEq ιP]
+    [DecidableEq ιZ0] [DecidableEq ιZ0']
+    (R : CMP116HResummation σ ιD ιP ιZ0 ιZ0' Ψ Φ)
+    (Z : σ) :
+    Finset ((ιD × ιP) × (ιZ0 × ιZ0')) :=
+  (R.DIndex Z).biUnion fun D =>
+    (R.PIndex Z D).biUnion fun P =>
+      (R.Z0Index Z D P).biUnion fun Z0 =>
+        (R.Z0PrimeIndex Z D P Z0).map
+          ⟨fun Z0' => ((D, P), (Z0, Z0')),
+            by
+              intro a b h
+              simpa using congrArg (fun y => y.2.2) h⟩
+
+/-- The resummed CMP116 activity `H(Z)` represented by the finite pre-Lemma
+summation data. -/
+noncomputable def balabanCMP116H
+    {σ ιD ιP ιZ0 ιZ0' Ψ Φ : Type*}
+    [DecidableEq ιD] [DecidableEq ιP]
+    [DecidableEq ιZ0] [DecidableEq ιZ0']
+    (R : CMP116HResummation σ ιD ιP ιZ0 ιZ0' Ψ Φ)
+    (Z : σ) (ψ : Ψ) (φ : Φ) : ℂ :=
+  Finset.sum (cmp116HIndexFinset R Z)
+    (fun x => R.summand Z x.1.1 x.1.2 x.2.1 x.2.2 ψ φ)
+
+/-- Final finite-sum norm step for the source-shaped CMP116 Lemma 3
+resummation interface.
+
+This is the theorem-fed bridge from termwise source bounds plus a pre-Lemma
+summed-weight budget to a term-weight-sum bound with the Lemma 3 right-hand
+side.  The hypotheses are not an analytic proof of Lemma 3. -/
+theorem norm_balabanCMP116H_le_termWeightSum
+    {σ ιD ιP ιZ0 ιZ0' Ψ Φ : Type*}
+    [DecidableEq ιD] [DecidableEq ιP]
+    [DecidableEq ιZ0] [DecidableEq ιZ0']
+    (hp : CMP116Lemma3Parameters)
+    (R : CMP116HResummation σ ιD ιP ιZ0 ιZ0' Ψ Φ)
+    (sourceMetric : σ → ℕ)
+    (hterm :
+      ∀ Z x, x ∈ cmp116HIndexFinset R Z →
+        ∀ ψ φ,
+          ‖R.summand Z x.1.1 x.1.2 x.2.1 x.2.2 ψ φ‖ ≤
+            R.termWeight Z x.1.1 x.1.2 x.2.1 x.2.2)
+    (hbudget :
+      ∀ Z,
+        Finset.sum (cmp116HIndexFinset R Z)
+          (fun x => R.termWeight Z x.1.1 x.1.2 x.2.1 x.2.2) ≤
+          (hp.C3 * hp.epsilon1) *
+            balabanCMP116Lemma3Weight
+              hp.blockScale hp.delta hp.kappa sourceMetric Z) :
+    ∀ Z ψ φ,
+      ‖balabanCMP116H R Z ψ φ‖ ≤
+        (hp.C3 * hp.epsilon1) *
+          balabanCMP116Lemma3Weight
+            hp.blockScale hp.delta hp.kappa sourceMetric Z := by
+  intro Z ψ φ
+  unfold balabanCMP116H
+  calc
+    ‖Finset.sum (cmp116HIndexFinset R Z)
+        (fun x => R.summand Z x.1.1 x.1.2 x.2.1 x.2.2 ψ φ)‖
+        ≤ Finset.sum (cmp116HIndexFinset R Z)
+            (fun x => ‖R.summand Z x.1.1 x.1.2 x.2.1 x.2.2 ψ φ‖) :=
+      norm_sum_le (cmp116HIndexFinset R Z)
+        (fun x => R.summand Z x.1.1 x.1.2 x.2.1 x.2.2 ψ φ)
+    _ ≤ Finset.sum (cmp116HIndexFinset R Z)
+          (fun x => R.termWeight Z x.1.1 x.1.2 x.2.1 x.2.2) :=
+      Finset.sum_le_sum (fun x hx => hterm Z x hx ψ φ)
+    _ ≤
+        (hp.C3 * hp.epsilon1) *
+          balabanCMP116Lemma3Weight
+            hp.blockScale hp.delta hp.kappa sourceMetric Z :=
+      hbudget Z
+
+/-- A source identification of the resummed `H(Z)` with a physical local
+activity turns the theorem-fed Lemma 3 bound into the existing
+`CMP116Lemma3ActivityEstimate` object. -/
+theorem cmp116Lemma3ActivityEstimate_of_resummation
+    {σ ιD ιP ιZ0 ιZ0' : Type*}
+    [DecidableEq ιD] [DecidableEq ιP]
+    [DecidableEq ιZ0] [DecidableEq ιZ0']
+    {dPhys N Nc : ℕ} [NeZero N]
+    (hp : CMP116Lemma3Parameters)
+    (R :
+      CMP116HResummation σ ιD ιP ιZ0 ιZ0'
+        (PhysicalGaugeField dPhys N Nc)
+        (PhysicalGaugeField dPhys N Nc))
+    (sourceMetric : σ → ℕ)
+    (physicalActivity : σ → PhysicalGaugeLocalActivity dPhys N Nc)
+    (hglobal :
+      ∀ Z ψ φ,
+        (physicalActivity Z).globalEval ψ φ =
+          balabanCMP116H R Z ψ φ)
+    (hterm :
+      ∀ Z x, x ∈ cmp116HIndexFinset R Z →
+        ∀ ψ φ,
+          ‖R.summand Z x.1.1 x.1.2 x.2.1 x.2.2 ψ φ‖ ≤
+            R.termWeight Z x.1.1 x.1.2 x.2.1 x.2.2)
+    (hbudget :
+      ∀ Z,
+        Finset.sum (cmp116HIndexFinset R Z)
+          (fun x => R.termWeight Z x.1.1 x.1.2 x.2.1 x.2.2) ≤
+          (hp.C3 * hp.epsilon1) *
+            balabanCMP116Lemma3Weight
+              hp.blockScale hp.delta hp.kappa sourceMetric Z) :
+    CMP116Lemma3ActivityEstimate
+      physicalActivity sourceMetric hp.blockScale
+      hp.C3 hp.epsilon1 hp.delta hp.kappa := by
+  intro Z ψ φ
+  calc
+    ‖(physicalActivity Z).globalEval ψ φ‖ =
+        ‖balabanCMP116H R Z ψ φ‖ := by
+      rw [hglobal Z ψ φ]
+    _ ≤
+        (hp.C3 * hp.epsilon1) *
+          balabanCMP116Lemma3Weight
+            hp.blockScale hp.delta hp.kappa sourceMetric Z :=
+      norm_balabanCMP116H_le_termWeightSum hp R sourceMetric
+        hterm hbudget Z ψ φ
+
+end YangMills.RG

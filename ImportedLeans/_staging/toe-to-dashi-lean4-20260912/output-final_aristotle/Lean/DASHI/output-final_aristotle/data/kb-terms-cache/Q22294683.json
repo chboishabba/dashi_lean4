@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "GO:0051703",
+  "intraspecies interaction with other organisms",
+  "intraspecies interaction between organisms"
+ ],
+ "canonical": "Q22294683",
+ "description": "process in which an organism has an effect on an organism of the same species",
+ "id": "Q22294683",
+ "label": "biological process involved in intraspecies interaction between organisms"
+}

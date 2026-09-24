@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "object category",
+  "physical object genre",
+  "physical object category",
+  "class of physical object",
+  "object genre"
+ ],
+ "canonical": "Q111360549",
+ "description": "broad classification of material objects",
+ "id": "Q111360549",
+ "label": "type of physical object"
+}

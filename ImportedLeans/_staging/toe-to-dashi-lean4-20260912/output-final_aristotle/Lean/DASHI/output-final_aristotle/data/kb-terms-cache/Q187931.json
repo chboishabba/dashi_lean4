@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "phrases",
+  "expression"
+ ],
+ "canonical": "Q187931",
+ "description": "sequence of at least two words",
+ "id": "Q187931",
+ "label": "phrase"
+}

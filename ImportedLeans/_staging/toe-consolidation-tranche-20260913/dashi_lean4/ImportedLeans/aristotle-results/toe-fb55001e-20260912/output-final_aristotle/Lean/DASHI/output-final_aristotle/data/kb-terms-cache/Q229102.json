@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "surjection",
+  "right-total function",
+  "onto function"
+ ],
+ "canonical": "Q229102",
+ "description": "function such that every element of the codomain has a preimage",
+ "id": "Q229102",
+ "label": "surjective function"
+}

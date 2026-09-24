@@ -1,0 +1,3 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/taxa-defects.tkb","taxon","taxon-cycle","error","needs-review","Q1","","Q4","","","two distinct taxa each descend from the other","delete one `parent taxon` statement; the ranks say which direction is right"
+"examples/taxa-defects.tkb","taxon","taxon-cycle","error","needs-review","Q4","","Q1","","","two distinct taxa each descend from the other","delete one `parent taxon` statement; the ranks say which direction is right"

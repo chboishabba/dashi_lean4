@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "weak 2-category",
+  "2-category"
+ ],
+ "canonical": "Q4903541",
+ "description": "structure consisting of a class of objects and (between every pair X,Y of objects) a category C(X,Y), along with composition functors C(X,Y)×C(Y,Z)→C(X,Z), such that composition is associative (up to natural equivalence by some isomorphism)",
+ "id": "Q4903541",
+ "label": "bicategory"
+}

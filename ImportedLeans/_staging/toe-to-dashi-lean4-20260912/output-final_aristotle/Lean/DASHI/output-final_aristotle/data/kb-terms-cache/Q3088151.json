@@ -1,0 +1,7 @@
+{
+ "aliases": [],
+ "canonical": "Q3088151",
+ "description": "minimal graph with the same reachability relation as a given graph",
+ "id": "Q3088151",
+ "label": "transitive reduction"
+}

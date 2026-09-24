@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "one-to-one function",
+  "1-to-1 function",
+  "injective function"
+ ],
+ "canonical": "Q182003",
+ "description": "mathematical function that preserves distinctness",
+ "id": "Q182003",
+ "label": "injection"
+}

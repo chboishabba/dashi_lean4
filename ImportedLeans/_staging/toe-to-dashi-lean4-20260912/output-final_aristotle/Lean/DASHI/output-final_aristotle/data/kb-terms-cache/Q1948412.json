@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "arrow",
+  "1-cell"
+ ],
+ "canonical": "Q1948412",
+ "description": "map (arrow) between two objects of a category",
+ "id": "Q1948412",
+ "label": "morphism"
+}

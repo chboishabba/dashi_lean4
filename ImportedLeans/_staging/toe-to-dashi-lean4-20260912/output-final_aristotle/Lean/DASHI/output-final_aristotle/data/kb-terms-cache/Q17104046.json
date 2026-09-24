@@ -1,0 +1,7 @@
+{
+ "aliases": [],
+ "canonical": "Q17104046",
+ "description": "graph that is permitted to contain both directed and undirected edges",
+ "id": "Q17104046",
+ "label": "mixed graph"
+}

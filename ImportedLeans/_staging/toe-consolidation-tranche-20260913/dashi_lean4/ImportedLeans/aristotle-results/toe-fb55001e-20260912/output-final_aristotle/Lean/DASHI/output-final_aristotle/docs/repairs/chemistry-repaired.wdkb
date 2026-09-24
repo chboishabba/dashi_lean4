@@ -1,0 +1,192 @@
+name	chemistry-medicine
+item	wd	Q11344
+item	wd	Q12136
+item	wd	Q8386
+item	wd	Q11367
+item	wd	Q578779
+item	wd	Q17339814
+item	wd	Q43460564
+item	wd	Q10683158
+item	wd	Q2057971
+item	wd	Q2996394
+item	wd	Q2438541
+item	wd	Q104086571
+item	wd	Q409205
+item	wd	Q79529
+item	wd	Q174211
+item	wd	Q74892521
+item	wd	Q24027474
+item	wd	Q28555911
+item	wd	Q6005984
+item	wd	Q7189713
+item	wd	Q3505845
+item	wd	Q813912
+item	wd	Q130459448
+item	wd	Q621184
+item	wd	Q2141565
+item	wd	Q123928941
+item	wd	Q87075524
+item	wd	Q122764215
+item	wd	Q1132455
+item	wd	Q101208084
+item	wd	Q567555
+item	wd	Q483247
+item	wd	Q130286945
+item	wd	Q64732777
+item	wd	Q1322005
+item	wd	Q17320256
+item	wd	Q111752858
+item	wd	Q1293220
+item	wd	Q116505632
+item	wd	Q24017414
+item	wd	Q7048977
+item	wd	Q1272626
+item	wd	Q7551287
+item	wd	Q11268999
+item	wd	Q2995644
+item	wd	Q12775893
+item	wd	Q96253971
+item	wd	Q21146257
+item	wd	Q19868531
+item	wd	Q23959932
+item	wd	Q5127848
+item	wd	Q19478619
+item	wd	Q23958852
+item	wd	Q151885
+item	wd	Q115490628
+item	wd	Q2901852
+item	wd	Q11173
+item	wd	Q47154513
+item	wd	Q5962346
+item	wd	Q72070508
+item	wd	Q16889133
+item	wd	Q24017465
+level	62	wd	Q5127848
+level	62	wd	Q16889133
+level	62	wd	Q7551287
+level	62	wd	Q151885
+level	62	wd	Q1272626
+level	62	wd	Q7048977
+level	61	wd	Q21146257
+level	61	wd	Q116505632
+level	60	wd	Q72070508
+level	63	wd	Q115490628
+level	63	wd	Q19868531
+level	61	wd	Q96253971
+level	62	wd	Q24027474
+level	2	wd	Q5962346
+level	2	wd	Q130286945
+level	2	wd	Q74892521
+level	2	wd	Q130459448
+level	2	wd	Q17339814
+level	1	wd	Q11344
+level	1	wd	Q12136
+level	1	wd	Q8386
+level	1	wd	Q11367
+level	1	wd	Q578779
+level	1	wd	Q43460564
+level	1	wd	Q10683158
+level	1	wd	Q2057971
+level	1	wd	Q2996394
+level	1	wd	Q2438541
+level	61	wd	Q104086571
+level	1	wd	Q409205
+level	1	wd	Q79529
+level	1	wd	Q174211
+level	1	wd	Q28555911
+level	1	wd	Q6005984
+level	1	wd	Q7189713
+level	1	wd	Q3505845
+level	1	wd	Q813912
+level	1	wd	Q621184
+level	1	wd	Q2141565
+level	1	wd	Q123928941
+level	1	wd	Q87075524
+level	1	wd	Q122764215
+level	1	wd	Q1132455
+level	2	wd	Q101208084
+level	1	wd	Q567555
+level	1	wd	Q483247
+level	1	wd	Q64732777
+level	1	wd	Q1322005
+level	1	wd	Q17320256
+level	1	wd	Q111752858
+level	1	wd	Q1293220
+level	61	wd	Q24017414
+level	1	wd	Q11268999
+level	1	wd	Q2995644
+level	59	wd	Q12775893
+level	61	wd	Q23959932
+level	62	wd	Q19478619
+level	63	wd	Q23958852
+level	1	wd	Q2901852
+level	1	wd	Q11173
+level	60	wd	Q47154513
+level	61	wd	Q24017465
+sub	wd	Q11344	wd	Q79529
+sub	wd	Q11173	wd	Q578779
+sub	wd	Q79529	wd	Q43460564
+sub	wd	Q79529	wd	Q10683158
+sub	wd	Q12136	wd	Q2057971
+sub	wd	Q12136	wd	Q2996394
+sub	wd	Q12136	wd	Q2438541
+sub	wd	Q8386	wd	Q409205
+sub	wd	Q8386	wd	Q11173
+sub	wd	Q11367	wd	Q174211
+sub	wd	Q578779	wd	Q79529
+sub	wd	Q24017414	wd	Q23959932
+sub	wd	Q43460564	wd	Q28555911
+sub	wd	Q10683158	wd	Q28555911
+sub	wd	Q2057971	wd	Q7189713
+sub	wd	Q2057971	wd	Q621184
+sub	wd	Q2057971	wd	Q87075524
+sub	wd	Q2057971	wd	Q567555
+sub	wd	Q2996394	wd	Q64732777
+sub	wd	Q2996394	wd	Q17320256
+sub	wd	Q2438541	wd	Q11268999
+sub	wd	Q104086571	wd	Q23959932
+sub	wd	Q409205	wd	Q79529
+sub	wd	Q174211	wd	Q2901852
+sub	wd	Q24017465	wd	Q23959932
+sub	wd	Q28555911	wd	Q6005984
+sub	wd	Q7189713	wd	Q3505845
+sub	wd	Q7189713	wd	Q813912
+sub	wd	Q621184	wd	Q2141565
+sub	wd	Q621184	wd	Q123928941
+sub	wd	Q87075524	wd	Q122764215
+sub	wd	Q87075524	wd	Q1132455
+sub	wd	Q567555	wd	Q483247
+sub	wd	Q64732777	wd	Q1322005
+sub	wd	Q64732777	wd	Q1293220
+sub	wd	Q17320256	wd	Q111752858
+sub	wd	Q17320256	wd	Q1293220
+sub	wd	Q116505632	wd	Q21146257
+sub	wd	Q151885	wd	Q7048977
+sub	wd	Q151885	wd	Q1272626
+sub	wd	Q151885	wd	Q7551287
+sub	wd	Q11268999	wd	Q2995644
+sub	wd	Q96253971	wd	Q21146257
+sub	wd	Q19478619	wd	Q16889133
+sub	wd	Q16889133	wd	Q5127848
+sub	wd	Q2901852	wd	Q11173
+sub	wd	Q47154513	wd	Q72070508
+sub	wd	Q23958852	wd	Q23958852
+sub	wd	Q19478619	wd	Q151885
+inst	wd	Q11344	wd	Q17339814
+inst	wd	Q11173	wd	Q17339814
+inst	wd	Q12136	wd	Q130459448
+inst	wd	Q11367	wd	Q74892521
+inst	wd	Q578779	wd	Q17339814
+inst	wd	Q2057971	wd	Q130286945
+inst	wd	Q2438541	wd	Q5962346
+inst	wd	Q24017465	wd	Q24027474
+inst	wd	Q7189713	wd	Q130459448
+inst	wd	Q87075524	wd	Q101208084
+inst	wd	Q116505632	wd	Q19478619
+inst	wd	Q151885	wd	Q23958852
+inst	wd	Q96253971	wd	Q19478619
+inst	wd	Q19478619	wd	Q19868531
+inst	wd	Q16889133	wd	Q23958852
+inst	wd	Q16889133	wd	Q115490628
+inst	wd	Q47154513	wd	Q24017465
+inst	wd	Q72070508	wd	Q24017465

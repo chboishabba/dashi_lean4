@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "Wikibase core datatype",
+  "Wikibase default datatype",
+  "Wikibase built-in datatype"
+ ],
+ "canonical": "Q115463072",
+ "description": "datatype that is built into the Wikibase software (as opposed to defined via an extension)",
+ "id": "Q115463072",
+ "label": "Wikibase builtin datatype"
+}

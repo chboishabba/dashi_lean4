@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "kind of tool",
+  "tool-type"
+ ],
+ "canonical": "Q123588392",
+ "description": "Wikidata metaclass for tool, equipment, instrument and appliance including physical, virtual, and abstract objects",
+ "id": "Q123588392",
+ "label": "type of tool"
+}

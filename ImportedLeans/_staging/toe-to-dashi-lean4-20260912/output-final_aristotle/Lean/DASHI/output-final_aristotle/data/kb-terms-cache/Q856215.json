@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "indexed set",
+  "family"
+ ],
+ "canonical": "Q856215",
+ "description": "collection of objects, each associated with an index from some index set",
+ "id": "Q856215",
+ "label": "indexed family"
+}

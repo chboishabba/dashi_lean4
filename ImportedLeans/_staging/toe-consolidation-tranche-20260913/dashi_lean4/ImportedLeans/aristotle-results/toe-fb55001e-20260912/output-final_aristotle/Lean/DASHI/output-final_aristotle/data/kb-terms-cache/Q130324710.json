@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "relation type"
+ ],
+ "canonical": "Q130324710",
+ "description": "metaclass for relation or association between different objects, processes or abstractions",
+ "id": "Q130324710",
+ "label": "type of relation"
+}

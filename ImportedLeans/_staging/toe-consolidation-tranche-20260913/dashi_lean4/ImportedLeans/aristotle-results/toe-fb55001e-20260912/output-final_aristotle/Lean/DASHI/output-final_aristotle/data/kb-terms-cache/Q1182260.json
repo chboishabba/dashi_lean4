@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "deduplication",
+  "dedupe",
+  "dedup",
+  "deduping"
+ ],
+ "canonical": "Q1182260",
+ "description": "data processing technique to eliminate duplicate copies of repeating data",
+ "id": "Q1182260",
+ "label": "data deduplication"
+}

@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "resource"
+ ],
+ "canonical": "Q110854677",
+ "description": "software resource accesible by a network",
+ "id": "Q110854677",
+ "label": "network resource"
+}

@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "Wikidata property type",
+  "Wikidata property"
+ ],
+ "canonical": "Q107649491",
+ "description": "Wikidata metaclass for properties",
+ "id": "Q107649491",
+ "label": "type of Wikidata property"
+}

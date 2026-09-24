@@ -1,0 +1,17 @@
+{
+ "aliases": [
+  "geographical object",
+  "geographic feature",
+  "geographic object",
+  "topological feature",
+  "topological object",
+  "topologic feature",
+  "topologic object",
+  "terrain feature",
+  "terrain object"
+ ],
+ "canonical": "Q618123",
+ "description": "components of planets that can be geographically located",
+ "id": "Q618123",
+ "label": "geographical feature"
+}

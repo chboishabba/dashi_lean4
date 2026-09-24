@@ -1,0 +1,2 @@
+/latest/*  /data/:splat  302
+/.well-known/ontology  /manifest.json  302

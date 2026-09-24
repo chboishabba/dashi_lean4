@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "FO formula",
+  "FOL formula"
+ ],
+ "canonical": "Q110765110",
+ "description": "well-formed formula belonging to a first-order language",
+ "id": "Q110765110",
+ "label": "first-order formula"
+}

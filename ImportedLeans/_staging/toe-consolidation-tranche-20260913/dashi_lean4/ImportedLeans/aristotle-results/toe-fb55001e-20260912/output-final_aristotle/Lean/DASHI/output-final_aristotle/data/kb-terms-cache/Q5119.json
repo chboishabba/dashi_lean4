@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "capital"
+ ],
+ "canonical": "Q5119",
+ "description": "primary governing city of a top-level (country) or first-level and second-level subdivision (country, state, province, regency, etc) political entity",
+ "id": "Q5119",
+ "label": "capital city"
+}

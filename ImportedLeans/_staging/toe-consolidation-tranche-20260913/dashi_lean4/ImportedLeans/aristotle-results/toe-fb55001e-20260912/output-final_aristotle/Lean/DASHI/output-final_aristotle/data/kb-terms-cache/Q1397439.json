@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "fibered product",
+  "fibred product"
+ ],
+ "canonical": "Q1397439",
+ "description": "category-theoretic limit of a diagram of the form 𝑋→𝑍←𝑌",
+ "id": "Q1397439",
+ "label": "pullback"
+}

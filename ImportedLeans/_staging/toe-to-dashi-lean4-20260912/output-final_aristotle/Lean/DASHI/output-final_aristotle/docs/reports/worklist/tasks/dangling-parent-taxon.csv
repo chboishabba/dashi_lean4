@@ -1,0 +1,2 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/taxa-defects.tkb","taxon","dangling-parent-taxon","error","suggested-fix","Q2","","Q97","","","`parent taxon` (P171) statement with an undeclared endpoint","declare the missing taxon, or delete the statement"

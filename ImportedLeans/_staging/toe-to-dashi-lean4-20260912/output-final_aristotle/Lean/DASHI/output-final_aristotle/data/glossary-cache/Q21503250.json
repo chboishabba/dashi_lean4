@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "Q21503250",
+ "description": "type of constraint for Wikidata properties: used to specify that the item described by such properties should be a subclass or instance of a given type",
+ "id": "Q21503250",
+ "kind": "item",
+ "label": "subject type constraint"
+}

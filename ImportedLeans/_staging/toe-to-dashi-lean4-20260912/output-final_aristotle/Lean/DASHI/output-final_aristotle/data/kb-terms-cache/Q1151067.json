@@ -1,0 +1,16 @@
+{
+ "aliases": [
+  "instruction",
+  "guideline",
+  "regulation",
+  "law",
+  "human-made rule",
+  "rules",
+  "requirement",
+  "prescription"
+ ],
+ "canonical": "Q1151067",
+ "description": "prescription, including laws, regulations, instructions, guidelines, and social conventions; determinate method for performing any operation",
+ "id": "Q1151067",
+ "label": "rule"
+}

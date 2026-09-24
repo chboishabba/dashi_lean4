@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "Q21510855",
+ "description": "type of constraint for Wikidata properties: used to specify that the referenced item has to refer back to this item with the given inverse property",
+ "id": "Q21510855",
+ "kind": "item",
+ "label": "inverse constraint"
+}

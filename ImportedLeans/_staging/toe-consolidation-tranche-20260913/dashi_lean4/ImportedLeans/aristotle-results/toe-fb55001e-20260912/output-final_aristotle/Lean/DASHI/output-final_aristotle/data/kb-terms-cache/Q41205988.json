@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "octet",
+  "octuple",
+  "8-uplet"
+ ],
+ "canonical": "Q41205988",
+ "description": "tuple of specific length (tuple length n=8)",
+ "id": "Q41205988",
+ "label": "8-tuple"
+}

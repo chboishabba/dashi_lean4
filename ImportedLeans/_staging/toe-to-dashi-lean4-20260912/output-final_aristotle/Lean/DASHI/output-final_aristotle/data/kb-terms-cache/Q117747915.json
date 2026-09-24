@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "role"
+ ],
+ "canonical": "Q117747915",
+ "description": "role that an entity plays with respect to a specific action or state as part of a coherent scene (i.e. semantic frame). The role may or may not be evoked by a specific lexical item such as a verb.",
+ "id": "Q117747915",
+ "label": "semantic role"
+}

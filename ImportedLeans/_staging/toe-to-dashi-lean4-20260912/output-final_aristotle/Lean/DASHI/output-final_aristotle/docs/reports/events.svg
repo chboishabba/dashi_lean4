@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="208" viewBox="0 0 860 208" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif">
+<rect width="860" height="208" fill="#ffffff"/>
+<style>.ttl{font-size:20px;font-weight:600;fill:#1b1b1f}.sub{font-size:12px;fill:#5b5b66}.lbl{font-size:12px;fill:#1b1b1f}.cnt{font-size:12px;fill:#5b5b66}</style>
+<text x="28" y="44" class="ttl">Wikidata report — events</text>
+<text x="28" y="66" class="sub">61 error(s), 9 warning(s) in data/events.wdkb</text>
+<line x1="261" y1="92" x2="261" y2="174" stroke="#d7d7de"/>
+<g class="bar"><text x="250" y="109" text-anchor="end" class="lbl">level-inst</text><rect x="262" y="99" width="520" height="16" rx="3" fill="#a4262c"/><text x="790" y="112" class="cnt">31</text></g>
+<g class="bar"><text x="250" y="135" text-anchor="end" class="lbl">level-sub</text><rect x="262" y="125" width="503" height="16" rx="3" fill="#a4262c"/><text x="773" y="138" class="cnt">30</text></g>
+<g class="bar"><text x="250" y="161" text-anchor="end" class="lbl">redundant-sub</text><rect x="262" y="151" width="150" height="16" rx="3" fill="#d8a200"/><text x="420" y="164" class="cnt">9</text></g>
+</svg>

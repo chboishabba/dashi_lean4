@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "tuple",
+  "ordered tuplet",
+  "ordered list",
+  "ordered n-tuple",
+  "n-tuple"
+ ],
+ "canonical": "Q600590",
+ "description": "finite ordered list of elements",
+ "id": "Q600590",
+ "label": "𝑛-tuple"
+}

@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P1545",
+ "description": "position of an item in its parent series (most frequently a 1-based index), generally to be used as a qualifier (different from \"rank\" defined as a class, and from \"ranking\" defined as a property for evaluating a quality)",
+ "id": "P1545",
+ "kind": "property",
+ "label": "series ordinal"
+}

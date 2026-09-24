@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "software entity",
+  "software part",
+  "data object"
+ ],
+ "canonical": "Q110832782",
+ "description": "part of a software application accessible, whether it be a data or a program",
+ "id": "Q110832782",
+ "label": "software resource"
+}

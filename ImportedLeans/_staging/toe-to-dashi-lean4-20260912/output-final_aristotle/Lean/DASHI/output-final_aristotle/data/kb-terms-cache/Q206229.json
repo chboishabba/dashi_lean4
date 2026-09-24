@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "biological molecule",
+  "natural compound",
+  "biogenic molecule",
+  "biogenic compound"
+ ],
+ "canonical": "Q206229",
+ "description": "molecule that is produced by a living organism",
+ "id": "Q206229",
+ "label": "biomolecule"
+}

@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "module over a ring"
+ ],
+ "canonical": "Q18848",
+ "description": "generalization of vector space, with scalars in a ring instead of a field",
+ "id": "Q18848",
+ "label": "module"
+}

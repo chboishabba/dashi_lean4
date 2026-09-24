@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "number having finite decimal representation",
+  "terminating decimal",
+  "number with finite decimal representations",
+  "number with terminating decimal representation"
+ ],
+ "canonical": "Q8424307",
+ "description": "number that can be represented with a finite number of decimal places",
+ "id": "Q8424307",
+ "label": "number with finite decimal representation"
+}

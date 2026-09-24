@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "gathering",
+  "concentration",
+  "swarm",
+  "group"
+ ],
+ "canonical": "Q21157127",
+ "description": "collection of entities that are physically or conceptually close to each other",
+ "id": "Q21157127",
+ "label": "cluster"
+}

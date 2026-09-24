@@ -1,0 +1,64 @@
+name	douglas-adams
+item	wd	Q42
+item	wd	Q5
+item	wd	Q2250224
+item	wd	Q215627
+item	wd	Q795052
+item	wd	Q164509
+item	wd	Q72638
+item	wd	Q729
+item	wd	Q154954
+item	wd	Q3778211
+item	wd	Q106559804
+item	wd	Q2135465
+item	wd	Q10541491
+item	wd	Q134601860
+item	wd	Q111360549
+item	wd	Q5891007
+item	wd	Q15978631
+item	wd	Q134264207
+item	wd	Q55983715
+item	wd	Q21871294
+item	wd	Q19478619
+level	0	wd	Q42
+level	1	wd	Q5
+level	1	wd	Q2250224
+level	1	wd	Q215627
+level	1	wd	Q795052
+level	1	wd	Q164509
+level	1	wd	Q72638
+level	1	wd	Q729
+level	1	wd	Q154954
+level	1	wd	Q3778211
+level	1	wd	Q106559804
+level	2	wd	Q2135465
+level	2	wd	Q10541491
+level	2	wd	Q134601860
+level	2	wd	Q111360549
+level	1	wd	Q5891007
+level	1	wd	Q15978631
+level	2	wd	Q134264207
+level	2	wd	Q55983715
+level	2	wd	Q21871294
+level	3	wd	Q19478619
+sub	wd	Q5	wd	Q2250224
+sub	wd	Q5	wd	Q164509
+sub	wd	Q5	wd	Q154954
+sub	wd	Q5	wd	Q5891007
+sub	wd	Q2250224	wd	Q215627
+sub	wd	Q2250224	wd	Q795052
+sub	wd	Q164509	wd	Q72638
+sub	wd	Q164509	wd	Q729
+sub	wd	Q154954	wd	Q3778211
+sub	wd	Q154954	wd	Q106559804
+sub	wd	Q5891007	wd	Q15978631
+sub	wd	Q55983715	wd	Q21871294
+inst	wd	Q42	wd	Q5
+inst	wd	Q5	wd	Q55983715
+inst	wd	Q154954	wd	Q2135465
+inst	wd	Q154954	wd	Q10541491
+inst	wd	Q154954	wd	Q134601860
+inst	wd	Q154954	wd	Q111360549
+inst	wd	Q5891007	wd	Q134264207
+inst	wd	Q5891007	wd	Q55983715
+inst	wd	Q55983715	wd	Q19478619

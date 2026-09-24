@@ -1,0 +1,15 @@
+{
+ "aliases": [
+  "Wikidata properties representing a unique identifier",
+  "Wikidata property representing a unique identifier",
+  "Wikidata property for a unique identifier",
+  "Wikidata property for an external identifier",
+  "identifier property",
+  "unique identifier",
+  "external-id"
+ ],
+ "canonical": "Q19847637",
+ "description": "Wikidata property to identify something in an external source",
+ "id": "Q19847637",
+ "label": "Wikidata property for an identifier"
+}

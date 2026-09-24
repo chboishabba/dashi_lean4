@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "multiple people",
+  "multiple persons",
+  "person group",
+  "group of people"
+ ],
+ "canonical": "Q134601727",
+ "description": "any set of beings with personhood (for groups of humans, use Q16334295 [group of humans] with P31 [instance of])",
+ "id": "Q134601727",
+ "label": "group of persons"
+}

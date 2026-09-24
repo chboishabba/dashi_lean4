@@ -1,0 +1,225 @@
+import Mathlib
+
+/-!
+# Bounded reachability for finitely presented graphs
+
+This module provides the executable transitive-closure engine used by the
+Wikidata ontology development: a fuel-indexed boolean search `reachIn` together
+with an *exactness* theorem saying that, when the fuel is at least the number of
+possible edge targets, the boolean search decides the reflexive transitive
+closure of the one-step relation.
+
+The exactness theorem is what makes the downstream `isSubclassOf_iff` /
+`isInstanceOf_iff` results possible: the executable checker and the declarative
+relation are provably the same thing.
+-/
+
+namespace Wikidata.Reach
+
+variable {α : Type} [DecidableEq α]
+
+/-- The one-step relation induced by a successor function. -/
+def Step (succ : α → List α) (a b : α) : Prop := b ∈ succ a
+
+instance (succ : α → List α) (a b : α) : Decidable (Step succ a b) :=
+  inferInstanceAs (Decidable (b ∈ succ a))
+
+/-- Fuel-bounded reachability search: `reachIn succ n a b` is `true` iff `b` can
+be reached from `a` by at most `n` steps. -/
+def reachIn (succ : α → List α) : Nat → α → α → Bool
+  | 0, a, b => a == b
+  | n + 1, a, b => (a == b) || (succ a).any (fun c => reachIn succ n c b)
+
+/-- A walk from `a` to `b`: `l` lists the vertices visited after `a`. -/
+def IsWalk (succ : α → List α) (a b : α) (l : List α) : Prop :=
+  List.IsChain (Step succ) (a :: l) ∧ (a :: l).getLast? = some b
+
+section Chains
+
+variable {R : α → α → Prop}
+
+/-- Splitting a list that is not duplicate-free. -/
+theorem exists_dup_split :
+    ∀ {l : List α}, ¬ l.Nodup → ∃ (l₁ : List α) (x : α) (l₂ : List α), l = l₁ ++ x :: l₂ ∧ x ∈ l₂
+  | [], h => absurd List.nodup_nil h
+  | a :: t, h => by
+      by_cases hat : a ∈ t
+      · exact ⟨[], a, t, rfl, hat⟩
+      · have ht : ¬ t.Nodup := by
+          intro ht
+          exact h (List.nodup_cons.2 ⟨hat, ht⟩)
+        obtain ⟨l₁, x, l₂, rfl, hx⟩ := exists_dup_split ht
+        exact ⟨a :: l₁, x, l₂, rfl, hx⟩
+
+/-- Loop removal: every chain can be shortened to a duplicate-free chain with the
+same endpoints. -/
+theorem exists_nodup_chain :
+    ∀ (l : List α), List.IsChain R l →
+      ∃ l', List.IsChain R l' ∧ l'.Nodup ∧ l'.head? = l.head? ∧ l'.getLast? = l.getLast? ∧
+        l' ⊆ l := by
+  intro l
+  induction hn : l.length using Nat.strong_induction_on generalizing l with
+  | _ n ih =>
+    intro hchain
+    by_cases hnd : l.Nodup
+    · exact ⟨l, hchain, hnd, rfl, rfl, List.Subset.refl l⟩
+    · obtain ⟨l₁, x, l₂, rfl, hx⟩ := exists_dup_split hnd
+      obtain ⟨B, C, rfl⟩ := List.append_of_mem hx
+      have hsplit : l₁ ++ x :: (B ++ x :: C) = l₁ ++ ((x :: B) ++ (x :: C)) := by simp
+      have hchain' : List.IsChain R (l₁ ++ x :: C) := by
+        rw [List.isChain_append]
+        rw [hsplit, List.isChain_append] at hchain
+        obtain ⟨h1, h2, h3⟩ := hchain
+        rw [List.isChain_append] at h2
+        refine ⟨h1, h2.2.1, ?_⟩
+        intro u hu v hv
+        have := h3 u hu x (by simp)
+        simp only [List.head?_cons, Option.mem_def, Option.some.injEq] at hv
+        exact hv ▸ this
+      have hlen : (l₁ ++ x :: C).length < (l₁ ++ x :: (B ++ x :: C)).length := by
+        simp only [List.length_append, List.length_cons]
+        omega
+      have hhead : (l₁ ++ x :: C).head? = (l₁ ++ x :: (B ++ x :: C)).head? := by
+        cases l₁ with
+        | nil => simp
+        | cons a t => simp
+      have hlast : (l₁ ++ x :: C).getLast? = (l₁ ++ x :: (B ++ x :: C)).getLast? := by
+        have h1 : (l₁ ++ x :: C).getLast? = (x :: C).getLast? :=
+          List.getLast?_append_cons _ _ _
+        have h2 : (l₁ ++ x :: (B ++ x :: C)).getLast? = (x :: C).getLast? := by
+          rw [hsplit, ← List.append_assoc]
+          exact List.getLast?_append_cons _ _ _
+        rw [h1, h2]
+      have hsub : (l₁ ++ x :: C) ⊆ (l₁ ++ x :: (B ++ x :: C)) := by
+        intro y hy
+        simp only [List.mem_append, List.mem_cons] at hy ⊢
+        tauto
+      obtain ⟨l', hc, hnd', hh, hl, hs⟩ := ih _ (hn ▸ hlen) (l₁ ++ x :: C) rfl hchain'
+      exact ⟨l', hc, hnd', hh.trans hhead, hl.trans hlast, hs.trans hsub⟩
+
+omit [DecidableEq α] in
+/-- In a chain, every element after the head has a predecessor. -/
+theorem mem_tail_has_pred :
+    ∀ (a : α) (t : List α), List.IsChain R (a :: t) → ∀ x ∈ t, ∃ y, R y x := by
+  intro a t
+  induction t generalizing a with
+  | nil => intro _ x hx; simp at hx
+  | cons h t ih =>
+      intro hchain x hx
+      rw [List.isChain_cons] at hchain
+      have hah : R a h := hchain.1 h (by simp)
+      rcases List.mem_cons.1 hx with rfl | hx'
+      · exact ⟨a, hah⟩
+      · exact ih h hchain.2 x hx'
+
+end Chains
+
+section Walks
+
+variable {succ : α → List α}
+
+omit [DecidableEq α] in
+theorem reflTransGen_of_walk :
+    ∀ (l : List α) (a b : α), IsWalk succ a b l → Relation.ReflTransGen (Step succ) a b := by
+  intro l
+  induction l with
+  | nil =>
+      intro a b h
+      have : a = b := by simpa using h.2
+      exact this ▸ Relation.ReflTransGen.refl
+  | cons c t ih =>
+      intro a b h
+      obtain ⟨hchain, hlast⟩ := h
+      rw [List.isChain_cons] at hchain
+      have hac : Step succ a c := hchain.1 c (by simp)
+      have : IsWalk succ c b t := ⟨hchain.2, by simpa using hlast⟩
+      exact Relation.ReflTransGen.head hac (ih c b this)
+
+omit [DecidableEq α] in
+theorem walk_of_reflTransGen {a b : α} (h : Relation.ReflTransGen (Step succ) a b) :
+    ∃ l, IsWalk succ a b l := by
+  induction h using Relation.ReflTransGen.head_induction_on with
+  | refl => exact ⟨[], by simp [IsWalk]⟩
+  | @head a c hac _ ih =>
+      obtain ⟨l, hchain, hlast⟩ := ih
+      refine ⟨c :: l, ?_, ?_⟩
+      · rw [List.isChain_cons]
+        refine ⟨?_, hchain⟩
+        intro y hy
+        simp only [List.head?_cons, Option.mem_def, Option.some.injEq] at hy
+        exact hy ▸ hac
+      · simpa using hlast
+
+theorem reachIn_of_walk :
+    ∀ (n : Nat) (a b : α) (l : List α), IsWalk succ a b l → l.length ≤ n →
+      reachIn succ n a b = true := by
+  intro n
+  induction n with
+  | zero =>
+      intro a b l h hlen
+      have hl : l = [] := List.length_eq_zero_iff.1 (Nat.le_zero.1 hlen)
+      subst hl
+      have : a = b := by simpa using h.2
+      simp [reachIn, this]
+  | succ n ih =>
+      intro a b l h hlen
+      cases l with
+      | nil =>
+          have : a = b := by simpa using h.2
+          simp [reachIn, this]
+      | cons c t =>
+          obtain ⟨hchain, hlast⟩ := h
+          rw [List.isChain_cons] at hchain
+          have hac : c ∈ succ a := hchain.1 c (by simp)
+          have hw : IsWalk succ c b t := ⟨hchain.2, by simpa using hlast⟩
+          have hrec := ih c b t hw (by simpa using Nat.le_of_succ_le_succ hlen)
+          simp only [reachIn, Bool.or_eq_true, List.any_eq_true]
+          exact Or.inr ⟨c, hac, hrec⟩
+
+theorem reachIn_sound :
+    ∀ (n : Nat) (a b : α), reachIn succ n a b = true → Relation.ReflTransGen (Step succ) a b := by
+  intro n
+  induction n with
+  | zero =>
+      intro a b h
+      have : a = b := by simpa [reachIn] using h
+      exact this ▸ Relation.ReflTransGen.refl
+  | succ n ih =>
+      intro a b h
+      simp only [reachIn, Bool.or_eq_true, beq_iff_eq, List.any_eq_true] at h
+      rcases h with rfl | ⟨c, hc, hrec⟩
+      · exact Relation.ReflTransGen.refl
+      · exact Relation.ReflTransGen.head hc (ih c b hrec)
+
+end Walks
+
+/-- **Exactness of the bounded search.**  If every edge target lies in `objs`,
+then searching to depth `objs.length` decides the reflexive transitive closure of
+the one-step relation. -/
+theorem reachIn_iff (succ : α → List α) (objs : List α)
+    (hobjs : ∀ a b, b ∈ succ a → b ∈ objs) (a b : α) :
+    reachIn succ objs.length a b = true ↔ Relation.ReflTransGen (Step succ) a b := by
+  constructor
+  · intro h
+    exact reachIn_sound _ a b h
+  · intro h
+    obtain ⟨l, hw⟩ := walk_of_reflTransGen h
+    obtain ⟨l', hc, hnd, hh, hl, hs⟩ := exists_nodup_chain (a :: l) hw.1
+    cases l' with
+    | nil => simp at hh
+    | cons a' t =>
+        have ha' : a' = a := by simpa using hh
+        subst ha'
+        have hwalk : IsWalk succ a' b t := ⟨hc, by rw [hl]; exact hw.2⟩
+        have htsub : t ⊆ objs := by
+          intro x hx
+          obtain ⟨y, hy⟩ := mem_tail_has_pred a' t hc x hx
+          exact hobjs y x hy
+        have htnd : t.Nodup := (List.nodup_cons.1 hnd).2
+        have hlen : t.length ≤ objs.length := by
+          calc t.length = t.toFinset.card := (List.toFinset_card_of_nodup htnd).symm
+            _ ≤ objs.toFinset.card := Finset.card_le_card (by simpa [Finset.subset_iff] using htsub)
+            _ ≤ objs.length := List.toFinset_card_le objs
+        exact reachIn_of_walk objs.length a' b t hwalk hlen
+
+end Wikidata.Reach

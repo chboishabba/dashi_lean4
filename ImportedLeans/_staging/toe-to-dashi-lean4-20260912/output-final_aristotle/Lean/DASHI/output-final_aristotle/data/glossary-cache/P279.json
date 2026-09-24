@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P279",
+ "description": "this item is a subclass (subset) of that item; ALL instances of this item are instances of that item; different from P31 (instance of), e.g.: volcano is a subclass of mountain; Everest is an instance of mountain",
+ "id": "P279",
+ "kind": "property",
+ "label": "subclass of"
+}

@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "quantity type"
+ ],
+ "canonical": "Q71758646",
+ "description": "first-order metaclass of quantities; instances include the classes physical quantity, chemical quantity, base quantity, intensive quantity, ...",
+ "id": "Q71758646",
+ "label": "general quantity"
+}

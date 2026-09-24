@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "Q identifier",
+  "QID"
+ ],
+ "canonical": "Q115642124",
+ "description": "identifier for an item in Wikibase, prefixed by a Q",
+ "id": "Q115642124",
+ "label": "Wikibase Q identifier"
+}

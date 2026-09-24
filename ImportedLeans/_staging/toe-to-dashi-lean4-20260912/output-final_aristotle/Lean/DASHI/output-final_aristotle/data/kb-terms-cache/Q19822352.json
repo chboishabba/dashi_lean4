@@ -1,0 +1,17 @@
+{
+ "aliases": [
+  "stepmother or stepfather",
+  "step-parent",
+  "step parent",
+  "stepmother",
+  "step-mother",
+  "step mother",
+  "stepfather",
+  "step-father",
+  "step father"
+ ],
+ "canonical": "Q19822352",
+ "description": "parent's spouse who is not one's biological parent",
+ "id": "Q19822352",
+ "label": "stepparent"
+}

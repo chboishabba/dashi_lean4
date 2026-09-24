@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "continuous map",
+  "continuous application",
+  "continuous transformation"
+ ],
+ "canonical": "Q170058",
+ "description": "function such that the preimage of an open set is open",
+ "id": "Q170058",
+ "label": "continuous function"
+}

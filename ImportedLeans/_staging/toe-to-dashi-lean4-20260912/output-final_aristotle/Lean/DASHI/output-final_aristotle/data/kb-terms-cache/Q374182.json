@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "entailment",
+  "asserted relation",
+  "implies",
+  "logically implies",
+  "logical implication",
+  "=>"
+ ],
+ "canonical": "Q374182",
+ "description": "fundamental concept in logic",
+ "id": "Q374182",
+ "label": "logical consequence"
+}

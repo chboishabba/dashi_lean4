@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "wikibase:propertyType",
+  "property type",
+  "Wikibase data type",
+  "Wikidata data type",
+  "Wikidata datatype"
+ ],
+ "canonical": "Q19798645",
+ "description": "defines for Wikibase how correspondingly labelled data values are to be processed and displayed",
+ "id": "Q19798645",
+ "label": "Wikibase datatype"
+}

@@ -1,0 +1,2 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/taxa-defects.tkb","taxon","missing-rank","warning","suggested-fix","Q8","","","","","a declared taxon carries no `taxon rank`","add the `taxon rank` (P105) statement"

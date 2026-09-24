@@ -1,0 +1,181 @@
+info: RequestProject: no previous manifest, creating one from scratch
+info: mathlib: cloning https://github.com/leanprover-community/mathlib4.git
+info: mathlib: checking out revision '8f9d9cff6bd728b17a24e163c9402775d9e6a365'
+info: toolchain not updated; already up-to-date
+info: plausible: cloning https://github.com/leanprover-community/plausible
+info: plausible: checking out revision '55c8532eb21ec9f6d565d51d96b8ca50bd1fbef3'
+info: LeanSearchClient: cloning https://github.com/leanprover-community/LeanSearchClient
+info: LeanSearchClient: checking out revision 'c5d5b8fe6e5158def25cd28eb94e4141ad97c843'
+info: importGraph: cloning https://github.com/leanprover-community/import-graph
+info: importGraph: checking out revision '85b59af46828c029a9168f2f9c35119bd0721e6e'
+info: proofwidgets: cloning https://github.com/leanprover-community/ProofWidgets4
+info: proofwidgets: checking out revision 'be3b2e63b1bbf496c478cef98b86972a37c1417d'
+info: aesop: cloning https://github.com/leanprover-community/aesop
+info: aesop: checking out revision 'f642a64c76df8ba9cb53dba3b919425a0c2aeaf1'
+info: Qq: cloning https://github.com/leanprover-community/quote4
+info: Qq: checking out revision 'b8f98e9087e02c8553945a2c5abf07cec8e798c3'
+info: batteries: cloning https://github.com/leanprover-community/batteries
+info: batteries: checking out revision '495c008c3e3f4fb4256ff5582ddb3abf3198026f'
+info: Cli: cloning https://github.com/leanprover/lean4-cli
+info: Cli: checking out revision '4f10f47646cb7d5748d6f423f4a07f98f7bbcc9e'
+info: mathlib: running post-update hooks
+✔ [4/22] Built Batteries.Data.String.Basic (2.1s)
+✔ [5/22] Built Cache.Init (2.9s)
+✔ [6/22] Built Cache.Lean (3.1s)
+✔ [7/22] Built Batteries.Data.String.Basic:c.o (659ms)
+✔ [8/22] Built Cache.Lean:c.o (506ms)
+✔ [9/22] Built Cache.Init:c.o (670ms)
+✔ [10/22] Built Batteries.Data.Array.Match (3.1s)
+✔ [11/22] Built Batteries.Data.String.Matcher (748ms)
+✔ [12/22] Built Batteries.Data.Array.Match:c.o (982ms)
+✔ [13/22] Built Batteries.Data.String.Matcher:c.o (787ms)
+✔ [14/22] Built Cache.IO (2.7s)
+✔ [15/22] Built Cache.Hashing (1.6s)
+✔ [16/22] Built Cache.Hashing:c.o (2.4s)
+✔ [17/22] Built Cache.Requests (2.7s)
+✔ [18/22] Built Cache.Main (1.8s)
+✔ [19/22] Built Cache.IO:c.o (7.9s)
+✔ [20/22] Built Cache.Main:c.o (3.2s)
+✔ [21/22] Built Cache.Requests:c.o (7.2s)
+✔ [22/22] Built cache:exe (10s)
+Fetching ProofWidgets cloud release... done!
+Current branch: HEAD
+Using cache (Azure) from origin: leanprover-community/mathlib4
+No files to download
+Decompressing 8007 file(s) (3 already decompressed)
+Decompressed in 38371 ms
+Completed successfully!
+✔ [8026/8137] Built MoonshineFractran (5.3s)
+✔ [8027/8137] Built DashiPerf.Sample102 (6.3s)
+✔ [8028/8137] Built DashiPerf.Sample100 (6.5s)
+✔ [8029/8137] Built YangMillsContinuumGap (6.4s)
+✔ [8030/8137] Built AgdaMirror.MoonshineEarn (6.7s)
+✔ [8031/8137] Built DashiPerf.Schema (6.7s)
+✔ [8032/8137] Built DashiPerf.Sample101 (6.6s)
+✔ [8033/8137] Built DashiPerf.Audit (6.8s)
+✔ [8034/8137] Built AgdaMirror.Q (74s)
+✔ [8035/8137] Built AgdaMirror.TreeCCR (74s)
+✔ [8036/8137] Built AgdaMirror.SpinFromEvenClifford (74s)
+✔ [8037/8137] Built AgdaMirror.TypedResidualBasisDecomposition (75s)
+✔ [8038/8137] Built AgdaMirror.ConstraintAlgebraClosure (75s)
+✔ [8039/8137] Built SpectralClosure (75s)
+ℹ [8040/8137] Built NavierStokesClosure (75s)
+info: lean-baseline/NavierStokesClosure.lean:70:153: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+ℹ [8041/8137] Built YangMillsClosure (75s)
+info: lean-baseline/YangMillsClosure.lean:65:83: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+info: lean-baseline/YangMillsClosure.lean:66:58: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+✔ [8042/8137] Built AgdaMirror.SignatureDerivation (19s)
+✔ [8043/8137] Built AgdaMirror.CancellationPressure (19s)
+✔ [8044/8137] Built AgdaMirror.NoGlobalAttractor (19s)
+✔ [8045/8137] Built AgdaMirror.DashiMarkov (19s)
+✔ [8046/8137] Built AgdaMirror.QuotientSetoidSurface (20s)
+✔ [8047/8137] Built AgdaMirror.AlgebraCCR (20s)
+✔ [8048/8137] Built AgdaMirror.AuthorityBoundary (20s)
+✔ [8049/8137] Built AgdaMirror.AnomalyContracts (20s)
+✔ [8050/8137] Built AgdaMirror.SpinEmergence (16s)
+✔ [8051/8137] Built AgdaMirror.CliffordUniversalProperty (16s)
+✔ [8052/8137] Built AgdaMirror.UVFiniteness (17s)
+✔ [8053/8137] Built AgdaMirror.CCRFromProjection (17s)
+✔ [8054/8137] Built AgdaMirror.GaugeGroupContract (17s)
+✔ [8055/8137] Built AgdaMirror.JoinSurface (17s)
+✔ [8056/8137] Built AgdaMirror.ConstraintClosure (18s)
+✔ [8057/8137] Built AgdaMirror.QuantumInterface (18s)
+✔ [8058/8137] Built AgdaMirror.EnergyMetric (17s)
+✔ [8059/8137] Built AgdaMirror.LensKernel (18s)
+✔ [8060/8137] Built AgdaMirror.ProjectionOrthogonality (18s)
+✔ [8061/8137] Built AgdaMirror.DimensionFixedPoint (19s)
+✔ [8062/8137] Built AgdaMirror.OperatorMonoidClosed (19s)
+✔ [8063/8137] Built AgdaMirror.CoprimeLayer (19s)
+✔ [8064/8137] Built AgdaMirror.KernelMonoid (20s)
+✔ [8065/8137] Built AgdaMirror.OperatorTypes (20s)
+✔ [8066/8137] Built AgdaMirror.SWAR (16s)
+✔ [8067/8137] Built AgdaMirror.Ultrametric (16s)
+✔ [8068/8137] Built AgdaMirror.LoomRelationAlgebra (20s)
+✔ [8069/8137] Built AgdaMirror.Base369 (18s)
+✔ [8070/8137] Built AgdaMirror.DASHIValuation (22s)
+✔ [8071/8137] Built AgdaMirror.TenfoldBridges (18s)
+✔ [8072/8137] Built DashiPerf (760ms)
+✔ [8073/8137] Built AgdaMirror.Overflow (20s)
+✔ [8074/8137] Built Main (1.8s)
+✔ [8075/8137] Built AgdaMirror.UFTC_Lattice (21s)
+✔ [8076/8137] Built AgdaMirror.CRTPeriod (15s)
+✔ [8077/8137] Built AgdaMirror.Moonshine (14s)
+✔ [8078/8137] Built AgdaMirror.JFixedPoint (17s)
+✔ [8079/8137] Built AgdaMirror.MonsterOntos (21s)
+✔ [8080/8137] Built AgdaMirror.UniversalOperatorBasis (16s)
+✔ [8081/8137] Built ClosureEndToEnd (18s)
+✔ [8082/8137] Built AgdaMirror.DimensionFixedPointInstance (19s)
+✔ [8083/8137] Built AgdaMirror.QuantumUnitary (18s)
+✔ [8084/8137] Built AgdaMirror.ProjectionVsInvertible (18s)
+✔ [8085/8137] Built AgdaMirror.Contraction (18s)
+✔ [8086/8137] Built AgdaMirror.DASHIAlgebra (20s)
+✔ [8087/8137] Built AgdaMirror.MonsterProjection15 (22s)
+✔ [8088/8137] Built AgdaMirror.LogicTlurey (21s)
+✔ [8089/8137] Built AgdaMirror.DeltaGrowth (20s)
+✔ [8090/8137] Built AgdaMirror.MonsterWalk (24s)
+✔ [8091/8137] Built AgdaMirror.ValuationLemmas (22s)
+✔ [8092/8137] Built AgdaMirror.MoonshineBridge (17s)
+✔ [8093/8137] Built AgdaMirror.VpTrue (21s)
+✔ [8094/8137] Built AgdaMirror.Scaffolding (20s)
+✔ [8095/8137] Built Main11 (17s)
+✔ [8096/8137] Built AgdaMirror.CRTJFixedPointBridge (25s)
+✔ [8097/8137] Built AgdaMirror.GodelLattice (23s)
+✔ [8098/8137] Built AgdaMirror.PhysicsSignature (23s)
+✔ [8099/8137] Built AgdaMirror.TrackedCoprimeTable (23s)
+✔ [8100/8137] Built AgdaMirror.QuantumMeasurement (20s)
+✔ [8101/8137] Built AgdaMirror.FixedPoint (18s)
+✔ [8102/8137] Built AgdaMirror.TritBridge (15s)
+✔ [8103/8137] Built AgdaMirror.RealTernaryCarrier (15s)
+✔ [8104/8137] Built AgdaMirror.MonsterGroups (16s)
+✔ [8105/8137] Built AgdaMirror.HalfTrit (17s)
+✔ [8106/8137] Built AgdaMirror.TetralemmaBridge (19s)
+✔ [8107/8137] Built AgdaMirror.StageQuotient (21s)
+✔ [8108/8137] Built AgdaMirror.MonsterVectors (17s)
+✔ [8109/8137] Built AgdaMirror.UnitaryVsCollapse (17s)
+✔ [8110/8137] Built AgdaMirror.ArithmeticIntegerEmbedding (17s)
+✔ [8111/8137] Built AgdaMirror.Vec15Order (16s)
+✔ [8112/8137] Built AgdaMirror.PhysicsConformance (14s)
+✔ [8113/8137] Built AgdaMirror.NormalizeAdd (15s)
+✔ [8114/8137] Built AgdaMirror.ArithmeticCoprimeLayer (16s)
+✔ [8115/8137] Built AgdaMirror.HalfTritIndexed (15s)
+✔ [8116/8137] Built AgdaMirror.VpAddUnequal (16s)
+✔ [8117/8137] Built AgdaMirror.ArithmeticDeltaGrowth (16s)
+✔ [8118/8137] Built AgdaMirror.Vec15Descriptive (16s)
+✔ [8119/8137] Built AgdaMirror.NormalizeAddNonexpansive (14s)
+✔ [8120/8137] Built AgdaMirror.NormalizeAddSumPreservation (15s)
+✔ [8121/8137] Built AgdaMirror.CancellationPressureFromCanonical (15s)
+✔ [8122/8137] Built AgdaMirror.GlobalPressure (12s)
+✔ [8123/8137] Built AgdaMirror.Vec15Inference (13s)
+✔ [8124/8137] Built AgdaMirror.CancellationPressureRefinement (12s)
+✔ [8125/8137] Built AgdaMirror.DeltaInteraction (14s)
+✔ [8126/8137] Built AgdaMirror.TrackedSupport (13s)
+✔ [8127/8137] Built AgdaMirror.Vec15Robust (13s)
+✔ [8128/8137] Built AgdaMirror.PrimeIndexedPressure (7.6s)
+✔ [8129/8137] Built AgdaMirror.ActiveWallStructure (8.2s)
+✔ [8130/8137] Built AgdaMirror.WeightedPressure (8.3s)
+✔ [8131/8137] Built AgdaMirror.DeltaRarity (7.1s)
+✔ [8132/8137] Built AgdaMirror.MaxPressure (10s)
+✔ [8133/8137] Built AgdaMirror.KPrimeInteraction (7.2s)
+✔ [8134/8137] Built AgdaMirror.ActiveWallBounds (6.4s)
+✔ [8135/8137] Built AgdaMirror1 (6.0s)
+✔ [8136/8137] Built AgdaMirror (7.0s)
+Build completed successfully (8137 jobs).
+
+real	9m5.280s
+user	13m50.213s
+sys	7m41.659s

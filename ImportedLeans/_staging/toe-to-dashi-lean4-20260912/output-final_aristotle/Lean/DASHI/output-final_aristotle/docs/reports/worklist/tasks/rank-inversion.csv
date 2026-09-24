@@ -1,0 +1,5 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/taxa-defects.tkb","taxon","rank-inversion","error","needs-review","Q3","","Q2","","","`taxon rank` does not increase along a `parent taxon` statement","promote or demote one rank (see `TaxonRank.level`), or reverse the statement"
+"examples/taxa-defects.tkb","taxon","rank-inversion","error","needs-review","Q5","human","Q5","human","","`taxon rank` does not increase along a `parent taxon` statement","promote or demote one rank (see `TaxonRank.level`), or reverse the statement"
+"examples/taxa-defects.tkb","taxon","rank-inversion","error","needs-review","Q6","","Q7","","","`taxon rank` does not increase along a `parent taxon` statement","promote or demote one rank (see `TaxonRank.level`), or reverse the statement"
+"examples/taxa-defects.tkb","taxon","rank-inversion","error","needs-review","Q4","","Q1","","","`taxon rank` does not increase along a `parent taxon` statement","promote or demote one rank (see `TaxonRank.level`), or reverse the statement"

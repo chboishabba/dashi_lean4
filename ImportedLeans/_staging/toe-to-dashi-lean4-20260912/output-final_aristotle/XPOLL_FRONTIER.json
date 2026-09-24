@@ -1,0 +1,11 @@
+{
+  "adopted_new": 1822,
+  "adopted_new_complete": 1821,
+  "adopted_new_incomplete": 1,
+  "cross_lane_hubs": 573,
+  "dependency_incomplete": 90,
+  "missing_targets": 108,
+  "modules": 17521,
+  "modules_with_direct_missing": 37,
+  "shared_declaration_names": 290
+}

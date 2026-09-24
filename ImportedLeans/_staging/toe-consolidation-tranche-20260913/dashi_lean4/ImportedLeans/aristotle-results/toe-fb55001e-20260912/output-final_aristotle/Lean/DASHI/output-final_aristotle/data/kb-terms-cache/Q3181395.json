@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "information processing system"
+ ],
+ "canonical": "Q3181395",
+ "description": "system (be it electrical, mechanical, biological) which takes information (a sequence of enumerated symbols, states) in one form and processes (transforms, converts) it into another form, e.g. to statistics, by an algorithmic process",
+ "id": "Q3181395",
+ "label": "information processor"
+}

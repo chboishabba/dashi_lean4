@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "reasoning engine",
+  "rules engine",
+  "reasoner"
+ ],
+ "canonical": "Q3929429",
+ "description": "software able to infer logical consequences from a set of asserted facts or axioms",
+ "id": "Q3929429",
+ "label": "semantic reasoner"
+}

@@ -1,0 +1,27 @@
+tranche_title,relative_path,comparison_status,recommended_action
+TOE / DASHI source handoff,AnchoredGram.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,AxiomAudit.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,Duality.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,EndToEnd.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,EqualCardinality.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,FiniteReindex.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,FixedLocus.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,GramLedger.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,GronwallComparison.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,JMD.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,JMD/ArchitectureDynamics.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,JMD/FactorVecSheaf.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,JMD/MonsterMoonshine.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,MeanSplit.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,Observer.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,OggGrid.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,RateBlockSchur.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,RateBlockSchurPiCarrier.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,RiemannBridge.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,SchurBlock.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,SchurComplement.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,TernaryPhase.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,TraceNorm.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,TransverseGram.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,TritCarrier.lean,identical,retain_active_no_copy
+TOE / DASHI source handoff,TwoRegime.lean,identical,retain_active_no_copy

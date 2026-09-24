@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "right quasigroup",
+  "left quasigroup"
+ ],
+ "canonical": "Q1503423",
+ "description": "magma satisfying the Latin square property",
+ "id": "Q1503423",
+ "label": "quasigroup"
+}

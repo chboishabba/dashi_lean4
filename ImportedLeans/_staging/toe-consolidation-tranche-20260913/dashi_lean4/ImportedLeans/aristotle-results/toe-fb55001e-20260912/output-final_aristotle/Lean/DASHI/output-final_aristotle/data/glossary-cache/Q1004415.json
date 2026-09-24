@@ -1,0 +1,8 @@
+{
+ "article": "Runtime system",
+ "canonical": "Q1004415",
+ "description": "system that provides behavior needed by running code; primarily implements portions of an execution model",
+ "id": "Q1004415",
+ "kind": "item",
+ "label": "run-time system"
+}

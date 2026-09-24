@@ -1,0 +1,12 @@
+{
+ "aliases": [
+  "class of chemical compounds",
+  "chemical class",
+  "structural class of chemical compounds",
+  "structural class of ions"
+ ],
+ "canonical": "Q47154513",
+ "description": "set of chemical entities sharing a common structural feature to which is attached a variable part (or parts) defining a specific entity of the class",
+ "id": "Q47154513",
+ "label": "structural class of chemical entities"
+}

@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "IRI"
+ ],
+ "canonical": "Q424583",
+ "description": "identifier for resources made using Unicode/ISO 10646 characters specified by RFC 3987",
+ "id": "Q424583",
+ "label": "Internationalized Resource Identifier"
+}

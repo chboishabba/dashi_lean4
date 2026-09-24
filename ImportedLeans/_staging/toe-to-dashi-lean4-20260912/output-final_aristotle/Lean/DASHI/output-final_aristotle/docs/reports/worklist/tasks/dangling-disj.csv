@@ -1,0 +1,2 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/defects.skb","ontology","dangling-disj","error","suggested-fix","Q1","","Q998","","","disjointness declaration with an endpoint that is not a declared item","declare the missing item, or delete the declaration"

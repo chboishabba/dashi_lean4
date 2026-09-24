@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P40",
+ "description": "subject has object as child. Do not use for stepchildren—use \"relative\" (P1038), qualified with \"kinship to subject\" (P1039)",
+ "id": "P40",
+ "kind": "property",
+ "label": "child"
+}

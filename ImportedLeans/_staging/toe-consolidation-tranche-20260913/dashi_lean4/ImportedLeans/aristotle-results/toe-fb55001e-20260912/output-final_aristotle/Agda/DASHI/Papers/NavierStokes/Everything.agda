@@ -1,0 +1,54 @@
+module DASHI.Papers.NavierStokes.Everything where
+
+-- Navier--Stokes paper/interface ownership surface.
+-- Historical and current theorem-interface rounds remain live provenance.
+
+import DASHI.Papers.NavierStokes.TheoremInterface
+import DASHI.Papers.NavierStokes.ClayContractRound23
+import DASHI.Papers.NavierStokes.ClaimCorpusHighestAlphaRound24
+import DASHI.Papers.NavierStokes.CurrentTheoremInterfaceRound24
+import DASHI.Papers.NavierStokes.PhysicalCarrierSupportRound25
+import DASHI.Papers.NavierStokes.CurrentTheoremInterfaceRound25
+import DASHI.Papers.NavierStokes.GalerkinCriticalLedgerRound26
+import DASHI.Papers.NavierStokes.CurrentTheoremInterfaceRound26
+import DASHI.Papers.NavierStokes.ProjectorOperatorCoreRound27
+import DASHI.Papers.NavierStokes.CurrentTheoremInterfaceRound27
+import DASHI.Papers.NavierStokes.PhysicalCarrierPartitionRound28
+import DASHI.Papers.NavierStokes.CurrentTheoremInterfaceRound28
+import DASHI.Papers.NavierStokes.DependentFlowOwnerAnalysisRound29
+import DASHI.Papers.NavierStokes.CurrentTheoremInterfaceRound29
+import DASHI.Papers.NavierStokes.PhysicalGalerkinFlowRound30
+import DASHI.Papers.NavierStokes.PhysicalGalerkinConcreteRound30
+
+-- Exact theorem-interface continuation rounds discovered in the live tree.
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound53
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound63Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound64Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound65Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound66Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound67Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound69Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound70Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound71Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound72Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound73Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound74Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound76Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound77Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound78Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound79Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound80Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound82Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound83Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound86Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound90Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound103Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound104Exact
+import DASHI.Papers.NavierStokes.TheoremInterfaceRound105Exact
+
+-- Delivered by the 2026-09-12 NS source tranche; wired here on 2026-09-12.
+-- Constructive, postulate-free: exhibits an inhabitant of
+-- `FeffermanPeriodicClayStatementB` at the degenerate carrier, so inhabiting
+-- that family is not evidence for periodic regularity.  Not Agda-checked in
+-- the session that wired it (no Agda toolchain available there).
+import DASHI.Papers.NavierStokes.ClayCarrierVacuityAudit

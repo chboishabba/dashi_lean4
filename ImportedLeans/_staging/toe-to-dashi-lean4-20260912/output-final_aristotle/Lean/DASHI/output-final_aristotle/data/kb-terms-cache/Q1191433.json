@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "T3½ space",
+  "Tychonoff space"
+ ],
+ "canonical": "Q1191433",
+ "description": "topological space in which a point and a closed set are separable by a real-valued continuous function",
+ "id": "Q1191433",
+ "label": "completely regular space"
+}

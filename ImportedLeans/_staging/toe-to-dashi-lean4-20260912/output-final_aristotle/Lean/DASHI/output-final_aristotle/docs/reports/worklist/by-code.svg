@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="910" viewBox="0 0 860 910" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif">
+<rect width="860" height="910" fill="#ffffff"/>
+<style>.ttl{font-size:20px;font-weight:600;fill:#1b1b1f}.sub{font-size:12px;fill:#5b5b66}.lbl{font-size:12px;fill:#1b1b1f}.cnt{font-size:12px;fill:#5b5b66}</style>
+<text x="28" y="44" class="ttl">Wikidata worklist — By error type</text>
+<text x="28" y="66" class="sub">30 task(s), 7398 item(s) of work</text>
+<line x1="261" y1="92" x2="261" y2="876" stroke="#d7d7de"/>
+<g class="bar"><text x="250" y="109" text-anchor="end" class="lbl">level-sub</text><rect x="262" y="99" width="520" height="16" rx="3" fill="#a4262c"/><text x="790" y="112" class="cnt">3141</text></g>
+<g class="bar"><text x="250" y="135" text-anchor="end" class="lbl">level-inst</text><rect x="262" y="125" width="327" height="16" rx="3" fill="#a4262c"/><text x="597" y="138" class="cnt">1979</text></g>
+<g class="bar"><text x="250" y="161" text-anchor="end" class="lbl">no-parent</text><rect x="262" y="151" width="255" height="16" rx="3" fill="#d8a200"/><text x="525" y="164" class="cnt">1541</text></g>
+<g class="bar"><text x="250" y="187" text-anchor="end" class="lbl">childless-class</text><rect x="262" y="177" width="98" height="16" rx="3" fill="#d8a200"/><text x="368" y="190" class="cnt">593</text></g>
+<g class="bar"><text x="250" y="213" text-anchor="end" class="lbl">redundant-sub</text><rect x="262" y="203" width="12" height="16" rx="3" fill="#d8a200"/><text x="282" y="216" class="cnt">75</text></g>
+<g class="bar"><text x="250" y="239" text-anchor="end" class="lbl">isolated</text><rect x="262" y="229" width="4" height="16" rx="3" fill="#d8a200"/><text x="274" y="242" class="cnt">26</text></g>
+<g class="bar"><text x="250" y="265" text-anchor="end" class="lbl">subclass-cycle</text><rect x="262" y="255" width="1" height="16" rx="3" fill="#a4262c"/><text x="271" y="268" class="cnt">8</text></g>
+<g class="bar"><text x="250" y="291" text-anchor="end" class="lbl">rank-inversion</text><rect x="262" y="281" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="294" class="cnt">4</text></g>
+<g class="bar"><text x="250" y="317" text-anchor="end" class="lbl">series-mismatch</text><rect x="262" y="307" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="320" class="cnt">3</text></g>
+<g class="bar"><text x="250" y="343" text-anchor="end" class="lbl">series-cycle</text><rect x="262" y="333" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="346" class="cnt">2</text></g>
+<g class="bar"><text x="250" y="369" text-anchor="end" class="lbl">forked-series</text><rect x="262" y="359" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="372" class="cnt">2</text></g>
+<g class="bar"><text x="250" y="395" text-anchor="end" class="lbl">taxonomic-follows</text><rect x="262" y="385" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="398" class="cnt">2</text></g>
+<g class="bar"><text x="250" y="421" text-anchor="end" class="lbl">taxon-cycle</text><rect x="262" y="411" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="424" class="cnt">2</text></g>
+<g class="bar"><text x="250" y="447" text-anchor="end" class="lbl">multiple-parent-taxa</text><rect x="262" y="437" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="450" class="cnt">2</text></g>
+<g class="bar"><text x="250" y="473" text-anchor="end" class="lbl">duplicate-taxon-name</text><rect x="262" y="463" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="476" class="cnt">2</text></g>
+<g class="bar"><text x="250" y="499" text-anchor="end" class="lbl">taxonomic-parent</text><rect x="262" y="489" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="502" class="cnt">2</text></g>
+<g class="bar"><text x="250" y="525" text-anchor="end" class="lbl">dangling-sub</text><rect x="262" y="515" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="528" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="551" text-anchor="end" class="lbl">dangling-inst</text><rect x="262" y="541" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="554" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="577" text-anchor="end" class="lbl">dangling-disj</text><rect x="262" y="567" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="580" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="603" text-anchor="end" class="lbl">disjoint-violation</text><rect x="262" y="593" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="606" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="629" text-anchor="end" class="lbl">dangling-series</text><rect x="262" y="619" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="632" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="655" text-anchor="end" class="lbl">dangling-follows</text><rect x="262" y="645" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="658" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="681" text-anchor="end" class="lbl">dangling-ordinal</text><rect x="262" y="671" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="684" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="707" text-anchor="end" class="lbl">self-follows</text><rect x="262" y="697" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="710" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="733" text-anchor="end" class="lbl">ordinal-conflict</text><rect x="262" y="723" width="0" height="16" rx="3" fill="#d8a200"/><text x="270" y="736" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="759" text-anchor="end" class="lbl">dangling-parent-taxon</text><rect x="262" y="749" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="762" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="785" text-anchor="end" class="lbl">dangling-rank</text><rect x="262" y="775" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="788" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="811" text-anchor="end" class="lbl">dangling-taxon-name</text><rect x="262" y="801" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="814" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="837" text-anchor="end" class="lbl">self-parent-taxon</text><rect x="262" y="827" width="0" height="16" rx="3" fill="#a4262c"/><text x="270" y="840" class="cnt">1</text></g>
+<g class="bar"><text x="250" y="863" text-anchor="end" class="lbl">missing-rank</text><rect x="262" y="853" width="0" height="16" rx="3" fill="#d8a200"/><text x="270" y="866" class="cnt">1</text></g>
+</svg>

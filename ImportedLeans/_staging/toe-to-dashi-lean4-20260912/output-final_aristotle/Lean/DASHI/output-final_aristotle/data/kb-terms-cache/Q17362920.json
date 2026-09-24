@@ -1,0 +1,26 @@
+{
+ "aliases": [
+  "duplicated page",
+  "duplicate",
+  "doublet",
+  "dup",
+  "Wikimedia duplicated page (temporary)",
+  "Wikipedia duplicated page",
+  "Wikibooks duplicated page",
+  "Wikinews duplicated page",
+  "Wikiquote duplicated page",
+  "Wikisource duplicated page",
+  "Wikiversity duplicated page",
+  "Wikivoyage duplicated page",
+  "Wikispecies duplicated page",
+  "Wikimedia Commons duplicated page",
+  "Wikidata duplicated page",
+  "MediaWiki duplicated page",
+  "Meta-Wiki duplicated page",
+  "Wiktionary duplicated page"
+ ],
+ "canonical": "Q17362920",
+ "description": "this item duplicates another item, it can be merged once the necessary merges are done in other Wikimedia projects",
+ "id": "Q17362920",
+ "label": "Wikimedia duplicated page"
+}

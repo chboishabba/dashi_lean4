@@ -1,0 +1,8 @@
+{
+ "article": "",
+ "canonical": "P248",
+ "description": "to be used in the references field to refer to the information document or database in which a claim is made; for qualifiers use P805; for the type of document in which a claim is made use P3865",
+ "id": "P248",
+ "kind": "property",
+ "label": "stated in"
+}

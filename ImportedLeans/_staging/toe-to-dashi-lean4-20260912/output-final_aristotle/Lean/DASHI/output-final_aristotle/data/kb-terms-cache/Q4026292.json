@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "act"
+ ],
+ "canonical": "Q4026292",
+ "description": "something an agent can do or perform",
+ "id": "Q4026292",
+ "label": "action"
+}

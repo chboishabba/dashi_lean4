@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "component",
+  "software componentry",
+  "app feature",
+  "website feature",
+  "website part",
+  "app part"
+ ],
+ "canonical": "Q17176533",
+ "description": "software package, web service, web resource, or module that encapsulates a set of related functions",
+ "id": "Q17176533",
+ "label": "software component"
+}

@@ -1,0 +1,274 @@
+import Integration.Kernel.Quotient
+
+/-!
+# A provenance instance: the public announcement is not the proof stage
+
+`Agda/DASHI/Core/SourceExactFrontierBidiCrossPollination2026.agda` states, for a
+two-element `EvidenceState`, that the coarse "same public claim surface" map
+cannot factor the fine evidence status, and separately that an external kernel
+receipt, an external numerical certificate and a statement-correspondence
+receipt are each distinct from a machine-checked proof term.  Those are
+`→ ⊥` refutations against fixed finite fixtures, wrapped in `Bool`-valued
+ledger records.
+
+This file restates the reusable content in Lean, as an instance of
+`Integration.Kernel.Quotient`, over a five-stage carrier rather than a
+two-element one, and adds the two converses the Agda owner does not carry:
+that the announcement observer *is* recovered by the stage observer, and that a
+status flag never determines a witness.
+
+## What is proved
+
+* **`announcement_does_not_descend`** — the evidence stage is not a function of
+  the public announcement surface.  Everything the announcement can compute is
+  constant (`announcement_only_constants`), so no announcement-level predicate
+  distinguishes an announcement-only claim from a source-exact one.
+* `stage_refines_announcement` / `stage_strictly_refines` — the converse
+  direction: the announcement descends through the stage, strictly.
+* **`inhabits_iff_proofTerm`** — of the four verification carriers exactly one,
+  the checked proof term, inhabits a theorem-facing obligation;
+  `receipt_does_not_inhabit`, `certificate_does_not_inhabit` and
+  `correspondence_does_not_inhabit` are its three corollaries, and
+  `every_non_proof_carrier_fails_to_inhabit` is the uniform statement over the
+  individual carriers.
+* **Bundles.**  The per-carrier statement does not by itself say anything about
+  carriers held *jointly*, so the joint case is a separate object here:
+  `Bundle := Finset Carrier`, `BundleInhabits S := checkedProofTerm ∈ S`,
+  `bundleInhabits_iff_exists_member` (a bundle inhabits exactly when one of its
+  members does — so possession is not additive),
+  `bundle_without_proof_term_does_not_inhabit`, and the named instance
+  `no_combination_of_non_proof_carriers : ¬ BundleInhabits nonProofBundle`
+  where `nonProofBundle` is the three-element bundle
+  `{externalMachineReceipt, externalNumericCertificate, statementCorrespondence}`.
+* **`flag_does_not_determine_witness`** — a `Bool` status ledger does not
+  determine whether a witness is present: two claims agree on the flag and
+  differ on the witness, so by the kernel's collision lemma no function of the
+  flag is the witness coordinate.  `flag_true_without_witness` is the explicit
+  offending claim.  This is the "status closure ≠ theorem inhabitance"
+  distinction stated as a non-descent rather than as prose.
+* **`recovery_is_refinement_not_refutation`** — recovering an exact source does
+  not falsify the earlier announcement reading: the announcement coordinate is
+  unchanged under the refinement that adds the stage.
+* `same_announcement_different_provenance` — two claims sharing an announcement
+  surface may differ in provenance, which is the same shape as the temporal and
+  situated instances.
+
+**Claim boundary.** `Stage`, `Carrier` and `Claim` are finite label types
+introduced here.  `Inhabits` is a two-valued predicate on labels, *not* a
+provability predicate; nothing in this file inspects, transports or certifies
+any actual proof, and no statement is made here about any particular
+mathematical announcement, paper, author or result.
+-/
+
+namespace Integration.Kernel.Instances.SourceStage
+
+open Integration.Kernel.Quotient
+
+/-! ## §1 Evidence stages under a common announcement surface -/
+
+/-- Five stages a claim can be at.  These are labels: the type records the
+distinctions the corpus insists on, not any judgement about a real claim. -/
+inductive Stage : Type
+  | announcementOnly
+  | preprintText
+  | statementCorrespondence
+  | externalMachineReceipt
+  | sourceExactProofTerm
+  deriving DecidableEq, Repr
+
+open Stage
+
+/-- The public announcement surface: every stage presents the same claim. -/
+def announcement : Stage → Unit := fun _ => ()
+
+/-- The fine coordinate: which stage the claim is actually at. -/
+def stage : Stage → Stage := id
+
+theorem announcement_collides (s t : Stage) : announcement s = announcement t := rfl
+
+theorem stages_differ : stage announcementOnly ≠ stage sourceExactProofTerm := by
+  decide
+
+/-- **The announcement does not determine the stage.**  Instance of the kernel's
+collision lemma: a coordinate that two states share cannot compute a coordinate
+on which they differ. -/
+theorem announcement_does_not_descend :
+    ¬ DescendsThrough stage announcement :=
+  not_descendsThrough_of_collision
+    (announcement_collides announcementOnly sourceExactProofTerm) stages_differ
+
+/-- Everything computable from the announcement alone is constant, so no
+announcement-level test separates any two stages. -/
+theorem announcement_only_constants {W : Type*} (C : Stage → W)
+    (h : DescendsThrough C announcement) (s t : Stage) : C s = C t := by
+  obtain ⟨f, hf⟩ := h
+  rw [← hf s, ← hf t]
+
+/-- The converse direction: the announcement *is* a function of the stage. -/
+theorem stage_refines_announcement : RefinedBy announcement stage := fun _ _ _ => rfl
+
+/-- And strictly so. -/
+theorem stage_strictly_refines : StrictlyRefines announcement stage where
+  law := stage_refines_announcement
+  witness := ⟨announcementOnly, sourceExactProofTerm, rfl, stages_differ⟩
+
+/-! ## §2 Verification carriers and theorem inhabitance -/
+
+/-- The four things a claim can carry.  They are deliberately distinct labels. -/
+inductive Carrier : Type
+  | externalMachineReceipt
+  | externalNumericCertificate
+  | statementCorrespondence
+  | checkedProofTerm
+  deriving DecidableEq, Repr
+
+/-- Which carrier discharges a theorem-facing obligation.  This is a stipulated
+predicate on labels: it records the corpus's classification, and proves nothing
+about any real artefact. -/
+def Inhabits : Carrier → Bool
+  | .checkedProofTerm => true
+  | _ => false
+
+theorem inhabits_iff_proofTerm (c : Carrier) :
+    Inhabits c = true ↔ c = Carrier.checkedProofTerm := by
+  cases c <;> simp [Inhabits]
+
+theorem receipt_does_not_inhabit : Inhabits Carrier.externalMachineReceipt = false := rfl
+
+theorem certificate_does_not_inhabit :
+    Inhabits Carrier.externalNumericCertificate = false := rfl
+
+theorem correspondence_does_not_inhabit :
+    Inhabits Carrier.statementCorrespondence = false := rfl
+
+/-- Every individual carrier other than the checked proof term fails to inhabit.
+This is a statement about carriers **one at a time**; the joint case is
+`no_combination_of_non_proof_carriers` below, which needs the bundle type. -/
+theorem every_non_proof_carrier_fails_to_inhabit (c : Carrier)
+    (h : c ≠ Carrier.checkedProofTerm) : Inhabits c = false := by
+  cases c <;> simp_all [Inhabits]
+
+/-! ### Carriers held jointly
+
+A statement about each carrier separately does not, on its face, settle what a
+*collection* of carriers does; that has to be a claim about a collection.  So
+the bundle is given its own type and its own inhabitance predicate. -/
+
+/-- A collection of verification carriers held together. -/
+abbrev Bundle : Type := Finset Carrier
+
+/-- A bundle discharges a theorem-facing obligation exactly when a checked proof
+term is among the carriers it holds.  Like `Inhabits`, this is stipulated. -/
+def BundleInhabits (S : Bundle) : Prop := Carrier.checkedProofTerm ∈ S
+
+instance (S : Bundle) : Decidable (BundleInhabits S) :=
+  inferInstanceAs (Decidable (Carrier.checkedProofTerm ∈ S))
+
+theorem bundleInhabits_iff_mem (S : Bundle) :
+    BundleInhabits S ↔ Carrier.checkedProofTerm ∈ S := Iff.rfl
+
+/-- **Bundling is not additive.**  A bundle inhabits exactly when one of its
+members already does, so no aggregation rule over non-inhabiting carriers can
+produce inhabitance. -/
+theorem bundleInhabits_iff_exists_member (S : Bundle) :
+    BundleInhabits S ↔ ∃ c ∈ S, Inhabits c = true := by
+  constructor
+  · intro h
+    exact ⟨Carrier.checkedProofTerm, h, rfl⟩
+  · rintro ⟨c, hc, h⟩
+    rwa [(inhabits_iff_proofTerm c).mp h] at hc
+
+/-- Any bundle avoiding the checked proof term fails to inhabit, however many
+carriers it holds. -/
+theorem bundle_without_proof_term_does_not_inhabit {S : Bundle}
+    (h : ∀ c ∈ S, c ≠ Carrier.checkedProofTerm) : ¬ BundleInhabits S :=
+  fun hS => h _ hS rfl
+
+/-- The three non-proof carriers held jointly. -/
+def nonProofBundle : Bundle :=
+  {Carrier.externalMachineReceipt, Carrier.externalNumericCertificate,
+    Carrier.statementCorrespondence}
+
+/-- **The other three, jointly, still do not inhabit.**  Unlike
+`every_non_proof_carrier_fails_to_inhabit`, this is a statement about the three
+carriers as one bundle. -/
+theorem no_combination_of_non_proof_carriers : ¬ BundleInhabits nonProofBundle := by
+  decide
+
+/-- Adding non-proof carriers to a bundle never changes its inhabitance status:
+the only carrier that moves the predicate is the proof term. -/
+theorem bundleInhabits_insert_of_ne {S : Bundle} {c : Carrier}
+    (h : c ≠ Carrier.checkedProofTerm) :
+    BundleInhabits (insert c S) ↔ BundleInhabits S := by
+  simp [BundleInhabits, Finset.mem_insert, Ne.symm h]
+
+/-! ## §3 A status flag is not a witness -/
+
+/-- A claim as it appears in a ledger: a Boolean status flag and, separately,
+whether an inhabiting carrier is actually attached. -/
+structure Claim : Type where
+  /-- The declared status. -/
+  flag : Bool
+  /-- The carrier actually attached, if any. -/
+  witness : Option Carrier
+  deriving DecidableEq, Repr
+
+/-- A claim marked closed with no attached carrier at all. -/
+def flagTrueNoWitness : Claim := ⟨true, none⟩
+
+/-- A claim marked closed and carrying a checked proof term. -/
+def flagTrueWithWitness : Claim := ⟨true, some Carrier.checkedProofTerm⟩
+
+theorem flag_true_without_witness :
+    flagTrueNoWitness.flag = true ∧ flagTrueNoWitness.witness = none := ⟨rfl, rfl⟩
+
+theorem flags_collide : flagTrueNoWitness.flag = flagTrueWithWitness.flag := rfl
+
+theorem witnesses_differ : flagTrueNoWitness.witness ≠ flagTrueWithWitness.witness := by
+  decide
+
+/-- **The ledger flag does not determine the witness.**  So `flag = true` is a
+declaration about a record field and never, by itself, produces the carrier a
+theorem-facing obligation requires. -/
+theorem flag_does_not_determine_witness :
+    ¬ DescendsThrough (fun c : Claim => c.witness) (fun c : Claim => c.flag) :=
+  not_descendsThrough_of_collision flags_collide witnesses_differ
+
+/-- The inhabitance coordinate is a function of the witness, but not of the
+flag: the ledger is strictly coarser than the thing it claims to summarise. -/
+def inhabited (c : Claim) : Bool :=
+  match c.witness with
+  | some w => Inhabits w
+  | none => false
+
+theorem inhabited_refines_witness :
+    RefinedBy inhabited (fun c : Claim => c.witness) := by
+  intro x y h; simp [inhabited, h]
+
+theorem inhabited_does_not_descend_through_flag :
+    ¬ DescendsThrough inhabited (fun c : Claim => c.flag) :=
+  not_descendsThrough_of_collision (x := flagTrueNoWitness) (y := flagTrueWithWitness)
+    flags_collide (by decide)
+
+/-! ## §4 Recovery refines, it does not refute -/
+
+/-- Adding the stage coordinate to the announcement leaves the announcement
+reading exactly as it was: source-exact recovery is a refinement of the public
+record, not a claim that the public record was false. -/
+theorem recovery_is_refinement_not_refutation (s : Stage) :
+    (pair announcement stage s).1 = announcement s := rfl
+
+theorem recovery_strictly_narrows :
+    fibre (pair announcement stage) announcementOnly ⊂ fibre announcement announcementOnly :=
+  fibre_pair_ssubset (y := sourceExactProofTerm)
+    (announcement_collides announcementOnly sourceExactProofTerm) (by decide)
+
+/-- Two claims can present the same announcement surface and differ in
+provenance; this is the same non-descent shape as the temporal-leakage and
+situated-valuation instances. -/
+theorem same_announcement_different_provenance :
+    announcement externalMachineReceipt = announcement sourceExactProofTerm ∧
+      stage externalMachineReceipt ≠ stage sourceExactProofTerm :=
+  ⟨rfl, by decide⟩
+
+end Integration.Kernel.Instances.SourceStage

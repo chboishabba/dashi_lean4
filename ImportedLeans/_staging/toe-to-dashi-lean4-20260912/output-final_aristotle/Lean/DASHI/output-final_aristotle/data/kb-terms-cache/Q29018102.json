@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "meet-semilattice"
+ ],
+ "canonical": "Q29018102",
+ "description": "partially ordered set that has a greatest lower bound for any nonempty finite subset",
+ "id": "Q29018102",
+ "label": "lower semilattice"
+}

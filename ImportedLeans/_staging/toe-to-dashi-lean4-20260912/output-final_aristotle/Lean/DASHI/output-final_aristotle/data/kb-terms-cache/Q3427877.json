@@ -1,0 +1,9 @@
+{
+ "aliases": [
+  "online resource"
+ ],
+ "canonical": "Q3427877",
+ "description": "resource accessible from the World Wide Web and has a Uniform Resource Identifier. Can be resource of different file formats, accessible by a specific protocol, etc.",
+ "id": "Q3427877",
+ "label": "web resource"
+}

@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "ring with identity",
+  "unital ring",
+  "associative ring",
+  "associative ring with identity",
+  "associative unital ring"
+ ],
+ "canonical": "Q161172",
+ "description": "algebraic structure that has compatible structures of an abelian group and a monoid, in particular having multiplicative identity",
+ "id": "Q161172",
+ "label": "ring"
+}

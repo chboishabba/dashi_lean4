@@ -1,0 +1,4 @@
+Proposed repairs for douglas-adams
+candidates: 0, recommended: 0, left for review: 0
+repair debt: 21 → 21 if the recommended changes are made
+Nothing below has been applied.

@@ -1,0 +1,21 @@
+{
+  "delivered_content_already_in_repo_by_hash": 18814,
+  "delivered_files": 21728,
+  "delivery_vs_repo": {
+    "absent": 2231,
+    "differs": 1592,
+    "identical": 17905
+  },
+  "new_module_declarations": 70,
+  "new_module_names_shared_with_dashi_lean": 24,
+  "new_module_names_shared_with_public_corpus": 0,
+  "preserved_files": 258,
+  "preserved_lean_admit": 0,
+  "preserved_lean_axiom_decls": 0,
+  "preserved_lean_declarations": 2848,
+  "preserved_lean_files": 184,
+  "preserved_lean_lines": 58786,
+  "preserved_lean_native_decide": 0,
+  "preserved_lean_sorry": 0,
+  "preserved_manifest_mismatches": []
+}

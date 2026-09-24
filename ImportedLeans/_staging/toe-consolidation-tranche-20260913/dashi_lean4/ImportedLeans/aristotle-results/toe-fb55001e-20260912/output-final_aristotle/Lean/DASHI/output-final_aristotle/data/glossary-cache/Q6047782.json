@@ -1,0 +1,8 @@
+{
+ "article": "Internal category",
+ "canonical": "Q6047782",
+ "description": "structure, with properties similar to a (small) category, constructed inside any category with pullbacks; two objects O (objects) and M (morphisms), equipped with arrows s, t: M → O (source/target), e: O → M (identity), m: M ₛ×ₜ M → M (composition)",
+ "id": "Q6047782",
+ "kind": "item",
+ "label": "internal category"
+}

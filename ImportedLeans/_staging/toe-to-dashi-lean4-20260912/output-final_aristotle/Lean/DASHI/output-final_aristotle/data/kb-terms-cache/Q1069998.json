@@ -1,0 +1,13 @@
+{
+ "aliases": [
+  "ordering relation",
+  "non-strict order",
+  "reflexive order",
+  "non-strict partial order",
+  "reflexive partial order"
+ ],
+ "canonical": "Q1069998",
+ "description": "reflexive antisymmetric transitive binary relation",
+ "id": "Q1069998",
+ "label": "partial order"
+}

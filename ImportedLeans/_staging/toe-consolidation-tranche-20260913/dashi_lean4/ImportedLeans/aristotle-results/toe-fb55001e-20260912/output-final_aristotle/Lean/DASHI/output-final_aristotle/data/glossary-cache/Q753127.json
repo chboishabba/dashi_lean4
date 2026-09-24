@@ -1,0 +1,8 @@
+{
+ "article": "Topological sorting",
+ "canonical": "Q753127",
+ "description": "an ordering of the vertices of the directed graph for which each edge is directed from earlier to later in the ordering",
+ "id": "Q753127",
+ "kind": "item",
+ "label": "topological sorting"
+}

@@ -1,0 +1,69 @@
+import RequestProject.Wikidata.Provenance
+import RequestProject.Epistemic.Trit
+
+/-!
+# Context-indexed evidence
+
+A claim imported from a knowledge base with provenance is not a global boolean:
+its evidence depends on which slice of the sources you are willing to rely on.
+`sliceClaim` is the corresponding `ScopedClaim`, indexed by
+`Wikidata.Slice`, and it is genuinely context-dependent.
+
+The asymmetry is the point.  Support obtained from a restricted, more
+trustworthy slice transfers up to the full knowledge base
+(`sliceClaim_transfers_up`), while support at the asserted slice grants the
+reliable slice nothing — see `Wikidata.Example.support_does_not_transfer_down`.
+-/
+
+namespace Epistemic
+
+open Wikidata
+
+/-- Evidence for a subclass claim, evaluated slice by slice, carrying its
+source references. -/
+def sliceClaim (p : Provenanced) (a b : Qid) (sourceMatched : Bool) (refs : List String) :
+    ScopedClaim Slice where
+  stateAt := fun s => receiptState sourceMatched (isSubclassOf (p.slice s) a b)
+  references := refs
+
+@[simp] theorem sliceClaim_references (p : Provenanced) (a b : Qid) (m : Bool)
+    (refs : List String) : (sliceClaim p a b m refs).references = refs := rfl
+
+@[simp] theorem sliceClaim_stateAt (p : Provenanced) (a b : Qid) (m : Bool)
+    (refs : List String) (s : Slice) :
+    (sliceClaim p a b m refs).stateAt s = receiptState m (isSubclassOf (p.slice s) a b) := rfl
+
+/-- Support in any slice is backed by the corresponding derived fact. -/
+theorem subclassOf_slice_of_supported {p : Provenanced} {a b : Qid} {m : Bool}
+    {refs : List String} {s : Slice} (h : (sliceClaim p a b m refs).stateAt s = Trit.supported) :
+    SubclassOf (p.slice s) a b := by
+  rw [sliceClaim_stateAt, receiptState_eq_supported_iff] at h
+  exact (isSubclassOf_iff _ _ _).1 h.2
+
+/-- **Evidence transfers up.**  Support from a restricted slice is support for
+the whole knowledge base. -/
+theorem sliceClaim_transfers_up {p : Provenanced} {a b : Qid} {m : Bool} {refs : List String}
+    (hnormal : AllNormal p.base) (s : Slice)
+    (h : (sliceClaim p a b m refs).stateAt s = Trit.supported) :
+    (sliceClaim p a b m refs).stateAt Slice.asserted = Trit.supported := by
+  have hm : m = true := by
+    rw [sliceClaim_stateAt, receiptState_eq_supported_iff] at h
+    exact h.1
+  have hbase : SubclassOf p.base a b :=
+    p.subclassOf_of_slice s hnormal (subclassOf_slice_of_supported h)
+  rw [sliceClaim_stateAt, receiptState_eq_supported_iff]
+  refine ⟨hm, ?_⟩
+  rw [Provenanced.slice_asserted]
+  exact (isSubclassOf_iff _ _ _).2 hbase
+
+/-- Restricting attention to a slice never manufactures a refutation. -/
+theorem sliceClaim_ne_contradicted (p : Provenanced) (a b : Qid) (m : Bool)
+    (refs : List String) (s : Slice) :
+    (sliceClaim p a b m refs).stateAt s ≠ Trit.contradicted :=
+  receiptState_ne_contradicted _ _
+
+/-- Whatever the slice, provenance is retained. -/
+theorem sliceClaim_preserves_references (p : Provenanced) (a b : Qid) (m : Bool)
+    (refs : List String) : (sliceClaim p a b m refs).references = refs := rfl
+
+end Epistemic

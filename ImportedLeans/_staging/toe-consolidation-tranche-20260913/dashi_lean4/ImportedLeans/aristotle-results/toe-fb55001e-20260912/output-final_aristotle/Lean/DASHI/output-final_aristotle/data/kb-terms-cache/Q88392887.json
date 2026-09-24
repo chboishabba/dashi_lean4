@@ -1,0 +1,30 @@
+{
+ "aliases": [
+  "chapter",
+  "verse",
+  "stanza",
+  "scene",
+  "frame",
+  "paragraph",
+  "section",
+  "tome",
+  "volume",
+  "book",
+  "film",
+  "word",
+  "sign",
+  "character",
+  "movement",
+  "picture",
+  "snapshot",
+  "song",
+  "part",
+  "article",
+  "number",
+  "part of work"
+ ],
+ "canonical": "Q88392887",
+ "description": "part that a work consists of (use a more specific object if possible)",
+ "id": "Q88392887",
+ "label": "part of a work"
+}

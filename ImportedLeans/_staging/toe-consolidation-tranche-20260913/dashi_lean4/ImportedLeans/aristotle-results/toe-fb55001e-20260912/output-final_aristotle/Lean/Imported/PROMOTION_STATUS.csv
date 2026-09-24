@@ -1,0 +1,1400 @@
+path,rung,note
+AgdaCheck/DASHI/Algebra/BalancedTernary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Algebra/GaugeGroupContract.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Algebra/Trit.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Arithmetic/CancellationPressureBound.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Arithmetic/CancellationPressureCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Arithmetic/CancellationPressureLyapunovBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Arithmetic/CancellationPressureMDL.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/AliceEngagementInterventionSourceRegistry.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/AnimalexicAnimalUtteranceSurface.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/AvianCompassExamples.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/AvianCompassSurface.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/BodyKeepsScoreResidualBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/BodyMemoryMeasurementProxyBoundary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/CrossPaperDialecticalDevelopment.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/CrossSpeciesOntologyTranslationBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/EcologyOfDataHyperfabricBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/EducationCorpusSourceRegistry.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/EvolvedSensoryTransport.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/FeedbackNonResponseGovernance.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/GoodSoTLWellFormedness.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/HumanCodingMachineCompilationBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/HumourOnlineEngagementFramework.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/HyperfabricIntersectionalBodyMemoryBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/InterpretiveCodingSystem.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/IntersectionalFeedbackPrivacyBoundary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/IntersectionalLongitudinalResidualDynamics.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/InterventionConsentLongitudinalGovernance.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/Levin/CompetentGoalExecution.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/Levin/ConstitutiveInteractiveAutonomy.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/Levin/FungalNetworkAgencyBoundary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/Levin/MultiscaleIdentityDissociation.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/Levin/MycelialTransportTopology.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/Levin/NicheConstructionProblemSpace.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/Levin/ProblemSpaceAgency.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/Levin/SeparableBoundaryPersistence.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/Levin/TravelingWaveComputationBoundary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/LongitudinalEngagementTrajectory.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/NeurochemicalVocabularyReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/OEFMultiFibreFeedbackHyperfabric.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/OEFOverlapAnalytics.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/ParentAllyshipMultiObserverBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/PedagogicalJPlusOneRouting.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/PredictiveMetastabilityTraumaBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/RetinalPerturbationObservationBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Biology/StudentEngagementEvidenceBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Cognition/PNF/DemandResolutionState.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Cognition/PNF/DependencyDerivedOccurrenceIdentityExact.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Cognition/PNF/FreshReplayAuthorityAdmissionExact.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Cognition/PNF/FreshReplayAuthorityAdmissionRegression.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Cognition/PNF/NumericAuthority.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Cognition/PNF/ProducerCertifiedReferenceAdmissionExact.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Cognition/PNF/ProducerCertifiedReferenceAdmissionRegression.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Cognition/PNF/ProducerCertifiedTokenReferenceFibreExact.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Cognition/PNF/ProducerCertifiedTokenReferenceFibreRegression.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Cognition/PNF/ProducerCompleteDependencyProjectionExact.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Cognition/PNF/ProducerCompleteDependencyProjectionRegression.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/AdapterCanonicalityCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/AuthorityBoundary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/AuthorityNonPromotionCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/BridgeRequirementCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/CandidateFunctionalCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/CandidateOnlyCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/ConditionalMarginalReversalExact.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/ConsumerIndexedRelevanceMeasure.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/EmptyPromotionCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/EvenLaneOperatorCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/FibreRestrictionCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/FiniteReceiptList.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/FormalLensQualificationCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/FormalLensVocabularyCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/GenericReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/HiddenLiftProjectionCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/MinimalSufficientResidual.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/OddGrassmannLaneCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/OperatorShapeNonAuthorityCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/ParityLaneOperatorCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/ParticipationSelectionQuotient.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/PossibilityAccessibilitySupport.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/RelationalHypervoxelBraidCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/RelevanceDistortionRefinement.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Core/ReopenableProjectionComposition.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Culture/IntersectionalPowerValueFolkModelBoundary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Culture/PatternMindReciprocityLoveBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Culture/SemioticPhallicLackAmalekBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Education/EarlyLearningComparativeEvidenceRound2SourceRegistry.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Education/EarlyLearningComparativeEvidenceSourceRegistry.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Education/EarlyLearningIntersectionalSourceRegistry.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Education/RelationalEducationGateAlgebra.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Education/RoseContextLearningSourceBoundary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Foundations/JChartSuccessorBoundary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/FullRelationalFlowRepairHyperfabric.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Geometry/FiniteSpeed.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Geometry/RealFiniteSpeed/Core.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Geometry/TimeOrientation.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Geometry/TriadicEllipticModuliGate.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Governance/AmalekProvenanceRoleBinding.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Governance/CyberneticClinicalInstitutionalRepairBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Governance/HealthcareAccessDistortion.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Governance/HealthcareEqualityInvariant.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Governance/InstitutionalContinuityRepairArithmetic.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Governance/MedicalCannabisPresenceImpairmentBoundary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Governance/PublicEssentialCareDoctrineBoundary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Interop/ObservationTransportSpine.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Interop/SpectralOperatorShapeCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Interop/VectorNonAuthorityCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/MDL/CodeLengths.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/MDL/MDLLyapunov.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Ontology/EpistemicTrit.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Ontology/LeanWikidataFullSourceManifest.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Ontology/LeanWikidataSourceSnapshot.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Ontology/WikidataAnimalSemanticJoinLayer.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Ontology/WikidataCheckerResultAttributionExact.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Philosophy/PatternPreservingTeaching.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Boundaries/GribovResolutionAuthorityReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/BTBoundaryCrossSectionRows.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/BTCanonicalNeckAnalogue.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/Basin.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/BraidGroupedKPReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/BruhatTitsBraidKPReductionReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/BruhatTitsProductTreeReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/CanonicalCodecAtomReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/CarrierBraidStructureReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/CarrierLatticeYMDefinitionReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/DialecticalAccumulationReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/DialecticalBraidDepthReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/DialecticalTetrationScaleReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/DynamicalClosureStatus.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/FiniteCarrierSpectralGapZ7Receipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/FiniteCuspHeckeSpectralFrontierReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/FullAtomWithSpinPressureReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/HEPDataObservableDefinitionReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/HEPDataResidualBridgeWorkerQueue.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/HEPDataResidualSourceCandidateDiagnostic.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/HaarWaveletEmbeddingReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/HolographicBulkBoundaryReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/IntersectionalPressureAnisotropyReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/KnownLimitsRecovery.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/KnownLimitsStatus.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/MillenniumTowerSchemaReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/NoSpectralPollutionReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/OSAxiomAvailability.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/PhotonuclearEmpiricalConstantsRegistry.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/Projection.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/ReflectionPositivityForWilsonReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/SensoryAttractorClasses.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/SignedZeroTorsionReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/SpacetimeLatticeFromCarrierDepthReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/SpectralConvergenceGate3Receipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/TriadicRepresentationMDL.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/Validation/ObservableCollapse.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/W4W5AcceptedDYLuminosityConventionDiagnostic.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/WilsonActionOn3PlusOneLatticeReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Closure/WilsonBetaFromCSLevelReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/Constraints/Generators.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/FiniteAlgebraCandidates.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/QFT/CSLevelFlowFullReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/QFT/DHRThermodynamicLimitBoundary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Physics/UniversalityTheorem.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Promotion/AuthorityGateCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/DASHI/Reasoning/CarryMemorySubvoxelReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/JFixedPoint.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/Kernel/Algebra.lean,not-attempted,needs a library root beyond Mathlib
+AgdaCheck/Ultrametric.lean,not-attempted,needs a library root beyond Mathlib
+AgdaMirror/Algebra.lean,not-attempted,needs a library root beyond Mathlib
+AgdaMirror/Analysis.lean,not-attempted,needs a library root beyond Mathlib
+AgdaMirror/Core.lean,not-attempted,needs a library root beyond Mathlib
+AgdaMirror/MoonshineEarn.lean,wired,promoted to Lean/Promoted/AgdaMirrorLean/MoonshineEarn.lean and built by the Promoted library
+AgdaVendor/DASHI/Algebra/BalancedTernary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Algebra/Trit.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Arithmetic/CancellationPressureCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Biology/AvianCompassSurface.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Biology/EducationCorpusSourceRegistry.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Biology/ParentAllyshipMultiObserverBridge.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Cognition/PNF/NumericAuthority.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Core/AuthorityBoundary.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Core/ConsumerIndexedRelevanceMeasure.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Core/FibreRestrictionCore.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Core/PossibilityAccessibilitySupport.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Foundations/Base369Nat.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Geometry/TimeOrientation.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Interop/ObservationTransportSpine.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/MDL/CodeLengths.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Ontology/EpistemicTrit.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Ontology/LeanWikidataFullSourceManifest.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Ontology/LeanWikidataSourceSnapshot.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Physics/Closure/DialecticalBraidDepthReceipt.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Physics/Closure/DynamicalClosureStatus.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Physics/Closure/KnownLimitsStatus.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Physics/Closure/OSAxiomAvailability.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Physics/Closure/SensoryAttractorClasses.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Physics/Constraints/Generators.lean,not-attempted,needs a library root beyond Mathlib
+AgdaVendor/DASHI/Physics/QFT/CSLevelFlowFullReceipt.lean,not-attempted,needs a library root beyond Mathlib
+Artifacts/introspective-visual/VisionReceipt.lean,not-attempted,needs a library root beyond Mathlib
+JMD - Full Stack Architecture_aristotle/RequestProject/ArchitectureDynamics.lean,wired,promoted to Lean/Promoted/JMD/ArchitectureDynamics.lean and built by the Promoted library
+JMD - Full Stack Architecture_aristotle/RequestProject/FactorVecSheaf.lean,wired,promoted to Lean/Promoted/JMD/FactorVecSheaf.lean and built by the Promoted library
+JMD - Full Stack Architecture_aristotle/RequestProject/Main.lean,not-attempted,needs a library root beyond Mathlib
+JMD - Full Stack Architecture_aristotle/RequestProject/MonsterMoonshine.lean,elaborates,elaborates but uses native_decide; held out of the Promoted library
+RequestProject/Agda/Prelude.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Agda/Syntax.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Agda/Verbatim.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Alignment.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/All.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Anatomy.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/AnatomySVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Anim3D.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Archimedes369.lean,wired,promoted to Lean/Promoted/RequestProject/Archimedes369.lean and built by the Promoted library
+RequestProject/ArchimedesDelta.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ArchimedesNinetySix.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ArchimedesSpin.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/AristoTask.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/AristotleExporter.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ArtinSchreier.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/AtlasGuide.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/BabySteps.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/BabyStepsAlignment.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/BabyStepsProperties.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/BaseGeneral.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/BigFieldSizeScan.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CRTTorus.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CategoryOfOntologies.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CenterRetraction.lean,wired,promoted to Lean/Promoted/RequestProject/CenterRetraction.lean and built by the Promoted library
+RequestProject/CenterRetractionAtlas.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CenterRetractionHeredity.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CenterRetractionMore.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CenterRetractionPerm.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CenterRetractionPi.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CenterRetractionProd.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CenterRetractionSharpness.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CenterRetractionSmall.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CenterRetractionSplit.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ClassAlgebra.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/Codegen.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/Derive.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/Enrich.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/EnrichCmd.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/Examples.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/Fetch.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/Format.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/Import.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/Query.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/ScanFormat.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/SeriesFormat.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/TaxaFormat.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cli/Tool.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CompiledFacts.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CompilerPipeline.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Concepts.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ConformalField.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ConformalFieldSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Core.lean,wired,promoted to Lean/Promoted/RequestProject/Core.lean and built by the Promoted library
+RequestProject/CorpusEntailment.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CorpusFrontier.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CorpusGraph.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CorpusRounds.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Cosmos.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CubicalTypes.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/CyclicAlgebra.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Dasl.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DeclWeave.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DeclWeaveSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DefTest.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DefectReport.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Defects.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DeltaDissection.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DeltaFrobenius.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DeltaGraph.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DeltaModular.lean,wired,promoted to Lean/Promoted/RequestProject/DeltaModular.lean and built by the Promoted library
+RequestProject/DeltaTriangles.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DeltaWordGraphs.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Diagnostics.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DihedralCenterRetraction.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DihedralInfinite.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DisjointUnion.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DualAtlas.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DualAtlasCensus.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DualAtlasReports.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DualAtlasSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DualDeformSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DualFailureCensus.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/DuplicateGlossary.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Engine.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Enrichment.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/EnrichmentCorpus.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/EnvEmbedding.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/EnvWeave.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/EnvWeaveSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/Authority.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/AxisSupport.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/Bridge.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/Context.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/ContextErasure.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/FourView.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/Lens.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/ObligationAuthority.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/Observer.lean,wired,promoted to Lean/Promoted/RequestProject/Epistemic/Observer.lean and built by the Promoted library
+RequestProject/Epistemic/ObserverJoin.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/Opposition.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/ParentingEvidence.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/PathEvidence.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/QueryEvidence.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/Quotient.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/Repair.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/Surfaces.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/Tetralemma.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/Trit.lean,wired,promoted to Lean/Promoted/RequestProject/Epistemic/Trit.lean and built by the Promoted library
+RequestProject/Epistemic/ValueEvidence.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Epistemic/Views.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/EuclidTiling.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Examples.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ExprAddress.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ExprAddressCorpus.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ExprAddressSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ExtendedPrimes.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ExtendedPrimesSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ExtensionTowerTree.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ExternalIds.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/EyeCandy.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FastEval.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FeedbackSets.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FibVortex.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FiberColors.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FiberHome.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FiberSumSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FiberSumTable.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FiberSums.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FiberSumsMulti.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FiberSumsSingle.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FiberSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FieldSizeScan.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FieldsOfStudy.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FractranBiome.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FractranBiomeSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FractranWalk.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Frobenius.lean,wired,promoted to Lean/Promoted/RequestProject/Frobenius.lean and built by the Promoted library
+RequestProject/FrobeniusAutomorphismGroup.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FrobeniusGalois.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FrobeniusOrbit.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FrobeniusTrace.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/FrobeniusTransfer.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/GF27.lean,wired,promoted to Lean/Promoted/RequestProject/GF27.lean and built by the Promoted library
+RequestProject/GF27ArtinSchreier.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/GF27Subfields.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/GF9Repair.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/GearTopology.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/GeneralLinearCenterRetraction.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/GeneralLinearEven.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/GeneralLinearPositive.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Chemistry.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Core.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/CreativeWorks.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/DouglasAdams.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Enriched.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Events.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Frontier.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Frontier2.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Frontier3.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Frontier4.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Geography.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Glossary.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/KbTerms.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/KnowledgeRepresentation.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/LifeSciences.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Mathematics.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/RelatedStructures.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/RelatedStructures2.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Science.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Society.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Structures.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Technology.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/Theories.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/TheoryAuthority.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/TheorySitelinks.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/TheorySources.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/UpperOntology.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Generated/VocabularyCorpus.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/GradedClock.lean,wired,promoted to Lean/Promoted/RequestProject/GradedClock.lean and built by the Promoted library
+RequestProject/GrothendieckSite.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Grounded.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Grounding.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Heatmap3D.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Hecke23.lean,wired,promoted to Lean/Promoted/RequestProject/Hecke23.lean and built by the Promoted library
+RequestProject/HeckeGeneral.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/HeckeShapeSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/HeckeShapeTable.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/HeckeShapes.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/HeckeWords.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/HilbertNinety.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Holograms.lean,elaborates,elaborates but proves by native_decide; held out of the Promoted library
+RequestProject/HomotopyTypes.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Infographic.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Introspect.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/IntrospectSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Introspection.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Irrep170.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Irrep194.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/IrrepFold.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/IrrepGears.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ItemMerge.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/JExpansion.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/KbTerms.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/KernelReflection.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Kinship.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/KinshipDiagnostics.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Lessons.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Lexemes.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Main.lean,wired,promoted to Lean/Promoted/RequestProject/Main.lean and built by the Promoted library
+RequestProject/Matching.lean,wired,promoted to Lean/Promoted/RequestProject/Matching.lean and built by the Promoted library
+RequestProject/MathCorpus.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MathResonance.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Mereology.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Merge.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Meta/Provenance.lean,wired,promoted to Lean/Promoted/RequestProject/Meta/Provenance.lean and built by the Promoted library
+RequestProject/MetaFrobenius.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ModularGraph.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ModularSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ModularZeta.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ModularZetaSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MonsterAddress.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MonsterBitmap.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MonsterBitmapSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MonsterOrrerySVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MonsterReach.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MonsterSpiral.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MonsterSpiral3D.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MonsterSpiral3DAnim.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MonsterSpiral3DSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MonsterSpiralSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MonsterZeta.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Moonshine.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Moonshine369.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MoonshineAddress.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MoonshineBridge.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MoonshineBridgeSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MoonshineSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MoonshineZoom.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MoonshineZoomSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MultiCID.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/MultiplicativeRepairIff.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Normalize.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/OggPrimes.lean,wired,promoted to Lean/Promoted/RequestProject/OggPrimes.lean and built by the Promoted library
+RequestProject/OntologyColimits.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/OntologyFields.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/OntologyGroups.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/OntologyLimits.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/OntologySheaves.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/OntologyTopology.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/OpenCVShapes.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/OtherFieldSizes.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PaletteCharacterTable.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PaletteTaxonomy.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PaletteUniversality.lean,wired,promoted to Lean/Promoted/RequestProject/PaletteUniversality.lean and built by the Promoted library
+RequestProject/Parenting.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ParentingDiagnostics.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ParentingExamples.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PascalAtlasViz.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PascalExpanded.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PascalTower.lean,wired,promoted to Lean/Promoted/RequestProject/PascalTower.lean and built by the Promoted library
+RequestProject/Paths.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Periodicity.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PeriodicityReport.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PivotLadderViz.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PrimeFibers.lean,wired,promoted to Lean/Promoted/RequestProject/PrimeFibers.lean and built by the Promoted library
+RequestProject/PrimeProjection.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ProgramAlgebra.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ProofComicSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Properties.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PropertyConstraints.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PropertyEngine.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Provenance.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PullbackComparison.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/PullbackRetraction.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/QDeform.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/QExpansionLadder.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/QRepage.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/QShapes.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Quantities.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/QuaternionCenterRetraction.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Queries.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Quine.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/RamanujanTau.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Ranks.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Rdf.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Reachability.lean,wired,promoted to Lean/Promoted/RequestProject/Reachability.lean and built by the Promoted library
+RequestProject/Redundancy.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Reflection.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/RelatedCorpus.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/RelatedNotions.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/RelationWords.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/RelativeNorm.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Renaming.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Repair3D.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/RepairAtlas3D.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/RepairScan.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/RepairVisualization.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ResolutionLadder.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ResolutionLadderSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/RetractTopology.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/RetractiveCore.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/RunExport.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ScanVisualization.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Schemas.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SelfDescription.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SemanticCID.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SemanticPerturbation.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Semantics.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Series.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SeriesChain.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SeriesDiagnostics.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SeriesExamples.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Showcase.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Sieve23.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SieveGeneral.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SignedWords.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Sitelinks.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SmallPrimeFibers.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SmallPrimeFibersSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Snaks.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SpectralAtlas.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SpectrumReport.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SpiralOrbit.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SporadicAtlas.lean,wired,promoted to Lean/Promoted/RequestProject/SporadicAtlas.lean and built by the Promoted library
+RequestProject/SporadicClosure.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SporadicClosureSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SporadicCrossing.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SporadicFieldDegree.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SporadicGroups.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SporadicSpectrum.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SporadicSpectrumSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SporadicSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SporadicTower.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SporadicZeta.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SporadicZetaSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/StatementConstraints.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Stratification.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/StudentGallery.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/StudentPosters.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SubfieldLattice.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Subsumption.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/SvgCore.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/T2vsT3.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/T2vsT3Delta.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TauWaves.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TauWavesSix.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TauWavesSixSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TauWavesSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Taxa.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TaxaDiagnostics.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TaxaExamples.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TaxaLineage.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Taxonomy.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Temporal.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Terms.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Ternary/Aggregate.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Ternary/Balanced.lean,wired,promoted to Lean/Promoted/RequestProject/Ternary/Balanced.lean and built by the Promoted library
+RequestProject/Ternary/Base369.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Tesla369.lean,wired,promoted to Lean/Promoted/RequestProject/Tesla369.lean and built by the Promoted library
+RequestProject/TheoryCorpus.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TimeValues.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TourSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TwistSeries.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TwistSeriesViz.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TwistedResolution.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/TypeProperties.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/UltrametricTaxonomy.lean,wired,promoted to Lean/Promoted/RequestProject/UltrametricTaxonomy.lean and built by the Promoted library
+RequestProject/UniversalTraceRepair.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/UpperOntology.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/UserAddress.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/VerticalWalls.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/VisionAtlas.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/VisionFFI.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/VisionFFICert.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/VisionPatterns.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/VisionPatternsSVG.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Visualization.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Vocabulary.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/WhyTwentySeven.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Alignment.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/AlignmentSafety.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Attribution.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/ClassAlgebra.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/ClassExpressions.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Constraints.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Core.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Coverage.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/DerivationFibres.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Diagnostics.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/DisjointUnionDiagnostics.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/EvidencePolarity.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Examples.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/ExamplesConflict.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/ExamplesLayers.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Identity.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Layers.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Learning.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Lens.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/NamedGraphs.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Owl.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Parenting.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/ParentingAuthority.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/ParentingFibres.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/ParentingRoles.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Provenance.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Qualifiers.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Rdf.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/RdfInformationOrder.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Reachability.lean,wired,promoted to Lean/Promoted/RequestProject/Wikidata/Reachability.lean and built by the Promoted library
+RequestProject/Wikidata/Redundancy.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Slices.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Sparql.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/SparqlAggregation.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/SparqlNegation.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/SparqlPaths.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/Values.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/Wikidata/ViewJoin.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/WorkbookData.lean,elaborates,elaborates but proves by native_decide; held out of the Promoted library
+RequestProject/Zeta369.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ZetaExponentScale.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ZetaExponentSvg.lean,not-attempted,needs a library root beyond Mathlib
+RequestProject/ZetaMoonshine.lean,wired,promoted to Lean/Promoted/RequestProject/ZetaMoonshine.lean and built by the Promoted library
+RequestProject/ZetaMoonshineSvg.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/ActualZetaHeightSeparation.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/AnchoredExterior.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/AnchoredMinorConsumer.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/AnchoredPrimeExpansion.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/AnchoredRowVariance.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/AnchoredShiftLedger.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/BudgetScale.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/ChebyshevLower.lean,wired,promoted to Lean/Promoted/RiemannAnalytic/ChebyshevLower.lean and built by the Promoted library
+RiemannAnalytic/CompensatedDiagonal.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/CompensatedObservable.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/ComplexPoisson.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/CubicPhase.lean,wired,promoted to Lean/Promoted/RiemannAnalytic/CubicPhase.lean and built by the Promoted library
+RiemannAnalytic/CubicTransversePlane.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/Detectability.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/EvenTaylorDeterminant.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/ExteriorCore.lean,wired,promoted to Lean/Promoted/RiemannAnalytic/ExteriorCore.lean and built by the Promoted library
+RiemannAnalytic/ExteriorDecision.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/ExteriorGate.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/ExteriorPairKernel.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/FrobeniusDecomposition.lean,wired,promoted to Lean/Promoted/RiemannAnalytic/FrobeniusDecomposition.lean and built by the Promoted library
+RiemannAnalytic/GaussianEnvelope.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/GaussianRetention.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/GramBudgetTransport.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/GramDetectability.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/GramSurplus.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/GridTail.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/GridVectors.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/HigherTraceMinors.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/HyperbolicTP2.lean,elaborates-with-sorry,
+RiemannAnalytic/ImaginaryChannel.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/ImaginaryProjectionDiagonal.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/InterferenceRatio.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/KernelChannels.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/KernelEnvelope.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LatticeRetention.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LiteralRelativeRoute.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LiteralRoute.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LiteralSourceIdentity.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LiteralStatement.lean,wired,promoted to Lean/Promoted/RiemannAnalytic/LiteralStatement.lean and built by the Promoted library
+RiemannAnalytic/LiteralWeilFourSampleTransversality.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LocalBudgetScale.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LocalHeight.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LocalHotCold.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LocalRouteCapstone.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LocalSchur.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LocalTraceScale.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LocalWindow.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/LogFrequencyPigeonhole.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/MultiplicityLift.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/NormalizedMomentCoefficients.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/NormalizedTransverseResidual.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/OddTaylorDeterminant.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/OddTaylorSupportSlack.lean,elaborates-with-sorry,
+RiemannAnalytic/OggAffineGrid.lean,wired,promoted to Lean/Promoted/RiemannAnalytic/OggAffineGrid.lean and built by the Promoted library
+RiemannAnalytic/OneSidedDampedTaper.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/OneSidedGram.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/PairExpansion.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/ParityMinorAssembly.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/PhaseGauge.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/PoissonExtension.lean,wired,promoted to Lean/Promoted/RiemannAnalytic/PoissonExtension.lean and built by the Promoted library
+RiemannAnalytic/PoleErrorAutopsy.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/PoleQuotientTransversality.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/PrimeFourSampleGeometry.lean,elaborates-with-sorry,
+RiemannAnalytic/PrimeLogFrequency.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/ProjectorLedger.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/RelativeContraction.lean,wired,promoted to Lean/Promoted/RiemannAnalytic/RelativeContraction.lean and built by the Promoted library
+RiemannAnalytic/SchurEliminationDefect.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/ShiftProjector.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/ShortIntervalMeanValue.lean,wired,promoted to Lean/Promoted/RiemannAnalytic/ShortIntervalMeanValue.lean and built by the Promoted library
+RiemannAnalytic/ShortWindowPrimeTarget.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/SourceCoefficient.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/SourceNormalization.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/SpectralWindowValleys.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/StrictKernelMomentRatio.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/SubexponentialTaperGate.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TaperAnalyticIncompatibility.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TaperCoercivity.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TiltedLogVariance.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TraceInterface.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TransverseDecay.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TransverseDerivative.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TransverseEnergy.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TransverseGridVariance.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TransverseKernel.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TripleTraceMinors.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TwistedNormalization.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TwistedPrimeAbsoluteScale.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TwistedPrimeMassMean.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TwistedPrimeMoments.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TwistedPrimeVarianceLower.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TwistedTaperUniformity.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/TwoRegimeInterference.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/WeightedGramTarget.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/WeilParityQuotientDecomposition.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/WeilParityResponseBridge.lean,not-attempted,needs a library root beyond Mathlib
+RiemannAnalytic/WindowGram.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/AxiomCheck.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/CertifiedFiniteCarrierReindex.lean,wired,promoted to Lean/Promoted/Zeta23Bridge/CertifiedFiniteCarrierReindex.lean and built by the Promoted library
+Zeta23Bridge/Zeta23Bridge/CoshCombinationSeparation.lean,elaborates-with-sorry,
+Zeta23Bridge/Zeta23Bridge/CoshWindowSeparation.lean,elaborates-with-sorry,
+Zeta23Bridge/Zeta23Bridge/E2Adapter.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/FarShellCutoffTailBound.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilClusterTwoRadiusProfile.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilDetRestBoundMonotonicity.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilDeterministicProjectiveSchur.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilDeterministicSchurMarginInstance.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilEvenChannelTaper.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilGammaChannel.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilGammaConeBound.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilGammaProjectiveBound.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilLeadingCoefficientCovariance.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilNarrowWindowDomination.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilNormalizedWindowBounds.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilOddChannelTaper.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilOffOrdinateEvenConeReflectionSymmetrization.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilOffOrdinateProjectiveTail.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilOffOrdinateReflectionPair.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilOffOrdinateReflectionSymmetrization.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilOffOrdinateTail.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilOtherZerosChannel.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilParityBalance.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilPoleProjectiveCancellation.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilPrimeEvenCone.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilProjectiveGateNoGo.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilProjectiveResidualDecomposition.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilProjectiveSeparationGate.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilProjectiveStripConstant.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilProjectiveTaper.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilSameOrdinateEvenCone.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilTargetDefectLeadingCoefficient.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilTargetHeightMargin.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilThreeSampleProjectedCarrier.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilThreeTaperCoefficientGate.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilThreeWindowNarrowInstance.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilThreeWindowPoleNullSeed.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilTwoRadiusBalance.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilTwoRadiusHeightDetector.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilTwoRadiusResidualEnvelope.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilTwoRadiusSeparationGate.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilTwoTaperCoefficientGate.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilWindowRatioSeparation.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilWindowSchurAdmission.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilWindowSchurInstance.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilWindowSchurResidualBudget.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/LiteralWeilWindowSeparationInstance.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/MultiTaperSchurCore.lean,elaborates-with-sorry,
+Zeta23Bridge/Zeta23Bridge/NearCoreDeterminantTaper.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/NearFarCarrierSplit.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/NormalizedNarrowWindowCertificate.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/OddTaylorDeterminant.lean,wired,promoted to Lean/Promoted/Zeta23Bridge/OddTaylorDeterminant.lean and built by the Promoted library
+Zeta23Bridge/Zeta23Bridge/OffOrdinateCutoffCarrier.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/OscillatoryKernelDecay.lean,elaborates-with-sorry,
+Zeta23Bridge/Zeta23Bridge/PoleQuotientBudgetCircularity.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/PoleQuotientClusterMargin.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/PoleQuotientComplementMargin.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/PoleQuotientGammaBudget.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/ProjectedTwoZeroCutsetCore.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/ProjectedZeroTailSummability.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/ReflectionPairCurvatureBound.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/ReflectionPairKernelDecay.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/ResidualBudgetMarginCompiler.lean,wired,promoted to Lean/Promoted/Zeta23Bridge/ResidualBudgetMarginCompiler.lean and built by the Promoted library
+Zeta23Bridge/Zeta23Bridge/ThreeTaperCrossDetLeading.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/ThreeTaperSchurCore.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/ThreeTaperSchurGram.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/ThreeTaperSchurMargin.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/ThreeWindowPointGate.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/TwoTaperCrossDetLeading.lean,elaborates-with-sorry,
+Zeta23Bridge/Zeta23Bridge/TwoTaperCrossDetSchur.lean,not-attempted,needs a library root beyond Mathlib
+Zeta23Bridge/Zeta23Bridge/TwoZeroUniversalRHBoundary.lean,wired,promoted to Lean/Promoted/Zeta23Bridge/TwoZeroUniversalRHBoundary.lean and built by the Promoted library
+Zeta23Bridge/Zeta23Bridge/WindowSchurSharedCertificate.lean,not-attempted,needs a library root beyond Mathlib
+ac4cfa19-4e4e-4205-ac74-6a8225cf7870_aristotle/RequestProject/TaoFramework.lean,wired,promoted to Lean/Promoted/Tao/TaoFramework.lean and built by the Promoted library
+ac4cfa19-4e4e-4205-ac74-6a8225cf7870_aristotle/RequestProject/TaoShang.lean,not-attempted,needs a library root beyond Mathlib
+ac4cfa19-4e4e-4205-ac74-6a8225cf7870_aristotle/RequestProject/TaoTeChing.lean,not-attempted,needs a library root beyond Mathlib
+ac4cfa19-4e4e-4205-ac74-6a8225cf7870_aristotle/RequestProject/TaoXia.lean,not-attempted,needs a library root beyond Mathlib
+dashi-rh-cutset-20260821_aristotle/RiemannAnalytic.lean,not-attempted,needs a library root beyond Mathlib
+monster/Main.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/AbelianVariety.lean,fails,Lean/Imported/monster/MonsterLean/AbelianVariety.lean:3:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Rat/Basic.olean' of module Mathlib.Data.Rat.Basic does not exist
+monster/MonsterLean/ArchitecturalNumbers.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/BisimulationProof.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/BottCliffordVector.lean,fails,Lean/Imported/monster/MonsterLean/BottCliffordVector.lean:15:9: error(lean.unknownIdentifier): Unknown identifier `ℍ`
+monster/MonsterLean/BottPeriodicity.lean,fails,Lean/Imported/monster/MonsterLean/BottPeriodicity.lean:198:25: error: Tactic `rfl` failed: The left-hand side
+monster/MonsterLean/BottPeriodicityReflections.lean,fails,Lean/Imported/monster/MonsterLean/BottPeriodicityReflections.lean:30:24: error: No deriving handlers have been implemented for class `Fintype`
+monster/MonsterLean/CathedralBridge.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/ComplexityLattice.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/CrossLanguageComplexity.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/DiscoverLattice.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/DivisionPreservation.lean,fails,Lean/Imported/monster/MonsterLean/DivisionPreservation.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Digits.olean' of module Mathlib.Data.Nat.Digits does not exist
+monster/MonsterLean/EncodingZoo.lean,fails,Lean/Imported/monster/MonsterLean/EncodingZoo.lean:123:2: error: Tactic `rfl` failed: The left-hand side
+monster/MonsterLean/ExpressionKernels.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/ExtractLattice.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/GPUPipelineProof.lean,fails,Lean/Imported/monster/MonsterLean/GPUPipelineProof.lean:9:21: error: Type mismatch
+monster/MonsterLean/GPUStripMine.lean,fails,Lean/Imported/monster/MonsterLean/GPUStripMine.lean:26:28: error: unknown tactic
+monster/MonsterLean/GradedRing71.lean,fails,Lean/Imported/monster/MonsterLean/GradedRing71.lean:28:10: error(lean.synthInstanceFailed): failed to synthesize instance of type class
+monster/MonsterLean/GraphTheory.lean,fails,Lean/Imported/monster/MonsterLean/GraphTheory.lean:37:2: error: unexpected token 'from'; expected command
+monster/MonsterLean/HeckeAutoEncoder.lean,fails,"Lean/Imported/monster/MonsterLean/HeckeAutoEncoder.lean:27:7: error(lean.invalidField): Invalid field `floor`: The environment does not contain `Real.floor`, so it is not possible to project the field"
+monster/MonsterLean/HeckeProof.lean,fails,Lean/Imported/monster/MonsterLean/HeckeProof.lean:3:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/MonsterLean/HexWalk.lean,fails,Lean/Imported/monster/MonsterLean/HexWalk.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Digits.olean' of module Mathlib.Data.Nat.Digits does not exist
+monster/MonsterLean/JInvariantWorld.lean,fails,Lean/Imported/monster/MonsterLean/JInvariantWorld.lean:14:5: error: unknown tactic
+monster/MonsterLean/LatentSpaceProof.lean,fails,Lean/Imported/monster/MonsterLean/LatentSpaceProof.lean:25:2: error(lean.synthInstanceFailed): failed to synthesize instance of type class
+monster/MonsterLean/LogarithmicAnalysis.lean,wired,promoted to Lean/Promoted/MonsterLean/LogarithmicAnalysis.lean and built by the Promoted library
+monster/MonsterLean/MasterProof.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MetaCoqToLean.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MonsterAlgorithm.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MonsterAlgorithmProofs.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MonsterAlgorithmSimple.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MonsterExponents.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MonsterHarmonics.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MonsterHexComplete.lean,fails,Lean/Imported/monster/MonsterLean/MonsterHexComplete.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Digits.olean' of module Mathlib.Data.Nat.Digits does not exist
+monster/MonsterLean/MonsterLangSec.lean,fails,Lean/Imported/monster/MonsterLean/MonsterLangSec.lean:17:3: error(lean.synthInstanceFailed): failed to synthesize instance of type class
+monster/MonsterLean/MonsterLattice.lean,fails,Lean/Imported/monster/MonsterLean/MonsterLattice.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/LinearAlgebra/Matrix/Basic.olean' of module Mathlib.LinearAlgebra.Matrix.Basic does
+monster/MonsterLean/MonsterLayers.lean,fails,"Lean/Imported/monster/MonsterLean/MonsterLayers.lean:76:24: error(lean.invalidField): Invalid field `maximum?`: The environment does not contain `List.maximum?`, so it is not possible to project the f"
+monster/MonsterLean/MonsterLean/BreadthFirstCorrect.lean,fails,Lean/Imported/monster/MonsterLean/MonsterLean/BreadthFirstCorrect.lean:26:6: error(lean.synthInstanceFailed): failed to synthesize instance of type class
+monster/MonsterLean/MonsterLean/BreadthFirstPipeline.lean,fails,Lean/Imported/monster/MonsterLean/MonsterLean/BreadthFirstPipeline.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Algebra/BigOperators/Basic.olean' of module Mathlib.Algebra.BigOp
+monster/MonsterLean/MonsterLean/Extract71Objects.lean,fails,Lean/Imported/monster/MonsterLean/MonsterLean/Extract71Objects.lean:18:37: error(lean.synthInstanceFailed): failed to synthesize instance of type class
+monster/MonsterLean/MonsterLean/HarmonicFolding.lean,fails,Lean/Imported/monster/MonsterLean/MonsterLean/HarmonicFolding.lean:31:28: error: Invalid `⟨...⟩` notation: The expected type `ℕ` has more than one constructor
+monster/MonsterLean/MonsterLean/MonsterAutoencoder.lean,fails,Lean/Imported/monster/MonsterLean/MonsterLean/MonsterAutoencoder.lean:32:3: error: unknown tactic
+monster/MonsterLean/MonsterLean/MonsterIsMeme.lean,fails,Lean/Imported/monster/MonsterLean/MonsterLean/MonsterIsMeme.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/LinearAlgebra/Dimension.olean' of module Mathlib.LinearAlgebra.Dimension
+monster/MonsterLean/MonsterLean/MusicalPeriodicTableUniversal.lean,fails,Lean/Imported/monster/MonsterLean/MonsterLean/MusicalPeriodicTableUniversal.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime d
+monster/MonsterLean/MonsterLean/PrologUnification.lean,fails,Lean/Imported/monster/MonsterLean/MonsterLean/PrologUnification.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/LinearAlgebra/Dimension.olean' of module Mathlib.LinearAlgebra.Dimen
+monster/MonsterLean/MonsterLean/ProofIndex.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MonsterLean/SelfReferentialConformal.lean,fails,Lean/Imported/monster/MonsterLean/MonsterLean/SelfReferentialConformal.lean:25:23: error: Type mismatch
+monster/MonsterLean/MonsterLean/ShardLMFDB.lean,elaborates-with-sorry,
+monster/MonsterLean/MonsterLean/ShardReader.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MonsterMemoryFill.lean,elaborates-with-sorry,
+monster/MonsterLean/MonsterMusic.lean,fails,Lean/Imported/monster/MonsterLean/MonsterMusic.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/MonsterLean/MonsterReflection.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MonsterResonance.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MonsterShells.lean,elaborates-with-sorry,
+monster/MonsterLean/MonsterSong.lean,fails,Lean/Imported/monster/MonsterLean/MonsterSong.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Digits.olean' of module Mathlib.Data.Nat.Digits does not exist
+monster/MonsterLean/MonsterTheory.lean,fails,Lean/Imported/monster/MonsterLean/MonsterTheory.lean:64:54: error: unexpected token '/--'; expected 'lemma'
+monster/MonsterLean/MonsterVOA.lean,fails,Lean/Imported/monster/MonsterLean/MonsterVOA.lean:26:35: error(lean.unknownIdentifier): Unknown identifier `j_coefficient`
+monster/MonsterLean/MonsterWalk.lean,fails,"Lean/Imported/monster/MonsterLean/MonsterWalk.lean:51:7: error: unexpected token 'prefix'; expected '(', ':=', 'rec', '|' or term"
+monster/MonsterLean/MonsterWalkAllBases.lean,fails,Lean/Imported/monster/MonsterLean/MonsterWalkAllBases.lean:32:2: error(lean.unknownIdentifier): Unknown constant `Complex.abs`
+monster/MonsterLean/MonsterWalkGPU.lean,elaborates-with-sorry,
+monster/MonsterLean/MonsterWalkHex.lean,elaborates-with-sorry,
+monster/MonsterLean/MonsterWalkLogarithmic.lean,fails,"Lean/Imported/monster/MonsterLean/MonsterWalkLogarithmic.lean:76:6: error(lean.invalidField): Invalid field `log_diff`: The environment does not contain `Function.log_diff`, so it is not possible to p"
+monster/MonsterLean/MonsterWalkMatrix.lean,fails,"Lean/Imported/monster/MonsterLean/MonsterWalkMatrix.lean:50:26: error(lean.invalidField): Invalid field `digits`: The environment does not contain `Nat.digits`, so it is not possible to project the fi"
+monster/MonsterLean/MonsterWalkOnLean.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MonsterWalkPrimes.lean,fails,Lean/Imported/monster/MonsterLean/MonsterWalkPrimes.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Digits.olean' of module Mathlib.Data.Nat.Digits does not exist
+monster/MonsterLean/MonsterWalkRings.lean,fails,Lean/Imported/monster/MonsterLean/MonsterWalkRings.lean:34:2: error: failed to synthesize
+monster/MonsterLean/MoonshineDoorways.lean,fails,Lean/Imported/monster/MonsterLean/MoonshineDoorways.lean:49:2: error: No goals to be solved
+monster/MonsterLean/MultiDimensionalDepth.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/MusicalPeriodicTable.lean,fails,"Lean/Imported/monster/MonsterLean/MusicalPeriodicTable.lean:40:11: error: (kernel) invalid declaration, it uses unsafe declaration 'Real.instRepr'"
+monster/MonsterLean/MyceliumSporeJar.lean,fails,Lean/Imported/monster/MonsterLean/MyceliumSporeJar.lean:58:26: error: unknown tactic
+monster/MonsterLean/NeuralKTheory.lean,fails,Lean/Imported/monster/MonsterLean/NeuralKTheory.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Analysis/NormedSpace/Basic.olean' of module Mathlib.Analysis.NormedSpace.Basic does 
+monster/MonsterLean/Operations71Proven.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/P2PZKMeme.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/ParquetZKML.lean,fails,Lean/Imported/monster/MonsterLean/ParquetZKML.lean:51:5: error(lean.synthInstanceFailed): failed to synthesize instance of type class
+monster/MonsterLean/PartitionByShells.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/PartitionMathlib.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/PrecedenceSurvey.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/Prime71Precedence.lean,fails,Lean/Imported/monster/MonsterLean/Prime71Precedence.lean:21:51: error: unknown tactic
+monster/MonsterLean/PrimeResonance.lean,fails,Lean/Imported/monster/MonsterLean/PrimeResonance.lean:10:17: error(lean.unknownIdentifier): Unknown constant `Real.log`
+monster/MonsterLean/ProcessMonster71.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/QIDDenseShards.lean,fails,Lean/Imported/monster/MonsterLean/QIDDenseShards.lean:39:2: error: typeclass instance problem is stuck
+monster/MonsterLean/QwenFreeTier.lean,fails,Lean/Imported/monster/MonsterLean/QwenFreeTier.lean:28:3: error: unknown tactic
+monster/MonsterLean/QwenShardSplit.lean,fails,Lean/Imported/monster/MonsterLean/QwenShardSplit.lean:74:3: error: unknown tactic
+monster/MonsterLean/RunDiscovery.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/SearchMonsterExponents.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/Shard13.lean,fails,Lean/Imported/monster/MonsterLean/Shard13.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/AlgebraicGeometry/EllipticCurve/Affine.olean' of module Mathlib.AlgebraicGeometry.Elliptic
+monster/MonsterLean/Shard23DNA.lean,fails,Lean/Imported/monster/MonsterLean/Shard23DNA.lean:25:24: error: No deriving handlers have been implemented for class `Fintype`
+monster/MonsterLean/SolidStateLLM.lean,fails,Lean/Imported/monster/MonsterLean/SolidStateLLM.lean:81:2: error: Tactic `rfl` failed: The left-hand side
+monster/MonsterLean/StripMineLayers.lean,elaborates-with-sorry,
+monster/MonsterLean/TestLattice.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/TopologicalReading.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/WalkToEarth.lean,fails,Lean/Imported/monster/MonsterLean/WalkToEarth.lean:81:3: error: unknown tactic
+monster/MonsterLean/WalkToEarthHex.lean,fails,Lean/Imported/monster/MonsterLean/WalkToEarthHex.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Digits.olean' of module Mathlib.Data.Nat.Digits does not exist
+monster/MonsterLean/ZKMemeGenerator.lean,not-attempted,needs a library root beyond Mathlib
+monster/MonsterLean/ZKRDFAProof.lean,fails,Lean/Imported/monster/MonsterLean/ZKRDFAProof.lean:160:96: error: unsolved goals
+monster/ProveOmniscience.lean,not-attempted,needs a library root beyond Mathlib
+monster/extracted_proof.lean,not-attempted,needs a library root beyond Mathlib
+monster/monster-shards/shard-01/lean4/cluster_pictures/cluster_picture.lean,fails,Lean/Imported/monster/monster-shards/shard-01/lean4/cluster_pictures/cluster_picture.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Na
+monster/monster-shards/shard-01/lean4/cluster_pictures/web_cluster_picture.lean,fails,Lean/Imported/monster/monster-shards/shard-01/lean4/cluster_pictures/web_cluster_picture.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Dat
+monster/monster-shards/shard-01/lean4/riemann/main.lean,fails,Lean/Imported/monster/monster-shards/shard-01/lean4/riemann/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exi
+monster/monster-shards/shard-01/lean4/siegel_modular_forms/family.lean,fails,Lean/Imported/monster/monster-shards/shard-01/lean4/siegel_modular_forms/family.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Pri
+monster/monster-shards/shard-01/lean4/typed_data/Lfunction_types.lean,fails,Lean/Imported/monster/monster-shards/shard-01/lean4/typed_data/Lfunction_types.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prim
+monster/monster-shards/shard-01/lean4/typed_data/standard_types.lean,fails,Lean/Imported/monster/monster-shards/shard-01/lean4/typed_data/standard_types.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime
+monster/monster-shards/shard-01/lean4/utils/cocalcwrap.lean,fails,Lean/Imported/monster/monster-shards/shard-01/lean4/utils/cocalcwrap.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not
+monster/monster-shards/shard-01/lean4/verify/mf_hecke_traces.lean,fails,Lean/Imported/monster/monster-shards/shard-01/lean4/verify/mf_hecke_traces.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime do
+monster/monster-shards/shard-01/lean4/zeros/main.lean,fails,Lean/Imported/monster/monster-shards/shard-01/lean4/zeros/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/monster-shards/shard-02/lean4/HilbertModularForms/hilbert_field.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/HilbertModularForms/hilbert_field.lean:5:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/RingTheory/DedekindDomain/Ideal.olean' of modu
+monster/monster-shards/shard-02/lean4/HilbertModularForms/hilbert_modular_form.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/HilbertModularForms/hilbert_modular_form.lean:5:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/RingTheory/DedekindDomain/Ideal.olean' 
+monster/monster-shards/shard-02/lean4/HilbertModularForms/hmf_stats.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/HilbertModularForms/hmf_stats.lean:5:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/RingTheory/DedekindDomain/Ideal.olean' of module M
+monster/monster-shards/shard-02/lean4/HilbertModularForms/q_expansion.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/HilbertModularForms/q_expansion.lean:5:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/RingTheory/DedekindDomain/Ideal.olean' of module
+monster/monster-shards/shard-02/lean4/HilbertModularForms/test_hmf.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/HilbertModularForms/test_hmf.lean:5:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/RingTheory/DedekindDomain/Ideal.olean' of module Ma
+monster/monster-shards/shard-02/lean4/HilbertModularForms/web_HMF.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/HilbertModularForms/web_HMF.lean:5:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/RingTheory/DedekindDomain/Ideal.olean' of module Mat
+monster/monster-shards/shard-02/lean4/abvar/download.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/abvar/download.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not e
+monster/monster-shards/shard-02/lean4/abvar/isog_class.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/abvar/isog_class.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not
+monster/monster-shards/shard-02/lean4/abvar/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/abvar/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/monster-shards/shard-02/lean4/abvar/stats.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/abvar/stats.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exis
+monster/monster-shards/shard-02/lean4/abvar/web_abvar.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/abvar/web_abvar.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-02/lean4/api/api.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/api/api.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/monster-shards/shard-02/lean4/api2/api2.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/api2/api2.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/monster-shards/shard-02/lean4/api2/searchers.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/api2/searchers.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not e
+monster/monster-shards/shard-02/lean4/api2/utils.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/api2/utils.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/monster-shards/shard-02/lean4/artin_representations/cyc_alt_res_engine.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/artin_representations/cyc_alt_res_engine.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib
+monster/monster-shards/shard-02/lean4/artin_representations/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/artin_representations/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prim
+monster/monster-shards/shard-02/lean4/artin_representations/math_classes.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/artin_representations/math_classes.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.
+monster/monster-shards/shard-02/lean4/belyi/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/belyi/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/monster-shards/shard-02/lean4/belyi/web_belyi.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/belyi/web_belyi.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-02/lean4/bianchi_modular_forms/bianchi_modular_form.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/bianchi_modular_forms/bianchi_modular_form.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathl
+monster/monster-shards/shard-02/lean4/bianchi_modular_forms/web_BMF.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/bianchi_modular_forms/web_BMF.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.P
+monster/monster-shards/shard-02/lean4/characters/HeckeCharacters.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/characters/HeckeCharacters.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prim
+monster/monster-shards/shard-02/lean4/characters/ListCharacters.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/characters/ListCharacters.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime
+monster/monster-shards/shard-02/lean4/characters/TinyConrey.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/characters/TinyConrey.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime doe
+monster/monster-shards/shard-02/lean4/characters/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/characters/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-02/lean4/characters/utils.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/characters/utils.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not
+monster/monster-shards/shard-02/lean4/characters/web_character.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/characters/web_character.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime 
+monster/monster-shards/shard-02/lean4/classical_modular_forms/cmf_test_pages.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/classical_modular_forms/cmf_test_pages.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.D
+monster/monster-shards/shard-02/lean4/classical_modular_forms/download.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/classical_modular_forms/download.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Na
+monster/monster-shards/shard-02/lean4/classical_modular_forms/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/classical_modular_forms/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Pr
+monster/monster-shards/shard-02/lean4/classical_modular_forms/web_newform.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/classical_modular_forms/web_newform.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data
+monster/monster-shards/shard-02/lean4/classical_modular_forms/web_space.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/classical_modular_forms/web_space.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.N
+monster/monster-shards/shard-02/lean4/crystals/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/crystals/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not ex
+monster/monster-shards/shard-02/lean4/ecnf/WebEllipticCurve.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/ecnf/WebEllipticCurve.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime doe
+monster/monster-shards/shard-02/lean4/ecnf/ecnf_stats.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/ecnf/ecnf_stats.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-02/lean4/ecnf/ecnf_test_pages.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/ecnf/ecnf_test_pages.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does
+monster/monster-shards/shard-02/lean4/ecnf/isog_class.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/ecnf/isog_class.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-02/lean4/ecnf/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/ecnf/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/monster-shards/shard-02/lean4/ecnf/searchers.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/ecnf/searchers.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not e
+monster/monster-shards/shard-02/lean4/elliptic_curves/congruent_numbers.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/elliptic_curves/congruent_numbers.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.N
+monster/monster-shards/shard-02/lean4/elliptic_curves/elliptic_curve.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/elliptic_curves/elliptic_curve.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.
+monster/monster-shards/shard-02/lean4/elliptic_curves/isog_class.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/elliptic_curves/isog_class.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prim
+monster/monster-shards/shard-02/lean4/elliptic_curves/searchers.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/elliptic_curves/searchers.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime
+monster/monster-shards/shard-02/lean4/elliptic_curves/web_ec.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/elliptic_curves/web_ec.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime do
+monster/monster-shards/shard-02/lean4/galois_groups/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/galois_groups/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does n
+monster/monster-shards/shard-02/lean4/galois_groups/transitive_group.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/galois_groups/transitive_group.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.
+monster/monster-shards/shard-02/lean4/genus2_curves/g2c_test_pages.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/genus2_curves/g2c_test_pages.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Pr
+monster/monster-shards/shard-02/lean4/genus2_curves/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/genus2_curves/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does n
+monster/monster-shards/shard-02/lean4/genus2_curves/web_g2c.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/genus2_curves/web_g2c.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime doe
+monster/monster-shards/shard-02/lean4/groups/circles.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/groups/circles.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not e
+monster/monster-shards/shard-02/lean4/groups/groups_test_pages.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/groups/groups_test_pages.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime 
+monster/monster-shards/shard-02/lean4/groups/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/groups/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exis
+monster/monster-shards/shard-02/lean4/groups/stats.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/groups/stats.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exi
+monster/monster-shards/shard-02/lean4/groups/verify.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/groups/verify.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not ex
+monster/monster-shards/shard-02/lean4/groups/web_groups.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/groups/web_groups.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does no
+monster/monster-shards/shard-02/lean4/half_integral_weight_forms/half_integral_form.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/half_integral_weight_forms/half_integral_form.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Ma
+monster/monster-shards/shard-02/lean4/hecke_algebras/hecke_algebras_stats.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/hecke_algebras/hecke_algebras_stats.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data
+monster/monster-shards/shard-02/lean4/hecke_algebras/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/hecke_algebras/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does 
+monster/monster-shards/shard-02/lean4/higher_genus_w_automorphisms/hgcwa_stats.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/higher_genus_w_automorphisms/hgcwa_stats.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib
+monster/monster-shards/shard-02/lean4/higher_genus_w_automorphisms/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/higher_genus_w_automorphisms/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.N
+monster/monster-shards/shard-02/lean4/hilbert_modular_forms/hilbert_field.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/hilbert_modular_forms/hilbert_field.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data
+monster/monster-shards/shard-02/lean4/hilbert_modular_forms/hilbert_modular_form.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/hilbert_modular_forms/hilbert_modular_form.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathl
+monster/monster-shards/shard-02/lean4/hilbert_modular_forms/hmf_stats.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/hilbert_modular_forms/hmf_stats.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat
+monster/monster-shards/shard-02/lean4/hilbert_modular_forms/q_expansion.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/hilbert_modular_forms/q_expansion.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.N
+monster/monster-shards/shard-02/lean4/hilbert_modular_forms/web_HMF.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/hilbert_modular_forms/web_HMF.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.P
+monster/monster-shards/shard-02/lean4/homepage/random.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/homepage/random.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-02/lean4/homepage/sidebar.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/homepage/sidebar.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not
+monster/monster-shards/shard-02/lean4/hypergm/hodge.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/hypergm/hodge.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not ex
+monster/monster-shards/shard-02/lean4/hypergm/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/hypergm/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exi
+monster/monster-shards/shard-02/lean4/hypergm/web_family.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/hypergm/web_family.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does n
+monster/monster-shards/shard-02/lean4/knowledge/knowl.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/knowledge/knowl.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-02/lean4/knowledge/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/knowledge/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not e
+monster/monster-shards/shard-02/lean4/lattice/isom.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/lattice/isom.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exi
+monster/monster-shards/shard-02/lean4/lattice/lattice_stats.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/lattice/lattice_stats.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime doe
+monster/monster-shards/shard-02/lean4/lattice/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/lattice/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exi
+monster/monster-shards/shard-02/lean4/lfunctions/HodgeTransformations.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/lfunctions/HodgeTransformations.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat
+monster/monster-shards/shard-02/lean4/lfunctions/Lfunction.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/lfunctions/Lfunction.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does
+monster/monster-shards/shard-02/lean4/lfunctions/LfunctionComp.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/lfunctions/LfunctionComp.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime 
+monster/monster-shards/shard-02/lean4/lfunctions/LfunctionDatabase.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/lfunctions/LfunctionDatabase.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Pr
+monster/monster-shards/shard-02/lean4/lfunctions/LfunctionLcalc.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/lfunctions/LfunctionLcalc.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime
+monster/monster-shards/shard-02/lean4/lfunctions/LfunctionPlot.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/lfunctions/LfunctionPlot.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime 
+monster/monster-shards/shard-02/lean4/lfunctions/Lfunction_base.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/lfunctions/Lfunction_base.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime
+monster/monster-shards/shard-02/lean4/lfunctions/Lfunctionutilities.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/lfunctions/Lfunctionutilities.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.P
+monster/monster-shards/shard-02/lean4/lfunctions/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/lfunctions/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-02/lean4/local_fields/family.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/local_fields/family.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does 
+monster/monster-shards/shard-02/lean4/local_fields/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/local_fields/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does no
+monster/monster-shards/shard-02/lean4/logger/start.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/logger/start.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exi
+monster/monster-shards/shard-02/lean4/maass_forms/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/maass_forms/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not
+monster/monster-shards/shard-02/lean4/maass_forms/plot.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/maass_forms/plot.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not
+monster/monster-shards/shard-02/lean4/maass_forms/web_maassform.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/maass_forms/web_maassform.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime
+monster/monster-shards/shard-02/lean4/modl_galois_representations/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/modl_galois_representations/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Na
+monster/monster-shards/shard-02/lean4/modl_galois_representations/web_modlgal.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/modl_galois_representations/web_modlgal.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.
+monster/monster-shards/shard-02/lean4/modlmf/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/modlmf/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exis
+monster/monster-shards/shard-02/lean4/modlmf/modlmf_stats.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/modlmf/modlmf_stats.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does 
+monster/monster-shards/shard-02/lean4/modular_curves/family.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/modular_curves/family.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime doe
+monster/monster-shards/shard-02/lean4/modular_curves/isog_class.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/modular_curves/isog_class.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime
+monster/monster-shards/shard-02/lean4/modular_curves/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/modular_curves/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does 
+monster/monster-shards/shard-02/lean4/modular_curves/upload.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/modular_curves/upload.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime doe
+monster/monster-shards/shard-02/lean4/modular_curves/web_curve.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/modular_curves/web_curve.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime 
+monster/monster-shards/shard-02/lean4/motives/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/motives/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exi
+monster/monster-shards/shard-02/lean4/nfutils/psort.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/nfutils/psort.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not ex
+monster/monster-shards/shard-02/lean4/number_fields/draw_spectrum.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/number_fields/draw_spectrum.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Pri
+monster/monster-shards/shard-02/lean4/number_fields/number_field.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/number_fields/number_field.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prim
+monster/monster-shards/shard-02/lean4/number_fields/web_number_field.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/number_fields/web_number_field.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.
+monster/monster-shards/shard-02/lean4/permutations/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/permutations/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does no
+monster/monster-shards/shard-02/lean4/riemann/stieltjes.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/riemann/stieltjes.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does no
+monster/monster-shards/shard-02/lean4/sato_tate_groups/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/sato_tate_groups/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime doe
+monster/monster-shards/shard-02/lean4/siegel_modular_forms/dimensions.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/siegel_modular_forms/dimensions.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat
+monster/monster-shards/shard-02/lean4/siegel_modular_forms/family_data.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/siegel_modular_forms/family_data.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Na
+monster/monster-shards/shard-02/lean4/siegel_modular_forms/sample.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/siegel_modular_forms/sample.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Pri
+monster/monster-shards/shard-02/lean4/siegel_modular_forms/siegel_core.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/siegel_modular_forms/siegel_core.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Na
+monster/monster-shards/shard-02/lean4/siegel_modular_forms/siegel_modular_form.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/siegel_modular_forms/siegel_modular_form.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib
+monster/monster-shards/shard-02/lean4/siegel_modular_forms/smf_test_pages.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/siegel_modular_forms/smf_test_pages.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data
+monster/monster-shards/shard-02/lean4/symL/symL.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/symL/symL.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/monster-shards/shard-02/lean4/symL/sympowlmfdb.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/symL/sympowlmfdb.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not
+monster/monster-shards/shard-02/lean4/tensor_products/galois_reps.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/tensor_products/galois_reps.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Pri
+monster/monster-shards/shard-02/lean4/tensor_products/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/tensor_products/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does
+monster/monster-shards/shard-02/lean4/tests/generate_snippet_tests.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/tests/generate_snippet_tests.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Pr
+monster/monster-shards/shard-02/lean4/typed_data/type_generation.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/typed_data/type_generation.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prim
+monster/monster-shards/shard-02/lean4/uploads/process.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/uploads/process.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-02/lean4/uploads/verify.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/uploads/verify.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not e
+monster/monster-shards/shard-02/lean4/users/main.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/users/main.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/monster-shards/shard-02/lean4/users/pwdmanager.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/users/pwdmanager.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not
+monster/monster-shards/shard-02/lean4/users/recaptcha.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/users/recaptcha.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-02/lean4/utils/color.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/color.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exis
+monster/monster-shards/shard-02/lean4/utils/common_regex.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/common_regex.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does n
+monster/monster-shards/shard-02/lean4/utils/completeness.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/completeness.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does n
+monster/monster-shards/shard-02/lean4/utils/config.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/config.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exi
+monster/monster-shards/shard-02/lean4/utils/display_stats.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/display_stats.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does 
+monster/monster-shards/shard-02/lean4/utils/downloader.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/downloader.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not
+monster/monster-shards/shard-02/lean4/utils/interesting.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/interesting.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does no
+monster/monster-shards/shard-02/lean4/utils/names_and_urls.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/names_and_urls.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does
+monster/monster-shards/shard-02/lean4/utils/place_code.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/place_code.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not
+monster/monster-shards/shard-02/lean4/utils/random_wrap.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/random_wrap.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does no
+monster/monster-shards/shard-02/lean4/utils/search_boxes.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/search_boxes.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does n
+monster/monster-shards/shard-02/lean4/utils/search_columns.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/search_columns.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does
+monster/monster-shards/shard-02/lean4/utils/search_parsing.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/search_parsing.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does
+monster/monster-shards/shard-02/lean4/utils/search_wrapper.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/search_wrapper.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does
+monster/monster-shards/shard-02/lean4/utils/trace_hash.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/trace_hash.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not
+monster/monster-shards/shard-02/lean4/utils/uploader.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/uploader.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not e
+monster/monster-shards/shard-02/lean4/utils/utilities.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/utilities.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-02/lean4/utils/web_display.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/utils/web_display.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does no
+monster/monster-shards/shard-02/lean4/verify/gps_gl2zhat_fine.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/gps_gl2zhat_fine.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime d
+monster/monster-shards/shard-02/lean4/verify/mf.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/mf.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/monster-shards/shard-02/lean4/verify/mf_gamma1.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/mf_gamma1.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not
+monster/monster-shards/shard-02/lean4/verify/mf_gamma1_portraits.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/mf_gamma1_portraits.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prim
+monster/monster-shards/shard-02/lean4/verify/mf_hecke_cc.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/mf_hecke_cc.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does n
+monster/monster-shards/shard-02/lean4/verify/mf_hecke_lpolys.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/mf_hecke_lpolys.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime do
+monster/monster-shards/shard-02/lean4/verify/mf_hecke_nf.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/mf_hecke_nf.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does n
+monster/monster-shards/shard-02/lean4/verify/mf_newform_portraits.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/mf_newform_portraits.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Pri
+monster/monster-shards/shard-02/lean4/verify/mf_newforms.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/mf_newforms.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does n
+monster/monster-shards/shard-02/lean4/verify/mf_newspace_portraits.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/mf_newspace_portraits.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Pr
+monster/monster-shards/shard-02/lean4/verify/mf_newspaces.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/mf_newspaces.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does 
+monster/monster-shards/shard-02/lean4/verify/modcurve_modelmaps.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/modcurve_modelmaps.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime
+monster/monster-shards/shard-02/lean4/verify/verification.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/verification.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does 
+monster/monster-shards/shard-02/lean4/verify/verify_tables.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/verify/verify_tables.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does
+monster/monster-shards/shard-02/lean4/zeros/platt_zeros.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/zeros/platt_zeros.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does no
+monster/monster-shards/shard-02/lean4/zeros/zetazeros.lean,fails,Lean/Imported/monster/monster-shards/shard-02/lean4/zeros/zetazeros.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-03/lean4/homepage/boxes.lean,fails,Lean/Imported/monster/monster-shards/shard-03/lean4/homepage/boxes.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not e
+monster/monster-shards/shard-03/lean4/hypergm/plot.lean,fails,Lean/Imported/monster/monster-shards/shard-03/lean4/hypergm/plot.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exi
+monster/monster-shards/shard-03/lean4/logger/utils.lean,fails,Lean/Imported/monster/monster-shards/shard-03/lean4/logger/utils.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exi
+monster/monster-shards/shard-03/lean4/utils/datetime_utils.lean,fails,Lean/Imported/monster/monster-shards/shard-03/lean4/utils/datetime_utils.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does
+monster/monster-shards/shard-03/lean4/verify/follower.lean,fails,Lean/Imported/monster/monster-shards/shard-03/lean4/verify/follower.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not 
+monster/monster-shards/shard-05/lean4/abvar/search_parsing.lean,fails,Lean/Imported/monster/monster-shards/shard-05/lean4/abvar/search_parsing.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does
+monster/onlyskills-repo/CommitValue.lean,fails,Lean/Imported/monster/onlyskills-repo/CommitValue.lean:35:2: error: No goals to be solved
+monster/onlyskills-repo/ComplexityLatticeProof.lean,fails,Lean/Imported/monster/onlyskills-repo/ComplexityLatticeProof.lean:33:47: error: unknown tactic
+monster/onlyskills-repo/InodeCoverageProof.lean,fails,Lean/Imported/monster/onlyskills-repo/InodeCoverageProof.lean:32:2: error: No applicable extensionality theorem found for type
+monster/onlyskills-repo/InodeZKArrows.lean,fails,"Lean/Imported/monster/onlyskills-repo/InodeZKArrows.lean:61:29: error(lean.invalidField): Invalid field `get!`: The environment does not contain `List.get!`, so it is not possible to project the field"
+monster/onlyskills-repo/Onlyskills.lean,not-attempted,needs a library root beyond Mathlib
+monster/onlyskills-repo/OptimalLatticeProof.lean,fails,Lean/Imported/monster/onlyskills-repo/OptimalLatticeProof.lean:4:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Optimization/Basic.olean' of module Mathlib.Optimization.Basic does not ex
+monster/onlyskills-repo/PrologModelCompleteness.lean,fails,Lean/Imported/monster/onlyskills-repo/PrologModelCompleteness.lean:77:21: error(lean.unknownIdentifier): Unknown identifier `t`
+monster/onlyskills-repo/RepoScannerNovelty.lean,elaborates-with-sorry,
+monster/onlyskills-repo/TenfoldWay.lean,not-attempted,needs a library root beyond Mathlib
+monster/onlyskills-repo/TenfoldWayMathlib.lean,fails,Lean/Imported/monster/onlyskills-repo/TenfoldWayMathlib.lean:64:14: error: Tactic `rfl` failed: The left-hand side
+monster/onlyskills-repo/TotalMonsterLattice.lean,fails,Lean/Imported/monster/onlyskills-repo/TotalMonsterLattice.lean:41:66: error: could not synthesize default value for field 'symm' of 'SimpleGraph' using tactics
+monster/onlyskills-repo/TurtleExportProof.lean,not-attempted,needs a library root beyond Mathlib
+monster/onlyskills-repo/UniversalFilesystemProof.lean,fails,Lean/Imported/monster/onlyskills-repo/UniversalFilesystemProof.lean:69:2: error: No applicable extensionality theorem found for type
+monster/onlyskills-repo/ZKCircuitProof.lean,not-attempted,needs a library root beyond Mathlib
+monster/onlyskills-repo/ZeroOntology.lean,not-attempted,needs a library root beyond Mathlib
+monster/onlyskills-repo/intervention_proof.lean,fails,Lean/Imported/monster/onlyskills-repo/intervention_proof.lean:2:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+monster/proofs/metameme_first_payment.lean,not-attempted,needs a library root beyond Mathlib
+monster/proofs/metameme_first_payment_hott.lean,elaborates,elaborates but declares its own axiom; held out of the Promoted library
+monster/prove_computational_omniscience.lean,fails,Lean/Imported/monster/prove_computational_omniscience.lean:3:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Data/Nat/Prime.olean' of module Mathlib.Data.Nat.Prime does not exist
+quine.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Analytic/RectangleLogDeriv.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Analytic/Stirling.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Assembly/Certificate.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Assembly/CertificateC3.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Assembly/Inputs.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Assembly/SeamMult.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Defs.lean,wired,promoted to Lean/Promoted/Zeta23/Defs.lean and built by the Promoted library
+reference/zeta23/Zeta23/Defs/Counting.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Defs/LeafIntegrals.lean,wired,promoted to Lean/Promoted/Zeta23/Defs/LeafIntegrals.lean and built by the Promoted library
+reference/zeta23/Zeta23/Defs/Profile.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ExplicitFormula.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ExplicitFormula/Bridge.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Final.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/FinalMult.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/FromPNTPlus/Auxiliary.lean,fails,Lean/Imported/reference/zeta23/Zeta23/FromPNTPlus/Auxiliary.lean:69:3: error: unknown tactic
+reference/zeta23/Zeta23/FromPNTPlus/EulerMaclaurin.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/FromPNTPlus/Fourier.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/FromPNTPlus/Mathlib/Algebra/Notation/Support.lean,wired,promoted to Lean/Promoted/Zeta23/FromPNTPlus/Mathlib/Algebra/Notation/Support.lean and built by the Promoted library
+reference/zeta23/Zeta23/FromPNTPlus/Mathlib/Analysis/SpecialFunctions/Log/Basic.lean,wired,promoted to Lean/Promoted/Zeta23/FromPNTPlus/Mathlib/Analysis/SpecialFunctions/Log/Basic.lean and built by the Promoted library
+reference/zeta23/Zeta23/FromPNTPlus/MellinCalculus.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/FromPNTPlus/Mertens.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/FromPNTPlus/Rectangle.lean,fails,Lean/Imported/reference/zeta23/Zeta23/FromPNTPlus/Rectangle.lean:84:2: error: Tactic `assumption` failed
+reference/zeta23/Zeta23/FromPNTPlus/SmoothExistence.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/FromPNTPlus/Sobolev.lean,fails,"Lean/Imported/reference/zeta23/Zeta23/FromPNTPlus/Sobolev.lean:106:15: error: unexpected identifier; expected ')', ',' or ':'"
+reference/zeta23/Zeta23/FromPNTPlus/StrongPNTPrefix.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/FromPNTPlus/Tactic/AdditiveCombination.lean,fails,Lean/Imported/reference/zeta23/Zeta23/FromPNTPlus/Tactic/AdditiveCombination.lean:18:0: error: object file '/mathlib/.lake/build/lib/lean/Mathlib/Tactic/LinearCombinationPrime.olean' of module Mathlib
+reference/zeta23/Zeta23/FromPNTPlus/ZetaConj.lean,fails,Lean/Imported/reference/zeta23/Zeta23/FromPNTPlus/ZetaConj.lean:24:2: error: `simp` made no progress
+reference/zeta23/Zeta23/GammaFacts.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/GammaFacts/Complete.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/GammaFacts/IntMu.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/GammaFacts/Mu.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/GammaFacts/Series.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/GammaFacts/StirlingVert.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Hypotheses.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Hypotheses/GzGp.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/LinAlg.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/LinAlg/HermitianPosPart.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/LinAlg/PosIndex.lean,wired,promoted to Lean/Promoted/Zeta23/LinAlg/PosIndex.lean and built by the Promoted library
+reference/zeta23/Zeta23/LinAlg/RankTrace.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/LinAlg/Sylvester.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/LinAlg/VonNeumann.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/LinAlg/Weyl.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/MV.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/MV/Duality.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/MV/Eigen.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/MV/EigenIdentity.lean,wired,promoted to Lean/Promoted/Zeta23/MV/EigenIdentity.lean and built by the Promoted library
+reference/zeta23/Zeta23/MV/Final.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/MV/Quadratic.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/MV/Spacing.lean,wired,promoted to Lean/Promoted/Zeta23/MV/Spacing.lean and built by the Promoted library
+reference/zeta23/Zeta23/Main.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PairCeiling/Bridge.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PairCeiling/Ceiling.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PairCeiling/CeilingLaw256.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PairCeiling/Defs.lean,wired,promoted to Lean/Promoted/Zeta23/PairCeiling/Defs.lean and built by the Promoted library
+reference/zeta23/Zeta23/PairCeiling/Grid.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PairCeiling/LawN256.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PairCeiling/NumericCert.lean,wired,promoted to Lean/Promoted/Zeta23/PairCeiling/NumericCert.lean and built by the Promoted library
+reference/zeta23/Zeta23/PairCeiling/RowCert.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PairCeiling/Signed.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PiFacts.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Poisson.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Prelude/InstancePriorities.lean,wired,promoted to Lean/Promoted/Zeta23/Prelude/InstancePriorities.lean and built by the Promoted library
+reference/zeta23/Zeta23/PrimeSideA.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideA/Bridge.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideA/CrossMuP.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideA/CrossMuPCore.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideA/Defs.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideA/Ends.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideA/EndsCore.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideA/EndsE1.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideA/EndsE2.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideA/EndsNu.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideA/EndsWeighted.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideA/MuMu.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideB.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideB/Concrete.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideB/Final.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideB/PP.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideB/PPKernel.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideB/PPOffDiag.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideB/Traces.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/PrimeSideTemp.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/RvM/Backlund.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/RvM/BacklundDefs.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/RvM/CountByIntegral.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/RvM/Defs.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/RvM/Fold.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/RvM/GammaSide.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/RvM/Halving.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/RvM/LocalCount.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/RvM/ReZeroCount.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/RvM/Statement.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Statement.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Statement/Seam.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Statement/SeamClosed.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Tail.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Tail/Basic.lean,wired,promoted to Lean/Promoted/Zeta23/Tail/Basic.lean and built by the Promoted library
+reference/zeta23/Zeta23/Tail/Count.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Tail/Grid.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Tail/Package.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Tail/RankOne.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Taper.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Taper/Basic.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Taper/Fourier.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Taper/Gevrey.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Taper/GevreyPhi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Taper/GevreyRamps.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Taper/Norms.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Taper/Params.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Taper/Strip.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/AssemblyD.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/BridgeD.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/Concrete.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/Endgame.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/Final.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/Functional.lean,wired,promoted to Lean/Promoted/Zeta23/ThmD/Functional.lean and built by the Promoted library
+reference/zeta23/Zeta23/ThmD/Limit.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/Mult.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/PP.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/ParamsD.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/PsiC.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/Traces.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/WindowCore.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/WindowLocalHyps.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmD/ZeroSideD.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmDE/Concrete.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmDE/Endgame.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmDE/Final.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmDE/Limit.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmDE/Mult.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmDE/PP.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmDE/Traces.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmDE/TracesHyp.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmDE/ZeroSide.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/AssemblyQ.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/BacklundChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/ChebCoprime.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/ContourChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/CountByIntegralChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/CrossMuPChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/EFLitChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/Final.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/FoldChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/FullLineChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/FullLineChiAssembly.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/FullLineChiFold.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/FullLineChiProof.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/GammaFactsChiProof.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/GammaSideChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/GzGpChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/HorizontalChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/Hypotheses.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/IntMuChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/LGrowth.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/LandauChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/LocalCountChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/Main.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/MainChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/MainTermChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/MuMuChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/Mult.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/ReZeroCountChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/RvMChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/RvMChiDefs.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/SeamL.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/Statement.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/TracesChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/TracesHypChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ThmE/VerticalLineChi.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/TracesBoundsE.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/Unconditional.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/WeilEF/Effective.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/WeilEF/FullLine.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/WeilEF/FullLineAssembly.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/WeilEF/GammaRBracket.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/WeilEF/GoodHeights.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/WeilEF/Horizontal.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/WeilEF/Landau.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/WeilEF/Main.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/WeilEF/XiLogDeriv.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/WeilEF/ZeroSumLimit.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/WeilEF/ZeroSummability.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/WeilEF/ZeroSummabilityGen.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Assembly.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Certificate.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Certificate/AtOne.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Certificate/D1.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Certificate/Poly.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/CertificateFn.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/Abel.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/Basic.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/DiagLaw.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/H3.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/LSeries.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/LT.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/LayerOne.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/MainTerm/Asymp.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/MainTerm/Squarefree.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/Param.lean,wired,promoted to Lean/Promoted/Zeta23/XiPrime/Coeff/Param.lean and built by the Promoted library
+reference/zeta23/Zeta23/XiPrime/Coeff/PowerSums.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/PrimeSums.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/Reexpansion.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/ReexpansionGen.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/ReexpansionW.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/Tail.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Coeff/Upper.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Defs.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ExplicitFormula.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ExplicitFormula/Contour.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ExplicitFormula/DirichletLine.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ExplicitFormula/EntryError.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ExplicitFormula/FamilyFacts.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ExplicitFormula/FullLine.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ExplicitFormula/GramBridge.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ExplicitFormula/JTerm.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ExplicitFormula/LineBound.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ExplicitFormula/Main.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ExplicitFormula/PrimeTermJ.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ExplicitFormula/XiEFAssembly.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/FamilyFlat.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/FamilyHyps.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/FamilyHypsV.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Final.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/Basic.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/Contour.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/Count.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/EFBasic.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/EFContour/Analytic.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/EFContour/Limit.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/EFContour/Poles.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/EFContour/Rectangle.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/EFExpansion.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/EFFinal.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/EFJTermW.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/EFMain.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/EFWeights.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/GoodHeightsW.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/GramBridgeW.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/Omega.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/Seam.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/TwoLine.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/ZFunction.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Hardy/ZeroFree.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/PrimeSide/Abel.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/PrimeSide/Concrete.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/PrimeSide/Cross.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/PrimeSide/Density.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/PrimeSide/Final.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/PrimeSide/Moments.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/PrimeSide/PP.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/PrimeSide/PPUpper.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/PrimeSide/Trace.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/QuarticWindow/Family.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/QuarticWindow/ModWindow.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/QuarticWindow/Moments.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/QuarticWindow/Params.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/QuarticWindow/Quartic.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/QuarticWindow/ZeroSide.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Seam.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Statement.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/StatementW.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Transfer/Dependence.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Transfer/Inputs.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Transfer/InputsW.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Transfer/W.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Window.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Window/FlatAdm.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/Window/Quartic.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ZeroCount/ArgBound.lean,wired,promoted to Lean/Promoted/Zeta23/XiPrime/ZeroCount/ArgBound.lean and built by the Promoted library
+reference/zeta23/Zeta23/XiPrime/ZeroCount/Contour.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ZeroCount/Generic.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ZeroCount/GenericRvM.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ZeroCount/GoodHeights.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ZeroCount/Landau.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ZeroCount/Sides.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/XiPrime/ZeroCount/Y.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ZeroSide.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ZeroSide/Final.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ZeroSide/Mult.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ZeroSide/RankTraceMult.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ZeroSide/TightMult.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/Zeta23/ZetaReflect.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/comparator/Challenge.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/comparator/Challenge/Multiplicity.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/comparator/Challenge/XiPrime.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/comparator/ChallengeDeps.lean,wired,promoted to Lean/Promoted/Zeta23Comparator/ChallengeDeps.lean and built by the Promoted library
+reference/zeta23/comparator/ChallengeDeps/XiPrime.lean,wired,promoted to Lean/Promoted/Zeta23Comparator/ChallengeDeps/XiPrime.lean and built by the Promoted library
+reference/zeta23/comparator/PrintAxioms.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/comparator/PrintAxioms/Multiplicity.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/comparator/PrintAxioms/PairCeiling.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/comparator/PrintAxioms/XiPrime.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/comparator/Solution.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/comparator/Solution/Multiplicity.lean,not-attempted,needs a library root beyond Mathlib
+reference/zeta23/comparator/Solution/XiPrime.lean,not-attempted,needs a library root beyond Mathlib
+rh-analytic-bridge/Lean/RiemannAnalytic.lean,not-attempted,needs a library root beyond Mathlib
+rh-analytic-bridge/Lean/RiemannAnalytic/WindowGram.lean,not-attempted,needs a library root beyond Mathlib
+rh-to-toe-lean-handoff/Lean/RiemannAnalytic.lean,not-attempted,needs a library root beyond Mathlib
+scripts/Generate3d.lean,not-attempted,needs a library root beyond Mathlib
+scripts/GenerateAnim.lean,not-attempted,needs a library root beyond Mathlib
+scripts/GenerateHeckeShapes.lean,not-attempted,needs a library root beyond Mathlib
+scripts/GenerateSporadicClosure.lean,not-attempted,needs a library root beyond Mathlib
+scripts/GenerateSporadicSpectrum.lean,not-attempted,needs a library root beyond Mathlib
+scripts/GenerateSporadicZeta.lean,not-attempted,needs a library root beyond Mathlib
+scripts/GenerateSvg.lean,not-attempted,needs a library root beyond Mathlib
+scripts/GenerateWaves.lean,not-attempted,needs a library root beyond Mathlib
+scripts/GenerateWavesSix.lean,not-attempted,needs a library root beyond Mathlib
+tools/AgdaDump.lean,not-attempted,needs a library root beyond Mathlib
+tools/AgdaParse.lean,not-attempted,needs a library root beyond Mathlib
+tools/DepDump.lean,not-attempted,needs a library root beyond Mathlib

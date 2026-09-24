@@ -1,0 +1,10 @@
+{
+ "aliases": [
+  "proteid",
+  "proteins"
+ ],
+ "canonical": "Q8054",
+ "description": "biomolecule or biomolecule complex largely consisting of chains of amino acid residues",
+ "id": "Q8054",
+ "label": "protein"
+}

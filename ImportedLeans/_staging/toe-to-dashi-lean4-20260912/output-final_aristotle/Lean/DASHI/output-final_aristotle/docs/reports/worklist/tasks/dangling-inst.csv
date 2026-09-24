@@ -1,0 +1,2 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/defects.skb","ontology","dangling-inst","error","suggested-fix","Q900","","Q1","","","`instance of` statement with an endpoint that is not a declared item","declare the missing item, or delete the statement"

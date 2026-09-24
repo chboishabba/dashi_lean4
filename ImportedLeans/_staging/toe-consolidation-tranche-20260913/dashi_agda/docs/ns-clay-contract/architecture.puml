@@ -1,0 +1,186 @@
+@startuml
+' C4-style component view without a remote include.
+' Parent document: README.md
+
+title DASHI periodic Navier–Stokes Clay contract after Round 29
+
+skinparam componentStyle rectangle
+skinparam wrapWidth 220
+skinparam maxMessageSize 160
+skinparam shadowing false
+
+actor "Mathematical reviewer" as Reviewer
+
+package "Official target" {
+  component "Fefferman periodic alternative B\nliteral target" as ClayTarget <<Requirement>>
+  component "Mean centering and\nGalilean restoration" as Galilean <<Reducer plus open analysis>>
+  component "Literal Fefferman witness" as Witness <<Checked terminal reducer>>
+}
+
+package "Finite physical PDE" {
+  component "Duplicate-free cutoff carrier\nand physical output fibres" as Carrier <<Checked exact>>
+  component "HH/LH/HL/CC plus Com\nexhaustive support" as Support <<Checked exact>>
+  component "Sharp finite shell projectors" as Projectors <<Checked exact>>
+  component "Reconstructed physical state\ntransverse, real, zero-free" as Reconstructed <<Checked exact Round 29>>
+  component "Dependent physical ODE carrier" as PhysicalODE <<Checked exact Round 29>>
+  component "Literal nonlinear equivariance" as Equivariance <<Open producer>>
+  component "Real finite Picard-Lindelof" as Picard <<Open producer>>
+  component "Triad energy cancellation" as Energy <<Checked exact algebra>>
+  component "Finite blowup alternative\nand energy control" as Blowup <<Checked reducer Round 29>>
+  component "Global finite Galerkin flow" as GlobalFlow <<Open producer>>
+  component "One global bilinear pairing\n= HH+LH+HL+CC+Com" as GlobalPairing <<Checked exact Round 29>>
+  component "Physical time-dependent\nshell balance" as ShellBalance <<Open producer>>
+}
+
+package "Signed operator system" {
+  component "Signed multiplier difference\nm(k)-m(k-l)" as SignedCom <<Checked exact>>
+  component "Finite dyadic coefficient\n2^-q * 2^q = 1" as ScaleCancel <<Checked exact Round 29>>
+  component "Discrete multiplier telescoping" as Telescoping <<Checked exact Round 29>>
+  component "Cross-shell signed cells\nand local decay envelopes" as CrossShell <<Checked scalar core Round 29>>
+  component "Operator Cotlar-Stein / TT*" as Cotlar <<Open producer>>
+  component "Physical Com owner estimate" as ComTax <<Open producer>>
+}
+
+package "Directional high-high system" {
+  component "Periodic Fourier strain multiplier" as StrainMultiplier <<Checked exact algebra>>
+  component "Periodic principal-value kernel\nand Calderon-Zygmund bounds" as Kernel <<Open producer>>
+  component "Plucker/Gram and orbit parity" as Geometry <<Checked exact>>
+  component "Scale-normalised amplitude\nlambda^-1 lambda^3 E=lambda^2 E" as Amplitude <<Checked exact Round 29>>
+  component "HH-good owner estimate" as HHGood <<Open producer>>
+  component "Directional defect evolution" as DefectEvolution <<Open producer>>
+  component "HH-bad feasibility/no-go" as HHBadFeasibility <<Checked exact Round 29>>
+  component "Positive variation and\nbad-amplitude estimate" as HHBadPhysical <<Open producer>>
+}
+
+package "Tax and limit system" {
+  component "Signed constituent tree" as Constituents <<Checked exact>>
+  component "Delayed positive part\nlossy fallback named" as DelayedPositive <<Checked exact Round 29>>
+  component "Dependent unique-owner partition" as Ownership <<Checked exact>>
+  component "No-hidden-norm estimate language" as TaxLanguage <<Checked exact>>
+  component "Symbolic affine owner costs" as SymbolicCosts <<Checked exact Round 29>>
+  component "Nine physical owner estimates" as NineOwners <<Open producer>>
+  component "Strict eta_total < 1" as Margin <<Open central bottleneck>>
+  component "Nine-owner absorption" as Absorption <<Checked reducer>>
+  component "Boundary atoms by\nvanishing mechanism" as Boundaries <<Checked classification Round 29>>
+  component "Shell and Galerkin limits" as Limits <<Open producer>>
+}
+
+package "Continuation system" {
+  component "Uniform critical Gronwall" as Gronwall <<Checked reducer>>
+  component "Negative Sobolev\ntime-derivative budget" as TimeDerivative <<Reducer plus open physical estimate>>
+  component "Aubin-Lions-Simon compactness" as Compactness <<Open producer>>
+  component "Quantitative critical-to-Serrin" as CriticalSerrin <<Checked algebra Round 29>>
+  component "Periodic Serrin continuation" as Serrin <<Open producer>>
+  component "Smooth pressure recovery" as Pressure <<Open producer>>
+}
+
+package "Assurance" {
+  component "Round 29 cumulative Agda root" as AgdaRoot <<Verification>>
+  component "Fail-closed source, hole,\nauthority and link checker" as Checker <<Verification>>
+}
+
+Carrier --> Support
+Carrier --> Reconstructed
+Projectors --> GlobalPairing
+Reconstructed --> PhysicalODE
+PhysicalODE --> Equivariance : requires raw field commutation
+Equivariance --> Picard
+Picard --> GlobalFlow
+Energy --> Blowup
+Blowup --> GlobalFlow
+GlobalFlow --> ShellBalance
+Support --> GlobalPairing
+GlobalPairing --> ShellBalance
+
+SignedCom --> ScaleCancel
+SignedCom --> Telescoping
+Telescoping --> CrossShell
+ScaleCancel --> CrossShell
+CrossShell --> Cotlar
+Cotlar --> ComTax
+
+StrainMultiplier --> Kernel
+Geometry --> HHGood
+Kernel --> HHGood
+Amplitude --> HHBadPhysical
+DefectEvolution --> HHBadPhysical
+HHBadFeasibility --> HHBadPhysical : feasible tuple or no-go
+
+ShellBalance --> Constituents
+Constituents --> DelayedPositive
+DelayedPositive --> Ownership
+Ownership --> TaxLanguage
+ComTax --> NineOwners
+HHGood --> NineOwners
+HHBadPhysical --> NineOwners
+Kernel --> NineOwners
+Boundaries --> NineOwners
+TaxLanguage --> SymbolicCosts
+SymbolicCosts --> NineOwners
+NineOwners --> Margin
+Margin --> Absorption
+Absorption --> Gronwall
+Gronwall --> Limits
+Boundaries --> Limits
+Limits --> TimeDerivative
+TimeDerivative --> Compactness
+Compactness --> CriticalSerrin
+CriticalSerrin --> Serrin
+Serrin --> Pressure
+Pressure --> Galilean
+Galilean --> Witness
+Witness --> ClayTarget
+
+AgdaRoot ..> Reconstructed
+AgdaRoot ..> PhysicalODE
+AgdaRoot ..> Blowup
+AgdaRoot ..> GlobalPairing
+AgdaRoot ..> DelayedPositive
+AgdaRoot ..> Telescoping
+AgdaRoot ..> CrossShell
+AgdaRoot ..> Amplitude
+AgdaRoot ..> HHBadFeasibility
+AgdaRoot ..> SymbolicCosts
+AgdaRoot ..> Boundaries
+AgdaRoot ..> CriticalSerrin
+Checker ..> AgdaRoot
+Reviewer --> Checker
+Reviewer --> ClayTarget
+
+note right of Reconstructed
+The selector is concrete because the state type
+already carries the physical constraints.
+Full Galerkin vector-field preservation is open.
+end note
+
+note right of DelayedPositive
+Physical taxes target (sum signed constituents)^+.
+The sum of atomwise positive parts is retained only
+as an explicitly lossy fallback.
+end note
+
+note right of CrossShell
+The signed scalar aggregation is checked.
+The operator-valued cutoff-uniform decay estimate
+is the next Com-lane theorem.
+end note
+
+note right of HHBadFeasibility
+A physical parameter family must fit strictly inside
+its owner allocation. An unavoidable floor can now
+refute the current good/bad architecture.
+end note
+
+note right of SymbolicCosts
+Young parameters stay symbolic until every owner is
+assembled. One exact rational certificate must prove
+the global strict margin.
+end note
+
+note bottom of ClayTarget
+No unconditional theorem is promoted until every
+physical producer is inhabited and the cumulative
+Agda kernel check succeeds.
+end note
+
+@enduml

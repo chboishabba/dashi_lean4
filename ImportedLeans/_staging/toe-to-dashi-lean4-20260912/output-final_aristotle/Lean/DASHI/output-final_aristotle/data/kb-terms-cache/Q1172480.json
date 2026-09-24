@@ -1,0 +1,11 @@
+{
+ "aliases": [
+  "datamodel",
+  "data models",
+  "datamodels"
+ ],
+ "canonical": "Q1172480",
+ "description": "an abstract model that organizes elements of data and standardizes how they relate to one another and to real world entities.",
+ "id": "Q1172480",
+ "label": "data model"
+}

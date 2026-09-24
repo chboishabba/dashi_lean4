@@ -1,0 +1,3 @@
+"source","layer","code","severity","status","subject","subject label","object","object label","extra","message","fix"
+"examples/defects.skb","series","forked-series","error","needs-review","V5","","V1","","V2","an item follows two different items: the series forks","keep one predecessor; if both are right, the two are different series"
+"examples/defects.skb","series","forked-series","error","needs-review","V5","","V2","","V1","an item follows two different items: the series forks","keep one predecessor; if both are right, the two are different series"

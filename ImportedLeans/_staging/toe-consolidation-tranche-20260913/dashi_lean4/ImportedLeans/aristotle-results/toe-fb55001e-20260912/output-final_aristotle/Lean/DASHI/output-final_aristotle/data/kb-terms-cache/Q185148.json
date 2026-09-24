@@ -1,0 +1,14 @@
+{
+ "aliases": [
+  "real interval",
+  "range",
+  "real range",
+  "interval of reals",
+  "interval of real numbers",
+  "interval of the real line"
+ ],
+ "canonical": "Q185148",
+ "description": "subset an ordered set that consists of all elements between two given endpoints",
+ "id": "Q185148",
+ "label": "interval"
+}

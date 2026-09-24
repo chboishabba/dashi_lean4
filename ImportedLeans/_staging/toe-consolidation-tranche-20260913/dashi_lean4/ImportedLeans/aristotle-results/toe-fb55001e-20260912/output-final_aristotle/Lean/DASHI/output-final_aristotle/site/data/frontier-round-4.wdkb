@@ -1,0 +1,292 @@
+name	frontier-round-4
+item	wd	Q10567583
+item	wd	Q10915
+item	wd	Q110854677
+item	wd	Q115490427
+item	wd	Q115820013
+item	wd	Q1292333
+item	wd	Q1348645
+item	wd	Q16003513
+item	wd	Q161172
+item	wd	Q17006903
+item	wd	Q18848
+item	wd	Q192276
+item	wd	Q20026918
+item	wd	Q2101636
+item	wd	Q2305441
+item	wd	Q694975
+item	wd	Q1209283
+item	wd	Q7233031
+item	wd	Q6047782
+item	wd	Q4164581
+item	wd	Q18386809
+item	wd	Q150866
+item	wd	Q3059449
+item	wd	Q16521
+item	wd	Q21871294
+item	wd	Q115949945
+item	wd	Q110832782
+item	wd	Q7397
+item	wd	Q14946528
+item	wd	Q7048977
+item	wd	Q35120
+item	wd	Q11953984
+item	wd	Q2198779
+item	wd	Q121132955
+item	wd	Q942423
+item	wd	Q1426191
+item	wd	Q2112502
+item	wd	Q5500272
+item	wd	Q340169
+item	wd	Q334265
+item	wd	Q96251598
+item	wd	Q1068473
+item	wd	Q11016
+item	wd	Q112057532
+item	wd	Q2267705
+item	wd	Q13405586
+item	wd	Q223393
+item	wd	Q108466143
+item	wd	Q13512116
+item	wd	Q1333055
+item	wd	Q17102802
+item	wd	Q121075789
+item	wd	Q205464
+item	wd	Q748349
+item	wd	Q1851710
+item	wd	Q5165061
+item	wd	Q1657198
+item	wd	Q95744479
+item	wd	Q22963169
+item	wd	Q21855572
+item	wd	Q130901
+item	wd	Q1756942
+item	wd	Q3924032
+item	wd	Q937228
+item	wd	Q11348
+item	wd	Q96253971
+item	wd	Q17737
+item	wd	Q131841
+item	wd	Q6423319
+item	wd	Q24034552
+item	wd	Q151885
+item	wd	Q23958852
+item	wd	Q137429456
+item	wd	Q25107
+item	wd	Q18340964
+item	wd	Q33104129
+item	wd	Q33104069
+item	wd	Q127421212
+item	wd	Q3249551
+item	wd	Q67518978
+item	wd	Q124711104
+item	wd	Q483247
+item	wd	Q30241068
+item	wd	Q116505632
+item	wd	Q21146257
+item	wd	Q16889133
+item	wd	Q19478619
+item	wd	Q24017414
+item	wd	Q49848
+item	wd	Q37866906
+item	wd	Q82753
+item	wd	Q37787110
+item	wd	Q59138870
+item	wd	Q121771058
+item	wd	Q719395
+level	1	wd	Q10567583
+level	1	wd	Q10915
+level	1	wd	Q110854677
+level	1	wd	Q115490427
+level	1	wd	Q115820013
+level	1	wd	Q1292333
+level	1	wd	Q1348645
+level	0	wd	Q16003513
+level	1	wd	Q161172
+level	32	wd	Q17006903
+level	1	wd	Q18848
+level	32	wd	Q192276
+level	1	wd	Q20026918
+level	1	wd	Q2101636
+level	1	wd	Q2305441
+level	1	wd	Q694975
+level	1	wd	Q1209283
+level	1	wd	Q7233031
+level	1	wd	Q6047782
+level	1	wd	Q4164581
+level	1	wd	Q18386809
+level	1	wd	Q150866
+level	1	wd	Q3059449
+level	2	wd	Q16521
+level	2	wd	Q21871294
+level	3	wd	Q115949945
+level	1	wd	Q110832782
+level	1	wd	Q7397
+level	2	wd	Q14946528
+level	1	wd	Q7048977
+level	1	wd	Q35120
+level	1	wd	Q11953984
+level	1	wd	Q2198779
+level	2	wd	Q121132955
+level	1	wd	Q942423
+level	1	wd	Q1426191
+level	1	wd	Q2112502
+level	1	wd	Q5500272
+level	1	wd	Q340169
+level	1	wd	Q334265
+level	2	wd	Q96251598
+level	2	wd	Q1068473
+level	2	wd	Q11016
+level	3	wd	Q112057532
+level	3	wd	Q2267705
+level	2	wd	Q13405586
+level	2	wd	Q223393
+level	2	wd	Q108466143
+level	1	wd	Q13512116
+level	1	wd	Q1333055
+level	1	wd	Q17102802
+level	1	wd	Q121075789
+level	1	wd	Q205464
+level	1	wd	Q748349
+level	1	wd	Q1851710
+level	32	wd	Q5165061
+level	32	wd	Q1657198
+level	32	wd	Q95744479
+level	32	wd	Q22963169
+level	32	wd	Q21855572
+level	32	wd	Q130901
+level	32	wd	Q1756942
+level	33	wd	Q3924032
+level	33	wd	Q937228
+level	33	wd	Q11348
+level	34	wd	Q96253971
+level	1	wd	Q17737
+level	1	wd	Q131841
+level	1	wd	Q6423319
+level	34	wd	Q24034552
+level	33	wd	Q151885
+level	34	wd	Q23958852
+level	34	wd	Q137429456
+level	1	wd	Q25107
+level	1	wd	Q18340964
+level	2	wd	Q33104129
+level	2	wd	Q33104069
+level	2	wd	Q127421212
+level	1	wd	Q3249551
+level	1	wd	Q67518978
+level	2	wd	Q124711104
+level	1	wd	Q483247
+level	1	wd	Q30241068
+level	2	wd	Q116505632
+level	2	wd	Q21146257
+level	2	wd	Q16889133
+level	3	wd	Q19478619
+level	3	wd	Q24017414
+level	1	wd	Q49848
+level	1	wd	Q37866906
+level	1	wd	Q82753
+level	1	wd	Q37787110
+level	1	wd	Q59138870
+level	1	wd	Q121771058
+level	1	wd	Q719395
+sub	wd	Q10567583	wd	Q6047782
+sub	wd	Q10567583	wd	Q121771058
+sub	wd	Q10567583	wd	Q4164581
+sub	wd	Q10915	wd	Q150866
+sub	wd	Q110854677	wd	Q110832782
+sub	wd	Q115490427	wd	Q7048977
+sub	wd	Q115820013	wd	Q11953984
+sub	wd	Q1209283	wd	Q340169
+sub	wd	Q1292333	wd	Q942423
+sub	wd	Q1292333	wd	Q5500272
+sub	wd	Q1348645	wd	Q340169
+sub	wd	Q1348645	wd	Q49848
+sub	wd	Q161172	wd	Q13512116
+sub	wd	Q161172	wd	Q1333055
+sub	wd	Q161172	wd	Q17102802
+sub	wd	Q17006903	wd	Q192276
+sub	wd	Q18848	wd	Q205464
+sub	wd	Q192276	wd	Q5165061
+sub	wd	Q192276	wd	Q95744479
+sub	wd	Q192276	wd	Q11348
+sub	wd	Q20026918	wd	Q17737
+sub	wd	Q2101636	wd	Q25107
+sub	wd	Q2305441	wd	Q3249551
+sub	wd	Q2305441	wd	Q483247
+sub	wd	Q694975	wd	Q49848
+sub	wd	Q694975	wd	Q1209283
+sub	wd	Q694975	wd	Q82753
+sub	wd	Q7233031	wd	Q121771058
+sub	wd	Q6047782	wd	Q748349
+sub	wd	Q4164581	wd	Q18386809
+sub	wd	Q150866	wd	Q3059449
+sub	wd	Q16521	wd	Q21871294
+sub	wd	Q110832782	wd	Q37866906
+sub	wd	Q110832782	wd	Q7397
+sub	wd	Q7048977	wd	Q35120
+sub	wd	Q11953984	wd	Q2198779
+sub	wd	Q121132955	wd	Q21146257
+sub	wd	Q942423	wd	Q1426191
+sub	wd	Q942423	wd	Q2112502
+sub	wd	Q5500272	wd	Q205464
+sub	wd	Q340169	wd	Q334265
+sub	wd	Q1068473	wd	Q11016
+sub	wd	Q13405586	wd	Q223393
+sub	wd	Q13405586	wd	Q108466143
+sub	wd	Q13512116	wd	Q205464
+sub	wd	Q1333055	wd	Q121075789
+sub	wd	Q17102802	wd	Q121075789
+sub	wd	Q205464	wd	Q748349
+sub	wd	Q205464	wd	Q1851710
+sub	wd	Q5165061	wd	Q1657198
+sub	wd	Q95744479	wd	Q22963169
+sub	wd	Q95744479	wd	Q21855572
+sub	wd	Q11348	wd	Q130901
+sub	wd	Q11348	wd	Q1756942
+sub	wd	Q3924032	wd	Q937228
+sub	wd	Q3924032	wd	Q11348
+sub	wd	Q17737	wd	Q131841
+sub	wd	Q17737	wd	Q6423319
+sub	wd	Q24034552	wd	Q151885
+sub	wd	Q25107	wd	Q18340964
+sub	wd	Q127421212	wd	Q21146257
+sub	wd	Q3249551	wd	Q67518978
+sub	wd	Q483247	wd	Q30241068
+sub	wd	Q116505632	wd	Q21146257
+sub	wd	Q116505632	wd	Q16889133
+sub	wd	Q49848	wd	Q37866906
+sub	wd	Q82753	wd	Q37787110
+sub	wd	Q82753	wd	Q59138870
+sub	wd	Q121771058	wd	Q719395
+inst	wd	Q10915	wd	Q16521
+inst	wd	Q1209283	wd	Q121132955
+inst	wd	Q1348645	wd	Q1068473
+inst	wd	Q1348645	wd	Q13405586
+inst	wd	Q192276	wd	Q3924032
+inst	wd	Q20026918	wd	Q24034552
+inst	wd	Q2101636	wd	Q127421212
+inst	wd	Q2305441	wd	Q116505632
+inst	wd	Q150866	wd	Q16521
+inst	wd	Q16521	wd	Q24017414
+inst	wd	Q16521	wd	Q115949945
+inst	wd	Q110832782	wd	Q14946528
+inst	wd	Q7048977	wd	Q23958852
+inst	wd	Q7048977	wd	Q96251598
+inst	wd	Q121132955	wd	Q19478619
+inst	wd	Q340169	wd	Q96251598
+inst	wd	Q1068473	wd	Q112057532
+inst	wd	Q1068473	wd	Q2267705
+inst	wd	Q13405586	wd	Q19478619
+inst	wd	Q205464	wd	Q24034552
+inst	wd	Q11348	wd	Q24034552
+inst	wd	Q3924032	wd	Q96253971
+inst	wd	Q3924032	wd	Q24034552
+inst	wd	Q24034552	wd	Q23958852
+inst	wd	Q24034552	wd	Q137429456
+inst	wd	Q25107	wd	Q33104129
+inst	wd	Q25107	wd	Q33104069
+inst	wd	Q25107	wd	Q127421212
+inst	wd	Q127421212	wd	Q19478619
+inst	wd	Q3249551	wd	Q124711104
+inst	wd	Q116505632	wd	Q19478619
+inst	wd	Q116505632	wd	Q24017414

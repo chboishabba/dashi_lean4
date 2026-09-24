@@ -1,0 +1,29 @@
+{
+ "aliases": [
+  "rdfs:subClassOf",
+  "has superclass",
+  "subtype of",
+  "subcategory of",
+  "is thereby also a",
+  "is necessarily also a",
+  "whose instances are among",
+  "is a type of",
+  "is a class of",
+  "type of",
+  "form of",
+  "way of",
+  "all members of this class also belong to",
+  "category of",
+  "whose instances are a subset of those of",
+  "sc (abbreviation)",
+  "kind of",
+  "sort of",
+  "variant of",
+  "subgenre of",
+  "⊆"
+ ],
+ "canonical": "P279",
+ "description": "this item is a subclass (subset) of that item; ALL instances of this item are instances of that item; different from P31 (instance of), e.g.: volcano is a subclass of mountain; Everest is an instance of mountain",
+ "id": "P279",
+ "label": "subclass of"
+}

@@ -2523,4 +2523,113 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_scaledFourthAngularBal
     W.literalOffOrdExactAt_le_fourthHarmonic_add_sixthDebt_add_far
       ht n
 
+
+/-!
+## Support geometry of adverse fourth-harmonic mass
+
+Negative fourth phase requires both horizontal and ordinate displacement and
+forces them to be comparable.  Thus adverse local fourth-harmonic mass is
+supported only on genuinely off-line, off-ordinate zeros.
+-/
+
+theorem quarticSignedPolePhysicalFourthPhaseReal_nonneg_of_height_zero
+    (t : ℝ) (rho : Zeros)
+    (ha : heightOf rho = 0) :
+    0 <= quarticSignedPolePhysicalFourthPhaseReal t rho := by
+  unfold quarticSignedPolePhysicalFourthPhaseReal
+  rw [ha]
+  positivity
+
+theorem quarticSignedPolePhysicalFourthPhaseReal_nonneg_of_same_ordinate
+    (t : ℝ) (rho : Zeros)
+    (hd : (rho : ℂ).im = t) :
+    0 <= quarticSignedPolePhysicalFourthPhaseReal t rho := by
+  unfold quarticSignedPolePhysicalFourthPhaseReal
+  rw [hd]
+  ring_nf
+  positivity
+
+theorem quarticSignedPole_adverseFourthPhase_height_ne_zero
+    {t : ℝ} {rho : Zeros}
+    (hneg : quarticSignedPolePhysicalFourthPhaseReal t rho < 0) :
+    heightOf rho ≠ 0 := by
+  intro ha
+  have hnonneg :=
+    quarticSignedPolePhysicalFourthPhaseReal_nonneg_of_height_zero
+      t rho ha
+  linarith
+
+theorem quarticSignedPole_adverseFourthPhase_ordinate_ne_center
+    {t : ℝ} {rho : Zeros}
+    (hneg : quarticSignedPolePhysicalFourthPhaseReal t rho < 0) :
+    (rho : ℂ).im ≠ t := by
+  intro hd
+  have hnonneg :=
+    quarticSignedPolePhysicalFourthPhaseReal_nonneg_of_same_ordinate
+      t rho hd
+  linarith
+
+theorem quarticSignedPole_adverseFourthPhase_height_sq_lt_six_delta_sq
+    {t : ℝ} {rho : Zeros}
+    (hneg : quarticSignedPolePhysicalFourthPhaseReal t rho < 0) :
+    heightOf rho^2 < 6 * ((rho : ℂ).im-t)^2 := by
+  unfold quarticSignedPolePhysicalFourthPhaseReal at hneg
+  have ha2 : 0 <= heightOf rho^2 := sq_nonneg _
+  have hd2 : 0 <= ((rho : ℂ).im-t)^2 := sq_nonneg _
+  by_contra h
+  have hge :
+      6 * ((rho : ℂ).im-t)^2 <= heightOf rho^2 :=
+    le_of_not_gt h
+  have ha4 :
+      heightOf rho^4 = heightOf rho^2 * heightOf rho^2 := by ring
+  have hd4 :
+      ((rho : ℂ).im-t)^4 =
+        ((rho : ℂ).im-t)^2 * ((rho : ℂ).im-t)^2 := by ring
+  rw [ha4,hd4] at hneg
+  nlinarith
+
+theorem quarticSignedPole_adverseFourthPhase_delta_sq_lt_six_height_sq
+    {t : ℝ} {rho : Zeros}
+    (hneg : quarticSignedPolePhysicalFourthPhaseReal t rho < 0) :
+    ((rho : ℂ).im-t)^2 < 6 * heightOf rho^2 := by
+  unfold quarticSignedPolePhysicalFourthPhaseReal at hneg
+  have ha2 : 0 <= heightOf rho^2 := sq_nonneg _
+  have hd2 : 0 <= ((rho : ℂ).im-t)^2 := sq_nonneg _
+  by_contra h
+  have hge :
+      6 * heightOf rho^2 <= ((rho : ℂ).im-t)^2 :=
+    le_of_not_gt h
+  have ha4 :
+      heightOf rho^4 = heightOf rho^2 * heightOf rho^2 := by ring
+  have hd4 :
+      ((rho : ℂ).im-t)^4 =
+        ((rho : ℂ).im-t)^2 * ((rho : ℂ).im-t)^2 := by ring
+  rw [ha4,hd4] at hneg
+  nlinarith
+
+theorem quarticSignedPole_adverseFourthPhase_comparable
+    {t : ℝ} {rho : Zeros}
+    (hneg : quarticSignedPolePhysicalFourthPhaseReal t rho < 0) :
+    heightOf rho^2 < 6 * ((rho : ℂ).im-t)^2
+      ∧
+    ((rho : ℂ).im-t)^2 < 6 * heightOf rho^2 := by
+  exact ⟨
+    quarticSignedPole_adverseFourthPhase_height_sq_lt_six_delta_sq hneg,
+    quarticSignedPole_adverseFourthPhase_delta_sq_lt_six_height_sq hneg
+  ⟩
+
+/--
+Every adverse fourth-phase zero is genuinely off the critical line in the
+repo's horizontal coordinate and genuinely separated from the target
+ordinate.
+-/
+theorem quarticSignedPole_adverseFourthPhase_offline_offordinate
+    {t : ℝ} {rho : Zeros}
+    (hneg : quarticSignedPolePhysicalFourthPhaseReal t rho < 0) :
+    heightOf rho ≠ 0 ∧ (rho : ℂ).im ≠ t := by
+  exact ⟨
+    quarticSignedPole_adverseFourthPhase_height_ne_zero hneg,
+    quarticSignedPole_adverseFourthPhase_ordinate_ne_center hneg
+  ⟩
+
 end Synthesis

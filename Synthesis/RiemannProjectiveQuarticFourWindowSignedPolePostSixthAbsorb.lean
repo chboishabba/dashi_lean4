@@ -1265,4 +1265,163 @@ theorem QuarticFourSignedPolePair.signedProfileMomentSix_nonneg_iff_endpoint
   linarith
 
 
+
+/-!
+## Generic projective moment bridge and J6 reduction
+
+The physical projective profile is 4*g*B_r, so every polynomial moment is four
+times the corresponding bracket moment.  For the four-window family at r=1,
+that bracket moment is exactly quarticFourWindowJ at the same order.
+
+This general k bridge makes the selected signed sixth determinant completely
+explicit in the existing four-window coordinates.
+-/
+
+def projectiveMomentEvenResp
+    (g : ℝ -> ℝ) (k : ℕ) (s : ℝ) : ℝ :=
+  ∫ u : ℝ, g u * u^k * Real.cos (s*u)
+
+def projectiveBracketMoment
+    (g : ℝ -> ℝ) (r : ℝ) (k : ℕ) : ℝ :=
+  ∫ u : ℝ, g u * u^k * twoRadiusBracket g r u
+
+theorem projectiveBracketMoment_eq_response_det
+    {g : ℝ -> ℝ}
+    (hg : Continuous g)
+    (hgc : HasCompactSupport g)
+    (r : ℝ) (k : ℕ) :
+    projectiveBracketMoment g r k
+      =
+    evenResp g 0 r * projectiveMomentEvenResp g k (2*r)
+      - evenResp g 0 (2*r) * projectiveMomentEvenResp g k r := by
+  let f2 : ℝ -> ℝ := fun u =>
+    g u * u^k * Real.cos ((2*r)*u)
+  let f1 : ℝ -> ℝ := fun u =>
+    g u * u^k * Real.cos (r*u)
+  have hf2 : Integrable f2 := by
+    dsimp [f2]
+    exact Continuous.integrable_of_hasCompactSupport
+      (by fun_prop)
+      ((hgc.mul_right).mul_right)
+  have hf1 : Integrable f1 := by
+    dsimp [f1]
+    exact Continuous.integrable_of_hasCompactSupport
+      (by fun_prop)
+      ((hgc.mul_right).mul_right)
+  unfold projectiveBracketMoment twoRadiusBracket
+  have hpoint :
+      (fun u : ℝ =>
+        g u * u^k *
+          (evenResp g 0 r * Real.cos (2*r*u)
+            - evenResp g 0 (2*r) * Real.cos (r*u)))
+        =
+      (fun u : ℝ =>
+        evenResp g 0 r * f2 u
+          - evenResp g 0 (2*r) * f1 u) := by
+    funext u
+    dsimp [f1,f2]
+    ring
+  rw [hpoint,
+      integral_sub (hf2.const_mul _) (hf1.const_mul _),
+      integral_const_mul, integral_const_mul]
+  unfold projectiveMomentEvenResp
+  rfl
+
+theorem genericProjectivePhysicalProfile_moment
+    {g : ℝ -> ℝ}
+    (r : ℝ) (k : ℕ) :
+    (∫ u : ℝ,
+      genericProjectivePhysicalProfile g r u * u^k)
+      =
+    4 * projectiveBracketMoment g r k := by
+  unfold genericProjectivePhysicalProfile projectiveBracketMoment
+  rw [← integral_const_mul]
+  apply integral_congr_ae
+  exact Filter.Eventually.of_forall fun u => by ring
+
+theorem projectiveBracketMoment_fourWindow_one
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (k : ℕ) :
+    projectiveBracketMoment
+      (quarticFourWindowProfile R lam mu) 1 k
+      =
+    quarticFourWindowJ R lam mu k := by
+  rw [projectiveBracketMoment_eq_response_det
+      (quarticFourWindowProfile_continuous hR)
+      (quarticFourWindowProfile_compact hR) 1 k,
+    evenResp_zero_fourWindow hR,
+    evenResp_zero_fourWindow hR]
+  unfold projectiveMomentEvenResp
+    quarticFourWindowJ quarticFourWindowMomentResp
+  rw [quarticFourWindowProfile_pairing_eq hR (by fun_prop),
+      quarticFourWindowProfile_pairing_eq hR (by fun_prop)]
+  norm_num
+
+theorem quarticFourNormalizedProjectiveProfile_moment
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (k : ℕ) :
+    (∫ u : ℝ,
+      quarticFourNormalizedProjectiveProfile R lam mu u * u^k)
+      =
+    4 * quarticFourWindowJ R lam mu k := by
+  unfold quarticFourNormalizedProjectiveProfile
+  rw [genericProjectivePhysicalProfile_moment,
+      projectiveBracketMoment_fourWindow_one hR]
+
+theorem quarticFourNormalizedProjectiveProfileSixthMoment_eq_J6
+    {R lam mu : ℝ}
+    (hR : 0 < R) :
+    quarticFourNormalizedProjectiveProfileSixthMoment R lam mu
+      =
+    4 * quarticFourWindowJ R lam mu 6 := by
+  unfold quarticFourNormalizedProjectiveProfileSixthMoment
+  exact quarticFourNormalizedProjectiveProfile_moment hR 6
+
+theorem QuarticFourSignedPolePair.endpointHalfSixthMoment_eq_J6
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.endpointHalfSixthMoment
+      =
+    4 * quarticFourWindowJ W.R (1/2) W.muHalf 6 := by
+  unfold QuarticFourSignedPolePair.endpointHalfSixthMoment
+  exact quarticFourNormalizedProjectiveProfileSixthMoment_eq_J6
+    W.Rpos
+
+theorem QuarticFourSignedPolePair.endpointTwoSixthMoment_eq_J6
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.endpointTwoSixthMoment
+      =
+    4 * quarticFourWindowJ W.R (2/3) W.muTwo 6 := by
+  unfold QuarticFourSignedPolePair.endpointTwoSixthMoment
+  exact quarticFourNormalizedProjectiveProfileSixthMoment_eq_J6
+    W.Rpos
+
+theorem QuarticFourSignedPolePair.signedProfileMomentSix_eq_J6_determinant
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedProfileMomentSix
+      =
+    4 *
+      (W.poleTwo * quarticFourWindowJ W.R (1/2) W.muHalf 6
+        - W.poleHalf * quarticFourWindowJ W.R (2/3) W.muTwo 6) := by
+  rw [W.signedProfileMomentSix_eq_endpoint_determinant,
+      W.endpointHalfSixthMoment_eq_J6,
+      W.endpointTwoSixthMoment_eq_J6]
+  ring
+
+theorem QuarticFourSignedPolePair.signedProfileMomentSix_nonneg_iff_J6
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    0 <= W.signedProfileMomentSix
+      ↔
+    W.poleHalf * quarticFourWindowJ W.R (2/3) W.muTwo 6
+      <=
+    W.poleTwo * quarticFourWindowJ W.R (1/2) W.muHalf 6 := by
+  rw [W.signedProfileMomentSix_eq_J6_determinant]
+  constructor <;> intro h <;> nlinarith
+
+
 end Synthesis

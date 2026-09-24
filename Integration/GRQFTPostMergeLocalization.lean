@@ -1720,4 +1720,61 @@ theorem authoritative_max_cut_blocks_standard_exterior_repulsion :
     authoritativeStandardVacuumExteriorRepulsionConstructed = false := rfl
 
 
+/-!
+Positive-mass non-vacuum exterior escape.
+
+Kottler/Schwarzschild-de Sitter weak-field radial acceleration:
+  a_r = -M/r^2 + Lambda*r/3.
+-/
+
+def kottlerRadialAcceleration (mass radius lambda : Rat) : Rat :=
+  -mass / (radius^2) + lambda * radius / 3
+
+def kottlerSurfaceMass : Rat := 1/4
+def kottlerProbeRadius : Rat := 2
+def kottlerExteriorLambda : Rat := 3/4
+
+theorem kottler_mass_term_one_sixteenth :
+    kottlerSurfaceMass / (kottlerProbeRadius^2) = 1/16 := by
+  norm_num [kottlerSurfaceMass, kottlerProbeRadius]
+
+theorem kottler_lambda_term_one_half :
+    kottlerExteriorLambda * kottlerProbeRadius / 3 = 1/2 := by
+  norm_num [kottlerExteriorLambda, kottlerProbeRadius]
+
+theorem kottler_fixture_acceleration_seven_sixteenths :
+    kottlerRadialAcceleration
+      kottlerSurfaceMass kottlerProbeRadius kottlerExteriorLambda = 7/16 := by
+  norm_num [kottlerRadialAcceleration, kottlerSurfaceMass,
+    kottlerProbeRadius, kottlerExteriorLambda]
+
+def kottlerLambdaThreshold (mass radius : Rat) : Rat :=
+  3 * mass / radius^3
+
+theorem kottler_fixture_threshold_three_thirtyseconds :
+    kottlerLambdaThreshold kottlerSurfaceMass kottlerProbeRadius = 3/32 := by
+  norm_num [kottlerLambdaThreshold, kottlerSurfaceMass, kottlerProbeRadius]
+
+structure PositiveMassNonVacuumExteriorRepulsionWitness : Prop where
+  positiveSurfaceMass : kottlerSurfaceMass = 1/4
+  threshold : kottlerLambdaThreshold kottlerSurfaceMass kottlerProbeRadius = 3/32
+  outwardAcceleration :
+    kottlerRadialAcceleration
+      kottlerSurfaceMass kottlerProbeRadius kottlerExteriorLambda = 7/16
+
+theorem canonical_positive_mass_nonvacuum_exterior_repulsion :
+    PositiveMassNonVacuumExteriorRepulsionWitness := by
+  exact {
+    positiveSurfaceMass := rfl
+    threshold := kottler_fixture_threshold_three_thirtyseconds
+    outwardAcceleration := kottler_fixture_acceleration_seven_sixteenths
+  }
+
+def positiveMassRetainedInKottlerEscape : Bool := true
+def negativeMassRequiredInKottlerEscape : Bool := false
+def nonVacuumExteriorRequiredInKottlerEscape : Bool := true
+def kottlerInteriorExteriorJunctionSolved : Bool := false
+def kottlerSIMagnitudeCalibrated : Bool := false
+
+
 end Integration.GRQFTPostMergeLocalization

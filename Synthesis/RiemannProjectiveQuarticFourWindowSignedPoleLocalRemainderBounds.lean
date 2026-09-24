@@ -354,6 +354,116 @@ theorem QuarticFourSignedPolePair.signedNormalizedBaseKernel_abs_le_local_quarti
       rfl
 
 
+
+/-!
+## Sixth-order scalar Taylor bounds
+-/
+
+theorem complex_cos_sub_quartic_abs_le_sixth
+    {x : ℂ}
+    (hx : ‖x‖ <= 1) :
+    ‖Complex.cos x - (1 - x^2/2 + x^4/24)‖
+      <= ‖x‖^6 * (7/4320 : ℝ) := by
+  calc
+    ‖Complex.cos x - (1 - x^2/2 + x^4/24)‖
+      =
+    ‖(Complex.exp (-x * Complex.I)
+        - ∑ m ∈ Finset.range 6,
+            (-x * Complex.I)^m / m.factorial) / 2
+      +
+      (Complex.exp (x * Complex.I)
+        - ∑ m ∈ Finset.range 6,
+            (x * Complex.I)^m / m.factorial) / 2‖ := by
+        simp [Complex.cos, Finset.sum_range_succ, Nat.factorial]
+        grind [Complex.I_sq, two_ne_zero]
+    _ <=
+      ‖Complex.exp (-x * Complex.I)
+        - ∑ m ∈ Finset.range 6,
+            (-x * Complex.I)^m / m.factorial‖ / 2
+      +
+      ‖Complex.exp (x * Complex.I)
+        - ∑ m ∈ Finset.range 6,
+            (x * Complex.I)^m / m.factorial‖ / 2 := by
+        grw [norm_add_le]
+        simp
+    _ <=
+      ‖-x * Complex.I‖^6
+          * ((Nat.succ 6 : ℝ)
+            * (Nat.factorial 6 * (6 : ℕ) : ℝ)⁻¹) / 2
+      +
+      ‖x * Complex.I‖^6
+          * ((Nat.succ 6 : ℝ)
+            * (Nat.factorial 6 * (6 : ℕ) : ℝ)⁻¹) / 2 := by
+        grw [Complex.exp_bound (by simpa) (by norm_num),
+          Complex.exp_bound (by simpa) (by norm_num)]
+    _ <= ‖x‖^6 * (7/4320 : ℝ) := by
+        norm_num
+
+theorem real_cos_sub_quartic_abs_le_sixth
+    {x : ℝ}
+    (hx : |x| <= 1) :
+    |Real.cos x - (1 - x^2/2 + x^4/24)|
+      <= |x|^6 * (7/4320 : ℝ) := by
+  have h :=
+    complex_cos_sub_quartic_abs_le_sixth
+      (x := (x : ℂ)) (by simpa using hx)
+  simpa [Real.norm_eq_abs] using h
+
+theorem real_cosh_sub_quartic_abs_le_sixth
+    {x : ℝ}
+    (hx : |x| <= 1) :
+    |Real.cosh x - 1 - x^2/2 - x^4/24|
+      <= |x|^6 * (7/4320 : ℝ) := by
+  calc
+    |Real.cosh x - 1 - x^2/2 - x^4/24|
+      =
+    |(Real.exp x
+        - ∑ m ∈ Finset.range 6, x^m / m.factorial) / 2
+      +
+      (Real.exp (-x)
+        - ∑ m ∈ Finset.range 6, (-x)^m / m.factorial) / 2| := by
+        rw [Real.cosh_eq]
+        simp [Finset.sum_range_succ, Nat.factorial]
+        ring
+    _ <=
+      |Real.exp x
+        - ∑ m ∈ Finset.range 6, x^m / m.factorial| / 2
+      +
+      |Real.exp (-x)
+        - ∑ m ∈ Finset.range 6, (-x)^m / m.factorial| / 2 := by
+        have h2 : (0:ℝ) < 2 := by norm_num
+        calc
+          |(Real.exp x
+              - ∑ m ∈ Finset.range 6, x^m / m.factorial) / 2
+            +
+            (Real.exp (-x)
+              - ∑ m ∈ Finset.range 6, (-x)^m / m.factorial) / 2|
+            <=
+          |(Real.exp x
+              - ∑ m ∈ Finset.range 6, x^m / m.factorial) / 2|
+            +
+          |(Real.exp (-x)
+              - ∑ m ∈ Finset.range 6, (-x)^m / m.factorial) / 2| :=
+            abs_add _ _
+          _ =
+          |Real.exp x
+              - ∑ m ∈ Finset.range 6, x^m / m.factorial| / 2
+            +
+          |Real.exp (-x)
+              - ∑ m ∈ Finset.range 6, (-x)^m / m.factorial| / 2 := by
+            rw [abs_div, abs_div, abs_of_pos h2]
+    _ <=
+      (|x|^6 * (7/4320 : ℝ)) / 2
+        + (|-x|^6 * (7/4320 : ℝ)) / 2 := by
+      gcongr
+      · exact Real.exp_bound hx (by norm_num)
+      · exact Real.exp_bound
+          (by simpa [abs_neg] using hx) (by norm_num)
+    _ = |x|^6 * (7/4320 : ℝ) := by
+      rw [abs_neg]
+      ring
+
+
 /-!
 ## Certified quartic hyperbolic remainder
 -/

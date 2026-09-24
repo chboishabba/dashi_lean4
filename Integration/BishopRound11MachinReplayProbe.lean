@@ -46,6 +46,20 @@ theorem source_manifest_literal_receipt :
       "baee86e7085c9193227142eb9713df9d2e4a546e" := by
   native_decide
 
+/-- The manifest names the concrete verification artifacts used by this PR. -/
+theorem verification_artifacts_literal_receipt :
+    replayVerifierScript =
+      "scripts/verify_round11_machin_route_b.py" ∧
+    generatedReplayCertificatePath =
+      "Generated/BishopRound11MachinReplayCertificate.lean" ∧
+    focusedReplayProbeModule =
+      "Integration/BishopRound11MachinReplayProbe.lean" ∧
+    focusedAxiomAuditModule =
+      "Integration/AxiomAuditMoonshineRound11RouteB.lean" ∧
+    focusedReplayWorkflow =
+      ".github/workflows/moonshine-round11-route-b.yml" := by
+  native_decide
+
 /-- Mathematical inhabitance of the exact Lean-facing Round11/Machin binding
 shape is no longer conditional. -/
 theorem canonical_binding_inhabited :
@@ -76,6 +90,7 @@ theorem canonical_sixfold_phase_available
 
 structure ReplayProbeBoundary where
   contentAddressedManifestKernelVisible : Bool
+  verificationArtifactManifestKernelVisible : Bool
   canonicalBindingKernelVisible : Bool
   canonicalRouteDeltaKernelVisible : Bool
   eta24SameObjectKernelVisible : Bool
@@ -84,6 +99,7 @@ structure ReplayProbeBoundary where
 
 def replayProbeBoundary : ReplayProbeBoundary where
   contentAddressedManifestKernelVisible := true
+  verificationArtifactManifestKernelVisible := true
   canonicalBindingKernelVisible := true
   canonicalRouteDeltaKernelVisible := true
   eta24SameObjectKernelVisible := true

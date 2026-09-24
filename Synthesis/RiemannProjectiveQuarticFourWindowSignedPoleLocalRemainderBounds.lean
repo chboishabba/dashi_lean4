@@ -2316,4 +2316,211 @@ theorem QuarticFourSignedPolePair.literalCompleteJointQuarticPolynomial_eq_phase
   ring
 
 
+
+/-!
+## Local fourth-harmonic moment of the actual zero cloud
+
+The complete quartic jet is exactly a fourth angular harmonic.  Package the
+remaining local zeta-specific information as a multiplicity-weighted moment of
+the physical phase
+
+  Re (a + i*delta)^4
+    = a^4 - 6*a^2*delta^2 + delta^4.
+
+No Taylor carrier is summed outside the canonical local region.
+-/
+
+def QuarticFourSignedPolePair.literalLocalFourthPhaseMomentAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact
+    ∑ rho ∈ centeredZeroFinset t n,
+      if quarticSignedPoleLocal t eta rho then
+        if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+          ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+            * quarticSignedPolePhysicalFourthPhaseReal t rho
+        else
+          0
+      else
+        0
+
+def QuarticFourSignedPolePair.literalLocalFourthFavorableMassAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact
+    ∑ rho ∈ centeredZeroFinset t n,
+      if quarticSignedPoleLocal t eta rho then
+        if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+          ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+            * max (quarticSignedPolePhysicalFourthPhaseReal t rho) 0
+        else
+          0
+      else
+        0
+
+def QuarticFourSignedPolePair.literalLocalFourthAdverseMassAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact
+    ∑ rho ∈ centeredZeroFinset t n,
+      if quarticSignedPoleLocal t eta rho then
+        if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+          ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+            * max (-quarticSignedPolePhysicalFourthPhaseReal t rho) 0
+        else
+          0
+      else
+        0
+
+theorem quarticSignedPolePhysicalFourthPhaseReal_eq_radial_sub_mixed
+    (t : ℝ) (rho : Zeros) :
+    quarticSignedPolePhysicalFourthPhaseReal t rho
+      =
+    (heightOf rho^2 + ((rho : ℂ).im-t)^2)^2
+      - 8 * heightOf rho^2 * ((rho : ℂ).im-t)^2 := by
+  unfold quarticSignedPolePhysicalFourthPhaseReal
+  ring
+
+theorem QuarticFourSignedPolePair.literalLocalFourthPhaseMomentAt_eq_favorable_sub_adverse
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalFourthPhaseMomentAt eta n
+      =
+    W.literalLocalFourthFavorableMassAt eta n
+      - W.literalLocalFourthAdverseMassAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalFourthPhaseMomentAt
+    QuarticFourSignedPolePair.literalLocalFourthFavorableMassAt
+    QuarticFourSignedPolePair.literalLocalFourthAdverseMassAt
+  rw [Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl,hoff]
+      have hmax :
+          quarticSignedPolePhysicalFourthPhaseReal t rho
+            =
+          max (quarticSignedPolePhysicalFourthPhaseReal t rho) 0
+            - max (-quarticSignedPolePhysicalFourthPhaseReal t rho) 0 := by
+        by_cases hp :
+            0 <= quarticSignedPolePhysicalFourthPhaseReal t rho
+        · simp [max_eq_left hp, max_eq_right (neg_nonpos.mpr hp)]
+        · have hn :
+              quarticSignedPolePhysicalFourthPhaseReal t rho < 0 :=
+            lt_of_not_ge hp
+          have hnp :
+              0 <= -quarticSignedPolePhysicalFourthPhaseReal t rho := by
+            linarith
+          simp [max_eq_right (le_of_lt hn),
+            max_eq_left hnp]
+      rw [hmax]
+      ring
+    · simp [hl,hoff]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalFourthHarmonicAt_eq_phaseMoment
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalFourthHarmonicAt eta n
+      =
+    - W.targetStrength
+      / (6 * (t/16)^6)
+      * W.literalLocalFourthPhaseMomentAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalFourthHarmonicAt
+    QuarticFourSignedPolePair.literalLocalCompletePolynomialTerm
+    QuarticFourSignedPolePair.literalLocalFourthPhaseMomentAt
+  rw [← Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl,hoff]
+      rw [W.literalCompleteJointQuarticPolynomial_eq_phase ht]
+      ring
+    · simp [hl,hoff]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalFourthHarmonicAt_eq_adverse_sub_favorable
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalFourthHarmonicAt eta n
+      =
+    W.targetStrength
+      / (6 * (t/16)^6)
+      *
+      (W.literalLocalFourthAdverseMassAt eta n
+        - W.literalLocalFourthFavorableMassAt eta n) := by
+  rw [W.literalLocalFourthHarmonicAt_eq_phaseMoment ht]
+  rw [W.literalLocalFourthPhaseMomentAt_eq_favorable_sub_adverse]
+  ring
+
+theorem QuarticFourSignedPolePair.literalLocalFourthFavorableMassAt_nonneg
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    0 <= W.literalLocalFourthFavorableMassAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalFourthFavorableMassAt
+  exact Finset.sum_nonneg fun rho _ => by
+    by_cases hl : quarticSignedPoleLocal t eta rho
+    · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+      · simp [hl,hoff]
+        positivity
+      · simp [hl,hoff]
+    · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalFourthAdverseMassAt_nonneg
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    0 <= W.literalLocalFourthAdverseMassAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalFourthAdverseMassAt
+  exact Finset.sum_nonneg fun rho _ => by
+    by_cases hl : quarticSignedPoleLocal t eta rho
+    · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+      · simp [hl,hoff]
+        positivity
+      · simp [hl,hoff]
+    · simp [hl]
+
+/--
+The local exact-source budget can now be read directly as a balance of the
+adverse and favorable fourth angular sectors, plus the certified sixth-order
+debt and the untouched exact far source.
+-/
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_scaledFourthAngularBalance_add_sixthDebt_add_far
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalOffOrdExactAt n
+      <=
+    W.targetStrength
+      / (6 * (t/16)^6)
+      *
+      (W.literalLocalFourthAdverseMassAt
+          quarticSignedPoleCanonicalLocalRadius n
+        - W.literalLocalFourthFavorableMassAt
+          quarticSignedPoleCanonicalLocalRadius n)
+      +
+    W.literalLocalSixthDebtAt
+        quarticSignedPoleCanonicalLocalRadius n
+      +
+    W.literalFarExactAt
+        quarticSignedPoleCanonicalLocalRadius n := by
+  rw [W.literalLocalFourthHarmonicAt_eq_adverse_sub_favorable
+      (eta:=quarticSignedPoleCanonicalLocalRadius)
+      (by linarith)]
+  exact
+    W.literalOffOrdExactAt_le_fourthHarmonic_add_sixthDebt_add_far
+      ht n
+
 end Synthesis

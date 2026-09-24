@@ -48,6 +48,20 @@ theorem brier_half (y : BinaryOutcome) :
     brierLossValue (1 / 2 : ℚ) y = 1 / 4 := by
   cases y <;> simp
 
+theorem brier_nonneg (p : Probability) (y : BinaryOutcome) :
+    0 ≤ brierLoss p y := by
+  cases y <;> simp [brierLoss, brierLossValue, outcomeValue] <;> positivity
+
+theorem brier_le_one (p : Probability) (y : BinaryOutcome) :
+    brierLoss p y ≤ 1 := by
+  cases y <;>
+    simp only [brierLoss, brierLossValue, outcomeValue] <;>
+    nlinarith [p.lower, p.upper]
+
+theorem brier_mem_unit_interval (p : Probability) (y : BinaryOutcome) :
+    0 ≤ brierLoss p y ∧ brierLoss p y ≤ 1 :=
+  ⟨brier_nonneg p y, brier_le_one p y⟩
+
 structure BinaryLogScoreCoordinates (p : Probability) where
   negLogP : ℚ
   negLogOneMinusP : ℚ

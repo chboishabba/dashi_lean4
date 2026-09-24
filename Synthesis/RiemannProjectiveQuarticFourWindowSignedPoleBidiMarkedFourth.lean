@@ -1400,4 +1400,297 @@ theorem quarticFourAtomicSignedMarkedPoleQuadraticCarrier_pos
     mul_neg_of_pos_of_neg hhalfD htwoQ
   linarith
 
+
+/-!
+## Uniform atomic marked-pole quadratic signs on the existing mu corridor
+
+The smooth J2 witness only guarantees a small fixed corridor around the atomic
+root.  Fortunately the new marked-pole quadratic carrier is affine in mu, with
+a uniformly tiny corridor perturbation compared with its endpoint sign
+margins.  Thus no stronger mu-selection hypothesis is needed for the bidi
+lane.
+-/
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_half_general_formula
+    {t mu : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicMarkedPoleQuadraticCarrier t (1/2) mu
+      =
+    Real.pi^2 *
+      (3*Real.cosh (8*Real.pi/(3*t))
+        + 10*Real.cosh (4*Real.pi/t)
+        - 4
+        + mu *
+          (576
+            - 180*Real.cosh (4*Real.pi/t)
+            - 396*Real.cosh (8*Real.pi/t)))
+      / 288 := by
+  unfold quarticFourAtomicMarkedPoleQuadraticCarrier
+  rw [quarticFourAtomicPoleSecondPairing_one ht,
+      quarticFourAtomicPoleSecondPairing_two ht,
+      quarticFourAtomicOnLineSecondPairing_one,
+      quarticFourAtomicOnLineSecondPairing_two,
+      quarticFourAtomicPolePairing_one ht,
+      quarticFourAtomicPolePairing_two ht,
+      quarticFourAtomicOnLinePairing_one,
+      quarticFourAtomicOnLinePairing_two]
+  ring
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_general_formula
+    {t mu : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicMarkedPoleQuadraticCarrier t (2/3) mu
+      =
+    Real.pi^2 *
+      (-Real.cosh (8*Real.pi/(3*t))
+        + 10*Real.cosh (4*Real.pi/t)
+        - 12
+        + mu *
+          (432
+            - 180*Real.cosh (4*Real.pi/t)
+            - 252*Real.cosh (8*Real.pi/t)))
+      / 216 := by
+  unfold quarticFourAtomicMarkedPoleQuadraticCarrier
+  rw [quarticFourAtomicPoleSecondPairing_one ht,
+      quarticFourAtomicPoleSecondPairing_two ht,
+      quarticFourAtomicOnLineSecondPairing_one,
+      quarticFourAtomicOnLineSecondPairing_two,
+      quarticFourAtomicPolePairing_one ht,
+      quarticFourAtomicPolePairing_two ht,
+      quarticFourAtomicOnLinePairing_one,
+      quarticFourAtomicOnLinePairing_two]
+  ring
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_half_root_ge
+    {t : ℝ} (ht : t ≠ 0) :
+    Real.pi^2 / 32
+      <=
+    quarticFourAtomicMarkedPoleQuadraticCarrier
+      t (1/2) (quarticFourAtomicMu (1/2)) := by
+  rw [quarticFourAtomicMarkedPoleQuadraticCarrier_half_formula ht]
+  have h3 := Real.one_le_cosh (8*Real.pi/(3*t))
+  have h4 := Real.one_le_cosh (4*Real.pi/t)
+  have h8 := Real.one_le_cosh (8*Real.pi/t)
+  have hp : 0 < Real.pi^2 := by positivity
+  nlinarith
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_root_le
+    {t : ℝ} (ht : 200 <= t) :
+    quarticFourAtomicMarkedPoleQuadraticCarrier
+      t (2/3) (quarticFourAtomicMu (2/3))
+      <= -(Real.pi^2/100) := by
+  have ht0 : t ≠ 0 := by linarith
+  rw [quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_formula ht0]
+  let C : ℝ := Real.cosh (4*Real.pi/t)
+  have h3 := Real.one_le_cosh (8*Real.pi/(3*t))
+  have hdouble :
+      Real.cosh (8*Real.pi/t) = 2*C^2 - 1 := by
+    have harg : 8*Real.pi/t = 2*(4*Real.pi/t) := by ring
+    rw [harg, Real.cosh_two_mul, Real.cosh_sq]
+    dsimp [C]
+    ring
+  have hs : 0 <= (C - 10/7)^2 := sq_nonneg _
+  have hquad :
+      -28*C^2 + 80*C - 79 <= -(153/7 : ℝ) := by
+    nlinarith
+  have hnum :
+      -9*Real.cosh (8*Real.pi/(3*t))
+        + 80*Real.cosh (4*Real.pi/t)
+        - 14*Real.cosh (8*Real.pi/t)
+        - 84
+      <= -(153/7 : ℝ) := by
+    rw [hdouble]
+    dsimp [C] at hquad ⊢
+    nlinarith
+  have hp : 0 < Real.pi^2 := by positivity
+  have hscale :
+      Real.pi^2 * (-(153/7 : ℝ)) / 1944
+        <= -(Real.pi^2/100) := by
+    nlinarith
+  exact
+    (div_le_div_of_nonneg_right
+      (mul_le_mul_of_nonneg_left hnum hp.le)
+      (by norm_num : (0:ℝ) <= 1944)).trans hscale
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_half_mu_difference
+    {t mu1 mu2 : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicMarkedPoleQuadraticCarrier t (1/2) mu1
+      -
+    quarticFourAtomicMarkedPoleQuadraticCarrier t (1/2) mu2
+      =
+    Real.pi^2 *
+      (576
+        - 180*Real.cosh (4*Real.pi/t)
+        - 396*Real.cosh (8*Real.pi/t))
+      / 288 * (mu1-mu2) := by
+  rw [quarticFourAtomicMarkedPoleQuadraticCarrier_half_general_formula ht,
+      quarticFourAtomicMarkedPoleQuadraticCarrier_half_general_formula ht]
+  ring
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_mu_difference
+    {t mu1 mu2 : ℝ} (ht : t ≠ 0) :
+    quarticFourAtomicMarkedPoleQuadraticCarrier t (2/3) mu1
+      -
+    quarticFourAtomicMarkedPoleQuadraticCarrier t (2/3) mu2
+      =
+    Real.pi^2 *
+      (432
+        - 180*Real.cosh (4*Real.pi/t)
+        - 252*Real.cosh (8*Real.pi/t))
+      / 216 * (mu1-mu2) := by
+  rw [quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_general_formula ht,
+      quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_general_formula ht]
+  ring
+
+private theorem bidi_marked_pole_cosh_four_le_two
+    {t : ℝ} (ht : 200 <= t) :
+    Real.cosh (4*Real.pi/t) <= 2 := by
+  have htpos : 0 < t := by linarith
+  have h8ex := quarticFour_cosh_excess_le_one_of_twoHundred ht
+  have h8hi : Real.cosh (8*Real.pi/t) <= 2 := by
+    linarith
+  have hx4 : |4*Real.pi/t| <= |8*Real.pi/t| := by
+    have h4 : 0 <= 4*Real.pi/t := by positivity
+    have h8 : 0 <= 8*Real.pi/t := by positivity
+    rw [abs_of_nonneg h4, abs_of_nonneg h8]
+    field_simp [ne_of_gt htpos]
+    nlinarith [Real.pi_pos]
+  exact ((Real.cosh_le_cosh).2 hx4).trans h8hi
+
+private theorem bidi_marked_pole_cosh_eight_le_two
+    {t : ℝ} (ht : 200 <= t) :
+    Real.cosh (8*Real.pi/t) <= 2 := by
+  have h := quarticFour_cosh_excess_le_one_of_twoHundred ht
+  linarith
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_half_corridor_pos
+    {t mu : ℝ} (ht : 200 <= t)
+    (hmu :
+      |mu-quarticFourAtomicMu (1/2)|
+        <= quarticFourAtomicMuRadius) :
+    0 <
+    quarticFourAtomicMarkedPoleQuadraticCarrier t (1/2) mu := by
+  have ht0 : t ≠ 0 := by linarith
+  have h4lo := Real.one_le_cosh (4*Real.pi/t)
+  have h8lo := Real.one_le_cosh (8*Real.pi/t)
+  have h4hi := bidi_marked_pole_cosh_four_le_two ht
+  have h8hi := bidi_marked_pole_cosh_eight_le_two ht
+  have hcoef :
+      |576
+        - 180*Real.cosh (4*Real.pi/t)
+        - 396*Real.cosh (8*Real.pi/t)|
+      <= 1728 := by
+    rw [abs_le]
+    constructor <;> nlinarith
+  have hdiff :=
+    quarticFourAtomicMarkedPoleQuadraticCarrier_half_mu_difference
+      (t:=t) (mu1:=mu) (mu2:=quarticFourAtomicMu (1/2)) ht0
+  have hp : 0 < Real.pi^2 := by positivity
+  have hmu' :
+      |mu-quarticFourAtomicMu (1/2)| <= (1/10000 : ℝ) := by
+    simpa [quarticFourAtomicMuRadius] using hmu
+  have herr :
+      |quarticFourAtomicMarkedPoleQuadraticCarrier t (1/2) mu
+        -
+       quarticFourAtomicMarkedPoleQuadraticCarrier
+          t (1/2) (quarticFourAtomicMu (1/2))|
+      <= 6*Real.pi^2/10000 := by
+    rw [hdiff, abs_mul, abs_mul, abs_div,
+      abs_of_pos hp, abs_of_nonneg (by norm_num : (0:ℝ) <= 288)]
+    have hc :
+        Real.pi^2 * |576
+          - 180*Real.cosh (4*Real.pi/t)
+          - 396*Real.cosh (8*Real.pi/t)|
+          / 288
+          <= 6*Real.pi^2 := by
+      have := mul_le_mul_of_nonneg_left hcoef hp.le
+      nlinarith
+    exact (mul_le_mul hc hmu' (abs_nonneg _) (by positivity)).trans_eq
+      (by ring)
+  have hroot :=
+    quarticFourAtomicMarkedPoleQuadraticCarrier_half_root_ge ht0
+  have hlo := (abs_le.mp herr).1
+  nlinarith [hp]
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_corridor_neg
+    {t mu : ℝ} (ht : 200 <= t)
+    (hmu :
+      |mu-quarticFourAtomicMu (2/3)|
+        <= quarticFourAtomicMuRadius) :
+    quarticFourAtomicMarkedPoleQuadraticCarrier t (2/3) mu < 0 := by
+  have ht0 : t ≠ 0 := by linarith
+  have h4lo := Real.one_le_cosh (4*Real.pi/t)
+  have h8lo := Real.one_le_cosh (8*Real.pi/t)
+  have h4hi := bidi_marked_pole_cosh_four_le_two ht
+  have h8hi := bidi_marked_pole_cosh_eight_le_two ht
+  have hcoef :
+      |432
+        - 180*Real.cosh (4*Real.pi/t)
+        - 252*Real.cosh (8*Real.pi/t)|
+      <= 1296 := by
+    rw [abs_le]
+    constructor <;> nlinarith
+  have hdiff :=
+    quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_mu_difference
+      (t:=t) (mu1:=mu) (mu2:=quarticFourAtomicMu (2/3)) ht0
+  have hp : 0 < Real.pi^2 := by positivity
+  have hmu' :
+      |mu-quarticFourAtomicMu (2/3)| <= (1/10000 : ℝ) := by
+    simpa [quarticFourAtomicMuRadius] using hmu
+  have herr :
+      |quarticFourAtomicMarkedPoleQuadraticCarrier t (2/3) mu
+        -
+       quarticFourAtomicMarkedPoleQuadraticCarrier
+          t (2/3) (quarticFourAtomicMu (2/3))|
+      <= 6*Real.pi^2/10000 := by
+    rw [hdiff, abs_mul, abs_mul, abs_div,
+      abs_of_pos hp, abs_of_nonneg (by norm_num : (0:ℝ) <= 216)]
+    have hc :
+        Real.pi^2 * |432
+          - 180*Real.cosh (4*Real.pi/t)
+          - 252*Real.cosh (8*Real.pi/t)|
+          / 216
+          <= 6*Real.pi^2 := by
+      have := mul_le_mul_of_nonneg_left hcoef hp.le
+      nlinarith
+    exact (mul_le_mul hc hmu' (abs_nonneg _) (by positivity)).trans_eq
+      (by ring)
+  have hroot :=
+    quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_root_le ht
+  have hhi := (abs_le.mp herr).2
+  nlinarith [hp]
+
+/--
+The smooth signed marked-pole quadratic carrier.  Positivity follows from
+positive smooth pole coordinates at both endpoints together with the
+half-positive / two-thirds-negative marked quadratic endpoint signs.
+-/
+def quarticFourSmoothSignedMarkedPoleQuadraticCarrier
+    (R muHalf muTwo t : ℝ) : ℝ :=
+  quarticFourSmoothFinitePoleResidual R (2/3) muTwo t
+    * quarticFourSmoothMarkedPoleQuadraticCarrier
+        R (1/2) muHalf t
+  -
+  quarticFourSmoothFinitePoleResidual R (1/2) muHalf t
+    * quarticFourSmoothMarkedPoleQuadraticCarrier
+        R (2/3) muTwo t
+
+theorem quarticFourSmoothSignedMarkedPoleQuadraticCarrier_pos_of_endpoint_signs
+    {R muHalf muTwo t : ℝ}
+    (hPoleHalf :
+      0 < quarticFourSmoothFinitePoleResidual R (1/2) muHalf t)
+    (hPoleTwo :
+      0 < quarticFourSmoothFinitePoleResidual R (2/3) muTwo t)
+    (hQHalf :
+      0 < quarticFourSmoothMarkedPoleQuadraticCarrier
+        R (1/2) muHalf t)
+    (hQTwo :
+      quarticFourSmoothMarkedPoleQuadraticCarrier
+        R (2/3) muTwo t < 0) :
+    0 <
+    quarticFourSmoothSignedMarkedPoleQuadraticCarrier
+      R muHalf muTwo t := by
+  unfold quarticFourSmoothSignedMarkedPoleQuadraticCarrier
+  have h1 := mul_pos hPoleTwo hQHalf
+  have h2 := mul_neg_of_pos_of_neg hPoleHalf hQTwo
+  linarith
+
 end Synthesis

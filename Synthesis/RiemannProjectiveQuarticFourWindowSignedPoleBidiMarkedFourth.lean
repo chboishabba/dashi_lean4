@@ -284,4 +284,55 @@ theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_eq
   rw [W.literalLocalFourthPhaseMomentAt_eq_vertical_add_horizontal]
   ring
 
+
+/-!
+## The universal 0/2/4 bidi angular operator
+-/
+
+def quarticSignedPoleBidiAngularOperator
+    (A M0 M2 M4 : ℝ) : ℝ :=
+  (1/2 : ℝ) * M4 - 3 * A^2 * M2 + 5 * A^4 * M0
+
+theorem quarticSignedPoleFourthPhaseReal_eq_bidi_operator
+    (A a delta : ℝ) :
+    quarticSignedPoleFourthPhaseReal a delta
+      =
+    quarticSignedPoleBidiAngularOperator A 1
+      (quarticSignedPoleSecondPhaseReal (a-A) delta
+        + quarticSignedPoleSecondPhaseReal (a+A) delta)
+      (quarticSignedPoleFourthPhaseReal (a-A) delta
+        + quarticSignedPoleFourthPhaseReal (a+A) delta) := by
+  rw [quarticSignedPoleFourthPhaseReal_eq_bidi_target_reflection]
+  rfl
+
+/--
+The smooth critical-line background is governed by exactly the same bidi
+operator: put a=0 and the physical fourth phase is delta^4.
+-/
+theorem quarticSignedPoleVerticalFourth_eq_bidi_operator
+    (A delta : ℝ) :
+    delta^4
+      =
+    quarticSignedPoleBidiAngularOperator A 1
+      (quarticSignedPoleSecondPhaseReal (-A) delta
+        + quarticSignedPoleSecondPhaseReal A delta)
+      (quarticSignedPoleFourthPhaseReal (-A) delta
+        + quarticSignedPoleFourthPhaseReal A delta) := by
+  have h :=
+    quarticSignedPoleFourthPhaseReal_eq_bidi_operator A 0 delta
+  simpa [quarticSignedPoleFourthPhaseReal] using h
+
+theorem QuarticFourSignedPolePair.literalLocalFourthPhaseMomentAt_eq_bidi_operator
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalFourthPhaseMomentAt eta n
+      =
+    quarticSignedPoleBidiAngularOperator A
+      (W.literalLocalMarkedMassAt eta n)
+      (W.literalLocalMarkedSecondPairMomentAt eta A n)
+      (W.literalLocalMarkedFourthPairMomentAt eta A n) := by
+  rw [W.literalLocalFourthPhaseMomentAt_eq_bidi_marked]
+  rfl
+
 end Synthesis

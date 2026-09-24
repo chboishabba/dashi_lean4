@@ -810,6 +810,209 @@ theorem QuarticFourSignedPolePair.signedHorizontalQuarticRemainder_abs_le
       rfl
 
 
+
+/-!
+## Centered sixth-order hyperbolic remainder
+-/
+
+def QuarticFourSignedPolePair.horizontalCenteredQuarticRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha q : ℝ) : ℝ :=
+  W.signedHorizontalQuarticRemainder alpha q
+    + (W.targetStrength/6) * alpha^4
+
+theorem QuarticFourSignedPolePair.horizontalCenteredQuarticRemainder_eq_integral
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.horizontalCenteredQuarticRemainder alpha q
+      =
+    ∫ u : ℝ,
+      quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t u
+        *
+      ((Real.cosh (alpha*u) - 1 - (alpha*u)^2/2)
+          * Real.cos (q*u)
+        - (alpha*u)^4/24) := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t
+  have hM4 :
+      ∫ u : ℝ, P u * u^4 = -4 * W.targetStrength := by
+    change profileFourthMoment P = -4 * W.targetStrength
+    simpa [QuarticFourSignedPolePair.targetStrength] using
+      quarticFourSignedPoleCombinedProfile_fourth
+        (muHalf:=W.muHalf) (muTwo:=W.muTwo)
+        (t:=t) W.Rpos
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hmain :
+      Integrable
+        (fun u : ℝ =>
+          P u
+            * (Real.cosh (alpha*u) - 1 - (alpha*u)^2/2)
+            * Real.cos (q*u)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) ((hPc.mul_right).mul_right)
+  have h4 :
+      Integrable (fun u : ℝ => P u * u^4) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  unfold QuarticFourSignedPolePair.horizontalCenteredQuarticRemainder
+  rw [W.signedHorizontalQuarticRemainder_eq_integral]
+  have hquartic :
+      (W.targetStrength/6) * alpha^4
+        =
+      - ∫ u : ℝ, P u * ((alpha*u)^4/24) := by
+    rw [show
+        (fun u : ℝ => P u * ((alpha*u)^4/24))
+        =
+        fun u => (alpha^4/24) * (P u * u^4) by
+      funext u
+      ring,
+      integral_const_mul,hM4]
+    ring
+  rw [hquartic, ← integral_sub hmain (by
+    simpa [show
+      (fun u : ℝ => P u * ((alpha*u)^4/24))
+      =
+      fun u => (alpha^4/24) * (P u * u^4) by
+        funext u
+        ring] using h4.const_mul (alpha^4/24))]
+  apply integral_congr_ae
+  exact Filter.Eventually.of_forall fun u => by ring
+
+theorem QuarticFourSignedPolePair.horizontalCenteredQuarticRemainder_abs_le_sixth
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (ha : |alpha| <= quarticSignedPoleCanonicalLocalRadius)
+    (hq : |q| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.horizontalCenteredQuarticRemainder alpha q|
+      <=
+    ((7/4320 : ℝ) * |alpha|^6
+      + (1/48 : ℝ) * |alpha|^4 * |q|^2)
+      * W.signedProfileAbsMomentSix := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hi :
+      Integrable
+        (fun u : ℝ =>
+          P u *
+            ((Real.cosh (alpha*u) - 1 - (alpha*u)^2/2)
+                * Real.cos (q*u)
+              - (alpha*u)^4/24)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have hmaj :
+      Integrable
+        (fun u : ℝ =>
+          ((7/4320 : ℝ) * |alpha|^6
+            + (1/48 : ℝ) * |alpha|^4 * |q|^2)
+            * (|P u| * |u|^6)) :=
+    (compactProfile_absMoment_integrable hP hPc 6).const_mul _
+  rw [W.horizontalCenteredQuarticRemainder_eq_integral]
+  calc
+    |∫ u : ℝ,
+      P u *
+        ((Real.cosh (alpha*u) - 1 - (alpha*u)^2/2)
+            * Real.cos (q*u)
+          - (alpha*u)^4/24)|
+      <=
+    ∫ u : ℝ,
+      |P u *
+        ((Real.cosh (alpha*u) - 1 - (alpha*u)^2/2)
+            * Real.cos (q*u)
+          - (alpha*u)^4/24)| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ u : ℝ,
+      ((7/4320 : ℝ) * |alpha|^6
+        + (1/48 : ℝ) * |alpha|^4 * |q|^2)
+        * (|P u| * |u|^6) := by
+      apply integral_mono hi.abs hmaj
+      intro u
+      by_cases hzero : P u = 0
+      · simp [hzero]
+      · have hau :=
+          W.abs_q_mul_u_le_one_of_local
+            (q:=alpha) (u:=u) ha hzero
+        have hqu :=
+          W.abs_q_mul_u_le_one_of_local
+            (q:=q) (u:=u) hq hzero
+        have hh :=
+          real_cosh_sub_quartic_abs_le_sixth hau
+        have hc :=
+          Zeta23Bridge.LiteralWeilProjectiveTaper.abs_cos_sub_one_le
+            (q*u)
+        have hcos : |Real.cos (q*u)| <= 1 :=
+          Real.abs_cos_le_one _
+        have halpha6 :
+            |alpha*u|^6 = |alpha|^6 * |u|^6 := by
+          rw [abs_mul, mul_pow]
+        have halpha4 :
+            |alpha*u|^4 = |alpha|^4 * |u|^4 := by
+          rw [abs_mul, mul_pow]
+        have hq2 :
+            |q*u|^2 = |q|^2 * |u|^2 := by
+          rw [abs_mul, mul_pow]
+        rw [halpha6] at hh
+        rw [hq2] at hc
+        have hsplit :
+            (Real.cosh (alpha*u) - 1 - (alpha*u)^2/2)
+                * Real.cos (q*u)
+              - (alpha*u)^4/24
+            =
+            (Real.cosh (alpha*u) - 1 - (alpha*u)^2/2
+                - (alpha*u)^4/24)
+              * Real.cos (q*u)
+            +
+            ((alpha*u)^4/24)
+              * (Real.cos (q*u)-1) := by
+          ring
+        rw [abs_mul, hsplit]
+        have htri :=
+          abs_add
+            ((Real.cosh (alpha*u) - 1 - (alpha*u)^2/2
+                - (alpha*u)^4/24)
+              * Real.cos (q*u))
+            (((alpha*u)^4/24) * (Real.cos (q*u)-1))
+        rw [abs_mul, abs_mul] at htri
+        have hA :
+            |Real.cosh (alpha*u) - 1 - (alpha*u)^2/2
+                - (alpha*u)^4/24|
+              * |Real.cos (q*u)|
+            <=
+            (7/4320 : ℝ) * |alpha|^6 * |u|^6 := by
+          nlinarith [abs_nonneg
+            (Real.cosh (alpha*u) - 1 - (alpha*u)^2/2
+              - (alpha*u)^4/24)]
+        have hB :
+            |(alpha*u)^4/24|
+              * |Real.cos (q*u)-1|
+            <=
+            (1/48 : ℝ) * |alpha|^4 * |q|^2 * |u|^6 := by
+          rw [abs_div, abs_pow,
+            abs_of_pos (by norm_num : (0:ℝ) < 24),
+            halpha4]
+          nlinarith [abs_nonneg u]
+        nlinarith [abs_nonneg (P u), abs_nonneg u]
+    _ =
+    ((7/4320 : ℝ) * |alpha|^6
+      + (1/48 : ℝ) * |alpha|^4 * |q|^2)
+      * compactProfileAbsMoment P 6 := by
+      rw [integral_const_mul]
+      rfl
+    _ =
+    ((7/4320 : ℝ) * |alpha|^6
+      + (1/48 : ℝ) * |alpha|^4 * |q|^2)
+      * W.signedProfileAbsMomentSix := by
+      rfl
+
+
 /-!
 ## One same-object bound for the complete local joint remainder
 -/

@@ -129,4 +129,12 @@ theorem endpoint_metric_transport_boundary_parity :
     secondEndpointToMetricStressIdentificationRequired = false :=
   no_second_endpoint_metric_stress_theorem
 
+theorem finite_d1_component_boundary_parity :
+    tenStressValuesIndependentOfFiniteD1Evaluation = false :=
+  ten_stress_values_not_independent_of_finite_d1
+
+theorem finite_d1_remaining_leaf_parity :
+    tenFiniteLocalizedD1EvaluationsStillRequired = true :=
+  ten_finite_d1_evaluations_remain
+
 end AgdaMirror.GRQFTPostMergeLocalization

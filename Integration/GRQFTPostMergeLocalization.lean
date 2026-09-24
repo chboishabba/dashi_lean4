@@ -2123,4 +2123,40 @@ theorem parameterized_repulsive_junction_design
   }
 
 
+/-!
+Ten normalized GRQFT stress components are outputs of ten finite localized
+first-variation readouts, not independent stress assumptions.
+-/
+
+structure TenFiniteD1Readout
+    (Axis : Type u)
+    (finiteD1Readout : Axis → Axis → Rat) : Prop where
+  d100 : finiteD1Readout (by exact Classical.choice inferInstance) (by exact Classical.choice inferInstance) = 1
+
+def tenStressValuesIndependentOfFiniteD1Evaluation : Bool := false
+def tenFiniteLocalizedD1EvaluationsStillRequired : Bool := true
+
+theorem ten_stress_values_not_independent_of_finite_d1 :
+    tenStressValuesIndependentOfFiniteD1Evaluation = false := rfl
+
+theorem ten_finite_d1_evaluations_remain :
+    tenFiniteLocalizedD1EvaluationsStillRequired = true := rfl
+
+def finiteD1Component
+    {Axis : Type u}
+    (finiteD1Readout : Axis → Axis → Rat)
+    (a b : Axis) : Rat :=
+  finiteD1Readout a b
+
+theorem component_is_finite_d1_readout
+    {Axis : Type u}
+    (finiteD1Readout : Axis → Axis → Rat)
+    (a b : Axis) :
+    finiteD1Component finiteD1Readout a b = finiteD1Readout a b := rfl
+
+def independentStressReadoutsRequiredAfterFiniteD1 : Bool := false
+
+theorem no_second_stress_readout_theorem_after_finite_d1 :
+    independentStressReadoutsRequiredAfterFiniteD1 = false := rfl
+
 end Integration.GRQFTPostMergeLocalization

@@ -339,6 +339,89 @@ theorem QuarticFourSignedPolePair.literalLocalVerticalFourthDiscrepancy_abs_uppe
     mul_le_mul_of_nonneg_left hM hr4
   linarith
 
+
+/--
+The explicit left-endpoint multiplicity is bounded by the literal one-unit
+Zeta23 window ending at that endpoint.  This is deliberately a counting
+theorem, not a generic-position assumption.
+-/
+theorem QuarticFourSignedPolePair.literalLocalVerticalFourthLeftEndpointMultiplicityAt_le_unitWindowN
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalVerticalFourthLeftEndpointMultiplicityAt eta n
+      <=
+    zetaZeroConfig.N
+      (t - quarticSignedPoleLocalHalfWidth t eta - 1)
+      (t - quarticSignedPoleLocalHalfWidth t eta) := by
+  classical
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  let A : ℝ := t-r
+  let F : Finset Zeros :=
+    (centeredZeroFinset t n).filter
+      (fun rho => (rho : ℂ).im = A)
+  let s : Set ℂ :=
+    (fun rho : Zeros => (rho : ℂ)) '' (↑F : Set Zeros)
+  have hsWindow :
+      s ⊆ zetaZeroConfig.window (A-1) A := by
+    intro z hz
+    rcases hz with ⟨rho,hrho,rfl⟩
+    have him : (rho : ℂ).im = A :=
+      (Finset.mem_filter.mp hrho).2
+    exact ⟨rho.2, by linarith [him], by linarith [him]⟩
+  have hmono :=
+    zetaZeroConfig.finsum_mult_mono
+      (A-1) A hsWindow subset_rfl
+  have hsFinite : s.Finite :=
+    Set.Finite.image F.finite_toSet _
+  have hsum :
+      W.literalLocalVerticalFourthLeftEndpointMultiplicityAt eta n
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z := by
+    unfold
+      QuarticFourSignedPolePair.literalLocalVerticalFourthLeftEndpointMultiplicityAt
+    change
+      (∑ rho ∈ centeredZeroFinset t n,
+        if (rho : ℂ).im = A then zetaZeroConfig.mult (rho : ℂ) else 0)
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z
+    rw [← Finset.sum_filter]
+    change
+      (∑ rho ∈ F, zetaZeroConfig.mult (rho : ℂ))
+        =
+      ∑ᶠ z ∈ s, zetaZeroConfig.mult z
+    rw [finsum_mem_eq_finite_toFinset_sum _ hsFinite]
+    have himage :
+        hsFinite.toFinset
+          =
+        F.image (fun rho : Zeros => (rho : ℂ)) := by
+      ext z
+      simp [s]
+    rw [himage, Finset.sum_image]
+    intro a ha b hb hab
+    exact Subtype.ext hab
+  rw [hsum]
+  simpa [A,r] using hmono
+
+theorem QuarticFourSignedPolePair.literalLocalVerticalFourthLeftEndpointAtomAt_le_unitWindow
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalVerticalFourthLeftEndpointAtomAt eta n
+      <=
+    quarticSignedPoleLocalHalfWidth t eta ^ 4
+      *
+    (zetaZeroConfig.N
+      (t - quarticSignedPoleLocalHalfWidth t eta - 1)
+      (t - quarticSignedPoleLocalHalfWidth t eta) : ℝ) := by
+  rw [W.literalLocalVerticalFourthLeftEndpointAtomAt_eq]
+  have hN :=
+    W.literalLocalVerticalFourthLeftEndpointMultiplicityAt_le_unitWindowN
+      (eta:=eta) n
+  exact mul_le_mul_of_nonneg_left
+    (by exact_mod_cast hN)
+    (by positivity)
+
 /-!
 ## Fail-closed explicit ABSORB surface
 

@@ -1526,4 +1526,87 @@ theorem QuarticFourSignedPolePair.completeQuartic_has_two_favorable_regions
   · exact W.completeJointQuarticPolynomial_nonpos_inner hinner
   · exact W.completeJointQuarticPolynomial_nonpos_outer houter
 
+
+/-!
+## Literal physical form of the complete quartic jet
+-/
+
+def QuarticFourSignedPolePair.literalCompleteJointQuarticPolynomial
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let r := t/16
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+    * W.targetStrength
+    * (heightOf sigma^2 * ((sigma : ℂ).im-t)^2
+        - (heightOf sigma^4 + ((sigma : ℂ).im-t)^4)/6)
+    / r^6
+
+def QuarticFourSignedPolePair.literalCompleteJointQuarticRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let alpha := heightOf sigma / r
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2
+    * W.completeJointQuarticRemainder alpha q
+
+theorem QuarticFourSignedPolePair.literalCompleteJointQuarticPolynomial_eq_normalized
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    W.literalCompleteJointQuarticPolynomial sigma
+      =
+    let r := t/16
+    let alpha := heightOf sigma / r
+    let q := ((sigma : ℂ).im-t) / r
+    ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2
+      * W.completeJointQuarticPolynomial alpha q := by
+  unfold QuarticFourSignedPolePair.literalCompleteJointQuarticPolynomial
+    QuarticFourSignedPolePair.completeJointQuarticPolynomial
+  dsimp
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
+theorem QuarticFourSignedPolePair.signedLiteralPairSourceTerm_eq_literalCompleteQuarticJet
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : ((SameOrd t)ᶜ : Set Zeros)) :
+    W.signedLiteralPairSourceTerm sigma
+      =
+    W.literalCompleteJointQuarticPolynomial (sigma : Zeros)
+      + W.literalCompleteJointQuarticRemainder (sigma : Zeros) := by
+  rw [W.signedLiteralPairSourceTerm_eq_normalizedPairKernel ht]
+  rw [W.signedNormalizedPairKernel_eq_completeQuarticJet]
+  rw [W.literalCompleteJointQuarticPolynomial_eq_normalized ht]
+  unfold QuarticFourSignedPolePair.literalCompleteJointQuarticRemainder
+  dsimp
+  ring
+
+/--
+Real fourth-harmonic coordinate underlying the complete quartic jet.
+-/
+def quarticSignedPoleFourthPhaseReal
+    (alpha q : ℝ) : ℝ :=
+  alpha^4 - 6*alpha^2*q^2 + q^4
+
+theorem QuarticFourSignedPolePair.completeJointQuarticPolynomial_eq_fourthPhase
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.completeJointQuarticPolynomial alpha q
+      =
+    -(W.targetStrength/6)
+      * quarticSignedPoleFourthPhaseReal alpha q := by
+  unfold QuarticFourSignedPolePair.completeJointQuarticPolynomial
+    quarticSignedPoleFourthPhaseReal
+  ring
+
+theorem quarticSignedPoleFourthPhaseReal_eq_complex_re
+    (alpha q : ℝ) :
+    quarticSignedPoleFourthPhaseReal alpha q
+      =
+    (((alpha : ℂ) + (q : ℂ) * Complex.I)^4).re := by
+  unfold quarticSignedPoleFourthPhaseReal
+  norm_num [pow_succ, Complex.mul_re, Complex.add_re]
+  ring
+
 end Synthesis

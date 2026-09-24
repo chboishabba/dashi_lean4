@@ -241,7 +241,9 @@ theorem exists_quarticSignedPoleRvMVerticalFourthDiscrepancy_bound :
     intro x hx
     by_cases hxA : x = A
     · subst x
-      simp [zetaMuCumulativeDiscrepancy, zetaMuPrimitive]
+      have hN : Ncount A A = 0 := by
+        simp [Ncount, zerosIn]
+      simpa [zetaMuCumulativeDiscrepancy, zetaMuPrimitive, hN] using hE
     · have hAx : A < x := lt_of_le_of_ne hx.1 hxA.symm
       have hraw := hRvM A x hleft hAx
       rw [zetaMuCumulativeDiscrepancy_endpoint]

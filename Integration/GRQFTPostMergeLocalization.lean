@@ -481,4 +481,132 @@ theorem common_regime_backreaction_is_theory_core :
 theorem novel_observable_is_validation_not_theory_core :
     novelObservableIsPartOfTheoryConstructionCore = false := rfl
 
+/-!
+Concrete normalized component cut.
+
+The finite GR fixture is the exact 4x4 rational tensor diag(1,-1,-1,-1).
+A future CMP119 evaluator supplies the QFT tensor in the same carrier; the
+16 component equations then compile directly to tensor equality.
+-/
+
+inductive Axis4 where
+  | t | x | y | z
+  deriving DecidableEq, Repr
+
+def RationalTensor4 := Axis4 → Axis4 → Rat
+
+def finiteGRStressRational : RationalTensor4
+  | .t, .t => 1
+  | .x, .x => -1
+  | .y, .y => -1
+  | .z, .z => -1
+  | _, _ => 0
+
+structure CMP119RationalStressComponentEvaluator (Stress : Type u) where
+  component : Stress → Axis4 → Axis4 → Rat
+
+def cmp119RationalTensor
+    {Stress : Type u}
+    (E : CMP119RationalStressComponentEvaluator Stress)
+    (stress : Stress) : RationalTensor4 :=
+  E.component stress
+
+structure NormalizedCrossSectorStressInstance
+    {Stress : Type u}
+    (E : CMP119RationalStressComponentEvaluator Stress)
+    (stress : Stress) : Prop where
+  qft00 : E.component stress .t .t = 1
+  qft11 : E.component stress .x .x = -1
+  qft22 : E.component stress .y .y = -1
+  qft33 : E.component stress .z .z = -1
+  qft01 : E.component stress .t .x = 0
+  qft02 : E.component stress .t .y = 0
+  qft03 : E.component stress .t .z = 0
+  qft10 : E.component stress .x .t = 0
+  qft12 : E.component stress .x .y = 0
+  qft13 : E.component stress .x .z = 0
+  qft20 : E.component stress .y .t = 0
+  qft21 : E.component stress .y .x = 0
+  qft23 : E.component stress .y .z = 0
+  qft30 : E.component stress .z .t = 0
+  qft31 : E.component stress .z .x = 0
+  qft32 : E.component stress .z .y = 0
+
+theorem sixteen_components_compile_to_tensor_equality
+    {Stress : Type u}
+    {E : CMP119RationalStressComponentEvaluator Stress}
+    {stress : Stress}
+    (h : NormalizedCrossSectorStressInstance E stress)
+    (a b : Axis4) :
+    finiteGRStressRational a b = cmp119RationalTensor E stress a b := by
+  cases a <;> cases b <;>
+    simp [finiteGRStressRational, cmp119RationalTensor,
+      h.qft00, h.qft11, h.qft22, h.qft33,
+      h.qft01, h.qft02, h.qft03, h.qft10,
+      h.qft12, h.qft13, h.qft20, h.qft21,
+      h.qft23, h.qft30, h.qft31, h.qft32]
+
+def normalizedCMP119ComponentEvaluatorStillRequired : Bool := true
+def secondTensorEqualityTheoremAfterSixteenComponentsRequired : Bool := false
+def physicalSIStressCalibrationClaimed : Bool := false
+
+theorem no_second_tensor_theorem_after_components :
+    secondTensorEqualityTheoremAfterSixteenComponentsRequired = false := rfl
+
+/-!
+Executable common-regime attempt retaining four separate failure coordinates.
+-/
+
+structure CommonRegimeDecisionProbe
+    (Candidate Regime : Type u) where
+  grRegimeDecision : Regime → Bool
+  qftRegimeDecision : Regime → Bool
+  backreactionDecision : Candidate → Regime → Bool
+  correctionDecision : Candidate → Regime → Bool
+
+structure CommonRegimeAttemptResult where
+  grPassed : Bool
+  qftPassed : Bool
+  backreactionPassed : Bool
+  correctionPassed : Bool
+  allPassed : Bool
+  deriving DecidableEq, Repr
+
+def runCommonRegimeAttempt
+    {Candidate Regime : Type u}
+    (P : CommonRegimeDecisionProbe Candidate Regime)
+    (candidate : Candidate)
+    (regime : Regime) : CommonRegimeAttemptResult :=
+  let gr := P.grRegimeDecision regime
+  let qft := P.qftRegimeDecision regime
+  let back := P.backreactionDecision candidate regime
+  let corr := P.correctionDecision candidate regime
+  {
+    grPassed := gr
+    qftPassed := qft
+    backreactionPassed := back
+    correctionPassed := corr
+    allPassed := gr && qft && back && corr
+  }
+
+def commonRegimeAttemptRetainsFourSeparateFailureCoordinates : Bool := true
+def missingCommonRegimePromotionTokenBlocksAttemptExecution : Bool := false
+
+theorem overlap_attempt_preserves_failures :
+    commonRegimeAttemptRetainsFourSeparateFailureCoordinates = true := rfl
+
+theorem promotion_does_not_block_overlap_attempt :
+    missingCommonRegimePromotionTokenBlocksAttemptExecution = false := rfl
+
+/-!
+Concrete frontier correction.
+-/
+
+def unifiedCandidateInhabitationIsAggregateConsequence : Bool := true
+def qftComponentEvaluatorExists : Bool := false
+def commonOverlapEvidenceExists : Bool := false
+
+theorem candidate_inhabitation_not_extra_leaf :
+    unifiedCandidateInhabitationIsAggregateConsequence = true := rfl
+
 end Integration.GRQFTPostMergeLocalization

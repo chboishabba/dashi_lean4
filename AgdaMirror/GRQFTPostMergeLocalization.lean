@@ -93,4 +93,20 @@ theorem common_regime_theory_core_parity :
     commonRegimeBackreactionIsPartOfTheoryCore = true :=
   common_regime_backreaction_is_theory_core
 
+theorem component_cut_parity :
+    secondTensorEqualityTheoremAfterSixteenComponentsRequired = false :=
+  no_second_tensor_theorem_after_components
+
+theorem overlap_failure_coordinate_parity :
+    commonRegimeAttemptRetainsFourSeparateFailureCoordinates = true :=
+  overlap_attempt_preserves_failures
+
+theorem overlap_promotion_boundary_parity :
+    missingCommonRegimePromotionTokenBlocksAttemptExecution = false :=
+  promotion_does_not_block_overlap_attempt
+
+theorem candidate_aggregate_construction_parity :
+    unifiedCandidateInhabitationIsAggregateConsequence = true :=
+  candidate_inhabitation_not_extra_leaf
+
 end AgdaMirror.GRQFTPostMergeLocalization

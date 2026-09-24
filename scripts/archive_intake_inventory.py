@@ -35,18 +35,21 @@ def hash_file(path: Path) -> str:
 def family_for(member_name: str) -> str:
     path = "/" + member_name.strip("/") + "/"
     for marker, family in (
-        ("/Lean/ImportedLeans/", "recursive_importedleans"),
+        # Check recursive copies before project surfaces: an archive can embed a
+        # complete output-final tree below either `Lean/` or its own root.
+        ("/ImportedLeans/", "recursive_importedleans"),
         ("/Lean/outputs/", "generated_output"),
         ("/Provenance/", "provenance"),
+        ("/imported/", "imported_mirror"),
         ("/Lean/Imported/", "imported_mirror"),
-        ("/Lean/AgdaMirror/", "agda_mirror"),
+        ("/AgdaMirror/", "agda_mirror"),
         ("/Lean/DASHI/", "dashi_snapshot"),
-        ("/DASHI/output-final_aristotle/RequestProject/", "requestproject_snapshot"),
-        ("/Lean/Spine/", "spine"),
-        ("/Lean/Synthesis/", "synthesis"),
-        ("/Lean/Cuisine/", "cuisine"),
-        ("/Lean/Integration/", "integration"),
-        ("/Lean/Promoted/", "promoted"),
+        ("/RequestProject/", "requestproject_snapshot"),
+        ("/Spine/", "spine"),
+        ("/Synthesis/", "synthesis"),
+        ("/Cuisine/", "cuisine"),
+        ("/Integration/", "integration"),
+        ("/Promoted/", "promoted"),
     ):
         if marker in path:
             return family

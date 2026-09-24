@@ -44,7 +44,7 @@ theorem source_manifest_literal_receipt :
       "4787feafbd9630dc439556543c42c6b75bf7fdbd" ∧
     extractionBlob.gitBlob =
       "baee86e7085c9193227142eb9713df9d2e4a546e" := by
-  repeat' first | constructor | rfl
+  native_decide
 
 /-- Mathematical inhabitance of the exact Lean-facing Round11/Machin binding
 shape is no longer conditional. -/

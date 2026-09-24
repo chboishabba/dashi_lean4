@@ -29,20 +29,6 @@ open scoped Real
 
 namespace Synthesis
 
-def quarticSignedPoleCanonicalLocalRadius : ℝ :=
-  1 / (Real.pi + 1)
-
-theorem quarticSignedPoleCanonicalLocalRadius_pos :
-    0 < quarticSignedPoleCanonicalLocalRadius := by
-  unfold quarticSignedPoleCanonicalLocalRadius
-  positivity
-
-theorem quarticSignedPoleCanonicalLocalRadius_lt_one :
-    quarticSignedPoleCanonicalLocalRadius < 1 := by
-  unfold quarticSignedPoleCanonicalLocalRadius
-  rw [div_lt_one (by positivity : 0 < Real.pi + 1)]
-  linarith [Real.pi_pos]
-
 def QuarticFourSignedPolePair.signedProfileAbsMomentSix
     {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
   compactProfileAbsMoment

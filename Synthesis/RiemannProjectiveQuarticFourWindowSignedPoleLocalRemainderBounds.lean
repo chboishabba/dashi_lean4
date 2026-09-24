@@ -2099,6 +2099,48 @@ theorem QuarticFourSignedPolePair.literalConeDebtAt_lt_target_of_quartic_floor
 
 
 
+
+/-!
+## Exact physical transport of the signed sixth harmonic
+
+This keeps the literal zero multiplicity and the same physical normalization as
+the complete quartic remainder.  No inequality is used.
+-/
+
+def QuarticFourSignedPolePair.literalCompleteJointSixthHarmonic
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let alpha := heightOf sigma / r
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2
+    * W.completeJointSixthHarmonic alpha q
+
+def QuarticFourSignedPolePair.literalCompleteJointBeyondSixthRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let alpha := heightOf sigma / r
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2
+    * W.completeJointBeyondSixthRemainder alpha q
+
+theorem QuarticFourSignedPolePair.literalCompleteJointQuarticRemainder_eq_sixth_add_beyond
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    W.literalCompleteJointQuarticRemainder sigma
+      =
+    W.literalCompleteJointSixthHarmonic sigma
+      + W.literalCompleteJointBeyondSixthRemainder sigma := by
+  unfold QuarticFourSignedPolePair.literalCompleteJointQuarticRemainder
+    QuarticFourSignedPolePair.literalCompleteJointSixthHarmonic
+    QuarticFourSignedPolePair.literalCompleteJointBeyondSixthRemainder
+  dsimp
+  rw [W.completeJointQuarticRemainder_eq_sixth_add_beyond]
+  ring
+
+
 /-!
 ## Physical r^-8 transport of the complete sixth-order remainder
 -/
@@ -2301,6 +2343,56 @@ def QuarticFourSignedPolePair.literalLocalCompleteRemainderAt
     (eta : ℝ) (n : ℕ) : ℝ :=
   ∑ rho ∈ centeredZeroFinset t n,
     W.literalLocalCompleteRemainderTerm eta rho
+
+
+def QuarticFourSignedPolePair.literalLocalSignedSixthHarmonicAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        W.literalCompleteJointSixthHarmonic rho
+      else
+        0
+    else
+      0
+
+def QuarticFourSignedPolePair.literalLocalBeyondSixthRemainderAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        W.literalCompleteJointBeyondSixthRemainder rho
+      else
+        0
+    else
+      0
+
+theorem QuarticFourSignedPolePair.literalLocalCompleteRemainderAt_eq_signedSixth_add_beyond
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalCompleteRemainderAt eta n
+      =
+    W.literalLocalSignedSixthHarmonicAt eta n
+      + W.literalLocalBeyondSixthRemainderAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalCompleteRemainderAt
+    QuarticFourSignedPolePair.literalLocalCompleteRemainderTerm
+    QuarticFourSignedPolePair.literalLocalSignedSixthHarmonicAt
+    QuarticFourSignedPolePair.literalLocalBeyondSixthRemainderAt
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl, hoff,
+        W.literalCompleteJointQuarticRemainder_eq_sixth_add_beyond rho]
+    · simp [hl, hoff]
+  · simp [hl]
 
 def QuarticFourSignedPolePair.literalLocalSixthDebtAt
     {t : ℝ} (W : QuarticFourSignedPolePair t)

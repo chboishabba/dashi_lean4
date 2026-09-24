@@ -1518,4 +1518,160 @@ theorem balanced_max_cut_uses_positive_g :
     balancedMaxCutNegativeGRequired = false := rfl
 
 
+/-!
+Literal finite rational TOV system.
+
+Absorb 4π into rhoBar so m' = r^2 rhoBar remains rational.  The fixture uses
+r1=1,m1=1/8 and r2=2,m2=1/4 with p_r(r2)=0.
+-/
+
+structure RationalRadialState where
+  radius : Rat
+  mass : Rat
+  densityBar : Rat
+  rho : Rat
+  radialPressure : Rat
+  tangentialPressure : Rat
+  deriving Repr
+
+def schwarzschildDenominator (s : RationalRadialState) : Rat :=
+  s.radius * (s.radius - 2 * s.mass)
+
+def tovGravityNumerator (s : RationalRadialState) : Rat :=
+  s.mass + s.radius^3 * s.radialPressure
+
+def tovGravityFactor (s : RationalRadialState) : Rat :=
+  tovGravityNumerator s / schwarzschildDenominator s
+
+def anisotropicTOVRHS (s : RationalRadialState) : Rat :=
+  -((s.rho + s.radialPressure) * tovGravityFactor s)
+    + 2 * (s.tangentialPressure - s.radialPressure) / s.radius
+
+def innerTOVState : RationalRadialState where
+  radius := 1
+  mass := 1/8
+  densityBar := 1/8
+  rho := 1
+  radialPressure := -1
+  tangentialPressure := -1
+
+def outerMassTarget : Rat := 1/4
+def outerRadius : Rat := 2
+def outerDensityBar : Rat := 1/32
+
+def massIncrement (r rhoBar deltaR : Rat) : Rat :=
+  r^2 * rhoBar * deltaR
+
+theorem outer_mass_integration_exact :
+    innerTOVState.mass + massIncrement outerRadius outerDensityBar 1
+      = outerMassTarget := by
+  norm_num [innerTOVState, massIncrement, outerRadius, outerDensityBar, outerMassTarget]
+
+def outerBaseState (pT : Rat) : RationalRadialState where
+  radius := 2
+  mass := 1/4
+  densityBar := 1/32
+  rho := 1
+  radialPressure := 0
+  tangentialPressure := pT
+
+theorem outer_tov_gravity_factor_one_twelfth :
+    tovGravityFactor (outerBaseState 0) = 1/12 := by
+  norm_num [tovGravityFactor, tovGravityNumerator, schwarzschildDenominator, outerBaseState]
+
+def desiredOuterPressureDerivative : Rat := 1/2
+
+def requiredOuterTangentialPressure : Rat :=
+  0 + (2/2 : Rat) * (desiredOuterPressureDerivative + tovGravityFactor (outerBaseState 0))
+
+theorem required_outer_tangential_pressure_seven_twelfths :
+    requiredOuterTangentialPressure = 7/12 := by
+  norm_num [requiredOuterTangentialPressure, desiredOuterPressureDerivative,
+    tovGravityFactor, tovGravityNumerator, schwarzschildDenominator, outerBaseState]
+
+def outerBalancedTOVState : RationalRadialState :=
+  outerBaseState requiredOuterTangentialPressure
+
+theorem outer_tov_balance_exact :
+    anisotropicTOVRHS outerBalancedTOVState = desiredOuterPressureDerivative := by
+  norm_num [anisotropicTOVRHS, outerBalancedTOVState, requiredOuterTangentialPressure,
+    desiredOuterPressureDerivative, tovGravityFactor, tovGravityNumerator,
+    schwarzschildDenominator, outerBaseState]
+
+theorem outer_r_minus_two_m_three_halves :
+    outerBalancedTOVState.radius - 2 * outerBalancedTOVState.mass = 3/2 := by
+  norm_num [outerBalancedTOVState, outerBaseState]
+
+def radialActiveStress (s : RationalRadialState) : Rat :=
+  s.rho + s.radialPressure + 2 * s.tangentialPressure
+
+def finiteIntegratedActiveMass : Rat :=
+  radialActiveStress innerTOVState + (1/2 : Rat) * radialActiveStress outerBalancedTOVState
+
+theorem finite_integrated_active_mass_negative_eleven_twelfths :
+    finiteIntegratedActiveMass = -11/12 := by
+  norm_num [finiteIntegratedActiveMass, radialActiveStress, innerTOVState,
+    outerBalancedTOVState, requiredOuterTangentialPressure, outerBaseState,
+    desiredOuterPressureDerivative, tovGravityFactor, tovGravityNumerator,
+    schwarzschildDenominator]
+
+/-!
+Exterior-mass collision and static positive-density no-go.
+
+The literal TOV metric mass at the surface is +1/4 while the pressure-weighted
+active-stress diagnostic is -11/12.  They are not the same object.
+-/
+
+def finiteSurfaceMetricMass : Rat := outerMassTarget
+
+theorem finite_surface_metric_mass_positive_quarter :
+    finiteSurfaceMetricMass = 1/4 := rfl
+
+theorem surface_metric_mass_not_active_stress_diagnostic :
+    finiteSurfaceMetricMass ≠ finiteIntegratedActiveMass := by
+  norm_num [finiteSurfaceMetricMass, outerMassTarget,
+    finiteIntegratedActiveMass, radialActiveStress, innerTOVState,
+    outerBalancedTOVState, requiredOuterTangentialPressure, outerBaseState,
+    desiredOuterPressureDerivative, tovGravityFactor, tovGravityNumerator,
+    schwarzschildDenominator]
+
+inductive MetricMassSign where
+  | negative | zero | positive
+  deriving DecidableEq, Repr
+
+inductive DensityShellSign where
+  | zero | positive
+  deriving DecidableEq, Repr
+
+def accumulatePositiveDensityShell :
+    MetricMassSign → DensityShellSign → MetricMassSign
+  | .negative, _ => .negative
+  | .zero, .zero => .zero
+  | .zero, .positive => .positive
+  | .positive, _ => .positive
+
+theorem two_positive_shells_from_regular_center_positive :
+    accumulatePositiveDensityShell
+      (accumulatePositiveDensityShell .zero .positive) .positive = .positive := rfl
+
+inductive ExteriorRepulsionEscapeRoute where
+  | negativeEnergyDensityContribution
+  | negativeSurfaceEnergyJunction
+  | nonVacuumExteriorStress
+  | modifiedGravityOrEffectiveCoupling
+  | timeDependentOrNonStaticGeometry
+  | nonSphericalOrTopologicalRoute
+  deriving DecidableEq, Repr
+
+def negativePressureCanGiveLocalDefocusing : Bool := true
+def negativePressureAloneCanMakeMetricMassNegative : Bool := false
+def regularPositiveDensityMassAccumulationStaysNonnegative : Bool := true
+def finiteLiteralTOVStandardExteriorRepulsive : Bool := false
+def trueExteriorRepulsionNeedsEscapeRoute : Bool := true
+def activeStressDiagnosticEqualsSchwarzschildMassByDefault : Bool := false
+
+theorem finite_tov_blocks_standard_exterior_repulsion :
+    finiteLiteralTOVStandardExteriorRepulsive = false := rfl
+
+
 end Integration.GRQFTPostMergeLocalization

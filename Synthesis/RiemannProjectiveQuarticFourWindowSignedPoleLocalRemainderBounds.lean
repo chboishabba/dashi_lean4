@@ -2062,4 +2062,258 @@ theorem QuarticFourSignedPolePair.literalCompleteJointQuarticRemainder_abs_le
         ring
 
 
+
+/-!
+## Local fourth-harmonic normal form
+
+Use the complete quartic jet on the whole canonical local carrier.  The far
+carrier remains exact.  Same-ordinate zeros are excluded exactly as in the
+literal pair source.
+-/
+
+theorem quarticSignedPole_normalizedHeight_abs_le_canonicalRadius
+    {t : ℝ}
+    (ht : 200 <= t)
+    (rho : Zeros) :
+    |heightOf rho / (t/16)|
+      <= quarticSignedPoleCanonicalLocalRadius := by
+  have hr : 0 < t/16 := by linarith
+  have hstrip := zetaZero_height_abs_le_half rho
+  have heta := one_fifth_lt_quarticSignedPoleCanonicalLocalRadius
+  have hprod :
+      (1/2 : ℝ)
+        < quarticSignedPoleCanonicalLocalRadius * (t/16) := by
+    have hmul :=
+      mul_lt_mul_of_pos_right heta hr
+    have hlo :
+        (5/2 : ℝ) <= (1/5 : ℝ) * (t/16) := by
+      nlinarith
+    linarith
+  rw [abs_div, abs_of_pos hr]
+  rw [div_le_iff₀ hr]
+  exact hstrip.trans_lt hprod |>.le
+
+def QuarticFourSignedPolePair.literalLocalExactTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (rho : Zeros) : ℝ :=
+  if quarticSignedPoleLocal t eta rho then
+    W.literalOffOrdSource rho
+  else
+    0
+
+def QuarticFourSignedPolePair.literalLocalCompletePolynomialTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (rho : Zeros) : ℝ := by
+  classical
+  exact if quarticSignedPoleLocal t eta rho then
+    if h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+      W.literalCompleteJointQuarticPolynomial rho
+    else
+      0
+  else
+    0
+
+def QuarticFourSignedPolePair.literalLocalCompleteRemainderTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (rho : Zeros) : ℝ := by
+  classical
+  exact if quarticSignedPoleLocal t eta rho then
+    if h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+      W.literalCompleteJointQuarticRemainder rho
+    else
+      0
+  else
+    0
+
+def QuarticFourSignedPolePair.literalLocalExactAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    W.literalLocalExactTerm eta rho
+
+def QuarticFourSignedPolePair.literalLocalFourthHarmonicAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    W.literalLocalCompletePolynomialTerm eta rho
+
+def QuarticFourSignedPolePair.literalLocalCompleteRemainderAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    W.literalLocalCompleteRemainderTerm eta rho
+
+def QuarticFourSignedPolePair.literalLocalSixthDebtAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        W.literalCompleteSixthRemainderBound rho
+      else
+        0
+    else
+      0
+
+theorem QuarticFourSignedPolePair.literalOffOrdSource_eq_local_add_far
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.literalOffOrdSource rho
+      =
+    W.literalLocalExactTerm eta rho
+      + W.literalFarExactTerm eta rho := by
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · have hnf : ¬ quarticSignedPoleFar t eta rho := by
+      intro hf
+      linarith [hl,hf]
+    simp [QuarticFourSignedPolePair.literalLocalExactTerm,
+      QuarticFourSignedPolePair.literalFarExactTerm,hl,hnf]
+  · have hf : quarticSignedPoleFar t eta rho := by
+      exact lt_of_not_ge hl
+    simp [QuarticFourSignedPolePair.literalLocalExactTerm,
+      QuarticFourSignedPolePair.literalFarExactTerm,hl,hf]
+
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_eq_local_add_far
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalOffOrdExactAt n
+      =
+    W.literalLocalExactAt eta n
+      + W.literalFarExactAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalOffOrdExactAt
+    QuarticFourSignedPolePair.literalLocalExactAt
+    QuarticFourSignedPolePair.literalFarExactAt
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  exact W.literalOffOrdSource_eq_local_add_far rho
+
+theorem QuarticFourSignedPolePair.literalLocalExactTerm_eq_completeJet
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.literalLocalExactTerm eta rho
+      =
+    W.literalLocalCompletePolynomialTerm eta rho
+      + W.literalLocalCompleteRemainderTerm eta rho := by
+  classical
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · have h :=
+        W.signedLiteralPairSourceTerm_eq_literalCompleteQuarticJet
+          ht (⟨rho,hoff⟩ : ((SameOrd t)ᶜ : Set Zeros))
+      simp [QuarticFourSignedPolePair.literalLocalExactTerm,
+        QuarticFourSignedPolePair.literalOffOrdSource,
+        QuarticFourSignedPolePair.literalLocalCompletePolynomialTerm,
+        QuarticFourSignedPolePair.literalLocalCompleteRemainderTerm,
+        hl,hoff] at h ⊢
+      exact h
+    · simp [QuarticFourSignedPolePair.literalLocalExactTerm,
+        QuarticFourSignedPolePair.literalOffOrdSource,
+        QuarticFourSignedPolePair.literalLocalCompletePolynomialTerm,
+        QuarticFourSignedPolePair.literalLocalCompleteRemainderTerm,
+        hl,hoff]
+  · simp [QuarticFourSignedPolePair.literalLocalExactTerm,
+      QuarticFourSignedPolePair.literalLocalCompletePolynomialTerm,
+      QuarticFourSignedPolePair.literalLocalCompleteRemainderTerm,hl]
+
+theorem QuarticFourSignedPolePair.literalLocalExactAt_eq_fourthHarmonic_add_remainder
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalExactAt eta n
+      =
+    W.literalLocalFourthHarmonicAt eta n
+      + W.literalLocalCompleteRemainderAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalExactAt
+    QuarticFourSignedPolePair.literalLocalFourthHarmonicAt
+    QuarticFourSignedPolePair.literalLocalCompleteRemainderAt
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  exact W.literalLocalExactTerm_eq_completeJet ht rho
+
+theorem QuarticFourSignedPolePair.literalLocalCompleteRemainderAt_le_sixthDebt
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalCompleteRemainderAt
+        quarticSignedPoleCanonicalLocalRadius n
+      <=
+    W.literalLocalSixthDebtAt
+        quarticSignedPoleCanonicalLocalRadius n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalCompleteRemainderAt
+    QuarticFourSignedPolePair.literalLocalCompleteRemainderTerm
+    QuarticFourSignedPolePair.literalLocalSixthDebtAt
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hl :
+      quarticSignedPoleLocal
+        t quarticSignedPoleCanonicalLocalRadius rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · have ha :=
+        quarticSignedPole_normalizedHeight_abs_le_canonicalRadius
+          ht rho
+      have hq : |((rho : ℂ).im-t)/(t/16)|
+          <= quarticSignedPoleCanonicalLocalRadius := hl
+      have hb :=
+        W.literalCompleteJointQuarticRemainder_abs_le
+          (by linarith) rho ha hq
+      simp [hl,hoff]
+      exact le_trans (le_abs_self _) hb
+    · simp [hl,hoff]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_fourthHarmonic_add_sixthDebt_add_far
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalOffOrdExactAt n
+      <=
+    W.literalLocalFourthHarmonicAt
+        quarticSignedPoleCanonicalLocalRadius n
+      +
+    W.literalLocalSixthDebtAt
+        quarticSignedPoleCanonicalLocalRadius n
+      +
+    W.literalFarExactAt
+        quarticSignedPoleCanonicalLocalRadius n := by
+  rw [W.literalOffOrdExactAt_eq_local_add_far
+      (eta:=quarticSignedPoleCanonicalLocalRadius)]
+  rw [W.literalLocalExactAt_eq_fourthHarmonic_add_remainder
+      (eta:=quarticSignedPoleCanonicalLocalRadius)
+      (by linarith)]
+  have hr :=
+    W.literalLocalCompleteRemainderAt_le_sixthDebt
+      ht n
+  linarith
+
+def quarticSignedPolePhysicalFourthPhaseReal
+    (t : ℝ) (sigma : Zeros) : ℝ :=
+  heightOf sigma^4
+    - 6 * heightOf sigma^2 * ((sigma : ℂ).im-t)^2
+    + ((sigma : ℂ).im-t)^4
+
+theorem QuarticFourSignedPolePair.literalCompleteJointQuarticPolynomial_eq_phase
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    W.literalCompleteJointQuarticPolynomial sigma
+      =
+    - (((zetaZeroConfig).mult (sigma : ℂ) : ℝ)
+        * W.targetStrength
+        * quarticSignedPolePhysicalFourthPhaseReal t sigma)
+      / (6 * (t/16)^6) := by
+  unfold QuarticFourSignedPolePair.literalCompleteJointQuarticPolynomial
+    quarticSignedPolePhysicalFourthPhaseReal
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
+
 end Synthesis

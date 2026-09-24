@@ -301,6 +301,8 @@ inductive ExecutableGapStatus where
   | locallyClosed
   | locallyRejected
   | executableInterfaceReadyConcreteInstanceMissing
+  | analyticRealizationMissing
+  | localAdapterPresentExternalAcceptanceRequired
   | externalInformationRequired
   deriving DecidableEq, Repr
 
@@ -321,11 +323,11 @@ def executableClosureMatrix : GRQFTExecutableClosureMatrix where
   finiteSourcedEinsteinEquation := .locallyClosed
   finiteNormalizedCouplingUniqueness := .locallyClosed
   currentW4DirtyCalibration := .locallyRejected
-  sameCandidateGRRecovery := .executableInterfaceReadyConcreteInstanceMissing
+  sameCandidateGRRecovery := .analyticRealizationMissing
   sameCandidateQFTRecovery := .executableInterfaceReadyConcreteInstanceMissing
   sameCarrierStressWeld := .executableInterfaceReadyConcreteInstanceMissing
-  physicalUnitCalibration := .externalInformationRequired
-  continuumRecovery := .executableInterfaceReadyConcreteInstanceMissing
+  physicalUnitCalibration := .localAdapterPresentExternalAcceptanceRequired
+  continuumRecovery := .analyticRealizationMissing
   empiricalGRQFTValidation := .externalInformationRequired
   terminalPromotion := false
 
@@ -348,7 +350,7 @@ theorem direct_gr_target_equality_not_primitive :
     directSelectedGRTargetEqualityPrimitive = false := rfl
 
 inductive GRQFTConcreteInstanceLeaf where
-  | attachLiteralRound131YMToRecoveredQFT
+  | attachPinnedLiteralYMToRecoveredQFT
   | attachLiteralNonflatGRToRecoveredGR
   | instantiateCommonEinsteinMetricVariation
   | instantiateCommonBalabanAllSectorProducer
@@ -358,7 +360,7 @@ inductive GRQFTConcreteInstanceLeaf where
   deriving DecidableEq, Repr
 
 def concreteInstanceLeaves : List GRQFTConcreteInstanceLeaf :=
-  [ .attachLiteralRound131YMToRecoveredQFT
+  [ .attachPinnedLiteralYMToRecoveredQFT
   , .attachLiteralNonflatGRToRecoveredGR
   , .instantiateCommonEinsteinMetricVariation
   , .instantiateCommonBalabanAllSectorProducer
@@ -389,5 +391,144 @@ theorem finite_einstein_no_longer_open :
 
 theorem w4_candidate_no_longer_unknown :
     concreteInstanceFrontier.currentW4CandidateStillUnknown = false := rfl
+
+structure W4CalibrationFailureDiagnosis where
+  currentChi2PerDof : String
+  dataEndpointRatio : String
+  currentEndpointShapeRatio : String
+  widthCorrectedChi2PerDof : String
+  massGeneralChi2PerDof : String
+  massGeneralBestFitScale : String
+  logLinearResidualCoverage : String
+  logCubicResidualChi2PerDof : String
+  cssProxyResidualChi2PerDof : String
+  replacementRequiresPhysicalShapeModel : Bool
+  promotesW4 : Bool
+  deriving Repr
+
+def w4CalibrationFailureDiagnosis : W4CalibrationFailureDiagnosis where
+  currentChi2PerDof := "298.8462841768543"
+  dataEndpointRatio := "980.3474210907259"
+  currentEndpointShapeRatio := "67.15857949369088"
+  widthCorrectedChi2PerDof := "297.1653530154906"
+  massGeneralChi2PerDof := "298.6378875341807"
+  massGeneralBestFitScale := "-11.122653052012883"
+  logLinearResidualCoverage := "0.9687052128530348"
+  logCubicResidualChi2PerDof := "18.036622062708705"
+  cssProxyResidualChi2PerDof := "583.0310302095853"
+  replacementRequiresPhysicalShapeModel := true
+  promotesW4 := false
+
+theorem w4_failure_is_shape_not_scalar_unknown :
+    w4CalibrationFailureDiagnosis.replacementRequiresPhysicalShapeModel = true := rfl
+
+structure GRAnalyticRealizationFrontier where
+  finiteSourcedEquationClosed : Bool
+  firstDiscreteToSmoothMissing : String
+  weakFieldFirstMissing : String
+  literalRecoveredEqualityConstructed : Bool
+  deriving Repr
+
+def grAnalyticRealizationFrontier : GRAnalyticRealizationFrontier where
+  finiteSourcedEquationClosed := true
+  firstDiscreteToSmoothMissing := "missingDiscreteToSmoothCurvatureConvergence"
+  weakFieldFirstMissing := "missingRadialValuation"
+  literalRecoveredEqualityConstructed := false
+
+structure SIPhysicalCalibrationBridge where
+  candidate256LocalAdapterPresent : Bool
+  exactExternalAuthorityAccepted : Bool
+  candidate256ReceiptPromoted : Bool
+  deriving Repr
+
+def siPhysicalCalibrationBridge : SIPhysicalCalibrationBridge where
+  candidate256LocalAdapterPresent := true
+  exactExternalAuthorityAccepted := false
+  candidate256ReceiptPromoted := false
+
+structure EinsteinPhysicalCouplingCandidate where
+  convention : String
+  gravitationalConstantSI : String
+  gravitationalConstantStandardUncertaintySI : String
+  exactSpeedOfLightSI : String
+  eightPiGOverC4SI : String
+  eightPiGOverC4StandardUncertaintySI : String
+  acceptedGAuthorityTokenPresent : Bool
+  typedGNumericValueLoaded : Bool
+  physicalCouplingPromoted : Bool
+  deriving Repr
+
+def einsteinPhysicalCouplingCandidate : EinsteinPhysicalCouplingCandidate where
+  convention := "energy-density: G_mu_nu = (8*pi*G/c^4) T_mu_nu"
+  gravitationalConstantSI := "6.67430e-11 m^3 kg^-1 s^-2"
+  gravitationalConstantStandardUncertaintySI := "1.5e-15 m^3 kg^-1 s^-2"
+  exactSpeedOfLightSI := "299792458 m s^-1 exact"
+  eightPiGOverC4SI := "2.0766474428449717e-43 m J^-1"
+  eightPiGOverC4StandardUncertaintySI := "4.667112902128249e-48 m J^-1"
+  acceptedGAuthorityTokenPresent := false
+  typedGNumericValueLoaded := false
+  physicalCouplingPromoted := false
+
+inductive PinnedYMGRQFTStressOpenLeaf where
+  | missingPinnedLiteralRecoveredQFTAttachment
+  | missingAllSectorAggregationAndCommonVariation
+  | missingEinsteinCommonMetricVariation
+  | missingCommonMetricProducerLanguage
+  deriving DecidableEq, Repr
+
+def pinnedYMGRQFTStressOpenLeaves : List PinnedYMGRQFTStressOpenLeaf :=
+  [ .missingPinnedLiteralRecoveredQFTAttachment
+  , .missingAllSectorAggregationAndCommonVariation
+  , .missingEinsteinCommonMetricVariation
+  , .missingCommonMetricProducerLanguage
+  ]
+
+def secondQFTStressTheoremRequired : Bool := false
+
+theorem second_qft_stress_theorem_not_required :
+    secondQFTStressTheoremRequired = false := rfl
+
+structure PinnedYMRecoveryStressParity where
+  pinnedStressIsLiteralByConstruction : Bool
+  oneRecoveryAttachmentFeedsSelectedQFTStress : Bool
+  allSectorAggregationStillApplicationOwned : Bool
+  deriving Repr
+
+def pinnedYMRecoveryStressParity : PinnedYMRecoveryStressParity where
+  pinnedStressIsLiteralByConstruction := true
+  oneRecoveryAttachmentFeedsSelectedQFTStress := true
+  allSectorAggregationStillApplicationOwned := true
+
+structure EinsteinFiniteToPhysicalCalibration (PhysicalCoefficient : Type u) where
+  curvatureToPhysical : SourceCoefficient → PhysicalCoefficient
+  stressToPhysical : SourceCoefficient → PhysicalCoefficient
+  applyPhysicalEinsteinCoupling : PhysicalCoefficient → PhysicalCoefficient
+  normalizedScaleCommutesWithPhysicalCoupling :
+    ∀ coefficient,
+      curvatureToPhysical coefficient =
+        applyPhysicalEinsteinCoupling (stressToPhysical coefficient)
+  acceptedMeasuredGCoupling : Bool
+  analyticContinuumRealization : Bool
+
+theorem finite_equation_transports_to_physical_equation
+    {PhysicalCoefficient : Type u}
+    (calibration : EinsteinFiniteToPhysicalCalibration PhysicalCoefficient)
+    (a b : Axis4) :
+    calibration.curvatureToPhysical (computedEinsteinTensor a b) =
+      calibration.applyPhysicalEinsteinCoupling
+        (calibration.stressToPhysical (computedMatterStress a b)) := by
+  rw [show computedEinsteinTensor a b = computedMatterStress a b by
+    cases a <;> cases b <;> rfl]
+  exact calibration.normalizedScaleCommutesWithPhysicalCoupling
+    (computedMatterStress a b)
+
+def normalizedKappaOneManufacturesMeasuredG : Bool := false
+def scaleCommutationManufacturesContinuumLimit : Bool := false
+
+theorem normalized_kappa_one_does_not_manufacture_measured_g :
+    normalizedKappaOneManufacturesMeasuredG = false := rfl
+
+theorem scale_commutation_does_not_manufacture_continuum_limit :
+    scaleCommutationManufacturesContinuumLimit = false := rfl
 
 end Integration.GRQFTExecutableResidual

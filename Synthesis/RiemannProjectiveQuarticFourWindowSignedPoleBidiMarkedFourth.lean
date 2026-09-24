@@ -3507,8 +3507,11 @@ theorem QuarticFourSignedPolePair.bidiMarkedPoleNormalizedCombination_sub_trunc_
            quarticFourSmoothBidiMarkedPoleResidualTrunc
               W.R (2/3) W.muTwo t (16*A/t))|
       <=
-      |W.poleTwo| * eHalf.rhs
-        + |W.poleHalf| * eTwo.rhs := by
+      |W.poleTwo| *
+          (quarticFourBidiDeterminantRemainderConstant * |16*A/t|^4)
+        +
+      |W.poleHalf| *
+          (quarticFourBidiDeterminantRemainderConstant * |16*A/t|^4) := by
     rw [abs_sub, abs_mul, abs_mul]
     exact add_le_add
       (mul_le_mul_of_nonneg_left eHalf (abs_nonneg _))

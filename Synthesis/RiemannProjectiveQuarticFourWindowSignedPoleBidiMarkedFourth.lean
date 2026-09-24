@@ -1693,4 +1693,525 @@ theorem quarticFourSmoothSignedMarkedPoleQuadraticCarrier_pos_of_endpoint_signs
   have h2 := mul_neg_of_pos_of_neg hPoleHalf hQTwo
   linarith
 
+
+/-!
+## Quantitative corridor margins and smooth localization of the marked-pole jet
+-/
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_half_corridor_ge
+    {t mu : ℝ} (ht : 200 <= t)
+    (hmu :
+      |mu-quarticFourAtomicMu (1/2)|
+        <= quarticFourAtomicMuRadius) :
+    Real.pi^2 / 32
+      <=
+    quarticFourAtomicMarkedPoleQuadraticCarrier t (1/2) mu := by
+  have ht0 : t ≠ 0 := by linarith
+  rw [quarticFourAtomicMarkedPoleQuadraticCarrier_half_general_formula ht0]
+  have h3 := Real.one_le_cosh (8*Real.pi/(3*t))
+  have h4 := Real.one_le_cosh (4*Real.pi/t)
+  have h8 := Real.one_le_cosh (8*Real.pi/t)
+  have hmuHi :
+      mu <= -(1/78 : ℝ) + 1/10000 := by
+    have h := (abs_le.mp hmu).2
+    rw [quarticFourAtomicMu_half] at h
+    simpa [quarticFourAtomicMuRadius] using h
+  have hmuNonpos : mu <= 0 := by
+    nlinarith
+  have hcoef :
+      576
+        - 180*Real.cosh (4*Real.pi/t)
+        - 396*Real.cosh (8*Real.pi/t)
+      <= 0 := by
+    nlinarith
+  have hmuprod :
+      0 <=
+      mu *
+        (576
+          - 180*Real.cosh (4*Real.pi/t)
+          - 396*Real.cosh (8*Real.pi/t)) :=
+    mul_nonneg_of_nonpos_of_nonpos hmuNonpos hcoef
+  have hp : 0 < Real.pi^2 := by positivity
+  nlinarith
+
+theorem quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_corridor_le
+    {t mu : ℝ} (ht : 200 <= t)
+    (hmu :
+      |mu-quarticFourAtomicMu (2/3)|
+        <= quarticFourAtomicMuRadius) :
+    quarticFourAtomicMarkedPoleQuadraticCarrier t (2/3) mu
+      <= -(Real.pi^2/432) := by
+  have ht0 : t ≠ 0 := by linarith
+  rw [quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_general_formula ht0]
+  have h3 := Real.one_le_cosh (8*Real.pi/(3*t))
+  have h4 := Real.one_le_cosh (4*Real.pi/t)
+  have h8hi := bidi_marked_pole_cosh_eight_le_two ht
+  let C : ℝ := Real.cosh (4*Real.pi/t)
+  have hdouble :
+      Real.cosh (8*Real.pi/t) = 2*C^2 - 1 := by
+    have harg : 8*Real.pi/t = 2*(4*Real.pi/t) := by ring
+    rw [harg, Real.cosh_two_mul, Real.cosh_sq]
+    dsimp [C]
+    ring
+  have hClo : 1 <= C := by
+    dsimp [C]
+    exact h4
+  have hChi : C <= 5/4 := by
+    rw [hdouble] at h8hi
+    dsimp [C] at h8hi
+    nlinarith [sq_nonneg (C-5/4)]
+  have hmuLo :
+      (1/162 : ℝ) - 1/10000 <= mu := by
+    have h := (abs_le.mp hmu).1
+    rw [quarticFourAtomicMu_twoThird] at h
+    simpa [quarticFourAtomicMuRadius] using h
+  have hmuNonneg : 0 <= mu := by
+    nlinarith
+  have hcoef :
+      432
+        - 180*Real.cosh (4*Real.pi/t)
+        - 252*Real.cosh (8*Real.pi/t)
+      <= 0 := by
+    have h8lo := Real.one_le_cosh (8*Real.pi/t)
+    nlinarith
+  have hmuprod :
+      mu *
+        (432
+          - 180*Real.cosh (4*Real.pi/t)
+          - 252*Real.cosh (8*Real.pi/t))
+      <= 0 :=
+    mul_nonpos_of_nonneg_of_nonpos hmuNonneg hcoef
+  have hp : 0 < Real.pi^2 := by positivity
+  dsimp [C] at hChi
+  nlinarith
+
+theorem quarticFourNormalizedPoleSecondWeight_continuous
+    (t c : ℝ) :
+    Continuous (quarticFourNormalizedPoleSecondWeight t c) := by
+  unfold quarticFourNormalizedPoleSecondWeight
+  fun_prop
+
+theorem quarticFourNormalizedPoleSecondWeight_even
+    (t c v : ℝ) :
+    quarticFourNormalizedPoleSecondWeight t c (-v)
+      = quarticFourNormalizedPoleSecondWeight t c v := by
+  unfold quarticFourNormalizedPoleSecondWeight
+  rw [neg_sq, quarticFourNormalizedPoleWeight_even]
+
+theorem quarticFourNormalizedOnLineSecondWeight_continuous
+    (c : ℝ) :
+    Continuous (quarticFourNormalizedOnLineSecondWeight c) := by
+  unfold quarticFourNormalizedOnLineSecondWeight
+  fun_prop
+
+theorem quarticFourNormalizedOnLineSecondWeight_even
+    (c v : ℝ) :
+    quarticFourNormalizedOnLineSecondWeight c (-v)
+      = quarticFourNormalizedOnLineSecondWeight c v := by
+  unfold quarticFourNormalizedOnLineSecondWeight
+  rw [neg_sq, quarticFourNormalizedOnLineWeight_even]
+
+def quarticFourAtomicPairingEnvelope
+    (w : ℝ -> ℝ) : ℝ :=
+  |w 0|
+    + |w (Real.pi/3)|
+    + (2/3 : ℝ) * |w (Real.pi/2)|
+    + (1/10 : ℝ) * |w Real.pi|
+
+theorem quarticFourAtomicPairingEnvelope_nonneg
+    (w : ℝ -> ℝ) :
+    0 <= quarticFourAtomicPairingEnvelope w := by
+  unfold quarticFourAtomicPairingEnvelope
+  positivity
+
+theorem quarticFourAtomicPairing_abs_le_envelope
+    {lam mu : ℝ}
+    (hlam : lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ))
+    (hmu : |mu| <= 1/10)
+    (w : ℝ -> ℝ) :
+    |quarticFourAtomicPairingAt lam mu w|
+      <= quarticFourAtomicPairingEnvelope w := by
+  have hlam0 : 0 <= lam := by linarith [hlam.1]
+  have hlamAbs : |lam| <= 2/3 := by
+    rw [abs_of_nonneg hlam0]
+    exact hlam.2
+  unfold quarticFourAtomicPairingAt quarticFourAtomicPairingEnvelope
+  calc
+    |w 0 - w (Real.pi/3) + lam*w (Real.pi/2) + mu*w Real.pi|
+      <=
+    |w 0 - w (Real.pi/3) + lam*w (Real.pi/2)|
+      + |mu*w Real.pi| := abs_add _ _
+    _ <=
+    (|w 0 - w (Real.pi/3)| + |lam*w (Real.pi/2)|)
+      + |mu|*|w Real.pi| := by
+        gcongr
+        · exact abs_add _ _
+        · rw [abs_mul]
+    _ <=
+    (|w 0| + |w (Real.pi/3)|)
+      + |lam|*|w (Real.pi/2)|
+      + |mu|*|w Real.pi| := by
+        gcongr
+        · exact abs_sub _ _
+        · rw [abs_mul]
+    _ <=
+    |w 0| + |w (Real.pi/3)|
+      + (2/3 : ℝ)*|w (Real.pi/2)|
+      + (1/10 : ℝ)*|w Real.pi| := by
+        gcongr
+
+def quarticFourMarkedPoleAtomicEnvelope
+    (t : ℝ) : ℝ :=
+  quarticFourAtomicPairingEnvelope
+      (quarticFourNormalizedPoleWeight t 1)
+    +
+  quarticFourAtomicPairingEnvelope
+      (quarticFourNormalizedPoleWeight t 2)
+    +
+  quarticFourAtomicPairingEnvelope
+      (quarticFourNormalizedOnLineWeight 1)
+    +
+  quarticFourAtomicPairingEnvelope
+      (quarticFourNormalizedOnLineWeight 2)
+    +
+  quarticFourAtomicPairingEnvelope
+      (quarticFourNormalizedPoleSecondWeight t 1)
+    +
+  quarticFourAtomicPairingEnvelope
+      (quarticFourNormalizedPoleSecondWeight t 2)
+    +
+  quarticFourAtomicPairingEnvelope
+      (quarticFourNormalizedOnLineSecondWeight 1)
+    +
+  quarticFourAtomicPairingEnvelope
+      (quarticFourNormalizedOnLineSecondWeight 2)
+
+theorem quarticFourMarkedPoleAtomicEnvelope_nonneg
+    (t : ℝ) :
+    0 <= quarticFourMarkedPoleAtomicEnvelope t := by
+  unfold quarticFourMarkedPoleAtomicEnvelope
+  positivity
+
+private theorem quarticFourAtomicPairing_abs_le_markedPoleEnvelope
+    {t lam mu : ℝ}
+    (hlam : lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ))
+    (hmu : |mu| <= 1/10)
+    {w : ℝ -> ℝ}
+    (hw :
+      w = quarticFourNormalizedPoleWeight t 1
+      ∨ w = quarticFourNormalizedPoleWeight t 2
+      ∨ w = quarticFourNormalizedOnLineWeight 1
+      ∨ w = quarticFourNormalizedOnLineWeight 2
+      ∨ w = quarticFourNormalizedPoleSecondWeight t 1
+      ∨ w = quarticFourNormalizedPoleSecondWeight t 2
+      ∨ w = quarticFourNormalizedOnLineSecondWeight 1
+      ∨ w = quarticFourNormalizedOnLineSecondWeight 2) :
+    |quarticFourAtomicPairingAt lam mu w|
+      <= quarticFourMarkedPoleAtomicEnvelope t := by
+  have h :=
+    quarticFourAtomicPairing_abs_le_envelope hlam hmu w
+  rcases hw with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    exact h.trans (by
+      unfold quarticFourMarkedPoleAtomicEnvelope
+      positivity)
+
+/--
+Uniform smooth localization of the two endpoint marked-pole quadratic signs.
+
+The theorem is uniform over the existing atomic mu corridor; no stronger
+witness-selection hypothesis is introduced.
+-/
+theorem exists_radius_quarticFourSmoothMarkedPoleQuadraticCarrier_endpoint_signs
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ R muHalf muTwo : ℝ,
+        0 < R -> R < delta ->
+        |muHalf-quarticFourAtomicMu (1/2)|
+          <= quarticFourAtomicMuRadius ->
+        |muTwo-quarticFourAtomicMu (2/3)|
+          <= quarticFourAtomicMuRadius ->
+        0 <
+          quarticFourSmoothMarkedPoleQuadraticCarrier
+            R (1/2) muHalf t
+        ∧
+        quarticFourSmoothMarkedPoleQuadraticCarrier
+            R (2/3) muTwo t < 0 := by
+  let margin : ℝ := Real.pi^2 / 500
+  let M : ℝ := quarticFourMarkedPoleAtomicEnvelope t
+  let eta : ℝ := min 1 (margin / (4*(4*M+2)))
+  have hmargin : 0 < margin := by
+    dsimp [margin]
+    positivity
+  have hM : 0 <= M := by
+    dsimp [M]
+    exact quarticFourMarkedPoleAtomicEnvelope_nonneg t
+  have hden : 0 < 4*(4*M+2) := by positivity
+  have heta : 0 < eta := by
+    dsimp [eta]
+    exact lt_min (by norm_num) (div_pos hmargin hden)
+  have heta1 : eta <= 1 := min_le_left _ _
+
+  obtain ⟨dP1,hdP1,hP1⟩ :=
+    exists_radius_quarticFourWindowPairing_close_atomic
+      (quarticFourNormalizedPoleWeight_continuous t 1)
+      (quarticFourNormalizedPoleWeight_even t 1) heta
+  obtain ⟨dP2,hdP2,hP2⟩ :=
+    exists_radius_quarticFourWindowPairing_close_atomic
+      (quarticFourNormalizedPoleWeight_continuous t 2)
+      (quarticFourNormalizedPoleWeight_even t 2) heta
+  obtain ⟨dO1,hdO1,hO1⟩ :=
+    exists_radius_quarticFourWindowPairing_close_atomic
+      (quarticFourNormalizedOnLineWeight_continuous 1)
+      (quarticFourNormalizedOnLineWeight_even 1) heta
+  obtain ⟨dO2,hdO2,hO2⟩ :=
+    exists_radius_quarticFourWindowPairing_close_atomic
+      (quarticFourNormalizedOnLineWeight_continuous 2)
+      (quarticFourNormalizedOnLineWeight_even 2) heta
+  obtain ⟨dPS1,hdPS1,hPS1⟩ :=
+    exists_radius_quarticFourWindowPairing_close_atomic
+      (quarticFourNormalizedPoleSecondWeight_continuous t 1)
+      (quarticFourNormalizedPoleSecondWeight_even t 1) heta
+  obtain ⟨dPS2,hdPS2,hPS2⟩ :=
+    exists_radius_quarticFourWindowPairing_close_atomic
+      (quarticFourNormalizedPoleSecondWeight_continuous t 2)
+      (quarticFourNormalizedPoleSecondWeight_even t 2) heta
+  obtain ⟨dOS1,hdOS1,hOS1⟩ :=
+    exists_radius_quarticFourWindowPairing_close_atomic
+      (quarticFourNormalizedOnLineSecondWeight_continuous 1)
+      (quarticFourNormalizedOnLineSecondWeight_even 1) heta
+  obtain ⟨dOS2,hdOS2,hOS2⟩ :=
+    exists_radius_quarticFourWindowPairing_close_atomic
+      (quarticFourNormalizedOnLineSecondWeight_continuous 2)
+      (quarticFourNormalizedOnLineSecondWeight_even 2) heta
+
+  let delta :=
+    min dP1 (min dP2 (min dO1 (min dO2
+      (min dPS1 (min dPS2 (min dOS1 dOS2))))))
+  have hdelta : 0 < delta := by
+    dsimp [delta]
+    exact lt_min hdP1
+      (lt_min hdP2
+        (lt_min hdO1
+          (lt_min hdO2
+            (lt_min hdPS1
+              (lt_min hdPS2
+                (lt_min hdOS1 hdOS2))))))
+  refine ⟨delta,hdelta,?_⟩
+  intro R muHalf muTwo hR hRd hmuHalf hmuTwo
+
+  have hmuHalfAbs :
+      |muHalf| < 1/10 :=
+    quarticFourAtomicMu_corridor_abs_lt_tenth
+      (by norm_num) (by norm_num) hmuHalf
+  have hmuTwoAbs :
+      |muTwo| < 1/10 :=
+    quarticFourAtomicMu_corridor_abs_lt_tenth
+      (by norm_num) (by norm_num) hmuTwo
+  have hlamHalf : (1/2 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨le_rfl, by norm_num⟩
+  have hlamTwo : (2/3 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨by norm_num, le_rfl⟩
+
+  have hRdP1 : R < dP1 := hRd.trans_le (min_le_left _ _)
+  have hrestP2 :=
+    hRd.trans_le (min_le_right dP1
+      (min dP2 (min dO1 (min dO2
+        (min dPS1 (min dPS2 (min dOS1 dOS2)))))))
+  have hRdP2 : R < dP2 := hrestP2.trans_le (min_le_left _ _)
+  have hrestO1 := hrestP2.trans_le (min_le_right _ _)
+  have hRdO1 : R < dO1 := hrestO1.trans_le (min_le_left _ _)
+  have hrestO2 := hrestO1.trans_le (min_le_right _ _)
+  have hRdO2 : R < dO2 := hrestO2.trans_le (min_le_left _ _)
+  have hrestPS1 := hrestO2.trans_le (min_le_right _ _)
+  have hRdPS1 : R < dPS1 := hrestPS1.trans_le (min_le_left _ _)
+  have hrestPS2 := hrestPS1.trans_le (min_le_right _ _)
+  have hRdPS2 : R < dPS2 := hrestPS2.trans_le (min_le_left _ _)
+  have hrestOS1 := hrestPS2.trans_le (min_le_right _ _)
+  have hRdOS1 : R < dOS1 := hrestOS1.trans_le (min_le_left _ _)
+  have hRdOS2 : R < dOS2 := hrestOS1.trans_le (min_le_right _ _)
+
+  have pairError
+      (lam mu : ℝ)
+      (hlam : lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ))
+      (hmu : |mu| <= 1/10) :
+      |quarticFourSmoothMarkedPoleQuadraticCarrier R lam mu t
+        - quarticFourAtomicMarkedPoleQuadraticCarrier t lam mu|
+        <= 2*(4*M+2)*eta := by
+    have eP1 := hP1 R lam mu hR hRdP1 hlam hmu
+    have eP2 := hP2 R lam mu hR hRdP2 hlam hmu
+    have eO1 := hO1 R lam mu hR hRdO1 hlam hmu
+    have eO2 := hO2 R lam mu hR hRdO2 hlam hmu
+    have ePS1 := hPS1 R lam mu hR hRdPS1 hlam hmu
+    have ePS2 := hPS2 R lam mu hR hRdPS2 hlam hmu
+    have eOS1 := hOS1 R lam mu hR hRdOS1 hlam hmu
+    have eOS2 := hOS2 R lam mu hR hRdOS2 hlam hmu
+
+    have aPS1 :=
+      quarticFourAtomicPairing_abs_le_markedPoleEnvelope
+        (t:=t) hlam hmu
+        (w:=quarticFourNormalizedPoleSecondWeight t 1)
+        (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl)))))
+    have bO2 :=
+      quarticFourAtomicPairing_abs_le_markedPoleEnvelope
+        (t:=t) hlam hmu
+        (w:=quarticFourNormalizedOnLineWeight 2)
+        (Or.inr (Or.inr (Or.inr (Or.inl rfl))))
+    have cPS2 :=
+      quarticFourAtomicPairing_abs_le_markedPoleEnvelope
+        (t:=t) hlam hmu
+        (w:=quarticFourNormalizedPoleSecondWeight t 2)
+        (Or.inr (Or.inr (Or.inr (Or.inr
+          (Or.inr (Or.inl rfl))))))
+    have dO1 :=
+      quarticFourAtomicPairing_abs_le_markedPoleEnvelope
+        (t:=t) hlam hmu
+        (w:=quarticFourNormalizedOnLineWeight 1)
+        (Or.inr (Or.inr (Or.inl rfl)))
+    have hdet1 :=
+      abs_det_sub_det_le hM heta.le heta1
+        aPS1 bO2 cPS2 dO1
+        ePS1 eO2 ePS2 eO1
+
+    have aP1 :=
+      quarticFourAtomicPairing_abs_le_markedPoleEnvelope
+        (t:=t) hlam hmu
+        (w:=quarticFourNormalizedPoleWeight t 1)
+        (Or.inl rfl)
+    have bOS2 :=
+      quarticFourAtomicPairing_abs_le_markedPoleEnvelope
+        (t:=t) hlam hmu
+        (w:=quarticFourNormalizedOnLineSecondWeight 2)
+        (Or.inr (Or.inr (Or.inr (Or.inr
+          (Or.inr (Or.inr (Or.inr rfl)))))))
+    have cP2 :=
+      quarticFourAtomicPairing_abs_le_markedPoleEnvelope
+        (t:=t) hlam hmu
+        (w:=quarticFourNormalizedPoleWeight t 2)
+        (Or.inr (Or.inl rfl))
+    have dOS1 :=
+      quarticFourAtomicPairing_abs_le_markedPoleEnvelope
+        (t:=t) hlam hmu
+        (w:=quarticFourNormalizedOnLineSecondWeight 1)
+        (Or.inr (Or.inr (Or.inr (Or.inr
+          (Or.inr (Or.inr (Or.inl rfl)))))))
+    have hdet2 :=
+      abs_det_sub_det_le hM heta.le heta1
+        aP1 bOS2 cP2 dOS1
+        eP1 eOS2 eP2 eOS1
+
+    unfold quarticFourSmoothMarkedPoleQuadraticCarrier
+      quarticFourAtomicMarkedPoleQuadraticCarrier
+    have htri :=
+      abs_add
+        ((quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedPoleSecondWeight t 1)
+          * quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedOnLineWeight 2)
+          -
+          quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedPoleSecondWeight t 2)
+          * quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedOnLineWeight 1))
+        -
+        (quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedPoleSecondWeight t 1)
+          * quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedOnLineWeight 2)
+          -
+          quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedPoleSecondWeight t 2)
+          * quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedOnLineWeight 1)))
+        ((quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedPoleWeight t 1)
+          * quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedOnLineSecondWeight 2)
+          -
+          quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedPoleWeight t 2)
+          * quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedOnLineSecondWeight 1))
+        -
+        (quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedPoleWeight t 1)
+          * quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedOnLineSecondWeight 2)
+          -
+          quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedPoleWeight t 2)
+          * quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedOnLineSecondWeight 1)))
+    have hrearr :
+        quarticFourSmoothMarkedPoleQuadraticCarrier R lam mu t
+          - quarticFourAtomicMarkedPoleQuadraticCarrier t lam mu
+        =
+        ((quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedPoleSecondWeight t 1)
+          * quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedOnLineWeight 2)
+          -
+          quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedPoleSecondWeight t 2)
+          * quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedOnLineWeight 1))
+        -
+        (quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedPoleSecondWeight t 1)
+          * quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedOnLineWeight 2)
+          -
+          quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedPoleSecondWeight t 2)
+          * quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedOnLineWeight 1)))
+        +
+        ((quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedPoleWeight t 1)
+          * quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedOnLineSecondWeight 2)
+          -
+          quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedPoleWeight t 2)
+          * quarticFourWindowPairing R lam mu
+            (quarticFourNormalizedOnLineSecondWeight 1))
+        -
+        (quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedPoleWeight t 1)
+          * quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedOnLineSecondWeight 2)
+          -
+          quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedPoleWeight t 2)
+          * quarticFourAtomicPairingAt lam mu
+            (quarticFourNormalizedOnLineSecondWeight 1))) := by
+      ring
+    rw [hrearr]
+    exact htri.trans (by linarith [hdet1,hdet2])
+
+  have hErrBound :
+      2*(4*M+2)*eta <= margin/2 := by
+    have hetaRight :
+        eta <= margin/(4*(4*M+2)) := min_le_right _ _
+    have hcoef : 0 <= 2*(4*M+2) := by positivity
+    have hmul := mul_le_mul_of_nonneg_left hetaRight hcoef
+    field_simp [ne_of_gt (by positivity : 0 < 4*M+2)] at hmul ⊢
+    nlinarith
+
+  have eHalf :=
+    pairError (1/2) muHalf hlamHalf hmuHalfAbs.le
+  have eTwo :=
+    pairError (2/3) muTwo hlamTwo hmuTwoAbs.le
+  have hHalfAtomic :=
+    quarticFourAtomicMarkedPoleQuadraticCarrier_half_corridor_ge
+      ht hmuHalf
+  have hTwoAtomic :=
+    quarticFourAtomicMarkedPoleQuadraticCarrier_twoThird_corridor_le
+      ht hmuTwo
+  have eHalf' := eHalf.trans hErrBound
+  have eTwo' := eTwo.trans hErrBound
+  have hHalfLo := (abs_le.mp eHalf').1
+  have hTwoHi := (abs_le.mp eTwo').2
+  dsimp [margin] at hHalfLo hTwoHi
+  constructor <;> nlinarith [Real.pi_pos]
+
 end Synthesis

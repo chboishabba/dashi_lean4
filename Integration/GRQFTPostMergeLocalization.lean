@@ -2035,4 +2035,23 @@ def israelExactSquaredMagnitudeConstructed : Bool := true
 def israelExactPiSqrtMagnitudeInternal : Bool := false
 
 
+theorem kottler_window_nonempty_iff (mass radius : Rat) :
+    3*mass < 3*radius - 6*mass ↔ 3*mass < radius := by
+  constructor <;> intro h <;> linarith
+
+theorem midpoint_outward_margin_positive
+    (mass radius : Rat)
+    (h : 3*mass < radius) :
+    0 < outwardAccelerationMargin mass (scaledLambdaMidpoint mass radius) := by
+  rw [midpoint_outward_margin_identity]
+  positivity
+
+theorem midpoint_static_margin_positive
+    (mass radius : Rat)
+    (h : 3*mass < radius) :
+    0 < staticPatchMargin mass radius (scaledLambdaMidpoint mass radius) := by
+  rw [midpoint_static_margin_identity]
+  positivity
+
+
 end Integration.GRQFTPostMergeLocalization

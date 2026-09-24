@@ -297,7 +297,10 @@ theorem QuarticFourSignedPolePair.literalLocalHorizontalFourthAdverseEnvelopeAt_
           have ha2non : 0 <= heightOf rho^2 := sq_nonneg _
           nlinarith [sq_nonneg (heightOf rho^2 - (1/4 : ℝ))]
         simp [hl, hoff, hadv, hcone]
-        exact mul_le_mul_of_nonneg_left ha4 (by positivity)
+        simpa [mul_comm] using
+          (mul_le_mul_of_nonneg_left ha4
+            (by positivity :
+              0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ)))
       · simp [hl, hoff, hadv]
         by_cases hcone : quarticSignedPoleLocalCone t eta rho
         · positivity

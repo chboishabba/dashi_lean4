@@ -86,6 +86,27 @@ theorem eval_nonnegative
   intro n
   simpa [shifted] using hx (n + 1) (by omega)
 
+
+/-- Classical nonnegativity of the evaluated real reflects Bishop's exact
+constructive NonNegative predicate.  This uses the sharp sample-to-limit
+estimate, not a new order axiom. -/
+theorem nonnegative_of_eval_nonnegative
+    {x : RegularRatReal}
+    (hx : 0 ≤ eval x) :
+    NonNegative x := by
+  intro n hn
+  have hs := sample_dist_eval_le x n hn
+  have hlow :
+      eval x - 1 / (n : ℝ) ≤ (x.seq n : ℝ) := by
+    rw [abs_le] at hs
+    linarith
+  linarith
+
+theorem eval_nonnegative_iff
+    {x : RegularRatReal} :
+    NonNegative x ↔ 0 ≤ eval x :=
+  ⟨eval_nonnegative, nonnegative_of_eval_nonnegative⟩
+
 /-- Source subtraction expressed using the exact vendored add/neg operations. -/
 def sub (A : VendoredArithmeticMirror)
     (x y : RegularRatReal) : RegularRatReal :=
@@ -114,6 +135,23 @@ theorem eval_le
     eval_nonnegative hxy
   rw [eval_sub] at hnn
   linarith
+
+
+/-- Lean order reflects back to the exact vendored Bishop order. -/
+theorem le_of_eval_le
+    (A : VendoredArithmeticMirror)
+    {x y : RegularRatReal}
+    (hxy : eval x ≤ eval y) :
+    Le A x y := by
+  apply nonnegative_of_eval_nonnegative
+  rw [eval_sub]
+  linarith
+
+theorem eval_le_iff
+    (A : VendoredArithmeticMirror)
+    {x y : RegularRatReal} :
+    Le A x y ↔ eval x ≤ eval y :=
+  ⟨eval_le A, le_of_eval_le A⟩
 
 /-- Exact Bishop absolute-difference expression. -/
 def absDiff
@@ -173,6 +211,50 @@ theorem eval_tendsto_of_bishopConvergesTo
     simpa [k] using hm
   exact lt_of_le_of_lt hsource hsmall
 
+
+/-- Ordinary Lean convergence of evaluated source terms reconstructs Bishop's
+quantitative 1/k convergence to the same source representative.
+
+This is the converse of eval_tendsto_of_bishopConvergesTo and is the key
+setoid-completion theorem: a proof-dependent Bishop limit representative can be
+replaced by any Bishop-equivalent representative with the same evaluated
+classical limit. -/
+theorem bishopConvergesTo_of_eval_tendsto
+    (A : VendoredArithmeticMirror)
+    {f : ℕ → RegularRatReal}
+    {x : RegularRatReal}
+    (hconv :
+      Tendsto (fun n => eval (f n)) atTop (𝓝 (eval x))) :
+    BishopConvergesTo A f x := by
+  intro k hk
+  have hkpos : (0 : ℝ) < 1 / (k : ℝ) := by
+    have hkR : (0 : ℝ) < k := by
+      exact_mod_cast Nat.pos_of_ne_zero hk
+    positivity
+  have hevent :
+      ∀ᶠ n in atTop,
+        dist (eval (f n)) (eval x) < 1 / (k : ℝ) := by
+    exact (Metric.tendsto_atTop.1 hconv) (1 / (k : ℝ)) hkpos
+  rcases (eventually_atTop.1 hevent) with ⟨N, hN⟩
+  refine ⟨N, ?_⟩
+  intro n hn
+  apply le_of_eval_le A
+  rw [eval_absDiff, eval_rational]
+  have hkcast :
+      ((1 / (k : ℚ) : ℚ) : ℝ) = 1 / (k : ℝ) := by
+    norm_num
+  rw [hkcast]
+  exact (hN n hn).le
+
+theorem bishopConvergesTo_iff_eval_tendsto
+    (A : VendoredArithmeticMirror)
+    {f : ℕ → RegularRatReal}
+    {x : RegularRatReal} :
+    BishopConvergesTo A f x ↔
+      Tendsto (fun n => eval (f n)) atTop (𝓝 (eval x)) :=
+  ⟨eval_tendsto_of_bishopConvergesTo A,
+   bishopConvergesTo_of_eval_tendsto A⟩
+
 /-- Machine-readable status for the convergence bridge. -/
 structure VendorConvergenceBoundary where
   bishopNonnegativeMirrored : Bool
@@ -180,9 +262,11 @@ structure VendorConvergenceBoundary where
   bishopAbsoluteValueMirrored : Bool
   rationalEmbeddingEvaluatesCorrectly : Bool
   evaluatorOrderSound : Bool
+  evaluatorOrderReflecting : Bool
   evaluatorAbsPreserving : Bool
   bishopQuantitativeConvergenceMirrored : Bool
   bishopConvergenceImpliesLeanTendsto : Bool
+  leanTendstoImpliesBishopConvergence : Bool
 
 def vendorConvergenceBoundary : VendorConvergenceBoundary where
   bishopNonnegativeMirrored := true
@@ -190,9 +274,11 @@ def vendorConvergenceBoundary : VendorConvergenceBoundary where
   bishopAbsoluteValueMirrored := true
   rationalEmbeddingEvaluatesCorrectly := true
   evaluatorOrderSound := true
+  evaluatorOrderReflecting := true
   evaluatorAbsPreserving := true
   bishopQuantitativeConvergenceMirrored := true
   bishopConvergenceImpliesLeanTendsto := true
+  leanTendstoImpliesBishopConvergence := true
 
 end
 

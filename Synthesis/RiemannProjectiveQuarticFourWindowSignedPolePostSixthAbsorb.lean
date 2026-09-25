@@ -2689,4 +2689,121 @@ theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_postSixth
   linarith
 
 
+
+/-!
+## Exact far base / horizontal split
+
+The remaining literal far coordinate is not primitive.  On the exact literal
+carrier, the pair source has an already-defined base zero source; the residual
+difference is exactly the horizontal correction.  We expose that split only on
+the existing far predicate and the existing centered finite exhaustion.
+
+No absolute value and no new far surrogate is introduced.
+-/
+
+def QuarticFourSignedPolePair.literalFarBaseExactTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (rho : Zeros) : ℝ :=
+  if quarticSignedPoleFar t eta rho then
+    W.signedZeroSourceTerm rho
+  else
+    0
+
+def QuarticFourSignedPolePair.literalFarHorizontalExactTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (rho : Zeros) : ℝ :=
+  if quarticSignedPoleFar t eta rho then
+    W.literalOffOrdSource rho - W.signedZeroSourceTerm rho
+  else
+    0
+
+theorem QuarticFourSignedPolePair.literalFarExactTerm_eq_base_add_horizontal
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.literalFarExactTerm eta rho
+      =
+    W.literalFarBaseExactTerm eta rho
+      + W.literalFarHorizontalExactTerm eta rho := by
+  by_cases hf : quarticSignedPoleFar t eta rho
+  · simp [QuarticFourSignedPolePair.literalFarExactTerm,
+      QuarticFourSignedPolePair.literalFarBaseExactTerm,
+      QuarticFourSignedPolePair.literalFarHorizontalExactTerm, hf]
+  · simp [QuarticFourSignedPolePair.literalFarExactTerm,
+      QuarticFourSignedPolePair.literalFarBaseExactTerm,
+      QuarticFourSignedPolePair.literalFarHorizontalExactTerm, hf]
+
+def QuarticFourSignedPolePair.literalFarBaseExactAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    W.literalFarBaseExactTerm eta rho
+
+def QuarticFourSignedPolePair.literalFarHorizontalExactAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    W.literalFarHorizontalExactTerm eta rho
+
+theorem QuarticFourSignedPolePair.literalFarExactAt_eq_base_add_horizontal
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalFarExactAt eta n
+      =
+    W.literalFarBaseExactAt eta n
+      + W.literalFarHorizontalExactAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalFarExactAt
+    QuarticFourSignedPolePair.literalFarBaseExactAt
+    QuarticFourSignedPolePair.literalFarHorizontalExactAt
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  exact W.literalFarExactTerm_eq_base_add_horizontal rho
+
+theorem QuarticFourSignedPolePair.literalSharpenedSignedCompensationAt_eq_farSplit
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalSharpenedSignedCompensationAt eta n
+      =
+    W.literalConeGainAt eta n
+      + W.literalGoodQuarticGainAt eta n
+      - W.literalFarBaseExactAt eta n
+      - W.literalFarHorizontalExactAt eta n := by
+  unfold QuarticFourSignedPolePair.literalSharpenedSignedCompensationAt
+  rw [W.literalFarExactAt_eq_base_add_horizontal]
+  ring
+
+def QuarticFourSignedPolePair.literalFarSplitBudgetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ :=
+  W.literalSharpenedLocalDebtAt eta n
+    - W.literalConeGainAt eta n
+    - W.literalGoodQuarticGainAt eta n
+    + W.literalFarBaseExactAt eta n
+    + W.literalFarHorizontalExactAt eta n
+
+theorem QuarticFourSignedPolePair.literalFarSplitBudgetAt_eq_sharpenedJointBudget
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalFarSplitBudgetAt eta n
+      = W.literalSharpenedJointBudgetAt eta n := by
+  unfold QuarticFourSignedPolePair.literalFarSplitBudgetAt
+    QuarticFourSignedPolePair.literalSharpenedJointBudgetAt
+  rw [W.literalSharpenedSignedCompensationAt_eq_farSplit]
+  ring
+
+theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_farSplitBudget
+    {t eta : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalOffOrdExactAt n
+      <= W.literalFarSplitBudgetAt eta n := by
+  rw [W.literalFarSplitBudgetAt_eq_sharpenedJointBudget]
+  exact W.literalOffOrdExactAt_le_sharpenedJointBudget ht n
+
+
 end Synthesis

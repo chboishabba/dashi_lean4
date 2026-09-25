@@ -180,6 +180,7 @@ def lean_string(value: str) -> str:
 def write_lean_certificate(
     out_path: pathlib.Path,
     blobs: list[SourceBlob],
+    bindings: list[SourceBinding],
     bishop_commit: str,
     agda_commit: str,
     closure: list[str],
@@ -188,6 +189,15 @@ def write_lean_certificate(
         f'  , ⟨"{lean_string(blob.path)}", "{blob.sha}"⟩' for blob in blobs[1:]
     )
     first = blobs[0]
+    binding_items = "\n".join(
+        "  , ⟨"
+        f'"{lean_string(binding.agda_declaration)}", '
+        f'"{lean_string(binding.lean_owner)}", '
+        f'"{lean_string(binding.lean_declaration)}"'
+        "⟩"
+        for binding in bindings[1:]
+    )
+    first_binding = bindings[0]
     closure_items = "\n".join(f'  , "{lean_string(p)}"' for p in closure[1:])
     first_closure = closure[0] if closure else ""
 
@@ -216,6 +226,12 @@ def observedLoadBearingBlobs : List SourceBlob :=
 {blob_items}
   ]
 
+def observedTheoremBindings : List SourceTheoremBinding :=
+  [ ⟨"{lean_string(first_binding.owner_blob)}", "{lean_string(first_binding.agda_declaration)}",
+      "{lean_string(first_binding.lean_owner)}", "{lean_string(first_binding.lean_declaration)}"⟩
+{binding_items}
+  ]
+
 def observedImportClosure : List String :=
   [ "{lean_string(first_closure)}"
 {closure_items}
@@ -233,11 +249,16 @@ theorem load_bearing_blobs_match_manifest :
     observedLoadBearingBlobs = loadBearingBlobs := by
   native_decide
 
+theorem theorem_bindings_match_manifest :
+    observedTheoremBindings = theoremBindings := by
+  native_decide
+
 structure GeneratedReplayReceipt where
   agdaCheckoutObserved : Bool
   bishopSubmoduleObserved : Bool
   loadBearingBlobsVerified : Bool
   sourceDeclarationsVerified : Bool
+  theoremBindingTableKernelMatched : Bool
   recursiveImportClosureObserved : Bool
   leanManifestKernelMatch : Bool
 
@@ -246,6 +267,7 @@ def generatedReplayReceipt : GeneratedReplayReceipt where
   bishopSubmoduleObserved := true
   loadBearingBlobsVerified := true
   sourceDeclarationsVerified := true
+  theoremBindingTableKernelMatched := true
   recursiveImportClosureObserved := true
   leanManifestKernelMatch := true
 
@@ -382,6 +404,7 @@ def main() -> int:
     write_lean_certificate(
         args.out_lean,
         blobs,
+        bindings,
         observed_bishop_commit,
         observed_agda_commit,
         closure,

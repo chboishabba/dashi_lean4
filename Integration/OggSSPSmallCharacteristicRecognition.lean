@@ -179,6 +179,106 @@ theorem p3_flip_moves_nonzero_representative :
       p3OrbitPresentation.representative .nonzero := by
   decide
 
+/-! ## Literal F9/F3 Frobenius candidate: negative control -/
+
+inductive F3
+  | z | o | t
+  deriving DecidableEq, Repr, Fintype
+
+def neg3 : F3 → F3
+  | .z => .z
+  | .o => .t
+  | .t => .o
+
+theorem neg3_involutive (x : F3) : neg3 (neg3 x) = x := by
+  cases x <;> rfl
+
+abbrev F9Point := F3 × F3
+
+def frobenius3 : F9Point → F9Point
+  | (a, b) => (a, neg3 b)
+
+theorem frobenius3_involutive (x : F9Point) :
+    frobenius3 (frobenius3 x) = x := by
+  rcases x with ⟨a, b⟩
+  simp [frobenius3, neg3_involutive]
+
+def f9Act : C2 → F9Point → F9Point
+  | .e, x => x
+  | .flip, x => frobenius3 x
+
+def f9FrobeniusAction : InvertibleAction F9Point C2 where
+  identity := .e
+  combine := c2Combine
+  inverse := c2Inverse
+  act := f9Act
+  identity_act := by intro x; rfl
+  combine_act := by
+    intro g h x
+    cases g <;> cases h
+    · rfl
+    · rfl
+    · rfl
+    · simpa [f9Act] using frobenius3_involutive x
+  inverse_left := by
+    intro g x
+    cases g
+    · rfl
+    · simpa [f9Act, c2Inverse] using frobenius3_involutive x
+  inverse_right := by
+    intro g x
+    cases g
+    · rfl
+    · simpa [f9Act, c2Inverse] using frobenius3_involutive x
+
+inductive F9Orbit
+  | fixed0 | fixed1 | fixed2
+  | pair0 | pair1 | pair2
+  deriving DecidableEq, Repr, Fintype
+
+def classifyF9 : F9Point → F9Orbit
+  | (.z, .z) => .fixed0
+  | (.o, .z) => .fixed1
+  | (.t, .z) => .fixed2
+  | (.z, .o) => .pair0
+  | (.z, .t) => .pair0
+  | (.o, .o) => .pair1
+  | (.o, .t) => .pair1
+  | (.t, .o) => .pair2
+  | (.t, .t) => .pair2
+
+def representativeF9 : F9Orbit → F9Point
+  | .fixed0 => (.z, .z)
+  | .fixed1 => (.o, .z)
+  | .fixed2 => (.t, .z)
+  | .pair0 => (.z, .o)
+  | .pair1 => (.o, .o)
+  | .pair2 => (.t, .o)
+
+def f9OrbitPresentation : OrbitPresentation f9FrobeniusAction where
+  Orbit := F9Orbit
+  orbitOf := classifyF9
+  representative := representativeF9
+  orbit_invariant := by
+    intro g x
+    cases g <;> rcases x with ⟨a, b⟩ <;>
+      cases a <;> cases b <;> rfl
+  representative_exact := by
+    intro o
+    cases o <;> rfl
+
+theorem f9_orbit_cardinality : Fintype.card F9Orbit = 6 := by decide
+
+theorem no_injective_f9_orbits_to_p3_target :
+    ¬ ∃ f : F9Orbit → P3Orbit, Function.Injective f := by
+  rintro ⟨f, hf⟩
+  have hle :
+      Fintype.card F9Orbit ≤ Fintype.card P3Orbit :=
+    Fintype.card_le_of_injective f hf
+  have h6 : Fintype.card F9Orbit = 6 := by decide
+  have h2 : Fintype.card P3Orbit = 2 := by decide
+  omega
+
 def p2DiscreteAction : InvertibleAction P2State PUnit where
   identity := PUnit.unit
   combine := fun _ _ => PUnit.unit
@@ -304,6 +404,7 @@ structure RecognitionBoundary where
   targetActionsMirrored : Bool
   orbitStabilizerRecognitionCoreReused : Bool
   coarseJNoGoMirrored : Bool
+  f9FrobeniusSixOrbitNoGoMirrored : Bool
   arithmeticTo369DirectionMirrored : Bool
   targetOrbitEmbeddingConstraintMirrored : Bool
   markedP2ArithmeticSourceInhabited : Bool
@@ -317,6 +418,7 @@ def canonicalBoundary : RecognitionBoundary where
   targetActionsMirrored := true
   orbitStabilizerRecognitionCoreReused := true
   coarseJNoGoMirrored := true
+  f9FrobeniusSixOrbitNoGoMirrored := true
   arithmeticTo369DirectionMirrored := true
   targetOrbitEmbeddingConstraintMirrored := true
   markedP2ArithmeticSourceInhabited := false

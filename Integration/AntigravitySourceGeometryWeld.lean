@@ -271,6 +271,78 @@ structure PhysicalKottlerCalibrationEnclosure
     transport.exteriorAmplitudeLower ≤ nambuBubbleExteriorAmplitude
       ∧ nambuBubbleExteriorAmplitude ≤ transport.exteriorAmplitudeUpper
 
+def codataCandidateKappaLower : Rat :=
+  207660077171595041751 / 1000000000000000000000000000000000000000000000000000000000000000
+
+def codataCandidateKappaUpper : Rat :=
+  207669411397399298249 / 1000000000000000000000000000000000000000000000000000000000000000
+
+theorem codata_candidate_kappa_lower_positive :
+    0 < codataCandidateKappaLower := by
+  norm_num [codataCandidateKappaLower]
+
+theorem codata_candidate_kappa_interval_ordered :
+    codataCandidateKappaLower ≤ codataCandidateKappaUpper := by
+  norm_num [codataCandidateKappaLower, codataCandidateKappaUpper]
+
+def codataCandidateKappaInterval : PhysicalEinsteinCouplingInterval where
+  lower := codataCandidateKappaLower
+  upper := codataCandidateKappaUpper
+  lowerPositive := codata_candidate_kappa_lower_positive
+  ordered := codata_candidate_kappa_interval_ordered
+
+/-- For fixed positive source magnitude and target dimensionless Kottler
+    amplitude, a measured kappa interval determines the required interval for
+    the product (stress-energy per source unit) * lengthScale^2.  This does not
+    choose a stress scale or a length scale separately. -/
+def requiredStressLengthSquaredLower
+    (source : AgdaTraceSourceReceipt) : Rat :=
+  nambuBubbleExteriorAmplitude
+    / (codataCandidateKappaUpper * source.sourceMagnitude)
+
+def requiredStressLengthSquaredUpper
+    (source : AgdaTraceSourceReceipt) : Rat :=
+  nambuBubbleExteriorAmplitude
+    / (codataCandidateKappaLower * source.sourceMagnitude)
+
+theorem required_stress_length_squared_lower_positive
+    (source : AgdaTraceSourceReceipt) :
+    0 < requiredStressLengthSquaredLower source := by
+  unfold requiredStressLengthSquaredLower
+  have hs : 0 < source.sourceMagnitude := source.sourceMagnitude_positive
+  have hk : 0 < codataCandidateKappaUpper := by
+    exact lt_of_lt_of_le codata_candidate_kappa_lower_positive
+      codata_candidate_kappa_interval_ordered
+  positivity
+
+theorem required_stress_length_squared_upper_positive
+    (source : AgdaTraceSourceReceipt) :
+    0 < requiredStressLengthSquaredUpper source := by
+  unfold requiredStressLengthSquaredUpper
+  have hs : 0 < source.sourceMagnitude := source.sourceMagnitude_positive
+  have hk : 0 < codataCandidateKappaLower :=
+    codata_candidate_kappa_lower_positive
+  positivity
+
+theorem required_stress_length_squared_interval_ordered
+    (source : AgdaTraceSourceReceipt) :
+    requiredStressLengthSquaredLower source
+      ≤ requiredStressLengthSquaredUpper source := by
+  unfold requiredStressLengthSquaredLower requiredStressLengthSquaredUpper
+  have hs : 0 < source.sourceMagnitude := source.sourceMagnitude_positive
+  have hlo : 0 < codataCandidateKappaLower :=
+    codata_candidate_kappa_lower_positive
+  have hhi : 0 < codataCandidateKappaUpper := by
+    exact lt_of_lt_of_le hlo codata_candidate_kappa_interval_ordered
+  apply div_le_div_of_nonneg_left
+  · norm_num [nambuBubbleExteriorAmplitude]
+  · exact mul_pos hlo hs
+  · exact mul_le_mul_of_nonneg_right
+      codata_candidate_kappa_interval_ordered (le_of_lt hs)
+
+def codataDiagnosticIntervalTyped : Bool := true
+def codataDiagnosticIntervalAcceptedAuthority : Bool := false
+
 def acceptedPhysicalEinsteinCouplingAlreadyDerived : Bool := false
 def exactRationalSICouplingClaimed : Bool := false
 def measuredCouplingIntervalRequired : Bool := true

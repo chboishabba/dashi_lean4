@@ -8024,4 +8024,155 @@ theorem exists_quarticSignedPoleFixedHigh_ambientSimpleMultiplicityEstimate_excl
       hPT hambient)
 
 
+
+/-!
+## Close the Platt--Trudgian to high-theorem threshold seam
+
+The arbitrary-endpoint RvM input is now explicit from A >= 5, hence the V4
+producer is explicit from t-r >= 5.  For every Clay-high ordinate
+
+  quarticPlattTrudgianCutoff < t
+
+the canonical local radius satisfies r < t/16, so t-r > 15t/16 > 5.
+Therefore no second fixed threshold above the Platt--Trudgian cutoff is needed.
+-/
+
+theorem exists_quarticSignedPoleAbovePT_compiles_selectedLiteralFarMinusMuHighCut :
+    ∃ CV : ℝ,
+      0 <= CV
+        ∧
+      ∀ {t : ℝ},
+        quarticPlattTrudgianCutoff < t ->
+        ∀ {rho : Zeros},
+          (rho : ℂ).im = t ->
+          heightOf rho ≠ 0 ->
+          quarticSignedPoleSelectedLiteralFarMinusMuHighCut CV t rho ->
+          False := by
+  obtain ⟨CV,hCV,hVprod⟩ :=
+    exists_quarticSignedPoleRvMVerticalFourthDiscrepancy_bound_at_five
+  refine ⟨CV,hCV,?_⟩
+  intro t htPT rho him hoff hcut
+  have ht200 : 200 <= t := by
+    have hPT200 := quarticPlattTrudgianCutoff_gt_twoHundred
+    linarith
+  have ht0 : 0 < t := by linarith
+  rcases hcut with
+    ⟨W,hS,hM6lo,hM6neg,hband,hfar⟩
+  let r :=
+    quarticSignedPoleLocalHalfWidth
+      t quarticSignedPoleCanonicalLocalRadius
+  have hr : 0 < r := by
+    dsimp [r, quarticSignedPoleLocalHalfWidth]
+    positivity
+  have hrlt :
+      r < t/16 := by
+    dsimp [r]
+    exact quarticSignedPoleLocalHalfWidth_lt_sixteenth ht0
+  have hleft : 5 <= t-r := by
+    have hPT200 := quarticPlattTrudgianCutoff_gt_twoHundred
+    linarith
+  have hVraw :=
+    hVprod t r hr hleft
+  have hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy t r|
+        <= quarticSignedPoleCanonicalV4Error CV t := by
+    simpa [quarticSignedPoleCanonicalV4Error,r] using hVraw
+  have hcanonical :
+      W.PostSixthCanonicalSignedHighCut rho
+        (quarticSignedPoleCanonicalV4Error CV t) :=
+    (W.postSixthCanonicalSignedHighCut_iff_literalFar
+      ht200 rho).2 hfar
+  have hG3 :=
+    W.postSixthCanonicalSignedHighCut_compiles_G3
+      ht200 hM6lo hM6neg hV hcanonical
+  exact
+    W.compensationTargetThreshold_contradicts_offline
+      ht0 rho him hoff hG3
+
+theorem exists_quarticSignedPoleAbovePT_ambientSimpleMultiplicityEstimate_excludes_offLine :
+    ∃ CV : ℝ,
+      0 <= CV
+        ∧
+      (
+        (∀ {t a : ℝ},
+          quarticPlattTrudgianCutoff < t ->
+          0 < |a| ->
+          |a| <= 1/2 ->
+          ∃ W : QuarticFourSignedPolePair t,
+            quarticSignedPoleStrengthFloor <= W.targetStrength
+              ∧
+            -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+              ∧
+            W.signedProfileMomentSix < 0
+              ∧
+            8/t < W.quantitativeTargetRadius
+              ∧
+            (1/2 : ℝ)
+              *
+              (
+                W.canonicalLiteralFarPairSource
+                -
+                ∫ tau : ℝ,
+                  W.signedOrdinateTest tau * Zeta23.mu tau
+              )
+              <
+            W.ambientPostSixthTerminalResidualMargin
+              1 a
+              (quarticSignedPoleCanonicalV4Error CV t))
+        ->
+        ∀ {t : ℝ},
+          quarticPlattTrudgianCutoff < t ->
+          ∀ {rho : Zeros},
+            (rho : ℂ).im = t ->
+            heightOf rho ≠ 0 ->
+            False
+      ) := by
+  obtain ⟨CV,hCV,hcompile⟩ :=
+    exists_quarticSignedPoleAbovePT_compiles_selectedLiteralFarMinusMuHighCut
+  refine ⟨CV,hCV,?_⟩
+  intro hambient t htPT rho him hoff
+  have ha0 : 0 < |heightOf rho| := abs_pos.mpr hoff
+  have ha : |heightOf rho| <= 1/2 :=
+    zetaZero_height_abs_le_half rho
+  obtain ⟨W,hS,hM6lo,hM6neg,hband,hcut1⟩ :=
+    hambient htPT ha0 ha
+  have ht0 : 0 < t := by
+    have hPT200 := quarticPlattTrudgianCutoff_gt_twoHundred
+    linarith
+  have hdefect :
+      0 <= W.physicalCombinedHeightDefect (heightOf rho) :=
+    (W.physicalCombinedHeightDefect_pos_of_ambient_strip
+      ht0 hband ha0 ha).le
+  have hmultPos :
+      0 < ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
+    positivity
+  have hnatPos :
+      0 < (zetaZeroConfig).mult (rho : ℂ) := by
+    exact_mod_cast hmultPos
+  have hmultOne :
+      (1 : ℝ) <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
+    exact_mod_cast hnatPos
+  have hmargin :=
+    W.ambientMargin_mono_multiplicity hdefect hmultOne
+      (EV:=quarticSignedPoleCanonicalV4Error CV t)
+      (a:=heightOf rho)
+  have hcut :
+      (1/2 : ℝ)
+          *
+          (
+            W.canonicalLiteralFarPairSource
+            -
+            ∫ tau : ℝ,
+              W.signedOrdinateTest tau * Zeta23.mu tau
+          )
+        <
+      W.postSixthTerminalResidualMargin rho
+        (quarticSignedPoleCanonicalV4Error CV t) := by
+    rw [W.postSixthTerminalResidualMargin_eq_ambient]
+    exact hcut1.trans_le hmargin
+  exact
+    hcompile htPT him hoff
+      ⟨W,hS,hM6lo,hM6neg,hband,hcut⟩
+
+
 end Synthesis

@@ -30,6 +30,8 @@ open Integration.MoonshineDeltaFinalMinCut
 /-- The currently pinned Agda source blob IDs are definitionally the ones the
 route-B manifest declares. -/
 theorem source_manifest_literal_receipt :
+    agdaSourceCommit =
+      "c72ea464663a02333319f2254967c94bd188f5f5" ∧
     sourceInstanceBlob.gitBlob =
       "ec132e001eeb7836078561e88fe2b3f54438facb" ∧
     machinConstructionBlob.gitBlob =

@@ -30,6 +30,32 @@ repository constructions.  In particular:
 * finite ternary coding does not imply recovery of arithmetic magnitude.
 -/
 
+inductive ClaimOrigin
+  | externalTheorem
+  | repositoryFormalReconstruction
+  | repositoryNewExtension
+  deriving DecidableEq, Repr
+
+structure SourceAttribution where
+  authors : String
+  title : String
+  year : Nat
+  deriving Repr
+
+def duncanSwisherSource : SourceAttribution where
+  authors := "John F. R. Duncan / Holly Swisher"
+  title := "Modular Functions and the Monstrous Exponents"
+  year := 2026
+
+def arithmeticTableOrigin : ClaimOrigin :=
+  .repositoryFormalReconstruction
+
+def codecRoutingOrigin : ClaimOrigin :=
+  .repositoryNewExtension
+
+theorem arithmetic_table_not_codec_extension :
+    arithmeticTableOrigin ≠ codecRoutingOrigin := by decide
+
 /-! ## §1 Attributed arithmetic triple -/
 
 structure ArithmeticTriple where

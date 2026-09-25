@@ -8,6 +8,7 @@ import NSBControl.OutputRealityNoGo
 import NSBControl.SelectedSelfResolvedRecombination
 import NSBControl.CombinedSpacetimePayment
 import NSBControl.CombinedPaymentToWeightedWork
+import NSBControl.CombinedCurrentEndgame
 
 namespace NSBCyclicOrbit
 

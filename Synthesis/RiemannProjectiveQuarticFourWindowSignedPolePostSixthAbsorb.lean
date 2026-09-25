@@ -6091,4 +6091,74 @@ def QuarticFourSignedPolePair.PairedOuterHorizontalHighCut
         - localAllowance - eps
 
 
+/-!
+## Asymptotic outer-paired recut onto the manuscript far carrier
+
+The finite outer paired presentation is useful for exposing the signed
+symmetric-window correlation, but the Clay-facing asymptotic object should be
+compared with the already-owned canonical far completed compensation rather
+than treated as a second analytic invariant.
+
+For one centered-Abel exhaustion E, define the limiting outer paired +
+horizontal coordinate by removing the canonical local paired Abel integral
+from the exhausted centered Abel correlation.  Existing Abel bookkeeping then
+gives the exact same-object identity
+
+  outerPairedHorizontalLimit
+    = canonicalFarCompletedCompensation
+      + 1/2 * (canonical left boundary + canonical right boundary).
+
+Thus the only difference between the new outer-paired carrier and the
+manuscript far carrier is an explicit canonical boundary coordinate.  No
+estimate is asserted here.
+-/
+
+def QuarticFourSignedPolePair.canonicalOuterPairedHorizontalLimit
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (E : W.CenteredAbelExhaustion) : ℝ :=
+  (1/2 : ℝ) *
+    (
+      - E.leftLimit - E.rightLimit
+      + W.canonicalLocalLeftAbel
+      + W.canonicalLocalRightAbel
+    )
+    + W.signedHorizontalRemainder
+
+theorem QuarticFourSignedPolePair.canonicalOuterPairedHorizontalLimit_eq_far_add_boundary
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (E : W.CenteredAbelExhaustion) :
+    W.canonicalOuterPairedHorizontalLimit E
+      =
+    W.canonicalFarCompletedCompensation
+      + (1/2 : ℝ) *
+        (W.canonicalLocalLeftBoundary
+          + W.canonicalLocalRightBoundary) := by
+  rw [W.canonicalFarCompletedCompensation_eq_centeredAbel_tail ht E]
+  unfold QuarticFourSignedPolePair.canonicalOuterPairedHorizontalLimit
+  ring
+
+/--
+Equivalent form isolating the manuscript far carrier.  Any terminal estimate
+for the asymptotic outer paired+horizontal object may therefore be transferred
+without a new representation theorem; only the explicit canonical boundary
+pair must be accounted for.
+-/
+theorem QuarticFourSignedPolePair.canonicalFarCompletedCompensation_eq_outerLimit_sub_boundary
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (E : W.CenteredAbelExhaustion) :
+    W.canonicalFarCompletedCompensation
+      =
+    W.canonicalOuterPairedHorizontalLimit E
+      - (1/2 : ℝ) *
+        (W.canonicalLocalLeftBoundary
+          + W.canonicalLocalRightBoundary) := by
+  rw [W.canonicalOuterPairedHorizontalLimit_eq_far_add_boundary ht E]
+  ring
+
+
 end Synthesis

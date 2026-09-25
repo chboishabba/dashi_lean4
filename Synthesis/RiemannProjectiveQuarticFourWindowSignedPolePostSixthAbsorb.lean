@@ -5122,4 +5122,90 @@ theorem QuarticFourSignedPolePair.postSixthNormalizedCompensationCut_iff_quartic
     exact hcut
 
 
+
+theorem QuarticFourSignedPolePair.postSixthLiteralCompensationCut_iff_quarticScale
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.PostSixthLiteralCompensationCut rho EV
+      ↔
+    ∃ n : ℕ,
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ)
+      ∧
+      |W.quarticScaleFiniteCutCompensatedFar n|
+        <
+      (t/16)^6
+        * W.postSixthTerminalResidualMargin rho EV := by
+  rw [W.postSixthLiteralCompensationCut_iff_normalized ht rho]
+  exact W.postSixthNormalizedCompensationCut_iff_quarticScale rho
+
+def quarticSignedPoleSelectedQuarticScaleHighCut
+    (CV t : ℝ) (rho : Zeros) : Prop :=
+  ∃ W : QuarticFourSignedPolePair t,
+    quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧
+    -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+      ∧
+    W.signedProfileMomentSix < 0
+      ∧
+    8/t < W.quantitativeTargetRadius
+      ∧
+    ∃ n : ℕ,
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ)
+      ∧
+      |W.quarticScaleFiniteCutCompensatedFar n|
+        <
+      (t/16)^6
+        * W.postSixthTerminalResidualMargin rho
+          (quarticSignedPoleCanonicalV4Error CV t)
+
+theorem quarticSignedPoleSelectedLiteralHighCut_iff_quarticScale
+    {CV t : ℝ}
+    (ht : 200 <= t)
+    (rho : Zeros) :
+    quarticSignedPoleSelectedLiteralHighCut CV t rho
+      ↔
+    quarticSignedPoleSelectedQuarticScaleHighCut CV t rho := by
+  constructor
+  · rintro ⟨W,hS,hM6lo,hM6neg,hband,hcut⟩
+    refine ⟨W,hS,hM6lo,hM6neg,hband,?_⟩
+    exact
+      (W.postSixthLiteralCompensationCut_iff_quarticScale
+        ht rho).mp hcut
+  · rintro ⟨W,hS,hM6lo,hM6neg,hband,hcut⟩
+    refine ⟨W,hS,hM6lo,hM6neg,hband,?_⟩
+    exact
+      (W.postSixthLiteralCompensationCut_iff_quarticScale
+        ht rho).mpr hcut
+
+theorem exists_quarticSignedPoleFixedHigh_compiles_selectedQuarticScaleHighCut :
+    ∃ CV T : ℝ,
+      0 <= CV
+        ∧ quarticPlattTrudgianCutoff <= T
+        ∧
+      ∀ {t : ℝ},
+        T < t ->
+        ∀ {rho : Zeros},
+          (rho : ℂ).im = t ->
+          heightOf rho ≠ 0 ->
+          quarticSignedPoleSelectedQuarticScaleHighCut CV t rho ->
+          False := by
+  obtain ⟨CV,T,hCV,hPT,hcompile⟩ :=
+    exists_quarticSignedPoleFixedHigh_compiles_selectedLiteralHighCut
+  refine ⟨CV,T,hCV,hPT,?_⟩
+  intro t ht rho him hoff hcut
+  have ht200 : 200 <= t := by
+    have hPTgt := quarticPlattTrudgianCutoff_gt_twoHundred
+    linarith
+  apply hcompile ht him hoff
+  exact
+    (quarticSignedPoleSelectedLiteralHighCut_iff_quarticScale
+      ht200 rho).mpr hcut
+
+
 end Synthesis

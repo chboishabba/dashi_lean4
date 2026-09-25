@@ -269,6 +269,64 @@ def f9OrbitPresentation : OrbitPresentation f9FrobeniusAction where
 
 theorem f9_orbit_cardinality : Fintype.card F9Orbit = 6 := by decide
 
+def extensionCoordinate : F9Point → P3State
+  | (_, .z) => .zero
+  | (_, .o) => .positive
+  | (_, .t) => .negative
+
+def extensionCoordinateSection : P3State → F9Point
+  | .zero => (.z, .z)
+  | .positive => (.z, .o)
+  | .negative => (.z, .t)
+
+theorem extensionCoordinate_surjective :
+    Function.Surjective extensionCoordinate := by
+  intro s
+  refine ⟨extensionCoordinateSection s, ?_⟩
+  cases s <;> rfl
+
+theorem extensionCoordinate_equivariant (g : C2) (x : F9Point) :
+    extensionCoordinate (f9Act g x) =
+      p3Act g (extensionCoordinate x) := by
+  cases g <;> rcases x with ⟨a, b⟩ <;>
+    cases a <;> cases b <;> rfl
+
+def f9ExtensionCoordinateFunctor :
+    ActionRecognitionFunctor f9FrobeniusAction p3Action where
+  mapState := extensionCoordinate
+  mapSymmetry := id
+  preservesIdentity := rfl
+  preservesCombine := by intro g h; rfl
+  preservesInverse := by intro g; rfl
+  actionEquivariant := extensionCoordinate_equivariant
+
+def f9OrbitToP3Orbit : F9Orbit → P3Orbit
+  | .fixed0 | .fixed1 | .fixed2 => .zero
+  | .pair0 | .pair1 | .pair2 => .nonzero
+
+theorem f9_orbit_map_exact (x : F9Point) :
+    p3OrbitPresentation.orbitOf
+      (f9ExtensionCoordinateFunctor.mapState x) =
+    f9OrbitToP3Orbit (f9OrbitPresentation.orbitOf x) := by
+  rcases x with ⟨a, b⟩
+  cases a <;> cases b <;> rfl
+
+def f9ExtensionCoordinateOrbitRecognition :
+    OrbitRecognition
+      f9ExtensionCoordinateFunctor
+      f9OrbitPresentation
+      p3OrbitPresentation where
+  mapOrbit := f9OrbitToP3Orbit
+  orbitMapExact := f9_orbit_map_exact
+
+theorem f9_extension_coordinate_not_pi0_embedding :
+    ¬ Nonempty (Pi0Embedding f9ExtensionCoordinateOrbitRecognition) := by
+  rintro ⟨h⟩
+  have impossible : F9Orbit.fixed0 = F9Orbit.fixed1 :=
+    h.reflectsOrbitEquality (show
+      f9OrbitToP3Orbit .fixed0 = f9OrbitToP3Orbit .fixed1 by rfl)
+  cases impossible
+
 theorem no_injective_f9_orbits_to_p3_target :
     ¬ ∃ f : F9Orbit → P3Orbit, Function.Injective f := by
   rintro ⟨f, hf⟩
@@ -415,6 +473,8 @@ structure RecognitionBoundary where
   coarseJNoGoMirrored : Bool
   f9FrobeniusSixOrbitNoGoMirrored : Bool
   f9FullRecognitionNoGoMirrored : Bool
+  f9ExtensionCoordinateQuotientMirrored : Bool
+  f9ExtensionCoordinateFailsPi0EmbeddingMirrored : Bool
   arithmeticTo369DirectionMirrored : Bool
   targetOrbitEmbeddingConstraintMirrored : Bool
   markedP2ArithmeticSourceInhabited : Bool
@@ -430,6 +490,8 @@ def canonicalBoundary : RecognitionBoundary where
   coarseJNoGoMirrored := true
   f9FrobeniusSixOrbitNoGoMirrored := true
   f9FullRecognitionNoGoMirrored := true
+  f9ExtensionCoordinateQuotientMirrored := true
+  f9ExtensionCoordinateFailsPi0EmbeddingMirrored := true
   arithmeticTo369DirectionMirrored := true
   targetOrbitEmbeddingConstraintMirrored := true
   markedP2ArithmeticSourceInhabited := false

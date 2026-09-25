@@ -248,10 +248,125 @@ theorem finite_thickness_tov_transition :
     pressureEndsAtZero := transition_outer_pressure
   }
 
+
+
+/-!
+Exact exterior matching for the outer finite-thickness node.
+
+M = 5/18, R = 5/2 satisfies R > 3M.  Choose the midpoint of the Kottler
+repulsion/static window in scaled-Lambda coordinates.
+-/
+
+def transitionOuterScaledLambda : Rat :=
+  scaledLambdaMidpoint transitionOuterMass transitionOuterRadius
+
+def transitionOuterLambda : Rat :=
+  transitionOuterScaledLambda / transitionOuterRadius^3
+
+def transitionInnerMatchedLambda : Rat :=
+  transitionOuterLambda
+    + 6 * transitionOuterMass / transitionOuterRadius^3
+
+theorem transition_outer_scaled_lambda :
+    transitionOuterScaledLambda = 10/3 := by
+  norm_num [transitionOuterScaledLambda, scaledLambdaMidpoint,
+    transitionOuterMass, transitionOuterRadius]
+
+theorem transition_outer_lambda :
+    transitionOuterLambda = 16/75 := by
+  norm_num [transitionOuterLambda, transitionOuterScaledLambda,
+    scaledLambdaMidpoint, transitionOuterMass, transitionOuterRadius]
+
+theorem transition_inner_matched_lambda :
+    transitionInnerMatchedLambda = 8/25 := by
+  norm_num [transitionInnerMatchedLambda, transitionOuterLambda,
+    transitionOuterScaledLambda, scaledLambdaMidpoint,
+    transitionOuterMass, transitionOuterRadius]
+
+theorem transition_outer_kottler_lapse :
+    fExteriorJunction
+      transitionOuterRadius transitionOuterMass transitionOuterLambda
+      = 1/3 := by
+  norm_num [fExteriorJunction, transitionOuterRadius, transitionOuterMass,
+    transitionOuterLambda, transitionOuterScaledLambda, scaledLambdaMidpoint]
+
+theorem transition_inner_de_sitter_lapse :
+    fInteriorJunction
+      transitionOuterRadius transitionInnerMatchedLambda
+      = 1/3 := by
+  norm_num [fInteriorJunction, transitionOuterRadius,
+    transitionInnerMatchedLambda, transitionOuterLambda,
+    transitionOuterScaledLambda, scaledLambdaMidpoint,
+    transitionOuterMass]
+
+theorem transition_outer_lapse_matches :
+    fInteriorJunction transitionOuterRadius transitionInnerMatchedLambda
+      =
+    fExteriorJunction
+      transitionOuterRadius transitionOuterMass transitionOuterLambda := by
+  rw [transition_inner_de_sitter_lapse, transition_outer_kottler_lapse]
+
+theorem transition_outer_acceleration_positive :
+    kottlerRadialAcceleration
+      transitionOuterMass transitionOuterRadius transitionOuterLambda
+      = 2/15 := by
+  norm_num [kottlerRadialAcceleration, transitionOuterMass,
+    transitionOuterRadius, transitionOuterLambda,
+    transitionOuterScaledLambda, scaledLambdaMidpoint]
+
+theorem transition_outer_derivative_jump :
+    fExteriorPrimeJunction
+        transitionOuterRadius transitionOuterMass transitionOuterLambda
+      -
+      fInteriorPrimeJunction
+        transitionOuterRadius transitionInnerMatchedLambda
+      = 4/15 := by
+  norm_num [fExteriorPrimeJunction, fInteriorPrimeJunction,
+    transitionOuterRadius, transitionOuterMass,
+    transitionOuterLambda, transitionInnerMatchedLambda,
+    transitionOuterScaledLambda, scaledLambdaMidpoint]
+
+structure FiniteThicknessExteriorMatchWitness : Prop where
+  outerLambda : transitionOuterLambda = 16/75
+  innerLambda : transitionInnerMatchedLambda = 8/25
+  lapseMatched :
+    fInteriorJunction transitionOuterRadius transitionInnerMatchedLambda
+      =
+    fExteriorJunction
+      transitionOuterRadius transitionOuterMass transitionOuterLambda
+  staticPositive :
+    fExteriorJunction
+      transitionOuterRadius transitionOuterMass transitionOuterLambda
+      = 1/3
+  outwardAcceleration :
+    kottlerRadialAcceleration
+      transitionOuterMass transitionOuterRadius transitionOuterLambda
+      = 2/15
+  derivativeJump :
+    fExteriorPrimeJunction
+        transitionOuterRadius transitionOuterMass transitionOuterLambda
+      -
+      fInteriorPrimeJunction
+        transitionOuterRadius transitionInnerMatchedLambda
+      = 4/15
+
+theorem finite_thickness_exterior_match :
+    FiniteThicknessExteriorMatchWitness := by
+  exact {
+    outerLambda := transition_outer_lambda
+    innerLambda := transition_inner_matched_lambda
+    lapseMatched := transition_outer_lapse_matches
+    staticPositive := transition_outer_kottler_lapse
+    outwardAcceleration := transition_outer_acceleration_positive
+    derivativeJump := transition_outer_derivative_jump
+  }
+
+
 def finiteThicknessLiteralTOVTransitionSolved : Bool := true
 def finiteThicknessContinuumEinsteinPDESolved : Bool := false
 def finiteThicknessScalarFieldEquationSolved : Bool := false
 def finiteThicknessSourceNativeCMP119ProfileDerived : Bool := false
-def finiteThicknessExteriorMatchingStillRequired : Bool := true
+def finiteThicknessExteriorMatchingStillRequired : Bool := false
+def finiteThicknessExteriorMatchingCompiled : Bool := true
 
 end Integration.AntigravityFiniteThicknessTOVTransition

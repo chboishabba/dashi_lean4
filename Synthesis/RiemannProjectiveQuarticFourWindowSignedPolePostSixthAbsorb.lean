@@ -3277,4 +3277,109 @@ theorem QuarticFourSignedPolePair.signedNormalizedHorizontalKernel_abs_le_invSq
       hq
 
 
+
+/-!
+## Physical rescaling of the exact horizontal source
+
+The normalized q^-2 decay is now transported back to the literal zero carrier.
+The r^-2 source normalization cancels exactly against q^-2=(delta/r)^-2.
+-/
+
+theorem quarticFourHorizontalSourceTerm_eq_normalizedHorizontalKernel
+    {R lam mu t : ℝ}
+    (hR : 0 < R)
+    (ht : 0 < t)
+    (rho : Zeros) :
+    quarticFourHorizontalSourceTerm R lam mu t rho
+      =
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ) / (t/16)^2
+      *
+    genericProjectiveHorizontalKernel
+      (quarticFourWindowProfile R lam mu)
+      (heightOf rho / (t/16))
+      (((rho : ℂ).im-t)/(t/16)) := by
+  unfold quarticFourHorizontalSourceTerm
+  rw [literalPairProjectiveDefect_rescale
+        (quarticFourWindowProfile_contDiff
+          (lam:=lam) (mu:=mu) hR)
+        (quarticFourWindowProfile_compact hR)
+        (quarticFourWindowProfile_even R lam mu)
+        (by positivity : 0 < t/16) t rho,
+      quarticFourBaseSourceTerm_eq_normalizedKernel,
+      genericProjectivePairKernel_eq_base_add_horizontal
+        (quarticFourWindowProfile_continuous hR)
+        (quarticFourWindowProfile_compact hR)]
+  ring
+
+theorem QuarticFourSignedPolePair.signedHorizontalSourceTerm_eq_normalized
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.signedHorizontalSourceTerm rho
+      =
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ) / (t/16)^2
+      *
+    W.signedNormalizedHorizontalKernel
+      (heightOf rho / (t/16))
+      (((rho : ℂ).im-t)/(t/16)) := by
+  unfold QuarticFourSignedPolePair.signedHorizontalSourceTerm
+    QuarticFourSignedPolePair.signedNormalizedHorizontalKernel
+  rw [quarticFourHorizontalSourceTerm_eq_normalizedHorizontalKernel
+        W.Rpos ht,
+      quarticFourHorizontalSourceTerm_eq_normalizedHorizontalKernel
+        W.Rpos ht]
+  ring
+
+theorem QuarticFourSignedPolePair.signedHorizontalSourceTerm_abs_le_gap_sq
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hdelta : (rho : ℂ).im ≠ t) :
+    |W.signedHorizontalSourceTerm rho|
+      <=
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+      * W.signedHorizontalDecayCurvature
+          (heightOf rho / (t/16))
+      / ((rho : ℂ).im-t)^2 := by
+  have hr : 0 < t/16 := by positivity
+  have hq :
+      ((rho : ℂ).im-t)/(t/16) ≠ 0 := by
+    exact div_ne_zero (sub_ne_zero.mpr hdelta) hr.ne'
+  have hdec :=
+    W.signedNormalizedHorizontalKernel_abs_le_invSq
+      (alpha:=heightOf rho/(t/16)) hq
+  rw [W.signedHorizontalSourceTerm_eq_normalized ht rho,
+      abs_mul]
+  have hm :
+      0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
+    positivity
+  have hr2 : 0 < (t/16)^2 := by positivity
+  rw [abs_of_nonneg (div_nonneg hm hr2.le)]
+  have hmul :=
+    mul_le_mul_of_nonneg_left hdec
+      (div_nonneg hm hr2.le)
+  calc
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ) / (t/16)^2
+      *
+      |W.signedNormalizedHorizontalKernel
+        (heightOf rho/(t/16))
+        (((rho : ℂ).im-t)/(t/16))|
+      <=
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ) / (t/16)^2
+      *
+      (W.signedHorizontalDecayCurvature
+          (heightOf rho/(t/16))
+        / (((rho : ℂ).im-t)/(t/16))^2) := hmul
+    _ =
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+      * W.signedHorizontalDecayCurvature
+          (heightOf rho/(t/16))
+      / ((rho : ℂ).im-t)^2 := by
+        field_simp [show t ≠ 0 by linarith,
+          sub_ne_zero.mpr hdelta]
+        ring
+
+
 end Synthesis

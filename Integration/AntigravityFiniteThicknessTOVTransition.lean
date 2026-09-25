@@ -635,8 +635,9 @@ theorem current_tov_layer_metric_reconstruction_boundary :
     secondFundamentalFormMatchStillRequired := trivial
   }
 
-def finiteThicknessTOVLapseReconstructed : Bool := false
-def finiteThicknessDarmoisMatchSolved : Bool := true
+def finiteThicknessFullInteriorLapseReconstructed : Bool := false
+def finiteThicknessOuterDarmoisBoundarySolved : Bool := true
+def finiteThicknessFullDarmoisMetricReconstructionSolved : Bool := false
 
 /-!
 Lambda-aware finite-thickness TOV profile and shell-free outer boundary.
@@ -889,8 +890,9 @@ def finiteThicknessContinuumEinsteinPDESolved : Bool := false
 def finiteThicknessScalarFieldEquationSolved : Bool := false
 def finiteThicknessSourceNativeCMP119ProfileDerived : Bool := false
 def finiteThicknessExteriorParameterWindowCompiled : Bool := true
-def finiteThicknessTOVToKottlerDarmoisMatchingStillRequired : Bool := false
-def finiteThicknessExteriorMatchingStillRequired : Bool := false
-def finiteThicknessExteriorMatchingCompiled : Bool := true
+def finiteThicknessTOVToKottlerOuterBoundaryMatchingStillRequired : Bool := false
+def finiteThicknessFullMetricMatchingStillRequired : Bool := true
+def finiteThicknessExteriorParameterMatchingStillRequired : Bool := false
+def finiteThicknessOuterBoundaryMatchingCompiled : Bool := true
 
 end Integration.AntigravityFiniteThicknessTOVTransition

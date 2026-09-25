@@ -136,7 +136,7 @@ structure PhysicallyCalibratedFiniteThicknessSourceWitness
     (stress : Stress)
     (normalized : NormalizedCrossSectorStressInstance E stress)
     (source : AgdaTraceSourceReceipt)
-    (calibration : PhysicalEinsteinSourceCalibration source)
+    (calibration : NormalizedEinsteinSourceCalibration source)
     (thickness : Rat) : Prop where
   calibrated :
     PhysicallyCalibratedAntigravityWitness
@@ -162,7 +162,7 @@ theorem compile_physically_calibrated_finite_thickness_source
     {stress : Stress}
     (normalized : NormalizedCrossSectorStressInstance E stress)
     (source : AgdaTraceSourceReceipt)
-    (calibration : PhysicalEinsteinSourceCalibration source)
+    (calibration : NormalizedEinsteinSourceCalibration source)
     (thickness : Rat)
     (hThickness : 0 < thickness) :
     PhysicallyCalibratedFiniteThicknessSourceWitness

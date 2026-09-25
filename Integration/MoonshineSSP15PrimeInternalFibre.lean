@@ -61,6 +61,29 @@ theorem same_prime_multiple_internal_states :
   · rfl
   · decide
 
+
+
+/-! Canonical signed lift from the full prime/internal pair. -/
+
+def primeInternalToPointedSigned (s : PrimeInternalCarrier) : PointedSignedLane :=
+  ⟨s.1, phaseToUnitMultiplicity s.2.2⟩
+
+theorem prime_internal_pointed_prime_exact (s : PrimeInternalCarrier) :
+    (primeInternalToPointedSigned s).selectedPrime = s.1 := rfl
+
+theorem prime_internal_pointed_phase_exact (s : PrimeInternalCarrier) :
+    coarseMultiplicity (primeInternalToPointedSigned s).signedMultiplicity = s.2.2 := by
+  rcases s with ⟨p, m, ph⟩
+  cases ph <;> rfl
+
+def primeInternalValuation (s : PrimeInternalCarrier) : SSPValuation :=
+  pointedValuation (primeInternalToPointedSigned s)
+
+theorem prime_internal_valuation_own_lane (s : PrimeInternalCarrier) :
+    primeInternalValuation s s.1 =
+      phaseToUnitMultiplicity s.2.2 := by
+  simp [primeInternalValuation, primeInternalToPointedSigned, pointedValuation]
+
 structure Boundary where
   primeLaneCountFifteen : Bool
   internalLaneCountFifteen : Bool
@@ -69,6 +92,7 @@ structure Boundary where
   chosenBijectionIsGaugeSection : Bool
   chosenGaugeExhaustsSemanticCarrier : Bool
   explicitOffGaugeP71StatesOwned : Bool
+  canonicalSignedLiftUsesPrimeInternalPair : Bool
   primeEqualsInternalLaneSemantically : Bool
   deriving Repr
 
@@ -80,6 +104,7 @@ def canonicalBoundary : Boundary where
   chosenBijectionIsGaugeSection := true
   chosenGaugeExhaustsSemanticCarrier := false
   explicitOffGaugeP71StatesOwned := true
+  canonicalSignedLiftUsesPrimeInternalPair := true
   primeEqualsInternalLaneSemantically := false
 
 end Integration.MoonshineSSP15PrimeInternalFibre

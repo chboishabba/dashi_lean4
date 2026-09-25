@@ -8,14 +8,14 @@ open Integration.MoonshineSSP15SignedFRACTRANBranch
 open Integration.MoonshineNeutralCuspRelationCrossPollination
 
 /-!
-The existing Ogg/nonary address laws canonically provide only a coarse
-(complement mode, binary orientation) observation.  They do not canonically
-supply all fifteen internal SSP15 lanes.
+SSP15 itself is the fifteen Ogg/Monster prime lanes.  The exact Euclidean Ogg
+address determines that lane.
 
-The decisive obstruction is that address-derived mode09 never occurs at any of
-the fifteen Ogg primes, whereas the internal SSP15 carrier contains three
-mode09 lanes.  Therefore no bijection preserving the address-derived mode can
-exist.
+This module concerns only the later lossy projection
+`SSP15/Ogg lane -> (complement mode, binary orientation)`.  The decisive
+obstruction is that this coarse observer omits mode09 and has collisions, so it
+cannot be identified with the separate five-by-three internal presentation.
+This is an observer-loss theorem, not an SSP15-from-Ogg no-go.
 -/
 
 inductive BinaryOrientation
@@ -114,6 +114,8 @@ structure Boundary where
   modePreservingFifteenBijectionImpossible : Bool
   chosenCarrierBijectionStillExists : Bool
   chosenCarrierBijectionDerivedFromAddressLaw : Bool
+  ssp15CarrierIsOggPrimeCarrier : Bool
+  exactOggAddressDeterminesSSP15Lane : Bool
   extraRefinementNeededForCanonicalSSP15Lane : Bool
   deriving Repr
 
@@ -124,6 +126,8 @@ def canonicalBoundary : Boundary where
   modePreservingFifteenBijectionImpossible := true
   chosenCarrierBijectionStillExists := true
   chosenCarrierBijectionDerivedFromAddressLaw := false
-  extraRefinementNeededForCanonicalSSP15Lane := true
+  ssp15CarrierIsOggPrimeCarrier := true
+  exactOggAddressDeterminesSSP15Lane := true
+  extraRefinementNeededForCanonicalSSP15Lane := false
 
 end Integration.MoonshineOggAddressSSP15NoGo

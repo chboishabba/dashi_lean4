@@ -4326,4 +4326,272 @@ theorem QuarticFourSignedPolePair.canonicalFarCompletedCompensation_abs_le_of_qu
       ring
 
 
+
+/-!
+## One-inequality terminal compensation compiler
+
+The selected-M6 terminal budget already has the form
+
+  local deterministic budget + literalFarExactAt.
+
+Since the exact finite source is
+
+  literalLocalExactAt + literalFarExactAt,
+
+the far term cancels algebraically and yields a theorem-bearing upper bound for
+the exact local pair source alone.  No new local analysis is required.
+
+We then compare the global completed residual with one half of that finite local
+pair source.  The difference is the exact compensated far remainder at the
+same cut.  Multiplying by r^6 puts both sides on the quartic target scale.
+
+The resulting normalized compensation cut is the single Clay-facing
+high-ordinate inequality: once it holds at one cut beyond the canonical local
+radius, the existing source estimates compile directly to strict G3.
+-/
+
+def QuarticFourSignedPolePair.postSixthTerminalLocalM6Budget
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (EV : ℝ) : ℝ :=
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  let NZ : ℝ :=
+    (zetaZeroConfig.N (t-r-1) (t+r) : ℝ)
+  (W.targetStrength / (6 * (t/16)^6))
+    *
+  (
+    EV
+      + (3/2 : ℝ) * r^2 * NZ
+      - (2/5 : ℝ) * r^5
+          * quarticSignedPoleMuLowerEnvelope (t-r)
+  )
+    +
+  (((3/20 : ℝ) * Real.pi^6)
+      * quarticSignedPoleLocalSixthPhaseEnvelope t eta
+      / (720 * (t/16)^8))
+    * NZ
+    +
+  (((Real.pi+1)^2 * W.fourthLipschitz)
+      * quarticSignedPoleLocalEighthPhysicalEnvelope t eta
+      / (t/16)^10)
+    * NZ
+
+theorem QuarticFourSignedPolePair.postSixthTerminalM6BudgetAt_eq_local_add_far
+    {t EV : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.postSixthTerminalM6BudgetAt EV n
+      =
+    W.postSixthTerminalLocalM6Budget EV
+      + W.literalFarExactAt
+          quarticSignedPoleCanonicalLocalRadius n := by
+  unfold QuarticFourSignedPolePair.postSixthTerminalM6BudgetAt
+    QuarticFourSignedPolePair.postSixthTerminalLocalM6Budget
+  dsimp
+  ring
+
+theorem QuarticFourSignedPolePair.literalLocalExactAt_le_postSixthTerminalLocalM6Budget
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hM6lo :
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ))
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV) :
+    W.literalLocalExactAt
+        quarticSignedPoleCanonicalLocalRadius n
+      <=
+    W.postSixthTerminalLocalM6Budget EV := by
+  have hsource :=
+    W.literalOffOrdExactAt_le_postSixthTerminalM6BudgetAt
+      ht hM6lo hM6neg n hn hV
+  rw [W.literalOffOrdExactAt_eq_local_add_far
+      (eta:=quarticSignedPoleCanonicalLocalRadius)] at hsource
+  rw [W.postSixthTerminalM6BudgetAt_eq_local_add_far] at hsource
+  linarith
+
+def QuarticFourSignedPolePair.finiteCutCompensatedFar
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  W.completedSignedResidual
+    - (1/2 : ℝ) *
+      W.literalLocalExactAt
+        quarticSignedPoleCanonicalLocalRadius n
+
+def QuarticFourSignedPolePair.normalizedFiniteCutCompensatedFar
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  (t/16)^2 * W.finiteCutCompensatedFar n
+
+theorem QuarticFourSignedPolePair.completedSignedResidual_eq_local_half_add_finiteCutFar
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.completedSignedResidual
+      =
+    (1/2 : ℝ) *
+      W.literalLocalExactAt
+        quarticSignedPoleCanonicalLocalRadius n
+      + W.finiteCutCompensatedFar n := by
+  unfold QuarticFourSignedPolePair.finiteCutCompensatedFar
+  ring
+
+theorem QuarticFourSignedPolePair.finiteCutCompensatedFar_eq_normalized
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.finiteCutCompensatedFar n
+      =
+    (1/(t/16)^2) *
+      W.normalizedFiniteCutCompensatedFar n := by
+  unfold QuarticFourSignedPolePair.normalizedFiniteCutCompensatedFar
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
+def QuarticFourSignedPolePair.postSixthTerminalResidualMargin
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (EV : ℝ) : ℝ :=
+  2 * W.combinedZeroHeightDefect rho
+    - (1/2 : ℝ) * W.postSixthTerminalLocalM6Budget EV
+
+def QuarticFourSignedPolePair.PostSixthNormalizedCompensationCut
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (EV : ℝ) : Prop :=
+  ∃ n : ℕ,
+    quarticSignedPoleLocalHalfWidth
+        t quarticSignedPoleCanonicalLocalRadius
+      < (n : ℝ)
+    ∧
+    (t/16)^4
+        * |W.normalizedFiniteCutCompensatedFar n|
+      <
+    (t/16)^6
+        * W.postSixthTerminalResidualMargin rho EV
+
+theorem QuarticFourSignedPolePair.finiteCutCompensatedFar_lt_margin_of_normalizedCut
+    {t EV : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    {n : ℕ}
+    (hcut :
+      (t/16)^4
+          * |W.normalizedFiniteCutCompensatedFar n|
+        <
+      (t/16)^6
+          * W.postSixthTerminalResidualMargin rho EV) :
+    W.finiteCutCompensatedFar n
+      <
+    W.postSixthTerminalResidualMargin rho EV := by
+  have hr : 0 < t/16 := by positivity
+  have hr4 : 0 < (t/16)^4 := by positivity
+  have hr6 : 0 < (t/16)^6 := by positivity
+  have hnormNonneg :
+      0 <= |W.normalizedFiniteCutCompensatedFar n| :=
+    abs_nonneg _
+  have hmarginPos :
+      0 < W.postSixthTerminalResidualMargin rho EV := by
+    by_contra hnot
+    have hmarginNonpos :
+        W.postSixthTerminalResidualMargin rho EV <= 0 :=
+      le_of_not_gt hnot
+    have hright :
+        (t/16)^6
+            * W.postSixthTerminalResidualMargin rho EV <= 0 :=
+      mul_nonpos_of_nonneg_of_nonpos hr6.le hmarginNonpos
+    have hleft :
+        0 <=
+        (t/16)^4
+            * |W.normalizedFiniteCutCompensatedFar n| :=
+      mul_nonneg hr4.le hnormNonneg
+    linarith
+  have habsScaled :
+      |W.normalizedFiniteCutCompensatedFar n|
+        <
+      (t/16)^2
+        * W.postSixthTerminalResidualMargin rho EV := by
+    have hdiv :=
+      (lt_div_iff₀ hr4).2 hcut
+    convert hdiv using 1
+    field_simp [hr.ne']
+    ring
+  have hnormLe :
+      W.normalizedFiniteCutCompensatedFar n
+        <
+      (t/16)^2
+        * W.postSixthTerminalResidualMargin rho EV :=
+    (le_abs_self _).trans_lt habsScaled
+  rw [W.finiteCutCompensatedFar_eq_normalized ht n]
+  have hfac : 0 < 1/(t/16)^2 := by positivity
+  have hscaled :=
+    mul_lt_mul_of_pos_left hnormLe hfac
+  calc
+    (1/(t/16)^2)
+        * W.normalizedFiniteCutCompensatedFar n
+      <
+    (1/(t/16)^2)
+        * ((t/16)^2
+          * W.postSixthTerminalResidualMargin rho EV) := hscaled
+    _ = W.postSixthTerminalResidualMargin rho EV := by
+      field_simp [hr.ne']
+
+theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_normalizedCompensationCut
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hM6lo :
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV)
+    (hC : W.PostSixthNormalizedCompensationCut rho EV) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho := by
+  rcases hC with ⟨n,hn,hcut⟩
+  have hlocal :=
+    W.literalLocalExactAt_le_postSixthTerminalLocalM6Budget
+      ht hM6lo hM6neg n hn hV
+  have hfar :=
+    W.finiteCutCompensatedFar_lt_margin_of_normalizedCut
+      (by linarith : 0 < t) hcut
+  rw [W.completedSignedResidual_eq_local_half_add_finiteCutFar n]
+  unfold QuarticFourSignedPolePair.postSixthTerminalResidualMargin at hfar
+  nlinarith
+
+theorem QuarticFourSignedPolePair.postSixthNormalizedCompensationCut_compiles_G3
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hM6lo :
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV)
+    (hC : W.PostSixthNormalizedCompensationCut rho EV) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho :=
+  W.completedSignedResidual_lt_target_of_normalizedCompensationCut
+    ht hM6lo hM6neg hV hC
+
+
 end Synthesis

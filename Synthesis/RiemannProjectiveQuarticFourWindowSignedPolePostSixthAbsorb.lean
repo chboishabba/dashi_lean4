@@ -3996,4 +3996,148 @@ theorem QuarticFourSignedPolePair.literalFarExactTerm_eq_existing_base_horizonta
       W.literalFarHorizontalExactTerm_eq_existing heta hfar]
 
 
+
+/-!
+## Canonical same-object far compensation
+
+The discrete far zero source must not be estimated in isolation: the terminal
+G3 object already contains the matching mu/Gamma channel.  We therefore cut
+the exact signed N-mu scalar at the same canonical physical half-width used by
+the local quartic source.
+
+The remaining far coordinate is the complement of that finite centered N-mu
+residual inside W.signedNMuPair.  This is exactly the object controlled by the
+existing centered Abel tail machinery.
+-/
+
+def quarticSignedPoleCanonicalPhysicalHalfWidth
+    (t : ℝ) : ℝ :=
+  (t/16) * quarticSignedPoleCanonicalLocalRadius
+
+theorem quarticSignedPoleCanonicalPhysicalHalfWidth_pos
+    {t : ℝ} (ht : 0 < t) :
+    0 < quarticSignedPoleCanonicalPhysicalHalfWidth t := by
+  unfold quarticSignedPoleCanonicalPhysicalHalfWidth
+  exact mul_pos (by positivity)
+    quarticSignedPoleCanonicalLocalRadius_pos
+
+def QuarticFourSignedPolePair.canonicalLocalNMuResidual
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  let h := quarticSignedPoleCanonicalPhysicalHalfWidth t
+  W.signedCenteredWindowResidual (t-h) (t+h)
+
+def QuarticFourSignedPolePair.canonicalFarNMuCompensation
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.signedNMuPair - W.canonicalLocalNMuResidual
+
+def QuarticFourSignedPolePair.canonicalFarCompletedCompensation
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  (1/2 : ℝ) * W.canonicalFarNMuCompensation
+    + W.signedHorizontalRemainder
+
+theorem QuarticFourSignedPolePair.signedNMuPair_eq_canonicalLocal_add_far
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNMuPair
+      =
+    W.canonicalLocalNMuResidual
+      + W.canonicalFarNMuCompensation := by
+  unfold QuarticFourSignedPolePair.canonicalFarNMuCompensation
+  ring
+
+theorem QuarticFourSignedPolePair.completedSignedResidual_eq_canonicalLocal_add_far
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.completedSignedResidual
+      =
+    (1/2 : ℝ) * W.canonicalLocalNMuResidual
+      + W.canonicalFarCompletedCompensation := by
+  unfold QuarticFourSignedPolePair.completedSignedResidual
+    QuarticFourSignedPolePair.canonicalFarCompletedCompensation
+    QuarticFourSignedPolePair.canonicalFarNMuCompensation
+  ring
+
+def QuarticFourSignedPolePair.canonicalLocalLeftBoundary
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  let h := quarticSignedPoleCanonicalPhysicalHalfWidth t
+  W.signedOrdinateTest (t-h)
+    * zetaMuCumulativeDiscrepancy (t-h) t
+
+def QuarticFourSignedPolePair.canonicalLocalRightBoundary
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  let h := quarticSignedPoleCanonicalPhysicalHalfWidth t
+  W.signedOrdinateTest (t+h)
+    * centeredZetaMuDiscrepancy t (t+h)
+
+def QuarticFourSignedPolePair.canonicalLocalLeftAbel
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  let h := quarticSignedPoleCanonicalPhysicalHalfWidth t
+  ∫ x in (t-h)..t, W.centeredAbelIntegrand x
+
+def QuarticFourSignedPolePair.canonicalLocalRightAbel
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  let h := quarticSignedPoleCanonicalPhysicalHalfWidth t
+  ∫ x in t..(t+h), W.centeredAbelIntegrand x
+
+theorem QuarticFourSignedPolePair.canonicalLocalNMuResidual_eq_centeredAbel
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalLocalNMuResidual
+      =
+    W.canonicalLocalLeftBoundary
+      + W.canonicalLocalRightBoundary
+      - W.canonicalLocalLeftAbel
+      - W.canonicalLocalRightAbel := by
+  let h := quarticSignedPoleCanonicalPhysicalHalfWidth t
+  have hh : 0 <= h :=
+    (quarticSignedPoleCanonicalPhysicalHalfWidth_pos ht).le
+  have hA : t-h <= t := by linarith
+  have hB : t <= t+h := by linarith
+  have habel :=
+    W.signedCenteredWindowResidual_eq_centeredAbel
+      ht hA hB
+  unfold QuarticFourSignedPolePair.canonicalLocalNMuResidual
+    QuarticFourSignedPolePair.canonicalLocalLeftBoundary
+    QuarticFourSignedPolePair.canonicalLocalRightBoundary
+    QuarticFourSignedPolePair.canonicalLocalLeftAbel
+    QuarticFourSignedPolePair.canonicalLocalRightAbel
+    QuarticFourSignedPolePair.centeredAbelIntegrand
+  dsimp [h] at habel ⊢
+  exact habel
+
+theorem QuarticFourSignedPolePair.canonicalFarNMuCompensation_eq_centeredAbel_tail
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (E : W.CenteredAbelExhaustion) :
+    W.canonicalFarNMuCompensation
+      =
+    - E.leftLimit - E.rightLimit
+      - W.canonicalLocalLeftBoundary
+      - W.canonicalLocalRightBoundary
+      + W.canonicalLocalLeftAbel
+      + W.canonicalLocalRightAbel := by
+  unfold QuarticFourSignedPolePair.canonicalFarNMuCompensation
+  rw [W.signedNMuPair_eq_centeredAbel_limits ht E,
+      W.canonicalLocalNMuResidual_eq_centeredAbel ht]
+  ring
+
+theorem QuarticFourSignedPolePair.canonicalFarCompletedCompensation_eq_centeredAbel_tail
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (E : W.CenteredAbelExhaustion) :
+    W.canonicalFarCompletedCompensation
+      =
+    (1/2 : ℝ) *
+      (
+        - E.leftLimit - E.rightLimit
+        - W.canonicalLocalLeftBoundary
+        - W.canonicalLocalRightBoundary
+        + W.canonicalLocalLeftAbel
+        + W.canonicalLocalRightAbel
+      )
+      + W.signedHorizontalRemainder := by
+  unfold QuarticFourSignedPolePair.canonicalFarCompletedCompensation
+  rw [W.canonicalFarNMuCompensation_eq_centeredAbel_tail ht E]
+
+
 end Synthesis

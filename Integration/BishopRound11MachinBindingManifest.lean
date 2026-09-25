@@ -176,6 +176,7 @@ structure ManifestBoundary where
   recursiveReplayClosureGeneratorSourceOwned : Bool
   replayKernelElaborationWorkflowStepOwned : Bool
   focusedRouteBAxiomAuditSourceOwned : Bool
+  generatedBindingTableKernelMatchSourceOwned : Bool
 
   generatedAgdaReplayObserved : Bool
   leanKernelReceiptObserved : Bool
@@ -196,6 +197,7 @@ def manifestBoundary : ManifestBoundary where
   recursiveReplayClosureGeneratorSourceOwned := true
   replayKernelElaborationWorkflowStepOwned := true
   focusedRouteBAxiomAuditSourceOwned := true
+  generatedBindingTableKernelMatchSourceOwned := true
 
   generatedAgdaReplayObserved := false
   leanKernelReceiptObserved := false

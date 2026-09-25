@@ -1,6 +1,8 @@
 import Mathlib
 import Integration.NonginOnePointOneArmyRefinement
+import Integration.NonginOnePointOneFutureSplit
 import Integration.TwistronicsRelativeRegistrationComparator
+import Integration.TwistronicsRegistrationControlFutureSplit
 import Integration.FutureSafeCoarseFibreCapacity
 import Integration.TSFVSemanticQueryFutureSplit
 
@@ -33,9 +35,9 @@ structure DomainFutureSafetyStatus where
 def nonginStatus : DomainFutureSafetyStatus where
   lane := .nonginFrame
   currentConsumerNonDescentProved := true
-  proofBearingActionSystemSuppliedHere := false
-  finiteFutureDistinctFibreSuppliedHere := false
-  concreteFutureCapacityBoundInstantiatedHere := false
+  proofBearingActionSystemSuppliedHere := true
+  finiteFutureDistinctFibreSuppliedHere := true
+  concreteFutureCapacityBoundInstantiatedHere := true
 
 def tsfvStatus : DomainFutureSafetyStatus where
   lane := .tsfvHistory
@@ -55,15 +57,18 @@ def tsfvSemanticQueryStatus : DomainFutureSafetyStatus where
 def twistronicsStatus : DomainFutureSafetyStatus where
   lane := .twistronicsRegistration
   currentConsumerNonDescentProved := true
-  proofBearingActionSystemSuppliedHere := false
+  proofBearingActionSystemSuppliedHere := true
   finiteFutureDistinctFibreSuppliedHere := false
   concreteFutureCapacityBoundInstantiatedHere := false
 
 structure FutureSafetyBoundary where
   sharedCurrentNonDescentShape : Bool
   sharedFutureCapacityTheoremAvailable : Bool
+  nonginDynamicsConstructed : Bool
   tsfvSemanticQueryDynamicsConstructed : Bool
   tsfvPhysicalCausticRealizationConstructed : Bool
+  twistronicsControlSystemConstructed : Bool
+  twistronicsConcreteFutureSplitWitnessInstantiated : Bool
   currentNonDescentImpliesFutureDistinctionAutomatically : Bool
   sharedShapeImpliesSharedPhysicalMechanism : Bool
   deriving Repr
@@ -71,8 +76,11 @@ structure FutureSafetyBoundary where
 def canonicalBoundary : FutureSafetyBoundary where
   sharedCurrentNonDescentShape := true
   sharedFutureCapacityTheoremAvailable := true
+  nonginDynamicsConstructed := true
   tsfvSemanticQueryDynamicsConstructed := true
   tsfvPhysicalCausticRealizationConstructed := false
+  twistronicsControlSystemConstructed := true
+  twistronicsConcreteFutureSplitWitnessInstantiated := false
   currentNonDescentImpliesFutureDistinctionAutomatically := false
   sharedShapeImpliesSharedPhysicalMechanism := false
 

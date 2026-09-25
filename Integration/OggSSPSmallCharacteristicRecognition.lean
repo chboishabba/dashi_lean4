@@ -301,8 +301,12 @@ def f9ExtensionCoordinateFunctor :
   actionEquivariant := extensionCoordinate_equivariant
 
 def f9OrbitToP3Orbit : F9Orbit → P3Orbit
-  | .fixed0 | .fixed1 | .fixed2 => .zero
-  | .pair0 | .pair1 | .pair2 => .nonzero
+  | .fixed0 => .zero
+  | .fixed1 => .zero
+  | .fixed2 => .zero
+  | .pair0 => .nonzero
+  | .pair1 => .nonzero
+  | .pair2 => .nonzero
 
 theorem f9_orbit_map_exact (x : F9Point) :
     p3OrbitPresentation.orbitOf

@@ -148,13 +148,15 @@ theorem targetOrbit_to_source_injective
     (R : FullRecognition F sourceOrbits targetOrbits) :
     Function.Injective R.pi0Surjection.preimageOrbit := by
   intro a b h
-  have hm :
-      R.orbitRecognition.mapOrbit
-          (R.pi0Surjection.preimageOrbit a) =
-        R.orbitRecognition.mapOrbit
-          (R.pi0Surjection.preimageOrbit b) :=
-    congrArg R.orbitRecognition.mapOrbit h
-  simpa [R.pi0Surjection.hitsEveryTargetOrbit] using hm
+  calc
+    a = R.orbitRecognition.mapOrbit
+        (R.pi0Surjection.preimageOrbit a) :=
+      (R.pi0Surjection.hitsEveryTargetOrbit a).symm
+    _ = R.orbitRecognition.mapOrbit
+        (R.pi0Surjection.preimageOrbit b) :=
+      congrArg R.orbitRecognition.mapOrbit h
+    _ = b :=
+      R.pi0Surjection.hitsEveryTargetOrbit b
 
 end FullRecognition
 

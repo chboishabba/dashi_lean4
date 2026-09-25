@@ -4905,4 +4905,97 @@ theorem exists_quarticSignedPoleV4Producer_compiles_selectedLiteralHighCut :
       hcomp
 
 
+
+/-!
+## Final fixed-high-threshold compiler
+
+Absorb the V4 producer's lower-end threshold into one fixed global cutoff.
+Because eta0 = 1/(pi+1) < 1,
+
+  r = (t/16) eta0 < t/16,
+
+so t-r > 15t/16.  Taking t above twice max(TV,4) is therefore more than
+enough to satisfy the V4 producer's left-end condition.
+
+The resulting theorem has exactly one substantive high-ordinate premise:
+the selected literal compensation cut.
+-/
+
+theorem quarticSignedPoleCanonicalLocalRadius_lt_one :
+    quarticSignedPoleCanonicalLocalRadius < 1 := by
+  unfold quarticSignedPoleCanonicalLocalRadius
+  have hp : 0 < Real.pi := Real.pi_pos
+  have hden : 1 < Real.pi + 1 := by linarith
+  rw [div_lt_one (by positivity : 0 < Real.pi + 1)]
+  exact hden
+
+theorem quarticSignedPoleLocalHalfWidth_lt_sixteenth
+    {t : ℝ} (ht : 0 < t) :
+    quarticSignedPoleLocalHalfWidth
+        t quarticSignedPoleCanonicalLocalRadius
+      < t/16 := by
+  unfold quarticSignedPoleLocalHalfWidth
+  have hr0 : 0 < t/16 := by positivity
+  have heta :=
+    quarticSignedPoleCanonicalLocalRadius_lt_one
+  nlinarith
+
+theorem exists_quarticSignedPoleFixedHigh_compiles_selectedLiteralHighCut :
+    ∃ CV T : ℝ,
+      0 <= CV
+        ∧ quarticPlattTrudgianCutoff <= T
+        ∧
+      ∀ {t : ℝ},
+        T < t ->
+        ∀ {rho : Zeros},
+          (rho : ℂ).im = t ->
+          heightOf rho ≠ 0 ->
+          quarticSignedPoleSelectedLiteralHighCut CV t rho ->
+          False := by
+  obtain ⟨CV,TV,hCV,hcompile⟩ :=
+    exists_quarticSignedPoleV4Producer_compiles_selectedLiteralHighCut
+  let M : ℝ := max TV 4
+  let T : ℝ := max quarticPlattTrudgianCutoff (2*M + 1)
+  refine ⟨CV,T,hCV,?_,?_⟩
+  · dsimp [T]
+    exact le_max_left _ _
+  · intro t ht rho him hoff hcut
+    have hPT : quarticPlattTrudgianCutoff < t := by
+      have hle : quarticPlattTrudgianCutoff <= T := by
+        dsimp [T]
+        exact le_max_left _ _
+      exact lt_of_le_of_lt hle ht
+    have ht200 : 200 <= t := by
+      have h200 := quarticPlattTrudgianCutoff_gt_twoHundred
+      linarith
+    have hM0 : 0 <= M := by
+      dsimp [M]
+      have : (0 : ℝ) <= 4 := by norm_num
+      exact this.trans (le_max_right TV 4)
+    have htM : 2*M + 1 < t := by
+      have hle : 2*M + 1 <= T := by
+        dsimp [T]
+        exact le_max_right _ _
+      exact lt_of_le_of_lt hle ht
+    have ht0 : 0 < t := by linarith
+    have hrlt :=
+      quarticSignedPoleLocalHalfWidth_lt_sixteenth ht0
+    have hhalf : M < t/2 := by
+      nlinarith
+    have hremain :
+        M <=
+          t - quarticSignedPoleLocalHalfWidth
+                t quarticSignedPoleCanonicalLocalRadius := by
+      have hrt :
+          quarticSignedPoleLocalHalfWidth
+              t quarticSignedPoleCanonicalLocalRadius
+            < t/2 := by
+        nlinarith
+      linarith
+    exact
+      hcompile ht200
+        (by simpa [M] using hremain)
+        him hoff hcut
+
+
 end Synthesis

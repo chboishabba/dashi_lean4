@@ -160,6 +160,40 @@ The dimensionless Kottler cosmological amplitude is therefore
 No numerical value of G, lattice spacing, or stress normalization is invented.
 -/
 
+structure NormalizedSourceToKottlerTargetCalibration
+    (source : AgdaTraceSourceReceipt)
+    (targetAmplitude : Rat) where
+  stressEnergyPerSourceUnit : Rat
+  normalizedEinsteinCoupling : Rat
+  lengthScale : Rat
+  stressScalePositive : 0 < stressEnergyPerSourceUnit
+  normalizedEinsteinCouplingPositive : 0 < normalizedEinsteinCoupling
+  lengthScalePositive : 0 < lengthScale
+  targetCalibration :
+    normalizedEinsteinCoupling
+      * stressEnergyPerSourceUnit
+      * source.sourceMagnitude
+      * lengthScale^2
+      = targetAmplitude
+
+def NormalizedSourceToKottlerTargetCalibration.dimensionlessAmplitude
+    {source : AgdaTraceSourceReceipt}
+    {targetAmplitude : Rat}
+    (calibration :
+      NormalizedSourceToKottlerTargetCalibration source targetAmplitude) : Rat :=
+  calibration.normalizedEinsteinCoupling
+    * calibration.stressEnergyPerSourceUnit
+    * source.sourceMagnitude
+    * calibration.lengthScale^2
+
+theorem normalized_target_calibration_exact
+    (source : AgdaTraceSourceReceipt)
+    (target : Rat)
+    (calibration :
+      NormalizedSourceToKottlerTargetCalibration source target) :
+    calibration.dimensionlessAmplitude = target :=
+  calibration.targetCalibration
+
 structure NormalizedEinsteinSourceCalibration
     (source : AgdaTraceSourceReceipt) where
   stressEnergyPerSourceUnit : Rat
@@ -290,6 +324,37 @@ def codataCandidateKappaInterval : PhysicalEinsteinCouplingInterval where
   upper := codataCandidateKappaUpper
   lowerPositive := codata_candidate_kappa_lower_positive
   ordered := codata_candidate_kappa_interval_ordered
+
+def requiredStressLengthSquaredLowerFor
+    (targetAmplitude : Rat)
+    (source : AgdaTraceSourceReceipt) : Rat :=
+  targetAmplitude
+    / (codataCandidateKappaUpper * source.sourceMagnitude)
+
+def requiredStressLengthSquaredUpperFor
+    (targetAmplitude : Rat)
+    (source : AgdaTraceSourceReceipt) : Rat :=
+  targetAmplitude
+    / (codataCandidateKappaLower * source.sourceMagnitude)
+
+theorem required_stress_length_squared_for_interval_ordered
+    (targetAmplitude : Rat)
+    (source : AgdaTraceSourceReceipt)
+    (hTarget : 0 ≤ targetAmplitude) :
+    requiredStressLengthSquaredLowerFor targetAmplitude source
+      ≤ requiredStressLengthSquaredUpperFor targetAmplitude source := by
+  unfold requiredStressLengthSquaredLowerFor
+    requiredStressLengthSquaredUpperFor
+  have hs : 0 < source.sourceMagnitude := source.sourceMagnitude_positive
+  have hlo : 0 < codataCandidateKappaLower :=
+    codata_candidate_kappa_lower_positive
+  have hhi : 0 < codataCandidateKappaUpper := by
+    exact lt_of_lt_of_le hlo codata_candidate_kappa_interval_ordered
+  apply div_le_div_of_nonneg_left
+  · exact hTarget
+  · exact mul_pos hlo hs
+  · exact mul_le_mul_of_nonneg_right
+      codata_candidate_kappa_interval_ordered (le_of_lt hs)
 
 /-- For fixed positive source magnitude and target dimensionless Kottler
     amplitude, a measured kappa interval determines the required interval for

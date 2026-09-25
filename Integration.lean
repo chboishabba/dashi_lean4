@@ -991,3 +991,7 @@ discharged.
 -/
 
 import Integration.AntigravityFiniteThicknessMatterCompatibility
+
+import Integration.AntigravityCorrectedSourceGeometryWeld
+import Integration.AntigravitySourceNativeAnisotropicYMProfile
+import Integration.AntigravityCorrectedFiniteThicknessCalibration

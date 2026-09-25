@@ -8175,4 +8175,340 @@ theorem exists_quarticSignedPoleAbovePT_ambientSimpleMultiplicityEstimate_exclud
       ⟨W,hS,hM6lo,hM6neg,hband,hcut⟩
 
 
+
+/-!
+## Quantitative quartic/sixth expansion of the ambient height defect
+
+For the selected combined profile P_W we already have
+
+  M0(P_W) = M2(P_W) = 0,
+  M4(P_W) = -4*S(W).
+
+The exact height defect is -1/4 times the compact cosh transform.  Retaining
+the signed sixth moment therefore gives
+
+  D_W(alpha)
+    = S(W)*alpha^4/24
+      - M6(W)*alpha^6/2880
+      + R8_W(alpha),
+
+with an eighth-order remainder controlled by the same absolute eighth moment
+already used in the post-sixth source.
+
+For physical horizontal displacement a and r=t/16 this becomes
+
+  H_W(a)
+    = S(W)*a^4/(24*r^6)
+      - M6(W)*a^6/(2880*r^8)
+      + physicalR8_W(a),
+
+so the selected M6<0 term is favorable.
+-/
+
+def QuarticFourSignedPolePair.normalizedHeightDefectSixthRemainder
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (alpha : ℝ) : ℝ :=
+  quarticFourSignedPoleCombinedHeightDefect
+      W.R W.muHalf W.muTwo t alpha
+    - (W.targetStrength/24) * alpha^4
+    + (W.signedProfileMomentSix/2880) * alpha^6
+
+theorem QuarticFourSignedPolePair.normalizedHeightDefectSixthRemainder_eq_integral
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.normalizedHeightDefectSixthRemainder alpha
+      =
+    -(1/4 : ℝ) *
+      ∫ u : ℝ,
+        quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t u
+          *
+        (Real.cosh (alpha*u)
+          - 1
+          - (alpha*u)^2/2
+          - (alpha*u)^4/24
+          - (alpha*u)^6/720) := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have h0 : Integrable P :=
+    hP.integrable_of_hasCompactSupport hPc
+  have h2 : Integrable (fun u : ℝ => P u * u^2) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have h4 : Integrable (fun u : ℝ => P u * u^4) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have h6 : Integrable (fun u : ℝ => P u * u^6) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have hcosh : Integrable (fun u : ℝ => P u * Real.cosh (alpha*u)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have hM0 : ∫ u : ℝ, P u = 0 := by
+    change profileZerothMoment P = 0
+    exact quarticFourSignedPoleCombinedProfile_zeroth_zero W.Rpos
+  have hM2 : ∫ u : ℝ, P u * u^2 = 0 := by
+    change profileSecondMoment P = 0
+    exact quarticFourSignedPoleCombinedProfile_second_zero
+      W.Rpos W.J2Half W.J2Two
+  have hM4 : ∫ u : ℝ, P u * u^4 = -4 * W.targetStrength := by
+    change profileFourthMoment P = -4 * W.targetStrength
+    rw [quarticFourSignedPoleCombinedProfile_fourth W.Rpos]
+    unfold QuarticFourSignedPolePair.targetStrength
+    ring
+  have hM6 : ∫ u : ℝ, P u * u^6 = W.signedProfileMomentSix := by
+    rfl
+  have href :
+      ∫ u : ℝ,
+        P u
+          * (1 + (alpha*u)^2/2
+              + (alpha*u)^4/24
+              + (alpha*u)^6/720)
+        =
+      -(W.targetStrength/6) * alpha^4
+        + (W.signedProfileMomentSix/720) * alpha^6 := by
+    rw [show
+      (fun u : ℝ =>
+        P u
+          * (1 + (alpha*u)^2/2
+              + (alpha*u)^4/24
+              + (alpha*u)^6/720))
+      =
+      fun u =>
+        P u
+          + (alpha^2/2) * (P u * u^2)
+          + (alpha^4/24) * (P u * u^4)
+          + (alpha^6/720) * (P u * u^6) by
+        funext u
+        ring]
+    rw [integral_add
+          (h0.add (h2.const_mul _))
+          ((h4.const_mul _).add (h6.const_mul _)),
+        integral_add h0 (h2.const_mul _),
+        integral_add (h4.const_mul _) (h6.const_mul _),
+        integral_const_mul, integral_const_mul,
+        integral_const_mul, hM0, hM2, hM4, hM6]
+    ring
+  have hrem :
+      (∫ u : ℝ,
+        P u
+          * (Real.cosh (alpha*u)
+            - 1
+            - (alpha*u)^2/2
+            - (alpha*u)^4/24
+            - (alpha*u)^6/720))
+      =
+      (∫ u : ℝ, P u * Real.cosh (alpha*u))
+        - (-(W.targetStrength/6) * alpha^4
+            + (W.signedProfileMomentSix/720) * alpha^6) := by
+    have hrefInt :
+        Integrable
+          (fun u : ℝ =>
+            P u
+              * (1 + (alpha*u)^2/2
+                  + (alpha*u)^4/24
+                  + (alpha*u)^6/720)) :=
+      Continuous.integrable_of_hasCompactSupport
+        (by fun_prop) hPc.mul_right
+    rw [show
+      (fun u : ℝ =>
+        P u
+          * (Real.cosh (alpha*u)
+            - 1
+            - (alpha*u)^2/2
+            - (alpha*u)^4/24
+            - (alpha*u)^6/720))
+      =
+      fun u =>
+        P u * Real.cosh (alpha*u)
+          -
+        P u
+          * (1 + (alpha*u)^2/2
+              + (alpha*u)^4/24
+              + (alpha*u)^6/720) by
+        funext u
+        ring,
+      integral_sub hcosh hrefInt,
+      href]
+  unfold QuarticFourSignedPolePair.normalizedHeightDefectSixthRemainder
+  rw [quarticFourSignedPoleCombinedHeightDefect_eq_cosh W.Rpos]
+  unfold compactCoshTransform
+  rw [hrem]
+  ring
+
+theorem QuarticFourSignedPolePair.normalizedHeightDefectSixthRemainder_abs_le
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (halpha : |alpha| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.normalizedHeightDefectSixthRemainder alpha|
+      <=
+    (1/143360 : ℝ)
+      * |alpha|^8
+      * W.signedProfileAbsMomentEight := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hi :
+      Integrable
+        (fun u : ℝ =>
+          P u
+            *
+          (Real.cosh (alpha*u)
+            - 1
+            - (alpha*u)^2/2
+            - (alpha*u)^4/24
+            - (alpha*u)^6/720)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have hmaj :
+      Integrable
+        (fun u : ℝ =>
+          (1/35840 : ℝ) * |alpha|^8
+            * (|P u| * |u|^8)) :=
+    (compactProfile_absMoment_integrable hP hPc 8).const_mul
+      ((1/35840 : ℝ) * |alpha|^8)
+  rw [W.normalizedHeightDefectSixthRemainder_eq_integral,
+      abs_mul,
+      abs_neg,
+      abs_of_nonneg (by norm_num : (0:ℝ) <= (1/4 : ℝ))]
+  have hint :
+      |∫ u : ℝ,
+        P u
+          *
+        (Real.cosh (alpha*u)
+          - 1
+          - (alpha*u)^2/2
+          - (alpha*u)^4/24
+          - (alpha*u)^6/720)|
+        <=
+      (1/35840 : ℝ) * |alpha|^8
+        * W.signedProfileAbsMomentEight := by
+    calc
+      |∫ u : ℝ,
+        P u
+          *
+        (Real.cosh (alpha*u)
+          - 1
+          - (alpha*u)^2/2
+          - (alpha*u)^4/24
+          - (alpha*u)^6/720)|
+        <=
+      ∫ u : ℝ,
+        |P u
+          *
+        (Real.cosh (alpha*u)
+          - 1
+          - (alpha*u)^2/2
+          - (alpha*u)^4/24
+          - (alpha*u)^6/720)| :=
+        abs_integral_le_integral_abs
+      _ <=
+      ∫ u : ℝ,
+        (1/35840 : ℝ) * |alpha|^8
+          * (|P u| * |u|^8) := by
+        apply integral_mono hi.abs hmaj
+        intro u
+        by_cases hzero : P u = 0
+        · simp [hzero]
+        · have hau :=
+            W.abs_q_mul_u_le_one_of_local
+              (q:=alpha) (u:=u) halpha hzero
+          have hc :=
+            real_cosh_sub_sixth_abs_le_eighth hau
+          have hau8 :
+              |alpha*u|^8 = |alpha|^8 * |u|^8 := by
+            rw [abs_mul, mul_pow]
+          rw [hau8] at hc
+          rw [abs_mul]
+          nlinarith [abs_nonneg (P u), abs_nonneg u]
+      _ =
+      (1/35840 : ℝ) * |alpha|^8
+        * compactProfileAbsMoment P 8 := by
+        rw [integral_const_mul]
+        rfl
+      _ =
+      (1/35840 : ℝ) * |alpha|^8
+        * W.signedProfileAbsMomentEight := by
+        rfl
+  nlinarith [abs_nonneg
+    (∫ u : ℝ,
+      P u
+        *
+      (Real.cosh (alpha*u)
+        - 1
+        - (alpha*u)^2/2
+        - (alpha*u)^4/24
+        - (alpha*u)^6/720))]
+
+theorem QuarticFourSignedPolePair.normalizedHeightDefect_lower_quartic_sixth
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (halpha : |alpha| <= quarticSignedPoleCanonicalLocalRadius) :
+    (W.targetStrength/24) * alpha^4
+      - (W.signedProfileMomentSix/2880) * alpha^6
+      - (1/143360 : ℝ) * |alpha|^8
+          * W.signedProfileAbsMomentEight
+      <=
+    quarticFourSignedPoleCombinedHeightDefect
+      W.R W.muHalf W.muTwo t alpha := by
+  have h :=
+    W.normalizedHeightDefectSixthRemainder_abs_le halpha
+  unfold QuarticFourSignedPolePair.normalizedHeightDefectSixthRemainder at h
+  exact (abs_le.mp h).1 |> by
+    intro hlo
+    linarith
+
+theorem QuarticFourSignedPolePair.physicalHeightDefect_lower_quartic_sixth
+    {t a : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (ha : |a| <= 1/2) :
+    (W.targetStrength/24) * a^4 / (t/16)^6
+      - (W.signedProfileMomentSix/2880) * a^6 / (t/16)^8
+      - (1/143360 : ℝ) * |a|^8
+          * W.signedProfileAbsMomentEight / (t/16)^10
+      <=
+    W.physicalCombinedHeightDefect a := by
+  have ht0 : 0 < t := by linarith
+  have hr : 0 < t/16 := by positivity
+  have halpha8 :
+      |a/(t/16)| <= 8/t := by
+    rw [abs_div, abs_of_pos hr]
+    rw [div_le_iff₀ hr, div_eq_mul_inv]
+    have ht0' : 0 < t := ht0
+    field_simp [ht0.ne']
+    nlinarith [ha]
+  have h8eta :
+      8/t <= quarticSignedPoleCanonicalLocalRadius := by
+    unfold quarticSignedPoleCanonicalLocalRadius
+    have hp4 := Real.pi_lt_four
+    have hden : 0 < Real.pi + 1 := by positivity
+    rw [div_le_div_iff₀ ht0 hden]
+    nlinarith
+  have halpha :
+      |a/(t/16)| <= quarticSignedPoleCanonicalLocalRadius :=
+    halpha8.trans h8eta
+  have hnorm :=
+    W.normalizedHeightDefect_lower_quartic_sixth halpha
+  have hfac : 0 < 1/(t/16)^2 := by positivity
+  have hscaled :=
+    mul_le_mul_of_nonneg_left hnorm hfac.le
+  rw [W.physicalCombinedHeightDefect_scaled ht0]
+  convert hscaled using 1 <;>
+    field_simp [hr.ne'] <;>
+    ring_nf <;>
+    try rw [abs_div, abs_of_pos hr, div_pow] <;>
+    ring
+
+
 end Synthesis

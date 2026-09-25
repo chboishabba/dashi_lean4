@@ -134,3 +134,4 @@ jobs:
           lake env lean Integration/MoonshineNeutralCuspRelationCrossPollination.lean
           lake env lean Integration/MoonshineSSP15SignedFRACTRANBranch.lean
           lake env lean Integration/MoonshineOggAddressSSP15NoGo.lean
+          lake env lean Integration/MoonshineSSP15PrimeInternalFibre.lean

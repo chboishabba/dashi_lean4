@@ -2591,4 +2591,102 @@ def QuarticFourSignedPolePair.postSixthTerminalDeterministicBudgetAt
 
 
 
+/-!
+## Direct selected-M6 terminal scalar compiler
+
+This is the Clay-facing compiler surface for the sharpened lane.  Once the
+literal terminal budget is eventually strictly below the exact compensation
+threshold, no further sixth-order, carrier, or representation theorem is
+needed: the existing cofinal exact-source limit and completed-residual weld
+compile directly to G3.
+
+FarExact deliberately remains inside the scalar hypothesis with its sign.
+-/
+
+def QuarticFourSignedPolePair.PostSixthTerminalStrictAbsorb
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (EV : ℝ) : Prop :=
+  ∃ eps : ℝ, 0 < eps ∧
+    ∃ N : ℕ, ∀ n : ℕ, N <= n ->
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ)
+      ∧
+      W.postSixthTerminalM6BudgetAt EV n
+        <= W.compensationTargetThreshold rho - eps
+
+theorem QuarticFourSignedPolePair.globalOffOrd_le_target_sub_eps_of_postSixthTerminalStrictAbsorb
+    {t EV eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hM6lo :
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (heps : 0 < eps)
+    (N : ℕ)
+    (hN : ∀ n : ℕ, N <= n ->
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ)
+      ∧
+      W.postSixthTerminalM6BudgetAt EV n
+        <= W.compensationTargetThreshold rho - eps)
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV) :
+    (∑' z : Zeros, W.literalOffOrdSource z)
+      <= W.compensationTargetThreshold rho - eps := by
+  have ht0 : 0 < t := by linarith
+  have hfinite :
+      ∀ᶠ n : ℕ in atTop,
+        W.literalOffOrdExactAt n
+          <= W.compensationTargetThreshold rho - eps := by
+    rw [eventually_atTop]
+    refine ⟨N, ?_⟩
+    intro n hn
+    obtain ⟨hnRadius,hbudget⟩ := hN n hn
+    have hsource :=
+      W.literalOffOrdExactAt_le_postSixthTerminalM6BudgetAt
+        ht hM6lo hM6neg n hnRadius hV
+    exact hsource.trans hbudget
+  have hlim :=
+    W.literalOffOrdExactAt_tendsto_tsum ht0
+  exact le_of_tendsto hlim hfinite
+
+theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_postSixthTerminalStrictAbsorb
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hM6lo :
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV)
+    (hC : W.PostSixthTerminalStrictAbsorb rho EV) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho := by
+  rcases hC with ⟨eps,heps,N,hN⟩
+  have hglobal :=
+    W.globalOffOrd_le_target_sub_eps_of_postSixthTerminalStrictAbsorb
+      ht rho hM6lo hM6neg heps N hN hV
+  have hsum :
+      (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+        W.signedLiteralPairSourceTerm sigma)
+        <= W.compensationTargetThreshold rho - eps := by
+    rw [← W.literalOffOrdSource_tsum_eq_signedLiteralPairSource_tsum]
+    exact hglobal
+  rw [W.completedSignedResidual_eq_jointPairSource ht]
+  unfold QuarticFourSignedPolePair.compensationTargetThreshold at hsum
+  linarith
+
+
 end Synthesis

@@ -189,8 +189,10 @@ def write_lean_certificate(
         f'  , ⟨"{lean_string(blob.path)}", "{blob.sha}"⟩' for blob in blobs[1:]
     )
     first = blobs[0]
+    blob_by_name = {blob.name: blob for blob in blobs}
     binding_items = "\n".join(
         "  , ⟨"
+        f'"{lean_string(blob_by_name[binding.owner_blob].path)}", '
         f'"{lean_string(binding.agda_declaration)}", '
         f'"{lean_string(binding.lean_owner)}", '
         f'"{lean_string(binding.lean_declaration)}"'
@@ -198,6 +200,7 @@ def write_lean_certificate(
         for binding in bindings[1:]
     )
     first_binding = bindings[0]
+    first_binding_owner = blob_by_name[first_binding.owner_blob].path
     closure_items = "\n".join(f'  , "{lean_string(p)}"' for p in closure[1:])
     first_closure = closure[0] if closure else ""
 
@@ -227,7 +230,7 @@ def observedLoadBearingBlobs : List SourceBlob :=
   ]
 
 def observedTheoremBindings : List SourceTheoremBinding :=
-  [ ⟨"{lean_string(first_binding.owner_blob)}", "{lean_string(first_binding.agda_declaration)}",
+  [ ⟨"{lean_string(first_binding_owner)}", "{lean_string(first_binding.agda_declaration)}",
       "{lean_string(first_binding.lean_owner)}", "{lean_string(first_binding.lean_declaration)}"⟩
 {binding_items}
   ]

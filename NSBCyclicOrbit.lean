@@ -3,6 +3,7 @@ import NSBControl.SelfOrbitCommutatorCarrier
 import NSBControl.SingleSelfCommutatorOrbit
 import NSBControl.SpectatorFibreLegTransport
 import NSBControl.CompleteSelfOrbitCollapse
+import NSBControl.OutputPairingCollapse
 
 namespace NSBCyclicOrbit
 

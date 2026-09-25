@@ -148,4 +148,89 @@ theorem transcriptNotPromotedToEmpiricalProof :
 theorem empiricalApplicationStillRequiresEvidence :
     canonicalBoundary.empiricalApplicationRequiresExternalEvidence = true := rfl
 
+
+namespace ObjectiveRechart
+
+inductive Objective where
+  | approvalIndexed
+  | declaredCriterion
+  deriving DecidableEq
+
+inductive Choice where
+  | approvalConforming
+  | nonApprovalConforming
+  deriving DecidableEq
+
+def chooseByObjective : Objective → Choice
+  | .approvalIndexed => .approvalConforming
+  | .declaredCriterion => .nonApprovalConforming
+
+theorem objectiveRechartChangesSelectedConduct :
+    chooseByObjective .approvalIndexed ≠ chooseByObjective .declaredCriterion := by
+  intro h
+  cases h
+
+inductive ConstraintWorld where
+  | sameObjectiveLowSanction
+  | sameObjectiveHighSanction
+  deriving DecidableEq
+
+inductive SanctionAnswer where
+  | lowerExternalSanction
+  | higherExternalSanction
+  deriving DecidableEq
+
+def objectiveSurface : ConstraintWorld → Unit := fun _ => ()
+
+def sanctionAnswer : ConstraintWorld → SanctionAnswer
+  | .sameObjectiveLowSanction => .lowerExternalSanction
+  | .sameObjectiveHighSanction => .higherExternalSanction
+
+theorem objectiveDoesNotDetermineSanction :
+    ¬ FactorsThrough objectiveSurface sanctionAnswer := by
+  rintro ⟨coarse, h⟩
+  have h₁ := h ConstraintWorld.sameObjectiveLowSanction
+  have h₂ := h ConstraintWorld.sameObjectiveHighSanction
+  have bad :
+      SanctionAnswer.lowerExternalSanction =
+        SanctionAnswer.higherExternalSanction := by
+    exact h₁.trans h₂.symm
+  cases bad
+
+structure RechartBoundary where
+  objectiveChangeEqualsMeanness : Bool
+  approvalIndependenceEliminatesExternalSanction : Bool
+  approvalIndependenceEliminatesDesire : Bool
+  approvalIndependenceEliminatesSymbolicStructure : Bool
+  disapprovalAutomaticallyMeansCriterionFailure : Bool
+  approvalAutomaticallyMeansCriterionSuccess : Bool
+  reciprocalRelationRequiresSovereignEvaluator : Bool
+  rechartCanChangeSelectedConduct : Bool
+  relationCanPersistWithoutOneCentredApprovalObjective : Bool
+  empiricalPowerEffectRequiresEvidence : Bool
+  deriving DecidableEq
+
+def canonicalRechartBoundary : RechartBoundary where
+  objectiveChangeEqualsMeanness := false
+  approvalIndependenceEliminatesExternalSanction := false
+  approvalIndependenceEliminatesDesire := false
+  approvalIndependenceEliminatesSymbolicStructure := false
+  disapprovalAutomaticallyMeansCriterionFailure := false
+  approvalAutomaticallyMeansCriterionSuccess := false
+  reciprocalRelationRequiresSovereignEvaluator := false
+  rechartCanChangeSelectedConduct := true
+  relationCanPersistWithoutOneCentredApprovalObjective := true
+  empiricalPowerEffectRequiresEvidence := true
+
+theorem approvalIndependenceDoesNotEraseSanctions :
+    canonicalRechartBoundary.approvalIndependenceEliminatesExternalSanction = false := rfl
+
+theorem approvalIndependenceDoesNotEraseDesire :
+    canonicalRechartBoundary.approvalIndependenceEliminatesDesire = false := rfl
+
+theorem relationNeedNotRequireSovereignEvaluator :
+    canonicalRechartBoundary.reciprocalRelationRequiresSovereignEvaluator = false := rfl
+
+end ObjectiveRechart
+
 end DASHI.GenderedNormApproval

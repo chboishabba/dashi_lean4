@@ -80,7 +80,8 @@ theorem explicit_finite_layer_cannot_match_uniform_negative_active_source
       (lapseProfileState transitionOuterRadius).rho
         + (lapseProfileState transitionOuterRadius).radialPressure
         + 2 * (lapseProfileState transitionOuterRadius).tangentialPressure < 0 := by
-    simpa [hrho, hpr, hpt] using hneg
+    rw [hrho, hpr, hpt] at hneg
+    exact hneg
   have hpos := lapse_profile_outer_active_stress_positive
   unfold radialActiveStress at hpos
   linarith

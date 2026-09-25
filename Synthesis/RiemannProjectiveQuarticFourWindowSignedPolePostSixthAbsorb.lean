@@ -2959,4 +2959,97 @@ theorem exists_canonicalLiteralFarBaseExactAt_uniform_shell_bound :
     W hJ hJcut n
 
 
+
+/-!
+## Concrete linear high-ordinate cutoff
+
+For a closure-facing scalar interface we choose the deliberately conservative
+cutoff floor(t/2000).  It is inside the canonical physical far boundary for
+t >= 2000 because eta0 = 1/(pi+1) > 1/80.
+
+The constant 2000 is not optimized; its role is only to remove the auxiliary
+cutoff quantifier while retaining an explicit decaying shell bound.
+-/
+
+def quarticSignedPoleCanonicalFarCutoff (t : ℝ) : ℕ :=
+  ⌊t / 2000⌋₊
+
+theorem quarticSignedPoleCanonicalLocalRadius_gt_one_div_eighty :
+    (1/80 : ℝ) < quarticSignedPoleCanonicalLocalRadius := by
+  unfold quarticSignedPoleCanonicalLocalRadius
+  rw [div_lt_div_iff₀ (by norm_num : (0:ℝ) < 80)
+      (by positivity : 0 < Real.pi + 1)]
+  nlinarith [Real.pi_lt_four]
+
+theorem quarticSignedPoleCanonicalFarCutoff_one_le
+    {t : ℝ} (ht : 2000 <= t) :
+    1 <= quarticSignedPoleCanonicalFarCutoff t := by
+  unfold quarticSignedPoleCanonicalFarCutoff
+  rw [Nat.le_floor]
+  norm_num
+  linarith
+
+theorem quarticSignedPoleCanonicalFarCutoff_cast_le
+    {t : ℝ} (ht : 2000 <= t) :
+    (quarticSignedPoleCanonicalFarCutoff t : ℝ)
+      <= quarticSignedPoleCanonicalLocalRadius * (t/16) := by
+  have ht0 : 0 <= t := by linarith
+  have hfloor :
+      (quarticSignedPoleCanonicalFarCutoff t : ℝ) <= t/2000 := by
+    unfold quarticSignedPoleCanonicalFarCutoff
+    exact Nat.floor_le (by positivity)
+  have heta :=
+    quarticSignedPoleCanonicalLocalRadius_gt_one_div_eighty
+  have hcoeff :
+      (1/2000 : ℝ)
+        <= quarticSignedPoleCanonicalLocalRadius / 16 := by
+    nlinarith
+  have hmul :=
+    mul_le_mul_of_nonneg_right hcoeff ht0
+  have hscale :
+      t/2000
+        <= quarticSignedPoleCanonicalLocalRadius * (t/16) := by
+    calc
+      t/2000 = (1/2000 : ℝ) * t := by ring
+      _ <= (quarticSignedPoleCanonicalLocalRadius / 16) * t := hmul
+      _ = quarticSignedPoleCanonicalLocalRadius * (t/16) := by ring
+  exact hfloor.trans hscale
+
+theorem exists_canonicalLiteralFarBaseExactAt_linearCutoff_bound :
+    ∃ A : ℝ, 1 <= A ∧
+      ∀ {t : ℝ},
+        2000 <= t ->
+        (W : QuarticFourSignedPolePair t) ->
+        ∀ n : ℕ,
+          |W.literalFarBaseExactAt
+              quarticSignedPoleCanonicalLocalRadius n|
+            <=
+          W.signedOrdinateCurvature
+            *
+          farShellBound A |t|
+            (quarticSignedPoleCanonicalFarCutoff t) := by
+  obtain ⟨A,hA,hbound⟩ :=
+    exists_canonicalLiteralFarBaseExactAt_uniform_shell_bound
+  refine ⟨A,hA,?_⟩
+  intro t ht W n
+  have htpos : 0 < t := by linarith
+  exact hbound htpos W
+    (quarticSignedPoleCanonicalFarCutoff_one_le ht)
+    (quarticSignedPoleCanonicalFarCutoff_cast_le ht)
+    n
+
+theorem quarticSignedPoleCanonicalFarShellBound_eq
+    (A t : ℝ) :
+    farShellBound A |t|
+        (quarticSignedPoleCanonicalFarCutoff t)
+      =
+    18 * A * Real.log (|t|+4)
+        / quarticSignedPoleCanonicalFarCutoff t
+      +
+    72 * A
+        / Real.sqrt (quarticSignedPoleCanonicalFarCutoff t) := by
+  exact farShellBound_eq A |t|
+    (quarticSignedPoleCanonicalFarCutoff t)
+
+
 end Synthesis

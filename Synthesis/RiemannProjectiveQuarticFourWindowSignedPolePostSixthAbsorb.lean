@@ -4594,4 +4594,170 @@ theorem QuarticFourSignedPolePair.postSixthNormalizedCompensationCut_compiles_G3
     ht hM6lo hM6neg hV hC
 
 
+
+/-!
+## Literal normalized-cut expansion and terminal contradiction
+
+The finite-cut compensated far remainder has no hidden semantic content:
+
+  F_n
+    = 1/2 * (global exact pair source
+              - finite exact local pair source
+              - full Gamma/mu ordinate integral).
+
+This is exactly the manuscript-style compensated high-ordinate carrier.
+The final theorem below sends the one normalized compensation cut directly
+through the existing completed-residual G3 theorem to contradiction.
+-/
+
+theorem QuarticFourSignedPolePair.finiteCutCompensatedFar_eq_pairTail_sub_mu
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.finiteCutCompensatedFar n
+      =
+    (1/2 : ℝ)
+      *
+    (
+      (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+        W.signedLiteralPairSourceTerm sigma)
+      -
+      W.literalLocalExactAt
+        quarticSignedPoleCanonicalLocalRadius n
+      -
+      ∫ tau : ℝ,
+        W.signedOrdinateTest tau * Zeta23.mu tau
+    ) := by
+  unfold QuarticFourSignedPolePair.finiteCutCompensatedFar
+  rw [W.completedSignedResidual_eq_jointPairSource ht]
+  ring
+
+theorem QuarticFourSignedPolePair.normalizedFiniteCutCompensatedFar_eq_pairTail_sub_mu
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.normalizedFiniteCutCompensatedFar n
+      =
+    ((t/16)^2 / 2)
+      *
+    (
+      (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+        W.signedLiteralPairSourceTerm sigma)
+      -
+      W.literalLocalExactAt
+        quarticSignedPoleCanonicalLocalRadius n
+      -
+      ∫ tau : ℝ,
+        W.signedOrdinateTest tau * Zeta23.mu tau
+    ) := by
+  unfold QuarticFourSignedPolePair.normalizedFiniteCutCompensatedFar
+  rw [W.finiteCutCompensatedFar_eq_pairTail_sub_mu ht n]
+  ring
+
+def QuarticFourSignedPolePair.PostSixthLiteralCompensationCut
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (EV : ℝ) : Prop :=
+  ∃ n : ℕ,
+    quarticSignedPoleLocalHalfWidth
+        t quarticSignedPoleCanonicalLocalRadius
+      < (n : ℝ)
+    ∧
+    ((t/16)^6 / 2)
+      *
+    |
+      (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+        W.signedLiteralPairSourceTerm sigma)
+      -
+      W.literalLocalExactAt
+        quarticSignedPoleCanonicalLocalRadius n
+      -
+      ∫ tau : ℝ,
+        W.signedOrdinateTest tau * Zeta23.mu tau
+    |
+      <
+    (t/16)^6
+      * W.postSixthTerminalResidualMargin rho EV
+
+theorem QuarticFourSignedPolePair.postSixthLiteralCompensationCut_iff_normalized
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.PostSixthLiteralCompensationCut rho EV
+      ↔
+    W.PostSixthNormalizedCompensationCut rho EV := by
+  constructor
+  · rintro ⟨n,hn,hcut⟩
+    refine ⟨n,hn,?_⟩
+    rw [W.normalizedFiniteCutCompensatedFar_eq_pairTail_sub_mu ht n]
+    rw [abs_mul]
+    have hr2non :
+        0 <= (t/16)^2 / 2 := by positivity
+    rw [abs_of_nonneg hr2non]
+    convert hcut using 1
+    · ring
+    · rfl
+  · rintro ⟨n,hn,hcut⟩
+    refine ⟨n,hn,?_⟩
+    rw [W.normalizedFiniteCutCompensatedFar_eq_pairTail_sub_mu ht n] at hcut
+    rw [abs_mul] at hcut
+    have hr2non :
+        0 <= (t/16)^2 / 2 := by positivity
+    rw [abs_of_nonneg hr2non] at hcut
+    convert hcut using 1
+    · ring
+    · rfl
+
+theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_literalCompensationCut
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hM6lo :
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV)
+    (hC : W.PostSixthLiteralCompensationCut rho EV) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho := by
+  apply W.completedSignedResidual_lt_target_of_normalizedCompensationCut
+    ht hM6lo hM6neg hV
+  exact
+    (W.postSixthLiteralCompensationCut_iff_normalized
+      ht rho).mp hC
+
+theorem QuarticFourSignedPolePair.false_of_postSixthLiteralCompensationCut
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hhigh : 8/t < W.quantitativeTargetRadius)
+    {rho : Zeros}
+    (him : (rho : ℂ).im = t)
+    (hoff : heightOf rho ≠ 0)
+    (hM6lo :
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV)
+    (hC : W.PostSixthLiteralCompensationCut rho EV) :
+    False := by
+  have hstrict :=
+    W.completedSignedResidual_lt_target_of_literalCompensationCut
+      ht hM6lo hM6neg hV hC
+  exact
+    false_of_quarticFourSignedPole_completedResidual_strict
+      ht W hhigh him hoff hstrict
+
+
 end Synthesis

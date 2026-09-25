@@ -6245,4 +6245,147 @@ theorem QuarticFourSignedPolePair.canonicalOuterPairedHorizontalLimit_eq_far_add
   rw [W.canonicalLocalBoundaryPair_eq_symmetricWindow ht]
 
 
+
+/-!
+## Collapse far + symmetric boundary to one exhaustion-independent carrier
+
+The explicit symmetric boundary should not survive in the final theorem
+interface.  Combining it with the manuscript far compensation cancels the
+boundary already present in the centered-Abel tail formula.
+
+The resulting scalar is independent of the chosen centered-Abel exhaustion and
+is exactly the completed residual minus the already-defined local paired
+contribution.
+-/
+
+def QuarticFourSignedPolePair.canonicalFarBoundaryCoupledCompensation
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.canonicalFarCompletedCompensation
+    + (1/2 : ℝ)
+      *
+      (
+        W.signedOrdinateTest
+          (t + quarticSignedPoleCanonicalPhysicalHalfWidth t)
+        *
+        zetaMuCumulativeDiscrepancy
+          (t - quarticSignedPoleCanonicalPhysicalHalfWidth t)
+          (t + quarticSignedPoleCanonicalPhysicalHalfWidth t)
+      )
+
+theorem QuarticFourSignedPolePair.canonicalFarBoundaryCoupledCompensation_eq_outerLimit
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (E : W.CenteredAbelExhaustion) :
+    W.canonicalFarBoundaryCoupledCompensation
+      =
+    W.canonicalOuterPairedHorizontalLimit E := by
+  unfold QuarticFourSignedPolePair.canonicalFarBoundaryCoupledCompensation
+  rw [W.canonicalOuterPairedHorizontalLimit_eq_far_add_symmetricBoundary
+      ht E]
+
+theorem QuarticFourSignedPolePair.canonicalOuterPairedHorizontalLimit_independent
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (E₁ E₂ : W.CenteredAbelExhaustion) :
+    W.canonicalOuterPairedHorizontalLimit E₁
+      =
+    W.canonicalOuterPairedHorizontalLimit E₂ := by
+  rw [← W.canonicalFarBoundaryCoupledCompensation_eq_outerLimit ht E₁,
+      ← W.canonicalFarBoundaryCoupledCompensation_eq_outerLimit ht E₂]
+
+theorem QuarticFourSignedPolePair.canonicalLocalPairedAbel_eq_left_add_right
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalLocalPairedAbel
+      =
+    W.canonicalLocalLeftAbel
+      + W.canonicalLocalRightAbel := by
+  let h := quarticSignedPoleCanonicalPhysicalHalfWidth t
+  have hh : 0 < h :=
+    quarticSignedPoleCanonicalPhysicalHalfWidth_pos ht
+  let f : ℝ -> ℝ := W.centeredAbelIntegrand
+  have hleft :
+      IntervalIntegrable f volume (t-h) t :=
+    W.centeredAbelIntegrand_intervalIntegrable
+      ht (A:=t-h) (B:=t)
+  have hright :
+      IntervalIntegrable f volume t (t+h) :=
+    W.centeredAbelIntegrand_intervalIntegrable
+      ht (A:=t) (B:=t+h)
+  have hleft' :
+      IntervalIntegrable (fun s : ℝ => f (t-s))
+        volume 0 h := by
+    simpa using hleft.comp_sub_left t
+  have hright' :
+      IntervalIntegrable (fun s : ℝ => f (t+s))
+        volume 0 h := by
+    simpa using hright.comp_add_left t
+  have hL :
+      (∫ x in (t-h)..t, f x)
+        =
+      ∫ s in (0:ℝ)..h, f (t-s) := by
+    symm
+    simpa using
+      (intervalIntegral.integral_comp_sub_mul
+        (f:=f) (a:=(0:ℝ)) (b:=h)
+        (c:=(1:ℝ)) (by norm_num) t)
+  have hR :
+      (∫ x in t..(t+h), f x)
+        =
+      ∫ s in (0:ℝ)..h, f (t+s) := by
+    symm
+    simpa using
+      (intervalIntegral.integral_comp_add_left
+        (f:=f) (a:=(0:ℝ)) (b:=h) t)
+  unfold QuarticFourSignedPolePair.canonicalLocalPairedAbel
+    QuarticFourSignedPolePair.canonicalLocalLeftAbel
+    QuarticFourSignedPolePair.canonicalLocalRightAbel
+  dsimp [h]
+  rw [hL,hR, ← intervalIntegral.integral_add hleft' hright']
+  apply intervalIntegral.integral_congr
+  intro s hs
+  unfold f QuarticFourSignedPolePair.centeredAbelIntegrand
+    QuarticFourSignedPolePair.pairedCenteredAbelOffset
+  rw [W.signedOrdinateTestDeriv_reflect ht]
+  ring
+
+theorem QuarticFourSignedPolePair.canonicalFarBoundaryCoupledCompensation_eq_completed_sub_localPaired
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalFarBoundaryCoupledCompensation
+      =
+    W.completedSignedResidual
+      - W.canonicalLocalPairedContribution := by
+  unfold QuarticFourSignedPolePair.canonicalFarBoundaryCoupledCompensation
+    QuarticFourSignedPolePair.canonicalLocalPairedContribution
+  rw [W.completedSignedResidual_eq_canonicalLocal_add_far,
+      W.canonicalLocalNMuResidual_eq_centeredAbel ht,
+      W.canonicalLocalBoundaryPair_eq_symmetricWindow ht,
+      W.canonicalLocalPairedAbel_eq_left_add_right ht]
+  ring
+
+def QuarticFourSignedPolePair.quarticScaleCanonicalFarBoundaryCoupledCompensation
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  (t/16)^6 * W.canonicalFarBoundaryCoupledCompensation
+
+theorem QuarticFourSignedPolePair.quarticScaleCanonicalFarBoundaryCoupledCompensation_eq
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.quarticScaleCanonicalFarBoundaryCoupledCompensation
+      =
+    (t/16)^6
+      *
+      (W.completedSignedResidual
+        - W.canonicalLocalPairedContribution) := by
+  unfold QuarticFourSignedPolePair.quarticScaleCanonicalFarBoundaryCoupledCompensation
+  rw [W.canonicalFarBoundaryCoupledCompensation_eq_completed_sub_localPaired ht]
+
+
 end Synthesis

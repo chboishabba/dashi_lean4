@@ -5488,4 +5488,255 @@ theorem QuarticFourSignedPolePair.normalizedPairedIntegrand_eq_cubic_add_quintic
   ring
 
 
+
+/-!
+## The cubic paired discrepancy is exactly the centered V4 Abel coordinate
+
+The symmetric discrepancy exposed above is not merely analogous to V4.
+For a physical symmetric half-width h, the quartic Abel derivative can be
+recentered from the left endpoint to t exactly:
+
+  V4(t,h)
+    = h^4 D(t-h,t+h)
+      - ∫_{t-h}^{t+h} 4(x-t)^3 E_t(x) dx.
+
+The constant left-anchor discrepancy disappears because the cubic derivative
+has zero integral on the symmetric interval.  Thus the leading cubic part of
+the selected C'_W correlation is literally a scalar multiple of the already
+owned V4 coordinate plus one explicit symmetric boundary term.
+-/
+
+theorem zetaMuCumulativeDiscrepancy_leftAnchor_eq_const_add_centered
+    {t h x : ℝ}
+    (hh : 0 <= h)
+    (hx : x ∈ Set.Icc (t-h) (t+h)) :
+    zetaMuCumulativeDiscrepancy (t-h) x
+      =
+    zetaMuCumulativeDiscrepancy (t-h) t
+      + centeredZetaMuDiscrepancy t x := by
+  by_cases hxt : x <= t
+  · exact
+      zetaMuCumulativeDiscrepancy_left_eq_centered
+        hx.1 hxt
+  · have htx : t <= x := le_of_not_ge hxt
+    have hAt : t-h <= t := by linarith
+    have hadd :=
+      zetaMuCumulativeDiscrepancy_add
+        (A:=t-h) (B:=t) (C:=x) hAt htx
+    rw [centeredZetaMuDiscrepancy_of_le htx]
+    exact hadd
+
+def quarticSignedPoleCenteredFourthAbelCorrelation
+    (t h : ℝ) : ℝ :=
+  ∫ x in (t-h)..(t+h),
+    quarticSignedPoleVerticalFourthWeightDeriv t x
+      * centeredZetaMuDiscrepancy t x
+
+theorem quarticSignedPoleCenteredFourthAbelCorrelation_intervalIntegrable
+    {t h : ℝ}
+    (hh : 0 <= h) :
+    IntervalIntegrable
+      (fun x : ℝ =>
+        quarticSignedPoleVerticalFourthWeightDeriv t x
+          * centeredZetaMuDiscrepancy t x)
+      volume (t-h) (t+h) := by
+  have hAB : t-h <= t+h := by linarith
+  have hder :=
+    quarticSignedPoleVerticalFourthWeightDeriv_intervalIntegrable
+      t (t-h) (t+h)
+  have hN :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          quarticSignedPoleVerticalFourthWeightDeriv t x
+            * (Ncount (t-h) x : ℝ))
+        volume (t-h) (t+h) :=
+    phi_mul_Ncount_intervalIntegrable hAB hder
+  have hM :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          quarticSignedPoleVerticalFourthWeightDeriv t x
+            * zetaMuPrimitive (t-h) x)
+        volume (t-h) (t+h) :=
+    phi_mul_zetaMuPrimitive_intervalIntegrable hder
+  have hCum :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          quarticSignedPoleVerticalFourthWeightDeriv t x
+            * zetaMuCumulativeDiscrepancy (t-h) x)
+        volume (t-h) (t+h) := by
+    unfold zetaMuCumulativeDiscrepancy
+    simpa [mul_sub] using hN.sub hM
+  have hConst :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          quarticSignedPoleVerticalFourthWeightDeriv t x
+            * zetaMuCumulativeDiscrepancy (t-h) t)
+        volume (t-h) (t+h) := by
+    exact hder.mul_const _
+  have hSub := hCum.sub hConst
+  refine hSub.congr_ae ?_
+  rw [Filter.EventuallyEq,
+    MeasureTheory.ae_restrict_iff' measurableSet_uIoc]
+  filter_upwards with x hx
+  have hxI : x ∈ Set.Icc (t-h) (t+h) := by
+    simpa [Set.uIoc_of_le hAB] using ⟨hx.1.le,hx.2⟩
+  rw [zetaMuCumulativeDiscrepancy_leftAnchor_eq_const_add_centered
+      hh hxI]
+  ring
+
+theorem quarticSignedPoleRvMVerticalFourthDiscrepancy_eq_centeredAbel
+    {t h : ℝ}
+    (hh : 0 <= h) :
+    quarticSignedPoleRvMVerticalFourthDiscrepancy t h
+      =
+    h^4
+      * zetaMuCumulativeDiscrepancy (t-h) (t+h)
+      -
+    quarticSignedPoleCenteredFourthAbelCorrelation t h := by
+  have hAB : t-h <= t+h := by linarith
+  have hraw :=
+    quarticSignedPoleRvMVerticalFourthDiscrepancy_eq_abel
+      (t:=t) (r:=h) hh
+  have hder :=
+    quarticSignedPoleVerticalFourthWeightDeriv_intervalIntegrable
+      t (t-h) (t+h)
+  have hcenter :=
+    quarticSignedPoleCenteredFourthAbelCorrelation_intervalIntegrable
+      (t:=t) hh
+  have hconst :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          quarticSignedPoleVerticalFourthWeightDeriv t x
+            * zetaMuCumulativeDiscrepancy (t-h) t)
+        volume (t-h) (t+h) :=
+    hder.mul_const _
+  have hFTC :=
+    intervalIntegral.integral_deriv_eq_sub'
+      (fun x hx =>
+        quarticSignedPoleVerticalFourthWeight_hasDerivAt t x)
+      hder
+  have hDerivZero :
+      (∫ x in (t-h)..(t+h),
+        quarticSignedPoleVerticalFourthWeightDeriv t x) = 0 := by
+    rw [hFTC]
+    unfold quarticSignedPoleVerticalFourthWeight
+    ring
+  have hConstZero :
+      (∫ x in (t-h)..(t+h),
+        quarticSignedPoleVerticalFourthWeightDeriv t x
+          * zetaMuCumulativeDiscrepancy (t-h) t) = 0 := by
+    rw [show
+        (fun x : ℝ =>
+          quarticSignedPoleVerticalFourthWeightDeriv t x
+            * zetaMuCumulativeDiscrepancy (t-h) t)
+        =
+        fun x =>
+          zetaMuCumulativeDiscrepancy (t-h) t
+            * quarticSignedPoleVerticalFourthWeightDeriv t x by
+      funext x
+      ring]
+    rw [intervalIntegral.integral_const_mul, hDerivZero, mul_zero]
+  have hCum :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          quarticSignedPoleVerticalFourthWeightDeriv t x
+            * zetaMuCumulativeDiscrepancy (t-h) x)
+        volume (t-h) (t+h) := by
+    have hN :
+        IntervalIntegrable
+          (fun x : ℝ =>
+            quarticSignedPoleVerticalFourthWeightDeriv t x
+              * (Ncount (t-h) x : ℝ))
+          volume (t-h) (t+h) :=
+      phi_mul_Ncount_intervalIntegrable hAB hder
+    have hM :
+        IntervalIntegrable
+          (fun x : ℝ =>
+            quarticSignedPoleVerticalFourthWeightDeriv t x
+              * zetaMuPrimitive (t-h) x)
+          volume (t-h) (t+h) :=
+      phi_mul_zetaMuPrimitive_intervalIntegrable hder
+    unfold zetaMuCumulativeDiscrepancy
+    simpa [mul_sub] using hN.sub hM
+  have hsplit :
+      (∫ x in (t-h)..(t+h),
+        quarticSignedPoleVerticalFourthWeightDeriv t x
+          * zetaMuCumulativeDiscrepancy (t-h) x)
+        =
+      (∫ x in (t-h)..(t+h),
+        quarticSignedPoleVerticalFourthWeightDeriv t x
+          * zetaMuCumulativeDiscrepancy (t-h) t)
+        +
+      quarticSignedPoleCenteredFourthAbelCorrelation t h := by
+    unfold quarticSignedPoleCenteredFourthAbelCorrelation
+    rw [← intervalIntegral.integral_add hconst hcenter]
+    apply intervalIntegral.integral_congr
+    intro x hx
+    have hxI : x ∈ Set.Icc (t-h) (t+h) := by
+      simpa [Set.uIcc_of_le hAB] using hx
+    rw [zetaMuCumulativeDiscrepancy_leftAnchor_eq_const_add_centered
+      hh hxI]
+    ring
+  rw [hsplit, hConstZero, zero_add] at hraw
+  exact hraw
+
+def QuarticFourSignedPolePair.canonicalCenteredFourthAbelCorrelation
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  quarticSignedPoleCenteredFourthAbelCorrelation
+    t (quarticSignedPoleCanonicalPhysicalHalfWidth t)
+
+theorem QuarticFourSignedPolePair.canonicalCenteredFourthAbelCorrelation_eq_boundary_sub_V4
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalCenteredFourthAbelCorrelation
+      =
+    (quarticSignedPoleCanonicalPhysicalHalfWidth t)^4
+      *
+      zetaMuCumulativeDiscrepancy
+        (t - quarticSignedPoleCanonicalPhysicalHalfWidth t)
+        (t + quarticSignedPoleCanonicalPhysicalHalfWidth t)
+      -
+    quarticSignedPoleRvMVerticalFourthDiscrepancy
+      t (quarticSignedPoleCanonicalPhysicalHalfWidth t) := by
+  have hh :
+      0 <= quarticSignedPoleCanonicalPhysicalHalfWidth t :=
+    (quarticSignedPoleCanonicalPhysicalHalfWidth_pos ht).le
+  have h :=
+    quarticSignedPoleRvMVerticalFourthDiscrepancy_eq_centeredAbel
+      (t:=t)
+      (h:=quarticSignedPoleCanonicalPhysicalHalfWidth t)
+      hh
+  unfold QuarticFourSignedPolePair.canonicalCenteredFourthAbelCorrelation
+  linarith
+
+def QuarticFourSignedPolePair.cubicLeadingCanonicalCorrelation
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  -(W.targetStrength / 6)
+    * W.canonicalCenteredFourthAbelCorrelation
+
+theorem QuarticFourSignedPolePair.cubicLeadingCanonicalCorrelation_eq_V4_boundary
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.cubicLeadingCanonicalCorrelation
+      =
+    -(W.targetStrength / 6)
+      *
+    (
+      (quarticSignedPoleCanonicalPhysicalHalfWidth t)^4
+        *
+        zetaMuCumulativeDiscrepancy
+          (t - quarticSignedPoleCanonicalPhysicalHalfWidth t)
+          (t + quarticSignedPoleCanonicalPhysicalHalfWidth t)
+      -
+      quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t (quarticSignedPoleCanonicalPhysicalHalfWidth t)
+    ) := by
+  unfold QuarticFourSignedPolePair.cubicLeadingCanonicalCorrelation
+  rw [W.canonicalCenteredFourthAbelCorrelation_eq_boundary_sub_V4 ht]
+
+
 end Synthesis

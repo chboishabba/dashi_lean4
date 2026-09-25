@@ -1,0 +1,54 @@
+name: J369 small-characteristic recognition Lean
+
+on:
+  push:
+    branches:
+      - agent/j369-small-characteristic-recognition-20260925
+    paths:
+      - "Integration/ActionOrbitRecognition.lean"
+      - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/ProvenancePreservingRecognition.lean"
+      - "Integration/OggSSPIndependentBase369Recognition.lean"
+      - "Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean"
+      - "AgdaMirror/OggSSPSmallCharacteristicRecognition.lean"
+      - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
+      - "Integration.lean"
+      - "AgdaMirror.lean"
+      - ".github/workflows/j369-small-characteristic-recognition.yml"
+  pull_request:
+    paths:
+      - "Integration/ActionOrbitRecognition.lean"
+      - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/ProvenancePreservingRecognition.lean"
+      - "Integration/OggSSPIndependentBase369Recognition.lean"
+      - "Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean"
+      - "AgdaMirror/OggSSPSmallCharacteristicRecognition.lean"
+      - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
+      - "Integration.lean"
+      - "AgdaMirror.lean"
+      - ".github/workflows/j369-small-characteristic-recognition.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recognition:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Check action/orbit recognition core
+        run: lake env lean Integration/ActionOrbitRecognition.lean
+      - name: Check J369 small-characteristic recognition
+        run: lake env lean Integration/OggSSPSmallCharacteristicRecognition.lean
+      - name: Check provenance recognition core
+        run: lake env lean Integration/ProvenancePreservingRecognition.lean
+      - name: Check independent Base369 recognitions
+        run: lake env lean Integration/OggSSPIndependentBase369Recognition.lean
+      - name: Check Agda parity receipts
+        run: |
+          lake env lean AgdaMirror/OggSSPSmallCharacteristicRecognition.lean
+          lake env lean AgdaMirror/OggSSPIndependentBase369Recognition.lean
+      - name: Run focused axiom audit
+        run: lake env lean Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean

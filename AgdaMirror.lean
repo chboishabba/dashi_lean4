@@ -132,6 +132,8 @@ provides faithful Lean mirrors:
 -/
 
 import AgdaMirror.JInvariant369ConsolidatedNextStage
+import AgdaMirror.OggSSPSmallCharacteristicRecognition
+import AgdaMirror.OggSSPIndependentBase369Recognition
 
 import AgdaMirror.JInvariant369ZeroToThirteenTetralemmaQualification
 

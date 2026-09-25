@@ -82,12 +82,37 @@ theorem coarse_observer_factors_through_exact_lane (lane : SSP15Lane) :
       addressCoarse10 lane := by
   cases lane <;> rfl
 
+
+def addressCoordinates (a : SSP15OggAddress15) : Nat × Nat :=
+  (coarseSheets a, remainder a)
+
+theorem address_coordinates_injective :
+    Function.Injective addressCoordinates := by
+  intro a b h
+  cases a <;> cases b <;> simp [addressCoordinates, coarseSheets, remainder] at h ⊢
+
+theorem exact_ogg_coordinates_determine_ssp15_lane :
+    Function.Injective (fun lane : SSP15Lane =>
+      addressCoordinates (addressFromSSP15Lane lane)) := by
+  intro left right h
+  have ha :
+      addressFromSSP15Lane left = addressFromSSP15Lane right :=
+    address_coordinates_injective h
+  simpa using congrArg ssp15LaneFromAddress ha
+
+theorem p2_p11_exact_addresses_distinct :
+    addressFromSSP15Lane .p2 ≠ addressFromSSP15Lane .p11 := by decide
+
+theorem p5_p23_exact_addresses_distinct :
+    addressFromSSP15Lane .p5 ≠ addressFromSSP15Lane .p23 := by decide
+
 structure Boundary where
   ssp15CarrierIsOggPrimeCarrier : Bool
   exactAddressCarrierHasFifteenCases : Bool
   exactAddressDecodesSSP15Lane : Bool
   laneAddressRoundTripPaid : Bool
   addressLaneRoundTripPaid : Bool
+  exactCoordinatesDetermineSSP15Lane : Bool
   coarseModeOrientationIsOnlyDerivedObserver : Bool
   deriving Repr
 
@@ -97,6 +122,7 @@ def canonicalBoundary : Boundary where
   exactAddressDecodesSSP15Lane := true
   laneAddressRoundTripPaid := true
   addressLaneRoundTripPaid := true
+  exactCoordinatesDetermineSSP15Lane := true
   coarseModeOrientationIsOnlyDerivedObserver := true
 
 end Integration.MoonshineSSP15OggAddressCodec

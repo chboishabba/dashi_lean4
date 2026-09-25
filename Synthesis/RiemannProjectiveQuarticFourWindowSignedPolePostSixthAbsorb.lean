@@ -8511,4 +8511,107 @@ theorem QuarticFourSignedPolePair.physicalHeightDefect_lower_quartic_sixth
     ring
 
 
+
+theorem QuarticFourSignedPolePair.physicalHeightDefect_lower_quartic_of_M6_neg
+    {t a : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (ha : |a| <= 1/2)
+    (hM6neg : W.signedProfileMomentSix <= 0) :
+    (W.targetStrength/24) * a^4 / (t/16)^6
+      - (1/143360 : ℝ) * |a|^8
+          * W.signedProfileAbsMomentEight / (t/16)^10
+      <=
+    W.physicalCombinedHeightDefect a := by
+  have h :=
+    W.physicalHeightDefect_lower_quartic_sixth ht ha
+  have hr8 : 0 < (t/16)^8 := by
+    have ht0 : 0 < t := by linarith
+    positivity
+  have hsix :
+      0 <=
+      -(W.signedProfileMomentSix/2880) * a^6 / (t/16)^8 := by
+    have ha6 : 0 <= a^6 := by positivity
+    have hcoef : 0 <= -(W.signedProfileMomentSix/2880) := by
+      linarith
+    positivity
+  linarith
+
+theorem QuarticFourSignedPolePair.physicalHeightDefect_lower_selected_explicit
+    {t a : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hS :
+      quarticSignedPoleStrengthFloor <= W.targetStrength)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (ha : |a| <= 1/2) :
+    (quarticSignedPoleStrengthFloor/24) * a^4 / (t/16)^6
+      -
+    (1/143360 : ℝ) * |a|^8
+      * ((Real.pi + 1)^2 * quarticSignedPoleExplicitK0)
+      / (t/16)^10
+      <=
+    W.physicalCombinedHeightDefect a := by
+  have hbase :=
+    W.physicalHeightDefect_lower_quartic_of_M6_neg
+      ht ha hM6neg.le
+  have hK :=
+    W.fourthLipschitz_le_explicitK0 ht
+  have hM8 :=
+    W.signedProfileAbsMomentEight_le_supportSq_mul_fourthLipschitz
+  have hM8K :
+      W.signedProfileAbsMomentEight
+        <= (Real.pi + 1)^2 * quarticSignedPoleExplicitK0 :=
+    hM8.trans
+      (mul_le_mul_of_nonneg_left hK
+        (sq_nonneg (Real.pi + 1)))
+  have ht0 : 0 < t := by linarith
+  have hr6 : 0 < (t/16)^6 := by positivity
+  have hr10 : 0 < (t/16)^10 := by positivity
+  have ha4 : 0 <= a^4 := by positivity
+  have ha8 : 0 <= |a|^8 := by positivity
+  have hlead :
+      (quarticSignedPoleStrengthFloor/24) * a^4 / (t/16)^6
+        <=
+      (W.targetStrength/24) * a^4 / (t/16)^6 := by
+    gcongr
+  have herr :
+      (1/143360 : ℝ) * |a|^8
+          * W.signedProfileAbsMomentEight / (t/16)^10
+        <=
+      (1/143360 : ℝ) * |a|^8
+          * ((Real.pi + 1)^2 * quarticSignedPoleExplicitK0)
+          / (t/16)^10 := by
+    gcongr
+  linarith
+
+theorem QuarticFourSignedPolePair.ambientSimpleMargin_lower_selected_explicit
+    {t a EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hS :
+      quarticSignedPoleStrengthFloor <= W.targetStrength)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (ha : |a| <= 1/2) :
+    2 *
+      (
+        (quarticSignedPoleStrengthFloor/24) * a^4 / (t/16)^6
+          -
+        (1/143360 : ℝ) * |a|^8
+          * ((Real.pi + 1)^2 * quarticSignedPoleExplicitK0)
+          / (t/16)^10
+      )
+      -
+      (1/2 : ℝ) * W.postSixthTerminalLocalM6Budget EV
+      <=
+    W.ambientPostSixthTerminalResidualMargin 1 a EV := by
+  have hdef :=
+    W.physicalHeightDefect_lower_selected_explicit
+      ht hS hM6neg ha
+  unfold QuarticFourSignedPolePair.ambientPostSixthTerminalResidualMargin
+    QuarticFourSignedPolePair.ambientZeroHeightDefect
+  norm_num
+  linarith
+
+
 end Synthesis

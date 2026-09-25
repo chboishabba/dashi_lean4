@@ -1,6 +1,7 @@
 import NSBControl.CyclicHelicalVectorTransform
 import NSBControl.SelfOrbitCommutatorCarrier
 import NSBControl.SingleSelfCommutatorOrbit
+import NSBControl.SpectatorFibreLegTransport
 
 namespace NSBCyclicOrbit
 

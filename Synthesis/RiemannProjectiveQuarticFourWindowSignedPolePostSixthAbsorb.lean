@@ -3845,4 +3845,155 @@ theorem exists_completedSignedResidual_lt_target_of_horizontalCurvature_and_scal
       hM6lo hM6neg hV hstrict
 
 
+
+/-!
+## Far carrier is genuinely off-ordinate
+
+For every positive normalized radius, the far predicate forces Im rho != t.
+Thus on the canonical positive radius the zero-extension in literalOffOrdSource
+is never active on the far carrier.
+-/
+
+theorem quarticSignedPoleFar_im_ne
+    {t eta : ℝ} {rho : Zeros}
+    (heta : 0 < eta)
+    (hfar : quarticSignedPoleFar t eta rho) :
+    (rho : ℂ).im ≠ t := by
+  intro him
+  have hzero :
+      quarticSignedPoleNormalizedOrdinateOffset t rho = 0 := by
+    unfold quarticSignedPoleNormalizedOrdinateOffset
+    rw [him]
+    simp
+  unfold quarticSignedPoleFar at hfar
+  rw [hzero, abs_zero] at hfar
+  linarith
+
+theorem quarticSignedPoleFar_mem_offOrd
+    {t eta : ℝ} {rho : Zeros}
+    (heta : 0 < eta)
+    (hfar : quarticSignedPoleFar t eta rho) :
+    rho ∈ ((SameOrd t)ᶜ : Set Zeros) := by
+  have himne := quarticSignedPoleFar_im_ne heta hfar
+  simpa [SameOrd] using himne
+
+def QuarticFourSignedPolePair.signedHorizontalOffOrdSourceTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : ((SameOrd t)ᶜ : Set Zeros)) : ℝ :=
+  W.poleTwo *
+      quarticFourHorizontalSourceTerm
+        W.R (1/2) W.muHalf t (sigma : Zeros)
+    +
+  (-W.poleHalf) *
+      quarticFourHorizontalSourceTerm
+        W.R (2/3) W.muTwo t (sigma : Zeros)
+
+theorem QuarticFourSignedPolePair.signedHorizontalOffOrdSourceTerm_summable
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Summable W.signedHorizontalOffOrdSourceTerm := by
+  have h1 :=
+    (quarticFourHorizontalSourceTerm_summable_offOrd
+      (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf)
+      W.Rpos ht).mul_left W.poleTwo
+  have h2 :=
+    (quarticFourHorizontalSourceTerm_summable_offOrd
+      (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo)
+      W.Rpos ht).mul_left (-W.poleHalf)
+  exact h1.add h2
+
+theorem QuarticFourSignedPolePair.signedHorizontalRemainder_eq_half_tsum
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.signedHorizontalRemainder
+      =
+    (1/2 : ℝ) *
+      (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+        W.signedHorizontalOffOrdSourceTerm sigma) := by
+  have h1 :=
+    quarticFourHorizontalSourceTerm_summable_offOrd
+      (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf)
+      W.Rpos ht
+  have h2 :=
+    quarticFourHorizontalSourceTerm_summable_offOrd
+      (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo)
+      W.Rpos ht
+  unfold QuarticFourSignedPolePair.signedHorizontalRemainder
+    quarticFourHorizontalRemainder
+    QuarticFourSignedPolePair.signedHorizontalOffOrdSourceTerm
+  rw [(h1.mul_left W.poleTwo).tsum_add
+      (h2.mul_left (-W.poleHalf)),
+      tsum_mul_left, tsum_mul_left]
+  ring
+
+theorem QuarticFourSignedPolePair.signedLiteralPairSourceTerm_eq_base_add_horizontal
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (sigma : ((SameOrd t)ᶜ : Set Zeros)) :
+    W.signedLiteralPairSourceTerm sigma
+      =
+    W.signedZeroSourceTerm (sigma : Zeros)
+      + W.signedHorizontalOffOrdSourceTerm sigma := by
+  unfold QuarticFourSignedPolePair.signedLiteralPairSourceTerm
+    QuarticFourSignedPolePair.signedHorizontalOffOrdSourceTerm
+  rw [quarticFourPairDefect_eq_base_add_horizontal
+        W.R (1/2) W.muHalf t (sigma : Zeros),
+      quarticFourPairDefect_eq_base_add_horizontal
+        W.R (2/3) W.muTwo t (sigma : Zeros),
+      W.signedZeroSourceTerm_eq_linear (sigma : Zeros)]
+  ring
+
+theorem QuarticFourSignedPolePair.literalOffOrdSource_eq_base_add_horizontal_of_offOrd
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)) :
+    W.literalOffOrdSource rho
+      =
+    W.signedZeroSourceTerm rho
+      +
+    W.signedHorizontalOffOrdSourceTerm
+        (⟨rho,hoff⟩ : ((SameOrd t)ᶜ : Set Zeros)) := by
+  simp [QuarticFourSignedPolePair.literalOffOrdSource, hoff]
+  exact
+    W.signedLiteralPairSourceTerm_eq_base_add_horizontal
+      (⟨rho,hoff⟩ : ((SameOrd t)ᶜ : Set Zeros))
+
+theorem QuarticFourSignedPolePair.literalFarHorizontalExactTerm_eq_existing
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (heta : 0 < eta)
+    {rho : Zeros}
+    (hfar : quarticSignedPoleFar t eta rho) :
+    W.literalFarHorizontalExactTerm eta rho
+      =
+    W.signedHorizontalOffOrdSourceTerm
+      (⟨rho, quarticSignedPoleFar_mem_offOrd heta hfar⟩ :
+        ((SameOrd t)ᶜ : Set Zeros)) := by
+  let hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros) :=
+    quarticSignedPoleFar_mem_offOrd heta hfar
+  unfold QuarticFourSignedPolePair.literalFarHorizontalExactTerm
+  rw [if_pos hfar]
+  rw [W.literalOffOrdSource_eq_base_add_horizontal_of_offOrd hoff]
+  ring
+
+theorem QuarticFourSignedPolePair.literalFarExactTerm_eq_existing_base_horizontal
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (heta : 0 < eta)
+    {rho : Zeros}
+    (hfar : quarticSignedPoleFar t eta rho) :
+    W.literalFarExactTerm eta rho
+      =
+    W.signedZeroSourceTerm rho
+      +
+    W.signedHorizontalOffOrdSourceTerm
+      (⟨rho, quarticSignedPoleFar_mem_offOrd heta hfar⟩ :
+        ((SameOrd t)ᶜ : Set Zeros)) := by
+  rw [W.literalFarExactTerm_eq_base_add_horizontal]
+  unfold QuarticFourSignedPolePair.literalFarBaseExactTerm
+  rw [if_pos hfar,
+      W.literalFarHorizontalExactTerm_eq_existing heta hfar]
+
+
 end Synthesis

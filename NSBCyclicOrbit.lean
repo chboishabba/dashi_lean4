@@ -5,6 +5,7 @@ import NSBControl.SpectatorFibreLegTransport
 import NSBControl.CompleteSelfOrbitCollapse
 import NSBControl.OutputPairingCollapse
 import NSBControl.OutputRealityNoGo
+import NSBControl.SelectedSelfResolvedRecombination
 
 namespace NSBCyclicOrbit
 

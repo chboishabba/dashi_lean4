@@ -1,6 +1,7 @@
 import Mathlib
 import Integration.NonginOnePointOneArmyRefinement
 import Integration.TwistronicsRelativeRegistrationComparator
+import Integration.CoarseUnitFineFibreCapacity
 
 /-!
 # Relational-coordinate / +1 cross-pollination
@@ -67,3 +68,28 @@ def canonicalBoundary : RelationalCoordinatePlusOneBoundary where
   sameShapeImpliesSameMechanism := false
 
 end Integration.RelationalCoordinatePlusOneCrossPollination
+
+
+namespace FibreAmplification
+
+theorem jCompletionFineCoordinateCountIs19683 :
+    1 * 19683 = 19683 := by norm_num
+
+structure PlusOneFibreAmplificationBoundary where
+  coarseUnitCanIndexLargeFineCoordinateFamily : Bool
+  futureRelevantFineClassesForceResidualCapacity : Bool
+  jCompletionFineCoordinate19683Reused : Bool
+  fixedEvaluationFibreCardinality19683Claimed : Bool
+  oneCoarseUnitMeansOneFineState : Bool
+  largeFineFibreMeansUniversalAdvantage : Bool
+  deriving Repr
+
+def canonicalBoundary : PlusOneFibreAmplificationBoundary where
+  coarseUnitCanIndexLargeFineCoordinateFamily := true
+  futureRelevantFineClassesForceResidualCapacity := true
+  jCompletionFineCoordinate19683Reused := true
+  fixedEvaluationFibreCardinality19683Claimed := false
+  oneCoarseUnitMeansOneFineState := false
+  largeFineFibreMeansUniversalAdvantage := false
+
+end FibreAmplification

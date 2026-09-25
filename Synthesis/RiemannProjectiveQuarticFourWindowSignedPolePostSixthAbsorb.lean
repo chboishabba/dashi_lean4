@@ -6161,4 +6161,88 @@ theorem QuarticFourSignedPolePair.canonicalFarCompletedCompensation_eq_outerLimi
   ring
 
 
+/-!
+## Collapse the canonical boundary pair
+
+The selected ordinate test is even about the target ordinate.  Consequently
+the two Abel boundary terms at the canonical cut share one common test value,
+while discrepancy additivity combines their left/right N-mu increments into
+the single symmetric window discrepancy.
+
+This is the last representation simplification needed for the asymptotic
+outer-paired carrier.
+-/
+
+theorem QuarticFourSignedPolePair.signedOrdinateTest_center_reflection
+    {t y : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.signedOrdinateTest (t-y)
+      = W.signedOrdinateTest (t+y) := by
+  rw [W.signedOrdinateTest_eq_combinedCosine,
+      W.signedOrdinateTest_eq_combinedCosine]
+  dsimp
+  have hr : t/16 ≠ 0 := by positivity
+  have harg :
+      (t-y-t)/(t/16)
+        = -((t+y-t)/(t/16)) := by
+    field_simp [hr]
+    ring
+  rw [harg, compactCosineTransform_even]
+
+theorem QuarticFourSignedPolePair.canonicalLocalBoundaryPair_eq_symmetricWindow
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalLocalLeftBoundary
+        + W.canonicalLocalRightBoundary
+      =
+    W.signedOrdinateTest
+        (t + quarticSignedPoleCanonicalPhysicalHalfWidth t)
+      *
+    zetaMuCumulativeDiscrepancy
+      (t - quarticSignedPoleCanonicalPhysicalHalfWidth t)
+      (t + quarticSignedPoleCanonicalPhysicalHalfWidth t) := by
+  let h := quarticSignedPoleCanonicalPhysicalHalfWidth t
+  have hh : 0 < h :=
+    quarticSignedPoleCanonicalPhysicalHalfWidth_pos ht
+  have hleft : t-h < t := by linarith
+  have hright : t <= t+h := by linarith
+  have hadd :=
+    zetaMuCumulativeDiscrepancy_add
+      (A:=t-h) (B:=t) (C:=t+h)
+      hleft.le hright
+  have hreflect :=
+    W.signedOrdinateTest_center_reflection ht (y:=h)
+  unfold QuarticFourSignedPolePair.canonicalLocalLeftBoundary
+    QuarticFourSignedPolePair.canonicalLocalRightBoundary
+  dsimp [h]
+  rw [centeredZetaMuDiscrepancy_of_le hright]
+  rw [hreflect]
+  rw [← hadd]
+  ring
+
+theorem QuarticFourSignedPolePair.canonicalOuterPairedHorizontalLimit_eq_far_add_symmetricBoundary
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (E : W.CenteredAbelExhaustion) :
+    W.canonicalOuterPairedHorizontalLimit E
+      =
+    W.canonicalFarCompletedCompensation
+      +
+    (1/2 : ℝ)
+      *
+    (
+      W.signedOrdinateTest
+        (t + quarticSignedPoleCanonicalPhysicalHalfWidth t)
+      *
+      zetaMuCumulativeDiscrepancy
+        (t - quarticSignedPoleCanonicalPhysicalHalfWidth t)
+        (t + quarticSignedPoleCanonicalPhysicalHalfWidth t)
+    ) := by
+  rw [W.canonicalOuterPairedHorizontalLimit_eq_far_add_boundary ht E]
+  rw [W.canonicalLocalBoundaryPair_eq_symmetricWindow ht]
+
+
 end Synthesis

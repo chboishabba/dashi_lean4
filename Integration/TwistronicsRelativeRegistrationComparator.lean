@@ -1,4 +1,5 @@
 import Mathlib
+import Integration.NonginOnePointOneArmyRefinement
 
 /-!
 # Twistronics relative-registration comparator
@@ -178,3 +179,100 @@ def canonicalBoundary : OnePointOneCrossPollinationBoundary where
   exactTenPercentGainExplainsMagicAnglePhysics := false
 
 end OnePointOneCrossPollination
+
+
+namespace RegistrationRefinement
+
+structure RegistrationSensitiveWitness
+    {Microscopic Registration Effective : Type}
+    (observeEffective :
+      Integration.TwistronicsRelativeRegistrationComparator.OverlayState
+        Microscopic Registration → Effective) where
+  microscopic : Microscopic
+  firstRegistration : Registration
+  secondRegistration : Registration
+  effectiveChanges :
+    observeEffective
+      ⟨microscopic, microscopic, firstRegistration⟩ ≠
+    observeEffective
+      ⟨microscopic, microscopic, secondRegistration⟩
+
+def forgetRegistration
+    {Microscopic Registration : Type} :
+    Integration.TwistronicsRelativeRegistrationComparator.OverlayState
+      Microscopic Registration →
+    Microscopic × Microscopic
+  | ⟨left, right, _⟩ => (left, right)
+
+theorem registration_sensitive_implies_distinct
+    {Microscopic Registration Effective : Type}
+    {observeEffective :
+      Integration.TwistronicsRelativeRegistrationComparator.OverlayState
+        Microscopic Registration → Effective}
+    (w : RegistrationSensitiveWitness observeEffective) :
+    w.firstRegistration ≠ w.secondRegistration := by
+  intro h
+  apply w.effectiveChanges
+  cases h
+  rfl
+
+theorem coarse_pair_not_injective
+    {Microscopic Registration Effective : Type}
+    {observeEffective :
+      Integration.TwistronicsRelativeRegistrationComparator.OverlayState
+        Microscopic Registration → Effective}
+    (w : RegistrationSensitiveWitness observeEffective) :
+    ¬ Function.Injective
+      (forgetRegistration :
+        Integration.TwistronicsRelativeRegistrationComparator.OverlayState
+          Microscopic Registration →
+        Microscopic × Microscopic) := by
+  intro h
+  have sameState :
+      (⟨w.microscopic, w.microscopic, w.firstRegistration⟩ :
+        Integration.TwistronicsRelativeRegistrationComparator.OverlayState
+          Microscopic Registration) =
+      ⟨w.microscopic, w.microscopic, w.secondRegistration⟩ :=
+    h rfl
+  exact registration_sensitive_implies_distinct w
+    (congrArg
+      Integration.TwistronicsRelativeRegistrationComparator.OverlayState.relativeRegistration
+      sameState)
+
+theorem no_effective_factorization_through_coarse_pair
+    {Microscopic Registration Effective : Type}
+    {observeEffective :
+      Integration.TwistronicsRelativeRegistrationComparator.OverlayState
+        Microscopic Registration → Effective}
+    (w : RegistrationSensitiveWitness observeEffective) :
+    ¬ ∃ coarseObserve : (Microscopic × Microscopic) → Effective,
+      ∀ state, observeEffective state = coarseObserve (forgetRegistration state) := by
+  rintro ⟨coarseObserve, h⟩
+  have left := h
+    (⟨w.microscopic, w.microscopic, w.firstRegistration⟩ :
+      Integration.TwistronicsRelativeRegistrationComparator.OverlayState
+        Microscopic Registration)
+  have right := h
+    (⟨w.microscopic, w.microscopic, w.secondRegistration⟩ :
+      Integration.TwistronicsRelativeRegistrationComparator.OverlayState
+        Microscopic Registration)
+  exact w.effectiveChanges (left.trans right.symm)
+
+structure NonginTwistronicsRefinementBoundary where
+  nonginUsesStrictRefinementShape : Bool
+  twistronicsUsesStrictRefinementShape : Bool
+  bothNeedConsumerSeparationWitness : Bool
+  sharedShapeImpliesSharedMechanism : Bool
+  frameCoordinateIsTwistAngle : Bool
+  onePointOneExplainsMagicAngleValue : Bool
+  deriving Repr
+
+def canonicalBoundary : NonginTwistronicsRefinementBoundary where
+  nonginUsesStrictRefinementShape := true
+  twistronicsUsesStrictRefinementShape := true
+  bothNeedConsumerSeparationWitness := true
+  sharedShapeImpliesSharedMechanism := false
+  frameCoordinateIsTwistAngle := false
+  onePointOneExplainsMagicAngleValue := false
+
+end RegistrationRefinement

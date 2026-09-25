@@ -636,15 +636,261 @@ theorem current_tov_layer_metric_reconstruction_boundary :
   }
 
 def finiteThicknessTOVLapseReconstructed : Bool := false
-def finiteThicknessDarmoisMatchSolved : Bool := false
+def finiteThicknessDarmoisMatchSolved : Bool := true
+
+/-!
+Lambda-aware finite-thickness TOV profile and shell-free outer boundary.
+
+The repulsive exterior uses a positive cosmological term.  The correct interior
+comparison therefore uses the SAME lambda in the finite TOV gravity factor:
+
+  G_Lambda =
+    (m + r^3 p_r - Lambda r^3/3)
+    /
+    (r (r - 2m - Lambda r^3/3)).
+
+At p_r(R)=0 this is exactly f'_Kottler(R)/(2 f_Kottler(R)).  Hence once the
+boundary time normalization is chosen so that e^(2 Phi(R)) = f_Kottler(R),
+the first radial derivative of g_tt matches as well; no residual Israel shell is
+required at the outer boundary.
+-/
+
+def lambdaSchwarzschildDenominator
+    (state : RationalRadialState)
+    (lambda : Rat) : Rat :=
+  state.radius
+    * (state.radius - 2 * state.mass - lambda * state.radius^3 / 3)
+
+def lambdaTOVGravityNumerator
+    (state : RationalRadialState)
+    (lambda : Rat) : Rat :=
+  state.mass + state.radius^3 * state.radialPressure
+    - lambda * state.radius^3 / 3
+
+def lambdaTOVGravityFactor
+    (state : RationalRadialState)
+    (lambda : Rat) : Rat :=
+  lambdaTOVGravityNumerator state lambda
+    / lambdaSchwarzschildDenominator state lambda
+
+def anisotropicLambdaTOVRHS
+    (state : RationalRadialState)
+    (lambda : Rat) : Rat :=
+  -((state.rho + state.radialPressure)
+      * lambdaTOVGravityFactor state lambda)
+    + 2 * (state.tangentialPressure - state.radialPressure) / state.radius
+
+def designedLambdaTangentialPressure
+    (state : RationalRadialState)
+    (lambda radialPressureDerivative : Rat) : Rat :=
+  state.radialPressure
+    + state.radius / 2
+      * (radialPressureDerivative
+          + (state.rho + state.radialPressure)
+            * lambdaTOVGravityFactor state lambda)
+
+def withDesignedLambdaTangentialPressure
+    (state : RationalRadialState)
+    (lambda radialPressureDerivative : Rat) : RationalRadialState :=
+  { state with
+    tangentialPressure :=
+      designedLambdaTangentialPressure
+        state lambda radialPressureDerivative }
+
+theorem designed_lambda_tangential_pressure_solves_tov
+    (state : RationalRadialState)
+    (lambda radialPressureDerivative : Rat)
+    (hRadius : state.radius ≠ 0) :
+    anisotropicLambdaTOVRHS
+        (withDesignedLambdaTangentialPressure
+          state lambda radialPressureDerivative)
+        lambda
+      = radialPressureDerivative := by
+  unfold anisotropicLambdaTOVRHS
+    withDesignedLambdaTangentialPressure
+    designedLambdaTangentialPressure
+  simp only
+  field_simp [hRadius]
+  ring
+
+def finiteLayerLambda : Rat := transitionOuterLambda
+
+def lambdaLayerState (radius : Rat) : RationalRadialState :=
+  withDesignedLambdaTangentialPressure
+    (layerBaseState radius)
+    finiteLayerLambda
+    layerRadialPressureDerivative
+
+theorem lambda_layer_denominator_positive
+    {radius : Rat}
+    (hLower : transitionInnerRadius ≤ radius)
+    (hUpper : radius ≤ transitionOuterRadius) :
+    0 <
+      layerBaseState radius |>.radius
+        - 2 * (layerBaseState radius |>.mass)
+        - finiteLayerLambda * (layerBaseState radius |>.radius)^3 / 3 := by
+  have hr : 0 < radius := layer_radius_positive hLower
+  have hsq : radius^2 ≤ (25/4 : Rat) :=
+    layer_radius_square_upper hLower hUpper
+  rw [finite_thickness_kottler_target_exact]
+  dsimp [layerBaseState, layerMass]
+  have hfactor : (1/3 : Rat) ≤ 1 - (8/75 : Rat) * radius^2 := by
+    nlinarith
+  have hfactorPos : 0 < 1 - (8/75 : Rat) * radius^2 := by
+    linarith
+  have hprod :
+      0 < radius * (1 - (8/75 : Rat) * radius^2) :=
+    mul_pos hr hfactorPos
+  convert hprod using 1 <;> ring
+
+theorem lambda_layer_tov_exact
+    {radius : Rat}
+    (hLower : transitionInnerRadius ≤ radius) :
+    anisotropicLambdaTOVRHS
+        (lambdaLayerState radius)
+        finiteLayerLambda
+      = layerRadialPressureDerivative := by
+  exact designed_lambda_tangential_pressure_solves_tov
+    (layerBaseState radius)
+    finiteLayerLambda
+    layerRadialPressureDerivative
+    (ne_of_gt (layer_radius_positive hLower))
+
+theorem lambda_layer_outer_gravity_factor :
+    lambdaTOVGravityFactor
+      (layerBaseState transitionOuterRadius)
+      finiteLayerLambda
+      = -2/5 := by
+  norm_num [lambdaTOVGravityFactor, lambdaTOVGravityNumerator,
+    lambdaSchwarzschildDenominator, layerBaseState, layerMass,
+    layerRadialPressure, layerEnergyDensity, layerDensityBar,
+    transitionOuterRadius, transitionOuterMass,
+    finiteLayerLambda, transitionOuterLambda,
+    transitionOuterScaledLambda, scaledLambdaMidpoint]
+
+def kottlerLogLapseSlope
+    (radius mass lambda : Rat) : Rat :=
+  fExteriorPrimeJunction radius mass lambda
+    / (2 * fExteriorJunction radius mass lambda)
+
+theorem finite_layer_outer_log_lapse_matches :
+    lambdaTOVGravityFactor
+      (layerBaseState transitionOuterRadius)
+      finiteLayerLambda
+    =
+    kottlerLogLapseSlope
+      transitionOuterRadius transitionOuterMass transitionOuterLambda := by
+  rw [lambda_layer_outer_gravity_factor]
+  norm_num [kottlerLogLapseSlope, fExteriorPrimeJunction,
+    fExteriorJunction, transitionOuterRadius, transitionOuterMass,
+    transitionOuterLambda, transitionOuterScaledLambda,
+    scaledLambdaMidpoint]
+
+def finiteLayerBoundaryLapse : Rat :=
+  fExteriorJunction
+    transitionOuterRadius transitionOuterMass transitionOuterLambda
+
+def finiteLayerBoundaryLapsePrime : Rat :=
+  2 * finiteLayerBoundaryLapse
+    * lambdaTOVGravityFactor
+        (layerBaseState transitionOuterRadius)
+        finiteLayerLambda
+
+theorem finite_layer_boundary_lapse :
+    finiteLayerBoundaryLapse = 1/3 := by
+  exact transition_outer_kottler_lapse
+
+theorem finite_layer_boundary_lapse_prime :
+    finiteLayerBoundaryLapsePrime = -4/15 := by
+  rw [finite_layer_boundary_lapse, lambda_layer_outer_gravity_factor]
+  norm_num [finiteLayerBoundaryLapsePrime]
+
+theorem finite_layer_boundary_lapse_prime_matches_kottler :
+    finiteLayerBoundaryLapsePrime
+      =
+    fExteriorPrimeJunction
+      transitionOuterRadius transitionOuterMass transitionOuterLambda := by
+  rw [finite_layer_boundary_lapse_prime]
+  norm_num [fExteriorPrimeJunction, transitionOuterRadius,
+    transitionOuterMass, transitionOuterLambda,
+    transitionOuterScaledLambda, scaledLambdaMidpoint]
+
+structure LambdaAwareFiniteThicknessBoundaryWitness : Prop where
+  sameLambda :
+    finiteLayerLambda = transitionOuterLambda
+  radialPressureZero :
+    layerRadialPressure transitionOuterRadius = 0
+  outerMassMatched :
+    layerMass transitionOuterRadius = transitionOuterMass
+  boundaryLapsePositive :
+    finiteLayerBoundaryLapse = 1/3
+  logLapseSlopeMatched :
+    lambdaTOVGravityFactor
+      (layerBaseState transitionOuterRadius)
+      finiteLayerLambda
+    =
+    kottlerLogLapseSlope
+      transitionOuterRadius transitionOuterMass transitionOuterLambda
+  lapseDerivativeMatched :
+    finiteLayerBoundaryLapsePrime
+      =
+    fExteriorPrimeJunction
+      transitionOuterRadius transitionOuterMass transitionOuterLambda
+
+theorem lambda_aware_finite_thickness_boundary :
+    LambdaAwareFiniteThicknessBoundaryWitness := by
+  exact {
+    sameLambda := rfl
+    radialPressureZero := layer_outer_pressure
+    outerMassMatched := layer_outer_mass_matches
+    boundaryLapsePositive := finite_layer_boundary_lapse
+    logLapseSlopeMatched := finite_layer_outer_log_lapse_matches
+    lapseDerivativeMatched :=
+      finite_layer_boundary_lapse_prime_matches_kottler
+  }
+
+structure LambdaAwareRationalFiniteThicknessTOVProfileWitness : Prop where
+  baseProfile : RationalFiniteThicknessTOVProfileWitness
+  lambdaTOVExact :
+    ∀ radius,
+      transitionInnerRadius ≤ radius →
+      radius ≤ transitionOuterRadius →
+      anisotropicLambdaTOVRHS
+        (lambdaLayerState radius)
+        finiteLayerLambda
+        = layerRadialPressureDerivative
+  lambdaRadialDenominatorPositive :
+    ∀ radius,
+      transitionInnerRadius ≤ radius →
+      radius ≤ transitionOuterRadius →
+      0 <
+        layerBaseState radius |>.radius
+          - 2 * (layerBaseState radius |>.mass)
+          - finiteLayerLambda * (layerBaseState radius |>.radius)^3 / 3
+  outerBoundary : LambdaAwareFiniteThicknessBoundaryWitness
+
+theorem lambda_aware_rational_finite_thickness_tov_profile :
+    LambdaAwareRationalFiniteThicknessTOVProfileWitness := by
+  exact {
+    baseProfile := rational_finite_thickness_tov_profile
+    lambdaTOVExact := fun radius hlo _ =>
+      lambda_layer_tov_exact hlo
+    lambdaRadialDenominatorPositive := fun radius hlo hhi =>
+      lambda_layer_denominator_positive hlo hhi
+    outerBoundary := lambda_aware_finite_thickness_boundary
+  }
+
+def finiteThicknessLambdaAwareTOVSolved : Bool := true
+def finiteThicknessOuterDarmoisBoundaryDataSolved : Bool := true
+def finiteThicknessFullInteriorLapseReconstructionStillRequired : Bool := true
 
 def finiteThicknessLiteralTOVTransitionSolved : Bool := true
 def finiteThicknessContinuumEinsteinPDESolved : Bool := false
 def finiteThicknessScalarFieldEquationSolved : Bool := false
 def finiteThicknessSourceNativeCMP119ProfileDerived : Bool := false
 def finiteThicknessExteriorParameterWindowCompiled : Bool := true
-def finiteThicknessTOVToKottlerDarmoisMatchingStillRequired : Bool := true
-def finiteThicknessExteriorMatchingStillRequired : Bool := true
-def finiteThicknessExteriorMatchingCompiled : Bool := false
+def finiteThicknessTOVToKottlerDarmoisMatchingStillRequired : Bool := false
+def finiteThicknessExteriorMatchingStillRequired : Bool := false
+def finiteThicknessExteriorMatchingCompiled : Bool := true
 
 end Integration.AntigravityFiniteThicknessTOVTransition

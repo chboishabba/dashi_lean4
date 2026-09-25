@@ -198,5 +198,109 @@ theorem threeOuterLegChannel_explicit
 
 end Vector
 
+
+section PairingNormalForm
+
+variable {V : Type*}
+variable [AddCommGroup V] [Module ℝ V]
+
+variable (modeNorm : Mode → ℝ)
+variable (component : HelicitySign → Mode → V)
+variable (project : Mode → V → V)
+variable (cross : V → V → V)
+variable (conjugate : V → V)
+variable (pairing : V → V → ℝ)
+
+variable
+  (pairScaleRight :
+    ∀ (a : ℝ) (u v : V), pairing u (a • v) = a * pairing u v)
+  (projectSelfAdjoint :
+    ∀ (m : Mode) (u v : V),
+      pairing u (project m v) = pairing (project m u) v)
+
+def baseGeometry
+    (test : V) (τ : Triad) (signP signQ : HelicitySign) : ℝ :=
+  pairing (project τ.k test)
+    (cross (component signP τ.p) (component signQ τ.q))
+
+def pLegGeometry
+    (test : V) (τ : Triad) (signK signQ : HelicitySign) : ℝ :=
+  pairing (project τ.p test)
+    (cross (component signK τ.k) (conjugate (component signQ τ.q)))
+
+def qLegGeometry
+    (test : V) (τ : Triad) (signK signP : HelicitySign) : ℝ :=
+  pairing (project τ.q test)
+    (cross (component signK τ.k) (conjugate (component signP τ.p)))
+
+theorem basePairing_factor
+    (test : V) (τ : Triad) (signP signQ : HelicitySign) :
+    pairing test
+      (baseChannelVector modeNorm component project cross τ signP signQ) =
+      baseCoefficient modeNorm τ signP signQ *
+        baseGeometry component project cross pairing test τ signP signQ := by
+  unfold baseChannelVector channelVector baseGeometry baseCoefficient
+  rw [pairScaleRight]
+  rw [projectSelfAdjoint]
+
+theorem pLegPairing_factor
+    (test : V) (τ : Triad) (signK signQ : HelicitySign) :
+    pairing test
+      (pLegChannelVector
+        modeNorm component project cross conjugate τ signK signQ) =
+      pLegCoefficient modeNorm τ signK signQ *
+        pLegGeometry component project cross conjugate pairing
+          test τ signK signQ := by
+  unfold pLegChannelVector pLegGeometry pLegCoefficient
+  rw [pairScaleRight]
+  rw [projectSelfAdjoint]
+
+theorem qLegPairing_factor
+    (test : V) (τ : Triad) (signK signP : HelicitySign) :
+    pairing test
+      (qLegChannelVector
+        modeNorm component project cross conjugate τ signK signP) =
+      qLegCoefficient modeNorm τ signK signP *
+        qLegGeometry component project cross conjugate pairing
+          test τ signK signP := by
+  unfold qLegChannelVector qLegGeometry qLegCoefficient
+  rw [pairScaleRight]
+  rw [projectSelfAdjoint]
+
+theorem geometryOrientation_closes
+    (testK testP testQ : V)
+    (τ : Triad)
+    (signP signQ signK : HelicitySign)
+    (hP :
+      pLegGeometry component project cross conjugate pairing
+          testP τ signK signQ =
+        - baseGeometry component project cross pairing
+          testK τ signP signQ)
+    (hQ :
+      qLegGeometry component project cross conjugate pairing
+          testQ τ signK signP =
+        baseGeometry component project cross pairing
+          testK τ signP signQ) :
+    pairing testK
+        (baseChannelVector modeNorm component project cross τ signP signQ) +
+      pairing testP
+        (pLegChannelVector
+          modeNorm component project cross conjugate τ signK signQ) +
+      pairing testQ
+        (qLegChannelVector
+          modeNorm component project cross conjugate τ signK signP) = 0 := by
+  rw [basePairing_factor modeNorm component project cross pairing
+        pairScaleRight projectSelfAdjoint]
+  rw [pLegPairing_factor modeNorm component project cross conjugate pairing
+        pairScaleRight projectSelfAdjoint]
+  rw [qLegPairing_factor modeNorm component project cross conjugate pairing
+        pairScaleRight projectSelfAdjoint]
+  rw [hP, hQ]
+  unfold baseCoefficient pLegCoefficient qLegCoefficient
+  ring
+
+end PairingNormalForm
+
+
 end CyclicHelicalVectorTransform
 end NSBControl

@@ -2,6 +2,8 @@ import Mathlib
 import Integration.NonginOnePointOneArmyRefinement
 import Integration.TwistronicsRelativeRegistrationComparator
 import Integration.CoarseUnitFineFibreCapacity
+import Integration.LatentDistinctionActivation
+import Integration.NonginOnePointOneFutureSplit
 
 /-!
 # Relational-coordinate / +1 cross-pollination
@@ -93,3 +95,27 @@ def canonicalBoundary : PlusOneFibreAmplificationBoundary where
   largeFineFibreMeansUniversalAdvantage := false
 
 end FibreAmplification
+
+
+namespace DynamicActivation
+
+structure PlusOneDynamicActivationBoundary where
+  extensionShapeAloneImpliesDynamicActivation : Bool
+  nonginFrameHasConcreteActivationWitness : Bool
+  ninePlusOneHasActivationWitnessHere : Bool
+  tenPlusOneHasActivationWitnessHere : Bool
+  fiftyThreePlusOneHasActivationWitnessHere : Bool
+  monsterPlusOneHasActivationWitnessHere : Bool
+  arithmeticEqualityCreatesFutureDistinction : Bool
+  deriving Repr
+
+def canonicalBoundary : PlusOneDynamicActivationBoundary where
+  extensionShapeAloneImpliesDynamicActivation := false
+  nonginFrameHasConcreteActivationWitness := true
+  ninePlusOneHasActivationWitnessHere := false
+  tenPlusOneHasActivationWitnessHere := false
+  fiftyThreePlusOneHasActivationWitnessHere := false
+  monsterPlusOneHasActivationWitnessHere := false
+  arithmeticEqualityCreatesFutureDistinction := false
+
+end DynamicActivation

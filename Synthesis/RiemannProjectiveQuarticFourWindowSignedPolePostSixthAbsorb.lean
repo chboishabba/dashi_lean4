@@ -3052,4 +3052,110 @@ theorem quarticSignedPoleCanonicalFarShellBound_eq
     (quarticSignedPoleCanonicalFarCutoff t)
 
 
+
+/-!
+## Identify the exact far-horizontal carrier
+
+The difference introduced by the far split is exactly the already-existing
+endpoint-linear horizontal source.  This removes the last representation
+ambiguity from the literal far-horizontal finite sum.
+-/
+
+def QuarticFourSignedPolePair.signedHorizontalSourceTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) : ℝ :=
+  W.poleTwo *
+      quarticFourHorizontalSourceTerm
+        W.R (1/2) W.muHalf t rho
+    +
+  (-W.poleHalf) *
+      quarticFourHorizontalSourceTerm
+        W.R (2/3) W.muTwo t rho
+
+theorem QuarticFourSignedPolePair.literalOffOrdSource_sub_zero_eq_horizontalSource
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)) :
+    W.literalOffOrdSource rho - W.signedZeroSourceTerm rho
+      = W.signedHorizontalSourceTerm rho := by
+  unfold QuarticFourSignedPolePair.literalOffOrdSource
+  rw [dif_pos hoff]
+  unfold QuarticFourSignedPolePair.signedLiteralPairSourceTerm
+    QuarticFourSignedPolePair.signedHorizontalSourceTerm
+  rw [W.signedZeroSourceTerm_eq_linear,
+      quarticFourPairDefect_eq_base_add_horizontal,
+      quarticFourPairDefect_eq_base_add_horizontal]
+  ring
+
+theorem quarticSignedPoleFar_mem_offOrd
+    {t eta : ℝ}
+    (heta : 0 < eta)
+    (rho : Zeros)
+    (hfar : quarticSignedPoleFar t eta rho) :
+    rho ∈ ((SameOrd t)ᶜ : Set Zeros) := by
+  rw [Set.mem_compl_iff]
+  intro hsame
+  have him : (rho : ℂ).im = t := by
+    exact hsame
+  unfold quarticSignedPoleFar
+    quarticSignedPoleNormalizedOrdinateOffset at hfar
+  rw [him, sub_self, zero_div, abs_zero] at hfar
+  linarith
+
+theorem QuarticFourSignedPolePair.literalFarHorizontalExactTerm_eq_horizontalSource
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (heta : 0 < eta)
+    (rho : Zeros) :
+    W.literalFarHorizontalExactTerm eta rho
+      =
+    if quarticSignedPoleFar t eta rho then
+      W.signedHorizontalSourceTerm rho
+    else
+      0 := by
+  by_cases hfar : quarticSignedPoleFar t eta rho
+  · have hoff := quarticSignedPoleFar_mem_offOrd heta rho hfar
+    rw [if_pos hfar]
+    unfold QuarticFourSignedPolePair.literalFarHorizontalExactTerm
+    rw [if_pos hfar]
+    exact W.literalOffOrdSource_sub_zero_eq_horizontalSource rho hoff
+  · simp [QuarticFourSignedPolePair.literalFarHorizontalExactTerm, hfar]
+
+theorem QuarticFourSignedPolePair.literalFarHorizontalExactAt_eq_horizontalSource
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (heta : 0 < eta)
+    (n : ℕ) :
+    W.literalFarHorizontalExactAt eta n
+      =
+    ∑ rho ∈ centeredZeroFinset t n,
+      if quarticSignedPoleFar t eta rho then
+        W.signedHorizontalSourceTerm rho
+      else
+        0 := by
+  classical
+  unfold QuarticFourSignedPolePair.literalFarHorizontalExactAt
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  exact W.literalFarHorizontalExactTerm_eq_horizontalSource heta rho
+
+theorem QuarticFourSignedPolePair.signedHorizontalSourceTerm_summable_offOrd
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Summable
+      (fun sigma : ((SameOrd t)ᶜ : Set Zeros) =>
+        W.signedHorizontalSourceTerm (sigma : Zeros)) := by
+  have h1 :=
+    (quarticFourHorizontalSourceTerm_summable_offOrd
+      (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf)
+      W.Rpos ht).mul_left W.poleTwo
+  have h2 :=
+    (quarticFourHorizontalSourceTerm_summable_offOrd
+      (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo)
+      W.Rpos ht).mul_left (-W.poleHalf)
+  exact h1.add h2
+
+
 end Synthesis

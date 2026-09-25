@@ -4760,4 +4760,149 @@ theorem QuarticFourSignedPolePair.false_of_postSixthLiteralCompensationCut
       ht W hhigh him hoff hstrict
 
 
+
+/-!
+## Selected witness + target-band weld
+
+The terminal-M6 witness is also admissible for the already-paid G1 quantitative
+band.  The explicit K0 theorem is universal over every four-window witness at
+t >= 200, so no second existential witness is needed.
+
+Above the existing quantitative threshold, the very same witness carries:
+
+* the target-strength floor;
+* the terminal signed-sixth certificate;
+* the full-strip quantitative target radius.
+-/
+
+theorem exists_quarticFourSignedPolePair_with_terminal_M6_and_band_of_threshold
+    {t : ℝ}
+    (ht200 : 200 <= t)
+    (htQ : quarticSignedPoleQuantitativeThreshold < t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      quarticSignedPoleStrengthFloor <= W.targetStrength
+        ∧
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+        ∧
+      W.signedProfileMomentSix < 0
+        ∧
+      8/t < W.quantitativeTargetRadius := by
+  obtain ⟨W,hSraw,hM6lo,hM6neg⟩ :=
+    exists_quarticFourSignedPolePair_with_strength_floor_and_terminal_M6
+      ht200
+  have hS :
+      quarticSignedPoleStrengthFloor <= W.targetStrength := by
+    simpa [quarticSignedPoleStrengthFloor] using hSraw
+  have hK :
+      W.fourthLipschitz <= quarticSignedPoleExplicitK0 :=
+    W.fourthLipschitz_le_explicitK0 ht200
+  have hthreshold :
+      4 * (quarticSignedPoleExplicitK0 + 1) / t
+        < quarticSignedPoleStrengthFloor :=
+    quarticSignedPole_scalar_threshold_of_gt htQ
+  have hband :
+      8/t < W.quantitativeTargetRadius :=
+    quarticSignedPole_quantitativeBand_covers_strip
+      (by
+        have hqpos := quarticSignedPoleQuantitativeThreshold_pos
+        linarith)
+      W
+      quarticSignedPoleStrengthFloor_pos
+      quarticSignedPoleExplicitK0_nonneg
+      hS hK hthreshold
+  exact ⟨W,hS,hM6lo,hM6neg,hband⟩
+
+theorem exists_quarticFourSignedPolePair_with_terminal_M6_and_band_above_PT
+    {t : ℝ}
+    (htPT : quarticPlattTrudgianCutoff < t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      quarticSignedPoleStrengthFloor <= W.targetStrength
+        ∧
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+        ∧
+      W.signedProfileMomentSix < 0
+        ∧
+      8/t < W.quantitativeTargetRadius := by
+  have ht200 : 200 <= t := by
+    have hPT := quarticPlattTrudgianCutoff_gt_twoHundred
+    linarith
+  have htQ : quarticSignedPoleQuantitativeThreshold < t :=
+    lt_trans quarticSignedPoleThresholdBelowPlattTrudgian_proved htPT
+  exact
+    exists_quarticFourSignedPolePair_with_terminal_M6_and_band_of_threshold
+      ht200 htQ
+
+/-!
+## One remaining high-ordinate predicate
+
+The V4 discrepancy producer is witness-independent.  For a fixed producer
+constant CV, the only witness-dependent high assertion left is that one
+already-certified selected witness satisfies the literal compensated cut.
+
+This predicate intentionally bundles the already-paid witness certificates so
+that there is no hidden same-witness matching obligation.
+-/
+
+def quarticSignedPoleSelectedLiteralHighCut
+    (CV t : ℝ) (rho : Zeros) : Prop :=
+  ∃ W : QuarticFourSignedPolePair t,
+    quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧
+    -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+      ∧
+    W.signedProfileMomentSix < 0
+      ∧
+    8/t < W.quantitativeTargetRadius
+      ∧
+    W.PostSixthLiteralCompensationCut rho
+      (quarticSignedPoleCanonicalV4Error CV t)
+
+/--
+Global V4 producer + one literal compensation cut -> contradiction.
+
+Everything except the selected literal high cut is supplied by existing
+theorem-bearing infrastructure.  The lower-end condition is exactly the
+threshold required by the arbitrary-endpoint V4 producer and is independent
+of the selected witness.
+-/
+theorem exists_quarticSignedPoleV4Producer_compiles_selectedLiteralHighCut :
+    ∃ CV TV : ℝ,
+      0 <= CV
+        ∧
+      ∀ {t : ℝ},
+        200 <= t ->
+        max TV 4
+            <=
+          t - quarticSignedPoleLocalHalfWidth
+                t quarticSignedPoleCanonicalLocalRadius ->
+        ∀ {rho : Zeros},
+          (rho : ℂ).im = t ->
+          heightOf rho ≠ 0 ->
+          quarticSignedPoleSelectedLiteralHighCut CV t rho ->
+          False := by
+  obtain ⟨CV,TV,hCV,hVprod⟩ :=
+    exists_quarticSignedPoleRvMVerticalFourthDiscrepancy_bound
+  refine ⟨CV,TV,hCV,?_⟩
+  intro t ht hleft rho him hoff hcut
+  rcases hcut with
+    ⟨W,hS,hM6lo,hM6neg,hband,hcomp⟩
+  let r :=
+    quarticSignedPoleLocalHalfWidth
+      t quarticSignedPoleCanonicalLocalRadius
+  have hr : 0 < r := by
+    dsimp [r,quarticSignedPoleLocalHalfWidth]
+    positivity
+  have hVraw :=
+    hVprod t r hr (by simpa [r] using hleft)
+  have hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy t r|
+        <= quarticSignedPoleCanonicalV4Error CV t := by
+    simpa [quarticSignedPoleCanonicalV4Error,r] using hVraw
+  exact
+    W.false_of_postSixthLiteralCompensationCut
+      ht hband him hoff hM6lo hM6neg
+      (by simpa [r] using hV)
+      hcomp
+
+
 end Synthesis

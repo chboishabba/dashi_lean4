@@ -159,7 +159,8 @@ theorem full_triple_does_not_descend :
 theorem every_consumer_descends_through_exact_code
     {Outcome : Type} (consumer : ArithmeticTriple → Outcome) :
     DescendsThrough consumer encodeTriple :=
-  ⟨fun code => consumer (decodeTriple code), fun t => by simp [decode_encode_triple]⟩
+  ⟨fun code => consumer (decodeTriple code),
+    fun t => congrArg consumer (decode_encode_triple t)⟩
 
 /-! ## §5 Consumer-indexed routing -/
 
@@ -234,9 +235,13 @@ theorem decode_encode_selected_role
     decodeSelectedRoleMagnitude role (encodeSelectedRole role t) =
       roleMagnitude role t := by
   rcases t with ⟨a,b,c⟩
-  cases role <;> simp [encodeSelectedRole, selectedRoleResidual,
-    decodeSelectedRoleMagnitude, roleSurface, roleMagnitude, surface]
-  all_goals cases ‹Nat› <;> rfl
+  cases role with
+  | frickeComparison =>
+      cases a <;> rfl
+  | levelPComparison =>
+      cases b <;> rfl
+  | levelP2Comparison =>
+      cases c <;> rfl
 
 theorem role_magnitude_descends_through_selected_code
     (role : ModularContributionRole) :

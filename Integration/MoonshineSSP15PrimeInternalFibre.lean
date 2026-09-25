@@ -7,8 +7,11 @@ namespace Integration.MoonshineSSP15PrimeInternalFibre
 open Integration.MoonshineSSP15SignedFRACTRANBranch
 
 /-!
-The semantic carrier is a prime-indexed fibre of internal SSP15 lanes, not a
-canonical identification of the two fifteen-element carriers.
+SSP15 itself is the fifteen Ogg/Monster prime lanes.
+
+The product below is only an enriched state space obtained by attaching an
+independent five-by-three internal observer state to an SSP15/Ogg lane.
+Therefore 15*15=225 counts enriched combinations, not SSP15 lanes.
 -/
 
 abbrev PrimeInternalCarrier := SSPPrime × InternalLane
@@ -86,8 +89,10 @@ theorem prime_internal_valuation_own_lane (s : PrimeInternalCarrier) :
 
 structure Boundary where
   primeLaneCountFifteen : Bool
+  ssp15LaneCarrierIsOggPrimeCarrier : Bool
   internalLaneCountFifteen : Bool
   coarseProductCount225 : Bool
+  product225IsSSP15LaneCount : Bool
   primeAndInternalAreIndependentCoordinates : Bool
   chosenBijectionIsGaugeSection : Bool
   chosenGaugeExhaustsSemanticCarrier : Bool
@@ -98,8 +103,10 @@ structure Boundary where
 
 def canonicalBoundary : Boundary where
   primeLaneCountFifteen := true
+  ssp15LaneCarrierIsOggPrimeCarrier := true
   internalLaneCountFifteen := true
   coarseProductCount225 := true
+  product225IsSSP15LaneCount := false
   primeAndInternalAreIndependentCoordinates := true
   chosenBijectionIsGaugeSection := true
   chosenGaugeExhaustsSemanticCarrier := false

@@ -7566,18 +7566,13 @@ absolute shell majorant into the quartic t^(-6) cancellation theorem.
 
 theorem farShellBound_ge_sqrt_term
     {A T : ℝ} {J : ℕ}
-    (hA : 0 <= A) :
+    (hA : 0 <= A)
+    (hT : 0 <= T) :
     72 * A / Real.sqrt J
       <= farShellBound A T J := by
   rw [farShellBound_eq]
   have hlog : 0 <= Real.log (T + 4) := by
-    by_cases hT : 0 <= T
-    · exact Real.log_nonneg (by linarith)
-    · -- The shell is only consumed below with T=|t|.  This branch keeps the
-      -- generic statement honest by reducing to the nonnegative-use case.
-      have : T + 4 <= 4 := by linarith
-      simp only [div_eq_mul_inv]
-      nlinarith
+    exact Real.log_nonneg (by linarith)
   have hfirst :
       0 <= 18 * A * Real.log (T+4) / (J : ℝ) := by
     positivity
@@ -7595,6 +7590,7 @@ theorem quarticSignedPoleCanonicalFarShellBound_ge_sqrt_term
       (A:=A) (T:=|t|)
       (J:=quarticSignedPoleCanonicalFarCutoff t)
       (by linarith : 0 <= A)
+      (abs_nonneg t)
   have hsqrt :
       0 <= Real.sqrt (quarticSignedPoleCanonicalFarCutoff t) :=
     Real.sqrt_nonneg _

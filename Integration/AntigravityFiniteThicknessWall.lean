@@ -119,4 +119,75 @@ def finiteThicknessEinsteinSolutionDerived : Bool := false
 def sourceNativeScalarWallDerived : Bool := false
 def thinWallDistributionRequiredAtSourceLevel : Bool := false
 
+
+
+/-!
+Physically calibrated finite-thickness source package.
+
+This composes the source->Einstein calibration with the exact positive-width
+effective wall profile.  It still does not claim that the smeared profile solves
+the finite-thickness Einstein equations; that remaining PDE/matching theorem is
+kept explicit.
+-/
+
+structure PhysicallyCalibratedFiniteThicknessSourceWitness
+    {Stress : Type u}
+    (E : CMP119RationalStressComponentEvaluator Stress)
+    (stress : Stress)
+    (normalized : NormalizedCrossSectorStressInstance E stress)
+    (source : AgdaTraceSourceReceipt)
+    (calibration : PhysicalEinsteinSourceCalibration source)
+    (thickness : Rat) : Prop where
+  calibrated :
+    PhysicallyCalibratedAntigravityWitness
+      E stress normalized source calibration
+  thicknessPositive :
+    0 < thickness
+  effectiveWall :
+    FiniteThicknessEffectiveWallProfile
+  effectiveWallHasRequestedThickness :
+    effectiveWall.thickness = thickness
+  integratedSurfaceEnergy :
+    slabIntegratedEnergy
+      nambuBubbleSurfaceTension8Pi thickness
+      = nambuBubbleSurfaceTension8Pi
+  integratedSurfacePressure :
+    slabIntegratedTangentialPressure
+      nambuBubbleSurfaceTension8Pi thickness
+      = -nambuBubbleSurfaceTension8Pi
+
+theorem compile_physically_calibrated_finite_thickness_source
+    {Stress : Type u}
+    {E : CMP119RationalStressComponentEvaluator Stress}
+    {stress : Stress}
+    (normalized : NormalizedCrossSectorStressInstance E stress)
+    (source : AgdaTraceSourceReceipt)
+    (calibration : PhysicalEinsteinSourceCalibration source)
+    (thickness : Rat)
+    (hThickness : 0 < thickness) :
+    PhysicallyCalibratedFiniteThicknessSourceWitness
+      E stress normalized source calibration thickness := by
+  let wall :=
+    nambu_bubble_finite_thickness_effective_wall thickness hThickness
+  exact {
+    calibrated :=
+      compile_physically_calibrated_antigravity
+        normalized source calibration
+    thicknessPositive := hThickness
+    effectiveWall := wall
+    effectiveWallHasRequestedThickness := rfl
+    integratedSurfaceEnergy := by
+      exact slab_integrated_energy
+        nambuBubbleSurfaceTension8Pi thickness
+        (ne_of_gt hThickness)
+    integratedSurfacePressure := by
+      exact slab_integrated_tangential_pressure
+        nambuBubbleSurfaceTension8Pi thickness
+        (ne_of_gt hThickness)
+  }
+
+def physicallyCalibratedFiniteThicknessSourceCompiled : Bool := true
+def finiteThicknessGeometryPDEStillRequired : Bool := true
+
+
 end Integration.AntigravityFiniteThicknessWall

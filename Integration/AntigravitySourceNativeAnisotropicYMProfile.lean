@@ -116,4 +116,47 @@ structure SourceNativeYMFiniteThicknessTarget
 
 def sourceFirstGeometryConstructionRequired : Bool := true
 
+
+/-!
+Sharp outer-boundary redesign condition.
+
+At a boundary where p_r = 0, negative active stress requires
+
+  rho + 2 p_t < 0,
+
+equivalently p_t < -rho/2.
+-/
+
+theorem outer_negative_active_requires_tangential_below_minus_half_rho
+    (profile : SourceNativeAnisotropicYMProfile)
+    (hOuterRadial :
+      profile.radialPressure transitionOuterRadius = 0) :
+    profile.tangentialPressure transitionOuterRadius
+      < -(profile.rho transitionOuterRadius) / 2 := by
+  have hlo :
+      transitionInnerRadius ≤ transitionOuterRadius := by
+    norm_num [transitionInnerRadius, transitionOuterRadius]
+  have hhi :
+      transitionOuterRadius ≤ transitionOuterRadius := le_rfl
+  have hactive :=
+    profile.activeStressNegative transitionOuterRadius hlo hhi
+  rw [hOuterRadial] at hactive
+  linarith
+
+theorem explicit_layer_outer_tangential_pressure_above_negative_half_density :
+    -(1 : Rat) / 2
+      < (lapseProfileState transitionOuterRadius).tangentialPressure := by
+  rw [lapse_profile_outer_tangential_pressure]
+  norm_num
+
+theorem explicit_layer_misses_negative_active_outer_threshold :
+    ¬ ((lapseProfileState transitionOuterRadius).tangentialPressure
+        < -(lapseProfileState transitionOuterRadius).rho / 2) := by
+  rw [lapse_profile_outer_tangential_pressure,
+    lapse_profile_outer_energy_density]
+  norm_num
+
+def sourceNativeOuterTangentialThresholdKnown : Bool := true
+def explicitLayerSatisfiesOuterNegativeActiveThreshold : Bool := false
+
 end Integration.AntigravitySourceNativeAnisotropicYMProfile

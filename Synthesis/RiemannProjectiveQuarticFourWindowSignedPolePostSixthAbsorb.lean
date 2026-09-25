@@ -7275,4 +7275,205 @@ theorem exists_quarticSignedPoleFixedHigh_compiles_selectedCanonicalSignedHighCu
       rho).1 hcut
 
 
+
+/-!
+## Collapse the canonical high scalar onto the literal far carrier
+
+The preferred scalar still displayed one harmless bookkeeping subtraction:
+
+  global off-ordinate pair tsum - canonical stabilized local pair sum.
+
+The pointwise local/far partition is already exact and the global off-ordinate
+source is already summable.  The canonical local indicator has finite support
+inside the canonical exhaustion finset.  Hence the complementary literal far
+indicator is summable too, and the global tsum splits exactly into canonical
+local + canonical far.
+
+This removes the last representation subtraction from the analytic wall.
+-/
+
+def QuarticFourSignedPolePair.canonicalLiteralFarPairSource
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  ∑' rho : Zeros,
+    W.literalFarExactTerm
+      quarticSignedPoleCanonicalLocalRadius rho
+
+theorem QuarticFourSignedPolePair.canonicalLocalExactTerm_summable
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Summable
+      (fun rho : Zeros =>
+        W.literalLocalExactTerm
+          quarticSignedPoleCanonicalLocalRadius rho) := by
+  let n := quarticSignedPoleCanonicalLocalExhaustionIndex t
+  apply summable_of_ne_finset_zero
+    (s := centeredZeroFinset t n)
+  intro rho hrho
+  have hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t < (n : ℝ) := by
+    dsimp [n]
+    exact quarticSignedPoleCanonicalLocalExhaustionIndex_spec t
+  have hnotlocal :
+      ¬ quarticSignedPoleLocal
+          t quarticSignedPoleCanonicalLocalRadius rho := by
+    intro hl
+    have hclosed :=
+      (quarticSignedPoleLocal_iff_closed_ordinate_window
+        ht quarticSignedPoleCanonicalLocalRadius_pos.le rho).1 hl
+    have hmemb :
+        rho ∈ centeredZeroFinset t n := by
+      apply (mem_centeredZeroFinset_iff t n rho).2
+      unfold quarticSignedPoleCanonicalPhysicalHalfWidth at hn
+      unfold quarticSignedPoleLocalHalfWidth at hclosed
+      constructor <;> nlinarith
+    exact hrho hmemb
+  simp [QuarticFourSignedPolePair.literalLocalExactTerm, hnotlocal]
+
+theorem QuarticFourSignedPolePair.canonicalLocalExactTerm_tsum_eq
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    (∑' rho : Zeros,
+      W.literalLocalExactTerm
+        quarticSignedPoleCanonicalLocalRadius rho)
+      =
+    W.canonicalLiteralLocalExact := by
+  let n := quarticSignedPoleCanonicalLocalExhaustionIndex t
+  unfold QuarticFourSignedPolePair.canonicalLiteralLocalExact
+  dsimp [n]
+  rw [tsum_eq_sum
+    (s := centeredZeroFinset t
+      (quarticSignedPoleCanonicalLocalExhaustionIndex t))]
+  intro rho hrho
+  have hn :=
+    quarticSignedPoleCanonicalLocalExhaustionIndex_spec t
+  have hnotlocal :
+      ¬ quarticSignedPoleLocal
+          t quarticSignedPoleCanonicalLocalRadius rho := by
+    intro hl
+    have hclosed :=
+      (quarticSignedPoleLocal_iff_closed_ordinate_window
+        ht quarticSignedPoleCanonicalLocalRadius_pos.le rho).1 hl
+    have hmemb :
+        rho ∈ centeredZeroFinset t
+          (quarticSignedPoleCanonicalLocalExhaustionIndex t) := by
+      apply
+        (mem_centeredZeroFinset_iff t
+          (quarticSignedPoleCanonicalLocalExhaustionIndex t) rho).2
+      unfold quarticSignedPoleCanonicalPhysicalHalfWidth at hn
+      unfold quarticSignedPoleLocalHalfWidth at hclosed
+      constructor <;> nlinarith
+    exact hrho hmemb
+  simp [QuarticFourSignedPolePair.literalLocalExactTerm, hnotlocal]
+
+theorem QuarticFourSignedPolePair.canonicalFarExactTerm_summable
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Summable
+      (fun rho : Zeros =>
+        W.literalFarExactTerm
+          quarticSignedPoleCanonicalLocalRadius rho) := by
+  have hoff := W.literalOffOrdSource_summable ht
+  have hlocal := W.canonicalLocalExactTerm_summable ht
+  have hsub := hoff.sub hlocal
+  refine hsub.congr ?_
+  intro rho
+  rw [W.literalOffOrdSource_eq_local_add_far
+    (eta:=quarticSignedPoleCanonicalLocalRadius)]
+  ring
+
+theorem QuarticFourSignedPolePair.globalOffOrd_tsum_eq_canonicalLocal_add_far
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    (∑' rho : Zeros, W.literalOffOrdSource rho)
+      =
+    W.canonicalLiteralLocalExact
+      + W.canonicalLiteralFarPairSource := by
+  have hlocal := W.canonicalLocalExactTerm_summable ht
+  have hfar := W.canonicalFarExactTerm_summable ht
+  calc
+    (∑' rho : Zeros, W.literalOffOrdSource rho)
+      =
+    ∑' rho : Zeros,
+      (W.literalLocalExactTerm
+          quarticSignedPoleCanonicalLocalRadius rho
+        +
+       W.literalFarExactTerm
+          quarticSignedPoleCanonicalLocalRadius rho) := by
+        apply tsum_congr
+        intro rho
+        exact
+          W.literalOffOrdSource_eq_local_add_far
+            (eta:=quarticSignedPoleCanonicalLocalRadius) rho
+    _ =
+      (∑' rho : Zeros,
+        W.literalLocalExactTerm
+          quarticSignedPoleCanonicalLocalRadius rho)
+      +
+      (∑' rho : Zeros,
+        W.literalFarExactTerm
+          quarticSignedPoleCanonicalLocalRadius rho) := by
+        exact hlocal.tsum_add hfar
+    _ =
+      W.canonicalLiteralLocalExact
+        + W.canonicalLiteralFarPairSource := by
+        rw [W.canonicalLocalExactTerm_tsum_eq ht]
+        rfl
+
+theorem QuarticFourSignedPolePair.globalSignedLiteralPairSource_eq_canonicalLocal_add_far
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+      W.signedLiteralPairSourceTerm sigma)
+      =
+    W.canonicalLiteralLocalExact
+      + W.canonicalLiteralFarPairSource := by
+  rw [← W.literalOffOrdSource_tsum_eq_signedLiteralPairSource_tsum]
+  exact W.globalOffOrd_tsum_eq_canonicalLocal_add_far ht
+
+theorem QuarticFourSignedPolePair.canonicalSignedHighResidual_eq_literal_far_sub_mu
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalSignedHighResidual
+      =
+    (1/2 : ℝ)
+      *
+    (
+      W.canonicalLiteralFarPairSource
+      -
+      ∫ tau : ℝ,
+        W.signedOrdinateTest tau * Zeta23.mu tau
+    ) := by
+  rw [W.canonicalSignedHighResidual_eq_literal_pair_sub_mu ht]
+  rw [W.globalSignedLiteralPairSource_eq_canonicalLocal_add_far
+      (by linarith : 0 < t)]
+  ring
+
+theorem QuarticFourSignedPolePair.postSixthCanonicalSignedHighCut_iff_literalFar
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.PostSixthCanonicalSignedHighCut rho EV
+      ↔
+    (1/2 : ℝ)
+      *
+    (
+      W.canonicalLiteralFarPairSource
+      -
+      ∫ tau : ℝ,
+        W.signedOrdinateTest tau * Zeta23.mu tau
+    )
+      <
+    W.postSixthTerminalResidualMargin rho EV := by
+  unfold QuarticFourSignedPolePair.PostSixthCanonicalSignedHighCut
+  rw [W.canonicalSignedHighResidual_eq_literal_far_sub_mu ht]
+
+
 end Synthesis

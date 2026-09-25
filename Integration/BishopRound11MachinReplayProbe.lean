@@ -1,5 +1,6 @@
 import Integration.BishopRound11MachinBindingManifest
 import Integration.BishopRound11MachinCanonicalBinding
+import Integration.BishopRound11MachinRecognition
 import Integration.MoonshineEisensteinRound11CanonicalRouteB
 import Integration.MoonshineDeltaFinalMinCut
 
@@ -24,6 +25,7 @@ namespace Integration.BishopRound11MachinReplayProbe
 
 open Integration.BishopRound11MachinBindingManifest
 open Integration.BishopRound11MachinCanonicalBinding
+open Integration.BishopRound11MachinRecognition
 open Integration.MoonshineEisensteinRound11CanonicalRouteB
 open Integration.MoonshineDeltaFinalMinCut
 
@@ -70,6 +72,12 @@ theorem canonical_binding_inhabited :
         Arithmetic) :=
   ⟨canonicalBinding⟩
 
+/-- The current provenance surface is intentionally weaker than a genuine
+cross-prover replay. This theorem keeps the firewall kernel-visible. -/
+theorem manifest_recognition_does_not_claim_source_inhabitance :
+    currentManifestRecognition.importedBindingInhabitedFromSourceTerms = false :=
+  current_manifest_is_not_cross_prover_replay
+
 /-- The canonical source route reaches the normalized classical Delta target. -/
 theorem canonical_route_delta_same_object :
     ∀ τ : ℍ,
@@ -94,6 +102,7 @@ structure ReplayProbeBoundary where
   contentAddressedManifestKernelVisible : Bool
   verificationArtifactManifestKernelVisible : Bool
   canonicalBindingKernelVisible : Bool
+  recognitionFirewallKernelVisible : Bool
   canonicalRouteDeltaKernelVisible : Bool
   eta24SameObjectKernelVisible : Bool
   sixfoldPhaseKernelVisible : Bool
@@ -103,6 +112,7 @@ def replayProbeBoundary : ReplayProbeBoundary where
   contentAddressedManifestKernelVisible := true
   verificationArtifactManifestKernelVisible := true
   canonicalBindingKernelVisible := true
+  recognitionFirewallKernelVisible := true
   canonicalRouteDeltaKernelVisible := true
   eta24SameObjectKernelVisible := true
   sixfoldPhaseKernelVisible := true

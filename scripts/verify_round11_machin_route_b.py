@@ -33,6 +33,9 @@ BLOB_RE = re.compile(
     r'\s*⟨"(?P<path>[^"]+)",\s*"(?P<sha>[0-9a-f]{40})"⟩',
     re.MULTILINE,
 )
+AGDA_COMMIT_RE = re.compile(
+    r'def\s+agdaSourceCommit\s*:\s*String\s*:=\s*"(?P<sha>[0-9a-f]{40})"'
+)
 BISHOP_COMMIT_RE = re.compile(
     r'def\s+bishopSubmoduleCommit\s*:\s*String\s*:=\s*"(?P<sha>[0-9a-f]{40})"'
 )
@@ -81,7 +84,9 @@ def run(*args: str, cwd: pathlib.Path | None = None) -> str:
     return proc.stdout.strip()
 
 
-def parse_manifest(path: pathlib.Path) -> tuple[list[SourceBlob], str, list[SourceBinding]]:
+def parse_manifest(
+    path: pathlib.Path,
+) -> tuple[list[SourceBlob], str, str, list[SourceBinding]]:
     text = path.read_text(encoding="utf-8")
     blobs = [
         SourceBlob(m.group("name"), m.group("path"), m.group("sha"))
@@ -89,6 +94,10 @@ def parse_manifest(path: pathlib.Path) -> tuple[list[SourceBlob], str, list[Sour
     ]
     if not blobs:
         raise RuntimeError(f"no SourceBlob declarations parsed from {path}")
+
+    agda = AGDA_COMMIT_RE.search(text)
+    if agda is None:
+        raise RuntimeError("agdaSourceCommit not found in manifest")
 
     bishop = BISHOP_COMMIT_RE.search(text)
     if bishop is None:
@@ -107,7 +116,7 @@ def parse_manifest(path: pathlib.Path) -> tuple[list[SourceBlob], str, list[Sour
     if not bindings:
         raise RuntimeError("no SourceTheoremBinding declarations parsed from manifest")
 
-    return blobs, bishop.group("sha"), bindings
+    return blobs, agda.group("sha"), bishop.group("sha"), bindings
 
 
 def git_blob_sha(root: pathlib.Path, rel: str) -> str:
@@ -212,6 +221,10 @@ def observedImportClosure : List String :=
 {closure_items}
   ]
 
+theorem agda_commit_matches_manifest :
+    observedAgdaCommit = agdaSourceCommit := by
+  native_decide
+
 theorem bishop_commit_matches_manifest :
     observedBishopCommit = bishopSubmoduleCommit := by
   native_decide
@@ -264,10 +277,21 @@ def main() -> int:
 
     agda_root = args.agda_root.resolve()
     manifest = args.manifest.resolve()
-    blobs, expected_bishop_commit, bindings = parse_manifest(manifest)
+    blobs, expected_agda_commit, expected_bishop_commit, bindings = parse_manifest(manifest)
     blob_by_name = {blob.name: blob for blob in blobs}
 
     failures: list[str] = []
+
+    try:
+        observed_agda_commit = run("git", "rev-parse", "HEAD", cwd=agda_root)
+    except RuntimeError:
+        observed_agda_commit = "unknown"
+        failures.append("unable to resolve dashi_agda checkout commit")
+    if observed_agda_commit != expected_agda_commit:
+        failures.append(
+            "dashi_agda checkout mismatch: "
+            f"expected {expected_agda_commit}, observed {observed_agda_commit}"
+        )
 
     observed_blobs: list[dict[str, str]] = []
     root_paths: list[pathlib.Path] = []
@@ -329,13 +353,11 @@ def main() -> int:
     closure_paths = recursive_import_closure(agda_root, root_paths)
     closure = [rel_display(agda_root, p) for p in closure_paths]
 
-    try:
-        agda_commit = run("git", "rev-parse", "HEAD", cwd=agda_root)
-    except RuntimeError:
-        agda_commit = "unknown"
-
     receipt = {
-        "agda_commit": agda_commit,
+        "agda_commit": {
+            "expected": expected_agda_commit,
+            "observed": observed_agda_commit,
+        },
         "bishop_submodule": {
             "expected": expected_bishop_commit,
             "observed": observed_bishop_commit,
@@ -361,7 +383,7 @@ def main() -> int:
         args.out_lean,
         blobs,
         observed_bishop_commit,
-        agda_commit,
+        observed_agda_commit,
         closure,
     )
     print(

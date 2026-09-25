@@ -6388,4 +6388,118 @@ theorem QuarticFourSignedPolePair.quarticScaleCanonicalFarBoundaryCoupledCompens
   rw [W.canonicalFarBoundaryCoupledCompensation_eq_completed_sub_localPaired ht]
 
 
+
+/-!
+## Literal zero-minus-mu complement form of the coupled far carrier
+
+The canonical far N-mu compensation is expanded without changing carrier.
+
+We retain the canonical local window as its two natural centered halves.  This
+avoids endpoint-convention ambiguity at t and makes the decomposition
+definitionally match the existing signed centered-window residual.
+
+The global literal objects are already theorem-bearing:
+
+  signedNMuPair
+    = tsum signedZeroSourceTerm - integral Psi_t * mu.
+
+Subtracting the same canonical local zero and mu windows therefore gives exact
+far complements.  No absolute value or new tail surrogate is introduced.
+-/
+
+def QuarticFourSignedPolePair.canonicalLocalZeroPair
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  let h := quarticSignedPoleCanonicalPhysicalHalfWidth t
+  zetaWindowWeightedPair (t-h) t W.signedOrdinateTest
+    + zetaWindowWeightedPair t (t+h) W.signedOrdinateTest
+
+def QuarticFourSignedPolePair.canonicalLocalMuPair
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  let h := quarticSignedPoleCanonicalPhysicalHalfWidth t
+  (∫ x in (t-h)..t,
+      W.signedOrdinateTest x * Zeta23.mu x)
+    +
+  (∫ x in t..(t+h),
+      W.signedOrdinateTest x * Zeta23.mu x)
+
+theorem QuarticFourSignedPolePair.canonicalLocalNMuResidual_eq_zero_sub_mu
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalLocalNMuResidual
+      =
+    W.canonicalLocalZeroPair - W.canonicalLocalMuPair := by
+  unfold QuarticFourSignedPolePair.canonicalLocalNMuResidual
+    QuarticFourSignedPolePair.canonicalLocalZeroPair
+    QuarticFourSignedPolePair.canonicalLocalMuPair
+    QuarticFourSignedPolePair.signedCenteredWindowResidual
+    QuarticFourSignedPolePair.signedZetaMuWindowResidual
+    zetaWindowMinusMuPair
+  dsimp
+  ring
+
+def QuarticFourSignedPolePair.canonicalFarZeroComplement
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  (∑' rho : Zeros, W.signedZeroSourceTerm rho)
+    - W.canonicalLocalZeroPair
+
+def QuarticFourSignedPolePair.canonicalFarMuComplement
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  (∫ x : ℝ, W.signedOrdinateTest x * Zeta23.mu x)
+    - W.canonicalLocalMuPair
+
+theorem QuarticFourSignedPolePair.canonicalFarNMuCompensation_eq_zero_sub_mu
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalFarNMuCompensation
+      =
+    W.canonicalFarZeroComplement - W.canonicalFarMuComplement := by
+  unfold QuarticFourSignedPolePair.canonicalFarNMuCompensation
+    QuarticFourSignedPolePair.canonicalFarZeroComplement
+    QuarticFourSignedPolePair.canonicalFarMuComplement
+  rw [W.signedNMuPair_eq_pointwise_closed ht,
+      W.canonicalLocalNMuResidual_eq_zero_sub_mu]
+  ring
+
+theorem QuarticFourSignedPolePair.canonicalFarCompletedCompensation_eq_zero_mu_horizontal
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalFarCompletedCompensation
+      =
+    (1/2 : ℝ)
+      * (W.canonicalFarZeroComplement - W.canonicalFarMuComplement)
+      + W.signedHorizontalRemainder := by
+  unfold QuarticFourSignedPolePair.canonicalFarCompletedCompensation
+  rw [W.canonicalFarNMuCompensation_eq_zero_sub_mu ht]
+
+theorem QuarticFourSignedPolePair.canonicalFarBoundaryCoupledCompensation_eq_zero_mu_horizontal_boundary
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalFarBoundaryCoupledCompensation
+      =
+    (1/2 : ℝ)
+      *
+      (
+        W.canonicalFarZeroComplement
+          - W.canonicalFarMuComplement
+          +
+        W.signedOrdinateTest
+          (t + quarticSignedPoleCanonicalPhysicalHalfWidth t)
+          *
+        zetaMuCumulativeDiscrepancy
+          (t - quarticSignedPoleCanonicalPhysicalHalfWidth t)
+          (t + quarticSignedPoleCanonicalPhysicalHalfWidth t)
+      )
+      + W.signedHorizontalRemainder := by
+  unfold QuarticFourSignedPolePair.canonicalFarBoundaryCoupledCompensation
+  rw [W.canonicalFarCompletedCompensation_eq_zero_mu_horizontal ht]
+  ring
+
+
 end Synthesis

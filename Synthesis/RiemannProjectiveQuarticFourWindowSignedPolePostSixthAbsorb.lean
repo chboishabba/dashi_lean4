@@ -3158,4 +3158,123 @@ theorem QuarticFourSignedPolePair.signedHorizontalSourceTerm_summable_offOrd
   exact h1.add h2
 
 
+
+/-!
+## Quadratic q-decay of the exact signed horizontal kernel
+
+For fixed normalized horizontal displacement alpha, the signed horizontal
+kernel is the cosine transform of the exact combined projective profile
+multiplied by cosh(alpha*u)-1.  Two integrations by parts therefore give
+quadratic decay in the normalized ordinate variable q.
+-/
+
+open Zeta23Bridge.OscillatoryKernelDecay
+
+def QuarticFourSignedPolePair.signedHorizontalDecayWeight
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha u : ℝ) : ℝ :=
+  quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t u
+    * (Real.cosh (alpha*u) - 1)
+
+def QuarticFourSignedPolePair.signedHorizontalDecayCurvature
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha : ℝ) : ℝ :=
+  ∫ u : ℝ,
+    |deriv (deriv (W.signedHorizontalDecayWeight alpha)) u|
+
+theorem QuarticFourSignedPolePair.signedHorizontalDecayCurvature_nonneg
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    0 <= W.signedHorizontalDecayCurvature alpha := by
+  unfold QuarticFourSignedPolePair.signedHorizontalDecayCurvature
+  positivity
+
+theorem QuarticFourSignedPolePair.signedHorizontalDecayWeight_contDiff_two
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    ContDiff ℝ 2 (W.signedHorizontalDecayWeight alpha) := by
+  unfold QuarticFourSignedPolePair.signedHorizontalDecayWeight
+  exact
+    (quarticFourSignedPoleCombinedProfile_contDiff_two W.Rpos).mul
+      (by fun_prop)
+
+theorem QuarticFourSignedPolePair.signedHorizontalDecayWeight_compact
+    {t alpha : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    HasCompactSupport (W.signedHorizontalDecayWeight alpha) := by
+  unfold QuarticFourSignedPolePair.signedHorizontalDecayWeight
+  exact
+    (quarticFourSignedPoleCombinedProfile_compact W.Rpos).mul_right
+
+theorem QuarticFourSignedPolePair.signedNormalizedHorizontalKernel_eq_decayIntegral
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNormalizedHorizontalKernel alpha q
+      =
+    ∫ u : ℝ,
+      W.signedHorizontalDecayWeight alpha u
+        * Real.cos (q*u) := by
+  let P1 :=
+    quarticFourNormalizedProjectiveProfile
+      W.R (1/2) W.muHalf
+  let P2 :=
+    quarticFourNormalizedProjectiveProfile
+      W.R (2/3) W.muTwo
+  have h1 :
+      Integrable
+        (fun u : ℝ =>
+          P1 u * (Real.cosh (alpha*u)-1) * Real.cos (q*u)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by dsimp [P1]; fun_prop)
+      (((quarticFourNormalizedProjectiveProfile_compact W.Rpos).mul_right).mul_right)
+  have h2 :
+      Integrable
+        (fun u : ℝ =>
+          P2 u * (Real.cosh (alpha*u)-1) * Real.cos (q*u)) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by dsimp [P2]; fun_prop)
+      (((quarticFourNormalizedProjectiveProfile_compact W.Rpos).mul_right).mul_right)
+  unfold QuarticFourSignedPolePair.signedNormalizedHorizontalKernel
+    genericProjectiveHorizontalKernel
+    QuarticFourSignedPolePair.signedHorizontalDecayWeight
+    quarticFourSignedPoleCombinedProfile profileLinearCombination
+  rw [show
+      (fun u : ℝ =>
+        (W.poleTwo *
+            quarticFourNormalizedProjectiveProfile
+              W.R (1/2) W.muHalf u
+          + (-W.poleHalf) *
+            quarticFourNormalizedProjectiveProfile
+              W.R (2/3) W.muTwo u)
+          * (Real.cosh (alpha*u)-1)
+          * Real.cos (q*u))
+      =
+      fun u =>
+        W.poleTwo *
+          (P1 u * (Real.cosh (alpha*u)-1) * Real.cos (q*u))
+        +
+        (-W.poleHalf) *
+          (P2 u * (Real.cosh (alpha*u)-1) * Real.cos (q*u)) by
+      funext u
+      dsimp [P1,P2]
+      ring,
+      integral_add (h1.const_mul _) (h2.const_mul _),
+      integral_const_mul, integral_const_mul]
+  ring
+
+theorem QuarticFourSignedPolePair.signedNormalizedHorizontalKernel_abs_le_invSq
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hq : q ≠ 0) :
+    |W.signedNormalizedHorizontalKernel alpha q|
+      <= W.signedHorizontalDecayCurvature alpha / q^2 := by
+  rw [W.signedNormalizedHorizontalKernel_eq_decayIntegral]
+  exact
+    abs_integral_mul_cos_le
+      (W.signedHorizontalDecayWeight_contDiff_two)
+      (W.signedHorizontalDecayWeight_compact)
+      hq
+
+
 end Synthesis

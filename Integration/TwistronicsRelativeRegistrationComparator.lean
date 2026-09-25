@@ -124,3 +124,57 @@ def canonicalBoundary : TwistronicsComparatorBoundary where
   crossDomainSameObjectPromotionMade := false
 
 end Integration.TwistronicsRelativeRegistrationComparator
+
+
+namespace OnePointOneCrossPollination
+
+/-!
+The repo uses "1.1" in several non-identical roles.  This mirror makes the
+collision firewall explicit instead of treating a shared printed number as a
+same-object theorem.
+-/
+
+inductive OnePointOneRole
+  | twistronicsApproximateAngleRole
+  | exactTenPercentScalarRole
+  | metacognitiveFrameCoordinateRole
+  | decimalFineRefinementRole
+  deriving DecidableEq, Repr
+
+theorem twistronics_role_ne_scalar :
+    OnePointOneRole.twistronicsApproximateAngleRole ≠
+      OnePointOneRole.exactTenPercentScalarRole := by
+  decide
+
+theorem twistronics_role_ne_meta :
+    OnePointOneRole.twistronicsApproximateAngleRole ≠
+      OnePointOneRole.metacognitiveFrameCoordinateRole := by
+  decide
+
+theorem scalar_role_ne_meta :
+    OnePointOneRole.exactTenPercentScalarRole ≠
+      OnePointOneRole.metacognitiveFrameCoordinateRole := by
+  decide
+
+theorem three_axis_ten_percent_gain_numerator :
+    11 ^ 3 = 1331 := by norm_num
+
+theorem three_axis_ten_percent_gain_denominator :
+    10 ^ 3 = 1000 := by norm_num
+
+structure OnePointOneCrossPollinationBoundary where
+  exactElevenTenthsArithmeticMirrored : Bool
+  metacognitiveOnePointOneTreatedAsScalar : Bool
+  approximateMagicAngleEqualsExactElevenTenths : Bool
+  equalPrintedTokenImpliesEqualRole : Bool
+  exactTenPercentGainExplainsMagicAnglePhysics : Bool
+  deriving Repr
+
+def canonicalBoundary : OnePointOneCrossPollinationBoundary where
+  exactElevenTenthsArithmeticMirrored := true
+  metacognitiveOnePointOneTreatedAsScalar := false
+  approximateMagicAngleEqualsExactElevenTenths := false
+  equalPrintedTokenImpliesEqualRole := false
+  exactTenPercentGainExplainsMagicAnglePhysics := false
+
+end OnePointOneCrossPollination

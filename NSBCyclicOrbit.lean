@@ -1,4 +1,5 @@
 import NSBControl.CyclicHelicalVectorTransform
+import NSBControl.SelfOrbitCommutatorCarrier
 
 namespace NSBCyclicOrbit
 

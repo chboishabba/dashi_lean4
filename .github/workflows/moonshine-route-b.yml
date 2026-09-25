@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - agent/moonshine-eisenstein-analytic-20260922
+      - feature/j369-ogg-address-ssp15-no-go-20260925
     paths:
       - "Integration/Bishop*.lean"
       - "Integration/Moonshine*.lean"

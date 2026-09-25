@@ -43,6 +43,39 @@ def qEnergyLeg (τ : Triad) : Triad where
 @[simp] theorem qEnergyLeg_q (τ : Triad) : (qEnergyLeg τ).q = -τ.p := rfl
 @[simp] theorem qEnergyLeg_k (τ : Triad) : (qEnergyLeg τ).k = τ.q := rfl
 
+
+def swapTriad (τ : Triad) : Triad where
+  p := τ.q
+  q := τ.p
+  k := τ.k
+  resonance := by
+    simpa [add_comm] using τ.resonance
+
+@[simp] theorem swapTriad_p (τ : Triad) : (swapTriad τ).p = τ.q := rfl
+@[simp] theorem swapTriad_q (τ : Triad) : (swapTriad τ).q = τ.p := rfl
+@[simp] theorem swapTriad_k (τ : Triad) : (swapTriad τ).k = τ.k := rfl
+
+theorem pEnergyLeg_involution (τ : Triad) :
+    pEnergyLeg (pEnergyLeg τ) = τ := by
+  apply Triad.ext <;> simp [pEnergyLeg]
+
+theorem pEnergyLeg_qEnergyLeg (τ : Triad) :
+    pEnergyLeg (qEnergyLeg τ) = swapTriad τ := by
+  apply Triad.ext <;> simp [pEnergyLeg, qEnergyLeg, swapTriad]
+
+def selfInner (τ : Triad) : Triad := pEnergyLeg τ
+
+theorem selfInner_base (τ : Triad) :
+    selfInner τ = pEnergyLeg τ := rfl
+
+theorem selfInner_pEnergyLeg (τ : Triad) :
+    selfInner (pEnergyLeg τ) = τ := by
+  exact pEnergyLeg_involution τ
+
+theorem selfInner_qEnergyLeg (τ : Triad) :
+    selfInner (qEnergyLeg τ) = swapTriad τ := by
+  exact pEnergyLeg_qEnergyLeg τ
+
 def signedEigenvalue
     (modeNorm : Mode → ℝ) (sign : HelicitySign) (m : Mode) : ℝ :=
   match sign with

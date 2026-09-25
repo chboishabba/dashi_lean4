@@ -3403,7 +3403,7 @@ def QuarticFourSignedPolePair.HorizontalFarCurvatureBound
 theorem QuarticFourSignedPolePair.literalFarHorizontalExactTerm_abs_le_tailTermFrom
     {t eta CH : ℝ}
     (ht : 0 < t)
-    (heta : 0 <= eta)
+    (heta : 0 < eta)
     (hCH : 0 <= CH)
     (W : QuarticFourSignedPolePair t)
     (hCurv : W.HorizontalFarCurvatureBound CH)
@@ -3456,14 +3456,7 @@ theorem QuarticFourSignedPolePair.literalFarHorizontalExactTerm_abs_le_tailTermF
             / ((rho : ℂ).im-t)^2 := by
       exact div_le_div_of_nonneg_right
         (mul_le_mul_of_nonneg_left hcurv hm) hd2.le
-    rw [W.literalFarHorizontalExactTerm_eq_horizontalSource
-        (by
-          have hpos := quarticSignedPoleCanonicalLocalRadius_pos
-          by_cases he : eta = quarticSignedPoleCanonicalLocalRadius
-          · simpa [he] using hpos
-          · have : 0 < eta := lt_of_le_of_ne heta (Ne.symm he)
-            exact this)
-        rho]
+    rw [W.literalFarHorizontalExactTerm_eq_horizontalSource heta rho]
     rw [if_pos hfar]
     unfold tailTermFrom
     rw [if_pos hJgap]
@@ -3508,7 +3501,7 @@ theorem exists_literalFarHorizontalExactAt_uniform_shell_bound :
           apply Finset.sum_le_sum
           intro rho hrho
           exact W.literalFarHorizontalExactTerm_abs_le_tailTermFrom
-            ht heta.le hCH hCurv hJ hJcut rho
+            ht heta hCH hCurv hJ hJcut rho
     _ <=
     ∑' rho : Zeros, CH * tailTermFrom t J rho := by
         exact
@@ -3563,7 +3556,7 @@ theorem exists_literalFarExactAt_uniform_shell_bound_of_horizontalCurvature :
           <= CH * tailTermFrom t J rho :=
     fun rho =>
       W.literalFarHorizontalExactTerm_abs_le_tailTermFrom
-        ht heta.le hCH hCurv hJ hJcut rho
+        ht heta hCH hCurv hJ hJcut rho
   have hcoef :
       0 <= W.signedOrdinateCurvature + CH := by
     exact add_nonneg W.signedOrdinateCurvature_nonneg hCH

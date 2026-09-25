@@ -79,4 +79,36 @@ def sourceNativeStressOverlapRequiredBeforeCalibrationPromotion : Bool := true
 def acceptedMeasuredKappaAuthorityStillRequired : Bool := true
 def microscopicStressLengthFactorizationStillOptional : Bool := true
 
+
+/-!
+Calibration-sign firewall.
+
+Positive Einstein coupling, positive source-unit conversion, and positive
+length-squared scaling preserve the sign of the active source.  Calibration
+therefore cannot repair a positive-active-stress source by normalization.
+-/
+
+theorem positive_calibration_cannot_flip_active_source_sign
+    {activeSource coupling stressLengthSquared : Rat}
+    (hActive : 0 ≤ activeSource)
+    (hCoupling : 0 < coupling)
+    (hScale : 0 < stressLengthSquared) :
+    0 ≤ coupling * activeSource * stressLengthSquared := by
+  have hc : 0 ≤ coupling := le_of_lt hCoupling
+  have hs : 0 ≤ stressLengthSquared := le_of_lt hScale
+  positivity
+
+theorem positive_calibration_preserves_strict_negative_active_source
+    {activeSource coupling stressLengthSquared : Rat}
+    (hActive : activeSource < 0)
+    (hCoupling : 0 < coupling)
+    (hScale : 0 < stressLengthSquared) :
+    coupling * activeSource * stressLengthSquared < 0 := by
+  have hca : coupling * activeSource < 0 :=
+    mul_neg_of_pos_of_neg hCoupling hActive
+  exact mul_neg_of_neg_of_pos hca hScale
+
+def calibrationCanRepairActiveStressSignMismatch : Bool := false
+def calibrationSignPreservationCompiled : Bool := true
+
 end Integration.AntigravityCorrectedFiniteThicknessCalibration

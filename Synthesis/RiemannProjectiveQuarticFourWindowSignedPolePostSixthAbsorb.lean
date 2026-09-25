@@ -7772,4 +7772,87 @@ theorem exists_quarticSignedPoleFixedHigh_offLine_forces_literalFarMinusMu_ge_ma
   exact hcompile ht him hoff hcut
 
 
+
+/-!
+## Uniform literal far-minus-mu theorem interface
+
+The remaining analytic statement is naturally uniform in the hypothetical
+off-line zero.  Package it once, at the exact selected-witness quantifiers
+consumed by the fixed-high compiler.
+
+No proof of this proposition is supplied here.
+-/
+
+def LiteralFarMinusMuUniformHighEstimate
+    (CV T : ℝ) : Prop :=
+  ∀ {t : ℝ},
+    T < t ->
+    ∀ {rho : Zeros},
+      (rho : ℂ).im = t ->
+      heightOf rho ≠ 0 ->
+      ∃ W : QuarticFourSignedPolePair t,
+        quarticSignedPoleStrengthFloor <= W.targetStrength
+          ∧
+        -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+          ∧
+        W.signedProfileMomentSix < 0
+          ∧
+        8/t < W.quantitativeTargetRadius
+          ∧
+        (1/2 : ℝ)
+          *
+          (
+            W.canonicalLiteralFarPairSource
+            -
+            ∫ tau : ℝ,
+              W.signedOrdinateTest tau * Zeta23.mu tau
+          )
+          <
+        W.postSixthTerminalResidualMargin rho
+          (quarticSignedPoleCanonicalV4Error CV t)
+
+theorem exists_quarticSignedPoleFixedHigh_uniformLiteralFarMinusMuEstimate_excludes_offLine :
+    ∃ CV T : ℝ,
+      0 <= CV
+        ∧ quarticPlattTrudgianCutoff <= T
+        ∧
+      (
+        LiteralFarMinusMuUniformHighEstimate CV T
+        ->
+        ∀ {t : ℝ},
+          T < t ->
+          ∀ {rho : Zeros},
+            (rho : ℂ).im = t ->
+            heightOf rho ≠ 0 ->
+            False
+      ) := by
+  obtain ⟨CV,T,hCV,hPT,hcompile⟩ :=
+    exists_quarticSignedPoleFixedHigh_compiles_selectedLiteralFarMinusMuHighCut
+  refine ⟨CV,T,hCV,hPT,?_⟩
+  intro huniform t ht rho him hoff
+  obtain ⟨W,hS,hM6lo,hM6neg,hband,hfar⟩ :=
+    huniform ht him hoff
+  exact
+    hcompile ht him hoff
+      ⟨W,hS,hM6lo,hM6neg,hband,hfar⟩
+
+theorem exists_quarticSignedPoleFixedHigh_offLine_forces_uniformEstimate_failure :
+    ∃ CV T : ℝ,
+      0 <= CV
+        ∧ quarticPlattTrudgianCutoff <= T
+        ∧
+      (
+        (∃ t : ℝ, T < t ∧
+          ∃ rho : Zeros,
+            (rho : ℂ).im = t ∧ heightOf rho ≠ 0)
+        ->
+        ¬ LiteralFarMinusMuUniformHighEstimate CV T
+      ) := by
+  obtain ⟨CV,T,hCV,hPT,hexclude⟩ :=
+    exists_quarticSignedPoleFixedHigh_uniformLiteralFarMinusMuEstimate_excludes_offLine
+  refine ⟨CV,T,hCV,hPT,?_⟩
+  rintro ⟨t,ht,rho,him,hoff⟩ huniform
+  exact hexclude huniform ht him hoff
+
+
 end Synthesis

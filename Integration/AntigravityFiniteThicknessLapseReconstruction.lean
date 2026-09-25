@@ -339,4 +339,17 @@ def finiteThicknessSourceGeometryWithExplicitLapseCompiled : Bool := true
 def finiteThicknessAbstractInteriorLapseSocketRequiredOnDesignedRoute : Bool := false
 
 
+
+/-!
+Post-correction promotion firewall.
+
+The historical source receipt used Z * quantumTraceNumerator under the name
+activeConnectedNumerator.  After separating Lorentzian trace from active stress,
+these constructors remain algebraically valid compatibility surfaces but are
+not sufficient physical source-to-geometry promotion witnesses.
+-/
+
+def historicalTraceOnlySourceGeometryPhysicallyPromotable : Bool := false
+def correctedLorentzianActiveSourceReceiptRequiredForPromotion : Bool := true
+
 end Integration.AntigravityFiniteThicknessLapseReconstruction

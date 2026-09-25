@@ -7126,4 +7126,153 @@ theorem exists_quarticSignedPoleFixedHigh_compiles_selectedFixedCoupledHighCut :
     ht200 rho hcut
 
 
+
+/-!
+## Canonical literal high scalar
+
+All representation bookkeeping now collapses to one fixed literal scalar:
+
+  H_W =
+    1/2 * (
+      global off-ordinate literal pair source
+      - canonical stabilized local literal source
+      - full theorem-bearing mu/Gamma ordinate integral).
+
+This is definitionally the fixed coupled far-plus-boundary carrier minus the
+stabilized paired-vs-literal local correction.
+
+The preferred Clay-facing analytic theorem is simply the one-sided inequality
+
+  H_W < terminalResidualMargin.
+-/
+
+def QuarticFourSignedPolePair.canonicalSignedHighResidual
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.canonicalFarBoundaryCoupledCompensation
+    - W.canonicalLiteralVsPairedLocalCorrection
+
+theorem QuarticFourSignedPolePair.canonicalSignedHighResidual_eq_finiteCut
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t < (n : ℝ)) :
+    W.canonicalSignedHighResidual
+      =
+    W.finiteCutCompensatedFar n := by
+  unfold QuarticFourSignedPolePair.canonicalSignedHighResidual
+  rw [W.finiteCutCompensatedFar_eq_fixedCoupled ht n hn]
+
+theorem QuarticFourSignedPolePair.canonicalSignedHighResidual_eq_literal_pair_sub_mu
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalSignedHighResidual
+      =
+    (1/2 : ℝ)
+      *
+    (
+      (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+        W.signedLiteralPairSourceTerm sigma)
+      -
+      W.canonicalLiteralLocalExact
+      -
+      ∫ tau : ℝ,
+        W.signedOrdinateTest tau * Zeta23.mu tau
+    ) := by
+  let n := quarticSignedPoleCanonicalLocalExhaustionIndex t
+  have hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t < (n : ℝ) := by
+    dsimp [n]
+    exact quarticSignedPoleCanonicalLocalExhaustionIndex_spec t
+  rw [W.canonicalSignedHighResidual_eq_finiteCut
+      (by linarith : 0 < t) n hn]
+  rw [W.finiteCutCompensatedFar_eq_pairTail_sub_mu ht n]
+  rw [W.literalLocalExactAt_eq_canonical
+      (by linarith : 0 < t) n hn]
+
+def QuarticFourSignedPolePair.PostSixthCanonicalSignedHighCut
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (EV : ℝ) : Prop :=
+  W.canonicalSignedHighResidual
+    < W.postSixthTerminalResidualMargin rho EV
+
+theorem QuarticFourSignedPolePair.postSixthCanonicalSignedHighCut_iff_fixedCoupled
+    {t EV : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.PostSixthCanonicalSignedHighCut rho EV
+      ↔
+    W.PostSixthFixedCoupledSignedCompensationCut rho EV := by
+  rfl
+
+theorem QuarticFourSignedPolePair.postSixthCanonicalSignedHighCut_compiles_G3
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hM6lo :
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV)
+    (hC : W.PostSixthCanonicalSignedHighCut rho EV) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho := by
+  exact
+    W.postSixthFixedCoupledSignedCompensationCut_compiles_G3
+      ht hM6lo hM6neg hV
+      ((W.postSixthCanonicalSignedHighCut_iff_fixedCoupled rho).1 hC)
+
+def quarticSignedPoleSelectedCanonicalSignedHighCut
+    (CV t : ℝ) (rho : Zeros) : Prop :=
+  ∃ W : QuarticFourSignedPolePair t,
+    quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧
+    -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+      ∧
+    W.signedProfileMomentSix < 0
+      ∧
+    8/t < W.quantitativeTargetRadius
+      ∧
+    W.PostSixthCanonicalSignedHighCut rho
+      (quarticSignedPoleCanonicalV4Error CV t)
+
+theorem quarticSignedPoleSelectedCanonicalSignedHighCut_iff_fixedCoupled
+    {CV t : ℝ}
+    (rho : Zeros) :
+    quarticSignedPoleSelectedCanonicalSignedHighCut CV t rho
+      ↔
+    quarticSignedPoleSelectedFixedCoupledHighCut CV t rho := by
+  rfl
+
+theorem exists_quarticSignedPoleFixedHigh_compiles_selectedCanonicalSignedHighCut :
+    ∃ CV T : ℝ,
+      0 <= CV
+        ∧ quarticPlattTrudgianCutoff <= T
+        ∧
+      ∀ {t : ℝ},
+        T < t ->
+        ∀ {rho : Zeros},
+          (rho : ℂ).im = t ->
+          heightOf rho ≠ 0 ->
+          quarticSignedPoleSelectedCanonicalSignedHighCut CV t rho ->
+          False := by
+  obtain ⟨CV,T,hCV,hPT,hcompile⟩ :=
+    exists_quarticSignedPoleFixedHigh_compiles_selectedFixedCoupledHighCut
+  refine ⟨CV,T,hCV,hPT,?_⟩
+  intro t ht rho him hoff hcut
+  apply hcompile ht him hoff
+  exact
+    (quarticSignedPoleSelectedCanonicalSignedHighCut_iff_fixedCoupled
+      rho).1 hcut
+
+
 end Synthesis

@@ -152,20 +152,21 @@ def arithmeticDependentQuotient :
   reopen := reopenTriple
   reopen_project := reopen_triple_exact
 
-abbrev ArithmeticCode := arithmeticDependentQuotient.Code
+abbrev ArithmeticCode :=
+  DependentResidualQuotient.Code arithmeticDependentQuotient
 
 def encodeTriple : ArithmeticTriple → ArithmeticCode :=
-  arithmeticDependentQuotient.encode
+  DependentResidualQuotient.encode arithmeticDependentQuotient
 
 def decodeTriple : ArithmeticCode → ArithmeticTriple :=
-  arithmeticDependentQuotient.decode
+  DependentResidualQuotient.decode arithmeticDependentQuotient
 
 theorem decode_encode_triple (t : ArithmeticTriple) :
     decodeTriple (encodeTriple t) = t :=
-  arithmeticDependentQuotient.decode_encode t
+  DependentResidualQuotient.decode_encode arithmeticDependentQuotient t
 
 theorem encodeTriple_injective : Function.Injective encodeTriple :=
-  arithmeticDependentQuotient.encode_injective
+  DependentResidualQuotient.encode_injective arithmeticDependentQuotient
 
 /-! ## §4 Consumer-relative descent -/
 
@@ -194,7 +195,8 @@ theorem full_triple_does_not_descend :
 theorem every_consumer_descends_through_exact_code
     {Outcome : Type} (consumer : ArithmeticTriple → Outcome) :
     DescendsThrough consumer encodeTriple :=
-  arithmeticDependentQuotient.every_consumer_descends consumer
+  DependentResidualQuotient.every_consumer_descends
+    arithmeticDependentQuotient consumer
 
 /-! ## §5 Consumer-indexed routing -/
 

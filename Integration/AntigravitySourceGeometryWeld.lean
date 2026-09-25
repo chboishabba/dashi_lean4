@@ -542,4 +542,17 @@ def ag7SelectedCMP119SourceEqualityStillRequired : Bool := true
 def ag7CMP119PhysicalSameObjectStillRequired : Bool := true
 def ag8ConditionalAssemblyCompiled : Bool := true
 
+
+/-!
+Post-correction promotion firewall.
+
+The historical source receipt used Z * quantumTraceNumerator under the name
+activeConnectedNumerator.  After separating Lorentzian trace from active stress,
+these constructors remain algebraically valid compatibility surfaces but are
+not sufficient physical source-to-geometry promotion witnesses.
+-/
+
+def historicalTraceOnlySourceGeometryPhysicallyPromotable : Bool := false
+def correctedLorentzianActiveSourceReceiptRequiredForPromotion : Bool := true
+
 end Integration.AntigravitySourceGeometryWeld

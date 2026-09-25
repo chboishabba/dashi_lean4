@@ -405,10 +405,16 @@ def finiteThicknessAllRationalRadiiTOVSolved : Bool := true
 
 
 /-!
-Exact exterior matching for the outer finite-thickness node.
+Exact Kottler exterior parameter compatibility for the outer finite-thickness
+node.
 
 M = 5/18, R = 5/2 satisfies R > 3M.  Choose the midpoint of the Kottler
 repulsion/static window in scaled-Lambda coordinates.
+
+Important boundary: `fInteriorJunction` below is the repository's de Sitter
+helper, NOT the lapse reconstructed from `layerState`.  The equal-lapse and
+derivative-jump calculations therefore certify a de-Sitter/Kottler comparison
+at the same (M,R), not a Darmois match of the finite TOV layer itself.
 -/
 
 def transitionOuterScaledLambda : Rat :=
@@ -480,7 +486,7 @@ theorem transition_outer_derivative_jump :
     transitionOuterLambda, transitionInnerMatchedLambda,
     transitionOuterScaledLambda, scaledLambdaMidpoint]
 
-structure FiniteThicknessExteriorMatchWitness : Prop where
+structure FiniteThicknessExteriorParameterWitness : Prop where
   outerLambda : transitionOuterLambda = 16/75
   innerLambda : transitionInnerMatchedLambda = 8/25
   lapseMatched :
@@ -504,8 +510,8 @@ structure FiniteThicknessExteriorMatchWitness : Prop where
         transitionOuterRadius transitionInnerMatchedLambda
       = 4/15
 
-theorem finite_thickness_exterior_match :
-    FiniteThicknessExteriorMatchWitness := by
+theorem finite_thickness_exterior_parameters :
+    FiniteThicknessExteriorParameterWitness := by
   exact {
     outerLambda := transition_outer_lambda
     innerLambda := transition_inner_matched_lambda
@@ -565,8 +571,8 @@ structure FiniteThicknessSourceGeometryWitness
     calibration.dimensionlessAmplitude = finiteThicknessKottlerTarget
   tovTransition :
     FiniteThicknessTOVTransitionWitness
-  exteriorMatch :
-    FiniteThicknessExteriorMatchWitness
+  exteriorParameters :
+    FiniteThicknessExteriorParameterWitness
   exteriorAcceleration :
     kottlerRadialAcceleration
       transitionOuterMass transitionOuterRadius transitionOuterLambda
@@ -585,7 +591,7 @@ theorem compile_finite_thickness_source_geometry
       normalized_target_calibration_exact
         source finiteThicknessKottlerTarget calibration
     tovTransition := finite_thickness_tov_transition
-    exteriorMatch := finite_thickness_exterior_match
+    exteriorParameters := finite_thickness_exterior_parameters
     exteriorAcceleration := transition_outer_acceleration_positive
   }
 
@@ -593,11 +599,52 @@ def finiteThicknessSourceToGeometryCompilerClosed : Bool := true
 def finiteThicknessMeasuredScaleProductIntervalCompiled : Bool := true
 
 
+/-!
+Actual TOV-layer -> Kottler Darmois boundary.
+
+The rational TOV state determines mass, density and pressures, but the current
+carrier does not yet reconstruct the temporal lapse Phi(r).  A shell-free
+Darmois theorem therefore needs an explicit lapse/normal-derivative
+reconstruction on the TOV side.
+-/
+
+structure TOVLayerExteriorDarmoisData where
+  interiorLapseAtOuter : Rat
+  interiorLapsePrimeAtOuter : Rat
+  exteriorLapseAtOuter : Rat
+  exteriorLapsePrimeAtOuter : Rat
+  lapseContinuity :
+    interiorLapseAtOuter = exteriorLapseAtOuter
+  derivativeContinuity :
+    interiorLapsePrimeAtOuter = exteriorLapsePrimeAtOuter
+
+structure TOVLayerMetricReconstructionBoundary : Prop where
+  outerRadialPressureZero :
+    layerRadialPressure transitionOuterRadius = 0
+  outerMassKnown :
+    layerMass transitionOuterRadius = transitionOuterMass
+  temporalLapseReconstructionStillRequired : True
+  secondFundamentalFormMatchStillRequired : True
+
+theorem current_tov_layer_metric_reconstruction_boundary :
+    TOVLayerMetricReconstructionBoundary := by
+  exact {
+    outerRadialPressureZero := layer_outer_pressure
+    outerMassKnown := layer_outer_mass_matches
+    temporalLapseReconstructionStillRequired := trivial
+    secondFundamentalFormMatchStillRequired := trivial
+  }
+
+def finiteThicknessTOVLapseReconstructed : Bool := false
+def finiteThicknessDarmoisMatchSolved : Bool := false
+
 def finiteThicknessLiteralTOVTransitionSolved : Bool := true
 def finiteThicknessContinuumEinsteinPDESolved : Bool := false
 def finiteThicknessScalarFieldEquationSolved : Bool := false
 def finiteThicknessSourceNativeCMP119ProfileDerived : Bool := false
-def finiteThicknessExteriorMatchingStillRequired : Bool := false
-def finiteThicknessExteriorMatchingCompiled : Bool := true
+def finiteThicknessExteriorParameterWindowCompiled : Bool := true
+def finiteThicknessTOVToKottlerDarmoisMatchingStillRequired : Bool := true
+def finiteThicknessExteriorMatchingStillRequired : Bool := true
+def finiteThicknessExteriorMatchingCompiled : Bool := false
 
 end Integration.AntigravityFiniteThicknessTOVTransition

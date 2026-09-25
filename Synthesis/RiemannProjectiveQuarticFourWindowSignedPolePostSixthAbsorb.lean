@@ -2806,4 +2806,157 @@ theorem QuarticFourSignedPolePair.literalOffOrdExactAt_le_farSplitBudget
   exact W.literalOffOrdExactAt_le_sharpenedJointBudget ht n
 
 
+
+/-!
+## Uniform shell payment for the exact far base carrier
+
+The base part of the literal far source is the exact signed zero test already
+used by the N-mu/Abel stack.  Its pointwise inverse-square decay can therefore
+be combined directly with the unconditional literal zero shell bound.
+
+For any natural cutoff J lying inside the physical far boundary eta*(t/16),
+the resulting estimate is uniform in the centered exhaustion index n.
+-/
+
+open Zeta23Bridge.FarShellCutoffTailBound
+
+theorem QuarticFourSignedPolePair.literalFarBaseExactTerm_abs_le_tailTermFrom
+    {t eta : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (W : QuarticFourSignedPolePair t)
+    {J : ℕ}
+    (hJ : 1 <= J)
+    (hJcut : (J : ℝ) <= eta * (t/16))
+    (rho : Zeros) :
+    |W.literalFarBaseExactTerm eta rho|
+      <=
+    W.signedOrdinateCurvature
+      * tailTermFrom t J rho := by
+  by_cases hf : quarticSignedPoleFar t eta rho
+  · have hr : 0 < t/16 := by positivity
+    have hfar := hf
+    unfold quarticSignedPoleFar
+      quarticSignedPoleNormalizedOrdinateOffset at hfar
+    rw [abs_div, abs_of_pos hr] at hfar
+    have hphysical :
+        eta * (t/16) < |(rho : ℂ).im-t| := by
+      exact (lt_div_iff₀ hr).mp hfar
+    have hJgap :
+        (J : ℝ) <= |(rho : ℂ).im-t| := by
+      exact hJcut.trans hphysical.le
+    have hJreal : (1 : ℝ) <= (J : ℝ) := by
+      exact_mod_cast hJ
+    have hgapPos :
+        0 < |(rho : ℂ).im-t| := by
+      exact lt_of_lt_of_le (by norm_num : (0:ℝ) < 1)
+        (hJreal.trans hJgap)
+    have hxt : (rho : ℂ).im ≠ t := by
+      intro heq
+      rw [heq, sub_self, abs_zero] at hgapPos
+      linarith
+    have hphi :=
+      W.signedOrdinateTest_abs_le_gap_sq ht hxt
+    have hm :
+        0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
+      positivity
+    have hcurv := W.signedOrdinateCurvature_nonneg
+    unfold QuarticFourSignedPolePair.literalFarBaseExactTerm
+      QuarticFourSignedPolePair.signedZeroSourceTerm
+    rw [if_pos hf, abs_mul, abs_of_nonneg hm]
+    unfold tailTermFrom
+    rw [if_pos hJgap]
+    calc
+      ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+          * |W.signedOrdinateTest (rho : ℂ).im|
+        <=
+      ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+          * (W.signedOrdinateCurvature
+              / ((rho : ℂ).im-t)^2) :=
+        mul_le_mul_of_nonneg_left hphi hm
+      _ =
+      W.signedOrdinateCurvature
+        * (((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+            / ((rho : ℂ).im-t)^2) := by ring
+  · simp [QuarticFourSignedPolePair.literalFarBaseExactTerm,
+      hf, tailTermFrom_nonneg, W.signedOrdinateCurvature_nonneg]
+
+theorem exists_literalFarBaseExactAt_uniform_shell_bound :
+    ∃ A : ℝ, 1 <= A ∧
+      ∀ {t eta : ℝ},
+        0 < t ->
+        0 <= eta ->
+        (W : QuarticFourSignedPolePair t) ->
+        ∀ {J : ℕ},
+          1 <= J ->
+          (J : ℝ) <= eta * (t/16) ->
+          ∀ n : ℕ,
+            |W.literalFarBaseExactAt eta n|
+              <=
+            W.signedOrdinateCurvature
+              * farShellBound A |t| J := by
+  obtain ⟨A,hA1,hloc⟩ :=
+    Zeta23.RvM.zetaZeroConfig_local_count
+  refine ⟨A,hA1,?_⟩
+  intro t eta ht heta W J hJ hJcut n
+  classical
+  have hcurv := W.signedOrdinateCurvature_nonneg
+  have htail :=
+    tsum_tailTermFrom_le hA1 hloc t J hJ
+  have hsumTail := summable_tailTermFrom hJ t
+  unfold QuarticFourSignedPolePair.literalFarBaseExactAt
+  calc
+    |∑ rho ∈ centeredZeroFinset t n,
+        W.literalFarBaseExactTerm eta rho|
+      <=
+    ∑ rho ∈ centeredZeroFinset t n,
+        |W.literalFarBaseExactTerm eta rho| := by
+          exact abs_sum_le_sum_abs _ _
+    _ <=
+    ∑ rho ∈ centeredZeroFinset t n,
+        W.signedOrdinateCurvature * tailTermFrom t J rho := by
+          apply Finset.sum_le_sum
+          intro rho hrho
+          exact W.literalFarBaseExactTerm_abs_le_tailTermFrom
+            ht heta hJ hJcut rho
+    _ <=
+    ∑' rho : Zeros,
+      W.signedOrdinateCurvature * tailTermFrom t J rho := by
+        exact
+          (hsumTail.mul_left W.signedOrdinateCurvature).sum_le_tsum
+            (centeredZeroFinset t n)
+            (fun rho hrho =>
+              mul_nonneg hcurv (tailTermFrom_nonneg t J rho))
+    _ =
+    W.signedOrdinateCurvature
+      * (∑' rho : Zeros, tailTermFrom t J rho) := by
+        rw [tsum_mul_left]
+    _ <=
+    W.signedOrdinateCurvature
+      * farShellBound A |t| J :=
+        mul_le_mul_of_nonneg_left htail hcurv
+
+theorem exists_canonicalLiteralFarBaseExactAt_uniform_shell_bound :
+    ∃ A : ℝ, 1 <= A ∧
+      ∀ {t : ℝ},
+        0 < t ->
+        (W : QuarticFourSignedPolePair t) ->
+        ∀ {J : ℕ},
+          1 <= J ->
+          (J : ℝ)
+            <= quarticSignedPoleCanonicalLocalRadius * (t/16) ->
+          ∀ n : ℕ,
+            |W.literalFarBaseExactAt
+                quarticSignedPoleCanonicalLocalRadius n|
+              <=
+            W.signedOrdinateCurvature
+              * farShellBound A |t| J := by
+  obtain ⟨A,hA,hbound⟩ :=
+    exists_literalFarBaseExactAt_uniform_shell_bound
+  refine ⟨A,hA,?_⟩
+  intro t ht W J hJ hJcut n
+  exact hbound ht quarticSignedPoleCanonicalLocalRadius_pos.le
+    W hJ hJcut n
+
+
 end Synthesis

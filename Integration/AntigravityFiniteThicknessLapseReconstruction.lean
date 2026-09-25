@@ -276,4 +276,67 @@ def finiteThicknessSourceNativeCMP119ProfileStillRequired : Bool := true
 def finiteThicknessScalarFieldWallEquationStillRequired : Bool := true
 def finiteThicknessContinuumEinsteinPromotionStillRequired : Bool := true
 
+
+/-!
+Source-calibrated finite-thickness geometry with explicit temporal lapse.
+
+This capstone uses the finite-thickness Kottler target 16/75 already selected by
+the Lambda-aware layer.  It replaces the former abstract interior-lapse socket
+with the explicit designed lapse witness above.
+-/
+
+structure ExplicitLapseSourceGeometryWitness
+    (source : AgdaTraceSourceReceipt)
+    (calibration :
+      NormalizedSourceToKottlerTargetCalibration
+        source finiteThicknessKottlerTarget) : Prop where
+  sourceActiveNegative :
+    source.activeConnectedNumerator < 0
+  sourceMagnitudePositive :
+    0 < source.sourceMagnitude
+  sourceCalibratesToFiniteThicknessLambda :
+    calibration.dimensionlessAmplitude = finiteThicknessKottlerTarget
+  explicitLapse :
+    ExplicitFiniteThicknessLapseReconstructionWitness
+  outerMassMatched :
+    layerMass transitionOuterRadius = transitionOuterMass
+  outerLambda :
+    transitionOuterLambda = 16/75
+  outerAcceleration :
+    kottlerRadialAcceleration
+      transitionOuterMass transitionOuterRadius transitionOuterLambda
+      = 2/15
+  outerLapseMatched :
+    lapseProfileTemporalLapse lapseOuterRadiusReal
+      = (finiteLayerBoundaryLapse : ℝ)
+  outerLapseDerivativeMatched :
+    (-4/15 : ℝ)
+      = (fExteriorPrimeJunction
+          transitionOuterRadius transitionOuterMass transitionOuterLambda : Rat)
+
+theorem compile_explicit_lapse_source_geometry
+    (source : AgdaTraceSourceReceipt)
+    (calibration :
+      NormalizedSourceToKottlerTargetCalibration
+        source finiteThicknessKottlerTarget) :
+    ExplicitLapseSourceGeometryWitness source calibration := by
+  exact {
+    sourceActiveNegative := source.activeConnectedNumerator_negative
+    sourceMagnitudePositive := source.sourceMagnitude_positive
+    sourceCalibratesToFiniteThicknessLambda :=
+      normalized_target_calibration_exact
+        source finiteThicknessKottlerTarget calibration
+    explicitLapse := explicit_finite_thickness_lapse_reconstruction
+    outerMassMatched := layer_outer_mass_matches
+    outerLambda := transition_outer_lambda
+    outerAcceleration := transition_outer_acceleration_positive
+    outerLapseMatched := lapse_profile_outer_lapse_matches_kottler
+    outerLapseDerivativeMatched :=
+      lapse_profile_outer_derivative_matches_kottler
+  }
+
+def finiteThicknessSourceGeometryWithExplicitLapseCompiled : Bool := true
+def finiteThicknessAbstractInteriorLapseSocketRequiredOnDesignedRoute : Bool := false
+
+
 end Integration.AntigravityFiniteThicknessLapseReconstruction

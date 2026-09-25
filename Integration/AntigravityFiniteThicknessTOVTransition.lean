@@ -571,6 +571,12 @@ structure FiniteThicknessSourceGeometryWitness
     calibration.dimensionlessAmplitude = finiteThicknessKottlerTarget
   tovTransition :
     FiniteThicknessTOVTransitionWitness
+  rationalProfile :
+    RationalFiniteThicknessTOVProfileWitness
+  lambdaAwareProfile :
+    LambdaAwareRationalFiniteThicknessTOVProfileWitness
+  outerDarmoisBoundary :
+    LambdaAwareFiniteThicknessBoundaryWitness
   exteriorParameters :
     FiniteThicknessExteriorParameterWitness
   exteriorAcceleration :
@@ -591,6 +597,9 @@ theorem compile_finite_thickness_source_geometry
       normalized_target_calibration_exact
         source finiteThicknessKottlerTarget calibration
     tovTransition := finite_thickness_tov_transition
+    rationalProfile := rational_finite_thickness_tov_profile
+    lambdaAwareProfile := lambda_aware_rational_finite_thickness_tov_profile
+    outerDarmoisBoundary := lambda_aware_finite_thickness_boundary
     exteriorParameters := finite_thickness_exterior_parameters
     exteriorAcceleration := transition_outer_acceleration_positive
   }

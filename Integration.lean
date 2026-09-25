@@ -120,6 +120,7 @@ import Integration.PhysicsInstances
 import Integration.GRQFTExecutableResidual
 import Integration.GRQFTPostMergeLocalization
 import Integration.AntigravitySourceGeometryWeld
+import Integration.AntigravityFiniteThicknessWall
 import Integration.Registry
 import Integration.RiemannReflection
 import Integration.RiemannStrip

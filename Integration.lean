@@ -53,6 +53,7 @@ import Integration.SSPWeave
 import Integration.ObserverQuotient
 import Integration.PolarResidual
 import Integration.ResidualQuotient
+import Integration.DependentResidualQuotient
 import Integration.SymmetryReduction
 import Integration.StructuredObserver
 import Integration.ObserverTower

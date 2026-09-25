@@ -5895,4 +5895,145 @@ theorem QuarticFourSignedPolePair.quarticScaleFiniteCutComplement_eq_completed_s
   linarith
 
 
+
+/-!
+## Global symmetric Abel pairing and canonical local/high split
+
+The preferred symmetric Abel exhaustion can be reflected exactly onto positive
+physical offsets.  This exposes the global analytic object as
+
+  ∫_0^n Psi'_t(t+s) D(t-s,t+s) ds.
+
+Splitting at the canonical physical half-width h0 therefore separates:
+
+* the local paired correlation, where the cubic + quintic witness jet is valid
+  and the cubic term is the V4 boundary-minus-moment coordinate above;
+* the outer paired correlation, where the exact C'_W kernel must be retained.
+
+This is the genuine high-ordinate remainder after the local quartic programme.
+-/
+
+def QuarticFourSignedPolePair.pairedCenteredAbelPartial
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  ∫ s in (0:ℝ)..(n:ℝ), W.pairedCenteredAbelOffset s
+
+theorem QuarticFourSignedPolePair.combinedCenteredAbelPartial_eq_paired
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.combinedCenteredAbelPartial n
+      =
+    W.pairedCenteredAbelPartial n := by
+  let f : ℝ -> ℝ := W.centeredAbelIntegrand
+  have hleft :
+      IntervalIntegrable f volume (t-(n:ℝ)) t :=
+    W.centeredAbelIntegrand_intervalIntegrable
+      ht (A:=t-(n:ℝ)) (B:=t)
+  have hright :
+      IntervalIntegrable f volume t (t+(n:ℝ)) :=
+    W.centeredAbelIntegrand_intervalIntegrable
+      ht (A:=t) (B:=t+(n:ℝ))
+  have hleft' :
+      IntervalIntegrable (fun s : ℝ => f (t-s))
+        volume 0 (n:ℝ) := by
+    simpa using hleft.comp_sub_left t
+  have hright' :
+      IntervalIntegrable (fun s : ℝ => f (t+s))
+        volume 0 (n:ℝ) := by
+    simpa using hright.comp_add_left t
+  have hL :
+      (∫ x in (t-(n:ℝ))..t, f x)
+        =
+      ∫ s in (0:ℝ)..(n:ℝ), f (t-s) := by
+    symm
+    simpa using
+      (intervalIntegral.integral_comp_sub_mul
+        (f:=f) (a:=(0:ℝ)) (b:=(n:ℝ))
+        (c:=(1:ℝ)) (by norm_num) t)
+  have hR :
+      (∫ x in t..(t+(n:ℝ)), f x)
+        =
+      ∫ s in (0:ℝ)..(n:ℝ), f (t+s) := by
+    symm
+    simpa using
+      (intervalIntegral.integral_comp_add_left
+        (f:=f) (a:=(0:ℝ)) (b:=(n:ℝ)) t)
+  unfold QuarticFourSignedPolePair.combinedCenteredAbelPartial
+    QuarticFourSignedPolePair.leftCenteredAbelPartial
+    QuarticFourSignedPolePair.rightCenteredAbelPartial
+    QuarticFourSignedPolePair.pairedCenteredAbelPartial
+  rw [hL,hR, ← intervalIntegral.integral_add hleft' hright']
+  apply intervalIntegral.integral_congr
+  intro s hs
+  unfold f QuarticFourSignedPolePair.centeredAbelIntegrand
+    QuarticFourSignedPolePair.pairedCenteredAbelOffset
+  rw [W.signedOrdinateTestDeriv_reflect ht]
+  ring
+
+def QuarticFourSignedPolePair.canonicalOuterPairedAbelAt
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  ∫ s in quarticSignedPoleCanonicalPhysicalHalfWidth t..(n:ℝ),
+    W.pairedCenteredAbelOffset s
+
+def QuarticFourSignedPolePair.canonicalLocalPairedAbel
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  ∫ s in (0:ℝ)..quarticSignedPoleCanonicalPhysicalHalfWidth t,
+    W.pairedCenteredAbelOffset s
+
+theorem QuarticFourSignedPolePair.pairedCenteredAbelPartial_eq_local_add_outer
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t
+        <= (n : ℝ)) :
+    W.pairedCenteredAbelPartial n
+      =
+    W.canonicalLocalPairedAbel
+      + W.canonicalOuterPairedAbelAt n := by
+  have hpair :
+      IntervalIntegrable W.pairedCenteredAbelOffset
+        volume 0 (n:ℝ) := by
+    rw [← W.combinedCenteredAbelPartial_eq_paired ht n]
+    -- Integrability is inherited from the reflected left/right centered-Abel
+    -- pieces used in the preceding theorem.
+    let f : ℝ -> ℝ := W.centeredAbelIntegrand
+    have hleft :
+        IntervalIntegrable (fun s : ℝ => f (t-s))
+          volume 0 (n:ℝ) := by
+      have h :=
+        W.centeredAbelIntegrand_intervalIntegrable
+          ht (A:=t-(n:ℝ)) (B:=t)
+      simpa using h.comp_sub_left t
+    have hright :
+        IntervalIntegrable (fun s : ℝ => f (t+s))
+          volume 0 (n:ℝ) := by
+      have h :=
+        W.centeredAbelIntegrand_intervalIntegrable
+          ht (A:=t) (B:=t+(n:ℝ))
+      simpa using h.comp_add_left t
+    have hadd := hleft.add hright
+    refine hadd.congr_ae ?_
+    rw [Filter.EventuallyEq,
+      MeasureTheory.ae_restrict_iff' measurableSet_uIoc]
+    filter_upwards with s hs
+    unfold f QuarticFourSignedPolePair.centeredAbelIntegrand
+      QuarticFourSignedPolePair.pairedCenteredAbelOffset
+    rw [W.signedOrdinateTestDeriv_reflect ht]
+    ring
+  unfold QuarticFourSignedPolePair.pairedCenteredAbelPartial
+    QuarticFourSignedPolePair.canonicalLocalPairedAbel
+    QuarticFourSignedPolePair.canonicalOuterPairedAbelAt
+  exact intervalIntegral.integral_add_adjacent_intervals
+    hpair.mono_set
+    hpair.mono_set
+
+
 end Synthesis

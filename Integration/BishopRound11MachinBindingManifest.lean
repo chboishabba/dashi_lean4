@@ -36,6 +36,15 @@ structure SourceBlob where
 
 deriving Repr, DecidableEq
 
+def agdaSourceRepository : String :=
+  "https://github.com/chboishabba/dashi_agda.git"
+
+/-- Exact dashi_agda commit whose complete transitive import graph is replayed.
+Pinning the checkout commit closes the dependency-drift hole left by hashing
+only the seven load-bearing roots. -/
+def agdaSourceCommit : String :=
+  "c72ea464663a02333319f2254967c94bd188f5f5"
+
 def bishopSubmoduleRepository : String :=
   "https://github.com/viktorcsimma/bishop.git"
 
@@ -152,6 +161,7 @@ def focusedReplayWorkflow : String :=
 /-- The manifest itself is fully concrete and contains no theorem-shaped
 placeholder. -/
 structure ManifestBoundary where
+  agdaSourceCommitPinned : Bool
   bishopSubmoduleCommitPinned : Bool
   allAgdaLoadBearingFilesContentAddressed : Bool
   sourceToLeanDeclarationTableOwned : Bool
@@ -171,6 +181,7 @@ structure ManifestBoundary where
   leanKernelReceiptObserved : Bool
 
 def manifestBoundary : ManifestBoundary where
+  agdaSourceCommitPinned := true
   bishopSubmoduleCommitPinned := true
   allAgdaLoadBearingFilesContentAddressed := true
   sourceToLeanDeclarationTableOwned := true

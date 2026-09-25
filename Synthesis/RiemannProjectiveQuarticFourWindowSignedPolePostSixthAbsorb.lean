@@ -7609,4 +7609,88 @@ theorem quarticSignedPoleCanonicalFarShellBound_ge_sqrt_term
   exact hscale.trans hbase
 
 
+
+/-!
+## Literal far-minus-mu statement is the remaining high-zero theorem
+
+At this point the preferred analytic hypothesis can be stated without any
+internal representation names.  It is exactly the one-sided signed inequality
+
+  (1/2) * (canonical far literal pair source - full mu pairing)
+    < terminal residual margin.
+
+The theorem below welds that literal statement directly to the selected high
+contradiction compiler.  This is an audit boundary, not a proof of the
+inequality: proving the displayed cancellation uniformly for the selected
+witnesses excludes every hypothetical off-line zero above the fixed verified
+cutoff.
+-/
+
+def quarticSignedPoleSelectedLiteralFarMinusMuHighCut
+    (CV t : ℝ) (rho : Zeros) : Prop :=
+  ∃ W : QuarticFourSignedPolePair t,
+    quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧
+    -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+      ∧
+    W.signedProfileMomentSix < 0
+      ∧
+    8/t < W.quantitativeTargetRadius
+      ∧
+    (1/2 : ℝ)
+      *
+      (
+        W.canonicalLiteralFarPairSource
+        -
+        ∫ tau : ℝ,
+          W.signedOrdinateTest tau * Zeta23.mu tau
+      )
+      <
+    W.postSixthTerminalResidualMargin rho
+      (quarticSignedPoleCanonicalV4Error CV t)
+
+theorem quarticSignedPoleSelectedLiteralFarMinusMuHighCut_iff_canonical
+    {CV t : ℝ}
+    (ht : 200 <= t)
+    (rho : Zeros) :
+    quarticSignedPoleSelectedLiteralFarMinusMuHighCut CV t rho
+      ↔
+    quarticSignedPoleSelectedCanonicalSignedHighCut CV t rho := by
+  constructor
+  · rintro ⟨W,hstrength,hM6lo,hM6neg,hband,hfar⟩
+    refine ⟨W,hstrength,hM6lo,hM6neg,hband,?_⟩
+    exact
+      (W.postSixthCanonicalSignedHighCut_iff_literalFar
+        ht rho).2 hfar
+  · rintro ⟨W,hstrength,hM6lo,hM6neg,hband,hcanonical⟩
+    refine ⟨W,hstrength,hM6lo,hM6neg,hband,?_⟩
+    exact
+      (W.postSixthCanonicalSignedHighCut_iff_literalFar
+        ht rho).1 hcanonical
+
+theorem exists_quarticSignedPoleFixedHigh_compiles_selectedLiteralFarMinusMuHighCut :
+    ∃ CV T : ℝ,
+      0 <= CV
+        ∧ quarticPlattTrudgianCutoff <= T
+        ∧
+      ∀ {t : ℝ},
+        T < t ->
+        ∀ {rho : Zeros},
+          (rho : ℂ).im = t ->
+          heightOf rho ≠ 0 ->
+          quarticSignedPoleSelectedLiteralFarMinusMuHighCut CV t rho ->
+          False := by
+  obtain ⟨CV,T,hCV,hPT,hcompile⟩ :=
+    exists_quarticSignedPoleFixedHigh_compiles_selectedCanonicalSignedHighCut
+  refine ⟨CV,T,hCV,hPT,?_⟩
+  intro t ht rho him hoff hcut
+  have hPT200 := quarticPlattTrudgianCutoff_gt_twoHundred
+  have ht200 : 200 <= t := by
+    linarith
+  apply hcompile ht him hoff
+  exact
+    (quarticSignedPoleSelectedLiteralFarMinusMuHighCut_iff_canonical
+      ht200 rho).1 hcut
+
+
 end Synthesis

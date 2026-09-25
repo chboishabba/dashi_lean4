@@ -7,6 +7,7 @@ import NSBControl.OutputPairingCollapse
 import NSBControl.OutputRealityNoGo
 import NSBControl.SelectedSelfResolvedRecombination
 import NSBControl.CombinedSpacetimePayment
+import NSBControl.CombinedPaymentToWeightedWork
 
 namespace NSBCyclicOrbit
 

@@ -16,6 +16,8 @@ structure ParityReceipt where
   coarseJNoGoMirrored : Bool
   f9FrobeniusSixOrbitNoGoMirrored : Bool
   f9FullRecognitionNoGoMirrored : Bool
+  f9ExtensionCoordinateQuotientMirrored : Bool
+  f9ExtensionCoordinateFailsPi0EmbeddingMirrored : Bool
   markedSourceSocketsMirrored : Bool
   arithmeticTo369DirectionMirrored : Bool
   actionOrbitStabilizerRecognitionMirrored : Bool
@@ -44,6 +46,8 @@ def canonicalParityReceipt : ParityReceipt where
   coarseJNoGoMirrored := true
   f9FrobeniusSixOrbitNoGoMirrored := true
   f9FullRecognitionNoGoMirrored := true
+  f9ExtensionCoordinateQuotientMirrored := true
+  f9ExtensionCoordinateFailsPi0EmbeddingMirrored := true
   markedSourceSocketsMirrored := true
   arithmeticTo369DirectionMirrored := true
   actionOrbitStabilizerRecognitionMirrored := true
@@ -81,5 +85,15 @@ theorem f9_full_recognition_no_go_parity
       (Integration.ActionOrbitRecognition.FullRecognition
         F f9OrbitPresentation p3OrbitPresentation) :=
   no_full_f9_frobenius_recognition_to_p3 F
+
+theorem f9_extension_coordinate_surjective_parity :
+    Function.Surjective extensionCoordinate :=
+  extensionCoordinate_surjective
+
+theorem f9_extension_coordinate_not_pi0_embedding_parity :
+    ¬ Nonempty
+      (Integration.ActionOrbitRecognition.Pi0Embedding
+        f9ExtensionCoordinateOrbitRecognition) :=
+  f9_extension_coordinate_not_pi0_embedding
 
 end AgdaMirror.OggSSPSmallCharacteristicRecognition

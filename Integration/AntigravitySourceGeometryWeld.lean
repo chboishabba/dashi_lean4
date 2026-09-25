@@ -352,7 +352,7 @@ The physically structured calibration can feed the end-to-end geometry
 directly.  This avoids inventing an inverse "normalization scale".
 -/
 
-structure PhysicallyCalibratedAntigravityWitness
+structure NormalizedCalibratedAntigravityWitness
     {Stress : Type u}
     (E : CMP119RationalStressComponentEvaluator Stress)
     (stress : Stress)
@@ -363,31 +363,31 @@ structure PhysicallyCalibratedAntigravityWitness
     source.activeConnectedNumerator < 0
   sourceMagnitudePositive :
     0 < source.sourceMagnitude
-  physicalExteriorAmplitude :
+  normalizedExteriorAmplitude :
     calibration.dimensionlessExteriorAmplitude
       = nambuBubbleExteriorAmplitude
-  physicalExteriorAmplitudePositive :
+  normalizedExteriorAmplitudePositive :
     0 < calibration.dimensionlessExteriorAmplitude
   bubble :
     NambuGotoRepulsiveBubbleCandidate E stress normalized
   exteriorAccelerationPositive :
     0 < nambuBubbleAcceleration
 
-theorem compile_physically_calibrated_antigravity
+theorem compile_normalized_calibrated_antigravity
     {Stress : Type u}
     {E : CMP119RationalStressComponentEvaluator Stress}
     {stress : Stress}
     (normalized : NormalizedCrossSectorStressInstance E stress)
     (source : AgdaTraceSourceReceipt)
     (calibration : NormalizedEinsteinSourceCalibration source) :
-    PhysicallyCalibratedAntigravityWitness
+    NormalizedCalibratedAntigravityWitness
       E stress normalized source calibration := by
   exact {
     activeSourceNegative := source.activeConnectedNumerator_negative
     sourceMagnitudePositive := source.sourceMagnitude_positive
-    physicalExteriorAmplitude :=
+    normalizedExteriorAmplitude :=
       physical_calibration_exterior_amplitude source calibration
-    physicalExteriorAmplitudePositive :=
+    normalizedExteriorAmplitudePositive :=
       physical_calibration_exterior_amplitude_positive source calibration
     bubble := nambu_goto_repulsive_bubble_candidate normalized
     exteriorAccelerationPositive :=

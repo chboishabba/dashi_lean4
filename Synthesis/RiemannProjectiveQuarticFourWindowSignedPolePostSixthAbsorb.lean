@@ -7476,4 +7476,75 @@ theorem QuarticFourSignedPolePair.postSixthCanonicalSignedHighCut_iff_literalFar
   rw [W.canonicalSignedHighResidual_eq_literal_far_sub_mu ht]
 
 
+
+/-!
+## Transport the existing shell technology onto the canonical far tsum
+
+The shell estimates were proved for the finite centered exhaustions.  The
+preferred high scalar now uses the global canonical far tsum.  Summability of
+the canonical far indicator closes that representation seam directly.
+-/
+
+theorem QuarticFourSignedPolePair.literalCanonicalFarExactAt_tendsto_tsum
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Tendsto
+      (fun n : ℕ =>
+        W.literalFarExactAt
+          quarticSignedPoleCanonicalLocalRadius n)
+      atTop
+      (𝓝 W.canonicalLiteralFarPairSource) := by
+  have hsum := (W.canonicalFarExactTerm_summable ht).hasSum
+  have hcofinal := centeredZeroFinset_tendsto_atTop t
+  simpa [
+    QuarticFourSignedPolePair.literalFarExactAt,
+    QuarticFourSignedPolePair.canonicalLiteralFarPairSource
+  ] using hsum.comp hcofinal
+
+theorem QuarticFourSignedPolePair.canonicalLiteralFarPairSource_abs_le_of_finite
+    {t B : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hB :
+      ∀ n : ℕ,
+        |W.literalFarExactAt
+            quarticSignedPoleCanonicalLocalRadius n|
+          <= B) :
+    |W.canonicalLiteralFarPairSource| <= B := by
+  have hlim :=
+    W.literalCanonicalFarExactAt_tendsto_tsum ht
+  have habslim :
+      Tendsto
+        (fun n : ℕ =>
+          |W.literalFarExactAt
+              quarticSignedPoleCanonicalLocalRadius n|)
+        atTop
+        (𝓝 |W.canonicalLiteralFarPairSource|) := by
+    exact (continuous_abs.tendsto _).comp hlim
+  exact le_of_tendsto habslim (Filter.Eventually.of_forall hB)
+
+theorem exists_canonicalLiteralFarPairSource_linearCutoff_bound_of_horizontalCurvature :
+    ∃ A : ℝ, 1 <= A ∧
+      ∀ {t CH : ℝ},
+        2000 <= t ->
+        0 <= CH ->
+        (W : QuarticFourSignedPolePair t) ->
+        W.HorizontalFarCurvatureBound CH ->
+        |W.canonicalLiteralFarPairSource|
+          <=
+        (W.signedOrdinateCurvature + CH)
+          *
+        farShellBound A |t|
+          (quarticSignedPoleCanonicalFarCutoff t) := by
+  obtain ⟨A,hA,hfinite⟩ :=
+    exists_canonicalLiteralFarExactAt_linearCutoff_bound_of_horizontalCurvature
+  refine ⟨A,hA,?_⟩
+  intro t CH ht hCH W hCurv
+  exact
+    W.canonicalLiteralFarPairSource_abs_le_of_finite
+      (by linarith : 0 < t)
+      (hfinite ht hCH W hCurv)
+
+
 end Synthesis

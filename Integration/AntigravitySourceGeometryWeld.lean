@@ -405,6 +405,64 @@ theorem required_stress_length_squared_interval_ordered
   · exact mul_le_mul_of_nonneg_right
       codata_candidate_kappa_interval_ordered (le_of_lt hs)
 
+
+/-!
+Least-privilege physical scale calibration.
+
+The Kottler consumer never observes the stress-energy conversion and model
+length separately; it observes only
+
+  S_L2 = (stress-energy per source unit) * lengthScale^2.
+
+Therefore the physical calibration ABI should expose that product directly.
+A microscopic/lattice realization may later factor S_L2, but the gravitational
+consumer must not demand a non-identifiable split.
+-/
+
+structure PhysicalStressLengthSquaredCalibration
+    (source : AgdaTraceSourceReceipt)
+    (targetAmplitude : Rat) where
+  stressLengthSquared : Rat
+  stressLengthSquaredPositive : 0 < stressLengthSquared
+
+  targetInsideCODATAKappaEnclosure :
+    codataCandidateKappaLower
+        * source.sourceMagnitude * stressLengthSquared
+      ≤ targetAmplitude
+      ∧
+    targetAmplitude
+      ≤ codataCandidateKappaUpper
+        * source.sourceMagnitude * stressLengthSquared
+
+theorem required_scale_interval_contains_every_exact_calibration
+    (source : AgdaTraceSourceReceipt)
+    (targetAmplitude : Rat)
+    (hTarget : 0 < targetAmplitude)
+    (calibration :
+      PhysicalStressLengthSquaredCalibration source targetAmplitude) :
+    requiredStressLengthSquaredLowerFor targetAmplitude source
+      ≤ calibration.stressLengthSquared
+      ∧
+    calibration.stressLengthSquared
+      ≤ requiredStressLengthSquaredUpperFor targetAmplitude source := by
+  rcases calibration.targetInsideCODATAKappaEnclosure with ⟨hlo, hhi⟩
+  have hs : 0 < source.sourceMagnitude := source.sourceMagnitude_positive
+  have hklo : 0 < codataCandidateKappaLower :=
+    codata_candidate_kappa_lower_positive
+  have hkhi : 0 < codataCandidateKappaUpper := by
+    exact lt_of_lt_of_le hklo codata_candidate_kappa_interval_ordered
+  constructor
+  · unfold requiredStressLengthSquaredLowerFor
+    apply (div_le_iff₀ (mul_pos hkhi hs)).2
+    nlinarith
+  · unfold requiredStressLengthSquaredUpperFor
+    apply (le_div_iff₀ (mul_pos hklo hs)).2
+    nlinarith
+
+def physicalScaleConsumerNeedsOnlyStressLengthSquaredProduct : Bool := true
+def separateStressAndLengthIdentificationRequiredByGravityConsumer : Bool := false
+
+
 def codataDiagnosticIntervalTyped : Bool := true
 def codataDiagnosticIntervalAcceptedAuthority : Bool := false
 

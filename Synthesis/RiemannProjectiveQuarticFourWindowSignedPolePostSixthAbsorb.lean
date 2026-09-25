@@ -5739,4 +5739,160 @@ theorem QuarticFourSignedPolePair.cubicLeadingCanonicalCorrelation_eq_V4_boundar
   rw [W.canonicalCenteredFourthAbelCorrelation_eq_boundary_sub_V4 ht]
 
 
+
+/-!
+## Fail-fast separation: local cubic/V4 versus the genuinely open complement
+
+Oddness is global, so it is useful to expose the exact paired Abel integrand at
+a physical offset s.  For s >= 0,
+
+  Psi'_t(t-s) = - Psi'_t(t+s)
+
+and
+
+  E_t(t+s) - E_t(t-s) = D(t-s,t+s).
+
+Thus the paired centered-Abel integrand is exactly the derivative at the right
+endpoint times one symmetric N-mu window discrepancy.
+
+However, the cubic Taylor estimate proved above is only certified on the
+canonical local normalized interval |q| <= eta0.  That is precisely the local
+source already subtracted in finiteCutCompensatedFar.  The quartic-scale
+completed residual therefore decomposes exactly into the already-paid local
+source plus the still-open complementary finite-cut compensation.
+
+This prevents the local cubic/V4 diagnostic from being mistaken for a payment
+of the remaining high cut.
+-/
+
+theorem QuarticFourSignedPolePair.signedOrdinateTestDeriv_reflect
+    {t s : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.signedOrdinateTestDeriv (t-s)
+      = - W.signedOrdinateTestDeriv (t+s) := by
+  rw [W.signedOrdinateTestDeriv_eq_combinedD1 ht,
+      W.signedOrdinateTestDeriv_eq_combinedD1 ht]
+  dsimp
+  have hr : t/16 ≠ 0 := by positivity
+  have hleft :
+      ((t-s)-t)/(t/16) = -(s/(t/16)) := by
+    field_simp [hr]
+    ring
+  have hright :
+      ((t+s)-t)/(t/16) = s/(t/16) := by
+    field_simp [hr]
+    ring
+  rw [hleft, hright, compactCosineD1_odd]
+  ring
+
+theorem centeredZetaMuDiscrepancy_sub_reflect_eq_symmetricWindow
+    {t s : ℝ}
+    (hs : 0 <= s) :
+    centeredZetaMuDiscrepancy t (t+s)
+      - centeredZetaMuDiscrepancy t (t-s)
+      =
+    zetaMuCumulativeDiscrepancy (t-s) (t+s) := by
+  by_cases hs0 : s = 0
+  · subst s
+    simp [centeredZetaMuDiscrepancy_self,
+      zetaMuCumulativeDiscrepancy,
+      zetaMuPrimitive_self]
+  · have hspos : 0 < s := lt_of_le_of_ne hs (Ne.symm hs0)
+    have hleft : t-s < t := by linarith
+    have hright : t <= t+s := by linarith
+    have hadd :=
+      zetaMuCumulativeDiscrepancy_add
+        (A:=t-s) (B:=t) (C:=t+s)
+        (by linarith) hright
+    rw [centeredZetaMuDiscrepancy_of_le hright,
+      centeredZetaMuDiscrepancy_of_lt hleft]
+    rw [hadd]
+    ring
+
+def QuarticFourSignedPolePair.pairedCenteredAbelOffset
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (s : ℝ) : ℝ :=
+  W.signedOrdinateTestDeriv (t+s)
+    *
+  (
+    centeredZetaMuDiscrepancy t (t+s)
+      - centeredZetaMuDiscrepancy t (t-s)
+  )
+
+theorem QuarticFourSignedPolePair.pairedCenteredAbelOffset_eq_symmetricWindow
+    {t s : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hs : 0 <= s) :
+    W.pairedCenteredAbelOffset s
+      =
+    W.signedOrdinateTestDeriv (t+s)
+      * zetaMuCumulativeDiscrepancy (t-s) (t+s) := by
+  unfold QuarticFourSignedPolePair.pairedCenteredAbelOffset
+  rw [centeredZetaMuDiscrepancy_sub_reflect_eq_symmetricWindow hs]
+
+theorem QuarticFourSignedPolePair.pairedCenteredAbelOffset_quarticScale
+    {t q : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hq : 0 <= q) :
+    (t/16)^7
+      * W.pairedCenteredAbelOffset ((t/16)*q)
+      =
+    W.normalizedOrdinateCosineD1 q
+      * W.quarticScaleAntisymmetricDiscrepancy q := by
+  unfold QuarticFourSignedPolePair.pairedCenteredAbelOffset
+  have hr : 0 < t/16 := by positivity
+  have hqphys : 0 <= (t/16)*q := mul_nonneg hr.le hq
+  rw [W.signedOrdinateTestDeriv_normalized ht]
+  have hplus :
+      t + (t/16)*q = t + (t/16)*q := rfl
+  have hminus :
+      t - (t/16)*q = t + (t/16)*(-q) := by ring
+  unfold QuarticFourSignedPolePair.quarticScaleAntisymmetricDiscrepancy
+    QuarticFourSignedPolePair.quarticScaleCenteredDiscrepancy
+    QuarticFourSignedPolePair.normalizedCenteredDiscrepancy
+  rw [hminus]
+  have hr0 : t/16 ≠ 0 := by positivity
+  field_simp [hr0]
+  ring
+
+theorem QuarticFourSignedPolePair.quarticScaleCompletedResidual_eq_localExact_add_finiteCutComplement
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.quarticScaleCompletedResidual
+      =
+    ((t/16)^6 / 2)
+      * W.literalLocalExactAt
+          quarticSignedPoleCanonicalLocalRadius n
+      +
+    W.quarticScaleFiniteCutCompensatedFar n := by
+  unfold QuarticFourSignedPolePair.quarticScaleCompletedResidual
+    QuarticFourSignedPolePair.quarticScaleFiniteCutCompensatedFar
+  rw [W.completedSignedResidual_eq_local_half_add_finiteCutFar n]
+  ring
+
+/--
+Audit theorem: every local cubic/V4 sharpening can only improve the first term
+in the exact decomposition above.  The selected quartic-scale high cut still
+requires an independent estimate of the complementary finite-cut compensation.
+-/
+theorem QuarticFourSignedPolePair.quarticScaleFiniteCutComplement_eq_completed_sub_local
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.quarticScaleFiniteCutCompensatedFar n
+      =
+    W.quarticScaleCompletedResidual
+      -
+    ((t/16)^6 / 2)
+      * W.literalLocalExactAt
+          quarticSignedPoleCanonicalLocalRadius n := by
+  have h :=
+    W.quarticScaleCompletedResidual_eq_localExact_add_finiteCutComplement n
+  linarith
+
+
 end Synthesis

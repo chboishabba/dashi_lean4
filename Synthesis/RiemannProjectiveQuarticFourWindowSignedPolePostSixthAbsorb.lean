@@ -7964,6 +7964,7 @@ def LiteralFarMinusMuAmbientSimpleMultiplicityEstimate
 
 theorem literalFarMinusMuAmbientSimpleMultiplicityEstimate_implies_uniformHighEstimate
     {CV T : ℝ}
+    (hPT : quarticPlattTrudgianCutoff <= T)
     (hambient :
       LiteralFarMinusMuAmbientSimpleMultiplicityEstimate CV T) :
     LiteralFarMinusMuUniformHighEstimate CV T := by
@@ -7974,29 +7975,24 @@ theorem literalFarMinusMuAmbientSimpleMultiplicityEstimate_implies_uniformHighEs
   obtain ⟨W,hS,hM6lo,hM6neg,hband,hambientCut⟩ :=
     hambient ht ha0 ha
   refine ⟨W,hS,hM6lo,hM6neg,hband,?_⟩
+  have ht0 : 0 < t := by
+    have hPT200 := quarticPlattTrudgianCutoff_gt_twoHundred
+    have hPTt : quarticPlattTrudgianCutoff < t :=
+      lt_of_le_of_lt hPT ht
+    linarith
   have hdefect :
       0 <= W.physicalCombinedHeightDefect (heightOf rho) :=
     (W.physicalCombinedHeightDefect_pos_of_ambient_strip
-      (by
-        have hPT := quarticPlattTrudgianCutoff_gt_twoHundred
-        have hT :
-            quarticPlattTrudgianCutoff <= T := by
-          -- The ambient interface is consumed below only with the fixed T
-          -- returned by the compiler.  Keep this generic theorem independent
-          -- of that provenance by deriving positivity directly from the band.
-          have hq : 0 < 8/t := by
-            exact lt_trans (by positivity) hband
-          positivity)
-      hband ha0 ha).le
+      ht0 hband ha0 ha).le
   have hmultPos :
       0 < ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
     positivity
+  have hnatPos :
+      0 < (zetaZeroConfig).mult (rho : ℂ) := by
+    exact_mod_cast hmultPos
   have hmultOne :
       (1 : ℝ) <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
-    have hnat :
-        1 <= (zetaZeroConfig).mult (rho : ℂ) := by
-      exact Nat.one_le_iff_ne_zero.mpr (by positivity)
-    exact_mod_cast hnat
+    exact_mod_cast hnatPos
   have hmargin :=
     W.ambientMargin_mono_multiplicity hdefect hmultOne
       (EV:=quarticSignedPoleCanonicalV4Error CV t)
@@ -8025,7 +8021,7 @@ theorem exists_quarticSignedPoleFixedHigh_ambientSimpleMultiplicityEstimate_excl
   intro hambient
   exact hexclude
     (literalFarMinusMuAmbientSimpleMultiplicityEstimate_implies_uniformHighEstimate
-      hambient)
+      hPT hambient)
 
 
 end Synthesis

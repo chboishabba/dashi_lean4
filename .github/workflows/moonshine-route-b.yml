@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - agent/moonshine-eisenstein-analytic-20260922
+      - feature/j369-ogg-address-ssp15-no-go-20260925
     paths:
       - "Integration/Bishop*.lean"
       - "Integration/Moonshine*.lean"
@@ -133,3 +134,5 @@ jobs:
           lake env lean Integration/MonsterAtlas6561X8RecognitionObligation.lean
           lake env lean Integration/MoonshineNeutralCuspRelationCrossPollination.lean
           lake env lean Integration/MoonshineSSP15SignedFRACTRANBranch.lean
+          lake env lean Integration/MoonshineOggAddressSSP15NoGo.lean
+          lake env lean Integration/MoonshineSSP15PrimeInternalFibre.lean

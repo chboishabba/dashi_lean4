@@ -141,15 +141,16 @@ theorem compile_end_to_end_conditional_antigravity
 
 
 /-!
-Physical source -> Einstein/Kottler calibration.
+Normalized source -> Einstein/Kottler calibration.
 
 The earlier `SourceToKottlerCalibration` is retained as the minimal normalized
-ABI.  The preferred physical ABI exposes the factors that its single scale had
-compressed:
+ABI.  This factorized ABI exposes the dimensionless factors that its single scale
+had compressed.  It is NOT an exact SI evaluation of 8*pi*G/c^4: measured G and
+the transcendental pi factor belong to the physical authority layer below:
 
   sourceMagnitude                    dimensionless finite-source readout
   stressEnergyPerSourceUnit          physical stress-energy / source unit
-  einsteinCoupling                   8*pi*G/c^4 in the chosen unit convention
+  normalizedEinsteinCoupling         dimensionless positive coupling representative
   lengthScale                        physical length represented by one model unit
 
 The dimensionless Kottler cosmological amplitude is therefore
@@ -159,69 +160,120 @@ The dimensionless Kottler cosmological amplitude is therefore
 No numerical value of G, lattice spacing, or stress normalization is invented.
 -/
 
-structure PhysicalEinsteinSourceCalibration
+structure NormalizedEinsteinSourceCalibration
     (source : AgdaTraceSourceReceipt) where
   stressEnergyPerSourceUnit : Rat
-  einsteinCoupling : Rat
+  normalizedEinsteinCoupling : Rat
   lengthScale : Rat
   stressScalePositive : 0 < stressEnergyPerSourceUnit
-  einsteinCouplingPositive : 0 < einsteinCoupling
+  normalizedEinsteinCouplingPositive : 0 < normalizedEinsteinCoupling
   lengthScalePositive : 0 < lengthScale
   exteriorAmplitudeCalibration :
-    einsteinCoupling
+    normalizedEinsteinCoupling
       * stressEnergyPerSourceUnit
       * source.sourceMagnitude
       * lengthScale^2
       = nambuBubbleExteriorAmplitude
 
-def PhysicalEinsteinSourceCalibration.dimensionlessExteriorAmplitude
+def NormalizedEinsteinSourceCalibration.dimensionlessExteriorAmplitude
     {source : AgdaTraceSourceReceipt}
-    (calibration : PhysicalEinsteinSourceCalibration source) : Rat :=
-  calibration.einsteinCoupling
+    (calibration : NormalizedEinsteinSourceCalibration source) : Rat :=
+  calibration.normalizedEinsteinCoupling
     * calibration.stressEnergyPerSourceUnit
     * source.sourceMagnitude
     * calibration.lengthScale^2
 
 theorem physical_calibration_exterior_amplitude
     (source : AgdaTraceSourceReceipt)
-    (calibration : PhysicalEinsteinSourceCalibration source) :
+    (calibration : NormalizedEinsteinSourceCalibration source) :
     calibration.dimensionlessExteriorAmplitude
       = nambuBubbleExteriorAmplitude :=
   calibration.exteriorAmplitudeCalibration
 
 theorem physical_calibration_exterior_amplitude_positive
     (source : AgdaTraceSourceReceipt)
-    (calibration : PhysicalEinsteinSourceCalibration source) :
+    (calibration : NormalizedEinsteinSourceCalibration source) :
     0 < calibration.dimensionlessExteriorAmplitude := by
   rw [physical_calibration_exterior_amplitude source calibration]
   norm_num [nambuBubbleExteriorAmplitude]
 
 theorem physical_calibration_factor_product_positive
     (source : AgdaTraceSourceReceipt)
-    (calibration : PhysicalEinsteinSourceCalibration source) :
+    (calibration : NormalizedEinsteinSourceCalibration source) :
     0 <
-      calibration.einsteinCoupling
+      calibration.normalizedEinsteinCoupling
         * calibration.stressEnergyPerSourceUnit
         * source.sourceMagnitude
         * calibration.lengthScale^2 := by
   exact physical_calibration_exterior_amplitude_positive source calibration
 
 /-!
-Authority boundary for the physical coupling.  The mathematical consumer needs
-a positive typed coupling; accepted CODATA value/uncertainty provenance is a
-separate receipt.  This mirrors the existing Agda
-EinsteinPhysicalCouplingCalibrationExact boundary rather than silently treating
-a decimal diagnostic as exact.
+Authority boundary for the measured physical coupling.
+
+The mathematical Kottler consumer above is exact and rational.  Physical
+calibration is different: kappa = 8*pi*G/c^4 contains measured G and pi, so it
+must not be represented as an exact Rat.  We use an exact rational enclosure for
+a typed measured-coupling representative, plus explicit authority and convention
+receipts.  A later real/interval backend may refine the enclosure without
+changing the normalized geometry theorem.
 -/
 
+structure PhysicalEinsteinCouplingInterval where
+  lower : Rat
+  upper : Rat
+  lowerPositive : 0 < lower
+  ordered : lower ≤ upper
+
 structure PhysicalEinsteinCouplingAuthority
-    (calibration : Rat) : Prop where
-  positive : 0 < calibration
+    (interval : PhysicalEinsteinCouplingInterval) : Prop where
+  codataSourceBound : Prop
   acceptedMeasuredValue : Prop
   uncertaintyAccountedFor : Prop
   energyDensityConvention : Prop
+  kappaConvention : Prop
+
+structure PhysicalScaleTransport
+    (source : AgdaTraceSourceReceipt)
+    (interval : PhysicalEinsteinCouplingInterval) where
+  stressEnergyPerSourceUnitLower : Rat
+  stressEnergyPerSourceUnitUpper : Rat
+  lengthScaleLower : Rat
+  lengthScaleUpper : Rat
+  stressLowerPositive : 0 < stressEnergyPerSourceUnitLower
+  stressOrdered : stressEnergyPerSourceUnitLower ≤ stressEnergyPerSourceUnitUpper
+  lengthLowerPositive : 0 < lengthScaleLower
+  lengthOrdered : lengthScaleLower ≤ lengthScaleUpper
+
+def PhysicalScaleTransport.exteriorAmplitudeLower
+    {source : AgdaTraceSourceReceipt}
+    {interval : PhysicalEinsteinCouplingInterval}
+    (transport : PhysicalScaleTransport source interval) : Rat :=
+  interval.lower
+    * transport.stressEnergyPerSourceUnitLower
+    * source.sourceMagnitude
+    * transport.lengthScaleLower^2
+
+def PhysicalScaleTransport.exteriorAmplitudeUpper
+    {source : AgdaTraceSourceReceipt}
+    {interval : PhysicalEinsteinCouplingInterval}
+    (transport : PhysicalScaleTransport source interval) : Rat :=
+  interval.upper
+    * transport.stressEnergyPerSourceUnitUpper
+    * source.sourceMagnitude
+    * transport.lengthScaleUpper^2
+
+structure PhysicalKottlerCalibrationEnclosure
+    (source : AgdaTraceSourceReceipt)
+    (interval : PhysicalEinsteinCouplingInterval) : Prop where
+  authority : PhysicalEinsteinCouplingAuthority interval
+  transport : PhysicalScaleTransport source interval
+  targetInside :
+    transport.exteriorAmplitudeLower ≤ nambuBubbleExteriorAmplitude
+      ∧ nambuBubbleExteriorAmplitude ≤ transport.exteriorAmplitudeUpper
 
 def acceptedPhysicalEinsteinCouplingAlreadyDerived : Bool := false
+def exactRationalSICouplingClaimed : Bool := false
+def measuredCouplingIntervalRequired : Bool := true
 
 /-!
 The physically structured calibration can feed the end-to-end geometry
@@ -234,7 +286,7 @@ structure PhysicallyCalibratedAntigravityWitness
     (stress : Stress)
     (normalized : NormalizedCrossSectorStressInstance E stress)
     (source : AgdaTraceSourceReceipt)
-    (calibration : PhysicalEinsteinSourceCalibration source) : Prop where
+    (calibration : NormalizedEinsteinSourceCalibration source) : Prop where
   activeSourceNegative :
     source.activeConnectedNumerator < 0
   sourceMagnitudePositive :
@@ -255,7 +307,7 @@ theorem compile_physically_calibrated_antigravity
     {stress : Stress}
     (normalized : NormalizedCrossSectorStressInstance E stress)
     (source : AgdaTraceSourceReceipt)
-    (calibration : PhysicalEinsteinSourceCalibration source) :
+    (calibration : NormalizedEinsteinSourceCalibration source) :
     PhysicallyCalibratedAntigravityWitness
       E stress normalized source calibration := by
   exact {
@@ -282,6 +334,8 @@ def ag3FourDiagonalCollapseCompiled : Bool := true
 def ag4LocalRepulsionCompilerCompiled : Bool := true
 def ag5SourceGeometryCalibrationExplicit : Bool := true
 def ag5PhysicalEinsteinFactorizationCompiled : Bool := true
+def ag5ExactRationalSICouplingRetired : Bool := true
+def ag5MeasuredCouplingIntervalABICompiled : Bool := true
 def ag5MeasuredGCouplingAuthorityStillRequired : Bool := true
 def ag5StressEnergyPerSourceUnitStillRequired : Bool := true
 def ag5LengthScaleStillRequired : Bool := true

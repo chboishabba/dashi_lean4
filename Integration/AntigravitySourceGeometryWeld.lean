@@ -272,6 +272,10 @@ def ag5MeasuredGCouplingAuthorityStillRequired : Bool := true
 def ag5StressEnergyPerSourceUnitStillRequired : Bool := true
 def ag5LengthScaleStillRequired : Bool := true
 def ag6GlobalThinWallCandidateCompiled : Bool := true
+def ag7CanonicalWilsonGibbsCompilerClosed : Bool := true
+def ag7SymmetricMetricRechartClosed : Bool := true
+def ag7CoordinateRoundTripStillRequired : Bool := false
+def ag7SelectedCMP119SourceEqualityStillRequired : Bool := true
 def ag7CMP119PhysicalSameObjectStillRequired : Bool := true
 def ag8ConditionalAssemblyCompiled : Bool := true
 

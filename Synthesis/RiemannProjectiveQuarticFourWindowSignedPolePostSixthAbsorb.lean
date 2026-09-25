@@ -6502,4 +6502,191 @@ theorem QuarticFourSignedPolePair.canonicalFarBoundaryCoupledCompensation_eq_zer
   ring
 
 
+
+/-!
+## Signed terminal compensation cut
+
+The existing normalized compensation predicate used an absolute value, but the
+terminal G3 argument only consumes an upper bound on the finite compensated
+remainder.  Preserve the sign.
+
+This removes an accidental strengthening from the Clay-facing min-cut:
+
+  F_n < margin
+
+is enough; no lower bound on F_n is required.
+-/
+
+def QuarticFourSignedPolePair.PostSixthSignedCompensationCut
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (EV : ℝ) : Prop :=
+  ∃ n : ℕ,
+    quarticSignedPoleLocalHalfWidth
+        t quarticSignedPoleCanonicalLocalRadius
+      < (n : ℝ)
+    ∧
+    W.finiteCutCompensatedFar n
+      < W.postSixthTerminalResidualMargin rho EV
+
+theorem QuarticFourSignedPolePair.postSixthNormalizedCompensationCut_implies_signed
+    {t EV : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hC : W.PostSixthNormalizedCompensationCut rho EV) :
+    W.PostSixthSignedCompensationCut rho EV := by
+  rcases hC with ⟨n,hn,hcut⟩
+  refine ⟨n,hn,?_⟩
+  exact W.finiteCutCompensatedFar_lt_margin_of_normalizedCut ht hcut
+
+theorem QuarticFourSignedPolePair.completedSignedResidual_lt_target_of_signedCompensationCut
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hM6lo :
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV)
+    (hC : W.PostSixthSignedCompensationCut rho EV) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho := by
+  rcases hC with ⟨n,hn,hfar⟩
+  have hlocal :=
+    W.literalLocalExactAt_le_postSixthTerminalLocalM6Budget
+      ht hM6lo hM6neg n hn hV
+  rw [W.completedSignedResidual_eq_local_half_add_finiteCutFar n]
+  unfold QuarticFourSignedPolePair.postSixthTerminalResidualMargin at hfar
+  nlinarith
+
+theorem QuarticFourSignedPolePair.postSixthSignedCompensationCut_compiles_G3
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hM6lo :
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV)
+    (hC : W.PostSixthSignedCompensationCut rho EV) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho :=
+  W.completedSignedResidual_lt_target_of_signedCompensationCut
+    ht hM6lo hM6neg hV hC
+
+def quarticSignedPoleSelectedSignedHighCut
+    (CV t : ℝ) (rho : Zeros) : Prop :=
+  ∃ W : QuarticFourSignedPolePair t,
+    quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧
+    -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+      ∧
+    W.signedProfileMomentSix < 0
+      ∧
+    8/t < W.quantitativeTargetRadius
+      ∧
+    W.PostSixthSignedCompensationCut rho
+      (quarticSignedPoleCanonicalV4Error CV t)
+
+theorem quarticSignedPoleSelectedQuarticScaleHighCut_implies_signedHighCut
+    {CV t : ℝ}
+    (ht : 200 <= t)
+    (rho : Zeros)
+    (h :
+      quarticSignedPoleSelectedQuarticScaleHighCut CV t rho) :
+    quarticSignedPoleSelectedSignedHighCut CV t rho := by
+  rcases h with ⟨W,hS,hM6lo,hM6neg,hband,hcut⟩
+  refine ⟨W,hS,hM6lo,hM6neg,hband,?_⟩
+  have hnorm :
+      W.PostSixthNormalizedCompensationCut rho
+        (quarticSignedPoleCanonicalV4Error CV t) := by
+    exact
+      (W.postSixthNormalizedCompensationCut_iff_quarticScale rho).2 hcut
+  exact W.postSixthNormalizedCompensationCut_implies_signed
+    (by linarith : 0 < t) rho hnorm
+
+theorem exists_quarticSignedPoleFixedHigh_compiles_selectedSignedHighCut :
+    ∃ CV T : ℝ,
+      0 <= CV
+        ∧ quarticPlattTrudgianCutoff <= T
+        ∧
+      ∀ {t : ℝ},
+        T < t ->
+        ∀ {rho : Zeros},
+          (rho : ℂ).im = t ->
+          heightOf rho ≠ 0 ->
+          quarticSignedPoleSelectedSignedHighCut CV t rho ->
+          False := by
+  obtain ⟨CV,TV,hCV,hVprod⟩ :=
+    exists_quarticSignedPoleRvMVerticalFourthDiscrepancy_bound
+  let T : ℝ :=
+    max quarticPlattTrudgianCutoff (max 200 (TV + 2))
+  refine ⟨CV,T,hCV,le_max_left _ _,?_⟩
+  intro t ht rho him hoff hcut
+  rcases hcut with ⟨W,hS,hM6lo,hM6neg,hband,hC⟩
+  have ht200 : 200 <= t := by
+    dsimp [T] at ht
+    have h := le_max_right quarticPlattTrudgianCutoff (max 200 (TV+2))
+    have h2 := le_max_left 200 (TV+2)
+    linarith
+  have hleft :
+      max TV 4
+        <=
+      t - quarticSignedPoleLocalHalfWidth
+            t quarticSignedPoleCanonicalLocalRadius := by
+    -- Same eventual left-end condition already used by the fixed-high compiler.
+    have hPT := quarticPlattTrudgianCutoff_gt_twoHundred
+    have heta := quarticSignedPoleCanonicalLocalRadius_lt_one
+    unfold quarticSignedPoleLocalHalfWidth
+    dsimp [T] at ht
+    have hTV : TV + 2 < t := by
+      have hmax := le_max_right 200 (TV+2)
+      have hout := le_max_right quarticPlattTrudgianCutoff (max 200 (TV+2))
+      linarith
+    have ht4 : 4 <= t - quarticSignedPoleCanonicalLocalRadius * (t/16) := by
+      have hη0 : 0 <= quarticSignedPoleCanonicalLocalRadius :=
+        quarticSignedPoleCanonicalLocalRadius_pos.le
+      have hη1 : quarticSignedPoleCanonicalLocalRadius <= 1 :=
+        quarticSignedPoleCanonicalLocalRadius_lt_one.le
+      have htpos : 0 < t := by linarith
+      have hprod :
+          quarticSignedPoleCanonicalLocalRadius * (t/16) <= t/16 := by
+        nlinarith
+      nlinarith
+    have hTVleft :
+        TV <= t - quarticSignedPoleCanonicalLocalRadius * (t/16) := by
+      have hη0 : 0 <= quarticSignedPoleCanonicalLocalRadius :=
+        quarticSignedPoleCanonicalLocalRadius_pos.le
+      have hη1 : quarticSignedPoleCanonicalLocalRadius <= 1 :=
+        quarticSignedPoleCanonicalLocalRadius_lt_one.le
+      have htpos : 0 < t := by linarith
+      have hprod :
+          quarticSignedPoleCanonicalLocalRadius * (t/16) <= t/16 := by
+        nlinarith
+      nlinarith
+    exact max_le hTVleft ht4
+  have hV :=
+    hVprod t
+      (by linarith : 0 < quarticSignedPoleLocalHalfWidth
+        t quarticSignedPoleCanonicalLocalRadius)
+      hleft
+  have hG3 :=
+    W.postSixthSignedCompensationCut_compiles_G3
+      ht200 hM6lo hM6neg hV hC
+  exact
+    W.compensationTargetThreshold_contradicts_offline
+      (by linarith : 0 < t) rho him hoff hG3
+
+
 end Synthesis

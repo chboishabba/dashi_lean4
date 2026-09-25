@@ -250,6 +250,160 @@ theorem finite_thickness_tov_transition :
 
 
 
+
+
+/-!
+All-rational-radius finite-thickness profile.
+
+This strengthens the three-node fixture to one exact formula on every rational
+radius in 3/2 <= r <= 5/2.  The "derivative" fields below are explicit
+polynomial slope formulas in the finite rational model; no claim about a
+completed real differentiable manifold is made here.
+-/
+
+def layerMass (radius : Rat) : Rat :=
+  (4/225 : Rat) * radius^3
+
+def layerDensityBar : Rat := 4/75
+
+def layerEnergyDensity : Rat := 1
+
+def layerRadialPressure (radius : Rat) : Rat :=
+  radius - 5/2
+
+def layerRadialPressureDerivative : Rat := 1
+
+def layerMassDerivative (radius : Rat) : Rat :=
+  (4/75 : Rat) * radius^2
+
+def layerBaseState (radius : Rat) : RationalRadialState where
+  radius := radius
+  mass := layerMass radius
+  densityBar := layerDensityBar
+  rho := layerEnergyDensity
+  radialPressure := layerRadialPressure radius
+  tangentialPressure := 0
+
+def layerState (radius : Rat) : RationalRadialState :=
+  withDesignedTangentialPressure
+    (layerBaseState radius)
+    layerRadialPressureDerivative
+
+theorem layer_mass_slope_equation (radius : Rat) :
+    layerMassDerivative radius
+      = radius^2 * layerDensityBar := by
+  ring
+
+theorem layer_pressure_affine_difference (left right : Rat) :
+    layerRadialPressure right - layerRadialPressure left
+      = (right - left) * layerRadialPressureDerivative := by
+  ring
+
+theorem layer_inner_pressure :
+    layerRadialPressure transitionInnerRadius = -1 := by
+  norm_num [layerRadialPressure, transitionInnerRadius]
+
+theorem layer_outer_pressure :
+    layerRadialPressure transitionOuterRadius = 0 := by
+  norm_num [layerRadialPressure, transitionOuterRadius]
+
+theorem layer_outer_mass_matches :
+    layerMass transitionOuterRadius = transitionOuterMass := by
+  norm_num [layerMass, transitionOuterRadius, transitionOuterMass]
+
+theorem layer_radius_positive
+    {radius : Rat}
+    (hLower : transitionInnerRadius ≤ radius) :
+    0 < radius := by
+  norm_num [transitionInnerRadius] at hLower
+  linarith
+
+theorem layer_radius_square_upper
+    {radius : Rat}
+    (hLower : transitionInnerRadius ≤ radius)
+    (hUpper : radius ≤ transitionOuterRadius) :
+    radius^2 ≤ (25/4 : Rat) := by
+  have hr : 0 < radius := layer_radius_positive hLower
+  have hsum : 0 ≤ (5/2 : Rat) + radius := by
+    linarith
+  have hdiff : 0 ≤ (5/2 : Rat) - radius := by
+    norm_num [transitionOuterRadius] at hUpper
+    linarith
+  have hprod :
+      0 ≤ ((5/2 : Rat) - radius) * ((5/2 : Rat) + radius) :=
+    mul_nonneg hdiff hsum
+  nlinarith
+
+theorem layer_outside_horizon
+    {radius : Rat}
+    (hLower : transitionInnerRadius ≤ radius)
+    (hUpper : radius ≤ transitionOuterRadius) :
+    0 < radius - 2 * layerMass radius := by
+  have hr : 0 < radius := layer_radius_positive hLower
+  have hsq : radius^2 ≤ (25/4 : Rat) :=
+    layer_radius_square_upper hLower hUpper
+  have hfactor : (7/9 : Rat) ≤ 1 - (8/225 : Rat) * radius^2 := by
+    nlinarith
+  have hfactorPos : 0 < 1 - (8/225 : Rat) * radius^2 := by
+    linarith
+  have hprod :
+      0 < radius * (1 - (8/225 : Rat) * radius^2) :=
+    mul_pos hr hfactorPos
+  convert hprod using 1 <;> ring
+
+theorem layer_tov_exact
+    {radius : Rat}
+    (hLower : transitionInnerRadius ≤ radius) :
+    anisotropicTOVRHS (layerState radius)
+      = layerRadialPressureDerivative := by
+  exact designed_tangential_pressure_solves_tov
+    (layerBaseState radius)
+    layerRadialPressureDerivative
+    (ne_of_gt (layer_radius_positive hLower))
+
+structure RationalFiniteThicknessTOVProfileWitness : Prop where
+  innerPressure :
+    layerRadialPressure transitionInnerRadius = -1
+  outerPressure :
+    layerRadialPressure transitionOuterRadius = 0
+  outerMass :
+    layerMass transitionOuterRadius = transitionOuterMass
+  massEquation :
+    ∀ radius,
+      layerMassDerivative radius = radius^2 * layerDensityBar
+  pressureAffine :
+    ∀ left right,
+      layerRadialPressure right - layerRadialPressure left
+        = (right - left) * layerRadialPressureDerivative
+  horizonSafe :
+    ∀ radius,
+      transitionInnerRadius ≤ radius →
+      radius ≤ transitionOuterRadius →
+      0 < radius - 2 * layerMass radius
+  tovExact :
+    ∀ radius,
+      transitionInnerRadius ≤ radius →
+      radius ≤ transitionOuterRadius →
+      anisotropicTOVRHS (layerState radius)
+        = layerRadialPressureDerivative
+
+theorem rational_finite_thickness_tov_profile :
+    RationalFiniteThicknessTOVProfileWitness := by
+  exact {
+    innerPressure := layer_inner_pressure
+    outerPressure := layer_outer_pressure
+    outerMass := layer_outer_mass_matches
+    massEquation := layer_mass_slope_equation
+    pressureAffine := layer_pressure_affine_difference
+    horizonSafe := fun radius hlo hhi =>
+      layer_outside_horizon hlo hhi
+    tovExact := fun radius hlo _ =>
+      layer_tov_exact hlo
+  }
+
+def finiteThicknessAllRationalRadiiTOVSolved : Bool := true
+
+
 /-!
 Exact exterior matching for the outer finite-thickness node.
 

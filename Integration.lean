@@ -1,3 +1,5 @@
+import Integration.ActionOrbitRecognition
+import Integration.OggSSPSmallCharacteristicRecognition
 import Integration.SmithChartComplexReflection
 import Integration.Levels
 import Integration.MoonshineEisensteinAnalytic

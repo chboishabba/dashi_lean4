@@ -7069,4 +7069,61 @@ theorem QuarticFourSignedPolePair.postSixthFixedCoupledSignedCompensationCut_com
       (by linarith : 0 < t) rho).2 hC
 
 
+
+def quarticSignedPoleSelectedFixedCoupledHighCut
+    (CV t : ℝ) (rho : Zeros) : Prop :=
+  ∃ W : QuarticFourSignedPolePair t,
+    quarticSignedPoleStrengthFloor <= W.targetStrength
+      ∧
+    -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+      ∧
+    W.signedProfileMomentSix < 0
+      ∧
+    8/t < W.quantitativeTargetRadius
+      ∧
+    W.PostSixthFixedCoupledSignedCompensationCut rho
+      (quarticSignedPoleCanonicalV4Error CV t)
+
+theorem quarticSignedPoleSelectedFixedCoupledHighCut_implies_signedHighCut
+    {CV t : ℝ}
+    (ht : 200 <= t)
+    (rho : Zeros)
+    (h :
+      quarticSignedPoleSelectedFixedCoupledHighCut CV t rho) :
+    quarticSignedPoleSelectedSignedHighCut CV t rho := by
+  rcases h with ⟨W,hS,hM6lo,hM6neg,hband,hcut⟩
+  refine ⟨W,hS,hM6lo,hM6neg,hband,?_⟩
+  have hcoupled :
+      W.PostSixthCoupledSignedCompensationCut rho
+        (quarticSignedPoleCanonicalV4Error CV t) :=
+    (W.postSixthCoupledSignedCompensationCut_iff_fixed
+      (by linarith : 0 < t) rho).2 hcut
+  exact
+    (W.postSixthSignedCompensationCut_iff_coupled
+      (by linarith : 0 < t) rho).2 hcoupled
+
+theorem exists_quarticSignedPoleFixedHigh_compiles_selectedFixedCoupledHighCut :
+    ∃ CV T : ℝ,
+      0 <= CV
+        ∧ quarticPlattTrudgianCutoff <= T
+        ∧
+      ∀ {t : ℝ},
+        T < t ->
+        ∀ {rho : Zeros},
+          (rho : ℂ).im = t ->
+          heightOf rho ≠ 0 ->
+          quarticSignedPoleSelectedFixedCoupledHighCut CV t rho ->
+          False := by
+  obtain ⟨CV,T,hCV,hPT,hcompile⟩ :=
+    exists_quarticSignedPoleFixedHigh_compiles_selectedSignedHighCut
+  refine ⟨CV,T,hCV,hPT,?_⟩
+  intro t ht rho him hoff hcut
+  have ht200 : 200 <= t := by
+    have hPTgt := quarticPlattTrudgianCutoff_gt_twoHundred
+    linarith
+  apply hcompile ht him hoff
+  exact quarticSignedPoleSelectedFixedCoupledHighCut_implies_signedHighCut
+    ht200 rho hcut
+
+
 end Synthesis

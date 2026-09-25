@@ -35,7 +35,26 @@ theorem exists_zetaMuWindowDiscrepancy_arbitrary_bound :
         A < B ->
         |zetaMuWindowDiscrepancy A B|
           <= C * (Real.log (A + 3) + Real.log (B + 4)) := by
-  obtain ⟨CB, TB, hB⟩ := Zeta23.RvM.backlund_horizontal
+  let CB : ℝ :=
+    2 * Real.pi *
+      ((1 / Real.log ((0.9 : ℝ) / 0.8)
+        * (|Real.log (6 * (20 / 3 : ℝ))|
+          + 2 * max (1 : ℝ) 0)) + 1)
+  let TB : ℝ := 4
+  have hB :
+      ∀ T : ℝ, TB <= T ->
+        (∀ rho, IsNontrivialZero rho -> rho.im ≠ T) ->
+        |(∫ sigma in (1 / 2 : ℝ)..2,
+          logDeriv riemannZeta (sigma + T * I)).im|
+          <= CB * Real.log T := by
+    intro T hT hord
+    have h :=
+      Zeta23.RvM.backlund_horizontal_at T
+        (by
+          dsimp [TB] at hT
+          simpa using hT)
+        hord
+    simpa [CB] using h
   obtain ⟨A0, hA01, hA0⟩ := Zeta23.RvM.zeta_local_zero_count
   obtain ⟨CM, hCM0, hCM⟩ := Zeta23.RvM.mu_le_log Zeta23.gammaFacts
   let C : ℝ :=

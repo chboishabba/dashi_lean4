@@ -7,6 +7,12 @@ on:
     paths:
       - "Integration/ActionOrbitRecognition.lean"
       - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/ProvenancePreservingRecognition.lean"
+      - "Integration/OggSSPIndependentBase369Recognition.lean"
+      - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
+      - "Integration/ProvenancePreservingRecognition.lean"
+      - "Integration/OggSSPIndependentBase369Recognition.lean"
+      - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
       - "Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean"
       - "AgdaMirror/OggSSPSmallCharacteristicRecognition.lean"
       - "Integration.lean"
@@ -36,7 +42,13 @@ jobs:
         run: lake env lean Integration/ActionOrbitRecognition.lean
       - name: Check J369 small-characteristic recognition
         run: lake env lean Integration/OggSSPSmallCharacteristicRecognition.lean
+      - name: Check provenance recognition core
+        run: lake env lean Integration/ProvenancePreservingRecognition.lean
+      - name: Check independent Base369 recognitions
+        run: lake env lean Integration/OggSSPIndependentBase369Recognition.lean
       - name: Check Agda parity receipt
-        run: lake env lean AgdaMirror/OggSSPSmallCharacteristicRecognition.lean
+        run: |
+          lake env lean AgdaMirror/OggSSPSmallCharacteristicRecognition.lean
+          lake env lean AgdaMirror/OggSSPIndependentBase369Recognition.lean
       - name: Run focused axiom audit
         run: lake env lean Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean

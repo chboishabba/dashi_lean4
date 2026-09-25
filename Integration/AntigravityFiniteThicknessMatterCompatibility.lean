@@ -112,4 +112,68 @@ def explicitLayerCanonicalSingleScalarCompatible : Bool := false
 def explicitLayerRequiresGenuinelyAnisotropicMatter : Bool := true
 def sourceNativeYMTensorProfileStillRequired : Bool := true
 
+
+/-!
+Trace-sign versus active-stress firewall.
+
+The renormalized four-dimensional trace and the static focusing/active-stress
+combination are different contractions:
+
+  trace(T)  = -rho + p_r + 2 p_t,
+  active(T) =  rho + p_r + 2 p_t.
+
+For the explicit outer finite-layer state, the trace is negative while the
+active stress is positive.  Therefore a negative trace-anomaly theorem does not
+by itself pay the negative-active-source premise used by the local defocusing
+route.
+-/
+
+def radialStressTrace (s : RationalRadialState) : Rat :=
+  -s.rho + s.radialPressure + 2 * s.tangentialPressure
+
+theorem lapse_profile_outer_active_stress :
+    radialActiveStress (lapseProfileState transitionOuterRadius)
+      = 157/190 := by
+  rw [show radialActiveStress (lapseProfileState transitionOuterRadius)
+      =
+      (lapseProfileState transitionOuterRadius).rho
+        + (lapseProfileState transitionOuterRadius).radialPressure
+        + 2 * (lapseProfileState transitionOuterRadius).tangentialPressure by
+      rfl]
+  rw [lapse_profile_outer_energy_density,
+    lapse_profile_outer_pressure,
+    lapse_profile_outer_tangential_pressure]
+  norm_num
+
+theorem lapse_profile_outer_active_stress_positive :
+    0 < radialActiveStress (lapseProfileState transitionOuterRadius) := by
+  rw [lapse_profile_outer_active_stress]
+  norm_num
+
+theorem lapse_profile_outer_trace :
+    radialStressTrace (lapseProfileState transitionOuterRadius)
+      = -223/190 := by
+  unfold radialStressTrace
+  rw [lapse_profile_outer_energy_density,
+    lapse_profile_outer_pressure,
+    lapse_profile_outer_tangential_pressure]
+  norm_num
+
+theorem lapse_profile_outer_trace_negative :
+    radialStressTrace (lapseProfileState transitionOuterRadius) < 0 := by
+  rw [lapse_profile_outer_trace]
+  norm_num
+
+theorem negative_trace_does_not_pay_negative_active_stress_on_explicit_layer :
+    radialStressTrace (lapseProfileState transitionOuterRadius) < 0
+      ∧
+    ¬ (radialActiveStress (lapseProfileState transitionOuterRadius) < 0) := by
+  constructor
+  · exact lapse_profile_outer_trace_negative
+  · linarith [lapse_profile_outer_active_stress_positive]
+
+def negativeTraceImpliesNegativeActiveStress : Bool := false
+def explicitFiniteLayerMatchesUniformNegativeActiveSource : Bool := false
+def sourceToGeometryNeedsTensorShapeNotTraceSignAlone : Bool := true
+
 end Integration.AntigravityFiniteThicknessMatterCompatibility

@@ -4140,4 +4140,190 @@ theorem QuarticFourSignedPolePair.canonicalFarCompletedCompensation_eq_centeredA
   rw [W.canonicalFarNMuCompensation_eq_centeredAbel_tail ht E]
 
 
+
+/-!
+## Canonical normalized compensation carrier
+
+At the Clay-facing local cut the physical half-width is
+
+  h = r * eta0,     r = t/16,
+  eta0 = quarticSignedPoleCanonicalLocalRadius.
+
+Thus the boundary is at the fixed normalized coordinate q = +/- eta0, not at a
+large Fourier frequency.  This records the scale exactly and prevents a false
+"more integrations by parts will pay the far tail" detour.
+
+The exact signed ordinate test and its first derivative scale as r^-2 and r^-3
+under x = t + r*q.  After dx = r dq, every centered Abel correlation therefore
+has the global prefactor r^-2.  Since the target quartic signal is r^-6, the
+remaining compensated discrepancy theorem must supply four additional inverse
+powers of r by cancellation/sign, not by remote Fourier decay alone.
+-/
+
+theorem quarticSignedPoleCanonicalPhysicalHalfWidth_eq
+    (t : ℝ) :
+    quarticSignedPoleCanonicalPhysicalHalfWidth t
+      =
+    (t/16) * quarticSignedPoleCanonicalLocalRadius := by
+  rfl
+
+theorem quarticSignedPoleCanonicalRight_normalized
+    {t : ℝ} (ht : 0 < t) :
+    ((t + quarticSignedPoleCanonicalPhysicalHalfWidth t) - t) / (t/16)
+      =
+    quarticSignedPoleCanonicalLocalRadius := by
+  unfold quarticSignedPoleCanonicalPhysicalHalfWidth
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
+theorem quarticSignedPoleCanonicalLeft_normalized
+    {t : ℝ} (ht : 0 < t) :
+    ((t - quarticSignedPoleCanonicalPhysicalHalfWidth t) - t) / (t/16)
+      =
+    - quarticSignedPoleCanonicalLocalRadius := by
+  unfold quarticSignedPoleCanonicalPhysicalHalfWidth
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
+def QuarticFourSignedPolePair.normalizedOrdinateCosine
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (q : ℝ) : ℝ :=
+  compactCosineTransform
+    (quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t) q
+
+def QuarticFourSignedPolePair.normalizedOrdinateCosineD1
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (q : ℝ) : ℝ :=
+  compactCosineD1
+    (quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t) q
+
+def QuarticFourSignedPolePair.normalizedCenteredDiscrepancy
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (q : ℝ) : ℝ :=
+  centeredZetaMuDiscrepancy t (t + (t/16)*q)
+
+theorem QuarticFourSignedPolePair.signedOrdinateTest_normalized
+    {t q : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.signedOrdinateTest (t + (t/16)*q)
+      =
+    (1/(t/16)^2) * W.normalizedOrdinateCosine q := by
+  rw [W.signedOrdinateTest_eq_combinedCosine]
+  unfold QuarticFourSignedPolePair.normalizedOrdinateCosine
+  field_simp [show t/16 ≠ 0 by positivity]
+  congr 2
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
+theorem QuarticFourSignedPolePair.signedOrdinateTestDeriv_normalized
+    {t q : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.signedOrdinateTestDeriv (t + (t/16)*q)
+      =
+    (1/(t/16)^3) * W.normalizedOrdinateCosineD1 q := by
+  rw [W.signedOrdinateTestDeriv_eq_combinedD1 ht]
+  unfold QuarticFourSignedPolePair.normalizedOrdinateCosineD1
+  field_simp [show t/16 ≠ 0 by positivity]
+  congr 2
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
+theorem QuarticFourSignedPolePair.canonicalLocalRightBoundary_normalized
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalLocalRightBoundary
+      =
+    (1/(t/16)^2)
+      *
+    (
+      W.normalizedOrdinateCosine
+        quarticSignedPoleCanonicalLocalRadius
+      *
+      W.normalizedCenteredDiscrepancy
+        quarticSignedPoleCanonicalLocalRadius
+    ) := by
+  unfold QuarticFourSignedPolePair.canonicalLocalRightBoundary
+    QuarticFourSignedPolePair.normalizedCenteredDiscrepancy
+  dsimp
+  rw [W.signedOrdinateTest_normalized ht]
+  ring
+
+theorem QuarticFourSignedPolePair.canonicalLocalLeftBoundary_normalized
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalLocalLeftBoundary
+      =
+    (1/(t/16)^2)
+      *
+    (
+      W.normalizedOrdinateCosine
+        (-quarticSignedPoleCanonicalLocalRadius)
+      *
+      centeredZetaMuDiscrepancy
+        t
+        (t - quarticSignedPoleCanonicalPhysicalHalfWidth t)
+    ) := by
+  unfold QuarticFourSignedPolePair.canonicalLocalLeftBoundary
+  dsimp
+  have hx :
+      t - quarticSignedPoleCanonicalPhysicalHalfWidth t
+        =
+      t + (t/16) * (-quarticSignedPoleCanonicalLocalRadius) := by
+    unfold quarticSignedPoleCanonicalPhysicalHalfWidth
+    ring
+  rw [hx, W.signedOrdinateTest_normalized ht]
+  ring
+
+/--
+The exact scale-normalized terminal compensation coordinate.
+
+Multiplying the far completed compensation by r^2 removes the unavoidable
+physical r^-2 scaling of a generic centered N-mu correlation.  The final
+quartic target comparison therefore requires this normalized scalar to be
+O(r^-4), with sign/constant strong enough to preserve the strict margin.
+-/
+def QuarticFourSignedPolePair.normalizedCanonicalFarCompletedCompensation
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  (t/16)^2 * W.canonicalFarCompletedCompensation
+
+theorem QuarticFourSignedPolePair.canonicalFarCompletedCompensation_eq_normalized
+    {t : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalFarCompletedCompensation
+      =
+    (1/(t/16)^2)
+      * W.normalizedCanonicalFarCompletedCompensation := by
+  unfold QuarticFourSignedPolePair.normalizedCanonicalFarCompletedCompensation
+  field_simp [show t/16 ≠ 0 by positivity]
+  ring
+
+def QuarticFourSignedPolePair.CanonicalFarQuarticScaleBound
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (B : ℝ) : Prop :=
+  |W.normalizedCanonicalFarCompletedCompensation|
+    <= B / (t/16)^4
+
+theorem QuarticFourSignedPolePair.canonicalFarCompletedCompensation_abs_le_of_quarticScale
+    {t B : ℝ} (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hB : W.CanonicalFarQuarticScaleBound B) :
+    |W.canonicalFarCompletedCompensation|
+      <= B / (t/16)^6 := by
+  rw [W.canonicalFarCompletedCompensation_eq_normalized ht,
+      abs_mul, abs_of_nonneg (by positivity : 0 <= 1/(t/16)^2)]
+  unfold QuarticFourSignedPolePair.CanonicalFarQuarticScaleBound at hB
+  have hfac : 0 <= 1/(t/16)^2 := by positivity
+  calc
+    (1/(t/16)^2) *
+        |W.normalizedCanonicalFarCompletedCompensation|
+      <=
+    (1/(t/16)^2) * (B/(t/16)^4) :=
+      mul_le_mul_of_nonneg_left hB hfac
+    _ = B/(t/16)^6 := by
+      field_simp [show t/16 ≠ 0 by positivity]
+      ring
+
+
 end Synthesis

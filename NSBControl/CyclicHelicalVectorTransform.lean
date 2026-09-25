@@ -69,6 +69,35 @@ theorem minusPlusCoefficient (a b : ℝ) :
 theorem minusMinusCoefficient (a b : ℝ) :
     (-b) - (-a) = a - b := by ring
 
+
+def baseCoefficient
+    (modeNorm : Mode → ℝ)
+    (τ : Triad) (signP signQ : HelicitySign) : ℝ :=
+  signedEigenvalue modeNorm signQ τ.q -
+    signedEigenvalue modeNorm signP τ.p
+
+def pLegCoefficient
+    (modeNorm : Mode → ℝ)
+    (τ : Triad) (signK signQ : HelicitySign) : ℝ :=
+  signedEigenvalue modeNorm signQ τ.q -
+    signedEigenvalue modeNorm signK τ.k
+
+def qLegCoefficient
+    (modeNorm : Mode → ℝ)
+    (τ : Triad) (signK signP : HelicitySign) : ℝ :=
+  signedEigenvalue modeNorm signP τ.p -
+    signedEigenvalue modeNorm signK τ.k
+
+theorem orientedCyclicCoefficient_zero
+    (modeNorm : Mode → ℝ)
+    (τ : Triad)
+    (signP signQ signK : HelicitySign) :
+    baseCoefficient modeNorm τ signP signQ -
+      pLegCoefficient modeNorm τ signK signQ +
+      qLegCoefficient modeNorm τ signK signP = 0 := by
+  unfold baseCoefficient pLegCoefficient qLegCoefficient
+  ring
+
 section Vector
 
 variable {V : Type*}

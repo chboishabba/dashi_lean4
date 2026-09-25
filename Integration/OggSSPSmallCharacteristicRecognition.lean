@@ -1,24 +1,20 @@
 import Mathlib
+import Integration.ActionOrbitRecognition
 
 /-!
 # Small-characteristic Ogg/SSP recognition mirror
 
-Lean mirror of the live Agda recognition cut:
-
-* p=2 and p=3 each have one coarse supersingular j-class on the authority side;
-* the 369 targets carry strictly richer orbit/residual structure;
-* coarse-j data alone cannot satisfy full pi0 recognition;
-* p=2 retained orientation is exact reopening data, not an optional label;
-* a valid arithmetic source must be a marked/enriched cover and must have
-  enough orbit capacity to receive the exact target orbit carrier.
-
-This file deliberately does not construct the missing arithmetic p=2/p=3
-marked supersingular source.
+Lean mirror of the live Agda recognition cut.  The target carriers/codecs and
+recognition consequences are proved here.  The missing arithmetic marked
+supersingular source remains an explicit structure parameter; no inhabitant is
+manufactured from authority metadata.
 -/
 
 namespace Integration.OggSSPSmallCharacteristicRecognition
 
-/-! ## Finite 369 target carriers -/
+open Integration.ActionOrbitRecognition
+
+/-! ## Exact finite target codecs -/
 
 inductive P3Orbit
   | zero
@@ -62,8 +58,9 @@ theorem p3_reopen_exact (s : P3State) :
 theorem p3_coarse_projection_not_injective :
     ¬ Function.Injective p3Project := by
   intro h
-  have := h (show p3Project .negative = p3Project .positive by rfl)
-  cases this
+  have impossible : P3State.negative = P3State.positive :=
+    h (show p3Project .negative = p3Project .positive by rfl)
+  cases impossible
 
 theorem p3_coarse_projection_has_no_left_inverse :
     ¬ ∃ recover : P3Orbit → P3State, Function.LeftInverse recover p3Project := by
@@ -97,10 +94,12 @@ theorem p2_reopen_exact (s : P2State) :
 theorem p2_coarse_projection_not_injective :
     ¬ Function.Injective p2Project := by
   intro h
-  have same :
+  have impossible :
+      (StrictSide.lower, NineOrbit.zero) =
+      (StrictSide.upper, NineOrbit.zero) :=
+    h (show
       p2Project (.lower, NineOrbit.zero) =
-      p2Project (.upper, NineOrbit.zero) := rfl
-  have impossible := h same
+      p2Project (.upper, NineOrbit.zero) by rfl)
   cases impossible
 
 theorem p2_coarse_projection_has_no_left_inverse :
@@ -128,10 +127,77 @@ def oggAddress (lane : OggLane) : Nat × Nat :=
 theorem p2_p3_exact_addresses_distinct :
     oggAddress .p2 ≠ oggAddress .p3 := by decide
 
+/-! ## Target actions and orbit presentations -/
+
+inductive C2
+  | e
+  | flip
+  deriving DecidableEq, Repr, Fintype
+
+def c2Combine : C2 → C2 → C2
+  | .e, g => g
+  | g, .e => g
+  | .flip, .flip => .e
+
+def c2Inverse : C2 → C2 := id
+
+def p3Act : C2 → P3State → P3State
+  | .e, s => s
+  | .flip, .zero => .zero
+  | .flip, .negative => .positive
+  | .flip, .positive => .negative
+
+def p3Action : InvertibleAction P3State C2 where
+  identity := .e
+  combine := c2Combine
+  inverse := c2Inverse
+  act := p3Act
+  identity_act := by intro s; cases s <;> rfl
+  combine_act := by intro g h s; cases g <;> cases h <;> cases s <;> rfl
+  inverse_left := by intro g s; cases g <;> cases s <;> rfl
+  inverse_right := by intro g s; cases g <;> cases s <;> rfl
+
+def p3OrbitPresentation : OrbitPresentation p3Action where
+  Orbit := P3Orbit
+  orbitOf := p3Project
+  representative
+    | .zero => .zero
+    | .nonzero => .positive
+  orbit_invariant := by
+    intro g s
+    cases g <;> cases s <;> rfl
+  representative_exact := by
+    intro o
+    cases o <;> rfl
+
+theorem p3_flip_fixes_zero :
+    p3Action.act .flip P3State.zero = P3State.zero := rfl
+
+theorem p3_flip_moves_nonzero_representative :
+    p3Action.act .flip
+      (p3OrbitPresentation.representative .nonzero) ≠
+      p3OrbitPresentation.representative .nonzero := by
+  decide
+
+def p2DiscreteAction : InvertibleAction P2State PUnit where
+  identity := PUnit.unit
+  combine := fun _ _ => PUnit.unit
+  inverse := fun _ => PUnit.unit
+  act := fun _ s => s
+  identity_act := by intro s; rfl
+  combine_act := by intro _ _ s; rfl
+  inverse_left := by intro _ s; rfl
+  inverse_right := by intro _ s; rfl
+
+def p2DiscreteOrbitPresentation : OrbitPresentation p2DiscreteAction where
+  Orbit := P2State
+  orbitOf := id
+  representative := id
+  orbit_invariant := by intro _ s; rfl
+  representative_exact := by intro o; rfl
+
 /-! ## Coarse supersingular-j no-go -/
 
-/-- The upstream arithmetic authority currently exposes one coarse supersingular
-j-class at p=2 and p=3. We mirror only that cardinal fact here. -/
 inductive CoarseJ
   | unique
   deriving DecidableEq, Repr, Fintype
@@ -145,8 +211,8 @@ theorem no_surjection_coarse_j_to_p3_orbits :
   obtain ⟨b, hb⟩ := hf P3Orbit.nonzero
   cases a
   cases b
-  have : P3Orbit.zero = P3Orbit.nonzero := ha.symm.trans hb
-  cases this
+  have impossible : P3Orbit.zero = P3Orbit.nonzero := ha.symm.trans hb
+  cases impossible
 
 theorem no_surjection_coarse_j_to_p2_target :
     ¬ ∃ f : CoarseJ → P2State, Function.Surjective f := by
@@ -155,67 +221,68 @@ theorem no_surjection_coarse_j_to_p2_target :
   obtain ⟨b, hb⟩ := hf (StrictSide.upper, NineOrbit.zero)
   cases a
   cases b
-  have :
+  have impossible :
       (StrictSide.lower, NineOrbit.zero) =
       (StrictSide.upper, NineOrbit.zero) := ha.symm.trans hb
-  cases this
+  cases impossible
 
-/-! ## Recognition direction and source-capacity constraint -/
-
-/-- Orbit-level core of the correctly directed arithmetic -> 369 recognition.
-Action-equivariance and stabilizer preservation live in the Agda owner; this
-Lean surface mirrors the pi0 consequence needed for source-capacity auditing. -/
-structure OrbitRecognition (SourceOrbit TargetOrbit : Type) where
-  targetToSource : TargetOrbit → SourceOrbit
-  sourceToTarget : SourceOrbit → TargetOrbit
-  targetRoundTrip : Function.LeftInverse sourceToTarget targetToSource
-  sourceRoundTrip : Function.LeftInverse targetToSource sourceToTarget
-
-namespace OrbitRecognition
-
-theorem targetToSource_injective
-    {S T : Type} (R : OrbitRecognition S T) :
-    Function.Injective R.targetToSource :=
-  R.targetRoundTrip.injective
-
-theorem sourceToTarget_surjective
-    {S T : Type} (R : OrbitRecognition S T) :
-    Function.Surjective R.sourceToTarget :=
-  R.targetRoundTrip.surjective
-
-end OrbitRecognition
+/-! ## Marked arithmetic source sockets -/
 
 structure P3MarkedArithmeticSource where
   State : Type
-  Orbit : Type
+  action : InvertibleAction State C2
+  orbits : OrbitPresentation action
   coarseJ : State → CoarseJ
   coarseJ_constant : ∀ s, coarseJ s = .unique
-  frobeniusMovesSomeMarkedState : Prop
+  markedWitness : State
+  frobeniusMovesMarkedWitness :
+    action.act C2.flip markedWitness ≠ markedWitness
+  flipIsArithmeticFrobenius : Prop
 
 structure P2MarkedArithmeticSource where
   State : Type
-  Orbit : Type
+  Symmetry : Type
+  action : InvertibleAction State Symmetry
+  orbits : OrbitPresentation action
   coarseJ : State → CoarseJ
   coarseJ_constant : ∀ s, coarseJ s = .unique
   markedResidualStructurePresent : Prop
 
+/-! ## Correctly directed arithmetic -> 369 recognition -/
+
 structure P3ArithmeticTo369Recognition (S : P3MarkedArithmeticSource) where
-  orbitRecognition : OrbitRecognition S.Orbit P3Orbit
+  functor : ActionRecognitionFunctor S.action p3Action
+  fullRecognition :
+    FullRecognition functor S.orbits p3OrbitPresentation
 
 structure P2ArithmeticTo369Recognition (S : P2MarkedArithmeticSource) where
-  orbitRecognition : OrbitRecognition S.Orbit P2State
+  functor : ActionRecognitionFunctor S.action p2DiscreteAction
+  fullRecognition :
+    FullRecognition functor S.orbits p2DiscreteOrbitPresentation
+
+def p3TargetOrbitToArithmeticOrbit
+    {S : P3MarkedArithmeticSource}
+    (R : P3ArithmeticTo369Recognition S) :
+    P3Orbit → S.orbits.Orbit :=
+  R.fullRecognition.pi0Surjection.preimageOrbit
+
+def p2TargetStateToArithmeticOrbit
+    {S : P2MarkedArithmeticSource}
+    (R : P2ArithmeticTo369Recognition S) :
+    P2State → S.orbits.Orbit :=
+  R.fullRecognition.pi0Surjection.preimageOrbit
 
 theorem p3_target_orbits_embed_into_arithmetic_source
     {S : P3MarkedArithmeticSource}
     (R : P3ArithmeticTo369Recognition S) :
-    Function.Injective R.orbitRecognition.targetToSource :=
-  R.orbitRecognition.targetToSource_injective
+    Function.Injective (p3TargetOrbitToArithmeticOrbit R) :=
+  R.fullRecognition.targetOrbit_to_source_injective
 
 theorem p2_ten_target_states_embed_into_arithmetic_source
     {S : P2MarkedArithmeticSource}
     (R : P2ArithmeticTo369Recognition S) :
-    Function.Injective R.orbitRecognition.targetToSource :=
-  R.orbitRecognition.targetToSource_injective
+    Function.Injective (p2TargetStateToArithmeticOrbit R) :=
+  R.fullRecognition.targetOrbit_to_source_injective
 
 /-! ## Promotion / attribution firewall -/
 
@@ -234,6 +301,8 @@ def arithmeticTo369RecognitionOrigin : ClaimOrigin := .openRecognitionConjecture
 
 structure RecognitionBoundary where
   exactCodecTargetsMirrored : Bool
+  targetActionsMirrored : Bool
+  orbitStabilizerRecognitionCoreReused : Bool
   coarseJNoGoMirrored : Bool
   arithmeticTo369DirectionMirrored : Bool
   targetOrbitEmbeddingConstraintMirrored : Bool
@@ -245,6 +314,8 @@ structure RecognitionBoundary where
 
 def canonicalBoundary : RecognitionBoundary where
   exactCodecTargetsMirrored := true
+  targetActionsMirrored := true
+  orbitStabilizerRecognitionCoreReused := true
   coarseJNoGoMirrored := true
   arithmeticTo369DirectionMirrored := true
   targetOrbitEmbeddingConstraintMirrored := true

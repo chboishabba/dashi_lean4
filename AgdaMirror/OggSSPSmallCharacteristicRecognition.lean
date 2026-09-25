@@ -14,6 +14,7 @@ structure ParityReceipt where
   p2ResidualCodecMirrored : Bool
   p3ResidualCodecMirrored : Bool
   coarseJNoGoMirrored : Bool
+  f9FrobeniusSixOrbitNoGoMirrored : Bool
   markedSourceSocketsMirrored : Bool
   arithmeticTo369DirectionMirrored : Bool
   actionOrbitStabilizerRecognitionMirrored : Bool
@@ -40,6 +41,7 @@ def canonicalParityReceipt : ParityReceipt where
   p2ResidualCodecMirrored := true
   p3ResidualCodecMirrored := true
   coarseJNoGoMirrored := true
+  f9FrobeniusSixOrbitNoGoMirrored := true
   markedSourceSocketsMirrored := true
   arithmeticTo369DirectionMirrored := true
   actionOrbitStabilizerRecognitionMirrored := true
@@ -65,5 +67,9 @@ theorem p2_coarse_j_no_go_parity :
 theorem p3_coarse_j_no_go_parity :
     ¬ ∃ f : CoarseJ → P3Orbit, Function.Surjective f :=
   no_surjection_coarse_j_to_p3_orbits
+
+theorem f9_six_orbit_no_go_parity :
+    ¬ ∃ f : F9Orbit → P3Orbit, Function.Injective f :=
+  no_injective_f9_orbits_to_p3_target
 
 end AgdaMirror.OggSSPSmallCharacteristicRecognition

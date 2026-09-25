@@ -9,12 +9,9 @@ on:
       - "Integration/OggSSPSmallCharacteristicRecognition.lean"
       - "Integration/ProvenancePreservingRecognition.lean"
       - "Integration/OggSSPIndependentBase369Recognition.lean"
-      - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
-      - "Integration/ProvenancePreservingRecognition.lean"
-      - "Integration/OggSSPIndependentBase369Recognition.lean"
-      - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
       - "Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean"
       - "AgdaMirror/OggSSPSmallCharacteristicRecognition.lean"
+      - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
       - "Integration.lean"
       - "AgdaMirror.lean"
       - ".github/workflows/j369-small-characteristic-recognition.yml"
@@ -22,8 +19,11 @@ on:
     paths:
       - "Integration/ActionOrbitRecognition.lean"
       - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/ProvenancePreservingRecognition.lean"
+      - "Integration/OggSSPIndependentBase369Recognition.lean"
       - "Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean"
       - "AgdaMirror/OggSSPSmallCharacteristicRecognition.lean"
+      - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
       - "Integration.lean"
       - "AgdaMirror.lean"
       - ".github/workflows/j369-small-characteristic-recognition.yml"
@@ -46,7 +46,7 @@ jobs:
         run: lake env lean Integration/ProvenancePreservingRecognition.lean
       - name: Check independent Base369 recognitions
         run: lake env lean Integration/OggSSPIndependentBase369Recognition.lean
-      - name: Check Agda parity receipt
+      - name: Check Agda parity receipts
         run: |
           lake env lean AgdaMirror/OggSSPSmallCharacteristicRecognition.lean
           lake env lean AgdaMirror/OggSSPIndependentBase369Recognition.lean

@@ -9,12 +9,13 @@ open Integration.MoonshineOggAddressSSP15NoGo
 open Integration.MoonshineSSP15PrimeInternalFibre
 
 /-!
-The Ogg/nonary law supplies a coarse address observation, not a canonical
-internal SSP15 lane.  The corrected semantic object therefore retains the full
-`(prime, internalLane)` state as residual data.
+SSP15 itself is the fifteen-way Ogg prime carrier, and the exact Ogg address
+recovers it.
 
-This module records the exact lossless factorization and proves that dropping
-the residual is genuinely lossy.
+This module concerns only the later coarse `(mode,orientation)` projection and
+an optional attached internal state.  Residual data is needed to recover that
+enriched pair from the coarse observer; it is not needed to recover SSP15 lane
+identity from the exact Ogg address.
 -/
 
 abbrev AddressObservedPrimeInternal :=
@@ -66,19 +67,23 @@ theorem coarse_address_has_no_prime_left_inverse :
 
 structure Boundary where
   coarseAddressIsObservationOnly : Bool
+  exactOggAddressAlreadyRecoversSSP15Lane : Bool
   fullPrimeInternalStateRetainedUpstairs : Bool
   residualRoundTripIsExact : Bool
   coarseAddressForgetsInternalLane : Bool
   coarseAddressCannotRecoverPrime : Bool
-  residualRefinementRequiredForLosslessSemantics : Bool
+  residualRefinementRequiredForSSP15Identity : Bool
+  residualRefinementRequiredForEnrichedState : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
   coarseAddressIsObservationOnly := true
+  exactOggAddressAlreadyRecoversSSP15Lane := true
   fullPrimeInternalStateRetainedUpstairs := true
   residualRoundTripIsExact := true
   coarseAddressForgetsInternalLane := true
   coarseAddressCannotRecoverPrime := true
-  residualRefinementRequiredForLosslessSemantics := true
+  residualRefinementRequiredForSSP15Identity := false
+  residualRefinementRequiredForEnrichedState := true
 
 end Integration.MoonshineOggAddressResidualFibre

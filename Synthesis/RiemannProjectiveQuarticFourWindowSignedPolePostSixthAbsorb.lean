@@ -4998,4 +4998,128 @@ theorem exists_quarticSignedPoleFixedHigh_compiles_selectedLiteralHighCut :
         him hoff hcut
 
 
+
+/-!
+## Quartic-scale centered discrepancy coordinate
+
+The remaining high-ordinate compensation problem is not a missing decay lemma.
+At the canonical physical scaling x = t + r*q, r=t/16, the exact derivative
+already contributes r^-3.  To compare the centered Abel correlation with the
+quartic r^-6 target after dx = r dq, the discrepancy itself must supply four
+additional inverse powers of r.
+
+We expose that requirement as the dimensionless coordinate
+
+  E4_W(q) = r^4 * E_t(t+r*q).
+
+The pointwise identity below is exact:
+
+  r^7 * centeredAbelIntegrand(t+r*q)
+    = normalizedOrdinateCosineD1(q) * E4_W(q).
+
+Thus the remaining Clay-facing high inequality is genuinely a cancellation /
+sign estimate for this quartic-scale centered discrepancy (together with the
+already-existing horizontal remainder), not another oscillatory tail problem.
+-/
+
+def QuarticFourSignedPolePair.quarticScaleCenteredDiscrepancy
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (q : ℝ) : ℝ :=
+  (t/16)^4 * W.normalizedCenteredDiscrepancy q
+
+theorem QuarticFourSignedPolePair.quarticScaleCenteredDiscrepancy_eq
+    {t q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.quarticScaleCenteredDiscrepancy q
+      =
+    (t/16)^4
+      * centeredZetaMuDiscrepancy
+          t (t + (t/16)*q) := by
+  rfl
+
+theorem QuarticFourSignedPolePair.centeredAbelIntegrand_quarticScale_normalized
+    {t q : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    (t/16)^7
+      * W.centeredAbelIntegrand (t + (t/16)*q)
+      =
+    W.normalizedOrdinateCosineD1 q
+      * W.quarticScaleCenteredDiscrepancy q := by
+  unfold QuarticFourSignedPolePair.centeredAbelIntegrand
+    QuarticFourSignedPolePair.quarticScaleCenteredDiscrepancy
+    QuarticFourSignedPolePair.normalizedCenteredDiscrepancy
+  rw [W.signedOrdinateTestDeriv_normalized ht]
+  have hr : t/16 ≠ 0 := by positivity
+  field_simp [hr]
+  ring
+
+def QuarticFourSignedPolePair.quarticScaleHorizontalRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  (t/16)^6 * W.signedHorizontalRemainder
+
+def QuarticFourSignedPolePair.quarticScaleCompletedResidual
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  (t/16)^6 * W.completedSignedResidual
+
+theorem QuarticFourSignedPolePair.quarticScaleCompletedResidual_eq
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.quarticScaleCompletedResidual
+      =
+    ((t/16)^6 / 2) * W.signedNMuPair
+      + W.quarticScaleHorizontalRemainder := by
+  unfold QuarticFourSignedPolePair.quarticScaleCompletedResidual
+    QuarticFourSignedPolePair.quarticScaleHorizontalRemainder
+    QuarticFourSignedPolePair.completedSignedResidual
+  ring
+
+def QuarticFourSignedPolePair.quarticScaleFiniteCutCompensatedFar
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  (t/16)^6 * W.finiteCutCompensatedFar n
+
+theorem QuarticFourSignedPolePair.quarticScaleFiniteCutCompensatedFar_eq_normalized
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.quarticScaleFiniteCutCompensatedFar n
+      =
+    (t/16)^4 * W.normalizedFiniteCutCompensatedFar n := by
+  unfold QuarticFourSignedPolePair.quarticScaleFiniteCutCompensatedFar
+    QuarticFourSignedPolePair.normalizedFiniteCutCompensatedFar
+  ring
+
+theorem QuarticFourSignedPolePair.postSixthNormalizedCompensationCut_iff_quarticScale
+    {t EV : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.PostSixthNormalizedCompensationCut rho EV
+      ↔
+    ∃ n : ℕ,
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ)
+      ∧
+      |W.quarticScaleFiniteCutCompensatedFar n|
+        <
+      (t/16)^6
+        * W.postSixthTerminalResidualMargin rho EV := by
+  constructor
+  · rintro ⟨n,hn,hcut⟩
+    refine ⟨n,hn,?_⟩
+    rw [W.quarticScaleFiniteCutCompensatedFar_eq_normalized]
+    rw [abs_mul]
+    have hr4 : 0 <= (t/16)^4 := by positivity
+    rw [abs_of_nonneg hr4]
+    exact hcut
+  · rintro ⟨n,hn,hcut⟩
+    refine ⟨n,hn,?_⟩
+    rw [W.quarticScaleFiniteCutCompensatedFar_eq_normalized] at hcut
+    rw [abs_mul] at hcut
+    have hr4 : 0 <= (t/16)^4 := by positivity
+    rw [abs_of_nonneg hr4] at hcut
+    exact hcut
+
+
 end Synthesis

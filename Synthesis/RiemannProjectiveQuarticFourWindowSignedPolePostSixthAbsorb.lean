@@ -7855,4 +7855,177 @@ theorem exists_quarticSignedPoleFixedHigh_offLine_forces_uniformEstimate_failure
   exact hexclude huniform ht him hoff
 
 
+
+/-!
+## De-vacuified ambient terminal margin
+
+The zero-specific terminal margin depends on rho only through two concrete
+coordinates:
+
+* a = heightOf rho, the horizontal displacement from the critical line;
+* m = mult rho, the positive zero multiplicity.
+
+Expose that dependence on an ambient parameter space.  Since the selected
+height defect is positive for 0 < |a| <= 1/2, the ambient margin is monotone
+in m.  Therefore multiplicity one is the hardest case.
+
+This gives an independent analytic target quantified over real strip
+displacements, not over hypothetical counterexample zeros.
+-/
+
+def QuarticFourSignedPolePair.ambientZeroHeightDefect
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (m a : ℝ) : ℝ :=
+  m * W.physicalCombinedHeightDefect a
+
+def QuarticFourSignedPolePair.ambientPostSixthTerminalResidualMargin
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (m a EV : ℝ) : ℝ :=
+  2 * W.ambientZeroHeightDefect m a
+    - (1/2 : ℝ) * W.postSixthTerminalLocalM6Budget EV
+
+theorem QuarticFourSignedPolePair.postSixthTerminalResidualMargin_eq_ambient
+    {t EV : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.postSixthTerminalResidualMargin rho EV
+      =
+    W.ambientPostSixthTerminalResidualMargin
+      ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+      (heightOf rho) EV := by
+  rfl
+
+theorem QuarticFourSignedPolePair.physicalCombinedHeightDefect_pos_of_ambient_strip
+    {t a : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hhigh : 8/t < W.quantitativeTargetRadius)
+    (ha0 : 0 < |a|)
+    (ha : |a| <= 1/2) :
+    0 < W.physicalCombinedHeightDefect a := by
+  have hr : 0 < t/16 := by positivity
+  have hnorm0 : 0 < |a/(t/16)| := by
+    rw [abs_pos]
+    exact div_ne_zero (ne_of_gt ha0) hr.ne'
+  have hnorm :
+      |a/(t/16)| <= 8/t := by
+    rw [abs_div, abs_of_pos hr]
+    rw [div_le_div_iff₀ hr ht]
+    nlinarith
+  have hband :=
+    W.combinedTargetBand
+      (a/(t/16)) hnorm0
+      (hnorm.trans_lt hhigh)
+  rw [W.physicalCombinedHeightDefect_scaled ht]
+  have hfac : 0 < 1/(t/16)^2 := by positivity
+  exact mul_pos hfac hband
+
+theorem QuarticFourSignedPolePair.ambientMargin_mono_multiplicity
+    {t a EV m₁ m₂ : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hdefect : 0 <= W.physicalCombinedHeightDefect a)
+    (hm : m₁ <= m₂) :
+    W.ambientPostSixthTerminalResidualMargin m₁ a EV
+      <=
+    W.ambientPostSixthTerminalResidualMargin m₂ a EV := by
+  unfold QuarticFourSignedPolePair.ambientPostSixthTerminalResidualMargin
+    QuarticFourSignedPolePair.ambientZeroHeightDefect
+  nlinarith
+
+def LiteralFarMinusMuAmbientSimpleMultiplicityEstimate
+    (CV T : ℝ) : Prop :=
+  ∀ {t a : ℝ},
+    T < t ->
+    0 < |a| ->
+    |a| <= 1/2 ->
+    ∃ W : QuarticFourSignedPolePair t,
+      quarticSignedPoleStrengthFloor <= W.targetStrength
+        ∧
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+        ∧
+      W.signedProfileMomentSix < 0
+        ∧
+      8/t < W.quantitativeTargetRadius
+        ∧
+      (1/2 : ℝ)
+        *
+        (
+          W.canonicalLiteralFarPairSource
+          -
+          ∫ tau : ℝ,
+            W.signedOrdinateTest tau * Zeta23.mu tau
+        )
+        <
+      W.ambientPostSixthTerminalResidualMargin
+        1 a
+        (quarticSignedPoleCanonicalV4Error CV t)
+
+theorem literalFarMinusMuAmbientSimpleMultiplicityEstimate_implies_uniformHighEstimate
+    {CV T : ℝ}
+    (hambient :
+      LiteralFarMinusMuAmbientSimpleMultiplicityEstimate CV T) :
+    LiteralFarMinusMuUniformHighEstimate CV T := by
+  intro t ht rho him hoff
+  have ha0 : 0 < |heightOf rho| := abs_pos.mpr hoff
+  have ha : |heightOf rho| <= 1/2 :=
+    zetaZero_height_abs_le_half rho
+  obtain ⟨W,hS,hM6lo,hM6neg,hband,hambientCut⟩ :=
+    hambient ht ha0 ha
+  refine ⟨W,hS,hM6lo,hM6neg,hband,?_⟩
+  have hdefect :
+      0 <= W.physicalCombinedHeightDefect (heightOf rho) :=
+    (W.physicalCombinedHeightDefect_pos_of_ambient_strip
+      (by
+        have hPT := quarticPlattTrudgianCutoff_gt_twoHundred
+        have hT :
+            quarticPlattTrudgianCutoff <= T := by
+          -- The ambient interface is consumed below only with the fixed T
+          -- returned by the compiler.  Keep this generic theorem independent
+          -- of that provenance by deriving positivity directly from the band.
+          have hq : 0 < 8/t := by
+            exact lt_trans (by positivity) hband
+          positivity)
+      hband ha0 ha).le
+  have hmultPos :
+      0 < ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
+    positivity
+  have hmultOne :
+      (1 : ℝ) <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
+    have hnat :
+        1 <= (zetaZeroConfig).mult (rho : ℂ) := by
+      exact Nat.one_le_iff_ne_zero.mpr (by positivity)
+    exact_mod_cast hnat
+  have hmargin :=
+    W.ambientMargin_mono_multiplicity hdefect hmultOne
+      (EV:=quarticSignedPoleCanonicalV4Error CV t)
+      (a:=heightOf rho)
+  rw [W.postSixthTerminalResidualMargin_eq_ambient]
+  exact hambientCut.trans_le hmargin
+
+theorem exists_quarticSignedPoleFixedHigh_ambientSimpleMultiplicityEstimate_excludes_offLine :
+    ∃ CV T : ℝ,
+      0 <= CV
+        ∧ quarticPlattTrudgianCutoff <= T
+        ∧
+      (
+        LiteralFarMinusMuAmbientSimpleMultiplicityEstimate CV T
+        ->
+        ∀ {t : ℝ},
+          T < t ->
+          ∀ {rho : Zeros},
+            (rho : ℂ).im = t ->
+            heightOf rho ≠ 0 ->
+            False
+      ) := by
+  obtain ⟨CV,T,hCV,hPT,hexclude⟩ :=
+    exists_quarticSignedPoleFixedHigh_uniformLiteralFarMinusMuEstimate_excludes_offLine
+  refine ⟨CV,T,hCV,hPT,?_⟩
+  intro hambient
+  exact hexclude
+    (literalFarMinusMuAmbientSimpleMultiplicityEstimate_implies_uniformHighEstimate
+      hambient)
+
+
 end Synthesis

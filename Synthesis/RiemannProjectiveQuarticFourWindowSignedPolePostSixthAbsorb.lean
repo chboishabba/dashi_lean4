@@ -6036,4 +6036,59 @@ theorem QuarticFourSignedPolePair.pairedCenteredAbelPartial_eq_local_add_outer
     hpair.mono_set
 
 
+
+def QuarticFourSignedPolePair.canonicalOuterPairedHorizontalAt
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  -(1/2 : ℝ) * W.canonicalOuterPairedAbelAt n
+    + W.signedHorizontalRemainder
+
+def QuarticFourSignedPolePair.canonicalLocalPairedContribution
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  -(1/2 : ℝ) * W.canonicalLocalPairedAbel
+
+theorem QuarticFourSignedPolePair.centeredCompletedResidualAt_eq_localPaired_add_outerHorizontal
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t
+        <= (n : ℝ)) :
+    W.centeredCompletedResidualAt n
+      =
+    W.canonicalLocalPairedContribution
+      + W.canonicalOuterPairedHorizontalAt n := by
+  unfold QuarticFourSignedPolePair.centeredCompletedResidualAt
+    QuarticFourSignedPolePair.canonicalLocalPairedContribution
+    QuarticFourSignedPolePair.canonicalOuterPairedHorizontalAt
+  rw [W.combinedCenteredAbelPartial_eq_paired ht n,
+      W.pairedCenteredAbelPartial_eq_local_add_outer ht n hn]
+  ring
+
+/--
+The remaining paired high object after the local cubic/V4 sector is removed.
+No estimate is asserted here.
+
+A terminal proof through the paired-Abel lane must control this exact object,
+not the already-paid local cubic correlation:
+
+  -1/2 * outer paired symmetric N-mu correlation
+    + signed horizontal remainder.
+-/
+def QuarticFourSignedPolePair.PairedOuterHorizontalHighCut
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (localAllowance : ℝ) : Prop :=
+  ∃ eps : ℝ, 0 < eps ∧
+    ∀ᶠ n : ℕ in Filter.atTop,
+      W.canonicalOuterPairedHorizontalAt n
+        <=
+      2 * W.combinedZeroHeightDefect rho
+        - localAllowance - eps
+
+
 end Synthesis

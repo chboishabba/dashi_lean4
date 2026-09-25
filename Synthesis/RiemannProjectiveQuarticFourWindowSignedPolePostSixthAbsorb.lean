@@ -7693,4 +7693,83 @@ theorem exists_quarticSignedPoleFixedHigh_compiles_selectedLiteralFarMinusMuHigh
       ht200 rho).1 hcut
 
 
+
+/-!
+## Counterexample rigidity: any high off-line zero forces the opposite inequality
+
+The final far-minus-mu estimate is not merely sufficient.  Once the selected
+witness existence theorem is combined with the fixed-high contradiction
+compiler, every hypothetical high off-line zero forces the selected witness to
+FAIL the strict high cut.
+
+Thus a counterexample at height t must carry a concrete selected W for which
+
+  terminalResidualMargin
+    <= (1/2) * (canonicalLiteralFarPairSource - integral Psi_t * mu).
+
+This is the useful contrapositive form of the remaining analytic wall.
+It places a theorem-bearing lower bound on the exact signed scalar that any
+counterexample would have to sustain.
+-/
+
+theorem exists_quarticSignedPoleFixedHigh_offLine_forces_literalFarMinusMu_ge_margin :
+    ∃ CV T : ℝ,
+      0 <= CV
+        ∧ quarticPlattTrudgianCutoff <= T
+        ∧
+      ∀ {t : ℝ},
+        T < t ->
+        ∀ {rho : Zeros},
+          (rho : ℂ).im = t ->
+          heightOf rho ≠ 0 ->
+          ∃ W : QuarticFourSignedPolePair t,
+            quarticSignedPoleStrengthFloor <= W.targetStrength
+              ∧
+            -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+              ∧
+            W.signedProfileMomentSix < 0
+              ∧
+            8/t < W.quantitativeTargetRadius
+              ∧
+            W.postSixthTerminalResidualMargin rho
+                (quarticSignedPoleCanonicalV4Error CV t)
+              <=
+            (1/2 : ℝ)
+              *
+              (
+                W.canonicalLiteralFarPairSource
+                -
+                ∫ tau : ℝ,
+                  W.signedOrdinateTest tau * Zeta23.mu tau
+              ) := by
+  obtain ⟨CV,T,hCV,hPT,hcompile⟩ :=
+    exists_quarticSignedPoleFixedHigh_compiles_selectedLiteralFarMinusMuHighCut
+  refine ⟨CV,T,hCV,hPT,?_⟩
+  intro t ht rho him hoff
+  have hPTt : quarticPlattTrudgianCutoff < t :=
+    lt_of_le_of_lt hPT ht
+  obtain ⟨W,hS,hM6lo,hM6neg,hband⟩ :=
+    exists_quarticFourSignedPolePair_with_terminal_M6_and_band_above_PT
+      hPTt
+  refine ⟨W,hS,hM6lo,hM6neg,hband,?_⟩
+  by_contra hnot
+  have hstrict :
+      (1/2 : ℝ)
+          *
+          (
+            W.canonicalLiteralFarPairSource
+            -
+            ∫ tau : ℝ,
+              W.signedOrdinateTest tau * Zeta23.mu tau
+          )
+        <
+      W.postSixthTerminalResidualMargin rho
+        (quarticSignedPoleCanonicalV4Error CV t) :=
+    lt_of_not_ge hnot
+  have hcut :
+      quarticSignedPoleSelectedLiteralFarMinusMuHighCut CV t rho :=
+    ⟨W,hS,hM6lo,hM6neg,hband,hstrict⟩
+  exact hcompile ht him hoff hcut
+
+
 end Synthesis

@@ -1803,4 +1803,490 @@ theorem exists_quarticFourSignedPolePair_with_strength_floor_and_M6_neg
   simpa [W, QuarticFourSignedPolePair.targetStrength] using hfloor
 
 
+/-!
+## Clay-facing selected M6 certificate
+
+The manuscript min-cut does not need another generic moment theory.  What the
+terminal scalar inequality needs is one quantitative sixth-moment certificate
+for the same floor-certified selected witness.
+
+The existing atomic pole estimates were intentionally very coarse.  On the
+actual high range t>=200 the three hyperbolic arguments in the endpoint pole
+formula are all <= 4/25 in absolute value.  The already-certified degree-six
+cosh Taylor theorem therefore gives a much tighter endpoint-pole bound.
+
+Together with the existing atomic/smooth J6 bridge this yields
+
+  -(3/20) pi^6 <= M6_signed(W) < 0
+
+for one strength-floor witness at every t>=200.
+
+This is deliberately terminal-specific; no new generic J_k API is introduced.
+-/
+
+theorem quarticSignedPole_cosh_le_51_50_of_abs_le_four_twentyfive
+    {x : ℝ}
+    (hx : |x| <= (4/25 : ℝ)) :
+    Real.cosh x <= 51/50 := by
+  have hx1 : |x| <= 1 := by linarith
+  have hr :=
+    real_cosh_sub_sixth_abs_le_eighth (x:=x) hx1
+  have hu := (abs_le.mp hr).2
+
+  have h2a : |x|^2 <= (4/25 : ℝ)^2 := by gcongr
+  have h4a : |x|^4 <= (4/25 : ℝ)^4 := by gcongr
+  have h6a : |x|^6 <= (4/25 : ℝ)^6 := by gcongr
+  have h8a : |x|^8 <= (4/25 : ℝ)^8 := by gcongr
+
+  have h2 : x^2 <= (4/25 : ℝ)^2 := by
+    simpa [sq_abs] using h2a
+  have h4 : x^4 <= (4/25 : ℝ)^4 := by
+    calc
+      x^4 = |x^4| := (abs_of_nonneg (by positivity)).symm
+      _ = |x|^4 := abs_pow x 4
+      _ <= (4/25 : ℝ)^4 := h4a
+  have h6 : x^6 <= (4/25 : ℝ)^6 := by
+    calc
+      x^6 = |x^6| := (abs_of_nonneg (by positivity)).symm
+      _ = |x|^6 := abs_pow x 6
+      _ <= (4/25 : ℝ)^6 := h6a
+  have h8 : x^8 <= (4/25 : ℝ)^8 := by
+    calc
+      x^8 = |x^8| := (abs_of_nonneg (by positivity)).symm
+      _ = |x|^8 := abs_pow x 8
+      _ <= (4/25 : ℝ)^8 := h8a
+  have habs8 : |x|^8 = x^8 := by
+    rw [← abs_pow, abs_of_nonneg (by positivity : 0 <= x^8)]
+  rw [habs8] at hu
+  norm_num at h2 h4 h6 h8 ⊢
+  nlinarith
+
+theorem quarticSignedPole_atomic_arguments_abs_le_four_twentyfive
+    {t : ℝ} (ht : 200 <= t) :
+    |8*Real.pi/(3*t)| <= (4/25 : ℝ)
+      ∧ |4*Real.pi/t| <= (4/25 : ℝ)
+      ∧ |8*Real.pi/t| <= (4/25 : ℝ) := by
+  have ht0 : 0 < t := by linarith
+  have hp0 : 0 < Real.pi := Real.pi_pos
+  have hp4 : Real.pi < 4 := Real.pi_lt_four
+  have h1non : 0 <= 8*Real.pi/(3*t) := by positivity
+  have h2non : 0 <= 4*Real.pi/t := by positivity
+  have h3non : 0 <= 8*Real.pi/t := by positivity
+  rw [abs_of_nonneg h1non, abs_of_nonneg h2non, abs_of_nonneg h3non]
+  constructor
+  · rw [div_le_iff₀ (by positivity : 0 < 3*t)]
+    nlinarith
+  constructor <;> rw [div_le_iff₀ ht0] <;> nlinarith
+
+theorem quarticFourAtomicNullPole_half_le_57_50
+    {t : ℝ} (ht : 200 <= t) :
+    quarticFourAtomicFinitePoleResidual
+      t (1/2) (quarticFourAtomicMu (1/2))
+      <= 57/50 := by
+  have ht0 : 0 < t := by linarith
+  obtain ⟨hx1,hx2,hx3⟩ :=
+    quarticSignedPole_atomic_arguments_abs_le_four_twentyfive ht
+  have hc1 :=
+    quarticSignedPole_cosh_le_51_50_of_abs_le_four_twentyfive hx1
+  have hc2 :=
+    quarticSignedPole_cosh_le_51_50_of_abs_le_four_twentyfive hx2
+  have hc3 :=
+    quarticSignedPole_cosh_le_51_50_of_abs_le_four_twentyfive hx3
+  rw [quarticFourAtomicFinitePoleResidual_formula_general ht0.ne',
+      quarticFourAtomicMu_half]
+  norm_num at ⊢
+  nlinarith
+
+theorem quarticFourAtomicNullPole_two_le_51_50
+    {t : ℝ} (ht : 200 <= t) :
+    quarticFourAtomicFinitePoleResidual
+      t (2/3) (quarticFourAtomicMu (2/3))
+      <= 51/50 := by
+  have ht0 : 0 < t := by linarith
+  obtain ⟨hx1,hx2,hx3⟩ :=
+    quarticSignedPole_atomic_arguments_abs_le_four_twentyfive ht
+  have hc1 :=
+    quarticSignedPole_cosh_le_51_50_of_abs_le_four_twentyfive hx1
+  have hc2 :=
+    quarticSignedPole_cosh_le_51_50_of_abs_le_four_twentyfive hx2
+  have hc3lo : 1 <= Real.cosh (8*Real.pi/t) :=
+    Real.one_le_cosh _
+  rw [quarticFourAtomicFinitePoleResidual_formula_general ht0.ne',
+      quarticFourAtomicMu_twoThirds]
+  norm_num at ⊢
+  nlinarith
+
+theorem quarticFourAtomicEndpointPole_corridor_le_23_20
+    {t lam mu : ℝ}
+    (ht : 200 <= t)
+    (hlam : lam = (1/2 : ℝ) ∨ lam = (2/3 : ℝ))
+    (hmu :
+      |mu-quarticFourAtomicMu lam|
+        <= quarticFourAtomicMuRadius) :
+    quarticFourAtomicFinitePoleResidual t lam mu <= 23/20 := by
+  rcases hlam with rfl | rfl
+  · have hc :=
+      quarticFourAtomicFinitePoleResidual_corridor_close_null
+        ht ⟨by norm_num, by norm_num⟩ hmu
+    have hu := (abs_le.mp hc).2
+    have h0 := quarticFourAtomicNullPole_half_le_57_50 ht
+    linarith
+  · have hc :=
+      quarticFourAtomicFinitePoleResidual_corridor_close_null
+        ht ⟨by norm_num, by norm_num⟩ hmu
+    have hu := (abs_le.mp hc).2
+    have h0 := quarticFourAtomicNullPole_two_le_51_50 ht
+    linarith
+
+theorem exists_radius_quarticFourSmooth_endpointPole_le_six_fifths
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ R muHalf muTwo : ℝ,
+        0 < R -> R < delta ->
+        |muHalf-quarticFourAtomicMu (1/2)|
+          <= quarticFourAtomicMuRadius ->
+        |muTwo-quarticFourAtomicMu (2/3)|
+          <= quarticFourAtomicMuRadius ->
+        quarticFourSmoothFinitePoleResidual R (1/2) muHalf t <= 6/5
+          ∧
+        quarticFourSmoothFinitePoleResidual R (2/3) muTwo t <= 6/5 := by
+  obtain ⟨d,hd,hclose⟩ :=
+    exists_radius_quarticFourSmoothPole_close_atomic
+      ht (by norm_num : (0:ℝ) < 1/100)
+  refine ⟨d,hd,?_⟩
+  intro R muHalf muTwo hR hRd hmuHalf hmuTwo
+  have hmuHalfAbs :
+      |muHalf| < 1/10 :=
+    quarticFourAtomicMu_corridor_abs_lt_tenth
+      (by norm_num) (by norm_num) hmuHalf
+  have hmuTwoAbs :
+      |muTwo| < 1/10 :=
+    quarticFourAtomicMu_corridor_abs_lt_tenth
+      (by norm_num) (by norm_num) hmuTwo
+  have hlamHalf : (1/2 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨le_rfl, by norm_num⟩
+  have hlamTwo : (2/3 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨by norm_num, le_rfl⟩
+  have eHalf :=
+    hclose R (1/2) muHalf hR hRd hlamHalf hmuHalfAbs.le
+  have eTwo :=
+    hclose R (2/3) muTwo hR hRd hlamTwo hmuTwoAbs.le
+  have aHalf :=
+    quarticFourAtomicEndpointPole_corridor_le_23_20
+      ht (Or.inl rfl) hmuHalf
+  have aTwo :=
+    quarticFourAtomicEndpointPole_corridor_le_23_20
+      ht (Or.inr rfl) hmuTwo
+  have eHalfHi := (abs_le.mp eHalf).2
+  have eTwoHi := (abs_le.mp eTwo).2
+  constructor <;> nlinarith
+
+theorem quarticFourAtomicJ6_half_abs_le_three_125
+    {mu : ℝ}
+    (hmu :
+      |mu-quarticFourAtomicMu (1/2)|
+        <= quarticFourAtomicMuRadius) :
+    |quarticFourAtomicJAt (1/2) mu 6|
+      <= (3/125 : ℝ) * Real.pi^6 := by
+  rw [quarticFourAtomicJAt_six_formula]
+  rw [quarticFourAtomicMu_half] at hmu
+  unfold quarticFourAtomicMuRadius at hmu
+  have hlo := (abs_le.mp hmu).1
+  have hhi := (abs_le.mp hmu).2
+  have hp6 : 0 < Real.pi^6 := by positivity
+  rw [abs_le]
+  norm_num at hlo hhi ⊢
+  constructor <;> nlinarith
+
+theorem quarticFourAtomicJ6_twoThirds_abs_le_one_200
+    {mu : ℝ}
+    (hmu :
+      |mu-quarticFourAtomicMu (2/3)|
+        <= quarticFourAtomicMuRadius) :
+    |quarticFourAtomicJAt (2/3) mu 6|
+      <= (1/200 : ℝ) * Real.pi^6 := by
+  rw [quarticFourAtomicJAt_six_formula]
+  rw [quarticFourAtomicMu_twoThirds] at hmu
+  unfold quarticFourAtomicMuRadius at hmu
+  have hlo := (abs_le.mp hmu).1
+  have hhi := (abs_le.mp hmu).2
+  have hp6 : 0 < Real.pi^6 := by positivity
+  rw [abs_le]
+  norm_num at hlo hhi ⊢
+  constructor <;> nlinarith
+
+theorem exists_radius_quarticFourWindow_endpointJ6_terminal_abs_bounds :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ R muHalf muTwo : ℝ,
+        0 < R -> R < delta ->
+        |muHalf-quarticFourAtomicMu (1/2)|
+          <= quarticFourAtomicMuRadius ->
+        |muTwo-quarticFourAtomicMu (2/3)|
+          <= quarticFourAtomicMuRadius ->
+        |quarticFourWindowJ R (1/2) muHalf 6|
+            <= Real.pi^6 / 40
+          ∧
+        |quarticFourWindowJ R (2/3) muTwo 6|
+            <= 3 * Real.pi^6 / 500 := by
+  let eps : ℝ := Real.pi^6 / 1000
+  have heps : 0 < eps := by
+    dsimp [eps]
+    positivity
+  obtain ⟨d,hd,hclose⟩ :=
+    exists_radius_quarticFourWindowJ6_close_atomic heps
+  refine ⟨d,hd,?_⟩
+  intro R muHalf muTwo hR hRd hmuHalf hmuTwo
+  have hmuHalfAbs :
+      |muHalf| < 1/10 :=
+    quarticFourAtomicMu_corridor_abs_lt_tenth
+      (by norm_num) (by norm_num) hmuHalf
+  have hmuTwoAbs :
+      |muTwo| < 1/10 :=
+    quarticFourAtomicMu_corridor_abs_lt_tenth
+      (by norm_num) (by norm_num) hmuTwo
+  have hlamHalf : (1/2 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨le_rfl, by norm_num⟩
+  have hlamTwo : (2/3 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨by norm_num, le_rfl⟩
+  have eHalf :=
+    hclose R (1/2) muHalf hR hRd hlamHalf hmuHalfAbs.le
+  have eTwo :=
+    hclose R (2/3) muTwo hR hRd hlamTwo hmuTwoAbs.le
+  have aHalf :=
+    quarticFourAtomicJ6_half_abs_le_three_125 hmuHalf
+  have aTwo :=
+    quarticFourAtomicJ6_twoThirds_abs_le_one_200 hmuTwo
+  have triHalf :
+      |quarticFourWindowJ R (1/2) muHalf 6|
+        <=
+      |quarticFourAtomicJAt (1/2) muHalf 6|
+        + |quarticFourWindowJ R (1/2) muHalf 6
+            - quarticFourAtomicJAt (1/2) muHalf 6| := by
+    have h :=
+      abs_add
+        (quarticFourAtomicJAt (1/2) muHalf 6)
+        (quarticFourWindowJ R (1/2) muHalf 6
+          - quarticFourAtomicJAt (1/2) muHalf 6)
+    simpa [add_sub_cancel_left] using h
+  have triTwo :
+      |quarticFourWindowJ R (2/3) muTwo 6|
+        <=
+      |quarticFourAtomicJAt (2/3) muTwo 6|
+        + |quarticFourWindowJ R (2/3) muTwo 6
+            - quarticFourAtomicJAt (2/3) muTwo 6| := by
+    have h :=
+      abs_add
+        (quarticFourAtomicJAt (2/3) muTwo 6)
+        (quarticFourWindowJ R (2/3) muTwo 6
+          - quarticFourAtomicJAt (2/3) muTwo 6)
+    simpa [add_sub_cancel_left] using h
+  constructor
+  · have he := eHalf
+    dsimp [eps] at he
+    nlinarith
+  · have he := eTwo
+    dsimp [eps] at he
+    nlinarith
+
+/--
+Clay-facing selected-witness certificate.
+
+This is the quantitative strengthening actually consumed by the terminal
+post-sixth source.  The bound 3*pi^6/20 is chosen because it beats the
+dominant sixth-vs-quartic balance at the canonical local radius.
+-/
+theorem exists_quarticFourSignedPolePair_with_strength_floor_and_terminal_M6
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 <= W.targetStrength
+        ∧
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+        ∧
+      W.signedProfileMomentSix < 0 := by
+  obtain ⟨R0,hR0,hfamily⟩ :=
+    exists_uniform_smooth_quarticFourWindow_family
+  obtain ⟨dTarget,hdTarget,hTarget⟩ :=
+    exists_radius_quarticFourSmooth_signedPoleTarget_ge_margin ht
+  obtain ⟨dJSign,hdJSign,hJSign⟩ :=
+    exists_radius_quarticFourWindow_endpointJ6_signs
+  obtain ⟨dJAbs,hdJAbs,hJAbs⟩ :=
+    exists_radius_quarticFourWindow_endpointJ6_terminal_abs_bounds
+  obtain ⟨dPPos,hdPPos,hPPos⟩ :=
+    exists_radius_quarticFourSmooth_endpointPole_pos ht
+  obtain ⟨dPUp,hdPUp,hPUp⟩ :=
+    exists_radius_quarticFourSmooth_endpointPole_le_six_fifths ht
+
+  let d :=
+    min dTarget (min dJSign (min dJAbs (min dPPos dPUp)))
+  have hd : 0 < d := by
+    dsimp [d]
+    exact lt_min hdTarget
+      (lt_min hdJSign
+        (lt_min hdJAbs (lt_min hdPPos hdPUp)))
+  let R : ℝ := min 1 (min R0 d) / 2
+  have hinner : 0 < min R0 d := lt_min hR0 hd
+  have hmin : 0 < min 1 (min R0 d) :=
+    lt_min (by norm_num) hinner
+  have hR : 0 < R := by
+    dsimp [R]
+    linarith
+  have hRone : R < 1 := by
+    dsimp [R]
+    have hle := min_le_left 1 (min R0 d)
+    linarith
+  have hRinner : R < min R0 d := by
+    dsimp [R]
+    have hle := min_le_right 1 (min R0 d)
+    linarith
+  have hRR0 : R < R0 :=
+    hRinner.trans_le (min_le_left R0 d)
+  have hRd : R < d :=
+    hRinner.trans_le (min_le_right R0 d)
+
+  have hRTarget : R < dTarget :=
+    hRd.trans_le (min_le_left dTarget _)
+  have hRest1 :
+      R < min dJSign (min dJAbs (min dPPos dPUp)) :=
+    hRd.trans_le (min_le_right dTarget _)
+  have hRJSign : R < dJSign :=
+    hRest1.trans_le (min_le_left dJSign _)
+  have hRest2 : R < min dJAbs (min dPPos dPUp) :=
+    hRest1.trans_le (min_le_right dJSign _)
+  have hRJAbs : R < dJAbs :=
+    hRest2.trans_le (min_le_left dJAbs _)
+  have hRest3 : R < min dPPos dPUp :=
+    hRest2.trans_le (min_le_right dJAbs _)
+  have hRPPos : R < dPPos :=
+    hRest3.trans_le (min_le_left dPPos dPUp)
+  have hRPUp : R < dPUp :=
+    hRest3.trans_le (min_le_right dPPos dPUp)
+
+  have hlamHalf : (1/2 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨le_rfl, by norm_num⟩
+  have hlamTwo : (2/3 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨by norm_num, le_rfl⟩
+  obtain ⟨S1⟩ := hfamily R (1/2) hR hRR0 hlamHalf
+  obtain ⟨S2⟩ := hfamily R (2/3) hR hRR0 hlamTwo
+
+  have hfloor :
+      7 * Real.pi^4 / 1600 <=
+        quarticFourSmoothPoleCancelledTarget
+          R S1.mu S2.mu t :=
+    hTarget R S1.mu S2.mu hR hRTarget S1.muNear S2.muNear
+  have htransPos :
+      0 < quarticFourSmoothPoleCancelledTarget
+        R S1.mu S2.mu t := by
+    have hp4 : 0 < Real.pi^4 := by positivity
+    nlinarith
+  obtain ⟨eps,heps,hband⟩ :=
+    exists_quarticFourSignedPoleCombinedHeightDefect_pos_punctured
+      hR S1.J2zero S2.J2zero htransPos
+
+  let W : QuarticFourSignedPolePair t := {
+    R := R
+    muHalf := S1.mu
+    muTwo := S2.mu
+    eps := eps
+    Rpos := hR
+    RltOne := hRone
+    muHalfNear := S1.muNear
+    muTwoNear := S2.muNear
+    J2Half := S1.J2zero
+    J2Two := S2.J2zero
+    signedTargetStrength := htransPos
+    epsPos := heps
+    combinedTargetBand := hband
+  }
+
+  have hJsign :=
+    hJSign R S1.mu S2.mu hR hRJSign S1.muNear S2.muNear
+  have hJabs :=
+    hJAbs R S1.mu S2.mu hR hRJAbs S1.muNear S2.muNear
+  have hPpos :=
+    hPPos R S1.mu S2.mu hR hRPPos S1.muNear S2.muNear
+  have hPup :=
+    hPUp R S1.mu S2.mu hR hRPUp S1.muNear S2.muNear
+
+  have hM6neg : W.signedProfileMomentSix < 0 := by
+    rw [W.signedProfileMomentSix_eq_J6_determinant]
+    dsimp [W]
+    have hterm1 :
+        quarticFourSmoothFinitePoleResidual R (2/3) S2.mu t
+          * quarticFourWindowJ R (1/2) S1.mu 6 < 0 :=
+      mul_neg_of_pos_of_neg hPpos.2 hJsign.1
+    have hterm2 :
+        0 <
+        quarticFourSmoothFinitePoleResidual R (1/2) S1.mu t
+          * quarticFourWindowJ R (2/3) S2.mu 6 :=
+      mul_pos hPpos.1 hJsign.2
+    nlinarith
+
+  have hJHalfMag :
+      - quarticFourWindowJ R (1/2) S1.mu 6
+        <= Real.pi^6 / 40 := by
+    have hab := hJabs.1
+    have hneg := hJsign.1
+    rw [abs_of_neg hneg] at hab
+    exact hab
+  have hJTwoMag :
+      quarticFourWindowJ R (2/3) S2.mu 6
+        <= 3 * Real.pi^6 / 500 := by
+    have hab := hJabs.2
+    have hpos := hJsign.2
+    rw [abs_of_pos hpos] at hab
+    exact hab
+
+  have htermHalf :
+      quarticFourSmoothFinitePoleResidual R (2/3) S2.mu t
+          * (-quarticFourWindowJ R (1/2) S1.mu 6)
+        <=
+      (6/5 : ℝ) * (Real.pi^6 / 40) := by
+    exact mul_le_mul hPup.2 hJHalfMag
+      (by linarith [hJsign.1])
+      (by norm_num)
+  have htermTwo :
+      quarticFourSmoothFinitePoleResidual R (1/2) S1.mu t
+          * quarticFourWindowJ R (2/3) S2.mu 6
+        <=
+      (6/5 : ℝ) * (3 * Real.pi^6 / 500) := by
+    exact mul_le_mul hPup.1 hJTwoMag
+      hJsign.2.le
+      (by norm_num)
+
+  have hM6lo :
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix := by
+    rw [W.signedProfileMomentSix_eq_J6_determinant]
+    dsimp [W]
+    have hp6 : 0 <= Real.pi^6 := by positivity
+    nlinarith
+
+  refine ⟨W, ?_, hM6lo, hM6neg⟩
+  simpa [W, QuarticFourSignedPolePair.targetStrength] using hfloor
+
+/--
+The selected terminal M6 certificate is genuinely below the old dominant
+sixth-vs-quartic balance at the canonical local radius.
+-/
+theorem quarticSignedPole_terminal_M6_cap_pays_dominant_balance :
+    (1/24 : ℝ)
+        * ((3/20 : ℝ) * Real.pi^6)
+        * quarticSignedPoleCanonicalLocalRadius^2
+      <
+    quarticSignedPoleStrengthFloor := by
+  unfold quarticSignedPoleCanonicalLocalRadius
+    quarticSignedPoleStrengthFloor
+  have hp0 : 0 < Real.pi := Real.pi_pos
+  have hp4 : Real.pi < 4 := Real.pi_lt_four
+  have hden : 0 < Real.pi + 1 := by positivity
+  rw [div_pow]
+  rw [div_lt_iff₀ (sq_pos_of_pos hden)]
+  have hp4pos : 0 < Real.pi^4 := by positivity
+  have hcore :
+      3 * Real.pi^2 < 14 * Real.pi + 7 := by
+    have hs : Real.pi^2 < 4 * Real.pi := by
+      nlinarith
+    nlinarith
+  nlinarith [hp4pos, hcore]
+
+
 end Synthesis

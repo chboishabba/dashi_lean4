@@ -130,7 +130,7 @@ the finite-thickness Einstein equations; that remaining PDE/matching theorem is
 kept explicit.
 -/
 
-structure PhysicallyCalibratedFiniteThicknessSourceWitness
+structure NormalizedCalibratedFiniteThicknessSourceWitness
     {Stress : Type u}
     (E : CMP119RationalStressComponentEvaluator Stress)
     (stress : Stress)
@@ -139,7 +139,7 @@ structure PhysicallyCalibratedFiniteThicknessSourceWitness
     (calibration : NormalizedEinsteinSourceCalibration source)
     (thickness : Rat) : Prop where
   calibrated :
-    PhysicallyCalibratedAntigravityWitness
+    NormalizedCalibratedAntigravityWitness
       E stress normalized source calibration
   thicknessPositive :
     0 < thickness
@@ -156,7 +156,7 @@ structure PhysicallyCalibratedFiniteThicknessSourceWitness
       nambuBubbleSurfaceTension8Pi thickness
       = -nambuBubbleSurfaceTension8Pi
 
-theorem compile_physically_calibrated_finite_thickness_source
+theorem compile_normalized_calibrated_finite_thickness_source
     {Stress : Type u}
     {E : CMP119RationalStressComponentEvaluator Stress}
     {stress : Stress}
@@ -165,13 +165,13 @@ theorem compile_physically_calibrated_finite_thickness_source
     (calibration : NormalizedEinsteinSourceCalibration source)
     (thickness : Rat)
     (hThickness : 0 < thickness) :
-    PhysicallyCalibratedFiniteThicknessSourceWitness
+    NormalizedCalibratedFiniteThicknessSourceWitness
       E stress normalized source calibration thickness := by
   let wall :=
     nambu_bubble_finite_thickness_effective_wall thickness hThickness
   exact {
     calibrated :=
-      compile_physically_calibrated_antigravity
+      compile_normalized_calibrated_antigravity
         normalized source calibration
     thicknessPositive := hThickness
     effectiveWall := wall
@@ -186,7 +186,7 @@ theorem compile_physically_calibrated_finite_thickness_source
         (ne_of_gt hThickness)
   }
 
-def physicallyCalibratedFiniteThicknessSourceCompiled : Bool := true
+def normalizedCalibratedFiniteThicknessSourceCompiled : Bool := true
 def finiteThicknessGeometryPDEStillRequired : Bool := true
 
 

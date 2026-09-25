@@ -5208,4 +5208,284 @@ theorem exists_quarticSignedPoleFixedHigh_compiles_selectedQuarticScaleHighCut :
       ht200 rho).mpr hcut
 
 
+
+/-!
+## Odd pairing and cubic-leading derivative jet
+
+The normalized cosine derivative is odd.  On the selected witness its first
+nonzero Taylor coefficient is cubic, with the sign forced by
+
+  M4(W) = -4 * targetStrength(W).
+
+Hence
+
+  C'_W(q) = -(2/3) * targetStrength(W) * q^3 + R5_W(q).
+
+The sign here is important: C'_W(q) is negative for small positive q, in
+agreement with the already-certified radial derivative theorem.
+
+The remainder is controlled directly by Mathlib's unit-ball sine remainder
+and the same selected absolute sixth moment already welded to G1.
+-/
+
+theorem real_sin_sub_cubic_abs_le_fifth
+    {x : ℝ}
+    (hx : |x| <= 1) :
+    |Real.sin x - (x - x^3/6)|
+      <= |x|^5 / 100 := by
+  have h :=
+    Complex.sin_bound (x := (x : ℂ)) (by simpa using hx)
+  simpa [Real.norm_eq_abs] using h
+
+theorem QuarticFourSignedPolePair.normalizedOrdinateCosineD1_odd
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (q : ℝ) :
+    W.normalizedOrdinateCosineD1 (-q)
+      = - W.normalizedOrdinateCosineD1 q := by
+  unfold QuarticFourSignedPolePair.normalizedOrdinateCosineD1
+  exact compactCosineD1_odd _ q
+
+def QuarticFourSignedPolePair.normalizedOrdinateD1QuinticRemainder
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (q : ℝ) : ℝ :=
+  W.normalizedOrdinateCosineD1 q
+    + (2/3 : ℝ) * W.targetStrength * q^3
+
+theorem QuarticFourSignedPolePair.normalizedOrdinateCosineD1_eq_cubic_add_remainder
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (q : ℝ) :
+    W.normalizedOrdinateCosineD1 q
+      =
+    -(2/3 : ℝ) * W.targetStrength * q^3
+      + W.normalizedOrdinateD1QuinticRemainder q := by
+  unfold QuarticFourSignedPolePair.normalizedOrdinateD1QuinticRemainder
+  ring
+
+theorem QuarticFourSignedPolePair.normalizedOrdinateD1QuinticRemainder_odd
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (q : ℝ) :
+    W.normalizedOrdinateD1QuinticRemainder (-q)
+      =
+    - W.normalizedOrdinateD1QuinticRemainder q := by
+  unfold QuarticFourSignedPolePair.normalizedOrdinateD1QuinticRemainder
+  rw [W.normalizedOrdinateCosineD1_odd]
+  ring
+
+theorem QuarticFourSignedPolePair.normalizedOrdinateD1QuinticRemainder_eq_integral
+    {t q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.normalizedOrdinateD1QuinticRemainder q
+      =
+    ∫ u : ℝ,
+      - quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t u
+      *
+      (Real.sin (q*u) - ((q*u) - (q*u)^3/6))
+      * u := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hsin :
+      Integrable (fun u : ℝ => -P u * Real.sin (q*u) * u) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) ((hPc.neg.mul_right).mul_right)
+  have h2 :
+      Integrable (fun u : ℝ => P u * u^2) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have h4 :
+      Integrable (fun u : ℝ => P u * u^4) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  have hM2 :
+      ∫ u : ℝ, P u * u^2 = 0 := by
+    change profileSecondMoment P = 0
+    exact quarticFourSignedPoleCombinedProfile_second_zero
+      W.Rpos W.J2Half W.J2Two
+  have hM4 :
+      ∫ u : ℝ, P u * u^4 = -4 * W.targetStrength := by
+    change profileFourthMoment P = -4 * W.targetStrength
+    simpa [QuarticFourSignedPolePair.targetStrength] using
+      quarticFourSignedPoleCombinedProfile_fourth
+        (R:=W.R) (muHalf:=W.muHalf) (muTwo:=W.muTwo)
+        (t:=t) W.Rpos
+  unfold QuarticFourSignedPolePair.normalizedOrdinateD1QuinticRemainder
+    QuarticFourSignedPolePair.normalizedOrdinateCosineD1
+    compactCosineD1
+  change
+    (∫ u : ℝ, -P u * Real.sin (q*u) * u)
+      + (2/3 : ℝ) * W.targetStrength * q^3
+      =
+    ∫ u : ℝ,
+      -P u * (Real.sin (q*u) - ((q*u) - (q*u)^3/6)) * u
+  have hpoly :
+      (fun u : ℝ =>
+        -P u * (Real.sin (q*u) - ((q*u) - (q*u)^3/6)) * u)
+      =
+      fun u =>
+        (-P u * Real.sin (q*u) * u)
+          + q * (P u * u^2)
+          - (q^3/6) * (P u * u^4) := by
+    funext u
+    ring
+  rw [hpoly]
+  have hq2 := h2.const_mul q
+  have hq4 := h4.const_mul (q^3/6)
+  rw [integral_sub (hsin.add hq2) hq4,
+      integral_add hsin hq2,
+      integral_const_mul, integral_const_mul,
+      hM2, hM4]
+  ring
+
+theorem QuarticFourSignedPolePair.normalizedOrdinateD1QuinticRemainder_abs_le
+    {t q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hq : |q| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.normalizedOrdinateD1QuinticRemainder q|
+      <=
+    (1/100 : ℝ) * |q|^5 * W.signedProfileAbsMomentSix := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hi :
+      Integrable
+        (fun u : ℝ =>
+          -P u
+            * (Real.sin (q*u) - ((q*u) - (q*u)^3/6))
+            * u) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) ((hPc.neg.mul_right).mul_right)
+  have hmaj :
+      Integrable
+        (fun u : ℝ =>
+          (1/100 : ℝ) * |q|^5 * (|P u| * |u|^6)) :=
+    (compactProfile_absMoment_integrable hP hPc 6).const_mul
+      ((1/100 : ℝ) * |q|^5)
+  rw [W.normalizedOrdinateD1QuinticRemainder_eq_integral]
+  calc
+    |∫ u : ℝ,
+      -P u
+        * (Real.sin (q*u) - ((q*u) - (q*u)^3/6))
+        * u|
+      <=
+    ∫ u : ℝ,
+      |-P u
+        * (Real.sin (q*u) - ((q*u) - (q*u)^3/6))
+        * u| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ u : ℝ,
+      (1/100 : ℝ) * |q|^5 * (|P u| * |u|^6) := by
+      apply integral_mono hi.abs hmaj
+      intro u
+      by_cases hzero : P u = 0
+      · simp [hzero]
+      · have hqu := W.abs_q_mul_u_le_one_of_local hq hzero
+        have hs := real_sin_sub_cubic_abs_le_fifth hqu
+        rw [abs_mul, abs_mul, abs_neg]
+        have hqupow : |q*u|^5 = |q|^5 * |u|^5 := by
+          rw [abs_mul, mul_pow]
+        rw [hqupow] at hs
+        have hP0 : 0 <= |P u| := abs_nonneg _
+        have hu0 : 0 <= |u| := abs_nonneg _
+        calc
+          |P u|
+              * |Real.sin (q*u) - ((q*u) - (q*u)^3/6)|
+              * |u|
+            <=
+          |P u| * ((|q|^5 * |u|^5) / 100) * |u| := by
+            gcongr
+          _ =
+          (1/100 : ℝ) * |q|^5 * (|P u| * |u|^6) := by
+            ring
+    _ =
+    (1/100 : ℝ) * |q|^5 * compactProfileAbsMoment P 6 := by
+      rw [integral_const_mul]
+      rfl
+    _ =
+    (1/100 : ℝ) * |q|^5 * W.signedProfileAbsMomentSix := by
+      rfl
+
+
+/-!
+## Antisymmetric quartic-scale centered discrepancy
+
+Because C'_W is odd, the selected vertical correlation sees only the
+antisymmetric component of the centered discrepancy.  For q >= 0 that
+antisymmetric component is exactly one symmetric literal N-mu window.
+-/
+
+def QuarticFourSignedPolePair.quarticScaleAntisymmetricDiscrepancy
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (q : ℝ) : ℝ :=
+  W.quarticScaleCenteredDiscrepancy q
+    - W.quarticScaleCenteredDiscrepancy (-q)
+
+theorem QuarticFourSignedPolePair.quarticScaleAntisymmetricDiscrepancy_eq_symmetricWindow
+    {t q : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hq : 0 <= q) :
+    W.quarticScaleAntisymmetricDiscrepancy q
+      =
+    (t/16)^4
+      *
+    zetaMuCumulativeDiscrepancy
+      (t - (t/16)*q)
+      (t + (t/16)*q) := by
+  by_cases hq0 : q = 0
+  · subst q
+    simp [QuarticFourSignedPolePair.quarticScaleAntisymmetricDiscrepancy,
+      QuarticFourSignedPolePair.quarticScaleCenteredDiscrepancy,
+      QuarticFourSignedPolePair.normalizedCenteredDiscrepancy,
+      centeredZetaMuDiscrepancy_self,
+      zetaMuCumulativeDiscrepancy,
+      zetaMuPrimitive_self]
+  · have hqpos : 0 < q := lt_of_le_of_ne hq (Ne.symm hq0)
+    have hr : 0 < t/16 := by positivity
+    have hleft : t - (t/16)*q < t := by positivity
+    have hright : t <= t + (t/16)*q := by positivity
+    have hadd :=
+      zetaMuCumulativeDiscrepancy_add
+        (A:=t-(t/16)*q)
+        (B:=t)
+        (C:=t+(t/16)*q)
+        (by linarith)
+        hright
+    unfold QuarticFourSignedPolePair.quarticScaleAntisymmetricDiscrepancy
+      QuarticFourSignedPolePair.quarticScaleCenteredDiscrepancy
+      QuarticFourSignedPolePair.normalizedCenteredDiscrepancy
+    rw [centeredZetaMuDiscrepancy_of_le hright,
+      centeredZetaMuDiscrepancy_of_lt hleft]
+    rw [hadd]
+    ring
+
+theorem QuarticFourSignedPolePair.normalizedPairedIntegrand_eq_cubic_add_quintic
+    {t q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.normalizedOrdinateCosineD1 q
+      * W.quarticScaleAntisymmetricDiscrepancy q
+      =
+    (-(2/3 : ℝ) * W.targetStrength * q^3)
+      * W.quarticScaleAntisymmetricDiscrepancy q
+      +
+    W.normalizedOrdinateD1QuinticRemainder q
+      * W.quarticScaleAntisymmetricDiscrepancy q := by
+  rw [W.normalizedOrdinateCosineD1_eq_cubic_add_remainder]
+  ring
+
+
 end Synthesis

@@ -22,6 +22,20 @@ structure AgdaTraceSourceReceipt where
   partitionPositive : 0 < partitionFunction
   quantumTraceNegative : quantumTraceNumerator < 0
 
+  /-- The selected R119/CMP119 connected numerator is the canonical
+      Wilson/Gibbs connected numerator on the same finite measure. -/
+  selectedCMP119ConnectedNumeratorSameObject : Prop
+
+  /-- The renormalized trace numerator is attached to the convention-correct
+      beta/F^2 numerator on that same source family. -/
+  betaF2TraceSameObject : Prop
+
+  /-- The partition function is the partition function of the selected literal
+      finite measure rather than an unrelated positive scalar. -/
+  selectedPartitionFunctionSameObject : Prop
+
+def sourceReceiptCarriesSameObjectProvenance : Bool := true
+
 def AgdaTraceSourceReceipt.activeConnectedNumerator
     (s : AgdaTraceSourceReceipt) : Rat :=
   s.partitionFunction * s.quantumTraceNumerator

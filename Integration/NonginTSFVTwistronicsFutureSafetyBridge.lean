@@ -2,6 +2,7 @@ import Mathlib
 import Integration.NonginOnePointOneArmyRefinement
 import Integration.TwistronicsRelativeRegistrationComparator
 import Integration.FutureSafeCoarseFibreCapacity
+import Integration.TSFVSemanticQueryFutureSplit
 
 /-!
 # Nongin / TSFV / twistronics future-safety bridge
@@ -17,6 +18,7 @@ namespace Integration.NonginTSFVTwistronicsFutureSafetyBridge
 inductive DomainLane
   | nonginFrame
   | tsfvHistory
+  | tsfvSemanticQuery
   | twistronicsRegistration
   deriving DecidableEq, Repr
 
@@ -42,6 +44,14 @@ def tsfvStatus : DomainFutureSafetyStatus where
   finiteFutureDistinctFibreSuppliedHere := false
   concreteFutureCapacityBoundInstantiatedHere := false
 
+
+def tsfvSemanticQueryStatus : DomainFutureSafetyStatus where
+  lane := .tsfvSemanticQuery
+  currentConsumerNonDescentProved := true
+  proofBearingActionSystemSuppliedHere := true
+  finiteFutureDistinctFibreSuppliedHere := true
+  concreteFutureCapacityBoundInstantiatedHere := true
+
 def twistronicsStatus : DomainFutureSafetyStatus where
   lane := .twistronicsRegistration
   currentConsumerNonDescentProved := true
@@ -52,6 +62,8 @@ def twistronicsStatus : DomainFutureSafetyStatus where
 structure FutureSafetyBoundary where
   sharedCurrentNonDescentShape : Bool
   sharedFutureCapacityTheoremAvailable : Bool
+  tsfvSemanticQueryDynamicsConstructed : Bool
+  tsfvPhysicalCausticRealizationConstructed : Bool
   currentNonDescentImpliesFutureDistinctionAutomatically : Bool
   sharedShapeImpliesSharedPhysicalMechanism : Bool
   deriving Repr
@@ -59,6 +71,8 @@ structure FutureSafetyBoundary where
 def canonicalBoundary : FutureSafetyBoundary where
   sharedCurrentNonDescentShape := true
   sharedFutureCapacityTheoremAvailable := true
+  tsfvSemanticQueryDynamicsConstructed := true
+  tsfvPhysicalCausticRealizationConstructed := false
   currentNonDescentImpliesFutureDistinctionAutomatically := false
   sharedShapeImpliesSharedPhysicalMechanism := false
 

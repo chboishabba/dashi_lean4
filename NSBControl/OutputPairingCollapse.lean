@@ -1,5 +1,4 @@
 import NSBControl.SelfOrbitCommutatorCarrier
-import Mathlib.Tactic.Ring
 
 namespace NSBControl
 namespace OutputPairingCollapse
@@ -44,41 +43,40 @@ theorem spectatorRow_factor_left
       simp only [spectatorRow, foldV, List.map_cons, List.sum_cons, pair]
       rw [ih, pairAddLeft]
 
+theorem sum_pair_right
+    (left : V)
+    (items : List Triad) :
+    (items.map (fun beta => pairing left (selfCell beta))).sum =
+      pairing left (foldV selfCell items) := by
+  induction items with
+  | nil =>
+      simp [foldV, pairZeroRight]
+  | cons beta rest ih =>
+      simp only [foldV, List.map_cons, List.sum_cons]
+      rw [ih, pairAddRight]
+
 theorem doubleRow_collapse
     (items : List Triad) :
     (items.map
       (fun beta =>
         spectatorRow (pair pairing mixed selfCell) beta items)).sum =
       pairing (foldV mixed items) (foldV selfCell items) := by
-  induction items with
-  | nil =>
-      simp [foldV, pairZeroRight]
-  | cons beta rest ih =>
-      let M := foldV mixed (beta :: rest)
-      have hrow :
-          spectatorRow (pair pairing mixed selfCell) beta (beta :: rest) =
-            pairing M (selfCell beta) := by
-        exact spectatorRow_factor_left
-          pairing pairAddLeft mixed selfCell beta (beta :: rest)
-      have htail :
-          ((rest.map
-            (fun gamma =>
-              spectatorRow (pair pairing mixed selfCell) gamma (beta :: rest))).sum) =
-            pairing M (foldV selfCell rest) := by
-        induction rest with
-        | nil =>
-            simp [foldV, pairZeroRight]
-        | cons gamma tail tailIH =>
-            simp only [List.map_cons, List.sum_cons]
-            rw [spectatorRow_factor_left
-              pairing pairAddLeft mixed selfCell gamma (beta :: gamma :: tail)]
-            rw [tailIH]
-            rw [← pairAddRight]
-            rfl
-      simp only [List.map_cons, List.sum_cons]
-      rw [hrow, htail]
-      rw [← pairAddRight]
-      rfl
+  calc
+    (items.map
+      (fun beta =>
+        spectatorRow (pair pairing mixed selfCell) beta items)).sum
+        =
+      (items.map
+        (fun beta =>
+          pairing (foldV mixed items) (selfCell beta))).sum := by
+            apply List.sum_congr rfl
+            intro beta hBeta
+            exact spectatorRow_factor_left
+              pairing pairAddLeft mixed selfCell beta items
+    _ = pairing (foldV mixed items) (foldV selfCell items) := by
+          exact sum_pair_right
+            pairing pairAddRight pairZeroRight selfCell
+            (foldV mixed items) items
 
 end
 

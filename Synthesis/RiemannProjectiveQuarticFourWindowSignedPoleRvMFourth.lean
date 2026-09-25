@@ -202,20 +202,20 @@ by the quartic V4 compiler.
 The local half-width r is assumed positive and the left endpoint must lie
 above the existing arbitrary-endpoint threshold.
 -/
-theorem exists_quarticSignedPoleRvMVerticalFourthDiscrepancy_bound :
-    ∃ C T0 : ℝ, 0 <= C ∧
+theorem exists_quarticSignedPoleRvMVerticalFourthDiscrepancy_bound_at_five :
+    ∃ C : ℝ, 0 <= C ∧
       ∀ t r : ℝ,
         0 < r ->
-        max T0 4 <= t-r ->
+        5 <= t-r ->
         |quarticSignedPoleRvMVerticalFourthDiscrepancy t r|
           <=
         9 * r^4 *
           (C *
             (Real.log ((t-r) + 3)
               + Real.log ((t+r) + 4))) := by
-  obtain ⟨C,T0,hC,hRvM⟩ :=
-    exists_zetaMuWindowDiscrepancy_arbitrary_bound
-  refine ⟨C,T0,hC,?_⟩
+  obtain ⟨C,hC,hRvM⟩ :=
+    exists_zetaMuWindowDiscrepancy_arbitrary_bound_at_five
+  refine ⟨C,hC,?_⟩
   intro t r hr hleft
   let A : ℝ := t-r
   let B : ℝ := t+r
@@ -225,8 +225,9 @@ theorem exists_quarticSignedPoleRvMVerticalFourthDiscrepancy_bound :
   have hAB : A < B := by
     dsimp [A,B]
     linarith
-  have hA4 : 4 <= A :=
-    (le_max_right T0 4).trans hleft
+  have hA4 : 4 <= A := by
+    dsimp [A] at hleft ⊢
+    linarith
   have hE : 0 <= E := by
     dsimp [E]
     have hlogA : 0 <= Real.log (A+3) :=
@@ -245,7 +246,7 @@ theorem exists_quarticSignedPoleRvMVerticalFourthDiscrepancy_bound :
         simp [Ncount, zerosIn]
       simpa [zetaMuCumulativeDiscrepancy, zetaMuPrimitive, hN] using hE
     · have hAx : A < x := lt_of_le_of_ne hx.1 hxA.symm
-      have hraw := hRvM A x hleft hAx
+      have hraw := hRvM A x (by simpa [A] using hleft) hAx
       rw [zetaMuCumulativeDiscrepancy_endpoint]
       have hlog :
           Real.log (x+4) <= Real.log (B+4) :=
@@ -264,5 +265,29 @@ theorem exists_quarticSignedPoleRvMVerticalFourthDiscrepancy_bound :
         intro x hx
         simpa [A,B] using hD x hx)
   simpa [A,B,E] using hbound
+
+
+
+/--
+Compatibility wrapper for existing consumers.  The source theorem above now
+exposes the concrete V4 left-end threshold 5.
+-/
+theorem exists_quarticSignedPoleRvMVerticalFourthDiscrepancy_bound :
+    ∃ C T0 : ℝ, 0 <= C ∧
+      ∀ t r : ℝ,
+        0 < r ->
+        max T0 4 <= t-r ->
+        |quarticSignedPoleRvMVerticalFourthDiscrepancy t r|
+          <=
+        9 * r^4 *
+          (C *
+            (Real.log ((t-r) + 3)
+              + Real.log ((t+r) + 4))) := by
+  obtain ⟨C,hC,h⟩ :=
+    exists_quarticSignedPoleRvMVerticalFourthDiscrepancy_bound_at_five
+  refine ⟨C,5,hC,?_⟩
+  intro t r hr hleft
+  apply h t r hr
+  simpa using hleft
 
 end Synthesis

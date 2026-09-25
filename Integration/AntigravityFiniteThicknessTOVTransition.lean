@@ -362,6 +362,83 @@ theorem finite_thickness_exterior_match :
   }
 
 
+
+
+/-!
+Source-calibrated finite-thickness capstone.
+
+Unlike the older thin-wall bubble calibration, this uses the actual finite-layer
+Kottler target Lambda_out = 16/75.
+-/
+
+def finiteThicknessKottlerTarget : Rat := transitionOuterLambda
+
+theorem finite_thickness_kottler_target_exact :
+    finiteThicknessKottlerTarget = 16/75 :=
+  transition_outer_lambda
+
+theorem finite_thickness_kottler_target_positive :
+    0 < finiteThicknessKottlerTarget := by
+  rw [finite_thickness_kottler_target_exact]
+  norm_num
+
+def finiteThicknessRequiredStressLengthSquaredLower
+    (source : AgdaTraceSourceReceipt) : Rat :=
+  requiredStressLengthSquaredLowerFor finiteThicknessKottlerTarget source
+
+def finiteThicknessRequiredStressLengthSquaredUpper
+    (source : AgdaTraceSourceReceipt) : Rat :=
+  requiredStressLengthSquaredUpperFor finiteThicknessKottlerTarget source
+
+theorem finite_thickness_required_scale_interval_ordered
+    (source : AgdaTraceSourceReceipt) :
+    finiteThicknessRequiredStressLengthSquaredLower source
+      ≤ finiteThicknessRequiredStressLengthSquaredUpper source := by
+  exact required_stress_length_squared_for_interval_ordered
+    finiteThicknessKottlerTarget source
+    (le_of_lt finite_thickness_kottler_target_positive)
+
+structure FiniteThicknessSourceGeometryWitness
+    (source : AgdaTraceSourceReceipt)
+    (calibration :
+      NormalizedSourceToKottlerTargetCalibration
+        source finiteThicknessKottlerTarget) : Prop where
+  sourceActiveNegative :
+    source.activeConnectedNumerator < 0
+  sourceMagnitudePositive :
+    0 < source.sourceMagnitude
+  sourceCalibratesToFiniteThicknessLambda :
+    calibration.dimensionlessAmplitude = finiteThicknessKottlerTarget
+  tovTransition :
+    FiniteThicknessTOVTransitionWitness
+  exteriorMatch :
+    FiniteThicknessExteriorMatchWitness
+  exteriorAcceleration :
+    kottlerRadialAcceleration
+      transitionOuterMass transitionOuterRadius transitionOuterLambda
+      = 2/15
+
+theorem compile_finite_thickness_source_geometry
+    (source : AgdaTraceSourceReceipt)
+    (calibration :
+      NormalizedSourceToKottlerTargetCalibration
+        source finiteThicknessKottlerTarget) :
+    FiniteThicknessSourceGeometryWitness source calibration := by
+  exact {
+    sourceActiveNegative := source.activeConnectedNumerator_negative
+    sourceMagnitudePositive := source.sourceMagnitude_positive
+    sourceCalibratesToFiniteThicknessLambda :=
+      normalized_target_calibration_exact
+        source finiteThicknessKottlerTarget calibration
+    tovTransition := finite_thickness_tov_transition
+    exteriorMatch := finite_thickness_exterior_match
+    exteriorAcceleration := transition_outer_acceleration_positive
+  }
+
+def finiteThicknessSourceToGeometryCompilerClosed : Bool := true
+def finiteThicknessMeasuredScaleProductIntervalCompiled : Bool := true
+
+
 def finiteThicknessLiteralTOVTransitionSolved : Bool := true
 def finiteThicknessContinuumEinsteinPDESolved : Bool := false
 def finiteThicknessScalarFieldEquationSolved : Bool := false

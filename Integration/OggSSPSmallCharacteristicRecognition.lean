@@ -279,6 +279,15 @@ theorem no_injective_f9_orbits_to_p3_target :
   have h2 : Fintype.card P3Orbit = 2 := by decide
   omega
 
+theorem no_full_f9_frobenius_recognition_to_p3
+    (F : ActionRecognitionFunctor f9FrobeniusAction p3Action) :
+    ¬ Nonempty (FullRecognition F f9OrbitPresentation p3OrbitPresentation) := by
+  rintro ⟨R⟩
+  have hinj : Function.Injective R.orbitRecognition.mapOrbit :=
+    fun _ _ h => R.pi0Embedding.reflectsOrbitEquality h
+  exact no_injective_f9_orbits_to_p3_target
+    ⟨R.orbitRecognition.mapOrbit, hinj⟩
+
 def p2DiscreteAction : InvertibleAction P2State PUnit where
   identity := PUnit.unit
   combine := fun _ _ => PUnit.unit
@@ -405,6 +414,7 @@ structure RecognitionBoundary where
   orbitStabilizerRecognitionCoreReused : Bool
   coarseJNoGoMirrored : Bool
   f9FrobeniusSixOrbitNoGoMirrored : Bool
+  f9FullRecognitionNoGoMirrored : Bool
   arithmeticTo369DirectionMirrored : Bool
   targetOrbitEmbeddingConstraintMirrored : Bool
   markedP2ArithmeticSourceInhabited : Bool
@@ -419,6 +429,7 @@ def canonicalBoundary : RecognitionBoundary where
   orbitStabilizerRecognitionCoreReused := true
   coarseJNoGoMirrored := true
   f9FrobeniusSixOrbitNoGoMirrored := true
+  f9FullRecognitionNoGoMirrored := true
   arithmeticTo369DirectionMirrored := true
   targetOrbitEmbeddingConstraintMirrored := true
   markedP2ArithmeticSourceInhabited := false

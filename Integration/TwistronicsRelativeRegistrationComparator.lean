@@ -276,3 +276,35 @@ def canonicalBoundary : NonginTwistronicsRefinementBoundary where
   onePointOneExplainsMagicAngleValue := false
 
 end RegistrationRefinement
+
+
+namespace PhysicalMeaning
+
+structure TwistronicsPhysicalMeaningReceipt where
+  momentumSeparationFormula : String
+  dimensionlessCouplingParameter : String
+  firstMagicAngleStatement : String
+  physicalInterpretation : String
+  relativeGeometryEntersEffectiveHamiltonian : Bool
+  coherentInterlayerInterferenceRelevant : Bool
+  effectiveLowEnergyCarrierCanChangeWithRegistration : Bool
+  microscopicCarbonAlphabetChangedByTwist : Bool
+  literalTenPercentGainIsPhysicalMechanism : Bool
+  nonginFrameCoordinateIsPhysicalTwistAngle : Bool
+  deriving Repr
+
+def canonicalReceipt : TwistronicsPhysicalMeaningReceipt where
+  momentumSeparationFormula := "k_theta = 2 k_D sin(theta/2)"
+  dimensionlessCouplingParameter := "alpha = w / (v k_theta)"
+  firstMagicAngleStatement :=
+    "Bistritzer--MacDonald continuum model: first Dirac-velocity zero near theta approximately 1.05 degrees for w = 110 meV"
+  physicalInterpretation :=
+    "relative geometry changes momentum separation and coherent interlayer tunnelling/interference in the effective Hamiltonian; special coupling ratios can flatten the low-energy moire band"
+  relativeGeometryEntersEffectiveHamiltonian := true
+  coherentInterlayerInterferenceRelevant := true
+  effectiveLowEnergyCarrierCanChangeWithRegistration := true
+  microscopicCarbonAlphabetChangedByTwist := false
+  literalTenPercentGainIsPhysicalMechanism := false
+  nonginFrameCoordinateIsPhysicalTwistAngle := false
+
+end PhysicalMeaning

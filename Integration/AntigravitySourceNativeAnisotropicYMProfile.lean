@@ -21,6 +21,7 @@ a negative trace.
 structure SourceNativeAnisotropicYMProfile where
   rho : Rat → Rat
   radialPressure : Rat → Rat
+  radialPressureDerivative : Rat → Rat
   tangentialPressure : Rat → Rat
 
   activeStressNegative :
@@ -101,7 +102,7 @@ structure SourceNativeYMFiniteThicknessTarget
       anisotropicLambdaTOVRHS
         (profile.state radius) finiteLayerLambda
         =
-      lapseProfileRadialPressureDerivative radius
+      profile.radialPressureDerivative radius
 
   outerRadialPressureZero :
     profile.radialPressure transitionOuterRadius = 0

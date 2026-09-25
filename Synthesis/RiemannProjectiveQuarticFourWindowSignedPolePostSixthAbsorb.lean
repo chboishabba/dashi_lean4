@@ -3382,4 +3382,288 @@ theorem QuarticFourSignedPolePair.signedHorizontalSourceTerm_abs_le_gap_sq
         ring
 
 
+
+/-!
+## Far-horizontal shell compiler with one explicit curvature coordinate
+
+The exact horizontal per-zero decay is already paid.  The only remaining
+uniformity issue is whether the selected witness admits one scalar C_H bounding
+its normalized horizontal decay curvature over the literal zero carrier.
+
+We expose exactly that coordinate and no stronger regularity package.
+-/
+
+def QuarticFourSignedPolePair.HorizontalFarCurvatureBound
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (CH : ℝ) : Prop :=
+  ∀ rho : Zeros,
+    W.signedHorizontalDecayCurvature
+      (heightOf rho / (t/16)) <= CH
+
+theorem QuarticFourSignedPolePair.literalFarHorizontalExactTerm_abs_le_tailTermFrom
+    {t eta CH : ℝ}
+    (ht : 0 < t)
+    (heta : 0 <= eta)
+    (hCH : 0 <= CH)
+    (W : QuarticFourSignedPolePair t)
+    (hCurv : W.HorizontalFarCurvatureBound CH)
+    {J : ℕ}
+    (hJ : 1 <= J)
+    (hJcut : (J : ℝ) <= eta * (t/16))
+    (rho : Zeros) :
+    |W.literalFarHorizontalExactTerm eta rho|
+      <= CH * tailTermFrom t J rho := by
+  by_cases hfar : quarticSignedPoleFar t eta rho
+  · have hr : 0 < t/16 := by positivity
+    have hfar' := hfar
+    unfold quarticSignedPoleFar
+      quarticSignedPoleNormalizedOrdinateOffset at hfar'
+    rw [abs_div, abs_of_pos hr] at hfar'
+    have hphysical :
+        eta * (t/16) < |(rho : ℂ).im-t| := by
+      exact (lt_div_iff₀ hr).mp hfar'
+    have hJgap :
+        (J : ℝ) <= |(rho : ℂ).im-t| := by
+      exact hJcut.trans hphysical.le
+    have hJreal : (1 : ℝ) <= (J : ℝ) := by
+      exact_mod_cast hJ
+    have hgapPos :
+        0 < |(rho : ℂ).im-t| := by
+      exact lt_of_lt_of_le (by norm_num : (0:ℝ) < 1)
+        (hJreal.trans hJgap)
+    have hdelta : (rho : ℂ).im ≠ t := by
+      intro heq
+      rw [heq, sub_self, abs_zero] at hgapPos
+      linarith
+    have hsrc :=
+      W.signedHorizontalSourceTerm_abs_le_gap_sq ht rho hdelta
+    have hcurv :=
+      hCurv rho
+    have hm :
+        0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by
+      positivity
+    have hd2 :
+        0 < ((rho : ℂ).im-t)^2 := by
+      positivity
+    have hpoint :
+        ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+            * W.signedHorizontalDecayCurvature
+                (heightOf rho/(t/16))
+            / ((rho : ℂ).im-t)^2
+          <=
+        ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+            * CH
+            / ((rho : ℂ).im-t)^2 := by
+      exact div_le_div_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hcurv hm) hd2.le
+    rw [W.literalFarHorizontalExactTerm_eq_horizontalSource
+        (by
+          have hpos := quarticSignedPoleCanonicalLocalRadius_pos
+          by_cases he : eta = quarticSignedPoleCanonicalLocalRadius
+          · simpa [he] using hpos
+          · have : 0 < eta := lt_of_le_of_ne heta (Ne.symm he)
+            exact this)
+        rho]
+    rw [if_pos hfar]
+    unfold tailTermFrom
+    rw [if_pos hJgap]
+    exact hsrc.trans (hpoint.trans_eq (by ring))
+  · simp [QuarticFourSignedPolePair.literalFarHorizontalExactTerm,
+      hfar, tailTermFrom_nonneg, hCH]
+
+theorem exists_literalFarHorizontalExactAt_uniform_shell_bound :
+    ∃ A : ℝ, 1 <= A ∧
+      ∀ {t eta CH : ℝ},
+        0 < t ->
+        0 < eta ->
+        0 <= CH ->
+        (W : QuarticFourSignedPolePair t) ->
+        W.HorizontalFarCurvatureBound CH ->
+        ∀ {J : ℕ},
+          1 <= J ->
+          (J : ℝ) <= eta * (t/16) ->
+          ∀ n : ℕ,
+            |W.literalFarHorizontalExactAt eta n|
+              <=
+            CH * farShellBound A |t| J := by
+  obtain ⟨A,hA1,hloc⟩ :=
+    Zeta23.RvM.zetaZeroConfig_local_count
+  refine ⟨A,hA1,?_⟩
+  intro t eta CH ht heta hCH W hCurv J hJ hJcut n
+  classical
+  have htail :=
+    tsum_tailTermFrom_le hA1 hloc t J hJ
+  have hsumTail := summable_tailTermFrom hJ t
+  unfold QuarticFourSignedPolePair.literalFarHorizontalExactAt
+  calc
+    |∑ rho ∈ centeredZeroFinset t n,
+        W.literalFarHorizontalExactTerm eta rho|
+      <=
+    ∑ rho ∈ centeredZeroFinset t n,
+        |W.literalFarHorizontalExactTerm eta rho| := by
+          exact abs_sum_le_sum_abs _ _
+    _ <=
+    ∑ rho ∈ centeredZeroFinset t n,
+        CH * tailTermFrom t J rho := by
+          apply Finset.sum_le_sum
+          intro rho hrho
+          exact W.literalFarHorizontalExactTerm_abs_le_tailTermFrom
+            ht heta.le hCH hCurv hJ hJcut rho
+    _ <=
+    ∑' rho : Zeros, CH * tailTermFrom t J rho := by
+        exact
+          (hsumTail.mul_left CH).sum_le_tsum
+            (centeredZeroFinset t n)
+            (fun rho hrho =>
+              mul_nonneg hCH (tailTermFrom_nonneg t J rho))
+    _ =
+    CH * (∑' rho : Zeros, tailTermFrom t J rho) := by
+        rw [tsum_mul_left]
+    _ <= CH * farShellBound A |t| J :=
+      mul_le_mul_of_nonneg_left htail hCH
+
+/--
+Combined theorem: once one horizontal-curvature scalar is supplied, the whole
+literal FarExact coordinate is bounded by the same explicit zero-shell tail.
+-/
+theorem exists_literalFarExactAt_uniform_shell_bound_of_horizontalCurvature :
+    ∃ A : ℝ, 1 <= A ∧
+      ∀ {t eta CH : ℝ},
+        0 < t ->
+        0 < eta ->
+        0 <= CH ->
+        (W : QuarticFourSignedPolePair t) ->
+        W.HorizontalFarCurvatureBound CH ->
+        ∀ {J : ℕ},
+          1 <= J ->
+          (J : ℝ) <= eta * (t/16) ->
+          ∀ n : ℕ,
+            |W.literalFarExactAt eta n|
+              <=
+            (W.signedOrdinateCurvature + CH)
+              * farShellBound A |t| J := by
+  obtain ⟨A,hA1,hloc⟩ :=
+    Zeta23.RvM.zetaZeroConfig_local_count
+  refine ⟨A,hA1,?_⟩
+  intro t eta CH ht heta hCH W hCurv J hJ hJcut n
+  classical
+  have htail :=
+    tsum_tailTermFrom_le hA1 hloc t J hJ
+  have hsumTail := summable_tailTermFrom hJ t
+  have hbaseTerm :
+      ∀ rho : Zeros,
+        |W.literalFarBaseExactTerm eta rho|
+          <= W.signedOrdinateCurvature * tailTermFrom t J rho :=
+    fun rho =>
+      W.literalFarBaseExactTerm_abs_le_tailTermFrom
+        ht heta.le hJ hJcut rho
+  have hhorTerm :
+      ∀ rho : Zeros,
+        |W.literalFarHorizontalExactTerm eta rho|
+          <= CH * tailTermFrom t J rho :=
+    fun rho =>
+      W.literalFarHorizontalExactTerm_abs_le_tailTermFrom
+        ht heta.le hCH hCurv hJ hJcut rho
+  have hcoef :
+      0 <= W.signedOrdinateCurvature + CH := by
+    exact add_nonneg W.signedOrdinateCurvature_nonneg hCH
+  rw [W.literalFarExactAt_eq_base_add_horizontal]
+  calc
+    |W.literalFarBaseExactAt eta n
+        + W.literalFarHorizontalExactAt eta n|
+      <=
+    |W.literalFarBaseExactAt eta n|
+      + |W.literalFarHorizontalExactAt eta n| :=
+        abs_add _ _
+    _ <=
+    ∑ rho ∈ centeredZeroFinset t n,
+      ((W.signedOrdinateCurvature + CH)
+        * tailTermFrom t J rho) := by
+      unfold QuarticFourSignedPolePair.literalFarBaseExactAt
+        QuarticFourSignedPolePair.literalFarHorizontalExactAt
+      have hb :
+          |∑ rho ∈ centeredZeroFinset t n,
+              W.literalFarBaseExactTerm eta rho|
+            <=
+          ∑ rho ∈ centeredZeroFinset t n,
+              W.signedOrdinateCurvature * tailTermFrom t J rho := by
+        calc
+          |∑ rho ∈ centeredZeroFinset t n,
+              W.literalFarBaseExactTerm eta rho|
+            <= ∑ rho ∈ centeredZeroFinset t n,
+              |W.literalFarBaseExactTerm eta rho| :=
+                abs_sum_le_sum_abs _ _
+          _ <= ∑ rho ∈ centeredZeroFinset t n,
+              W.signedOrdinateCurvature * tailTermFrom t J rho := by
+                apply Finset.sum_le_sum
+                intro rho hrho
+                exact hbaseTerm rho
+      have hh :
+          |∑ rho ∈ centeredZeroFinset t n,
+              W.literalFarHorizontalExactTerm eta rho|
+            <=
+          ∑ rho ∈ centeredZeroFinset t n,
+              CH * tailTermFrom t J rho := by
+        calc
+          |∑ rho ∈ centeredZeroFinset t n,
+              W.literalFarHorizontalExactTerm eta rho|
+            <= ∑ rho ∈ centeredZeroFinset t n,
+              |W.literalFarHorizontalExactTerm eta rho| :=
+                abs_sum_le_sum_abs _ _
+          _ <= ∑ rho ∈ centeredZeroFinset t n,
+              CH * tailTermFrom t J rho := by
+                apply Finset.sum_le_sum
+                intro rho hrho
+                exact hhorTerm rho
+      rw [← Finset.sum_add_distrib]
+      refine (add_le_add hb hh).trans_eq ?_
+      apply Finset.sum_congr rfl
+      intro rho hrho
+      ring
+    _ <=
+    ∑' rho : Zeros,
+      (W.signedOrdinateCurvature + CH)
+        * tailTermFrom t J rho := by
+      exact
+        (hsumTail.mul_left
+          (W.signedOrdinateCurvature + CH)).sum_le_tsum
+          (centeredZeroFinset t n)
+          (fun rho hrho =>
+            mul_nonneg hcoef (tailTermFrom_nonneg t J rho))
+    _ =
+    (W.signedOrdinateCurvature + CH)
+      * (∑' rho : Zeros, tailTermFrom t J rho) := by
+        rw [tsum_mul_left]
+    _ <=
+    (W.signedOrdinateCurvature + CH)
+      * farShellBound A |t| J :=
+        mul_le_mul_of_nonneg_left htail hcoef
+
+theorem exists_canonicalLiteralFarExactAt_linearCutoff_bound_of_horizontalCurvature :
+    ∃ A : ℝ, 1 <= A ∧
+      ∀ {t CH : ℝ},
+        2000 <= t ->
+        0 <= CH ->
+        (W : QuarticFourSignedPolePair t) ->
+        W.HorizontalFarCurvatureBound CH ->
+        ∀ n : ℕ,
+          |W.literalFarExactAt
+              quarticSignedPoleCanonicalLocalRadius n|
+            <=
+          (W.signedOrdinateCurvature + CH)
+            *
+          farShellBound A |t|
+            (quarticSignedPoleCanonicalFarCutoff t) := by
+  obtain ⟨A,hA,hbound⟩ :=
+    exists_literalFarExactAt_uniform_shell_bound_of_horizontalCurvature
+  refine ⟨A,hA,?_⟩
+  intro t CH ht hCH W hCurv n
+  have ht0 : 0 < t := by linarith
+  exact hbound ht0 quarticSignedPoleCanonicalLocalRadius_pos
+    hCH W hCurv
+    (quarticSignedPoleCanonicalFarCutoff_one_le ht)
+    (quarticSignedPoleCanonicalFarCutoff_cast_le ht)
+    n
+
+
 end Synthesis

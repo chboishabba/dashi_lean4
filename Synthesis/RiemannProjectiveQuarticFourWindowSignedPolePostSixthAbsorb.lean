@@ -6867,4 +6867,206 @@ theorem QuarticFourSignedPolePair.postSixthCoupledSignedCompensationCut_compiles
       (by linarith : 0 < t) rho).2 hC
 
 
+
+/-!
+## Stabilize the literal canonical-local source
+
+The literal local predicate is closed, while the centered exhaustion is
+half-open only at its own moving left endpoint.  Once the exhaustion radius n
+strictly exceeds the canonical physical half-width h0, every closed-local zero
+is contained in centeredZeroFinset t n.  Terms newly added by increasing n are
+therefore nonlocal and contribute zero.
+
+Hence literalLocalExactAt is exactly constant beyond h0.  We package that
+eventual value once, eliminating the last artificial existential exhaustion
+index from the coupled high cut.
+-/
+
+theorem centeredZeroFinset_mono
+    {t : ℝ} {m n : ℕ}
+    (hmn : m <= n) :
+    centeredZeroFinset t m ⊆ centeredZeroFinset t n := by
+  intro rho hrho
+  have hm :=
+    (mem_centeredZeroFinset_iff t m rho).1 hrho
+  apply (mem_centeredZeroFinset_iff t n rho).2
+  have hcast : (m : ℝ) <= (n : ℝ) := by
+    exact_mod_cast hmn
+  constructor <;> linarith
+
+theorem QuarticFourSignedPolePair.literalLocalExactAt_monoIndex_stable
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    {m n : ℕ}
+    (hm :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t < (m : ℝ))
+    (hmn : m <= n) :
+    W.literalLocalExactAt
+        quarticSignedPoleCanonicalLocalRadius m
+      =
+    W.literalLocalExactAt
+        quarticSignedPoleCanonicalLocalRadius n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalExactAt
+  apply Finset.sum_subset (centeredZeroFinset_mono hmn)
+  intro rho hrhon hrhom
+  have hnotlocal :
+      ¬ quarticSignedPoleLocal
+          t quarticSignedPoleCanonicalLocalRadius rho := by
+    intro hl
+    have hclosed :=
+      (quarticSignedPoleLocal_iff_closed_ordinate_window
+        ht quarticSignedPoleCanonicalLocalRadius_pos.le rho).1 hl
+    have hmemb :
+        rho ∈ centeredZeroFinset t m := by
+      apply (mem_centeredZeroFinset_iff t m rho).2
+      constructor <;> linarith
+    exact hrhom hmemb
+  simp [QuarticFourSignedPolePair.literalLocalExactTerm, hnotlocal]
+
+theorem QuarticFourSignedPolePair.literalLocalExactAt_stable
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    {m n : ℕ}
+    (hm :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t < (m : ℝ))
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t < (n : ℝ)) :
+    W.literalLocalExactAt
+        quarticSignedPoleCanonicalLocalRadius m
+      =
+    W.literalLocalExactAt
+        quarticSignedPoleCanonicalLocalRadius n := by
+  rcases le_total m n with hmn | hnm
+  · exact W.literalLocalExactAt_monoIndex_stable ht hm hmn
+  · exact (W.literalLocalExactAt_monoIndex_stable ht hn hnm).symm
+
+noncomputable def quarticSignedPoleCanonicalLocalExhaustionIndex
+    (t : ℝ) : ℕ :=
+  Classical.choose
+    (exists_nat_gt (quarticSignedPoleCanonicalPhysicalHalfWidth t))
+
+theorem quarticSignedPoleCanonicalLocalExhaustionIndex_spec
+    (t : ℝ) :
+    quarticSignedPoleCanonicalPhysicalHalfWidth t
+      <
+    (quarticSignedPoleCanonicalLocalExhaustionIndex t : ℝ) := by
+  exact Classical.choose_spec
+    (exists_nat_gt (quarticSignedPoleCanonicalPhysicalHalfWidth t))
+
+def QuarticFourSignedPolePair.canonicalLiteralLocalExact
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.literalLocalExactAt
+    quarticSignedPoleCanonicalLocalRadius
+    (quarticSignedPoleCanonicalLocalExhaustionIndex t)
+
+theorem QuarticFourSignedPolePair.literalLocalExactAt_eq_canonical
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t < (n : ℝ)) :
+    W.literalLocalExactAt
+        quarticSignedPoleCanonicalLocalRadius n
+      =
+    W.canonicalLiteralLocalExact := by
+  unfold QuarticFourSignedPolePair.canonicalLiteralLocalExact
+  exact W.literalLocalExactAt_stable
+    ht hn (quarticSignedPoleCanonicalLocalExhaustionIndex_spec t)
+
+def QuarticFourSignedPolePair.canonicalLiteralVsPairedLocalCorrection
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  (1/2 : ℝ) * W.canonicalLiteralLocalExact
+    - W.canonicalLocalPairedContribution
+
+theorem QuarticFourSignedPolePair.literalVsPairedLocalCorrectionAt_eq_canonical
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t < (n : ℝ)) :
+    W.literalVsPairedLocalCorrectionAt n
+      =
+    W.canonicalLiteralVsPairedLocalCorrection := by
+  unfold QuarticFourSignedPolePair.literalVsPairedLocalCorrectionAt
+    QuarticFourSignedPolePair.canonicalLiteralVsPairedLocalCorrection
+  rw [W.literalLocalExactAt_eq_canonical ht n hn]
+
+theorem QuarticFourSignedPolePair.finiteCutCompensatedFar_eq_fixedCoupled
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t < (n : ℝ)) :
+    W.finiteCutCompensatedFar n
+      =
+    W.canonicalFarBoundaryCoupledCompensation
+      - W.canonicalLiteralVsPairedLocalCorrection := by
+  rw [W.finiteCutCompensatedFar_eq_coupled_sub_localCorrection ht n,
+      W.literalVsPairedLocalCorrectionAt_eq_canonical ht n hn]
+
+def QuarticFourSignedPolePair.PostSixthFixedCoupledSignedCompensationCut
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (EV : ℝ) : Prop :=
+  W.canonicalFarBoundaryCoupledCompensation
+      - W.canonicalLiteralVsPairedLocalCorrection
+    <
+  W.postSixthTerminalResidualMargin rho EV
+
+theorem QuarticFourSignedPolePair.postSixthCoupledSignedCompensationCut_iff_fixed
+    {t EV : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.PostSixthCoupledSignedCompensationCut rho EV
+      ↔
+    W.PostSixthFixedCoupledSignedCompensationCut rho EV := by
+  constructor
+  · rintro ⟨n,hn,hcut⟩
+    unfold QuarticFourSignedPolePair.PostSixthFixedCoupledSignedCompensationCut
+    rw [← W.literalVsPairedLocalCorrectionAt_eq_canonical ht n hn]
+    exact hcut
+  · intro hcut
+    let n := quarticSignedPoleCanonicalLocalExhaustionIndex t
+    have hn :
+        quarticSignedPoleCanonicalPhysicalHalfWidth t < (n : ℝ) := by
+      dsimp [n]
+      exact quarticSignedPoleCanonicalLocalExhaustionIndex_spec t
+    refine ⟨n,hn,?_⟩
+    unfold QuarticFourSignedPolePair.PostSixthFixedCoupledSignedCompensationCut at hcut
+    rw [W.literalVsPairedLocalCorrectionAt_eq_canonical ht n hn]
+    exact hcut
+
+theorem QuarticFourSignedPolePair.postSixthFixedCoupledSignedCompensationCut_compiles_G3
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hM6lo :
+      -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (hV :
+      |quarticSignedPoleRvMVerticalFourthDiscrepancy
+        t
+        (quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius)|
+        <= EV)
+    (hC : W.PostSixthFixedCoupledSignedCompensationCut rho EV) :
+    W.completedSignedResidual
+      < 2 * W.combinedZeroHeightDefect rho := by
+  apply W.postSixthCoupledSignedCompensationCut_compiles_G3
+    ht hM6lo hM6neg hV
+  exact
+    (W.postSixthCoupledSignedCompensationCut_iff_fixed
+      (by linarith : 0 < t) rho).2 hC
+
+
 end Synthesis

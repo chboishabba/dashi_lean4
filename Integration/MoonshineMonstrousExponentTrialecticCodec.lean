@@ -1,6 +1,7 @@
 import Integration.MoonshineSSP15SignedFRACTRANBranch
 import Integration.TernaryHub
 import Integration.ResidualQuotient
+import Integration.DependentResidualQuotient
 import Integration.Kernel.Quotient
 import Mathlib
 
@@ -9,6 +10,7 @@ namespace Integration.MoonshineMonstrousExponentTrialecticCodec
 open Integration.MoonshineSSP15SignedFRACTRANBranch
 open Integration.TernaryHub
 open Integration.Kernel.Quotient
+open Integration.DependentResidual
 
 /-!
 # Attributed monstrous-exponent trialectic -> consumer-indexed 369 codec
@@ -116,21 +118,28 @@ theorem reopen_triple_exact (t : ArithmeticTriple) :
   rcases t with ⟨a,b,c⟩
   cases a <;> cases b <;> cases c <;> rfl
 
-abbrev ArithmeticCode := Sigma TripleResidual
+def arithmeticDependentQuotient :
+    DependentResidualQuotient ArithmeticTriple Surface3 where
+  Residual := TripleResidual
+  project := surface
+  residual := tripleResidual
+  reopen := reopenTriple
+  reopen_project := reopen_triple_exact
 
-def encodeTriple (t : ArithmeticTriple) : ArithmeticCode :=
-  ⟨surface t, tripleResidual t⟩
+abbrev ArithmeticCode := arithmeticDependentQuotient.Code
 
-def decodeTriple : ArithmeticCode → ArithmeticTriple
-  | ⟨s,r⟩ => reopenTriple s r
+def encodeTriple : ArithmeticTriple → ArithmeticCode :=
+  arithmeticDependentQuotient.encode
+
+def decodeTriple : ArithmeticCode → ArithmeticTriple :=
+  arithmeticDependentQuotient.decode
 
 theorem decode_encode_triple (t : ArithmeticTriple) :
     decodeTriple (encodeTriple t) = t :=
-  reopen_triple_exact t
+  arithmeticDependentQuotient.decode_encode t
 
-theorem encodeTriple_injective : Function.Injective encodeTriple := by
-  intro left right h
-  rw [← decode_encode_triple left, ← decode_encode_triple right, h]
+theorem encodeTriple_injective : Function.Injective encodeTriple :=
+  arithmeticDependentQuotient.encode_injective
 
 /-! ## §4 Consumer-relative descent -/
 
@@ -159,8 +168,7 @@ theorem full_triple_does_not_descend :
 theorem every_consumer_descends_through_exact_code
     {Outcome : Type} (consumer : ArithmeticTriple → Outcome) :
     DescendsThrough consumer encodeTriple :=
-  ⟨fun code => consumer (decodeTriple code),
-    fun t => congrArg consumer (decode_encode_triple t)⟩
+  arithmeticDependentQuotient.every_consumer_descends consumer
 
 /-! ## §5 Consumer-indexed routing -/
 

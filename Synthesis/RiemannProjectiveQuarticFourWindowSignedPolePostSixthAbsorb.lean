@@ -3666,4 +3666,190 @@ theorem exists_canonicalLiteralFarExactAt_linearCutoff_bound_of_horizontalCurvat
     n
 
 
+
+/-!
+## Far-paid terminal scalar surface
+
+The terminal source can now forget the finite FarExact carrier entirely once a
+single horizontal curvature bound CH is supplied.  We retain the exact literal
+zero count in the local terms and replace only FarExact by its theorem-bearing
+canonical shell envelope.
+
+This is deliberately the narrowest compiler needed for the remaining scalar
+inequality.
+-/
+
+def QuarticFourSignedPolePair.postSixthTerminalFarPaidBudget
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (EV A CH : ℝ) : ℝ :=
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  let NZ : ℝ :=
+    (zetaZeroConfig.N (t-r-1) (t+r) : ℝ)
+  let J := quarticSignedPoleCanonicalFarCutoff t
+  (W.targetStrength / (6 * (t/16)^6))
+    *
+  (
+    EV
+      + (3/2 : ℝ) * r^2 * NZ
+      - (2/5 : ℝ) * r^5
+          * quarticSignedPoleMuLowerEnvelope (t-r)
+  )
+    +
+  (((3/20 : ℝ) * Real.pi^6)
+      * quarticSignedPoleLocalSixthPhaseEnvelope t eta
+      / (720 * (t/16)^8))
+    * NZ
+    +
+  (((Real.pi+1)^2 * W.fourthLipschitz)
+      * quarticSignedPoleLocalEighthPhysicalEnvelope t eta
+      / (t/16)^10)
+    * NZ
+    +
+  (W.signedOrdinateCurvature + CH)
+    * farShellBound A |t| J
+
+theorem exists_postSixthTerminalM6BudgetAt_le_farPaidBudget :
+    ∃ A : ℝ, 1 <= A ∧
+      ∀ {t EV CH : ℝ},
+        2000 <= t ->
+        0 <= CH ->
+        (W : QuarticFourSignedPolePair t) ->
+        W.HorizontalFarCurvatureBound CH ->
+        ∀ n : ℕ,
+          W.postSixthTerminalM6BudgetAt EV n
+            <= W.postSixthTerminalFarPaidBudget EV A CH := by
+  obtain ⟨A,hA,hfar⟩ :=
+    exists_canonicalLiteralFarExactAt_linearCutoff_bound_of_horizontalCurvature
+  refine ⟨A,hA,?_⟩
+  intro t EV CH ht hCH W hCurv n
+  have hfarAbs :=
+    hfar ht hCH W hCurv n
+  have hfarLe :
+      W.literalFarExactAt
+          quarticSignedPoleCanonicalLocalRadius n
+        <=
+      (W.signedOrdinateCurvature + CH)
+        * farShellBound A |t|
+          (quarticSignedPoleCanonicalFarCutoff t) :=
+    (le_abs_self _).trans hfarAbs
+  unfold QuarticFourSignedPolePair.postSixthTerminalM6BudgetAt
+    QuarticFourSignedPolePair.postSixthTerminalFarPaidBudget
+  dsimp
+  linarith
+
+def QuarticFourSignedPolePair.PostSixthTerminalFarPaidStrictAbsorb
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (EV A CH : ℝ) : Prop :=
+  W.postSixthTerminalFarPaidBudget EV A CH
+    < W.compensationTargetThreshold rho
+
+theorem QuarticFourSignedPolePair.postSixthTerminalStrictAbsorb_of_farPaid
+    {t EV A CH : ℝ}
+    (ht : 2000 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hCH : 0 <= CH)
+    (hCurv : W.HorizontalFarCurvatureBound CH)
+    (hA : 1 <= A)
+    (hFar :
+      ∀ n : ℕ,
+        |W.literalFarExactAt
+            quarticSignedPoleCanonicalLocalRadius n|
+          <=
+        (W.signedOrdinateCurvature + CH)
+          * farShellBound A |t|
+            (quarticSignedPoleCanonicalFarCutoff t))
+    (hscalar :
+      W.PostSixthTerminalFarPaidStrictAbsorb rho EV A CH) :
+    W.PostSixthTerminalStrictAbsorb rho EV := by
+  let B := W.postSixthTerminalFarPaidBudget EV A CH
+  let T := W.compensationTargetThreshold rho
+  let eps := (T-B)/2
+  have heps : 0 < eps := by
+    dsimp [eps,B,T,
+      QuarticFourSignedPolePair.PostSixthTerminalFarPaidStrictAbsorb] at *
+    linarith
+  obtain ⟨N,hN⟩ :=
+    exists_nat_gt
+      (quarticSignedPoleLocalHalfWidth
+        t quarticSignedPoleCanonicalLocalRadius)
+  refine ⟨eps,heps,N,?_⟩
+  intro n hn
+  have hnRadius :
+      quarticSignedPoleLocalHalfWidth
+          t quarticSignedPoleCanonicalLocalRadius
+        < (n : ℝ) := by
+    exact lt_of_lt_of_le hN (by exact_mod_cast hn)
+  have hfarLe :
+      W.literalFarExactAt
+          quarticSignedPoleCanonicalLocalRadius n
+        <=
+      (W.signedOrdinateCurvature + CH)
+        * farShellBound A |t|
+          (quarticSignedPoleCanonicalFarCutoff t) :=
+    (le_abs_self _).trans (hFar n)
+  have hbudget :
+      W.postSixthTerminalM6BudgetAt EV n
+        <= W.postSixthTerminalFarPaidBudget EV A CH := by
+    unfold QuarticFourSignedPolePair.postSixthTerminalM6BudgetAt
+      QuarticFourSignedPolePair.postSixthTerminalFarPaidBudget
+    dsimp
+    linarith
+  constructor
+  · exact hnRadius
+  · dsimp [eps,B,T,
+      QuarticFourSignedPolePair.PostSixthTerminalFarPaidStrictAbsorb] at hscalar ⊢
+    linarith
+
+theorem exists_postSixthTerminalStrictAbsorb_of_horizontalCurvature_and_scalar :
+    ∃ A : ℝ, 1 <= A ∧
+      ∀ {t EV CH : ℝ},
+        2000 <= t ->
+        0 <= CH ->
+        (W : QuarticFourSignedPolePair t) ->
+        W.HorizontalFarCurvatureBound CH ->
+        ∀ {rho : Zeros},
+          W.PostSixthTerminalFarPaidStrictAbsorb rho EV A CH ->
+          W.PostSixthTerminalStrictAbsorb rho EV := by
+  obtain ⟨A,hA,hfar⟩ :=
+    exists_canonicalLiteralFarExactAt_linearCutoff_bound_of_horizontalCurvature
+  refine ⟨A,hA,?_⟩
+  intro t EV CH ht hCH W hCurv rho hscalar
+  exact W.postSixthTerminalStrictAbsorb_of_farPaid
+    ht hCH hCurv hA
+    (hfar ht hCH W hCurv)
+    hscalar
+
+theorem exists_completedSignedResidual_lt_target_of_horizontalCurvature_and_scalar :
+    ∃ A : ℝ, 1 <= A ∧
+      ∀ {t EV CH : ℝ},
+        2000 <= t ->
+        0 <= CH ->
+        (W : QuarticFourSignedPolePair t) ->
+        W.HorizontalFarCurvatureBound CH ->
+        ∀ {rho : Zeros},
+          (-(3/20 : ℝ) * Real.pi^6
+              <= W.signedProfileMomentSix) ->
+          W.signedProfileMomentSix < 0 ->
+          (|quarticSignedPoleRvMVerticalFourthDiscrepancy
+              t
+              (quarticSignedPoleLocalHalfWidth
+                t quarticSignedPoleCanonicalLocalRadius)|
+            <= EV) ->
+          W.PostSixthTerminalFarPaidStrictAbsorb rho EV A CH ->
+          W.completedSignedResidual
+            < 2 * W.combinedZeroHeightDefect rho := by
+  obtain ⟨A,hA,hcompile⟩ :=
+    exists_postSixthTerminalStrictAbsorb_of_horizontalCurvature_and_scalar
+  refine ⟨A,hA,?_⟩
+  intro t EV CH ht hCH W hCurv rho hM6lo hM6neg hV hscalar
+  have hstrict :=
+    hcompile ht hCH W hCurv hscalar
+  exact
+    W.completedSignedResidual_lt_target_of_postSixthTerminalStrictAbsorb
+      (by linarith : 200 <= t)
+      hM6lo hM6neg hV hstrict
+
+
 end Synthesis

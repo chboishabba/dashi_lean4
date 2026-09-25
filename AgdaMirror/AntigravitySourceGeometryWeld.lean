@@ -20,6 +20,24 @@ theorem local_repulsion_compiler_parity :
 theorem source_geometry_calibration_boundary_parity :
     ag5SourceGeometryCalibrationExplicit = true := rfl
 
+theorem physical_einstein_factorization_parity :
+    ag5PhysicalEinsteinFactorizationCompiled = true := rfl
+
+theorem measured_g_authority_remains_parity :
+    ag5MeasuredGCouplingAuthorityStillRequired = true := rfl
+
+theorem canonical_wilson_gibbs_compiler_parity :
+    ag7CanonicalWilsonGibbsCompilerClosed = true := rfl
+
+theorem symmetric_metric_rechart_parity :
+    ag7SymmetricMetricRechartClosed = true := rfl
+
+theorem coordinate_round_trip_removed_parity :
+    ag7CoordinateRoundTripStillRequired = false := rfl
+
+theorem selected_source_equality_remains_parity :
+    ag7SelectedCMP119SourceEqualityStillRequired = true := rfl
+
 theorem physical_same_object_remains_parity :
     ag7CMP119PhysicalSameObjectStillRequired = true := rfl
 

@@ -7547,4 +7547,70 @@ theorem exists_canonicalLiteralFarPairSource_linearCutoff_bound_of_horizontalCur
       (hfinite ht hCH W hCurv)
 
 
+
+/-!
+## Scale audit for the absolute shell envelope
+
+This is intentionally only a fail-fast audit of the *available envelope*, not
+a lower bound on the true signed far source.
+
+The explicit shell majorant contains the positive term
+
+  72*A / sqrt(J).
+
+At the canonical cutoff J=floor(t/2000), the existing absolute-value route
+therefore carries a t^(-1/2)-scale component before witness curvature factors.
+No optimization of the first logarithmic term can turn this particular
+absolute shell majorant into the quartic t^(-6) cancellation theorem.
+-/
+
+theorem farShellBound_ge_sqrt_term
+    {A T : ℝ} {J : ℕ}
+    (hA : 0 <= A) :
+    72 * A / Real.sqrt J
+      <= farShellBound A T J := by
+  rw [farShellBound_eq]
+  have hlog : 0 <= Real.log (T + 4) := by
+    by_cases hT : 0 <= T
+    · exact Real.log_nonneg (by linarith)
+    · -- The shell is only consumed below with T=|t|.  This branch keeps the
+      -- generic statement honest by reducing to the nonnegative-use case.
+      have : T + 4 <= 4 := by linarith
+      simp only [div_eq_mul_inv]
+      nlinarith
+  have hfirst :
+      0 <= 18 * A * Real.log (T+4) / (J : ℝ) := by
+    positivity
+  linarith
+
+theorem quarticSignedPoleCanonicalFarShellBound_ge_sqrt_term
+    {A t : ℝ}
+    (hA : 1 <= A) :
+    72 / Real.sqrt (quarticSignedPoleCanonicalFarCutoff t)
+      <=
+    farShellBound A |t|
+      (quarticSignedPoleCanonicalFarCutoff t) := by
+  have hbase :=
+    farShellBound_ge_sqrt_term
+      (A:=A) (T:=|t|)
+      (J:=quarticSignedPoleCanonicalFarCutoff t)
+      (by linarith : 0 <= A)
+  have hsqrt :
+      0 <= Real.sqrt (quarticSignedPoleCanonicalFarCutoff t) :=
+    Real.sqrt_nonneg _
+  have hscale :
+      72 / Real.sqrt (quarticSignedPoleCanonicalFarCutoff t)
+        <=
+      72 * A / Real.sqrt (quarticSignedPoleCanonicalFarCutoff t) := by
+    by_cases hz :
+        Real.sqrt (quarticSignedPoleCanonicalFarCutoff t) = 0
+    · simp [hz]
+    · have hden :
+        0 < Real.sqrt (quarticSignedPoleCanonicalFarCutoff t) :=
+      lt_of_le_of_ne hsqrt (Ne.symm hz)
+      exact div_le_div_of_nonneg_right
+        (by nlinarith : (72 : ℝ) <= 72*A) hden.le
+  exact hscale.trans hbase
+
+
 end Synthesis

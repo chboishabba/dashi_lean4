@@ -10,6 +10,7 @@ import NSBControl.CombinedSpacetimePayment
 import NSBControl.CombinedPaymentToWeightedWork
 import NSBControl.CombinedCurrentEndgame
 import NSBControl.DirectCombinedCut
+import NSBControl.SharedWeightedCut
 
 namespace NSBCyclicOrbit
 

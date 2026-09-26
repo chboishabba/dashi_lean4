@@ -28,14 +28,33 @@ namespace Synthesis
 open Zeta23
 open Zeta23.RvM
 
-theorem exists_zetaMuWindowDiscrepancy_arbitrary_bound :
-    ∃ C T0 : ℝ, 0 <= C ∧
+theorem exists_zetaMuWindowDiscrepancy_arbitrary_bound_at_five :
+    ∃ C : ℝ, 0 <= C ∧
       ∀ A B : ℝ,
-        max T0 4 <= A ->
+        5 <= A ->
         A < B ->
         |zetaMuWindowDiscrepancy A B|
           <= C * (Real.log (A + 3) + Real.log (B + 4)) := by
-  obtain ⟨CB, TB, hB⟩ := Zeta23.RvM.backlund_horizontal
+  let CB : ℝ :=
+    2 * Real.pi *
+      ((1 / Real.log ((0.9 : ℝ) / 0.8)
+        * (|Real.log (6 * (20 / 3 : ℝ))|
+          + 2 * max (1 : ℝ) 0)) + 1)
+  let TB : ℝ := 4
+  have hB :
+      ∀ T : ℝ, TB <= T ->
+        (∀ rho, IsNontrivialZero rho -> rho.im ≠ T) ->
+        |(∫ sigma in (1 / 2 : ℝ)..2,
+          logDeriv riemannZeta (sigma + T * I)).im|
+          <= CB * Real.log T := by
+    intro T hT hord
+    have h :=
+      Zeta23.RvM.backlund_horizontal_at T
+        (by
+          dsimp [TB] at hT
+          simpa using hT)
+        hord
+    simpa [CB] using h
   obtain ⟨A0, hA01, hA0⟩ := Zeta23.RvM.zeta_local_zero_count
   obtain ⟨CM, hCM0, hCM⟩ := Zeta23.RvM.mu_le_log Zeta23.gammaFacts
   let C : ℝ :=
@@ -44,10 +63,12 @@ theorem exists_zetaMuWindowDiscrepancy_arbitrary_bound :
   have hC0 : 0 <= C := by
     dsimp [C]
     positivity
-  refine ⟨C, TB + 1, hC0, ?_⟩
+  refine ⟨C, hC0, ?_⟩
   intro A B hA hAB
-  have hA4 : 4 <= A := (le_max_right (TB + 1) 4).trans hA
-  have hATB : TB + 1 <= A := (le_max_left (TB + 1) 4).trans hA
+  have hA4 : 4 <= A := by linarith
+  have hATB : TB + 1 <= A := by
+    dsimp [TB]
+    linarith
   have hApos : 0 < A := by linarith
   have hBpos : 0 < B := lt_trans hApos hAB
   obtain ⟨T1, hT1mem, hg1⟩ := Zeta23.RvM.exists_goodHeight (A - 1)
@@ -294,5 +315,27 @@ theorem exists_zetaMuWindowDiscrepancy_arbitrary_bound :
     mul_nonneg hA0nonneg hlogB0,
     mul_nonneg hCM0.le hlogA0,
     mul_nonneg hCM0.le hlogB0]
+
+
+
+/--
+Compatibility wrapper retaining the earlier existential-threshold interface.
+The theorem-bearing source now exposes the concrete arbitrary-endpoint cutoff
+T0 = 5.
+-/
+theorem exists_zetaMuWindowDiscrepancy_arbitrary_bound :
+    ∃ C T0 : ℝ, 0 <= C ∧
+      ∀ A B : ℝ,
+        max T0 4 <= A ->
+        A < B ->
+        |zetaMuWindowDiscrepancy A B|
+          <= C * (Real.log (A + 3) + Real.log (B + 4)) := by
+  obtain ⟨C,hC,h⟩ :=
+    exists_zetaMuWindowDiscrepancy_arbitrary_bound_at_five
+  refine ⟨C,5,hC,?_⟩
+  intro A B hA hAB
+  apply h A B
+  · simpa using hA
+  · exact hAB
 
 end Synthesis

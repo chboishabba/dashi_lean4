@@ -42,6 +42,165 @@ theorem QuarticFourSignedPolePair.signedProfileAbsMomentSix_nonneg
     compactProfileAbsMoment
   positivity
 
+
+/-!
+## Sixth moment cross-weld with the already-paid G1 constant
+
+The terminal complete-jet remainder originally used the generic support/L1
+bound on the sixth absolute moment.  The selected witness already carries a
+stronger same-object quantity in G1:
+
+  K(W) = ∫ |P_W(u)| cosh(|u|) |u|^5 du.
+
+Since x <= sinh x < cosh x for x >= 0, pointwise
+
+  |u|^6 <= cosh(|u|) |u|^5.
+
+Hence M6_abs(W) <= K(W).  This does not by itself make the existing explicit
+G1 numerical K0 sharp enough for terminal ABSORB; it removes M6 as an
+independent witness invariant and lets any future sharpening of the selected
+G1 corridor feed the sixth-order lane directly.
+-/
+
+theorem QuarticFourSignedPolePair.signedProfileAbsMomentSix_le_fourthLipschitz
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    W.signedProfileAbsMomentSix <= W.fourthLipschitz := by
+  let P : ℝ -> ℝ :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have h6 :
+      Integrable (fun u : ℝ => |P u| * |u|^6) :=
+    compactProfile_absMoment_integrable hP hPc 6
+  have hK :
+      Integrable (fun u : ℝ => |P u| * Real.cosh |u| * |u|^5) :=
+    compactCoshFourthLipschitzMajorant_integrable hP hPc
+  unfold QuarticFourSignedPolePair.signedProfileAbsMomentSix
+    QuarticFourSignedPolePair.fourthLipschitz
+    compactProfileAbsMoment
+    compactCoshFourthLipschitzConstant
+  dsimp [P]
+  apply integral_mono h6 hK
+  intro u
+  have hu0 : 0 <= |u| := abs_nonneg u
+  have husinh : |u| <= Real.sinh |u| := by
+    exact Real.self_le_sinh_iff.mpr hu0
+  have hsinhcosh : Real.sinh |u| <= Real.cosh |u| :=
+    (Real.sinh_lt_cosh |u|).le
+  have hucosh : |u| <= Real.cosh |u| :=
+    husinh.trans hsinhcosh
+  have hfac : 0 <= |P u| * |u|^5 := by positivity
+  calc
+    |P u| * |u|^6
+        = (|P u| * |u|^5) * |u| := by ring
+    _ <= (|P u| * |u|^5) * Real.cosh |u| :=
+      mul_le_mul_of_nonneg_left hucosh hfac
+    _ = |P u| * Real.cosh |u| * |u|^5 := by ring
+
+
+/-!
+## Signed sixth harmonic surface
+
+Do not absolute-value the first term beyond the complete quartic jet.  The
+degree-six Taylor polynomial of cosh(alpha*u) cos(q*u) has angular factor
+
+  alpha^6 - 15 alpha^4 q^2 + 15 alpha^2 q^4 - q^6
+    = Re (alpha + i q)^6.
+
+The definitions below expose that signed carrier explicitly.  The final
+`completeJointBeyondSixthRemainder` is an exact algebraic residual.  No
+order-eight estimate is claimed here; proving such an estimate is the next
+analytic sharpening if the signed sixth carrier alone does not close ABSORB.
+-/
+
+def QuarticFourSignedPolePair.signedProfileMomentSix
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  ∫ u : ℝ,
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t u * u^6
+
+theorem QuarticFourSignedPolePair.signedProfileMomentSix_abs_le
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    |W.signedProfileMomentSix| <= W.signedProfileAbsMomentSix := by
+  let P : ℝ -> ℝ :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hi : Integrable (fun u : ℝ => P u * u^6) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by fun_prop) hPc.mul_right
+  unfold QuarticFourSignedPolePair.signedProfileMomentSix
+    QuarticFourSignedPolePair.signedProfileAbsMomentSix
+    compactProfileAbsMoment
+  dsimp [P]
+  calc
+    |∫ u : ℝ, P u * u^6|
+      <= ∫ u : ℝ, |P u * u^6| :=
+        abs_integral_le_integral_abs
+    _ = ∫ u : ℝ, |P u| * |u|^6 := by
+      apply integral_congr_ae
+      exact Filter.Eventually.of_forall fun u => by
+        rw [abs_mul, abs_pow]
+    _ = ∫ u : ℝ,
+        |quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t u| * |u|^6 := by rfl
+
+def quarticSignedPoleSixthPhaseReal
+    (alpha q : ℝ) : ℝ :=
+  alpha^6 - 15*alpha^4*q^2 + 15*alpha^2*q^4 - q^6
+
+theorem quarticSignedPoleSixthPhaseReal_eq_complex_re
+    (alpha q : ℝ) :
+    quarticSignedPoleSixthPhaseReal alpha q
+      = (((alpha : ℂ) + (q : ℂ) * Complex.I)^6).re := by
+  unfold quarticSignedPoleSixthPhaseReal
+  norm_num [pow_succ, Complex.mul_re, Complex.add_re]
+  ring
+
+def QuarticFourSignedPolePair.completeJointSixthHarmonic
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha q : ℝ) : ℝ :=
+  (W.signedProfileMomentSix / 720)
+    * quarticSignedPoleSixthPhaseReal alpha q
+
+def QuarticFourSignedPolePair.completeJointBeyondSixthRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (alpha q : ℝ) : ℝ :=
+  W.completeJointQuarticRemainder alpha q
+    - W.completeJointSixthHarmonic alpha q
+
+theorem QuarticFourSignedPolePair.completeJointQuarticRemainder_eq_sixth_add_beyond
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.completeJointQuarticRemainder alpha q
+      =
+    W.completeJointSixthHarmonic alpha q
+      + W.completeJointBeyondSixthRemainder alpha q := by
+  unfold QuarticFourSignedPolePair.completeJointBeyondSixthRemainder
+  ring
+
+theorem QuarticFourSignedPolePair.signedNormalizedPairKernel_eq_completeQuarticSixth
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.signedNormalizedPairKernel alpha q
+      =
+    W.completeJointQuarticPolynomial alpha q
+      + W.completeJointSixthHarmonic alpha q
+      + W.completeJointBeyondSixthRemainder alpha q := by
+  rw [W.signedNormalizedPairKernel_eq_completeQuarticJet]
+  rw [W.completeJointQuarticRemainder_eq_sixth_add_beyond]
+  ring
+
 theorem QuarticFourSignedPolePair.abs_q_mul_u_le_one_of_local
     {t q u : ℝ}
     (W : QuarticFourSignedPolePair t)
@@ -1940,6 +2099,48 @@ theorem QuarticFourSignedPolePair.literalConeDebtAt_lt_target_of_quartic_floor
 
 
 
+
+/-!
+## Exact physical transport of the signed sixth harmonic
+
+This keeps the literal zero multiplicity and the same physical normalization as
+the complete quartic remainder.  No inequality is used.
+-/
+
+def QuarticFourSignedPolePair.literalCompleteJointSixthHarmonic
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let alpha := heightOf sigma / r
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2
+    * W.completeJointSixthHarmonic alpha q
+
+def QuarticFourSignedPolePair.literalCompleteJointBeyondSixthRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let alpha := heightOf sigma / r
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2
+    * W.completeJointBeyondSixthRemainder alpha q
+
+theorem QuarticFourSignedPolePair.literalCompleteJointQuarticRemainder_eq_sixth_add_beyond
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros) :
+    W.literalCompleteJointQuarticRemainder sigma
+      =
+    W.literalCompleteJointSixthHarmonic sigma
+      + W.literalCompleteJointBeyondSixthRemainder sigma := by
+  unfold QuarticFourSignedPolePair.literalCompleteJointQuarticRemainder
+    QuarticFourSignedPolePair.literalCompleteJointSixthHarmonic
+    QuarticFourSignedPolePair.literalCompleteJointBeyondSixthRemainder
+  dsimp
+  rw [W.completeJointQuarticRemainder_eq_sixth_add_beyond]
+  ring
+
+
 /-!
 ## Physical r^-8 transport of the complete sixth-order remainder
 -/
@@ -2142,6 +2343,56 @@ def QuarticFourSignedPolePair.literalLocalCompleteRemainderAt
     (eta : ℝ) (n : ℕ) : ℝ :=
   ∑ rho ∈ centeredZeroFinset t n,
     W.literalLocalCompleteRemainderTerm eta rho
+
+
+def QuarticFourSignedPolePair.literalLocalSignedSixthHarmonicAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        W.literalCompleteJointSixthHarmonic rho
+      else
+        0
+    else
+      0
+
+def QuarticFourSignedPolePair.literalLocalBeyondSixthRemainderAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        W.literalCompleteJointBeyondSixthRemainder rho
+      else
+        0
+    else
+      0
+
+theorem QuarticFourSignedPolePair.literalLocalCompleteRemainderAt_eq_signedSixth_add_beyond
+    {t eta : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalCompleteRemainderAt eta n
+      =
+    W.literalLocalSignedSixthHarmonicAt eta n
+      + W.literalLocalBeyondSixthRemainderAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalCompleteRemainderAt
+    QuarticFourSignedPolePair.literalLocalCompleteRemainderTerm
+    QuarticFourSignedPolePair.literalLocalSignedSixthHarmonicAt
+    QuarticFourSignedPolePair.literalLocalBeyondSixthRemainderAt
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl, hoff,
+        W.literalCompleteJointQuarticRemainder_eq_sixth_add_beyond rho]
+    · simp [hl, hoff]
+  · simp [hl]
 
 def QuarticFourSignedPolePair.literalLocalSixthDebtAt
     {t : ℝ} (W : QuarticFourSignedPolePair t)
@@ -2891,5 +3142,122 @@ theorem exists_quarticFourSignedPole_literalLocalFourthAdverseMassAt_le_log :
     (3/2 : ℝ) * (3 * A0 * Real.log (t+5)) := by
       exact mul_le_mul_of_nonneg_left hN (by norm_num)
     _ = (9/2 : ℝ) * A0 * Real.log (t+5) := by ring
+
+
+/-!
+## Eighth-order scalar Taylor remainder after the signed sixth harmonic
+
+These are the certified scalar ingredients for the post-sixth ABSORB recut.
+They deliberately mirror the existing sixth-order proofs, but retain the full
+degree-six Taylor polynomial before taking absolute values.
+-/
+
+theorem complex_cos_sub_sixth_abs_le_eighth
+    {x : ℂ}
+    (hx : ‖x‖ <= 1) :
+    ‖Complex.cos x
+        - (1 - x^2/2 + x^4/24 - x^6/720)‖
+      <= ‖x‖^8 * (1/35840 : ℝ) := by
+  calc
+    ‖Complex.cos x
+        - (1 - x^2/2 + x^4/24 - x^6/720)‖
+      =
+    ‖(Complex.exp (-x * Complex.I)
+        - ∑ m ∈ Finset.range 8,
+            (-x * Complex.I)^m / m.factorial) / 2
+      +
+      (Complex.exp (x * Complex.I)
+        - ∑ m ∈ Finset.range 8,
+            (x * Complex.I)^m / m.factorial) / 2‖ := by
+        simp [Complex.cos, Finset.sum_range_succ, Nat.factorial]
+        grind [Complex.I_sq, two_ne_zero]
+    _ <=
+      ‖Complex.exp (-x * Complex.I)
+        - ∑ m ∈ Finset.range 8,
+            (-x * Complex.I)^m / m.factorial‖ / 2
+      +
+      ‖Complex.exp (x * Complex.I)
+        - ∑ m ∈ Finset.range 8,
+            (x * Complex.I)^m / m.factorial‖ / 2 := by
+        grw [norm_add_le]
+        simp
+    _ <=
+      ‖-x * Complex.I‖^8
+          * ((Nat.succ 8 : ℝ)
+            * (Nat.factorial 8 * (8 : ℕ) : ℝ)⁻¹) / 2
+      +
+      ‖x * Complex.I‖^8
+          * ((Nat.succ 8 : ℝ)
+            * (Nat.factorial 8 * (8 : ℕ) : ℝ)⁻¹) / 2 := by
+        grw [Complex.exp_bound (by simpa) (by norm_num),
+          Complex.exp_bound (by simpa) (by norm_num)]
+    _ <= ‖x‖^8 * (1/35840 : ℝ) := by
+        norm_num
+
+theorem real_cos_sub_sixth_abs_le_eighth
+    {x : ℝ}
+    (hx : |x| <= 1) :
+    |Real.cos x
+        - (1 - x^2/2 + x^4/24 - x^6/720)|
+      <= |x|^8 * (1/35840 : ℝ) := by
+  have h :=
+    complex_cos_sub_sixth_abs_le_eighth
+      (x := (x : ℂ)) (by simpa using hx)
+  simpa [Real.norm_eq_abs] using h
+
+theorem real_cosh_sub_sixth_abs_le_eighth
+    {x : ℝ}
+    (hx : |x| <= 1) :
+    |Real.cosh x - 1 - x^2/2 - x^4/24 - x^6/720|
+      <= |x|^8 * (1/35840 : ℝ) := by
+  calc
+    |Real.cosh x - 1 - x^2/2 - x^4/24 - x^6/720|
+      =
+    |(Real.exp x
+        - ∑ m ∈ Finset.range 8, x^m / m.factorial) / 2
+      +
+      (Real.exp (-x)
+        - ∑ m ∈ Finset.range 8, (-x)^m / m.factorial) / 2| := by
+        rw [Real.cosh_eq]
+        simp [Finset.sum_range_succ, Nat.factorial]
+        ring
+    _ <=
+      |Real.exp x
+        - ∑ m ∈ Finset.range 8, x^m / m.factorial| / 2
+      +
+      |Real.exp (-x)
+        - ∑ m ∈ Finset.range 8, (-x)^m / m.factorial| / 2 := by
+        have h2 : (0:ℝ) < 2 := by norm_num
+        calc
+          |(Real.exp x
+              - ∑ m ∈ Finset.range 8, x^m / m.factorial) / 2
+            +
+            (Real.exp (-x)
+              - ∑ m ∈ Finset.range 8, (-x)^m / m.factorial) / 2|
+            <=
+          |(Real.exp x
+              - ∑ m ∈ Finset.range 8, x^m / m.factorial) / 2|
+            +
+          |(Real.exp (-x)
+              - ∑ m ∈ Finset.range 8, (-x)^m / m.factorial) / 2| :=
+            abs_add _ _
+          _ =
+          |Real.exp x
+              - ∑ m ∈ Finset.range 8, x^m / m.factorial| / 2
+            +
+          |Real.exp (-x)
+              - ∑ m ∈ Finset.range 8, (-x)^m / m.factorial| / 2 := by
+            rw [abs_div, abs_div, abs_of_pos h2]
+    _ <=
+      (|x|^8 * (1/35840 : ℝ)) / 2
+        + (|-x|^8 * (1/35840 : ℝ)) / 2 := by
+      gcongr
+      · exact Real.exp_bound hx (by norm_num)
+      · exact Real.exp_bound
+          (by simpa [abs_neg] using hx) (by norm_num)
+    _ = |x|^8 * (1/35840 : ℝ) := by
+      rw [abs_neg]
+      ring
+
 
 end Synthesis

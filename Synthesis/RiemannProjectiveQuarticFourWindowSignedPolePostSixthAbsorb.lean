@@ -8671,15 +8671,22 @@ theorem quarticSignedPoleFar_implies_completeOuterCone
       (5/2 : ℝ) < |(rho : ℂ).im-t| := by
     nlinarith
   have ha := zetaZero_height_abs_le_half rho
+  have hdeltaSqRaw :
+      (5/2 : ℝ)^2 < ((rho : ℂ).im-t)^2 := by
+    rw [sq_lt_sq]
+    simpa using hdelta25
   have hdeltaSq :
       (25/4 : ℝ) < ((rho : ℂ).im-t)^2 := by
-    have h := sq_lt_sq.mpr ⟨by linarith [abs_nonneg ((rho : ℂ).im-t)],
-      hdelta25⟩
-    simpa [sq_abs] using h
+    norm_num at hdeltaSqRaw ⊢
+    exact hdeltaSqRaw
+  have haSqRaw :
+      heightOf rho^2 <= (1/2 : ℝ)^2 := by
+    rw [sq_le_sq]
+    simpa using ha
   have haSq :
       heightOf rho^2 <= (1/4 : ℝ) := by
-    have h := sq_le_sq.mpr ⟨by linarith [abs_nonneg (heightOf rho)], ha⟩
-    simpa [sq_abs] using h
+    norm_num at haSqRaw ⊢
+    exact haSqRaw
   nlinarith
 
 def QuarticFourSignedPolePair.literalCanonicalFarQuarticTerm

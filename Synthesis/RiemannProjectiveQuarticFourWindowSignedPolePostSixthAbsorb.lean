@@ -8808,4 +8808,96 @@ theorem QuarticFourSignedPolePair.literalFarExactAt_le_nonquartic
   linarith
 
 
+
+/-!
+## Atomic zero-mode fail-fast for constant-density annihilation
+
+Whole-line constant-density cancellation of a cosine-transform test would
+require the corresponding physical projective profile to vanish at the
+physical origin.  For a narrow four-window endpoint the atomic origin
+coordinate is proportional to
+
+  A1 - A2 = lambda - 1 - 2*mu,
+
+where A1,A2 are the two on-line radius responses.
+
+Evaluate this coordinate on the J2-null atomic endpoints lambda=1/2 and 2/3,
+then combine them with the same asymptotic pole-cancelling coefficients
+P2=1 and -P1=-9/8.  The result is -10/117, not zero.
+
+Thus the currently selected fixed-endpoint pair does not obtain exact
+constant-density annihilation merely from its pole cancellation.  Any use of
+that mechanism would require a redesigned witness family rather than another
+transport lemma.
+-/
+
+def quarticFourAtomicProjectiveOriginCoordinate
+    (lam mu : ℝ) : ℝ :=
+  quarticFourAtomicOnLineOne lam mu
+    - quarticFourAtomicOnLineTwo lam mu
+
+theorem quarticFourAtomicProjectiveOriginCoordinate_formula
+    (lam mu : ℝ) :
+    quarticFourAtomicProjectiveOriginCoordinate lam mu
+      = lam - 1 - 2*mu := by
+  unfold quarticFourAtomicProjectiveOriginCoordinate
+    quarticFourAtomicOnLineOne
+    quarticFourAtomicOnLineTwo
+  ring
+
+theorem quarticFourAtomicMu_half :
+    quarticFourAtomicMu (1/2) = -(1/78 : ℝ) := by
+  unfold quarticFourAtomicMu
+  norm_num
+
+theorem quarticFourAtomicMu_twoThirds :
+    quarticFourAtomicMu (2/3) = (1/162 : ℝ) := by
+  unfold quarticFourAtomicMu
+  norm_num
+
+theorem quarticFourAtomicProjectiveOriginCoordinate_half :
+    quarticFourAtomicProjectiveOriginCoordinate
+      (1/2) (quarticFourAtomicMu (1/2))
+      = -(37/78 : ℝ) := by
+  rw [quarticFourAtomicProjectiveOriginCoordinate_formula,
+      quarticFourAtomicMu_half]
+  norm_num
+
+theorem quarticFourAtomicProjectiveOriginCoordinate_twoThirds :
+    quarticFourAtomicProjectiveOriginCoordinate
+      (2/3) (quarticFourAtomicMu (2/3))
+      = -(28/81 : ℝ) := by
+  rw [quarticFourAtomicProjectiveOriginCoordinate_formula,
+      quarticFourAtomicMu_twoThirds]
+  norm_num
+
+def quarticFourAtomicSignedPoleProjectiveOriginCoordinate : ℝ :=
+  quarticFourAtomicHighPoleResidual
+      (2/3) (quarticFourAtomicMu (2/3))
+    *
+    quarticFourAtomicProjectiveOriginCoordinate
+      (1/2) (quarticFourAtomicMu (1/2))
+  -
+  quarticFourAtomicHighPoleResidual
+      (1/2) (quarticFourAtomicMu (1/2))
+    *
+    quarticFourAtomicProjectiveOriginCoordinate
+      (2/3) (quarticFourAtomicMu (2/3))
+
+theorem quarticFourAtomicSignedPoleProjectiveOriginCoordinate_formula :
+    quarticFourAtomicSignedPoleProjectiveOriginCoordinate
+      = -(10/117 : ℝ) := by
+  unfold quarticFourAtomicSignedPoleProjectiveOriginCoordinate
+  rw [quarticFourAtomicPole_half,
+      quarticFourAtomicPole_twoThirds,
+      quarticFourAtomicProjectiveOriginCoordinate_half,
+      quarticFourAtomicProjectiveOriginCoordinate_twoThirds]
+  norm_num
+
+theorem quarticFourAtomicSignedPoleProjectiveOriginCoordinate_ne_zero :
+    quarticFourAtomicSignedPoleProjectiveOriginCoordinate ≠ 0 := by
+  rw [quarticFourAtomicSignedPoleProjectiveOriginCoordinate_formula]
+  norm_num
+
+
 end Synthesis

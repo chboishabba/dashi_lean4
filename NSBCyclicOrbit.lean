@@ -9,6 +9,7 @@ import NSBControl.SelectedSelfResolvedRecombination
 import NSBControl.CombinedSpacetimePayment
 import NSBControl.CombinedPaymentToWeightedWork
 import NSBControl.CombinedCurrentEndgame
+import NSBControl.DirectCombinedCut
 
 namespace NSBCyclicOrbit
 

@@ -8614,4 +8614,191 @@ theorem QuarticFourSignedPolePair.ambientSimpleMargin_lower_selected_explicit
   linarith
 
 
+
+/-!
+## Canonical-far fourth-order sign
+
+The adverse middle cone of the complete joint quartic jet is a local geometry
+phenomenon.  It cannot occur on the actual canonical-far carrier once t is in
+the high regime.
+
+Indeed every zeta zero has |heightOf rho| <= 1/2, whereas canonical far means
+
+  eta0 < |(gamma-t)/(t/16)|,
+
+with eta0 = 1/(pi+1) > 1/5.  For t >= 200 this forces
+|gamma-t| > 5/2, hence
+
+  6 * heightOf(rho)^2 < (gamma-t)^2.
+
+Therefore the complete fourth-order pair polynomial is nonpositive on every
+canonical-far zero.
+
+The fourth-order polynomial is not separately summable globally, so keep this
+split finite-windowed.  The exact far source is then bounded above by the
+finite nonquartic remainder carrier.
+-/
+
+theorem quarticSignedPoleCanonicalLocalRadius_gt_one_fifth :
+    (1/5 : ℝ) < quarticSignedPoleCanonicalLocalRadius := by
+  unfold quarticSignedPoleCanonicalLocalRadius
+  have hden : 0 < Real.pi + 1 := by positivity
+  rw [div_lt_div_iff₀ (by norm_num : (0:ℝ) < 5) hden]
+  nlinarith [Real.pi_lt_four]
+
+theorem quarticSignedPoleFar_implies_completeOuterCone
+    {t : ℝ}
+    (ht : 200 <= t)
+    (rho : Zeros)
+    (hfar :
+      quarticSignedPoleFar
+        t quarticSignedPoleCanonicalLocalRadius rho) :
+    6 * heightOf rho^2 < ((rho : ℂ).im-t)^2 := by
+  have ht0 : 0 < t := by linarith
+  have hr : 0 < t/16 := by positivity
+  have hq :
+      (1/5 : ℝ)
+        <
+      |quarticSignedPoleNormalizedOrdinateOffset t rho| :=
+    lt_trans quarticSignedPoleCanonicalLocalRadius_gt_one_fifth hfar
+  unfold quarticSignedPoleNormalizedOrdinateOffset at hq
+  rw [abs_div, abs_of_pos hr] at hq
+  have hdelta :
+      (1/5 : ℝ) * (t/16)
+        < |(rho : ℂ).im-t| :=
+    (lt_div_iff₀ hr).mp hq
+  have hdelta25 :
+      (5/2 : ℝ) < |(rho : ℂ).im-t| := by
+    nlinarith
+  have ha := zetaZero_height_abs_le_half rho
+  have hdeltaSq :
+      (25/4 : ℝ) < ((rho : ℂ).im-t)^2 := by
+    have h := sq_lt_sq.mpr ⟨by linarith [abs_nonneg ((rho : ℂ).im-t)],
+      hdelta25⟩
+    simpa [sq_abs] using h
+  have haSq :
+      heightOf rho^2 <= (1/4 : ℝ) := by
+    have h := sq_le_sq.mpr ⟨by linarith [abs_nonneg (heightOf rho)], ha⟩
+    simpa [sq_abs] using h
+  nlinarith
+
+def QuarticFourSignedPolePair.literalCanonicalFarQuarticTerm
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) : ℝ :=
+  if quarticSignedPoleFar
+      t quarticSignedPoleCanonicalLocalRadius rho then
+    W.literalCompleteJointQuarticPolynomial rho
+  else
+    0
+
+def QuarticFourSignedPolePair.literalCanonicalFarNonquarticTerm
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) : ℝ :=
+  if quarticSignedPoleFar
+      t quarticSignedPoleCanonicalLocalRadius rho then
+    W.literalOffOrdSource rho
+      - W.literalCompleteJointQuarticPolynomial rho
+  else
+    0
+
+theorem QuarticFourSignedPolePair.literalFarExactTerm_eq_quartic_add_nonquartic
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.literalFarExactTerm
+        quarticSignedPoleCanonicalLocalRadius rho
+      =
+    W.literalCanonicalFarQuarticTerm rho
+      + W.literalCanonicalFarNonquarticTerm rho := by
+  by_cases hf :
+      quarticSignedPoleFar
+        t quarticSignedPoleCanonicalLocalRadius rho
+  · simp [
+      QuarticFourSignedPolePair.literalFarExactTerm,
+      QuarticFourSignedPolePair.literalCanonicalFarQuarticTerm,
+      QuarticFourSignedPolePair.literalCanonicalFarNonquarticTerm,
+      hf]
+  · simp [
+      QuarticFourSignedPolePair.literalFarExactTerm,
+      QuarticFourSignedPolePair.literalCanonicalFarQuarticTerm,
+      QuarticFourSignedPolePair.literalCanonicalFarNonquarticTerm,
+      hf]
+
+theorem QuarticFourSignedPolePair.literalCanonicalFarQuarticTerm_nonpos
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.literalCanonicalFarQuarticTerm rho <= 0 := by
+  by_cases hf :
+      quarticSignedPoleFar
+        t quarticSignedPoleCanonicalLocalRadius rho
+  · have hcone :=
+      quarticSignedPoleFar_implies_completeOuterCone ht rho hf
+    have hpoly :=
+      W.literalCompleteJointQuarticPolynomial_nonpos_of_six_height_sq_le_delta_sq
+        (by linarith : 0 < t) rho hcone.le
+    simpa [QuarticFourSignedPolePair.literalCanonicalFarQuarticTerm, hf]
+      using hpoly
+  · simp [QuarticFourSignedPolePair.literalCanonicalFarQuarticTerm, hf]
+
+def QuarticFourSignedPolePair.literalCanonicalFarQuarticAt
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    W.literalCanonicalFarQuarticTerm rho
+
+def QuarticFourSignedPolePair.literalCanonicalFarNonquarticAt
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  ∑ rho ∈ centeredZeroFinset t n,
+    W.literalCanonicalFarNonquarticTerm rho
+
+theorem QuarticFourSignedPolePair.literalFarExactAt_eq_quartic_add_nonquartic
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalFarExactAt
+        quarticSignedPoleCanonicalLocalRadius n
+      =
+    W.literalCanonicalFarQuarticAt n
+      + W.literalCanonicalFarNonquarticAt n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalFarExactAt
+    QuarticFourSignedPolePair.literalCanonicalFarQuarticAt
+    QuarticFourSignedPolePair.literalCanonicalFarNonquarticAt
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  exact W.literalFarExactTerm_eq_quartic_add_nonquartic rho
+
+theorem QuarticFourSignedPolePair.literalCanonicalFarQuarticAt_nonpos
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalCanonicalFarQuarticAt n <= 0 := by
+  classical
+  unfold QuarticFourSignedPolePair.literalCanonicalFarQuarticAt
+  exact Finset.sum_nonpos fun rho _ =>
+    W.literalCanonicalFarQuarticTerm_nonpos ht rho
+
+theorem QuarticFourSignedPolePair.literalFarExactAt_le_nonquartic
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalFarExactAt
+        quarticSignedPoleCanonicalLocalRadius n
+      <=
+    W.literalCanonicalFarNonquarticAt n := by
+  rw [W.literalFarExactAt_eq_quartic_add_nonquartic n]
+  have hq := W.literalCanonicalFarQuarticAt_nonpos ht n
+  linarith
+
+
 end Synthesis

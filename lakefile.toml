@@ -152,3 +152,11 @@ globs = ["RequestProject.NavierStokes.CanonicalCompletionLeaves"]
 [[lean_lib]]
 name = "YMContinuum"
 globs = ["YangMills.*"]
+
+
+# Independent mirror of the live Agda R702/R703 cyclic-helical max-cut.
+# This proves only exact leg/coefficient bookkeeping; it makes no Clay or
+# analytic-closure claim.
+[[lean_lib]]
+name = "NSBCyclicOrbit"
+globs = ["NSBCyclicOrbit", "NSBControl.CyclicHelicalVectorTransform", "NSBControl.SelfOrbitCommutatorCarrier", "NSBControl.SingleSelfCommutatorOrbit", "NSBControl.SpectatorFibreLegTransport", "NSBControl.CompleteSelfOrbitCollapse", "NSBControl.OutputPairingCollapse", "NSBControl.OutputRealityNoGo", "NSBControl.SelectedSelfResolvedRecombination", "NSBControl.CombinedSpacetimePayment", "NSBControl.CombinedPaymentToWeightedWork", "NSBControl.CombinedCurrentEndgame", "NSBControl.DirectCombinedCut", "NSBControl.SharedWeightedCut"]

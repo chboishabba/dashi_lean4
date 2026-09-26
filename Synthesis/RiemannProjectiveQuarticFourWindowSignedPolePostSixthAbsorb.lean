@@ -8997,16 +8997,22 @@ theorem quarticFourAtomicPoleCancelledOrigin_eq_zero_iff
   have hdy : 3*y - 8 ≠ 0 := by linarith
   constructor
   · intro h
-    have hnum :
-        10 * (x-2) * (x-y) * (y-2) = 0 := by
-      apply (div_eq_zero_iff).mp h |>.1
-    rcases mul_eq_zero.mp hnum with h10 | hrest
-    · norm_num at h10
-    · rcases mul_eq_zero.mp hrest with hxzero | hrest2
-      · exact (hx2ne hxzero).elim
-      · rcases mul_eq_zero.mp hrest2 with hxy | hyzero
-        · linarith
-        · exact (hy2ne hyzero).elim
+    have hden :
+        (3*x-8)*(3*y-8) ≠ 0 :=
+      mul_ne_zero hdx hdy
+    rw [div_eq_zero_iff] at h
+    rcases h with hnum | hdenZero
+    · by_contra hxy
+      have hxmy : x-y ≠ 0 := sub_ne_zero.mpr hxy
+      have hnumNe :
+          10 * (x-2) * (x-y) * (y-2) ≠ 0 :=
+        mul_ne_zero
+          (mul_ne_zero
+            (mul_ne_zero (by norm_num) hx2ne)
+            hxmy)
+          hy2ne
+      exact hnumNe hnum
+    · exact (hden hdenZero).elim
   · rintro rfl
     simp
 

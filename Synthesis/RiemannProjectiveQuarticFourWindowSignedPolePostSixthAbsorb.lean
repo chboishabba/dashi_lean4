@@ -9212,4 +9212,89 @@ theorem quarticFourAtomic_pole_cancel_forces_origin_target_relation
   nlinarith
 
 
+
+/-!
+## Finite-t atomic origin determinant stays uniformly negative
+
+The high-ordinate atomic origin coordinate is not an asymptotic sign artifact.
+At the exact J2-null endpoint centres, use the finite-t projective pole
+determinants themselves.
+
+Writing
+  h1 = cosh(8*pi/(3t)),
+  h2 = cosh(4*pi/t),
+  h3 = cosh(8*pi/t),
+
+the pole-cancelled physical-origin determinant is exactly
+
+  -10 * (27*h1 + 64*h2 - 10*h3) / 9477.
+
+For t>=200, h1,h2>=1 and the existing Backlund-era high-regime cosh bound
+gives h3<=2.  Hence this determinant is <= -710/9477 < 0.
+
+This gives a quantitative atomic margin to transport through the existing
+finite-radius localization.
+-/
+
+def quarticFourAtomicFinitePoleCancelledOriginAtNull
+    (t : ℝ) : ℝ :=
+  quarticFourAtomicFinitePoleResidual
+      t (2/3) (quarticFourAtomicMu (2/3))
+    *
+  quarticFourAtomicOriginOnNull (1/2)
+  -
+  quarticFourAtomicFinitePoleResidual
+      t (1/2) (quarticFourAtomicMu (1/2))
+    *
+  quarticFourAtomicOriginOnNull (2/3)
+
+theorem quarticFourAtomicFinitePoleCancelledOriginAtNull_formula
+    (t : ℝ) :
+    quarticFourAtomicFinitePoleCancelledOriginAtNull t
+      =
+    -(10/9477 : ℝ)
+      *
+    (
+      27 * Real.cosh (8*Real.pi/(3*t))
+      + 64 * Real.cosh (4*Real.pi/t)
+      - 10 * Real.cosh (8*Real.pi/t)
+    ) := by
+  unfold quarticFourAtomicFinitePoleCancelledOriginAtNull
+    quarticFourAtomicFinitePoleResidual
+    quarticFourAtomicOriginOnNull
+  rw [quarticFourAtomicProjectiveOriginCoordinate_formula,
+      quarticFourAtomicProjectiveOriginCoordinate_formula]
+  unfold quarticFourAtomicMu
+  norm_num
+  ring
+
+theorem quarticFourAtomicFinitePoleCancelledOriginAtNull_le
+    {t : ℝ}
+    (ht : 200 <= t) :
+    quarticFourAtomicFinitePoleCancelledOriginAtNull t
+      <= -(710/9477 : ℝ) := by
+  have h1 :
+      1 <= Real.cosh (8*Real.pi/(3*t)) :=
+    Real.one_le_cosh _
+  have h2 :
+      1 <= Real.cosh (4*Real.pi/t) :=
+    Real.one_le_cosh _
+  have h3ex :=
+    quarticFour_cosh_excess_le_one_of_twoHundred ht
+  have h3 :
+      Real.cosh (8*Real.pi/t) <= 2 := by
+    linarith
+  rw [quarticFourAtomicFinitePoleCancelledOriginAtNull_formula]
+  nlinarith
+
+theorem quarticFourAtomicFinitePoleCancelledOriginAtNull_neg
+    {t : ℝ}
+    (ht : 200 <= t) :
+    quarticFourAtomicFinitePoleCancelledOriginAtNull t < 0 := by
+  have h :=
+    quarticFourAtomicFinitePoleCancelledOriginAtNull_le ht
+  norm_num at h ⊢
+  linarith
+
+
 end Synthesis

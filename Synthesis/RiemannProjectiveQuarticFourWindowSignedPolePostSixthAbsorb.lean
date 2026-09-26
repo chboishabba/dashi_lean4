@@ -9043,4 +9043,173 @@ theorem quarticFourAtomic_zeroMode_cancel_forces_target_zero
   exact quarticFourAtomicPoleCancelledTargetBetween_self x
 
 
+
+/-!
+## Atomic rigidity: quartic target is in the span of pole and zero mode
+
+The two-channel no-go is the shadow of a stronger identity on the entire
+atomic J2-null four-window curve.
+
+Write
+  P(lambda) = atomic high pole coordinate,
+  O(lambda) = atomic projective physical-origin coordinate,
+  S(lambda) = atomic quartic target strength = -J4.
+
+Then exactly
+
+  S(lambda)
+    = pi^4 * (-(20/243) * P(lambda) - (1/4) * O(lambda)).
+
+Therefore for ANY finite signed combination of J2-null channels, simultaneous
+pole cancellation and zero-mode cancellation force the quartic target to
+cancel as well.
+
+Equivalently, once the pole is cancelled, the surviving physical-origin mode
+is rigidly tied to the quartic target:
+
+  O_comb = -(4/pi^4) * S_comb.
+
+So exact constant-density annihilation is not merely unavailable to the chosen
+endpoint pair; it is incompatible with a nonzero quartic target throughout
+this atomic J2-null family.
+-/
+
+theorem quarticFourAtomic_target_eq_pole_origin_combination
+    {lam : ℝ}
+    (hlam : lam <= 2/3) :
+    quarticFourAtomicTargetStrength lam
+      =
+    Real.pi^4
+      *
+    (
+      -(20/243 : ℝ) * quarticFourAtomicPoleOnNull lam
+      - (1/4 : ℝ) * quarticFourAtomicOriginOnNull lam
+    ) := by
+  unfold quarticFourAtomicTargetStrength
+  rw [quarticFourAtomicJ4_on_null_formula hlam,
+      quarticFourAtomicPoleOnNull_formula,
+      quarticFourAtomicOriginOnNull_formula hlam]
+  have hden : 3*lam-8 ≠ 0 := by linarith
+  field_simp [hden]
+  ring
+
+theorem quarticFourAtomic_target_linear_relation
+    {P O S : ℝ}
+    (h :
+      S = Real.pi^4 * (-(20/243 : ℝ) * P - (1/4 : ℝ) * O)) :
+    4 * S
+      + Real.pi^4 * O
+      + (80/243 : ℝ) * Real.pi^4 * P
+      = 0 := by
+  rw [h]
+  ring
+
+/--
+Generic finite-combination compiler.
+
+If every channel satisfies the atomic J2-null target/pole/origin identity,
+then any coefficient combination cancelling both pole and origin necessarily
+cancels target.
+-/
+theorem quarticFourAtomic_combination_target_zero_of_pole_origin_zero
+    {ι : Type*} [Fintype ι]
+    (c P O S : ι -> ℝ)
+    (hrel :
+      ∀ i,
+        S i =
+          Real.pi^4
+            *
+          (
+            -(20/243 : ℝ) * P i
+            - (1/4 : ℝ) * O i
+          ))
+    (hP : ∑ i, c i * P i = 0)
+    (hO : ∑ i, c i * O i = 0) :
+    ∑ i, c i * S i = 0 := by
+  calc
+    ∑ i, c i * S i
+      =
+    ∑ i,
+      c i *
+        (
+          Real.pi^4
+            *
+          (
+            -(20/243 : ℝ) * P i
+            - (1/4 : ℝ) * O i
+          )
+        ) := by
+          apply Finset.sum_congr rfl
+          intro i hi
+          rw [hrel i]
+    _ =
+      Real.pi^4
+        *
+      (
+        -(20/243 : ℝ) * (∑ i, c i * P i)
+        - (1/4 : ℝ) * (∑ i, c i * O i)
+      ) := by
+        simp_rw [mul_sub, Finset.sum_sub_distrib,
+          ← Finset.mul_sum]
+        ring
+    _ = 0 := by rw [hP,hO]; ring
+
+theorem quarticFourAtomic_pole_cancel_forces_origin_target_relation
+    {ι : Type*} [Fintype ι]
+    (c P O S : ι -> ℝ)
+    (hrel :
+      ∀ i,
+        S i =
+          Real.pi^4
+            *
+          (
+            -(20/243 : ℝ) * P i
+            - (1/4 : ℝ) * O i
+          ))
+    (hP : ∑ i, c i * P i = 0) :
+    ∑ i, c i * O i
+      =
+    -(4 / Real.pi^4)
+      * (∑ i, c i * S i) := by
+  have hp4 : Real.pi^4 ≠ 0 := by positivity
+  have hsum :
+      (∑ i, c i * S i)
+        =
+      Real.pi^4
+        *
+      (
+        -(20/243 : ℝ) * (∑ i, c i * P i)
+        - (1/4 : ℝ) * (∑ i, c i * O i)
+      ) := by
+    calc
+      ∑ i, c i * S i
+        =
+      ∑ i,
+        c i *
+          (
+            Real.pi^4
+              *
+            (
+              -(20/243 : ℝ) * P i
+              - (1/4 : ℝ) * O i
+            )
+          ) := by
+            apply Finset.sum_congr rfl
+            intro i hi
+            rw [hrel i]
+      _ =
+        Real.pi^4
+          *
+        (
+          -(20/243 : ℝ) * (∑ i, c i * P i)
+          - (1/4 : ℝ) * (∑ i, c i * O i)
+        ) := by
+          simp_rw [mul_sub, Finset.sum_sub_distrib,
+            ← Finset.mul_sum]
+          ring
+  rw [hP, mul_zero, zero_sub] at hsum
+  field_simp [hp4]
+  nlinarith
+
+
 end Synthesis

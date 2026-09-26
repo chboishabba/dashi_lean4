@@ -159,4 +159,4 @@ globs = ["YangMills.*"]
 # analytic-closure claim.
 [[lean_lib]]
 name = "NSBCyclicOrbit"
-globs = ["NSBCyclicOrbit", "NSBControl.CyclicHelicalVectorTransform", "NSBControl.SelfOrbitCommutatorCarrier", "NSBControl.SingleSelfCommutatorOrbit", "NSBControl.SpectatorFibreLegTransport", "NSBControl.CompleteSelfOrbitCollapse", "NSBControl.OutputPairingCollapse", "NSBControl.OutputRealityNoGo", "NSBControl.SelectedSelfResolvedRecombination", "NSBControl.CombinedSpacetimePayment", "NSBControl.CombinedPaymentToWeightedWork", "NSBControl.CombinedCurrentEndgame"]
+globs = ["NSBCyclicOrbit", "NSBControl.CyclicHelicalVectorTransform", "NSBControl.SelfOrbitCommutatorCarrier", "NSBControl.SingleSelfCommutatorOrbit", "NSBControl.SpectatorFibreLegTransport", "NSBControl.CompleteSelfOrbitCollapse", "NSBControl.OutputPairingCollapse", "NSBControl.OutputRealityNoGo", "NSBControl.SelectedSelfResolvedRecombination", "NSBControl.CombinedSpacetimePayment", "NSBControl.CombinedPaymentToWeightedWork", "NSBControl.CombinedCurrentEndgame", "NSBControl.DirectCombinedCut"]

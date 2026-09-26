@@ -8900,4 +8900,141 @@ theorem quarticFourAtomicSignedPoleProjectiveOriginCoordinate_ne_zero :
   norm_num
 
 
+
+/-!
+## Atomic two-channel no-go: pole cancellation cannot also kill the zero mode
+
+The fixed endpoint computation above is not accidental.  Along the entire
+atomic J2-null curve the projective-origin coordinate divided by the pole
+coordinate is strictly injective on lambda in [1/2,2/3].
+
+Equivalently, for two channels x,y on that null curve,
+
+  P(y) O(x) - P(x) O(y)
+    = 10 (x-2)(x-y)(y-2) / ((3x-8)(3y-8)).
+
+All non-(x-y) factors are nonzero on the admissible corridor.  Therefore exact
+signed pole cancellation plus exact physical-origin cancellation forces x=y.
+But then the corresponding pole-cancelled target determinant is identically
+zero.
+
+So a two-channel redesign within this atomic four-window J2-null family cannot
+simultaneously:
+  * cancel the projective pole,
+  * annihilate the constant-density zero mode,
+  * retain a nonzero quartic target.
+
+Any exact constant-density mechanism would need a genuinely larger witness
+family / third independent channel, not merely another choice of the surviving
+lambda parameter.
+-/
+
+def quarticFourAtomicOriginOnNull (lam : ℝ) : ℝ :=
+  quarticFourAtomicProjectiveOriginCoordinate
+    lam (quarticFourAtomicMu lam)
+
+def quarticFourAtomicPoleOnNull (lam : ℝ) : ℝ :=
+  quarticFourAtomicHighPoleResidual
+    lam (quarticFourAtomicMu lam)
+
+theorem quarticFourAtomicOriginOnNull_formula
+    {lam : ℝ}
+    (hlam : lam <= 2/3) :
+    quarticFourAtomicOriginOnNull lam
+      =
+    (lam-2) * (27*lam-32) / (9*(3*lam-8)) := by
+  unfold quarticFourAtomicOriginOnNull
+  rw [quarticFourAtomicProjectiveOriginCoordinate_formula]
+  unfold quarticFourAtomicMu
+  have hden : 144 - 54*lam ≠ 0 :=
+    ne_of_gt (quarticFourAtomicMu_den_pos hlam)
+  field_simp [hden]
+  ring
+
+theorem quarticFourAtomicPoleOnNull_formula
+    (lam : ℝ) :
+    quarticFourAtomicPoleOnNull lam
+      = 3 * (2-lam) / 4 := by
+  unfold quarticFourAtomicPoleOnNull
+  exact quarticFourAtomicHighPoleResidual_formula _ _
+
+def quarticFourAtomicPoleCancelledOrigin
+    (x y : ℝ) : ℝ :=
+  quarticFourAtomicPoleOnNull y
+      * quarticFourAtomicOriginOnNull x
+    -
+  quarticFourAtomicPoleOnNull x
+      * quarticFourAtomicOriginOnNull y
+
+theorem quarticFourAtomicPoleCancelledOrigin_formula
+    {x y : ℝ}
+    (hx : x <= 2/3)
+    (hy : y <= 2/3) :
+    quarticFourAtomicPoleCancelledOrigin x y
+      =
+    10 * (x-2) * (x-y) * (y-2)
+      / ((3*x-8)*(3*y-8)) := by
+  unfold quarticFourAtomicPoleCancelledOrigin
+  rw [quarticFourAtomicPoleOnNull_formula,
+      quarticFourAtomicPoleOnNull_formula,
+      quarticFourAtomicOriginOnNull_formula hx,
+      quarticFourAtomicOriginOnNull_formula hy]
+  have hdx : 3*x-8 ≠ 0 := by linarith
+  have hdy : 3*y-8 ≠ 0 := by linarith
+  field_simp [hdx,hdy]
+  ring
+
+theorem quarticFourAtomicPoleCancelledOrigin_eq_zero_iff
+    {x y : ℝ}
+    (hx1 : 1/2 <= x) (hx2 : x <= 2/3)
+    (hy1 : 1/2 <= y) (hy2 : y <= 2/3) :
+    quarticFourAtomicPoleCancelledOrigin x y = 0
+      ↔ x = y := by
+  rw [quarticFourAtomicPoleCancelledOrigin_formula hx2 hy2]
+  have hx2ne : x - 2 ≠ 0 := by linarith
+  have hy2ne : y - 2 ≠ 0 := by linarith
+  have hdx : 3*x - 8 ≠ 0 := by linarith
+  have hdy : 3*y - 8 ≠ 0 := by linarith
+  constructor
+  · intro h
+    have hnum :
+        10 * (x-2) * (x-y) * (y-2) = 0 := by
+      apply (div_eq_zero_iff).mp h |>.1
+    rcases mul_eq_zero.mp hnum with h10 | hrest
+    · norm_num at h10
+    · rcases mul_eq_zero.mp hrest with hxzero | hrest2
+      · exact (hx2ne hxzero).elim
+      · rcases mul_eq_zero.mp hrest2 with hxy | hyzero
+        · linarith
+        · exact (hy2ne hyzero).elim
+  · rintro rfl
+    simp
+
+def quarticFourAtomicPoleCancelledTargetBetween
+    (x y : ℝ) : ℝ :=
+  quarticFourAtomicPoleOnNull y
+      * quarticFourAtomicTargetStrength x
+    -
+  quarticFourAtomicPoleOnNull x
+      * quarticFourAtomicTargetStrength y
+
+theorem quarticFourAtomicPoleCancelledTargetBetween_self
+    (x : ℝ) :
+    quarticFourAtomicPoleCancelledTargetBetween x x = 0 := by
+  unfold quarticFourAtomicPoleCancelledTargetBetween
+  ring
+
+theorem quarticFourAtomic_zeroMode_cancel_forces_target_zero
+    {x y : ℝ}
+    (hx1 : 1/2 <= x) (hx2 : x <= 2/3)
+    (hy1 : 1/2 <= y) (hy2 : y <= 2/3)
+    (hzero : quarticFourAtomicPoleCancelledOrigin x y = 0) :
+    quarticFourAtomicPoleCancelledTargetBetween x y = 0 := by
+  have hxy :=
+    (quarticFourAtomicPoleCancelledOrigin_eq_zero_iff
+      hx1 hx2 hy1 hy2).1 hzero
+  subst y
+  exact quarticFourAtomicPoleCancelledTargetBetween_self x
+
+
 end Synthesis

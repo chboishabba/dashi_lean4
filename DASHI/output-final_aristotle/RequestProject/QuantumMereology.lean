@@ -146,6 +146,7 @@ cross-module inference, and new DASHI theorems distinct.
 
 inductive AttributionRole where
   | externalSourceClaim
+  | importedFormalTheoremSource
   | localFormalReconstruction
   | crossModuleInference
   | newDASHITheorem
@@ -167,6 +168,11 @@ structure SourceReceipt where
   identifier : String
   supports : String
 deriving Repr, DecidableEq
+
+def jmdWikidataMereologyFormalSource : AttributionReceipt where
+  role := .importedFormalTheoremSource
+  owner := "JMD (github.com/meta-introspector), RequestProject.Mereology"
+  claim := "Retained Lean theorem source for executable Wikidata P361/P2670 mereology: certified part-of closure, proper-part order and well-foundedness, overlap laws, part completeness, and P279/P31 no-confusion. Source-manifest digest b81a8632dce181845e4c9ca500fb4a9a74df77aeb86a99392361eda991347c35."
 
 def carrollSinghObjectiveClaim : AttributionReceipt where
   role := .externalSourceClaim

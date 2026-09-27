@@ -45,11 +45,27 @@ structure AccelerationAuthority where
   pointerEntropySecondDerivativeAuthority :
     PointerEntropySecondDerivativeAuthority
 
+/-- Canonical bare world used by the finite linear/operator producer. -/
+def linearWorld (H : Type*) [NormedAddCommGroup H] [InnerProductSpace ℂ H] :
+    BareQuantumWorld where
+  State := H
+  Hamiltonian := H →ₗ[ℂ] H
+  evolve := fun A state => A state
+
 /-- Complete same-object source producer for a fixed ambient operator and a
-family of candidate TPSs of the same factor dimensions. -/
+family of candidate TPSs of the same factor dimensions. The abstract
+quantum-mereology TPS and the concrete inner-product tensor reconstruction are
+kept separate and joined only by an explicit application-supplied weld. -/
 structure Pipeline where
   CandidateIndex : Type
   tps : CandidateIndex → BipartiteInnerProductTPS H Left Right
+  abstractTPS :
+    CandidateIndex → TensorProductStructure (linearWorld H)
+
+  AbstractConcreteTPSWeld : CandidateIndex → Prop
+  abstractConcreteTPSWeld :
+    ∀ candidate, AbstractConcreteTPSWeld candidate
+
   admissible : CandidateIndex → Prop
 
   globalOperator : H →ₗ[ℂ] H
@@ -81,23 +97,9 @@ noncomputable def schwingerSearchData
     (P : Pipeline
       (H := H) (Left := Left) (Right := Right)
       (PointerInit := PointerInit)) :
-    SchwingerObjective.SearchData
-      { State := H
-        Hamiltonian := H →ₗ[ℂ] H
-        evolve := fun A state => A state }
-      PointerInit where
+    SchwingerObjective.SearchData (linearWorld H) PointerInit where
   Candidate := P.CandidateIndex
-  realizes := fun candidate =>
-    { Subsystem := Sum Left Right
-      FactorIndex := Bool
-      subsystemAt := fun
-        | false => Sum.inl (0 : Left)
-        | true => Sum.inr (0 : Right)
-      partOfCarrier := fun _ => True
-      reconstructsCarrier := True
-      reconstruction := trivial
-      Entangled := fun _ _ _ => Prop
-      Interacts := fun _ _ _ => Prop }
+  realizes := P.abstractTPS
   Admissible := P.admissible
   accelerations :=
     { linearEntropyAcceleration :=
@@ -108,11 +110,9 @@ noncomputable def schwingerSearchData
           (P.acceleration candidate pointer).pointerEntropyAcceleration }
 
 /-!
-The generic TensorProductStructure carrier does not yet retain the concrete
-LinearIsometryEquiv reconstruction, so the realizes field above is only the
-existing abstract subsystem interface. Same-object linkage to the concrete TPS
-is retained separately by P.tps. This is intentionally not a claim that the
-abstract subsystemAt encoding reconstructs the Hilbert tensor product.
+The generic TensorProductStructure carrier does not itself retain the concrete
+LinearIsometryEquiv reconstruction. The two views are therefore joined only by
+P.abstractConcreteTPSWeld, whose semantics remain an application obligation.
 -/
 
 /-- Compile an already-selected Schwinger minimizer through the source-exact

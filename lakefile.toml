@@ -157,4 +157,4 @@ globs = ["YangMills.*"]
 [[lean_lib]]
 name = "QuantumMereology"
 srcDir = "DASHI/output-final_aristotle"
-globs = ["RequestProject.Mereology", "RequestProject.QuantumMereology", "RequestProject.QuantumMereologySelection", "RequestProject.QuantumMereologySelectionRegression", "RequestProject.QuantumMereologyObserverBridge", "RequestProject.QuantumMereologyFiniteLinearTPS", "RequestProject.QuantumMereologyInnerProductTPS", "RequestProject.QuantumMereologyOperatorLocality", "RequestProject.QuantumMereologyHamiltonianTransport"]
+globs = ["RequestProject.Mereology", "RequestProject.QuantumMereology", "RequestProject.QuantumMereologySelection", "RequestProject.QuantumMereologySelectionRegression", "RequestProject.QuantumMereologyObserverBridge", "RequestProject.QuantumMereologyFiniteLinearTPS", "RequestProject.QuantumMereologyInnerProductTPS", "RequestProject.QuantumMereologyOperatorLocality", "RequestProject.QuantumMereologyHamiltonianTransport", "RequestProject.QuantumMereologySchwingerObjective"]

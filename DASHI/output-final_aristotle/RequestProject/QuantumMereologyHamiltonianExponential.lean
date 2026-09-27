@@ -63,9 +63,12 @@ theorem U_mem_unitary
   simp [U, generator]
 
 noncomputable def unitaryPath
-    (H : Matrix (I × I) (I × I) ℂ)
+    {A B : Type*}
+    [Fintype A] [DecidableEq A]
+    [Fintype B] [DecidableEq B]
+    (H : Matrix (A × B) (A × B) ℂ)
     (hH : H.IsHermitian) :
-    EntropyAcceleration.UnitaryPath (A := I) (B := I) where
+    EntropyAcceleration.UnitaryPath (A := A) (B := B) where
   U := U H
   unitary := U_mem_unitary hH
 

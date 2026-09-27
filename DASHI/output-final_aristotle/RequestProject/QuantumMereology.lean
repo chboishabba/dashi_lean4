@@ -126,6 +126,53 @@ theorem classical_part_not_instance (B : ClassicalBenchmark)
     B.mkb.base.isInstanceOf a b = false :=
   Wikidata.MKB.part_not_instance B.noClassConfusion hab
 
+theorem classical_part_complete_exhibits (B : ClassicalBenchmark)
+    {a c c' d : Wikidata.Qid}
+    (hcomp : B.mkb.partCompleteB a = true)
+    (hac : B.mkb.base.isInstanceOf a c = true)
+    (hcc' : B.mkb.base.isSubclassOf c c' = true)
+    (hd : (c', d) ∈ B.mkb.partClasses) :
+    ∃ p ∈ B.mkb.base.items,
+      B.mkb.isProperPartOfB p a = true ∧
+      B.mkb.base.isInstanceOf p d = true :=
+  Wikidata.MKB.partComplete_exhibits
+    (Wikidata.MKB.mwf_base B.wellFormed) hcomp hac hcc' hd
+
+/-! ## Attributed scientific source receipts -/
+
+structure SourceReceipt where
+  authors : String
+  title : String
+  venue : String
+  year : String
+  identifier : String
+  supports : String
+deriving Repr, DecidableEq
+
+def carrollSingh2021 : SourceReceipt where
+  authors := "Sean M. Carroll; Ashmeet Singh"
+  title := "Quantum mereology: Factorizing Hilbert space into subsystems with quasiclassical dynamics"
+  venue := "Physical Review A 103, 022213"
+  year := "2021"
+  identifier := "doi:10.1103/PhysRevA.103.022213"
+  supports := "Preferred-TPS research program from Hilbert space plus Hamiltonian using quasiclassical robustness, entanglement-growth, and localization criteria."
+
+def caoCarrollMichalakis2017 : SourceReceipt where
+  authors := "ChunJun Cao; Sean M. Carroll; Spyridon Michalakis"
+  title := "Space from Hilbert space: Recovering geometry from bulk entanglement"
+  venue := "Physical Review D 95, 024031"
+  year := "2017"
+  identifier := "doi:10.1103/PhysRevD.95.024031"
+  supports := "Given a supplied TPS, entanglement/mutual-information relations can feed an emergent spatial-geometry construction under stated assumptions."
+
+def pasqualiniFortin2026 : SourceReceipt where
+  authors := "Matías Pasqualini; Sebastian Fortin"
+  title := "Towards a Tensor Product Structure-Grounded Mereology"
+  venue := "Entropy 28(6), 627"
+  year := "2026"
+  identifier := "doi:10.3390/e28060627"
+  supports := "TPS-grounded quantum mereology and the sourced claim that the TPS refinement space lacks a canonical global meet analogous to a classical partition lattice."
+
 /-! ## Entanglement relations are downstream of the TPS -/
 
 structure FactorRelationGeometry

@@ -49,6 +49,46 @@ theorem isHermitian_partialTraceRight
   intro i j
   simp [partialTraceRight, map_sum, h.apply]
 
+
+def rightBlock
+    (rho : Matrix (A × B) (A × B) ℂ)
+    (b : B) :
+    Matrix A A ℂ :=
+  rho.submatrix (fun i => (i, b)) (fun j => (j, b))
+
+theorem partialTraceRight_eq_sum_rightBlock
+    (rho : Matrix (A × B) (A × B) ℂ) :
+    partialTraceRight rho =
+      ∑ b : B, rightBlock rho b := by
+  ext i j
+  simp [partialTraceRight, rightBlock]
+
+theorem finset_sum_posSemidef
+    {s : Finset B}
+    {M : B → Matrix A A ℂ}
+    (hM : ∀ b ∈ s, (M b).PosSemidef) :
+    (∑ b ∈ s, M b).PosSemidef := by
+  classical
+  induction s using Finset.induction_on with
+  | empty =>
+      simp only [Finset.not_mem_empty, Finset.sum_empty]
+      exact Matrix.PosSemidef.zero
+  | @insert b s hb ih =>
+      rw [Finset.sum_insert hb]
+      exact (hM b (by simp)).add
+        (ih (fun x hx => hM x (by simp [hx])))
+
+theorem posSemidef_partialTraceRight
+    {rho : Matrix (A × B) (A × B) ℂ}
+    (h : rho.PosSemidef) :
+    (partialTraceRight rho).PosSemidef := by
+  rw [partialTraceRight_eq_sum_rightBlock]
+  simpa only [Finset.sum_univ] using
+    finset_sum_posSemidef
+      (s := Finset.univ)
+      (M := rightBlock rho)
+      (fun b _ => h.submatrix (fun i => (i, b)))
+
 /-- Finite density-matrix payload. Positivity and trace-one are actual
 mathematical conditions, not status labels. -/
 structure DensityMatrix (I : Type*) [Fintype I] [DecidableEq I] where
@@ -68,24 +108,14 @@ end DensityMatrix
 
 /-- A reduced density candidate whose only unpaid density-matrix law is
 positive-semidefinite preservation of the partial trace. -/
-structure ReducedDensity
-    (rho : DensityMatrix (A × B)) where
-  positive :
-    (partialTraceRight rho.matrix).PosSemidef
-
-namespace ReducedDensity
-
-def toDensityMatrix
-    {rho : DensityMatrix (A × B)}
-    (R : ReducedDensity rho) :
+def partialTraceDensityRight
+    (rho : DensityMatrix (A × B)) :
     DensityMatrix A where
   matrix := partialTraceRight rho.matrix
-  positive := R.positive
+  positive := posSemidef_partialTraceRight rho.positive
   traceOne := by
     rw [trace_partialTraceRight]
     exact rho.traceOne
-
-end ReducedDensity
 
 /-- Source linear entropy on a finite reduced density matrix. For a genuine
 density matrix the trace is real; this definition takes the real part explicitly
@@ -103,7 +133,7 @@ theorem linearEntropy_eq_source_formula
   rfl
 
 structure Boundary where
-  partialTraceDefinitionProvesPositivity : Bool := false
+  partialTraceDefinitionProvesPositivity : Bool := true
   reducedDensityCreatesTimeEvolution : Bool := false
   linearEntropyFormulaCreatesSecondDerivative : Bool := false
   finiteDensityMatrixIsEmpiricalQuantumState : Bool := false
@@ -111,8 +141,8 @@ deriving Repr, DecidableEq
 
 def canonicalBoundary : Boundary := {}
 
-theorem partial_trace_positivity_remains_separate :
-    canonicalBoundary.partialTraceDefinitionProvesPositivity = false := rfl
+theorem partial_trace_positivity_is_paid :
+    canonicalBoundary.partialTraceDefinitionProvesPositivity = true := rfl
 
 theorem entropy_formula_does_not_create_time_derivative :
     canonicalBoundary.linearEntropyFormulaCreatesSecondDerivative = false := rfl
@@ -127,6 +157,6 @@ def mathlibReducedStateTheoremSource : AttributionReceipt where
 def dashiFinitePartialTraceTheoremReceipt : AttributionReceipt where
   role := .newDASHITheorem
   owner := "DASHI"
-  claim := "Defines finite bipartite partial trace and proves trace and Hermitian preservation; positive-semidefinite preservation remains an explicit separate authority leaf."
+  claim := "Defines finite bipartite partial trace and proves trace, Hermitian, and positive-semidefinite preservation, yielding a concrete reduced density matrix."
 
 end QuantumMereology

@@ -59,6 +59,54 @@ theorem twoOptimalSelectionsAgreeGivenUniqueness
     left.selected right.selected
     left.selectedOptimal right.selectedOptimal
 
+/-! ## Carroll--Singh source-objective realization
+
+The paper owns the external scientific claim that the preferred-factorisation
+search minimizes a combination of entanglement growth and internal spreading.
+The application supplies the combined objective carrier/order and proves that
+it matches the generic NoWorse relation. DASHI owns only the transport theorem.
+-/
+
+structure CarrollSinghObjectiveRealization
+    {W : BareQuantumWorld}
+    (P : PreferredTPSSelectionProblem W) where
+  CombinedObjective : Type
+  combine :
+    P.EntanglementGrowthScore →
+    P.InternalSpreadingScore →
+    CombinedObjective
+  ObjectiveNoWorse : CombinedObjective → CombinedObjective → Prop
+  noWorseToCombined :
+    ∀ left right,
+      P.NoWorse left right →
+      ObjectiveNoWorse
+        (combine (P.entanglementGrowth left) (P.internalSpreading left))
+        (combine (P.entanglementGrowth right) (P.internalSpreading right))
+  combinedToNoWorse :
+    ∀ left right,
+      ObjectiveNoWorse
+        (combine (P.entanglementGrowth left) (P.internalSpreading left))
+        (combine (P.entanglementGrowth right) (P.internalSpreading right)) →
+      P.NoWorse left right
+
+theorem selectionReceiptMinimizesRealizedCombinedObjective
+    {W : BareQuantumWorld}
+    {P : PreferredTPSSelectionProblem W}
+    (objective : CarrollSinghObjectiveRealization P)
+    (receipt : PreferredTPSSelectionReceipt P)
+    (other : P.Candidate)
+    (otherAdmissible : P.Admissible other) :
+    objective.ObjectiveNoWorse
+      (objective.combine
+        (P.entanglementGrowth receipt.selected)
+        (P.internalSpreading receipt.selected))
+      (objective.combine
+        (P.entanglementGrowth other)
+        (P.internalSpreading other)) :=
+  objective.noWorseToCombined
+    receipt.selected other
+    (receipt.selectedOptimal.2 other otherAdmissible)
+
 /-! ## Criterion observer and downstream consumer sufficiency -/
 
 structure CriterionConsumerSurface

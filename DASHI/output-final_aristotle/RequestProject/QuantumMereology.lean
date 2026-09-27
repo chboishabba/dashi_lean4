@@ -239,4 +239,44 @@ not claim the mathematical no-go theorem until an independent formalisation of
 their TPS equivalence/refinement space is supplied.
 -/
 
+
+/-! ## Finite structural no-meet regression
+
+This proves only that the abstract TPSRefinementSpace interface does not force
+a meet. It is not the Pasqualini--Fortin theorem about the physical TPS space.
+-/
+
+inductive ToyTPSTag where
+  | left
+  | right
+deriving Repr, DecidableEq
+
+def toyWorld : BareQuantumWorld where
+  State := Unit
+  Hamiltonian := Unit
+  evolve := fun _ _ => ()
+
+def toyTPS : TensorProductStructure toyWorld where
+  Subsystem := Unit
+  FactorIndex := Unit
+  subsystemAt := fun _ => ()
+  partOfCarrier := fun _ => True
+  reconstructsCarrier := True
+  reconstruction := trivial
+  Entangled := fun _ _ _ => True
+  Interacts := fun _ _ _ => True
+
+def toyRefinementSpace : TPSRefinementSpace toyWorld where
+  TPS := ToyTPSTag
+  realizes := fun _ => toyTPS
+  Refines := fun a b => a = b
+
+theorem toy_refinement_space_has_no_canonical_meet :
+    ¬ Nonempty (CanonicalMeetAuthority toyRefinementSpace) := by
+  rintro ⟨A⟩
+  have hL := A.meetRefinesLeft ToyTPSTag.left ToyTPSTag.right
+  have hR := A.meetRefinesRight ToyTPSTag.left ToyTPSTag.right
+  have h : ToyTPSTag.left = ToyTPSTag.right := hL.symm.trans hR
+  cases h
+
 end QuantumMereology

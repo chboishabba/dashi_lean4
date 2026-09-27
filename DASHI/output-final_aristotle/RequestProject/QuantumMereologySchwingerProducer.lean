@@ -29,8 +29,10 @@ variable
   [Fintype PointerInit] [Nonempty PointerInit]
 
 /-- The exact producer payload for one factorisation and one candidate-pointer
-initial state. Formula correctness is carried explicitly because the current
-repo still lacks a reduced-density-matrix / partial-trace derivative stack. -/
+initial state. This generic interface predates the concrete finite matrix
+producer. It remains useful for non-matrix consumers, but finite quantum
+instances should prefer the derivative-backed ReducedState / DensityEvolution /
+EntropyAcceleration lane rather than treating these fields as primary authority. -/
 structure AccelerationAuthority where
   linearEntropyAcceleration : ℝ
   pointerEntropyAcceleration : ℝ
@@ -147,7 +149,7 @@ end Pipeline
 structure Boundary where
   sameInteractionWeldCreatesCPOReceipt : Bool := false
   cpoReceiptCreatesEntropyAccelerations : Bool := false
-  accelerationAuthorityCreatesReducedStateTheory : Bool := false
+  genericAccelerationSocketIsFiniteReducedStateProof : Bool := false
   compiledSearchCreatesMinimizerExistence : Bool := false
   compiledSearchCreatesPreferredTPSUniqueness : Bool := false
 deriving Repr, DecidableEq
@@ -157,8 +159,8 @@ def canonicalBoundary : Boundary := {}
 theorem same_interaction_weld_does_not_create_cpo_minimizer :
     canonicalBoundary.sameInteractionWeldCreatesCPOReceipt = false := rfl
 
-theorem acceleration_socket_does_not_create_reduced_state_theory :
-    canonicalBoundary.accelerationAuthorityCreatesReducedStateTheory = false := rfl
+theorem generic_acceleration_socket_is_not_finite_reduced_state_proof :
+    canonicalBoundary.genericAccelerationSocketIsFiniteReducedStateProof = false := rfl
 
 end SchwingerProducer
 

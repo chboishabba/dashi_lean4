@@ -152,3 +152,9 @@ globs = ["RequestProject.NavierStokes.CanonicalCompletionLeaves"]
 [[lean_lib]]
 name = "YMContinuum"
 globs = ["YangMills.*"]
+
+# TPS-grounded quantum mereology reusing the retained Wikidata P361/P2670 layer.
+[[lean_lib]]
+name = "QuantumMereology"
+srcDir = "DASHI/output-final_aristotle"
+globs = ["RequestProject.Mereology", "RequestProject.QuantumMereology"]

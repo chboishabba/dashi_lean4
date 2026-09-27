@@ -138,6 +138,25 @@ theorem classical_part_complete_exhibits (B : ClassicalBenchmark)
   Wikidata.MKB.partComplete_exhibits
     (Wikidata.MKB.mwf_base B.wellFormed) hcomp hac hcc' hd
 
+/-! ## Attribution roles
+
+The repo keeps external source claims, local formal reconstruction,
+cross-module inference, and new DASHI theorems distinct.
+-/
+
+inductive AttributionRole where
+  | externalSourceClaim
+  | localFormalReconstruction
+  | crossModuleInference
+  | newDASHITheorem
+deriving Repr, DecidableEq
+
+structure AttributionReceipt where
+  role : AttributionRole
+  owner : String
+  claim : String
+deriving Repr, DecidableEq
+
 /-! ## Attributed scientific source receipts -/
 
 structure SourceReceipt where
@@ -149,13 +168,38 @@ structure SourceReceipt where
   supports : String
 deriving Repr, DecidableEq
 
+def carrollSinghObjectiveClaim : AttributionReceipt where
+  role := .externalSourceClaim
+  owner := "Sean M. Carroll; Ashmeet Singh, Phys. Rev. A 103, 022213 (2021)"
+  claim := "The source proposes an in-principle preferred-factorisation search minimizing a combination of entanglement growth and internal spreading for quasiclassical subsystem behaviour."
+
+def pasqualiniFortinNoCanonicalMeetClaim : AttributionReceipt where
+  role := .externalSourceClaim
+  owner := "Matías Pasqualini; Sebastian Fortin, Entropy 28(6), 627 (2026)"
+  claim := "The source argues that TPS space lacks the canonical global meet/lattice structure of classical partition mereology."
+
+def dashiSelectionReconstructionReceipt : AttributionReceipt where
+  role := .localFormalReconstruction
+  owner := "DASHI"
+  claim := "Typed candidate/criterion/selection records reconstruct the source-described preferred-TPS search without importing existence, uniqueness, or physical correctness."
+
+def dashiObserverCrossModuleReceipt : AttributionReceipt where
+  role := .crossModuleInference
+  owner := "DASHI"
+  claim := "Consumer-sufficiency/non-factorability logic is applied to TPS criterion observations only after the candidate family and downstream consumer are declared."
+
+def dashiFiniteNoMeetTheoremReceipt : AttributionReceipt where
+  role := .newDASHITheorem
+  owner := "DASHI"
+  claim := "The finite two-tag refinement regression has no CanonicalMeetAuthority; this is not the Pasqualini--Fortin physical TPS theorem."
+
 def carrollSingh2021 : SourceReceipt where
   authors := "Sean M. Carroll; Ashmeet Singh"
   title := "Quantum mereology: Factorizing Hilbert space into subsystems with quasiclassical dynamics"
   venue := "Physical Review A 103, 022213"
   year := "2021"
   identifier := "doi:10.1103/PhysRevA.103.022213"
-  supports := "Preferred-TPS research program from Hilbert space plus Hamiltonian using quasiclassical robustness, entanglement-growth, and localization criteria."
+  supports := "Preferred-TPS research program from Hilbert space plus Hamiltonian using pointer robustness and an in-principle objective combining entanglement growth with internal spreading/localization around approximately classical trajectories."
 
 def caoCarrollMichalakis2017 : SourceReceipt where
   authors := "ChunJun Cao; Sean M. Carroll; Spyridon Michalakis"

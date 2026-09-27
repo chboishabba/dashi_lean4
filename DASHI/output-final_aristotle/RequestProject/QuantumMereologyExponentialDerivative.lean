@@ -1,5 +1,6 @@
 import RequestProject.QuantumMereologyHamiltonianExponential
 import Mathlib.Analysis.SpecialFunctions.Exponential
+import Mathlib.Analysis.Complex.RealDeriv
 
 /-!
 # Exponential derivative spine
@@ -78,6 +79,43 @@ def schrodingerGenerator
     Matrix I I ℂ :=
   (-Complex.I) • H
 
+
+/-- Real Fréchet derivative map obtained by restricting a complex derivative
+vector to the real axis. This keeps the scalar-field change explicit. -/
+noncomputable def realRestrictionDerivative
+    (v : Matrix I I ℂ) :
+    ℝ →L[ℝ] Matrix I I ℂ :=
+  (Complex.reCLM.smulRight v +
+    Complex.I • Complex.imCLM.smulRight v).comp
+      Complex.ofRealCLM
+
+theorem hasFDerivAt_real_complexPath
+    (K : Matrix I I ℂ)
+    (t : ℝ) :
+    HasFDerivAt
+      (fun s : ℝ => complexPath K (s : ℂ))
+      (realRestrictionDerivative
+        (NormedSpace.exp ((t : ℂ) • K) * K))
+      t := by
+  have h :=
+    (hasDerivAt_complexPath K (t : ℂ)).complexToReal_fderiv'
+  simpa [realRestrictionDerivative] using
+    h.comp t Complex.ofRealCLM.hasFDerivAt
+
+theorem hasFDerivAt_real_complexPath_derivative
+    (K : Matrix I I ℂ)
+    (t : ℝ) :
+    HasFDerivAt
+      (fun s : ℝ =>
+        NormedSpace.exp ((s : ℂ) • K) * K)
+      (realRestrictionDerivative
+        ((NormedSpace.exp ((t : ℂ) • K) * K) * K))
+      t := by
+  have h :=
+    (hasDerivAt_complexPath_derivative K (t : ℂ)).complexToReal_fderiv'
+  simpa [realRestrictionDerivative] using
+    h.comp t Complex.ofRealCLM.hasFDerivAt
+
 theorem complexPath_schrodingerGenerator
     (H : Matrix I I ℂ)
     (z : ℂ) :
@@ -86,15 +124,15 @@ theorem complexPath_schrodingerGenerator
   rfl
 
 structure Boundary where
-  complexDerivativeAutomaticallyIsRealTimeDerivative : Bool := false
+  complexDerivativeRealRestrictionPaid : Bool := true
   complexSecondDerivativeAutomaticallyComputesEntropySecondDerivative : Bool := false
   exponentialDerivativeProvesHamiltonianIsEmpirical : Bool := false
 deriving Repr, DecidableEq
 
 def canonicalBoundary : Boundary := {}
 
-theorem complex_derivative_not_silently_real_time :
-    canonicalBoundary.complexDerivativeAutomaticallyIsRealTimeDerivative = false := rfl
+theorem complex_derivative_real_restriction_is_paid :
+    canonicalBoundary.complexDerivativeRealRestrictionPaid = true := rfl
 
 theorem matrix_second_derivative_not_entropy_second_derivative :
     canonicalBoundary.complexSecondDerivativeAutomaticallyComputesEntropySecondDerivative = false := rfl
@@ -109,6 +147,6 @@ def mathlibExponentialDerivativeSource : AttributionReceipt where
 def dashiExponentialDerivativeReceipt : AttributionReceipt where
   role := .newDASHITheorem
   owner := "DASHI"
-  claim := "Specialises the mathlib exponential derivative to the finite matrix carrier and derives the second complex-parameter derivative while keeping the real-time and entropy-chain-rule bridges explicit."
+  claim := "Specialises the mathlib exponential derivative to the finite matrix carrier, derives first/second complex-parameter derivatives, and pays the real-axis Fréchet-derivative restriction while keeping the entropy-chain-rule bridge explicit."
 
 end QuantumMereology

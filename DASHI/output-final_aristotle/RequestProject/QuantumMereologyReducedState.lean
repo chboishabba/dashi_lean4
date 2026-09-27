@@ -12,9 +12,8 @@ For finite subsystem index types A and B, define the partial trace over B by
 
   (Tr_B rho) i j = sum_b rho (i,b) (j,b).
 
-DASHI proves trace preservation and Hermitian preservation directly. Positive
-semidefinite preservation is intentionally left as an explicit authority leaf
-rather than being smuggled into the definition.
+DASHI proves trace, Hermitian, and positive-semidefinite preservation directly,
+so the partial trace now returns a genuine finite density matrix.
 
 The resulting linear entropy is the source formula 1 - Tr(rho_A^2).
 -/
@@ -106,8 +105,6 @@ theorem isHermitian
 
 end DensityMatrix
 
-/-- A reduced density candidate whose only unpaid density-matrix law is
-positive-semidefinite preservation of the partial trace. -/
 def partialTraceDensityRight
     (rho : DensityMatrix (A × B)) :
     DensityMatrix A where

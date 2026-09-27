@@ -1,6 +1,7 @@
 import RequestProject.QuantumMereologyCandidatePointerObservable
 import RequestProject.QuantumMereologySchwingerObjective
 import RequestProject.QuantumMereologyOperatorLocality
+import RequestProject.QuantumMereologyEntropyAcceleration
 
 /-!
 # Same-TPS CPO -> Schwinger producer compiler
@@ -46,6 +47,57 @@ structure AccelerationAuthority where
   PointerEntropySecondDerivativeAuthority : Prop
   pointerEntropySecondDerivativeAuthority :
     PointerEntropySecondDerivativeAuthority
+
+namespace AccelerationAuthority
+
+variable
+  {A B J : Type*}
+  [Fintype A] [DecidableEq A]
+  [Fintype B] [DecidableEq B]
+  [Fintype J]
+
+/-- Finite matrix instances enter the generic compiler only through an actual
+derivative-backed entropy-acceleration receipt. The generic authority fields are
+instantiated by concrete theorem statements, not by True placeholders. -/
+def ofConcreteReceipt
+    {path : EntropyAcceleration.UnitaryPath (A := A) (B := B)}
+    {rho0 : ReducedState.DensityMatrix (A × B)}
+    {projectors :
+      PointerProbability.ProjectorFamily (I := A) (J := J)}
+    (R : EntropyAcceleration.Receipt path rho0 projectors) :
+    AccelerationAuthority where
+  linearEntropyAcceleration := R.linearAcceleration
+  pointerEntropyAcceleration := R.pointerAcceleration
+  ReducedStateAuthority :=
+    ReducedState.partialTraceDensityRight
+      (EntropyAcceleration.globalDensityAt path rho0 0)
+      =
+    EntropyAcceleration.reducedDensityAt path rho0 0
+  reducedStateAuthority := rfl
+  LinearEntropySecondDerivativeAuthority :=
+    EntropyAcceleration.SecondDerivativeAt
+      (EntropyAcceleration.linearEntropyPath path rho0)
+      0
+      R.linearAcceleration
+  linearEntropySecondDerivativeAuthority :=
+    R.linearSecondDerivative
+  PointerProbabilityAuthority :=
+    EntropyAcceleration.pointerEntropyPath path rho0 projectors
+      =
+    (fun t =>
+      PointerProbability.pointerEntropy
+        (EntropyAcceleration.reducedDensityAt path rho0 t)
+        projectors)
+  pointerProbabilityAuthority := rfl
+  PointerEntropySecondDerivativeAuthority :=
+    EntropyAcceleration.SecondDerivativeAt
+      (EntropyAcceleration.pointerEntropyPath path rho0 projectors)
+      0
+      R.pointerAcceleration
+  pointerEntropySecondDerivativeAuthority :=
+    R.pointerSecondDerivative
+
+end AccelerationAuthority
 
 /-- Canonical bare world used by the finite linear/operator producer. -/
 def linearWorld (H : Type*) [NormedAddCommGroup H] [InnerProductSpace ℂ H] :

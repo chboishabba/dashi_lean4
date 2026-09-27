@@ -129,6 +129,33 @@ theorem criterionCollisionBlocksFactorisation
   exact criterionCollisionBlocksConsumerSufficiency collision
     (criterionFactorisationImpliesSufficient factorisation)
 
+
+structure CriterionRefinementRepair
+    {W : BareQuantumWorld}
+    {P : PreferredTPSSelectionProblem W}
+    (S : CriterionConsumerSurface P)
+    (Refinement : Type)
+    (refine : P.Candidate → Refinement) where
+  repaired :
+    ∀ left right,
+      (S.observeCriterion left, refine left) =
+        (S.observeCriterion right, refine right) →
+      S.consumer left = S.consumer right
+
+theorem criterionCollisionForcesSeparationInEveryRepair
+    {W : BareQuantumWorld}
+    {P : PreferredTPSSelectionProblem W}
+    {S : CriterionConsumerSurface P}
+    {Refinement : Type}
+    {refine : P.Candidate → Refinement}
+    (collision : CriterionCollision S)
+    (repair : CriterionRefinementRepair S Refinement refine) :
+    refine collision.left ≠ refine collision.right := by
+  intro sameRefinement
+  apply collision.differentOutcome
+  apply repair.repaired collision.left collision.right
+  exact Prod.ext collision.sameCriterion sameRefinement
+
 structure PreferredTPSSelectionBoundary where
   sourceObjectiveCreatesLocalMinimizer : Bool := false
   oneOptimalReceiptCreatesUniqueness : Bool := false

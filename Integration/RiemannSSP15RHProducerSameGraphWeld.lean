@@ -85,6 +85,23 @@ theorem imported_source_primitive_kernel
       = 0 :=
   RH.primitive_kernel_via_source_roles lam mu
 
+def depthFiveSourceRole : Codec.RHDepthFiveRole → RH.ProducerRole
+  | .origin => .origin
+  | .j => .j
+  | .s => .target
+
+theorem depth_five_source_role_is_certificate_coordinate
+    (role : Codec.RHDepthFiveRole) :
+    importedProducerCertificate.depthFiveCoordinate role
+      = depthFiveSourceRole role := by
+  cases role <;> rfl
+
+theorem depth_five_source_coefficient_exact
+    (role : Codec.RHDepthFiveRole) :
+    importedProducerCertificate.depthFiveCoefficient role
+      = RH.coefficient (depthFiveSourceRole role) := by
+  cases role <;> rfl
+
 def markedCode
     (mode : Codec.Mode5)
     (role : Codec.RHDepthFiveRole) :
@@ -158,6 +175,81 @@ theorem neutral_j_execution_collapses :
       = SF.executeSeed (signedSeed .mode45 .j) := by
   simpa [signedSeed, markedCode] using SF.five_neutral_states_same_effect
 
+structure RoleExecutionReceipt
+    (mode : Codec.Mode5)
+    (role : Codec.RHDepthFiveRole) where
+  sourceRole : RH.ProducerRole
+  sourceRoleExact : sourceRole = depthFiveSourceRole role
+  sourceCoefficient : Nat
+  sourceCoefficientExact :
+    sourceCoefficient = RH.coefficient sourceRole
+  selectedPrime : Grid.Prime15
+  selectedPrimeExact :
+    selectedPrime = (signedSeed mode role).pointed.selectedPrime
+  orientation : SF.FibreOrientation
+  orientationExact :
+    orientation = (SF.hyperformLane (markedCode mode role).erase).orientation
+  execution : SF.Effect
+  executionExact :
+    execution = SF.executeSeed (signedSeed mode role)
+
+def canonicalRoleExecutionReceipt
+    (mode : Codec.Mode5)
+    (role : Codec.RHDepthFiveRole) :
+    RoleExecutionReceipt mode role where
+  sourceRole := depthFiveSourceRole role
+  sourceRoleExact := rfl
+  sourceCoefficient := RH.coefficient (depthFiveSourceRole role)
+  sourceCoefficientExact := rfl
+  selectedPrime := (signedSeed mode role).pointed.selectedPrime
+  selectedPrimeExact := rfl
+  orientation := (SF.hyperformLane (markedCode mode role).erase).orientation
+  orientationExact := rfl
+  execution := SF.executeSeed (signedSeed mode role)
+  executionExact := rfl
+
+theorem source_role_to_signed_execution_commutes
+    (mode : Codec.Mode5)
+    (role : Codec.RHDepthFiveRole) :
+    let receipt := canonicalRoleExecutionReceipt mode role
+    receipt.sourceCoefficient
+      = RH.coefficient (depthFiveSourceRole role) ∧
+    receipt.selectedPrime
+      = (signedSeed mode role).pointed.selectedPrime ∧
+    receipt.orientation
+      = (SF.hyperformLane (markedCode mode role).erase).orientation ∧
+    receipt.execution
+      = SF.executeSeed (signedSeed mode role) := by
+  simp [canonicalRoleExecutionReceipt]
+
+theorem origin_source_to_inverse_execution
+    (mode : Codec.Mode5) :
+    RH.coefficient (depthFiveSourceRole .origin) = 243 ∧
+    (canonicalRoleExecutionReceipt mode .origin).orientation = .inverse ∧
+    (canonicalRoleExecutionReceipt mode .origin).execution.inversePrimeTokens = 1 := by
+  simp [depthFiveSourceRole, canonicalRoleExecutionReceipt, signedSeed, markedCode,
+    SF.hyperformLane, SF.orientationOfRole, SF.executeSeed, SF.seed, SF.roleProgram,
+    SF.executeProgram, SF.applyInstruction, SF.emptyEffect]
+
+theorem j_source_to_neutral_execution
+    (mode : Codec.Mode5) :
+    RH.coefficient (depthFiveSourceRole .j) = 1215 ∧
+    (canonicalRoleExecutionReceipt mode .j).orientation = .mediated ∧
+    (canonicalRoleExecutionReceipt mode .j).execution = SF.emptyEffect := by
+  simp [depthFiveSourceRole, canonicalRoleExecutionReceipt, signedSeed, markedCode,
+    SF.hyperformLane, SF.orientationOfRole, SF.executeSeed, SF.seed, SF.roleProgram,
+    SF.executeProgram, SF.emptyEffect]
+
+theorem s_source_target_to_positive_execution
+    (mode : Codec.Mode5) :
+    RH.coefficient (depthFiveSourceRole .s) = 972 ∧
+    depthFiveSourceRole .s = RH.ProducerRole.target ∧
+    (canonicalRoleExecutionReceipt mode .s).orientation = .forward ∧
+    (canonicalRoleExecutionReceipt mode .s).execution.positivePrimeTokens = 1 := by
+  simp [depthFiveSourceRole, canonicalRoleExecutionReceipt, signedSeed, markedCode,
+    SF.hyperformLane, SF.orientationOfRole, SF.executeSeed, SF.seed, SF.roleProgram,
+    SF.executeProgram, SF.applyInstruction, SF.emptyEffect]
+
 structure Boundary where
   sourceNativeProducerCertificateImported : Bool
   sourcePoleOriginJTargetSameObjectOwned : Bool
@@ -168,6 +260,7 @@ structure Boundary where
   hyperformOrientationOwned : Bool
   neutralJPrimeProvenanceRetained : Bool
   neutralJExecutionCollapseOwned : Bool
+  sourceRoleToSignedExecutionReceiptOwned : Bool
   chosenSSPIndexingPromotedToCanonicalArithmeticSemantics : Bool
   deriving Repr
 
@@ -181,6 +274,7 @@ def canonicalBoundary : Boundary where
   hyperformOrientationOwned := true
   neutralJPrimeProvenanceRetained := true
   neutralJExecutionCollapseOwned := true
+  sourceRoleToSignedExecutionReceiptOwned := true
   chosenSSPIndexingPromotedToCanonicalArithmeticSemantics := false
 
 end Integration.RiemannSSP15RHProducerSameGraphWeld

@@ -116,8 +116,10 @@ structure Boundary where
   geometricSupersingularityIdentificationConstructed : Bool
   sourceResidueFieldDescentToF2Constructed : Bool
   mathlibWittPowerSeriesLocalRingOwned : Bool
+  coefficientMaximalIdealAdicCompletenessPaid : Bool
   mathlibPowerSeriesCompletenessLayersOwned : Bool
   powerSeriesMaximalIdealIdentified : Bool
+  powerSeriesMaximalIdealCoefficientMaxPlusXPaid : Bool
   maximalIdealAdicCompletenessConstructed : Bool
   universalDeformationImplementationFrontierOwned : Bool
   singleArithmeticBidiDischargesBothFiniteCodecRecognitions : Bool
@@ -161,8 +163,10 @@ def canonicalBoundary : Boundary where
   geometricSupersingularityIdentificationConstructed := false
   sourceResidueFieldDescentToF2Constructed := false
   mathlibWittPowerSeriesLocalRingOwned := true
+  coefficientMaximalIdealAdicCompletenessPaid := true
   mathlibPowerSeriesCompletenessLayersOwned := true
   powerSeriesMaximalIdealIdentified := true
+  powerSeriesMaximalIdealCoefficientMaxPlusXPaid := true
   maximalIdealAdicCompletenessConstructed := false
   universalDeformationImplementationFrontierOwned := true
   singleArithmeticBidiDischargesBothFiniteCodecRecognitions := true

@@ -1,3 +1,5 @@
+import Integration.OggSSPP2PuncturedKernel2Bidi
+import Integration.TriadicPAdicKernel
 import Integration.OggSSPP2Gamma0FourSubgroupIsogenyChainBidi
 import Integration.OggSSPP2UniqueGamma0FourMarkingBidi
 import Integration.OggSSPP2Gamma0FourUniqueSupersingularSubgroupSeparation

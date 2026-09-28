@@ -996,3 +996,5 @@ carrier is finite and every distance is a natural number; inside it the carriers
 are `ℝ` and `ℂ` as sets with involutions, and no analytic hypothesis is
 discharged.
 -/
+
+import Integration.TrialecticX6ModelCapstone

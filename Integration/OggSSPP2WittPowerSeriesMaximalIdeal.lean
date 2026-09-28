@@ -9,14 +9,17 @@ import Integration.OggSSPP2WittPowerSeriesCompleteness
 For A = W(F_2) and R = A[[X]], the universal deformation is naturally
 completed at the maximal ideal combining the coefficient maximal ideal with X.
 
-This file introduces the exact candidate ideal already available from the
-current Mathlib API:
+This file starts from the exact candidate ideal
 
-  mCandidate := (maximalIdeal A).comap PowerSeries.constantCoeff.
+  mCandidate := (maximalIdeal A).comap PowerSeries.constantCoeff
 
-It does NOT yet identify this ideal with IsLocalRing.maximalIdeal R or with a
-literal generated ideal (2, X).  Those are the next algebraic same-object
-theorems.
+and proves that it IS the actual maximal ideal of A[[X]].  It then proves the
+stronger two-part presentation
+
+  maximalIdeal A[[X]] = C(maximalIdeal A) + (X).
+
+It still does not identify the coefficient maximal ideal with a literal
+uniformizer such as 2; that requires a separate coefficient-ring theorem.
 -/
 
 namespace Integration.OggSSPP2WittPowerSeriesMaximalIdeal
@@ -94,8 +97,10 @@ theorem deformationTwoPartIdeal_le_maximalIdeal :
     deformationTwoPartIdeal ≤
       IsLocalRing.maximalIdeal P2WittPowerSeriesBase := by
   apply sup_le
-  · intro f hf
-    rcases hf with ⟨a, ha, rfl⟩
+  · rw [Ideal.map_le_iff_le_comap]
+    intro a ha
+    change PowerSeries.C a ∈
+      IsLocalRing.maximalIdeal P2WittPowerSeriesBase
     rw [maximalIdeal_membership_iff_constantCoeff]
     simpa using ha
   · rw [Ideal.span_le]

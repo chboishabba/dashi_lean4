@@ -4,7 +4,6 @@ import Integration.OggSSPP2F4FrobeniusCandidateNoGo
 import Integration.OggSSPP2F4DependentMarkedCover
 import Integration.OggSSPP2BalancedTernaryPuncturedPlane
 import Integration.OggSSPP2BadPrimeLevelStructureBoundary
-import Integration.OggSSPP2Gamma0FourCanonicalRawFlag
 
 /-!
 # p=2 Gamma_0(4) finite-flat marked subgroup-scheme source socket

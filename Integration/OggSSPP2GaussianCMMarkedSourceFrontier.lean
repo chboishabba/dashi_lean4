@@ -7,6 +7,8 @@ import Integration.OggSSPP2BalancedTernaryPuncturedPlane
 import Integration.OggSSPP2BalancedTernaryNeutralCompletionBridge
 import Integration.OggSSPP2BadPrimeLevelStructureBoundary
 import Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
+import Integration.OggSSPP2Gamma0FourRefinedModuliBoundary
+import Integration.OggSSPP2Gamma0FourTwoIsogenyChainSource
 
 /-!
 # p=2 Gaussian-CM marked-source frontier
@@ -88,6 +90,8 @@ structure Boundary where
   duplicatedCentreCompletionBridgeOwned : Bool
   badPrimeLevelStructureBoundaryOwned : Bool
   gamma0FourMarkedSubgroupSchemeSocketOwned : Bool
+  gamma0FourRefinedCompactificationBoundaryOwned : Bool
+  gamma0FourTwoIsogenyChainSocketOwned : Bool
   gamma0FourOrderTwoSubflagRequired : Bool
   naiveFullE4PointSetIdentificationRuledOut : Bool
   stabilizerTypeCompatibilityOwned : Bool
@@ -107,6 +111,8 @@ def canonicalBoundary : Boundary where
   duplicatedCentreCompletionBridgeOwned := true
   badPrimeLevelStructureBoundaryOwned := true
   gamma0FourMarkedSubgroupSchemeSocketOwned := true
+  gamma0FourRefinedCompactificationBoundaryOwned := true
+  gamma0FourTwoIsogenyChainSocketOwned := true
   gamma0FourOrderTwoSubflagRequired := true
   naiveFullE4PointSetIdentificationRuledOut := true
   stabilizerTypeCompatibilityOwned := true

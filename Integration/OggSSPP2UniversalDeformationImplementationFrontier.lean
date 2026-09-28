@@ -9,6 +9,7 @@ import Integration.OggSSPP2ResidueFieldDescentBoundary
 import Integration.OggSSPP2ConcreteF2UniversalDeformationRecognition
 import Integration.OggSSPP2BanerjeeF4UniversalDeformationSource
 import Integration.OggSSPP2BanerjeeF4SameSourceRealization
+import Integration.OggSSPP2BanerjeeF4Gamma0FourEnhancement
 
 /-!
 # p=2 universal-deformation implementation frontier
@@ -31,12 +32,11 @@ This file is an implementation frontier only.
 namespace Integration.OggSSPP2UniversalDeformationImplementationFrontier
 
 inductive Residual
-  | missingBanerjeeF4SourceAuthority
-  | missingGaloisInertiaSectorRealization
+  | missingFiniteFlatGamma0FourEnhancementFamily
   deriving DecidableEq, Repr
 
 def firstImplementationResidual : Residual :=
-  .missingBanerjeeF4SourceAuthority
+  .missingFiniteFlatGamma0FourEnhancementFamily
 
 structure WittPowerSeriesBaseImplementation where
   ResidueField : Type
@@ -62,6 +62,8 @@ structure Boundary where
   preferredUniversalSourceBaseIsWittF4PowerSeries : Bool
   banerjeeF4SourceDonorOwned : Bool
   explicitBanerjeeUniversalFamilyOwned : Bool
+  banerjeeSourceAuthorityAttributedAndInhabited : Bool
+  gamma0FourEnhancementContractOwned : Bool
   galoisInertiaSectorRealizationContractOwned : Bool
   explicitF2CurveCandidateOwned : Bool
   explicitF2CurveDiscriminantAndTracePaid : Bool
@@ -81,7 +83,7 @@ structure Boundary where
   universalEllipticFamilyRequiredAfterBase : Bool
   separateMarkedStateConstructionRequiredAfterSectorRealization : Bool
   separateTenStateBidiRequiredAfterSectorRealization : Bool
-  firstResidualIsBanerjeeF4SourceAuthority : Bool
+  firstResidualIsFiniteFlatGamma0FourEnhancementFamily : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
@@ -91,6 +93,8 @@ def canonicalBoundary : Boundary where
   preferredUniversalSourceBaseIsWittF4PowerSeries := true
   banerjeeF4SourceDonorOwned := true
   explicitBanerjeeUniversalFamilyOwned := true
+  banerjeeSourceAuthorityAttributedAndInhabited := true
+  gamma0FourEnhancementContractOwned := true
   galoisInertiaSectorRealizationContractOwned := true
   explicitF2CurveCandidateOwned := true
   explicitF2CurveDiscriminantAndTracePaid := true
@@ -110,6 +114,6 @@ def canonicalBoundary : Boundary where
   universalEllipticFamilyRequiredAfterBase := false
   separateMarkedStateConstructionRequiredAfterSectorRealization := false
   separateTenStateBidiRequiredAfterSectorRealization := false
-  firstResidualIsBanerjeeF4SourceAuthority := true
+  firstResidualIsFiniteFlatGamma0FourEnhancementFamily := true
 
 end Integration.OggSSPP2UniversalDeformationImplementationFrontier

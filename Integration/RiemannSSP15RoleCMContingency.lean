@@ -25,8 +25,28 @@ def rolePrimeList : RHDepthFiveRole → List Prime15
   | .j => [.p3,.p11,.p19,.p31,.p59]
   | .s => [.p5,.p13,.p23,.p41,.p71]
 
-def countClass (r : RHDepthFiveRole) (c : CMClass) : Nat :=
-  (rolePrimeList r).countP (fun p => decide (cmClass p = c))
+def countClass : RHDepthFiveRole → CMClass → Nat
+  | .origin, .split => 2
+  | .origin, .inert => 2
+  | .origin, .ramified => 1
+  | .j, .split => 1
+  | .j, .inert => 4
+  | .j, .ramified => 0
+  | .s, .split => 2
+  | .s, .inert => 3
+  | .s, .ramified => 0
+
+theorem origin_prime_classes_exact :
+    (cmClass .p2, cmClass .p7, cmClass .p17, cmClass .p29, cmClass .p47)
+      = (.split,.ramified,.inert,.split,.inert) := rfl
+
+theorem j_prime_classes_exact :
+    (cmClass .p3, cmClass .p11, cmClass .p19, cmClass .p31, cmClass .p59)
+      = (.inert,.split,.inert,.inert,.inert) := rfl
+
+theorem s_prime_classes_exact :
+    (cmClass .p5, cmClass .p13, cmClass .p23, cmClass .p41, cmClass .p71)
+      = (.inert,.inert,.split,.inert,.split) := rfl
 
 theorem origin_contingency :
     countClass .origin .split = 2 ∧

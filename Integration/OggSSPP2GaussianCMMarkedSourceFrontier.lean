@@ -15,6 +15,7 @@ import Integration.OggSSPP2WittPowerSeriesBase
 import Integration.OggSSPP2UniversalDeformationImplementationFrontier
 import Integration.OggSSPP2ExplicitF2CurveCandidate
 import Integration.OggSSPP2ResidueFieldDescentBoundary
+import Integration.OggSSPP2ConcreteF2UniversalDeformationRecognition
 import Integration.OggSSPP2BalancedTernaryNeutralCompletionBridge
 import Integration.OggSSPP2BadPrimeLevelStructureBoundary
 import Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
@@ -52,7 +53,7 @@ open Integration.OggSSPP2FrobeniusRetainedTarget
 
 inductive Residual
   | missingFormalKerFrobeniusSquaredFiniteFlatConstruction
-  | missingFormalWittPowerSeriesUniversalDeformation
+  | missingConcreteF2UniversalDeformationAuthority
   | missingGamma0FourMarkedDeformationStates
   | missingUniversalDeformationTenStateBidi
   | missingSubgroupIsogenyChainBidi
@@ -115,6 +116,8 @@ structure Boundary where
   explicitF2CurveDiscriminantAndTracePaid : Bool
   geometricSupersingularityIdentificationConstructed : Bool
   sourceResidueFieldDescentToF2Constructed : Bool
+  concreteF2UniversalDeformationRecognitionContractOwned : Bool
+  sameSourceAuthorityMarkingRecognitionCapstoneOwned : Bool
   mathlibWittPowerSeriesLocalRingOwned : Bool
   coefficientMaximalIdealAdicCompletenessPaid : Bool
   mathlibPowerSeriesCompletenessLayersOwned : Bool
@@ -163,6 +166,8 @@ def canonicalBoundary : Boundary where
   explicitF2CurveDiscriminantAndTracePaid := true
   geometricSupersingularityIdentificationConstructed := false
   sourceResidueFieldDescentToF2Constructed := false
+  concreteF2UniversalDeformationRecognitionContractOwned := true
+  sameSourceAuthorityMarkingRecognitionCapstoneOwned := true
   mathlibWittPowerSeriesLocalRingOwned := true
   coefficientMaximalIdealAdicCompletenessPaid := true
   mathlibPowerSeriesCompletenessLayersOwned := true

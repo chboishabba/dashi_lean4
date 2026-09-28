@@ -1012,3 +1012,5 @@ import Integration.BalancedTernarySparseKernel
 import Integration.BalancedTernaryDepthFiveX6Bridge
 
 import Integration.RiemannJ369BalancedTernaryCrossPollination
+
+import Integration.TrialecticDyadicT4

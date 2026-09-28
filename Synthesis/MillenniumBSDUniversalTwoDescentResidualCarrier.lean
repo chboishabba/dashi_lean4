@@ -25,18 +25,13 @@ No rank equality, Sha identification, or BSD theorem is included.
 
 namespace Synthesis.Millennium.BSD
 
-/-- Use the ellipticity proof already carried by the literal subtype. -/
-noncomputable def withRationalEllipticInstance
-    {α : Sort*}
-    (E : RationalEllipticCurve)
-    (f : E.1.IsElliptic → α) : α :=
-  f E.2
-
 /-- A point lies in the literal double image 2E(Q). -/
 def IsRationalPointDouble
-    (E : RationalEllipticCurve)
-    (P : E.1.toAffine.Point) : Prop :=
-  ∃ Q : E.1.toAffine.Point, P = Q + Q
+    (E : RationalEllipticCurve) :
+    E.1.toAffine.Point → Prop := by
+  letI : E.1.IsElliptic := E.2
+  exact fun P =>
+    ∃ Q : E.1.toAffine.Point, P = Q + Q
 
 structure UniversalTwoDescentResidualOn
     (E : RationalEllipticCurve) where
@@ -48,9 +43,12 @@ structure UniversalTwoDescentResidualOn
 
   kummer :
     letI : E.1.IsElliptic := E.2
+    let _ := selmerGroup
     Multiplicative E.1.toAffine.Point →* Selmer
 
   residualMap :
+    let _ := selmerGroup
+    let _ := residualGroup
     Selmer →* Residual
 
   kummerKernelExactlyDoubles :

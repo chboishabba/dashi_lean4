@@ -33,6 +33,75 @@ inductive FiveOrbit
 
 abbrev PhaseOrbit15 := BalancedPhase × FiveOrbit
 
+/-! ## Structural five-orbit source: T² modulo simultaneous inversion -/
+
+abbrev InnerT2 := BalancedPhase × BalancedPhase
+
+def negatePhase : BalancedPhase → BalancedPhase
+  | .negative => .positive
+  | .zero => .zero
+  | .positive => .negative
+
+theorem negate_phase_involutive (phase : BalancedPhase) :
+    negatePhase (negatePhase phase) = phase := by
+  cases phase <;> rfl
+
+def innerInvert : InnerT2 → InnerT2
+  | (y,z) => (negatePhase y, negatePhase z)
+
+theorem inner_invert_involutive (state : InnerT2) :
+    innerInvert (innerInvert state) = state := by
+  rcases state with ⟨y,z⟩
+  cases y <;> cases z <;> rfl
+
+def quotientInnerT2 : InnerT2 → FiveOrbit
+  | (.zero,.zero) => .zeroOrbit
+  | (.negative,.zero) | (.positive,.zero) => .firstAxisOrbit
+  | (.zero,.negative) | (.zero,.positive) => .secondAxisOrbit
+  | (.negative,.negative) | (.positive,.positive) => .equalSignOrbit
+  | (.negative,.positive) | (.positive,.negative) => .oppositeSignOrbit
+
+theorem quotient_inner_inversion_invariant (state : InnerT2) :
+    quotientInnerT2 (innerInvert state) = quotientInnerT2 state := by
+  rcases state with ⟨y,z⟩
+  cases y <;> cases z <;> rfl
+
+def canonicalInnerRepresentative : FiveOrbit → InnerT2
+  | .zeroOrbit => (.zero,.zero)
+  | .firstAxisOrbit => (.positive,.zero)
+  | .secondAxisOrbit => (.zero,.positive)
+  | .equalSignOrbit => (.positive,.positive)
+  | .oppositeSignOrbit => (.positive,.negative)
+
+theorem quotient_canonical_representative (orbit : FiveOrbit) :
+    quotientInnerT2 (canonicalInnerRepresentative orbit) = orbit := by
+  cases orbit <;> rfl
+
+abbrev BalancedT3 := BalancedPhase × BalancedPhase × BalancedPhase
+
+def reduceBalancedT3 : BalancedT3 → PhaseOrbit15
+  | (x,y,z) => (x, quotientInnerT2 (y,z))
+
+def canonicalLiftPhaseOrbit : PhaseOrbit15 → BalancedT3
+  | (phase,orbit) =>
+      let yz := canonicalInnerRepresentative orbit
+      (phase, yz.1, yz.2)
+
+theorem reduce_canonical_lift (state : PhaseOrbit15) :
+    reduceBalancedT3 (canonicalLiftPhaseOrbit state) = state := by
+  rcases state with ⟨phase,orbit⟩
+  cases orbit <;> rfl
+
+def invertInnerBalancedT3 : BalancedT3 → BalancedT3
+  | (x,y,z) => (x, negatePhase y, negatePhase z)
+
+theorem reduce_inner_inversion_invariant (state : BalancedT3) :
+    reduceBalancedT3 (invertInnerBalancedT3 state) =
+      reduceBalancedT3 state := by
+  rcases state with ⟨x,y,z⟩
+  cases y <;> cases z <;> rfl
+
+
 def orbitToMode : FiveOrbit → Mode5
   | .zeroOrbit => .m09
   | .firstAxisOrbit => .m18
@@ -132,6 +201,8 @@ structure Boundary where
   composedOggThreeByFiveBidiPaid : Bool
   threeTimesFiveCountFifteen : Bool
   actualInnerT2InversionQuotientPorted : Bool
+  canonicalQuotientRepresentativesOwned : Bool
+  phasePreservingT3ReductionOwned : Bool
   chosenPresentationIsCanonicalAddress : Bool
   fiveOrbitArithmeticInvariant : Bool
   presentationRedefinesSSP15 : Bool
@@ -144,7 +215,9 @@ def canonicalBoundary : Boundary where
   internalThreeByFiveBidiPaid := true
   composedOggThreeByFiveBidiPaid := true
   threeTimesFiveCountFifteen := true
-  actualInnerT2InversionQuotientPorted := false
+  actualInnerT2InversionQuotientPorted := true
+  canonicalQuotientRepresentativesOwned := true
+  phasePreservingT3ReductionOwned := true
   chosenPresentationIsCanonicalAddress := false
   fiveOrbitArithmeticInvariant := false
   presentationRedefinesSSP15 := false

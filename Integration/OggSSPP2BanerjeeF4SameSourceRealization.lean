@@ -45,14 +45,20 @@ structure SourceAuthority where
   curveOverF4ClaimRecorded :
     receipt.curveOverF4IsY2PlusYEqX3 = true
 
+  specialCurveSupersingularClaimRecorded :
+    receipt.specialCurveIsSupersingular = true
+
   automorphismG24ClaimRecorded :
     receipt.automorphismGroupIsG24 = true
 
   sameSourceTorsorClaimRecorded :
     receipt.universalDeformationIsG24SemidirectGaloisTorsor = true
 
-  wittF4PowerSeriesClaimRecorded :
-    receipt.deformationBaseIsWittF4PowerSeries = true
+  serreTateWittF4PowerSeriesClaimRecorded :
+    receipt.serreTateDeformationIsWittF4PowerSeries = true
+
+  oneParameterUniversalDeformationClaimRecorded :
+    receipt.oneParameterUniversalDeformationRecorded = true
 
   universalLiftEquationClaimRecorded :
     receipt.universalLiftEquationRecorded = true
@@ -69,9 +75,11 @@ structure SourceAuthority where
 def canonicalSourceAuthority : SourceAuthority where
   receipt := Banerjee.canonicalSourceReceipt
   curveOverF4ClaimRecorded := rfl
+  specialCurveSupersingularClaimRecorded := rfl
   automorphismG24ClaimRecorded := rfl
   sameSourceTorsorClaimRecorded := rfl
-  wittF4PowerSeriesClaimRecorded := rfl
+  serreTateWittF4PowerSeriesClaimRecorded := rfl
+  oneParameterUniversalDeformationClaimRecorded := rfl
   universalLiftEquationClaimRecorded := rfl
   sourceTitleMatches := rfl
   sourceLocatorMatches := rfl
@@ -83,13 +91,13 @@ They are receipt-backed attribution propositions, not Lean reconstructions of
 Banerjee's proofs.
 -/
 def sourceSpecialFibreSupersingular (authority : SourceAuthority) : Prop :=
-  authority.receipt.curveOverF4IsY2PlusYEqX3 = true
+  authority.receipt.specialCurveIsSupersingular = true
 
 def sourceOneParameterUniversalDeformation (authority : SourceAuthority) : Prop :=
-  authority.receipt.deformationBaseIsWittF4PowerSeries = true
+  authority.receipt.oneParameterUniversalDeformationRecorded = true
 
 def sourceCompleteLocalWittF4PowerSeriesShape (authority : SourceAuthority) : Prop :=
-  authority.receipt.deformationBaseIsWittF4PowerSeries = true
+  authority.receipt.serreTateDeformationIsWittF4PowerSeries = true
 
 def sourceUniversalProperty (authority : SourceAuthority) : Prop :=
   authority.receipt.universalDeformationIsG24SemidirectGaloisTorsor = true
@@ -148,6 +156,13 @@ def realizationFromEnhancement
     (family : Enhancement.EnhancementFamily) :
     SectorRealization authority where
   enhancementFamily := family
+
+/-- Preferred realization over the canonically attributed Banerjee source. -/
+def canonicalRealizationFromEnhancement
+    (family : Enhancement.EnhancementFamily) :
+    SectorRealization canonicalSourceAuthority :=
+  realizationFromEnhancement canonicalSourceAuthority family
+
 
 
 def marking
@@ -216,6 +231,18 @@ def tenStateRecognition
       (marking realization) where
   arithmeticBidi := markingBidi realization
 
+/--
+Once the finite-flat Gamma_0(4) enhancement family exists, the preferred
+Banerjee source marking and ten-state bidi are compiled automatically.
+-/
+def canonicalSameSourceRecognitionFromEnhancement
+    (family : Enhancement.EnhancementFamily) :
+    Universal.UniversalDeformationTenStateRecognition
+      (sourceDatum canonicalSourceAuthority)
+      (marking (canonicalRealizationFromEnhancement family)) :=
+  tenStateRecognition (canonicalRealizationFromEnhancement family)
+
+
 theorem realized_state_count_is_ten
     {authority : SourceAuthority}
     (realization : SectorRealization authority) :
@@ -223,11 +250,11 @@ theorem realized_state_count_is_ten
   exact Banerjee.galois_inertia_state_cardinality
 
 inductive Residual
-  | missingGaloisInertiaSectorRealization
+  | missingFiniteFlatGamma0FourEnhancementFamily
   deriving DecidableEq, Repr
 
 def firstResidual : Residual :=
-  .missingGaloisInertiaSectorRealization
+  .missingFiniteFlatGamma0FourEnhancementFamily
 
 structure Boundary where
   canonicalBanerjeeSourceAuthorityInhabited : Bool
@@ -237,7 +264,6 @@ structure Boundary where
   allTenSectorsShareOneUniversalFamily : Bool
   g24AndGaloisComeFromSameSourceDeformation : Bool
   galoisSheetKeptDistinctFromQuadraticOrientation : Bool
-  canonicalBanerjeeSourceAuthorityInhabited : Bool
   sectorRealizationRequiresFiniteFlatGamma0FourEnhancement : Bool
   sectorRealizationConstructsMarkedSource : Bool
   sectorRealizationConstructsTenStateBidi : Bool
@@ -253,7 +279,6 @@ def canonicalBoundary : Boundary where
   allTenSectorsShareOneUniversalFamily := true
   g24AndGaloisComeFromSameSourceDeformation := true
   galoisSheetKeptDistinctFromQuadraticOrientation := true
-  canonicalBanerjeeSourceAuthorityInhabited := true
   sectorRealizationRequiresFiniteFlatGamma0FourEnhancement := true
   sectorRealizationConstructsMarkedSource := true
   sectorRealizationConstructsTenStateBidi := true

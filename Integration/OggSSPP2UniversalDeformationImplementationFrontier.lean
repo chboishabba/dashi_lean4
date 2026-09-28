@@ -3,6 +3,8 @@ import Integration.OggSSPP2SupersingularUniversalDeformationSource
 import Integration.OggSSPP2WittPowerSeriesBase
 import Integration.OggSSPP2WittPowerSeriesCompleteness
 import Integration.OggSSPP2WittPowerSeriesMaximalIdeal
+import Integration.OggSSPP2ExplicitF2CurveCandidate
+import Integration.OggSSPP2ResidueFieldDescentBoundary
 
 /-!
 # p=2 universal-deformation implementation frontier
@@ -25,6 +27,7 @@ This file is an implementation frontier only.
 namespace Integration.OggSSPP2UniversalDeformationImplementationFrontier
 
 inductive Residual
+  | missingGeometricSupersingularityIdentification
   | missingSourceResidueFieldDescentToF2
   | missingMaximalIdealAdicCompleteness
   | missingSupersingularUniversalEllipticFamily
@@ -33,7 +36,7 @@ inductive Residual
   deriving DecidableEq, Repr
 
 def firstImplementationResidual : Residual :=
-  .missingSourceResidueFieldDescentToF2
+  .missingGeometricSupersingularityIdentification
 
 structure WittPowerSeriesBaseImplementation where
   ResidueField : Type
@@ -56,6 +59,9 @@ structure Boundary where
   mathlibWittVectorCarrierReused : Bool
   mathlibPowerSeriesCarrierReused : Bool
   f2SpecializationNotPromotedToUniversalSource : Bool
+  explicitF2CurveCandidateOwned : Bool
+  explicitF2CurveDiscriminantAndTracePaid : Bool
+  geometricSupersingularityIdentificationRequired : Bool
   sourceResidueFieldDescentToF2Required : Bool
   wittEquivTwoAdicsReused : Bool
   algebraicLocalRingBasePaid : Bool
@@ -66,13 +72,16 @@ structure Boundary where
   universalEllipticFamilyRequiredAfterBase : Bool
   gamma0FourMarkedStatesRequiredAfterFamily : Bool
   tenStateBidiRequiredAfterMarkedStates : Bool
-  firstResidualIsSourceResidueFieldDescent : Bool
+  firstResidualIsGeometricSupersingularityIdentification : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
   mathlibWittVectorCarrierReused := true
   mathlibPowerSeriesCarrierReused := true
   f2SpecializationNotPromotedToUniversalSource := true
+  explicitF2CurveCandidateOwned := true
+  explicitF2CurveDiscriminantAndTracePaid := true
+  geometricSupersingularityIdentificationRequired := true
   sourceResidueFieldDescentToF2Required := true
   wittEquivTwoAdicsReused := true
   algebraicLocalRingBasePaid := true
@@ -83,6 +92,6 @@ def canonicalBoundary : Boundary where
   universalEllipticFamilyRequiredAfterBase := true
   gamma0FourMarkedStatesRequiredAfterFamily := true
   tenStateBidiRequiredAfterMarkedStates := true
-  firstResidualIsSourceResidueFieldDescent := true
+  firstResidualIsGeometricSupersingularityIdentification := true
 
 end Integration.OggSSPP2UniversalDeformationImplementationFrontier

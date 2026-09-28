@@ -13,6 +13,7 @@ import NSBControl.DirectCombinedCut
 import NSBControl.SharedWeightedCut
 import NSBControl.AugmentedDerivativeCancellation
 import NSBControl.DyadicDifferenceResidual
+import NSBControl.GlobalProductRuleLoop
 
 namespace NSBCyclicOrbit
 

@@ -102,7 +102,7 @@ structure Pi0Surjection
     {F : ActionRecognitionFunctor sourceAction targetAction}
     {sourceOrbits : OrbitPresentation sourceAction}
     {targetOrbits : OrbitPresentation targetAction}
-    (R : OrbitRecognition F sourceOrbits targetOrbits) : Type max u v w x where
+    (R : OrbitRecognition F sourceOrbits targetOrbits) : Type (max (max u v) (max w x)) where
   preimageOrbit : targetOrbits.Orbit → sourceOrbits.Orbit
   hitsEveryTargetOrbit : ∀ o, R.mapOrbit (preimageOrbit o) = o
 

@@ -118,6 +118,26 @@ theorem ab_local_count_is_full_four_shift :
 theorem punctured_ab_local_count_is_rh_pole :
     Fintype.card PuncturedAB = 80 := punctured_ab_count
 
+/-! ## Pre-RH descent reconstruction of T9 from three T4 locals -/
+
+theorem compatible_dyadic_matching_is_t9 :
+    Function.Bijective t9ToMatching :=
+  ⟨t9DyadicMatchingEquiv.injective, t9DyadicMatchingEquiv.surjective⟩
+
+theorem compatible_dyadic_matching_count_is_t9 :
+    Fintype.card DyadicMatching = t9Count := by
+  rw [dyadic_matching_count]
+  norm_num [t9Count, t9_state_count]
+
+theorem raw_three_local_count_is_81_cubed :
+    Fintype.card DyadicRawTriple = 81^3 := by
+  norm_num [raw_dyadic_tuple_count]
+
+theorem overlap_constraints_remove_factor_27 :
+    Fintype.card DyadicRawTriple =
+      Fintype.card DyadicMatching * 27 :=
+  raw_to_matching_count_factor
+
 /-! ## Shared four-shift comparison -/
 
 def j369FourShiftResidual : Nat :=
@@ -169,6 +189,8 @@ structure Boundary where
   rhPoleMatchesPuncturedT4Count : Bool
   originalDyadicLocalIsSameT4Carrier : Bool
   puncturedDyadicLocalCount80 : Bool
+  compatibleDyadicMatchingExactlyT9 : Bool
+  rawThreeLocalCountFactorsByOverlap27 : Bool
   semanticIdentityClaimed : Bool
   analyticMechanismClaimed : Bool
   deriving Repr
@@ -184,6 +206,8 @@ def canonicalBoundary : Boundary where
   rhPoleMatchesPuncturedT4Count := true
   originalDyadicLocalIsSameT4Carrier := true
   puncturedDyadicLocalCount80 := true
+  compatibleDyadicMatchingExactlyT9 := true
+  rawThreeLocalCountFactorsByOverlap27 := true
   semanticIdentityClaimed := false
   analyticMechanismClaimed := false
 

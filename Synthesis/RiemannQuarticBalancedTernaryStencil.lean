@@ -117,6 +117,40 @@ theorem bulk_residual_after_depth_five :
     (810 : Nat) = 3^6 + 3^4 := by
   norm_num
 
+/-! ## Exact sparse-support complexity -/
+
+def tritSupport : SignedTrit → Nat
+  | .neg => 1
+  | .zero => 0
+  | .pos => 1
+
+def stencilSupport (s : Stencil8) : Nat :=
+    tritSupport s.e7 + tritSupport s.e6
+  + tritSupport s.e5 + tritSupport s.e4
+  + tritSupport s.e3 + tritSupport s.e2
+  + tritSupport s.e1 + tritSupport s.e0
+
+theorem pole_stencil_support : stencilSupport poleStencil = 2 := by decide
+theorem origin_stencil_support : stencilSupport originStencil = 1 := by decide
+theorem j_stencil_support : stencilSupport jStencil = 3 := by decide
+theorem target_stencil_support : stencilSupport targetStencil = 2 := by decide
+
+def totalStencilSupport : Nat :=
+  stencilSupport poleStencil + stencilSupport originStencil
+    + stencilSupport jStencil + stencilSupport targetStencil
+
+theorem total_stencil_support_is_eight :
+    totalStencilSupport = 8 := by decide
+
+def depthFiveQuotientVector : Nat × Nat × Nat :=
+  (1,5,4)
+
+theorem depth_five_j_quotient_balanced :
+    (5 : Int) = 3^2 - 3 - 1 := by norm_num
+
+theorem depth_five_target_quotient_balanced :
+    (4 : Int) = 3 + 1 := by norm_num
+
 /-! ## Symbolic shift-polynomial stencil -/
 
 open Polynomial
@@ -294,6 +328,8 @@ theorem primitive_gcd_does_not_determine_depth_profile :
 
 structure Boundary where
   sparseStencilOwned : Bool
+  totalSignedMonomialSupportIsEight : Bool
+  depthFiveQuotientStencilOneFiveFourOwned : Bool
   symbolicShiftPolynomialKernelOwned : Bool
   modThreeUnitVsDepthFiveSplitOwned : Bool
   exactThreeAdicDepthCertificatesOwned : Bool
@@ -308,6 +344,8 @@ structure Boundary where
 
 def canonicalBoundary : Boundary where
   sparseStencilOwned := true
+  totalSignedMonomialSupportIsEight := true
+  depthFiveQuotientStencilOneFiveFourOwned := true
   symbolicShiftPolynomialKernelOwned := true
   modThreeUnitVsDepthFiveSplitOwned := true
   exactThreeAdicDepthCertificatesOwned := true

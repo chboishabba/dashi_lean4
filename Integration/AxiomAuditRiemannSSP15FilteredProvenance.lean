@@ -1,3 +1,4 @@
+import Integration.RiemannSSP15RHProducerDonorManifest
 import Integration.RiemannSSP15RoleCMContingency
 import Integration.RiemannSSP15DepthFiveRoleCodec
 import Integration.RiemannSSP15SignedProvenanceBridge
@@ -34,3 +35,9 @@ import Integration.RiemannSSP15FilteredProvenanceCapstone
 #print axioms Integration.RiemannSSP15RoleCMContingency.s_contingency
 #print axioms Integration.RiemannSSP15RoleCMContingency.cm_column_sums
 #print axioms Integration.RiemannSSP15RoleCMContingency.complete_contingency_matrix
+
+
+#print axioms Integration.RiemannSSP15RHProducerDonorManifest.donor_commit_is_pinned
+#print axioms Integration.RiemannSSP15RHProducerDonorManifest.content_addressed_verifier_is_owned
+#print axioms Integration.RiemannSSP15RHProducerDonorManifest.exact_head_verifier_not_yet_observed
+#print axioms Integration.RiemannSSP15RHProducerDonorManifest.donor_not_imported_into_current_branch

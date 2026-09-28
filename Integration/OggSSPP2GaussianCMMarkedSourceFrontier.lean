@@ -9,6 +9,8 @@ import Integration.OggSSPP2TrialecticNineObserverReconciliation
 import Integration.OggSSPP2TrialecticNineObserverArithmeticLoss
 import Integration.OggSSPP2TrialecticNineCentreResidualBidi
 import Integration.OggSSPP2DualDependentCodecBidi
+import Integration.OggSSPP2ArithmeticBidiDualCodecTransport
+import Integration.OggSSPP2SupersingularUniversalDeformationSource
 import Integration.OggSSPP2BalancedTernaryNeutralCompletionBridge
 import Integration.OggSSPP2BadPrimeLevelStructureBoundary
 import Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
@@ -103,6 +105,8 @@ structure Boundary where
   trialecticNineObserverArithmeticLossPaid : Bool
   trialecticNineCentreOnlyResidualCodecOwned : Bool
   dualDependentCodecBidiOwned : Bool
+  arithmeticBidiDualCodecTransportOwned : Bool
+  universalSupersingularDeformationSourceSocketOwned : Bool
   duplicatedCentreCompletionBridgeOwned : Bool
   badPrimeLevelStructureBoundaryOwned : Bool
   gamma0FourMarkedSubgroupSchemeSocketOwned : Bool
@@ -133,6 +137,8 @@ def canonicalBoundary : Boundary where
   trialecticNineObserverArithmeticLossPaid := true
   trialecticNineCentreOnlyResidualCodecOwned := true
   dualDependentCodecBidiOwned := true
+  arithmeticBidiDualCodecTransportOwned := true
+  universalSupersingularDeformationSourceSocketOwned := true
   duplicatedCentreCompletionBridgeOwned := true
   badPrimeLevelStructureBoundaryOwned := true
   gamma0FourMarkedSubgroupSchemeSocketOwned := true

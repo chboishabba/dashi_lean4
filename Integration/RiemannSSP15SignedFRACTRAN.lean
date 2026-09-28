@@ -32,6 +32,60 @@ def roleProgram : RHSSP15RoleCode → List SignedInstruction
   | (_,.j) => []
   | (m,.s) => [.introducePrime (roleCodeToPrime (m,.s))]
 
+inductive FibreOrientation
+  | inverse | mediated | forward
+  deriving DecidableEq, Repr
+
+def orientationOfRole : RHDepthFiveRole → FibreOrientation
+  | .origin => .inverse
+  | .j => .mediated
+  | .s => .forward
+
+def complexityRank : Prime15 → Nat
+  | .p2 => 0
+  | .p3 => 1
+  | .p5 => 2
+  | .p7 => 3
+  | .p11 => 4
+  | .p13 => 5
+  | .p17 => 6
+  | .p19 => 7
+  | .p23 => 8
+  | .p29 => 9
+  | .p31 => 10
+  | .p41 => 11
+  | .p47 => 12
+  | .p59 => 13
+  | .p71 => 14
+
+structure HyperformLane where
+  prime : Prime15
+  declaredComplexityRank : Nat
+  rankCertificate : declaredComplexityRank = complexityRank prime
+  address369 : Nat × Nat × Nat
+  orientation : FibreOrientation
+
+def canonicalAddress369 : Nat × Nat × Nat := (3,6,9)
+
+def hyperformLane (c : RHSSP15RoleCode) : HyperformLane :=
+  let p := roleCodeToPrime c
+  ⟨p, complexityRank p, rfl, canonicalAddress369, orientationOfRole c.2⟩
+
+theorem hyperform_lane_prime_exact (c : RHSSP15RoleCode) :
+    (hyperformLane c).prime = roleCodeToPrime c := rfl
+
+theorem origin_hyperform_orientation_inverse (m : Mode5) :
+    (hyperformLane (m,.origin)).orientation = .inverse := rfl
+
+theorem j_hyperform_orientation_mediated (m : Mode5) :
+    (hyperformLane (m,.j)).orientation = .mediated := rfl
+
+theorem s_hyperform_orientation_forward (m : Mode5) :
+    (hyperformLane (m,.s)).orientation = .forward := rfl
+
+theorem hyperform_address_is_369 (c : RHSSP15RoleCode) :
+    (hyperformLane c).address369 = (3,6,9) := rfl
+
 structure Effect where
   positivePrimeTokens : Nat
   inversePrimeTokens : Nat
@@ -115,6 +169,9 @@ inductive PromotionError
   deriving DecidableEq, Repr
 
 structure Boundary where
+  signedHyperformLaneOwned : Bool
+  rolePolarityOrientationOwned : Bool
+  canonical369AddressOwned : Bool
   originInverseInstructionOwned : Bool
   jEmptyProgramOwned : Bool
   sPositiveInstructionOwned : Bool
@@ -125,6 +182,9 @@ structure Boundary where
   deriving Repr
 
 def canonicalBoundary : Boundary where
+  signedHyperformLaneOwned := true
+  rolePolarityOrientationOwned := true
+  canonical369AddressOwned := true
   originInverseInstructionOwned := true
   jEmptyProgramOwned := true
   sPositiveInstructionOwned := true

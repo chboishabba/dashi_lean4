@@ -831,4 +831,156 @@ theorem exists_quarticFourSignedPole_quarticScaleOuterTerminal_tendsto :
   rw [← htarget]
   exact hsub
 
+
+/-!
+## Finite-Q terminal interface
+
+Because the dimensionless outer-terminal sequence converges to r^6 H_W, the
+strict canonical high cut is equivalent to an eventual finite-Q bound with a
+positive slack.  This removes improper limits from the statement a future
+ordinary analytic proof must establish.
+-/
+
+def QuarticFourSignedPolePair.QuarticScaleOuterTerminalEventuallyBelowMargin
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (EV : ℝ) : Prop :=
+  ∃ eps : ℝ, 0 < eps ∧
+    ∀ᶠ n : ℕ in atTop,
+      W.quarticScaleOuterTerminalAt n
+        <=
+      (t/16)^6 * W.postSixthTerminalResidualMargin rho EV - eps
+
+theorem QuarticFourSignedPolePair.quarticScaleOuterTerminalEventuallyBelowMargin_iff_highCut
+    {t EV : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hlim :
+      Tendsto W.quarticScaleOuterTerminalAt atTop
+        (𝓝 ((t/16)^6 * W.canonicalSignedHighResidual))) :
+    W.QuarticScaleOuterTerminalEventuallyBelowMargin rho EV
+      ↔
+    W.PostSixthCanonicalSignedHighCut rho EV := by
+  let L : ℝ := (t/16)^6 * W.canonicalSignedHighResidual
+  let M : ℝ := (t/16)^6 * W.postSixthTerminalResidualMargin rho EV
+  have hr6 : 0 < (t/16)^6 := by positivity
+  constructor
+  · rintro ⟨eps,heps,hev⟩
+    have hle :
+        L <= M - eps := by
+      apply le_of_tendsto hlim
+      exact hev
+    unfold QuarticFourSignedPolePair.PostSixthCanonicalSignedHighCut
+    dsimp [L,M] at hle
+    have hscaled :
+        (t/16)^6 * W.canonicalSignedHighResidual
+          <
+        (t/16)^6 * W.postSixthTerminalResidualMargin rho EV := by
+      linarith
+    exact (mul_lt_mul_left hr6).mp hscaled
+  · intro hcut
+    unfold QuarticFourSignedPolePair.PostSixthCanonicalSignedHighCut at hcut
+    have hscaled :
+        L < M := by
+      dsimp [L,M]
+      exact (mul_lt_mul_left hr6).2 hcut
+    let eps : ℝ := (M-L)/2
+    have heps : 0 < eps := by
+      dsimp [eps]
+      linarith
+    have htarget : L < M - eps := by
+      dsimp [eps]
+      linarith
+    have hev :
+        ∀ᶠ n : ℕ in atTop,
+          W.quarticScaleOuterTerminalAt n < M - eps :=
+      (tendsto_order.1 hlim).2 _ htarget
+    refine ⟨eps,heps,?_⟩
+    filter_upwards [hev] with n hn
+    exact hn.le
+
+def QuarticScaleOuterTerminalFiniteQUniformHighEstimate
+    (CV T : ℝ) : Prop :=
+  ∀ {t : ℝ},
+    T < t ->
+    ∀ {rho : Zeros},
+      (rho : ℂ).im = t ->
+      heightOf rho ≠ 0 ->
+      ∃ W : QuarticFourSignedPolePair t,
+        quarticSignedPoleStrengthFloor <= W.targetStrength
+          ∧
+        -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix
+          ∧
+        W.signedProfileMomentSix < 0
+          ∧
+        8/t < W.quantitativeTargetRadius
+          ∧
+        W.QuarticScaleOuterTerminalEventuallyBelowMargin
+          rho (quarticSignedPoleCanonicalV4Error CV t)
+
+theorem exists_quarticSignedPoleFixedHigh_finiteQOuterTerminalEstimate_excludes_offLine :
+    ∃ CV T : ℝ,
+      0 <= CV
+        ∧ quarticPlattTrudgianCutoff <= T
+        ∧
+      (
+        QuarticScaleOuterTerminalFiniteQUniformHighEstimate CV T
+        ->
+        ∀ {t : ℝ},
+          T < t ->
+          ∀ {rho : Zeros},
+            (rho : ℂ).im = t ->
+            heightOf rho ≠ 0 ->
+            False
+      ) := by
+  obtain ⟨Tlim,hTlim1,hTlim⟩ :=
+    exists_quarticFourSignedPole_quarticScaleOuterTerminal_tendsto
+  obtain ⟨CV,Tbase,hCV,hPT,hcompile⟩ :=
+    exists_quarticSignedPoleFixedHigh_compiles_selectedLiteralFarMinusMuHighCut
+  let T : ℝ := max Tbase Tlim
+  refine ⟨CV,T,hCV,?_,?_⟩
+  · exact hPT.trans (le_max_left _ _)
+  · intro hfinite t ht rho him hoff
+    have htBase : Tbase < t :=
+      lt_of_le_of_lt (le_max_left Tbase Tlim) ht
+    have htLim : Tlim <= t :=
+      (le_max_right Tbase Tlim).trans ht.le
+    obtain ⟨W,hS,hM6lo,hM6neg,hband,hfiniteCut⟩ :=
+      hfinite ht him hoff
+    have ht0 : 0 < t := by
+      have hPT200 := quarticPlattTrudgianCutoff_gt_twoHundred
+      have hPTt : quarticPlattTrudgianCutoff < t :=
+        lt_of_le_of_lt (hPT.trans (le_max_left _ _)) ht
+      linarith
+    have hlim := hTlim W htLim
+    have hcanonical :
+        W.PostSixthCanonicalSignedHighCut rho
+          (quarticSignedPoleCanonicalV4Error CV t) :=
+      (W.quarticScaleOuterTerminalEventuallyBelowMargin_iff_highCut
+        ht0 rho hlim).1 hfiniteCut
+    have hliteral :
+        (1/2 : ℝ)
+          *
+          (
+            W.canonicalLiteralFarPairSource
+            -
+            ∫ tau : ℝ,
+              W.signedOrdinateTest tau * Zeta23.mu tau
+          )
+          <
+        W.postSixthTerminalResidualMargin rho
+          (quarticSignedPoleCanonicalV4Error CV t) :=
+      (W.postSixthCanonicalSignedHighCut_iff_literalFar
+        (by
+          have hPT200 := quarticPlattTrudgianCutoff_gt_twoHundred
+          have hPTt : quarticPlattTrudgianCutoff < t :=
+            lt_of_le_of_lt (hPT.trans (le_max_left _ _)) ht
+          linarith)
+        rho).1 hcanonical
+    exact
+      hcompile htBase him hoff
+        ⟨W,hS,hM6lo,hM6neg,hband,hliteral⟩
+
 end Synthesis

@@ -162,9 +162,11 @@ def equivTarget : GaloisInertiaState ≃ Target.StratifiedTargetState where
 
 structure SourceReceipt where
   curveOverF4IsY2PlusYEqX3 : Bool
+  specialCurveIsSupersingular : Bool
   automorphismGroupIsG24 : Bool
   universalDeformationIsG24SemidirectGaloisTorsor : Bool
-  deformationBaseIsWittF4PowerSeries : Bool
+  serreTateDeformationIsWittF4PowerSeries : Bool
+  oneParameterUniversalDeformationRecorded : Bool
   universalLiftEquationRecorded : Bool
   sourceTitle : String
   sourceLocator : String
@@ -172,9 +174,11 @@ structure SourceReceipt where
 
 def canonicalSourceReceipt : SourceReceipt where
   curveOverF4IsY2PlusYEqX3 := true
+  specialCurveIsSupersingular := true
   automorphismGroupIsG24 := true
   universalDeformationIsG24SemidirectGaloisTorsor := true
-  deformationBaseIsWittF4PowerSeries := true
+  serreTateDeformationIsWittF4PowerSeries := true
+  oneParameterUniversalDeformationRecorded := true
   universalLiftEquationRecorded := true
   sourceTitle := "Romie Banerjee, A modular description of ER(2), NYJM 20 (2014) 743-758"
   sourceLocator := "Section 3.1, Proposition 3.1; arXiv:1212.2069"

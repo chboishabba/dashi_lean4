@@ -80,6 +80,18 @@ theorem ab_cycles_twice_to_ca (state : T9Carrier) :
       caAsAB (restrictCA state) :=
   restrictAB_after_rotate_twice_is_CA state
 
+theorem whole_factorization_cycles_to_bc (state : T9Carrier) :
+    observerToABLocalComplement (rotateABC state) =
+      (bcAsAB (restrictBC state),
+        bcComplementAsABComplement (bcComplement state)) :=
+  ab_factorization_after_rotate_is_bc state
+
+theorem whole_factorization_cycles_twice_to_ca (state : T9Carrier) :
+    observerToABLocalComplement (rotateABC (rotateABC state)) =
+      (caAsAB (restrictCA state),
+        caComplementAsABComplement (caComplement state)) :=
+  ab_factorization_after_rotate_twice_is_ca state
+
 def pointedRestrictionSystem :
     PointedDyadicRestrictionSystem :=
   canonicalPointedDyadicRestrictionSystem
@@ -122,6 +134,7 @@ structure Boundary where
   localTimesComplementExact : Bool
   complementCount243Owned : Bool
   participantC3CyclesCharts : Bool
+  participantC3ConjugatesWholeFactorizations : Bool
   noPreferredChart : Bool
   pointedRestrictionRepairOwned : Bool
   naivePuncturedSubpresheafRejected : Bool
@@ -138,6 +151,7 @@ def canonicalBoundary : Boundary where
   localTimesComplementExact := true
   complementCount243Owned := true
   participantC3CyclesCharts := true
+  participantC3ConjugatesWholeFactorizations := true
   noPreferredChart := true
   pointedRestrictionRepairOwned := true
   naivePuncturedSubpresheafRejected := true

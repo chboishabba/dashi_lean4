@@ -2,6 +2,7 @@ import Mathlib
 import Integration.ActionOrbitRecognition
 import Integration.BalancedTernaryHypercubeAntipodalOrbitCount
 import Integration.OggSSPSmallCharacteristicRecognition
+import Integration.MarkedArithmeticResidualCover
 
 /-!
 # Exponent-residual arithmetic source acquisition interface
@@ -110,6 +111,22 @@ structure ArithmeticResidualSource
   arithmeticConstructionReference : String
   actionGroupoidExternallySourcedClaim : Bool
 
+def toMarkedCoverPrime :
+    ExceptionalResidualPrime →
+    Integration.MarkedArithmeticResidualCover.ExceptionalResidualPrime
+  | .p2 => .p2
+  | .p3 => .p3
+
+structure MarkedCoverArithmeticResidualSourceCandidate
+    (p : ExceptionalResidualPrime) where
+  markedCoverCandidate :
+    Integration.MarkedArithmeticResidualCover.MarkedResidualSourceCandidate
+      (toMarkedCoverPrime p)
+  source : ArithmeticResidualSource p
+  sourceStateEquivMarkedCoverFine :
+    Nonempty (source.State ≃ markedCoverCandidate.cover.Fine)
+  sourceConstructionUsesMarkedCoverPattern : Prop
+
 structure FullResidualRecognition
     (p : ExceptionalResidualPrime)
     (source : ArithmeticResidualSource p) where
@@ -164,6 +181,8 @@ structure Boundary where
   p2TargetCountFactorsThroughRetainedBinaryTimesA2 : Bool
   sourceRequiresActionAndOrbitPresentation : Bool
   sourceRequiresIndependentPi0Receipt : Bool
+  markedCoverAcquisitionPatternAvailable : Bool
+  p11MarkedCoverPrecedentRecorded : Bool
   fullRecognitionUsesActionOrbitStabilizerCore : Bool
   samePresentationRequiresStateAndSymmetryBijections : Bool
   p2ArithmeticSourceConstructed : Bool
@@ -181,6 +200,8 @@ def canonicalBoundary : Boundary where
   p2TargetCountFactorsThroughRetainedBinaryTimesA2 := true
   sourceRequiresActionAndOrbitPresentation := true
   sourceRequiresIndependentPi0Receipt := true
+  markedCoverAcquisitionPatternAvailable := true
+  p11MarkedCoverPrecedentRecorded := true
   fullRecognitionUsesActionOrbitStabilizerCore := true
   samePresentationRequiresStateAndSymmetryBijections := true
   p2ArithmeticSourceConstructed := false

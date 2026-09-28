@@ -41,6 +41,25 @@ theorem p2_retained_target_passes_pi0 :
     Pi0RecognitionGate p2ExceptionalResidual (Fintype.card P2State) :=
   ⟨by decide⟩
 
+/-! ## Cheap source-proxy eliminations -/
+
+/-- Mirroring the Agda p=2 source-side fact: a naive identity-only residual
+proxy built from the 2-dimensional spinor basis would have two components,
+not the required ten.  This rejects that proxy only. -/
+theorem p2_spinor_identity_proxy_fails_pi0 :
+    ¬ Pi0RecognitionGate p2ExceptionalResidual 2 := by
+  intro h
+  exact (by decide : (10 : Nat) ≠ 2)
+    (by simpa [p2ExceptionalResidual] using h.preservesCount)
+
+/-- Mirroring the Agda p=3 separation theorem: the supersingular Frobenius
+proxy has one component, not the required two. -/
+theorem p3_supersingular_frobenius_proxy_fails_pi0 :
+    ¬ Pi0RecognitionGate p3ExceptionalResidual 1 := by
+  intro h
+  exact (by decide : (2 : Nat) ≠ 1)
+    (by simpa [p3ExceptionalResidual] using h.preservesCount)
+
 inductive RecognitionEvidenceStage
   | numericalCompatibilityOnly
   | targetGroupoidStructureExplicit
@@ -170,6 +189,8 @@ structure Boundary where
   p2GaugeTargetFailsPi0 : Bool
   p2RetainedTargetPassesPi0 : Bool
   p2GateSelectsRetainedOrientation : Bool
+  p2NaiveSpinorProxyRejected : Bool
+  p3SupersingularFrobeniusProxyRejected : Bool
   genericFullRecognitionOwnerUsed : Bool
   sourceRequiresIndependentPi0Receipt : Bool
   sourceCarriesProvenanceReference : Bool
@@ -185,6 +206,8 @@ def canonicalBoundary : Boundary where
   p2GaugeTargetFailsPi0 := true
   p2RetainedTargetPassesPi0 := true
   p2GateSelectsRetainedOrientation := true
+  p2NaiveSpinorProxyRejected := true
+  p3SupersingularFrobeniusProxyRejected := true
   genericFullRecognitionOwnerUsed := true
   sourceRequiresIndependentPi0Receipt := true
   sourceCarriesProvenanceReference := true

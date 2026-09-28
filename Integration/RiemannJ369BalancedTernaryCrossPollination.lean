@@ -2,6 +2,7 @@ import Integration.BalancedTernarySparseKernel
 import Integration.BalancedTernaryDepthFiveX6Bridge
 import Integration.MoonshineTrialecticSurfaceConsumerRouting
 import Integration.HeisenbergX6AppraisalSlice
+import Integration.TrialecticDyadicT4
 import Mathlib
 
 /-!
@@ -35,6 +36,7 @@ open Integration.BalancedTernarySparseKernel
 open Integration.BalancedTernaryDepthFiveX6Bridge
 open Integration.MoonshineTrialecticSurfaceConsumerRouting
 open Integration.HeisenbergX6AppraisalSlice
+open Integration.TrialecticDyadicT4
 
 def t9Count : Nat := Fintype.card T9Carrier
 def x6Count : Nat := Fintype.card X6
@@ -95,6 +97,27 @@ theorem depth_five_residual_is_x6_plus_puncture_plus_origin :
   norm_num [x6Count, puncturedT4Count,
     x6_state_count, punctured_t4_state_count]
 
+/-! ## The original dyadic local chart is literally the same T4 carrier -/
+
+theorem ab_local_is_same_t4_carrier :
+    Function.Bijective abToT4 :=
+  ⟨abT4Equiv.injective, abT4Equiv.surjective⟩
+
+theorem bc_local_is_same_t4_carrier :
+    Function.Bijective bcToT4 :=
+  ⟨bcT4Equiv.injective, bcT4Equiv.surjective⟩
+
+theorem ca_local_is_same_t4_carrier :
+    Function.Bijective caToT4 :=
+  ⟨caT4Equiv.injective, caT4Equiv.surjective⟩
+
+theorem ab_local_count_is_full_four_shift :
+    Fintype.card ABSection = 3^4 := by
+  norm_num [ab_section_count]
+
+theorem punctured_ab_local_count_is_rh_pole :
+    Fintype.card PuncturedAB = 80 := punctured_ab_count
+
 /-! ## Shared four-shift comparison -/
 
 def j369FourShiftResidual : Nat :=
@@ -144,6 +167,8 @@ structure Boundary where
   depthFiveX6PlusT4SplitTyped : Bool
   fullVersusPuncturedFourShiftTyped : Bool
   rhPoleMatchesPuncturedT4Count : Bool
+  originalDyadicLocalIsSameT4Carrier : Bool
+  puncturedDyadicLocalCount80 : Bool
   semanticIdentityClaimed : Bool
   analyticMechanismClaimed : Bool
   deriving Repr
@@ -157,6 +182,8 @@ def canonicalBoundary : Boundary where
   depthFiveX6PlusT4SplitTyped := true
   fullVersusPuncturedFourShiftTyped := true
   rhPoleMatchesPuncturedT4Count := true
+  originalDyadicLocalIsSameT4Carrier := true
+  puncturedDyadicLocalCount80 := true
   semanticIdentityClaimed := false
   analyticMechanismClaimed := false
 

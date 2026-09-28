@@ -1,5 +1,6 @@
 import Mathlib.RingTheory.WittVector.Compare
-import Mathlib.RingTheory.PowerSeries.Basic
+import Mathlib.RingTheory.PowerSeries.Inverse
+import Mathlib.RingTheory.LocalRing.Basic
 import Mathlib.Algebra.Field.ZMod
 
 /-!
@@ -39,6 +40,18 @@ noncomputable def p2WittEquivPadicInt :
     P2WittRing ≃+* ℤ_[2] :=
   WittVector.equiv 2
 
+noncomputable def p2WittIsLocalRing : IsLocalRing P2WittRing :=
+  IsLocalRing.of_surjective'
+    p2WittEquivPadicInt.symm.toRingHom
+    p2WittEquivPadicInt.symm.surjective
+
+noncomputable local instance : IsLocalRing P2WittRing :=
+  p2WittIsLocalRing
+
+noncomputable def p2PowerSeriesIsLocalRing :
+    IsLocalRing P2WittPowerSeriesBase :=
+  inferInstance
+
 def formalParameter :
     P2WittPowerSeriesBase :=
   PowerSeries.X
@@ -52,8 +65,10 @@ structure Boundary where
   pTypicalWittCarrierPaid : Bool
   powerSeriesCarrierPaid : Bool
   wittRingEquivTwoAdicsPaid : Bool
+  wittRingLocalStructurePaid : Bool
+  powerSeriesLocalStructurePaid : Bool
   formalParameterXPaid : Bool
-  completeLocalTopologyForUniversalDeformationClaimed : Bool
+  topologicalCompletenessForUniversalDeformationClaimed : Bool
   universalEllipticFamilyClaimed : Bool
   deriving Repr
 
@@ -62,8 +77,10 @@ def canonicalBoundary : Boundary where
   pTypicalWittCarrierPaid := true
   powerSeriesCarrierPaid := true
   wittRingEquivTwoAdicsPaid := true
+  wittRingLocalStructurePaid := true
+  powerSeriesLocalStructurePaid := true
   formalParameterXPaid := true
-  completeLocalTopologyForUniversalDeformationClaimed := false
+  topologicalCompletenessForUniversalDeformationClaimed := false
   universalEllipticFamilyClaimed := false
 
 end Integration.OggSSPP2WittPowerSeriesBase

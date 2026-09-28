@@ -1964,4 +1964,79 @@ theorem QuarticFourSignedPolePair.exists_normalizedOuterPairedAbel_invSq_add_fou
     hboundary ((n : ℝ)/(t/16)) hQlarge
   exact hraw.trans (add_le_add_right hbd _)
 
+
+/-!
+## Weld anchored P4 to the literal physical quartic-cap primitive
+
+The generic anchored/Cesaro identity now closes the last same-object gap in
+the fourfold route.
+-/
+
+theorem QuarticFourSignedPolePair.anchoredFourth_eq_normalizedFourthPrimitive
+    {t Q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hQ : quarticSignedPoleCanonicalLocalRadius <= Q) :
+    anchoredPrimitive4
+      W.quarticScaleSymmetricWindowDiscrepancy
+      quarticSignedPoleCanonicalLocalRadius Q
+      =
+    W.outerSymmetricDiscrepancyFourthPrimitive Q := by
+  have hA :
+      IntervalIntegrable
+        W.quarticScaleSymmetricWindowDiscrepancy
+        volume
+        quarticSignedPoleCanonicalLocalRadius Q :=
+    W.quarticScaleSymmetricWindowDiscrepancy_intervalIntegrable hQ
+  rw [anchoredPrimitive4_eq_cubic_cesaro hQ hA]
+  rfl
+
+theorem QuarticFourSignedPolePair.anchoredFourth_eq_physicalFourthPrimitive
+    {t Q : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hQ : quarticSignedPoleCanonicalLocalRadius <= Q) :
+    anchoredPrimitive4
+      W.quarticScaleSymmetricWindowDiscrepancy
+      quarticSignedPoleCanonicalLocalRadius Q
+      =
+    W.outerSymmetricDiscrepancyFourthPhysicalPrimitive Q := by
+  rw [W.anchoredFourth_eq_normalizedFourthPrimitive hQ]
+  exact W.outerSymmetricDiscrepancyFourthPrimitive_eq_physical ht
+
+theorem QuarticFourSignedPolePair.outerFourthPrimitiveUniformBound_to_anchored
+    {t B4 : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hB4 : W.OuterFourthPrimitiveUniformBound B4) :
+    W.OuterAnchoredFourthPrimitiveUniformBound B4 := by
+  intro Q hQ
+  rw [W.anchoredFourth_eq_physicalFourthPrimitive ht hQ]
+  exact hB4 Q hQ
+
+theorem QuarticFourSignedPolePair.exists_normalizedOuterPairedAbel_invSq_add_physicalFourthPrimitive_bound
+    {t BP B1 B2 B3 B4 : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hBP : 0 <= BP)
+    (hB1 : 0 <= B1)
+    (hB2 : 0 <= B2)
+    (hB3 : 0 <= B3)
+    (hB4 : 0 <= B4)
+    (hprim : W.OuterFourthPrimitiveUniformBound BP)
+    (henv : W.OuterPrimitivePolynomialEnvelope B1 B2 B3 B4) :
+    ∃ Kboundary : ℝ, 0 < Kboundary ∧
+      ∀ n : ℕ,
+        quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ) ->
+        max 1 quarticSignedPoleCanonicalLocalRadius
+          <= (n : ℝ)/(t/16) ->
+        |W.normalizedOuterPairedAbelAt n|
+          <=
+        Kboundary / (((n : ℝ)/(t/16))^2)
+          + BP * W.fifthDerivativeGlobalL1Mass := by
+  exact
+    W.exists_normalizedOuterPairedAbel_invSq_add_fourthPrimitive_bound
+      ht hBP hB1 hB2 hB3 hB4
+      (W.outerFourthPrimitiveUniformBound_to_anchored ht hprim)
+      henv
+
 end Synthesis

@@ -1,5 +1,6 @@
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.AlgebraicGeometry.EllipticCurve.Weierstrass
+import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 
 /-!
 # Explicit characteristic-two p=2 curve candidate
@@ -70,12 +71,33 @@ theorem frobenius_trace_is_zero :
     frobeniusTrace = 0 := by
   native_decide
 
+noncomputable def curveBaseChange
+    (K : Type*) [Field K] [Algebra F2 K] :
+    WeierstrassCurve.Affine K :=
+  curve.baseChange K
+
+theorem no_nonzero_affine_two_torsion_after_base_change
+    {K : Type*} [Field K] [CharP K 2] [Algebra F2 K]
+    {x y : K}
+    (h : (curveBaseChange K).Nonsingular x y)
+    (h2 :
+      WeierstrassCurve.Affine.Point.some x y h +
+        WeierstrassCurve.Affine.Point.some x y h = 0) :
+    False := by
+  have hroot :=
+    WeierstrassCurve.Affine.Point.isRoot_twoTorsionPolynomial_of_add_self
+      h h2
+  simpa [curveBaseChange, curve, WeierstrassCurve.twoTorsionPolynomial,
+    WeierstrassCurve.b₂, WeierstrassCurve.b₄, WeierstrassCurve.b₆,
+    Polynomial.IsRoot] using hroot
+
 structure Boundary where
   explicitF2WeierstrassModelOwned : Bool
   discriminantUnitPaid : Bool
   affineF2PointCountPaid : Bool
   projectivePointCountWithInfinityPaid : Bool
   frobeniusTraceZeroPaid : Bool
+  noNonzeroAffineTwoTorsionAfterCharTwoBaseChangePaid : Bool
   supersingularityIdentified : Bool
   universalDeformationSourceSameObject : Bool
   deriving Repr
@@ -86,6 +108,7 @@ def canonicalBoundary : Boundary where
   affineF2PointCountPaid := true
   projectivePointCountWithInfinityPaid := true
   frobeniusTraceZeroPaid := true
+  noNonzeroAffineTwoTorsionAfterCharTwoBaseChangePaid := true
   supersingularityIdentified := false
   universalDeformationSourceSameObject := false
 

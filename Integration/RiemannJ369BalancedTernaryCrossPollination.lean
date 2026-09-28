@@ -3,6 +3,7 @@ import Integration.BalancedTernaryDepthFiveX6Bridge
 import Integration.MoonshineTrialecticSurfaceConsumerRouting
 import Integration.HeisenbergX6AppraisalSlice
 import Integration.TrialecticDyadicT4
+import Integration.TrialecticDyadicLocalComplement
 import Mathlib
 
 /-!
@@ -37,6 +38,7 @@ open Integration.BalancedTernaryDepthFiveX6Bridge
 open Integration.MoonshineTrialecticSurfaceConsumerRouting
 open Integration.HeisenbergX6AppraisalSlice
 open Integration.TrialecticDyadicT4
+open Integration.TrialecticDyadicLocalComplement
 
 def t9Count : Nat := Fintype.card T9Carrier
 def x6Count : Nat := Fintype.card X6
@@ -138,6 +140,27 @@ theorem overlap_constraints_remove_factor_27 :
       Fintype.card DyadicMatching * 27 :=
   raw_to_matching_count_factor
 
+/-! ## Exact pre-RH local/complement factorization -/
+
+theorem global_t9_is_local_t4_times_complement_t5 :
+    Fintype.card T9Carrier =
+      Fintype.card ABSection * Fintype.card T5Carrier :=
+  t9_is_t4_times_t5
+
+theorem depth_five_factor_is_literal_t5_complement :
+    Fintype.card T5Carrier = 3^5 := by
+  norm_num [t5_state_count]
+
+theorem bulk_is_complement_times_shifted_local :
+    (196830 : Nat) =
+      Fintype.card T5Carrier
+        * ((3^2 + 1) * Fintype.card ABSection) := by
+  norm_num [t5_state_count, ab_section_count]
+
+theorem rh_pole_matches_punctured_dyadic_local :
+    (80 : Nat) = Fintype.card PuncturedAB := by
+  simpa using punctured_ab_count.sym
+
 /-! ## Shared four-shift comparison -/
 
 def j369FourShiftResidual : Nat :=
@@ -191,6 +214,9 @@ structure Boundary where
   puncturedDyadicLocalCount80 : Bool
   compatibleDyadicMatchingExactlyT9 : Bool
   rawThreeLocalCountFactorsByOverlap27 : Bool
+  globalT9IsLocalT4TimesComplementT5 : Bool
+  depthFiveFactorIsLiteralT5Complement : Bool
+  rhPoleMatchesPuncturedDyadicLocal : Bool
   semanticIdentityClaimed : Bool
   analyticMechanismClaimed : Bool
   deriving Repr
@@ -208,6 +234,9 @@ def canonicalBoundary : Boundary where
   puncturedDyadicLocalCount80 := true
   compatibleDyadicMatchingExactlyT9 := true
   rawThreeLocalCountFactorsByOverlap27 := true
+  globalT9IsLocalT4TimesComplementT5 := true
+  depthFiveFactorIsLiteralT5Complement := true
+  rhPoleMatchesPuncturedDyadicLocal := true
   semanticIdentityClaimed := false
   analyticMechanismClaimed := false
 

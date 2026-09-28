@@ -3,6 +3,7 @@ import Integration.OggSSPP2BanerjeeF4UniversalDeformationSource
 import Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
 import Integration.OggSSPP2Gamma0FourUniqueSupersingularSubgroupSeparation
 import Integration.OggSSPP2Gamma0FourTwoIsogenyChainSource
+import Integration.OggSSPP2Gamma0FourCanonicalRawFlag
 
 /-!
 # Banerjee F4 source versus Gamma_0(4) enhancement boundary
@@ -26,6 +27,7 @@ namespace Gamma0 := Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
 namespace Unique :=
   Integration.OggSSPP2Gamma0FourUniqueSupersingularSubgroupSeparation
 namespace Chain := Integration.OggSSPP2Gamma0FourTwoIsogenyChainSource
+namespace RawFlag := Integration.OggSSPP2Gamma0FourCanonicalRawFlag
 
 /--
 Concrete source-side enhancement required for EACH Banerjee Galois/inertia
@@ -38,11 +40,12 @@ structure SectorGamma0FourEnhancement
     (state : Banerjee.GaloisInertiaState) where
   finiteFlatDatum : Gamma0.Gamma0FourFiniteFlatDatum
 
-  rawOrderFourSubgroup :
-    Unique.SupersingularRawGamma0FourSubgroup
+  rawFlag :
+    RawFlag.RawGamma0FourFlag
 
-  rawOrderFourSubgroupIsKerFrobeniusSquared :
-    rawOrderFourSubgroup = .kerFrobeniusSquared
+  rawFlagIsCanonical :
+    rawFlag.orderTwo = RawFlag.canonicalRawFlag.orderTwo ∧
+      rawFlag.orderFour = RawFlag.canonicalRawFlag.orderFour
 
   twoIsogenyChain :
     Chain.Gamma0FourTwoIsogenyChain
@@ -75,12 +78,22 @@ The raw order-4 subgroup choice is forced to be ker(F²) in every enhanced
 sector.  Hence any tenfold distinction must live in the additional marking /
 inertia / local-model data, not in ten different raw subgroup choices.
 -/
+theorem every_enhanced_sector_has_same_raw_flag
+    (family : EnhancementFamily)
+    (state : Banerjee.GaloisInertiaState) :
+    (family.enhance state).rawFlag.orderTwo =
+        RawFlag.canonicalRawFlag.orderTwo ∧
+      (family.enhance state).rawFlag.orderFour =
+        RawFlag.canonicalRawFlag.orderFour :=
+  (family.enhance state).rawFlagIsCanonical
+
 theorem every_enhanced_sector_has_same_raw_order_four_subgroup
     (family : EnhancementFamily)
     (state : Banerjee.GaloisInertiaState) :
-    (family.enhance state).rawOrderFourSubgroup =
-      .kerFrobeniusSquared :=
-  (family.enhance state).rawOrderFourSubgroupIsKerFrobeniusSquared
+    (family.enhance state).rawFlag.orderFour =
+      .kerFrobeniusSquared := by
+  rw [(every_enhanced_sector_has_same_raw_flag family state).2]
+  rfl
 
 /--
 The enhancement does not change the source sector carrier.
@@ -115,6 +128,7 @@ structure Boundary where
   banerjeeSourceTorsorReused : Bool
   banerjeeLevelThreeContextKeptDistinctFromGamma0Four : Bool
   rawOrderFourSubgroupForcedToKerFrobeniusSquared : Bool
+  rawOrderTwoSubflagChoiceAlsoUnique : Bool
   finiteFlatDatumRequiredPerSector : Bool
   orderTwoSubflagCompatibilityRequired : Bool
   twoIsogenyChainRequiredPerSector : Bool
@@ -126,6 +140,7 @@ def canonicalBoundary : Boundary where
   banerjeeSourceTorsorReused := true
   banerjeeLevelThreeContextKeptDistinctFromGamma0Four := true
   rawOrderFourSubgroupForcedToKerFrobeniusSquared := true
+  rawOrderTwoSubflagChoiceAlsoUnique := true
   finiteFlatDatumRequiredPerSector := true
   orderTwoSubflagCompatibilityRequired := true
   twoIsogenyChainRequiredPerSector := true

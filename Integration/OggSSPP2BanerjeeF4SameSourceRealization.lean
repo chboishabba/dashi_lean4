@@ -2,6 +2,7 @@ import Mathlib
 import Integration.OggSSPP2BanerjeeF4UniversalDeformationSource
 import Integration.OggSSPP2SupersingularUniversalDeformationSource
 import Integration.OggSSPP2UniqueGamma0FourMarkingBidi
+import Integration.OggSSPP2BanerjeeF4Gamma0FourEnhancement
 
 /-!
 # Banerjee F4 same-source realization capstone
@@ -29,6 +30,7 @@ namespace Unique :=
   Integration.OggSSPP2Gamma0FourUniqueSupersingularSubgroupSeparation
 namespace Bidi := Integration.OggSSPP2UniqueGamma0FourMarkingBidi
 namespace Target := Integration.OggSSPP2F4AntipodalStratifiedRefinement
+namespace Enhancement := Integration.OggSSPP2BanerjeeF4Gamma0FourEnhancement
 
 /--
 Attributed Banerjee source authority.
@@ -134,17 +136,19 @@ theorem canonical_authority_source_claims_paid :
 
 structure SectorRealization
     (authority : SourceAuthority) where
-  gamma0FourLevelStructurePresent :
-    Banerjee.GaloisInertiaState → Prop
+  enhancementFamily :
+    Enhancement.EnhancementFamily
 
-  gamma0FourLevelStructurePresentProof :
-    ∀ state, gamma0FourLevelStructurePresent state
+/--
+Canonical realization constructor once a genuine Gamma_0(4) enhancement family
+has been constructed.  No additional free propositions are required.
+-/
+def realizationFromEnhancement
+    (authority : SourceAuthority)
+    (family : Enhancement.EnhancementFamily) :
+    SectorRealization authority where
+  enhancementFamily := family
 
-  deformationProvenanceRetained :
-    Banerjee.GaloisInertiaState → Prop
-
-  deformationProvenanceRetainedProof :
-    ∀ state, deformationProvenanceRetained state
 
 def marking
     {authority : SourceAuthority}
@@ -155,14 +159,14 @@ def marking
   underlyingFamilyState := fun _ => Banerjee.universalCurve
   specializesToRawSubgroup := fun _ => .kerFrobeniusSquared
   specializationIsUniqueKerFrobeniusSquared := fun _ => rfl
-  gamma0FourLevelStructurePresent :=
-    realization.gamma0FourLevelStructurePresent
-  gamma0FourLevelStructurePresentProof :=
-    realization.gamma0FourLevelStructurePresentProof
-  deformationProvenanceRetained :=
-    realization.deformationProvenanceRetained
-  deformationProvenanceRetainedProof :=
-    realization.deformationProvenanceRetainedProof
+  gamma0FourLevelStructurePresent := fun state =>
+    Nonempty (Enhancement.SectorGamma0FourEnhancement state)
+  gamma0FourLevelStructurePresentProof := fun state =>
+    ⟨realization.enhancementFamily.enhance state⟩
+  deformationProvenanceRetained := fun state =>
+    (realization.enhancementFamily.enhance state).sourceSectorRetained = state
+  deformationProvenanceRetainedProof := fun state =>
+    (realization.enhancementFamily.enhance state).sourceSectorRetainedExact
 
 def sourceCoarseOrbit :
     Banerjee.GaloisInertiaState →
@@ -175,6 +179,14 @@ theorem all_sector_states_share_universal_curve
     (state : Banerjee.GaloisInertiaState) :
     (marking realization).underlyingFamilyState state =
       Banerjee.universalCurve := rfl
+
+theorem realized_state_has_gamma0_four_enhancement
+    {authority : SourceAuthority}
+    (realization : SectorRealization authority)
+    (state : Banerjee.GaloisInertiaState) :
+    Nonempty (Enhancement.SectorGamma0FourEnhancement state) :=
+  ⟨realization.enhancementFamily.enhance state⟩
+
 
 def markingBidi
     {authority : SourceAuthority}
@@ -225,6 +237,8 @@ structure Boundary where
   allTenSectorsShareOneUniversalFamily : Bool
   g24AndGaloisComeFromSameSourceDeformation : Bool
   galoisSheetKeptDistinctFromQuadraticOrientation : Bool
+  canonicalBanerjeeSourceAuthorityInhabited : Bool
+  sectorRealizationRequiresFiniteFlatGamma0FourEnhancement : Bool
   sectorRealizationConstructsMarkedSource : Bool
   sectorRealizationConstructsTenStateBidi : Bool
   separateTenStateClassificationProofRequired : Bool
@@ -239,6 +253,8 @@ def canonicalBoundary : Boundary where
   allTenSectorsShareOneUniversalFamily := true
   g24AndGaloisComeFromSameSourceDeformation := true
   galoisSheetKeptDistinctFromQuadraticOrientation := true
+  canonicalBanerjeeSourceAuthorityInhabited := true
+  sectorRealizationRequiresFiniteFlatGamma0FourEnhancement := true
   sectorRealizationConstructsMarkedSource := true
   sectorRealizationConstructsTenStateBidi := true
   separateTenStateClassificationProofRequired := false

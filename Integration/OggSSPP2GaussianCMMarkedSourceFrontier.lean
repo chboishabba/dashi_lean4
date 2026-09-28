@@ -3,6 +3,8 @@ import Integration.OggSSPP2F4FrobeniusCandidateNoGo
 import Integration.OggSSPP2F4AntipodalStratifiedRefinement
 import Integration.OggSSPP2F4DependentMarkedCover
 import Integration.OggSSPP2FrobeniusRetainedTarget
+import Integration.OggSSPP2BalancedTernaryPuncturedPlane
+import Integration.OggSSPP2BalancedTernaryNeutralCompletionBridge
 
 /-!
 # p=2 Gaussian-CM marked-source frontier
@@ -78,6 +80,8 @@ structure Boundary where
   rawF4ThreeOrbitPresentationOwned : Bool
   uniformThreeOrbitLiftRuledOut : Bool
   oneOneEightDependentTargetNormalFormOwned : Bool
+  balancedTernaryPuncturedPlaneNormalFormOwned : Bool
+  duplicatedCentreCompletionBridgeOwned : Bool
   stabilizerTypeCompatibilityOwned : Bool
   movingFrobeniusDiscreteTargetNoGoOwned : Bool
   movingC2TenOrbitPositiveControlOwned : Bool
@@ -91,6 +95,8 @@ def canonicalBoundary : Boundary where
   rawF4ThreeOrbitPresentationOwned := true
   uniformThreeOrbitLiftRuledOut := true
   oneOneEightDependentTargetNormalFormOwned := true
+  balancedTernaryPuncturedPlaneNormalFormOwned := true
+  duplicatedCentreCompletionBridgeOwned := true
   stabilizerTypeCompatibilityOwned := true
   movingFrobeniusDiscreteTargetNoGoOwned := true
   movingC2TenOrbitPositiveControlOwned := true

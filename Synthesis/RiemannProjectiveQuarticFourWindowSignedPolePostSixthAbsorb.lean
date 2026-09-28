@@ -9514,6 +9514,84 @@ theorem quarticFourSignedPoleCombinedProfile_zero_eq_weighted_origin
   ring
 
 
+private theorem quantitativeSymBump_zero_of_center_ge_one
+    {R c : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1)
+    (hc : 1 <= c) :
+    quantitativeSymBump c R 0 = 0 := by
+  have hplus : scaledUnitBump c R 0 = 0 := by
+    by_contra hne
+    have hs := scaledUnitBump_support hR hne
+    have habs : |(0 : ℝ) - c| = c := by
+      rw [zero_sub, abs_neg, abs_of_nonneg (hc.trans' (by norm_num))]
+    rw [habs] at hs
+    linarith
+  unfold quantitativeSymBump
+    Zeta23Bridge.LiteralWeilOddChannelTaper.symmetrize
+  simp [hplus]
+
+/--
+For a narrow four-window profile, evaluation at the physical origin sees only
+the central bump.  Hence the value at zero is independent of lambda and mu.
+
+This is the exact support-separation fact needed to factor the combined
+physical-origin value through the smooth origin determinant.
+-/
+theorem quarticFourWindowProfile_zero_independent
+    {R lam mu lam' mu' : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1) :
+    quarticFourWindowProfile R lam mu 0
+      =
+    quarticFourWindowProfile R lam' mu' 0 := by
+  have hpi3 : (1 : ℝ) <= Real.pi/3 := by
+    have hp := Real.pi_gt_three
+    linarith
+  have hpi2 : (1 : ℝ) <= Real.pi/2 := by
+    have hp := Real.pi_gt_three
+    linarith
+  have hpi : (1 : ℝ) <= Real.pi := by
+    have hp := Real.pi_gt_three
+    linarith
+  have h1 :=
+    quantitativeSymBump_zero_of_center_ge_one hR hRone hpi3
+  have h2 :=
+    quantitativeSymBump_zero_of_center_ge_one hR hRone hpi2
+  have h3 :=
+    quantitativeSymBump_zero_of_center_ge_one hR hRone hpi
+  unfold quarticFourWindowProfile quarticFourWindowRaw
+  rw [h1,h2,h3]
+  ring
+
+/--
+Exact factorization of the selected combined physical-profile value at u=0.
+
+The endpoint window value is common because the noncentral bumps are support
+separated from zero.  Therefore the only endpoint-dependent factor left is
+the already-defined pole-cancelled physical-origin determinant.
+-/
+theorem QuarticFourSignedPolePair.combinedProfile_zero_eq_commonWindow_mul_origin
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t 0
+      =
+    4 * quarticFourWindowProfile W.R (1/2) W.muHalf 0
+      * quarticFourSmoothFinitePoleCancelledOrigin
+          W.R W.muHalf W.muTwo t := by
+  rw [quarticFourSignedPoleCombinedProfile_zero_eq_weighted_origin W.Rpos]
+  have hcommon :
+      quarticFourWindowProfile W.R (2/3) W.muTwo 0
+        =
+      quarticFourWindowProfile W.R (1/2) W.muHalf 0 :=
+    quarticFourWindowProfile_zero_independent
+      W.Rpos W.RltOne
+  rw [hcommon]
+  unfold quarticFourSmoothFinitePoleCancelledOrigin
+  ring
+
+
 theorem exists_radius_quarticFourSmoothOrigin_close_atomic
     {eps : ℝ}
     (heps : 0 < eps) :

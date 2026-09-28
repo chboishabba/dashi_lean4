@@ -5,6 +5,7 @@ import Integration.OggSSPP2F4DependentMarkedCover
 import Integration.OggSSPP2FrobeniusRetainedTarget
 import Integration.OggSSPP2BalancedTernaryPuncturedPlane
 import Integration.OggSSPP2BalancedTernaryNeutralCompletionBridge
+import Integration.OggSSPP2BadPrimeLevelStructureBoundary
 
 /-!
 # p=2 Gaussian-CM marked-source frontier
@@ -82,6 +83,8 @@ structure Boundary where
   oneOneEightDependentTargetNormalFormOwned : Bool
   balancedTernaryPuncturedPlaneNormalFormOwned : Bool
   duplicatedCentreCompletionBridgeOwned : Bool
+  badPrimeLevelStructureBoundaryOwned : Bool
+  naiveFullE4PointSetIdentificationRuledOut : Bool
   stabilizerTypeCompatibilityOwned : Bool
   movingFrobeniusDiscreteTargetNoGoOwned : Bool
   movingC2TenOrbitPositiveControlOwned : Bool
@@ -97,6 +100,8 @@ def canonicalBoundary : Boundary where
   oneOneEightDependentTargetNormalFormOwned := true
   balancedTernaryPuncturedPlaneNormalFormOwned := true
   duplicatedCentreCompletionBridgeOwned := true
+  badPrimeLevelStructureBoundaryOwned := true
+  naiveFullE4PointSetIdentificationRuledOut := true
   stabilizerTypeCompatibilityOwned := true
   movingFrobeniusDiscreteTargetNoGoOwned := true
   movingC2TenOrbitPositiveControlOwned := true

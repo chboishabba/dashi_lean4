@@ -70,6 +70,39 @@ def phaseOrbitRoot369Equiv : PhaseOrbit15 ≃ Root369Refinement where
   left_inv := phase_root_roundtrip
   right_inv := root_phase_roundtrip
 
+def addressToRoot369
+    (address : Integration.MoonshineSSP15OggAddressCodec.SSP15OggAddress15) :
+    Root369Refinement :=
+  oggToRoot369
+    (Integration.MoonshineSSP15OggAddressCodec.ssp15LaneFromAddress address)
+
+def root369ToAddress
+    (state : Root369Refinement) :
+    Integration.MoonshineSSP15OggAddressCodec.SSP15OggAddress15 :=
+  Integration.MoonshineSSP15OggAddressCodec.addressFromSSP15Lane
+    (root369ToOgg state)
+
+theorem address_root_roundtrip
+    (address : Integration.MoonshineSSP15OggAddressCodec.SSP15OggAddress15) :
+    root369ToAddress (addressToRoot369 address) = address := by
+  simp [addressToRoot369, root369ToAddress,
+    Integration.MoonshineSSP15OggAddressCodec.address_after_lane]
+
+theorem root_address_roundtrip (state : Root369Refinement) :
+    addressToRoot369 (root369ToAddress state) = state := by
+  rcases state with ⟨prime,address⟩
+  cases address
+  simp [addressToRoot369, root369ToAddress, oggToRoot369,
+    Integration.MoonshineSSP15OggAddressCodec.lane_after_address]
+
+def addressRoot369Equiv :
+    Integration.MoonshineSSP15OggAddressCodec.SSP15OggAddress15 ≃
+      Root369Refinement where
+  toFun := addressToRoot369
+  invFun := root369ToAddress
+  left_inv := address_root_roundtrip
+  right_inv := root_address_roundtrip
+
 inductive Root369CreatesFullPAdicHierarchy : Prop
 
 theorem root_only_does_not_create_full_padic_hierarchy :
@@ -81,6 +114,7 @@ structure Boundary where
   rootAddressSingleton : Bool
   oggRoot369BidiPaid : Bool
   phaseOrbitRoot369BidiPaid : Bool
+  exactAddressRoot369BidiPaid : Bool
   fullDepthRefinementHierarchyPorted : Bool
   pAdicCoordinateBridgePorted : Bool
   deriving Repr
@@ -89,6 +123,7 @@ def canonicalBoundary : Boundary where
   rootAddressSingleton := true
   oggRoot369BidiPaid := true
   phaseOrbitRoot369BidiPaid := true
+  exactAddressRoot369BidiPaid := true
   fullDepthRefinementHierarchyPorted := false
   pAdicCoordinateBridgePorted := false
 

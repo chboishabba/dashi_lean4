@@ -24,6 +24,7 @@ structure DegreeTwoIsogenyStep where
   kernelRank : Nat
   kernelRankIsTwo : kernelRank = 2
   finiteFlatKernel : Prop
+  finiteFlatKernelProof : finiteFlatKernel
 
 structure Gamma0FourTwoIsogenyChain where
   E0 : Type
@@ -40,15 +41,26 @@ structure Gamma0FourTwoIsogenyChain where
   compositeKernelRankIsFour :
     compositeKernelRank = 4
   firstKernelIsOrderTwoSubflag : Prop
+  firstKernelIsOrderTwoSubflagProof : firstKernelIsOrderTwoSubflag
+
   compositeKernelIsGamma0FourCyclic : Prop
+  compositeKernelIsGamma0FourCyclicProof : compositeKernelIsGamma0FourCyclic
+
   characteristicTwoBadPrimeSemantics : Prop
+  characteristicTwoBadPrimeSemanticsProof : characteristicTwoBadPrimeSemantics
+
   sourceReference : String
 
 structure ChainToSubgroupDatumRecognition
     (chain : Gamma0FourTwoIsogenyChain) where
   subgroupDatum : Gamma0FourFiniteFlatDatum
+
   firstStepKernelMatchesSubflag : Prop
+  firstStepKernelMatchesSubflagProof : firstStepKernelMatchesSubflag
+
   compositeKernelMatchesOrderFourSubgroup : Prop
+  compositeKernelMatchesOrderFourSubgroupProof :
+    compositeKernelMatchesOrderFourSubgroup
 
 inductive Residual
   | missingFirstFiniteFlatDegreeTwoStep

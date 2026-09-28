@@ -5,6 +5,7 @@ import NSBControl.SpectatorFibreLegTransport
 import NSBControl.CompleteSelfOrbitCollapse
 import NSBControl.OutputPairingCollapse
 import NSBControl.OutputRealityNoGo
+import NSBControl.QCycleQuotientResidual
 import NSBControl.SelectedSelfResolvedRecombination
 import NSBControl.CombinedSpacetimePayment
 import NSBControl.CombinedPaymentToWeightedWork

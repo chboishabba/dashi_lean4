@@ -1,6 +1,8 @@
 import Mathlib
 import Integration.OggSSPP2SupersingularUniversalDeformationSource
 import Integration.OggSSPP2WittPowerSeriesBase
+import Integration.OggSSPP2WittPowerSeriesCompleteness
+import Integration.OggSSPP2WittPowerSeriesMaximalIdeal
 
 /-!
 # p=2 universal-deformation implementation frontier
@@ -23,14 +25,14 @@ This file is an implementation frontier only.
 namespace Integration.OggSSPP2UniversalDeformationImplementationFrontier
 
 inductive Residual
-  | missingCompleteTopologicalUniversalDeformationStructure
+  | missingMaximalIdealAdicCompleteness
   | missingSupersingularUniversalEllipticFamily
   | missingGamma0FourMarkedDeformationStates
   | missingTenStateClassificationBidi
   deriving DecidableEq, Repr
 
 def firstImplementationResidual : Residual :=
-  .missingCompleteTopologicalUniversalDeformationStructure
+  .missingMaximalIdealAdicCompleteness
 
 structure WittPowerSeriesBaseImplementation where
   ResidueField : Type
@@ -54,11 +56,14 @@ structure Boundary where
   mathlibPowerSeriesCarrierReused : Bool
   wittEquivTwoAdicsReused : Bool
   algebraicLocalRingBasePaid : Bool
-  completeTopologicalUniversalDeformationStructureRequired : Bool
+  coefficientwiseCompletenessPaid : Bool
+  xAdicCompletenessPaid : Bool
+  actualPowerSeriesMaximalIdealIdentified : Bool
+  maximalIdealAdicCompletenessRequired : Bool
   universalEllipticFamilyRequiredAfterBase : Bool
   gamma0FourMarkedStatesRequiredAfterFamily : Bool
   tenStateBidiRequiredAfterMarkedStates : Bool
-  firstResidualIsCompleteTopologicalUniversalStructure : Bool
+  firstResidualIsMaximalIdealAdicCompleteness : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
@@ -66,10 +71,13 @@ def canonicalBoundary : Boundary where
   mathlibPowerSeriesCarrierReused := true
   wittEquivTwoAdicsReused := true
   algebraicLocalRingBasePaid := true
-  completeTopologicalUniversalDeformationStructureRequired := true
+  coefficientwiseCompletenessPaid := true
+  xAdicCompletenessPaid := true
+  actualPowerSeriesMaximalIdealIdentified := true
+  maximalIdealAdicCompletenessRequired := true
   universalEllipticFamilyRequiredAfterBase := true
   gamma0FourMarkedStatesRequiredAfterFamily := true
   tenStateBidiRequiredAfterMarkedStates := true
-  firstResidualIsCompleteTopologicalUniversalStructure := true
+  firstResidualIsMaximalIdealAdicCompleteness := true
 
 end Integration.OggSSPP2UniversalDeformationImplementationFrontier

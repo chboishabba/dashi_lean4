@@ -1044,3 +1044,9 @@ import Integration.OggSSP15PhaseOrbitBidi
 import Integration.OggSSP369RootRefinementBidi
 
 import Integration.OggSSP15PhaseOrbitC3
+
+import Integration.TrialecticT5ComplementPhaseOrbitResidual
+
+import Integration.TrialecticT5ComplementOggResidualBidi
+
+import Integration.TrialecticParticipantCenteredSSPFactor

@@ -9,6 +9,8 @@ on:
     paths:
       - "Integration/Bishop*.lean"
       - "Integration/Moonshine*.lean"
+      - "Integration/TrialecticX6ModelCapstone.lean"
+      - "Integration/Riemann*.lean"
       - "Integration.lean"
       - "scripts/route_b_agda_replay_probe.py"
       - "scripts/route_b_agda_kernel_replay.py"
@@ -19,6 +21,8 @@ on:
     paths:
       - "Integration/Bishop*.lean"
       - "Integration/Moonshine*.lean"
+      - "Integration/TrialecticX6ModelCapstone.lean"
+      - "Integration/Riemann*.lean"
       - "Integration.lean"
       - "scripts/route_b_agda_replay_probe.py"
       - "scripts/route_b_agda_kernel_replay.py"
@@ -111,6 +115,16 @@ jobs:
 
       - name: Build Integration library
         run: lake build Integration
+
+      - name: Check RH balanced-ternary cross-pollination
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean Integration/RiemannOneTwoThreeCoefficientLanguage.lean
+          lake env lean Integration/RiemannPrimitiveKernelBalancedTernaryStencil.lean
+          lake env lean Integration/RiemannMonster196830TernaryShiftBridge.lean
+          lake env lean Integration/RiemannTrialecticT9ScaleFactorizationBoundary.lean
+          lake env lean Integration/AxiomAuditRiemannBalancedTernary.lean
 
       - name: Check route-B terminal modules
         shell: bash

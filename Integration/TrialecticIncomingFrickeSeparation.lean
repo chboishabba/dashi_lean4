@@ -110,6 +110,45 @@ theorem stabilizer_preserving_five_way_equiv_impossible :
   cases hm : h.equiv NineOrbit5.zeroOrbit <;>
     simp [incomingOrbitStabilizerSize, finiteFrickeModeStabilizerSize, hm] at hs
 
+/-! ## Correct future target: quotient-level analytic Fricke recognition -/
+
+structure AnalyticFrickeFiveModeRecognition where
+  AnalyticState : Type
+  analyticFricke : AnalyticState → AnalyticState
+  involutive : ∀ state, analyticFricke (analyticFricke state) = state
+  analyticMode : AnalyticState → Mode5
+  modeInvariant :
+    ∀ state, analyticMode (analyticFricke state) = analyticMode state
+  representative : Mode5 → AnalyticState
+  representativeExact :
+    ∀ mode, analyticMode (representative mode) = mode
+
+def incomingAnalyticRepresentative
+    (recognition : AnalyticFrickeFiveModeRecognition)
+    (point : NinePoint) : recognition.AnalyticState :=
+  recognition.representative (incomingQuotientMode point)
+
+theorem incoming_analytic_representative_same_mode
+    (recognition : AnalyticFrickeFiveModeRecognition)
+    (point : NinePoint) :
+    recognition.analyticMode
+      (incomingAnalyticRepresentative recognition point)
+      = incomingQuotientMode point :=
+  recognition.representativeExact _
+
+inductive QuotientRecognitionCreatesRawEquivariantEquiv : Prop
+inductive QuotientRecognitionCreatesStabilizerGroupoidEquiv : Prop
+
+theorem quotient_recognition_does_not_create_raw_equiv :
+    ¬ QuotientRecognitionCreatesRawEquivariantEquiv := by
+  intro h
+  cases h
+
+theorem quotient_recognition_does_not_create_groupoid_equiv :
+    ¬ QuotientRecognitionCreatesStabilizerGroupoidEquiv := by
+  intro h
+  cases h
+
 inductive QuotientCoordinateMatchCreatesRawActionIdentity : Prop
 inductive FiniteFrickeIsAnalyticModularFricke : Prop
 
@@ -133,6 +172,9 @@ structure Boundary where
   incomingStabilizerProfileTwoOneOneOneOne : Bool
   finiteFrickeStabilizerProfileAllOne : Bool
   stabilizerPreservingFiveWayEquivalenceRejected : Bool
+  quotientLevelAnalyticRecognitionContractOwned : Bool
+  rawEquivRequiredByAnalyticContract : Bool
+  groupoidEquivRequiredByAnalyticContract : Bool
   analyticFrickeIdentificationPaid : Bool
   deriving Repr
 
@@ -146,6 +188,9 @@ def canonicalBoundary : Boundary where
   incomingStabilizerProfileTwoOneOneOneOne := true
   finiteFrickeStabilizerProfileAllOne := true
   stabilizerPreservingFiveWayEquivalenceRejected := true
+  quotientLevelAnalyticRecognitionContractOwned := true
+  rawEquivRequiredByAnalyticContract := false
+  groupoidEquivRequiredByAnalyticContract := false
   analyticFrickeIdentificationPaid := false
 
 end Integration.TrialecticIncomingFrickeSeparation

@@ -31,8 +31,6 @@ namespace Bidi := Integration.OggSSPP2UniqueGamma0FourMarkingBidi
 namespace Target := Integration.OggSSPP2F4AntipodalStratifiedRefinement
 
 structure SourceAuthority where
-  EllipticFamilyState : Type
-
   specialFibreSupersingular : Prop
   specialFibreSupersingularProof : specialFibreSupersingular
 
@@ -56,7 +54,7 @@ def sourceDatum
   WittBase := Banerjee.F4WittRing
   FormalParameter := Banerjee.F4DeformationBase
   DeformationBase := Banerjee.F4DeformationBase
-  EllipticFamilyState := authority.EllipticFamilyState
+  EllipticFamilyState := WeierstrassCurve Banerjee.F4DeformationBase
   characteristic := 2
   characteristicIsTwo := rfl
   oneFormalParameter := authority.oneParameterUniversalDeformation
@@ -82,10 +80,6 @@ theorem source_deformation_base_is_WF4_power_series
 
 structure SectorRealization
     (authority : SourceAuthority) where
-  underlyingFamilyState :
-    Banerjee.GaloisInertiaState →
-      (sourceDatum authority).EllipticFamilyState
-
   gamma0FourLevelStructurePresent :
     Banerjee.GaloisInertiaState → Prop
 
@@ -104,7 +98,7 @@ def marking
     Universal.Gamma0FourUniversalDeformationMarking
       (sourceDatum authority) where
   MarkedState := Banerjee.GaloisInertiaState
-  underlyingFamilyState := realization.underlyingFamilyState
+  underlyingFamilyState := fun _ => Banerjee.universalCurve
   specializesToRawSubgroup := fun _ => .kerFrobeniusSquared
   specializationIsUniqueKerFrobeniusSquared := fun _ => rfl
   gamma0FourLevelStructurePresent :=
@@ -120,6 +114,13 @@ def sourceCoarseOrbit :
     Banerjee.GaloisInertiaState →
       Integration.OggSSPP2F4FrobeniusCandidateNoGo.F4Orbit :=
   Target.stratumOf ∘ Banerjee.toTarget
+
+theorem all_sector_states_share_universal_curve
+    {authority : SourceAuthority}
+    (realization : SectorRealization authority)
+    (state : Banerjee.GaloisInertiaState) :
+    (marking realization).underlyingFamilyState state =
+      Banerjee.universalCurve := rfl
 
 def markingBidi
     {authority : SourceAuthority}
@@ -165,6 +166,8 @@ def firstResidual : Residual :=
 
 structure Boundary where
   sourceBaseCorrectedFromF2ToF4 : Bool
+  explicitUniversalFamilyCarrierPaid : Bool
+  allTenSectorsShareOneUniversalFamily : Bool
   g24AndGaloisComeFromSameSourceDeformation : Bool
   galoisSheetKeptDistinctFromQuadraticOrientation : Bool
   sectorRealizationConstructsMarkedSource : Bool
@@ -175,6 +178,8 @@ structure Boundary where
 
 def canonicalBoundary : Boundary where
   sourceBaseCorrectedFromF2ToF4 := true
+  explicitUniversalFamilyCarrierPaid := true
+  allTenSectorsShareOneUniversalFamily := true
   g24AndGaloisComeFromSameSourceDeformation := true
   galoisSheetKeptDistinctFromQuadraticOrientation := true
   sectorRealizationConstructsMarkedSource := true

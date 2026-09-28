@@ -249,6 +249,79 @@ noncomputable def powerSeriesMaximalIdealHausdorff :
       coeff_mem_of_mem_actualMaximalPower n k hfmem
     simpa [SModEq.zero, smul_eq_mul, Ideal.mul_top] using hcoeff
 
+noncomputable def powerSeriesMaximalIdealPrecomplete :
+    IsPrecomplete
+      (IsLocalRing.maximalIdeal P2WittPowerSeriesBase)
+      P2WittPowerSeriesBase where
+  prec' f hf := by
+    let g : Nat → Nat → P2WittRing :=
+      fun k r => PowerSeries.coeff k (f (r + k + 1))
+    have hgCauchy :
+        ∀ k : Nat, ∀ {r s : Nat}, r ≤ s →
+          g k r ≡ g k s
+            [SMOD (coefficientMaximalIdeal ^ r •
+              (⊤ : Submodule P2WittRing P2WittRing))] := by
+      intro k r s hrs
+      have hindex :
+          r + k + 1 ≤ s + k + 1 := by omega
+      have hfs := hf hindex
+      have hmem :
+          f (r + k + 1) - f (s + k + 1) ∈
+            (IsLocalRing.maximalIdeal P2WittPowerSeriesBase) ^
+              (r + k + 1) := by
+        simpa [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top] using hfs
+      have hcoeff :=
+        coeff_mem_of_mem_actualMaximalPower r k hmem
+      simpa [g, SModEq.sub_mem, map_sub, smul_eq_mul, Ideal.mul_top] using hcoeff
+    choose limitCoeff hlimit using
+      fun k =>
+        IsPrecomplete.prec
+          (I := coefficientMaximalIdeal)
+          (hgCauchy k)
+    let L : P2WittPowerSeriesBase :=
+      PowerSeries.mk limitCoeff
+    refine ⟨L, ?_⟩
+    intro n
+    have hstep := hf (Nat.le_succ n)
+    have hstepMem :
+        f n - f (n + 1) ∈
+          (IsLocalRing.maximalIdeal P2WittPowerSeriesBase) ^ n := by
+      simpa [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top,
+        Nat.succ_eq_add_one] using hstep
+    have hnextMem :
+        f (n + 1) - L ∈
+          (IsLocalRing.maximalIdeal P2WittPowerSeriesBase) ^ n := by
+      apply actualMaximalPower_mem_of_lowCoefficientControl
+      intro k hk
+      have hlim := hlimit k (n - k)
+      have hindex :
+          (n - k) + k + 1 = n + 1 := by omega
+      have hcoeff :
+          PowerSeries.coeff k (f (n + 1)) -
+              PowerSeries.coeff k L ∈
+            coefficientMaximalIdeal ^ (n - k) := by
+        have :
+            g k (n - k) - limitCoeff k ∈
+              coefficientMaximalIdeal ^ (n - k) := by
+          simpa [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top] using hlim
+        simpa [g, L, hindex] using this
+      simpa [map_sub] using hcoeff
+    have hsum :=
+      (IsLocalRing.maximalIdeal P2WittPowerSeriesBase ^ n).add_mem
+        hstepMem hnextMem
+    have htotal :
+        f n - L ∈
+          (IsLocalRing.maximalIdeal P2WittPowerSeriesBase) ^ n := by
+      simpa [sub_add_sub_cancel] using hsum
+    simpa [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top] using htotal
+
+noncomputable def powerSeriesMaximalIdealAdicallyComplete :
+    IsAdicComplete
+      (IsLocalRing.maximalIdeal P2WittPowerSeriesBase)
+      P2WittPowerSeriesBase where
+  toIsHausdorff := powerSeriesMaximalIdealHausdorff
+  toIsPrecomplete := powerSeriesMaximalIdealPrecomplete
+
 structure Boundary where
   coefficientMaximalIdealFiniteGenerated : Bool
   coefficientIdealPowerControlsAllCoefficients : Bool
@@ -266,6 +339,6 @@ def canonicalBoundary : Boundary where
   mixedPowerControlsFixedCoefficient := true
   actualMaximalIdealPowerControlsFixedCoefficient := true
   mixedAdicHausdorffProved := true
-  mixedAdicPrecompleteProved := false
+  mixedAdicPrecompleteProved := true
 
 end Integration.OggSSPP2WittPowerSeriesMixedAdicControl

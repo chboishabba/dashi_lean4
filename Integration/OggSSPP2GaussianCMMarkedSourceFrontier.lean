@@ -48,12 +48,10 @@ open Integration.OggSSPP2FrobeniusRetainedTarget
 
 inductive Residual
   | missingFormalKerFrobeniusSquaredFiniteFlatConstruction
-  | missingArithmeticMarkingOverUniqueRawSubgroup
-  | missingUniqueGamma0MarkingBidi
+  | missingFormalWittPowerSeriesUniversalDeformation
+  | missingGamma0FourMarkedDeformationStates
+  | missingUniversalDeformationTenStateBidi
   | missingSubgroupIsogenyChainBidi
-  | missingOrderTwoSubflag
-  | missingFormalCMOrbitEquivalence
-  | missingArithmeticOneOneEightMarking
   | missingFrobeniusCompatibleRecognition
   deriving DecidableEq, Repr
 
@@ -107,6 +105,8 @@ structure Boundary where
   dualDependentCodecBidiOwned : Bool
   arithmeticBidiDualCodecTransportOwned : Bool
   universalSupersingularDeformationSourceSocketOwned : Bool
+  singleArithmeticBidiDischargesBothFiniteCodecRecognitions : Bool
+  separateArithmeticOneOneEightProofRequiredAfterBidi : Bool
   duplicatedCentreCompletionBridgeOwned : Bool
   badPrimeLevelStructureBoundaryOwned : Bool
   gamma0FourMarkedSubgroupSchemeSocketOwned : Bool
@@ -139,6 +139,8 @@ def canonicalBoundary : Boundary where
   dualDependentCodecBidiOwned := true
   arithmeticBidiDualCodecTransportOwned := true
   universalSupersingularDeformationSourceSocketOwned := true
+  singleArithmeticBidiDischargesBothFiniteCodecRecognitions := true
+  separateArithmeticOneOneEightProofRequiredAfterBidi := false
   duplicatedCentreCompletionBridgeOwned := true
   badPrimeLevelStructureBoundaryOwned := true
   gamma0FourMarkedSubgroupSchemeSocketOwned := true

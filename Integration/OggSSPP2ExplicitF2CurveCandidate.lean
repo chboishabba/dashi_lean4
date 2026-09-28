@@ -63,11 +63,19 @@ theorem rational_point_count_is_three :
     rationalPointCount = 3 := by
   native_decide
 
+def frobeniusTrace : Int :=
+  (2 : Int) + 1 - rationalPointCount
+
+theorem frobenius_trace_is_zero :
+    frobeniusTrace = 0 := by
+  native_decide
+
 structure Boundary where
   explicitF2WeierstrassModelOwned : Bool
   discriminantUnitPaid : Bool
   affineF2PointCountPaid : Bool
   projectivePointCountWithInfinityPaid : Bool
+  frobeniusTraceZeroPaid : Bool
   supersingularityIdentified : Bool
   universalDeformationSourceSameObject : Bool
   deriving Repr
@@ -77,6 +85,7 @@ def canonicalBoundary : Boundary where
   discriminantUnitPaid := true
   affineF2PointCountPaid := true
   projectivePointCountWithInfinityPaid := true
+  frobeniusTraceZeroPaid := true
   supersingularityIdentified := false
   universalDeformationSourceSameObject := false
 

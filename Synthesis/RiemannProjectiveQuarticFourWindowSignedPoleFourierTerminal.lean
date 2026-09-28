@@ -983,4 +983,131 @@ theorem exists_quarticSignedPoleFixedHigh_finiteQOuterTerminalEstimate_excludes_
       hcompile htBase him hoff
         ⟨W,hS,hM6lo,hM6neg,hband,hliteral⟩
 
+
+/-!
+## Four-primitive scale cancellation
+
+The normalized outer wall contains
+
+  A4(q) = r^4 * D(t-r*q,t+r*q),   r=t/16.
+
+A pointwise estimate on A4 is far too expensive.  But after four primitives in
+the normalized variable, the apparent r^4 loss cancels *exactly* against the
+affine change of variables and the cubic Cesaro kernel.
+
+Define the fourth primitive anchored at the canonical normalized cut eta0:
+
+  P4_q(Q)
+    = ∫_[eta0,Q] ((Q-q)^3/6) * A4(q) dq.
+
+Define its physical-halfwidth counterpart:
+
+  P4_s(Q)
+    = ∫_[r*eta0,r*Q]
+        ((r*Q-s)^3/6) * D(t-s,t+s) ds.
+
+Then P4_q(Q)=P4_s(Q) exactly.  This is the first nontrivial mechanism in the
+current reduction that can supply the four missing inverse powers without a
+pointwise r^-4 discrepancy estimate.
+
+No bound on this primitive is asserted here.
+-/
+
+def QuarticFourSignedPolePair.outerSymmetricDiscrepancyFourthPrimitive
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (Q : ℝ) : ℝ :=
+  ∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+    ((Q-q)^3 / 6)
+      * W.quarticScaleSymmetricWindowDiscrepancy q
+
+def QuarticFourSignedPolePair.outerSymmetricDiscrepancyFourthPhysicalPrimitive
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (Q : ℝ) : ℝ :=
+  let r := t/16
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  ∫ s in (r*eta)..(r*Q),
+    ((r*Q-s)^3 / 6)
+      * zetaMuCumulativeDiscrepancy (t-s) (t+s)
+
+theorem QuarticFourSignedPolePair.outerSymmetricDiscrepancyFourthPrimitive_eq_physical
+    {t Q : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.outerSymmetricDiscrepancyFourthPrimitive Q
+      =
+    W.outerSymmetricDiscrepancyFourthPhysicalPrimitive Q := by
+  let r : ℝ := t/16
+  let eta : ℝ := quarticSignedPoleCanonicalLocalRadius
+  let f : ℝ -> ℝ := fun s =>
+    ((r*Q-s)^3 / 6)
+      * zetaMuCumulativeDiscrepancy (t-s) (t+s)
+  have hr : 0 < r := by
+    dsimp [r]
+    positivity
+  have hscale :=
+    intervalIntegral.smul_integral_comp_mul_add
+      (f:=f) (a:=eta) (b:=Q) r 0
+  unfold QuarticFourSignedPolePair.outerSymmetricDiscrepancyFourthPrimitive
+    QuarticFourSignedPolePair.outerSymmetricDiscrepancyFourthPhysicalPrimitive
+    QuarticFourSignedPolePair.quarticScaleSymmetricWindowDiscrepancy
+  dsimp [r,eta] at hscale ⊢
+  rw [show
+      (fun q : ℝ =>
+        ((Q-q)^3 / 6)
+          *
+        ((t/16)^4
+          * zetaMuCumulativeDiscrepancy
+              (t-(t/16)*q)
+              (t+(t/16)*q)))
+      =
+      fun q =>
+        (t/16) *
+          (
+            (((t/16)*Q - (t/16)*q)^3 / 6)
+              *
+            zetaMuCumulativeDiscrepancy
+              (t-(t/16)*q)
+              (t+(t/16)*q)
+          ) by
+        funext q
+        ring]
+  rw [intervalIntegral.integral_const_mul]
+  simpa [smul_eq_mul] using hscale
+
+def QuarticFourSignedPolePair.OuterFourthPrimitiveUniformBound
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (B : ℝ) : Prop :=
+  ∀ Q : ℝ,
+    quarticSignedPoleCanonicalLocalRadius <= Q ->
+    |W.outerSymmetricDiscrepancyFourthPhysicalPrimitive Q| <= B
+
+theorem QuarticFourSignedPolePair.outerFourthPrimitiveUniformBound_normalized
+    {t B Q : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hB : W.OuterFourthPrimitiveUniformBound B)
+    (hQ : quarticSignedPoleCanonicalLocalRadius <= Q) :
+    |W.outerSymmetricDiscrepancyFourthPrimitive Q| <= B := by
+  rw [W.outerSymmetricDiscrepancyFourthPrimitive_eq_physical ht]
+  exact hB Q hQ
+
+/-!
+Source firewall.
+
+A future donor for OuterFourthPrimitiveUniformBound must be unconditional in
+the RH proof context.  Conditional pointwise bounds for the classical
+iterated argument functions S_n(t) may be useful as diagnostics, but importing
+an RH-conditional S_n theorem here would be circular and therefore cannot pay
+the Clay-facing analytic debt.
+-/
+
+def OuterFourthPrimitiveDonorBoundary : Prop :=
+  True
+
+theorem outerFourthPrimitiveDonorBoundary : OuterFourthPrimitiveDonorBoundary := by
+  trivial
+
 end Synthesis

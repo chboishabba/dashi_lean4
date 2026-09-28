@@ -614,4 +614,160 @@ theorem fourfoldIBPLowerBoundary_anchored_eq_zero
       anchoredPrimitive3_self, anchoredPrimitive4_self]
   ring
 
+
+/-!
+## Anchored fourth primitive equals the cubic Cesaro convolution
+
+This closes the same-object seam between the generic anchored primitive ladder
+used by the fourfold IBP compiler and the quartic Cesaro primitive used by the
+physical symmetric-cap construction.
+
+Only absolute continuity is used.  The staircase input A is never
+differentiated pointwise.
+-/
+
+theorem anchoredPrimitive4_eq_cubic_cesaro
+    {A : ℝ -> ℝ}
+    {a Q : ℝ}
+    (haQ : a <= Q)
+    (hA : IntervalIntegrable A volume a Q) :
+    anchoredPrimitive4 A a Q
+      =
+    ∫ q in a..Q, ((Q-q)^3 / 6) * A q := by
+  let P1 := anchoredPrimitive1 A a
+  let P2 := anchoredPrimitive2 A a
+  let P3 := anchoredPrimitive3 A a
+  let P4 := anchoredPrimitive4 A a
+  let w3 : ℝ -> ℝ := fun q => (Q-q)^3 / 6
+  let w2 : ℝ -> ℝ := fun q => (Q-q)^2 / 2
+  let w1 : ℝ -> ℝ := fun q => Q-q
+
+  obtain ⟨hP1ac,hP2ac,hP3ac,hP4ac⟩ :=
+    anchoredPrimitive_ladder_ac hA
+  obtain ⟨hP1',hP2',hP3',_hP4'⟩ :=
+    anchoredPrimitive_ladder_ae_deriv hA
+
+  have hw3ac : AbsolutelyContinuousOnInterval w3 a Q := by
+    have hcd : ContDiff ℝ 1 w3 := by
+      dsimp [w3]
+      fun_prop
+    exact hcd.contDiffOn.absolutelyContinuousOnInterval
+  have hw2ac : AbsolutelyContinuousOnInterval w2 a Q := by
+    have hcd : ContDiff ℝ 1 w2 := by
+      dsimp [w2]
+      fun_prop
+    exact hcd.contDiffOn.absolutelyContinuousOnInterval
+  have hw1ac : AbsolutelyContinuousOnInterval w1 a Q := by
+    have hcd : ContDiff ℝ 1 w1 := by
+      dsimp [w1]
+      fun_prop
+    exact hcd.contDiffOn.absolutelyContinuousOnInterval
+
+  have hdw3 :
+      deriv w3 = fun q => - w2 q := by
+    funext q
+    have hraw :
+        HasDerivAt
+          (fun x : ℝ => (Q-x)^3 / 6)
+          (3*(Q-q)^2*(-1)/6) q := by
+      fun_prop
+    dsimp [w3,w2]
+    rw [hraw.deriv]
+    ring
+  have hdw2 :
+      deriv w2 = fun q => - w1 q := by
+    funext q
+    have hraw :
+        HasDerivAt
+          (fun x : ℝ => (Q-x)^2 / 2)
+          (2*(Q-q)*(-1)/2) q := by
+      fun_prop
+    dsimp [w2,w1]
+    rw [hraw.deriv]
+    ring
+  have hdw1 :
+      deriv w1 = fun _ => (-1 : ℝ) := by
+    funext q
+    have hraw :
+        HasDerivAt (fun x : ℝ => Q-x) (-1) q := by
+      fun_prop
+    dsimp [w1]
+    exact hraw.deriv
+
+  have hIBP1 := hw3ac.integral_mul_deriv_eq_deriv_mul hP1ac
+  have hIBP2 := hw2ac.integral_mul_deriv_eq_deriv_mul hP2ac
+  have hIBP3 := hw1ac.integral_mul_deriv_eq_deriv_mul hP3ac
+
+  have eP1 :
+      (∫ q in a..Q, w3 q * deriv P1 q)
+        =
+      ∫ q in a..Q, w3 q * A q := by
+    apply intervalIntegral.integral_congr_ae
+    filter_upwards [hP1'] with q hq hmem
+    rw [hq (Set.uIoc_subset_uIcc hmem)]
+  have eP2 :
+      (∫ q in a..Q, w2 q * deriv P2 q)
+        =
+      ∫ q in a..Q, w2 q * P1 q := by
+    apply intervalIntegral.integral_congr_ae
+    filter_upwards [hP2'] with q hq hmem
+    rw [hq (Set.uIoc_subset_uIcc hmem)]
+  have eP3 :
+      (∫ q in a..Q, w1 q * deriv P3 q)
+        =
+      ∫ q in a..Q, w1 q * P2 q := by
+    apply intervalIntegral.integral_congr_ae
+    filter_upwards [hP3'] with q hq hmem
+    rw [hq (Set.uIoc_subset_uIcc hmem)]
+
+  rw [eP1,hdw3] at hIBP1
+  rw [eP2,hdw2] at hIBP2
+  rw [eP3,hdw1] at hIBP3
+
+  have hP1a : P1 a = 0 := by
+    dsimp [P1]
+    exact anchoredPrimitive1_self A a
+  have hP2a : P2 a = 0 := by
+    dsimp [P2]
+    exact anchoredPrimitive2_self A a
+  have hP3a : P3 a = 0 := by
+    dsimp [P3]
+    exact anchoredPrimitive3_self A a
+  have hw3Q : w3 Q = 0 := by simp [w3]
+  have hw2Q : w2 Q = 0 := by simp [w2]
+  have hw1Q : w1 Q = 0 := by simp [w1]
+
+  have hstep1 :
+      (∫ q in a..Q, w3 q * A q)
+        =
+      ∫ q in a..Q, w2 q * P1 q := by
+    rw [hP1a,hw3Q] at hIBP1
+    simpa [mul_zero,zero_mul] using hIBP1
+  have hstep2 :
+      (∫ q in a..Q, w2 q * P1 q)
+        =
+      ∫ q in a..Q, w1 q * P2 q := by
+    rw [hP2a,hw2Q] at hIBP2
+    simpa [mul_zero,zero_mul] using hIBP2
+  have hstep3 :
+      (∫ q in a..Q, w1 q * P2 q)
+        =
+      ∫ q in a..Q, P3 q := by
+    rw [hP3a,hw1Q] at hIBP3
+    simpa [mul_zero,zero_mul] using hIBP3
+
+  have hP4 :
+      P4 Q = ∫ q in a..Q, P3 q := by
+    rfl
+
+  dsimp [P4,w3] at hP4 ⊢
+  rw [hP4]
+  calc
+    (∫ q in a..Q, P3 q)
+      = ∫ q in a..Q, w1 q * P2 q := hstep3.symm
+    _ = ∫ q in a..Q, w2 q * P1 q := hstep2.symm
+    _ = ∫ q in a..Q, w3 q * A q := hstep1.symm
+    _ = ∫ q in a..Q, ((Q-q)^3 / 6) * A q := by
+      rfl
+
 end Synthesis

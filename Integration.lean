@@ -1,3 +1,4 @@
+import Integration.RiemannPrimitiveKernelExplicitSmithReduction
 import Integration.RiemannPrimitiveKernelSmithFiltrationSeparation
 import Integration.RiemannPrimitiveKernelMod243Filtration
 import Integration.RiemannPrimitiveKernelUnimodularBasis

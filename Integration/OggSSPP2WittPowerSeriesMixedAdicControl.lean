@@ -5,6 +5,7 @@ import Mathlib.RingTheory.PowerSeries.Basic
 import Mathlib.NumberTheory.Padics.PadicIntegers
 import Integration.OggSSPP2WittPowerSeriesBase
 import Integration.OggSSPP2WittPowerSeriesMaximalIdeal
+import Integration.OggSSPP2WittPowerSeriesCompleteness
 
 /-!
 # Mixed-adic coefficient control for the p=2 Witt power-series base
@@ -107,6 +108,31 @@ theorem coeff_mem_of_mem_actualMaximalPower
   apply coeff_mem_of_mem_mixedPower n k
   rwa [deformationTwoPartIdeal_eq_maximalIdeal]
 
+noncomputable local instance :
+    IsAdicComplete coefficientMaximalIdeal P2WittRing :=
+  Integration.OggSSPP2WittPowerSeriesCompleteness.p2WittMaximalIdealAdicallyComplete
+
+noncomputable def powerSeriesMaximalIdealHausdorff :
+    IsHausdorff
+      (IsLocalRing.maximalIdeal P2WittPowerSeriesBase)
+      P2WittPowerSeriesBase where
+  haus' f hf := by
+    apply PowerSeries.ext
+    intro k
+    apply IsHausdorff.haus'
+      (I := coefficientMaximalIdeal)
+      (PowerSeries.coeff k f)
+    intro n
+    have hdeep :=
+      hf (n + (k + 1))
+    have hfmem :
+        f ∈ (IsLocalRing.maximalIdeal P2WittPowerSeriesBase) ^
+          (n + (k + 1)) := by
+      simpa [SModEq.zero, smul_eq_mul, Ideal.mul_top] using hdeep
+    have hcoeff :=
+      coeff_mem_of_mem_actualMaximalPower n k hfmem
+    simpa [SModEq.zero, smul_eq_mul, Ideal.mul_top] using hcoeff
+
 structure Boundary where
   coefficientMaximalIdealFiniteGenerated : Bool
   coefficientIdealPowerControlsAllCoefficients : Bool
@@ -123,7 +149,7 @@ def canonicalBoundary : Boundary where
   xPowerKillsLowerCoefficients := true
   mixedPowerControlsFixedCoefficient := true
   actualMaximalIdealPowerControlsFixedCoefficient := true
-  mixedAdicHausdorffProved := false
+  mixedAdicHausdorffProved := true
   mixedAdicPrecompleteProved := false
 
 end Integration.OggSSPP2WittPowerSeriesMixedAdicControl

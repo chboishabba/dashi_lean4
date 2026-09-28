@@ -67,6 +67,12 @@ theorem unitBump_at_zero : unitBump 0 = 1 := by
 def scaledUnitBump (c R : ℝ) : ℝ → ℝ :=
   fun u => unitBump ((u - c) / R)
 
+theorem scaledUnitBump_contDiff_n {R : ℝ} (hR : R ≠ 0) (c : ℝ) (n : ℕ∞) :
+    ContDiff ℝ n (scaledUnitBump c R) := by
+  unfold scaledUnitBump
+  exact (unitBump_contDiff_n n).comp
+    ((contDiff_id.sub contDiff_const).div_const hR)
+
 theorem scaledUnitBump_contDiff {R : ℝ} (hR : R ≠ 0) (c : ℝ) :
     ContDiff ℝ 2 (scaledUnitBump c R) := by
   unfold scaledUnitBump

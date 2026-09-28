@@ -36,6 +36,7 @@ namespace Cap := Integration.RiemannSSP15FilteredProvenanceCapstone
 namespace Codec := Integration.RiemannSSP15DepthFiveRoleCodec
 namespace SF := Integration.RiemannSSP15SignedFRACTRAN
 namespace Prov := Integration.RiemannSSP15SignedProvenanceBridge
+namespace Grid := Integration.RiemannSSP15ChosenGridTransversality
 
 def importedProducerCertificate : Cap.PrimitiveRowProducerRoleCertificate where
   ProducerCoordinate := RH.ProducerRole

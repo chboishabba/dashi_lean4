@@ -467,4 +467,186 @@ theorem QuarticFourSignedPolePair.quarticScaleCompletedResidual_eq_normalizedPai
   rw [huniq]
   ring
 
+
+def QuarticFourSignedPolePair.quarticScaleSymmetricWindowDiscrepancy
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (q : ℝ) : ℝ :=
+  (t/16)^4
+    * zetaMuCumulativeDiscrepancy
+        (t - (t/16)*q)
+        (t + (t/16)*q)
+
+theorem QuarticFourSignedPolePair.quarticScaleAntisymmetricDiscrepancy_eq_literalSymmetric
+    {t q : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hq : 0 <= q) :
+    W.quarticScaleAntisymmetricDiscrepancy q
+      =
+    W.quarticScaleSymmetricWindowDiscrepancy q := by
+  unfold QuarticFourSignedPolePair.quarticScaleSymmetricWindowDiscrepancy
+  exact
+    W.quarticScaleAntisymmetricDiscrepancy_eq_symmetricWindow
+      ht hq
+
+theorem QuarticFourSignedPolePair.normalizedPairedAbelPartial_eq_literalSymmetric
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.normalizedPairedAbelPartial n
+      =
+    ∫ q in (0 : ℝ)..((n : ℝ)/(t/16)),
+      W.normalizedOrdinateCosineD1 q
+        * W.quarticScaleSymmetricWindowDiscrepancy q := by
+  have hr : 0 < t/16 := by positivity
+  have hupper : 0 <= (n : ℝ)/(t/16) := by positivity
+  unfold QuarticFourSignedPolePair.normalizedPairedAbelPartial
+    QuarticFourSignedPolePair.normalizedPairedAbelIntegrand
+  apply intervalIntegral.integral_congr
+  intro q hq
+  rw [Set.uIcc_of_le hupper] at hq
+  rw [W.quarticScaleAntisymmetricDiscrepancy_eq_literalSymmetric
+    ht hq.1]
+
+def QuarticFourSignedPolePair.normalizedOuterPairedAbelAt
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  ∫ q in quarticSignedPoleCanonicalLocalRadius..((n : ℝ)/(t/16)),
+    W.normalizedPairedAbelIntegrand q
+
+theorem QuarticFourSignedPolePair.normalizedOuterPairedAbelAt_eq_literalSymmetric
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t
+        <= (n : ℝ)) :
+    W.normalizedOuterPairedAbelAt n
+      =
+    ∫ q in quarticSignedPoleCanonicalLocalRadius..((n : ℝ)/(t/16)),
+      W.normalizedOrdinateCosineD1 q
+        * W.quarticScaleSymmetricWindowDiscrepancy q := by
+  have hr : 0 < t/16 := by positivity
+  have hlower : 0 <= quarticSignedPoleCanonicalLocalRadius :=
+    quarticSignedPoleCanonicalLocalRadius_pos.le
+  have hupper :
+      quarticSignedPoleCanonicalLocalRadius
+        <= (n : ℝ)/(t/16) := by
+    rw [le_div_iff₀ hr]
+    unfold quarticSignedPoleCanonicalPhysicalHalfWidth at hn
+    exact hn
+  unfold QuarticFourSignedPolePair.normalizedOuterPairedAbelAt
+    QuarticFourSignedPolePair.normalizedPairedAbelIntegrand
+  apply intervalIntegral.integral_congr
+  intro q hq
+  rw [Set.uIcc_of_le hupper] at hq
+  rw [W.quarticScaleAntisymmetricDiscrepancy_eq_literalSymmetric
+    ht (hlower.trans hq.1)]
+
+theorem QuarticFourSignedPolePair.normalizedOuterPairedAbelAt_eq_quarticScale
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t
+        <= (n : ℝ)) :
+    W.normalizedOuterPairedAbelAt n
+      =
+    (t/16)^6 * W.canonicalOuterPairedAbelAt n := by
+  let r : ℝ := t/16
+  let eta : ℝ := quarticSignedPoleCanonicalLocalRadius
+  have hr : 0 < r := by
+    dsimp [r]
+    positivity
+  have hr0 : r ≠ 0 := ne_of_gt hr
+  have heta : 0 < eta := by
+    dsimp [eta]
+    exact quarticSignedPoleCanonicalLocalRadius_pos
+  have hupper : eta <= (n : ℝ)/r := by
+    rw [le_div_iff₀ hr]
+    dsimp [eta,r]
+    unfold quarticSignedPoleCanonicalPhysicalHalfWidth at hn
+    exact hn
+  have hpoint :
+      (∫ q in eta..((n : ℝ)/r),
+        W.normalizedPairedAbelIntegrand q)
+        =
+      ∫ q in eta..((n : ℝ)/r),
+        r^7 * W.pairedCenteredAbelOffset (r*q) := by
+    apply intervalIntegral.integral_congr
+    intro q hq
+    rw [Set.uIcc_of_le hupper] at hq
+    unfold QuarticFourSignedPolePair.normalizedPairedAbelIntegrand
+    have hs :=
+      W.pairedCenteredAbelOffset_quarticScale
+        ht (q:=q) (heta.le.trans hq.1)
+    dsimp [r] at hs
+    symm
+    exact hs
+  unfold QuarticFourSignedPolePair.normalizedOuterPairedAbelAt
+  change
+    (∫ q in eta..((n : ℝ)/r),
+      W.normalizedPairedAbelIntegrand q)
+      =
+    r^6 * W.canonicalOuterPairedAbelAt n
+  rw [hpoint, intervalIntegral.integral_const_mul]
+  have hscale :=
+    intervalIntegral.smul_integral_comp_mul_add
+      (f:=W.pairedCenteredAbelOffset)
+      (a:=eta)
+      (b:=((n : ℝ)/r))
+      r 0
+  have hscale' :
+      r *
+        (∫ q in eta..((n : ℝ)/r),
+          W.pairedCenteredAbelOffset (r*q))
+        =
+      W.canonicalOuterPairedAbelAt n := by
+    unfold QuarticFourSignedPolePair.canonicalOuterPairedAbelAt
+    dsimp [eta,r]
+    simpa [smul_eq_mul, hr0,
+      quarticSignedPoleCanonicalPhysicalHalfWidth] using hscale
+  calc
+    r^7 *
+        (∫ q in eta..((n : ℝ)/r),
+          W.pairedCenteredAbelOffset (r*q))
+      =
+    r^6 *
+      (
+        r *
+        (∫ q in eta..((n : ℝ)/r),
+          W.pairedCenteredAbelOffset (r*q))
+      ) := by ring
+    _ = r^6 * W.canonicalOuterPairedAbelAt n := by
+      rw [hscale']
+
+def QuarticFourSignedPolePair.quarticScaleOuterPairedHorizontalAt
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  -(1/2 : ℝ) * W.normalizedOuterPairedAbelAt n
+    + W.quarticScaleHorizontalRemainder
+
+theorem QuarticFourSignedPolePair.quarticScaleOuterPairedHorizontalAt_eq
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t
+        <= (n : ℝ)) :
+    W.quarticScaleOuterPairedHorizontalAt n
+      =
+    (t/16)^6 * W.canonicalOuterPairedHorizontalAt n := by
+  unfold QuarticFourSignedPolePair.quarticScaleOuterPairedHorizontalAt
+    QuarticFourSignedPolePair.quarticScaleHorizontalRemainder
+    QuarticFourSignedPolePair.canonicalOuterPairedHorizontalAt
+  rw [W.normalizedOuterPairedAbelAt_eq_quarticScale ht n hn]
+  ring
+
 end Synthesis

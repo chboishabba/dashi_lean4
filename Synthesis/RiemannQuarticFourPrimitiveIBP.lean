@@ -544,4 +544,45 @@ theorem compactCosineD1_fourfold_ibp_anchored
     hP hPc h1ac h2ac h3ac h4ac
     h1' h2' h3' h4'
 
+
+theorem anchoredPrimitive1_self
+    (A : ℝ -> ℝ)
+    (a : ℝ) :
+    anchoredPrimitive1 A a a = 0 := by
+  simp [anchoredPrimitive1]
+
+theorem anchoredPrimitive2_self
+    (A : ℝ -> ℝ)
+    (a : ℝ) :
+    anchoredPrimitive2 A a a = 0 := by
+  simp [anchoredPrimitive2]
+
+theorem anchoredPrimitive3_self
+    (A : ℝ -> ℝ)
+    (a : ℝ) :
+    anchoredPrimitive3 A a a = 0 := by
+  simp [anchoredPrimitive3]
+
+theorem anchoredPrimitive4_self
+    (A : ℝ -> ℝ)
+    (a : ℝ) :
+    anchoredPrimitive4 A a a = 0 := by
+  simp [anchoredPrimitive4]
+
+theorem fourfoldIBPLowerBoundary_anchored_eq_zero
+    (C1 C2 C3 C4 A : ℝ -> ℝ)
+    (a : ℝ) :
+    fourfoldIBPLowerBoundary
+      C1 C2 C3 C4
+      (anchoredPrimitive1 A a)
+      (anchoredPrimitive2 A a)
+      (anchoredPrimitive3 A a)
+      (anchoredPrimitive4 A a)
+      a
+      = 0 := by
+  unfold fourfoldIBPLowerBoundary
+  rw [anchoredPrimitive1_self, anchoredPrimitive2_self,
+      anchoredPrimitive3_self, anchoredPrimitive4_self]
+  ring
+
 end Synthesis

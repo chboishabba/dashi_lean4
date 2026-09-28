@@ -1,5 +1,6 @@
 import Integration.MoonshineSSP15SignedFRACTRANBranch
 import Integration.MoonshineSSP15OggAddressCodec
+import Integration.OggSSP15CanonicalRankThreeByFive
 import Mathlib
 
 /-!
@@ -170,6 +171,21 @@ theorem five_orbit_count : Fintype.card FiveOrbit = 5 := by decide
 theorem phase_orbit_count : Fintype.card PhaseOrbit15 = 15 := by
   native_decide
 
+/-! ## The existing presentation factors through canonical Ogg rank -/
+
+open Integration.OggSSP15CanonicalRankThreeByFive
+
+def rankToPhaseOrbit (rank : Rank15) : PhaseOrbit15 :=
+  internalToPhaseOrbit (rankToInternal rank)
+
+def oggToPhaseOrbitViaCanonicalRank (prime : SSPPrime) : PhaseOrbit15 :=
+  rankToPhaseOrbit (primeToRank prime)
+
+theorem existing_presentation_factors_through_canonical_rank
+    (prime : SSPPrime) :
+    oggToPhaseOrbit15 prime = oggToPhaseOrbitViaCanonicalRank prime := by
+  cases prime <;> rfl
+
 /-! ## Exact address ↔ phase-orbit commuting triangle -/
 
 def addressToPhaseOrbit : SSP15OggAddress15 → PhaseOrbit15 :=
@@ -237,6 +253,8 @@ structure Boundary where
   internalThreeByFiveBidiPaid : Bool
   composedOggThreeByFiveBidiPaid : Bool
   directAddressThreeByFiveBidiPaid : Bool
+  presentationFactorsThroughCanonicalOggRank : Bool
+  canonicalRelativeToRepositoryOrder : Bool
   exactPrimeValuePreservedThroughPresentation : Bool
   threeTimesFiveCountFifteen : Bool
   actualInnerT2InversionQuotientPorted : Bool
@@ -254,6 +272,8 @@ def canonicalBoundary : Boundary where
   internalThreeByFiveBidiPaid := true
   composedOggThreeByFiveBidiPaid := true
   directAddressThreeByFiveBidiPaid := true
+  presentationFactorsThroughCanonicalOggRank := true
+  canonicalRelativeToRepositoryOrder := true
   exactPrimeValuePreservedThroughPresentation := true
   threeTimesFiveCountFifteen := true
   actualInnerT2InversionQuotientPorted := true

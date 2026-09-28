@@ -7,6 +7,8 @@ on:
     paths:
       - "Integration/ActionOrbitRecognition.lean"
       - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/OggSmallCharacteristicIsotropyOrderCrossPollination.lean"
+      - "Integration/MarkedArithmeticResidualCover.lean"
       - "Integration/OggSSPExponentResidualVsSupersingularOrbitSeparation.lean"
       - "Integration/OggSSPExponentResidualArithmeticSource.lean"
       - "Integration/BalancedTernaryHypercubeAntipodalOrbitCount.lean"
@@ -22,6 +24,8 @@ on:
     paths:
       - "Integration/ActionOrbitRecognition.lean"
       - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/OggSmallCharacteristicIsotropyOrderCrossPollination.lean"
+      - "Integration/MarkedArithmeticResidualCover.lean"
       - "Integration/OggSSPExponentResidualVsSupersingularOrbitSeparation.lean"
       - "Integration/OggSSPExponentResidualArithmeticSource.lean"
       - "Integration/BalancedTernaryHypercubeAntipodalOrbitCount.lean"
@@ -48,6 +52,10 @@ jobs:
         run: lake env lean Integration/ActionOrbitRecognition.lean
       - name: Check J369 small-characteristic recognition
         run: lake env lean Integration/OggSSPSmallCharacteristicRecognition.lean
+      - name: Check marked arithmetic residual-cover pattern
+        run: lake env lean Integration/MarkedArithmeticResidualCover.lean
+      - name: Check small-characteristic isotropy-order comparison
+        run: lake env lean Integration/OggSmallCharacteristicIsotropyOrderCrossPollination.lean
       - name: Check ternary antipodal target-count family
         run: lake env lean Integration/BalancedTernaryHypercubeAntipodalOrbitCount.lean
       - name: Check exponent-residual acquisition and separation

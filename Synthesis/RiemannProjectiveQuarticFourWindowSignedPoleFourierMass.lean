@@ -340,4 +340,132 @@ theorem QuarticFourSignedPolePair.adverseCenterDensityMode_pos_of_mu_pos_origin_
     W.centerDensityMode_neg_of_mu_pos_origin_neg ht hmu horigin
   nlinarith
 
+
+/-!
+## Full-line center-density / variation split
+
+The finite-window algebra from the Abel file now upgrades to the exact
+full-line scalar because the Fourier-mass work supplies L1 integrability of
+Psi itself.
+-/
+
+theorem QuarticFourSignedPolePair.signedOrdinateTest_integrable
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Integrable W.signedOrdinateTest := by
+  let r : ℝ := t/16
+  let P : ℝ -> ℝ :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hr : 0 < r := by
+    dsimp [r]
+    positivity
+  have hr0 : r ≠ 0 := ne_of_gt hr
+  have hscaled :
+      Integrable
+        (fun x : ℝ =>
+          compactCosineTransform P ((1/r)*x)) :=
+    compactCosineTransform_comp_mul_integrable
+      (quarticFourSignedPoleCombinedProfile_contDiff_two W.Rpos)
+      (quarticFourSignedPoleCombinedProfile_compact W.Rpos)
+      (by positivity : (1/r : ℝ) ≠ 0)
+  have hshift :
+      Integrable
+        (fun x : ℝ =>
+          compactCosineTransform P ((1/r)*(x-t))) :=
+    hscaled.comp_sub_right t
+  have hconst :=
+    hshift.const_mul (1/r^2)
+  refine hconst.congr ?_
+  exact Filter.Eventually.of_forall fun x => by
+    rw [W.signedOrdinateTest_eq_combinedCosine]
+    dsimp [P,r]
+    congr 2
+    field_simp [hr0]
+    ring
+
+def QuarticFourSignedPolePair.fullMuVariation
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  ∫ x : ℝ,
+    W.signedOrdinateTest x * (Zeta23.mu x - Zeta23.mu t)
+
+theorem QuarticFourSignedPolePair.fullMuVariation_integrable
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    Integrable
+      (fun x : ℝ =>
+        W.signedOrdinateTest x * (Zeta23.mu x - Zeta23.mu t)) := by
+  have hmu := W.signedOrdinateTest_mul_mu_integrable ht
+  have hpsi := W.signedOrdinateTest_integrable ht
+  have hconst :
+      Integrable
+        (fun x : ℝ =>
+          W.signedOrdinateTest x * Zeta23.mu t) :=
+    hpsi.mul_const _
+  have hsub := hmu.sub hconst
+  simpa [mul_sub] using hsub
+
+theorem QuarticFourSignedPolePair.fullMuIntegral_eq_centerDensity_add_variation
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    (∫ x : ℝ, W.signedOrdinateTest x * Zeta23.mu x)
+      =
+    W.centerDensityMode + W.fullMuVariation := by
+  have hpsi := W.signedOrdinateTest_integrable ht
+  have hconst :
+      Integrable
+        (fun x : ℝ =>
+          W.signedOrdinateTest x * Zeta23.mu t) :=
+    hpsi.mul_const _
+  have hvar := W.fullMuVariation_integrable ht
+  unfold QuarticFourSignedPolePair.centerDensityMode
+    QuarticFourSignedPolePair.fullMuVariation
+  rw [← integral_const_mul]
+  rw [← integral_add hconst hvar]
+  apply integral_congr_ae
+  exact Filter.Eventually.of_forall fun x => by ring
+
+theorem QuarticFourSignedPolePair.canonicalSignedHighResidual_eq_far_centerDensity_variation
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalSignedHighResidual
+      =
+    (1/2 : ℝ)
+      *
+    (
+      W.canonicalLiteralFarPairSource
+      - W.centerDensityMode
+      - W.fullMuVariation
+    ) := by
+  rw [W.canonicalSignedHighResidual_eq_literal_far_sub_mu ht]
+  rw [W.fullMuIntegral_eq_centerDensity_add_variation
+    (by linarith : 0 < t)]
+  ring
+
+theorem QuarticFourSignedPolePair.canonicalSignedHighResidual_eq_far_explicitOrigin_variation
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.canonicalSignedHighResidual
+      =
+    (1/2 : ℝ)
+      *
+    (
+      W.canonicalLiteralFarPairSource
+      -
+      (128 * Real.pi * Zeta23.mu t
+          / (t * W.R * unitBumpMass0))
+        *
+      quarticFourSmoothFinitePoleCancelledOrigin
+          W.R W.muHalf W.muTwo t
+      - W.fullMuVariation
+    ) := by
+  rw [W.canonicalSignedHighResidual_eq_far_centerDensity_variation ht]
+  rw [W.centerDensityMode_eq_originDet (by linarith : 0 < t)]
+
 end Synthesis

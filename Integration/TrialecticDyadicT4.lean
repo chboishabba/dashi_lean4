@@ -152,7 +152,7 @@ def t9ToMatching : T9Carrier → DyadicMatching
         simp [restrictAB, restrictBC, restrictCA, matchingPredicate]⟩
 
 def matchingToT9 : DyadicMatching → T9Carrier
-  | ⟨(ab,bc,ca), hA,hB,hC⟩ =>
+  | ⟨(ab,bc,ca), _⟩ =>
       (
         ⟨ab.aa, ab.ab, ca.ac⟩,
         ⟨ab.ba, ab.bb, bc.bc⟩,
@@ -166,13 +166,10 @@ theorem matching_after_t9 (state : T9Carrier) :
 
 theorem t9_after_matching (family : DyadicMatching) :
     t9ToMatching (matchingToT9 family) = family := by
-  rcases family with ⟨⟨ab,bc,ca⟩,hA,hB,hC⟩
+  rcases family with ⟨⟨⟨aa,abv,ba,bb⟩,⟨⟨bb',bcv,cb,cc⟩,⟨cc',ca,ac,aa'⟩⟩⟩, h⟩
+  rcases h with ⟨hA,hB,hC⟩
   apply Subtype.ext
-  rcases ab with ⟨aa,abv,ba,bb⟩
-  rcases bc with ⟨bb',bcv,cb,cc⟩
-  rcases ca with ⟨cc',ca,ac,aa'⟩
-  simp [matchingToT9, t9ToMatching, restrictAB, restrictBC, restrictCA,
-    matchingPredicate] at hA hB hC ⊢
+  dsimp [matchingToT9, t9ToMatching, restrictAB, restrictBC, restrictCA]
   subst aa'
   subst bb'
   subst cc'

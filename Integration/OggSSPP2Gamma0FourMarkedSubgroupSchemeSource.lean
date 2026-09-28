@@ -4,6 +4,7 @@ import Integration.OggSSPP2F4FrobeniusCandidateNoGo
 import Integration.OggSSPP2F4DependentMarkedCover
 import Integration.OggSSPP2BalancedTernaryPuncturedPlane
 import Integration.OggSSPP2BadPrimeLevelStructureBoundary
+import Integration.OggSSPP2Gamma0FourCanonicalRawFlag
 
 /-!
 # p=2 Gamma_0(4) finite-flat marked subgroup-scheme source socket
@@ -103,8 +104,7 @@ theorem target_total_mark_count_is_ten :
   decide
 
 inductive SourceResidual
-  | missingFiniteFlatCyclicOrderFourSubgroup
-  | missingOrderTwoSubflag
+  | missingConcreteFiniteFlatCanonicalFlagRealization
   | missingArithmeticFrobeniusTransport
   | missingArithmeticOneOneEightFibreEquivalence
   | missingActionOrbitStabilizerRecognition
@@ -119,6 +119,7 @@ inductive ClaimOrigin
 structure Boundary where
   badPrimeModuliBoundaryConsumed : Bool
   gamma0TypedAsSubgroupSchemeDatum : Bool
+  canonicalRawKerFFlagOwned : Bool
   orderTwoSubflagRequired : Bool
   fullDrinfeldBasisRejectedAsAutomaticSubstitute : Bool
   gamma1PointRejectedAsAutomaticSubstitute : Bool
@@ -133,6 +134,7 @@ structure Boundary where
 def canonicalBoundary : Boundary where
   badPrimeModuliBoundaryConsumed := true
   gamma0TypedAsSubgroupSchemeDatum := true
+  canonicalRawKerFFlagOwned := true
   orderTwoSubflagRequired := true
   fullDrinfeldBasisRejectedAsAutomaticSubstitute := true
   gamma1PointRejectedAsAutomaticSubstitute := true
@@ -141,6 +143,6 @@ def canonicalBoundary : Boundary where
   arithmeticGamma0FourSourceConstructed := false
   arithmeticFibreEquivalenceConstructed := false
   fullRecognitionConstructed := false
-  firstResidual := .missingFiniteFlatCyclicOrderFourSubgroup
+  firstResidual := .missingConcreteFiniteFlatCanonicalFlagRealization
 
 end Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource

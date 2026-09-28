@@ -1,3 +1,4 @@
+import Integration.OggSSPSmallCharacteristicAcquisitionDirection
 import Integration.OggSSPP2F4AntipodalStratifiedRefinement
 import Integration.OggSSPP2FrobeniusRetainedTarget
 import Integration.OggSmallCharacteristicIsotropyOrderCrossPollination

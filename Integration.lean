@@ -1050,3 +1050,9 @@ import Integration.TrialecticT5ComplementPhaseOrbitResidual
 import Integration.TrialecticT5ComplementOggResidualBidi
 
 import Integration.TrialecticParticipantCenteredSSPFactor
+
+import Integration.OggSSP369CanonicalThreeSixNineLift
+
+import Integration.OggSSP15CanonicalRankThreeByFive
+
+import Integration.TrialecticSSP15RecognitionCapstone

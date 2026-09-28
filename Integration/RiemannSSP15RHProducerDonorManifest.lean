@@ -67,6 +67,8 @@ structure Boundary where
   sparseShiftTheoremLocated : Bool
   depthFiveBlockTheoremLocated : Bool
   fourSourceNativeCoordinateTermsLocated : Bool
+  contentAddressedVerifierOwned : Bool
+  exactHeadVerifierObserved : Bool
   donorImportedIntoCurrentBranch : Bool
   sameGraphProducerCertificateInhabited : Bool
   deriving Repr
@@ -78,7 +80,21 @@ def canonicalBoundary : Boundary where
   sparseShiftTheoremLocated := true
   depthFiveBlockTheoremLocated := true
   fourSourceNativeCoordinateTermsLocated := true
+  contentAddressedVerifierOwned := true
+  exactHeadVerifierObserved := false
   donorImportedIntoCurrentBranch := false
   sameGraphProducerCertificateInhabited := false
+
+theorem donor_commit_is_pinned :
+    canonicalBoundary.donorCommitPinned = true := rfl
+
+theorem content_addressed_verifier_is_owned :
+    canonicalBoundary.contentAddressedVerifierOwned = true := rfl
+
+theorem exact_head_verifier_not_yet_observed :
+    canonicalBoundary.exactHeadVerifierObserved = false := rfl
+
+theorem donor_not_imported_into_current_branch :
+    canonicalBoundary.donorImportedIntoCurrentBranch = false := rfl
 
 end Integration.RiemannSSP15RHProducerDonorManifest

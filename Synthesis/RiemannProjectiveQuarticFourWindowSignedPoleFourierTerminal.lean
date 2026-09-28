@@ -1,5 +1,6 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleFourierMass
 import Synthesis.RiemannQuarticFourPrimitiveIBP
+import Synthesis.RiemannCompactCosineSchwartzDecay
 
 /-!
 # Clay-facing quartic signed-pole Fourier recut
@@ -1286,5 +1287,268 @@ theorem QuarticFourSignedPolePair.physicalFourthCapWeight_nonneg
     (W : QuarticFourSignedPolePair t) :
     0 <= W.physicalFourthCapWeight S y :=
   quarticSymmetricCapWeight_nonneg _ _ _ _
+
+
+/-!
+## Upper IBP boundary: rapid decay versus polynomial primitive growth
+
+The upper Q-boundary does not need a sharp RvM estimate.  Any fixed polynomial
+growth envelope for the four anchored primitives is enough because the
+selected compact profile is C-infinity and its cosine derivative tower is
+Schwartz-rapidly decaying.
+
+We deliberately keep the lower eta0 boundary separate.
+-/
+
+def fourfoldIBPUpperBoundary
+    (C1 C2 C3 C4 P1 P2 P3 P4 : ℝ -> ℝ)
+    (Q : ℝ) : ℝ :=
+  C1 Q * P1 Q
+    - C2 Q * P2 Q
+    + C3 Q * P3 Q
+    - C4 Q * P4 Q
+
+def fourfoldIBPLowerBoundary
+    (C1 C2 C3 C4 P1 P2 P3 P4 : ℝ -> ℝ)
+    (a : ℝ) : ℝ :=
+  C1 a * P1 a
+    - C2 a * P2 a
+    + C3 a * P3 a
+    - C4 a * P4 a
+
+theorem fourfoldIBPBoundary_eq_upper_sub_lower
+    (C1 C2 C3 C4 P1 P2 P3 P4 : ℝ -> ℝ)
+    (a b : ℝ) :
+    fourfoldIBPBoundary C1 C2 C3 C4 P1 P2 P3 P4 a b
+      =
+    fourfoldIBPUpperBoundary C1 C2 C3 C4 P1 P2 P3 P4 b
+      -
+    fourfoldIBPLowerBoundary C1 C2 C3 C4 P1 P2 P3 P4 a := by
+  unfold fourfoldIBPBoundary fourfoldIBPUpperBoundary
+    fourfoldIBPLowerBoundary
+  ring
+
+def QuarticFourSignedPolePair.OuterPrimitivePolynomialEnvelope
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (B1 B2 B3 B4 : ℝ) : Prop :=
+  ∀ Q : ℝ,
+    max 1 quarticSignedPoleCanonicalLocalRadius <= Q ->
+    |anchoredPrimitive1
+      W.quarticScaleSymmetricWindowDiscrepancy
+      quarticSignedPoleCanonicalLocalRadius Q|
+      <= B1 * Q^2
+    ∧
+    |anchoredPrimitive2
+      W.quarticScaleSymmetricWindowDiscrepancy
+      quarticSignedPoleCanonicalLocalRadius Q|
+      <= B2 * Q^3
+    ∧
+    |anchoredPrimitive3
+      W.quarticScaleSymmetricWindowDiscrepancy
+      quarticSignedPoleCanonicalLocalRadius Q|
+      <= B3 * Q^4
+    ∧
+    |anchoredPrimitive4
+      W.quarticScaleSymmetricWindowDiscrepancy
+      quarticSignedPoleCanonicalLocalRadius Q|
+      <= B4 * Q^5
+
+theorem mul_abs_le_invSq_of_rapid_decay_and_poly
+    {C P K B Q : ℝ}
+    {m d : ℕ}
+    (hQ : 1 <= Q)
+    (hm : m = d + 2)
+    (hK : 0 <= K)
+    (hB : 0 <= B)
+    (hC : |Q|^m * |C| <= K)
+    (hP : |P| <= B * Q^d) :
+    |C * P| <= K * B / Q^2 := by
+  subst m
+  have hQpos : 0 < Q := lt_of_lt_of_le (by norm_num) hQ
+  have hQabs : |Q| = Q := abs_of_nonneg hQ.le
+  rw [abs_mul,hQabs] at hC ⊢
+  have hQpow : 0 < Q^(d+2) := pow_pos hQpos _
+  have hC' : |C| <= K / Q^(d+2) := by
+    rw [le_div_iff₀ hQpow]
+    simpa [mul_comm] using hC
+  calc
+    |C| * |P|
+      <= (K / Q^(d+2)) * (B * Q^d) := by
+        exact mul_le_mul hC' hP (abs_nonneg _) (by positivity)
+    _ = K * B / Q^2 := by
+        field_simp [ne_of_gt hQpos]
+        ring
+
+theorem QuarticFourSignedPolePair.exists_upperIBPBoundary_invSq_bound
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    {B1 B2 B3 B4 : ℝ}
+    (hB1 : 0 <= B1)
+    (hB2 : 0 <= B2)
+    (hB3 : 0 <= B3)
+    (hB4 : 0 <= B4)
+    (henv : W.OuterPrimitivePolynomialEnvelope B1 B2 B3 B4) :
+    ∃ K : ℝ, 0 < K ∧
+      ∀ Q : ℝ,
+        max 1 quarticSignedPoleCanonicalLocalRadius <= Q ->
+        |fourfoldIBPUpperBoundary
+          W.normalizedOrdinateCosineD1
+          (compactCosineD2
+            (quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t))
+          (compactCosineD3
+            (quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t))
+          (compactCosineD4
+            (quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t))
+          (anchoredPrimitive1
+            W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius)
+          (anchoredPrimitive2
+            W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius)
+          (anchoredPrimitive3
+            W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius)
+          (anchoredPrimitive4
+            W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius)
+          Q|
+        <= K / Q^2 := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hPs : ContDiff ℝ (⊤ : ℕ∞) P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_contDiff_n W.Rpos ⊤
+  have hPc : HasCompactSupport P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  obtain ⟨K1,hK1,hD1⟩ :=
+    compactCosineD1_rapid_decay hPc hPs 4
+  obtain ⟨K2,hK2,hD2⟩ :=
+    compactCosineD2_rapid_decay hPc hPs 5
+  obtain ⟨K3,hK3,hD3⟩ :=
+    compactCosineD3_rapid_decay hPc hPs 6
+  obtain ⟨K4,hK4,hD4⟩ :=
+    compactCosineD4_rapid_decay hPc hPs 7
+  let K := K1*B1 + K2*B2 + K3*B3 + K4*B4 + 1
+  have hK : 0 < K := by
+    dsimp [K]
+    positivity
+  refine ⟨K,hK,?_⟩
+  intro Q hQ
+  have hQ1 : 1 <= Q := (le_max_left 1 _).trans hQ
+  obtain ⟨hP1,hP2,hP3,hP4⟩ := henv Q hQ
+  have h1 :=
+    mul_abs_le_invSq_of_rapid_decay_and_poly
+      hQ1 rfl hK1.le hB1 (hD1 Q) hP1
+  have h2 :=
+    mul_abs_le_invSq_of_rapid_decay_and_poly
+      hQ1 rfl hK2.le hB2 (hD2 Q) hP2
+  have h3 :=
+    mul_abs_le_invSq_of_rapid_decay_and_poly
+      hQ1 rfl hK3.le hB3 (hD3 Q) hP3
+  have h4 :=
+    mul_abs_le_invSq_of_rapid_decay_and_poly
+      hQ1 rfl hK4.le hB4 (hD4 Q) hP4
+  unfold fourfoldIBPUpperBoundary
+  have habs :=
+    abs_add
+      (W.normalizedOrdinateCosineD1 Q *
+        anchoredPrimitive1 W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius Q
+       -
+       compactCosineD2 P Q *
+        anchoredPrimitive2 W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius Q)
+      (compactCosineD3 P Q *
+        anchoredPrimitive3 W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius Q
+       -
+       compactCosineD4 P Q *
+        anchoredPrimitive4 W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius Q)
+  have hleft :=
+    abs_sub
+      (W.normalizedOrdinateCosineD1 Q *
+        anchoredPrimitive1 W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius Q)
+      (compactCosineD2 P Q *
+        anchoredPrimitive2 W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius Q)
+  have hright :=
+    abs_sub
+      (compactCosineD3 P Q *
+        anchoredPrimitive3 W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius Q)
+      (compactCosineD4 P Q *
+        anchoredPrimitive4 W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius Q)
+  dsimp [P] at h1 h2 h3 h4 ⊢
+  have hsum :
+      |W.normalizedOrdinateCosineD1 Q *
+          anchoredPrimitive1 W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius Q
+        -
+        compactCosineD2
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t) Q *
+          anchoredPrimitive2 W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius Q
+        +
+        (
+          compactCosineD3
+            (quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t) Q *
+            anchoredPrimitive3 W.quarticScaleSymmetricWindowDiscrepancy
+              quarticSignedPoleCanonicalLocalRadius Q
+          -
+          compactCosineD4
+            (quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t) Q *
+            anchoredPrimitive4 W.quarticScaleSymmetricWindowDiscrepancy
+              quarticSignedPoleCanonicalLocalRadius Q
+        )|
+      <= (K1*B1 + K2*B2 + K3*B3 + K4*B4) / Q^2 := by
+    calc
+      _ <=
+        |W.normalizedOrdinateCosineD1 Q *
+          anchoredPrimitive1 W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius Q
+        -
+        compactCosineD2
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t) Q *
+          anchoredPrimitive2 W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius Q|
+        +
+        |compactCosineD3
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t) Q *
+          anchoredPrimitive3 W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius Q
+        -
+        compactCosineD4
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t) Q *
+          anchoredPrimitive4 W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius Q| := habs
+      _ <=
+        (K1*B1 / Q^2 + K2*B2 / Q^2)
+        + (K3*B3 / Q^2 + K4*B4 / Q^2) := by
+          exact add_le_add
+            (hleft.trans (add_le_add h1 h2))
+            (hright.trans (add_le_add h3 h4))
+      _ = (K1*B1 + K2*B2 + K3*B3 + K4*B4) / Q^2 := by ring
+  exact hsum.trans <| by
+    dsimp [K]
+    have hQ2 : 0 < Q^2 := by positivity
+    rw [div_le_div_iff₀ hQ2]
+    nlinarith
+
+end Synthesis
 
 end Synthesis

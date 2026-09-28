@@ -1060,3 +1060,5 @@ import Integration.TrialecticSSP15RecognitionCapstone
 import Integration.TrialecticIncomingFrickeSeparation
 
 import Integration.SelectedFibreActionCompiler
+
+import Integration.OutgoingFrickeModeBlock

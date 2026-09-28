@@ -123,14 +123,14 @@ theorem source_transport_becomes_CA_negation
 structure PointedMonsterFiveSource (source : MonsterFiveSource) where
   basepoint : source.ActualState
   completionAtBasepoint : source.completionWitness basepoint = true
-  transportPreservesBasepoint :
-    ∀ transport,
-      source.applyTransport transport basepoint = basepoint
 
 structure PointedRecognition
     {source : MonsterFiveSource}
     (pointedSource : PointedMonsterFiveSource source)
     (recognition : Recognition source) where
+  distinguishedTransportPreservesBasepoint :
+    source.applyTransport recognition.distinguishedTransport pointedSource.basepoint
+      = pointedSource.basepoint
   basepointMapsToABZero :
     recognition.sourceToAB pointedSource.basepoint = zeroAB
 

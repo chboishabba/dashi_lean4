@@ -4,10 +4,9 @@ import Mathlib.RingTheory.LocalRing.Basic
 import Mathlib.Algebra.Field.ZMod
 
 /-!
-# Concrete p=2 Witt power-series carrier
+# Concrete F2-specialized p=2 Witt power-series carrier
 
-Mathlib already owns the algebraic carriers needed for the base of the
-supersingular universal deformation:
+Mathlib owns a concrete algebraic specialization relevant to the p=2 lane:
 
   F_2        := ZMod 2
   W(F_2)     := WittVector 2 (ZMod 2)
@@ -16,9 +15,10 @@ supersingular universal deformation:
 It also owns the ring equivalence
   WittVector 2 (ZMod 2) ≃+* ℤ_[2].
 
-This file pays only the algebraic carrier layer.  It does not claim the
-specific complete-local topology/universal elliptic family required by the
-Katz--Mazur deformation theorem.
+This file pays only the F2-specialized algebraic carrier layer.  Katz--Mazur's
+universal deformation is formulated over W(k)[[t]] for the actual residue field
+k of the supersingular curve.  No theorem here identifies that source residue
+field with F2 or proves descent/base change to this specialization.
 -/
 
 namespace Integration.OggSSPP2WittPowerSeriesBase
@@ -68,6 +68,8 @@ structure Boundary where
   wittRingLocalStructurePaid : Bool
   powerSeriesLocalStructurePaid : Bool
   formalParameterXPaid : Bool
+  f2SpecializationOnly : Bool
+  universalSourceResidueFieldIdentifiedWithF2 : Bool
   topologicalCompletenessForUniversalDeformationClaimed : Bool
   universalEllipticFamilyClaimed : Bool
   deriving Repr
@@ -80,6 +82,8 @@ def canonicalBoundary : Boundary where
   wittRingLocalStructurePaid := true
   powerSeriesLocalStructurePaid := true
   formalParameterXPaid := true
+  f2SpecializationOnly := true
+  universalSourceResidueFieldIdentifiedWithF2 := false
   topologicalCompletenessForUniversalDeformationClaimed := false
   universalEllipticFamilyClaimed := false
 

@@ -9565,6 +9565,60 @@ theorem quarticFourWindowProfile_zero_independent
   ring
 
 /--
+For a narrow four-window profile the physical origin sees exactly the central
+symmetric bump.  Since each reflected central bump equals one at its centre and
+the common normalization mass is 2*R*M0, the origin value is exactly
+
+  G_{R,lambda,mu}(0) = 1 / (R*M0).
+
+In particular it is strictly positive.
+-/
+theorem quarticFourWindowProfile_zero_eq_inv_mass
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1) :
+    quarticFourWindowProfile R lam mu 0
+      = 1 / (R * unitBumpMass0) := by
+  have hpi3 : (1 : ℝ) <= Real.pi/3 := by
+    have hp := Real.pi_gt_three
+    linarith
+  have hpi2 : (1 : ℝ) <= Real.pi/2 := by
+    have hp := Real.pi_gt_three
+    linarith
+  have hpi : (1 : ℝ) <= Real.pi := by
+    have hp := Real.pi_gt_three
+    linarith
+  have h1 :=
+    quantitativeSymBump_zero_of_center_ge_one hR hRone hpi3
+  have h2 :=
+    quantitativeSymBump_zero_of_center_ge_one hR hRone hpi2
+  have h3 :=
+    quantitativeSymBump_zero_of_center_ge_one hR hRone hpi
+  have hcenter :
+      quantitativeSymBump 0 R 0 = 2 := by
+    unfold quantitativeSymBump
+      Zeta23Bridge.LiteralWeilOddChannelTaper.symmetrize
+    rw [show -(0 : ℝ) = 0 by norm_num,
+      scaledUnitBump_at_center hR.ne',
+      scaledUnitBump_at_center hR.ne']
+    norm_num
+  have hM : 0 < unitBumpMass0 := unitBumpMass0_pos
+  unfold quarticFourWindowProfile quarticFourWindowRaw quarticWindowMass
+  rw [hcenter,h1,h2,h3]
+  field_simp [ne_of_gt hR, ne_of_gt hM]
+  ring
+
+theorem quarticFourWindowProfile_zero_pos
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1) :
+    0 < quarticFourWindowProfile R lam mu 0 := by
+  rw [quarticFourWindowProfile_zero_eq_inv_mass hR hRone]
+  have hM : 0 < unitBumpMass0 := unitBumpMass0_pos
+  positivity
+
+
+/--
 Exact factorization of the selected combined physical-profile value at u=0.
 
 The endpoint window value is common because the noncentral bumps are support

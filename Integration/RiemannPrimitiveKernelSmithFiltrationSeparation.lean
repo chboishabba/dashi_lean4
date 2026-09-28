@@ -1,6 +1,7 @@
 import Mathlib
 import Integration.RiemannPrimitiveKernelUnimodularBasis
 import Integration.RiemannPrimitiveKernelMod243Filtration
+import Integration.RiemannPrimitiveKernelExplicitSmithReduction
 
 /-!
 # Primitive RH kernel: Smith invariant versus 3-adic filtration
@@ -18,6 +19,7 @@ namespace Integration.RiemannPrimitiveKernelSmithFiltrationSeparation
 
 open Integration.RiemannPrimitiveKernelUnimodularBasis
 open Integration.RiemannPrimitiveKernelMod243Filtration
+open Integration.RiemannPrimitiveKernelExplicitSmithReduction
 
 theorem primitive_smith_invariant_one :
     smithInvariant = 1 :=
@@ -35,6 +37,14 @@ theorem coordinate_tail_description_changes :
     originalKernel secondBasis ∧ ¬ transformedKernel secondBasis :=
   coordinate_tail_flag_changes
 
+theorem explicit_smith_form_owned :
+    smithReduce originalRow = ⟨1,0,0,0⟩ :=
+  explicit_smith_normal_form
+
+theorem bare_row_map_surjective :
+    Function.Surjective rowMap :=
+  row_map_surjective
+
 inductive StructuralLevel
   | scalarSmithInvariant
   | coordinateDepthPresentation
@@ -50,6 +60,8 @@ structure Boundary where
   determinantOneCounterexampleOwned : Bool
   rawDepthTupleBasisInvariant : Bool
   mod243KernelTransportOwned : Bool
+  explicitSmithOneZeroZeroZeroOwned : Bool
+  bareRowMapSurjective : Bool
   coordinateTailDescriptionIntrinsic : Bool
   filteredKernelPreferredForFurtherStructure : Bool
   deriving Repr
@@ -59,6 +71,8 @@ def canonicalBoundary : Boundary where
   determinantOneCounterexampleOwned := true
   rawDepthTupleBasisInvariant := false
   mod243KernelTransportOwned := true
+  explicitSmithOneZeroZeroZeroOwned := true
+  bareRowMapSurjective := true
   coordinateTailDescriptionIntrinsic := false
   filteredKernelPreferredForFurtherStructure := true
 

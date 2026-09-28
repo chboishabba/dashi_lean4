@@ -29,6 +29,11 @@ open Zeta23Bridge.LiteralWeilProjectiveStripConstant
 def quantitativeSymBump (c R : ℝ) : ℝ → ℝ :=
   symmetrize (scaledUnitBump c R)
 
+theorem quantitativeSymBump_contDiff_n {c R : ℝ} (hR : R ≠ 0) (n : ℕ∞) :
+    ContDiff ℝ n (quantitativeSymBump c R) := by
+  unfold quantitativeSymBump
+  exact symmetrize_contDiff (scaledUnitBump_contDiff_n hR c n)
+
 theorem quantitativeSymBump_contDiff {c R : ℝ} (hR : R ≠ 0) :
     ContDiff ℝ 2 (quantitativeSymBump c R) := by
   unfold quantitativeSymBump

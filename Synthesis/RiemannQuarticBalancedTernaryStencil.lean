@@ -175,12 +175,35 @@ theorem quarticFourAtomic_null_target_sparse_coefficient
   rw [quarticFourAtomic_target_eq_pole_origin_combination hlam]
   norm_num
 
+/-! ## Primitive Smith/gcd lens
+
+The primitive row gcd is one.  For a 1×4 integer matrix this is the only
+nonzero Smith invariant up to sign.  It does not encode which three
+coefficients share five factors of 3.
+-/
+
+def primitiveKernelGCD : Nat :=
+  Nat.gcd 80 (Nat.gcd 243 (Nat.gcd 1215 972))
+
+theorem primitive_kernel_gcd_one :
+    primitiveKernelGCD = 1 := by
+  native_decide
+
+inductive PrimitiveGcdOneDeterminesDepthProfile : Prop
+
+theorem primitive_gcd_does_not_determine_depth_profile :
+    ¬ PrimitiveGcdOneDeterminesDepthProfile := by
+  intro h
+  cases h
+
 structure Boundary where
   sparseStencilOwned : Bool
   modThreeUnitVsDepthFiveSplitOwned : Bool
   directRHKernelAttachmentOwned : Bool
   depthFiveBlockKernelOwned : Bool
   twoSpike196830Owned : Bool
+  primitiveKernelGcdOneOwned : Bool
+  gcdInvariantDeterminesDepthProfile : Bool
   createsNewAnalyticRHHypothesis : Bool
   createsSemanticCarrierIdentity : Bool
   deriving Repr
@@ -191,6 +214,8 @@ def canonicalBoundary : Boundary where
   directRHKernelAttachmentOwned := true
   depthFiveBlockKernelOwned := true
   twoSpike196830Owned := true
+  primitiveKernelGcdOneOwned := true
+  gcdInvariantDeterminesDepthProfile := false
   createsNewAnalyticRHHypothesis := false
   createsSemanticCarrierIdentity := false
 

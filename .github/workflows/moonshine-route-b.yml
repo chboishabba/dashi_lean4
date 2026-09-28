@@ -165,6 +165,7 @@ jobs:
           lake env lean Integration/RiemannSSP15SignedProvenanceBridge.lean
           lake env lean Integration/RiemannSSP15PartitionSeparation.lean
           lake env lean Integration/RiemannSSP15ChosenGridTransversality.lean
+          lake env lean Integration/RiemannSSP15SignedFRACTRAN.lean
           lake env lean Integration/RiemannSSP15FilteredProvenanceCapstone.lean
           lake env lean Integration/RiemannSSP15RoleCMContingency.lean
           lake env lean Integration/AxiomAuditRiemannSSP15FilteredProvenance.lean

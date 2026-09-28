@@ -112,7 +112,7 @@ theorem rationalDoubleSubgroup_le_kummerKernel :
   rcases hx with ⟨Q, hQ⟩
   have hDouble :
       IsRationalPointDouble E x.toAdd := by
-    exact ⟨Q, hQ.symm⟩
+    exact ⟨Q, hQ⟩
   exact (d.kummerKernelExactlyDoubles x.toAdd).2 hDouble
 
 noncomputable def quotientKummerToSelmer :
@@ -140,7 +140,7 @@ theorem quotientKummerToSelmer_injective :
         IsRationalPointDouble E x.toAdd :=
       (d.kummerKernelExactlyDoubles x.toAdd).1 hx
     rcases hDouble with ⟨Q, hQ⟩
-    exact ⟨Q, hQ.symm⟩
+    exact ⟨Q, hQ⟩
   · intro hx
     exact d.rationalDoubleSubgroup_le_kummerKernel hx
 

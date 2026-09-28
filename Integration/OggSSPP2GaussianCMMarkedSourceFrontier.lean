@@ -108,6 +108,7 @@ structure Boundary where
   arithmeticBidiDualCodecTransportOwned : Bool
   universalSupersingularDeformationSourceSocketOwned : Bool
   mathlibWittPowerSeriesCarrierOwned : Bool
+  mathlibWittPowerSeriesLocalRingOwned : Bool
   universalDeformationImplementationFrontierOwned : Bool
   singleArithmeticBidiDischargesBothFiniteCodecRecognitions : Bool
   separateArithmeticOneOneEightProofRequiredAfterBidi : Bool
@@ -144,6 +145,7 @@ def canonicalBoundary : Boundary where
   arithmeticBidiDualCodecTransportOwned := true
   universalSupersingularDeformationSourceSocketOwned := true
   mathlibWittPowerSeriesCarrierOwned := true
+  mathlibWittPowerSeriesLocalRingOwned := true
   universalDeformationImplementationFrontierOwned := true
   singleArithmeticBidiDischargesBothFiniteCodecRecognitions := true
   separateArithmeticOneOneEightProofRequiredAfterBidi := false

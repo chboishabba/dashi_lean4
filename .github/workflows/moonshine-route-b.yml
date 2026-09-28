@@ -125,6 +125,7 @@ jobs:
           lake env lean Integration/RiemannMonster196830TernaryShiftBridge.lean
           lake env lean Integration/RiemannTrialecticT9ScaleFactorizationBoundary.lean
           lake env lean Integration/RiemannPrimitiveKernelUnimodularBasis.lean
+          lake env lean Integration/RiemannPrimitiveKernelExplicitSmithReduction.lean
           lake env lean Integration/RiemannPrimitiveKernelMod243Filtration.lean
           lake env lean Integration/RiemannPrimitiveKernelSmithFiltrationSeparation.lean
           lake env lean Integration/AxiomAuditRiemannBalancedTernary.lean

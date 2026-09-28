@@ -57,8 +57,9 @@ open Integration.OggSSPP2F4DependentMarkedCover
 open Integration.OggSSPP2FrobeniusRetainedTarget
 
 inductive Residual
-  | missingFormalKerFrobeniusSquaredFiniteFlatConstruction
-  | missingFiniteFlatGamma0FourEnhancementFamily
+  | missingBanerjeeEllipticCurveSchemeRealization
+  | missingFiniteFlatFrobeniusKernelFlagRealization
+  | missingGamma0FourLocalModelEnhancementFamily
   | missingSubgroupIsogenyChainBidi
   | missingFrobeniusCompatibleRecognition
   deriving DecidableEq, Repr
@@ -218,6 +219,6 @@ def canonicalBoundary : Boundary where
   arithmeticCMOrbitEquivalenceConstructed := false
   arithmeticOneOneEightMarkingConstructed := false
   arithmeticRecognitionConstructed := false
-  firstResidual := .missingFormalKerFrobeniusSquaredFiniteFlatConstruction
+  firstResidual := .missingBanerjeeEllipticCurveSchemeRealization
 
 end Integration.OggSSPP2GaussianCMMarkedSourceFrontier

@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: chboishabba/dashi_lean4
-          ref: 824f84cddf5cf424c643688c2d24e351795dac07
+          ref: 85f10467c453bea93bd8199ed80054b1fb41b46a
           path: rh-producer
 
       - name: Verify pinned RH producer donor
@@ -65,6 +65,14 @@ jobs:
           grep -q 'quarticFourAtomicProjectiveOriginCoordinate' "rh-producer/${donor_file}"
           grep -q 'quarticFourAtomicJAt lam mu 2' "rh-producer/${donor_file}"
           grep -q 'quarticFourAtomicTargetStrengthAt' "rh-producer/${donor_file}"
+
+          cert_file="Synthesis/RiemannQuarticProducerRoleCertificate.lean"
+          cert_blob="cb89ebc956cedd55179042cf63ff2eaf3d44f073"
+          actual_cert_blob="$(git -C rh-producer rev-parse "HEAD:${cert_file}")"
+          test "${actual_cert_blob}" = "${cert_blob}"
+          grep -q 'theorem primitive_kernel_via_source_roles' "rh-producer/${cert_file}"
+          grep -q 'def canonicalSourceNativeProducerRoleCertificate' "rh-producer/${cert_file}"
+          grep -q 'theorem canonical_certificate_inhabited' "rh-producer/${cert_file}"
 
       - name: Checkout bound dashi_agda source
         uses: actions/checkout@v4

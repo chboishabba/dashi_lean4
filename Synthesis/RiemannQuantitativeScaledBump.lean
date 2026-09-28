@@ -37,7 +37,7 @@ def unitContDiffBump : ContDiffBump (0 : ℝ) where
 
 def unitBump : ℝ → ℝ := fun x => unitContDiffBump x
 
-theorem unitBump_contDiff_n (n : WithTop ℕ∞) : ContDiff ℝ n unitBump :=
+theorem unitBump_contDiff_n (n : ℕ∞) : ContDiff ℝ n unitBump :=
   unitContDiffBump.contDiff (n := n)
 
 theorem unitBump_contDiff : ContDiff ℝ 2 unitBump :=

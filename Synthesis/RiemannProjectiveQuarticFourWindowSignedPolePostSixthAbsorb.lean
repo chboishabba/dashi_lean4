@@ -9454,6 +9454,66 @@ def quarticFourSmoothFinitePoleCancelledOrigin
       * quarticFourSmoothProjectiveOriginCoordinate
           R (2/3) muTwo
 
+/--
+Exact same-object origin identity for one smooth endpoint.
+
+The "physical-origin coordinate" is literally the radius-1 minus radius-2
+on-line response appearing in the projective bracket.  Evaluating the
+normalized projective physical profile at u=0 therefore gives that coordinate
+times the actual smooth window value at zero.
+-/
+theorem quarticFourNormalizedProjectiveProfile_zero_eq_origin
+    {R lam mu : ℝ}
+    (hR : 0 < R) :
+    quarticFourNormalizedProjectiveProfile R lam mu 0
+      =
+    4 * quarticFourWindowProfile R lam mu 0
+      * quarticFourSmoothProjectiveOriginCoordinate R lam mu := by
+  unfold quarticFourNormalizedProjectiveProfile
+    genericProjectivePhysicalProfile
+    twoRadiusBracket
+    quarticFourSmoothProjectiveOriginCoordinate
+    quarticFourNormalizedOnLineWeight
+    evenResp
+  simp only [mul_zero, Real.cos_zero, mul_one]
+  rw [
+    quarticFourWindowProfile_pairing_eq hR (by fun_prop),
+    quarticFourWindowProfile_pairing_eq hR (by fun_prop)
+  ]
+  ring
+
+/--
+The selected combined physical profile at its physical origin is the exact
+pole-weighted combination of the two endpoint origin coordinates, with the
+actual endpoint window values retained.
+
+This is intentionally stronger in provenance and weaker in simplification
+than replacing those two window values by a common scalar: no such equality
+is assumed here.
+-/
+theorem quarticFourSignedPoleCombinedProfile_zero_eq_weighted_origin
+    {R muHalf muTwo t : ℝ}
+    (hR : 0 < R) :
+    quarticFourSignedPoleCombinedProfile R muHalf muTwo t 0
+      =
+    4 *
+      (
+        quarticFourSmoothFinitePoleResidual R (2/3) muTwo t
+          * quarticFourWindowProfile R (1/2) muHalf 0
+          * quarticFourSmoothProjectiveOriginCoordinate R (1/2) muHalf
+        -
+        quarticFourSmoothFinitePoleResidual R (1/2) muHalf t
+          * quarticFourWindowProfile R (2/3) muTwo 0
+          * quarticFourSmoothProjectiveOriginCoordinate R (2/3) muTwo
+      ) := by
+  unfold quarticFourSignedPoleCombinedProfile profileLinearCombination
+  rw [
+    quarticFourNormalizedProjectiveProfile_zero_eq_origin hR,
+    quarticFourNormalizedProjectiveProfile_zero_eq_origin hR
+  ]
+  ring
+
+
 theorem exists_radius_quarticFourSmoothOrigin_close_atomic
     {eps : ℝ}
     (heps : 0 < eps) :

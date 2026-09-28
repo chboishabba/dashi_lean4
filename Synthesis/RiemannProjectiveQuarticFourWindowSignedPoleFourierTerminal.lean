@@ -1,4 +1,5 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleFourierMass
+import Synthesis.RiemannQuarticFourPrimitiveIBP
 
 /-!
 # Clay-facing quartic signed-pole Fourier recut
@@ -1109,5 +1110,73 @@ def OuterFourthPrimitiveDonorBoundary : Prop :=
 
 theorem outerFourthPrimitiveDonorBoundary : OuterFourthPrimitiveDonorBoundary := by
   trivial
+
+
+/-!
+## Fourfold IBP specialization to the literal outer discrepancy
+
+This theorem is the direct bridge from the finite-Q carrier to the canonical
+anchored primitive ladder.  The only remaining measure-theoretic premise is
+finite-interval integrability of the literal symmetric discrepancy itself.
+No differentiability of the zero staircase is assumed.
+-/
+
+theorem QuarticFourSignedPolePair.normalizedOuterPairedAbelAt_fourfold_ibp
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t
+        <= (n : ℝ))
+    (hA :
+      IntervalIntegrable
+        W.quarticScaleSymmetricWindowDiscrepancy
+        volume
+        quarticSignedPoleCanonicalLocalRadius
+        ((n : ℝ)/(t/16))) :
+    W.normalizedOuterPairedAbelAt n
+      =
+    fourfoldIBPBoundary
+      W.normalizedOrdinateCosineD1
+      (compactCosineD2
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t))
+      (compactCosineD3
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t))
+      (compactCosineD4
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t))
+      (anchoredPrimitive1
+        W.quarticScaleSymmetricWindowDiscrepancy
+        quarticSignedPoleCanonicalLocalRadius)
+      (anchoredPrimitive2
+        W.quarticScaleSymmetricWindowDiscrepancy
+        quarticSignedPoleCanonicalLocalRadius)
+      (anchoredPrimitive3
+        W.quarticScaleSymmetricWindowDiscrepancy
+        quarticSignedPoleCanonicalLocalRadius)
+      (anchoredPrimitive4
+        W.quarticScaleSymmetricWindowDiscrepancy
+        quarticSignedPoleCanonicalLocalRadius)
+      quarticSignedPoleCanonicalLocalRadius
+      ((n : ℝ)/(t/16))
+      +
+    ∫ q in quarticSignedPoleCanonicalLocalRadius..((n : ℝ)/(t/16)),
+      compactCosineD5
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t) q
+        *
+      anchoredPrimitive4
+        W.quarticScaleSymmetricWindowDiscrepancy
+        quarticSignedPoleCanonicalLocalRadius q := by
+  rw [W.normalizedOuterPairedAbelAt_eq_literalSymmetric ht n hn]
+  unfold QuarticFourSignedPolePair.normalizedOrdinateCosineD1
+  exact
+    compactCosineD1_fourfold_ibp_anchored
+      (quarticFourSignedPoleCombinedProfile_continuous W.Rpos)
+      (quarticFourSignedPoleCombinedProfile_compact W.Rpos)
+      hA
 
 end Synthesis

@@ -57,6 +57,40 @@ theorem full_t4_is_punctured_plus_origin :
       Fintype.card PuncturedT4Carrier + 1 := by
   norm_num [t4_state_count, punctured_t4_state_count]
 
+def punctureT4 (x : T4Carrier) : Option PuncturedT4Carrier :=
+  if h : x = zeroT4 then
+    none
+  else
+    some ⟨x, h⟩
+
+def reopenPuncturedT4 : PuncturedT4Carrier → T4Carrier :=
+  Subtype.val
+
+theorem puncture_reopens_nonzero (x : PuncturedT4Carrier) :
+    punctureT4 (reopenPuncturedT4 x) = some x := by
+  unfold punctureT4 reopenPuncturedT4
+  split
+  · rename_i h
+    exact False.elim (x.property h)
+  · rename_i h
+    apply congrArg some
+    exact Subtype.ext rfl
+
+theorem puncture_zero :
+    punctureT4 zeroT4 = none := by
+  simp [punctureT4]
+
+theorem depth_five_residual_is_x6_plus_puncture_plus_origin :
+    depthFiveResidualCount =
+      Fintype.card X6 + Fintype.card PuncturedT4Carrier + 1 := by
+  norm_num [depthFiveResidualCount, x6_state_count, punctured_t4_state_count]
+
+theorem bulk_factors_through_x6_puncture_origin :
+    (196830 : Nat) =
+      3^5 *
+        (Fintype.card X6 + Fintype.card PuncturedT4Carrier + 1) := by
+  norm_num [x6_state_count, punctured_t4_state_count]
+
 theorem x6_state_count_again :
     Fintype.card X6 = 729 :=
   x6_state_count
@@ -96,7 +130,9 @@ structure Boundary where
   literalFourTritCount81Owned : Bool
   literalPuncturedFourTritCount80Owned : Bool
   poleCoefficientMatchesPuncturedFourTrit : Bool
+  partialPunctureReopenMapOwned : Bool
   residual810Equals729Plus81 : Bool
+  residual810Equals729Plus80PlusOrigin : Bool
   bulk196830FactorsThroughCountSplit : Bool
   concreteCoproductEquivConstructed : Bool
   semanticCarrierIdentityClaimed : Bool
@@ -107,7 +143,9 @@ def canonicalBoundary : Boundary where
   literalFourTritCount81Owned := true
   literalPuncturedFourTritCount80Owned := true
   poleCoefficientMatchesPuncturedFourTrit := true
+  partialPunctureReopenMapOwned := true
   residual810Equals729Plus81 := true
+  residual810Equals729Plus80PlusOrigin := true
   bulk196830FactorsThroughCountSplit := true
   concreteCoproductEquivConstructed := false
   semanticCarrierIdentityClaimed := false

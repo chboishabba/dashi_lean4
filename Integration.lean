@@ -1017,3 +1017,9 @@ import Integration.RiemannJ369BalancedTernaryCrossPollination
 import Integration.TrialecticDyadicT4
 
 import Integration.TrialecticDyadicLocalComplement
+
+import Integration.TrialecticDyadicC3
+
+import Integration.TrialecticDyadicPointed
+
+import Integration.TrialecticPreRHTernaryCapstone

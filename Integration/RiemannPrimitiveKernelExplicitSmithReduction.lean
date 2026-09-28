@@ -144,12 +144,29 @@ def smithInvariantFactors : List Nat := [1]
 theorem smith_invariant_factors_exact :
     smithInvariantFactors = [1] := rfl
 
+def rowMap (r : Row4) : Int :=
+  80*r.a + 243*r.b + 1215*r.c + 972*r.d
+
+def rowPreimage (z : Int) : Row4 :=
+  ⟨-82*z, 27*z, 0, 0⟩
+
+theorem row_map_has_preimage (z : Int) :
+    rowMap (rowPreimage z) = z := by
+  simp [rowMap, rowPreimage]
+  ring
+
+theorem row_map_surjective :
+    Function.Surjective rowMap := by
+  intro z
+  exact ⟨rowPreimage z, row_map_has_preimage z⟩
+
 structure Boundary where
   explicitDeterminantOneFirstBlock : Bool
   threeElementaryShearsOwned : Bool
   everyStepHasExplicitInverse : Bool
   completeRowEquivalenceOwned : Bool
   explicitSNFOneZeroZeroZeroOwned : Bool
+  rowMapSurjectivityOwned : Bool
   nontrivialBareIntegerSmithFactorRemains : Bool
   filteredThreeAdicStructureStillAdditional : Bool
   deriving Repr
@@ -160,6 +177,7 @@ def canonicalBoundary : Boundary where
   everyStepHasExplicitInverse := true
   completeRowEquivalenceOwned := true
   explicitSNFOneZeroZeroZeroOwned := true
+  rowMapSurjectivityOwned := true
   nontrivialBareIntegerSmithFactorRemains := false
   filteredThreeAdicStructureStillAdditional := true
 

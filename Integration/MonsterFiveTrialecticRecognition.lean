@@ -53,10 +53,25 @@ theorem source_observer_after_distinguished_transport
       (source.applyTransport recognition.distinguishedTransport state)
     =
     negateModeNine (source.observeMode state) := by
-  rw [recognition.sourceObserverAgreesWithLocalObserver]
-  rw [recognition.sourceTransportBecomesLocalNegation]
-  rw [mode_observer_intertwines_negation]
-  rw [← recognition.sourceObserverAgreesWithLocalObserver]
+  calc
+    source.observeMode
+        (source.applyTransport recognition.distinguishedTransport state)
+        =
+      observeABModeNine
+        (recognition.sourceToLocal
+          (source.applyTransport recognition.distinguishedTransport state)) :=
+      recognition.sourceObserverAgreesWithLocalObserver _
+    _ =
+      observeABModeNine
+        (negateABLocal (recognition.sourceToLocal state)) := by
+      rw [recognition.sourceTransportBecomesLocalNegation]
+    _ =
+      negateModeNine
+        (observeABModeNine (recognition.sourceToLocal state)) :=
+      mode_observer_intertwines_negation _
+    _ =
+      negateModeNine (source.observeMode state) := by
+      rw [recognition.sourceObserverAgreesWithLocalObserver]
 
 structure ModelTransportMatch
     {source : MonsterFiveSource}

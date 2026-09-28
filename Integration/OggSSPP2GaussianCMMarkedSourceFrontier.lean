@@ -1,3 +1,4 @@
+import Integration.OggSSPP2BanerjeeGaloisOrbitNoGo
 import Mathlib
 import Integration.OggSSPP2F4FrobeniusCandidateNoGo
 import Integration.OggSSPP2F4AntipodalStratifiedRefinement
@@ -64,6 +65,14 @@ inductive Residual
   | missingFrobeniusCompatibleRecognition
   deriving DecidableEq, Repr
 
+/-- The bare Banerjee sheet quotient has only five orbit labels. -/
+theorem banerjee_galois_pi0_is_not_ten :
+    Fintype.card
+      Integration.OggSSPP2OrientedInertiaTenStateRecognition.BinaryTetrahedralInversionOrbit ≠
+      Fintype.card
+        Integration.OggSSPP2BanerjeeF4UniversalDeformationSource.GaloisInertiaState :=
+  Integration.OggSSPP2BanerjeeGaloisOrbitNoGo.gal_orbits_are_not_ten
+
 theorem raw_f4_orbit_count_is_three :
     Fintype.card F4Orbit = 3 := by decide
 
@@ -126,6 +135,7 @@ structure Boundary where
   banerjeeExplicitUniversalFamilyOwned : Bool
   g24AndGaloisSameSourceTorsorRecorded : Bool
   galoisInertiaTenStateCandidateOwned : Bool
+  banerjeeGaloisFiveOrbitNoGoOwned : Bool
   banerjeeSourceAuthorityAttributedAndInhabited : Bool
   gamma0FourEnhancementContractOwned : Bool
   schemeLevelFiniteFlatGamma0FourFrontierOwned : Bool
@@ -186,6 +196,7 @@ def canonicalBoundary : Boundary where
   banerjeeExplicitUniversalFamilyOwned := true
   g24AndGaloisSameSourceTorsorRecorded := true
   galoisInertiaTenStateCandidateOwned := true
+  banerjeeGaloisFiveOrbitNoGoOwned := true
   banerjeeSourceAuthorityAttributedAndInhabited := true
   gamma0FourEnhancementContractOwned := true
   schemeLevelFiniteFlatGamma0FourFrontierOwned := true

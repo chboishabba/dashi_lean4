@@ -47,6 +47,19 @@ noncomputable def p2WittCompleteSpace : CompleteSpace P2WittRing :=
 noncomputable local instance : CompleteSpace P2WittRing :=
   p2WittCompleteSpace
 
+noncomputable local instance : IsLocalRing P2WittRing :=
+  p2WittIsLocalRing
+
+noncomputable def p2WittMaximalIdealAdicallyComplete :
+    IsAdicComplete (IsLocalRing.maximalIdeal P2WittRing) P2WittRing := by
+  apply
+    (IsAdicComplete.congr_ringEquiv
+      (IsLocalRing.maximalIdeal P2WittRing)
+      p2WittEquivPadicInt).mp
+  simpa using
+    (inferInstance :
+      IsAdicComplete (IsLocalRing.maximalIdeal ℤ_[2]) ℤ_[2])
+
 open scoped PowerSeries.WithPiTopology
 
 noncomputable def p2PowerSeriesCoefficientwiseComplete :
@@ -62,6 +75,7 @@ noncomputable def p2PowerSeriesXAdicallyComplete :
 structure Boundary where
   pAdicUniformityPulledBackToWittRing : Bool
   wittRingCompleteUnderPulledBackUniformity : Bool
+  coefficientMaximalIdealAdicComplete : Bool
   coefficientwisePowerSeriesComplete : Bool
   xAdicPowerSeriesComplete : Bool
   coefficientwiseTopologyIdentifiedWithMaximalIdealTopology : Bool
@@ -72,6 +86,7 @@ structure Boundary where
 def canonicalBoundary : Boundary where
   pAdicUniformityPulledBackToWittRing := true
   wittRingCompleteUnderPulledBackUniformity := true
+  coefficientMaximalIdealAdicComplete := true
   coefficientwisePowerSeriesComplete := true
   xAdicPowerSeriesComplete := true
   coefficientwiseTopologyIdentifiedWithMaximalIdealTopology := false

@@ -1032,3 +1032,7 @@ import Integration.TrialecticDyadicC3
 import Integration.TrialecticDyadicPointed
 
 import Integration.TrialecticPreRHTernaryCapstone
+
+import Integration.TrialecticDyadicNineObserverCandidate
+
+import Integration.MonsterFiveTrialecticRecognition

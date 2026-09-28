@@ -7,6 +7,8 @@ import Integration.OggSSPP2WittPowerSeriesMixedAdicControl
 import Integration.OggSSPP2ExplicitF2CurveCandidate
 import Integration.OggSSPP2ResidueFieldDescentBoundary
 import Integration.OggSSPP2ConcreteF2UniversalDeformationRecognition
+import Integration.OggSSPP2BanerjeeF4UniversalDeformationSource
+import Integration.OggSSPP2BanerjeeF4SameSourceRealization
 
 /-!
 # p=2 universal-deformation implementation frontier
@@ -29,13 +31,12 @@ This file is an implementation frontier only.
 namespace Integration.OggSSPP2UniversalDeformationImplementationFrontier
 
 inductive Residual
-  | missingConcreteF2UniversalDeformationAuthority
-  | missingGamma0FourMarkedDeformationStates
-  | missingTenStateClassificationBidi
+  | missingBanerjeeF4SourceAuthority
+  | missingGaloisInertiaSectorRealization
   deriving DecidableEq, Repr
 
 def firstImplementationResidual : Residual :=
-  .missingConcreteF2UniversalDeformationAuthority
+  .missingBanerjeeF4SourceAuthority
 
 structure WittPowerSeriesBaseImplementation where
   ResidueField : Type
@@ -58,6 +59,10 @@ structure Boundary where
   mathlibWittVectorCarrierReused : Bool
   mathlibPowerSeriesCarrierReused : Bool
   f2SpecializationNotPromotedToUniversalSource : Bool
+  preferredUniversalSourceBaseIsWittF4PowerSeries : Bool
+  banerjeeF4SourceDonorOwned : Bool
+  explicitBanerjeeUniversalFamilyOwned : Bool
+  galoisInertiaSectorRealizationContractOwned : Bool
   explicitF2CurveCandidateOwned : Bool
   explicitF2CurveDiscriminantAndTracePaid : Bool
   concreteF2SourceRecognitionContractOwned : Bool
@@ -74,15 +79,19 @@ structure Boundary where
   mixedAdicPrecompletePaid : Bool
   maximalIdealAdicCompletenessPaid : Bool
   universalEllipticFamilyRequiredAfterBase : Bool
-  gamma0FourMarkedStatesRequiredAfterFamily : Bool
-  tenStateBidiRequiredAfterMarkedStates : Bool
-  firstResidualIsConcreteF2UniversalDeformationAuthority : Bool
+  separateMarkedStateConstructionRequiredAfterSectorRealization : Bool
+  separateTenStateBidiRequiredAfterSectorRealization : Bool
+  firstResidualIsBanerjeeF4SourceAuthority : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
   mathlibWittVectorCarrierReused := true
   mathlibPowerSeriesCarrierReused := true
   f2SpecializationNotPromotedToUniversalSource := true
+  preferredUniversalSourceBaseIsWittF4PowerSeries := true
+  banerjeeF4SourceDonorOwned := true
+  explicitBanerjeeUniversalFamilyOwned := true
+  galoisInertiaSectorRealizationContractOwned := true
   explicitF2CurveCandidateOwned := true
   explicitF2CurveDiscriminantAndTracePaid := true
   concreteF2SourceRecognitionContractOwned := true
@@ -98,9 +107,9 @@ def canonicalBoundary : Boundary where
   mixedAdicHausdorffPaid := true
   mixedAdicPrecompletePaid := true
   maximalIdealAdicCompletenessPaid := true
-  universalEllipticFamilyRequiredAfterBase := true
-  gamma0FourMarkedStatesRequiredAfterFamily := true
-  tenStateBidiRequiredAfterMarkedStates := true
-  firstResidualIsConcreteF2UniversalDeformationAuthority := true
+  universalEllipticFamilyRequiredAfterBase := false
+  separateMarkedStateConstructionRequiredAfterSectorRealization := false
+  separateTenStateBidiRequiredAfterSectorRealization := false
+  firstResidualIsBanerjeeF4SourceAuthority := true
 
 end Integration.OggSSPP2UniversalDeformationImplementationFrontier

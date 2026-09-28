@@ -136,6 +136,50 @@ structure FullRecognition
   pi0Surjection : Pi0Surjection orbitRecognition
   stabilizerRecognition : StabilizerRecognition orbitRecognition
 
+/-! ## Strong same-presentation recognition grade -/
+
+/-- Two-sided recovery of the underlying state map. -/
+structure StateMapEquivalence
+    {SS SG TS TG : Type}
+    {source : InvertibleAction SS SG}
+    {target : InvertibleAction TS TG}
+    (F : ActionRecognitionFunctor source target) where
+  preimageState : TS → SS
+  mapAfterPreimageState :
+    ∀ t, F.mapState (preimageState t) = t
+  preimageAfterMapState :
+    ∀ s, preimageState (F.mapState s) = s
+
+/-- Two-sided recovery of the symmetry-label map. -/
+structure SymmetryMapEquivalence
+    {SS SG TS TG : Type}
+    {source : InvertibleAction SS SG}
+    {target : InvertibleAction TS TG}
+    (F : ActionRecognitionFunctor source target) where
+  preimageSymmetry : TG → SG
+  mapAfterPreimageSymmetry :
+    ∀ t, F.mapSymmetry (preimageSymmetry t) = t
+  preimageAfterMapSymmetry :
+    ∀ s, preimageSymmetry (F.mapSymmetry s) = s
+
+/-- Safe same-presentation gate.  This is strictly stronger than full
+orbit/stabilizer recognition: the underlying object and symmetry maps must
+both be equivalences. -/
+structure ActionGroupoidPresentationIsomorphism
+    {SS SG TS TG : Type}
+    {source : InvertibleAction SS SG}
+    {target : InvertibleAction TS TG}
+    (F : ActionRecognitionFunctor source target)
+    (sourceOrbits : OrbitPresentation source)
+    (targetOrbits : OrbitPresentation target) where
+  orbitStabilizerRecognition :
+    FullRecognition F sourceOrbits targetOrbits
+  stateMapEquivalence :
+    StateMapEquivalence F
+  symmetryMapEquivalence :
+    SymmetryMapEquivalence F
+
+
 namespace FullRecognition
 
 theorem targetOrbit_to_source_injective
@@ -164,6 +208,25 @@ inductive RecognitionPromotionError
   | cardinalityMatchOnly
   | stateMapWithoutActionEquivariance
   | orbitBijectionWithoutStabilizerControl
+  | orbitStabilizerRecognitionWithoutStateEquivalence
+  | orbitStabilizerRecognitionWithoutSymmetryEquivalence
   deriving DecidableEq, Repr
+
+structure RecognitionBoundary where
+  actionEquivarianceRequired : Bool
+  pi0BijectionRequired : Bool
+  stabilizerRecognitionRequired : Bool
+  presentationIsomorphismRequiresStateBijection : Bool
+  presentationIsomorphismRequiresSymmetryBijection : Bool
+  orbitRecognitionAloneCreatesPresentationIsomorphism : Bool
+  deriving Repr
+
+def canonicalBoundary : RecognitionBoundary where
+  actionEquivarianceRequired := true
+  pi0BijectionRequired := true
+  stabilizerRecognitionRequired := true
+  presentationIsomorphismRequiresStateBijection := true
+  presentationIsomorphismRequiresSymmetryBijection := true
+  orbitRecognitionAloneCreatesPresentationIsomorphism := false
 
 end Integration.ActionOrbitRecognition

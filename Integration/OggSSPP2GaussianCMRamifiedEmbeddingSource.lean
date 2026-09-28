@@ -84,10 +84,13 @@ structure Realization (EndomorphismObject : Type) where
   targetEndomorphismObject :
     Embedding → EndomorphismObject
 
-  everyEmbeddingTargetsSameObject :
+  selectedEndomorphismObject :
+    EndomorphismObject
+
+  everyEmbeddingTargetsSelectedObject :
     ∀ o,
       targetEndomorphismObject (embeddingOfOrientation o) =
-        targetEndomorphismObject (embeddingOfOrientation .lower)
+        selectedEndomorphismObject
 
   optimal :
     Embedding → Prop

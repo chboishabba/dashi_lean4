@@ -1637,4 +1637,215 @@ theorem QuarticFourSignedPolePair.tendsto_abs_upperIBPBoundary_zero
     exact hbound Q hQ
   · exact hg
 
+
+/-!
+## Scalar norm contract for the fifth-derivative interior
+
+After fourfold IBP the only vertical interior is
+
+  integral C_W^(5)(q) * P4_W(q) dq.
+
+We expose the two scalar envelopes needed to bound it:
+
+* B4 bounds the anchored fourth discrepancy primitive;
+* K5 bounds the finite outer L1 mass of the fifth cosine derivative.
+
+The resulting product B4*K5 is the complete kernel-side cost.
+-/
+
+def QuarticFourSignedPolePair.OuterAnchoredFourthPrimitiveUniformBound
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (B4 : ℝ) : Prop :=
+  ∀ q : ℝ,
+    quarticSignedPoleCanonicalLocalRadius <= q ->
+    |anchoredPrimitive4
+      W.quarticScaleSymmetricWindowDiscrepancy
+      quarticSignedPoleCanonicalLocalRadius q|
+      <= B4
+
+def QuarticFourSignedPolePair.FifthDerivativeOuterL1Envelope
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (K5 : ℝ) : Prop :=
+  ∀ Q : ℝ,
+    quarticSignedPoleCanonicalLocalRadius <= Q ->
+    (∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+      |compactCosineD5
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t) q|)
+      <= K5
+
+theorem QuarticFourSignedPolePair.fifthInterior_abs_le_B4_mul_intervalL1
+    {t B4 Q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hQ : quarticSignedPoleCanonicalLocalRadius <= Q)
+    (hB4nonneg : 0 <= B4)
+    (hB4 : W.OuterAnchoredFourthPrimitiveUniformBound B4) :
+    |
+      ∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+        compactCosineD5
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t) q
+          *
+        anchoredPrimitive4
+          W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius q
+    |
+      <=
+    B4 *
+      (∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+        |compactCosineD5
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t) q|) := by
+  let P : ℝ -> ℝ :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  let A : ℝ -> ℝ :=
+    W.quarticScaleSymmetricWindowDiscrepancy
+  let P4 : ℝ -> ℝ :=
+    anchoredPrimitive4 A quarticSignedPoleCanonicalLocalRadius
+  have hPcont : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hC5cont : Continuous (compactCosineD5 P) :=
+    compactCosineD5_continuous hPcont hPc
+  have hAint :
+      IntervalIntegrable A volume
+        quarticSignedPoleCanonicalLocalRadius Q :=
+    W.quarticScaleSymmetricWindowDiscrepancy_intervalIntegrable
+      hQ
+  obtain ⟨_h1ac,_h2ac,_h3ac,hP4ac⟩ :=
+    anchoredPrimitive_ladder_ac hAint
+  have hP4cont :
+      ContinuousOn P4
+        (Set.uIcc quarticSignedPoleCanonicalLocalRadius Q) :=
+    hP4ac.continuousOn
+  have hprodI :
+      IntervalIntegrable
+        (fun q => compactCosineD5 P q * P4 q)
+        volume quarticSignedPoleCanonicalLocalRadius Q :=
+    (hC5cont.continuousOn.mul hP4cont).intervalIntegrable
+  have hC5absI :
+      IntervalIntegrable
+        (fun q => |compactCosineD5 P q|)
+        volume quarticSignedPoleCanonicalLocalRadius Q :=
+    hC5cont.abs.intervalIntegrable _ _
+  have hmajorI :
+      IntervalIntegrable
+        (fun q => B4 * |compactCosineD5 P q|)
+        volume quarticSignedPoleCanonicalLocalRadius Q :=
+    hC5absI.const_mul B4
+  calc
+    |
+      ∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+        compactCosineD5 P q * P4 q
+    |
+      <=
+    ∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+      |compactCosineD5 P q * P4 q| :=
+        intervalIntegral.abs_integral_le_integral_abs hQ
+    _ <=
+    ∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+      B4 * |compactCosineD5 P q| := by
+        apply intervalIntegral.integral_mono_on
+          hQ hprodI.abs hmajorI
+        intro q hq
+        rw [abs_mul]
+        have hprim : |P4 q| <= B4 := by
+          apply hB4 q
+          exact (Set.uIcc_of_le hQ ▸ hq).1
+        exact mul_le_mul_of_nonneg_left
+          hprim (abs_nonneg _)
+    _ =
+    B4 *
+      (∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+        |compactCosineD5 P q|) := by
+        rw [intervalIntegral.integral_const_mul]
+
+theorem QuarticFourSignedPolePair.fifthInterior_abs_le_B4_mul_K5
+    {t B4 K5 Q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hQ : quarticSignedPoleCanonicalLocalRadius <= Q)
+    (hB4nonneg : 0 <= B4)
+    (hK5nonneg : 0 <= K5)
+    (hB4 : W.OuterAnchoredFourthPrimitiveUniformBound B4)
+    (hK5 : W.FifthDerivativeOuterL1Envelope K5) :
+    |
+      ∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+        compactCosineD5
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t) q
+          *
+        anchoredPrimitive4
+          W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius q
+    |
+      <= B4 * K5 := by
+  have hinner :=
+    W.fifthInterior_abs_le_B4_mul_intervalL1
+      hQ hB4nonneg hB4
+  have hmass := hK5 Q hQ
+  exact hinner.trans
+    (mul_le_mul_of_nonneg_left hmass hB4nonneg)
+
+theorem QuarticFourSignedPolePair.normalizedOuterPairedAbelAt_abs_le_boundary_add_B4K5
+    {t B4 K5 : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hB4nonneg : 0 <= B4)
+    (hK5nonneg : 0 <= K5)
+    (hB4 : W.OuterAnchoredFourthPrimitiveUniformBound B4)
+    (hK5 : W.FifthDerivativeOuterL1Envelope K5)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ))
+    (hA :
+      IntervalIntegrable
+        W.quarticScaleSymmetricWindowDiscrepancy
+        volume
+        quarticSignedPoleCanonicalLocalRadius
+        ((n : ℝ)/(t/16))) :
+    |W.normalizedOuterPairedAbelAt n|
+      <=
+    |
+      fourfoldIBPUpperBoundary
+        W.normalizedOrdinateCosineD1
+        (compactCosineD2
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t))
+        (compactCosineD3
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t))
+        (compactCosineD4
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t))
+        (anchoredPrimitive1
+          W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius)
+        (anchoredPrimitive2
+          W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius)
+        (anchoredPrimitive3
+          W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius)
+        (anchoredPrimitive4
+          W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius)
+        ((n : ℝ)/(t/16))
+    |
+      + B4*K5 := by
+  rw [W.normalizedOuterPairedAbelAt_eq_upperBoundary_add_fifthInterior
+    ht n hn hA]
+  have hQ :
+      quarticSignedPoleCanonicalLocalRadius
+        <= (n : ℝ)/(t/16) := by
+    rw [le_div_iff₀ (by positivity : 0 < t/16)]
+    exact hn
+  have hinter :=
+    W.fifthInterior_abs_le_B4_mul_K5
+      hQ hB4nonneg hK5nonneg hB4 hK5
+  exact (abs_add _ _).trans (add_le_add_left hinter _)
+
 end Synthesis

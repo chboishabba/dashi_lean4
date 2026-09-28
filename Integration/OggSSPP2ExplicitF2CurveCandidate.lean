@@ -91,6 +91,18 @@ theorem no_nonzero_affine_two_torsion_after_base_change
     WeierstrassCurve.b₂, WeierstrassCurve.b₄, WeierstrassCurve.b₆,
     Polynomial.IsRoot] using hroot
 
+theorem geometric_two_torsion_trivial
+    {K : Type*} [Field K] [CharP K 2] [Algebra F2 K]
+    (P : (curveBaseChange K).Point)
+    (h2 : P + P = 0) :
+    P = 0 := by
+  cases P with
+  | zero =>
+      rfl
+  | some x y h =>
+      exact False.elim
+        (no_nonzero_affine_two_torsion_after_base_change h h2)
+
 structure Boundary where
   explicitF2WeierstrassModelOwned : Bool
   discriminantUnitPaid : Bool
@@ -98,6 +110,8 @@ structure Boundary where
   projectivePointCountWithInfinityPaid : Bool
   frobeniusTraceZeroPaid : Bool
   noNonzeroAffineTwoTorsionAfterCharTwoBaseChangePaid : Bool
+  geometricTwoTorsionTrivialPaid : Bool
+  supersingularityCriterionWeldPaid : Bool
   supersingularityIdentified : Bool
   universalDeformationSourceSameObject : Bool
   deriving Repr
@@ -109,6 +123,8 @@ def canonicalBoundary : Boundary where
   projectivePointCountWithInfinityPaid := true
   frobeniusTraceZeroPaid := true
   noNonzeroAffineTwoTorsionAfterCharTwoBaseChangePaid := true
+  geometricTwoTorsionTrivialPaid := true
+  supersingularityCriterionWeldPaid := false
   supersingularityIdentified := false
   universalDeformationSourceSameObject := false
 

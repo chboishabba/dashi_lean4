@@ -1,5 +1,6 @@
 import Mathlib
 import Integration.OggSSPP2SupersingularUniversalDeformationSource
+import Integration.OggSSPP2WittPowerSeriesBase
 
 /-!
 # p=2 universal-deformation implementation frontier
@@ -22,15 +23,14 @@ This file is an implementation frontier only.
 namespace Integration.OggSSPP2UniversalDeformationImplementationFrontier
 
 inductive Residual
-  | missingWittVectorRingCarrier
-  | missingCompleteLocalPowerSeriesBase
+  | missingCompleteLocalUniversalDeformationStructure
   | missingSupersingularUniversalEllipticFamily
   | missingGamma0FourMarkedDeformationStates
   | missingTenStateClassificationBidi
   deriving DecidableEq, Repr
 
 def firstImplementationResidual : Residual :=
-  .missingWittVectorRingCarrier
+  .missingCompleteLocalUniversalDeformationStructure
 
 structure WittPowerSeriesBaseImplementation where
   ResidueField : Type
@@ -50,24 +50,24 @@ structure UniversalDeformationImplementation
   sourceUsesImplementedBase : Prop
 
 structure Boundary where
-  leanWittVectorCarrierFoundInRepo : Bool
-  leanCompleteLocalPowerSeriesCarrierFoundInRepo : Bool
-  wittVectorRingCarrierRequired : Bool
-  completeLocalPowerSeriesBaseRequired : Bool
+  mathlibWittVectorCarrierReused : Bool
+  mathlibPowerSeriesCarrierReused : Bool
+  wittEquivTwoAdicsReused : Bool
+  completeLocalUniversalDeformationStructureRequired : Bool
   universalEllipticFamilyRequiredAfterBase : Bool
   gamma0FourMarkedStatesRequiredAfterFamily : Bool
   tenStateBidiRequiredAfterMarkedStates : Bool
-  firstResidualIsWittVectorRingCarrier : Bool
+  firstResidualIsCompleteLocalUniversalStructure : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
-  leanWittVectorCarrierFoundInRepo := false
-  leanCompleteLocalPowerSeriesCarrierFoundInRepo := false
-  wittVectorRingCarrierRequired := true
-  completeLocalPowerSeriesBaseRequired := true
+  mathlibWittVectorCarrierReused := true
+  mathlibPowerSeriesCarrierReused := true
+  wittEquivTwoAdicsReused := true
+  completeLocalUniversalDeformationStructureRequired := true
   universalEllipticFamilyRequiredAfterBase := true
   gamma0FourMarkedStatesRequiredAfterFamily := true
   tenStateBidiRequiredAfterMarkedStates := true
-  firstResidualIsWittVectorRingCarrier := true
+  firstResidualIsCompleteLocalUniversalStructure := true
 
 end Integration.OggSSPP2UniversalDeformationImplementationFrontier

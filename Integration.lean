@@ -1,3 +1,4 @@
+import Integration.OggSSPP2ExplicitF2CurveCandidate
 import Integration.OggSSPP2WittPowerSeriesMaximalIdeal
 import Integration.OggSSPP2WittPowerSeriesCompleteness
 import Integration.OggSSPP2UniversalDeformationImplementationFrontier

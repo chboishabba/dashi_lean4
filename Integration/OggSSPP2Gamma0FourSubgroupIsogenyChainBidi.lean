@@ -43,11 +43,20 @@ structure Bidi where
   firstKernelMatchesSelectedOrderTwoSubflag :
     ChainState → Prop
 
+  firstKernelMatchesSelectedOrderTwoSubflagProof :
+    ∀ state, firstKernelMatchesSelectedOrderTwoSubflag state
+
   compositeKernelMatchesSelectedOrderFourSubgroup :
     ChainState → Prop
 
+  compositeKernelMatchesSelectedOrderFourSubgroupProof :
+    ∀ state, compositeKernelMatchesSelectedOrderFourSubgroup state
+
   finiteFlatBadPrimeSemanticsPreserved :
     ChainState → Prop
+
+  finiteFlatBadPrimeSemanticsPreservedProof :
+    ∀ state, finiteFlatBadPrimeSemanticsPreserved state
 
 theorem subgroupToChain_injective
     (b : Bidi) :

@@ -10,6 +10,8 @@ import Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
 import Integration.OggSSPP2Gamma0FourRefinedModuliBoundary
 import Integration.OggSSPP2Gamma0FourTwoIsogenyChainSource
 import Integration.OggSSPP2Gamma0FourUniqueSupersingularSubgroupSeparation
+import Integration.OggSSPP2UniqueGamma0FourMarkingBidi
+import Integration.OggSSPP2Gamma0FourSubgroupIsogenyChainBidi
 
 /-!
 # p=2 Gaussian-CM marked-source frontier
@@ -40,6 +42,8 @@ open Integration.OggSSPP2FrobeniusRetainedTarget
 inductive Residual
   | missingFormalKerFrobeniusSquaredFiniteFlatConstruction
   | missingArithmeticMarkingOverUniqueRawSubgroup
+  | missingUniqueGamma0MarkingBidi
+  | missingSubgroupIsogenyChainBidi
   | missingOrderTwoSubflag
   | missingFormalCMOrbitEquivalence
   | missingArithmeticOneOneEightMarking
@@ -96,6 +100,8 @@ structure Boundary where
   gamma0FourTwoIsogenyChainSocketOwned : Bool
   uniqueRawSupersingularGamma0FourSubgroupSourceBacked : Bool
   rawSubgroupChoiceCountOneVsResidualTenSeparated : Bool
+  uniqueGamma0MarkingBidiContractOwned : Bool
+  subgroupIsogenyChainBidiContractOwned : Bool
   gamma0FourOrderTwoSubflagRequired : Bool
   naiveFullE4PointSetIdentificationRuledOut : Bool
   stabilizerTypeCompatibilityOwned : Bool
@@ -119,6 +125,8 @@ def canonicalBoundary : Boundary where
   gamma0FourTwoIsogenyChainSocketOwned := true
   uniqueRawSupersingularGamma0FourSubgroupSourceBacked := true
   rawSubgroupChoiceCountOneVsResidualTenSeparated := true
+  uniqueGamma0MarkingBidiContractOwned := true
+  subgroupIsogenyChainBidiContractOwned := true
   gamma0FourOrderTwoSubflagRequired := true
   naiveFullE4PointSetIdentificationRuledOut := true
   stabilizerTypeCompatibilityOwned := true

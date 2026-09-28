@@ -9958,6 +9958,109 @@ theorem exists_quarticFourSignedPolePair_with_strength_floor_and_negative_origin
   · simpa [W] using hneg
 
 
+
+/-!
+## RH-native analytic puncture: center ordinate versus physical origin
+
+The balanced-ternary coefficient 3^4-1 suggests asking whether the analytic
+RH construction itself removes a distinguished origin.
+
+There is indeed an exact puncture already built into the projective test, but
+it lives in the Fourier/ordinate variable.  The combined physical profile has
+zero zeroth moment, hence its compact cosine transform vanishes at q=0.  After
+physical rescaling this says
+
+  Psi_t(t) = 0.
+
+Consequently every zero with Im rho = t contributes exactly zero to the base
+signed N-mu zero source, and the full zero-source tsum is exactly its
+off-ordinate restriction.
+
+This must not be confused with the *physical-profile origin coordinate*
+studied above.  The selected smooth witness can simultaneously have Psi_t(t)=0
+and a strictly negative pole-cancelled physical-origin determinant.  Thus the
+existing RH analytic puncture does not identify the balanced-ternary
+3^4-1 subtraction with annihilation of the physical zero mode.
+-/
+
+theorem QuarticFourSignedPolePair.normalizedOrdinateCosine_zero
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.normalizedOrdinateCosine 0 = 0 := by
+  unfold QuarticFourSignedPolePair.normalizedOrdinateCosine
+  exact
+    compactCosine_zero_of_profileZerothMoment_zero
+      (quarticFourSignedPoleCombinedProfile_zeroth_zero W.Rpos)
+
+theorem QuarticFourSignedPolePair.signedOrdinateTest_center_zero
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.signedOrdinateTest t = 0 := by
+  have h :=
+    W.signedOrdinateTest_normalized (q := 0) ht
+  rw [W.normalizedOrdinateCosine_zero] at h
+  simpa using h
+
+theorem QuarticFourSignedPolePair.signedZeroSourceTerm_eq_zero_of_sameOrd
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    {sigma : Zeros}
+    (him : (sigma : ℂ).im = t) :
+    W.signedZeroSourceTerm sigma = 0 := by
+  unfold QuarticFourSignedPolePair.signedZeroSourceTerm
+  rw [him, W.signedOrdinateTest_center_zero ht]
+  ring
+
+theorem QuarticFourSignedPolePair.signedZeroSource_tsum_eq_offOrd
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    (∑' sigma : Zeros, W.signedZeroSourceTerm sigma)
+      =
+    (∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+      W.signedZeroSourceTerm (sigma : Zeros)) := by
+  have hfull := W.signedZeroSourceTerm_summable ht
+  have hsame := hfull.subtype (SameOrd t)
+  have hoff := hfull.subtype ((SameOrd t)ᶜ)
+  have hsame0 :
+      (∑' sigma : SameOrd t,
+        W.signedZeroSourceTerm (sigma : Zeros)) = 0 := by
+    apply tsum_eq_zero
+    intro sigma
+    exact W.signedZeroSourceTerm_eq_zero_of_sameOrd ht sigma.property
+  have hsplit :=
+    (Summable.tsum_add_tsum_compl hsame hoff).symm
+  rw [hsame0, zero_add] at hsplit
+  exact hsplit
+
+theorem exists_quarticFourSignedPolePair_with_dual_center_puncture_and_negative_physical_origin
+    {t : ℝ}
+    (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 <= W.targetStrength
+      ∧ W.signedOrdinateTest t = 0
+      ∧ quarticFourSmoothFinitePoleCancelledOrigin
+          W.R W.muHalf W.muTwo t < 0 := by
+  obtain ⟨W,hstrength,horigin⟩ :=
+    exists_quarticFourSignedPolePair_with_strength_floor_and_negative_origin ht
+  refine ⟨W,hstrength,?_,horigin⟩
+  exact W.signedOrdinateTest_center_zero (by linarith)
+
+theorem exists_quarticFourSignedPolePair_dual_center_puncture_does_not_kill_physical_origin
+    {t : ℝ}
+    (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      W.signedOrdinateTest t = 0
+      ∧ quarticFourSmoothFinitePoleCancelledOrigin
+          W.R W.muHalf W.muTwo t ≠ 0 := by
+  obtain ⟨W,_hstrength,hcenter,horigin⟩ :=
+    exists_quarticFourSignedPolePair_with_dual_center_puncture_and_negative_physical_origin ht
+  refine ⟨W,hcenter,?_⟩
+  exact ne_of_lt horigin
+
+
 /-!
 ## Primitive coefficient lattice of the unrestricted atomic response system
 

@@ -65,9 +65,11 @@ structure Boundary where
   sourceResidueFieldDescentToF2Required : Bool
   wittEquivTwoAdicsReused : Bool
   algebraicLocalRingBasePaid : Bool
+  coefficientMaximalIdealAdicCompletenessPaid : Bool
   coefficientwiseCompletenessPaid : Bool
   xAdicCompletenessPaid : Bool
   actualPowerSeriesMaximalIdealIdentified : Bool
+  powerSeriesMaximalIdealEqualsCoefficientMaxPlusX : Bool
   maximalIdealAdicCompletenessRequired : Bool
   universalEllipticFamilyRequiredAfterBase : Bool
   gamma0FourMarkedStatesRequiredAfterFamily : Bool
@@ -85,9 +87,11 @@ def canonicalBoundary : Boundary where
   sourceResidueFieldDescentToF2Required := true
   wittEquivTwoAdicsReused := true
   algebraicLocalRingBasePaid := true
+  coefficientMaximalIdealAdicCompletenessPaid := true
   coefficientwiseCompletenessPaid := true
   xAdicCompletenessPaid := true
   actualPowerSeriesMaximalIdealIdentified := true
+  powerSeriesMaximalIdealEqualsCoefficientMaxPlusX := true
   maximalIdealAdicCompletenessRequired := true
   universalEllipticFamilyRequiredAfterBase := true
   gamma0FourMarkedStatesRequiredAfterFamily := true

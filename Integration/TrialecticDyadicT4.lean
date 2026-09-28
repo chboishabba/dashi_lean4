@@ -195,6 +195,35 @@ theorem raw_to_matching_count_factor :
       Fintype.card DyadicMatching * 27 := by
   norm_num [raw_dyadic_tuple_count, dyadic_matching_count]
 
+/-! ## Local puncture is not closed under punctured overlap restriction -/
+
+def offDiagonalPuncturedAB : ABSection :=
+  ⟨.zero, .posOne, .zero, .zero⟩
+
+theorem offDiagonalPuncturedAB_ne_zero :
+    offDiagonalPuncturedAB ≠ zeroAB := by
+  decide
+
+theorem offDiagonalPuncturedAB_overlapA_zero :
+    offDiagonalPuncturedAB.aa = SSPTrit.zero := rfl
+
+theorem offDiagonalPuncturedAB_overlapB_zero :
+    offDiagonalPuncturedAB.bb = SSPTrit.zero := rfl
+
+theorem punctured_local_does_not_force_punctured_overlapA :
+    ¬ (∀ section : ABSection,
+      section ≠ zeroAB →
+      section.aa ≠ SSPTrit.zero) := by
+  intro h
+  exact (h offDiagonalPuncturedAB offDiagonalPuncturedAB_ne_zero) rfl
+
+theorem punctured_local_does_not_force_punctured_overlapB :
+    ¬ (∀ section : ABSection,
+      section ≠ zeroAB →
+      section.bb ≠ SSPTrit.zero) := by
+  intro h
+  exact (h offDiagonalPuncturedAB offDiagonalPuncturedAB_ne_zero) rfl
+
 inductive DyadicT4ChartCreatesRHMechanism : Prop
 inductive GrothendieckDescentForcesPuncture : Prop
 
@@ -219,6 +248,8 @@ structure Boundary where
   compatibleMatchingCount19683 : Bool
   rawTripleCount531441 : Bool
   rawToMatchingFactor27 : Bool
+  puncturedLocalClosedUnderPuncturedOverlapRestriction : Bool
+  explicitOffDiagonalCounterexampleOwned : Bool
   rhMechanismClaimed : Bool
   punctureForcedByDescent : Bool
   deriving Repr
@@ -234,6 +265,8 @@ def canonicalBoundary : Boundary where
   compatibleMatchingCount19683 := true
   rawTripleCount531441 := true
   rawToMatchingFactor27 := true
+  puncturedLocalClosedUnderPuncturedOverlapRestriction := false
+  explicitOffDiagonalCounterexampleOwned := true
   rhMechanismClaimed := false
   punctureForcedByDescent := false
 

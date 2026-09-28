@@ -1,3 +1,4 @@
+import Integration.RiemannSSP15RoleCMContingency
 import Integration.RiemannSSP15DepthFiveRoleCodec
 import Integration.RiemannSSP15SignedProvenanceBridge
 import Integration.RiemannSSP15PartitionSeparation
@@ -26,3 +27,10 @@ import Integration.RiemannSSP15FilteredProvenanceCapstone
 #print axioms Integration.RiemannSSP15FilteredProvenanceCapstone.PrimitiveRowProducerRoleCertificate.j_coefficient
 #print axioms Integration.RiemannSSP15FilteredProvenanceCapstone.PrimitiveRowProducerRoleCertificate.s_coefficient
 #print axioms Integration.RiemannSSP15FilteredProvenanceCapstone.producer_marked_role_code_roundtrip
+
+
+#print axioms Integration.RiemannSSP15RoleCMContingency.origin_contingency
+#print axioms Integration.RiemannSSP15RoleCMContingency.j_contingency
+#print axioms Integration.RiemannSSP15RoleCMContingency.s_contingency
+#print axioms Integration.RiemannSSP15RoleCMContingency.cm_column_sums
+#print axioms Integration.RiemannSSP15RoleCMContingency.complete_contingency_matrix

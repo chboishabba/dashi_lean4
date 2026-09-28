@@ -3,6 +3,7 @@ import Integration.OggSSPP2BanerjeeF4UniversalDeformationSource
 import Integration.OggSSPP2BanerjeeGaloisVsF4OrbitNoGo
 import Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
 import Integration.OggSSPP2TwoInvolutionArithmeticSource
+import Integration.OggSSPP2BanerjeeF4SameSourceRealization
 
 /-!
 # Banerjee universal curve + proof-bearing Gamma_0(4) attachment
@@ -46,6 +47,17 @@ structure Attachment where
 
   gammaZeroLevelFourSemantics : Prop
   gammaZeroLevelFourSemanticsProof : gammaZeroLevelFourSemantics
+
+  /--
+  Source-side witness that each reconstructed Galois/inertia sector is actually
+  represented in the Banerjee torsor.  This is NOT derived from the mere 2×5
+  cardinality.
+  -/
+  sectorRealizedInBanerjeeTorsor :
+    Banerjee.GaloisInertiaState → Prop
+
+  sectorRealizedInBanerjeeTorsorProof :
+    ∀ state, sectorRealizedInBanerjeeTorsor state
 
   rawFrobenius :
     Banerjee.GaloisInertiaState → Banerjee.GaloisInertiaState
@@ -128,6 +140,32 @@ def rawFrobeniusSource
     Gamma.Gamma0FourMarkedArithmeticSource :=
   Two.toRawFrobeniusSource (twoInvolutionSource attachment)
 
+/--
+A proof-bearing finite-flat attachment plus source-sector realization produces
+the same-source universal-deformation marking automatically.
+-/
+def sectorRealization
+    (authority :
+      Integration.OggSSPP2BanerjeeF4SameSourceRealization.SourceAuthority)
+    (attachment : Attachment) :
+    Integration.OggSSPP2BanerjeeF4SameSourceRealization.SectorRealization
+      authority where
+  gamma0FourLevelStructurePresent :=
+    fun _ => attachment.gammaZeroLevelFourSemantics
+  gamma0FourLevelStructurePresentProof :=
+    fun _ => attachment.gammaZeroLevelFourSemanticsProof
+  deformationProvenanceRetained :=
+    attachment.sectorRealizedInBanerjeeTorsor
+  deformationProvenanceRetainedProof :=
+    attachment.sectorRealizedInBanerjeeTorsorProof
+
+def tenStateRecognition
+    (authority :
+      Integration.OggSSPP2BanerjeeF4SameSourceRealization.SourceAuthority)
+    (attachment : Attachment) :=
+  Integration.OggSSPP2BanerjeeF4SameSourceRealization.tenStateRecognition
+    (sectorRealization authority attachment)
+
 theorem selected_elliptic_object_is_universal_curve
     (attachment : Attachment) :
     (finiteFlatDatum attachment).selectedEllipticObject =
@@ -156,6 +194,8 @@ structure Boundary where
   rawFrobeniusRequiredSeparately : Bool
   rawGaloisCommutationRequired : Bool
   twoInvolutionSourceConstructedAutomatically : Bool
+  sectorRealizationConstructedFromAttachment : Bool
+  tenStateRecognitionConstructedFromAttachment : Bool
   attachmentInhabitedHere : Bool
   deriving Repr
 
@@ -167,6 +207,8 @@ def canonicalBoundary : Boundary where
   rawFrobeniusRequiredSeparately := true
   rawGaloisCommutationRequired := true
   twoInvolutionSourceConstructedAutomatically := true
+  sectorRealizationConstructedFromAttachment := true
+  tenStateRecognitionConstructedFromAttachment := true
   attachmentInhabitedHere := false
 
 end Integration.OggSSPP2BanerjeeGamma0FourAttachment

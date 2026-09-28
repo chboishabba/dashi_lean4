@@ -13,6 +13,8 @@ import Integration.OggSSPP2ArithmeticBidiDualCodecTransport
 import Integration.OggSSPP2SupersingularUniversalDeformationSource
 import Integration.OggSSPP2WittPowerSeriesBase
 import Integration.OggSSPP2UniversalDeformationImplementationFrontier
+import Integration.OggSSPP2ExplicitF2CurveCandidate
+import Integration.OggSSPP2ResidueFieldDescentBoundary
 import Integration.OggSSPP2BalancedTernaryNeutralCompletionBridge
 import Integration.OggSSPP2BadPrimeLevelStructureBoundary
 import Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
@@ -109,6 +111,9 @@ structure Boundary where
   universalSupersingularDeformationSourceSocketOwned : Bool
   mathlibWittPowerSeriesCarrierOwned : Bool
   f2WittBaseIsSpecializationOnly : Bool
+  explicitF2CurveCandidateOwned : Bool
+  explicitF2CurveDiscriminantAndTracePaid : Bool
+  geometricSupersingularityIdentificationConstructed : Bool
   sourceResidueFieldDescentToF2Constructed : Bool
   mathlibWittPowerSeriesLocalRingOwned : Bool
   mathlibPowerSeriesCompletenessLayersOwned : Bool
@@ -151,6 +156,9 @@ def canonicalBoundary : Boundary where
   universalSupersingularDeformationSourceSocketOwned := true
   mathlibWittPowerSeriesCarrierOwned := true
   f2WittBaseIsSpecializationOnly := true
+  explicitF2CurveCandidateOwned := true
+  explicitF2CurveDiscriminantAndTracePaid := true
+  geometricSupersingularityIdentificationConstructed := false
   sourceResidueFieldDescentToF2Constructed := false
   mathlibWittPowerSeriesLocalRingOwned := true
   mathlibPowerSeriesCompletenessLayersOwned := true

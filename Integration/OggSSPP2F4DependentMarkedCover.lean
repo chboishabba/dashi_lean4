@@ -67,6 +67,21 @@ theorem decode_encode_marked (s : StratifiedTargetState) :
     decodeMarked (encodeMarked s) = s :=
   decode_encode p2F4DependentMarkedProjection s
 
+theorem encode_decode_marked
+    (code : Code p2F4DependentMarkedProjection) :
+    encodeMarked (decodeMarked code) = code := by
+  rcases code with ⟨orbit, mark⟩
+  cases orbit with
+  | zeroFixed =>
+      cases mark
+      rfl
+  | oneFixed =>
+      cases mark
+      rfl
+  | conjugatePair =>
+      rcases mark with ⟨side, noncentral⟩
+      rfl
+
 theorem encode_marked_injective :
     Function.Injective encodeMarked :=
   encode_injective p2F4DependentMarkedProjection
@@ -115,6 +130,7 @@ structure Boundary where
   dependentResidualCoreReused : Bool
   exactOneOneEightMarkFamilyConstructed : Bool
   exactReopenConstructed : Bool
+  exactEncodeDecodeConstructed : Bool
   dependentCodeSeparating : Bool
   uniformMarkingRejected : Bool
   targetNormalFormHasTenComponents : Bool
@@ -125,6 +141,7 @@ def canonicalBoundary : Boundary where
   dependentResidualCoreReused := true
   exactOneOneEightMarkFamilyConstructed := true
   exactReopenConstructed := true
+  exactEncodeDecodeConstructed := true
   dependentCodeSeparating := true
   uniformMarkingRejected := true
   targetNormalFormHasTenComponents := true

@@ -1703,6 +1703,17 @@ theorem genericProjectivePhysicalProfile_contDiff_two
     Zeta23Bridge.LiteralWeilParityBalance.evenResp
   fun_prop
 
+theorem quarticFourNormalizedProjectiveProfile_contDiff_n
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (n : ℕ∞) :
+    ContDiff ℝ n
+      (quarticFourNormalizedProjectiveProfile R lam mu) := by
+  unfold quarticFourNormalizedProjectiveProfile
+  exact genericProjectivePhysicalProfile_contDiff_n
+    (quarticFourWindowProfile_contDiff_n
+      (lam:=lam) (mu:=mu) hR n) 1
+
 theorem quarticFourNormalizedProjectiveProfile_contDiff_two
     {R lam mu : ℝ}
     (hR : 0 < R) :

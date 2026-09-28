@@ -72,7 +72,14 @@ def puncturedKernel2ToPhaseNine
   ⟨kernel2ToPhaseNine x.1, by
     intro h
     apply x.2
-    apply kernel_phase_roundtrip x.1 ▸ congrArg phaseNineToKernel2 h
+    calc
+      x.1 = phaseNineToKernel2 (kernel2ToPhaseNine x.1) :=
+        (kernel_phase_roundtrip x.1).symm
+      _ = phaseNineToKernel2 (.zero,.zero) :=
+        congrArg phaseNineToKernel2 h
+      _ = origin 2 := by
+        funext i
+        fin_cases i <;> rfl
   ⟩
 
 def puncturedPhaseNineToKernel2
@@ -80,8 +87,12 @@ def puncturedPhaseNineToKernel2
   ⟨phaseNineToKernel2 x.1, by
     intro h
     apply x.2
-    have := congrArg kernel2ToPhaseNine h
-    simpa [origin, kernel2ToPhaseNine] using this
+    calc
+      x.1 = kernel2ToPhaseNine (phaseNineToKernel2 x.1) :=
+        (phase_kernel_roundtrip x.1).symm
+      _ = kernel2ToPhaseNine (origin 2) :=
+        congrArg kernel2ToPhaseNine h
+      _ = (.zero,.zero) := by rfl
   ⟩
 
 theorem punctured_kernel_phase_roundtrip

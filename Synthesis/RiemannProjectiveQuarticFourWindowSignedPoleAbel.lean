@@ -1682,6 +1682,17 @@ theorem exists_quarticFourSignedPole_rightBoundary_tendsto_zero :
 
 open Zeta23Bridge.OscillatoryKernelDecay
 
+theorem genericProjectivePhysicalProfile_contDiff_n
+    {g : ℝ -> ℝ}
+    {n : ℕ∞}
+    (hg : ContDiff ℝ n g)
+    (r : ℝ) :
+    ContDiff ℝ n (genericProjectivePhysicalProfile g r) := by
+  unfold genericProjectivePhysicalProfile
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+  fun_prop
+
 theorem genericProjectivePhysicalProfile_contDiff_two
     {g : ℝ -> ℝ}
     (hg : ContDiff ℝ 2 g)

@@ -9,6 +9,7 @@ import Integration.OggSSPP2ResidueFieldDescentBoundary
 import Integration.OggSSPP2ConcreteF2UniversalDeformationRecognition
 import Integration.OggSSPP2BanerjeeF4UniversalDeformationSource
 import Integration.OggSSPP2BanerjeeF4SameSourceRealization
+import Integration.OggSSPP2Gamma0FourSchemeLevelRealizationFrontier
 import Integration.OggSSPP2BanerjeeF4Gamma0FourEnhancement
 
 /-!
@@ -64,6 +65,7 @@ structure Boundary where
   explicitBanerjeeUniversalFamilyOwned : Bool
   banerjeeSourceAuthorityAttributedAndInhabited : Bool
   gamma0FourEnhancementContractOwned : Bool
+  schemeLevelFiniteFlatGamma0FourFrontierOwned : Bool
   galoisInertiaSectorRealizationContractOwned : Bool
   explicitF2CurveCandidateOwned : Bool
   explicitF2CurveDiscriminantAndTracePaid : Bool
@@ -95,6 +97,7 @@ def canonicalBoundary : Boundary where
   explicitBanerjeeUniversalFamilyOwned := true
   banerjeeSourceAuthorityAttributedAndInhabited := true
   gamma0FourEnhancementContractOwned := true
+  schemeLevelFiniteFlatGamma0FourFrontierOwned := true
   galoisInertiaSectorRealizationContractOwned := true
   explicitF2CurveCandidateOwned := true
   explicitF2CurveDiscriminantAndTracePaid := true

@@ -3,6 +3,7 @@ import Integration.ActionOrbitRecognition
 import Integration.BalancedTernaryHypercubeAntipodalOrbitCount
 import Integration.OggSSPSmallCharacteristicRecognition
 import Integration.MarkedArithmeticResidualCover
+import Integration.OggSSPSmallCharacteristicAcquisitionDirection
 
 /-!
 # Exponent-residual arithmetic source acquisition interface
@@ -127,6 +128,20 @@ structure MarkedCoverArithmeticResidualSourceCandidate
     Nonempty (source.State ≃ markedCoverCandidate.cover.Fine)
   sourceConstructionUsesMarkedCoverPattern : Prop
 
+def preferredAcquisitionDirection :
+    ExceptionalResidualPrime →
+    Integration.OggSSPSmallCharacteristicAcquisitionDirection.AcquisitionDirection
+  | .p2 =>
+      .markedEnrichmentOrCover
+  | .p3 =>
+      .quotientOrCompression
+
+theorem p2_acquisition_direction_is_marked_enrichment :
+    preferredAcquisitionDirection .p2 = .markedEnrichmentOrCover := rfl
+
+theorem p3_acquisition_direction_is_quotient :
+    preferredAcquisitionDirection .p3 = .quotientOrCompression := rfl
+
 structure FullResidualRecognition
     (p : ExceptionalResidualPrime)
     (source : ArithmeticResidualSource p) where
@@ -183,6 +198,9 @@ structure Boundary where
   sourceRequiresIndependentPi0Receipt : Bool
   markedCoverAcquisitionPatternAvailable : Bool
   p11MarkedCoverPrecedentRecorded : Bool
+  p2SearchDirectionMarkedEnrichment : Bool
+  p3SearchDirectionQuotientCompression : Bool
+  acquisitionDirectionPromotedToArithmeticAuthority : Bool
   fullRecognitionUsesActionOrbitStabilizerCore : Bool
   samePresentationRequiresStateAndSymmetryBijections : Bool
   p2ArithmeticSourceConstructed : Bool
@@ -202,6 +220,9 @@ def canonicalBoundary : Boundary where
   sourceRequiresIndependentPi0Receipt := true
   markedCoverAcquisitionPatternAvailable := true
   p11MarkedCoverPrecedentRecorded := true
+  p2SearchDirectionMarkedEnrichment := true
+  p3SearchDirectionQuotientCompression := true
+  acquisitionDirectionPromotedToArithmeticAuthority := false
   fullRecognitionUsesActionOrbitStabilizerCore := true
   samePresentationRequiresStateAndSymmetryBijections := true
   p2ArithmeticSourceConstructed := false

@@ -71,10 +71,78 @@ structure UniversalTwoDescentResidualOn
       ∃ P : E.1.toAffine.Point,
         kummer (Multiplicative.ofAdd P) = s
 
+/-! ## Literal MW/2 source on the exact point group -/
+
+noncomputable def rationalDoubleSubgroup
+    (E : RationalEllipticCurve) :
+    letI : E.1.IsElliptic := E.2
+    Subgroup (Multiplicative E.1.toAffine.Point) := by
+  letI : E.1.IsElliptic := E.2
+  exact
+    { carrier := {x | ∃ Q : E.1.toAffine.Point, x.toAdd = Q + Q}
+      one_mem' := by
+        refine ⟨0, ?_⟩
+        simp
+      mul_mem' := by
+        intro x y hx hy
+        rcases hx with ⟨P, hP⟩
+        rcases hy with ⟨Q, hQ⟩
+        refine ⟨P + Q, ?_⟩
+        simp only [Multiplicative.toAdd_mul]
+        rw [hP, hQ]
+        abel
+      inv_mem' := by
+        intro x hx
+        rcases hx with ⟨P, hP⟩
+        refine ⟨-P, ?_⟩
+        simp only [Multiplicative.toAdd_inv]
+        rw [hP]
+        abel }
+
 namespace UniversalTwoDescentResidualOn
 
 variable {E : RationalEllipticCurve}
 variable (d : UniversalTwoDescentResidualOn E)
+
+theorem rationalDoubleSubgroup_le_kummerKernel :
+    letI : E.1.IsElliptic := E.2
+    let _ := d.selmerGroup
+    rationalDoubleSubgroup E ≤ d.kummer.ker := by
+  intro x hx
+  rcases hx with ⟨Q, hQ⟩
+  have hDouble :
+      IsRationalPointDouble E x.toAdd := by
+    exact ⟨Q, hQ.symm⟩
+  exact (d.kummerKernelExactlyDoubles x.toAdd).2 hDouble
+
+noncomputable def quotientKummerToSelmer :
+    letI : E.1.IsElliptic := E.2
+    let _ := d.selmerGroup
+    (Multiplicative E.1.toAffine.Point ⧸ rationalDoubleSubgroup E) →*
+      d.Selmer :=
+  QuotientGroup.lift
+    (rationalDoubleSubgroup E)
+    d.kummer
+    d.rationalDoubleSubgroup_le_kummerKernel
+
+theorem quotientKummerToSelmer_injective :
+    letI : E.1.IsElliptic := E.2
+    let _ := d.selmerGroup
+    Function.Injective d.quotientKummerToSelmer := by
+  apply
+    (QuotientGroup.injective_lift_iff
+      d.kummer
+      d.rationalDoubleSubgroup_le_kummerKernel).2
+  ext x
+  constructor
+  · intro hx
+    have hDouble :
+        IsRationalPointDouble E x.toAdd :=
+      (d.kummerKernelExactlyDoubles x.toAdd).1 hx
+    rcases hDouble with ⟨Q, hQ⟩
+    exact ⟨Q, hQ.symm⟩
+  · intro hx
+    exact d.rationalDoubleSubgroup_le_kummerKernel hx
 
 noncomputable local instance : CommGroup d.Selmer :=
   d.selmerGroup

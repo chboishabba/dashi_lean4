@@ -1036,3 +1036,5 @@ import Integration.TrialecticPreRHTernaryCapstone
 import Integration.TrialecticDyadicNineObserverCandidate
 
 import Integration.MonsterFiveTrialecticRecognition
+
+import Integration.MonsterFiveTrialecticRecognitionFrontier

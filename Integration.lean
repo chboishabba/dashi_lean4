@@ -1062,3 +1062,5 @@ import Integration.TrialecticIncomingFrickeSeparation
 import Integration.SelectedFibreActionCompiler
 
 import Integration.OutgoingFrickeModeBlock
+
+import Integration.TrialecticFiniteBasisLinearWrongType

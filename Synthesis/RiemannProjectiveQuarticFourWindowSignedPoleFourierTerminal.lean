@@ -1179,4 +1179,112 @@ theorem QuarticFourSignedPolePair.normalizedOuterPairedAbelAt_fourfold_ibp
       (quarticFourSignedPoleCombinedProfile_compact W.Rpos)
       hA
 
+
+/-!
+## Quartic cap carrier for the physical fourth primitive
+
+For physical half-widths s0 <= S define the cap
+
+  w(y) = (max 0 (S - max s0 |y-t|))^4 / 24.
+
+It is constant on the already-paid inner window |y-t| <= s0, quartic on the
+annulus s0 <= |y-t| <= S, and zero outside the outer symmetric window.
+
+The expected Fubini weld is
+
+  physicalFourthPrimitive(S)
+    =
+  zetaWindowMinusMuPair (t-S) (t+S) w.
+
+That equality is intentionally not asserted below yet; this section only
+constructs the literal weighted-pair carrier and pays its elementary geometry.
+-/
+
+def quarticSymmetricCapWeight
+    (t s0 S y : ℝ) : ℝ :=
+  (max 0 (S - max s0 |y-t|))^4 / 24
+
+theorem quarticSymmetricCapWeight_nonneg
+    (t s0 S y : ℝ) :
+    0 <= quarticSymmetricCapWeight t s0 S y := by
+  unfold quarticSymmetricCapWeight
+  positivity
+
+theorem quarticSymmetricCapWeight_eq_inner
+    {t s0 S y : ℝ}
+    (hs0 : 0 <= s0)
+    (hsS : s0 <= S)
+    (hy : |y-t| <= s0) :
+    quarticSymmetricCapWeight t s0 S y
+      =
+    (S-s0)^4 / 24 := by
+  unfold quarticSymmetricCapWeight
+  rw [max_eq_left hy]
+  rw [max_eq_right]
+  · rfl
+  · linarith
+
+theorem quarticSymmetricCapWeight_eq_annulus
+    {t s0 S y : ℝ}
+    (hs0y : s0 <= |y-t|)
+    (hyS : |y-t| <= S) :
+    quarticSymmetricCapWeight t s0 S y
+      =
+    (S-|y-t|)^4 / 24 := by
+  unfold quarticSymmetricCapWeight
+  rw [max_eq_right hs0y]
+  rw [max_eq_right]
+  · rfl
+  · linarith
+
+theorem quarticSymmetricCapWeight_eq_zero_of_outer
+    {t s0 S y : ℝ}
+    (hSy : S <= |y-t|) :
+    quarticSymmetricCapWeight t s0 S y = 0 := by
+  unfold quarticSymmetricCapWeight
+  have hmax : S <= max s0 |y-t| :=
+    hSy.trans (le_max_right _ _)
+  rw [max_eq_left]
+  · norm_num
+  · linarith
+
+theorem quarticSymmetricCapWeight_at_outer_right
+    {t s0 S : ℝ}
+    (hsS : s0 <= S) :
+    quarticSymmetricCapWeight t s0 S (t+S) = 0 := by
+  apply quarticSymmetricCapWeight_eq_zero_of_outer
+  rw [show t+S-t = S by ring]
+  exact le_abs_self S
+
+theorem quarticSymmetricCapWeight_at_outer_left
+    {t s0 S : ℝ}
+    (hsS : s0 <= S) :
+    quarticSymmetricCapWeight t s0 S (t-S) = 0 := by
+  apply quarticSymmetricCapWeight_eq_zero_of_outer
+  rw [show t-S-t = -S by ring, abs_neg]
+  exact le_abs_self S
+
+def QuarticFourSignedPolePair.physicalFourthCapPair
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (S : ℝ) : ℝ :=
+  let s0 :=
+    quarticSignedPoleCanonicalPhysicalHalfWidth t
+  zetaWindowMinusMuPair
+    (t-S) (t+S)
+    (quarticSymmetricCapWeight t s0 S)
+
+def QuarticFourSignedPolePair.physicalFourthCapWeight
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (S : ℝ) : ℝ -> ℝ :=
+  quarticSymmetricCapWeight
+    t quarticSignedPoleCanonicalPhysicalHalfWidth t S
+
+theorem QuarticFourSignedPolePair.physicalFourthCapWeight_nonneg
+    {t S y : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    0 <= W.physicalFourthCapWeight S y :=
+  quarticSymmetricCapWeight_nonneg _ _ _ _
+
 end Synthesis

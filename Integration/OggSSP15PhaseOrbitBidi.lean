@@ -168,6 +168,41 @@ theorem five_orbit_count : Fintype.card FiveOrbit = 5 := by decide
 theorem phase_orbit_count : Fintype.card PhaseOrbit15 = 15 := by
   native_decide
 
+/-! ## Exact address ↔ phase-orbit commuting triangle -/
+
+def addressToPhaseOrbit : SSP15OggAddress15 → PhaseOrbit15 :=
+  fun address => oggToPhaseOrbit15 (ssp15LaneFromAddress address)
+
+def phaseOrbitToAddress : PhaseOrbit15 → SSP15OggAddress15 :=
+  fun state => addressFromSSP15Lane (phaseOrbit15ToOgg state)
+
+theorem address_phase_orbit_roundtrip (address : SSP15OggAddress15) :
+    phaseOrbitToAddress (addressToPhaseOrbit address) = address := by
+  simp [addressToPhaseOrbit, phaseOrbitToAddress,
+    ogg_phase_orbit_roundtrip, address_after_lane]
+
+theorem phase_orbit_address_roundtrip (state : PhaseOrbit15) :
+    addressToPhaseOrbit (phaseOrbitToAddress state) = state := by
+  simp [addressToPhaseOrbit, phaseOrbitToAddress,
+    phase_orbit_ogg_roundtrip, lane_after_address]
+
+def addressPhaseOrbitEquiv : SSP15OggAddress15 ≃ PhaseOrbit15 where
+  toFun := addressToPhaseOrbit
+  invFun := phaseOrbitToAddress
+  left_inv := address_phase_orbit_roundtrip
+  right_inv := phase_orbit_address_roundtrip
+
+def phaseOrbitPrimeValue (state : PhaseOrbit15) : Nat :=
+  primeValue (phaseOrbit15ToOgg state)
+
+def phaseOrbitAddressValue (state : PhaseOrbit15) : Nat :=
+  addressValue (phaseOrbitToAddress state)
+
+theorem phase_orbit_address_value_is_prime_value (state : PhaseOrbit15) :
+    phaseOrbitAddressValue state = phaseOrbitPrimeValue state := by
+  simp [phaseOrbitAddressValue, phaseOrbitPrimeValue, phaseOrbitToAddress,
+    address_value_is_ssp15_prime]
+
 /-! Canonical exact Ogg address remains the identity code. -/
 
 theorem exact_address_still_roundtrips (prime : SSPPrime) :
@@ -199,6 +234,8 @@ structure Boundary where
   chosenPrimeInternalBijectionReused : Bool
   internalThreeByFiveBidiPaid : Bool
   composedOggThreeByFiveBidiPaid : Bool
+  directAddressThreeByFiveBidiPaid : Bool
+  exactPrimeValuePreservedThroughPresentation : Bool
   threeTimesFiveCountFifteen : Bool
   actualInnerT2InversionQuotientPorted : Bool
   canonicalQuotientRepresentativesOwned : Bool
@@ -214,6 +251,8 @@ def canonicalBoundary : Boundary where
   chosenPrimeInternalBijectionReused := true
   internalThreeByFiveBidiPaid := true
   composedOggThreeByFiveBidiPaid := true
+  directAddressThreeByFiveBidiPaid := true
+  exactPrimeValuePreservedThroughPresentation := true
   threeTimesFiveCountFifteen := true
   actualInnerT2InversionQuotientPorted := true
   canonicalQuotientRepresentativesOwned := true

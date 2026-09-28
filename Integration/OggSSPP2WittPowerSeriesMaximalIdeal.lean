@@ -69,12 +69,76 @@ theorem maximalIdeal_membership_iff_constantCoeff
   rw [← deformationIdealCandidate_eq_maximalIdeal]
   rfl
 
+noncomputable def coefficientMaximalIdealInPowerSeries :
+    Ideal P2WittPowerSeriesBase :=
+  coefficientMaximalIdeal.map PowerSeries.C
+
+noncomputable def deformationTwoPartIdeal :
+    Ideal P2WittPowerSeriesBase :=
+  coefficientMaximalIdealInPowerSeries ⊔
+    Ideal.span ({PowerSeries.X} : Set P2WittPowerSeriesBase)
+
+theorem constant_of_coefficient_maximal_mem_twoPart
+    {a : P2WittRing}
+    (ha : a ∈ coefficientMaximalIdeal) :
+    PowerSeries.C a ∈ deformationTwoPartIdeal := by
+  apply Ideal.mem_sup_left
+  exact Ideal.mem_map_of_mem PowerSeries.C ha
+
+theorem X_mem_twoPart :
+    PowerSeries.X ∈ deformationTwoPartIdeal := by
+  apply Ideal.mem_sup_right
+  exact Ideal.subset_span (Set.mem_singleton PowerSeries.X)
+
+theorem deformationTwoPartIdeal_le_maximalIdeal :
+    deformationTwoPartIdeal ≤
+      IsLocalRing.maximalIdeal P2WittPowerSeriesBase := by
+  apply sup_le
+  · intro f hf
+    rcases hf with ⟨a, ha, rfl⟩
+    rw [maximalIdeal_membership_iff_constantCoeff]
+    simpa using ha
+  · rw [Ideal.span_le]
+    intro f hf
+    simp only [Set.mem_singleton_iff] at hf
+    subst f
+    rw [← deformationIdealCandidate_eq_maximalIdeal]
+    exact X_mem_deformationIdealCandidate
+
+theorem maximalIdeal_le_deformationTwoPartIdeal :
+    IsLocalRing.maximalIdeal P2WittPowerSeriesBase ≤
+      deformationTwoPartIdeal := by
+  intro f hf
+  have hconst :
+      PowerSeries.constantCoeff f ∈ coefficientMaximalIdeal := by
+    simpa [coefficientMaximalIdeal] using
+      (maximalIdeal_membership_iff_constantCoeff f).mp hf
+  have hC :
+      PowerSeries.C (PowerSeries.constantCoeff f) ∈
+        deformationTwoPartIdeal :=
+    constant_of_coefficient_maximal_mem_twoPart hconst
+  have hX :
+      f - PowerSeries.C (PowerSeries.constantCoeff f) ∈
+        deformationTwoPartIdeal := by
+    rw [PowerSeries.sub_const_eq_shift_mul_X]
+    exact deformationTwoPartIdeal.mul_mem_left _ X_mem_twoPart
+  have hadd := deformationTwoPartIdeal.add_mem hX hC
+  simpa using hadd
+
+theorem deformationTwoPartIdeal_eq_maximalIdeal :
+    deformationTwoPartIdeal =
+      IsLocalRing.maximalIdeal P2WittPowerSeriesBase :=
+  le_antisymm
+    deformationTwoPartIdeal_le_maximalIdeal
+    maximalIdeal_le_deformationTwoPartIdeal
+
 structure Boundary where
   coefficientMaximalIdealOwned : Bool
   deformationIdealCandidateOwned : Bool
   variableXInCandidatePaid : Bool
   candidateIdentifiedWithPowerSeriesMaximalIdeal : Bool
   candidateIdentifiedWithLiteralTwoXIdeal : Bool
+  coefficientMaxPlusXPresentationPaid : Bool
   candidateAdicCompletenessPaid : Bool
   deriving Repr
 
@@ -84,6 +148,7 @@ def canonicalBoundary : Boundary where
   variableXInCandidatePaid := true
   candidateIdentifiedWithPowerSeriesMaximalIdeal := true
   candidateIdentifiedWithLiteralTwoXIdeal := false
+  coefficientMaxPlusXPresentationPaid := true
   candidateAdicCompletenessPaid := false
 
 end Integration.OggSSPP2WittPowerSeriesMaximalIdeal

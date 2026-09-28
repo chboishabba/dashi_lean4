@@ -9646,6 +9646,32 @@ theorem QuarticFourSignedPolePair.combinedProfile_zero_eq_commonWindow_mul_origi
   ring
 
 
+theorem QuarticFourSignedPolePair.combinedProfile_zero_neg_of_origin_neg
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (horigin :
+      quarticFourSmoothFinitePoleCancelledOrigin
+        W.R W.muHalf W.muTwo t < 0) :
+    quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t 0 < 0 := by
+  rw [W.combinedProfile_zero_eq_commonWindow_mul_origin]
+  have hG :
+      0 < quarticFourWindowProfile W.R (1/2) W.muHalf 0 :=
+    quarticFourWindowProfile_zero_pos W.Rpos W.RltOne
+  nlinarith
+
+theorem exists_quarticFourSignedPolePair_with_strength_floor_and_negative_profile_origin
+    {t : ℝ}
+    (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 <= W.targetStrength
+      ∧ quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t 0 < 0 := by
+  obtain ⟨W,hstrength,horigin⟩ :=
+    exists_quarticFourSignedPolePair_with_strength_floor_and_negative_origin ht
+  exact ⟨W,hstrength,W.combinedProfile_zero_neg_of_origin_neg horigin⟩
+
+
 theorem exists_radius_quarticFourSmoothOrigin_close_atomic
     {eps : ℝ}
     (heps : 0 < eps) :

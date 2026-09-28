@@ -87,9 +87,9 @@ theorem no_nonzero_affine_two_torsion_after_base_change
   have hroot :=
     WeierstrassCurve.Affine.Point.isRoot_twoTorsionPolynomial_of_add_self
       h h2
+  rw [Polynomial.IsRoot.def] at hroot
   simpa [curveBaseChange, curve, WeierstrassCurve.twoTorsionPolynomial,
-    WeierstrassCurve.b₂, WeierstrassCurve.b₄, WeierstrassCurve.b₆,
-    Polynomial.IsRoot] using hroot
+    WeierstrassCurve.b₂, WeierstrassCurve.b₄, WeierstrassCurve.b₆] using hroot
 
 theorem geometric_two_torsion_trivial
     {K : Type*} [Field K] [CharP K 2] [Algebra F2 K]

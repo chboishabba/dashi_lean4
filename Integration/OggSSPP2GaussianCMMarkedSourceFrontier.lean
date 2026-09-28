@@ -18,6 +18,7 @@ import Integration.OggSSPP2ResidueFieldDescentBoundary
 import Integration.OggSSPP2ConcreteF2UniversalDeformationRecognition
 import Integration.OggSSPP2BanerjeeF4UniversalDeformationSource
 import Integration.OggSSPP2BanerjeeF4SameSourceRealization
+import Integration.OggSSPP2BanerjeeF4Gamma0FourEnhancement
 import Integration.OggSSPP2OrientedInertiaTenStateRecognition
 import Integration.OggSSPP2BalancedTernaryNeutralCompletionBridge
 import Integration.OggSSPP2BadPrimeLevelStructureBoundary
@@ -56,8 +57,7 @@ open Integration.OggSSPP2FrobeniusRetainedTarget
 
 inductive Residual
   | missingFormalKerFrobeniusSquaredFiniteFlatConstruction
-  | missingBanerjeeF4SourceAuthority
-  | missingGaloisInertiaSectorRealization
+  | missingFiniteFlatGamma0FourEnhancementFamily
   | missingSubgroupIsogenyChainBidi
   | missingFrobeniusCompatibleRecognition
   deriving DecidableEq, Repr
@@ -124,6 +124,8 @@ structure Boundary where
   banerjeeExplicitUniversalFamilyOwned : Bool
   g24AndGaloisSameSourceTorsorRecorded : Bool
   galoisInertiaTenStateCandidateOwned : Bool
+  banerjeeSourceAuthorityAttributedAndInhabited : Bool
+  gamma0FourEnhancementContractOwned : Bool
   galoisInertiaSectorRealizationContractOwned : Bool
   separateMarkedAndTenStateProofsRequiredAfterSectorRealization : Bool
   sameSourceAuthorityMarkingRecognitionCapstoneOwned : Bool
@@ -181,6 +183,8 @@ def canonicalBoundary : Boundary where
   banerjeeExplicitUniversalFamilyOwned := true
   g24AndGaloisSameSourceTorsorRecorded := true
   galoisInertiaTenStateCandidateOwned := true
+  banerjeeSourceAuthorityAttributedAndInhabited := true
+  gamma0FourEnhancementContractOwned := true
   galoisInertiaSectorRealizationContractOwned := true
   separateMarkedAndTenStateProofsRequiredAfterSectorRealization := false
   sameSourceAuthorityMarkingRecognitionCapstoneOwned := true

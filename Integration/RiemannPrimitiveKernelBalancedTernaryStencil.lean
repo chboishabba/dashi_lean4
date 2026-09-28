@@ -50,6 +50,56 @@ theorem s_depth_five :
     sCoefficient = pow3 5 * sResidualStencil := by
   norm_num [sCoefficient, sResidualStencil, pow3]
 
+inductive NonzeroTernaryResidue
+  | one
+  | two
+  deriving DecidableEq, Repr
+
+def residueValue : NonzeroTernaryResidue → Nat
+  | .one => 1
+  | .two => 2
+
+structure ExactThreeAdicDepthWitness (coefficient : Nat) where
+  depth : Nat
+  unit : Nat
+  factorization : coefficient = pow3 depth * unit
+  unitResidue : NonzeroTernaryResidue
+  residueExact : unit % 3 = residueValue unitResidue
+
+def poleDepthZero : ExactThreeAdicDepthWitness poleCoefficient where
+  depth := 0
+  unit := 80
+  factorization := by norm_num [poleCoefficient, pow3]
+  unitResidue := .two
+  residueExact := by norm_num [residueValue]
+
+def originDepthFive : ExactThreeAdicDepthWitness originCoefficient where
+  depth := 5
+  unit := 1
+  factorization := by norm_num [originCoefficient, pow3]
+  unitResidue := .one
+  residueExact := by norm_num [residueValue]
+
+def jDepthFive : ExactThreeAdicDepthWitness jCoefficient where
+  depth := 5
+  unit := 5
+  factorization := by norm_num [jCoefficient, pow3]
+  unitResidue := .two
+  residueExact := by norm_num [residueValue]
+
+def sDepthFive : ExactThreeAdicDepthWitness sCoefficient where
+  depth := 5
+  unit := 4
+  factorization := by norm_num [sCoefficient, pow3]
+  unitResidue := .one
+  residueExact := by norm_num [residueValue]
+
+def threeAdicDepthProfile : Nat × Nat × Nat × Nat :=
+  (poleDepthZero.depth, originDepthFive.depth, jDepthFive.depth, sDepthFive.depth)
+
+theorem three_adic_depth_profile_exact :
+    threeAdicDepthProfile = (0, 5, 5, 5) := rfl
+
 inductive SpikeSign
   | positive
   | negative
@@ -86,6 +136,7 @@ structure Boundary where
   decimalCoefficientVectorRecovered : Bool
   sparseSignedTernaryStencilOwned : Bool
   commonDepthFiveFactorOwned : Bool
+  exactThreeAdicProfileZeroFiveFiveFiveOwned : Bool
   puncturedFourShiftOwned : Bool
   goldenPolynomialOnlyEvaluatedAtThree : Bool
   rhClosedHere : Bool
@@ -96,6 +147,7 @@ def canonicalBoundary : Boundary where
   decimalCoefficientVectorRecovered := true
   sparseSignedTernaryStencilOwned := true
   commonDepthFiveFactorOwned := true
+  exactThreeAdicProfileZeroFiveFiveFiveOwned := true
   puncturedFourShiftOwned := true
   goldenPolynomialOnlyEvaluatedAtThree := true
   rhClosedHere := false

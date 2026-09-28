@@ -7,6 +7,9 @@ on:
     paths:
       - "Integration/ActionOrbitRecognition.lean"
       - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/OggSSPExponentResidualVsSupersingularOrbitSeparation.lean"
+      - "Integration/OggSSPExponentResidualArithmeticSource.lean"
+      - "Integration/BalancedTernaryHypercubeAntipodalOrbitCount.lean"
       - "Integration/ProvenancePreservingRecognition.lean"
       - "Integration/OggSSPIndependentBase369Recognition.lean"
       - "Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean"
@@ -19,6 +22,9 @@ on:
     paths:
       - "Integration/ActionOrbitRecognition.lean"
       - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/OggSSPExponentResidualVsSupersingularOrbitSeparation.lean"
+      - "Integration/OggSSPExponentResidualArithmeticSource.lean"
+      - "Integration/BalancedTernaryHypercubeAntipodalOrbitCount.lean"
       - "Integration/ProvenancePreservingRecognition.lean"
       - "Integration/OggSSPIndependentBase369Recognition.lean"
       - "Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean"
@@ -42,6 +48,12 @@ jobs:
         run: lake env lean Integration/ActionOrbitRecognition.lean
       - name: Check J369 small-characteristic recognition
         run: lake env lean Integration/OggSSPSmallCharacteristicRecognition.lean
+      - name: Check ternary antipodal target-count family
+        run: lake env lean Integration/BalancedTernaryHypercubeAntipodalOrbitCount.lean
+      - name: Check exponent-residual acquisition and separation
+        run: |
+          lake env lean Integration/OggSSPExponentResidualArithmeticSource.lean
+          lake env lean Integration/OggSSPExponentResidualVsSupersingularOrbitSeparation.lean
       - name: Check provenance recognition core
         run: lake env lean Integration/ProvenancePreservingRecognition.lean
       - name: Check independent Base369 recognitions

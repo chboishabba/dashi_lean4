@@ -128,6 +128,12 @@ jobs:
           lake env lean Integration/RiemannPrimitiveKernelExplicitSmithReduction.lean
           lake env lean Integration/RiemannPrimitiveKernelMod243Filtration.lean
           lake env lean Integration/RiemannPrimitiveKernelSmithFiltrationSeparation.lean
+          lake env lean Integration/RiemannSSP15DepthFiveRoleCodec.lean
+          lake env lean Integration/RiemannSSP15SignedProvenanceBridge.lean
+          lake env lean Integration/RiemannSSP15PartitionSeparation.lean
+          lake env lean Integration/RiemannSSP15ChosenGridTransversality.lean
+          lake env lean Integration/RiemannSSP15FilteredProvenanceCapstone.lean
+          lake env lean Integration/AxiomAuditRiemannSSP15FilteredProvenance.lean
           lake env lean Integration/AxiomAuditRiemannBalancedTernary.lean
 
       - name: Check route-B terminal modules

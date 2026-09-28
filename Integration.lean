@@ -1007,3 +1007,5 @@ import Integration.TrialecticX6ModelCapstone
 import Integration.BalancedTernarySparseKernel
 
 import Integration.BalancedTernaryDepthFiveX6Bridge
+
+import Integration.RiemannJ369BalancedTernaryCrossPollination

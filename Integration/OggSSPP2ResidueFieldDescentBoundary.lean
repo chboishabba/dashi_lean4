@@ -1,5 +1,6 @@
 import Mathlib
 import Integration.OggSSPP2ExplicitF2CurveCandidate
+import Integration.OggSSPP2ConcreteF2UniversalDeformationRecognition
 
 /-!
 # p=2 residue-field descent boundary
@@ -27,6 +28,7 @@ structure Boundary where
   explicitSupersingularCurveModelOverF2Owned : Bool
   geometricSupersingularityIdentificationOwned : Bool
   universalDeformationDescentToF2Owned : Bool
+  combinedConcreteF2SourceRecognitionContractOwned : Bool
   f2WittBaseRemainsSpecializationOnly : Bool
   firstResidualIsGeometricSupersingularityIdentification : Bool
   deriving Repr
@@ -35,6 +37,7 @@ def canonicalBoundary : Boundary where
   explicitSupersingularCurveModelOverF2Owned := true
   geometricSupersingularityIdentificationOwned := false
   universalDeformationDescentToF2Owned := false
+  combinedConcreteF2SourceRecognitionContractOwned := true
   f2WittBaseRemainsSpecializationOnly := true
   firstResidualIsGeometricSupersingularityIdentification := true
 

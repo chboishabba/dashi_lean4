@@ -129,6 +129,45 @@ noncomputable def concrete_deformation_base_adically_complete :
       Base.P2WittPowerSeriesBase :=
   Mixed.powerSeriesMaximalIdealAdicallyComplete
 
+/--
+Same-source capstone: authority, marked deformation states, and the finite
+ten-state recognition all live over the SAME concrete F₂ universal-deformation
+datum.
+-/
+structure ConcreteF2TenStateArithmeticSource where
+  authority : ConcreteF2UniversalDeformationAuthority
+
+  marking :
+    Universal.Gamma0FourUniversalDeformationMarking
+      (concreteSourceDatum authority)
+
+  recognition :
+    Universal.UniversalDeformationTenStateRecognition
+      (concreteSourceDatum authority) marking
+
+def arithmeticBidi
+    (source : ConcreteF2TenStateArithmeticSource) :=
+  source.recognition.arithmeticBidi
+
+theorem same_source_residue_field_is_F2
+    (source : ConcreteF2TenStateArithmeticSource) :
+    (concreteSourceDatum source.authority).ResidueField =
+      Base.P2ResidueField :=
+  rfl
+
+theorem same_source_deformation_base_is_paid_power_series
+    (source : ConcreteF2TenStateArithmeticSource) :
+    (concreteSourceDatum source.authority).DeformationBase =
+      Base.P2WittPowerSeriesBase :=
+  rfl
+
+theorem same_source_marking_specializes_to_unique_kerF2
+    (source : ConcreteF2TenStateArithmeticSource)
+    (state : source.marking.MarkedState) :
+    source.marking.specializesToRawSubgroup state =
+      .kerFrobeniusSquared :=
+  source.marking.specializationIsUniqueKerFrobeniusSquared state
+
 inductive Residual
   | missingConcreteF2UniversalDeformationAuthority
   | missingGamma0FourMarkedDeformationStates
@@ -146,6 +185,7 @@ structure Boundary where
   wittBaseFixedDefinitionally : Bool
   deformationBaseFixedDefinitionally : Bool
   separateResidueFieldDescentCodecRequiredAfterRecognition : Bool
+  sameSourceAuthorityMarkingRecognitionCapstoneOwned : Bool
   sourceAuthorityInhabitedHere : Bool
   deriving Repr
 
@@ -157,6 +197,7 @@ def canonicalBoundary : Boundary where
   wittBaseFixedDefinitionally := true
   deformationBaseFixedDefinitionally := true
   separateResidueFieldDescentCodecRequiredAfterRecognition := false
+  sameSourceAuthorityMarkingRecognitionCapstoneOwned := true
   sourceAuthorityInhabitedHere := false
 
 end Integration.OggSSPP2ConcreteF2UniversalDeformationRecognition

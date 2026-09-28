@@ -57,7 +57,7 @@ theorem residual_nonnegative_iff_gap
   · intro h
     linarith
   · intro h
-    positivity
+    linarith
 
 end DyadicDifferenceResidual
 end NSBControl

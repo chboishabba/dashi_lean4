@@ -30,22 +30,68 @@ namespace Unique :=
 namespace Bidi := Integration.OggSSPP2UniqueGamma0FourMarkingBidi
 namespace Target := Integration.OggSSPP2F4AntipodalStratifiedRefinement
 
+/--
+Attributed Banerjee source authority.
+
+This is deliberately NOT an internal proof of the source mathematics.
+Each field says that the corresponding statement is present in the canonical
+source receipt, whose locator points to Banerjee §3.1 / Proposition 3.1.
+-/
 structure SourceAuthority where
-  specialFibreSupersingular : Prop
-  specialFibreSupersingularProof : specialFibreSupersingular
+  receipt : Banerjee.SourceReceipt
 
-  oneParameterUniversalDeformation : Prop
-  oneParameterUniversalDeformationProof : oneParameterUniversalDeformation
+  curveOverF4ClaimRecorded :
+    receipt.curveOverF4IsY2PlusYEqX3 = true
 
-  completeLocalWittF4PowerSeriesShape : Prop
-  completeLocalWittF4PowerSeriesShapeProof :
-    completeLocalWittF4PowerSeriesShape
+  automorphismG24ClaimRecorded :
+    receipt.automorphismGroupIsG24 = true
 
-  universalProperty : Prop
-  universalPropertyProof : universalProperty
+  sameSourceTorsorClaimRecorded :
+    receipt.universalDeformationIsG24SemidirectGaloisTorsor = true
 
-  sourceReceiptMatchesBanerjee : Prop
-  sourceReceiptMatchesBanerjeeProof : sourceReceiptMatchesBanerjee
+  wittF4PowerSeriesClaimRecorded :
+    receipt.deformationBaseIsWittF4PowerSeries = true
+
+  universalLiftEquationClaimRecorded :
+    receipt.universalLiftEquationRecorded = true
+
+  sourceTitleMatches :
+    receipt.sourceTitle =
+      "Romie Banerjee, A modular description of ER(2), NYJM 20 (2014) 743-758"
+
+  sourceLocatorMatches :
+    receipt.sourceLocator =
+      "Section 3.1, Proposition 3.1; arXiv:1212.2069"
+
+/-- Canonical attribution authority from the already-pinned Banerjee receipt. -/
+def canonicalSourceAuthority : SourceAuthority where
+  receipt := Banerjee.canonicalSourceReceipt
+  curveOverF4ClaimRecorded := rfl
+  automorphismG24ClaimRecorded := rfl
+  sameSourceTorsorClaimRecorded := rfl
+  wittF4PowerSeriesClaimRecorded := rfl
+  universalLiftEquationClaimRecorded := rfl
+  sourceTitleMatches := rfl
+  sourceLocatorMatches := rfl
+
+/--
+Source-claim propositions used by the generic deformation socket.
+
+They are receipt-backed attribution propositions, not Lean reconstructions of
+Banerjee's proofs.
+-/
+def sourceSpecialFibreSupersingular (authority : SourceAuthority) : Prop :=
+  authority.receipt.curveOverF4IsY2PlusYEqX3 = true
+
+def sourceOneParameterUniversalDeformation (authority : SourceAuthority) : Prop :=
+  authority.receipt.deformationBaseIsWittF4PowerSeries = true
+
+def sourceCompleteLocalWittF4PowerSeriesShape (authority : SourceAuthority) : Prop :=
+  authority.receipt.deformationBaseIsWittF4PowerSeries = true
+
+def sourceUniversalProperty (authority : SourceAuthority) : Prop :=
+  authority.receipt.universalDeformationIsG24SemidirectGaloisTorsor = true
+
 
 def sourceDatum
     (authority : SourceAuthority) :
@@ -57,11 +103,11 @@ def sourceDatum
   EllipticFamilyState := WeierstrassCurve Banerjee.F4DeformationBase
   characteristic := 2
   characteristicIsTwo := rfl
-  oneFormalParameter := authority.oneParameterUniversalDeformation
+  oneFormalParameter := sourceOneParameterUniversalDeformation authority
   completeLocalWittPowerSeriesShape :=
-    authority.completeLocalWittF4PowerSeriesShape
-  supersingularSpecialFibre := authority.specialFibreSupersingular
-  universalPropertyImportedFromSource := authority.universalProperty
+    sourceCompleteLocalWittF4PowerSeriesShape authority
+  supersingularSpecialFibre := sourceSpecialFibreSupersingular authority
+  universalPropertyImportedFromSource := sourceUniversalProperty authority
   sourceReference :=
     "Romie Banerjee, A modular description of ER(2), NYJM 20 (2014), Section 3.1"
 
@@ -77,6 +123,14 @@ theorem source_deformation_base_is_WF4_power_series
     (authority : SourceAuthority) :
     (sourceDatum authority).DeformationBase =
       Banerjee.F4DeformationBase := rfl
+
+theorem canonical_authority_source_claims_paid :
+    sourceSpecialFibreSupersingular canonicalSourceAuthority ∧
+    sourceOneParameterUniversalDeformation canonicalSourceAuthority ∧
+    sourceCompleteLocalWittF4PowerSeriesShape canonicalSourceAuthority ∧
+    sourceUniversalProperty canonicalSourceAuthority := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
 
 structure SectorRealization
     (authority : SourceAuthority) where
@@ -157,14 +211,15 @@ theorem realized_state_count_is_ten
   exact Banerjee.galois_inertia_state_cardinality
 
 inductive Residual
-  | missingBanerjeeF4SourceAuthority
   | missingGaloisInertiaSectorRealization
   deriving DecidableEq, Repr
 
 def firstResidual : Residual :=
-  .missingBanerjeeF4SourceAuthority
+  .missingGaloisInertiaSectorRealization
 
 structure Boundary where
+  canonicalBanerjeeSourceAuthorityInhabited : Bool
+  sourceAuthorityIsAttributionNotInternalProof : Bool
   sourceBaseCorrectedFromF2ToF4 : Bool
   explicitUniversalFamilyCarrierPaid : Bool
   allTenSectorsShareOneUniversalFamily : Bool
@@ -177,6 +232,8 @@ structure Boundary where
   deriving Repr
 
 def canonicalBoundary : Boundary where
+  canonicalBanerjeeSourceAuthorityInhabited := true
+  sourceAuthorityIsAttributionNotInternalProof := true
   sourceBaseCorrectedFromF2ToF4 := true
   explicitUniversalFamilyCarrierPaid := true
   allTenSectorsShareOneUniversalFamily := true

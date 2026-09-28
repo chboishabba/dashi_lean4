@@ -39,6 +39,22 @@ def quarticFourWindowProfile
     (quarticWindowMass R)⁻¹
       * quarticFourWindowRaw R lam mu u
 
+theorem quarticFourWindowRaw_contDiff_n
+    {R lam mu : ℝ} (hR : 0 < R) (n : ℕ∞) :
+    ContDiff ℝ n (quarticFourWindowRaw R lam mu) := by
+  unfold quarticFourWindowRaw
+  exact
+    (((quantitativeSymBump_contDiff_n
+        (c:=0) (R:=R) hR.ne' n).sub
+      (quantitativeSymBump_contDiff_n
+        (c:=Real.pi/3) (R:=R) hR.ne' n)).add
+      (contDiff_const.mul
+        (quantitativeSymBump_contDiff_n
+          (c:=Real.pi/2) (R:=R) hR.ne' n))).add
+      (contDiff_const.mul
+        (quantitativeSymBump_contDiff_n
+          (c:=Real.pi) (R:=R) hR.ne' n))
+
 theorem quarticFourWindowRaw_contDiff
     {R lam mu : ℝ} (hR : 0 < R) :
     ContDiff ℝ 2 (quarticFourWindowRaw R lam mu) := by

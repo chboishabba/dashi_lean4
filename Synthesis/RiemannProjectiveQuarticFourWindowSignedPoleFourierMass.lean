@@ -252,4 +252,92 @@ theorem exists_quarticFourSignedPolePair_with_strength_floor_and_negative_ordina
   exact W.signedOrdinateTest_mass_neg_of_origin_neg
     (by linarith) horigin
 
+
+/-!
+## Exact constant-density mode
+
+The center-density contribution is now a literal scalar, not an asymptotic
+description.  We deliberately do not assume a sign for Zeta23.mu here; that
+can be supplied by the existing Riemann--von Mangoldt owner when desired.
+-/
+
+def QuarticFourSignedPolePair.centerDensityMode
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  Zeta23.mu t * (∫ x : ℝ, W.signedOrdinateTest x)
+
+theorem QuarticFourSignedPolePair.centerDensityMode_eq_originDet
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.centerDensityMode
+      =
+    (128 * Real.pi * Zeta23.mu t
+        / (t * W.R * unitBumpMass0))
+      *
+    quarticFourSmoothFinitePoleCancelledOrigin
+        W.R W.muHalf W.muTwo t := by
+  unfold QuarticFourSignedPolePair.centerDensityMode
+  rw [W.signedOrdinateTest_mass_eq_originDet ht]
+  have ht0 : t ≠ 0 := ne_of_gt ht
+  have hR : W.R ≠ 0 := ne_of_gt W.Rpos
+  have hM : unitBumpMass0 ≠ 0 := ne_of_gt unitBumpMass0_pos
+  field_simp [ht0,hR,hM]
+  ring
+
+def QuarticFourSignedPolePair.adverseCenterDensityMode
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  -(1/2 : ℝ) * W.centerDensityMode
+
+theorem QuarticFourSignedPolePair.adverseCenterDensityMode_eq_originDet
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    W.adverseCenterDensityMode
+      =
+    -(64 * Real.pi * Zeta23.mu t
+        / (t * W.R * unitBumpMass0))
+      *
+    quarticFourSmoothFinitePoleCancelledOrigin
+        W.R W.muHalf W.muTwo t := by
+  unfold QuarticFourSignedPolePair.adverseCenterDensityMode
+  rw [W.centerDensityMode_eq_originDet ht]
+  have ht0 : t ≠ 0 := ne_of_gt ht
+  have hR : W.R ≠ 0 := ne_of_gt W.Rpos
+  have hM : unitBumpMass0 ≠ 0 := ne_of_gt unitBumpMass0_pos
+  field_simp [ht0,hR,hM]
+  ring
+
+theorem QuarticFourSignedPolePair.centerDensityMode_neg_of_mu_pos_origin_neg
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hmu : 0 < Zeta23.mu t)
+    (horigin :
+      quarticFourSmoothFinitePoleCancelledOrigin
+        W.R W.muHalf W.muTwo t < 0) :
+    W.centerDensityMode < 0 := by
+  rw [W.centerDensityMode_eq_originDet ht]
+  have hfac :
+      0 <
+      128 * Real.pi * Zeta23.mu t
+        / (t * W.R * unitBumpMass0) := by
+    positivity
+  exact mul_neg_of_pos_of_neg hfac horigin
+
+theorem QuarticFourSignedPolePair.adverseCenterDensityMode_pos_of_mu_pos_origin_neg
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hmu : 0 < Zeta23.mu t)
+    (horigin :
+      quarticFourSmoothFinitePoleCancelledOrigin
+        W.R W.muHalf W.muTwo t < 0) :
+    0 < W.adverseCenterDensityMode := by
+  unfold QuarticFourSignedPolePair.adverseCenterDensityMode
+  have hneg :=
+    W.centerDensityMode_neg_of_mu_pos_origin_neg ht hmu horigin
+  nlinarith
+
 end Synthesis

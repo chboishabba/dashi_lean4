@@ -12,6 +12,7 @@ import NSBControl.CombinedCurrentEndgame
 import NSBControl.DirectCombinedCut
 import NSBControl.SharedWeightedCut
 import NSBControl.AugmentedDerivativeCancellation
+import NSBControl.DyadicDifferenceResidual
 
 namespace NSBCyclicOrbit
 

@@ -1,3 +1,4 @@
+import Integration.OggSSPP2GaussianCMMarkedSourceFrontier
 import Integration.OggSSPP2F4DependentMarkedCover
 import Integration.DependentRecoverableProjection
 import Integration.OggSSPSmallCharacteristicAcquisitionDirection

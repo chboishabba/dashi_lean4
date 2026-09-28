@@ -94,6 +94,7 @@ import Integration.TernaryHubClosure
 import Integration.EquivarianceObstruction
 import Integration.ActionOrbitRecognition
 import Integration.MoonshineSmallCharacteristicResidualTargets
+import Integration.MoonshineSmallCharacteristicRecognitionFrontier
 import Integration.LocalRealisation
 import Integration.FieldControlledDynamics
 import Integration.ObserverBundle

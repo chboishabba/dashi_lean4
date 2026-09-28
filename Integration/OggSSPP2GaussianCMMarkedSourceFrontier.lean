@@ -9,6 +9,7 @@ import Integration.OggSSPP2BadPrimeLevelStructureBoundary
 import Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
 import Integration.OggSSPP2Gamma0FourRefinedModuliBoundary
 import Integration.OggSSPP2Gamma0FourTwoIsogenyChainSource
+import Integration.OggSSPP2Gamma0FourUniqueSupersingularSubgroupSeparation
 
 /-!
 # p=2 Gaussian-CM marked-source frontier
@@ -37,7 +38,8 @@ open Integration.OggSSPP2F4DependentMarkedCover
 open Integration.OggSSPP2FrobeniusRetainedTarget
 
 inductive Residual
-  | missingFiniteFlatCyclicOrderFourSubgroup
+  | missingFormalKerFrobeniusSquaredFiniteFlatConstruction
+  | missingArithmeticMarkingOverUniqueRawSubgroup
   | missingOrderTwoSubflag
   | missingFormalCMOrbitEquivalence
   | missingArithmeticOneOneEightMarking
@@ -92,6 +94,8 @@ structure Boundary where
   gamma0FourMarkedSubgroupSchemeSocketOwned : Bool
   gamma0FourRefinedCompactificationBoundaryOwned : Bool
   gamma0FourTwoIsogenyChainSocketOwned : Bool
+  uniqueRawSupersingularGamma0FourSubgroupSourceBacked : Bool
+  rawSubgroupChoiceCountOneVsResidualTenSeparated : Bool
   gamma0FourOrderTwoSubflagRequired : Bool
   naiveFullE4PointSetIdentificationRuledOut : Bool
   stabilizerTypeCompatibilityOwned : Bool
@@ -113,6 +117,8 @@ def canonicalBoundary : Boundary where
   gamma0FourMarkedSubgroupSchemeSocketOwned := true
   gamma0FourRefinedCompactificationBoundaryOwned := true
   gamma0FourTwoIsogenyChainSocketOwned := true
+  uniqueRawSupersingularGamma0FourSubgroupSourceBacked := true
+  rawSubgroupChoiceCountOneVsResidualTenSeparated := true
   gamma0FourOrderTwoSubflagRequired := true
   naiveFullE4PointSetIdentificationRuledOut := true
   stabilizerTypeCompatibilityOwned := true
@@ -121,6 +127,6 @@ def canonicalBoundary : Boundary where
   arithmeticCMOrbitEquivalenceConstructed := false
   arithmeticOneOneEightMarkingConstructed := false
   arithmeticRecognitionConstructed := false
-  firstResidual := .missingFiniteFlatCyclicOrderFourSubgroup
+  firstResidual := .missingFormalKerFrobeniusSquaredFiniteFlatConstruction
 
 end Integration.OggSSPP2GaussianCMMarkedSourceFrontier

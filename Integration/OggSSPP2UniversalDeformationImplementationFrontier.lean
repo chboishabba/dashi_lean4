@@ -6,6 +6,7 @@ import Integration.OggSSPP2WittPowerSeriesMaximalIdeal
 import Integration.OggSSPP2WittPowerSeriesMixedAdicControl
 import Integration.OggSSPP2ExplicitF2CurveCandidate
 import Integration.OggSSPP2ResidueFieldDescentBoundary
+import Integration.OggSSPP2ConcreteF2UniversalDeformationRecognition
 
 /-!
 # p=2 universal-deformation implementation frontier
@@ -28,15 +29,13 @@ This file is an implementation frontier only.
 namespace Integration.OggSSPP2UniversalDeformationImplementationFrontier
 
 inductive Residual
-  | missingGeometricSupersingularityIdentification
-  | missingSourceResidueFieldDescentToF2
-  | missingSupersingularUniversalEllipticFamily
+  | missingConcreteF2UniversalDeformationAuthority
   | missingGamma0FourMarkedDeformationStates
   | missingTenStateClassificationBidi
   deriving DecidableEq, Repr
 
 def firstImplementationResidual : Residual :=
-  .missingGeometricSupersingularityIdentification
+  .missingConcreteF2UniversalDeformationAuthority
 
 structure WittPowerSeriesBaseImplementation where
   ResidueField : Type
@@ -61,8 +60,8 @@ structure Boundary where
   f2SpecializationNotPromotedToUniversalSource : Bool
   explicitF2CurveCandidateOwned : Bool
   explicitF2CurveDiscriminantAndTracePaid : Bool
-  geometricSupersingularityIdentificationRequired : Bool
-  sourceResidueFieldDescentToF2Required : Bool
+  concreteF2SourceRecognitionContractOwned : Bool
+  geometricSupersingularityAndResidueFieldCollapsedToOneAuthority : Bool
   wittEquivTwoAdicsReused : Bool
   algebraicLocalRingBasePaid : Bool
   coefficientMaximalIdealAdicCompletenessPaid : Bool
@@ -77,7 +76,7 @@ structure Boundary where
   universalEllipticFamilyRequiredAfterBase : Bool
   gamma0FourMarkedStatesRequiredAfterFamily : Bool
   tenStateBidiRequiredAfterMarkedStates : Bool
-  firstResidualIsGeometricSupersingularityIdentification : Bool
+  firstResidualIsConcreteF2UniversalDeformationAuthority : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
@@ -86,8 +85,8 @@ def canonicalBoundary : Boundary where
   f2SpecializationNotPromotedToUniversalSource := true
   explicitF2CurveCandidateOwned := true
   explicitF2CurveDiscriminantAndTracePaid := true
-  geometricSupersingularityIdentificationRequired := true
-  sourceResidueFieldDescentToF2Required := true
+  concreteF2SourceRecognitionContractOwned := true
+  geometricSupersingularityAndResidueFieldCollapsedToOneAuthority := true
   wittEquivTwoAdicsReused := true
   algebraicLocalRingBasePaid := true
   coefficientMaximalIdealAdicCompletenessPaid := true
@@ -102,6 +101,6 @@ def canonicalBoundary : Boundary where
   universalEllipticFamilyRequiredAfterBase := true
   gamma0FourMarkedStatesRequiredAfterFamily := true
   tenStateBidiRequiredAfterMarkedStates := true
-  firstResidualIsGeometricSupersingularityIdentification := true
+  firstResidualIsConcreteF2UniversalDeformationAuthority := true
 
 end Integration.OggSSPP2UniversalDeformationImplementationFrontier

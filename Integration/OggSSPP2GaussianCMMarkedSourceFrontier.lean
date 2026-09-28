@@ -19,6 +19,7 @@ import Integration.OggSSPP2ConcreteF2UniversalDeformationRecognition
 import Integration.OggSSPP2BanerjeeF4UniversalDeformationSource
 import Integration.OggSSPP2BanerjeeF4SameSourceRealization
 import Integration.OggSSPP2BanerjeeF4Gamma0FourEnhancement
+import Integration.OggSSPP2Gamma0FourSchemeLevelRealizationFrontier
 import Integration.OggSSPP2OrientedInertiaTenStateRecognition
 import Integration.OggSSPP2BalancedTernaryNeutralCompletionBridge
 import Integration.OggSSPP2BadPrimeLevelStructureBoundary
@@ -126,6 +127,7 @@ structure Boundary where
   galoisInertiaTenStateCandidateOwned : Bool
   banerjeeSourceAuthorityAttributedAndInhabited : Bool
   gamma0FourEnhancementContractOwned : Bool
+  schemeLevelFiniteFlatGamma0FourFrontierOwned : Bool
   galoisInertiaSectorRealizationContractOwned : Bool
   separateMarkedAndTenStateProofsRequiredAfterSectorRealization : Bool
   sameSourceAuthorityMarkingRecognitionCapstoneOwned : Bool
@@ -185,6 +187,7 @@ def canonicalBoundary : Boundary where
   galoisInertiaTenStateCandidateOwned := true
   banerjeeSourceAuthorityAttributedAndInhabited := true
   gamma0FourEnhancementContractOwned := true
+  schemeLevelFiniteFlatGamma0FourFrontierOwned := true
   galoisInertiaSectorRealizationContractOwned := true
   separateMarkedAndTenStateProofsRequiredAfterSectorRealization := false
   sameSourceAuthorityMarkingRecognitionCapstoneOwned := true

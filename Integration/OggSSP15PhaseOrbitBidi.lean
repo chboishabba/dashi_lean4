@@ -11,10 +11,12 @@ The authoritative SSP15 carrier remains the fifteen Ogg/Monster prime lanes.
 This file composes the existing CHOSEN finite prime/internal indexing with an
 exact finite 3×5 presentation of the internal lane.
 
-Unlike the Agda source, Lean does not yet port the actual
-T^2 / inner-inversion quotient theorem producing the five orbits.  Therefore
-the finite 5-way orbit chart is exact as a presentation, while structural
-quotient provenance is explicitly left unpaid.
+Lean now also owns the actual structural source of the five-way factor:
+the inner two-trit sheet T^2 modulo simultaneous sign inversion.  Canonical
+orbit representatives and the phase-preserving T^3 -> 3 x 5 reduction are
+explicit below.  The remaining authority boundary is semantic, not structural:
+this 3 x 5 presentation is not promoted to the canonical arithmetic identity
+of the Ogg primes.
 -/
 
 namespace Integration.OggSSP15PhaseOrbitBidi

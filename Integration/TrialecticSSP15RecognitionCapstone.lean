@@ -5,6 +5,7 @@ import Integration.OggSSP369CanonicalThreeSixNineLift
 import Integration.TrialecticIncomingFrickeSeparation
 import Integration.SelectedFibreActionCompiler
 import Integration.OutgoingFrickeModeBlock
+import Integration.TrialecticFiniteBasisLinearWrongType
 import Mathlib
 
 /-!
@@ -132,6 +133,7 @@ theorem outgoing_selected_fibre_compiler
   compiled_action_stays_in_selected_fibre invariant inertia sheet
 
 open Integration.OutgoingFrickeModeBlock
+open Integration.TrialecticFiniteBasisLinearWrongType
 
 theorem incoming_stabilizer_preserving_recognition_rejected :
     ¬ Nonempty StabilizerPreservingFiveWayEquiv :=
@@ -154,6 +156,29 @@ theorem outgoing_fricke_mode18_compiler
     action.act element.frickeInertia (embedModeBlock mode state) =
       embedModeBlock mode (compiledFrickeBlockAct element mode state) :=
   compiled_fricke_block_intertwines element mode state
+
+def finite_basis_linear_wrongtype_boundary :
+    Integration.TrialecticFiniteBasisLinearWrongType.Boundary :=
+  Integration.TrialecticFiniteBasisLinearWrongType.canonicalBoundary
+
+theorem finite_90_chart_is_basis_coordinate_only :
+    finite_basis_linear_wrongtype_boundary.linearMultiplicityTypeSeparated = true := rfl
+
+theorem explicit_linear_basis_specialisation_required :
+    finite_basis_linear_wrongtype_boundary.explicitBasisSpecialisationRequired = true := rfl
+
+inductive ActualLinearMultiplicityRecognition : Prop
+inductive BasisSpecialisationRecognition : Prop
+
+theorem actual_linear_multiplicity_recognition_still_open :
+    ¬ ActualLinearMultiplicityRecognition := by
+  intro h
+  cases h
+
+theorem basis_specialisation_recognition_still_open :
+    ¬ BasisSpecialisationRecognition := by
+  intro h
+  cases h
 
 inductive IncomingInversionAuthority : Prop
 inductive AnalyticFrickeQuotientAuthority : Prop
@@ -215,6 +240,10 @@ structure Boundary where
   outgoingSelectedFibreCompilerPaid : Bool
   outgoingFineFrickeSingleFibreNoGoPaid : Bool
   outgoingFrickeStableModeBlock18Paid : Bool
+  finiteNinetyChartSeparatedFromLinearMultiplicity : Bool
+  explicitBasisSpecialisationRequired : Bool
+  actualLinearMultiplicityRecognitionPaid : Bool
+  basisSpecialisationRecognitionPaid : Bool
   actualMonsterFineFrickeElementPaid : Bool
   actualMonsterMultiplicityActionPaid : Bool
   invariantFine10FibreRecognitionPaid : Bool
@@ -240,6 +269,10 @@ def canonicalBoundary : Boundary where
   outgoingSelectedFibreCompilerPaid := true
   outgoingFineFrickeSingleFibreNoGoPaid := true
   outgoingFrickeStableModeBlock18Paid := true
+  finiteNinetyChartSeparatedFromLinearMultiplicity := true
+  explicitBasisSpecialisationRequired := true
+  actualLinearMultiplicityRecognitionPaid := false
+  basisSpecialisationRecognitionPaid := false
   actualMonsterFineFrickeElementPaid := false
   actualMonsterMultiplicityActionPaid := false
   invariantFine10FibreRecognitionPaid := false

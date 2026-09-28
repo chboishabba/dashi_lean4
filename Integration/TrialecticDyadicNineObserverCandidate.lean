@@ -61,6 +61,101 @@ theorem ab_observer_after_rotate_twice_is_ca (state : T9Carrier) :
   rcases state with ⟨⟨aa,ab,ac⟩,⟨ba,bb,bc⟩,⟨ca,cb,cc⟩⟩
   rfl
 
+inductive ModeNine
+  | identityMode
+  | A2negative | A2positive
+  | B1negative | B1positive
+  | B2negative | B2positive
+  | Enegative | Epositive
+  deriving DecidableEq, Repr, Fintype
+
+def faceToModeNine : NineFace → ModeNine
+  | (.negOne,.negOne) => .identityMode
+  | (.negOne,.zero) => .A2negative
+  | (.negOne,.posOne) => .A2positive
+  | (.zero,.negOne) => .B1negative
+  | (.zero,.zero) => .B1positive
+  | (.zero,.posOne) => .B2negative
+  | (.posOne,.negOne) => .B2positive
+  | (.posOne,.zero) => .Enegative
+  | (.posOne,.posOne) => .Epositive
+
+def modeNineToFace : ModeNine → NineFace
+  | .identityMode => (.negOne,.negOne)
+  | .A2negative => (.negOne,.zero)
+  | .A2positive => (.negOne,.posOne)
+  | .B1negative => (.zero,.negOne)
+  | .B1positive => (.zero,.zero)
+  | .B2negative => (.zero,.posOne)
+  | .B2positive => (.posOne,.negOne)
+  | .Enegative => (.posOne,.zero)
+  | .Epositive => (.posOne,.posOne)
+
+theorem face_mode_roundtrip (x : NineFace) :
+    modeNineToFace (faceToModeNine x) = x := by
+  rcases x with ⟨a,b⟩
+  cases a <;> cases b <;> rfl
+
+theorem mode_face_roundtrip (x : ModeNine) :
+    faceToModeNine (modeNineToFace x) = x := by
+  cases x <;> rfl
+
+def canonicalModeNineRecognition : NineModeRecognition where
+  ModeNine := ModeNine
+  toMode := faceToModeNine
+  toFace := modeNineToFace
+  face_after_mode := face_mode_roundtrip
+  mode_after_face := mode_face_roundtrip
+
+def observeABModeNine (section : ABSection) : ModeNine :=
+  faceToModeNine (observeABSelfFace section)
+
+def negateSSP : SSPTrit → SSPTrit
+  | .negOne => .posOne
+  | .zero => .zero
+  | .posOne => .negOne
+
+theorem negateSSP_involutive (x : SSPTrit) :
+    negateSSP (negateSSP x) = x := by
+  cases x <;> rfl
+
+def negateABLocal : ABSection → ABSection
+  | ⟨aa,ab,ba,bb⟩ => ⟨negateSSP aa,negateSSP ab,negateSSP ba,negateSSP bb⟩
+
+theorem negateABLocal_involutive (x : ABSection) :
+    negateABLocal (negateABLocal x) = x := by
+  rcases x with ⟨aa,ab,ba,bb⟩
+  cases aa <;> cases ab <;> cases ba <;> cases bb <;> rfl
+
+def negateNineFace : NineFace → NineFace
+  | (a,b) => (negateSSP a, negateSSP b)
+
+def negateModeNine (x : ModeNine) : ModeNine :=
+  faceToModeNine (negateNineFace (modeNineToFace x))
+
+theorem negateModeNine_involutive (x : ModeNine) :
+    negateModeNine (negateModeNine x) = x := by
+  cases x <;> rfl
+
+theorem face_observer_intertwines_negation (x : ABSection) :
+    observeABSelfFace (negateABLocal x) =
+      negateNineFace (observeABSelfFace x) := by
+  rcases x with ⟨aa,ab,ba,bb⟩
+  rfl
+
+theorem mode_observer_intertwines_negation (x : ABSection) :
+    observeABModeNine (negateABLocal x) =
+      negateModeNine (observeABModeNine x) := by
+  rcases x with ⟨aa,ab,ba,bb⟩
+  rfl
+
+inductive RepoNativeNegationEqualsAnalyticFricke : Prop
+
+theorem repo_native_negation_not_promoted_to_analytic_fricke :
+    ¬ RepoNativeNegationEqualsAnalyticFricke := by
+  intro h
+  cases h
+
 structure NineModeRecognition where
   ModeNine : Type
   toMode : NineFace → ModeNine
@@ -87,6 +182,10 @@ structure Boundary where
   observerKnownLossy : Bool
   participantC3NaturalityOwned : Bool
   d4ModeNineRecognitionConstructed : Bool
+  modeNineCarrierRoundTripsPaid : Bool
+  repoNativeC2TransportOwned : Bool
+  candidateObserverTransportIntertwinerPaid : Bool
+  repoNativeC2IdentifiedWithAnalyticFricke : Bool
   actualMonsterFiveLocalIdentified : Bool
   deriving Repr
 
@@ -95,7 +194,11 @@ def canonicalBoundary : Boundary where
   twoTritFaceCountNine := true
   observerKnownLossy := true
   participantC3NaturalityOwned := true
-  d4ModeNineRecognitionConstructed := false
+  d4ModeNineRecognitionConstructed := true
+  modeNineCarrierRoundTripsPaid := true
+  repoNativeC2TransportOwned := true
+  candidateObserverTransportIntertwinerPaid := true
+  repoNativeC2IdentifiedWithAnalyticFricke := false
   actualMonsterFiveLocalIdentified := false
 
 end Integration.TrialecticDyadicNineObserverCandidate

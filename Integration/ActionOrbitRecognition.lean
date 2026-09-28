@@ -362,7 +362,93 @@ def composeOrbitStabilizerRecognition
       R₁.stabilizerRecognition
       R₂.stabilizerRecognition
 
-/-! ## §8 Cheap gates do not construct recognition -/
+/-! ## §8 Identity recognition: non-vacuity of the full ladder -/
+
+def identityActionRecognition
+    {State : Type u} {Sym : Type v}
+    (A : InvertibleAction State Sym) :
+    ActionRecognitionFunctor A A where
+  mapState := id
+  mapSymmetry := id
+  preservesIdentity := rfl
+  preservesCombine := by intro g h; rfl
+  preservesInverse := by intro g; rfl
+  actionEquivariant := by intro g s; rfl
+
+def identityOrbitRecognition
+    {State : Type u} {Sym : Type v}
+    {A : InvertibleAction State Sym}
+    (O : OrbitPresentation A) :
+    OrbitRecognition (identityActionRecognition A) O O where
+  mapOrbit := id
+  orbitMapExact := by intro s; rfl
+
+def identityPi0Embedding
+    {State : Type u} {Sym : Type v}
+    {A : InvertibleAction State Sym}
+    (O : OrbitPresentation A) :
+    Pi0Embedding (identityOrbitRecognition O) where
+  reflectsOrbitEquality := by
+    intro a b h
+    exact h
+
+def identityPi0Surjection
+    {State : Type u} {Sym : Type v}
+    {A : InvertibleAction State Sym}
+    (O : OrbitPresentation A) :
+    Pi0Surjection (identityOrbitRecognition O) where
+  preimageOrbit := id
+  hitsEveryTargetOrbit := by intro o; rfl
+
+def identityStabilizerRecognition
+    {State : Type u} {Sym : Type v}
+    {A : InvertibleAction State Sym}
+    (O : OrbitPresentation A) :
+    StabilizerRecognition (identityOrbitRecognition O) where
+  representativeCompatibility := by intro o; rfl
+  preservesStabilizer := by intro o g h; exact h
+  reflectsMappedStabilizer := by intro o g h; exact h
+
+def identityOrbitStabilizerRecognition
+    {State : Type u} {Sym : Type v}
+    {A : InvertibleAction State Sym}
+    (O : OrbitPresentation A) :
+    OrbitStabilizerRecognition
+      (identityActionRecognition A) O O where
+  orbitRecognition := identityOrbitRecognition O
+  pi0Embedding := identityPi0Embedding O
+  pi0Surjection := identityPi0Surjection O
+  stabilizerRecognition := identityStabilizerRecognition O
+
+def identityStateMapEquivalence
+    {State : Type u} {Sym : Type v}
+    (A : InvertibleAction State Sym) :
+    StateMapEquivalence (identityActionRecognition A) where
+  preimageState := id
+  mapAfterPreimageState := by intro s; rfl
+  preimageAfterMapState := by intro s; rfl
+
+def identitySymmetryMapEquivalence
+    {State : Type u} {Sym : Type v}
+    (A : InvertibleAction State Sym) :
+    SymmetryMapEquivalence (identityActionRecognition A) where
+  preimageSymmetry := id
+  mapAfterPreimageSymmetry := by intro g; rfl
+  preimageAfterMapSymmetry := by intro g; rfl
+
+def identityPresentationIsomorphism
+    {State : Type u} {Sym : Type v}
+    {A : InvertibleAction State Sym}
+    (O : OrbitPresentation A) :
+    ActionGroupoidPresentationIsomorphism
+      (identityActionRecognition A) O O where
+  orbitStabilizerRecognition := identityOrbitStabilizerRecognition O
+  stateMapEquivalence := identityStateMapEquivalence A
+  symmetryMapEquivalence := identitySymmetryMapEquivalence A
+
+/-! ## §9 Cheap gates do not construct recognition -/
+
+
 
 
 
@@ -391,6 +477,8 @@ structure Boundary where
   samePresentationRequiresStateBijection : Bool
   samePresentationRequiresSymmetryBijection : Bool
   recognitionCompositionOwned : Bool
+  identityFullRecognitionConstructed : Bool
+  identitySamePresentationConstructed : Bool
   cardinalityMatchSufficient : Bool
   deriving Repr
 
@@ -405,6 +493,8 @@ def canonicalBoundary : Boundary where
   samePresentationRequiresStateBijection := true
   samePresentationRequiresSymmetryBijection := true
   recognitionCompositionOwned := true
+  identityFullRecognitionConstructed := true
+  identitySamePresentationConstructed := true
   cardinalityMatchSufficient := false
 
 end Integration.ActionOrbitRecognition

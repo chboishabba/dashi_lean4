@@ -25,6 +25,7 @@ This file is an implementation frontier only.
 namespace Integration.OggSSPP2UniversalDeformationImplementationFrontier
 
 inductive Residual
+  | missingSourceResidueFieldDescentToF2
   | missingMaximalIdealAdicCompleteness
   | missingSupersingularUniversalEllipticFamily
   | missingGamma0FourMarkedDeformationStates
@@ -32,7 +33,7 @@ inductive Residual
   deriving DecidableEq, Repr
 
 def firstImplementationResidual : Residual :=
-  .missingMaximalIdealAdicCompleteness
+  .missingSourceResidueFieldDescentToF2
 
 structure WittPowerSeriesBaseImplementation where
   ResidueField : Type
@@ -54,6 +55,8 @@ structure UniversalDeformationImplementation
 structure Boundary where
   mathlibWittVectorCarrierReused : Bool
   mathlibPowerSeriesCarrierReused : Bool
+  f2SpecializationNotPromotedToUniversalSource : Bool
+  sourceResidueFieldDescentToF2Required : Bool
   wittEquivTwoAdicsReused : Bool
   algebraicLocalRingBasePaid : Bool
   coefficientwiseCompletenessPaid : Bool
@@ -63,12 +66,14 @@ structure Boundary where
   universalEllipticFamilyRequiredAfterBase : Bool
   gamma0FourMarkedStatesRequiredAfterFamily : Bool
   tenStateBidiRequiredAfterMarkedStates : Bool
-  firstResidualIsMaximalIdealAdicCompleteness : Bool
+  firstResidualIsSourceResidueFieldDescent : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
   mathlibWittVectorCarrierReused := true
   mathlibPowerSeriesCarrierReused := true
+  f2SpecializationNotPromotedToUniversalSource := true
+  sourceResidueFieldDescentToF2Required := true
   wittEquivTwoAdicsReused := true
   algebraicLocalRingBasePaid := true
   coefficientwiseCompletenessPaid := true
@@ -78,6 +83,6 @@ def canonicalBoundary : Boundary where
   universalEllipticFamilyRequiredAfterBase := true
   gamma0FourMarkedStatesRequiredAfterFamily := true
   tenStateBidiRequiredAfterMarkedStates := true
-  firstResidualIsMaximalIdealAdicCompleteness := true
+  firstResidualIsSourceResidueFieldDescent := true
 
 end Integration.OggSSPP2UniversalDeformationImplementationFrontier

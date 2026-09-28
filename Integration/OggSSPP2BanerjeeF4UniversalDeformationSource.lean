@@ -2,6 +2,7 @@ import Mathlib.FieldTheory.Finite.GaloisField
 import Mathlib.RingTheory.WittVector.Complete
 import Mathlib.RingTheory.WittVector.DiscreteValuationRing
 import Mathlib.RingTheory.PowerSeries.Inverse
+import Mathlib.AlgebraicGeometry.EllipticCurve.Weierstrass
 import Integration.OggSSPP2OrientedInertiaTenStateRecognition
 import Integration.OggSSPP2F4AntipodalStratifiedRefinement
 
@@ -60,6 +61,47 @@ noncomputable def f4WittTwoAdicallyComplete :
 
 def universalParameter : F4DeformationBase :=
   PowerSeries.X
+
+open WeierstrassCurve
+
+/-- Banerjee's explicit universal lift y² + a1*x*y + y = x³. -/
+def universalCurve : WeierstrassCurve F4DeformationBase :=
+  ⟨PowerSeries.X, 0, 1, 0, 0⟩
+
+/-- The characteristic-two special fibre y² + y = x³ over F4. -/
+def specialCurve : WeierstrassCurve F4 :=
+  ⟨0, 0, 1, 0, 0⟩
+
+/-- Set a1 = 0 and reduce Witt coefficients to F4. -/
+noncomputable def residueMap : F4DeformationBase →+* F4 :=
+  WittVector.constantCoeff.comp PowerSeries.constantCoeff
+
+noncomputable def specializedUniversalCurve : WeierstrassCurve F4 :=
+  universalCurve.map residueMap
+
+theorem residueMap_X :
+    residueMap PowerSeries.X = 0 := by
+  simp [residueMap]
+
+theorem specialized_a1 :
+    specializedUniversalCurve.a₁ = 0 := by
+  simp [specializedUniversalCurve, universalCurve, residueMap]
+
+theorem specialized_a2 :
+    specializedUniversalCurve.a₂ = 0 := by
+  simp [specializedUniversalCurve, universalCurve, residueMap]
+
+theorem specialized_a3 :
+    specializedUniversalCurve.a₃ = 1 := by
+  simp [specializedUniversalCurve, universalCurve, residueMap]
+
+theorem specialized_a4 :
+    specializedUniversalCurve.a₄ = 0 := by
+  simp [specializedUniversalCurve, universalCurve, residueMap]
+
+theorem specialized_a6 :
+    specializedUniversalCurve.a₆ = 0 := by
+  simp [specializedUniversalCurve, universalCurve, residueMap]
 
 inductive GaloisSheet
   | identity
@@ -145,6 +187,8 @@ structure Boundary where
   sourceG24ActionRecorded : Bool
   sourceGaloisC2ActionRecorded : Bool
   sourceSameDeformationTorsorRecorded : Bool
+  explicitUniversalWeierstrassFamilyOwned : Bool
+  exactSpecialFibreCoefficientReductionPaid : Bool
   fiveInversionOrbitQuotientIsRepositoryReconstruction : Bool
   exactTwoTimesFiveCarrierOwned : Bool
   exactRechartToPaidTenStateTarget : Bool
@@ -160,6 +204,8 @@ def canonicalBoundary : Boundary where
   sourceG24ActionRecorded := true
   sourceGaloisC2ActionRecorded := true
   sourceSameDeformationTorsorRecorded := true
+  explicitUniversalWeierstrassFamilyOwned := true
+  exactSpecialFibreCoefficientReductionPaid := true
   fiveInversionOrbitQuotientIsRepositoryReconstruction := true
   exactTwoTimesFiveCarrierOwned := true
   exactRechartToPaidTenStateTarget := true

@@ -2,6 +2,8 @@ import Integration.TrialecticParticipantCenteredSSPFactor
 import Integration.TrialecticT5ComplementOggResidualBidi
 import Integration.OggSSP15CanonicalRankThreeByFive
 import Integration.OggSSP369CanonicalThreeSixNineLift
+import Integration.TrialecticIncomingFrickeSeparation
+import Integration.SelectedFibreActionCompiler
 import Mathlib
 
 /-!
@@ -17,10 +19,14 @@ Consolidates the exact carrier chain currently paid in Lean:
 with the 3×5 presentation factoring through canonical Ogg rank, and the fixed
 [3,6,9] canonical lane slice available separately.
 
-Remaining recognition walls are intentionally explicit:
-* authority for quotienting the incoming observer pair by simultaneous inversion;
-* arithmetic/Fricke recognition of the retained outgoing nine-state residual;
-* any promotion of ordered rank coordinates to intrinsic modular invariants.
+Recognition is now sharper:
+* the incoming five-state quotient coordinate agrees with the finite Fricke mode,
+  while raw involution equivalence is rejected by fixed-point profile;
+* analytic modular-Fricke authority is still open at the quotient level;
+* the outgoing residual action is compiler output once an external product
+  action and an invariant Fine10 fibre are supplied;
+* actual Monster multiplicity/inertia and that invariant fibre remain open;
+* ordered rank coordinates are not promoted to intrinsic modular invariants.
 -/
 
 namespace Integration.TrialecticSSP15RecognitionCapstone
@@ -103,8 +109,32 @@ theorem canonical369_slice_roundtrip (prime : SSPPrime) :
     canonical369ToOgg (oggToCanonical369Slice prime) = prime :=
   canonical_ogg_roundtrip prime
 
+/-! ## Recognition reductions beyond the carrier chain -/
+
+open Integration.TrialecticIncomingFrickeSeparation
+open Integration.SelectedFibreActionCompiler
+
+theorem incoming_five_state_finite_fricke_coordinate_paid :
+    incomingQuotientMode (.zero,.zero) = .m09 := rfl
+
+theorem incoming_raw_action_equivalence_rejected :
+    ¬ Nonempty RawInvolutionEquivariantEquiv :=
+  raw_involution_equivariant_equiv_impossible
+
+theorem outgoing_selected_fibre_compiler
+    {Inertia Fine Sheet : Type}
+    {action : ProductAction Inertia Fine Sheet}
+    (invariant : SelectedFineInvariant action)
+    (inertia : Inertia) (sheet : Sheet) :
+    action.act inertia (invariant.selectedFine, sheet) =
+      (invariant.selectedFine, compiledSheetAct invariant inertia sheet) :=
+  compiled_action_stays_in_selected_fibre invariant inertia sheet
+
 inductive IncomingInversionAuthority : Prop
+inductive AnalyticFrickeQuotientAuthority : Prop
 inductive OutgoingNineResidualArithmeticRecognition : Prop
+inductive ActualMonsterMultiplicityActionRecognition : Prop
+inductive InvariantFine10FibreRecognition : Prop
 inductive OrderedRankIsIntrinsicModularInvariant : Prop
 inductive ResidualMayBeDiscarded : Prop
 
@@ -113,8 +143,23 @@ theorem incoming_inversion_authority_still_open :
   intro h
   cases h
 
+theorem analytic_fricke_quotient_authority_still_open :
+    ¬ AnalyticFrickeQuotientAuthority := by
+  intro h
+  cases h
+
 theorem outgoing_residual_recognition_still_open :
     ¬ OutgoingNineResidualArithmeticRecognition := by
+  intro h
+  cases h
+
+theorem actual_monster_multiplicity_action_still_open :
+    ¬ ActualMonsterMultiplicityActionRecognition := by
+  intro h
+  cases h
+
+theorem invariant_fine10_fibre_still_open :
+    ¬ InvariantFine10FibreRecognition := by
   intro h
   cases h
 
@@ -137,6 +182,12 @@ structure Boundary where
   oggCanonical369SliceBidiPaid : Bool
   outgoingResidualExplicitNineStateCarrier : Bool
   incomingInversionAuthorityPaid : Bool
+  incomingFiniteFrickeQuotientCoordinatePaid : Bool
+  incomingRawActionEquivalenceRejected : Bool
+  analyticFrickeQuotientAuthorityPaid : Bool
+  outgoingSelectedFibreCompilerPaid : Bool
+  actualMonsterMultiplicityActionPaid : Bool
+  invariantFine10FibreRecognitionPaid : Bool
   outgoingResidualArithmeticRecognitionPaid : Bool
   orderedRankIntrinsicModularInvariant : Bool
   residualDiscarded : Bool
@@ -151,6 +202,12 @@ def canonicalBoundary : Boundary where
   oggCanonical369SliceBidiPaid := true
   outgoingResidualExplicitNineStateCarrier := true
   incomingInversionAuthorityPaid := false
+  incomingFiniteFrickeQuotientCoordinatePaid := true
+  incomingRawActionEquivalenceRejected := true
+  analyticFrickeQuotientAuthorityPaid := false
+  outgoingSelectedFibreCompilerPaid := true
+  actualMonsterMultiplicityActionPaid := false
+  invariantFine10FibreRecognitionPaid := false
   outgoingResidualArithmeticRecognitionPaid := false
   orderedRankIntrinsicModularInvariant := false
   residualDiscarded := false

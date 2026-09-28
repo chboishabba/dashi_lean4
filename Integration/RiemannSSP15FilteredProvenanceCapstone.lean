@@ -113,6 +113,7 @@ structure Boundary where
   producerRoleCertificateTypeDefined : Bool
   sourceNativeProducerTheoremLocatedAndPinned : Bool
   sourceNativeFourCoordinateTermsLocated : Bool
+  sourceNativeProducerCertificateInhabitedOnDonorBranch : Bool
   donorImportedIntoCurrentSourceGraph : Bool
   producerRoleCertificateInhabitedHere : Bool
   analyticRolePromotionPaid : Bool
@@ -129,6 +130,7 @@ def canonicalBoundary : Boundary where
   producerRoleCertificateTypeDefined := true
   sourceNativeProducerTheoremLocatedAndPinned := true
   sourceNativeFourCoordinateTermsLocated := true
+  sourceNativeProducerCertificateInhabitedOnDonorBranch := true
   donorImportedIntoCurrentSourceGraph := false
   producerRoleCertificateInhabitedHere := false
   analyticRolePromotionPaid := false

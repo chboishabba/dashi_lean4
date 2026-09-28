@@ -15,19 +15,21 @@ import Integration.OggSSPP2BanerjeeF4Gamma0FourEnhancement
 /-!
 # p=2 universal-deformation implementation frontier
 
-Mathlib supplies the p=2 Witt-vector carrier, the one-variable power-series
-carrier, and enough local-ring algebra to make W(F_2)[[t]] a local ring.
-What remains is the complete topological/universal-deformation structure.
+The preferred source path is now Banerjee's same-source supersingular
+deformation over W(F4)[[a1]].  The attributed source authority, explicit
+computational universal Weierstrass family, G24 ⋊ Gal source torsor, and the
+finite ten-sector vocabulary are paid.
 
-The implementation dependency chain is therefore:
+The live implementation dependency chain is therefore:
 
-  algebraic local base W(F_2)[[t]]   [paid]
-    -> complete topological universal-deformation structure
-    -> supersingular universal elliptic family
-    -> Gamma_0(4) marked deformation states
-    -> ten-state arithmetic bidi.
+  Banerjee W(F4)[[a1]] universal family                  [paid]
+    -> scheme realization of that elliptic family
+    -> finite-flat subgroup schemes ker(F) <= ker(F²)
+    -> Gamma_0(4) local-model / sector enhancement
+    -> marked source + ten-state bidi                    [automatic afterward].
 
-This file is an implementation frontier only.
+The older F2-specialized Witt path remains only as an independently checked
+control/specialization and is not promoted to the preferred source.
 -/
 
 namespace Integration.OggSSPP2UniversalDeformationImplementationFrontier

@@ -7,9 +7,9 @@ The actual analytic producer lives on dashi_lean4 PR #22, not on the current
 SSP15/369 integration branch.
 
 Pinned donor:
-* commit: 824f84cddf5cf424c643688c2d24e351795dac07
+* commit: 85f10467c453bea93bd8199ed80054b1fb41b46a
 * file: Synthesis/RiemannQuarticBalancedTernaryStencil.lean
-* git blob: 138153858e329469048175fcdeeaf75c182078be
+* stencil git blob: 138153858e329469048175fcdeeaf75c182078be\n* certificate file: Synthesis/RiemannQuarticProducerRoleCertificate.lean\n* certificate git blob: cb89ebc956cedd55179042cf63ff2eaf3d44f073
 
 Load-bearing theorems:
 * quarticFourAtomic_primitive_integer_kernel
@@ -31,13 +31,25 @@ into the current Lean environment.
 namespace Integration.RiemannSSP15RHProducerDonorManifest
 
 def donorCommit : String :=
-  "824f84cddf5cf424c643688c2d24e351795dac07"
+  "85f10467c453bea93bd8199ed80054b1fb41b46a"
 
 def donorFile : String :=
   "Synthesis/RiemannQuarticBalancedTernaryStencil.lean"
 
 def donorBlob : String :=
   "138153858e329469048175fcdeeaf75c182078be"
+
+def producerCertificateFile : String :=
+  "Synthesis/RiemannQuarticProducerRoleCertificate.lean"
+
+def producerCertificateBlob : String :=
+  "cb89ebc956cedd55179042cf63ff2eaf3d44f073"
+
+def producerCertificateTheorem : String :=
+  "Synthesis.RiemannQuarticProducerRoleCertificate.canonical_certificate_inhabited"
+
+def sourceRoleKernelTheorem : String :=
+  "Synthesis.RiemannQuarticProducerRoleCertificate.primitive_kernel_via_source_roles"
 
 def primitiveKernelTheorem : String :=
   "Synthesis.RiemannQuarticBalancedTernaryStencil.quarticFourAtomic_primitive_integer_kernel"
@@ -67,6 +79,8 @@ structure Boundary where
   sparseShiftTheoremLocated : Bool
   depthFiveBlockTheoremLocated : Bool
   fourSourceNativeCoordinateTermsLocated : Bool
+  sourceNativeProducerCertificateInhabitedOnDonorBranch : Bool
+  sourceRoleKernelTheoremLocated : Bool
   contentAddressedVerifierOwned : Bool
   exactHeadVerifierObserved : Bool
   donorImportedIntoCurrentBranch : Bool
@@ -80,6 +94,8 @@ def canonicalBoundary : Boundary where
   sparseShiftTheoremLocated := true
   depthFiveBlockTheoremLocated := true
   fourSourceNativeCoordinateTermsLocated := true
+  sourceNativeProducerCertificateInhabitedOnDonorBranch := true
+  sourceRoleKernelTheoremLocated := true
   contentAddressedVerifierOwned := true
   exactHeadVerifierObserved := false
   donorImportedIntoCurrentBranch := false

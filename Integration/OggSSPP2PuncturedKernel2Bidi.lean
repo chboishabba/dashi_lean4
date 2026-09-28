@@ -61,12 +61,44 @@ theorem plane_kernel2_roundtrip (p : PuncturedNineSheet) :
 
 theorem kernel2_plane_roundtrip (x : PuncturedKernel2) :
     planeToPuncturedKernel2 (puncturedKernel2ToPlane x) = x := by
-  apply Subtype.ext
-  funext i
-  fin_cases i <;>
-    rcases x with ⟨x,hx⟩ <;>
-    simp only [puncturedKernel2ToPlane] at * <;>
-    native_decide
+  rcases x with ⟨x, hx⟩
+  cases h0 : x 0 <;> cases h1 : x 1
+  · apply Subtype.ext
+    funext i
+    fin_cases i <;>
+      simp [puncturedKernel2ToPlane, planeToPuncturedKernel2, pairKernel, h0, h1]
+  · apply Subtype.ext
+    funext i
+    fin_cases i <;>
+      simp [puncturedKernel2ToPlane, planeToPuncturedKernel2, pairKernel, h0, h1]
+  · apply Subtype.ext
+    funext i
+    fin_cases i <;>
+      simp [puncturedKernel2ToPlane, planeToPuncturedKernel2, pairKernel, h0, h1]
+  · apply Subtype.ext
+    funext i
+    fin_cases i <;>
+      simp [puncturedKernel2ToPlane, planeToPuncturedKernel2, pairKernel, h0, h1]
+  · exfalso
+    apply hx
+    funext i
+    fin_cases i <;> simp [origin, h0, h1]
+  · apply Subtype.ext
+    funext i
+    fin_cases i <;>
+      simp [puncturedKernel2ToPlane, planeToPuncturedKernel2, pairKernel, h0, h1]
+  · apply Subtype.ext
+    funext i
+    fin_cases i <;>
+      simp [puncturedKernel2ToPlane, planeToPuncturedKernel2, pairKernel, h0, h1]
+  · apply Subtype.ext
+    funext i
+    fin_cases i <;>
+      simp [puncturedKernel2ToPlane, planeToPuncturedKernel2, pairKernel, h0, h1]
+  · apply Subtype.ext
+    funext i
+    fin_cases i <;>
+      simp [puncturedKernel2ToPlane, planeToPuncturedKernel2, pairKernel, h0, h1]
 
 noncomputable def puncturedPlaneEquivKernel2 :
     PuncturedNineSheet ≃ PuncturedKernel2 where

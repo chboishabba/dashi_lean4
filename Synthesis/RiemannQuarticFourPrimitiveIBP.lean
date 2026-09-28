@@ -42,6 +42,35 @@ def fourfoldIBPBoundary
     + (C3 b * P3 b - C3 a * P3 a)
     - (C4 b * P4 b - C4 a * P4 a)
 
+
+def fourfoldIBPUpperBoundary
+    (C1 C2 C3 C4 P1 P2 P3 P4 : ℝ → ℝ)
+    (Q : ℝ) : ℝ :=
+  C1 Q * P1 Q
+    - C2 Q * P2 Q
+    + C3 Q * P3 Q
+    - C4 Q * P4 Q
+
+def fourfoldIBPLowerBoundary
+    (C1 C2 C3 C4 P1 P2 P3 P4 : ℝ → ℝ)
+    (a : ℝ) : ℝ :=
+  C1 a * P1 a
+    - C2 a * P2 a
+    + C3 a * P3 a
+    - C4 a * P4 a
+
+theorem fourfoldIBPBoundary_eq_upper_sub_lower
+    (C1 C2 C3 C4 P1 P2 P3 P4 : ℝ → ℝ)
+    (a b : ℝ) :
+    fourfoldIBPBoundary C1 C2 C3 C4 P1 P2 P3 P4 a b
+      =
+    fourfoldIBPUpperBoundary C1 C2 C3 C4 P1 P2 P3 P4 b
+      -
+    fourfoldIBPLowerBoundary C1 C2 C3 C4 P1 P2 P3 P4 a := by
+  unfold fourfoldIBPBoundary fourfoldIBPUpperBoundary
+    fourfoldIBPLowerBoundary
+  ring
+
 theorem compactCosineD1_continuous
     {P : ℝ → ℝ}
     (hP : Continuous P)

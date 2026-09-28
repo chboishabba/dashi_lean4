@@ -3,6 +3,7 @@ import Integration.OggSSPP2SupersingularUniversalDeformationSource
 import Integration.OggSSPP2WittPowerSeriesBase
 import Integration.OggSSPP2WittPowerSeriesCompleteness
 import Integration.OggSSPP2WittPowerSeriesMaximalIdeal
+import Integration.OggSSPP2WittPowerSeriesMixedAdicControl
 import Integration.OggSSPP2ExplicitF2CurveCandidate
 import Integration.OggSSPP2ResidueFieldDescentBoundary
 
@@ -29,7 +30,6 @@ namespace Integration.OggSSPP2UniversalDeformationImplementationFrontier
 inductive Residual
   | missingGeometricSupersingularityIdentification
   | missingSourceResidueFieldDescentToF2
-  | missingMaximalIdealAdicCompleteness
   | missingSupersingularUniversalEllipticFamily
   | missingGamma0FourMarkedDeformationStates
   | missingTenStateClassificationBidi
@@ -70,7 +70,10 @@ structure Boundary where
   xAdicCompletenessPaid : Bool
   actualPowerSeriesMaximalIdealIdentified : Bool
   powerSeriesMaximalIdealEqualsCoefficientMaxPlusX : Bool
-  maximalIdealAdicCompletenessRequired : Bool
+  mixedPowerCoefficientControlPaid : Bool
+  mixedAdicHausdorffPaid : Bool
+  mixedAdicPrecompletePaid : Bool
+  maximalIdealAdicCompletenessPaid : Bool
   universalEllipticFamilyRequiredAfterBase : Bool
   gamma0FourMarkedStatesRequiredAfterFamily : Bool
   tenStateBidiRequiredAfterMarkedStates : Bool
@@ -92,7 +95,10 @@ def canonicalBoundary : Boundary where
   xAdicCompletenessPaid := true
   actualPowerSeriesMaximalIdealIdentified := true
   powerSeriesMaximalIdealEqualsCoefficientMaxPlusX := true
-  maximalIdealAdicCompletenessRequired := true
+  mixedPowerCoefficientControlPaid := true
+  mixedAdicHausdorffPaid := true
+  mixedAdicPrecompletePaid := true
+  maximalIdealAdicCompletenessPaid := true
   universalEllipticFamilyRequiredAfterBase := true
   gamma0FourMarkedStatesRequiredAfterFamily := true
   tenStateBidiRequiredAfterMarkedStates := true

@@ -1,5 +1,6 @@
 import Integration.MoonshineTrialecticSurfaceConsumerRouting
 import Integration.BalancedTernaryDepthFiveX6Bridge
+import Integration.TernaryHub
 import Mathlib
 
 /-!
@@ -25,6 +26,7 @@ namespace Integration.TrialecticDyadicT4
 
 open Integration.MoonshineTrialecticSurfaceConsumerRouting
 open Integration.MoonshineMonstrousExponentTrialecticCodec
+open Integration.TernaryHub
 open Integration.BalancedTernaryDepthFiveX6Bridge
 
 structure ABSection where

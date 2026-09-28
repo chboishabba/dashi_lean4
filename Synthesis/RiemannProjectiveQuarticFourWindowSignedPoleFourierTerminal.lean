@@ -1523,4 +1523,59 @@ theorem QuarticFourSignedPolePair.exists_upperIBPBoundary_invSq_bound
 
 end Synthesis
 
+
+theorem QuarticFourSignedPolePair.normalizedOuterPairedAbelAt_eq_upperBoundary_add_fifthInterior
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t
+        <= (n : ℝ))
+    (hA :
+      IntervalIntegrable
+        W.quarticScaleSymmetricWindowDiscrepancy
+        volume
+        quarticSignedPoleCanonicalLocalRadius
+        ((n : ℝ)/(t/16))) :
+    W.normalizedOuterPairedAbelAt n
+      =
+    fourfoldIBPUpperBoundary
+      W.normalizedOrdinateCosineD1
+      (compactCosineD2
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t))
+      (compactCosineD3
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t))
+      (compactCosineD4
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t))
+      (anchoredPrimitive1
+        W.quarticScaleSymmetricWindowDiscrepancy
+        quarticSignedPoleCanonicalLocalRadius)
+      (anchoredPrimitive2
+        W.quarticScaleSymmetricWindowDiscrepancy
+        quarticSignedPoleCanonicalLocalRadius)
+      (anchoredPrimitive3
+        W.quarticScaleSymmetricWindowDiscrepancy
+        quarticSignedPoleCanonicalLocalRadius)
+      (anchoredPrimitive4
+        W.quarticScaleSymmetricWindowDiscrepancy
+        quarticSignedPoleCanonicalLocalRadius)
+      ((n : ℝ)/(t/16))
+      +
+    ∫ q in quarticSignedPoleCanonicalLocalRadius..((n : ℝ)/(t/16)),
+      compactCosineD5
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t) q
+        *
+      anchoredPrimitive4
+        W.quarticScaleSymmetricWindowDiscrepancy
+        quarticSignedPoleCanonicalLocalRadius q := by
+  rw [W.normalizedOuterPairedAbelAt_fourfold_ibp ht n hn hA]
+  rw [fourfoldIBPBoundary_eq_upper_sub_lower]
+  rw [fourfoldIBPLowerBoundary_anchored_eq_zero]
+  ring
+
 end Synthesis

@@ -9419,4 +9419,542 @@ theorem quarticFourAtomic_family_target_zero_of_combined_pole_origin_J2_zero
   · exact hO
   · exact hJ2
 
+
+/-!
+## Smooth transport of the negative projective-origin mode
+
+The expanded atomic no-go above settles the redesign question algebraically.
+For the already-selected two-channel witness it remains useful to close the
+smaller robustness loophole: smoothing and the small J2-root displacement do
+not flip the surviving physical-origin sign.
+
+The normalized smooth origin coordinate is the difference of the two on-line
+radius responses.  It converges uniformly to the atomic coordinate.  Together
+with the existing finite-pole localization and the 1/10000 mu corridor, the
+signed determinant stays within 1/100 of its exact atomic-root determinant.
+The latter is at most -710/9477, hence the smooth determinant is still
+strictly negative.
+-/
+
+def quarticFourSmoothProjectiveOriginCoordinate
+    (R lam mu : ℝ) : ℝ :=
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineWeight 1)
+    -
+  quarticFourWindowPairing R lam mu
+      (quarticFourNormalizedOnLineWeight 2)
+
+def quarticFourSmoothFinitePoleCancelledOrigin
+    (R muHalf muTwo t : ℝ) : ℝ :=
+  quarticFourSmoothFinitePoleResidual R (2/3) muTwo t
+      * quarticFourSmoothProjectiveOriginCoordinate
+          R (1/2) muHalf
+    -
+  quarticFourSmoothFinitePoleResidual R (1/2) muHalf t
+      * quarticFourSmoothProjectiveOriginCoordinate
+          R (2/3) muTwo
+
+theorem exists_radius_quarticFourSmoothOrigin_close_atomic
+    {eps : ℝ}
+    (heps : 0 < eps) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ R lam mu : ℝ,
+        0 < R -> R < delta ->
+        lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) ->
+        |mu| <= 1/10 ->
+        |quarticFourSmoothProjectiveOriginCoordinate R lam mu
+          - quarticFourAtomicProjectiveOriginCoordinate lam mu|
+          <= eps := by
+  let eta : ℝ := eps / 2
+  have heta : 0 < eta := by
+    dsimp [eta]
+    linarith
+  obtain ⟨d1,hd1,h1⟩ :=
+    exists_radius_quarticFourWindowPairing_close_atomic
+      (quarticFourNormalizedOnLineWeight_continuous 1)
+      (quarticFourNormalizedOnLineWeight_even 1) eta
+  obtain ⟨d2,hd2,h2⟩ :=
+    exists_radius_quarticFourWindowPairing_close_atomic
+      (quarticFourNormalizedOnLineWeight_continuous 2)
+      (quarticFourNormalizedOnLineWeight_even 2) eta
+  let delta := min d1 d2
+  have hdelta : 0 < delta := by
+    dsimp [delta]
+    exact lt_min hd1 hd2
+  refine ⟨delta,hdelta,?_⟩
+  intro R lam mu hR hRd hlam hmu
+  have hRd1 : R < d1 :=
+    hRd.trans_le (min_le_left _ _)
+  have hRd2 : R < d2 :=
+    hRd.trans_le (min_le_right _ _)
+  have e1 := h1 R lam mu hR hRd1 hlam hmu
+  have e2 := h2 R lam mu hR hRd2 hlam hmu
+  rw [quarticFourAtomicOnLinePairing_one] at e1
+  rw [quarticFourAtomicOnLinePairing_two] at e2
+  unfold quarticFourSmoothProjectiveOriginCoordinate
+    quarticFourAtomicProjectiveOriginCoordinate
+    quarticFourAtomicOnLineOne
+    quarticFourAtomicOnLineTwo
+  have htri :
+      |(quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 1) - (1/2-mu))
+        -
+        (quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 2) - (3/2-lam+mu))|
+      <=
+      |quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 1) - (1/2-mu)|
+      +
+      |quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 2) - (3/2-lam+mu)| :=
+    abs_sub _ _
+  calc
+    |quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 1)
+      -
+      quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 2)
+      -
+      ((1/2-mu) - (3/2-lam+mu))|
+      =
+    |(quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 1) - (1/2-mu))
+      -
+      (quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 2) - (3/2-lam+mu))| := by
+        congr 1
+        ring
+    _ <=
+      |quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 1) - (1/2-mu)|
+      +
+      |quarticFourWindowPairing R lam mu
+          (quarticFourNormalizedOnLineWeight 2) - (3/2-lam+mu)| := htri
+    _ <= eta + eta := add_le_add e1 e2
+    _ = eps := by dsimp [eta]; ring
+
+private theorem quarticFourOrigin_high_cosh_bounds
+    {t : ℝ}
+    (ht : 200 <= t) :
+    1 <= Real.cosh (8*Real.pi/(3*t))
+      ∧ Real.cosh (8*Real.pi/(3*t)) <= 2
+      ∧ 1 <= Real.cosh (4*Real.pi/t)
+      ∧ Real.cosh (4*Real.pi/t) <= 2
+      ∧ 1 <= Real.cosh (8*Real.pi/t)
+      ∧ Real.cosh (8*Real.pi/t) <= 2 := by
+  have htpos : 0 < t := by linarith
+  have h3lo : 1 <= Real.cosh (8*Real.pi/t) :=
+    Real.one_le_cosh _
+  have h3ex := quarticFour_cosh_excess_le_one_of_twoHundred ht
+  have h3hi : Real.cosh (8*Real.pi/t) <= 2 := by linarith
+  have hx1non : 0 <= 8*Real.pi/(3*t) := by positivity
+  have hx2non : 0 <= 4*Real.pi/t := by positivity
+  have hx3non : 0 <= 8*Real.pi/t := by positivity
+  have hx1 :
+      |8*Real.pi/(3*t)| <= |8*Real.pi/t| := by
+    rw [abs_of_nonneg hx1non, abs_of_nonneg hx3non]
+    field_simp [ne_of_gt htpos]
+    nlinarith [Real.pi_pos]
+  have hx2 :
+      |4*Real.pi/t| <= |8*Real.pi/t| := by
+    rw [abs_of_nonneg hx2non, abs_of_nonneg hx3non]
+    field_simp [ne_of_gt htpos]
+    nlinarith [Real.pi_pos]
+  have h1hi :=
+    ((Real.cosh_le_cosh).2 hx1).trans h3hi
+  have h2hi :=
+    ((Real.cosh_le_cosh).2 hx2).trans h3hi
+  exact ⟨Real.one_le_cosh _, h1hi,
+    Real.one_le_cosh _, h2hi, h3lo, h3hi⟩
+
+theorem quarticFourAtomicFinitePoleResidual_mu_lipschitz_two
+    {t lam mu nu : ℝ}
+    (ht : 200 <= t)
+    (hlam : lam ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ)) :
+    |quarticFourAtomicFinitePoleResidual t lam mu
+      - quarticFourAtomicFinitePoleResidual t lam nu|
+      <= 2 * |mu-nu| := by
+  rcases quarticFourOrigin_high_cosh_bounds ht with
+    ⟨h1lo,h1hi,h2lo,h2hi,h3lo,h3hi⟩
+  have htpos : 0 < t := by linarith
+  have hx2non : 0 <= 4*Real.pi/t := by positivity
+  have hx3non : 0 <= 8*Real.pi/t := by positivity
+  have hx23 :
+      |4*Real.pi/t| <= |8*Real.pi/t| := by
+    rw [abs_of_nonneg hx2non, abs_of_nonneg hx3non]
+    field_simp [ne_of_gt htpos]
+    nlinarith [Real.pi_pos]
+  have h23 :
+      Real.cosh (4*Real.pi/t) <= Real.cosh (8*Real.pi/t) :=
+    (Real.cosh_le_cosh).2 hx23
+  let C : ℝ :=
+    -Real.cosh (4*Real.pi/t) * lam
+      + Real.cosh (8*Real.pi/t) * (lam-2)
+      + 2
+  have hdiffnon :
+      0 <= Real.cosh (8*Real.pi/t) - Real.cosh (4*Real.pi/t) := by
+    linarith
+  have hdiffle :
+      Real.cosh (8*Real.pi/t) - Real.cosh (4*Real.pi/t) <= 1 := by
+    linarith
+  have hprodnon :
+      0 <= lam *
+        (Real.cosh (8*Real.pi/t) - Real.cosh (4*Real.pi/t)) :=
+    mul_nonneg (by linarith [hlam.1]) hdiffnon
+  have hprodle :
+      lam *
+        (Real.cosh (8*Real.pi/t) - Real.cosh (4*Real.pi/t))
+        <= 2/3 := by
+    have :=
+      mul_le_mul hlam.2 hdiffle hdiffnon
+        (by linarith [hlam.1] : 0 <= lam)
+    nlinarith
+  have hC :
+      |C| <= 2 := by
+    rw [abs_le]
+    dsimp [C]
+    constructor <;> nlinarith
+  have heq :
+      quarticFourAtomicFinitePoleResidual t lam mu
+        - quarticFourAtomicFinitePoleResidual t lam nu
+      = C * (mu-nu) := by
+    dsimp [C]
+    unfold quarticFourAtomicFinitePoleResidual
+    ring
+  rw [heq, abs_mul]
+  exact mul_le_mul_of_nonneg_right hC (abs_nonneg _)
+
+private theorem quarticFourAtomicOrigin_root_entries_abs_le_two
+    {t : ℝ}
+    (ht : 200 <= t) :
+    |quarticFourAtomicFinitePoleResidual
+        t (1/2) (quarticFourAtomicMu (1/2))| <= 2
+      ∧
+    |quarticFourAtomicOriginOnNull (1/2)| <= 2
+      ∧
+    |quarticFourAtomicFinitePoleResidual
+        t (2/3) (quarticFourAtomicMu (2/3))| <= 2
+      ∧
+    |quarticFourAtomicOriginOnNull (2/3)| <= 2 := by
+  rcases quarticFourOrigin_high_cosh_bounds ht with
+    ⟨h1lo,h1hi,h2lo,h2hi,h3lo,h3hi⟩
+  have hpHalfPos :=
+    quarticFourAtomicFinitePoleResidual_pos_of_twoHundred
+      ht (by constructor <;> norm_num)
+      (by
+        have h :=
+          quarticFourAtomicMu_small_on_half_twoThirds
+            (by norm_num : (1/2 : ℝ) <= 1/2)
+            (by norm_num : (1/2 : ℝ) <= 2/3)
+        exact h.trans (by norm_num))
+  have hpTwoPos :=
+    quarticFourAtomicFinitePoleResidual_pos_of_twoHundred
+      ht (by constructor <;> norm_num)
+      (by
+        have h :=
+          quarticFourAtomicMu_small_on_half_twoThirds
+            (by norm_num : (1/2 : ℝ) <= 2/3)
+            (by norm_num : (2/3 : ℝ) <= 2/3)
+        exact h.trans (by norm_num))
+  constructor
+  · rw [abs_of_pos hpHalfPos]
+    unfold quarticFourAtomicFinitePoleResidual quarticFourAtomicMu
+    norm_num
+    nlinarith
+  constructor
+  · rw [quarticFourAtomicOriginOnNull_formula
+      (by norm_num : (1/2 : ℝ) <= 2/3)]
+    norm_num
+  constructor
+  · rw [abs_of_pos hpTwoPos]
+    unfold quarticFourAtomicFinitePoleResidual quarticFourAtomicMu
+    norm_num
+    nlinarith
+  · rw [quarticFourAtomicOriginOnNull_formula
+      (by norm_num : (2/3 : ℝ) <= 2/3)]
+    norm_num
+
+theorem exists_radius_quarticFourSmoothFinitePoleCancelledOrigin_neg
+    {t : ℝ}
+    (ht : 200 <= t) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ R muHalf muTwo : ℝ,
+        0 < R -> R < delta ->
+        |muHalf-quarticFourAtomicMu (1/2)|
+          <= quarticFourAtomicMuRadius ->
+        |muTwo-quarticFourAtomicMu (2/3)|
+          <= quarticFourAtomicMuRadius ->
+        quarticFourSmoothFinitePoleCancelledOrigin
+          R muHalf muTwo t < 0 := by
+  let eta : ℝ := 1/2000
+  obtain ⟨dP,hdP,hP⟩ :=
+    exists_radius_quarticFourSmoothPole_close_atomic ht
+      (by norm_num : 0 < eta)
+  obtain ⟨dO,hdO,hO⟩ :=
+    exists_radius_quarticFourSmoothOrigin_close_atomic
+      (by norm_num : 0 < eta)
+  let delta := min dP dO
+  have hdelta : 0 < delta := lt_min hdP hdO
+  refine ⟨delta,hdelta,?_⟩
+  intro R muHalf muTwo hR hRd hmuHalf hmuTwo
+  have hRdP : R < dP := hRd.trans_le (min_le_left _ _)
+  have hRdO : R < dO := hRd.trans_le (min_le_right _ _)
+  have hmuHalfAbs :
+      |muHalf| <= 1/10 :=
+    (quarticFourAtomicMu_corridor_abs_lt_tenth
+      (by norm_num) (by norm_num) hmuHalf).le
+  have hmuTwoAbs :
+      |muTwo| <= 1/10 :=
+    (quarticFourAtomicMu_corridor_abs_lt_tenth
+      (by norm_num) (by norm_num) hmuTwo).le
+  have hlamHalf : (1/2 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨le_rfl, by norm_num⟩
+  have hlamTwo : (2/3 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨by norm_num, le_rfl⟩
+
+  have ePH :=
+    hP R (1/2) muHalf hR hRdP hlamHalf hmuHalfAbs
+  have ePT :=
+    hP R (2/3) muTwo hR hRdP hlamTwo hmuTwoAbs
+  have eOH :=
+    hO R (1/2) muHalf hR hRdO hlamHalf hmuHalfAbs
+  have eOT :=
+    hO R (2/3) muTwo hR hRdO hlamTwo hmuTwoAbs
+
+  have aPH :=
+    quarticFourAtomicFinitePoleResidual_mu_lipschitz_two
+      ht hlamHalf
+      (mu:=muHalf) (nu:=quarticFourAtomicMu (1/2))
+  have aPT :=
+    quarticFourAtomicFinitePoleResidual_mu_lipschitz_two
+      ht hlamTwo
+      (mu:=muTwo) (nu:=quarticFourAtomicMu (2/3))
+  have aOH :
+      |quarticFourAtomicProjectiveOriginCoordinate (1/2) muHalf
+        - quarticFourAtomicOriginOnNull (1/2)|
+      <= 2 * |muHalf-quarticFourAtomicMu (1/2)| := by
+    unfold quarticFourAtomicOriginOnNull
+    rw [quarticFourAtomicProjectiveOriginCoordinate_formula,
+        quarticFourAtomicProjectiveOriginCoordinate_formula]
+    have heq :
+        (1/2 : ℝ) - 1 - 2*muHalf
+          - ((1/2 : ℝ) - 1 - 2*quarticFourAtomicMu (1/2))
+        =
+        -2 * (muHalf-quarticFourAtomicMu (1/2)) := by ring
+    rw [heq, abs_mul]
+    norm_num
+  have aOT :
+      |quarticFourAtomicProjectiveOriginCoordinate (2/3) muTwo
+        - quarticFourAtomicOriginOnNull (2/3)|
+      <= 2 * |muTwo-quarticFourAtomicMu (2/3)| := by
+    unfold quarticFourAtomicOriginOnNull
+    rw [quarticFourAtomicProjectiveOriginCoordinate_formula,
+        quarticFourAtomicProjectiveOriginCoordinate_formula]
+    have heq :
+        (2/3 : ℝ) - 1 - 2*muTwo
+          - ((2/3 : ℝ) - 1 - 2*quarticFourAtomicMu (2/3))
+        =
+        -2 * (muTwo-quarticFourAtomicMu (2/3)) := by ring
+    rw [heq, abs_mul]
+    norm_num
+
+  have rootPH :
+      |quarticFourSmoothFinitePoleResidual R (1/2) muHalf t
+        -
+        quarticFourAtomicFinitePoleResidual
+          t (1/2) (quarticFourAtomicMu (1/2))|
+      <= 1/1000 := by
+    calc
+      _ <=
+        |quarticFourSmoothFinitePoleResidual R (1/2) muHalf t
+          - quarticFourAtomicFinitePoleResidual t (1/2) muHalf|
+        +
+        |quarticFourAtomicFinitePoleResidual t (1/2) muHalf
+          - quarticFourAtomicFinitePoleResidual
+              t (1/2) (quarticFourAtomicMu (1/2))| := by
+            simpa [sub_eq_add_neg, add_assoc] using
+              abs_add
+                (quarticFourSmoothFinitePoleResidual R (1/2) muHalf t
+                  - quarticFourAtomicFinitePoleResidual t (1/2) muHalf)
+                (quarticFourAtomicFinitePoleResidual t (1/2) muHalf
+                  - quarticFourAtomicFinitePoleResidual
+                      t (1/2) (quarticFourAtomicMu (1/2)))
+      _ <= eta + 2*quarticFourAtomicMuRadius := by
+        exact add_le_add ePH (aPH.trans (mul_le_mul_of_nonneg_left
+          hmuHalf (by norm_num)))
+      _ <= 1/1000 := by
+        norm_num [eta, quarticFourAtomicMuRadius]
+  have rootPT :
+      |quarticFourSmoothFinitePoleResidual R (2/3) muTwo t
+        -
+        quarticFourAtomicFinitePoleResidual
+          t (2/3) (quarticFourAtomicMu (2/3))|
+      <= 1/1000 := by
+    calc
+      _ <=
+        |quarticFourSmoothFinitePoleResidual R (2/3) muTwo t
+          - quarticFourAtomicFinitePoleResidual t (2/3) muTwo|
+        +
+        |quarticFourAtomicFinitePoleResidual t (2/3) muTwo
+          - quarticFourAtomicFinitePoleResidual
+              t (2/3) (quarticFourAtomicMu (2/3))| := by
+            simpa [sub_eq_add_neg, add_assoc] using
+              abs_add
+                (quarticFourSmoothFinitePoleResidual R (2/3) muTwo t
+                  - quarticFourAtomicFinitePoleResidual t (2/3) muTwo)
+                (quarticFourAtomicFinitePoleResidual t (2/3) muTwo
+                  - quarticFourAtomicFinitePoleResidual
+                      t (2/3) (quarticFourAtomicMu (2/3)))
+      _ <= eta + 2*quarticFourAtomicMuRadius := by
+        exact add_le_add ePT (aPT.trans (mul_le_mul_of_nonneg_left
+          hmuTwo (by norm_num)))
+      _ <= 1/1000 := by
+        norm_num [eta, quarticFourAtomicMuRadius]
+  have rootOH :
+      |quarticFourSmoothProjectiveOriginCoordinate R (1/2) muHalf
+        - quarticFourAtomicOriginOnNull (1/2)|
+      <= 1/1000 := by
+    calc
+      _ <=
+        |quarticFourSmoothProjectiveOriginCoordinate R (1/2) muHalf
+          - quarticFourAtomicProjectiveOriginCoordinate (1/2) muHalf|
+        +
+        |quarticFourAtomicProjectiveOriginCoordinate (1/2) muHalf
+          - quarticFourAtomicOriginOnNull (1/2)| := by
+            simpa [sub_eq_add_neg, add_assoc] using
+              abs_add
+                (quarticFourSmoothProjectiveOriginCoordinate
+                    R (1/2) muHalf
+                  - quarticFourAtomicProjectiveOriginCoordinate
+                      (1/2) muHalf)
+                (quarticFourAtomicProjectiveOriginCoordinate
+                    (1/2) muHalf
+                  - quarticFourAtomicOriginOnNull (1/2))
+      _ <= eta + 2*quarticFourAtomicMuRadius := by
+        exact add_le_add eOH (aOH.trans (mul_le_mul_of_nonneg_left
+          hmuHalf (by norm_num)))
+      _ <= 1/1000 := by
+        norm_num [eta, quarticFourAtomicMuRadius]
+  have rootOT :
+      |quarticFourSmoothProjectiveOriginCoordinate R (2/3) muTwo
+        - quarticFourAtomicOriginOnNull (2/3)|
+      <= 1/1000 := by
+    calc
+      _ <=
+        |quarticFourSmoothProjectiveOriginCoordinate R (2/3) muTwo
+          - quarticFourAtomicProjectiveOriginCoordinate (2/3) muTwo|
+        +
+        |quarticFourAtomicProjectiveOriginCoordinate (2/3) muTwo
+          - quarticFourAtomicOriginOnNull (2/3)| := by
+            simpa [sub_eq_add_neg, add_assoc] using
+              abs_add
+                (quarticFourSmoothProjectiveOriginCoordinate
+                    R (2/3) muTwo
+                  - quarticFourAtomicProjectiveOriginCoordinate
+                      (2/3) muTwo)
+                (quarticFourAtomicProjectiveOriginCoordinate
+                    (2/3) muTwo
+                  - quarticFourAtomicOriginOnNull (2/3))
+      _ <= eta + 2*quarticFourAtomicMuRadius := by
+        exact add_le_add eOT (aOT.trans (mul_le_mul_of_nonneg_left
+          hmuTwo (by norm_num)))
+      _ <= 1/1000 := by
+        norm_num [eta, quarticFourAtomicMuRadius]
+
+  rcases quarticFourAtomicOrigin_root_entries_abs_le_two ht with
+    ⟨bPH,bOH,bPT,bOT⟩
+  have hdet :=
+    abs_det_sub_det_le
+      (by norm_num : (0:ℝ) <= 2)
+      (by norm_num : (0:ℝ) <= 1/1000)
+      (by norm_num : (1/1000 : ℝ) <= 1)
+      bPT bOH bPH bOT
+      rootPT rootOH rootPH rootOT
+  have hbase :=
+    quarticFourAtomicFinitePoleCancelledOriginAtNull_le ht
+  unfold quarticFourSmoothFinitePoleCancelledOrigin
+    quarticFourAtomicFinitePoleCancelledOriginAtNull at hdet
+  have hupper := (abs_le.mp hdet).2
+  nlinarith
+
+theorem exists_quarticFourSignedPolePair_with_strength_floor_and_negative_origin
+    {t : ℝ}
+    (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 <= W.targetStrength
+      ∧
+      quarticFourSmoothFinitePoleCancelledOrigin
+        W.R W.muHalf W.muTwo t < 0 := by
+  obtain ⟨R0,hR0,hfamily⟩ :=
+    exists_uniform_smooth_quarticFourWindow_family
+  obtain ⟨dTarget,hdTarget,hTarget⟩ :=
+    exists_radius_quarticFourSmooth_signedPoleTarget_ge_margin ht
+  obtain ⟨dOrigin,hdOrigin,hOrigin⟩ :=
+    exists_radius_quarticFourSmoothFinitePoleCancelledOrigin_neg ht
+  let R : ℝ :=
+    min 1 (min R0 (min dTarget dOrigin)) / 2
+  have hinner :
+      0 < min R0 (min dTarget dOrigin) :=
+    lt_min hR0 (lt_min hdTarget hdOrigin)
+  have hmin :
+      0 < min 1 (min R0 (min dTarget dOrigin)) :=
+    lt_min (by norm_num) hinner
+  have hR : 0 < R := by
+    dsimp [R]
+    linarith
+  have hRone : R < 1 := by
+    dsimp [R]
+    have hle := min_le_left 1 (min R0 (min dTarget dOrigin))
+    linarith
+  have hRinner :
+      R < min R0 (min dTarget dOrigin) := by
+    dsimp [R]
+    have hle := min_le_right 1 (min R0 (min dTarget dOrigin))
+    linarith
+  have hRR0 : R < R0 :=
+    hRinner.trans_le (min_le_left _ _)
+  have hRest : R < min dTarget dOrigin :=
+    hRinner.trans_le (min_le_right _ _)
+  have hRTarget : R < dTarget :=
+    hRest.trans_le (min_le_left _ _)
+  have hROrigin : R < dOrigin :=
+    hRest.trans_le (min_le_right _ _)
+  have hlamHalf : (1/2 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨le_rfl, by norm_num⟩
+  have hlamTwo : (2/3 : ℝ) ∈ Set.Icc (1/2 : ℝ) (2/3 : ℝ) :=
+    ⟨by norm_num, le_rfl⟩
+  obtain ⟨S1⟩ := hfamily R (1/2) hR hRR0 hlamHalf
+  obtain ⟨S2⟩ := hfamily R (2/3) hR hRR0 hlamTwo
+  have hfloor :
+      7 * Real.pi^4 / 1600 <=
+        quarticFourSmoothPoleCancelledTarget R S1.mu S2.mu t :=
+    hTarget R S1.mu S2.mu hR hRTarget S1.muNear S2.muNear
+  have htransPos :
+      0 < quarticFourSmoothPoleCancelledTarget R S1.mu S2.mu t := by
+    have hp4 : 0 < Real.pi^4 := by positivity
+    nlinarith
+  obtain ⟨eps,heps,hband⟩ :=
+    exists_quarticFourSignedPoleCombinedHeightDefect_pos_punctured
+      hR S1.J2zero S2.J2zero htransPos
+  let W : QuarticFourSignedPolePair t := {
+    R := R
+    muHalf := S1.mu
+    muTwo := S2.mu
+    eps := eps
+    Rpos := hR
+    RltOne := hRone
+    muHalfNear := S1.muNear
+    muTwoNear := S2.muNear
+    J2Half := S1.J2zero
+    J2Two := S2.J2zero
+    signedTargetStrength := htransPos
+    epsPos := heps
+    combinedTargetBand := hband
+  }
+  have hneg :=
+    hOrigin R S1.mu S2.mu hR hROrigin S1.muNear S2.muNear
+  refine ⟨W,?_,?_⟩
+  · simpa [W, QuarticFourSignedPolePair.targetStrength] using hfloor
+  · simpa [W] using hneg
+
 end Synthesis

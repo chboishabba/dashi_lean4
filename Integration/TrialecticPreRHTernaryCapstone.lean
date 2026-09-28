@@ -2,6 +2,7 @@ import Integration.TrialecticDyadicT4
 import Integration.TrialecticDyadicLocalComplement
 import Integration.TrialecticDyadicC3
 import Integration.TrialecticDyadicPointed
+import Integration.TrialecticParticipantCenteredSSPFactor
 import Mathlib
 
 /-!
@@ -24,6 +25,7 @@ open Integration.TrialecticDyadicT4
 open Integration.TrialecticDyadicLocalComplement
 open Integration.TrialecticDyadicC3
 open Integration.TrialecticDyadicPointed
+open Integration.TrialecticParticipantCenteredSSPFactor
 open Integration.MoonshineTrialecticSurfaceConsumerRouting
 
 theorem ab_local_exact_t4 :
@@ -106,6 +108,16 @@ theorem nonzero_local_can_hit_basepoint_B :
       BPointed.basepoint :=
   offDiagonalAB_restricts_to_basepoint_B
 
+theorem participant_centered_ssp_factor_section
+    (state : PhaseOrbitWithNineResidual) :
+    participantCenteredQuotient
+      (canonicalLiftParticipantCentered state) = state :=
+  participant_centered_quotient_lift state
+
+theorem participant_centered_factor_count :
+    Fintype.card PhaseOrbitWithNineResidual = 135 :=
+  centered_factor_count
+
 inductive PreRHCapstoneImportsRHAnalyticTheorem : Prop
 inductive PreRHCapstoneSelectsPreferredDyadicChart : Prop
 inductive PointedRepairEqualsTopologicalCofiber : Prop
@@ -138,6 +150,8 @@ structure Boundary where
   noPreferredChart : Bool
   pointedRestrictionRepairOwned : Bool
   naivePuncturedSubpresheafRejected : Bool
+  participantCenteredSSPFactorOwned : Bool
+  outgoingNineResidualRetained : Bool
   rhAnalyticTheoremImported : Bool
   topologicalCofiberClaimed : Bool
   deriving Repr
@@ -155,6 +169,8 @@ def canonicalBoundary : Boundary where
   noPreferredChart := true
   pointedRestrictionRepairOwned := true
   naivePuncturedSubpresheafRejected := true
+  participantCenteredSSPFactorOwned := true
+  outgoingNineResidualRetained := true
   rhAnalyticTheoremImported := false
   topologicalCofiberClaimed := false
 

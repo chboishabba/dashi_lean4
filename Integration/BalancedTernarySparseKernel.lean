@@ -95,6 +95,41 @@ theorem bulk196830_depth5 :
 theorem residual810_two_spike :
     (810 : Nat) = 3^6 + 3^4 := by norm_num
 
+/-! ## Exact 3-adic depth certificates -/
+
+structure ExactThreeAdicDepthCertificate (value depth : Nat) where
+  unit : Nat
+  factorExact : value = 3^depth * unit
+  unitModThreeNonzero : unit % 3 ≠ 0
+  deriving Repr
+
+def poleExactDepthZero :
+    ExactThreeAdicDepthCertificate 80 0 where
+  unit := 80
+  factorExact := by norm_num
+  unitModThreeNonzero := by decide
+
+def originExactDepthFive :
+    ExactThreeAdicDepthCertificate 243 5 where
+  unit := 1
+  factorExact := by norm_num
+  unitModThreeNonzero := by decide
+
+def jExactDepthFive :
+    ExactThreeAdicDepthCertificate 1215 5 where
+  unit := 5
+  factorExact := by norm_num
+  unitModThreeNonzero := by decide
+
+def targetExactDepthFive :
+    ExactThreeAdicDepthCertificate 972 5 where
+  unit := 4
+  factorExact := by norm_num
+  unitModThreeNonzero := by decide
+
+def exactDepthProfile : Nat × Nat × Nat × Nat :=
+  (0,5,5,5)
+
 /-! ## Primitive Smith/gcd lens
 
 For a one-row integer matrix, the first Smith invariant is the gcd of its
@@ -119,6 +154,7 @@ theorem primitive_gcd_does_not_determine_depth_profile :
 structure Boundary where
   sparseStencilOwned : Bool
   modThreeUnitVsDepthFiveOwned : Bool
+  exactThreeAdicDepthCertificatesOwned : Bool
   puncturedFourShiftOwned : Bool
   twoSpike196830Owned : Bool
   primitiveKernelGcdOneOwned : Bool
@@ -130,6 +166,7 @@ structure Boundary where
 def canonicalBoundary : Boundary where
   sparseStencilOwned := true
   modThreeUnitVsDepthFiveOwned := true
+  exactThreeAdicDepthCertificatesOwned := true
   puncturedFourShiftOwned := true
   twoSpike196830Owned := true
   primitiveKernelGcdOneOwned := true

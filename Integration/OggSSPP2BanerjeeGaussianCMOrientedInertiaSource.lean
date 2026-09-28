@@ -5,6 +5,8 @@ import Integration.OggSSPP2OrientedInertiaTenStateRecognition
 import Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
 import Integration.OggSSPP2UniqueGamma0FourMarkingBidi
 import Integration.OggSSPP2SupersingularUniversalDeformationSource
+import Integration.OggSSPP2GaussianCMRamifiedEmbeddingSource
+import Integration.OggSSPP2KerFSubflagFiniteFlatSource
 
 /-!
 # Banerjee + Gaussian-CM oriented inertia same-source candidate
@@ -47,6 +49,8 @@ namespace Unique :=
   Integration.OggSSPP2Gamma0FourUniqueSupersingularSubgroupSeparation
 namespace Target := Integration.OggSSPP2F4AntipodalStratifiedRefinement
 namespace F4 := Integration.OggSSPP2F4FrobeniusCandidateNoGo
+namespace GaussianCM := Integration.OggSSPP2GaussianCMRamifiedEmbeddingSource
+namespace KerF := Integration.OggSSPP2KerFSubflagFiniteFlatSource
 
 abbrev State := Ten.State
 
@@ -84,25 +88,18 @@ curve.  The CM-orientation and inertia realizability fields are deliberately
 proof-bearing: the 2×5 count alone cannot inhabit them.
 -/
 structure Attachment where
-  OrderFourSubgroup : Type
-  OrderTwoSubgroup : Type
+  EndomorphismObject : Type
 
-  selectedOrderFourSubgroup : OrderFourSubgroup
-  selectedOrderTwoSubgroup : OrderTwoSubgroup
+  cmEmbeddingRealization :
+    GaussianCM.Realization EndomorphismObject
 
-  orderTwoSubflagOfOrderFour : Prop
-  orderTwoSubflagOfOrderFourProof : orderTwoSubflagOfOrderFour
+  selectedCMEndomorphismObjectIsBanerjeeSpecialFibreEndomorphismObject :
+    Prop
+  selectedCMEndomorphismObjectIsBanerjeeSpecialFibreEndomorphismObjectProof :
+    selectedCMEndomorphismObjectIsBanerjeeSpecialFibreEndomorphismObject
 
-  finiteFlatAtCharacteristicTwo : Prop
-  finiteFlatAtCharacteristicTwoProof : finiteFlatAtCharacteristicTwo
-
-  gammaZeroLevelFourSemantics : Prop
-  gammaZeroLevelFourSemanticsProof : gammaZeroLevelFourSemantics
-
-  gaussianCMOrientationRealized :
-    Ten.ClassicalQuadraticOrientation → Prop
-  gaussianCMOrientationRealizedProof :
-    ∀ orientation, gaussianCMOrientationRealized orientation
+  kerFSubflagAuthority :
+    KerF.Authority
 
   g24GaloisOrbitRealized :
     Ten.BinaryTetrahedralInversionOrbit → Prop
@@ -125,27 +122,9 @@ structure Attachment where
 
 def finiteFlatDatum
     (attachment : Attachment) :
-    Gamma.Gamma0FourFiniteFlatDatum where
-  EllipticObject := WeierstrassCurve Banerjee.F4DeformationBase
-  OrderFourSubgroup := attachment.OrderFourSubgroup
-  OrderTwoSubgroup := attachment.OrderTwoSubgroup
-  selectedEllipticObject := Banerjee.universalCurve
-  selectedOrderFourSubgroup := attachment.selectedOrderFourSubgroup
-  selectedOrderTwoSubgroup := attachment.selectedOrderTwoSubgroup
-  orderFourRank := 4
-  orderFourRankIsFour := rfl
-  orderTwoRank := 2
-  orderTwoRankIsTwo := rfl
-  orderTwoSubflagOfOrderFour := attachment.orderTwoSubflagOfOrderFour
-  orderTwoSubflagOfOrderFourProof :=
-    attachment.orderTwoSubflagOfOrderFourProof
-  finiteFlatAtCharacteristicTwo := attachment.finiteFlatAtCharacteristicTwo
-  finiteFlatAtCharacteristicTwoProof :=
-    attachment.finiteFlatAtCharacteristicTwoProof
-  gammaZeroLevelFourSemantics := attachment.gammaZeroLevelFourSemantics
-  gammaZeroLevelFourSemanticsProof :=
-    attachment.gammaZeroLevelFourSemanticsProof
-  sourceReference := attachment.sourceReference
+    Gamma.Gamma0FourFiniteFlatDatum :=
+  KerF.finiteFlatDatum Banerjee.universalCurve
+    attachment.kerFSubflagAuthority
 
 /--
 The universal deformation datum is concrete except for the external semantic
@@ -191,17 +170,15 @@ def marking
   specializesToRawSubgroup := fun _ => .kerFrobeniusSquared
   specializationIsUniqueKerFrobeniusSquared := fun _ => rfl
   gamma0FourLevelStructurePresent :=
-    fun _ => attachment.gammaZeroLevelFourSemantics
+    fun _ => attachment.kerFSubflagAuthority.gammaZeroFourSemantics
   gamma0FourLevelStructurePresentProof :=
-    fun _ => attachment.gammaZeroLevelFourSemanticsProof
+    fun _ => attachment.kerFSubflagAuthority.gammaZeroFourSemanticsProof
   deformationProvenanceRetained :=
     fun s =>
-      attachment.gaussianCMOrientationRealized s.1 ∧
-        attachment.g24GaloisOrbitRealized s.2
+      attachment.g24GaloisOrbitRealized s.2
   deformationProvenanceRetainedProof :=
     fun s =>
-      ⟨attachment.gaussianCMOrientationRealizedProof s.1,
-       attachment.g24GaloisOrbitRealizedProof s.2⟩
+      attachment.g24GaloisOrbitRealizedProof s.2
 
 def markingBidi
     (authority : SourceAuthority)
@@ -250,8 +227,9 @@ theorem five_inertia_labels_are_already_galois_quotient :
 
 inductive Residual
   | missingBanerjeeSourceSemanticAuthority
-  | missingGaussianCMOrientationRealizationOnBanerjeeCurve
-  | missingFiniteFlatGamma0FourAttachment
+  | missingCMEmbeddingTargetSameObjectIdentification
+  | missingFiveInertiaSectorRealization
+  | missingKerFSubflagFiniteFlatAuthority
   | missingRawFrobeniusCompatibility
   deriving DecidableEq, Repr
 
@@ -263,8 +241,9 @@ structure Boundary where
   fiveInertiaLabelsAlreadyGaloisQuotient : Bool
   independentBinaryFactorIsCMOrientation : Bool
   banerjeeGaloisSheetUsedAsIndependentBinaryFactor : Bool
-  proofBearingCMOrientationRealizationRequired : Bool
-  proofBearingGamma0FourAttachmentRequired : Bool
+  proofBearingCMEmbeddingRealizationRequired : Bool
+  cmEmbeddingTargetSameObjectProofRequired : Bool
+  canonicalKerFSubflagAuthorityRequired : Bool
   oneAttachmentConstructsTenStateBidi : Bool
   namedClassicalTenStateModuliObjectClaimed : Bool
   deriving Repr
@@ -274,8 +253,9 @@ def canonicalBoundary : Boundary where
   fiveInertiaLabelsAlreadyGaloisQuotient := true
   independentBinaryFactorIsCMOrientation := true
   banerjeeGaloisSheetUsedAsIndependentBinaryFactor := false
-  proofBearingCMOrientationRealizationRequired := true
-  proofBearingGamma0FourAttachmentRequired := true
+  proofBearingCMEmbeddingRealizationRequired := true
+  cmEmbeddingTargetSameObjectProofRequired := true
+  canonicalKerFSubflagAuthorityRequired := true
   oneAttachmentConstructsTenStateBidi := true
   namedClassicalTenStateModuliObjectClaimed := false
 

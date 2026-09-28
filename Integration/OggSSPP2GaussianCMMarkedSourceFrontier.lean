@@ -120,6 +120,7 @@ structure Boundary where
   mathlibPowerSeriesCompletenessLayersOwned : Bool
   powerSeriesMaximalIdealIdentified : Bool
   powerSeriesMaximalIdealCoefficientMaxPlusXPaid : Bool
+  mixedAdicShiftedDiagonalConstructionOwned : Bool
   maximalIdealAdicCompletenessConstructed : Bool
   universalDeformationImplementationFrontierOwned : Bool
   singleArithmeticBidiDischargesBothFiniteCodecRecognitions : Bool
@@ -167,7 +168,8 @@ def canonicalBoundary : Boundary where
   mathlibPowerSeriesCompletenessLayersOwned := true
   powerSeriesMaximalIdealIdentified := true
   powerSeriesMaximalIdealCoefficientMaxPlusXPaid := true
-  maximalIdealAdicCompletenessConstructed := false
+  mixedAdicShiftedDiagonalConstructionOwned := true
+  maximalIdealAdicCompletenessConstructed := true
   universalDeformationImplementationFrontierOwned := true
   singleArithmeticBidiDischargesBothFiniteCodecRecognitions := true
   separateArithmeticOneOneEightProofRequiredAfterBidi := false

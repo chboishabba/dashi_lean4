@@ -61,6 +61,13 @@ theorem ab_observer_after_rotate_twice_is_ca (state : T9Carrier) :
   rcases state with ⟨⟨aa,ab,ac⟩,⟨ba,bb,bc⟩,⟨ca,cb,cc⟩⟩
   rfl
 
+structure NineModeRecognition where
+  ModeNine : Type
+  toMode : NineFace → ModeNine
+  toFace : ModeNine → NineFace
+  face_after_mode : ∀ x, toFace (toMode x) = x
+  mode_after_face : ∀ x, toMode (toFace x) = x
+
 inductive ModeNine
   | identityMode
   | A2negative | A2positive
@@ -99,6 +106,10 @@ theorem face_mode_roundtrip (x : NineFace) :
 theorem mode_face_roundtrip (x : ModeNine) :
     faceToModeNine (modeNineToFace x) = x := by
   cases x <;> rfl
+
+theorem mode_nine_count :
+    Fintype.card ModeNine = 9 := by
+  native_decide
 
 def canonicalModeNineRecognition : NineModeRecognition where
   ModeNine := ModeNine
@@ -155,13 +166,6 @@ theorem repo_native_negation_not_promoted_to_analytic_fricke :
     ¬ RepoNativeNegationEqualsAnalyticFricke := by
   intro h
   cases h
-
-structure NineModeRecognition where
-  ModeNine : Type
-  toMode : NineFace → ModeNine
-  toFace : ModeNine → NineFace
-  face_after_mode : ∀ x, toFace (toMode x) = x
-  mode_after_face : ∀ x, toMode (toFace x) = x
 
 inductive SharedNineCardinalityCreatesRecognition : Prop
 inductive TrialecticCandidateIsActualMonsterFiveLocal : Prop

@@ -1724,6 +1724,21 @@ theorem quarticFourNormalizedProjectiveProfile_contDiff_two
     (quarticFourWindowProfile_contDiff
       (lam:=lam) (mu:=mu) hR) 1
 
+theorem quarticFourSignedPoleCombinedProfile_contDiff_n
+    {R muHalf muTwo t : ℝ}
+    (hR : 0 < R)
+    (n : ℕ∞) :
+    ContDiff ℝ n
+      (quarticFourSignedPoleCombinedProfile R muHalf muTwo t) := by
+  unfold quarticFourSignedPoleCombinedProfile profileLinearCombination
+  exact
+    (contDiff_const.mul
+      (quarticFourNormalizedProjectiveProfile_contDiff_n
+        (lam:=(1/2 : ℝ)) (mu:=muHalf) hR n)).add
+    (contDiff_const.mul
+      (quarticFourNormalizedProjectiveProfile_contDiff_n
+        (lam:=(2/3 : ℝ)) (mu:=muTwo) hR n))
+
 theorem quarticFourSignedPoleCombinedProfile_contDiff_two
     {R muHalf muTwo t : ℝ}
     (hR : 0 < R) :

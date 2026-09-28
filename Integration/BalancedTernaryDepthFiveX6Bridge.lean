@@ -38,6 +38,25 @@ theorem t4_state_count :
     Fintype.card T4Carrier = 81 := by
   decide
 
+def zeroT4 : T4Carrier :=
+  ⟨.zero, .zero, .zero, .zero⟩
+
+abbrev PuncturedT4Carrier :=
+  {x : T4Carrier // x ≠ zeroT4}
+
+theorem punctured_t4_state_count :
+    Fintype.card PuncturedT4Carrier = 80 := by
+  native_decide
+
+theorem pole_coefficient_matches_punctured_t4 :
+    (80 : Nat) = Fintype.card PuncturedT4Carrier := by
+  simpa using punctured_t4_state_count.sym
+
+theorem full_t4_is_punctured_plus_origin :
+    Fintype.card T4Carrier =
+      Fintype.card PuncturedT4Carrier + 1 := by
+  norm_num [t4_state_count, punctured_t4_state_count]
+
 theorem x6_state_count_again :
     Fintype.card X6 = 729 :=
   x6_state_count
@@ -75,6 +94,8 @@ theorem count_split_does_not_create_semantic_identity :
 structure Boundary where
   x6Count729Reused : Bool
   literalFourTritCount81Owned : Bool
+  literalPuncturedFourTritCount80Owned : Bool
+  poleCoefficientMatchesPuncturedFourTrit : Bool
   residual810Equals729Plus81 : Bool
   bulk196830FactorsThroughCountSplit : Bool
   concreteCoproductEquivConstructed : Bool
@@ -84,6 +105,8 @@ structure Boundary where
 def canonicalBoundary : Boundary where
   x6Count729Reused := true
   literalFourTritCount81Owned := true
+  literalPuncturedFourTritCount80Owned := true
+  poleCoefficientMatchesPuncturedFourTrit := true
   residual810Equals729Plus81 := true
   bulk196830FactorsThroughCountSplit := true
   concreteCoproductEquivConstructed := false

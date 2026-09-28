@@ -95,11 +95,34 @@ theorem bulk196830_depth5 :
 theorem residual810_two_spike :
     (810 : Nat) = 3^6 + 3^4 := by norm_num
 
+/-! ## Primitive Smith/gcd lens
+
+For a one-row integer matrix, the first Smith invariant is the gcd of its
+entries.  This kernel is primitive: the gcd is 1.  That invariant is useful but
+strictly coarser than the 3-adic depth split exposed above.
+-/
+
+def primitiveKernelGCD : Nat :=
+  Nat.gcd 80 (Nat.gcd 243 (Nat.gcd 1215 972))
+
+theorem primitive_kernel_gcd_one :
+    primitiveKernelGCD = 1 := by
+  native_decide
+
+inductive PrimitiveGcdOneDeterminesThreeAdicDepthProfile : Prop
+
+theorem primitive_gcd_does_not_determine_depth_profile :
+    ¬ PrimitiveGcdOneDeterminesThreeAdicDepthProfile := by
+  intro h
+  cases h
+
 structure Boundary where
   sparseStencilOwned : Bool
   modThreeUnitVsDepthFiveOwned : Bool
   puncturedFourShiftOwned : Bool
   twoSpike196830Owned : Bool
+  primitiveKernelGcdOneOwned : Bool
+  gcdInvariantDeterminesDepthProfile : Bool
   analyticRHIdentityClaimed : Bool
   semanticCarrierIdentityClaimed : Bool
   deriving Repr
@@ -109,6 +132,8 @@ def canonicalBoundary : Boundary where
   modThreeUnitVsDepthFiveOwned := true
   puncturedFourShiftOwned := true
   twoSpike196830Owned := true
+  primitiveKernelGcdOneOwned := true
+  gcdInvariantDeterminesDepthProfile := false
   analyticRHIdentityClaimed := false
   semanticCarrierIdentityClaimed := false
 

@@ -1578,4 +1578,63 @@ theorem QuarticFourSignedPolePair.normalizedOuterPairedAbelAt_eq_upperBoundary_a
   rw [fourfoldIBPLowerBoundary_anchored_eq_zero]
   ring
 
+
+theorem QuarticFourSignedPolePair.tendsto_abs_upperIBPBoundary_zero
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    {B1 B2 B3 B4 : ℝ}
+    (hB1 : 0 <= B1)
+    (hB2 : 0 <= B2)
+    (hB3 : 0 <= B3)
+    (hB4 : 0 <= B4)
+    (henv : W.OuterPrimitivePolynomialEnvelope B1 B2 B3 B4) :
+    Tendsto
+      (fun Q : ℝ =>
+        |fourfoldIBPUpperBoundary
+          W.normalizedOrdinateCosineD1
+          (compactCosineD2
+            (quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t))
+          (compactCosineD3
+            (quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t))
+          (compactCosineD4
+            (quarticFourSignedPoleCombinedProfile
+              W.R W.muHalf W.muTwo t))
+          (anchoredPrimitive1
+            W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius)
+          (anchoredPrimitive2
+            W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius)
+          (anchoredPrimitive3
+            W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius)
+          (anchoredPrimitive4
+            W.quarticScaleSymmetricWindowDiscrepancy
+            quarticSignedPoleCanonicalLocalRadius)
+          Q|)
+      atTop (𝓝 0) := by
+  obtain ⟨K,hK,hbound⟩ :=
+    W.exists_upperIBPBoundary_invSq_bound
+      hB1 hB2 hB3 hB4 henv
+  have hinv :
+      Tendsto (fun Q : ℝ => Q⁻¹) atTop (𝓝 0) :=
+    tendsto_inv_atTop_zero
+  have hsq :
+      Tendsto (fun Q : ℝ => (Q⁻¹)^2) atTop (𝓝 0) :=
+    hinv.pow 2
+  have hg :
+      Tendsto (fun Q : ℝ => K / Q^2) atTop (𝓝 0) := by
+    have hm := tendsto_const_nhds.mul hsq
+    simpa [div_eq_mul_inv, inv_pow] using hm
+  apply squeeze_zero'
+  · exact Filter.Eventually.of_forall fun Q => abs_nonneg _
+  · filter_upwards [
+      eventually_ge_atTop
+        (max 1 quarticSignedPoleCanonicalLocalRadius)
+    ] with Q hQ
+    exact hbound Q hQ
+  · exact hg
+
 end Synthesis

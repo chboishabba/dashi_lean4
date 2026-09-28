@@ -1848,4 +1848,72 @@ theorem QuarticFourSignedPolePair.normalizedOuterPairedAbelAt_abs_le_boundary_ad
       hQ hB4nonneg hK5nonneg hB4 hK5
   exact (abs_add _ _).trans (add_le_add_left hinter _)
 
+
+def QuarticFourSignedPolePair.fifthDerivativeGlobalL1Mass
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  ∫ q : ℝ,
+    |compactCosineD5
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t) q|
+
+theorem QuarticFourSignedPolePair.fifthDerivativeGlobalL1Mass_nonneg
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    0 <= W.fifthDerivativeGlobalL1Mass := by
+  unfold QuarticFourSignedPolePair.fifthDerivativeGlobalL1Mass
+  positivity
+
+theorem QuarticFourSignedPolePair.fifthDerivativeOuterL1Envelope_global
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.FifthDerivativeOuterL1Envelope
+      W.fifthDerivativeGlobalL1Mass := by
+  intro Q hQ
+  let P : ℝ -> ℝ :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP2 :
+      ContDiff ℝ 2 P :=
+    quarticFourSignedPoleCombinedProfile_contDiff_two W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hC5 : Integrable (compactCosineD5 P) :=
+    compactCosineD5_integrable hP2 hPc
+  have hC5abs : Integrable (fun q : ℝ => |compactCosineD5 P q|) :=
+    hC5.abs
+  unfold QuarticFourSignedPolePair.fifthDerivativeGlobalL1Mass
+  dsimp [P] at hC5abs ⊢
+  rw [intervalIntegral.integral_of_le hQ]
+  apply setIntegral_mono_set
+  · exact hC5abs.integrableOn
+  · filter_upwards with q
+    exact abs_nonneg _
+  · exact Filter.Eventually.of_forall fun q hq =>
+      Set.mem_univ q
+
+theorem QuarticFourSignedPolePair.fifthInterior_abs_le_primitive_mul_globalL1
+    {t B4 Q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hQ : quarticSignedPoleCanonicalLocalRadius <= Q)
+    (hB4nonneg : 0 <= B4)
+    (hB4 : W.OuterAnchoredFourthPrimitiveUniformBound B4) :
+    |
+      ∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+        compactCosineD5
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t) q
+          *
+        anchoredPrimitive4
+          W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius q
+    |
+      <= B4 * W.fifthDerivativeGlobalL1Mass := by
+  exact
+    W.fifthInterior_abs_le_B4_mul_K5
+      hQ hB4nonneg
+      W.fifthDerivativeGlobalL1Mass_nonneg
+      hB4
+      W.fifthDerivativeOuterL1Envelope_global
+
 end Synthesis

@@ -41,8 +41,8 @@ theorem p2WittEquivPadicInt_isUniformEmbedding :
   isUniformEmbedding_comap p2WittEquivPadicInt.injective
 
 noncomputable def p2WittCompleteSpace : CompleteSpace P2WittRing :=
-  (p2WittEquivPadicInt_isUniformEmbedding.isUniformInducing
-      .completeSpace_congr p2WittEquivPadicInt.surjective).mpr inferInstance
+  (p2WittEquivPadicInt_isUniformEmbedding.isUniformInducing.completeSpace_congr
+      p2WittEquivPadicInt.surjective).mpr inferInstance
 
 noncomputable local instance : CompleteSpace P2WittRing :=
   p2WittCompleteSpace

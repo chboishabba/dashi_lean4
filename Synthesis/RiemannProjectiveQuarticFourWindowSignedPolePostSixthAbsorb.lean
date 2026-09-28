@@ -9957,4 +9957,169 @@ theorem exists_quarticFourSignedPolePair_with_strength_floor_and_negative_origin
   · simpa [W, QuarticFourSignedPolePair.targetStrength] using hfloor
   · simpa [W] using hneg
 
+
+/-!
+## Primitive coefficient lattice of the unrestricted atomic response system
+
+The unrestricted rigidity relation is not recorded merely as the rational
+coefficient 20/243.  Normalize
+
+  j = J2 / pi^2,    s = S / pi^4,
+
+and expand the four atomic coordinates in the common monomial basis
+
+  (1, lambda, mu, lambda*mu).
+
+Their exact rational coefficient rows are
+
+  P = ( 3/2,   -3/4,  0,    0   )
+  O = (-1,      1,   -2,    0   )
+  j = ( 1/9,  -13/72, 2,   -3/4 )
+  s = (-1/81,  97/2592,-2, 15/16).
+
+The integer left-kernel vector
+
+  (80,243,1215,972)
+
+is primitive and annihilates the four monomial columns.  Its coefficients
+factor intrinsically as
+
+  80   = 3^4 - 1,
+  243  = 3^5,
+  1215 = 5 * 3^5,
+  972  = 4 * 3^5.
+
+This makes the triadic signature a property of the exact rank defect, rather
+than of one hand-solved presentation of 20/243.
+-/
+
+def quarticFourAtomicPoleCoeff : Fin 4 → ℚ :=
+  ![(3/2 : ℚ), (-3/4 : ℚ), 0, 0]
+
+def quarticFourAtomicOriginCoeff : Fin 4 → ℚ :=
+  ![(-1 : ℚ), 1, -2, 0]
+
+def quarticFourAtomicJ2NormalizedCoeff : Fin 4 → ℚ :=
+  ![(1/9 : ℚ), (-13/72 : ℚ), 2, (-3/4 : ℚ)]
+
+def quarticFourAtomicTargetNormalizedCoeff : Fin 4 → ℚ :=
+  ![(-1/81 : ℚ), (97/2592 : ℚ), -2, (15/16 : ℚ)]
+
+def quarticFourAtomicMonomialEval
+    (v : Fin 4 → ℚ)
+    (lam mu : ℝ) : ℝ :=
+  (v 0 : ℝ)
+    + (v 1 : ℝ) * lam
+    + (v 2 : ℝ) * mu
+    + (v 3 : ℝ) * lam * mu
+
+theorem quarticFourAtomicPoleCoeff_eval
+    (lam mu : ℝ) :
+    quarticFourAtomicMonomialEval
+        quarticFourAtomicPoleCoeff lam mu
+      =
+    quarticFourAtomicHighPoleResidual lam mu := by
+  rw [quarticFourAtomicHighPoleResidual_formula]
+  unfold quarticFourAtomicMonomialEval quarticFourAtomicPoleCoeff
+  norm_num
+  ring
+
+theorem quarticFourAtomicOriginCoeff_eval
+    (lam mu : ℝ) :
+    quarticFourAtomicMonomialEval
+        quarticFourAtomicOriginCoeff lam mu
+      =
+    quarticFourAtomicProjectiveOriginCoordinate lam mu := by
+  rw [quarticFourAtomicProjectiveOriginCoordinate_formula]
+  unfold quarticFourAtomicMonomialEval quarticFourAtomicOriginCoeff
+  norm_num
+  ring
+
+theorem quarticFourAtomicJ2NormalizedCoeff_eval
+    (lam mu : ℝ) :
+    quarticFourAtomicJAt lam mu 2 / Real.pi^2
+      =
+    quarticFourAtomicMonomialEval
+      quarticFourAtomicJ2NormalizedCoeff lam mu := by
+  rw [quarticFourAtomicJAt_two_formula]
+  unfold quarticFourAtomicMonomialEval
+    quarticFourAtomicJ2NormalizedCoeff
+  have hp : Real.pi^2 ≠ 0 := by positivity
+  field_simp [hp]
+  ring
+
+theorem quarticFourAtomicTargetNormalizedCoeff_eval
+    (lam mu : ℝ) :
+    quarticFourAtomicTargetStrengthAt lam mu / Real.pi^4
+      =
+    quarticFourAtomicMonomialEval
+      quarticFourAtomicTargetNormalizedCoeff lam mu := by
+  unfold quarticFourAtomicTargetStrengthAt
+  rw [quarticFourAtomicJAt_four_formula]
+  unfold quarticFourAtomicMonomialEval
+    quarticFourAtomicTargetNormalizedCoeff
+  have hp : Real.pi^4 ≠ 0 := by positivity
+  field_simp [hp]
+  ring
+
+theorem quarticFourAtomic_primitiveKernel_pointwise :
+    ∀ k : Fin 4,
+      80 * quarticFourAtomicPoleCoeff k
+      + 243 * quarticFourAtomicOriginCoeff k
+      + 1215 * quarticFourAtomicJ2NormalizedCoeff k
+      + 972 * quarticFourAtomicTargetNormalizedCoeff k
+      = 0 := by
+  intro k
+  fin_cases k <;>
+    norm_num [
+      quarticFourAtomicPoleCoeff,
+      quarticFourAtomicOriginCoeff,
+      quarticFourAtomicJ2NormalizedCoeff,
+      quarticFourAtomicTargetNormalizedCoeff
+    ]
+
+theorem quarticFourAtomic_primitiveKernel_eval
+    (lam mu : ℝ) :
+    80 * quarticFourAtomicHighPoleResidual lam mu
+      + 243 * quarticFourAtomicProjectiveOriginCoordinate lam mu
+      + 1215 * (quarticFourAtomicJAt lam mu 2 / Real.pi^2)
+      + 972 * (quarticFourAtomicTargetStrengthAt lam mu / Real.pi^4)
+      = 0 := by
+  rw [quarticFourAtomicJ2NormalizedCoeff_eval,
+      quarticFourAtomicTargetNormalizedCoeff_eval,
+      ← quarticFourAtomicPoleCoeff_eval,
+      ← quarticFourAtomicOriginCoeff_eval]
+  unfold quarticFourAtomicMonomialEval
+  have h0 := quarticFourAtomic_primitiveKernel_pointwise (0 : Fin 4)
+  have h1 := quarticFourAtomic_primitiveKernel_pointwise (1 : Fin 4)
+  have h2 := quarticFourAtomic_primitiveKernel_pointwise (2 : Fin 4)
+  have h3 := quarticFourAtomic_primitiveKernel_pointwise (3 : Fin 4)
+  norm_num [
+    quarticFourAtomicPoleCoeff,
+    quarticFourAtomicOriginCoeff,
+    quarticFourAtomicJ2NormalizedCoeff,
+    quarticFourAtomicTargetNormalizedCoeff
+  ] at h0 h1 h2 h3 ⊢
+  ring
+
+theorem quarticFourAtomic_kernel_gcd_is_one :
+    Nat.gcd 80 (Nat.gcd 243 (Nat.gcd 1215 972)) = 1 := by
+  norm_num
+
+theorem quarticFourAtomic_kernel_triadic_factorization :
+    (80 : ℕ) = 3^4 - 1
+      ∧ (243 : ℕ) = 3^5
+      ∧ (1215 : ℕ) = 5 * 3^5
+      ∧ (972 : ℕ) = 4 * 3^5 := by
+  norm_num
+
+theorem quarticFourAtomic_twenty_over_243_as_punctured_triadic_ratio :
+    (20/243 : ℚ)
+      = ((3^4 - 1 : ℚ) / (4 * 3^5)) := by
+  norm_num
+
+theorem quarticFourAtomic_240_over_243 :
+    (240/243 : ℚ) = 1 - 1 / 3^4 := by
+  norm_num
+
 end Synthesis

@@ -132,6 +132,72 @@ theorem rh_pole_count_matches_punctured_local :
     (80 : Nat) = Fintype.card PuncturedAB := by
   simpa using punctured_ab_count.sym
 
+/-! ## Exact compatible matching family and T9 rechart -/
+
+abbrev DyadicRawTriple :=
+  ABSection × BCSection × CASection
+
+def matchingPredicate (x : DyadicRawTriple) : Prop :=
+  x.1.aa = x.2.2.aa ∧
+  x.1.bb = x.2.1.bb ∧
+  x.2.1.cc = x.2.2.cc
+
+abbrev DyadicMatching :=
+  {x : DyadicRawTriple // matchingPredicate x}
+
+def t9ToMatching : T9Carrier → DyadicMatching
+  | state =>
+      ⟨(restrictAB state, restrictBC state, restrictCA state), by
+        rcases state with ⟨a,b,c⟩
+        simp [restrictAB, restrictBC, restrictCA, matchingPredicate]⟩
+
+def matchingToT9 : DyadicMatching → T9Carrier
+  | ⟨(ab,bc,ca), hA,hB,hC⟩ =>
+      (
+        ⟨ab.aa, ab.ab, ca.ac⟩,
+        ⟨ab.ba, ab.bb, bc.bc⟩,
+        ⟨ca.ca, bc.cb, bc.cc⟩
+      )
+
+theorem matching_after_t9 (state : T9Carrier) :
+    matchingToT9 (t9ToMatching state) = state := by
+  rcases state with ⟨⟨aa,ab,ac⟩,⟨ba,bb,bc⟩,⟨ca,cb,cc⟩⟩
+  rfl
+
+theorem t9_after_matching (family : DyadicMatching) :
+    t9ToMatching (matchingToT9 family) = family := by
+  rcases family with ⟨⟨ab,bc,ca⟩,hA,hB,hC⟩
+  apply Subtype.ext
+  rcases ab with ⟨aa,abv,ba,bb⟩
+  rcases bc with ⟨bb',bcv,cb,cc⟩
+  rcases ca with ⟨cc',ca,ac,aa'⟩
+  simp [matchingToT9, t9ToMatching, restrictAB, restrictBC, restrictCA,
+    matchingPredicate] at hA hB hC ⊢
+  subst aa'
+  subst bb'
+  subst cc'
+  rfl
+
+def t9DyadicMatchingEquiv : T9Carrier ≃ DyadicMatching where
+  toFun := t9ToMatching
+  invFun := matchingToT9
+  left_inv := matching_after_t9
+  right_inv := t9_after_matching
+
+theorem dyadic_matching_count :
+    Fintype.card DyadicMatching = 19683 := by
+  rw [← Fintype.card_congr t9DyadicMatchingEquiv]
+  exact t9_state_count
+
+theorem raw_dyadic_tuple_count :
+    Fintype.card DyadicRawTriple = 531441 := by
+  native_decide
+
+theorem raw_to_matching_count_factor :
+    Fintype.card DyadicRawTriple =
+      Fintype.card DyadicMatching * 27 := by
+  norm_num [raw_dyadic_tuple_count, dyadic_matching_count]
+
 inductive DyadicT4ChartCreatesRHMechanism : Prop
 inductive GrothendieckDescentForcesPuncture : Prop
 
@@ -152,6 +218,10 @@ structure Boundary where
   eachLocalCount81 : Bool
   eachPuncturedLocalCount80 : Bool
   rhPoleMatchesPuncturedLocalCount : Bool
+  matchingFamilyExactlyT9 : Bool
+  compatibleMatchingCount19683 : Bool
+  rawTripleCount531441 : Bool
+  rawToMatchingFactor27 : Bool
   rhMechanismClaimed : Bool
   punctureForcedByDescent : Bool
   deriving Repr
@@ -163,6 +233,10 @@ def canonicalBoundary : Boundary where
   eachLocalCount81 := true
   eachPuncturedLocalCount80 := true
   rhPoleMatchesPuncturedLocalCount := true
+  matchingFamilyExactlyT9 := true
+  compatibleMatchingCount19683 := true
+  rawTripleCount531441 := true
+  rawToMatchingFactor27 := true
   rhMechanismClaimed := false
   punctureForcedByDescent := false
 

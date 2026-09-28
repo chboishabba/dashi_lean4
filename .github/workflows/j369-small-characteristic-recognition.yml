@@ -7,6 +7,8 @@ on:
     paths:
       - "Integration/ActionOrbitRecognition.lean"
       - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/OggSSPSmallCharacteristicAcquisitionDirection.lean"
+      - "Integration/OggSSPP2F4FrobeniusCandidateNoGo.lean"
       - "Integration/OggSmallCharacteristicIsotropyOrderCrossPollination.lean"
       - "Integration/MarkedArithmeticResidualCover.lean"
       - "Integration/OggSSPExponentResidualVsSupersingularOrbitSeparation.lean"
@@ -24,6 +26,8 @@ on:
     paths:
       - "Integration/ActionOrbitRecognition.lean"
       - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/OggSSPSmallCharacteristicAcquisitionDirection.lean"
+      - "Integration/OggSSPP2F4FrobeniusCandidateNoGo.lean"
       - "Integration/OggSmallCharacteristicIsotropyOrderCrossPollination.lean"
       - "Integration/MarkedArithmeticResidualCover.lean"
       - "Integration/OggSSPExponentResidualVsSupersingularOrbitSeparation.lean"
@@ -52,6 +56,10 @@ jobs:
         run: lake env lean Integration/ActionOrbitRecognition.lean
       - name: Check J369 small-characteristic recognition
         run: lake env lean Integration/OggSSPSmallCharacteristicRecognition.lean
+      - name: Check p2 raw-F4 and acquisition direction
+        run: |
+          lake env lean Integration/OggSSPP2F4FrobeniusCandidateNoGo.lean
+          lake env lean Integration/OggSSPSmallCharacteristicAcquisitionDirection.lean
       - name: Check marked arithmetic residual-cover pattern
         run: lake env lean Integration/MarkedArithmeticResidualCover.lean
       - name: Check small-characteristic isotropy-order comparison

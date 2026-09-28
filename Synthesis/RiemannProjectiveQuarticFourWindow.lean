@@ -91,6 +91,14 @@ theorem quarticFourWindowRaw_compact
       (quantitativeSymBump_hasCompactSupport
         (c:=Real.pi) hR).mul_left
 
+theorem quarticFourWindowProfile_contDiff_n
+    {R lam mu : ℝ} (hR : 0 < R) (n : ℕ∞) :
+    ContDiff ℝ n (quarticFourWindowProfile R lam mu) := by
+  unfold quarticFourWindowProfile
+  exact contDiff_const.mul
+    (quarticFourWindowRaw_contDiff_n
+      (lam:=lam) (mu:=mu) hR n)
+
 theorem quarticFourWindowProfile_contDiff
     {R lam mu : ℝ} (hR : 0 < R) :
     ContDiff ℝ 2 (quarticFourWindowProfile R lam mu) := by

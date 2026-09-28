@@ -16,6 +16,9 @@ import Integration.OggSSPP2UniversalDeformationImplementationFrontier
 import Integration.OggSSPP2ExplicitF2CurveCandidate
 import Integration.OggSSPP2ResidueFieldDescentBoundary
 import Integration.OggSSPP2ConcreteF2UniversalDeformationRecognition
+import Integration.OggSSPP2BanerjeeF4UniversalDeformationSource
+import Integration.OggSSPP2BanerjeeF4SameSourceRealization
+import Integration.OggSSPP2OrientedInertiaTenStateRecognition
 import Integration.OggSSPP2BalancedTernaryNeutralCompletionBridge
 import Integration.OggSSPP2BadPrimeLevelStructureBoundary
 import Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
@@ -53,9 +56,8 @@ open Integration.OggSSPP2FrobeniusRetainedTarget
 
 inductive Residual
   | missingFormalKerFrobeniusSquaredFiniteFlatConstruction
-  | missingConcreteF2UniversalDeformationAuthority
-  | missingGamma0FourMarkedDeformationStates
-  | missingUniversalDeformationTenStateBidi
+  | missingBanerjeeF4SourceAuthority
+  | missingGaloisInertiaSectorRealization
   | missingSubgroupIsogenyChainBidi
   | missingFrobeniusCompatibleRecognition
   deriving DecidableEq, Repr
@@ -117,6 +119,13 @@ structure Boundary where
   geometricSupersingularityIdentificationConstructed : Bool
   sourceResidueFieldDescentToF2Constructed : Bool
   concreteF2UniversalDeformationRecognitionContractOwned : Bool
+  f2UniversalBaseRetainedAsSpecializationControlOnly : Bool
+  banerjeeF4UniversalDeformationSourceOwned : Bool
+  banerjeeExplicitUniversalFamilyOwned : Bool
+  g24AndGaloisSameSourceTorsorRecorded : Bool
+  galoisInertiaTenStateCandidateOwned : Bool
+  galoisInertiaSectorRealizationContractOwned : Bool
+  separateMarkedAndTenStateProofsRequiredAfterSectorRealization : Bool
   sameSourceAuthorityMarkingRecognitionCapstoneOwned : Bool
   mathlibWittPowerSeriesLocalRingOwned : Bool
   coefficientMaximalIdealAdicCompletenessPaid : Bool
@@ -167,6 +176,13 @@ def canonicalBoundary : Boundary where
   geometricSupersingularityIdentificationConstructed := false
   sourceResidueFieldDescentToF2Constructed := false
   concreteF2UniversalDeformationRecognitionContractOwned := true
+  f2UniversalBaseRetainedAsSpecializationControlOnly := true
+  banerjeeF4UniversalDeformationSourceOwned := true
+  banerjeeExplicitUniversalFamilyOwned := true
+  g24AndGaloisSameSourceTorsorRecorded := true
+  galoisInertiaTenStateCandidateOwned := true
+  galoisInertiaSectorRealizationContractOwned := true
+  separateMarkedAndTenStateProofsRequiredAfterSectorRealization := false
   sameSourceAuthorityMarkingRecognitionCapstoneOwned := true
   mathlibWittPowerSeriesLocalRingOwned := true
   coefficientMaximalIdealAdicCompletenessPaid := true

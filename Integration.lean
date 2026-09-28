@@ -1,3 +1,4 @@
+import Integration.OggSSPP2ConcreteF2UniversalDeformationRecognition
 import Integration.OggSSPP2SupersingularityCriterionWeld
 import Integration.OggSSPP2WittPowerSeriesMixedAdicControl
 import Integration.OggSSPP2ExplicitF2CurveCandidate

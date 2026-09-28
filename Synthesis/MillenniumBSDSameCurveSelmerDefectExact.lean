@@ -47,7 +47,7 @@ theorem mordellWeil_le_selmer
     (E : RationalEllipticCurve) :
     bg.algebraic.rank E ≤ d.selmerRank E := by
   rw [d.selmer_eq_mordellWeil_add_defect E]
-  exact Nat.le_add_right _ _
+  omega
 
 theorem selmer_le_mordellWeil_iff_defect_zero
     (E : RationalEllipticCurve) :

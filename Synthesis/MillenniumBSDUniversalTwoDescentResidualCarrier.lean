@@ -53,6 +53,7 @@ structure UniversalTwoDescentResidualOn
 
   kummerKernelExactlyDoubles :
     letI : E.1.IsElliptic := E.2
+    let _ := selmerGroup
     ∀ P : E.1.toAffine.Point,
       kummer (Multiplicative.ofAdd P) = 1
         ↔ IsRationalPointDouble E P
@@ -62,6 +63,8 @@ structure UniversalTwoDescentResidualOn
 
   exactMiddle :
     letI : E.1.IsElliptic := E.2
+    let _ := selmerGroup
+    let _ := residualGroup
     ∀ s : Selmer,
       residualMap s = 1
         ↔

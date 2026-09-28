@@ -66,6 +66,88 @@ theorem restrictCA_after_rotate_is_AB (state : T9Carrier) :
   rcases state with ⟨⟨aa,ab,ac⟩,⟨ba,bb,bc⟩,⟨ca,cb,cc⟩⟩
   rfl
 
+structure BCComplement5 where
+  ba : SSPTrit
+  ca : SSPTrit
+  ab : SSPTrit
+  ac : SSPTrit
+  aa : SSPTrit
+  deriving DecidableEq, Repr, Fintype
+
+structure CAComplement5 where
+  cb : SSPTrit
+  ab : SSPTrit
+  bc : SSPTrit
+  ba : SSPTrit
+  bb : SSPTrit
+  deriving DecidableEq, Repr, Fintype
+
+def bcComplement : T9Carrier → BCComplement5
+  | (a,b,c) => ⟨b.x,c.x,a.y,a.z,a.x⟩
+
+def caComplement : T9Carrier → CAComplement5
+  | (a,b,c) => ⟨c.y,a.y,b.z,b.x,b.y⟩
+
+structure BCLocalComplement where
+  local : BCSection
+  complement : BCComplement5
+  deriving DecidableEq, Repr, Fintype
+
+structure CALocalComplement where
+  local : CASection
+  complement : CAComplement5
+  deriving DecidableEq, Repr, Fintype
+
+def observerToBCLocalComplement (state : T9Carrier) : BCLocalComplement :=
+  ⟨restrictBC state, bcComplement state⟩
+
+def bcLocalComplementToObserver : BCLocalComplement → T9Carrier
+  | ⟨⟨bb,bc,cb,cc⟩,⟨ba,ca,ab,ac,aa⟩⟩ =>
+      (
+        ⟨aa,ab,ac⟩,
+        ⟨ba,bb,bc⟩,
+        ⟨ca,cb,cc⟩
+      )
+
+def observerToCALocalComplement (state : T9Carrier) : CALocalComplement :=
+  ⟨restrictCA state, caComplement state⟩
+
+def caLocalComplementToObserver : CALocalComplement → T9Carrier
+  | ⟨⟨cc,ca,ac,aa⟩,⟨cb,ab,bc,ba,bb⟩⟩ =>
+      (
+        ⟨aa,ab,ac⟩,
+        ⟨ba,bb,bc⟩,
+        ⟨ca,cb,cc⟩
+      )
+
+theorem bc_local_complement_roundtrip (state : T9Carrier) :
+    bcLocalComplementToObserver (observerToBCLocalComplement state) = state := by
+  rcases state with ⟨⟨aa,ab,ac⟩,⟨ba,bb,bc⟩,⟨ca,cb,cc⟩⟩
+  rfl
+
+theorem ca_local_complement_roundtrip (state : T9Carrier) :
+    caLocalComplementToObserver (observerToCALocalComplement state) = state := by
+  rcases state with ⟨⟨aa,ab,ac⟩,⟨ba,bb,bc⟩,⟨ca,cb,cc⟩⟩
+  rfl
+
+def bcComplementAsABComplement : BCComplement5 → T5Carrier
+  | ⟨ba,ca,ab,ac,aa⟩ => ⟨ba,ca,ab,ac,aa⟩
+
+def caComplementAsABComplement : CAComplement5 → T5Carrier
+  | ⟨cb,ab,bc,ba,bb⟩ => ⟨cb,ab,bc,ba,bb⟩
+
+theorem ab_factorization_after_rotate_is_bc (state : T9Carrier) :
+    observerToABLocalComplement (rotateABC state) =
+      (bcAsAB (restrictBC state), bcComplementAsABComplement (bcComplement state)) := by
+  rcases state with ⟨⟨aa,ab,ac⟩,⟨ba,bb,bc⟩,⟨ca,cb,cc⟩⟩
+  rfl
+
+theorem ab_factorization_after_rotate_twice_is_ca (state : T9Carrier) :
+    observerToABLocalComplement (rotateABC (rotateABC state)) =
+      (caAsAB (restrictCA state), caComplementAsABComplement (caComplement state)) := by
+  rcases state with ⟨⟨aa,ab,ac⟩,⟨ba,bb,bc⟩,⟨ca,cb,cc⟩⟩
+  rfl
+
 inductive ParticipantC3EqualsSquareD4 : Prop
 inductive ParticipantC3CreatesPreferredChart : Prop
 
@@ -85,6 +167,7 @@ structure Boundary where
   abCyclesToBC : Bool
   abCyclesTwiceToCA : Bool
   allDyadicLocalChartsConjugate : Bool
+  allDyadicLocalComplementFactorizationsConjugate : Bool
   squareD4Identified : Bool
   preferredChartClaimed : Bool
   deriving Repr
@@ -95,6 +178,7 @@ def canonicalBoundary : Boundary where
   abCyclesToBC := true
   abCyclesTwiceToCA := true
   allDyadicLocalChartsConjugate := true
+  allDyadicLocalComplementFactorizationsConjugate := true
   squareD4Identified := false
   preferredChartClaimed := false
 

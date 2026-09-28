@@ -103,7 +103,10 @@ def markingBidi
   toTargetPreservesCoarseOrbit := fun _ => rfl
   fromTargetPreservesCoarseOrbit := by
     intro t
-    simp [Oriented.coarseOrbit, Oriented.target_roundtrip]
+    change
+      Target.stratumOf (Oriented.toTarget (Oriented.fromTarget t)) =
+        Target.stratumOf t
+    rw [Oriented.target_roundtrip]
   everyMappedStateStillLiesOverUniqueRawSubgroup := fun _ => rfl
 
 /-- Full universal-deformation finite recognition follows automatically. -/

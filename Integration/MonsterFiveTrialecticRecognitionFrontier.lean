@@ -60,6 +60,16 @@ theorem negateCA_involutive (x : CASection) :
     negateCA (negateCA x) = x := by
   cases x <;> simp [negateCA, negateSSP_involutive]
 
+theorem abAsBC_negate_commutes (x : ABSection) :
+    abAsBC (negateAB x) = negateBC (abAsBC x) := by
+  cases x
+  rfl
+
+theorem abAsCA_negate_commutes (x : ABSection) :
+    abAsCA (negateAB x) = negateCA (abAsCA x) := by
+  cases x
+  rfl
+
 structure MonsterFiveSource where
   ActualState : Type
   ActualTransport : Type
@@ -94,11 +104,9 @@ theorem source_transport_becomes_BC_negation
       (source.applyTransport recognition.distinguishedTransport state)
       =
     negateBC (sourceToBC recognition state) := by
-  have h := recognition.transport_becomes_local_negation state
-  cases recognition.sourceToAB state with
-  | mk aa ab ba bb =>
-      simp [sourceToBC, abAsBC, negateAB, negateBC] at h ⊢
-      exact h
+  unfold sourceToBC
+  rw [recognition.transport_becomes_local_negation state]
+  exact abAsBC_negate_commutes (recognition.sourceToAB state)
 
 theorem source_transport_becomes_CA_negation
     {source : MonsterFiveSource}
@@ -108,11 +116,9 @@ theorem source_transport_becomes_CA_negation
       (source.applyTransport recognition.distinguishedTransport state)
       =
     negateCA (sourceToCA recognition state) := by
-  have h := recognition.transport_becomes_local_negation state
-  cases recognition.sourceToAB state with
-  | mk aa ab ba bb =>
-      simp [sourceToCA, abAsCA, negateAB, negateCA] at h ⊢
-      exact h
+  unfold sourceToCA
+  rw [recognition.transport_becomes_local_negation state]
+  exact abAsCA_negate_commutes (recognition.sourceToAB state)
 
 structure PointedMonsterFiveSource (source : MonsterFiveSource) where
   basepoint : source.ActualState

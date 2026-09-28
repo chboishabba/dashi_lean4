@@ -315,4 +315,156 @@ theorem exists_quarticSignedPoleFixedHigh_completedResidualWithLocalSlack_exclud
   exact hexclude
     ((completedResidualWithLocalSlackUniformHighEstimate_iff_literalFar hPT).1 hnew)
 
+
+/-!
+## Exact quartic-scale paired Abel normalization
+
+Let r=t/16.  The existing pointwise theorem gives, for q >= 0,
+
+  r^7 * pairedCenteredAbelOffset(r*q)
+    = C'_W(q) * A4_W(q),
+
+where A4_W is the antisymmetric quartic-scale centered discrepancy.
+
+Changing variables s=r*q therefore yields the exact finite identity
+
+  normalizedPairedAbelPartial(n)
+    = r^6 * pairedCenteredAbelPartial(n).
+
+Thus the global N-mu correlation is placed on the same quartic r^-6 scale as
+the terminal target without any estimate.
+-/
+
+def QuarticFourSignedPolePair.normalizedPairedAbelIntegrand
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (q : ℝ) : ℝ :=
+  W.normalizedOrdinateCosineD1 q
+    * W.quarticScaleAntisymmetricDiscrepancy q
+
+def QuarticFourSignedPolePair.normalizedPairedAbelPartial
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  ∫ q in (0 : ℝ)..((n : ℝ)/(t/16)),
+    W.normalizedPairedAbelIntegrand q
+
+theorem QuarticFourSignedPolePair.normalizedPairedAbelPartial_eq_quarticScale
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.normalizedPairedAbelPartial n
+      =
+    (t/16)^6 * W.pairedCenteredAbelPartial n := by
+  let r : ℝ := t/16
+  have hr : 0 < r := by
+    dsimp [r]
+    positivity
+  have hr0 : r ≠ 0 := ne_of_gt hr
+  have hupper : 0 <= (n : ℝ)/r := by positivity
+  have hpoint :
+      (∫ q in (0 : ℝ)..((n : ℝ)/r),
+        W.normalizedPairedAbelIntegrand q)
+        =
+      ∫ q in (0 : ℝ)..((n : ℝ)/r),
+        r^7 * W.pairedCenteredAbelOffset (r*q) := by
+    apply intervalIntegral.integral_congr
+    intro q hq
+    rw [Set.uIcc_of_le hupper] at hq
+    unfold QuarticFourSignedPolePair.normalizedPairedAbelIntegrand
+    have hs :=
+      W.pairedCenteredAbelOffset_quarticScale
+        ht (q:=q) hq.1
+    dsimp [r] at hs
+    symm
+    exact hs
+  unfold QuarticFourSignedPolePair.normalizedPairedAbelPartial
+  change
+    (∫ q in (0 : ℝ)..((n : ℝ)/r),
+      W.normalizedPairedAbelIntegrand q)
+      =
+    r^6 * W.pairedCenteredAbelPartial n
+  rw [hpoint, intervalIntegral.integral_const_mul]
+  have hscale :=
+    intervalIntegral.smul_integral_comp_mul_add
+      (f:=W.pairedCenteredAbelOffset)
+      (a:=(0 : ℝ))
+      (b:=((n : ℝ)/r))
+      r 0
+  have hscale' :
+      r *
+        (∫ q in (0 : ℝ)..((n : ℝ)/r),
+          W.pairedCenteredAbelOffset (r*q))
+        =
+      W.pairedCenteredAbelPartial n := by
+    unfold QuarticFourSignedPolePair.pairedCenteredAbelPartial
+    simpa [smul_eq_mul, hr0] using hscale
+  calc
+    r^7 *
+        (∫ q in (0 : ℝ)..((n : ℝ)/r),
+          W.pairedCenteredAbelOffset (r*q))
+      =
+    r^6 *
+      (
+        r *
+        (∫ q in (0 : ℝ)..((n : ℝ)/r),
+          W.pairedCenteredAbelOffset (r*q))
+      ) := by ring
+    _ = r^6 * W.pairedCenteredAbelPartial n := by
+      rw [hscale']
+
+theorem exists_quarticFourSignedPole_normalizedPairedAbel_tendsto :
+    ∃ T0 : ℝ,
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        T0 <= t ->
+        Tendsto W.normalizedPairedAbelPartial atTop
+          (𝓝 (- (t/16)^6 * W.signedNMuPair)) := by
+  obtain ⟨T0,hT0⟩ :=
+    exists_quarticFourSignedPole_combinedCenteredAbel_tendsto
+  refine ⟨max T0 1,?_⟩
+  intro t W ht
+  have ht0 : 0 < t := by
+    have h1 : 1 <= t := (le_max_right T0 1).trans ht
+    linarith
+  have htBase : T0 <= t :=
+    (le_max_left T0 1).trans ht
+  have hcombined := hT0 W htBase
+  have hpaired :
+      Tendsto W.pairedCenteredAbelPartial atTop
+        (𝓝 (-W.signedNMuPair)) := by
+    apply hcombined.congr'
+    exact Filter.Eventually.of_forall fun n => by
+      symm
+      exact W.combinedCenteredAbelPartial_eq_paired ht0 n
+  have hscaled :
+      Tendsto
+        (fun n : ℕ => (t/16)^6 * W.pairedCenteredAbelPartial n)
+        atTop
+        (𝓝 ((t/16)^6 * (-W.signedNMuPair))) :=
+    tendsto_const_nhds.mul hpaired
+  apply hscaled.congr'
+  filter_upwards with n
+  rw [W.normalizedPairedAbelPartial_eq_quarticScale ht0 n]
+  ring
+
+theorem QuarticFourSignedPolePair.quarticScaleCompletedResidual_eq_normalizedPairedLimit
+    {t L : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hlim :
+      Tendsto W.normalizedPairedAbelPartial atTop (𝓝 L))
+    (hcanonical :
+      Tendsto W.normalizedPairedAbelPartial atTop
+        (𝓝 (- (t/16)^6 * W.signedNMuPair))) :
+    W.quarticScaleCompletedResidual
+      =
+    -(1/2 : ℝ) * L
+      + W.quarticScaleHorizontalRemainder := by
+  have huniq := tendsto_nhds_unique hlim hcanonical
+  rw [W.quarticScaleCompletedResidual_eq]
+  rw [huniq]
+  ring
+
 end Synthesis

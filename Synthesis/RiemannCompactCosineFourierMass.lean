@@ -211,4 +211,95 @@ theorem compactCosineTransform_integrable
       rw [Real.norm_eq_abs, abs_of_nonneg hkq]
       exact hmajor q)
 
+
+/--
+Nonzero linear rescaling preserves integrability of the compact cosine
+transform.  We prove this on the same Cauchy majorant rather than appealing to
+an opaque change-of-variables wrapper, so the normalization used by Fourier
+inversion remains visible.
+-/
+theorem compactCosineTransform_comp_mul_integrable
+    {P : ℝ -> ℝ}
+    (hP : ContDiff ℝ 2 P)
+    (hPc : HasCompactSupport P)
+    {a : ℝ}
+    (ha : a ≠ 0) :
+    Integrable (fun q : ℝ => compactCosineTransform P (a*q)) := by
+  let M0 : ℝ := compactProfileAbsMoment P 0
+  let M2 : ℝ := compactCosineSecondDerivativeMass P
+  let K : ℝ := 2 * (M0 + M2)
+  have hPcont : Continuous P := hP.continuous
+  have hM0 : 0 <= M0 := by
+    dsimp [M0, compactProfileAbsMoment]
+    positivity
+  have hM2 : 0 <= M2 := by
+    dsimp [M2]
+    exact compactCosineSecondDerivativeMass_nonneg P
+  have hK : 0 <= K := by
+    dsimp [K]
+    positivity
+  have hmajor :
+      ∀ q : ℝ,
+        |compactCosineTransform P (a*q)|
+          <= K * (1 + (a*q)^2)⁻¹ := by
+    intro q
+    have hmass :=
+      compactCosineTransform_abs_le_profileMass hPcont hPc (a*q)
+    by_cases hz : |a*q| <= 1
+    · have hz2 : (a*q)^2 <= 1 := by
+        nlinarith [sq_nonneg (a*q)]
+      have hden : 0 < 1 + (a*q)^2 := by positivity
+      have hhalf :
+          (1/2 : ℝ) <= (1 + (a*q)^2)⁻¹ := by
+        rw [le_inv_iff₀ hden]
+        nlinarith
+      dsimp [K]
+      have hscale :=
+        mul_le_mul_of_nonneg_left hhalf
+          (by positivity : 0 <= 2*(M0+M2))
+      nlinarith
+    · have hzgt : 1 < |a*q| := lt_of_not_ge hz
+      have hz0 : a*q ≠ 0 := by
+        intro hzero
+        rw [hzero, abs_zero] at hzgt
+        linarith
+      have hdec :=
+        compactCosineTransform_abs_le_invSq hP hPc hz0
+      have hz2 : 1 < (a*q)^2 := by
+        nlinarith [sq_abs (a*q)]
+      have hden : 0 < 1 + (a*q)^2 := by positivity
+      have hinv :
+          1 / (a*q)^2 <= 2 * (1 + (a*q)^2)⁻¹ := by
+        rw [div_eq_mul_inv]
+        have hz2pos : 0 < (a*q)^2 := by positivity
+        rw [inv_le_iff₀ hz2pos]
+        field_simp [ne_of_gt hden, ne_of_gt hz2pos]
+        nlinarith
+      dsimp [M2] at hdec
+      dsimp [K]
+      have hm :=
+        mul_le_mul_of_nonneg_left hinv hM2
+      calc
+        |compactCosineTransform P (a*q)|
+          <= M2 / (a*q)^2 := hdec
+        _ <= 2*M2*(1+(a*q)^2)⁻¹ := by
+          simpa [div_eq_mul_inv, mul_assoc] using hm
+        _ <= 2*(M0+M2)*(1+(a*q)^2)⁻¹ := by
+          have hweight : 0 <= (1+(a*q)^2)⁻¹ := by positivity
+          nlinarith
+  have hmajInt :
+      Integrable (fun q : ℝ => K * (1+(a*q)^2)⁻¹) :=
+    (integrable_inv_one_add_mul_sq ha).const_mul K
+  have hC :
+      Continuous (fun q : ℝ => compactCosineTransform P (a*q)) :=
+    (compactCosineTransform_continuous hPcont hPc).comp
+      (continuous_const.mul continuous_id)
+  exact hmajInt.mono'
+    hC.aestronglyMeasurable
+    (Filter.Eventually.of_forall fun q => by
+      rw [Real.norm_eq_abs]
+      have hkq : 0 <= K * (1+(a*q)^2)⁻¹ := by positivity
+      rw [Real.norm_eq_abs, abs_of_nonneg hkq]
+      exact hmajor q)
+
 end Synthesis

@@ -289,4 +289,259 @@ theorem compactCosineD1_fourfold_ibp_ac
   unfold fourfoldIBPBoundary
   linarith
 
+
+/--
+A version of the AC fourfold compiler where every primitive derivative
+identity is required only almost everywhere on the integration interval.
+This is the correct interface for primitives of a staircase discrepancy.
+-/
+theorem compactCosineD1_fourfold_ibp_ac_ae
+    {P A P1 P2 P3 P4 : ℝ → ℝ}
+    {a b : ℝ}
+    (hP : Continuous P)
+    (hPc : HasCompactSupport P)
+    (hP1ac : AbsolutelyContinuousOnInterval P1 a b)
+    (hP2ac : AbsolutelyContinuousOnInterval P2 a b)
+    (hP3ac : AbsolutelyContinuousOnInterval P3 a b)
+    (hP4ac : AbsolutelyContinuousOnInterval P4 a b)
+    (hP1' :
+      ∀ᵐ x : ℝ, x ∈ Set.uIcc a b → deriv P1 x = A x)
+    (hP2' :
+      ∀ᵐ x : ℝ, x ∈ Set.uIcc a b → deriv P2 x = P1 x)
+    (hP3' :
+      ∀ᵐ x : ℝ, x ∈ Set.uIcc a b → deriv P3 x = P2 x)
+    (hP4' :
+      ∀ᵐ x : ℝ, x ∈ Set.uIcc a b → deriv P4 x = P3 x) :
+    (∫ q in a..b, compactCosineD1 P q * A q)
+      =
+    fourfoldIBPBoundary
+      (compactCosineD1 P)
+      (compactCosineD2 P)
+      (compactCosineD3 P)
+      (compactCosineD4 P)
+      P1 P2 P3 P4 a b
+      +
+    ∫ q in a..b, compactCosineD5 P q * P4 q := by
+  have hC1ac :
+      AbsolutelyContinuousOnInterval (compactCosineD1 P) a b :=
+    (compactCosineD1_contDiff_one hP hPc).contDiffOn
+      .absolutelyContinuousOnInterval
+  have hC2ac :
+      AbsolutelyContinuousOnInterval (compactCosineD2 P) a b :=
+    (compactCosineD2_contDiff_one hP hPc).contDiffOn
+      .absolutelyContinuousOnInterval
+  have hC3ac :
+      AbsolutelyContinuousOnInterval (compactCosineD3 P) a b :=
+    (compactCosineD3_contDiff_one hP hPc).contDiffOn
+      .absolutelyContinuousOnInterval
+  have hC4ac :
+      AbsolutelyContinuousOnInterval (compactCosineD4 P) a b :=
+    (compactCosineD4_contDiff_one hP hPc).contDiffOn
+      .absolutelyContinuousOnInterval
+
+  have h1 := hC1ac.integral_mul_deriv_eq_deriv_mul hP1ac
+  have h2 := hC2ac.integral_mul_deriv_eq_deriv_mul hP2ac
+  have h3 := hC3ac.integral_mul_deriv_eq_deriv_mul hP3ac
+  have h4 := hC4ac.integral_mul_deriv_eq_deriv_mul hP4ac
+
+  have hd1 :
+      deriv (compactCosineD1 P) = compactCosineD2 P := by
+    funext q
+    exact (compactCosineD1_deriv hP hPc q).deriv
+  have hd2 :
+      deriv (compactCosineD2 P) = compactCosineD3 P := by
+    funext q
+    exact (compactCosineD2_deriv hP hPc q).deriv
+  have hd3 :
+      deriv (compactCosineD3 P) = compactCosineD4 P := by
+    funext q
+    exact (compactCosineD3_deriv hP hPc q).deriv
+  have hd4 :
+      deriv (compactCosineD4 P) = compactCosineD5 P := by
+    funext q
+    exact (compactCosineD4_deriv hP hPc q).deriv
+
+  rw [hd1] at h1
+  rw [hd2] at h2
+  rw [hd3] at h3
+  rw [hd4] at h4
+
+  have e1 :
+      (∫ q in a..b, compactCosineD1 P q * deriv P1 q)
+        =
+      ∫ q in a..b, compactCosineD1 P q * A q := by
+    apply intervalIntegral.integral_congr_ae
+    filter_upwards [hP1'] with q hq hmem
+    rw [hq (Set.uIoc_subset_uIcc hmem)]
+  have e2 :
+      (∫ q in a..b, compactCosineD2 P q * deriv P2 q)
+        =
+      ∫ q in a..b, compactCosineD2 P q * P1 q := by
+    apply intervalIntegral.integral_congr_ae
+    filter_upwards [hP2'] with q hq hmem
+    rw [hq (Set.uIoc_subset_uIcc hmem)]
+  have e3 :
+      (∫ q in a..b, compactCosineD3 P q * deriv P3 q)
+        =
+      ∫ q in a..b, compactCosineD3 P q * P2 q := by
+    apply intervalIntegral.integral_congr_ae
+    filter_upwards [hP3'] with q hq hmem
+    rw [hq (Set.uIoc_subset_uIcc hmem)]
+  have e4 :
+      (∫ q in a..b, compactCosineD4 P q * deriv P4 q)
+        =
+      ∫ q in a..b, compactCosineD4 P q * P3 q := by
+    apply intervalIntegral.integral_congr_ae
+    filter_upwards [hP4'] with q hq hmem
+    rw [hq (Set.uIoc_subset_uIcc hmem)]
+
+  rw [e1] at h1
+  rw [e2] at h2
+  rw [e3] at h3
+  rw [e4] at h4
+  unfold fourfoldIBPBoundary
+  linarith
+
+def anchoredPrimitive1
+    (A : ℝ → ℝ) (a x : ℝ) : ℝ :=
+  ∫ q in a..x, A q
+
+def anchoredPrimitive2
+    (A : ℝ → ℝ) (a x : ℝ) : ℝ :=
+  ∫ q in a..x, anchoredPrimitive1 A a q
+
+def anchoredPrimitive3
+    (A : ℝ → ℝ) (a x : ℝ) : ℝ :=
+  ∫ q in a..x, anchoredPrimitive2 A a q
+
+def anchoredPrimitive4
+    (A : ℝ → ℝ) (a x : ℝ) : ℝ :=
+  ∫ q in a..x, anchoredPrimitive3 A a q
+
+theorem anchoredPrimitive_ladder_ac
+    {A : ℝ → ℝ}
+    {a b : ℝ}
+    (hA : IntervalIntegrable A volume a b) :
+    AbsolutelyContinuousOnInterval (anchoredPrimitive1 A a) a b
+      ∧ AbsolutelyContinuousOnInterval (anchoredPrimitive2 A a) a b
+      ∧ AbsolutelyContinuousOnInterval (anchoredPrimitive3 A a) a b
+      ∧ AbsolutelyContinuousOnInterval (anchoredPrimitive4 A a) a b := by
+  have ha : a ∈ Set.uIcc a b := by
+    simp [Set.mem_uIcc]
+  have h1 :
+      AbsolutelyContinuousOnInterval (anchoredPrimitive1 A a) a b := by
+    unfold anchoredPrimitive1
+    exact hA.absolutelyContinuousOnInterval_intervalIntegral ha
+  have h1i :
+      IntervalIntegrable (anchoredPrimitive1 A a) volume a b :=
+    h1.continuousOn.intervalIntegrable
+  have h2 :
+      AbsolutelyContinuousOnInterval (anchoredPrimitive2 A a) a b := by
+    unfold anchoredPrimitive2
+    exact h1i.absolutelyContinuousOnInterval_intervalIntegral ha
+  have h2i :
+      IntervalIntegrable (anchoredPrimitive2 A a) volume a b :=
+    h2.continuousOn.intervalIntegrable
+  have h3 :
+      AbsolutelyContinuousOnInterval (anchoredPrimitive3 A a) a b := by
+    unfold anchoredPrimitive3
+    exact h2i.absolutelyContinuousOnInterval_intervalIntegral ha
+  have h3i :
+      IntervalIntegrable (anchoredPrimitive3 A a) volume a b :=
+    h3.continuousOn.intervalIntegrable
+  have h4 :
+      AbsolutelyContinuousOnInterval (anchoredPrimitive4 A a) a b := by
+    unfold anchoredPrimitive4
+    exact h3i.absolutelyContinuousOnInterval_intervalIntegral ha
+  exact ⟨h1,h2,h3,h4⟩
+
+theorem anchoredPrimitive_ladder_ae_deriv
+    {A : ℝ → ℝ}
+    {a b : ℝ}
+    (hA : IntervalIntegrable A volume a b) :
+    (∀ᵐ x : ℝ, x ∈ Set.uIcc a b →
+      deriv (anchoredPrimitive1 A a) x = A x)
+    ∧
+    (∀ᵐ x : ℝ, x ∈ Set.uIcc a b →
+      deriv (anchoredPrimitive2 A a) x = anchoredPrimitive1 A a x)
+    ∧
+    (∀ᵐ x : ℝ, x ∈ Set.uIcc a b →
+      deriv (anchoredPrimitive3 A a) x = anchoredPrimitive2 A a x)
+    ∧
+    (∀ᵐ x : ℝ, x ∈ Set.uIcc a b →
+      deriv (anchoredPrimitive4 A a) x = anchoredPrimitive3 A a x) := by
+  have ha : a ∈ Set.uIcc a b := by
+    simp [Set.mem_uIcc]
+  obtain ⟨h1ac,h2ac,h3ac,h4ac⟩ :=
+    anchoredPrimitive_ladder_ac hA
+  have h1i :
+      IntervalIntegrable (anchoredPrimitive1 A a) volume a b :=
+    h1ac.continuousOn.intervalIntegrable
+  have h2i :
+      IntervalIntegrable (anchoredPrimitive2 A a) volume a b :=
+    h2ac.continuousOn.intervalIntegrable
+  have h3i :
+      IntervalIntegrable (anchoredPrimitive3 A a) volume a b :=
+    h3ac.continuousOn.intervalIntegrable
+
+  have h1raw := hA.ae_hasDerivAt_integral
+  have h2raw := h1i.ae_hasDerivAt_integral
+  have h3raw := h2i.ae_hasDerivAt_integral
+  have h4raw := h3i.ae_hasDerivAt_integral
+
+  have h1 :
+      ∀ᵐ x : ℝ, x ∈ Set.uIcc a b →
+        deriv (anchoredPrimitive1 A a) x = A x := by
+    filter_upwards [h1raw] with x hx
+    intro hmem
+    exact (hx hmem a ha).deriv
+  have h2 :
+      ∀ᵐ x : ℝ, x ∈ Set.uIcc a b →
+        deriv (anchoredPrimitive2 A a) x = anchoredPrimitive1 A a x := by
+    filter_upwards [h2raw] with x hx
+    intro hmem
+    exact (hx hmem a ha).deriv
+  have h3 :
+      ∀ᵐ x : ℝ, x ∈ Set.uIcc a b →
+        deriv (anchoredPrimitive3 A a) x = anchoredPrimitive2 A a x := by
+    filter_upwards [h3raw] with x hx
+    intro hmem
+    exact (hx hmem a ha).deriv
+  have h4 :
+      ∀ᵐ x : ℝ, x ∈ Set.uIcc a b →
+        deriv (anchoredPrimitive4 A a) x = anchoredPrimitive3 A a x := by
+    filter_upwards [h4raw] with x hx
+    intro hmem
+    exact (hx hmem a ha).deriv
+  exact ⟨h1,h2,h3,h4⟩
+
+theorem compactCosineD1_fourfold_ibp_anchored
+    {P A : ℝ → ℝ}
+    {a b : ℝ}
+    (hP : Continuous P)
+    (hPc : HasCompactSupport P)
+    (hA : IntervalIntegrable A volume a b) :
+    (∫ q in a..b, compactCosineD1 P q * A q)
+      =
+    fourfoldIBPBoundary
+      (compactCosineD1 P)
+      (compactCosineD2 P)
+      (compactCosineD3 P)
+      (compactCosineD4 P)
+      (anchoredPrimitive1 A a)
+      (anchoredPrimitive2 A a)
+      (anchoredPrimitive3 A a)
+      (anchoredPrimitive4 A a)
+      a b
+      +
+    ∫ q in a..b,
+      compactCosineD5 P q * anchoredPrimitive4 A a q := by
+  obtain ⟨h1ac,h2ac,h3ac,h4ac⟩ :=
+    anchoredPrimitive_ladder_ac hA
+  obtain ⟨h1',h2',h3',h4'⟩ :=
+    anchoredPrimitive_ladder_ae_deriv hA
+  exact compactCosineD1_fourfold_ibp_ac_ae
+    hP hPc h1ac h2ac h3ac h4ac
+    h1' h2' h3' h4'
+
 end Synthesis

@@ -10122,4 +10122,45 @@ theorem quarticFourAtomic_240_over_243 :
     (240/243 : ℚ) = 1 - 1 / 3^4 := by
   norm_num
 
+
+/--
+The rational left kernel is one-dimensional.
+
+Thus the primitive vector (80,243,1215,972) is not merely one convenient
+annihilating relation: every rational relation among the four normalized
+atomic coordinate rows is its scalar multiple.
+-/
+theorem quarticFourAtomic_kernel_is_generated_by_primitive_vector
+    {a b c d : ℚ}
+    (h :
+      ∀ k : Fin 4,
+        a * quarticFourAtomicPoleCoeff k
+        + b * quarticFourAtomicOriginCoeff k
+        + c * quarticFourAtomicJ2NormalizedCoeff k
+        + d * quarticFourAtomicTargetNormalizedCoeff k
+        = 0) :
+    ∃ q : ℚ,
+      a = q * 80
+      ∧ b = q * 243
+      ∧ c = q * 1215
+      ∧ d = q * 972 := by
+  have h0 := h (0 : Fin 4)
+  have h1 := h (1 : Fin 4)
+  have h2 := h (2 : Fin 4)
+  have h3 := h (3 : Fin 4)
+  norm_num [
+    quarticFourAtomicPoleCoeff,
+    quarticFourAtomicOriginCoeff,
+    quarticFourAtomicJ2NormalizedCoeff,
+    quarticFourAtomicTargetNormalizedCoeff
+  ] at h0 h1 h2 h3
+  refine ⟨d / 972, ?_⟩
+  constructor
+  · linarith
+  constructor
+  · linarith
+  constructor
+  · linarith
+  · field_simp
+
 end Synthesis

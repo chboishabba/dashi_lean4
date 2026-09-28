@@ -202,4 +202,235 @@ def QuarticFourSignedPolePair.physicalFourthCapPairAC
     (t-S) (t+S)
     (quarticSymmetricCapAC t s0 S)
 
+
+theorem quarticCapDeriv_mul_leftDiscrepancy_intervalIntegrable
+    {t s0 S : ℝ}
+    (hS : 0 <= S) :
+    IntervalIntegrable
+      (fun x =>
+        quarticSymmetricCapDeriv t s0 S x
+          * zetaMuCumulativeDiscrepancy (t-S) x)
+      volume (t-S) (t+S) := by
+  have hAB : t-S <= t+S := by linarith
+  have hcap :=
+    quarticSymmetricCapDeriv_intervalIntegrable
+      t s0 S (t-S) (t+S)
+  have hN :=
+    phi_mul_Ncount_intervalIntegrable hAB hcap
+  have hM :=
+    phi_mul_zetaMuPrimitive_intervalIntegrable hcap
+  unfold zetaMuCumulativeDiscrepancy
+  simpa [mul_sub] using hN.sub hM
+
+theorem quarticSymmetricCapPairAC_eq_symmetricFourthPrimitive
+    {t s0 S : ℝ}
+    (hs0 : 0 <= s0)
+    (hsS : s0 <= S) :
+    zetaWindowMinusMuPair
+      (t-S) (t+S)
+      (quarticSymmetricCapAC t s0 S)
+      =
+    ∫ s in s0..S,
+      ((S-s)^3 / 6)
+        * zetaMuCumulativeDiscrepancy (t-s) (t+s) := by
+  have hS : 0 <= S := hs0.trans hsS
+  have hAB : t-S <= t+S := by linarith
+  have hcapAC :=
+    quarticSymmetricCapAC_absolutelyContinuous
+      (t:=t) (s0:=s0) hS
+  have habel :=
+    zetaWindowMinusMuPair_eq_discrepancyAbel_ac
+      hAB hcapAC
+  rw [quarticSymmetricCapAC_right_zero hs0 hS] at habel
+  simp only [zero_mul, zero_sub] at habel
+
+  let f : ℝ -> ℝ := fun x =>
+    quarticSymmetricCapDeriv t s0 S x
+      * zetaMuCumulativeDiscrepancy (t-S) x
+  have hf :
+      IntervalIntegrable f volume (t-S) (t+S) := by
+    dsimp [f]
+    exact quarticCapDeriv_mul_leftDiscrepancy_intervalIntegrable hS
+  have hleft :
+      IntervalIntegrable f volume (t-S) t :=
+    hf.mono_set <| by
+      rw [Set.uIcc_of_le hAB, Set.uIcc_of_le (by linarith)]
+      intro x hx
+      exact ⟨hx.1, hx.2.trans (by linarith)⟩
+  have hright :
+      IntervalIntegrable f volume t (t+S) :=
+    hf.mono_set <| by
+      rw [Set.uIcc_of_le hAB, Set.uIcc_of_le (by linarith)]
+      intro x hx
+      exact ⟨(by linarith : t-S <= x), hx.2⟩
+  have hleft' :
+      IntervalIntegrable (fun s : ℝ => f (t-s))
+        volume 0 S := by
+    simpa using hleft.comp_sub_left t
+  have hright' :
+      IntervalIntegrable (fun s : ℝ => f (t+s))
+        volume 0 S := by
+    simpa using hright.comp_add_left t
+  have hsumI :
+      IntervalIntegrable
+        (fun s : ℝ => f (t-s) + f (t+s))
+        volume 0 S :=
+    hleft'.add hright'
+
+  have hL :
+      (∫ x in (t-S)..t, f x)
+        =
+      ∫ s in (0:ℝ)..S, f (t-s) := by
+    symm
+    simpa using
+      (intervalIntegral.integral_comp_sub_mul
+        (f:=f) (a:=(0:ℝ)) (b:=S)
+        (c:=(1:ℝ)) (by norm_num) t)
+  have hR :
+      (∫ x in t..(t+S), f x)
+        =
+      ∫ s in (0:ℝ)..S, f (t+s) := by
+    symm
+    simpa using
+      (intervalIntegral.integral_comp_add_left
+        (f:=f) (a:=(0:ℝ)) (b:=S) t)
+
+  have hderivEq :
+      (∫ x in (t-S)..(t+S),
+        deriv (quarticSymmetricCapAC t s0 S) x
+          * zetaMuCumulativeDiscrepancy (t-S) x)
+        =
+      ∫ x in (t-S)..(t+S), f x := by
+    apply intervalIntegral.integral_congr_ae
+    filter_upwards [
+      quarticSymmetricCapAC_ae_deriv
+        (t:=t) (s0:=s0) hS
+    ] with x hx hmem
+    rw [hx (Set.uIoc_subset_uIcc hmem)]
+    rfl
+
+  rw [hderivEq] at habel
+  rw [← intervalIntegral.integral_add_adjacent_intervals hleft hright,
+      hL,hR, ← intervalIntegral.integral_add hleft' hright'] at habel
+
+  let g : ℝ -> ℝ := fun s =>
+    ((S-s)^3 / 6)
+      * zetaMuCumulativeDiscrepancy (t-s) (t+s)
+  let gi : ℝ -> ℝ := fun s =>
+    if s0 < s then g s else 0
+
+  have hpoint :
+      ∀ s ∈ Set.uIcc (0:ℝ) S,
+        f (t-s) + f (t+s) = - gi s := by
+    intro s hs
+    rw [Set.uIcc_of_le hS] at hs
+    dsimp [f,gi,g]
+    rw [quarticSymmetricCapDeriv_left hs0 hs.1,
+        quarticSymmetricCapDeriv_right hs0 hs.1]
+    by_cases hsi : s0 < s
+    · rw [if_pos hsi, if_pos hsi]
+      have hleftOrd : t-S <= t-s := by linarith
+      have hmidOrd : t-s <= t+s := by linarith
+      have hadd :=
+        zetaMuCumulativeDiscrepancy_add
+          (A:=t-S) (B:=t-s) (C:=t+s)
+          hleftOrd hmidOrd
+      rw [hadd]
+      ring
+    · rw [if_neg hsi, if_neg hsi]
+      ring
+
+  have hgi :
+      IntervalIntegrable gi volume 0 S := by
+    refine hsumI.neg.congr ?_
+    intro s hs
+    have hs' : s ∈ Set.uIcc (0:ℝ) S := by
+      exact Set.uIoc_subset_uIcc hs
+    rw [hpoint s hs']
+    rfl
+
+  have hgiEq :
+      (∫ s in (0:ℝ)..S, gi s)
+        =
+      ∫ s in s0..S, g s := by
+    have hs0mem : s0 ∈ Set.Icc (0:ℝ) S :=
+      ⟨hs0,hsS⟩
+    have htailI :
+        IntervalIntegrable g volume s0 S := by
+      have hsub :
+          IntervalIntegrable gi volume s0 S :=
+        hgi.mono_set <| by
+          rw [Set.uIcc_of_le hsS, Set.uIcc_of_le hS]
+          intro s hs
+          exact ⟨hs0.trans hs.1, hs.2⟩
+      refine hsub.congr_ae ?_
+      rw [Filter.EventuallyEq,
+          MeasureTheory.ae_restrict_iff' measurableSet_uIoc]
+      filter_upwards with s hs
+      rw [Set.uIoc_of_le hsS] at hs
+      dsimp [gi]
+      rw [if_pos hs.1]
+    have hzero :
+        (∫ s in (0:ℝ)..s0, gi s) = 0 := by
+      apply intervalIntegral.integral_eq_zero
+      intro s hs
+      rw [Set.uIcc_of_le hs0] at hs
+      dsimp [gi]
+      rw [if_neg (not_lt.mpr hs.2)]
+    have hsplit :=
+      intervalIntegral.integral_add_adjacent_intervals
+        (hgi.mono_set <| by
+          rw [Set.uIcc_of_le hs0, Set.uIcc_of_le hS]
+          intro s hs
+          exact ⟨hs.1, hs.2.trans hsS⟩)
+        htailI
+    rw [hzero, zero_add] at hsplit
+    have hsame :
+        (∫ s in s0..S, gi s)
+          =
+        ∫ s in s0..S, g s := by
+      apply intervalIntegral.integral_congr_ae
+      filter_upwards with s hs
+      rw [Set.uIoc_of_le hsS] at hs
+      dsimp [gi]
+      rw [if_pos hs.1]
+    rw [hsame] at hsplit
+    exact hsplit.symm
+
+  have hsumEq :
+      (∫ s in (0:ℝ)..S, f (t-s) + f (t+s))
+        =
+      - ∫ s in (0:ℝ)..S, gi s := by
+    rw [← intervalIntegral.integral_neg]
+    apply intervalIntegral.integral_congr
+    intro s hs
+    rw [hpoint s hs]
+    rfl
+
+  rw [hsumEq, hgiEq] at habel
+  dsimp [g] at habel
+  linarith
+
+theorem QuarticFourSignedPolePair.physicalFourthCapPairAC_eq_physicalPrimitive
+    {t S : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hS :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t <= S) :
+    W.physicalFourthCapPairAC S
+      =
+    W.outerSymmetricDiscrepancyFourthPhysicalPrimitive (S/(t/16)) := by
+  let s0 := quarticSignedPoleCanonicalPhysicalHalfWidth t
+  have hs0 : 0 <= s0 :=
+    (quarticSignedPoleCanonicalPhysicalHalfWidth_pos ht).le
+  have hpair :=
+    quarticSymmetricCapPairAC_eq_symmetricFourthPrimitive
+      (t:=t) (s0:=s0) (S:=S) hs0 hS
+  unfold QuarticFourSignedPolePair.physicalFourthCapPairAC
+    QuarticFourSignedPolePair.outerSymmetricDiscrepancyFourthPhysicalPrimitive
+  dsimp [s0] at hpair ⊢
+  have hr0 : t/16 ≠ 0 := by positivity
+  convert hpair using 1 <;>
+    field_simp [hr0] <;> ring
+
 end Synthesis

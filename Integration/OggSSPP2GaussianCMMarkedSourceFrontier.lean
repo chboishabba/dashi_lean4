@@ -6,6 +6,7 @@ import Integration.OggSSPP2FrobeniusRetainedTarget
 import Integration.OggSSPP2BalancedTernaryPuncturedPlane
 import Integration.OggSSPP2PuncturedKernel2Bidi
 import Integration.OggSSPP2TrialecticNineObserverReconciliation
+import Integration.OggSSPP2TrialecticNineObserverArithmeticLoss
 import Integration.OggSSPP2BalancedTernaryNeutralCompletionBridge
 import Integration.OggSSPP2BadPrimeLevelStructureBoundary
 import Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
@@ -97,6 +98,7 @@ structure Boundary where
   balancedTernaryPuncturedPlaneNormalFormOwned : Bool
   puncturedKernel2BidiNormalFormOwned : Bool
   trialecticSharedNineObserverReconciliationOwned : Bool
+  trialecticNineObserverArithmeticLossPaid : Bool
   duplicatedCentreCompletionBridgeOwned : Bool
   badPrimeLevelStructureBoundaryOwned : Bool
   gamma0FourMarkedSubgroupSchemeSocketOwned : Bool
@@ -124,6 +126,7 @@ def canonicalBoundary : Boundary where
   balancedTernaryPuncturedPlaneNormalFormOwned := true
   puncturedKernel2BidiNormalFormOwned := true
   trialecticSharedNineObserverReconciliationOwned := true
+  trialecticNineObserverArithmeticLossPaid := true
   duplicatedCentreCompletionBridgeOwned := true
   badPrimeLevelStructureBoundaryOwned := true
   gamma0FourMarkedSubgroupSchemeSocketOwned := true

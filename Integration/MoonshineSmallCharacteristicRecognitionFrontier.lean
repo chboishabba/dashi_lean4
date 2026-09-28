@@ -89,24 +89,67 @@ that can be related to the independent target through
 `OrbitStabilizerRecognition`.
 -/
 
-structure ArithmeticSourceGroupoid where
+inductive ExceptionalResidualPrime
+  | p2 | p3
+  deriving DecidableEq, Repr
+
+def expectedResidualCount : ExceptionalResidualPrime → Nat
+  | .p2 => p2ExceptionalResidual
+  | .p3 => p3ExceptionalResidual
+
+structure ArithmeticSourceGroupoid (prime : ExceptionalResidualPrime) where
   State : Type
   Symmetry : Type
   action : InvertibleAction State Symmetry
   orbits : OrbitPresentation action
+  pi0Count : Nat
+  pi0CountExact : pi0Count = expectedResidualCount prime
+  provenance : String
+  arithmeticConstructionReference : String
+  actionGroupoidExternallySourcedClaim : Bool
 
-/-- Full recognition at p=3 must inhabit the generic repository owner. -/
-abbrev P3FullRecognition
-    (source : ArithmeticSourceGroupoid)
-    (F : ActionRecognitionFunctor source.action p3Action) :=
-  OrbitStabilizerRecognition F source.orbits p3OrbitPresentation
+/-- Full recognition includes the generic orbit/stabilizer recognition plus an
+explicit count receipt. -/
+structure P3FullRecognition
+    (source : ArithmeticSourceGroupoid .p3) where
+  functor : ActionRecognitionFunctor source.action p3Action
+  recognition :
+    OrbitStabilizerRecognition functor source.orbits p3OrbitPresentation
+  pi0CountPreserved : source.pi0Count = Fintype.card P3Orbit
 
-/-- Full recognition at p=2, after the pi0 discriminator, must target the
-retained-orientation groupoid, not the flip quotient. -/
-abbrev P2RetainedFullRecognition
-    (source : ArithmeticSourceGroupoid)
-    (F : ActionRecognitionFunctor source.action unitAction) :=
-  OrbitStabilizerRecognition F source.orbits p2RetainedOrbitPresentation
+structure P2RetainedFullRecognition
+    (source : ArithmeticSourceGroupoid .p2) where
+  functor : ActionRecognitionFunctor source.action unitAction
+  recognition :
+    OrbitStabilizerRecognition functor source.orbits p2RetainedOrbitPresentation
+  pi0CountPreserved : source.pi0Count = Fintype.card P2State
+
+/-- Stronger optional grade: literal two-sided state and symmetry recovery. -/
+structure P3SamePresentation
+    (source : ArithmeticSourceGroupoid .p3) where
+  functor : ActionRecognitionFunctor source.action p3Action
+  presentationIsomorphism :
+    ActionGroupoidPresentationIsomorphism
+      functor source.orbits p3OrbitPresentation
+
+structure P2RetainedSamePresentation
+    (source : ArithmeticSourceGroupoid .p2) where
+  functor : ActionRecognitionFunctor source.action unitAction
+  presentationIsomorphism :
+    ActionGroupoidPresentationIsomorphism
+      functor source.orbits p2RetainedOrbitPresentation
+
+theorem p3_full_recognition_closes_count
+    (source : ArithmeticSourceGroupoid .p3)
+    (recognized : P3FullRecognition source) :
+    source.pi0Count = p3ExceptionalResidual := by
+  exact source.pi0CountExact
+
+theorem p2_full_recognition_closes_count
+    (source : ArithmeticSourceGroupoid .p2)
+    (recognized : P2RetainedFullRecognition source) :
+    source.pi0Count = p2ExceptionalResidual := by
+  exact source.pi0CountExact
 
 inductive P2ArithmeticRecognitionConstructed : Prop
 inductive P3ArithmeticRecognitionConstructed : Prop
@@ -128,6 +171,9 @@ structure Boundary where
   p2RetainedTargetPassesPi0 : Bool
   p2GateSelectsRetainedOrientation : Bool
   genericFullRecognitionOwnerUsed : Bool
+  sourceRequiresIndependentPi0Receipt : Bool
+  sourceCarriesProvenanceReference : Bool
+  samePresentationRequiresStateAndSymmetryBijections : Bool
   p2FullRecognitionConstructed : Bool
   p3FullRecognitionConstructed : Bool
   cardinalityMatchPromotedToRecognition : Bool
@@ -140,6 +186,9 @@ def canonicalBoundary : Boundary where
   p2RetainedTargetPassesPi0 := true
   p2GateSelectsRetainedOrientation := true
   genericFullRecognitionOwnerUsed := true
+  sourceRequiresIndependentPi0Receipt := true
+  sourceCarriesProvenanceReference := true
+  samePresentationRequiresStateAndSymmetryBijections := true
   p2FullRecognitionConstructed := false
   p3FullRecognitionConstructed := false
   cardinalityMatchPromotedToRecognition := false

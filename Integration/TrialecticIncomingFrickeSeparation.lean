@@ -84,6 +84,32 @@ theorem raw_involution_equivariant_equiv_impossible :
     rw [← h.intertwines incomingCentre, incoming_centre_fixed]
   exact finiteFricke_no_fixed_point (h.equiv incomingCentre) hfixed
 
+/-! ## Orbit-count agreement does not extend to stabilizer profiles -/
+
+def incomingOrbitStabilizerSize : NineOrbit5 → Nat
+  | .zeroOrbit => 2
+  | .firstAxisOrbit => 1
+  | .secondAxisOrbit => 1
+  | .equalSignOrbit => 1
+  | .oppositeSignOrbit => 1
+
+def finiteFrickeModeStabilizerSize : Mode5 → Nat
+  | .m09 | .m18 | .m27 | .m36 | .m45 => 1
+
+structure StabilizerPreservingFiveWayEquiv where
+  equiv : NineOrbit5 ≃ Mode5
+  stabilizerPreserved :
+    ∀ orbit,
+      incomingOrbitStabilizerSize orbit =
+        finiteFrickeModeStabilizerSize (equiv orbit)
+
+theorem stabilizer_preserving_five_way_equiv_impossible :
+    ¬ Nonempty StabilizerPreservingFiveWayEquiv := by
+  rintro ⟨h⟩
+  have hs := h.stabilizerPreserved NineOrbit5.zeroOrbit
+  cases hm : h.equiv NineOrbit5.zeroOrbit <;>
+    simp [incomingOrbitStabilizerSize, finiteFrickeModeStabilizerSize, hm] at hs
+
 inductive QuotientCoordinateMatchCreatesRawActionIdentity : Prop
 inductive FiniteFrickeIsAnalyticModularFricke : Prop
 
@@ -104,6 +130,9 @@ structure Boundary where
   incomingRawActionHasFixedCentre : Bool
   finiteFrickeRawActionFixedPointFree : Bool
   rawEquivariantEquivalenceRejected : Bool
+  incomingStabilizerProfileTwoOneOneOneOne : Bool
+  finiteFrickeStabilizerProfileAllOne : Bool
+  stabilizerPreservingFiveWayEquivalenceRejected : Bool
   analyticFrickeIdentificationPaid : Bool
   deriving Repr
 
@@ -114,6 +143,9 @@ def canonicalBoundary : Boundary where
   incomingRawActionHasFixedCentre := true
   finiteFrickeRawActionFixedPointFree := true
   rawEquivariantEquivalenceRejected := true
+  incomingStabilizerProfileTwoOneOneOneOne := true
+  finiteFrickeStabilizerProfileAllOne := true
+  stabilizerPreservingFiveWayEquivalenceRejected := true
   analyticFrickeIdentificationPaid := false
 
 end Integration.TrialecticIncomingFrickeSeparation

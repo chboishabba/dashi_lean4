@@ -11,6 +11,8 @@ import Integration.OggSSPP2TrialecticNineCentreResidualBidi
 import Integration.OggSSPP2DualDependentCodecBidi
 import Integration.OggSSPP2ArithmeticBidiDualCodecTransport
 import Integration.OggSSPP2SupersingularUniversalDeformationSource
+import Integration.OggSSPP2WittPowerSeriesBase
+import Integration.OggSSPP2UniversalDeformationImplementationFrontier
 import Integration.OggSSPP2BalancedTernaryNeutralCompletionBridge
 import Integration.OggSSPP2BadPrimeLevelStructureBoundary
 import Integration.OggSSPP2Gamma0FourMarkedSubgroupSchemeSource
@@ -105,6 +107,8 @@ structure Boundary where
   dualDependentCodecBidiOwned : Bool
   arithmeticBidiDualCodecTransportOwned : Bool
   universalSupersingularDeformationSourceSocketOwned : Bool
+  mathlibWittPowerSeriesCarrierOwned : Bool
+  universalDeformationImplementationFrontierOwned : Bool
   singleArithmeticBidiDischargesBothFiniteCodecRecognitions : Bool
   separateArithmeticOneOneEightProofRequiredAfterBidi : Bool
   duplicatedCentreCompletionBridgeOwned : Bool
@@ -139,6 +143,8 @@ def canonicalBoundary : Boundary where
   dualDependentCodecBidiOwned := true
   arithmeticBidiDualCodecTransportOwned := true
   universalSupersingularDeformationSourceSocketOwned := true
+  mathlibWittPowerSeriesCarrierOwned := true
+  universalDeformationImplementationFrontierOwned := true
   singleArithmeticBidiDischargesBothFiniteCodecRecognitions := true
   separateArithmeticOneOneEightProofRequiredAfterBidi := false
   duplicatedCentreCompletionBridgeOwned := true

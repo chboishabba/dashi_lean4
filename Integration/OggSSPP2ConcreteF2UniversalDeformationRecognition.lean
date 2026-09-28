@@ -35,6 +35,12 @@ namespace Base := Integration.OggSSPP2WittPowerSeriesBase
 namespace Mixed := Integration.OggSSPP2WittPowerSeriesMixedAdicControl
 namespace Universal := Integration.OggSSPP2SupersingularUniversalDeformationSource
 
+noncomputable local instance : IsLocalRing Base.P2WittRing :=
+  Base.p2WittIsLocalRing
+
+noncomputable local instance : IsLocalRing Base.P2WittPowerSeriesBase :=
+  Base.p2PowerSeriesIsLocalRing
+
 structure ConcreteF2UniversalDeformationAuthority where
   supersingularityMeaning : Criterion.SourceSupersingularityMeaning
 

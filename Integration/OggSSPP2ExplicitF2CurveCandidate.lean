@@ -91,7 +91,11 @@ theorem no_nonzero_affine_two_torsion_after_base_change
   simpa [curveBaseChange, curve, WeierstrassCurve.twoTorsionPolynomial,
     WeierstrassCurve.b₂, WeierstrassCurve.b₄, WeierstrassCurve.b₆] using hroot
 
-theorem geometric_two_torsion_trivial
+def GeometricTwoTorsionTrivial : Prop :=
+  ∀ (K : Type*) [Field K] [CharP K 2] [Algebra F2 K],
+    ∀ P : (curveBaseChange K).Point, P + P = 0 → P = 0
+
+theorem geometric_two_torsion_trivial_point
     {K : Type*} [Field K] [CharP K 2] [Algebra F2 K]
     (P : (curveBaseChange K).Point)
     (h2 : P + P = 0) :
@@ -102,6 +106,11 @@ theorem geometric_two_torsion_trivial
   | some x y h =>
       exact False.elim
         (no_nonzero_affine_two_torsion_after_base_change h h2)
+
+theorem geometric_two_torsion_trivial :
+    GeometricTwoTorsionTrivial := by
+  intro K _ _ _ P h2
+  exact geometric_two_torsion_trivial_point P h2
 
 structure Boundary where
   explicitF2WeierstrassModelOwned : Bool

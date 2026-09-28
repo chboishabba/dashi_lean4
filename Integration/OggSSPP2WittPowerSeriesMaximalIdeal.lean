@@ -53,6 +53,22 @@ theorem candidate_membership_iff_constantCoeff
       PowerSeries.constantCoeff f ∈ coefficientMaximalIdeal :=
   Iff.rfl
 
+theorem deformationIdealCandidate_eq_maximalIdeal :
+    deformationIdealCandidate =
+      IsLocalRing.maximalIdeal P2WittPowerSeriesBase := by
+  ext f
+  simp only [deformationIdealCandidate, coefficientMaximalIdeal,
+    Ideal.mem_comap, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
+  exact not_congr PowerSeries.isUnit_iff_constantCoeff
+
+theorem maximalIdeal_membership_iff_constantCoeff
+    (f : P2WittPowerSeriesBase) :
+    f ∈ IsLocalRing.maximalIdeal P2WittPowerSeriesBase ↔
+      PowerSeries.constantCoeff f ∈
+        IsLocalRing.maximalIdeal P2WittRing := by
+  rw [← deformationIdealCandidate_eq_maximalIdeal]
+  rfl
+
 structure Boundary where
   coefficientMaximalIdealOwned : Bool
   deformationIdealCandidateOwned : Bool
@@ -66,7 +82,7 @@ def canonicalBoundary : Boundary where
   coefficientMaximalIdealOwned := true
   deformationIdealCandidateOwned := true
   variableXInCandidatePaid := true
-  candidateIdentifiedWithPowerSeriesMaximalIdeal := false
+  candidateIdentifiedWithPowerSeriesMaximalIdeal := true
   candidateIdentifiedWithLiteralTwoXIdeal := false
   candidateAdicCompletenessPaid := false
 

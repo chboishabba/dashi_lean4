@@ -11,6 +11,7 @@ import NSBControl.CombinedPaymentToWeightedWork
 import NSBControl.CombinedCurrentEndgame
 import NSBControl.DirectCombinedCut
 import NSBControl.SharedWeightedCut
+import NSBControl.AugmentedDerivativeCancellation
 
 namespace NSBCyclicOrbit
 

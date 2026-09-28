@@ -1056,3 +1056,7 @@ import Integration.OggSSP369CanonicalThreeSixNineLift
 import Integration.OggSSP15CanonicalRankThreeByFive
 
 import Integration.TrialecticSSP15RecognitionCapstone
+
+import Integration.TrialecticIncomingFrickeSeparation
+
+import Integration.SelectedFibreActionCompiler

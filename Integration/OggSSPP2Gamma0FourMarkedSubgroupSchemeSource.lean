@@ -48,8 +48,13 @@ structure Gamma0FourFiniteFlatDatum where
   orderTwoRankIsTwo : orderTwoRank = 2
 
   orderTwoSubflagOfOrderFour : Prop
+  orderTwoSubflagOfOrderFourProof : orderTwoSubflagOfOrderFour
+
   finiteFlatAtCharacteristicTwo : Prop
+  finiteFlatAtCharacteristicTwoProof : finiteFlatAtCharacteristicTwo
+
   gammaZeroLevelFourSemantics : Prop
+  gammaZeroLevelFourSemanticsProof : gammaZeroLevelFourSemantics
 
   sourceReference : String
 
@@ -82,6 +87,7 @@ structure Gamma0FourOneOneEightRecognition
     Nonempty (ArithmeticMark .conjugatePair ≃ PuncturedNineSheet)
 
   frobeniusCompatibility : Prop
+  frobeniusCompatibilityProof : frobeniusCompatibility
 
 def targetZeroFixedMarkCount : Nat := 1
 def targetOneFixedMarkCount : Nat := 1

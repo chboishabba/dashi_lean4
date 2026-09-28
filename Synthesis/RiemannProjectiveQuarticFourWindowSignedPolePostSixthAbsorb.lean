@@ -9297,4 +9297,126 @@ theorem quarticFourAtomicFinitePoleCancelledOriginAtNull_neg
   linarith
 
 
+
+/-!
+## Expanded atomic rigidity: only combined J2 cancellation is needed
+
+The previous rigidity theorem was stated after imposing J2=0 separately on
+every channel.  The unrestricted atomic (lambda,mu) family satisfies the
+stronger exact identity
+
+  S = pi^4 (-(20/243) P - (1/4) O) - (5/4) pi^2 J2,
+
+where
+  P  is the high-ordinate projective pole coordinate,
+  O  is the projective physical-origin coordinate,
+  J2 is the quadratic moment determinant,
+  S  = -J4 is the quartic target strength.
+
+Consequently a finite signed combination only needs J2 to cancel globally:
+if the combined P, O, and J2 coordinates vanish, then the combined quartic
+target vanishes.  Thus adding three or four channels cannot evade the
+zero-mode obstruction merely by dropping per-channel J2-nullness.
+-/
+
+theorem quarticFourAtomic_targetAt_eq_pole_origin_J2_combination
+    (lam mu : ℝ) :
+    quarticFourAtomicTargetStrengthAt lam mu
+      =
+    Real.pi^4 *
+      (
+        -(20/243 : ℝ) * quarticFourAtomicHighPoleResidual lam mu
+        - (1/4 : ℝ) * quarticFourAtomicProjectiveOriginCoordinate lam mu
+      )
+      - (5/4 : ℝ) * Real.pi^2 * quarticFourAtomicJAt lam mu 2 := by
+  unfold quarticFourAtomicTargetStrengthAt
+  rw [quarticFourAtomicJAt_four_formula,
+      quarticFourAtomicHighPoleResidual_formula,
+      quarticFourAtomicProjectiveOriginCoordinate_formula,
+      quarticFourAtomicJAt_two_formula]
+  ring
+
+/--
+Abstract finite-combination compiler for the unrestricted atomic identity.
+Only the combined quadratic mode is assumed to vanish.
+-/
+theorem quarticFourAtomic_combination_target_zero_of_pole_origin_J2_zero
+    {ι : Type*} [Fintype ι]
+    (c P O J2 S : ι -> ℝ)
+    (hrel :
+      ∀ i,
+        S i =
+          Real.pi^4 *
+            (
+              -(20/243 : ℝ) * P i
+              - (1/4 : ℝ) * O i
+            )
+          - (5/4 : ℝ) * Real.pi^2 * J2 i)
+    (hP : ∑ i, c i * P i = 0)
+    (hO : ∑ i, c i * O i = 0)
+    (hJ2 : ∑ i, c i * J2 i = 0) :
+    ∑ i, c i * S i = 0 := by
+  calc
+    ∑ i, c i * S i
+      =
+    ∑ i,
+      c i *
+        (
+          Real.pi^4 *
+            (
+              -(20/243 : ℝ) * P i
+              - (1/4 : ℝ) * O i
+            )
+          - (5/4 : ℝ) * Real.pi^2 * J2 i
+        ) := by
+          apply Finset.sum_congr rfl
+          intro i hi
+          rw [hrel i]
+    _ =
+      Real.pi^4 *
+        (
+          -(20/243 : ℝ) * (∑ i, c i * P i)
+          - (1/4 : ℝ) * (∑ i, c i * O i)
+        )
+      - (5/4 : ℝ) * Real.pi^2 * (∑ i, c i * J2 i) := by
+        simp_rw [mul_sub, Finset.sum_sub_distrib, ← Finset.mul_sum]
+        ring
+    _ = 0 := by
+      rw [hP,hO,hJ2]
+      ring
+
+/--
+Concrete unrestricted-family no-go.
+
+For arbitrary atomic channels (lambda_i,mu_i), simultaneous cancellation of
+the pole coordinate, physical-origin coordinate, and only the combined J2
+coordinate forces cancellation of the quartic target.
+-/
+theorem quarticFourAtomic_family_target_zero_of_combined_pole_origin_J2_zero
+    {ι : Type*} [Fintype ι]
+    (c lam mu : ι -> ℝ)
+    (hP :
+      ∑ i,
+        c i * quarticFourAtomicHighPoleResidual (lam i) (mu i) = 0)
+    (hO :
+      ∑ i,
+        c i * quarticFourAtomicProjectiveOriginCoordinate (lam i) (mu i) = 0)
+    (hJ2 :
+      ∑ i,
+        c i * quarticFourAtomicJAt (lam i) (mu i) 2 = 0) :
+    ∑ i,
+      c i * quarticFourAtomicTargetStrengthAt (lam i) (mu i) = 0 := by
+  apply quarticFourAtomic_combination_target_zero_of_pole_origin_J2_zero
+    c
+    (fun i => quarticFourAtomicHighPoleResidual (lam i) (mu i))
+    (fun i => quarticFourAtomicProjectiveOriginCoordinate (lam i) (mu i))
+    (fun i => quarticFourAtomicJAt (lam i) (mu i) 2)
+    (fun i => quarticFourAtomicTargetStrengthAt (lam i) (mu i))
+  · intro i
+    exact quarticFourAtomic_targetAt_eq_pole_origin_J2_combination
+      (lam i) (mu i)
+  · exact hP
+  · exact hO
+  · exact hJ2
+
 end Synthesis

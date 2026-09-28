@@ -106,6 +106,33 @@ theorem distinct_neutral_codes_same_valuation :
   · decide
   · rw [j_role_valuation_is_zero, j_role_valuation_is_zero]
 
+def jColumnNeutralPrimes : List Prime15 :=
+  [roleCodeToPrime (.mode09,.j),
+   roleCodeToPrime (.mode18,.j),
+   roleCodeToPrime (.mode27,.j),
+   roleCodeToPrime (.mode36,.j),
+   roleCodeToPrime (.mode45,.j)]
+
+theorem j_column_neutral_primes_exact :
+    jColumnNeutralPrimes = [.p3,.p11,.p19,.p31,.p59] := rfl
+
+theorem five_neutral_j_states_share_zero_valuation :
+    pointedValuation (roleCodeToPointed (jRoleCode .mode09)) =
+      pointedValuation (roleCodeToPointed (jRoleCode .mode18)) ∧
+    pointedValuation (roleCodeToPointed (jRoleCode .mode18)) =
+      pointedValuation (roleCodeToPointed (jRoleCode .mode27)) ∧
+    pointedValuation (roleCodeToPointed (jRoleCode .mode27)) =
+      pointedValuation (roleCodeToPointed (jRoleCode .mode36)) ∧
+    pointedValuation (roleCodeToPointed (jRoleCode .mode36)) =
+      pointedValuation (roleCodeToPointed (jRoleCode .mode45)) := by
+  constructor
+  · rw [j_role_valuation_is_zero, j_role_valuation_is_zero]
+  constructor
+  · rw [j_role_valuation_is_zero, j_role_valuation_is_zero]
+  constructor
+  · rw [j_role_valuation_is_zero, j_role_valuation_is_zero]
+  · rw [j_role_valuation_is_zero, j_role_valuation_is_zero]
+
 inductive PromotionError
   | zeroValuationRecoversSelectedMode
   | chosenPrimeAssignmentIsExternalArithmeticCanonicality

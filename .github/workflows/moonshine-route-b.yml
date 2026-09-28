@@ -41,6 +41,31 @@ jobs:
       - name: Checkout dashi_lean4
         uses: actions/checkout@v4
 
+      - name: Checkout pinned RH producer donor
+        uses: actions/checkout@v4
+        with:
+          repository: chboishabba/dashi_lean4
+          ref: 824f84cddf5cf424c643688c2d24e351795dac07
+          path: rh-producer
+
+      - name: Verify pinned RH producer donor
+        shell: bash
+        run: |
+          set -euo pipefail
+          donor_file="Synthesis/RiemannQuarticBalancedTernaryStencil.lean"
+          expected_blob="138153858e329469048175fcdeeaf75c182078be"
+          actual_blob="$(git -C rh-producer rev-parse "HEAD:${donor_file}")"
+          test "${actual_blob}" = "${expected_blob}"
+
+          grep -q 'theorem quarticFourAtomic_primitive_integer_kernel' "rh-producer/${donor_file}"
+          grep -q 'theorem quarticFourAtomic_sparse_shift_kernel' "rh-producer/${donor_file}"
+          grep -q 'theorem quarticFourAtomic_depth_five_block_kernel' "rh-producer/${donor_file}"
+
+          grep -q 'quarticFourAtomicHighPoleResidual' "rh-producer/${donor_file}"
+          grep -q 'quarticFourAtomicProjectiveOriginCoordinate' "rh-producer/${donor_file}"
+          grep -q 'quarticFourAtomicJAt lam mu 2' "rh-producer/${donor_file}"
+          grep -q 'quarticFourAtomicTargetStrengthAt' "rh-producer/${donor_file}"
+
       - name: Checkout bound dashi_agda source
         uses: actions/checkout@v4
         with:

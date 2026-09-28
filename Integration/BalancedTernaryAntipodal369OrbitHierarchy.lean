@@ -169,6 +169,46 @@ theorem p2_existing_orbit_matches_rank2 :
 theorem p2_existing_retained_target_matches_binary_times_rank2 :
     Fintype.card P2State = 2 * quotientOrbitCount .two := by decide
 
+
+/-! ## F9 extension-coordinate quotient factors through rank-1 geometry -/
+
+def f9OrbitToRank1 : F9Orbit → Orbit3 :=
+  fun o => p3OrbitToAntipodal (f9OrbitToP3Orbit o)
+
+theorem f9_fixed_components_land_at_centre :
+    f9OrbitToRank1 .fixed0 = .centre ∧
+    f9OrbitToRank1 .fixed1 = .centre ∧
+    f9OrbitToRank1 .fixed2 = .centre := by
+  decide
+
+theorem f9_paired_components_land_at_nonzero :
+    f9OrbitToRank1 .pair0 = .nonzero ∧
+    f9OrbitToRank1 .pair1 = .nonzero ∧
+    f9OrbitToRank1 .pair2 = .nonzero := by
+  decide
+
+theorem f9_rank1_map_not_injective :
+    ¬ Function.Injective f9OrbitToRank1 := by
+  intro h
+  have : F9Orbit.fixed0 = F9Orbit.fixed1 :=
+    h (show f9OrbitToRank1 .fixed0 = f9OrbitToRank1 .fixed1 by rfl)
+  cases this
+
+inductive ExceptionalAntipodalTarget
+  | p3Rank1Quotient
+  | p2BinaryOverRank2Quotient
+  deriving DecidableEq, Repr
+
+def exceptionalTargetComponentCount : ExceptionalAntipodalTarget → Nat
+  | .p3Rank1Quotient => quotientOrbitCount .one
+  | .p2BinaryOverRank2Quotient => 2 * quotientOrbitCount .two
+
+theorem p3_exceptional_target_count :
+    exceptionalTargetComponentCount .p3Rank1Quotient = 2 := by rfl
+
+theorem p2_exceptional_target_count :
+    exceptionalTargetComponentCount .p2BinaryOverRank2Quotient = 10 := by rfl
+
 inductive ClaimOrigin
   | finiteGroupActionCalibration
   | repositoryCrossModuleInference

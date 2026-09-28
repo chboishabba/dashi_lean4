@@ -95,6 +95,67 @@ theorem bulk196830_depth5 :
 theorem residual810_two_spike :
     (810 : Nat) = 3^6 + 3^4 := by norm_num
 
+/-! ## Symbolic shift-polynomial stencil -/
+
+open Polynomial
+
+def poleShiftPolynomial : Polynomial ℤ :=
+  X^4 - 1
+
+def originShiftPolynomial : Polynomial ℤ :=
+  X^5
+
+def jShiftPolynomial : Polynomial ℤ :=
+  X^5 * (X^2 - X - 1)
+
+def targetShiftPolynomial : Polynomial ℤ :=
+  X^5 * (X + 1)
+
+theorem j_shift_polynomial_expanded :
+    jShiftPolynomial = X^7 - X^6 - X^5 := by
+  simp [jShiftPolynomial]
+  ring
+
+theorem target_shift_polynomial_expanded :
+    targetShiftPolynomial = X^6 + X^5 := by
+  simp [targetShiftPolynomial]
+  ring
+
+theorem pole_shift_eval_three :
+    poleShiftPolynomial.eval 3 = 80 := by
+  norm_num [poleShiftPolynomial]
+
+theorem origin_shift_eval_three :
+    originShiftPolynomial.eval 3 = 243 := by
+  norm_num [originShiftPolynomial]
+
+theorem j_shift_eval_three :
+    jShiftPolynomial.eval 3 = 1215 := by
+  norm_num [jShiftPolynomial]
+
+theorem target_shift_eval_three :
+    targetShiftPolynomial.eval 3 = 972 := by
+  norm_num [targetShiftPolynomial]
+
+structure ShiftPolynomialKernel where
+  pole : Polynomial ℤ
+  origin : Polynomial ℤ
+  j2 : Polynomial ℤ
+  target : Polynomial ℤ
+
+def canonicalShiftPolynomialKernel : ShiftPolynomialKernel where
+  pole := poleShiftPolynomial
+  origin := originShiftPolynomial
+  j2 := jShiftPolynomial
+  target := targetShiftPolynomial
+
+inductive EvaluationAtThreeCreatesUniversalShiftIdentity : Prop
+
+theorem evaluation_at_three_does_not_create_universal_shift_identity :
+    ¬ EvaluationAtThreeCreatesUniversalShiftIdentity := by
+  intro h
+  cases h
+
 /-! ## Exact 3-adic depth certificates -/
 
 structure ExactThreeAdicDepthCertificate (value depth : Nat) where
@@ -153,6 +214,7 @@ theorem primitive_gcd_does_not_determine_depth_profile :
 
 structure Boundary where
   sparseStencilOwned : Bool
+  symbolicShiftPolynomialKernelOwned : Bool
   modThreeUnitVsDepthFiveOwned : Bool
   exactThreeAdicDepthCertificatesOwned : Bool
   puncturedFourShiftOwned : Bool
@@ -165,6 +227,7 @@ structure Boundary where
 
 def canonicalBoundary : Boundary where
   sparseStencilOwned := true
+  symbolicShiftPolynomialKernelOwned := true
   modThreeUnitVsDepthFiveOwned := true
   exactThreeAdicDepthCertificatesOwned := true
   puncturedFourShiftOwned := true

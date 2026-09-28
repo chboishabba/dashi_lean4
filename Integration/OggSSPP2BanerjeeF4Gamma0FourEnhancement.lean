@@ -40,6 +40,33 @@ structure SectorGamma0FourEnhancement
     (state : Banerjee.GaloisInertiaState) where
   finiteFlatDatum : Gamma0.Gamma0FourFiniteFlatDatum
 
+  /-- The datum's elliptic-object carrier is the concrete Banerjee universal family carrier. -/
+  ellipticCarrierEquiv :
+    finiteFlatDatum.EllipticObject ≃
+      WeierstrassCurve Banerjee.F4DeformationBase
+
+  selectedEllipticObjectIsUniversalCurve :
+    ellipticCarrierEquiv finiteFlatDatum.selectedEllipticObject =
+      Banerjee.universalCurve
+
+  /-- The selected order-2 carrier is exactly the canonical raw ker(F) carrier. -/
+  orderTwoCarrierEquiv :
+    finiteFlatDatum.OrderTwoSubgroup ≃
+      RawFlag.SupersingularRawOrderTwoSubgroup
+
+  selectedOrderTwoIsCanonical :
+    orderTwoCarrierEquiv finiteFlatDatum.selectedOrderTwoSubgroup =
+      RawFlag.canonicalRawFlag.orderTwo
+
+  /-- The selected order-4 carrier is exactly the canonical raw ker(F²) carrier. -/
+  orderFourCarrierEquiv :
+    finiteFlatDatum.OrderFourSubgroup ≃
+      RawFlag.SupersingularRawOrderFourSubgroup
+
+  selectedOrderFourIsCanonical :
+    orderFourCarrierEquiv finiteFlatDatum.selectedOrderFourSubgroup =
+      RawFlag.canonicalRawFlag.orderFour
+
   rawFlag :
     RawFlag.RawGamma0FourFlag
 
@@ -95,6 +122,30 @@ theorem every_enhanced_sector_has_same_raw_order_four_subgroup
   rw [(every_enhanced_sector_has_same_raw_flag family state).2]
   rfl
 
+theorem selected_order_two_is_canonical_raw_subflag
+    (family : EnhancementFamily)
+    (state : Banerjee.GaloisInertiaState) :
+    (family.enhance state).orderTwoCarrierEquiv
+        (family.enhance state).finiteFlatDatum.selectedOrderTwoSubgroup =
+      RawFlag.canonicalRawFlag.orderTwo :=
+  (family.enhance state).selectedOrderTwoIsCanonical
+
+theorem selected_order_four_is_canonical_raw_subgroup
+    (family : EnhancementFamily)
+    (state : Banerjee.GaloisInertiaState) :
+    (family.enhance state).orderFourCarrierEquiv
+        (family.enhance state).finiteFlatDatum.selectedOrderFourSubgroup =
+      RawFlag.canonicalRawFlag.orderFour :=
+  (family.enhance state).selectedOrderFourIsCanonical
+
+theorem selected_elliptic_object_is_banerjee_universal_curve
+    (family : EnhancementFamily)
+    (state : Banerjee.GaloisInertiaState) :
+    (family.enhance state).ellipticCarrierEquiv
+        (family.enhance state).finiteFlatDatum.selectedEllipticObject =
+      Banerjee.universalCurve :=
+  (family.enhance state).selectedEllipticObjectIsUniversalCurve
+
 /--
 The enhancement does not change the source sector carrier.
 -/
@@ -132,6 +183,8 @@ structure Boundary where
   finiteFlatDatumRequiredPerSector : Bool
   orderTwoSubflagCompatibilityRequired : Bool
   twoIsogenyChainRequiredPerSector : Bool
+  sameObjectCarrierEquivalencesRequired : Bool
+  selectedObjectsMustMatchUniversalCurveAndCanonicalFlag : Bool
   freePropLevelPresenceRejectedAsSufficient : Bool
   enhancementFamilyConstructedHere : Bool
   deriving Repr
@@ -144,6 +197,8 @@ def canonicalBoundary : Boundary where
   finiteFlatDatumRequiredPerSector := true
   orderTwoSubflagCompatibilityRequired := true
   twoIsogenyChainRequiredPerSector := true
+  sameObjectCarrierEquivalencesRequired := true
+  selectedObjectsMustMatchUniversalCurveAndCanonicalFlag := true
   freePropLevelPresenceRejectedAsSufficient := true
   enhancementFamilyConstructedHere := false
 

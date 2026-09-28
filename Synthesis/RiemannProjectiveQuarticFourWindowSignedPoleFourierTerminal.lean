@@ -1916,4 +1916,52 @@ theorem QuarticFourSignedPolePair.fifthInterior_abs_le_primitive_mul_globalL1
       hB4
       W.fifthDerivativeOuterL1Envelope_global
 
+
+theorem QuarticFourSignedPolePair.exists_normalizedOuterPairedAbel_invSq_add_fourthPrimitive_bound
+    {t BP B1 B2 B3 B4 : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hBP : 0 <= BP)
+    (hB1 : 0 <= B1)
+    (hB2 : 0 <= B2)
+    (hB3 : 0 <= B3)
+    (hB4 : 0 <= B4)
+    (hprim : W.OuterAnchoredFourthPrimitiveUniformBound BP)
+    (henv : W.OuterPrimitivePolynomialEnvelope B1 B2 B3 B4) :
+    ∃ Kboundary : ℝ, 0 < Kboundary ∧
+      ∀ n : ℕ,
+        quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ) ->
+        max 1 quarticSignedPoleCanonicalLocalRadius
+          <= (n : ℝ)/(t/16) ->
+        |W.normalizedOuterPairedAbelAt n|
+          <=
+        Kboundary / (((n : ℝ)/(t/16))^2)
+          + BP * W.fifthDerivativeGlobalL1Mass := by
+  obtain ⟨Kboundary,hKboundary,hboundary⟩ :=
+    W.exists_upperIBPBoundary_invSq_bound
+      hB1 hB2 hB3 hB4 henv
+  refine ⟨Kboundary,hKboundary,?_⟩
+  intro n hn hQlarge
+  have hQ :
+      quarticSignedPoleCanonicalLocalRadius
+        <= (n : ℝ)/(t/16) :=
+    (le_max_right 1 quarticSignedPoleCanonicalLocalRadius).trans hQlarge
+  have hA :
+      IntervalIntegrable
+        W.quarticScaleSymmetricWindowDiscrepancy
+        volume
+        quarticSignedPoleCanonicalLocalRadius
+        ((n : ℝ)/(t/16)) :=
+    W.quarticScaleSymmetricWindowDiscrepancy_intervalIntegrable hQ
+  have hraw :=
+    W.normalizedOuterPairedAbelAt_abs_le_boundary_add_B4K5
+      ht hBP
+      W.fifthDerivativeGlobalL1Mass_nonneg
+      hprim
+      W.fifthDerivativeOuterL1Envelope_global
+      n hn hA
+  have hbd :=
+    hboundary ((n : ℝ)/(t/16)) hQlarge
+  exact hraw.trans (add_le_add_right hbd _)
+
 end Synthesis

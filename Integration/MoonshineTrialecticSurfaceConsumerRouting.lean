@@ -1,4 +1,5 @@
 import Integration.MoonshineMonstrousExponentTrialecticCodec
+import Integration.HeisenbergX6AppraisalSlice
 import Integration.Kernel.Quotient
 import Mathlib
 
@@ -51,6 +52,37 @@ theorem selected_row_after_embedding
     (slot : DeclaredRowSlot) (row : Surface3) :
     selectedRow slot (embedDeclaredRow slot row) = row := by
   cases slot <;> rfl
+
+/-! ## Exact T9 ≃ interaction T3 × appraisal X6 factorization -/
+
+open Integration.HeisenbergX6AppraisalSlice
+
+def t9ToInteractionX6 : T9Carrier → Surface3 × X6
+  | (interaction, appraisalA, appraisalB) =>
+      (interaction, appraisalToX6 (appraisalA, appraisalB))
+
+def interactionX6ToT9 : Surface3 × X6 → T9Carrier
+  | (interaction, fibre) =>
+      let appraisal := x6ToAppraisal fibre
+      (interaction, appraisal.1, appraisal.2)
+
+theorem t9_after_interaction_x6 (state : T9Carrier) :
+    interactionX6ToT9 (t9ToInteractionX6 state) = state := by
+  rcases state with ⟨interaction, appraisalA, appraisalB⟩
+  simp [t9ToInteractionX6, interactionX6ToT9, x6_after_appraisal]
+
+theorem interaction_x6_after_t9 (state : Surface3 × X6) :
+    t9ToInteractionX6 (interactionX6ToT9 state) = state := by
+  rcases state with ⟨interaction, fibre⟩
+  simp [t9ToInteractionX6, interactionX6ToT9, appraisal_after_x6]
+
+def t9InteractionX6Equiv : T9Carrier ≃ (Surface3 × X6) where
+  toFun := t9ToInteractionX6
+  invFun := interactionX6ToT9
+  left_inv := t9_after_interaction_x6
+  right_inv := interaction_x6_after_t9
+
+theorem t9_state_count : Fintype.card T9Carrier = 19683 := by decide
 
 /-! ## Surface-only geometric consumers -/
 
@@ -127,6 +159,8 @@ theorem exact_code_still_suffices_after_t9_routing
 
 structure Boundary where
   declaredT9CarrierOwned : Bool
+  exactT9InteractionX6FactorizationOwned : Bool
+  t9StateCount19683 : Bool
   rowSlotMustBeDeclared : Bool
   selectedRowReopensExactly : Bool
   arbitraryT9ConsumerDescendsThroughT3 : Bool
@@ -140,6 +174,8 @@ structure Boundary where
 
 def canonicalBoundary : Boundary where
   declaredT9CarrierOwned := true
+  exactT9InteractionX6FactorizationOwned := true
+  t9StateCount19683 := true
   rowSlotMustBeDeclared := true
   selectedRowReopensExactly := true
   arbitraryT9ConsumerDescendsThroughT3 := true

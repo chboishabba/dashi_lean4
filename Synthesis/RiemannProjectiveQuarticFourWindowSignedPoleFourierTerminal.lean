@@ -649,4 +649,186 @@ theorem QuarticFourSignedPolePair.quarticScaleOuterPairedHorizontalAt_eq
   rw [W.normalizedOuterPairedAbelAt_eq_quarticScale ht n hn]
   ring
 
+
+/-!
+## Dimensionless outer-terminal exhaustion
+
+The normalized outer Abel integral already owns the entire vertical
+zero-distribution channel outside the canonical local radius. Add the exact
+horizontal correction and subtract the fixed literal-vs-paired local
+correction on the same r^6 scale.
+
+The resulting finite scalar converges to r^6 times the canonical signed high
+residual. This is the final representation recut before genuinely new
+zero-distribution analysis.
+-/
+
+def QuarticFourSignedPolePair.quarticScaleCanonicalLocalCorrection
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) : ℝ :=
+  (t/16)^6 * W.canonicalLiteralVsPairedLocalCorrection
+
+def QuarticFourSignedPolePair.quarticScaleOuterTerminalAt
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) : ℝ :=
+  W.quarticScaleOuterPairedHorizontalAt n
+    - W.quarticScaleCanonicalLocalCorrection
+
+theorem QuarticFourSignedPolePair.normalizedPairedAbelPartial_eq_local_add_outer
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t
+        <= (n : ℝ)) :
+    W.normalizedPairedAbelPartial n
+      =
+    (t/16)^6 * W.canonicalLocalPairedAbel
+      + W.normalizedOuterPairedAbelAt n := by
+  rw [W.normalizedPairedAbelPartial_eq_quarticScale ht n,
+      W.normalizedOuterPairedAbelAt_eq_quarticScale ht n hn,
+      W.pairedCenteredAbelPartial_eq_local_add_outer ht n hn]
+  ring
+
+theorem exists_quarticFourSignedPole_normalizedOuterPairedAbel_tendsto :
+    ∃ T0 : ℝ, 1 <= T0 ∧
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        T0 <= t ->
+        Tendsto W.normalizedOuterPairedAbelAt atTop
+          (𝓝
+            (
+              - (t/16)^6 * W.signedNMuPair
+              - (t/16)^6 * W.canonicalLocalPairedAbel
+            )) := by
+  obtain ⟨Tbase,hTbase⟩ :=
+    exists_quarticFourSignedPole_normalizedPairedAbel_tendsto
+  let T0 : ℝ := max Tbase 1
+  refine ⟨T0,le_max_right _ _,?_⟩
+  intro t W ht
+  have ht0 : 0 < t := by
+    have h1 : 1 <= t := (le_max_right Tbase 1).trans ht
+    linarith
+  have htBase : Tbase <= t :=
+    (le_max_left Tbase 1).trans ht
+  have htotal := hTbase W htBase
+  let N := quarticSignedPoleCanonicalLocalExhaustionIndex t
+  have hN :
+      quarticSignedPoleCanonicalPhysicalHalfWidth t < (N : ℝ) := by
+    dsimp [N]
+    exact quarticSignedPoleCanonicalLocalExhaustionIndex_spec t
+  have hevent :
+      ∀ᶠ n : ℕ in atTop,
+        quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ) := by
+    filter_upwards [eventually_ge_atTop N] with n hn
+    have hNN : (N : ℝ) <= (n : ℝ) := by exact_mod_cast hn
+    exact hN.le.trans hNN
+  have heq :
+      ∀ᶠ n : ℕ in atTop,
+        W.normalizedOuterPairedAbelAt n
+          =
+        W.normalizedPairedAbelPartial n
+          - (t/16)^6 * W.canonicalLocalPairedAbel := by
+    filter_upwards [hevent] with n hn
+    rw [W.normalizedPairedAbelPartial_eq_local_add_outer ht0 n hn]
+    ring
+  have hsub :
+      Tendsto
+        (fun n : ℕ =>
+          W.normalizedPairedAbelPartial n
+            - (t/16)^6 * W.canonicalLocalPairedAbel)
+        atTop
+        (𝓝
+          (
+            - (t/16)^6 * W.signedNMuPair
+            - (t/16)^6 * W.canonicalLocalPairedAbel
+          )) :=
+    htotal.sub_const _
+  exact hsub.congr' heq.symm
+
+theorem exists_quarticFourSignedPole_quarticScaleOuterPairedHorizontal_tendsto :
+    ∃ T0 : ℝ, 1 <= T0 ∧
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        T0 <= t ->
+        Tendsto W.quarticScaleOuterPairedHorizontalAt atTop
+          (𝓝 ((t/16)^6 * W.canonicalFarBoundaryCoupledCompensation)) := by
+  obtain ⟨T0,hT01,hT0⟩ :=
+    exists_quarticFourSignedPole_normalizedOuterPairedAbel_tendsto
+  refine ⟨T0,hT01,?_⟩
+  intro t W ht
+  have ht0 : 0 < t := lt_of_lt_of_le (by norm_num) (hT01.trans ht)
+  have houter := hT0 W ht
+  have hscaled :
+      Tendsto
+        (fun n : ℕ =>
+          -(1/2 : ℝ) * W.normalizedOuterPairedAbelAt n
+            + W.quarticScaleHorizontalRemainder)
+        atTop
+        (𝓝
+          (
+            -(1/2 : ℝ) *
+              (
+                - (t/16)^6 * W.signedNMuPair
+                - (t/16)^6 * W.canonicalLocalPairedAbel
+              )
+            + W.quarticScaleHorizontalRemainder
+          )) :=
+    (tendsto_const_nhds.mul houter).add_const _
+  have htarget :
+      -(1/2 : ℝ) *
+          (
+            - (t/16)^6 * W.signedNMuPair
+            - (t/16)^6 * W.canonicalLocalPairedAbel
+          )
+        + W.quarticScaleHorizontalRemainder
+      =
+      (t/16)^6 * W.canonicalFarBoundaryCoupledCompensation := by
+    unfold QuarticFourSignedPolePair.quarticScaleHorizontalRemainder
+    rw [W.canonicalFarBoundaryCoupledCompensation_eq_completed_sub_localPaired ht0]
+    unfold QuarticFourSignedPolePair.completedSignedResidual
+      QuarticFourSignedPolePair.canonicalLocalPairedContribution
+    ring
+  unfold QuarticFourSignedPolePair.quarticScaleOuterPairedHorizontalAt
+  rw [← htarget]
+  exact hscaled
+
+theorem exists_quarticFourSignedPole_quarticScaleOuterTerminal_tendsto :
+    ∃ T0 : ℝ, 1 <= T0 ∧
+      ∀ {t : ℝ},
+        (W : QuarticFourSignedPolePair t) ->
+        T0 <= t ->
+        Tendsto W.quarticScaleOuterTerminalAt atTop
+          (𝓝 ((t/16)^6 * W.canonicalSignedHighResidual)) := by
+  obtain ⟨T0,hT01,hT0⟩ :=
+    exists_quarticFourSignedPole_quarticScaleOuterPairedHorizontal_tendsto
+  refine ⟨T0,hT01,?_⟩
+  intro t W ht
+  have houter := hT0 W ht
+  have hsub :
+      Tendsto
+        (fun n : ℕ =>
+          W.quarticScaleOuterPairedHorizontalAt n
+            - W.quarticScaleCanonicalLocalCorrection)
+        atTop
+        (𝓝
+          (
+            (t/16)^6 * W.canonicalFarBoundaryCoupledCompensation
+              - W.quarticScaleCanonicalLocalCorrection
+          )) :=
+    houter.sub_const _
+  have htarget :
+      (t/16)^6 * W.canonicalFarBoundaryCoupledCompensation
+          - W.quarticScaleCanonicalLocalCorrection
+        =
+      (t/16)^6 * W.canonicalSignedHighResidual := by
+    unfold QuarticFourSignedPolePair.quarticScaleCanonicalLocalCorrection
+      QuarticFourSignedPolePair.canonicalSignedHighResidual
+    ring
+  unfold QuarticFourSignedPolePair.quarticScaleOuterTerminalAt
+  rw [← htarget]
+  exact hsub
+
 end Synthesis

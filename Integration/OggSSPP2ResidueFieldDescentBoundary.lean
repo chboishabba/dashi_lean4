@@ -1,4 +1,5 @@
 import Mathlib
+import Integration.OggSSPP2ExplicitF2CurveCandidate
 
 /-!
 # p=2 residue-field descent boundary
@@ -20,21 +21,21 @@ inductive Residual
   deriving DecidableEq, Repr
 
 def firstResidual : Residual :=
-  .missingExplicitSupersingularCurveModelOverF2
+  .missingGeometricSupersingularityIdentification
 
 structure Boundary where
   explicitSupersingularCurveModelOverF2Owned : Bool
   geometricSupersingularityIdentificationOwned : Bool
   universalDeformationDescentToF2Owned : Bool
   f2WittBaseRemainsSpecializationOnly : Bool
-  firstResidualIsExplicitF2CurveModel : Bool
+  firstResidualIsGeometricSupersingularityIdentification : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
-  explicitSupersingularCurveModelOverF2Owned := false
+  explicitSupersingularCurveModelOverF2Owned := true
   geometricSupersingularityIdentificationOwned := false
   universalDeformationDescentToF2Owned := false
   f2WittBaseRemainsSpecializationOnly := true
-  firstResidualIsExplicitF2CurveModel := true
+  firstResidualIsGeometricSupersingularityIdentification := true
 
 end Integration.OggSSPP2ResidueFieldDescentBoundary

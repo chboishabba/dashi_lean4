@@ -109,6 +109,9 @@ structure Boundary where
   universalSupersingularDeformationSourceSocketOwned : Bool
   mathlibWittPowerSeriesCarrierOwned : Bool
   mathlibWittPowerSeriesLocalRingOwned : Bool
+  mathlibPowerSeriesCompletenessLayersOwned : Bool
+  powerSeriesMaximalIdealIdentified : Bool
+  maximalIdealAdicCompletenessConstructed : Bool
   universalDeformationImplementationFrontierOwned : Bool
   singleArithmeticBidiDischargesBothFiniteCodecRecognitions : Bool
   separateArithmeticOneOneEightProofRequiredAfterBidi : Bool
@@ -146,6 +149,9 @@ def canonicalBoundary : Boundary where
   universalSupersingularDeformationSourceSocketOwned := true
   mathlibWittPowerSeriesCarrierOwned := true
   mathlibWittPowerSeriesLocalRingOwned := true
+  mathlibPowerSeriesCompletenessLayersOwned := true
+  powerSeriesMaximalIdealIdentified := true
+  maximalIdealAdicCompletenessConstructed := false
   universalDeformationImplementationFrontierOwned := true
   singleArithmeticBidiDischargesBothFiniteCodecRecognitions := true
   separateArithmeticOneOneEightProofRequiredAfterBidi := false

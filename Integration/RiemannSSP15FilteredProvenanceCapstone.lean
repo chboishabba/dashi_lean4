@@ -1,3 +1,4 @@
+import Integration.RiemannSSP15RHProducerDonorManifest
 import Mathlib
 import Integration.RiemannPrimitiveKernelSmithFiltrationSeparation
 import Integration.RiemannSSP15DepthFiveRoleCodec
@@ -110,6 +111,9 @@ structure Boundary where
   partitionSeparationPaid : Bool
   chosenGridTransversalityPaid : Bool
   producerRoleCertificateTypeDefined : Bool
+  sourceNativeProducerTheoremLocatedAndPinned : Bool
+  sourceNativeFourCoordinateTermsLocated : Bool
+  donorImportedIntoCurrentSourceGraph : Bool
   producerRoleCertificateInhabitedHere : Bool
   analyticRolePromotionPaid : Bool
   deriving Repr
@@ -123,6 +127,9 @@ def canonicalBoundary : Boundary where
   partitionSeparationPaid := true
   chosenGridTransversalityPaid := true
   producerRoleCertificateTypeDefined := true
+  sourceNativeProducerTheoremLocatedAndPinned := true
+  sourceNativeFourCoordinateTermsLocated := true
+  donorImportedIntoCurrentSourceGraph := false
   producerRoleCertificateInhabitedHere := false
   analyticRolePromotionPaid := false
 

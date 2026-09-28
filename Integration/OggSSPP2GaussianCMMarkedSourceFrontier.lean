@@ -35,6 +35,8 @@ open Integration.OggSSPP2F4DependentMarkedCover
 open Integration.OggSSPP2FrobeniusRetainedTarget
 
 inductive Residual
+  | missingFiniteFlatCyclicOrderFourSubgroup
+  | missingOrderTwoSubflag
   | missingFormalCMOrbitEquivalence
   | missingArithmeticOneOneEightMarking
   | missingFrobeniusCompatibleRecognition
@@ -113,6 +115,6 @@ def canonicalBoundary : Boundary where
   arithmeticCMOrbitEquivalenceConstructed := false
   arithmeticOneOneEightMarkingConstructed := false
   arithmeticRecognitionConstructed := false
-  firstResidual := .missingFormalCMOrbitEquivalence
+  firstResidual := .missingFiniteFlatCyclicOrderFourSubgroup
 
 end Integration.OggSSPP2GaussianCMMarkedSourceFrontier

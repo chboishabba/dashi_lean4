@@ -4,6 +4,7 @@ import Integration.OggSSP15CanonicalRankThreeByFive
 import Integration.OggSSP369CanonicalThreeSixNineLift
 import Integration.TrialecticIncomingFrickeSeparation
 import Integration.SelectedFibreActionCompiler
+import Integration.OutgoingFrickeModeBlock
 import Mathlib
 
 /-!
@@ -130,6 +131,30 @@ theorem outgoing_selected_fibre_compiler
       (invariant.selectedFine, compiledSheetAct invariant inertia sheet) :=
   compiled_action_stays_in_selected_fibre invariant inertia sheet
 
+open Integration.OutgoingFrickeModeBlock
+
+theorem incoming_stabilizer_preserving_recognition_rejected :
+    ¬ Nonempty StabilizerPreservingFiveWayEquiv :=
+  stabilizer_preserving_five_way_equiv_impossible
+
+theorem outgoing_fine_fricke_rejects_single_fibre
+    {Inertia : Type}
+    {action : ProductAction Inertia FineCarrier Sheet9}
+    (element : FineFrickeElement action)
+    (invariant : SelectedFineInvariant action) :
+    False :=
+  fine_fricke_element_rejects_selected_fine element invariant
+
+theorem outgoing_fricke_mode18_compiler
+    {Inertia : Type}
+    {action : ProductAction Inertia FineCarrier Sheet9}
+    (element : FineFrickeElement action)
+    (mode : Mode5)
+    (state : ModeBlock18) :
+    action.act element.frickeInertia (embedModeBlock mode state) =
+      embedModeBlock mode (compiledFrickeBlockAct element mode state) :=
+  compiled_fricke_block_intertwines element mode state
+
 inductive IncomingInversionAuthority : Prop
 inductive AnalyticFrickeQuotientAuthority : Prop
 inductive OutgoingNineResidualArithmeticRecognition : Prop
@@ -184,8 +209,13 @@ structure Boundary where
   incomingInversionAuthorityPaid : Bool
   incomingFiniteFrickeQuotientCoordinatePaid : Bool
   incomingRawActionEquivalenceRejected : Bool
+  incomingStabilizerPreservingRecognitionRejected : Bool
+  quotientLevelAnalyticFrickeContractOwned : Bool
   analyticFrickeQuotientAuthorityPaid : Bool
   outgoingSelectedFibreCompilerPaid : Bool
+  outgoingFineFrickeSingleFibreNoGoPaid : Bool
+  outgoingFrickeStableModeBlock18Paid : Bool
+  actualMonsterFineFrickeElementPaid : Bool
   actualMonsterMultiplicityActionPaid : Bool
   invariantFine10FibreRecognitionPaid : Bool
   outgoingResidualArithmeticRecognitionPaid : Bool
@@ -204,8 +234,13 @@ def canonicalBoundary : Boundary where
   incomingInversionAuthorityPaid := false
   incomingFiniteFrickeQuotientCoordinatePaid := true
   incomingRawActionEquivalenceRejected := true
+  incomingStabilizerPreservingRecognitionRejected := true
+  quotientLevelAnalyticFrickeContractOwned := true
   analyticFrickeQuotientAuthorityPaid := false
   outgoingSelectedFibreCompilerPaid := true
+  outgoingFineFrickeSingleFibreNoGoPaid := true
+  outgoingFrickeStableModeBlock18Paid := true
+  actualMonsterFineFrickeElementPaid := false
   actualMonsterMultiplicityActionPaid := false
   invariantFine10FibreRecognitionPaid := false
   outgoingResidualArithmeticRecognitionPaid := false

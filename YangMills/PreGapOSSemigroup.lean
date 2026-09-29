@@ -204,11 +204,8 @@ theorem os_semigroup_locally_uniform_in_time
         field_simp [hA0]
         ring
   have hLess : δ * ‖right‖ + (‖left‖ + 1) * δ ≤ δ * A := by
-    have hEq :
-        δ * ‖right‖ + (‖left‖ + 1) * δ = δ * A := by
-      dsimp [A]
-      ring
-    exact le_of_eq hEq
+    dsimp [A]
+    nlinarith [le_of_lt hδpos]
   linarith
 
 /--

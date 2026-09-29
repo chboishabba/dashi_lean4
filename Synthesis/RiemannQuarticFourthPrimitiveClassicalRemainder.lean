@@ -113,4 +113,82 @@ theorem zetaMuPositiveOrdinateRemainder_sub_eq_zetaHalfContour
   rw [zetaMuCumulativeDiscrepancy_endpoint] at hdelta
   exact hdelta.symm.trans hwindow
 
+
+/-- Exact additivity of the *same* atomic counting discrepancy and the mu
+integral at an arbitrary intermediate ordinate. -/
+theorem zetaMuCumulativeDiscrepancy_add
+    {A B C : ℝ}
+    (hAB : A <= B)
+    (hBC : B <= C) :
+    zetaMuCumulativeDiscrepancy A C
+      =
+    zetaMuCumulativeDiscrepancy A B
+      + zetaMuCumulativeDiscrepancy B C := by
+  have hn :=
+    Zeta23.Ncount_add (a:=A) (b:=B) (c:=C) hAB hBC
+  have hnR :
+      (Ncount A C : ℝ)
+        = (Ncount A B : ℝ) + (Ncount B C : ℝ) := by
+    exact_mod_cast hn
+  have hmu : ∀ a b : ℝ,
+      IntervalIntegrable Zeta23.mu volume a b :=
+    fun a b => Zeta23.gammaFacts.smooth.continuous.intervalIntegrable a b
+  have hi :=
+    intervalIntegral.integral_add_adjacent_intervals
+      (hmu A B) (hmu B C)
+  unfold zetaMuCumulativeDiscrepancy zetaMuPrimitive
+  rw [hnR,hi]
+  ring
+
+/-- A two-sided remainder which is defined even when the symmetric window
+crosses ordinate zero.  The negative-side term is not discarded. -/
+def zetaMuFullSymmetricRemainder (t s : ℝ) : ℝ :=
+  if s <= t then
+    zetaMuPositiveOrdinateRemainder (t+s)
+      - zetaMuPositiveOrdinateRemainder (t-s)
+  else
+    zetaMuCumulativeDiscrepancy (t-s) 0
+      + zetaMuPositiveOrdinateRemainder (t+s)
+
+theorem zetaMuSymmetricDiscrepancy_eq_fullRemainder
+    {t s : ℝ}
+    (ht : 0 <= t)
+    (hs : 0 <= s) :
+    zetaMuCumulativeDiscrepancy (t-s) (t+s)
+      =
+    zetaMuFullSymmetricRemainder t s := by
+  unfold zetaMuFullSymmetricRemainder
+  split_ifs with hst
+  · exact zetaMuWindowDiscrepancy_eq_positiveRemainder_sub
+      (by linarith) (by linarith)
+  · have hleft : t-s <= 0 := by linarith
+    have hright : 0 <= t+s := by linarith
+    rw [zetaMuCumulativeDiscrepancy_add hleft hright]
+    rfl
+
+/-- Full positive-and-negative-ordinate version.  No cutoff condition
+r*Q <= t is required; the negative window is retained literally. -/
+theorem QuarticFourSignedPolePair.physicalFourthPrimitive_eq_fullSymmetricRemainder
+    {t Q : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hQ : quarticSignedPoleCanonicalLocalRadius <= Q) :
+    W.outerSymmetricDiscrepancyFourthPhysicalPrimitive Q
+      =
+    ∫ s in
+      ((t/16)*quarticSignedPoleCanonicalLocalRadius)..((t/16)*Q),
+      (((t/16)*Q-s)^3/6) * zetaMuFullSymmetricRemainder t s := by
+  let r : ℝ := t/16
+  have hr : 0 < r := by dsimp [r]; positivity
+  have hle : r*quarticSignedPoleCanonicalLocalRadius <= r*Q :=
+    mul_le_mul_of_nonneg_left hQ hr.le
+  unfold QuarticFourSignedPolePair.outerSymmetricDiscrepancyFourthPhysicalPrimitive
+  dsimp [r]
+  apply intervalIntegral.integral_congr
+  intro s hs
+  rw [Set.uIcc_of_le hle] at hs
+  have hs0 : 0 <= s :=
+    (mul_nonneg hr.le quarticSignedPoleCanonicalLocalRadius_pos.le).trans hs.1
+  rw [zetaMuSymmetricDiscrepancy_eq_fullRemainder ht.le hs0]
+
 end Synthesis

@@ -1,3 +1,11 @@
+/-!
+NOTICE (R815): This earlier compiler's PhysicalOrbitWeld is a strictly
+hypothetical equality, NOT the literal R745/R760/R781 W2 weld.  It omits the
+retained viscous contribution and uses an opposite signed payment direction.
+Do not instantiate it using those Agda owners.  The physically normalized
+conditional route is NSBControl/SignedOrbitPacketWeld.lean, which retains
+the factor six and the nonnegative integrated orbit payment.
+-/
 import Mathlib.Tactic
 
 /-!

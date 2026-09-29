@@ -163,6 +163,88 @@ theorem zeta_zetaSquared_zero_is_not_infinity :
     specialHomogeneousCubic zeta (zeta ^ 2) 0 ≠ 0 := by
   simp [specialHomogeneousCubic, zeta_cube_is_one]
 
+/-- Every cube-one coordinate is 1, zeta, or zeta². -/
+theorem cube_one_iff (x : B.F4) :
+    x ^ 3 = 1 ↔ x = 1 ∨ x = zeta ∨ x = zeta ^ 2 := by
+  constructor
+  · intro h
+    have hf : (x - 1) * ((x - zeta) * (x - zeta ^ 2)) = 0 := by
+      calc
+        _ = (x - 1) * (x ^ 2 + x + 1) := by rw [quadratic_factors]
+        _ = x ^ 3 - 1 := by ring
+        _ = 0 := by rw [h]; ring
+    rcases mul_eq_zero.mp hf with h1 | h2
+    · exact Or.inl (sub_eq_zero.mp h1)
+    rcases mul_eq_zero.mp h2 with hz | hz2
+    · exact Or.inr (Or.inl (sub_eq_zero.mp hz))
+    · exact Or.inr (Or.inr (sub_eq_zero.mp hz2))
+  · rintro (rfl | rfl | rfl)
+    · ring
+    · exact zeta_cube_is_one
+    · calc
+        _ = zeta ^ 6 := by ring
+        _ = (zeta ^ 3) ^ 2 := by ring
+        _ = 1 := by rw [zeta_cube_is_one]; ring
+
+/-- The characteristic-two zero-trace values are exactly zero and one. -/
+theorem trace_zero_iff (y : B.F4) :
+    y ^ 2 + y = 0 ↔ y = 0 ∨ y = 1 := by
+  have htwo : (2 : B.F4) = 0 := CharP.cast_eq_zero B.F4 2
+  have hfactor : y * (y - 1) = y ^ 2 + y := by
+    linear_combination -(y * htwo)
+  constructor
+  · intro h
+    have hf : y * (y - 1) = 0 := by rw [hfactor, h]
+    rcases mul_eq_zero.mp hf with h0 | h1
+    · exact Or.inl h0
+    · exact Or.inr (sub_eq_zero.mp h1)
+  · rintro (rfl | rfl)
+    · simp
+    · simpa using htwo
+
+/-- The characteristic-two unit-trace values are zeta and zeta². -/
+theorem trace_one_iff (y : B.F4) :
+    y ^ 2 + y = 1 ↔ y = zeta ∨ y = zeta ^ 2 := by
+  have htwo : (2 : B.F4) = 0 := CharP.cast_eq_zero B.F4 2
+  constructor
+  · intro h
+    have hz : y ^ 2 + y + 1 = 0 := by
+      linear_combination h + htwo
+    have hf : (y - zeta) * (y - zeta ^ 2) = 0 := by
+      rw [quadratic_factors]
+      exact hz
+    rcases mul_eq_zero.mp hf with hz1 | hz2
+    · exact Or.inl (sub_eq_zero.mp hz1)
+    · exact Or.inr (sub_eq_zero.mp hz2)
+  · rintro (rfl | rfl)
+    · exact zeta_trace_one
+    · exact zeta_squared_trace_one
+
+/--
+Exhaustive affine-coordinate classification for Banerjee's special F4 curve.
+This determines two points over x=0, and two over each of 1,zeta,zeta².
+-/
+theorem affine_curve_coordinate_iff (x y : B.F4) :
+    y ^ 2 + y = x ^ 3 ↔
+      (x = 0 ∧ (y = 0 ∨ y = 1)) ∨
+      ((x = 1 ∨ x = zeta ∨ x = zeta ^ 2) ∧
+        (y = zeta ∨ y = zeta ^ 2)) := by
+  constructor
+  · intro h
+    by_cases hx : x = 0
+    · left
+      refine ⟨hx, (trace_zero_iff y).mp ?_⟩
+      simpa [hx] using h
+    · right
+      have hx3 : x ^ 3 = 1 := nonzero_f4_cube_is_one x hx
+      exact ⟨(cube_one_iff x).mp hx3,
+        (trace_one_iff y).mp (h.trans hx3)⟩
+  · rintro (⟨rfl, hy⟩ | ⟨hx, hy⟩)
+    · simpa using (trace_zero_iff y).mpr hy
+    · have hx3 := (cube_one_iff x).mpr hx
+      have hy1 := (trace_one_iff y).mpr hy
+      exact hy1.trans hx3.symm
+
 structure Boundary where
   actualNontrivialF4ZetaSelected : Bool
   cubicRootAndQuadraticRelation : Bool
@@ -170,6 +252,7 @@ structure Boundary where
   threeRootPolynomialOwned : Bool
   exhaustiveThreeRootClassificationOwned : Bool
   falseProjectiveInfinityTripleRejected : Bool
+  exhaustiveAffineCoordinateClassificationLeanOwned : Bool
   fullCurvePointEnumerationLeanProved : Bool
   gamma0FourMarkedSourceRealized : Bool
   deriving Repr
@@ -181,6 +264,7 @@ def canonicalBoundary : Boundary where
   threeRootPolynomialOwned := true
   exhaustiveThreeRootClassificationOwned := true
   falseProjectiveInfinityTripleRejected := true
+  exhaustiveAffineCoordinateClassificationLeanOwned := true
   fullCurvePointEnumerationLeanProved := false
   gamma0FourMarkedSourceRealized := false
 

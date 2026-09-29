@@ -399,7 +399,7 @@ theorem QuarticFourSignedPolePair.fourthPrimitive_abs_le_from_absoluteRvM
         volume quarticSignedPoleCanonicalLocalRadius Q := by
     have hw : Continuous (fun q : ℝ => (Q-q)^3/6) := by
       fun_prop
-    exact hA.mul_continuous hw
+    exact hA.mul_continuousOn hw.continuousOn
   have hr4 : 0 <= (t/16)^4 := by positivity
   have hbound :
       ∀ q ∈ Set.Icc quarticSignedPoleCanonicalLocalRadius Q,

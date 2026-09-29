@@ -8,9 +8,7 @@ Finite cardinality for B of size b is b^k; B containing n tagged
 three-mode families has (3*n)^k elements if tags are disjoint.
 The self-indexing carrier (previous level → B) is a distinct tower.
 -/
-import Mathlib.Data.Fin.Basic
-import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Fintype.Pi
+import Mathlib
 
 namespace AgdaMirror.Core.IndexedRelationalHyperfabric
 

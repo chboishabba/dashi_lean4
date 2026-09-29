@@ -95,14 +95,18 @@ theorem heisenberg_commutator_of_curve_points (p q : CurveGroup) :
 theorem coords_frobenius_model (p : CurveGroup) :
     coords (Action.actualFrobeniusModel p) =
       Action.frobeniusMatrix (coords p) := by
-  exact Basis.actualC3SquareAddEquiv.symm.apply_apply_symm
-    (Action.frobeniusMatrix (coords p))
+  change Basis.actualC3SquareAddEquiv.symm
+      (Basis.actualC3SquareAddEquiv (Action.frobeniusMatrix (coords p))) =
+      Action.frobeniusMatrix (coords p)
+  exact Basis.actualC3SquareAddEquiv.symm_apply_apply _
 
 theorem coords_shear_model (p : CurveGroup) :
     coords (Action.actualShearModel p) =
       Action.shearMatrix (coords p) := by
-  exact Basis.actualC3SquareAddEquiv.symm.apply_apply_symm
-    (Action.shearMatrix (coords p))
+  change Basis.actualC3SquareAddEquiv.symm
+      (Basis.actualC3SquareAddEquiv (Action.shearMatrix (coords p))) =
+      Action.shearMatrix (coords p)
+  exact Basis.actualC3SquareAddEquiv.symm_apply_apply _
 
 /-- The transported actual-group shear preserves the Heisenberg commutator. -/
 theorem pairing_shear (p q : CurveGroup) :
@@ -141,19 +145,19 @@ theorem pairing_nondegenerate {p : CurveGroup} (hp : p ≠ 0) :
     ∃ q : CurveGroup, pairing p q ≠ 0 := by
   have hc : coords p ≠ (0,0) := by
     intro h
-    have hp0 : p = 0 := by
-      apply Basis.actualC3SquareAddEquiv.injective
-      simpa [coords] using h
-    exact hp hp0
-  rcases coords p with ⟨a,b⟩
-  by_cases ha : a = 0
-  · have hb : b ≠ 0 := by
-      intro h
-      exact hc (by simp [ha,h])
+    apply hp
+    apply Basis.actualC3SquareAddEquiv.symm.injective
+    simpa [coords] using h
+  by_cases ha : (coords p).1 = 0
+  · have hb : (coords p).2 ≠ 0 := by
+      intro hb
+      apply hc
+      exact Prod.ext ha hb
     refine ⟨Basis.actualC3SquareAddEquiv (1,0), ?_⟩
     simp [pairing, coords, hb]
   · refine ⟨Basis.actualC3SquareAddEquiv (0,1), ?_⟩
     simp [pairing, coords, ha]
+
 
 structure Boundary where
   actualEllipticGroupBasisReused : Bool

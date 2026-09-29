@@ -159,10 +159,60 @@ theorem pairing_nondegenerate {p : CurveGroup} (hp : p ≠ 0) :
     simp [pairing, coords, ha]
 
 
+/--
+The native unsymmetrized Heisenberg shear has a quadratic central correction.
+This is the exact cocycle difference between lifting an elliptic point first
+and applying the rank-one Heisenberg shear.
+-/
+theorem native_shear_lift_central_correction (p : CurveGroup) :
+    (Integration.OggSSPP2TernaryHeisenbergAction.shearLift
+      (heisenbergLift p)).z =
+        2 * (coords p).2 ^ 2 := by
+  simp [Integration.OggSSPP2TernaryHeisenbergAction.shearLift,
+    heisenbergLift, H.dot, Fin.sum_univ_one]
+  ring
+
+/--
+The commutator of native Heisenberg lifts transforms under the *actual*
+elliptic-model shear by preservation of the central pairing.
+-/
+theorem native_heisenberg_shear_matches_actual_elliptic_pairing
+    (p q : CurveGroup) :
+    H.omega
+      (Integration.OggSSPP2TernaryHeisenbergAction.shearLift
+        (heisenbergLift p))
+      (Integration.OggSSPP2TernaryHeisenbergAction.shearLift
+        (heisenbergLift q))
+      =
+    pairing (Action.actualShearModel p)
+      (Action.actualShearModel q) := by
+  rw [Integration.OggSSPP2TernaryHeisenbergAction.shearLift_omega,
+    heisenbergLift_omega, pairing_shear]
+
+/--
+The center-inverting native Heisenberg reflection matches the transported
+Frobenius anti-symplectic form, without equating the actual coordinate
+Frobenius to the transported group model.
+-/
+theorem native_heisenberg_reflection_matches_actual_elliptic_pairing
+    (p q : CurveGroup) :
+    H.omega
+      (Integration.OggSSPP2TernaryHeisenbergAction.reflectionLift
+        (heisenbergLift p))
+      (Integration.OggSSPP2TernaryHeisenbergAction.reflectionLift
+        (heisenbergLift q))
+      =
+    pairing (Action.actualFrobeniusModel p)
+      (Action.actualFrobeniusModel q) := by
+  rw [Integration.OggSSPP2TernaryHeisenbergAction.reflectionLift_omega,
+    heisenbergLift_omega, pairing_frobenius]
+
 structure Boundary where
   actualEllipticGroupBasisReused : Bool
   actualEllipticPairingBilinear : Bool
   actualHeisenbergCommutatorIdentified : Bool
+  nativeQuadraticShearCocycleCompared : Bool
+  nativeHeisenbergActionsMatchTransportedPairing : Bool
   shearSymplectic : Bool
   FrobeniusAntisymplectic : Bool
   intrinsicWeilPairingIdentification : Bool
@@ -174,6 +224,8 @@ def canonicalBoundary : Boundary where
   actualEllipticGroupBasisReused := true
   actualEllipticPairingBilinear := true
   actualHeisenbergCommutatorIdentified := true
+  nativeQuadraticShearCocycleCompared := true
+  nativeHeisenbergActionsMatchTransportedPairing := true
   shearSymplectic := true
   FrobeniusAntisymplectic := true
   intrinsicWeilPairingIdentification := false

@@ -142,4 +142,43 @@ theorem reflection_conjugates_central_phase (z : F3) :
   rw [← Integration.Base369Schrodinger.chi_add]
   simp [Integration.Base369Schrodinger.chi_zero]
 
+
+/-- A genuine symplectic action on the existing central-commutator pairing. -/
+theorem shearLift_omega (g h : H n) :
+    omega (shearLift g) (shearLift h) = omega g h := by
+  simp only [omega, shearLift, dot_add_right]
+  rw [dot_comm g.y h.y]
+  ring
+
+/-- The relative-Frobenius reflection is anti-symplectic. -/
+theorem reflectionLift_omega (g h : H n) :
+    omega (reflectionLift g) (reflectionLift h) = -omega g h := by
+  simp only [omega, reflectionLift, dot_neg_left]
+  ring
+
+/-- The S3/dihedral relation is obeyed by the actual group lifts,
+including the unsymmetrized cocycle's central quadratic correction. -/
+theorem reflection_shear_reflection (g : H n) :
+    reflectionLift (shearLift (reflectionLift g))
+      = shearLift (shearLift g) := by
+  have hm : (-1 : F3) = 2 := by decide
+  have hq : (-2 : F3) = 4 := by decide
+  refine H.ext' ?_ ?_ ?_
+  · ext i
+    change g.x i - g.y i = g.x i + g.y i + g.y i
+    calc
+      g.x i - g.y i = g.x i + (-1 : F3)*g.y i := by ring
+      _ = g.x i + 2*g.y i := by rw [hm]
+      _ = g.x i + g.y i + g.y i := by ring
+  · simp [reflectionLift,shearLift]
+  · change
+      -(-g.z + 2 * dot (-g.y) (-g.y))
+        = (g.z + 2 * dot g.y g.y) + 2 * dot g.y g.y
+    rw [dot_neg_left, dot_neg_right]
+    calc
+      -(-g.z + 2 * -(-dot g.y g.y))
+        = g.z + (-2 : F3)*dot g.y g.y := by ring
+      _ = g.z + 4*dot g.y g.y := by rw [hq]
+      _ = (g.z+2*dot g.y g.y)+2*dot g.y g.y := by ring
+
 end Integration.OggSSPP2TernaryHeisenbergAction

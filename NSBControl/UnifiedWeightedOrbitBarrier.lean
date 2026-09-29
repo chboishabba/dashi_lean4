@@ -97,5 +97,41 @@ theorem scaleFreeBalanceForcesBothZero
   norm_num at balanceAtTwo
   constructor <;> linarith
 
+/-- Truly uniform-in-cutoff result: one positive margin floor and one
+    terminal bound shared by every cutoff.  Both are independent analytic
+    inputs; this statement does not infer them from cutoff-wise estimates. -/
+theorem allCutoffsUniformBarrier
+    {Time : Type*}
+    (family : ℕ → Time → Slice)
+    (bound : Time → ℝ)
+    (uniformMargin : ℝ)
+    (_hUniformMarginPositive : 0 < uniformMargin)
+    (hWeld : ∀ cutoff terminal, PhysicalOrbitWeld (family cutoff terminal))
+    (hSigned : ∀ cutoff terminal, SignedOrbitPayment (family cutoff terminal))
+    (hW1 : ∀ cutoff terminal,
+      (family cutoff terminal).integratedWeighted +
+        (family cutoff terminal).Qterminal ≤ bound terminal)
+    (hInitial : ∀ cutoff terminal, 0 ≤ (family cutoff terminal).Qinitial)
+    (hDiss : ∀ cutoff terminal, 0 ≤ (family cutoff terminal).dissipation)
+    (hMargin : ∀ cutoff terminal, uniformMargin ≤ (family cutoff terminal).margin) :
+    ∀ cutoff terminal,
+      (family cutoff terminal).terminalCritical +
+        uniformMargin * (family cutoff terminal).dissipation
+      ≤ (family cutoff terminal).initialCritical + 12 * bound terminal := by
+  intro cutoff terminal
+  let s := family cutoff terminal
+  have hw2 : augmentedDefect s ≤ 0 :=
+    orbitPayment_implies_W2 s (hWeld cutoff terminal)
+      (hSigned cutoff terminal)
+  have hbound : s.integratedWeighted + s.Qterminal ≤ bound terminal :=
+    hW1 cutoff terminal
+  have hmass : 0 ≤ s.Qinitial := hInitial cutoff terminal
+  have hprod :
+      0 ≤ (s.margin - uniformMargin) * s.dissipation :=
+    mul_nonneg (sub_nonneg.mpr (hMargin cutoff terminal))
+      (hDiss cutoff terminal)
+  unfold augmentedDefect at hw2
+  nlinarith
+
 end UnifiedWeightedOrbitBarrier
 end NSBControl

@@ -554,7 +554,7 @@ theorem compactCosineD5_weighted_abs_integrable
     · exact hcont.aestronglyMeasurable
   have hC5 :
       Integrable (fun q : ℝ => |compactCosineD5 P q|) :=
-    (compactCosineD5_integrable hPs.contDiff_two hPc).abs
+    (compactCosineD5_integrable (hPs.of_le (by simp)) hPc).abs
   have hw' :
       Integrable (fun q : ℝ => |q|^5 * |compactCosineD5 P q|) := by
     simpa [Real.norm_eq_abs] using hw

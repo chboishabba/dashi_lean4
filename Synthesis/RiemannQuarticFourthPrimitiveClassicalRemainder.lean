@@ -191,4 +191,37 @@ theorem QuarticFourSignedPolePair.physicalFourthPrimitive_eq_fullSymmetricRemain
     (mul_nonneg hr.le quarticSignedPoleCanonicalLocalRadius_pos.le).trans hs.1
   rw [zetaMuSymmetricDiscrepancy_eq_fullRemainder ht.le hs0]
 
+
+/-- The actual signed fifth-kernel pairing, with no anonymous fourth
+primitive: its inner integrand is the literal full-range RvM remainder,
+including negative ordinates when q>16. -/
+theorem QuarticFourSignedPolePair.signedFifthCapInterior_eq_twoSidedRemainder
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn : quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ)) :
+    W.signedFifthPhysicalCapInteriorAt n
+      =
+    ∫ q in quarticSignedPoleCanonicalLocalRadius..((n : ℝ)/(t/16)),
+      compactCosineD5
+        (quarticFourSignedPoleCombinedProfile
+          W.R W.muHalf W.muTwo t) q
+      *
+      (∫ s in
+        ((t/16)*quarticSignedPoleCanonicalLocalRadius)..((t/16)*q),
+        (((t/16)*q-s)^3/6) *
+          zetaMuFullSymmetricRemainder t s) := by
+  have hr : 0 < t/16 := by positivity
+  have hQ :
+      quarticSignedPoleCanonicalLocalRadius <= (n : ℝ)/(t/16) := by
+    rw [le_div_iff₀ hr]
+    exact hn
+  unfold QuarticFourSignedPolePair.signedFifthPhysicalCapInteriorAt
+  apply intervalIntegral.integral_congr
+  intro q hq
+  rw [Set.uIcc_of_le hQ] at hq
+  rw [W.anchoredFourth_eq_physicalFourthPrimitive ht hq.1,
+    W.physicalFourthPrimitive_eq_fullSymmetricRemainder ht hq.1]
+
 end Synthesis

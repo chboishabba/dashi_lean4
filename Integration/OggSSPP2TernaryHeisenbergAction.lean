@@ -250,4 +250,69 @@ theorem alternatingCenterCoordinate_reflectionLift (g : H n) :
   simp only [alternatingCenterCoordinate,reflectionLift,dot_neg_left]
   ring
 
+
+/-!
+## The anti-linear Schrödinger intertwiner
+
+Complex conjugation on the EXISTING Schrödinger function space implements
+the centre-inverting reflection, not an ordinary complex-linear
+intertwiner preserving the original central character. The equations below
+use the existing action T and the proved AddChar inverse/conjugation identity.
+-/
+
+noncomputable def reflectionConjugation (f : X n → ℂ) : X n → ℂ :=
+  fun u => star (f u)
+
+theorem reflectionConjugation_involutive (f : X n → ℂ) :
+    reflectionConjugation (reflectionConjugation f) = f := by
+  funext u
+  simp [reflectionConjugation]
+
+theorem reflectionConjugation_add (f h : X n → ℂ) :
+    reflectionConjugation (f+h)
+      = reflectionConjugation f + reflectionConjugation h := by
+  funext u
+  simp [reflectionConjugation]
+
+theorem reflectionConjugation_conj_smul (c : ℂ) (f : X n → ℂ) :
+    reflectionConjugation (c • f)
+      = (star c) • reflectionConjugation f := by
+  funext u
+  simp [reflectionConjugation, smul_eq_mul, star_mul]
+
+/-- The anti-linear realisation of the relative-F₂ reflection on the
+already-constructed finite Schrödinger representation. -/
+theorem reflectionConjugation_intertwines (g : H n) (f : X n → ℂ) :
+    reflectionConjugation (Integration.Base369Schrodinger.T g f)
+      =
+    Integration.Base369Schrodinger.T (reflectionLift g)
+      (reflectionConjugation f) := by
+  funext u
+  have hexp :
+      -(g.z + dot g.y (u-g.x)) =
+        -g.z + dot (-g.y) (u-g.x) := by
+    rw [dot_neg_left]
+    ring
+  change
+    star (Integration.Base369Schrodinger.chi
+        (g.z+dot g.y (u-g.x)) * f (u-g.x))
+      =
+    Integration.Base369Schrodinger.chi
+        (-g.z+dot (-g.y) (u-g.x))
+      * star (f (u-g.x))
+  rw [star_mul, ← AddChar.map_neg_eq_conj
+    Integration.Base369Schrodinger.chi
+    (g.z+dot g.y (u-g.x)), hexp]
+
+/-- The map is pointwise norm preserving; its finite Hilbert-space
+antiunitarity follows from the same equality summed over the finite X n. -/
+theorem reflectionConjugation_norm (f : X n → ℂ) (u : X n) :
+    ‖reflectionConjugation f u‖ = ‖f u‖ := by
+  simp [reflectionConjugation]
+
+theorem reflectionConjugation_energy (f : X n → ℂ) :
+    (∑ u : X n, ‖reflectionConjugation f u‖ ^ 2)
+      = ∑ u : X n, ‖f u‖ ^ 2 := by
+  simp [reflectionConjugation]
+
 end Integration.OggSSPP2TernaryHeisenbergAction

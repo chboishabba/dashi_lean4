@@ -124,4 +124,48 @@ theorem os_gram_contraction_respects_null_equivalence
     os_gram_contraction_preserves_null
       B hPositive T hContract hNull
 
+/--
+The ACTUAL pairing on the OS null quotient, constructed with Lean's
+`Submodule` quotient.  Positivity plus symmetry proves representative
+independence by `os_gram_pair_eq_of_null_differences`.
+
+No independent axiom asserting "OS pairing descends" is taken here.
+-/
+def osGramQuotientPairing
+    {V : Type*} [AddCommGroup V] [Module ℝ V]
+    (B : LinearMap.BilinForm ℝ V)
+    (hPositive : ∀ v : V, 0 ≤ B v v)
+    (hSymmetric : B.IsSymm) :
+    (V ⧸ B.ker) → (V ⧸ B.ker) → ℝ :=
+  fun left right =>
+    Quotient.liftOn₂ left right
+      (fun x y : V => B x y)
+      (by
+        intro left₁ left₂ right₁ right₂ hleft hright
+        have hleftMem :
+            left₁ - left₂ ∈ B.ker :=
+          (Submodule.quotientRel_r_def B.ker).mp hleft
+        have hrightMem :
+            right₁ - right₂ ∈ B.ker :=
+          (Submodule.quotientRel_r_def B.ker).mp hright
+        exact os_gram_pair_eq_of_null_differences
+          B hPositive hSymmetric
+          ((B.apply_apply_same_eq_zero_iff hPositive hSymmetric).mpr hleftMem)
+          ((B.apply_apply_same_eq_zero_iff hPositive hSymmetric).mpr hrightMem))
+
+/--
+The reconstructed pre-Hilbert pairing of two OS equivalence classes is
+definitionally the original positive-time reflection Gram value.
+-/
+theorem osGramQuotientPairing_mk
+    {V : Type*} [AddCommGroup V] [Module ℝ V]
+    (B : LinearMap.BilinForm ℝ V)
+    (hPositive : ∀ v : V, 0 ≤ B v v)
+    (hSymmetric : B.IsSymm)
+    (left right : V) :
+    osGramQuotientPairing B hPositive hSymmetric
+      (Quotient.mk left : V ⧸ B.ker)
+      (Quotient.mk right : V ⧸ B.ker) =
+    B left right := rfl
+
 end RequestProject.YangMills

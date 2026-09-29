@@ -118,6 +118,11 @@ import Integration.PromotionDiscipline
 import Integration.ConsumerGauge
 import Integration.PhysicsInstances
 import Integration.GRQFTExecutableResidual
+import Integration.GRQFTPostMergeLocalization
+import Integration.AntigravitySourceGeometryWeld
+import Integration.AntigravityFiniteThicknessWall
+import Integration.AntigravityFiniteThicknessTOVTransition
+import Integration.AntigravityFiniteThicknessLapseReconstruction
 import Integration.Registry
 import Integration.RiemannReflection
 import Integration.RiemannStrip
@@ -984,3 +989,9 @@ carrier is finite and every distance is a natural number; inside it the carriers
 are `ℝ` and `ℂ` as sets with involutions, and no analytic hypothesis is
 discharged.
 -/
+
+import Integration.AntigravityFiniteThicknessMatterCompatibility
+
+import Integration.AntigravityCorrectedSourceGeometryWeld
+import Integration.AntigravitySourceNativeAnisotropicYMProfile
+import Integration.AntigravityCorrectedFiniteThicknessCalibration

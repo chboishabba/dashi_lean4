@@ -71,7 +71,24 @@ theorem affine_curve_is_closed_subscheme :
 
 theorem equation_in_defining_ideal :
     equation ∈ equationIdeal := by
-  exact Ideal.subset_span (Set.mem_singleton equation)
+  apply Ideal.subset_span
+  simp
+
+/-- The defining Weierstrass equation holds in the actual coordinate ring. -/
+theorem equation_vanishes_in_coordinate_ring :
+    (Ideal.Quotient.mk equationIdeal) equation = 0 :=
+  Ideal.Quotient.eq_zero_iff_mem.mpr equation_in_defining_ideal
+
+/-- In the quotient, y² + a₁*x*y + y = x³ is an exact ring equality. -/
+theorem affine_weierstrass_relation :
+    ybar ^ 2 +
+        (coefficientMap B.universalParameter) * xbar * ybar +
+        ybar = xbar ^ 3 := by
+  have h := equation_vanishes_in_coordinate_ring
+  simp only [equation, map_sub, map_add, map_pow, map_mul,
+    RingHom.comp_apply] at h
+  dsimp [xbar, ybar, coefficientMap, parameter] at *
+  exact sub_eq_zero.mp h
 
 structure Boundary where
   actualPolynomialEquationOwned : Bool

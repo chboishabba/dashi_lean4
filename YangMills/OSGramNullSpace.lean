@@ -86,4 +86,42 @@ theorem os_gram_pair_eq_of_null_differences
     _ = B right' left' := hRight
     _ = B left' right' := hSymmetric.eq _ _
 
+/--
+Any reflected-Gram contraction preserves null vectors, so the positive-time
+translation operator is meaningful on the OS quotient.  This is the
+algebraic descent condition; a strongly continuous contraction semigroup
+on the completion still needs a separate analytic reconstruction theorem.
+-/
+theorem os_gram_contraction_preserves_null
+    {V : Type*} [AddCommGroup V] [Module ℝ V]
+    (B : LinearMap.BilinForm ℝ V)
+    (hPositive : ∀ v : V, 0 ≤ B v v)
+    (T : V →ₗ[ℝ] V)
+    (hContract : ∀ v : V, B (T v) (T v) ≤ B v v)
+    {v : V}
+    (hNull : B v v = 0) :
+    B (T v) (T v) = 0 := by
+  have hnonneg := hPositive (T v)
+  have hupper := hContract v
+  rw [hNull] at hupper
+  exact le_antisymm hupper hnonneg
+
+/--
+OS reflection-positive quotient classes remain identified under
+positive-time translation, provided the physical translation is
+nonexpansive in the ACTUAL reflected Gram form.
+-/
+theorem os_gram_contraction_respects_null_equivalence
+    {V : Type*} [AddCommGroup V] [Module ℝ V]
+    (B : LinearMap.BilinForm ℝ V)
+    (hPositive : ∀ v : V, 0 ≤ B v v)
+    (T : V →ₗ[ℝ] V)
+    (hContract : ∀ v : V, B (T v) (T v) ≤ B v v)
+    {left right : V}
+    (hNull : B (left - right) (left - right) = 0) :
+    B (T left - T right) (T left - T right) = 0 := by
+  simpa only [map_sub] using
+    os_gram_contraction_preserves_null
+      B hPositive T hContract hNull
+
 end RequestProject.YangMills

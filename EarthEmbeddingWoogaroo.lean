@@ -66,22 +66,22 @@ inductive Evidence : EvidenceStage → Type
       (sourceInstrument review : String) : Evidence .legalConsumer
 
 inductive Waterway
-  | springfieldLakes | opossumCreek | mountainCreek
+  | springfieldMainLakes | opossumCreek | mountainCreek
   | woogarooCreek | brisbaneRiver
   deriving DecidableEq, Repr
 
 inductive Connection : Waterway → Waterway → Prop
-  | lakesOpossum : Connection .springfieldLakes .opossumCreek
+  | lakesOpossum : Connection .springfieldMainLakes .opossumCreek
   | opossumWoogaroo : Connection .opossumCreek .woogarooCreek
-  | mountainWoogaroo : Connection .mountainCreek .woogarooCreek
+  | mountainOpossum : Connection .mountainCreek .opossumCreek
   | woogarooBrisbane : Connection .woogarooCreek .brisbaneRiver
 
 inductive Downstream : Waterway → Waterway → Prop
   | direct {a b} : Connection a b → Downstream a b
   | trans {a b c} : Downstream a b → Downstream b c → Downstream a c
 
-theorem springfield_to_brisbane :
-    Downstream .springfieldLakes .brisbaneRiver :=
+theorem main_lakes_to_brisbane :
+    Downstream .springfieldMainLakes .brisbaneRiver :=
   .trans (.direct .lakesOpossum)
     (.trans (.direct .opossumWoogaroo) (.direct .woogarooBrisbane))
 
@@ -101,6 +101,11 @@ theorem prefix_compose {n k j : Nat} (v : Fin n → ℝ)
 theorem coordinate_distance_identity (u v : ℝ) :
     (u - v) ^ 2 = u ^ 2 + v ^ 2 - 2 * u * v := by
   ring
+
+theorem mountain_to_brisbane :
+    Downstream .mountainCreek .brisbaneRiver :=
+  .trans (.direct .mountainOpossum)
+    (.trans (.direct .opossumWoogaroo) (.direct .woogarooBrisbane))
 
 structure WoogarooExperiment where
   selectedRegion : String

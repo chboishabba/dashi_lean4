@@ -1682,6 +1682,17 @@ theorem exists_quarticFourSignedPole_rightBoundary_tendsto_zero :
 
 open Zeta23Bridge.OscillatoryKernelDecay
 
+theorem genericProjectivePhysicalProfile_contDiff_n
+    {g : ℝ -> ℝ}
+    {n : ℕ∞}
+    (hg : ContDiff ℝ n g)
+    (r : ℝ) :
+    ContDiff ℝ n (genericProjectivePhysicalProfile g r) := by
+  unfold genericProjectivePhysicalProfile
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.twoRadiusBracket
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+  fun_prop
+
 theorem genericProjectivePhysicalProfile_contDiff_two
     {g : ℝ -> ℝ}
     (hg : ContDiff ℝ 2 g)
@@ -1692,6 +1703,17 @@ theorem genericProjectivePhysicalProfile_contDiff_two
     Zeta23Bridge.LiteralWeilParityBalance.evenResp
   fun_prop
 
+theorem quarticFourNormalizedProjectiveProfile_contDiff_n
+    {R lam mu : ℝ}
+    (hR : 0 < R)
+    (n : ℕ∞) :
+    ContDiff ℝ n
+      (quarticFourNormalizedProjectiveProfile R lam mu) := by
+  unfold quarticFourNormalizedProjectiveProfile
+  exact genericProjectivePhysicalProfile_contDiff_n
+    (quarticFourWindowProfile_contDiff_n
+      (lam:=lam) (mu:=mu) hR n) 1
+
 theorem quarticFourNormalizedProjectiveProfile_contDiff_two
     {R lam mu : ℝ}
     (hR : 0 < R) :
@@ -1701,6 +1723,21 @@ theorem quarticFourNormalizedProjectiveProfile_contDiff_two
   exact genericProjectivePhysicalProfile_contDiff_two
     (quarticFourWindowProfile_contDiff
       (lam:=lam) (mu:=mu) hR) 1
+
+theorem quarticFourSignedPoleCombinedProfile_contDiff_n
+    {R muHalf muTwo t : ℝ}
+    (hR : 0 < R)
+    (n : ℕ∞) :
+    ContDiff ℝ n
+      (quarticFourSignedPoleCombinedProfile R muHalf muTwo t) := by
+  unfold quarticFourSignedPoleCombinedProfile profileLinearCombination
+  exact
+    (contDiff_const.mul
+      (quarticFourNormalizedProjectiveProfile_contDiff_n
+        (lam:=(1/2 : ℝ)) (mu:=muHalf) hR n)).add
+    (contDiff_const.mul
+      (quarticFourNormalizedProjectiveProfile_contDiff_n
+        (lam:=(2/3 : ℝ)) (mu:=muTwo) hR n))
 
 theorem quarticFourSignedPoleCombinedProfile_contDiff_two
     {R muHalf muTwo t : ℝ}
@@ -2359,6 +2396,65 @@ def QuarticFourSignedPolePair.centeredMuWindowAt
     {t : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) : ℝ :=
   ∫ x in (t - n)..(t + n),
     W.signedOrdinateTest x * Zeta23.mu x
+
+
+def QuarticFourSignedPolePair.centeredOrdinateMassAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) : ℝ :=
+  ∫ x in (t - n)..(t + n), W.signedOrdinateTest x
+
+def QuarticFourSignedPolePair.centeredMuVariationAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) : ℝ :=
+  ∫ x in (t - n)..(t + n),
+    W.signedOrdinateTest x * (Zeta23.mu x - Zeta23.mu t)
+
+/--
+Exact finite-window density split.
+
+This isolates the potentially dominant constant-density mode from the actual
+variation of the Riemann--von Mangoldt density across the selected test.
+No asymptotic approximation to mu is used.
+-/
+theorem QuarticFourSignedPolePair.centeredMuWindowAt_eq_centerDensity_add_variation
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.centeredMuWindowAt n
+      =
+    Zeta23.mu t * W.centeredOrdinateMassAt n
+      + W.centeredMuVariationAt n := by
+  have hpsiC : Continuous W.signedOrdinateTest := by
+    apply continuous_iff_continuousAt.2
+    intro x
+    exact (W.signedOrdinateTest_hasDerivAt ht x).continuousAt
+  have hpsiI :
+      IntervalIntegrable W.signedOrdinateTest volume (t-n) (t+n) :=
+    hpsiC.intervalIntegrable _ _
+  have hprodI :
+      IntervalIntegrable
+        (fun x : ℝ => W.signedOrdinateTest x * Zeta23.mu x)
+        volume (t-n) (t+n) :=
+    (W.signedOrdinateTest_mul_mu_integrable ht).intervalIntegrable
+  have hconstI :
+      IntervalIntegrable
+        (fun x : ℝ => Zeta23.mu t * W.signedOrdinateTest x)
+        volume (t-n) (t+n) :=
+    hpsiI.const_mul _
+  have hvarI :
+      IntervalIntegrable
+        (fun x : ℝ =>
+          W.signedOrdinateTest x * (Zeta23.mu x - Zeta23.mu t))
+        volume (t-n) (t+n) := by
+    have hsub := hprodI.sub hconstI
+    simpa [mul_sub, mul_comm, mul_left_comm, mul_assoc] using hsub
+  unfold QuarticFourSignedPolePair.centeredMuWindowAt
+    QuarticFourSignedPolePair.centeredOrdinateMassAt
+    QuarticFourSignedPolePair.centeredMuVariationAt
+  rw [← intervalIntegral.integral_add hconstI hvarI]
+  apply intervalIntegral.integral_congr
+  intro x
+  ring
+
 
 theorem QuarticFourSignedPolePair.centeredMuWindowAt_tendsto_full
     {t : ℝ} (ht : 0 < t)

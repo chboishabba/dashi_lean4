@@ -371,6 +371,7 @@ def quarticSignedPoleLocalMuMarkedFourthPairMoment
       + quarticSignedPoleFourthPhaseReal A (x-t))
       * Zeta23.mu x
 
+@[ext]
 structure QuarticSignedPoleBidiMarkedJet where
   m0 : ℝ
   m2 : ℝ
@@ -529,6 +530,494 @@ theorem QuarticSignedPoleBidiMarkedJet.angular_sub
     QuarticSignedPoleBidiMarkedJet.angular
     quarticSignedPoleBidiAngularOperator
   ring
+
+
+/--
+Absolute consumer bound for the universal bidi angular operator.
+-/
+theorem QuarticSignedPoleBidiMarkedJet.abs_angular_le
+    (A : ℝ) (J : QuarticSignedPoleBidiMarkedJet) :
+    |J.angular A|
+      <=
+    (1/2 : ℝ) * |J.m4|
+      + 3 * A^2 * |J.m2|
+      + 5 * A^4 * |J.m0| := by
+  unfold QuarticSignedPoleBidiMarkedJet.angular
+    quarticSignedPoleBidiAngularOperator
+  rw [abs_le]
+  have h0u := le_abs_self J.m0
+  have h0l := neg_abs_le J.m0
+  have h2u := le_abs_self J.m2
+  have h2l := neg_abs_le J.m2
+  have h4u := le_abs_self J.m4
+  have h4l := neg_abs_le J.m4
+  have hA2 : 0 <= A^2 := sq_nonneg A
+  have hA4 : 0 <= A^4 := by positivity
+  constructor <;> nlinarith
+
+/--
+Coordinatewise 0/2/4 bounds compile directly to the single angular bound
+consumed by the RH lane.
+-/
+theorem QuarticSignedPoleBidiMarkedJet.abs_angular_le_of_coordinate_bounds
+    (A : ℝ) (J : QuarticSignedPoleBidiMarkedJet)
+    {E0 E2 E4 : ℝ}
+    (h0 : |J.m0| <= E0)
+    (h2 : |J.m2| <= E2)
+    (h4 : |J.m4| <= E4) :
+    |J.angular A|
+      <=
+    (1/2 : ℝ) * E4
+      + 3 * A^2 * E2
+      + 5 * A^4 * E0 := by
+  have hbase := J.abs_angular_le A
+  have hA2 : 0 <= A^2 := sq_nonneg A
+  have hA4 : 0 <= A^4 := by positivity
+  nlinarith
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_abs_le_of_bidi_coordinate_bounds
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    {E0 E2 E4 : ℝ}
+    (h0 :
+      |(W.literalLocalCenteredBidiMarkedJetAt eta A n).m0|
+        <= E0)
+    (h2 :
+      |(W.literalLocalCenteredBidiMarkedJetAt eta A n).m2|
+        <= E2)
+    (h4 :
+      |(W.literalLocalCenteredBidiMarkedJetAt eta A n).m4|
+        <= E4) :
+    |W.literalLocalCenteredFourthAngularAt eta n|
+      <=
+    (1/2 : ℝ) * E4
+      + 3 * A^2 * E2
+      + 5 * A^4 * E0 := by
+  rw [W.literalLocalCenteredFourthAngularAt_eq_bidi_discrepancy
+      (A:=A)]
+  exact
+    QuarticSignedPoleBidiMarkedJet.abs_angular_le_of_coordinate_bounds
+      A (W.literalLocalCenteredBidiMarkedJetAt eta A n)
+      h0 h2 h4
+
+
+/-!
+## Single-scalar localized marked-correlation error
+
+The analytic producer does not need to expose three unrelated error budgets.
+Package the actual zero-minus-mu jet by its coordinate sup norm.  On the
+target/reflection strip |A| <= 1/2, the universal angular operator has norm at
+most 25/16 with respect to this carrier:
+
+  1/2 + 3 A^2 + 5 A^4 <= 25/16.
+
+Thus one scalar localized marked-correlation estimate controls the exact
+fourth-angular consumer.
+-/
+
+def QuarticSignedPoleBidiMarkedJet.maxAbs
+    (J : QuarticSignedPoleBidiMarkedJet) : ℝ :=
+  max |J.m0| (max |J.m2| |J.m4|)
+
+theorem QuarticSignedPoleBidiMarkedJet.maxAbs_nonneg
+    (J : QuarticSignedPoleBidiMarkedJet) :
+    0 <= J.maxAbs := by
+  unfold QuarticSignedPoleBidiMarkedJet.maxAbs
+  positivity
+
+theorem QuarticSignedPoleBidiMarkedJet.abs_m0_le_maxAbs
+    (J : QuarticSignedPoleBidiMarkedJet) :
+    |J.m0| <= J.maxAbs := by
+  unfold QuarticSignedPoleBidiMarkedJet.maxAbs
+  exact le_max_left _ _
+
+theorem QuarticSignedPoleBidiMarkedJet.abs_m2_le_maxAbs
+    (J : QuarticSignedPoleBidiMarkedJet) :
+    |J.m2| <= J.maxAbs := by
+  unfold QuarticSignedPoleBidiMarkedJet.maxAbs
+  exact le_trans (le_max_left _ _) (le_max_right _ _)
+
+theorem QuarticSignedPoleBidiMarkedJet.abs_m4_le_maxAbs
+    (J : QuarticSignedPoleBidiMarkedJet) :
+    |J.m4| <= J.maxAbs := by
+  unfold QuarticSignedPoleBidiMarkedJet.maxAbs
+  exact le_trans (le_max_right _ _) (le_max_right _ _)
+
+theorem QuarticSignedPoleBidiMarkedJet.abs_angular_le_maxAbs
+    (A : ℝ) (J : QuarticSignedPoleBidiMarkedJet) :
+    |J.angular A|
+      <=
+    ((1/2 : ℝ) + 3*A^2 + 5*A^4) * J.maxAbs := by
+  have h :=
+    J.abs_angular_le_of_coordinate_bounds A
+      J.abs_m0_le_maxAbs
+      J.abs_m2_le_maxAbs
+      J.abs_m4_le_maxAbs
+  nlinarith
+
+theorem quarticSignedPoleBidiAngularCoefficient_le_twentyFive_sixteenths
+    {A : ℝ} (hA : |A| <= 1/2) :
+    (1/2 : ℝ) + 3*A^2 + 5*A^4 <= 25/16 := by
+  have hA2 : A^2 <= (1/4 : ℝ) := by
+    nlinarith [sq_abs A, abs_nonneg A]
+  have hplus : 0 <= (1/4 : ℝ) + A^2 := by
+    nlinarith [sq_nonneg A]
+  have hprod :
+      0 <= ((1/4 : ℝ) - A^2) * ((1/4 : ℝ) + A^2) :=
+    mul_nonneg (sub_nonneg.mpr hA2) hplus
+  have hA4 : A^4 <= (1/16 : ℝ) := by
+    nlinarith
+  nlinarith
+
+theorem QuarticSignedPoleBidiMarkedJet.abs_angular_le_twentyFive_sixteenths_maxAbs
+    {A : ℝ} (hA : |A| <= 1/2)
+    (J : QuarticSignedPoleBidiMarkedJet) :
+    |J.angular A| <= (25/16 : ℝ) * J.maxAbs := by
+  have hbase := J.abs_angular_le_maxAbs A
+  have hcoef :=
+    quarticSignedPoleBidiAngularCoefficient_le_twentyFive_sixteenths hA
+  exact hbase.trans
+    (mul_le_mul_of_nonneg_right hcoef J.maxAbs_nonneg)
+
+def QuarticFourSignedPolePair.literalLocalCenteredBidiMarkedErrorAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) (n : ℕ) : ℝ :=
+  (W.literalLocalCenteredBidiMarkedJetAt eta A n).maxAbs
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_abs_le_of_maxError
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hA : |A| <= 1/2) :
+    |W.literalLocalCenteredFourthAngularAt eta n|
+      <=
+    (25/16 : ℝ)
+      * W.literalLocalCenteredBidiMarkedErrorAt eta A n := by
+  rw [W.literalLocalCenteredFourthAngularAt_eq_bidi_discrepancy
+      (A:=A)]
+  exact
+    QuarticSignedPoleBidiMarkedJet.abs_angular_le_twentyFive_sixteenths_maxAbs
+      hA (W.literalLocalCenteredBidiMarkedJetAt eta A n)
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_abs_lt_of_maxError
+    {t eta A margin : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hA : |A| <= 1/2)
+    (hsmall :
+      (25/16 : ℝ)
+        * W.literalLocalCenteredBidiMarkedErrorAt eta A n
+        < margin) :
+    |W.literalLocalCenteredFourthAngularAt eta n| < margin := by
+  exact lt_of_le_of_lt
+    (W.literalLocalCenteredFourthAngularAt_abs_le_of_maxError
+      n hA)
+    hsmall
+
+/--
+Equivalent producer-facing threshold without the 25/16 coefficient on the
+left.  Positivity of the margin is explicit because this theorem is intended
+for direct use by the final absorption inequality.
+-/
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_abs_lt_of_maxError_lt_margin
+    {t eta A margin : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hA : |A| <= 1/2)
+    (hmargin : 0 < margin)
+    (herror :
+      W.literalLocalCenteredBidiMarkedErrorAt eta A n
+        < (16/25 : ℝ) * margin) :
+    |W.literalLocalCenteredFourthAngularAt eta n| < margin := by
+  apply W.literalLocalCenteredFourthAngularAt_abs_lt_of_maxError
+    n hA
+  have hscale : 0 < (25/16 : ℝ) := by norm_num
+  have hscaled :=
+    mul_lt_mul_of_pos_left herror hscale
+  norm_num at hscaled ⊢
+  nlinarith
+
+
+
+/-!
+## Vertical RvM jet versus horizontal off-line correction
+
+The zero-side marked jet is not analytically homogeneous.  Its dependence on
+the ordinates is visible to Riemann--von Mangoldt/Abel machinery, while its
+dependence on horizontal displacement is precisely the genuinely off-line
+debt.
+
+For a = Re rho - 1/2 and delta = Im rho - t, subtracting the critical-line
+reference a=0 gives
+
+  M2(actual) - M2(line) = 2 a^2,
+
+  M4(actual) - M4(line)
+    = 2 a^2 (a^2 + 6 A^2 - 6 delta^2).
+
+The universal D_A combination cancels the auxiliary A dependence of this
+horizontal correction and returns a^2(a^2-6 delta^2), exactly the existing
+horizontal fourth-angular term.
+-/
+
+def QuarticSignedPoleBidiMarkedJet.add
+    (X Y : QuarticSignedPoleBidiMarkedJet) :
+    QuarticSignedPoleBidiMarkedJet where
+  m0 := X.m0 + Y.m0
+  m2 := X.m2 + Y.m2
+  m4 := X.m4 + Y.m4
+
+theorem QuarticSignedPoleBidiMarkedJet.angular_add
+    (A : ℝ) (X Y : QuarticSignedPoleBidiMarkedJet) :
+    (X.add Y).angular A = X.angular A + Y.angular A := by
+  unfold QuarticSignedPoleBidiMarkedJet.add
+    QuarticSignedPoleBidiMarkedJet.angular
+    quarticSignedPoleBidiAngularOperator
+  ring
+
+theorem QuarticSignedPoleBidiMarkedJet.maxAbs_add_le
+    (X Y : QuarticSignedPoleBidiMarkedJet) :
+    (X.add Y).maxAbs <= X.maxAbs + Y.maxAbs := by
+  have h0 :
+      |X.m0 + Y.m0| <= X.maxAbs + Y.maxAbs := by
+    exact (abs_add _ _).trans
+      (add_le_add X.abs_m0_le_maxAbs Y.abs_m0_le_maxAbs)
+  have h2 :
+      |X.m2 + Y.m2| <= X.maxAbs + Y.maxAbs := by
+    exact (abs_add _ _).trans
+      (add_le_add X.abs_m2_le_maxAbs Y.abs_m2_le_maxAbs)
+  have h4 :
+      |X.m4 + Y.m4| <= X.maxAbs + Y.maxAbs := by
+    exact (abs_add _ _).trans
+      (add_le_add X.abs_m4_le_maxAbs Y.abs_m4_le_maxAbs)
+  unfold QuarticSignedPoleBidiMarkedJet.add
+    QuarticSignedPoleBidiMarkedJet.maxAbs
+  exact max_le h0 (max_le h2 h4)
+
+def quarticSignedPoleTargetReflectionSecondPairMarkOnLine
+    (t A : ℝ) (rho : Zeros) : ℝ :=
+  quarticSignedPoleSecondPhaseReal (-A) ((rho : ℂ).im - t)
+    +
+  quarticSignedPoleSecondPhaseReal A ((rho : ℂ).im - t)
+
+def quarticSignedPoleTargetReflectionFourthPairMarkOnLine
+    (t A : ℝ) (rho : Zeros) : ℝ :=
+  quarticSignedPoleFourthPhaseReal (-A) ((rho : ℂ).im - t)
+    +
+  quarticSignedPoleFourthPhaseReal A ((rho : ℂ).im - t)
+
+theorem quarticSignedPoleTargetReflectionSecondPairMark_eq_onLine_add_horizontal
+    (t A : ℝ) (rho : Zeros) :
+    quarticSignedPoleTargetReflectionSecondPairMark t A rho
+      =
+    quarticSignedPoleTargetReflectionSecondPairMarkOnLine t A rho
+      + 2 * heightOf rho^2 := by
+  unfold quarticSignedPoleTargetReflectionSecondPairMark
+    quarticSignedPoleTargetReflectionSecondPairMarkOnLine
+    quarticSignedPoleSecondPhaseReal
+  ring
+
+theorem quarticSignedPoleTargetReflectionFourthPairMark_eq_onLine_add_horizontal
+    (t A : ℝ) (rho : Zeros) :
+    quarticSignedPoleTargetReflectionFourthPairMark t A rho
+      =
+    quarticSignedPoleTargetReflectionFourthPairMarkOnLine t A rho
+      +
+    2 * heightOf rho^2
+      * (heightOf rho^2 + 6*A^2 - 6*((rho : ℂ).im-t)^2) := by
+  unfold quarticSignedPoleTargetReflectionFourthPairMark
+    quarticSignedPoleTargetReflectionFourthPairMarkOnLine
+    quarticSignedPoleFourthPhaseReal
+  ring
+
+def QuarticFourSignedPolePair.literalLocalVerticalReferenceSecondPairMomentAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact
+    ∑ rho ∈ centeredZeroFinset t n,
+      if quarticSignedPoleLocal t eta rho then
+        if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+          ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+            * quarticSignedPoleTargetReflectionSecondPairMarkOnLine
+                t A rho
+        else
+          0
+      else
+        0
+
+def QuarticFourSignedPolePair.literalLocalVerticalReferenceFourthPairMomentAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact
+    ∑ rho ∈ centeredZeroFinset t n,
+      if quarticSignedPoleLocal t eta rho then
+        if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+          ((zetaZeroConfig).mult (rho : ℂ) : ℝ)
+            * quarticSignedPoleTargetReflectionFourthPairMarkOnLine
+                t A rho
+        else
+          0
+      else
+        0
+
+def QuarticFourSignedPolePair.literalLocalVerticalReferenceBidiMarkedJetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) (n : ℕ) : QuarticSignedPoleBidiMarkedJet where
+  m0 := W.literalLocalMarkedMassAt eta n
+  m2 := W.literalLocalVerticalReferenceSecondPairMomentAt eta A n
+  m4 := W.literalLocalVerticalReferenceFourthPairMomentAt eta A n
+
+def QuarticFourSignedPolePair.literalLocalCenteredVerticalReferenceBidiMarkedJetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) (n : ℕ) : QuarticSignedPoleBidiMarkedJet :=
+  (W.literalLocalVerticalReferenceBidiMarkedJetAt eta A n).sub
+    (quarticSignedPoleLocalMuBidiMarkedJet t eta A)
+
+def QuarticFourSignedPolePair.literalLocalHorizontalBidiCorrectionJetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eta A : ℝ) (n : ℕ) : QuarticSignedPoleBidiMarkedJet :=
+  (W.literalLocalZeroBidiMarkedJetAt eta A n).sub
+    (W.literalLocalVerticalReferenceBidiMarkedJetAt eta A n)
+
+theorem QuarticFourSignedPolePair.literalLocalHorizontalBidiCorrectionJetAt_m0
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    (W.literalLocalHorizontalBidiCorrectionJetAt eta A n).m0 = 0 := by
+  exact sub_self _
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredBidiMarkedJetAt_eq_vertical_add_horizontal
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalCenteredBidiMarkedJetAt eta A n
+      =
+    (W.literalLocalCenteredVerticalReferenceBidiMarkedJetAt eta A n).add
+      (W.literalLocalHorizontalBidiCorrectionJetAt eta A n) := by
+  apply QuarticSignedPoleBidiMarkedJet.ext <;>
+    unfold QuarticFourSignedPolePair.literalLocalCenteredBidiMarkedJetAt
+      QuarticFourSignedPolePair.literalLocalCenteredVerticalReferenceBidiMarkedJetAt
+      QuarticFourSignedPolePair.literalLocalHorizontalBidiCorrectionJetAt
+      QuarticFourSignedPolePair.literalLocalZeroBidiMarkedJetAt
+      QuarticFourSignedPolePair.literalLocalVerticalReferenceBidiMarkedJetAt
+      quarticSignedPoleLocalMuBidiMarkedJet
+      QuarticSignedPoleBidiMarkedJet.sub
+      QuarticSignedPoleBidiMarkedJet.add <;>
+    simp <;> ring
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredBidiMarkedErrorAt_le_vertical_add_horizontal
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalCenteredBidiMarkedErrorAt eta A n
+      <=
+    (W.literalLocalCenteredVerticalReferenceBidiMarkedJetAt eta A n).maxAbs
+      +
+    (W.literalLocalHorizontalBidiCorrectionJetAt eta A n).maxAbs := by
+  unfold QuarticFourSignedPolePair.literalLocalCenteredBidiMarkedErrorAt
+  rw [W.literalLocalCenteredBidiMarkedJetAt_eq_vertical_add_horizontal]
+  exact QuarticSignedPoleBidiMarkedJet.maxAbs_add_le _ _
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_eq_vertical_add_horizontal_bidi
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalCenteredFourthAngularAt eta n
+      =
+    (W.literalLocalCenteredVerticalReferenceBidiMarkedJetAt eta A n).angular A
+      +
+    (W.literalLocalHorizontalBidiCorrectionJetAt eta A n).angular A := by
+  rw [W.literalLocalCenteredFourthAngularAt_eq_bidi_discrepancy
+      (A:=A)]
+  rw [W.literalLocalCenteredBidiMarkedJetAt_eq_vertical_add_horizontal]
+  exact QuarticSignedPoleBidiMarkedJet.angular_add A _ _
+
+
+
+theorem QuarticFourSignedPolePair.literalLocalVerticalFourthZeroMomentAt_eq_bidi_verticalReference
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    W.literalLocalVerticalFourthZeroMomentAt eta n
+      =
+    (W.literalLocalVerticalReferenceBidiMarkedJetAt eta A n).angular A := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalVerticalFourthZeroMomentAt
+    QuarticFourSignedPolePair.literalLocalVerticalReferenceBidiMarkedJetAt
+    QuarticFourSignedPolePair.literalLocalMarkedMassAt
+    QuarticFourSignedPolePair.literalLocalVerticalReferenceSecondPairMomentAt
+    QuarticFourSignedPolePair.literalLocalVerticalReferenceFourthPairMomentAt
+    QuarticSignedPoleBidiMarkedJet.angular
+    quarticSignedPoleBidiAngularOperator
+  rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum]
+  rw [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl, hoff]
+      have h :=
+        quarticSignedPoleVerticalFourth_eq_bidi_operator
+          A ((rho : ℂ).im-t)
+      unfold quarticSignedPoleBidiAngularOperator at h
+      unfold quarticSignedPoleTargetReflectionSecondPairMarkOnLine
+        quarticSignedPoleTargetReflectionFourthPairMarkOnLine
+      rw [h]
+      ring
+    · simp [hl, hoff]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredVerticalReferenceBidiMarkedJetAt_angular_eq_vertical_discrepancy
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    (W.literalLocalCenteredVerticalReferenceBidiMarkedJetAt eta A n).angular A
+      =
+    W.literalLocalVerticalFourthZeroMomentAt eta n
+      - quarticSignedPoleLocalMuVerticalFourthMoment t eta := by
+  unfold QuarticFourSignedPolePair.literalLocalCenteredVerticalReferenceBidiMarkedJetAt
+  rw [QuarticSignedPoleBidiMarkedJet.angular_sub]
+  rw [← W.literalLocalVerticalFourthZeroMomentAt_eq_bidi_verticalReference
+        (A:=A)]
+  rw [quarticSignedPoleLocalMuVerticalFourthMoment_eq_bidi_operator
+        t eta A]
+  rfl
+
+theorem QuarticFourSignedPolePair.literalLocalHorizontalBidiCorrectionJetAt_angular_eq_horizontalFourth
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    (W.literalLocalHorizontalBidiCorrectionJetAt eta A n).angular A
+      =
+    W.literalLocalHorizontalFourthCorrectionAt eta n := by
+  have htotal :=
+    W.literalLocalCenteredFourthAngularAt_eq_vertical_add_horizontal_bidi
+      (eta:=eta) (A:=A) n
+  have hsplit :=
+    W.literalLocalCenteredFourthAngularAt_eq
+      (eta:=eta) n
+  have hvert :=
+    W.literalLocalCenteredVerticalReferenceBidiMarkedJetAt_angular_eq_vertical_discrepancy
+      (eta:=eta) (A:=A) n
+  rw [hvert] at htotal
+  linarith
+
+theorem QuarticFourSignedPolePair.literalLocalCenteredFourthAngularAt_abs_le_verticalDiscrepancy_add_horizontalDebt
+    {t eta A : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ) :
+    |W.literalLocalCenteredFourthAngularAt eta n|
+      <=
+    |W.literalLocalVerticalFourthZeroMomentAt eta n
+      - quarticSignedPoleLocalMuVerticalFourthMoment t eta|
+      +
+    |W.literalLocalHorizontalFourthCorrectionAt eta n| := by
+  rw [W.literalLocalCenteredFourthAngularAt_eq]
+  exact abs_add _ _
+
 
 
 /-!
@@ -1043,6 +1532,90 @@ theorem QuarticFourSignedPolePair.bidiMarkedPrimeTwo_eq_zero
   exact
     quarticFourBidiMarkedPhysicalDetector_primeProjectiveDefect_eq_zero
       W.Rpos W.RltOne ht
+
+
+/-!
+## Prime-producer firewall for the short marked witness
+
+The auxiliary Weil-normalized 0/2/4 prime jet is useful arithmetic machinery,
+but it is not the literal prime channel of the present short-support witness.
+The latter vanishes identically because the physical detector is supported
+strictly inside log 2.
+-/
+
+def QuarticFourSignedPolePair.bidiMarkedPrimeCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A : ℝ) : ℝ :=
+  W.poleTwo *
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (1/2) W.muHalf t A)
+      t (t/16)
+  +
+  (-W.poleHalf) *
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourBidiMarkedPhysicalDetector
+        W.R (2/3) W.muTwo t A)
+      t (t/16)
+
+theorem QuarticFourSignedPolePair.bidiMarkedPrimeCombination_eq_zero
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (A : ℝ) :
+    W.bidiMarkedPrimeCombination A = 0 := by
+  unfold QuarticFourSignedPolePair.bidiMarkedPrimeCombination
+  rw [W.bidiMarkedPrimeHalf_eq_zero ht A,
+      W.bidiMarkedPrimeTwo_eq_zero ht A]
+  ring
+
+theorem quarticSignedPoleLiteralWeilPrimeBidiAngular_pos
+    {N : ℕ} (hN : (10 : ℝ)^8 <= (N : ℝ))
+    {A : ℝ} (hA : 0 < A) (hAhalf : A < 1/2) :
+    0 <
+    (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A := by
+  have hcoercive :=
+    quarticSignedPoleLiteralWeilPrimeBidiAngular_coercive
+      (N:=N) hN hA.le hAhalf
+  have hN0 : (0 : ℝ) < (N : ℝ) := by
+    nlinarith [pow_pos (by norm_num : (0 : ℝ) < 10) 8]
+  have hpow :
+      0 < (N : ℝ)^((1/2 : ℝ)+A) :=
+    Real.rpow_pos_of_pos hN0 _
+  have hfloor :
+      0 < A^4 * (N : ℝ)^((1/2 : ℝ)+A) / 64 := by
+    positivity
+  exact lt_of_lt_of_le hfloor hcoercive
+
+theorem QuarticFourSignedPolePair.bidiMarkedPrimeCombination_ne_literalWeilPrimeAngular
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {N : ℕ} (hN : (10 : ℝ)^8 <= (N : ℝ))
+    {A : ℝ} (hA : 0 < A) (hAhalf : A < 1/2) :
+    W.bidiMarkedPrimeCombination A
+      ≠
+    (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A := by
+  rw [W.bidiMarkedPrimeCombination_eq_zero ht A]
+  exact ne_of_lt
+    (quarticSignedPoleLiteralWeilPrimeBidiAngular_pos
+      (N:=N) hN hA hAhalf)
+
+theorem QuarticFourSignedPolePair.no_nonzero_literalPrimeCoefficient_for_actualMarkedPrime
+    {t : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    {N : ℕ} (hN : (10 : ℝ)^8 <= (N : ℝ))
+    {A cPrime : ℝ}
+    (hA : 0 < A) (hAhalf : A < 1/2)
+    (hc : cPrime ≠ 0) :
+    W.bidiMarkedPrimeCombination A
+      ≠
+    cPrime * (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A := by
+  rw [W.bidiMarkedPrimeCombination_eq_zero ht A]
+  have hp :
+      (quarticSignedPoleLiteralWeilPrimeBidiJet N A).angular A ≠ 0 :=
+    ne_of_gt
+      (quarticSignedPoleLiteralWeilPrimeBidiAngular_pos
+        (N:=N) hN hA hAhalf)
+  exact (mul_ne_zero hc hp).symm
 
 theorem QuarticFourSignedPolePair.bidiMarkedPoleCombination_even
     {t : ℝ}
@@ -4021,5 +4594,158 @@ theorem heightDefect_coshMarked_eq_targetReflection
         hg hgc A a r,
       evenResp_coshMarked_zero_eq hg hgc A r,
       evenResp_coshMarked_zero_eq hg hgc A (2*r)]
+
+
+/-!
+## Literal target/reflection zero-sum form of the marked cluster
+
+The previous cosh-mark identity is pointwise in the height parameter.  Here it
+is pushed through the absolutely convergent same-ordinate zero sum.  This keeps
+the analytic frontier honest: the marked cluster is exposed as a literal sum
+of target/reflection-symmetrized per-zero defects rather than left behind the
+opaque clusterHeightDefect interface.
+-/
+
+def quarticSignedPoleTargetReflectionHeightDefect
+    (g : ℝ -> ℝ) (A r : ℝ) (rho : Zeros) : ℝ :=
+  (
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+        g (heightOf rho + A) (2*r)
+      +
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+        g (heightOf rho - A) (2*r)
+  ) / 2
+    *
+  Zeta23Bridge.LiteralWeilParityBalance.evenResp g A r
+    -
+  (
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+        g (heightOf rho + A) r
+      +
+    Zeta23Bridge.LiteralWeilParityBalance.evenResp
+        g (heightOf rho - A) r
+  ) / 2
+    *
+  Zeta23Bridge.LiteralWeilParityBalance.evenResp g A (2*r)
+
+theorem heightDefect_coshMarked_eq_targetReflectionZero
+    {g : ℝ -> ℝ}
+    (hg : Continuous g)
+    (hgc : HasCompactSupport g)
+    (A r : ℝ) (rho : Zeros) :
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
+        (quarticSignedPoleCoshMarkedDetector g A)
+        r (heightOf rho) 0
+      =
+    quarticSignedPoleTargetReflectionHeightDefect g A r rho := by
+  unfold quarticSignedPoleTargetReflectionHeightDefect
+  simpa [add_comm] using
+    heightDefect_coshMarked_eq_targetReflection
+      hg hgc A (heightOf rho) r
+
+theorem clusterHeightDefect_coshMarked_eq_tsum_targetReflection
+    {g : ℝ -> ℝ}
+    (hgs : ContDiff ℝ 2 g)
+    (hgc : HasCompactSupport g)
+    (heven : ∀ u, g (-u) = g u)
+    (A t r : ℝ) :
+    Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile.clusterHeightDefect
+        (quarticSignedPoleCoshMarkedDetector g A) t r
+      =
+    ∑' rho : SameOrd t,
+      2 * ((Zeta23.zetaZeroConfig).mult (rho : Zeros) : ℝ)
+        * quarticSignedPoleTargetReflectionHeightDefect
+            g A r (rho : Zeros) := by
+  have hmarkedCD :
+      ContDiff ℝ 2 (quarticSignedPoleCoshMarkedDetector g A) :=
+    quarticSignedPoleCoshMarkedDetector_contDiff hgs A
+  have hmarkedK :
+      HasCompactSupport (quarticSignedPoleCoshMarkedDetector g A) :=
+    quarticSignedPoleCoshMarkedDetector_compact hgc A
+  have hmarkedEven :
+      ∀ u, quarticSignedPoleCoshMarkedDetector g A (-u)
+        = quarticSignedPoleCoshMarkedDetector g A u :=
+    quarticSignedPoleCoshMarkedDetector_even heven A
+  rw [
+    Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile.clusterHeightDefect_eq_tsum
+      hmarkedCD hmarkedK hmarkedEven t r
+  ]
+  apply tsum_congr
+  intro rho
+  unfold Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile.zeroHeightDefect
+  rw [heightDefect_coshMarked_eq_targetReflectionZero
+        hgs.continuous hgc A r (rho : Zeros)]
+
+def QuarticFourSignedPolePair.bidiMarkedClusterTargetReflectionCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (A : ℝ) : ℝ :=
+  W.poleTwo *
+    (
+      ∑' rho : SameOrd t,
+        2 * ((Zeta23.zetaZeroConfig).mult (rho : Zeros) : ℝ)
+          * quarticSignedPoleTargetReflectionHeightDefect
+              (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+              A (t/16) (rho : Zeros)
+    )
+  +
+  (-W.poleHalf) *
+    (
+      ∑' rho : SameOrd t,
+        2 * ((Zeta23.zetaZeroConfig).mult (rho : Zeros) : ℝ)
+          * quarticSignedPoleTargetReflectionHeightDefect
+              (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+              A (t/16) (rho : Zeros)
+    )
+
+theorem QuarticFourSignedPolePair.bidiMarkedCluster_eq_targetReflection_tsum
+    {t A : ℝ} (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.bidiMarkedClusterCombination A
+      =
+    W.bidiMarkedClusterTargetReflectionCombination A := by
+  have hHalf :=
+    clusterHeightDefect_coshMarked_eq_tsum_targetReflection
+      (quarticFourPhysicalDetector_contDiff
+        (t:=t) (lam:=(1/2 : ℝ)) (mu:=W.muHalf) W.Rpos)
+      (quarticFourPhysicalDetector_compact
+        (t:=t) (lam:=(1/2 : ℝ)) (mu:=W.muHalf)
+        W.Rpos (by linarith))
+      (quarticFourPhysicalDetector_even
+        W.R (1/2) W.muHalf t)
+      A t (t/16)
+  have hTwo :=
+    clusterHeightDefect_coshMarked_eq_tsum_targetReflection
+      (quarticFourPhysicalDetector_contDiff
+        (t:=t) (lam:=(2/3 : ℝ)) (mu:=W.muTwo) W.Rpos)
+      (quarticFourPhysicalDetector_compact
+        (t:=t) (lam:=(2/3 : ℝ)) (mu:=W.muTwo)
+        W.Rpos (by linarith))
+      (quarticFourPhysicalDetector_even
+        W.R (2/3) W.muTwo t)
+      A t (t/16)
+  unfold QuarticFourSignedPolePair.bidiMarkedClusterCombination
+    QuarticFourSignedPolePair.bidiMarkedClusterTargetReflectionCombination
+    quarticFourBidiMarkedPhysicalDetector
+  rw [hHalf, hTwo]
+
+theorem exists_quarticFourSignedPolePair_with_strength_floor_and_targetReflection_bias
+    {t : ℝ} (ht : 200 <= t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 <= W.targetStrength
+      ∧
+      ∃ epsA : ℝ, 0 < epsA ∧
+        ∀ A : ℝ,
+          0 < |A| -> |A| < epsA ->
+          W.bidiMarkedOffOrdCombination A
+            + W.bidiMarkedGammaCombination A
+            <
+          W.bidiMarkedClusterTargetReflectionCombination A := by
+  obtain ⟨W,hfloor,epsA,hepsA,hbias⟩ :=
+    exists_quarticFourSignedPolePair_with_strength_floor_and_marked_channel_bias
+      ht
+  refine ⟨W,hfloor,epsA,hepsA,?_⟩
+  intro A hA0 hAe
+  rw [← W.bidiMarkedCluster_eq_targetReflection_tsum ht]
+  exact hbias A hA0 hAe
 
 end Synthesis

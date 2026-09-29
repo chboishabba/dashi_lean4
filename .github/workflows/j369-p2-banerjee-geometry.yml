@@ -7,6 +7,7 @@ on:
       - "Integration/OggSSPP2BanerjeeAffineCurveScheme.lean"
       - "Integration/OggSSPP2BanerjeeProjectiveCubicEquation.lean"
       - "Integration/OggSSPP2BanerjeeSpecialFibreElliptic.lean"
+      - "Integration/OggSSPP2BanerjeeF4ZetaCoordinates.lean"
       - ".github/workflows/j369-p2-banerjee-geometry.yml"
   workflow_dispatch:
 
@@ -30,3 +31,5 @@ jobs:
         run: lake env lean Integration/OggSSPP2BanerjeeProjectiveCubicEquation.lean
       - name: Check special fibre elliptic criterion
         run: lake env lean Integration/OggSSPP2BanerjeeSpecialFibreElliptic.lean
+      - name: Check F4 zeta roots and projective infinity
+        run: lake env lean Integration/OggSSPP2BanerjeeF4ZetaCoordinates.lean

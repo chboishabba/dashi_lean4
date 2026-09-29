@@ -22,6 +22,8 @@ namespace Basis := Integration.OggSSPP2F4ActualGroupBasis
 namespace P := Integration.OggSSPP2F4ActualPairingNormalization
 namespace Hei := Integration.Base369Heisenberg
 namespace Act := Integration.OggSSPP2TernaryHeisenbergAction
+namespace Matrix := Integration.OggSSPP2F4ActualGroupShearReflection
+namespace Sch := Integration.Base369Schrodinger
 
 abbrev F3 := ZMod 3
 abbrev Plane := F3 × F3
@@ -221,5 +223,114 @@ theorem toActual_inverse (g : Hei.H 1) :
         product_assoc _ _ _
     _ = product (inverse (toActual g)) identity := by rw [hprod]
     _ = inverse (toActual g) := product_identity _
+
+
+/-!
+## Action-preserving arithmetic Heisenberg comparison
+
+The elliptic transported shear fixes the chosen centre, while the
+Frobenius-model reflection inverts it.  The native H(1) action intertwiner
+now commutes with the ACTUAL elliptic-point chart; this is not a
+coordinate-permutation cardinality coincidence.
+-/
+
+noncomputable def ellipticShear (g : ActualEllipticH27) : ActualEllipticH27 :=
+  ⟨g.center, Matrix.actualShearModel g.point⟩
+
+noncomputable def ellipticReflection (g : ActualEllipticH27) : ActualEllipticH27 :=
+  ⟨-g.center, Matrix.actualFrobeniusModel g.point⟩
+
+theorem ellipticShear_product (g h : ActualEllipticH27) :
+    ellipticShear (product g h) =
+      product (ellipticShear g) (ellipticShear h) := by
+  apply ActualEllipticH27.ext
+  · change
+      g.center + h.center + 2*P.ellipticOmega g.point h.point =
+      g.center + h.center
+        + 2*P.ellipticOmega
+            (Matrix.actualShearModel g.point)
+            (Matrix.actualShearModel h.point)
+    rw [P.ellipticOmega_shearModel]
+  · exact Matrix.actualShearModel.map_add g.point h.point
+
+theorem ellipticReflection_product (g h : ActualEllipticH27) :
+    ellipticReflection (product g h) =
+      product (ellipticReflection g) (ellipticReflection h) := by
+  apply ActualEllipticH27.ext
+  · change
+      -(g.center+h.center+2*P.ellipticOmega g.point h.point)
+      =
+      -g.center+-h.center
+        + 2*P.ellipticOmega
+            (Matrix.actualFrobeniusModel g.point)
+            (Matrix.actualFrobeniusModel h.point)
+    rw [P.ellipticOmega_frobeniusModel]
+    ring
+  · exact Matrix.actualFrobeniusModel.map_add g.point h.point
+
+theorem nativePlane_shear (g : Hei.H 1) :
+    nativePlane (Act.shearLift g) =
+      Matrix.shearMatrix (nativePlane g) := by
+  rfl
+
+theorem nativePlane_reflection (g : Hei.H 1) :
+    nativePlane (Act.reflectionLift g) =
+      Matrix.frobeniusMatrix (nativePlane g) := by
+  rfl
+
+theorem toActual_shear (g : Hei.H 1) :
+    toActual (Act.shearLift g) = ellipticShear (toActual g) := by
+  apply ActualEllipticH27.ext
+  · change
+      -Act.alternatingCenterCoordinate (Act.shearLift g)
+      = -Act.alternatingCenterCoordinate g
+    rw [Act.alternatingCenterCoordinate_shearLift]
+  · change
+      Basis.actualC3SquareAddEquiv (nativePlane (Act.shearLift g))
+        = Matrix.actualShearModel
+            (Basis.actualC3SquareAddEquiv (nativePlane g))
+    rw [nativePlane_shear]
+    rfl
+
+theorem toActual_reflection (g : Hei.H 1) :
+    toActual (Act.reflectionLift g) =
+      ellipticReflection (toActual g) := by
+  apply ActualEllipticH27.ext
+  · change
+      -Act.alternatingCenterCoordinate (Act.reflectionLift g)
+        = -(-Act.alternatingCenterCoordinate g)
+    rw [Act.alternatingCenterCoordinate_reflectionLift]
+  · change
+      Basis.actualC3SquareAddEquiv (nativePlane (Act.reflectionLift g))
+        = Matrix.actualFrobeniusModel
+            (Basis.actualC3SquareAddEquiv (nativePlane g))
+    rw [nativePlane_reflection]
+    rfl
+
+theorem fromActual_reflection (g : ActualEllipticH27) :
+    fromActual (ellipticReflection g) =
+      Act.reflectionLift (fromActual g) := by
+  apply toActual_injective
+  rw [toActual_reflection, toActual_fromActual,
+    toActual_fromActual]
+
+/-- A genuine elliptic-Heisenberg representation, defined by transporting
+the ALREADY PROVED finite Schrödinger action. -/
+noncomputable def ellipticSchrodingerAction
+    (g : ActualEllipticH27) (f : Hei.X 1 → ℂ) : Hei.X 1 → ℂ :=
+  Sch.T (fromActual g) f
+
+/-- Arithmetic reflection is realized anti-linearly, and maps the
+central character to its conjugate rather than claiming a complex-linear
+fixed-character intertwiner. -/
+theorem ellipticReflection_antilinear_intertwines
+    (g : ActualEllipticH27) (f : Hei.X 1 → ℂ) :
+    Act.reflectionConjugation (ellipticSchrodingerAction g f)
+      =
+    ellipticSchrodingerAction (ellipticReflection g)
+      (Act.reflectionConjugation f) := by
+  unfold ellipticSchrodingerAction
+  rw [Act.reflectionConjugation_intertwines,
+    fromActual_reflection]
 
 end Integration.OggSSPP2F4ActualEllipticHeisenberg

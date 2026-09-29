@@ -34,9 +34,9 @@ private theorem equation_of_nonsingular
   have heq :=
     (WeierstrassCurve.Affine.equation_iff_nonsingular
       (W := B.specialCurve.toAffine)).mpr h
-  exact (WeierstrassCurve.Affine.equation_iff
-    (W := B.specialCurve.toAffine) x y).mp heq |>.rec
-    (fun q => by simpa [B.specialCurve] using q)
+  simpa [B.specialCurve] using
+    (WeierstrassCurve.Affine.equation_iff
+      (W := B.specialCurve.toAffine) x y).mp heq
 
 theorem frobenius_preserves_curve
     (x y : B.F4) (h : y ^ 2 + y = x ^ 3) :
@@ -76,12 +76,14 @@ theorem frobenius_square (p : G.ActualCurveGroup) :
   cases p with
   | zero => rfl
   | some x y h =>
+      have hx : (x ^ 2) ^ 2 = x := by
+        simpa [pow_mul] using
+          (Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power x)
+      have hy : (y ^ 2) ^ 2 = y := by
+        simpa [pow_mul] using
+          (Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power y)
       simp only [frobenius, G.fromAffineEquation]
-      have hx := Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power x
-      have hy := Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power y
-      simpa only [pow_mul, show 2 * 2 = 4 by decide] using
-        congrArg₂ (fun a b : B.F4 => WeierstrassCurve.Affine.Point.some a b
-          (by simpa [hx, hy] using h)) hx hy
+      rw [hx, hy]
 
 theorem shear_cube (p : G.ActualCurveGroup) :
     shear (shear (shear p)) = p := by
@@ -89,12 +91,11 @@ theorem shear_cube (p : G.ActualCurveGroup) :
   | zero => rfl
   | some x y h =>
       simp only [shear, G.fromAffineEquation]
-      congr 1
-      · calc
-          Z.zeta * (Z.zeta * (Z.zeta * x)) =
-              Z.zeta ^ 3 * x := by ring
+      have hx : Z.zeta * (Z.zeta * (Z.zeta * x)) = x := by
+        calc
+          _ = Z.zeta ^ 3 * x := by ring
           _ = x := by rw [Z.zeta_cube_is_one]; ring
-      · rfl
+      rw [hx]
 
 theorem frobenius_shear_frobenius (p : G.ActualCurveGroup) :
     frobenius (shear (frobenius p)) = shear (shear p) := by
@@ -102,12 +103,17 @@ theorem frobenius_shear_frobenius (p : G.ActualCurveGroup) :
   | zero => rfl
   | some x y h =>
       simp only [frobenius, shear, G.fromAffineEquation]
-      congr 1
-      · have hx := Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power x
+      have hx : (Z.zeta * x ^ 2) ^ 2 =
+          Z.zeta * (Z.zeta * x) := by
         calc
-          (Z.zeta * x ^ 2) ^ 2 = Z.zeta ^ 2 * x ^ 4 := by ring
-          _ = Z.zeta * (Z.zeta * x) := by rw [hx]; ring
-      · exact Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power y
+          _ = Z.zeta ^ 2 * x ^ 4 := by ring
+          _ = Z.zeta * (Z.zeta * x) := by
+            rw [Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power x]
+            ring
+      have hy : (y ^ 2) ^ 2 = y := by
+        simpa [pow_mul] using
+          (Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power y)
+      rw [hx, hy]
 
 structure Boundary where
   actsOnActualMathlibEllipticPoints : Bool

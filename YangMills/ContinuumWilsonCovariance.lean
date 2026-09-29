@@ -135,7 +135,9 @@ theorem full_test_clustering_of_uniform_dense_wilson_clustering
     calc
       |connected n left right| =
           |(connected n left right - connected n wleft wright) +
-            connected n wleft wright| := by ring
+            connected n wleft wright| := by
+            congr 1
+            ring
       _ ≤
           |connected n left right - connected n wleft wright| +
             |connected n wleft wright| := abs_add_le _ _

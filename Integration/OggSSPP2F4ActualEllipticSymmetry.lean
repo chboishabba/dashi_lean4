@@ -115,12 +115,39 @@ theorem frobenius_shear_frobenius (p : G.ActualCurveGroup) :
           (Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power y)
       rw [hx, hy]
 
+/-! ## Actual permutations, rather than merely functions on labelled points -/
+
+noncomputable def frobeniusEquiv : G.ActualCurveGroup ≃ G.ActualCurveGroup where
+  toFun := frobenius
+  invFun := frobenius
+  left_inv := frobenius_square
+  right_inv := frobenius_square
+
+noncomputable def shearEquiv : G.ActualCurveGroup ≃ G.ActualCurveGroup where
+  toFun := shear
+  invFun := fun p => shear (shear p)
+  left_inv := by
+    intro p
+    exact shear_cube p
+  right_inv := by
+    intro p
+    change shear (shear (shear p)) = p
+    exact shear_cube p
+
+theorem conjugation_relation_as_permutations :
+    frobeniusEquiv.trans (shearEquiv.trans frobeniusEquiv)
+      = shearEquiv.trans shearEquiv := by
+  ext p
+  exact frobenius_shear_frobenius p
+
 structure Boundary where
   actsOnActualMathlibEllipticPoints : Bool
   bothMapsPreserveSourceCurveEquation : Bool
   frobeniusSquareIdentity : Bool
   shearCubeIdentity : Bool
   conjugationInvertsShear : Bool
+  actualFrobeniusAndShearAreEquivalences : Bool
+  s3RelationAsActualPermutations : Bool
   actionPreservesEllipticAddition : Bool
   additive369EigenbasisConstructed : Bool
   levelFourModuliRecognized : Bool
@@ -132,6 +159,8 @@ def canonicalBoundary : Boundary where
   frobeniusSquareIdentity := true
   shearCubeIdentity := true
   conjugationInvertsShear := true
+  actualFrobeniusAndShearAreEquivalences := true
+  s3RelationAsActualPermutations := true
   actionPreservesEllipticAddition := false
   additive369EigenbasisConstructed := false
   levelFourModuliRecognized := false

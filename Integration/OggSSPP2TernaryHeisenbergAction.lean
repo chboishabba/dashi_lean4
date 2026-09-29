@@ -181,4 +181,73 @@ theorem reflection_shear_reflection (g : H n) :
       _ = g.z + 4*dot g.y g.y := by rw [hq]
       _ = (g.z+2*dot g.y g.y)+2*dot g.y g.y := by ring
 
+
+/-!
+## Exact coordinate gauge to the alternating cocycle
+
+The repo-native presentation uses c(g,h)=dot(y_g,x_h).  Setting
+
+  z_alt(g) := z_native(g) + dot(y_g,x_g)
+
+gives the standard alternating cocycle
+
+  z_alt(gh) = z_alt(g)+z_alt(h)+2*omega(g,h).
+
+In this gauge, shear fixes z_alt and reflection negates it.  This explains
+precisely why the shear quadratic correction is present in the native
+Schrödinger convention but absent from the alternating convention.
+-/
+
+def alternatingCenterCoordinate (g : H n) : F3 :=
+  g.z + dot g.y g.x
+
+theorem alternatingCenterCoordinate_mul (g h : H n) :
+    alternatingCenterCoordinate (g*h)
+      =
+    alternatingCenterCoordinate g
+      + alternatingCenterCoordinate h
+      + 2*omega g h := by
+  have hminus : (-2 : F3) = 1 := by decide
+  have hexpand :
+      alternatingCenterCoordinate (g*h)
+        =
+      alternatingCenterCoordinate g
+        + alternatingCenterCoordinate h
+        + 2*dot g.y h.x + dot h.y g.x := by
+    simp only [alternatingCenterCoordinate,mul_z,mul_y,mul_x,
+      dot_add_left,dot_add_right]
+    ring
+  rw [hexpand]
+  unfold omega
+  calc
+    alternatingCenterCoordinate g
+      + alternatingCenterCoordinate h
+      + 2*dot g.y h.x + dot h.y g.x
+        =
+      alternatingCenterCoordinate g
+        + alternatingCenterCoordinate h
+        + 2*dot g.y h.x
+        + (-2 : F3)*dot h.y g.x := by
+          rw [hminus]; ring
+    _ =
+      alternatingCenterCoordinate g
+        + alternatingCenterCoordinate h
+        + 2*(dot g.y h.x-dot h.y g.x) := by ring
+
+theorem alternatingCenterCoordinate_shearLift (g : H n) :
+    alternatingCenterCoordinate (shearLift g)
+      = alternatingCenterCoordinate g := by
+  have hthree : (3 : F3) = 0 := by decide
+  simp only [alternatingCenterCoordinate,shearLift,dot_add_right]
+  calc
+    g.z + 2*dot g.y g.y + (dot g.y g.x + dot g.y g.y)
+      = (g.z+dot g.y g.x) + (3 : F3)*dot g.y g.y := by ring
+    _ = g.z+dot g.y g.x := by rw [hthree]; ring
+
+theorem alternatingCenterCoordinate_reflectionLift (g : H n) :
+    alternatingCenterCoordinate (reflectionLift g)
+      = -alternatingCenterCoordinate g := by
+  simp only [alternatingCenterCoordinate,reflectionLift,dot_neg_left]
+  ring
+
 end Integration.OggSSPP2TernaryHeisenbergAction

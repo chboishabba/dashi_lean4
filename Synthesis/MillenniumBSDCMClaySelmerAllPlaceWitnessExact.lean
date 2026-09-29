@@ -1,6 +1,5 @@
 import Synthesis.MillenniumBSDCMClayPointKummerExact
 import Synthesis.MillenniumBSDExplicitSelmerIntersection
-import Synthesis.MillenniumBSDTwoDescentTautologicalModelFirewall
 import Mathlib.Tactic
 
 /-!

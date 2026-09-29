@@ -1,3 +1,4 @@
+import Integration.OggSSPP2BanerjeeAffineCurveScheme
 import Integration.OggSSPP2BanerjeeGaloisOrbitNoGo
 import Mathlib
 import Integration.OggSSPP2F4FrobeniusCandidateNoGo
@@ -58,7 +59,7 @@ open Integration.OggSSPP2F4DependentMarkedCover
 open Integration.OggSSPP2FrobeniusRetainedTarget
 
 inductive Residual
-  | missingBanerjeeEllipticCurveSchemeRealization
+  | missingProjectiveEllipticSchemeCompactification
   | missingFiniteFlatFrobeniusKernelFlagRealization
   | missingGamma0FourLocalModelEnhancementFamily
   | missingSubgroupIsogenyChainBidi
@@ -139,6 +140,7 @@ structure Boundary where
   banerjeeSourceAuthorityAttributedAndInhabited : Bool
   gamma0FourEnhancementContractOwned : Bool
   schemeLevelFiniteFlatGamma0FourFrontierOwned : Bool
+  banerjeeAffineCurveSchemeConstructed : Bool
   galoisInertiaSectorRealizationContractOwned : Bool
   separateMarkedAndTenStateProofsRequiredAfterSectorRealization : Bool
   sameSourceAuthorityMarkingRecognitionCapstoneOwned : Bool
@@ -200,6 +202,7 @@ def canonicalBoundary : Boundary where
   banerjeeSourceAuthorityAttributedAndInhabited := true
   gamma0FourEnhancementContractOwned := true
   schemeLevelFiniteFlatGamma0FourFrontierOwned := true
+  banerjeeAffineCurveSchemeConstructed := true
   galoisInertiaSectorRealizationContractOwned := true
   separateMarkedAndTenStateProofsRequiredAfterSectorRealization := false
   sameSourceAuthorityMarkingRecognitionCapstoneOwned := true
@@ -230,6 +233,6 @@ def canonicalBoundary : Boundary where
   arithmeticCMOrbitEquivalenceConstructed := false
   arithmeticOneOneEightMarkingConstructed := false
   arithmeticRecognitionConstructed := false
-  firstResidual := .missingBanerjeeEllipticCurveSchemeRealization
+  firstResidual := .missingProjectiveEllipticSchemeCompactification
 
 end Integration.OggSSPP2GaussianCMMarkedSourceFrontier

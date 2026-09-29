@@ -64,6 +64,7 @@ structure Boundary where
   discriminantOneEllipticInstanceReused : Bool
   actualNonsingularPointAddCommGroup : Bool
   curveEquationGivesActualPoint : Bool
+  candidatePQToActualGroupModuleExists : Bool
   zeroIsActualInfinity : Bool
   ninePointGroupEquivalenceConstructed : Bool
   FrobeniusAsGroupEndomorphismConstructed : Bool
@@ -76,6 +77,7 @@ def canonicalBoundary : Boundary where
   discriminantOneEllipticInstanceReused := true
   actualNonsingularPointAddCommGroup := true
   curveEquationGivesActualPoint := true
+  candidatePQToActualGroupModuleExists := true
   zeroIsActualInfinity := true
   ninePointGroupEquivalenceConstructed := false
   FrobeniusAsGroupEndomorphismConstructed := false

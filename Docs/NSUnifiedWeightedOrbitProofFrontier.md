@@ -1,4 +1,4 @@
-# Periodic NS: unified weighted/orbit proof surface (R735–R814)
+# Periodic NS: signed W2 orbit payment (through R815)
 
 **Status:** conditional implication, not an unconditional Navier–Stokes regularity proof. Sources on Agda PR #1039 are source-written/static-inspected; no exact-head kernel receipt is asserted.
 
@@ -43,65 +43,68 @@ degree-three and degree-five scaling laws hold on the literal selected
 objects and equality is imposed at amplitudes 1 and 2, then both terms
 must vanish. This does not rule out a genuine integrated signed payment.
 
-## Strongest honest combined theorem
+## R815 corrects the physical normalization and sign
 
-Introduce the augmented W2 defect
+The old (A)/(C) story below has been superseded by the exact R745 →
+R749 → R760 → R781 finite-rate transport, now source-written in Agda
+`NSTriadKNR650SignedOrbitPacketWeldRound815Exact.agda`.
 
-  Z_N(T) :=
-    [X_N(T)-12 Q_+-,N(T)]-[X_N(0)-12 Q_+-,N(0)]
-      + delta_N D_N(T)-12 W_N(T).
+At a fixed cutoff/time and with the same live packet:
 
-For each cutoff and terminal, suppose:
+  R_N(t) := D_sep(t) + D_CC(t)
+            + 6*(2nu-delta)*d_N(t)
 
-(A) **Integrated physical weld**. The actual R742 integrated defect
-    is exactly an integrated/reindexed R760/R781 orbit residual,
-    separated plus CC-touched, with sign and multiplicities checked.
-    R781 by itself is a same-time finite fold identity and must not
-    be silently substituted for a spacetime statement.
+  R_N(t) = 6*(Combined_N(t) - PacketStrictSurplus_N(t)).
 
-(B) **Same-object R813 transfer**. Under that weld, the separated
-    component is integrated from 2*(9 N_sep - Q_sep), retaining the
-    same live cutoff/trajectory/mask.
+The finite nonlinear split alone is NOT the physical surplus gap.
+The retained viscous term and factor six must survive. Consequently
+the sign required by pointwise W2 is R_N(t) >= 0, not <= 0.
 
-(C) **Combined signed payment**. The integrated sum of the separated
-    expression and the CC-touched residual is <= 0. Cancellation
-    of the fully-separated family is optional and *stronger* than needed.
-    A payment via a controlled boundary/normalization defect also qualifies
-    when justified on the real physical carrier.
+R815 also transports this exact equality through the live integration
+authority, yielding
 
-(D) W1 is bounded by B(T) independently of cutoff N.
+  integral R_N dt = 6 * integral (Combined_N - PacketStrictSurplus_N) dt.
 
-(E) The original mixed mass is nonnegative; if uniform dissipation
-    is required, delta_N >= delta_0 > 0 independently of cutoff.
+The R742 integrated W2 input is therefore paid by an integrated
+NONNEGATIVE orbit expression. The eventual cancellation/estimate remains
+open; R815 is an identity only.
 
-Then (A)+(B)+(C) give Z_N(T)<=0, which is W2. W1+W2 yield
+The existing R813 refinement can be substituted into this expression:
 
-  X_N(T) + delta_N D_N(T)
-    <= X_N(0) + 12 B(T) - 12 Q_+-,N(0)
-    <= X_N(0) + 12 B(T).
+  R_N(t) = 2*(9*N_sep(t)-Q_sep(t)) + D_CC(t)
+           + 6*(2nu-delta)*d_N(t).
 
-With delta_N>=delta_0 and D_N>=0,
+The needed analytic input is
+
+  integral [ 2*(9*N_sep-Q_sep) + D_CC
+             + 6*(2nu-delta)*d_N ] dt >= 0.
+
+The desired positive viscosity margin is the one already consumed by
+R742/R734; it must not be spent a second time. Without further
+information, neither a sign for the cubic term nor a sign for the
+quintic work is known.
+
+After this payment, R742/R734 compile the augmented W2 bound; with
+cutoff-independent W1 and an independently uniform positive margin
+delta_N >= delta_0 > 0, the conditional Clay-facing bound remains
 
   X_N(T) + delta_0 D_N(T) <= X_N(0) + 12 B(T).
 
-The downstream continuation theorem additionally needs the pre-existing
-uniform-in-N initial-energy bound, suitable finite-time B(T), compactness
-and smoothness/continuation hypotheses. They are not established here.
+The signed estimate, W1 bound, and uniform margin are open. Smooth
+continuation/limit passage is an additional distinct requirement.
 
-## The remaining nontrivial leaves
+## Exact status
 
-1. Verify/source-write the **R742 spacetime ↔ R760/R781 signed-fold
-   transport**, including any factor 2 from swap-pairing and all
-   zero-output and time-integration conventions. This is a theorem
-   obligation, not a definitional equality.
-2. Prove one physical, signed **separated+CC payment**. Exploit the
-   cubic/quintic mismatch to avoid an impossible all-amplitude equality
-   or an amplitude-independent estimate with invalid degree.
-3. Prove W1 with a cutoff-independent B(T); prove a uniform positive
-   margin floor if the terminal continuation consumes one.
-4. Establish the actual selected-object amplitude scaling and a
-   nonzero witness before promoting R814's degree audit into a
-   no-go theorem on the physical state family.
+- R745 gives the rate-to-physical-packet identity with factor three.
+- R749 changes only the nonlinear incidence representation.
+- R760 doubles the same nonlinear fold through physical swap.
+- R781 splits the paired fold into separated and CC-touched parts.
+- R813 gives the separated refinement, without requiring it to vanish.
+- R815 lifts the correctly normalized physical gap to a signed
+  spacetime integral. **No new analytic inequality is asserted.**
+- `NSBControl/SignedOrbitPacketWeld.lean` is the corrected conditional
+  scalar compiler. The older `UnifiedWeightedOrbitBarrier.lean` uses a
+  hypothetical, nonliteral weld and must not be instantiated as R815.
 
 ## Verified cross-pollination boundaries
 
@@ -118,16 +121,10 @@ finite Moonshine/SSP representations.
 
 ## Lean mirror
 
-NSBControl/UnifiedWeightedOrbitBarrier.lean contains:
+The corrected consumer is `NSBControl/SignedOrbitPacketWeld.lean`.
+It explicitly requires integrated nonnegativity, the factor-six same-object
+weld, W1, and any uniform margin floor. The historical
+`UnifiedWeightedOrbitBarrier.lean` remains marked nonphysical for
+this particular R745–R815 instantiation.
 
-- PhysicalOrbitWeld (explicit R742-to-R781 seam);
-- SignedOrbitPayment (no cancellation assumption);
-- orbitPayment_implies_W2;
-- weightedOrbitBarrier;
-- uniformMarginBarrier and allCutoffsUniformBarrier;
-- exactSeparatedCancellation_iff (optional);
-- scaleFreeBalanceForcesBothZero (degree-3 vs degree-5 negative control).
-
-The Lean mirror is conditional algebra over real scalars. It **does not**
-certify the Agda physical-to-analytic weld, nor has a fresh exact-head
-Lean kernel run been performed for this tranche.
+No exact-head Agda or Lean kernel receipt is claimed.

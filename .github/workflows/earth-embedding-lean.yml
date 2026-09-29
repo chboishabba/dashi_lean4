@@ -26,3 +26,4 @@ jobs:
           lake env lean EarthEmbeddingWoogaroo.lean
           lake env lean EarthEmbeddingGeometry.lean
           lake env lean EarthEmbeddingAdvanced.lean
+          lake env lean EarthEmbeddingInterpretability.lean

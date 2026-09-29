@@ -300,9 +300,10 @@ theorem reflectionConjugation_intertwines (g : H n) (f : X n → ℂ) :
     Integration.Base369Schrodinger.chi
         (-g.z+dot (-g.y) (u-g.x))
       * star (f (u-g.x))
-  rw [star_mul, ← AddChar.map_neg_eq_conj
-    Integration.Base369Schrodinger.chi
-    (g.z+dot g.y (u-g.x)), hexp]
+  rw [star_mul, Complex.star_def,
+    ← AddChar.map_neg_eq_conj
+      Integration.Base369Schrodinger.chi
+      (g.z+dot g.y (u-g.x)), hexp]
 
 /-- The map is pointwise norm preserving; its finite Hilbert-space
 antiunitarity follows from the same equality summed over the finite X n. -/

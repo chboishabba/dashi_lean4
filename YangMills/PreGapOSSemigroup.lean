@@ -183,10 +183,17 @@ theorem os_semigroup_locally_uniform_in_time
       _ ≤ ‖left - left'‖ * ‖right‖ +
             ‖left'‖ * ‖right - right'‖ := hError
       _ ≤ δ * ‖right‖ + (‖left‖ + 1) * δ := by
-        gcongr
-        exact le_of_lt hleft
-        exact hleftBound
-        exact le_of_lt hright
+        apply add_le_add
+        · exact mul_le_mul_of_nonneg_right (le_of_lt hleft)
+            (norm_nonneg right)
+        · calc
+            ‖left'‖ * ‖right - right'‖
+                ≤ (‖left‖ + 1) * ‖right - right'‖ :=
+                  mul_le_mul_of_nonneg_right hleftBound
+                    (norm_nonneg _)
+            _ ≤ (‖left‖ + 1) * δ :=
+                  mul_le_mul_of_nonneg_left (le_of_lt hright)
+                    (by positivity)
   have hProduct :
       δ * A ≤ ε / 2 := by
     calc
@@ -194,10 +201,14 @@ theorem os_semigroup_locally_uniform_in_time
         mul_le_mul_of_nonneg_right hδfrac hA.le
       _ = ε / 2 := by
         have hA0 : A ≠ 0 := ne_of_gt hA
-        field_simp
+        field_simp [hA0]
+        ring
   have hLess : δ * ‖right‖ + (‖left‖ + 1) * δ ≤ δ * A := by
-    dsimp [A]
-    ring
+    have hEq :
+        δ * ‖right‖ + (‖left‖ + 1) * δ = δ * A := by
+      dsimp [A]
+      ring
+    exact le_of_eq hEq
   linarith
 
 /--

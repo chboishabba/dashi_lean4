@@ -1,6 +1,8 @@
 import Mathlib
 import YangMills.ContinuumProkhorov
 import YangMills.ContinuumWilsonCovariance
+import YangMills.OSGramNullSpace
+import YangMills.PreGapOSSemigroup
 
 open Filter Set MeasureTheory
 

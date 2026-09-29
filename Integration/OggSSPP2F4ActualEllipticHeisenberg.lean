@@ -163,4 +163,63 @@ theorem rankOne_center_sign (z : F3) :
     (toActual (Act.central (n:=1) z)).center = -z := by
   simp [toActual, Act.central, Act.alternatingCenterCoordinate, Hei.dot]
 
+
+/-- Inverse computed using actual elliptic point inversion.  Because the
+cocycle is alternating, there is no central cross-term. -/
+def inverse (g : ActualEllipticH27) : ActualEllipticH27 :=
+  ⟨-g.center, -g.point⟩
+
+private theorem ellipticOmega_neg_right (p : E.ActualCurveGroup) :
+    P.ellipticOmega p (-p) = 0 := by
+  simp [P.ellipticOmega, P.planeOmega,
+    Basis.actualC3SquareAddEquiv.symm.map_neg]
+  ring
+
+private theorem ellipticOmega_neg_left (p : E.ActualCurveGroup) :
+    P.ellipticOmega (-p) p = 0 := by
+  rw [P.ellipticOmega_skew,
+    ellipticOmega_neg_right]
+  simp
+
+theorem product_inverse (g : ActualEllipticH27) :
+    product g (inverse g) = identity := by
+  cases g with | mk z p =>
+  simp [product, inverse, identity,
+    ellipticOmega_neg_right]
+
+theorem inverse_product (g : ActualEllipticH27) :
+    product (inverse g) g = identity := by
+  cases g with | mk z p =>
+  simp [product, inverse, identity,
+    ellipticOmega_neg_left]
+
+theorem toActual_inverse (g : Hei.H 1) :
+    toActual (g⁻¹) = inverse (toActual g) := by
+  have hg : g*g⁻¹ = (1 : Hei.H 1) := mul_inv_cancel g
+  have hprod := congrArg toActual hg
+  rw [toActual_product] at hprod
+  have hone : toActual (1 : Hei.H 1) = identity := by
+    have h : (1 : Hei.H 1) = Act.central (n:=1) 0 := by
+      rfl
+    rw [h]
+    simp [toActual, Act.central,
+      Act.alternatingCenterCoordinate, Hei.dot, identity,
+      nativePlane]
+  rw [hone] at hprod
+  have hc := product_inverse (toActual g)
+  -- Right multiplication by the same element has a unique inverse in
+  -- the explicitly proved associative unital product.
+  have hident := identity_product (toActual (g⁻¹))
+  calc
+    toActual (g⁻¹)
+        = product identity (toActual (g⁻¹)) := hident.symm
+    _ = product (product (inverse (toActual g)) (toActual g))
+          (toActual (g⁻¹)) := by
+        rw [inverse_product]
+    _ = product (inverse (toActual g))
+          (product (toActual g) (toActual (g⁻¹))) :=
+        product_assoc _ _ _
+    _ = product (inverse (toActual g)) identity := by rw [hprod]
+    _ = inverse (toActual g) := product_identity _
+
 end Integration.OggSSPP2F4ActualEllipticHeisenberg

@@ -397,6 +397,7 @@ import Synthesis.MonsterWholeCharacterSimpleSubobjectRegression
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleBidiMarkedFourth
 import Synthesis.RiemannQuarticFourthPrimitiveQuantitativeBudget
 import Synthesis.RiemannQuarticFourthPrimitiveClassicalRemainder
+import Synthesis.RiemannQuarticSignedCosinePSDNoGo
 
 
 

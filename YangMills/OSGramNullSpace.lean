@@ -144,10 +144,10 @@ def osGramQuotientPairing
         intro left₁ left₂ right₁ right₂ hleft hright
         have hleftMem :
             left₁ - left₂ ∈ B.ker :=
-          (Submodule.quotientRel_r_def B.ker).mp hleft
+          (Submodule.quotientRel_def B.ker).mp hleft
         have hrightMem :
             right₁ - right₂ ∈ B.ker :=
-          (Submodule.quotientRel_r_def B.ker).mp hright
+          (Submodule.quotientRel_def B.ker).mp hright
         exact os_gram_pair_eq_of_null_differences
           B hPositive hSymmetric
           ((B.apply_apply_same_eq_zero_iff hPositive hSymmetric).mpr hleftMem)

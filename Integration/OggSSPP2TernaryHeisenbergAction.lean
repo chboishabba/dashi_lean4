@@ -109,4 +109,44 @@ theorem rankOne_schrodinger_irreducible
 
 def actualEllipticPairingTransportPaid : Bool := false
 
+
+/-- Coordinate shear iterated three times is the identity in characteristic 3,
+including its quadratic central correction. -/
+theorem shearLift_cube (g : H n) :
+    shearLift (shearLift (shearLift g)) = g := by
+  have h3 : (3 : F3) = 0 := by decide
+  refine H.ext' ?_ ?_ ?_
+  · change ((g.x+g.y)+g.y)+g.y = g.x
+    have h : g.y+g.y+g.y = (3 : F3) • g.y := by
+      simp [three_nsmul]
+    calc
+      ((g.x+g.y)+g.y)+g.y =
+          g.x + ((3 : F3) • g.y) := by
+            rw [← h]
+            abel
+      _ = g.x := by
+          have hzero : (3 : ℕ) • g.y = 0 := by
+            ext i
+            simp [three_nsmul, h3]
+          simpa using congrArg (fun a => g.x+a) hzero
+  · rfl
+  · change (g.z + 2*dot g.y g.y)
+      + 2*dot g.y g.y + 2*dot g.y g.y = g.z
+    have htwo : (6 : F3) = 0 := by decide
+    calc
+      (g.z + 2*dot g.y g.y) + 2*dot g.y g.y
+         + 2*dot g.y g.y = g.z + (6:F3)*dot g.y g.y := by ring
+      _ = g.z := by rw [htwo]; ring
+
+/-- Reflection reverses the complex phase of the existing Schrödinger
+central character.  This is stronger than observing a determinant sign. -/
+theorem reflection_conjugates_central_phase (z : F3) :
+    Integration.Base369Schrodinger.chi
+        ((reflectionLift (central (n:=1) z)).z)
+      * Integration.Base369Schrodinger.chi z = 1 := by
+  change Integration.Base369Schrodinger.chi (-z)
+    * Integration.Base369Schrodinger.chi z = 1
+  rw [← Integration.Base369Schrodinger.chi_add]
+  simp [Integration.Base369Schrodinger.chi_zero]
+
 end Integration.OggSSPP2TernaryHeisenbergAction

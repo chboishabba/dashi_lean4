@@ -416,4 +416,107 @@ theorem QuarticFourSignedPolePair.fourthPrimitive_abs_le_from_absoluteRvM
   unfold QuarticFourSignedPolePair.outerSymmetricDiscrepancyFourthPrimitive
   exact hraw
 
+
+/-!
+## One-sided alternative, on the literal outer terminal carrier
+
+A crucial sign that should not be hidden by absolute values:
+
+  T_n = -I_n/2 + H6 - L6,
+  T_n < r^6 M  <->  -budget < I_n.
+
+Thus the exact analytic target for the selected witness is a LOWER bound
+on the signed outer Abel integral, not an upper bound on its absolute value.
+When budget <= 0, the absolute route has no nonnegative cost that fits,
+but the signed route remains logically available.
+-/
+
+theorem QuarticFourSignedPolePair.outerTerminal_lt_iff_signedAbel_gt_negBudget
+    {t EV : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (n : ℕ) :
+    W.quarticScaleOuterTerminalAt n
+      < (t/16)^6 * W.postSixthTerminalResidualMargin rho EV
+    ↔
+    - W.outerVerticalAbsoluteBudget rho EV
+      < W.normalizedOuterPairedAbelAt n := by
+  unfold QuarticFourSignedPolePair.quarticScaleOuterTerminalAt
+    QuarticFourSignedPolePair.quarticScaleOuterPairedHorizontalAt
+    QuarticFourSignedPolePair.outerVerticalAbsoluteBudget
+  constructor <;> intro h <;> linarith
+
+theorem QuarticFourSignedPolePair.nonpos_budget_blocks_nonnegative_absolute_cost
+    {t EV BP K : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hBudget : W.outerVerticalAbsoluteBudget rho EV <= 0)
+    (hBP : 0 <= BP)
+    (hK : 0 <= K) :
+    ¬ W.absolutePrimitiveAdmissibleProduct rho EV BP K := by
+  apply W.absoluteBudget_failfast
+  exact hBudget.trans (mul_nonneg hBP hK)
+
+theorem QuarticFourSignedPolePair.positive_budget_iff_heightDefect_exceeds_cost
+    {t EV : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    0 < W.outerVerticalAbsoluteBudget rho EV
+    ↔
+    W.quarticScaleHorizontalRemainder
+      - W.quarticScaleCanonicalLocalCorrection
+      <
+    (t/16)^6 * W.postSixthTerminalResidualMargin rho EV := by
+  unfold QuarticFourSignedPolePair.outerVerticalAbsoluteBudget
+  constructor <;> intro h <;> linarith
+
+theorem QuarticFourSignedPolePair.nonpos_budget_iff_heightDefect_below_cost
+    {t EV : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.outerVerticalAbsoluteBudget rho EV <= 0
+    ↔
+    (t/16)^6 * W.postSixthTerminalResidualMargin rho EV
+      <=
+    W.quarticScaleHorizontalRemainder
+      - W.quarticScaleCanonicalLocalCorrection := by
+  unfold QuarticFourSignedPolePair.outerVerticalAbsoluteBudget
+  constructor <;> intro h <;> linarith
+
+theorem QuarticFourSignedPolePair.outerTerminal_eventually_iff_signedAbel_eventually
+    {t EV eps : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    (∀ᶠ n : ℕ in atTop,
+      W.quarticScaleOuterTerminalAt n
+        <= (t/16)^6 * W.postSixthTerminalResidualMargin rho EV - eps)
+    ↔
+    (∀ᶠ n : ℕ in atTop,
+      - W.outerVerticalAbsoluteBudget rho EV + 2*eps
+        <= W.normalizedOuterPairedAbelAt n) := by
+  apply Filter.eventually_congr
+  filter_upwards with n
+  unfold QuarticFourSignedPolePair.quarticScaleOuterTerminalAt
+    QuarticFourSignedPolePair.quarticScaleOuterPairedHorizontalAt
+    QuarticFourSignedPolePair.outerVerticalAbsoluteBudget
+  constructor <;> intro h <;> linarith
+
+theorem QuarticFourSignedPolePair.signedAbelPositiveSlack_iff_terminalCut
+    {t EV : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.QuarticScaleOuterTerminalEventuallyBelowMargin rho EV
+      ↔
+    ∃ eps : ℝ, 0 < eps ∧
+      ∀ᶠ n : ℕ in atTop,
+        - W.outerVerticalAbsoluteBudget rho EV + 2*eps
+          <= W.normalizedOuterPairedAbelAt n := by
+  unfold QuarticFourSignedPolePair.QuarticScaleOuterTerminalEventuallyBelowMargin
+  constructor
+  · rintro ⟨eps,heps,hev⟩
+    exact ⟨eps,heps,
+      (W.outerTerminal_eventually_iff_signedAbel_eventually rho).1 hev⟩
+  · rintro ⟨eps,heps,hev⟩
+    exact ⟨eps,heps,
+      (W.outerTerminal_eventually_iff_signedAbel_eventually rho).2 hev⟩
+
 end Synthesis

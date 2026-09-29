@@ -1,9 +1,11 @@
 /-!
 DASHI-original relation index for candidate legal wrong patterns.
-The Care / Transaction / Power labels are visible in the user-supplied
-uvsmpub / Rob McNamara "A System of Wrong" diagram; directional semantics,
-offence placement and legal interpretation here are DASHI constructions,
-not attributed to Forrest Landry or McNamara.
+Rob McNamara's user-supplied Episode 4 transcript explicitly defines
+the first coordinate as the *violated frame* and the second as the
+*imposed frame*. His examples populate all nine cells. McNamara attributes
+the underlying framework to Forrest Landry; original authorship and
+his universality claim have NOT been independently established.
+Lean predicates and proofs are DASHI-original.
 
 Primary-law locator (historical consolidation; not a present-law claim):
 Queensland Criminal Code Act 1899, ss 245-246, 354A, 391, 408C, 409, 415.
@@ -18,8 +20,8 @@ inductive Mode
   deriving DecidableEq, Repr
 
 structure Cell where
-  actor : Mode
-  context : Mode
+  violated : Mode
+  imposed : Mode
   deriving DecidableEq, Repr
 
 inductive Pattern
@@ -60,7 +62,7 @@ def first : GridCandidate :=
    "DASHI hypothetical; not a legal finding"⟩
 
 def second : GridCandidate :=
-  ⟨"example:abstract-wrong-type", .fraud, ⟨.power, .transaction⟩,
+  ⟨"example:abstract-wrong-type", .fraud, ⟨.transaction, .power⟩,
    "example:context-2", "example:evidence-pending", qldCode "s 408C",
    "DASHI hypothetical; not a legal finding"⟩
 
@@ -68,7 +70,7 @@ def sample : List GridCandidate := [first, second]
 
 theorem example_many_to_many :
     Fits "example:abstract-wrong-type" ⟨.transaction, .transaction⟩ sample ∧
-    Fits "example:abstract-wrong-type" ⟨.power, .transaction⟩ sample := by
+    Fits "example:abstract-wrong-type" ⟨.transaction, .power⟩ sample := by
   constructor
   · exact ⟨first, by simp [sample], rfl, rfl⟩
   · exact ⟨second, by simp [sample], rfl, rfl⟩
@@ -82,24 +84,67 @@ structure LegalAssessmentBoundary where
   defenceAndExceptionReview : Prop
 
 /-- Each fixture is an offence-family locator with an explicitly editorial
-cell assignment. Neither the enactment nor the video supplies this cell. -/
+cell assignment. A cell may be supported by the video while legal elements remain unproved. -/
 def crimeCandidate (id : String) (p : Pattern) (c : Cell)
     (section : String) : GridCandidate :=
   ⟨id, p, c, "illustrative:context-not-established", "evidence:not-provided",
-    qldCode section, "DASHI illustrative cell; not attributed to statute or video"⟩
+    qldCode section, "DASHI illustrative fixture; statute does not classify cells"⟩
 
 def illustrativeCrimes : List GridCandidate := [
-  crimeCandidate "wrong:QLD:assault" .assault ⟨.power, .care⟩ "ss 245-246",
-  crimeCandidate "wrong:QLD:sexual-assault" .sexualAssault ⟨.power, .power⟩ "s 352",
-  crimeCandidate "wrong:QLD:murder" .murder ⟨.power, .power⟩ "s 302",
+  crimeCandidate "wrong:QLD:assault" .assault ⟨.care, .power⟩ "ss 245-246",
+  crimeCandidate "wrong:QLD:sexual-assault" .sexualAssault ⟨.care, .power⟩ "s 352",
+  crimeCandidate "wrong:QLD:murder" .murder ⟨.care, .power⟩ "s 302",
   crimeCandidate "wrong:QLD:manslaughter" .manslaughter ⟨.care, .power⟩ "s 303",
   crimeCandidate "wrong:QLD:stealing" .theft ⟨.transaction, .transaction⟩ "s 391",
   crimeCandidate "wrong:QLD:fraud" .fraud ⟨.transaction, .transaction⟩ "s 408C",
-  crimeCandidate "wrong:QLD:robbery" .robbery ⟨.power, .transaction⟩ "s 409",
-  crimeCandidate "wrong:QLD:extortion" .extortion ⟨.power, .transaction⟩ "s 415",
-  crimeCandidate "wrong:QLD:kidnapping-ransom" .kidnapping ⟨.power, .power⟩ "s 354A",
-  crimeCandidate "wrong:QLD:burglary" .burglary ⟨.power, .transaction⟩ "s 419",
+  crimeCandidate "wrong:QLD:robbery" .robbery ⟨.transaction, .power⟩ "s 409",
+  crimeCandidate "wrong:QLD:extortion" .extortion ⟨.transaction, .power⟩ "s 415",
+  crimeCandidate "wrong:QLD:kidnapping-ransom" .kidnapping ⟨.care, .power⟩ "s 354A",
+  crimeCandidate "wrong:QLD:burglary" .burglary ⟨.transaction, .power⟩ "s 419",
   crimeCandidate "wrong:QLD:computer-misuse" .cyberMisuse ⟨.transaction, .power⟩ "s 408E"
 ]
 
+
+/-- Exact episode-level labels and examples supplied by user transcript.
+These are claims of the named speaker, not proven classifications of
+criminal offences or evidence that such conduct is unlawful. -/
+structure EpisodeCellClaim where
+  cell : Cell
+  label : String
+  spokenExamples : String
+  speaker : String := "Rob McNamara"
+  work : String := "A System of Wrong, Episode 4: The Grid"
+  provenance : String := "user-provided transcript 2026-09-30"
+  status : String := "attributed speech; legally unverified"
+
+def spoken (target imposed : Mode) (label examples : String) :
+    EpisodeCellClaim :=
+  ⟨⟨target, imposed⟩, label, examples,
+    "Rob McNamara", "A System of Wrong, Episode 4: The Grid",
+    "user-provided transcript 2026-09-30",
+    "attributed speech; legally unverified"⟩
+
+def episodeCells : List EpisodeCellClaim := [
+  spoken .care .care "care betrayed from within"
+    "neglect; abandonment; institutional self-service",
+  spoken .care .transaction "priced person"
+    "trafficking; commodified intimacy; engagement metrics",
+  spoken .care .power "body, safety, life seized by force"
+    "murder; assault; rape; enslavement",
+  spoken .transaction .care "rigged gift"
+    "conditional charity; aid with hidden strings",
+  spoken .transaction .transaction "corrupted ledger"
+    "theft; fraud; forgery; embezzlement",
+  spoken .transaction .power "manufactured sale"
+    "robbery; extortion; ransomware; protection racket",
+  spoken .power .care "authority dissolved by sentiment"
+    "judge favouring friend; commander sparing guilty",
+  spoken .power .transaction "sold decision"
+    "bribery; corruption; regulatory capture",
+  spoken .power .power "betrayal from within"
+    "treason; sedition; insider subversion"
+]
+
+-- The speaker's assertion that all serious legal wrongs belong in the
+-- nine cells is intentionally NOT promoted into a theorem.
 end AgdaMirror.Law.WrongTypeGrid

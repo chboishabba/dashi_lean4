@@ -297,4 +297,123 @@ theorem QuarticFourSignedPolePair.weightedOuterAbel_abs_le_boundary_add_cost
     hQ hBP hPrimitive hWeighted
   exact (abs_add _ _).trans (add_le_add_left hinner _)
 
+
+/-!
+## Absolute RvM comparison: fourfold smoothing does not produce r^-4
+
+The following exact scalar bound is intentionally unconditional with respect
+to any *given* pointwise envelope E for a finite interval.  It proves that
+four primitives transfer the r^4 coefficient into the physical primitive's
+size: the affine identity alone is not an analytic saving.
+-/
+
+theorem cubicCesaro_abs_le_of_discrepancy_envelope
+    {a Q E : ℝ}
+    {A : ℝ -> ℝ}
+    (haQ : a <= Q)
+    (hE : 0 <= E)
+    (hAI : IntervalIntegrable
+      (fun q : ℝ => ((Q-q)^3 / 6) * A q) volume a Q)
+    (hAbound : ∀ q ∈ Set.Icc a Q, |A q| <= E) :
+    |∫ q in a..Q, ((Q-q)^3 / 6) * A q|
+      <= E * (Q-a)^4 / 24 := by
+  let w : ℝ -> ℝ := fun q => (Q-q)^3 / 6
+  have hwcont : Continuous w := by
+    dsimp [w]
+    fun_prop
+  have hwint : IntervalIntegrable w volume a Q :=
+    hwcont.intervalIntegrable a Q
+  have hmajor :
+      IntervalIntegrable (fun q => E*w q) volume a Q :=
+    hwint.const_mul E
+  have hweight :
+      (∫ q in a..Q, w q) = (Q-a)^4 / 24 := by
+    let F : ℝ -> ℝ := fun q => -(Q-q)^4 / 24
+    have hderiv :
+        ∀ q ∈ Set.uIcc a Q, HasDerivAt F (w q) q := by
+      intro q hq
+      have hraw :
+          HasDerivAt F
+            (-(4*(Q-q)^3*(-1))/24) q := by
+        dsimp [F]
+        fun_prop
+      convert hraw using 1 <;> dsimp [w] <;> ring
+    have hint :
+        IntervalIntegrable w volume a Q := hwint
+    have hFTC :=
+      intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
+    dsimp [F,w] at hFTC ⊢
+    rw [hFTC]
+    ring
+  have hineq :
+      (∫ q in a..Q, |w q * A q|)
+        <= (∫ q in a..Q, E*w q) := by
+    apply intervalIntegral.integral_mono_on
+      haQ hAI.abs hmajor
+    intro q hq
+    have hqQ : q <= Q := hq.2
+    have hwpos : 0 <= w q := by
+      dsimp [w]
+      have hdiff : 0 <= Q-q := by linarith
+      positivity
+    rw [abs_mul,abs_of_nonneg hwpos]
+    have hbound := hAbound q hq
+    calc
+      w q * |A q| <= w q * E :=
+        mul_le_mul_of_nonneg_left hbound hwpos
+      _ = E*w q := by ring
+  calc
+    |∫ q in a..Q, ((Q-q)^3/6)*A q|
+      <= ∫ q in a..Q, |w q * A q| := by
+        dsimp [w]
+        exact intervalIntegral.abs_integral_le_integral_abs haQ
+    _ <= ∫ q in a..Q, E*w q := hineq
+    _ = E*(Q-a)^4/24 := by
+      rw [intervalIntegral.integral_const_mul, hweight]
+      ring
+
+theorem QuarticFourSignedPolePair.fourthPrimitive_abs_le_from_absoluteRvM
+    {t Q E : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hQ : quarticSignedPoleCanonicalLocalRadius <= Q)
+    (hE : 0 <= E)
+    (hD : ∀ q ∈
+      Set.Icc quarticSignedPoleCanonicalLocalRadius Q,
+      |zetaMuCumulativeDiscrepancy
+        (t-(t/16)*q) (t+(t/16)*q)| <= E) :
+    |W.outerSymmetricDiscrepancyFourthPhysicalPrimitive Q|
+      <=
+    (t/16)^4 * E
+      * (Q-quarticSignedPoleCanonicalLocalRadius)^4 / 24 := by
+  have hA :
+      IntervalIntegrable
+        W.quarticScaleSymmetricWindowDiscrepancy volume
+        quarticSignedPoleCanonicalLocalRadius Q :=
+    W.quarticScaleSymmetricWindowDiscrepancy_intervalIntegrable hQ
+  have hprod :
+      IntervalIntegrable
+        (fun q : ℝ =>
+          ((Q-q)^3/6)
+          * W.quarticScaleSymmetricWindowDiscrepancy q)
+        volume quarticSignedPoleCanonicalLocalRadius Q := by
+    have hw : Continuous (fun q : ℝ => (Q-q)^3/6) := by
+      fun_prop
+    exact hA.mul_continuous hw
+  have hr4 : 0 <= (t/16)^4 := by positivity
+  have hbound :
+      ∀ q ∈ Set.Icc quarticSignedPoleCanonicalLocalRadius Q,
+        |W.quarticScaleSymmetricWindowDiscrepancy q|
+          <= (t/16)^4 * E := by
+    intro q hq
+    unfold QuarticFourSignedPolePair.quarticScaleSymmetricWindowDiscrepancy
+    rw [abs_mul, abs_of_nonneg hr4]
+    exact mul_le_mul_of_nonneg_left (hD q hq) hr4
+  have hraw :=
+    cubicCesaro_abs_le_of_discrepancy_envelope
+      hQ (mul_nonneg hr4 hE) hprod hbound
+  rw [← W.outerSymmetricDiscrepancyFourthPrimitive_eq_physical ht]
+  unfold QuarticFourSignedPolePair.outerSymmetricDiscrepancyFourthPrimitive
+  exact hraw
+
 end Synthesis

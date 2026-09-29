@@ -19,7 +19,7 @@ The proof is unconditional and uses the actual Zeta23 window and mu.
 
 noncomputable section
 
-open MeasureTheory Set
+open MeasureTheory Complex Set
 open scoped Real
 
 namespace Synthesis

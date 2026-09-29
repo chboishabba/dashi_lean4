@@ -1,0 +1,32 @@
+name: J369 p2 Banerjee geometric source kernel
+
+on:
+  pull_request:
+    paths:
+      - "Integration/OggSSPP2BanerjeeF4UniversalDeformationSource.lean"
+      - "Integration/OggSSPP2BanerjeeAffineCurveScheme.lean"
+      - "Integration/OggSSPP2BanerjeeProjectiveCubicEquation.lean"
+      - "Integration/OggSSPP2BanerjeeSpecialFibreElliptic.lean"
+      - ".github/workflows/j369-p2-banerjee-geometry.yml"
+  workflow_dispatch:
+
+jobs:
+  kernel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Lean and lake
+        uses: leanprover/lean-action@v1
+        with:
+          use-github-cache: true
+      - name: Get pinned Mathlib cache
+        run: lake exe cache get
+      - name: Check concrete Banerjee source
+        run: lake env lean Integration/OggSSPP2BanerjeeF4UniversalDeformationSource.lean
+      - name: Check affine scheme
+        run: lake env lean Integration/OggSSPP2BanerjeeAffineCurveScheme.lean
+      - name: Check projective equation
+        run: lake env lean Integration/OggSSPP2BanerjeeProjectiveCubicEquation.lean
+      - name: Check special fibre elliptic criterion
+        run: lake env lean Integration/OggSSPP2BanerjeeSpecialFibreElliptic.lean

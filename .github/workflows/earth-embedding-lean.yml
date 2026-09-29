@@ -1,0 +1,28 @@
+name: Earth Embedding Lean Kernel
+on:
+  push:
+    branches:
+      - research/earth-embeddings-woogaroo-20260929
+    paths:
+      - 'EarthEmbedding*.lean'
+      - '.github/workflows/earth-embedding-lean.yml'
+  pull_request:
+    paths:
+      - 'EarthEmbedding*.lean'
+      - '.github/workflows/earth-embedding-lean.yml'
+jobs:
+  check-earth-embeddings:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          use-mathlib-cache: true
+          build: false
+          test: false
+          lint: false
+      - name: Kernel-check four owned files
+        run: |
+          lake env lean EarthEmbeddingWoogaroo.lean
+          lake env lean EarthEmbeddingGeometry.lean
+          lake env lean EarthEmbeddingAdvanced.lean

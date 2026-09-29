@@ -122,8 +122,9 @@ theorem canonicalViscosityMarginBarrier
     (marginIsNu : s.margin = nu) :
     s.terminalCritical + nu * s.dissipation ≤
       s.initialCritical + 12 * s.uniformBound := by
-  subst marginIsNu
-  exact signedOrbitBarrier s w payment w1 initialMass
+  have h := signedOrbitBarrier s w payment w1 initialMass
+  rw [marginIsNu] at h
+  exact h
 
 /-- Direct complete-target compiler mirroring Agda R817.  The only analytic
     input is nonnegativity of the exact complete signed target; no separated

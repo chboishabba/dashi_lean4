@@ -1,3 +1,4 @@
+import Integration.OggSSPP2F4EllipticHeisenbergPairing
 import Integration.OggSSPP2F4ActualGroupShearReflection
 import Integration.OggSSPP2F4ActualGroupBasis
 import Integration.OggSSPP2F4ActualGroupCardinality

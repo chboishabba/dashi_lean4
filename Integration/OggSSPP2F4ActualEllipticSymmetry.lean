@@ -1,0 +1,133 @@
+import Integration.OggSSPP2F4ActualEllipticGroup
+import Integration.OggSSPP2BanerjeeF4ZetaCoordinates
+import Mathlib
+
+/-!
+# Actual characteristic-two elliptic point carrier: Frobenius and order-three symmetry
+
+This owner acts on the *real Mathlib nonsingular Weierstrass point type*, not
+on a parallel nine-label table.  The functions are built from the actual
+coordinates of E : y²+y=x³ over F₄ and preserve its equation.
+
+F(x,y) = (x²,y²) and R(x,y) = (ζ*x,y), with infinity fixed, satisfy
+F² = 1, R³ = 1, and F R F = R².  Inversion of the elliptic point group is
+a different map; it has y-coordinate y+1.
+
+The action relations are proved as permutations of the actual point carrier.
+Group-homomorphism status for F and R, elliptic 3-torsion, and an equivariant
+additive 369 chart are separate obligations.  Nothing here infers an
+exceptional Monster exponent or a Γ₀(4) subgroup scheme.
+-/
+
+namespace Integration.OggSSPP2F4ActualEllipticSymmetry
+
+namespace B := Integration.OggSSPP2BanerjeeF4UniversalDeformationSource
+namespace Z := Integration.OggSSPP2BanerjeeF4ZetaCoordinates
+namespace G := Integration.OggSSPP2F4ActualEllipticGroup
+
+open WeierstrassCurve
+
+private theorem equation_of_nonsingular
+    {x y : B.F4}
+    (h : B.specialCurve.toAffine.Nonsingular x y) :
+    y ^ 2 + y = x ^ 3 := by
+  have heq :=
+    (WeierstrassCurve.Affine.equation_iff_nonsingular
+      (W := B.specialCurve.toAffine)).mpr h
+  exact (WeierstrassCurve.Affine.equation_iff
+    (W := B.specialCurve.toAffine) x y).mp heq |>.rec
+    (fun q => by simpa [B.specialCurve] using q)
+
+theorem frobenius_preserves_curve
+    (x y : B.F4) (h : y ^ 2 + y = x ^ 3) :
+    (y ^ 2) ^ 2 + y ^ 2 = (x ^ 2) ^ 3 := by
+  calc
+    (y ^ 2) ^ 2 + y ^ 2 = (y ^ 2 + y) ^ 2 := by
+      have htwo : (2 : B.F4) = 0 := CharP.cast_eq_zero B.F4 2
+      linear_combination -(y ^ 3 * htwo)
+    _ = (x ^ 3) ^ 2 := congrArg (fun t : B.F4 => t ^ 2) h
+    _ = (x ^ 2) ^ 3 := by ring
+
+theorem shear_preserves_curve
+    (x y : B.F4) (h : y ^ 2 + y = x ^ 3) :
+    y ^ 2 + y = (Z.zeta * x) ^ 3 := by
+  calc
+    y ^ 2 + y = x ^ 3 := h
+    _ = Z.zeta ^ 3 * x ^ 3 := by rw [Z.zeta_cube_is_one]; ring
+    _ = (Z.zeta * x) ^ 3 := by ring
+
+noncomputable def frobenius : G.ActualCurveGroup → G.ActualCurveGroup
+  | .zero => 0
+  | .some x y h =>
+      G.fromAffineEquation (x ^ 2) (y ^ 2)
+        (frobenius_preserves_curve x y (equation_of_nonsingular h))
+
+noncomputable def shear : G.ActualCurveGroup → G.ActualCurveGroup
+  | .zero => 0
+  | .some x y h =>
+      G.fromAffineEquation (Z.zeta * x) y
+        (shear_preserves_curve x y (equation_of_nonsingular h))
+
+theorem frobenius_zero : frobenius 0 = 0 := rfl
+theorem shear_zero : shear 0 = 0 := rfl
+
+theorem frobenius_square (p : G.ActualCurveGroup) :
+    frobenius (frobenius p) = p := by
+  cases p with
+  | zero => rfl
+  | some x y h =>
+      simp only [frobenius, G.fromAffineEquation]
+      have hx := Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power x
+      have hy := Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power y
+      simpa only [pow_mul, show 2 * 2 = 4 by decide] using
+        congrArg₂ (fun a b : B.F4 => WeierstrassCurve.Affine.Point.some a b
+          (by simpa [hx, hy] using h)) hx hy
+
+theorem shear_cube (p : G.ActualCurveGroup) :
+    shear (shear (shear p)) = p := by
+  cases p with
+  | zero => rfl
+  | some x y h =>
+      simp only [shear, G.fromAffineEquation]
+      congr 1
+      · calc
+          Z.zeta * (Z.zeta * (Z.zeta * x)) =
+              Z.zeta ^ 3 * x := by ring
+          _ = x := by rw [Z.zeta_cube_is_one]; ring
+      · rfl
+
+theorem frobenius_shear_frobenius (p : G.ActualCurveGroup) :
+    frobenius (shear (frobenius p)) = shear (shear p) := by
+  cases p with
+  | zero => rfl
+  | some x y h =>
+      simp only [frobenius, shear, G.fromAffineEquation]
+      congr 1
+      · have hx := Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power x
+        calc
+          (Z.zeta * x ^ 2) ^ 2 = Z.zeta ^ 2 * x ^ 4 := by ring
+          _ = Z.zeta * (Z.zeta * x) := by rw [hx]; ring
+      · exact Integration.OggSSPP2F4CurveTangentFlex.f4_fourth_power y
+
+structure Boundary where
+  actsOnActualMathlibEllipticPoints : Bool
+  bothMapsPreserveSourceCurveEquation : Bool
+  frobeniusSquareIdentity : Bool
+  shearCubeIdentity : Bool
+  conjugationInvertsShear : Bool
+  actionPreservesEllipticAddition : Bool
+  additive369EigenbasisConstructed : Bool
+  levelFourModuliRecognized : Bool
+  deriving Repr
+
+def canonicalBoundary : Boundary where
+  actsOnActualMathlibEllipticPoints := true
+  bothMapsPreserveSourceCurveEquation := true
+  frobeniusSquareIdentity := true
+  shearCubeIdentity := true
+  conjugationInvertsShear := true
+  actionPreservesEllipticAddition := false
+  additive369EigenbasisConstructed := false
+  levelFourModuliRecognized := false
+
+end Integration.OggSSPP2F4ActualEllipticSymmetry

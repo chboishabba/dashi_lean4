@@ -52,6 +52,42 @@ theorem residual_exponent_two_of_selmer_exponent_two
   obtain ⟨s, rfl⟩ := d.residualSurjective r
   rw [← map_mul, hSelmer s, map_one]
 
+/--
+The MW/2 quotient inherits exponent-two from the Selmer carrier through the
+actual injective quotient-Kummer map.  No separate MW rank or torsion theorem
+is smuggled into this implication.
+-/
+theorem mordellWeilModuloTwo_exponent_two_of_selmer_exponent_two
+    (hSelmer : ∀ s : d.Selmer, s * s = 1) :
+    letI : E.1.IsElliptic := E.2
+    ∀ q : Multiplicative E.1.toAffine.Point ⧸ rationalDoubleSubgroup E,
+      q * q = 1 := by
+  letI : E.1.IsElliptic := E.2
+  intro q
+  apply d.quotientKummerToSelmer_injective
+  calc
+    d.quotientKummerToSelmer (q * q)
+        = d.quotientKummerToSelmer q *
+          d.quotientKummerToSelmer q := map_mul _ _ _
+    _ = 1 := hSelmer _
+    _ = d.quotientKummerToSelmer 1 := (map_one _).symm
+
+/--
+At an actual finite elementary-two descent layer, all three carriers are
+finite and both quotient terms have exponent two. This is the prerequisite
+for a dimension formulation; no dimension/rank equality is claimed here.
+-/
+theorem finite_two_descent_group_properties
+    [Finite d.Selmer]
+    (hSelmer : ∀ s : d.Selmer, s * s = 1) :
+    (Finite d.Residual) ∧
+    (letI : E.1.IsElliptic := E.2
+      Finite
+        (Multiplicative E.1.toAffine.Point ⧸ rationalDoubleSubgroup E)) := by
+  constructor
+  · exact d.residual_finite_of_selmer_finite
+  · exact d.mordellWeilModuloTwo_finite_of_selmer_finite
+
 /-- Same-curve finite-cardinality factorization, now with finiteness explicitly
 available for both factors. This is still not an F₂ dimension statement. -/
 theorem finite_selmer_two_descent_cardinality

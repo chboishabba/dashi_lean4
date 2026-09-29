@@ -103,6 +103,29 @@ theorem twoTorsionResidualCountermodel_nontrivial
   change Nontrivial (Multiplicative (ZMod 2))
   infer_instance
 
+/-- Even a FINITE, nontrivial residual is permitted by bare exactness
+on every curve: the explicit residual is exactly the two-element group. -/
+theorem twoTorsionResidualCountermodel_finite
+    (E : RationalEllipticCurve) :
+    Finite (twoTorsionResidualCountermodel E).Residual := by
+  change Finite (Multiplicative (ZMod 2))
+  infer_instance
+
+/-- Its chosen residual has exponent two, again without any arithmetic
+Selmer construction or Sha(E)[2] identification. -/
+theorem twoTorsionResidualCountermodel_exponent_two
+    (E : RationalEllipticCurve) :
+    ∀ r : (twoTorsionResidualCountermodel E).Residual,
+      r * r = 1 := by
+  intro r
+  change Multiplicative.ofAdd (r.toAdd + r.toAdd) =
+    Multiplicative.ofAdd (0 : ZMod 2)
+  congr 1
+  have hz : (2 : ZMod 2) = 0 := by decide
+  calc
+    r.toAdd + r.toAdd = (2 : ZMod 2) * r.toAdd := by ring
+    _ = 0 := by rw [hz]; simp
+
 /-!
 Thus even "there exists an exact sequence with nontrivial residual" is a
 tautology under the original interface. Genuine BSD progress requires an

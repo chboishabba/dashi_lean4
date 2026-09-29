@@ -1,3 +1,4 @@
+import Integration.OggSSPP2F4ActualGroupGenerators
 import Integration.OggSSPP2F4ActualEllipticGroup
 import Integration.OggSSPP2BanerjeeF4ZetaCoordinates
 import Mathlib
@@ -139,6 +140,35 @@ theorem conjugation_relation_as_permutations :
       = shearEquiv.trans shearEquiv := by
   ext p
   exact frobenius_shear_frobenius p
+
+/-! ## Actual generator-level relative-F₂-Frobenius reflection -/
+
+namespace Gen := Integration.OggSSPP2F4ActualGroupGenerators
+
+theorem frobenius_fixed_actual_P :
+    frobenius Gen.P = Gen.P := by
+  simp [frobenius, Gen.P, G.fromAffineEquation]
+
+/-- The F₂-Frobenius of Q has precisely Q's genuine elliptic inverse
+coordinate. This uses the SOURCE curve negY and the actual ζ polynomial,
+not a ternary label reflection. -/
+theorem frobenius_actual_Q_y_eq_negY :
+    (Z.zeta ^ 2 : B.F4)
+      =
+    B.specialCurve.toAffine.negY 1 Z.zeta := by
+  have h : (Z.zeta ^ 2 : B.F4) = -Z.zeta - 1 := by
+    linear_combination Z.zeta_quadratic
+  simpa [WeierstrassCurve.Affine.negY, B.specialCurve] using h
+
+/-- The asserted matrix reflection on the proposed P,Q axes has now been
+verified on Q as an equality of ACTUAL elliptic points.  To extend it to all
+points by group linearity still requires a genuine additive chart. -/
+theorem frobenius_actual_Q_eq_neg :
+    frobenius Gen.Q = -Gen.Q := by
+  simp only [Gen.Q, frobenius, G.fromAffineEquation,
+    WeierstrassCurve.Affine.Point.neg_some]
+  congr 1
+  exact frobenius_actual_Q_y_eq_negY
 
 structure Boundary where
   actsOnActualMathlibEllipticPoints : Bool

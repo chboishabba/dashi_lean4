@@ -109,6 +109,40 @@ theorem zeta_squared_is_ternary_root :
     ternaryRootPolynomial (zeta ^ 2) = 0 := by
   simp [ternaryRootPolynomial, zeta_squared_quadratic]
 
+/-- The characteristic-two quadratic splits at precisely zeta and zeta². -/
+theorem quadratic_factors (t : B.F4) :
+    (t - zeta) * (t - zeta ^ 2) = t ^ 2 + t + 1 := by
+  have htwo : (2 : B.F4) = 0 := CharP.cast_eq_zero B.F4 2
+  calc
+    _ = t ^ 2 - (zeta + zeta ^ 2) * t + zeta ^ 3 := by ring
+    _ = t ^ 2 - t + 1 := by rw [← zeta_trace_one, zeta_cube_is_one]
+    _ = t ^ 2 + t + 1 := by linear_combination -(t * htwo)
+
+/-- All three roots, and no others, of t(t²+t+1) over F4. -/
+theorem ternary_root_iff (t : B.F4) :
+    ternaryRootPolynomial t = 0 ↔
+      t = 0 ∨ t = zeta ∨ t = zeta ^ 2 := by
+  constructor
+  · intro h
+    have hf : t * ((t - zeta) * (t - zeta ^ 2)) = 0 := by
+      simpa [ternaryRootPolynomial, quadratic_factors] using h
+    rcases mul_eq_zero.mp hf with hzero | hrest
+    · exact Or.inl hzero
+    rcases mul_eq_zero.mp hrest with hz | hz2
+    · exact Or.inr (Or.inl (sub_eq_zero.mp hz))
+    · exact Or.inr (Or.inr (sub_eq_zero.mp hz2))
+  · rintro (rfl | rfl | rfl)
+    · exact zero_is_ternary_root
+    · exact zeta_is_ternary_root
+    · exact zeta_squared_is_ternary_root
+
+/-- Frobenius exchanges the two nonzero phase roots. -/
+theorem zeta_frobenius_conjugate :
+    (zeta ^ 2) ^ 2 = zeta := by
+  calc
+    _ = zeta ^ 4 := by ring
+    _ = zeta := zeta_fourth_is_zeta
+
 theorem one_is_not_ternary_root :
     ternaryRootPolynomial 1 ≠ 0 := by
   have htwo : (2 : B.F4) = 0 := CharP.cast_eq_zero B.F4 2
@@ -132,6 +166,7 @@ structure Boundary where
   cubicRootAndQuadraticRelation : Bool
   bothConjugateRootsSolveYTraceOne : Bool
   threeRootPolynomialOwned : Bool
+  exhaustiveThreeRootClassificationOwned : Bool
   falseProjectiveInfinityTripleRejected : Bool
   fullCurvePointEnumerationLeanProved : Bool
   gamma0FourMarkedSourceRealized : Bool
@@ -142,6 +177,7 @@ def canonicalBoundary : Boundary where
   cubicRootAndQuadraticRelation := true
   bothConjugateRootsSolveYTraceOne := true
   threeRootPolynomialOwned := true
+  exhaustiveThreeRootClassificationOwned := true
   falseProjectiveInfinityTripleRejected := true
   fullCurvePointEnumerationLeanProved := false
   gamma0FourMarkedSourceRealized := false

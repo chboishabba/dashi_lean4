@@ -331,7 +331,7 @@ theorem nondegenerate_pairing_basis_phase_nonzero
   have hPZero : G.P = 0 := by
     apply hNondeg G.P
     intro q
-    exact congrArg (fun f : E.ActualCurveGroup →+ F3 => f q)
+    simpa using congrArg (fun f : E.ActualCurveGroup →+ F3 => f q)
       hPairZero
   exact Integration.OggSSPP2F4ActualGroupBasis.P_ne_zero hPZero
 

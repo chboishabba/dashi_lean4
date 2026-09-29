@@ -1,6 +1,7 @@
 import Integration.OggSSPP2F4ActualGroupBasis
 import Integration.OggSSPP2F4ActualGroupShearReflection
 import Integration.Base369Heisenberg
+import Integration.OggSSPP2F4EllipticHeisenbergPairing
 
 /-!
 # Actual elliptic-group alternating form, via the proved additive chart
@@ -361,5 +362,25 @@ theorem nondegenerate_pairing_matches_up_to_phase
         (E.ActualCurveGroup →+ F3) => f p q) heq
   · right
     exact inverted_orientation_pairing_unique β hAlt h
+
+
+/-- Exact same-object comparison with the PRE-EXISTING elliptic-Heisenberg
+owner. Its native central commutator orientation is -ellipticOmega, not
+ellipticOmega. This prevents building a second, silently opposed pairing. -/
+theorem existing_native_elliptic_pairing_eq_neg_normalized
+    (p q : E.ActualCurveGroup) :
+    Integration.OggSSPP2F4EllipticHeisenbergPairing.pairing p q
+      = -ellipticOmega p q := by
+  dsimp [Integration.OggSSPP2F4EllipticHeisenbergPairing.pairing,
+    Integration.OggSSPP2F4EllipticHeisenbergPairing.coords,
+    ellipticOmega, planeOmega]
+  ring
+
+theorem normalized_pairing_eq_neg_existing_native
+    (p q : E.ActualCurveGroup) :
+    ellipticOmega p q =
+      -Integration.OggSSPP2F4EllipticHeisenbergPairing.pairing p q := by
+  rw [existing_native_elliptic_pairing_eq_neg_normalized]
+  simp
 
 end Integration.OggSSPP2F4ActualPairingNormalization

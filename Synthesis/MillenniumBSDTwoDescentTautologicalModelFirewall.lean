@@ -22,17 +22,17 @@ namespace Synthesis.Millennium.BSD
 
 noncomputable section
 
-abbrev QuotientOnlyTwoSelmer (E : RationalEllipticCurve) :=
+abbrev QuotientOnlyTwoSelmerLegacy (E : RationalEllipticCurve) :=
   letI : E.1.IsElliptic := E.2
   Multiplicative E.1.toAffine.Point ⧸ rationalDoubleSubgroup E
 
-def quotientOnlyResidualMap (E : RationalEllipticCurve) :
-    QuotientOnlyTwoSelmer E →* PUnit where
+def quotientOnlyResidualMap_legacy (E : RationalEllipticCurve) :
+    QuotientOnlyTwoSelmerLegacy E →* PUnit where
   toFun := fun _ => PUnit.unit
   map_one' := rfl
   map_mul' := by intros; rfl
 
-theorem quotientOnlyKummerKernelExactlyDoubles
+theorem quotientOnlyKummerKernelExactlyDoubles_legacy
     (E : RationalEllipticCurve) :
     letI : E.1.IsElliptic := E.2
     ∀ P : E.1.toAffine.Point,
@@ -47,19 +47,19 @@ theorem quotientOnlyKummerKernelExactlyDoubles
       (N := rationalDoubleSubgroup E)
       (Multiplicative.ofAdd P))
 
-noncomputable def quotientOnlyDescent
+noncomputable def quotientOnlyDescent_legacy
     (E : RationalEllipticCurve) :
     UniversalTwoDescentResidualOn E where
-  Selmer := QuotientOnlyTwoSelmer E
+  Selmer := QuotientOnlyTwoSelmerLegacy E
   Residual := PUnit
   selmerGroup := inferInstance
   residualGroup := inferInstance
   kummer := by
     letI : E.1.IsElliptic := E.2
     exact QuotientGroup.mk' (rationalDoubleSubgroup E)
-  residualMap := quotientOnlyResidualMap E
+  residualMap := quotientOnlyResidualMap_legacy E
   kummerKernelExactlyDoubles :=
-    quotientOnlyKummerKernelExactlyDoubles E
+    quotientOnlyKummerKernelExactlyDoubles_legacy E
   residualSurjective := by
     intro r
     cases r
@@ -76,13 +76,13 @@ noncomputable def quotientOnlyDescent
     · intro _
       rfl
 
-theorem oldUniversalTwoDescentCarrier_isTautologicallyInhabited :
+theorem oldUniversalTwoDescentCarrier_isTautologicallyInhabited_legacy :
     UniversalTwoDescentResidualCarrier :=
-  fun E => ⟨quotientOnlyDescent E⟩
+  fun E => ⟨quotientOnlyDescent_legacy E⟩
 
-theorem quotientOnlyResidualSubsingleton
+theorem quotientOnlyResidualSubsingleton_legacy
     (E : RationalEllipticCurve) :
-    Subsingleton (quotientOnlyDescent E).Residual :=
+    Subsingleton (quotientOnlyDescent_legacy E).Residual :=
   inferInstance
 
 /-!

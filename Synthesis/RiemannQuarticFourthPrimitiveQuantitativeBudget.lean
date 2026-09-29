@@ -804,7 +804,8 @@ theorem QuarticFourSignedPolePair.signedFifthCapCriterion_no_budget_sign
     (hsigned :
       -W.outerVerticalAbsoluteBudget rho EV + 2*eps
         <= W.signedFifthPhysicalCapInteriorAt n) :
-    W.PostSixthCanonicalSignedHighCut rho EV := by
+    W.quarticScaleOuterTerminalAt n
+      < (t/16)^6 * W.postSixthTerminalResidualMargin rho EV := by
   exact W.signedFifthCapLowerBound_closes_finiteTerminal
     ht rho n hn heps hboundary hsigned
 

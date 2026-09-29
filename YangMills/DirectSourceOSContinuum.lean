@@ -145,8 +145,9 @@ theorem physical_ope_truncations_converge_of_dyadic_tail
     have hnsmall := hN n hn
     have hpositive : 0 ≤ C * (1 / 2 : ℝ) ^ n := by positivity
     simpa [Real.dist_eq, abs_of_nonneg hpositive] using hnsmall
-  change |truncation n - product| < ε
-  rw [abs_sub_comm]
-  exact lt_of_le_of_lt hbound hsmall
+  have hfinal : |truncation n - product| < ε := by
+    rw [abs_sub_comm]
+    exact lt_of_le_of_lt hbound hsmall
+  simpa [Real.dist_eq] using hfinal
 
 end RequestProject.YangMills

@@ -1,3 +1,4 @@
+import Integration.OggSSPP2BanerjeeAffineCurveScheme
 import Mathlib.AlgebraicGeometry.Scheme
 import Mathlib.AlgebraicGeometry.Morphisms.Finite
 import Mathlib.AlgebraicGeometry.Morphisms.Flat
@@ -117,15 +118,17 @@ structure Realization where
     comparison.finiteFlatFlagMatchesFrobeniusKernels
 
 inductive Residual
-  | missingBanerjeeEllipticCurveSchemeRealization
+  | missingProjectiveEllipticSchemeCompactification
   | missingFiniteFlatFrobeniusKernelSubgroupSchemes
   | missingGamma0FourLocalModelMarking
   deriving DecidableEq, Repr
 
 def firstResidual : Residual :=
-  .missingBanerjeeEllipticCurveSchemeRealization
+  .missingProjectiveEllipticSchemeCompactification
 
 structure Boundary where
+  actualAffineBanerjeeSchemeConstructed : Bool
+  actualAffineCurveOverWittBaseConstructed : Bool
   mathlibSchemeCarrierAvailable : Bool
   mathlibFiniteMorphismPredicateAvailable : Bool
   mathlibFlatMorphismPredicateAvailable : Bool
@@ -138,6 +141,8 @@ structure Boundary where
   deriving Repr
 
 def canonicalBoundary : Boundary where
+  actualAffineBanerjeeSchemeConstructed := true
+  actualAffineCurveOverWittBaseConstructed := true
   mathlibSchemeCarrierAvailable := true
   mathlibFiniteMorphismPredicateAvailable := true
   mathlibFlatMorphismPredicateAvailable := true

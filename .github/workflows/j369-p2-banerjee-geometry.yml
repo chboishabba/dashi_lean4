@@ -11,6 +11,7 @@ on:
       - "Integration/OggSSPP2F4CurveTangentFlex.lean"
       - "Integration/OggSSPP2F4ActualEllipticGroup.lean"
       - "Integration/OggSSPP2F4ActualGroupGenerators.lean"
+      - "Integration/OggSSPP2F4ActualGroupRelations.lean"
       - ".github/workflows/j369-p2-banerjee-geometry.yml"
   workflow_dispatch:
 
@@ -36,9 +37,16 @@ jobs:
         run: lake env lean Integration/OggSSPP2BanerjeeSpecialFibreElliptic.lean
       - name: Check F4 zeta roots and projective infinity
         run: lake env lean Integration/OggSSPP2BanerjeeF4ZetaCoordinates.lean
+      - name: Check actual elliptic group carrier
+        run: lake env lean Integration/OggSSPP2F4ActualEllipticGroup.lean
+      - name: Check actual elliptic group generators
+        run: lake env lean Integration/OggSSPP2F4ActualGroupGenerators.lean
+      - name: Check actual elliptic group relations
+        run: lake env lean Integration/OggSSPP2F4ActualGroupRelations.lean
       - name: Check finite-field tangent flex
         run: lake env lean Integration/OggSSPP2F4CurveTangentFlex.lean
       - name: Check actual Mathlib elliptic group
         run: lake env lean Integration/OggSSPP2F4ActualEllipticGroup.lean
       - name: Check actual P Q candidate basis
         run: lake env lean Integration/OggSSPP2F4ActualGroupGenerators.lean
+

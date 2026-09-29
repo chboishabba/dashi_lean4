@@ -636,4 +636,63 @@ theorem QuarticFourSignedPolePair.weightedFifthInterior_abs_le_physicalGrowth_mu
   exact W.weightedFifthInterior_abs_le_primitiveCost
     hQ hBP hPrimitive W.fifthDerivativeWeightedOuterEnvelope_global
 
+
+/-!
+## Budget sign on the actual off-critical target
+
+The quantitative target theorem proves that combinedZeroHeightDefect rho > 0
+for a selected off-line rho, but budget positivity needs *more*:
+the quartic target must beat the entire local+horizontal overhead.
+
+Expose this exact equation so future analytic work cannot infer an absolute
+margin solely from target-pair positivity.
+-/
+
+def QuarticFourSignedPolePair.absoluteFourthPrimitiveOverhead
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) (EV : ℝ) : ℝ :=
+  (t/16)^6 * W.postSixthTerminalLocalM6Budget EV
+    + 2*W.quarticScaleHorizontalRemainder
+    - 2*W.quarticScaleCanonicalLocalCorrection
+
+theorem QuarticFourSignedPolePair.absoluteBudget_eq_targetHeight_minus_overhead
+    {t EV : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.outerVerticalAbsoluteBudget rho EV
+      =
+    4*(t/16)^6 * W.combinedZeroHeightDefect rho
+      - W.absoluteFourthPrimitiveOverhead EV := by
+  unfold QuarticFourSignedPolePair.outerVerticalAbsoluteBudget
+    QuarticFourSignedPolePair.absoluteFourthPrimitiveOverhead
+    QuarticFourSignedPolePair.postSixthTerminalResidualMargin
+  ring
+
+theorem QuarticFourSignedPolePair.absoluteBudget_pos_iff_overhead_lt_targetHeight
+    {t EV : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    0 < W.outerVerticalAbsoluteBudget rho EV
+      ↔
+    W.absoluteFourthPrimitiveOverhead EV
+      < 4*(t/16)^6 * W.combinedZeroHeightDefect rho := by
+  rw [W.absoluteBudget_eq_targetHeight_minus_overhead]
+  constructor <;> intro h <;> linarith
+
+theorem QuarticFourSignedPolePair.offline_targetHeight_pos_but_absolute_requires_overhead
+    {t EV : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hhigh : 8/t < W.quantitativeTargetRadius)
+    (rho : Zeros)
+    (hoff : heightOf rho ≠ 0) :
+    0 < W.combinedZeroHeightDefect rho
+    ∧
+    (0 < W.outerVerticalAbsoluteBudget rho EV
+      ↔ W.absoluteFourthPrimitiveOverhead EV
+          < 4*(t/16)^6 * W.combinedZeroHeightDefect rho) := by
+  exact ⟨W.combinedZeroHeightDefect_pos_quantitative
+      ht hhigh rho hoff,
+    W.absoluteBudget_pos_iff_overhead_lt_targetHeight rho⟩
+
 end Synthesis

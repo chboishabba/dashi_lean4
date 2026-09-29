@@ -106,5 +106,44 @@ theorem allCutoffsBarrier
     (hW1 n t) (hInitial n t) (hDiss n t)
     uniformMargin (hMargin n t)
 
+
+/-- Canonical retained-margin specialization.  If the physical viscosity nu is
+    positive and the integrated slice uses margin = nu, the uniform-margin
+    step needs no extra cutoff-wise lower-bound theorem: the common floor is
+    literally nu. -/
+theorem canonicalViscosityMarginBarrier
+    (s : Integrated) (w : IntegratedWeld s)
+    (payment : 0 ≤ s.orbitPayment)
+    (w1 : s.integratedWeighted + s.terminalMixed ≤ s.uniformBound)
+    (initialMass : 0 ≤ s.initialMixed)
+    (dissNonnegative : 0 ≤ s.dissipation)
+    (nu : ℝ)
+    (nuPositive : 0 < nu)
+    (marginIsNu : s.margin = nu) :
+    s.terminalCritical + nu * s.dissipation ≤
+      s.initialCritical + 12 * s.uniformBound := by
+  subst marginIsNu
+  exact signedOrbitBarrier s w payment w1 initialMass
+
+/-- Direct complete-target compiler mirroring Agda R817.  The only analytic
+    input is nonnegativity of the exact complete signed target; no separated
+    cancellation is assumed. -/
+structure CompleteSignedTarget (s : Integrated) : Prop where
+  completeTarget : ℝ
+  completeTarget_is_orbitPayment :
+    completeTarget = s.orbitPayment
+
+theorem completeTargetBarrier
+    (s : Integrated) (w : IntegratedWeld s)
+    (target : CompleteSignedTarget s)
+    (targetNonnegative : 0 ≤ target.completeTarget)
+    (w1 : s.integratedWeighted + s.terminalMixed ≤ s.uniformBound)
+    (initialMass : 0 ≤ s.initialMixed) :
+    s.terminalCritical + s.margin * s.dissipation ≤
+      s.initialCritical + 12 * s.uniformBound := by
+  have payment : 0 ≤ s.orbitPayment := by
+    rwa [← target.completeTarget_is_orbitPayment]
+  exact signedOrbitBarrier s w payment w1 initialMass
+
 end SignedOrbitPacketWeld
 end NSBControl

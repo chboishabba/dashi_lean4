@@ -68,8 +68,12 @@ theorem no_identity_observable_candidate :
       (∀ p, candidate.sourceObservable p = rawDifferent p) ∧
       (∀ n, candidate.valuationContribution n = n) := by
   rintro ⟨candidate, fromRaw, contributionIsIdentity⟩
-  have h := candidate.matchesGap .two
-  rw [fromRaw, contributionIsIdentity] at h
+  have h : rawDifferent .two = exceptionalGap .two := by
+    calc
+      rawDifferent .two = candidate.sourceObservable .two := (fromRaw .two).symm
+      _ = candidate.valuationContribution (candidate.sourceObservable .two) :=
+        (contributionIsIdentity (candidate.sourceObservable .two)).symm
+      _ = exceptionalGap .two := candidate.matchesGap .two
   exact raw_different_ne_exceptional_gap .two h
 
 inductive ClaimOrigin

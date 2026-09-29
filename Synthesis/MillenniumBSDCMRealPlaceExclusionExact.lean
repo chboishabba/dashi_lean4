@@ -45,6 +45,17 @@ theorem mixedSignGlobalClass_not_selmerSubgroup :
   intro h
   exact mixedSignGlobalClass_not_realKummerImage h.1
 
+/-- The all-place CM two-Selmer subgroup is genuinely smaller than the
+unrestricted square-class product, as witnessed by the explicit mixed-sign
+class. This is arithmetic content absent from a bare exact-sequence shape. -/
+theorem explicitTwoSelmerSubgroup_ne_top :
+    explicitTwoSelmerSubgroup ≠ ⊤ := by
+  intro htop
+  have hmember : mixedSignGlobalClass ∈ explicitTwoSelmerSubgroup := by
+    rw [htop]
+    exact Subgroup.mem_top _
+  exact mixedSignGlobalClass_not_selmerSubgroup hmember
+
 /-!
 This example demonstrates an actual local arithmetic restriction on the
 worked CM Selmer carrier. It does not construct Sel_2(E) for general E, nor

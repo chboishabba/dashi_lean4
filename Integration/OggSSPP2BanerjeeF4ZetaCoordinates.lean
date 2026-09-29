@@ -115,7 +115,9 @@ theorem quadratic_factors (t : B.F4) :
   have htwo : (2 : B.F4) = 0 := CharP.cast_eq_zero B.F4 2
   calc
     _ = t ^ 2 - (zeta + zeta ^ 2) * t + zeta ^ 3 := by ring
-    _ = t ^ 2 - t + 1 := by rw [← zeta_trace_one, zeta_cube_is_one]
+    _ = t ^ 2 - t + 1 := by
+      rw [show zeta + zeta ^ 2 = (1 : B.F4) from by
+        simpa [add_comm] using zeta_trace_one, zeta_cube_is_one]
     _ = t ^ 2 + t + 1 := by linear_combination -(t * htwo)
 
 /-- All three roots, and no others, of t(t²+t+1) over F4. -/

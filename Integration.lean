@@ -1044,3 +1044,9 @@ import Integration.OggSSPP2F4CurveTangentFlex
 
 import Integration.OggSSPP2F4ActualEllipticGroup
 import Integration.OggSSPP2TernaryHeisenbergAction
+
+import Integration.OggSSPP2F4RecenteredNineS3
+
+import Integration.OggSSPP2F4ActualEllipticSymmetry
+
+import Integration.OggSSPP2F4ActualEllipticFirstSum

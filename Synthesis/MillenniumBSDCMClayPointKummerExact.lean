@@ -106,11 +106,80 @@ theorem cmClayGlobalKummerHom_kernel_iff_double
     rw [hQ, map_add]
 
 /-!
-Remaining worked-instance debt: turn the existing exact-middle quotient theorem
-into a point-level exact-middle proof on the transported Clay map. After that,
-the literal residual map can be installed as an actual concrete
-UniversalTwoDescentResidualOn cmRationalEllipticCurve. No all-curve statement
-or Sha identification follows from the present theorem.
+## Literal exact-middle transport
+
+The explicit cokernel's middle exactness was originally stated with the
+quotient MW/2 source. Its source quotient is a genuine quotient group, so a
+quotient witness can be represented by an actual rational point. This permits
+the exact same statement on the point-level Kummer hom.
+-/
+
+/-- Every quotient-class Kummer value is obtained from an actual legacy
+rational point, by quotient induction rather than a chosen representative. -/
+theorem cmLegacyKummerQuotient_hasPointRepresentative
+    (q : CMClayMordellWeilModuloTwo) :
+    ∃ P : RationalProjectivePoint,
+      globalKummerSelmerHom (Multiplicative.ofAdd P)
+        = cmClayKummerToSelmer q := by
+  refine Quotient.inductionOn q ?_
+  intro point
+  refine ⟨point.toAdd, ?_⟩
+  rfl
+
+/-- Exactness at the Selmer term on the actual Clay curve's point carrier. -/
+theorem cmClayGlobalKummer_exactMiddle
+    (s : explicitTwoSelmerSubgroup) :
+    explicitTwoSelmerCokernelMap s = 1
+      ↔
+    ∃ P : CMClayRationalPoint,
+      cmClayGlobalKummerHom (Multiplicative.ofAdd P) = s := by
+  constructor
+  · intro h
+    rcases (explicitTwoSelmerCokernel_exact_middle s).mp h with ⟨q, hq⟩
+    rcases cmLegacyKummerQuotient_hasPointRepresentative q with ⟨P, hP⟩
+    refine ⟨rationalProjectivePointAddEquivCMClay P, ?_⟩
+    change
+      globalKummerSelmerHom
+        (Multiplicative.ofAdd
+          (rationalProjectivePointAddEquivCMClay.symm
+            (rationalProjectivePointAddEquivCMClay P))) = s
+    simpa only [rationalProjectivePointAddEquivCMClay.symm_apply_apply]
+      using hP.trans hq
+  · rintro ⟨P, hP⟩
+    apply (explicitTwoSelmerCokernel_exact_middle s).mpr
+    refine
+      ⟨QuotientGroup.mk' globalDoubleSubgroup
+        (cmClayPointsToLegacy (Multiplicative.ofAdd P)), ?_⟩
+    change
+      globalKummerSelmerHom
+        (cmClayPointsToLegacy (Multiplicative.ofAdd P)) = s at hP
+    exact hP
+
+/--
+Actual concrete inhabitant of the universal two-descent *structure* for the
+worked CM curve y²=x³-x, obtained from the repo's point-level Kummer map and
+its explicit global/local Selmer cokernel.
+-/
+noncomputable def cmClayTwoDescentResidual :
+    UniversalTwoDescentResidualOn cmRationalEllipticCurve where
+  Selmer := explicitTwoSelmerSubgroup
+  Residual := ExplicitTwoSelmerCokernel
+  selmerGroup := inferInstance
+  residualGroup := inferInstance
+  kummer := cmClayGlobalKummerHom
+  residualMap := explicitTwoSelmerCokernelMap
+  kummerKernelExactlyDoubles :=
+    cmClayGlobalKummerHom_kernel_iff_double
+  residualSurjective :=
+    explicitTwoSelmerCokernelMap_surjective
+  exactMiddle :=
+    cmClayGlobalKummer_exactMiddle
+
+/-!
+This is a worked-curve inhabitant only. It does not produce Selmer data on
+an arbitrary RationalEllipticCurve or identify the residual with Sha[2].
+The all-curve theorem, higher descent tower and analytic-rank comparison
+remain open, as does exact-head kernel verification of this new file.
 -/
 
 end

@@ -31,7 +31,7 @@ def FactorsThrough {State View Answer : Type}
 
 /-- Exact collision sufficient to refute all decoder functions. -/
 structure Collision {State View Answer : Type}
-    (observe : State → View) (answer : State → Answer) : Prop where
+    (observe : State → View) (answer : State → Answer) : Type where
   left : State
   right : State
   sameView : observe left = observe right

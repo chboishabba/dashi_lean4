@@ -42,7 +42,7 @@ theorem reserve_nonneg (s : Slice)
     (hDiss : 0 ≤ s.dissipation) :
     0 ≤ reserve s := by
   dsimp [reserve]
-  positivity
+  nlinarith [mul_nonneg (sub_nonneg.mpr hMargin) hDiss]
 
 /-- Exact, signed acceptance test, with no positive-part or individual
     norm bounds. This is the minimal nonlinear/viscous spending condition. -/
@@ -107,8 +107,7 @@ theorem unitScale_falsification_certificate
     ¬ (0 ≤ signedAtScale quadratic cubic quintic 1 ∧
        0 ≤ signedAtScale quadratic cubic quintic (-1)) := by
   apply failure_of_bothSigns_at_scale quadratic cubic quintic 1
-  norm_num [pow_succ] at *
-  exact h
+  simpa only [one_pow, one_mul] using h
 
 end SignedOrbitReserveAudit
 end NSBControl

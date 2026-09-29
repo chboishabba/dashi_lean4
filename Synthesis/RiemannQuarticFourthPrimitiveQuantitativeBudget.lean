@@ -695,4 +695,117 @@ theorem QuarticFourSignedPolePair.offline_targetHeight_pos_but_absolute_requires
       ht hhigh rho hoff,
     W.absoluteBudget_pos_iff_overhead_lt_targetHeight rho⟩
 
+
+/-!
+## Direct signed C5 cap pairing cut
+
+The absolute P4 route can fail while the one-sided integral succeeds.
+Keep the exact two surviving pieces of fourfold IBP as separate functions,
+without replacing either with a norm.
+-/
+
+def QuarticFourSignedPolePair.signedFifthPhysicalCapInteriorAt
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) (n : ℕ) : ℝ :=
+  ∫ q in quarticSignedPoleCanonicalLocalRadius..((n : ℝ)/(t/16)),
+    compactCosineD5
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t) q
+      * anchoredPrimitive4
+        W.quarticScaleSymmetricWindowDiscrepancy
+        quarticSignedPoleCanonicalLocalRadius q
+
+def QuarticFourSignedPolePair.signedFifthCapUpperBoundaryAt
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) (n : ℕ) : ℝ :=
+  fourfoldIBPUpperBoundary
+    W.normalizedOrdinateCosineD1
+    (compactCosineD2
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t))
+    (compactCosineD3
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t))
+    (compactCosineD4
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t))
+    (anchoredPrimitive1
+      W.quarticScaleSymmetricWindowDiscrepancy
+      quarticSignedPoleCanonicalLocalRadius)
+    (anchoredPrimitive2
+      W.quarticScaleSymmetricWindowDiscrepancy
+      quarticSignedPoleCanonicalLocalRadius)
+    (anchoredPrimitive3
+      W.quarticScaleSymmetricWindowDiscrepancy
+      quarticSignedPoleCanonicalLocalRadius)
+    (anchoredPrimitive4
+      W.quarticScaleSymmetricWindowDiscrepancy
+      quarticSignedPoleCanonicalLocalRadius)
+    ((n : ℝ)/(t/16))
+
+theorem QuarticFourSignedPolePair.signedOuterAbel_eq_boundary_add_fifthCap
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (n : ℕ)
+    (hn : quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ)) :
+    W.normalizedOuterPairedAbelAt n
+      =
+    W.signedFifthCapUpperBoundaryAt n
+      + W.signedFifthPhysicalCapInteriorAt n := by
+  have hQ : quarticSignedPoleCanonicalLocalRadius
+      <= (n : ℝ)/(t/16) := by
+    rw [le_div_iff₀ (by positivity : 0 < t/16)]
+    exact hn
+  have hA :
+      IntervalIntegrable
+        W.quarticScaleSymmetricWindowDiscrepancy volume
+        quarticSignedPoleCanonicalLocalRadius ((n : ℝ)/(t/16)) :=
+    W.quarticScaleSymmetricWindowDiscrepancy_intervalIntegrable hQ
+  exact W.normalizedOuterPairedAbelAt_eq_upperBoundary_add_fifthInterior
+    ht n hn hA
+
+theorem QuarticFourSignedPolePair.signedFifthCapLowerBound_closes_finiteTerminal
+    {t EV eps : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (n : ℕ)
+    (hn : quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ))
+    (heps : 0 < eps)
+    (hboundary :
+      |W.signedFifthCapUpperBoundaryAt n| <= eps)
+    (hsigned :
+      -W.outerVerticalAbsoluteBudget rho EV + 2*eps
+        <= W.signedFifthPhysicalCapInteriorAt n) :
+    W.quarticScaleOuterTerminalAt n
+      <
+    (t/16)^6 * W.postSixthTerminalResidualMargin rho EV := by
+  have hsum :=
+    W.signedOuterAbel_eq_boundary_add_fifthCap ht n hn
+  have hbd := (abs_le.mp hboundary).1
+  have htarget :
+      -W.outerVerticalAbsoluteBudget rho EV
+        < W.normalizedOuterPairedAbelAt n := by
+    rw [hsum]
+    linarith
+  exact (W.outerTerminal_lt_iff_signedAbel_gt_negBudget rho n).2 htarget
+
+/-- The signed cap route does not require the absolute budget to be positive:
+the fifth-kernel correlation can in principle provide the needed lower
+bound even when the absolute sufficient criterion has no headroom. -/
+theorem QuarticFourSignedPolePair.signedFifthCapCriterion_no_budget_sign
+    {t EV eps : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (n : ℕ)
+    (hn : quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ))
+    (heps : 0 < eps)
+    (hboundary : |W.signedFifthCapUpperBoundaryAt n| <= eps)
+    (hsigned :
+      -W.outerVerticalAbsoluteBudget rho EV + 2*eps
+        <= W.signedFifthPhysicalCapInteriorAt n) :
+    W.PostSixthCanonicalSignedHighCut rho EV := by
+  exact W.signedFifthCapLowerBound_closes_finiteTerminal
+    ht rho n hn heps hboundary hsigned
+
 end Synthesis

@@ -1064,3 +1064,5 @@ import Integration.SelectedFibreActionCompiler
 import Integration.OutgoingFrickeModeBlock
 
 import Integration.TrialecticFiniteBasisLinearWrongType
+
+import Integration.Selected3BProjectionChoice

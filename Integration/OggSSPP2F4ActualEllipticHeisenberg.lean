@@ -136,6 +136,13 @@ theorem toActual_product (g h : Hei.H 1) :
     rw [nativePlane_product]
     exact Basis.actualC3SquareAddEquiv.map_add _ _
 
+theorem toActual_injective : Function.Injective toActual := by
+  intro a b hab
+  calc
+    a = fromActual (toActual a) := (fromActual_toActual a).symm
+    _ = fromActual (toActual b) := by rw [hab]
+    _ = b := fromActual_toActual b
+
 theorem fromActual_product (g h : ActualEllipticH27) :
     fromActual (product g h) =
       fromActual g * fromActual h := by

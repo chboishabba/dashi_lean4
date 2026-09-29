@@ -6,6 +6,7 @@ import NSBControl.CompleteSelfOrbitCollapse
 import NSBControl.OutputPairingCollapse
 import NSBControl.OutputRealityNoGo
 import NSBControl.QCycleQuotientResidual
+import NSBControl.UnifiedWeightedOrbitBarrier
 import NSBControl.SelectedSelfResolvedRecombination
 import NSBControl.CombinedSpacetimePayment
 import NSBControl.CombinedPaymentToWeightedWork

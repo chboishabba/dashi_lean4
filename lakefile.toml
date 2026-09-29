@@ -153,10 +153,15 @@ globs = ["RequestProject.NavierStokes.CanonicalCompletionLeaves"]
 name = "YMContinuum"
 globs = ["YangMills.*"]
 
-
 # Independent mirror of the live Agda R702/R703 cyclic-helical max-cut.
 # This proves only exact leg/coefficient bookkeeping; it makes no Clay or
 # analytic-closure claim.
 [[lean_lib]]
 name = "NSBCyclicOrbit"
 globs = ["NSBCyclicOrbit", "NSBControl.CyclicHelicalVectorTransform", "NSBControl.SelfOrbitCommutatorCarrier", "NSBControl.SingleSelfCommutatorOrbit", "NSBControl.SpectatorFibreLegTransport", "NSBControl.CompleteSelfOrbitCollapse", "NSBControl.OutputPairingCollapse", "NSBControl.OutputRealityNoGo", "NSBControl.SelectedSelfResolvedRecombination", "NSBControl.CombinedSpacetimePayment", "NSBControl.CombinedPaymentToWeightedWork", "NSBControl.CombinedCurrentEndgame", "NSBControl.DirectCombinedCut", "NSBControl.SharedWeightedCut", "NSBControl.AugmentedDerivativeCancellation", "NSBControl.DyadicDifferenceResidual", "NSBControl.GlobalProductRuleLoop"]
+
+# TPS-grounded quantum mereology reusing the retained Wikidata P361/P2670 layer.
+[[lean_lib]]
+name = "QuantumMereology"
+srcDir = "DASHI/output-final_aristotle"
+globs = ["RequestProject.Mereology", "RequestProject.QuantumMereology", "RequestProject.QuantumMereologySelection", "RequestProject.QuantumMereologySelectionRegression", "RequestProject.QuantumMereologyObserverBridge", "RequestProject.QuantumMereologyFiniteLinearTPS", "RequestProject.QuantumMereologyInnerProductTPS", "RequestProject.QuantumMereologyOperatorLocality", "RequestProject.QuantumMereologyHamiltonianTransport", "RequestProject.QuantumMereologySchwingerObjective", "RequestProject.QuantumMereologyCandidatePointerObservable", "RequestProject.QuantumMereologyReducedState", "RequestProject.QuantumMereologyPointerProbability", "RequestProject.QuantumMereologyDensityEvolution", "RequestProject.QuantumMereologyEntropyAcceleration", "RequestProject.QuantumMereologySchwingerProducer", "RequestProject.QuantumMereologyHamiltonianExponential", "RequestProject.QuantumMereologyExponentialDerivative"]

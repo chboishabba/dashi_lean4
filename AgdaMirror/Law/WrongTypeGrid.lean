@@ -25,6 +25,7 @@ structure Cell where
 inductive Pattern
   | neglect | professionalNegligence | fiduciaryAbuse
   | theft | fraud | extortion | robbery | assault | kidnapping
+  | murder | manslaughter | sexualAssault | burglary
   | bribery | publicPowerMisuse | cyberMisuse | environmentalHarm
   deriving DecidableEq, Repr
 
@@ -79,5 +80,26 @@ structure LegalAssessmentBoundary where
   applicableNormEvidence : Prop
   satisfiedElementEvidence : Prop
   defenceAndExceptionReview : Prop
+
+/-- Each fixture is an offence-family locator with an explicitly editorial
+cell assignment. Neither the enactment nor the video supplies this cell. -/
+def crimeCandidate (id : String) (p : Pattern) (c : Cell)
+    (section : String) : GridCandidate :=
+  ⟨id, p, c, "illustrative:context-not-established", "evidence:not-provided",
+    qldCode section, "DASHI illustrative cell; not attributed to statute or video"⟩
+
+def illustrativeCrimes : List GridCandidate := [
+  crimeCandidate "wrong:QLD:assault" .assault ⟨.power, .care⟩ "ss 245-246",
+  crimeCandidate "wrong:QLD:sexual-assault" .sexualAssault ⟨.power, .power⟩ "s 352",
+  crimeCandidate "wrong:QLD:murder" .murder ⟨.power, .power⟩ "s 302",
+  crimeCandidate "wrong:QLD:manslaughter" .manslaughter ⟨.care, .power⟩ "s 303",
+  crimeCandidate "wrong:QLD:stealing" .theft ⟨.transaction, .transaction⟩ "s 391",
+  crimeCandidate "wrong:QLD:fraud" .fraud ⟨.transaction, .transaction⟩ "s 408C",
+  crimeCandidate "wrong:QLD:robbery" .robbery ⟨.power, .transaction⟩ "s 409",
+  crimeCandidate "wrong:QLD:extortion" .extortion ⟨.power, .transaction⟩ "s 415",
+  crimeCandidate "wrong:QLD:kidnapping-ransom" .kidnapping ⟨.power, .power⟩ "s 354A",
+  crimeCandidate "wrong:QLD:burglary" .burglary ⟨.power, .transaction⟩ "s 419",
+  crimeCandidate "wrong:QLD:computer-misuse" .cyberMisuse ⟨.transaction, .power⟩ "s 408E"
+]
 
 end AgdaMirror.Law.WrongTypeGrid

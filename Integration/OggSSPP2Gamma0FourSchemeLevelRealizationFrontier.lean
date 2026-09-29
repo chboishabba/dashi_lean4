@@ -1,3 +1,4 @@
+import Integration.OggSSPP2BanerjeeProjectiveCubicEquation
 import Integration.OggSSPP2BanerjeeAffineCurveScheme
 import Mathlib.AlgebraicGeometry.Scheme
 import Mathlib.AlgebraicGeometry.Morphisms.Finite
@@ -127,6 +128,8 @@ def firstResidual : Residual :=
   .missingProjectiveEllipticSchemeCompactification
 
 structure Boundary where
+  homogeneousBanerjeeCubicEquationOwned : Bool
+  pointAtInfinityEquationPaid : Bool
   actualAffineBanerjeeSchemeConstructed : Bool
   actualAffineCurveOverWittBaseConstructed : Bool
   mathlibSchemeCarrierAvailable : Bool
@@ -141,6 +144,8 @@ structure Boundary where
   deriving Repr
 
 def canonicalBoundary : Boundary where
+  homogeneousBanerjeeCubicEquationOwned := true
+  pointAtInfinityEquationPaid := true
   actualAffineBanerjeeSchemeConstructed := true
   actualAffineCurveOverWittBaseConstructed := true
   mathlibSchemeCarrierAvailable := true

@@ -9,6 +9,7 @@ on:
       - "Integration/OggSSPP2BanerjeeSpecialFibreElliptic.lean"
       - "Integration/OggSSPP2BanerjeeF4ZetaCoordinates.lean"
       - "Integration/OggSSPP2F4EllipticHeisenbergPairing.lean"
+      - "Integration/OggSSPP2F4ActualCoordinateActionGenerators.lean"
       - "Integration/OggSSPP2F4CurveTangentFlex.lean"
       - "Integration/OggSSPP2F4ActualEllipticGroup.lean"
       - "Integration/OggSSPP2F4ActualGroupGenerators.lean"
@@ -43,6 +44,8 @@ jobs:
         run: lake env lean Integration/OggSSPP2BanerjeeF4ZetaCoordinates.lean
       - name: Check actual elliptic-to-Heisenberg pairing and action
         run: lake env lean Integration/OggSSPP2F4EllipticHeisenbergPairing.lean
+      - name: Check coordinate Frobenius and shear on actual generators
+        run: lake env lean Integration/OggSSPP2F4ActualCoordinateActionGenerators.lean
       - name: Check actual elliptic group carrier
         run: lake env lean Integration/OggSSPP2F4ActualEllipticGroup.lean
       - name: Check actual elliptic group generators

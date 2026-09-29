@@ -81,4 +81,37 @@ theorem continuum_covariance_bound_of_three_expectations
       hLeft hRight hProduct)
   exact hFinite
 
+/--
+H3 rate contradiction for a positive selected spectral weight.
+
+If the physical spectral representation supplies a nonzero normalized subgap
+weight `weight`, while Wilson clustering bounds it by `C * (fast / slow)^n`
+with `0 ≤ fast < slow`, then no such weight exists.  This is the actual
+order/limit argument behind the R281 slow-versus-fast source obligation.
+Constructing the positive weight and normalization from the *same* H2-core
+Hamiltonian remains the independent physical spectral theorem.
+-/
+theorem no_positive_spectral_weight_below_faster_clustering_rate
+    (weight C fast slow : ℝ)
+    (hWeight : 0 < weight)
+    (hSlow : 0 < slow)
+    (hFastNonnegative : 0 ≤ fast)
+    (hFastBelowSlow : fast < slow)
+    (hNormalized :
+      ∀ n : ℕ, weight ≤ C * (fast / slow) ^ n) :
+    False := by
+  have hNonnegative : 0 ≤ fast / slow :=
+    div_nonneg hFastNonnegative hSlow.le
+  have hLessOne : fast / slow < 1 :=
+    (div_lt_one hSlow).2 hFastBelowSlow
+  have hDecay :
+      Tendsto (fun n : ℕ => C * (fast / slow) ^ n)
+        atTop (𝓝 0) := by
+    simpa using
+      (tendsto_pow_atTop_nhds_zero_of_lt_one
+        hNonnegative hLessOne).const_mul C
+  have hNonpositive : weight ≤ 0 :=
+    ge_of_tendsto hDecay (Filter.Eventually.of_forall hNormalized)
+  exact (not_le_of_gt hWeight) hNonpositive
+
 end RequestProject.YangMills

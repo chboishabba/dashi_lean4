@@ -1,6 +1,8 @@
 import Mathlib
 import YangMills.ContinuumProkhorov
 import YangMills.ContinuumWilsonCovariance
+import YangMills.OSGramNullSpace
+import YangMills.PreGapOSSemigroup
 
 open Filter Set MeasureTheory
 
@@ -112,5 +114,40 @@ theorem exists_unique_continuum_measure_with_selected_exponential_clustering
     exists_unique_continuum_measure_with_selected_covariance_bound
       μ cost hcost M hmoment hcompact hthreshold L hScalar
       left right (C * Real.exp (-m * t)) hFinite
+
+/--
+C2: a literal nonnegative dyadic OPE tail makes the actual finite-depth
+truncations converge to the SAME physical product coefficient.  The
+physics is the identification of the CMP119 marked-composite remainder
+with this actual local product; the rate-to-limit implication is analytic.
+-/
+theorem physical_ope_truncations_converge_of_dyadic_tail
+    (product : ℝ) (truncation : ℕ → ℝ) (C : ℝ)
+    (hC : 0 ≤ C)
+    (hRemainder :
+      ∀ depth : ℕ,
+        |product - truncation depth| ≤ C * (1 / 2 : ℝ) ^ depth) :
+    Tendsto truncation atTop (𝓝 product) := by
+  have hGeometric :
+      Tendsto (fun n : ℕ => C * (1 / 2 : ℝ) ^ n)
+        atTop (𝓝 0) := by
+    simpa using
+      (tendsto_pow_atTop_nhds_zero_of_lt_one
+        (by norm_num : 0 ≤ (1 / 2 : ℝ))
+        (by norm_num : (1 / 2 : ℝ) < 1)).const_mul C
+  apply Metric.tendsto_atTop.2
+  intro ε hε
+  obtain ⟨N, hN⟩ := Metric.tendsto_atTop.1 hGeometric ε hε
+  refine ⟨N, ?_⟩
+  intro n hn
+  have hbound := hRemainder n
+  have hsmall : C * (1 / 2 : ℝ) ^ n < ε := by
+    have hnsmall := hN n hn
+    have hpositive : 0 ≤ C * (1 / 2 : ℝ) ^ n := by positivity
+    simpa [Real.dist_eq, abs_of_nonneg hpositive] using hnsmall
+  have hfinal : |truncation n - product| < ε := by
+    rw [abs_sub_comm]
+    exact lt_of_le_of_lt hbound hsmall
+  simpa [Real.dist_eq] using hfinal
 
 end RequestProject.YangMills

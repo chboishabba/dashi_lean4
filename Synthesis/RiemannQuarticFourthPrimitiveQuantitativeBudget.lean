@@ -127,4 +127,174 @@ theorem QuarticFourSignedPolePair.absoluteBudget_failfast
   unfold QuarticFourSignedPolePair.absolutePrimitiveAdmissibleProduct
   exact not_lt.mpr hTooLarge
 
+
+/-!
+## Polynomial-growth primitive versus weighted fifth-kernel norm
+
+This is the useful non-uniform interface.  The analytic assumption is a
+bound on the ACTUAL anchored/physical fourth primitive.  The fifth-derivative
+integrability is recorded separately as a weighted kernel envelope.
+
+It is important that the coefficient BP remains height-dependent in any
+future RvM estimate: no quartic-scale saving is inferred from the growth
+degree alone.
+-/
+
+def QuarticFourSignedPolePair.OuterFourthPrimitivePolynomialBound
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) (BP : ℝ) : Prop :=
+  ∀ q : ℝ, quarticSignedPoleCanonicalLocalRadius <= q ->
+    |anchoredPrimitive4
+      W.quarticScaleSymmetricWindowDiscrepancy
+      quarticSignedPoleCanonicalLocalRadius q|
+      <= BP * (1 + q^5)
+
+def QuarticFourSignedPolePair.FifthDerivativeWeightedOuterEnvelope
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) (K : ℝ) : Prop :=
+  ∀ Q : ℝ, quarticSignedPoleCanonicalLocalRadius <= Q ->
+    (∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+      (1 + q^5)
+        * |compactCosineD5
+           (quarticFourSignedPoleCombinedProfile
+             W.R W.muHalf W.muTwo t) q|)
+      <= K
+
+theorem QuarticFourSignedPolePair.weightedFifthInterior_abs_le_primitiveCost
+    {t BP K Q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hQ : quarticSignedPoleCanonicalLocalRadius <= Q)
+    (hBP : 0 <= BP)
+    (hPrimitive : W.OuterFourthPrimitivePolynomialBound BP)
+    (hWeighted : W.FifthDerivativeWeightedOuterEnvelope K) :
+    |
+      ∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+        compactCosineD5
+          (quarticFourSignedPoleCombinedProfile
+            W.R W.muHalf W.muTwo t) q
+          *
+        anchoredPrimitive4
+          W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius q
+    | <= BP*K := by
+  let P : ℝ -> ℝ :=
+    quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t
+  let A : ℝ -> ℝ := W.quarticScaleSymmetricWindowDiscrepancy
+  let P4 : ℝ -> ℝ :=
+    anchoredPrimitive4 A quarticSignedPoleCanonicalLocalRadius
+  have hPcont : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hC5cont : Continuous (compactCosineD5 P) :=
+    compactCosineD5_continuous hPcont hPc
+  have hAint :
+      IntervalIntegrable A volume
+        quarticSignedPoleCanonicalLocalRadius Q :=
+    W.quarticScaleSymmetricWindowDiscrepancy_intervalIntegrable hQ
+  obtain ⟨_,_,_,hP4ac⟩ := anchoredPrimitive_ladder_ac hAint
+  have hP4cont :
+      ContinuousOn P4 (Set.uIcc quarticSignedPoleCanonicalLocalRadius Q) :=
+    hP4ac.continuousOn
+  have hproduct :
+      IntervalIntegrable
+        (fun q => compactCosineD5 P q * P4 q)
+        volume quarticSignedPoleCanonicalLocalRadius Q :=
+    (hC5cont.continuousOn.mul hP4cont).intervalIntegrable
+  have hweight :
+      IntervalIntegrable
+        (fun q => (1+q^5)*|compactCosineD5 P q|)
+        volume quarticSignedPoleCanonicalLocalRadius Q := by
+    apply Continuous.intervalIntegrable
+    fun_prop
+  have hmajor :
+      IntervalIntegrable
+        (fun q => BP*((1+q^5)*|compactCosineD5 P q|))
+        volume quarticSignedPoleCanonicalLocalRadius Q :=
+    hweight.const_mul BP
+  have hraw :
+      |
+        ∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+          compactCosineD5 P q * P4 q
+      | <=
+      BP *
+        (∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+          (1+q^5)*|compactCosineD5 P q|) := by
+    calc
+      |
+        ∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+          compactCosineD5 P q * P4 q
+      |
+        <= ∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+          |compactCosineD5 P q * P4 q| :=
+          intervalIntegral.abs_integral_le_integral_abs hQ
+      _ <= ∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+          BP*((1+q^5)*|compactCosineD5 P q|) := by
+        apply intervalIntegral.integral_mono_on
+          hQ hproduct.abs hmajor
+        intro q hq
+        rw [abs_mul]
+        have hqEta :
+            quarticSignedPoleCanonicalLocalRadius <= q := hq.1
+        have hbound := hPrimitive q hqEta
+        have hbase : 0 <= (1+q^5) := by
+          have heta : 0 < quarticSignedPoleCanonicalLocalRadius :=
+            quarticSignedPoleCanonicalLocalRadius_pos
+          have hq0 : 0 <= q := heta.le.trans hqEta
+          positivity
+        calc
+          |compactCosineD5 P q| * |P4 q|
+            <= |compactCosineD5 P q| * (BP*(1+q^5)) :=
+              mul_le_mul_of_nonneg_left hbound (abs_nonneg _)
+          _ = BP*((1+q^5)*|compactCosineD5 P q|) := by ring
+      _ =
+          BP *
+          (∫ q in quarticSignedPoleCanonicalLocalRadius..Q,
+            (1+q^5)*|compactCosineD5 P q|) := by
+            rw [intervalIntegral.integral_const_mul]
+  have hbound := hWeighted Q hQ
+  exact hraw.trans (mul_le_mul_of_nonneg_left hbound hBP)
+
+theorem QuarticFourSignedPolePair.weightedOuterAbel_abs_le_boundary_add_cost
+    {t BP K : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (hBP : 0 <= BP)
+    (hPrimitive : W.OuterFourthPrimitivePolynomialBound BP)
+    (hWeighted : W.FifthDerivativeWeightedOuterEnvelope K)
+    (n : ℕ)
+    (hn : quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ))
+    (hA :
+      IntervalIntegrable
+        W.quarticScaleSymmetricWindowDiscrepancy volume
+        quarticSignedPoleCanonicalLocalRadius ((n : ℝ)/(t/16))) :
+    |W.normalizedOuterPairedAbelAt n|
+      <=
+      |fourfoldIBPUpperBoundary
+        W.normalizedOrdinateCosineD1
+        (compactCosineD2
+          (quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t))
+        (compactCosineD3
+          (quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t))
+        (compactCosineD4
+          (quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t))
+        (anchoredPrimitive1 W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius)
+        (anchoredPrimitive2 W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius)
+        (anchoredPrimitive3 W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius)
+        (anchoredPrimitive4 W.quarticScaleSymmetricWindowDiscrepancy
+          quarticSignedPoleCanonicalLocalRadius)
+        ((n : ℝ)/(t/16))|
+      + BP*K := by
+  rw [W.normalizedOuterPairedAbelAt_eq_upperBoundary_add_fifthInterior
+    ht n hn hA]
+  have hQ : quarticSignedPoleCanonicalLocalRadius <= (n : ℝ)/(t/16) := by
+    rw [le_div_iff₀ (by positivity : 0 < t/16)]
+    exact hn
+  have hinner := W.weightedFifthInterior_abs_le_primitiveCost
+    hQ hBP hPrimitive hWeighted
+  exact (abs_add _ _).trans (add_le_add_left hinner _)
+
 end Synthesis

@@ -7,6 +7,7 @@ on:
     paths:
       - "Integration/ActionOrbitRecognition.lean"
       - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/OggSSPWildDifferentArithmeticObstruction.lean"
       - "Integration/OggSSPSmallCharacteristicAcquisitionDirection.lean"
       - "Integration/OggSSPP2F4FrobeniusCandidateNoGo.lean"
       - "Integration/OggSmallCharacteristicIsotropyOrderCrossPollination.lean"
@@ -26,6 +27,7 @@ on:
     paths:
       - "Integration/ActionOrbitRecognition.lean"
       - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/OggSSPWildDifferentArithmeticObstruction.lean"
       - "Integration/OggSSPSmallCharacteristicAcquisitionDirection.lean"
       - "Integration/OggSSPP2F4FrobeniusCandidateNoGo.lean"
       - "Integration/OggSmallCharacteristicIsotropyOrderCrossPollination.lean"
@@ -78,5 +80,7 @@ jobs:
         run: |
           lake env lean AgdaMirror/OggSSPSmallCharacteristicRecognition.lean
           lake env lean AgdaMirror/OggSSPIndependentBase369Recognition.lean
+      - name: Check wild-different arithmetic obstruction
+        run: lake env lean Integration/OggSSPWildDifferentArithmeticObstruction.lean
       - name: Run focused axiom audit
         run: lake env lean Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean

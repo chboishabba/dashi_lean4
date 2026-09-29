@@ -44,7 +44,7 @@ theorem every_point_on_infinity_chart_has_X_zero
     (x y : R)
     (h : homogeneousCubicAt x y 0 = 0) :
     x ^ 3 = 0 := by
-  simpa [homogeneousCubicAt] using h.symm
+  simpa [homogeneousCubicAt] using h
 
 structure Boundary where
   literalHomogeneousCubicOwned : Bool

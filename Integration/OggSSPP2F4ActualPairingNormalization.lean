@@ -31,7 +31,7 @@ abbrev Plane := F3 × F3
 def planeOmega (v w : Plane) : F3 :=
   v.1 * w.2 - v.2 * w.1
 
-def ellipticOmega (p q : E.ActualCurveGroup) : F3 :=
+noncomputable def ellipticOmega (p q : E.ActualCurveGroup) : F3 :=
   planeOmega (Basis.actualC3SquareAddEquiv.symm p)
     (Basis.actualC3SquareAddEquiv.symm q)
 
@@ -176,13 +176,13 @@ arithmetic API needed for the intrinsic Weil pairing after its geometric
 construction, and prevents an unjustified choice of cube-root orientation.
 -/
 
-def ellipticOmegaRightHom (p : E.ActualCurveGroup) :
+noncomputable def ellipticOmegaRightHom (p : E.ActualCurveGroup) :
     E.ActualCurveGroup →+ F3 where
   toFun := ellipticOmega p
   map_zero' := by simp [ellipticOmega, planeOmega]
   map_add' q u := ellipticOmega_add_right p q u
 
-def ellipticOmegaHom :
+noncomputable def ellipticOmegaHom :
     E.ActualCurveGroup →+ (E.ActualCurveGroup →+ F3) where
   toFun := ellipticOmegaRightHom
   map_zero' := by

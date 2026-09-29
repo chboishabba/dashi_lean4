@@ -43,7 +43,17 @@ theorem special_fibre_j_is_zero :
     B.specialCurve.j = 0 := by
   simp [WeierstrassCurve.j, special_fibre_c4_is_zero]
 
+/-- The full mixed-characteristic family has discriminant a₁³ - 27. -/
+theorem universal_family_discriminant_formula :
+    B.universalCurve.Δ =
+      B.universalParameter ^ 3 - 27 := by
+  simp [WeierstrassCurve.Δ, WeierstrassCurve.b₂,
+    WeierstrassCurve.b₄, WeierstrassCurve.b₆,
+    WeierstrassCurve.b₈, B.universalCurve, B.universalParameter]
+  ring
+
 structure Boundary where
+  universalFamilyDiscriminantFormulaPaid : Bool
   concreteSpecialFibreDiscriminantOne : Bool
   concreteSpecialFibreIsElliptic : Bool
   concreteSpecialFibreC4Zero : Bool
@@ -53,6 +63,7 @@ structure Boundary where
   deriving Repr
 
 def canonicalBoundary : Boundary where
+  universalFamilyDiscriminantFormulaPaid := true
   concreteSpecialFibreDiscriminantOne := true
   concreteSpecialFibreIsElliptic := true
   concreteSpecialFibreC4Zero := true

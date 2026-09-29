@@ -173,20 +173,6 @@ theorem actualShearModel_Q_is_R :
     actualShearModel G.Q = R.R := by
   rw [actualShearModel_Q, R.P_add_Q_eq_R]
 
-/--
-Open recognition goal: transported diagonal reflection equals coordinate
-Frobenius on every actual curve point.
--/
-def coordinateFrobeniusRecognitionGoal : Prop :=
-  ∀ p : E.ActualCurveGroup,
-    actualFrobeniusModel p =
-      actualFrobeniusModel p
-
-/--
-Open recognition goal intentionally kept separate: identify the transported
-shear with the actual coordinate automorphism (x,y) |-> (zeta*x,y).
-The tautological placeholder is NOT promoted as the recognition theorem.
--/
 structure RecognitionBoundary where
   transportedActualGroupAutomorphismsOwned : Bool
   matrixS3RelationsProved : Bool

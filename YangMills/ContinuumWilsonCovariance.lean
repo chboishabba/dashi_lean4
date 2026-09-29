@@ -83,4 +83,63 @@ theorem probabilityCovariance_exponential_bound_of_weak_limit
   exact probabilityCovariance_abs_le_of_weak_limit
     hμ f g (C * Real.exp (-m * t)) hfinite
 
+/--
+Dense-class clustering extension, the analytic component of Agda R583.
+
+The continuity modulus is uniform in Euclidean time and controls both
+observable slots.  Density is given as an actual metric approximation rather
+than an abstract proposition called "dense".  This theorem does NOT infer
+CMP119 Wilson-product density or the bound from a single selected Wilson pair.
+Those are the separate physical H1/OS4 hypotheses.
+-/
+theorem full_test_clustering_of_uniform_dense_wilson_clustering
+    {Test : Type*} [MetricSpace Test]
+    (wilsonProducts : Set Test)
+    (connected : ℕ → Test → Test → ℝ)
+    (hDense :
+      ∀ (test : Test) (δ : ℝ), 0 < δ →
+        ∃ w ∈ wilsonProducts, dist test w < δ)
+    (hUniform :
+      ∀ (ε : ℝ), 0 < ε →
+        ∃ δ : ℝ, 0 < δ ∧
+          ∀ (n : ℕ) (left left' right right' : Test),
+            dist left left' < δ →
+            dist right right' < δ →
+            |connected n left right - connected n left' right'| < ε)
+    (hWilson :
+      ∀ left ∈ wilsonProducts, ∀ right ∈ wilsonProducts,
+        Tendsto (fun n : ℕ => connected n left right) atTop (𝓝 0)) :
+    ∀ left right : Test,
+      Tendsto (fun n : ℕ => connected n left right) atTop (𝓝 0) := by
+  intro left right
+  apply Metric.tendsto_atTop.2
+  intro ε hε
+  have hεtwo : 0 < ε / 2 := half_pos hε
+  obtain ⟨δ, hδ, hcontinuity⟩ := hUniform (ε / 2) hεtwo
+  obtain ⟨wleft, hwleft, hdleft⟩ := hDense left δ hδ
+  obtain ⟨wright, hwright, hdright⟩ := hDense right δ hδ
+  obtain ⟨N, hN⟩ :=
+    Metric.tendsto_atTop.1 (hWilson wleft hwleft wright hwright)
+      (ε / 2) hεtwo
+  refine ⟨N, ?_⟩
+  intro n hn
+  have hnear :
+      |connected n left right - connected n wleft wright| < ε / 2 :=
+    hcontinuity n left wleft right wright hdleft hdright
+  have hsmall : |connected n wleft wright| < ε / 2 := by
+    simpa [Real.dist_eq] using hN n hn
+  have htriangle :
+      |connected n left right| ≤
+        |connected n left right - connected n wleft wright| +
+          |connected n wleft wright| := by
+    calc
+      |connected n left right| =
+          |(connected n left right - connected n wleft wright) +
+            connected n wleft wright| := by ring
+      _ ≤
+          |connected n left right - connected n wleft wright| +
+            |connected n wleft wright| := abs_add_le _ _
+  have hfinal : |connected n left right| < ε := by linarith
+  simpa [Real.dist_eq] using hfinal
+
 end RequestProject.YangMills

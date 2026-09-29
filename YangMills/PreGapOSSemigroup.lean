@@ -91,4 +91,50 @@ theorem continuum_covariance_eq_core_os_semigroup
   rw [hOnePoint, hTwoPoint, os_centered_semigroup_correlation
     Ω ψ T hNormalized hVacuumFixed hSymmetric t]
 
+/--
+The Cauchy--Schwarz estimate actually required by the OS4 extension.  It
+only uses contractivity of the SAME reconstructed OS transfer operator.
+Thus the time-uniform correlation modulus is a consequence of physical
+OS-semigroup reconstruction, not an independent continuum RG estimate.
+-/
+theorem os_semigroup_correlation_error_le
+    {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
+    (T : H →L[ℝ] H)
+    (hContract : ‖T‖ ≤ 1)
+    (left left' right right' : H) :
+    |⟪left, T right⟫_ℝ - ⟪left', T right'⟫_ℝ| ≤
+      ‖left - left'‖ * ‖right‖ +
+        ‖left'‖ * ‖right - right'‖ := by
+  have hDifference :
+      ⟪left, T right⟫_ℝ - ⟪left', T right'⟫_ℝ =
+      ⟪left - left', T right⟫_ℝ +
+        ⟪left', T (right - right')⟫_ℝ := by
+    simp only [inner_sub_left, map_sub, inner_sub_right]
+    ring
+  have hNormT (v : H) : ‖T v‖ ≤ ‖v‖ := by
+    calc
+      ‖T v‖ ≤ ‖T‖ * ‖v‖ := T.le_opNorm v
+      _ ≤ 1 * ‖v‖ :=
+        mul_le_mul_of_nonneg_right hContract (norm_nonneg v)
+      _ = ‖v‖ := one_mul _
+  rw [hDifference]
+  calc
+    |⟪left - left', T right⟫_ℝ +
+        ⟪left', T (right - right')⟫_ℝ|
+      ≤ |⟪left - left', T right⟫_ℝ| +
+          |⟪left', T (right - right')⟫_ℝ| :=
+        abs_add_le _ _
+    _ ≤ ‖left - left'‖ * ‖T right‖ +
+          ‖left'‖ * ‖T (right - right')‖ :=
+        add_le_add
+          (abs_real_inner_le_norm _ _)
+          (abs_real_inner_le_norm _ _)
+    _ ≤ ‖left - left'‖ * ‖right‖ +
+          ‖left'‖ * ‖right - right'‖ :=
+        add_le_add
+          (mul_le_mul_of_nonneg_left (hNormT right)
+            (norm_nonneg _))
+          (mul_le_mul_of_nonneg_left
+            (hNormT (right - right')) (norm_nonneg _))
+
 end RequestProject.YangMills

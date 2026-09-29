@@ -88,4 +88,29 @@ theorem QuarticFourSignedPolePair.physicalFourthPrimitive_eq_positiveRemainderDi
     (by linarith : t-s <= t+s)]
   rfl
 
+
+/-- At good positive heights the exact difference of classical counting
+remainders is the zeta-only half-contour, with the Gamma density already
+cancelled.  No RH input is used. -/
+theorem zetaMuPositiveOrdinateRemainder_sub_eq_zetaHalfContour
+    {A B : ℝ}
+    (hA : 1 <= A)
+    (hAB : A < B)
+    (hgA : Zeta23.RvM.GoodHeight A)
+    (hgB : Zeta23.RvM.GoodHeight B) :
+    zetaMuPositiveOrdinateRemainder B
+      - zetaMuPositiveOrdinateRemainder A
+      =
+    (1/Real.pi) *
+      (Zeta23.RvM.halfContour
+        (logDeriv riemannZeta) A B).im := by
+  have hwindow :=
+    zetaMuWindowDiscrepancy_eq_zetaHalfContour
+      hA hAB hgA hgB
+  have hdelta :=
+    zetaMuWindowDiscrepancy_eq_positiveRemainder_sub
+      (by linarith : 0 <= A) hAB.le
+  rw [zetaMuCumulativeDiscrepancy_endpoint] at hdelta
+  exact hdelta.symm.trans hwindow
+
 end Synthesis

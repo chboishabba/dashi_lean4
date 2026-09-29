@@ -1,5 +1,6 @@
 import Integration.OggSSPP2F4ActualGroupBasis
 import Integration.OggSSPP2F4ActualGroupShearReflection
+import Integration.Base369Heisenberg
 
 /-!
 # Actual elliptic-group alternating form, via the proved additive chart
@@ -271,5 +272,39 @@ theorem intrinsicWeilMatch_of_normalized_biadditive
   have h := normalized_pairing_unique β hAlt hPhase
   exact congrArg (fun f : E.ActualCurveGroup →+
       (E.ActualCurveGroup →+ F3) => f p q) h
+
+
+/-!
+## Native Heisenberg commutator orientation
+
+The repository's Schrödinger-compatible cocycle uses
+  omega_native(g,h) = <y_g,x_h> - <y_h,x_g>,
+which is the NEGATIVE of the elliptic P,Q orientation
+  omega_PQ((a,b),(c,d)) = a*d-b*c.
+This minus sign cannot be omitted when transporting a geometric e₃ phase
+through the native Heisenberg and VOA owners.
+-/
+
+def rankOneAxis (v : Plane) : Integration.Base369Heisenberg.H 1 :=
+  ⟨(fun _ => v.1), (fun _ => v.2), 0⟩
+
+theorem rankOneAxis_commutator_orientation (v w : Plane) :
+    Integration.Base369Heisenberg.omega (rankOneAxis v) (rankOneAxis w)
+      = -planeOmega v w := by
+  rcases v with ⟨a,b⟩
+  rcases w with ⟨c,d⟩
+  simp only [rankOneAxis, Integration.Base369Heisenberg.omega,
+    Integration.Base369Heisenberg.dot, Fin.sum_univ_one]
+  dsimp [planeOmega]
+  ring
+
+theorem ellipticOmega_eq_neg_nativeHeisenbergCommutator
+    (p q : E.ActualCurveGroup) :
+    ellipticOmega p q =
+      -Integration.Base369Heisenberg.omega
+        (rankOneAxis (Basis.actualC3SquareAddEquiv.symm p))
+        (rankOneAxis (Basis.actualC3SquareAddEquiv.symm q)) := by
+  rw [rankOneAxis_commutator_orientation]
+  simp [ellipticOmega]
 
 end Integration.OggSSPP2F4ActualPairingNormalization

@@ -1,3 +1,4 @@
+import Integration.OggSSPP2BanerjeeF4ZetaCoordinates
 import Integration.OggSSPP2BanerjeeSpecialFibreElliptic
 import Integration.OggSSPP2BanerjeeAffineCurveScheme
 import Integration.OggSSPP2BanerjeeGaloisOrbitNoGo
@@ -142,6 +143,7 @@ structure Boundary where
   gamma0FourEnhancementContractOwned : Bool
   schemeLevelFiniteFlatGamma0FourFrontierOwned : Bool
   banerjeeF4SpecialFibreEllipticProved : Bool
+  f4ZetaThreeRootArithmeticChartOwned : Bool
   banerjeeAffineCurveSchemeConstructed : Bool
   galoisInertiaSectorRealizationContractOwned : Bool
   separateMarkedAndTenStateProofsRequiredAfterSectorRealization : Bool
@@ -205,6 +207,7 @@ def canonicalBoundary : Boundary where
   gamma0FourEnhancementContractOwned := true
   schemeLevelFiniteFlatGamma0FourFrontierOwned := true
   banerjeeF4SpecialFibreEllipticProved := true
+  f4ZetaThreeRootArithmeticChartOwned := true
   banerjeeAffineCurveSchemeConstructed := true
   galoisInertiaSectorRealizationContractOwned := true
   separateMarkedAndTenStateProofsRequiredAfterSectorRealization := false

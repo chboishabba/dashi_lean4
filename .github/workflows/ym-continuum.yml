@@ -1,6 +1,14 @@
 name: YM Continuum Lean
 
 on:
+  push:
+    branches:
+      - agent/ym-selected-covariance-limit-20260922
+    paths:
+      - "YangMills/**"
+      - "lakefile.toml"
+      - "lean-toolchain"
+      - ".github/workflows/ym-continuum.yml"
   pull_request:
     paths:
       - "YangMills/**"

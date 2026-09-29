@@ -246,4 +246,35 @@ theorem os_semigroup_clustering_of_dense_wilson_vectors
       T hContract left right ε hε
   · exact hWilson
 
+/--
+The exact R281 correlation uses the ABSOLUTE magnitude of covariance.
+For a translated autocorrelation of one centered Wilson vector, positivity
+of the reconstructed self-adjoint contraction semigroup removes that
+absolute value.  This is NOT valid for arbitrary distinct left/right
+Wilson tests: the translated same-vector identification is a physical
+premise and must be checked on the actual selected CMP119 family.
+-/
+theorem continuum_abs_covariance_eq_positive_core_os_semigroup
+    {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
+    (Ω ψ : H) (T : ℕ → H →ₗ[ℝ] H)
+    (hNormalized : ⟪Ω, Ω⟫_ℝ = 1)
+    (hVacuumFixed : ∀ t, T t Ω = Ω)
+    (hSymmetric :
+      ∀ t (left right : H),
+        ⟪left, T t right⟫_ℝ = ⟪T t left, right⟫_ℝ)
+    (hPositive :
+      ∀ t (vector : H), 0 ≤ ⟪vector, T t vector⟫_ℝ)
+    (onePoint : ℝ) (twoPoint : ℕ → ℝ)
+    (hOnePoint : onePoint = ⟪Ω, ψ⟫_ℝ)
+    (hTwoPoint : ∀ t, twoPoint t = ⟪ψ, T t ψ⟫_ℝ)
+    (t : ℕ) :
+    |twoPoint t - onePoint ^ 2| =
+      ⟪osCenteredWilsonVector Ω ψ,
+        T t (osCenteredWilsonVector Ω ψ)⟫_ℝ := by
+  rw [continuum_covariance_eq_core_os_semigroup
+    Ω ψ T hNormalized hVacuumFixed hSymmetric
+    onePoint twoPoint hOnePoint hTwoPoint t]
+  exact abs_of_nonneg
+    (hPositive t (osCenteredWilsonVector Ω ψ))
+
 end RequestProject.YangMills

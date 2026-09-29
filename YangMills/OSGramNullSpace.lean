@@ -168,4 +168,35 @@ theorem osGramQuotientPairing_mk
       (Quotient.mk right : V ⧸ B.ker) =
     B left right := rfl
 
+/--
+Positivity is inherited by the genuine OS quotient.  On the quotient,
+zero reflected Gram length is exactly the ZERO equivalence class, so
+the positive semidefinite form becomes positive definite.
+-/
+theorem osGramQuotientPairing_nonnegative
+    {V : Type*} [AddCommGroup V] [Module ℝ V]
+    (B : LinearMap.BilinForm ℝ V)
+    (hPositive : ∀ v : V, 0 ≤ B v v)
+    (hSymmetric : B.IsSymm)
+    (q : V ⧸ B.ker) :
+    0 ≤ osGramQuotientPairing B hPositive hSymmetric q q := by
+  refine Quotient.inductionOn q ?_
+  intro v
+  exact hPositive v
+
+theorem osGramQuotientPairing_self_eq_zero_iff
+    {V : Type*} [AddCommGroup V] [Module ℝ V]
+    (B : LinearMap.BilinForm ℝ V)
+    (hPositive : ∀ v : V, 0 ≤ B v v)
+    (hSymmetric : B.IsSymm)
+    (q : V ⧸ B.ker) :
+    osGramQuotientPairing B hPositive hSymmetric q q = 0
+      ↔ q = 0 := by
+  refine Quotient.inductionOn q ?_
+  intro v
+  change B v v = 0 ↔
+    (Submodule.Quotient.mk v : V ⧸ B.ker) = 0
+  rw [B.apply_apply_same_eq_zero_iff hPositive hSymmetric]
+  exact (Submodule.Quotient.mk_eq_zero B.ker).symm
+
 end RequestProject.YangMills

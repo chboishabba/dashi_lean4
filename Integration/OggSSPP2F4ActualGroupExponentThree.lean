@@ -39,7 +39,7 @@ private theorem negY_distinct (x y : B.F4) :
   have hone : (1 : B.F4) = 0 := by
     have h : y = -y - 1 := by
       simpa [W, WeierstrassCurve.Affine.negY, B.specialCurve] using heq
-    linear_combination h + y*htwo
+    linear_combination h - y*htwo
   exact one_ne_zero hone
 
 private theorem tangent_slope (x y : B.F4) :

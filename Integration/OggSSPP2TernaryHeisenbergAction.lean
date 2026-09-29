@@ -1,119 +1,112 @@
-import Mathlib
+import Integration.Base369Heisenberg
+import Integration.Base369Schrodinger
 
 /-!
-The ternary Heisenberg model for a symplectic basis of F₃².
+# Centre-preserving shear / centre-inverting reflection on repo-native H(n)
 
-NOT an identification with E(F₄), nor a construction of the actual Weil
-pairing: both of those genuine arithmetic obligations remain open in
-OggSSPP2F4ActualGroupGenerators.  This provides the exact finite target in
-which to test the proposed shear and relative-F₂-Frobenius reflection.
+The actual source group is Base369Heisenberg.H n, whose multiplication uses
+cocycle dot(y_g,x_h). In this UNSYMMETRIZED convention the upper shear
+(x,y) -> (x+y,y) requires central correction 2*dot(y,y).
+The relative-F2 reflection (x,y)->(x,-y) inverts the centre.
+Both lift to group endomorphisms.
 
-The alternating group cocycle is 2ω(v,w), since 2=1/2 over F₃.
+This is a finite-coordinate theorem, not a proof that actual E(F4) carries
+this pairing or that its unproved P,Q chart is an additive equivalence.
 -/
 
 namespace Integration.OggSSPP2TernaryHeisenbergAction
 
-abbrev F3 := ZMod 3
+open Integration.Base369Heisenberg
 
-structure Plane where
-  x : F3
-  y : F3
-  deriving DecidableEq, Fintype
+variable {n : ℕ}
 
-def vadd (a b : Plane) : Plane := ⟨a.x+b.x,a.y+b.y⟩
-def omega (a b : Plane) : F3 := a.x*b.y-a.y*b.x
-def shear (a : Plane) : Plane := ⟨a.x+a.y,a.y⟩
-def reflection (a : Plane) : Plane := ⟨a.x,-a.y⟩
+theorem dot_comm (a b : X n) :
+    dot a b = dot b a := by
+  simp [dot, mul_comm]
 
-theorem omega_shear (a b : Plane) :
-    omega (shear a) (shear b) = omega a b := by
-  simp only [omega,shear]
-  ring
+theorem quadratic_shear_cocycle (y y' : X n) :
+    (2 : F3) * dot (y+y') (y+y') =
+      2*dot y y + 2*dot y' y' + dot y y' := by
+  have hfour : (4 : F3) = 1 := by decide
+  calc
+    (2 : F3) * dot (y+y') (y+y')
+        = 2*dot y y + 2*dot y' y'
+            + 4*dot y y' := by
+          rw [dot_add_left, dot_add_right, dot_add_right,
+            dot_comm y' y]
+          ring
+    _ = 2*dot y y + 2*dot y' y' + dot y y' := by
+          rw [hfour]
+          ring
 
-theorem omega_reflection (a b : Plane) :
-    omega (reflection a) (reflection b) = -omega a b := by
-  simp only [omega,reflection]
-  ring
+def shearLift (g : H n) : H n :=
+  ⟨g.x+g.y, g.y, g.z + 2*dot g.y g.y⟩
 
-structure Heisenberg27 where
-  z : F3
-  v : Plane
-  deriving DecidableEq, Fintype
+def reflectionLift (g : H n) : H n :=
+  ⟨g.x, -g.y, -g.z⟩
 
-def mulH (a b : Heisenberg27) : Heisenberg27 :=
-  ⟨a.z+b.z+2*omega a.v b.v,vadd a.v b.v⟩
-def unitH : Heisenberg27 := ⟨0,⟨0,0⟩⟩
-def center (z : F3) : Heisenberg27 := ⟨z,⟨0,0⟩⟩
-def liftShear (a : Heisenberg27) : Heisenberg27 :=
-  ⟨a.z,shear a.v⟩
-def liftReflection (a : Heisenberg27) : Heisenberg27 :=
-  ⟨-a.z,reflection a.v⟩
+def central (z : F3) : H n := ⟨0,0,z⟩
 
-theorem mulH_assoc (a b c : Heisenberg27) :
-    mulH (mulH a b) c = mulH a (mulH b c) := by
-  cases a with | mk za ⟨xa,ya⟩ =>
-  cases b with | mk zb ⟨xb,yb⟩ =>
-  cases c with | mk zc ⟨xc,yc⟩ =>
-  simp only [mulH,vadd,omega,Heisenberg27.mk.injEq,Plane.mk.injEq]
-  constructor
-  · ring
-  · constructor <;> ring
+theorem shearLift_mul (g h : H n) :
+    shearLift (g*h) = shearLift g * shearLift h := by
+  refine H.ext' ?_ ?_ ?_
+  · change (g.x+h.x)+(g.y+h.y) =
+      (g.x+g.y)+(h.x+h.y)
+    abel
+  · rfl
+  · change
+      g.z+h.z+dot g.y h.x
+        + 2*dot (g.y+h.y) (g.y+h.y)
+      =
+      (g.z+2*dot g.y g.y)
+        + (h.z+2*dot h.y h.y)
+        + dot g.y (h.x+h.y)
+    rw [quadratic_shear_cocycle, dot_add_right]
+    ring
 
-theorem mulH_unit (a : Heisenberg27) :
-    mulH a unitH = a := by
-  cases a with | mk z ⟨x,y⟩ =>
-  simp [mulH,unitH,vadd,omega]
+theorem reflectionLift_mul (g h : H n) :
+    reflectionLift (g*h) =
+      reflectionLift g * reflectionLift h := by
+  refine H.ext' ?_ ?_ ?_
+  · rfl
+  · change -(g.y+h.y) = -g.y + -h.y
+    abel
+  · change
+      -(g.z+h.z+dot g.y h.x)
+        = -g.z + -h.z + dot (-g.y) h.x
+    rw [dot_neg_left]
+    ring
 
-theorem unit_mulH (a : Heisenberg27) :
-    mulH unitH a = a := by
-  cases a with | mk z ⟨x,y⟩ =>
-  simp [mulH,unitH,vadd,omega]
+theorem shearLift_central (z : F3) :
+    shearLift (central (n:=n) z) = central z := by
+  simp [shearLift,central]
 
-theorem liftShear_mulH (a b : Heisenberg27) :
-    liftShear (mulH a b) = mulH (liftShear a) (liftShear b) := by
-  cases a with | mk z ⟨x,y⟩ =>
-  cases b with | mk w ⟨u,v⟩ =>
-  simp only [liftShear,mulH,shear,vadd,omega,
-    Heisenberg27.mk.injEq,Plane.mk.injEq]
-  constructor
-  · ring
-  · constructor <;> ring
+theorem reflectionLift_central (z : F3) :
+    reflectionLift (central (n:=n) z) = central (-z) := by
+  simp [reflectionLift,central]
 
-theorem liftReflection_mulH (a b : Heisenberg27) :
-    liftReflection (mulH a b) =
-      mulH (liftReflection a) (liftReflection b) := by
-  cases a with | mk z ⟨x,y⟩ =>
-  cases b with | mk w ⟨u,v⟩ =>
-  simp only [liftReflection,mulH,reflection,vadd,omega,
-    Heisenberg27.mk.injEq,Plane.mk.injEq]
-  constructor
-  · ring
-  · constructor <;> ring
+theorem reflectionLift_square (g : H n) :
+    reflectionLift (reflectionLift g) = g := by
+  cases g
+  simp [reflectionLift]
 
-theorem shear_preserves_center (z : F3) :
-    liftShear (center z) = center z := by
-  simp [liftShear,center,shear]
+theorem rankOne_card :
+    Fintype.card (H 1) = 27 := by
+  rw [card_H]
+  norm_num
 
-theorem reflection_inverts_center (z : F3) :
-    liftReflection (center z) = center (-z) := by
-  simp [liftReflection,center,reflection]
+theorem rankOne_schrodinger_dim :
+    Module.finrank ℂ (X 1 → ℂ) = 3 := by
+  rw [Integration.Base369Schrodinger.finrank_V]
+  norm_num
 
-theorem reflection_squared (a : Heisenberg27) :
-    liftReflection (liftReflection a) = a := by
-  cases a with | mk z ⟨x,y⟩ =>
-  simp [liftReflection,reflection]
+theorem rankOne_schrodinger_irreducible
+    {W : Submodule ℂ (X 1 → ℂ)}
+    (hW : Integration.Base369Schrodinger.Invariant W)
+    (hne : W ≠ ⊥) :
+    W = ⊤ :=
+  Integration.Base369Schrodinger.schrodinger_irreducible hW hne
 
-theorem carrier_cardinality :
-    Fintype.card Heisenberg27 = 27 := by decide
-
-/-- A selected primitive third-root central character is exchanged with its
-inverse by relative F₂-Frobenius, not fixed as by the shear. -/
-theorem reflection_nontrivial_center :
-    liftReflection (center 1) = center (2 : F3) := by
-  simpa [show (-1 : F3) = 2 by decide] using
-    reflection_inverts_center (1 : F3)
-
-/-- The arithmetic transport to Mathlib's genuine E[3] remains unproved. -/
-def actualEllipticTorsionTransportPaid : Bool := false
+def actualEllipticPairingTransportPaid : Bool := false
 
 end Integration.OggSSPP2TernaryHeisenbergAction

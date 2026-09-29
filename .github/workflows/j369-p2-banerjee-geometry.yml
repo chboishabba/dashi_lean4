@@ -14,6 +14,7 @@ on:
       - "Integration/OggSSPP2F4ActualGroupRelations.lean"
       - "Integration/OggSSPP2F4ActualGroupCardinality.lean"
       - "Integration/OggSSPP2F4ActualGroupBasis.lean"
+      - "Integration/OggSSPP2F4ActualGroupShearReflection.lean"
       - ".github/workflows/j369-p2-banerjee-geometry.yml"
   workflow_dispatch:
 
@@ -49,6 +50,8 @@ jobs:
         run: lake env lean Integration/OggSSPP2F4ActualGroupCardinality.lean
       - name: Check actual C3-square elliptic basis
         run: lake env lean Integration/OggSSPP2F4ActualGroupBasis.lean
+      - name: Check actual elliptic S3 representation
+        run: lake env lean Integration/OggSSPP2F4ActualGroupShearReflection.lean
       - name: Check finite-field tangent flex
         run: lake env lean Integration/OggSSPP2F4CurveTangentFlex.lean
       - name: Check actual Mathlib elliptic group

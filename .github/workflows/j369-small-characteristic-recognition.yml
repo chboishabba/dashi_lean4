@@ -20,6 +20,8 @@ on:
       - "Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean"
       - "AgdaMirror/OggSSPSmallCharacteristicRecognition.lean"
       - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
+      - "Integration/OggSSPP2F4ActualPairingNormalization.lean"
+      - "Integration/OggSSPP2F4ActualEllipticHeisenberg.lean"
       - "Integration.lean"
       - "AgdaMirror.lean"
       - ".github/workflows/j369-small-characteristic-recognition.yml"
@@ -40,6 +42,8 @@ on:
       - "Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean"
       - "AgdaMirror/OggSSPSmallCharacteristicRecognition.lean"
       - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
+      - "Integration/OggSSPP2F4ActualPairingNormalization.lean"
+      - "Integration/OggSSPP2F4ActualEllipticHeisenberg.lean"
       - "Integration.lean"
       - "AgdaMirror.lean"
       - ".github/workflows/j369-small-characteristic-recognition.yml"
@@ -80,6 +84,10 @@ jobs:
         run: |
           lake env lean AgdaMirror/OggSSPSmallCharacteristicRecognition.lean
           lake env lean AgdaMirror/OggSSPIndependentBase369Recognition.lean
+      - name: Check genuine elliptic basis pairing and phase orientation
+        run: lake env lean Integration/OggSSPP2F4ActualPairingNormalization.lean
+      - name: Check arithmetic Heisenberg extension against native rank one
+        run: lake env lean Integration/OggSSPP2F4ActualEllipticHeisenberg.lean
       - name: Check wild-different arithmetic obstruction
         run: lake env lean Integration/OggSSPWildDifferentArithmeticObstruction.lean
       - name: Run focused axiom audit

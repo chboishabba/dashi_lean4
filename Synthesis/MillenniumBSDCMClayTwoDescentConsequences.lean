@@ -40,6 +40,34 @@ theorem cmClayModuloTwoFinite_of_selmerFinite
         rationalDoubleSubgroup cmRationalEllipticCurve) :=
   cmClayTwoDescentResidual.mordellWeilModuloTwo_finite_of_selmer_finite
 
+/-- The explicit Selmer subgroup inherits exponent two from the ACTUAL
+rational square-class group, not from an additional supplied Selmer premise. -/
+theorem cmClaySelmerExponentTwo
+    (s : explicitTwoSelmerSubgroup) :
+    s * s = 1 := by
+  apply Subtype.ext
+  apply Prod.ext
+  · change (s.1.1 * s.1.1 : RatSquareClass) = 1
+    exact ratSquareClass_sq_eq_one s.1.1
+  · change (s.1.2 * s.1.2 : RatSquareClass) = 1
+    exact ratSquareClass_sq_eq_one s.1.2
+
+/-- Unconditional exponent-two law for the literal worked CM residual. -/
+theorem cmClayResidualExponentTwo_actual :
+    ∀ r : ExplicitTwoSelmerCokernel, r * r = 1 :=
+  cmClayTwoDescentResidual.residual_exponent_two_of_selmer_exponent_two
+    cmClaySelmerExponentTwo
+
+/-- Unconditional exponent-two law for the literal CM Mordell--Weil mod-2
+quotient, derived through the actual Kummer injection. -/
+theorem cmClayMordellWeilModuloTwoExponentTwo_actual :
+    ∀ q :
+      Multiplicative CMClayRationalPoint ⧸
+        rationalDoubleSubgroup cmRationalEllipticCurve,
+      q * q = 1 :=
+  cmClayTwoDescentResidual.mordellWeilModuloTwo_exponent_two_of_selmer_exponent_two
+    cmClaySelmerExponentTwo
+
 theorem cmClayResidualExponentTwo
     (hSelmer :
       ∀ s : explicitTwoSelmerSubgroup, s * s = 1) :

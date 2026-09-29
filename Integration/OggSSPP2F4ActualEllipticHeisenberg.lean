@@ -30,7 +30,7 @@ structure ActualEllipticH27 where
   center : F3
   point : E.ActualCurveGroup
 
-def product (g h : ActualEllipticH27) : ActualEllipticH27 :=
+noncomputable def product (g h : ActualEllipticH27) : ActualEllipticH27 :=
   ⟨g.center + h.center + 2 * P.ellipticOmega g.point h.point,
    g.point + h.point⟩
 
@@ -65,11 +65,11 @@ theorem product_identity (g : ActualEllipticH27) :
 def nativePlane (g : Hei.H 1) : Plane :=
   (g.x 0, g.y 0)
 
-def toActual (g : Hei.H 1) : ActualEllipticH27 :=
+noncomputable def toActual (g : Hei.H 1) : ActualEllipticH27 :=
   ⟨-Act.alternatingCenterCoordinate g,
     Basis.actualC3SquareAddEquiv (nativePlane g)⟩
 
-def fromActual (g : ActualEllipticH27) : Hei.H 1 :=
+noncomputable def fromActual (g : ActualEllipticH27) : Hei.H 1 :=
   let ab := Basis.actualC3SquareAddEquiv.symm g.point
   ⟨(fun _ => ab.1), (fun _ => ab.2),
     -g.center - ab.2 * ab.1⟩
@@ -153,7 +153,7 @@ theorem fromActual_product (g h : ActualEllipticH27) :
 /-- The map is an equivalence of sets AND a multiplicative isomorphism.
 The coefficient pairing on the base is an explicitly normalized alternating
 form; identifying it with geometric e₃ still requires its own source. -/
-def nativeEllipticH27Equiv : Hei.H 1 ≃ ActualEllipticH27 where
+noncomputable def nativeEllipticH27Equiv : Hei.H 1 ≃ ActualEllipticH27 where
   toFun := toActual
   invFun := fromActual
   left_inv := fromActual_toActual
@@ -166,7 +166,7 @@ theorem rankOne_center_sign (z : F3) :
 
 /-- Inverse computed using actual elliptic point inversion.  Because the
 cocycle is alternating, there is no central cross-term. -/
-def inverse (g : ActualEllipticH27) : ActualEllipticH27 :=
+noncomputable def inverse (g : ActualEllipticH27) : ActualEllipticH27 :=
   ⟨-g.center, -g.point⟩
 
 private theorem ellipticOmega_neg_right (p : E.ActualCurveGroup) :

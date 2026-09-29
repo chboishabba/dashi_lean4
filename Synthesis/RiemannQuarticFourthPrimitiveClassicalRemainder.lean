@@ -46,9 +46,12 @@ theorem zetaMuWindowDiscrepancy_eq_positiveRemainder_sub
       (hint 0 A) (hint A B)
   unfold zetaMuPositiveOrdinateRemainder
     zetaMuCumulativeDiscrepancy zetaMuPrimitive
-  rw [← Zeta23.zetaZeroConfig_N] at hcount
-  push_cast at hcount
-  rw [hcount,hmu]
+  have hcountR :
+      (Ncount 0 B : ℝ)
+        =
+      (Ncount 0 A : ℝ) + (Ncount A B : ℝ) := by
+    exact_mod_cast hcount
+  rw [hcountR,hmu]
   ring
 
 /-- The physical cap uses the difference of TWO classical counting

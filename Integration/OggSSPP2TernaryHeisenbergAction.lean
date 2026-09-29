@@ -116,19 +116,12 @@ theorem shearLift_cube (g : H n) :
     shearLift (shearLift (shearLift g)) = g := by
   have h3 : (3 : F3) = 0 := by decide
   refine H.ext' ?_ ?_ ?_
-  · change ((g.x+g.y)+g.y)+g.y = g.x
-    have h : g.y+g.y+g.y = (3 : F3) • g.y := by
-      simp [three_nsmul]
+  · ext i
+    change ((g.x i+g.y i)+g.y i)+g.y i = g.x i
     calc
-      ((g.x+g.y)+g.y)+g.y =
-          g.x + ((3 : F3) • g.y) := by
-            rw [← h]
-            abel
-      _ = g.x := by
-          have hzero : (3 : ℕ) • g.y = 0 := by
-            ext i
-            simp [three_nsmul, h3]
-          simpa using congrArg (fun a => g.x+a) hzero
+      ((g.x i+g.y i)+g.y i)+g.y i =
+        g.x i+(3:F3)*g.y i := by ring
+      _ = g.x i := by rw [h3]; ring
   · rfl
   · change (g.z + 2*dot g.y g.y)
       + 2*dot g.y g.y + 2*dot g.y g.y = g.z

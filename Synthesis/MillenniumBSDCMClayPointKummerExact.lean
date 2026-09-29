@@ -78,8 +78,15 @@ theorem cmClayGlobalKummerHom_kernel_iff_double
         ↔
       ∃ Q : RationalProjectivePoint,
         rationalProjectivePointAddEquivCMClay.symm P = Q + Q := by
+    change
+      (Multiplicative.ofAdd
+        (rationalProjectivePointAddEquivCMClay.symm P)) ∈
+          globalKummerSelmerHom.ker
+        ↔
+      (Multiplicative.ofAdd
+        (rationalProjectivePointAddEquivCMClay.symm P)) ∈
+          globalDoubleSubgroup
     rw [← globalDoubleSubgroup_eq_selmerKernel]
-    rfl
   change
     globalKummerSelmerHom
       (Multiplicative.ofAdd

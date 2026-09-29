@@ -167,8 +167,8 @@ theorem frobenius_actual_Q_eq_neg :
     frobenius Gen.Q = -Gen.Q := by
   simp only [Gen.Q, frobenius, G.fromAffineEquation,
     WeierstrassCurve.Affine.Point.neg_some]
-  congr 1
-  exact frobenius_actual_Q_y_eq_negY
+  rw [WeierstrassCurve.Affine.Point.some.injEq]
+  exact ⟨by norm_num, frobenius_actual_Q_y_eq_negY⟩
 
 structure Boundary where
   actsOnActualMathlibEllipticPoints : Bool

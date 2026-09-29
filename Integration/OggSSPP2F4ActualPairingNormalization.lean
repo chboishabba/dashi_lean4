@@ -307,4 +307,59 @@ theorem ellipticOmega_eq_neg_nativeHeisenbergCommutator
   rw [rankOneAxis_commutator_orientation]
   simp [ellipticOmega]
 
+
+/-!
+## Nondegenerate geometric pairing determines its own phase
+
+There are exactly two nontrivial F3 phase orientations. An *independent*
+geometric pairing with nondegeneracy must select one of them: we need not
+evaluate 81 pairs, but we must not choose the orientation by fiat.
+-/
+
+theorem nondegenerate_pairing_basis_phase_nonzero
+    (β : E.ActualCurveGroup →+ (E.ActualCurveGroup →+ F3))
+    (hAlt : ∀ p : E.ActualCurveGroup, β p p = 0)
+    (hNondeg :
+      ∀ p : E.ActualCurveGroup,
+        (∀ q : E.ActualCurveGroup, β p q = 0) → p = 0) :
+    β G.P G.Q ≠ 0 := by
+  intro hPQ
+  have hPairZero : β G.P = 0 := by
+    apply actual_addHom_ext_PQ
+    · simpa using hAlt G.P
+    · simpa using hPQ
+  have hPZero : G.P = 0 := by
+    apply hNondeg G.P
+    intro q
+    exact congrArg (fun f : E.ActualCurveGroup →+ F3 => f q)
+      hPairZero
+  exact Integration.OggSSPP2F4ActualGroupBasis.P_ne_zero hPZero
+
+theorem nondegenerate_pairing_phase_dichotomy
+    (β : E.ActualCurveGroup →+ (E.ActualCurveGroup →+ F3))
+    (hAlt : ∀ p : E.ActualCurveGroup, β p p = 0)
+    (hNondeg :
+      ∀ p : E.ActualCurveGroup,
+        (∀ q : E.ActualCurveGroup, β p q = 0) → p = 0) :
+    β G.P G.Q = 1 ∨ β G.P G.Q = -1 := by
+  have hne := nondegenerate_pairing_basis_phase_nonzero β hAlt hNondeg
+  fin_cases h : β G.P G.Q <;> simp_all
+
+theorem nondegenerate_pairing_matches_up_to_phase
+    (β : E.ActualCurveGroup →+ (E.ActualCurveGroup →+ F3))
+    (hAlt : ∀ p : E.ActualCurveGroup, β p p = 0)
+    (hNondeg :
+      ∀ p : E.ActualCurveGroup,
+        (∀ q : E.ActualCurveGroup, β p q = 0) → p = 0) :
+    (∀ p q, β p q = ellipticOmega p q) ∨
+      (∀ p q, β p q = -ellipticOmega p q) := by
+  rcases nondegenerate_pairing_phase_dichotomy β hAlt hNondeg with h | h
+  · left
+    have heq := normalized_pairing_unique β hAlt h
+    intro p q
+    exact congrArg (fun f : E.ActualCurveGroup →+
+        (E.ActualCurveGroup →+ F3) => f p q) heq
+  · right
+    exact inverted_orientation_pairing_unique β hAlt h
+
 end Integration.OggSSPP2F4ActualPairingNormalization

@@ -809,4 +809,46 @@ theorem QuarticFourSignedPolePair.signedFifthCapCriterion_no_budget_sign
   exact W.signedFifthCapLowerBound_closes_finiteTerminal
     ht rho n hn heps hboundary hsigned
 
+
+/-- The actual limiting compiler: the cap bound must hold EVENTUALLY with
+fixed strict slack.  A single finite cutoff does not imply a global high cut. -/
+theorem QuarticFourSignedPolePair.signedFifthCap_eventual_compiles_highCut
+    {t EV eps : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (heps : 0 < eps)
+    (hboundary :
+      ∀ᶠ n : ℕ in atTop,
+        |W.signedFifthCapUpperBoundaryAt n| <= eps)
+    (hsigned :
+      ∀ᶠ n : ℕ in atTop,
+        -W.outerVerticalAbsoluteBudget rho EV + 3*eps
+          <= W.signedFifthPhysicalCapInteriorAt n)
+    (hlim :
+      Tendsto W.quarticScaleOuterTerminalAt atTop
+        (𝓝 ((t/16)^6 * W.canonicalSignedHighResidual))) :
+    W.PostSixthCanonicalSignedHighCut rho EV := by
+  obtain ⟨N,hN⟩ :=
+    exists_nat_gt (quarticSignedPoleCanonicalPhysicalHalfWidth t)
+  have hlarge :
+      ∀ᶠ n : ℕ in atTop,
+        quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ) := by
+    filter_upwards [eventually_ge_atTop N] with n hn
+    exact hN.le.trans (by exact_mod_cast hn)
+  have hAbel :
+      ∀ᶠ n : ℕ in atTop,
+        -W.outerVerticalAbsoluteBudget rho EV + 2*eps
+          <= W.normalizedOuterPairedAbelAt n := by
+    filter_upwards [hlarge,hboundary,hsigned] with n hn hb hs
+    rw [W.signedOuterAbel_eq_boundary_add_fifthCap ht n hn]
+    have hlo := (abs_le.mp hb).1
+    linarith
+  have hfinite :
+      W.QuarticScaleOuterTerminalEventuallyBelowMargin rho EV := by
+    apply (W.signedAbelPositiveSlack_iff_terminalCut rho).2
+    exact ⟨eps,heps,hAbel⟩
+  exact (W.quarticScaleOuterTerminalEventuallyBelowMargin_iff_highCut
+    ht rho hlim).1 hfinite
+
 end Synthesis

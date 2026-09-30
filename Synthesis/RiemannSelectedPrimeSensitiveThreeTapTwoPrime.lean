@@ -197,4 +197,134 @@ theorem projectiveTwoRadius_zeroBaselinePrime
     eps*(P1two*A0r-P1r*A0two)
       + eps^2*(P1two*A1r-P1r*A1two) := by ring
 
+
+/-!
+## Selected four-window support: n=3 vanishes identically
+
+Unlike an arbitrary |u|<log2 taper, the literal high four-window source
+has support radius 16*(pi+1)/t. At t>=200, this is STRICTLY less than
+1/3 <= log(3/2). Consequently the translated prime n=3 does not
+survive for either physical detector; neither does any n>=4.
+
+The only possibly active positive frequency is n=2, and that one is
+eps*g(0), with no assertion that g(0) is nonzero.
+-/
+
+theorem quarticFourCompletedRadius_lt_oneThird_of_twoHundred
+    {t : ℝ}
+    (ht : 200 ≤ t) :
+    quarticFourCompletedRadius t < (1/3 : ℝ) := by
+  have htpos : 0 < t := by linarith
+  have hpi : Real.pi < (3.15 : ℝ) := Real.pi_lt_d2
+  unfold quarticFourCompletedRadius
+  rw [div_lt_iff₀ htpos]
+  nlinarith
+
+theorem oneThird_le_log_threeHalves :
+    (1/3 : ℝ) ≤ Real.log (3/2 : ℝ) := by
+  have h := Real.one_sub_inv_le_log_of_pos
+    (show 0 < (3/2 : ℝ) by norm_num)
+  convert h using 1 <;> norm_num
+
+theorem quarticFourPhysicalDetector_thirdPrimeShiftedSample_eq_zero
+    {R lam mu t eps : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1)
+    (ht : 200 ≤ t) :
+    detectorThreeTap
+      (quarticFourPhysicalDetector R lam mu t)
+      eps (Real.log 2) (Real.log 3) = 0 := by
+  rw [detectorThreeTap_at_thirdPrime_of_shortSupport
+    (quarticFourPhysicalDetector R lam mu t) eps
+    (quarticFourPhysicalDetector_short_of_twoHundred hR hRone ht)]
+  have hbound :=
+    quarticFourCompletedRadius_lt_oneThird_of_twoHundred ht
+  have hlog : quarticFourCompletedRadius t
+      < Real.log (3/2 : ℝ) :=
+    hbound.trans_le oneThird_le_log_threeHalves
+  have hz :
+      quarticFourPhysicalDetector R lam mu t
+        (Real.log (3/2 : ℝ)) = 0 := by
+    by_contra hn
+    have hs :=
+      quarticFourPhysicalDetector_support_completedRadius
+        hR hRone (by linarith : 0 < t) _ hn
+    rw [abs_of_nonneg (by
+      have h : (0:ℝ) < Real.log (3/2 : ℝ) := by
+        apply Real.log_pos
+        norm_num
+      exact h.le)] at hs
+    linarith
+  rw [hz, mul_zero]
+
+/-- The second new prime, n=3, is absent on the *literal*
+physical detector despite being generically reachable after translation. -/
+theorem quarticFourPhysicalDetector_literalThirdPrimeSummand_eq_zero
+    {R lam mu t eps s : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1)
+    (ht : 200 ≤ t) :
+    ((ArithmeticFunction.vonMangoldt 3 / Real.sqrt 3 : ℝ) : ℂ)
+      * (Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+          (detectorThreeTap
+            (quarticFourPhysicalDetector R lam mu t)
+            eps (Real.log 2)) t s (Real.log 3)
+        + Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+          (detectorThreeTap
+            (quarticFourPhysicalDetector R lam mu t)
+            eps (Real.log 2)) t s (-Real.log 3)) = 0 := by
+  have heven :
+      ∀ u, quarticFourPhysicalDetector R lam mu t (-u)
+        = quarticFourPhysicalDetector R lam mu t u :=
+    quarticFourPhysicalDetector_even R lam mu t
+  rw [detectorThreeTap_literalThirdPrimeSummand heven
+    (quarticFourPhysicalDetector_short_of_twoHundred hR hRone ht)]
+  rw [quarticFourPhysicalDetector_thirdPrimeShiftedSample_eq_zero
+    hR hRone ht]
+  simp only [detectorThreeTap_at_thirdPrime_of_shortSupport] -- sample identity
+  have hz : quarticFourPhysicalDetector R lam mu t
+      (Real.log (3/2 : ℝ)) = 0 := by
+    have htpos : 0 < t := by linarith
+    have hs := quarticFourCompletedRadius_lt_oneThird_of_twoHundred ht
+    have hlog := hs.trans_le oneThird_le_log_threeHalves
+    by_contra hn
+    have hbound :=
+      quarticFourPhysicalDetector_support_completedRadius
+        hR hRone htpos _ hn
+    have hpos : 0 ≤ Real.log (3/2 : ℝ) := by
+      apply Real.log_nonneg
+      norm_num
+    rw [abs_of_nonneg hpos] at hbound
+    linarith
+  simp [hz]
+
+/-- Entire actual prime sum has only the n=2 response. -/
+theorem quarticFourPhysicalDetector_threeTap_primeTerm_eq_first
+    {R lam mu t eps s : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1)
+    (ht : 200 ≤ t) :
+    Zeta23Bridge.LiteralWeilParityBalance.primeTerm
+      (Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+        (detectorThreeTap
+          (quarticFourPhysicalDetector R lam mu t)
+          eps (Real.log 2)) t s)
+    =
+    (((ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ)
+        * (2*(eps*quarticFourPhysicalDetector R lam mu t 0)
+            * Real.cos ((s-t)*Real.log 2))) : ℝ) := by
+  have heven :
+      ∀ u, quarticFourPhysicalDetector R lam mu t (-u)
+        = quarticFourPhysicalDetector R lam mu t u :=
+    quarticFourPhysicalDetector_even R lam mu t
+  rw [detectorThreeTap_primeTerm_eq_two_summands
+    (quarticFourPhysicalDetector_short_of_twoHundred hR hRone ht) eps t s]
+  simp only [Finset.sum_insert (by simp : (2:ℕ) ∉ ({3}:Finset ℕ)),
+    Finset.sum_singleton]
+  rw [detectorThreeTap_literalFirstPrimeSummand heven
+      (quarticFourPhysicalDetector_short_of_twoHundred hR hRone ht)]
+  rw [quarticFourPhysicalDetector_literalThirdPrimeSummand_eq_zero
+    hR hRone ht]
+  simp
+
 end Synthesis

@@ -337,4 +337,55 @@ theorem physical_su2_complete_action_coefficient_probe
   rw [su2_negative_unit_cost]
   ring
 
+/--
+The complete finite four-dimensional action includes E/R/boundary/vacuum
+as separate source terms, evaluated on actual link configurations.
+-/
+def su2FourDimensionalCompleteAction (L : ℕ) [NeZero L]
+    (links : SU2TorusLinks L) (β : ℝ)
+    (regular rOperation boundary vacuum : SU2TorusLinks L → ℝ) : ℝ :=
+  su2FourDimensionalWilsonAction L links β +
+    regular links + rOperation links + boundary links + vacuum links
+
+/--
+A complete effective source is gauge invariant if its four NON-WILSON
+terms are gauge invariant on the actual link carrier.  Gauge
+invariance of the Wilson term alone cannot establish this conclusion.
+-/
+theorem su2_complete_action_gauge_invariant
+    (L : ℕ) [NeZero L] (g : SU2TorusGauge L)
+    (links : SU2TorusLinks L) (β : ℝ)
+    (regular rOperation boundary vacuum : SU2TorusLinks L → ℝ)
+    (hRegular : regular (su2GaugeTransform g links) = regular links)
+    (hR : rOperation (su2GaugeTransform g links) = rOperation links)
+    (hBoundary : boundary (su2GaugeTransform g links) = boundary links)
+    (hVacuum : vacuum (su2GaugeTransform g links) = vacuum links) :
+    su2FourDimensionalCompleteAction L
+      (su2GaugeTransform g links) β regular rOperation boundary vacuum =
+    su2FourDimensionalCompleteAction L
+      links β regular rOperation boundary vacuum := by
+  simp only [su2FourDimensionalCompleteAction,
+    su2_four_dimensional_wilson_action_gauge_invariant,
+    hRegular, hR, hBoundary, hVacuum]
+
+/--
+Gauge invariance passes to the real full Gibbs density, without dropping
+any effective sector or assuming a particular CMP119 plaquette projector.
+-/
+theorem su2_complete_gibbs_density_gauge_invariant
+    (L : ℕ) [NeZero L] (g : SU2TorusGauge L)
+    (links : SU2TorusLinks L) (β : ℝ)
+    (regular rOperation boundary vacuum : SU2TorusLinks L → ℝ)
+    (hRegular : regular (su2GaugeTransform g links) = regular links)
+    (hR : rOperation (su2GaugeTransform g links) = rOperation links)
+    (hBoundary : boundary (su2GaugeTransform g links) = boundary links)
+    (hVacuum : vacuum (su2GaugeTransform g links) = vacuum links) :
+    Real.exp (-(su2FourDimensionalCompleteAction L
+      (su2GaugeTransform g links) β regular rOperation boundary vacuum)) =
+    Real.exp (-(su2FourDimensionalCompleteAction L
+      links β regular rOperation boundary vacuum)) := by
+  rw [su2_complete_action_gauge_invariant
+    L g links β regular rOperation boundary vacuum
+    hRegular hR hBoundary hVacuum]
+
 end RequestProject.YangMills

@@ -49,15 +49,15 @@ theorem nonnegative_gibbs_ratio_comparison_two_constants
         A * Nwilson * (B * Zfull) :=
     mul_le_mul_of_nonneg_left hPartition
       (mul_nonneg hA hNwilson)
+  rw [show
+    (A * B) * (Nwilson / Zwilson) =
+      (A * B * Nwilson) / Zwilson by ring]
   apply (div_le_div_iff₀ hZfull hZwilson).2
   calc
     Nfull * Zwilson ≤
         A * Nwilson * Zwilson := h1
     _ ≤ A * Nwilson * (B * Zfull) := h2
-    _ = ((A * B) * (Nwilson / Zwilson)) *
-          (Zfull * Zwilson) := by
-        field_simp [ne_of_gt hZwilson]
-        ring
+    _ = (A * B * Nwilson) * Zfull := by ring
 
 /--
 Exact pointwise full/Wilson density comparison from asymmetric

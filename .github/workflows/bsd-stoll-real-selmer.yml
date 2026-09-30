@@ -1,0 +1,34 @@
+name: BSD genuine 2-Selmer donor Lean 4.34
+
+on:
+  push:
+    branches:
+      - 'agent/bsd-stoll-real-selmer-v434-20260930'
+    paths:
+      - 'BSDStoll/**'
+      - 'BSDStoll.lean'
+      - 'lakefile.toml'
+      - 'lean-toolchain'
+      - '.github/workflows/bsd-stoll-real-selmer.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  actual-selmer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      LEAN_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+        with:
+          build: false
+      - name: Resolve version-matched Stoll and mathlib dependencies
+        run: lake update
+      - name: Build only the genuine two-Selmer experiment
+        run: lake build BSDStoll
+      - name: Kernel check of literal Selmer donor
+        run: lake env lean BSDStoll/ActualAllPlaceSelmer.lean

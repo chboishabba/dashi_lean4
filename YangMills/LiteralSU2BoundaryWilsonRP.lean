@@ -78,10 +78,13 @@ theorem su2_constant_crossing_kernel_rp
     (test : SU2PlaquetteHolonomy → ℝ) :
     0 ≤ finiteReflectionGram sites
       (fun _ _ => (1 : ℝ)) test := by
-  have h := finite_reflection_gram_rank_one sites
-    (fun _ => (1 : ℝ)) test
-  simpa using (show
-    0 ≤ (∑ x ∈ sites, test x * (1 : ℝ)) ^ 2 from sq_nonneg _)
+  have hkernel :
+      (fun _ _ : SU2PlaquetteHolonomy => (1 : ℝ)) =
+        (fun U V => (1 : ℝ) * (1 : ℝ)) := by
+    funext U V
+    ring
+  rw [hkernel, finite_reflection_gram_rank_one]
+  exact sq_nonneg _
 
 /--
 First-order physical crossing-plaquette Wilson kernel.

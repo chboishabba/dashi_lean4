@@ -1,0 +1,48 @@
+name: Source-native Monster integral and 3B checks
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/j369-ogg-address-ssp15-no-go-20260925
+    paths:
+      - "Integration/OggSSP2BActualWeightTwoSourceBudget.lean"
+      - "Integration/OggSSP2B4AActualIntegralMultiplicities.lean"
+      - "Integration/OggSSP2BExplicitIntegralCARestriction.lean"
+      - "Integration/OggSSP2BVacuumTateNormalization.lean"
+      - "Integration/Selected3BActualMonsterCharacterFingerprint.lean"
+      - "Integration/Selected3BCanonicalFixedLineProjection.lean"
+      - "Integration/SignedTwoPrimePhaseObstruction.lean"
+      - ".github/workflows/monster-source-integral.yml"
+  pull_request:
+    paths:
+      - "Integration/OggSSP2B*.lean"
+      - "Integration/Selected3B*.lean"
+      - "Integration/SignedTwoPrimePhaseObstruction.lean"
+      - ".github/workflows/monster-source-integral.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Lean
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+      - name: Download Mathlib cache
+        run: lake exe cache get
+      - name: Check actual integral 4A(2B) source multiplicities
+        run: |
+          lake env lean Integration/OggSSP2BVacuumTateNormalization.lean
+          lake env lean Integration/OggSSP2BActualWeightTwoSourceBudget.lean
+          lake env lean Integration/OggSSP2B4AActualIntegralMultiplicities.lean
+          lake env lean Integration/OggSSP2BExplicitIntegralCARestriction.lean
+      - name: Check actual 3B fingerprint and projection
+        run: |
+          lake env lean Integration/Selected3BCanonicalFixedLineProjection.lean
+          lake env lean Integration/Selected3BActualMonsterCharacterFingerprint.lean
+          lake env lean Integration/SignedTwoPrimePhaseObstruction.lean

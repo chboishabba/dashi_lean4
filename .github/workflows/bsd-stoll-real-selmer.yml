@@ -31,4 +31,5 @@ jobs:
       - name: Build only the genuine two-Selmer experiment
         run: lake build BSDStoll
       - name: Kernel check of literal Selmer donor
-        run: lake env lean BSDStoll/ActualAllPlaceSelmer.lean
+        run: lake env lean BSDStoll/CompleteLocalObstruction.lean
+          lake env lean BSDStoll/ActualAllPlaceSelmer.lean

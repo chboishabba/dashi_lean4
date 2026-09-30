@@ -398,6 +398,7 @@ import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleBidiMarkedFourth
 import Synthesis.RiemannQuarticFourthPrimitiveQuantitativeBudget
 import Synthesis.RiemannQuarticFourthPrimitiveClassicalRemainder
 import Synthesis.RiemannQuarticSignedCosinePSDNoGo
+import Synthesis.RiemannMarkedArithmeticCompletedOperatorAudit
 
 
 

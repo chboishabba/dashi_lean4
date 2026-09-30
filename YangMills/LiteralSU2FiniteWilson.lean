@@ -245,6 +245,36 @@ theorem finite_cmp119_boltzmann_weight_upper_bound
   linarith
 
 /--
+The complete-source Gibbs weight has a positive explicit *lower*
+majorization whenever the regular/R/boundary/vacuum sectors have upper
+bounds.  This does not assume those sectors vanish or carry the Wilson
+sign.  The bound depends on the number of finite plaquettes, so it is
+not a cutoff-uniform continuum estimate.
+-/
+theorem finite_cmp119_boltzmann_weight_lower_bound
+    {P Ω : Type*}
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ) (hβ : 0 ≤ β)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (Kregular Kr Kboundary Kv : ℝ)
+    (hregular : ∀ x, regular x ≤ Kregular)
+    (hr : ∀ x, rOperation x ≤ Kr)
+    (hboundary : ∀ x, boundary x ≤ Kboundary)
+    (hv : ∀ x, vacuum x ≤ Kv)
+    (x : Ω) :
+    Real.exp (-(2 * β * (plaquettes.card : ℝ) +
+        Kregular + Kr + Kboundary + Kv)) ≤
+      finiteCMP119BoltzmannWeight plaquettes holonomy β
+        regular rOperation boundary vacuum x := by
+  unfold finiteCMP119BoltzmannWeight
+  apply Real.exp_le_exp.mpr
+  have h := finite_cmp119_complete_action_upper_bound
+    plaquettes holonomy β hβ regular rOperation boundary vacuum
+    Kregular Kr Kboundary Kv hregular hr hboundary hv x
+  linarith
+
+/--
 Finite physical partition function for an explicitly chosen probability
 reference measure (intended to be the LINK product Haar measure).
 

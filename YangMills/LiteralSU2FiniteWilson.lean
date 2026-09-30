@@ -62,6 +62,21 @@ theorem su2_positive_plaquette_cost_bounds
   constructor <;> linarith
 
 /--
+The conventional bare SU(2) positive Wilson action uses
+β = 4 / g₀² multiplying 1 - Re Tr(U)/2.
+This number is different from the T4 symbolic coefficient of a
+negative-exponent basis until an explicit source-basis map is proved.
+-/
+def su2WilsonBeta (bareCoupling : ℝ) : ℝ :=
+  4 / bareCoupling ^ 2
+
+theorem su2_wilson_beta_positive
+    (bareCoupling : ℝ) (h : bareCoupling ≠ 0) :
+    0 < su2WilsonBeta bareCoupling := by
+  unfold su2WilsonBeta
+  exact div_pos (by norm_num) (sq_pos_of_ne_zero h)
+
+/--
 The full finite Wilson action contains an ACTUAL finite plaquette sum;
 `holonomy` is to be produced from physical link variables.
 -/

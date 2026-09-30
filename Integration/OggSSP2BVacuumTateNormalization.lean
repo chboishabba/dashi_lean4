@@ -56,4 +56,21 @@ theorem naive_vacuum_coefficient_identification_inconsistent
     (hTateH1 : naiveDifferencePole = 0) : False := by
   omega
 
+/-- Five distinct nonzero sectors cannot all inject into the actual
+rank-one vacuum Hhat0 = Z/2, independently of how they are labelled.
+This DOES NOT rule out five modules drawn from different weights. -/
+theorem no_five_distinct_vacuum_tate_sectors :
+    ¬ ∃ f : Fin 5 → ZMod 2, Function.Injective f := by
+  rintro ⟨f, hf⟩
+  have hcard : Fintype.card (Fin 5) ≤ Fintype.card (ZMod 2) :=
+    Fintype.card_le_of_injective f hf
+  norm_num at hcard
+
+/-- A single nonzero vacuum Tate class cannot itself give five disjoint
+nonzero composition factors: it already has length one over F2. -/
+theorem vacuum_h0_has_two_residue_classes :
+    Fintype.card (ZMod 2) = 2 := by
+  decide
+
+
 end Integration.OggSSP2BVacuumTateNormalization

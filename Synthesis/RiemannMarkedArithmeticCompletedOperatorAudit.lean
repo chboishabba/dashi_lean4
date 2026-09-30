@@ -269,4 +269,33 @@ theorem realTwoByTwo_nonnegative_iff_schur
       exact realTwoByTwo_nonnegative_of_left_positive_and_det
         haPos hdet
 
+
+/-!
+## Literal first-prime support threshold
+
+Since the first nontrivial prime power is 2, a source detector
+supported strictly inside (-log 2, log 2) has exactly zero arithmetic
+prime defect. Conversely, a NONZERO literal prime defect forces actual
+detector support at |u| >= log 2. This is a necessary geometric
+condition on any replacement witness that would use prime-side
+coercivity; it does not assert a sign or sufficient bound beyond the
+threshold.
+-/
+
+theorem nonzero_literalPrimeDefect_forces_firstPrime_support
+    {g : ℝ → ℝ} {t r : ℝ}
+    (hprime :
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+        g t r ≠ 0) :
+    ∃ u : ℝ, g u ≠ 0 ∧ Real.log 2 ≤ |u| := by
+  by_contra hnone
+  have hshort : ∀ u : ℝ, g u ≠ 0 → |u| < Real.log 2 := by
+    intro u hu
+    apply lt_of_not_ge
+    intro huoutside
+    exact hnone ⟨u,hu,huoutside⟩
+  exact hprime
+    (Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect_eq_zero
+      hshort t r)
+
 end Synthesis

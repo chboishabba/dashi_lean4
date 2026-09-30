@@ -194,12 +194,12 @@ The full physical plaquette index is a four-dimensional site and an
 ordered pair of directions.  Using μ<ν avoids double-counting opposite
 orientations.
 -/
-def su2FourDimensionalPlaquettes (L : ℕ) :
+def su2FourDimensionalPlaquettes (L : ℕ) [NeZero L] :
     Finset (SU2TorusSite L × Fin 4 × Fin 4) :=
   Finset.univ.filter (fun p => p.2.1 < p.2.2)
 
 /-- Wilson action on the real lattice link field, not on arbitrary plaquette data. -/
-def su2FourDimensionalWilsonAction (L : ℕ)
+def su2FourDimensionalWilsonAction (L : ℕ) [NeZero L]
     (links : SU2TorusLinks L) (β : ℝ) : ℝ :=
   finiteSU2WilsonAction
     (su2FourDimensionalPlaquettes L)
@@ -207,7 +207,7 @@ def su2FourDimensionalWilsonAction (L : ℕ)
     β links
 
 theorem su2_four_dimensional_wilson_action_gauge_invariant
-    (L : ℕ) (g : SU2TorusGauge L)
+    (L : ℕ) [NeZero L] (g : SU2TorusGauge L)
     (links : SU2TorusLinks L) (β : ℝ) :
     su2FourDimensionalWilsonAction L (su2GaugeTransform g links) β =
       su2FourDimensionalWilsonAction L links β := by
@@ -224,7 +224,7 @@ Actual 4D finite Wilson estimate, now using a link-derived plaquette
 field.  It is finite-volume/cutoff explicit, NOT uniform along UV flow.
 -/
 theorem su2_four_dimensional_wilson_action_bounds
-    (L : ℕ) (links : SU2TorusLinks L) (β : ℝ) (hβ : 0 ≤ β) :
+    (L : ℕ) [NeZero L] (links : SU2TorusLinks L) (β : ℝ) (hβ : 0 ≤ β) :
     0 ≤ su2FourDimensionalWilsonAction L links β ∧
       su2FourDimensionalWilsonAction L links β
         ≤ 2 * β * ((su2FourDimensionalPlaquettes L).card : ℝ) := by

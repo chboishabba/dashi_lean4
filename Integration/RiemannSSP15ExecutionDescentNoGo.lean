@@ -33,4 +33,16 @@ theorem distinct_observable_prevents_descent
   rintro ⟨decoder, h⟩
   exact different (fibre_constancy_of_factorization execution observable decoder h same)
 
+theorem j_prime_provenance_not_recoverable_from_execution :
+    ¬ ∃ decoder : SF.Effect → Grid.Prime15,
+      ∀ mode : Codec.Mode5,
+        (W.signedSeed mode .j).pointed.selectedPrime =
+          decoder (SF.executeSeed (W.signedSeed mode .j)) := by
+  apply distinct_observable_prevents_descent
+    (fun mode : Codec.Mode5 => SF.executeSeed (W.signedSeed mode .j))
+    (fun mode : Codec.Mode5 => (W.signedSeed mode .j).pointed.selectedPrime)
+    (a := Codec.Mode5.mode09) (b := Codec.Mode5.mode18)
+  · exact W.neutral_j_execution_collapses.1
+  · decide
+
 end Integration.RiemannSSP15ExecutionDescentNoGo

@@ -1,2 +1,1 @@
-import BSDStoll.ActualArithmeticSelmerDefect
-import BSDStoll.ActualAllPlaceSelmer
+import BSDStoll.ClaySameCurveArithmeticResponse

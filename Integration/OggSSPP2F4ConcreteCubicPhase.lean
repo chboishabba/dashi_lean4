@@ -15,6 +15,11 @@ This construction is NOT the intrinsic geometric Weil pairing e3.
 In particular, phase normalization does not evaluate an independently
 defined Weil pairing at the geometric points P,Q.
 
+Likewise the multiplicative cube roots here live in characteristic two;
+they are NOT the complex cyclotomic phases of the VOA action. Comparing
+their abstract cyclic groups requires a separate phase-group isomorphism,
+not a characteristic-zero/characteristic-two field embedding.
+
 Source orientation: the choice of zeta agrees with the concrete F4 root
 selected in OggSSPP2BanerjeeF4ZetaCoordinates.
 -/
@@ -133,6 +138,7 @@ structure Boundary where
   transportedShearPhasePreservation : Bool
   transportedFrobeniusPhaseSign : Bool
   fieldFrobeniusMatchesPhaseInversion : Bool
+  complexCyclotomicFieldIdentifiedWithF4 : Bool
   intrinsicGeometricWeilPairingConstructed : Bool
   intrinsicWeilValueAtP_QComputed : Bool
   deriving Repr
@@ -145,6 +151,7 @@ def canonicalBoundary : Boundary where
   transportedShearPhasePreservation := true
   transportedFrobeniusPhaseSign := true
   fieldFrobeniusMatchesPhaseInversion := true
+  complexCyclotomicFieldIdentifiedWithF4 := false
   intrinsicGeometricWeilPairingConstructed := false
   intrinsicWeilValueAtP_QComputed := false
 

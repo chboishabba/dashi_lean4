@@ -203,4 +203,97 @@ theorem finite_cmp119_boltzmann_weight_upper_bound
     Kregular Kr Kboundary Kv hregular hr hboundary hv x
   linarith
 
+/--
+Finite physical partition function for an explicitly chosen probability
+reference measure (intended to be the LINK product Haar measure).
+
+This is a genuine finite-measure positivity result.  The estimate is
+cutoff-dependent, and it does NOT assert that a symbolic CMP119 source
+weight is equal to the Boltzmann weight used here.
+-/
+def finiteCMP119Partition
+    {P Ω : Type*} [MeasurableSpace Ω]
+    (haar : MeasureTheory.ProbabilityMeasure Ω)
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ)
+    (regular rOperation boundary vacuum : Ω → ℝ) : ℝ :=
+  ∫ x : Ω,
+    finiteCMP119BoltzmannWeight plaquettes holonomy β
+      regular rOperation boundary vacuum x
+    ∂((haar : MeasureTheory.ProbabilityMeasure Ω) :
+        MeasureTheory.Measure Ω)
+
+/--
+A measurable, bounded-below complete selected finite action has
+a positive, finite, explicitly bounded partition function with respect
+to ANY normalized nonzero reference measure, including product Haar.
+
+Four independent sector lower bounds are visible.  Their possible
+volume/UV dependence is NOT eliminated by this theorem; bounding those
+dependences is precisely the next physical RG estimate.
+-/
+theorem finite_cmp119_partition_positive_and_bounded
+    {P Ω : Type*} [MeasurableSpace Ω]
+    (haar : MeasureTheory.ProbabilityMeasure Ω)
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ) (hβ : 0 ≤ β)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (Kregular Kr Kboundary Kv : ℝ)
+    (hregular : ∀ x, -Kregular ≤ regular x)
+    (hr : ∀ x, -Kr ≤ rOperation x)
+    (hboundary : ∀ x, -Kboundary ≤ boundary x)
+    (hv : ∀ x, -Kv ≤ vacuum x)
+    (hMeasurable :
+      Measurable (finiteCMP119BoltzmannWeight plaquettes
+        holonomy β regular rOperation boundary vacuum)) :
+    0 < finiteCMP119Partition haar plaquettes holonomy β
+      regular rOperation boundary vacuum ∧
+    finiteCMP119Partition haar plaquettes holonomy β
+      regular rOperation boundary vacuum
+      ≤ Real.exp (Kregular + Kr + Kboundary + Kv) := by
+  let μ : MeasureTheory.Measure Ω := haar
+  let w : Ω → ℝ :=
+    finiteCMP119BoltzmannWeight plaquettes holonomy β
+      regular rOperation boundary vacuum
+  let K : ℝ := Kregular + Kr + Kboundary + Kv
+  have hwBound : ∀ x, w x ≤ Real.exp K := by
+    intro x
+    exact finite_cmp119_boltzmann_weight_upper_bound
+      plaquettes holonomy β hβ regular rOperation boundary vacuum
+      Kregular Kr Kboundary Kv hregular hr hboundary hv x
+  have hwNonnegative : ∀ x, 0 ≤ w x := by
+    intro x
+    exact (finite_cmp119_boltzmann_weight_pos
+      plaquettes holonomy β regular rOperation boundary vacuum x).le
+  have hwAbs : ∀ x, ‖w x‖ ≤ Real.exp K := by
+    intro x
+    rw [Real.norm_eq_abs, abs_of_nonneg (hwNonnegative x)]
+    exact hwBound x
+  have hwIntegrable : MeasureTheory.Integrable w μ :=
+    MeasureTheory.Integrable.of_bound
+      hMeasurable.aestronglyMeasurable
+      (Real.exp K)
+      (Filter.Eventually.of_forall hwAbs)
+  have hPositive : 0 < ∫ x, w x ∂μ := by
+    have hSupport : Function.support w = Set.univ := by
+      ext x
+      simp only [Function.mem_support, Set.mem_univ, iff_true]
+      exact ne_of_gt (finite_cmp119_boltzmann_weight_pos
+        plaquettes holonomy β regular rOperation boundary vacuum x)
+    apply (MeasureTheory.integral_pos_iff_support_of_nonneg
+      hwNonnegative hwIntegrable).2
+    rw [hSupport]
+    simp [μ]
+  have hUpper : (∫ x, w x ∂μ) ≤ Real.exp K := by
+    calc
+      ∫ x, w x ∂μ ≤ ∫ _ : Ω, Real.exp K ∂μ :=
+        MeasureTheory.integral_mono hwIntegrable
+          (MeasureTheory.integrable_const _) hwBound
+      _ = Real.exp K := by simp [μ]
+  constructor
+  · exact hPositive
+  · exact hUpper
+
 end RequestProject.YangMills

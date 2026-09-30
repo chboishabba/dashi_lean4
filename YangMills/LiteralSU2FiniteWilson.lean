@@ -31,6 +31,16 @@ structure SU2PlaquetteHolonomy where
   unit_quaternion : a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2 = 1
 
 /--
+The coordinate-induced measurable structure is the canonical finite-link
+SU(2) sigma algebra used by the native Gibbs probability owner.  The
+separate compact-topological-group and normalized Haar identification
+must still be established for the actual quaternion carrier.
+-/
+instance : MeasurableSpace SU2PlaquetteHolonomy :=
+  MeasurableSpace.induced
+    (fun U => (U.a, U.b, U.c, U.d)) inferInstance
+
+/--
 The actual complex fundamental 2×2 matrix attached to a unit quaternion.
 This is the standard SU(2) realization, with the usual conjugate second
 row and determinant-one unit-quaternion constraint.

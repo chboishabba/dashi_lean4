@@ -53,16 +53,14 @@ theorem amplitudeAtOneMatchesSnapshot :
 
 theorem amplitudeSignReversalPositive :
     0 < amplitudeRate (-1) := by
-  unfold amplitudeRate commutatorWork
-    criticalProduction criticalDissipation
-  norm_num
+  dsimp [amplitudeRate, commutatorWork,
+    criticalProduction, criticalDissipation]
   nlinarith [Real.sqrt_nonneg (2 : ℝ)]
 
 theorem amplitudeHalfNegative :
     amplitudeRate (1 / 2) < 0 := by
-  unfold amplitudeRate commutatorWork
-    criticalProduction criticalDissipation
-  norm_num
+  dsimp [amplitudeRate, commutatorWork,
+    criticalProduction, criticalDissipation]
   nlinarith [Real.sqrt_nonneg (2 : ℝ)]
 
 /-- If the actual live R408/R815 signed rate at time zero is independently

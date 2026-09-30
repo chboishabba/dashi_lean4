@@ -277,26 +277,15 @@ theorem quarticFourPhysicalDetector_literalThirdPrimeSummand_eq_zero
       ∀ u, quarticFourPhysicalDetector R lam mu t (-u)
         = quarticFourPhysicalDetector R lam mu t u :=
     quarticFourPhysicalDetector_even R lam mu t
-  rw [detectorThreeTap_literalThirdPrimeSummand heven
-    (quarticFourPhysicalDetector_short_of_twoHundred hR hRone ht)]
-  rw [quarticFourPhysicalDetector_thirdPrimeShiftedSample_eq_zero
-    hR hRone ht]
-  simp only [detectorThreeTap_at_thirdPrime_of_shortSupport] -- sample identity
-  have hz : quarticFourPhysicalDetector R lam mu t
-      (Real.log (3/2 : ℝ)) = 0 := by
-    have htpos : 0 < t := by linarith
-    have hs := quarticFourCompletedRadius_lt_oneThird_of_twoHundred ht
-    have hlog := hs.trans_le oneThird_le_log_threeHalves
-    by_contra hn
-    have hbound :=
-      quarticFourPhysicalDetector_support_completedRadius
-        hR hRone htpos _ hn
-    have hpos : 0 ≤ Real.log (3/2 : ℝ) := by
-      apply Real.log_nonneg
-      norm_num
-    rw [abs_of_nonneg hpos] at hbound
-    linarith
-  simp [hz]
+  have hz :=
+    quarticFourPhysicalDetector_thirdPrimeShiftedSample_eq_zero
+      (eps := eps) hR hRone ht
+  have hneg :
+      detectorThreeTap (quarticFourPhysicalDetector R lam mu t)
+        eps (Real.log 2) (-Real.log 3) = 0 := by
+    rw [detectorThreeTap_even heven]
+    exact hz
+  simp [Zeta23Bridge.LiteralWeilParityBalance.sampleTest, hz, hneg]
 
 /-- Entire actual prime sum has only the n=2 response. -/
 theorem quarticFourPhysicalDetector_threeTap_primeTerm_eq_first

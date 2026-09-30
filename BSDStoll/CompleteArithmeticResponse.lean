@@ -67,18 +67,32 @@ theorem mem_ker_completeArithmeticResponse_iff
         localObstruction W (v.adicCompletion K) c),
        (fun i : ι => localObstruction W (Loc i) c))) = 1 ↔
       c ∈ W.selmerGroup₂ R Loc
-  rw [show
-      (W.normM c,
-        ((fun v : HeightOneSpectrum R =>
-          localObstruction W (v.adicCompletion K) c),
-         (fun i : ι => localObstruction W (Loc i) c))) = 1 ↔
-      W.normM c = 1 ∧
-      (∀ v : HeightOneSpectrum R,
-        localObstruction W (v.adicCompletion K) c = 1) ∧
-      (∀ i : ι,
-        localObstruction W (Loc i) c = 1) by
-    simp only [Prod.mk.injEq, Prod.one_eq_mk, and_assoc, Pi.one_apply, funext_iff]]
-  exact (selmer_iff_complete_obstruction_vanishes W R Loc c).symm
+  constructor
+  · intro h
+    apply (selmer_iff_complete_obstruction_vanishes W R Loc c).2
+    refine ⟨congrArg Prod.fst h, ?_, ?_⟩
+    · intro v
+      have hv :=
+        congrArg
+          (fun response : CompleteArithmeticResponseGroup W R Loc =>
+            response.2.1 v) h
+      simpa using hv
+    · intro i
+      have hi :=
+        congrArg
+          (fun response : CompleteArithmeticResponseGroup W R Loc =>
+            response.2.2 i) h
+      simpa using hi
+  · intro hc
+    obtain ⟨hnorm, hfinite, hinfinite⟩ :=
+      (selmer_iff_complete_obstruction_vanishes W R Loc c).1 hc
+    apply Prod.ext
+    · exact hnorm
+    · apply Prod.ext
+      · funext v
+        exact hfinite v
+      · funext i
+        exact hinfinite i
 
 /-- The substantive kernel identity, at the level of genuine subgroups. -/
 theorem completeArithmeticResponse_ker_eq_selmer :

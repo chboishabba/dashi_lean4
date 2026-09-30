@@ -1,2 +1,2 @@
-import BSDStoll.CompleteLocalObstruction
+import BSDStoll.ActualArithmeticSelmerDefect
 import BSDStoll.ActualAllPlaceSelmer

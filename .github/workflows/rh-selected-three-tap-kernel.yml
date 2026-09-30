@@ -5,10 +5,12 @@ on:
       - agent/rh-marked-cluster-target-reflection
     paths:
       - 'Synthesis/RiemannSelectedPrimeSensitiveThreeTap*.lean'
+      - 'Synthesis/RiemannSelectedPrimeSensitiveTwoScale.lean'
       - '.github/workflows/rh-selected-three-tap-kernel.yml'
   pull_request:
     paths:
       - 'Synthesis/RiemannSelectedPrimeSensitiveThreeTap*.lean'
+      - 'Synthesis/RiemannSelectedPrimeSensitiveTwoScale.lean'
       - '.github/workflows/rh-selected-three-tap-kernel.yml'
   workflow_dispatch:
 
@@ -23,3 +25,4 @@ jobs:
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapTwoPrime
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapCompleted
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapIncrementAudit
+          lake build Synthesis.RiemannSelectedPrimeSensitiveTwoScale

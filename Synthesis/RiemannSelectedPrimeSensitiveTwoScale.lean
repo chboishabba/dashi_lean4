@@ -550,4 +550,109 @@ theorem QuarticFourSignedPolePair.twoScaleCompletedCluster_eq_off_add_arithmetic
   rw [hhalf,htwo]
   ring
 
+
+/-!
+## Exact completed increment against the unshifted selected witness
+
+This subtracts the literal four-channel projective formula at
+(e2,e3)=(0,0) from the formula at (e2,e3). A nonzero finite
+prime contribution is necessarily balanced by the corresponding changes
+in the same-witness off-ordinate, gamma, pole, and cluster channels.
+No original pole cancellation or positive cluster estimate is reused.
+-/
+
+theorem QuarticFourSignedPolePair.twoScaleSignedPrimeCombination_zero
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.twoScaleSignedPrimeCombination 0 0 = 0 := by
+  unfold QuarticFourSignedPolePair.twoScaleSignedPrimeCombination
+    QuarticFourSignedPolePair.twoScaleChannelCombination
+    QuarticFourSignedPolePair.twoScaleHalf
+    QuarticFourSignedPolePair.twoScaleTwo
+  have hzero (g : ℝ → ℝ) : detectorTwoScale g 0 0 = g := by
+    funext u
+    simp [detectorTwoScale]
+  rw [hzero,hzero]
+  have hhalf :
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+        (quarticFourPhysicalDetector W.R (1/2) W.muHalf t) t (t/16) = 0 :=
+    quarticFourPhysicalDetector_primeProjectiveDefect_eq_zero
+      W.Rpos W.RltOne (by linarith : 200 ≤ t)
+  have htwo :
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+        (quarticFourPhysicalDetector W.R (2/3) W.muTwo t) t (t/16) = 0 :=
+    quarticFourPhysicalDetector_primeProjectiveDefect_eq_zero
+      W.Rpos W.RltOne (by linarith : 200 ≤ t)
+  rw [hhalf,htwo]
+  ring
+
+/-- The theorem retains every changed completed channel. The presence of
+n=2 and n=3 is not independent arithmetic control of the selected zero
+because the same explicit formula forces this equality. -/
+theorem QuarticFourSignedPolePair.twoScaleCompletedIncrement
+    {t e2 e3 : ℝ}
+    (ht : 300 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.twoScaleChannelCombination e2 e3
+      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.clusterHeightDefect
+      -
+    W.twoScaleChannelCombination 0 0
+      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.clusterHeightDefect
+    =
+    (W.twoScaleChannelCombination e2 e3
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect
+      - W.twoScaleChannelCombination 0 0
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect)
+    +
+    (W.twoScaleSignedPrimeCombination e2 e3
+      - W.twoScaleSignedPrimeCombination 0 0)
+    +
+    (W.twoScaleChannelCombination e2 e3
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect
+      - W.twoScaleChannelCombination 0 0
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect)
+    +
+    (W.twoScaleChannelCombination e2 e3
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect
+      - W.twoScaleChannelCombination 0 0
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect) := by
+  have hnew :=
+    W.twoScaleCompletedCluster_eq_off_add_arithmetic ht (e2 := e2) (e3 := e3)
+  have hbase :=
+    W.twoScaleCompletedCluster_eq_off_add_arithmetic ht (e2 := 0) (e3 := 0)
+  unfold QuarticFourSignedPolePair.twoScaleCompletedArithmetic at hnew hbase
+  linarith
+
+/-- A user of the exact two-prime result may eliminate the old zero-prime
+baseline from the increment, but NOT the altered Gamma/pole/zero terms. -/
+theorem QuarticFourSignedPolePair.twoScaleCompletedIncrement_exactPrime
+    {t e2 e3 : ℝ}
+    (ht : 300 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.twoScaleChannelCombination e2 e3
+      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.clusterHeightDefect
+      -
+    W.twoScaleChannelCombination 0 0
+      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.clusterHeightDefect
+    =
+    (W.twoScaleChannelCombination e2 e3
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect
+      - W.twoScaleChannelCombination 0 0
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect)
+    +
+    W.twoScaleSignedPrimeCombination e2 e3
+    +
+    (W.twoScaleChannelCombination e2 e3
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect
+      - W.twoScaleChannelCombination 0 0
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect)
+    +
+    (W.twoScaleChannelCombination e2 e3
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect
+      - W.twoScaleChannelCombination 0 0
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect) := by
+  rw [← W.twoScaleCompletedIncrement ht]
+  rw [W.twoScaleSignedPrimeCombination_zero]
+  ring
+
 end Synthesis

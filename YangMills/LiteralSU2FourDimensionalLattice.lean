@@ -233,4 +233,63 @@ theorem su2_four_dimensional_wilson_action_bounds
     (fun links p => su2Plaquette links p.1 p.2.1 p.2.2)
     β hβ links
 
+/--
+Two adjacent physical links blocked into a path of length two.
+This is the natural group-valued RG blocking operation, not an
+arithmetic average of plaquette coefficients.
+-/
+def su2TwoLinkBlock {L : ℕ}
+    (links : SU2TorusLinks L)
+    (x : SU2TorusSite L) (direction : Fin 4) :
+    SU2PlaquetteHolonomy :=
+  links x direction *
+    links (su2Shift x direction) direction
+
+/--
+The blocked link has the proper endpoint gauge covariance under the
+SAME fine-lattice gauge action.  Intermediate site gauge factors
+cancel exactly.  This is the required local geometry for comparing
+physical fine/coarse link fields in an RG trajectory.
+-/
+theorem su2_two_link_block_gauge_covariant {L : ℕ}
+    (g : SU2TorusGauge L) (links : SU2TorusLinks L)
+    (x : SU2TorusSite L) (direction : Fin 4) :
+    su2TwoLinkBlock (su2GaugeTransform g links) x direction =
+      g x * su2TwoLinkBlock links x direction *
+        (g (su2Shift (su2Shift x direction) direction))⁻¹ := by
+  dsimp [su2TwoLinkBlock, su2GaugeTransform]
+  group
+
+/-- Fundamental central negative unit of the genuine quaternion SU(2). -/
+def su2CentralNegative : SU2PlaquetteHolonomy :=
+  ⟨-1, 0, 0, 0, by norm_num⟩
+
+theorem su2_negative_unit_cost :
+    su2PositivePlaquetteCost su2CentralNegative = 2 := by
+  norm_num [su2_real_trace_normalization, su2CentralNegative]
+
+theorem su2_negative_units_multiply_to_identity :
+    su2CentralNegative * su2CentralNegative =
+      (1 : SU2PlaquetteHolonomy) := by
+  apply su2_holonomy_ext <;>
+    norm_num [su2CentralNegative, Mul.mul, su2Mul,
+      One.one, su2One]
+
+/--
+Explicit finite nonlinear obstruction: Wilson cost is NOT additive
+when two group-valued plaquette holonomies are multiplied.  A two-step
+block containing -I and -I is the identity, with cost zero, while the
+two original costs sum to four.  Thus a CMP119 RG action cannot be
+obtained simply by summing Wilson terms across blocking scales.
+-/
+theorem su2_wilson_cost_not_additive_under_blocking :
+    su2PositivePlaquetteCost
+      (su2CentralNegative * su2CentralNegative) ≠
+      su2PositivePlaquetteCost su2CentralNegative +
+        su2PositivePlaquetteCost su2CentralNegative := by
+  rw [su2_negative_units_multiply_to_identity,
+    su2_negative_unit_cost]
+  norm_num [su2PositivePlaquetteCost, su2FundamentalRealTrace,
+    One.one, su2One]
+
 end RequestProject.YangMills

@@ -4,12 +4,12 @@ import Mathlib.Data.Real.Sqrt
 /-!
 # Exact sparse signed-reserve negative control (R815 / R823)
 
-Independent SymPy evaluator:
+The factor two in R692.Work.coherentWork = 2*R179.realHermitianCross\nis included here. Independent SymPy evaluator:
 `scripts/check_ns_r823_exact_sparse_reserve_witness.py`
 on Agda PR #1039 evaluates a divergence-free reality-paired radius-one
 Fourier snapshot. Its computed conventions are
 
-  global R230 commutator coherent work = -142 - 59*sqrt(2)/2,
+  global R230 commutator coherent work = -284 - 59*sqrt(2),
   R723 combined = 12*commutator,
   R744 critical production = 0,
   R744 critical dissipation = 108,
@@ -33,7 +33,7 @@ Promotion requires a genuine real/algebraic-field same-object adapter.
 namespace NSBControl
 namespace ExactSparseReserveWitness
 
-def commutatorWork : ℝ := -142 - (59 / 2 : ℝ) * Real.sqrt 2
+def commutatorWork : ℝ := -284 - 59 * Real.sqrt 2
 
 def combinedResidue : ℝ := 12 * commutatorWork
 
@@ -45,7 +45,7 @@ def canonicalSignedRate : ℝ :=
   6 * (combinedResidue - criticalProduction + criticalDissipation)
 
 theorem exactSignedRate :
-    canonicalSignedRate = -9576 - 2124 * Real.sqrt 2 := by
+    canonicalSignedRate = -19800 - 4248 * Real.sqrt 2 := by
   unfold canonicalSignedRate combinedResidue commutatorWork
     criticalProduction criticalDissipation
   ring

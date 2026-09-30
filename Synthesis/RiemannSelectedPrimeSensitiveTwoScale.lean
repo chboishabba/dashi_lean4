@@ -376,4 +376,178 @@ theorem quarticFourPhysicalDetector_twoScale_primeChannel_at_logTwo_resonance
       hphase]
   ring
 
+
+/-!
+## Completed two-scale projective source
+
+All prime amplitudes below come from the ACTUAL von-Mangoldt terms.
+The on-line responses are evaluated on the same translated detector.
+Their coefficients depend on e2,e3, making the final projective
+prime response generally quadratic in the two parameters.
+-/
+
+def twoScalePrimeShape (g : ℝ → ℝ) (r L : ℝ) : ℝ :=
+  Real.cos (2*r*L)
+      * Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r
+    - Real.cos (r*L)
+      * Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r)
+
+theorem quarticFourPhysicalDetector_twoScale_primeProjective_eq
+    {R lam mu t e2 e3 r : ℝ}
+    (hR : 0 < R) (hRone : R < 1) (ht : 300 ≤ t) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (detectorTwoScale (quarticFourPhysicalDetector R lam mu t)
+        e2 e3) t r
+    =
+    8*(quarticWindowMass R)⁻¹
+      * (
+        e2*(ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ)
+          * Real.cos (t*Real.log 2)
+          * twoScalePrimeShape
+              (detectorTwoScale (quarticFourPhysicalDetector R lam mu t)
+                e2 e3) r (Real.log 2)
+        +
+        e3*(ArithmeticFunction.vonMangoldt 3 / Real.sqrt 3 : ℝ)
+          * Real.cos (t*Real.log 3)
+          * twoScalePrimeShape
+              (detectorTwoScale (quarticFourPhysicalDetector R lam mu t)
+                e2 e3) r (Real.log 3)
+      ) := by
+  unfold Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.channelProjectiveDefect
+    twoScalePrimeShape
+  rw [quarticFourPhysicalDetector_twoScale_primeChannel_eq hR hRone ht (2*r),
+    quarticFourPhysicalDetector_twoScale_primeChannel_eq hR hRone ht r]
+  ring
+
+def QuarticFourSignedPolePair.twoScaleHalf
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (e2 e3 : ℝ) : ℝ → ℝ :=
+  detectorTwoScale
+    (quarticFourPhysicalDetector W.R (1/2) W.muHalf t) e2 e3
+
+def QuarticFourSignedPolePair.twoScaleTwo
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (e2 e3 : ℝ) : ℝ → ℝ :=
+  detectorTwoScale
+    (quarticFourPhysicalDetector W.R (2/3) W.muTwo t) e2 e3
+
+def QuarticFourSignedPolePair.twoScaleChannelCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (e2 e3 : ℝ)
+    (C : (ℝ → ℝ) → ℝ → ℝ → ℝ) : ℝ :=
+  W.poleTwo*C (W.twoScaleHalf e2 e3) t (t/16)
+    - W.poleHalf*C (W.twoScaleTwo e2 e3) t (t/16)
+
+def QuarticFourSignedPolePair.twoScaleSignedPrimeCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (e2 e3 : ℝ) : ℝ :=
+  W.twoScaleChannelCombination e2 e3
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+
+/-- The selected W has independently tunable 2 and 3 arithmetic phases,
+but both are paired against the updated on-line column. -/
+theorem QuarticFourSignedPolePair.twoScaleSignedPrimeCombination_eq
+    {t e2 e3 : ℝ}
+    (ht : 300 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.twoScaleSignedPrimeCombination e2 e3
+      =
+    8*(quarticWindowMass W.R)⁻¹
+      * (
+        e2*(ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ)
+          * Real.cos (t*Real.log 2)
+          * (W.poleTwo*twoScalePrimeShape
+                 (W.twoScaleHalf e2 e3) (t/16) (Real.log 2)
+            - W.poleHalf*twoScalePrimeShape
+                 (W.twoScaleTwo e2 e3) (t/16) (Real.log 2))
+        +
+        e3*(ArithmeticFunction.vonMangoldt 3 / Real.sqrt 3 : ℝ)
+          * Real.cos (t*Real.log 3)
+          * (W.poleTwo*twoScalePrimeShape
+                 (W.twoScaleHalf e2 e3) (t/16) (Real.log 3)
+            - W.poleHalf*twoScalePrimeShape
+                 (W.twoScaleTwo e2 e3) (t/16) (Real.log 3))
+      ) := by
+  unfold QuarticFourSignedPolePair.twoScaleSignedPrimeCombination
+    QuarticFourSignedPolePair.twoScaleChannelCombination
+    QuarticFourSignedPolePair.twoScaleHalf
+    QuarticFourSignedPolePair.twoScaleTwo
+  rw [quarticFourPhysicalDetector_twoScale_primeProjective_eq
+      W.Rpos W.RltOne ht,
+    quarticFourPhysicalDetector_twoScale_primeProjective_eq
+      W.Rpos W.RltOne ht]
+  ring
+
+theorem detectorTwoScale_eq_twoThreeTaps_sub
+    (g : ℝ → ℝ) (e2 e3 : ℝ) :
+    detectorTwoScale g e2 e3
+      = (fun u =>
+          detectorThreeTap g e2 (Real.log 2) u
+            + detectorThreeTap g e3 (Real.log 3) u - g u) := by
+  funext u
+  unfold detectorTwoScale detectorThreeTap
+  ring
+
+theorem detectorTwoScale_contDiff
+    {g : ℝ → ℝ} (hg : ContDiff ℝ 2 g) (e2 e3 : ℝ) :
+    ContDiff ℝ 2 (detectorTwoScale g e2 e3) := by
+  unfold detectorTwoScale
+  fun_prop
+
+theorem detectorTwoScale_compact
+    {g : ℝ → ℝ} (hg : HasCompactSupport g) (e2 e3 : ℝ) :
+    HasCompactSupport (detectorTwoScale g e2 e3) := by
+  rw [detectorTwoScale_eq_twoThreeTaps_sub]
+  exact ((detectorThreeTap_compact hg e2 (Real.log 2)).add
+    (detectorThreeTap_compact hg e3 (Real.log 3))).sub hg
+
+def QuarticFourSignedPolePair.twoScaleCompletedArithmetic
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (e2 e3 : ℝ) : ℝ :=
+  W.twoScaleSignedPrimeCombination e2 e3
+    + W.twoScaleChannelCombination e2 e3
+        Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect
+    + W.twoScaleChannelCombination e2 e3
+        Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect
+
+/-- Exact Zeta23 completed equality on the independently shifted selected
+physical detectors. No original pole cancellation or terminal sign
+property is reused without re-establishment. -/
+theorem QuarticFourSignedPolePair.twoScaleCompletedCluster_eq_off_add_arithmetic
+    {t e2 e3 : ℝ}
+    (ht : 300 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.twoScaleChannelCombination e2 e3
+      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.clusterHeightDefect
+      =
+    W.twoScaleChannelCombination e2 e3
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect
+      + W.twoScaleCompletedArithmetic e2 e3 := by
+  have hhalf :=
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.clusterHeightDefect_eq_fourProjectiveChannels
+      (detectorTwoScale_contDiff
+        (quarticFourPhysicalDetector_contDiff W.Rpos) e2 e3)
+      (detectorTwoScale_compact
+        (quarticFourPhysicalDetector_compact W.Rpos (by linarith)) e2 e3)
+      (detectorTwoScale_even
+        (quarticFourPhysicalDetector_even W.R (1/2) W.muHalf t) e2 e3)
+      t (t/16)
+  have htwo :=
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.clusterHeightDefect_eq_fourProjectiveChannels
+      (detectorTwoScale_contDiff
+        (quarticFourPhysicalDetector_contDiff W.Rpos) e2 e3)
+      (detectorTwoScale_compact
+        (quarticFourPhysicalDetector_compact W.Rpos (by linarith)) e2 e3)
+      (detectorTwoScale_even
+        (quarticFourPhysicalDetector_even W.R (2/3) W.muTwo t) e2 e3)
+      t (t/16)
+  dsimp [QuarticFourSignedPolePair.twoScaleCompletedArithmetic,
+    QuarticFourSignedPolePair.twoScaleSignedPrimeCombination,
+    QuarticFourSignedPolePair.twoScaleChannelCombination,
+    QuarticFourSignedPolePair.twoScaleHalf,
+    QuarticFourSignedPolePair.twoScaleTwo] at *
+  rw [hhalf,htwo]
+  ring
+
 end Synthesis

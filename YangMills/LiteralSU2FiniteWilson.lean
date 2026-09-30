@@ -1,0 +1,206 @@
+import Mathlib
+
+/-!
+# Actual finite SU(2) plaquette cost, with separate CMP119 effective sectors
+
+A unit quaternion (a,b,c,d) represents the compact SU(2) fundamental
+matrix [[a+ib,c+id],[-c+id,a-ib]].  Its **real normalized fundamental
+trace** is a. The usual positive Wilson plaquette cost is therefore 1-a,
+not the abstract coefficient of an unrelated action basis.
+
+This file proves pointwise, finite-cutoff consequences which require NO
+assumption of existence of a continuum Yang--Mills measure.  The physical
+identification of actual CMP119 edge/plaquette variables with this
+quaternion carrier, the published source action, the product Haar integral,
+and the gauge-invariant/reflection-positive measure remain distinct
+obligations.  It does not infer such an identification from CMP109's
+inverse-coupling recursion or the T4 symbolic projector.
+
+Wilson (1974): DOI 10.1103/PhysRevD.10.2445.
+Balaban CMP 119 (1988): DOI 10.1007/BF01217741.
+-/
+
+namespace RequestProject.YangMills
+
+/-- Fundamental SU(2) holonomy as a unit quaternion. -/
+structure SU2PlaquetteHolonomy where
+  a : ℝ
+  b : ℝ
+  c : ℝ
+  d : ℝ
+  unit_quaternion : a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2 = 1
+
+/-- Real part of the fundamental trace, before dividing by two. -/
+def su2FundamentalRealTrace (U : SU2PlaquetteHolonomy) : ℝ :=
+  2 * U.a
+
+/-- The standard SU(2) Wilson cost 1 - (Re Tr U)/2. -/
+def su2PositivePlaquetteCost (U : SU2PlaquetteHolonomy) : ℝ :=
+  1 - su2FundamentalRealTrace U / 2
+
+theorem su2_real_trace_normalization (U : SU2PlaquetteHolonomy) :
+    su2PositivePlaquetteCost U = 1 - U.a := by
+  simp [su2PositivePlaquetteCost, su2FundamentalRealTrace]
+
+theorem su2_quaternion_real_part_abs_le_one
+    (U : SU2PlaquetteHolonomy) :
+    -1 ≤ U.a ∧ U.a ≤ 1 := by
+  have hb := sq_nonneg U.b
+  have hc := sq_nonneg U.c
+  have hd := sq_nonneg U.d
+  have ha := sq_nonneg U.a
+  have hn := U.unit_quaternion
+  constructor <;> nlinarith
+
+/-- A genuine SU(2) plaquette costs between zero and two. -/
+theorem su2_positive_plaquette_cost_bounds
+    (U : SU2PlaquetteHolonomy) :
+    0 ≤ su2PositivePlaquetteCost U ∧
+      su2PositivePlaquetteCost U ≤ 2 := by
+  rw [su2_real_trace_normalization]
+  obtain ⟨hlo, hhi⟩ := su2_quaternion_real_part_abs_le_one U
+  constructor <;> linarith
+
+/--
+The full finite Wilson action contains an ACTUAL finite plaquette sum;
+`holonomy` is to be produced from physical link variables.
+-/
+def finiteSU2WilsonAction
+    {P Ω : Type*}
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (inverseCouplingCoefficient : ℝ)
+    (configuration : Ω) : ℝ :=
+  inverseCouplingCoefficient *
+    ∑ p ∈ plaquettes,
+      su2PositivePlaquetteCost (holonomy configuration p)
+
+/--
+Cutoff-explicit energy bounds for the genuine SU(2) Wilson cost.
+They show exactly why a fixed-cutoff estimate is NOT automatically a
+uniform ultraviolet/infinite-volume coercive estimate: the upper bound
+contains the plaquette count and the inverse bare coupling.
+-/
+theorem finite_su2_wilson_action_bounds
+    {P Ω : Type*}
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ) (hβ : 0 ≤ β) (configuration : Ω) :
+    0 ≤ finiteSU2WilsonAction plaquettes holonomy β configuration ∧
+    finiteSU2WilsonAction plaquettes holonomy β configuration
+      ≤ 2 * β * (plaquettes.card : ℝ) := by
+  classical
+  have hsumNonnegative :
+      0 ≤ ∑ p ∈ plaquettes,
+        su2PositivePlaquetteCost (holonomy configuration p) := by
+    apply Finset.sum_nonneg
+    intro p hp
+    exact (su2_positive_plaquette_cost_bounds
+      (holonomy configuration p)).1
+  have hsumUpper :
+      (∑ p ∈ plaquettes,
+        su2PositivePlaquetteCost (holonomy configuration p))
+        ≤ 2 * (plaquettes.card : ℝ) := by
+    calc
+      _ ≤ ∑ p ∈ plaquettes, (2 : ℝ) := by
+        apply Finset.sum_le_sum
+        intro p hp
+        exact (su2_positive_plaquette_cost_bounds
+          (holonomy configuration p)).2
+      _ = 2 * (plaquettes.card : ℝ) := by simp
+  constructor
+  · exact mul_nonneg hβ hsumNonnegative
+  · dsimp [finiteSU2WilsonAction]
+    have h := mul_le_mul_of_nonneg_left hsumUpper hβ
+    nlinarith
+
+/--
+Keep the four non-Wilson sectors distinct. Their sum is NOT automatically
+gauge invariant, bounded, nonnegative, or a small remainder.
+-/
+def finiteCMP119SectorAction
+    {P Ω : Type*}
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (configuration : Ω) : ℝ :=
+  finiteSU2WilsonAction plaquettes holonomy β configuration +
+    regular configuration + rOperation configuration +
+    boundary configuration + vacuum configuration
+
+/--
+A real source-specific finite lower bound: conditional only on four
+separate numerical sector lower estimates, NOT on a guessed
+Wilson-only complete action.
+-/
+theorem finite_cmp119_complete_action_lower_bound
+    {P Ω : Type*}
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ) (hβ : 0 ≤ β)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (Kregular Kr Kboundary Kv : ℝ)
+    (hregular : ∀ x, -Kregular ≤ regular x)
+    (hr : ∀ x, -Kr ≤ rOperation x)
+    (hboundary : ∀ x, -Kboundary ≤ boundary x)
+    (hv : ∀ x, -Kv ≤ vacuum x)
+    (x : Ω) :
+    -(Kregular + Kr + Kboundary + Kv) ≤
+      finiteCMP119SectorAction plaquettes holonomy β
+        regular rOperation boundary vacuum x := by
+  have hWilson := (finite_su2_wilson_action_bounds
+    plaquettes holonomy β hβ x).1
+  dsimp [finiteCMP119SectorAction]
+  linarith [hregular x, hr x, hboundary x, hv x]
+
+/--
+The finite Gibbs weight is strictly positive for every SU(2) configuration,
+and an explicit bound on all remaining sectors gives a pointwise majorant.
+Positivity alone does not establish positive Haar normalization unless the
+chosen Haar measure and its support are physically identified.
+-/
+def finiteCMP119BoltzmannWeight
+    {P Ω : Type*}
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (configuration : Ω) : ℝ :=
+  Real.exp (-(finiteCMP119SectorAction plaquettes holonomy β
+    regular rOperation boundary vacuum configuration))
+
+theorem finite_cmp119_boltzmann_weight_pos
+    {P Ω : Type*}
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (x : Ω) :
+    0 < finiteCMP119BoltzmannWeight plaquettes holonomy β
+      regular rOperation boundary vacuum x := by
+  exact Real.exp_pos _
+
+theorem finite_cmp119_boltzmann_weight_upper_bound
+    {P Ω : Type*}
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ) (hβ : 0 ≤ β)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (Kregular Kr Kboundary Kv : ℝ)
+    (hregular : ∀ x, -Kregular ≤ regular x)
+    (hr : ∀ x, -Kr ≤ rOperation x)
+    (hboundary : ∀ x, -Kboundary ≤ boundary x)
+    (hv : ∀ x, -Kv ≤ vacuum x)
+    (x : Ω) :
+    finiteCMP119BoltzmannWeight plaquettes holonomy β
+      regular rOperation boundary vacuum x
+      ≤ Real.exp (Kregular + Kr + Kboundary + Kv) := by
+  unfold finiteCMP119BoltzmannWeight
+  apply Real.exp_le_exp.mpr
+  have h := finite_cmp119_complete_action_lower_bound
+    plaquettes holonomy β hβ regular rOperation boundary vacuum
+    Kregular Kr Kboundary Kv hregular hr hboundary hv x
+  linarith
+
+end RequestProject.YangMills

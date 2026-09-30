@@ -170,6 +170,32 @@ theorem finite_cmp119_complete_action_lower_bound
   linarith [hregular x, hr x, hboundary x, hv x]
 
 /--
+The complementary upper estimate on the COMPLETE physical finite action.
+One needs independent upper controls on all four selected effective sectors;
+the Wilson estimate alone cannot pay these.
+-/
+theorem finite_cmp119_complete_action_upper_bound
+    {P Ω : Type*}
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ) (hβ : 0 ≤ β)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (Kregular Kr Kboundary Kv : ℝ)
+    (hregular : ∀ x, regular x ≤ Kregular)
+    (hr : ∀ x, rOperation x ≤ Kr)
+    (hboundary : ∀ x, boundary x ≤ Kboundary)
+    (hv : ∀ x, vacuum x ≤ Kv)
+    (x : Ω) :
+    finiteCMP119SectorAction plaquettes holonomy β
+      regular rOperation boundary vacuum x ≤
+        2 * β * (plaquettes.card : ℝ) +
+          Kregular + Kr + Kboundary + Kv := by
+  have hWilson := (finite_su2_wilson_action_bounds
+    plaquettes holonomy β hβ x).2
+  dsimp [finiteCMP119SectorAction]
+  linarith [hregular x, hr x, hboundary x, hv x]
+
+/--
 The finite Gibbs weight is strictly positive for every SU(2) configuration,
 and an explicit bound on all remaining sectors gives a pointwise majorant.
 Positivity alone does not establish positive Haar normalization unless the

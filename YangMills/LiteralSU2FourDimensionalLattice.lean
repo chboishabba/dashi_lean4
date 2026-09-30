@@ -292,4 +292,49 @@ theorem su2_wilson_cost_not_additive_under_blocking :
   norm_num [su2PositivePlaquetteCost, su2FundamentalRealTrace,
     One.one, su2One]
 
+/--
+A physical one-plaquette source normalization probe, independent of the
+T4 abstract plaquette projector: evaluate the actual normalized trace at
+the central negative SU(2) element.
+-/
+theorem physical_su2_central_probe_extracts_two_beta (β : ℝ) :
+    β * su2PositivePlaquetteCost su2CentralNegative = 2 * β := by
+  rw [su2_negative_unit_cost]
+  ring
+
+/--
+Two candidate Wilson normalizations which agree on the actual -I
+plaquette must have the same coefficient, without any symbolic
+projector assumption.
+-/
+theorem physical_su2_wilson_normalization_unique
+    (β γ : ℝ)
+    (hSamePhysicalProbe :
+      β * su2PositivePlaquetteCost su2CentralNegative =
+      γ * su2PositivePlaquetteCost su2CentralNegative) :
+    β = γ := by
+  rw [su2_negative_unit_cost] at hSamePhysicalProbe
+  linarith
+
+/--
+The independent regular/R/boundary/vacuum sector changes must be
+subtracted before claiming the Wilson coefficient has been measured.
+This theorem returns a SOURCE-CHECKABLE equality for the physical
+nonlinear plaquette rather than assuming total action = Wilson action.
+-/
+theorem physical_su2_complete_action_coefficient_probe
+    (β : ℝ) (regular rOperation boundary vacuum :
+      SU2PlaquetteHolonomy → ℝ) :
+    β * su2PositivePlaquetteCost su2CentralNegative +
+        regular su2CentralNegative +
+        rOperation su2CentralNegative +
+        boundary su2CentralNegative +
+        vacuum su2CentralNegative -
+        (regular su2CentralNegative +
+        rOperation su2CentralNegative +
+        boundary su2CentralNegative +
+        vacuum su2CentralNegative) = 2 * β := by
+  rw [su2_negative_unit_cost]
+  ring
+
 end RequestProject.YangMills

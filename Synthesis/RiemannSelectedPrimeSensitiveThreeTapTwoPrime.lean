@@ -283,7 +283,7 @@ theorem quarticFourPhysicalDetector_literalThirdPrimeSummand_eq_zero
   have hneg :
       detectorThreeTap (quarticFourPhysicalDetector R lam mu t)
         eps (Real.log 2) (-Real.log 3) = 0 := by
-    rw [detectorThreeTap_even heven]
+    rw [detectorThreeTap_even heven eps (Real.log 2) (Real.log 3)]
     exact hz
   simp [Zeta23Bridge.LiteralWeilParityBalance.sampleTest, hz, hneg]
 

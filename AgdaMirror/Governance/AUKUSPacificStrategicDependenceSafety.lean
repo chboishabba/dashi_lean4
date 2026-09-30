@@ -3,7 +3,7 @@ namespace AgdaMirror.Governance.AUKUSPacificStrategicDependenceSafety
 inductive StrategicDependenceAxis
   | submarineIndustrialCapacity | usOperationalAccess | australianCommandSovereignty
   | nuclearStewardship | pacificRegionalLegitimacy | sensingInfrastructure
-  | historicalSubmarineSafety
+  | historicalSubmarineSafety | alliedCombatPresence
   deriving DecidableEq, Repr
 
 structure StrategicDependenceObservation where
@@ -21,14 +21,18 @@ def officialAUKUSCommitment : StrategicDependenceObservation :=
 
 def historicalSubmarineSafetyCase : StrategicDependenceObservation :=
   ⟨.historicalSubmarineSafety,
-   "USS Greeneville/Ehime Maru shows severe submarine navigation/procedure safety consequences are possible.",
+   "USS Greeneville/Ehime Maru retained as a historical navigation/procedure safety case.",
    "NTSB DCA01MM022"⟩
 
-theorem neither_observation_is_outcome_verdict :
+def irisDenaPresenceCase : StrategicDependenceObservation :=
+  ⟨.alliedCombatPresence,
+   "Three Australian personnel were aboard the U.S. submarine during the strike that sank IRIS Dena; Australian government says they did not participate offensively.",
+   "Reuters 2026-03-06 / ABC 2026-03-06"⟩
+
+theorem observations_do_not_auto_close_sovereignty_or_aukus_verdict :
     officialAUKUSCommitment.provesAUKUSSuccess = false ∧
-    officialAUKUSCommitment.provesAUKUSFailure = false ∧
-    historicalSubmarineSafetyCase.provesAUKUSSuccess = false ∧
-    historicalSubmarineSafetyCase.provesAUKUSFailure = false := by
+    historicalSubmarineSafetyCase.provesAUKUSFailure = false ∧
+    irisDenaPresenceCase.provesLossOfAustralianSovereignty = false := by
   decide
 
 end AgdaMirror.Governance.AUKUSPacificStrategicDependenceSafety

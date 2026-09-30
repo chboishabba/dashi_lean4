@@ -563,6 +563,7 @@ No original pole cancellation or positive cluster estimate is reused.
 
 theorem QuarticFourSignedPolePair.twoScaleSignedPrimeCombination_zero
     {t : ℝ}
+    (ht : 200 ≤ t)
     (W : QuarticFourSignedPolePair t) :
     W.twoScaleSignedPrimeCombination 0 0 = 0 := by
   unfold QuarticFourSignedPolePair.twoScaleSignedPrimeCombination
@@ -577,12 +578,12 @@ theorem QuarticFourSignedPolePair.twoScaleSignedPrimeCombination_zero
       Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
         (quarticFourPhysicalDetector W.R (1/2) W.muHalf t) t (t/16) = 0 :=
     quarticFourPhysicalDetector_primeProjectiveDefect_eq_zero
-      W.Rpos W.RltOne (by linarith : 200 ≤ t)
+      W.Rpos W.RltOne ht
   have htwo :
       Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
         (quarticFourPhysicalDetector W.R (2/3) W.muTwo t) t (t/16) = 0 :=
     quarticFourPhysicalDetector_primeProjectiveDefect_eq_zero
-      W.Rpos W.RltOne (by linarith : 200 ≤ t)
+      W.Rpos W.RltOne ht
   rw [hhalf,htwo]
   ring
 
@@ -651,8 +652,8 @@ theorem QuarticFourSignedPolePair.twoScaleCompletedIncrement_exactPrime
       Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect
       - W.twoScaleChannelCombination 0 0
       Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect) := by
-  rw [← W.twoScaleCompletedIncrement ht]
-  rw [W.twoScaleSignedPrimeCombination_zero]
-  ring
+  have h := W.twoScaleCompletedIncrement ht (e2 := e2) (e3 := e3)
+  rw [W.twoScaleSignedPrimeCombination_zero (by linarith : 200 ≤ t)] at h
+  simpa only [sub_zero] using h
 
 end Synthesis

@@ -197,4 +197,171 @@ theorem quarticFourPhysicalDetector_twoScale_samples
     detectorTwoScale_at_log_three hs e2 e3,
     detectorTwoScale_at_log_nat_eq_zero_of_four_le hs e2 e3⟩
 
+
+/-!
+## All two-scale prime powers: exact literal Zeta23 finite sum
+
+The prime n=4 is included in the far cutoff; there is no accidental
+prime-square term after the physical support becomes smaller than 1/4.
+-/
+
+theorem detectorTwoScale_literalPrimeSummand_eq_zero_of_four_le
+    {g : ℝ → ℝ}
+    (heven : ∀ u, g (-u) = g u)
+    (hshort : ∀ u : ℝ, g u ≠ 0 → |u| < (1/4:ℝ))
+    (e2 e3 t s : ℝ) (n : ℕ) (hn : 4 ≤ n) :
+    ((ArithmeticFunction.vonMangoldt n / Real.sqrt n : ℝ) : ℂ)
+      * (Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+          (detectorTwoScale g e2 e3) t s (Real.log n)
+        + Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+          (detectorTwoScale g e2 e3) t s (-Real.log n))
+      = 0 := by
+  have hp :=
+    detectorTwoScale_at_log_nat_eq_zero_of_four_le hshort e2 e3 n hn
+  have hm :
+      detectorTwoScale g e2 e3 (-Real.log n) = 0 := by
+    rw [detectorTwoScale_even heven e2 e3 (Real.log n)]
+    exact hp
+  simp [Zeta23Bridge.LiteralWeilParityBalance.sampleTest,hp,hm]
+
+theorem detectorTwoScale_primeTerm_eq_two_summands
+    {g : ℝ → ℝ}
+    (heven : ∀ u, g (-u) = g u)
+    (hshort : ∀ u : ℝ, g u ≠ 0 → |u| < (1/4:ℝ))
+    (e2 e3 t s : ℝ) :
+    Zeta23Bridge.LiteralWeilParityBalance.primeTerm
+      (Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+        (detectorTwoScale g e2 e3) t s)
+      =
+    ∑ n ∈ ({2,3} : Finset ℕ),
+      ((ArithmeticFunction.vonMangoldt n / Real.sqrt n : ℝ) : ℂ)
+      * (Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+          (detectorTwoScale g e2 e3) t s (Real.log n)
+        + Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+          (detectorTwoScale g e2 e3) t s (-Real.log n)) := by
+  unfold Zeta23Bridge.LiteralWeilParityBalance.primeTerm
+  apply tsum_eq_sum
+  intro n hn
+  have hne2 : n ≠ 2 := by
+    intro h
+    exact hn (by simp [h])
+  have hne3 : n ≠ 3 := by
+    intro h
+    exact hn (by simp [h])
+  by_cases h4 : 4 ≤ n
+  · exact detectorTwoScale_literalPrimeSummand_eq_zero_of_four_le
+      heven hshort e2 e3 t s n h4
+  · have hn4 : n < 4 := Nat.lt_of_not_ge h4
+    interval_cases n <;>
+      simp [hne2,hne3,ArithmeticFunction.vonMangoldt]
+
+theorem detectorTwoScale_primeTerm_eq_two_real_terms
+    {g : ℝ → ℝ}
+    (heven : ∀ u, g (-u) = g u)
+    (hshort : ∀ u : ℝ, g u ≠ 0 → |u| < (1/4:ℝ))
+    (e2 e3 t s : ℝ) :
+    Zeta23Bridge.LiteralWeilParityBalance.primeTerm
+      (Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+        (detectorTwoScale g e2 e3) t s)
+      =
+    (((2 : ℝ)*g 0 *
+      (e2*(ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ)
+        * Real.cos ((s-t)*Real.log 2)
+       + e3*(ArithmeticFunction.vonMangoldt 3 / Real.sqrt 3 : ℝ)
+        * Real.cos ((s-t)*Real.log 3))) : ℝ) := by
+  rw [detectorTwoScale_primeTerm_eq_two_summands
+    heven hshort e2 e3 t s]
+  simp only [Finset.sum_insert (by simp : (2:ℕ) ∉ ({3}:Finset ℕ)),
+    Finset.sum_singleton]
+  rw [Zeta23Bridge.LiteralWeilPrimeEvenCone.primeSummand_sampleTest
+      (detectorTwoScale_even heven e2 e3) t s 2,
+    Zeta23Bridge.LiteralWeilPrimeEvenCone.primeSummand_sampleTest
+      (detectorTwoScale_even heven e2 e3) t s 3]
+  rw [detectorTwoScale_at_log_two hshort,
+    detectorTwoScale_at_log_three hshort]
+  push_cast
+  ring
+
+theorem quarticFourPhysicalDetector_twoScale_primeTerm_exact
+    {R lam mu t e2 e3 s : ℝ}
+    (hR : 0 < R) (hRone : R < 1) (ht : 300 ≤ t) :
+    Zeta23Bridge.LiteralWeilParityBalance.primeTerm
+      (Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+        (detectorTwoScale
+          (quarticFourPhysicalDetector R lam mu t) e2 e3) t s)
+      =
+    (((4 : ℝ)*(quarticWindowMass R)⁻¹ *
+      (e2*(ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ)
+        * Real.cos ((s-t)*Real.log 2)
+       + e3*(ArithmeticFunction.vonMangoldt 3 / Real.sqrt 3 : ℝ)
+        * Real.cos ((s-t)*Real.log 3))) : ℝ) := by
+  have hg : ∀ u,
+      quarticFourPhysicalDetector R lam mu t (-u)
+        = quarticFourPhysicalDetector R lam mu t u :=
+    quarticFourPhysicalDetector_even R lam mu t
+  rw [detectorTwoScale_primeTerm_eq_two_real_terms hg
+    (quarticFourPhysicalDetector_support_quarter hR hRone ht)]
+  rw [quarticFourPhysicalDetector_centre_eq hR hRone]
+  ring
+
+/-- Full even-cone prime channel, including both time phases and their
+independent eps_2,eps_3 coefficients. -/
+theorem quarticFourPhysicalDetector_twoScale_primeChannel_eq
+    {R lam mu t e2 e3 : ℝ}
+    (hR : 0 < R) (hRone : R < 1) (ht : 300 ≤ t)
+    (s : ℝ) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeChannel
+      (detectorTwoScale (quarticFourPhysicalDetector R lam mu t)
+        e2 e3) t s
+      =
+    8*(quarticWindowMass R)⁻¹
+      * (
+        e2*(ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ)
+           * Real.cos (s*Real.log 2) * Real.cos (t*Real.log 2)
+        +
+        e3*(ArithmeticFunction.vonMangoldt 3 / Real.sqrt 3 : ℝ)
+           * Real.cos (s*Real.log 3) * Real.cos (t*Real.log 3)
+      ) := by
+  let g := quarticFourPhysicalDetector R lam mu t
+  have hsample (v : ℝ) :=
+    quarticFourPhysicalDetector_twoScale_primeTerm_exact
+      (R:=R) (lam:=lam) (mu:=mu) (t:=t)
+      (e2:=e2) (e3:=e3) hR hRone ht (s:=v)
+  change
+    Zeta23Bridge.LiteralWeilParityBalance.reim
+      (Zeta23Bridge.LiteralWeilParityBalance.primeTerm
+        (Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+          (detectorTwoScale g e2 e3) t s))
+    +
+    Zeta23Bridge.LiteralWeilParityBalance.reim
+      (Zeta23Bridge.LiteralWeilParityBalance.primeTerm
+        (Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+          (detectorTwoScale g e2 e3) t (-s)))
+    = _
+  rw [hsample s, hsample (-s)]
+  simp only [Zeta23Bridge.LiteralWeilParityBalance.reim,
+    Complex.ofReal_re,Complex.ofReal_im,add_zero]
+  rw [← add_mul, threeTap_prime_cosine_pair s t (Real.log 2)]
+  rw [threeTap_prime_cosine_pair s t (Real.log 3)]
+  ring
+
+/-- Two independent shifts cannot be reduced to the single-prime
+factor cos(t log2); however this is still an exact arithmetic response,
+not a positivity or high-zero estimate. -/
+theorem quarticFourPhysicalDetector_twoScale_primeChannel_at_logTwo_resonance
+    {R lam mu t e2 e3 : ℝ}
+    (hR : 0 < R) (hRone : R < 1) (ht : 300 ≤ t)
+    (hphase : Real.cos (t*Real.log 2) = 0)
+    (s : ℝ) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeChannel
+      (detectorTwoScale (quarticFourPhysicalDetector R lam mu t)
+        e2 e3) t s
+      =
+    8*(quarticWindowMass R)⁻¹
+       * e3*(ArithmeticFunction.vonMangoldt 3 / Real.sqrt 3 : ℝ)
+       * Real.cos (s*Real.log 3)*Real.cos (t*Real.log 3) := by
+  rw [quarticFourPhysicalDetector_twoScale_primeChannel_eq hR hRone ht,
+      hphase]
+  ring
+
 end Synthesis

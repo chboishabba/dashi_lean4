@@ -94,14 +94,9 @@ theorem realTwoByTwo_determinant_nonneg
     b^2 ≤ a*d := by
   obtain ⟨ha,hd⟩ := realTwoByTwo_nonneg_diagonals h
   by_cases hzero : a = 0
-  · have hp := h 1 1
-    have hm := h (-1) 1
-    have hboth := h (d+1) (-2*b)
-    -- The zero-left-diagonal case is settled with x chosen to force
-    -- a negative cross term, using the positive square of b.
-    have htest := h (-d*b-b) 1
+  · have htest := h (-(d+1)) b
     rw [hzero] at htest
-    dsimp [RealTwoByTwoNonnegative] at htest
+    have hdb : 0 ≤ d * b^2 := mul_nonneg hd (sq_nonneg b)
     nlinarith [sq_nonneg b]
   · have haPos : 0 < a := lt_of_le_of_ne ha (Ne.symm hzero)
     have htest := h (-b/a) 1

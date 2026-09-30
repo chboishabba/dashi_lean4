@@ -131,4 +131,53 @@ theorem realTwoByTwo_nonzero_offdiag_requires_positive_diagonals
     rw [hz] at hdet
     nlinarith
 
+
+/-!
+## Removal of the marker does not restore a prime term
+
+At A=0 the cosh marking is exactly the identity on each selected
+physical detector. The prime defect is still identically zero. This
+is stronger than a statement only about small nonzero markers.
+-/
+
+theorem quarticFourPhysicalDetector_primeProjectiveDefect_eq_zero
+    {R lam mu t : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1)
+    (ht : 200 ≤ t) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourPhysicalDetector R lam mu t) t (t/16)
+      = 0 := by
+  have h :=
+    quarticFourBidiMarkedPhysicalDetector_primeProjectiveDefect_eq_zero
+      (lam := lam) (mu := mu) hR hRone ht (A := 0)
+  simpa [quarticFourBidiMarkedPhysicalDetector,
+    quarticSignedPoleCoshMarkedDetector_zero] using h
+
+theorem QuarticFourSignedPolePair.unmarkedSelectedPrimeHalf_eq_zero
+    {t : ℝ} (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourPhysicalDetector W.R (1/2) W.muHalf t) t (t/16)
+        = 0 :=
+  quarticFourPhysicalDetector_primeProjectiveDefect_eq_zero
+    W.Rpos W.RltOne ht
+
+theorem QuarticFourSignedPolePair.unmarkedSelectedPrimeTwo_eq_zero
+    {t : ℝ} (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourPhysicalDetector W.R (2/3) W.muTwo t) t (t/16)
+        = 0 :=
+  quarticFourPhysicalDetector_primeProjectiveDefect_eq_zero
+    W.Rpos W.RltOne ht
+
+/-- This is exactly the unmarked A=0 instance of the existing
+same-witness two-window prime combination. -/
+theorem QuarticFourSignedPolePair.unmarkedSelectedPrimeCombination_eq_zero
+    {t : ℝ} (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.bidiMarkedPrimeCombination 0 = 0 :=
+  W.bidiMarkedPrimeCombination_eq_zero ht 0
+
 end Synthesis

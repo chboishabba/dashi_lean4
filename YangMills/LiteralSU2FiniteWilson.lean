@@ -496,4 +496,89 @@ theorem finite_cmp119_partition_lower_bound
       Kregular Kr Kboundary Kv hregular hr hboundary hv x
   simpa [finiteCMP119Partition, lower] using hBound
 
+/--
+Actual finite Gibbs expectation from the selected *full* exponential
+action and one fixed reference probability measure.
+
+The numerator integrates the same density as the partition function.
+This function becomes an honest normalized positive expectation when the
+full-source finite Boltzmann partition is nonzero and the source observables
+satisfy the usual real integration conditions.  It does not postulate a
+different "continuum measure" or alter the effective-action sectors.
+-/
+def finiteCMP119NormalizedExpectation
+    {P Ω : Type*} [MeasurableSpace Ω]
+    (haar : MeasureTheory.ProbabilityMeasure Ω)
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (observable : Ω → ℝ) : ℝ :=
+  (∫ x : Ω,
+      finiteCMP119BoltzmannWeight plaquettes holonomy β
+        regular rOperation boundary vacuum x * observable x
+      ∂((haar : MeasureTheory.ProbabilityMeasure Ω) :
+        MeasureTheory.Measure Ω)) /
+    finiteCMP119Partition haar plaquettes holonomy β
+      regular rOperation boundary vacuum
+
+/--
+Normalization of the explicit finite Yang--Mills expectation.  The only
+required input is positivity of the partition function, already proved
+from measurability and the four non-Wilson sector lower bounds.
+-/
+theorem finite_cmp119_expectation_one
+    {P Ω : Type*} [MeasurableSpace Ω]
+    (haar : MeasureTheory.ProbabilityMeasure Ω)
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (hZ : 0 < finiteCMP119Partition haar plaquettes holonomy β
+      regular rOperation boundary vacuum) :
+    finiteCMP119NormalizedExpectation haar plaquettes holonomy β
+      regular rOperation boundary vacuum (fun _ => 1) = 1 := by
+  unfold finiteCMP119NormalizedExpectation finiteCMP119Partition
+  simp only [mul_one]
+  exact div_self (ne_of_gt hZ)
+
+/--
+A nonnegative physical finite cylinder test has a nonnegative
+expectation under the same source-normalized positive Gibbs weight.
+-/
+theorem finite_cmp119_expectation_nonnegative
+    {P Ω : Type*} [MeasurableSpace Ω]
+    (haar : MeasureTheory.ProbabilityMeasure Ω)
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (hZ : 0 < finiteCMP119Partition haar plaquettes holonomy β
+      regular rOperation boundary vacuum)
+    (observable : Ω → ℝ)
+    (hObservable : ∀ x, 0 ≤ observable x) :
+    0 ≤ finiteCMP119NormalizedExpectation haar plaquettes holonomy β
+      regular rOperation boundary vacuum observable := by
+  unfold finiteCMP119NormalizedExpectation
+  apply div_nonneg
+  · apply MeasureTheory.integral_nonneg
+    intro x
+    exact mul_nonneg
+      (finite_cmp119_boltzmann_weight_pos
+        plaquettes holonomy β regular rOperation boundary vacuum x).le
+      (hObservable x)
+  · exact hZ.le
+
+/-- The zero observable integrates to zero under the same finite Gibbs law. -/
+theorem finite_cmp119_expectation_zero
+    {P Ω : Type*} [MeasurableSpace Ω]
+    (haar : MeasureTheory.ProbabilityMeasure Ω)
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ)
+    (regular rOperation boundary vacuum : Ω → ℝ) :
+    finiteCMP119NormalizedExpectation haar plaquettes holonomy β
+      regular rOperation boundary vacuum (fun _ => 0) = 0 := by
+  simp [finiteCMP119NormalizedExpectation]
+
 end RequestProject.YangMills

@@ -175,9 +175,10 @@ theorem quarticFourPhysicalDetector_support_quarter
       |u| < (1/4:ℝ) := by
   intro u hu
   have hpos : 0 < t := by linarith
-  exact (quarticFourPhysicalDetector_support_completedRadius
-    hR hRone hpos u hu).trans_lt
-      (fourWindowRadius_lt_quarter_of_threeHundred ht)
+  exact lt_of_le_of_lt
+    (quarticFourPhysicalDetector_support_completedRadius
+      hR hRone hpos u hu)
+    (fourWindowRadius_lt_quarter_of_threeHundred ht)
 
 theorem quarticFourPhysicalDetector_twoScale_samples
     {R lam mu t e2 e3 : ℝ}

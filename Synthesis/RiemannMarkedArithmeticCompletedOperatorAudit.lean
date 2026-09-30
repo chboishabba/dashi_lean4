@@ -298,4 +298,77 @@ theorem nonzero_literalPrimeDefect_forces_firstPrime_support
     (Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect_eq_zero
       hshort t r)
 
+
+/-!
+## Support-rigidity of the arithmetic prime channel
+
+The prime blindness is geometric, not a special cancellation of the cosh
+marker. For the actual short physical detector, ANY pointwise multiplier
+retains support below log 2, and therefore the literal prime term is zero.
+In particular, no reweighting by an auxiliary Heisenberg character,
+cyclotomic phase, polynomial jet or cosh factor can conjure a nonzero
+prime response while the physical support stays fixed.
+
+A nonzero arithmetic prime term needs a detector that is actually
+nonzero at a prime-power logarithm. This theorem tests the SAME Zeta23
+prime functional, rather than a separately defined positive prime jet.
+-/
+
+theorem quarticFourPhysicalDetector_pointwiseMultiplier_prime_eq_zero
+    {R lam mu t : ℝ}
+    (hR : 0 < R) (hRone : R < 1) (ht : 200 ≤ t)
+    (h : ℝ → ℝ) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (fun u => quarticFourPhysicalDetector R lam mu t u * h u)
+      t (t/16) = 0 := by
+  apply
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect_eq_zero
+  intro u hu
+  apply quarticFourPhysicalDetector_short_of_twoHundred
+    hR hRone ht u
+  intro hzero
+  simp [hzero] at hu
+
+theorem QuarticFourSignedPolePair.selectedPointwiseMultipliers_prime_eq_zero
+    {t : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t)
+    (hHalf hTwo : ℝ → ℝ) :
+    W.poleTwo *
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+        (fun u =>
+          quarticFourPhysicalDetector W.R (1/2) W.muHalf t u * hHalf u)
+        t (t/16)
+    + (-W.poleHalf) *
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+        (fun u =>
+          quarticFourPhysicalDetector W.R (2/3) W.muTwo t u * hTwo u)
+        t (t/16) = 0 := by
+  rw [quarticFourPhysicalDetector_pointwiseMultiplier_prime_eq_zero
+        W.Rpos W.RltOne ht hHalf,
+      quarticFourPhysicalDetector_pointwiseMultiplier_prime_eq_zero
+        W.Rpos W.RltOne ht hTwo]
+  ring
+
+/-- No source-exact prime coercivity can arise solely from changing
+pointwise weights of the selected compact-support physical witness. -/
+theorem QuarticFourSignedPolePair.selectedPointwiseMultipliers_no_positive_prime
+    {t : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t)
+    (hHalf hTwo : ℝ → ℝ) :
+    ¬ 0 <
+      W.poleTwo *
+        Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+          (fun u =>
+            quarticFourPhysicalDetector W.R (1/2) W.muHalf t u * hHalf u)
+          t (t/16)
+      + (-W.poleHalf) *
+        Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+          (fun u =>
+            quarticFourPhysicalDetector W.R (2/3) W.muTwo t u * hTwo u)
+          t (t/16) := by
+  rw [W.selectedPointwiseMultipliers_prime_eq_zero ht hHalf hTwo]
+  exact lt_irrefl 0
+
 end Synthesis

@@ -37,4 +37,5 @@ jobs:
           lake env lean BSDStoll/ActualArithmeticSelmerDefect.lean
           lake env lean BSDStoll/ClaySameCurveArithmeticResponse.lean
           lake env lean BSDStoll/AllRationalCurveNormalization.lean
+          lake env lean BSDStoll/FiniteArithmeticDefectFactorization.lean
           lake env lean BSDStoll/ActualAllPlaceSelmer.lean

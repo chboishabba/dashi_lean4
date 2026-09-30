@@ -33,4 +33,6 @@ jobs:
       - name: Kernel check of literal Selmer donor
         run: |
           lake env lean BSDStoll/CompleteLocalObstruction.lean
+          lake env lean BSDStoll/CompleteArithmeticResponse.lean
+          lake env lean BSDStoll/ActualArithmeticSelmerDefect.lean
           lake env lean BSDStoll/ActualAllPlaceSelmer.lean

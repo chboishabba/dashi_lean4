@@ -59,7 +59,6 @@ def forgetFormalPremise {P : Prop}
     associated with a concrete formal counterexample, but the counterexample
     itself must be supplied and remains the theorem-bearing object. -/
 def refineValueDistinctness {α : Type}
-    {d : SingleValueDemand}
     {first second : ScopedValue α}
     (runtime : CheckedRuntimeWitness)
     (counterexample : first.value ≠ second.value) :

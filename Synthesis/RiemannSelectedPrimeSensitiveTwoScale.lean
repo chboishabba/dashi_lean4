@@ -101,6 +101,7 @@ theorem detectorTwoScale_at_log_two
     hz _ (by rw [abs_of_nonpos (by linarith)]; linarith)
   unfold detectorTwoScale
   rw [h0,h22,h23,h32]
+  simp only [sub_self]
   ring
 
 /-- The log3 shift is independent on the same narrow support. -/
@@ -122,6 +123,7 @@ theorem detectorTwoScale_at_log_three
     hz _ (by rw [abs_of_nonneg (by linarith)]; linarith)
   unfold detectorTwoScale
   rw [h0,h32,h32plus,h33plus]
+  simp only [sub_self]
   ring
 
 theorem detectorTwoScale_at_log_nat_eq_zero_of_four_le
@@ -341,9 +343,19 @@ theorem quarticFourPhysicalDetector_twoScale_primeChannel_eq
   rw [hsample s, hsample (-s)]
   simp only [Zeta23Bridge.LiteralWeilParityBalance.reim,
     Complex.ofReal_re,Complex.ofReal_im,add_zero]
-  rw [← add_mul, threeTap_prime_cosine_pair s t (Real.log 2)]
-  rw [threeTap_prime_cosine_pair s t (Real.log 3)]
-  ring
+  calc
+    _ =
+      4*(quarticWindowMass R)⁻¹ *
+        (e2*(ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ)
+          * (Real.cos ((s-t)*Real.log 2)
+            + Real.cos ((-s-t)*Real.log 2))
+         + e3*(ArithmeticFunction.vonMangoldt 3 / Real.sqrt 3 : ℝ)
+          * (Real.cos ((s-t)*Real.log 3)
+            + Real.cos ((-s-t)*Real.log 3))) := by ring
+    _ = _ := by
+      rw [threeTap_prime_cosine_pair s t (Real.log 2),
+        threeTap_prime_cosine_pair s t (Real.log 3)]
+      ring
 
 /-- Two independent shifts cannot be reduced to the single-prime
 factor cos(t log2); however this is still an exact arithmetic response,

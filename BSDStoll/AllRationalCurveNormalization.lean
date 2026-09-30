@@ -59,9 +59,9 @@ noncomputable def normalizedPointGroupEquiv
       ≃+
     E.1.toAffine.Point := by
   letI : E.1.IsElliptic := E.2
-  exact E.1.toAffine.Point.equivVariableChange
-    E.1
-    (rationalCurveNormalizingChange E)
+  classical
+  exact WeierstrassCurve.Affine.Point.equivVariableChange
+    E.1 (rationalCurveNormalizingChange E)
 
 /-- In particular the normalization intertwines the literal doubling
 maps. This is the first same-curve input needed for transporting the
@@ -71,7 +71,7 @@ theorem normalizedPointGroupEquiv_commutes_with_double
     (P : (normalizedRationalEllipticCurve E).1.toAffine.Point) :
     normalizedPointGroupEquiv E (2 • P) =
       2 • normalizedPointGroupEquiv E P := by
-  exact map_nsmul (normalizedPointGroupEquiv E) 2 P
+  simp
 
 /-- For every rational elliptic curve, return the ACTUAL arithmetic
 Selmer subgroup of its explicitly isomorphic normal form. -/

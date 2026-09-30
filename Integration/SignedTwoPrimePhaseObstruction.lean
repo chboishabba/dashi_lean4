@@ -34,7 +34,7 @@ theorem phaseResponse_antiphase_upper
     Real.cos_le_one _
   have hbound :
       b * Real.cos ((Real.pi / omega) * nu) ≤ b := by
-    exact (mul_le_mul_of_nonneg_left hcos hb).trans_eq (mul_one b)
+    simpa using (mul_le_mul_of_nonneg_left hcos hb)
   have hphase : (Real.pi / omega) * omega = Real.pi := by
     field_simp [homega]
   simp only [phaseResponse, hphase, Real.cos_pi, mul_neg, mul_one]

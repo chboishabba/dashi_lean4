@@ -30,6 +30,25 @@ structure SU2PlaquetteHolonomy where
   d : ℝ
   unit_quaternion : a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2 = 1
 
+/--
+The actual complex fundamental 2×2 matrix attached to a unit quaternion.
+This is the standard SU(2) realization, with the usual conjugate second
+row and determinant-one unit-quaternion constraint.
+-/
+def su2FundamentalMatrix (U : SU2PlaquetteHolonomy) :
+    Matrix (Fin 2) (Fin 2) ℂ :=
+  !![(U.a : ℂ) + (U.b : ℂ) * Complex.I,
+     (U.c : ℂ) + (U.d : ℂ) * Complex.I;
+     -(U.c : ℂ) + (U.d : ℂ) * Complex.I,
+     (U.a : ℂ) - (U.b : ℂ) * Complex.I]
+
+/-- The actual matrix trace is precisely twice the real quaternion component. -/
+theorem su2_fundamental_matrix_trace_eq
+    (U : SU2PlaquetteHolonomy) :
+    Matrix.trace (su2FundamentalMatrix U) = (2 * U.a : ℝ) := by
+  simp [su2FundamentalMatrix, Matrix.trace, Fin.sum_univ_two]
+  ring
+
 /-- Real part of the fundamental trace, before dividing by two. -/
 def su2FundamentalRealTrace (U : SU2PlaquetteHolonomy) : ℝ :=
   2 * U.a

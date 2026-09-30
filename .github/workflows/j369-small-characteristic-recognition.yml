@@ -22,6 +22,8 @@ on:
       - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
       - "Integration/OggSSPP2F4ActualPairingNormalization.lean"
       - "Integration/OggSSPP2F4ConcreteCubicPhase.lean"
+      - "Integration/OggSSPP2F4WeilMillerFixedPhase.lean"
+      - "Integration/OggSSPP2F4WeilMillerPhaseToNative.lean"
       - "Integration/OggSSPP2F4ActualEllipticHeisenberg.lean"
       - "Integration.lean"
       - "AgdaMirror.lean"
@@ -89,6 +91,10 @@ jobs:
         run: lake env lean Integration/OggSSPP2F4ActualPairingNormalization.lean
       - name: Check actual F4 cubic-phase normalization and field Frobenius
         run: lake env lean Integration/OggSSPP2F4ConcreteCubicPhase.lean
+      - name: Check independent Miller fixed phase and native orientation weld
+        run: |
+          lake env lean Integration/OggSSPP2F4WeilMillerFixedPhase.lean
+          lake env lean Integration/OggSSPP2F4WeilMillerPhaseToNative.lean
       - name: Check arithmetic Heisenberg extension against native rank one
         run: lake env lean Integration/OggSSPP2F4ActualEllipticHeisenberg.lean
       - name: Check wild-different arithmetic obstruction

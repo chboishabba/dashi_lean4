@@ -371,4 +371,72 @@ theorem QuarticFourSignedPolePair.selectedPointwiseMultipliers_no_positive_prime
   rw [W.selectedPointwiseMultipliers_prime_eq_zero ht hHalf hTwo]
   exact lt_irrefl 0
 
+
+/-!
+## Actual selected cosine imposes a strictly positive diagonal completion
+
+The zero at the origin and negative Fourier mass prove the actual normalized
+cosine kernel is nonzero. Any PSD completion with off-diagonal entry equal
+to that SAME kernel must pay *both* positive diagonal entries, with their
+product at least its squared amplitude.
+
+This does not produce such an arithmetic diagonal: it states its unavoidable
+source-identified cost. It prevents a finite positive Heisenberg form from
+being transported as a zero-diagonal completion of the signed RH cosine.
+-/
+
+def QuarticFourSignedPolePair.SelectedCosinePositiveBlock
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (a d : ℝ) : Prop :=
+  ∀ q : ℝ, RealTwoByTwoNonnegative a d
+    (W.normalizedOrdinateCosine q)
+
+theorem QuarticFourSignedPolePair.normalizedCosine_nonzero_of_negativeOrigin
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hOrigin :
+      quarticFourSmoothFinitePoleCancelledOrigin
+        W.R W.muHalf W.muTwo t < 0) :
+    ∃ q : ℝ, W.normalizedOrdinateCosine q ≠ 0 := by
+  by_contra hall
+  push_neg at hall
+  have hmass0 :
+      (∫ q : ℝ, W.normalizedOrdinateCosine q) = 0 := by
+    simp [hall]
+  have hmassNeg :=
+    W.normalizedOrdinateCosine_mass_neg_of_origin_neg hOrigin
+  linarith
+
+theorem QuarticFourSignedPolePair.selectedCosineCompletion_requires_positive_diagonals
+    {t a d : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hOrigin :
+      quarticFourSmoothFinitePoleCancelledOrigin
+        W.R W.muHalf W.muTwo t < 0)
+    (hPSD : W.SelectedCosinePositiveBlock a d) :
+    0 < a ∧ 0 < d ∧
+      ∀ q : ℝ, (W.normalizedOrdinateCosine q)^2 ≤ a*d := by
+  obtain ⟨q,hq⟩ := W.normalizedCosine_nonzero_of_negativeOrigin hOrigin
+  obtain ⟨ha,hd,_⟩ :=
+    realTwoByTwo_nonzero_offdiag_requires_positive_diagonals
+      (hPSD q) hq
+  exact ⟨ha,hd,fun z =>
+    realTwoByTwo_determinant_nonneg (hPSD z)⟩
+
+theorem QuarticFourSignedPolePair.selectedCosineCompletion_iff_diagonalPayment
+    {t a d : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.SelectedCosinePositiveBlock a d
+      ↔ 0 ≤ a ∧ 0 ≤ d ∧
+        ∀ q : ℝ, (W.normalizedOrdinateCosine q)^2 ≤ a*d := by
+  unfold QuarticFourSignedPolePair.SelectedCosinePositiveBlock
+  constructor
+  · intro h
+    obtain ⟨ha,hd⟩ := realTwoByTwo_nonneg_diagonals (h 0)
+    exact ⟨ha,hd,fun q => realTwoByTwo_determinant_nonneg (h q)⟩
+  · rintro ⟨ha,hd,hdet⟩ q
+    exact realTwoByTwo_nonnegative_iff_schur.mpr
+      ⟨ha,hd,hdet q⟩
+
 end Synthesis

@@ -196,4 +196,158 @@ theorem quarticFourPhysicalDetector_threeTap_completedBalance
   · exact detectorThreeTap_even
       (quarticFourPhysicalDetector_even R lam mu t) eps (Real.log 2)
 
+
+/-!
+## Genuine two-detector projective assembly on the SAME selected W
+
+The two quartic physical detectors carry different shape parameters and
+literal pole weights. The perturbation changes all four completed
+channels. In particular the old pole cancellation theorem is NOT applied
+to the translated detector without a new proof.
+-/
+
+def QuarticFourSignedPolePair.threeTapHalf
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (eps : ℝ) : ℝ → ℝ :=
+  detectorThreeTap
+    (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+    eps (Real.log 2)
+
+def QuarticFourSignedPolePair.threeTapTwo
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (eps : ℝ) : ℝ → ℝ :=
+  detectorThreeTap
+    (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+    eps (Real.log 2)
+
+def QuarticFourSignedPolePair.threeTapPrimeShape
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (g : ℝ → ℝ) (r : ℝ) : ℝ :=
+  Real.cos (2*r*Real.log 2)
+    * Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 r
+  - Real.cos (r*Real.log 2)
+    * Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r)
+
+def QuarticFourSignedPolePair.threeTapSignedPrimeCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) : ℝ :=
+  W.poleTwo *
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (W.threeTapHalf eps) t (t/16)
+    -
+  W.poleHalf *
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (W.threeTapTwo eps) t (t/16)
+
+/-- Exact actual POLE-WEIGHTED projective prime response.
+Dependence on eps is not merely linear: its on-line column also changes. -/
+theorem QuarticFourSignedPolePair.threeTapSignedPrimeCombination_eq
+    {t eps : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapSignedPrimeCombination eps
+      =
+    (4*eps*
+      (ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ)
+      * Real.cos (t*Real.log 2))
+      *
+      (
+        W.poleTwo
+          * quarticFourPhysicalDetector W.R (1/2) W.muHalf t 0
+          * W.threeTapPrimeShape (W.threeTapHalf eps) (t/16)
+        -
+        W.poleHalf
+          * quarticFourPhysicalDetector W.R (2/3) W.muTwo t 0
+          * W.threeTapPrimeShape (W.threeTapTwo eps) (t/16)
+      ) := by
+  unfold QuarticFourSignedPolePair.threeTapSignedPrimeCombination
+    QuarticFourSignedPolePair.threeTapPrimeShape
+    QuarticFourSignedPolePair.threeTapHalf
+    QuarticFourSignedPolePair.threeTapTwo
+  rw [quarticFourPhysicalDetector_threeTap_primeProjectiveDefect_eq
+      W.Rpos W.RltOne ht,
+      quarticFourPhysicalDetector_threeTap_primeProjectiveDefect_eq
+      W.Rpos W.RltOne ht]
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapSignedPrime_eq_zero_at_resonance
+    {t eps : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t)
+    (hphase : Real.cos (t*Real.log 2)=0) :
+    W.threeTapSignedPrimeCombination eps = 0 := by
+  rw [W.threeTapSignedPrimeCombination_eq ht, hphase]
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapSignedPrime_eq_zero_at_zeroStrength
+    {t : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapSignedPrimeCombination 0 = 0 := by
+  rw [W.threeTapSignedPrimeCombination_eq ht]
+  ring
+
+def QuarticFourSignedPolePair.threeTapChannelCombination
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ)
+    (C : (ℝ → ℝ) → ℝ → ℝ → ℝ) : ℝ :=
+  W.poleTwo*(C (W.threeTapHalf eps) t (t/16))
+    - W.poleHalf*(C (W.threeTapTwo eps) t (t/16))
+
+def QuarticFourSignedPolePair.threeTapCompletedArithmetic
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) : ℝ :=
+  W.threeTapSignedPrimeCombination eps
+    + W.threeTapChannelCombination eps
+        Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect
+    + W.threeTapChannelCombination eps
+        Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect
+
+/-- Exact transformed Zeta23 completed formula: recompute all channels
+on the shifted detector. -/
+theorem QuarticFourSignedPolePair.threeTapCompletedCluster_eq_off_add_arithmetic
+    {t eps : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapChannelCombination eps
+        Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.clusterHeightDefect
+      =
+    W.threeTapChannelCombination eps
+        Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect
+      + W.threeTapCompletedArithmetic eps := by
+  have hhalf :=
+    quarticFourPhysicalDetector_threeTap_completedBalance
+      (R := W.R) (lam := (1/2)) (mu := W.muHalf)
+      (t := t) (eps := eps) W.Rpos W.RltOne ht (t/16)
+  have htwo :=
+    quarticFourPhysicalDetector_threeTap_completedBalance
+      (R := W.R) (lam := (2/3)) (mu := W.muTwo)
+      (t := t) (eps := eps) W.Rpos W.RltOne ht (t/16)
+  dsimp [QuarticFourSignedPolePair.threeTapChannelCombination,
+    QuarticFourSignedPolePair.threeTapCompletedArithmetic,
+    QuarticFourSignedPolePair.threeTapSignedPrimeCombination,
+    QuarticFourSignedPolePair.threeTapHalf,
+    QuarticFourSignedPolePair.threeTapTwo] at *
+  rw [hhalf,htwo]
+  ring
+
+/-- The new prime response balances the simultaneously changed zero,
+Gamma, pole and on-line responses. Source activation alone proves no
+positive completed margin. -/
+theorem QuarticFourSignedPolePair.threeTap_completed_prime_not_independent
+    {t eps : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapSignedPrimeCombination eps
+      =
+    W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.clusterHeightDefect
+    - W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect
+    - W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect
+    - W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect := by
+  have h := W.threeTapCompletedCluster_eq_off_add_arithmetic ht
+  unfold QuarticFourSignedPolePair.threeTapCompletedArithmetic at h
+  linarith
+
 end Synthesis

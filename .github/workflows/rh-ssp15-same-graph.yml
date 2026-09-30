@@ -55,4 +55,5 @@ jobs:
         run: |
           lake env lean Integration/RiemannSSP15RHProducerSameGraphWeld.lean
           lake env lean Integration/RiemannSSP15RHAnalyticSignFrontier.lean
+          lake env lean Integration/RiemannSSP15ExecutionDescentNoGo.lean
           lake env lean Integration/AxiomAuditRiemannSSP15RHProducerSameGraphWeld.lean

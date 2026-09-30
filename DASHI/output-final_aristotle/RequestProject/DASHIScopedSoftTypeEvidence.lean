@@ -31,7 +31,7 @@ structure ScopedEvidenceDemand where
 /-- All premises must hold simultaneously in the declared consumer scope. -/
 structure ApplicableCounterexample (α : Type)
     (d : ScopedEvidenceDemand)
-    (a b : ScopedEvidenceFact α) : Prop where
+    (a b : ScopedEvidenceFact α) : Type where
   firstSubject : a.subject = d.subject
   secondSubject : b.subject = d.subject
   firstProperty : a.property = d.property
@@ -108,7 +108,7 @@ def sampleLater : ScopedEvidenceFact Bool :=
   ⟨"subject", "property", "2021", true, true, "source-b", "statement-b"⟩
 
 theorem differentScopeIsNotAViolation :
-    checkApplicable sampleDemand sampleEarlier sampleLater = none := by
+    (checkApplicable sampleDemand sampleEarlier sampleLater).isSome = false := by
   decide
 
 /-- Missing applicability is not a negative assertion about the value. -/
@@ -116,7 +116,7 @@ def sampleMissingApplicability : ScopedEvidenceFact Bool :=
   ⟨"subject", "property", "2020", true, false, "source-c", "statement-c"⟩
 
 theorem missingApplicabilityIsNotAViolation :
-    checkApplicable sampleDemand sampleEarlier sampleMissingApplicability = none := by
+    (checkApplicable sampleDemand sampleEarlier sampleMissingApplicability).isSome = false := by
   decide
 
 /-- A positive local test with independently supplied true applicability. -/

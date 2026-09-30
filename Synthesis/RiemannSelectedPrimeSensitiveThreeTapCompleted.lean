@@ -350,4 +350,86 @@ theorem QuarticFourSignedPolePair.threeTap_completed_prime_not_independent
   unfold QuarticFourSignedPolePair.threeTapCompletedArithmetic at h
   linarith
 
+
+/-!
+## Actual physical origin: both endpoint detectors have the same centre
+
+For 0<R<1 the three noncentral bumps centered at pi/3, pi/2, pi
+are disjoint from the origin; the central symmetrized unit bump equals 2.
+The normalized source thus has g(0)=2/m_R >0 independently of lambda,mu,t.
+-/
+
+private theorem fourWindow_noncentral_bump_zero
+    {R c : ℝ} (hR : 0 < R) (hc : R ≤ c) :
+    quantitativeSymBump c R 0 = 0 := by
+  have hscaled : scaledUnitBump c R 0 = 0 := by
+    by_contra hne
+    have hs := scaledUnitBump_support hR hne
+    have hc0 : 0 ≤ c := hR.le.trans hc
+    simp only [zero_sub, abs_neg, abs_of_nonneg hc0] at hs
+    linarith
+  change scaledUnitBump c R 0 + scaledUnitBump c R (-0) = 0
+  simp [hscaled]
+
+theorem quarticFourPhysicalDetector_centre_eq
+    {R lam mu t : ℝ}
+    (hR : 0 < R) (hRone : R < 1) :
+    quarticFourPhysicalDetector R lam mu t 0
+      = 2 * (quarticWindowMass R)⁻¹ := by
+  have hp : (3:ℝ) < Real.pi := Real.pi_gt_three
+  have h1 : R ≤ Real.pi/3 := by linarith
+  have h2 : R ≤ Real.pi/2 := by linarith
+  have h3 : R ≤ Real.pi := by linarith
+  have hb0 : quantitativeSymBump 0 R 0 = 2 := by
+    change scaledUnitBump 0 R 0 + scaledUnitBump 0 R (-0) = 2
+    rw [scaledUnitBump_at_center hR.ne']
+    simp [scaledUnitBump_at_center hR.ne']
+  have hb1 := fourWindow_noncentral_bump_zero hR h1
+  have hb2 := fourWindow_noncentral_bump_zero hR h2
+  have hb3 := fourWindow_noncentral_bump_zero hR h3
+  unfold quarticFourPhysicalDetector projectiveRescaleProfile
+    quarticFourWindowProfile quarticFourWindowRaw
+  simp [hb0, hb1, hb2, hb3]
+  ring
+
+theorem quarticFourPhysicalDetector_centre_pos
+    {R lam mu t : ℝ}
+    (hR : 0 < R) (hRone : R < 1) :
+    0 < quarticFourPhysicalDetector R lam mu t 0 := by
+  rw [quarticFourPhysicalDetector_centre_eq hR hRone]
+  exact mul_pos (by norm_num) (inv_pos.mpr (quarticWindowMass_pos hR))
+
+theorem QuarticFourSignedPolePair.threeTapSignedPrimeCombination_eq_commonCentre
+    {t eps : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapSignedPrimeCombination eps
+      =
+    (8*eps*(ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ)
+      * (quarticWindowMass W.R)⁻¹
+      * Real.cos (t*Real.log 2))
+      *
+      (
+        W.poleTwo * W.threeTapPrimeShape (W.threeTapHalf eps) (t/16)
+        -
+        W.poleHalf * W.threeTapPrimeShape (W.threeTapTwo eps) (t/16)
+      ) := by
+  rw [W.threeTapSignedPrimeCombination_eq ht,
+    quarticFourPhysicalDetector_centre_eq W.Rpos W.RltOne,
+    quarticFourPhysicalDetector_centre_eq W.Rpos W.RltOne]
+  ring
+
+/-- The literal first prime sample is actually nonzero when eps is nonzero,
+though the completed even cone can still vanish at phase resonance. -/
+theorem quarticFourPhysicalDetector_threeTap_firstPrime_nonzero
+    {R lam mu t eps : ℝ}
+    (hR : 0 < R) (hRone : R < 1) (ht : 200 ≤ t)
+    (heps : eps ≠ 0) :
+    detectorThreeTap
+      (quarticFourPhysicalDetector R lam mu t)
+      eps (Real.log 2) (Real.log 2) ≠ 0 := by
+  rw [quarticFourPhysicalDetector_threeTap_firstPrime hR hRone ht]
+  exact mul_ne_zero heps
+    (ne_of_gt (quarticFourPhysicalDetector_centre_pos hR hRone))
+
 end Synthesis

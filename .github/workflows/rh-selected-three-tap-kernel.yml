@@ -18,7 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
-      - name: Kernel check literal prime and completed source
+      - name: Kernel check literal prime, completed source, and increment audit
         run: |
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapTwoPrime
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapCompleted
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapIncrementAudit

@@ -32,7 +32,7 @@ namespace Integration.OggSSP2B4AActualIntegralMultiplicities
 
 inductive SourceIntegral4AModule
   | A | D | CA
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 def rank : SourceIntegral4AModule → ℕ
   | .A => 1
@@ -131,7 +131,6 @@ theorem rank_and_trace_reconstruct (m : GradeMultiplicity) :
 families forced by matching the binary-tetrahedral orbit count. -/
 theorem three_source_module_families :
     Fintype.card SourceIntegral4AModule = 3 := by
-  classical
-  exact Fintype.card_ofFinset (Finset.univ : Finset SourceIntegral4AModule)
+  decide
 
 end Integration.OggSSP2B4AActualIntegralMultiplicities

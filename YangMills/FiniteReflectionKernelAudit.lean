@@ -53,6 +53,50 @@ theorem positive_gibbs_density_not_enough_for_os2 :
     twoStateOddTest, Fin.sum_univ_two]
   norm_num
 
+/--
+A bounded cross-reflection effective-action perturbation:
+zero on equal half-configurations and -ε on unequal halves.
+Its complete Gibbs kernel is strictly positive for every ε, and it
+is an arbitrarily small perturbation of the reflection-positive
+constant kernel as ε decreases to zero.
+-/
+def twoStateCrossAction (ε : ℝ) (x y : Fin 2) : ℝ :=
+  if x = y then 0 else -ε
+
+def twoStateCrossGibbsKernel (ε : ℝ) (x y : Fin 2) : ℝ :=
+  Real.exp (-twoStateCrossAction ε x y)
+
+theorem two_state_cross_action_gibbs_kernel_values
+    (ε : ℝ) (x y : Fin 2) :
+    twoStateCrossGibbsKernel ε x y =
+      if x = y then 1 else Real.exp ε := by
+  by_cases h : x = y
+  · simp [twoStateCrossGibbsKernel, twoStateCrossAction, h]
+  · simp [twoStateCrossGibbsKernel, twoStateCrossAction, h]
+
+theorem two_state_cross_gibbs_pointwise_positive
+    (ε : ℝ) (x y : Fin 2) :
+    0 < twoStateCrossGibbsKernel ε x y :=
+  Real.exp_pos _
+
+/--
+An arbitrarily small NEGATIVE off-diagonal effective action destroys
+finite reflection positivity for a baseline kernel with a null vector.
+There is no open neighborhood of the semidefinite positive cone
+consisting of reflection-positive matrices.  Thus a numerically small
+CMP119 boundary/R-sector correction cannot be *assumed* to preserve OS2.
+-/
+theorem arbitrarily_small_cross_plane_action_breaks_os2
+    (ε : ℝ) (hε : 0 < ε) :
+    finiteReflectionGram (Finset.univ : Finset (Fin 2))
+      (twoStateCrossGibbsKernel ε) twoStateOddTest < 0 := by
+  have hExp : 1 < Real.exp ε := by
+    have h := Real.add_one_le_exp ε
+    linarith
+  simp [finiteReflectionGram, twoStateCrossGibbsKernel,
+    twoStateCrossAction, twoStateOddTest, Fin.sum_univ_two]
+  linarith
+
 /-- A product of one half-space weight and its reflected copy. -/
 def multiplyReflectedHalfWeights
     {X : Type*} (K : X → X → ℝ) (halfWeight : X → ℝ) :

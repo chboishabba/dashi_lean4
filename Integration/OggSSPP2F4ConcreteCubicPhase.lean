@@ -56,8 +56,17 @@ theorem phase_cube (a : ZMod 3) : phase a ^ 3 = 1 := by
 /-- Arithmetic Frobenius on the concrete cube roots agrees with phase inversion. -/
 theorem phase_neg_frobenius (a : ZMod 3) :
     phase (-a) = (phase a) ^ 2 := by
-  fin_cases a <;>
-    simp [phase, phase_neg_one, Z.zeta_fourth_is_zeta]
+  fin_cases a
+  · simp [phase]
+  · change phase (-1) = (phase 1) ^ 2
+    rw [phase_neg_one, phase_one]
+  · have hminus : -(2 : ZMod 3) = 1 := by decide
+    rw [hminus, phase_one]
+    change Z.zeta = (phase 2) ^ 2
+    rw [show (2 : ZMod 3) = -1 from by decide, phase_neg_one]
+    calc
+      Z.zeta = Z.zeta ^ 4 := Z.zeta_fourth_is_zeta.symm
+      _ = (Z.zeta ^ 2) ^ 2 := by ring
 
 /-- Transport of the normalized reflection to field Frobenius on F4 phases. -/
 theorem phase_frobenius (a : ZMod 3) :

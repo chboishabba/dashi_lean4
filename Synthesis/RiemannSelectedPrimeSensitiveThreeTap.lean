@@ -108,8 +108,10 @@ theorem threeTapSpectralMultiplier_ne_zero
       eps*(Complex.exp (-z*L)+Complex.exp (z*L)) = -1 := by
     have h := hzero
     unfold threeTapSpectralMultiplier at h
-    apply add_left_cancel (a := (1 : ℂ))
-    simpa using h
+    calc
+      eps*(Complex.exp (-z*L)+Complex.exp (z*L))
+        = (1 + eps*(Complex.exp (-z*L)+Complex.exp (z*L))) - 1 := by ring
+      _ = -1 := by rw [h]; ring
   rw [hpert] at hsmall
   norm_num at hsmall
 

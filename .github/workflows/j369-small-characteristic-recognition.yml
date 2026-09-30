@@ -21,6 +21,7 @@ on:
       - "AgdaMirror/OggSSPSmallCharacteristicRecognition.lean"
       - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
       - "Integration/OggSSPP2F4ActualPairingNormalization.lean"
+      - "Integration/OggSSPP2F4ConcreteCubicPhase.lean"
       - "Integration/OggSSPP2F4ActualEllipticHeisenberg.lean"
       - "Integration.lean"
       - "AgdaMirror.lean"
@@ -86,6 +87,8 @@ jobs:
           lake env lean AgdaMirror/OggSSPIndependentBase369Recognition.lean
       - name: Check genuine elliptic basis pairing and phase orientation
         run: lake env lean Integration/OggSSPP2F4ActualPairingNormalization.lean
+      - name: Check actual F4 cubic-phase normalization and field Frobenius
+        run: lake env lean Integration/OggSSPP2F4ConcreteCubicPhase.lean
       - name: Check arithmetic Heisenberg extension against native rank one
         run: lake env lean Integration/OggSSPP2F4ActualEllipticHeisenberg.lean
       - name: Check wild-different arithmetic obstruction

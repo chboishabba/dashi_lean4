@@ -180,4 +180,38 @@ theorem QuarticFourSignedPolePair.unmarkedSelectedPrimeCombination_eq_zero
     W.bidiMarkedPrimeCombination 0 = 0 :=
   W.bidiMarkedPrimeCombination_eq_zero ht 0
 
+
+/-!
+## Fully unmarked A=0 completed literal formula
+
+Removing the marker does not create an arithmetic prime source.
+In addition, the existing pole cancellation at A=0 eliminates the
+two-window pole term. Thus the complete unmarked source for THESE
+physical detectors reduces exactly to its Gamma component.
+The signed RvM fourth-cap is not identified with this source by
+any theorem in this file; the two endpoint constructions have to be
+joined with their actual literal normalizations.
+-/
+
+theorem QuarticFourSignedPolePair.unmarkedCompletedArithmetic_eq_gamma
+    {t : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.markedCompletedArithmeticResponse 0
+       = W.bidiMarkedGammaCombination 0 := by
+  rw [W.markedArithmetic_eq_gamma_add_pole ht]
+  rw [W.bidiMarkedPoleCombination_zero (by linarith : 0 < t)]
+  ring
+
+theorem QuarticFourSignedPolePair.unmarkedCluster_eq_offOrd_add_gamma
+    {t : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.bidiMarkedClusterCombination 0
+      =
+    W.bidiMarkedOffOrdCombination 0
+      + W.bidiMarkedGammaCombination 0 := by
+  rw [W.markedCluster_eq_offOrd_add_arithmetic ht]
+  rw [W.unmarkedCompletedArithmetic_eq_gamma ht]
+
 end Synthesis

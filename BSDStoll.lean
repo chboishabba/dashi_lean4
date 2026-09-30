@@ -1,1 +1,1 @@
-import BSDStoll.ClaySameCurveArithmeticResponse
+import BSDStoll.AllRationalCurveNormalization

@@ -1,0 +1,24 @@
+name: RH selected three-tap kernel
+on:
+  push:
+    branches:
+      - agent/rh-marked-cluster-target-reflection
+    paths:
+      - 'Synthesis/RiemannSelectedPrimeSensitiveThreeTap*.lean'
+      - '.github/workflows/rh-selected-three-tap-kernel.yml'
+  pull_request:
+    paths:
+      - 'Synthesis/RiemannSelectedPrimeSensitiveThreeTap*.lean'
+      - '.github/workflows/rh-selected-three-tap-kernel.yml'
+  workflow_dispatch:
+
+jobs:
+  selected-three-tap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Kernel check literal prime and completed source
+        run: |
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapTwoPrime
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapCompleted

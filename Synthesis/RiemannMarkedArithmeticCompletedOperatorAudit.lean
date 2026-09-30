@@ -103,12 +103,12 @@ theorem realTwoByTwo_determinant_nonneg
     have hsq :
         a * (-b/a)^2 + 2*b*(-b/a) + d
           = d - b^2/a := by
-      field_simp
+      field_simp [hzero]
       ring
     rw [hsq] at htest
     have hprod := mul_nonneg ha htest
     have hid : a*(d-b^2/a)=a*d-b^2 := by
-      field_simp
+      field_simp [hzero]
       ring
     rw [hid] at hprod
     linarith

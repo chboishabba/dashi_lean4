@@ -134,4 +134,97 @@ This is the exact scope firewall:
   source functional and the entire transformed Gamma/pole/zero balance.
 -/
 
+
+/-!
+## Bind the first shifted sample to the SOURCE-NATIVE Zeta23 prime term
+
+The prime channel is a von-Mangoldt sum, not an abstract Fourier sample.
+The existing LiteralWeilPrimeEvenCone.primeSummand_sampleTest theorem gives
+its exact n-th summand for every even physical detector.  We specialize
+it at the FIRST actual prime n=2.
+
+The full prime term may still have cancellations or phase resonances.
+-/
+
+theorem detectorThreeTap_even
+    {g : ℝ → ℝ} (heven : ∀ u, g (-u) = g u)
+    (eps L : ℝ) :
+    ∀ u : ℝ,
+      detectorThreeTap g eps L (-u) =
+        detectorThreeTap g eps L u := by
+  intro u
+  unfold detectorThreeTap
+  rw [heven u,
+    show -u-L = -(u+L) by ring,
+    show -u+L = -(u-L) by ring,
+    heven (u+L), heven (u-L)]
+  ring
+
+theorem quarticFourPhysicalDetector_threeTap_firstPrime
+    {R lam mu t eps : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1)
+    (ht : 200 ≤ t) :
+    detectorThreeTap
+      (quarticFourPhysicalDetector R lam mu t)
+      eps (Real.log 2) (Real.log 2)
+      =
+    eps * quarticFourPhysicalDetector R lam mu t 0 := by
+  exact detectorThreeTap_on_source_shortDetector
+    _ eps (quarticFourPhysicalDetector_short_of_twoHundred
+      hR hRone ht)
+
+/-- Literal n=2 arithmetic summand, not an independently invented "prime
+angular jet". It belongs to the existing Zeta23 Weil explicit formula. -/
+theorem detectorThreeTap_literalFirstPrimeSummand
+    {g : ℝ → ℝ}
+    (heven : ∀ u, g (-u) = g u)
+    (hshort : ∀ u, g u ≠ 0 → |u| < Real.log 2)
+    (eps t s : ℝ) :
+    ((ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ) : ℂ)
+      *
+      (Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+        (detectorThreeTap g eps (Real.log 2)) t s (Real.log 2)
+        +
+       Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+        (detectorThreeTap g eps (Real.log 2)) t s (-Real.log 2))
+      =
+    (((ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ)
+        * (2 * (eps * g 0)
+          * Real.cos ((s-t)*Real.log 2)) : ℝ) : ℂ) := by
+  have h :=
+    Zeta23Bridge.LiteralWeilPrimeEvenCone.primeSummand_sampleTest
+      (detectorThreeTap_even heven eps (Real.log 2)) t s 2
+  rw [detectorThreeTap_on_source_shortDetector g eps hshort] at h
+  exact h
+
+/-- This is the first-prime coefficient in the ACTUAL von-Mangoldt
+summand, with no assertion about cancellation in the remaining infinite sum. -/
+def detectorThreeTap_firstPrimeRealContribution
+    (g : ℝ → ℝ) (eps t s : ℝ) : ℝ :=
+  (ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ)
+    * (2 * (eps * g 0)
+      * Real.cos ((s-t)*Real.log 2))
+
+theorem detectorThreeTap_firstPrimeRealContribution_nonzero
+    {g : ℝ → ℝ} {eps t s : ℝ}
+    (hcoeff :
+      (ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ) ≠ 0)
+    (heps : eps ≠ 0)
+    (hg : g 0 ≠ 0)
+    (hphase : Real.cos ((s-t)*Real.log 2) ≠ 0) :
+    detectorThreeTap_firstPrimeRealContribution g eps t s ≠ 0 := by
+  unfold detectorThreeTap_firstPrimeRealContribution
+  exact mul_ne_zero hcoeff
+    (mul_ne_zero (mul_ne_zero (by norm_num) (mul_ne_zero heps hg))
+      hphase)
+
+/-!
+Quantifier firewall: at phase resonance cos((s-t) log 2)=0 even the
+literal n=2 contribution vanishes.  Nor does one prime summand certify
+the projective prime defect, which also depends on the full transformed
+sample vector and the on-line response.  A proof of support separation
+and an exact completed balance is required before making that claim.
+-/
+
 end Synthesis

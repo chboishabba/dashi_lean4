@@ -581,4 +581,112 @@ theorem finite_cmp119_expectation_zero
       regular rOperation boundary vacuum (fun _ => 0) = 0 := by
   simp [finiteCMP119NormalizedExpectation]
 
+/--
+A literal finite full-sector Gibbs expectation preserves every
+pointwise bound of a positive bounded observable.
+
+The bound is independent of lattice spacing, volume and the chosen
+non-Wilson sector values. This produces a genuine cutoff-uniform
+BOUND for normalized compact Wilson probes, but does not provide
+COERCIVITY on an infinite-dimensional continuum field space.
+-/
+theorem finite_cmp119_bounded_observable_expectation
+    {P Ω : Type*} [MeasurableSpace Ω]
+    (haar : MeasureTheory.ProbabilityMeasure Ω)
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (observable : Ω → ℝ)
+    (M : ℝ)
+    (hObservable :
+      ∀ x, 0 ≤ observable x ∧ observable x ≤ M)
+    (hZ : 0 < finiteCMP119Partition haar plaquettes holonomy β
+      regular rOperation boundary vacuum)
+    (hWeightIntegrable :
+      MeasureTheory.Integrable
+        (finiteCMP119BoltzmannWeight plaquettes holonomy β
+          regular rOperation boundary vacuum)
+        ((haar : MeasureTheory.ProbabilityMeasure Ω) :
+          MeasureTheory.Measure Ω))
+    (hWeightedIntegrable :
+      MeasureTheory.Integrable
+        (fun x =>
+          finiteCMP119BoltzmannWeight plaquettes holonomy β
+            regular rOperation boundary vacuum x * observable x)
+        ((haar : MeasureTheory.ProbabilityMeasure Ω) :
+          MeasureTheory.Measure Ω)) :
+    0 ≤ finiteCMP119NormalizedExpectation haar plaquettes holonomy β
+      regular rOperation boundary vacuum observable ∧
+    finiteCMP119NormalizedExpectation haar plaquettes holonomy β
+      regular rOperation boundary vacuum observable ≤ M := by
+  let μ : MeasureTheory.Measure Ω := haar
+  let w : Ω → ℝ :=
+    finiteCMP119BoltzmannWeight plaquettes holonomy β
+      regular rOperation boundary vacuum
+  have hNumeratorUpper :
+      (∫ x : Ω, w x * observable x ∂μ) ≤
+        M * (∫ x : Ω, w x ∂μ) := by
+    calc
+      ∫ x : Ω, w x * observable x ∂μ ≤
+          ∫ x : Ω, M * w x ∂μ := by
+        apply MeasureTheory.integral_mono
+          hWeightedIntegrable (hWeightIntegrable.const_mul M)
+        intro x
+        have hp := (finite_cmp119_boltzmann_weight_pos
+          plaquettes holonomy β
+          regular rOperation boundary vacuum x).le
+        exact (mul_le_mul_of_nonneg_left (hObservable x).2 hp).trans_eq
+          (mul_comm (w x) M)
+      _ = M * (∫ x : Ω, w x ∂μ) := by
+        rw [MeasureTheory.integral_const_mul]
+  constructor
+  · exact finite_cmp119_expectation_nonnegative
+      haar plaquettes holonomy β regular rOperation boundary vacuum
+      hZ observable (fun x => (hObservable x).1)
+  · unfold finiteCMP119NormalizedExpectation
+    exact (div_le_iff₀ hZ).mpr hNumeratorUpper
+
+/--
+Consequently, every selected SU(2) one-plaquette cost has expectation
+in [0,2] at every finite cutoff.  The cutoff-independent constant 2
+is actual physical group geometry; unlike a coercive curvature moment
+it says nothing about ultraviolet smoothness or continuum tightness.
+-/
+theorem finite_cmp119_selected_plaquette_expectation_bounds
+    {P Ω : Type*} [MeasurableSpace Ω]
+    (haar : MeasureTheory.ProbabilityMeasure Ω)
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (selected : P)
+    (hZ : 0 < finiteCMP119Partition haar plaquettes holonomy β
+      regular rOperation boundary vacuum)
+    (hWeightIntegrable :
+      MeasureTheory.Integrable
+        (finiteCMP119BoltzmannWeight plaquettes holonomy β
+          regular rOperation boundary vacuum)
+        ((haar : MeasureTheory.ProbabilityMeasure Ω) :
+          MeasureTheory.Measure Ω))
+    (hWeightedIntegrable :
+      MeasureTheory.Integrable
+        (fun x =>
+          finiteCMP119BoltzmannWeight plaquettes holonomy β
+            regular rOperation boundary vacuum x *
+            su2PositivePlaquetteCost (holonomy x selected))
+        ((haar : MeasureTheory.ProbabilityMeasure Ω) :
+          MeasureTheory.Measure Ω)) :
+    0 ≤ finiteCMP119NormalizedExpectation haar plaquettes holonomy β
+      regular rOperation boundary vacuum
+      (fun x => su2PositivePlaquetteCost (holonomy x selected)) ∧
+    finiteCMP119NormalizedExpectation haar plaquettes holonomy β
+      regular rOperation boundary vacuum
+      (fun x => su2PositivePlaquetteCost (holonomy x selected)) ≤ 2 := by
+  exact finite_cmp119_bounded_observable_expectation
+    haar plaquettes holonomy β regular rOperation boundary vacuum
+    (fun x => su2PositivePlaquetteCost (holonomy x selected)) 2
+    (fun x => su2_positive_plaquette_cost_bounds (holonomy x selected))
+    hZ hWeightIntegrable hWeightedIntegrable
+
 end RequestProject.YangMills

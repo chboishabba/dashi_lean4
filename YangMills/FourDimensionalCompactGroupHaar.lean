@@ -39,7 +39,7 @@ noncomputable def fourDimensionalNativeLinkHaar
     MeasureTheory.Measure.haar
   have hfinite : MeasureTheory.IsFiniteMeasure μ :=
     ⟨MeasureTheory.IsFiniteMeasureOnCompacts.lt_top_of_isCompact
-      (Set.isCompact_univ)⟩
+      (isCompact_univ)⟩
   let finite :
       MeasureTheory.FiniteMeasure (FourDimensionalGroupLinks G L) :=
     ⟨μ, hfinite⟩

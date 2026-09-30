@@ -86,10 +86,10 @@ def audit() -> None:
         # Exact additive-action version: positive Gibbs kernel wdiag=1,
         # woff=1+epsilon with a bounded *negative* off-diagonal action.
         kernel = ((O, O+epsilon), (O+epsilon, O))
-        # Diagonal entry chosen 1, not zero.
-        kernel = ((O, O+epsilon), (O+epsilon, O))
-        gram = 2*O - 2*(O+epsilon)
-        assert gram < 0
+        odd = (O, -O)
+        gram = sum((odd[i]*kernel[i][j]*odd[j]
+                    for i in range(2) for j in range(2)), Z)
+        assert gram == -2*epsilon and gram < 0
     rng = Random(369)
     side = 2
     sites = tuple(product(range(side), repeat=4))

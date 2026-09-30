@@ -53,6 +53,17 @@ theorem phase_cube (a : ZMod 3) : phase a ^ 3 = 1 := by
       (Z.zeta ^ 2) ^ 3 = (Z.zeta ^ 3) ^ 2 := by ring
       _ = 1 := by rw [Z.zeta_cube_is_one]; ring
 
+/-- Arithmetic Frobenius on the concrete cube roots agrees with phase inversion. -/
+theorem phase_neg_frobenius (a : ZMod 3) :
+    phase (-a) = (phase a) ^ 2 := by
+  fin_cases a <;>
+    simp [phase, phase_neg_one, Z.zeta_fourth_is_zeta]
+
+/-- Transport of the normalized reflection to field Frobenius on F4 phases. -/
+theorem phase_frobenius (a : ZMod 3) :
+    (phase a) ^ 2 = phase (-a) :=
+  (phase_neg_frobenius a).symm
+
 /-- The normalized alternating form gives a concrete F4-valued phase. -/
 noncomputable def ellipticPhase (p q : E.ActualCurveGroup) : B.F4 :=
   phase (P.ellipticOmega p q)
@@ -92,6 +103,19 @@ theorem elliptic_phase_frobenius_reflection
       phase (-P.ellipticOmega p q) := by
   rw [ellipticPhase, P.ellipticOmega_frobeniusModel]
 
+/--
+The transported elliptic-group reflection is the actual coefficient-field
+Frobenius on the normalized F4-valued phase.  This is NOT yet an equation
+for an independently constructed intrinsic Weil pairing.
+-/
+theorem elliptic_phase_reflection_is_field_frobenius
+    (p q : E.ActualCurveGroup) :
+    ellipticPhase (A.actualFrobeniusModel p)
+      (A.actualFrobeniusModel q) =
+      (ellipticPhase p q) ^ 2 := by
+  rw [elliptic_phase_frobenius_reflection]
+  exact phase_neg_frobenius _
+
 structure Boundary where
   concreteF4CubicRootPhaseSelected : Bool
   P_QPhaseIsConcreteZeta : Bool
@@ -99,6 +123,7 @@ structure Boundary where
   alternatingAndCubicRootProperties : Bool
   transportedShearPhasePreservation : Bool
   transportedFrobeniusPhaseSign : Bool
+  fieldFrobeniusMatchesPhaseInversion : Bool
   intrinsicGeometricWeilPairingConstructed : Bool
   intrinsicWeilValueAtP_QComputed : Bool
   deriving Repr
@@ -110,6 +135,7 @@ def canonicalBoundary : Boundary where
   alternatingAndCubicRootProperties := true
   transportedShearPhasePreservation := true
   transportedFrobeniusPhaseSign := true
+  fieldFrobeniusMatchesPhaseInversion := true
   intrinsicGeometricWeilPairingConstructed := false
   intrinsicWeilValueAtP_QComputed := false
 

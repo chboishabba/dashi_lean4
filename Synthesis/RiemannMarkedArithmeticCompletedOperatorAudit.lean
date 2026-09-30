@@ -214,4 +214,59 @@ theorem QuarticFourSignedPolePair.unmarkedCluster_eq_offOrd_add_gamma
   rw [W.markedCluster_eq_offOrd_add_arithmetic ht]
   rw [W.unmarkedCompletedArithmetic_eq_gamma ht]
 
+
+/-!
+## The exact positive-completion test (the reverse Schur direction)
+
+This theorem is not an RH assumption: it identifies necessary AND
+sufficient scalar matrix inequalities.  To become an RH source producer,
+a future arithmetic operator must construct a,d and b with a same-object
+completed explicit-formula identity and prove these inequalities independently.
+-/
+
+theorem realTwoByTwo_nonnegative_of_left_positive_and_det
+    {a d b : ℝ}
+    (ha : 0 < a)
+    (hdet : b^2 ≤ a*d) :
+    RealTwoByTwoNonnegative a d b := by
+  intro x y
+  have hane : a ≠ 0 := ne_of_gt ha
+  have hsq : 0 ≤ (a*x+b*y)^2/a :=
+    div_nonneg (sq_nonneg _) ha.le
+  have hrem : 0 ≤ ((a*d-b^2)/a)*y^2 :=
+    mul_nonneg
+      (div_nonneg (sub_nonneg.mpr hdet) ha.le)
+      (sq_nonneg _)
+  have hid :
+      a*x^2 + 2*b*x*y + d*y^2
+        = (a*x+b*y)^2/a + ((a*d-b^2)/a)*y^2 := by
+    field_simp [hane]
+    ring
+  rw [hid]
+  exact add_nonneg hsq hrem
+
+theorem realTwoByTwo_nonnegative_iff_schur
+    {a d b : ℝ} :
+    RealTwoByTwoNonnegative a d b
+      ↔
+    0 ≤ a ∧ 0 ≤ d ∧ b^2 ≤ a*d := by
+  constructor
+  · intro h
+    obtain ⟨ha,hd⟩ := realTwoByTwo_nonneg_diagonals h
+    exact ⟨ha,hd,realTwoByTwo_determinant_nonneg h⟩
+  · rintro ⟨ha,hd,hdet⟩
+    by_cases hzero : a = 0
+    · have hb : b = 0 := by
+        rw [hzero] at hdet
+        nlinarith [sq_nonneg b]
+      subst a
+      subst b
+      intro x y
+      have hd' : 0 ≤ d*y^2 :=
+        mul_nonneg hd (sq_nonneg _)
+      simpa using hd'
+    · have haPos : 0 < a := lt_of_le_of_ne ha (Ne.symm hzero)
+      exact realTwoByTwo_nonnegative_of_left_positive_and_det
+        haPos hdet
+
 end Synthesis

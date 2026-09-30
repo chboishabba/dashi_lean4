@@ -518,3 +518,5 @@ obligations.
 import Synthesis.MillenniumBSDCMRealPlaceExclusionExact
 
 import Synthesis.MillenniumBSDTwoDescentArbitraryResidualCountermodel
+
+import Synthesis.MillenniumBSDCMFiniteLocalObstructionExact

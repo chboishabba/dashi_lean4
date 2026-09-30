@@ -311,4 +311,62 @@ theorem finite_cmp119_partition_positive_and_bounded
   · exact hPositive
   · exact hUpper
 
+
+/-!
+## Explicit nonzero plaquette probe and orientation calibration
+
+The central quaternion -I has normalized Wilson cost exactly 2. This
+provides a genuine SU(2) *holonomy* probe for uniqueness of a coefficient
+in the literal Gibbs exponent. It is not yet a proof that the selected
+CMP119 link/plaquette configuration and renormalized effective action use
+this specific holonomy and exponent.
+-/
+
+/-- A genuine, nontrivial SU(2) element: central holonomy -I. -/
+def su2NegativeIdentity : SU2PlaquetteHolonomy where
+  a := -1
+  b := 0
+  c := 0
+  d := 0
+  unit_quaternion := by norm_num
+
+theorem su2_negative_identity_plaquette_cost :
+    su2PositivePlaquetteCost su2NegativeIdentity = 2 := by
+  norm_num [su2PositivePlaquetteCost, su2FundamentalRealTrace,
+    su2NegativeIdentity]
+
+theorem su2_negative_identity_cost_strictly_positive :
+    0 < su2PositivePlaquetteCost su2NegativeIdentity := by
+  rw [su2_negative_identity_plaquette_cost]
+  norm_num
+
+/--
+An actual nonzero SU(2) probe identifies the signed Wilson coefficient
+from equality with the literal negative Gibbs action, without assuming the
+conclusion c = -u or introducing an arbitrary normalized action basis.
+-/
+theorem su2_literal_exponent_probe_determines_coefficient
+    (sourceCoefficient inverseSquare : ℝ)
+    (hExponent :
+      sourceCoefficient * su2PositivePlaquetteCost su2NegativeIdentity
+        = -(inverseSquare * su2PositivePlaquetteCost su2NegativeIdentity)) :
+    sourceCoefficient = -inverseSquare := by
+  rw [su2_negative_identity_plaquette_cost] at hExponent
+  linarith
+
+/--
+On precisely the same normalized positive Wilson cost, the standard
+SU(2) bare coefficient 4/g₀² and T4's unit coefficient u agree only when
+u = 4/g₀². This does not equate the bare and renormalized couplings.
+-/
+theorem su2_bare_vs_t4_coefficient_from_probe
+    (t4Inverse bareInverse : ℝ)
+    (hSameAction :
+      t4Inverse * su2PositivePlaquetteCost su2NegativeIdentity
+        = (4 * bareInverse) *
+          su2PositivePlaquetteCost su2NegativeIdentity) :
+    t4Inverse = 4 * bareInverse := by
+  rw [su2_negative_identity_plaquette_cost] at hSameAction
+  linarith
+
 end RequestProject.YangMills

@@ -636,8 +636,10 @@ theorem finite_cmp119_bounded_observable_expectation
         have hp := (finite_cmp119_boltzmann_weight_pos
           plaquettes holonomy β
           regular rOperation boundary vacuum x).le
-        exact (mul_le_mul_of_nonneg_left (hObservable x).2 hp).trans_eq
-          (mul_comm (w x) M)
+        calc
+          w x * observable x ≤ w x * M :=
+            mul_le_mul_of_nonneg_left (hObservable x).2 hp
+          _ = M * w x := mul_comm _ _
       _ = M * (∫ x : Ω, w x ∂μ) := by
         rw [MeasureTheory.integral_const_mul]
   constructor

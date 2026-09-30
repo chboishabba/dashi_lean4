@@ -425,4 +425,56 @@ theorem su2_bare_vs_t4_coefficient_from_probe
   rw [su2_negative_identity_plaquette_cost] at hSameAction
   linarith
 
+/--
+The finite Haar normalization inherits the **lower** Gibbs majorant.
+
+The integrability premise follows from the already-proved upper sector
+bound plus measurability via
+`finite_cmp119_partition_positive_and_bounded`'s internal argument.
+The constant on the left is cutoff-dependent: neither this bound nor
+pointwise positivity asserts thermodynamic/UV tightness.
+-/
+theorem finite_cmp119_partition_lower_bound
+    {P Ω : Type*} [MeasurableSpace Ω]
+    (haar : MeasureTheory.ProbabilityMeasure Ω)
+    (plaquettes : Finset P)
+    (holonomy : Ω → P → SU2PlaquetteHolonomy)
+    (β : ℝ) (hβ : 0 ≤ β)
+    (regular rOperation boundary vacuum : Ω → ℝ)
+    (Kregular Kr Kboundary Kv : ℝ)
+    (hregular : ∀ x, regular x ≤ Kregular)
+    (hr : ∀ x, rOperation x ≤ Kr)
+    (hboundary : ∀ x, boundary x ≤ Kboundary)
+    (hv : ∀ x, vacuum x ≤ Kv)
+    (hIntegrable :
+      MeasureTheory.Integrable
+        (finiteCMP119BoltzmannWeight plaquettes holonomy β
+          regular rOperation boundary vacuum)
+        ((haar : MeasureTheory.ProbabilityMeasure Ω) :
+          MeasureTheory.Measure Ω)) :
+    Real.exp (-(2 * β * (plaquettes.card : ℝ) +
+        Kregular + Kr + Kboundary + Kv)) ≤
+      finiteCMP119Partition haar plaquettes holonomy β
+        regular rOperation boundary vacuum := by
+  let lower : ℝ :=
+    Real.exp (-(2 * β * (plaquettes.card : ℝ) +
+        Kregular + Kr + Kboundary + Kv))
+  have hBound :
+      ∫ _ : Ω, lower
+        ∂((haar : MeasureTheory.ProbabilityMeasure Ω) :
+            MeasureTheory.Measure Ω)
+        ≤
+      ∫ x : Ω,
+        finiteCMP119BoltzmannWeight plaquettes holonomy β
+          regular rOperation boundary vacuum x
+        ∂((haar : MeasureTheory.ProbabilityMeasure Ω) :
+            MeasureTheory.Measure Ω) := by
+    apply MeasureTheory.integral_mono
+      (MeasureTheory.integrable_const _) hIntegrable
+    intro x
+    exact finite_cmp119_boltzmann_weight_lower_bound
+      plaquettes holonomy β hβ regular rOperation boundary vacuum
+      Kregular Kr Kboundary Kv hregular hr hboundary hv x
+  simpa [finiteCMP119Partition, lower] using hBound
+
 end RequestProject.YangMills

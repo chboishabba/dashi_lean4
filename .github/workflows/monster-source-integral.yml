@@ -41,6 +41,7 @@ jobs:
           lake env lean Integration/OggSSP2BActualWeightTwoSourceBudget.lean
           lake env lean Integration/OggSSP2B4AActualIntegralMultiplicities.lean
           lake env lean Integration/OggSSP2BExplicitIntegralCARestriction.lean
+          lake env lean Integration/OggSSP2BActualRestrictedTate.lean
       - name: Check actual 3B fingerprint and projection
         run: |
           lake env lean Integration/Selected3BCanonicalFixedLineProjection.lean

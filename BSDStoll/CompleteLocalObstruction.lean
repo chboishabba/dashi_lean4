@@ -55,14 +55,13 @@ theorem localObstruction_eq_one_iff
     (c : W.M) :
     localObstruction W L c = 1 ↔
       c ∈ W.localCondition L := by
-  have hk :
-      (QuotientGroup.mk'
-        (WeierstrassCurve.Affine.μ (W := (W⁄L).toAffine)).range)
-          (W.localRes L c) = 1
-        ↔ W.localRes L c ∈
-            (WeierstrassCurve.Affine.μ (W := (W⁄L).toAffine)).range := by
-    rw [← MonoidHom.mem_ker, QuotientGroup.ker_mk']
-  exact hk.trans (W.mem_localCondition_iff L).symm
+  change
+    (QuotientGroup.mk'
+      (WeierstrassCurve.Affine.μ (W := (W⁄L).toAffine)).range)
+        (W.localRes L c) = 1 ↔
+      W.localRes L c ∈ W.localCondition L
+  rw [QuotientGroup.eq_one_iff]
+  exact (W.mem_localCondition_iff L).symm
 
 /-- Any rational point maps into the local Kummer image, so its entire
 local obstruction vanishes. The nontrivial local/global compatibility

@@ -39,7 +39,6 @@ inductive SingleValueJudgment (α : Type)
   | violation (witness : CardinalityCounterexample α)
   | missing (unpaid : List String)
   | outsideScope (reason : String)
-  deriving Repr
 
 def classifySingleValue {α : Type}
     (w : Option (CardinalityCounterexample α))

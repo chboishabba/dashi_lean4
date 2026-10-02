@@ -35,6 +35,8 @@ jobs:
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapJ2Polynomial
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdaptiveMixed
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdaptiveJet
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdaptiveLocalDebt
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdaptiveOffOrdWeld
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapJ2Phase
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapJ2Normalized
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdaptiveRemainder

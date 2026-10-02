@@ -120,3 +120,64 @@ def audit() -> None:
 
 if __name__ == "__main__":
     audit()
+    audit_even_time_reflection_partition()
+
+
+def _reflect_site_tuple(x, side):
+    y = list(x)
+    y[0] = (-x[0] - 1) % side
+    return tuple(y)
+
+
+def _reflect_plaquette_index(p, side):
+    x, i, j = p
+    rx = _reflect_site_tuple(x, side)
+    if i == 0:
+        rx = shift(rx, 0, side)
+        rx = tuple(((v - 1) % side) if k == 0 else v for k, v in enumerate(rx))
+        # previous two lines are intentionally simplified below to the exact
+        # backward-time reflected base point theta(x)-e0.
+        rx = list(_reflect_site_tuple(x, side))
+        rx[0] = (rx[0] - 1) % side
+        rx = tuple(rx)
+    return (rx, i, j)
+
+
+def _crossing_index(p, n):
+    x, i, j = p
+    return i == 0 and x[0] in {n - 1, 2 * n - 1}
+
+
+def _positive_index(p, n):
+    return (not _crossing_index(p, n)) and p[0][0] < n
+
+
+def _negative_index(p, n):
+    return (not _crossing_index(p, n)) and n <= p[0][0]
+
+
+def audit_even_time_reflection_partition():
+    for n in range(1, 7):
+        side = 2 * n
+        sites = tuple(product(range(side), repeat=4))
+        plaquettes = tuple(
+            (x, i, j)
+            for x in sites
+            for i in range(4)
+            for j in range(i + 1, 4)
+        )
+        pos = {p for p in plaquettes if _positive_index(p, n)}
+        neg = {p for p in plaquettes if _negative_index(p, n)}
+        cross = {p for p in plaquettes if _crossing_index(p, n)}
+        assert pos.isdisjoint(neg)
+        assert pos.isdisjoint(cross)
+        assert neg.isdisjoint(cross)
+        assert pos | neg | cross == set(plaquettes)
+        image = {_reflect_plaquette_index(p, side) for p in pos}
+        assert image == neg, (n, len(image), len(neg), image ^ neg)
+        for p in plaquettes:
+            assert _reflect_plaquette_index(
+                _reflect_plaquette_index(p, side), side) == p
+    print("PASS exact even-time plaquette reflection: n=1..6")
+    print("PASS P = P+ disjoint-union P- disjoint-union Pcross")
+    print("PASS reflected(P+) = P- and plaquette-index reflection involutive")

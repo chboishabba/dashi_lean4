@@ -166,6 +166,7 @@ structure CrossPollinationBoundary where
   caoCorrelatedPhaseSourcesRetained : Bool
   huInSituRegistrationControlSourceRetained : Bool
   gaoFe5GeTe2SourceRetained : Bool
+  jiangMagicAngleChargeOrderPrecedentRetained : Bool
   sharedObservableFibreTheoremShapeUsed : Bool
   sharedConsumerRefinementTheoremShapeUsed : Bool
   twistAngleIdentifiedWithFeInteractionStrength : Bool
@@ -181,6 +182,7 @@ def canonicalBoundary : CrossPollinationBoundary where
   caoCorrelatedPhaseSourcesRetained := true
   huInSituRegistrationControlSourceRetained := true
   gaoFe5GeTe2SourceRetained := true
+  jiangMagicAngleChargeOrderPrecedentRetained := true
   sharedObservableFibreTheoremShapeUsed := true
   sharedConsumerRefinementTheoremShapeUsed := true
   twistAngleIdentifiedWithFeInteractionStrength := false

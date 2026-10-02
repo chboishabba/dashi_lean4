@@ -13,6 +13,13 @@ on:
       - 'CondensedMatter/BdGNambuParticleHoleExact.lean'
       - 'CondensedMatter/YbSb2BdGParticleHoleAdapter.lean'
       - 'CondensedMatter/YbSb2MajoranaQuantumComputerBridge.lean'
+      - 'CondensedMatter/MajoranaBraidYangBaxterExact.lean'
+      - 'CondensedMatter/MajoranaParityQubitExact.lean'
+      - 'CondensedMatter/MajoranaOperatorKernelExact.lean'
+      - 'CondensedMatter/MajoranaB4BraidExact.lean'
+      - 'CondensedMatter/MajoranaLogicalBraidGateExact.lean'
+      - 'CondensedMatter/IsingMajoranaUniversalityBoundaryExact.lean'
+      - 'CondensedMatter/YbSb2MajoranaMaxCutBoundaryExact.lean'
       - '.github/workflows/yb-sb2-trsb-int.yml'
   pull_request:
     paths:
@@ -26,6 +33,13 @@ on:
       - 'CondensedMatter/BdGNambuParticleHoleExact.lean'
       - 'CondensedMatter/YbSb2BdGParticleHoleAdapter.lean'
       - 'CondensedMatter/YbSb2MajoranaQuantumComputerBridge.lean'
+      - 'CondensedMatter/MajoranaBraidYangBaxterExact.lean'
+      - 'CondensedMatter/MajoranaParityQubitExact.lean'
+      - 'CondensedMatter/MajoranaOperatorKernelExact.lean'
+      - 'CondensedMatter/MajoranaB4BraidExact.lean'
+      - 'CondensedMatter/MajoranaLogicalBraidGateExact.lean'
+      - 'CondensedMatter/IsingMajoranaUniversalityBoundaryExact.lean'
+      - 'CondensedMatter/YbSb2MajoranaMaxCutBoundaryExact.lean'
       - '.github/workflows/yb-sb2-trsb-int.yml'
   workflow_dispatch:
 
@@ -35,23 +49,37 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
-      - name: Check reusable TR/gauge theorem
+      - name: Check SuperconductingTimeReversalGaugeObstruction.lean
         run: lake env lean CondensedMatter/SuperconductingTimeReversalGaugeObstruction.lean
-      - name: Check selected YbSb2 INT theorem
+      - name: Check YbSb2INTNonunitarySelected.lean
         run: lake env lean CondensedMatter/YbSb2INTNonunitarySelected.lean
-      - name: Check literal complex q calculation
+      - name: Check INTComplexNonunitarity.lean
         run: lake env lean CondensedMatter/INTComplexNonunitarity.lean
-      - name: Check single-band exclusion funnel
+      - name: Check YbSb2SingleBandConstraintFunnel.lean
         run: lake env lean CondensedMatter/YbSb2SingleBandConstraintFunnel.lean
-      - name: Check INT exchange parity
+      - name: Check InternallyAntisymmetricTripletExchange.lean
         run: lake env lean CondensedMatter/InternallyAntisymmetricTripletExchange.lean
-      - name: Check BdG symmetry boundary
+      - name: Check YbSb2BdGSymmetryBoundary.lean
         run: lake env lean CondensedMatter/YbSb2BdGSymmetryBoundary.lean
-      - name: Check Dirac mass sign
+      - name: Check YbSb2DiracMassSign.lean
         run: lake env lean CondensedMatter/YbSb2DiracMassSign.lean
-      - name: Check reusable Nambu PHS theorem
+      - name: Check BdGNambuParticleHoleExact.lean
         run: lake env lean CondensedMatter/BdGNambuParticleHoleExact.lean
-      - name: Check YbSb2 BdG PHS adapter
+      - name: Check YbSb2BdGParticleHoleAdapter.lean
         run: lake env lean CondensedMatter/YbSb2BdGParticleHoleAdapter.lean
-      - name: Check Majorana quantum-computer bridge
+      - name: Check YbSb2MajoranaQuantumComputerBridge.lean
         run: lake env lean CondensedMatter/YbSb2MajoranaQuantumComputerBridge.lean
+      - name: Check MajoranaBraidYangBaxterExact.lean
+        run: lake env lean CondensedMatter/MajoranaBraidYangBaxterExact.lean
+      - name: Check MajoranaParityQubitExact.lean
+        run: lake env lean CondensedMatter/MajoranaParityQubitExact.lean
+      - name: Check MajoranaOperatorKernelExact.lean
+        run: lake env lean CondensedMatter/MajoranaOperatorKernelExact.lean
+      - name: Check MajoranaB4BraidExact.lean
+        run: lake env lean CondensedMatter/MajoranaB4BraidExact.lean
+      - name: Check MajoranaLogicalBraidGateExact.lean
+        run: lake env lean CondensedMatter/MajoranaLogicalBraidGateExact.lean
+      - name: Check IsingMajoranaUniversalityBoundaryExact.lean
+        run: lake env lean CondensedMatter/IsingMajoranaUniversalityBoundaryExact.lean
+      - name: Check YbSb2MajoranaMaxCutBoundaryExact.lean
+        run: lake env lean CondensedMatter/YbSb2MajoranaMaxCutBoundaryExact.lean

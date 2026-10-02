@@ -1,0 +1,29 @@
+name: YbSb2 TRSB INT Lean
+
+on:
+  push:
+    paths:
+      - 'CondensedMatter/SuperconductingTimeReversalGaugeObstruction.lean'
+      - 'CondensedMatter/YbSb2INTNonunitarySelected.lean'
+      - 'CondensedMatter/INTComplexNonunitarity.lean'
+      - '.github/workflows/yb-sb2-trsb-int.yml'
+  pull_request:
+    paths:
+      - 'CondensedMatter/SuperconductingTimeReversalGaugeObstruction.lean'
+      - 'CondensedMatter/YbSb2INTNonunitarySelected.lean'
+      - 'CondensedMatter/INTComplexNonunitarity.lean'
+      - '.github/workflows/yb-sb2-trsb-int.yml'
+  workflow_dispatch:
+
+jobs:
+  kernel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Check reusable TR/gauge theorem
+        run: lake env lean CondensedMatter/SuperconductingTimeReversalGaugeObstruction.lean
+      - name: Check selected YbSb2 INT theorem
+        run: lake env lean CondensedMatter/YbSb2INTNonunitarySelected.lean
+      - name: Check literal complex q calculation
+        run: lake env lean CondensedMatter/INTComplexNonunitarity.lean

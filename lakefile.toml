@@ -4,7 +4,7 @@ defaultTargets = ["Synthesis"]
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4.git"
-rev = "v4.28.0"
+rev = "25730c7c759d108ef87ab70af2342a196760f79d"
 
 # Cross-domain finite synthesis returned from Aristotle task bf6411b6.
 [[lean_lib]]
@@ -152,3 +152,8 @@ globs = ["RequestProject.NavierStokes.CanonicalCompletionLeaves"]
 [[lean_lib]]
 name = "YMContinuum"
 globs = ["YangMills.*"]
+
+# Opt-in current-Mathlib BSD continuous-cohomology donor.
+[[lean_lib]]
+name = "BSDCohomology"
+globs = ["BSDCohomology", "BSDCohomology.*"]

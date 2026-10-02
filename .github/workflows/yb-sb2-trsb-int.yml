@@ -6,6 +6,8 @@ on:
       - 'CondensedMatter/SuperconductingTimeReversalGaugeObstruction.lean'
       - 'CondensedMatter/YbSb2INTNonunitarySelected.lean'
       - 'CondensedMatter/INTComplexNonunitarity.lean'
+      - 'CondensedMatter/YbSb2SingleBandConstraintFunnel.lean'
+      - 'CondensedMatter/YbSb2SingleBandConstraintFunnel.lean'
       - '.github/workflows/yb-sb2-trsb-int.yml'
   pull_request:
     paths:
@@ -27,3 +29,5 @@ jobs:
         run: lake env lean CondensedMatter/YbSb2INTNonunitarySelected.lean
       - name: Check literal complex q calculation
         run: lake env lean CondensedMatter/INTComplexNonunitarity.lean
+      - name: Check single-band exclusion funnel
+        run: lake env lean CondensedMatter/YbSb2SingleBandConstraintFunnel.lean

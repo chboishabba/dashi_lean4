@@ -38,5 +38,6 @@ jobs:
           lake env lean BSDCohomology/EllipticPointTopRep.lean
           lake env lean BSDCohomology/EllipticShaTarget.lean
           lake env lean BSDCohomology/EllipticKummerKernelExact.lean
+          lake env lean BSDCohomology/EllipticKummerDivisibilityReduction.lean
           lake env lean BSDCohomology/GenuineDegreeOneShaTwoTorsion.lean
           lake env lean Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean

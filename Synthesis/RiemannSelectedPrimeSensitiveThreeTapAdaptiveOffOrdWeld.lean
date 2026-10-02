@@ -461,7 +461,7 @@ theorem QuarticFourSignedPolePair.threeTapAdaptivePairTerm_summable
   have h1 := W.threeTapEndpointPairTermHalf_summable ht (eps:=eps)
   have h2 := W.threeTapEndpointPairTermTwo_summable ht (eps:=eps)
   have hcomb :=
-    (h1.const_mul W.poleTwo).sub (h2.const_mul W.poleHalf)
+    (h1.mul_left W.poleTwo).sub (h2.mul_left W.poleHalf)
   apply hcomb.congr
   intro sigma
   symm
@@ -483,8 +483,8 @@ theorem QuarticFourSignedPolePair.threeTap_offOrd_eq_half_adaptivePair_tsum
   have h1 := W.threeTapEndpointPairTermHalf_summable ht (eps:=eps)
   have h2 := W.threeTapEndpointPairTermTwo_summable ht (eps:=eps)
   rw [← tsum_mul_left, ← tsum_mul_left]
-  rw [← (h1.const_mul W.poleTwo).tsum_sub
-      (h2.const_mul W.poleHalf)]
+  rw [← (h1.mul_left W.poleTwo).tsum_sub
+      (h2.mul_left W.poleHalf)]
   congr 1
   apply tsum_congr
   intro sigma

@@ -129,4 +129,80 @@ theorem su2_even_time_reflect_spatial_plaquette_cost
         (su2Plaquette links (su2EvenTimeReflectSite x) μ ν) := by
   rw [su2_even_time_reflect_spatial_plaquette links x μ ν hμ hν]
 
+/--
+A spatial forward shift commutes with the backward time shift.  This is the
+remaining square-geometry identity needed in the reflected temporal plaquette.
+-/
+theorem su2_shift_backward_time_spatial_commute
+    {L : ℕ} (x : SU2TorusSite L) (direction : Fin 4)
+    (hSpatial : direction ≠ su2TimeDirection) :
+    su2ShiftBackward (su2Shift x direction) su2TimeDirection =
+      su2Shift (su2ShiftBackward x su2TimeDirection) direction := by
+  classical
+  funext i
+  by_cases hiTime : i = su2TimeDirection
+  · subst i
+    simp [su2ShiftBackward, su2Shift,
+      Function.update_noteq hSpatial]
+  · by_cases hiDir : i = direction
+    · subst i
+      simp [su2ShiftBackward, su2Shift,
+        Function.update_same, Function.update_noteq hSpatial,
+        Function.update_noteq hiTime]
+    · simp [su2ShiftBackward, su2Shift,
+        Function.update_noteq hiTime, Function.update_noteq hiDir]
+
+/--
+For a temporal/spatial plaquette, time reflection reverses its orientation.
+The reflected plaquette is conjugate to the inverse of the literal plaquette
+based at the reflected-backward site.  This is stronger than equality of
+Wilson costs and is the exact orientation-sensitive same-object statement.
+-/
+theorem su2_even_time_reflect_temporal_plaquette_conjugate_inverse
+    {n : ℕ} (links : SU2TorusLinks (2 * n))
+    (x : SU2TorusSite (2 * n)) (ν : Fin 4)
+    (hν : ν ≠ su2TimeDirection) :
+    let y :=
+      su2ShiftBackward (su2EvenTimeReflectSite x) su2TimeDirection
+    su2Plaquette (su2EvenTimeReflectLinks links)
+        x su2TimeDirection ν =
+      (links y su2TimeDirection)⁻¹ *
+        (su2Plaquette links y su2TimeDirection ν)⁻¹ *
+        links y su2TimeDirection := by
+  dsimp
+  rw [su2Plaquette]
+  rw [su2_even_time_reflect_links_temporal]
+  rw [su2_even_time_reflect_links_spatial _ _ _ hν]
+  rw [su2_even_time_reflect_forward_time_shift]
+  rw [su2_even_time_reflect_links_temporal]
+  rw [su2_even_time_reflect_spatial_shift _ ν hν]
+  rw [su2_even_time_reflect_links_spatial _ _ _ hν]
+  rw [su2_shift_backward_time_spatial_commute _ ν hν]
+  rw [su2_shift_forward_backward_cancel]
+  dsimp [su2Plaquette]
+  group
+
+/--
+The temporal noncrossing Wilson cost is therefore exactly reflection
+invariant: conjugation and orientation reversal are invisible to the
+trace-normalized positive plaquette cost.
+-/
+theorem su2_even_time_reflect_temporal_plaquette_cost
+    {n : ℕ} (links : SU2TorusLinks (2 * n))
+    (x : SU2TorusSite (2 * n)) (ν : Fin 4)
+    (hν : ν ≠ su2TimeDirection) :
+    let y :=
+      su2ShiftBackward (su2EvenTimeReflectSite x) su2TimeDirection
+    su2PositivePlaquetteCost
+        (su2Plaquette (su2EvenTimeReflectLinks links)
+          x su2TimeDirection ν) =
+      su2PositivePlaquetteCost
+        (su2Plaquette links y su2TimeDirection ν) := by
+  dsimp
+  rw [su2_even_time_reflect_temporal_plaquette_conjugate_inverse
+    links x ν hν]
+  rw [su2_plaquette_cost_conjugation]
+  exact su2_plaquette_cost_inverse _
+
+
 end RequestProject.YangMills

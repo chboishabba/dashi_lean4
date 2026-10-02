@@ -25,6 +25,7 @@ on:
       - "Integration/OggSSPP2F4WeilMillerFixedPhase.lean"
       - "Integration/OggSSPP2F4WeilMillerPhaseToNative.lean"
       - "Integration/OggSSPP2F4MillerDivisorGeometry.lean"
+      - "Integration/OggSSPP2F4WeilCurveSpecificCertificate.lean"
       - "Integration/OggSSPP2F4ActualEllipticHeisenberg.lean"
       - "Integration.lean"
       - "AgdaMirror.lean"
@@ -97,6 +98,7 @@ jobs:
           lake env lean Integration/OggSSPP2F4WeilMillerFixedPhase.lean
           lake env lean Integration/OggSSPP2F4WeilMillerPhaseToNative.lean
           lake env lean Integration/OggSSPP2F4MillerDivisorGeometry.lean
+          lake env lean Integration/OggSSPP2F4WeilCurveSpecificCertificate.lean
       - name: Check arithmetic Heisenberg extension against native rank one
         run: lake env lean Integration/OggSSPP2F4ActualEllipticHeisenberg.lean
       - name: Check wild-different arithmetic obstruction

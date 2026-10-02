@@ -175,6 +175,91 @@ theorem QuarticFourSignedPolePair.threeTapSignedJ2_zero_iff_normalized
   have hfac : (1/(t/16)^4 : ℝ) ≠ 0 := by positivity
   exact mul_eq_zero.trans (by simp [hfac])
 
+
+def normalizedJ2LinearPhase
+    (g : ℝ → ℝ) (B : ℝ) : ℝ :=
+  let A1 := Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 1
+  let A2 := Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 2
+  let U1 := projectiveSinFirstResp g 1
+  let U2 := projectiveSinFirstResp g 2
+  2 * B^2 * A1 * A2 * (Real.cos (2*B) - Real.cos B)
+    +
+  4 * B *
+    (A2 * Real.sin B * U1
+      - A1 * Real.sin (2*B) * U2)
+
+def normalizedJ2QuadraticPhase
+    (g : ℝ → ℝ) (B : ℝ) : ℝ :=
+  let A1 := Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 1
+  let A2 := Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 2
+  let U1 := projectiveSinFirstResp g 1
+  let U2 := projectiveSinFirstResp g 2
+  8 * B *
+    (Real.cos (2*B) * A2 * Real.sin B * U1
+      - Real.cos B * A1 * Real.sin (2*B) * U2)
+
+theorem QuarticFourSignedPolePair.threeTapNormalizedJ2LinearCoeff_eq_phase
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapNormalizedJ2LinearCoeff
+      =
+    let B := threeTapNormalizedShift t (Real.log 2)
+    W.poleTwo *
+      normalizedJ2LinearPhase
+        (quarticFourWindowProfile W.R (1/2) W.muHalf) B
+      -
+    W.poleHalf *
+      normalizedJ2LinearPhase
+        (quarticFourWindowProfile W.R (2/3) W.muTwo) B := by
+  let B := threeTapNormalizedShift t (Real.log 2)
+  have hhalf :=
+    projectiveBracketSecondMomentThreeTapLinearCoeff_eq_phase
+      (quarticFourWindowProfile_continuous W.Rpos)
+      (quarticFourWindowProfile_compact W.Rpos)
+      (L:=B) (r:=1) W.J2Half
+  have htwo :=
+    projectiveBracketSecondMomentThreeTapLinearCoeff_eq_phase
+      (quarticFourWindowProfile_continuous W.Rpos)
+      (quarticFourWindowProfile_compact W.Rpos)
+      (L:=B) (r:=1) W.J2Two
+  unfold QuarticFourSignedPolePair.threeTapNormalizedJ2LinearCoeff
+    normalizedJ2LinearPhase
+  dsimp [B] at hhalf htwo ⊢
+  rw [hhalf, htwo]
+  norm_num
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapNormalizedJ2QuadraticCoeff_eq_phase
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapNormalizedJ2QuadraticCoeff
+      =
+    let B := threeTapNormalizedShift t (Real.log 2)
+    W.poleTwo *
+      normalizedJ2QuadraticPhase
+        (quarticFourWindowProfile W.R (1/2) W.muHalf) B
+      -
+    W.poleHalf *
+      normalizedJ2QuadraticPhase
+        (quarticFourWindowProfile W.R (2/3) W.muTwo) B := by
+  let B := threeTapNormalizedShift t (Real.log 2)
+  have hhalf :=
+    projectiveBracketSecondMomentThreeTapQuadraticCoeff_eq_phase
+      (quarticFourWindowProfile_continuous W.Rpos)
+      (quarticFourWindowProfile_compact W.Rpos)
+      (L:=B) (r:=1) W.J2Half
+  have htwo :=
+    projectiveBracketSecondMomentThreeTapQuadraticCoeff_eq_phase
+      (quarticFourWindowProfile_continuous W.Rpos)
+      (quarticFourWindowProfile_compact W.Rpos)
+      (L:=B) (r:=1) W.J2Two
+  unfold QuarticFourSignedPolePair.threeTapNormalizedJ2QuadraticCoeff
+    normalizedJ2QuadraticPhase
+  dsimp [B] at hhalf htwo ⊢
+  rw [hhalf, htwo]
+  norm_num
+  ring
+
 /-! ## Exact exceptional-strength classification -/
 
 theorem QuarticFourSignedPolePair.threeTapSignedJ2_zero_iff_linear_factor

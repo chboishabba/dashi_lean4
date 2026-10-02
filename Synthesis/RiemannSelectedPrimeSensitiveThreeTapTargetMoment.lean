@@ -187,4 +187,68 @@ theorem threeTap_shift_not_in_canonical_normalized_support
   rw [abs_of_pos hpos]
   exact not_le.mpr (threeTapNormalizedShift_logTwo_gt_pi_add_one ht)
 
+/-! ## Exact support growth under symmetric translation -/
+
+theorem detectorThreeTap_support_abs_lt_add
+    {g : ℝ → ℝ} {S eps L u : ℝ}
+    (hS0 : 0 ≤ S)
+    (hS : ∀ v : ℝ, g v ≠ 0 → |v| < S)
+    (hu : detectorThreeTap g eps L u ≠ 0) :
+    |u| < S + |L| := by
+  by_contra hnot
+  have hfar : S + |L| ≤ |u| := le_of_not_gt hnot
+  have hz (v : ℝ) (hv : S ≤ |v|) : g v = 0 := by
+    by_contra hne
+    exact (not_lt_of_ge hv) (hS v hne)
+  have hminusTri : |u| ≤ |u-L| + |L| := by
+    calc
+      |u| = |(u-L)+L| := by congr 1 <;> ring
+      _ ≤ |u-L| + |L| := abs_add _ _
+  have hplusTri : |u| ≤ |u+L| + |L| := by
+    calc
+      |u| = |(u+L)-L| := by congr 1 <;> ring
+      _ ≤ |u+L| + |L| := by
+        simpa [sub_eq_add_neg, abs_neg] using abs_add (u+L) (-L)
+  have hminus : S ≤ |u-L| := by linarith
+  have hplus : S ≤ |u+L| := by linarith
+  have hu0 : S ≤ |u| := by
+    have habs : 0 ≤ |L| := abs_nonneg L
+    linarith
+  have h0 := hz u hu0
+  have hm := hz (u-L) hminus
+  have hp := hz (u+L) hplus
+  apply hu
+  simp [detectorThreeTap, h0, hm, hp]
+
+theorem quarticFourWindowProfile_threeTap_support_abs_lt
+    {R lam mu eps B u : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1)
+    (hu :
+      detectorThreeTap
+        (quarticFourWindowProfile R lam mu) eps B u ≠ 0) :
+    |u| < (Real.pi + 1) + |B| := by
+  apply detectorThreeTap_support_abs_lt_add
+    (S := Real.pi + 1) (eps := eps) (L := B)
+  · positivity
+  · intro v hv
+    have hs := quarticFourWindowProfile_support_abs_lt hR hv
+    linarith
+  · exact hu
+
+theorem quarticFourWindowProfile_threeTap_logTwo_normalized_support
+    {R lam mu t eps u : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1)
+    (hu :
+      detectorThreeTap
+        (quarticFourWindowProfile R lam mu)
+        eps (threeTapNormalizedShift t (Real.log 2)) u ≠ 0) :
+    |u|
+      <
+    (Real.pi + 1)
+      + |threeTapNormalizedShift t (Real.log 2)| := by
+  exact quarticFourWindowProfile_threeTap_support_abs_lt
+    hR hRone hu
+
 end Synthesis

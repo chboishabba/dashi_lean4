@@ -7,6 +7,7 @@ on:
       - 'CondensedMatter/YbSb2INTNonunitarySelected.lean'
       - 'CondensedMatter/INTComplexNonunitarity.lean'
       - 'CondensedMatter/YbSb2SingleBandConstraintFunnel.lean'
+      - 'CondensedMatter/InternallyAntisymmetricTripletExchange.lean'
       - '.github/workflows/yb-sb2-trsb-int.yml'
   pull_request:
     paths:
@@ -14,6 +15,7 @@ on:
       - 'CondensedMatter/YbSb2INTNonunitarySelected.lean'
       - 'CondensedMatter/INTComplexNonunitarity.lean'
       - 'CondensedMatter/YbSb2SingleBandConstraintFunnel.lean'
+      - 'CondensedMatter/InternallyAntisymmetricTripletExchange.lean'
       - '.github/workflows/yb-sb2-trsb-int.yml'
   workflow_dispatch:
 
@@ -31,3 +33,6 @@ jobs:
         run: lake env lean CondensedMatter/INTComplexNonunitarity.lean
       - name: Check single-band exclusion funnel
         run: lake env lean CondensedMatter/YbSb2SingleBandConstraintFunnel.lean
+
+      - name: Check INT exchange parity
+        run: lake env lean CondensedMatter/InternallyAntisymmetricTripletExchange.lean

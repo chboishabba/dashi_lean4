@@ -26,4 +26,6 @@ jobs:
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapCompleted
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapIncrementAudit
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapTerminalTest
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapTargetMoment
+          lake build Synthesis.RiemannSelectedPrimeSensitiveSymmetricShiftMoments
           lake build Synthesis.RiemannSelectedPrimeSensitiveTwoScale

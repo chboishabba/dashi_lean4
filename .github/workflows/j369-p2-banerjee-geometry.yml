@@ -1,0 +1,67 @@
+name: J369 p2 Banerjee geometric source kernel
+
+on:
+  pull_request:
+    paths:
+      - "Integration/OggSSPP2BanerjeeF4UniversalDeformationSource.lean"
+      - "Integration/OggSSPP2BanerjeeAffineCurveScheme.lean"
+      - "Integration/OggSSPP2BanerjeeProjectiveCubicEquation.lean"
+      - "Integration/OggSSPP2BanerjeeSpecialFibreElliptic.lean"
+      - "Integration/OggSSPP2BanerjeeF4ZetaCoordinates.lean"
+      - "Integration/OggSSPP2F4EllipticHeisenbergPairing.lean"
+      - "Integration/OggSSPP2F4ActualCoordinateActionGenerators.lean"
+      - "Integration/OggSSPP2F4CurveTangentFlex.lean"
+      - "Integration/OggSSPP2F4ActualEllipticGroup.lean"
+      - "Integration/OggSSPP2F4ActualGroupGenerators.lean"
+      - "Integration/OggSSPP2F4ActualGroupRelations.lean"
+      - "Integration/OggSSPP2F4ActualGroupCardinality.lean"
+      - "Integration/OggSSPP2F4ActualGroupBasis.lean"
+      - "Integration/OggSSPP2F4ActualGroupShearReflection.lean"
+      - ".github/workflows/j369-p2-banerjee-geometry.yml"
+  workflow_dispatch:
+
+jobs:
+  kernel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Lean and lake
+        uses: leanprover/lean-action@v1
+        with:
+          use-github-cache: true
+      - name: Get pinned Mathlib cache
+        run: lake exe cache get
+      - name: Check concrete Banerjee source
+        run: lake env lean Integration/OggSSPP2BanerjeeF4UniversalDeformationSource.lean
+      - name: Check affine scheme
+        run: lake env lean Integration/OggSSPP2BanerjeeAffineCurveScheme.lean
+      - name: Check projective equation
+        run: lake env lean Integration/OggSSPP2BanerjeeProjectiveCubicEquation.lean
+      - name: Check special fibre elliptic criterion
+        run: lake env lean Integration/OggSSPP2BanerjeeSpecialFibreElliptic.lean
+      - name: Check F4 zeta roots and projective infinity
+        run: lake env lean Integration/OggSSPP2BanerjeeF4ZetaCoordinates.lean
+      - name: Check actual elliptic-to-Heisenberg pairing and action
+        run: lake env lean Integration/OggSSPP2F4EllipticHeisenbergPairing.lean
+      - name: Check coordinate Frobenius and shear on actual generators
+        run: lake env lean Integration/OggSSPP2F4ActualCoordinateActionGenerators.lean
+      - name: Check actual elliptic group carrier
+        run: lake env lean Integration/OggSSPP2F4ActualEllipticGroup.lean
+      - name: Check actual elliptic group generators
+        run: lake env lean Integration/OggSSPP2F4ActualGroupGenerators.lean
+      - name: Check actual elliptic group relations
+        run: lake env lean Integration/OggSSPP2F4ActualGroupRelations.lean
+      - name: Check actual elliptic group cardinality
+        run: lake env lean Integration/OggSSPP2F4ActualGroupCardinality.lean
+      - name: Check actual C3-square elliptic basis
+        run: lake env lean Integration/OggSSPP2F4ActualGroupBasis.lean
+      - name: Check actual elliptic S3 representation
+        run: lake env lean Integration/OggSSPP2F4ActualGroupShearReflection.lean
+      - name: Check finite-field tangent flex
+        run: lake env lean Integration/OggSSPP2F4CurveTangentFlex.lean
+      - name: Check actual Mathlib elliptic group
+        run: lake env lean Integration/OggSSPP2F4ActualEllipticGroup.lean
+      - name: Check actual P Q candidate basis
+        run: lake env lean Integration/OggSSPP2F4ActualGroupGenerators.lean
+

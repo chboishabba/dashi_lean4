@@ -1,0 +1,107 @@
+name: J369 small-characteristic recognition Lean
+
+on:
+  push:
+    branches:
+      - agent/j369-small-characteristic-recognition-20260925
+    paths:
+      - "Integration/ActionOrbitRecognition.lean"
+      - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/OggSSPWildDifferentArithmeticObstruction.lean"
+      - "Integration/OggSSPSmallCharacteristicAcquisitionDirection.lean"
+      - "Integration/OggSSPP2F4FrobeniusCandidateNoGo.lean"
+      - "Integration/OggSmallCharacteristicIsotropyOrderCrossPollination.lean"
+      - "Integration/MarkedArithmeticResidualCover.lean"
+      - "Integration/OggSSPExponentResidualVsSupersingularOrbitSeparation.lean"
+      - "Integration/OggSSPExponentResidualArithmeticSource.lean"
+      - "Integration/BalancedTernaryHypercubeAntipodalOrbitCount.lean"
+      - "Integration/ProvenancePreservingRecognition.lean"
+      - "Integration/OggSSPIndependentBase369Recognition.lean"
+      - "Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean"
+      - "AgdaMirror/OggSSPSmallCharacteristicRecognition.lean"
+      - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
+      - "Integration/OggSSPP2F4ActualPairingNormalization.lean"
+      - "Integration/OggSSPP2F4ConcreteCubicPhase.lean"
+      - "Integration/OggSSPP2F4WeilMillerFixedPhase.lean"
+      - "Integration/OggSSPP2F4WeilMillerPhaseToNative.lean"
+      - "Integration/OggSSPP2F4MillerDivisorGeometry.lean"
+      - "Integration/OggSSPP2F4WeilCurveSpecificCertificate.lean"
+      - "Integration/OggSSPP2F4ActualEllipticHeisenberg.lean"
+      - "Integration.lean"
+      - "AgdaMirror.lean"
+      - ".github/workflows/j369-small-characteristic-recognition.yml"
+  pull_request:
+    paths:
+      - "Integration/ActionOrbitRecognition.lean"
+      - "Integration/OggSSPSmallCharacteristicRecognition.lean"
+      - "Integration/OggSSPWildDifferentArithmeticObstruction.lean"
+      - "Integration/OggSSPSmallCharacteristicAcquisitionDirection.lean"
+      - "Integration/OggSSPP2F4FrobeniusCandidateNoGo.lean"
+      - "Integration/OggSmallCharacteristicIsotropyOrderCrossPollination.lean"
+      - "Integration/MarkedArithmeticResidualCover.lean"
+      - "Integration/OggSSPExponentResidualVsSupersingularOrbitSeparation.lean"
+      - "Integration/OggSSPExponentResidualArithmeticSource.lean"
+      - "Integration/BalancedTernaryHypercubeAntipodalOrbitCount.lean"
+      - "Integration/ProvenancePreservingRecognition.lean"
+      - "Integration/OggSSPIndependentBase369Recognition.lean"
+      - "Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean"
+      - "AgdaMirror/OggSSPSmallCharacteristicRecognition.lean"
+      - "AgdaMirror/OggSSPIndependentBase369Recognition.lean"
+      - "Integration/OggSSPP2F4ActualPairingNormalization.lean"
+      - "Integration/OggSSPP2F4ActualEllipticHeisenberg.lean"
+      - "Integration.lean"
+      - "AgdaMirror.lean"
+      - ".github/workflows/j369-small-characteristic-recognition.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recognition:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Check action/orbit recognition core
+        run: lake env lean Integration/ActionOrbitRecognition.lean
+      - name: Check J369 small-characteristic recognition
+        run: lake env lean Integration/OggSSPSmallCharacteristicRecognition.lean
+      - name: Check p2 raw-F4 and acquisition direction
+        run: |
+          lake env lean Integration/OggSSPP2F4FrobeniusCandidateNoGo.lean
+          lake env lean Integration/OggSSPSmallCharacteristicAcquisitionDirection.lean
+      - name: Check marked arithmetic residual-cover pattern
+        run: lake env lean Integration/MarkedArithmeticResidualCover.lean
+      - name: Check small-characteristic isotropy-order comparison
+        run: lake env lean Integration/OggSmallCharacteristicIsotropyOrderCrossPollination.lean
+      - name: Check ternary antipodal target-count family
+        run: lake env lean Integration/BalancedTernaryHypercubeAntipodalOrbitCount.lean
+      - name: Check exponent-residual acquisition and separation
+        run: |
+          lake env lean Integration/OggSSPExponentResidualArithmeticSource.lean
+          lake env lean Integration/OggSSPExponentResidualVsSupersingularOrbitSeparation.lean
+      - name: Check provenance recognition core
+        run: lake env lean Integration/ProvenancePreservingRecognition.lean
+      - name: Check independent Base369 recognitions
+        run: lake env lean Integration/OggSSPIndependentBase369Recognition.lean
+      - name: Check Agda parity receipts
+        run: |
+          lake env lean AgdaMirror/OggSSPSmallCharacteristicRecognition.lean
+          lake env lean AgdaMirror/OggSSPIndependentBase369Recognition.lean
+      - name: Check genuine elliptic basis pairing and phase orientation
+        run: lake env lean Integration/OggSSPP2F4ActualPairingNormalization.lean
+      - name: Check actual F4 cubic-phase normalization and field Frobenius
+        run: lake env lean Integration/OggSSPP2F4ConcreteCubicPhase.lean
+      - name: Check independent Miller fixed phase and native orientation weld
+        run: |
+          lake env lean Integration/OggSSPP2F4WeilMillerFixedPhase.lean
+          lake env lean Integration/OggSSPP2F4WeilMillerPhaseToNative.lean
+          lake env lean Integration/OggSSPP2F4MillerDivisorGeometry.lean
+          lake env lean Integration/OggSSPP2F4WeilCurveSpecificCertificate.lean
+      - name: Check arithmetic Heisenberg extension against native rank one
+        run: lake env lean Integration/OggSSPP2F4ActualEllipticHeisenberg.lean
+      - name: Check wild-different arithmetic obstruction
+        run: lake env lean Integration/OggSSPWildDifferentArithmeticObstruction.lean
+      - name: Run focused axiom audit
+        run: lake env lean Integration/AxiomAuditOggSSPSmallCharacteristicRecognition.lean

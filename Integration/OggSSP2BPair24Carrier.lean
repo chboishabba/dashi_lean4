@@ -38,10 +38,10 @@ theorem pair24_card :
 def permutePair (σ : Equiv.Perm (Fin 24)) : Pair24 ≃ Pair24 where
   toFun p :=
     ⟨p.1.image σ, by
-      simpa using Finset.card_image_iff.mpr σ.injective p.1⟩
+      simpa using Finset.card_image_of_injective p.1 σ.injective⟩
   invFun p :=
     ⟨p.1.image σ.symm, by
-      simpa using Finset.card_image_iff.mpr σ.symm.injective p.1⟩
+      simpa using Finset.card_image_of_injective p.1 σ.symm.injective⟩
   left_inv p := by
     apply Subtype.ext
     simp

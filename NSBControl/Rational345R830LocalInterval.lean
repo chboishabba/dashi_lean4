@@ -2,6 +2,7 @@ import Mathlib.Tactic
 import Mathlib.Analysis.Calculus.MeanValue
 import NSBControl.Rational345LocalODE
 import NSBControl.Rational345ShortTime
+import NSBControl.Rational345RateLipschitz
 
 /-!
 # R830 local-interval compiler
@@ -178,6 +179,89 @@ theorem negativeIntegral_on_usableTime_of_continuousRate
   exact rate_comp_continuousOn_usable
     (solution_continuousOn_usable hε hderiv)
     hrateContinuous
+
+
+/-- Ball-local terminal compiler for R830.
+
+The concrete proof no longer needs global bounds.  It is enough that the local
+solution segment stays in one closed bootstrap ball, the literal Galerkin field
+has the certified norm bound on that ball, and the literal selected-rate
+polynomial has the certified derivative bound there. -/
+theorem negativeIntegral_from_ball_bounds
+    {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (field : E → E)
+    (u : ℝ → E) (u₀ : E) (rate : E → ℝ)
+    {ε radius : ℝ}
+    (hε : 0 < ε)
+    (hradius : 0 ≤ radius)
+    (hu0 : u 0 = u₀)
+    (hderiv :
+      ∀ t ∈ Ioo (-ε) ε,
+        HasDerivAt u (field (u t)) t)
+    (hstay :
+      ∀ t ∈ Icc (0 : ℝ) (usableTime ε),
+        u t ∈ Metric.closedBall u₀ radius)
+    (hfieldBall :
+      ∀ x ∈ Metric.closedBall u₀ radius,
+        ‖field x‖ ≤ odeComponentBound)
+    (hrateDiff :
+      ∀ x ∈ Metric.closedBall u₀ radius,
+        DifferentiableAt ℝ rate x)
+    (hrateDerivBound :
+      ∀ x ∈ Metric.closedBall u₀ radius,
+        ‖fderiv ℝ rate x‖ ≤ rateLipschitzBound)
+    (hrateContinuous : Continuous rate)
+    (hinitial : rate u₀ ≤ -integerMargin) :
+    (∫ t in (0 : ℝ)..usableTime ε, rate (u t)) < 0 := by
+  have hdisp :
+      ∀ t ∈ Icc (0 : ℝ) (usableTime ε),
+        ‖u t - u₀‖ ≤ odeComponentBound * t := by
+    apply displacement_le_of_field_norm_le
+      field u u₀ hε hu0 hderiv
+    intro t ht
+    exact hfieldBall (u t) (hstay t ht)
+
+  have hneg :
+      ∀ t ∈ Icc (0 : ℝ) (usableTime ε),
+        rate (u t) < 0 := by
+    intro t ht
+    have hrateStep :
+        rate (u t) - rate u₀
+          ≤ rateLipschitzBound * ‖u t - u₀‖ :=
+      Rational345RateLipschitz.rate_sub_le_of_fderiv_bound
+        rate u₀ radius rateLipschitzBound
+        hradius hrateDiff hrateDerivBound (hstay t ht)
+    have hdispStep := hdisp t ht
+    have htime :
+        rateLipschitzBound * odeComponentBound * t
+          ≤ integerMargin / 2 := by
+      calc
+        rateLipschitzBound * odeComponentBound * t
+            ≤ rateLipschitzBound * odeComponentBound * usableTime ε := by
+              gcongr
+        _ ≤ integerMargin / 2 :=
+          ConcreteConstants.certifiedBudget_le_of_le_certifiedTime
+            (le_of_lt (usableTime_pos hε))
+            (usableTime_le_certifiedTime ε)
+    have hgrowth :
+        rate (u t) - rate u₀ ≤ integerMargin / 2 := by
+      calc
+        rate (u t) - rate u₀
+            ≤ rateLipschitzBound * ‖u t - u₀‖ := hrateStep
+        _ ≤ rateLipschitzBound * (odeComponentBound * t) := by
+              gcongr
+        _ = rateLipschitzBound * odeComponentBound * t := by ring
+        _ ≤ integerMargin / 2 := htime
+    have hm : 0 < integerMargin := by norm_num [integerMargin]
+    linarith
+
+  apply intervalIntegral_strictlyNegative
+    (usableTime_pos hε)
+  · exact rate_comp_continuousOn_usable
+      (solution_continuousOn_usable hε hderiv)
+      hrateContinuous
+  · exact hneg
 
 end Rational345R830LocalInterval
 end NSBControl

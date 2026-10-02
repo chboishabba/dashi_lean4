@@ -1,4 +1,5 @@
 import Mathlib.Tactic
+import Mathlib.Analysis.Calculus.MeanValue
 import NSBControl.Rational345LocalODE
 import NSBControl.Rational345ShortTime
 
@@ -107,6 +108,47 @@ theorem negativeIntegral_on_usableTime
       (usableTime_le_certifiedTime ε)
       hinitial hdisp hrate hcont
 
+
+
+/-- O2 compiler: a uniform norm bound on the actual vector field along the
+usable solution segment gives the required linear displacement estimate in one
+mean-value step.  No coordinatewise integration is needed. -/
+theorem displacement_le_of_field_norm_le
+    {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (field : E → E)
+    (u : ℝ → E) (u₀ : E)
+    {ε K : ℝ}
+    (hε : 0 < ε)
+    (hu0 : u 0 = u₀)
+    (hderiv :
+      ∀ t ∈ Ioo (-ε) ε,
+        HasDerivAt u (field (u t)) t)
+    (hfield :
+      ∀ t ∈ Icc (0 : ℝ) (usableTime ε),
+        ‖field (u t)‖ ≤ K) :
+    ∀ t ∈ Icc (0 : ℝ) (usableTime ε),
+      ‖u t - u₀‖ ≤ K * t := by
+  intro t ht
+  have hT : 0 ≤ usableTime ε := le_of_lt (usableTime_pos hε)
+  have hwithin :
+      ∀ x ∈ Icc (0 : ℝ) (usableTime ε),
+        HasDerivWithinAt u (field (u x))
+          (Icc (0 : ℝ) (usableTime ε)) x := by
+    intro x hx
+    exact
+      (hderiv x (usable_Icc_inside_picard_Ioo hε hx)).hasDerivWithinAt
+  have hbound :
+      ∀ x ∈ Ico (0 : ℝ) (usableTime ε),
+        ‖field (u x)‖ ≤ K := by
+    intro x hx
+    exact hfield x ⟨hx.1, le_of_lt hx.2⟩
+  have hmv :=
+    norm_image_sub_le_of_norm_deriv_le_segment'
+      (a := (0 : ℝ)) (b := usableTime ε)
+      (f := u) (f' := fun x => field (u x))
+      hwithin hbound t ht
+  simpa [hu0] using hmv
 
 /-- Stronger terminal compiler: derivative authority plus continuity of the
 finite selected-rate observable discharges the continuity hypothesis

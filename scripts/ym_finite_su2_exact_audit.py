@@ -133,11 +133,7 @@ def _reflect_plaquette_index(p, side):
     x, i, j = p
     rx = _reflect_site_tuple(x, side)
     if i == 0:
-        rx = shift(rx, 0, side)
-        rx = tuple(((v - 1) % side) if k == 0 else v for k, v in enumerate(rx))
-        # previous two lines are intentionally simplified below to the exact
-        # backward-time reflected base point theta(x)-e0.
-        rx = list(_reflect_site_tuple(x, side))
+        rx = list(rx)
         rx[0] = (rx[0] - 1) % side
         rx = tuple(rx)
     return (rx, i, j)

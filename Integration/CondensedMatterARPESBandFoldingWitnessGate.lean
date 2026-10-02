@@ -51,6 +51,14 @@ def literalSqrt3R30FoldClass :
   Integration.CondensedMatterSqrt3R30.foldClass
 
 structure Fe5GeTe2Status where
+  orderedPhaseLabel : String
+  originalBrillouinZoneShown : Bool
+  reconstructedSqrt3BrillouinZoneShown : Bool
+  gammaToKReplicaBandsReported : Bool
+  lowTemperatureK : Nat
+  highTemperatureK : Nat
+  spectralWeightIntegrationLowerBindingMeV : Nat
+  spectralWeightIntegrationUpperBindingMeV : Nat
   primaryPaperReportsBandFolding : Bool
   primaryPaperReportsFlatBandNestingVector : Bool
   primaryPaperReportsLindhardSupport : Bool
@@ -62,6 +70,14 @@ structure Fe5GeTe2Status where
   deriving Repr
 
 def canonicalFe5GeTe2Status : Fe5GeTe2Status where
+  orderedPhaseLabel := "UUU phase"
+  originalBrillouinZoneShown := true
+  reconstructedSqrt3BrillouinZoneShown := true
+  gammaToKReplicaBandsReported := true
+  lowTemperatureK := 8
+  highTemperatureK := 180
+  spectralWeightIntegrationLowerBindingMeV := 50
+  spectralWeightIntegrationUpperBindingMeV := 0
   primaryPaperReportsBandFolding := true
   primaryPaperReportsFlatBandNestingVector := true
   primaryPaperReportsLindhardSupport := true

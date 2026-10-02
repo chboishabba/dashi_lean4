@@ -1,0 +1,42 @@
+name: BSD cohomological Sha donor
+
+on:
+  push:
+    branches:
+      - 'agent/bsd-cohomological-sha-v435-20261002'
+    paths:
+      - 'BSDCohomology/**'
+      - 'Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean'
+      - 'Synthesis/MillenniumBSDSelmerShaCohomologicalBoundary.lean'
+      - 'Synthesis/MillenniumBSDActualE2H1LowDegreeReduction.lean'
+      - 'Synthesis.lean'
+      - 'BSDCohomology.lean'
+      - 'lakefile.toml'
+      - 'lean-toolchain'
+      - '.github/workflows/bsd-cohomological-sha.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sha:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+        with:
+          build: false
+      - name: Resolve pinned current Mathlib
+        run: lake update
+      - name: Build genuine Sha donor
+        run: lake build BSDCohomology
+      - name: Kernel check genuine Sha donor
+        run: |
+          lake env lean BSDCohomology/EllipticTwoTorsionAction.lean
+          lake env lean BSDCohomology/EllipticPointTopRep.lean
+          lake env lean BSDCohomology/EllipticShaTarget.lean
+          lake env lean BSDCohomology/EllipticKummerKernelExact.lean
+          lake env lean BSDCohomology/GenuineDegreeOneShaTwoTorsion.lean
+          lake env lean Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean

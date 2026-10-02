@@ -164,6 +164,84 @@ theorem symmetricShiftPairMoment_eq_integral
   unfold symmetricShiftPower
   ring
 
+/-- Exact low even moments.  These are the near-line cancellation engine. -/
+theorem threeTapRawMoment_zero_exact
+    {g : ℝ → ℝ}
+    (hg : Continuous g)
+    (hgc : HasCompactSupport g)
+    (eps L : ℝ) :
+    threeTapRawMoment g eps L 0
+      = (1 + 2*eps) * rawMoment g 0 := by
+  rw [threeTapRawMoment_eq_base_add_pair hg hgc,
+      symmetricShiftPairMoment_eq_integral hg hgc]
+  rw [show
+      (fun u : ℝ => symmetricShiftPower 0 L u * g u)
+        = fun u => 2 * g u by
+      funext u
+      rw [symmetricShiftPower_zero]
+      ring,
+      integral_const_mul]
+  unfold rawMoment
+  simp only [pow_zero, one_mul]
+  ring
+
+theorem threeTapRawMoment_two_exact
+    {g : ℝ → ℝ}
+    (hg : Continuous g)
+    (hgc : HasCompactSupport g)
+    (eps L : ℝ) :
+    threeTapRawMoment g eps L 2
+      =
+    (1 + 2*eps) * rawMoment g 2
+      + 2*eps*L^2 * rawMoment g 0 := by
+  rw [threeTapRawMoment_eq_base_add_pair hg hgc,
+      symmetricShiftPairMoment_eq_integral hg hgc]
+  have h0 := integrable_pow_mul_of_continuous_compact hg hgc 0
+  have h2 := integrable_pow_mul_of_continuous_compact hg hgc 2
+  rw [show
+      (fun u : ℝ => symmetricShiftPower 2 L u * g u)
+        =
+      fun u =>
+        2 * (u^2 * g u) + (2*L^2) * (u^0 * g u) by
+      funext u
+      rw [symmetricShiftPower_two]
+      ring,
+      integral_add (h2.const_mul 2) (h0.const_mul (2*L^2)),
+      integral_const_mul, integral_const_mul]
+  unfold rawMoment
+  ring
+
+theorem threeTapRawMoment_four_exact
+    {g : ℝ → ℝ}
+    (hg : Continuous g)
+    (hgc : HasCompactSupport g)
+    (eps L : ℝ) :
+    threeTapRawMoment g eps L 4
+      =
+    (1 + 2*eps) * rawMoment g 4
+      + 12*eps*L^2 * rawMoment g 2
+      + 2*eps*L^4 * rawMoment g 0 := by
+  rw [threeTapRawMoment_eq_base_add_pair hg hgc,
+      symmetricShiftPairMoment_eq_integral hg hgc]
+  have h0 := integrable_pow_mul_of_continuous_compact hg hgc 0
+  have h2 := integrable_pow_mul_of_continuous_compact hg hgc 2
+  have h4 := integrable_pow_mul_of_continuous_compact hg hgc 4
+  rw [show
+      (fun u : ℝ => symmetricShiftPower 4 L u * g u)
+        =
+      fun u =>
+        2*(u^4*g u) + (12*L^2)*(u^2*g u)
+          + (2*L^4)*(u^0*g u) by
+      funext u
+      rw [symmetricShiftPower_four]
+      ring,
+      integral_add (h4.const_mul 2)
+        ((h2.const_mul (12*L^2)).add (h0.const_mul (2*L^4))),
+      integral_add (h2.const_mul (12*L^2)) (h0.const_mul (2*L^4)),
+      integral_const_mul, integral_const_mul, integral_const_mul]
+  unfold rawMoment
+  ring
+
 /-- The exact sixth transformed moment, before any sign estimate. -/
 theorem threeTapRawMoment_six_exact
     {g : ℝ → ℝ}

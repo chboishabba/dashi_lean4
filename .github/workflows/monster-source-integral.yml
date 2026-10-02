@@ -13,6 +13,8 @@ on:
       - "Integration/OggSSP2BActualFiveLengthNoGo.lean"
       - "Integration/OggSSP2BActualFiveSlices.lean"
       - "Integration/OggSSP2BNormalizerFiveByTwoRecognition.lean"
+      - "Integration/OggSSP2BM22CompletionTenCandidate.lean"
+      - "Integration/OggSSP2BCo1TenDimensionalNoGo.lean"
       - "Integration/OggSSP2BFiveByTwoDefectArchitecture.lean"
       - "Integration/OggSSP2BResidualC4BinaryPhaseNoGo.lean"
       - "Integration/Selected3BActualMonsterCharacterFingerprint.lean"
@@ -54,6 +56,8 @@ jobs:
           lake env lean Integration/OggSSP2BResidualC4BinaryPhaseNoGo.lean
           lake env lean Integration/OggSSP2BFiveByTwoDefectArchitecture.lean
           lake env lean Integration/OggSSP2BNormalizerFiveByTwoRecognition.lean
+          lake env lean Integration/OggSSP2BCo1TenDimensionalNoGo.lean
+          lake env lean Integration/OggSSP2BM22CompletionTenCandidate.lean
           lake env lean Integration/OggSSP2BActualSourceParityNormalizationAudit.lean
       - name: Check actual 3B fingerprint and projection
         run: |

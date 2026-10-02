@@ -411,3 +411,4 @@ obligations.
 -/
 import Synthesis.MillenniumBSDCohomologicalShaLocalizationExact
 import Synthesis.MillenniumBSDActualE2ShaSameObjectMaxCut
+import BSDCohomology.EllipticKummerDivisibilityReduction

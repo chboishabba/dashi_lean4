@@ -268,4 +268,81 @@ theorem QuarticFourSignedPolePair.threeTapNormalizedCosineSixthRemainder_abs_le_
       gcongr
       exact W.threeTapNormalizedProjectiveAbsMomentEight_le
 
+/-! ## Adaptive two-variable local domain -/
+
+private theorem log_two_lt_one_for_threeTap : Real.log 2 < 1 := by
+  have h := Real.log_lt_sub_one_of_pos
+    (by norm_num : (0:ℝ) < 2) (by norm_num : (2:ℝ) ≠ 1)
+  norm_num at h ⊢
+  exact h
+
+theorem QuarticFourSignedPolePair.threeTapNormalizedSupportRadius_le_two_r
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapNormalizedSupportRadius <= 2 * (t/16) := by
+  have hr : 0 < t/16 := by linarith
+  have hrlo : (25/2 : ℝ) <= t/16 := by linarith
+  have hpi : Real.pi < 4 := Real.pi_lt_four
+  have hlog := log_two_lt_one_for_threeTap
+  have hBpos : 0 < threeTapNormalizedShift t (Real.log 2) := by
+    unfold threeTapNormalizedShift
+    positivity
+  unfold QuarticFourSignedPolePair.threeTapNormalizedSupportRadius
+  rw [abs_of_pos hBpos]
+  unfold threeTapNormalizedShift
+  nlinarith
+
+/-- Every critical-strip zero has normalized height inside the adaptive
+Taylor radius.  Thus the new support radius controls both alpha and q. -/
+theorem QuarticFourSignedPolePair.threeTap_zero_alpha_abs_le_adaptive
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    |heightOf rho / (t/16)| <= W.threeTapAdaptiveLocalRadius := by
+  have hr : 0 < t/16 := by linarith
+  have hSpos := W.threeTapNormalizedSupportRadius_pos
+  have hSle := W.threeTapNormalizedSupportRadius_le_two_r ht
+  have hstrip := zetaZero_height_abs_le_half rho
+  have ha :
+      |heightOf rho / (t/16)|
+        <= (1/2 : ℝ) / (t/16) := by
+    rw [abs_div, abs_of_pos hr]
+    exact div_le_div_of_nonneg_right hstrip hr.le
+  have hhalf :
+      (1/2 : ℝ) / (t/16)
+        <= 1 / W.threeTapNormalizedSupportRadius := by
+    rw [div_le_div_iff₀ hr hSpos]
+    nlinarith
+  unfold QuarticFourSignedPolePair.threeTapAdaptiveLocalRadius
+  exact ha.trans hhalf
+
+def quarticSignedPoleThreeTapAdaptiveLocal
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) : Prop :=
+  |quarticSignedPoleNormalizedOrdinateOffset t rho|
+    <= W.threeTapAdaptiveLocalRadius
+
+def quarticSignedPoleThreeTapAdaptiveFar
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) : Prop :=
+  W.threeTapAdaptiveLocalRadius
+    < |quarticSignedPoleNormalizedOrdinateOffset t rho|
+
+theorem quarticSignedPole_threeTapAdaptive_local_far
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    quarticSignedPoleThreeTapAdaptiveLocal W rho
+      ∨ quarticSignedPoleThreeTapAdaptiveFar W rho := by
+  exact le_or_gt _ _
+
+theorem QuarticFourSignedPolePair.threeTapAdaptive_local_q_bound
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    {rho : Zeros}
+    (hl : quarticSignedPoleThreeTapAdaptiveLocal W rho) :
+    |quarticSignedPoleNormalizedOrdinateOffset t rho|
+      <= W.threeTapAdaptiveLocalRadius := hl
+
 end Synthesis

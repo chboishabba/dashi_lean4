@@ -150,6 +150,115 @@ theorem heightDefect_detectorThreeTap_zero_height
       (detectorThreeTap g eps L) r 0 0 = 0 := by
   exact heightDefect_at_zero_height _ _
 
+
+/-! ## Same-object transformed selected-zero target -/
+
+def QuarticFourSignedPolePair.threeTapCombinedZeroHeightDefect
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) (rho : Zeros) : ℝ :=
+  W.poleTwo *
+      Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile.zeroHeightDefect
+        (W.threeTapHalf eps) (t/16) rho
+    +
+  (-W.poleHalf) *
+      Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile.zeroHeightDefect
+        (W.threeTapTwo eps) (t/16) rho
+
+def QuarticFourSignedPolePair.threeTapCombinedTargetLinearCoeff
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) : ℝ :=
+  ((Zeta23.zetaZeroConfig).mult (rho : ℂ) : ℝ)
+    *
+    (
+      W.poleTwo *
+        threeTapHeightDefectLinearCoeff
+          (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+          (Real.log 2) (t/16) (heightOf rho) 0
+      -
+      W.poleHalf *
+        threeTapHeightDefectLinearCoeff
+          (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+          (Real.log 2) (t/16) (heightOf rho) 0
+    )
+
+def QuarticFourSignedPolePair.threeTapCombinedTargetQuadraticCoeff
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) : ℝ :=
+  ((Zeta23.zetaZeroConfig).mult (rho : ℂ) : ℝ)
+    *
+    (
+      W.poleTwo *
+        threeTapHeightDefectQuadraticCoeff
+          (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+          (Real.log 2) (t/16) (heightOf rho) 0
+      -
+      W.poleHalf *
+        threeTapHeightDefectQuadraticCoeff
+          (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+          (Real.log 2) (t/16) (heightOf rho) 0
+    )
+
+theorem QuarticFourSignedPolePair.threeTapCombinedZeroHeightDefect_zero
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.threeTapCombinedZeroHeightDefect 0 rho
+      = W.combinedZeroHeightDefect rho := by
+  rw [W.combinedZeroHeightDefect_eq_linear]
+  unfold QuarticFourSignedPolePair.threeTapCombinedZeroHeightDefect
+    QuarticFourSignedPolePair.threeTapHalf
+    QuarticFourSignedPolePair.threeTapTwo
+    detectorThreeTap
+  simp
+
+/-- Exact source-native target polynomial for the selected zero. -/
+theorem QuarticFourSignedPolePair.threeTapCombinedZeroHeightDefect_quadratic
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.threeTapCombinedZeroHeightDefect eps rho
+      =
+    W.combinedZeroHeightDefect rho
+      + eps * W.threeTapCombinedTargetLinearCoeff rho
+      + eps^2 * W.threeTapCombinedTargetQuadraticCoeff rho := by
+  have hhalf :=
+    heightDefect_detectorThreeTap_quadratic
+      (quarticFourPhysicalDetector_contDiff
+        (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf) (t:=t) W.Rpos).continuous
+      (quarticFourPhysicalDetector_compact
+        (R:=W.R) (lam:=(1/2 : ℝ)) (mu:=W.muHalf) (t:=t)
+        W.Rpos (by linarith : 0 < t))
+      eps (Real.log 2) (t/16) (heightOf rho) 0
+  have htwo :=
+    heightDefect_detectorThreeTap_quadratic
+      (quarticFourPhysicalDetector_contDiff
+        (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo) (t:=t) W.Rpos).continuous
+      (quarticFourPhysicalDetector_compact
+        (R:=W.R) (lam:=(2/3 : ℝ)) (mu:=W.muTwo) (t:=t)
+        W.Rpos (by linarith : 0 < t))
+      eps (Real.log 2) (t/16) (heightOf rho) 0
+  rw [W.combinedZeroHeightDefect_eq_linear]
+  unfold QuarticFourSignedPolePair.threeTapCombinedZeroHeightDefect
+    QuarticFourSignedPolePair.threeTapCombinedTargetLinearCoeff
+    QuarticFourSignedPolePair.threeTapCombinedTargetQuadraticCoeff
+    QuarticFourSignedPolePair.threeTapHalf
+    QuarticFourSignedPolePair.threeTapTwo
+    Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile.zeroHeightDefect
+  rw [hhalf, htwo]
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapCombinedZeroHeightDefect_at_line
+    {t eps : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hline : heightOf rho = 0) :
+    W.threeTapCombinedZeroHeightDefect eps rho = 0 := by
+  unfold QuarticFourSignedPolePair.threeTapCombinedZeroHeightDefect
+    Zeta23Bridge.LiteralWeilClusterTwoRadiusProfile.zeroHeightDefect
+  rw [hline]
+  rw [heightDefect_at_zero_height, heightDefect_at_zero_height]
+  ring
+
 /-! ## Physical-to-normalized shift firewall -/
 
 def threeTapNormalizedShift (t L : ℝ) : ℝ :=

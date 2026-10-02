@@ -10,6 +10,9 @@ on:
       - 'CondensedMatter/InternallyAntisymmetricTripletExchange.lean'
       - 'CondensedMatter/YbSb2BdGSymmetryBoundary.lean'
       - 'CondensedMatter/YbSb2DiracMassSign.lean'
+      - 'CondensedMatter/BdGNambuParticleHoleExact.lean'
+      - 'CondensedMatter/YbSb2BdGParticleHoleAdapter.lean'
+      - 'CondensedMatter/YbSb2MajoranaQuantumComputerBridge.lean'
       - '.github/workflows/yb-sb2-trsb-int.yml'
   pull_request:
     paths:
@@ -20,6 +23,9 @@ on:
       - 'CondensedMatter/InternallyAntisymmetricTripletExchange.lean'
       - 'CondensedMatter/YbSb2BdGSymmetryBoundary.lean'
       - 'CondensedMatter/YbSb2DiracMassSign.lean'
+      - 'CondensedMatter/BdGNambuParticleHoleExact.lean'
+      - 'CondensedMatter/YbSb2BdGParticleHoleAdapter.lean'
+      - 'CondensedMatter/YbSb2MajoranaQuantumComputerBridge.lean'
       - '.github/workflows/yb-sb2-trsb-int.yml'
   workflow_dispatch:
 
@@ -43,3 +49,9 @@ jobs:
         run: lake env lean CondensedMatter/YbSb2BdGSymmetryBoundary.lean
       - name: Check Dirac mass sign
         run: lake env lean CondensedMatter/YbSb2DiracMassSign.lean
+      - name: Check reusable Nambu PHS theorem
+        run: lake env lean CondensedMatter/BdGNambuParticleHoleExact.lean
+      - name: Check YbSb2 BdG PHS adapter
+        run: lake env lean CondensedMatter/YbSb2BdGParticleHoleAdapter.lean
+      - name: Check Majorana quantum-computer bridge
+        run: lake env lean CondensedMatter/YbSb2MajoranaQuantumComputerBridge.lean

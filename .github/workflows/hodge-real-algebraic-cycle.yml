@@ -28,6 +28,7 @@ jobs:
       - name: Resolve current Mathlib
         run: lake update
       - name: Kernel check real algebraic-cycle multiplicity donor
-        run: lake env lean Synthesis/MillenniumHodgeRealAlgebraicCycleMultiplicityExact.lean
+        run: |
+          lake env lean Synthesis/MillenniumHodgeRealAlgebraicCycleMultiplicityExact.lean
           lake env lean Synthesis/MillenniumHodgeP1xP1PrimitiveRulingRegressionExact.lean
           lake env lean Synthesis/MillenniumHodgeActualCycleCorrespondenceActionExact.lean

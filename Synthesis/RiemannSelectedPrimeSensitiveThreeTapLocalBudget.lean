@@ -2,17 +2,24 @@ import Synthesis.RiemannSelectedPrimeSensitiveSymmetricShiftMoments
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleLocalRemainderBounds
 
 /-!
-# Three-tap transformed local-budget primitives
+# Three-tap transformed projective local-budget frontier
 
-This module moves the local Taylor data onto the same transformed normalized
-signed profile used by the physical three-tap detector.
+Projectivization is detector-dependent: translating the source taper changes
+the on-line response column, so in general
 
-The fixed physical shift log 2 becomes B(t)=(t/16)log 2.  The transformed
-support radius is therefore allowed to grow with |B(t)|; the old canonical
-radius 1/(pi+1) is not reused.
+  projectiveProfile (T_eps g) != T_eps (projectiveProfile g).
 
-The file pays exact support, sixth moment and eighth moment objects.  The final
-absolute eighth-and-higher terminal inequality remains an analytic estimate.
+Accordingly this file defines the transformed local-moment object directly
+from the ACTUAL translated detector in each endpoint channel.  The generic
+symmetric-shift moment algebra remains useful for linear subexpressions, but is
+not used to identify these projective moments without a theorem.
+
+The fixed physical shift log 2 becomes B(t)=(t/16)log 2 in the normalized
+source coordinate.  At t>=200 B(t)>pi+1, proving that the old canonical
+|q u|<=1 Taylor domain cannot simply be reused.
+
+The transformed absolute M6/M8 estimate and a recut local/far compiler remain
+the analytic frontier.
 -/
 
 noncomputable section
@@ -21,13 +28,120 @@ namespace Synthesis
 open MeasureTheory
 open scoped Real
 
-def QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile
+/-- Same-object transformed physical projective profile, endpoint lambda=1/2. -/
+def QuarticFourSignedPolePair.threeTapProjectiveProfileHalf
     {t : ℝ} (W : QuarticFourSignedPolePair t)
     (eps : ℝ) : ℝ → ℝ :=
-  detectorThreeTap
-    (quarticFourSignedPoleCombinedProfile
-      W.R W.muHalf W.muTwo t)
-    eps (threeTapNormalizedShift t (Real.log 2))
+  genericProjectivePhysicalProfile (W.threeTapHalf eps) (t/16)
+
+/-- Same-object transformed physical projective profile, endpoint lambda=2/3. -/
+def QuarticFourSignedPolePair.threeTapProjectiveProfileTwo
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) : ℝ → ℝ :=
+  genericProjectivePhysicalProfile (W.threeTapTwo eps) (t/16)
+
+/-- The exact pole-weighted transformed projective profile. -/
+def QuarticFourSignedPolePair.threeTapSignedProjectiveProfile
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) : ℝ → ℝ :=
+  fun u =>
+    W.poleTwo * W.threeTapProjectiveProfileHalf eps u
+      + (-W.poleHalf) * W.threeTapProjectiveProfileTwo eps u
+
+theorem QuarticFourSignedPolePair.threeTapProjectiveProfileHalf_continuous
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    Continuous (W.threeTapProjectiveProfileHalf eps) := by
+  unfold QuarticFourSignedPolePair.threeTapProjectiveProfileHalf
+  exact genericProjectivePhysicalProfile_continuous
+    (detectorThreeTap_contDiff
+      (quarticFourPhysicalDetector_contDiff W.Rpos)
+      eps (Real.log 2)).continuous
+    (t/16)
+
+theorem QuarticFourSignedPolePair.threeTapProjectiveProfileTwo_continuous
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    Continuous (W.threeTapProjectiveProfileTwo eps) := by
+  unfold QuarticFourSignedPolePair.threeTapProjectiveProfileTwo
+  exact genericProjectivePhysicalProfile_continuous
+    (detectorThreeTap_contDiff
+      (quarticFourPhysicalDetector_contDiff W.Rpos)
+      eps (Real.log 2)).continuous
+    (t/16)
+
+theorem QuarticFourSignedPolePair.threeTapProjectiveProfileHalf_compact
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    HasCompactSupport (W.threeTapProjectiveProfileHalf eps) := by
+  unfold QuarticFourSignedPolePair.threeTapProjectiveProfileHalf
+  exact genericProjectivePhysicalProfile_compact
+    (detectorThreeTap_compact
+      (quarticFourPhysicalDetector_compact
+        W.Rpos (by linarith : 0 < t))
+      eps (Real.log 2))
+    (t/16)
+
+theorem QuarticFourSignedPolePair.threeTapProjectiveProfileTwo_compact
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    HasCompactSupport (W.threeTapProjectiveProfileTwo eps) := by
+  unfold QuarticFourSignedPolePair.threeTapProjectiveProfileTwo
+  exact genericProjectivePhysicalProfile_compact
+    (detectorThreeTap_compact
+      (quarticFourPhysicalDetector_compact
+        W.Rpos (by linarith : 0 < t))
+      eps (Real.log 2))
+    (t/16)
+
+theorem QuarticFourSignedPolePair.threeTapSignedProjectiveProfile_continuous
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    Continuous (W.threeTapSignedProjectiveProfile eps) := by
+  unfold QuarticFourSignedPolePair.threeTapSignedProjectiveProfile
+  fun_prop
+
+theorem QuarticFourSignedPolePair.threeTapSignedProjectiveProfile_compact
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    HasCompactSupport (W.threeTapSignedProjectiveProfile eps) := by
+  unfold QuarticFourSignedPolePair.threeTapSignedProjectiveProfile
+  exact
+    (W.threeTapProjectiveProfileHalf_compact ht).mul_left.add
+      (W.threeTapProjectiveProfileTwo_compact ht).mul_left
+
+/-- Source-native absolute moments for the transformed projective object. -/
+def QuarticFourSignedPolePair.threeTapProjectiveAbsMoment
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) (k : ℕ) : ℝ :=
+  compactProfileAbsMoment (W.threeTapSignedProjectiveProfile eps) k
+
+def QuarticFourSignedPolePair.threeTapProjectiveAbsMomentSix
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) : ℝ :=
+  W.threeTapProjectiveAbsMoment eps 6
+
+def QuarticFourSignedPolePair.threeTapProjectiveAbsMomentEight
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) : ℝ :=
+  W.threeTapProjectiveAbsMoment eps 8
+
+theorem QuarticFourSignedPolePair.threeTapProjectiveAbsMoment_nonneg
+    {t eps : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (k : ℕ) :
+    0 <= W.threeTapProjectiveAbsMoment eps k := by
+  unfold QuarticFourSignedPolePair.threeTapProjectiveAbsMoment
+    compactProfileAbsMoment
+  positivity
+
+/-! ## Normalized source-shift firewall -/
 
 def QuarticFourSignedPolePair.threeTapNormalizedSupportRadius
     {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
@@ -52,322 +166,6 @@ theorem QuarticFourSignedPolePair.threeTapAdaptiveLocalRadius_pos
   unfold QuarticFourSignedPolePair.threeTapAdaptiveLocalRadius
   positivity
 
-theorem detectorThreeTap_support_abs_le_add
-    {g : ℝ → ℝ} {S eps L u : ℝ}
-    (hS0 : 0 ≤ S)
-    (hS : ∀ v : ℝ, g v ≠ 0 → |v| ≤ S)
-    (hu : detectorThreeTap g eps L u ≠ 0) :
-    |u| ≤ S + |L| := by
-  by_contra hnot
-  have hfar : S + |L| < |u| := lt_of_not_ge hnot
-  have hz (v : ℝ) (hv : S < |v|) : g v = 0 := by
-    by_contra hne
-    exact (not_lt_of_ge (hS v hne)) hv
-  have hminusTri : |u| ≤ |u-L| + |L| := by
-    calc
-      |u| = |(u-L)+L| := by congr 1 <;> ring
-      _ ≤ |u-L| + |L| := abs_add _ _
-  have hplusTri : |u| ≤ |u+L| + |L| := by
-    calc
-      |u| = |(u+L)-L| := by congr 1 <;> ring
-      _ ≤ |u+L| + |L| := by
-        simpa [sub_eq_add_neg, abs_neg] using abs_add (u+L) (-L)
-  have hminus : S < |u-L| := by linarith
-  have hplus : S < |u+L| := by linarith
-  have hu0 : S < |u| := by
-    have ha := abs_nonneg L
-    linarith
-  have h0 := hz u hu0
-  have hm := hz (u-L) hminus
-  have hp := hz (u+L) hplus
-  apply hu
-  simp [detectorThreeTap, h0, hm, hp]
-
-theorem QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile_support
-    {t eps u : ℝ}
-    (W : QuarticFourSignedPolePair t)
-    (hu : W.threeTapNormalizedCombinedProfile eps u ≠ 0) :
-    |u| ≤ W.threeTapNormalizedSupportRadius := by
-  unfold QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile
-    QuarticFourSignedPolePair.threeTapNormalizedSupportRadius
-  apply detectorThreeTap_support_abs_le_add
-    (S := Real.pi + 1)
-  · positivity
-  · intro v hv
-    exact W.combinedProfile_support_abs_le_pi_add_one v hv
-  · exact hu
-
-theorem QuarticFourSignedPolePair.abs_q_mul_u_le_one_of_threeTapAdaptive
-    {t eps q u : ℝ}
-    (W : QuarticFourSignedPolePair t)
-    (hq : |q| ≤ W.threeTapAdaptiveLocalRadius)
-    (hu : W.threeTapNormalizedCombinedProfile eps u ≠ 0) :
-    |q*u| ≤ 1 := by
-  have hus := W.threeTapNormalizedCombinedProfile_support hu
-  rw [abs_mul]
-  unfold QuarticFourSignedPolePair.threeTapAdaptiveLocalRadius at hq
-  have hS := W.threeTapNormalizedSupportRadius_pos
-  have hqS :
-      |q| * W.threeTapNormalizedSupportRadius ≤ 1 := by
-    calc
-      |q| * W.threeTapNormalizedSupportRadius
-        ≤ (1 / W.threeTapNormalizedSupportRadius)
-            * W.threeTapNormalizedSupportRadius :=
-          mul_le_mul_of_nonneg_right hq hS.le
-      _ = 1 := by field_simp [hS.ne']
-  exact (mul_le_mul_of_nonneg_left hus (abs_nonneg q)).trans hqS
-
-def QuarticFourSignedPolePair.threeTapSignedProfileMomentZero
-    {t : ℝ} (W : QuarticFourSignedPolePair t)
-    (eps : ℝ) : ℝ :=
-  rawMoment (W.threeTapNormalizedCombinedProfile eps) 0
-
-def QuarticFourSignedPolePair.threeTapSignedProfileMomentTwo
-    {t : ℝ} (W : QuarticFourSignedPolePair t)
-    (eps : ℝ) : ℝ :=
-  rawMoment (W.threeTapNormalizedCombinedProfile eps) 2
-
-def QuarticFourSignedPolePair.threeTapSignedProfileMomentFour
-    {t : ℝ} (W : QuarticFourSignedPolePair t)
-    (eps : ℝ) : ℝ :=
-  rawMoment (W.threeTapNormalizedCombinedProfile eps) 4
-
-theorem QuarticFourSignedPolePair.baseRawMomentZero_eq_zero
-    {t : ℝ} (W : QuarticFourSignedPolePair t) :
-    rawMoment
-      (quarticFourSignedPoleCombinedProfile
-        W.R W.muHalf W.muTwo t) 0 = 0 := by
-  unfold rawMoment
-  simp only [pow_zero, one_mul]
-  change profileZerothMoment
-    (quarticFourSignedPoleCombinedProfile
-      W.R W.muHalf W.muTwo t) = 0
-  exact quarticFourSignedPoleCombinedProfile_zeroth_zero W.Rpos
-
-theorem QuarticFourSignedPolePair.baseRawMomentTwo_eq_zero
-    {t : ℝ} (W : QuarticFourSignedPolePair t) :
-    rawMoment
-      (quarticFourSignedPoleCombinedProfile
-        W.R W.muHalf W.muTwo t) 2 = 0 := by
-  unfold rawMoment
-  change profileSecondMoment
-    (quarticFourSignedPoleCombinedProfile
-      W.R W.muHalf W.muTwo t) = 0
-  exact quarticFourSignedPoleCombinedProfile_second_zero
-    W.Rpos W.J2Half W.J2Two
-
-theorem QuarticFourSignedPolePair.baseRawMomentFour_eq
-    {t : ℝ} (W : QuarticFourSignedPolePair t) :
-    rawMoment
-      (quarticFourSignedPoleCombinedProfile
-        W.R W.muHalf W.muTwo t) 4
-      = -4 * W.targetStrength := by
-  unfold rawMoment
-  change profileFourthMoment
-    (quarticFourSignedPoleCombinedProfile
-      W.R W.muHalf W.muTwo t)
-      = -4 * W.targetStrength
-  rw [quarticFourSignedPoleCombinedProfile_fourth W.Rpos]
-  unfold QuarticFourSignedPolePair.targetStrength
-  ring
-
-theorem QuarticFourSignedPolePair.threeTapSignedProfileMomentZero_eq_zero
-    {t eps : ℝ}
-    (W : QuarticFourSignedPolePair t) :
-    W.threeTapSignedProfileMomentZero eps = 0 := by
-  let P :=
-    quarticFourSignedPoleCombinedProfile
-      W.R W.muHalf W.muTwo t
-  have hP : Continuous P :=
-    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
-  have hPc : HasCompactSupport P :=
-    quarticFourSignedPoleCombinedProfile_compact W.Rpos
-  unfold QuarticFourSignedPolePair.threeTapSignedProfileMomentZero
-    QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile
-  rw [threeTapRawMoment_zero_exact hP hPc,
-      W.baseRawMomentZero_eq_zero]
-  ring
-
-theorem QuarticFourSignedPolePair.threeTapSignedProfileMomentTwo_eq_zero
-    {t eps : ℝ}
-    (W : QuarticFourSignedPolePair t) :
-    W.threeTapSignedProfileMomentTwo eps = 0 := by
-  let P :=
-    quarticFourSignedPoleCombinedProfile
-      W.R W.muHalf W.muTwo t
-  have hP : Continuous P :=
-    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
-  have hPc : HasCompactSupport P :=
-    quarticFourSignedPoleCombinedProfile_compact W.Rpos
-  unfold QuarticFourSignedPolePair.threeTapSignedProfileMomentTwo
-    QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile
-  rw [threeTapRawMoment_two_exact hP hPc,
-      W.baseRawMomentZero_eq_zero,
-      W.baseRawMomentTwo_eq_zero]
-  ring
-
-theorem QuarticFourSignedPolePair.threeTapSignedProfileMomentFour_eq
-    {t eps : ℝ}
-    (W : QuarticFourSignedPolePair t) :
-    W.threeTapSignedProfileMomentFour eps
-      = -4 * (1 + 2*eps) * W.targetStrength := by
-  let P :=
-    quarticFourSignedPoleCombinedProfile
-      W.R W.muHalf W.muTwo t
-  have hP : Continuous P :=
-    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
-  have hPc : HasCompactSupport P :=
-    quarticFourSignedPoleCombinedProfile_compact W.Rpos
-  unfold QuarticFourSignedPolePair.threeTapSignedProfileMomentFour
-    QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile
-  rw [threeTapRawMoment_four_exact hP hPc,
-      W.baseRawMomentZero_eq_zero,
-      W.baseRawMomentTwo_eq_zero,
-      W.baseRawMomentFour_eq]
-  ring
-
-/-- The transformed normalized profile retains the quartic near-line
-cancellation unless eps=-1/2. -/
-theorem QuarticFourSignedPolePair.threeTap_quartic_coefficient_neg
-    {t eps : ℝ}
-    (W : QuarticFourSignedPolePair t)
-    (heps : -(1/2 : ℝ) < eps) :
-    W.threeTapSignedProfileMomentFour eps < 0 := by
-  rw [W.threeTapSignedProfileMomentFour_eq]
-  have hfac : 0 < 1 + 2*eps := by linarith
-  have hS := W.signedTargetStrength
-  nlinarith
-
-def QuarticFourSignedPolePair.threeTapSignedProfileMomentSix
-    {t : ℝ} (W : QuarticFourSignedPolePair t)
-    (eps : ℝ) : ℝ :=
-  rawMoment (W.threeTapNormalizedCombinedProfile eps) 6
-
-def QuarticFourSignedPolePair.threeTapSignedProfileMomentEight
-    {t : ℝ} (W : QuarticFourSignedPolePair t)
-    (eps : ℝ) : ℝ :=
-  rawMoment (W.threeTapNormalizedCombinedProfile eps) 8
-
-def QuarticFourSignedPolePair.threeTapSignedProfileAbsMomentEight
-    {t : ℝ} (W : QuarticFourSignedPolePair t)
-    (eps : ℝ) : ℝ :=
-  compactProfileAbsMoment
-    (W.threeTapNormalizedCombinedProfile eps) 8
-
-theorem QuarticFourSignedPolePair.threeTapSignedProfileAbsMomentEight_nonneg
-    {t eps : ℝ}
-    (W : QuarticFourSignedPolePair t) :
-    0 ≤ W.threeTapSignedProfileAbsMomentEight eps := by
-  unfold QuarticFourSignedPolePair.threeTapSignedProfileAbsMomentEight
-    compactProfileAbsMoment
-  positivity
-
-theorem QuarticFourSignedPolePair.rawMomentSix_eq_signedProfileMomentSix
-    {t : ℝ} (W : QuarticFourSignedPolePair t) :
-    rawMoment
-      (quarticFourSignedPoleCombinedProfile
-        W.R W.muHalf W.muTwo t) 6
-      = W.signedProfileMomentSix := by
-  unfold rawMoment QuarticFourSignedPolePair.signedProfileMomentSix
-  apply integral_congr_ae
-  filter_upwards with u
-  ring
-
-theorem QuarticFourSignedPolePair.threeTapSignedProfileMomentSix_exact
-    {t eps : ℝ}
-    (W : QuarticFourSignedPolePair t) :
-    W.threeTapSignedProfileMomentSix eps
-      =
-    W.signedProfileMomentSix
-      + eps *
-        ∫ u : ℝ,
-          (2*u^6
-            + 30*(threeTapNormalizedShift t (Real.log 2))^2*u^4
-            + 30*(threeTapNormalizedShift t (Real.log 2))^4*u^2
-            + 2*(threeTapNormalizedShift t (Real.log 2))^6)
-          *
-          quarticFourSignedPoleCombinedProfile
-            W.R W.muHalf W.muTwo t u := by
-  let P :=
-    quarticFourSignedPoleCombinedProfile
-      W.R W.muHalf W.muTwo t
-  have hP : Continuous P :=
-    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
-  have hPc : HasCompactSupport P :=
-    quarticFourSignedPoleCombinedProfile_compact W.Rpos
-  unfold QuarticFourSignedPolePair.threeTapSignedProfileMomentSix
-    QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile
-  rw [threeTapRawMoment_six_exact hP hPc,
-      W.rawMomentSix_eq_signedProfileMomentSix]
-  rfl
-
-theorem QuarticFourSignedPolePair.threeTapSignedProfileMomentEight_exact
-    {t eps : ℝ}
-    (W : QuarticFourSignedPolePair t) :
-    W.threeTapSignedProfileMomentEight eps
-      =
-    rawMoment
-      (quarticFourSignedPoleCombinedProfile
-        W.R W.muHalf W.muTwo t) 8
-      + eps *
-        ∫ u : ℝ,
-          (2*u^8
-            + 56*(threeTapNormalizedShift t (Real.log 2))^2*u^6
-            + 140*(threeTapNormalizedShift t (Real.log 2))^4*u^4
-            + 56*(threeTapNormalizedShift t (Real.log 2))^6*u^2
-            + 2*(threeTapNormalizedShift t (Real.log 2))^8)
-          *
-          quarticFourSignedPoleCombinedProfile
-            W.R W.muHalf W.muTwo t u := by
-  let P :=
-    quarticFourSignedPoleCombinedProfile
-      W.R W.muHalf W.muTwo t
-  have hP : Continuous P :=
-    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
-  have hPc : HasCompactSupport P :=
-    quarticFourSignedPoleCombinedProfile_compact W.Rpos
-  unfold QuarticFourSignedPolePair.threeTapSignedProfileMomentEight
-    QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile
-  exact threeTapRawMoment_eight_exact hP hPc eps
-    (threeTapNormalizedShift t (Real.log 2))
-
-/-! ## Canonical local radius is genuinely invalid on shifted support -/
-
-theorem QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile_at_shift
-    {t eps : ℝ}
-    (ht : 200 <= t)
-    (W : QuarticFourSignedPolePair t) :
-    W.threeTapNormalizedCombinedProfile eps
-        (threeTapNormalizedShift t (Real.log 2))
-      =
-    eps *
-      quarticFourSignedPoleCombinedProfile
-        W.R W.muHalf W.muTwo t 0 := by
-  let B := threeTapNormalizedShift t (Real.log 2)
-  have hBout :
-      Real.pi + 1 < B :=
-    threeTapNormalizedShift_logTwo_gt_pi_add_one ht
-  have hBpos : 0 < B := lt_trans (by positivity : 0 < Real.pi + 1) hBout
-  have hzB :
-      quarticFourSignedPoleCombinedProfile
-        W.R W.muHalf W.muTwo t B = 0 := by
-    by_contra hne
-    have hs := W.combinedProfile_support_abs_le_pi_add_one B hne
-    rw [abs_of_pos hBpos] at hs
-    linarith
-  have hz2B :
-      quarticFourSignedPoleCombinedProfile
-        W.R W.muHalf W.muTwo t (B+B) = 0 := by
-    by_contra hne
-    have hs := W.combinedProfile_support_abs_le_pi_add_one (B+B) hne
-    rw [abs_of_pos (by positivity : 0 < B+B)] at hs
-    linarith
-  unfold QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile
-    detectorThreeTap
-  dsimp [B] at hzB hz2B ⊢
-  rw [hzB, hz2B]
-  ring
-
 theorem QuarticFourSignedPolePair.canonical_q_times_threeTapShift_gt_one
     {t : ℝ}
     (ht : 200 <= t)
@@ -381,34 +179,20 @@ theorem QuarticFourSignedPolePair.canonical_q_times_threeTapShift_gt_one
   have hp : 0 < Real.pi + 1 := by positivity
   exact (one_lt_div hp).2 hB
 
-/-- For a nonzero transformed shifted-copy amplitude at B(t), the canonical
-Taylor prerequisite |q*u|<=1 fails at q=eta0 on an actual support point. -/
-theorem QuarticFourSignedPolePair.canonicalLocalTaylorCondition_fails_threeTap
-    {t eps : ℝ}
+/-- A literal shifted source copy is centered outside the canonical normalized
+Taylor radius.  Therefore a new local/far split is required before the old
+post-sixth terminal compiler can consume the transformed detector. -/
+theorem QuarticFourSignedPolePair.threeTap_requires_adaptive_local_recut
+    {t : ℝ}
     (ht : 200 <= t)
-    (W : QuarticFourSignedPolePair t)
-    (heps : eps ≠ 0)
-    (hcentre :
-      quarticFourSignedPoleCombinedProfile
-        W.R W.muHalf W.muTwo t 0 ≠ 0) :
-    W.threeTapNormalizedCombinedProfile eps
-        (threeTapNormalizedShift t (Real.log 2)) ≠ 0
-    ∧
-    1 <
-      |quarticSignedPoleCanonicalLocalRadius
-        * threeTapNormalizedShift t (Real.log 2)| := by
-  constructor
-  · rw [W.threeTapNormalizedCombinedProfile_at_shift ht]
-    exact mul_ne_zero heps hcentre
-  · have hprod := W.canonical_q_times_threeTapShift_gt_one ht
-    rw [abs_of_pos (lt_trans (by norm_num : (0:ℝ) < 1) hprod)]
-    exact hprod
+    (W : QuarticFourSignedPolePair t) :
+    quarticSignedPoleCanonicalLocalRadius
+      * threeTapNormalizedShift t (Real.log 2) > 1 := by
+  exact W.canonical_q_times_threeTapShift_gt_one ht
 
-/-- The adaptive normalized split has a bounded physical half-width rather
-than the original O(t) half-width.  This identity is the recut geometry. -/
+/-- The adaptive physical half-width associated to the expanded source support. -/
 theorem QuarticFourSignedPolePair.threeTapAdaptivePhysicalHalfWidth_eq
     {t : ℝ}
-    (ht : 0 < t)
     (W : QuarticFourSignedPolePair t) :
     (t/16) * W.threeTapAdaptiveLocalRadius
       =
@@ -418,5 +202,25 @@ theorem QuarticFourSignedPolePair.threeTapAdaptivePhysicalHalfWidth_eq
   unfold QuarticFourSignedPolePair.threeTapAdaptiveLocalRadius
     QuarticFourSignedPolePair.threeTapNormalizedSupportRadius
   ring
+
+/-- Explicit firewall: this equality is NOT asserted.  It names the exact
+object-identification debt that a future moment-transport theorem would have to
+pay before generic shift formulas can be reused after projectivization. -/
+def QuarticFourSignedPolePair.ThreeTapProjectiveShiftCommutes
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) : Prop :=
+  W.threeTapSignedProjectiveProfile eps
+    =
+  detectorThreeTap
+    (fun u =>
+      W.poleTwo *
+        genericProjectivePhysicalProfile
+          (quarticFourPhysicalDetector W.R (1/2) W.muHalf t)
+          (t/16) u
+      + (-W.poleHalf) *
+        genericProjectivePhysicalProfile
+          (quarticFourPhysicalDetector W.R (2/3) W.muTwo t)
+          (t/16) u)
+    eps (Real.log 2)
 
 end Synthesis

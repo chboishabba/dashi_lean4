@@ -175,4 +175,79 @@ theorem cmp119_sector_not_silently_dropped
     sector ∈ (Finset.univ : Finset CMP119ResidualSector) := by
   simp
 
+
+/--
+CMP119's source dictionary identifies V_k as a vacuum-energy CONSTANT.
+On a finite reflection boundary, the corresponding Gibbs factor exp(-v)
+is therefore a rank-one reflected-half kernel with
+  h = exp(-v/2).
+
+This theorem removes the vacuum sector from the genuinely cross-plane RP
+frontier once the literal action has been welded to that source constant.
+-/
+def cmp119ConstantVacuumCertificate
+    {ι : Type*} [Fintype ι]
+    (vacuumEnergy : ℝ) :
+    CMP119SectorReflectionCertificate ι :=
+  .halfFactor (fun _ => Real.exp (-(vacuumEnergy / 2)))
+
+theorem cmp119_constant_vacuum_kernel_eq
+    {ι : Type*} [Fintype ι]
+    (vacuumEnergy : ℝ) :
+    (cmp119ConstantVacuumCertificate
+      (ι := ι) vacuumEnergy).kernel =
+      fun _ _ => Real.exp (-vacuumEnergy) := by
+  funext i j
+  dsimp [cmp119ConstantVacuumCertificate,
+    CMP119SectorReflectionCertificate.kernel]
+  rw [← Real.exp_add]
+  congr 1
+  ring
+
+theorem cmp119_constant_vacuum_kernel_rp
+    {ι : Type*} [Fintype ι]
+    (vacuumEnergy : ℝ) :
+    ∀ test : ι → ℝ,
+      0 ≤ indexedReflectionQuadratic
+        (fun _ _ => Real.exp (-vacuumEnergy)) test := by
+  rw [← cmp119_constant_vacuum_kernel_eq
+    (ι := ι) vacuumEnergy]
+  exact (cmp119ConstantVacuumCertificate
+    (ι := ι) vacuumEnergy).reflectionPositive
+
+/--
+Three-sector residual cut after paying the source-native constant-vacuum
+identification.  E, R_operation and B remain explicit physical certificates.
+-/
+def cmp119ResidualCutWithConstantVacuum
+    {ι : Type*} [Fintype ι]
+    (regularCert rCert boundaryCert :
+      CMP119SectorReflectionCertificate ι)
+    (vacuumEnergy : ℝ)
+    (sourceKernel : ι → ι → ℝ)
+    (hSource :
+      sourceKernel =
+        fun i j =>
+          regularCert.kernel i j *
+          rCert.kernel i j *
+          boundaryCert.kernel i j *
+          Real.exp (-vacuumEnergy)) :
+    CMP119ResidualReflectionCut ι := by
+  refine
+    { certificate := fun sector =>
+        match sector with
+        | .regularE => regularCert
+        | .rOperation => rCert
+        | .boundaryB => boundaryCert
+        | .vacuumV =>
+            cmp119ConstantVacuumCertificate
+              (ι := ι) vacuumEnergy
+      sourceKernel := sourceKernel
+      sourceKernelEquation := ?_ }
+  rw [hSource]
+  funext i j
+  simp only [Finset.prod_univ_four]
+  rw [cmp119_constant_vacuum_kernel_eq]
+  ring
+
 end RequestProject.YangMills

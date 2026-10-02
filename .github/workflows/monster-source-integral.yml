@@ -11,9 +11,11 @@ on:
       - "Integration/OggSSP2BExplicitIntegralCARestriction.lean"
       - "Integration/OggSSP2BVacuumTateNormalization.lean"
       - "Integration/OggSSP2BActualFiveLengthNoGo.lean"
+      - "Integration/OggSSP2BActualFiveSlices.lean"
       - "Integration/Selected3BActualMonsterCharacterFingerprint.lean"
       - "Integration/Selected3BCanonicalFixedLineProjection.lean"
       - "Integration/Selected3BKernelProjectionRestriction.lean"
+      - "Integration/Selected3BActionEqualityFromSpectralDecomposition.lean"
       - "Integration/SignedTwoPrimePhaseObstruction.lean"
       - ".github/workflows/monster-source-integral.yml"
   pull_request:
@@ -45,10 +47,12 @@ jobs:
           lake env lean Integration/OggSSP2BExplicitIntegralCARestriction.lean
           lake env lean Integration/OggSSP2BActualRestrictedTate.lean
           lake env lean Integration/OggSSP2BActualFiveLengthNoGo.lean
+          lake env lean Integration/OggSSP2BActualFiveSlices.lean
           lake env lean Integration/OggSSP2BActualSourceParityNormalizationAudit.lean
       - name: Check actual 3B fingerprint and projection
         run: |
           lake env lean Integration/Selected3BCanonicalFixedLineProjection.lean
           lake env lean Integration/Selected3BKernelProjectionRestriction.lean
+          lake env lean Integration/Selected3BActionEqualityFromSpectralDecomposition.lean
           lake env lean Integration/Selected3BActualMonsterCharacterFingerprint.lean
           lake env lean Integration/SignedTwoPrimePhaseObstruction.lean

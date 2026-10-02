@@ -59,10 +59,9 @@ theorem tangentFunctionAtQ_is_geometric_tangent_difference
     (X Y : B.F4) :
     Integration.OggSSPP2F4WeilMillerFixedPhase.tangentFunctionAtQ X Y
       = Y + T.tangentY 1 Z.zeta X := by
-  have htwo : (2 : B.F4) = 0 := CharP.cast_eq_zero B.F4 2
   simp [Integration.OggSSPP2F4WeilMillerFixedPhase.tangentFunctionAtQ,
     T.tangentY]
-  linear_combination Z.zeta * htwo
+  ring
 
 /-- Likewise f_P=y is the difference from the tangent y=0. -/
 theorem tangentFunctionAtP_is_geometric_tangent_difference
@@ -86,7 +85,8 @@ theorem projective_infinity_forces_X_zero
     X = 0 := by
   have hx3 : X^3 = 0 := by
     simpa [Z.specialHomogeneousCubic] using hcurve
-  exact (pow_eq_zero hx3)
+  by_contra hX
+  exact (pow_ne_zero 3 hX) hx3
 
 theorem numerator_denominator_triple_cut_certificate :
     (∀ X : B.F4,

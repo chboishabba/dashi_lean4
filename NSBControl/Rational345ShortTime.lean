@@ -30,6 +30,10 @@ def integerMargin : ℝ := 226189
 
 def rateUpper : ℝ := -(226189 : ℝ) / 2
 
+def odeComponentBound : ℝ := 5032512
+
+def rateLipschitzBound : ℝ := 391309593930357307785216
+
 def certifiedTime : ℝ :=
   (226189 : ℝ) / 3938540454339300631433585885184
 
@@ -44,6 +48,22 @@ theorem certifiedTime_pos : 0 < certifiedTime := by
 
 theorem rateUpper_neg : rateUpper < 0 := by
   norm_num [rateUpper]
+
+theorem odeComponentBound_nonneg : 0 ≤ odeComponentBound := by
+  norm_num [odeComponentBound]
+
+theorem rateLipschitzBound_nonneg : 0 ≤ rateLipschitzBound := by
+  norm_num [rateLipschitzBound]
+
+theorem certifiedBudget_exact :
+    rateLipschitzBound * odeComponentBound * certifiedTime
+      = integerMargin / 2 := by
+  norm_num [rateLipschitzBound, odeComponentBound, certifiedTime, integerMargin]
+
+theorem certifiedBudget_le :
+    rateLipschitzBound * odeComponentBound * certifiedTime
+      ≤ integerMargin / 2 := by
+  rw [certifiedBudget_exact]
 
 /-- A reusable short-time sign theorem. -/
 theorem rate_le_negativeHalfMargin
@@ -118,3 +138,38 @@ theorem negativeIntegral_of_bootstrap
 
 end Rational345ShortTime
 end NSBControl
+
+
+namespace ConcreteConstants
+
+/-- R828's exact constants discharge the generic short-time budget
+definitionally/arithmeticly.  A concrete Galerkin trajectory only has to supply
+the displacement, one-sided rate Lipschitz, and continuity hypotheses. -/
+theorem negativeIntegral_from_R828_bounds
+    {E : Type*} [NormedAddCommGroup E]
+    (u : ℝ → E) (u₀ : E) (rate : E → ℝ)
+    (hinitial : rate u₀ ≤ -integerMargin)
+    (hdisp :
+      ∀ t ∈ Set.Icc (0 : ℝ) certifiedTime,
+        ‖u t - u₀‖ ≤ odeComponentBound * t)
+    (hrate :
+      ∀ x,
+        rate x - rate u₀ ≤ rateLipschitzBound * ‖x - u₀‖)
+    (hcont :
+      ContinuousOn (fun t => rate (u t))
+        (Set.Icc (0 : ℝ) certifiedTime)) :
+    (∫ t in (0 : ℝ)..certifiedTime, rate (u t)) < 0 := by
+  apply negativeIntegral_of_bootstrap
+    u u₀ rate
+    rateLipschitzBound odeComponentBound integerMargin certifiedTime
+  · exact rateLipschitzBound_nonneg
+  · exact odeComponentBound_nonneg
+  · norm_num [integerMargin]
+  · exact certifiedTime_pos
+  · exact hinitial
+  · exact hdisp
+  · exact hrate
+  · exact certifiedBudget_le
+  · exact hcont
+
+end ConcreteConstants

@@ -58,6 +58,21 @@ theorem su2_crossing_trace_sum_eq_features
   rw [su2_relative_trace_eq_quaternion_dot]
   simp
 
+theorem su2_crossing_trace_sum_symmetric
+    {P : Type*} [DecidableEq P]
+    (crossings : Finset P)
+    (left right : SU2CrossingBoundary P) :
+    su2CrossingTraceSum crossings left right =
+      su2CrossingTraceSum crossings right left := by
+  unfold su2CrossingTraceSum
+  apply Finset.sum_congr rfl
+  intro p hp
+  rw [su2_relative_trace_eq_quaternion_dot,
+    su2_relative_trace_eq_quaternion_dot]
+  apply Finset.sum_congr rfl
+  intro i hi
+  ring
+
 /--
 The complete Wilson crossing-plane factor, including the constant
 positive plaquette cost e^{-β} for every crossed plaquette.
@@ -68,6 +83,15 @@ def su2WilsonCrossingPlaneKernel
     (left right : SU2CrossingBoundary P) : ℝ :=
   Real.exp (-(β * (crossings.card : ℝ))) *
     Real.exp (β * su2CrossingTraceSum crossings left right)
+
+theorem su2_wilson_crossing_plane_kernel_symmetric
+    {P : Type*} [DecidableEq P]
+    (crossings : Finset P) (β : ℝ)
+    (left right : SU2CrossingBoundary P) :
+    su2WilsonCrossingPlaneKernel crossings β left right =
+      su2WilsonCrossingPlaneKernel crossings β right left := by
+  unfold su2WilsonCrossingPlaneKernel
+  rw [su2_crossing_trace_sum_symmetric crossings left right]
 
 /-- Exact factorization into one-plaquette crossing Wilson kernels. -/
 theorem su2_wilson_crossing_plane_kernel_eq_product

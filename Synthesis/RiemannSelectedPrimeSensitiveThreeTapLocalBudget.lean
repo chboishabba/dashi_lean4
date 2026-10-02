@@ -210,4 +210,92 @@ theorem QuarticFourSignedPolePair.threeTapSignedProfileMomentEight_exact
   exact threeTapRawMoment_eight_exact hP hPc eps
     (threeTapNormalizedShift t (Real.log 2))
 
+/-! ## Canonical local radius is genuinely invalid on shifted support -/
+
+theorem QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile_at_shift
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapNormalizedCombinedProfile eps
+        (threeTapNormalizedShift t (Real.log 2))
+      =
+    eps *
+      quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t 0 := by
+  let B := threeTapNormalizedShift t (Real.log 2)
+  have hBout :
+      Real.pi + 1 < B :=
+    threeTapNormalizedShift_logTwo_gt_pi_add_one ht
+  have hBpos : 0 < B := lt_trans (by positivity : 0 < Real.pi + 1) hBout
+  have hzB :
+      quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t B = 0 := by
+    by_contra hne
+    have hs := W.combinedProfile_support_abs_le_pi_add_one B hne
+    rw [abs_of_pos hBpos] at hs
+    linarith
+  have hz2B :
+      quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t (B+B) = 0 := by
+    by_contra hne
+    have hs := W.combinedProfile_support_abs_le_pi_add_one (B+B) hne
+    rw [abs_of_pos (by positivity : 0 < B+B)] at hs
+    linarith
+  unfold QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile
+    detectorThreeTap
+  dsimp [B] at hzB hz2B ⊢
+  rw [hzB, hz2B]
+  ring
+
+theorem QuarticFourSignedPolePair.canonical_q_times_threeTapShift_gt_one
+    {t : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    1 <
+      quarticSignedPoleCanonicalLocalRadius
+        * threeTapNormalizedShift t (Real.log 2) := by
+  have hB :=
+    threeTapNormalizedShift_logTwo_gt_pi_add_one ht
+  unfold quarticSignedPoleCanonicalLocalRadius
+  have hp : 0 < Real.pi + 1 := by positivity
+  exact (one_lt_div hp).2 hB
+
+/-- For a nonzero transformed shifted-copy amplitude at B(t), the canonical
+Taylor prerequisite |q*u|<=1 fails at q=eta0 on an actual support point. -/
+theorem QuarticFourSignedPolePair.canonicalLocalTaylorCondition_fails_threeTap
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (heps : eps ≠ 0)
+    (hcentre :
+      quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t 0 ≠ 0) :
+    W.threeTapNormalizedCombinedProfile eps
+        (threeTapNormalizedShift t (Real.log 2)) ≠ 0
+    ∧
+    1 <
+      |quarticSignedPoleCanonicalLocalRadius
+        * threeTapNormalizedShift t (Real.log 2)| := by
+  constructor
+  · rw [W.threeTapNormalizedCombinedProfile_at_shift ht]
+    exact mul_ne_zero heps hcentre
+  · have hprod := W.canonical_q_times_threeTapShift_gt_one ht
+    rw [abs_of_pos (lt_trans (by norm_num : (0:ℝ) < 1) hprod)]
+    exact hprod
+
+/-- The adaptive normalized split has a bounded physical half-width rather
+than the original O(t) half-width.  This identity is the recut geometry. -/
+theorem QuarticFourSignedPolePair.threeTapAdaptivePhysicalHalfWidth_eq
+    {t : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t) :
+    (t/16) * W.threeTapAdaptiveLocalRadius
+      =
+    (t/16) /
+      ((Real.pi + 1)
+        + |threeTapNormalizedShift t (Real.log 2)|) := by
+  unfold QuarticFourSignedPolePair.threeTapAdaptiveLocalRadius
+    QuarticFourSignedPolePair.threeTapNormalizedSupportRadius
+  ring
+
 end Synthesis

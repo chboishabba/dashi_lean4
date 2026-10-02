@@ -187,9 +187,11 @@ theorem QuarticFourSignedPolePair.threeTapNormalizedJ2Polynomial_eq_zero_iff_uni
     apply (eq_div_iff hB).2
     linarith
   · intro h
-    rw [h]
-    field_simp [hB]
-    ring
+    have hm :
+        eps * W.threeTapNormalizedJ2QuadraticCoeff
+          = - W.threeTapNormalizedJ2LinearCoeff :=
+      (eq_div_iff hB).1 h
+    linarith
 
 /-- If B vanishes but A does not, no nonzero tap strength reaches the quartic
 exceptional locus. -/

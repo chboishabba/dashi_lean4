@@ -198,64 +198,148 @@ private theorem reflected_index_positive_to_negative
           have hn : 0 < n := NeZero.pos n
           omega)
 
+private theorem reflected_site_time_val_of_negative
+    (n : ℕ) [NeZero n]
+    (x : SU2TorusSite (2 * n))
+    (hx : n ≤ (x su2TimeDirection).val) :
+    (su2EvenTimeReflectSite x su2TimeDirection).val =
+      2 * n - 1 - (x su2TimeDirection).val := by
+  haveI : NeZero (2 * n) := ⟨neZero_two_mul n⟩
+  have hmax : (x su2TimeDirection).val ≤ 2 * n - 1 := by
+    have hv := (x su2TimeDirection).val_lt
+    omega
+  by_cases htop : (x su2TimeDirection).val = 2 * n - 1
+  · rw [show
+      su2EvenTimeReflectSite x su2TimeDirection =
+        -(x su2TimeDirection + 1) by
+          simp [su2EvenTimeReflectSite]
+          ring]
+    have hsumzero : x su2TimeDirection + 1 = 0 := by
+      apply ZMod.val_injective
+      rw [ZMod.val_add]
+      have hone : ((1 : ZMod (2 * n))).val = 1 := by
+        rw [ZMod.val_natCast_of_lt]
+        omega
+      rw [hone, htop]
+      simp
+    rw [hsumzero]
+    simp
+  · have hpluslt :
+        (x su2TimeDirection).val + 1 < 2 * n := by omega
+    have hplusval :
+        (x su2TimeDirection + 1).val =
+          (x su2TimeDirection).val + 1 := by
+      simpa using
+        (ZMod.val_add_of_lt
+          (a := x su2TimeDirection) (b := (1 : ZMod (2 * n)))
+          (by simpa using hpluslt))
+    have hplusne : x su2TimeDirection + 1 ≠ 0 := by
+      intro h
+      have hv := congrArg ZMod.val h
+      rw [hplusval] at hv
+      simp at hv
+      omega
+    rw [show
+      su2EvenTimeReflectSite x su2TimeDirection =
+        -(x su2TimeDirection + 1) by
+          simp [su2EvenTimeReflectSite]
+          ring]
+    rw [ZMod.neg_val, if_neg hplusne, hplusval]
+    omega
+
+private theorem reflected_temporal_base_time_val_of_negative_noncross
+    (n : ℕ) [NeZero n]
+    (x : SU2TorusSite (2 * n))
+    (hx : n ≤ (x su2TimeDirection).val)
+    (hTop : (x su2TimeDirection).val ≠ 2 * n - 1) :
+    (su2ShiftBackward
+      (su2EvenTimeReflectSite x)
+      su2TimeDirection su2TimeDirection).val =
+      2 * n - 2 - (x su2TimeDirection).val := by
+  haveI : NeZero (2 * n) := ⟨neZero_two_mul n⟩
+  have htheta :=
+    reflected_site_time_val_of_negative n x hx
+  have hthetaPos :
+      1 ≤ (su2EvenTimeReflectSite x su2TimeDirection).val := by
+    rw [htheta]
+    have hv := (x su2TimeDirection).val_lt
+    omega
+  change
+    ((su2EvenTimeReflectSite x su2TimeDirection) - 1).val =
+      2 * n - 2 - (x su2TimeDirection).val
+  rw [ZMod.val_sub]
+  · rw [htheta]
+    omega
+  · simpa using hthetaPos
+
 private theorem reflected_index_negative_to_positive
     (n : ℕ) [NeZero n]
     (p : SU2LiteralPlaquetteIndex (2 * n))
     (hp : p ∈ su2EvenTimeNegativePlaquettes n) :
     su2EvenTimeReflectPlaquetteIndex p ∈
       su2EvenTimePositivePlaquettes n := by
-  -- Use involutivity plus the already-proved positive-to-negative map.
-  by_contra hnot
-  have hphys : p ∈ su2FourDimensionalPlaquettes (2 * n) :=
-    (Finset.mem_filter.mp hp).1
-  have hpartition :=
-    su2_even_time_cut_partition n
-  have hrefPhys :
+  classical
+  have hpdata := Finset.mem_filter.mp hp
+  have hphys : p ∈ su2FourDimensionalPlaquettes (2 * n) := hpdata.1
+  have hneg := hpdata.2
+  have hnoncross := hneg.1
+  have htime := hneg.2
+  have hdirections :=
+    su2_even_time_reflect_plaquette_index_directions p
+  have hphysRef :
       su2EvenTimeReflectPlaquetteIndex p ∈
         su2FourDimensionalPlaquettes (2 * n) := by
     simp only [su2FourDimensionalPlaquettes,
       Finset.mem_filter, Finset.mem_univ, true_and] at hphys ⊢
-    simpa [su2_even_time_reflect_plaquette_index_directions] using hphys
-  have hrefCases :
-      su2EvenTimeReflectPlaquetteIndex p ∈
-          su2EvenTimePositivePlaquettes n ∨
-      su2EvenTimeReflectPlaquetteIndex p ∈
-          su2EvenTimeNegativePlaquettes n ∨
-      su2EvenTimeReflectPlaquetteIndex p ∈
-          su2EvenTimeCrossingPlaquettes n := by
-    have hm :
-        su2EvenTimeReflectPlaquetteIndex p ∈
-          ((su2EvenTimePositivePlaquettes n ∪
-            su2EvenTimeNegativePlaquettes n) ∪
-              su2EvenTimeCrossingPlaquettes n) := by
-      rw [su2_even_time_cut_partition n]
-      exact hrefPhys
-    simpa [Finset.mem_union, or_assoc] using hm
-  rcases hrefCases with hpos | hneg | hcross
-  · exact hnot hpos
-  · have hagain :=
-      reflected_index_positive_to_negative n
-        (su2EvenTimeReflectPlaquetteIndex p)
-        (by
-          -- If the reflected point were negative, reflect once more and use
-          -- disjointness after swapping the names via involution.
-          -- This branch is impossible because p itself is already negative.
-          exfalso
-          exact hnot (by
-            -- numerical partition leaves only positive once crossing is
-            -- excluded below; retain source-written explicit contradiction
-            -- rather than postulating a bijection.
-            sorry))
-    rw [su2_even_time_reflect_plaquette_index_involutive] at hagain
-    exact False.elim ((Finset.disjoint_left.mp
-      (su2_even_time_cut_pairwise_disjoint n).1)
-      hagain hp)
-  · have hcData := Finset.mem_filter.mp hcross
-    have hpData := Finset.mem_filter.mp hp
-    exact False.elim (hpData.2.1 (by
-      -- Crossing membership is invariant under the involution; source-written
-      -- arithmetic is intentionally isolated for kernel checking.
-      sorry))
+    simpa [hdirections] using hphys
+  refine Finset.mem_filter.mpr ⟨hphysRef, ?_, ?_⟩
+  · intro hcrossRef
+    have hμ :
+        p.2.1 = su2TimeDirection := by
+      have hrefμ := hcrossRef.1
+      simpa [hdirections] using hrefμ
+    have htop :
+        (p.1 su2TimeDirection).val ≠ 2 * n - 1 := by
+      intro ht
+      exact hnoncross ⟨hμ, Or.inr ht⟩
+    rw [show
+      su2EvenTimeReflectPlaquetteIndex p =
+        (su2ShiftBackward
+          (su2EvenTimeReflectSite p.1)
+          su2TimeDirection, p.2.1, p.2.2) by
+            simp [su2EvenTimeReflectPlaquetteIndex, hμ]] at hcrossRef
+    have hrefval :=
+      reflected_temporal_base_time_val_of_negative_noncross
+        n p.1 htime htop
+    rcases hcrossRef.2 with h | h
+    · have hn : 0 < n := NeZero.pos n
+      omega
+    · have hn : 0 < n := NeZero.pos n
+      omega
+  · by_cases hμ : p.2.1 = su2TimeDirection
+    · have htop :
+          (p.1 su2TimeDirection).val ≠ 2 * n - 1 := by
+        intro ht
+        exact hnoncross ⟨hμ, Or.inr ht⟩
+      rw [show
+        su2EvenTimeReflectPlaquetteIndex p =
+          (su2ShiftBackward
+            (su2EvenTimeReflectSite p.1)
+            su2TimeDirection, p.2.1, p.2.2) by
+              simp [su2EvenTimeReflectPlaquetteIndex, hμ]]
+      have hv :=
+        reflected_temporal_base_time_val_of_negative_noncross
+          n p.1 htime htop
+      have hn : 0 < n := NeZero.pos n
+      omega
+    · rw [show
+        su2EvenTimeReflectPlaquetteIndex p =
+          (su2EvenTimeReflectSite p.1, p.2.1, p.2.2) by
+            simp [su2EvenTimeReflectPlaquetteIndex, hμ]]
+      have hv :=
+        reflected_site_time_val_of_negative n p.1 htime
+      have hn : 0 < n := NeZero.pos n
+      omega
 
 /--
 Global finite-set bijection: reflection sends the literal positive

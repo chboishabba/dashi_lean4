@@ -101,6 +101,41 @@ theorem card_selmer_eq_card_defect_mul_card_modDoubles :
   rw [card_selmer_eq_card_defect_mul_card_kummerRange]
   rw [card_globalKummerRange_eq_card_modDoubles]
 
+/-- The genuine global Kummer image has the standard
+rank-times-two-torsion cardinality, now for the SAME subgroup used in the
+arithmetic defect quotient. -/
+theorem card_globalKummerRange_eq_rank_torsion
+    [AddGroup.FG W.Point] :
+    Nat.card (globalKummerIntoActualSelmer W R Loc).range
+      =
+    2 ^ Module.finrank ℤ W.Point
+      * Nat.card (nsmulAddMonoidHom (α := W.Point) 2).ker := by
+  calc
+    Nat.card (globalKummerIntoActualSelmer W R Loc).range
+        = Nat.card (Multiplicative W.Point ⧸ (W.μ).ker) :=
+          card_globalKummerRange_eq_card_pointQuotient W R Loc
+    _ = Nat.card (W.μ).range := by
+          exact Nat.card_congr (QuotientGroup.quotientKerEquivRange W.μ)
+    _ = 2 ^ Module.finrank ℤ W.Point
+          * Nat.card (nsmulAddMonoidHom (α := W.Point) 2).ker :=
+          W.card_range_μ
+
+/-- Full finite-level arithmetic identity before any Sha identification:
+
+  #Sel₂(W) = #C₂(W) * 2^rank(W(K)) * #W(K)[2].
+
+The parenthesization below is literal Nat multiplication. -/
+theorem card_selmer_eq_card_defect_mul_rank_torsion
+    [AddGroup.FG W.Point] :
+    Nat.card (W.selmerGroup₂ R Loc)
+      =
+    Nat.card (ActualTwoSelmerDefect W R Loc)
+      *
+      (2 ^ Module.finrank ℤ W.Point
+        * Nat.card (nsmulAddMonoidHom (α := W.Point) 2).ker) := by
+  rw [card_selmer_eq_card_defect_mul_card_kummerRange]
+  rw [card_globalKummerRange_eq_rank_torsion]
+
 /-!
 This is the strongest finite arithmetic statement available before the
 cohomological comparison. Once C₂(W) ≃ Sha(W)[2] is genuinely proved,

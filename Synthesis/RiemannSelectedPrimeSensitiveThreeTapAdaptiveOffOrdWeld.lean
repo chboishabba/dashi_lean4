@@ -350,4 +350,144 @@ theorem QuarticFourSignedPolePair.threeTap_offOrd_eq_endpoint_pair_tsums
       W.threeTap_endpoint_offOrdTwo_eq_tsum ht]
   ring
 
+theorem genericProjectiveReflectionPairIntegral_summable
+    {g : ℝ → ℝ}
+    (hgs : ContDiff ℝ 2 g)
+    (hgc : HasCompactSupport g)
+    (heven : ∀ u, g (-u) = g u)
+    (t r : ℝ) :
+    Summable
+      (fun sigma : ((SameOrd t)ᶜ : Set Zeros) =>
+        ((Zeta23.zetaZeroConfig).mult (sigma : Zeros) : ℝ)
+          * genericProjectiveReflectionPairIntegral
+              g r (heightOf (sigma : Zeros))
+              (((sigma : Zeros) : ℂ).im-t)) := by
+  let f : ((SameOrd t)ᶜ : Set Zeros) → ℝ :=
+    fun sigma =>
+      2 * reim
+        (Zeta23.EF.zeroTerm
+          (Zeta23Bridge.LiteralWeilParityBalance.sampleTest
+            (projTaper g r) t 0) (sigma : Zeros))
+  have hf : Summable f := by
+    dsimp [f]
+    exact projectiveZeroTerm_summable hgs hgc t r
+  have hfe : Summable (fun sigma => f (reflectOffOrdEquiv t sigma)) :=
+    (reflectOffOrdEquiv t).summable_iff.mpr hf
+  have hsum := hf.add hfe
+  apply hsum.congr
+  intro sigma
+  dsimp [f, reflectOffOrdEquiv]
+  symm
+  exact projectiveZeroPair_eq_reflectionPairIntegral
+    hgs.continuous hgc heven t r (sigma : Zeros)
+
+theorem QuarticFourSignedPolePair.threeTapEndpointPairTermHalf_summable
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    Summable
+      (fun sigma : ((SameOrd t)ᶜ : Set Zeros) =>
+        W.threeTapEndpointPairTermHalf eps (sigma : Zeros)) := by
+  have hr : 0 < t/16 := by linarith
+  let G := W.threeTapNormalizedHalf eps
+  have hG : ContDiff ℝ 2 G := by
+    unfold G QuarticFourSignedPolePair.threeTapNormalizedHalf
+    exact detectorThreeTap_contDiff
+      (quarticFourWindowProfile_contDiff W.Rpos) eps _
+  have hGc : HasCompactSupport G := by
+    unfold G QuarticFourSignedPolePair.threeTapNormalizedHalf
+    exact detectorThreeTap_compact
+      (quarticFourWindowProfile_compact W.Rpos) eps _
+  have hGe : ∀ u, G (-u) = G u := by
+    unfold G QuarticFourSignedPolePair.threeTapNormalizedHalf
+    exact detectorThreeTap_even
+      (quarticFourWindowProfile_even W.R (1/2) W.muHalf) eps _
+  have hs :=
+    genericProjectiveReflectionPairIntegral_summable
+      (projectiveRescaleProfile_contDiff hG (t/16))
+      (projectiveRescaleProfile_compact hGc (by positivity : (t/16) ≠ 0))
+      (projectiveRescaleProfile_even hGe (t/16))
+      t (t/16)
+  apply hs.congr
+  intro sigma
+  rw [genericProjectiveReflectionPairIntegral_rescale hr]
+  unfold QuarticFourSignedPolePair.threeTapEndpointPairTermHalf
+    QuarticFourSignedPolePair.threeTapNormalizedProjectiveHalf
+  dsimp [G]
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapEndpointPairTermTwo_summable
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    Summable
+      (fun sigma : ((SameOrd t)ᶜ : Set Zeros) =>
+        W.threeTapEndpointPairTermTwo eps (sigma : Zeros)) := by
+  have hr : 0 < t/16 := by linarith
+  let G := W.threeTapNormalizedTwo eps
+  have hG : ContDiff ℝ 2 G := by
+    unfold G QuarticFourSignedPolePair.threeTapNormalizedTwo
+    exact detectorThreeTap_contDiff
+      (quarticFourWindowProfile_contDiff W.Rpos) eps _
+  have hGc : HasCompactSupport G := by
+    unfold G QuarticFourSignedPolePair.threeTapNormalizedTwo
+    exact detectorThreeTap_compact
+      (quarticFourWindowProfile_compact W.Rpos) eps _
+  have hGe : ∀ u, G (-u) = G u := by
+    unfold G QuarticFourSignedPolePair.threeTapNormalizedTwo
+    exact detectorThreeTap_even
+      (quarticFourWindowProfile_even W.R (2/3) W.muTwo) eps _
+  have hs :=
+    genericProjectiveReflectionPairIntegral_summable
+      (projectiveRescaleProfile_contDiff hG (t/16))
+      (projectiveRescaleProfile_compact hGc (by positivity : (t/16) ≠ 0))
+      (projectiveRescaleProfile_even hGe (t/16))
+      t (t/16)
+  apply hs.congr
+  intro sigma
+  rw [genericProjectiveReflectionPairIntegral_rescale hr]
+  unfold QuarticFourSignedPolePair.threeTapEndpointPairTermTwo
+    QuarticFourSignedPolePair.threeTapNormalizedProjectiveTwo
+  dsimp [G]
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapAdaptivePairTerm_summable
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    Summable
+      (fun sigma : ((SameOrd t)ᶜ : Set Zeros) =>
+        W.threeTapAdaptivePairTerm eps (sigma : Zeros)) := by
+  have h1 := W.threeTapEndpointPairTermHalf_summable ht (eps:=eps)
+  have h2 := W.threeTapEndpointPairTermTwo_summable ht (eps:=eps)
+  have hcomb :=
+    (h1.const_mul W.poleTwo).sub (h2.const_mul W.poleHalf)
+  apply hcomb.congr
+  intro sigma
+  symm
+  exact W.threeTapAdaptivePairTerm_eq_endpoints (eps:=eps) (sigma : Zeros)
+
+/-- Final exact same-object weld: the transformed off-ordinate projective
+channel is half the summable signed adaptive reflection-pair carrier. -/
+theorem QuarticFourSignedPolePair.threeTap_offOrd_eq_half_adaptivePair_tsum
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect
+      =
+    (1/2 : ℝ) *
+      ∑' sigma : ((SameOrd t)ᶜ : Set Zeros),
+        W.threeTapAdaptivePairTerm eps (sigma : Zeros) := by
+  rw [W.threeTap_offOrd_eq_endpoint_pair_tsums ht]
+  have h1 := W.threeTapEndpointPairTermHalf_summable ht (eps:=eps)
+  have h2 := W.threeTapEndpointPairTermTwo_summable ht (eps:=eps)
+  rw [← tsum_mul_left, ← tsum_mul_left]
+  rw [← (h1.const_mul W.poleTwo).tsum_sub
+      (h2.const_mul W.poleHalf)]
+  congr 1
+  apply tsum_congr
+  intro sigma
+  rw [W.threeTapAdaptivePairTerm_eq_endpoints]
+
 end Synthesis

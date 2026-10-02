@@ -30,5 +30,6 @@ jobs:
           lake build Synthesis.RiemannSelectedPrimeSensitiveSymmetricShiftMoments
           lake build Synthesis.RiemannSelectedSignedFifthTerminalBridge
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapTerminalized
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapNearLine
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapLocalBudget
           lake build Synthesis.RiemannSelectedPrimeSensitiveTwoScale

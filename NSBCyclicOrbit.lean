@@ -19,6 +19,7 @@ import NSBControl.GlobalProductRuleLoop
 import NSBControl.Rational345ReserveWitness
 import NSBControl.Rational345ShortTime
 import NSBControl.Rational345LocalODE
+import NSBControl.Rational345QuadraticODE
 
 namespace NSBCyclicOrbit
 

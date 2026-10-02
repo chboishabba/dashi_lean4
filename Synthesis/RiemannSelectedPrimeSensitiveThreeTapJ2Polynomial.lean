@@ -90,8 +90,8 @@ theorem projectiveBracketSecondMoment_detectorThreeTap_quadratic
       + eps * projectiveBracketSecondMomentThreeTapLinearCoeff g L r
       + eps^2 * projectiveBracketSecondMomentThreeTapQuadraticCoeff g L r := by
   have hgt : Continuous (detectorThreeTap g eps L) := by
-    exact (detectorThreeTap_contDiff
-      (by simpa using hg.contDiff) eps L).continuous
+    unfold detectorThreeTap
+    fun_prop
   have hgk : HasCompactSupport (detectorThreeTap g eps L) :=
     detectorThreeTap_compact hgc eps L
   rw [projectiveBracketSecondMoment_eq_response_det hgt hgk r,

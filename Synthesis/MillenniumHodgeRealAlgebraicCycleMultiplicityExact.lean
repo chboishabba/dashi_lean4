@@ -70,6 +70,61 @@ theorem doublePointCycle_off_support
     doublePointCycle x y = 0 := by
   simp [doublePointCycle, pointCycle, hxy]
 
+/-- Two genuine codimension-one cycle generators admit the exact
+sum/difference operations needed for the P¹×P¹ ruling regression. -/
+noncomputable def polarizationCycle
+    {X : Scheme} [DecidableEq X] (h₁ h₂ : X) :
+    AlgebraicCycle X ℤ :=
+  pointCycle h₁ + pointCycle h₂
+
+noncomputable def rulingDifferenceCycle
+    {X : Scheme} [DecidableEq X] (h₁ h₂ : X) :
+    AlgebraicCycle X ℤ :=
+  pointCycle h₁ - pointCycle h₂
+
+theorem polarizationCycle_isWeilDivisor
+    {X : Scheme} [DecidableEq X]
+    (h₁ h₂ : X)
+    (hh₁ : Order.coheight h₁ = 1)
+    (hh₂ : Order.coheight h₂ = 1) :
+    IsWeilDivisor (polarizationCycle h₁ h₂) := by
+  exact
+    (pointCycle_isWeilDivisor h₁ hh₁).add
+      (pointCycle_isWeilDivisor h₂ hh₂)
+
+theorem rulingDifferenceCycle_isWeilDivisor
+    {X : Scheme} [DecidableEq X]
+    (h₁ h₂ : X)
+    (hh₁ : Order.coheight h₁ = 1)
+    (hh₂ : Order.coheight h₂ = 1) :
+    IsWeilDivisor (rulingDifferenceCycle h₁ h₂) := by
+  exact
+    (pointCycle_isWeilDivisor h₁ hh₁).sub
+      (pointCycle_isWeilDivisor h₂ hh₂)
+
+/-- For distinct codimension-one points, the difference cycle is visibly
+nonzero on the first generator. -/
+theorem rulingDifferenceCycle_coefficient_left
+    {X : Scheme} [DecidableEq X]
+    (h₁ h₂ : X) (hne : h₁ ≠ h₂) :
+    rulingDifferenceCycle h₁ h₂ h₁ = 1 := by
+  simp [rulingDifferenceCycle, pointCycle, hne]
+
+theorem rulingDifferenceCycle_coefficient_right
+    {X : Scheme} [DecidableEq X]
+    (h₁ h₂ : X) (hne : h₁ ≠ h₂) :
+    rulingDifferenceCycle h₁ h₂ h₂ = -1 := by
+  have hne' : h₂ ≠ h₁ := Ne.symm hne
+  simp [rulingDifferenceCycle, pointCycle, hne, hne']
+
+theorem rulingDifferenceCycle_ne_zero
+    {X : Scheme} [DecidableEq X]
+    (h₁ h₂ : X) (hne : h₁ ≠ h₂) :
+    rulingDifferenceCycle h₁ h₂ ≠ 0 := by
+  intro hzero
+  have hcoeff := congrArg (fun D : AlgebraicCycle X ℤ => D h₁) hzero
+  simpa [rulingDifferenceCycle_coefficient_left h₁ h₂ hne] using hcoeff
+
 end RealCycle
 
 /-!

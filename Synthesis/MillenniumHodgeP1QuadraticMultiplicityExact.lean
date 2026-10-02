@@ -43,6 +43,32 @@ theorem quadraticPointPullback_count_zero :
     quadraticPointPullbackLocalEquation.roots.count 0 = 2 := by
   simp [quadraticPointPullbackLocalEquation, pow_two, Polynomial.roots_mul]
 
+/-- Effective zero-divisor on the affine chart, represented by the
+root multiset with algebraic multiplicity. -/
+def affineEffectiveZeroDivisor (p : ℚ[X]) : Multiset ℚ :=
+  p.roots
+
+/-- The selected target point y₁=0 restricts to the origin on this chart. -/
+def targetPointAffineDivisor : Multiset ℚ :=
+  {0}
+
+/-- Pullback of the selected point section gives exactly TWO copies of the
+same affine prime divisor, not merely the same support. -/
+theorem quadraticPointPullback_affineDivisor :
+    affineEffectiveZeroDivisor quadraticPointPullbackLocalEquation
+      =
+    targetPointAffineDivisor + targetPointAffineDivisor := by
+  simp [affineEffectiveZeroDivisor, targetPointAffineDivisor,
+    quadraticPointPullbackLocalEquation, pow_two, Polynomial.roots_mul]
+
+/-- The divisor degree on this affine zero-cycle is exactly two. -/
+theorem quadraticPointPullback_affineDivisor_degree :
+    Multiset.card
+      (affineEffectiveZeroDivisor quadraticPointPullbackLocalEquation)
+      = 2 := by
+  rw [quadraticPointPullback_affineDivisor]
+  simp [targetPointAffineDivisor]
+
 /-!
 The next genuine geometric theorem is:
   f^*[1:0] = 2·[1:0] in CH¹(P¹)

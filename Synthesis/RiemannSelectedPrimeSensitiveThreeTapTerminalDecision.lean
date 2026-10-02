@@ -44,7 +44,7 @@ theorem QuarticFourSignedPolePair.exists_threeTapAdaptiveTerminalProfile_pos_rig
       (W.threeTapAdaptiveTerminalProfile_hasDerivAt
         (eps := eps) (mult := mult) (a := 0) ht).continuousAt
   have hnh : f ⁻¹' Set.Ioi (0 : ℝ) ∈ 𝓝 (0 : ℝ) := by
-    exact hcont (Set.Ioi_mem_nhds hf0)
+    exact hcont (Ioi_mem_nhds hf0)
   rw [Metric.mem_nhds_iff] at hnh
   obtain ⟨delta, hdelta, hball⟩ := hnh
   refine ⟨delta, hdelta, ?_⟩
@@ -73,7 +73,7 @@ theorem QuarticFourSignedPolePair.exists_threeTapAdaptiveTerminalProfile_neg_rig
       (W.threeTapAdaptiveTerminalProfile_hasDerivAt
         (eps := eps) (mult := mult) (a := 0) ht).continuousAt
   have hnh : f ⁻¹' Set.Iio (0 : ℝ) ∈ 𝓝 (0 : ℝ) := by
-    exact hcont (Set.Iio_mem_nhds hf0)
+    exact hcont (Iio_mem_nhds hf0)
   rw [Metric.mem_nhds_iff] at hnh
   obtain ⟨delta, hdelta, hball⟩ := hnh
   refine ⟨delta, hdelta, ?_⟩

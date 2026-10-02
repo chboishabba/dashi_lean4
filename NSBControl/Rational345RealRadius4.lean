@@ -24,7 +24,7 @@ The remaining concrete R830 work is:
 3. certify the finite field/rate derivative bounds on the bootstrap ball.
 -/
 
-open scoped BigOperators ComplexConjugate
+open scoped BigOperators
 
 namespace NSBControl
 namespace Rational345RealRadius4
@@ -65,7 +65,7 @@ def bilinearDot (u v : Vec3) : ℂ :=
   ∑ j : Fin 3, u j * v j
 
 def hermitianDot (u v : Vec3) : ℂ :=
-  ∑ j : Fin 3, conj (u j) * v j
+  ∑ j : Fin 3, star (u j) * v j
 
 def kComplex (k : Mode) : Vec3 :=
   fun j => (kReal k j : ℂ)

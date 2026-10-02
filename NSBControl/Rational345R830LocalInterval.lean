@@ -181,6 +181,40 @@ theorem negativeIntegral_on_usableTime_of_continuousRate
     hrateContinuous
 
 
+
+/-- Every positive bootstrap radius contains the local solution for a positive
+time.  This is the only residence fact needed before shrinking the terminal
+interval; it follows from continuity of the Picard solution at zero. -/
+theorem exists_positive_ball_residence
+    {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (field : E → E)
+    (u : ℝ → E) (u₀ : E)
+    {ε radius : ℝ}
+    (hε : 0 < ε)
+    (hradius : 0 < radius)
+    (hu0 : u 0 = u₀)
+    (hderiv :
+      ∀ t ∈ Ioo (-ε) ε,
+        HasDerivAt u (field (u t)) t) :
+    ∃ δ > 0,
+      ∀ t : ℝ, |t| < δ →
+        u t ∈ Metric.closedBall u₀ radius := by
+  have hzero : (0 : ℝ) ∈ Ioo (-ε) ε := by
+    constructor <;> linarith
+  have hcont : ContinuousAt u 0 :=
+    (hderiv 0 hzero).continuousAt
+  obtain ⟨δ, hδ, hclose⟩ :=
+    (Metric.continuousAt_iff.mp hcont) radius hradius
+  refine ⟨δ, hδ, ?_⟩
+  intro t ht
+  have hdist0 : dist t (0 : ℝ) < δ := by
+    simpa [Real.dist_eq] using ht
+  have hdist : dist (u t) (u 0) < radius :=
+    hclose hdist0
+  rw [hu0] at hdist
+  exact Metric.mem_closedBall'.2 (le_of_lt hdist)
+
 /-- Ball-local terminal compiler for R830.
 
 The concrete proof no longer needs global bounds.  It is enough that the local

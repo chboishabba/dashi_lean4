@@ -35,6 +35,14 @@ def QuarticFourSignedPolePair.threeTapAdaptivePairTerm
     (heightOf rho / (t/16))
     (quarticSignedPoleNormalizedOrdinateOffset t rho)
 
+def QuarticFourSignedPolePair.threeTapAdaptiveOffOrdPairTerm
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) (rho : Zeros) : ℝ := by
+  classical
+  exact if h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+    W.threeTapAdaptivePairTerm eps rho
+  else 0
+
 def QuarticFourSignedPolePair.threeTapAdaptiveJetTerm
     {t : ℝ} (W : QuarticFourSignedPolePair t)
     (eps : ℝ) (rho : Zeros) : ℝ :=
@@ -73,7 +81,7 @@ def QuarticFourSignedPolePair.threeTapAdaptiveLocalPairAt
   classical
   exact ∑ rho ∈ centeredZeroFinset t n,
     if quarticSignedPoleThreeTapAdaptiveLocal W rho then
-      W.threeTapAdaptivePairTerm eps rho
+      W.threeTapAdaptiveOffOrdPairTerm eps rho
     else 0
 
 def QuarticFourSignedPolePair.threeTapAdaptiveLocalJetAt
@@ -82,7 +90,9 @@ def QuarticFourSignedPolePair.threeTapAdaptiveLocalJetAt
   classical
   exact ∑ rho ∈ centeredZeroFinset t n,
     if quarticSignedPoleThreeTapAdaptiveLocal W rho then
-      W.threeTapAdaptiveJetTerm eps rho
+      if rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        W.threeTapAdaptiveJetTerm eps rho
+      else 0
     else 0
 
 def QuarticFourSignedPolePair.threeTapAdaptiveLocalRemainderAt
@@ -91,7 +101,9 @@ def QuarticFourSignedPolePair.threeTapAdaptiveLocalRemainderAt
   classical
   exact ∑ rho ∈ centeredZeroFinset t n,
     if quarticSignedPoleThreeTapAdaptiveLocal W rho then
-      W.threeTapAdaptiveRemainderTerm eps rho
+      if rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        W.threeTapAdaptiveRemainderTerm eps rho
+      else 0
     else 0
 
 def QuarticFourSignedPolePair.threeTapAdaptiveLocalRemainderDebtAt
@@ -100,7 +112,9 @@ def QuarticFourSignedPolePair.threeTapAdaptiveLocalRemainderDebtAt
   classical
   exact ∑ rho ∈ centeredZeroFinset t n,
     if quarticSignedPoleThreeTapAdaptiveLocal W rho then
-      |W.threeTapAdaptiveRemainderTerm eps rho|
+      if rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        |W.threeTapAdaptiveRemainderTerm eps rho|
+      else 0
     else 0
 
 theorem QuarticFourSignedPolePair.threeTapAdaptiveLocalPairAt_eq_jet_add_remainder
@@ -115,11 +129,14 @@ theorem QuarticFourSignedPolePair.threeTapAdaptiveLocalPairAt_eq_jet_add_remaind
   unfold QuarticFourSignedPolePair.threeTapAdaptiveLocalPairAt
     QuarticFourSignedPolePair.threeTapAdaptiveLocalJetAt
     QuarticFourSignedPolePair.threeTapAdaptiveLocalRemainderAt
+    QuarticFourSignedPolePair.threeTapAdaptiveOffOrdPairTerm
   rw [← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro rho hrho
   by_cases hl : quarticSignedPoleThreeTapAdaptiveLocal W rho
-  · simp [hl, W.threeTapAdaptivePairTerm_eq_jet_add_remainder]
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl, hoff, W.threeTapAdaptivePairTerm_eq_jet_add_remainder]
+    · simp [hl, hoff]
   · simp [hl]
 
 theorem QuarticFourSignedPolePair.threeTapAdaptiveLocalRemainderAt_le_debt
@@ -134,7 +151,9 @@ theorem QuarticFourSignedPolePair.threeTapAdaptiveLocalRemainderAt_le_debt
   apply Finset.sum_le_sum
   intro rho hrho
   by_cases hl : quarticSignedPoleThreeTapAdaptiveLocal W rho
-  · simp [hl, le_abs_self]
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl, hoff, le_abs_self]
+    · simp [hl, hoff]
   · simp [hl]
 
 def QuarticFourSignedPolePair.threeTapAdaptiveMixedEnvelope
@@ -265,24 +284,29 @@ theorem QuarticFourSignedPolePair.threeTapAdaptiveLocalRemainderDebtAt_le_multip
   apply Finset.sum_le_sum
   intro rho hrho
   by_cases hl : quarticSignedPoleThreeTapAdaptiveLocal W rho
-  · have hpoint := W.threeTapAdaptiveRemainderTerm_abs_le ht hl
-    have hlocal :
-        quarticSignedPoleLocal
-          t W.threeTapAdaptiveLocalRadius rho := hl
-    simp [hl, hlocal]
-    have hm : 0 <= (zetaZeroConfig.mult (rho : ℂ) : ℝ) := by positivity
-    calc
-      |W.threeTapAdaptiveRemainderTerm eps rho|
-        <=
-      (zetaZeroConfig.mult (rho : ℂ) : ℝ) / (t/16)^2
-        *
-      (W.threeTapAdaptiveMixedEnvelope
-        * W.threeTapNormalizedProjectiveAbsMomentEight eps) := hpoint
-      _ =
-      ((W.threeTapAdaptiveMixedEnvelope
-          * W.threeTapNormalizedProjectiveAbsMomentEight eps)
-        / (t/16)^2)
-        * (zetaZeroConfig.mult (rho : ℂ) : ℝ) := by ring
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · have hpoint := W.threeTapAdaptiveRemainderTerm_abs_le ht hl
+      have hlocal :
+          quarticSignedPoleLocal
+            t W.threeTapAdaptiveLocalRadius rho := hl
+      simp [hl, hoff, hlocal]
+      calc
+        |W.threeTapAdaptiveRemainderTerm eps rho|
+          <=
+        (zetaZeroConfig.mult (rho : ℂ) : ℝ) / (t/16)^2
+          *
+        (W.threeTapAdaptiveMixedEnvelope
+          * W.threeTapNormalizedProjectiveAbsMomentEight eps) := hpoint
+        _ =
+        ((W.threeTapAdaptiveMixedEnvelope
+            * W.threeTapNormalizedProjectiveAbsMomentEight eps)
+          / (t/16)^2)
+          * (zetaZeroConfig.mult (rho : ℂ) : ℝ) := by ring
+    · have hlocal :
+          quarticSignedPoleLocal
+            t W.threeTapAdaptiveLocalRadius rho := hl
+      simp [hl, hoff, hlocal]
+      exact mul_nonneg hcoef (by positivity)
   · have hnot :
         ¬ quarticSignedPoleLocal
           t W.threeTapAdaptiveLocalRadius rho := by

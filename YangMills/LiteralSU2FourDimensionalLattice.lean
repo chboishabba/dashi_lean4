@@ -93,6 +93,16 @@ theorem su2_real_trace_cyclic (x y : SU2PlaquetteHolonomy) :
   dsimp [HMul.hMul, Mul.mul, su2Mul]
   ring
 
+/-- Quaternion inversion preserves the real fundamental trace. -/
+theorem su2_inverse_real_trace (x : SU2PlaquetteHolonomy) :
+    (x⁻¹).a = x.a := by
+  rfl
+
+/-- The trace-normalized Wilson plaquette cost is orientation independent. -/
+theorem su2_plaquette_cost_inverse (x : SU2PlaquetteHolonomy) :
+    su2PositivePlaquetteCost x⁻¹ = su2PositivePlaquetteCost x := by
+  simp only [su2_real_trace_normalization, su2_inverse_real_trace]
+
 /-- SU(2) plaquette cost is invariant under conjugation. -/
 theorem su2_plaquette_cost_conjugation
     (g U : SU2PlaquetteHolonomy) :

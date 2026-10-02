@@ -41,6 +41,39 @@ def QuarticFourSignedPolePair.threeTapResonancePaidCost
   W.threeTapResonanceNonPrimeExternal eps
     + (1/2 : ℝ) * W.threeTapAdaptiveLocalSlack eps
 
+
+theorem QuarticFourSignedPolePair.threeTapResonancePaidCost_eq_adaptive_far_local
+    {t eps : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapResonancePaidCost eps
+      =
+    W.threeTapAdaptiveFarExact eps
+      +
+    W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect
+      +
+    W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect
+      +
+    (1/2 : ℝ) *
+      (W.threeTapAdaptiveLocalExact eps
+        + W.threeTapAdaptiveLocalBudget eps) := by
+  unfold QuarticFourSignedPolePair.threeTapResonancePaidCost
+    QuarticFourSignedPolePair.threeTapResonanceNonPrimeExternal
+    QuarticFourSignedPolePair.threeTapAdaptiveLocalSlack
+  rw [W.threeTap_offOrd_eq_local_add_far]
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapResonancePaidCost_ge_nonPrime
+    {t eps : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapResonanceNonPrimeExternal eps
+      <= W.threeTapResonancePaidCost eps := by
+  unfold QuarticFourSignedPolePair.threeTapResonancePaidCost
+  have hs : 0 <= W.threeTapAdaptiveLocalSlack eps :=
+    W.threeTapAdaptiveLocalSlack_nonneg
+  linarith
+
 theorem QuarticFourSignedPolePair.threeTapResonanceTerminalConstant_eq_neg_paidCost
     {t eps : ℝ}
     (W : QuarticFourSignedPolePair t) :
@@ -191,6 +224,29 @@ theorem QuarticFourSignedPolePair.threeTapResonanceTerminalConstant_pos_iff
         + (1/2 : ℝ) * W.threeTapAdaptiveLocalSlack eps < 0 := by
   rw [W.threeTapResonanceTerminalConstant_eq_neg_sum]
   linarith
+
+
+/-- The strongest fully-paid local fail compiler: if the exact adaptive
+far/local resonance cost is nonnegative and J2 has the wrong sign, the whole
+one-scale terminal profile is strictly negative near the critical line. -/
+theorem QuarticFourSignedPolePair.exists_threeTapResonantTerminalProfile_neg_right_of_paidCost_nonneg_J2_pos
+    {t eps mult : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hphase : Real.cos (t * Real.log 2) = 0)
+    (hmult : 0 < mult)
+    (hcost : 0 <= W.threeTapResonancePaidCost eps)
+    (hJ : 0 < W.threeTapNormalizedJ2Polynomial eps) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ a : ℝ, 0 < a → a < delta →
+        W.threeTapAdaptiveTerminalProfile eps mult a < 0 := by
+  rcases lt_or_eq_of_le hcost with hcostpos | hcostzero
+  · exact
+      W.exists_threeTapResonantTerminalProfile_neg_right_of_paidCost_pos
+        ht hphase hcostpos
+  · exact
+      W.exists_threeTapResonantTerminalProfile_neg_right_of_paidCost_zero_J2_pos
+        ht hphase hmult hcostzero hJ
 
 /-- A nonnegative completed non-prime resonance carrier plus the wrong J2 sign
 is already enough to force a strict negative near-line terminal band.  This

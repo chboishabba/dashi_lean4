@@ -368,6 +368,6 @@ def QuarticFourSignedPolePair.ThreeTapAdaptiveOffOrdCarrierWeld
       Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect
     =
   (1/2 : ℝ) * ∑' rho : Zeros,
-    W.threeTapAdaptivePairTerm eps rho
+    W.threeTapAdaptiveOffOrdPairTerm eps rho
 
 end Synthesis

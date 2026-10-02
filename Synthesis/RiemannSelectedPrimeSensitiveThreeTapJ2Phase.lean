@@ -55,16 +55,6 @@ theorem evenResp_shiftPair_zero_eq
       integral_add_right_eq_self
         (fun v : ℝ => g v * Real.cos (s*(v-L))) L
     simpa [sub_eq_add_neg, add_assoc] using h
-  have hiMinus :
-      Integrable (fun u : ℝ => g (u-L) * Real.cos (s*u)) := by
-    exact
-      (by fun_prop : Continuous (fun u : ℝ => g (u-L) * Real.cos (s*u)))
-        |>.integrable_of_hasCompactSupport
-          ((threeTapShiftPair_compact hgc L).subset
-            (by
-              intro x hx
-              simp only [Function.support_subset_iff] at *
-              sorry))
   unfold Zeta23Bridge.LiteralWeilParityBalance.evenResp
   simp only [zero_mul, Real.cosh_zero, one_mul]
   unfold threeTapShiftPair

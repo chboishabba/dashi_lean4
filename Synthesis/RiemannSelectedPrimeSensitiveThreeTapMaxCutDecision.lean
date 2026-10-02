@@ -31,6 +31,117 @@ namespace Synthesis
 
 open scoped Real
 
+
+/-- The fully paid resonance cost.  This is the single scalar that must be
+negative for a positive constant-term pass and nonnegative for the J2-based
+fail compiler above. -/
+def QuarticFourSignedPolePair.threeTapResonancePaidCost
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) : ℝ :=
+  W.threeTapResonanceNonPrimeExternal eps
+    + (1/2 : ℝ) * W.threeTapAdaptiveLocalSlack eps
+
+theorem QuarticFourSignedPolePair.threeTapResonanceTerminalConstant_eq_neg_paidCost
+    {t eps : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapResonanceTerminalConstant eps
+      = - W.threeTapResonancePaidCost eps := by
+  rfl
+
+theorem QuarticFourSignedPolePair.threeTapResonanceTerminalConstant_pos_iff_paidCost_neg
+    {t eps : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    0 < W.threeTapResonanceTerminalConstant eps
+      ↔ W.threeTapResonancePaidCost eps < 0 := by
+  rw [W.threeTapResonanceTerminalConstant_eq_neg_paidCost]
+  linarith
+
+theorem QuarticFourSignedPolePair.threeTapResonanceTerminalConstant_neg_iff_paidCost_pos
+    {t eps : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapResonanceTerminalConstant eps < 0
+      ↔ 0 < W.threeTapResonancePaidCost eps := by
+  rw [W.threeTapResonanceTerminalConstant_eq_neg_paidCost]
+  linarith
+
+/-- Direct one-scale PASS compiler at resonance: a negative fully paid
+non-target cost gives a positive terminal band without consulting J2. -/
+theorem QuarticFourSignedPolePair.exists_threeTapResonantTerminalProfile_pos_right_of_paidCost_neg
+    {t eps mult : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hphase : Real.cos (t * Real.log 2) = 0)
+    (hcost : W.threeTapResonancePaidCost eps < 0) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ a : ℝ, 0 < a → a < delta →
+        0 < W.threeTapAdaptiveTerminalProfile eps mult a := by
+  have hcres : 0 < W.threeTapResonanceTerminalConstant eps :=
+    (W.threeTapResonanceTerminalConstant_pos_iff_paidCost_neg).2 hcost
+  have hcadaptive : 0 < W.threeTapAdaptiveTerminalConstant eps := by
+    rw [W.threeTapAdaptiveTerminalConstant_eq_resonance ht hphase]
+    exact hcres
+  exact
+    W.exists_threeTapAdaptiveTerminalProfile_pos_right_of_constant_pos
+      ht hcadaptive
+
+/-- Direct strict FAIL compiler at resonance: a positive fully paid cost gives
+a negative terminal band without consulting J2. -/
+theorem QuarticFourSignedPolePair.exists_threeTapResonantTerminalProfile_neg_right_of_paidCost_pos
+    {t eps mult : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hphase : Real.cos (t * Real.log 2) = 0)
+    (hcost : 0 < W.threeTapResonancePaidCost eps) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ a : ℝ, 0 < a → a < delta →
+        W.threeTapAdaptiveTerminalProfile eps mult a < 0 := by
+  have hcres : W.threeTapResonanceTerminalConstant eps < 0 :=
+    (W.threeTapResonanceTerminalConstant_neg_iff_paidCost_pos).2 hcost
+  have hcadaptive : W.threeTapAdaptiveTerminalConstant eps < 0 := by
+    rw [W.threeTapAdaptiveTerminalConstant_eq_resonance ht hphase]
+    exact hcres
+  exact
+    W.exists_threeTapAdaptiveTerminalProfile_neg_right_of_constant_neg
+      ht hcadaptive
+
+/-- On the exactly paid boundary, J2 is the first decision coordinate. -/
+theorem QuarticFourSignedPolePair.exists_threeTapResonantTerminalProfile_neg_right_of_paidCost_zero_J2_pos
+    {t eps mult : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hphase : Real.cos (t * Real.log 2) = 0)
+    (hmult : 0 < mult)
+    (hcost : W.threeTapResonancePaidCost eps = 0)
+    (hJ : 0 < W.threeTapNormalizedJ2Polynomial eps) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ a : ℝ, 0 < a → a < delta →
+        W.threeTapAdaptiveTerminalProfile eps mult a < 0 := by
+  have hc : W.threeTapResonanceTerminalConstant eps = 0 := by
+    rw [W.threeTapResonanceTerminalConstant_eq_neg_paidCost, hcost]
+    ring
+  exact
+    W.exists_threeTapResonantTerminalProfile_neg_right
+      ht hphase hmult hc hJ
+
+theorem QuarticFourSignedPolePair.exists_threeTapResonantTerminalProfile_pos_right_of_paidCost_zero_J2_neg
+    {t eps mult : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hphase : Real.cos (t * Real.log 2) = 0)
+    (hmult : 0 < mult)
+    (hcost : W.threeTapResonancePaidCost eps = 0)
+    (hJ : W.threeTapNormalizedJ2Polynomial eps < 0) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ a : ℝ, 0 < a → a < delta →
+        0 < W.threeTapAdaptiveTerminalProfile eps mult a := by
+  have hc : W.threeTapResonanceTerminalConstant eps = 0 := by
+    rw [W.threeTapResonanceTerminalConstant_eq_neg_paidCost, hcost]
+    ring
+  exact
+    W.exists_threeTapResonantTerminalProfile_pos_right
+      ht hphase hmult hc hJ
+
+
 theorem QuarticFourSignedPolePair.threeTapResonanceTerminalConstant_eq_neg_sum
     {t eps : ℝ}
     (W : QuarticFourSignedPolePair t) :

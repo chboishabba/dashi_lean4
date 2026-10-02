@@ -103,6 +103,17 @@ theorem su2_plaquette_cost_inverse (x : SU2PlaquetteHolonomy) :
     su2PositivePlaquetteCost x⁻¹ = su2PositivePlaquetteCost x := by
   simp only [su2_real_trace_normalization, su2_inverse_real_trace]
 
+/-- Quaternion inversion preserves the real fundamental trace coordinate. -/
+theorem su2_inverse_real_trace (U : SU2PlaquetteHolonomy) :
+    (U⁻¹).a = U.a := by
+  rfl
+
+/-- Wilson plaquette cost is orientation-invariant. -/
+theorem su2_plaquette_cost_inverse (U : SU2PlaquetteHolonomy) :
+    su2PositivePlaquetteCost U⁻¹ =
+      su2PositivePlaquetteCost U := by
+  simp only [su2_real_trace_normalization, su2_inverse_real_trace]
+
 /-- SU(2) plaquette cost is invariant under conjugation. -/
 theorem su2_plaquette_cost_conjugation
     (g U : SU2PlaquetteHolonomy) :

@@ -204,4 +204,47 @@ theorem threeTapRawMoment_eight_exact
   filter_upwards with u
   rw [symmetricShiftPower_eight]
 
+/-! ## Exact normalized-coordinate representation -/
+
+theorem detectorThreeTap_projectiveRescaleProfile
+    (G : ℝ → ℝ) (r eps L : ℝ) :
+    detectorThreeTap (projectiveRescaleProfile G r) eps L
+      =
+    projectiveRescaleProfile
+      (detectorThreeTap G eps (r*L)) r := by
+  funext u
+  unfold detectorThreeTap projectiveRescaleProfile
+  congr 1 <;> ring
+
+theorem quarticFourPhysicalDetector_threeTap_eq_normalized
+    (R lam mu t eps L : ℝ) :
+    detectorThreeTap
+      (quarticFourPhysicalDetector R lam mu t) eps L
+      =
+    projectiveRescaleProfile
+      (detectorThreeTap
+        (quarticFourWindowProfile R lam mu)
+        eps ((t/16)*L))
+      (t/16) := by
+  unfold quarticFourPhysicalDetector
+  exact detectorThreeTap_projectiveRescaleProfile
+    (quarticFourWindowProfile R lam mu) (t/16) eps L
+
+/-- The physical log-2 tap is therefore a normalized translation by
+B(t)=(t/16)log2.  This is the object whose M2/M4/M6/M8 data must feed any
+translated local Taylor budget. -/
+theorem quarticFourPhysicalDetector_threeTap_logTwo_eq_normalized
+    (R lam mu t eps : ℝ) :
+    detectorThreeTap
+      (quarticFourPhysicalDetector R lam mu t)
+      eps (Real.log 2)
+      =
+    projectiveRescaleProfile
+      (detectorThreeTap
+        (quarticFourWindowProfile R lam mu)
+        eps (threeTapNormalizedShift t (Real.log 2)))
+      (t/16) := by
+  rw [quarticFourPhysicalDetector_threeTap_eq_normalized]
+  rfl
+
 end Synthesis

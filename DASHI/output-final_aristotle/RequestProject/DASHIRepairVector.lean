@@ -1,3 +1,5 @@
+import RequestProject.DASHIScopedSoftTyping
+
 /-!
 DASHI multi-consumer repair vector.
 
@@ -6,8 +8,6 @@ module prevents an overall "acceptable for review" conclusion unless no
 checked consumer regresses and at least one checked consumer improves.
 Unchecked consumers remain explicit. This is not edit authority.
 -/
-import RequestProject.DASHIScopedSoftTyping
-
 namespace DASHI.ContextIndexedOntology
 
 inductive RepairOutcome

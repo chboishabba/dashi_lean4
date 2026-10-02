@@ -1,3 +1,5 @@
+import RequestProject.DASHIScopedSoftTyping
+
 /-!
 DASHI runtime-witness → formal-premise refinement boundary.
 
@@ -10,8 +12,6 @@ premises by coercion.
 No source extraction correctness or external validator soundness is proved
 here; those are assumptions of the particular refinement procedure.
 -/
-import RequestProject.DASHIScopedSoftTyping
-
 namespace DASHI.ContextIndexedOntology
 
 inductive RuntimeWitnessKind

@@ -1,3 +1,5 @@
+import RequestProject.DASHIContextIndexedTransport
+
 /-!
 DASHI source-grounded soft typing: single-value *consumer-scoped* contract.
 JMD's RequestProject finite property checker remains upstream and unmodified.
@@ -8,8 +10,6 @@ or scope is Missing, not a counterexample. This file is generic over the
 type of evidence values and does not claim that a source observation has
 been authenticated, or that Wikidata itself violates a property constraint.
 -/
-import RequestProject.DASHIContextIndexedTransport
-
 namespace DASHI.ContextIndexedOntology
 
 /-- A consumer-selected scope is not automatically comparable to another. -/

@@ -1,3 +1,5 @@
+import RequestProject.DASHIScopedSoftTyping
+
 /-!
 DASHI-local executable, consumer-scoped single-value diagnostic.
 
@@ -7,8 +9,6 @@ is not an independent proof that the source was correctly extracted.
 The checker makes its premises inspectable and cannot classify two
 different scopes as a violation merely because two values differ.
 -/
-import RequestProject.DASHIScopedSoftTyping
-
 namespace DASHI.ContextIndexedOntology
 
 /-- Source-local fact. The producer's applicability observation is explicit. -/

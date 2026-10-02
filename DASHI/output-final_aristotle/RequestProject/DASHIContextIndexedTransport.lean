@@ -1,11 +1,11 @@
+import RequestProject.Properties
+
 /-!
 DASHI-local context-indexed transport over JMD-attributed Wikidata properties.
 This module does not modify RequestProject's original JMD semantics.
 A transport proof is scoped to one declared observation/query; it is neither
 a source equivalence nor an edit-authority or live-Wikidata certificate.
 -/
-import RequestProject.Properties
-
 namespace DASHI.ContextIndexedOntology
 
 /-- One consumer's observation of a native representation. -/
@@ -20,7 +20,7 @@ structure Licensed (α β out : Type)
 
 def Licensed.id {α out : Type} (a : ConsumerView α out) :
     Licensed α α out a a where
-  map := id
+  map := fun x => x
   preserves := by intro _; rfl
 
 /-- Licences compose only when their shared intermediate observer is the same. -/

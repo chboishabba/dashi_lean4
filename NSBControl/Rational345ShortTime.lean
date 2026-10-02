@@ -172,4 +172,58 @@ theorem negativeIntegral_from_R828_bounds
   · exact certifiedBudget_le
   · exact hcont
 
+
+/-- The R828 budget is monotone in the time horizon: any positive local
+interval no longer than `certifiedTime` inherits the certified half-margin
+budget.  This is the form needed to compose with an arbitrary Picard interval;
+there is no obligation to prove that the local solution exists all the way to
+the particular rational endpoint chosen by the certificate. -/
+theorem certifiedBudget_le_of_le_certifiedTime
+    {T : ℝ}
+    (hT : 0 ≤ T)
+    (hTcert : T ≤ certifiedTime) :
+    rateLipschitzBound * odeComponentBound * T
+      ≤ integerMargin / 2 := by
+  have hcoeff :
+      0 ≤ rateLipschitzBound * odeComponentBound := by
+    positivity
+  calc
+    rateLipschitzBound * odeComponentBound * T
+        ≤ rateLipschitzBound * odeComponentBound * certifiedTime := by
+          gcongr
+    _ ≤ integerMargin / 2 := certifiedBudget_le
+
+/-- Concrete R828 transport on any positive subinterval of the certified
+horizon.  This removes the exact-horizon/existence-interval matching problem
+from R830. -/
+theorem negativeIntegral_from_R828_bounds_up_to
+    {E : Type*} [NormedAddCommGroup E]
+    (u : ℝ → E) (u₀ : E) (rate : E → ℝ)
+    (T : ℝ)
+    (hT : 0 < T)
+    (hTcert : T ≤ certifiedTime)
+    (hinitial : rate u₀ ≤ -integerMargin)
+    (hdisp :
+      ∀ t ∈ Set.Icc (0 : ℝ) T,
+        ‖u t - u₀‖ ≤ odeComponentBound * t)
+    (hrate :
+      ∀ x,
+        rate x - rate u₀ ≤ rateLipschitzBound * ‖x - u₀‖)
+    (hcont :
+      ContinuousOn (fun t => rate (u t))
+        (Set.Icc (0 : ℝ) T)) :
+    (∫ t in (0 : ℝ)..T, rate (u t)) < 0 := by
+  apply negativeIntegral_of_bootstrap
+    u u₀ rate
+    rateLipschitzBound odeComponentBound integerMargin T
+  · exact rateLipschitzBound_nonneg
+  · exact odeComponentBound_nonneg
+  · norm_num [integerMargin]
+  · exact hT
+  · exact hinitial
+  · exact hdisp
+  · exact hrate
+  · exact certifiedBudget_le_of_le_certifiedTime (le_of_lt hT) hTcert
+  · exact hcont
+
 end ConcreteConstants

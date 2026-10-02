@@ -6,6 +6,8 @@ import YangMills.CMP119LiteralCompleteCrossingRP
 import YangMills.CMP119LiteralDyadicResidualWeld
 import YangMills.CMP119NativeDyadicMomentBound
 import YangMills.FourDimensionalNativeHaarReflectionMaxCut
+import YangMills.FourDimensionalNativeHaarProductWeld
+import YangMills.FourDimensionalFlatHaarReflectionIndex
 import YangMills.ScaleSensitiveWilsonMomentMaxCut
 
 /-!
@@ -56,6 +58,35 @@ def ymBlockAHaarReflectionLeaf
     [MeasurableSpace G] [BorelSpace G]
     (n : ℕ) [NeZero n] : Prop :=
   FourDimensionalNativeHaarReflectionInvariant G n
+
+/--
+A1 is now the same-object identification between whole-link native Haar and
+the explicit finite product law.  Its only remaining one-link input is
+normalized Haar left invariance.
+-/
+def ymBlockA1NativeEqualsProductHaar
+    (G : Type*) [Group G] [TopologicalSpace G]
+    [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
+    [MeasurableSpace G] [BorelSpace G]
+    (L : ℕ) [NeZero L] : Prop :=
+  CompactGroupNormalizedHaarLeftInvariant G
+
+/--
+A2's genuinely group-theoretic one-link input is inversion invariance of
+normalized compact Haar.  The selected lattice reflection has already been
+reduced to a flat finite-index involution plus this per-coordinate inversion.
+-/
+def ymBlockA2OneLinkInversionLeaf
+    (G : Type*) [Group G] [TopologicalSpace G]
+    [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
+    [MeasurableSpace G] [BorelSpace G] : Prop :=
+  CompactGroupNormalizedHaarInversionInvariant G
+
+theorem ym_block_a2_link_index_geometry_closed
+    {n : ℕ} (p : FourDimensionalLinkIndex (2 * n)) :
+    fourDimensionalEvenTimeReflectLinkIndex
+      (fourDimensionalEvenTimeReflectLinkIndex p) = p :=
+  four_dimensional_even_time_reflect_link_index_involutive p
 
 /--
 The easy cutoff-uniform Wilson observable is the bounded average plaquette

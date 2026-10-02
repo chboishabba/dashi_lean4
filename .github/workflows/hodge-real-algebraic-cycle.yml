@@ -6,6 +6,8 @@ on:
       - 'agent/hodge-real-algebraic-cycle-v435-20261002'
     paths:
       - 'Synthesis/MillenniumHodgeRealAlgebraicCycleMultiplicityExact.lean'
+      - 'Synthesis/MillenniumHodgeP1xP1PrimitiveRulingRegressionExact.lean'
+      - 'Synthesis/MillenniumHodgeActualCycleCorrespondenceActionExact.lean'
       - 'Synthesis.lean'
       - 'lean-toolchain'
       - 'lakefile.toml'
@@ -28,3 +30,4 @@ jobs:
       - name: Kernel check real algebraic-cycle multiplicity donor
         run: lake env lean Synthesis/MillenniumHodgeRealAlgebraicCycleMultiplicityExact.lean
           lake env lean Synthesis/MillenniumHodgeP1xP1PrimitiveRulingRegressionExact.lean
+          lake env lean Synthesis/MillenniumHodgeActualCycleCorrespondenceActionExact.lean

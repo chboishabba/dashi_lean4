@@ -268,6 +268,129 @@ theorem QuarticFourSignedPolePair.threeTapNormalizedCosineSixthRemainder_abs_le_
       gcongr
       exact W.threeTapNormalizedProjectiveAbsMomentEight_le
 
+
+/-! ## Exact physical/normalized absolute-moment rescaling -/
+
+theorem QuarticFourSignedPolePair.threeTapProjectiveAbsMomentSix_rescale
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapProjectiveAbsMomentSix eps
+      =
+    (1/(t/16)^8)
+      * W.threeTapNormalizedProjectiveAbsMomentSix eps := by
+  let r : ℝ := t/16
+  let Pn := W.threeTapNormalizedSignedProjectiveProfile eps
+  have hr : 0 < r := by dsimp [r]; linarith
+  have hr0 : r ≠ 0 := ne_of_gt hr
+  have hscale :=
+    Measure.integral_comp_mul_left
+      (fun v : ℝ => |Pn v| * |v|^6) r
+  have habs : |r⁻¹| = 1/r := by
+    rw [abs_of_pos (inv_pos.mpr hr)]
+    rfl
+  have hscale' :
+      (∫ u : ℝ, |Pn (r*u)| * |r*u|^6)
+        =
+      (1/r) * ∫ v : ℝ, |Pn v| * |v|^6 := by
+    simpa [habs, smul_eq_mul] using hscale
+  unfold QuarticFourSignedPolePair.threeTapProjectiveAbsMomentSix
+    QuarticFourSignedPolePair.threeTapProjectiveAbsMoment
+    QuarticFourSignedPolePair.threeTapNormalizedProjectiveAbsMomentSix
+    QuarticFourSignedPolePair.threeTapNormalizedProjectiveAbsMoment
+    compactProfileAbsMoment
+  rw [show
+      (fun u : ℝ => |W.threeTapSignedProjectiveProfile eps u| * |u|^6)
+      =
+      fun u =>
+        (1/r^7) * (|Pn (r*u)| * |r*u|^6) by
+      funext u
+      rw [W.threeTapSignedProjectiveProfile_rescale ht]
+      dsimp [r, Pn]
+      rw [abs_mul, abs_of_pos (one_div_pos.mpr hr), abs_mul,
+          abs_of_pos hr]
+      field_simp [hr0]
+      ring,
+      integral_const_mul, hscale']
+  dsimp [r, Pn]
+  field_simp [hr0]
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapProjectiveAbsMomentEight_rescale
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapProjectiveAbsMomentEight eps
+      =
+    (1/(t/16)^10)
+      * W.threeTapNormalizedProjectiveAbsMomentEight eps := by
+  let r : ℝ := t/16
+  let Pn := W.threeTapNormalizedSignedProjectiveProfile eps
+  have hr : 0 < r := by dsimp [r]; linarith
+  have hr0 : r ≠ 0 := ne_of_gt hr
+  have hscale :=
+    Measure.integral_comp_mul_left
+      (fun v : ℝ => |Pn v| * |v|^8) r
+  have habs : |r⁻¹| = 1/r := by
+    rw [abs_of_pos (inv_pos.mpr hr)]
+    rfl
+  have hscale' :
+      (∫ u : ℝ, |Pn (r*u)| * |r*u|^8)
+        =
+      (1/r) * ∫ v : ℝ, |Pn v| * |v|^8 := by
+    simpa [habs, smul_eq_mul] using hscale
+  unfold QuarticFourSignedPolePair.threeTapProjectiveAbsMomentEight
+    QuarticFourSignedPolePair.threeTapProjectiveAbsMoment
+    QuarticFourSignedPolePair.threeTapNormalizedProjectiveAbsMomentEight
+    QuarticFourSignedPolePair.threeTapNormalizedProjectiveAbsMoment
+    compactProfileAbsMoment
+  rw [show
+      (fun u : ℝ => |W.threeTapSignedProjectiveProfile eps u| * |u|^8)
+      =
+      fun u =>
+        (1/r^9) * (|Pn (r*u)| * |r*u|^8) by
+      funext u
+      rw [W.threeTapSignedProjectiveProfile_rescale ht]
+      dsimp [r, Pn]
+      rw [abs_mul, abs_of_pos (one_div_pos.mpr hr), abs_mul,
+          abs_of_pos hr]
+      field_simp [hr0]
+      ring,
+      integral_const_mul, hscale']
+  dsimp [r, Pn]
+  field_simp [hr0]
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapProjectiveAbsMomentSix_le_adaptive
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapProjectiveAbsMomentSix eps
+      <=
+    (1/(t/16)^8)
+      * (W.threeTapNormalizedSupportRadius^6
+        * W.threeTapNormalizedProjectiveAbsMass eps) := by
+  rw [W.threeTapProjectiveAbsMomentSix_rescale ht]
+  have hr : 0 < t/16 := by linarith
+  have hfac : 0 <= 1/(t/16)^8 := by positivity
+  exact mul_le_mul_of_nonneg_left
+    W.threeTapNormalizedProjectiveAbsMomentSix_le hfac
+
+theorem QuarticFourSignedPolePair.threeTapProjectiveAbsMomentEight_le_adaptive
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapProjectiveAbsMomentEight eps
+      <=
+    (1/(t/16)^10)
+      * (W.threeTapNormalizedSupportRadius^8
+        * W.threeTapNormalizedProjectiveAbsMass eps) := by
+  rw [W.threeTapProjectiveAbsMomentEight_rescale ht]
+  have hr : 0 < t/16 := by linarith
+  have hfac : 0 <= 1/(t/16)^10 := by positivity
+  exact mul_le_mul_of_nonneg_left
+    W.threeTapNormalizedProjectiveAbsMomentEight_le hfac
+
 /-! ## Adaptive two-variable local domain -/
 
 private theorem log_two_lt_one_for_threeTap : Real.log 2 < 1 := by

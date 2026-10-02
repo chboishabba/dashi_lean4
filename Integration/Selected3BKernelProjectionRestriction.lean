@@ -32,8 +32,7 @@ def projectToKernel
     F.removeFixedLine_in_kernel phi u hunit v⟩
   map_add' x y := by
     apply Subtype.ext
-    simp [F.removeFixedLine, map_add, add_smul]
-    module
+    simp [F.removeFixedLine, add_smul, sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
   map_smul' c x := by
     apply Subtype.ext
     simp [F.removeFixedLine, map_smul, smul_sub, mul_smul]

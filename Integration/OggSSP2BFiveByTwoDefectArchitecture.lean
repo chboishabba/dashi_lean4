@@ -86,8 +86,9 @@ def flipPhase : BinaryPhase → BinaryPhase
   | .direct => .counter
   | .counter => .direct
 
-def complement : TenState → TenState :=
-  fun x => decode (encode x |>.1, flipPhase (encode x |>.2))
+def complement (x : TenState) : TenState :=
+  let mp := encode x
+  decode (mp.1, flipPhase mp.2)
 
 theorem complement_preserves_mode (x : TenState) :
     (encode (complement x)).1 = (encode x).1 := by

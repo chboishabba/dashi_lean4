@@ -117,6 +117,127 @@ theorem QuarticFourSignedPolePair.abs_q_mul_u_le_one_of_threeTapAdaptive
       _ = 1 := by field_simp [hS.ne']
   exact (mul_le_mul_of_nonneg_left hus (abs_nonneg q)).trans hqS
 
+def QuarticFourSignedPolePair.threeTapSignedProfileMomentZero
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) : ℝ :=
+  rawMoment (W.threeTapNormalizedCombinedProfile eps) 0
+
+def QuarticFourSignedPolePair.threeTapSignedProfileMomentTwo
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) : ℝ :=
+  rawMoment (W.threeTapNormalizedCombinedProfile eps) 2
+
+def QuarticFourSignedPolePair.threeTapSignedProfileMomentFour
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) : ℝ :=
+  rawMoment (W.threeTapNormalizedCombinedProfile eps) 4
+
+theorem QuarticFourSignedPolePair.baseRawMomentZero_eq_zero
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    rawMoment
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t) 0 = 0 := by
+  unfold rawMoment
+  simp only [pow_zero, one_mul]
+  change profileZerothMoment
+    (quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t) = 0
+  exact quarticFourSignedPoleCombinedProfile_zeroth_zero W.Rpos
+
+theorem QuarticFourSignedPolePair.baseRawMomentTwo_eq_zero
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    rawMoment
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t) 2 = 0 := by
+  unfold rawMoment
+  change profileSecondMoment
+    (quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t) = 0
+  exact quarticFourSignedPoleCombinedProfile_second_zero
+    W.Rpos W.J2Half W.J2Two
+
+theorem QuarticFourSignedPolePair.baseRawMomentFour_eq
+    {t : ℝ} (W : QuarticFourSignedPolePair t) :
+    rawMoment
+      (quarticFourSignedPoleCombinedProfile
+        W.R W.muHalf W.muTwo t) 4
+      = -4 * W.targetStrength := by
+  unfold rawMoment
+  change profileFourthMoment
+    (quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t)
+      = -4 * W.targetStrength
+  rw [quarticFourSignedPoleCombinedProfile_fourth W.Rpos]
+  unfold QuarticFourSignedPolePair.targetStrength
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapSignedProfileMomentZero_eq_zero
+    {t eps : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapSignedProfileMomentZero eps = 0 := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  unfold QuarticFourSignedPolePair.threeTapSignedProfileMomentZero
+    QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile
+  rw [threeTapRawMoment_zero_exact hP hPc,
+      W.baseRawMomentZero_eq_zero]
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapSignedProfileMomentTwo_eq_zero
+    {t eps : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapSignedProfileMomentTwo eps = 0 := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  unfold QuarticFourSignedPolePair.threeTapSignedProfileMomentTwo
+    QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile
+  rw [threeTapRawMoment_two_exact hP hPc,
+      W.baseRawMomentZero_eq_zero,
+      W.baseRawMomentTwo_eq_zero]
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapSignedProfileMomentFour_eq
+    {t eps : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapSignedProfileMomentFour eps
+      = -4 * (1 + 2*eps) * W.targetStrength := by
+  let P :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  have hP : Continuous P :=
+    quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P :=
+    quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  unfold QuarticFourSignedPolePair.threeTapSignedProfileMomentFour
+    QuarticFourSignedPolePair.threeTapNormalizedCombinedProfile
+  rw [threeTapRawMoment_four_exact hP hPc,
+      W.baseRawMomentZero_eq_zero,
+      W.baseRawMomentTwo_eq_zero,
+      W.baseRawMomentFour_eq]
+  ring
+
+/-- The transformed normalized profile retains the quartic near-line
+cancellation unless eps=-1/2. -/
+theorem QuarticFourSignedPolePair.threeTap_quartic_coefficient_neg
+    {t eps : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (heps : -(1/2 : ℝ) < eps) :
+    W.threeTapSignedProfileMomentFour eps < 0 := by
+  rw [W.threeTapSignedProfileMomentFour_eq]
+  have hfac : 0 < 1 + 2*eps := by linarith
+  have hS := W.signedTargetStrength
+  nlinarith
+
 def QuarticFourSignedPolePair.threeTapSignedProfileMomentSix
     {t : ℝ} (W : QuarticFourSignedPolePair t)
     (eps : ℝ) : ℝ :=

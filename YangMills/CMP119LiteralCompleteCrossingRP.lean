@@ -21,11 +21,7 @@ theorem cmp119_literal_wilson_crossing_mul_residual_rp
     (crossings : Finset P)
     (β : ℝ) (hβ : 0 ≤ β)
     (boundary : ι → SU2CrossingBoundary P)
-    (cut : CMP119ResidualReflectionCut ι)
-    (hSourceKernelIsBoundaryPullback :
-      ∀ i j,
-        cut.sourceKernel i j =
-          cut.sourceKernel i j) :
+    (cut : CMP119ResidualReflectionCut ι) :
     ∀ test : ι → ℝ,
       0 ≤ indexedReflectionQuadratic
         (fun i j =>

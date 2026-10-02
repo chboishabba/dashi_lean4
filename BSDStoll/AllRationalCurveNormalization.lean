@@ -98,7 +98,7 @@ theorem normalizedPointGroupEquiv_preserves_x
     ?_⟩
   · exact
       WeierstrassCurve.Affine.equation_iff_nonsingular.mp
-        ((WeierstrassCurve.variableChange_equation
+        ((WeierstrassCurve.Affine.variableChange_equation
           E.1 (rationalCurveNormalizingChange E) x y).mpr
           (WeierstrassCurve.Affine.equation_iff_nonsingular.mpr h))
   · rw [normalizedPointGroupEquiv]

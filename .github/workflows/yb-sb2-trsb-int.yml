@@ -7,13 +7,13 @@ on:
       - 'CondensedMatter/YbSb2INTNonunitarySelected.lean'
       - 'CondensedMatter/INTComplexNonunitarity.lean'
       - 'CondensedMatter/YbSb2SingleBandConstraintFunnel.lean'
-      - 'CondensedMatter/YbSb2SingleBandConstraintFunnel.lean'
       - '.github/workflows/yb-sb2-trsb-int.yml'
   pull_request:
     paths:
       - 'CondensedMatter/SuperconductingTimeReversalGaugeObstruction.lean'
       - 'CondensedMatter/YbSb2INTNonunitarySelected.lean'
       - 'CondensedMatter/INTComplexNonunitarity.lean'
+      - 'CondensedMatter/YbSb2SingleBandConstraintFunnel.lean'
       - '.github/workflows/yb-sb2-trsb-int.yml'
   workflow_dispatch:
 

@@ -34,6 +34,19 @@ noncomputable def rationalCurveNormalizingChange
     VariableChange ℚ :=
   E.1.toCharNeTwoNF
 
+/-- The characteristic-not-two normalization is a pure completion-of-square:
+its x-coordinate scaling is one. -/
+@[simp] theorem rationalCurveNormalizingChange_u
+    (E : RationalEllipticCurve) :
+    rationalCurveNormalizingChange E |>.u = 1 := by
+  rfl
+
+/-- The same normalization has zero x-translation. -/
+@[simp] theorem rationalCurveNormalizingChange_r
+    (E : RationalEllipticCurve) :
+    rationalCurveNormalizingChange E |>.r = 0 := by
+  rfl
+
 /-- The actual normalized rational Weierstrass model. -/
 noncomputable def normalizedRationalEllipticCurve
     (E : RationalEllipticCurve) :
@@ -62,6 +75,37 @@ noncomputable def normalizedPointGroupEquiv
   classical
   exact WeierstrassCurve.Affine.Point.equivVariableChange
     E.1 (rationalCurveNormalizingChange E)
+
+/-- On every finite affine point, normalization preserves the x-coordinate
+LITERALLY; only y is completed to a square. This is the crucial simplification
+for comparing Stoll's x-T descent presentation across the same curve. -/
+theorem normalizedPointGroupEquiv_preserves_x
+    (E : RationalEllipticCurve)
+    {x y : ℚ}
+    (h :
+      (normalizedRationalEllipticCurve E).1.toAffine.Nonsingular x y) :
+    ∃ y' h',
+      normalizedPointGroupEquiv E
+        (.some x y h)
+      =
+      .some x y' h' := by
+  letI : E.1.IsElliptic := E.2
+  classical
+  refine ⟨
+    y + (rationalCurveNormalizingChange E).s * x
+      + (rationalCurveNormalizingChange E).t,
+    ?_,
+    ?_⟩
+  · exact
+      WeierstrassCurve.Affine.equation_iff_nonsingular.mp
+        ((WeierstrassCurve.variableChange_equation
+          E.1 (rationalCurveNormalizingChange E) x y).mpr
+          (WeierstrassCurve.Affine.equation_iff_nonsingular.mpr h))
+  · rw [normalizedPointGroupEquiv]
+    rw [WeierstrassCurve.Affine.Point.equivVariableChange_some]
+    apply WeierstrassCurve.Affine.Point.some_eq_some E.1
+    · simp [rationalCurveNormalizingChange]
+    · simp [rationalCurveNormalizingChange]
 
 /-- In particular the normalization intertwines the literal doubling
 maps. This is the first same-curve input needed for transporting the

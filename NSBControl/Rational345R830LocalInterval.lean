@@ -107,5 +107,35 @@ theorem negativeIntegral_on_usableTime
       (usableTime_le_certifiedTime ε)
       hinitial hdisp hrate hcont
 
+
+/-- Stronger terminal compiler: derivative authority plus continuity of the
+finite selected-rate observable discharges the continuity hypothesis
+automatically.  The concrete NS residue is therefore just initial-rate
+identification and the two quantitative R828 bounds. -/
+theorem negativeIntegral_on_usableTime_of_continuousRate
+    {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (field : E → E)
+    (u : ℝ → E) (u₀ : E) (rate : E → ℝ)
+    {ε : ℝ}
+    (hε : 0 < ε)
+    (hderiv :
+      ∀ t ∈ Ioo (-ε) ε,
+        HasDerivAt u (field (u t)) t)
+    (hrateContinuous : Continuous rate)
+    (hinitial : rate u₀ ≤ -integerMargin)
+    (hdisp :
+      ∀ t ∈ Icc (0 : ℝ) (usableTime ε),
+        ‖u t - u₀‖ ≤ odeComponentBound * t)
+    (hrate :
+      ∀ x,
+        rate x - rate u₀ ≤ rateLipschitzBound * ‖x - u₀‖) :
+    (∫ t in (0 : ℝ)..usableTime ε, rate (u t)) < 0 := by
+  apply negativeIntegral_on_usableTime
+    u u₀ rate hε hinitial hdisp hrate
+  exact rate_comp_continuousOn_usable
+    (solution_continuousOn_usable hε hderiv)
+    hrateContinuous
+
 end Rational345R830LocalInterval
 end NSBControl

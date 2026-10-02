@@ -1,1 +1,139 @@
-import Synthesis.RiemannSelectedPrimeSensitiveThreeTapIncrementAudit\nimport Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleFourierTerminal\n\n/-!\n# RH three-tap terminal-margin decision surface\n\nThis file makes the Clay-facing test explicit. The canonical selected witness\nalready has a single exact positive-margin scalar. For a translated detector\nwe keep the changed same-ordinate target and changed local budget visible\ninstead of silently reusing the unperturbed ones.\n\nNo RH estimate is assumed or proved here.\n-/\n\nnoncomputable section\nnamespace Synthesis\nopen scoped Real\n\ndef QuarticFourSignedPolePair.canonicalTerminalMargin\n    {t : ℝ} (W : QuarticFourSignedPolePair t)\n    (rho : Zeros) (EV : ℝ) : ℝ :=\n  2 * W.combinedZeroHeightDefect rho\n    - (W.completedSignedResidual\n        + (1/2 : ℝ) * W.canonicalLocalBudgetSlack EV)\n\ntheorem QuarticFourSignedPolePair.canonicalTerminalMargin_pos_iff_highCut\n    {t EV : ℝ}\n    (ht : 200 <= t)\n    (W : QuarticFourSignedPolePair t)\n    (rho : Zeros) :\n    0 < W.canonicalTerminalMargin rho EV\n      ↔ W.PostSixthCanonicalSignedHighCut rho EV := by\n  rw [W.postSixthCanonicalSignedHighCut_iff_completed_plus_localSlack ht rho]\n  unfold QuarticFourSignedPolePair.canonicalTerminalMargin\n  constructor <;> intro h <;> linarith\n\ndef QuarticFourSignedPolePair.threeTapCompletedExternal\n    {t : ℝ} (W : QuarticFourSignedPolePair t)\n    (eps : ℝ) : ℝ :=\n  W.threeTapChannelCombination eps\n      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect\n    + W.threeTapSignedPrimeCombination eps\n    + W.threeTapChannelCombination eps\n      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect\n    + W.threeTapChannelCombination eps\n      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect\n\ntheorem QuarticFourSignedPolePair.threeTapCompletedExternal_eq_cluster\n    {t eps : ℝ}\n    (ht : 200 <= t)\n    (W : QuarticFourSignedPolePair t) :\n    W.threeTapCompletedExternal eps\n      =\n    W.threeTapChannelCombination eps\n      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.clusterHeightDefect := by\n  have h := W.threeTapCompletedCluster_eq_off_add_arithmetic ht (eps := eps)\n  unfold QuarticFourSignedPolePair.threeTapCompletedExternal\n    QuarticFourSignedPolePair.threeTapCompletedArithmetic at h ⊢\n  linarith\n\ntheorem QuarticFourSignedPolePair.threeTapCompletedExternal_at_resonance\n    {t eps : ℝ}\n    (ht : 200 <= t)\n    (W : QuarticFourSignedPolePair t)\n    (hphase : Real.cos (t * Real.log 2) = 0) :\n    W.threeTapCompletedExternal eps\n      =\n    W.threeTapChannelCombination eps\n      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect\n    + W.threeTapChannelCombination eps\n      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect\n    + W.threeTapChannelCombination eps\n      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect := by\n  unfold QuarticFourSignedPolePair.threeTapCompletedExternal\n  rw [W.threeTapSignedPrime_eq_zero_at_resonance ht hphase]\n  ring\n\ndef QuarticFourSignedPolePair.threeTapTerminalMargin\n    {t : ℝ} (W : QuarticFourSignedPolePair t)\n    (eps target localSlack : ℝ) : ℝ :=\n  2 * target\n    - (W.threeTapCompletedExternal eps\n        + (1/2 : ℝ) * localSlack)\n\ntheorem QuarticFourSignedPolePair.threeTapTerminalMargin_sub_canonical\n    {t eps target localSlack EV : ℝ}\n    (W : QuarticFourSignedPolePair t)\n    (rho : Zeros) :\n    W.threeTapTerminalMargin eps target localSlack\n      - W.canonicalTerminalMargin rho EV\n    =\n    2 * (target - W.combinedZeroHeightDefect rho)\n      - (W.threeTapCompletedExternal eps - W.completedSignedResidual)\n      - (1/2 : ℝ) * (localSlack - W.canonicalLocalBudgetSlack EV) := by\n  unfold QuarticFourSignedPolePair.threeTapTerminalMargin\n    QuarticFourSignedPolePair.canonicalTerminalMargin\n  ring\n\ntheorem QuarticFourSignedPolePair.threeTapTerminalMargin_sub_canonical_at_resonance\n    {t eps target localSlack EV : ℝ}\n    (ht : 200 <= t)\n    (W : QuarticFourSignedPolePair t)\n    (rho : Zeros)\n    (hphase : Real.cos (t * Real.log 2) = 0) :\n    W.threeTapTerminalMargin eps target localSlack\n      - W.canonicalTerminalMargin rho EV\n    =\n    2 * (target - W.combinedZeroHeightDefect rho)\n      -\n      (\n        W.threeTapChannelCombination eps\n          Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect\n        + W.threeTapChannelCombination eps\n          Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect\n        + W.threeTapChannelCombination eps\n          Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect\n        - W.completedSignedResidual\n      )\n      - (1/2 : ℝ) * (localSlack - W.canonicalLocalBudgetSlack EV) := by\n  rw [W.threeTapTerminalMargin_sub_canonical rho]\n  rw [W.threeTapCompletedExternal_at_resonance ht hphase]\n\ntheorem heightDefect_at_zero_height\n    (g : ℝ -> ℝ) (r : ℝ) :\n    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect\n      g r 0 0 = 0 := by\n  unfold Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect\n  ring\n\ntheorem no_positive_floor_from_heightDefect_at_zero\n    (g : ℝ -> ℝ) (r delta : ℝ)\n    (hdelta : 0 < delta) :\n    ¬ delta <=\n      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect\n        g r 0 0 := by\n  rw [heightDefect_at_zero_height]\n  linarith\n\nend Synthesis\n
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapIncrementAudit
+import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleFourierTerminal
+
+/-!
+# RH three-tap terminal-margin decision surface
+
+This file makes the Clay-facing test explicit. The canonical selected witness
+already has a single exact positive-margin scalar. For a translated detector
+we keep the changed same-ordinate target and changed local budget visible
+instead of silently reusing the unperturbed ones.
+
+No RH estimate is assumed or proved here.
+-/
+
+noncomputable section
+namespace Synthesis
+open scoped Real
+
+def QuarticFourSignedPolePair.canonicalTerminalMargin
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (EV : ℝ) : ℝ :=
+  2 * W.combinedZeroHeightDefect rho
+    - (W.completedSignedResidual
+        + (1/2 : ℝ) * W.canonicalLocalBudgetSlack EV)
+
+theorem QuarticFourSignedPolePair.canonicalTerminalMargin_pos_iff_highCut
+    {t EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    0 < W.canonicalTerminalMargin rho EV
+      ↔ W.PostSixthCanonicalSignedHighCut rho EV := by
+  rw [W.postSixthCanonicalSignedHighCut_iff_completed_plus_localSlack ht rho]
+  unfold QuarticFourSignedPolePair.canonicalTerminalMargin
+  constructor <;> intro h <;> linarith
+
+def QuarticFourSignedPolePair.threeTapCompletedExternal
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps : ℝ) : ℝ :=
+  W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect
+    + W.threeTapSignedPrimeCombination eps
+    + W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect
+    + W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect
+
+theorem QuarticFourSignedPolePair.threeTapCompletedExternal_eq_cluster
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapCompletedExternal eps
+      =
+    W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.clusterHeightDefect := by
+  have h := W.threeTapCompletedCluster_eq_off_add_arithmetic ht (eps := eps)
+  unfold QuarticFourSignedPolePair.threeTapCompletedExternal
+    QuarticFourSignedPolePair.threeTapCompletedArithmetic at h ⊢
+  linarith
+
+theorem QuarticFourSignedPolePair.threeTapCompletedExternal_at_resonance
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hphase : Real.cos (t * Real.log 2) = 0) :
+    W.threeTapCompletedExternal eps
+      =
+    W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect
+    + W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect
+    + W.threeTapChannelCombination eps
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect := by
+  unfold QuarticFourSignedPolePair.threeTapCompletedExternal
+  rw [W.threeTapSignedPrime_eq_zero_at_resonance ht hphase]
+  ring
+
+def QuarticFourSignedPolePair.threeTapTerminalMargin
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (eps target localSlack : ℝ) : ℝ :=
+  2 * target
+    - (W.threeTapCompletedExternal eps
+        + (1/2 : ℝ) * localSlack)
+
+theorem QuarticFourSignedPolePair.threeTapTerminalMargin_sub_canonical
+    {t eps target localSlack EV : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) :
+    W.threeTapTerminalMargin eps target localSlack
+      - W.canonicalTerminalMargin rho EV
+    =
+    2 * (target - W.combinedZeroHeightDefect rho)
+      - (W.threeTapCompletedExternal eps - W.completedSignedResidual)
+      - (1/2 : ℝ) * (localSlack - W.canonicalLocalBudgetSlack EV) := by
+  unfold QuarticFourSignedPolePair.threeTapTerminalMargin
+    QuarticFourSignedPolePair.canonicalTerminalMargin
+  ring
+
+theorem QuarticFourSignedPolePair.threeTapTerminalMargin_sub_canonical_at_resonance
+    {t eps target localSlack EV : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hphase : Real.cos (t * Real.log 2) = 0) :
+    W.threeTapTerminalMargin eps target localSlack
+      - W.canonicalTerminalMargin rho EV
+    =
+    2 * (target - W.combinedZeroHeightDefect rho)
+      -
+      (
+        W.threeTapChannelCombination eps
+          Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.offOrdProjectiveDefect
+        + W.threeTapChannelCombination eps
+          Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.gammaProjectiveDefect
+        + W.threeTapChannelCombination eps
+          Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect
+        - W.completedSignedResidual
+      )
+      - (1/2 : ℝ) * (localSlack - W.canonicalLocalBudgetSlack EV) := by
+  rw [W.threeTapTerminalMargin_sub_canonical rho]
+  rw [W.threeTapCompletedExternal_at_resonance ht hphase]
+
+theorem heightDefect_at_zero_height
+    (g : ℝ -> ℝ) (r : ℝ) :
+    Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
+      g r 0 0 = 0 := by
+  unfold Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
+  ring
+
+theorem no_positive_floor_from_heightDefect_at_zero
+    (g : ℝ -> ℝ) (r delta : ℝ)
+    (hdelta : 0 < delta) :
+    ¬ delta <=
+      Zeta23Bridge.LiteralWeilTwoRadiusHeightDetector.heightDefect
+        g r 0 0 := by
+  rw [heightDefect_at_zero_height]
+  linarith
+
+end Synthesis

@@ -16,6 +16,8 @@ import NSBControl.SharedWeightedCut
 import NSBControl.AugmentedDerivativeCancellation
 import NSBControl.DyadicDifferenceResidual
 import NSBControl.GlobalProductRuleLoop
+import NSBControl.Rational345ReserveWitness
+import NSBControl.Rational345ShortTime
 
 namespace NSBCyclicOrbit
 

@@ -5,6 +5,8 @@ import YangMills.CMP119ResidualReflectionCut
 import YangMills.CMP119LiteralCompleteCrossingRP
 import YangMills.CMP119LiteralDyadicResidualWeld
 import YangMills.CMP119NativeDyadicMomentBound
+import YangMills.FourDimensionalNativeHaarReflectionMaxCut
+import YangMills.ScaleSensitiveWilsonMomentMaxCut
 
 /-!
 # YM max-cut frontier, 2026-10-02
@@ -41,6 +43,31 @@ Those are the surviving max-cut leaves.
 -/
 
 namespace RequestProject.YangMills
+
+
+/--
+Block A has been reduced to the preservation of native compact-group link
+Haar by the one explicit coordinate-permutation/temporal-inversion reflection.
+All finite Wilson plaquette geometry and half-action transport are upstream.
+-/
+def ymBlockAHaarReflectionLeaf
+    (G : Type*) [Group G] [TopologicalSpace G]
+    [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
+    [MeasurableSpace G] [BorelSpace G]
+    (n : ℕ) [NeZero n] : Prop :=
+  FourDimensionalNativeHaarReflectionInvariant G n
+
+/--
+The easy cutoff-uniform Wilson observable is the bounded average plaquette
+cost.  Its universal bound must not be confused with the missing
+scale-sensitive coercive producer.
+-/
+theorem ym_maxcut_average_plaquette_cost_is_uniformly_bounded
+    (L : ℕ) [NeZero L]
+    (hCard : (su2FourDimensionalPlaquettes L).card ≠ 0)
+    (links : SU2TorusLinks L) :
+    su2AveragePlaquetteCost L links ≤ 2 :=
+  (su2_average_plaquette_cost_bounds L hCard links).2
 
 /--
 The global finite Wilson half-action identity is no longer a hypothesis.

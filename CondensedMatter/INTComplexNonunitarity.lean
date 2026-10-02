@@ -76,5 +76,51 @@ theorem conjugate_canonical_q_z :
     (qVector (CVec3.conj canonicalEta)).z = -2 := by
   simp [qVector, canonicalEta, CVec3.smul, CVec3.cross, CVec3.conj]
 
+/-!
+Paper-specific YbSb₂ witness.
+
+Kataria et al. use
+  η = (1/√2) (1, exp(iπ/4), 0)
+for the displayed surface calculation.  We represent
+  exp(iπ/4) = (1/√2)(1+i)
+exactly, avoiding transcendental normalization machinery.
+-/
+
+def invSqrtTwo : ℂ :=
+  ((Real.sqrt 2 : ℝ) : ℂ)⁻¹
+
+def paperPhasePiOverFour : ℂ :=
+  invSqrtTwo * (1 + I)
+
+def paperEta : CVec3 :=
+  ⟨invSqrtTwo, invSqrtTwo * paperPhasePiOverFour, 0⟩
+
+theorem invSqrtTwo_ne_zero :
+    invSqrtTwo ≠ 0 := by
+  have hsqrt : Real.sqrt (2 : ℝ) ≠ 0 := by positivity
+  have hcast : ((Real.sqrt 2 : ℝ) : ℂ) ≠ 0 := by
+    exact_mod_cast hsqrt
+  exact inv_ne_zero hcast
+
+/--
+The exact paper-selected η has a nonzero z-directed nonunitarity vector.
+Before reducing √2 powers, the literal value is 2 (1/√2)^3.
+-/
+theorem paper_q_z_formula :
+    (qVector paperEta).z = 2 * invSqrtTwo ^ 3 := by
+  simp [qVector, paperEta, paperPhasePiOverFour, invSqrtTwo,
+    CVec3.smul, CVec3.cross, CVec3.conj]
+  ring
+
+theorem paper_q_nonzero :
+    qVector paperEta ≠ ⟨0, 0, 0⟩ := by
+  intro h
+  have hz : (qVector paperEta).z = 0 := congrArg CVec3.z h
+  rw [paper_q_z_formula] at hz
+  have hpow : invSqrtTwo ^ 3 ≠ 0 :=
+    pow_ne_zero 3 invSqrtTwo_ne_zero
+  have htwo : (2 : ℂ) ≠ 0 := by norm_num
+  exact (mul_ne_zero htwo hpow) hz
+
 end INT
 end CondensedMatter

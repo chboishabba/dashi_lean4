@@ -100,24 +100,39 @@ def Resonates (p q k : Mode) : Prop :=
 
 instance (p q k : Mode) : Decidable (Resonates p q k) := inferInstance
 
-def projectedOrderedTerm (u : State) (p q k : Mode) : Vec3 :=
+def projectedOrderedBilinear
+    (left right : State) (p q k : Mode) : Vec3 :=
   if Resonates p q k then
     fun j =>
       -Complex.I *
         leray k
-          (fun a => bilinearDot (u p) (kComplex q) * u q a) j
+          (fun a => bilinearDot (left p) (kComplex q) * right q a) j
   else 0
 
-def projectedNonlinearity (u : State) (k : Mode) : Vec3 :=
+def projectedOrderedTerm (u : State) (p q k : Mode) : Vec3 :=
+  projectedOrderedBilinear u u p q k
+
+def projectedBilinear (left right : State) (k : Mode) : Vec3 :=
   if isZeroMode k then 0
   else
-    ∑ p : Mode, ∑ q : Mode, projectedOrderedTerm u p q k
+    ∑ p : Mode, ∑ q : Mode, projectedOrderedBilinear left right p q k
 
-def galerkinField (u : State) : State :=
+def projectedNonlinearity (u : State) (k : Mode) : Vec3 :=
+  projectedBilinear u u k
+
+def viscousLinear (u : State) : State :=
   fun k =>
     if isZeroMode k then 0
-    else fun j =>
-      -(normSq k : ℂ) * u k j + projectedNonlinearity u k j
+    else fun j => -(normSq k : ℂ) * u k j
+
+def galerkinField (u : State) : State :=
+  fun k => viscousLinear u k + projectedBilinear u u k
+
+theorem projectedNonlinearity_eq_bilinear_diag (u : State) :
+    projectedNonlinearity u = projectedBilinear u u := rfl
+
+theorem galerkinField_eq_linear_add_bilinear (u : State) :
+    galerkinField u = viscousLinear u + projectedBilinear u u := rfl
 
 def mixedCell (u : State) (p q : Mode) : Vec3 :=
   cross (helicalPlus p (u p)) (helicalMinus q (u q))

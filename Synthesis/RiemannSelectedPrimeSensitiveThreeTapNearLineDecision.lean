@@ -133,6 +133,6 @@ theorem QuarticFourSignedPolePair.threeTap_nearLine_trichotomy
       eps * W.threeTapNormalizedJ2LinearCoeff
         + eps^2 * W.threeTapNormalizedJ2QuadraticCoeff
     ) := by
-  exact lt_trichotomy _ 0 |>.imp id (fun h => Or.inl h.symm) id
+  exact lt_trichotomy _ 0
 
 end Synthesis

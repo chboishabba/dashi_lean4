@@ -6,6 +6,10 @@ on:
       - 'agent/bsd-cohomological-sha-v435-20261002'
     paths:
       - 'BSDCohomology/**'
+      - 'Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean'
+      - 'Synthesis/MillenniumBSDSelmerShaCohomologicalBoundary.lean'
+      - 'Synthesis/MillenniumBSDActualE2H1LowDegreeReduction.lean'
+      - 'Synthesis.lean'
       - 'BSDCohomology.lean'
       - 'lakefile.toml'
       - 'lean-toolchain'
@@ -34,3 +38,4 @@ jobs:
           lake env lean BSDCohomology/EllipticShaTarget.lean
           lake env lean BSDCohomology/EllipticKummerKernelExact.lean
           lake env lean BSDCohomology/GenuineDegreeOneShaTwoTorsion.lean
+          lake env lean Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean

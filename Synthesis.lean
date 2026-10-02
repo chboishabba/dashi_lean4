@@ -410,3 +410,4 @@ See `DEPENDENCY_MAP.md` for the provenance map and the list of remaining proof
 obligations.
 -/
 import Synthesis.MillenniumHodgeRealAlgebraicCycleMultiplicityExact
+import Synthesis.MillenniumHodgeP1xP1PrimitiveRulingRegressionExact

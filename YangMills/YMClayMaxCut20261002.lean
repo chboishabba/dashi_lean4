@@ -143,6 +143,44 @@ theorem ym_maxcut_wilson_three_sector_complete_rp
       wilsonKernel hWilsonSymm hWilsonRP cut)
 
 /--
+Literal specialization: the Wilson factor is no longer an input.  The existing
+multi-plaquette SU(2) crossing theorem supplies it on the SAME selected
+boundary map, while the constant vacuum is paid by the rank-one half factor.
+
+The only source-facing RP inputs are therefore certificates for E, R_op and B.
+-/
+theorem ym_maxcut_literal_wilson_three_sector_complete_rp
+    {P ι : Type*} [DecidableEq P] [Fintype ι]
+    (crossings : Finset P)
+    (β : ℝ) (hβ : 0 ≤ β)
+    (boundary : ι → SU2CrossingBoundary P)
+    (regularCert rCert boundaryCert :
+      CMP119SectorReflectionCertificate ι)
+    (vacuumEnergy : ℝ) :
+    ∀ test : ι → ℝ,
+      0 ≤ indexedReflectionQuadratic
+        (fun i j =>
+          su2WilsonCrossingPlaneKernel crossings β
+            (boundary i) (boundary j) *
+          (regularCert.kernel i j *
+            rCert.kernel i j *
+            boundaryCert.kernel i j *
+            Real.exp (-vacuumEnergy)))
+        test := by
+  let cut : CMP119ResidualReflectionCut ι :=
+    cmp119ResidualCutWithConstantVacuum
+      regularCert rCert boundaryCert vacuumEnergy
+      (fun i j =>
+        regularCert.kernel i j *
+        rCert.kernel i j *
+        boundaryCert.kernel i j *
+        Real.exp (-vacuumEnergy))
+      rfl
+  exact cmp119_literal_wilson_crossing_mul_residual_rp
+    crossings β hβ boundary cut
+
+
+/--
 The current source-facing complete-action RP cut has exactly three residual
 certificate leaves after the constant-vacuum identification.
 -/

@@ -1,4 +1,5 @@
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapTerminalNearLine
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapJ2AtomicDecision
 
 /-!
 # One-scale resonance decision surface
@@ -72,12 +73,6 @@ theorem QuarticFourSignedPolePair.threeTapAdaptiveTerminalConstant_eq_resonance
   unfold QuarticFourSignedPolePair.threeTapAdaptiveTerminalConstant
     QuarticFourSignedPolePair.threeTapResonanceTerminalConstant
   rw [W.threeTapCompletedExternal_eq_nonPrime_at_resonance ht hphase]
-
-def QuarticFourSignedPolePair.threeTapNormalizedJ2Polynomial
-    {t : ℝ} (W : QuarticFourSignedPolePair t)
-    (eps : ℝ) : ℝ :=
-  eps * W.threeTapNormalizedJ2LinearCoeff
-    + eps^2 * W.threeTapNormalizedJ2QuadraticCoeff
 
 theorem QuarticFourSignedPolePair.threeTap_target_second_derivative_sign_resonance_surface
     {t eps : ℝ}

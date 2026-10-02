@@ -175,4 +175,113 @@ theorem QuarticFourSignedPolePair.threeTapSignedJ2_zero_iff_normalized
   have hfac : (1/(t/16)^4 : ℝ) ≠ 0 := by positivity
   exact mul_eq_zero.trans (by simp [hfac])
 
+/-! ## Exact exceptional-strength classification -/
+
+theorem QuarticFourSignedPolePair.threeTapSignedJ2_zero_iff_linear_factor
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (heps : eps ≠ 0) :
+    W.threeTapSignedJ2 eps = 0
+      ↔
+    W.threeTapNormalizedJ2LinearCoeff
+      + eps * W.threeTapNormalizedJ2QuadraticCoeff = 0 := by
+  rw [W.threeTapSignedJ2_zero_iff_normalized ht]
+  rw [show
+      eps * W.threeTapNormalizedJ2LinearCoeff
+        + eps^2 * W.threeTapNormalizedJ2QuadraticCoeff
+      =
+      eps *
+        (W.threeTapNormalizedJ2LinearCoeff
+          + eps * W.threeTapNormalizedJ2QuadraticCoeff) by ring]
+  simp [heps]
+
+theorem QuarticFourSignedPolePair.threeTap_quartic_exception_unique
+    {t eps1 eps2 : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hB : W.threeTapNormalizedJ2QuadraticCoeff ≠ 0)
+    (h1 : eps1 ≠ 0)
+    (h2 : eps2 ≠ 0)
+    (hz1 : W.threeTapSignedJ2 eps1 = 0)
+    (hz2 : W.threeTapSignedJ2 eps2 = 0) :
+    eps1 = eps2 := by
+  have e1 :=
+    (W.threeTapSignedJ2_zero_iff_linear_factor ht h1).1 hz1
+  have e2 :=
+    (W.threeTapSignedJ2_zero_iff_linear_factor ht h2).1 hz2
+  nlinarith
+
+theorem QuarticFourSignedPolePair.threeTap_no_nonzero_quartic_exception_of_B_zero
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hA : W.threeTapNormalizedJ2LinearCoeff ≠ 0)
+    (hB : W.threeTapNormalizedJ2QuadraticCoeff = 0)
+    (heps : eps ≠ 0) :
+    W.threeTapSignedJ2 eps ≠ 0 := by
+  intro hz
+  have h :=
+    (W.threeTapSignedJ2_zero_iff_linear_factor ht heps).1 hz
+  rw [hB, mul_zero, add_zero] at h
+  exact hA h
+
+theorem QuarticFourSignedPolePair.threeTap_exception_eq_neg_A_div_B
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hB : W.threeTapNormalizedJ2QuadraticCoeff ≠ 0)
+    (heps : eps ≠ 0)
+    (hz : W.threeTapSignedJ2 eps = 0) :
+    eps
+      =
+    - W.threeTapNormalizedJ2LinearCoeff
+      / W.threeTapNormalizedJ2QuadraticCoeff := by
+  have h :=
+    (W.threeTapSignedJ2_zero_iff_linear_factor ht heps).1 hz
+  apply (eq_div_iff hB).2
+  nlinarith
+
+/-- The near-line target second derivative has the opposite sign from the
+normalized J2 polynomial, since the physical r^-4 factor is positive. -/
+theorem QuarticFourSignedPolePair.threeTap_target_second_derivative_sign
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t) :
+    W.threeTapCombinedHeightD2 eps 0
+      =
+    -(1/(t/16)^4)
+      *
+    (eps * W.threeTapNormalizedJ2LinearCoeff
+      + eps^2 * W.threeTapNormalizedJ2QuadraticCoeff) := by
+  rw [W.threeTapCombinedHeightD2_zero_eq,
+      W.threeTapSignedJ2_eq_normalized_polynomial ht]
+
+theorem QuarticFourSignedPolePair.threeTap_target_quadratic_positive_of_J2poly_neg
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hneg :
+      eps * W.threeTapNormalizedJ2LinearCoeff
+        + eps^2 * W.threeTapNormalizedJ2QuadraticCoeff < 0) :
+    0 < W.threeTapCombinedHeightD2 eps 0 := by
+  rw [W.threeTap_target_second_derivative_sign ht]
+  have hr : 0 < t/16 := by linarith
+  have hfac : 0 < 1/(t/16)^4 := by positivity
+  nlinarith
+
+theorem QuarticFourSignedPolePair.threeTap_target_quadratic_negative_of_J2poly_pos
+    {t eps : ℝ}
+    (ht : 200 <= t)
+    (W : QuarticFourSignedPolePair t)
+    (hpos :
+      0 <
+      eps * W.threeTapNormalizedJ2LinearCoeff
+        + eps^2 * W.threeTapNormalizedJ2QuadraticCoeff) :
+    W.threeTapCombinedHeightD2 eps 0 < 0 := by
+  rw [W.threeTap_target_second_derivative_sign ht]
+  have hr : 0 < t/16 := by linarith
+  have hfac : 0 < 1/(t/16)^4 := by positivity
+  nlinarith
+
 end Synthesis

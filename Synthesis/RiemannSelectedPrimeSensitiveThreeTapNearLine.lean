@@ -93,14 +93,18 @@ theorem QuarticFourSignedPolePair.threeTapCombinedHeightDefect_eq_cosh
       compactCoshTransform (W.threeTapSignedProjectiveProfile eps) a := by
   have hhalf :=
     heightDefect_eq_neg_quarter_projectiveCosh
-      (W.threeTapProjectiveProfileHalf_continuous ht).1
+      (detectorThreeTap_contDiff
+        (quarticFourPhysicalDetector_contDiff W.Rpos)
+        eps (Real.log 2)).continuous
       (detectorThreeTap_compact
         (quarticFourPhysicalDetector_compact W.Rpos (by linarith : 0 < t))
         eps (Real.log 2))
       (t/16) a
   have htwo :=
     heightDefect_eq_neg_quarter_projectiveCosh
-      (W.threeTapProjectiveProfileTwo_continuous ht).1
+      (detectorThreeTap_contDiff
+        (quarticFourPhysicalDetector_contDiff W.Rpos)
+        eps (Real.log 2)).continuous
       (detectorThreeTap_compact
         (quarticFourPhysicalDetector_compact W.Rpos (by linarith : 0 < t))
         eps (Real.log 2))

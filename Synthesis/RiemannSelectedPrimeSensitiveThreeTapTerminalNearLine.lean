@@ -116,66 +116,6 @@ theorem QuarticFourSignedPolePair.threeTapAdaptiveTerminalProfileD2_zero
   rw [W.threeTap_target_second_derivative_sign ht]
   ring
 
-/-- If the completed constant is already positive, strict terminal positivity
-holds on a punctured neighborhood independently of J2. -/
-theorem QuarticFourSignedPolePair.exists_threeTapAdaptiveTerminalProfile_pos_right_of_constant_pos
-    {t eps mult : ℝ}
-    (ht : 200 <= t)
-    (W : QuarticFourSignedPolePair t)
-    (hconst : 0 < W.threeTapAdaptiveTerminalConstant eps) :
-    ∃ delta : ℝ, 0 < delta ∧
-      ∀ a : ℝ, 0 < a → a < delta →
-        0 < W.threeTapAdaptiveTerminalProfile eps mult a := by
-  have hcont :
-      ContinuousAt
-        (W.threeTapAdaptiveTerminalProfile eps mult) 0 :=
-    (W.threeTapAdaptiveTerminalProfile_hasDerivAt
-      (eps:=eps) (mult:=mult) ht (a:=0)).continuousAt
-  have hopen :
-      ∀ᶠ a : ℝ in 𝓝 0,
-        0 < W.threeTapAdaptiveTerminalProfile eps mult a :=
-    (isOpen_lt continuous_const
-      (continuous_of_continuousAt_zero hcont)).mem_nhds
-      (by simpa [W.threeTapAdaptiveTerminalProfile_zero] using hconst)
-  rw [Metric.eventually_nhds_iff] at hopen
-  obtain ⟨delta,hdelta,hband⟩ := hopen
-  refine ⟨delta,hdelta,?_⟩
-  intro a ha had
-  apply hband
-  rw [Real.dist_eq]
-  simpa [abs_of_pos ha] using had
-
-/-- If the completed constant is negative, the whole terminal scalar is
-strictly negative near the line regardless of a favorable target quadratic
-coefficient.  This is an immediate one-scale no-go regime. -/
-theorem QuarticFourSignedPolePair.exists_threeTapAdaptiveTerminalProfile_neg_right_of_constant_neg
-    {t eps mult : ℝ}
-    (ht : 200 <= t)
-    (W : QuarticFourSignedPolePair t)
-    (hconst : W.threeTapAdaptiveTerminalConstant eps < 0) :
-    ∃ delta : ℝ, 0 < delta ∧
-      ∀ a : ℝ, 0 < a → a < delta →
-        W.threeTapAdaptiveTerminalProfile eps mult a < 0 := by
-  have hcont :
-      ContinuousAt
-        (W.threeTapAdaptiveTerminalProfile eps mult) 0 :=
-    (W.threeTapAdaptiveTerminalProfile_hasDerivAt
-      (eps:=eps) (mult:=mult) ht (a:=0)).continuousAt
-  have hopen :
-      ∀ᶠ a : ℝ in 𝓝 0,
-        W.threeTapAdaptiveTerminalProfile eps mult a < 0 :=
-    (isOpen_lt
-      (continuous_of_continuousAt_zero hcont)
-      continuous_const).mem_nhds
-      (by simpa [W.threeTapAdaptiveTerminalProfile_zero] using hconst)
-  rw [Metric.eventually_nhds_iff] at hopen
-  obtain ⟨delta,hdelta,hband⟩ := hopen
-  refine ⟨delta,hdelta,?_⟩
-  intro a ha had
-  apply hband
-  rw [Real.dist_eq]
-  simpa [abs_of_pos ha] using had
-
 /-- On the exactly balanced completed-constant locus, the normalized J2
 polynomial is the leading second derivative of the whole terminal scalar.
 For positive multiplicity, negative J2 polynomial gives a positive quadratic

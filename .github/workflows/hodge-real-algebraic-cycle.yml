@@ -1,0 +1,29 @@
+name: Hodge genuine algebraic-cycle donor
+
+on:
+  push:
+    branches:
+      - 'agent/hodge-real-algebraic-cycle-v435-20261002'
+    paths:
+      - 'Synthesis/MillenniumHodgeRealAlgebraicCycleMultiplicityExact.lean'
+      - 'Synthesis.lean'
+      - 'lean-toolchain'
+      - 'lakefile.toml'
+      - '.github/workflows/hodge-real-algebraic-cycle.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-cycle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+        with:
+          build: false
+      - name: Resolve current Mathlib
+        run: lake update
+      - name: Kernel check real algebraic-cycle multiplicity donor
+        run: lake env lean Synthesis/MillenniumHodgeRealAlgebraicCycleMultiplicityExact.lean

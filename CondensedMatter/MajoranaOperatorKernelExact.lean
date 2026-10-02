@@ -142,3 +142,67 @@ theorem fermion_CAR :
     simp [add, mul, ladderTarget, ladderDaggerTarget, one]
 
 end CondensedMatter
+
+
+/-!
+Closed-form exchange operator numerator.
+
+For A = gamma1 gamma2, A^2 = -1.  Hence the normalized exchange
+U12 = (1 + A)/sqrt(2) has inverse/adjoint proportional to (1 - A).
+We prove the normalization-free identities exactly; these are sufficient to
+recover the conjugation action after dividing by 2.
+-/
+
+def gamma12 : CMatrix2 :=
+  mul gamma1 gamma2
+
+def braidPlus : CMatrix2 :=
+  add one gamma12
+
+def braidMinus : CMatrix2 :=
+  add one (neg gamma12)
+
+def twoIdentity : CMatrix2 :=
+  smul 2 one
+
+def twoGamma1 : CMatrix2 :=
+  smul 2 gamma1
+
+def twoGamma2 : CMatrix2 :=
+  smul 2 gamma2
+
+def minusTwoGamma1 : CMatrix2 :=
+  neg twoGamma1
+
+theorem gamma12_square_minus_one :
+    mul gamma12 gamma12 = neg one := by
+  apply CMatrix2.ext <;>
+    simp [gamma12, mul, gamma1, gamma2, neg, one, Complex.I_mul_I]
+
+theorem braid_normalization_exact :
+    mul braidMinus braidPlus = twoIdentity := by
+  apply CMatrix2.ext <;>
+    simp [braidMinus, braidPlus, gamma12, add, neg, mul, smul,
+      one, twoIdentity, gamma1, gamma2, Complex.I_mul_I]
+  <;> norm_num
+
+/--
+Unnormalized form of U† gamma1 U = gamma2.
+The left side equals 2 gamma2 before the 1/sqrt(2) factors are divided out.
+-/
+theorem braid_conjugates_gamma1_to_gamma2 :
+    mul (mul braidMinus gamma1) braidPlus = twoGamma2 := by
+  apply CMatrix2.ext <;>
+    simp [braidMinus, braidPlus, gamma12, add, neg, mul, smul,
+      one, twoGamma2, gamma1, gamma2, Complex.I_mul_I]
+  <;> norm_num
+
+/--
+Unnormalized form of U† gamma2 U = -gamma1.
+-/
+theorem braid_conjugates_gamma2_to_minus_gamma1 :
+    mul (mul braidMinus gamma2) braidPlus = minusTwoGamma1 := by
+  apply CMatrix2.ext <;>
+    simp [braidMinus, braidPlus, gamma12, add, neg, mul, smul,
+      one, minusTwoGamma1, twoGamma1, gamma1, gamma2, Complex.I_mul_I]
+  <;> norm_num

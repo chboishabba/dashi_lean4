@@ -1,0 +1,45 @@
+name: NS R829-R830 rational 3-4-5 Lean check
+
+on:
+  push:
+    branches:
+      - 'agent/ns-r703-cyclic-vector-orbit'
+    paths:
+      - 'NSBControl/Rational345ReserveWitness.lean'
+      - 'NSBControl/Rational345ShortTime.lean'
+      - 'NSBControl/Rational345LocalODE.lean'
+      - 'NSBControl/Rational345QuadraticODE.lean'
+      - 'NSBCyclicOrbit.lean'
+      - 'lakefile.toml'
+      - 'lean-toolchain'
+      - '.github/workflows/ns-r829-r830-rational-345.yml'
+  pull_request:
+    paths:
+      - 'NSBControl/Rational345ReserveWitness.lean'
+      - 'NSBControl/Rational345ShortTime.lean'
+      - 'NSBControl/Rational345LocalODE.lean'
+      - 'NSBControl/Rational345QuadraticODE.lean'
+      - 'NSBCyclicOrbit.lean'
+      - 'lakefile.toml'
+      - 'lean-toolchain'
+      - '.github/workflows/ns-r829-r830-rational-345.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          test: false
+          build: false
+      - name: Build R829-R830 modules
+        run: |
+          lake build NSBControl.Rational345ReserveWitness
+          lake build NSBControl.Rational345ShortTime
+          lake build NSBControl.Rational345LocalODE
+          lake build NSBControl.Rational345QuadraticODE

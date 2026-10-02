@@ -86,4 +86,84 @@ def applyB4Generator : B4Generator → SignedMajorana4 → SignedMajorana4
   | .s2 => sigma2_4
   | .s3 => sigma3_4
 
+
+def sigma1InvBasis4 : Majorana4 → SignedMajorana4
+  | .gamma1 => ⟨.minus,.gamma2⟩
+  | .gamma2 => ⟨.plus,.gamma1⟩
+  | .gamma3 => ⟨.plus,.gamma3⟩
+  | .gamma4 => ⟨.plus,.gamma4⟩
+
+def sigma2InvBasis4 : Majorana4 → SignedMajorana4
+  | .gamma1 => ⟨.plus,.gamma1⟩
+  | .gamma2 => ⟨.minus,.gamma3⟩
+  | .gamma3 => ⟨.plus,.gamma2⟩
+  | .gamma4 => ⟨.plus,.gamma4⟩
+
+def sigma3InvBasis4 : Majorana4 → SignedMajorana4
+  | .gamma1 => ⟨.plus,.gamma1⟩
+  | .gamma2 => ⟨.plus,.gamma2⟩
+  | .gamma3 => ⟨.minus,.gamma4⟩
+  | .gamma4 => ⟨.plus,.gamma3⟩
+
+def sigma1Inv_4 : SignedMajorana4 → SignedMajorana4
+  | ⟨s,m⟩ => applyOuterSign4 s (sigma1InvBasis4 m)
+
+def sigma2Inv_4 : SignedMajorana4 → SignedMajorana4
+  | ⟨s,m⟩ => applyOuterSign4 s (sigma2InvBasis4 m)
+
+def sigma3Inv_4 : SignedMajorana4 → SignedMajorana4
+  | ⟨s,m⟩ => applyOuterSign4 s (sigma3InvBasis4 m)
+
+theorem sigma1_inverse_left_4 (x : SignedMajorana4) :
+    sigma1Inv_4 (sigma1_4 x) = x := by
+  rcases x with ⟨s,m⟩
+  cases s <;> cases m <;> rfl
+
+theorem sigma1_inverse_right_4 (x : SignedMajorana4) :
+    sigma1_4 (sigma1Inv_4 x) = x := by
+  rcases x with ⟨s,m⟩
+  cases s <;> cases m <;> rfl
+
+theorem sigma2_inverse_left_4 (x : SignedMajorana4) :
+    sigma2Inv_4 (sigma2_4 x) = x := by
+  rcases x with ⟨s,m⟩
+  cases s <;> cases m <;> rfl
+
+theorem sigma2_inverse_right_4 (x : SignedMajorana4) :
+    sigma2_4 (sigma2Inv_4 x) = x := by
+  rcases x with ⟨s,m⟩
+  cases s <;> cases m <;> rfl
+
+theorem sigma3_inverse_left_4 (x : SignedMajorana4) :
+    sigma3Inv_4 (sigma3_4 x) = x := by
+  rcases x with ⟨s,m⟩
+  cases s <;> cases m <;> rfl
+
+theorem sigma3_inverse_right_4 (x : SignedMajorana4) :
+    sigma3_4 (sigma3Inv_4 x) = x := by
+  rcases x with ⟨s,m⟩
+  cases s <;> cases m <;> rfl
+
+inductive B4Letter
+  | s1pos | s1neg | s2pos | s2neg | s3pos | s3neg
+  deriving DecidableEq, Repr
+
+def applyB4Letter : B4Letter → SignedMajorana4 → SignedMajorana4
+  | .s1pos => sigma1_4
+  | .s1neg => sigma1Inv_4
+  | .s2pos => sigma2_4
+  | .s2neg => sigma2Inv_4
+  | .s3pos => sigma3_4
+  | .s3neg => sigma3Inv_4
+
+inductive B4Word
+  | halt
+  | thenApply (letter : B4Letter) (rest : B4Word)
+  deriving Repr
+
+def runB4Word : B4Word → SignedMajorana4 → SignedMajorana4
+  | .halt, x => x
+  | .thenApply letter rest, x =>
+      runB4Word rest (applyB4Letter letter x)
+
 end CondensedMatter

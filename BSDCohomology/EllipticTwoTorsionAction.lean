@@ -93,6 +93,56 @@ theorem galoisTwoTorsionMap_coe
     (galoisTwoTorsionMap W σ P).1 =
       galoisPointMap W σ P.1 := rfl
 
+/-- Identity Galois automorphism acts identically on geometric points. -/
+theorem galoisPointMap_one
+    (P : GeometricPoint W) :
+    galoisPointMap W (1 : Field.absoluteGaloisGroup K) P = P := by
+  simpa [galoisPointMap] using
+    (WeierstrassCurve.Affine.Point.map_id
+      (W' := W.toAffine) P)
+
+/-- Composition of absolute-Galois automorphisms is transported by the
+actual base-change point functor. -/
+theorem galoisPointMap_mul
+    (σ τ : Field.absoluteGaloisGroup K)
+    (P : GeometricPoint W) :
+    galoisPointMap W (σ * τ) P =
+      galoisPointMap W σ (galoisPointMap W τ P) := by
+  symm
+  simpa [galoisPointMap, AlgEquiv.mul_apply] using
+    (WeierstrassCurve.Affine.Point.map_map
+      (W' := W.toAffine)
+      τ.toAlgHom σ.toAlgHom P)
+
+/-- The same identity law restricted to literal E[2]. -/
+theorem galoisTwoTorsionMap_one :
+    galoisTwoTorsionMap W (1 : Field.absoluteGaloisGroup K)
+      =
+    AddMonoidHom.id (EllipticTwoTorsion W) := by
+  ext P
+  apply Subtype.ext
+  exact galoisPointMap_one W P.1
+
+/-- The same composition law restricted to literal E[2]. -/
+theorem galoisTwoTorsionMap_mul
+    (σ τ : Field.absoluteGaloisGroup K) :
+    galoisTwoTorsionMap W (σ * τ)
+      =
+    (galoisTwoTorsionMap W σ).comp
+      (galoisTwoTorsionMap W τ) := by
+  ext P
+  apply Subtype.ext
+  exact galoisPointMap_mul W σ τ P.1
+
+/-- The actual absolute-Galois action on E[2], bundled as a monoid
+homomorphism into additive endomorphisms. -/
+noncomputable def ellipticTwoTorsionAction :
+    Field.absoluteGaloisGroup K →*
+      AddMonoid.End (EllipticTwoTorsion W) where
+  toFun := galoisTwoTorsionMap W
+  map_one' := galoisTwoTorsionMap_one W
+  map_mul' := galoisTwoTorsionMap_mul W
+
 /-!
 NEXT BSD-C GATE
 

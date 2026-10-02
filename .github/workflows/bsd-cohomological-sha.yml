@@ -29,4 +29,5 @@ jobs:
       - name: Build genuine Sha donor
         run: lake build BSDCohomology
       - name: Kernel check genuine Sha donor
-        run: lake env lean BSDCohomology/GenuineDegreeOneShaTwoTorsion.lean
+        run: lake env lean BSDCohomology/EllipticTwoTorsionAction.lean
+          lake env lean BSDCohomology/GenuineDegreeOneShaTwoTorsion.lean

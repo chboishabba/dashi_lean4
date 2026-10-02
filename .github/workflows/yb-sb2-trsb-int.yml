@@ -8,6 +8,8 @@ on:
       - 'CondensedMatter/INTComplexNonunitarity.lean'
       - 'CondensedMatter/YbSb2SingleBandConstraintFunnel.lean'
       - 'CondensedMatter/InternallyAntisymmetricTripletExchange.lean'
+      - 'CondensedMatter/YbSb2BdGSymmetryBoundary.lean'
+      - 'CondensedMatter/YbSb2DiracMassSign.lean'
       - '.github/workflows/yb-sb2-trsb-int.yml'
   pull_request:
     paths:
@@ -15,7 +17,9 @@ on:
       - 'CondensedMatter/YbSb2INTNonunitarySelected.lean'
       - 'CondensedMatter/INTComplexNonunitarity.lean'
       - 'CondensedMatter/YbSb2SingleBandConstraintFunnel.lean'
-      - 'CondensedMatter/InternallyAntisymmetricTripletExchange.lean'
+      - 'CondensedMatter/InternallyAntisymmetricTripletExchange.lean'      - 'CondensedMatter/YbSb2BdGSymmetryBoundary.lean'      - 'CondensedMatter/YbSb2DiracMassSign.lean'
+
+
       - '.github/workflows/yb-sb2-trsb-int.yml'
   workflow_dispatch:
 
@@ -36,3 +40,7 @@ jobs:
 
       - name: Check INT exchange parity
         run: lake env lean CondensedMatter/InternallyAntisymmetricTripletExchange.lean
+      - name: Check BdG symmetry boundary
+        run: lake env lean CondensedMatter/YbSb2BdGSymmetryBoundary.lean
+      - name: Check Dirac mass sign
+        run: lake env lean CondensedMatter/YbSb2DiracMassSign.lean

@@ -132,13 +132,14 @@ theorem r823ReserveRate_continuous
     (data : R823Cutoff4TouchedCarrierWeldData) :
     Continuous (r823ReserveRate data) := by
   unfold r823ReserveRate r823SignedComparableCC r823ViscousReserve r823Nu
-  fun_prop
+  exact data.touchedSignedFold_continuous.add
+    (continuous_const.mul criticalDissipation_continuous_real)
 
 /-- Continuity of the cutoff-four demand definition. -/
 theorem r823DemandRate_continuous
     (data : R823Cutoff4TouchedCarrierWeldData) :
     Continuous (r823DemandRate data) := by
-  unfold r823DemandRate r823QSeparated r823NestedSeparated
+  simp only [r823DemandRate, r823QSeparated, r823NestedSeparated]
   fun_prop
 
 /-- The literal touched carrier constructs the preferred terminal semantic

@@ -1,48 +1,18 @@
-name: NS R829-R830 rational 3-4-5 Lean check
+name: NS R829-R831 rational 3-4-5 Lean check
 
 on:
   push:
     branches:
       - 'agent/ns-r703-cyclic-vector-orbit'
     paths:
-      - 'NSBControl/Rational345ReserveWitness.lean'
-      - 'NSBControl/Rational345ShortTime.lean'
-      - 'NSBControl/Rational345LocalODE.lean'
-      - 'NSBControl/Rational345QuadraticODE.lean'
-      - 'NSBControl/Rational345R830LocalInterval.lean'
-      - 'NSBControl/Rational345RateLipschitz.lean'
-      - 'NSBControl/Rational345RealHelicalScalars.lean'
-      - 'NSBControl/Rational345RealRadius4.lean'
-      - 'NSBControl/Rational345RealInitialState.lean'
-      - 'NSBControl/Rational345RealRadius4Quadratic.lean'
-      - 'NSBControl/Rational345RealSnapshotSparse.lean'
-      - 'NSBControl/Rational345RealSnapshotRows.lean'
-      - 'NSBControl/Rational345RealSnapshotHelicalSparse.lean'
-      - 'NSBControl/Rational345RealSnapshotHelicalRows.lean'
-      - 'NSBControl/Rational345RealSnapshotW2.lean'
-      - 'NSBControl/Rational345RealSnapshotW2Test.lean'
+      - 'NSBControl/Rational345*.lean'
       - 'NSBCyclicOrbit.lean'
       - 'lakefile.toml'
       - 'lean-toolchain'
       - '.github/workflows/ns-r829-r830-rational-345.yml'
   pull_request:
     paths:
-      - 'NSBControl/Rational345ReserveWitness.lean'
-      - 'NSBControl/Rational345ShortTime.lean'
-      - 'NSBControl/Rational345LocalODE.lean'
-      - 'NSBControl/Rational345QuadraticODE.lean'
-      - 'NSBControl/Rational345R830LocalInterval.lean'
-      - 'NSBControl/Rational345RateLipschitz.lean'
-      - 'NSBControl/Rational345RealHelicalScalars.lean'
-      - 'NSBControl/Rational345RealRadius4.lean'
-      - 'NSBControl/Rational345RealInitialState.lean'
-      - 'NSBControl/Rational345RealRadius4Quadratic.lean'
-      - 'NSBControl/Rational345RealSnapshotSparse.lean'
-      - 'NSBControl/Rational345RealSnapshotRows.lean'
-      - 'NSBControl/Rational345RealSnapshotHelicalSparse.lean'
-      - 'NSBControl/Rational345RealSnapshotHelicalRows.lean'
-      - 'NSBControl/Rational345RealSnapshotW2.lean'
-      - 'NSBControl/Rational345RealSnapshotW2Test.lean'
+      - 'NSBControl/Rational345*.lean'
       - 'NSBCyclicOrbit.lean'
       - 'lakefile.toml'
       - 'lean-toolchain'
@@ -61,21 +31,11 @@ jobs:
         with:
           test: false
           build: false
-      - name: Build R829-R830 modules
+      - name: Build R829-R831 terminal tests
         run: |
-          lake build NSBControl.Rational345ReserveWitness
-          lake build NSBControl.Rational345ShortTime
-          lake build NSBControl.Rational345LocalODE
-          lake build NSBControl.Rational345QuadraticODE
-          lake build NSBControl.Rational345R830LocalInterval
-          lake build NSBControl.Rational345RateLipschitz
-          lake build NSBControl.Rational345RealHelicalScalars
-          lake build NSBControl.Rational345RealRadius4
-          lake build NSBControl.Rational345RealInitialState
-          lake build NSBControl.Rational345RealRadius4Quadratic
-          lake build NSBControl.Rational345RealSnapshotSparse
-          lake build NSBControl.Rational345RealSnapshotRows
-          lake build NSBControl.Rational345RealSnapshotHelicalSparse
-          lake build NSBControl.Rational345RealSnapshotHelicalRows
-          lake build NSBControl.Rational345RealSnapshotW2
           lake build NSBControl.Rational345RealSnapshotW2Test
+          lake build NSBControl.Rational345Round71W1Test
+          lake build NSBControl.Rational345BQFieldBoundTest
+          lake build NSBControl.Rational345BPClosedTest
+          lake build NSBControl.Rational345R830DecisionCompilerTest
+          lake build NSBControl.Rational345R831ReserveDecisionTest

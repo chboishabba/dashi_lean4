@@ -1,4 +1,5 @@
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapMaxCutScalarSplit
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapM0Envelope
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapGlobalize
 import Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
 
@@ -24,6 +25,13 @@ One-scale resonance has now been compressed past the abstract reflection tail:
   normalized mass `threeTapCanonicalM0`;
 * the remaining finite coefficient is source-visible at log-over-t scale in
   `threeTapHalfHeightLogCoefficient`;
+* translation itself no longer obstructs M0 control: the actual translated
+  detector obeys an L1 bound independent of translation distance, and
+  radius-one projectivization obeys the same-object quadratic envelope
+  `||P_g||_1 <= 8 ||g||_1^2`;
+* consequently `threeTapCanonicalM0_le_of_sourceMass_poleBounds` reduces M0
+  to ordinary endpoint-profile L1 bounds and finite signed-pole bounds, with
+  no projective/translation commutation assumption;
 * the final producer-facing PASS surface can be read either as negativity of
   `ThreeTapAdverseHalfHeightAsymptoticScalar` or as the split same-object
   inequalities finite-core <= H, actual far tail < H, and

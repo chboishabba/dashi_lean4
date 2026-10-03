@@ -171,4 +171,77 @@ instance globalMeasureIsProbability
 
 end RealCountableObservableCoordinateMomentSource
 
+/--
+A stronger but often cheaper source interface: every selected scalar observable
+has a cutoff-uniform pointwise bound.  This is enough to manufacture the scalar
+first moments required above under *any* cutoff probability law, so bounded
+Wilson/cylinder coordinates do not need a separate RG moment estimate merely to
+obtain projective tightness.
+-/
+structure RealCountableObservableUniformBoundSource
+    (Ω : Type*) [MeasurableSpace Ω] where
+  cutoffLaw : ℕ → ProbabilityMeasure Ω
+  observable : ℕ → Ω → ℝ
+  observableMeasurable : ∀ i, Measurable (observable i)
+  coordinateBound : ℕ → ℝ
+  coordinateBoundNonneg : ∀ i, 0 ≤ coordinateBound i
+  observableAbsLe : ∀ (i : ℕ) (x : Ω), |observable i x| ≤ coordinateBound i
+
+namespace RealCountableObservableUniformBoundSource
+
+/-- Pointwise bounded coordinates have the corresponding cutoff-uniform L1 budget. -/
+theorem uniform_abs_moment
+    {Ω : Type*} [MeasurableSpace Ω]
+    (source : RealCountableObservableUniformBoundSource Ω)
+    (i k : ℕ) :
+    (∫⁻ x : Ω, ENNReal.ofReal |source.observable i x|
+      ∂((source.cutoffLaw k : ProbabilityMeasure Ω) : Measure Ω)) ≤
+      ENNReal.ofReal (source.coordinateBound i) := by
+  calc
+    (∫⁻ x : Ω, ENNReal.ofReal |source.observable i x|
+      ∂((source.cutoffLaw k : ProbabilityMeasure Ω) : Measure Ω))
+      ≤ ∫⁻ _x : Ω, ENNReal.ofReal (source.coordinateBound i)
+          ∂((source.cutoffLaw k : ProbabilityMeasure Ω) : Measure Ω) := by
+        apply lintegral_mono
+        intro x
+        exact ENNReal.ofReal_le_ofReal (source.observableAbsLe i x)
+    _ = ENNReal.ofReal (source.coordinateBound i) := by simp
+
+/-- Bounded selected observables compile to the scalar-moment D3 source. -/
+noncomputable def toCoordinateMomentSource
+    {Ω : Type*} [MeasurableSpace Ω]
+    (source : RealCountableObservableUniformBoundSource Ω) :
+    RealCountableObservableCoordinateMomentSource Ω where
+  cutoffLaw := source.cutoffLaw
+  observable := source.observable
+  observableMeasurable := source.observableMeasurable
+  coordinateMomentBound := fun i => ENNReal.ofReal (source.coordinateBound i)
+  coordinateMomentBoundFinite := by
+    intro i
+    simp
+  coordinateUniformAbsMoment := source.uniform_abs_moment
+
+/-- Hence bounded selected observables compile directly to the full norm-moment source. -/
+noncomputable def toNormMomentSource
+    {Ω : Type*} [MeasurableSpace Ω]
+    (source : RealCountableObservableUniformBoundSource Ω) :
+    RealCountableObservableNormMomentSource Ω :=
+  source.toCoordinateMomentSource.toNormMomentSource
+
+/-- And therefore to an actual probability law on the countable selected coordinates. -/
+noncomputable def globalMeasure
+    {Ω : Type*} [MeasurableSpace Ω]
+    (source : RealCountableObservableUniformBoundSource Ω) :
+    Measure (ℕ → ℝ) :=
+  source.toCoordinateMomentSource.globalMeasure
+
+instance globalMeasureIsProbability
+    {Ω : Type*} [MeasurableSpace Ω]
+    (source : RealCountableObservableUniformBoundSource Ω) :
+    IsProbabilityMeasure source.globalMeasure := by
+  unfold globalMeasure
+  infer_instance
+
+end RealCountableObservableUniformBoundSource
+
 end RequestProject.YangMills

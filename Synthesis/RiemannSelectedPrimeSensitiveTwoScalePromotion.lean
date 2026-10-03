@@ -17,7 +17,8 @@ terminal scalar has already been paid.
 noncomputable section
 namespace Synthesis
 
-open scoped Real
+open Set
+open scoped Real BigOperators
 
 /-- Strict local failure of the one-scale completed terminal profile. -/
 def QuarticFourSignedPolePair.ThreeTapNearLineFails

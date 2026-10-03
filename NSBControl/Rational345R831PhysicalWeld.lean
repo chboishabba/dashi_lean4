@@ -1,5 +1,5 @@
 import NSBControl.Rational345R831ReserveDecision
-import NSBControl.Rational345R830PhysicalSegment
+import NSBControl.Rational345R830PhysicalSegmentStrong
 
 /-!
 # R831 physical-domain reserve weld
@@ -20,7 +20,7 @@ namespace Rational345R831ReserveDecision
 
 open Rational345RealRadius4
 open Rational345Round71RealityField
-open Rational345R830PhysicalSegment
+open Rational345R830PhysicalSegmentStrong
 
 /-- The two linear physical constraints carried by the R830 trajectory. -/
 def IsR823PhysicalState (x : State) : Prop :=
@@ -72,8 +72,10 @@ def integratedWeldOfPhysicalSegment
             (weld.reserveRate (u t) - weld.demandRate (u t)) := by
           apply intervalIntegral.integral_congr
           intro t ht
+          have htIcc : t ∈ Icc (0 : ℝ) T := by
+            simpa [uIcc_of_le hT] using ht
           exact weld.selectedRate_eq_reserve_sub_demand
-            (u t) (hphysical t (by simpa [uIcc_of_le hT] using ht))
+            (u t) (hphysical t htIcc)
     _ = reserve - demand := by
           dsimp [reserve, demand]
           exact intervalIntegral.integral_sub hreserveInt hdemandInt
@@ -85,29 +87,27 @@ inequality. -/
 theorem r830_physical_segment_refutes_r823_reserve
     (weld : R823PhysicalPointwiseWeld) :
     ∃ reserve demand : ℝ, ¬ demand ≤ reserve := by
-  obtain ⟨u, T, hT, hu0, hReality, hTransverse, hneg, hIntegral⟩ :=
-    r830_physical_negative_segment
+  obtain ⟨u, T, hT, hu0, hu, hReality, hTransverse, hneg, hIntegral⟩ :=
+    r830_physical_negative_segment_continuous
 
-  have hu : ContinuousOn u (Icc (0 : ℝ) T) := by
+  have hphysical :
+      ∀ t ∈ Icc (0 : ℝ) T, IsR823PhysicalState (u t) := by
     intro t ht
-    have hselectedCont :
-        ContinuousAt (fun s => selectedRate (u s)) t :=
-      Rational345R830DecisionCompiler.selectedRate_continuous.continuousAt.comp t
-        ((Rational345R830DecisionCompiler.selectedRate_continuous.continuousAt.comp t
-          continuousAt_id).fst.continuousAt) -- dummy term replaced below
-    -- The physical segment theorem was produced by a Picard trajectory; use
-    -- continuity of the state recovered from reality/transverse proof source.
-    exact continuousAt_const.continuousWithinAt
+    exact ⟨hReality t ht, hTransverse t ht⟩
 
-  -- Recover state continuity directly from the pointwise negative segment is
-  -- intentionally avoided here: the integrated weld only needs integrability
-  -- of reserve/demand, which follows from their continuity and the same local
-  -- Picard continuity used by R830.  Package that continuity through a stronger
-  -- source theorem below.
-  sorry
+  let integrated :=
+    integratedWeldOfPhysicalSegment weld u T (le_of_lt hT) hu hphysical
+
+  refine ⟨integrated.integratedReserve, integrated.integratedDemand, ?_⟩
+  apply welded_negative_payment_refutes_reserve integrated
+  simpa [selectedPayment] using hIntegral
 
 /-- The old all-ambient-state weld is stronger than necessary for R831. -/
 def r831DecisionReducedToPhysicalPointwiseWeld : Bool := true
+
+/-- Exact remaining decision leaf: construct the R823 reserve/demand rates on
+the real physical state carrier and prove their pointwise identity there. -/
+def r823PhysicalPointwiseWeldClosed : Bool := false
 
 end Rational345R831ReserveDecision
 end NSBControl

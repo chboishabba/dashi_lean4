@@ -10,6 +10,7 @@ on:
       - 'Synthesis/MillenniumBSDSelmerShaCohomologicalBoundary.lean'
       - 'Synthesis/MillenniumBSDActualE2H1LowDegreeReduction.lean'
       - 'Synthesis/MillenniumBSDCMAlgClosureDoublingSurjectiveExact.lean'
+      - 'Synthesis/MillenniumBSDCMGeometricKummerGroupExact.lean'
       - 'Synthesis.lean'
       - 'BSDCohomology.lean'
       - 'lakefile.toml'
@@ -40,6 +41,8 @@ jobs:
           lake env lean BSDCohomology/EllipticShaTarget.lean
           lake env lean BSDCohomology/EllipticKummerKernelExact.lean
           lake env lean BSDCohomology/EllipticKummerDivisibilityReduction.lean
+          lake env lean BSDCohomology/EllipticKummerTopRepMapsExact.lean
           lake env lean BSDCohomology/GenuineDegreeOneShaTwoTorsion.lean
           lake env lean Synthesis/MillenniumBSDCMAlgClosureDoublingSurjectiveExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGeometricKummerGroupExact.lean
           lake env lean Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean

@@ -67,7 +67,8 @@ theorem literal_su2_one_link_haar_mul_left_invariant
       funext q
       simp [Function.comp_def, literal_su2_from_compact_mul]]
     rw [← Measure.map_map]
-    · rw [compact_group_native_haar_left_invariant SU2CompactQuaternion]
+    · rw [compact_group_native_haar_left_invariant
+        SU2CompactQuaternion (literalSU2ToCompactQuaternion g)]
     · exact literal_su2_from_compact_measurable.aemeasurable
     · fun_prop
   · fun_prop

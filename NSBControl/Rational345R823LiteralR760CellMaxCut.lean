@@ -32,8 +32,10 @@ open Rational345R823TouchedNormalForm
 open Rational345R823TouchedPartition
 open Rational345R823RealSemanticProvenance
 
-/-- Concrete finite incidence address for the real radius-four R760 fold. -/
-abbrev R760Incidence := Mode × Mode × Mode
+/-- Concrete finite incidence address for the real radius-four R760 fold.
+Parentheses are explicit so all downstream real ports use the same storage
+order `(output,(firstInput,secondInput))`. -/
+abbrev R760Incidence := Mode × (Mode × Mode)
 
 /-- A literal real R760 cell carrier.  Continuity is a routine finite-cell
 certificate; the only substantive field is that the complete

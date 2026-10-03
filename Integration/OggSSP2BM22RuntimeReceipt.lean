@@ -77,15 +77,18 @@ theorem total_ten_dimensional_factor_multiplicity :
     factorMultiplicity .tenA + factorMultiplicity .tenB = 10 := by
   decide
 
-/-- The two runtime ten-dimensional factors match the two sourced AtlasRep
-candidate kinds already owned by the repository. -/
-def runtimeKindToCandidate :
-    {k : RuntimeFactorKind // k = .tenA ∨ k = .tenB} → C.M22TenModuleKind
-  | ⟨.tenA, _⟩ => .golayCode
-  | ⟨.tenB, _⟩ => .golayCocode
-  | ⟨.trivialOne, h⟩ => False.elim (by simpa using h)
-  | ⟨.thirtyFour, h⟩ => False.elim (by simpa using h)
-  | ⟨.ninetyEight, h⟩ => False.elim (by simpa using h)
+/-- The runtime AtlasRep identifications for the two ten-dimensional factors.
+`none` for the other composition-factor dimensions is deliberate. -/
+def atlasCandidateKind : RuntimeFactorKind → Option C.M22TenModuleKind
+  | .tenA => some .golayCode
+  | .tenB => some .golayCocode
+  | _ => none
+
+theorem tenA_identified_with_golayCode :
+    atlasCandidateKind .tenA = some .golayCode := rfl
+
+theorem tenB_identified_with_golayCocode :
+    atlasCandidateKind .tenB = some .golayCocode := rfl
 
 /-- Runtime involution fingerprint shared by 10a and 10b. -/
 def runtimeBareM22InvolutionRank : ℕ := 4

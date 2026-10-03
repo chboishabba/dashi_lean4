@@ -6,6 +6,7 @@ import YangMills.LiteralSU2LinkHaarReflection
 import YangMills.LiteralSU2LinkSectorHaarSplit
 import YangMills.LiteralSU2CrossingIntegralRP
 import YangMills.LiteralSU2FixedBoundaryNoGo
+import YangMills.LiteralSU2BoundaryGaugeProjectionCut
 import YangMills.CMP119ResidualReflectionCut
 import YangMills.CMP119LiteralCompleteCrossingRP
 import YangMills.CMP119LiteralDyadicResidualWeld
@@ -19,33 +20,25 @@ import YangMills.ScaleSensitiveWilsonMomentMaxCut
 /-!
 # YM max-cut frontier, 2026-10-03
 
-Block A has been reduced further than the earlier Haar/Fubini roadmap.
+The selected literal finite Wilson lane now owns the quaternion Haar carrier,
+full-link product Haar, reflection invariance, the positive/boundary/negative
+sector product split, and continuous integral RP of the abstract exponential
+crossing kernel.
 
-Now source-written on the selected literal quaternion/link carrier:
-* compact unit-quaternion Haar attachment;
-* literal full-link product Haar;
-* exact selected reflection invariance;
-* positive/boundary/negative product-Haar sector split;
-* continuous (not merely finite-Gram) RP of the abstract Wilson crossing kernel.
+A fixed-boundary Q8 witness shows that conditional boundary PSD is false.
+Therefore the exact remaining finite-Wilson leaf is
+`LiteralSU2BoundaryGaugeProjectionRPExact`: positivity of the boundary-Haar
+averaged physical Wilson kernel on two reflected positive-interior copies.
 
-However fixed temporal-boundary conditioning is NOT reflection-positive: an
-exact two-point Q8 witness gives a negative first-order quadratic form.  Hence
-the final pure-Wilson leaf is specifically the Haar-averaged boundary gauge
-projection / transfer-kernel positivity theorem.  Ordinary conditional Fubini
-is formally ruled out.
-
-CMP119's configuration-independent vacuum factor remains a reflected-half
-rank-one factor.  Therefore complete residual RP still has exactly three
-physical source leaves: regular E, R-operation, and boundary B.
-
-The dyadic residual and native moment-transfer compilers remain downstream of
-one same-object localized-residual weld and one genuinely global compactness /
-coercive estimate.
+CMP119's configuration-independent vacuum factor is a reflected-half rank-one
+factor, leaving exactly E, R-operation, and B as nontrivial physical RP leaves.
+The residual/moment compilers remain downstream of the same-object localized
+residual weld and a genuine global compact-containment/coercive estimate.
 -/
 
 namespace RequestProject.YangMills
 
-/-- Block A1 is theorem-bearing on the generic compact-group carrier. -/
+/-- Generic compact-group A1: native whole-link Haar is finite product Haar. -/
 theorem ym_block_a1_native_equals_product_haar_closed
     (G : Type*) [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
@@ -62,7 +55,7 @@ theorem ym_block_a1_native_equals_product_haar_closed
       MeasureTheory.Measure (FourDimensionalGroupLinks G L)) :=
   four_dimensional_native_haar_eq_product_haar_closed G L
 
-/-- Block A2 is theorem-bearing: selected reflection preserves native whole-link Haar. -/
+/-- Generic compact-group A2: selected reflection preserves native Haar. -/
 theorem ym_block_a2_native_haar_reflection_closed
     (G : Type*) [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
@@ -85,7 +78,7 @@ theorem ym_block_a_literal_link_haar_reflection
         MeasureTheory.Measure (SU2TorusLinks (2 * n))) :=
   literal_su2_link_haar_reflection_invariant n
 
-/-- Literal Haar is an exact P/B/N product after the physical link cut. -/
+/-- Literal Haar splits exactly into positive / boundary / negative factors. -/
 theorem ym_block_a_literal_sector_haar_split
     (n : ℕ) [NeZero n] :
     MeasureTheory.Measure.map
@@ -114,24 +107,17 @@ theorem ym_block_a_crossing_kernel_integral_rp
   su2_wilson_crossing_plane_integral_rp
     crossings β hβ μ f hfMeas hfInt
 
-/-- Fixed-boundary conditioning is explicitly NOT the missing Wilson OS2 proof. -/
+/-- Fixed temporal-boundary conditioning is formally ruled out. -/
 theorem ym_block_a_fixed_boundary_route_fails :
     ¬ (0 ≤ fixedBoundaryFirstOrderTwoPointQuadratic
       su2BoundaryWitnessOne su2BoundaryWitnessMinusOne) :=
   fixed_boundary_first_order_not_rp
 
-/--
-Exact surviving pure-Wilson leaf: positivity after Haar averaging the shared
-reflection-boundary temporal links.  This must be proved as a gauge projection
-/transfer-kernel theorem; it cannot be replaced by conditional fixed-boundary
-PSD because the theorem immediately above is a counterexample.
--/
-def LiteralSU2BoundaryGaugeProjectionRP : Prop :=
-  ∀ (n : ℕ) (_ : NeZero n) (β : ℝ), 0 ≤ β →
-    ∀ (positiveTest : SU2PositiveInteriorLinks n → ℝ),
-      True
+/-- Exact surviving pure-Wilson proposition. -/
+abbrev LiteralSU2BoundaryGaugeProjectionRP :=
+  LiteralSU2BoundaryGaugeProjectionRPExact
 
-/-- The literal SU(2) Wilson half-action identity is no longer a hypothesis. -/
+/-- The literal SU(2) Wilson half-action identity is theorem-bearing. -/
 theorem ym_maxcut_literal_wilson_half_closed
     (n : ℕ) [NeZero n]
     (links : SU2TorusLinks (2 * n))
@@ -144,10 +130,7 @@ theorem ym_maxcut_literal_wilson_half_closed
         links β :=
   su2_negative_half_eq_reflected_positive_half n links β
 
-/--
-The easy cutoff-uniform Wilson observable remains a negative control only: it
-is bounded and therefore not the missing continuum-coercive producer.
--/
+/-- Bounded average plaquette cost is a negative control, not the D producer. -/
 theorem ym_maxcut_average_plaquette_cost_is_uniformly_bounded
     (L : ℕ) [NeZero L]
     (hCard : (su2FourDimensionalPlaquettes L).card ≠ 0)
@@ -155,7 +138,7 @@ theorem ym_maxcut_average_plaquette_cost_is_uniformly_bounded
     su2AveragePlaquetteCost L links ≤ 2 :=
   (su2_average_plaquette_cost_bounds L hCard links).2
 
-/-- The source-native constant vacuum factor is a reflected-half factor. -/
+/-- Constant source vacuum is a reflected-half factor. -/
 theorem ym_maxcut_constant_vacuum_is_reflected_half
     {ι : Type*} [Fintype ι]
     (vacuumEnergy : ℝ) :
@@ -167,8 +150,7 @@ theorem ym_maxcut_constant_vacuum_is_reflected_half
 /-- Only E, R_op and B need nontrivial residual reflection certificates. -/
 theorem ym_maxcut_three_sector_residual_rp
     {ι : Type*} [Fintype ι]
-    (regularCert rCert boundaryCert :
-      CMP119SectorReflectionCertificate ι)
+    (regularCert rCert boundaryCert : CMP119SectorReflectionCertificate ι)
     (vacuumEnergy : ℝ) :
     ∀ test : ι → ℝ,
       0 ≤ indexedReflectionQuadratic
@@ -176,17 +158,13 @@ theorem ym_maxcut_three_sector_residual_rp
           regularCert.kernel i j *
           rCert.kernel i j *
           boundaryCert.kernel i j *
-          Real.exp (-vacuumEnergy))
-        test := by
+          Real.exp (-vacuumEnergy)) test := by
   let cut : CMP119ResidualReflectionCut ι :=
     cmp119ResidualCutWithConstantVacuum
       regularCert rCert boundaryCert vacuumEnergy
       (fun i j =>
-        regularCert.kernel i j *
-        rCert.kernel i j *
-        boundaryCert.kernel i j *
-        Real.exp (-vacuumEnergy))
-      rfl
+        regularCert.kernel i j * rCert.kernel i j *
+          boundaryCert.kernel i j * Real.exp (-vacuumEnergy)) rfl
   intro test
   exact cmp119_complete_residual_kernel_rp cut test
 
@@ -197,59 +175,44 @@ theorem ym_maxcut_wilson_three_sector_complete_rp
     (hWilsonSymm : ∀ i j, wilsonKernel i j = wilsonKernel j i)
     (hWilsonRP : ∀ test : ι → ℝ,
       0 ≤ indexedReflectionQuadratic wilsonKernel test)
-    (regularCert rCert boundaryCert :
-      CMP119SectorReflectionCertificate ι)
+    (regularCert rCert boundaryCert : CMP119SectorReflectionCertificate ι)
     (vacuumEnergy : ℝ) :
     ∀ test : ι → ℝ,
       0 ≤ indexedReflectionQuadratic
         (fun i j =>
           wilsonKernel i j *
-          (regularCert.kernel i j *
-            rCert.kernel i j *
-            boundaryCert.kernel i j *
-            Real.exp (-vacuumEnergy)))
-        test := by
+          (regularCert.kernel i j * rCert.kernel i j *
+            boundaryCert.kernel i j * Real.exp (-vacuumEnergy))) test := by
   let cut : CMP119ResidualReflectionCut ι :=
     cmp119ResidualCutWithConstantVacuum
       regularCert rCert boundaryCert vacuumEnergy
       (fun i j =>
-        regularCert.kernel i j *
-        rCert.kernel i j *
-        boundaryCert.kernel i j *
-        Real.exp (-vacuumEnergy))
-      rfl
+        regularCert.kernel i j * rCert.kernel i j *
+          boundaryCert.kernel i j * Real.exp (-vacuumEnergy)) rfl
   simpa only [mul_assoc] using
     (cmp119_wilson_mul_complete_residual_rp
       wilsonKernel hWilsonSymm hWilsonRP cut)
 
-/-- Literal multi-plaquette Wilson specialization: only E, R_op and B remain physical. -/
+/-- Literal multi-plaquette specialization of the complete finite RP compiler. -/
 theorem ym_maxcut_literal_wilson_three_sector_complete_rp
     {P ι : Type*} [DecidableEq P] [Fintype ι]
     (crossings : Finset P)
     (β : ℝ) (hβ : 0 ≤ β)
     (boundary : ι → SU2CrossingBoundary P)
-    (regularCert rCert boundaryCert :
-      CMP119SectorReflectionCertificate ι)
+    (regularCert rCert boundaryCert : CMP119SectorReflectionCertificate ι)
     (vacuumEnergy : ℝ) :
     ∀ test : ι → ℝ,
       0 ≤ indexedReflectionQuadratic
         (fun i j =>
-          su2WilsonCrossingPlaneKernel crossings β
-            (boundary i) (boundary j) *
-          (regularCert.kernel i j *
-            rCert.kernel i j *
-            boundaryCert.kernel i j *
-            Real.exp (-vacuumEnergy)))
-        test := by
+          su2WilsonCrossingPlaneKernel crossings β (boundary i) (boundary j) *
+          (regularCert.kernel i j * rCert.kernel i j *
+            boundaryCert.kernel i j * Real.exp (-vacuumEnergy))) test := by
   let cut : CMP119ResidualReflectionCut ι :=
     cmp119ResidualCutWithConstantVacuum
       regularCert rCert boundaryCert vacuumEnergy
       (fun i j =>
-        regularCert.kernel i j *
-        rCert.kernel i j *
-        boundaryCert.kernel i j *
-        Real.exp (-vacuumEnergy))
-      rfl
+        regularCert.kernel i j * rCert.kernel i j *
+          boundaryCert.kernel i j * Real.exp (-vacuumEnergy)) rfl
   exact cmp119_literal_wilson_crossing_mul_residual_rp
     crossings β hβ boundary cut
 

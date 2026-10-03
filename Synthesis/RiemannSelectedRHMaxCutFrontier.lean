@@ -1,3 +1,4 @@
+import Synthesis.RiemannProjectiveQuarticFourWindowUniformPoleLocalizationPaid
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapAsymptoticBalance
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapMidStripMesh
 import Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
@@ -22,8 +23,14 @@ One-scale resonance has now been compressed past the abstract reflection tail:
 * the actual transformed pair kernel has exact q^-2 decay;
 * the zeta critical strip puts every actual normalized horizontal displacement
   in the fixed compact alpha interval |alpha|<=1/25 for t>=200;
-* `ThreeTapUniformCurvatureBound` now names exactly the remaining compact-alpha
-  curvature theorem, with no witness-width surrogate hidden in its statement;
+* the formerly pointwise-in-t pole-weight continuity has been sharpened to the
+  uniform elementary estimate
+  `|w_t,c(u)-w_t,c(v)| <= 19*cosh(1)*|u-v|` on [-6,6] for t>=200, |c|<=2;
+* the normalized four-window determinant quantifier swap is isolated as the
+  finite compiler target `UniformQuarticFourPoleDeterminantCompilerTarget`, and
+  that target already compiles to one fixed-width high-t signed-pole core;
+* `ThreeTapUniformCurvatureBound` names the remaining compact-alpha curvature
+  theorem on the actual transformed projective profile;
 * the subtraction-defined actual adverse far remainder is exactly a
   complementary subtype tsum and is bounded by Ccurv times the literal
   inverse-square zero tail `threeTapInverseSquareZeroTailAfter`;
@@ -39,8 +46,9 @@ One-scale resonance has now been compressed past the abstract reflection tail:
 
 The live Route-A analytic leaves are therefore now genuinely narrow:
 
-1. prove the actual compact-alpha curvature bound, equivalently obtain enough
-   uniform witness-width/derivative control to bound the C2 oscillatory source;
+1. finish the finite normalized-bump/determinant compiler fed by the already-
+   proved uniform pole-weight Lipschitz estimate, then bound the compact-alpha
+   C2 curvature of the resulting fixed-width transformed witness;
 2. prove an RvM estimate for the literal inverse-square tail, ideally
    `threeTapInverseSquareZeroTailAfter t (t/2) = O(log t/t)`;
 3. bound the translated gamma+pole channel above by a negative gain and the
@@ -48,10 +56,9 @@ The live Route-A analytic leaves are therefore now genuinely narrow:
 
      finite + Ccurv*inverseSquareTail < G - S/2.
 
-No RH theorem or unpaid analytic sign is asserted here.  The current smooth
-signed-pole constructor is still pointwise in t on the pole-localization side;
-a common high-t witness radius has not been proved merely by renaming that
-quantifier.
+No RH theorem or unpaid analytic sign is asserted here.  In particular, the
+uniform pole-weight modulus is paid but the final determinant compiler remains
+fail-closed until kernel replay verifies that finite bookkeeping.
 
 A strict one-scale FAIL exposes the already-built independent log2/log3
 two-scale source.  Route B remains the independent signed-fifth theorem:

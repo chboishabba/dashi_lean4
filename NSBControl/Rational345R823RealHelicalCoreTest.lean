@@ -1,4 +1,4 @@
-import NSBControl.Rational345R823RealHelicalCore
+import NSBControl.Rational345R823RealMultiplierDifference
 
 namespace NSBControl
 namespace Rational345R823RealHelicalCoreTest

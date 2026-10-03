@@ -1,5 +1,6 @@
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapFarDecay
-import Synthesis.RiemannSelectedPrimeSensitiveThreeTapGlobalize
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapCompensationFloor
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapMidStripMesh
 import Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
 
 /-!
@@ -14,8 +15,6 @@ One-scale resonance has now been compressed past the abstract reflection tail:
 * the adverse phase is alpha-independent before the positive cosh weight;
 * the finite adverse core is welded to the literal N-mu RvM carrier through an
   absolutely-continuous Abel theorem;
-* the RvM discrepancy, smooth mu term, endpoint term and variation term are
-  assembled into `threeTapAdverseNearExplicitBudget`;
 * the cutoff tradeoff is explicit and the canonical half-height choice R=t/2
   is compatible for t>=200;
 * translation itself does not enlarge L1 mass, and radius-one projectivization
@@ -30,22 +29,25 @@ One-scale resonance has now been compressed past the abstract reflection tail:
   repo's twice-integrated Fourier estimate gives exact q^-2 decay;
 * restoring physical units cancels the projective `(t/16)^-2` scale exactly,
   reducing each adverse pair to multiplicity times an oscillatory-curvature
-  factor divided by `(gamma-t)^2`.
+  factor divided by `(gamma-t)^2`;
+* the compensation floor is exactly
+  `-(Gamma+Pole) - LocalSlack/2`; hence a negative translated gamma+pole gain
+  and an upper bound on the already-paid local slack are the only ingredients
+  of that side;
+* after a near-line PASS, a finite net plus a proved Lipschitz constant and
+  node margin compiles the entire compact mid-strip, with no endpoint gap.
 
 The live Route-A PASS surface is therefore: explicit finite budget <= H,
-actual half-height adverse tail < H, and H <= LocalExact-Compensation.  The
-far theorem is no longer an arbitrary summability question: it is a weighted
-inverse-square zero-count problem.  To obtain a uniform O(log t/t) tail one
-must additionally control the oscillatory curvature of the selected witness;
-the current existential witness constructor permits its bump width R to shrink
-with t, so that uniformity has not yet been proved.
+actual half-height adverse tail < H, and H below the gamma+pole-minus-slack
+floor.  The far theorem is no longer an arbitrary summability question: it is
+a weighted inverse-square zero-count problem.  To obtain a uniform O(log t/t)
+tail one must additionally control the oscillatory curvature of the selected
+witness; the current existential witness constructor permits its bump width R
+to shrink with t, so that uniformity has not yet been proved.
 
-After a one-scale PASS, only compact mid-strip positivity remains before the
-full 0<a<=1/2 displacement statement.  A strict one-scale FAIL exposes the
-already-built independent log2/log3 two-scale source.
-
-The independent signed-fifth route is exposed by the single finite scalar
-`signedFifthCorrelationGapAt = Credit - Debt + OuterBudget - 3 eps`;
+A strict one-scale FAIL exposes the already-built independent log2/log3
+two-scale source.  The independent signed-fifth route is exposed by the single
+finite scalar `signedFifthCorrelationGapAt = Credit - Debt + OuterBudget - 3 eps`;
 eventual nonnegativity is exactly the existing signed-fifth interior target.
 No RH theorem and no unpaid analytic sign are asserted here.
 -/

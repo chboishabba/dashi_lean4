@@ -84,7 +84,7 @@ def qEnergyLegEquiv : R760Incidence ≃ R760Incidence where
   left_inv := qEnergyLeg_involutive
   right_inv := qEnergyLeg_involutive
 
- theorem resonates_swap_iff (p q k : Mode) :
+theorem resonates_swap_iff (p q k : Mode) :
     Resonates q p k ↔ Resonates p q k := by
   constructor <;> intro h j
   · have hj := h j
@@ -92,7 +92,7 @@ def qEnergyLegEquiv : R760Incidence ≃ R760Incidence where
   · have hj := h j
     omega
 
- theorem resonates_pEnergyLeg_iff (β : R760Incidence) :
+theorem resonates_pEnergyLeg_iff (β : R760Incidence) :
     Resonates (incP (pEnergyLeg β)) (incQ (pEnergyLeg β))
         (incK (pEnergyLeg β)) ↔
       Resonates (incP β) (incQ β) (incK β) := by
@@ -104,7 +104,7 @@ def qEnergyLegEquiv : R760Incidence ≃ R760Incidence where
   · have hj := h j
     omega
 
- theorem resonates_qEnergyLeg_iff (β : R760Incidence) :
+theorem resonates_qEnergyLeg_iff (β : R760Incidence) :
     Resonates (incP (qEnergyLeg β)) (incQ (qEnergyLeg β))
         (incK (qEnergyLeg β)) ↔
       Resonates (incP β) (incQ β) (incK β) := by
@@ -207,14 +207,30 @@ theorem threeLegOrderedPairPowerZero
   let hdiv := hu.2.1
   simp only [orderedPairPower, pEnergyLeg, qEnergyLeg, incK, incP, incQ]
   simp_rw [orderedPower_eq_energyCell u hdiv]
-  have hCE := energyCell_pair_cancel u hreality hdiv k (negateMode q) p
-  have hBpair := energyCell_pair_cancel u hreality hdiv q p k
-  have hDneg := energyCell_negate_all u hreality (negateMode q) k p
+  have hCE :
+      energyCell u k (negateMode p) q =
+        - energyCell u k (negateMode q) p := by
+    simpa using
+      (energyCell_pair_cancel u hreality hdiv k (negateMode q) p)
+  have hBpair :
+      energyCell u q (negateMode k) (negateMode p) =
+        - energyCell u q p k :=
+    energyCell_pair_cancel u hreality hdiv q p k
+  have hDneg :
+      energyCell u q (negateMode k) (negateMode p) =
+        energyCell u (negateMode q) k p := by
+    simpa using (energyCell_negate_all u hreality (negateMode q) k p)
   have hDB :
       energyCell u (negateMode q) k p = - energyCell u q p k :=
     hDneg.symm.trans hBpair
-  have hApair := energyCell_pair_cancel u hreality hdiv p q k
-  have hFneg := energyCell_negate_all u hreality (negateMode p) k q
+  have hApair :
+      energyCell u p (negateMode k) (negateMode q) =
+        - energyCell u p q k :=
+    energyCell_pair_cancel u hreality hdiv p q k
+  have hFneg :
+      energyCell u p (negateMode k) (negateMode q) =
+        energyCell u (negateMode p) k q := by
+    simpa using (energyCell_negate_all u hreality (negateMode p) k q)
   have hFA :
       energyCell u (negateMode p) k q = - energyCell u p q k :=
     hFneg.symm.trans hApair
@@ -264,10 +280,10 @@ theorem pairedProductionOrbit_is_twoDifference
       (physicalTriadActive_qEnergyLeg_iff β).2 hβ
     have hzero := threeLegOrderedPairPowerZero u hu β hβ
     rcases hβ with ⟨hp, hq, hk, hres⟩
-    simp only [pairedProductionOrbitCell, pairedWeightedCell,
-      pairedTwoDifferenceCell, hβ, hpβ, hqβ, if_true,
-      selectedDyadicWeight]
-    simp only [hk, hp, hq, if_false]
+    simp [pairedProductionOrbitCell, pairedWeightedCell,
+      pairedTwoDifferenceCell, hβ, hpβ, hqβ,
+      selectedDyadicWeight, pEnergyLeg, qEnergyLeg, incK, incP, incQ,
+      hk, hp, hq] at hzero ⊢
     ring_nf at hzero ⊢
     linarith
   · have hpβ : ¬ physicalTriadActive (pEnergyLeg β) := by
@@ -323,9 +339,9 @@ theorem pairedWeightedCompleteFold_eq_criticalProduction
         ∑ β : R760Incidence, physicalProductionCell u β :=
     Equiv.sum_comp swapEquiv (physicalProductionCell u)
   rw [hsplit, hswap, physicalProductionCompleteFold_eq_existing]
-  have hphys := weightedIncidence_eq_physicalWeightedIncidence u hu.2.2
-  rw [← hphys]
-  exact (criticalProduction_eq_twice_weightedIncidence u).symm
+  rw [← weightedIncidence_eq_physicalWeightedIncidence u hu.2.2]
+  rw [criticalProduction_eq_twice_weightedIncidence]
+  ring
 
 /-- Complete paired production orbit is three copies of critical production. -/
 theorem pairedProductionOrbitCompleteFold_eq_threeProduction

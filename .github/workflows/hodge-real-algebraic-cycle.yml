@@ -14,6 +14,7 @@ on:
       - 'Synthesis/MillenniumHodgeP1QProjExact.lean'
       - 'Synthesis/MillenniumHodgeP1QBaseRingExact.lean'
       - 'Synthesis/MillenniumHodgeP1QStructureMapExact.lean'
+      - 'Synthesis/MillenniumHodgeP1QPoint10Exact.lean'
       - 'Synthesis.lean'
       - 'lean-toolchain'
       - 'lakefile.toml'
@@ -44,3 +45,4 @@ jobs:
           lake env lean Synthesis/MillenniumHodgeP1QProjExact.lean
           lake env lean Synthesis/MillenniumHodgeP1QBaseRingExact.lean
           lake env lean Synthesis/MillenniumHodgeP1QStructureMapExact.lean
+          lake env lean Synthesis/MillenniumHodgeP1QPoint10Exact.lean

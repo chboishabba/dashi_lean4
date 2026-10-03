@@ -149,4 +149,37 @@ def CompactGroupNormalizedHaarInversionInvariant
       MeasureTheory.ProbabilityMeasure G) :
       MeasureTheory.Measure G))
 
+/--
+The second one-link Haar leaf is unconditional for compact groups.  The
+argument is genuinely nonabelian: normalized left Haar is first shown right
+invariant by uniqueness of left-invariant probability measures; its inverse
+pushforward is then again a left-invariant probability measure, hence the same
+measure.
+-/
+theorem compact_group_native_haar_inversion_invariant
+    (G : Type*) [Group G] [TopologicalSpace G]
+    [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
+    [MeasurableSpace G] [BorelSpace G] :
+    CompactGroupNormalizedHaarInversionInvariant G := by
+  let μ : MeasureTheory.Measure G :=
+    ((compactGroupNativeHaar G : MeasureTheory.ProbabilityMeasure G) :
+      MeasureTheory.Measure G)
+  letI : MeasureTheory.IsProbabilityMeasure μ := by
+    dsimp [μ]
+    infer_instance
+  letI : MeasureTheory.Measure.IsMulLeftInvariant μ :=
+    ⟨compact_group_native_haar_left_invariant G⟩
+  letI : MeasureTheory.Measure.IsMulRightInvariant μ :=
+    compact_group_native_haar_right_invariant G
+  let ν : MeasureTheory.Measure G :=
+    MeasureTheory.Measure.map (fun x : G => x⁻¹) μ
+  letI : MeasureTheory.IsProbabilityMeasure ν := by
+    dsimp [ν]
+    infer_instance
+  letI : MeasureTheory.Measure.IsMulLeftInvariant ν := by
+    change MeasureTheory.Measure.IsMulLeftInvariant μ.inv
+    infer_instance
+  change ν = μ
+  exact compact_group_left_invariant_probability_unique ν μ
+
 end RequestProject.YangMills

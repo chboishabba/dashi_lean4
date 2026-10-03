@@ -64,7 +64,7 @@ public critical production.  Only zero mean is needed from physicality. -/
 theorem r853_production_sameObject
     (u : State) (hu : IsR823PhysicalState u) :
     r853ProductionCarrier u = criticalProduction u := by
-  have hzero : u Rational345Round71PhysicalCarrier.zeroMode = 0 := hu.2.2
+  have hzero : u Rational345Round71ZeroMode.zeroMode = 0 := hu.2.2
   unfold r853ProductionCarrier
   rw [criticalProduction_eq_twice_weightedIncidence u]
   rw [weightedIncidence_eq_physicalWeightedIncidence u hzero]

@@ -1,0 +1,163 @@
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapInverseSquareTail
+import Synthesis.RiemannZetaMuExactAbelAC
+
+/-!
+# Literal zero-window inverse-square bounds
+
+This is the carrier-to-shell bridge for the inverse-square max-cut.
+
+For any literal half-open zero window `(A,B]` separated by distance `d>0` from
+the sample height `t`, every summand satisfies
+
+  m_rho / (gamma_rho-t)^2 <= m_rho / d^2.
+
+Summing on the exact finite `Zeta23` window turns the multiplicity sum back into
+`Ncount A B`.  The arbitrary-endpoint RvM count theorem then gives an explicit
+positive-height shell estimate.  No conjugation/reflection of zeros is used.
+-/
+
+noncomputable section
+namespace Synthesis
+
+open MeasureTheory Set
+open scoped Real BigOperators
+open Zeta23
+
+/-- Inverse-square mass on the literal half-open zeta window `(A,B]`. -/
+def zetaWindowInverseSquareMass (t A B : ℝ) : ℝ :=
+  ∑ rho ∈ (zetaZeroConfig.finite_window A B).toFinset,
+    (zetaZeroConfig.mult rho : ℝ) / (rho.im - t)^2
+
+theorem zetaWindowInverseSquareMass_nonneg
+    (t A B : ℝ) :
+    0 <= zetaWindowInverseSquareMass t A B := by
+  unfold zetaWindowInverseSquareMass
+  positivity
+
+/-- A separated literal zero window is bounded by its exact multiplicity count
+multiplied by the inverse-square separation cost. -/
+theorem zetaWindowInverseSquareMass_le_count_div_sq
+    {t A B d : ℝ}
+    (hd : 0 < d)
+    (hsep : ∀ rho ∈ zetaZeroConfig.window A B,
+      d <= |rho.im - t|) :
+    zetaWindowInverseSquareMass t A B
+      <= (Ncount A B : ℝ) / d^2 := by
+  classical
+  let hfin : (zetaZeroConfig.window A B).Finite :=
+    zetaZeroConfig.finite_window A B
+  let F : Finset ℂ := hfin.toFinset
+  have hN :
+      (Ncount A B : ℝ)
+        = ∑ rho ∈ F, (zetaZeroConfig.mult rho : ℝ) := by
+    rw [← zetaZeroConfig_N]
+    unfold ZeroConfig.N
+    rw [finsum_mem_eq_finite_toFinset_sum _ hfin]
+    push_cast
+    rfl
+  have hterm :
+      ∀ rho ∈ F,
+        (zetaZeroConfig.mult rho : ℝ) / (rho.im - t)^2
+          <= (zetaZeroConfig.mult rho : ℝ) / d^2 := by
+    intro rho hrho
+    have hrhoSet : rho ∈ zetaZeroConfig.window A B := by
+      simpa [F, hfin] using hrho
+    have hdist := hsep rho hrhoSet
+    have hprod :
+        0 <= (|rho.im - t| - d) * (|rho.im - t| + d) :=
+      mul_nonneg (sub_nonneg.mpr hdist)
+        (add_nonneg (abs_nonneg _) hd.le)
+    have hden : d^2 <= (rho.im - t)^2 := by
+      rw [← sq_abs (rho.im - t)]
+      nlinarith
+    have hd2 : 0 < d^2 := by positivity
+    have hx2 : 0 < (rho.im - t)^2 := lt_of_lt_of_le hd2 hden
+    apply (div_le_div_iff₀ hx2 hd2).2
+    exact mul_le_mul_of_nonneg_left hden (by positivity)
+  unfold zetaWindowInverseSquareMass
+  change (∑ rho ∈ F,
+    (zetaZeroConfig.mult rho : ℝ) / (rho.im - t)^2) <= _
+  calc
+    (∑ rho ∈ F,
+      (zetaZeroConfig.mult rho : ℝ) / (rho.im - t)^2)
+      <= ∑ rho ∈ F, (zetaZeroConfig.mult rho : ℝ) / d^2 := by
+        exact Finset.sum_le_sum hterm
+    _ = (∑ rho ∈ F, (zetaZeroConfig.mult rho : ℝ)) / d^2 := by
+        rw [Finset.sum_div]
+    _ = (Ncount A B : ℝ) / d^2 := by rw [hN]
+
+/-- RvM count + separation gives an explicit inverse-square window bound for
+arbitrary positive endpoints. -/
+theorem exists_zetaWindowInverseSquareMass_rvm_bound :
+    ∃ C : ℝ, 0 <= C ∧
+      ∀ {t A B d : ℝ},
+        5 <= A ->
+        A < B ->
+        0 < d ->
+        (∀ rho ∈ zetaZeroConfig.window A B,
+          d <= |rho.im - t|) ->
+        zetaWindowInverseSquareMass t A B
+          <=
+        C * ((B-A)+1) * Real.log (B+4) / d^2 := by
+  obtain ⟨C, hC0, hcount⟩ := exists_zetaZeroCount_arbitrary_bound_at_five
+  refine ⟨C, hC0, ?_⟩
+  intro t A B d hA hAB hd hsep
+  have hbase := zetaWindowInverseSquareMass_le_count_div_sq hd hsep
+  have hN := hcount A B hA hAB
+  have hd2 : 0 < d^2 := by positivity
+  exact hbase.trans (div_le_div_of_nonneg_right hN hd2.le)
+
+/-- The right dyadic shell `(t+R,t+2R]` has the expected count-over-R^2
+bound.  Iterating this shell is the remaining summation step. -/
+theorem exists_zetaWindowInverseSquareMass_right_shell_rvm_bound :
+    ∃ C : ℝ, 0 <= C ∧
+      ∀ {t R : ℝ},
+        200 <= t ->
+        0 < R ->
+        zetaWindowInverseSquareMass t (t+R) (t+2*R)
+          <=
+        C * (R+1) * Real.log (t+2*R+4) / R^2 := by
+  obtain ⟨C, hC0, hwin⟩ := exists_zetaWindowInverseSquareMass_rvm_bound
+  refine ⟨C, hC0, ?_⟩
+  intro t R ht hR
+  have hA : 5 <= t+R := by linarith
+  have hAB : t+R < t+2*R := by linarith
+  have hsep :
+      ∀ rho ∈ zetaZeroConfig.window (t+R) (t+2*R),
+        R <= |rho.im-t| := by
+    intro rho hrho
+    have hpos : 0 < rho.im - t := by linarith [hrho.2.1]
+    rw [abs_of_pos hpos]
+    linarith [hrho.2.1]
+  have h := hwin (t:=t) (A:=t+R) (B:=t+2*R) (d:=R)
+    hA hAB hR hsep
+  convert h using 1 <;> ring
+
+/-- The left shell `(t-2R,t-R]` obeys the same estimate as long as it remains in
+the positive-height RvM range.  Once `t-2R < 5`, the proof must switch to the
+all-real local zero-count theorem; no positivity assumption is hidden here. -/
+theorem exists_zetaWindowInverseSquareMass_left_shell_rvm_bound :
+    ∃ C : ℝ, 0 <= C ∧
+      ∀ {t R : ℝ},
+        200 <= t ->
+        0 < R ->
+        5 <= t-2*R ->
+        zetaWindowInverseSquareMass t (t-2*R) (t-R)
+          <=
+        C * (R+1) * Real.log (t-R+4) / R^2 := by
+  obtain ⟨C, hC0, hwin⟩ := exists_zetaWindowInverseSquareMass_rvm_bound
+  refine ⟨C, hC0, ?_⟩
+  intro t R ht hR hleft
+  have hAB : t-2*R < t-R := by linarith
+  have hsep :
+      ∀ rho ∈ zetaZeroConfig.window (t-2*R) (t-R),
+        R <= |rho.im-t| := by
+    intro rho hrho
+    have hneg : rho.im - t < 0 := by linarith [hrho.2.2]
+    rw [abs_of_neg hneg]
+    linarith [hrho.2.2]
+  have h := hwin (t:=t) (A:=t-2*R) (B:=t-R) (d:=R)
+    hleft hAB hR hsep
+  convert h using 1 <;> ring
+
+end Synthesis

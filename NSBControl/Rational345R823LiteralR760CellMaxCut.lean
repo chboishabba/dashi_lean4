@@ -35,12 +35,15 @@ open Rational345R823RealSemanticProvenance
 /-- Concrete finite incidence address for the real radius-four R760 fold. -/
 abbrev R760Incidence := Mode × Mode × Mode
 
-/-- A literal real R760 cell carrier.  Apart from routine continuity, the only
-proof-bearing field is that the complete original-multiplicity cell sum is the
-R760 scalar total already normalized to `selectedNonlinear`. -/
+/-- A literal real R760 cell carrier.  Continuity is a routine finite-cell
+certificate; the only substantive field is that the complete
+original-multiplicity cell sum is the R760 scalar total already normalized to
+`selectedNonlinear`. -/
 structure LiteralR760CellCarrier where
   cell : State → R760Incidence → ℝ
-  cell_continuous : ∀ i, Continuous (fun x => cell x i)
+
+  completeFold_continuous :
+    Continuous (fun x : State => ∑ i : R760Incidence, cell x i)
 
   completeFold_sameObject :
     ∀ x, IsR823PhysicalState x →
@@ -65,13 +68,12 @@ theorem literalR760TouchedFold_eq_completeFold
   exact ccTouchedFold4_eq_completeFold
     (fun i : R760Incidence => data.cell x i)
 
-/-- The complete literal fold is continuous because it is a finite sum of
-continuous literal cells. -/
+/-- Continuity of the complete literal fold is part of the concrete cell
+carrier certificate. -/
 theorem literalR760CompleteFold_continuous
     (data : LiteralR760CellCarrier) :
     Continuous (literalR760CompleteFold data) := by
-  unfold literalR760CompleteFold
-  fun_prop
+  exact data.completeFold_continuous
 
 /-- The touched fold inherits continuity from its exact equality with the
 complete finite fold. -/

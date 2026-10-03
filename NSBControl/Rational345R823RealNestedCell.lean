@@ -100,22 +100,12 @@ theorem realNestedCell_eq_fourCommutator
       realNestedHalfCell u p q =
         forcingCommutatorCell u (projectedNonlinearity u) p q +
         forcingCommutatorCell u (projectedNonlinearity u) p q := by
-    unfold realNestedHalfCell
-    have hfun : realFourSignForcing u =
-        projectedNonlinearity u + projectedNonlinearity u := by
-      funext k
-      by_cases hk : nonzeroMode k
-      · exact realFourSignForcing_eq_twiceProjected u k hk hzero htrans
-      · have hk0 : isZeroMode k := Classical.byContradiction (fun h => hk h)
-        have hkEq : k = zeroMode :=
-          Rational345Round71ZeroModeUnique.eq_zeroMode_of_isZero k hk0
-        subst k
-        simp [realFourSignForcing, fourSignInnerFold, fourSignInnerTerm,
-          physicalPairActive, projectedNonlinearity, projectedBilinear,
-          zeroMode_is_zero]
-    rw [hfun]
-    exact forcingCommutatorCell_add_forcing
-      u (projectedNonlinearity u) (projectedNonlinearity u) p q
+    unfold realNestedHalfCell realFourSignForcing
+    unfold forcingCommutatorCell
+    rw [hinner]
+    simp [helicalPlus_add_real, helicalMinus_add_real, cross_add_left_real]
+    ext j
+    ring
   unfold realNestedCell
   rw [hhalf]
   ext j

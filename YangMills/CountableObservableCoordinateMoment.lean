@@ -10,7 +10,8 @@ the sum of the absolute values of its coordinates.  Hence uniform scalar first
 moments automatically give the finite-prefix coercive moment required by D3.
 
 This is the exact adapter from source single-insertion moments to the projective
-compactness compiler; it does not assume a separate m-dimensional estimate.
+compactness compiler; it does not assume a separate m-dimensional estimate or
+an independently supplied compactness threshold.
 -/
 
 open Set MeasureTheory
@@ -49,9 +50,29 @@ theorem real_finite_prefix_norm_cost_le_coordinate_sum
       intro i hi
       exact abs_nonneg _
 
+/-- Elementary Markov threshold for any finite ENNReal moment budget. -/
+theorem finite_ennreal_moment_threshold
+    (M : ENNReal) (hM : M ≠ ⊤)
+    (ε : ENNReal) (hε : 0 < ε) :
+    ∃ R : ENNReal, R ≠ 0 ∧ R ≠ ⊤ ∧ M / R ≤ ε := by
+  let R : ENNReal := M / ε + 1
+  have hε0 : ε ≠ 0 := ne_of_gt hε
+  have hDivTop : M / ε ≠ ⊤ := ENNReal.div_ne_top hM hε0
+  have hR0 : R ≠ 0 := by simp [R]
+  have hRTop : R ≠ ⊤ := by
+    simp [R, hDivTop]
+  refine ⟨R, hR0, hRTop, ?_⟩
+  by_cases hεTop : ε = ⊤
+  · simp [hεTop]
+  · apply (ENNReal.div_le_iff hR0 hRTop).2
+    rw [show R = M / ε + 1 by rfl, mul_add,
+      ENNReal.mul_div_cancel hε0 hεTop]
+    exact le_add_right (le_refl M) ε
+
 /--
 Source-facing scalar moment producer.  `coordinateUniformAbsMoment` is the
 physical input supplied by a CMP119 insertion/exponential-moment theorem.
+Finiteness of each scalar budget is the only quantitative side condition.
 -/
 structure RealCountableObservableCoordinateMomentSource
     (Ω : Type*) [MeasurableSpace Ω] where
@@ -59,16 +80,12 @@ structure RealCountableObservableCoordinateMomentSource
   observable : ℕ → Ω → ℝ
   observableMeasurable : ∀ i, Measurable (observable i)
   coordinateMomentBound : ℕ → ENNReal
+  coordinateMomentBoundFinite : ∀ i, coordinateMomentBound i ≠ ⊤
   coordinateUniformAbsMoment :
     ∀ (i k : ℕ),
       (∫⁻ x : Ω, ENNReal.ofReal |observable i x|
         ∂((cutoffLaw k : ProbabilityMeasure Ω) : Measure Ω)) ≤
       coordinateMomentBound i
-  threshold :
-    ∀ (m : ℕ) (ε : ENNReal), 0 < ε →
-      ∃ R : ENNReal,
-        R ≠ 0 ∧ R ≠ ⊤ ∧
-          finitePrefixCoordinateMomentBound coordinateMomentBound m / R ≤ ε
 
 namespace RealCountableObservableCoordinateMomentSource
 
@@ -78,6 +95,15 @@ def prefixMomentBound
     (source : RealCountableObservableCoordinateMomentSource Ω)
     (m : ℕ) : ENNReal :=
   finitePrefixCoordinateMomentBound source.coordinateMomentBound m
+
+/-- Every finite prefix budget is finite. -/
+theorem prefixMomentBound_ne_top
+    {Ω : Type*} [MeasurableSpace Ω]
+    (source : RealCountableObservableCoordinateMomentSource Ω)
+    (m : ℕ) : source.prefixMomentBound m ≠ ⊤ := by
+  unfold prefixMomentBound finitePrefixCoordinateMomentBound
+  exact ENNReal.sum_ne_top.2 fun i hi =>
+    source.coordinateMomentBoundFinite i.1
 
 /-- Scalar source moments imply the source-native finite-prefix norm moment. -/
 theorem uniform_prefix_norm_moment
@@ -125,7 +151,9 @@ noncomputable def toNormMomentSource
   sourceUniformNormMoment := source.uniform_prefix_norm_moment
   threshold := by
     intro m ε hε
-    exact source.threshold m ε hε
+    exact finite_ennreal_moment_threshold
+      (source.prefixMomentBound m)
+      (source.prefixMomentBound_ne_top m) ε hε
 
 /-- Scalar insertion moments therefore construct the selected continuum law. -/
 noncomputable def globalMeasure

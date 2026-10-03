@@ -128,12 +128,17 @@ theorem ym_20261003_selected_observable_continuum_prefix
         Measure ((i : Set.Iic n) → ℝ)) :=
   source.globalMeasure_prefix n
 
-/-- Exact physical D3 leaf after all generic compactness/extension machinery. -/
+/--
+Exact physical D3 leaf after all generic compactness/extension machinery:
+the producer must live on the SAME selected cutoff law and scalar observable
+sequence supplied here.
+-/
 def YM20261003D3SelectedPrefixNormMomentProducerExists
     {Ω : Type*} [MeasurableSpace Ω]
     (cutoffLaw : ℕ → ProbabilityMeasure Ω)
-    (observable : ℕ → Ω → ℝ)
-    (hObservable : ∀ i, Measurable (observable i)) : Prop :=
-  Nonempty (RealCountableObservableNormMomentSource Ω)
+    (observable : ℕ → Ω → ℝ) : Prop :=
+  ∃ source : RealCountableObservableNormMomentSource Ω,
+    source.cutoffLaw = cutoffLaw ∧
+    source.observable = observable
 
 end RequestProject.YangMills

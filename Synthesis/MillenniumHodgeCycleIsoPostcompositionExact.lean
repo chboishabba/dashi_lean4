@@ -1,15 +1,14 @@
 import Synthesis.MillenniumHodgeCycleIsoPushforwardExact
+import Mathlib.LinearAlgebra.Dimension.Finrank
 import Mathlib.Tactic
 
 /-!
 # Hodge max-cut: postcomposition by a scheme isomorphism
 
 The selected ruling regression only needs functoriality of genuine
-`AlgebraicCycle.map` when the *second* morphism is the factor-swap isomorphism.
-This owner proves the entire locally-finite-sum/reindexing part of that theorem.
-The sole remaining scalar obligation is the mathematically canonical fact that
-postcomposing a residue-field extension by an isomorphism does not change its
-finite degree.
+`AlgebraicCycle.map` when the second morphism is the factor-swap isomorphism.
+This owner proves that specialization on the literal residue-degree weighted
+Mathlib cycle map.
 -/
 
 namespace Synthesis.Millennium.Hodge
@@ -24,14 +23,31 @@ universe u
 
 variable {X Y Z : Scheme.{u}}
 
+/-- Postcomposing a scheme morphism by an isomorphism does not change the
+residue-field degree at a source point.  This is the scalar tower fact needed
+by genuine cycle pushforward functoriality. -/
+theorem residueDegree_postcompose_iso
+    (f : X ⟶ Y) (e : Y ≅ Z) (x : X) :
+    (f ≫ e.hom).residueDegree x = f.residueDegree x := by
+  unfold Scheme.Hom.residueDegree
+  letI := ((f ≫ e.hom).residueFieldMap x).hom.toAlgebra
+  letI := (f.residueFieldMap x).hom.toAlgebra
+  let i : Z.residueField ((f ≫ e.hom) x) ≃+* Y.residueField (f x) :=
+    (asIso (e.hom.residueFieldMap (f x))).commRingCatIsoToRingEquiv
+  refine Algebra.finrank_eq_of_equiv_equiv i (RingEquiv.refl _) ?_
+  ext a
+  change
+    f.residueFieldMap x (e.hom.residueFieldMap (f x) a) =
+      (f ≫ e.hom).residueFieldMap x a
+  have h := Scheme.residueFieldMap_comp f e.hom x
+  exact congrArg (fun k => k a) h.symm
+
 /-- Genuine cycle pushforward commutes with postcomposition by an isomorphism
-once the literal residue degrees for the composite are identified with those
-for the original morphism.  No unit-weight replacement is used. -/
-theorem actualCyclePushforward_postcompose_iso_of_residueDegree
+for the exact residue-degree weighted Mathlib `AlgebraicCycle.map`. -/
+theorem actualCyclePushforward_postcompose_iso
     (f : X ⟶ Y) [QuasiCompact f]
     (e : Y ≅ Z)
-    (D : AlgebraicCycle X ℤ)
-    (hdeg : ∀ x : X, (f ≫ e.hom).residueDegree x = f.residueDegree x) :
+    (D : AlgebraicCycle X ℤ) :
     actualCyclePushforward e.hom (actualCyclePushforward f D) =
       actualCyclePushforward (f ≫ e.hom) D := by
   ext z
@@ -52,7 +68,8 @@ theorem actualCyclePushforward_postcompose_iso_of_residueDegree
       simpa [Scheme.comp_base_apply] using h
   by_cases hx : f.base x = e.inv.base z
   · have hcomp : (f ≫ e.hom).base x = z := hfiber.mp hx
-    simp [hx, hcomp, AlgebraicCycle.mapCoeff, hdeg x]
+    simp [hx, hcomp, AlgebraicCycle.mapCoeff,
+      residueDegree_postcompose_iso f e x]
   · have hcomp : (f ≫ e.hom).base x ≠ z := by
       exact fun h => hx (hfiber.mpr h)
     simp [hx, hcomp, AlgebraicCycle.mapCoeff]
@@ -61,19 +78,15 @@ theorem actualCyclePushforward_postcompose_iso_of_residueDegree
 MAX-CUT STATUS
 
 PAID HERE, subject to exact-head kernel certification:
-* the complete fiber/reindexing part of `map (f ≫ e) = map e ∘ map f` for
-  the exact residue-degree weighted Mathlib cycle pushforward when `e` is a
-  scheme isomorphism;
-* no synthetic cycle map and no altered multiplicity convention.
+* residue-degree invariance under postcomposition by a genuine scheme iso;
+* the full fiber/reindexing equality for the exact Mathlib cycle map;
+* therefore `e_* (f_* D) = (f ≫ e)_* D` with genuine multiplicities.
 
-ONE SCALAR LIBRARY LEMMA REMAINS:
-
-  (f ≫ e.hom).residueDegree x = f.residueDegree x.
-
-This follows from `Scheme.Hom.residueFieldMap_comp`, the fact that the residue
-field map of an isomorphism is an isomorphism, and finrank invariance under a
-base-field ring equivalence.  Once packaged, the theorem above is unconditional
-and can be applied directly to the two actual P¹ rulings and factor swap.
+SELECTED RULING CONSEQUENCE:
+Once the actual P¹ fundamental cycle and quasicompact ruling instances are in
+place, combine this theorem with `p1QRulingOne_swap` and
+`p1QRulingTwo_swap` to obtain the exact `P1QRulingCycleExchange` consumed by
+the already-written anti-invariant difference theorem.
 -/
 
 end

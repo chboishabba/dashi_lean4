@@ -35,6 +35,9 @@ jobs:
         run: |
           lake build NSBControl.Rational345RealSnapshotW2Test
           lake build NSBControl.Rational345Round71W1Test
+          lake build NSBControl.Rational345Round71PhysicalCarrierTest
+          lake build NSBControl.Rational345Round71RealityFieldTest
+          lake build NSBControl.Rational345Round71TransverseFieldTest
           lake build NSBControl.Rational345BQFieldBoundTest
           lake build NSBControl.Rational345BPClosedTest
           lake build NSBControl.Rational345R830DecisionCompilerTest

@@ -7,6 +7,8 @@ import YangMills.CountableObservableCoordinateMoment
 import YangMills.LiteralSU2PositiveHalfBoundaryIndependence
 import YangMills.LiteralSU2CrossingPositiveIndexCoincidence
 import YangMills.LiteralSU2BoundaryHaarTranslation
+import YangMills.LiteralSU2BoundaryHaarDoubleAverage
+import YangMills.LiteralSU2BoundaryGaugeRelative
 import YangMills.LiteralSU2BoundaryProjectedKernelPlaneSplit
 
 /-!
@@ -21,11 +23,18 @@ A / finite Wilson:
 * upper/lower crossing half paths have already been read back to boundary gauge
   transforms on the same literal positive spatial edges;
 * the reflected positive edge and the explicit positive edge are identified;
-* the selected one-link and boundary-plane Haar laws have genuine right
-  translation invariance;
+* the selected one-link and boundary-plane Haar laws have genuine left and
+  right translation invariance;
+* two independent upper/lower boundary Haar copies collapse exactly to one
+  relative Haar boundary in either noncommutative orientation;
+* two independently endpoint-gauged SU(2) crossing edges depend only on the
+  exact relative gauge `b * c⁻¹`;
 * the projected kernel is already the exact two-plane Haar integral.
-The remaining pure-Wilson leaf is therefore only the final gauge-projector
-positivity/Fubini theorem.  No lattice representation seam remains below it.
+Thus the abstract Haar/Fubini change-of-variables seam is paid.  The remaining
+pure-Wilson leaf is the literal crossing-feature assembly theorem identifying
+the augmented positive feature exponential with the same projected Wilson
+kernel, followed by the already-existing positivity compiler.  No lattice or
+probability representation seam remains below it.
 
 B / complete action:
 The generic Wilson × residual compiler and crossing falsifier are ready, but no
@@ -98,7 +107,37 @@ theorem ym_20261003_block_a_lower_common_positive_edge
       su2LowerCrossingLeftPositiveIndex n p hp :=
   su2_lower_crossing_positive_index_coincides n p hp
 
-/-- The final pure-Wilson Block-A statement; only its final projector proof remains. -/
+/-- Local Block-A noncommutative weld: two boundary gauges reduce to one relative gauge. -/
+theorem ym_20261003_block_a_two_gauges_relative
+    (bs bt cs ct left right : SU2PlaquetteHolonomy) :
+    su2RelativeFundamentalTrace
+        (su2BoundaryGaugeTransformEdge bs bt left)
+        (su2BoundaryGaugeTransformEdge cs ct right) =
+      su2RelativeFundamentalTrace right
+        (su2BoundaryGaugeTransformEdge
+          (bs * cs⁻¹) (bt * ct⁻¹) left) :=
+  su2_relative_trace_two_boundary_gauges_relative_swapped
+    bs bt cs ct left right
+
+/-- Upper boundary double-Haar averaging reduces to one relative boundary field. -/
+theorem ym_20261003_block_a_upper_double_haar_relative
+    (n : ℕ) [NeZero n]
+    (k : SU2UpperBoundaryTemporalLinks n → ℝ) :
+    (∫ g, ∫ h, k (g * h⁻¹) ∂(literalSU2UpperBoundaryTemporalHaar n)
+      ∂(literalSU2UpperBoundaryTemporalHaar n)) =
+      ∫ u, k u ∂(literalSU2UpperBoundaryTemporalHaar n) :=
+  literal_su2_upper_boundary_haar_double_mul_inv n k
+
+/-- Lower boundary double-Haar averaging reduces to one relative boundary field. -/
+theorem ym_20261003_block_a_lower_double_haar_relative
+    (n : ℕ) [NeZero n]
+    (k : SU2LowerBoundaryTemporalLinks n → ℝ) :
+    (∫ g, ∫ h, k (g⁻¹ * h) ∂(literalSU2LowerBoundaryTemporalHaar n)
+      ∂(literalSU2LowerBoundaryTemporalHaar n)) =
+      ∫ u, k u ∂(literalSU2LowerBoundaryTemporalHaar n) :=
+  literal_su2_lower_boundary_haar_double_relative n k
+
+/-- The final pure-Wilson Block-A statement; only its final literal feature assembly remains. -/
 def YM20261003BlockAFinalGaugeProjectionPositivity : Prop :=
   LiteralSU2BoundaryGaugeProjectionRPExact
 

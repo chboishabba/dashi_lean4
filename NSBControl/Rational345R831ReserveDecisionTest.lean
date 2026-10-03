@@ -3,7 +3,9 @@ import NSBControl.Rational345R831ReserveDecision
 namespace NSBControl
 namespace Rational345R831ReserveDecisionTest
 
+open Set
 open Rational345R831ReserveDecision
+open Rational345RealRadius4
 
 example {payment reserve demand : ℝ}
     (hneg : payment < 0)
@@ -20,6 +22,19 @@ example
     (hWeld : R823WeldForR830Witness) :
     ∃ reserve demand : ℝ, ¬ demand ≤ reserve := by
   exact r830_refutes_r823_reserve hWeld
+
+example
+    (weld : R823PointwiseWeld)
+    (u : ℝ → State) (terminal : ℝ)
+    (hu : ContinuousOn u (uIcc (0 : ℝ) terminal)) :
+    selectedPayment u terminal =
+      integratedReserve weld u terminal - integratedDemand weld u terminal := by
+  exact integrated_weld_of_pointwise weld hu
+
+example
+    (hPointwise : R823PointwiseWeld) :
+    R823WeldForR830Witness := by
+  exact r823WitnessWeld_of_pointwise hPointwise
 
 end Rational345R831ReserveDecisionTest
 end NSBControl

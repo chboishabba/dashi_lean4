@@ -9,6 +9,8 @@ import YangMills.LiteralSU2CrossingPositiveIndexCoincidence
 import YangMills.LiteralSU2BoundaryHaarTranslation
 import YangMills.LiteralSU2BoundaryHaarDoubleAverage
 import YangMills.LiteralSU2BoundaryGaugeRelative
+import YangMills.LiteralSU2CrossingDoubleGaugeRelative
+import YangMills.LiteralSU2CrossingDoubleGaugeAverage
 import YangMills.LiteralSU2BoundaryProjectedKernelPlaneSplit
 
 /-!
@@ -18,23 +20,26 @@ This integration surface records the current literal frontier without upgrading
 source hypotheses into proofs.
 
 A / finite Wilson:
-* the positive Wilson half is now theorem-bearingly independent of both temporal
+* the positive Wilson half is theorem-bearingly independent of both temporal
   boundary Haar planes and of the reflected-right field;
-* upper/lower crossing half paths have already been read back to boundary gauge
-  transforms on the same literal positive spatial edges;
-* the reflected positive edge and the explicit positive edge are identified;
-* the selected one-link and boundary-plane Haar laws have genuine left and
-  right translation invariance;
-* two independent upper/lower boundary Haar copies collapse exactly to one
-  relative Haar boundary in either noncommutative orientation;
-* two independently endpoint-gauged SU(2) crossing edges depend only on the
-  exact relative gauge `b * c⁻¹`;
-* the projected kernel is already the exact two-plane Haar integral.
-Thus the abstract Haar/Fubini change-of-variables seam is paid.  The remaining
-pure-Wilson leaf is the literal crossing-feature assembly theorem identifying
-the augmented positive feature exponential with the same projected Wilson
-kernel, followed by the already-existing positivity compiler.  No lattice or
-probability representation seam remains below it.
+* upper/lower crossing half paths are read back to boundary gauge transforms on
+  the same literal positive spatial edges;
+* the reflected positive edge and explicit positive edge are identified;
+* the selected one-link and boundary Haar laws have genuine left/right
+  translation invariance;
+* two independently endpoint-gauged SU(2) edges depend only on the exact
+  relative gauge `b * c⁻¹`;
+* that local identity is lifted through the complete upper+lower crossing sum;
+* two independent full temporal-boundary Haar copies collapse exactly to one
+  relative Haar boundary;
+* therefore the complete double-gauged augmented crossing exponential average
+  is exactly the single-boundary literal Wilson crossing-kernel average.
+
+So the crossing/Fubini same-object seam is now paid.  The remaining pure-Wilson
+leaf is narrower: prove the reflected positive noncrossing half reads only the
+right positive field, then absorb the left/right noncrossing half factors into
+the already-positive augmented crossing quadratic form.  The final consumer is
+still `LiteralSU2BoundaryGaugeProjectionRPExact`.
 
 B / complete action:
 The generic Wilson × residual compiler and crossing falsifier are ready, but no
@@ -119,25 +124,38 @@ theorem ym_20261003_block_a_two_gauges_relative
   su2_relative_trace_two_boundary_gauges_relative_swapped
     bs bt cs ct left right
 
-/-- Upper boundary double-Haar averaging reduces to one relative boundary field. -/
-theorem ym_20261003_block_a_upper_double_haar_relative
+/-- Complete crossing sum with two boundary copies depends only on the relative boundary. -/
+theorem ym_20261003_block_a_double_crossing_relative
     (n : ℕ) [NeZero n]
-    (k : SU2UpperBoundaryTemporalLinks n → ℝ) :
-    (∫ g, ∫ h, k (g * h⁻¹) ∂(literalSU2UpperBoundaryTemporalHaar n)
-      ∂(literalSU2UpperBoundaryTemporalHaar n)) =
-      ∫ u, k u ∂(literalSU2UpperBoundaryTemporalHaar n) :=
-  literal_su2_upper_boundary_haar_double_mul_inv n k
+    (left right : SU2PositiveInteriorLinks n)
+    (b c : SU2BoundaryTemporalLinks n) :
+    su2DoubleGaugedCrossingTraceSum n left right b c =
+      su2UpperGaugedCrossingTraceSum n left right
+        (su2RelativeBoundaryField b c) +
+      su2LowerGaugedCrossingTraceSum n left right
+        (su2RelativeBoundaryField b c) :=
+  su2_double_gauged_crossing_trace_sum_relative n left right b c
 
-/-- Lower boundary double-Haar averaging reduces to one relative boundary field. -/
-theorem ym_20261003_block_a_lower_double_haar_relative
+/-- The entire augmented crossing average is the exact literal Wilson crossing average. -/
+theorem ym_20261003_block_a_crossing_average_same_object
     (n : ℕ) [NeZero n]
-    (k : SU2LowerBoundaryTemporalLinks n → ℝ) :
-    (∫ g, ∫ h, k (g⁻¹ * h) ∂(literalSU2LowerBoundaryTemporalHaar n)
-      ∂(literalSU2LowerBoundaryTemporalHaar n)) =
-      ∫ u, k u ∂(literalSU2LowerBoundaryTemporalHaar n) :=
-  literal_su2_lower_boundary_haar_double_relative n k
+    (β : ℝ)
+    (left right : SU2PositiveInteriorLinks n) :
+    (∫ b, ∫ c,
+      su2DoubleGaugedCrossingKernel n β left right b c
+      ∂(literalSU2BoundaryTemporalHaar n)
+      ∂(literalSU2BoundaryTemporalHaar n)) =
+      ∫ u,
+        su2WilsonCrossingPlaneKernel
+          (su2EvenTimeCrossingPlaquettes n) β
+          (su2LiteralCrossingFirstBoundary
+            (su2AssembleReflectedPair n left u right))
+          (su2LiteralCrossingSecondBoundary
+            (su2AssembleReflectedPair n left u right))
+        ∂(literalSU2BoundaryTemporalHaar n) :=
+  su2_double_gauged_crossing_average_eq_literal n β left right
 
-/-- The final pure-Wilson Block-A statement; only its final literal feature assembly remains. -/
+/-- The final pure-Wilson Block-A statement. -/
 def YM20261003BlockAFinalGaugeProjectionPositivity : Prop :=
   LiteralSU2BoundaryGaugeProjectionRPExact
 

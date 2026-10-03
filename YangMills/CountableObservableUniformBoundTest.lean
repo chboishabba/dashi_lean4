@@ -1,0 +1,11 @@
+import Mathlib
+import YangMills.CountableObservableCoordinateMoment
+
+namespace RequestProject.YangMills
+
+#check RealCountableObservableUniformBoundSource
+#check RealCountableObservableUniformBoundSource.toCoordinateMomentSource
+#check RealCountableObservableUniformBoundSource.toNormMomentSource
+#check RealCountableObservableUniformBoundSource.globalMeasure
+
+end RequestProject.YangMills

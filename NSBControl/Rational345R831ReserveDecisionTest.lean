@@ -1,4 +1,4 @@
-import NSBControl.Rational345R831ReserveDecision
+import NSBControl.Rational345R831PhysicalWeld
 
 namespace NSBControl
 namespace Rational345R831ReserveDecisionTest

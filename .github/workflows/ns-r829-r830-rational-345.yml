@@ -52,4 +52,6 @@ jobs:
           lake build NSBControl.Rational345R831TouchedCarrierWeldTest
           lake build NSBControl.Rational345R831R853PhysicalCarrierWeldTest
           lake build NSBControl.Rational345R831TerminalCarrierTest
+          lake build NSBControl.Rational345R823RealSemanticProvenanceTest
+          lake build NSBControl.Rational345R823LiteralR760CellMaxCutTest
           lake build NSBControl.Rational345R831ReserveDecisionTest

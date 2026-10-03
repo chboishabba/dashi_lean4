@@ -1,5 +1,4 @@
-import Synthesis.RiemannSelectedPrimeSensitiveThreeTapMaxCutScalarSplit
-import Synthesis.RiemannSelectedPrimeSensitiveThreeTapM0Envelope
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapFiniteAsymptotic
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapGlobalize
 import Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
 
@@ -23,26 +22,29 @@ One-scale resonance has now been compressed past the abstract reflection tail:
   is compatible for t>=200;
 * the finite half-height core is collapsed from M0/M1 to the single canonical
   normalized mass `threeTapCanonicalM0`;
-* the remaining finite coefficient is source-visible at log-over-t scale in
-  `threeTapHalfHeightLogCoefficient`;
-* translation itself no longer obstructs M0 control: the actual translated
-  detector obeys an L1 bound independent of translation distance, and
-  radius-one projectivization obeys the same-object quadratic envelope
-  `||P_g||_1 <= 8 ||g||_1^2`;
-* consequently `threeTapCanonicalM0_le_of_sourceMass_poleBounds` reduces M0
-  to ordinary endpoint-profile L1 bounds and finite signed-pole bounds, with
-  no projective/translation commutation assumption;
-* the final producer-facing PASS surface can be read either as negativity of
-  `ThreeTapAdverseHalfHeightAsymptoticScalar` or as the split same-object
-  inequalities finite-core <= H, actual far tail < H, and
+* translation itself does not enlarge L1 mass, and radius-one projectivization
+  obeys the same-object quadratic envelope `||P_g||_1 <= 8 ||g||_1^2`;
+* the actual four-window witness has endpoint source mass <= 3 and finite pole
+  coefficients bounded by `18*cosh(1)`, yielding the explicit uniform bound
+  `M0 <= 2592*cosh(1)^2*(1+2|eps|)^2`;
+* therefore the finite Route-A budget contains no remaining zeta-distribution
+  input: `threeTapUniformFiniteHalfHeightBudget` is explicit and obeys a
+  source-visible log-over-t envelope;
+* the final producer-facing PASS surface is now exactly: explicit finite
+  budget <= H, actual half-height adverse tail < H, and
   H <= LocalExact-Compensation.
+
+Thus the first genuinely zero-distribution-specific Route-A obligation is the
+actual adverse tail at the compatible half-height cutoff.  Unrestricted
+summability only supplies an eta-small tail at some large cutoff and does not
+place that cutoff before t-5.
 
 After a one-scale PASS, only compact mid-strip positivity remains before the
 full 0<a<=1/2 displacement statement.  A strict one-scale FAIL exposes the
 already-built independent log2/log3 two-scale source.
 
-The independent signed-fifth route is now also exposed by the single finite
-scalar `signedFifthCorrelationGapAt = Credit - Debt + OuterBudget - 3 eps`;
+The independent signed-fifth route is exposed by the single finite scalar
+`signedFifthCorrelationGapAt = Credit - Debt + OuterBudget - 3 eps`;
 eventual nonnegativity is exactly the existing signed-fifth interior target.
 No RH theorem and no unpaid analytic sign are asserted here.
 -/

@@ -28,6 +28,7 @@ on:
       - 'Synthesis/MillenniumBSDCMExplicitGeometricHalfCharacterExact.lean'
       - 'Synthesis/MillenniumBSDCMGeometricKummerSquareClassEvaluationExact.lean'
       - 'Synthesis/MillenniumBSDCMGlobalKummerOrdinaryExact.lean'
+      - 'Synthesis/MillenniumBSDCMGlobalKummerBoundaryCompilerExact.lean'
       - 'Synthesis.lean'
       - 'BSDCohomology.lean'
       - 'lakefile.toml'
@@ -80,4 +81,5 @@ jobs:
           lake env lean Synthesis/MillenniumBSDCMExplicitGeometricHalfCharacterExact.lean
           lake env lean Synthesis/MillenniumBSDCMGeometricKummerSquareClassEvaluationExact.lean
           lake env lean Synthesis/MillenniumBSDCMGlobalKummerOrdinaryExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGlobalKummerBoundaryCompilerExact.lean
           lake env lean Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean

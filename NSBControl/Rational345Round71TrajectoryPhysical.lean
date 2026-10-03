@@ -3,6 +3,7 @@ import Mathlib.Analysis.Calculus.ContDiff.RCLike
 import NSBControl.Rational345RealRadius4Quadratic
 import NSBControl.Rational345Round71RealityField
 import NSBControl.Rational345Round71InitialPhysical
+import NSBControl.Rational345Round71TransverseField
 
 /-!
 # Round71 physical invariants along the local real trajectory
@@ -11,6 +12,14 @@ The radius-four Galerkin field is globally equivariant under Fourier reality.
 Since the field is C¹, Mathlib supplies a local Lipschitz neighborhood and ODE
 uniqueness.  Therefore any local solution through the reality-fixed 3-4-5
 initial state remains reality-fixed on a positive time neighborhood.
+
+The divergence vector of all 729 modes is treated at once.  Its exact field
+identity is the diagonal linear system
+
+  D(Q(u))_k = -|k|² D(u)_k.
+
+The initial divergence vector is zero, so finite-dimensional ODE uniqueness
+forces it to remain zero on a positive neighborhood as well.
 -/
 
 open Set
@@ -23,6 +32,7 @@ open Rational345RealInitialState
 open Rational345RealRadius4Quadratic
 open Rational345Round71RealityField
 open Rational345Round71InitialPhysical
+open Rational345Round71TransverseField
 
 /-- The Fourier reality involution is real-linear on the ambient state space. -/
 noncomputable def realityLinearMap : State →ₗ[ℝ] State where
@@ -127,9 +137,163 @@ theorem trajectory_reality_radius
   apply hball t
   simpa [Real.dist_eq] using ht
 
-/-- Reality along the local trajectory is now an explicit positive-radius
+------------------------------------------------------------------------
+-- All-mode divergence vector and its exact diagonal ODE.
+------------------------------------------------------------------------
+
+abbrev DivergenceState := Mode → ℂ
+
+def divergenceState (u : State) : DivergenceState := fun k =>
+  bilinearDot (kComplex k) (u k)
+
+def divergenceDecay (d : DivergenceState) : DivergenceState := fun k =>
+  -(normSq k : ℂ) * d k
+
+noncomputable def divergenceLinearMap : State →ₗ[ℝ] DivergenceState where
+  toFun := divergenceState
+  map_add' := by
+    intro u v
+    funext k
+    simp [divergenceState, bilinearDot]
+    ring
+  map_smul' := by
+    intro c u
+    funext k
+    simp [divergenceState, bilinearDot]
+    ring
+
+noncomputable def divergenceCLM : State →L[ℝ] DivergenceState :=
+  ⟨divergenceLinearMap,
+    LinearMap.continuous_of_finiteDimensional divergenceLinearMap⟩
+
+noncomputable def divergenceDecayLinearMap :
+    DivergenceState →ₗ[ℝ] DivergenceState where
+  toFun := divergenceDecay
+  map_add' := by
+    intro d e
+    funext k
+    simp [divergenceDecay]
+    ring
+  map_smul' := by
+    intro c d
+    funext k
+    simp [divergenceDecay]
+    ring
+
+noncomputable def divergenceDecayCLM :
+    DivergenceState →L[ℝ] DivergenceState :=
+  ⟨divergenceDecayLinearMap,
+    LinearMap.continuous_of_finiteDimensional divergenceDecayLinearMap⟩
+
+@[simp] theorem divergenceCLM_apply (u : State) :
+    divergenceCLM u = divergenceState u := rfl
+
+@[simp] theorem divergenceDecayCLM_apply (d : DivergenceState) :
+    divergenceDecayCLM d = divergenceDecay d := rfl
+
+/-- The full 729-component divergence vector intertwines the literal Galerkin
+field with one fixed diagonal linear vector field. -/
+theorem divergenceState_field (u : State) :
+    divergenceState (galerkinField u) =
+      divergenceDecay (divergenceState u) := by
+  funext k
+  exact divergence_field_identity u k
+
+/-- Initial divergence is identically zero. -/
+theorem divergenceState_u₀_zero : divergenceState u₀ = 0 := by
+  funext k
+  exact initial_transverse k
+
+/-- Composing a Galerkin solution with the all-mode divergence map gives a
+solution of the fixed diagonal divergence ODE. -/
+theorem divergence_curve_hasDerivAt
+    (u : ℝ → State) {ε t : ℝ}
+    (hderiv : ∀ s ∈ Ioo (-ε) ε,
+      HasDerivAt u (galerkinField (u s)) s)
+    (ht : t ∈ Ioo (-ε) ε) :
+    HasDerivAt
+      (fun s => divergenceState (u s))
+      (divergenceDecay (divergenceState (u t))) t := by
+  have hcomp :=
+    divergenceCLM.hasFDerivAt.comp_hasDerivAt t (hderiv t ht)
+  rw [divergenceState_field]
+  simpa [Function.comp_def] using hcomp
+
+/-- The zero divergence curve solves the diagonal divergence ODE globally. -/
+theorem zero_divergence_curve_hasDerivAt (t : ℝ) :
+    HasDerivAt
+      (fun _ : ℝ => (0 : DivergenceState))
+      (divergenceDecay 0) t := by
+  simpa [divergenceDecay] using
+    (hasDerivAt_const t (0 : DivergenceState))
+
+/-- A local solution through the transverse 3-4-5 datum is divergence-free on
+a positive neighborhood of time zero, simultaneously for every Fourier mode. -/
+theorem trajectory_transverse_radius
+    (u : ℝ → State) {ε : ℝ}
+    (hε : 0 < ε)
+    (hu0 : u 0 = u₀)
+    (hderiv : ∀ t ∈ Ioo (-ε) ε,
+      HasDerivAt u (galerkinField (u t)) t) :
+    ∃ ρ > 0, ∀ t : ℝ, |t| < ρ →
+      ∀ k : Mode, bilinearDot (kComplex k) (u t k) = 0 := by
+  let d : ℝ → DivergenceState := fun t => divergenceState (u t)
+  let z : ℝ → DivergenceState := fun _ => 0
+  let K : ℝ≥0 := ‖divergenceDecayCLM‖₊
+
+  have hI : Ioo (-ε) ε ∈ 𝓝 (0 : ℝ) :=
+    Ioo_mem_nhds (by linarith) (by linarith)
+
+  have hv :
+      ∀ᶠ t in 𝓝 (0 : ℝ),
+        LipschitzOnWith K ((fun _ : ℝ => divergenceDecay) t)
+          ((fun _ : ℝ => (Set.univ : Set DivergenceState)) t) := by
+    apply Filter.Eventually.of_forall
+    intro t
+    exact (divergenceDecayCLM.lipschitzWith).lipschitzOnWith
+
+  have hdSol :
+      ∀ᶠ t in 𝓝 (0 : ℝ),
+        HasDerivAt d (divergenceDecay (d t)) t ∧ d t ∈ Set.univ := by
+    filter_upwards [Filter.Eventually.of_mem hI] with t htI
+    exact ⟨by simpa [d] using divergence_curve_hasDerivAt u hderiv htI,
+      Set.mem_univ _⟩
+
+  have hzSol :
+      ∀ᶠ t in 𝓝 (0 : ℝ),
+        HasDerivAt z (divergenceDecay (z t)) t ∧ z t ∈ Set.univ := by
+    apply Filter.Eventually.of_forall
+    intro t
+    exact ⟨by simpa [z] using zero_divergence_curve_hasDerivAt t,
+      Set.mem_univ _⟩
+
+  have hinit : d 0 = z 0 := by
+    simp [d, z, hu0, divergenceState_u₀_zero]
+
+  have hevent : d =ᶠ[𝓝 (0 : ℝ)] z :=
+    ODE_solution_unique_of_eventually
+      (v := fun _ : ℝ => divergenceDecay)
+      (s := fun _ : ℝ => (Set.univ : Set DivergenceState))
+      hv hdSol hzSol hinit
+
+  have hevent' : ∀ᶠ t in 𝓝 (0 : ℝ), divergenceState (u t) = 0 := by
+    simpa [d, z] using hevent
+
+  obtain ⟨ρ, hρ, hball⟩ := Metric.eventually_nhds_iff_ball.mp hevent'
+  refine ⟨ρ, hρ, ?_⟩
+  intro t ht k
+  have hzero : divergenceState (u t) = 0 := by
+    apply hball t
+    simpa [Real.dist_eq] using ht
+  exact congrFun hzero k
+
+/-- Reality along the local trajectory is an explicit positive-radius
 consequence of the literal field symmetry and standard uniqueness. -/
 def trajectoryRealityLocallyClosed : Bool := true
+
+/-- Divergence freedom along the local trajectory is an explicit positive-
+radius consequence of the exact diagonal divergence equation. -/
+def trajectoryTransverseLocallyClosed : Bool := true
 
 end Rational345Round71TrajectoryPhysical
 end NSBControl

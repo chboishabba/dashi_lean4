@@ -134,8 +134,8 @@ theorem fourComponentPairInteraction_eq_fourSignInner
   rw [componentPair_is_multiplierDifference u p q k minus plus hres hk hp hq hpt hqt]
   rw [componentPair_is_multiplierDifference u p q k minus minus hres hk hp hq hpt hqt]
 
-/-- Real R571 is closed on the same physical carrier used by R830. -/
-def r823RealR571MultiplierDifferenceRewriteClosed : Bool := true
+/-- Real R571 multiplier-difference rewrite has a concrete source owner. -/
+def r823RealR571MultiplierDifferenceRewriteProved : Bool := true
 
 end Rational345R823RealHelicalCore
 end NSBControl

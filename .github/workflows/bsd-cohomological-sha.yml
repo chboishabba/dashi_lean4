@@ -16,6 +16,7 @@ on:
       - 'Synthesis/MillenniumBSDCMGenericE2H1SquareClassExact.lean'
       - 'Synthesis/MillenniumBSDCMGeometricKummerContinuousH1Exact.lean'
       - 'Synthesis/MillenniumBSDCMRationalToGeometricKummerExact.lean'
+      - 'Synthesis/MillenniumBSDCMXTOrientationExact.lean'
       - 'Synthesis.lean'
       - 'BSDCohomology.lean'
       - 'lakefile.toml'
@@ -56,4 +57,5 @@ jobs:
           lake env lean Synthesis/MillenniumBSDCMGenericE2H1SquareClassExact.lean
           lake env lean Synthesis/MillenniumBSDCMGeometricKummerContinuousH1Exact.lean
           lake env lean Synthesis/MillenniumBSDCMRationalToGeometricKummerExact.lean
+          lake env lean Synthesis/MillenniumBSDCMXTOrientationExact.lean
           lake env lean Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean

@@ -94,7 +94,8 @@ theorem literal_su2_boundary_gauge_projection_rp_of_averaged_crossing_rp
           (f right * h right) := by
     intro left right
     rw [literal_su2_boundary_gauge_projected_kernel_half_weight_factorization]
-    rfl
-  simpa only [hPoint] using hPos
+    ring
+  simp_rw [hPoint]
+  exact hPos
 
 end RequestProject.YangMills

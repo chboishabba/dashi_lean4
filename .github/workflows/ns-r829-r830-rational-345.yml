@@ -41,4 +41,5 @@ jobs:
           lake build NSBControl.Rational345BQFieldBoundTest
           lake build NSBControl.Rational345BPClosedTest
           lake build NSBControl.Rational345R830DecisionCompilerTest
+          lake build NSBControl.Rational345R823RealHelicalCoreTest
           lake build NSBControl.Rational345R831ReserveDecisionTest

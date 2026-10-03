@@ -34,6 +34,15 @@ One-scale resonance has now been compressed past the abstract reflection tail:
 * the subtraction-defined actual adverse far remainder is exactly a
   complementary subtype tsum and is bounded by Ccurv times the literal
   inverse-square zero tail `threeTapInverseSquareZeroTailAfter`;
+* the arbitrary-endpoint RvM discrepancy has now been converted into a literal
+  count bound
+  `N(A,B) <= C (B-A+1) log(B+4)` for `5 <= A < B`;
+* `zetaWindowInverseSquareMass_le_count_div_sq` now pays the exact carrier weld
+  from a separated literal zero window to `N(A,B)/d^2`;
+* positive-height right/left shell bounds are source-written, and the existing
+  unconditional all-real local zero count now gives unit-window inverse-square
+  bounds on both sides of `t`, including negative ordinates, without changing
+  the `Ncount` carrier or invoking zero reflection;
 * `threeTapRouteAAdverseBudget` combines the explicit finite budget and this
   inverse-square far budget, while
   `exists_threeTapRouteAAsymptoticBalancePass_constants` compiles the strict
@@ -49,7 +58,9 @@ The live Route-A analytic leaves are therefore now genuinely narrow:
 1. finish the finite normalized-bump/determinant compiler fed by the already-
    proved uniform pole-weight Lipschitz estimate, then bound the compact-alpha
    C2 curvature of the resulting fixed-width transformed witness;
-2. prove an RvM estimate for the literal inverse-square tail, ideally
+2. partition the exact complementary zero carrier into the source-written
+   literal unit/dyadic windows and sum their explicit inverse-square budgets to
+   prove
    `threeTapInverseSquareZeroTailAfter t (t/2) = O(log t/t)`;
 3. bound the translated gamma+pole channel above by a negative gain and the
    already-paid local slack above strongly enough that
@@ -58,7 +69,9 @@ The live Route-A analytic leaves are therefore now genuinely narrow:
 
 No RH theorem or unpaid analytic sign is asserted here.  In particular, the
 uniform pole-weight modulus is paid but the final determinant compiler remains
-fail-closed until kernel replay verifies that finite bookkeeping.
+fail-closed until kernel replay verifies that finite bookkeeping, and the
+inverse-square unit/shell estimates are paid but their countable tail summation
+is not yet claimed.
 
 A strict one-scale FAIL exposes the already-built independent log2/log3
 two-scale source.  Route B remains the independent signed-fifth theorem:

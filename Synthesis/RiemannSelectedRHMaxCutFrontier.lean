@@ -1,5 +1,4 @@
-import Synthesis.RiemannSelectedPrimeSensitiveThreeTapFarDecay
-import Synthesis.RiemannSelectedPrimeSensitiveThreeTapCompensationFloor
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapAsymptoticBalance
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapMidStripMesh
 import Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
 
@@ -12,44 +11,52 @@ One-scale resonance has now been compressed past the abstract reflection tail:
 
 * the actual transformed pair series is split into adverse mass minus favorable
   credit;
-* the adverse phase is alpha-independent before the positive cosh weight;
 * the finite adverse core is welded to the literal N-mu RvM carrier through an
   absolutely-continuous Abel theorem;
-* the cutoff tradeoff is explicit and the canonical half-height choice R=t/2
-  is compatible for t>=200;
-* translation itself does not enlarge L1 mass, and radius-one projectivization
-  obeys the same-object quadratic envelope `||P_g||_1 <= 8 ||g||_1^2`;
-* the actual four-window witness has endpoint source mass <= 3 and finite pole
-  coefficients bounded by `18*cosh(1)`, yielding the explicit uniform bound
+* the canonical half-height cutoff R=t/2 is RvM-compatible for t>=200;
+* translation does not enlarge L1 mass and radius-one projectivization obeys
+  `||P_g||_1 <= 8 ||g||_1^2`;
+* endpoint source mass and pole coefficients are explicitly bounded, giving
   `M0 <= 2592*cosh(1)^2*(1+2|eps|)^2`;
-* therefore the finite Route-A budget contains no remaining zeta-distribution
-  input: `threeTapUniformFiniteHalfHeightBudget` is explicit and obeys a
-  source-visible log-over-t envelope;
-* the actual transformed pair kernel is a compact C2 cosine transform, so the
-  repo's twice-integrated Fourier estimate gives exact q^-2 decay;
-* restoring physical units cancels the projective `(t/16)^-2` scale exactly,
-  reducing each adverse pair to multiplicity times an oscillatory-curvature
-  factor divided by `(gamma-t)^2`;
+* the finite Route-A budget is therefore explicit O(log t/t);
+* the actual transformed pair kernel has exact q^-2 decay;
+* the zeta critical strip puts every actual normalized horizontal displacement
+  in the fixed compact alpha interval |alpha|<=1/25 for t>=200;
+* `ThreeTapUniformCurvatureBound` now names exactly the remaining compact-alpha
+  curvature theorem, with no witness-width surrogate hidden in its statement;
+* the subtraction-defined actual adverse far remainder is exactly a
+  complementary subtype tsum and is bounded by Ccurv times the literal
+  inverse-square zero tail `threeTapInverseSquareZeroTailAfter`;
+* `threeTapRouteAAdverseBudget` combines the explicit finite budget and this
+  inverse-square far budget, while
+  `exists_threeTapRouteAAsymptoticBalancePass_constants` compiles the strict
+  comparison against the gamma+pole-minus-slack floor directly to paid-cost
+  negativity;
 * the compensation floor is exactly
-  `-(Gamma+Pole) - LocalSlack/2`; hence a negative translated gamma+pole gain
-  and an upper bound on the already-paid local slack are the only ingredients
-  of that side;
-* after a near-line PASS, a finite net plus a proved Lipschitz constant and
-  node margin compiles the entire compact mid-strip, with no endpoint gap.
+  `-(Gamma+Pole) - LocalSlack/2`;
+* after a near-line PASS, the existing finite net/Lipschitz compiler closes the
+  compact mid-strip once certified node margins and a derivative bound exist.
 
-The live Route-A PASS surface is therefore: explicit finite budget <= H,
-actual half-height adverse tail < H, and H below the gamma+pole-minus-slack
-floor.  The far theorem is no longer an arbitrary summability question: it is
-a weighted inverse-square zero-count problem.  To obtain a uniform O(log t/t)
-tail one must additionally control the oscillatory curvature of the selected
-witness; the current existential witness constructor permits its bump width R
-to shrink with t, so that uniformity has not yet been proved.
+The live Route-A analytic leaves are therefore now genuinely narrow:
+
+1. prove the actual compact-alpha curvature bound, equivalently obtain enough
+   uniform witness-width/derivative control to bound the C2 oscillatory source;
+2. prove an RvM estimate for the literal inverse-square tail, ideally
+   `threeTapInverseSquareZeroTailAfter t (t/2) = O(log t/t)`;
+3. bound the translated gamma+pole channel above by a negative gain and the
+   already-paid local slack above strongly enough that
+
+     finite + Ccurv*inverseSquareTail < G - S/2.
+
+No RH theorem or unpaid analytic sign is asserted here.  The current smooth
+signed-pole constructor is still pointwise in t on the pole-localization side;
+a common high-t witness radius has not been proved merely by renaming that
+quantifier.
 
 A strict one-scale FAIL exposes the already-built independent log2/log3
-two-scale source.  The independent signed-fifth route is exposed by the single
-finite scalar `signedFifthCorrelationGapAt = Credit - Debt + OuterBudget - 3 eps`;
-eventual nonnegativity is exactly the existing signed-fifth interior target.
-No RH theorem and no unpaid analytic sign are asserted here.
+two-scale source.  Route B remains the independent signed-fifth theorem:
+eventual nonnegativity of
+`signedFifthCorrelationGapAt = Credit - Debt + OuterBudget - 3 eps`.
 -/
 
 noncomputable section

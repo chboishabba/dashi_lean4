@@ -16,6 +16,7 @@ on:
       - 'NSBControl/Rational345RealInitialState.lean'
       - 'NSBControl/Rational345RealRadius4Quadratic.lean'
       - 'NSBControl/Rational345RealSnapshotSparse.lean'
+      - 'NSBControl/Rational345RealSnapshotRows.lean'
       - 'NSBControl/Rational345RealSnapshotW2.lean'
       - 'NSBControl/Rational345RealSnapshotW2Test.lean'
       - 'NSBCyclicOrbit.lean'
@@ -35,6 +36,7 @@ on:
       - 'NSBControl/Rational345RealInitialState.lean'
       - 'NSBControl/Rational345RealRadius4Quadratic.lean'
       - 'NSBControl/Rational345RealSnapshotSparse.lean'
+      - 'NSBControl/Rational345RealSnapshotRows.lean'
       - 'NSBControl/Rational345RealSnapshotW2.lean'
       - 'NSBControl/Rational345RealSnapshotW2Test.lean'
       - 'NSBCyclicOrbit.lean'
@@ -68,4 +70,5 @@ jobs:
           lake build NSBControl.Rational345RealInitialState
           lake build NSBControl.Rational345RealRadius4Quadratic
           lake build NSBControl.Rational345RealSnapshotSparse
+          lake build NSBControl.Rational345RealSnapshotRows
           lake build NSBControl.Rational345RealSnapshotW2Test

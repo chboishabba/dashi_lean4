@@ -58,7 +58,12 @@ theorem QuarticFourSignedPolePair.threeTapKernelPhaseAdversePart_le_profileAbs
           <=
         |W.threeTapNormalizedSignedProjectiveProfile eps v|
           * |Real.cos (q*v)| := by
-      exact le_abs_self _ |>.trans_eq (abs_mul _ _).symm
+      calc
+        W.threeTapNormalizedSignedProjectiveProfile eps v * Real.cos (q*v)
+          <= |W.threeTapNormalizedSignedProjectiveProfile eps v * Real.cos (q*v)| :=
+            le_abs_self _
+        _ = |W.threeTapNormalizedSignedProjectiveProfile eps v|
+            * |Real.cos (q*v)| := abs_mul _ _
     calc
       (W.threeTapNormalizedSignedProjectiveProfile eps v * Real.cos (q*v)
           + W.threeTapNormalizedSignedProjectiveProfile eps v * Real.cos (q*v))/2
@@ -139,7 +144,7 @@ theorem QuarticFourSignedPolePair.exists_threeTapAdverseMuMass_bound :
     exact mul_nonneg hCmu0.le (Real.log_nonneg (by linarith))
   have hpoint :
       ∀ x ∈ Set.uIoc (t-R) (t+R),
-        W.threeTapAdversePhysicalOrdinateTest eps A x * Zeta23.mu x
+        |W.threeTapAdversePhysicalOrdinateTest eps A x * Zeta23.mu x|
           <= M * U := by
     intro x hx
     rw [Set.uIoc_of_le (by linarith : t-R <= t+R)] at hx
@@ -151,19 +156,24 @@ theorem QuarticFourSignedPolePair.exists_threeTapAdverseMuMass_bound :
       Real.log_le_log (by linarith) (by linarith [hx.2])
     have hmuAbs' : |Zeta23.mu x| <= U :=
       hmuAbs.trans (mul_le_mul_of_nonneg_left hlog hCmu0.le)
-    have hmuLe : Zeta23.mu x <= U :=
-      (le_abs_self _).trans hmuAbs'
-    exact mul_le_mul hphi hmuLe (by linarith) hM
+    rw [abs_mul, abs_of_nonneg hphi0]
+    exact mul_le_mul hphi hmuAbs' (abs_nonneg _) hM
   have hraw :=
-    intervalIntegral.integral_le_of_forall_le_of_le
-      (a:=t-R) (b:=t+R)
-      (by linarith : t-R <= t+R)
+    intervalIntegral.norm_integral_le_of_norm_le_const
+      (f := fun x =>
+        W.threeTapAdversePhysicalOrdinateTest eps A x * Zeta23.mu x)
       hpoint
-  unfold QuarticFourSignedPolePair.threeTapAdverseMuMass
-  dsimp [M,U] at hraw ⊢
-  rw [intervalIntegral.integral_const] at hraw
-  have hlen : (t+R)-(t-R)=2*R := by ring
+  rw [Real.norm_eq_abs] at hraw
+  have hlen : |(t+R)-(t-R)| = 2*R := by
+    rw [show (t+R)-(t-R)=2*R by ring, abs_of_nonneg (by linarith)]
   rw [hlen] at hraw
-  simpa [mul_assoc, mul_left_comm, mul_comm] using hraw
+  have hupper :
+      (∫ x in (t-R)..(t+R),
+        W.threeTapAdversePhysicalOrdinateTest eps A x * Zeta23.mu x)
+        <= M * U * (2*R) := by
+    exact (le_abs_self _).trans hraw
+  unfold QuarticFourSignedPolePair.threeTapAdverseMuMass
+  dsimp [M,U] at hupper ⊢
+  nlinarith
 
 end Synthesis

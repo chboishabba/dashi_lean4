@@ -176,7 +176,7 @@ theorem literal_su2_flat_link_haar_reflection_invariant
   rw [MeasureTheory.Measure.map_map]
   · rw [literal_su2_flat_link_haar_reindex_invariant n]
     exact literal_su2_flat_link_haar_temporal_invert_invariant (2 * n)
-  · exact literal_su2_inv_measurable.pi.aemeasurable
+  · fun_prop
   · fun_prop
 
 /--

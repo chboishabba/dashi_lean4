@@ -21,5 +21,13 @@ example (a : CanonicalState) (k : Mode) :
       vecConj (galerkinField (decode a) k) := by
   exact galerkinField_decode_reality a k
 
+example (u : State) : realityTransform (realityTransform u) = u := by
+  exact realityTransform_involutive u
+
+example (u : State) :
+    galerkinField (realityTransform u) =
+      realityTransform (galerkinField u) := by
+  exact galerkinField_reality_equivariant u
+
 end Rational345Round71RealityFieldTest
 end NSBControl

@@ -38,9 +38,6 @@ theorem literal_su2_mul_measurable :
 instance : MeasurableMul SU2PlaquetteHolonomy where
   measurable_mul := literal_su2_mul_measurable
 
-instance : MeasurableInv SU2PlaquetteHolonomy where
-  measurable_inv := literal_su2_inv_measurable
-
 /-- The compact-to-literal carrier map respects multiplication. -/
 theorem literal_su2_from_compact_mul
     (q r : SU2CompactQuaternion) :

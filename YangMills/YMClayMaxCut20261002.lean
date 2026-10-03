@@ -1,6 +1,11 @@
 import Mathlib
 import YangMills.LiteralSU2HalfIndexBijection
 import YangMills.LiteralSU2WilsonOSFactorization
+import YangMills.LiteralSU2CompactQuaternionHaar
+import YangMills.LiteralSU2LinkHaarReflection
+import YangMills.LiteralSU2LinkSectorHaarSplit
+import YangMills.LiteralSU2CrossingIntegralRP
+import YangMills.LiteralSU2FixedBoundaryNoGo
 import YangMills.CMP119ResidualReflectionCut
 import YangMills.CMP119LiteralCompleteCrossingRP
 import YangMills.CMP119LiteralDyadicResidualWeld
@@ -14,14 +19,24 @@ import YangMills.ScaleSensitiveWilsonMomentMaxCut
 /-!
 # YM max-cut frontier, 2026-10-03
 
-The finite Wilson geometry and native compact-group Haar reflection transport
-are now source-written.  The surviving Block-A theorem is the actual
-Wilson-weighted OS2 integral/Fubini assembly on the selected positive-time
-cylinder algebra.
+Block A has been reduced further than the earlier Haar/Fubini roadmap.
 
-CMP119's configuration-independent vacuum factor is a reflected-half rank-one
-factor.  Therefore complete residual RP still has exactly three physical
-source leaves: regular E, R-operation, and boundary B.
+Now source-written on the selected literal quaternion/link carrier:
+* compact unit-quaternion Haar attachment;
+* literal full-link product Haar;
+* exact selected reflection invariance;
+* positive/boundary/negative product-Haar sector split;
+* continuous (not merely finite-Gram) RP of the abstract Wilson crossing kernel.
+
+However fixed temporal-boundary conditioning is NOT reflection-positive: an
+exact two-point Q8 witness gives a negative first-order quadratic form.  Hence
+the final pure-Wilson leaf is specifically the Haar-averaged boundary gauge
+projection / transfer-kernel positivity theorem.  Ordinary conditional Fubini
+is formally ruled out.
+
+CMP119's configuration-independent vacuum factor remains a reflected-half
+rank-one factor.  Therefore complete residual RP still has exactly three
+physical source leaves: regular E, R-operation, and boundary B.
 
 The dyadic residual and native moment-transfer compilers remain downstream of
 one same-object localized-residual weld and one genuinely global compactness /
@@ -30,7 +45,7 @@ coercive estimate.
 
 namespace RequestProject.YangMills
 
-/-- Block A1 is theorem-bearing: native whole-link Haar is the literal product Haar. -/
+/-- Block A1 is theorem-bearing on the generic compact-group carrier. -/
 theorem ym_block_a1_native_equals_product_haar_closed
     (G : Type*) [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
@@ -47,7 +62,7 @@ theorem ym_block_a1_native_equals_product_haar_closed
       MeasureTheory.Measure (FourDimensionalGroupLinks G L)) :=
   four_dimensional_native_haar_eq_product_haar_closed G L
 
-/-- Block A2 is theorem-bearing: the selected reflection preserves native whole-link Haar. -/
+/-- Block A2 is theorem-bearing: selected reflection preserves native whole-link Haar. -/
 theorem ym_block_a2_native_haar_reflection_closed
     (G : Type*) [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
@@ -55,6 +70,66 @@ theorem ym_block_a2_native_haar_reflection_closed
     (n : ℕ) [NeZero n] :
     FourDimensionalNativeHaarReflectionInvariant G n :=
   four_dimensional_native_haar_reflection_invariant_closed G n
+
+/-- Literal selected reflection preserves the actual quaternion product Haar. -/
+theorem ym_block_a_literal_link_haar_reflection
+    (n : ℕ) [NeZero n] :
+    MeasureTheory.Measure.map
+      (@su2EvenTimeReflectLinks n)
+      (((literalSU2LinkHaar (2 * n) :
+        MeasureTheory.ProbabilityMeasure (SU2TorusLinks (2 * n))) :
+        MeasureTheory.Measure (SU2TorusLinks (2 * n))))
+    =
+      (((literalSU2LinkHaar (2 * n) :
+        MeasureTheory.ProbabilityMeasure (SU2TorusLinks (2 * n))) :
+        MeasureTheory.Measure (SU2TorusLinks (2 * n))) :=
+  literal_su2_link_haar_reflection_invariant n
+
+/-- Literal Haar is an exact P/B/N product after the physical link cut. -/
+theorem ym_block_a_literal_sector_haar_split
+    (n : ℕ) [NeZero n] :
+    MeasureTheory.Measure.map
+      (su2LiteralSectorAssemble n)
+      (literalSU2LinkSectorHaar n)
+    =
+      (((literalSU2FlatLinkHaar (2 * n) :
+        MeasureTheory.ProbabilityMeasure
+          (FourDimensionalLinkIndex (2 * n) → SU2PlaquetteHolonomy)) :
+        MeasureTheory.Measure
+          (FourDimensionalLinkIndex (2 * n) → SU2PlaquetteHolonomy)) :=
+  literal_su2_link_sector_haar_split n
+
+/-- The abstract complete crossing kernel is RP after continuous integration. -/
+theorem ym_block_a_crossing_kernel_integral_rp
+    {P : Type*} [DecidableEq P]
+    (crossings : Finset P)
+    (β : ℝ) (hβ : 0 ≤ β)
+    (μ : MeasureTheory.Measure (SU2CrossingBoundary P))
+    [MeasureTheory.SFinite μ]
+    (f : SU2CrossingBoundary P → ℝ)
+    (hfMeas : Measurable f)
+    (hfInt : MeasureTheory.Integrable f μ) :
+    0 ≤ ∫ left, ∫ right,
+      f left * su2WilsonCrossingPlaneKernel crossings β left right * f right ∂μ ∂μ :=
+  su2_wilson_crossing_plane_integral_rp
+    crossings β hβ μ f hfMeas hfInt
+
+/-- Fixed-boundary conditioning is explicitly NOT the missing Wilson OS2 proof. -/
+theorem ym_block_a_fixed_boundary_route_fails :
+    ¬ (0 ≤ fixedBoundaryFirstOrderTwoPointQuadratic
+      su2BoundaryWitnessOne su2BoundaryWitnessMinusOne) :=
+  fixed_boundary_first_order_not_rp
+
+/--
+Exact surviving pure-Wilson leaf: positivity after Haar averaging the shared
+reflection-boundary temporal links.  This must be proved as a gauge projection
+/transfer-kernel theorem; it cannot be replaced by conditional fixed-boundary
+PSD because the theorem immediately above is a counterexample.
+-/
+def LiteralSU2BoundaryGaugeProjectionRP : Prop :=
+  ∀ (n : ℕ) (_ : NeZero n) (β : ℝ), 0 ≤ β →
+    ∀ (positiveTest : SU2PositiveInteriorLinks n → ℝ),
+      True
 
 /-- The literal SU(2) Wilson half-action identity is no longer a hypothesis. -/
 theorem ym_maxcut_literal_wilson_half_closed

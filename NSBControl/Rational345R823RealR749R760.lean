@@ -34,11 +34,14 @@ open Rational345R823LiteralR760CellMaxCut
 
 classical
 
+/-- One unambiguous name for the common `(output,(p,q))` carrier. -/
+abbrev Incidence := Rational345R823RealProductionDifference.R760Incidence
+
 /-- R694 spectator row for one outer physical triad incidence.  The finite
 carrier is the full radius-four cube with non-resonant/zero-output incidences
 zero-masked; this is an exact extension of the physical enumeration by zero
 cells and preserves every active multiplicity. -/
-def realNestedOuterRow (u : State) (β : R760Incidence) : ℝ :=
+def realNestedOuterRow (u : State) (β : Incidence) : ℝ :=
   if isZeroMode (incK β) then 0
   else if Resonates (incP β) (incQ β) (incK β) then
     coherentWork
@@ -47,14 +50,14 @@ def realNestedOuterRow (u : State) (β : R760Incidence) : ℝ :=
   else 0
 
 /-- Literal R700 three-energy-leg nested orbit cell. -/
-def realNestedOrbitCell (u : State) (β : R760Incidence) : ℝ :=
+def realNestedOrbitCell (u : State) (β : Incidence) : ℝ :=
   realNestedOuterRow u β +
     realNestedOuterRow u (pEnergyLeg β) +
     realNestedOuterRow u (qEnergyLeg β)
 
 /-- Complete literal R700 cell fold. -/
 def realNestedOrbitCellCompleteFold (u : State) : ℝ :=
-  ∑ β : R760Incidence, realNestedOrbitCell u β
+  ∑ β : Incidence, realNestedOrbitCell u β
 
 /-- Coherent work commutes with a finite sum in the right vector slot. -/
 theorem coherentWork_sum_right
@@ -70,10 +73,12 @@ theorem coherentWork_sum_right
 nested pair fold. -/
 theorem realNestedOuterRowCompleteFold_eq_globalPairFold
     (u : State) :
-    (∑ β : R760Incidence, realNestedOuterRow u β) =
+    (∑ β : Incidence, realNestedOuterRow u β) =
       realNestedGlobalPairFold u := by
-  simp only [R760Incidence, Fintype.sum_prod_type]
-  unfold realNestedOuterRow realNestedGlobalPairFold realNestedOutputWork
+  simp only [Incidence, Rational345R823RealProductionDifference.R760Incidence,
+    Fintype.sum_prod_type]
+  unfold realNestedOuterRow incK incP incQ
+    realNestedGlobalPairFold realNestedOutputWork
   apply Finset.sum_congr rfl
   intro k hkMem
   by_cases hk : isZeroMode k
@@ -93,14 +98,14 @@ theorem realNestedOuterRowCompleteFold_eq_globalPairFold
 /-- The p-energy-leg contribution is a pure permutation of the complete outer
 carrier. -/
 theorem sum_realNestedOuterRow_pEnergyLeg (u : State) :
-    (∑ β : R760Incidence, realNestedOuterRow u (pEnergyLeg β)) =
-      ∑ β : R760Incidence, realNestedOuterRow u β :=
+    (∑ β : Incidence, realNestedOuterRow u (pEnergyLeg β)) =
+      ∑ β : Incidence, realNestedOuterRow u β :=
   Equiv.sum_comp pEnergyLegEquiv (realNestedOuterRow u)
 
 /-- The q-energy-leg contribution is likewise a complete-carrier permutation. -/
 theorem sum_realNestedOuterRow_qEnergyLeg (u : State) :
-    (∑ β : R760Incidence, realNestedOuterRow u (qEnergyLeg β)) =
-      ∑ β : R760Incidence, realNestedOuterRow u β :=
+    (∑ β : Incidence, realNestedOuterRow u (qEnergyLeg β)) =
+      ∑ β : Incidence, realNestedOuterRow u β :=
   Equiv.sum_comp qEnergyLegEquiv (realNestedOuterRow u)
 
 /-- Cellwise R700 and the previously exposed complete-fold R700 owner are the
@@ -123,12 +128,12 @@ theorem realNestedOrbitCellCompleteFold_eq_twelveCoherent
   exact realNestedOrbitCompleteFold_eq_twelveCoherent u hu
 
 /-- Exact real R749 local difference-aligned cell. -/
-def r749DifferenceAlignedCell (u : State) (β : R760Incidence) : ℝ :=
+def r749DifferenceAlignedCell (u : State) (β : Incidence) : ℝ :=
   3 * realNestedOrbitCell u β - pairedTwoDifferenceCell u β
 
 /-- Complete real R749 fold. -/
 def r749DifferenceAlignedCompleteFold (u : State) : ℝ :=
-  ∑ β : R760Incidence, r749DifferenceAlignedCell u β
+  ∑ β : Incidence, r749DifferenceAlignedCell u β
 
 /-- D2: literal R749 finite summation gives exactly the scalar R749 normal
 form, with no estimate. -/
@@ -143,13 +148,13 @@ theorem r749DifferenceAlignedCompleteFold_eq_total
   ring
 
 /-- Literal R760 p/q swap-paired residual cell. -/
-def r760SwapPairedResidualCell (u : State) (β : R760Incidence) : ℝ :=
+def r760SwapPairedResidualCell (u : State) (β : Incidence) : ℝ :=
   r749DifferenceAlignedCell u β +
     r749DifferenceAlignedCell u (swapIncidence β)
 
 /-- Complete literal R760 cell fold. -/
 def r760SwapPairedResidualCompleteFold (u : State) : ℝ :=
-  ∑ β : R760Incidence, r760SwapPairedResidualCell u β
+  ∑ β : Incidence, r760SwapPairedResidualCell u β
 
 /-- D3: swap pairing doubles the complete R749 fold because swap is a
 permutation of the complete original-multiplicity carrier. -/
@@ -160,8 +165,8 @@ theorem r760SwapPairedResidualCompleteFold_eq_twiceR749
   unfold r760SwapPairedResidualCompleteFold r760SwapPairedResidualCell
   rw [Finset.sum_add_distrib]
   have hswap :
-      (∑ β : R760Incidence, r749DifferenceAlignedCell u (swapIncidence β)) =
-        ∑ β : R760Incidence, r749DifferenceAlignedCell u β :=
+      (∑ β : Incidence, r749DifferenceAlignedCell u (swapIncidence β)) =
+        ∑ β : Incidence, r749DifferenceAlignedCell u β :=
     Equiv.sum_comp swapEquiv (r749DifferenceAlignedCell u)
   rw [hswap]
   ring
@@ -192,13 +197,13 @@ theorem r760SwapPairedResidualCompleteFold_continuous :
 def literalR760CellCarrier : LiteralR760CellCarrier where
   cell := fun u β => r760SwapPairedResidualCell u β
   completeFold_continuous := by
-    simpa [literalR760CompleteFold, r760SwapPairedResidualCompleteFold]
-      using r760SwapPairedResidualCompleteFold_continuous
+    change Continuous r760SwapPairedResidualCompleteFold
+    exact r760SwapPairedResidualCompleteFold_continuous
   completeFold_sameObject := by
     intro u hu
     calc
-      (∑ β : R760Incidence, r760SwapPairedResidualCell u β) =
-          selectedNonlinear u :=
+      (∑ β : Rational345R823LiteralR760CellMaxCut.R760Incidence,
+          r760SwapPairedResidualCell u β) = selectedNonlinear u :=
         r760SwapPairedResidualCompleteFold_eq_selectedNonlinear u hu
       _ = r760SwapPairedResidualTotal u :=
         (r760SwapPairedResidualTotal_eq_selectedNonlinear u).symm

@@ -8,102 +8,55 @@ import YangMills.CMP119NativeDyadicMomentBound
 import YangMills.FourDimensionalNativeHaarReflectionMaxCut
 import YangMills.FourDimensionalNativeHaarProductWeld
 import YangMills.FourDimensionalFlatHaarReflectionIndex
+import YangMills.FourDimensionalNativeHaarReflectionTransport
 import YangMills.ScaleSensitiveWilsonMomentMaxCut
 
 /-!
-# YM max-cut frontier, 2026-10-02
+# YM max-cut frontier, 2026-10-03
 
-This owner records the shortest source-facing cut after the literal finite
-Wilson geometry was completed.
+The finite Wilson geometry and native compact-group Haar reflection transport
+are now source-written.  The surviving Block-A theorem is the actual
+Wilson-weighted OS2 integral/Fubini assembly on the selected positive-time
+cylinder algebra.
 
-What is now theorem-bearing on the literal finite SU(2) carrier:
+CMP119's configuration-independent vacuum factor is a reflected-half rank-one
+factor.  Therefore complete residual RP still has exactly three physical
+source leaves: regular E, R-operation, and boundary B.
 
-* the even-time plaquette-index reflection sends P+ exactly onto P-;
-* therefore the negative noncrossing Wilson half is exactly the reflected
-  positive half;
-* the full literal Wilson density has the positive-half / reflected-half /
-  crossing-kernel factorization;
-* CMP119's vacuum contribution, when identified with the source-native
-  configuration-independent vacuum constant, is a reflected-half rank-one
-  factor and is not an independent cross-plane RP leaf;
-* consequently complete residual RP needs only physical certificates for the
-  regular E, R-operation, and boundary B sectors;
-* the dyadic residual and native moment-transfer theorems remain available
-  downstream once the actual source weld and Wilson moment estimate are paid.
-
-This file deliberately does NOT manufacture any of the remaining physical
-inputs.  In particular it does not claim:
-
-* native quaternion link-Haar OS2 integration has been completed;
-* E, R-operation, or B has a reflected-half/PSD cross-plane certificate;
-* the selected CMP119 localized R(X) expansion has been identified with the
-  literal residual tail;
-* a cutoff-uniform scale-sensitive Wilson coercive moment estimate has been
-  proved.
-
-Those are the surviving max-cut leaves.
+The dyadic residual and native moment-transfer compilers remain downstream of
+one same-object localized-residual weld and one genuinely global compactness /
+coercive estimate.
 -/
 
 namespace RequestProject.YangMills
 
-
-/--
-Block A has been reduced to the preservation of native compact-group link
-Haar by the one explicit coordinate-permutation/temporal-inversion reflection.
-All finite Wilson plaquette geometry and half-action transport are upstream.
--/
-def ymBlockAHaarReflectionLeaf
+/-- Block A1 is theorem-bearing: native whole-link Haar is the literal product Haar. -/
+theorem ym_block_a1_native_equals_product_haar_closed
     (G : Type*) [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
     [MeasurableSpace G] [BorelSpace G]
-    (n : ℕ) [NeZero n] : Prop :=
-  FourDimensionalNativeHaarReflectionInvariant G n
+    (L : ℕ) [NeZero L] :
+    (((fourDimensionalNativeLinkHaar G L :
+      MeasureTheory.ProbabilityMeasure
+        (FourDimensionalGroupLinks G L)) :
+      MeasureTheory.Measure (FourDimensionalGroupLinks G L)))
+    =
+    (((fourDimensionalProductLinkHaar G L :
+      MeasureTheory.ProbabilityMeasure
+        (FourDimensionalGroupLinks G L)) :
+      MeasureTheory.Measure (FourDimensionalGroupLinks G L)) :=
+  four_dimensional_native_haar_eq_product_haar_closed G L
 
-/--
-A1 is now the same-object identification between whole-link native Haar and
-the explicit finite product law.  Its only remaining one-link input is
-normalized Haar left invariance.
--/
-def ymBlockA1NativeEqualsProductHaar
+/-- Block A2 is theorem-bearing: the selected reflection preserves native whole-link Haar. -/
+theorem ym_block_a2_native_haar_reflection_closed
     (G : Type*) [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
     [MeasurableSpace G] [BorelSpace G]
-    (L : ℕ) [NeZero L] : Prop :=
-  CompactGroupNormalizedHaarLeftInvariant G
+    (n : ℕ) [NeZero n] :
+    FourDimensionalNativeHaarReflectionInvariant G n :=
+  four_dimensional_native_haar_reflection_invariant_closed G n
 
-/--
-A2's genuinely group-theoretic one-link input is inversion invariance of
-normalized compact Haar.  The selected lattice reflection has already been
-reduced to a flat finite-index involution plus this per-coordinate inversion.
--/
-def ymBlockA2OneLinkInversionLeaf
-    (G : Type*) [Group G] [TopologicalSpace G]
-    [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
-    [MeasurableSpace G] [BorelSpace G] : Prop :=
-  CompactGroupNormalizedHaarInversionInvariant G
-
-theorem ym_block_a2_link_index_geometry_closed
-    {n : ℕ} (p : FourDimensionalLinkIndex (2 * n)) :
-    fourDimensionalEvenTimeReflectLinkIndex
-      (fourDimensionalEvenTimeReflectLinkIndex p) = p :=
-  four_dimensional_even_time_reflect_link_index_involutive p
-
-/--
-The easy cutoff-uniform Wilson observable is the bounded average plaquette
-cost.  Its universal bound must not be confused with the missing
-scale-sensitive coercive producer.
--/
-theorem ym_maxcut_average_plaquette_cost_is_uniformly_bounded
-    (L : ℕ) [NeZero L]
-    (hCard : (su2FourDimensionalPlaquettes L).card ≠ 0)
-    (links : SU2TorusLinks L) :
-    su2AveragePlaquetteCost L links ≤ 2 :=
-  (su2_average_plaquette_cost_bounds L hCard links).2
-
-/--
-The global finite Wilson half-action identity is no longer a hypothesis.
-It is an immediate consumer alias of the literal plaquette-index bijection.
--/
+/-- The literal SU(2) Wilson half-action identity is no longer a hypothesis. -/
 theorem ym_maxcut_literal_wilson_half_closed
     (n : ℕ) [NeZero n]
     (links : SU2TorusLinks (2 * n))
@@ -117,9 +70,17 @@ theorem ym_maxcut_literal_wilson_half_closed
   su2_negative_half_eq_reflected_positive_half n links β
 
 /--
-The source-native constant vacuum factor is a reflected-half factor, not an
-independent cross-plane positivity obligation.
+The easy cutoff-uniform Wilson observable remains a negative control only: it
+is bounded and therefore not the missing continuum-coercive producer.
 -/
+theorem ym_maxcut_average_plaquette_cost_is_uniformly_bounded
+    (L : ℕ) [NeZero L]
+    (hCard : (su2FourDimensionalPlaquettes L).card ≠ 0)
+    (links : SU2TorusLinks L) :
+    su2AveragePlaquetteCost L links ≤ 2 :=
+  (su2_average_plaquette_cost_bounds L hCard links).2
+
+/-- The source-native constant vacuum factor is a reflected-half factor. -/
 theorem ym_maxcut_constant_vacuum_is_reflected_half
     {ι : Type*} [Fintype ι]
     (vacuumEnergy : ℝ) :
@@ -128,15 +89,7 @@ theorem ym_maxcut_constant_vacuum_is_reflected_half
       CMP119ReflectionPlacement.reflectedHalf := by
   rfl
 
-/--
-After paying the constant-vacuum source identification, only the three
-nontrivial residual sectors E, R_op, and B need reflection certificates.
-
-This theorem packages those three certificates with the exact constant
-vacuum kernel and proves RP of their product.  It is intentionally agnostic
-about whether each supplied certificate is a half-factor or a genuine
-cross-plane PSD kernel.
--/
+/-- Only E, R_op and B need nontrivial residual reflection certificates. -/
 theorem ym_maxcut_three_sector_residual_rp
     {ι : Type*} [Fintype ι]
     (regularCert rCert boundaryCert :
@@ -162,13 +115,7 @@ theorem ym_maxcut_three_sector_residual_rp
   intro test
   exact cmp119_complete_residual_kernel_rp cut test
 
-/--
-Wilson crossing RP plus the three selected residual certificates and the
-constant vacuum factor imply RP of the complete finite crossing kernel.
-
-Thus failure to source a certificate for any one of E, R_op, or B is now a
-literal obstruction to this CMP119 -> OS route; V is not a fourth open leaf.
--/
+/-- Wilson RP times the three selected residual certificates gives complete finite RP. -/
 theorem ym_maxcut_wilson_three_sector_complete_rp
     {ι : Type*} [Fintype ι]
     (wilsonKernel : ι → ι → ℝ)
@@ -200,13 +147,7 @@ theorem ym_maxcut_wilson_three_sector_complete_rp
     (cmp119_wilson_mul_complete_residual_rp
       wilsonKernel hWilsonSymm hWilsonRP cut)
 
-/--
-Literal specialization: the Wilson factor is no longer an input.  The existing
-multi-plaquette SU(2) crossing theorem supplies it on the SAME selected
-boundary map, while the constant vacuum is paid by the rank-one half factor.
-
-The only source-facing RP inputs are therefore certificates for E, R_op and B.
--/
+/-- Literal multi-plaquette Wilson specialization: only E, R_op and B remain physical. -/
 theorem ym_maxcut_literal_wilson_three_sector_complete_rp
     {P ι : Type*} [DecidableEq P] [Fintype ι]
     (crossings : Finset P)
@@ -237,11 +178,7 @@ theorem ym_maxcut_literal_wilson_three_sector_complete_rp
   exact cmp119_literal_wilson_crossing_mul_residual_rp
     crossings β hβ boundary cut
 
-
-/--
-The current source-facing complete-action RP cut has exactly three residual
-certificate leaves after the constant-vacuum identification.
--/
+/-- Exact source-facing residual leaf set after the vacuum identification. -/
 def ymMaxCutResidualCertificateLeaves : Finset CMP119ResidualSector :=
   { CMP119ResidualSector.regularE
   , CMP119ResidualSector.rOperation

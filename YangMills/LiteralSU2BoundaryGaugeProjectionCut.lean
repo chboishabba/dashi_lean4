@@ -82,7 +82,7 @@ noncomputable def literalSU2BoundaryGaugeProjectedWilsonKernel
     ∂(literalSU2BoundaryTemporalHaar n)
 
 /-- Exact, non-vacuous surviving Block-A proposition. -/
-def LiteralSU2BoundaryGaugeProjectionRP : Prop :=
+def LiteralSU2BoundaryGaugeProjectionRPExact : Prop :=
   ∀ (n : ℕ) (_ : NeZero n) (β : ℝ), 0 ≤ β →
     ∀ f : SU2PositiveInteriorLinks n → ℝ,
       Measurable f →

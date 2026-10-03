@@ -7,6 +7,7 @@ open Set
 open Rational345RealRadius4
 open Rational345RealInitialState
 open Rational345Round71RealityField
+open Rational345Round71NonlinearConservation
 open Rational345R830PhysicalSegment
 
 example :
@@ -16,6 +17,7 @@ example :
       (∀ t ∈ Icc (0 : ℝ) T, realityTransform (u t) = u t) ∧
       (∀ t ∈ Icc (0 : ℝ) T,
         ∀ k : Mode, bilinearDot (kComplex k) (u t k) = 0) ∧
+      (∀ t ∈ Icc (0 : ℝ) T, rawProjectedPairingReal (u t) = 0) ∧
       (∀ t ∈ Icc (0 : ℝ) T, selectedRate (u t) < 0) ∧
       (∫ t in (0 : ℝ)..T, selectedRate (u t)) < 0 := by
   exact r830_physical_negative_segment

@@ -22,6 +22,12 @@ on:
       - 'Synthesis/MillenniumBSDCMFiniteE2SignTableExact.lean'
       - 'Synthesis/MillenniumBSDCMGaloisRootSignExact.lean'
       - 'Synthesis/MillenniumBSDCMGaloisHalfPointTableExact.lean'
+      - 'Synthesis/MillenniumBSDCMGlobalKummerCharacterCompilerExact.lean'
+      - 'Synthesis/MillenniumBSDCMExplicitRootBitOrientationExact.lean'
+      - 'Synthesis/MillenniumBSDCMRootSignDifferenceExact.lean'
+      - 'Synthesis/MillenniumBSDCMExplicitGeometricHalfCharacterExact.lean'
+      - 'Synthesis/MillenniumBSDCMGeometricKummerSquareClassEvaluationExact.lean'
+      - 'Synthesis/MillenniumBSDCMGlobalKummerOrdinaryExact.lean'
       - 'Synthesis.lean'
       - 'BSDCohomology.lean'
       - 'lakefile.toml'
@@ -68,4 +74,10 @@ jobs:
           lake env lean Synthesis/MillenniumBSDCMFiniteE2SignTableExact.lean
           lake env lean Synthesis/MillenniumBSDCMGaloisRootSignExact.lean
           lake env lean Synthesis/MillenniumBSDCMGaloisHalfPointTableExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGlobalKummerCharacterCompilerExact.lean
+          lake env lean Synthesis/MillenniumBSDCMExplicitRootBitOrientationExact.lean
+          lake env lean Synthesis/MillenniumBSDCMRootSignDifferenceExact.lean
+          lake env lean Synthesis/MillenniumBSDCMExplicitGeometricHalfCharacterExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGeometricKummerSquareClassEvaluationExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGlobalKummerOrdinaryExact.lean
           lake env lean Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean

@@ -17,10 +17,10 @@ argument:
 * pointwise inversion preserves the product Haar law on the temporal boundary
   links;
 * reflecting the assembled (left,boundary,reflected-right) field swaps the two
-  positive interiors and inverts the fixed temporal boundary.
+  positive interiors and inverts the fixed temporal boundary;
+* therefore the boundary-Haar projected physical Wilson kernel is symmetric.
 
-Kernel symmetry is then only the boundary-Haar change-of-variables step.  No
-positivity is claimed from symmetry alone.
+No positivity is claimed from symmetry alone.
 -/
 
 namespace RequestProject.YangMills
@@ -84,6 +84,14 @@ def su2BoundaryTemporalInvert
     SU2BoundaryTemporalLinks n :=
   fun p => (boundary p)⁻¹
 
+/-- Boundary inversion is involutive. -/
+theorem su2_boundary_temporal_invert_involutive
+    {n : ℕ} [NeZero n]
+    (boundary : SU2BoundaryTemporalLinks n) :
+    su2BoundaryTemporalInvert (su2BoundaryTemporalInvert boundary) = boundary := by
+  funext p
+  simp [su2BoundaryTemporalInvert]
+
 /-- Boundary inversion is measurable coordinatewise. -/
 theorem su2_boundary_temporal_invert_measurable
     (n : ℕ) [NeZero n] :
@@ -91,6 +99,17 @@ theorem su2_boundary_temporal_invert_measurable
   apply measurable_pi_lambda
   intro p
   exact literal_su2_inv_measurable.comp (measurable_apply p)
+
+/-- Boundary inversion as the measurable involution used in Haar change-of-variables. -/
+def su2BoundaryTemporalInvertEquiv
+    (n : ℕ) [NeZero n] :
+    SU2BoundaryTemporalLinks n ≃ᵐ SU2BoundaryTemporalLinks n where
+  toFun := su2BoundaryTemporalInvert
+  invFun := su2BoundaryTemporalInvert
+  left_inv := su2_boundary_temporal_invert_involutive
+  right_inv := su2_boundary_temporal_invert_involutive
+  measurable_toFun := su2_boundary_temporal_invert_measurable n
+  measurable_invFun := su2_boundary_temporal_invert_measurable n
 
 /--
 The actual boundary product Haar law is invariant under simultaneous
@@ -285,5 +304,73 @@ theorem su2_reflect_assembled_pair
       rfl
     rw [hold, hnew]
     simp [htime]
+
+/-- Reflection swaps the physical reflected-pair Wilson density after boundary inversion. -/
+theorem literal_su2_reflected_pair_wilson_density_swap
+    (n : ℕ) [NeZero n]
+    (β : ℝ)
+    (left right : SU2PositiveInteriorLinks n)
+    (boundary : SU2BoundaryTemporalLinks n) :
+    literalSU2ReflectedPairWilsonDensity n β left boundary right =
+      literalSU2ReflectedPairWilsonDensity n β right
+        (su2BoundaryTemporalInvert boundary) left := by
+  unfold literalSU2ReflectedPairWilsonDensity
+  calc
+    su2LiteralWilsonProduct
+        (su2FourDimensionalPlaquettes (2 * n))
+        (su2AssembleReflectedPair n left boundary right) β =
+      su2LiteralWilsonProduct
+        (su2FourDimensionalPlaquettes (2 * n))
+        (su2EvenTimeReflectLinks
+          (su2AssembleReflectedPair n left boundary right)) β :=
+      (su2_literal_full_wilson_reflection_invariant n
+        (su2AssembleReflectedPair n left boundary right) β).symm
+    _ = su2LiteralWilsonProduct
+        (su2FourDimensionalPlaquettes (2 * n))
+        (su2AssembleReflectedPair n right
+          (su2BoundaryTemporalInvert boundary) left) β := by
+      rw [su2_reflect_assembled_pair n left right boundary]
+
+/--
+The exact boundary-gauge-projected Wilson kernel is symmetric.  This follows
+from the literal density swap plus invariance of the selected boundary Haar
+law under the SAME pointwise inversion.
+-/
+theorem literal_su2_boundary_gauge_projected_kernel_symmetric
+    (n : ℕ) [NeZero n]
+    (β : ℝ)
+    (left right : SU2PositiveInteriorLinks n) :
+    literalSU2BoundaryGaugeProjectedWilsonKernel n β left right =
+      literalSU2BoundaryGaugeProjectedWilsonKernel n β right left := by
+  unfold literalSU2BoundaryGaugeProjectedWilsonKernel
+  calc
+    (∫ boundary : SU2BoundaryTemporalLinks n,
+      literalSU2ReflectedPairWilsonDensity n β left boundary right
+      ∂(literalSU2BoundaryTemporalHaar n)) =
+      ∫ boundary : SU2BoundaryTemporalLinks n,
+        literalSU2ReflectedPairWilsonDensity n β right
+          (su2BoundaryTemporalInvert boundary) left
+        ∂(literalSU2BoundaryTemporalHaar n) := by
+      apply MeasureTheory.integral_congr_ae
+      exact Filter.Eventually.of_forall fun boundary =>
+        literal_su2_reflected_pair_wilson_density_swap
+          n β left right boundary
+    _ = ∫ boundary : SU2BoundaryTemporalLinks n,
+        literalSU2ReflectedPairWilsonDensity n β right boundary left
+        ∂(literalSU2BoundaryTemporalHaar n) := by
+      let e := su2BoundaryTemporalInvertEquiv n
+      let f : SU2BoundaryTemporalLinks n → ℝ :=
+        fun boundary =>
+          literalSU2ReflectedPairWilsonDensity n β right boundary left
+      have hmap : MeasureTheory.Measure.map e
+          (literalSU2BoundaryTemporalHaar n) =
+          literalSU2BoundaryTemporalHaar n := by
+        simpa [e, su2BoundaryTemporalInvertEquiv] using
+          literal_su2_boundary_temporal_haar_inversion_invariant n
+      have hchange :=
+        MeasureTheory.integral_map_equiv
+          (μ := literalSU2BoundaryTemporalHaar n) e f
+      rw [hmap] at hchange
+      exact hchange.symm
 
 end RequestProject.YangMills

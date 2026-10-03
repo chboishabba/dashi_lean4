@@ -108,11 +108,15 @@ theorem r823_completeRate_eq_selectedRate
         (data.r760Cellwise_eq_totalNormalForm x hx).symm
       _ = data.touchedSignedFold x :=
         (data.touched_eq_r760Cellwise x hx).symm
-  unfold r823CompleteRate r823SignedComparableCC r823ViscousReserve
-    r823QSeparated r823NestedSeparated r823Nu
-  rw [← hTouched]
-  symm
-  exact selectedRate_eq_selectedNonlinear_add_dissipation x
+  calc
+    r823CompleteRate data x =
+        data.touchedSignedFold x + 6 * criticalDissipation x := by
+      simp [r823CompleteRate, r823SignedComparableCC,
+        r823ViscousReserve, r823QSeparated, r823NestedSeparated, r823Nu]
+    _ = selectedNonlinear x + 6 * criticalDissipation x := by
+      rw [hTouched]
+    _ = selectedRate x :=
+      (selectedRate_eq_selectedNonlinear_add_dissipation x).symm
 
 /-- The definition-level real R823 complete rate is the concrete R853 complete
 physical rate on the actual physical carrier. -/
@@ -128,8 +132,7 @@ theorem r823ReserveRate_continuous
     (data : R823Cutoff4TouchedCarrierWeldData) :
     Continuous (r823ReserveRate data) := by
   unfold r823ReserveRate r823SignedComparableCC r823ViscousReserve r823Nu
-  exact data.touchedSignedFold_continuous.add
-    (continuous_const.mul criticalDissipation_continuous_real)
+  fun_prop
 
 /-- Continuity of the cutoff-four demand definition. -/
 theorem r823DemandRate_continuous

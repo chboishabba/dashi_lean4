@@ -1,4 +1,4 @@
-import Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseFinalCut
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseAsymptoticDecision
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapGlobalize
 import Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
 import Synthesis.RiemannSelectedSignedFifthCorrelationCut
@@ -19,8 +19,16 @@ One-scale resonance has now been compressed past the abstract reflection tail:
   assembled into `threeTapAdverseNearExplicitBudget`;
 * the residual adverse tail is the actual summable tail after the chosen
   physical cutoff;
-* at an RvM-compatible cutoff the remaining strict PASS condition is exactly
-  negativity of `ThreeTapAdverseFinalScalar`.
+* the cutoff tradeoff is explicit and the canonical half-height choice R=t/2
+  is compatible for t>=200;
+* the finite half-height core is collapsed from M0/M1 to the single canonical
+  normalized mass `threeTapCanonicalM0`;
+* the remaining finite coefficient is source-visible at log-over-t scale in
+  `threeTapHalfHeightLogCoefficient`;
+* the final producer-facing PASS surface is exactly negativity of
+  `ThreeTapAdverseHalfHeightAsymptoticScalar`, fed only by same-object upper
+  bounds for M0 and the actual far tail plus a lower bound for
+  LocalExact-Compensation.
 
 After a one-scale PASS, only compact mid-strip positivity remains before the
 full 0<a<=1/2 displacement statement.  A strict one-scale FAIL exposes the

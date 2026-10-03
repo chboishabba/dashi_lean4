@@ -1,5 +1,6 @@
 import Synthesis.MillenniumHodgeP1QRulingsExact
 import Synthesis.MillenniumHodgeCycleIsoPushforwardExact
+import Mathlib.Tactic
 
 /-!
 # Hodge max-cut: genuine factor-swap action and ruling-cycle boundary
@@ -13,8 +14,8 @@ The selected geometry is already literal:
 
 Mathlib's current `AlgebraicCycle` layer supplies genuine residue-degree
 pushforward, but no canonical fundamental-cycle constructor for P¹ and no
-ready postcomposition theorem for `AlgebraicCycle.map`.  This owner therefore
-closes everything *after* the missing ruling-cycle exchange without replacing
+ready postcomposition theorem for `AlgebraicCycle.map`. This owner therefore
+closes everything after the missing ruling-cycle exchange without replacing
 that missing API by a synthetic divisor lattice.
 -/
 
@@ -44,7 +45,7 @@ theorem p1QFactorSwap_cycle_injective :
   exact actualCyclePushforward_iso_injective p1QFactorSwapOverQ
 
 /-- Once two genuine cycles are known to be exchanged by the actual factor
-swap, their literal difference is a genuine `(-1)` eigencycle.  This theorem
+swap, their literal difference is a genuine `(-1)` eigencycle. This theorem
 uses Mathlib's `AlgebraicCycle` carrier itself; no synthetic cycle action or
 parallel lattice is introduced. -/
 theorem p1QFactorSwap_difference_antiInvariant
@@ -68,7 +69,7 @@ theorem p1QFactorSwap_difference_antiInvariant
   abel
 
 /-- The exact remaining cycle-side regression target, stated only in terms of
-real Mathlib algebraic cycles and the already-selected factor swap.  A future
+real Mathlib algebraic cycles and the already-selected factor swap. A future
 fundamental-cycle owner should instantiate `D₁,D₂` as the pushforwards of the
 actual P¹ fundamental cycle along `p1QRulingOne` and `p1QRulingTwo`. -/
 def P1QRulingCycleExchange
@@ -92,7 +93,7 @@ PAID HERE, subject to exact-head kernel certification:
 * actual selected factor-swap action on Mathlib `AlgebraicCycle` is evaluated
   pointwise by inverse reindexing;
 * that action is injective;
-* for ANY two genuine cycles exchanged by the swap, their literal difference
+* for any two genuine cycles exchanged by the swap, their literal difference
   is proved to be a genuine `(-1)` eigencycle.
 
 THE ONLY REMAINING P¹ CYCLE-SIDE SEAM IS NOW PRECISE:
@@ -103,11 +104,11 @@ THE ONLY REMAINING P¹ CYCLE-SIDE SEAM IS NOW PRECISE:
    `AlgebraicCycle.map`, yielding `P1QRulingCycleExchange`.
 
 Current Mathlib exposes neither (1) as a canonical constructor nor (3) as a
-ready theorem in this layer.  They are intentionally NOT replaced here by a
+ready theorem in this layer. They are intentionally not replaced here by a
 synthetic fundamental class or unit-weight cycle map.
 
 After that seam closes, `p1Q_ruling_difference_antiInvariant_of_exchange`
-finishes the cycle-side regression immediately.  The next genuine library
+finishes the cycle-side regression immediately. The next genuine library
 boundary is then the cycle-class map and its naturality.
 -/
 

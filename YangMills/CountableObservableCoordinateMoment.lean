@@ -107,7 +107,7 @@ theorem uniform_prefix_norm_moment
             ∂((source.cutoffLaw k : ProbabilityMeasure Ω) : Measure Ω) := by
         rw [lintegral_finsetSum]
         intro i hi
-        exact ((source.observableMeasurable i.1).abs.ennreal_ofReal).aemeasurable
+        fun_prop
     _ ≤ ∑ i : Fin m, source.coordinateMomentBound i.1 := by
         exact Finset.sum_le_sum fun i hi =>
           source.coordinateUniformAbsMoment i.1 k

@@ -1,4 +1,4 @@
-import Synthesis.RiemannSelectedPrimeSensitiveThreeTapInverseSquareTail
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapInverseSquareWindow
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapCompensationFloor
 
 /-!

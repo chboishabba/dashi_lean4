@@ -36,5 +36,18 @@ example
     R823WeldForR830Witness := by
   exact r823WitnessWeld_of_pointwise hPointwise
 
+example
+    (data : R823NonlinearPointwiseData) :
+    R823PointwiseWeld := by
+  exact r823PointwiseWeld_of_nonlinearData data
+
+example
+    (data : R823NonlinearPointwiseData) :
+    ∀ x : State,
+      selectedRate x =
+        (data.signedComparableCC x + 6 * criticalDissipation x) -
+        (2 * (data.qsep x - 9 * data.nestedFourHelicityWork x)) := by
+  exact r823_pointwise_identity_of_nonlinearData data
+
 end Rational345R831ReserveDecisionTest
 end NSBControl

@@ -11,12 +11,15 @@ on:
       - 'Synthesis/MillenniumHodgeRelativeProductSwapExact.lean'
       - 'Synthesis/MillenniumHodgeRelativeRulingEmbeddingsExact.lean'
       - 'Synthesis/MillenniumHodgeCycleIsoPushforwardExact.lean'
+      - 'Synthesis/MillenniumHodgeCycleIsoPostcompositionExact.lean'
+      - 'Synthesis/MillenniumHodgeFundamentalCycleExact.lean'
       - 'Synthesis/MillenniumHodgeP1QProjExact.lean'
       - 'Synthesis/MillenniumHodgeP1QBaseRingExact.lean'
       - 'Synthesis/MillenniumHodgeP1QStructureMapExact.lean'
       - 'Synthesis/MillenniumHodgeP1QPoint10Exact.lean'
       - 'Synthesis/MillenniumHodgeP1QRulingsExact.lean'
       - 'Synthesis/MillenniumHodgeRulingCycleSwapMaxCutExact.lean'
+      - 'Synthesis/MillenniumHodgeP1QRulingCyclesExact.lean'
       - 'Synthesis.lean'
       - 'lean-toolchain'
       - 'lakefile.toml'
@@ -44,9 +47,12 @@ jobs:
           lake env lean Synthesis/MillenniumHodgeRelativeProductSwapExact.lean
           lake env lean Synthesis/MillenniumHodgeRelativeRulingEmbeddingsExact.lean
           lake env lean Synthesis/MillenniumHodgeCycleIsoPushforwardExact.lean
+          lake env lean Synthesis/MillenniumHodgeCycleIsoPostcompositionExact.lean
+          lake env lean Synthesis/MillenniumHodgeFundamentalCycleExact.lean
           lake env lean Synthesis/MillenniumHodgeP1QProjExact.lean
           lake env lean Synthesis/MillenniumHodgeP1QBaseRingExact.lean
           lake env lean Synthesis/MillenniumHodgeP1QStructureMapExact.lean
           lake env lean Synthesis/MillenniumHodgeP1QPoint10Exact.lean
           lake env lean Synthesis/MillenniumHodgeP1QRulingsExact.lean
           lake env lean Synthesis/MillenniumHodgeRulingCycleSwapMaxCutExact.lean
+          lake env lean Synthesis/MillenniumHodgeP1QRulingCyclesExact.lean

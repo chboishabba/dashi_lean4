@@ -14,9 +14,8 @@ payment rate pointwise.  Agda R823 then proves that full rate is exactly
   signedReserve - cubicQuinticDemand.
 
 This file mirrors that semantic transport without fabricating the still-open
-real-time same-object identification.  The strongest remaining leaf is now a
-*pointwise* real R815-to-R823 weld; ordinary interval-integral linearity then
-produces the integrated weld automatically.
+real-time same-object identification.  The remaining pointwise leaf is cut
+into the exact R815/R813/R822 identities that the Agda chain already owns.
 -/
 
 open Set
@@ -71,10 +70,7 @@ theorem welded_negative_payment_refutes_reserve
 -- Max-cut the semantic leaf from integrated equality to pointwise equality.
 ------------------------------------------------------------------------
 
-/-- Real pointwise counterpart of the Agda R820+R823 chain.  `reserveRate` and
-`demandRate` are intended to be the actual signed comparable-CC+viscous reserve
-and cubic/quintic demand respectively.  Their continuity is included only so
-that interval linearity is automatic downstream. -/
+/-- Real pointwise counterpart of the Agda R820+R823 chain. -/
 structure R823PointwiseWeld where
   reserveRate : State → ℝ
   demandRate : State → ℝ
@@ -82,6 +78,96 @@ structure R823PointwiseWeld where
     ∀ x, selectedRate x = reserveRate x - demandRate x
   reserveRate_continuous : Continuous reserveRate
   demandRate_continuous : Continuous demandRate
+
+------------------------------------------------------------------------
+-- Cut the pointwise leaf into the exact R815 / R813 / R822 same-object rows.
+------------------------------------------------------------------------
+
+/-- Non-viscous part of the real R815-normalized selected rate. -/
+def selectedNonlinear (x : State) : ℝ :=
+  6 * (12 * globalCoherentWork x - criticalProduction x)
+
+theorem selectedRate_eq_selectedNonlinear_add_dissipation (x : State) :
+    selectedRate x = selectedNonlinear x + 6 * criticalDissipation x := by
+  unfold selectedRate selectedNonlinear
+  ring
+
+/-- The critical dissipation fold is a continuous finite polynomial on the
+radius-four state carrier. -/
+theorem criticalDissipation_continuous_real :
+    Continuous criticalDissipation := by
+  unfold criticalDissipation modalDissipation hermitianDot
+  fun_prop
+
+/-- Exact real-time data needed to mirror Agda R820/R813/R822.
+
+* `r815SeparatedTouched` is the real R815 nonlinear split;
+* `r813SeparatedNormalForm` is Dsep = 2*(9*Nsep-Qsep);
+* `r822TouchedComparable` identifies the touched fold with the actual signed
+  comparable-CC rows.
+
+No sign or analytic estimate is included. -/
+structure R823NonlinearPointwiseData where
+  separatedRate : State → ℝ
+  touchedRate : State → ℝ
+  nestedFourHelicityWork : State → ℝ
+  qsep : State → ℝ
+  signedComparableCC : State → ℝ
+
+  nestedFourHelicityWork_continuous : Continuous nestedFourHelicityWork
+  qsep_continuous : Continuous qsep
+  signedComparableCC_continuous : Continuous signedComparableCC
+
+  r815SeparatedTouched :
+    ∀ x, selectedNonlinear x = separatedRate x + touchedRate x
+  r813SeparatedNormalForm :
+    ∀ x,
+      separatedRate x =
+        2 * (9 * nestedFourHelicityWork x - qsep x)
+  r822TouchedComparable :
+    ∀ x, touchedRate x = signedComparableCC x
+
+/-- The three Agda same-object identities imply the literal pointwise R823
+reserve-minus-demand identity on the real radius-four carrier. -/
+theorem r823_pointwise_identity_of_nonlinearData
+    (data : R823NonlinearPointwiseData) :
+    ∀ x : State,
+      selectedRate x =
+        (data.signedComparableCC x + 6 * criticalDissipation x) -
+        (2 * (data.qsep x - 9 * data.nestedFourHelicityWork x)) := by
+  intro x
+  calc
+    selectedRate x
+        = selectedNonlinear x + 6 * criticalDissipation x :=
+          selectedRate_eq_selectedNonlinear_add_dissipation x
+    _ = (data.separatedRate x + data.touchedRate x)
+          + 6 * criticalDissipation x := by
+          rw [data.r815SeparatedTouched x]
+    _ = (2 * (9 * data.nestedFourHelicityWork x - data.qsep x)
+          + data.signedComparableCC x)
+          + 6 * criticalDissipation x := by
+          rw [data.r813SeparatedNormalForm x, data.r822TouchedComparable x]
+    _ = (data.signedComparableCC x + 6 * criticalDissipation x) -
+          (2 * (data.qsep x - 9 * data.nestedFourHelicityWork x)) := by
+          ring
+
+/-- Construct the actual pointwise reserve/demand weld from the three exact
+nonlinear same-object leaves. -/
+def r823PointwiseWeld_of_nonlinearData
+    (data : R823NonlinearPointwiseData) : R823PointwiseWeld where
+  reserveRate := fun x =>
+    data.signedComparableCC x + 6 * criticalDissipation x
+  demandRate := fun x =>
+    2 * (data.qsep x - 9 * data.nestedFourHelicityWork x)
+  selectedRate_eq_reserve_sub_demand :=
+    r823_pointwise_identity_of_nonlinearData data
+  reserveRate_continuous := by
+    exact data.signedComparableCC_continuous.add
+      (continuous_const.mul criticalDissipation_continuous_real)
+  demandRate_continuous := by
+    exact continuous_const.mul
+      (data.qsep_continuous.sub
+        (continuous_const.mul data.nestedFourHelicityWork_continuous))
 
 /-- Integrated actual reserve attached to a pointwise weld. -/
 def integratedReserve
@@ -138,8 +224,7 @@ def R823WeldForR830Witness : Prop :=
     R823IntegratedWeld u (residenceUsableTime ε δ)
 
 /-- A global pointwise real R820+R823 weld automatically supplies the exact
-integrated weld on every R830 witness.  This shrinks the remaining semantic
-leaf from an integration theorem to a same-state operator identity. -/
+integrated weld on every R830 witness. -/
 theorem r823WitnessWeld_of_pointwise
     (weld : R823PointwiseWeld) :
     R823WeldForR830Witness := by
@@ -176,10 +261,12 @@ def r831TransportClosed : Bool := true
 /-- Interval linearity is no longer an open leaf. -/
 def r831IntegratedWeldReducedToPointwise : Bool := true
 
-/-- The actual real-time R820/R823 pointwise same-object weld remains the only
-semantic leaf before the repository-level universal reserve route may be
-frozen. -/
-def r823RealPointwiseWeldClosed : Bool := false
+/-- Pointwise reserve transport is reduced to the three exact Agda mirror
+identities in `R823NonlinearPointwiseData`. -/
+def r831PointwiseWeldReducedToThreeSameObjectLeaves : Bool := true
+
+/-- No real radius-four owner has yet instantiated all three leaves. -/
+def r823RealNonlinearSameObjectClosed : Bool := false
 
 end Rational345R831ReserveDecision
 end NSBControl

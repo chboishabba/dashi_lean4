@@ -13,7 +13,9 @@ the sample height `t`, every summand satisfies
 
 Summing on the exact finite `Zeta23` window turns the multiplicity sum back into
 `Ncount A B`.  The arbitrary-endpoint RvM count theorem then gives an explicit
-positive-height shell estimate.  No conjugation/reflection of zeros is used.
+positive-height shell estimate.  The unconditional local zero-count theorem is
+also consumed directly on all real unit windows, so negative ordinates remain
+on the same literal carrier and require no conjugation/reflection rewrite.
 -/
 
 noncomputable section
@@ -134,8 +136,8 @@ theorem exists_zetaWindowInverseSquareMass_right_shell_rvm_bound :
   convert h using 1 <;> ring
 
 /-- The left shell `(t-2R,t-R]` obeys the same estimate as long as it remains in
-the positive-height RvM range.  Once `t-2R < 5`, the proof must switch to the
-all-real local zero-count theorem; no positivity assumption is hidden here. -/
+the positive-height RvM range.  Once `t-2R < 5`, the proof switches to the
+all-real local zero-count theorem below; no positivity assumption is hidden. -/
 theorem exists_zetaWindowInverseSquareMass_left_shell_rvm_bound :
     ∃ C : ℝ, 0 <= C ∧
       ∀ {t R : ℝ},
@@ -159,5 +161,71 @@ theorem exists_zetaWindowInverseSquareMass_left_shell_rvm_bound :
   have h := hwin (t:=t) (A:=t-2*R) (B:=t-R) (d:=R)
     hleft hAB hR hsep
   convert h using 1 <;> ring
+
+/-- Unconditional all-real unit-window inverse-square estimate.  This is the
+literal negative-ordinate bridge: `T` is arbitrary, and the local zero count
+already pays the window by `log (|T|+3)`. -/
+theorem exists_zetaWindowInverseSquareMass_unit_local_bound :
+    ∃ A0 : ℝ, 0 <= A0 ∧
+      ∀ {t T d : ℝ},
+        0 < d ->
+        (∀ rho ∈ zetaZeroConfig.window T (T+1),
+          d <= |rho.im-t|) ->
+        zetaWindowInverseSquareMass t T (T+1)
+          <= A0 * Real.log (|T|+3) / d^2 := by
+  obtain ⟨A0, hA01, hlocal⟩ := Zeta23.RvM.zeta_local_zero_count
+  have hA00 : 0 <= A0 := by linarith
+  refine ⟨A0, hA00, ?_⟩
+  intro t T d hd hsep
+  have hbase := zetaWindowInverseSquareMass_le_count_div_sq hd hsep
+  have hN :
+      (Ncount T (T+1) : ℝ) <= A0 * Real.log (|T|+3) := by
+    simpa only [Zeta23.zetaZeroConfig_N] using hlocal T
+  have hd2 : 0 < d^2 := by positivity
+  exact hbase.trans (div_le_div_of_nonneg_right hN hd2.le)
+
+/-- Every all-real unit window strictly to the left of `t` has an explicit
+inverse-square bound with distance measured from its right endpoint. -/
+theorem exists_zetaWindowInverseSquareMass_left_unit_local_bound :
+    ∃ A0 : ℝ, 0 <= A0 ∧
+      ∀ {t T : ℝ},
+        T+1 < t ->
+        zetaWindowInverseSquareMass t T (T+1)
+          <= A0 * Real.log (|T|+3) / (t-(T+1))^2 := by
+  obtain ⟨A0, hA00, hunit⟩ :=
+    exists_zetaWindowInverseSquareMass_unit_local_bound
+  refine ⟨A0, hA00, ?_⟩
+  intro t T hT
+  have hd : 0 < t-(T+1) := by linarith
+  have hsep :
+      ∀ rho ∈ zetaZeroConfig.window T (T+1),
+        t-(T+1) <= |rho.im-t| := by
+    intro rho hrho
+    have hneg : rho.im-t < 0 := by linarith [hrho.2.2]
+    rw [abs_of_neg hneg]
+    linarith [hrho.2.2]
+  exact hunit hd hsep
+
+/-- Every all-real unit window strictly to the right of `t` has an explicit
+inverse-square bound with distance measured from its left endpoint. -/
+theorem exists_zetaWindowInverseSquareMass_right_unit_local_bound :
+    ∃ A0 : ℝ, 0 <= A0 ∧
+      ∀ {t T : ℝ},
+        t < T ->
+        zetaWindowInverseSquareMass t T (T+1)
+          <= A0 * Real.log (|T|+3) / (T-t)^2 := by
+  obtain ⟨A0, hA00, hunit⟩ :=
+    exists_zetaWindowInverseSquareMass_unit_local_bound
+  refine ⟨A0, hA00, ?_⟩
+  intro t T hT
+  have hd : 0 < T-t := by linarith
+  have hsep :
+      ∀ rho ∈ zetaZeroConfig.window T (T+1),
+        T-t <= |rho.im-t| := by
+    intro rho hrho
+    have hpos : 0 < rho.im-t := by linarith [hrho.2.1]
+    rw [abs_of_pos hpos]
+    linarith [hrho.2.1]
+  exact hunit hd hsep
 
 end Synthesis

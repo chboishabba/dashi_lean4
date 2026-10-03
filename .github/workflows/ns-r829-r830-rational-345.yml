@@ -9,6 +9,14 @@ on:
       - 'NSBControl/Rational345ShortTime.lean'
       - 'NSBControl/Rational345LocalODE.lean'
       - 'NSBControl/Rational345QuadraticODE.lean'
+      - 'NSBControl/Rational345R830LocalInterval.lean'
+      - 'NSBControl/Rational345RateLipschitz.lean'
+      - 'NSBControl/Rational345RealHelicalScalars.lean'
+      - 'NSBControl/Rational345RealRadius4.lean'
+      - 'NSBControl/Rational345RealInitialState.lean'
+      - 'NSBControl/Rational345RealRadius4Quadratic.lean'
+      - 'NSBControl/Rational345RealSnapshotW2.lean'
+      - 'NSBControl/Rational345RealSnapshotW2Test.lean'
       - 'NSBCyclicOrbit.lean'
       - 'lakefile.toml'
       - 'lean-toolchain'
@@ -19,6 +27,14 @@ on:
       - 'NSBControl/Rational345ShortTime.lean'
       - 'NSBControl/Rational345LocalODE.lean'
       - 'NSBControl/Rational345QuadraticODE.lean'
+      - 'NSBControl/Rational345R830LocalInterval.lean'
+      - 'NSBControl/Rational345RateLipschitz.lean'
+      - 'NSBControl/Rational345RealHelicalScalars.lean'
+      - 'NSBControl/Rational345RealRadius4.lean'
+      - 'NSBControl/Rational345RealInitialState.lean'
+      - 'NSBControl/Rational345RealRadius4Quadratic.lean'
+      - 'NSBControl/Rational345RealSnapshotW2.lean'
+      - 'NSBControl/Rational345RealSnapshotW2Test.lean'
       - 'NSBCyclicOrbit.lean'
       - 'lakefile.toml'
       - 'lean-toolchain'
@@ -43,3 +59,10 @@ jobs:
           lake build NSBControl.Rational345ShortTime
           lake build NSBControl.Rational345LocalODE
           lake build NSBControl.Rational345QuadraticODE
+          lake build NSBControl.Rational345R830LocalInterval
+          lake build NSBControl.Rational345RateLipschitz
+          lake build NSBControl.Rational345RealHelicalScalars
+          lake build NSBControl.Rational345RealRadius4
+          lake build NSBControl.Rational345RealInitialState
+          lake build NSBControl.Rational345RealRadius4Quadratic
+          lake build NSBControl.Rational345RealSnapshotW2Test

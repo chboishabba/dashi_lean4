@@ -94,7 +94,7 @@ theorem su2_upper_plane_double_gauge_reduce
     apply Finset.sum_congr rfl
     intro p hp
     rw [← su2_upper_crossing_positive_index_coincides n p hp]
-    rw [su2RelativeFundamentalTrace_comm]
+    rw [su2_relative_fundamental_trace_symmetric]
     exact su2_relative_trace_two_boundary_gauges_reduce
       (b (su2UpperCrossingSourceUpperBoundaryIndex n p hp))
       (b (su2UpperCrossingTargetUpperBoundaryIndex n p hp))

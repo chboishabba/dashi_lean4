@@ -37,17 +37,14 @@ example
   exact r823WitnessWeld_of_pointwise hPointwise
 
 example
-    (data : R823NonlinearPointwiseData) :
+    (weld : R853RealCarrierWeld) :
     R823PointwiseWeld := by
-  exact r823PointwiseWeld_of_nonlinearData data
+  exact r823PointwiseWeld_of_r853 weld
 
 example
-    (data : R823NonlinearPointwiseData) :
-    ∀ x : State,
-      selectedRate x =
-        (data.signedComparableCC x + 6 * criticalDissipation x) -
-        (2 * (data.qsep x - 9 * data.nestedFourHelicityWork x)) := by
-  exact r823_pointwise_identity_of_nonlinearData data
+    (weld : R853RealCarrierWeld) :
+    ∃ reserve demand : ℝ, ¬ demand ≤ reserve := by
+  exact r830_refutes_r823_reserve_of_r853 weld
 
 end Rational345R831ReserveDecisionTest
 end NSBControl

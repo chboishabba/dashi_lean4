@@ -73,6 +73,7 @@ jobs:
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseMassCollapse
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapM0Envelope
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapM0Uniform
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapFiniteAsymptotic
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseAsymptoticDecision
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapMaxCutScalarSplit
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapGlobalize

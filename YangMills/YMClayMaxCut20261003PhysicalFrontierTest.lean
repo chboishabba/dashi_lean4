@@ -11,6 +11,20 @@ example
   infer_instance
 
 example
+    {Ω : Type*} [MeasurableSpace Ω]
+    (source : RealCountableObservableUniformBoundSource Ω) :
+    IsProbabilityMeasure
+      (ym_20261003_bounded_selected_observable_continuum source) := by
+  infer_instance
+
+example
+    {Ω : Type*} [MeasurableSpace Ω]
+    (source : RealCountableObservableUniformBoundSource Ω) :
+    YM20261003D3SelectedPrefixNormMomentProducerExists
+      source.cutoffLaw source.observable :=
+  ym_20261003_d3_bounded_source_closes_moment_leaf source
+
+example
     (n : ℕ) [NeZero n]
     (β : ℝ)
     (left : SU2PositiveInteriorLinks n)

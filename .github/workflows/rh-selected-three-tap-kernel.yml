@@ -79,6 +79,7 @@ jobs:
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapInverseSquareTail
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapCompensationFloor
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAsymptoticBalance
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapInverseSquareShellRegression
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseAsymptoticDecision
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapMaxCutScalarSplit
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapGlobalize

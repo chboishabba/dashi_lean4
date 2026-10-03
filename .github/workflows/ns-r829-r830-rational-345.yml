@@ -44,5 +44,8 @@ jobs:
           lake build NSBControl.Rational345R830DecisionCompilerTest
           lake build NSBControl.Rational345R823RealHelicalCoreTest
           lake build NSBControl.Rational345R823RealInnerFoldTest
+          lake build NSBControl.Rational345R823RealProductionIncidenceTest
           lake build NSBControl.Rational345R823Cutoff4SeparationTest
+          lake build NSBControl.Rational345R823TouchedPartitionTest
+          lake build NSBControl.Rational345R823TouchedNormalFormTest
           lake build NSBControl.Rational345R831ReserveDecisionTest

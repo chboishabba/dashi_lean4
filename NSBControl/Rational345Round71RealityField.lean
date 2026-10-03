@@ -175,8 +175,7 @@ theorem viscousLinear_decode_reality
     funext j
     simp [viscousLinear, hz, hnz, normSq_negate, vecConj]
 
-/-- Main Round71 carrier theorem: the exact ambient Galerkin field is tangent
-to the structural Fourier-reality carrier. -/
+/-- Main Round71 carrier theorem on structurally decoded states. -/
 theorem galerkinField_decode_reality
     (a : CanonicalState) (k : Mode) :
     galerkinField (decode a) (negateMode k) =
@@ -192,8 +191,96 @@ theorem galerkinField_decode_reality
       projectedNonlinearity_decode_reality a k,
       vecConj_add]
 
-/-- No separate reality-preservation hypothesis remains at the operator level. -/
+------------------------------------------------------------------------
+-- Global reality involution and equivariance for arbitrary ambient states.
+------------------------------------------------------------------------
+
+/-- Fourier reality involution on the ambient radius-four state space. -/
+def realityTransform (u : State) : State := fun k =>
+  vecConj (u (negateMode k))
+
+@[simp] theorem realityTransform_apply (u : State) (k : Mode) :
+    realityTransform u k = vecConj (u (negateMode k)) := rfl
+
+@[simp] theorem realityTransform_involutive (u : State) :
+    realityTransform (realityTransform u) = u := by
+  funext k
+  simp [realityTransform]
+
+/-- One ordered cell intertwines the global reality involution. -/
+theorem projectedOrdered_realityTransform
+    (left right : State) (p q k : Mode) :
+    projectedOrderedBilinear (realityTransform left) (realityTransform right) p q k =
+      vecConj
+        (projectedOrderedBilinear left right
+          (negateMode p) (negateMode q) (negateMode k)) := by
+  by_cases hres : Resonates p q k
+  · have hresNeg : Resonates (negateMode p) (negateMode q) (negateMode k) :=
+      (resonates_negate_iff p q k).2 hres
+    simp only [projectedOrderedBilinear, hres, hresNeg, if_true,
+      realityTransform_apply]
+    funext j
+    rw [← leray_reality (negateMode k)]
+    simp [bilinearDot, kComplex, kReal, kInt_negate, vecConj]
+    ring
+  · have hresNeg : ¬ Resonates (negateMode p) (negateMode q) (negateMode k) := by
+      intro h
+      exact hres ((resonates_negate_iff p q k).1 h)
+    simp [projectedOrderedBilinear, hres, hresNeg, realityTransform, vecConj]
+
+/-- The full quadratic convolution intertwines the reality involution. -/
+theorem projectedNonlinearity_reality_equivariant
+    (u : State) (k : Mode) :
+    projectedNonlinearity (realityTransform u) k =
+      realityTransform (projectedNonlinearity u) k := by
+  unfold projectedNonlinearity projectedBilinear
+  by_cases hz : isZeroMode k
+  · have hnz : isZeroMode (negateMode k) := (isZeroMode_negate_iff k).2 hz
+    simp [hz, hnz, realityTransform, vecConj]
+  · have hnz : ¬ isZeroMode (negateMode k) := by simpa using hz
+    simp only [hz, if_false, realityTransform_apply]
+    rw [doubleSum_negate_reindex
+      (fun p q => projectedOrderedBilinear (realityTransform u)
+        (realityTransform u) p q k)]
+    simp_rw [projectedOrdered_realityTransform u u]
+    simp_rw [negateMode_involutive]
+    funext j
+    simp [projectedNonlinearity, projectedBilinear, hnz, vecConj]
+
+/-- The viscous term intertwines the reality involution. -/
+theorem viscousLinear_reality_equivariant (u : State) (k : Mode) :
+    viscousLinear (realityTransform u) k =
+      realityTransform (viscousLinear u) k := by
+  by_cases hz : isZeroMode k
+  · have hnz : isZeroMode (negateMode k) := (isZeroMode_negate_iff k).2 hz
+    simp [viscousLinear, hz, hnz, realityTransform, vecConj]
+  · have hnz : ¬ isZeroMode (negateMode k) := by simpa using hz
+    funext j
+    simp [viscousLinear, hz, hnz, realityTransform, normSq_negate, vecConj]
+
+/-- Global symmetry theorem used with ODE uniqueness: the literal radius-four
+Galerkin vector field commutes with Fourier reality on the entire ambient
+finite state space. -/
+theorem galerkinField_reality_equivariant (u : State) :
+    galerkinField (realityTransform u) =
+      realityTransform (galerkinField u) := by
+  funext k
+  rw [galerkinField_eq_linear_add_bilinear,
+      galerkinField_eq_linear_add_bilinear]
+  change
+    viscousLinear (realityTransform u) k +
+      projectedNonlinearity (realityTransform u) k =
+    realityTransform
+      (viscousLinear u + projectedNonlinearity u) k
+  rw [viscousLinear_reality_equivariant,
+      projectedNonlinearity_reality_equivariant]
+  simp [realityTransform]
+
+/-- No separate operator-level reality-preservation hypothesis remains. -/
 def round71LiteralGalerkinRealityClosed : Bool := true
+
+/-- Global equivariance needed for uniqueness-based trajectory invariance. -/
+def round71GlobalRealityEquivarianceClosed : Bool := true
 
 end Rational345Round71RealityField
 end NSBControl

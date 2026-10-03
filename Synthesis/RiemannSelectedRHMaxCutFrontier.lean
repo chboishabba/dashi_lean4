@@ -1,4 +1,4 @@
-import Synthesis.RiemannSelectedPrimeSensitiveThreeTapFiniteAsymptotic
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapFarDecay
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapGlobalize
 import Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
 
@@ -16,12 +16,8 @@ One-scale resonance has now been compressed past the abstract reflection tail:
   absolutely-continuous Abel theorem;
 * the RvM discrepancy, smooth mu term, endpoint term and variation term are
   assembled into `threeTapAdverseNearExplicitBudget`;
-* the residual adverse tail is the actual summable tail after the chosen
-  physical cutoff;
 * the cutoff tradeoff is explicit and the canonical half-height choice R=t/2
   is compatible for t>=200;
-* the finite half-height core is collapsed from M0/M1 to the single canonical
-  normalized mass `threeTapCanonicalM0`;
 * translation itself does not enlarge L1 mass, and radius-one projectivization
   obeys the same-object quadratic envelope `||P_g||_1 <= 8 ||g||_1^2`;
 * the actual four-window witness has endpoint source mass <= 3 and finite pole
@@ -30,14 +26,19 @@ One-scale resonance has now been compressed past the abstract reflection tail:
 * therefore the finite Route-A budget contains no remaining zeta-distribution
   input: `threeTapUniformFiniteHalfHeightBudget` is explicit and obeys a
   source-visible log-over-t envelope;
-* the final producer-facing PASS surface is now exactly: explicit finite
-  budget <= H, actual half-height adverse tail < H, and
-  H <= LocalExact-Compensation.
+* the actual transformed pair kernel is a compact C2 cosine transform, so the
+  repo's twice-integrated Fourier estimate gives exact q^-2 decay;
+* restoring physical units cancels the projective `(t/16)^-2` scale exactly,
+  reducing each adverse pair to multiplicity times an oscillatory-curvature
+  factor divided by `(gamma-t)^2`.
 
-Thus the first genuinely zero-distribution-specific Route-A obligation is the
-actual adverse tail at the compatible half-height cutoff.  Unrestricted
-summability only supplies an eta-small tail at some large cutoff and does not
-place that cutoff before t-5.
+The live Route-A PASS surface is therefore: explicit finite budget <= H,
+actual half-height adverse tail < H, and H <= LocalExact-Compensation.  The
+far theorem is no longer an arbitrary summability question: it is a weighted
+inverse-square zero-count problem.  To obtain a uniform O(log t/t) tail one
+must additionally control the oscillatory curvature of the selected witness;
+the current existential witness constructor permits its bump width R to shrink
+with t, so that uniformity has not yet been proved.
 
 After a one-scale PASS, only compact mid-strip positivity remains before the
 full 0<a<=1/2 displacement statement.  A strict one-scale FAIL exposes the

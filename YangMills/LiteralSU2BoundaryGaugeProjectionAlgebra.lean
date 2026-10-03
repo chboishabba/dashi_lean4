@@ -14,6 +14,17 @@ single physical boundary average by a double independent gauge average.
 
 namespace RequestProject.YangMills
 
+/-- The normalized SU(2) relative trace is symmetric. -/
+theorem su2_relative_fundamental_trace_symmetric
+    (left right : SU2PlaquetteHolonomy) :
+    su2RelativeFundamentalTrace left right =
+      su2RelativeFundamentalTrace right left := by
+  rw [su2_relative_trace_eq_quaternion_dot,
+    su2_relative_trace_eq_quaternion_dot]
+  apply Finset.sum_congr rfl
+  intro i hi
+  ring
+
 /--
 Two independently gauged edges reduce to one relative boundary gauge.
 

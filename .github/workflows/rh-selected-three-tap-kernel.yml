@@ -5,12 +5,16 @@ on:
       - agent/rh-marked-cluster-target-reflection
     paths:
       - 'Synthesis/RiemannSelectedPrimeSensitiveThreeTap*.lean'
-      - 'Synthesis/RiemannSelectedPrimeSensitiveTwoScale.lean'
+      - 'Synthesis/RiemannSelectedPrimeSensitiveTwoScale*.lean'
+      - 'Synthesis/RiemannSelectedSignedFifth*.lean'
+      - 'Synthesis/RiemannSelectedRHMaxCutFrontier.lean'
       - '.github/workflows/rh-selected-three-tap-kernel.yml'
   pull_request:
     paths:
       - 'Synthesis/RiemannSelectedPrimeSensitiveThreeTap*.lean'
-      - 'Synthesis/RiemannSelectedPrimeSensitiveTwoScale.lean'
+      - 'Synthesis/RiemannSelectedPrimeSensitiveTwoScale*.lean'
+      - 'Synthesis/RiemannSelectedSignedFifth*.lean'
+      - 'Synthesis/RiemannSelectedRHMaxCutFrontier.lean'
       - '.github/workflows/rh-selected-three-tap-kernel.yml'
   workflow_dispatch:
 
@@ -47,4 +51,9 @@ jobs:
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapPaidCostCut
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapMaxCutClosure
           lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapMaxCutComplete
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapFarExactCut
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapGlobalize
           lake build Synthesis.RiemannSelectedPrimeSensitiveTwoScale
+          lake build Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
+          lake build Synthesis.RiemannSelectedSignedFifthMaxCut
+          lake build Synthesis.RiemannSelectedRHMaxCutFrontier

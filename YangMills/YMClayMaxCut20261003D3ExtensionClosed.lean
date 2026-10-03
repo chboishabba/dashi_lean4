@@ -2,13 +2,16 @@ import Mathlib
 import YangMills.YMClayMaxCut20261003ABCD
 import YangMills.SequentialProjectiveConditionalKernel
 import YangMills.CanonicalMarginalMomentSource
+import YangMills.LiteralSU2BoundaryProjectedKernelPlaneSplit
+import YangMills.LiteralSU2CrossingGaugeSumReadback
+import YangMills.LiteralSU2CrossingGaugePlaneLocality
 
 /-!
-# D3 extension-closed max-cut surface
+# D3-extension-closed and A-readback-compressed max-cut surface
 
-This file records the stronger frontier after replacing the generic cylinder
-sigma-subadditivity obligation with the regular-conditional/Ionescu--Tulcea
-route available for real sequential prefixes.
+This file records the stronger frontier after two independent compressions.
+
+## D3
 
 For any consistent `RealSequentialProjectiveFamily`:
 
@@ -18,18 +21,37 @@ For any consistent `RealSequentialProjectiveFamily`:
 4. every selected prefix is recovered exactly;
 5. the global law is unique from those prefixes.
 
-Thus the remaining D3 work is no longer generic measure extension.  It is the
-physical/source side: choose the actual selected observable family and prove
-uniform coercive/tail estimates.  `RealCanonicalMarginalMomentSource` exposes
-that source estimate on the SAME cutoff law and transports it to the marginal
-moment compiler by pushforward identity.
+Thus generic D3 extension no longer requires a separately proved cylinder
+sigma-subadditivity theorem on the real sequential route.  The remaining D3
+work is physical/source-facing: choose the actual selected observable family
+and prove uniform coercive/tail estimates. `RealCanonicalMarginalMomentSource`
+places those estimates on the SAME cutoff law and transports them to marginal
+tightness by pushforward identity.
+
+## A
+
+The actual boundary-projected Wilson kernel now has an exact two-plane Haar
+readback.  The literal upper/lower crossing plaquettes have been classified on
+the physical link carrier, their half paths read back to the exact
+boundary-gauged positive-copy edges, and the complete crossing trace/kernel is
+rewritten as upper plus lower gauged sums.  Those two sums are theorem-bearingly
+local to the independent upper and lower boundary-plane fields.
+
+Consequently the remaining A leaf is no longer lattice geometry or source
+identification.  It is the final positivity/Fubini calculation for the explicit
+two-plane projected kernel, together with the noncrossing-half boundary
+independence needed to pull the positive half factors outside that average.
+
+Nothing here claims that final A positivity, physical CMP marginal estimates,
+complete-action CMP119 RP, continuum OS reconstruction, clustering, spectral
+completeness, or a mass gap before their named source producers are proved.
 -/
 
 open Set MeasureTheory Preorder
 
 namespace RequestProject.YangMills
 
-/-- Generic D3 extension is now an actual countable probability measure. -/
+/-- Generic D3 extension is an actual countable probability measure. -/
 noncomputable def ym_20261003_d3_ext_measure
     (sequence : RealSequentialProjectiveFamily) :
     Measure (ℕ → ℝ) :=
@@ -87,5 +109,55 @@ def YM20261003D3PhysicalMomentProducerExists
     (family : RealCanonicalProjectiveMarginalFamily Ω) : Prop :=
   ∃ source : RealCanonicalMarginalMomentSource Ω,
     source.family = family
+
+/-- Exact A readback onto the independent upper/lower boundary-plane carrier. -/
+theorem ym_20261003_block_a_projected_kernel_plane_split
+    (n : ℕ) [NeZero n]
+    (β : ℝ)
+    (left right : SU2PositiveInteriorLinks n) :
+    literalSU2BoundaryGaugeProjectedWilsonKernel n β left right =
+      ∫ planes : SU2BoundaryPlaneFields n,
+        literalSU2ReflectedPairWilsonDensity n β left
+          (su2BoundaryTemporalPlaneAssemble n planes) right
+        ∂(literalSU2BoundaryPlaneHaar n) :=
+  literal_su2_boundary_projected_kernel_plane_split n β left right
+
+/-- Exact A crossing kernel readback after the physical half-path calculation. -/
+theorem ym_20261003_block_a_crossing_kernel_gauge_readback
+    (n : ℕ) [NeZero n]
+    (β : ℝ)
+    (left right : SU2PositiveInteriorLinks n)
+    (boundary : SU2BoundaryTemporalLinks n) :
+    su2WilsonCrossingPlaneKernel
+      (su2EvenTimeCrossingPlaquettes n) β
+      (su2LiteralCrossingFirstBoundary
+        (su2AssembleReflectedPair n left boundary right))
+      (su2LiteralCrossingSecondBoundary
+        (su2AssembleReflectedPair n left boundary right)) =
+    Real.exp (-(β * ((su2EvenTimeCrossingPlaquettes n).card : ℝ))) *
+      Real.exp (β *
+        (su2UpperGaugedCrossingTraceSum n left right boundary +
+         su2LowerGaugedCrossingTraceSum n left right boundary)) :=
+  su2_literal_crossing_kernel_gauge_sum_readback n β left right boundary
+
+/-- Upper crossing dependence reads only the upper boundary-plane coordinate. -/
+theorem ym_20261003_block_a_upper_plane_locality
+    (n : ℕ) [NeZero n]
+    (left right : SU2PositiveInteriorLinks n)
+    (planes : SU2BoundaryPlaneFields n) :
+    su2UpperGaugedCrossingTraceSum n left right
+      (su2BoundaryTemporalPlaneAssemble n planes) =
+    su2UpperPlaneGaugedCrossingTraceSum n left right planes.1 :=
+  su2_upper_gauged_crossing_sum_plane_readback n left right planes
+
+/-- Lower crossing dependence reads only the lower boundary-plane coordinate. -/
+theorem ym_20261003_block_a_lower_plane_locality
+    (n : ℕ) [NeZero n]
+    (left right : SU2PositiveInteriorLinks n)
+    (planes : SU2BoundaryPlaneFields n) :
+    su2LowerGaugedCrossingTraceSum n left right
+      (su2BoundaryTemporalPlaneAssemble n planes) =
+    su2LowerPlaneGaugedCrossingTraceSum n left right planes.2 :=
+  su2_lower_gauged_crossing_sum_plane_readback n left right planes
 
 end RequestProject.YangMills

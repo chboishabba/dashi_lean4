@@ -2,6 +2,7 @@ import Mathlib
 import YangMills.YMClayMaxCut20261002
 import YangMills.LiteralSU2BoundaryGaugeProjectionRP
 import YangMills.LiteralSU2ReflectedPairOSFactorization
+import YangMills.IndependentBoundaryFeatureExponentialRP
 import YangMills.CMP119PolymerReflectionAudit
 import YangMills.CMP119PeriodicPolymerReflectionGeometry
 import YangMills.CMP119PeriodicPolymerSectorSplit
@@ -21,9 +22,11 @@ This file is a status/integration surface only. It distinguishes proved
 compilers from physical/source producers still required to close a block.
 
 * A: the density under boundary-Haar projection is exactly the SAME literal
-  positive-half/reflected-half/crossing-kernel OS factorization. The remaining
-  physical leaf is the upper/lower half-path boundary-Haar projection PSD
-  calculation.
+  positive-half/reflected-half/crossing-kernel OS factorization. Independently
+  adjoining finite boundary variables to a positive half now theorem-bearingly
+  preserves finite-feature exponential RP on the product carrier. The remaining
+  physical leaf is the literal upper/lower half-path feature identification plus
+  the final Fubini/readback equality to the selected projected Wilson kernel.
 * B: finite source polymers live on the actual periodic 4D link-support carrier,
   have an executable + / - / crossing / empty classifier, and sector sums split
   exactly by placement. Negative crossing quadratic forms formally falsify the
@@ -85,6 +88,27 @@ theorem ym_20261003_block_a_reflected_pair_factorization
         (su2LiteralCrossingSecondBoundary
           (su2AssembleReflectedPair n left boundary right)) :=
   literal_su2_reflected_pair_os_factorization n β left boundary right
+
+/-- Analytic Block-A theorem: independent finite boundary averaging preserves feature-exponential RP. -/
+theorem ym_20261003_block_a_independent_boundary_feature_rp
+    {B X I : Type*} [MeasurableSpace B] [MeasurableSpace X]
+    (boundaryHaar : MeasureTheory.Measure B)
+    [MeasureTheory.IsFiniteMeasure boundaryHaar]
+    (positiveHaar : MeasureTheory.Measure X)
+    [MeasureTheory.SFinite positiveHaar]
+    (terms : Finset I) (weight : I → ℝ)
+    (feature : I → B → X → ℝ)
+    (hweight : ∀ i ∈ terms, 0 ≤ weight i)
+    (hMeas : ∀ i ∈ terms, Measurable (Function.uncurry (feature i)))
+    (hBound : ∀ i ∈ terms, ∀ b x, |feature i b x| ≤ 1)
+    (β : ℝ) (hβ : 0 ≤ β)
+    (f : X → ℝ) (hfMeas : Measurable f)
+    (hfInt : MeasureTheory.Integrable f positiveHaar) :
+    0 ≤ independentBoundaryFeatureExponentialQuadratic
+      boundaryHaar positiveHaar terms weight feature β f :=
+  independent_boundary_feature_exponential_rp
+    boundaryHaar positiveHaar terms weight feature
+    hweight hMeas hBound β hβ f hfMeas hfInt
 
 /-- Concrete Block-B placement on the literal periodic 4D link-support carrier. -/
 noncomputable def ym_20261003_block_b_periodic_polymer_placement

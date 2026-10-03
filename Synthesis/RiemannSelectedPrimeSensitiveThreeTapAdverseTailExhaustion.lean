@@ -5,17 +5,19 @@ import Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseNearBudget
 
 The adverse pair carrier is nonnegative and summable.  Consequently the
 residual after a sufficiently large literal `nearOffFinset t R` is arbitrarily
-small.  This is stronger and cleaner than introducing a new absolute Fourier
-tail constant: the required convergence is already owned by the exact
-reflection-pair summability theorem.
+small.  This records the exact convergence supplied by reflection-pair
+summability; no new Fourier tail estimate is required for unrestricted R.
 
-Thus `Bfar` is not an independent zero-distribution hypothesis.  For every
-eta>0 there exists a physical cutoff R with
+For every eta>0 there exists a physical cutoff R with
 
   0 <= threeTapPairAdverseFarAfter eps R < eta.
 
-The substantive one-scale inequality is therefore concentrated in the finite
-RvM core and how its explicit budget compares with the paid threshold.
+Important firewall: the current unconditional arbitrary-endpoint RvM theorem
+used for the finite-core budget requires `5 <= t-R`.  Summability by itself does
+NOT guarantee that an eta-small cutoff can be chosen before this left-endpoint
+threshold is crossed.  The usable one-scale cut therefore still requires one
+RvM-compatible cutoff where the explicit finite-core budget plus the actual
+residual tail beats the paid threshold.
 -/
 
 noncomputable section
@@ -79,8 +81,9 @@ theorem exists_radius_covering_offOrd_finset
   dsimp [R]
   linarith
 
-/-- Summability closes the far adverse tail: for any requested positive error,
-there is a literal physical ordinate cutoff making the residual smaller. -/
+/-- Unrestricted literal tail exhaustion.  No claim is made that the returned
+R also satisfies the positive-left-endpoint condition used by the finite RvM
+producer. -/
 theorem QuarticFourSignedPolePair.exists_threeTapPairAdverseFarAfter_lt
     {t eps eta : ℝ}
     (ht : 200 <= t)
@@ -105,10 +108,6 @@ theorem QuarticFourSignedPolePair.exists_threeTapPairAdverseFarAfter_lt
     exact Summable.sum_le_tsum s
       (fun sigma hsigma =>
         W.threeTapPairAdversePart_nonneg (eps:=eps) (sigma : Zeros)) hf
-  have hnearLe :
-      W.threeTapPairAdverseNearAt eps R
-        <= ∑' sigma, f sigma := by
-    simpa [f] using W.threeTapPairAdverseNearAt_le_tsum ht (eps:=eps) (R:=R)
   have hsNear :
       (∑ sigma ∈ s, f sigma)
         <= W.threeTapPairAdverseNearAt eps R := by
@@ -128,30 +127,15 @@ theorem QuarticFourSignedPolePair.exists_threeTapPairAdverseFarAfter_lt
     change
       (∑' sigma, f sigma) - W.threeTapPairAdverseNearAt eps R < eta
     linarith
-  refine ⟨R,hR,?_,htailLt⟩
-  exact W.threeTapPairAdverseFarAfter_nonneg ht
+  have htail0 := W.threeTapPairAdverseFarAfter_nonneg ht (eps:=eps) (R:=R)
+  refine ⟨R,hR,htail0,?_⟩
+  linarith
 
-/-- The far-tail input in the PASS compiler can therefore always be chosen
-arbitrarily small; only the corresponding finite-core budget changes with R. -/
-theorem QuarticFourSignedPolePair.exists_threeTapResonancePaidCost_neg_of_explicitNear_margin
-    {t eps A C Cmu eta : ℝ}
-    (ht : 200 <= t)
-    (W : QuarticFourSignedPolePair t)
-    (heta : 0 < eta)
-    (hnearProvider :
-      ∀ R : ℝ, 0 < R →
-        W.threeTapPairAdverseNearAt eps R
-          <= W.threeTapAdverseNearExplicitBudget eps A R C Cmu)
-    (hbudget :
-      ∃ R : ℝ, 0 < R ∧
-        W.threeTapPairAdverseFarAfter eps R < eta ∧
-        (1/2 : ℝ) *
-          (W.threeTapAdverseNearExplicitBudget eps A R C Cmu + eta)
-          < W.threeTapAdaptiveLocalExact eps
-              - W.threeTapResonanceCompensation eps) :
-    W.threeTapResonancePaidCost eps < 0 := by
-  obtain ⟨R,hR,hfar,hpaid⟩ := hbudget
-  exact W.threeTapResonancePaidCost_neg_of_explicitNear_and_far
-    ht (hnearProvider R hR) (le_of_lt hfar) hpaid
+/-- A cutoff is compatible with the currently-owned positive-height arbitrary-
+endpoint RvM producer exactly when it is positive and leaves the left endpoint
+at or above 5. -/
+def QuarticFourSignedPolePair.ThreeTapRvMCompatibleCutoff
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (R : ℝ) : Prop :=
+  0 < R ∧ 5 <= t-R
 
 end Synthesis

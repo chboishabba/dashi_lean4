@@ -3,6 +3,7 @@ import YangMills.YMClayMaxCut20261003D3ExtensionClosed
 import YangMills.ProjectiveFinIicBridge
 import YangMills.CountableObservableMarginals
 import YangMills.CountableObservableNormMomentContinuum
+import YangMills.CountableObservableCoordinateMoment
 import YangMills.LiteralSU2PositiveHalfBoundaryIndependence
 import YangMills.LiteralSU2CrossingPositiveIndexCoincidence
 import YangMills.LiteralSU2BoundaryHaarTranslation
@@ -44,16 +45,21 @@ D3:
   finite marginal and prefix consistency is definitional;
 * the canonical finite-dimensional cost is ENNReal.ofReal of the sup norm, with
   compact sublevels automatically;
-* a source-native uniform finite-prefix norm moment therefore yields tightness,
-  one simultaneous subsequence, consistent limits, canonical regular
-  conditional kernels and an actual probability law on ℕ -> ℝ.
+* scalar coordinate first moments imply every finite-prefix norm moment;
+* if the selected coordinates are pointwise cutoff-uniformly bounded, even
+  those scalar moments are automatic under every cutoff probability law;
+* either route yields tightness, one simultaneous subsequence, consistent
+  limits, canonical regular conditional kernels and an actual probability law
+  on ℕ -> ℝ.
 
-The remaining D3 physical theorem is exactly the quantitative source estimate.
-The Agda CMP119 moment lane already has the correct same-measure interface:
-uniform exponential moments imply its polynomial insertion moments, while the
-literal CMP119 exponential-moment producer itself remains explicitly
-conditional.  No generic probability-theory obligation is being counted as
-physical debt here.
+Thus there is no remaining D3 quantitative moment theorem for a bounded selected
+coordinate family.  The physical choice is now sharper: either exhibit a
+bounded countable determining/scaling-relevant observable family, or use the
+literal CMP119 insertion/exponential-moment producer only for coordinates that
+are genuinely unbounded.  The Agda R559 lane already has the correct same-measure
+interface for the latter, while its literal exponential-moment producer remains
+explicitly conditional.  No generic probability-theory obligation is being
+counted as physical debt here.
 -/
 
 open Set MeasureTheory Preorder
@@ -128,6 +134,21 @@ theorem ym_20261003_selected_observable_continuum_prefix
         Measure ((i : Set.Iic n) → ℝ)) :=
   source.globalMeasure_prefix n
 
+/-- Bounded selected coordinates construct the same actual countable continuum law for free. -/
+noncomputable def ym_20261003_bounded_selected_observable_continuum
+    {Ω : Type*} [MeasurableSpace Ω]
+    (source : RealCountableObservableUniformBoundSource Ω) :
+    Measure (ℕ → ℝ) :=
+  source.globalMeasure
+
+instance ym_20261003_bounded_selected_observable_continuum_probability
+    {Ω : Type*} [MeasurableSpace Ω]
+    (source : RealCountableObservableUniformBoundSource Ω) :
+    IsProbabilityMeasure
+      (ym_20261003_bounded_selected_observable_continuum source) := by
+  unfold ym_20261003_bounded_selected_observable_continuum
+  infer_instance
+
 /--
 Exact physical D3 leaf after all generic compactness/extension machinery:
 the producer must live on the SAME selected cutoff law and scalar observable
@@ -138,6 +159,33 @@ def YM20261003D3SelectedPrefixNormMomentProducerExists
     (cutoffLaw : ℕ → ProbabilityMeasure Ω)
     (observable : ℕ → Ω → ℝ) : Prop :=
   ∃ source : RealCountableObservableNormMomentSource Ω,
+    source.cutoffLaw = cutoffLaw ∧
+    source.observable = observable
+
+/--
+For bounded selected coordinates the old quantitative D3 moment leaf is already
+closed: the pointwise bound manufactures the exact same-law norm-moment source.
+-/
+theorem ym_20261003_d3_bounded_source_closes_moment_leaf
+    {Ω : Type*} [MeasurableSpace Ω]
+    (source : RealCountableObservableUniformBoundSource Ω) :
+    YM20261003D3SelectedPrefixNormMomentProducerExists
+      source.cutoffLaw source.observable := by
+  refine ⟨source.toNormMomentSource, ?_, ?_⟩
+  · rfl
+  · rfl
+
+/--
+The genuinely remaining bounded-coordinate physical question: produce the
+chosen same-law bounded observable source.  Whether that family is sufficiently
+determining for the intended continuum Yang--Mills configuration space is a
+separate source/topology theorem and is deliberately not hidden here.
+-/
+def YM20261003D3SelectedUniformBoundProducerExists
+    {Ω : Type*} [MeasurableSpace Ω]
+    (cutoffLaw : ℕ → ProbabilityMeasure Ω)
+    (observable : ℕ → Ω → ℝ) : Prop :=
+  ∃ source : RealCountableObservableUniformBoundSource Ω,
     source.cutoffLaw = cutoffLaw ∧
     source.observable = observable
 

@@ -19,6 +19,7 @@ on:
       - 'Synthesis/MillenniumBSDCMXTOrientationExact.lean'
       - 'Synthesis/MillenniumBSDCMHalfSignActionExact.lean'
       - 'Synthesis/MillenniumBSDCMTorsionTranslationExact.lean'
+      - 'Synthesis/MillenniumBSDCMFiniteE2SignTableExact.lean'
       - 'Synthesis.lean'
       - 'BSDCohomology.lean'
       - 'lakefile.toml'
@@ -62,4 +63,5 @@ jobs:
           lake env lean Synthesis/MillenniumBSDCMXTOrientationExact.lean
           lake env lean Synthesis/MillenniumBSDCMHalfSignActionExact.lean
           lake env lean Synthesis/MillenniumBSDCMTorsionTranslationExact.lean
+          lake env lean Synthesis/MillenniumBSDCMFiniteE2SignTableExact.lean
           lake env lean Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean

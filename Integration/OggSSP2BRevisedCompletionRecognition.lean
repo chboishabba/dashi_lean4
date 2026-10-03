@@ -1,5 +1,6 @@
 import Integration.OggSSP2BM22RuntimeReceipt
 import Integration.OggSSP2BM24xS3DuadPhaseNoGo
+import Integration.OggSSP2BBinaryTetrahedralDefectSource
 import Integration.ThreeC2TateFibreFromGroupConjugacy
 
 /-!
@@ -13,20 +14,25 @@ The finite runtime now says two different things:
   modules with rank(g-I)=4 and fixed dimension 6, so it is not the old
   five-pair Completion10 involution.
 
+The binary-tetrahedral defect meaning has also been separated from the mode
+recognition problem: the independently defined invariant is the 2-adic
+exponent of the centralizer order on order strata 1,2,4,3,6, giving
+(3,3,2,1,1).  What remains is to identify the actual recognized Q10 modes
+with those source strata.
+
 Therefore the correct source target is:
 
 B'  an actual ten-dimensional *subquotient* of the source 2B Tate module;
 C'  a larger sourced action/filtration on that subquotient whose operator is
-    linearly conjugate to the repo-native Completion10 binary flip.
-
-This file states exactly those receipts and proves that the old bare-M22
-candidate cannot satisfy the revised Completion10 operator criterion.
+    linearly conjugate to the repo-native Completion10 binary flip;
+D   a sourced Mode5-to-binary-tetrahedral-order-stratum recognition.
 -/
 
 namespace Integration.OggSSP2BRevisedCompletionRecognition
 
 namespace F := Integration.OggSSP2BFiveByTwoDefectArchitecture
 namespace R := Integration.OggSSP2BM22RuntimeReceipt
+namespace D := Integration.OggSSP2BBinaryTetrahedralDefectSource
 
 abbrev Scalar := ZMod 2
 abbrev ActualTate276 := Fin 276 → Scalar
@@ -82,6 +88,10 @@ structure ActualTateCompletionTenRecognition
   largerActionSourceIdentified : Bool
   sourceProvenance : String
 
+/-- D: once Completion10 is recognized on the actual Q10, its five modes must
+be identified with the independently sourced binary-tetrahedral order strata. -/
+abbrev ActualModeDefectRecognition := D.FiveModeDefectRecognition
+
 /-- The runtime bare-M22 involution does not meet the old five-pair fingerprint
 and therefore cannot by itself inhabit C'. -/
 theorem bare_m22_involution_route_is_killed :
@@ -97,6 +107,16 @@ theorem finite_duad_model_has_ten_factor_multiplicity :
     R.factorMultiplicity .tenA + R.factorMultiplicity .tenB = 10 :=
   R.total_ten_dimensional_factor_multiplicity
 
+/-- The defect profile itself is independently sourced. -/
+theorem sourced_defect_profile_paid :
+    (D.centralizerTwoAdicExponent .identity,
+     D.centralizerTwoAdicExponent .centralMinusOne,
+     D.centralizerTwoAdicExponent .orderFour,
+     D.centralizerTwoAdicExponent .orderThree,
+     D.centralizerTwoAdicExponent .orderSix)
+      = (3,3,2,1,1) :=
+  D.sourced_defect_profile
+
 /-- Status boundary after the max-cut. -/
 structure RevisedFrontier where
   finiteTenFactorsObserved : Bool
@@ -105,17 +125,19 @@ structure RevisedFrontier where
   actualTateTenSubquotientPaid : Bool
   largerCompletionActionPaid : Bool
   sourceDefectInvariantPaid : Bool
+  actualModeToDefectStratumRecognitionPaid : Bool
   downstreamThirtyTraceSplitAvailable : Bool
   downstreamP31And279PromotedSameObject : Bool
 
-/-- This owner deliberately keeps the three hard same-object welds open. -/
+/-- This owner deliberately keeps the hard same-object welds open. -/
 def canonicalRevisedFrontier : RevisedFrontier where
   finiteTenFactorsObserved := true
   tenAAndTenBIdentified := true
   bareM22CompletionKilled := true
   actualTateTenSubquotientPaid := false
   largerCompletionActionPaid := false
-  sourceDefectInvariantPaid := false
+  sourceDefectInvariantPaid := true
+  actualModeToDefectStratumRecognitionPaid := false
   downstreamThirtyTraceSplitAvailable := true
   downstreamP31And279PromotedSameObject := false
 

@@ -1,0 +1,68 @@
+name: Moonshine Round11 Route B
+
+on:
+  pull_request:
+    paths:
+      - "Integration/BishopRound11Machin**"
+      - "Integration/BishopVendored**"
+      - "Integration/MoonshineEisenstein**"
+      - "Integration/MoonshineDelta**"
+      - "scripts/verify_round11_machin_route_b.py"
+      - ".github/workflows/moonshine-round11-route-b.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "Integration/BishopRound11Machin**"
+      - "Integration/BishopVendored**"
+      - "Integration/MoonshineEisenstein**"
+      - "Integration/MoonshineDelta**"
+      - "scripts/verify_round11_machin_route_b.py"
+      - ".github/workflows/moonshine-round11-route-b.yml"
+  workflow_dispatch:
+
+jobs:
+  route-b-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout dashi_lean4
+        uses: actions/checkout@v4
+
+      - name: Checkout content-addressed Agda source lane
+        uses: actions/checkout@v4
+        with:
+          repository: chboishabba/dashi_agda
+          ref: c72ea464663a02333319f2254967c94bd188f5f5
+          path: agda-source
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Setup Lean
+        uses: leanprover/lean-action@v1
+        with:
+          use-github-cache: true
+
+      - name: Verify Agda manifest and generate replay certificate
+        run: |
+          python3 scripts/verify_round11_machin_route_b.py             --agda-root agda-source             --out-json build/round11-machin-replay.json             --out-lean Generated/BishopRound11MachinReplayCertificate.lean
+
+      - name: Kernel-check generated provenance certificate
+        run: lake env lean Generated/BishopRound11MachinReplayCertificate.lean
+
+      - name: Kernel-check focused route-B probe
+        run: lake env lean Integration/BishopRound11MachinReplayProbe.lean
+
+      - name: Print focused route-B axiom audit
+        run: lake env lean Integration/AxiomAuditMoonshineRound11RouteB.lean
+
+      - name: Upload replay receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: round11-machin-route-b-replay
+          path: |
+            build/round11-machin-replay.json
+            Generated/BishopRound11MachinReplayCertificate.lean
+          if-no-files-found: warn

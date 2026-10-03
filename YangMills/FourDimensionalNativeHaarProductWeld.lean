@@ -114,7 +114,7 @@ theorem compact_group_left_invariant_probability_unique
   ext s hs
   have h := MeasureTheory.measure_mul_measure_eq
     μ ν Set.univ s (by simp) (by simp)
-  simpa using h
+  simpa using h.symm
 
 /--
 Normalized Haar on a compact group is also right invariant.  The proof does
@@ -174,8 +174,6 @@ theorem four_dimensional_product_link_haar_left_invariant
           (FourDimensionalGroupLinks G L)) :
         MeasureTheory.Measure (FourDimensionalGroupLinks G L)) := by
   classical
-  -- Expose the nested finite products and push the pointwise multiplication
-  -- through them one coordinate family at a time.
   change
     MeasureTheory.Measure.map
       (fun U x μ => g x μ * U x μ)
@@ -208,9 +206,6 @@ theorem four_dimensional_product_link_haar_left_invariant
 /--
 A compact-group left-invariant probability law on the literal whole-link
 carrier is exactly the repository native whole-link Haar law.
-
-The proof uses compact-space Haar uniqueness plus normalization; no statement
-about reflection or Wilson weights enters.
 -/
 theorem four_dimensional_native_haar_eq_product_haar
     (G : Type*) [Group G] [TopologicalSpace G]

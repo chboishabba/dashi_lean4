@@ -6,9 +6,9 @@ import YangMills.LiteralSU2BoundaryPlaneHaarSplit
 # Translation invariance of the literal SU(2) boundary Haar laws
 
 The boundary-projection proof needs genuine Haar translation, not only
-inversion invariance.  This file transports compact-group right invariance to
-the exact literal unit-quaternion carrier and then lets mathlib's finite product
-Haar instance lift it to the upper and lower boundary-plane fields.
+inversion invariance.  This file transports compact-group left/right invariance
+to the exact literal unit-quaternion carrier and then lets mathlib's finite
+product Haar instances lift it to the upper and lower boundary-plane fields.
 -/
 
 open MeasureTheory
@@ -44,6 +44,40 @@ theorem literal_su2_from_compact_mul
     literalSU2FromCompactQuaternion (q * r) =
       literalSU2FromCompactQuaternion q * literalSU2FromCompactQuaternion r := by
   exact literalSU2QuaternionGroupEquiv.symm.map_mul q r
+
+/-- Exact one-link literal Haar is left-translation invariant. -/
+theorem literal_su2_one_link_haar_mul_left_invariant
+    (g : SU2PlaquetteHolonomy) :
+    Measure.map (fun U : SU2PlaquetteHolonomy => g * U)
+      (((literalSU2OneLinkHaar : ProbabilityMeasure SU2PlaquetteHolonomy) :
+        Measure SU2PlaquetteHolonomy)) =
+      (((literalSU2OneLinkHaar : ProbabilityMeasure SU2PlaquetteHolonomy) :
+        Measure SU2PlaquetteHolonomy) := by
+  let μ : Measure SU2CompactQuaternion :=
+    ((compactGroupNativeHaar SU2CompactQuaternion :
+      ProbabilityMeasure SU2CompactQuaternion) : Measure SU2CompactQuaternion)
+  change Measure.map (fun U : SU2PlaquetteHolonomy => g * U)
+      (Measure.map literalSU2FromCompactQuaternion μ) =
+    Measure.map literalSU2FromCompactQuaternion μ
+  rw [Measure.map_map]
+  · rw [show
+      (fun U : SU2PlaquetteHolonomy => g * U) ∘ literalSU2FromCompactQuaternion =
+        literalSU2FromCompactQuaternion ∘
+          (fun q : SU2CompactQuaternion => literalSU2ToCompactQuaternion g * q) by
+      funext q
+      simp [Function.comp_def, literal_su2_from_compact_mul]]
+    rw [← Measure.map_map]
+    · rw [compact_group_native_haar_left_invariant SU2CompactQuaternion]
+    · exact literal_su2_from_compact_measurable.aemeasurable
+    · fun_prop
+  · fun_prop
+  · exact literal_su2_from_compact_measurable.aemeasurable
+
+instance literalSU2OneLinkHaarIsMulLeftInvariant :
+    Measure.IsMulLeftInvariant
+      (((literalSU2OneLinkHaar : ProbabilityMeasure SU2PlaquetteHolonomy) :
+        Measure SU2PlaquetteHolonomy)) where
+  map_mul_left_eq_self := literal_su2_one_link_haar_mul_left_invariant
 
 /-- Exact one-link literal Haar is right-translation invariant. -/
 theorem literal_su2_one_link_haar_mul_right_invariant
@@ -81,6 +115,30 @@ instance literalSU2OneLinkHaarIsMulRightInvariant :
       (((literalSU2OneLinkHaar : ProbabilityMeasure SU2PlaquetteHolonomy) :
         Measure SU2PlaquetteHolonomy)) where
   map_mul_right_eq_self := literal_su2_one_link_haar_mul_right_invariant
+
+/-- Upper boundary-plane product Haar is invariant under pointwise left translation. -/
+theorem literal_su2_upper_boundary_haar_mul_left_invariant
+    (n : ℕ) [NeZero n]
+    (g : SU2UpperBoundaryTemporalLinks n) :
+    Measure.map
+      (fun b : SU2UpperBoundaryTemporalLinks n => fun p => g p * b p)
+      (literalSU2UpperBoundaryTemporalHaar n) =
+      literalSU2UpperBoundaryTemporalHaar n := by
+  simpa [literalSU2UpperBoundaryTemporalHaar] using
+    (MeasureTheory.map_mul_left_eq_self
+      (literalSU2UpperBoundaryTemporalHaar n) g)
+
+/-- Lower boundary-plane product Haar is invariant under pointwise left translation. -/
+theorem literal_su2_lower_boundary_haar_mul_left_invariant
+    (n : ℕ) [NeZero n]
+    (g : SU2LowerBoundaryTemporalLinks n) :
+    Measure.map
+      (fun b : SU2LowerBoundaryTemporalLinks n => fun p => g p * b p)
+      (literalSU2LowerBoundaryTemporalHaar n) =
+      literalSU2LowerBoundaryTemporalHaar n := by
+  simpa [literalSU2LowerBoundaryTemporalHaar] using
+    (MeasureTheory.map_mul_left_eq_self
+      (literalSU2LowerBoundaryTemporalHaar n) g)
 
 /-- Upper boundary-plane product Haar is invariant under pointwise right translation. -/
 theorem literal_su2_upper_boundary_haar_mul_right_invariant

@@ -68,6 +68,88 @@ def CompactGroupNormalizedHaarLeftInvariant
         MeasureTheory.Measure G))
 
 /--
+The first one-link Haar leaf is unconditional: normalizing a nonzero left Haar
+measure only rescales it, so left-translation invariance survives exactly.
+-/
+theorem compact_group_native_haar_left_invariant
+    (G : Type*) [Group G] [TopologicalSpace G]
+    [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
+    [MeasurableSpace G] [BorelSpace G] :
+    CompactGroupNormalizedHaarLeftInvariant G := by
+  let μ : MeasureTheory.Measure G := MeasureTheory.Measure.haar
+  let finite : MeasureTheory.FiniteMeasure G := ⟨μ, by infer_instance⟩
+  have hμ : μ ≠ 0 := NeZero.ne μ
+  have hfinite : finite ≠ 0 := by
+    intro h
+    apply hμ
+    have h' := congrArg
+      (fun ν : MeasureTheory.FiniteMeasure G =>
+        (ν : MeasureTheory.Measure G)) h
+    simpa [finite, μ] using h'
+  intro g
+  change MeasureTheory.Measure.map (fun x : G => g * x)
+      ((finite.normalize : MeasureTheory.ProbabilityMeasure G) :
+        MeasureTheory.Measure G)
+    =
+      ((finite.normalize : MeasureTheory.ProbabilityMeasure G) :
+        MeasureTheory.Measure G)
+  rw [finite.toMeasure_normalize_eq_of_nonzero hfinite]
+  rw [MeasureTheory.Measure.map_smul,
+    MeasureTheory.map_mul_left_eq_self]
+  exact (measurable_const.mul measurable_id).aemeasurable
+
+/--
+Probability normalization removes the scalar ambiguity between finite
+left-invariant measures.  This is the compact-group uniqueness form needed to
+turn right translates of normalized Haar back into the same probability law.
+-/
+theorem compact_group_left_invariant_probability_unique
+    {G : Type*} [Group G] [MeasurableSpace G] [MeasurableMul G]
+    (μ ν : MeasureTheory.Measure G)
+    [MeasureTheory.IsProbabilityMeasure μ]
+    [MeasureTheory.IsProbabilityMeasure ν]
+    [MeasureTheory.Measure.IsMulLeftInvariant μ]
+    [MeasureTheory.Measure.IsMulLeftInvariant ν] :
+    μ = ν := by
+  ext s hs
+  have h := MeasureTheory.measure_mul_measure_eq
+    μ ν Set.univ s (by simp) (by simp)
+  simpa using h
+
+/--
+Normalized Haar on a compact group is also right invariant.  The proof does
+not assume commutativity: a right translate of a left-invariant probability
+measure is again left invariant, and probability-normalized left Haar is
+unique.
+-/
+theorem compact_group_native_haar_right_invariant
+    (G : Type*) [Group G] [TopologicalSpace G]
+    [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
+    [MeasurableSpace G] [BorelSpace G] :
+    MeasureTheory.Measure.IsMulRightInvariant
+      (((compactGroupNativeHaar G : MeasureTheory.ProbabilityMeasure G) :
+        MeasureTheory.Measure G)) := by
+  let μ : MeasureTheory.Measure G :=
+    ((compactGroupNativeHaar G : MeasureTheory.ProbabilityMeasure G) :
+      MeasureTheory.Measure G)
+  letI : MeasureTheory.Measure.IsMulLeftInvariant μ :=
+    ⟨compact_group_native_haar_left_invariant G⟩
+  constructor
+  intro g
+  let ν : MeasureTheory.Measure G :=
+    MeasureTheory.Measure.map (fun x : G => x * g) μ
+  letI : MeasureTheory.IsProbabilityMeasure μ := by
+    dsimp [μ]
+    infer_instance
+  letI : MeasureTheory.IsProbabilityMeasure ν := by
+    dsimp [ν]
+    infer_instance
+  letI : MeasureTheory.Measure.IsMulLeftInvariant ν := by
+    dsimp [ν]
+    infer_instance
+  exact compact_group_left_invariant_probability_unique ν μ
+
+/--
 Finite nested products preserve coordinatewise left invariance.
 
 This theorem contains no Yang--Mills dynamics; it is the exact measure-theory
@@ -169,5 +251,23 @@ theorem four_dimensional_native_haar_eq_product_haar
     simpa [ν, μ] using hmass
   rw [hscale, hscalar, one_smul]
   rfl
+
+/-- A1 with its one-link Haar premise discharged. -/
+theorem four_dimensional_native_haar_eq_product_haar_closed
+    (G : Type*) [Group G] [TopologicalSpace G]
+    [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
+    [MeasurableSpace G] [BorelSpace G]
+    (L : ℕ) [NeZero L] :
+    (((fourDimensionalNativeLinkHaar G L :
+      MeasureTheory.ProbabilityMeasure
+        (FourDimensionalGroupLinks G L)) :
+      MeasureTheory.Measure (FourDimensionalGroupLinks G L)))
+    =
+    (((fourDimensionalProductLinkHaar G L :
+      MeasureTheory.ProbabilityMeasure
+        (FourDimensionalGroupLinks G L)) :
+      MeasureTheory.Measure (FourDimensionalGroupLinks G L)) :=
+  four_dimensional_native_haar_eq_product_haar
+    G L (compact_group_native_haar_left_invariant G)
 
 end RequestProject.YangMills

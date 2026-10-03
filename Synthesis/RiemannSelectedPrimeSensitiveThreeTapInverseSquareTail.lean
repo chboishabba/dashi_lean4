@@ -33,7 +33,8 @@ open scoped Real BigOperators
 open Zeta23Bridge.OffOrdinateCutoffCarrier
 
 /-- Positive inverse-square zero-count tail on the exact complement of the
-literal finite near window. -/
+literal finite near window.  Since `nearOffFinset` uses the strict condition
+`|gamma-t| < R`, this complement includes the boundary `|gamma-t| = R`. -/
 def threeTapInverseSquareZeroTailAfter
     (t R : ℝ) : ℝ :=
   ∑' sigma : {sigma : ((SameOrd t)ᶜ : Set Zeros) //
@@ -79,7 +80,7 @@ object once uniform curvature is paid. -/
 theorem QuarticFourSignedPolePair.threeTapPairAdverseFarAfter_le_curvature_mul_inverseSquareTail
     {t eps R C : ℝ}
     (ht : 200 <= t)
-    (hR : 0 <= R)
+    (hR : 0 < R)
     (W : QuarticFourSignedPolePair t)
     (hcurv : W.ThreeTapUniformCurvatureBound eps C)
     (hinv : Summable
@@ -109,19 +110,20 @@ theorem QuarticFourSignedPolePair.threeTapPairAdverseFarAfter_le_curvature_mul_i
   have hpoint : ∀ sigma, f sigma <= C * g sigma := by
     intro sigma
     have hnot := sigma.property
-    have hmemnot :
-        ¬ |((((sigma : ((SameOrd t)ᶜ : Set Zeros)) : Zeros) : ℂ).im - t)| <= R := by
-      intro hle
+    have hnotlt :
+        ¬ |((((sigma : ((SameOrd t)ᶜ : Set Zeros)) : Zeros) : ℂ).im - t)| < R := by
+      intro hlt
       exact hnot ((mem_nearOffFinset_iff t R
-        (sigma : ((SameOrd t)ᶜ : Set Zeros))).2 hle)
+        (sigma : ((SameOrd t)ᶜ : Set Zeros))).2 hlt)
     have hdist :
-        R < |((((sigma : ((SameOrd t)ᶜ : Set Zeros)) : Zeros) : ℂ).im - t)| :=
-      lt_of_not_ge hmemnot
+        R <= |((((sigma : ((SameOrd t)ᶜ : Set Zeros)) : Zeros) : ℂ).im - t)| :=
+      le_of_not_gt hnotlt
+    have hdistPos :
+        0 < |((((sigma : ((SameOrd t)ᶜ : Set Zeros)) : Zeros) : ℂ).im - t)| :=
+      lt_of_lt_of_le hR hdist
     have hord :
         ((((sigma : ((SameOrd t)ᶜ : Set Zeros)) : Zeros) : ℂ).im - t) ≠ 0 := by
-      intro hz
-      rw [hz, abs_zero] at hdist
-      linarith
+      exact abs_pos.mp hdistPos
     have hpair := W.threeTapPairAdversePart_le_uniformInverseSquare
       ht hcurv ((sigma : ((SameOrd t)ᶜ : Set Zeros)) : Zeros) hord
     dsimp [f,g]

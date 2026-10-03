@@ -38,8 +38,11 @@ jobs:
           lake build NSBControl.Rational345Round71PhysicalCarrierTest
           lake build NSBControl.Rational345Round71RealityFieldTest
           lake build NSBControl.Rational345Round71TransverseFieldTest
+          lake build NSBControl.Rational345Round71ZeroModeTest
           lake build NSBControl.Rational345BQFieldBoundTest
           lake build NSBControl.Rational345BPClosedTest
           lake build NSBControl.Rational345R830DecisionCompilerTest
           lake build NSBControl.Rational345R823RealHelicalCoreTest
+          lake build NSBControl.Rational345R823RealInnerFoldTest
+          lake build NSBControl.Rational345R823Cutoff4SeparationTest
           lake build NSBControl.Rational345R831ReserveDecisionTest

@@ -18,6 +18,8 @@ on:
       - "Integration/OggSSP2BPair24SameObjectWeld.lean"
       - "Integration/ThreeC2TateFibreCycle.lean"
       - "Integration/C2TateIntertwinerTransport.lean"
+      - "Integration/ThreeCycleTraceSplit.lean"
+      - "Integration/ThreeC2TateFibreTraceSplit.lean"
       - "Integration/OggSSP2BM24xS3DuadPhaseNoGo.lean"
       - "Integration/OggSSP2BCo1TenDimensionalNoGo.lean"
       - "Integration/OggSSP2BFiveByTwoDefectArchitecture.lean"
@@ -31,6 +33,9 @@ on:
   pull_request:
     paths:
       - "Integration/OggSSP2B*.lean"
+      - "Integration/ThreeCycleTraceSplit.lean"
+      - "Integration/ThreeC2TateFibre*.lean"
+      - "Integration/C2TateIntertwinerTransport.lean"
       - "Integration/Selected3B*.lean"
       - "Integration/SignedTwoPrimePhaseObstruction.lean"
       - ".github/workflows/monster-source-integral.yml"
@@ -67,6 +72,8 @@ jobs:
           lake env lean Integration/OggSSP2BPair24SameObjectWeld.lean
           lake env lean Integration/ThreeC2TateFibreCycle.lean
           lake env lean Integration/C2TateIntertwinerTransport.lean
+          lake env lean Integration/ThreeCycleTraceSplit.lean
+          lake env lean Integration/ThreeC2TateFibreTraceSplit.lean
           lake env lean Integration/OggSSP2BM24xS3DuadPhaseNoGo.lean
           lake env lean Integration/OggSSP2BActualSourceParityNormalizationAudit.lean
       - name: Check actual 3B fingerprint and projection

@@ -29,6 +29,9 @@ on:
       - 'Synthesis/MillenniumBSDCMGeometricKummerSquareClassEvaluationExact.lean'
       - 'Synthesis/MillenniumBSDCMGlobalKummerOrdinaryExact.lean'
       - 'Synthesis/MillenniumBSDCMGlobalKummerBoundaryCompilerExact.lean'
+      - 'Synthesis/MillenniumBSDCMQuarterPointTransportExact.lean'
+      - 'Synthesis/MillenniumBSDCMQuarterPointBoundaryExact.lean'
+      - 'Synthesis/MillenniumBSDCMGlobalToPadicKummerCompatibilityExact.lean'
       - 'Synthesis.lean'
       - 'BSDCohomology.lean'
       - 'lakefile.toml'
@@ -82,4 +85,7 @@ jobs:
           lake env lean Synthesis/MillenniumBSDCMGeometricKummerSquareClassEvaluationExact.lean
           lake env lean Synthesis/MillenniumBSDCMGlobalKummerOrdinaryExact.lean
           lake env lean Synthesis/MillenniumBSDCMGlobalKummerBoundaryCompilerExact.lean
+          lake env lean Synthesis/MillenniumBSDCMQuarterPointTransportExact.lean
+          lake env lean Synthesis/MillenniumBSDCMQuarterPointBoundaryExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGlobalToPadicKummerCompatibilityExact.lean
           lake env lean Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean

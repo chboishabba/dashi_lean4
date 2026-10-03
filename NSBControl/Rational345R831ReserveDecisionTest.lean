@@ -46,5 +46,12 @@ example
     ∃ reserve demand : ℝ, ¬ demand ≤ reserve := by
   exact r830_refutes_r823_reserve_of_r853 weld
 
+/-- Max-cut regression: R831 must only require the R823 identity on the
+physical state domain actually traversed by the R830 witness. -/
+example
+    (weld : R823PhysicalPointwiseWeld) :
+    ∃ reserve demand : ℝ, ¬ demand ≤ reserve := by
+  exact r830_physical_segment_refutes_r823_reserve weld
+
 end Rational345R831ReserveDecisionTest
 end NSBControl

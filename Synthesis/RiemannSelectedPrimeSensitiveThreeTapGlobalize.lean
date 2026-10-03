@@ -19,7 +19,8 @@ analytic input.
 noncomputable section
 namespace Synthesis
 
-open scoped Real
+open Set
+open scoped Real BigOperators
 
 /-- Positivity of the transformed terminal profile for every admissible
 positive off-line displacement. -/

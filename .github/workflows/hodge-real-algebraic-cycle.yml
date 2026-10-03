@@ -10,6 +10,7 @@ on:
       - 'Synthesis/MillenniumHodgeActualCycleCorrespondenceActionExact.lean'
       - 'Synthesis/MillenniumHodgeRelativeProductSwapExact.lean'
       - 'Synthesis/MillenniumHodgeRelativeRulingEmbeddingsExact.lean'
+      - 'Synthesis/MillenniumHodgeCycleIsoPushforwardExact.lean'
       - 'Synthesis.lean'
       - 'lean-toolchain'
       - 'lakefile.toml'
@@ -36,3 +37,4 @@ jobs:
           lake env lean Synthesis/MillenniumHodgeActualCycleCorrespondenceActionExact.lean
           lake env lean Synthesis/MillenniumHodgeRelativeProductSwapExact.lean
           lake env lean Synthesis/MillenniumHodgeRelativeRulingEmbeddingsExact.lean
+          lake env lean Synthesis/MillenniumHodgeCycleIsoPushforwardExact.lean

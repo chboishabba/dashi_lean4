@@ -73,14 +73,16 @@ theorem taperMass_detectorThreeTap_le
         · exact abs_add _ _
         · rw [abs_mul]
       _ = _ := by rw [abs_mul]
-  unfold taperMass
+  have hdetc : Continuous (detectorThreeTap g eps L) := by
+    unfold detectorThreeTap
+    fun_prop
   have hdet : Integrable (fun u : ℝ => |detectorThreeTap g eps L u|) :=
-    (detectorThreeTap_contDiff hg.contDiff eps L).continuous.abs
-      |>.integrable_of_hasCompactSupport
-        (detectorThreeTap_compact hgc eps L).abs
+    hdetc.abs.integrable_of_hasCompactSupport
+      (detectorThreeTap_compact hgc eps L).abs
   have hrhs : Integrable (fun u : ℝ =>
       |g u| + |eps|*|g (u-L)| + |eps|*|g (u+L)|) :=
     (h0.add (hm.const_mul |eps|)).add (hp.const_mul |eps|)
+  unfold taperMass
   have hi := integral_mono hdet hrhs hmaj
   rw [show
       (∫ u : ℝ, |g u| + |eps|*|g (u-L)| + |eps|*|g (u+L)|)
@@ -170,7 +172,6 @@ theorem taperMass_genericProjectivePhysicalProfile_one_le
     genericProjectivePhysicalProfile_compact hgc 1
   have hgi : Integrable (fun u : ℝ => |g u|) :=
     hg.abs.integrable_of_hasCompactSupport hgc.abs
-  unfold taperMass
   have hmaj : ∀ u : ℝ,
       |genericProjectivePhysicalProfile g 1 u|
         <= 8 * (taperMass g) * |g u| := by
@@ -180,6 +181,7 @@ theorem taperMass_genericProjectivePhysicalProfile_one_le
     have hb := abs_twoRadiusBracket_one_le_two_taperMass hg hgc u
     norm_num
     nlinarith [abs_nonneg (g u)]
+  unfold taperMass
   have hi := integral_mono
     hP.abs.integrable_of_hasCompactSupport hPc.abs
     (hgi.const_mul (8 * taperMass g)) hmaj
@@ -200,6 +202,7 @@ theorem QuarticFourSignedPolePair.threeTapNormalizedProjectiveHalf_absMass_le
   have htap := taperMass_detectorThreeTap_le hg hgc eps
     (threeTapNormalizedShift t (Real.log 2))
   have hfac : 0 <= 1 + 2*|eps| := by positivity
+  have hbound0 : 0 <= (1 + 2*|eps|) * B := mul_nonneg hfac hB0
   have hmass :
       taperMass (W.threeTapNormalizedHalf eps)
         <= (1 + 2*|eps|) * B := by
@@ -208,18 +211,23 @@ theorem QuarticFourSignedPolePair.threeTapNormalizedProjectiveHalf_absMass_le
   have hmass0 : 0 <= taperMass (W.threeTapNormalizedHalf eps) := by
     unfold taperMass
     positivity
-  have hproj := taperMass_genericProjectivePhysicalProfile_one_le
-    (detectorThreeTap_contDiff hg.contDiff eps
-      (threeTapNormalizedShift t (Real.log 2))).continuous
-    (detectorThreeTap_compact hgc eps
-      (threeTapNormalizedShift t (Real.log 2)))
+  have hdetc : Continuous (W.threeTapNormalizedHalf eps) := by
+    unfold QuarticFourSignedPolePair.threeTapNormalizedHalf detectorThreeTap
+    fun_prop
+  have hdetk : HasCompactSupport (W.threeTapNormalizedHalf eps) := by
+    unfold QuarticFourSignedPolePair.threeTapNormalizedHalf
+    exact detectorThreeTap_compact hgc eps
+      (threeTapNormalizedShift t (Real.log 2))
+  have hproj := taperMass_genericProjectivePhysicalProfile_one_le hdetc hdetk
+  have hsquare :
+      (taperMass (W.threeTapNormalizedHalf eps))^2
+        <= ((1 + 2*|eps|) * B)^2 := by
+    have hmul := mul_le_mul hmass hmass hmass0 hbound0
+    simpa [pow_two] using hmul
   unfold QuarticFourSignedPolePair.threeTapNormalizedProjectiveHalf
     compactProfileAbsMoment at hproj ⊢
   simp only [pow_zero, mul_one]
-  exact hproj.trans (by
-    have hsquare := sq_le_sq₀ hmass0
-      (mul_nonneg hfac hB0) hmass
-    nlinarith)
+  exact hproj.trans (mul_le_mul_of_nonneg_left hsquare (by norm_num))
 
 /-- The second endpoint channel obeys the same same-object bound. -/
 theorem QuarticFourSignedPolePair.threeTapNormalizedProjectiveTwo_absMass_le
@@ -235,6 +243,7 @@ theorem QuarticFourSignedPolePair.threeTapNormalizedProjectiveTwo_absMass_le
   have htap := taperMass_detectorThreeTap_le hg hgc eps
     (threeTapNormalizedShift t (Real.log 2))
   have hfac : 0 <= 1 + 2*|eps| := by positivity
+  have hbound0 : 0 <= (1 + 2*|eps|) * B := mul_nonneg hfac hB0
   have hmass :
       taperMass (W.threeTapNormalizedTwo eps)
         <= (1 + 2*|eps|) * B := by
@@ -243,18 +252,23 @@ theorem QuarticFourSignedPolePair.threeTapNormalizedProjectiveTwo_absMass_le
   have hmass0 : 0 <= taperMass (W.threeTapNormalizedTwo eps) := by
     unfold taperMass
     positivity
-  have hproj := taperMass_genericProjectivePhysicalProfile_one_le
-    (detectorThreeTap_contDiff hg.contDiff eps
-      (threeTapNormalizedShift t (Real.log 2))).continuous
-    (detectorThreeTap_compact hgc eps
-      (threeTapNormalizedShift t (Real.log 2)))
+  have hdetc : Continuous (W.threeTapNormalizedTwo eps) := by
+    unfold QuarticFourSignedPolePair.threeTapNormalizedTwo detectorThreeTap
+    fun_prop
+  have hdetk : HasCompactSupport (W.threeTapNormalizedTwo eps) := by
+    unfold QuarticFourSignedPolePair.threeTapNormalizedTwo
+    exact detectorThreeTap_compact hgc eps
+      (threeTapNormalizedShift t (Real.log 2))
+  have hproj := taperMass_genericProjectivePhysicalProfile_one_le hdetc hdetk
+  have hsquare :
+      (taperMass (W.threeTapNormalizedTwo eps))^2
+        <= ((1 + 2*|eps|) * B)^2 := by
+    have hmul := mul_le_mul hmass hmass hmass0 hbound0
+    simpa [pow_two] using hmul
   unfold QuarticFourSignedPolePair.threeTapNormalizedProjectiveTwo
     compactProfileAbsMoment at hproj ⊢
   simp only [pow_zero, mul_one]
-  exact hproj.trans (by
-    have hsquare := sq_le_sq₀ hmass0
-      (mul_nonneg hfac hB0) hmass
-    nlinarith)
+  exact hproj.trans (mul_le_mul_of_nonneg_left hsquare (by norm_num))
 
 /-- Canonical M0 is explicitly controlled by source-profile L1 and pole bounds.
 This is uniform in the translation distance and therefore in t. -/
@@ -279,49 +293,74 @@ theorem QuarticFourSignedPolePair.threeTapCanonicalM0_le_of_sourceMass_poleBound
       (W.threeTapNormalizedProjectiveTwo eps) 0 := by
     unfold compactProfileAbsMoment
     positivity
+  have hHalfC : Continuous (W.threeTapNormalizedProjectiveHalf eps) := by
+    unfold QuarticFourSignedPolePair.threeTapNormalizedProjectiveHalf
+    apply genericProjectivePhysicalProfile_continuous
+    unfold QuarticFourSignedPolePair.threeTapNormalizedHalf detectorThreeTap
+    fun_prop
+  have hTwoC : Continuous (W.threeTapNormalizedProjectiveTwo eps) := by
+    unfold QuarticFourSignedPolePair.threeTapNormalizedProjectiveTwo
+    apply genericProjectivePhysicalProfile_continuous
+    unfold QuarticFourSignedPolePair.threeTapNormalizedTwo detectorThreeTap
+    fun_prop
+  have hHalfK : HasCompactSupport (W.threeTapNormalizedProjectiveHalf eps) := by
+    unfold QuarticFourSignedPolePair.threeTapNormalizedProjectiveHalf
+      QuarticFourSignedPolePair.threeTapNormalizedHalf
+    exact genericProjectivePhysicalProfile_compact
+      (detectorThreeTap_compact
+        (quarticFourWindowProfile_compact W.Rpos) eps
+        (threeTapNormalizedShift t (Real.log 2))) 1
+  have hTwoK : HasCompactSupport (W.threeTapNormalizedProjectiveTwo eps) := by
+    unfold QuarticFourSignedPolePair.threeTapNormalizedProjectiveTwo
+      QuarticFourSignedPolePair.threeTapNormalizedTwo
+    exact genericProjectivePhysicalProfile_compact
+      (detectorThreeTap_compact
+        (quarticFourWindowProfile_compact W.Rpos) eps
+        (threeTapNormalizedShift t (Real.log 2))) 1
+  have hSignedC : Continuous (W.threeTapNormalizedSignedProjectiveProfile eps) := by
+    unfold QuarticFourSignedPolePair.threeTapNormalizedSignedProjectiveProfile
+    fun_prop
+  have hSignedK : HasCompactSupport (W.threeTapNormalizedSignedProjectiveProfile eps) := by
+    unfold QuarticFourSignedPolePair.threeTapNormalizedSignedProjectiveProfile
+    exact (hHalfK.mul_left).add hTwoK.mul_left
+  have hHi : Integrable (fun v : ℝ => |W.threeTapNormalizedProjectiveHalf eps v|) :=
+    hHalfC.abs.integrable_of_hasCompactSupport hHalfK.abs
+  have hTi : Integrable (fun v : ℝ => |W.threeTapNormalizedProjectiveTwo eps v|) :=
+    hTwoC.abs.integrable_of_hasCompactSupport hTwoK.abs
   have hSigned :
       W.threeTapNormalizedProjectiveAbsMass eps
         <= 16 * P * ((1 + 2*|eps|) * B)^2 := by
     unfold QuarticFourSignedPolePair.threeTapNormalizedProjectiveAbsMass
       compactProfileAbsMoment
-      QuarticFourSignedPolePair.threeTapNormalizedSignedProjectiveProfile
-    have hcontH := W.threeTapNormalizedProjective_continuous (eps:=eps)
-    have hcompH := W.threeTapNormalizedProjective_compact (eps:=eps)
+    simp only [pow_zero, mul_one]
     have hpoint : ∀ v : ℝ,
-        |W.poleTwo * W.threeTapNormalizedProjectiveHalf eps v
-          + (-W.poleHalf) * W.threeTapNormalizedProjectiveTwo eps v|
+        |W.threeTapNormalizedSignedProjectiveProfile eps v|
         <= |W.poleTwo| * |W.threeTapNormalizedProjectiveHalf eps v|
           + |W.poleHalf| * |W.threeTapNormalizedProjectiveTwo eps v| := by
       intro v
+      unfold QuarticFourSignedPolePair.threeTapNormalizedSignedProjectiveProfile
       calc
-        |_|
+        |W.poleTwo * W.threeTapNormalizedProjectiveHalf eps v
+          + (-W.poleHalf) * W.threeTapNormalizedProjectiveTwo eps v|
           <= |W.poleTwo * W.threeTapNormalizedProjectiveHalf eps v|
             + |(-W.poleHalf) * W.threeTapNormalizedProjectiveTwo eps v| := abs_add _ _
         _ = _ := by simp [abs_mul]
     have hi := integral_mono
-      hcontH.abs.integrable_of_hasCompactSupport hcompH.abs
-      (((W.threeTapNormalizedProjectiveHalf_continuous (eps:=eps)).abs
-          .integrable_of_hasCompactSupport
-            (W.threeTapNormalizedProjectiveHalf_compact (eps:=eps)).abs
-          ).const_mul |W.poleTwo|
-        |>.add
-          (((W.threeTapNormalizedProjectiveTwo_continuous (eps:=eps)).abs
-            .integrable_of_hasCompactSupport
-              (W.threeTapNormalizedProjectiveTwo_compact (eps:=eps)).abs
-            ).const_mul |W.poleHalf|))
+      hSignedC.abs.integrable_of_hasCompactSupport hSignedK.abs
+      ((hHi.const_mul |W.poleTwo|).add (hTi.const_mul |W.poleHalf|))
       hpoint
-    rw [integral_add,
+    rw [integral_add (hHi.const_mul |W.poleTwo|) (hTi.const_mul |W.poleHalf|),
         integral_const_mul, integral_const_mul] at hi
-    · simp only [pow_zero, mul_one] at hH hT
-      have h1 := mul_le_mul hpTwo hH hprojH hP0
-      have h2 := mul_le_mul hpHalf hT hprojT hP0
-      nlinarith
-    · exact ((W.threeTapNormalizedProjectiveHalf_continuous (eps:=eps)).abs
-        .integrable_of_hasCompactSupport
-          (W.threeTapNormalizedProjectiveHalf_compact (eps:=eps)).abs).const_mul _
-    · exact ((W.threeTapNormalizedProjectiveTwo_continuous (eps:=eps)).abs
-        .integrable_of_hasCompactSupport
-          (W.threeTapNormalizedProjectiveTwo_compact (eps:=eps)).abs).const_mul _
+    simp only [pow_zero, mul_one] at hH hT
+    have h1 := mul_le_mul hpTwo hH hprojH hP0
+    have h2 := mul_le_mul hpHalf hT hprojT hP0
+    calc
+      ∫ v : ℝ, |W.threeTapNormalizedSignedProjectiveProfile eps v|
+        <= |W.poleTwo| * (∫ v : ℝ, |W.threeTapNormalizedProjectiveHalf eps v|)
+          + |W.poleHalf| * (∫ v : ℝ, |W.threeTapNormalizedProjectiveTwo eps v|) := hi
+      _ <= P * (8 * ((1 + 2*|eps|) * B)^2)
+          + P * (8 * ((1 + 2*|eps|) * B)^2) := add_le_add h1 h2
+      _ = 16 * P * ((1 + 2*|eps|) * B)^2 := by ring
   unfold QuarticFourSignedPolePair.threeTapCanonicalM0
   exact mul_le_mul_of_nonneg_left hSigned (Real.cosh_pos _).le
 

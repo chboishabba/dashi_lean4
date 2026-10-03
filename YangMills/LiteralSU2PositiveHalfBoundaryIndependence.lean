@@ -47,10 +47,10 @@ private theorem positive_second_direction_spatial
   simp only [su2FourDimensionalPlaquettes,
     Finset.mem_filter, Finset.mem_univ, true_and] at hp
   intro hSecond
-  have hzero : su2TimeDirection.val = 0 := rfl
-  have hnonneg : 0 ≤ p.2.1.val := Nat.zero_le _
   rw [hSecond] at hp
-  simpa [su2TimeDirection] using hp
+  have hImpossible : p.2.1.val < 0 := by
+    simpa [su2TimeDirection] using hp
+  omega
 
 /-- All four links in a positive noncrossing plaquette are positive-interior links. -/
 theorem su2_positive_noncrossing_link_sector_geometry

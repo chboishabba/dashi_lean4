@@ -1,7 +1,6 @@
-import Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseAsymptoticDecision
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapMaxCutScalarSplit
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapGlobalize
 import Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
-import Synthesis.RiemannSelectedSignedFifthCorrelationCut
 
 /-!
 # RH max-cut frontier after analytic compression
@@ -25,18 +24,19 @@ One-scale resonance has now been compressed past the abstract reflection tail:
   normalized mass `threeTapCanonicalM0`;
 * the remaining finite coefficient is source-visible at log-over-t scale in
   `threeTapHalfHeightLogCoefficient`;
-* the final producer-facing PASS surface is exactly negativity of
-  `ThreeTapAdverseHalfHeightAsymptoticScalar`, fed only by same-object upper
-  bounds for M0 and the actual far tail plus a lower bound for
-  LocalExact-Compensation.
+* the final producer-facing PASS surface can be read either as negativity of
+  `ThreeTapAdverseHalfHeightAsymptoticScalar` or as the split same-object
+  inequalities finite-core <= H, actual far tail < H, and
+  H <= LocalExact-Compensation.
 
 After a one-scale PASS, only compact mid-strip positivity remains before the
 full 0<a<=1/2 displacement statement.  A strict one-scale FAIL exposes the
 already-built independent log2/log3 two-scale source.
 
-The independent signed-fifth route is likewise exposed as positive RvM
-correlation credit minus negative correlation debt.  No RH theorem and no
-unpaid analytic sign are asserted here.
+The independent signed-fifth route is now also exposed by the single finite
+scalar `signedFifthCorrelationGapAt = Credit - Debt + OuterBudget - 3 eps`;
+eventual nonnegativity is exactly the existing signed-fifth interior target.
+No RH theorem and no unpaid analytic sign are asserted here.
 -/
 
 noncomputable section

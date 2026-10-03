@@ -43,6 +43,12 @@ One-scale resonance has now been compressed past the abstract reflection tail:
   unconditional all-real local zero count now gives unit-window inverse-square
   bounds on both sides of `t`, including negative ordinates, without changing
   the `Ncount` carrier or invoking zero reflection;
+* dyadic half-height shell geometry is source-written and its numerical series
+  is summed exactly:
+    `sum_k ((log t + 1) + k) 2^-k / t = (2 log t + 4)/t`;
+* `ThreeTapInverseSquareShellPartitionBound` is now the exact remaining carrier
+  surface, and its compiler proves the normalized Route-A tail bound with only
+  a factor-four loss.  Thus no infinite-series algebra remains behind that cut;
 * `threeTapRouteAAdverseBudget` combines the explicit finite budget and this
   inverse-square far budget, while
   `exists_threeTapRouteAAsymptoticBalancePass_constants` compiles the strict
@@ -58,10 +64,11 @@ The live Route-A analytic leaves are therefore now genuinely narrow:
 1. finish the finite normalized-bump/determinant compiler fed by the already-
    proved uniform pole-weight Lipschitz estimate, then bound the compact-alpha
    C2 curvature of the resulting fixed-width transformed witness;
-2. partition the exact complementary zero carrier into the source-written
-   literal unit/dyadic windows and sum their explicit inverse-square budgets to
-   prove
-   `threeTapInverseSquareZeroTailAfter t (t/2) = O(log t/t)`;
+2. prove the one literal carrier inequality
+   `∃ Ashell, ThreeTapInverseSquareShellPartitionBound Ashell`, partitioning the
+   exact complementary zero carrier into the already-paid all-real unit/dyadic
+   windows.  The geometric/log series and conversion to
+   `threeTapInverseSquareZeroTailAfter t (t/2) = O(log t/t)` are then automatic;
 3. bound the translated gamma+pole channel above by a negative gain and the
    already-paid local slack above strongly enough that
 
@@ -69,9 +76,8 @@ The live Route-A analytic leaves are therefore now genuinely narrow:
 
 No RH theorem or unpaid analytic sign is asserted here.  In particular, the
 uniform pole-weight modulus is paid but the final determinant compiler remains
-fail-closed until kernel replay verifies that finite bookkeeping, and the
-inverse-square unit/shell estimates are paid but their countable tail summation
-is not yet claimed.
+fail-closed until kernel replay verifies that finite bookkeeping; the shell
+series is paid but the literal complementary-zero carrier partition is not.
 
 A strict one-scale FAIL exposes the already-built independent log2/log3
 two-scale source.  Route B remains the independent signed-fifth theorem:

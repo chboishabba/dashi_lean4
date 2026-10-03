@@ -7,6 +7,7 @@ import YangMills.LiteralSU2LinkSectorHaarSplit
 import YangMills.LiteralSU2CrossingIntegralRP
 import YangMills.LiteralSU2FixedBoundaryNoGo
 import YangMills.LiteralSU2BoundaryGaugeProjectionCut
+import YangMills.LiteralSU2BoundaryGaugeProjectionSymmetry
 import YangMills.CMP119ResidualReflectionCut
 import YangMills.CMP119LiteralCompleteCrossingRP
 import YangMills.CMP119LiteralDyadicResidualWeld
@@ -22,13 +23,15 @@ import YangMills.ScaleSensitiveWilsonMomentMaxCut
 
 The selected literal finite Wilson lane now owns the quaternion Haar carrier,
 full-link product Haar, reflection invariance, the positive/boundary/negative
-sector product split, and continuous integral RP of the abstract exponential
-crossing kernel.
+sector product split, continuous integral RP of the abstract exponential
+crossing kernel, and exact reflection symmetry of the boundary-Haar projected
+physical Wilson kernel.
 
 A fixed-boundary Q8 witness shows that conditional boundary PSD is false.
-Therefore the exact remaining finite-Wilson leaf is
-`LiteralSU2BoundaryGaugeProjectionRPExact`: positivity of the boundary-Haar
-averaged physical Wilson kernel on two reflected positive-interior copies.
+Therefore the exact remaining finite-Wilson leaf is no longer symmetry or Haar
+transport: it is the nonnegative quadratic-form theorem for the symmetric
+boundary-gauge-projected physical kernel,
+`LiteralSU2BoundaryGaugeProjectionRPExact`.
 
 CMP119's configuration-independent vacuum factor is a reflected-half rank-one
 factor, leaving exactly E, R-operation, and B as nontrivial physical RP leaves.
@@ -113,7 +116,16 @@ theorem ym_block_a_fixed_boundary_route_fails :
       su2BoundaryWitnessOne su2BoundaryWitnessMinusOne) :=
   fixed_boundary_first_order_not_rp
 
-/-- Exact surviving pure-Wilson proposition. -/
+/-- The surviving projected physical Wilson kernel is now theorem-bearing symmetric. -/
+theorem ym_block_a_projected_wilson_kernel_symmetric
+    (n : ℕ) [NeZero n]
+    (β : ℝ)
+    (left right : SU2PositiveInteriorLinks n) :
+    literalSU2BoundaryGaugeProjectedWilsonKernel n β left right =
+      literalSU2BoundaryGaugeProjectedWilsonKernel n β right left :=
+  literal_su2_boundary_gauge_projected_kernel_symmetric n β left right
+
+/-- Exact surviving pure-Wilson positivity proposition. -/
 abbrev LiteralSU2BoundaryGaugeProjectionRP :=
   LiteralSU2BoundaryGaugeProjectionRPExact
 

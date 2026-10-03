@@ -20,6 +20,8 @@ on:
       - 'Synthesis/MillenniumHodgeP1QRulingsExact.lean'
       - 'Synthesis/MillenniumHodgeRulingCycleSwapMaxCutExact.lean'
       - 'Synthesis/MillenniumHodgeP1QRulingCyclesExact.lean'
+      - 'Synthesis/MillenniumHodgeP1QGeometryInstancesExact.lean'
+      - 'Synthesis/MillenniumHodgeP1QIrreducibleExact.lean'
       - 'Synthesis.lean'
       - 'lean-toolchain'
       - 'lakefile.toml'
@@ -56,3 +58,5 @@ jobs:
           lake env lean Synthesis/MillenniumHodgeP1QRulingsExact.lean
           lake env lean Synthesis/MillenniumHodgeRulingCycleSwapMaxCutExact.lean
           lake env lean Synthesis/MillenniumHodgeP1QRulingCyclesExact.lean
+          lake env lean Synthesis/MillenniumHodgeP1QGeometryInstancesExact.lean
+          lake env lean Synthesis/MillenniumHodgeP1QIrreducibleExact.lean

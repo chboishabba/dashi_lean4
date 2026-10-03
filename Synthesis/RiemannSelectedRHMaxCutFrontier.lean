@@ -1,21 +1,34 @@
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseFinalCut
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapGlobalize
 import Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
-import Synthesis.RiemannSelectedSignedFifthMaxCut
+import Synthesis.RiemannSelectedSignedFifthCorrelationCut
 
 /-!
-# RH max-cut frontier after the one-scale decision architecture
+# RH max-cut frontier after analytic compression
 
-This is the import boundary for the live analytic frontier:
+This is the import boundary for the live analytic frontier.
 
-* one-scale PASS: literal reflection-tail inequality, then compact mid-strip
-  positivity to globalize across 0 < a <= 1/2;
-* one-scale FAIL: strict negative near-line band promotes the already-built
-  independent log2/log3 two-scale source;
-* independent route: the signed-fifth analytic input compiles directly to the
-  canonical terminal margin.
+One-scale resonance has now been compressed past the abstract reflection tail:
 
-No RH theorem is asserted here.  The remaining premises are exactly the
-analytic inequalities exposed by the imported modules.
+* the actual transformed pair series is split into adverse mass minus favorable
+  credit;
+* the adverse phase is alpha-independent before the positive cosh weight;
+* the finite adverse core is welded to the literal N-mu RvM carrier through an
+  absolutely-continuous Abel theorem;
+* the RvM discrepancy, smooth mu term, endpoint term and variation term are
+  assembled into `threeTapAdverseNearExplicitBudget`;
+* the residual adverse tail is the actual summable tail after the chosen
+  physical cutoff;
+* at an RvM-compatible cutoff the remaining strict PASS condition is exactly
+  negativity of `ThreeTapAdverseFinalScalar`.
+
+After a one-scale PASS, only compact mid-strip positivity remains before the
+full 0<a<=1/2 displacement statement.  A strict one-scale FAIL exposes the
+already-built independent log2/log3 two-scale source.
+
+The independent signed-fifth route is likewise exposed as positive RvM
+correlation credit minus negative correlation debt.  No RH theorem and no
+unpaid analytic sign are asserted here.
 -/
 
 noncomputable section

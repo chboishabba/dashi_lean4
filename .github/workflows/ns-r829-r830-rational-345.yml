@@ -48,4 +48,5 @@ jobs:
           lake build NSBControl.Rational345R823Cutoff4SeparationTest
           lake build NSBControl.Rational345R823TouchedPartitionTest
           lake build NSBControl.Rational345R823TouchedNormalFormTest
+          lake build NSBControl.Rational345R831TouchedCarrierWeldTest
           lake build NSBControl.Rational345R831ReserveDecisionTest

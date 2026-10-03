@@ -107,6 +107,10 @@ theorem literal_su2_inv_measurable :
       rw [h, U.unit_quaternion]⟩)
   fun_prop
 
+/-- Make the coordinate proof available to product-measure/fun_prop consumers. -/
+instance : MeasurableInv SU2PlaquetteHolonomy where
+  measurable_inv := literal_su2_inv_measurable
+
 /--
 Normalized compact Haar, transported to the exact literal unit-quaternion
 carrier used by every Wilson link and plaquette theorem in this lane.

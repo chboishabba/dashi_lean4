@@ -8,14 +8,20 @@ R830 is already closed by `Rational345BPClosed`: there exists a literal
 radius-four Galerkin trajectory whose integrated selected payment is strictly
 negative on a nonzero interval.
 
-Agda R820 proves the actual R815 signed payment equals the full four-helicity
-payment rate pointwise.  Agda R823 then proves that full rate is exactly
+Agda R853 gives the decisive general normal form on every live packet:
 
-  signedReserve - cubicQuinticDemand.
+  R815 selected rate(delta)
+    = 6 * (12 * coherent - production + (2*nu-delta) * dissipation).
 
-This file mirrors that semantic transport without fabricating the still-open
-real-time same-object identification.  The remaining pointwise leaf is cut
-into the exact R815/R813/R822 identities that the Agda chain already owns.
+At the decision normalization `nu = delta = 1`, this is exactly the public
+Lean `selectedRate`.  Agda R823 independently gives the exact same-packet
+identity
+
+  completePhysicalRate = signedReserve - cubicQuinticDemand.
+
+Therefore the remaining R831 semantic problem is not R813/R822 arithmetic.
+It is the narrow real-carrier/live-packet weld that identifies the Lean
+radius-four state operators with the R853/R823 live packet operators.
 -/
 
 open Set
@@ -67,10 +73,9 @@ theorem welded_negative_payment_refutes_reserve
     hneg weld.selectedPayment_eq_reserve_sub_demand
 
 ------------------------------------------------------------------------
--- Max-cut the semantic leaf from integrated equality to pointwise equality.
+-- Pointwise-to-integrated compiler.
 ------------------------------------------------------------------------
 
-/-- Real pointwise counterpart of the Agda R820+R823 chain. -/
 structure R823PointwiseWeld where
   reserveRate : State → ℝ
   demandRate : State → ℝ
@@ -79,11 +84,133 @@ structure R823PointwiseWeld where
   reserveRate_continuous : Continuous reserveRate
   demandRate_continuous : Continuous demandRate
 
+def integratedReserve
+    (weld : R823PointwiseWeld) (u : ℝ → State) (terminal : ℝ) : ℝ :=
+  ∫ t in (0 : ℝ)..terminal, weld.reserveRate (u t)
+
+def integratedDemand
+    (weld : R823PointwiseWeld) (u : ℝ → State) (terminal : ℝ) : ℝ :=
+  ∫ t in (0 : ℝ)..terminal, weld.demandRate (u t)
+
+theorem integrated_weld_of_pointwise
+    (weld : R823PointwiseWeld)
+    (u : ℝ → State) (terminal : ℝ)
+    (hu : ContinuousOn u (uIcc (0 : ℝ) terminal)) :
+    selectedPayment u terminal =
+      integratedReserve weld u terminal - integratedDemand weld u terminal := by
+  have hreserveCont :
+      ContinuousOn (fun t => weld.reserveRate (u t))
+        (uIcc (0 : ℝ) terminal) :=
+    weld.reserveRate_continuous.continuousOn.comp hu (fun _ ht => ht)
+  have hdemandCont :
+      ContinuousOn (fun t => weld.demandRate (u t))
+        (uIcc (0 : ℝ) terminal) :=
+    weld.demandRate_continuous.continuousOn.comp hu (fun _ ht => ht)
+  have hreserveInt := hreserveCont.intervalIntegrable
+  have hdemandInt := hdemandCont.intervalIntegrable
+  unfold selectedPayment integratedReserve integratedDemand
+  simp_rw [weld.selectedRate_eq_reserve_sub_demand]
+  exact intervalIntegral.integral_sub hreserveInt hdemandInt
+
+def integratedWeldOfPointwise
+    (weld : R823PointwiseWeld)
+    (u : ℝ → State) (terminal : ℝ)
+    (hu : ContinuousOn u (uIcc (0 : ℝ) terminal)) :
+    R823IntegratedWeld u terminal where
+  integratedReserve := integratedReserve weld u terminal
+  integratedDemand := integratedDemand weld u terminal
+  selectedPayment_eq_reserve_sub_demand :=
+    integrated_weld_of_pointwise weld u terminal hu
+
+def R823WeldForR830Witness : Prop :=
+  ∀ (u : ℝ → State) (ε δ : ℝ),
+    0 < ε →
+    0 < δ →
+    u 0 = u₀ →
+    (∀ t ∈ Ioo (-ε) ε,
+      HasDerivAt u (galerkinField (u t)) t) →
+    R823IntegratedWeld u (residenceUsableTime ε δ)
+
+theorem r823WitnessWeld_of_pointwise
+    (weld : R823PointwiseWeld) :
+    R823WeldForR830Witness := by
+  intro u ε δ hε hδ hu0 hderiv
+  let terminal := residenceUsableTime ε δ
+  have hterminal : 0 ≤ terminal :=
+    le_of_lt (residenceUsableTime_pos hε hδ)
+  have huIcc : ContinuousOn u (uIcc (0 : ℝ) terminal) := by
+    rw [uIcc_of_le hterminal]
+    exact solution_continuousOn_residence hε hderiv
+  exact integratedWeldOfPointwise weld u terminal huIcc
+
 ------------------------------------------------------------------------
--- Cut the pointwise leaf into the exact R815 / R813 / R822 same-object rows.
+-- Round853 max-cut: the actual remaining semantic leaf.
 ------------------------------------------------------------------------
 
-/-- Non-viscous part of the real R815-normalized selected rate. -/
+/-- Minimal real-carrier mirror of Agda R853 + R823.
+
+`completePhysicalRate` is the actual R815/R853 selected rate on the decoded
+live packet.  The three scalar same-object fields are deliberately explicit:
+they are exactly the R853 carrier weld between the Lean finite real state and
+Agda's live packet owners R741/R815.  At nu=delta=1 R853 then gives
+`selectedRateSameObject`.
+
+The R823 fields are the actual signed reserve and cubic/quintic demand on the
+same decoded packet.  Their exact subtraction identity is already theorem
+content in Agda R823; Lean only requires the same-object real-carrier mirror.
+-/
+structure R853RealCarrierWeld where
+  coherent : State → ℝ
+  production : State → ℝ
+  dissipation : State → ℝ
+  completePhysicalRate : State → ℝ
+  reserveRate : State → ℝ
+  demandRate : State → ℝ
+
+  coherent_sameObject : ∀ x, coherent x = globalCoherentWork x
+  production_sameObject : ∀ x, production x = criticalProduction x
+  dissipation_sameObject : ∀ x, dissipation x = criticalDissipation x
+
+  r853DecisionNormalForm :
+    ∀ x,
+      completePhysicalRate x =
+        6 * (12 * coherent x - production x + dissipation x)
+
+  r823ReserveMinusDemand :
+    ∀ x, completePhysicalRate x = reserveRate x - demandRate x
+
+  reserveRate_continuous : Continuous reserveRate
+  demandRate_continuous : Continuous demandRate
+
+/-- Round853 plus the three scalar carrier identifications prove that the
+actual packet selected rate is literally the public Lean `selectedRate`. -/
+theorem r853_selectedRate_sameObject
+    (weld : R853RealCarrierWeld) (x : State) :
+    selectedRate x = weld.completePhysicalRate x := by
+  rw [selectedRate_public_definition]
+  rw [← weld.coherent_sameObject x,
+      ← weld.production_sameObject x,
+      ← weld.dissipation_sameObject x]
+  exact (weld.r853DecisionNormalForm x).symm
+
+/-- The R853 real-carrier weld is enough to construct the exact pointwise
+R823 reserve/demand weld; no R813/R822 re-expansion is needed in Lean. -/
+def r823PointwiseWeld_of_r853
+    (weld : R853RealCarrierWeld) : R823PointwiseWeld where
+  reserveRate := weld.reserveRate
+  demandRate := weld.demandRate
+  selectedRate_eq_reserve_sub_demand := by
+    intro x
+    exact (r853_selectedRate_sameObject weld x).trans
+      (weld.r823ReserveMinusDemand x)
+  reserveRate_continuous := weld.reserveRate_continuous
+  demandRate_continuous := weld.demandRate_continuous
+
+------------------------------------------------------------------------
+-- Legacy/fallback expansion through R813/R822.
+-- Kept for cross-checking only; Round853 is the preferred decision route.
+------------------------------------------------------------------------
+
 def selectedNonlinear (x : State) : ℝ :=
   6 * (12 * globalCoherentWork x - criticalProduction x)
 
@@ -92,21 +219,11 @@ theorem selectedRate_eq_selectedNonlinear_add_dissipation (x : State) :
   unfold selectedRate selectedNonlinear
   ring
 
-/-- The critical dissipation fold is a continuous finite polynomial on the
-radius-four state carrier. -/
 theorem criticalDissipation_continuous_real :
     Continuous criticalDissipation := by
   unfold criticalDissipation modalDissipation hermitianDot
   fun_prop
 
-/-- Exact real-time data needed to mirror Agda R820/R813/R822.
-
-* `r815SeparatedTouched` is the real R815 nonlinear split;
-* `r813SeparatedNormalForm` is Dsep = 2*(9*Nsep-Qsep);
-* `r822TouchedComparable` identifies the touched fold with the actual signed
-  comparable-CC rows.
-
-No sign or analytic estimate is included. -/
 structure R823NonlinearPointwiseData where
   separatedRate : State → ℝ
   touchedRate : State → ℝ
@@ -127,8 +244,6 @@ structure R823NonlinearPointwiseData where
   r822TouchedComparable :
     ∀ x, touchedRate x = signedComparableCC x
 
-/-- The three Agda same-object identities imply the literal pointwise R823
-reserve-minus-demand identity on the real radius-four carrier. -/
 theorem r823_pointwise_identity_of_nonlinearData
     (data : R823NonlinearPointwiseData) :
     ∀ x : State,
@@ -151,8 +266,6 @@ theorem r823_pointwise_identity_of_nonlinearData
           (2 * (data.qsep x - 9 * data.nestedFourHelicityWork x)) := by
           ring
 
-/-- Construct the actual pointwise reserve/demand weld from the three exact
-nonlinear same-object leaves. -/
 def r823PointwiseWeld_of_nonlinearData
     (data : R823NonlinearPointwiseData) : R823PointwiseWeld where
   reserveRate := fun x =>
@@ -169,76 +282,10 @@ def r823PointwiseWeld_of_nonlinearData
       (data.qsep_continuous.sub
         (continuous_const.mul data.nestedFourHelicityWork_continuous))
 
-/-- Integrated actual reserve attached to a pointwise weld. -/
-def integratedReserve
-    (weld : R823PointwiseWeld) (u : ℝ → State) (terminal : ℝ) : ℝ :=
-  ∫ t in (0 : ℝ)..terminal, weld.reserveRate (u t)
+------------------------------------------------------------------------
+-- Terminal decision compilers.
+------------------------------------------------------------------------
 
-/-- Integrated actual demand attached to a pointwise weld. -/
-def integratedDemand
-    (weld : R823PointwiseWeld) (u : ℝ → State) (terminal : ℝ) : ℝ :=
-  ∫ t in (0 : ℝ)..terminal, weld.demandRate (u t)
-
-/-- Pointwise R820+R823 equality plus continuity implies the exact integrated
-R823 weld; no new PDE estimate enters here. -/
-theorem integrated_weld_of_pointwise
-    (weld : R823PointwiseWeld)
-    (u : ℝ → State) (terminal : ℝ)
-    (hu : ContinuousOn u (uIcc (0 : ℝ) terminal)) :
-    selectedPayment u terminal =
-      integratedReserve weld u terminal - integratedDemand weld u terminal := by
-  have hreserveCont :
-      ContinuousOn (fun t => weld.reserveRate (u t))
-        (uIcc (0 : ℝ) terminal) :=
-    weld.reserveRate_continuous.continuousOn.comp hu (fun _ ht => ht)
-  have hdemandCont :
-      ContinuousOn (fun t => weld.demandRate (u t))
-        (uIcc (0 : ℝ) terminal) :=
-    weld.demandRate_continuous.continuousOn.comp hu (fun _ ht => ht)
-  have hreserveInt := hreserveCont.intervalIntegrable
-  have hdemandInt := hdemandCont.intervalIntegrable
-  unfold selectedPayment integratedReserve integratedDemand
-  simp_rw [weld.selectedRate_eq_reserve_sub_demand]
-  exact intervalIntegral.integral_sub hreserveInt hdemandInt
-
-/-- Build the integrated R823 object on any continuous trajectory. -/
-def integratedWeldOfPointwise
-    (weld : R823PointwiseWeld)
-    (u : ℝ → State) (terminal : ℝ)
-    (hu : ContinuousOn u (uIcc (0 : ℝ) terminal)) :
-    R823IntegratedWeld u terminal where
-  integratedReserve := integratedReserve weld u terminal
-  integratedDemand := integratedDemand weld u terminal
-  selectedPayment_eq_reserve_sub_demand :=
-    integrated_weld_of_pointwise weld u terminal hu
-
-/-- The older integrated interface retained as the exact consumer shape of
-R830. -/
-def R823WeldForR830Witness : Prop :=
-  ∀ (u : ℝ → State) (ε δ : ℝ),
-    0 < ε →
-    0 < δ →
-    u 0 = u₀ →
-    (∀ t ∈ Ioo (-ε) ε,
-      HasDerivAt u (galerkinField (u t)) t) →
-    R823IntegratedWeld u (residenceUsableTime ε δ)
-
-/-- A global pointwise real R820+R823 weld automatically supplies the exact
-integrated weld on every R830 witness. -/
-theorem r823WitnessWeld_of_pointwise
-    (weld : R823PointwiseWeld) :
-    R823WeldForR830Witness := by
-  intro u ε δ hε hδ hu0 hderiv
-  let terminal := residenceUsableTime ε δ
-  have hterminal : 0 ≤ terminal :=
-    le_of_lt (residenceUsableTime_pos hε hδ)
-  have huIcc : ContinuousOn u (uIcc (0 : ℝ) terminal) := by
-    rw [uIcc_of_le hterminal]
-    exact solution_continuousOn_residence hε hderiv
-  exact integratedWeldOfPointwise weld u terminal huIcc
-
-/-- R830 + the exact R823 same-object weld produce an explicit integrated
-reserve counterexample. -/
 theorem r830_refutes_r823_reserve
     (hWeld : R823WeldForR830Witness) :
     ∃ reserve demand : ℝ, ¬ demand ≤ reserve := by
@@ -249,24 +296,26 @@ theorem r830_refutes_r823_reserve
   apply welded_negative_payment_refutes_reserve weld
   simpa [selectedPayment] using hneg
 
-/-- Direct pointwise version of the decision gate. -/
 theorem r830_refutes_r823_reserve_of_pointwise
     (weld : R823PointwiseWeld) :
     ∃ reserve demand : ℝ, ¬ demand ≤ reserve :=
   r830_refutes_r823_reserve (r823WitnessWeld_of_pointwise weld)
 
-/-- R831's logical and integration transport is closed. -/
+/-- Preferred terminal route: Round853 real carrier weld -> R823 refutation. -/
+theorem r830_refutes_r823_reserve_of_r853
+    (weld : R853RealCarrierWeld) :
+    ∃ reserve demand : ℝ, ¬ demand ≤ reserve :=
+  r830_refutes_r823_reserve_of_pointwise (r823PointwiseWeld_of_r853 weld)
+
 def r831TransportClosed : Bool := true
 
-/-- Interval linearity is no longer an open leaf. -/
 def r831IntegratedWeldReducedToPointwise : Bool := true
 
-/-- Pointwise reserve transport is reduced to the three exact Agda mirror
-identities in `R823NonlinearPointwiseData`. -/
-def r831PointwiseWeldReducedToThreeSameObjectLeaves : Bool := true
+/-- Round853 supersedes the older R813/R822 expansion in the decision lane. -/
+def r831DecisionReducedToR853RealCarrierWeld : Bool := true
 
-/-- No real radius-four owner has yet instantiated all three leaves. -/
-def r823RealNonlinearSameObjectClosed : Bool := false
+/-- Exact remaining semantic leaf before R823/B-RESERVE may be frozen. -/
+def r853RealTrajectoryCarrierWeldClosed : Bool := false
 
 end Rational345R831ReserveDecision
 end NSBControl

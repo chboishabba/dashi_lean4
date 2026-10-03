@@ -14,10 +14,15 @@ on:
       - "Integration/OggSSP2BActualFiveSlices.lean"
       - "Integration/OggSSP2BNormalizerFiveByTwoRecognition.lean"
       - "Integration/OggSSP2BM22CompletionTenCandidate.lean"
+      - "Integration/OggSSP2BM22RuntimeReceipt.lean"
+      - "Integration/OggSSP2BRevisedCompletionRecognition.lean"
+      - "Integration/OggSSP2BBinaryTetrahedralDefectSource.lean"
       - "Integration/OggSSP2BPair24Carrier.lean"
       - "Integration/OggSSP2BPair24SameObjectWeld.lean"
       - "Integration/ThreeC2TateFibreCycle.lean"
       - "Integration/C2TateIntertwinerTransport.lean"
+      - "Integration/C2TateTransportFromGroupConjugacy.lean"
+      - "Integration/ThreeC2TateFibreFromGroupConjugacy.lean"
       - "Integration/ThreeCycleTraceSplit.lean"
       - "Integration/ThreeC2TateFibreTraceSplit.lean"
       - "Integration/OggSSP2BM24xS3DuadPhaseNoGo.lean"
@@ -36,6 +41,7 @@ on:
       - "Integration/ThreeCycleTraceSplit.lean"
       - "Integration/ThreeC2TateFibre*.lean"
       - "Integration/C2TateIntertwinerTransport.lean"
+      - "Integration/C2TateTransportFromGroupConjugacy.lean"
       - "Integration/Selected3B*.lean"
       - "Integration/SignedTwoPrimePhaseObstruction.lean"
       - ".github/workflows/monster-source-integral.yml"
@@ -68,13 +74,18 @@ jobs:
           lake env lean Integration/OggSSP2BNormalizerFiveByTwoRecognition.lean
           lake env lean Integration/OggSSP2BCo1TenDimensionalNoGo.lean
           lake env lean Integration/OggSSP2BM22CompletionTenCandidate.lean
+          lake env lean Integration/OggSSP2BM22RuntimeReceipt.lean
+          lake env lean Integration/OggSSP2BBinaryTetrahedralDefectSource.lean
           lake env lean Integration/OggSSP2BPair24Carrier.lean
           lake env lean Integration/OggSSP2BPair24SameObjectWeld.lean
-          lake env lean Integration/ThreeC2TateFibreCycle.lean
           lake env lean Integration/C2TateIntertwinerTransport.lean
+          lake env lean Integration/C2TateTransportFromGroupConjugacy.lean
+          lake env lean Integration/ThreeC2TateFibreCycle.lean
+          lake env lean Integration/ThreeC2TateFibreFromGroupConjugacy.lean
           lake env lean Integration/ThreeCycleTraceSplit.lean
           lake env lean Integration/ThreeC2TateFibreTraceSplit.lean
           lake env lean Integration/OggSSP2BM24xS3DuadPhaseNoGo.lean
+          lake env lean Integration/OggSSP2BRevisedCompletionRecognition.lean
           lake env lean Integration/OggSSP2BActualSourceParityNormalizationAudit.lean
       - name: Check actual 3B fingerprint and projection
         run: |

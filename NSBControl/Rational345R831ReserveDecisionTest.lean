@@ -53,5 +53,18 @@ example
     ∃ reserve demand : ℝ, ¬ demand ≤ reserve := by
   exact r830_physical_segment_refutes_r823_reserve weld
 
+/-- The live R813/R815/R822 semantic residue is one nonlinear same-object
+identity on physical states, not three independent downstream assumptions. -/
+example
+    (data : R823PhysicalNonlinearData) :
+    R823PhysicalPointwiseWeld := by
+  exact r823PhysicalPointwiseWeld_of_nonlinearData data
+
+example
+    (data : R823PhysicalNonlinearData) :
+    ∃ reserve demand : ℝ, ¬ demand ≤ reserve := by
+  exact r830_physical_segment_refutes_r823_reserve
+    (r823PhysicalPointwiseWeld_of_nonlinearData data)
+
 end Rational345R831ReserveDecisionTest
 end NSBControl

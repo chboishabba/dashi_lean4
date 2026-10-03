@@ -18,6 +18,20 @@ example (u : State) (k : Mode)
     helicalComponent plus u k + helicalComponent minus u k = u k := by
   exact helical_decomposition_of_transverse u k hk htrans
 
+example (u : State) (k : Mode)
+    (hk : nonzeroMode k)
+    (htrans : bilinearDot (kComplex k) (u k) = 0) :
+    curlSymbol k (helicalComponent plus u k) =
+      (modeNorm k : ℂ) • helicalComponent plus u k := by
+  exact helicalPlus_curl_eigen u k hk htrans
+
+example (u : State) (k : Mode)
+    (hk : nonzeroMode k)
+    (htrans : bilinearDot (kComplex k) (u k) = 0) :
+    curlSymbol k (helicalComponent minus u k) =
+      (-modeNorm k : ℂ) • helicalComponent minus u k := by
+  exact helicalMinus_curl_eigen u k hk htrans
+
 example (u : State) (p q k : Mode)
     (hres : Resonates p q k)
     (hp : nonzeroMode p) (hq : nonzeroMode q)

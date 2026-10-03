@@ -26,8 +26,11 @@ namespace Rational345R823RealR749R760
 
 open Rational345RealRadius4
 open Rational345R831ReserveDecision
+open Rational345R823RealHelicalCore
+open Rational345R823RealInnerFold
 open Rational345R823RealNestedCell
 open Rational345R823RealNestedOrbit
+open Rational345R823RealProductionIncidence
 open Rational345R823RealProductionDifference
 open Rational345R823TouchedNormalForm
 open Rational345R823LiteralR760CellMaxCut
@@ -64,9 +67,8 @@ theorem coherentWork_sum_right
     {ι : Type*} [Fintype ι] (left : Vec3) (f : ι → Vec3) :
     coherentWork left (∑ i, f i) = ∑ i, coherentWork left (f i) := by
   change
-    2 * Rational345R823RealProductionIncidence.pairingRealLinear left
-        (∑ i, f i) =
-      ∑ i, 2 * Rational345R823RealProductionIncidence.pairingRealLinear left (f i)
+    2 * pairingRealLinear left (∑ i, f i) =
+      ∑ i, 2 * pairingRealLinear left (f i)
   rw [map_sum, Finset.mul_sum]
 
 /-- The complete R694 outer-row fold is exactly the already-defined global
@@ -190,7 +192,7 @@ theorem r760SwapPairedResidualCompleteFold_continuous :
     selectedDyadicWeight realNestedCell realNestedHalfCell realFourSignForcing
     fourSignInnerFold fourSignInnerTerm fourSignInner multiplierDifferenceVector
     helicalComponent fixedOutputMixed mixedCell coherentWork hermitianDot
-    criticalWeight orderedPower Rational345R823RealProductionIncidence.pairingRealLinear
+    criticalWeight orderedPower pairingRealLinear
   fun_prop
 
 /-- Concrete one-leaf carrier required by the R823 terminal max-cut. -/

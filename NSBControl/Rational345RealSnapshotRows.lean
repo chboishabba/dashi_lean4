@@ -19,8 +19,8 @@ open Rational345RealSnapshotSparse
 
 classical
 
-private def c (re im : ℝ) : ℂ := re + im * Complex.I
-private def v (xr xi yr yi zr zi : ℝ) : Vec3 :=
+def c (re im : ℝ) : ℂ := re + im * Complex.I
+def v (xr xi yr yi zr zi : ℝ) : Vec3 :=
   ![c xr xi, c yr yi, c zr zi]
 
 -- Active outputs in the R850 order.

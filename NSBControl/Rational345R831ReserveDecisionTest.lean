@@ -16,5 +16,10 @@ example {payment reserve demand : ℝ}
     demand ≤ reserve ↔ 0 ≤ payment := by
   exact reserve_iff_nonnegative_payment hweld
 
+example
+    (hWeld : R823WeldForR830Witness) :
+    ∃ reserve demand : ℝ, ¬ demand ≤ reserve := by
+  exact r830_refutes_r823_reserve hWeld
+
 end Rational345R831ReserveDecisionTest
 end NSBControl

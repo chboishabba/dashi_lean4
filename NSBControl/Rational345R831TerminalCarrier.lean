@@ -69,14 +69,21 @@ def terminalSemanticWeld_of_cutoff4TouchedCarrier
   demandRate := fun _ => 0
   completeRate_eq_reserve_sub_demand := by
     intro x hx
-    let touchedData := cutoff4TouchedData_of_carrierWeld data
+    have hTouched : selectedNonlinear x = data.touchedSignedFold x := by
+      calc
+        selectedNonlinear x = r760SwapPairedResidualTotal x :=
+          (r760SwapPairedResidualTotal_eq_selectedNonlinear x).symm
+        _ = data.r760CellwiseFold x :=
+          (data.r760Cellwise_eq_totalNormalForm x hx).symm
+        _ = data.touchedSignedFold x :=
+          (data.touched_eq_r760Cellwise x hx).symm
     calc
       r853CompletePhysicalRate x = selectedRate x := by
         exact (selectedRate_eq_r853CompletePhysicalRate x hx).symm
       _ = selectedNonlinear x + 6 * criticalDissipation x :=
         selectedRate_eq_selectedNonlinear_add_dissipation x
       _ = data.touchedSignedFold x + 6 * criticalDissipation x := by
-        rw [touchedData.touched_sameObject x hx]
+        rw [hTouched]
       _ = (data.touchedSignedFold x + 6 * criticalDissipation x) - 0 := by
         ring
   reserveRate_continuous := by

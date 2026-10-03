@@ -1,5 +1,5 @@
 import NSBControl.Rational345R831ReserveDecision
-import NSBControl.Rational345R830PhysicalSegmentStrong
+import NSBControl.Rational345R830PhysicalPacketSegment
 
 /-!
 # R831 physical-domain reserve weld
@@ -8,9 +8,10 @@ Agda R853/R823 only asserts its pointwise identities on a live physical packet.
 The earlier Lean mirror asked for those identities on every ambient radius-four
 state, which is stronger than the decision experiment needs.
 
-R830 now supplies a nonzero trajectory segment satisfying Fourier reality and
-transversality at every time.  Therefore the exact R831 semantic leaf can be
-cut to the physical state domain traversed by that segment.
+R830 now supplies a nonzero trajectory segment satisfying Fourier reality,
+transversality, and zero-mode exclusion at every time.  Therefore the exact
+R831 semantic leaf can be cut to the physical state domain traversed by that
+segment.
 -/
 
 open Set
@@ -20,12 +21,14 @@ namespace Rational345R831ReserveDecision
 
 open Rational345RealRadius4
 open Rational345Round71RealityField
-open Rational345R830PhysicalSegmentStrong
+open Rational345Round71ZeroMode
+open Rational345R830PhysicalPacketSegment
 
-/-- The two linear physical constraints carried by the R830 trajectory. -/
+/-- The three structural constraints carried by the real R830 live packet. -/
 def IsR823PhysicalState (x : State) : Prop :=
   realityTransform x = x ∧
-    ∀ k : Mode, bilinearDot (kComplex k) (x k) = 0
+    (∀ k : Mode, bilinearDot (kComplex k) (x k) = 0) ∧
+    x zeroMode = 0
 
 /-- Exact R823 pointwise reserve/demand identity, required only on physical
 states.  Continuity remains global because it is a cheap finite-polynomial
@@ -82,18 +85,18 @@ def integratedWeldOfPhysicalSegment
 
 /-- Max-cut terminal decision theorem: no ambient-state R853/R823 identity is
 needed.  A reserve/demand identity on the actual physical state domain already
-turns the R830 physical negative segment into a counterexample to the reserve
-inequality. -/
+turns the R830 physical negative packet segment into a counterexample to the
+reserve inequality. -/
 theorem r830_physical_segment_refutes_r823_reserve
     (weld : R823PhysicalPointwiseWeld) :
     ∃ reserve demand : ℝ, ¬ demand ≤ reserve := by
-  obtain ⟨u, T, hT, hu0, hu, hReality, hTransverse, hneg, hIntegral⟩ :=
-    r830_physical_negative_segment_continuous
+  obtain ⟨u, T, hT, hu0, hu, hReality, hTransverse, hZero, hneg, hIntegral⟩ :=
+    r830_physical_packet_negative_segment
 
   have hphysical :
       ∀ t ∈ Icc (0 : ℝ) T, IsR823PhysicalState (u t) := by
     intro t ht
-    exact ⟨hReality t ht, hTransverse t ht⟩
+    exact ⟨hReality t ht, hTransverse t ht, hZero t ht⟩
 
   let integrated :=
     integratedWeldOfPhysicalSegment weld u T (le_of_lt hT) hu hphysical

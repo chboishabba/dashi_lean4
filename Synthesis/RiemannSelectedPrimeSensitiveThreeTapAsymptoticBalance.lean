@@ -58,7 +58,7 @@ theorem QuarticFourSignedPolePair.threeTapHalfHeightFar_le_curvature_tail
     W.threeTapPairAdverseFarAfter eps (t/2)
       <= Ccurv * threeTapInverseSquareZeroTailAfter t (t/2) := by
   exact W.threeTapPairAdverseFarAfter_le_curvature_mul_inverseSquareTail
-    ht (by linarith : 0 <= t/2) hcurv hinv
+    ht (by linarith : 0 < t/2) hcurv hinv
 
 /-- The clean final one-scale PASS compiler.  Strictness is placed on the full
 adverse budget, so no artificial factor-of-two split threshold is needed. -/

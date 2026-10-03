@@ -1,4 +1,4 @@
-import NSBControl.Rational345R831PhysicalWeld
+import NSBControl.Rational345R831PhysicalNonlinear
 
 namespace NSBControl
 namespace Rational345R831ReserveDecisionTest
@@ -63,8 +63,7 @@ example
 example
     (data : R823PhysicalNonlinearData) :
     ∃ reserve demand : ℝ, ¬ demand ≤ reserve := by
-  exact r830_physical_segment_refutes_r823_reserve
-    (r823PhysicalPointwiseWeld_of_nonlinearData data)
+  exact r830_refutes_r823_reserve_of_physicalNonlinearData data
 
 end Rational345R831ReserveDecisionTest
 end NSBControl

@@ -163,36 +163,26 @@ theorem fixedOutputCommutator_u₀_eq_sparse (k : Mode) :
   rw [fixedOutputCommutator, comm_sum_univ_eq_active_left k,
       comm_sum_active_eq_active_seed k]
 
-/-- Outside the eight seed-pair outputs the mixed factor vanishes, hence so
-does the coherent-work row regardless of the commutator factor. -/
+/-- Outside the eight nonzero seed-pair outputs the mixed factor vanishes.
+The zero mode is deliberately excluded from this statement; the public global
+coherent-work sum already removes it separately. -/
 theorem sparseMixed_zero_of_not_mem_active
-    {k : Mode} (hk : k ∉ activeOutputs) : sparseMixed k = 0 := by
+    {k : Mode} (hz : ¬ isZeroMode k) (hk : k ∉ activeOutputs) :
+    sparseMixed k = 0 := by
   have hnotgen : k ∉ generatedOutputs := by
     simpa [generatedOutputs_eq_activeOutputs] using hk
-  by_cases hz : isZeroMode k
-  · -- No nonzero support claim is needed at zero; the seed-pair mixed fold
-    -- cancels because no zero output is admitted by generatedOutputs.
-    apply Finset.sum_eq_zero
-    intro p hp
-    apply Finset.sum_eq_zero
-    intro q hq
-    by_cases hr : Resonates p q k
-    · have : k ∈ generatedOutputs := by
-        simp [generatedOutputs, hz, p, hp, q, hq, hr]
-      exact False.elim (hnotgen this)
-    · simp [hr]
-  · have hno :
-        ¬ ∃ p ∈ seedModes, ∃ q ∈ seedModes, Resonates p q k := by
-      intro hpair
-      exact hnotgen (by simp [generatedOutputs, hz, hpair])
-    apply Finset.sum_eq_zero
-    intro p hp
-    apply Finset.sum_eq_zero
-    intro q hq
-    have hnres : ¬ Resonates p q k := by
-      intro hres
-      exact hno ⟨p, hp, q, hq, hres⟩
-    simp [sparseMixed, hnres]
+  have hno :
+      ¬ ∃ p ∈ seedModes, ∃ q ∈ seedModes, Resonates p q k := by
+    intro hpair
+    exact hnotgen (by simp [generatedOutputs, hz, hpair])
+  apply Finset.sum_eq_zero
+  intro p hp
+  apply Finset.sum_eq_zero
+  intro q hq
+  have hnres : ¬ Resonates p q k := by
+    intro hres
+    exact hno ⟨p, hp, q, hq, hres⟩
+  simp [sparseMixed, hnres]
 
 end Rational345RealSnapshotHelicalSparse
 end NSBControl

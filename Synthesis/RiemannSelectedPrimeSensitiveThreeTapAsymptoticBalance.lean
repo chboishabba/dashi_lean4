@@ -1,4 +1,4 @@
-import Synthesis.RiemannSelectedPrimeSensitiveThreeTapInverseSquareWindow
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapInverseSquareShells
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapCompensationFloor
 
 /-!
@@ -15,9 +15,11 @@ where
 * G is the magnitude of the negative translated gamma+pole channel,
 * S bounds the already-paid nonnegative local slack.
 
-This file contains only exact compilation of those inputs to the existing
-paid-cost sign theorem.  It does not assert the still-open curvature, RvM-tail,
-or gamma+pole/slack estimates.
+This file contains exact compilation of those inputs to the existing paid-cost
+sign theorem.  On the inverse-square side it also isolates the one remaining
+carrier cut: once the literal complementary zero tsum is bounded by a constant
+times the already-proved dyadic numerical majorant, all infinite-series algebra
+compiles automatically to the desired `O(log t/t)` tail bound.
 -/
 
 noncomputable section
@@ -40,6 +42,55 @@ def ThreeTapInverseSquareTailBound
   ∀ t : ℝ, 200 <= t ->
     threeTapInverseSquareZeroTailAfter t (t/2)
       <= Ctail * ((2*Real.log t + 1)/t)
+
+/-- Exact remaining shell-partition surface.  All zero-count input and the
+numerical dyadic series are already paid elsewhere; this predicate asks only
+for the literal complementary zero carrier to be dominated by that series. -/
+def ThreeTapInverseSquareShellPartitionBound
+    (Ashell : ℝ) : Prop :=
+  0 <= Ashell ∧
+  ∀ t : ℝ, 200 <= t ->
+    threeTapInverseSquareZeroTailAfter t (t/2)
+      <= Ashell * (∑' k : ℕ, threeTapDyadicLogMajorant t k)
+
+/-- Once the exact carrier-to-shell inequality is supplied, the already-paid
+closed form of the dyadic series gives the Route-A log-over-t tail with no
+further zero analysis.  The harmless factor four absorbs the `+4` in the
+closed-form shell sum into the normalized `(2 log t + 1)/t` scale. -/
+theorem ThreeTapInverseSquareShellPartitionBound.toTailBound
+    {Ashell : ℝ}
+    (h : ThreeTapInverseSquareShellPartitionBound Ashell) :
+    ThreeTapInverseSquareTailBound (4 * Ashell) := by
+  refine ⟨mul_nonneg (by norm_num) h.1, ?_⟩
+  intro t ht
+  have ht0 : t ≠ 0 := by linarith
+  have htpos : 0 < t := by linarith
+  have hlog : 0 <= Real.log t :=
+    Real.log_nonneg (by linarith : 1 <= t)
+  have hraw := h.2 t ht
+  rw [tsum_threeTapDyadicLogMajorant ht0] at hraw
+  have hnum :
+      2 * Real.log t + 4 <= 4 * (2 * Real.log t + 1) := by
+    linarith
+  have hfrac :
+      (2 * Real.log t + 4) / t
+        <= 4 * ((2 * Real.log t + 1) / t) := by
+    have hdiv := div_le_div_of_nonneg_right hnum htpos.le
+    convert hdiv using 1 <;> ring
+  calc
+    threeTapInverseSquareZeroTailAfter t (t/2)
+        <= Ashell * ((2 * Real.log t + 4) / t) := hraw
+    _ <= Ashell * (4 * ((2 * Real.log t + 1) / t)) :=
+      mul_le_mul_of_nonneg_left hfrac h.1
+    _ = (4 * Ashell) * ((2 * Real.log t + 1) / t) := by ring
+
+/-- Existential form used by the regression target once the literal shell
+partition producer is paid. -/
+theorem exists_threeTapInverseSquareTailBound_of_shellPartition
+    (h : ∃ Ashell : ℝ, ThreeTapInverseSquareShellPartitionBound Ashell) :
+    ∃ Ctail : ℝ, ThreeTapInverseSquareTailBound Ctail := by
+  obtain ⟨Ashell, hAshell⟩ := h
+  exact ⟨4 * Ashell, hAshell.toTailBound⟩
 
 /-- If the exact inverse-square tail and compact-alpha curvature are controlled,
 the actual adverse residual at the compatible half-height cutoff inherits their

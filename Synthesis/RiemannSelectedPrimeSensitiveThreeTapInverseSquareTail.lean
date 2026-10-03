@@ -1,5 +1,6 @@
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapCurvatureMaxCut
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseTailExhaustion
+import Synthesis.RiemannZeta23RvMArbitraryEndpointCountBound
 
 /-!
 # Actual adverse far tail -> inverse-square zero tail
@@ -17,7 +18,11 @@ classical positive zero-count tail:
   FarAfter <= C_curv * sum_{sigma notin near}
     mult(sigma)/(gamma_sigma-t)^2.
 
-No RvM estimate for that final positive tail is asserted here.
+The imported arbitrary-endpoint count theorem now pays the positive-height RvM
+counting input on the same literal `Ncount` carrier.  The remaining analytic cut
+is the two-sided dyadic-shell summation, including the negative-ordinate side;
+that side must be paid on the literal all-real local zero-count carrier rather
+than by silently assuming positive ordinates.
 -/
 
 noncomputable section

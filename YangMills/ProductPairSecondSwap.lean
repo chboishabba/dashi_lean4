@@ -51,7 +51,6 @@ theorem product_pair_second_swap_measurePreserving
   have hregroup : MeasurePreserving regroup
       ((μ.prod ν).prod (μ.prod ν))
       ((μ.prod μ).prod (ν.prod ν)) := by
-    -- This is just associativity plus the middle-coordinate swap.
     have h1 : MeasurePreserving
         (MeasurableEquiv.prodAssoc : ((A × B) × (A × B)) ≃ᵐ A × (B × (A × B)))
         ((μ.prod ν).prod (μ.prod ν))
@@ -80,7 +79,11 @@ theorem product_pair_second_swap_measurePreserving
       ((μ.prod μ).prod (ν.prod ν)) :=
     MeasurePreserving.prod (MeasurePreserving.id (μ.prod μ))
       (MeasureTheory.measurePreserving_swap (μ := ν) (ν := ν))
-  have h := hregroup.symm regroup |>.comp (hmiddle.comp hregroup)
+  have hback : MeasurePreserving regroup.symm
+      ((μ.prod μ).prod (ν.prod ν))
+      ((μ.prod ν).prod (μ.prod ν)) :=
+    hregroup.symm regroup
+  have h := hback.comp (hmiddle.comp hregroup)
   simpa [regroup, productPairSecondSwap, Function.comp_def] using h
 
 /-- Integral invariance under exchanging the second coordinates of two product-law copies. -/

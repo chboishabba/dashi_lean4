@@ -68,7 +68,17 @@ Once Wilson/cylinder vectors are dense in the reconstructed Hilbert sector,
 every nonzero spectral vector is automatically detected by one of them.  Thus
 the remaining physical theorem is density/cyclicity, not a separate abstract
 detector axiom.
+
+G — all compact simple groups / local nontrivial QFT
+----------------------------------------------------
+No source-free group-generalization receipt is introduced here.  This stage
+remains downstream of the selected SU(2) complete-action source weld, continuum
+OS reconstruction, local-field regularity, clustering and positive gap.  A
+generic compact-simple-group theorem should only be populated from an actual
+uniform group-dependent source argument, not by relabelling the SU(2) proof.
 -/
+
+open MeasureTheory
 
 namespace RequestProject.YangMills
 
@@ -109,7 +119,7 @@ noncomputable def ym_20261004_bounded_determining_continuum_measure
 instance ym_20261004_bounded_determining_continuum_probability
     {Ω : Type*} [MeasurableSpace Ω]
     (source : RealCountableObservableDeterminingSource Ω) :
-    MeasureTheory.IsProbabilityMeasure
+    IsProbabilityMeasure
       (ym_20261004_bounded_determining_continuum_measure source) := by
   unfold ym_20261004_bounded_determining_continuum_measure
   infer_instance

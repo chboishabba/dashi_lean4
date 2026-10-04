@@ -1,0 +1,25 @@
+name: Hodge P1 quadratic multiplicity
+
+on:
+  push:
+    branches:
+      - 'agent/hodge-p1-quadratic-multiplicity-20260930'
+    paths:
+      - 'Synthesis/MillenniumHodgeP1QuadraticMultiplicityExact.lean'
+      - 'Synthesis.lean'
+      - '.github/workflows/hodge-p1-quadratic-multiplicity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  multiplicity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+        with:
+          build: false
+      - name: Kernel check exact quadratic multiplicity donor
+        run: lake env lean Synthesis/MillenniumHodgeP1QuadraticMultiplicityExact.lean

@@ -154,4 +154,62 @@ theorem tanh_countable_observable_map_injective
   funext i
   exact Real.tanh_injective (congrFun hxy i)
 
+/--
+On a standard Borel state space, a countable measurable point-separating real
+family becomes a measurable embedding after the coordinatewise bounded `tanh`
+transform.  Thus boundedness does not add a second separation obligation.
+-/
+theorem tanh_countable_observable_map_measurableEmbedding
+    {Ω : Type*} [MeasurableSpace Ω] [StandardBorelSpace Ω]
+    (raw : ℕ → Ω → ℝ)
+    (hMeas : ∀ i, Measurable (raw i))
+    (hraw : Function.Injective (countableObservableMap raw)) :
+    MeasurableEmbedding
+      (countableObservableMap (fun i x => Real.tanh (raw i x))) := by
+  apply Measurable.measurableEmbedding
+  · apply countable_observable_map_measurable
+    intro i
+    have hi := hMeas i
+    fun_prop
+  · exact tanh_countable_observable_map_injective raw hraw
+
+/--
+Canonical D-F constructor: any countable measurable point-separating real
+family on a standard Borel state space yields the exact bounded determining
+source consumed by the projective continuum-measure machinery.
+-/
+noncomputable def tanhDeterminingObservableSource
+    {Ω : Type*} [MeasurableSpace Ω] [StandardBorelSpace Ω]
+    (cutoffLaw : ℕ → ProbabilityMeasure Ω)
+    (raw : ℕ → Ω → ℝ)
+    (hMeas : ∀ i, Measurable (raw i))
+    (hraw : Function.Injective (countableObservableMap raw)) :
+    RealCountableObservableDeterminingSource Ω where
+  cutoffLaw := cutoffLaw
+  observable := fun i x => Real.tanh (raw i x)
+  observableMeasurable := by
+    intro i
+    have hi := hMeas i
+    fun_prop
+  coordinateBound := fun _ => 1
+  coordinateBoundNonneg := by intro i; norm_num
+  observableAbsLe := by
+    intro i x
+    exact (Real.abs_tanh_lt_one (raw i x)).le
+  coordinateMapEmbedding :=
+    tanh_countable_observable_map_measurableEmbedding raw hMeas hraw
+
+/-- The canonical tanh constructor discharges the exact D producer proposition. -/
+theorem tanh_determining_observable_producer_exists
+    {Ω : Type*} [MeasurableSpace Ω] [StandardBorelSpace Ω]
+    (cutoffLaw : ℕ → ProbabilityMeasure Ω)
+    (raw : ℕ → Ω → ℝ)
+    (hMeas : ∀ i, Measurable (raw i))
+    (hraw : Function.Injective (countableObservableMap raw)) :
+    RealCountableObservableDeterminingSource.ProducerExists
+      cutoffLaw (fun i x => Real.tanh (raw i x)) := by
+  refine ⟨tanhDeterminingObservableSource cutoffLaw raw hMeas hraw, ?_, ?_⟩
+  · rfl
+  · rfl
+
 end RequestProject.YangMills

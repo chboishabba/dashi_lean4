@@ -1,0 +1,62 @@
+name: Hodge genuine algebraic-cycle donor
+
+on:
+  push:
+    branches:
+      - 'agent/hodge-real-algebraic-cycle-v435-20261002'
+    paths:
+      - 'Synthesis/MillenniumHodgeRealAlgebraicCycleMultiplicityExact.lean'
+      - 'Synthesis/MillenniumHodgeP1xP1PrimitiveRulingRegressionExact.lean'
+      - 'Synthesis/MillenniumHodgeActualCycleCorrespondenceActionExact.lean'
+      - 'Synthesis/MillenniumHodgeRelativeProductSwapExact.lean'
+      - 'Synthesis/MillenniumHodgeRelativeRulingEmbeddingsExact.lean'
+      - 'Synthesis/MillenniumHodgeCycleIsoPushforwardExact.lean'
+      - 'Synthesis/MillenniumHodgeCycleIsoPostcompositionExact.lean'
+      - 'Synthesis/MillenniumHodgeFundamentalCycleExact.lean'
+      - 'Synthesis/MillenniumHodgeP1QProjExact.lean'
+      - 'Synthesis/MillenniumHodgeP1QBaseRingExact.lean'
+      - 'Synthesis/MillenniumHodgeP1QStructureMapExact.lean'
+      - 'Synthesis/MillenniumHodgeP1QPoint10Exact.lean'
+      - 'Synthesis/MillenniumHodgeP1QRulingsExact.lean'
+      - 'Synthesis/MillenniumHodgeRulingCycleSwapMaxCutExact.lean'
+      - 'Synthesis/MillenniumHodgeP1QRulingCyclesExact.lean'
+      - 'Synthesis/MillenniumHodgeP1QGeometryInstancesExact.lean'
+      - 'Synthesis/MillenniumHodgeP1QIrreducibleExact.lean'
+      - 'Synthesis.lean'
+      - 'lean-toolchain'
+      - 'lakefile.toml'
+      - '.github/workflows/hodge-real-algebraic-cycle.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-cycle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+        with:
+          build: false
+      - name: Resolve current Mathlib
+        run: lake update
+      - name: Kernel check real algebraic-cycle multiplicity donor
+        run: |
+          lake env lean Synthesis/MillenniumHodgeRealAlgebraicCycleMultiplicityExact.lean
+          lake env lean Synthesis/MillenniumHodgeP1xP1PrimitiveRulingRegressionExact.lean
+          lake env lean Synthesis/MillenniumHodgeActualCycleCorrespondenceActionExact.lean
+          lake env lean Synthesis/MillenniumHodgeRelativeProductSwapExact.lean
+          lake env lean Synthesis/MillenniumHodgeRelativeRulingEmbeddingsExact.lean
+          lake env lean Synthesis/MillenniumHodgeCycleIsoPushforwardExact.lean
+          lake env lean Synthesis/MillenniumHodgeCycleIsoPostcompositionExact.lean
+          lake env lean Synthesis/MillenniumHodgeFundamentalCycleExact.lean
+          lake env lean Synthesis/MillenniumHodgeP1QProjExact.lean
+          lake env lean Synthesis/MillenniumHodgeP1QBaseRingExact.lean
+          lake env lean Synthesis/MillenniumHodgeP1QStructureMapExact.lean
+          lake env lean Synthesis/MillenniumHodgeP1QPoint10Exact.lean
+          lake env lean Synthesis/MillenniumHodgeP1QRulingsExact.lean
+          lake env lean Synthesis/MillenniumHodgeRulingCycleSwapMaxCutExact.lean
+          lake env lean Synthesis/MillenniumHodgeP1QRulingCyclesExact.lean
+          lake env lean Synthesis/MillenniumHodgeP1QGeometryInstancesExact.lean
+          lake env lean Synthesis/MillenniumHodgeP1QIrreducibleExact.lean

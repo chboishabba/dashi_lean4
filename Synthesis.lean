@@ -409,4 +409,7 @@ the cross-domain material in this repository.
 See `DEPENDENCY_MAP.md` for the provenance map and the list of remaining proof
 obligations.
 -/
-import Synthesis.MillenniumHodgeP1QuadraticMultiplicityExact
+import Synthesis.MillenniumHodgeRealAlgebraicCycleMultiplicityExact
+import Synthesis.MillenniumHodgeP1xP1PrimitiveRulingRegressionExact
+import Synthesis.MillenniumHodgeActualCycleCorrespondenceActionExact
+import Synthesis.MillenniumHodgeRelativeProductSwapExact

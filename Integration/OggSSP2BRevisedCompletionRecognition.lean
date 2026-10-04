@@ -1,4 +1,5 @@
 import Integration.OggSSP2BM22RuntimeReceipt
+import Integration.OggSSP2BM22d2Completion10RuntimeReceipt
 import Integration.OggSSP2BM24xS3DuadPhaseNoGo
 import Integration.OggSSP2BBinaryTetrahedralDefectSource
 import Integration.ThreeC2TateFibreFromGroupConjugacy
@@ -6,32 +7,33 @@ import Integration.ThreeC2TateFibreFromGroupConjugacy
 /-!
 # Revised 2B Completion10 recognition after the runtime max-cut
 
-The finite runtime now says two different things:
+The finite runtime now says three distinct things:
 
-* positive: the M24 duad module restricted to M22 contains actual 10a and 10b
-  composition factors (five copies of each);
-* negative: the unique bare M22 involution acts on both ten-dimensional
-  modules with rank(g-I)=4 and fixed dimension 6, so it is not the old
-  five-pair Completion10 involution.
+* positive B-side evidence: the M24 duad module restricted to M22 contains
+  actual 10a and 10b composition factors (five copies of each);
+* negative old-C result: the unique bare M22 involution acts on both
+  ten-dimensional modules with rank(g-I)=4 and fixed dimension 6, so it is not
+  the old five-pair Completion10 involution;
+* positive revised-C source: in both actual ten-dimensional M22:2 modules, an
+  OUTER involution class has rank(g-I)=5, fixed dimension 5 and a verified
+  five-swapped-pair spanning basis.  Thus the finite Completion10 phase source
+  is found one layer above bare M22.
 
-The binary-tetrahedral defect meaning has also been separated from the mode
-recognition problem: the independently defined invariant is the 2-adic
-exponent of the centralizer order on order strata 1,2,4,3,6, giving
-(3,3,2,1,1).  What remains is to identify the actual recognized Q10 modes
-with those source strata.
+The remaining C' theorem is no longer discovery of an action.  It is the
+same-object statement that this sourced M22:2 outer action is the action on the
+same actual 2B Tate subquotient supplied by B'.
 
-Therefore the correct source target is:
-
-B'  an actual ten-dimensional *subquotient* of the source 2B Tate module;
-C'  a larger sourced action/filtration on that subquotient whose operator is
-    linearly conjugate to the repo-native Completion10 binary flip;
-D   a sourced Mode5-to-binary-tetrahedral-order-stratum recognition.
+The binary-tetrahedral defect meaning is independently sourced as the 2-adic
+centralizer exponent profile (3,3,2,1,1).  D still requires a sourced
+identification of the recognized five Completion10 modes with those five
+order strata.
 -/
 
 namespace Integration.OggSSP2BRevisedCompletionRecognition
 
 namespace F := Integration.OggSSP2BFiveByTwoDefectArchitecture
 namespace R := Integration.OggSSP2BM22RuntimeReceipt
+namespace CPrime := Integration.OggSSP2BM22d2Completion10RuntimeReceipt
 namespace D := Integration.OggSSP2BBinaryTetrahedralDefectSource
 
 abbrev Scalar := ZMod 2
@@ -66,9 +68,8 @@ structure ActualTateTenSubquotientReceipt
   target_finrank : Module.finrank Scalar Q = 10
   atlasKind : Integration.OggSSP2BM22CompletionTenCandidate.M22TenModuleKind
 
-/-- C': Completion10 is supplied by a larger sourced operator, not by the bare
-M22 involution.  The chart makes the semantic requirement exact: the operator
-must be conjugate to the repo-native complement permutation on ten states. -/
+/-- C': the sourced outer M22:2 operator must act on the SAME quotient from B'
+and be conjugate to the repo-native Completion10 complement action. -/
 structure LargerCompletionActionReceipt
     (Q : Type*) [AddCommGroup Q] [Module Scalar Q] where
   chart : Q ≃ₗ[Scalar] CompletionModule
@@ -78,14 +79,14 @@ structure LargerCompletionActionReceipt
   chart_intertwines_completion :
     ∀ q,
       chart (binaryOperator q) = completionFlipLinear (chart q)
-  sourcedBeyondBareM22 : Bool
+  sourcedFromM22d2OuterClass : Bool
 
 /-- Combined B'+C' same-object target. -/
 structure ActualTateCompletionTenRecognition
     (Q : Type*) [AddCommGroup Q] [Module Scalar Q] where
   subquotient : ActualTateTenSubquotientReceipt Q
   completion : LargerCompletionActionReceipt Q
-  largerActionSourceIdentified : Bool
+  m22d2OuterActionIdentifiedOnSameQuotient : Bool
   sourceProvenance : String
 
 /-- D: once Completion10 is recognized on the actual Q10, its five modes must
@@ -99,6 +100,17 @@ theorem bare_m22_involution_route_is_killed :
        ∧ R.runtimeBareM22FixedDimension =
           R.completionTenFivePairTargetFixedDimension) :=
   R.bare_m22_involution_cannot_meet_old_five_pair_fingerprint
+
+/-- Revised C' finite discovery is paid: exactly two M22:2 ten-module/class
+matches have the J2^5 fingerprint. -/
+theorem finite_m22d2_completion_source_is_found :
+    CPrime.outerJ2x5MatchCount = 2 :=
+  CPrime.outerJ2x5MatchCount_is_two
+
+theorem finite_m22d2_five_pair_basis_is_verified :
+    CPrime.tenAOuterCompletionCandidate.fiveSwapPairsVerified = true ∧
+    CPrime.tenBOuterCompletionCandidate.fiveSwapPairsVerified = true :=
+  CPrime.both_runtime_candidates_have_literal_five_pair_basis
 
 /-- The positive runtime result is still useful: ten-dimensional factor kinds
 exist in the finite duad restriction, so B' is now a same-object/source ingress
@@ -117,25 +129,29 @@ theorem sourced_defect_profile_paid :
       = (3,3,2,1,1) :=
   D.sourced_defect_profile
 
-/-- Status boundary after the max-cut. -/
+/-- Status boundary after the C' max-cut. -/
 structure RevisedFrontier where
   finiteTenFactorsObserved : Bool
   tenAAndTenBIdentified : Bool
   bareM22CompletionKilled : Bool
+  finiteM22d2CompletionSourceObserved : Bool
+  finiteM22d2FivePairBasisVerified : Bool
   actualTateTenSubquotientPaid : Bool
-  largerCompletionActionPaid : Bool
+  actualTateCompletionActionPaid : Bool
   sourceDefectInvariantPaid : Bool
   actualModeToDefectStratumRecognitionPaid : Bool
   downstreamThirtyTraceSplitAvailable : Bool
   downstreamP31And279PromotedSameObject : Bool
 
-/-- This owner deliberately keeps the hard same-object welds open. -/
+/-- Only the genuine same-object welds remain false. -/
 def canonicalRevisedFrontier : RevisedFrontier where
   finiteTenFactorsObserved := true
   tenAAndTenBIdentified := true
   bareM22CompletionKilled := true
+  finiteM22d2CompletionSourceObserved := true
+  finiteM22d2FivePairBasisVerified := true
   actualTateTenSubquotientPaid := false
-  largerCompletionActionPaid := false
+  actualTateCompletionActionPaid := false
   sourceDefectInvariantPaid := true
   actualModeToDefectStratumRecognitionPaid := false
   downstreamThirtyTraceSplitAvailable := true

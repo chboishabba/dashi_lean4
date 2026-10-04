@@ -18,6 +18,7 @@ on:
       - "Integration/OggSSP2BM22RuntimeReceipt.lean"
       - "Integration/OggSSP2BM22d2Completion10RuntimeReceipt.lean"
       - "Integration/OggSSP2BRevisedCompletionRecognition.lean"
+      - "Integration/OggSSP2BFinalSameObjectCompiler.lean"
       - "Integration/OggSSP2BBinaryTetrahedralDefectSource.lean"
       - "Integration/OggSSP2BPair24Carrier.lean"
       - "Integration/OggSSP2BPair24SameObjectWeld.lean"
@@ -90,6 +91,7 @@ jobs:
           lake env lean Integration/ThreeC2TateFibreTraceSplit.lean
           lake env lean Integration/OggSSP2BM24xS3DuadPhaseNoGo.lean
           lake env lean Integration/OggSSP2BRevisedCompletionRecognition.lean
+          lake env lean Integration/OggSSP2BFinalSameObjectCompiler.lean
           lake env lean Integration/OggSSP2BActualSourceParityNormalizationAudit.lean
       - name: Check actual 3B fingerprint and projection
         run: |

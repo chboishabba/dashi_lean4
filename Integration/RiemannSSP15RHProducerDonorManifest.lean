@@ -72,6 +72,21 @@ def jCoordinateTerm : String :=
 def targetCoordinateTerm : String :=
   "quarticFourAtomicTargetStrengthAt"
 
+def sameGraphWeldPR : String :=
+  "dashi_lean4 PR #33"
+
+def sameGraphWeldBranch : String :=
+  "agent/rh-ssp15-same-graph-weld-20260928"
+
+def sameGraphWeldHead : String :=
+  "3fb8061d2ce31a19f64b56ff6d3e0a087e019e9e"
+
+def sameGraphWeldTheorem : String :=
+  "Integration.RiemannSSP15RHProducerSameGraphWeld.imported_certificate_inhabited"
+
+def sameGraphSignedFRACTRANTheorem : String :=
+  "Integration.RiemannSSP15RHProducerSameGraphWeld.source_role_to_signed_execution_commutes"
+
 structure Boundary where
   donorCommitPinned : Bool
   donorBlobPinned : Bool
@@ -84,6 +99,9 @@ structure Boundary where
   contentAddressedVerifierOwned : Bool
   exactHeadVerifierObserved : Bool
   donorImportedIntoCurrentBranch : Bool
+  sameGraphWeldSourceWritten : Bool
+  sameGraphSignedFRACTRANWeldSourceWritten : Bool
+  sameGraphExactHeadKernelObserved : Bool
   sameGraphProducerCertificateInhabited : Bool
   deriving Repr
 
@@ -99,6 +117,9 @@ def canonicalBoundary : Boundary where
   contentAddressedVerifierOwned := true
   exactHeadVerifierObserved := false
   donorImportedIntoCurrentBranch := false
+  sameGraphWeldSourceWritten := true
+  sameGraphSignedFRACTRANWeldSourceWritten := true
+  sameGraphExactHeadKernelObserved := false
   sameGraphProducerCertificateInhabited := false
 
 theorem donor_commit_is_pinned :

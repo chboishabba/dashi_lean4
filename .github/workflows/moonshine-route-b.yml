@@ -5,9 +5,12 @@ on:
   push:
     branches:
       - agent/moonshine-eisenstein-analytic-20260922
+      - feature/j369-ogg-address-ssp15-no-go-20260925
     paths:
       - "Integration/Bishop*.lean"
       - "Integration/Moonshine*.lean"
+      - "Integration/TrialecticX6ModelCapstone.lean"
+      - "Integration/Riemann*.lean"
       - "Integration.lean"
       - "scripts/route_b_agda_replay_probe.py"
       - "scripts/route_b_agda_kernel_replay.py"
@@ -18,6 +21,8 @@ on:
     paths:
       - "Integration/Bishop*.lean"
       - "Integration/Moonshine*.lean"
+      - "Integration/TrialecticX6ModelCapstone.lean"
+      - "Integration/Riemann*.lean"
       - "Integration.lean"
       - "scripts/route_b_agda_replay_probe.py"
       - "scripts/route_b_agda_kernel_replay.py"
@@ -35,6 +40,39 @@ jobs:
     steps:
       - name: Checkout dashi_lean4
         uses: actions/checkout@v4
+
+      - name: Checkout pinned RH producer donor
+        uses: actions/checkout@v4
+        with:
+          repository: chboishabba/dashi_lean4
+          ref: 85f10467c453bea93bd8199ed80054b1fb41b46a
+          path: rh-producer
+
+      - name: Verify pinned RH producer donor
+        shell: bash
+        run: |
+          set -euo pipefail
+          donor_file="Synthesis/RiemannQuarticBalancedTernaryStencil.lean"
+          expected_blob="138153858e329469048175fcdeeaf75c182078be"
+          actual_blob="$(git -C rh-producer rev-parse "HEAD:${donor_file}")"
+          test "${actual_blob}" = "${expected_blob}"
+
+          grep -q 'theorem quarticFourAtomic_primitive_integer_kernel' "rh-producer/${donor_file}"
+          grep -q 'theorem quarticFourAtomic_sparse_shift_kernel' "rh-producer/${donor_file}"
+          grep -q 'theorem quarticFourAtomic_depth_five_block_kernel' "rh-producer/${donor_file}"
+
+          grep -q 'quarticFourAtomicHighPoleResidual' "rh-producer/${donor_file}"
+          grep -q 'quarticFourAtomicProjectiveOriginCoordinate' "rh-producer/${donor_file}"
+          grep -q 'quarticFourAtomicJAt lam mu 2' "rh-producer/${donor_file}"
+          grep -q 'quarticFourAtomicTargetStrengthAt' "rh-producer/${donor_file}"
+
+          cert_file="Synthesis/RiemannQuarticProducerRoleCertificate.lean"
+          cert_blob="cb89ebc956cedd55179042cf63ff2eaf3d44f073"
+          actual_cert_blob="$(git -C rh-producer rev-parse "HEAD:${cert_file}")"
+          test "${actual_cert_blob}" = "${cert_blob}"
+          grep -q 'theorem primitive_kernel_via_source_roles' "rh-producer/${cert_file}"
+          grep -q 'def canonicalSourceNativeProducerRoleCertificate' "rh-producer/${cert_file}"
+          grep -q 'theorem canonical_certificate_inhabited' "rh-producer/${cert_file}"
 
       - name: Checkout bound dashi_agda source
         uses: actions/checkout@v4
@@ -111,6 +149,28 @@ jobs:
       - name: Build Integration library
         run: lake build Integration
 
+      - name: Check RH balanced-ternary cross-pollination
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean Integration/RiemannOneTwoThreeCoefficientLanguage.lean
+          lake env lean Integration/RiemannPrimitiveKernelBalancedTernaryStencil.lean
+          lake env lean Integration/RiemannMonster196830TernaryShiftBridge.lean
+          lake env lean Integration/RiemannTrialecticT9ScaleFactorizationBoundary.lean
+          lake env lean Integration/RiemannPrimitiveKernelUnimodularBasis.lean
+          lake env lean Integration/RiemannPrimitiveKernelExplicitSmithReduction.lean
+          lake env lean Integration/RiemannPrimitiveKernelMod243Filtration.lean
+          lake env lean Integration/RiemannPrimitiveKernelSmithFiltrationSeparation.lean
+          lake env lean Integration/RiemannSSP15DepthFiveRoleCodec.lean
+          lake env lean Integration/RiemannSSP15SignedProvenanceBridge.lean
+          lake env lean Integration/RiemannSSP15PartitionSeparation.lean
+          lake env lean Integration/RiemannSSP15ChosenGridTransversality.lean
+          lake env lean Integration/RiemannSSP15SignedFRACTRAN.lean
+          lake env lean Integration/RiemannSSP15FilteredProvenanceCapstone.lean
+          lake env lean Integration/RiemannSSP15RoleCMContingency.lean
+          lake env lean Integration/AxiomAuditRiemannSSP15FilteredProvenance.lean
+          lake env lean Integration/AxiomAuditRiemannBalancedTernary.lean
+
       - name: Check route-B terminal modules
         shell: bash
         run: |
@@ -133,3 +193,5 @@ jobs:
           lake env lean Integration/MonsterAtlas6561X8RecognitionObligation.lean
           lake env lean Integration/MoonshineNeutralCuspRelationCrossPollination.lean
           lake env lean Integration/MoonshineSSP15SignedFRACTRANBranch.lean
+          lake env lean Integration/MoonshineOggAddressSSP15NoGo.lean
+          lake env lean Integration/MoonshineSSP15PrimeInternalFibre.lean

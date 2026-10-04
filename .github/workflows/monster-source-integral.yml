@@ -1,0 +1,110 @@
+name: Source-native Monster integral and 3B checks
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/j369-ogg-address-ssp15-no-go-20260925
+    paths:
+      - "Integration/OggSSP2BActualWeightTwoSourceBudget.lean"
+      - "Integration/OggSSP2B4AActualIntegralMultiplicities.lean"
+      - "Integration/OggSSP2BExplicitIntegralCARestriction.lean"
+      - "Integration/OggSSP2BVacuumTateNormalization.lean"
+      - "Integration/OggSSP2BTateGradingConventionBridge.lean"
+      - "Integration/OggSSP2BTateWeightTwoBrauerTraceBridge.lean"
+      - "Integration/OggSSP2BActualFiveLengthNoGo.lean"
+      - "Integration/OggSSP2BActualFiveSlices.lean"
+      - "Integration/OggSSP2BNormalizerFiveByTwoRecognition.lean"
+      - "Integration/OggSSP2BM22CompletionTenCandidate.lean"
+      - "Integration/OggSSP2BM22RuntimeReceipt.lean"
+      - "Integration/OggSSP2BM22d2Completion10RuntimeReceipt.lean"
+      - "Integration/OggSSP2BRevisedCompletionRecognition.lean"
+      - "Integration/OggSSP2BFinalSameObjectCompiler.lean"
+      - "Integration/OggSSP2BBinaryTetrahedralDefectSource.lean"
+      - "Integration/OggSSP2BDefectRecognitionAmbiguity.lean"
+      - "Integration/OggSSP2BDefectTwoBitProvenanceSelector.lean"
+      - "Integration/OggSSP2BBinaryTetrahedralCentralSignPhaseNoGo.lean"
+      - "Integration/OggSSP2BPair24Carrier.lean"
+      - "Integration/OggSSP2BPair24SameObjectWeld.lean"
+      - "Integration/ThreeC2TateFibreCycle.lean"
+      - "Integration/C2TateIntertwinerTransport.lean"
+      - "Integration/C2TateTransportFromGroupConjugacy.lean"
+      - "Integration/ThreeC2TateFibreFromGroupConjugacy.lean"
+      - "Integration/ThreeCycleTraceSplit.lean"
+      - "Integration/ThreeC2TateFibreTraceSplit.lean"
+      - "Integration/OggSSP2BM24xS3DuadPhaseNoGo.lean"
+      - "Integration/OggSSP2BCo1TenDimensionalNoGo.lean"
+      - "Integration/OggSSP2BFiveByTwoDefectArchitecture.lean"
+      - "Integration/OggSSP2BResidualC4BinaryPhaseNoGo.lean"
+      - "Integration/Selected3BActualMonsterCharacterFingerprint.lean"
+      - "Integration/Selected3BCanonicalFixedLineProjection.lean"
+      - "Integration/Selected3BKernelProjectionRestriction.lean"
+      - "Integration/Selected3BActionEqualityFromSpectralDecomposition.lean"
+      - "Integration/SignedTwoPrimePhaseObstruction.lean"
+      - ".github/workflows/monster-source-integral.yml"
+  pull_request:
+    paths:
+      - "Integration/OggSSP2B*.lean"
+      - "Integration/ThreeCycleTraceSplit.lean"
+      - "Integration/ThreeC2TateFibre*.lean"
+      - "Integration/C2TateIntertwinerTransport.lean"
+      - "Integration/C2TateTransportFromGroupConjugacy.lean"
+      - "Integration/Selected3B*.lean"
+      - "Integration/SignedTwoPrimePhaseObstruction.lean"
+      - ".github/workflows/monster-source-integral.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Lean
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+      - name: Download Mathlib cache
+        run: lake exe cache get
+      - name: Check actual integral 4A(2B) source multiplicities
+        run: |
+          lake env lean Integration/OggSSP2BVacuumTateNormalization.lean
+          lake env lean Integration/OggSSP2BActualWeightTwoSourceBudget.lean
+          lake env lean Integration/OggSSP2B4AActualIntegralMultiplicities.lean
+          lake env lean Integration/OggSSP2BExplicitIntegralCARestriction.lean
+          lake env lean Integration/OggSSP2BActualRestrictedTate.lean
+          lake env lean Integration/OggSSP2BTateGradingConventionBridge.lean
+          lake env lean Integration/OggSSP2BTateWeightTwoBrauerTraceBridge.lean
+          lake env lean Integration/OggSSP2BActualFiveLengthNoGo.lean
+          lake env lean Integration/OggSSP2BActualFiveSlices.lean
+          lake env lean Integration/OggSSP2BResidualC4BinaryPhaseNoGo.lean
+          lake env lean Integration/OggSSP2BFiveByTwoDefectArchitecture.lean
+          lake env lean Integration/OggSSP2BNormalizerFiveByTwoRecognition.lean
+          lake env lean Integration/OggSSP2BCo1TenDimensionalNoGo.lean
+          lake env lean Integration/OggSSP2BM22CompletionTenCandidate.lean
+          lake env lean Integration/OggSSP2BM22RuntimeReceipt.lean
+          lake env lean Integration/OggSSP2BM22d2Completion10RuntimeReceipt.lean
+          lake env lean Integration/OggSSP2BBinaryTetrahedralDefectSource.lean
+          lake env lean Integration/OggSSP2BDefectRecognitionAmbiguity.lean
+          lake env lean Integration/OggSSP2BDefectTwoBitProvenanceSelector.lean
+          lake env lean Integration/OggSSP2BBinaryTetrahedralCentralSignPhaseNoGo.lean
+          lake env lean Integration/OggSSP2BPair24Carrier.lean
+          lake env lean Integration/OggSSP2BPair24SameObjectWeld.lean
+          lake env lean Integration/C2TateIntertwinerTransport.lean
+          lake env lean Integration/C2TateTransportFromGroupConjugacy.lean
+          lake env lean Integration/ThreeC2TateFibreCycle.lean
+          lake env lean Integration/ThreeC2TateFibreFromGroupConjugacy.lean
+          lake env lean Integration/ThreeCycleTraceSplit.lean
+          lake env lean Integration/ThreeC2TateFibreTraceSplit.lean
+          lake env lean Integration/OggSSP2BM24xS3DuadPhaseNoGo.lean
+          lake env lean Integration/OggSSP2BRevisedCompletionRecognition.lean
+          lake env lean Integration/OggSSP2BFinalSameObjectCompiler.lean
+          lake env lean Integration/OggSSP2BActualSourceParityNormalizationAudit.lean
+      - name: Check actual 3B fingerprint and projection
+        run: |
+          lake env lean Integration/Selected3BCanonicalFixedLineProjection.lean
+          lake env lean Integration/Selected3BKernelProjectionRestriction.lean
+          lake env lean Integration/Selected3BActionEqualityFromSpectralDecomposition.lean
+          lake env lean Integration/Selected3BActualMonsterCharacterFingerprint.lean
+          lake env lean Integration/SignedTwoPrimePhaseObstruction.lean

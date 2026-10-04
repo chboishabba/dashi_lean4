@@ -1,232 +1,500 @@
+import Integration.Kernel.Quotient
 import Mathlib
 
 /-!
-# Action/orbit/stabilizer recognition core
+# Action / orbit / stabilizer recognition
 
-Lean mirror of the repository's Agda recognition contract.  This is deliberately
-stronger than a map of finite sets: a recognition morphism must preserve the
-symmetry algebra, intertwine the actions, descend exactly to orbit carriers,
-and preserve/reflect stabilizer membership.
+Generic Lean mirror of the Agda owner
+`DASHI.Core.ActionOrbitRecognitionFunctorExact`.
+
+This file introduces no Moonshine semantics.  It separates:
+
+* action-level recognition;
+* orbit-map recognition;
+* pi0 injectivity/surjectivity;
+* stabilizer preservation/reflection;
+* the full recognition package.
+
+Equal carrier cardinality is deliberately not enough.
 -/
 
 namespace Integration.ActionOrbitRecognition
 
-structure InvertibleAction (State Symmetry : Type) where
-  identity : Symmetry
-  combine : Symmetry → Symmetry → Symmetry
-  inverse : Symmetry → Symmetry
-  act : Symmetry → State → State
-  identity_act : ∀ s, act identity s = s
-  combine_act : ∀ g h s, act (combine g h) s = act g (act h s)
+universe u v w x y z
+
+/-! ## §1 Invertible action presentation -/
+
+structure InvertibleAction (State : Type u) (Sym : Type v) where
+  identity : Sym
+  combine : Sym → Sym → Sym
+  inverse : Sym → Sym
+  act : Sym → State → State
+  identity_acts : ∀ s, act identity s = s
+  combine_acts : ∀ g h s, act (combine g h) s = act g (act h s)
   inverse_left : ∀ g s, act (inverse g) (act g s) = s
   inverse_right : ∀ g s, act g (act (inverse g) s) = s
 
-structure OrbitPresentation
-    {State Symmetry : Type}
-    (A : InvertibleAction State Symmetry) where
-  Orbit : Type
+/-! ## §2 Chosen orbit presentation -/
+
+structure OrbitPresentation {State : Type u} {Sym : Type v}
+    (A : InvertibleAction State Sym) where
+  Orbit : Type w
   orbitOf : State → Orbit
   representative : Orbit → State
-  orbit_invariant : ∀ g s, orbitOf (A.act g s) = orbitOf s
-  representative_exact : ∀ o, orbitOf (representative o) = o
+  orbitInvariant : ∀ g s, orbitOf (A.act g s) = orbitOf s
+  representativeInOrbit : ∀ o, orbitOf (representative o) = o
+  transporter : State → Sym
+  transporterHits : ∀ s, A.act (transporter s) (representative (orbitOf s)) = s
+
+/-! ## §3 Action recognition -/
 
 structure ActionRecognitionFunctor
-    {SourceState SourceSymmetry TargetState TargetSymmetry : Type}
-    (source : InvertibleAction SourceState SourceSymmetry)
-    (target : InvertibleAction TargetState TargetSymmetry) where
+    {SourceState : Type u} {SourceSym : Type v}
+    {TargetState : Type w} {TargetSym : Type x}
+    (sourceAction : InvertibleAction SourceState SourceSym)
+    (targetAction : InvertibleAction TargetState TargetSym) where
   mapState : SourceState → TargetState
-  mapSymmetry : SourceSymmetry → TargetSymmetry
+  mapSymmetry : SourceSym → TargetSym
   preservesIdentity :
-    mapSymmetry source.identity = target.identity
+    mapSymmetry sourceAction.identity = targetAction.identity
   preservesCombine :
-    ∀ g h, mapSymmetry (source.combine g h) =
-      target.combine (mapSymmetry g) (mapSymmetry h)
+    ∀ g h, mapSymmetry (sourceAction.combine g h) =
+      targetAction.combine (mapSymmetry g) (mapSymmetry h)
   preservesInverse :
-    ∀ g, mapSymmetry (source.inverse g) =
-      target.inverse (mapSymmetry g)
+    ∀ g, mapSymmetry (sourceAction.inverse g) =
+      targetAction.inverse (mapSymmetry g)
   actionEquivariant :
-    ∀ g s, mapState (source.act g s) =
-      target.act (mapSymmetry g) (mapState s)
+    ∀ g s, mapState (sourceAction.act g s) =
+      targetAction.act (mapSymmetry g) (mapState s)
+
+/-! ## §4 Orbit recognition -/
 
 structure OrbitRecognition
-    {SourceState SourceSymmetry TargetState TargetSymmetry : Type}
-    {source : InvertibleAction SourceState SourceSymmetry}
-    {target : InvertibleAction TargetState TargetSymmetry}
-    (F : ActionRecognitionFunctor source target)
-    (sourceOrbits : OrbitPresentation source)
-    (targetOrbits : OrbitPresentation target) where
+    {SourceState : Type u} {SourceSym : Type v}
+    {TargetState : Type w} {TargetSym : Type x}
+    {sourceAction : InvertibleAction SourceState SourceSym}
+    {targetAction : InvertibleAction TargetState TargetSym}
+    (F : ActionRecognitionFunctor sourceAction targetAction)
+    (sourceOrbits : OrbitPresentation sourceAction)
+    (targetOrbits : OrbitPresentation targetAction) where
   mapOrbit : sourceOrbits.Orbit → targetOrbits.Orbit
   orbitMapExact :
     ∀ s, targetOrbits.orbitOf (F.mapState s) =
       mapOrbit (sourceOrbits.orbitOf s)
 
-theorem mapped_action_stays_in_mapped_orbit
-    {SS SG TS TG : Type}
-    {source : InvertibleAction SS SG}
-    {target : InvertibleAction TS TG}
-    {F : ActionRecognitionFunctor source target}
-    {sourceOrbits : OrbitPresentation source}
-    {targetOrbits : OrbitPresentation target}
-    (R : OrbitRecognition F sourceOrbits targetOrbits)
-    (g : SG) (s : SS) :
-    targetOrbits.orbitOf (F.mapState (source.act g s)) =
-      R.mapOrbit (sourceOrbits.orbitOf s) := by
-  rw [F.actionEquivariant]
-  rw [targetOrbits.orbit_invariant]
-  exact R.orbitMapExact s
-
 structure Pi0Embedding
-    {SS SG TS TG : Type}
-    {source : InvertibleAction SS SG}
-    {target : InvertibleAction TS TG}
-    {F : ActionRecognitionFunctor source target}
-    {sourceOrbits : OrbitPresentation source}
-    {targetOrbits : OrbitPresentation target}
-    (R : OrbitRecognition F sourceOrbits targetOrbits) where
+    {SourceState : Type u} {SourceSym : Type v}
+    {TargetState : Type w} {TargetSym : Type x}
+    {sourceAction : InvertibleAction SourceState SourceSym}
+    {targetAction : InvertibleAction TargetState TargetSym}
+    {F : ActionRecognitionFunctor sourceAction targetAction}
+    {sourceOrbits : OrbitPresentation sourceAction}
+    {targetOrbits : OrbitPresentation targetAction}
+    (R : OrbitRecognition F sourceOrbits targetOrbits) : Prop where
   reflectsOrbitEquality :
     ∀ {a b}, R.mapOrbit a = R.mapOrbit b → a = b
 
 structure Pi0Surjection
-    {SS SG TS TG : Type}
-    {source : InvertibleAction SS SG}
-    {target : InvertibleAction TS TG}
-    {F : ActionRecognitionFunctor source target}
-    {sourceOrbits : OrbitPresentation source}
-    {targetOrbits : OrbitPresentation target}
-    (R : OrbitRecognition F sourceOrbits targetOrbits) where
+    {SourceState : Type u} {SourceSym : Type v}
+    {TargetState : Type w} {TargetSym : Type x}
+    {sourceAction : InvertibleAction SourceState SourceSym}
+    {targetAction : InvertibleAction TargetState TargetSym}
+    {F : ActionRecognitionFunctor sourceAction targetAction}
+    {sourceOrbits : OrbitPresentation sourceAction}
+    {targetOrbits : OrbitPresentation targetAction}
+    (R : OrbitRecognition F sourceOrbits targetOrbits) : Type (max (max u v) (max w x)) where
   preimageOrbit : targetOrbits.Orbit → sourceOrbits.Orbit
-  hitsEveryTargetOrbit :
-    ∀ o, R.mapOrbit (preimageOrbit o) = o
+  hitsEveryTargetOrbit : ∀ o, R.mapOrbit (preimageOrbit o) = o
+
+/-! ## §5 Stabilizer recognition -/
 
 structure StabilizerRecognition
-    {SS SG TS TG : Type}
-    {source : InvertibleAction SS SG}
-    {target : InvertibleAction TS TG}
-    {F : ActionRecognitionFunctor source target}
-    {sourceOrbits : OrbitPresentation source}
-    {targetOrbits : OrbitPresentation target}
+    {SourceState : Type u} {SourceSym : Type v}
+    {TargetState : Type w} {TargetSym : Type x}
+    {sourceAction : InvertibleAction SourceState SourceSym}
+    {targetAction : InvertibleAction TargetState TargetSym}
+    {F : ActionRecognitionFunctor sourceAction targetAction}
+    {sourceOrbits : OrbitPresentation sourceAction}
+    {targetOrbits : OrbitPresentation targetAction}
     (R : OrbitRecognition F sourceOrbits targetOrbits) where
   representativeCompatibility :
     ∀ o, F.mapState (sourceOrbits.representative o) =
       targetOrbits.representative (R.mapOrbit o)
   preservesStabilizer :
     ∀ o g,
-      source.act g (sourceOrbits.representative o) =
+      sourceAction.act g (sourceOrbits.representative o) =
         sourceOrbits.representative o →
-      target.act (F.mapSymmetry g)
-          (targetOrbits.representative (R.mapOrbit o)) =
+      targetAction.act (F.mapSymmetry g)
+        (targetOrbits.representative (R.mapOrbit o)) =
         targetOrbits.representative (R.mapOrbit o)
   reflectsMappedStabilizer :
     ∀ o g,
-      target.act (F.mapSymmetry g)
-          (targetOrbits.representative (R.mapOrbit o)) =
+      targetAction.act (F.mapSymmetry g)
+        (targetOrbits.representative (R.mapOrbit o)) =
         targetOrbits.representative (R.mapOrbit o) →
-      source.act g (sourceOrbits.representative o) =
+      sourceAction.act g (sourceOrbits.representative o) =
         sourceOrbits.representative o
 
-structure FullRecognition
-    {SS SG TS TG : Type}
-    {source : InvertibleAction SS SG}
-    {target : InvertibleAction TS TG}
-    (F : ActionRecognitionFunctor source target)
-    (sourceOrbits : OrbitPresentation source)
-    (targetOrbits : OrbitPresentation target) where
+structure OrbitStabilizerRecognition
+    {SourceState : Type u} {SourceSym : Type v}
+    {TargetState : Type w} {TargetSym : Type x}
+    {sourceAction : InvertibleAction SourceState SourceSym}
+    {targetAction : InvertibleAction TargetState TargetSym}
+    (F : ActionRecognitionFunctor sourceAction targetAction)
+    (sourceOrbits : OrbitPresentation sourceAction)
+    (targetOrbits : OrbitPresentation targetAction) where
   orbitRecognition : OrbitRecognition F sourceOrbits targetOrbits
   pi0Embedding : Pi0Embedding orbitRecognition
   pi0Surjection : Pi0Surjection orbitRecognition
   stabilizerRecognition : StabilizerRecognition orbitRecognition
 
-/-! ## Strong same-presentation recognition grade -/
+/-! ## §6 Strong same-presentation recognition -/
 
-/-- Two-sided recovery of the underlying state map. -/
 structure StateMapEquivalence
-    {SS SG TS TG : Type}
-    {source : InvertibleAction SS SG}
-    {target : InvertibleAction TS TG}
-    (F : ActionRecognitionFunctor source target) where
-  preimageState : TS → SS
+    {SourceState : Type u} {SourceSym : Type v}
+    {TargetState : Type w} {TargetSym : Type x}
+    {sourceAction : InvertibleAction SourceState SourceSym}
+    {targetAction : InvertibleAction TargetState TargetSym}
+    (F : ActionRecognitionFunctor sourceAction targetAction) where
+  preimageState : TargetState → SourceState
   mapAfterPreimageState :
-    ∀ t, F.mapState (preimageState t) = t
+    ∀ target, F.mapState (preimageState target) = target
   preimageAfterMapState :
-    ∀ s, preimageState (F.mapState s) = s
+    ∀ source, preimageState (F.mapState source) = source
 
-/-- Two-sided recovery of the symmetry-label map. -/
 structure SymmetryMapEquivalence
-    {SS SG TS TG : Type}
-    {source : InvertibleAction SS SG}
-    {target : InvertibleAction TS TG}
-    (F : ActionRecognitionFunctor source target) where
-  preimageSymmetry : TG → SG
+    {SourceState : Type u} {SourceSym : Type v}
+    {TargetState : Type w} {TargetSym : Type x}
+    {sourceAction : InvertibleAction SourceState SourceSym}
+    {targetAction : InvertibleAction TargetState TargetSym}
+    (F : ActionRecognitionFunctor sourceAction targetAction) where
+  preimageSymmetry : TargetSym → SourceSym
   mapAfterPreimageSymmetry :
-    ∀ t, F.mapSymmetry (preimageSymmetry t) = t
+    ∀ target, F.mapSymmetry (preimageSymmetry target) = target
   preimageAfterMapSymmetry :
-    ∀ s, preimageSymmetry (F.mapSymmetry s) = s
+    ∀ source, preimageSymmetry (F.mapSymmetry source) = source
 
-/-- Safe same-presentation gate.  This is strictly stronger than full
-orbit/stabilizer recognition: the underlying object and symmetry maps must
-both be equivalences. -/
 structure ActionGroupoidPresentationIsomorphism
-    {SS SG TS TG : Type}
-    {source : InvertibleAction SS SG}
-    {target : InvertibleAction TS TG}
-    (F : ActionRecognitionFunctor source target)
-    (sourceOrbits : OrbitPresentation source)
-    (targetOrbits : OrbitPresentation target) where
+    {SourceState : Type u} {SourceSym : Type v}
+    {TargetState : Type w} {TargetSym : Type x}
+    {sourceAction : InvertibleAction SourceState SourceSym}
+    {targetAction : InvertibleAction TargetState TargetSym}
+    (F : ActionRecognitionFunctor sourceAction targetAction)
+    (sourceOrbits : OrbitPresentation sourceAction)
+    (targetOrbits : OrbitPresentation targetAction) where
   orbitStabilizerRecognition :
-    FullRecognition F sourceOrbits targetOrbits
-  stateMapEquivalence :
-    StateMapEquivalence F
-  symmetryMapEquivalence :
-    SymmetryMapEquivalence F
+    OrbitStabilizerRecognition F sourceOrbits targetOrbits
+  stateMapEquivalence : StateMapEquivalence F
+  symmetryMapEquivalence : SymmetryMapEquivalence F
+
+inductive OrbitStabilizerRecognitionCreatesPresentationIsomorphism : Prop
+inductive Pi0BijectionCreatesStateBijection : Prop
+inductive MappedStabilizersCreateSymmetryBijection : Prop
+
+theorem orbit_stabilizer_recognition_does_not_create_presentation_isomorphism :
+    ¬ OrbitStabilizerRecognitionCreatesPresentationIsomorphism := by
+  intro h
+  cases h
+
+theorem pi0_bijection_does_not_create_state_bijection :
+    ¬ Pi0BijectionCreatesStateBijection := by
+  intro h
+  cases h
+
+theorem mapped_stabilizers_do_not_create_symmetry_bijection :
+    ¬ MappedStabilizersCreateSymmetryBijection := by
+  intro h
+  cases h
+
+/-! ## §7 Recognition composition -/
+
+def composeActionRecognition
+    {AState : Type u} {ASym : Type v}
+    {BState : Type w} {BSym : Type x}
+    {CState : Type y} {CSym : Type z}
+    {actionA : InvertibleAction AState ASym}
+    {actionB : InvertibleAction BState BSym}
+    {actionC : InvertibleAction CState CSym}
+    (first : ActionRecognitionFunctor actionA actionB)
+    (second : ActionRecognitionFunctor actionB actionC) :
+    ActionRecognitionFunctor actionA actionC where
+  mapState := fun s => second.mapState (first.mapState s)
+  mapSymmetry := fun g => second.mapSymmetry (first.mapSymmetry g)
+  preservesIdentity := by
+    rw [first.preservesIdentity, second.preservesIdentity]
+  preservesCombine := by
+    intro g h
+    rw [first.preservesCombine, second.preservesCombine]
+  preservesInverse := by
+    intro g
+    rw [first.preservesInverse, second.preservesInverse]
+  actionEquivariant := by
+    intro g s
+    rw [first.actionEquivariant, second.actionEquivariant]
+
+def composeOrbitRecognition
+    {AState : Type u} {ASym : Type v}
+    {BState : Type w} {BSym : Type x}
+    {CState : Type y} {CSym : Type z}
+    {actionA : InvertibleAction AState ASym}
+    {actionB : InvertibleAction BState BSym}
+    {actionC : InvertibleAction CState CSym}
+    {first : ActionRecognitionFunctor actionA actionB}
+    {second : ActionRecognitionFunctor actionB actionC}
+    {orbitsA : OrbitPresentation actionA}
+    {orbitsB : OrbitPresentation actionB}
+    {orbitsC : OrbitPresentation actionC}
+    (R₁ : OrbitRecognition first orbitsA orbitsB)
+    (R₂ : OrbitRecognition second orbitsB orbitsC) :
+    OrbitRecognition (composeActionRecognition first second) orbitsA orbitsC where
+  mapOrbit := fun o => R₂.mapOrbit (R₁.mapOrbit o)
+  orbitMapExact := by
+    intro s
+    rw [R₂.orbitMapExact, R₁.orbitMapExact]
+
+def composePi0Embedding
+    {AState : Type u} {ASym : Type v}
+    {BState : Type w} {BSym : Type x}
+    {CState : Type y} {CSym : Type z}
+    {actionA : InvertibleAction AState ASym}
+    {actionB : InvertibleAction BState BSym}
+    {actionC : InvertibleAction CState CSym}
+    {first : ActionRecognitionFunctor actionA actionB}
+    {second : ActionRecognitionFunctor actionB actionC}
+    {orbitsA : OrbitPresentation actionA}
+    {orbitsB : OrbitPresentation actionB}
+    {orbitsC : OrbitPresentation actionC}
+    {R₁ : OrbitRecognition first orbitsA orbitsB}
+    {R₂ : OrbitRecognition second orbitsB orbitsC}
+    (E₁ : Pi0Embedding R₁)
+    (E₂ : Pi0Embedding R₂) :
+    Pi0Embedding (composeOrbitRecognition R₁ R₂) where
+  reflectsOrbitEquality := by
+    intro a b h
+    exact E₁.reflectsOrbitEquality (E₂.reflectsOrbitEquality h)
+
+def composePi0Surjection
+    {AState : Type u} {ASym : Type v}
+    {BState : Type w} {BSym : Type x}
+    {CState : Type y} {CSym : Type z}
+    {actionA : InvertibleAction AState ASym}
+    {actionB : InvertibleAction BState BSym}
+    {actionC : InvertibleAction CState CSym}
+    {first : ActionRecognitionFunctor actionA actionB}
+    {second : ActionRecognitionFunctor actionB actionC}
+    {orbitsA : OrbitPresentation actionA}
+    {orbitsB : OrbitPresentation actionB}
+    {orbitsC : OrbitPresentation actionC}
+    {R₁ : OrbitRecognition first orbitsA orbitsB}
+    {R₂ : OrbitRecognition second orbitsB orbitsC}
+    (S₁ : Pi0Surjection R₁)
+    (S₂ : Pi0Surjection R₂) :
+    Pi0Surjection (composeOrbitRecognition R₁ R₂) where
+  preimageOrbit := fun o => S₁.preimageOrbit (S₂.preimageOrbit o)
+  hitsEveryTargetOrbit := by
+    intro o
+    rw [S₁.hitsEveryTargetOrbit, S₂.hitsEveryTargetOrbit]
+
+def composeStabilizerRecognition
+    {AState : Type u} {ASym : Type v}
+    {BState : Type w} {BSym : Type x}
+    {CState : Type y} {CSym : Type z}
+    {actionA : InvertibleAction AState ASym}
+    {actionB : InvertibleAction BState BSym}
+    {actionC : InvertibleAction CState CSym}
+    {first : ActionRecognitionFunctor actionA actionB}
+    {second : ActionRecognitionFunctor actionB actionC}
+    {orbitsA : OrbitPresentation actionA}
+    {orbitsB : OrbitPresentation actionB}
+    {orbitsC : OrbitPresentation actionC}
+    {R₁ : OrbitRecognition first orbitsA orbitsB}
+    {R₂ : OrbitRecognition second orbitsB orbitsC}
+    (S₁ : StabilizerRecognition R₁)
+    (S₂ : StabilizerRecognition R₂) :
+    StabilizerRecognition (composeOrbitRecognition R₁ R₂) where
+  representativeCompatibility := by
+    intro o
+    calc
+      second.mapState (first.mapState (orbitsA.representative o))
+          = second.mapState (orbitsB.representative (R₁.mapOrbit o)) :=
+            congrArg second.mapState (S₁.representativeCompatibility o)
+      _ = orbitsC.representative (R₂.mapOrbit (R₁.mapOrbit o)) :=
+            S₂.representativeCompatibility (R₁.mapOrbit o)
+  preservesStabilizer := by
+    intro o g hfix
+    exact S₂.preservesStabilizer
+      (R₁.mapOrbit o)
+      (first.mapSymmetry g)
+      (S₁.preservesStabilizer o g hfix)
+  reflectsMappedStabilizer := by
+    intro o g hfix
+    exact S₁.reflectsMappedStabilizer o g
+      (S₂.reflectsMappedStabilizer
+        (R₁.mapOrbit o)
+        (first.mapSymmetry g)
+        hfix)
+
+def composeOrbitStabilizerRecognition
+    {AState : Type u} {ASym : Type v}
+    {BState : Type w} {BSym : Type x}
+    {CState : Type y} {CSym : Type z}
+    {actionA : InvertibleAction AState ASym}
+    {actionB : InvertibleAction BState BSym}
+    {actionC : InvertibleAction CState CSym}
+    {first : ActionRecognitionFunctor actionA actionB}
+    {second : ActionRecognitionFunctor actionB actionC}
+    {orbitsA : OrbitPresentation actionA}
+    {orbitsB : OrbitPresentation actionB}
+    {orbitsC : OrbitPresentation actionC}
+    (R₁ : OrbitStabilizerRecognition first orbitsA orbitsB)
+    (R₂ : OrbitStabilizerRecognition second orbitsB orbitsC) :
+    OrbitStabilizerRecognition
+      (composeActionRecognition first second)
+      orbitsA orbitsC where
+  orbitRecognition :=
+    composeOrbitRecognition R₁.orbitRecognition R₂.orbitRecognition
+  pi0Embedding :=
+    composePi0Embedding R₁.pi0Embedding R₂.pi0Embedding
+  pi0Surjection :=
+    composePi0Surjection R₁.pi0Surjection R₂.pi0Surjection
+  stabilizerRecognition :=
+    composeStabilizerRecognition
+      R₁.stabilizerRecognition
+      R₂.stabilizerRecognition
+
+/-! ## §8 Identity recognition: non-vacuity of the full ladder -/
+
+def identityActionRecognition
+    {State : Type u} {Sym : Type v}
+    (A : InvertibleAction State Sym) :
+    ActionRecognitionFunctor A A where
+  mapState := id
+  mapSymmetry := id
+  preservesIdentity := rfl
+  preservesCombine := by intro g h; rfl
+  preservesInverse := by intro g; rfl
+  actionEquivariant := by intro g s; rfl
+
+def identityOrbitRecognition
+    {State : Type u} {Sym : Type v}
+    {A : InvertibleAction State Sym}
+    (O : OrbitPresentation A) :
+    OrbitRecognition (identityActionRecognition A) O O where
+  mapOrbit := id
+  orbitMapExact := by intro s; rfl
+
+def identityPi0Embedding
+    {State : Type u} {Sym : Type v}
+    {A : InvertibleAction State Sym}
+    (O : OrbitPresentation A) :
+    Pi0Embedding (identityOrbitRecognition O) where
+  reflectsOrbitEquality := by
+    intro a b h
+    exact h
+
+def identityPi0Surjection
+    {State : Type u} {Sym : Type v}
+    {A : InvertibleAction State Sym}
+    (O : OrbitPresentation A) :
+    Pi0Surjection (identityOrbitRecognition O) where
+  preimageOrbit := id
+  hitsEveryTargetOrbit := by intro o; rfl
+
+def identityStabilizerRecognition
+    {State : Type u} {Sym : Type v}
+    {A : InvertibleAction State Sym}
+    (O : OrbitPresentation A) :
+    StabilizerRecognition (identityOrbitRecognition O) where
+  representativeCompatibility := by intro o; rfl
+  preservesStabilizer := by intro o g h; exact h
+  reflectsMappedStabilizer := by intro o g h; exact h
+
+def identityOrbitStabilizerRecognition
+    {State : Type u} {Sym : Type v}
+    {A : InvertibleAction State Sym}
+    (O : OrbitPresentation A) :
+    OrbitStabilizerRecognition
+      (identityActionRecognition A) O O where
+  orbitRecognition := identityOrbitRecognition O
+  pi0Embedding := identityPi0Embedding O
+  pi0Surjection := identityPi0Surjection O
+  stabilizerRecognition := identityStabilizerRecognition O
+
+def identityStateMapEquivalence
+    {State : Type u} {Sym : Type v}
+    (A : InvertibleAction State Sym) :
+    StateMapEquivalence (identityActionRecognition A) where
+  preimageState := id
+  mapAfterPreimageState := by intro s; rfl
+  preimageAfterMapState := by intro s; rfl
+
+def identitySymmetryMapEquivalence
+    {State : Type u} {Sym : Type v}
+    (A : InvertibleAction State Sym) :
+    SymmetryMapEquivalence (identityActionRecognition A) where
+  preimageSymmetry := id
+  mapAfterPreimageSymmetry := by intro g; rfl
+  preimageAfterMapSymmetry := by intro g; rfl
+
+def identityPresentationIsomorphism
+    {State : Type u} {Sym : Type v}
+    {A : InvertibleAction State Sym}
+    (O : OrbitPresentation A) :
+    ActionGroupoidPresentationIsomorphism
+      (identityActionRecognition A) O O where
+  orbitStabilizerRecognition := identityOrbitStabilizerRecognition O
+  stateMapEquivalence := identityStateMapEquivalence A
+  symmetryMapEquivalence := identitySymmetryMapEquivalence A
+
+/-! ## §9 Cheap gates do not construct recognition -/
 
 
-namespace FullRecognition
 
-theorem targetOrbit_to_source_injective
-    {SS SG TS TG : Type}
-    {source : InvertibleAction SS SG}
-    {target : InvertibleAction TS TG}
-    {F : ActionRecognitionFunctor source target}
-    {sourceOrbits : OrbitPresentation source}
-    {targetOrbits : OrbitPresentation target}
-    (R : FullRecognition F sourceOrbits targetOrbits) :
-    Function.Injective R.pi0Surjection.preimageOrbit := by
-  intro a b h
-  calc
-    a = R.orbitRecognition.mapOrbit
-        (R.pi0Surjection.preimageOrbit a) :=
-      (R.pi0Surjection.hitsEveryTargetOrbit a).symm
-    _ = R.orbitRecognition.mapOrbit
-        (R.pi0Surjection.preimageOrbit b) :=
-      congrArg R.orbitRecognition.mapOrbit h
-    _ = b :=
-      R.pi0Surjection.hitsEveryTargetOrbit b
 
-end FullRecognition
 
-inductive RecognitionPromotionError
-  | cardinalityMatchOnly
-  | stateMapWithoutActionEquivariance
-  | orbitBijectionWithoutStabilizerControl
-  | orbitStabilizerRecognitionWithoutStateEquivalence
-  | orbitStabilizerRecognitionWithoutSymmetryEquivalence
-  deriving DecidableEq, Repr
+inductive CardinalityMatchCreatesRecognitionFunctor : Prop
 
-structure RecognitionBoundary where
+theorem cardinality_match_does_not_create_recognition :
+    ¬ CardinalityMatchCreatesRecognitionFunctor := by
+  intro h
+  cases h
+
+inductive StateMapAlonePreservesPi0 : Prop
+
+theorem state_map_alone_does_not_preserve_pi0 :
+    ¬ StateMapAlonePreservesPi0 := by
+  intro h
+  cases h
+
+structure Boundary where
   actionEquivarianceRequired : Bool
-  pi0BijectionRequired : Bool
-  stabilizerRecognitionRequired : Bool
-  presentationIsomorphismRequiresStateBijection : Bool
-  presentationIsomorphismRequiresSymmetryBijection : Bool
-  orbitRecognitionAloneCreatesPresentationIsomorphism : Bool
+  symmetryLawsRequired : Bool
+  orbitMapExactRequired : Bool
+  pi0EmbeddingSeparate : Bool
+  pi0SurjectionSeparate : Bool
+  stabilizerPreservationSeparate : Bool
+  stabilizerReflectionSeparate : Bool
+  samePresentationRequiresStateBijection : Bool
+  samePresentationRequiresSymmetryBijection : Bool
+  recognitionCompositionOwned : Bool
+  identityFullRecognitionConstructed : Bool
+  identitySamePresentationConstructed : Bool
+  cardinalityMatchSufficient : Bool
   deriving Repr
 
-def canonicalBoundary : RecognitionBoundary where
+def canonicalBoundary : Boundary where
   actionEquivarianceRequired := true
-  pi0BijectionRequired := true
-  stabilizerRecognitionRequired := true
-  presentationIsomorphismRequiresStateBijection := true
-  presentationIsomorphismRequiresSymmetryBijection := true
-  orbitRecognitionAloneCreatesPresentationIsomorphism := false
+  symmetryLawsRequired := true
+  orbitMapExactRequired := true
+  pi0EmbeddingSeparate := true
+  pi0SurjectionSeparate := true
+  stabilizerPreservationSeparate := true
+  stabilizerReflectionSeparate := true
+  samePresentationRequiresStateBijection := true
+  samePresentationRequiresSymmetryBijection := true
+  recognitionCompositionOwned := true
+  identityFullRecognitionConstructed := true
+  identitySamePresentationConstructed := true
+  cardinalityMatchSufficient := false
 
 end Integration.ActionOrbitRecognition

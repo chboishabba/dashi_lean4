@@ -229,6 +229,55 @@ theorem QuarticFourSignedPolePair.signedFifthCapInterior_lower_of_credit_debt
   rw [W.signedFifthPhysicalCapInteriorAt_eq_credit_sub_debt ht n hn]
   linarith
 
+/-- The exact Route-B scalar from the max-cut roadmap.
+
+`gap >= 0` is definitionally the same analytic statement as
+
+  Credit_n - Debt_n + OuterBudget - 3 eps >= 0.
+
+Naming this scalar avoids further representation work: the only unpaid Route-B
+input is now eventual nonnegativity of this exact quantity. -/
+def QuarticFourSignedPolePair.signedFifthCorrelationGapAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (EV eps : ℝ) (n : ℕ) : ℝ :=
+  W.signedFifthCorrelationCreditAt n
+    - W.signedFifthCorrelationDebtAt n
+    + W.outerVerticalAbsoluteBudget rho EV
+    - 3*eps
+
+theorem QuarticFourSignedPolePair.signedFifthCorrelationGapAt_nonneg_iff
+    {t EV eps : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (n : ℕ) :
+    0 <= W.signedFifthCorrelationGapAt rho EV eps n
+      ↔
+    W.signedFifthCorrelationDebtAt n
+        - W.outerVerticalAbsoluteBudget rho EV + 3*eps
+      <= W.signedFifthCorrelationCreditAt n := by
+  unfold QuarticFourSignedPolePair.signedFifthCorrelationGapAt
+  constructor <;> intro h <;> linarith
+
+/-- Eventual `G_n >= 0` is exactly sufficient for the existing signed-fifth
+interior target.  This is the terminal Route-B producer interface; no new
+credit/debt wrapper is required beyond this point. -/
+theorem QuarticFourSignedPolePair.signedFifthInteriorTarget_of_eventual_gap_nonneg
+    {t EV eps : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hlarge :
+      ∀ᶠ n : ℕ in atTop,
+        quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ))
+    (hgap :
+      ∀ᶠ n : ℕ in atTop,
+        0 <= W.signedFifthCorrelationGapAt rho EV eps n) :
+    W.SignedFifthInteriorTarget rho EV eps := by
+  apply W.signedFifthInteriorTarget_of_eventual_credit_ge_debt_plus_threshold
+    ht rho hlarge
+  filter_upwards [hgap] with n hn
+  exact (W.signedFifthCorrelationGapAt_nonneg_iff rho n).mp hn
+
 /-- Eventual correlation inequality is exactly sufficient for the existing
 signed-fifth interior target. -/
 theorem QuarticFourSignedPolePair.signedFifthInteriorTarget_of_eventual_credit_ge_debt_plus_threshold

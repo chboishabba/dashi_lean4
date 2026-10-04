@@ -135,6 +135,39 @@ theorem exists_zetaWindowInverseSquareMass_right_shell_rvm_bound :
     hA hAB hR hsep
   convert h using 1 <;> ring
 
+/-- Boundary-safe first right shell.
+
+The ordinary right dyadic chart is `(3t/2,2t]` at `R=t/2`, so the literal
+complement boundary `gamma=3t/2` is not owned by that half-open window.  Rather
+than introduce a separate boundary fibre, enlarge only the first source window
+to `(3t/2-1,2t]`.  This contains the entire literal first far block
+`[3t/2,2t]`, while every point of the enlarged window remains at distance at
+least `t/2-1` from `t`.  For `t>=200` this costs only a harmless constant in the
+same `O(log t/t)` shell scale. -/
+theorem exists_zetaWindowInverseSquareMass_right_first_boundary_rvm_bound :
+    ∃ C : ℝ, 0 <= C ∧
+      ∀ {t : ℝ},
+        200 <= t ->
+        zetaWindowInverseSquareMass t (3*t/2-1) (2*t)
+          <=
+        C * (t/2 + 2) * Real.log (2*t+4) / (t/2-1)^2 := by
+  obtain ⟨C, hC0, hwin⟩ := exists_zetaWindowInverseSquareMass_rvm_bound
+  refine ⟨C, hC0, ?_⟩
+  intro t ht
+  have hA : 5 <= 3*t/2-1 := by linarith
+  have hAB : 3*t/2-1 < 2*t := by linarith
+  have hd : 0 < t/2-1 := by linarith
+  have hsep :
+      ∀ rho ∈ zetaZeroConfig.window (3*t/2-1) (2*t),
+        t/2-1 <= |rho.im-t| := by
+    intro rho hrho
+    have hpos : 0 < rho.im-t := by linarith [hrho.2.1]
+    rw [abs_of_pos hpos]
+    linarith [hrho.2.1]
+  have h := hwin (t:=t) (A:=3*t/2-1) (B:=2*t) (d:=t/2-1)
+    hA hAB hd hsep
+  convert h using 1 <;> ring
+
 /-- The left shell `(t-2R,t-R]` obeys the same estimate as long as it remains in
 the positive-height RvM range.  Once `t-2R < 5`, the proof switches to the
 all-real local zero-count theorem below; no positivity assumption is hidden. -/

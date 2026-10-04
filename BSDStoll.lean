@@ -1,0 +1,2 @@
+import BSDStoll.FiniteArithmeticDefectFactorization
+import BSDStoll.AllRationalCurveNormalization

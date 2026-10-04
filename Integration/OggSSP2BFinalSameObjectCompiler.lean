@@ -1,4 +1,5 @@
 import Integration.OggSSP2BRevisedCompletionRecognition
+import Integration.OggSSP2BDefectTwoBitProvenanceSelector
 import Integration.ThreeC2TateFibreCycle
 
 /-!
@@ -9,7 +10,8 @@ After the finite max-cut, discovery is no longer the issue:
 * bare M22 is ruled out as the Completion10 involution source;
 * M22:2 supplies an outer J2^5 five-pair action on both actual 10-dimensional
   modules;
-* the binary-tetrahedral defect invariant is independently sourced.
+* the binary-tetrahedral defect invariant is independently sourced;
+* defect compatibility reduces D to two independent provenance decisions.
 
 This file packages exactly the remaining same-object data needed to finish the
 original 2B programme:
@@ -18,11 +20,12 @@ A'  actual three-fibre Tate transport on the source 276-dimensional Tate
     carrier;
 B'  an actual 10-dimensional Tate subquotient;
 C'  the sourced M22:2 outer Completion10 action on that SAME quotient;
-D   a sourced Mode5 -> binary-tetrahedral order-stratum recognition;
+D   two sourced orientation decisions selecting the unique defect-compatible
+    Mode5 -> binary-tetrahedral order-stratum recognition;
 plus natural transport of the selected quotient through all three Tate fibres.
 
-No source receipt is fabricated here.  The point of this compiler is that once
-these concrete maps are supplied there is no remaining architectural theorem
+No source receipt is fabricated here.  Once these concrete maps plus the two
+provenance decisions are supplied there is no remaining architectural theorem
 between them and the finished core recognition.
 -/
 
@@ -31,6 +34,7 @@ namespace Integration.OggSSP2BFinalSameObjectCompiler
 namespace R := Integration.OggSSP2BRevisedCompletionRecognition
 namespace T := Integration.ThreeC2TateFibreCycle
 namespace D := Integration.OggSSP2BBinaryTetrahedralDefectSource
+namespace P := Integration.OggSSP2BDefectTwoBitProvenanceSelector
 
 abbrev Scalar := R.Scalar
 abbrev ActualTate276 := R.ActualTate276
@@ -107,6 +111,22 @@ structure Final2BCoreRecognition
 namespace Final2BCoreRecognition
 
 variable {Q : Type*} [AddCommGroup Q] [Module Scalar Q]
+
+/-- D max-cut constructor: callers no longer need to manufacture an arbitrary
+five-mode recognition object.  The exact remaining input is the two-bit source
+receipt. -/
+def fromTwoBitDefectProvenance
+    (completion : R.ActualTateCompletionTenRecognition Q)
+    (fullTateTransport : ActualThreeFibreTateTransportReceipt)
+    (selectedTransport : SelectedQ10TransportReceipt Q completion fullTateTransport)
+    (defectSource : P.TwoBitSourceReceipt)
+    (sourceProvenance : String) :
+    Final2BCoreRecognition Q where
+  completion := completion
+  fullTateTransport := fullTateTransport
+  selectedTransport := selectedTransport
+  defectRecognition := defectSource.toFiveModeDefectRecognition
+  sourceProvenance := sourceProvenance
 
 /-- B': the selected actual Tate quotient has the intended dimension. -/
 theorem selected_Q10_has_finrank_ten

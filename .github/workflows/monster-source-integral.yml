@@ -11,6 +11,7 @@ on:
       - "Integration/OggSSP2BExplicitIntegralCARestriction.lean"
       - "Integration/OggSSP2BVacuumTateNormalization.lean"
       - "Integration/OggSSP2BTateGradingConventionBridge.lean"
+      - "Integration/OggSSP2BTateWeightTwoBrauerTraceBridge.lean"
       - "Integration/OggSSP2BActualFiveLengthNoGo.lean"
       - "Integration/OggSSP2BActualFiveSlices.lean"
       - "Integration/OggSSP2BNormalizerFiveByTwoRecognition.lean"
@@ -74,6 +75,7 @@ jobs:
           lake env lean Integration/OggSSP2BExplicitIntegralCARestriction.lean
           lake env lean Integration/OggSSP2BActualRestrictedTate.lean
           lake env lean Integration/OggSSP2BTateGradingConventionBridge.lean
+          lake env lean Integration/OggSSP2BTateWeightTwoBrauerTraceBridge.lean
           lake env lean Integration/OggSSP2BActualFiveLengthNoGo.lean
           lake env lean Integration/OggSSP2BActualFiveSlices.lean
           lake env lean Integration/OggSSP2BResidualC4BinaryPhaseNoGo.lean

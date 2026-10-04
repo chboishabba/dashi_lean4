@@ -16,6 +16,7 @@ on:
       - "Integration/OggSSP2BNormalizerFiveByTwoRecognition.lean"
       - "Integration/OggSSP2BM22CompletionTenCandidate.lean"
       - "Integration/OggSSP2BM22RuntimeReceipt.lean"
+      - "Integration/OggSSP2BM22d2Completion10RuntimeReceipt.lean"
       - "Integration/OggSSP2BRevisedCompletionRecognition.lean"
       - "Integration/OggSSP2BBinaryTetrahedralDefectSource.lean"
       - "Integration/OggSSP2BPair24Carrier.lean"
@@ -77,6 +78,7 @@ jobs:
           lake env lean Integration/OggSSP2BCo1TenDimensionalNoGo.lean
           lake env lean Integration/OggSSP2BM22CompletionTenCandidate.lean
           lake env lean Integration/OggSSP2BM22RuntimeReceipt.lean
+          lake env lean Integration/OggSSP2BM22d2Completion10RuntimeReceipt.lean
           lake env lean Integration/OggSSP2BBinaryTetrahedralDefectSource.lean
           lake env lean Integration/OggSSP2BPair24Carrier.lean
           lake env lean Integration/OggSSP2BPair24SameObjectWeld.lean

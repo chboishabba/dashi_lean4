@@ -1,0 +1,15 @@
+import NSBControl.Rational345R830DecisionCompiler
+
+namespace NSBControl
+namespace Rational345R830DecisionCompilerTest
+
+open Rational345RealRadius4
+open Rational345RealInitialState
+open Rational345BPBudget
+open Rational345R830DecisionCompiler
+
+example : selectedRate u₀ ≤ -Rational345ShortTime.integerMargin := by
+  exact initial_rate_has_integer_margin
+
+end Rational345R830DecisionCompilerTest
+end NSBControl

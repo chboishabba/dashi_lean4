@@ -1,0 +1,62 @@
+name: NS R829-R831 rational 3-4-5 Lean check
+
+on:
+  push:
+    branches:
+      - 'agent/ns-r703-cyclic-vector-orbit'
+    paths:
+      - 'NSBControl/Rational345*.lean'
+      - 'NSBCyclicOrbit.lean'
+      - 'lakefile.toml'
+      - 'lean-toolchain'
+      - '.github/workflows/ns-r829-r830-rational-345.yml'
+  pull_request:
+    paths:
+      - 'NSBControl/Rational345*.lean'
+      - 'NSBCyclicOrbit.lean'
+      - 'lakefile.toml'
+      - 'lean-toolchain'
+      - '.github/workflows/ns-r829-r830-rational-345.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          test: false
+          build: false
+      - name: Build R829-R831 terminal tests
+        run: |
+          lake build NSBControl.Rational345RealSnapshotW2Test
+          lake build NSBControl.Rational345Round71W1Test
+          lake build NSBControl.Rational345Round71PhysicalCarrierTest
+          lake build NSBControl.Rational345Round71RealityFieldTest
+          lake build NSBControl.Rational345Round71TransverseFieldTest
+          lake build NSBControl.Rational345Round71ZeroModeTest
+          lake build NSBControl.Rational345BQFieldBoundTest
+          lake build NSBControl.Rational345BPClosedTest
+          lake build NSBControl.Rational345R830DecisionCompilerTest
+          lake build NSBControl.Rational345R823RealHelicalCoreTest
+          lake build NSBControl.Rational345R823RealInnerFoldTest
+          lake build NSBControl.Rational345R823RealProductionIncidenceTest
+          lake build NSBControl.Rational345R823RealNestedCellTest
+          lake build NSBControl.Rational345R823RealNestedOrbitTest
+          lake build NSBControl.Rational345R823RealProductionDifferenceTest
+          lake build NSBControl.Rational345R823RealR749R760Test
+          lake build NSBControl.Rational345R823DecisionFreezeTest
+          lake build NSBControl.Rational345R823Cutoff4SeparationTest
+          lake build NSBControl.Rational345R823TouchedPartitionTest
+          lake build NSBControl.Rational345R823TouchedNormalFormTest
+          lake build NSBControl.Rational345R853PhysicalScalarCarrierTest
+          lake build NSBControl.Rational345R831TouchedCarrierWeldTest
+          lake build NSBControl.Rational345R831R853PhysicalCarrierWeldTest
+          lake build NSBControl.Rational345R831TerminalCarrierTest
+          lake build NSBControl.Rational345R823RealSemanticProvenanceTest
+          lake build NSBControl.Rational345R823LiteralR760CellMaxCutTest
+          lake build NSBControl.Rational345R831ReserveDecisionTest

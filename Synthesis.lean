@@ -395,6 +395,17 @@ import Synthesis.LinearConsumerSyntheticBidiRuntimeByteEqualityRegression
 import Synthesis.MonsterWholeCharacterSimpleSubobjectClassification
 import Synthesis.MonsterWholeCharacterSimpleSubobjectRegression
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleBidiMarkedFourth
+import Synthesis.RiemannQuarticFourthPrimitiveQuantitativeBudget
+import Synthesis.RiemannQuarticFourthPrimitiveClassicalRemainder
+import Synthesis.RiemannQuarticSignedCosinePSDNoGo
+import Synthesis.RiemannMarkedArithmeticCompletedOperatorAudit
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapTwoPrime
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapCompleted
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapJ2SmoothAtomicError
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapJ2AtomicDecision
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapTerminalDecision
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapMaxCutDecision
+import Synthesis.RiemannSelectedPrimeSensitiveTwoScale
 
 
 
@@ -409,7 +420,96 @@ the cross-domain material in this repository.
 See `DEPENDENCY_MAP.md` for the provenance map and the list of remaining proof
 obligations.
 -/
-import Synthesis.MillenniumHodgeRealAlgebraicCycleMultiplicityExact
-import Synthesis.MillenniumHodgeP1xP1PrimitiveRulingRegressionExact
-import Synthesis.MillenniumHodgeActualCycleCorrespondenceActionExact
-import Synthesis.MillenniumHodgeRelativeProductSwapExact
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

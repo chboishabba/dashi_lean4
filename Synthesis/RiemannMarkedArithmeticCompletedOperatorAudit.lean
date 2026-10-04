@@ -1,0 +1,442 @@
+import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleBidiMarkedFourth
+import Synthesis.RiemannQuarticSignedCosinePSDNoGo
+
+/-!
+# Same-witness marked Guinand–Weil source, and completion firewall
+
+The *actual* primeProjectiveDefect of both short marked physical
+detectors vanishes for t >= 200. A positive separately-defined
+prime-angular jet cannot be substituted for their arithmetic source.
+
+The literal Zeta23 cluster/off-ordinate/Gamma/pole decomposition,
+together with the exact prime vanishing, is the completed source
+identity for this marked test. It is not the canonical unmarked
+signed fifth-RvM terminal inequality.
+-/
+noncomputable section
+namespace Synthesis
+
+def QuarticFourSignedPolePair.markedCompletedArithmeticResponse
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (A : ℝ) : ℝ :=
+  W.bidiMarkedPrimeCombination A
+    + W.bidiMarkedGammaCombination A
+    + W.bidiMarkedPoleCombination A
+
+theorem QuarticFourSignedPolePair.markedArithmetic_eq_gamma_add_pole
+    {t A : ℝ} (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.markedCompletedArithmeticResponse A
+      = W.bidiMarkedGammaCombination A
+        + W.bidiMarkedPoleCombination A := by
+  simp [QuarticFourSignedPolePair.markedCompletedArithmeticResponse,
+    W.bidiMarkedPrimeCombination_eq_zero ht A]
+
+theorem QuarticFourSignedPolePair.markedCluster_eq_offOrd_add_arithmetic
+    {t A : ℝ} (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.bidiMarkedClusterCombination A
+      =
+    W.bidiMarkedOffOrdCombination A
+      + W.markedCompletedArithmeticResponse A := by
+  rw [W.bidiMarkedCluster_eq_offOrd_add_gamma_add_pole ht A]
+  rw [W.markedArithmetic_eq_gamma_add_pole ht]
+  ring
+
+theorem QuarticFourSignedPolePair.markedPrime_not_positive
+    {t A : ℝ} (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    ¬ (0 < W.bidiMarkedPrimeCombination A) := by
+  rw [W.bidiMarkedPrimeCombination_eq_zero ht A]
+  exact lt_irrefl 0
+
+theorem exists_selected_marked_arithmetic_pole_bias
+    {t : ℝ} (ht : 200 ≤ t) :
+    ∃ W : QuarticFourSignedPolePair t,
+      7 * Real.pi^4 / 1600 ≤ W.targetStrength
+      ∧ ∃ epsA : ℝ, 0 < epsA ∧
+        ∀ A : ℝ, 0 < |A| → |A| < epsA →
+          W.bidiMarkedOffOrdCombination A
+            + W.markedCompletedArithmeticResponse A
+              = W.bidiMarkedClusterCombination A
+          ∧
+          W.bidiMarkedOffOrdCombination A
+            + W.bidiMarkedGammaCombination A
+              < W.bidiMarkedClusterCombination A := by
+  obtain ⟨W,hfloor,epsA,hepsA,hbias⟩ :=
+    exists_quarticFourSignedPolePair_with_strength_floor_and_marked_channel_bias ht
+  refine ⟨W,hfloor,epsA,hepsA,?_⟩
+  intro A hA hsmall
+  exact ⟨(W.markedCluster_eq_offOrd_add_arithmetic ht).symm,
+    hbias A hA hsmall⟩
+
+/-!
+A PSD block is not available from a positive finite character trace
+unless its positive diagonal is independently sourced and its
+off-diagonal has an established same-object equality with the
+selected completed zeta functional. The following elementary real
+block theorem isolates the necessary Schur determinant payment.
+-/
+def RealTwoByTwoNonnegative
+    (a d b : ℝ) : Prop :=
+  ∀ x y : ℝ, 0 ≤ a*x^2 + 2*b*x*y + d*y^2
+
+theorem realTwoByTwo_nonneg_diagonals
+    {a d b : ℝ}
+    (h : RealTwoByTwoNonnegative a d b) :
+    0 ≤ a ∧ 0 ≤ d := by
+  constructor
+  · simpa [RealTwoByTwoNonnegative] using h 1 0
+  · simpa [RealTwoByTwoNonnegative] using h 0 1
+
+theorem realTwoByTwo_determinant_nonneg
+    {a d b : ℝ}
+    (h : RealTwoByTwoNonnegative a d b) :
+    b^2 ≤ a*d := by
+  obtain ⟨ha,hd⟩ := realTwoByTwo_nonneg_diagonals h
+  by_cases hzero : a = 0
+  · have htest := h (-(d+1)) b
+    rw [hzero] at htest
+    have hdb : 0 ≤ d * b^2 := mul_nonneg hd (sq_nonneg b)
+    nlinarith [sq_nonneg b]
+  · have haPos : 0 < a := lt_of_le_of_ne ha (Ne.symm hzero)
+    have htest := h (-b/a) 1
+    have hsq :
+        a * (-b/a)^2 + 2*b*(-b/a) + d
+          = d - b^2/a := by
+      field_simp [hzero]
+      ring
+    rw [hsq] at htest
+    have hprod := mul_nonneg ha htest
+    have hid : a*(d-b^2/a)=a*d-b^2 := by
+      field_simp [hzero]
+      ring
+    rw [hid] at hprod
+    linarith
+
+theorem realTwoByTwo_nonzero_offdiag_requires_positive_diagonals
+    {a d b : ℝ}
+    (h : RealTwoByTwoNonnegative a d b)
+    (hb : b ≠ 0) :
+    0 < a ∧ 0 < d ∧ b^2 ≤ a*d := by
+  obtain ⟨ha,hd⟩ := realTwoByTwo_nonneg_diagonals h
+  have hdet := realTwoByTwo_determinant_nonneg h
+  have hb2 : 0 < b^2 := sq_pos_of_ne_zero hb
+  refine ⟨?_, ?_,hdet⟩
+  · by_contra hnot
+    have hz : a = 0 := le_antisymm (le_of_not_gt hnot) ha
+    rw [hz] at hdet
+    nlinarith
+  · by_contra hnot
+    have hz : d = 0 := le_antisymm (le_of_not_gt hnot) hd
+    rw [hz] at hdet
+    nlinarith
+
+
+/-!
+## Removal of the marker does not restore a prime term
+
+At A=0 the cosh marking is exactly the identity on each selected
+physical detector. The prime defect is still identically zero. This
+is stronger than a statement only about small nonzero markers.
+-/
+
+theorem quarticFourPhysicalDetector_primeProjectiveDefect_eq_zero
+    {R lam mu t : ℝ}
+    (hR : 0 < R)
+    (hRone : R < 1)
+    (ht : 200 ≤ t) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourPhysicalDetector R lam mu t) t (t/16)
+      = 0 := by
+  have h :=
+    quarticFourBidiMarkedPhysicalDetector_primeProjectiveDefect_eq_zero
+      (lam := lam) (mu := mu) hR hRone ht (A := 0)
+  simpa [quarticFourBidiMarkedPhysicalDetector,
+    quarticSignedPoleCoshMarkedDetector_zero] using h
+
+theorem QuarticFourSignedPolePair.unmarkedSelectedPrimeHalf_eq_zero
+    {t : ℝ} (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourPhysicalDetector W.R (1/2) W.muHalf t) t (t/16)
+        = 0 :=
+  quarticFourPhysicalDetector_primeProjectiveDefect_eq_zero
+    W.Rpos W.RltOne ht
+
+theorem QuarticFourSignedPolePair.unmarkedSelectedPrimeTwo_eq_zero
+    {t : ℝ} (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (quarticFourPhysicalDetector W.R (2/3) W.muTwo t) t (t/16)
+        = 0 :=
+  quarticFourPhysicalDetector_primeProjectiveDefect_eq_zero
+    W.Rpos W.RltOne ht
+
+/-- This is exactly the unmarked A=0 instance of the existing
+same-witness two-window prime combination. -/
+theorem QuarticFourSignedPolePair.unmarkedSelectedPrimeCombination_eq_zero
+    {t : ℝ} (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.bidiMarkedPrimeCombination 0 = 0 :=
+  W.bidiMarkedPrimeCombination_eq_zero ht 0
+
+
+/-!
+## Fully unmarked A=0 completed literal formula
+
+Removing the marker does not create an arithmetic prime source.
+In addition, the existing pole cancellation at A=0 eliminates the
+two-window pole term. Thus the complete unmarked source for THESE
+physical detectors reduces exactly to its Gamma component.
+The signed RvM fourth-cap is not identified with this source by
+any theorem in this file; the two endpoint constructions have to be
+joined with their actual literal normalizations.
+-/
+
+theorem QuarticFourSignedPolePair.unmarkedCompletedArithmetic_eq_gamma
+    {t : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.markedCompletedArithmeticResponse 0
+       = W.bidiMarkedGammaCombination 0 := by
+  rw [W.markedArithmetic_eq_gamma_add_pole ht]
+  rw [W.bidiMarkedPoleCombination_zero (by linarith : 0 < t)]
+  ring
+
+theorem QuarticFourSignedPolePair.unmarkedCluster_eq_offOrd_add_gamma
+    {t : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t) :
+    W.bidiMarkedClusterCombination 0
+      =
+    W.bidiMarkedOffOrdCombination 0
+      + W.bidiMarkedGammaCombination 0 := by
+  rw [W.markedCluster_eq_offOrd_add_arithmetic ht]
+  rw [W.unmarkedCompletedArithmetic_eq_gamma ht]
+
+
+/-!
+## The exact positive-completion test (the reverse Schur direction)
+
+This theorem is not an RH assumption: it identifies necessary AND
+sufficient scalar matrix inequalities.  To become an RH source producer,
+a future arithmetic operator must construct a,d and b with a same-object
+completed explicit-formula identity and prove these inequalities independently.
+-/
+
+theorem realTwoByTwo_nonnegative_of_left_positive_and_det
+    {a d b : ℝ}
+    (ha : 0 < a)
+    (hdet : b^2 ≤ a*d) :
+    RealTwoByTwoNonnegative a d b := by
+  intro x y
+  have hane : a ≠ 0 := ne_of_gt ha
+  have hsq : 0 ≤ (a*x+b*y)^2/a :=
+    div_nonneg (sq_nonneg _) ha.le
+  have hrem : 0 ≤ ((a*d-b^2)/a)*y^2 :=
+    mul_nonneg
+      (div_nonneg (sub_nonneg.mpr hdet) ha.le)
+      (sq_nonneg _)
+  have hid :
+      a*x^2 + 2*b*x*y + d*y^2
+        = (a*x+b*y)^2/a + ((a*d-b^2)/a)*y^2 := by
+    field_simp [hane]
+    ring
+  rw [hid]
+  exact add_nonneg hsq hrem
+
+theorem realTwoByTwo_nonnegative_iff_schur
+    {a d b : ℝ} :
+    RealTwoByTwoNonnegative a d b
+      ↔
+    0 ≤ a ∧ 0 ≤ d ∧ b^2 ≤ a*d := by
+  constructor
+  · intro h
+    obtain ⟨ha,hd⟩ := realTwoByTwo_nonneg_diagonals h
+    exact ⟨ha,hd,realTwoByTwo_determinant_nonneg h⟩
+  · rintro ⟨ha,hd,hdet⟩
+    by_cases hzero : a = 0
+    · have hb : b = 0 := by
+        rw [hzero] at hdet
+        nlinarith [sq_nonneg b]
+      subst a
+      subst b
+      intro x y
+      have hd' : 0 ≤ d*y^2 :=
+        mul_nonneg hd (sq_nonneg _)
+      simpa using hd'
+    · have haPos : 0 < a := lt_of_le_of_ne ha (Ne.symm hzero)
+      exact realTwoByTwo_nonnegative_of_left_positive_and_det
+        haPos hdet
+
+
+/-!
+## Literal first-prime support threshold
+
+Since the first nontrivial prime power is 2, a source detector
+supported strictly inside (-log 2, log 2) has exactly zero arithmetic
+prime defect. Conversely, a NONZERO literal prime defect forces actual
+detector support at |u| >= log 2. This is a necessary geometric
+condition on any replacement witness that would use prime-side
+coercivity; it does not assert a sign or sufficient bound beyond the
+threshold.
+-/
+
+theorem nonzero_literalPrimeDefect_forces_firstPrime_support
+    {g : ℝ → ℝ} {t r : ℝ}
+    (hprime :
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+        g t r ≠ 0) :
+    ∃ u : ℝ, g u ≠ 0 ∧ Real.log 2 ≤ |u| := by
+  by_contra hnone
+  have hshort : ∀ u : ℝ, g u ≠ 0 → |u| < Real.log 2 := by
+    intro u hu
+    apply lt_of_not_ge
+    intro huoutside
+    exact hnone ⟨u,hu,huoutside⟩
+  exact hprime
+    (Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect_eq_zero
+      hshort t r)
+
+
+/-!
+## Support-rigidity of the arithmetic prime channel
+
+The prime blindness is geometric, not a special cancellation of the cosh
+marker. For the actual short physical detector, ANY pointwise multiplier
+retains support below log 2, and therefore the literal prime term is zero.
+In particular, no reweighting by an auxiliary Heisenberg character,
+cyclotomic phase, polynomial jet or cosh factor can conjure a nonzero
+prime response while the physical support stays fixed.
+
+A nonzero arithmetic prime term needs a detector that is actually
+nonzero at a prime-power logarithm. This theorem tests the SAME Zeta23
+prime functional, rather than a separately defined positive prime jet.
+-/
+
+theorem quarticFourPhysicalDetector_pointwiseMultiplier_prime_eq_zero
+    {R lam mu t : ℝ}
+    (hR : 0 < R) (hRone : R < 1) (ht : 200 ≤ t)
+    (h : ℝ → ℝ) :
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+      (fun u => quarticFourPhysicalDetector R lam mu t u * h u)
+      t (t/16) = 0 := by
+  apply
+    Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect_eq_zero
+  intro u hu
+  apply quarticFourPhysicalDetector_short_of_twoHundred
+    hR hRone ht u
+  intro hzero
+  simp [hzero] at hu
+
+theorem QuarticFourSignedPolePair.selectedPointwiseMultipliers_prime_eq_zero
+    {t : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t)
+    (hHalf hTwo : ℝ → ℝ) :
+    W.poleTwo *
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+        (fun u =>
+          quarticFourPhysicalDetector W.R (1/2) W.muHalf t u * hHalf u)
+        t (t/16)
+    + (-W.poleHalf) *
+      Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+        (fun u =>
+          quarticFourPhysicalDetector W.R (2/3) W.muTwo t u * hTwo u)
+        t (t/16) = 0 := by
+  rw [quarticFourPhysicalDetector_pointwiseMultiplier_prime_eq_zero
+        W.Rpos W.RltOne ht hHalf,
+      quarticFourPhysicalDetector_pointwiseMultiplier_prime_eq_zero
+        W.Rpos W.RltOne ht hTwo]
+  ring
+
+/-- No source-exact prime coercivity can arise solely from changing
+pointwise weights of the selected compact-support physical witness. -/
+theorem QuarticFourSignedPolePair.selectedPointwiseMultipliers_no_positive_prime
+    {t : ℝ}
+    (ht : 200 ≤ t)
+    (W : QuarticFourSignedPolePair t)
+    (hHalf hTwo : ℝ → ℝ) :
+    ¬ 0 <
+      W.poleTwo *
+        Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+          (fun u =>
+            quarticFourPhysicalDetector W.R (1/2) W.muHalf t u * hHalf u)
+          t (t/16)
+      + (-W.poleHalf) *
+        Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.primeProjectiveDefect
+          (fun u =>
+            quarticFourPhysicalDetector W.R (2/3) W.muTwo t u * hTwo u)
+          t (t/16) := by
+  rw [W.selectedPointwiseMultipliers_prime_eq_zero ht hHalf hTwo]
+  exact lt_irrefl 0
+
+
+/-!
+## Actual selected cosine imposes a strictly positive diagonal completion
+
+The zero at the origin and negative Fourier mass prove the actual normalized
+cosine kernel is nonzero. Any PSD completion with off-diagonal entry equal
+to that SAME kernel must pay *both* positive diagonal entries, with their
+product at least its squared amplitude.
+
+This does not produce such an arithmetic diagonal: it states its unavoidable
+source-identified cost. It prevents a finite positive Heisenberg form from
+being transported as a zero-diagonal completion of the signed RH cosine.
+-/
+
+def QuarticFourSignedPolePair.SelectedCosinePositiveBlock
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (a d : ℝ) : Prop :=
+  ∀ q : ℝ, RealTwoByTwoNonnegative a d
+    (W.normalizedOrdinateCosine q)
+
+theorem QuarticFourSignedPolePair.normalizedCosine_nonzero_of_negativeOrigin
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hOrigin :
+      quarticFourSmoothFinitePoleCancelledOrigin
+        W.R W.muHalf W.muTwo t < 0) :
+    ∃ q : ℝ, W.normalizedOrdinateCosine q ≠ 0 := by
+  by_contra hall
+  push_neg at hall
+  have hmass0 :
+      (∫ q : ℝ, W.normalizedOrdinateCosine q) = 0 := by
+    simp [hall]
+  have hmassNeg :=
+    W.normalizedOrdinateCosine_mass_neg_of_origin_neg hOrigin
+  linarith
+
+theorem QuarticFourSignedPolePair.selectedCosineCompletion_requires_positive_diagonals
+    {t a d : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hOrigin :
+      quarticFourSmoothFinitePoleCancelledOrigin
+        W.R W.muHalf W.muTwo t < 0)
+    (hPSD : W.SelectedCosinePositiveBlock a d) :
+    0 < a ∧ 0 < d ∧
+      ∀ q : ℝ, (W.normalizedOrdinateCosine q)^2 ≤ a*d := by
+  obtain ⟨q,hq⟩ := W.normalizedCosine_nonzero_of_negativeOrigin hOrigin
+  obtain ⟨ha,hd,_⟩ :=
+    realTwoByTwo_nonzero_offdiag_requires_positive_diagonals
+      (hPSD q) hq
+  exact ⟨ha,hd,fun z =>
+    realTwoByTwo_determinant_nonneg (hPSD z)⟩
+
+theorem QuarticFourSignedPolePair.selectedCosineCompletion_iff_diagonalPayment
+    {t a d : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.SelectedCosinePositiveBlock a d
+      ↔ 0 ≤ a ∧ 0 ≤ d ∧
+        ∀ q : ℝ, (W.normalizedOrdinateCosine q)^2 ≤ a*d := by
+  unfold QuarticFourSignedPolePair.SelectedCosinePositiveBlock
+  constructor
+  · intro h
+    obtain ⟨ha,hd⟩ := realTwoByTwo_nonneg_diagonals (h 0)
+    exact ⟨ha,hd,fun q => realTwoByTwo_determinant_nonneg (h q)⟩
+  · rintro ⟨ha,hd,hdet⟩ q
+    exact realTwoByTwo_nonnegative_iff_schur.mpr
+      ⟨ha,hd,hdet q⟩
+
+end Synthesis

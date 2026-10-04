@@ -273,10 +273,10 @@ theorem QuarticFourSignedPolePair.signedFifthInteriorTarget_of_eventual_gap_nonn
       ∀ᶠ n : ℕ in atTop,
         0 <= W.signedFifthCorrelationGapAt rho EV eps n) :
     W.SignedFifthInteriorTarget rho EV eps := by
-  apply W.signedFifthInteriorTarget_of_eventual_credit_ge_debt_plus_threshold
-    ht rho hlarge
-  filter_upwards [hgap] with n hn
-  exact (W.signedFifthCorrelationGapAt_nonneg_iff rho n).mp hn
+  filter_upwards [hlarge,hgap] with n hn hg
+  exact W.signedFifthCapInterior_lower_of_credit_debt
+    ht rho n hn
+    ((W.signedFifthCorrelationGapAt_nonneg_iff rho n).mp hg)
 
 /-- Eventual correlation inequality is exactly sufficient for the existing
 signed-fifth interior target. -/

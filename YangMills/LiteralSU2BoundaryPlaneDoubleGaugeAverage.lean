@@ -97,22 +97,39 @@ theorem su2_boundary_plane_second_swap_kernel_eq_full
     su2DoubleGaugedCrossingKernel
   rw [su2_boundary_plane_second_swap_trace_eq_full]
 
+/-- Every normalized SU(2) relative trace has absolute value at most one. -/
+theorem su2_relative_fundamental_trace_abs_le_one
+    (U V : SU2PlaquetteHolonomy) :
+    |su2RelativeFundamentalTrace U V| ≤ 1 := by
+  simpa [su2RelativeFundamentalTrace, su2QuaternionCoordinate] using
+    (su2_quaternion_coordinate_abs_le_one (0 : Fin 4) (U * V⁻¹))
+
 /-- The double-gauged crossing trace is uniformly bounded on the finite crossing set. -/
 theorem su2_double_gauged_crossing_trace_sum_abs_le
     (n : ℕ) [NeZero n]
     (left right : SU2PositiveInteriorLinks n)
     (b c : SU2BoundaryTemporalLinks n) :
     |su2DoubleGaugedCrossingTraceSum n left right b c| ≤
-      ((su2UpperCrossingPlaquettes n).card +
-       (su2LowerCrossingPlaquettes n).card : ℕ) := by
+      (((su2UpperCrossingPlaquettes n).card +
+        (su2LowerCrossingPlaquettes n).card : ℕ) : ℝ) := by
   classical
-  unfold su2DoubleGaugedCrossingTraceSum
-  rw [abs_add]
-  · gcongr
-    · unfold su2UpperDoubleGaugedCrossingTraceSum
-      calc
-        |∑ p ∈ (su2UpperCrossingPlaquettes n).attach,
-            su2RelativeFundamentalTrace
+  let upper := su2UpperDoubleGaugedCrossingTraceSum n left right b c
+  let lower := su2LowerDoubleGaugedCrossingTraceSum n left right b c
+  have hUpper : |upper| ≤ ((su2UpperCrossingPlaquettes n).card : ℝ) := by
+    unfold upper su2UpperDoubleGaugedCrossingTraceSum
+    calc
+      |∑ p ∈ (su2UpperCrossingPlaquettes n).attach,
+          su2RelativeFundamentalTrace
+            (su2BoundaryGaugeTransformEdge
+              (b (su2UpperCrossingSourceBoundaryIndex n p.1 p.2))
+              (b (su2UpperCrossingTargetBoundaryIndex n p.1 p.2))
+              (left (su2UpperCrossingLeftPositiveIndex n p.1 p.2)))
+            (su2BoundaryGaugeTransformEdge
+              (c (su2UpperCrossingSourceBoundaryIndex n p.1 p.2))
+              (c (su2UpperCrossingTargetBoundaryIndex n p.1 p.2))
+              (right (su2UpperCrossingRightPositiveIndex n p.1 p.2)))| ≤
+          ∑ p ∈ (su2UpperCrossingPlaquettes n).attach,
+            |su2RelativeFundamentalTrace
               (su2BoundaryGaugeTransformEdge
                 (b (su2UpperCrossingSourceBoundaryIndex n p.1 p.2))
                 (b (su2UpperCrossingTargetBoundaryIndex n p.1 p.2))
@@ -120,25 +137,27 @@ theorem su2_double_gauged_crossing_trace_sum_abs_le
               (su2BoundaryGaugeTransformEdge
                 (c (su2UpperCrossingSourceBoundaryIndex n p.1 p.2))
                 (c (su2UpperCrossingTargetBoundaryIndex n p.1 p.2))
-                (right (su2UpperCrossingRightPositiveIndex n p.1 p.2)))| ≤
-            ∑ p ∈ (su2UpperCrossingPlaquettes n).attach, (1 : ℝ) := by
-              apply Finset.abs_sum_le_sum_abs.trans
-              gcongr with p hp
-              simpa [su2RelativeFundamentalTrace, su2QuaternionCoordinate] using
-                (su2_quaternion_coordinate_abs_le_one (0 : Fin 4)
-                  ((su2BoundaryGaugeTransformEdge
-                    (b (su2UpperCrossingSourceBoundaryIndex n p.1 p.2))
-                    (b (su2UpperCrossingTargetBoundaryIndex n p.1 p.2))
-                    (left (su2UpperCrossingLeftPositiveIndex n p.1 p.2))) *
-                   (su2BoundaryGaugeTransformEdge
-                    (c (su2UpperCrossingSourceBoundaryIndex n p.1 p.2))
-                    (c (su2UpperCrossingTargetBoundaryIndex n p.1 p.2))
-                    (right (su2UpperCrossingRightPositiveIndex n p.1 p.2)))⁻¹))
-        _ = ((su2UpperCrossingPlaquettes n).card : ℝ) := by simp
-    · unfold su2LowerDoubleGaugedCrossingTraceSum
-      calc
-        |∑ p ∈ (su2LowerCrossingPlaquettes n).attach,
-            su2RelativeFundamentalTrace
+                (right (su2UpperCrossingRightPositiveIndex n p.1 p.2)))| :=
+        Finset.abs_sum_le_sum_abs _ _
+      _ ≤ ∑ p ∈ (su2UpperCrossingPlaquettes n).attach, (1 : ℝ) := by
+        gcongr with p hp
+        exact su2_relative_fundamental_trace_abs_le_one _ _
+      _ = ((su2UpperCrossingPlaquettes n).card : ℝ) := by simp
+  have hLower : |lower| ≤ ((su2LowerCrossingPlaquettes n).card : ℝ) := by
+    unfold lower su2LowerDoubleGaugedCrossingTraceSum
+    calc
+      |∑ p ∈ (su2LowerCrossingPlaquettes n).attach,
+          su2RelativeFundamentalTrace
+            (su2BoundaryGaugeTransformEdge
+              (b (su2LowerCrossingSourceBoundaryIndex n p.1 p.2))
+              (b (su2LowerCrossingTargetBoundaryIndex n p.1 p.2))
+              (right (su2LowerCrossingRightPositiveIndex n p.1 p.2)))
+            (su2BoundaryGaugeTransformEdge
+              (c (su2LowerCrossingSourceBoundaryIndex n p.1 p.2))
+              (c (su2LowerCrossingTargetBoundaryIndex n p.1 p.2))
+              (left (su2LowerCrossingLeftPositiveIndex n p.1 p.2)))| ≤
+          ∑ p ∈ (su2LowerCrossingPlaquettes n).attach,
+            |su2RelativeFundamentalTrace
               (su2BoundaryGaugeTransformEdge
                 (b (su2LowerCrossingSourceBoundaryIndex n p.1 p.2))
                 (b (su2LowerCrossingTargetBoundaryIndex n p.1 p.2))
@@ -146,23 +165,19 @@ theorem su2_double_gauged_crossing_trace_sum_abs_le
               (su2BoundaryGaugeTransformEdge
                 (c (su2LowerCrossingSourceBoundaryIndex n p.1 p.2))
                 (c (su2LowerCrossingTargetBoundaryIndex n p.1 p.2))
-                (left (su2LowerCrossingLeftPositiveIndex n p.1 p.2)))| ≤
-            ∑ p ∈ (su2LowerCrossingPlaquettes n).attach, (1 : ℝ) := by
-              apply Finset.abs_sum_le_sum_abs.trans
-              gcongr with p hp
-              simpa [su2RelativeFundamentalTrace, su2QuaternionCoordinate] using
-                (su2_quaternion_coordinate_abs_le_one (0 : Fin 4)
-                  ((su2BoundaryGaugeTransformEdge
-                    (b (su2LowerCrossingSourceBoundaryIndex n p.1 p.2))
-                    (b (su2LowerCrossingTargetBoundaryIndex n p.1 p.2))
-                    (right (su2LowerCrossingRightPositiveIndex n p.1 p.2))) *
-                   (su2BoundaryGaugeTransformEdge
-                    (c (su2LowerCrossingSourceBoundaryIndex n p.1 p.2))
-                    (c (su2LowerCrossingTargetBoundaryIndex n p.1 p.2))
-                    (left (su2LowerCrossingLeftPositiveIndex n p.1 p.2)))⁻¹))
-        _ = ((su2LowerCrossingPlaquettes n).card : ℝ) := by simp
-  · exact abs_nonneg _
-  · exact abs_nonneg _
+                (left (su2LowerCrossingLeftPositiveIndex n p.1 p.2)))| :=
+        Finset.abs_sum_le_sum_abs _ _
+      _ ≤ ∑ p ∈ (su2LowerCrossingPlaquettes n).attach, (1 : ℝ) := by
+        gcongr with p hp
+        exact su2_relative_fundamental_trace_abs_le_one _ _
+      _ = ((su2LowerCrossingPlaquettes n).card : ℝ) := by simp
+  change |upper + lower| ≤ _
+  calc
+    |upper + lower| ≤ |upper| + |lower| := abs_add upper lower
+    _ ≤ ((su2UpperCrossingPlaquettes n).card : ℝ) +
+        ((su2LowerCrossingPlaquettes n).card : ℝ) := add_le_add hUpper hLower
+    _ = (((su2UpperCrossingPlaquettes n).card +
+          (su2LowerCrossingPlaquettes n).card : ℕ) : ℝ) := by norm_num
 
 /-- The literal full-boundary double-gauged kernel is integrable on the boundary pair. -/
 theorem su2_double_gauged_crossing_kernel_boundary_pair_integrable
@@ -175,8 +190,8 @@ theorem su2_double_gauged_crossing_kernel_boundary_pair_integrable
       ((literalSU2BoundaryTemporalHaar n).prod
         (literalSU2BoundaryTemporalHaar n)) := by
   let M : ℝ :=
-    ((su2UpperCrossingPlaquettes n).card +
-     (su2LowerCrossingPlaquettes n).card : ℕ)
+    (((su2UpperCrossingPlaquettes n).card +
+      (su2LowerCrossingPlaquettes n).card : ℕ) : ℝ)
   let C : ℝ :=
     Real.exp (-(β * ((su2EvenTimeCrossingPlaquettes n).card : ℝ))) *
       Real.exp (|β| * M)

@@ -45,13 +45,11 @@ theorem su2_boundary_plane_feature_exponential_pair_integrable
     (Filter.Eventually.of_forall fun bc => ?_)
   rw [Real.norm_eq_abs, abs_exp]
   apply Real.exp_le_exp.mpr
+  let K := finiteCrossPlaneFeatures terms (fun _ => (1 : ℝ)) feature
+    (bc.1, left) (bc.2, right)
   calc
-    β * finiteCrossPlaneFeatures terms (fun _ => (1 : ℝ)) feature
-          (bc.1, left) (bc.2, right) ≤
-        |β| *
-          |finiteCrossPlaneFeatures terms (fun _ => (1 : ℝ)) feature
-            (bc.1, left) (bc.2, right)| := by
-      exact mul_le_mul_of_nonneg_right (le_abs_self β) (abs_nonneg _)
+    β * K ≤ |β * K| := le_abs_self _
+    _ = |β| * |K| := abs_mul β K
     _ ≤ |β| * budget := by
       gcongr
       exact finite_cross_plane_features_abs_le_budget

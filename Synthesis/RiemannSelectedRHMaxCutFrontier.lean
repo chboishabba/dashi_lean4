@@ -1,6 +1,7 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowUniformPoleLocalizationPaid
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleA2ScalarAudit
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapAsymptoticBalance
+import Synthesis.RiemannSelectedPrimeSensitiveThreeTapInverseSquareCarrierAudit
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapMidStripMesh
 import Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
 import Synthesis.RiemannSelectedSignedFifthCorrelationGapAudit
@@ -50,10 +51,12 @@ One-scale resonance has been compressed past the abstract reflection tail:
   unconditional all-real local zero count gives unit-window inverse-square
   bounds on both sides of `t`, including negative ordinates, without changing
   the `Ncount` carrier or invoking zero reflection;
-* the half-open right-shell endpoint issue at `gamma=3t/2` is now absorbed by
-  the boundary-safe first source window `(3t/2-1,2t]`, whose entire mass has an
-  RvM inverse-square bound with separation `t/2-1`; no separate boundary fibre
-  or new carrier is introduced;
+* `threeTapHalfHeightComplement_left_or_right` now proves the exact complement
+  has only the two ordinate charts `gamma<=t/2` and `3t/2<=gamma`; the elementary
+  absolute-value geometry is no longer part of the carrier debt;
+* the half-open right-shell endpoint issue at `gamma=3t/2` is absorbed by the
+  boundary-safe first source window `(3t/2-1,2t]`, while the left first dyadic
+  chart already owns `gamma=t/2` by its `(lower,upper]` convention;
 * dyadic half-height shell geometry is source-written and its numerical series
   is summed exactly:
     `sum_k ((log t + 1) + k) 2^-k / t = (2 log t + 4)/t`;
@@ -72,9 +75,9 @@ One-scale resonance has been compressed past the abstract reflection tail:
 
 The live A1 leaves are therefore:
 
-1. finish the literal complementary-zero carrier summation into the already-
-   paid left/right source windows; the first-right-boundary defect is no longer
-   part of this leaf;
+1. assign each of the two exact ordinate charts to the already-paid countable
+   shell/window family and sum the literal complementary-zero carrier; boundary
+   ownership and left/right chart geometry are already paid;
 2. finish fixed-width determinant transport / witness control and prove uniform
    compact-alpha curvature;
 3. prove translated gamma+pole gain versus local slack strongly enough that

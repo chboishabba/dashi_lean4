@@ -21,6 +21,8 @@ on:
       - "Integration/OggSSP2BFinalSameObjectCompiler.lean"
       - "Integration/OggSSP2BBinaryTetrahedralDefectSource.lean"
       - "Integration/OggSSP2BDefectRecognitionAmbiguity.lean"
+      - "Integration/OggSSP2BDefectTwoBitProvenanceSelector.lean"
+      - "Integration/OggSSP2BBinaryTetrahedralCentralSignPhaseNoGo.lean"
       - "Integration/OggSSP2BPair24Carrier.lean"
       - "Integration/OggSSP2BPair24SameObjectWeld.lean"
       - "Integration/ThreeC2TateFibreCycle.lean"
@@ -83,6 +85,8 @@ jobs:
           lake env lean Integration/OggSSP2BM22d2Completion10RuntimeReceipt.lean
           lake env lean Integration/OggSSP2BBinaryTetrahedralDefectSource.lean
           lake env lean Integration/OggSSP2BDefectRecognitionAmbiguity.lean
+          lake env lean Integration/OggSSP2BDefectTwoBitProvenanceSelector.lean
+          lake env lean Integration/OggSSP2BBinaryTetrahedralCentralSignPhaseNoGo.lean
           lake env lean Integration/OggSSP2BPair24Carrier.lean
           lake env lean Integration/OggSSP2BPair24SameObjectWeld.lean
           lake env lean Integration/C2TateIntertwinerTransport.lean

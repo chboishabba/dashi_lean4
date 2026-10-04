@@ -200,13 +200,13 @@ theorem su2_double_gauged_crossing_kernel_boundary_pair_integrable
   rw [Real.norm_eq_abs, abs_mul, abs_exp, abs_exp]
   gcongr
   apply Real.exp_le_exp.mpr
+  let K := su2DoubleGaugedCrossingTraceSum n left right bc.1 bc.2
   calc
-    β * su2DoubleGaugedCrossingTraceSum n left right bc.1 bc.2 ≤
-        |β| * |su2DoubleGaugedCrossingTraceSum n left right bc.1 bc.2| := by
-      exact mul_le_mul_of_nonneg_right (le_abs_self β) (abs_nonneg _)
+    β * K ≤ |β * K| := le_abs_self _
+    _ = |β| * |K| := abs_mul β K
     _ ≤ |β| * M := by
       gcongr
-      simpa [M] using
+      simpa [K, M] using
         su2_double_gauged_crossing_trace_sum_abs_le n left right bc.1 bc.2
 
 /-- Plane assembly is measure preserving from plane Haar to full temporal-boundary Haar. -/

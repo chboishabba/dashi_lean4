@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: chboishabba/dashi_agda
-          ref: agent/jmd-archimedes-delta-369-bridge-20260922
+          ref: c72ea464663a02333319f2254967c94bd188f5f5
           path: agda-source
           submodules: recursive
           fetch-depth: 1

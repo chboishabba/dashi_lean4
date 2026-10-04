@@ -36,6 +36,15 @@ structure SourceBlob where
 
 deriving Repr, DecidableEq
 
+def agdaSourceRepository : String :=
+  "https://github.com/chboishabba/dashi_agda.git"
+
+/-- Exact dashi_agda commit whose complete transitive import graph is replayed.
+Pinning the checkout commit closes the dependency-drift hole left by hashing
+only the seven load-bearing roots. -/
+def agdaSourceCommit : String :=
+  "c72ea464663a02333319f2254967c94bd188f5f5"
+
 def bishopSubmoduleRepository : String :=
   "https://github.com/viktorcsimma/bishop.git"
 
@@ -133,9 +142,26 @@ def theoremBindings : List SourceTheoremBinding :=
   , machinPiBinding
   ]
 
+/-- Concrete verification artifacts for the content-addressed provenance replay. -/
+def replayVerifierScript : String :=
+  "scripts/verify_round11_machin_route_b.py"
+
+def generatedReplayCertificatePath : String :=
+  "Generated/BishopRound11MachinReplayCertificate.lean"
+
+def focusedReplayProbeModule : String :=
+  "Integration/BishopRound11MachinReplayProbe.lean"
+
+def focusedAxiomAuditModule : String :=
+  "Integration/AxiomAuditMoonshineRound11RouteB.lean"
+
+def focusedReplayWorkflow : String :=
+  ".github/workflows/moonshine-round11-route-b.yml"
+
 /-- The manifest itself is fully concrete and contains no theorem-shaped
 placeholder. -/
 structure ManifestBoundary where
+  agdaSourceCommitPinned : Bool
   bishopSubmoduleCommitPinned : Bool
   allAgdaLoadBearingFilesContentAddressed : Bool
   sourceToLeanDeclarationTableOwned : Bool
@@ -150,11 +176,13 @@ structure ManifestBoundary where
   recursiveReplayClosureGeneratorSourceOwned : Bool
   replayKernelElaborationWorkflowStepOwned : Bool
   focusedRouteBAxiomAuditSourceOwned : Bool
+  generatedBindingTableKernelMatchSourceOwned : Bool
 
   generatedAgdaReplayObserved : Bool
   leanKernelReceiptObserved : Bool
 
 def manifestBoundary : ManifestBoundary where
+  agdaSourceCommitPinned := true
   bishopSubmoduleCommitPinned := true
   allAgdaLoadBearingFilesContentAddressed := true
   sourceToLeanDeclarationTableOwned := true
@@ -169,6 +197,7 @@ def manifestBoundary : ManifestBoundary where
   recursiveReplayClosureGeneratorSourceOwned := true
   replayKernelElaborationWorkflowStepOwned := true
   focusedRouteBAxiomAuditSourceOwned := true
+  generatedBindingTableKernelMatchSourceOwned := true
 
   generatedAgdaReplayObserved := false
   leanKernelReceiptObserved := false

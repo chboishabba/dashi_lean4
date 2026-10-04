@@ -1,5 +1,6 @@
 import Integration.BishopRound11MachinBindingManifest
 import Integration.BishopRound11MachinCanonicalBinding
+import Integration.BishopRound11MachinRecognition
 import Integration.MoonshineEisensteinRound11CanonicalRouteB
 import Integration.MoonshineDeltaFinalMinCut
 
@@ -24,12 +25,15 @@ namespace Integration.BishopRound11MachinReplayProbe
 
 open Integration.BishopRound11MachinBindingManifest
 open Integration.BishopRound11MachinCanonicalBinding
+open Integration.BishopRound11MachinRecognition
 open Integration.MoonshineEisensteinRound11CanonicalRouteB
 open Integration.MoonshineDeltaFinalMinCut
 
 /-- The currently pinned Agda source blob IDs are definitionally the ones the
 route-B manifest declares. -/
 theorem source_manifest_literal_receipt :
+    agdaSourceCommit =
+      "c72ea464663a02333319f2254967c94bd188f5f5" ∧
     sourceInstanceBlob.gitBlob =
       "ec132e001eeb7836078561e88fe2b3f54438facb" ∧
     machinConstructionBlob.gitBlob =
@@ -44,7 +48,21 @@ theorem source_manifest_literal_receipt :
       "4787feafbd9630dc439556543c42c6b75bf7fdbd" ∧
     extractionBlob.gitBlob =
       "baee86e7085c9193227142eb9713df9d2e4a546e" := by
-  repeat' first | constructor | rfl
+  native_decide
+
+/-- The manifest names the concrete verification artifacts used by this PR. -/
+theorem verification_artifacts_literal_receipt :
+    replayVerifierScript =
+      "scripts/verify_round11_machin_route_b.py" ∧
+    generatedReplayCertificatePath =
+      "Generated/BishopRound11MachinReplayCertificate.lean" ∧
+    focusedReplayProbeModule =
+      "Integration/BishopRound11MachinReplayProbe.lean" ∧
+    focusedAxiomAuditModule =
+      "Integration/AxiomAuditMoonshineRound11RouteB.lean" ∧
+    focusedReplayWorkflow =
+      ".github/workflows/moonshine-round11-route-b.yml" := by
+  native_decide
 
 /-- Mathematical inhabitance of the exact Lean-facing Round11/Machin binding
 shape is no longer conditional. -/
@@ -53,6 +71,12 @@ theorem canonical_binding_inhabited :
       (Integration.BishopRound11MachinSourceBinding.Round11MachinSourceBinding
         Arithmetic) :=
   ⟨canonicalBinding⟩
+
+/-- The current provenance surface is intentionally weaker than a genuine
+cross-prover replay. This theorem keeps the firewall kernel-visible. -/
+theorem manifest_recognition_does_not_claim_source_inhabitance :
+    currentManifestRecognition.importedBindingInhabitedFromSourceTerms = false :=
+  current_manifest_is_not_cross_prover_replay
 
 /-- The canonical source route reaches the normalized classical Delta target. -/
 theorem canonical_route_delta_same_object :
@@ -76,7 +100,9 @@ theorem canonical_sixfold_phase_available
 
 structure ReplayProbeBoundary where
   contentAddressedManifestKernelVisible : Bool
+  verificationArtifactManifestKernelVisible : Bool
   canonicalBindingKernelVisible : Bool
+  recognitionFirewallKernelVisible : Bool
   canonicalRouteDeltaKernelVisible : Bool
   eta24SameObjectKernelVisible : Bool
   sixfoldPhaseKernelVisible : Bool
@@ -84,7 +110,9 @@ structure ReplayProbeBoundary where
 
 def replayProbeBoundary : ReplayProbeBoundary where
   contentAddressedManifestKernelVisible := true
+  verificationArtifactManifestKernelVisible := true
   canonicalBindingKernelVisible := true
+  recognitionFirewallKernelVisible := true
   canonicalRouteDeltaKernelVisible := true
   eta24SameObjectKernelVisible := true
   sixfoldPhaseKernelVisible := true

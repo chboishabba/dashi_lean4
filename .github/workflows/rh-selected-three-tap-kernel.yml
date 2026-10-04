@@ -1,0 +1,91 @@
+name: RH selected three-tap kernel
+on:
+  push:
+    branches:
+      - agent/rh-marked-cluster-target-reflection
+    paths:
+      - 'Synthesis/RiemannSelectedPrimeSensitiveThreeTap*.lean'
+      - 'Synthesis/RiemannSelectedPrimeSensitiveTwoScale*.lean'
+      - 'Synthesis/RiemannSelectedSignedFifth*.lean'
+      - 'Synthesis/RiemannSelectedRHMaxCutFrontier.lean'
+      - 'Synthesis/RiemannZetaMuExactAbelAC.lean'
+      - '.github/workflows/rh-selected-three-tap-kernel.yml'
+  pull_request:
+    paths:
+      - 'Synthesis/RiemannSelectedPrimeSensitiveThreeTap*.lean'
+      - 'Synthesis/RiemannSelectedPrimeSensitiveTwoScale*.lean'
+      - 'Synthesis/RiemannSelectedSignedFifth*.lean'
+      - 'Synthesis/RiemannSelectedRHMaxCutFrontier.lean'
+      - 'Synthesis/RiemannZetaMuExactAbelAC.lean'
+      - '.github/workflows/rh-selected-three-tap-kernel.yml'
+  workflow_dispatch:
+
+jobs:
+  selected-three-tap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Kernel check literal prime, completed source, increment and terminal audits
+        run: |
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapTwoPrime
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapCompleted
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapIncrementAudit
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapTerminalTest
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapTargetMoment
+          lake build Synthesis.RiemannSelectedPrimeSensitiveSymmetricShiftMoments
+          lake build Synthesis.RiemannSelectedSignedFifthTerminalBridge
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapTerminalized
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapNearLine
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapLocalBudget
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapJ2Polynomial
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdaptiveMixed
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdaptiveJet
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdaptiveLocalDebt
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdaptiveTerminal
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdaptiveGlobal
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdaptiveOffOrdWeld
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapJ2Phase
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapJ2Normalized
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdaptiveRemainder
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapNormalizedProjective
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapJ2SignRegion
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapPaidCostCut
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapMaxCutClosure
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapMaxCutComplete
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapFarExactCut
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapPairSignedCut
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapKernelPhaseCut
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapKernelAlphaEnvelope
+          lake build Synthesis.RiemannZetaMuExactAbelAC
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapKernelAdverseLipschitz
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseRvMAbel
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapPairOrdinateCut
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseNearEnvelope
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseWindowWeld
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseRvMBound
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseMuBound
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseNearBudget
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseTailExhaustion
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseFinalCut
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseAsymptoticBudget
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseCutoffOptimization
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseMassCollapse
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapM0Envelope
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapM0Uniform
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapFiniteAsymptotic
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapFarDecay
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapCurvatureMaxCut
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapInverseSquareTail
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapCompensationFloor
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAsymptoticBalance
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapInverseSquareShellRegression
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapAdverseAsymptoticDecision
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapMaxCutScalarSplit
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapGlobalize
+          lake build Synthesis.RiemannSelectedPrimeSensitiveThreeTapMidStripMesh
+          lake build Synthesis.RiemannSelectedPrimeSensitiveTwoScale
+          lake build Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
+          lake build Synthesis.RiemannSelectedSignedFifthMaxCut
+          lake build Synthesis.RiemannSelectedSignedFifthCorrelationCut
+          lake build Synthesis.RiemannSelectedRHMaxCutFrontier

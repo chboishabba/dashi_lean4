@@ -160,18 +160,6 @@ import Synthesis.MillenniumBSDActualE2H1CharacterReduction
 import Synthesis.MillenniumBSDCMSplitPrimeSignReduction
 import Synthesis.MillenniumBSDCMSplitPrimeCanonicalWitness
 import Synthesis.MillenniumBSDUniversalRankWeld
-import Synthesis.MillenniumBSDUniversalSelmerAnalyticMaxCut
-import Synthesis.MillenniumBSDUniversalRankInequalityMechanisms
-import Synthesis.MillenniumBSDLowAnalyticRankCoverageFirewall
-import Synthesis.MillenniumBSDSameCurveSelmerDefectExact
-import Synthesis.MillenniumBSDCMWorkedSelmerResidualSameCurve
-import Synthesis.MillenniumBSDUniversalTwoDescentResidualCarrier
-import Synthesis.MillenniumBSDTwoDescentTautologicalCountermodel
-import Synthesis.MillenniumBSDTwoDescentResidualCardinalityExact
-import Synthesis.MillenniumBSDTwoDescentFinitePrerequisitesExact
-import Synthesis.MillenniumBSDCMClayPointKummerExact
-import Synthesis.MillenniumBSDCMClayTwoDescentConsequences
-import Synthesis.MillenniumBSDCMClaySelmerAllPlaceWitnessExact
 import Synthesis.MillenniumBSDUniversalEllipticPointTopRep
 import Synthesis.MillenniumBSDCMWorkedCaseBoundary
 import Synthesis.MillenniumBSDUniversalLeadingCoefficient
@@ -407,9 +395,6 @@ import Synthesis.LinearConsumerSyntheticBidiRuntimeByteEqualityRegression
 import Synthesis.MonsterWholeCharacterSimpleSubobjectClassification
 import Synthesis.MonsterWholeCharacterSimpleSubobjectRegression
 import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleBidiMarkedFourth
-import Synthesis.RiemannQuarticFourthPrimitiveQuantitativeBudget
-import Synthesis.RiemannQuarticFourthPrimitiveClassicalRemainder
-import Synthesis.RiemannQuarticSignedCosinePSDNoGo
 
 
 
@@ -424,98 +409,6 @@ the cross-domain material in this repository.
 See `DEPENDENCY_MAP.md` for the provenance map and the list of remaining proof
 obligations.
 -/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import Synthesis.MillenniumBSDCMRealPlaceExclusionExact
+import Synthesis.MillenniumBSDCohomologicalShaLocalizationExact
+import Synthesis.MillenniumBSDActualE2ShaSameObjectMaxCut
+import BSDCohomology.EllipticKummerDivisibilityReduction

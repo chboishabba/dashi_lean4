@@ -4,7 +4,7 @@ defaultTargets = ["Synthesis"]
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4.git"
-rev = "v4.28.0"
+rev = "25730c7c759d108ef87ab70af2342a196760f79d"
 
 # Cross-domain finite synthesis returned from Aristotle task bf6411b6.
 [[lean_lib]]
@@ -38,7 +38,7 @@ globs = ["Promoted", "Promoted.*"]
 [[lean_lib]]
 name = "AristotleArchive"
 srcDir = "DASHI/output-final_aristotle"
-globs = ["RequestProject.Core", "RequestProject.Engine", "RequestProject.Properties", "RequestProject.PropertyConstraints", "RequestProject.PropertyEngine", "RequestProject.Provenance", "RequestProject.Ranks", "RequestProject.Reachability", "RequestProject.Schemas", "RequestProject.Snaks", "RequestProject.StatementConstraints", "RequestProject.Temporal", "RequestProject.TypeProperties", "RequestProject.Archive", "RequestProject.Publish", "RequestProject.Cli.Format", "RequestProject.Sync", "RequestProject.Merge", "RequestProject.Worklist", "RequestProject.Reports", "RequestProject.ReportFormat", "RequestProject.Diagnostics", "RequestProject.SeriesDiagnostics", "RequestProject.TaxaDiagnostics", "RequestProject.KinshipDiagnostics", "RequestProject.ParentingDiagnostics", "RequestProject.Cli.Derive", "RequestProject.Cli.Query", "RequestProject.Examples", "RequestProject.FastEval", "RequestProject.Kinship", "RequestProject.Normalize", "RequestProject.Parenting", "RequestProject.Queries", "RequestProject.Redundancy", "RequestProject.SelfDescription", "RequestProject.Series", "RequestProject.SeriesChain", "RequestProject.SeriesExamples", "RequestProject.Taxa", "RequestProject.TaxaExamples", "RequestProject.TaxaLineage", "RequestProject.DASHIContextIndexedTransport", "RequestProject.DASHIScopedSoftTyping", "RequestProject.DASHIScopedSoftTypeEvidence", "RequestProject.DASHIRuntimeWitnessRefinement", "RequestProject.DASHIRepairVector"]
+globs = ["RequestProject.Core", "RequestProject.Engine", "RequestProject.Properties", "RequestProject.PropertyConstraints", "RequestProject.PropertyEngine", "RequestProject.Provenance", "RequestProject.Ranks", "RequestProject.Reachability", "RequestProject.Schemas", "RequestProject.Snaks", "RequestProject.StatementConstraints", "RequestProject.Temporal", "RequestProject.TypeProperties", "RequestProject.Archive", "RequestProject.Publish", "RequestProject.Cli.Format", "RequestProject.Sync", "RequestProject.Merge", "RequestProject.Worklist", "RequestProject.Reports", "RequestProject.ReportFormat", "RequestProject.Diagnostics", "RequestProject.SeriesDiagnostics", "RequestProject.TaxaDiagnostics", "RequestProject.KinshipDiagnostics", "RequestProject.ParentingDiagnostics", "RequestProject.Cli.Derive", "RequestProject.Cli.Query", "RequestProject.Examples", "RequestProject.FastEval", "RequestProject.Kinship", "RequestProject.Normalize", "RequestProject.Parenting", "RequestProject.Queries", "RequestProject.Redundancy", "RequestProject.SelfDescription", "RequestProject.Series", "RequestProject.SeriesChain", "RequestProject.SeriesExamples", "RequestProject.Taxa", "RequestProject.TaxaExamples", "RequestProject.TaxaLineage"]
 
 [[lean_lib]]
 name = "Proposed"
@@ -153,15 +153,7 @@ globs = ["RequestProject.NavierStokes.CanonicalCompletionLeaves"]
 name = "YMContinuum"
 globs = ["YangMills.*"]
 
-# Independent mirror of the live Agda R702/R703 cyclic-helical max-cut.
-# This proves only exact leg/coefficient bookkeeping; it makes no Clay or
-# analytic-closure claim.
+# Opt-in current-Mathlib BSD continuous-cohomology donor.
 [[lean_lib]]
-name = "NSBCyclicOrbit"
-globs = ["NSBCyclicOrbit", "NSBControl.CyclicHelicalVectorTransform", "NSBControl.SelfOrbitCommutatorCarrier", "NSBControl.SingleSelfCommutatorOrbit", "NSBControl.SpectatorFibreLegTransport", "NSBControl.CompleteSelfOrbitCollapse", "NSBControl.OutputPairingCollapse", "NSBControl.OutputRealityNoGo", "NSBControl.SelectedSelfResolvedRecombination", "NSBControl.CombinedSpacetimePayment", "NSBControl.CombinedPaymentToWeightedWork", "NSBControl.CombinedCurrentEndgame", "NSBControl.DirectCombinedCut", "NSBControl.SharedWeightedCut", "NSBControl.AugmentedDerivativeCancellation", "NSBControl.DyadicDifferenceResidual", "NSBControl.GlobalProductRuleLoop"]
-
-# TPS-grounded quantum mereology reusing the retained Wikidata P361/P2670 layer.
-[[lean_lib]]
-name = "QuantumMereology"
-srcDir = "DASHI/output-final_aristotle"
-globs = ["RequestProject.Mereology", "RequestProject.QuantumMereology", "RequestProject.QuantumMereologySelection", "RequestProject.QuantumMereologySelectionRegression", "RequestProject.QuantumMereologyObserverBridge", "RequestProject.QuantumMereologyFiniteLinearTPS", "RequestProject.QuantumMereologyInnerProductTPS", "RequestProject.QuantumMereologyOperatorLocality", "RequestProject.QuantumMereologyHamiltonianTransport", "RequestProject.QuantumMereologySchwingerObjective", "RequestProject.QuantumMereologyCandidatePointerObservable", "RequestProject.QuantumMereologyReducedState", "RequestProject.QuantumMereologyPointerProbability", "RequestProject.QuantumMereologyDensityEvolution", "RequestProject.QuantumMereologyEntropyAcceleration", "RequestProject.QuantumMereologySchwingerProducer", "RequestProject.QuantumMereologyHamiltonianExponential", "RequestProject.QuantumMereologyExponentialDerivative"]
+name = "BSDCohomology"
+globs = ["BSDCohomology", "BSDCohomology.*"]

@@ -1,0 +1,91 @@
+name: BSD cohomological Sha donor
+
+on:
+  push:
+    branches:
+      - 'agent/bsd-cohomological-sha-v435-20261002'
+    paths:
+      - 'BSDCohomology/**'
+      - 'Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean'
+      - 'Synthesis/MillenniumBSDSelmerShaCohomologicalBoundary.lean'
+      - 'Synthesis/MillenniumBSDActualE2H1LowDegreeReduction.lean'
+      - 'Synthesis/MillenniumBSDCMAlgClosureDoublingSurjectiveExact.lean'
+      - 'Synthesis/MillenniumBSDCMGeometricKummerGroupExact.lean'
+      - 'Synthesis/MillenniumBSDCMGeometricKummerTopRepExact.lean'
+      - 'Synthesis/MillenniumBSDCMGenericE2SameObjectExact.lean'
+      - 'Synthesis/MillenniumBSDCMGenericE2H1SquareClassExact.lean'
+      - 'Synthesis/MillenniumBSDCMGeometricKummerContinuousH1Exact.lean'
+      - 'Synthesis/MillenniumBSDCMRationalToGeometricKummerExact.lean'
+      - 'Synthesis/MillenniumBSDCMXTOrientationExact.lean'
+      - 'Synthesis/MillenniumBSDCMHalfSignActionExact.lean'
+      - 'Synthesis/MillenniumBSDCMTorsionTranslationExact.lean'
+      - 'Synthesis/MillenniumBSDCMFiniteE2SignTableExact.lean'
+      - 'Synthesis/MillenniumBSDCMGaloisRootSignExact.lean'
+      - 'Synthesis/MillenniumBSDCMGaloisHalfPointTableExact.lean'
+      - 'Synthesis/MillenniumBSDCMGlobalKummerCharacterCompilerExact.lean'
+      - 'Synthesis/MillenniumBSDCMExplicitRootBitOrientationExact.lean'
+      - 'Synthesis/MillenniumBSDCMRootSignDifferenceExact.lean'
+      - 'Synthesis/MillenniumBSDCMExplicitGeometricHalfCharacterExact.lean'
+      - 'Synthesis/MillenniumBSDCMGeometricKummerSquareClassEvaluationExact.lean'
+      - 'Synthesis/MillenniumBSDCMGlobalKummerOrdinaryExact.lean'
+      - 'Synthesis/MillenniumBSDCMGlobalKummerBoundaryCompilerExact.lean'
+      - 'Synthesis/MillenniumBSDCMQuarterPointTransportExact.lean'
+      - 'Synthesis/MillenniumBSDCMQuarterPointBoundaryExact.lean'
+      - 'Synthesis/MillenniumBSDCMGlobalToPadicKummerCompatibilityExact.lean'
+      - 'Synthesis.lean'
+      - 'BSDCohomology.lean'
+      - 'lakefile.toml'
+      - 'lean-toolchain'
+      - '.github/workflows/bsd-cohomological-sha.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sha:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+        with:
+          build: false
+      - name: Resolve pinned current Mathlib
+        run: lake update
+      - name: Build genuine Sha donor
+        run: lake build BSDCohomology
+      - name: Kernel check genuine Sha donor
+        run: |
+          lake env lean BSDCohomology/EllipticTwoTorsionAction.lean
+          lake env lean BSDCohomology/EllipticPointTopRep.lean
+          lake env lean BSDCohomology/EllipticShaTarget.lean
+          lake env lean BSDCohomology/EllipticKummerKernelExact.lean
+          lake env lean BSDCohomology/EllipticKummerDivisibilityReduction.lean
+          lake env lean BSDCohomology/EllipticKummerTopRepMapsExact.lean
+          lake env lean BSDCohomology/EllipticKummerCocycleAlgebraExact.lean
+          lake env lean BSDCohomology/GenuineDegreeOneShaTwoTorsion.lean
+          lake env lean Synthesis/MillenniumBSDCMAlgClosureDoublingSurjectiveExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGeometricKummerGroupExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGeometricKummerTopRepExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGenericE2SameObjectExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGenericE2H1SquareClassExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGeometricKummerContinuousH1Exact.lean
+          lake env lean Synthesis/MillenniumBSDCMRationalToGeometricKummerExact.lean
+          lake env lean Synthesis/MillenniumBSDCMXTOrientationExact.lean
+          lake env lean Synthesis/MillenniumBSDCMHalfSignActionExact.lean
+          lake env lean Synthesis/MillenniumBSDCMTorsionTranslationExact.lean
+          lake env lean Synthesis/MillenniumBSDCMFiniteE2SignTableExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGaloisRootSignExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGaloisHalfPointTableExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGlobalKummerCharacterCompilerExact.lean
+          lake env lean Synthesis/MillenniumBSDCMExplicitRootBitOrientationExact.lean
+          lake env lean Synthesis/MillenniumBSDCMRootSignDifferenceExact.lean
+          lake env lean Synthesis/MillenniumBSDCMExplicitGeometricHalfCharacterExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGeometricKummerSquareClassEvaluationExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGlobalKummerOrdinaryExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGlobalKummerBoundaryCompilerExact.lean
+          lake env lean Synthesis/MillenniumBSDCMQuarterPointTransportExact.lean
+          lake env lean Synthesis/MillenniumBSDCMQuarterPointBoundaryExact.lean
+          lake env lean Synthesis/MillenniumBSDCMGlobalToPadicKummerCompatibilityExact.lean
+          lake env lean Synthesis/MillenniumBSDActualE2ShaSameObjectMaxCut.lean

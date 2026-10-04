@@ -331,6 +331,88 @@ theorem nonnegative_boundedContinuous_expectation_of_weak_limit
 
 
 /--
+H2: **all finite real reflected Gram matrices** remain positive semidefinite
+under the SAME weak continuum-measure limit.
+
+The kernel entries are the actual bounded-continuous reflected cylinder
+products supplied by the physical construction.  Their expectation is taken
+against the selected finite probability measures and the extracted limit;
+there is no new abstract "continuum OS2" predicate here.
+
+The finite-cutoff estimate still has to be proved from the CMP119
+reflection-positive action for each positive-time cylinder test family.
+Unbounded insertions need a moment/uniform-integrability argument first.
+-/
+theorem reflected_gram_positive_of_weak_limit
+    {Ω I : Type*}
+    [MeasurableSpace Ω]
+    [TopologicalSpace Ω]
+    [OpensMeasurableSpace Ω]
+    [Fintype I]
+    {μs : ℕ → ProbabilityMeasure Ω}
+    {μ∞ : ProbabilityMeasure Ω}
+    (hconv : Tendsto μs atTop (𝓝 μ∞))
+    (reflectedProduct : I → I → BoundedContinuousFunction Ω ℝ)
+    (hfinite :
+      ∀ (n : ℕ) (coeff : I → ℝ),
+        0 ≤
+          ∫ x : Ω,
+            (∑ i : I, ∑ j : I,
+              (coeff i * coeff j) • reflectedProduct i j) x
+            ∂((μs n : ProbabilityMeasure Ω) : Measure Ω)) :
+    ∀ coeff : I → ℝ,
+      0 ≤
+        ∫ x : Ω,
+          (∑ i : I, ∑ j : I,
+            (coeff i * coeff j) • reflectedProduct i j) x
+          ∂((μ∞ : ProbabilityMeasure Ω) : Measure Ω) := by
+  intro coeff
+  exact nonnegative_boundedContinuous_expectation_of_weak_limit
+    hconv
+    (∑ i : I, ∑ j : I,
+      (coeff i * coeff j) • reflectedProduct i j)
+    (fun n => hfinite n coeff)
+
+/--
+The full positive-time reflection Gram condition is maintained under
+one and the same weak limit simultaneously for *every* test family and
+all of its finite linear combinations.  This quantifier-order statement
+is what the OS null-space quotient actually consumes.
+-/
+theorem reflected_gram_positive_all_test_families_of_weak_limit
+    {Ω Test : Type*}
+    [MeasurableSpace Ω]
+    [TopologicalSpace Ω]
+    [OpensMeasurableSpace Ω]
+    {μs : ℕ → ProbabilityMeasure Ω}
+    {μ∞ : ProbabilityMeasure Ω}
+    (hconv : Tendsto μs atTop (𝓝 μ∞))
+    (reflectedProduct :
+      ∀ {n : ℕ}, (Fin n → Test) →
+        Fin n → Fin n → BoundedContinuousFunction Ω ℝ)
+    (hfinite :
+      ∀ (n : ℕ) (tests : Fin n → Test)
+        (coeff : Fin n → ℝ) (cutoff : ℕ),
+        0 ≤
+          ∫ x : Ω,
+            (∑ i : Fin n, ∑ j : Fin n,
+              (coeff i * coeff j) •
+                reflectedProduct tests i j) x
+            ∂((μs cutoff : ProbabilityMeasure Ω) : Measure Ω)) :
+    ∀ (n : ℕ) (tests : Fin n → Test) (coeff : Fin n → ℝ),
+      0 ≤
+        ∫ x : Ω,
+          (∑ i : Fin n, ∑ j : Fin n,
+            (coeff i * coeff j) •
+              reflectedProduct tests i j) x
+          ∂((μ∞ : ProbabilityMeasure Ω) : Measure Ω) := by
+  intro n tests coeff
+  exact reflected_gram_positive_of_weak_limit
+    hconv (reflectedProduct tests)
+    (fun cutoff coefficients => hfinite n tests coefficients cutoff)
+    coeff
+
+/--
 Every continuous finite-dimensional projection of the extracted continuum
 measure is the weak limit of the corresponding projected finite measures.
 

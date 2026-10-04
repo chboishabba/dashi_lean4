@@ -116,6 +116,79 @@ theorem exists_unique_continuum_measure_with_selected_exponential_clustering
       left right (C * Real.exp (-m * t)) hFinite
 
 /--
+H2 finite-to-continuum core with OS2 on the VERY SAME probability measure.
+
+The positive-time reflected product is a bounded continuous cylinder
+observable for every pair in each finite test family.  The physical finite
+reflection-positive inequality transfers to the UNIQUE continuum
+probability-measure limit obtained from the uniform coercive bound and all
+bounded-continuous expectation limits.
+
+This is a source-facing implication, not a standalone construction of
+4-dimensional YM: CMP119 must still furnish the gauge-invariant
+configuration-space topology, selected Gibbs measures, moment bound,
+cutoff-wise reflection positivity and expectation convergence.
+-/
+theorem exists_unique_continuum_measure_with_real_os2_gram
+    {Ω Test : Type*}
+    [MeasurableSpace Ω]
+    [TopologicalSpace Ω]
+    [T2Space Ω]
+    [BorelSpace Ω]
+    [FirstCountableTopology (ProbabilityMeasure Ω)]
+    (μ : ℕ → ProbabilityMeasure Ω)
+    (cost : Ω → ENNReal)
+    (hcost : Measurable cost)
+    (M : ENNReal)
+    (hmoment :
+      ∀ n : ℕ,
+        (∫⁻ x : Ω, cost x ∂((μ n : ProbabilityMeasure Ω) : Measure Ω)) ≤ M)
+    (hcompact :
+      ∀ R : ENNReal, R ≠ ⊤ → IsCompact {x : Ω | cost x ≤ R})
+    (hthreshold :
+      ∀ ε : ENNReal, 0 < ε →
+        ∃ R : ENNReal, R ≠ 0 ∧ R ≠ ⊤ ∧ M / R ≤ ε)
+    (L : BoundedContinuousFunction Ω ℝ → ℝ)
+    (hScalar :
+      ∀ f : BoundedContinuousFunction Ω ℝ,
+        Tendsto
+          (fun n =>
+            ∫ x : Ω, f x ∂((μ n : ProbabilityMeasure Ω) : Measure Ω))
+          atTop
+          (𝓝 (L f)))
+    (reflectedProduct :
+      ∀ {n : ℕ}, (Fin n → Test) →
+        Fin n → Fin n → BoundedContinuousFunction Ω ℝ)
+    (hFiniteOS2 :
+      ∀ (n : ℕ) (tests : Fin n → Test)
+        (coeff : Fin n → ℝ) (cutoff : ℕ),
+        0 ≤
+          ∫ x : Ω,
+            (∑ i : Fin n, ∑ j : Fin n,
+              (coeff i * coeff j) • reflectedProduct tests i j) x
+            ∂((μ cutoff : ProbabilityMeasure Ω) : Measure Ω)) :
+    ∃! μ∞ : ProbabilityMeasure Ω,
+      Tendsto μ atTop (𝓝 μ∞) ∧
+      (∀ f : BoundedContinuousFunction Ω ℝ,
+        (∫ x : Ω, f x ∂((μ∞ : ProbabilityMeasure Ω) : Measure Ω)) = L f) ∧
+      (∀ (n : ℕ) (tests : Fin n → Test) (coeff : Fin n → ℝ),
+        0 ≤
+          ∫ x : Ω,
+            (∑ i : Fin n, ∑ j : Fin n,
+              (coeff i * coeff j) • reflectedProduct tests i j) x
+            ∂((μ∞ : ProbabilityMeasure Ω) : Measure Ω)) := by
+  rcases
+      tendsto_unique_continuum_measure_of_coercive_moment_and_bcf_limits
+        μ cost hcost M hmoment hcompact hthreshold L hScalar with
+    ⟨μ∞, ⟨hconv, hidentify⟩, hunique⟩
+  have hGram :=
+    reflected_gram_positive_all_test_families_of_weak_limit
+      hconv reflectedProduct hFiniteOS2
+  refine ⟨μ∞, ⟨hconv, hidentify, hGram⟩, ?_⟩
+  intro ν hν
+  exact hunique ν ⟨hν.1, hν.2.1⟩
+
+/--
 C2: a literal nonnegative dyadic OPE tail makes the actual finite-depth
 truncations converge to the SAME physical product coefficient.  The
 physics is the identification of the CMP119 marked-composite remainder

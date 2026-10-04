@@ -6,12 +6,16 @@ on:
       - agent/ym-selected-covariance-limit-20260922
     paths:
       - "YangMills/**"
+      - "scripts/ym_finite_su2_exact_audit.py"
+      - "scripts/ym_finite_reflection_q8_exact_audit.py"
       - "lakefile.toml"
       - "lean-toolchain"
       - ".github/workflows/ym-continuum.yml"
   pull_request:
     paths:
       - "YangMills/**"
+      - "scripts/ym_finite_su2_exact_audit.py"
+      - "scripts/ym_finite_reflection_q8_exact_audit.py"
       - "lakefile.toml"
       - "lean-toolchain"
       - ".github/workflows/ym-continuum.yml"
@@ -22,6 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Exact finite SU(2) quaternion diagnostic
+        run: python3 scripts/ym_finite_su2_exact_audit.py
+      - name: Exact rational finite SU(2) reflection diagnostics
+        run: python3 scripts/ym_finite_reflection_q8_exact_audit.py
       - uses: leanprover/lean-action@v1
         with:
           build-args: YMContinuum

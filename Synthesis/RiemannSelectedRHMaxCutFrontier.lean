@@ -1,7 +1,9 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowUniformPoleLocalizationPaid
+import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleA2ScalarAudit
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapAsymptoticBalance
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapMidStripMesh
 import Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
+import Synthesis.RiemannSelectedSignedFifthCorrelationGapAudit
 
 /-!
 # RH max-cut frontier after analytic compression
@@ -96,19 +98,41 @@ has now been cut past the original fail-fast wall.  The source owns:
 * `literalLocalFourthPhaseMomentAt_ge_corrected_scalar`, which adds the mu
   reference contribution on the exact local phase carrier;
 * `literalOffOrdExactAt_le_postSixthV4H4AbsorbBudgetAt`, which therefore gives
-  the required same-object UPPER bound on the off-ordinate source.
+  the required same-object UPPER bound on the off-ordinate source;
+* the selected witness admits the quantitative certificate
+  `-(3/20)*pi^6 <= M6_signed < 0`, and
+  `quarticSignedPole_terminal_M6_cap_pays_dominant_balance` proves that this
+  cap is already strictly below the dominant quartic target coefficient;
+* `postSixthTerminalLocalM6Budget_eq_debt_sub_muGain` writes the local scalar
+  exactly as positive/local debt minus the smooth-mu gain;
+* `quarticSignedPoleMuLowerEnvelope_canonical_pos` proves that this mu gain is
+  genuinely favorable throughout `t>=200`;
+* the exact finite strict scalar is therefore
 
-So A2 is no longer blocked on orientation.  Its live theorem is the strict
-scalar ABSORB comparison of the exposed post-sixth V4/H4 budget against the
-common compensation/terminal threshold.  The signed sixth and FarExact terms
-remain signed; no absolute replacement is silently inserted.
+    localPositiveDebt + FarExact
+      < compensationTargetThreshold + localMuGain,
+
+  with FarExact still signed and no hidden absolute value.
+
+Thus A2 is no longer waiting on orientation or the leading sixth coefficient.
+Its live analytic theorem is the remaining lower-order/far/compensation strict
+inequality above.  If that inequality has the wrong asymptotic sign, A2 should
+be retired by an explicit no-go theorem rather than recut again.
 
 ## Route B: signed fifth
 
-The independent signed-fifth route now exposes exactly the roadmap scalar
+The independent signed-fifth route exposes exactly the roadmap scalar
 
   signedFifthCorrelationGapAt
     = Credit_n - Debt_n + OuterBudget - 3 eps.
+
+The direct gap audit also rewrites this same object as
+
+  signedFifthPhysicalCapInteriorAt n + OuterBudget - 3 eps
+
+once the existing finite cap identity is instantiated.  Therefore cancellation
+inside the signed cap can be estimated directly; no separate credit/debt
+bounds are required unless they are analytically useful.
 
 `eventual gap >= 0` compiles directly to the existing
 `SignedFifthInteriorTarget`.  The only unpaid Route-B research theorem is the

@@ -53,12 +53,12 @@ abbrev Hilbert
     (data : OSGramData V) :=
   UniformSpace.Completion data.PreHilbert
 
-/-- The canonical embedding of the pre-Hilbert quotient into its completion. -/
-noncomputable def toHilbert
+/-- Canonical inclusion of the pre-Hilbert quotient into its completion. -/
+def toHilbert
     {V : Type*} [AddCommGroup V] [Module ℝ V]
     (data : OSGramData V) :
-    data.PreHilbert →ₗ[ℝ] data.Hilbert :=
-  UniformSpace.Completion.coeLM ℝ data.PreHilbert
+    data.PreHilbert → data.Hilbert :=
+  fun q => UniformSpace.Completion.coe q
 
 /-- The canonical pre-Hilbert image is dense in the reconstructed Hilbert space. -/
 theorem denseRange_toHilbert

@@ -40,7 +40,7 @@ theorem countable_wilson_generated_algebra_L2_dense
     ((wilsonGeneratedAlgebra wilson).toSubmodule.map
       (ContinuousMap.toLp (E := ℝ) (2 : ℝ≥0∞) μ ℝ).toLinearMap).topologicalClosure = ⊤ := by
   exact
-    (ContinuousMap.toLp_denseRange ℝ μ ℝ ENNReal.coe_ne_top).topologicalClosure_map_submodule
+    (ContinuousMap.toLp_denseRange ℝ μ ℝ (by norm_num)).topologicalClosure_map_submodule
       (countable_wilson_generated_submodule_dense wilson hInjective)
 
 /--

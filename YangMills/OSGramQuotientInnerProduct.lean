@@ -29,7 +29,6 @@ noncomputable def osGramQuotientInnerProductCore
   inner := osGramQuotientPairing B hPositive hSymmetric
   conj_inner_symm := by
     intro x y
-    simp only [map_id]
     refine Quotient.inductionOn₂ x y ?_
     intro vx vy
     change B vy vx = B vx vy

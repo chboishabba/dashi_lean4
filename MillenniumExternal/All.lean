@@ -1,3 +1,4 @@
+import MillenniumExternal.COMMIT_PIN
 import MillenniumExternal.TerminalCensus
 import MillenniumExternal.ExternalTargetFrontier
 

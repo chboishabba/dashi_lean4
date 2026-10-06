@@ -9,7 +9,11 @@ on:
       - 'scripts/vendor_millennium_targets.sh'
       - 'scripts/audit_millennium_external_targets.py'
       - 'scripts/test_audit_millennium_external_targets.py'
+      - 'scripts/check_millennium_external_source.py'
+      - 'scripts/check_millennium_external_trust.sh'
       - 'vendor/LeanMillenniumPrizeProblems.VENDOR'
+      - 'vendor/LeanMillenniumPrizeProblems'
+      - '.gitmodules'
       - '.github/workflows/millennium-external-targets.yml'
   pull_request:
     paths:
@@ -17,7 +21,11 @@ on:
       - 'scripts/vendor_millennium_targets.sh'
       - 'scripts/audit_millennium_external_targets.py'
       - 'scripts/test_audit_millennium_external_targets.py'
+      - 'scripts/check_millennium_external_source.py'
+      - 'scripts/check_millennium_external_trust.sh'
       - 'vendor/LeanMillenniumPrizeProblems.VENDOR'
+      - 'vendor/LeanMillenniumPrizeProblems'
+      - '.gitmodules'
       - '.github/workflows/millennium-external-targets.yml'
   workflow_dispatch:
 
@@ -33,19 +41,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
     steps:
-      - name: Checkout DASHI
+      - name: Checkout DASHI and exact external target submodule
         uses: actions/checkout@v5
         with:
           persist-credentials: false
-
-      - name: Checkout exact LeanDojo Millennium source
-        uses: actions/checkout@v5
-        with:
-          repository: lean-dojo/LeanMillenniumPrizeProblems
-          ref: 603053dc267cf3efe422f438eb78098c0ececd6f
-          path: vendor/LeanMillenniumPrizeProblems
-          persist-credentials: false
-          fetch-depth: 1
+          submodules: recursive
 
       - name: Verify immutable vendor pin
         shell: bash
@@ -59,7 +59,9 @@ jobs:
       - name: Test and audit external registry
         run: |
           python3 scripts/test_audit_millennium_external_targets.py
+          python3 scripts/check_millennium_external_source.py
           python3 scripts/audit_millennium_external_targets.py
+          bash scripts/check_millennium_external_trust.sh
 
       - name: Install DASHI Lean environment
         uses: leanprover/lean-action@v1
@@ -82,15 +84,6 @@ jobs:
           set -euo pipefail
           lake update
           lake env lean MillenniumExternal/All.lean 2>&1 | tee millennium-external-dashi.log
-
-      - name: New-adapter trust scan
-        shell: bash
-        run: |
-          set -euo pipefail
-          if grep -R -n -E '\bsorry\b|^\s*axiom\b|^\s*unsafe\b' MillenniumExternal; then
-            echo 'forbidden trust escape in MillenniumExternal' >&2
-            exit 1
-          fi
 
       - name: Upload DASHI axiom audit log
         if: always()

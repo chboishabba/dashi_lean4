@@ -3,6 +3,8 @@ name: E6 F3 exterior-square max-cut
 on:
   pull_request:
     paths:
+      - "Integration/E6Mod3ReflectionIntertwiner.lean"
+      - "Integration/E6Mod3ReflectionIntertwinerRegression.lean"
       - "Integration/E6F3ExteriorSquare.lean"
       - "Integration/E6F3ExteriorSquareRegression.lean"
       - "Integration/E6PGSp4ExteriorSquare.lean"
@@ -24,6 +26,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
+      - name: Check global E6 mod3 reflection intertwiner
+        run: |
+          lake env lean Integration/E6Mod3ReflectionIntertwiner.lean
+          lake env lean Integration/E6Mod3ReflectionIntertwinerRegression.lean
       - name: Check F3 exterior-square core
         run: |
           lake env lean Integration/E6F3ExteriorSquare.lean

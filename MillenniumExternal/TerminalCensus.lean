@@ -26,20 +26,20 @@ inductive Problem where
   | birchSwinnertonDyer
   | yangMills
   | poincare
-  deriving DecidableEq, Repr
+  deriving DecidableEq, BEq, Repr
 
 inductive UpstreamStatus where
   | openProblem
   | solvedProblem
   | statementIncomplete
-  deriving DecidableEq, Repr
+  deriving DecidableEq, BEq, Repr
 
 inductive DashiOwner where
   | leanKernel
   | agdaSource
   | leanAndAgda
   | upstreamOnly
-  deriving DecidableEq, Repr
+  deriving DecidableEq, BEq, Repr
 
 structure TerminalLane where
   problem : Problem
@@ -52,50 +52,65 @@ structure TerminalLane where
 
 /-- Exact declaration names from LeanDojo commit
 `603053dc267cf3efe422f438eb78098c0ececd6f`. -/
+def pVersusNPLane : TerminalLane :=
+  { problem := .pVersusNP
+    upstreamDeclaration := "Millennium.ClayPVersusNP.Formulations.NegativeBranch"
+    upstreamStatus := .openProblem
+    dashiOwner := .agdaSource
+    dashiTerminalModule := "DASHI Millennium P-vs-NP Clay core / SAT lower-bound producer"
+    directCrossVersionAdapterKernelChecked := false }
+
+def riemannLane : TerminalLane :=
+  { problem := .riemann
+    upstreamDeclaration := "Millennium.ClayRiemannHypothesis"
+    upstreamStatus := .openProblem
+    dashiOwner := .leanAndAgda
+    dashiTerminalModule := "Synthesis.RiemannSelectedRHMaxCutFrontier"
+    directCrossVersionAdapterKernelChecked := false }
+
+def navierStokesLane : TerminalLane :=
+  { problem := .navierStokes
+    upstreamDeclaration := "MillenniumNavierStokes.FeffermanA|B|C|D"
+    upstreamStatus := .openProblem
+    dashiOwner := .leanAndAgda
+    dashiTerminalModule := "NSBControl.CombinedCurrentEndgame"
+    directCrossVersionAdapterKernelChecked := false }
+
+def hodgeLane : TerminalLane :=
+  { problem := .hodge
+    upstreamDeclaration := "MillenniumHodge.ClayHodge"
+    upstreamStatus := .statementIncomplete
+    dashiOwner := .leanAndAgda
+    dashiTerminalModule := "Synthesis.MillenniumHodgeRealAlgebraicCycleMultiplicityExact"
+    directCrossVersionAdapterKernelChecked := false }
+
+def bsdLane : TerminalLane :=
+  { problem := .birchSwinnertonDyer
+    upstreamDeclaration := "MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer"
+    upstreamStatus := .openProblem
+    dashiOwner := .leanAndAgda
+    dashiTerminalModule := "Synthesis.MillenniumBSDUniversalRankWeld"
+    directCrossVersionAdapterKernelChecked := false }
+
+def yangMillsLane : TerminalLane :=
+  { problem := .yangMills
+    upstreamDeclaration := "MillenniumYangMills.ClayYangMills"
+    upstreamStatus := .statementIncomplete
+    dashiOwner := .leanAndAgda
+    dashiTerminalModule := "YangMills.ContinuumWilsonCovariance + Agda OS/mass-gap terminal stack"
+    directCrossVersionAdapterKernelChecked := false }
+
+def poincareLane : TerminalLane :=
+  { problem := .poincare
+    upstreamDeclaration := "MillenniumPoincare.ClayPoincareConjecture"
+    upstreamStatus := .solvedProblem
+    dashiOwner := .upstreamOnly
+    dashiTerminalModule := "Perelman / upstream solved target"
+    directCrossVersionAdapterKernelChecked := false }
+
 def terminalLanes : List TerminalLane :=
-  [ { problem := .pVersusNP
-      upstreamDeclaration := "Millennium.ClayPVersusNP.Formulations.NegativeBranch"
-      upstreamStatus := .openProblem
-      dashiOwner := .agdaSource
-      dashiTerminalModule := "DASHI Millennium P-vs-NP Clay core / SAT lower-bound producer"
-      directCrossVersionAdapterKernelChecked := false }
-  , { problem := .riemann
-      upstreamDeclaration := "Millennium.ClayRiemannHypothesis"
-      upstreamStatus := .openProblem
-      dashiOwner := .leanAndAgda
-      dashiTerminalModule := "Synthesis.RiemannSelectedRHMaxCutFrontier"
-      directCrossVersionAdapterKernelChecked := false }
-  , { problem := .navierStokes
-      upstreamDeclaration := "MillenniumNavierStokes.FeffermanA|B|C|D"
-      upstreamStatus := .openProblem
-      dashiOwner := .leanAndAgda
-      dashiTerminalModule := "NSBControl.CombinedCurrentEndgame"
-      directCrossVersionAdapterKernelChecked := false }
-  , { problem := .hodge
-      upstreamDeclaration := "MillenniumHodge.ClayHodge"
-      upstreamStatus := .statementIncomplete
-      dashiOwner := .leanAndAgda
-      dashiTerminalModule := "Synthesis.MillenniumHodgeRealAlgebraicCycleMultiplicityExact"
-      directCrossVersionAdapterKernelChecked := false }
-  , { problem := .birchSwinnertonDyer
-      upstreamDeclaration := "MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer"
-      upstreamStatus := .openProblem
-      dashiOwner := .leanAndAgda
-      dashiTerminalModule := "Synthesis.MillenniumBSDUniversalRankWeld"
-      directCrossVersionAdapterKernelChecked := false }
-  , { problem := .yangMills
-      upstreamDeclaration := "MillenniumYangMills.ClayYangMills"
-      upstreamStatus := .statementIncomplete
-      dashiOwner := .leanAndAgda
-      dashiTerminalModule := "YangMills.ContinuumWilsonCovariance + Agda OS/mass-gap terminal stack"
-      directCrossVersionAdapterKernelChecked := false }
-  , { problem := .poincare
-      upstreamDeclaration := "MillenniumPoincare.ClayPoincareConjecture"
-      upstreamStatus := .solvedProblem
-      dashiOwner := .upstreamOnly
-      dashiTerminalModule := "Perelman / upstream solved target"
-      directCrossVersionAdapterKernelChecked := false }
-  ]
+  [pVersusNPLane, riemannLane, navierStokesLane, hodgeLane,
+    bsdLane, yangMillsLane, poincareLane]
 
 theorem terminalLanes_length : terminalLanes.length = 7 := by decide
 
@@ -107,10 +122,10 @@ def isValidPrizeAcceptanceTarget (lane : TerminalLane) : Bool :=
   | .openProblem | .solvedProblem => true
 
 theorem hodge_upstream_not_prize_target :
-    isValidPrizeAcceptanceTarget (terminalLanes.get! 3) = false := by decide
+    isValidPrizeAcceptanceTarget hodgeLane = false := by decide
 
 theorem yangMills_upstream_not_prize_target :
-    isValidPrizeAcceptanceTarget (terminalLanes.get! 5) = false := by decide
+    isValidPrizeAcceptanceTarget yangMillsLane = false := by decide
 
 /-! ## Existing theorem-bearing terminal surfaces
 

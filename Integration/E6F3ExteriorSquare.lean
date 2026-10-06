@@ -135,6 +135,89 @@ theorem standardQ1_card : Fintype.card StandardQ1 = 90 := by
 theorem standardQ2_card : Fintype.card StandardQ2 = 72 := by
   native_decide
 
+/-- Exact construction-level source carrier: ordered independent symplectically
+isotropic frames.  `wedgePrimitive ≠ 0` is exactly linear independence here. -/
+def IsotropicFrame :=
+  {uv : V4 × V4 // omega uv.1 uv.2 = 0 ∧ wedgePrimitive uv.1 uv.2 ≠ 0}
+
+instance : Fintype IsotropicFrame := inferInstance
+
+theorem isotropicFrame_card : Fintype.card IsotropicFrame = 1920 := by
+  native_decide
+
+/-- Every isotropic frame has a nonzero primitive-null Plucker image. -/
+def wedgeToPrimitiveNull (frame : IsotropicFrame) : PrimitiveNull :=
+  ⟨wedgePrimitive frame.1.1 frame.1.2,
+   frame.2.2,
+   primitive_null_of_isotropic frame.1.1 frame.1.2 frame.2.1⟩
+
+/-- Converse decomposability in this finite four-dimensional model: every
+nonzero primitive-null bivector is represented by an isotropic frame. -/
+theorem wedge_to_primitive_null_surjective :
+    Function.Surjective wedgeToPrimitiveNull := by
+  native_decide
+
+/-- Frames presenting the same oriented Plucker bivector. -/
+def OrientedFrameFiber (p : PrimitiveNull) :=
+  {frame : IsotropicFrame // wedgeToPrimitiveNull frame = p}
+
+instance (p : PrimitiveNull) : Fintype (OrientedFrameFiber p) := inferInstance
+
+/-- Each oriented Lagrangian bivector has exactly |SL(2,3)|=24 ordered frame
+presentations.  This is the precise 1920 = 80 * 24 quotient count. -/
+theorem orientedFrameFiber_card :
+    ∀ p : PrimitiveNull, Fintype.card (OrientedFrameFiber p) = 24 := by
+  native_decide
+
+theorem isotropic_frames_factor_80_times_24 :
+    Fintype.card IsotropicFrame = Fintype.card PrimitiveNull * 24 := by
+  norm_num [isotropicFrame_card, primitiveNull_card]
+
+/-- The derived oriented-Lagrangian carrier is the Plucker image, not the raw
+punctured V4 point carrier.  Surjectivity and the uniform 24-frame fibers above
+justify the provenance of this name. -/
+abbrev OrientedLagrangianBivector := PrimitiveNull
+
+/-- Restriction of the explicit ambient isometry to nonzero null points. -/
+def primitiveNullToStandard (p : PrimitiveNull) : StandardNull :=
+  ⟨primitiveToStandard p.1, by
+    constructor
+    · intro hzero
+      apply p.2.1
+      apply primitiveStandardEquiv.injective
+      simpa [primitiveStandardEquiv, primitiveToStandard] using hzero
+    · rw [primitive_standard_quadratic, p.2.2]
+      simp⟩
+
+/-- Inverse restriction of the explicit ambient isometry. -/
+def standardNullToPrimitive (z : StandardNull) : PrimitiveNull :=
+  ⟨standardToPrimitive z.1, by
+    constructor
+    · intro hzero
+      apply z.2.1
+      calc
+        z.1 = primitiveToStandard (standardToPrimitive z.1) :=
+          (primitive_standard_right z.1).symm
+        _ = primitiveToStandard 0 := by rw [hzero]
+        _ = 0 := by
+          funext i
+          fin_cases i <;> simp [primitiveToStandard]
+    · have hcompat := primitive_standard_quadratic (standardToPrimitive z.1)
+      rw [primitive_standard_right, z.2.2] at hcompat
+      exact neg_eq_zero.mp hcompat.symm⟩
+
+def primitiveNullEquivStandardNull : PrimitiveNull ≃ StandardNull where
+  toFun := primitiveNullToStandard
+  invFun := standardNullToPrimitive
+  left_inv := by
+    intro p
+    apply Subtype.ext
+    exact primitive_standard_left p.1
+  right_inv := by
+    intro z
+    apply Subtype.ext
+    exact primitive_standard_right z.1
+
 /-- The exact affine decomposition 243 = 1 + 80 + 90 + 72. -/
 theorem affine_decomposition_243 :
     243 = 1 + Fintype.card StandardNull + Fintype.card StandardQ1 + Fintype.card StandardQ2 := by
@@ -172,6 +255,10 @@ structure Boundary where
   pluckerIdentityPaid : Bool
   pluckerNullFromIsotropyPaid : Bool
   primitiveStandardIsometryPaid : Bool
+  isotropicFrameCount1920Paid : Bool
+  isotropicFrameSurjectsOntoLag80Paid : Bool
+  uniformFrameFiber24Paid : Bool
+  primitiveNullStandardNullEquivPaid : Bool
   rawT4KeptDistinctFromDerivedLag80 : Bool
   cardinalityAlonePromotesRecognition : Bool
   deriving Repr
@@ -186,6 +273,10 @@ def canonicalBoundary : Boundary where
   pluckerIdentityPaid := true
   pluckerNullFromIsotropyPaid := true
   primitiveStandardIsometryPaid := true
+  isotropicFrameCount1920Paid := true
+  isotropicFrameSurjectsOntoLag80Paid := true
+  uniformFrameFiber24Paid := true
+  primitiveNullStandardNullEquivPaid := true
   rawT4KeptDistinctFromDerivedLag80 := true
   cardinalityAlonePromotesRecognition := false
 

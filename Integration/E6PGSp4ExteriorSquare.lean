@@ -129,6 +129,16 @@ theorem standard_quadratic_agrees :
 def reflectV5 (s : E6SimpleReflection) (z : V5) : V5 :=
   fromE6Five (reflectStandard s (toE6Five z))
 
+theorem reflectV5_involutive : ∀ s z, reflectV5 s (reflectV5 s z) = z := by
+  native_decide
+
+theorem reflectV5_zero : ∀ s, reflectV5 s (0 : V5) = 0 := by
+  native_decide
+
+theorem reflectV5_preserves_quadratic :
+    ∀ s z, qStandard (reflectV5 s z) = qStandard z := by
+  native_decide
+
 /-- The exact generator-level exterior-square intertwiner.
 
 The premise is essential: the five-coordinate primitive chart represents the
@@ -154,23 +164,11 @@ def reflectStandardNull (s : E6SimpleReflection) (z : StandardNull) : StandardNu
     constructor
     · intro hz
       apply z.2.1
-      have hInv := simple_reflections_are_involutions s (toE6Five z.1)
-      have hBridge : toE6Five (reflectV5 s z.1) =
-          reflectStandard s (toE6Five z.1) := by
-        simp [reflectV5, toE6Five, fromE6Five]
-      rw [hz] at hBridge
-      have : reflectStandard s (toE6Five z.1) = 0 := by
-        simpa using hBridge.symm
-      have := congrArg (reflectStandard s) this
-      simpa using hInv.symm.trans this
-    · have hq := simple_reflections_preserve_quadratic s (toE6Five z.1)
-      rw [standard_quadratic_agrees] at hq
-      have hq' : standardQuadratic (toE6Five (reflectV5 s z.1)) = qStandard (reflectV5 s z.1) :=
-        standard_quadratic_agrees (reflectV5 s z.1)
-      have hbridge : toE6Five (reflectV5 s z.1) = reflectStandard s (toE6Five z.1) := by
-        simp [reflectV5, toE6Five, fromE6Five]
-      rw [hbridge] at hq'
-      rw [← hq', hq, z.2.2]⟩
+      calc
+        z.1 = reflectV5 s (reflectV5 s z.1) := (reflectV5_involutive s z.1).symm
+        _ = reflectV5 s 0 := by rw [hz]
+        _ = 0 := reflectV5_zero s
+    · rw [reflectV5_preserves_quadratic, z.2.2]⟩
 
 inductive RawT4VectorOrbitIsNullOrbit : Prop
 

@@ -54,11 +54,11 @@ instance : Fintype NullNonzero := inferInstance
 instance : Fintype ClassOne := inferInstance
 instance : Fintype ClassTwo := inferInstance
 
- theorem total_state_count : Fintype.card V5 = 243 := by native_decide
- theorem null_nonzero_count : Fintype.card NullNonzero = 80 := by native_decide
- theorem class_one_count : Fintype.card ClassOne = 90 := by native_decide
- theorem class_two_count : Fintype.card ClassTwo = 72 := by native_decide
- theorem state_partition_arithmetic : 243 = 1 + 80 + 90 + 72 := by decide
+theorem total_state_count : Fintype.card V5 = 243 := by native_decide
+theorem null_nonzero_count : Fintype.card NullNonzero = 80 := by native_decide
+theorem class_one_count : Fintype.card ClassOne = 90 := by native_decide
+theorem class_two_count : Fintype.card ClassTwo = 72 := by native_decide
+theorem state_partition_arithmetic : 243 = 1 + 80 + 90 + 72 := by decide
 
 /-- Balanced-ternary sign. -/
 def negV (x : V5) : V5 := ⟨-x.x0,-x.x1,-x.x2,-x.x3,-x.x4⟩
@@ -80,10 +80,10 @@ instance : Fintype NullLines := inferInstance
 instance : Fintype RootCandidateLines := inferInstance
 instance : Fintype OtherNonsingularLines := inferInstance
 
- theorem null_line_count : Fintype.card NullLines = 40 := by native_decide
- theorem root_candidate_line_count : Fintype.card RootCandidateLines = 36 := by native_decide
- theorem other_nonsingular_line_count : Fintype.card OtherNonsingularLines = 45 := by native_decide
- theorem projective_partition_arithmetic : 121 = 40 + 36 + 45 := by decide
+theorem null_line_count : Fintype.card NullLines = 40 := by native_decide
+theorem root_candidate_line_count : Fintype.card RootCandidateLines = 36 := by native_decide
+theorem other_nonsingular_line_count : Fintype.card OtherNonsingularLines = 45 := by native_decide
+theorem projective_partition_arithmetic : 121 = 40 + 36 + 45 := by decide
 
 /-- Orthogonality point graph on any canonical projective stratum. -/
 def lineAdj {P : Type} [Coe P V5] [DecidableEq P] (x y : P) : Bool :=
@@ -144,7 +144,9 @@ structure E6WeylFaithfulRecognition (Weyl : Type*) [Fintype Weyl] where
 
 /-- Candidate bridge to the fixed-point-free order-3 E8 quotient. This record
 requires an incidence equivalence; matching 40-vertex parameters is not enough. -/
-structure E6E8DualIncidenceRecognition (E8ProjectivePoint E8ProjectiveLine : Type*) where
+structure E6E8DualIncidenceRecognition
+    (E8ProjectivePoint E8ProjectiveLine : Type*)
+    [Fintype E8ProjectivePoint] [Fintype E8ProjectiveLine] where
   e8PointCount40 : Fintype.card E8ProjectivePoint = 40
   e8LineCount40 : Fintype.card E8ProjectiveLine = 40
   incident : E8ProjectivePoint → E8ProjectiveLine → Prop
@@ -164,11 +166,13 @@ inductive CardinalityCreatesExceptionalRecognition : Prop
 inductive MatchingSRGParametersCreateIncidenceIsomorphism : Prop
 inductive DepthNormCreatesProductDecomposition : Prop
 
- theorem cardinalityDoesNotCreateRecognition : ¬ CardinalityCreatesExceptionalRecognition := by
+theorem cardinalityDoesNotCreateRecognition : ¬ CardinalityCreatesExceptionalRecognition := by
   intro h; cases h
- theorem matchingParametersDoNotCreateIsomorphism : ¬ MatchingSRGParametersCreateIncidenceIsomorphism := by
+
+theorem matchingParametersDoNotCreateIsomorphism : ¬ MatchingSRGParametersCreateIncidenceIsomorphism := by
   intro h; cases h
- theorem depthNormNotAutoProduct : ¬ DepthNormCreatesProductDecomposition := by
+
+theorem depthNormNotAutoProduct : ¬ DepthNormCreatesProductDecomposition := by
   intro h; cases h
 
 structure Boundary where
@@ -183,7 +187,7 @@ structure Boundary where
   depthNormProductClaimed : Bool
   deriving Repr
 
- def canonicalBoundary : Boundary where
+def canonicalBoundary : Boundary where
   concrete243ModelPaid := true
   strataCountsPaid := true
   projectiveCountsPaid := true

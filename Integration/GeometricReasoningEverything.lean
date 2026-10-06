@@ -8,6 +8,10 @@ import Integration.E6Mod3QuadraticBridge
 import Integration.E6Mod3QuadraticBridgeRegression
 import Integration.E6Mod3WeylAction
 import Integration.E6Mod3WeylActionRegression
+import Integration.E6F3ExteriorSquare
+import Integration.E6F3ExteriorSquareRegression
+import Integration.E6PGSp4ExteriorSquare
+import Integration.E6PGSp4ExteriorSquareRegression
 import Integration.E8E6A2TernaryBranchingCandidate
 import Integration.E8E6A2TernaryBranchingCandidateRegression
 import Integration.E8RelativeT5IntrinsicGraphObstruction

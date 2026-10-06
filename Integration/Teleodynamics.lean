@@ -4,3 +4,7 @@ import Integration.TeleodynamicsRegression
 import Integration.TeleodynamicsLila
 import Integration.TeleodynamicsExceptionalPrior
 import Integration.TeleodynamicsLilaRegression
+import Integration.TeleodynamicsSemanticActionBridge
+import Integration.TeleodynamicsSemanticActionRegression
+import Integration.TeleodynamicsGeometricCandidateBridge
+import Integration.TeleodynamicsGeometricCandidateRegression

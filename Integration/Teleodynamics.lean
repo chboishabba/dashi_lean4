@@ -10,3 +10,5 @@ import Integration.TeleodynamicsGeometricCandidateBridge
 import Integration.TeleodynamicsGeometricCandidateRegression
 import Integration.TeleodynamicsCorrelation
 import Integration.TeleodynamicsCorrelationRegression
+import Integration.TeleodynamicsConsensus
+import Integration.TeleodynamicsConsensusRegression

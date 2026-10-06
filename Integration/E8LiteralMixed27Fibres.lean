@@ -82,9 +82,9 @@ theorem literal_e6_reflection_preserves_a2_weight :
 literal E6 simple-root reflection relation.  Relation form avoids defining the
 root action by transport through a ternary bijection. -/
 theorem literal_reflection_preserves_weight_fibre :
-    ∀ s (w : Int × Int) (r : LiteralWeightFiber w) k,
+    ∀ s (w : Int × Int) (r : LiteralWeightFiber w),
       reflectedWeight s r.1 = w := by
-  intro s w r k
+  intro s w r
   simpa [r.2] using literal_e6_reflection_preserves_a2_weight s r.1
 
 /-- The already-paid bare five-trit E6 orbit sizes. -/

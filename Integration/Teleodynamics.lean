@@ -8,3 +8,5 @@ import Integration.TeleodynamicsSemanticActionBridge
 import Integration.TeleodynamicsSemanticActionRegression
 import Integration.TeleodynamicsGeometricCandidateBridge
 import Integration.TeleodynamicsGeometricCandidateRegression
+import Integration.TeleodynamicsCorrelation
+import Integration.TeleodynamicsCorrelationRegression

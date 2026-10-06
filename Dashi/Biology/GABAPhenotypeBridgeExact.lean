@@ -2,32 +2,32 @@ import Dashi.Biology.GABAPhenotypeEvidenceExact
 
 namespace Dashi.Biology.GABAPhenotypeBridgeExact
 
-namespace Evidence := Dashi.Biology.GABAPhenotypeEvidenceExact
+open Dashi.Biology.GABAPhenotypeEvidenceExact
 
 /-!
 Structural Lean mirror of the GABA phenotype promotion boundary.
 
 The Agda repository already owns the concrete sensory-processing, memory-fibre,
-and causal-estimand objects.  Those owners do not yet have native Lean mirrors,
-so this file does not invent replacement theorem authority.  It records the
+and causal-estimand objects. Those owners do not yet have native Lean mirrors,
+so this file does not invent replacement theorem authority. It records the
 same promotion obligations and names the Agda causal owner explicitly.
 -/
 
 structure PromotionValidation where
-  source : Evidence.AttributedSource
+  source : AttributedSource
   validationReference : String
   validated : Bool
   deriving Repr, DecidableEq
 
 structure RegionalToWholeBrainBridge
-    (regional : Evidence.RegionalGABAEvidence) where
+    (regional : RegionalGABAEvidence) where
   validation : PromotionValidation
   wholeBrainScopeReference : String
   transportReference : String
   deriving Repr, DecidableEq
 
 structure GroupToIndividualBridge
-    (groupEvidence : Evidence.RegionalGABAEvidence) where
+    (groupEvidence : RegionalGABAEvidence) where
   validation : PromotionValidation
   individualSelectionReference : String
   calibrationReference : String
@@ -43,7 +43,7 @@ structure CausalEstimandReference where
   deriving Repr, DecidableEq
 
 structure AssociationToCausalBridge
-    (association : Evidence.RegionalGABAEvidence) where
+    (association : RegionalGABAEvidence) where
   validation : PromotionValidation
   causalEstimand : CausalEstimandReference
   identificationReference : String
@@ -58,7 +58,7 @@ structure SynchronyAttachmentBridge where
   deriving Repr, DecidableEq
 
 structure NeurochemicalInflammationBridge
-    (neurochemicalEvidence : Evidence.RegionalGABAEvidence) where
+    (neurochemicalEvidence : RegionalGABAEvidence) where
   validation : PromotionValidation
   inflammatoryReadoutReference : String
   mediatorReference : String
@@ -66,7 +66,7 @@ structure NeurochemicalInflammationBridge
   deriving Repr, DecidableEq
 
 def causalPromotionRequiresExistingEstimand
-    {association : Evidence.RegionalGABAEvidence}
+    {association : RegionalGABAEvidence}
     (bridge : AssociationToCausalBridge association) : CausalEstimandReference :=
   bridge.causalEstimand
 
@@ -86,7 +86,7 @@ theorem evidenceFamilyTagDoesNotDetermineCausalAuthority :
   cases h
 
 structure EvidenceFamilyReceipt where
-  evidence : Evidence.RegionalGABAEvidence
+  evidence : RegionalGABAEvidence
   family : EvidenceFamily
   familyReference : String
   promotionStillRequiresBridge : Bool
@@ -95,17 +95,16 @@ structure EvidenceFamilyReceipt where
 /- Sensory owner types remain Agda-owned, so the Lean carrier is parametric. -/
 structure SensoryGABAInteractionCarrier
     (Weight Context Geometry Load : Type) where
-  evidence : Evidence.RegionalGABAEvidence
+  evidence : RegionalGABAEvidence
   weighting : Weight
   context : Context
   processingGeometry : Geometry
   observedLoad : Load
   interactionReference : String
 
-
 theorem sameGABAEvidenceDifferentContextCanChangeLoad
     {Weight Context Geometry Load : Type}
-    (evidence : Evidence.RegionalGABAEvidence)
+    (evidence : RegionalGABAEvidence)
     (weight : Weight) (geometry : Geometry)
     (context₁ context₂ : Context) (load₁ load₂ : Load)
     (hContext : context₁ ≠ context₂)
@@ -115,18 +114,17 @@ theorem sameGABAEvidenceDifferentContextCanChangeLoad
 /- Memory owner type remains Agda-owned, so this attachment is parametric and
    explicitly states that no mutation follows from the evidence row. -/
 structure GABARetrievalMemoryBridge (Memory Geometry : Type) where
-  evidence : Evidence.RegionalGABAEvidence
+  evidence : RegionalGABAEvidence
   memory : Memory
   processingGeometry : Geometry
   attachmentReference : String
   evidenceChangesMemoryAutomatically : Bool
 
-
 def schmitzMemoryAttachment
     {Memory Geometry : Type}
     (memory : Memory) (processing : Geometry) :
     GABARetrievalMemoryBridge Memory Geometry := {
-  evidence := Evidence.schmitz2017ThoughtSuppression
+  evidence := schmitz2017ThoughtSuppression
   memory := memory
   processingGeometry := processing
   attachmentReference := "Structural Lean attachment only; concrete memory-fibre semantics remain owned by DASHI.Cognition.PNF.DepthWheelMemoryHyperfabric in Agda."

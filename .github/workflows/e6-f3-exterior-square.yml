@@ -1,0 +1,38 @@
+name: E6 F3 exterior-square max-cut
+
+on:
+  pull_request:
+    paths:
+      - "Integration/E6F3ExteriorSquare.lean"
+      - "Integration/E6F3ExteriorSquareRegression.lean"
+      - "Integration/E6PGSp4ExteriorSquare.lean"
+      - "Integration/E6PGSp4ExteriorSquareRegression.lean"
+      - "Integration/E6F3ProjectiveAssociation.lean"
+      - "Integration/E6F3ProjectiveAssociationRegression.lean"
+      - "Integration/GeometricReasoningEverything.lean"
+      - ".github/workflows/e6-f3-exterior-square.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exterior-square:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Check F3 exterior-square core
+        run: |
+          lake env lean Integration/E6F3ExteriorSquare.lean
+          lake env lean Integration/E6F3ExteriorSquareRegression.lean
+      - name: Check PGSp4/E6 generator intertwiner
+        run: |
+          lake env lean Integration/E6PGSp4ExteriorSquare.lean
+          lake env lean Integration/E6PGSp4ExteriorSquareRegression.lean
+      - name: Check projective association schemes
+        run: |
+          lake env lean Integration/E6F3ProjectiveAssociation.lean
+          lake env lean Integration/E6F3ProjectiveAssociationRegression.lean
+      - name: Check geometric reasoning rollup
+        run: lake env lean Integration/GeometricReasoningEverything.lean

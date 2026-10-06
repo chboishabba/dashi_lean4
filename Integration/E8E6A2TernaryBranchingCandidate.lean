@@ -134,7 +134,7 @@ inductive BranchSector
   | mixedB
   | a2
   | selectedLine
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 def branchSector (z : F3Five) : BranchSector :=
   if standardQuadratic z = 2 then .e6
@@ -143,11 +143,51 @@ def branchSector (z : F3Five) : BranchSector :=
   else if inSelectedAffinePlane z = true then .a2
   else .mixedB
 
+/-- Fibres of the exact classifier; these are disjoint by construction and
+exhaust the carrier because `branchSector` is total. -/
+def TaggedSector (tag : BranchSector) := {z : F3Five // branchSector z = tag}
+instance (tag : BranchSector) : Fintype (TaggedSector tag) := inferInstance
+
+theorem tagged_e6_card : Fintype.card (TaggedSector .e6) = 72 := by
+  native_decide
+
+theorem tagged_mixed_a_card : Fintype.card (TaggedSector .mixedA) = 81 := by
+  native_decide
+
+theorem tagged_mixed_b_card : Fintype.card (TaggedSector .mixedB) = 81 := by
+  native_decide
+
+theorem tagged_a2_card : Fintype.card (TaggedSector .a2) = 6 := by
+  native_decide
+
+theorem tagged_selected_line_card : Fintype.card (TaggedSector .selectedLine) = 3 := by
+  native_decide
+
+/-- Every point has exactly one classifier tag. -/
+def exactlyOneBranchSector (z : F3Five) : Prop :=
+  ∃! tag : BranchSector, branchSector z = tag
+
+theorem branch_sector_total : ∀ z, exactlyOneBranchSector z := by
+  intro z
+  refine ⟨branchSector z, rfl, ?_⟩
+  intro tag htag
+  exact htag.symm
+
+/-- The old constant-diagonal line in the same standardized F3^5 coordinates. -/
+def inOldDiagonal (z : F3Five) : Prop :=
+  z.z0 = z.z1 ∧ z.z1 = z.z2 ∧ z.z2 = z.z3 ∧ z.z3 = z.z4
+
+def selectedAffineLineDisjointFromOldDiagonal : Prop :=
+  ∀ z : F3Five, inSelectedAffineLine z = true → ¬ inOldDiagonal z
+
+theorem selected_line_disjoint_old_diagonal : selectedAffineLineDisjointFromOldDiagonal := by
+  native_decide
+
 /-- The line and old constant-diagonal cut are kept as distinct constructions.
 No equality between them is introduced or inferred from their common size 3. -/
 inductive SelectedAffineLineEqualsOldDiagonalCut : Prop
 
- theorem selectedAffineLineCannotEqualOldDiagonalByCardinalityAlone :
+theorem selectedAffineLineCannotEqualOldDiagonalByCardinalityAlone :
     ¬ SelectedAffineLineEqualsOldDiagonalCut := by
   intro h
   cases h
@@ -177,6 +217,7 @@ structure Boundary where
   selectedAffinePlaneInsideQOnePaid : Bool
   selectedAffineLineCountThreePaid : Bool
   exact243BranchingCountPaid : Bool
+  exactTaggedPartitionPaid : Bool
   exact240AfterSelectedLineRemovalPaid : Bool
   e6SectorUsesExistingQTwoGeometry : Bool
   branchingCountsCreateE8Recognition : Bool
@@ -191,6 +232,7 @@ def canonicalBoundary : Boundary where
   selectedAffinePlaneInsideQOnePaid := true
   selectedAffineLineCountThreePaid := true
   exact243BranchingCountPaid := true
+  exactTaggedPartitionPaid := true
   exact240AfterSelectedLineRemovalPaid := true
   e6SectorUsesExistingQTwoGeometry := true
   branchingCountsCreateE8Recognition := false

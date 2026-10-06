@@ -2,37 +2,37 @@ import Dashi.Biology.GABAPhenotypeBridgeExact
 
 namespace Dashi.Biology.GABAPhenotypeBridgeRegression
 
-namespace Bridge := Dashi.Biology.GABAPhenotypeBridgeExact
-namespace Evidence := Dashi.Biology.GABAPhenotypeEvidenceExact
+open Dashi.Biology.GABAPhenotypeBridgeExact
+open Dashi.Biology.GABAPhenotypeEvidenceExact
 
 def causalBridgeExportsExistingEstimand
-    {evidence : Evidence.RegionalGABAEvidence}
-    (bridge : Bridge.AssociationToCausalBridge evidence) :
-    Bridge.CausalEstimandReference :=
-  Bridge.causalPromotionRequiresExistingEstimand bridge
+    {evidence : RegionalGABAEvidence}
+    (bridge : AssociationToCausalBridge evidence) :
+    CausalEstimandReference :=
+  causalPromotionRequiresExistingEstimand bridge
 
 theorem evidenceFamilyTagCannotPromote :
-    Bridge.EvidenceFamilyDeterminesCausalAuthorityPermission → False :=
-  Bridge.evidenceFamilyTagDoesNotDetermineCausalAuthority
+    EvidenceFamilyDeterminesCausalAuthorityPermission → False :=
+  evidenceFamilyTagDoesNotDetermineCausalAuthority
 
 theorem contextSensitivitySurvivesGABAAttachment
     {Weight Context Geometry Load : Type}
-    (evidence : Evidence.RegionalGABAEvidence)
+    (evidence : RegionalGABAEvidence)
     (weight : Weight) (geometry : Geometry)
     (context₁ context₂ : Context) (load₁ load₂ : Load)
     (hContext : context₁ ≠ context₂)
     (hLoad : load₁ ≠ load₂) : load₁ ≠ load₂ :=
-  Bridge.sameGABAEvidenceDifferentContextCanChangeLoad
+  sameGABAEvidenceDifferentContextCanChangeLoad
     evidence weight geometry context₁ context₂ load₁ load₂ hContext hLoad
 
 theorem memoryAttachmentDoesNotMutateIdentity
     {Memory : Type} (memory : Memory) : memory = memory :=
-  Bridge.schmitzEvidenceDoesNotByItselfChangeMemory memory
+  schmitzEvidenceDoesNotByItselfChangeMemory memory
 
-def adhdEvidenceHoleRegression : Bridge.ADHDEvidenceGap :=
-  Bridge.canonicalADHDEvidenceGap
+def adhdEvidenceHoleRegression : ADHDEvidenceGap :=
+  canonicalADHDEvidenceGap
 
-def bridgeBoundaryRegression : Bridge.GABAPhenotypeBridgeBoundary :=
-  Bridge.canonicalGABAPhenotypeBridgeBoundary
+def bridgeBoundaryRegression : GABAPhenotypeBridgeBoundary :=
+  canonicalGABAPhenotypeBridgeBoundary
 
 end Dashi.Biology.GABAPhenotypeBridgeRegression

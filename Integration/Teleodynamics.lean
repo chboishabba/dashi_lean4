@@ -1,3 +1,6 @@
 import Integration.TeleodynamicsCore
 import Integration.TeleodynamicsGeometry
 import Integration.TeleodynamicsRegression
+import Integration.TeleodynamicsLila
+import Integration.TeleodynamicsExceptionalPrior
+import Integration.TeleodynamicsLilaRegression

@@ -71,22 +71,25 @@ def q2Adjacent (x y : Q2Line) : Bool :=
   decide (x ≠ y ∧ dot5 x.1 y.1 = 0)
 
 def nullDegree (x : NullLine) : Nat :=
-  (Finset.univ.filter fun y : NullLine => nullAdjacent x y).card
+  (Finset.univ.filter fun y : NullLine => nullAdjacent x y = true).card
 
 def q1Degree (x : Q1Line) : Nat :=
-  (Finset.univ.filter fun y : Q1Line => q1Adjacent x y).card
+  (Finset.univ.filter fun y : Q1Line => q1Adjacent x y = true).card
 
 def q2Degree (x : Q2Line) : Nat :=
-  (Finset.univ.filter fun y : Q2Line => q2Adjacent x y).card
+  (Finset.univ.filter fun y : Q2Line => q2Adjacent x y = true).card
 
 def nullCommon (x y : NullLine) : Nat :=
-  (Finset.univ.filter fun z : NullLine => nullAdjacent x z && nullAdjacent y z).card
+  (Finset.univ.filter fun z : NullLine =>
+    (nullAdjacent x z && nullAdjacent y z) = true).card
 
 def q1Common (x y : Q1Line) : Nat :=
-  (Finset.univ.filter fun z : Q1Line => q1Adjacent x z && q1Adjacent y z).card
+  (Finset.univ.filter fun z : Q1Line =>
+    (q1Adjacent x z && q1Adjacent y z) = true).card
 
 def q2Common (x y : Q2Line) : Nat :=
-  (Finset.univ.filter fun z : Q2Line => q2Adjacent x z && q2Adjacent y z).card
+  (Finset.univ.filter fun z : Q2Line =>
+    (q2Adjacent x z && q2Adjacent y z) = true).card
 
 /-! ## Q=0: SRG(40,12,2,4) -/
 

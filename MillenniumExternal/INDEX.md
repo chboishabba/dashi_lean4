@@ -1,0 +1,4 @@
+- `COMMIT_PIN.lean`: immutable upstream identity
+- `TerminalCensus.lean`: existing DASHI theorem-bearing terminal owners
+- `ExternalTargetFrontier.lean`: fail-closed exact-adapter status
+- `All.lean`: aggregate typecheck and axiom audit

@@ -8,6 +8,8 @@ import Integration.E6Mod3QuadraticBridge
 import Integration.E6Mod3QuadraticBridgeRegression
 import Integration.E6Mod3WeylAction
 import Integration.E6Mod3WeylActionRegression
+import Integration.E6Mod3ReflectionIntertwiner
+import Integration.E6Mod3ReflectionIntertwinerRegression
 import Integration.E6F3ExteriorSquare
 import Integration.E6F3ExteriorSquareRegression
 import Integration.E6PGSp4ExteriorSquare

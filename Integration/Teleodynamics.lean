@@ -6,3 +6,4 @@ import Integration.TeleodynamicsExceptionalPrior
 import Integration.TeleodynamicsLilaRegression
 import Integration.ExceptionalE6Mod3FiniteGeometry
 import Integration.ExceptionalE6Mod3FiniteGeometryRegression
+import Integration.ExceptionalE6E8FiniteGeometryPythonReceipt

@@ -7,7 +7,7 @@ inductive AdapterState where
   | redType
   | redMath
   | upstreamIncomplete
-  deriving DecidableEq, Repr
+  deriving DecidableEq, BEq, Repr
 
 structure ExternalTargetReceipt where
   problem : Problem

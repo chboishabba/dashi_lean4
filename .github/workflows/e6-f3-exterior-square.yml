@@ -9,6 +9,8 @@ on:
       - "Integration/E6PGSp4ExteriorSquareRegression.lean"
       - "Integration/E6F3ProjectiveAssociation.lean"
       - "Integration/E6F3ProjectiveAssociationRegression.lean"
+      - "Integration/E6F3OrbitTransitivity.lean"
+      - "Integration/E6F3OrbitTransitivityRegression.lean"
       - "Integration/GeometricReasoningEverything.lean"
       - ".github/workflows/e6-f3-exterior-square.yml"
   workflow_dispatch:
@@ -34,5 +36,9 @@ jobs:
         run: |
           lake env lean Integration/E6F3ProjectiveAssociation.lean
           lake env lean Integration/E6F3ProjectiveAssociationRegression.lean
+      - name: Check quadratic-shell orbit transitivity
+        run: |
+          lake env lean Integration/E6F3OrbitTransitivity.lean
+          lake env lean Integration/E6F3OrbitTransitivityRegression.lean
       - name: Check geometric reasoning rollup
         run: lake env lean Integration/GeometricReasoningEverything.lean

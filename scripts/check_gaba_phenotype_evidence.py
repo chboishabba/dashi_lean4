@@ -1,9 +1,12 @@
 from pathlib import Path
 
 p = Path("Dashi/Biology/GABAPhenotypeEvidenceExact.lean")
+r = Path("Dashi/Biology/GABAPhenotypeEvidenceRegression.lean")
 assert p.exists(), "missing GABAPhenotypeEvidenceExact.lean"
+assert r.exists(), "missing GABAPhenotypeEvidenceRegression.lean"
 
 text = p.read_text(encoding="utf-8")
+regression = r.read_text(encoding="utf-8")
 
 required = [
     "structure AttributedSource",
@@ -42,6 +45,16 @@ required = [
 for needle in required:
     assert needle in text, f"missing required surface: {needle}"
 
+for needle in [
+    "sourceAttributionNonAuthorityRegression",
+    "associationCausalityGateRegression",
+    "autismCausalSufficiencyGateRegression",
+    "adhdCausalSufficiencyGateRegression",
+    "sensoryUniversalizationGateRegression",
+    "canonicalBoundaryRegression",
+]:
+    assert needle in regression, f"missing regression proof: {needle}"
+
 for forbidden in [
     "structure LiteratureSource",
     "systematic-review / meta-analysis source registry row",
@@ -54,4 +67,4 @@ for forbidden in [
 ]:
     assert forbidden not in text, f"forbidden or stale promotion/attribution present: {forbidden}"
 
-print("Lean GABA phenotype evidence attribution/promotion surface checks passed")
+print("Lean GABA phenotype evidence attribution/promotion/regression surface checks passed")

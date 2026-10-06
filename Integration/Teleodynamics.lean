@@ -12,3 +12,5 @@ import Integration.TeleodynamicsCorrelation
 import Integration.TeleodynamicsCorrelationRegression
 import Integration.TeleodynamicsConsensus
 import Integration.TeleodynamicsConsensusRegression
+import Integration.TeleodynamicsConsensusSpectralGap
+import Integration.TeleodynamicsConsensusSpectralGapRegression

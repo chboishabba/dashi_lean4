@@ -35,13 +35,16 @@ def reflectQ2 (s : E6SimpleReflection) (z : StandardQ2) : StandardQ2 :=
   ⟨reflectV5 s z.1, by
     rw [reflectV5_preserves_quadratic, z.2]⟩
 
-/-- One generator-saturation step. -/
-def expandOrbit {α : Type*} [Fintype α] [DecidableEq α]
+/-- One exact saturation step by the six E6 simple generators.  Writing the
+six images explicitly keeps this finite owner independent of generic finite-set
+union APIs and mirrors the literal Coxeter generator set. -/
+def expandOrbit {α : Type*} [DecidableEq α]
     (act : E6SimpleReflection → α → α) (S : Finset α) : Finset α :=
-  S ∪ Finset.univ.biUnion (fun g : E6SimpleReflection => S.image (act g))
+  S ∪ S.image (act .s0) ∪ S.image (act .s1) ∪ S.image (act .s2) ∪
+      S.image (act .s3) ∪ S.image (act .s4) ∪ S.image (act .s5)
 
 /-- Bounded saturation from one seed. -/
-def orbitN {α : Type*} [Fintype α] [DecidableEq α]
+def orbitN {α : Type*} [DecidableEq α]
     (act : E6SimpleReflection → α → α) (seed : α) : Nat → Finset α
   | 0 => {seed}
   | n + 1 => expandOrbit act (orbitN act seed n)
@@ -84,18 +87,18 @@ theorem q2_orbit_full : q2Orbit = Finset.univ := by
 
 theorem null_orbit_card : nullOrbit.card = 80 := by
   rw [null_orbit_full]
-  exact standardNull_card
+  simpa using standardNull_card
 
 theorem q1_orbit_card : q1Orbit.card = 90 := by
   rw [q1_orbit_full]
-  exact standardQ1_card
+  simpa using standardQ1_card
 
 theorem q2_orbit_card : q2Orbit.card = 72 := by
   rw [q2_orbit_full]
-  exact standardQ2_card
+  simpa using standardQ2_card
 
-/-- Pointwise reachability form: every null point belongs to the generated
-finite saturation of the selected seed. -/
+/-- Pointwise reachability form: every point belongs to the generated finite
+saturation of the selected seed. -/
 theorem null_reachable (z : StandardNull) : z ∈ nullOrbit := by
   rw [null_orbit_full]
   simp

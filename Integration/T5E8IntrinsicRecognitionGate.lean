@@ -36,8 +36,6 @@ structure IntrinsicTargetGeometry where
   fixedBeforeRecognitionMap : Bool
   fixedBeforeRecognitionMapIsTrue : fixedBeforeRecognitionMap = true
 
-attribute [instance] IntrinsicTargetGeometry.decidableRelation
-
 /-- E8 source relation in the literal scaled-root carrier. -/
 def e8RootRelation (a b : E8ScaledRoot) : Prop :=
   a ≠ b ∧ e8ScaledDot a b = -4
@@ -79,18 +77,18 @@ theorem naive_recognition_yields_degree_recognition
   let f : E8RootNeighbor r →
       RelativeOrthogonalNeighbor (recognition.rootEquiv r) := fun s =>
     ⟨recognition.rootEquiv s.1, by
-      constructor
-      · intro hEq
-        have : s.1 = r := recognition.rootEquiv.injective hEq
-        exact s.2.1 this
-      · exact (recognition.relationIntertwining r s.1).mp s.2 |>.2⟩
+      have hsrc : e8RootRelation r s.1 := ⟨Ne.symm s.2.1, s.2.2⟩
+      have htgt := (recognition.relationIntertwining r s.1).mp hsrc
+      exact ⟨Ne.symm htgt.1, htgt.2⟩⟩
   let g : RelativeOrthogonalNeighbor (recognition.rootEquiv r) →
       E8RootNeighbor r := fun y =>
     ⟨recognition.rootEquiv.symm y.1, by
-      have hyRel : naiveOrthogonalityGeometry.relation (recognition.rootEquiv r) y.1 := y.2
-      have hsrc := (recognition.relationIntertwining r (recognition.rootEquiv.symm y.1)).mpr (by
-        simpa using hyRel)
-      exact hsrc⟩
+      have hyRel : naiveOrthogonalityGeometry.relation (recognition.rootEquiv r) y.1 :=
+        ⟨Ne.symm y.2.1, y.2.2⟩
+      have hsrc : e8RootRelation r (recognition.rootEquiv.symm y.1) :=
+        (recognition.relationIntertwining r (recognition.rootEquiv.symm y.1)).mpr (by
+          simpa using hyRel)
+      exact ⟨Ne.symm hsrc.1, hsrc.2⟩⟩
   let e : E8RootNeighbor r ≃ RelativeOrthogonalNeighbor (recognition.rootEquiv r) where
     toFun := f
     invFun := g

@@ -17,8 +17,16 @@ on:
       - "Integration/E6F3GeneratedGroupClosureRegression.lean"
       - "Integration/E6RootStabilizerA5SixSet.lean"
       - "Integration/E6RootStabilizerA5SixSetRegression.lean"
+      - "Integration/E6SelectedStabilizerFaceSameObject.lean"
+      - "Integration/E6SelectedStabilizerFaceSameObjectRegression.lean"
+      - "Integration/E6FullMatrixTernary27SameAction.lean"
+      - "Integration/E6FullMatrixTernary27SameActionRegression.lean"
+      - "Integration/E6Ternary27CoxeterAction.lean"
+      - "Integration/E6Ternary27CoxeterActionRegression.lean"
       - "Integration/E6SeventyTwoChartHyperformAtlas.lean"
       - "Integration/E6SeventyTwoChartHyperformAtlasRegression.lean"
+      - "Integration/E6SeventyTwoChartAtlasActionCompletion.lean"
+      - "Integration/E6SeventyTwoChartAtlasActionCompletionRegression.lean"
       - "Integration/E6LiteralE8Action.lean"
       - "Integration/E6LiteralE8ActionRegression.lean"
       - "Integration/E6Minuscule27LiteralRecognition.lean"
@@ -76,14 +84,22 @@ jobs:
         run: |
           lake env lean Integration/E6F3OrbitTransitivity.lean
           lake env lean Integration/E6F3OrbitTransitivityRegression.lean
-      - name: Check generated E6 image closure and root-chart atlas
+      - name: Check generated E6 image, stabilizer weld and coherent atlas
         run: |
           lake env lean Integration/E6F3GeneratedGroupClosure.lean
           lake env lean Integration/E6F3GeneratedGroupClosureRegression.lean
           lake env lean Integration/E6RootStabilizerA5SixSet.lean
           lake env lean Integration/E6RootStabilizerA5SixSetRegression.lean
+          lake env lean Integration/E6SelectedStabilizerFaceSameObject.lean
+          lake env lean Integration/E6SelectedStabilizerFaceSameObjectRegression.lean
+          lake env lean Integration/E6FullMatrixTernary27SameAction.lean
+          lake env lean Integration/E6FullMatrixTernary27SameActionRegression.lean
+          lake env lean Integration/E6Ternary27CoxeterAction.lean
+          lake env lean Integration/E6Ternary27CoxeterActionRegression.lean
           lake env lean Integration/E6SeventyTwoChartHyperformAtlas.lean
           lake env lean Integration/E6SeventyTwoChartHyperformAtlasRegression.lean
+          lake env lean Integration/E6SeventyTwoChartAtlasActionCompletion.lean
+          lake env lean Integration/E6SeventyTwoChartAtlasActionCompletionRegression.lean
       - name: Check literal E8 E6-sector action and typed ternary27 geometry
         run: |
           lake env lean Integration/E6LiteralE8Action.lean

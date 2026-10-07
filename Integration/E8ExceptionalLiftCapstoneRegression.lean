@@ -23,10 +23,12 @@ example : canonicalBoundary.e6SectorLiteralActionPaid = true := rfl
 example : canonicalBoundary.sixMixed27FibresTyped = true := rfl
 example : canonicalBoundary.sixMixed27FibresTransitivePaid = true := rfl
 example : canonicalBoundary.schlafli27RelationPaid = true := rfl
+example : canonicalBoundary.minuscule27WeightOrbitRecognitionPaid = true := rfl
+example : canonicalBoundary.minuscule27RelationRecognitionPaid = true := rfl
 example : canonicalBoundary.bareTernaryTranslationSchlafliBlocked = true := rfl
 example : canonicalBoundary.countMatchedTernaryBranchingActionObstructionPaid = true := rfl
 example : canonicalBoundary.fullTernary240SameActionRecognitionPaid = false := rfl
-example : canonicalBoundary.albert27SameActionRecognitionPaid = false := rfl
+example : canonicalBoundary.albert27AlgebraRecognitionPaid = false := rfl
 example : canonicalBoundary.cardinalityAloneCreatesExceptionalRecognition = false := rfl
 
 end Integration.E8ExceptionalLiftCapstoneRegression

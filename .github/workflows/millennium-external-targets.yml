@@ -78,17 +78,28 @@ jobs:
           elan run leanprover/lean4:v4.31.0 lake update
           elan run leanprover/lean4:v4.31.0 lake build Problems
 
-      - name: Build DASHI terminal census and axiom audit
+      - name: Probe exact vendored targets in the DASHI kernel
         shell: bash
         run: |
           set -euo pipefail
           lake update
+          DASHI_LEAN_PATH="$(lake env printenv LEAN_PATH)"
+          env LEAN_PATH="$PWD/vendor/LeanMillenniumPrizeProblems:$DASHI_LEAN_PATH" \
+            lake env lean MillenniumExternal/ExactTargetSurface.lean \
+            2>&1 | tee millennium-external-same-kernel.log
+
+      - name: Build DASHI terminal census and axiom audit
+        shell: bash
+        run: |
+          set -euo pipefail
           lake env lean MillenniumExternal/All.lean 2>&1 | tee millennium-external-dashi.log
 
-      - name: Upload DASHI axiom audit log
+      - name: Upload DASHI axiom audit logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: millennium-external-dashi-audit
-          path: millennium-external-dashi.log
+          path: |
+            millennium-external-same-kernel.log
+            millennium-external-dashi.log
           if-no-files-found: warn

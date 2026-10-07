@@ -98,7 +98,10 @@ theorem continuousOn_clayMomentumResidualComponent
   have hconv : ContinuousOn (fun z => convectionComponent u i z)
       nonnegativeTime := by
     unfold convectionComponent
-    fun_prop
+    apply continuousOn_finset_sum
+    intro j _hj
+    exact (hui j).continuousOn.mul
+      (continuousOn_partialSpace (hui i) j)
   have hlap : ContinuousOn (fun z => spatialLaplacianComponent u i z)
       nonnegativeTime := by
     unfold spatialLaplacianComponent

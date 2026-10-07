@@ -1,14 +1,18 @@
 import MillenniumExternal.COMMIT_PIN
 import MillenniumExternal.TerminalCensus
 import MillenniumExternal.ExternalTargetFrontier
+import MillenniumExternal.SameObjectMaxCut
 
 /-!
 Aggregate root for the external Millennium acceptance/audit layer.
 
 The `#print axioms` commands below audit theorem-bearing DASHI terminal
-constructors already present on `main`.  They do not claim the exact external
+constructors already present on `main`. They do not claim the exact external
 LeanDojo adapter has closed; that state is fail-closed in
 `ExternalTargetFrontier` until a direct theorem term compiles.
+
+`SameObjectMaxCut` additionally prevents already-paid literal/same-object/
+physical-object welds from being reopened as fresh mathematical obligations.
 -/
 
 #print axioms Synthesis.QuarticFourSignedPolePair.RHMaxCutRoute.signedFifth_terminalPositive

@@ -6,6 +6,7 @@ on:
       - agent/millennium-external-target-adapters-20261006
     paths:
       - 'MillenniumExternal/**'
+      - 'ExternalClayNS/LeanDojoTargetBridge.lean'
       - 'scripts/vendor_millennium_targets.sh'
       - 'scripts/audit_millennium_external_targets.py'
       - 'scripts/test_audit_millennium_external_targets.py'
@@ -18,6 +19,7 @@ on:
   pull_request:
     paths:
       - 'MillenniumExternal/**'
+      - 'ExternalClayNS/LeanDojoTargetBridge.lean'
       - 'scripts/vendor_millennium_targets.sh'
       - 'scripts/audit_millennium_external_targets.py'
       - 'scripts/test_audit_millennium_external_targets.py'
@@ -89,6 +91,21 @@ jobs:
             lean MillenniumExternal/ExactTargetSurface.lean
           ' 2>&1 | tee millennium-external-same-kernel.log
 
+      - name: Probe literal NS C/D against exact LeanDojo targets
+        shell: bash
+        run: |
+          set -euo pipefail
+          elan toolchain install leanprover/lean4:v4.34.0-rc2
+          (
+            cd ExternalClayNS
+            lake update
+            lake env bash -c '
+              set -euo pipefail
+              export LEAN_PATH="$PWD/../vendor/LeanMillenniumPrizeProblems:$LEAN_PATH"
+              lean LeanDojoTargetBridge.lean
+            '
+          ) 2>&1 | tee millennium-external-ns-leandojo.log
+
       - name: Build DASHI terminal census and axiom audit
         shell: bash
         run: |
@@ -102,5 +119,6 @@ jobs:
           name: millennium-external-dashi-audit
           path: |
             millennium-external-same-kernel.log
+            millennium-external-ns-leandojo.log
             millennium-external-dashi.log
           if-no-files-found: warn

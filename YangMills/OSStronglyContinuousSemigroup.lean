@@ -79,8 +79,8 @@ structure OSSymmetricPositiveStronglyContinuousSemigroupExtension
     (discrete : ℕ → H →L[ℝ] H)
     extends OSSymmetricPositiveStronglyContinuousSemigroup H where
   discreteAgreement : ∀ n : ℕ,
-    toOSSymmetricPositiveStronglyContinuousSemigroup
-      .toOSStronglyContinuousSemigroup.transfer (n : ℝ≥0) = discrete n
+    toOSSymmetricPositiveStronglyContinuousSemigroup.toOSStronglyContinuousSemigroup.transfer
+      (n : ℝ≥0) = discrete n
 
 /-- Exact remaining continuous-time source proposition once the discrete family is fixed. -/
 def OSContinuousSemigroupExtensionExists

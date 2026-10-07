@@ -5,6 +5,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 BRIDGE = ROOT / "ExternalClayNS" / "LeanDojoCComparatorBridge.lean"
 GEOMETRY = ROOT / "ExternalClayNS" / "LeanDojoCarrierGeometry.lean"
+EXACT = ROOT / "MillenniumExternal" / "ExactTargetSurface.lean"
 FRONTIER = ROOT / "MillenniumExternal" / "ExternalTargetFrontier.lean"
 
 
@@ -40,7 +41,15 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         self.assertNotIn("sorry", text + geometry)
         self.assertNotIn("axiom ", text + geometry)
 
-    def test_ns_frontier_can_only_be_green_from_unconditional_exact_bridge(self):
+    def test_exact_p_negative_branch_needs_only_one_language_outside_p(self):
+        text = EXACT.read_text(encoding="utf-8")
+        self.assertIn("theorem clayPNotEqualsNP_of_language_outside_p", text)
+        self.assertIn("Millennium.InNondeterministicPolynomialTime", text)
+        self.assertIn("Millennium.InPolynomialTime", text)
+        self.assertIn("Millennium.ClayPVersusNP.Formulations.NegativeBranch", text)
+        self.assertIn("#print axioms clayPNotEqualsNP_of_language_outside_p", text)
+
+    def test_exact_targets_can_only_be_green_from_unconditional_theorems(self):
         frontier = FRONTIER.read_text(encoding="utf-8")
         ns_start = frontier.index("problem := .navierStokes")
         ns_end = frontier.index("problem := .hodge", ns_start)
@@ -52,6 +61,14 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
                 bridge,
             )
             self.assertIn("#print axioms leanDojoFeffermanC", bridge)
+
+        p_start = frontier.index("problem := .pVersusNP")
+        p_end = frontier.index("problem := .riemann", p_start)
+        p = frontier[p_start:p_end]
+        if "state := .greenExact" in p:
+            exact = EXACT.read_text(encoding="utf-8")
+            self.assertIn("theorem clayPNotEqualsNP", exact)
+            self.assertNotIn("_of_language_outside_p", exact)
 
 
 if __name__ == "__main__":

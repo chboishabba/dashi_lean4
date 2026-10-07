@@ -88,7 +88,7 @@ theorem fderiv_pullback_time_eq_leanDojo
 /-- Product spatial direction `i` equals LeanDojo coordinate `i+1`. -/
 theorem fderiv_pullback_space_eq_leanDojo
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    {f : Spacetime3 → E]
+    {f : Spacetime3 → E}
     (hf : ContDiffOn ℝ ∞ f (global_spacetime_domain 3))
     (q : SpaceTime) (hq : 0 < q.2) (i : Fin 3) :
     fderiv ℝ (Function.uncurry (leanFieldToComparator f)) q

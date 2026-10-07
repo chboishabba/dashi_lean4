@@ -52,12 +52,12 @@ def riemannSameObjectCut : SameObjectCut :=
 def navierStokesSameObjectCut : SameObjectCut :=
   { problem := .navierStokes
     existingProducer :=
-      "ExternalClayNS literalClayC / literalClayD"
+      "released comparator C -> ClaySpec literalClayC -> direct LeanDojo C compiler"
     existingWeld :=
-      "released comparator -> independent ClaySpec C/D physical-semantic adapter"
+      "Gap.lean comparator-data -> ClaySpec and ClaySpec-solution -> comparator; LeanDojoCarrierGeometry spatial/divergence/round-trip facts"
     remaining := .transportOnly
     note :=
-      "No new fluid estimate is admissible here. The remaining cut is exact proposition/carrier identification ClaySpec.ClayOptionC/D <-> LeanDojo FeffermanC/D in one compatible kernel." }
+      "No new fluid estimate is admissible here. After consuming the existing comparator/ClaySpec semantic weld and paid carrier geometry, Fefferman C has exactly three residual transports: condition-(4) derivative packaging, condition-(5) pair-spacetime -> time-first Fin4 packaging, and LeanDojo GlobalSmoothSolution+FiniteEnergy -> ClaySpec.ClaySolutionR3." }
 
 def hodgeSameObjectCut : SameObjectCut :=
   { problem := .hodge

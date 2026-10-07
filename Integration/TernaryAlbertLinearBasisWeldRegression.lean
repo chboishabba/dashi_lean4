@@ -1,9 +1,17 @@
-import Integration.Ternary27HyperformSchlafliRecognition
-import Integration.AlbertMinusculeWeightLines
+import Integration.TernaryAlbertLinearBasisWeld
 
 namespace Integration.TernaryAlbertLinearBasisWeldRegression
 
--- RED-first: split the existing typed ternary 27 at its actual origin, prove
--- the complement has 26 points, and linearly index a traceless 26-basis.
+open Integration.TernaryAlbertLinearBasisWeld
+
+example : Fintype.card NonOrigin26 = 26 := nonorigin_card_26
+example : originSplit ternaryOrigin = Sum.inl () := originSplit_origin
+example : canonicalBoundary.actualTernaryOriginTyped = true := rfl
+example : canonicalBoundary.nonOriginCount26Paid = true := rfl
+example : canonicalBoundary.originPlus26SplitPaid = true := rfl
+example : canonicalBoundary.fin26TracelessBasisFromDimensionPaid = true := rfl
+example : canonicalBoundary.linearTernaryBasisTransportInhabited = true := rfl
+example : canonicalBoundary.f4EquivariancePaidHere = false := rfl
+example : canonicalBoundary.jordanCubicCompatibilityPaidHere = false := rfl
 
 end Integration.TernaryAlbertLinearBasisWeldRegression

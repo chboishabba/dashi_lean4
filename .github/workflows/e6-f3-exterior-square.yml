@@ -13,12 +13,20 @@ on:
       - "Integration/E6F3ProjectiveAssociationRegression.lean"
       - "Integration/E6F3OrbitTransitivity.lean"
       - "Integration/E6F3OrbitTransitivityRegression.lean"
+      - "Integration/E6F3GeneratedGroupClosure.lean"
+      - "Integration/E6F3GeneratedGroupClosureRegression.lean"
       - "Integration/E6LiteralE8Action.lean"
       - "Integration/E6LiteralE8ActionRegression.lean"
       - "Integration/E8TernaryBranchingActionObstruction.lean"
       - "Integration/E8TernaryBranchingActionObstructionRegression.lean"
       - "Integration/E8LiteralMixed27Fibres.lean"
       - "Integration/E8LiteralMixed27FibresRegression.lean"
+      - "Integration/E8LiteralMixed27Transitivity.lean"
+      - "Integration/E8LiteralMixed27TransitivityRegression.lean"
+      - "Integration/E8LiteralMixed27Schlafli.lean"
+      - "Integration/E8LiteralMixed27SchlafliRegression.lean"
+      - "Integration/E8ExceptionalLiftCapstone.lean"
+      - "Integration/E8ExceptionalLiftCapstoneRegression.lean"
       - "Integration/GeometricReasoningEverything.lean"
       - ".github/workflows/e6-f3-exterior-square.yml"
   workflow_dispatch:
@@ -52,6 +60,10 @@ jobs:
         run: |
           lake env lean Integration/E6F3OrbitTransitivity.lean
           lake env lean Integration/E6F3OrbitTransitivityRegression.lean
+      - name: Check generated E6 image closure and stabilizer
+        run: |
+          lake env lean Integration/E6F3GeneratedGroupClosure.lean
+          lake env lean Integration/E6F3GeneratedGroupClosureRegression.lean
       - name: Check literal E8 E6-sector action
         run: |
           lake env lean Integration/E6LiteralE8Action.lean
@@ -62,5 +74,11 @@ jobs:
           lake env lean Integration/E8TernaryBranchingActionObstructionRegression.lean
           lake env lean Integration/E8LiteralMixed27Fibres.lean
           lake env lean Integration/E8LiteralMixed27FibresRegression.lean
+          lake env lean Integration/E8LiteralMixed27Transitivity.lean
+          lake env lean Integration/E8LiteralMixed27TransitivityRegression.lean
+          lake env lean Integration/E8LiteralMixed27Schlafli.lean
+          lake env lean Integration/E8LiteralMixed27SchlafliRegression.lean
+          lake env lean Integration/E8ExceptionalLiftCapstone.lean
+          lake env lean Integration/E8ExceptionalLiftCapstoneRegression.lean
       - name: Check geometric reasoning rollup
         run: lake env lean Integration/GeometricReasoningEverything.lean

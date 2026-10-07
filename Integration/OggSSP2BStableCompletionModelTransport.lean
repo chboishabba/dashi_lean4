@@ -25,7 +25,6 @@ namespace R := Integration.OggSSP2BRevisedCompletionRecognition
 abbrev Scalar := A.Scalar
 abbrev ActualTate276 := A.ActualTate276
 
-/-- Stable Completion10 data on an arbitrary concrete 276-dimensional model. -/
 structure ModelStableCompletionReceipt
     (M Q : Type*) [AddCommGroup M] [Module Scalar M]
     [AddCommGroup Q] [Module Scalar Q] where
@@ -58,31 +57,54 @@ namespace ModelStableCompletionReceipt
 variable {M Q : Type*} [AddCommGroup M] [Module Scalar M]
 variable [AddCommGroup Q] [Module Scalar Q]
 
+/-- Pullback of the model's selected source submodule. -/
+def pulledSource
+    (r : ModelStableCompletionReceipt M Q)
+    (e : ActualTate276 ≃ₗ[Scalar] M) :
+    Submodule Scalar ActualTate276 :=
+  r.sourceSubmodule.comap e.toLinearMap
+
+/-- Canonical map from an element of the pulled-back source into the concrete
+model source.  Naming this map avoids relying on elaborator reduction of comap
+membership proofs in the terminal compiler. -/
+def toModelSource
+    (r : ModelStableCompletionReceipt M Q)
+    (e : ActualTate276 ≃ₗ[Scalar] M)
+    (x : r.pulledSource e) : r.sourceSubmodule :=
+  ⟨e x.1, x.2⟩
+
+@[simp] theorem toModelSource_val
+    (r : ModelStableCompletionReceipt M Q)
+    (e : ActualTate276 ≃ₗ[Scalar] M)
+    (x : r.pulledSource e) :
+    (r.toModelSource e x : M) = e x.1 := rfl
+
 /-- Pull a concrete-model stable quotient back to the actual Tate carrier. -/
 def transportToActualTate
     (r : ModelStableCompletionReceipt M Q)
     (e : ActualTate276 ≃ₗ[Scalar] M)
     (sameObjectProvenance : String) :
     A.StableCompletionSubquotientReceipt Q where
-  sourceSubmodule := r.sourceSubmodule.comap e.toLinearMap
+  sourceSubmodule := r.pulledSource e
   quotient :=
-    { toFun := fun x => r.quotient ⟨e x.1, x.2⟩
+    { toFun := fun x => r.quotient (r.toModelSource e x)
       map_add' := by
         intro x y
-        simp
+        simp [toModelSource]
       map_smul' := by
         intro c x
-        simp }
+        simp [toModelSource] }
   quotient_surjective := by
     intro q
     obtain ⟨y, hy⟩ := r.quotient_surjective q
     let x0 : ActualTate276 := e.symm y.1
-    have hx0 : x0 ∈ r.sourceSubmodule.comap e.toLinearMap := by
+    have hx0 : x0 ∈ r.pulledSource e := by
       change e x0 ∈ r.sourceSubmodule
       simpa [x0] using y.2
-    refine ⟨⟨x0, hx0⟩, ?_⟩
-    change r.quotient ⟨e x0, hx0⟩ = q
-    simpa [x0] using hy
+    let x : r.pulledSource e := ⟨x0, hx0⟩
+    refine ⟨x, ?_⟩
+    change r.quotient (r.toModelSource e x) = q
+    simpa [x, x0, toModelSource] using hy
   target_finrank := r.target_finrank
   atlasKind := r.atlasKind
   ambientOuterOperator :=
@@ -90,28 +112,31 @@ def transportToActualTate
   source_preserved := by
     intro x
     change e (e.symm (r.outerOperator (e x.1))) ∈ r.sourceSubmodule
-    simpa using r.source_preserved ⟨e x.1, x.2⟩
+    simpa using r.source_preserved (r.toModelSource e x)
   quotientOuterOperator := r.quotientOuterOperator
   quotient_natural := by
     intro x
-    simpa using r.quotient_natural ⟨e x.1, x.2⟩
+    change r.quotient
+        (r.toModelSource e
+          ⟨e.symm (r.outerOperator (e x.1)), by
+            change e (e.symm (r.outerOperator (e x.1))) ∈ r.sourceSubmodule
+            simpa using r.source_preserved (r.toModelSource e x)⟩)
+      = r.quotientOuterOperator (r.quotient (r.toModelSource e x))
+    simpa [toModelSource] using r.quotient_natural (r.toModelSource e x)
   completionChart := r.completionChart
   quotientOuterOperator_involutive := r.quotientOuterOperator_involutive
   completion_intertwining := r.completion_intertwining
   sourcedFromM22d2OuterClass := r.sourcedFromM22d2OuterClass
   sourceProvenance := sameObjectProvenance
 
-/-- Once the model equivalence is supplied, the transported quotient has the
-    exact target dimension automatically. -/
-theorem transported_finrank_ten
+ theorem transported_finrank_ten
     (r : ModelStableCompletionReceipt M Q)
     (e : ActualTate276 ≃ₗ[Scalar] M)
     (p : String) :
     Module.finrank Scalar Q = 10 :=
   (r.transportToActualTate e p).target_finrank
 
-/-- The finite model's Completion10 intertwiner survives the same-object weld. -/
-theorem transported_completion_intertwines
+ theorem transported_completion_intertwines
     (r : ModelStableCompletionReceipt M Q)
     (e : ActualTate276 ≃ₗ[Scalar] M)
     (p : String) (q : Q) :

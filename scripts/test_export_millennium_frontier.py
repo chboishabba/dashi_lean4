@@ -26,12 +26,13 @@ class FrontierExportTests(unittest.TestCase):
         self.assertEqual(len(data["problems"]), 7)
         self.assertEqual(len({row["problem"] for row in data["problems"]}), 7)
 
-    def test_rh_statement_weld_is_paid_but_math_is_open(self):
+    def test_rh_statement_weld_is_paid_but_first_math_cut_is_leading_a2(self):
         rh = self._rows()["riemann"]
         self.assertEqual(rh["frontier"], "ANALYTIC")
         self.assertTrue(rh["exact_statement_weld"])
         self.assertEqual(rh["closure_state"], "redMath")
-        self.assertIn("RiemannHypothesis", rh["first_unpaid"])
+        self.assertIn("postSixthTerminalEighthLeadingAllowance", rh["first_unpaid"])
+        self.assertIn("postSixthTerminalDominantHeadroom", rh["first_unpaid"])
 
     def test_pnp_frontier_names_literal_agda_collision(self):
         pnp = self._rows()["pVersusNP"]
@@ -39,6 +40,22 @@ class FrontierExportTests(unittest.TestCase):
         self.assertIn(
             "UniversalAnchoredPolynomialSATDecisionCollision", pnp["first_unpaid"]
         )
+
+    def test_ns_frontier_names_literal_force_decay_transport(self):
+        ns = self._rows()["navierStokes"]
+        self.assertEqual(ns["frontier"], "TYPE-WELD")
+        self.assertEqual(ns["closure_state"], "redType")
+        self.assertEqual(
+            ns["first_unpaid"],
+            "DASHILiteralClayNS.ComparatorForceDecayTransportR3",
+        )
+
+    def test_bsd_frontier_is_actual_clay_core_rank_equality(self):
+        bsd = self._rows()["birchSwinnertonDyer"]
+        self.assertEqual(bsd["frontier"], "ANALYTIC")
+        self.assertEqual(bsd["closure_state"], "redMath")
+        self.assertIn("BSDClayCoreObligation", bsd["first_unpaid"])
+        self.assertNotIn("transport", bsd["first_unpaid"].lower())
 
     def test_incomplete_upstream_targets_fail_closed(self):
         rows = self._rows()

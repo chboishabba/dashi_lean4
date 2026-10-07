@@ -17,6 +17,8 @@ on:
       - "Integration/E6F3GeneratedGroupClosureRegression.lean"
       - "Integration/E6LiteralE8Action.lean"
       - "Integration/E6LiteralE8ActionRegression.lean"
+      - "Integration/E6Minuscule27LiteralRecognition.lean"
+      - "Integration/E6Minuscule27LiteralRecognitionRegression.lean"
       - "Integration/E8TernaryBranchingActionObstruction.lean"
       - "Integration/E8TernaryBranchingActionObstructionRegression.lean"
       - "Integration/E8LiteralMixed27Fibres.lean"
@@ -66,10 +68,12 @@ jobs:
         run: |
           lake env lean Integration/E6F3GeneratedGroupClosure.lean
           lake env lean Integration/E6F3GeneratedGroupClosureRegression.lean
-      - name: Check literal E8 E6-sector action
+      - name: Check literal E8 E6-sector action and minuscule weights
         run: |
           lake env lean Integration/E6LiteralE8Action.lean
           lake env lean Integration/E6LiteralE8ActionRegression.lean
+          lake env lean Integration/E6Minuscule27LiteralRecognition.lean
+          lake env lean Integration/E6Minuscule27LiteralRecognitionRegression.lean
       - name: Check E8 branching action obstruction and 27 fibres
         run: |
           lake env lean Integration/E8TernaryBranchingActionObstruction.lean

@@ -38,7 +38,15 @@ required = {
         "ClayBirchSwinnertonDyer.of_rank_existence_and_finite_rank",
         "clayBirchSwinnertonDyer_of_dashi",
     ],
+    "ExternalClayNS/LeanDojoMaxCut.lean": [
+        "ComparatorForceDecayTransportR3",
+        "NavierStokesOnR3.SmoothRapidDecayForce",
+        "ComparatorForceDecayTransportPeriodic",
+        "NavierStokesPeriodic.PeriodicForceDecay",
+        "comparatorForceDecayTransportR3_implies_smooth",
+    ],
     "ExternalClayNS/LeanDojoTargetBridge.lean": [
+        "import LeanDojoMaxCut",
         "import LiteralABCD",
         "import Problems.NavierStokes.Millennium",
         "LeanDojoCDStatementWeld",
@@ -55,7 +63,13 @@ required = {
         ".upstreamDefect",
         ".solvedUnformalized",
         "firstUnpaid",
+        "UniversalAnchoredPolynomialSATDecisionCollision",
+        "postSixthTerminalEighthLeadingAllowance",
+        "DASHILiteralClayNS.ComparatorForceDecayTransportR3",
+        "Synthesis.Millennium.BSD.BSDClayCoreObligation bg",
         "riemann_frontier_is_analytic",
+        "navierStokes_frontier_is_typeWeld",
+        "birchSwinnertonDyer_frontier_is_analytic",
         "hodge_not_green_exact",
         "yangMills_not_green_exact",
         "poincare_not_green_exact",
@@ -84,9 +98,10 @@ for filename, needles in required.items():
 
 # Exact adapter surfaces must never gain a local escape hatch. The pinned
 # upstream tree is audited separately; this guard concerns only DASHI-authored
-# adapters.
+# adapters and the exact theorem-level max-cut.
 for filename in (
     "MillenniumExternal/ExactTargetSurface.lean",
+    "ExternalClayNS/LeanDojoMaxCut.lean",
     "ExternalClayNS/LeanDojoTargetBridge.lean",
 ):
     text = Path(filename).read_text(encoding="utf-8")

@@ -213,10 +213,10 @@ def YM20261007PhysicalTimeStepProducerExists
 
 /--
 Final gap-facing receipt on the preferred carrier-first route.  The dense R551
-family and the discrete OS transfer are the SAME objects by construction.  E2
-must extend that transfer to the actual strongly-continuous OS semigroup, then
-an externally fixed standard spectral authority separates the same Hamiltonian
-at the source-normalized physical mass floor.
+family and the discrete OS transfer are the SAME objects by construction.  The
+externally fixed generator authority is indexed by the selected `OSGramData`,
+so choosing the source carrier selects an authority instance but cannot redefine
+its meaning.
 -/
 structure YM20261007PreferredSameHGapAssembly
     (State V Hamiltonian : Type*)
@@ -226,40 +226,40 @@ structure YM20261007PreferredSameHGapAssembly
     (HamiltonianSelfAdjoint : Hamiltonian → Prop)
     (HamiltonianNonnegative : Hamiltonian → Prop)
     (GeneratedByOSSemigroup :
-      OSSymmetricPositiveStronglyContinuousSemigroup
-        (OSGramData.Hilbert (V := V) ·) → Hamiltonian → Prop)
+      ∀ data : OSGramData V,
+        OSSymmetricPositiveStronglyContinuousSemigroup data.Hilbert →
+          Hamiltonian → Prop)
     (IsPhysicalStepForOneLatticeTranslation : ℝ → Prop)
     (SpectrumSeparatedBy : Hamiltonian → ℝ → Prop) where
   sameFamily : SameHOSRawMixedHalfRateWeld State V
-  /-
-  `GeneratedByOSSemigroup` cannot be parameterized directly over the dependent
-  `sameFamily.data.Hilbert` in the structure header without introducing an
-  artificial carrier.  The exact dependent generator authority is therefore
-  stored below, fixed by the caller after `sameFamily` is chosen.
-  -/
-  HamiltonianSelfAdjointOnChosen : Hamiltonian → Prop
-  HamiltonianNonnegativeOnChosen : Hamiltonian → Prop
-  GeneratorAuthorityOnChosen :
-    OSSymmetricPositiveStronglyContinuousSemigroup sameFamily.data.Hilbert →
-      Hamiltonian → Prop
-  semanticSelfAdjointSame : HamiltonianSelfAdjointOnChosen = HamiltonianSelfAdjoint
-  semanticNonnegativeSame : HamiltonianNonnegativeOnChosen = HamiltonianNonnegative
   e2 : YM20261007E2ContinuousTimeGeneratorReceipt
     sameFamily.data.Hilbert Hamiltonian
-    HamiltonianSelfAdjointOnChosen HamiltonianNonnegativeOnChosen
-    GeneratorAuthorityOnChosen
+    HamiltonianSelfAdjoint HamiltonianNonnegative
+    (GeneratedByOSSemigroup sameFamily.data)
   sameDiscreteTransfer : e2.discreteTransfer = sameFamily.transfer
   physicalTime : YM20261007PhysicalTimeStepReceipt
     IsPhysicalStepForOneLatticeTranslation
   standardOSSpectralTransfer :
     SpectrumSeparatedBy e2.hamiltonian physicalTime.halfRateMassFloor
 
-/-!
-The generic parameter `GeneratedByOSSemigroup` above is retained only as a
-frontier label; because the Hilbert carrier is dependent on `sameFamily`, the
-actual fail-closed generator relation is `GeneratorAuthorityOnChosen`.  No
-inhabitant is manufactured here.
--/
+/-- Exact preferred same-H assembly producer before local/all-group completion. -/
+def YM20261007PreferredSameHGapAssemblyExists
+    (State V Hamiltonian : Type*)
+    [MeasurableSpace State] [TopologicalSpace State]
+    [OpensMeasurableSpace State]
+    [AddCommGroup V] [Module ℝ V]
+    (HamiltonianSelfAdjoint : Hamiltonian → Prop)
+    (HamiltonianNonnegative : Hamiltonian → Prop)
+    (GeneratedByOSSemigroup :
+      ∀ data : OSGramData V,
+        OSSymmetricPositiveStronglyContinuousSemigroup data.Hilbert →
+          Hamiltonian → Prop)
+    (IsPhysicalStepForOneLatticeTranslation : ℝ → Prop)
+    (SpectrumSeparatedBy : Hamiltonian → ℝ → Prop) : Prop :=
+  Nonempty (YM20261007PreferredSameHGapAssembly
+    State V Hamiltonian
+    HamiltonianSelfAdjoint HamiltonianNonnegative GeneratedByOSSemigroup
+    IsPhysicalStepForOneLatticeTranslation SpectrumSeparatedBy)
 
 /-! ## G remains downstream and semantic predicates are fixed externally -/
 

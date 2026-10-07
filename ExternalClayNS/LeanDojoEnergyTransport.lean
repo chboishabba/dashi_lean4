@@ -64,11 +64,10 @@ theorem leanDojoFiniteEnergy_memLp_velocity
   have hmeas := leanDojoVelocitySlice_aestronglyMeasurable sol t ht
   rw [memLp_two_iff_integrable_sq_norm hmeas]
   refine ⟨hmeas.norm.pow 2, ?_⟩
-  rw [← hasFiniteIntegral_congr_iff
-    (Filter.Eventually.of_forall fun x => ?_)]
-  · exact hfinite
-  · exact (euclidean_sum_sq_eq_norm_sq
-      (sol.velocity (spacetime_point t x))).symm
+  exact hfinite.congr
+    (Filter.Eventually.of_forall fun x =>
+      euclidean_sum_sq_eq_norm_sq
+        (sol.velocity (spacetime_point t x)))
 
 /-- Comparator's scalar norm field is therefore in `L²`. -/
 theorem leanDojoFiniteEnergy_memLp_norm

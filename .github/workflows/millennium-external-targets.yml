@@ -37,7 +37,8 @@ on:
 
 permissions:
   contents: read
-nconcurrency:
+
+concurrency:
   group: millennium-external-${{ github.ref }}
   cancel-in-progress: true
 

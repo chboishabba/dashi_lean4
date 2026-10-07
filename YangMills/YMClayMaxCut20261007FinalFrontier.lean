@@ -24,10 +24,14 @@ This owner is the current shortest honest route.
   discrete contraction semigroup are constructive.  The continuous-time input
   is now an ACTUAL strongly-continuous symmetric positive contraction semigroup
   on nonnegative real time, agreeing with the constructed discrete family.
-* F1/F2 are merged more strongly: on the preferred route the R551-controlled
-  observable carrier IS the OS raw pre-Hilbert carrier.  Its OS-vector image is
-  dense by quotient surjectivity plus completion, so no separate density axiom
-  survives.  The genuine physical receipt is same-carrier/same-correlation.
+* F1/F2 use the modern source-first Wilson carrier: R556 makes SAME-family
+  continuum covariance convergence compiler-owned once the finite covariance is
+  the exact CMP119/T5 covariance; R574/R576 reduce the genuine Wilson source
+  bill to W1 mixed-log connected-cluster expansion and W3 connecting-tail
+  control, with bounded-test/time/order semantics downstream.  On the preferred
+  OS route this observable carrier IS the raw pre-Hilbert carrier, so its OS
+  vector image is dense by quotient surjectivity plus completion and no separate
+  F2 density axiom survives.
 * The elementary half-rate -> `log 2 / a` energy conversion is proved once a
   positive physical Euclidean step is source-identified.
 * The remaining generator and spectrum statements are external standard
@@ -86,13 +90,15 @@ noncomputable def ym20261007CylinderContinuumSource
     RealCountableObservableDeterminingSource (WilsonCylinderState raw) :=
   wilsonCylinderDeterminingSource raw hMeas cutoffLaw
 
-/-! ## F1/F2: choose the R551 family as the OS raw carrier -/
+/-! ## F1/F2: choose the preferred source-first Wilson family as the OS raw carrier -/
 
 /--
-Preferred same-family producer.  The R551 observable carrier is literally the
-OS raw test space `V`, its transfer is the completed OS transfer, and its
-continuum covariance is the corresponding matrix coefficient.  Density then
-follows from the OS construction and is not an extra hypothesis.
+Preferred same-family producer.  The modern source-first Wilson observable
+carrier is literally the OS raw test space `V`, its transfer is the completed OS
+transfer, and its continuum covariance is the corresponding matrix coefficient.
+R556 already owns same-family covariance convergence on the exact CMP119/T5
+carrier; R574/R576 isolate W1/W3 upstream source analysis.  Density follows
+from the OS construction and is not an additional hypothesis here.
 -/
 def YM20261007PreferredSameFamilyProducerExists
     (State V : Type*)
@@ -111,7 +117,7 @@ noncomputable theorem ym20261007PreferredSameFamilyDenseWeld
     SameHDenseWilsonMixedHalfRateWeld State V weld.data.Hilbert :=
   weld.toDenseSameFamilyWeld
 
-/-- Every nonzero vector is detected by that same automatically dense R551/OS carrier. -/
+/-- Every nonzero vector is detected by that same automatically dense source-first Wilson/OS carrier. -/
 theorem ym20261007PreferredSameFamilyDetectsNonzero
     {State V : Type*}
     [MeasurableSpace State] [TopologicalSpace State]
@@ -212,11 +218,11 @@ def YM20261007PhysicalTimeStepProducerExists
 /-! ## Preferred same-H final gap assembly -/
 
 /--
-Final gap-facing receipt on the preferred carrier-first route.  The dense R551
-family and the discrete OS transfer are the SAME objects by construction.  The
-externally fixed generator authority is indexed by the selected `OSGramData`,
-so choosing the source carrier selects an authority instance but cannot redefine
-its meaning.
+Final gap-facing receipt on the preferred carrier-first route.  The dense
+source-first Wilson family and the discrete OS transfer are the SAME objects by
+construction.  The externally fixed generator authority is indexed by the
+selected `OSGramData`, so choosing the source carrier selects an authority
+instance but cannot redefine its meaning.
 -/
 structure YM20261007PreferredSameHGapAssembly
     (State V Hamiltonian : Type*)

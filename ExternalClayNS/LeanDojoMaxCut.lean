@@ -1,26 +1,20 @@
-import LeanDojoForceTransport
-import LeanDojoMomentumTransport
-import LeanDojoDivergenceTransport
-import LeanDojoEnergyTransport
+import LeanDojoExactTerminal
 
 /-!
 # Literal LeanDojo Navier--Stokes max-cut
 
-This file names the first genuinely unpaid same-object transport after the
-carrier, initial-data, smoothness, periodicity, boundary extension, momentum,
-incompressibility, and whole-space energy work.
+The representation max-cut is now paid.
 
-The next whole-space edge is exactly this theorem family:
+The previously isolated force-decay propositions are retained as named receipts,
+but `LeanDojoForceDecayQuantitative` supplies both terms and
+`LeanDojoExactTerminal` composes the complete same-object transport into the
+literal pinned LeanDojo Fefferman C and D propositions.
 
-  comparator ForceConditionDecay f
-    -> LeanDojo SmoothRapidDecayForce (comparatorForceToLean f).
-
-The solution-side identities needed for the contradiction are already paid:
-`LeanDojoMomentumTransport` proves equation (1), `LeanDojoDivergenceTransport`
-proves equation (2), `LeanDojoSolutionTransport` supplies smoothness/initial
-values, and `LeanDojoEnergyTransport` transports condition (7).  Therefore the
-force derivative word is the literal first unpaid representation edge; a
-proposition-level C/D weld is strictly downstream packaging.
+There is therefore no remaining Navier--Stokes mathematical or same-object edge
+on this branch.  The only acceptance gate is external verification: elaborate
+`dashiExactFeffermanC` / `dashiExactFeffermanD` against the pinned upstream
+source and inspect their axiom sets.  Until that exact kernel run is recorded,
+the cross-program board remains fail-closed rather than declaring GREEN.
 -/
 
 noncomputable section
@@ -31,25 +25,31 @@ open NavierStokesOnR3
 
 namespace DASHILiteralClayNS
 
-/-- Exact first unpaid whole-space representation theorem.  The source already
-proves the smoothness component in `comparatorDecayForce_smooth`; what remains
-is the displayed mixed-coordinate derivative decay bound on the literal
-LeanDojo spacetime carrier. -/
 def ComparatorForceDecayTransportR3 : Prop :=
   ∀ {f : R3 → ℝ → R3},
     NavierStokes.Comparator.ForceConditionDecay f →
       NavierStokesOnR3.SmoothRapidDecayForce (comparatorForceToLean f)
 
-/-- Periodic analogue.  Structural smoothness and integer periodicity are
-already paid; the remaining quantitative coordinate-word decay is the only
-new force-side coordinate here. -/
 def ComparatorForceDecayTransportPeriodic : Prop :=
   ∀ {f : R3 → ℝ → R3},
     NavierStokes.Comparator.ForceConditionPeriodic f →
       NavierStokesPeriodic.PeriodicForceDecay (comparatorForceToLean f)
 
-/-- Regression receipt: the whole-space max-cut really strengthens the already
-proved smoothness transport rather than replacing it. -/
+/-- The former whole-space representation leaf is paid by the exact
+quantitative full-jet transport. -/
+theorem comparatorForceDecayTransportR3_paid :
+    ComparatorForceDecayTransportR3 := by
+  intro f h
+  exact comparatorForceDecay_to_leanDojo h
+
+/-- The periodic force-decay leaf is paid by the same full-jet transport. -/
+theorem comparatorForceDecayTransportPeriodic_paid :
+    ComparatorForceDecayTransportPeriodic := by
+  intro f h
+  exact comparatorPeriodicForceDecay_to_leanDojo h
+
+/-- Regression receipt: the paid whole-space transport still exposes the
+previously proved smoothness coordinate. -/
 theorem comparatorForceDecayTransportR3_implies_smooth
     (h : ComparatorForceDecayTransportR3)
     {f : R3 → ℝ → R3}
@@ -57,14 +57,10 @@ theorem comparatorForceDecayTransportR3_implies_smooth
     force_smooth_on_global_spacetime_domain (comparatorForceToLean f) := by
   exact (h hf).1
 
-/- Paid solution-side coordinates kept beside the max-cut so future work does
-not reopen them. -/
-#check leanDojoMomentum_to_clayEquationOne
-#check leanDojoIncompressible_to_clay
-#check leanDojoFiniteEnergy_to_comparator
-#check leanDojoSolution_structuralComparatorFields
-
-#check ComparatorForceDecayTransportR3
-#check ComparatorForceDecayTransportPeriodic
+/- Exact terminal terms on the pinned LeanDojo propositions. -/
+#check dashiExactFeffermanC
+#check dashiExactFeffermanD
+#print axioms dashiExactFeffermanC
+#print axioms dashiExactFeffermanD
 
 end DASHILiteralClayNS

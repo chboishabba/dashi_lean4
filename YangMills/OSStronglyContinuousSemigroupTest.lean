@@ -17,4 +17,18 @@ example
     S.toOSStronglyContinuousSemigroup.transfer (n : ℝ≥0) = T n :=
   S.discreteAgreement n
 
+example
+    {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
+    (S : OSSymmetricPositiveStronglyContinuousSemigroup H)
+    (t : ℝ≥0) :
+    (S.toOSStronglyContinuousSemigroup.transfer t).IsPositive :=
+  S.transfer_isPositive t
+
+example
+    {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H] [CompleteSpace H]
+    (S : OSSymmetricPositiveStronglyContinuousSemigroup H)
+    (t : ℝ≥0) :
+    IsSelfAdjoint (S.toOSStronglyContinuousSemigroup.transfer t) :=
+  S.transfer_isSelfAdjoint t
+
 end RequestProject.YangMills

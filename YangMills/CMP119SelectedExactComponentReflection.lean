@@ -11,7 +11,9 @@ need a stricter same-object surface: every E/R/B component has a designated
 actual reflection kernel and its certificate must certify exactly that kernel.
 
 This file adds that fail-closed refinement.  It also makes finite negative
-samples decisive at component level.
+samples decisive at component level and ties the constant-vacuum RP factor to
+the selected source dictionary rather than introducing a second arbitrary
+vacuum constant.
 -/
 
 namespace RequestProject.YangMills
@@ -90,8 +92,9 @@ end CMP119SelectedSectorExactFunctionalRealization
 
 /--
 Strict selected-source BC cut: every actual E/R/B component kernel is fixed
-before its certificate is supplied, and the full source kernel is the product
-of those actual sector kernels and the source-constant vacuum factor.
+before its certificate is supplied, the vacuum factor is the selected source
+vacuum constant, and the full source kernel is the product of those actual
+sector kernels and that source-constant vacuum factor.
 -/
 structure CMP119SelectedSourceExactFunctionalReflectionCut
     (n : ℕ) [NeZero n] (X : Type*) where
@@ -103,6 +106,8 @@ structure CMP119SelectedSourceExactFunctionalReflectionCut
   boundary :
     CMP119SelectedSectorExactFunctionalRealization selectedSource.boundaryB X
   vacuumEnergy : ℝ
+  sourceVacuumIsConstant :
+    selectedSource.residual.sourceVacuum = fun _ => vacuumEnergy
   sourceKernel : X → X → ℝ
   sourceKernelEquation :
     sourceKernel = fun x y =>
@@ -113,6 +118,21 @@ structure CMP119SelectedSourceExactFunctionalReflectionCut
         (X := X) vacuumEnergy).kernel x y
 
 namespace CMP119SelectedSourceExactFunctionalReflectionCut
+
+/-- The constant vacuum used by the RP factor is literally the selected source vacuum. -/
+theorem source_vacuum_eq_selected_constant
+    {n : ℕ} [NeZero n] {X : Type*}
+    (cut : CMP119SelectedSourceExactFunctionalReflectionCut n X) :
+    cut.selectedSource.residual.sourceVacuum = fun _ => cut.vacuumEnergy :=
+  cut.sourceVacuumIsConstant
+
+/-- The selected literal vacuum evaluator is the same source constant as well. -/
+theorem literal_vacuum_eq_selected_constant
+    {n : ℕ} [NeZero n] {X : Type*}
+    (cut : CMP119SelectedSourceExactFunctionalReflectionCut n X) :
+    cut.selectedSource.residual.literalVacuum = fun _ => cut.vacuumEnergy := by
+  rw [← cut.selectedSource.residual.vacuumSourceEqLiteral]
+  exact cut.sourceVacuumIsConstant
 
 /-- The exact actual E/R/B/vacuum source kernel is functionally RP. -/
 theorem source_kernel_rp

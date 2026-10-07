@@ -40,7 +40,7 @@ new force-side coordinate here. -/
 def ComparatorForceDecayTransportPeriodic : Prop :=
   ∀ {f : R3 → ℝ → R3},
     NavierStokes.Comparator.ForceConditionPeriodic f →
-      NavierStokesPeriodic.SmoothRapidDecayForce (comparatorForceToLean f)
+      NavierStokesPeriodic.PeriodicForceDecay (comparatorForceToLean f)
 
 /-- Regression receipt: the whole-space max-cut really strengthens the already
 proved smoothness transport rather than replacing it. -/

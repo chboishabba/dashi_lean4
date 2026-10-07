@@ -33,6 +33,13 @@ class FrontierExportTests(unittest.TestCase):
         self.assertEqual(rh["closure_state"], "redMath")
         self.assertIn("RiemannHypothesis", rh["first_unpaid"])
 
+    def test_pnp_frontier_names_literal_agda_collision(self):
+        pnp = self._rows()["pVersusNP"]
+        self.assertEqual(pnp["frontier"], "ANALYTIC")
+        self.assertIn(
+            "UniversalAnchoredPolynomialSATDecisionCollision", pnp["first_unpaid"]
+        )
+
     def test_incomplete_upstream_targets_fail_closed(self):
         rows = self._rows()
         self.assertEqual(rows["hodge"]["frontier"], "UPSTREAM-DEFECT")

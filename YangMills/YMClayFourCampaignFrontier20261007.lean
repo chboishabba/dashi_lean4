@@ -1,13 +1,14 @@
 import Mathlib
 import YangMills.YMClayFiveCampaignFrontier20261007
 import YangMills.CMP116WilsonPointwiseLocalization
+import YangMills.CompactSimpleCasimirOrbitFactorization
 
 /-!
 # Yang--Mills four-campaign terminal frontier — 2026-10-07
 
 This is the shortest current honest board after internalizing the centered
-vacuum sector, excitation restriction, W3 finite aggregation and no-pollution
-spectral contradiction.
+vacuum sector, excitation restriction, W3 finite aggregation, no-pollution
+spectral contradiction and generic compact-simple Casimir transport.
 
 The live proof programmes are now:
 
@@ -26,9 +27,13 @@ The live proof programmes are now:
    is converted into the same transfer spectral window, the gap contradiction
    is compiler-owned by `YMClayFiveCampaignFrontier20261007`.
 
-G remains downstream: physical same-object composite/local-stress
-identification, accepted OS/Wightman reconstruction, nontriviality, and the
-same-theory extension to every compact simple gauge group.
+G remains downstream, but generic all-group scaling is no longer a leaf.  Once
+the physical Wilson/ghost/Haar colour algebra identifies the selected compact
+simple group expression as `C_A × universalFourOrbit`, the orbit sum and every
+certified universal lower bound transport automatically.  The remaining G bill
+is therefore the physical Casimir factorization, physical same-object
+composite/local-stress identification, accepted OS/Wightman reconstruction,
+nontriviality, and same-theory completion for every compact simple group.
 
 No conditional source theorem is promoted here.
 -/
@@ -67,6 +72,28 @@ def YM20261007F1PointwiseLocalizationProducerExists
     [MeasurableSpace Ω] [TopologicalSpace Ω]
     [DecidableEq Cluster] : Prop :=
   Nonempty (CMP116WilsonPointwiseLocalizationSource Ω Obs Cluster)
+
+/-! ## G: generic compact-simple Casimir transport is compiler-owned -/
+
+/-- Reuse one universal four-orbit lower bound for every nonnegative `C_A`. -/
+theorem ym20261007CompactSimpleCasimirLowerBoundCompiler
+    {GaugeGroup : Type*}
+    (carrier : CompactSimpleCasimirCarrier GaugeGroup)
+    (group : GaugeGroup)
+    (orbit : FourOrbitScalar)
+    (bound : UniversalFourOrbitLowerBound orbit) :
+    carrier.adjointCasimir group * bound.lower ≤
+      groupScaledOneLoopCoefficient carrier group orbit :=
+  compact_simple_casimir_transports_universal_lower_bound
+    carrier group orbit bound
+
+/--
+Exact remaining group-specific producer before generic Casimir reuse: prove the
+literal physical one-loop coefficient is the selected `C_A × universal` object.
+-/
+def YM20261007PhysicalCompactSimpleCasimirFactorizationExists
+    (GaugeGroup : Type*) : Prop :=
+  Nonempty (CompactSimplePhysicalCasimirFactorization GaugeGroup)
 
 /-!
 The rest of the preferred terminal path is inherited without weakening from the

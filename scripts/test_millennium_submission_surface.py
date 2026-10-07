@@ -10,34 +10,55 @@ FRONTIER = ROOT / "MillenniumExternal" / "ExternalTargetFrontier.lean"
 
 
 class MillenniumSubmissionSurfaceTests(unittest.TestCase):
-    def test_ns_c_bridge_reuses_paid_clayspec_and_carrier_welds(self):
+    def test_ns_c_bridge_has_exact_five_leaf_transport_frontier(self):
         self.assertTrue(BRIDGE.exists(), "direct ClaySpec-to-LeanDojo C bridge is missing")
         self.assertTrue(GEOMETRY.exists(), "LeanDojo carrier geometry is missing")
         text = BRIDGE.read_text(encoding="utf-8")
         geometry = GEOMETRY.read_text(encoding="utf-8")
-        for name in (
+
+        for residual in (
             "ClayInitialDecayToLeanDojo",
             "ClayForceToLeanDojo",
-            "LeanDojoSolutionToClaySpec",
+            "LeanDojoMomentumToClay",
+            "LeanDojoIncompressibleToClay",
+            "LeanDojoEnergyToClay",
+        ):
+            self.assertIn(residual, text)
+
+        for compiler in (
+            "LeanDojoSolutionTransportFrontier",
+            "leanDojoInitialCondition_to_clay",
+            "leanDojoSolutionToClaySpec_of_transport",
             "LeanDojoCTransportFrontier",
             "leanDojoFeffermanC_of_transport",
         ):
-            self.assertIn(name, text)
+            self.assertIn(compiler, text)
+
         for paid in (
             "pairFieldToLeanDojo_spacetime_point",
             "leanDojoFieldToPair_pairFieldToLeanDojo",
             "spacetime_point_mem_global_iff",
+            "leanDojoPairEmbedding_contDiff",
+            "leanDojoSmooth_to_pair",
             "clayInitialDivergenceFree_to_leanDojo",
         ):
             self.assertIn(paid, geometry)
+
         self.assertIn("SemanticGap.admissibleDataR3_of_comparator", text)
         self.assertIn("SemanticGap.claySolutionR3_to_comparator", text)
-        self.assertIn("clayInitialDivergenceFree_to_leanDojo", text)
-        self.assertNotIn("ClayInitialToLeanDojo", text)
-        self.assertNotIn("ComparatorInitialToLeanDojo", text)
-        self.assertNotIn("ComparatorForceToLeanDojo", text)
-        self.assertNotIn("LeanDojoSolutionToComparator", text)
-        self.assertNotIn("LeanDojoCDStatementWeld", text)
+        self.assertIn("NavierStokesOnR3.Breakdown.iff_no_finite_energy_solution", text)
+
+        for reopened in (
+            "ClayInitialToLeanDojo",
+            "ComparatorInitialToLeanDojo",
+            "ComparatorForceToLeanDojo",
+            "LeanDojoSolutionToComparator",
+            "LeanDojoVelocitySmoothToClay",
+            "LeanDojoPressureSmoothToClay",
+            "LeanDojoCDStatementWeld",
+        ):
+            self.assertNotIn(reopened, text)
+
         self.assertNotIn("sorry", text + geometry)
         self.assertNotIn("axiom ", text + geometry)
 

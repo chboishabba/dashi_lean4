@@ -39,33 +39,34 @@ def leanSpacetimeToPair (z : Spacetime3) : SpaceTime :=
   ext i
   simp [pairToLeanSpacetime, space, spacetime_point]
 
-@[simp] theorem leanSpacetimeToPair_leftInverse (z : SpaceTime) :
+@[simp] theorem leanSpacetimeToPair_leftInverse_apply (z : SpaceTime) :
     leanSpacetimeToPair (pairToLeanSpacetime z) = z := by
   apply Prod.ext
   · exact pairToLeanSpacetime_space z
   · exact pairToLeanSpacetime_time z
 
-@[simp] theorem pairToLeanSpacetime_rightInverse (z : Spacetime3) :
+@[simp] theorem pairToLeanSpacetime_rightInverse_apply (z : Spacetime3) :
     pairToLeanSpacetime (leanSpacetimeToPair z) = z := by
   ext i
   fin_cases i <;>
     simp [pairToLeanSpacetime, leanSpacetimeToPair, spacetime_point, space, time]
 
-/-- Compatibility aliases used by the terminal regression surface. -/
+/-- Functional inverse receipt used by downstream field transport. -/
 theorem pairToLeanSpacetime_leftInverse :
     Function.LeftInverse leanSpacetimeToPair pairToLeanSpacetime :=
-  leanSpacetimeToPair_leftInverse
+  leanSpacetimeToPair_leftInverse_apply
 
+/-- Functional inverse receipt used by downstream field transport. -/
 theorem pairToLeanSpacetime_rightInverse :
     Function.RightInverse leanSpacetimeToPair pairToLeanSpacetime :=
-  pairToLeanSpacetime_rightInverse
+  pairToLeanSpacetime_rightInverse_apply
 
 /-- Exact point equivalence, not merely equal cardinality. -/
 def pairLeanSpacetimeEquiv : SpaceTime ≃ Spacetime3 where
   toFun := pairToLeanSpacetime
   invFun := leanSpacetimeToPair
-  left_inv := leanSpacetimeToPair_leftInverse
-  right_inv := pairToLeanSpacetime_rightInverse
+  left_inv := leanSpacetimeToPair_leftInverse_apply
+  right_inv := pairToLeanSpacetime_rightInverse_apply
 
 @[simp] theorem pairToLeanSpacetime_nonnegative_iff (z : SpaceTime) :
     pairToLeanSpacetime z ∈ global_spacetime_domain 3 ↔ z ∈ nonnegativeTime := by
@@ -99,9 +100,8 @@ def leanFieldToComparator {E : Type*} (f : Spacetime3 → E) : R3 → ℝ → E 
     {E : Type*} (f : Spacetime3 → E) :
     comparatorFieldToLean (leanFieldToComparator f) = f := by
   funext z
-  simp [leanFieldToComparator, comparatorFieldToLean,
-    pairToLeanSpacetime, leanSpacetimeToPair,
-    pairToLeanSpacetime_rightInverse]
+  change f (pairToLeanSpacetime (leanSpacetimeToPair z)) = f z
+  rw [pairToLeanSpacetime_rightInverse_apply]
 
 /-- The actual external force carrier used by the C/D transport. -/
 abbrev comparatorForceToLean

@@ -52,13 +52,33 @@ theorem JordanAutomorphism.maps_traceless
   rw [g.map_trace]
   exact x.property
 
-/-- Restrict an Albert automorphism to a linear endomorphism of the traceless
-carrier.  Invertibility on the subspace can be packaged later once the ambient
-continuous group interface is chosen. -/
-def JordanAutomorphism.tracelessLinearMap
+/-- The inverse ambient equivalence also preserves the traceless subspace; this
+is derived from the forward trace-preservation law rather than postulated. -/
+theorem JordanAutomorphism.symm_maps_traceless
+    (A : AlbertStructure J) (g : JordanAutomorphism A)
+    (x : Traceless A.traceUnit) :
+    A.traceUnit.trace (g.toLinearEquiv.symm x.1) = 0 := by
+  have h := g.map_trace (g.toLinearEquiv.symm x.1)
+  have h' :
+      A.traceUnit.trace (g.toLinearEquiv.symm x.1) =
+        A.traceUnit.trace x.1 := by
+    simpa using h.symm
+  exact h'.trans x.property
+
+/-- Restrict an Albert automorphism to an actual linear equivalence of the
+traceless carrier.  This is the theorem-level reason an eventual F4
+identification acts on the 26-dimensional `J₀`. -/
+noncomputable def JordanAutomorphism.tracelessLinearEquiv
     (A : AlbertStructure J) (g : JordanAutomorphism A) :
-    Traceless A.traceUnit →ₗ[ℝ] Traceless A.traceUnit where
+    Traceless A.traceUnit ≃ₗ[ℝ] Traceless A.traceUnit where
   toFun x := ⟨g.toLinearEquiv x.1, g.maps_traceless A x⟩
+  invFun x := ⟨g.toLinearEquiv.symm x.1, g.symm_maps_traceless A x⟩
+  left_inv x := by
+    apply Subtype.ext
+    simp
+  right_inv x := by
+    apply Subtype.ext
+    simp
   map_add' x y := by
     apply Subtype.ext
     simp
@@ -107,6 +127,7 @@ structure Boundary where
   tracePreservingAutomorphismTyped : Bool
   cubicPreservingAutomorphismTyped : Bool
   tracelessActionRestrictionPaid : Bool
+  tracelessActionIsLinearEquivalencePaid : Bool
   f4AutomorphismRecognitionPaidHere : Bool
   e6UnitStabilizerRecognitionPaidHere : Bool
   dimension52CreatesF4 : Bool
@@ -120,6 +141,7 @@ def canonicalBoundary : Boundary where
   tracePreservingAutomorphismTyped := true
   cubicPreservingAutomorphismTyped := true
   tracelessActionRestrictionPaid := true
+  tracelessActionIsLinearEquivalencePaid := true
   f4AutomorphismRecognitionPaidHere := false
   e6UnitStabilizerRecognitionPaidHere := false
   dimension52CreatesF4 := false

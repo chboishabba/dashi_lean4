@@ -104,4 +104,76 @@ theorem QuarticFourSignedPolePair.postSixthTerminalEighthLeadingAllowance_nonneg
     positivity
   positivity
 
+/-- Exact selected-witness ceiling forced by the current positive eighth-order
+cap.  This is the quantity that should be compared against the same-object G1
+`fourthLipschitz`; no asymptotic order argument can replace this comparison. -/
+def QuarticFourSignedPolePair.postSixthTerminalFourthLipschitzThreshold
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.postSixthTerminalDominantHeadroom /
+    ((3/1700 : ℝ) * quarticSignedPoleCanonicalLocalRadius^2)
+
+/-- The current positive-cap leading A2 comparison is *exactly* an upper bound
+on the selected witness's G1 fourth-Lipschitz constant. -/
+theorem QuarticFourSignedPolePair.postSixthTerminalEighthLeadingAllowance_lt_headroom_iff_fourthLipschitz
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.postSixthTerminalEighthLeadingAllowance
+        < W.postSixthTerminalDominantHeadroom
+      ↔
+    W.fourthLipschitz
+        < W.postSixthTerminalFourthLipschitzThreshold := by
+  have heta : 0 < quarticSignedPoleCanonicalLocalRadius := by
+    unfold quarticSignedPoleCanonicalLocalRadius
+    positivity
+  have hc :
+      0 < (3/1700 : ℝ) * quarticSignedPoleCanonicalLocalRadius^2 := by
+    positivity
+  unfold QuarticFourSignedPolePair.postSixthTerminalFourthLipschitzThreshold
+  rw [lt_div_iff₀ hc]
+  unfold QuarticFourSignedPolePair.postSixthTerminalEighthLeadingAllowance
+  ring_nf
+
+/-- Hence the whole leading sixth-plus-eighth positive-cap lane closes iff the
+same selected witness lies below the explicit fourth-Lipschitz ceiling. -/
+theorem QuarticFourSignedPolePair.postSixthTerminalLeadingAllowance_lt_target_iff_fourthLipschitz
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t) :
+    W.postSixthTerminalLeadingAllowance < W.targetStrength
+      ↔
+    W.fourthLipschitz
+        < W.postSixthTerminalFourthLipschitzThreshold := by
+  rw [W.postSixthTerminalLeadingAllowance_lt_target_iff]
+  exact W.postSixthTerminalEighthLeadingAllowance_lt_headroom_iff_fourthLipschitz
+
+/-- Under the already-used strength floor, the admissible selected-witness
+fourth-Lipschitz interval is genuinely nonempty. -/
+theorem QuarticFourSignedPolePair.postSixthTerminalFourthLipschitzThreshold_pos
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hfloor : quarticSignedPoleStrengthFloor <= W.targetStrength) :
+    0 < W.postSixthTerminalFourthLipschitzThreshold := by
+  have hhead : 0 < W.postSixthTerminalDominantHeadroom :=
+    W.postSixthTerminalDominantHeadroom_pos hfloor
+  have hc :
+      0 < (3/1700 : ℝ) * quarticSignedPoleCanonicalLocalRadius^2 := by
+    unfold quarticSignedPoleCanonicalLocalRadius
+    positivity
+  unfold QuarticFourSignedPolePair.postSixthTerminalFourthLipschitzThreshold
+  exact div_pos hhead hc
+
+/-- Exact positive-cap no-go certificate at the selected-witness level.  A
+witness at or above the explicit ceiling cannot satisfy the present leading A2
+cap; progress would then require a sharper signed eighth-order treatment rather
+than more transport or asymptotic bookkeeping. -/
+theorem QuarticFourSignedPolePair.postSixthTerminalLeadingAllowance_not_lt_target_of_threshold_le_fourthLipschitz
+    {t : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (hK :
+      W.postSixthTerminalFourthLipschitzThreshold <= W.fourthLipschitz) :
+    ¬ W.postSixthTerminalLeadingAllowance < W.targetStrength := by
+  intro h
+  have hlt :=
+    (W.postSixthTerminalLeadingAllowance_lt_target_iff_fourthLipschitz).1 h
+  linarith
+
 end Synthesis

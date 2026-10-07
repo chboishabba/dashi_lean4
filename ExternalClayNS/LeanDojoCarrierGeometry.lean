@@ -93,4 +93,8 @@ theorem clayInitialDivergenceFree_to_leanDojo
     NavierStokesOnR3.DivergenceFreeInitial, partial_deriv,
     ClaySpec.spatialBasis, standard_basis] using h x
 
+#print axioms leanDojoPairEmbedding_contDiff
+#print axioms leanDojoSmooth_to_pair
+#print axioms clayInitialDivergenceFree_to_leanDojo
+
 end DASHILiteralClayNS

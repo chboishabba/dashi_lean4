@@ -38,19 +38,29 @@ required = {
         "ClayBirchSwinnertonDyer.of_rank_existence_and_finite_rank",
         "clayBirchSwinnertonDyer_of_dashi",
     ],
+    "ExternalClayNS/LeanDojoForceDecayQuantitative.lean": [
+        "spacetimeDerivativeVector_eq_fullJet_apply",
+        "norm_spacetimeDerivativeVector_le_fullJet",
+        "norm_targetJet_le_sourceJet",
+        "comparatorForceDecay_to_leanDojo",
+        "comparatorPeriodicForceDecay_to_leanDojo",
+    ],
+    "ExternalClayNS/LeanDojoExactTerminal.lean": [
+        "leanDojoR3Solution_to_comparator",
+        "leanDojoPeriodicSolution_to_comparator",
+        "theorem dashiExactFeffermanC : MillenniumNavierStokes.FeffermanC",
+        "theorem dashiExactFeffermanD : MillenniumNavierStokes.FeffermanD",
+        "#print axioms dashiExactFeffermanC",
+        "#print axioms dashiExactFeffermanD",
+    ],
     "ExternalClayNS/LeanDojoMaxCut.lean": [
-        "import LeanDojoMomentumTransport",
-        "import LeanDojoDivergenceTransport",
-        "import LeanDojoEnergyTransport",
+        "import LeanDojoExactTerminal",
         "ComparatorForceDecayTransportR3",
-        "NavierStokesOnR3.SmoothRapidDecayForce",
         "ComparatorForceDecayTransportPeriodic",
-        "NavierStokesPeriodic.PeriodicForceDecay",
-        "comparatorForceDecayTransportR3_implies_smooth",
-        "leanDojoMomentum_to_clayEquationOne",
-        "leanDojoIncompressible_to_clay",
-        "leanDojoFiniteEnergy_to_comparator",
-        "leanDojoSolution_structuralComparatorFields",
+        "comparatorForceDecayTransportR3_paid",
+        "comparatorForceDecayTransportPeriodic_paid",
+        "#check dashiExactFeffermanC",
+        "#check dashiExactFeffermanD",
     ],
     "ExternalClayNS/LeanDojoTargetBridge.lean": [
         "import LeanDojoMaxCut",
@@ -65,17 +75,19 @@ required = {
     ],
     "MillenniumExternal/ExternalTargetFrontier.lean": [
         "inductive FrontierClass",
-        ".typeWeld",
+        ".proved",
         ".analytic",
         ".upstreamDefect",
         ".solvedUnformalized",
         "firstUnpaid",
         "UniversalAnchoredPolynomialSATDecisionCollision",
         "postSixthTerminalEighthLeadingAllowance",
-        "DASHILiteralClayNS.ComparatorForceDecayTransportR3",
+        "dashiExactFeffermanC",
+        "dashiExactFeffermanD",
         "Synthesis.Millennium.BSD.BSDClayCoreObligation bg",
         "riemann_frontier_is_analytic",
-        "navierStokes_frontier_is_typeWeld",
+        "navierStokes_frontier_is_proved",
+        "navierStokes_not_green_before_kernel_receipt",
         "birchSwinnertonDyer_frontier_is_analytic",
         "hodge_not_green_exact",
         "yangMills_not_green_exact",
@@ -103,11 +115,10 @@ for filename, needles in required.items():
         if needle not in text:
             raise SystemExit(f"{filename}: missing {needle!r}")
 
-# Exact adapter surfaces must never gain a local escape hatch. The pinned
-# upstream tree is audited separately; this guard concerns only DASHI-authored
-# adapters and the exact theorem-level max-cut.
 for filename in (
     "MillenniumExternal/ExactTargetSurface.lean",
+    "ExternalClayNS/LeanDojoForceDecayQuantitative.lean",
+    "ExternalClayNS/LeanDojoExactTerminal.lean",
     "ExternalClayNS/LeanDojoMaxCut.lean",
     "ExternalClayNS/LeanDojoTargetBridge.lean",
 ):

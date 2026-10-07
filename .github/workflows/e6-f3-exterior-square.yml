@@ -17,6 +17,8 @@ on:
       - "Integration/E6F3GeneratedGroupClosureRegression.lean"
       - "Integration/E6RootStabilizerA5SixSet.lean"
       - "Integration/E6RootStabilizerA5SixSetRegression.lean"
+      - "Integration/E6SeventyTwoChartHyperformAtlas.lean"
+      - "Integration/E6SeventyTwoChartHyperformAtlasRegression.lean"
       - "Integration/E6LiteralE8Action.lean"
       - "Integration/E6LiteralE8ActionRegression.lean"
       - "Integration/E6Minuscule27LiteralRecognition.lean"
@@ -74,12 +76,14 @@ jobs:
         run: |
           lake env lean Integration/E6F3OrbitTransitivity.lean
           lake env lean Integration/E6F3OrbitTransitivityRegression.lean
-      - name: Check generated E6 image closure and six-object A5 stabilizer
+      - name: Check generated E6 image closure and root-chart atlas
         run: |
           lake env lean Integration/E6F3GeneratedGroupClosure.lean
           lake env lean Integration/E6F3GeneratedGroupClosureRegression.lean
           lake env lean Integration/E6RootStabilizerA5SixSet.lean
           lake env lean Integration/E6RootStabilizerA5SixSetRegression.lean
+          lake env lean Integration/E6SeventyTwoChartHyperformAtlas.lean
+          lake env lean Integration/E6SeventyTwoChartHyperformAtlasRegression.lean
       - name: Check literal E8 E6-sector action and typed ternary27 geometry
         run: |
           lake env lean Integration/E6LiteralE8Action.lean

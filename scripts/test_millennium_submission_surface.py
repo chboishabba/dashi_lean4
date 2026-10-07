@@ -8,17 +8,22 @@ FRONTIER = ROOT / "MillenniumExternal" / "ExternalTargetFrontier.lean"
 
 
 class MillenniumSubmissionSurfaceTests(unittest.TestCase):
-    def test_ns_c_bridge_exposes_atomic_transport_frontier(self):
-        self.assertTrue(BRIDGE.exists(), "direct comparator-to-LeanDojo C bridge is missing")
+    def test_ns_c_bridge_exposes_clayspec_only_transport_frontier(self):
+        self.assertTrue(BRIDGE.exists(), "direct ClaySpec-to-LeanDojo C bridge is missing")
         text = BRIDGE.read_text(encoding="utf-8")
         for name in (
-            "ComparatorInitialToLeanDojo",
-            "ComparatorForceToLeanDojo",
-            "LeanDojoSolutionToComparator",
+            "ClayInitialToLeanDojo",
+            "ClayForceToLeanDojo",
+            "LeanDojoSolutionToClaySpec",
             "LeanDojoCTransportFrontier",
             "leanDojoFeffermanC_of_transport",
         ):
             self.assertIn(name, text)
+        self.assertIn("SemanticGap.admissibleDataR3_of_comparator", text)
+        self.assertIn("SemanticGap.claySolutionR3_to_comparator", text)
+        self.assertNotIn("ComparatorInitialToLeanDojo", text)
+        self.assertNotIn("ComparatorForceToLeanDojo", text)
+        self.assertNotIn("LeanDojoSolutionToComparator", text)
         self.assertNotIn("LeanDojoCDStatementWeld", text)
         self.assertNotIn("sorry", text)
         self.assertNotIn("axiom ", text)

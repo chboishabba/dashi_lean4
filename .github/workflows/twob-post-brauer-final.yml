@@ -8,6 +8,7 @@ on:
     paths:
       - 'Integration/OggSSP2BTate276M24BrauerRuntimeReceipt.lean'
       - 'Integration/OggSSP2BBrauerOuterInvolutionBoundary.lean'
+      - 'Integration/OggSSP2BMonster2LocalThree276Source.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
       - '.github/workflows/twob-post-brauer-final.yml'
@@ -15,6 +16,7 @@ on:
     paths:
       - 'Integration/OggSSP2BTate276M24BrauerRuntimeReceipt.lean'
       - 'Integration/OggSSP2BBrauerOuterInvolutionBoundary.lean'
+      - 'Integration/OggSSP2BMonster2LocalThree276Source.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
       - '.github/workflows/twob-post-brauer-final.yml'
@@ -37,5 +39,6 @@ jobs:
         run: |
           lake env lean Integration/OggSSP2BTate276M24BrauerRuntimeReceipt.lean
           lake env lean Integration/OggSSP2BBrauerOuterInvolutionBoundary.lean
+          lake env lean Integration/OggSSP2BMonster2LocalThree276Source.lean
           lake env lean Integration/OggSSP2BActualStableCompletionSubquotient.lean
           lake env lean Integration/OggSSP2BPostBrauerFinalCompiler.lean

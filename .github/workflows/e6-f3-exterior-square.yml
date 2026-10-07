@@ -55,6 +55,8 @@ on:
       - "Integration/E8StructuredTernary240E6A2ActionRegression.lean"
       - "Integration/E8ExceptionalLiftCapstone.lean"
       - "Integration/E8ExceptionalLiftCapstoneRegression.lean"
+      - "Integration/E8StructuredExceptionalLiftFinalMaxCut.lean"
+      - "Integration/E8StructuredExceptionalLiftFinalMaxCutRegression.lean"
       - "Integration/GeometricReasoningEverything.lean"
       - ".github/workflows/e6-f3-exterior-square.yml"
   workflow_dispatch:
@@ -114,7 +116,7 @@ jobs:
           lake env lean Integration/Ternary27HyperformSchlafliRecognitionRegression.lean
           lake env lean Integration/Ternary27A5SixFaceReorganisation.lean
           lake env lean Integration/Ternary27A5SixFaceReorganisationRegression.lean
-      - name: Check E8 branching, obstructions and structured 240 action
+      - name: Check E8 branching, structured 240 action and final capstone
         run: |
           lake env lean Integration/E8TernaryBranchingActionObstruction.lean
           lake env lean Integration/E8TernaryBranchingActionObstructionRegression.lean
@@ -130,5 +132,7 @@ jobs:
           lake env lean Integration/E8StructuredTernary240E6A2ActionRegression.lean
           lake env lean Integration/E8ExceptionalLiftCapstone.lean
           lake env lean Integration/E8ExceptionalLiftCapstoneRegression.lean
+          lake env lean Integration/E8StructuredExceptionalLiftFinalMaxCut.lean
+          lake env lean Integration/E8StructuredExceptionalLiftFinalMaxCutRegression.lean
       - name: Check geometric reasoning rollup
         run: lake env lean Integration/GeometricReasoningEverything.lean

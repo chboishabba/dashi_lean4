@@ -23,6 +23,8 @@ on:
       - "Integration/E6FullMatrixTernary27SameActionRegression.lean"
       - "Integration/E6Ternary27CoxeterAction.lean"
       - "Integration/E6Ternary27CoxeterActionRegression.lean"
+      - "Integration/Ternary27AlbertShapeE6ActionBoundary.lean"
+      - "Integration/Ternary27AlbertShapeE6ActionBoundaryRegression.lean"
       - "Integration/E6SeventyTwoChartHyperformAtlas.lean"
       - "Integration/E6SeventyTwoChartHyperformAtlasRegression.lean"
       - "Integration/E6SeventyTwoChartAtlasActionCompletion.lean"
@@ -49,6 +51,8 @@ on:
       - "Integration/E8LiteralMixed27SchlafliRegression.lean"
       - "Integration/E8Mixed27TernaryTranslationObstruction.lean"
       - "Integration/E8Mixed27TernaryTranslationObstructionRegression.lean"
+      - "Integration/E8StructuredTernary240E6A2Action.lean"
+      - "Integration/E8StructuredTernary240E6A2ActionRegression.lean"
       - "Integration/E8ExceptionalLiftCapstone.lean"
       - "Integration/E8ExceptionalLiftCapstoneRegression.lean"
       - "Integration/GeometricReasoningEverything.lean"
@@ -72,19 +76,13 @@ jobs:
         run: |
           lake env lean Integration/E6F3ExteriorSquare.lean
           lake env lean Integration/E6F3ExteriorSquareRegression.lean
-      - name: Check PGSp4/E6 generator intertwiner
-        run: |
           lake env lean Integration/E6PGSp4ExteriorSquare.lean
           lake env lean Integration/E6PGSp4ExteriorSquareRegression.lean
-      - name: Check projective association schemes
-        run: |
           lake env lean Integration/E6F3ProjectiveAssociation.lean
           lake env lean Integration/E6F3ProjectiveAssociationRegression.lean
-      - name: Check quadratic-shell orbit transitivity
-        run: |
           lake env lean Integration/E6F3OrbitTransitivity.lean
           lake env lean Integration/E6F3OrbitTransitivityRegression.lean
-      - name: Check generated E6 image, stabilizer weld and coherent atlas
+      - name: Check generated E6 image, selected stabilizer and full ternary action
         run: |
           lake env lean Integration/E6F3GeneratedGroupClosure.lean
           lake env lean Integration/E6F3GeneratedGroupClosureRegression.lean
@@ -96,11 +94,13 @@ jobs:
           lake env lean Integration/E6FullMatrixTernary27SameActionRegression.lean
           lake env lean Integration/E6Ternary27CoxeterAction.lean
           lake env lean Integration/E6Ternary27CoxeterActionRegression.lean
+          lake env lean Integration/Ternary27AlbertShapeE6ActionBoundary.lean
+          lake env lean Integration/Ternary27AlbertShapeE6ActionBoundaryRegression.lean
           lake env lean Integration/E6SeventyTwoChartHyperformAtlas.lean
           lake env lean Integration/E6SeventyTwoChartHyperformAtlasRegression.lean
           lake env lean Integration/E6SeventyTwoChartAtlasActionCompletion.lean
           lake env lean Integration/E6SeventyTwoChartAtlasActionCompletionRegression.lean
-      - name: Check literal E8 E6-sector action and typed ternary27 geometry
+      - name: Check literal E8 sector and typed ternary27 geometry
         run: |
           lake env lean Integration/E6LiteralE8Action.lean
           lake env lean Integration/E6LiteralE8ActionRegression.lean
@@ -114,7 +114,7 @@ jobs:
           lake env lean Integration/Ternary27HyperformSchlafliRecognitionRegression.lean
           lake env lean Integration/Ternary27A5SixFaceReorganisation.lean
           lake env lean Integration/Ternary27A5SixFaceReorganisationRegression.lean
-      - name: Check E8 branching action obstruction and 27 fibres
+      - name: Check E8 branching, obstructions and structured 240 action
         run: |
           lake env lean Integration/E8TernaryBranchingActionObstruction.lean
           lake env lean Integration/E8TernaryBranchingActionObstructionRegression.lean
@@ -126,6 +126,8 @@ jobs:
           lake env lean Integration/E8LiteralMixed27SchlafliRegression.lean
           lake env lean Integration/E8Mixed27TernaryTranslationObstruction.lean
           lake env lean Integration/E8Mixed27TernaryTranslationObstructionRegression.lean
+          lake env lean Integration/E8StructuredTernary240E6A2Action.lean
+          lake env lean Integration/E8StructuredTernary240E6A2ActionRegression.lean
           lake env lean Integration/E8ExceptionalLiftCapstone.lean
           lake env lean Integration/E8ExceptionalLiftCapstoneRegression.lean
       - name: Check geometric reasoning rollup

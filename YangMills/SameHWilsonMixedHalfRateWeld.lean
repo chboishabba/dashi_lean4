@@ -1,5 +1,6 @@
 import Mathlib
 import YangMills.CMP116WilsonMixedHalfRateClustering
+import YangMills.WilsonSpectralCompleteness
 
 open Filter MeasureTheory
 
@@ -245,6 +246,19 @@ theorem dense_span
     (weld : SameHDenseWilsonMixedHalfRateWeld State Obs H) :
     Dense (Submodule.span ℝ (Set.range weld.vector) : Set H) :=
   weld.denseWilsonSpan
+
+/-- No nonzero Hilbert vector can hide from the same half-rate-controlled Wilson span. -/
+theorem detects_nonzero
+    {State Obs H : Type*}
+    [MeasurableSpace State] [TopologicalSpace State]
+    [OpensMeasurableSpace State]
+    [NormedAddCommGroup H] [InnerProductSpace ℝ H]
+    (weld : SameHDenseWilsonMixedHalfRateWeld State Obs H)
+    (v : H) (hv : v ≠ 0) :
+    ∃ w ∈ Submodule.span ℝ (Set.range weld.vector), ⟪w, v⟫_ℝ ≠ 0 :=
+  dense_wilson_vectors_detect_nonzero
+    (Submodule.span ℝ (Set.range weld.vector) : Set H)
+    weld.denseWilsonSpan v hv
 
 end SameHDenseWilsonMixedHalfRateWeld
 

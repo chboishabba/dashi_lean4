@@ -51,7 +51,7 @@ def d4Generator : D4Simple → Perm48
 def comp (p q : Perm48) : Perm48 := fun i => p (q i)
 def ident : Perm48 := fun i => i
 
- theorem f4_generators_involutive : ∀ s r, f4Generator s (f4Generator s r) = r := by
+theorem f4_generators_involutive : ∀ s r, f4Generator s (f4Generator s r) = r := by
   native_decide
 
 /-- Coxeter edges 3-4-3. -/
@@ -60,7 +60,6 @@ theorem f4_braid_01 : ∀ r,
     f4Generator .s1 (f4Generator .s0 (f4Generator .s1 r)) := by native_decide
 
 theorem f4_braid_12_order4 : ∀ r,
-    f4Generator .s0 r = f4Generator .s0 r →
     f4Generator .s1 (f4Generator .s2 (f4Generator .s1 (f4Generator .s2 r))) =
     f4Generator .s2 (f4Generator .s1 (f4Generator .s2 (f4Generator .s1 r))) := by
   native_decide
@@ -75,7 +74,6 @@ theorem f4_nonadjacent_commute : ∀ r,
     (f4Generator .s1 (f4Generator .s3 r) = f4Generator .s3 (f4Generator .s1 r)) := by
   native_decide
 
-/-- Closure under the four F4 simple reflections. -/
 def expandF4 (S : Finset Perm48) : Finset Perm48 :=
   S ∪ S.image (comp (f4Generator .s0)) ∪
       S.image (comp (f4Generator .s1)) ∪
@@ -91,7 +89,6 @@ def generatedF4 : Finset Perm48 := f4OrbitN 24
 theorem generated_f4_card : generatedF4.card = 1152 := by native_decide
 theorem generated_f4_stable : f4OrbitN 25 = generatedF4 := by native_decide
 
-/-- Long-root D4 subgroup. -/
 def expandD4 (S : Finset Perm48) : Finset Perm48 :=
   S ∪ S.image (comp (d4Generator .d0)) ∪
       S.image (comp (d4Generator .d1)) ∪
@@ -110,14 +107,11 @@ theorem generated_d4_stable : d4OrbitN 13 = generatedD4 := by native_decide
 theorem generated_d4_subset_f4 : ∀ p, p ∈ generatedD4 → p ∈ generatedF4 := by
   native_decide
 
-/-- Four-class label: 0=long roots, 1=vector short 8, 2/3=the two half-root 8s. -/
 def rootClass : Root48 → Fin 4 :=
   ![0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     1,1,1,1,1,1,1,1,
     2,3,3,2,3,2,2,3,3,2,2,3,2,3,3,2]
 
-/-- Triality action of F4 simple generators on the three short-root classes.
-Long roots (class 0) are fixed. -/
 def classPerm : F4Simple → Fin 4 → Fin 4
   | .s0, x => x
   | .s1, x => x
@@ -128,7 +122,6 @@ theorem simple_reflections_realize_triality_classes : ∀ s r,
     rootClass (f4Generator s r) = classPerm s (rootClass r) := by
   native_decide
 
-/-- Kernel of the three-short-class action on the full generated F4 image. -/
 def trialityKernel : Finset Perm48 :=
   generatedF4.filter fun p => ∀ r : Root48, rootClass (p r) = rootClass r
 
@@ -136,7 +129,6 @@ theorem triality_kernel_card : trialityKernel.card = 192 := by native_decide
 
 theorem triality_kernel_is_d4 : trialityKernel = generatedD4 := by native_decide
 
-/-- The F4/D4 index is six. -/
 theorem f4_order_is_d4_times_triality : generatedF4.card = generatedD4.card * 6 := by
   native_decide
 

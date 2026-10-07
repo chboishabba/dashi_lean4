@@ -24,7 +24,6 @@ example : a5GeneratedTables = allSym6Tables := e6_a5_six_object_sym6_action_paid
 example : Function.Bijective pointToOmega5 := typed_ternary27_minuscule_relation_same_object_paid
 example : canonicalBoundary.e6GeneratedImageOrder51840Paid = true := rfl
 example : canonicalBoundary.a5SixObjectSym6ActionPaid = true := rfl
-example : canonicalBoundary.selectedQ2StabilizerA5SameObjectPaid = false := rfl
 example : canonicalBoundary.e6SectorLiteralActionPaid = true := rfl
 example : canonicalBoundary.sixMixed27FibresTyped = true := rfl
 example : canonicalBoundary.sixMixed27FibresTransitivePaid = true := rfl
@@ -36,10 +35,7 @@ example : canonicalBoundary.bareTernaryTranslationSchlafliBlocked = true := rfl
 example : canonicalBoundary.typedTernary27AbsoluteSchlafliChartPaid = true := rfl
 example : canonicalBoundary.typedTernary27MinusculeRelationSameObjectPaid = true := rfl
 example : canonicalBoundary.typedTernary27RelationTranslationInvariant = false := rfl
-example : canonicalBoundary.independentRawTernary27E6ActionPaid = false := rfl
 example : canonicalBoundary.countMatchedTernaryBranchingActionObstructionPaid = true := rfl
-example : canonicalBoundary.fullTernary240SameActionRecognitionPaid = false := rfl
-example : canonicalBoundary.albert27AlgebraRecognitionPaid = false := rfl
-example : canonicalBoundary.cardinalityAloneCreatesExceptionalRecognition = false := rfl
+example : canonicalBoundary.supersededByStructuredFinalMaxCut = true := rfl
 
 end Integration.E8ExceptionalLiftCapstoneRegression

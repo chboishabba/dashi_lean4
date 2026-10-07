@@ -26,6 +26,21 @@ required = {
         "ClayRiemannHypothesis.of_mathlib",
         "ClayRiemannHypothesis.mathlib",
         "clayRiemannHypothesis_iff_mathlib",
+        "BSDLeanDojoSameObjectWeld",
+        "rankExistence_of_dashi",
+        "LeanDojoBSDFiniteRank",
+        "ClayBirchSwinnertonDyer.of_rank_existence_and_finite_rank",
+        "clayBirchSwinnertonDyer_of_dashi",
+    ],
+    "ExternalClayNS/LeanDojoTargetBridge.lean": [
+        "import LiteralABCD",
+        "import Problems.NavierStokes.Millennium",
+        "LeanDojoCDStatementWeld",
+        "c_iff : ClayOptionC ↔ MillenniumNavierStokes.FeffermanC",
+        "d_iff : ClayOptionD ↔ MillenniumNavierStokes.FeffermanD",
+        "leanDojoFeffermanC_of_statementWeld",
+        "leanDojoFeffermanD_of_statementWeld",
+        "leanDojoFeffermanCD_of_statementWeld",
     ],
     "MillenniumExternal/ExternalTargetFrontier.lean": [
         ".upstreamIncomplete",
@@ -46,14 +61,16 @@ for filename, needles in required.items():
         if needle not in text:
             raise SystemExit(f"{filename}: missing {needle!r}")
 
-# The exact adapter surface must never gain a local escape hatch.  The pinned
+# Exact adapter surfaces must never gain a local escape hatch. The pinned
 # upstream tree is audited separately; this guard concerns only DASHI-authored
-# adapter source.
-exact = Path("MillenniumExternal/ExactTargetSurface.lean").read_text(encoding="utf-8")
-for forbidden in ("sorry", "axiom ", "unsafe "):
-    if forbidden in exact:
-        raise SystemExit(
-            f"MillenniumExternal/ExactTargetSurface.lean: forbidden token {forbidden!r}"
-        )
+# adapters.
+for filename in (
+    "MillenniumExternal/ExactTargetSurface.lean",
+    "ExternalClayNS/LeanDojoTargetBridge.lean",
+):
+    text = Path(filename).read_text(encoding="utf-8")
+    for forbidden in ("sorry", "axiom ", "unsafe "):
+        if forbidden in text:
+            raise SystemExit(f"{filename}: forbidden token {forbidden!r}")
 
 print("millennium external source audit: PASS")

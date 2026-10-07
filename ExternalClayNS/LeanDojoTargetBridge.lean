@@ -1,3 +1,4 @@
+import LeanDojoMaxCut
 import LiteralABCD
 import Problems.NavierStokes.Millennium
 
@@ -17,6 +18,11 @@ The structure below makes precisely that semantic weld proof-relevant.  It does
 not replace it by a Boolean receipt and it does not manufacture the equivalence.
 Once the two equivalences are supplied, the exact LeanDojo target terms follow
 by composition only.
+
+The imported `LeanDojoMaxCut` also records the narrower theorem-level frontier
+found by the same-object audit: carrier, initial-data, smoothness, periodicity,
+and boundary transport are already paid; the first unpaid representation edge
+is the mixed-coordinate force-decay transport on LeanDojo's literal spacetime.
 -/
 
 namespace DASHILiteralClayNS

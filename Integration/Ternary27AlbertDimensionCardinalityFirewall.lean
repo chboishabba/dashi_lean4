@@ -65,15 +65,14 @@ inductive MinusculeWeightOrbitIsAlbertUnderlyingVectorSpace : Prop
 structure AlbertPromotionTarget where
   Scalar : Type
   Carrier : Type
-  scalarField : Field Scalar
-  additiveGroup : AddCommGroup Carrier
-  moduleStructure : Module Scalar Carrier
-  finiteDimensional : FiniteDimensional Scalar Carrier
-  dimension27 : FiniteDimensional.finrank Scalar Carrier = 27
+  [scalarField : Field Scalar]
+  [additiveGroup : AddCommGroup Carrier]
+  [moduleStructure : Module Scalar Carrier]
+  [finiteDimensional : FiniteDimensional Scalar Carrier]
+  dimension27 : Module.finrank Scalar Carrier = 27
   unit : Carrier
   jordanProduct : Carrier → Carrier → Carrier
   cubicNorm : Carrier → Scalar
-  deriving
 
 structure Boundary where
   minusculeOrbitCard27Paid : Bool

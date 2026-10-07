@@ -54,10 +54,10 @@ def navierStokesSameObjectCut : SameObjectCut :=
     existingProducer :=
       "released comparator C -> ClaySpec literalClayC -> direct LeanDojo C compiler"
     existingWeld :=
-      "Gap.lean comparator-data -> ClaySpec and ClaySpec-solution -> comparator; LeanDojoCarrierGeometry spatial/divergence/round-trip facts"
+      "Gap.lean comparator-data -> ClaySpec and ClaySpec-solution -> comparator; LeanDojoCarrierGeometry pays spatial carrier, pair/ambient round-trip, domain membership, smooth pullback and initial divergence"
     remaining := .transportOnly
     note :=
-      "No new fluid estimate is admissible here. After consuming the existing comparator/ClaySpec semantic weld and paid carrier geometry, Fefferman C has exactly three residual transports: condition-(4) derivative packaging, condition-(5) pair-spacetime -> time-first Fin4 packaging, and LeanDojo GlobalSmoothSolution+FiniteEnergy -> ClaySpec.ClaySolutionR3." }
+      "No new fluid estimate is admissible here. Fefferman C is reduced to exactly five transport leaves: condition-(4) derivative packaging; condition-(5) pair-spacetime -> time-first Fin4 derivative packaging; positive-time momentum -> closed-half-space Clay equation (including smooth boundary extension); positive-time incompressibility -> closed-half-space Clay equation; and LeanDojo coordinate-square finite energy -> ClaySpec vector L2/norm-square energy. Solution smoothness and initial condition are already paid." }
 
 def hodgeSameObjectCut : SameObjectCut :=
   { problem := .hodge

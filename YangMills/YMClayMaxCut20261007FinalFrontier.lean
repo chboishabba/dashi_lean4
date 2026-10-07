@@ -2,42 +2,45 @@ import Mathlib
 import YangMills.CMP119SelectedExactComponentReflection
 import YangMills.ProjectiveCylinderPhysicalReflectionRepresentation
 import YangMills.WilsonCylinderDeterminingSource
-import YangMills.OSGramRawDenseSameFamilyWeld
+import YangMills.OSCenteredSameFamilyWeld
+import YangMills.OSVacuumContinuousExcitation
 import YangMills.OSStronglyContinuousSemigroup
 import YangMills.HalfRatePhysicalTimeNormalization
 
 /-!
-# Yang--Mills max-cut frontier — 2026-10-07, post-cylinder cut
+# Yang--Mills max-cut frontier — 2026-10-07, centered terminal cut
 
 This owner is the current shortest honest route.
 
 * A remains off the active board modulo exact-head kernel verification.
 * BC certificates are tied component-by-component to designated actual E/R/B
-  kernels, with finite negative samples as decisive falsifiers.
+  kernels, with finite negative samples as decisive falsifiers.  Current Agda
+  source still marks the source-to-literal reflection dictionaries, time-half
+  classifier and E/R/B crossing audits conditional.
 * E1 is representation-first: physical reflection and multiplication are chosen
   once, and the transported bounded cylinder reflected product is definitionally
-  their selected observable representation.  The old duplicate-function
-  equality receipt is removed.
+  their selected observable representation.
 * DF2's generalized cylinder carrier/measure-determining machinery remains
   constructive.  No stronger gauge-field topology is inferred.
-* E2's null quotient, positive-definite pre-Hilbert norm, Hilbert completion and
-  discrete contraction semigroup are constructive.  The continuous-time input
-  is now an ACTUAL strongly-continuous symmetric positive contraction semigroup
-  on nonnegative real time, agreeing with the constructed discrete family.
-* F1/F2 use the modern source-first Wilson carrier: R556 makes SAME-family
-  continuum covariance convergence compiler-owned once the finite covariance is
-  the exact CMP119/T5 covariance; R574/R576 reduce the genuine Wilson source
-  bill to W1 mixed-log connected-cluster expansion and W3 connecting-tail
-  control, with bounded-test/time/order semantics downstream.  On the preferred
-  OS route this observable carrier IS the raw pre-Hilbert carrier, so its OS
-  vector image is dense by quotient surjectivity plus completion and no separate
-  F2 density axiom survives.
+* F1 uses the modern source-first Wilson carrier.  R556 makes same-family
+  continuum covariance convergence compiler-owned on the exact CMP119/T5
+  carrier; R573/R574/R576 isolate W1 mixed-log connected-cluster expansion and
+  W3 connecting-tail control as the genuine Wilson source leaves.
+* F2 is centered: the decaying vectors are dense in the vacuum-orthogonal
+  excitation sector, not in a Hilbert space containing an invariant vacuum.
+  Once the physical vacuum and raw carrier are fixed, this density is structural
+  by continuous centering of the already-dense raw OS vectors.
+* E2's null quotient, Hilbert completion and discrete contraction semigroup are
+  constructive.  Continuous time is represented by an actual symmetric positive
+  strongly-continuous contraction semigroup.  If it fixes the same normalized
+  vacuum, it restricts canonically to the same excitation sector.
 * The elementary half-rate -> `log 2 / a` energy conversion is proved once a
   positive physical Euclidean step is source-identified.
 * The remaining generator and spectrum statements are external standard
   functional-analytic authority relations; they are caller-fixed and cannot be
   manufactured by defining local predicates to be `True`.
-* G remains downstream.
+* Local/nontrivial QFT reconstruction and all-compact-simple-group extension are
+  downstream.
 -/
 
 namespace RequestProject.YangMills
@@ -90,52 +93,66 @@ noncomputable def ym20261007CylinderContinuumSource
     RealCountableObservableDeterminingSource (WilsonCylinderState raw) :=
   wilsonCylinderDeterminingSource raw hMeas cutoffLaw
 
-/-! ## F1/F2: choose the preferred source-first Wilson family as the OS raw carrier -/
+/-! ## F1/F2: centered same-family Wilson/OS carrier -/
 
 /--
-Preferred same-family producer.  The modern source-first Wilson observable
-carrier is literally the OS raw test space `V`, its transfer is the completed OS
-transfer, and its continuum covariance is the corresponding matrix coefficient.
-R556 already owns same-family covariance convergence on the exact CMP119/T5
-carrier; R574/R576 isolate W1/W3 upstream source analysis.  Density follows
-from the OS construction and is not an additional hypothesis here.
+Exact preferred same-family producer.  Physical mixed covariance is identified
+with centered OS-vector matrix coefficients of the same completed transfer.
+The normalized vacuum is fixed by that transfer.  Density of these centered
+vectors in `Ω⊥` is construction-owned and is not a new source hypothesis.
 -/
-def YM20261007PreferredSameFamilyProducerExists
+def YM20261007PreferredCenteredSameFamilyProducerExists
     (State V : Type*)
     [MeasurableSpace State] [TopologicalSpace State]
     [OpensMeasurableSpace State]
     [AddCommGroup V] [Module ℝ V] : Prop :=
-  Nonempty (SameHOSRawMixedHalfRateWeld State V)
+  Nonempty (SameHOSCenteredMixedHalfRateWeld State V)
 
-/-- Preferred same-family data automatically supplies the older dense-weld interface. -/
-noncomputable theorem ym20261007PreferredSameFamilyDenseWeld
+/-- The source half-rate holds on the same centered OS vectors. -/
+theorem ym20261007PreferredCenteredPairHalfRate
     {State V : Type*}
     [MeasurableSpace State] [TopologicalSpace State]
     [OpensMeasurableSpace State]
     [AddCommGroup V] [Module ℝ V]
-    (weld : SameHOSRawMixedHalfRateWeld State V) :
-    SameHDenseWilsonMixedHalfRateWeld State V weld.data.Hilbert :=
-  weld.toDenseSameFamilyWeld
+    (weld : SameHOSCenteredMixedHalfRateWeld State V)
+    (left right : V) :
+    HalfRateMatrixBound weld.transfer
+      (weld.centeredVector left) (weld.centeredVector right) :=
+  weld.centered_pair_half_rate left right
 
-/-- Every nonzero vector is detected by that same automatically dense source-first Wilson/OS carrier. -/
-theorem ym20261007PreferredSameFamilyDetectsNonzero
+/-- Centered source-first Wilson vectors are dense in the excitation sector. -/
+theorem ym20261007PreferredCenteredSameFamilyDenseSector
     {State V : Type*}
     [MeasurableSpace State] [TopologicalSpace State]
     [OpensMeasurableSpace State]
     [AddCommGroup V] [Module ℝ V]
-    (weld : SameHOSRawMixedHalfRateWeld State V)
-    (v : weld.data.Hilbert) (hv : v ≠ 0) :
-    ∃ w ∈ Submodule.span ℝ (Set.range weld.data.rawVector), ⟪w, v⟫_ℝ ≠ 0 :=
-  weld.toDenseSameFamilyWeld.detects_nonzero v hv
+    (weld : SameHOSCenteredMixedHalfRateWeld State V) :
+    Dense
+      (Submodule.span ℝ
+        (Set.range (weld.data.centeredRawVector
+          weld.vacuum weld.vacuumNormalized)) :
+        Set (vacuumOrthogonalSubmodule weld.vacuum)) :=
+  weld.dense_centered_span
+
+/-- The same discrete OS transfer preserves the centered excitation sector. -/
+theorem ym20261007PreferredTransferPreservesExcitation
+    {State V : Type*}
+    [MeasurableSpace State] [TopologicalSpace State]
+    [OpensMeasurableSpace State]
+    [AddCommGroup V] [Module ℝ V]
+    (weld : SameHOSCenteredMixedHalfRateWeld State V)
+    (time : ℕ) {x : weld.data.Hilbert}
+    (hx : x ∈ vacuumOrthogonalSubmodule weld.vacuum) :
+    weld.transfer time x ∈ vacuumOrthogonalSubmodule weld.vacuum :=
+  weld.transfer_preserves_excitation time hx
 
 /-! ## E2: concrete C0-type OS semigroup, external generator authority only -/
 
 /--
-Concrete E2 receipt.  The continuous semigroup is no longer hidden behind an
-opaque relation: it is an actual symmetric positive strongly-continuous
-contraction semigroup on `ℝ≥0` whose integer times are exactly the discrete OS
-transfer.  Only the unbounded-generator theorem is supplied by an externally
-fixed authority relation.
+Concrete E2 receipt.  The continuous semigroup is an actual symmetric positive
+strongly-continuous contraction semigroup on `ℝ≥0` whose integer times are
+exactly the discrete OS transfer.  Only the unbounded-generator theorem is
+supplied by an externally fixed authority relation.
 -/
 structure YM20261007E2ContinuousTimeGeneratorReceipt
     (H Hamiltonian : Type*)
@@ -215,14 +232,14 @@ def YM20261007PhysicalTimeStepProducerExists
   Nonempty (YM20261007PhysicalTimeStepReceipt
     IsPhysicalStepForOneLatticeTranslation)
 
-/-! ## Preferred same-H final gap assembly -/
+/-! ## Preferred same-H centered final gap assembly -/
 
 /--
-Final gap-facing receipt on the preferred carrier-first route.  The dense
-source-first Wilson family and the discrete OS transfer are the SAME objects by
-construction.  The externally fixed generator authority is indexed by the
-selected `OSGramData`, so choosing the source carrier selects an authority
-instance but cannot redefine its meaning.
+Final gap-facing receipt on the preferred centered carrier-first route.  The
+source-first Wilson covariance and the discrete OS transfer are the SAME
+objects; continuous OS time extends exactly that transfer and fixes the SAME
+normalized vacuum.  The externally fixed generator authority is indexed by the
+selected `OSGramData`, so an inhabitant cannot redefine its meaning.
 -/
 structure YM20261007PreferredSameHGapAssembly
     (State V Hamiltonian : Type*)
@@ -237,16 +254,73 @@ structure YM20261007PreferredSameHGapAssembly
           Hamiltonian → Prop)
     (IsPhysicalStepForOneLatticeTranslation : ℝ → Prop)
     (SpectrumSeparatedBy : Hamiltonian → ℝ → Prop) where
-  sameFamily : SameHOSRawMixedHalfRateWeld State V
+  sameFamily : SameHOSCenteredMixedHalfRateWeld State V
   e2 : YM20261007E2ContinuousTimeGeneratorReceipt
     sameFamily.data.Hilbert Hamiltonian
     HamiltonianSelfAdjoint HamiltonianNonnegative
     (GeneratedByOSSemigroup sameFamily.data)
   sameDiscreteTransfer : e2.discreteTransfer = sameFamily.transfer
+  continuousVacuumFixed :
+    ∀ t : ℝ≥0,
+      e2.continuousExtension
+        .toOSSymmetricPositiveStronglyContinuousSemigroup
+        .toOSStronglyContinuousSemigroup.transfer t sameFamily.vacuum =
+      sameFamily.vacuum
   physicalTime : YM20261007PhysicalTimeStepReceipt
     IsPhysicalStepForOneLatticeTranslation
   standardOSSpectralTransfer :
     SpectrumSeparatedBy e2.hamiltonian physicalTime.halfRateMassFloor
+
+namespace YM20261007PreferredSameHGapAssembly
+
+/-- The continuous extension, equipped with the same normalized fixed vacuum. -/
+def continuousVacuumSemigroup
+    {State V Hamiltonian : Type*}
+    [MeasurableSpace State] [TopologicalSpace State]
+    [OpensMeasurableSpace State]
+    [AddCommGroup V] [Module ℝ V]
+    {HamiltonianSelfAdjoint HamiltonianNonnegative : Hamiltonian → Prop}
+    {GeneratedByOSSemigroup :
+      ∀ data : OSGramData V,
+        OSSymmetricPositiveStronglyContinuousSemigroup data.Hilbert →
+          Hamiltonian → Prop}
+    {IsPhysicalStepForOneLatticeTranslation : ℝ → Prop}
+    {SpectrumSeparatedBy : Hamiltonian → ℝ → Prop}
+    (assembly : YM20261007PreferredSameHGapAssembly
+      State V Hamiltonian HamiltonianSelfAdjoint HamiltonianNonnegative
+      GeneratedByOSSemigroup IsPhysicalStepForOneLatticeTranslation
+      SpectrumSeparatedBy) :
+    OSVacuumStronglyContinuousSemigroup assembly.sameFamily.data.Hilbert where
+  toOSSymmetricPositiveStronglyContinuousSemigroup :=
+    assembly.e2.continuousExtension
+      .toOSSymmetricPositiveStronglyContinuousSemigroup
+  vacuum := assembly.sameFamily.vacuum
+  vacuumNormalized := assembly.sameFamily.vacuumNormalized
+  vacuumFixed := assembly.continuousVacuumFixed
+
+/-- The same continuous OS semigroup restricts canonically to the excitation sector. -/
+def excitationContinuousSemigroup
+    {State V Hamiltonian : Type*}
+    [MeasurableSpace State] [TopologicalSpace State]
+    [OpensMeasurableSpace State]
+    [AddCommGroup V] [Module ℝ V]
+    {HamiltonianSelfAdjoint HamiltonianNonnegative : Hamiltonian → Prop}
+    {GeneratedByOSSemigroup :
+      ∀ data : OSGramData V,
+        OSSymmetricPositiveStronglyContinuousSemigroup data.Hilbert →
+          Hamiltonian → Prop}
+    {IsPhysicalStepForOneLatticeTranslation : ℝ → Prop}
+    {SpectrumSeparatedBy : Hamiltonian → ℝ → Prop}
+    (assembly : YM20261007PreferredSameHGapAssembly
+      State V Hamiltonian HamiltonianSelfAdjoint HamiltonianNonnegative
+      GeneratedByOSSemigroup IsPhysicalStepForOneLatticeTranslation
+      SpectrumSeparatedBy) :
+    OSSymmetricPositiveStronglyContinuousSemigroup
+      (vacuumOrthogonalSubmodule assembly.sameFamily.vacuum) :=
+  assembly.continuousVacuumSemigroup
+    .toExcitationSymmetricPositiveStronglyContinuousSemigroup
+
+end YM20261007PreferredSameHGapAssembly
 
 /-- Exact preferred same-H assembly producer before local/all-group completion. -/
 def YM20261007PreferredSameHGapAssemblyExists

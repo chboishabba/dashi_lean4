@@ -112,10 +112,17 @@ jobs:
               lean LeanDojoSameObjectCore.lean
               lean LeanDojoCoordinateLinearEquiv.lean
               lean LeanDojoJetTransport.lean
+              lean LeanDojoDifferentialTransport.lean
+              lean LeanDojoSecondDerivativeTransport.lean
+              lean LeanDojoDivergenceTransport.lean
+              lean LeanDojoMomentumTransport.lean
               lean LeanDojoSameObject.lean
+              lean LeanDojoCoordinateWordJet.lean
               lean LeanDojoForceTransport.lean
+              lean LeanDojoForceDecayQuantitative.lean
               lean LeanDojoSolutionTransport.lean
               lean LeanDojoEnergyTransport.lean
+              lean LeanDojoExactTerminal.lean
               lean LeanDojoTargetBridge.lean
               lean LeanDojoSameObjectRegression.lean
             '

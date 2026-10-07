@@ -39,11 +39,18 @@ required = {
         "clayBirchSwinnertonDyer_of_dashi",
     ],
     "ExternalClayNS/LeanDojoMaxCut.lean": [
+        "import LeanDojoMomentumTransport",
+        "import LeanDojoDivergenceTransport",
+        "import LeanDojoEnergyTransport",
         "ComparatorForceDecayTransportR3",
         "NavierStokesOnR3.SmoothRapidDecayForce",
         "ComparatorForceDecayTransportPeriodic",
         "NavierStokesPeriodic.PeriodicForceDecay",
         "comparatorForceDecayTransportR3_implies_smooth",
+        "leanDojoMomentum_to_clayEquationOne",
+        "leanDojoIncompressible_to_clay",
+        "leanDojoFiniteEnergy_to_comparator",
+        "leanDojoSolution_structuralComparatorFields",
     ],
     "ExternalClayNS/LeanDojoTargetBridge.lean": [
         "import LeanDojoMaxCut",

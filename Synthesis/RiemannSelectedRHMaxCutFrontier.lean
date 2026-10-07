@@ -13,6 +13,15 @@ The merged architecture is frozen.  The programme is now three concrete
 analytic routes sharing the same terminal consumer; no RH-equivalent terminal
 certificate is counted as producer progress.
 
+The fail-closed accounting used here is:
+
+* `K`: source/kernel theorem already present on the same proof graph;
+* `U`: unconditional analytic input once instantiated on the literal carrier;
+* `O`: genuinely open scalar/limit estimate;
+* `C`: circular, RH-equivalent, or logically inert as an RH producer.
+
+`C` premises never count as progress.
+
 ## Route A1: inverse-square / three-tap
 
 One-scale resonance has been compressed past the abstract reflection tail:
@@ -54,22 +63,23 @@ One-scale resonance has been compressed past the abstract reflection tail:
   comparison against the gamma+pole-minus-slack floor directly to paid-cost
   negativity.
 
-The live A1 leaves are exactly:
+The cheap A1 geometry is exhausted.  The live A1 leaves are exactly:
 
-1. assign the two exact ordinate charts to the already-paid countable
-   shell/window family and sum the literal complementary-zero carrier;
+1. prove `ThreeTapInverseSquareShellPartitionBound`, i.e. assign the two exact
+   ordinate charts to the already-paid countable shell/window family and sum the
+   literal complementary-zero carrier;
 2. finish fixed-width determinant transport / witness control and prove uniform
    compact-alpha curvature;
 3. prove translated gamma+pole gain versus local slack strongly enough that
 
      finite + Ccurv*inverseSquareTail < G - S/2.
 
-No further boundary geometry is owed.
+No further boundary convention or numerical-series theorem is owed.
 
 ## Route A2: V4/H4/G3
 
 The polarity and dominant selected-sixth issues are paid.  The post-merge audit
-also traces the target scalar to primitives:
+traces the target scalar to primitives:
 
   compensationTargetThreshold(W,rho)
     = 4*combinedZeroHeightDefect(W,rho)
@@ -90,19 +100,57 @@ The source owns:
     localPositiveDebt + FarExact
       < compensationTargetThreshold + localMuGain;
 
-* the post-merge four-coordinate identity
+* the four-coordinate identity
 
     localPositiveDebt
       = verticalDebt + countDebt + sixthDebt + eighthDebt;
 
-* `postSixthTerminalDominantHeadroom_pos`, showing every strength-floor witness
-  has strict headroom after the selected dominant M6 allowance is removed.
+* the sharpened reassociation
 
-FarExact remains signed.  Nothing above proves the remaining strict scalar.
-The next quantitative theorem must bound the four explicit debt coordinates and
-signed FarExact against the explicit target plus positive mu gain.  If the
-normalized coefficients have the wrong sign, A2 should be retired by a no-go
-theorem rather than hidden behind a stronger certificate.
+    localPositiveDebt = lowerOrderLocalDebt + leadingLocalDebt,
+
+  where `lowerOrderLocalDebt = verticalDebt + countDebt` and
+  `leadingLocalDebt = sixthDebt + eighthDebt`;
+* exact canonical-radius expansions of the sixth and eighth envelopes.  These
+  show that both selected-M6 sixth debt and G1-welded eighth debt contain a
+  leading contribution proportional to
+
+    expandedZeroCount / (t/16)^2.
+
+  Therefore the eighth term is not automatically lower order merely because it
+  is an eighth-order Taylor remainder.  A2 now requires an actual leading
+  constant comparison on the selected witness;
+* `postSixthTerminalDominantHeadroom_pos`, showing every strength-floor witness
+  has strict headroom after the selected dominant M6 allowance is removed;
+* an exact far split `FarExact = FarBaseExact + FarHorizontalExact`;
+* the far base carrier already has an unconditional inverse-square shell bound;
+* the far horizontal carrier has the same shell bound once the single selected
+  witness coordinate `HorizontalFarCurvatureBound CH` is supplied; the combined
+  `FarExact` shell compiler and canonical linear cutoff are source-written.
+
+Consequently `FarExact` is no longer one opaque analytic leaf.  Its remaining
+far-side open coordinate is the selected horizontal curvature constant `CH`;
+the zero-shell payment itself is already compiled.
+
+The normalized compensation audit also rules out a false Fourier-decay shortcut:
+at the fixed normalized boundary q=+/-eta0 the centered Abel channel starts at
+the physical r^-2 scale, whereas the quartic target is r^-6.  The compensation
+producer must therefore obtain four additional powers by genuine cancellation
+or sign, not merely by sending the Fourier frequency to infinity.
+
+The live A2 leaves are now exactly:
+
+1. compare the leading sixth/eighth constants, the positive smooth-mu gain, and
+   the instantiated expanded-zero-count envelope on the selected witness;
+2. prove a selected `HorizontalFarCurvatureBound CH` sharp enough for the
+   already-written FarExact shell compiler;
+3. prove the explicit completed compensation lower bound, preserving the
+   same-object N-mu cancellation;
+4. combine those with the already-instantiated vertical/count error bounds and
+   either prove the strict scalar or prove an eventual reverse/no-go inequality
+   and retire A2.
+
+No stronger terminal certificate should be introduced if those constants fail.
 
 ## Route B: signed fifth
 
@@ -112,24 +160,25 @@ The exact signed scalar is
     = Credit_n - Debt_n + OuterBudget - 3 eps
     = signedFifthPhysicalCapInteriorAt n + OuterBudget - 3 eps
 
-at sufficiently large finite cutoff.  Therefore the only genuinely signed
-correlation theorem is eventual `gap >= 0`; separate credit/debt estimates are
-optional.
+at sufficiently large finite cutoff.  Separate credit/debt estimates are
+optional because the signed physical cap is the useful cancellation object.
 
-However, `SignedFifthAnalyticInput` also requires two independent auxiliary
-limits which must not be silently counted as paid:
+The cutoff ownership itself is now `K`: for every fixed t,
+`quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n:Real)` holds eventually
+by the Archimedean property of natural cutoffs.  It is not an analytic premise.
 
-* eventual upper-boundary decay
-    `|signedFifthCapUpperBoundaryAt n| <= eps`;
-* convergence of `quarticScaleOuterTerminalAt` to the canonical signed high
-  residual.
+`signedFifthAnalyticInput_of_three_producers` therefore exposes exactly three
+remaining analytic producers:
 
-`signedFifthAnalyticInput_of_eventual_direct_gap` now exposes the exact honest
-compiler: positive eps + boundary decay + large-cutoff ownership + eventual
-signed gap + outer convergence imply the existing Route-B analytic input.
-Until boundary decay and outer convergence are independently discharged for the
-selected witness, eventual `G_n >= 0` is the final signed inequality but not the
-entire Route-B closure.
+1. eventual upper-boundary decay
+     `|signedFifthCapUpperBoundaryAt n| <= eps`;
+2. eventual direct signed-gap nonnegativity
+     `0 <= signedFifthCorrelationGapAt rho EV eps n`;
+3. convergence of `quarticScaleOuterTerminalAt` to the canonical signed high
+   residual.
+
+Once those are proved for the same selected witness, the existing terminal
+consumer closes Route B.  Until then they remain independent `O` leaves.
 
 ## Downstream
 

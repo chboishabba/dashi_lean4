@@ -21,6 +21,8 @@ on:
       - "Integration/E6Minuscule27LiteralRecognitionRegression.lean"
       - "Integration/E6Minuscule27SchlafliRecognition.lean"
       - "Integration/E6Minuscule27SchlafliRecognitionRegression.lean"
+      - "Integration/E6Minuscule27SameObject.lean"
+      - "Integration/E6Minuscule27SameObjectRegression.lean"
       - "Integration/E8TernaryBranchingActionObstruction.lean"
       - "Integration/E8TernaryBranchingActionObstructionRegression.lean"
       - "Integration/E8LiteralMixed27Fibres.lean"
@@ -78,6 +80,8 @@ jobs:
           lake env lean Integration/E6Minuscule27LiteralRecognitionRegression.lean
           lake env lean Integration/E6Minuscule27SchlafliRecognition.lean
           lake env lean Integration/E6Minuscule27SchlafliRecognitionRegression.lean
+          lake env lean Integration/E6Minuscule27SameObject.lean
+          lake env lean Integration/E6Minuscule27SameObjectRegression.lean
       - name: Check E8 branching action obstruction and 27 fibres
         run: |
           lake env lean Integration/E8TernaryBranchingActionObstruction.lean

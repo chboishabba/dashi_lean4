@@ -25,4 +25,13 @@ example
     HalfRateMatrixBound T left right :=
   halfRateMatrixBound_of_mem_span T v hgen hleft hright
 
+example
+    {State Obs H : Type*}
+    [MeasurableSpace State] [TopologicalSpace State] [OpensMeasurableSpace State]
+    [NormedAddCommGroup H] [InnerProductSpace ℝ H]
+    (weld : SameHDenseWilsonMixedHalfRateWeld State Obs H)
+    (v : H) (hv : v ≠ 0) :
+    ∃ w ∈ Submodule.span ℝ (Set.range weld.vector), ⟪w, v⟫_ℝ ≠ 0 :=
+  weld.detects_nonzero v hv
+
 end RequestProject.YangMills

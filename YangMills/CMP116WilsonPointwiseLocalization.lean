@@ -99,7 +99,9 @@ theorem finite_half_rate
         source.clusterWeight cutoff left right c|
         ≤ ∑ c ∈ source.connectingClusters cutoff left right,
             |source.clusterWeight cutoff left right c| := by
-          exact abs_sum_le_sum_abs _ _
+          exact Finset.abs_sum_le_sum_abs
+            (source.clusterWeight cutoff left right)
+            (source.connectingClusters cutoff left right)
     _ ≤ (1 / 4 : ℝ) * (1 / 2 : ℝ) ^ time :=
       source.aggregate_connecting_weight_bound cutoff left right time
 

@@ -1,10 +1,24 @@
-import Integration.E6MinusculeWeightModule
-import Integration.AlbertJordanAutomorphism
+import Integration.AlbertLinearMinusculeTransport
 
 namespace Integration.AlbertLinearMinusculeTransportRegression
 
--- RED-first: any finite 27-dimensional real Albert carrier should admit a
--- purely linear equivalence to the canonical minuscule coordinate module, but
--- exceptional/Jordan compatibility must remain a separate obligation.
+open Integration.E6Minuscule27SchlafliRecognition
+open Integration.E6MinusculeWeightModule
+open Integration.AlbertLinearMinusculeTransport
+
+variable {J : Type*} [AddCommGroup J] [Module ℝ J] [Module.Finite ℝ J]
+
+example (hJ : Module.finrank ℝ J = 27) : Nonempty (J ≃ₗ[ℝ] MinusculeModule) :=
+  linear_transport_exists hJ
+
+example (e : J ≃ₗ[ℝ] MinusculeModule) :
+    Function.Injective (transportedWeightLine e) :=
+  transportedWeightLine_injective e
+
+example : canonicalBoundary.linearEquivalenceFromFinrank27Paid = true := rfl
+example : canonicalBoundary.twentySevenDistinctTransportedLinesPaid = true := rfl
+example : canonicalBoundary.conjugatedLinearE6ActionTyped = true := rfl
+example : canonicalBoundary.exceptionalJordanCompatibilityTyped = true := rfl
+example : canonicalBoundary.exceptionalJordanCompatibilityPaidHere = false := rfl
 
 end Integration.AlbertLinearMinusculeTransportRegression

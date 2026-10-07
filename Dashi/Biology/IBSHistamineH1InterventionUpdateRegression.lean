@@ -1,0 +1,8 @@
+import Dashi.Biology.IBSHistamineH1InterventionUpdateExact
+
+namespace Dashi.Biology.IBSHistamineH1InterventionUpdateRegression
+open Dashi.Biology.IBSHistamineH1InterventionUpdateExact
+example : H1InterventionReceipt := decraecker2024Receipt
+example : H1InterventionReceipt := pia2026Receipt
+example : IBSHistamineH1InterventionBoundary := canonicalIBSHistamineH1InterventionBoundary
+end Dashi.Biology.IBSHistamineH1InterventionUpdateRegression

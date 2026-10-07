@@ -90,4 +90,22 @@ theorem contDiffOn_leanFieldToComparator
   intro z hz
   exact (pairToLeanSpacetime_nonnegative_iff z).2 hz
 
+/-! ## Spatial translations -/
+
+/-- A LeanDojo spatial standard-basis translation leaves the time coordinate
+unchanged. -/
+@[simp] theorem time_add_int_spatialBasis
+    (z : Spacetime3) (i : Fin 3) (n : ℤ) :
+    time (z + n • standard_basis (n := 4) i.succ) = time z := by
+  simp [time, standard_basis]
+
+/-- Under `space`, the same four-dimensional translation is exactly the
+corresponding three-dimensional integer basis translation. -/
+@[simp] theorem space_add_int_spatialBasis
+    (z : Spacetime3) (i : Fin 3) (n : ℤ) :
+    space (z + n • standard_basis (n := 4) i.succ) =
+      space z + n • standard_basis (n := 3) i := by
+  ext j
+  simp [space, standard_basis]
+
 end DASHILiteralClayNS

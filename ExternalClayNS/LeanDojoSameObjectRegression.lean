@@ -1,4 +1,4 @@
-import LeanDojoSameObject
+import LeanDojoExactTerminal
 
 /-!
 Regression surface for the literal same-object Navier--Stokes external weld.
@@ -15,6 +15,8 @@ namespace DASHILiteralClayNS
 #check pairToLeanSpacetime_rightInverse
 #check comparatorInitialDecay_to_leanDojo
 #check comparatorInitialPeriodic_to_leanDojo
+#check comparatorForceDecay_to_leanDojo
+#check comparatorPeriodicForceDecay_to_leanDojo
 #check leanDojoR3Solution_to_comparator
 #check leanDojoPeriodicSolution_to_comparator
 #check dashiExactFeffermanC

@@ -1,0 +1,27 @@
+External donor: Cobord/JordanAlgebra
+Repository: https://github.com/Cobord/JordanAlgebra
+Pinned commit: a4b0d58554732ced63b4217200baa56be5a2c3d5
+Pinned upstream Lean toolchain: leanprover/lean4:v4.31.0
+Pinned upstream mathlib: v4.31.0
+DASHI Lean toolchain at branch creation: leanprover/lean4:v4.35.0-rc3
+
+Authority / attribution:
+- Cobord/JordanAlgebra owns its Jordan/octonion/Albert formalization.
+- DASHI owns only the immutable pin, source audit, compatibility boundary, generic decomposition theorems, and later adapters.
+- No upstream source is copied into DASHI by this tranche.
+
+License boundary:
+- GitHub repository metadata exposes no declared license at the pinned revision.
+- Therefore DASHI does not vendor source text into its own namespace; it tracks the repository as a git submodule and treats it as an external proof artifact.
+
+Source surface audited at the pin:
+- Octonion.AlbertAlgebra = 3x3 Hermitian octonionic matrices.
+- Octonion.albertEquiv gives the R-linear decomposition into three scalar diagonals plus three octonions.
+- Octonion.ofAlbert constructs a JordanAlgebra instance under the donor's regularity hypotheses.
+- Octonion.trace is the sum of three diagonal coordinates.
+- Octonion.det is the Freudenthal/Jordan cubic-form determinant formula.
+- Octonion.detTrace packages rank 3, trace, det, det_smul, trace_one, and det_one under formal-reality hypotheses.
+
+Important donor boundary:
+- The donor explicitly states that further multiplicative/full cubic-form identities for det are not proved there.
+- No E6 representation, F4 automorphism-group identification, minuscule-weight-line realization, or DASHI ternary/E8 weld is supplied by the donor.

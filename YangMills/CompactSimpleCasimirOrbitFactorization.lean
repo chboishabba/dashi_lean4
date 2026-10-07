@@ -37,7 +37,7 @@ def scale (C : ℝ) (orbit : FourOrbitScalar) : FourOrbitScalar where
 
 /-- Applying the Casimir per orbit equals applying it once to the universal sum. -/
 theorem total_scale (C : ℝ) (orbit : FourOrbitScalar) :
-    (orbit.scale C).total = C * orbit.total := by
+    (scale C orbit).total = C * orbit.total := by
   simp [total, scale]
   ring
 

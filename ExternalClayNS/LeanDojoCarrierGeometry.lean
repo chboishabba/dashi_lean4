@@ -63,6 +63,25 @@ when its time coordinate is nonnegative. -/
       0 ≤ t := by
   simp [NavierStokes.global_spacetime_domain, NavierStokes.spacetime_point]
 
+/-- The fixed pair-to-ambient coordinate embedding is smooth. -/
+theorem leanDojoPairEmbedding_contDiff :
+    ContDiff ℝ ∞ (fun z : R3 × ℝ =>
+      NavierStokes.spacetime_point z.2 z.1) := by
+  unfold NavierStokes.spacetime_point
+  fun_prop
+
+/-- Pull any ambient smooth field back to ClaySpec's pair-spacetime carrier.
+This is a generic coordinate theorem, not a fluid theorem. -/
+theorem leanDojoSmooth_to_pair
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {g : Spacetime3 → E}
+    (hg : ContDiffOn ℝ ∞ g (NavierStokes.global_spacetime_domain 3)) :
+    ClaySpec.TrustBoundarySmoothOn (leanDojoFieldToPair g) := by
+  unfold ClaySpec.TrustBoundarySmoothOn leanDojoFieldToPair
+  exact hg.comp leanDojoPairEmbedding_contDiff.contDiffOn (by
+    intro z hz
+    exact (spacetime_point_mem_global_iff z.2 z.1).2 hz)
+
 /-- ClaySpec and LeanDojo use the same literal `R3` standard basis in their
 initial divergence sums. -/
 theorem clayInitialDivergenceFree_to_leanDojo

@@ -11,6 +11,7 @@ on:
       - 'Integration/OggSSP2BMonster2LocalThree276Source.lean'
       - 'Integration/OggSSP2BFi22d2NaturalTenSource.lean'
       - 'Integration/OggSSP2BMonsterGF2RepresentationSource.lean'
+      - 'Integration/OggSSP2BIteratedTateDefectDetector.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
       - 'Integration/OggSSP2BCompletionAcquisitionFrontier.lean'
@@ -22,6 +23,7 @@ on:
       - 'Integration/OggSSP2BMonster2LocalThree276Source.lean'
       - 'Integration/OggSSP2BFi22d2NaturalTenSource.lean'
       - 'Integration/OggSSP2BMonsterGF2RepresentationSource.lean'
+      - 'Integration/OggSSP2BIteratedTateDefectDetector.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
       - 'Integration/OggSSP2BCompletionAcquisitionFrontier.lean'
@@ -48,6 +50,7 @@ jobs:
           lake env lean Integration/OggSSP2BMonster2LocalThree276Source.lean
           lake env lean Integration/OggSSP2BFi22d2NaturalTenSource.lean
           lake env lean Integration/OggSSP2BMonsterGF2RepresentationSource.lean
+          lake env lean Integration/OggSSP2BIteratedTateDefectDetector.lean
           lake env lean Integration/OggSSP2BActualStableCompletionSubquotient.lean
           lake env lean Integration/OggSSP2BPostBrauerFinalCompiler.lean
           lake env lean Integration/OggSSP2BCompletionAcquisitionFrontier.lean

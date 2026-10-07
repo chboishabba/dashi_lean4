@@ -83,10 +83,11 @@ jobs:
         run: |
           set -euo pipefail
           lake update
-          DASHI_LEAN_PATH="$(lake env printenv LEAN_PATH)"
-          env LEAN_PATH="$PWD/vendor/LeanMillenniumPrizeProblems:$DASHI_LEAN_PATH" \
-            lake env lean MillenniumExternal/ExactTargetSurface.lean \
-            2>&1 | tee millennium-external-same-kernel.log
+          lake env bash -c '
+            set -euo pipefail
+            export LEAN_PATH="$PWD/vendor/LeanMillenniumPrizeProblems:$LEAN_PATH"
+            lean MillenniumExternal/ExactTargetSurface.lean
+          ' 2>&1 | tee millennium-external-same-kernel.log
 
       - name: Build DASHI terminal census and axiom audit
         shell: bash

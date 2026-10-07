@@ -4,11 +4,10 @@ on:
   push:
     branches:
       - agent/millennium-external-target-adapters-20261006
-      - agent/millennium-submission-maxcut-20261007
+      - agent/millennium-submission-maxcut-restacked-20261007
     paths:
       - 'MillenniumExternal/**'
       - 'ExternalClayNS/LeanDojoTargetBridge.lean'
-      - 'ExternalClayNS/LeanDojoCarrierGeometry.lean'
       - 'ExternalClayNS/LeanDojoCComparatorBridge.lean'
       - 'scripts/vendor_millennium_targets.sh'
       - 'scripts/audit_millennium_external_targets.py'
@@ -24,7 +23,6 @@ on:
     paths:
       - 'MillenniumExternal/**'
       - 'ExternalClayNS/LeanDojoTargetBridge.lean'
-      - 'ExternalClayNS/LeanDojoCarrierGeometry.lean'
       - 'ExternalClayNS/LeanDojoCComparatorBridge.lean'
       - 'scripts/vendor_millennium_targets.sh'
       - 'scripts/audit_millennium_external_targets.py'
@@ -111,7 +109,6 @@ jobs:
               set -euo pipefail
               export LEAN_PATH="$PWD/../vendor/LeanMillenniumPrizeProblems:$LEAN_PATH"
               lean LeanDojoTargetBridge.lean
-              lean LeanDojoCarrierGeometry.lean
               lean LeanDojoCComparatorBridge.lean
             '
           ) 2>&1 | tee millennium-external-ns-leandojo.log

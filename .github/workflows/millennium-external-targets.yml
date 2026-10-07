@@ -37,8 +37,7 @@ on:
 
 permissions:
   contents: read
-
-concurrency:
+nconcurrency:
   group: millennium-external-${{ github.ref }}
   cancel-in-progress: true
 
@@ -111,6 +110,7 @@ jobs:
               lean LeanDojoBoundaryExtension.lean
               lean LeanDojoSameObjectCore.lean
               lean LeanDojoCoordinateLinearEquiv.lean
+              lean LeanDojoJetTransport.lean
               lean LeanDojoSameObject.lean
               lean LeanDojoForceTransport.lean
               lean LeanDojoSolutionTransport.lean

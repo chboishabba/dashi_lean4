@@ -27,6 +27,8 @@ on:
       - "Integration/E6Minuscule27SameObjectRegression.lean"
       - "Integration/Ternary27HyperformSchlafliRecognition.lean"
       - "Integration/Ternary27HyperformSchlafliRecognitionRegression.lean"
+      - "Integration/Ternary27A5SixFaceReorganisation.lean"
+      - "Integration/Ternary27A5SixFaceReorganisationRegression.lean"
       - "Integration/E8TernaryBranchingActionObstruction.lean"
       - "Integration/E8TernaryBranchingActionObstructionRegression.lean"
       - "Integration/E8LiteralMixed27Fibres.lean"
@@ -78,7 +80,7 @@ jobs:
           lake env lean Integration/E6F3GeneratedGroupClosureRegression.lean
           lake env lean Integration/E6RootStabilizerA5SixSet.lean
           lake env lean Integration/E6RootStabilizerA5SixSetRegression.lean
-      - name: Check literal E8 E6-sector action and minuscule geometry
+      - name: Check literal E8 E6-sector action and typed ternary27 geometry
         run: |
           lake env lean Integration/E6LiteralE8Action.lean
           lake env lean Integration/E6LiteralE8ActionRegression.lean
@@ -90,6 +92,8 @@ jobs:
           lake env lean Integration/E6Minuscule27SameObjectRegression.lean
           lake env lean Integration/Ternary27HyperformSchlafliRecognition.lean
           lake env lean Integration/Ternary27HyperformSchlafliRecognitionRegression.lean
+          lake env lean Integration/Ternary27A5SixFaceReorganisation.lean
+          lake env lean Integration/Ternary27A5SixFaceReorganisationRegression.lean
       - name: Check E8 branching action obstruction and 27 fibres
         run: |
           lake env lean Integration/E8TernaryBranchingActionObstruction.lean

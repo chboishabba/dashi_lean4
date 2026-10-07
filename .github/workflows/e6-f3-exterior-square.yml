@@ -15,6 +15,8 @@ on:
       - "Integration/E6F3OrbitTransitivityRegression.lean"
       - "Integration/E6F3GeneratedGroupClosure.lean"
       - "Integration/E6F3GeneratedGroupClosureRegression.lean"
+      - "Integration/E6RootStabilizerA5SixSet.lean"
+      - "Integration/E6RootStabilizerA5SixSetRegression.lean"
       - "Integration/E6LiteralE8Action.lean"
       - "Integration/E6LiteralE8ActionRegression.lean"
       - "Integration/E6Minuscule27LiteralRecognition.lean"
@@ -23,6 +25,8 @@ on:
       - "Integration/E6Minuscule27SchlafliRecognitionRegression.lean"
       - "Integration/E6Minuscule27SameObject.lean"
       - "Integration/E6Minuscule27SameObjectRegression.lean"
+      - "Integration/Ternary27HyperformSchlafliRecognition.lean"
+      - "Integration/Ternary27HyperformSchlafliRecognitionRegression.lean"
       - "Integration/E8TernaryBranchingActionObstruction.lean"
       - "Integration/E8TernaryBranchingActionObstructionRegression.lean"
       - "Integration/E8LiteralMixed27Fibres.lean"
@@ -68,10 +72,12 @@ jobs:
         run: |
           lake env lean Integration/E6F3OrbitTransitivity.lean
           lake env lean Integration/E6F3OrbitTransitivityRegression.lean
-      - name: Check generated E6 image closure and stabilizer
+      - name: Check generated E6 image closure and six-object A5 stabilizer
         run: |
           lake env lean Integration/E6F3GeneratedGroupClosure.lean
           lake env lean Integration/E6F3GeneratedGroupClosureRegression.lean
+          lake env lean Integration/E6RootStabilizerA5SixSet.lean
+          lake env lean Integration/E6RootStabilizerA5SixSetRegression.lean
       - name: Check literal E8 E6-sector action and minuscule geometry
         run: |
           lake env lean Integration/E6LiteralE8Action.lean
@@ -82,6 +88,8 @@ jobs:
           lake env lean Integration/E6Minuscule27SchlafliRecognitionRegression.lean
           lake env lean Integration/E6Minuscule27SameObject.lean
           lake env lean Integration/E6Minuscule27SameObjectRegression.lean
+          lake env lean Integration/Ternary27HyperformSchlafliRecognition.lean
+          lake env lean Integration/Ternary27HyperformSchlafliRecognitionRegression.lean
       - name: Check E8 branching action obstruction and 27 fibres
         run: |
           lake env lean Integration/E8TernaryBranchingActionObstruction.lean

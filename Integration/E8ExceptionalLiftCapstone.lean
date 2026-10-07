@@ -12,49 +12,19 @@ import Integration.Ternary27HyperformSchlafliRecognition
 import Mathlib
 
 /-!
-# Exceptional-lift capstone: E6/F3 -> literal E8 -> typed ternary 27
+# Historical exceptional-lift capstone
 
-This owner records the strongest currently paid exceptional-geometry spine
-without promoting the remaining algebraic/action seams.
+This file retains the earlier theorem surface for downstream compatibility.
+Its old frontier has now been superseded by:
 
-Paid independently in the imported owners:
+  `Integration.E8StructuredExceptionalLiftFinalMaxCut`
 
-* the five-dimensional mod-3 E6 action has exact quadratic strata 1/80/90/72;
-* its six simple generators close to an exact 51,840-element matrix image;
-* an explicit A5 root subsystem orthogonal to a chosen E6 root acts on the
-  minuscule +1 six-set as five transpositions and closes to all 720
-  permutations, paying the concrete `W(A5) = S6` six-object action model;
-* the literal E8 root system branches under the selected `E6 x A2` subsystem as
-  72 E6 roots, 6 A2 roots, and six E6-stable 27-point mixed fibres;
-* all six mixed fibres are transitive under the literal E6 reflection relation;
-* each mixed 27-fibre carries the Schlaefli `SRG(27,16,10,8)` relation;
-* the three positive fibres are exactly the E6 minuscule `omega5` weight orbit,
-  while the three negative fibres are exactly the `omega0` orbit;
-* the Schlaefli relation itself is recovered from the invariant E6 minuscule
-  weight pairing;
-* for the canonical plus fibre, the pre-existing Dynkin-label map is an actual
-  carrier equivalence with the omega5 minuscule orbit, preserving the Schlaefli
-  relation and intertwining the independent reflection relations;
-* the bare additive `F3^3` translation structure cannot realize the Schlaefli
-  relation by an undirected translation-invariant Cayley graph;
-* nevertheless an explicit absolute six-face/stratum chart on the same 27 raw
-  ternary coordinates gives the classical `6+15+6` Schlaefli presentation,
-  proves `SRG(27,16,10,8)`, and is bijective with the omega5 minuscule orbit at
-  relation level.  An explicit counterexample proves this relation is not
-  translation invariant, so the positive result is consistent with the Cayley
-  obstruction.
+which additionally pays the selected matrix-stabilizer/face-S6 same-object weld,
+the full 51,840 matrix/ternary-27 synchronized action, Coxeter coherence, the
+gauge-free 72-chart atlas, and the structured 240-state E6 x A2 branching.
 
-Still open:
-
-* an independently pre-existing E6 action on the raw ternary/hyperfabric 27
-  that intertwines the minuscule action; the current relation chart does not
-  manufacture that action by transport;
-* the same-object conjugacy/intertwiner between the independently selected Q=2
-  matrix stabilizer and the explicit A5/S6 six-set action;
-* an Albert/Jordan algebra realization on the recognized E6 minuscule carrier,
-  including product/unit/cubic-norm/F4 data;
-* a full ternary 240-state same-action recognition with the literal E8 roots;
-* any claim that carrier cardinalities alone realize F4/E6/E7/E8 structure.
+Do not use the historical false frontier flags below as the current project
+status; they record what this older tranche itself did not manufacture.
 -/
 
 namespace Integration.E8ExceptionalLiftCapstone
@@ -99,16 +69,13 @@ theorem e6_a5_six_object_sym6_action_paid :
     a5GeneratedTables = allSym6Tables :=
   a5_generated_tables_are_exactly_sym6
 
-theorem canonical_mixed_fibre_card_paid : Fintype.card Plus0 = 27 :=
-  plus0_card
+theorem canonical_mixed_fibre_card_paid : Fintype.card Plus0 = 27 := plus0_card
 
 theorem canonical_mixed_fibre_schlafli_degree_paid :
-    ∀ x : Plus0, schlafliDegree x = 16 :=
-  plus0_degree_16
+    ∀ x : Plus0, schlafliDegree x = 16 := plus0_degree_16
 
 theorem canonical_mixed_fibre_minuscule_weight_recognition_paid :
-    plus0LabelSet = minusculeOmega5Set :=
-  plus0_labels_eq_omega5
+    plus0LabelSet = minusculeOmega5Set := plus0_labels_eq_omega5
 
 theorem canonical_mixed_fibre_minuscule_relation_recognition_paid :
     ∀ x y : Plus0,
@@ -117,18 +84,14 @@ theorem canonical_mixed_fibre_minuscule_relation_recognition_paid :
   plus0_schlafli_iff_minuscule_pairing
 
 theorem canonical_mixed_fibre_minuscule_same_object_paid :
-    Function.Bijective plus0ToOmega5 :=
-  plus0_to_omega5_bijective
+    Function.Bijective plus0ToOmega5 := plus0_to_omega5_bijective
 
 theorem bare_ternary_translation_route_blocked :
     ∀ mask : Finset Direction, ¬ SchlafliOriginProfile mask :=
   no_translation_invariant_schlafli
 
-/-- Positive counterpart to the Cayley no-go: the absolute typed 27 chart is a
-bijection to the minuscule orbit and carries the Schlaefli relation. -/
 theorem typed_ternary27_minuscule_relation_same_object_paid :
-    Function.Bijective pointToOmega5 :=
-  point_to_omega5_bijective
+    Function.Bijective pointToOmega5 := point_to_omega5_bijective
 
 theorem typed_ternary27_schlafli_degree_paid :
     ∀ x : Ternary27Point, pointDegree pointSchlafli x = 16 :=
@@ -139,28 +102,11 @@ theorem typed_ternary27_relation_not_translation_invariant_paid :
       pointSchlafli x y ≠ pointSchlafli (pointAdd x t) (pointAdd y t) :=
   typed_schlafli_is_not_translation_invariant
 
-inductive FullTernary240SameActionRecognitionPaid : Prop
-inductive Albert27AlgebraRecognitionPaid : Prop
-inductive IndependentRawTernary27E6ActionPaid : Prop
-inductive SelectedQ2StabilizerA5SameObjectPaid : Prop
-
-theorem full_ternary_240_same_action_not_manufactured :
-    ¬ FullTernary240SameActionRecognitionPaid := by intro h; cases h
-
-theorem albert_27_algebra_not_manufactured :
-    ¬ Albert27AlgebraRecognitionPaid := by intro h; cases h
-
-theorem independent_raw_ternary_e6_action_not_manufactured :
-    ¬ IndependentRawTernary27E6ActionPaid := by intro h; cases h
-
-theorem selected_q2_stabilizer_weld_not_manufactured :
-    ¬ SelectedQ2StabilizerA5SameObjectPaid := by intro h; cases h
-
+/-- Historical tranche-local boundary only. -/
 structure Boundary where
   e6FiveDimensionalOrbitPartitionPaid : Bool
   e6GeneratedImageOrder51840Paid : Bool
   a5SixObjectSym6ActionPaid : Bool
-  selectedQ2StabilizerA5SameObjectPaid : Bool
   e6SectorLiteralActionPaid : Bool
   sixMixed27FibresTyped : Bool
   sixMixed27FibresTransitivePaid : Bool
@@ -172,18 +118,14 @@ structure Boundary where
   typedTernary27AbsoluteSchlafliChartPaid : Bool
   typedTernary27MinusculeRelationSameObjectPaid : Bool
   typedTernary27RelationTranslationInvariant : Bool
-  independentRawTernary27E6ActionPaid : Bool
   countMatchedTernaryBranchingActionObstructionPaid : Bool
-  fullTernary240SameActionRecognitionPaid : Bool
-  albert27AlgebraRecognitionPaid : Bool
-  cardinalityAloneCreatesExceptionalRecognition : Bool
+  supersededByStructuredFinalMaxCut : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
   e6FiveDimensionalOrbitPartitionPaid := true
   e6GeneratedImageOrder51840Paid := true
   a5SixObjectSym6ActionPaid := true
-  selectedQ2StabilizerA5SameObjectPaid := false
   e6SectorLiteralActionPaid := true
   sixMixed27FibresTyped := true
   sixMixed27FibresTransitivePaid := true
@@ -195,10 +137,7 @@ def canonicalBoundary : Boundary where
   typedTernary27AbsoluteSchlafliChartPaid := true
   typedTernary27MinusculeRelationSameObjectPaid := true
   typedTernary27RelationTranslationInvariant := false
-  independentRawTernary27E6ActionPaid := false
   countMatchedTernaryBranchingActionObstructionPaid := true
-  fullTernary240SameActionRecognitionPaid := false
-  albert27AlgebraRecognitionPaid := false
-  cardinalityAloneCreatesExceptionalRecognition := false
+  supersededByStructuredFinalMaxCut := true
 
 end Integration.E8ExceptionalLiftCapstone

@@ -25,6 +25,8 @@ on:
       - "Integration/E8LiteralMixed27TransitivityRegression.lean"
       - "Integration/E8LiteralMixed27Schlafli.lean"
       - "Integration/E8LiteralMixed27SchlafliRegression.lean"
+      - "Integration/E8Mixed27TernaryTranslationObstruction.lean"
+      - "Integration/E8Mixed27TernaryTranslationObstructionRegression.lean"
       - "Integration/E8ExceptionalLiftCapstone.lean"
       - "Integration/E8ExceptionalLiftCapstoneRegression.lean"
       - "Integration/GeometricReasoningEverything.lean"
@@ -78,6 +80,8 @@ jobs:
           lake env lean Integration/E8LiteralMixed27TransitivityRegression.lean
           lake env lean Integration/E8LiteralMixed27Schlafli.lean
           lake env lean Integration/E8LiteralMixed27SchlafliRegression.lean
+          lake env lean Integration/E8Mixed27TernaryTranslationObstruction.lean
+          lake env lean Integration/E8Mixed27TernaryTranslationObstructionRegression.lean
           lake env lean Integration/E8ExceptionalLiftCapstone.lean
           lake env lean Integration/E8ExceptionalLiftCapstoneRegression.lean
       - name: Check geometric reasoning rollup

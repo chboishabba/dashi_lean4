@@ -133,6 +133,19 @@ def PreservesTransportedAlbert
     (transportAlbertStructure A e).cubic (g x) =
       (transportAlbertStructure A e).cubic x)
 
+/-- A preservation receipt is exactly enough to promote an independently
+defined linear equivalence to a structural Jordan automorphism of the
+transported Albert algebra. -/
+noncomputable def jordanAutomorphismOfPreserves
+    (A : AlbertStructure J) (e : J ≃ₗ[ℝ] V)
+    (g : V ≃ₗ[ℝ] V) (h : PreservesTransportedAlbert A e g) :
+    JordanAutomorphism (transportAlbertStructure A e) where
+  toLinearEquiv := g
+  map_unit := h.1
+  map_jordan := h.2.1
+  map_trace := h.2.2.1
+  map_cubic := h.2.2.2
+
 /-- Exact exceptional compatibility target for the already-paid simple E6
 coordinate action. -/
 structure MinusculeAlbertE6Compatibility
@@ -141,6 +154,18 @@ structure MinusculeAlbertE6Compatibility
   e : J ≃ₗ[ℝ] MinusculeModule
   simpleReflectionsPreserveAlbert :
     ∀ s, PreservesTransportedAlbert A e (e6WeightLinearAction s)
+
+/-- Once the compatibility object exists, each independently defined E6 simple
+reflection is an actual Jordan automorphism of the same transported Albert
+structure. -/
+noncomputable def e6JordanAutomorphismOfCompatibility
+    (A : AlbertStructure J) [Module.Finite ℝ J]
+    (hJ : Module.finrank ℝ J = 27)
+    (C : MinusculeAlbertE6Compatibility A hJ)
+    (s : E6SimpleReflection) :
+    JordanAutomorphism (transportAlbertStructure A C.e) :=
+  jordanAutomorphismOfPreserves A C.e (e6WeightLinearAction s)
+    (C.simpleReflectionsPreserveAlbert s)
 
 inductive TransportedAlbertCreatesIndependentE6Compatibility : Prop
 
@@ -153,6 +178,8 @@ structure Boundary where
   jordanAutomorphismTransportPaid : Bool
   minusculeModuleAlbertStructureExistsFromAnyActualAlbert27 : Bool
   exactE6CompatibilityPredicateTyped : Bool
+  preservationReceiptCompilesToJordanAutomorphism : Bool
+  e6CompatibilityCompilesToSimpleJordanAutomorphisms : Bool
   independentE6CompatibilityPaidHere : Bool
   deriving Repr
 
@@ -161,6 +188,8 @@ def canonicalBoundary : Boundary where
   jordanAutomorphismTransportPaid := true
   minusculeModuleAlbertStructureExistsFromAnyActualAlbert27 := true
   exactE6CompatibilityPredicateTyped := true
+  preservationReceiptCompilesToJordanAutomorphism := true
+  e6CompatibilityCompilesToSimpleJordanAutomorphisms := true
   independentE6CompatibilityPaidHere := false
 
 end Integration.AlbertStructureTransport

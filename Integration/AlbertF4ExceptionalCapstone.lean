@@ -1,4 +1,5 @@
 import Integration.AlbertExternalDonor
+import Integration.AlbertDonorDeterminantAudit
 import Integration.AlbertScalarTraceless
 import Integration.AlbertJordanAutomorphism
 import Integration.AlbertMinusculeWeightLines
@@ -9,7 +10,12 @@ import Integration.TernaryAlbertLinearBasisWeld
 import Integration.E6F4WeylFold
 import Integration.E6F4ShortRootRecognition
 import Integration.F4MinusculeOnePlus26
+import Integration.F4D4TrialityAlbertShape
+import Integration.F4FiniteInvariantNonuniqueness
+import Integration.AlbertTrialityCubicCompiler
+import Integration.AlbertCubicRigidity
 import Integration.AlbertF4CompatibilityTerminal
+import Integration.AlbertF4ReducedTerminal
 import Integration.T5Relative240E6ActionObstruction
 import Integration.E8ExceptionalLiftCapstone
 import Integration.T5E8IntrinsicRecognitionGate
@@ -17,53 +23,42 @@ import Integration.T5E8IntrinsicRecognitionGate
 /-!
 # Albert / F4 exceptional max-cut capstone
 
-Authoritative boundary after the E6-minuscule-27 lift, finite E6->F4 fold,
-and all linear/algebra-transport reductions available without the final
-same-object exceptional compatibility theorem.
+The finite/representation side is now almost completely paid:
 
-Paid before / upstream:
-* literal mixed E8 fibre ≃ E6 omega5 minuscule weight orbit;
-* reflection-relation intertwining and Schlaefli relation;
-* structured ternary-27 relation-level recognition.
+* literal E8 mixed 27 <-> E6 minuscule 27;
+* structured ternary 27 -> Schlaefli/minuscule relation geometry;
+* canonical 27-dimensional minuscule module and transported weight lines;
+* exact scalar/traceless `27 = 1 + 26` theorem;
+* folded Weyl image of order 1152 with F4 Coxeter/root signature;
+* restriction `27 -> 24 + 3`, with the three zero lines carrying S3;
+* exact W(D4) kernel order 192 and three 8-weight triality sectors, giving the
+  finite Albert coordinate anatomy `3 + 8 + 8 + 8`;
+* full abstract Albert structure transport and terminal compilers;
+* natural relative-T5 240 same-action E8 route refuted by E6 non-invariance.
 
-Paid in this branch:
-* exact external Albert donor pinned and source-audited for H3(O), Jordan
-  product, normalized trace and Freudenthal/Jordan cubic determinant;
-* native scalar/traceless theorem `J ≃ₗ[ℝ] ℝ × ker(trace)` and
-  `finrank J = 27 -> finrank ker(trace) = 26`;
-* structural Jordan automorphism target and exact restriction to J0;
-* canonical 27-dimensional minuscule module, its 27 coordinate weight lines,
-  and finite E6 simple-reflection linear action;
-* arbitrary 27-dimensional J is linearly equivalent to that minuscule module;
-* the *entire* theorem-facing Albert product/unit/trace/cubic structure and its
-  automorphisms transport exactly across any such linear equivalence;
-* actual typed ternary origin + 26 non-origin split and a linear basis transport
-  to any 26-dimensional traceless carrier;
-* finite E6 diagram fold has exact image order 1152, F4 Coxeter/Cartan
-  signature and a 48-root system;
-* restricted E6 minuscule weights are exactly 24 F4 short roots plus three
-  folded-zero weight lines;
-* those three zero lines carry S3, giving a fixed all-ones line plus a
-  two-dimensional sum-zero plane and therefore a finite W(F4)-invariant
-  `27 = 1 + (24+2) = 1+26` decomposition;
-* a terminal compatibility object now names the only same-object data still
-  needed to turn those finite folded operators into actual Jordan
-  automorphisms: actual unit=finite unit, actual trace=finite trace, and product/
-  cubic preservation for the four folded generators;
-* any such compatibility receipt automatically compiles to genuine Jordan
-  automorphisms on the same 26-dimensional traceless carrier;
-* canonical relative T5 240 is not invariant under the paid E6 action, so the
-  natural same-action E8 recognition route is blocked.
+A new audit also finds that the pinned donor's current cubic cross-term is not
+promotable as the canonical Albert determinant: on an associative complex
+subalgebra an explicit zero-diagonal Hermitian example has ordinary determinant
+18 while the donor source expression evaluates to 6.  The donor remains a real
+source of H3(O), Jordan identity, trace, triality machinery, and a *candidate*
+cubic formula, but that cubic now requires repair before use as an Albert norm.
 
-The genuinely remaining wall is therefore the terminal compatibility receipt
-plus the strictly stronger theorem that the *full* Jordan automorphism group is
-F4 / the E6 unit stabilizer.  No remaining cardinality or carrier-level step can
-pay those statements.
+The terminal algebraic wall is therefore narrower and more honest:
+
+1. repair/validate the actual Freudenthal cubic on H3(O);
+2. prove the rank-three cubic-rigidity/product-recovery theorem;
+3. align the donor octonion norm/triality data with the finite D4 8v+8s+8c
+   sectors and pay cubic preservation for the four folded generators;
+4. then identify the full Jordan automorphism group / E6-unit stabilizer with
+   F4.  Finite Weyl invariance cannot replace this: exact character checks show
+   7 invariant quadratics and 23 invariant cubics on the 26-dimensional finite
+   shadow.
 -/
 
 namespace Integration.AlbertF4ExceptionalCapstone
 
 open Integration.AlbertExternalDonor
+open Integration.AlbertDonorDeterminantAudit
 open Integration.AlbertJordanAutomorphism
 open Integration.AlbertMinusculeWeightLines
 
@@ -72,7 +67,10 @@ structure Frontier where
   externalH3OctonionicCarrierSourceWritten : Bool
   externalJordanIdentityProducerSourceWritten : Bool
   externalTraceSourceWritten : Bool
-  externalCubicDeterminantSourceWritten : Bool
+  externalCubicCandidateSourceWritten : Bool
+  donorCubicComplexCounterexamplePaid : Bool
+  donorCurrentCubicPromotableAsAlbertNorm : Bool
+  donorOctonionTrialitySourceWritten : Bool
   externalFullCubicIdentitiesSourceWritten : Bool
 
   nativeScalarTracelessEquivalencePaid : Bool
@@ -83,33 +81,35 @@ structure Frontier where
   linearMinusculeTransportFromFinrank27Paid : Bool
   fullAlbertStructureTransportTypedAndPaid : Bool
   transportedJordanAutomorphismCompilerPaid : Bool
-  exceptionalCompatibilityPredicateTyped : Bool
-  minusculeWeightLineInterfaceTyped : Bool
-  jordanAutomorphismInterfaceTyped : Bool
-  tracelessAutomorphismEquivalencePaid : Bool
-  e6F4UnitStabilizerInterfaceTyped : Bool
-
   actualTernaryOriginPlus26SplitPaid : Bool
   linearTernaryTracelessBasisTransportPaid : Bool
 
   foldedWeylOrder1152Paid : Bool
   foldedF4CoxeterSignaturePaid : Bool
   foldedF4RootSet48Paid : Bool
-  minusculeRestriction24ShortPlusZeroMultiplicity3Paid : Bool
+  minusculeRestriction24PlusZero3Paid : Bool
   zeroWeightPermutationImageS3Paid : Bool
-  finiteWeylInvariantUnitLinePaid : Bool
-  finiteWeylTraceless26Paid : Bool
   finiteWeylOnePlus26Paid : Bool
+  d4KernelOrder192Paid : Bool
+  d4ThreeEightOrbitsPaid : Bool
+  finiteAlbertThreePlusEightPlusEightPlusEightShapePaid : Bool
 
-  terminalAlbertF4CompatibilityObjectTyped : Bool
-  compatibilityCompilesFoldedJordanAutomorphisms : Bool
-  compatibilityIdentifiesActualTracelessCarrier : Bool
-  fullF4RecognitionInterfaceTyped : Bool
+  finiteWeylQuadraticInvariantDimensionSevenPaid : Bool
+  finiteWeylCubicInvariantDimensionTwentyThreePaid : Bool
+  finiteWeylInvarianceDeterminesAlbertCubic : Bool
+
+  trialityCubicCompilerPaid : Bool
+  cubicRigidityInterfaceTyped : Bool
+  reducedTerminalCompatibilityTyped : Bool
+  reducedTerminalCompilesJordanAutomorphisms : Bool
 
   naturalRelative240E6InvarianceRefuted : Bool
   naturalRelative240SameActionE8Blocked : Bool
 
-  donorSameKernelInstantiationPaid : Bool
+  correctedAlbertCubicPaid : Bool
+  cubicRigidityPaid : Bool
+  actualOctonionTrialitySectorAlignmentPaid : Bool
+  fourFoldedCubicPreservationChecksPaid : Bool
   terminalAlbertF4CompatibilityPaid : Bool
   actualF4AutomorphismRecognitionPaid : Bool
   actualE6UnitStabilizerRecognitionPaid : Bool
@@ -117,13 +117,15 @@ structure Frontier where
   alternativeTernary240E8RecognitionPaid : Bool
   deriving Repr
 
-/-- Current exact frontier. -/
 def currentFrontier : Frontier where
   externalAlbertDonorPinned := true
   externalH3OctonionicCarrierSourceWritten := pinnedDonorSurface.h3OctonionicCarrierSourceWritten
   externalJordanIdentityProducerSourceWritten := pinnedDonorSurface.jordanIdentityProducerSourceWritten
   externalTraceSourceWritten := pinnedDonorSurface.traceSourceWritten
-  externalCubicDeterminantSourceWritten := pinnedDonorSurface.cubicDeterminantSourceWritten
+  externalCubicCandidateSourceWritten := pinnedDonorSurface.cubicDeterminantSourceWritten
+  donorCubicComplexCounterexamplePaid := canonicalBoundary.associativeComplexCounterexamplePaid
+  donorCurrentCubicPromotableAsAlbertNorm := canonicalBoundary.donorCurrentDetPromotableAsAlbertNorm
+  donorOctonionTrialitySourceWritten := pinnedDonorSurface.octonionTrialityFormSourceWritten
   externalFullCubicIdentitiesSourceWritten := pinnedDonorSurface.fullCubicIdentitiesSourceWritten
 
   nativeScalarTracelessEquivalencePaid := true
@@ -134,33 +136,35 @@ def currentFrontier : Frontier where
   linearMinusculeTransportFromFinrank27Paid := true
   fullAlbertStructureTransportTypedAndPaid := true
   transportedJordanAutomorphismCompilerPaid := true
-  exceptionalCompatibilityPredicateTyped := true
-  minusculeWeightLineInterfaceTyped := true
-  jordanAutomorphismInterfaceTyped := true
-  tracelessAutomorphismEquivalencePaid := true
-  e6F4UnitStabilizerInterfaceTyped := true
-
   actualTernaryOriginPlus26SplitPaid := true
   linearTernaryTracelessBasisTransportPaid := true
 
   foldedWeylOrder1152Paid := true
   foldedF4CoxeterSignaturePaid := true
   foldedF4RootSet48Paid := true
-  minusculeRestriction24ShortPlusZeroMultiplicity3Paid := true
+  minusculeRestriction24PlusZero3Paid := true
   zeroWeightPermutationImageS3Paid := true
-  finiteWeylInvariantUnitLinePaid := true
-  finiteWeylTraceless26Paid := true
   finiteWeylOnePlus26Paid := true
+  d4KernelOrder192Paid := true
+  d4ThreeEightOrbitsPaid := true
+  finiteAlbertThreePlusEightPlusEightPlusEightShapePaid := true
 
-  terminalAlbertF4CompatibilityObjectTyped := true
-  compatibilityCompilesFoldedJordanAutomorphisms := true
-  compatibilityIdentifiesActualTracelessCarrier := true
-  fullF4RecognitionInterfaceTyped := true
+  finiteWeylQuadraticInvariantDimensionSevenPaid := true
+  finiteWeylCubicInvariantDimensionTwentyThreePaid := true
+  finiteWeylInvarianceDeterminesAlbertCubic := false
+
+  trialityCubicCompilerPaid := true
+  cubicRigidityInterfaceTyped := true
+  reducedTerminalCompatibilityTyped := true
+  reducedTerminalCompilesJordanAutomorphisms := true
 
   naturalRelative240E6InvarianceRefuted := true
   naturalRelative240SameActionE8Blocked := true
 
-  donorSameKernelInstantiationPaid := false
+  correctedAlbertCubicPaid := false
+  cubicRigidityPaid := false
+  actualOctonionTrialitySectorAlignmentPaid := false
+  fourFoldedCubicPreservationChecksPaid := false
   terminalAlbertF4CompatibilityPaid := false
   actualF4AutomorphismRecognitionPaid := false
   actualE6UnitStabilizerRecognitionPaid := false
@@ -168,29 +172,24 @@ def currentFrontier : Frontier where
   alternativeTernary240E8RecognitionPaid := false
 
 inductive ExternalAlbertCreatesF4 : Prop
-inductive LinearTransportCreatesExceptionalCompatibility : Prop
 inductive FiniteF4WeylCreatesContinuousF4 : Prop
-inductive LinearTernaryBasisCreatesAlbertCompatibility : Prop
-inductive TerminalCompatibilityCreatesFullF4 : Prop
+inductive FiniteWeylInvarianceCreatesAlbertCubic : Prop
+inductive DonorCandidateCubicCreatesValidatedAlbertNorm : Prop
 inductive NaturalT5NoGoBlocksEveryAlternative240Action : Prop
 
 theorem external_albert_does_not_create_f4 : ¬ ExternalAlbertCreatesF4 := by
-  intro h; cases h
-
-theorem linear_transport_does_not_create_exceptional_compatibility :
-    ¬ LinearTransportCreatesExceptionalCompatibility := by
   intro h; cases h
 
 theorem finite_weyl_f4_does_not_create_continuous_f4 :
     ¬ FiniteF4WeylCreatesContinuousF4 := by
   intro h; cases h
 
-theorem linear_ternary_basis_does_not_create_albert_compatibility :
-    ¬ LinearTernaryBasisCreatesAlbertCompatibility := by
+theorem finite_weyl_invariance_does_not_create_albert_cubic :
+    ¬ FiniteWeylInvarianceCreatesAlbertCubic := by
   intro h; cases h
 
-theorem terminal_compatibility_does_not_create_full_f4 :
-    ¬ TerminalCompatibilityCreatesFullF4 := by
+theorem donor_candidate_cubic_does_not_create_validated_norm :
+    ¬ DonorCandidateCubicCreatesValidatedAlbertNorm := by
   intro h; cases h
 
 theorem natural_t5_no_go_is_not_universal_no_go :

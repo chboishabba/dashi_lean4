@@ -7,6 +7,18 @@ namespace RequestProject.YangMills
 
 example
     {n : ℕ} [NeZero n]
+    {P : Type*} [DecidableEq P]
+    (crossings : Finset P) (β : ℝ) (hβ : 0 ≤ β)
+    (cut : CMP119SelectedSourceExactFunctionalReflectionCut n
+      (SU2CrossingBoundary P)) :
+    ReflectionPositiveKernel
+      (fun left right =>
+        su2WilsonCrossingPlaneKernel crossings β left right *
+          cut.sourceKernel left right) :=
+  ym20261007BCCompleteFunctionalCompiler crossings β hβ cut
+
+example
+    {n : ℕ} [NeZero n]
     (cutoff : CMP119SelectedPhysicalCutoff n) :
     cutoff.beta = 4 * cutoff.sourceInverseCoupling :=
   ym20261007PreferredCutoffBetaNormalization cutoff

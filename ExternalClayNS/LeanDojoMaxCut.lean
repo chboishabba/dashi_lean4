@@ -57,7 +57,7 @@ theorem comparatorForceDecayTransportR3_implies_smooth
     force_smooth_on_global_spacetime_domain (comparatorForceToLean f) := by
   exact (h hf).1
 
-/-- Paid solution-side coordinates kept beside the max-cut so future work does
+/- Paid solution-side coordinates kept beside the max-cut so future work does
 not reopen them. -/
 #check leanDojoMomentum_to_clayEquationOne
 #check leanDojoIncompressible_to_clay

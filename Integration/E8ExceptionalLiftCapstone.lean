@@ -6,13 +6,14 @@ import Integration.E8LiteralMixed27Schlafli
 import Integration.E8Mixed27TernaryTranslationObstruction
 import Integration.E6Minuscule27LiteralRecognition
 import Integration.E6Minuscule27SchlafliRecognition
+import Integration.E6Minuscule27SameObject
 import Mathlib
 
 /-!
 # Exceptional-lift capstone: E6/F3 -> literal E8 branching -> mixed 27 geometry
 
 This owner records the strongest currently paid exceptional-geometry spine
-without promoting the remaining same-object recognition seams.
+without promoting the remaining algebraic recognition seams.
 
 Paid independently in the imported owners:
 
@@ -25,15 +26,18 @@ Paid independently in the imported owners:
 * the three positive fibres are exactly the E6 minuscule `omega5` weight orbit,
   while the three negative fibres are exactly the `omega0` orbit;
 * the Schlaefli relation itself is recovered from the invariant E6 minuscule
-  weight pairing, so relation geometry and E6 action agree on the same carrier;
+  weight pairing;
+* for the canonical plus fibre, the pre-existing Dynkin-label map is an actual
+  carrier equivalence with the omega5 minuscule orbit, preserving the Schlaefli
+  relation and intertwining the independent reflection relations;
 * the earlier count-matched bare ternary branching fails the same-action test;
 * the bare additive `F3^3` translation structure cannot realize the Schlaefli
   relation by any undirected translation-invariant Cayley graph.
 
 Still open:
 
-* an Albert/Jordan algebra realization on a recognized mixed 27 carrier,
-  including product/cubic-norm data rather than weight geometry alone;
+* an Albert/Jordan algebra realization on this now-recognized E6 minuscule
+  carrier, including product/cubic-norm data;
 * a full ternary 240-state same-action recognition with the literal E8 roots;
 * any claim that carrier cardinalities alone realize F4/E6/E7/E8 structure.
 -/
@@ -47,8 +51,8 @@ open Integration.E8LiteralMixed27Schlafli
 open Integration.E8Mixed27TernaryTranslationObstruction
 open Integration.E6Minuscule27LiteralRecognition
 open Integration.E6Minuscule27SchlafliRecognition
+open Integration.E6Minuscule27SameObject
 
-/-- Exact orbit-size ledger for the literal `E8 -> E6 x A2` root branching. -/
 structure LiteralE8OrbitLedger where
   total : Nat
   e6RootOrbit : Nat
@@ -64,7 +68,6 @@ def literalE8OrbitLedger : LiteralE8OrbitLedger where
   mixedWeightFibres := 6
   eachMixedFibre := 27
 
-/-- The literal branching arithmetic closes exactly. -/
 theorem literal_e8_orbit_ledger_closes :
     literalE8OrbitLedger.total =
       literalE8OrbitLedger.e6RootOrbit +
@@ -72,34 +75,32 @@ theorem literal_e8_orbit_ledger_closes :
       literalE8OrbitLedger.mixedWeightFibres * literalE8OrbitLedger.eachMixedFibre := by
   norm_num [literalE8OrbitLedger]
 
-/-- Cross-check against the exact generated E6 image. -/
 theorem e6_generated_image_order_paid : generatedMatrixSet.card = 51840 :=
   generated_matrix_set_card
 
-/-- One canonical literal mixed fibre really has 27 states. -/
 theorem canonical_mixed_fibre_card_paid : Fintype.card Plus0 = 27 :=
   plus0_card
 
-/-- The canonical literal mixed fibre has the Schlaefli degree profile. -/
 theorem canonical_mixed_fibre_schlafli_degree_paid :
     ∀ x : Plus0, schlafliDegree x = 16 :=
   plus0_degree_16
 
-/-- The same canonical fibre is exactly one E6 minuscule weight orbit. -/
 theorem canonical_mixed_fibre_minuscule_weight_recognition_paid :
     plus0LabelSet = minusculeOmega5Set :=
   plus0_labels_eq_omega5
 
-/-- Its independently defined literal-E8 Schlaefli adjacency is exactly the
-pairing-one relation of that minuscule weight geometry. -/
 theorem canonical_mixed_fibre_minuscule_relation_recognition_paid :
     ∀ x y : Plus0,
       schlafliAdjacent x y =
         minusculeAdjacent (fun z : Plus0 => literalDynkinLabel z.1) x y :=
   plus0_schlafli_iff_minuscule_pairing
 
-/-- The bare additive ternary cube cannot supply the literal mixed-27 relation
-geometry through a translation-invariant Cayley graph. -/
+/-- Stronger same-object result: the literal fibre and minuscule weight orbit
+are concretely equivalent via the pre-existing Dynkin-label map. -/
+theorem canonical_mixed_fibre_minuscule_same_object_paid :
+    Function.Bijective plus0ToOmega5 :=
+  plus0_to_omega5_bijective
+
 theorem bare_ternary_translation_route_blocked :
     ∀ mask : Finset Direction, ¬ SchlafliOriginProfile mask :=
   no_translation_invariant_schlafli
@@ -107,12 +108,12 @@ theorem bare_ternary_translation_route_blocked :
 inductive FullTernary240SameActionRecognitionPaid : Prop
 inductive Albert27AlgebraRecognitionPaid : Prop
 
- theorem full_ternary_240_same_action_not_manufactured :
+theorem full_ternary_240_same_action_not_manufactured :
     ¬ FullTernary240SameActionRecognitionPaid := by
   intro h
   cases h
 
- theorem albert_27_algebra_not_manufactured :
+theorem albert_27_algebra_not_manufactured :
     ¬ Albert27AlgebraRecognitionPaid := by
   intro h
   cases h
@@ -126,6 +127,7 @@ structure Boundary where
   schlafli27RelationPaid : Bool
   minuscule27WeightOrbitRecognitionPaid : Bool
   minuscule27RelationRecognitionPaid : Bool
+  minuscule27SameObjectRecognitionPaid : Bool
   bareTernaryTranslationSchlafliBlocked : Bool
   countMatchedTernaryBranchingActionObstructionPaid : Bool
   fullTernary240SameActionRecognitionPaid : Bool
@@ -142,6 +144,7 @@ def canonicalBoundary : Boundary where
   schlafli27RelationPaid := true
   minuscule27WeightOrbitRecognitionPaid := true
   minuscule27RelationRecognitionPaid := true
+  minuscule27SameObjectRecognitionPaid := true
   bareTernaryTranslationSchlafliBlocked := true
   countMatchedTernaryBranchingActionObstructionPaid := true
   fullTernary240SameActionRecognitionPaid := false

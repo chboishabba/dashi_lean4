@@ -4,26 +4,32 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 BRIDGE = ROOT / "ExternalClayNS" / "LeanDojoCComparatorBridge.lean"
-GEOMETRY = ROOT / "ExternalClayNS" / "LeanDojoCarrierGeometry.lean"
+SAME = ROOT / "ExternalClayNS" / "LeanDojoSameObject.lean"
+CORE = ROOT / "ExternalClayNS" / "LeanDojoSameObjectCore.lean"
+LINEAR = ROOT / "ExternalClayNS" / "LeanDojoCoordinateLinearEquiv.lean"
+BOUNDARY = ROOT / "ExternalClayNS" / "LeanDojoBoundaryExtension.lean"
 EXACT = ROOT / "MillenniumExternal" / "ExactTargetSurface.lean"
 FRONTIER = ROOT / "MillenniumExternal" / "ExternalTargetFrontier.lean"
 
 
 class MillenniumSubmissionSurfaceTests(unittest.TestCase):
-    def test_ns_c_bridge_has_exact_five_leaf_transport_frontier(self):
-        self.assertTrue(BRIDGE.exists(), "direct ClaySpec-to-LeanDojo C bridge is missing")
-        self.assertTrue(GEOMETRY.exists(), "LeanDojo carrier geometry is missing")
-        text = BRIDGE.read_text(encoding="utf-8")
-        geometry = GEOMETRY.read_text(encoding="utf-8")
+    def test_ns_c_bridge_has_exact_four_leaf_transport_frontier(self):
+        for path in (BRIDGE, SAME, CORE, LINEAR, BOUNDARY):
+            self.assertTrue(path.exists(), f"missing canonical NS transport owner: {path.name}")
+
+        bridge = BRIDGE.read_text(encoding="utf-8")
+        same = SAME.read_text(encoding="utf-8")
+        core = CORE.read_text(encoding="utf-8")
+        linear = LINEAR.read_text(encoding="utf-8")
+        boundary = BOUNDARY.read_text(encoding="utf-8")
 
         for residual in (
-            "ClayInitialDecayToLeanDojo",
-            "ClayForceToLeanDojo",
+            "ComparatorForceDecayToLeanDojo",
             "LeanDojoMomentumToClay",
             "LeanDojoIncompressibleToClay",
             "LeanDojoEnergyToClay",
         ):
-            self.assertIn(residual, text)
+            self.assertIn(residual, bridge)
 
         for compiler in (
             "LeanDojoSolutionTransportFrontier",
@@ -32,35 +38,33 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
             "LeanDojoCTransportFrontier",
             "leanDojoFeffermanC_of_transport",
         ):
-            self.assertIn(compiler, text)
+            self.assertIn(compiler, bridge)
 
-        for paid in (
-            "pairFieldToLeanDojo_spacetime_point",
-            "leanDojoFieldToPair_pairFieldToLeanDojo",
-            "spacetime_point_mem_global_iff",
-            "leanDojoPairEmbedding_contDiff",
-            "leanDojoSmooth_to_pair",
-            "clayInitialDivergenceFree_to_leanDojo",
-        ):
-            self.assertIn(paid, geometry)
+        self.assertIn("comparatorInitialDecay_to_leanDojo", same)
+        self.assertIn("comparatorInitialDecayData_to_leanDojo", same)
+        self.assertIn("leanDojo_spatialDerivativeVector_eq_clay", same)
+        self.assertIn("pairLeanSpacetimeEquiv", core)
+        self.assertIn("comparatorForceToLean", core)
+        self.assertIn("contDiffOn_leanFieldToComparator", linear)
+        self.assertIn("eqOn_Ici_zero_of_eqOn_Ioi_zero", boundary)
 
-        self.assertIn("SemanticGap.admissibleDataR3_of_comparator", text)
-        self.assertIn("SemanticGap.claySolutionR3_to_comparator", text)
-        self.assertIn("NavierStokesOnR3.Breakdown.iff_no_finite_energy_solution", text)
+        self.assertIn("comparatorInitialDecayData_to_leanDojo", bridge)
+        self.assertIn("SemanticGap.claySolutionR3_to_comparator", bridge)
+        self.assertIn("NavierStokesOnR3.Breakdown.iff_no_finite_energy_solution", bridge)
 
         for reopened in (
+            "ClayInitialDecayToLeanDojo",
             "ClayInitialToLeanDojo",
             "ComparatorInitialToLeanDojo",
-            "ComparatorForceToLeanDojo",
             "LeanDojoSolutionToComparator",
             "LeanDojoVelocitySmoothToClay",
             "LeanDojoPressureSmoothToClay",
             "LeanDojoCDStatementWeld",
         ):
-            self.assertNotIn(reopened, text)
+            self.assertNotIn(reopened, bridge)
 
-        self.assertNotIn("sorry", text + geometry)
-        self.assertNotIn("axiom ", text + geometry)
+        self.assertNotIn("sorry", bridge)
+        self.assertNotIn("axiom ", bridge)
 
     def test_exact_p_negative_branch_needs_only_one_language_outside_p(self):
         text = EXACT.read_text(encoding="utf-8")

@@ -52,6 +52,33 @@ namespace MillenniumExternal
 #check NSBControl.CombinedCurrentEndgame.current_three_coordinate_endgame
 
 /-!
+## P versus NP exact negative-branch compiler
+
+LeanDojo's negative prize branch is literally the negation of its finite-alphabet
+class equality. Therefore the external boundary does not require a second
+P/NP hierarchy or an NP-completeness wrapper: one concrete finite-alphabet
+language with a LeanDojo `NP` proof and a LeanDojo `not P` proof is sufficient.
+
+For the DASHI SAT programme this means the external same-object seam can be
+restricted to transporting the actual SAT language / finite encoding and its
+already-isolated lower-bound theorem onto this exact machine model.
+-/
+
+theorem clayPNotEqualsNP_of_language_outside_p
+    {alphabet : Type} [Fintype alphabet] [Nontrivial alphabet]
+    (L : Millennium.Language (List alphabet))
+    (hNP : Millennium.InNondeterministicPolynomialTime
+      (Millennium.fin_encoding_string alphabet) L)
+    (hNotP : Millennium.InPolynomialTime
+      (Millennium.fin_encoding_string alphabet) L → False) :
+    Millennium.ClayPVersusNP.Formulations.NegativeBranch := by
+  change ¬ Millennium.ClayPVersusNP.Formulations.ClassEquality
+  intro hEq
+  exact hNotP ((hEq alphabet L).2 hNP)
+
+#print axioms clayPNotEqualsNP_of_language_outside_p
+
+/-!
 ## Riemann-Hypothesis exact statement weld
 
 LeanDojo proves its exact Clay critical-line proposition equivalent to
@@ -123,9 +150,11 @@ theorem clayBirchSwinnertonDyer_of_dashi
 
 These checks keep every external endpoint visible beside the existing producer.
 No extra implication is manufactured here: P-vs-NP currently has its strongest
-Clay-core producer in Agda; Navier-Stokes has a stronger independent literal C/D
-nested Lean project; Hodge/Yang--Mills are upstream-incomplete; and Poincare is a
-historically solved statement whose proof is not included upstream.
+SAT lower-bound producer in Agda and now needs only a same-object transport of
+one finite-alphabet language into the exact LeanDojo machine model;
+Navier-Stokes has a stronger independent literal C/D nested Lean project;
+Hodge/Yang--Mills are upstream-incomplete; and Poincare is a historically solved
+statement whose proof is not included upstream.
 -/
 
 #check Millennium.ClayPVersusNP.Formulations.NegativeBranch

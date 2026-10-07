@@ -4,6 +4,7 @@ import Integration.E8LiteralMixed27Fibres
 import Integration.E8LiteralMixed27Transitivity
 import Integration.E8LiteralMixed27Schlafli
 import Integration.E8Mixed27TernaryTranslationObstruction
+import Integration.E6Minuscule27LiteralRecognition
 import Mathlib
 
 /-!
@@ -20,14 +21,17 @@ Paid independently in the imported owners:
   72 E6 roots, 6 A2 roots, and six E6-stable 27-point mixed fibres;
 * all six mixed fibres are transitive under the literal E6 reflection relation;
 * each mixed 27-fibre carries the Schlaefli `SRG(27,16,10,8)` relation;
+* the three positive fibres are exactly the E6 minuscule `omega5` weight orbit,
+  while the three negative fibres are exactly the `omega0` orbit;
 * the earlier count-matched bare ternary branching fails the same-action test;
 * the bare additive `F3^3` translation structure cannot realize the Schlaefli
   relation by any undirected translation-invariant Cayley graph.
 
 Still open:
 
-* a same-object recognition of an external Albert/minuscule-27 carrier with one
-  literal mixed 27-fibre, preserving both action and relation geometry;
+* a same-object recognition of an Albert/Jordan 27 carrier with one literal
+  mixed fibre, including the product/cubic-norm layer rather than weight geometry
+  alone;
 * a full ternary 240-state same-action recognition with the literal E8 roots;
 * any claim that carrier cardinalities alone realize F4/E6/E7/E8 structure.
 -/
@@ -39,6 +43,7 @@ open Integration.E8LiteralMixed27Fibres
 open Integration.E8LiteralMixed27Transitivity
 open Integration.E8LiteralMixed27Schlafli
 open Integration.E8Mixed27TernaryTranslationObstruction
+open Integration.E6Minuscule27LiteralRecognition
 
 /-- Exact orbit-size ledger for the literal `E8 -> E6 x A2` root branching. -/
 structure LiteralE8OrbitLedger where
@@ -77,6 +82,11 @@ theorem canonical_mixed_fibre_schlafli_degree_paid :
     ∀ x : Plus0, schlafliDegree x = 16 :=
   plus0_degree_16
 
+/-- The same canonical fibre is exactly one E6 minuscule weight orbit. -/
+theorem canonical_mixed_fibre_minuscule_weight_recognition_paid :
+    plus0LabelSet = minusculeOmega5Set :=
+  plus0_labels_eq_omega5
+
 /-- The bare additive ternary cube cannot supply the literal mixed-27 relation
 geometry through a translation-invariant Cayley graph. -/
 theorem bare_ternary_translation_route_blocked :
@@ -103,6 +113,7 @@ structure Boundary where
   sixMixed27FibresTyped : Bool
   sixMixed27FibresTransitivePaid : Bool
   schlafli27RelationPaid : Bool
+  minuscule27WeightOrbitRecognitionPaid : Bool
   bareTernaryTranslationSchlafliBlocked : Bool
   countMatchedTernaryBranchingActionObstructionPaid : Bool
   fullTernary240SameActionRecognitionPaid : Bool
@@ -117,6 +128,7 @@ def canonicalBoundary : Boundary where
   sixMixed27FibresTyped := true
   sixMixed27FibresTransitivePaid := true
   schlafli27RelationPaid := true
+  minuscule27WeightOrbitRecognitionPaid := true
   bareTernaryTranslationSchlafliBlocked := true
   countMatchedTernaryBranchingActionObstructionPaid := true
   fullTernary240SameActionRecognitionPaid := false

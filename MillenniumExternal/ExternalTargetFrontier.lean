@@ -36,14 +36,14 @@ def externalTargetReceipts : List ExternalTargetReceipt :=
       upstreamDeclaration := "Millennium.ClayPVersusNP.Formulations.NegativeBranch"
       state := .redMath
       frontier := .analytic
-      firstUnpaid := "Agda UniversalAnchoredPolynomialSATDecisionCollision on the literal PolynomialCostModel/SAT carrier"
-      note := "Agda already proves UniversalAnchoredPolynomialSATDecisionCollision -> SATNotInP -> SATLowerBoundProducer -> PNotEqualsNP, including the anchor-or-already-fails reduction. The universal anchored collision theorem is the first unpaid mathematical edge." }
+      firstUnpaid := "Agda UniversalPolynomialSATDecisionFailure on the literal PolynomialCostModel/SAT candidate carrier"
+      note := "PNotEqualsNPAnchoredCollisionEquivalenceExact proves constructively that UniversalPolynomialSATDecisionFailure and UniversalAnchoredPolynomialSATDecisionCollision are interderivable: arbitrary candidates are anchored or already fail, and anchored failure/collision are equivalent. The shortest mathematical leaf is therefore simply that every polynomial SAT candidate makes a concrete SAT error; the existing compiler then yields SATNotInP -> SATLowerBoundProducer -> PNotEqualsNP." }
   , { problem := .riemann
       upstreamDeclaration := "Millennium.ClayRiemannHypothesis"
       state := .redMath
       frontier := .analytic
-      firstUnpaid := "selected-witness A2 leading comparison postSixthTerminalEighthLeadingAllowance < postSixthTerminalDominantHeadroom"
-      note := "Exact LeanDojo <-> Mathlib RiemannHypothesis statement weld is source-written. A2 is compressed to the selected eighth-leading allowance versus sixth headroom; failure should retire this A2 branch rather than create another terminal certificate. A1 and Route B remain independent fallbacks." }
+      firstUnpaid := "selected A2 witness fourthLipschitz < quarticSignedPoleFloorFourthLipschitzThreshold"
+      note := "Exact LeanDojo <-> Mathlib RiemannHypothesis statement weld is source-written. RiemannProjectiveQuarticFourWindowSignedPoleA2SelectedWitnessCut reduces the leading sixth/eighth comparison for every strength-floor witness to one exact selected-witness G1 bound; the floor threshold is approximately 737.365. The old generic support/L1 K0 is far too coarse and does not constitute an A2 no-go. If the selected witness cannot meet the exact threshold, retire this positive-eighth-cap A2 branch and continue A1/Route B rather than introducing a stronger terminal certificate." }
   , { problem := .navierStokes
       upstreamDeclaration := "MillenniumNavierStokes.FeffermanC|D"
       state := .redType
@@ -61,7 +61,7 @@ def externalTargetReceipts : List ExternalTargetReceipt :=
       state := .redMath
       frontier := .analytic
       firstUnpaid := "Synthesis.Millennium.BSD.BSDClayCoreObligation bg"
-      note := "The Clay-facing source isolates the novel theorem exactly: equality of canonical analytic rank and Mordell-Weil free rank on the same rational elliptic curve after established background. LeanDojo carrier transport is downstream certification, not the first mathematical debt." }
+      note := "The Clay-facing source isolates the novel theorem exactly: equality of canonical analytic rank and Mordell-Weil free rank on the same rational elliptic curve after established background. The Selmer audit proves arbitrary mediators merely rename BSD. The literal two-descent donor has already reached |Sel_2(E)| = |E(Q)/2E(Q)| * |R_2(E)|; the arithmetic route now needs same-curve residual/Sha identification and 2^n or 2^infinity tower control to stable rank, while the analytic comparison remains independently necessary. LeanDojo carrier transport is downstream certification, not the first mathematical debt." }
   , { problem := .yangMills
       upstreamDeclaration := "MillenniumYangMills.ClayYangMills"
       state := .upstreamIncomplete
@@ -86,8 +86,6 @@ theorem riemann_frontier_is_analytic :
         (fun r => r.frontier) = some .analytic := by
   decide
 
-/-- NS has no unpaid proof edge after the literal C/D theorem terms are
-constructed; only the fail-closed kernel acceptance gate remains. -/
 theorem navierStokes_frontier_is_proved :
     (externalTargetReceipts.find? (fun r => r.problem == .navierStokes)).map
         (fun r => r.frontier) = some .proved := by

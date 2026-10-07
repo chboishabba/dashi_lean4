@@ -21,4 +21,10 @@ example (A : TraceUnitData J) :
     J ≃ₗ[ℝ] ℝ × Traceless A :=
   scalarTracelessEquiv A
 
+example [FiniteDimensional ℝ J]
+    (A : TraceUnitData J)
+    (hJ : Module.finrank ℝ J = 27) :
+    Module.finrank ℝ (Traceless A) = 26 :=
+  traceless_finrank_eq_26 A hJ
+
 end Integration.AlbertScalarTracelessRegression

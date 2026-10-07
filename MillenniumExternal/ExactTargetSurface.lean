@@ -67,13 +67,52 @@ theorem clayRiemannHypothesis_iff_mathlib :
 #print axioms clayRiemannHypothesis_iff_mathlib
 
 /-!
+## Birch--Swinnerton-Dyer exact target compiler
+
+Upstream already proves that its exact Clay Taylor statement is equivalent to
+rank-existence plus finite Mordell--Weil rank.  DASHI already owns the actual
+same-curve analytic/algebraic rank weld.  What remains at this boundary is
+therefore typed explicitly as two same-object transports:
+
+1. compile the DASHI core rank equality into LeanDojo's integral-model
+   `Rank.Existence` carrier (including its exact analytic-continuation data);
+2. identify DASHI's finite-generation/free-rank carrier with LeanDojo's
+   projective Mordell--Weil `ENat` rank sufficiently to prove it is not `top`.
+
+No Taylor-series argument is duplicated here.
+-/
+
+abbrev LeanDojoBSDFiniteRank : Prop :=
+  ∀ W : WeierstrassCurve ℤ, ∀ _hΔ : W.Δ ≠ 0,
+    WeierstrassCurve.rank (W.baseChange ℚ) ≠ (⊤ : ℕ∞)
+
+structure BSDLeanDojoSameObjectWeld
+    (bg : Synthesis.Millennium.BSD.BSDEstablishedBackground) : Prop where
+  rankExistence_of_dashi :
+    Synthesis.Millennium.BSD.BSDClayCoreObligation bg →
+      MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer.Formulations.Rank.Existence
+  finiteRank : LeanDojoBSDFiniteRank
+
+/-- Once the existing DASHI BSD core theorem is transported onto LeanDojo's
+literal integral/L-series carrier, upstream's own equivalence closes the exact
+Clay target. -/
+theorem clayBirchSwinnertonDyer_of_dashi
+    {bg : Synthesis.Millennium.BSD.BSDEstablishedBackground}
+    (w : BSDLeanDojoSameObjectWeld bg)
+    (hRank : Synthesis.Millennium.BSD.BSDClayCoreObligation bg) :
+    MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer :=
+  MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer.of_rank_existence_and_finite_rank
+    ⟨w.rankExistence_of_dashi hRank, w.finiteRank⟩
+
+#print axioms clayBirchSwinnertonDyer_of_dashi
+
+/-!
 ## Exact remaining target shapes
 
 These checks keep the external endpoint visible beside the existing producer.
 No extra implication is manufactured here: P-vs-NP currently has its strongest
 Clay-core producer in Agda; Navier-Stokes has a stronger independent literal C/D
-nested Lean project; and BSD's local universal rank weld must still be composed
-with the exact external continuation/Taylor-data surface.
+nested Lean project; and BSD's remaining adapter is the same-object weld above.
 -/
 
 #check Millennium.ClayPVersusNP.Formulations.NegativeBranch

@@ -31,8 +31,10 @@ def canonicalMonashIBSProgrammeAtlas : List MonashIBSEvidence := [
     role := .nutrientChallengeRescue, interventionOrExposure := "GOS challenge with alpha-galactosidase versus placebo",
     observedSurface := "nutrient-specific symptom provocation/rescue", mechanismIdentified := false, participantClassifierValidated := false },
   { sourceReference := "Silva et al. 2026 DOI 10.1002/ueg2.70173",
-    role := .digestiveGeneticModifier, interventionOrExposure := "sucrase-isomaltase hypomorphic-variant status after FODMAP education",
-    observedSurface := "long-term symptom/dietary outcome association", mechanismIdentified := false, participantClassifierValidated := false }
+    role := .digestiveGeneticModifier,
+    interventionOrExposure := "single sucrase-isomaltase hypomorphic-variant status after FODMAP education",
+    observedSurface := "negative stratification result for initial response, long-term symptom control and sucrose/starch intake in the represented cohort",
+    mechanismIdentified := false, participantClassifierValidated := false }
 ]
 
 inductive TreatmentResponseIdentifiesMechanismPermission : Prop
@@ -107,11 +109,11 @@ def canonicalAdaptiveTreatmentSequencingFrontier : List AdaptiveSequencingNode :
     informationDebt := "no validated policy combines therapeutic value, information value, burden and uncertainty",
     nextDesign := "prospective SMART-like or response-adaptive trial with locked switching rules and proximal target engagement",
     authorityBoundary := "an informative probe is not necessarily the clinically best treatment; clinical benefit is not information gain" },
-  { label := "long-term personalized carbohydrate handling", route := "externalKnowledgeComparison",
-    currentEvidence := "Silva 2026 SI genotype as candidate modifier after FODMAP education",
-    informationDebt := "prospective genotype-by-diet interaction and replication",
-    nextDesign := "predeclared interaction study rather than post-hoc mechanistic labeling",
-    authorityBoundary := "genotype association is neither deterministic intolerance nor causal-regime identity" }
+  { label := "SI genotype negative-stratification", route := "externalKnowledgeComparison",
+    currentEvidence := "Silva 2026 found no association of single SI hypomorphic variants with initial or long-term FODMAP outcomes in the represented cohort",
+    informationDebt := "double-carriers were sparse and retrospective ascertainment limits broader inference",
+    nextDesign := "prospective genotype-by-diet interaction only if this residual remains decision-relevant",
+    authorityBoundary := "negative single-variant result blocks a positive modifier claim but does not prove universal genetic irrelevance" }
 ]
 
 structure MonashAdaptiveBoundary where

@@ -202,7 +202,9 @@ theorem QuarticFourSignedPolePair.postSixthTerminalDominantHeadroom_pos
 /-- Route B is not closed by the eventual signed-cap theorem alone: boundary
 decay and outer-terminal convergence are independent obligations.  Once those
 are paid, eventual direct gap nonnegativity supplies the packaged analytic
-input with no credit/debt split. -/
+input.  The purely Archimedean finite-cutoff ownership condition is discharged
+inside `signedFifthAnalyticInput_of_three_producers` and is not an analytic
+premise. -/
 theorem QuarticFourSignedPolePair.signedFifthAnalyticInput_of_eventual_direct_gap
     {t EV eps : ℝ}
     (ht : 0 < t)
@@ -212,9 +214,6 @@ theorem QuarticFourSignedPolePair.signedFifthAnalyticInput_of_eventual_direct_ga
     (hboundary :
       ∀ᶠ n : ℕ in atTop,
         |W.signedFifthCapUpperBoundaryAt n| <= eps)
-    (hlarge :
-      ∀ᶠ n : ℕ in atTop,
-        quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ))
     (hgap :
       ∀ᶠ n : ℕ in atTop,
         0 <= W.signedFifthCorrelationGapAt rho EV eps n)
@@ -222,12 +221,8 @@ theorem QuarticFourSignedPolePair.signedFifthAnalyticInput_of_eventual_direct_ga
       Tendsto W.quarticScaleOuterTerminalAt atTop
         (𝓝 ((t/16)^6 * W.canonicalSignedHighResidual))) :
     W.SignedFifthAnalyticInput rho EV eps := by
-  have hinterior : W.SignedFifthInteriorTarget rho EV eps := by
-    filter_upwards [hlarge, hgap] with n hn hg
-    exact (W.signedFifthCorrelationGapAt_nonneg_iff_cap
-      ht rho n hn).mp hg
-  exact W.signedFifthAnalyticInput_of_interiorTarget
-    rho heps hboundary hinterior hlim
+  exact W.signedFifthAnalyticInput_of_three_producers
+    ht rho heps hboundary hgap hlim
 
 /-- Same Route-B cut stated directly on the signed physical cap. -/
 theorem QuarticFourSignedPolePair.signedFifthAnalyticInput_of_eventual_cap

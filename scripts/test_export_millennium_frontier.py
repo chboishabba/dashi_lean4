@@ -41,14 +41,13 @@ class FrontierExportTests(unittest.TestCase):
             "UniversalAnchoredPolynomialSATDecisionCollision", pnp["first_unpaid"]
         )
 
-    def test_ns_frontier_names_literal_force_decay_transport(self):
+    def test_ns_math_and_same_object_frontier_is_paid_kernel_gate_remains(self):
         ns = self._rows()["navierStokes"]
-        self.assertEqual(ns["frontier"], "TYPE-WELD")
+        self.assertEqual(ns["frontier"], "PROVED")
         self.assertEqual(ns["closure_state"], "redType")
-        self.assertEqual(
-            ns["first_unpaid"],
-            "DASHILiteralClayNS.ComparatorForceDecayTransportR3",
-        )
+        self.assertIn("dashiExactFeffermanC", ns["first_unpaid"])
+        self.assertIn("dashiExactFeffermanD", ns["first_unpaid"])
+        self.assertIn("kernel", ns["first_unpaid"].lower())
 
     def test_bsd_frontier_is_actual_clay_core_rank_equality(self):
         bsd = self._rows()["birchSwinnertonDyer"]

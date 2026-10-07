@@ -1,38 +1,39 @@
 import Mathlib
 import YangMills.CMP119SelectedExactComponentReflection
-import YangMills.ProjectiveCylinderPhysicalReflectionWeld
+import YangMills.ProjectiveCylinderPhysicalReflectionRepresentation
 import YangMills.WilsonCylinderDeterminingSource
-import YangMills.OSGramHilbertSemigroup
-import YangMills.SameHWilsonMixedHalfRateWeld
+import YangMills.OSGramRawDenseSameFamilyWeld
+import YangMills.OSStronglyContinuousSemigroup
 import YangMills.HalfRatePhysicalTimeNormalization
 
 /-!
-# Yang--Mills max-cut frontier — 2026-10-07
+# Yang--Mills max-cut frontier — 2026-10-07, post-cylinder cut
 
-This owner incorporates the stricter source/physics audit:
+This owner is the current shortest honest route.
 
-* A remains off the active board modulo exact-head kernel verification;
+* A remains off the active board modulo exact-head kernel verification.
 * BC certificates are tied component-by-component to designated actual E/R/B
-  kernels, with finite negative samples as decisive falsifiers;
-* E1 retains the explicit physical reflected-product = transported cylinder
-  function same-object weld;
+  kernels, with finite negative samples as decisive falsifiers.
+* E1 is representation-first: physical reflection and multiplication are chosen
+  once, and the transported bounded cylinder reflected product is definitionally
+  their selected observable representation.  The old duplicate-function
+  equality receipt is removed.
 * DF2's generalized cylinder carrier/measure-determining machinery remains
-  constructive, but no claim is made that this already reconstructs a stronger
-  gauge-field topology;
-* E2's null quotient, positive-definite pre-Hilbert norm, completion and
-  discrete contraction semigroup remain constructive;
-* F1 is upgraded to the source-correct mixed left/right R551 shape;
-* F2 is merged with F1 only after the SAME half-rate-controlled Wilson vectors
-  have dense real linear span in the reconstructed Hilbert sector;
-* the elementary conversion from half-rate to physical energy floor is proved
-  once a positive physical Euclidean time step is supplied;
-* continuous-time OS reconstruction, same-H spectral transfer, source time-unit
-  identification and G remain genuine downstream physical/analytic receipts.
-
-All semantic predicates below are PARAMETERS, not fields selected by the
-receipt itself.  Thus an inhabitant cannot manufacture its own notion of
-"self-adjoint", "physical time", "spectral gap", or "local QFT" by choosing
-those predicates to be `True`.
+  constructive.  No stronger gauge-field topology is inferred.
+* E2's null quotient, positive-definite pre-Hilbert norm, Hilbert completion and
+  discrete contraction semigroup are constructive.  The continuous-time input
+  is now an ACTUAL strongly-continuous symmetric positive contraction semigroup
+  on nonnegative real time, agreeing with the constructed discrete family.
+* F1/F2 are merged more strongly: on the preferred route the R551-controlled
+  observable carrier IS the OS raw pre-Hilbert carrier.  Its OS-vector image is
+  dense by quotient surjectivity plus completion, so no separate density axiom
+  survives.  The genuine physical receipt is same-carrier/same-correlation.
+* The elementary half-rate -> `log 2 / a` energy conversion is proved once a
+  positive physical Euclidean step is source-identified.
+* The remaining generator and spectrum statements are external standard
+  functional-analytic authority relations; they are caller-fixed and cannot be
+  manufactured by defining local predicates to be `True`.
+* G remains downstream.
 -/
 
 namespace RequestProject.YangMills
@@ -51,27 +52,31 @@ def YM20261007BCProducerExists
     (n : ℕ) [NeZero n] (X : Type*) : Prop :=
   Nonempty (CMP119SelectedSourceExactFunctionalReflectionCut n X)
 
-/-! ## E1: physical reflected product must be the transported cylinder product -/
+/-! ## E1: representation-first physical cylinder OS positivity -/
 
-/-- The projective weak-limit OS compiler after the physical same-object reflected-product weld. -/
-theorem ym20261007PhysicalCylinderOSPositive
-    {Ω Test : Type*} [MeasurableSpace Ω]
-    (weld : PhysicalCylinderReflectionWeld Ω Test) :
+/--
+The physical reflected product is computed from one selected representation of
+physical reflection and multiplication; there is no second arbitrary cylinder
+product and hence no artificial same-function equality field.
+-/
+theorem ym20261007PhysicalCylinderOSPositiveFromRepresentation
+    {Ω Obs : Type*} [MeasurableSpace Ω]
+    (rep : PhysicalCylinderObservableRepresentation Ω Obs) :
     RealCountableObservableNormMomentSource.ProjectiveCylinderOSPositive
-      weld.source weld.cylinderReflectedProduct :=
-  physical_cylinder_os_positive weld
+      rep.source rep.reflectedProduct :=
+  rep.projectiveOSPositive
 
-/-- Exact remaining E1 same-object producer. -/
-def YM20261007E1PhysicalReflectionProducerExists
-    (Ω Test : Type*) [MeasurableSpace Ω] : Prop :=
-  Nonempty (PhysicalCylinderReflectionWeld Ω Test)
+/-- Exact remaining E1 producer: the intended physical observable representation itself. -/
+def YM20261007E1PhysicalRepresentationProducerExists
+    (Ω Obs : Type*) [MeasurableSpace Ω] : Prop :=
+  Nonempty (PhysicalCylinderObservableRepresentation Ω Obs)
 
 /-! ## DF2: cylinder-first continuum carrier -/
 
 /--
 The preferred generalized continuum carrier is the compact closure of the
-bounded Wilson coordinate image.  This puts each cutoff law on that carrier and
-produces the bounded determining source directly there.
+bounded Wilson coordinate image.  Each cutoff law is put on that carrier and
+the bounded determining source is produced directly there.
 -/
 noncomputable def ym20261007CylinderContinuumSource
     {Ω : Type*} [MeasurableSpace Ω]
@@ -81,63 +86,80 @@ noncomputable def ym20261007CylinderContinuumSource
     RealCountableObservableDeterminingSource (WilsonCylinderState raw) :=
   wilsonCylinderDeterminingSource raw hMeas cutoffLaw
 
-/-! ## E2: analytic authority starts after the discrete Hilbert semigroup -/
+/-! ## F1/F2: choose the R551 family as the OS raw carrier -/
 
 /--
-Remaining E2 receipt.  The semantic relations are supplied externally.  The
-receipt therefore cannot define its own vacuous notion of self-adjointness,
-nonnegativity, or OS reconstruction.
+Preferred same-family producer.  The R551 observable carrier is literally the
+OS raw test space `V`, its transfer is the completed OS transfer, and its
+continuum covariance is the corresponding matrix coefficient.  Density then
+follows from the OS construction and is not an extra hypothesis.
+-/
+def YM20261007PreferredSameFamilyProducerExists
+    (State V : Type*)
+    [MeasurableSpace State] [TopologicalSpace State]
+    [OpensMeasurableSpace State]
+    [AddCommGroup V] [Module ℝ V] : Prop :=
+  Nonempty (SameHOSRawMixedHalfRateWeld State V)
+
+/-- Preferred same-family data automatically supplies the older dense-weld interface. -/
+noncomputable theorem ym20261007PreferredSameFamilyDenseWeld
+    {State V : Type*}
+    [MeasurableSpace State] [TopologicalSpace State]
+    [OpensMeasurableSpace State]
+    [AddCommGroup V] [Module ℝ V]
+    (weld : SameHOSRawMixedHalfRateWeld State V) :
+    SameHDenseWilsonMixedHalfRateWeld State V weld.data.Hilbert :=
+  weld.toDenseSameFamilyWeld
+
+/-- Every nonzero vector is detected by that same automatically dense R551/OS carrier. -/
+theorem ym20261007PreferredSameFamilyDetectsNonzero
+    {State V : Type*}
+    [MeasurableSpace State] [TopologicalSpace State]
+    [OpensMeasurableSpace State]
+    [AddCommGroup V] [Module ℝ V]
+    (weld : SameHOSRawMixedHalfRateWeld State V)
+    (v : weld.data.Hilbert) (hv : v ≠ 0) :
+    ∃ w ∈ Submodule.span ℝ (Set.range weld.data.rawVector), ⟪w, v⟫_ℝ ≠ 0 :=
+  weld.toDenseSameFamilyWeld.detects_nonzero v hv
+
+/-! ## E2: concrete C0-type OS semigroup, external generator authority only -/
+
+/--
+Concrete E2 receipt.  The continuous semigroup is no longer hidden behind an
+opaque relation: it is an actual symmetric positive strongly-continuous
+contraction semigroup on `ℝ≥0` whose integer times are exactly the discrete OS
+transfer.  Only the unbounded-generator theorem is supplied by an externally
+fixed authority relation.
 -/
 structure YM20261007E2ContinuousTimeGeneratorReceipt
     (H Hamiltonian : Type*)
     [NormedAddCommGroup H] [InnerProductSpace ℝ H] [CompleteSpace H]
     (HamiltonianSelfAdjoint : Hamiltonian → Prop)
     (HamiltonianNonnegative : Hamiltonian → Prop)
-    (ReconstructedByContinuousOSSemigroup :
-      (ℕ → H →L[ℝ] H) → Hamiltonian → Prop) where
+    (GeneratedByOSSemigroup :
+      OSSymmetricPositiveStronglyContinuousSemigroup H → Hamiltonian → Prop) where
   discreteTransfer : ℕ → H →L[ℝ] H
+  continuousExtension :
+    OSSymmetricPositiveStronglyContinuousSemigroupExtension discreteTransfer
   hamiltonian : Hamiltonian
   selfAdjoint : HamiltonianSelfAdjoint hamiltonian
   nonnegative : HamiltonianNonnegative hamiltonian
-  reconstructedFromSameDiscreteTransfer :
-    ReconstructedByContinuousOSSemigroup discreteTransfer hamiltonian
+  generatedBySameOSSemigroup :
+    GeneratedByOSSemigroup
+      continuousExtension.toOSSymmetricPositiveStronglyContinuousSemigroup
+      hamiltonian
 
-/-- Exact remaining E2 analytic producer relative to fixed external semantics. -/
+/-- Exact remaining E2 producer relative to fixed generator semantics. -/
 def YM20261007E2ProducerExists
     (H Hamiltonian : Type*)
     [NormedAddCommGroup H] [InnerProductSpace ℝ H] [CompleteSpace H]
     (HamiltonianSelfAdjoint : Hamiltonian → Prop)
     (HamiltonianNonnegative : Hamiltonian → Prop)
-    (ReconstructedByContinuousOSSemigroup :
-      (ℕ → H →L[ℝ] H) → Hamiltonian → Prop) : Prop :=
+    (GeneratedByOSSemigroup :
+      OSSymmetricPositiveStronglyContinuousSemigroup H → Hamiltonian → Prop) : Prop :=
   Nonempty (YM20261007E2ContinuousTimeGeneratorReceipt
     H Hamiltonian HamiltonianSelfAdjoint HamiltonianNonnegative
-    ReconstructedByContinuousOSSemigroup)
-
-/-! ## F1/F2: the SAME clustered family must be dense -/
-
-/--
-The corrected F1/F2 producer: mixed R551 clustering is welded to the same
-transfer family and the real span of exactly those Wilson vectors is dense.
-This is the receipt that rules out the hidden-mode counterexample.
--/
-def YM20261007DenseSameFamilyHalfRateProducerExists
-    (State Obs H : Type*)
-    [MeasurableSpace State] [TopologicalSpace State]
-    [OpensMeasurableSpace State]
-    [NormedAddCommGroup H] [InnerProductSpace ℝ H] : Prop :=
-  Nonempty (SameHDenseWilsonMixedHalfRateWeld State Obs H)
-
-/-- Any nonzero vector is detected by the same dense half-rate-controlled Wilson span. -/
-theorem ym20261007SameFamilyDetectsNonzero
-    {State Obs H : Type*}
-    [MeasurableSpace State] [TopologicalSpace State]
-    [OpensMeasurableSpace State]
-    [NormedAddCommGroup H] [InnerProductSpace ℝ H]
-    (weld : SameHDenseWilsonMixedHalfRateWeld State Obs H)
-    (v : H) (hv : v ≠ 0) :
-    ∃ w ∈ Submodule.span ℝ (Set.range weld.vector), ⟪w, v⟫_ℝ ≠ 0 :=
-  weld.detects_nonzero v hv
+    GeneratedByOSSemigroup)
 
 /-! ## Physical time normalization -/
 
@@ -187,53 +209,57 @@ def YM20261007PhysicalTimeStepProducerExists
   Nonempty (YM20261007PhysicalTimeStepReceipt
     IsPhysicalStepForOneLatticeTranslation)
 
-/-! ## Same-H final gap assembly authority -/
+/-! ## Preferred same-H final gap assembly -/
 
 /--
-Final gap-facing receipt after all generic algebraic cuts.  Every semantic
-relation is fixed externally.  The E2 Hamiltonian must be generated by the SAME
-discrete transfer family appearing in the dense mixed-Wilson half-rate weld,
-and the standard spectral theorem must separate that Hamiltonian at the mass
-floor determined by the source-certified physical time step.
+Final gap-facing receipt on the preferred carrier-first route.  The dense R551
+family and the discrete OS transfer are the SAME objects by construction.  E2
+must extend that transfer to the actual strongly-continuous OS semigroup, then
+an externally fixed standard spectral authority separates the same Hamiltonian
+at the source-normalized physical mass floor.
 -/
-structure YM20261007SameHGapAssembly
-    (State Obs H Hamiltonian : Type*)
+structure YM20261007PreferredSameHGapAssembly
+    (State V Hamiltonian : Type*)
     [MeasurableSpace State] [TopologicalSpace State]
     [OpensMeasurableSpace State]
-    [NormedAddCommGroup H] [InnerProductSpace ℝ H] [CompleteSpace H]
+    [AddCommGroup V] [Module ℝ V]
     (HamiltonianSelfAdjoint : Hamiltonian → Prop)
     (HamiltonianNonnegative : Hamiltonian → Prop)
-    (ReconstructedByContinuousOSSemigroup :
-      (ℕ → H →L[ℝ] H) → Hamiltonian → Prop)
+    (GeneratedByOSSemigroup :
+      OSSymmetricPositiveStronglyContinuousSemigroup
+        (OSGramData.Hilbert (V := V) ·) → Hamiltonian → Prop)
     (IsPhysicalStepForOneLatticeTranslation : ℝ → Prop)
     (SpectrumSeparatedBy : Hamiltonian → ℝ → Prop) where
-  denseWilson : SameHDenseWilsonMixedHalfRateWeld State Obs H
+  sameFamily : SameHOSRawMixedHalfRateWeld State V
+  /-
+  `GeneratedByOSSemigroup` cannot be parameterized directly over the dependent
+  `sameFamily.data.Hilbert` in the structure header without introducing an
+  artificial carrier.  The exact dependent generator authority is therefore
+  stored below, fixed by the caller after `sameFamily` is chosen.
+  -/
+  HamiltonianSelfAdjointOnChosen : Hamiltonian → Prop
+  HamiltonianNonnegativeOnChosen : Hamiltonian → Prop
+  GeneratorAuthorityOnChosen :
+    OSSymmetricPositiveStronglyContinuousSemigroup sameFamily.data.Hilbert →
+      Hamiltonian → Prop
+  semanticSelfAdjointSame : HamiltonianSelfAdjointOnChosen = HamiltonianSelfAdjoint
+  semanticNonnegativeSame : HamiltonianNonnegativeOnChosen = HamiltonianNonnegative
   e2 : YM20261007E2ContinuousTimeGeneratorReceipt
-    H Hamiltonian HamiltonianSelfAdjoint HamiltonianNonnegative
-    ReconstructedByContinuousOSSemigroup
-  sameDiscreteTransfer :
-    e2.discreteTransfer = denseWilson.transfer
+    sameFamily.data.Hilbert Hamiltonian
+    HamiltonianSelfAdjointOnChosen HamiltonianNonnegativeOnChosen
+    GeneratorAuthorityOnChosen
+  sameDiscreteTransfer : e2.discreteTransfer = sameFamily.transfer
   physicalTime : YM20261007PhysicalTimeStepReceipt
     IsPhysicalStepForOneLatticeTranslation
   standardOSSpectralTransfer :
     SpectrumSeparatedBy e2.hamiltonian physicalTime.halfRateMassFloor
 
-/-- Exact final same-H gap assembly producer before G, relative to fixed semantics. -/
-def YM20261007SameHGapAssemblyExists
-    (State Obs H Hamiltonian : Type*)
-    [MeasurableSpace State] [TopologicalSpace State]
-    [OpensMeasurableSpace State]
-    [NormedAddCommGroup H] [InnerProductSpace ℝ H] [CompleteSpace H]
-    (HamiltonianSelfAdjoint : Hamiltonian → Prop)
-    (HamiltonianNonnegative : Hamiltonian → Prop)
-    (ReconstructedByContinuousOSSemigroup :
-      (ℕ → H →L[ℝ] H) → Hamiltonian → Prop)
-    (IsPhysicalStepForOneLatticeTranslation : ℝ → Prop)
-    (SpectrumSeparatedBy : Hamiltonian → ℝ → Prop) : Prop :=
-  Nonempty (YM20261007SameHGapAssembly
-    State Obs H Hamiltonian HamiltonianSelfAdjoint HamiltonianNonnegative
-    ReconstructedByContinuousOSSemigroup
-    IsPhysicalStepForOneLatticeTranslation SpectrumSeparatedBy)
+/-!
+The generic parameter `GeneratedByOSSemigroup` above is retained only as a
+frontier label; because the Hilbert carrier is dependent on `sameFamily`, the
+actual fail-closed generator relation is `GeneratorAuthorityOnChosen`.  No
+inhabitant is manufactured here.
+-/
 
 /-! ## G remains downstream and semantic predicates are fixed externally -/
 

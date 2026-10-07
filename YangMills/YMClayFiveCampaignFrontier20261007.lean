@@ -197,6 +197,40 @@ def excitationContinuousSemigroup
     .toExcitationSymmetricPositiveStronglyContinuousSemigroup
 
 /--
+At every integer time, the continuously reconstructed excitation transfer is
+literally the same restricted operator as the discrete centered OS transfer.
+This removes a final same-H adapter seam from the spectral argument.
+-/
+theorem excitation_continuous_nat_eq_discrete
+    {State V Hamiltonian : Type*}
+    [MeasurableSpace State] [TopologicalSpace State]
+    [OpensMeasurableSpace State]
+    [AddCommGroup V] [Module ℝ V]
+    {HamiltonianSelfAdjoint HamiltonianNonnegative : Hamiltonian → Prop}
+    {GeneratedByOSSemigroup :
+      ∀ data : OSGramData V,
+        OSSymmetricPositiveStronglyContinuousSemigroup data.Hilbert →
+          Hamiltonian → Prop}
+    {IsPhysicalStepForOneLatticeTranslation : ℝ → Prop}
+    {SubgapSpectrum : Hamiltonian → ℝ → Prop}
+    (assembly : YM20261007FiveCampaignSameHGapAssembly
+      State V Hamiltonian HamiltonianSelfAdjoint HamiltonianNonnegative
+      GeneratedByOSSemigroup IsPhysicalStepForOneLatticeTranslation
+      SubgapSpectrum)
+    (n : ℕ) :
+    assembly.excitationContinuousSemigroup.toOSStronglyContinuousSemigroup.transfer
+      (n : ℝ≥0) = assembly.sameFamily.excitationTransfer n := by
+  ext x
+  apply Subtype.ext
+  change
+    assembly.e2.continuousExtension
+        .toOSSymmetricPositiveStronglyContinuousSemigroup
+        .toOSStronglyContinuousSemigroup.transfer (n : ℝ≥0) (x : assembly.sameFamily.data.Hilbert) =
+      assembly.sameFamily.transfer n (x : assembly.sameFamily.data.Hilbert)
+  rw [assembly.e2.continuousExtension.discreteAgreement n,
+    assembly.sameDiscreteTransfer]
+
+/--
 The spectral gap statement is now a theorem: any claimed subgap spectrum would
 produce a forbidden nonzero same-H transfer window.
 -/

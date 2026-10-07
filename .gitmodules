@@ -1,0 +1,3 @@
+[submodule "vendor/JordanAlgebra"]
+	path = vendor/JordanAlgebra
+	url = https://github.com/Cobord/JordanAlgebra.git

@@ -13,7 +13,10 @@ example : Fintype.card Minus2 = 27 := minus2_card
 example : 81 = 27 + 27 + 27 := by norm_num
 example : ∀ s r, reflectedWeight s r = a2Weight r := literal_e6_reflection_preserves_a2_weight
 example : ¬ BareF3FiveOrbitSize 27 := no_bare_f3five_27_orbit_size
-example : canonicalBoundary.literalMixedFibresSixTimes27Paid = true := rfl
+example : canonicalBoundary.sixLiteralWeightFibresTyped = true := rfl
+example : canonicalBoundary.eachLiteralWeightFibreCount27Paid = true := rfl
+example : canonicalBoundary.literalMixedPlusIsThree27FibresPaid = true := rfl
+example : canonicalBoundary.literalMixedMinusIsThree27FibresPaid = true := rfl
 example : canonicalBoundary.bareF3FiveSupplies27Orbit = false := rfl
 example : canonicalBoundary.albert27RecognitionAutomaticallyPaid = false := rfl
 

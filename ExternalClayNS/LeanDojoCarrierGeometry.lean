@@ -4,7 +4,7 @@ import Problems.NavierStokes.Millennium
 /-!
 # Exact carrier geometry for the LeanDojo Navier--Stokes acceptance bridge
 
-These lemmas pay representation facts only.  They contain no Navier--Stokes
+These lemmas pay representation facts only. They contain no Navier--Stokes
 estimate and no breakdown/existence argument.
 -/
 
@@ -14,6 +14,17 @@ namespace DASHILiteralClayNS
 
 open ClaySpec
 open NavierStokes
+
+/-- Pack a curried pair-spacetime field into LeanDojo's time-first ambient
+spacetime by using its canonical `space` and `time` projections. -/
+noncomputable def pairFieldToLeanDojo {E : Type*}
+    (f : R3 → ℝ → E) : Spacetime3 → E :=
+  fun z => f (NavierStokes.space z) (NavierStokes.time z)
+
+/-- Read an ambient LeanDojo field on the ordinary pair-spacetime carrier. -/
+noncomputable def leanDojoFieldToPair {E : Type*}
+    (f : Spacetime3 → E) : R3 × ℝ → E :=
+  fun z => f (NavierStokes.spacetime_point z.2 z.1)
 
 /-- LeanDojo's time projection recovers the time used by `spacetime_point`. -/
 @[simp] theorem leanDojo_time_spacetime_point
@@ -29,13 +40,28 @@ open NavierStokes
   ext i
   simp [NavierStokes.space, NavierStokes.spacetime_point]
 
-/-- The pair-to-ambient map is a left inverse for the two projections. -/
-@[simp] theorem comparatorForceToLeanDojo_spacetime_point
-    (f : R3 → ℝ → R3) (x : R3) (t : ℝ) :
-    (fun z : ForceField 3 => z)
-      (fun z => f (NavierStokes.space z) (NavierStokes.time z))
-      (NavierStokes.spacetime_point t x) = f x t := by
-  simp
+/-- Packing then evaluating at the canonical pair point recovers the curried
+field exactly. -/
+@[simp] theorem pairFieldToLeanDojo_spacetime_point {E : Type*}
+    (f : R3 → ℝ → E) (x : R3) (t : ℝ) :
+    pairFieldToLeanDojo f (NavierStokes.spacetime_point t x) = f x t := by
+  simp [pairFieldToLeanDojo]
+
+/-- Reading a packed field back on pair spacetime is definitionally the ordinary
+uncurried field. -/
+@[simp] theorem leanDojoFieldToPair_pairFieldToLeanDojo {E : Type*}
+    (f : R3 → ℝ → E) :
+    leanDojoFieldToPair (pairFieldToLeanDojo f) = SemanticGap.uncurryField f := by
+  funext z
+  simp [leanDojoFieldToPair, pairFieldToLeanDojo, SemanticGap.uncurryField]
+
+/-- The canonical pair point lies in LeanDojo's closed spacetime domain exactly
+when its time coordinate is nonnegative. -/
+@[simp] theorem spacetime_point_mem_global_iff
+    (t : ℝ) (x : Space3) :
+    NavierStokes.spacetime_point t x ∈ NavierStokes.global_spacetime_domain 3 ↔
+      0 ≤ t := by
+  simp [NavierStokes.global_spacetime_domain, NavierStokes.spacetime_point]
 
 /-- ClaySpec and LeanDojo use the same literal `R3` standard basis in their
 initial divergence sums. -/

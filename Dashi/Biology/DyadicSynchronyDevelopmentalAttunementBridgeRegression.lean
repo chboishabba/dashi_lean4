@@ -1,0 +1,12 @@
+import Dashi.Biology.DyadicSynchronyDevelopmentalAttunementBridgeExact
+
+namespace Dashi.Biology.DyadicSynchronyDevelopmentalAttunementBridgeRegression
+
+open Dashi.Biology.DyadicSynchronyDevelopmentalAttunementBridgeExact
+
+#check canonicalDyadicSynchronyAttunementBridge
+#check synchronyDoesNotRecoverOrderedResponseTrace
+#check synchronyDoesNotCollapseDyadObservers
+#check canonicalDyadicSynchronyAttunementBoundary
+
+end Dashi.Biology.DyadicSynchronyDevelopmentalAttunementBridgeRegression

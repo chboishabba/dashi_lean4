@@ -28,6 +28,10 @@ structure DonorSurface where
   cubicHomogeneitySourceWritten : Bool
   determinantOneSourceWritten : Bool
   rankThreeDetTracePackageSourceWritten : Bool
+  octonionInnerProductSourceWritten : Bool
+  octonionTrialityFormSourceWritten : Bool
+  octonionTrialityProducerSourceWritten : Bool
+  octonionNormedTrialityProducerSourceWritten : Bool
   fullCubicIdentitiesSourceWritten : Bool
   e6RepresentationSourceWritten : Bool
   f4AutomorphismRecognitionSourceWritten : Bool
@@ -48,6 +52,10 @@ def pinnedDonorSurface : DonorSurface where
   cubicHomogeneitySourceWritten := true
   determinantOneSourceWritten := true
   rankThreeDetTracePackageSourceWritten := true
+  octonionInnerProductSourceWritten := true
+  octonionTrialityFormSourceWritten := true
+  octonionTrialityProducerSourceWritten := true
+  octonionNormedTrialityProducerSourceWritten := true
   fullCubicIdentitiesSourceWritten := false
   e6RepresentationSourceWritten := false
   f4AutomorphismRecognitionSourceWritten := false

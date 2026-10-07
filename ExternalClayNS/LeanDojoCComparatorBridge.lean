@@ -16,13 +16,8 @@ pair-spacetime packing round-trip, domain membership, and initial-divergence
 identity. The external acceptance seam therefore does not reopen any of those
 facts.
 
-The residual obligations are now only:
-
-1. ClaySpec condition-(4) derivative-decay notation -> LeanDojo condition (4);
-2. ClaySpec condition-(5) pair-spacetime notation -> LeanDojo time-first `Fin 4` condition (5);
-3. LeanDojo global smooth finite-energy solution -> literal ClaySpec solution.
-
-No fluid estimate is introduced here.
+No fluid estimate is introduced here. Every residual below is a representation,
+coordinate-derivative, boundary-extension, or energy-carrier transport.
 -/
 
 noncomputable section
@@ -31,6 +26,8 @@ namespace DASHILiteralClayNS
 
 open ClaySpec
 open NavierStokes
+
+/-! ## Data-side residuals -/
 
 /-- Condition-(4) derivative-packaging transport only. Smoothness is already a
 literal common predicate and divergence is paid separately by
@@ -49,12 +46,25 @@ def ClayForceToLeanDojo : Prop :=
     ClaySpec.ForceRapidDecayR3 (SemanticGap.uncurryField f) →
       NavierStokesOnR3.SmoothRapidDecayForce (pairFieldToLeanDojo f)
 
-/-- Solution-carrier transport only.
+/-! ## Solution-side residuals -/
 
-The output is a literal `ClaySpec.ClaySolutionR3`; the already-proved
-`SemanticGap.claySolutionR3_to_comparator` then supplies the released
-comparator solution required for the contradiction. -/
-def LeanDojoSolutionToClaySpec : Prop :=
+/-- Pull ambient LeanDojo velocity smoothness back along the fixed
+pair-spacetime embedding. -/
+def LeanDojoVelocitySmoothToClay : Prop :=
+  ∀ u : VelocityField 3,
+    velocity_smooth_on_global_spacetime_domain u →
+      ClaySpec.TrustBoundarySmoothOn (leanDojoFieldToPair u)
+
+/-- Scalar analogue of `LeanDojoVelocitySmoothToClay`. -/
+def LeanDojoPressureSmoothToClay : Prop :=
+  ∀ p : PressureField 3,
+    pressure_smooth_on_global_spacetime_domain p →
+      ClaySpec.TrustBoundarySmoothOn (leanDojoFieldToPair p)
+
+/-- Transport LeanDojo's positive-time momentum equation into ClaySpec equation
+(1) on the closed half-space. The only non-definitional analytic content here
+is the smooth boundary extension from `t > 0` to `t = 0`. -/
+def LeanDojoMomentumToClay : Prop :=
   ∀ (ν : ℝ) (ν_pos : ν > 0)
     (u₀ : NavierStokesOnR3.InitialVelocity)
     (f : R3 → ℝ → R3)
@@ -62,23 +72,89 @@ def LeanDojoSolutionToClaySpec : Prop :=
     (sol : GlobalSmoothSolution
       (NavierStokesOnR3.equations ν ν_pos u₀ hdiv
         (pairFieldToLeanDojo f))),
-      NavierStokesOnR3.FiniteEnergy sol.velocity →
-        ClaySpec.ClaySolutionR3 ν u₀ (SemanticGap.uncurryField f)
-          (leanDojoFieldToPair sol.velocity)
-          (leanDojoFieldToPair sol.pressure)
+      ClaySpec.EquationOne ν
+        (leanDojoFieldToPair sol.velocity)
+        (leanDojoFieldToPair sol.pressure)
+        (SemanticGap.uncurryField f)
 
-/-- Exact post-archaeology representation frontier. Every field is now a
-strictly residual notation/carrier transport; comparator semantics, spatial
-carrier identity, domain round-trip and initial divergence are already paid. -/
+/-- Transport LeanDojo incompressibility from the open half-space to ClaySpec's
+closed-half-space equation (2), again exposing boundary extension explicitly. -/
+def LeanDojoIncompressibleToClay : Prop :=
+  ∀ (ν : ℝ) (ν_pos : ν > 0)
+    (u₀ : NavierStokesOnR3.InitialVelocity)
+    (f : R3 → ℝ → R3)
+    (hdiv : NavierStokesOnR3.DivergenceFreeInitial u₀)
+    (sol : GlobalSmoothSolution
+      (NavierStokesOnR3.equations ν ν_pos u₀ hdiv
+        (pairFieldToLeanDojo f))),
+      ClaySpec.EquationTwo (leanDojoFieldToPair sol.velocity)
+
+/-- Translate LeanDojo's finite-energy representation (coordinate square sum)
+into ClaySpec's vector-valued `MemLp` plus norm-square integral representation. -/
+def LeanDojoEnergyToClay : Prop :=
+  ∀ (u : VelocityField 3),
+    NavierStokesOnR3.FiniteEnergy u →
+      ClaySpec.BoundedEnergy (leanDojoFieldToPair u)
+
+/-- The initial condition is not residual: it follows directly from the fixed
+pair/ambient round-trip and the `GlobalSmoothSolution` initial condition. -/
+theorem leanDojoInitialCondition_to_clay
+    {ν : ℝ} {ν_pos : ν > 0}
+    {u₀ : NavierStokesOnR3.InitialVelocity}
+    {f : R3 → ℝ → R3}
+    {hdiv : NavierStokesOnR3.DivergenceFreeInitial u₀}
+    (sol : GlobalSmoothSolution
+      (NavierStokesOnR3.equations ν ν_pos u₀ hdiv
+        (pairFieldToLeanDojo f))) :
+    ClaySpec.EquationThree u₀ (leanDojoFieldToPair sol.velocity) := by
+  intro x
+  simpa [ClaySpec.EquationThree, leanDojoFieldToPair] using sol.initial_condition x
+
+/-- Exact solution-side representation frontier, after removing the initial
+condition and all already-paid comparator/ClaySpec semantics. -/
+structure LeanDojoSolutionTransportFrontier : Prop where
+  velocitySmooth : LeanDojoVelocitySmoothToClay
+  pressureSmooth : LeanDojoPressureSmoothToClay
+  momentum : LeanDojoMomentumToClay
+  incompressible : LeanDojoIncompressibleToClay
+  energy : LeanDojoEnergyToClay
+
+/-- Compile the five residual representation facts into the literal independent
+ClaySpec solution object. -/
+theorem leanDojoSolutionToClaySpec_of_transport
+    (w : LeanDojoSolutionTransportFrontier)
+    {ν : ℝ} {ν_pos : ν > 0}
+    {u₀ : NavierStokesOnR3.InitialVelocity}
+    {f : R3 → ℝ → R3}
+    {hdiv : NavierStokesOnR3.DivergenceFreeInitial u₀}
+    (sol : GlobalSmoothSolution
+      (NavierStokesOnR3.equations ν ν_pos u₀ hdiv
+        (pairFieldToLeanDojo f)))
+    (henergy : NavierStokesOnR3.FiniteEnergy sol.velocity) :
+    ClaySpec.ClaySolutionR3 ν u₀ (SemanticGap.uncurryField f)
+      (leanDojoFieldToPair sol.velocity)
+      (leanDojoFieldToPair sol.pressure) := by
+  refine ⟨w.velocitySmooth sol.velocity sol.velocity_smooth,
+    w.pressureSmooth sol.pressure sol.pressure_smooth,
+    w.momentum ν ν_pos u₀ f hdiv sol,
+    w.incompressible ν ν_pos u₀ f hdiv sol,
+    leanDojoInitialCondition_to_clay sol,
+    w.energy sol.velocity henergy⟩
+
+/-! ## Exact target compiler -/
+
+/-- Exact post-archaeology representation frontier. Comparator semantics,
+spatial carrier identity, domain round-trip, initial divergence and solution
+initial condition are already paid. -/
 structure LeanDojoCTransportFrontier : Prop where
   initialDecay : ClayInitialDecayToLeanDojo
   force : ClayForceToLeanDojo
-  solution : LeanDojoSolutionToClaySpec
+  solution : LeanDojoSolutionTransportFrontier
 
 /-- The released comparator C theorem, already-paid same-object welds, and only
-the three residual transports above compose to the exact pinned Fefferman C
-target. LeanDojo's own equivalence removes condition (6) from the contradiction
-branch because `GlobalSmoothSolution` already carries it. -/
+the residual transports above compose to the exact pinned Fefferman C target.
+LeanDojo's own equivalence removes condition (6) from the contradiction branch
+because `GlobalSmoothSolution` already carries it. -/
 theorem leanDojoFeffermanC_of_transport
     (w : LeanDojoCTransportFrontier) :
     MillenniumNavierStokes.FeffermanC := by
@@ -96,11 +172,13 @@ theorem leanDojoFeffermanC_of_transport
   intro hdiv' hExists
   apply hno
   rcases hExists with ⟨sol, henergy⟩
-  have hClay := w.solution ν ν_pos u₀ f hdiv' sol henergy
+  have hClay := leanDojoSolutionToClaySpec_of_transport w.solution sol henergy
   have hComparator := SemanticGap.claySolutionR3_to_comparator hClay
   rw [SemanticGap.curryField_uncurryField] at hComparator
   exact ⟨_, _, hComparator⟩
 
+#print axioms leanDojoInitialCondition_to_clay
+#print axioms leanDojoSolutionToClaySpec_of_transport
 #print axioms leanDojoFeffermanC_of_transport
 
 end DASHILiteralClayNS

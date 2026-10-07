@@ -58,14 +58,14 @@ def externalTargetReceipts : List ExternalTargetReceipt :=
       upstreamDeclaration := "Millennium.ClayRiemannHypothesis"
       state := .redMath
       frontier := .analytic
-      firstUnpaid := "produce Mathlib RiemannHypothesis from the surviving A2/A1/B analytic leaf"
-      note := "Exact LeanDojo <-> Mathlib RiemannHypothesis statement weld is source-written bidirectionally. DASHI's current RH route still reports the global/high-zero theorem open; kernel acceptance therefore waits on the standard Mathlib RH producer, not another Clay statement reconstruction." }
+      firstUnpaid := "selected-witness A2 leading comparison postSixthTerminalEighthLeadingAllowance < postSixthTerminalDominantHeadroom"
+      note := "Exact LeanDojo <-> Mathlib RiemannHypothesis statement weld is source-written bidirectionally. On the live RH producer branch, A2 has been compressed past polarity, dominant M6 sign, envelope expansion, and positive headroom. The first decision is now the selected eighth-leading allowance versus the already-paid sixth headroom; failure should retire the current positive-cap A2 branch rather than create another certificate. A1 and Route B remain independent fallback routes." }
   , { problem := .navierStokes
       upstreamDeclaration := "MillenniumNavierStokes.FeffermanA|B|C|D"
       state := .redType
       frontier := .typeWeld
-      firstUnpaid := "kernel-check ClaySpec.ClayOptionC/D <-> LeanDojo FeffermanC/D in one environment"
-      note := "ExternalClayNS already proves literal independent Clay C and D from the released comparator proof through a detailed physical/semantic bridge. LeanDojoTargetBridge reduces external acceptance exactly to ClaySpec.ClayOptionC/D <-> LeanDojo FeffermanC/D; no new fluid estimate belongs in this seam." }
+      firstUnpaid := "DASHILiteralClayNS.ComparatorForceDecayTransportR3"
+      note := "The same-object audit has already paid the spacetime equivalence, initial-data divergence/decay, force smoothness, periodicity, closed-time boundary extension, and structural solution pullback. LeanDojoMaxCut names the next literal edge: comparator mixed-derivative force decay -> LeanDojo SmoothRapidDecayForce on the transported field. PDE/divergence and finite-energy pullback remain immediately downstream; the older proposition-level C/D iff weld is no longer the first edge." }
   , { problem := .hodge
       upstreamDeclaration := "MillenniumHodge.ClayHodge"
       state := .upstreamIncomplete
@@ -76,8 +76,8 @@ def externalTargetReceipts : List ExternalTargetReceipt :=
       upstreamDeclaration := "MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer"
       state := .redMath
       frontier := .analytic
-      firstUnpaid := "universal same-curve algebraic-rank = analytic-rank producer plus LeanDojo rank-carrier transport"
-      note := "LeanDojo itself reduces the exact Taylor target to Rank.Existence plus finite Mordell-Weil rank. DASHI already has the literal same-curve analytic/algebraic rank carriers; ExactTargetSurface compiles the external Clay theorem from BSDLeanDojoSameObjectWeld plus the existing BSD core. The universal rank equality remains open in the current DASHI source, while continuation/rank-carrier transport is the certification seam." }
+      firstUnpaid := "Synthesis.Millennium.BSD.BSDClayCoreObligation bg"
+      note := "The mainline BSD surface already isolates the official novel theorem exactly: universal equality of the canonical analytic rank and Mordell-Weil free rank on the same rational elliptic curve, packaged as BSDClayCoreObligation after established background. LeanDojo rank-existence/finite-rank transport is a later certification seam and is not the first mathematical debt." }
   , { problem := .yangMills
       upstreamDeclaration := "MillenniumYangMills.ClayYangMills"
       state := .upstreamIncomplete
@@ -102,6 +102,20 @@ LeanDojo↔Mathlib equivalence lives in `ExactTargetSurface`.  The unpaid class 
 therefore mathematical/analytic rather than representational. -/
 theorem riemann_frontier_is_analytic :
     (externalTargetReceipts.find? (fun r => r.problem == .riemann)).map
+        (fun r => r.frontier) = some .analytic := by
+  decide
+
+/-- The current Navier--Stokes first edge is a representation theorem, not a new
+fluid estimate. -/
+theorem navierStokes_frontier_is_typeWeld :
+    (externalTargetReceipts.find? (fun r => r.problem == .navierStokes)).map
+        (fun r => r.frontier) = some .typeWeld := by
+  decide
+
+/-- BSD has paid the carrier/background split; its first unpaid edge is the
+actual universal rank equality. -/
+theorem birchSwinnertonDyer_frontier_is_analytic :
+    (externalTargetReceipts.find? (fun r => r.problem == .birchSwinnertonDyer)).map
         (fun r => r.frontier) = some .analytic := by
   decide
 

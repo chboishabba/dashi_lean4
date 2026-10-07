@@ -176,7 +176,7 @@ def continuousVacuumSemigroup
 
 /-- The same continuous semigroup restricts constructively to `Ω⊥`. -/
 def excitationContinuousSemigroup
-    {State V Hamiltonian : Type*)
+    {State V Hamiltonian : Type*}
     [MeasurableSpace State] [TopologicalSpace State]
     [OpensMeasurableSpace State]
     [AddCommGroup V] [Module ℝ V]

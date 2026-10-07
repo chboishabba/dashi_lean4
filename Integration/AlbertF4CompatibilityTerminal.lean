@@ -94,8 +94,9 @@ noncomputable def foldedTracelessAutomorphism
     (g : FoldGenerator) :
     Traceless (transportTraceUnit A C.coordinateEquiv) ≃ₗ[ℝ]
       Traceless (transportTraceUnit A C.coordinateEquiv) :=
-  (foldedJordanAutomorphism A hJ C g).tracelessLinearEquiv
+  JordanAutomorphism.tracelessLinearEquiv
     (transportAlbertStructure A C.coordinateEquiv)
+    (foldedJordanAutomorphism A hJ C g)
 
 /-- Terminal compiler surface for the remaining continuous/algebraic theorem.
 The finite Weyl action is now inside Jordan automorphisms; identifying the full

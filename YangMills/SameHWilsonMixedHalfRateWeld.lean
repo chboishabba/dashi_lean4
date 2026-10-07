@@ -99,7 +99,7 @@ theorem HalfRateMatrixBound.add_left
         = |⟪left₁, T time right⟫_ℝ + ⟪left₂, T time right⟫_ℝ| := by
             rw [inner_add_left]
     _ ≤ |⟪left₁, T time right⟫_ℝ| + |⟪left₂, T time right⟫_ℝ| :=
-          abs_add _ _
+          abs_add_le _ _
     _ ≤ C₁ * (1 / 2 : ℝ) ^ time + C₂ * (1 / 2 : ℝ) ^ time :=
           add_le_add (h₁ time) (h₂ time)
     _ = (C₁ + C₂) * (1 / 2 : ℝ) ^ time := by ring
@@ -120,7 +120,7 @@ theorem HalfRateMatrixBound.add_right
         = |⟪left, T time right₁⟫_ℝ + ⟪left, T time right₂⟫_ℝ| := by
             rw [map_add, inner_add_right]
     _ ≤ |⟪left, T time right₁⟫_ℝ| + |⟪left, T time right₂⟫_ℝ| :=
-          abs_add _ _
+          abs_add_le _ _
     _ ≤ C₁ * (1 / 2 : ℝ) ^ time + C₂ * (1 / 2 : ℝ) ^ time :=
           add_le_add (h₁ time) (h₂ time)
     _ = (C₁ + C₂) * (1 / 2 : ℝ) ^ time := by ring
@@ -159,31 +159,10 @@ theorem HalfRateMatrixBound.smul_right
           mul_le_mul_of_nonneg_left (h time) (abs_nonneg a)
     _ = (|a| * C) * (1 / 2 : ℝ) ^ time := by ring
 
-/-- Extend generator-pair half-rate bounds through the span in the right slot. -/
-theorem halfRateMatrixBound_right_of_mem_span
-    {Obs H : Type*}
-    [NormedAddCommGroup H] [InnerProductSpace ℝ H]
-    (T : ℕ → H →L[ℝ] H) (vector : Obs → H)
-    (left : H)
-    (hgen : ∀ j, HalfRateMatrixBound T left (vector j))
-    {right : H}
-    (hright : right ∈ Submodule.span ℝ (Set.range vector)) :
-    HalfRateMatrixBound T left right := by
-  induction hright using Submodule.span_induction with
-  | mem x hx =>
-      rcases hx with ⟨j, rfl⟩
-      exact hgen j
-  | zero =>
-      exact halfRateMatrixBound_zero_right T left
-  | add x y _ _ hx hy =>
-      exact hx.add_right hy
-  | smul a x _ hx =>
-      exact hx.smul_right a
-
 /--
 Mixed half-rate bounds on every selected Wilson-generator pair extend to every
-pair in the real linear span.  Thus once that SAME span is dense/cyclic, there
-is no hidden undetected sector at the algebraic F2 layer.
+pair in the real linear span.  This uses mathlib's binary span induction, so
+both variables stay tied to the SAME generator family throughout the proof.
 -/
 theorem halfRateMatrixBound_of_mem_span
     {Obs H : Type*}
@@ -194,17 +173,26 @@ theorem halfRateMatrixBound_of_mem_span
     (hleft : left ∈ Submodule.span ℝ (Set.range vector))
     (hright : right ∈ Submodule.span ℝ (Set.range vector)) :
     HalfRateMatrixBound T left right := by
-  induction hleft using Submodule.span_induction with
-  | mem x hx =>
-      rcases hx with ⟨i, rfl⟩
-      exact halfRateMatrixBound_right_of_mem_span
-        T vector (vector i) (hgen i) hright
-  | zero =>
-      exact halfRateMatrixBound_zero_left T right
-  | add x y _ _ hx hy =>
-      exact hx.add_left hy
-  | smul a x _ hx =>
-      exact hx.smul_left a
+  refine Submodule.span_induction₂
+    (s := Set.range vector) (t := Set.range vector)
+    ?mem_mem ?zero_left ?zero_right ?add_left ?add_right ?smul_left ?smul_right
+    hleft hright
+  · intro x y hx hy
+    rcases hx with ⟨i, rfl⟩
+    rcases hy with ⟨j, rfl⟩
+    exact hgen i j
+  · intro y _
+    exact halfRateMatrixBound_zero_left T y
+  · intro x _
+    exact halfRateMatrixBound_zero_right T x
+  · intro x y z _ _ _ hx hy
+    exact hx.add_left hy
+  · intro x y z _ _ _ hy hz
+    exact hy.add_right hz
+  · intro a x y _ _ hx
+    exact hx.smul_left a
+  · intro a x y _ _ hx
+    exact hx.smul_right a
 
 /-- Every mixed same-H R551 weld supplies generator-pair half-rate bounds. -/
 theorem SameHWilsonMixedHalfRateWeld.generator_half_rate

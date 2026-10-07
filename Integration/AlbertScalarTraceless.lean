@@ -112,6 +112,22 @@ noncomputable def scalarTracelessEquiv (A : TraceUnitData J) :
       simp [tracelessElement, tracelessPart, scalarPart, scalarCoeff]
       module
 
+/-- Once the ambient carrier is genuinely 27-dimensional, the trace-zero
+subspace is genuinely 26-dimensional.  This is the exact structural theorem
+behind `27 = 1 + 26`, not a cardinality analogy. -/
+theorem traceless_finrank_eq_26
+    [FiniteDimensional ℝ J]
+    (A : TraceUnitData J)
+    (hJ : Module.finrank ℝ J = 27) :
+    Module.finrank ℝ (Traceless A) = 26 := by
+  have hdim :
+      Module.finrank ℝ J = 1 + Module.finrank ℝ (Traceless A) := by
+    calc
+      Module.finrank ℝ J = Module.finrank ℝ (ℝ × Traceless A) :=
+        LinearEquiv.finrank_eq (scalarTracelessEquiv A)
+      _ = 1 + Module.finrank ℝ (Traceless A) := by simp
+  omega
+
 inductive ScalarTracelessCreatesAlbertProduct : Prop
 inductive ScalarTracelessCreatesF4Action : Prop
 

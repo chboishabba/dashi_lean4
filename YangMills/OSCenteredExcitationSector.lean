@@ -44,9 +44,11 @@ theorem continuous_centerToVacuumOrthogonal
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
     (Ω : H) (hNormalized : ⟪Ω, Ω⟫_ℝ = 1) :
     Continuous (centerToVacuumOrthogonal Ω hNormalized) := by
-  apply continuous_subtype_mk
-  simp only [centerToVacuumOrthogonal, osCenteredWilsonVector]
-  fun_prop
+  apply Continuous.subtype_mk
+  · simp only [centerToVacuumOrthogonal, osCenteredWilsonVector]
+    fun_prop
+  · intro x
+    exact (centerToVacuumOrthogonal Ω hNormalized x).property
 
 /-- Every excitation-sector vector is fixed by centering, hence centering is onto `Ω⊥`. -/
 theorem surjective_centerToVacuumOrthogonal

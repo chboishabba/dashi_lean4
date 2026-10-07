@@ -15,9 +15,9 @@ example
 example
     {Ω Obs Cluster : Type*}
     [MeasurableSpace Ω] [TopologicalSpace Ω] [DecidableEq Cluster]
-    (source : CMP116WilsonPointwiseLocalizationSource Ω Obs Cluster) :
+    (source : CMP116WilsonMarkedExpansionLocalizationSource Ω Obs Cluster) :
     CMP116WilsonMixedHalfRateClusteringSource Ω Obs :=
-  ym20261007F1FromPointwiseLocalization source
+  ym20261007F1FromMarkedLocalization source
 
 example
     {Cluster : Type*} [DecidableEq Cluster]
@@ -29,6 +29,18 @@ example
     (∑ c ∈ clusters, |weight c|) ≤ shell :=
   ym20261007W3FiniteAggregationCompiler
     clusters weight shellCharge shell hpoint hshell
+
+example
+    {Cluster : Type*} [DecidableEq Cluster]
+    (clusters : Finset Cluster)
+    (weight : Cluster → ℝ)
+    (touchesLeft touchesRight : Cluster → Bool)
+    (hzero : ∀ c ∈ clusters,
+      ¬ (touchesLeft c = true ∧ touchesRight c = true) → weight c = 0) :
+    (∑ c ∈ clusters, weight c) =
+      ∑ c ∈ clusters.filter (fun c => touchesLeft c && touchesRight c), weight c :=
+  ym20261007W1ConnectingFilterCompiler
+    clusters weight touchesLeft touchesRight hzero
 
 example
     {GaugeGroup : Type*}

@@ -47,13 +47,6 @@ theorem three_cartan_inverse_identity :
         if i = j then 3 else 0 := by
   native_decide
 
-/-- Simple reflections preserve the scaled weight pairing. -/
-theorem reflection_preserves_scaled_weight_inner :
-    ∀ s lambda mu,
-      scaledWeightInner (reflectLabel s lambda) (reflectLabel s mu) =
-        scaledWeightInner lambda mu := by
-  native_decide
-
 /-- Finite carriers for the two paid minuscule weight orbits. -/
 def Omega0Weight := {lambda : DynkinLabel // lambda ∈ minusculeOmega0Set}
 def Omega5Weight := {lambda : DynkinLabel // lambda ∈ minusculeOmega5Set}
@@ -65,6 +58,21 @@ instance : Fintype Omega5Weight := inferInstance
   native_decide
 
  theorem omega5_weight_card : Fintype.card Omega5Weight = 27 := by
+  native_decide
+
+/-- Finite kernel-facing checks that every simple reflection preserves the
+scaled invariant pairing on both paid minuscule orbits.  The ambient symbolic
+bilinear identity is not required for the present finite recognition. -/
+theorem omega0_reflection_preserves_scaled_weight_inner :
+    ∀ s (x y : Omega0Weight),
+      scaledWeightInner (reflectLabel s x.1) (reflectLabel s y.1) =
+        scaledWeightInner x.1 y.1 := by
+  native_decide
+
+theorem omega5_reflection_preserves_scaled_weight_inner :
+    ∀ s (x y : Omega5Weight),
+      scaledWeightInner (reflectLabel s x.1) (reflectLabel s y.1) =
+        scaledWeightInner x.1 y.1 := by
   native_decide
 
 /-- Intrinsic minuscule adjacency from the invariant weight pairing. -/

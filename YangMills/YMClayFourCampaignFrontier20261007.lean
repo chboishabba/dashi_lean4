@@ -1,6 +1,7 @@
 import Mathlib
 import YangMills.YMClayFiveCampaignFrontier20261007
 import YangMills.CMP116WilsonPointwiseLocalization
+import YangMills.CMP119SelectedHeterogeneousCylinderLaw
 import YangMills.CompactSimpleCasimirOrbitFactorization
 
 /-!
@@ -8,7 +9,8 @@ import YangMills.CompactSimpleCasimirOrbitFactorization
 
 This is the shortest current honest board after internalizing the centered
 vacuum sector, excitation restriction, W3 finite aggregation, no-pollution
-spectral contradiction and generic compact-simple Casimir transport.
+spectral contradiction, varying-cutoff cylinder transport and generic
+compact-simple Casimir transport.
 
 The live proof programmes are now:
 
@@ -17,7 +19,9 @@ The live proof programmes are now:
    Wilson × E/R/B/V functional RP kernel.
 2. C/E1: identify the published source Haar/coupling/Wilson normalization with
    the canonical selected Lean cutoff, and identify the intended physical
-   Wilson algebra with its bounded cylinder representation.
+   Wilson algebra with its bounded cylinder representation.  Once a measurable
+   cutoff-dependent Wilson coordinate family is supplied, the changing finite
+   lattice carriers are already pushed to one common compact determining cube.
 3. F1: W1 plus pointwise connecting-cluster localization, a localized shell
    charge majorant and physical support-distance/time semantics.  The aggregate
    W3 inequality is compiler-owned.
@@ -39,6 +43,20 @@ No conditional source theorem is promoted here.
 -/
 
 namespace RequestProject.YangMills
+
+/-! ## C/DF2: varying finite carriers already share one determining cylinder law -/
+
+/--
+Selected physical cutoffs of sizes `k+1` push to one exact bounded determining
+source on the common countable cylinder cube.  No common raw lattice carrier is
+assumed.
+-/
+noncomputable def ym20261007SelectedHeterogeneousCylinderDeterminingSource
+    (cutoff : ∀ k : ℕ, CMP119SelectedPhysicalCutoff (k + 1))
+    (raw : ∀ k : ℕ, ℕ → SU2TorusLinks (2 * (k + 1)) → ℝ)
+    (hMeas : ∀ k i, Measurable (raw k i)) :
+    RealCountableObservableDeterminingSource HeterogeneousWilsonCylinderState :=
+  selectedCMP119HeterogeneousDeterminingSource cutoff raw hMeas
 
 /-! ## F1: W3 aggregation is no longer a source leaf -/
 

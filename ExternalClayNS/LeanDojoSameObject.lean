@@ -110,9 +110,9 @@ theorem leanDojo_spatialDerivativeVector_eq_clay
         funext y
         rw [ih y]]
       rw [leanDojo_partialDeriv_eq_clay_direction]
-      have hs : ContDiff ℝ ∞
+      have hd : DifferentiableAt ℝ
           (fun y => ClaySpec.iteratedSpatialDirectional
-            (ClaySpec.initialSpatialWord α) u₀ y) := by
+            (ClaySpec.initialSpatialWord α) u₀ y) x := by
         rw [show
           (fun y => ClaySpec.iteratedSpatialDirectional
             (ClaySpec.initialSpatialWord α) u₀ y) =
@@ -122,10 +122,13 @@ theorem leanDojo_spatialDerivativeVector_eq_clay
           funext y
           exact SemanticGap.iteratedSpatialDirectional_eq_iteratedFDeriv
             hu₀ (ClaySpec.initialSpatialWord α) y]
-        exact (ContDiff.contDiff_iteratedFDeriv le_top hu₀).clm_apply
-          contDiff_const
-      exact SemanticGap.fderiv_component_basic
-        (hs.differentiable (by simp) x) i (ClaySpec.spatialBasis j)
+        exact
+          ((ContDiff.differentiable_iteratedFDeriv
+            (ENat.natCast_lt_of_coe_top_le_withTop le_rfl
+              (ClaySpec.initialSpatialWord α).length) hu₀) x).clm_apply
+            (differentiableAt_const
+              (ClaySpec.initialSpatialWord α).get)
+      exact SemanticGap.fderiv_component_basic hd i (ClaySpec.spatialBasis j)
 
 /-- Comparator's stronger full-jet decay immediately gives LeanDojo's displayed
 coordinate-word decay, via the already-paid frozen-Clay directional bound. -/
@@ -135,7 +138,7 @@ theorem comparatorInitialDecay_to_leanDojo
     NavierStokesOnR3.SmoothRapidDecayInitial u₀ := by
   refine ⟨h.smooth, ?_⟩
   intro α K
-  obtain ⟨C, hC0, hC⟩ := SemanticGap.initialRapidDecay_of_comparator h α K
+  obtain ⟨C, _hC0, hC⟩ := SemanticGap.initialRapidDecay_of_comparator h α K
   refine ⟨max C 1, by positivity, ?_⟩
   intro x
   rw [leanDojo_spatialDerivativeVector_eq_clay h.smooth α x]

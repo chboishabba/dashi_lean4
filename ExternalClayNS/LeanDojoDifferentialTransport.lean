@@ -29,6 +29,17 @@ theorem leanDojoGlobal_mem_nhds_of_time_pos
   intro w hw
   exact le_of_lt hw
 
+/-- Positive time likewise makes the frozen product half-space a neighbourhood. -/
+theorem nonnegativeTime_mem_nhds_of_pos
+    (q : SpaceTime) (hq : 0 < q.2) :
+    nonnegativeTime ∈ 𝓝 q := by
+  have hopen : IsOpen {w : SpaceTime | 0 < w.2} :=
+    isOpen_lt continuous_const continuous_snd
+  have hmem : q ∈ {w : SpaceTime | 0 < w.2} := hq
+  refine Filter.mem_of_superset (hopen.mem_nhds hmem) ?_
+  intro w hw
+  exact le_of_lt hw
+
 /-- Closed-halfspace smoothness upgrades to ordinary smoothness at every
 positive-time point. -/
 theorem contDiffAt_of_global_time_pos
@@ -97,5 +108,31 @@ theorem fderiv_pullback_space_eq_leanDojo
         (standard_basis (n := 4) i.succ) := by
   rw [fderiv_pullback_eq_leanDojo hf q hq]
   simp
+
+/-- Frozen Clay time partial of the pullback is exactly LeanDojo's coordinate-0
+partial derivative at positive time. -/
+theorem clayPartialTime_pullback_eq_leanDojo
+    {f : Spacetime3 → ℝ}
+    (hf : ContDiffOn ℝ ∞ f (global_spacetime_domain 3))
+    (q : SpaceTime) (hq : 0 < q.2) :
+    ClaySpec.partialTime
+        (Function.uncurry (leanFieldToComparator f)) q =
+      partial_deriv (n := 4) (0 : Fin 4) f (pairToLeanSpacetime q) := by
+  unfold ClaySpec.partialTime
+  rw [fderivWithin_of_mem_nhds (nonnegativeTime_mem_nhds_of_pos q hq)]
+  exact fderiv_pullback_time_eq_leanDojo hf q hq
+
+/-- Frozen Clay spatial partial `i` of the pullback is exactly LeanDojo's
+coordinate `i+1` partial derivative at positive time. -/
+theorem clayPartialSpace_pullback_eq_leanDojo
+    {f : Spacetime3 → ℝ}
+    (hf : ContDiffOn ℝ ∞ f (global_spacetime_domain 3))
+    (q : SpaceTime) (hq : 0 < q.2) (i : Fin 3) :
+    ClaySpec.partialSpace i
+        (Function.uncurry (leanFieldToComparator f)) q =
+      partial_deriv (n := 4) i.succ f (pairToLeanSpacetime q) := by
+  unfold ClaySpec.partialSpace
+  rw [fderivWithin_of_mem_nhds (nonnegativeTime_mem_nhds_of_pos q hq)]
+  exact fderiv_pullback_space_eq_leanDojo hf q hq i
 
 end DASHILiteralClayNS

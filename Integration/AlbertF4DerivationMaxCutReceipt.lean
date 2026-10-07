@@ -1,33 +1,38 @@
+import Integration.F4WeylD4TrialityExact
 import Mathlib
 
 /-!
-# Cross-kernel Albert/F4 derivation max-cut receipt
+# Cross-kernel Albert/F4 derivation and triality max-cut receipt
 
-The companion Agda branch now source-writes an actual rational Albert algebra
-`H_3(O_Q)`, its cubic norm, Jordan product/laws, explicit coordinate `S3`
-automorphisms, explicit signed-monomial octonion automorphisms and their Albert
-lift.
+The companion Agda branch source-writes the rational Albert algebra `H_3(O_Q)`
+and its actual Jordan/cubic structure.  Exact-rational runtime calculations now
+recover both the full 52-dimensional derivation space and its triality split:
 
-Independent exact-rational Python checks on those literal coordinate formulas
-produce:
+  Der(J) = tri(O) + O + O + O
+         = 28 + 8 + 8 + 8 = 52.
 
-* 1344 signed-monomial octonion basis automorphisms;
-* 8064 elements in the explicitly generated Albert automorphism subgroup after
-  adjoining the coordinate `S3`;
-* 729 unknown entries in a general 27x27 endomorphism;
-* derivation-constraint rank 677;
-* derivation nullity 52;
-* rank 52 for the span of all 351 inner commutators `[L_ei,L_ej]`.
+The octonion triality equation
 
-A separate order-only control gives `192 * 6 = 1152`, but that commuting
-construction is deliberately NOT identified with `W(F4)`: genuine F4 requires
-nontrivial D4 triality/root data, not the right order alone.
+  A(xy) = B(x)y + x C(y),  A,B,C in so(8)
 
-This Lean file is a typed cross-kernel status/arithmetical receipt only.  It does
-not promote Agda source or Python runtime calculations to Lean kernel theorems.
+has 84 skew-matrix unknowns, exact rank 56 and nullity 28; each projection to
+A/B/C has rank 28.  The induced Albert block action gives 28 derivations, while
+three explicit Peirce/inner families contribute independent ranks 8,8,8.  Their
+combined rank is 52, exhausting the earlier derivation-space computation.
+
+Independently, `F4WeylD4TrialityExact` pays the finite Weyl-side triality object:
+`W(F4)` order 1152, normal long-root `W(D4)` order 192, three eight-element
+short-root classes, quotient triality image order 6, and exact kernel D4.
+
+The missing seam is now representation-level: identify the actual rational
+triality/Peirce derivation modules with the D4 vector/spinor/cospinor roles and
+prove the Lie/root intertwiner.  Neither `52` nor `1152` is used by itself as
+classification authority.
 -/
 
 namespace Integration.AlbertF4DerivationMaxCutReceipt
+
+open Integration.F4WeylD4TrialityExact
 
 def signedMonomialOctonionOrder : Nat := 1344
 def coordinateS3Order : Nat := 6
@@ -38,6 +43,13 @@ def derivationConstraintRank : Nat := 677
 def derivationDimension : Nat := 52
 def innerCommutatorCount : Nat := 351
 def innerCommutatorSpanRank : Nat := 52
+
+def trialityUnknownCount : Nat := 84
+def trialityConstraintRank : Nat := 56
+def trialityDimension : Nat := 28
+def peirceXDimension : Nat := 8
+def peirceYDimension : Nat := 8
+def peirceZDimension : Nat := 8
 
 def orderTrapLineStabilizer : Nat := 192
 def orderTrapProductWithS3 : Nat := 1152
@@ -53,6 +65,21 @@ theorem derivation_dimension_checksum :
 theorem inner_span_matches_derivation_dimension :
     innerCommutatorSpanRank = derivationDimension := rfl
 
+theorem triality_dimension_checksum :
+    trialityUnknownCount - trialityConstraintRank = trialityDimension := by
+  native_decide
+
+theorem triality_peirce_decomposition_checksum :
+    trialityDimension + peirceXDimension + peirceYDimension + peirceZDimension =
+      derivationDimension := by
+  native_decide
+
+theorem finite_weyl_triality_paid :
+    F4WeylD4TrialityExact.canonicalBoundary.nontrivialTrialityClassActionPaid = true ∧
+    F4WeylD4TrialityExact.canonicalBoundary.trialityKernelExactlyD4Paid = true ∧
+    F4WeylD4TrialityExact.canonicalBoundary.trialityImageOrderSixPaid = true := by
+  decide
+
 theorem order_trap_checksum :
     orderTrapLineStabilizer * coordinateS3Order = orderTrapProductWithS3 := by
   native_decide
@@ -60,7 +87,8 @@ theorem order_trap_checksum :
 inductive AgdaAlbertKernelTransferredToLean : Prop
 inductive RuntimeDimensionAloneRecognizesF4 : Prop
 inductive Order1152AloneRecognizesWeylF4 : Prop
-inductive NontrivialD4TrialityPaid : Prop
+inductive AlbertTrialitySameActionWithWeylD4Paid : Prop
+inductive F4LieRootIntertwinerPaid : Prop
 inductive FullF4RecognitionPaid : Prop
 
 theorem no_cross_kernel_promotion : ¬ AgdaAlbertKernelTransferredToLean := by
@@ -72,43 +100,54 @@ theorem dimension_52_alone_does_not_recognize_f4 :
 theorem order_1152_alone_does_not_recognize_weyl_f4 :
     ¬ Order1152AloneRecognizesWeylF4 := by intro h; cases h
 
-theorem d4_triality_still_explicitly_open : ¬ NontrivialD4TrialityPaid := by
-  intro h; cases h
+theorem albert_triality_same_action_still_open :
+    ¬ AlbertTrialitySameActionWithWeylD4Paid := by intro h; cases h
+
+theorem f4_lie_root_intertwiner_still_open :
+    ¬ F4LieRootIntertwinerPaid := by intro h; cases h
 
 theorem full_f4_still_explicitly_open : ¬ FullF4RecognitionPaid := by
   intro h; cases h
 
 structure Boundary where
   rationalAlbertCarrierSourceWrittenOnAgda : Bool
-  cubicNormSourceWrittenOnAgda : Bool
   jordanProductAndLawsSourceWrittenOnAgda : Bool
-  coordinateS3AutomorphismsSourceWrittenOnAgda : Bool
-  signedMonomialOctonionAutomorphismsSourceWrittenOnAgda : Bool
   signedMonomialAlbertLiftSourceWrittenOnAgda : Bool
-  signedMonomialClosure1344RuntimeChecked : Bool
   explicitAlbertSubgroup8064RuntimeChecked : Bool
   derivationRank677RuntimeChecked : Bool
   derivationDimension52RuntimeChecked : Bool
   innerSpan52RuntimeChecked : Bool
-  order1152RejectedAsRecognition : Bool
-  nontrivialD4TrialityPaid : Bool
+  trialityRank56Nullity28RuntimeChecked : Bool
+  trialityThreeProjectionRanks28RuntimeChecked : Bool
+  threePeirceRanksEightRuntimeChecked : Bool
+  trialityPlusPeirceRank52RuntimeChecked : Bool
+  finiteWF4Order1152PaidOnLean : Bool
+  finiteD4NormalSubgroup192PaidOnLean : Bool
+  finiteNontrivialS3TrialityPaidOnLean : Bool
+  order1152CardinalityTrapRejected : Bool
+  albertTrialitySameActionWithFiniteD4Paid : Bool
+  f4LieRootIntertwinerPaid : Bool
   fullF4RecognitionPaid : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
   rationalAlbertCarrierSourceWrittenOnAgda := true
-  cubicNormSourceWrittenOnAgda := true
   jordanProductAndLawsSourceWrittenOnAgda := true
-  coordinateS3AutomorphismsSourceWrittenOnAgda := true
-  signedMonomialOctonionAutomorphismsSourceWrittenOnAgda := true
   signedMonomialAlbertLiftSourceWrittenOnAgda := true
-  signedMonomialClosure1344RuntimeChecked := true
   explicitAlbertSubgroup8064RuntimeChecked := true
   derivationRank677RuntimeChecked := true
   derivationDimension52RuntimeChecked := true
   innerSpan52RuntimeChecked := true
-  order1152RejectedAsRecognition := true
-  nontrivialD4TrialityPaid := false
+  trialityRank56Nullity28RuntimeChecked := true
+  trialityThreeProjectionRanks28RuntimeChecked := true
+  threePeirceRanksEightRuntimeChecked := true
+  trialityPlusPeirceRank52RuntimeChecked := true
+  finiteWF4Order1152PaidOnLean := true
+  finiteD4NormalSubgroup192PaidOnLean := true
+  finiteNontrivialS3TrialityPaidOnLean := true
+  order1152CardinalityTrapRejected := true
+  albertTrialitySameActionWithFiniteD4Paid := false
+  f4LieRootIntertwinerPaid := false
   fullF4RecognitionPaid := false
 
 end Integration.AlbertF4DerivationMaxCutReceipt

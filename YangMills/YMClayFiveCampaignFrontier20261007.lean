@@ -1,5 +1,6 @@
 import Mathlib
 import YangMills.YMClayMaxCut20261007FinalFrontier
+import YangMills.CMP119SelectedCompleteFunctionalRP
 import YangMills.CMP119SelectedPhysicalCutoff
 import YangMills.OSCenteredExcitationHalfRate
 import YangMills.SameHSubgapSpectralWindow
@@ -14,7 +15,10 @@ mathematical campaigns that remain after the centered-vacuum and excitation
 restriction cuts.
 
 1. BC: actual CMP119 E/R/B source supports, reflection geometry and crossing
-   kernels, ending in functional RP or an explicit finite negative sample.
+   kernels, ending in functional RP or an explicit finite negative sample.  If
+   the strict selected source cut is inhabited, the literal Wilson crossing
+   kernel and the exact E/R/B/V residual now assemble directly into one complete
+   functional RP kernel on the same boundary carrier.
 2. C/E1: same physical source law and observable representation.  On the
    preferred Lean finite route the reference measure is now canonical literal
    product Haar and beta is definitionally `4/g^2`; the source bridge only has
@@ -34,6 +38,27 @@ No source-conditional BC/W1/W3 theorem is promoted here.
 -/
 
 namespace RequestProject.YangMills
+
+/-! ## BC: successful source extraction reaches the complete functional crossing kernel -/
+
+/--
+The strict selected E/R/B/V source realization Schur-multiplies directly with
+the literal Wilson crossing kernel.  No separate post-BC assembly theorem
+remains on the preferred route.
+-/
+theorem ym20261007BCCompleteFunctionalCompiler
+    {n : ℕ} [NeZero n]
+    {P : Type*} [DecidableEq P]
+    (crossings : Finset P)
+    (β : ℝ) (hβ : 0 ≤ β)
+    (cut : CMP119SelectedSourceExactFunctionalReflectionCut n
+      (SU2CrossingBoundary P)) :
+    ReflectionPositiveKernel
+      (fun left right =>
+        su2WilsonCrossingPlaneKernel crossings β left right *
+          cut.sourceKernel left right) :=
+  cmp119_selected_complete_crossing_functional_rp
+    crossings β hβ cut
 
 /-! ## C: preferred finite physical cutoff has canonical Haar and beta -/
 
@@ -151,7 +176,7 @@ def continuousVacuumSemigroup
 
 /-- The same continuous semigroup restricts constructively to `Ω⊥`. -/
 def excitationContinuousSemigroup
-    {State V Hamiltonian : Type*}
+    {State V Hamiltonian : Type*)
     [MeasurableSpace State] [TopologicalSpace State]
     [OpensMeasurableSpace State]
     [AddCommGroup V] [Module ℝ V]

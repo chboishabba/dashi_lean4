@@ -8,18 +8,38 @@ The old statement-level assumption
 ClaySpec.ClayOptionC ↔ MillenniumNavierStokes.FeffermanC
 ```
 
-is not used by the direct max-cut.  The released comparator theorem already supplies the breakdown witness.  The surviving representation obligations are exactly:
+is not used by the direct max-cut.
 
-1. `ComparatorInitialToLeanDojo`
-   - same literal spatial carrier `EuclideanSpace ℝ (Fin 3)`;
-   - prove comparator smooth/divergence/operator-norm decay entails LeanDojo `SmoothRapidDecayInitial` and `DivergenceFreeInitial`.
-2. `ComparatorForceToLeanDojo`
-   - fixed force packing `f (space z) (time z)` from curried `(x,t)` to LeanDojo time-first `Fin 4` spacetime;
-   - prove comparator smooth/operator-norm decay entails LeanDojo `SmoothRapidDecayForce`.
-3. `LeanDojoSolutionToComparator`
-   - fixed unpacking through `spacetime_point t x`;
-   - prove a LeanDojo `GlobalSmoothSolution` with `FiniteEnergy` satisfies the exact comparator solution structure on the original curried force.
+The released comparator theorem already supplies the breakdown witness, and `Gap.lean` already pays both semantic directions needed around the independent Clay representation:
 
-`leanDojoFeffermanC_of_transport` then composes those three representation lemmas with `SemanticGapAdapter.openAIComparatorOptionC`; there is no remaining fluid estimate in the external acceptance seam.
+```text
+comparator data -> ClaySpec.AdmissibleDataR3
+ClaySpec.ClaySolutionR3 -> comparator solution
+```
 
-Promotion rule: NS remains fail-closed until all three transports are inhabited and the unconditional exact target theorem kernel-checks.  A conditional compiler is not GREEN.
+Therefore comparator derivative/PDE semantics are **not** reopened at the external adapter.  The surviving obligations are exactly the representation transports between ClaySpec's pair spacetime and LeanDojo's time-first ambient `Fin 4` spacetime:
+
+1. `ClayInitialToLeanDojo`
+   - the spatial carrier is already literally `EuclideanSpace ℝ (Fin 3)`;
+   - align ClaySpec initial divergence / coordinate-derivative decay with LeanDojo `DivergenceFreeInitial` / `SmoothRapidDecayInitial`.
+2. `ClayForceToLeanDojo`
+   - fixed packing `f (space z) (time z)` into LeanDojo's ambient spacetime;
+   - transport ClaySpec force smoothness / coordinate-derivative decay to LeanDojo `SmoothRapidDecayForce`.
+3. `LeanDojoSolutionToClaySpec`
+   - fixed unpacking `u (spacetime_point t x)` and `p (spacetime_point t x)` onto ClaySpec pair spacetime;
+   - transport a LeanDojo `GlobalSmoothSolution + FiniteEnergy` into literal `ClaySpec.ClaySolutionR3`.
+
+`leanDojoFeffermanC_of_transport` then composes:
+
+```text
+released comparator C
+-> existing comparator-data -> ClaySpec weld
+-> the three representation transports above
+-> existing ClaySpec-solution -> comparator weld
+-> contradiction
+-> exact pinned LeanDojo Fefferman C
+```
+
+There is no remaining fluid estimate in this acceptance seam.
+
+Promotion rule: NS remains fail-closed until all three representation transports are inhabited and the unconditional exact target theorem kernel-checks. A conditional compiler is not GREEN.

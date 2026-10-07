@@ -73,6 +73,31 @@ structure OSSymmetricPositiveStronglyContinuousSemigroup
   positive : ∀ t (x : H),
     0 ≤ ⟪x, toOSStronglyContinuousSemigroup.transfer t x⟫_ℝ
 
+namespace OSSymmetricPositiveStronglyContinuousSemigroup
+
+/-- Each Euclidean-time slice is a positive bounded operator. -/
+theorem transfer_isPositive
+    {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
+    (S : OSSymmetricPositiveStronglyContinuousSemigroup H)
+    (t : ℝ≥0) :
+    (S.toOSStronglyContinuousSemigroup.transfer t).IsPositive := by
+  refine (ContinuousLinearMap.isPositive_iff _).2 ⟨?_, ?_⟩
+  · intro x y
+    exact S.symmetric t x y
+  · intro x
+    rw [S.symmetric t x x]
+    exact S.positive t x
+
+/-- On the completed Hilbert space, each positive slice is self-adjoint. -/
+theorem transfer_isSelfAdjoint
+    {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H] [CompleteSpace H]
+    (S : OSSymmetricPositiveStronglyContinuousSemigroup H)
+    (t : ℝ≥0) :
+    IsSelfAdjoint (S.toOSStronglyContinuousSemigroup.transfer t) :=
+  (S.transfer_isPositive t).isSelfAdjoint
+
+end OSSymmetricPositiveStronglyContinuousSemigroup
+
 /-- Symmetric/positive strongly-continuous extension of the discrete OS family. -/
 structure OSSymmetricPositiveStronglyContinuousSemigroupExtension
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]

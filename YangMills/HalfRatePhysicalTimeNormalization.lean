@@ -38,6 +38,22 @@ theorem energy_ge_log_two_div_step_of_half_rate
   exact (div_le_iff₀ ha).2 hMul
 
 /--
+Contrapositive form used by the spectral-window argument: any energy strictly
+below the half-rate mass floor produces a one-step transfer value strictly
+above one half.
+-/
+theorem transfer_above_half_of_energy_below_log_two_div_step
+    (a E : ℝ) (ha : 0 < a)
+    (hSubgap : E < Real.log 2 / a) :
+    (1 / 2 : ℝ) < Real.exp (-a * E) := by
+  by_contra hNotAbove
+  have hDecay : Real.exp (-a * E) ≤ (1 / 2 : ℝ) :=
+    le_of_not_gt hNotAbove
+  have hFloor :=
+    energy_ge_log_two_div_step_of_half_rate a E ha hDecay
+  exact (not_lt_of_ge hFloor) hSubgap
+
+/--
 Exact physical normalization receipt left to the Yang--Mills source: identify
 one lattice transfer step with a strictly positive physical Euclidean time.
 -/
@@ -58,6 +74,14 @@ theorem energy_ge_halfRateMassFloor
     time.halfRateMassFloor ≤ E :=
   energy_ge_log_two_div_step_of_half_rate
     time.step E time.stepPositive hDecay
+
+/-- Any energy strictly below the mass floor maps to transfer value above one half. -/
+theorem transfer_above_half_of_energy_below_massFloor
+    (time : WilsonPhysicalTimeStep) (E : ℝ)
+    (hSubgap : E < time.halfRateMassFloor) :
+    (1 / 2 : ℝ) < Real.exp (-time.step * E) :=
+  transfer_above_half_of_energy_below_log_two_div_step
+    time.step E time.stepPositive hSubgap
 
 end WilsonPhysicalTimeStep
 

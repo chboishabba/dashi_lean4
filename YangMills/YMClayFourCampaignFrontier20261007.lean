@@ -1,6 +1,6 @@
 import Mathlib
 import YangMills.YMClayFiveCampaignFrontier20261007
-import YangMills.CMP116WilsonPointwiseLocalization
+import YangMills.CMP116WilsonMarkedExpansionLocalization
 import YangMills.CMP119SelectedHeterogeneousCylinderLaw
 import YangMills.CompactSimpleCasimirOrbitFactorization
 
@@ -8,9 +8,9 @@ import YangMills.CompactSimpleCasimirOrbitFactorization
 # Yang--Mills four-campaign terminal frontier — 2026-10-07
 
 This is the shortest current honest board after internalizing the centered
-vacuum sector, excitation restriction, W3 finite aggregation, no-pollution
-spectral contradiction, varying-cutoff cylinder transport and generic
-compact-simple Casimir transport.
+vacuum sector, excitation restriction, W1 connected filtering, W3 finite
+aggregation, no-pollution spectral contradiction, varying-cutoff cylinder
+transport and generic compact-simple Casimir transport.
 
 The live proof programmes are now:
 
@@ -22,9 +22,11 @@ The live proof programmes are now:
    Wilson algebra with its bounded cylinder representation.  Once a measurable
    cutoff-dependent Wilson coordinate family is supplied, the changing finite
    lattice carriers are already pushed to one common compact determining cube.
-3. F1: W1 plus pointwise connecting-cluster localization, a localized shell
-   charge majorant and physical support-distance/time semantics.  The aggregate
-   W3 inequality is compiler-owned.
+3. F1: the source-native full marked-expansion/response identity, derivative
+   vanishing away from clusters touching both Wilson supports, pointwise
+   connecting-cluster localization, a localized shell-charge majorant and
+   physical support-distance/time semantics.  Both connected-only filtering and
+   aggregate W3 summation are compiler-owned.
 4. E2/GEN: construct the physical strongly-continuous OS extension of the same
    discrete transfer, its same-H nonnegative self-adjoint generator, physical
    time step and standard functional calculus.  Once a genuine subgap H-window
@@ -58,7 +60,7 @@ noncomputable def ym20261007SelectedHeterogeneousCylinderDeterminingSource
     RealCountableObservableDeterminingSource HeterogeneousWilsonCylinderState :=
   selectedCMP119HeterogeneousDeterminingSource cutoff raw hMeas
 
-/-! ## F1: W3 aggregation is no longer a source leaf -/
+/-! ## F1: connected filtering and W3 aggregation are compiler-owned -/
 
 /-- Exact finite W3 aggregation from pointwise localization and shell charge. -/
 theorem ym20261007W3FiniteAggregationCompiler
@@ -72,24 +74,37 @@ theorem ym20261007W3FiniteAggregationCompiler
   finite_abs_weight_sum_le_shell_of_pointwise_localization
     clusters weight shellCharge shell hpoint hshell
 
+/-- Exact finite W1 support filter from marked locality/derivative vanishing. -/
+theorem ym20261007W1ConnectingFilterCompiler
+    {Cluster : Type*} [DecidableEq Cluster]
+    (clusters : Finset Cluster)
+    (weight : Cluster → ℝ)
+    (touchesLeft touchesRight : Cluster → Bool)
+    (hzero : ∀ c ∈ clusters,
+      ¬ (touchesLeft c = true ∧ touchesRight c = true) → weight c = 0) :
+    (∑ c ∈ clusters, weight c) =
+      ∑ c ∈ clusters.filter (fun c => touchesLeft c && touchesRight c), weight c :=
+  full_cluster_sum_eq_connecting_filter
+    clusters weight touchesLeft touchesRight hzero
+
 /--
-The preferred F1 source surface now stores W1 plus local cluster estimates,
-then compiles directly to the existing mixed half-rate source.
+The preferred F1 source surface is now the full marked/local source; both finite
+connected filtering and aggregate W3 compilation are derived.
 -/
-def ym20261007F1FromPointwiseLocalization
+def ym20261007F1FromMarkedLocalization
     {Ω Obs Cluster : Type*}
     [MeasurableSpace Ω] [TopologicalSpace Ω]
     [DecidableEq Cluster]
-    (source : CMP116WilsonPointwiseLocalizationSource Ω Obs Cluster) :
+    (source : CMP116WilsonMarkedExpansionLocalizationSource Ω Obs Cluster) :
     CMP116WilsonMixedHalfRateClusteringSource Ω Obs :=
   source.toMixedHalfRateSource
 
-/-- Exact remaining F1 source producer after paying finite W3 aggregation. -/
-def YM20261007F1PointwiseLocalizationProducerExists
+/-- Exact remaining F1 source producer at the marked-localization boundary. -/
+def YM20261007F1MarkedLocalizationProducerExists
     (Ω Obs Cluster : Type*)
     [MeasurableSpace Ω] [TopologicalSpace Ω]
     [DecidableEq Cluster] : Prop :=
-  Nonempty (CMP116WilsonPointwiseLocalizationSource Ω Obs Cluster)
+  Nonempty (CMP116WilsonMarkedExpansionLocalizationSource Ω Obs Cluster)
 
 /-! ## G: generic compact-simple Casimir transport is compiler-owned -/
 

@@ -13,7 +13,7 @@ The released comparator theorem is already welded to the independently frozen
 
 `LeanDojoCarrierGeometry` additionally pays the literal spatial carrier,
 pair-spacetime packing round-trip, domain membership, and initial-divergence
-identity.  The external acceptance seam therefore does not reopen any of those
+identity. The external acceptance seam therefore does not reopen any of those
 facts.
 
 The residual obligations are now only:
@@ -77,10 +77,13 @@ structure LeanDojoCTransportFrontier : Prop where
 
 /-- The released comparator C theorem, already-paid same-object welds, and only
 the three residual transports above compose to the exact pinned Fefferman C
-target. -/
+target. LeanDojo's own equivalence removes condition (6) from the contradiction
+branch because `GlobalSmoothSolution` already carries it. -/
 theorem leanDojoFeffermanC_of_transport
     (w : LeanDojoCTransportFrontier) :
     MillenniumNavierStokes.FeffermanC := by
+  change NavierStokesOnR3.Breakdown
+  rw [NavierStokesOnR3.Breakdown.iff_no_finite_energy_solution]
   intro ν ν_pos
   obtain ⟨u₀, f, hu₀, hf, hno⟩ :=
     SemanticGapAdapter.openAIComparatorOptionC ν ν_pos
@@ -92,7 +95,7 @@ theorem leanDojoFeffermanC_of_transport
   refine ⟨u₀, pairFieldToLeanDojo f, hinit, hdiv, hforce, ?_⟩
   intro hdiv' hExists
   apply hno
-  rcases hExists with ⟨sol, _hsmooth, henergy⟩
+  rcases hExists with ⟨sol, henergy⟩
   have hClay := w.solution ν ν_pos u₀ f hdiv' sol henergy
   have hComparator := SemanticGap.claySolutionR3_to_comparator hClay
   rw [SemanticGap.curryField_uncurryField] at hComparator

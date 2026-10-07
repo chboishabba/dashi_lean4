@@ -41,7 +41,7 @@ def canonicalStatus : SourceStatus where
 
 inductive ExternalGF2MonsterRepresentationIsTwoBTateHead : Prop
 
- theorem external_representation_does_not_identify_tate_head :
+theorem external_representation_does_not_identify_tate_head :
     ¬ ExternalGF2MonsterRepresentationIsTwoBTateHead := by
   intro h
   cases h

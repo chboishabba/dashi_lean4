@@ -104,4 +104,28 @@ theorem QuarticFourSignedPolePair.signedFifthInteriorTarget_of_eventual_direct_g
   exact (W.signedFifthCorrelationGapAt_nonneg_iff_cap
     ht rho n hn).mp hg
 
+/-- Honest Route-B compiler after removing the purely Archimedean cutoff
+premise.  Exactly three analytic producers remain visible: boundary decay,
+direct signed-gap nonnegativity, and outer-terminal convergence. -/
+theorem QuarticFourSignedPolePair.signedFifthAnalyticInput_of_three_producers
+    {t EV eps : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (heps : 0 < eps)
+    (hboundary :
+      ∀ᶠ n : ℕ in atTop,
+        |W.signedFifthCapUpperBoundaryAt n| <= eps)
+    (hgap :
+      ∀ᶠ n : ℕ in atTop,
+        0 <= W.signedFifthCorrelationGapAt rho EV eps n)
+    (hlim :
+      Tendsto W.quarticScaleOuterTerminalAt atTop
+        (𝓝 ((t/16)^6 * W.canonicalSignedHighResidual))) :
+    W.SignedFifthAnalyticInput rho EV eps := by
+  exact W.signedFifthAnalyticInput_of_interiorTarget
+    rho heps hboundary
+    (W.signedFifthInteriorTarget_of_eventual_direct_gap ht rho hgap)
+    hlim
+
 end Synthesis

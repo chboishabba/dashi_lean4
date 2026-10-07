@@ -1,6 +1,7 @@
 import Integration.E8LiteralE6A2Branching
 import Integration.E6LiteralE8Action
 import Integration.E6F3OrbitTransitivity
+import Integration.E8TernaryBranchingActionObstruction
 import Mathlib
 
 /-!
@@ -28,6 +29,7 @@ open Integration.E8LiteralE6A2Branching
 open Integration.E6Mod3WeylAction
 open Integration.E6LiteralE8Action
 open Integration.E6F3OrbitTransitivity
+open Integration.E8TernaryBranchingActionObstruction
 
 /-- Literal fibre of one selected A2 weight. -/
 def LiteralWeightFiber (w : Int × Int) :=

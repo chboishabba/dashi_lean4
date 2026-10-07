@@ -7,13 +7,15 @@ import YangMills.ContinuumWilsonCovariance
 /-!
 # DASHI Millennium terminal-constructor census
 
-This module deliberately does not restate any Clay problem.  It imports the
-strongest stable theorem-bearing terminal surfaces already present on `main`
-and records their relation to the independently pinned LeanDojo target names.
+This module deliberately does not restate any Clay problem. It imports stable
+theorem-bearing surfaces already present in the root DASHI Lean package and
+records the strongest external-facing producer found across the Lean/Agda
+repositories.
 
-The exact external propositions live in the pinned upstream source vendor.
-A direct cross-package theorem is not fabricated across incompatible Lean /
-Mathlib package graphs.
+The census is same-object first. A lane may therefore name a stronger producer
+that lives in a separate Lean/Agda kernel even when the root package can only
+`#check` an earlier theorem-bearing donor. Kernel separation is not mathematical
+closure and is not promoted to a GREEN external receipt.
 -/
 
 namespace MillenniumExternal
@@ -57,7 +59,8 @@ def pVersusNPLane : TerminalLane :=
     upstreamDeclaration := "Millennium.ClayPVersusNP.Formulations.NegativeBranch"
     upstreamStatus := .openProblem
     dashiOwner := .agdaSource
-    dashiTerminalModule := "DASHI Millennium P-vs-NP Clay core / SAT lower-bound producer"
+    dashiTerminalModule :=
+      "DASHI/Mathematics/Complexity/PNotEqualsNPClayCoreExact.agda + PNotEqualsNPDirectSATLowerBoundExact.agda"
     directCrossVersionAdapterKernelChecked := false }
 
 def riemannLane : TerminalLane :=
@@ -65,7 +68,8 @@ def riemannLane : TerminalLane :=
     upstreamDeclaration := "Millennium.ClayRiemannHypothesis"
     upstreamStatus := .openProblem
     dashiOwner := .leanAndAgda
-    dashiTerminalModule := "Synthesis.RiemannSelectedRHMaxCutFrontier"
+    dashiTerminalModule :=
+      "Synthesis.RiemannSelectedRHMaxCutFrontier + Agda RH status/provenance mirror"
     directCrossVersionAdapterKernelChecked := false }
 
 def navierStokesLane : TerminalLane :=
@@ -73,7 +77,8 @@ def navierStokesLane : TerminalLane :=
     upstreamDeclaration := "MillenniumNavierStokes.FeffermanA|B|C|D"
     upstreamStatus := .openProblem
     dashiOwner := .leanAndAgda
-    dashiTerminalModule := "NSBControl.CombinedCurrentEndgame"
+    dashiTerminalModule :=
+      "ExternalClayNS/LiteralABCD.lean (literal independent C/D terminal, separate Lean kernel) + NSBControl.CombinedCurrentEndgame"
     directCrossVersionAdapterKernelChecked := false }
 
 def hodgeLane : TerminalLane :=
@@ -81,7 +86,8 @@ def hodgeLane : TerminalLane :=
     upstreamDeclaration := "MillenniumHodge.ClayHodge"
     upstreamStatus := .statementIncomplete
     dashiOwner := .leanAndAgda
-    dashiTerminalModule := "Synthesis.MillenniumHodgeRealAlgebraicCycleMultiplicityExact"
+    dashiTerminalModule :=
+      "Synthesis.MillenniumHodgeRealAlgebraicCycleMultiplicityExact + Agda HodgeAlgebraicCycleClayCoreExact"
     directCrossVersionAdapterKernelChecked := false }
 
 def bsdLane : TerminalLane :=
@@ -89,7 +95,8 @@ def bsdLane : TerminalLane :=
     upstreamDeclaration := "MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer"
     upstreamStatus := .openProblem
     dashiOwner := .leanAndAgda
-    dashiTerminalModule := "Synthesis.MillenniumBSDUniversalRankWeld"
+    dashiTerminalModule :=
+      "Synthesis.MillenniumBSDUniversalRankWeld (literal L-series / Mordell-Weil same-curve rank weld; upstream Taylor-data packaging still separate)"
     directCrossVersionAdapterKernelChecked := false }
 
 def yangMillsLane : TerminalLane :=
@@ -97,7 +104,8 @@ def yangMillsLane : TerminalLane :=
     upstreamDeclaration := "MillenniumYangMills.ClayYangMills"
     upstreamStatus := .statementIncomplete
     dashiOwner := .leanAndAgda
-    dashiTerminalModule := "YangMills.ContinuumWilsonCovariance + Agda OS/mass-gap terminal stack"
+    dashiTerminalModule :=
+      "YangMills.ContinuumWilsonCovariance + Agda OS/QFT/mass-gap physical same-object stack"
     directCrossVersionAdapterKernelChecked := false }
 
 def poincareLane : TerminalLane :=
@@ -105,7 +113,7 @@ def poincareLane : TerminalLane :=
     upstreamDeclaration := "MillenniumPoincare.ClayPoincareConjecture"
     upstreamStatus := .solvedProblem
     dashiOwner := .upstreamOnly
-    dashiTerminalModule := "Perelman / upstream solved target"
+    dashiTerminalModule := "Perelman / upstream solved target (regression only)"
     directCrossVersionAdapterKernelChecked := false }
 
 def terminalLanes : List TerminalLane :=
@@ -127,11 +135,11 @@ theorem hodge_upstream_not_prize_target :
 theorem yangMills_upstream_not_prize_target :
     isValidPrizeAcceptanceTarget yangMillsLane = false := by decide
 
-/-! ## Existing theorem-bearing terminal surfaces
+/-! ## Existing root-package theorem-bearing surfaces
 
-These checks intentionally name existing declarations.  If archaeology or a
-refactor removes one, this census stops typechecking instead of silently
-falling back to a status boolean.
+These checks intentionally name declarations available to the root DASHI Lean
+package. Stronger terminals in nested projects are named above but are not
+silently imported across their independent package graphs.
 -/
 
 #check Synthesis.QuarticFourSignedPolePair.RHMaxCutRoute.signedFifth_terminalPositive

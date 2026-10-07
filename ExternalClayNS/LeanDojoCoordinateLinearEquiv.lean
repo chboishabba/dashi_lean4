@@ -115,7 +115,7 @@ Clay time direction. -/
 @[simp] theorem leanSpacetimeToPair_timeBasis :
     leanSpacetimeToPair (standard_basis (n := 4) (0 : Fin 4)) =
       ClaySpec.timeDirection := by
-  apply pairToLeanSpacetime_leftInverse_apply.injective
+  apply pairToLeanSpacetime_leftInverse.injective
   simp
 
 /-- The inverse coordinate map sends each LeanDojo spatial basis vector back to
@@ -123,7 +123,7 @@ Clay's corresponding product-space direction. -/
 @[simp] theorem leanSpacetimeToPair_spatialBasis (i : Fin 3) :
     leanSpacetimeToPair (standard_basis (n := 4) i.succ) =
       ClaySpec.spatialDirection i := by
-  apply pairToLeanSpacetime_leftInverse_apply.injective
+  apply pairToLeanSpacetime_leftInverse.injective
   simp
 
 /-! ## Spatial translations -/

@@ -99,4 +99,32 @@ noncomputable def selectedCMP119HeterogeneousCylinderCutoffLaw
     ℕ → ProbabilityMeasure HeterogeneousWilsonCylinderState :=
   fun k => selectedCMP119HeterogeneousCylinderPushforward cutoff raw hMeas k
 
+/--
+Direct bounded determining source on the common cube.  The coordinates are
+already in `[-1,1]`, so no second `tanh` transform is introduced.
+-/
+noncomputable def selectedCMP119HeterogeneousDeterminingSource
+    (cutoff : ∀ k : ℕ, CMP119SelectedPhysicalCutoff (k + 1))
+    (raw : ∀ k : ℕ, ℕ → SU2TorusLinks (2 * (k + 1)) → ℝ)
+    (hMeas : ∀ k i, Measurable (raw k i)) :
+    RealCountableObservableDeterminingSource HeterogeneousWilsonCylinderState where
+  cutoffLaw := selectedCMP119HeterogeneousCylinderCutoffLaw cutoff raw hMeas
+  observable := fun i z => heterogeneousWilsonCylinderCoordinate i z
+  observableMeasurable := by
+    intro i
+    exact (heterogeneousWilsonCylinderCoordinate i).continuous.measurable
+  coordinateBound := fun _ => 1
+  coordinateBoundNonneg := by
+    intro i
+    norm_num
+  observableAbsLe := by
+    intro i z
+    exact abs_le.mpr (z i).property
+  coordinateMapEmbedding := by
+    apply Measurable.measurableEmbedding
+    · apply countable_observable_map_measurable
+      intro i
+      exact (heterogeneousWilsonCylinderCoordinate i).continuous.measurable
+    · exact heterogeneousWilsonCylinderCoordinateMap_injective
+
 end RequestProject.YangMills

@@ -7,12 +7,14 @@ on:
       - agent/2b-same-object-final-maxcut-20261007
     paths:
       - 'Integration/OggSSP2BTate276M24BrauerRuntimeReceipt.lean'
+      - 'Integration/OggSSP2BBrauerOuterInvolutionBoundary.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
       - '.github/workflows/twob-post-brauer-final.yml'
   pull_request:
     paths:
       - 'Integration/OggSSP2BTate276M24BrauerRuntimeReceipt.lean'
+      - 'Integration/OggSSP2BBrauerOuterInvolutionBoundary.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
       - '.github/workflows/twob-post-brauer-final.yml'
@@ -34,5 +36,6 @@ jobs:
       - name: Check post-Brauer 2B owners
         run: |
           lake env lean Integration/OggSSP2BTate276M24BrauerRuntimeReceipt.lean
+          lake env lean Integration/OggSSP2BBrauerOuterInvolutionBoundary.lean
           lake env lean Integration/OggSSP2BActualStableCompletionSubquotient.lean
           lake env lean Integration/OggSSP2BPostBrauerFinalCompiler.lean

@@ -33,9 +33,10 @@ theorem full_cluster_sum_eq_connecting_filter
   symm
   apply Finset.sum_subset (Finset.filter_subset _ _)
   intro c hc hnot
-  have hcClusters : c ∈ clusters := (Finset.mem_filter.mp hc).1
-  exfalso
-  exact hnot hc
+  apply hzero c hc
+  intro hboth
+  apply hnot
+  simp [hc, hboth.1, hboth.2]
 
 /--
 Source-facing W1+localization package before finite connected filtering.

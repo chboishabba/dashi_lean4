@@ -2,23 +2,22 @@ import Adapter
 import Problems.NavierStokes.Millennium
 
 /-!
-# Direct comparator -> exact LeanDojo Fefferman C max-cut
+# Direct ClaySpec -> exact LeanDojo Fefferman C max-cut
 
-The released comparator theorem and the pinned LeanDojo target quantify over the
-same spatial carrier but use different spacetime representations.  This file
-removes the previous opaque proposition-level `ClayOptionC ↔ FeffermanC` seam.
+The released comparator theorem is already welded to the independently frozen
+`ClaySpec` representation by `Gap.lean`:
 
-The only remaining obligations are the three concrete transports below:
+* comparator data -> `ClaySpec.AdmissibleDataR3`;
+* `ClaySpec.ClaySolutionR3` -> the exact comparator solution structure.
 
-1. comparator initial-data hypotheses -> LeanDojo condition (4) + divergence;
-2. comparator force hypotheses -> LeanDojo condition (5) after the fixed
-   pair-spacetime -> time-first `Fin 4` packing below;
-3. a LeanDojo global smooth finite-energy solution -> the comparator solution
-   on the original curried force, again through the fixed carrier map.
+Therefore the external acceptance seam must not reopen comparator PDE semantics.
+The remaining obligations are purely representation transport between:
 
-No fluid estimate is introduced here.  If these representation lemmas are
-inhabited, the already-proved comparator C theorem composes directly to the
-exact pinned `MillenniumNavierStokes.FeffermanC` proposition.
+* `ClaySpec` pair spacetime `R3 × ℝ`, and
+* LeanDojo's time-first ambient `EuclideanSpace ℝ (Fin 4)` spacetime.
+
+The spatial carrier itself is already literally `EuclideanSpace ℝ (Fin 3)`.
+No fluid estimate is introduced here.
 -/
 
 noncomputable section
@@ -28,40 +27,48 @@ namespace DASHILiteralClayNS
 open ClaySpec
 open NavierStokes
 
-/-- Fixed representation map from the comparator's curried `(x,t)` force to
-LeanDojo's time-first ambient `Fin 4` spacetime field. -/
+/-- Pack a curried `(x,t)` force into LeanDojo's time-first ambient spacetime. -/
 noncomputable def comparatorForceToLeanDojo
     (f : R3 → ℝ → R3) : ForceField 3 :=
   fun z => f (NavierStokes.space z) (NavierStokes.time z)
 
-/-- Read a LeanDojo ambient velocity field on the comparator's curried carrier. -/
-noncomputable def leanDojoVelocityToComparator
-    (u : VelocityField 3) : R3 → ℝ → R3 :=
-  fun x t => u (NavierStokes.spacetime_point t x)
+/-- Read a LeanDojo velocity field on ClaySpec's pair-spacetime carrier. -/
+noncomputable def leanDojoVelocityToClay
+    (u : VelocityField 3) : ClaySpec.Velocity :=
+  fun z => u (NavierStokes.spacetime_point z.2 z.1)
 
-/-- Read a LeanDojo ambient pressure field on the comparator's curried carrier. -/
-noncomputable def leanDojoPressureToComparator
-    (p : PressureField 3) : R3 → ℝ → ℝ :=
-  fun x t => p (NavierStokes.spacetime_point t x)
+/-- Read a LeanDojo pressure field on ClaySpec's pair-spacetime carrier. -/
+noncomputable def leanDojoPressureToClay
+    (p : PressureField 3) : ClaySpec.Pressure :=
+  fun z => p (NavierStokes.spacetime_point z.2 z.1)
 
-/-- Initial-data representation obligation only.  The carrier itself is already
-literally `EuclideanSpace ℝ (Fin 3)` on both sides. -/
-def ComparatorInitialToLeanDojo : Prop :=
+/-- Condition-(4) and initial-divergence notation transport only.
+
+`Gap.lean` has already proved these ClaySpec clauses from the released
+comparator hypotheses.  This interface therefore contains no comparator object
+and no fluid estimate. -/
+def ClayInitialToLeanDojo : Prop :=
   ∀ u₀ : R3 → R3,
-    NavierStokes.Comparator.InitialVelocityConditionDecay u₀ →
+    ContDiff ℝ ∞ u₀ →
+    ClaySpec.InitialDivergenceFree u₀ →
+    ClaySpec.InitialRapidDecay u₀ →
       NavierStokesOnR3.SmoothRapidDecayInitial u₀ ∧
       NavierStokesOnR3.DivergenceFreeInitial u₀
 
-/-- Force representation obligation only. -/
-def ComparatorForceToLeanDojo : Prop :=
+/-- Condition-(5) representation transport only, after `Gap.lean` has already
+proved the ClaySpec force smoothness and derivative-decay clauses. -/
+def ClayForceToLeanDojo : Prop :=
   ∀ f : R3 → ℝ → R3,
-    NavierStokes.Comparator.ForceConditionDecay f →
+    ClaySpec.TrustBoundarySmoothOn (SemanticGap.uncurryField f) →
+    ClaySpec.ForceRapidDecayR3 (SemanticGap.uncurryField f) →
       NavierStokesOnR3.SmoothRapidDecayForce (comparatorForceToLeanDojo f)
 
-/-- Solution representation obligation only.  This is intentionally stated on
-an actual LeanDojo `GlobalSmoothSolution` and returns the exact comparator
-solution structure consumed by the released contradiction theorem. -/
-def LeanDojoSolutionToComparator : Prop :=
+/-- Solution-carrier transport only.
+
+The output is a literal `ClaySpec.ClaySolutionR3`; the already-proved
+`SemanticGap.claySolutionR3_to_comparator` then supplies the released
+comparator solution required for the contradiction. -/
+def LeanDojoSolutionToClaySpec : Prop :=
   ∀ (ν : ℝ) (ν_pos : ν > 0)
     (u₀ : NavierStokesOnR3.InitialVelocity)
     (f : R3 → ℝ → R3)
@@ -70,37 +77,40 @@ def LeanDojoSolutionToComparator : Prop :=
       (NavierStokesOnR3.equations ν ν_pos u₀ hdiv
         (comparatorForceToLeanDojo f))),
       NavierStokesOnR3.FiniteEnergy sol.velocity →
-        NavierStokes.Comparator.NavierStokesExistenceAndSmoothnessRn
-          ν u₀ f
-          (leanDojoVelocityToComparator sol.velocity)
-          (leanDojoPressureToComparator sol.pressure)
+        ClaySpec.ClaySolutionR3 ν u₀ (SemanticGap.uncurryField f)
+          (leanDojoVelocityToClay sol.velocity)
+          (leanDojoPressureToClay sol.pressure)
 
-/-- The exact representation frontier.  Unlike the old statement weld, every
-field is a concrete carrier/predicate transport that can be attacked
-independently and reused in an audit. -/
+/-- Exact post-archaeology representation frontier.  Every field is now a
+ClaySpec <-> LeanDojo carrier/notation transport; comparator semantics are
+already paid by `Gap.lean`. -/
 structure LeanDojoCTransportFrontier : Prop where
-  initial : ComparatorInitialToLeanDojo
-  force : ComparatorForceToLeanDojo
-  solution : LeanDojoSolutionToComparator
+  initial : ClayInitialToLeanDojo
+  force : ClayForceToLeanDojo
+  solution : LeanDojoSolutionToClaySpec
 
-/-- Composition theorem: the released comparator C theorem plus only the three
-representation transports above proves the literal pinned LeanDojo Fefferman C
-proposition. -/
+/-- The released comparator C theorem, the already-paid comparator -> ClaySpec
+same-object weld, and only the three ClaySpec <-> LeanDojo transports above
+compose to the exact pinned Fefferman C target. -/
 theorem leanDojoFeffermanC_of_transport
     (w : LeanDojoCTransportFrontier) :
     MillenniumNavierStokes.FeffermanC := by
   intro ν ν_pos
   obtain ⟨u₀, f, hu₀, hf, hno⟩ :=
     SemanticGapAdapter.openAIComparatorOptionC ν ν_pos
-  have hinit := w.initial u₀ hu₀
+  have hClayData := SemanticGap.admissibleDataR3_of_comparator hu₀ hf
+  rcases hClayData with ⟨huSmooth, huDiv, huRapid, hfSmooth, hfRapid⟩
+  have hinit := w.initial u₀ huSmooth huDiv huRapid
+  have hforce := w.force f hfSmooth hfRapid
   refine ⟨u₀, comparatorForceToLeanDojo f,
-    hinit.1, hinit.2, w.force f hf, ?_⟩
+    hinit.1, hinit.2, hforce, ?_⟩
   intro hdiv hExists
   apply hno
   rcases hExists with ⟨sol, _hsmooth, henergy⟩
-  exact ⟨leanDojoVelocityToComparator sol.velocity,
-    leanDojoPressureToComparator sol.pressure,
-    w.solution ν ν_pos u₀ f hdiv sol henergy⟩
+  have hClay := w.solution ν ν_pos u₀ f hdiv sol henergy
+  have hComparator := SemanticGap.claySolutionR3_to_comparator hClay
+  rw [SemanticGap.curryField_uncurryField] at hComparator
+  exact ⟨_, _, hComparator⟩
 
 #print axioms leanDojoFeffermanC_of_transport
 

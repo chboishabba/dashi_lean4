@@ -22,9 +22,23 @@ example
     {State V : Type*}
     [MeasurableSpace State] [TopologicalSpace State] [OpensMeasurableSpace State]
     [AddCommGroup V] [Module ℝ V]
-    (weld : SameHOSRawMixedHalfRateWeld State V) :
-    SameHDenseWilsonMixedHalfRateWeld State V weld.data.Hilbert :=
-  ym20261007PreferredSameFamilyDenseWeld weld
+    (weld : SameHOSCenteredMixedHalfRateWeld State V) :
+    Dense
+      (Submodule.span ℝ
+        (Set.range (weld.data.centeredRawVector
+          weld.vacuum weld.vacuumNormalized)) :
+        Set (vacuumOrthogonalSubmodule weld.vacuum)) :=
+  ym20261007PreferredCenteredSameFamilyDenseSector weld
+
+example
+    {State V : Type*}
+    [MeasurableSpace State] [TopologicalSpace State] [OpensMeasurableSpace State]
+    [AddCommGroup V] [Module ℝ V]
+    (weld : SameHOSCenteredMixedHalfRateWeld State V)
+    (left right : V) :
+    HalfRateMatrixBound weld.transfer
+      (weld.centeredVector left) (weld.centeredVector right) :=
+  ym20261007PreferredCenteredPairHalfRate weld left right
 
 example (a E : ℝ) (ha : 0 < a)
     (hDecay : Real.exp (-a * E) ≤ (1 / 2 : ℝ)) :

@@ -90,6 +90,42 @@ theorem contDiffOn_leanFieldToComparator
   intro z hz
   exact (pairToLeanSpacetime_nonnegative_iff z).2 hz
 
+/-! ## Derivative directions -/
+
+/-- Clay's positive-time direction is literally LeanDojo coordinate zero. -/
+@[simp] theorem pairToLeanSpacetime_timeDirection :
+    pairToLeanSpacetime ClaySpec.timeDirection =
+      standard_basis (n := 4) (0 : Fin 4) := by
+  ext i
+  fin_cases i <;>
+    simp [pairToLeanSpacetime, ClaySpec.timeDirection, spacetime_point,
+      standard_basis]
+
+/-- Clay spatial direction `i` is literally LeanDojo coordinate `i+1`. -/
+@[simp] theorem pairToLeanSpacetime_spatialDirection (i : Fin 3) :
+    pairToLeanSpacetime (ClaySpec.spatialDirection i) =
+      standard_basis (n := 4) i.succ := by
+  ext j
+  fin_cases j <;>
+    simp [pairToLeanSpacetime, ClaySpec.spatialDirection,
+      ClaySpec.spatialBasis, spacetime_point, standard_basis]
+
+/-- The inverse coordinate map sends LeanDojo's time basis back to the exact
+Clay time direction. -/
+@[simp] theorem leanSpacetimeToPair_timeBasis :
+    leanSpacetimeToPair (standard_basis (n := 4) (0 : Fin 4)) =
+      ClaySpec.timeDirection := by
+  apply pairToLeanSpacetime_leftInverse_apply.injective
+  simp
+
+/-- The inverse coordinate map sends each LeanDojo spatial basis vector back to
+Clay's corresponding product-space direction. -/
+@[simp] theorem leanSpacetimeToPair_spatialBasis (i : Fin 3) :
+    leanSpacetimeToPair (standard_basis (n := 4) i.succ) =
+      ClaySpec.spatialDirection i := by
+  apply pairToLeanSpacetime_leftInverse_apply.injective
+  simp
+
 /-! ## Spatial translations -/
 
 /-- A LeanDojo spatial standard-basis translation leaves the time coordinate

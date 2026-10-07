@@ -37,6 +37,26 @@ example
     (assembly : YM20261007FiveCampaignSameHGapAssembly
       State V Hamiltonian
       HamiltonianSelfAdjoint HamiltonianNonnegative GeneratedByOSSemigroup
+      IsPhysicalStepForOneLatticeTranslation SubgapSpectrum)
+    (n : ℕ) :
+    assembly.excitationContinuousSemigroup.toOSStronglyContinuousSemigroup.transfer
+      (n : ℝ≥0) = assembly.sameFamily.excitationTransfer n :=
+  assembly.excitation_continuous_nat_eq_discrete n
+
+example
+    {State V Hamiltonian : Type*}
+    [MeasurableSpace State] [TopologicalSpace State] [OpensMeasurableSpace State]
+    [AddCommGroup V] [Module ℝ V]
+    (HamiltonianSelfAdjoint HamiltonianNonnegative : Hamiltonian → Prop)
+    (GeneratedByOSSemigroup :
+      ∀ data : OSGramData V,
+        OSSymmetricPositiveStronglyContinuousSemigroup data.Hilbert →
+          Hamiltonian → Prop)
+    (IsPhysicalStepForOneLatticeTranslation : ℝ → Prop)
+    (SubgapSpectrum : Hamiltonian → ℝ → Prop)
+    (assembly : YM20261007FiveCampaignSameHGapAssembly
+      State V Hamiltonian
+      HamiltonianSelfAdjoint HamiltonianNonnegative GeneratedByOSSemigroup
       IsPhysicalStepForOneLatticeTranslation SubgapSpectrum) :
     ¬ SubgapSpectrum assembly.e2.hamiltonian
       assembly.physicalTime.halfRateMassFloor :=

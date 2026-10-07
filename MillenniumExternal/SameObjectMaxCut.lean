@@ -34,10 +34,10 @@ def pVersusNPSameObjectCut : SameObjectCut :=
     existingProducer :=
       "Agda PNotEqualsNPClayCoreExact / PNotEqualsNPDirectSATLowerBoundExact"
     existingWeld :=
-      "SATNotInP -> PNotEqualsNP Clay-core compiler; machine-model transport retained separately"
+      "ExactTargetSurface.clayPNotEqualsNP_of_language_outside_p closes LeanDojo NegativeBranch from one finite-alphabet NP language outside P"
     remaining := .mathematics
     note :=
-      "The external adapter must reuse the existing SAT/P machine-model chain. The only mathematical producer still represented as an input is the universal SAT lower-bound/failure theorem; no second P-vs-NP formalism is permitted." }
+      "The external target no longer needs the whole Agda P/NP hierarchy ported. Its exact acceptance boundary is one LeanDojo finite-alphabet language L with L∈NP and L∉P. DASHI already reduces its Clay core to an actual SAT lower-bound producer, so the live mathematical wall remains that universal SAT lower bound; after it is proved, the only external work is same-object/machine-model transport of that SAT witness." }
 
 def riemannSameObjectCut : SameObjectCut :=
   { problem := .riemann

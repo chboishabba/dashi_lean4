@@ -7,12 +7,14 @@ on:
       - agent/millennium-submission-maxcut-restacked-20261007
     paths:
       - 'MillenniumExternal/**'
-      - 'ExternalClayNS/LeanDojoTargetBridge.lean'
-      - 'ExternalClayNS/LeanDojoCComparatorBridge.lean'
+      - 'ExternalClayNS/**'
+      - 'Synthesis/MillenniumBSDProjectiveRankWeld.lean'
       - 'scripts/vendor_millennium_targets.sh'
       - 'scripts/audit_millennium_external_targets.py'
       - 'scripts/test_audit_millennium_external_targets.py'
       - 'scripts/test_millennium_submission_surface.py'
+      - 'scripts/export_millennium_frontier.py'
+      - 'scripts/test_export_millennium_frontier.py'
       - 'scripts/check_millennium_external_source.py'
       - 'scripts/check_millennium_external_trust.sh'
       - 'vendor/LeanMillenniumPrizeProblems.VENDOR'
@@ -22,12 +24,14 @@ on:
   pull_request:
     paths:
       - 'MillenniumExternal/**'
-      - 'ExternalClayNS/LeanDojoTargetBridge.lean'
-      - 'ExternalClayNS/LeanDojoCComparatorBridge.lean'
+      - 'ExternalClayNS/**'
+      - 'Synthesis/MillenniumBSDProjectiveRankWeld.lean'
       - 'scripts/vendor_millennium_targets.sh'
       - 'scripts/audit_millennium_external_targets.py'
       - 'scripts/test_audit_millennium_external_targets.py'
       - 'scripts/test_millennium_submission_surface.py'
+      - 'scripts/export_millennium_frontier.py'
+      - 'scripts/test_export_millennium_frontier.py'
       - 'scripts/check_millennium_external_source.py'
       - 'scripts/check_millennium_external_trust.sh'
       - 'vendor/LeanMillenniumPrizeProblems.VENDOR'
@@ -63,10 +67,12 @@ jobs:
           test "$(cat vendor/LeanMillenniumPrizeProblems/lean-toolchain)" = \
             'leanprover/lean4:v4.31.0'
 
-      - name: Test and audit external registry
+      - name: Test and audit external registry/frontier
         run: |
           python3 scripts/test_audit_millennium_external_targets.py
           python3 scripts/test_millennium_submission_surface.py
+          python3 scripts/test_export_millennium_frontier.py
+          python3 scripts/export_millennium_frontier.py > millennium-external-frontier.json
           python3 scripts/check_millennium_external_source.py
           python3 scripts/audit_millennium_external_targets.py
           bash scripts/check_millennium_external_trust.sh
@@ -97,7 +103,7 @@ jobs:
             lean MillenniumExternal/ExactTargetSurface.lean
           ' 2>&1 | tee millennium-external-same-kernel.log
 
-      - name: Probe literal NS C/D against exact LeanDojo targets
+      - name: Build literal NS same-object transport against exact LeanDojo targets
         shell: bash
         run: |
           set -euo pipefail
@@ -108,8 +114,23 @@ jobs:
             lake env bash -c '
               set -euo pipefail
               export LEAN_PATH="$PWD/../vendor/LeanMillenniumPrizeProblems:$LEAN_PATH"
-              lean LeanDojoTargetBridge.lean
-              lean LeanDojoCComparatorBridge.lean
+              lean LeanDojoBoundaryExtension.lean
+              lean LeanDojoSameObjectCore.lean
+              lean LeanDojoCoordinateLinearEquiv.lean
+              lean LeanDojoJetTransport.lean
+              lean LeanDojoDifferentialTransport.lean
+              lean LeanDojoSecondDerivativeTransport.lean
+              lean LeanDojoDivergenceTransport.lean
+              lean LeanDojoMomentumTransport.lean
+              lean LeanDojoSameObject.lean
+              lean LeanDojoCoordinateWordJet.lean
+              lean LeanDojoForceTransport.lean
+              lean LeanDojoForceDecayQuantitative.lean
+              lean LeanDojoSolutionTransport.lean
+              lean LeanDojoEnergyTransport.lean
+              lean LeanDojoExactTerminal.lean
+              lean LeanDojoMaxCut.lean
+              lean LeanDojoSameObjectRegression.lean
             '
           ) 2>&1 | tee millennium-external-ns-leandojo.log
 
@@ -119,12 +140,26 @@ jobs:
           set -euo pipefail
           lake env lean MillenniumExternal/All.lean 2>&1 | tee millennium-external-dashi.log
 
-      - name: Upload DASHI axiom audit logs
+      - name: Reject admitted exact-target terms
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -R -n 'sorryAx' \
+              millennium-external-same-kernel.log \
+              millennium-external-ns-leandojo.log \
+              millennium-external-dashi.log; then
+            echo 'forbidden sorryAx in exact-target axiom audit' >&2
+            exit 1
+          fi
+          echo 'exact-target axiom audit: no sorryAx'
+
+      - name: Upload DASHI axiom audit logs and machine frontier
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: millennium-external-dashi-audit
           path: |
+            millennium-external-frontier.json
             millennium-external-same-kernel.log
             millennium-external-ns-leandojo.log
             millennium-external-dashi.log

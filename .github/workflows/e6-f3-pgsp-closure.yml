@@ -1,18 +1,6 @@
 name: E6 F3 PGSp closure
 
 on:
-  push:
-    branches:
-      - agent/e6-f3-exterior-square-maxcut-20261008
-    paths:
-      - "Integration/F3E6PGSpClosure.lean"
-      - "Integration/F3E6PGSpClosureRegression.lean"
-      - "Integration/F3E6PGSpSameObjectBridge.lean"
-      - "Integration/F3E6PGSpGeneratorBridge.lean"
-      - "Integration/F3FourSymplecticExteriorSquare.lean"
-      - "Integration/GeometricReasoningEverything.lean"
-      - "scripts/verify_f3_e6_pgsp_closure.py"
-      - ".github/workflows/e6-f3-pgsp-closure.yml"
   pull_request:
     paths:
       - "Integration/F3E6PGSpClosure.lean"

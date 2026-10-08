@@ -88,12 +88,14 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         self.assertIn('some "DASHILiteralClayNS.dashiExactFeffermanC|D"', resolution)
         self.assertIn("pnp_rh_bsd_still_require_donor_resolution", resolution)
 
-    def test_fail_closed_frontier_matches_paid_ns_and_unresolved_other_donors(self):
+    def test_fail_closed_frontier_uses_resolution_not_red_math(self):
         frontier = FRONTIER.read_text(encoding="utf-8")
+
         ns_start = frontier.index("problem := .navierStokes")
         ns_end = frontier.index("problem := .hodge", ns_start)
         ns = frontier[ns_start:ns_end]
         self.assertIn("frontier := .proved", ns)
+        self.assertIn("state := .sourceExactKernelPending", ns)
         self.assertIn("dashiExactFeffermanC", ns)
         self.assertIn("dashiExactFeffermanD", ns)
         self.assertNotIn("state := .greenExact", ns)
@@ -106,8 +108,12 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
             start = frontier.index(f"problem := {problem}")
             end = frontier.index(f"problem := {next_problem}", start)
             block = frontier[start:end]
-            self.assertIn("frontier := .analytic", block)
+            self.assertIn("state := .proofResolutionPending", block)
+            self.assertIn("frontier := .proofResolution", block)
+            self.assertNotIn("state := .redMath", block)
             self.assertNotIn("state := .greenExact", block)
+
+        self.assertIn("faithful_active_lanes_not_red_math", frontier)
 
 
 if __name__ == "__main__":

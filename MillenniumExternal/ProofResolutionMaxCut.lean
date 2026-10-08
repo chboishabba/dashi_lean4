@@ -9,6 +9,12 @@ work is restricted to theorem discovery/import, definitional reduction,
 existing equivalences, same-object transport, theorem composition and kernel
 checking.  A failed lookup is a reason to search the graph, not to manufacture a
 replacement Millennium hypothesis.
+
+The producer lists below are ordered by the latest cross-prover archaeology.
+They deliberately include exact equivalence/terminal constructors that tell us
+where *not* to reopen mathematics: when an existing package is equivalent to the
+final hard witness, resolution must find its inhabitant elsewhere rather than
+prove a duplicate formulation.
 -/
 
 namespace MillenniumExternal
@@ -49,8 +55,13 @@ private def standardResolutionOps : List ResolutionOperation :=
 def pVersusNPResolution : ProofResolutionLane :=
   { problem := .pVersusNP
     producerSearch :=
-      [ "PNotEqualsNPClayCoreExact.satLowerBoundProducerClosesClayCore"
+      [ "PNotEqualsNPQ1TerminalSemanticsDecisionFailureExact.universalQ1TerminalPackageGivesUniversalDecisionFailure"
+      , "PNotEqualsNPQ1TerminalSemanticsDecisionFailureExact.universalDecisionFailureGivesUniversalQ1TerminalPackage"
+      , "PNotEqualsNPQ1TerminalSemanticsDecisionFailureExact.universalQ1TerminalPackageClosesPNotEqualsNP"
+      , "PNotEqualsNPGeneratedClosedQ1DiscoveryExact.GeneratedExecutedQ1StateConstructor"
+      , "PNotEqualsNPQ1FiniteCodeClayClosureExact.q1FiniteCodeContradictsSATInP"
       , "PNotEqualsNPDirectSATLowerBoundExact.universalDecisionFailureClosesPNotEqualsNP"
+      , "PNotEqualsNPClayCoreExact.satLowerBoundProducerClosesClayCore"
       , "UniversalPolynomialSATDecisionFailure"
       , "ConcreteTapeCookLevinCookFormulaExact"
       , "LeanDojo finite-alphabet SAT language/machine transport" ]
@@ -63,8 +74,11 @@ def rhResolution : ProofResolutionLane :=
   { problem := .riemann
     producerSearch :=
       [ "_root_.RiemannHypothesis"
-      , "RiemannSelectedRHMaxCutFrontier"
-      , "signedFifth_terminalPositive"
+      , "QuarticFourSignedPolePair.threeTap_globalize_near_and_mid"
+      , "QuarticFourSignedPolePair.threeTap_globalize_of_pair_tsum_lt"
+      , "QuarticFourSignedPolePair.RHMaxCutRoute.signedFifth_terminalPositive"
+      , "RiemannSelectedPrimeSensitiveThreeTapMaxCutComplete"
+      , "CanonicalTerminalPositive"
       , "high-zero/global RH terminal constructor"
       , "selected-zero/globalization same-object weld" ]
     preferredOperations := standardResolutionOps
@@ -89,11 +103,15 @@ def navierStokesResolution : ProofResolutionLane :=
 def bsdResolution : ProofResolutionLane :=
   { problem := .birchSwinnertonDyer
     producerSearch :=
-      [ "universalBSDRankTheorem_of_background"
-      , "universalBSDRankTheorem_of_producers"
-      , "BSDClayCoreObligation"
-      , "BSDEllipticLContinuation"
+      [ "Synthesis.Millennium.BSD.universalBSDRankTheorem_of_background"
+      , "Synthesis.Millennium.BSD.universalBSDRankTheorem_of_producers"
+      , "Synthesis.Millennium.BSD.universalBSDRankTheorem_of_bound"
+      , "Synthesis.Millennium.BSD.BSDClayCoreObligation"
+      , "Synthesis.Millennium.BSD.BSDEllipticLContinuation"
+      , "Synthesis.Millennium.BSD.universalBSDEstablishedBackgroundProducer_iff"
+      , "Synthesis.Millennium.BSD.universalBSDMordellWeilBindingProducer_iff"
       , "MillenniumBSDProjectiveRankWeld.projective_rank_carrier_paid"
+      , "Mathlib WeierstrassCurve.Projective.Point ≃+ WeierstrassCurve.Affine.Point"
       , "Hasse-Weil/LSeries bad-prime-correction same-object donor" ]
     preferredOperations := standardResolutionOps
     externalCompiler := "MillenniumExternal.clayBirchSwinnertonDyer_of_dashi"
@@ -115,6 +133,9 @@ theorem navierStokes_source_term_is_resolved :
       some "DASHILiteralClayNS.dashiExactFeffermanC|D" := by
   decide
 
+/-- These three lanes are search/composition obligations only.  `none` means
+"the unconditional exact source term has not yet been located by this adapter
+branch"; it does not mean the mathematics is reopened. -/
 theorem pnp_rh_bsd_still_require_donor_resolution :
     pVersusNPResolution.resolvedSourceTerm = none ∧
     rhResolution.resolvedSourceTerm = none ∧

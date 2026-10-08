@@ -10,6 +10,8 @@ LINEAR = ROOT / "ExternalClayNS" / "LeanDojoCoordinateLinearEquiv.lean"
 BOUNDARY = ROOT / "ExternalClayNS" / "LeanDojoBoundaryExtension.lean"
 EXACT = ROOT / "MillenniumExternal" / "ExactTargetSurface.lean"
 FRONTIER = ROOT / "MillenniumExternal" / "ExternalTargetFrontier.lean"
+SAME_OBJECT_CUT = ROOT / "MillenniumExternal" / "SameObjectMaxCut.lean"
+RESOLUTION = ROOT / "MillenniumExternal" / "ProofResolutionMaxCut.lean"
 
 
 class MillenniumSubmissionSurfaceTests(unittest.TestCase):
@@ -73,6 +75,38 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         self.assertIn("Millennium.InPolynomialTime", text)
         self.assertIn("Millennium.ClayPVersusNP.Formulations.NegativeBranch", text)
         self.assertIn("#print axioms clayPNotEqualsNP_of_language_outside_p", text)
+
+    def test_completion_pass_forbids_reopening_math_on_faithful_live_lanes(self):
+        self.assertTrue(SAME_OBJECT_CUT.exists())
+        self.assertTrue(RESOLUTION.exists())
+        same = SAME_OBJECT_CUT.read_text(encoding="utf-8")
+        resolution = RESOLUTION.read_text(encoding="utf-8")
+
+        for lane in (
+            "pVersusNPSameObjectCut",
+            "riemannSameObjectCut",
+            "navierStokesSameObjectCut",
+            "bsdSameObjectCut",
+        ):
+            start = same.index(f"def {lane}")
+            next_def = same.find("\ndef ", start + 5)
+            block = same[start:] if next_def == -1 else same[start:next_def]
+            self.assertIn("remaining := .transportOnly", block)
+            self.assertNotIn("remaining := .mathematics", block)
+
+        for lane in (
+            "pVersusNPResolution",
+            "rhResolution",
+            "navierStokesResolution",
+            "bsdResolution",
+        ):
+            start = resolution.index(f"def {lane}")
+            next_def = resolution.find("\ndef ", start + 5)
+            block = resolution[start:] if next_def == -1 else resolution[start:next_def]
+            self.assertIn("newMathematicsPermitted := false", block)
+
+        self.assertIn("no_faithful_resolution_lane_permits_new_mathematics", resolution)
+        self.assertIn("resolution_board_agrees_with_same_object_cut", resolution)
 
     def test_exact_targets_can_only_be_green_from_unconditional_theorems(self):
         frontier = FRONTIER.read_text(encoding="utf-8")

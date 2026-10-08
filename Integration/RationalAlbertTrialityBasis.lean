@@ -91,31 +91,30 @@ theorem swap_slot_basis (s : Fin 3) (i : Fin 8) :
 same literal coordinate ledger.  The missing theorem is an action intertwiner,
 not another dimensional equality. -/
 structure D4OctonionSectorIntertwiner where
-  /-- One bijection from each finite eight-weight orbit to one octonion basis. -/
   orbit0ToBasis : {w // w ∈ trialityOrbit0} ≃ Fin 8
   orbit1ToBasis : {w // w ∈ trialityOrbit1} ≃ Fin 8
   orbit2ToBasis : {w // w ∈ trialityOrbit2} ≃ Fin 8
 
-  /-- The 192-element D4 kernel acts on the three actual octonion coordinate
-  spaces through linear maps. -/
   d4OnOct0 : Mat6 → O8 → O8
   d4OnOct1 : Mat6 → O8 → O8
   d4OnOct2 : Mat6 → O8 → O8
 
-  /-- Only kernel elements are required to realize the three independent
-  eight-dimensional actions. -/
-  mapsBasis0 : ∀ M, M ∈ d4KernelSet → ∀ w : {w // w ∈ trialityOrbit0},
+  orbit0Closed : ∀ M, M ∈ d4KernelSet → ∀ w : {w // w ∈ trialityOrbit0},
+    matrixApply M w.1 ∈ trialityOrbit0
+  orbit1Closed : ∀ M, M ∈ d4KernelSet → ∀ w : {w // w ∈ trialityOrbit1},
+    matrixApply M w.1 ∈ trialityOrbit1
+  orbit2Closed : ∀ M, M ∈ d4KernelSet → ∀ w : {w // w ∈ trialityOrbit2},
+    matrixApply M w.1 ∈ trialityOrbit2
+
+  mapsBasis0 : ∀ M hM w,
     d4OnOct0 M (octBasis (orbit0ToBasis w)) =
-      octBasis (orbit0ToBasis ⟨matrixApply M w.1, by
-        simpa [trialityOrbit0,d4Orbit] using Finset.mem_image_of_mem (fun N => matrixApply N w.1) ‹M ∈ d4KernelSet›⟩)
-  mapsBasis1 : ∀ M, M ∈ d4KernelSet → ∀ w : {w // w ∈ trialityOrbit1},
+      octBasis (orbit0ToBasis ⟨matrixApply M w.1, orbit0Closed M hM w⟩)
+  mapsBasis1 : ∀ M hM w,
     d4OnOct1 M (octBasis (orbit1ToBasis w)) =
-      octBasis (orbit1ToBasis ⟨matrixApply M w.1, by
-        simpa [trialityOrbit1,d4Orbit] using Finset.mem_image_of_mem (fun N => matrixApply N w.1) ‹M ∈ d4KernelSet›⟩)
-  mapsBasis2 : ∀ M, M ∈ d4KernelSet → ∀ w : {w // w ∈ trialityOrbit2},
+      octBasis (orbit1ToBasis ⟨matrixApply M w.1, orbit1Closed M hM w⟩)
+  mapsBasis2 : ∀ M hM w,
     d4OnOct2 M (octBasis (orbit2ToBasis w)) =
-      octBasis (orbit2ToBasis ⟨matrixApply M w.1, by
-        simpa [trialityOrbit2,d4Orbit] using Finset.mem_image_of_mem (fun N => matrixApply N w.1) ‹M ∈ d4KernelSet›⟩)
+      octBasis (orbit2ToBasis ⟨matrixApply M w.1, orbit2Closed M hM w⟩)
 
 inductive ShapeCreatesTrialityIntertwiner : Prop
 

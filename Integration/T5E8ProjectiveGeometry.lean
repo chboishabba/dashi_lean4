@@ -94,12 +94,12 @@ def circulantPairing
 def zeroRelationDegree
     (m : SymmetricCirculant5) (x : ProjectiveRelativeT5) : Nat :=
   (Finset.univ.filter fun y : ProjectiveRelativeT5 =>
-    decide (y ≠ x ∧ circulantPairing m x y = 0)).card
+    y ≠ x ∧ circulantPairing m x y = 0).card
 
 def nonzeroRelationDegree
     (m : SymmetricCirculant5) (x : ProjectiveRelativeT5) : Nat :=
   (Finset.univ.filter fun y : ProjectiveRelativeT5 =>
-    decide (y ≠ x ∧ circulantPairing m x y ≠ 0)).card
+    y ≠ x ∧ circulantPairing m x y ≠ 0).card
 
 /-- The exact finite obstruction discovered by the Python preflight and stated
 here on the literal carrier: no symmetric circulant F3 bilinear form has either

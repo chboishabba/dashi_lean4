@@ -3,6 +3,7 @@ import MillenniumExternal.TerminalCensus
 import MillenniumExternal.ExternalTargetFrontier
 import MillenniumExternal.SameObjectMaxCut
 import MillenniumExternal.CompletionMaxCut
+import Synthesis.MillenniumBSDProjectiveRankWeld
 
 /-!
 Aggregate root for the external Millennium acceptance/audit layer.
@@ -20,6 +21,7 @@ producer/specification remaining after that archaeology.
 #print axioms Synthesis.QuarticFourSignedPolePair.RHMaxCutRoute.signedFifth_terminalPositive
 #print axioms Synthesis.Millennium.BSD.universalBSDRankTheorem_of_background
 #print axioms Synthesis.Millennium.BSD.universalBSDRankTheorem_of_producers
+#print axioms Synthesis.Millennium.BSD.projective_rank_carrier_paid
 #print axioms NSBControl.CombinedCurrentEndgame.current_three_coordinate_endgame
 #print axioms Synthesis.Millennium.Hodge.doublePointCycle_isWeilDivisor
 #print axioms RequestProject.YangMills.probabilityCovariance_exponential_bound_of_weak_limit

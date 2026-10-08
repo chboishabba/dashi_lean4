@@ -33,6 +33,20 @@ open Integration.F4D4TrialitySupport
 
 abbrev MonomialKey := Omega5Weight → Fin 4
 
+/-- Every weight in each D4 triality sector is an omega5 minuscule weight. -/
+theorem sector0_mem_omega5 : ∀ w : Sector0, w.1 ∈ minusculeOmega5Set := by
+  native_decide
+
+theorem sector1_mem_omega5 : ∀ w : Sector1, w.1 ∈ minusculeOmega5Set := by
+  native_decide
+
+theorem sector2_mem_omega5 : ∀ w : Sector2, w.1 ∈ minusculeOmega5Set := by
+  native_decide
+
+def omega0 (w : Sector0) : Omega5Weight := ⟨w.1, sector0_mem_omega5 w⟩
+def omega1 (w : Sector1) : Omega5Weight := ⟨w.1, sector1_mem_omega5 w⟩
+def omega2 (w : Sector2) : Omega5Weight := ⟨w.1, sector2_mem_omega5 w⟩
+
 /-- Commutative monomial key for degree three, represented by multiplicities. -/
 def monomial3 (a b c : Omega5Weight) : MonomialKey := fun w =>
   ⟨(if w = a then 1 else 0) + (if w = b then 1 else 0) +
@@ -50,20 +64,17 @@ def diagonalTerm : CubicTerm :=
 
 /-- Norm terms paired equivariantly with the three zero-weight lines. -/
 def normTerm0 (w : Sector0) : CubicTerm :=
-  ⟨-1, monomial3 zeroWeight0 ⟨w.1, by native_decide⟩ ⟨w.1, by native_decide⟩⟩
+  ⟨-1, monomial3 zeroWeight0 (omega0 w) (omega0 w)⟩
 
 def normTerm1 (w : Sector1) : CubicTerm :=
-  ⟨-1, monomial3 zeroWeight2 ⟨w.1, by native_decide⟩ ⟨w.1, by native_decide⟩⟩
+  ⟨-1, monomial3 zeroWeight2 (omega1 w) (omega1 w)⟩
 
 def normTerm2 (w : Sector2) : CubicTerm :=
-  ⟨-1, monomial3 zeroWeight1 ⟨w.1, by native_decide⟩ ⟨w.1, by native_decide⟩⟩
+  ⟨-1, monomial3 zeroWeight1 (omega2 w) (omega2 w)⟩
 
 /-- One coefficient-two triality monomial. -/
 def trialityTerm (p : Sector0 × Sector1 × Sector2) : CubicTerm :=
-  ⟨2, monomial3
-      ⟨p.1.1, by native_decide⟩
-      ⟨p.2.1.1, by native_decide⟩
-      ⟨p.2.2.1, by native_decide⟩⟩
+  ⟨2, monomial3 (omega0 p.1) (omega1 p.2.1) (omega2 p.2.2)⟩
 
 /-- Complete finite coefficient tensor. -/
 def finiteAlbertCubicTerms : Finset CubicTerm :=

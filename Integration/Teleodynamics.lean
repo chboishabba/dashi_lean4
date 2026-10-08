@@ -18,3 +18,5 @@ import Integration.TeleodynamicsConsensusGronwall
 import Integration.TeleodynamicsConsensusGronwallRegression
 import Integration.T5E8CyclicActionBridge
 import Integration.T5E8CyclicActionRegression
+import Integration.T5E8ProjectiveGeometry
+import Integration.T5E8ProjectiveGeometryRegression

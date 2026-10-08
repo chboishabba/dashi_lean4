@@ -57,6 +57,23 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         self.assertIn("Millennium.ClayPVersusNP.Formulations.NegativeBranch", text)
         self.assertIn("#print axioms clayPNotEqualsNP_of_language_outside_p", text)
 
+    def test_bsd_finite_rank_is_derived_not_an_adapter_field(self):
+        text = EXACT.read_text(encoding="utf-8")
+        self.assertIn("theorem leanDojoRank_finite_of_projective_fg", text)
+        self.assertIn("theorem leanDojoBSDFiniteRank_of_dashi", text)
+        self.assertIn("Module.Finite.base_change", text)
+        self.assertIn("Cardinal.toENat_ne_top", text)
+        self.assertIn("projective_fg E", text)
+
+        start = text.index("structure BSDLeanDojoSameObjectWeld")
+        end = text.index("theorem clayBirchSwinnertonDyer_of_dashi", start)
+        weld = text[start:end]
+        self.assertIn("rankExistence_of_dashi", weld)
+        self.assertNotIn("finiteRank :", weld)
+
+        compiler = text[text.index("theorem clayBirchSwinnertonDyer_of_dashi"):]
+        self.assertIn("leanDojoBSDFiniteRank_of_dashi bg.algebraic", compiler)
+
     def test_completion_pass_forbids_reopening_math_on_faithful_live_lanes(self):
         same = SAME_OBJECT_CUT.read_text(encoding="utf-8")
         resolution = RESOLUTION.read_text(encoding="utf-8")
@@ -113,6 +130,9 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
             self.assertNotIn("state := .redMath", block)
             self.assertNotIn("state := .greenExact", block)
 
+        bsd_start = frontier.index("problem := .birchSwinnertonDyer")
+        bsd_end = frontier.index("problem := .yangMills", bsd_start)
+        self.assertIn("Rank.Existence", frontier[bsd_start:bsd_end])
         self.assertIn("faithful_active_lanes_not_red_math", frontier)
 
 

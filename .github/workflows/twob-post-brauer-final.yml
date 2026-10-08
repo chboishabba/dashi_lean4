@@ -15,10 +15,12 @@ on:
       - 'Integration/OggSSP2BM22d2OuterClassDuadDefect.lean'
       - 'Integration/OggSSP2BWeightTwoIntegralC2Decomposition.lean'
       - 'Integration/OggSSP2BTatePlusMinusCokernel.lean'
+      - 'Integration/OggSSP2BCo1UntwistedSectorSplit.lean'
       - 'Integration/OggSSP2BCo1ExteriorSquareTateCandidate.lean'
       - 'Integration/OggSSP2BCo1AugmentationTrivialityCriterion.lean'
       - 'Integration/OggSSP2BCo1FrobeniusHomRigidity.lean'
       - 'Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean'
+      - 'Integration/OggSSP2BTateCokernelRankRigidity.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
       - 'Integration/OggSSP2BStableCompletionModelTransport.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
@@ -35,10 +37,12 @@ on:
       - 'Integration/OggSSP2BM22d2OuterClassDuadDefect.lean'
       - 'Integration/OggSSP2BWeightTwoIntegralC2Decomposition.lean'
       - 'Integration/OggSSP2BTatePlusMinusCokernel.lean'
+      - 'Integration/OggSSP2BCo1UntwistedSectorSplit.lean'
       - 'Integration/OggSSP2BCo1ExteriorSquareTateCandidate.lean'
       - 'Integration/OggSSP2BCo1AugmentationTrivialityCriterion.lean'
       - 'Integration/OggSSP2BCo1FrobeniusHomRigidity.lean'
       - 'Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean'
+      - 'Integration/OggSSP2BTateCokernelRankRigidity.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
       - 'Integration/OggSSP2BStableCompletionModelTransport.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
@@ -70,10 +74,12 @@ jobs:
           lake env lean Integration/OggSSP2BM22d2OuterClassDuadDefect.lean
           lake env lean Integration/OggSSP2BWeightTwoIntegralC2Decomposition.lean
           lake env lean Integration/OggSSP2BTatePlusMinusCokernel.lean
+          lake env lean Integration/OggSSP2BCo1UntwistedSectorSplit.lean
           lake env lean Integration/OggSSP2BCo1ExteriorSquareTateCandidate.lean
           lake env lean Integration/OggSSP2BCo1AugmentationTrivialityCriterion.lean
           lake env lean Integration/OggSSP2BCo1FrobeniusHomRigidity.lean
           lake env lean Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean
+          lake env lean Integration/OggSSP2BTateCokernelRankRigidity.lean
           lake env lean Integration/OggSSP2BActualStableCompletionSubquotient.lean
           lake env lean Integration/OggSSP2BStableCompletionModelTransport.lean
           lake env lean Integration/OggSSP2BPostBrauerFinalCompiler.lean

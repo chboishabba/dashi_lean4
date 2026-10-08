@@ -63,7 +63,7 @@ def cubic (u : RationalAlbert) : ℚ :=
 def innerO (x y : RationalOctonion) : ℚ :=
   RationalOctonion.realPart (x * RationalOctonion.conj y)
 
-private def halfO (x : RationalOctonion) : RationalOctonion := (1/2 : ℚ) • x
+def halfO (x : RationalOctonion) : RationalOctonion := (1/2 : ℚ) • x
 
 /-- Direct coordinate formula for `(XY+YX)/2`. -/
 def jordanProduct (X Y : RationalAlbert) : RationalAlbert :=

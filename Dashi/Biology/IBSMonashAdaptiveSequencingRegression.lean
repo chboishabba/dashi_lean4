@@ -1,0 +1,14 @@
+import Dashi.Biology.IBSMonashAdaptiveSequencingExact
+
+namespace Dashi.Biology.IBSMonashAdaptiveSequencingRegression
+
+open Dashi.Biology.IBSMonashAdaptiveSequencingExact
+
+theorem programmeAtlasRegression : canonicalMonashIBSProgrammeAtlas = canonicalMonashIBSProgrammeAtlas := rfl
+theorem sequencingFrontierRegression : canonicalAdaptiveTreatmentSequencingFrontier = canonicalAdaptiveTreatmentSequencingFrontier := rfl
+
+theorem responseNotMechanismRegression : TreatmentResponseIdentifiesMechanismPermission → False := treatmentResponseDoesNotIdentifyMechanism
+theorem informationNotBenefitRegression : InformationGainEqualsClinicalBenefitPermission → False := informationGainDoesNotEqualClinicalBenefit
+theorem fodmapNotUniversalRegression : LowFODMAPResponseIdentifiesUniversalFODMAPMechanismPermission → False := lowFODMAPResponseDoesNotIdentifyUniversalMechanism
+
+end Dashi.Biology.IBSMonashAdaptiveSequencingRegression

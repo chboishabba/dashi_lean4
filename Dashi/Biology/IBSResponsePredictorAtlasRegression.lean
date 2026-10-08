@@ -1,0 +1,13 @@
+import Dashi.Biology.IBSResponsePredictorAtlasExact
+
+namespace Dashi.Biology.IBSResponsePredictorAtlasRegression
+
+open Dashi.Biology.IBSResponsePredictorAtlasExact
+
+theorem atlasRegression : canonicalIBSResponsePredictorAtlas = canonicalIBSResponsePredictorAtlas := rfl
+theorem frontierRegression : canonicalIBSResponsePredictionParetoFrontier = canonicalIBSResponsePredictionParetoFrontier := rfl
+
+theorem predictorNotMediatorRegression : PredictorIsMediatorPermission → False := predictorDoesNotBecomeMediator
+theorem internalModelNotClinicalClassifierRegression : InternalPredictionIsValidatedClinicalClassifierPermission → False := internalPredictionDoesNotBecomeClinicalClassifier
+
+end Dashi.Biology.IBSResponsePredictorAtlasRegression

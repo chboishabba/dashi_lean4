@@ -1,0 +1,8 @@
+import Dashi.Biology.QuailEggGutTransferRound2Exact
+
+namespace Dashi.Biology.QuailEggGutTransferRound2Regression
+open Dashi.Biology.QuailEggGutTransferRound2Exact
+example : QuailOvomucoidStabilityReceipt := quailOvomucoidStability1994Receipt
+example : IBSDietMastCellMechanismReceipt := gao2025IBSDietMastCellReceipt
+example : QuailEggGutTransferRound2Boundary := canonicalQuailEggGutTransferRound2Boundary
+end Dashi.Biology.QuailEggGutTransferRound2Regression

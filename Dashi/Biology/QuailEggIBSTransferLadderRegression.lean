@@ -1,0 +1,9 @@
+import Dashi.Biology.QuailEggIBSTransferLadderExact
+
+namespace Dashi.Biology.QuailEggIBSTransferLadderRegression
+open Dashi.Biology.QuailEggIBSTransferLadderExact
+example : QuailEggIBSTransferLadder := canonicalQuailEggIBSTransferLadder
+example : HumanIBSQuailTerminalReceipt := canonicalHumanIBSQuailTerminalReceipt
+example : AdjacentEvidenceClosesHumanIBSPermission → False := adjacentEvidenceDoesNotCloseHumanIBS
+example : QuailEggIBSTransferLadderBoundary := canonicalQuailEggIBSTransferLadderBoundary
+end Dashi.Biology.QuailEggIBSTransferLadderRegression

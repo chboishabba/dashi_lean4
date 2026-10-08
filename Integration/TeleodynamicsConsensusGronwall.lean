@@ -42,10 +42,13 @@ theorem consensus_energy_exponential_bound
       ∀ x ∈ Ico a b, ∀ r, dEnergy x < r →
         ∃ᶠ z in 𝓝[>] x, (z - x)⁻¹ * (Energy z - Energy x) < r := by
     intro x hx r hr
-    exact (h.rightDerivative x hx).liminf_right_slope_le hr
+    simpa only [slope, smul_eq_mul] using
+      (h.rightDerivative x hx).liminf_right_slope_le hr
   intro t ht
   have hG :=
     le_gronwallBound_of_liminf_deriv_right_le
+      (f := Energy) (f' := dEnergy)
+      (δ := E0) (K := -2 * λ) (ε := 0) (a := a) (b := b)
       h.continuousEnergy hSlope h.initialBound
       (fun x hx => by
         simpa only [add_zero] using h.differentialInequality x hx)

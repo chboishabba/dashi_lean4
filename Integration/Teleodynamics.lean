@@ -14,3 +14,6 @@ import Integration.TeleodynamicsConsensus
 import Integration.TeleodynamicsConsensusRegression
 import Integration.TeleodynamicsConsensusSpectralGap
 import Integration.TeleodynamicsConsensusSpectralGapRegression
+import Integration.ScopedVerifierArtifact
+import Integration.GAISArchitectureComparison
+import Integration.ScopedVerifierArtifactRegression

@@ -3,11 +3,13 @@ from pathlib import Path
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-BRIDGE = ROOT / "ExternalClayNS" / "LeanDojoCComparatorBridge.lean"
-SAME = ROOT / "ExternalClayNS" / "LeanDojoSameObject.lean"
-CORE = ROOT / "ExternalClayNS" / "LeanDojoSameObjectCore.lean"
-LINEAR = ROOT / "ExternalClayNS" / "LeanDojoCoordinateLinearEquiv.lean"
-BOUNDARY = ROOT / "ExternalClayNS" / "LeanDojoBoundaryExtension.lean"
+EXACT_NS = ROOT / "ExternalClayNS" / "LeanDojoExactTerminal.lean"
+FORCE = ROOT / "ExternalClayNS" / "LeanDojoForceDecayQuantitative.lean"
+MOMENTUM = ROOT / "ExternalClayNS" / "LeanDojoMomentumTransport.lean"
+DIVERGENCE = ROOT / "ExternalClayNS" / "LeanDojoDivergenceTransport.lean"
+ENERGY = ROOT / "ExternalClayNS" / "LeanDojoEnergyTransport.lean"
+REGRESSION = ROOT / "ExternalClayNS" / "LeanDojoSameObjectRegression.lean"
+OBSOLETE_NS = ROOT / "ExternalClayNS" / "LeanDojoCComparatorBridge.lean"
 EXACT = ROOT / "MillenniumExternal" / "ExactTargetSurface.lean"
 FRONTIER = ROOT / "MillenniumExternal" / "ExternalTargetFrontier.lean"
 SAME_OBJECT_CUT = ROOT / "MillenniumExternal" / "SameObjectMaxCut.lean"
@@ -15,58 +17,37 @@ RESOLUTION = ROOT / "MillenniumExternal" / "ProofResolutionMaxCut.lean"
 
 
 class MillenniumSubmissionSurfaceTests(unittest.TestCase):
-    def test_ns_c_bridge_has_exact_four_leaf_transport_frontier(self):
-        for path in (BRIDGE, SAME, CORE, LINEAR, BOUNDARY):
-            self.assertTrue(path.exists(), f"missing canonical NS transport owner: {path.name}")
+    def test_ns_exact_terminal_supersedes_transport_frontier(self):
+        for path in (EXACT_NS, FORCE, MOMENTUM, DIVERGENCE, ENERGY, REGRESSION):
+            self.assertTrue(path.exists(), f"missing paid NS owner: {path.name}")
+        self.assertFalse(OBSOLETE_NS.exists(), "obsolete conditional NS frontier must stay removed")
 
-        bridge = BRIDGE.read_text(encoding="utf-8")
-        same = SAME.read_text(encoding="utf-8")
-        core = CORE.read_text(encoding="utf-8")
-        linear = LINEAR.read_text(encoding="utf-8")
-        boundary = BOUNDARY.read_text(encoding="utf-8")
+        terminal = EXACT_NS.read_text(encoding="utf-8")
+        force = FORCE.read_text(encoding="utf-8")
+        regression = REGRESSION.read_text(encoding="utf-8")
 
-        for residual in (
-            "ComparatorForceDecayToLeanDojo",
-            "LeanDojoMomentumToClay",
-            "LeanDojoIncompressibleToClay",
-            "LeanDojoEnergyToClay",
+        for theorem in (
+            "theorem leanDojoR3Solution_to_comparator",
+            "theorem leanDojoPeriodicSolution_to_comparator",
+            "theorem dashiExactFeffermanC : MillenniumNavierStokes.FeffermanC",
+            "theorem dashiExactFeffermanD : MillenniumNavierStokes.FeffermanD",
+            "#print axioms dashiExactFeffermanC",
+            "#print axioms dashiExactFeffermanD",
         ):
-            self.assertIn(residual, bridge)
+            self.assertIn(theorem, terminal)
 
-        for compiler in (
-            "LeanDojoSolutionTransportFrontier",
-            "leanDojoInitialCondition_to_clay",
-            "leanDojoSolutionToClaySpec_of_transport",
-            "LeanDojoCTransportFrontier",
-            "leanDojoFeffermanC_of_transport",
+        for paid in (
+            "comparatorForceDecay_to_leanDojo",
+            "comparatorPeriodicForceDecay_to_leanDojo",
+            "spacetimeDerivativeVector_eq_fullJet_apply",
+            "norm_targetJet_le_sourceJet",
         ):
-            self.assertIn(compiler, bridge)
+            self.assertIn(paid, force)
 
-        self.assertIn("comparatorInitialDecay_to_leanDojo", same)
-        self.assertIn("comparatorInitialDecayData_to_leanDojo", same)
-        self.assertIn("leanDojo_spatialDerivativeVector_eq_clay", same)
-        self.assertIn("pairLeanSpacetimeEquiv", core)
-        self.assertIn("comparatorForceToLean", core)
-        self.assertIn("contDiffOn_leanFieldToComparator", linear)
-        self.assertIn("eqOn_Ici_zero_of_eqOn_Ioi_zero", boundary)
-
-        self.assertIn("comparatorInitialDecayData_to_leanDojo", bridge)
-        self.assertIn("SemanticGap.claySolutionR3_to_comparator", bridge)
-        self.assertIn("NavierStokesOnR3.Breakdown.iff_no_finite_energy_solution", bridge)
-
-        for reopened in (
-            "ClayInitialDecayToLeanDojo",
-            "ClayInitialToLeanDojo",
-            "ComparatorInitialToLeanDojo",
-            "LeanDojoSolutionToComparator",
-            "LeanDojoVelocitySmoothToClay",
-            "LeanDojoPressureSmoothToClay",
-            "LeanDojoCDStatementWeld",
-        ):
-            self.assertNotIn(reopened, bridge)
-
-        self.assertNotIn("sorry", bridge)
-        self.assertNotIn("axiom ", bridge)
+        self.assertIn("#check dashiExactFeffermanC", regression)
+        self.assertIn("#check dashiExactFeffermanD", regression)
+        self.assertNotIn("sorry", terminal)
+        self.assertNotIn("axiom ", terminal)
 
     def test_exact_p_negative_branch_needs_only_one_language_outside_p(self):
         text = EXACT.read_text(encoding="utf-8")
@@ -77,8 +58,6 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         self.assertIn("#print axioms clayPNotEqualsNP_of_language_outside_p", text)
 
     def test_completion_pass_forbids_reopening_math_on_faithful_live_lanes(self):
-        self.assertTrue(SAME_OBJECT_CUT.exists())
-        self.assertTrue(RESOLUTION.exists())
         same = SAME_OBJECT_CUT.read_text(encoding="utf-8")
         resolution = RESOLUTION.read_text(encoding="utf-8")
 
@@ -105,29 +84,30 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
             block = resolution[start:] if next_def == -1 else resolution[start:next_def]
             self.assertIn("newMathematicsPermitted := false", block)
 
-        self.assertIn("no_faithful_resolution_lane_permits_new_mathematics", resolution)
-        self.assertIn("resolution_board_agrees_with_same_object_cut", resolution)
+        self.assertIn("navierStokes_source_term_is_resolved", resolution)
+        self.assertIn('some "DASHILiteralClayNS.dashiExactFeffermanC|D"', resolution)
+        self.assertIn("pnp_rh_bsd_still_require_donor_resolution", resolution)
 
-    def test_exact_targets_can_only_be_green_from_unconditional_theorems(self):
+    def test_fail_closed_frontier_matches_paid_ns_and_unresolved_other_donors(self):
         frontier = FRONTIER.read_text(encoding="utf-8")
         ns_start = frontier.index("problem := .navierStokes")
         ns_end = frontier.index("problem := .hodge", ns_start)
         ns = frontier[ns_start:ns_end]
-        bridge = BRIDGE.read_text(encoding="utf-8")
-        if "state := .greenExact" in ns:
-            self.assertIn(
-                "theorem leanDojoFeffermanC :\n    MillenniumNavierStokes.FeffermanC :=",
-                bridge,
-            )
-            self.assertIn("#print axioms leanDojoFeffermanC", bridge)
+        self.assertIn("frontier := .proved", ns)
+        self.assertIn("dashiExactFeffermanC", ns)
+        self.assertIn("dashiExactFeffermanD", ns)
+        self.assertNotIn("state := .greenExact", ns)
 
-        p_start = frontier.index("problem := .pVersusNP")
-        p_end = frontier.index("problem := .riemann", p_start)
-        p = frontier[p_start:p_end]
-        if "state := .greenExact" in p:
-            exact = EXACT.read_text(encoding="utf-8")
-            self.assertIn("theorem clayPNotEqualsNP", exact)
-            self.assertNotIn("_of_language_outside_p", exact)
+        for problem, next_problem in (
+            (".pVersusNP", ".riemann"),
+            (".riemann", ".navierStokes"),
+            (".birchSwinnertonDyer", ".yangMills"),
+        ):
+            start = frontier.index(f"problem := {problem}")
+            end = frontier.index(f"problem := {next_problem}", start)
+            block = frontier[start:end]
+            self.assertIn("frontier := .analytic", block)
+            self.assertNotIn("state := .greenExact", block)
 
 
 if __name__ == "__main__":

@@ -105,16 +105,43 @@ theorem e6ReducedGenerator_isometry (i : Fin 6) :
       primitivePolarMatrix := by
   fin_cases i <;> native_decide
 
-/-- Generator-level action equality is paid.  Group-level recognition still
-requires a theorem that the two generated actions are the same subgroup, not
-merely the external finite closure receipt. -/
+theorem e6ReducedGenerator_involutive (i : Fin 6) :
+    e6ReducedGenerator i * e6ReducedGenerator i = 1 := by
+  fin_cases i <;> native_decide
+
+/-- Five-space generator obtained from the explicit four-space lift. -/
+def pgspFiveGenerator (i : Fin 6) : M5 := exteriorAction (pgspGenerator i)
+
+/-- Left-to-right matrix word action. -/
+def wordAction (gen : Fin 6 → M5) : List (Fin 6) → M5
+  | [] => 1
+  | i :: rest => gen i * wordAction gen rest
+
+theorem generatorAction_eq (i : Fin 6) :
+    pgspFiveGenerator i = e6ReducedGenerator i :=
+  exteriorAction_pgspGenerator i
+
+/-- Every word in the six exterior-square images is literally the same
+five-dimensional matrix as the corresponding word in the six reduced E₆
+simple reflections.  This pays equality of the generated five-space action
+image without inferring anything from the common order 51840. -/
+theorem generatedFiveSpaceWordAction_eq (w : List (Fin 6)) :
+    wordAction pgspFiveGenerator w = wordAction e6ReducedGenerator w := by
+  induction w with
+  | nil => rfl
+  | cons i rest ih =>
+      simp only [wordAction]
+      rw [generatorAction_eq, ih]
+
 structure GeneratorBridgeBoundary where
   sixPGSpLiftsConstructed : Bool
   allSixMultiplierMinusOne : Bool
   sixReducedE6MatricesConstructed : Bool
   sixGeneratorIntertwiningPaid : Bool
   sixE6MatricesPreservePrimitivePolarForm : Bool
-  fullGeneratedGroupEqualityKernelPaid : Bool
+  e6GeneratorsInvolutive : Bool
+  generatedFiveSpaceActionEqualityPaid : Bool
+  abstractPGSpQuotientWeylIsomorphismPaid : Bool
   orderEqualityPromotesGroupRecognition : Bool
 
 def generatorBridgeBoundary : GeneratorBridgeBoundary :=
@@ -123,7 +150,9 @@ def generatorBridgeBoundary : GeneratorBridgeBoundary :=
     sixReducedE6MatricesConstructed := true
     sixGeneratorIntertwiningPaid := true
     sixE6MatricesPreservePrimitivePolarForm := true
-    fullGeneratedGroupEqualityKernelPaid := false
+    e6GeneratorsInvolutive := true
+    generatedFiveSpaceActionEqualityPaid := true
+    abstractPGSpQuotientWeylIsomorphismPaid := false
     orderEqualityPromotesGroupRecognition := false }
 
 end DASHI.Integration.F3E6PGSpGeneratorBridge

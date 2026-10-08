@@ -3,11 +3,12 @@ import Integration.AntigravitySourceGeometryWeld
 namespace Integration.AntigravityOverlayZMirror
 
 /-!
-Lean-side mirror of the current Agda Overlay Z antigravity/cosmology source cut.
+Lean-side mirror of the current Agda Overlay AA antigravity/cosmology source cut.
 
-This module mirrors the consumer shape only.  It does not identify Lean and Agda
-proof objects, does not manufacture the source physics, and does not promote a
-physical antigravity claim.
+The file name is retained for branch compatibility; the accounting below includes
+AA's final package compression.  This module mirrors the consumer shape only. It
+does not identify Lean and Agda proof objects, manufacture source physics, or
+promote a physical antigravity claim.
 -/
 
 /-- Source-first selected R129 object: the selected source is the R129 source by
@@ -32,8 +33,15 @@ theorem selected_f2_trace_authority_pair
     selectedF2 = renormalizedF2 ∧ localHilbertTrace = renormalizedTrace :=
   ⟨weld.selectedF2SameObject, weld.localHilbertTraceSameObject⟩
 
-/-- Consumer-minimal source frontier.  Every field here is genuine source or
-physical mathematics, not adapter/carrier plumbing. -/
+/-- AA's consumer-minimal four-package source frontier.  The internal fields of
+`selectedPhysicalF2Package` are deliberately not split into separate projects. -/
+structure OverlayAAPhysicalSourceFrontier : Prop where
+  activeRegularELocalizationFormWitness : Prop
+  selectedPhysicalF2Package : Prop
+  selectedF2TraceAuthorityWeld : Prop
+  weightedHaarPartitionOscillationPackage : Prop
+
+/-- Compatibility view of the earlier finer-grained Z presentation. -/
 structure OverlayZPhysicalSourceFrontier : Prop where
   activeRegularELocalizationFormWitness : Prop
   selectedPhysicalF2Semantics : Prop
@@ -56,6 +64,16 @@ def tenIndependentTangentEqualitiesRequired : Bool := false
 /-- R129 marked-source equality is retired by `selectedR129Source`. -/
 def postHocR129MarkedSourceEqualityRequired : Bool := false
 
+/-- AA schedules coefficient-energy control as an internal subclaim of one
+selected physical-F² source package, not as an independent project. -/
+def coefficientEnergyIndependentProjectRequired : Bool := false
+
+/-- Gauge/local semantics are fields of the same selected physical-F² package. -/
+def gaugeLocalIndependentProjectRequired : Bool := false
+
+/-- Exactly one selected physical-F² package remains in S3a. -/
+def oneSelectedPhysicalF2PackageRequired : Bool := true
+
 /-- Local-C F² is not represented by a second arbitrary scalar. -/
 def independentLocalCF2ScalarIdentificationRequired : Bool := false
 
@@ -70,11 +88,14 @@ def singleSliceExactQuadratureShortcutRequired : Bool := false
 /-- Exact Haar cell masses remove the independent mass-discrepancy leaf. -/
 def independentMassDiscrepancyRequired : Bool := false
 
+/-- AA's terminal schedule has four genuine physical/source packages. -/
+def remainingWorkIsFourPhysicalSourcePackages : Bool := true
+
 /-- What remains after the compiler/presentation cuts is physical source
 mathematics. -/
 def remainingWorkIsPhysicalSourceMathematics : Bool := true
 
-/-- There is no representation-only same-object debt left in Overlay Z. -/
+/-- There is no representation-only same-object debt left. -/
 def representationOnlySameObjectDebtRemains : Bool := false
 
 /-- The downstream geometry/calibration code remains conditional on a real source

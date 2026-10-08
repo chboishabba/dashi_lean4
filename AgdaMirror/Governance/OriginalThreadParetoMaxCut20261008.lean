@@ -1,4 +1,6 @@
 import AgdaMirror.Governance.IRISDenaSameObjectAcquisitionMaxCut
+import AgdaMirror.Governance.AUKUSEmbeddedAuthorityCommandNoncollapse
+import AgdaMirror.Governance.IRISDenaMinisterialBriefingFOIBoundary
 
 namespace AgdaMirror.Governance.OriginalThreadParetoMaxCut20261008
 
@@ -26,8 +28,8 @@ def hansardContentCell : ParetoCell :=
    "Read transcript 29619 pp. 49-52 plus applicable Chief-of-Navy correction before promoting duty-class content."⟩
 
 def embeddingProtocolCell : ParetoCell :=
-  ⟨.irisEmbeddingProtocolText, true, true, true, 3, 6, true,
-   "Acquire the actual Australian-US embedding protocol for third-party hostilities."⟩
+  ⟨.irisEmbeddingProtocolText, true, true, true, 2, 6, true,
+   "Acquire complete 2024 Chief-of-Navy directive and 2023 MOU/annexes; secondary reports already narrow the fibre to direction authority plus an explicit no-command clause."⟩
 
 def exactOperationalCell : ParetoCell :=
   ⟨.irisExactOperationalRecord, true, true, true, 5, 8, true,

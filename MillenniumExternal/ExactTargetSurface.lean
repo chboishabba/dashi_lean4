@@ -7,7 +7,9 @@ import Problems.YangMills.Millennium
 import Problems.Poincare.Millennium
 import Synthesis.RiemannSelectedRHMaxCutFrontier
 import Synthesis.MillenniumBSDUniversalRankWeld
+import Synthesis.MillenniumBSDProjectiveRankWeld
 import NSBControl.CombinedCurrentEndgame
+import Mathlib.RingTheory.TensorProduct.Finite
 
 /-!
 # Exact pinned Millennium target surface under the DASHI kernel
@@ -16,22 +18,9 @@ This file is elaborated only with the pinned `vendor/LeanMillenniumPrizeProblems
 root added to `LEAN_PATH`. The imported `Problems.*` files are the exact upstream
 source at commit `603053dc267cf3efe422f438eb78098c0ececd6f`; they are not copied
 or restated here.
-
-All seven upstream statement surfaces are intentionally imported here. Hodge and
-Yang--Mills remain explicitly invalid prize-acceptance targets at this pinned
-revision; Poincare is historically solved but the upstream repository does not
-contain Perelman's Lean proof. Importing those surfaces is an audit/conformance
-check only and does not promote them to DASHI theorem receipts.
-
-The same elaboration also imports the strongest root-package DASHI donors. Thus
-successful elaboration proves more than registry-name agreement: the exact
-external propositions and the DASHI theorem surfaces coexist in one Lean
-environment, ready for literal same-object adapter terms.
 -/
 
 namespace MillenniumExternal
-
-/-! ## Exact external declarations -/
 
 #check Millennium.ClayPVersusNP.Formulations.NegativeBranch
 #check Millennium.ClayRiemannHypothesis
@@ -44,25 +33,13 @@ namespace MillenniumExternal
 #check MillenniumYangMills.ClayYangMills
 #check MillenniumPoincare.ClayPoincareConjecture
 
-/-! ## Existing DASHI same-object / terminal donors in the same elaboration -/
-
 #check Synthesis.QuarticFourSignedPolePair.RHMaxCutRoute.signedFifth_terminalPositive
 #check Synthesis.Millennium.BSD.universalBSDRankTheorem_of_background
 #check Synthesis.Millennium.BSD.universalBSDRankTheorem_of_producers
+#check Synthesis.Millennium.BSD.projective_rank_carrier_paid
 #check NSBControl.CombinedCurrentEndgame.current_three_coordinate_endgame
 
-/-!
-## P versus NP exact negative-branch compiler
-
-LeanDojo's negative prize branch is literally the negation of its finite-alphabet
-class equality. Therefore the external boundary does not require a second
-P/NP hierarchy or an NP-completeness wrapper: one concrete finite-alphabet
-language with a LeanDojo `NP` proof and a LeanDojo `not P` proof is sufficient.
-
-For the DASHI SAT programme this means the external same-object seam can be
-restricted to transporting the actual SAT language / finite encoding and its
-already-isolated lower-bound theorem onto this exact machine model.
--/
+/-! ## P versus NP exact negative-branch compiler -/
 
 theorem clayPNotEqualsNP_of_language_outside_p
     {alphabet : Type} [Fintype alphabet] [Nontrivial alphabet]
@@ -78,14 +55,7 @@ theorem clayPNotEqualsNP_of_language_outside_p
 
 #print axioms clayPNotEqualsNP_of_language_outside_p
 
-/-!
-## Riemann-Hypothesis exact statement weld
-
-LeanDojo proves its exact Clay critical-line proposition equivalent to
-Mathlib's root `RiemannHypothesis`. Hence no DASHI-specific zero carrier or
-observer bridge is required at this boundary: once the standard Mathlib theorem
-is produced, the exact pinned Clay proposition follows directly, and conversely.
--/
+/-! ## Riemann-Hypothesis exact statement weld -/
 
 theorem clayRiemannHypothesis_of_mathlib
     (h : _root_.RiemannHypothesis) :
@@ -105,57 +75,72 @@ theorem clayRiemannHypothesis_iff_mathlib :
 #print axioms mathlibRiemannHypothesis_of_clay
 #print axioms clayRiemannHypothesis_iff_mathlib
 
-/-!
-## Birch--Swinnerton-Dyer exact target compiler
-
-Upstream already proves that its exact Clay Taylor statement is equivalent to
-rank-existence plus finite Mordell--Weil rank. DASHI already owns the actual
-same-curve analytic/algebraic rank weld. What remains at this boundary is
-therefore typed explicitly as two same-object transports:
-
-1. compile the DASHI core rank equality into LeanDojo's integral-model
-   `Rank.Existence` carrier (including its exact analytic-continuation data);
-2. identify DASHI's finite-generation/free-rank carrier with LeanDojo's
-   projective Mordell--Weil `ENat` rank sufficiently to prove it is not `top`.
-
-No Taylor-series argument is duplicated here.
--/
+/-! ## Birch--Swinnerton-Dyer exact target compiler -/
 
 abbrev LeanDojoBSDFiniteRank : Prop :=
   ∀ W : WeierstrassCurve ℤ, ∀ _hΔ : W.Δ ≠ 0,
     WeierstrassCurve.rank (W.baseChange ℚ) ≠ (⊤ : ℕ∞)
 
+/-- A finitely generated projective Mordell--Weil group has finite LeanDojo
+`ENat` rank.  This is pure Mathlib algebra: finite generation descends to the
+torsion quotient, scalar extension to `ℚ` is finite, hence the vector-space
+rank is below `aleph0`, exactly the condition for `Cardinal.toENat ≠ top`. -/
+theorem leanDojoRank_finite_of_projective_fg
+    (E : WeierstrassCurve ℚ)
+    (hFG : AddGroup.FG E.toProjective.Point) :
+    WeierstrassCurve.rank E ≠ (⊤ : ℕ∞) := by
+  let G : Type := E.toProjective.Point
+  letI : AddCommGroup G := inferInstance
+  letI : AddGroup.FG G := by simpa [G] using hFG
+  let T : AddSubgroup G := AddCommGroup.torsion G
+  letI : AddGroup.FG (G ⧸ T) :=
+    AddGroup.fg_of_surjective (QuotientAddGroup.mk' T)
+      (QuotientAddGroup.mk'_surjective T)
+  letI : Module.Finite ℤ (G ⧸ T) :=
+    (Module.Finite.iff_addGroup_fg).2 (by infer_instance)
+  letI : Module.Finite ℚ (TensorProduct ℤ ℚ (G ⧸ T)) :=
+    Module.Finite.base_change ℤ ℚ (G ⧸ T)
+  unfold WeierstrassCurve.rank WeierstrassCurve.MordellWeilGroup
+  change Cardinal.toENat (Module.rank ℚ (TensorProduct ℤ ℚ (G ⧸ T))) ≠ ⊤
+  exact Cardinal.toENat_ne_top.mpr (Module.rank_lt_aleph0 ℚ _)
+
+/-- The existing DASHI Mordell--Weil binding therefore pays LeanDojo's entire
+finite-rank side.  The affine/projective same-object transport is consumed via
+`projective_fg`; no independent finite-rank hypothesis remains. -/
+theorem leanDojoBSDFiniteRank_of_dashi
+    (m : Synthesis.Millennium.BSD.BSDMordellWeilRankBinding) :
+    LeanDojoBSDFiniteRank := by
+  intro W hΔ
+  let E : Synthesis.Millennium.BSD.RationalEllipticCurve :=
+    ⟨W.baseChange ℚ,
+      WeierstrassCurve.is_elliptic_base_change_q W hΔ⟩
+  apply leanDojoRank_finite_of_projective_fg (W.baseChange ℚ)
+  simpa [E] using m.projective_fg E
+
+/-- Only the rank-existence/analytic-continuation transport remains in the BSD
+same-object compiler.  Finite rank is derived automatically from the algebraic
+binding already carried by `bg`. -/
 structure BSDLeanDojoSameObjectWeld
     (bg : Synthesis.Millennium.BSD.BSDEstablishedBackground) : Prop where
   rankExistence_of_dashi :
     Synthesis.Millennium.BSD.BSDClayCoreObligation bg →
       MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer.Formulations.Rank.Existence
-  finiteRank : LeanDojoBSDFiniteRank
 
 /-- Once the existing DASHI BSD core theorem is transported onto LeanDojo's
 literal integral/L-series carrier, upstream's own equivalence closes the exact
-Clay target. -/
+Clay target.  Finite Mordell--Weil rank is no longer a field of the adapter. -/
 theorem clayBirchSwinnertonDyer_of_dashi
     {bg : Synthesis.Millennium.BSD.BSDEstablishedBackground}
     (w : BSDLeanDojoSameObjectWeld bg)
     (hRank : Synthesis.Millennium.BSD.BSDClayCoreObligation bg) :
     MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer :=
   MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer.of_rank_existence_and_finite_rank
-    ⟨w.rankExistence_of_dashi hRank, w.finiteRank⟩
+    ⟨w.rankExistence_of_dashi hRank,
+      leanDojoBSDFiniteRank_of_dashi bg.algebraic⟩
 
+#print axioms leanDojoRank_finite_of_projective_fg
+#print axioms leanDojoBSDFiniteRank_of_dashi
 #print axioms clayBirchSwinnertonDyer_of_dashi
-
-/-!
-## Exact remaining target shapes
-
-These checks keep every external endpoint visible beside the existing producer.
-No extra implication is manufactured here: P-vs-NP currently has its strongest
-SAT lower-bound producer in Agda and now needs only a same-object transport of
-one finite-alphabet language into the exact LeanDojo machine model;
-Navier-Stokes has a stronger independent literal C/D nested Lean project;
-Hodge/Yang--Mills are upstream-incomplete; and Poincare is a historically solved
-statement whose proof is not included upstream.
--/
 
 #check Millennium.ClayPVersusNP.Formulations.NegativeBranch
 #check MillenniumNavierStokes.FeffermanC

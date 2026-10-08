@@ -35,10 +35,13 @@ abbrev Sector2 := { w : DynkinLabel // w ∈ trialityOrbit2 }
 def labelAdjacent (x y : DynkinLabel) : Bool :=
   decide (x ≠ y) && decide (threeWeightPairing x y = 1)
 
-/-- Canonical triality support: all three cross-sector pairings are in the
-non-Schlaefli class. -/
+/-- Label-level support relation. -/
+def trialitySupportLabel (x y z : DynkinLabel) : Bool :=
+  !(labelAdjacent x y) && !(labelAdjacent x z) && !(labelAdjacent y z)
+
+/-- Canonical triality support on the three typed 8-sectors. -/
 def trialitySupport (x : Sector0) (y : Sector1) (z : Sector2) : Bool :=
-  !(labelAdjacent x.1 y.1) && !(labelAdjacent x.1 z.1) && !(labelAdjacent y.1 z.1)
+  trialitySupportLabel x.1 y.1 z.1
 
 /-- Exact support cardinality found independently by local finite enumeration. -/
 def supportTriples : Finset (Sector0 × Sector1 × Sector2) :=
@@ -86,15 +89,14 @@ theorem d4_kernel_preserves_sector2 :
     ∀ M ∈ d4KernelSet, ∀ x ∈ trialityOrbit2, matrixApply M x ∈ trialityOrbit2 := by
   native_decide
 
-/-- The 32-term support is invariant under the entire 192-element D4 kernel. -/
+/-- The 32-term relation is invariant under the entire finite D4 kernel.
+The hypotheses keep this theorem on the three paid 8-orbits without asking Lean
+to synthesize subtype witnesses inside the statement. -/
 theorem d4_kernel_preserves_triality_support :
     ∀ M ∈ d4KernelSet,
-      ∀ x : Sector0, ∀ y : Sector1, ∀ z : Sector2,
-        trialitySupport
-          ⟨matrixApply M x.1, d4_kernel_preserves_sector0 M ‹_› x.1 x.2⟩
-          ⟨matrixApply M y.1, d4_kernel_preserves_sector1 M ‹_› y.1 y.2⟩
-          ⟨matrixApply M z.1, d4_kernel_preserves_sector2 M ‹_› z.1 z.2⟩ =
-        trialitySupport x y z := by
+      ∀ x ∈ trialityOrbit0, ∀ y ∈ trialityOrbit1, ∀ z ∈ trialityOrbit2,
+        trialitySupportLabel (matrixApply M x) (matrixApply M y) (matrixApply M z) =
+          trialitySupportLabel x y z := by
   native_decide
 
 inductive FiniteTrialitySupportCreatesOctonionMultiplication : Prop

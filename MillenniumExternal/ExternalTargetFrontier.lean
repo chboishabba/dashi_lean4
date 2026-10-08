@@ -4,7 +4,7 @@ namespace MillenniumExternal
 
 /-- Acceptance state is deliberately independent from the mathematical roadmap.
 `proofResolutionPending` means this completion pass assumes the mathematics is
-already paid and is still locating/composing the exact donor.  `sourceExactKernelPending`
+already paid and is still locating/composing the exact donor. `sourceExactKernelPending`
 means a literal theorem term against the pinned external proposition is source-written,
 but no exact-head kernel/axiom receipt has yet been recorded. -/
 inductive AdapterState where
@@ -38,7 +38,7 @@ structure ExternalTargetReceipt where
 /-- Fail-closed receipts under the approved completion assumption.
 
 For P≠NP, RH and BSD, failure to have located the final donor is a proof-graph
-resolution state, not evidence that new mathematics is required.  Navier--Stokes
+resolution state, not evidence that new mathematics is required. Navier--Stokes
 has already reached literal external `FeffermanC` and `FeffermanD` theorem terms;
 it remains non-GREEN solely until exact-head kernel/axiom verification is recorded.
 Hodge and Yang--Mills remain upstream specification defects. -/
@@ -71,8 +71,8 @@ def externalTargetReceipts : List ExternalTargetReceipt :=
       upstreamDeclaration := "MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer"
       state := .proofResolutionPending
       frontier := .proofResolution
-      firstUnpaid := "locate and compose the existing universal rank/continuation donors into BSDLeanDojoSameObjectWeld"
-      note := "The exact affine/projective Mordell--Weil carrier seam is already paid by MillenniumBSDProjectiveRankWeld. The existing same-curve rank and continuation graph is treated as mathematically complete; this pass resolves donors into clayBirchSwinnertonDyer_of_dashi." }
+      firstUnpaid := "locate and compose the existing analytic/rank-equality donor into LeanDojo Rank.Existence"
+      note := "ExactTargetSurface now derives LeanDojo finite ENat rank automatically from the existing DASHI Mordell-Weil binding: projective FG descends to the torsion quotient, scalar extension to Q is finite, and Cardinal.toENat_ne_top closes the rank side. The affine/projective seam is paid by MillenniumBSDProjectiveRankWeld. Only Rank.Existence (equivalently universal incomplete-L-series rank equality plus continuation existence) remains for donor resolution." }
   , { problem := .yangMills
       upstreamDeclaration := "MillenniumYangMills.ClayYangMills"
       state := .upstreamIncomplete
@@ -92,8 +92,6 @@ theorem externalTargetReceipts_length : externalTargetReceipts.length = 7 := by 
 def hasGreenExact (p : Problem) : Bool :=
   externalTargetReceipts.any fun r => r.problem == p && r.state == .greenExact
 
-/-- Under the completion assumption, none of the faithful active lanes is
-classified as `redMath`. -/
 theorem faithful_active_lanes_not_red_math :
     (externalTargetReceipts.filter (fun r =>
       r.problem == .pVersusNP || r.problem == .riemann ||

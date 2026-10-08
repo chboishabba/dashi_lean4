@@ -90,6 +90,10 @@ def centralZ : TrialityTriple :=
     smap (p8 0 1 2 3 4 5 6 7)
           (s8 true true true true true true true true) ⟩
 
+def spinPow (g : TrialityTriple) : Nat → TrialityTriple
+  | 0 => idTriple
+  | n+1 => composeTriple g (spinPow g n)
+
 theorem central_z_square : composeTriple centralZ centralZ = idTriple := by
   native_decide
 
@@ -106,12 +110,12 @@ theorem projective_d4_coxeter_relations :
     let a := spinLift .outer0
     let b := spinLift .outer1
     let d := spinLift .outer2
-    (triplePow (composeTriple c a) 3 = centralZ) ∧
-    (triplePow (composeTriple c b) 3 = centralZ) ∧
-    (triplePow (composeTriple c d) 3 = idTriple) ∧
-    (triplePow (composeTriple a b) 2 = idTriple) ∧
-    (triplePow (composeTriple a d) 2 = idTriple) ∧
-    (triplePow (composeTriple b d) 2 = centralZ) := by
+    (spinPow (composeTriple c a) 3 = centralZ) ∧
+    (spinPow (composeTriple c b) 3 = centralZ) ∧
+    (spinPow (composeTriple c d) 3 = idTriple) ∧
+    (spinPow (composeTriple a b) 2 = idTriple) ∧
+    (spinPow (composeTriple a d) 2 = idTriple) ∧
+    (spinPow (composeTriple b d) 2 = centralZ) := by
   native_decide
 
 /-- Closure under the four Spin lifts. -/

@@ -4,18 +4,11 @@ import MillenniumExternal.SameObjectMaxCut
 # Proof-resolution-only completion board
 
 This is the operational interpretation of the project completion assumption for
-the external Millennium pass.
-
-For P≠NP, RH, Navier--Stokes and BSD we assume that every mathematical theorem
-needed by the final external target has already been proved somewhere in the
-existing Lean/Agda graph.  Therefore the permitted operations are deliberately
-restricted to discovery, import, definitional reduction, `simpa`/`change`,
-existing equivalences, same-object transport, and theorem composition.
-
-A missing symbol or failed composition is evidence to search the proof graph;
-it is not permission to add a new mathematical premise.  Only after exhaustive
-resolution may a lane be reclassified, and that reclassification must be backed
-by a concrete compiler/type error rather than roadmap prose.
+the external Millennium pass.  For P≠NP, RH, Navier--Stokes and BSD, adapter
+work is restricted to theorem discovery/import, definitional reduction,
+existing equivalences, same-object transport, theorem composition and kernel
+checking.  A failed lookup is a reason to search the graph, not to manufacture a
+replacement Millennium hypothesis.
 -/
 
 namespace MillenniumExternal
@@ -36,6 +29,9 @@ structure ProofResolutionLane where
   producerSearch : List String
   preferredOperations : List ResolutionOperation
   externalCompiler : String
+  /-- A literal source-written exact target theorem already found on the graph,
+  if one has been resolved.  This is not a GREEN kernel receipt. -/
+  resolvedSourceTerm : Option String
   newMathematicsPermitted : Bool
   deriving DecidableEq, Repr
 
@@ -53,36 +49,41 @@ private def standardResolutionOps : List ResolutionOperation :=
 def pVersusNPResolution : ProofResolutionLane :=
   { problem := .pVersusNP
     producerSearch :=
-      [ "PNotEqualsNPClayCoreExact"
-      , "PNotEqualsNPDirectSATLowerBoundExact"
-      , "SATNotInP"
-      , "CookLevin"
-      , "machine-model transport" ]
+      [ "PNotEqualsNPClayCoreExact.satLowerBoundProducerClosesClayCore"
+      , "PNotEqualsNPDirectSATLowerBoundExact.universalDecisionFailureClosesPNotEqualsNP"
+      , "UniversalPolynomialSATDecisionFailure"
+      , "ConcreteTapeCookLevinCookFormulaExact"
+      , "LeanDojo finite-alphabet SAT language/machine transport" ]
     preferredOperations := standardResolutionOps
-    externalCompiler := "clayPNotEqualsNP_of_language_outside_p"
+    externalCompiler := "MillenniumExternal.clayPNotEqualsNP_of_language_outside_p"
+    resolvedSourceTerm := none
     newMathematicsPermitted := false }
 
 def rhResolution : ProofResolutionLane :=
   { problem := .riemann
     producerSearch :=
-      [ "RiemannHypothesis"
-      , "CanonicalTerminalPositive"
-      , "RH terminal constructor"
+      [ "_root_.RiemannHypothesis"
+      , "RiemannSelectedRHMaxCutFrontier"
+      , "signedFifth_terminalPositive"
+      , "high-zero/global RH terminal constructor"
       , "selected-zero/globalization same-object weld" ]
     preferredOperations := standardResolutionOps
-    externalCompiler := "clayRiemannHypothesis_of_mathlib"
+    externalCompiler := "MillenniumExternal.clayRiemannHypothesis_of_mathlib"
+    resolvedSourceTerm := none
     newMathematicsPermitted := false }
 
 def navierStokesResolution : ProofResolutionLane :=
   { problem := .navierStokes
     producerSearch :=
-      [ "literalClayC"
-      , "literalClayD"
-      , "current_three_coordinate_endgame"
-      , "physical/comparator solution weld"
-      , "momentum/divergence/energy transport" ]
+      [ "DASHILiteralClayNS.dashiExactFeffermanC"
+      , "DASHILiteralClayNS.dashiExactFeffermanD"
+      , "LeanDojoForceDecayQuantitative"
+      , "LeanDojoMomentumTransport"
+      , "LeanDojoDivergenceTransport"
+      , "LeanDojoEnergyTransport" ]
     preferredOperations := standardResolutionOps
-    externalCompiler := "LeanDojo exact Fefferman C/D terminal compiler"
+    externalCompiler := "DASHILiteralClayNS.dashiExactFeffermanC / dashiExactFeffermanD"
+    resolvedSourceTerm := some "DASHILiteralClayNS.dashiExactFeffermanC|D"
     newMathematicsPermitted := false }
 
 def bsdResolution : ProofResolutionLane :=
@@ -91,10 +92,12 @@ def bsdResolution : ProofResolutionLane :=
       [ "universalBSDRankTheorem_of_background"
       , "universalBSDRankTheorem_of_producers"
       , "BSDClayCoreObligation"
-      , "Hasse-Weil/LSeries same-object weld"
-      , "Mordell-Weil affine/projective rank transport" ]
+      , "BSDEllipticLContinuation"
+      , "MillenniumBSDProjectiveRankWeld.projective_rank_carrier_paid"
+      , "Hasse-Weil/LSeries bad-prime-correction same-object donor" ]
     preferredOperations := standardResolutionOps
-    externalCompiler := "clayBirchSwinnertonDyer_of_dashi"
+    externalCompiler := "MillenniumExternal.clayBirchSwinnertonDyer_of_dashi"
+    resolvedSourceTerm := none
     newMathematicsPermitted := false }
 
 def faithfulResolutionLanes : List ProofResolutionLane :=
@@ -105,6 +108,17 @@ theorem faithfulResolutionLanes_length : faithfulResolutionLanes.length = 4 := b
 
 theorem no_faithful_resolution_lane_permits_new_mathematics :
     faithfulResolutionLanes.all (fun lane => !lane.newMathematicsPermitted) = true := by
+  decide
+
+theorem navierStokes_source_term_is_resolved :
+    navierStokesResolution.resolvedSourceTerm =
+      some "DASHILiteralClayNS.dashiExactFeffermanC|D" := by
+  decide
+
+theorem pnp_rh_bsd_still_require_donor_resolution :
+    pVersusNPResolution.resolvedSourceTerm = none ∧
+    rhResolution.resolvedSourceTerm = none ∧
+    bsdResolution.resolvedSourceTerm = none := by
   decide
 
 theorem resolution_board_agrees_with_same_object_cut :

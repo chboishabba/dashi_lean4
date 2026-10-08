@@ -15,7 +15,15 @@ example (i : Fin 6) :
     Matrix.transpose (e6ReducedGenerator i) * primitivePolarMatrix * e6ReducedGenerator i = primitivePolarMatrix :=
   e6ReducedGenerator_isometry i
 
+example (i : Fin 6) : e6ReducedGenerator i * e6ReducedGenerator i = 1 :=
+  e6ReducedGenerator_involutive i
+
+example (w : List (Fin 6)) :
+    wordAction pgspFiveGenerator w = wordAction e6ReducedGenerator w :=
+  generatedFiveSpaceWordAction_eq w
+
 example : generatorBridgeBoundary.sixGeneratorIntertwiningPaid = true := rfl
-example : generatorBridgeBoundary.fullGeneratedGroupEqualityKernelPaid = false := rfl
+example : generatorBridgeBoundary.generatedFiveSpaceActionEqualityPaid = true := rfl
+example : generatorBridgeBoundary.abstractPGSpQuotientWeylIsomorphismPaid = false := rfl
 
 end DASHI.Integration.F3E6PGSpGeneratorBridgeRegression

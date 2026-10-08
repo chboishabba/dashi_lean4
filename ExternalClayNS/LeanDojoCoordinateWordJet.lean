@@ -21,6 +21,7 @@ open scoped ContDiff
 
 namespace DASHILiteralClayNS
 
+/-- The coordinate directions selected by a word of Euclidean indices. -/
 def coordinateWordDirections {n : ℕ} (α : List (Fin n)) :
     Fin α.length → EuclideanCoordinateSpace ℝ n :=
   fun k => standard_basis (n := n) (α.get k)
@@ -30,6 +31,9 @@ def coordinateWordDirections {n : ℕ} (α : List (Fin n)) :
   funext k
   exact Fin.elim0 k
 
+/-- Local recursive identification of LeanDojo's nested coordinate partials
+with evaluation of the ordinary iterated Frechet derivative.  Finite-order
+smoothness one order beyond the requested word is enough for the induction. -/
 theorem iteratedPartialDeriv_eq_iteratedFDeriv_apply
     {n : ℕ} {f : EuclideanCoordinateSpace ℝ n → ℝ}
     (α : List (Fin n)) (x : EuclideanCoordinateSpace ℝ n)
@@ -67,6 +71,8 @@ theorem iteratedPartialDeriv_eq_iteratedFDeriv_apply
       · intro j
         rfl
 
+/-- Operator-norm consequence: every displayed coordinate word is bounded by
+the norm of the full jet because every standard basis direction has norm one. -/
 theorem norm_iteratedPartialDeriv_le_fullJet
     {n : ℕ} {f : EuclideanCoordinateSpace ℝ n → ℝ}
     (α : List (Fin n)) (x : EuclideanCoordinateSpace ℝ n)

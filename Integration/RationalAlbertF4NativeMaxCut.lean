@@ -1,6 +1,8 @@
 import Integration.RationalAlbertNative
 import Integration.RationalAlbertS3Native
 import Integration.RationalAlbertTrialityBasis
+import Integration.RationalOctonionTriality192
+import Integration.RationalOctonionTriality192Obstruction
 import Integration.F4D4TrialityAlbertShape
 import Integration.E6F4WeylFold
 import Integration.E6F4ShortRootRecognition
@@ -11,17 +13,17 @@ import Mathlib
 /-!
 # Native rational Albert / F4 max-cut
 
-The critical path no longer runs through the external donor.  The repo-native
-rational Cayley-Dickson octonions and explicit H3(O_Q) coordinate formulas now
-supply the actual Albert carrier, standard cubic, Jordan product/laws, and an
-explicit S3 subgroup.
+The critical path no longer runs through the external donor.  Repo-native exact
+rational Cayley-Dickson octonions and H3(O_Q) formulas now provide the carrier,
+standard cubic, Jordan product/laws and explicit S3 automorphisms.
 
-The finite exceptional side independently supplies W(F4)=1152 with a 192-element
-D4 kernel, three 8-weight triality sectors, and the S3 quotient permuting those
-sectors.  The remaining theorem is therefore an action/algebra compatibility
-problem: realize the D4 kernel as three octonion triality actions on the actual
-8-dimensional slots, then identify the generated Jordan automorphism group with
-F4.  Dimension/cardinality can no longer advance this wall.
+The finite exceptional side independently provides W(F4)=1152, a 192-element D4
+kernel and three 8-weight triality sectors.  A further signed-monomial search on
+the actual octonion triality tensor constructs a 192-element triality subgroup,
+but an exact element-order-spectrum comparison refutes its identification with
+W(D4).  Thus the next compatible action must use a genuinely different
+(non-monomial in this rational coordinate basis, or differently based/extended)
+Spin(8) triality realization.
 -/
 
 namespace Integration.RationalAlbertF4NativeMaxCut
@@ -54,8 +56,13 @@ structure Frontier where
   donorCubicCounterexamplePaid : Bool
   externalDonorRemovedFromCriticalPath : Bool
 
+  signedMonomialTrialityCandidateOrder192Paid : Bool
+  signedMonomialTrialityPreservationPaid : Bool
+  signedMonomialCandidateRefutedAsWD4 : Bool
+  nonMonomialSpin8RouteRequired : Bool
+
   actualD4OctonionSectorIntertwinerPaid : Bool
-  actualD4TrialityFormPreservationPaid : Bool
+  actualSpin8TrialityFormPreservationPaid : Bool
   actualD4JordanAutomorphismsPaid : Bool
   generatedFiniteWeylInsideAutJPaid : Bool
   fullAutJEqualsF4Paid : Bool
@@ -91,23 +98,28 @@ def currentFrontier : Frontier where
   donorCubicCounterexamplePaid := true
   externalDonorRemovedFromCriticalPath := true
 
+  signedMonomialTrialityCandidateOrder192Paid := true
+  signedMonomialTrialityPreservationPaid := true
+  signedMonomialCandidateRefutedAsWD4 := true
+  nonMonomialSpin8RouteRequired := true
+
   actualD4OctonionSectorIntertwinerPaid := false
-  actualD4TrialityFormPreservationPaid := false
+  actualSpin8TrialityFormPreservationPaid := false
   actualD4JordanAutomorphismsPaid := false
   generatedFiniteWeylInsideAutJPaid := false
   fullAutJEqualsF4Paid := false
   e6UnitStabilizerEqualsF4Paid := false
 
-/-- Finite triality anatomy alone cannot manufacture a Jordan automorphism. -/
 inductive FiniteTrialityShapeCreatesAlbertAutomorphism : Prop
+inductive Order192CreatesWD4Recognition : Prop
+inductive RationalAlbertPlusS3CreatesFullF4 : Prop
 
 theorem finite_triality_shape_does_not_create_albert_automorphism :
     ¬ FiniteTrialityShapeCreatesAlbertAutomorphism := by
   intro h; cases h
 
-/-- A native rational Albert algebra plus its explicit S3 subgroup still does
-not establish that the full automorphism group is F4. -/
-inductive RationalAlbertPlusS3CreatesFullF4 : Prop
+theorem order_192_does_not_create_wd4 : ¬ Order192CreatesWD4Recognition := by
+  intro h; cases h
 
 theorem rational_albert_plus_s3_does_not_create_full_f4 :
     ¬ RationalAlbertPlusS3CreatesFullF4 := by

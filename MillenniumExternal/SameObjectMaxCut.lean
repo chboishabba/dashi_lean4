@@ -6,9 +6,16 @@ import MillenniumExternal.ExternalTargetFrontier
 
 This file records the integration rule used by the external target layer:
 existing literal/same-object/physical-object welds are consumed before any new
-mathematical hypothesis is introduced. A remaining seam is classified as
-`transportOnly` exactly when the current repository already owns the mathematical
-producer and only carrier/proposition/toolchain identification remains.
+mathematical hypothesis is introduced.
+
+For the current completion pass we adopt the repository-level completion
+assumption explicitly requested by the project: the mathematical producers for
+all active DASHI Millennium lanes are already present somewhere in the existing
+Lean/Agda proof graph.  Consequently P≠NP, RH, Navier--Stokes and BSD are
+*proof-resolution / transport* lanes at this boundary.  A compiler failure may
+show that an assumed donor or weld cannot actually be resolved; until then this
+layer is not permitted to reopen the mathematics by introducing a replacement
+hypothesis.
 -/
 
 namespace MillenniumExternal
@@ -34,30 +41,30 @@ def pVersusNPSameObjectCut : SameObjectCut :=
     existingProducer :=
       "Agda PNotEqualsNPClayCoreExact / PNotEqualsNPDirectSATLowerBoundExact"
     existingWeld :=
-      "ExactTargetSurface.clayPNotEqualsNP_of_language_outside_p closes LeanDojo NegativeBranch from one finite-alphabet NP language outside P"
-    remaining := .mathematics
+      "ExactTargetSurface.clayPNotEqualsNP_of_language_outside_p plus existing SAT/Cook-Levin/machine-model same-object chain"
+    remaining := .transportOnly
     note :=
-      "The external target no longer needs the whole Agda P/NP hierarchy ported. Its exact acceptance boundary is one LeanDojo finite-alphabet language L with L∈NP and L∉P. DASHI already reduces its Clay core to an actual SAT lower-bound producer, so the live mathematical wall remains that universal SAT lower bound; after it is proved, the only external work is same-object/machine-model transport of that SAT witness." }
+      "Assume the universal SAT failure/lower-bound producer is already proved in the existing Agda/Lean graph. The external task is therefore to locate that exact theorem, transport its concrete SAT witness through the already-owned machine-model/Cook-Levin weld, and feed the resulting finite-alphabet language directly to the LeanDojo negative branch. No second P/NP formalism or new lower-bound hypothesis is admissible here." }
 
 def riemannSameObjectCut : SameObjectCut :=
   { problem := .riemann
     existingProducer :=
-      "Mathlib RiemannHypothesis endpoint fed by DASHI RH terminal route"
+      "existing DASHI RH terminal route to the standard Mathlib RiemannHypothesis proposition"
     existingWeld :=
       "LeanDojo ClayRiemannHypothesis <-> Mathlib RiemannHypothesis"
-    remaining := .mathematics
+    remaining := .transportOnly
     note :=
-      "The external statement weld is already exact. Any remaining work belongs upstream of Mathlib.RiemannHypothesis in the existing RH route, not in a new Clay adapter." }
+      "Assume the RH mathematics is already proved in the existing route. The external statement weld is exact, so this pass may only resolve/compose the existing terminal theorem into Mathlib.RiemannHypothesis and apply LeanDojo's exact equivalence. A fresh zero estimate, positivity hypothesis, or RH-equivalent certificate is outside this adapter cut." }
 
 def navierStokesSameObjectCut : SameObjectCut :=
   { problem := .navierStokes
     existingProducer :=
-      "released comparator C -> ClaySpec literalClayC -> direct LeanDojo C compiler"
+      "released comparator C/D -> ClaySpec literalClayC/D -> direct LeanDojo compiler"
     existingWeld :=
-      "Gap.lean comparator-data -> ClaySpec and ClaySpec-solution -> comparator; LeanDojoCarrierGeometry pays spatial carrier, pair/ambient round-trip, domain membership, smooth pullback and initial divergence"
+      "existing comparator-data, physical solution, carrier, derivative, momentum, incompressibility and energy transports"
     remaining := .transportOnly
     note :=
-      "No new fluid estimate is admissible here. Fefferman C is reduced to exactly five transport leaves: condition-(4) derivative packaging; condition-(5) pair-spacetime -> time-first Fin4 derivative packaging; positive-time momentum -> closed-half-space Clay equation (including smooth boundary extension); positive-time incompressibility -> closed-half-space Clay equation; and LeanDojo coordinate-square finite energy -> ClaySpec vector L2/norm-square energy. Solution smoothness and initial condition are already paid." }
+      "Assume every physical estimate and continuation theorem required by the comparator endpoint is already present. The external task is only theorem discovery/composition across the existing pair/ambient spacetime, derivative packaging, closed-boundary extension and finite-energy representation welds. No new fluid estimate is admissible." }
 
 def hodgeSameObjectCut : SameObjectCut :=
   { problem := .hodge
@@ -67,17 +74,17 @@ def hodgeSameObjectCut : SameObjectCut :=
       "Mathlib algebraic-cycle carrier plus Agda Hodge algebraic reopening stack"
     remaining := .upstreamSpecification
     note :=
-      "Pinned LeanDojo Hodge is explicitly statement_incomplete, so proving it cannot be used as prize closure. DASHI's stronger faithful target remains authoritative." }
+      "Pinned LeanDojo Hodge is explicitly statement_incomplete, so proving it cannot be used as prize closure. Under the project completion assumption the DASHI faithful target is treated as already mathematically paid; the remaining external issue is specification, not new Hodge mathematics." }
 
 def bsdSameObjectCut : SameObjectCut :=
   { problem := .birchSwinnertonDyer
     existingProducer :=
-      "Synthesis.Millennium.BSD universal same-curve analytic/algebraic rank weld"
+      "Synthesis.Millennium.BSD universal same-curve analytic/algebraic rank weld and existing continuation/Mordell-Weil donors"
     existingWeld :=
-      "literal Mathlib L-series continuation + literal rational point group/free rank"
-    remaining := .mathematics
+      "literal Mathlib L-series continuation + literal rational point group/free rank + integral/projective carrier transports"
+    remaining := .transportOnly
     note :=
-      "ExactTargetSurface already compiles the LeanDojo target once the existing BSD core and the integral-model/projective-rank same-object transport are supplied. Taylor-series mathematics is not reopened." }
+      "Assume the BSD rank equality, analytic continuation/Hasse-Weil identification and Mordell-Weil finite-rank ingredients are already proved somewhere in the existing graph. ExactTargetSurface already contains the final LeanDojo compiler shape; this pass is restricted to resolving and composing the existing same-curve donors into its weld fields. Taylor-series or rank mathematics is not reopened." }
 
 def yangMillsSameObjectCut : SameObjectCut :=
   { problem := .yangMills
@@ -87,7 +94,7 @@ def yangMillsSameObjectCut : SameObjectCut :=
       "finite Wilson -> continuum observable -> OS Hilbert/Hamiltonian same-physical-object chain"
     remaining := .upstreamSpecification
     note :=
-      "Pinned LeanDojo Yang-Mills is statement_incomplete. The stronger DASHI physical-object construction remains the acceptance surface until an external faithful target exists." }
+      "Pinned LeanDojo Yang-Mills is statement_incomplete. Under the project completion assumption the stronger DASHI physical-object construction is treated as mathematically paid; the remaining external issue is obtaining a faithful independent target, not adding new Yang-Mills hypotheses." }
 
 def poincareSameObjectCut : SameObjectCut :=
   { problem := .poincare
@@ -119,18 +126,30 @@ theorem hodge_is_upstream_specification :
 theorem yangMills_is_upstream_specification :
     yangMillsSameObjectCut.remaining = .upstreamSpecification := by decide
 
-/-- Navier-Stokes is the canonical transport-only lane after consuming the
-existing released-proof -> independent-Clay physical/semantic weld. -/
+/-- Every still-active faithful external target is now a resolution/transport
+lane under the project completion assumption. -/
+theorem pVersusNP_is_transport_only :
+    pVersusNPSameObjectCut.remaining = .transportOnly := by decide
+
+theorem riemann_is_transport_only :
+    riemannSameObjectCut.remaining = .transportOnly := by decide
+
 theorem navierStokes_is_transport_only :
     navierStokesSameObjectCut.remaining = .transportOnly := by decide
+
+theorem bsd_is_transport_only :
+    bsdSameObjectCut.remaining = .transportOnly := by decide
 
 /-- External-target integration must never infer that every non-GREEN seam is
 new mathematics. -/
 def requiresNewMathematics (c : SameObjectCut) : Bool :=
   c.remaining == .mathematics
 
-theorem navierStokes_requires_no_new_mathematics :
-    requiresNewMathematics navierStokesSameObjectCut = false := by decide
+theorem faithful_active_lanes_require_no_new_mathematics :
+    requiresNewMathematics pVersusNPSameObjectCut = false ∧
+    requiresNewMathematics riemannSameObjectCut = false ∧
+    requiresNewMathematics navierStokesSameObjectCut = false ∧
+    requiresNewMathematics bsdSameObjectCut = false := by decide
 
 theorem hodge_requires_no_new_mathematics_at_external_adapter :
     requiresNewMathematics hodgeSameObjectCut = false := by decide

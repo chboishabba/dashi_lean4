@@ -36,7 +36,7 @@ class FrontierExportTests(unittest.TestCase):
         self.assertTrue(rows["riemann"]["exact_statement_weld"])
         self.assertIn("SAT", rows["pVersusNP"]["first_unpaid"])
         self.assertIn("RiemannHypothesis", rows["riemann"]["first_unpaid"])
-        self.assertIn("BSDLeanDojoSameObjectWeld", rows["birchSwinnertonDyer"]["first_unpaid"])
+        self.assertIn("Rank.Existence", rows["birchSwinnertonDyer"]["first_unpaid"])
 
     def test_ns_source_exact_kernel_gate_is_only_remaining_acceptance_step(self):
         ns = self._rows()["navierStokes"]

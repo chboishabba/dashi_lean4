@@ -5,10 +5,12 @@ import Mathlib.Analysis.InnerProductSpace.PiL2
 /-!
 # Quantitative force-decay transport
 
-Comparator `ForceConditionDecay` controls the operator norm of the complete
-Frechet jet on the product half-space. LeanDojo asks only for coordinate-word
-evaluations of the transported jet. The exact spacetime linear equivalence and
-the coordinate-word theorem pay the latter without a new fluid estimate.
+This is the first previously-open same-object edge in the literal LeanDojo
+Navier--Stokes adapter.  Comparator `ForceConditionDecay` controls the operator
+norm of the complete Frechet jet on the product half-space.  LeanDojo asks only
+for coordinate-word evaluations of the transported jet.  The exact spacetime
+linear equivalence and the coordinate-word theorem therefore pay the latter
+without any new fluid estimate.
 -/
 
 noncomputable section
@@ -19,6 +21,8 @@ open scoped ContDiff
 
 namespace DASHILiteralClayNS
 
+/-- LeanDojo's vector-valued displayed derivative is evaluation of the ordinary
+full vector jet on the associated standard-basis word. -/
 theorem spacetimeDerivativeVector_eq_fullJet_apply
     {f : ForceField 3}
     (hf : ContDiffOn ℝ ∞ f (global_spacetime_domain 3))
@@ -44,6 +48,8 @@ theorem spacetimeDerivativeVector_eq_fullJet_apply
   have happ := congrArg (fun L => L (coordinateWordDirections idx)) hcomp
   simpa [idx, Function.comp_def] using happ
 
+/-- Every displayed LeanDojo mixed-coordinate derivative is bounded by the
+operator norm of the complete target jet. -/
 theorem norm_spacetimeDerivativeVector_le_fullJet
     {f : ForceField 3}
     (hf : ContDiffOn ℝ ∞ f (global_spacetime_domain 3))
@@ -67,6 +73,9 @@ theorem norm_spacetimeDerivativeVector_le_fullJet
     _ = _ := by
       simp [coordinateWordDirections, standard_basis]
 
+/-- Full target-jet norm after the exact spacetime permutation is controlled by
+the comparator source-jet norm times the finite operator-norm factor of the
+inverse linear equivalence. -/
 theorem norm_targetJet_le_sourceJet
     {f : R3 → ℝ → R3}
     (hf : NavierStokes.Comparator.ForceCondition f)
@@ -79,6 +88,8 @@ theorem norm_targetJet_le_sourceJet
   rw [iteratedFDerivWithin_comparatorFieldToLean hf.smooth N z hz]
   exact ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _
 
+/-- The whole-space comparator force-decay hypothesis implies LeanDojo's exact
+Fefferman condition (5) on the transported force. -/
 theorem comparatorForceDecay_to_leanDojo
     {f : R3 → ℝ → R3}
     (h : NavierStokes.Comparator.ForceConditionDecay f) :
@@ -117,6 +128,7 @@ theorem comparatorForceDecay_to_leanDojo
     _ ≤ max (C * A) 1 / (1 + ‖space z‖ + z 0) ^ K := by
         exact div_le_div_of_nonneg_right (le_max_left _ _) (by positivity)
 
+/-- Periodic analogue: the same full-jet argument pays Fefferman condition (9). -/
 theorem comparatorPeriodicForceDecay_to_leanDojo
     {f : R3 → ℝ → R3}
     (h : NavierStokes.Comparator.ForceConditionPeriodic f) :

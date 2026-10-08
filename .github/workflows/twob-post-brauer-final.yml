@@ -2,30 +2,6 @@ name: 2B post-Brauer final compiler
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - agent/2b-same-object-final-maxcut-20261007
-    paths:
-      - 'Integration/OggSSP2BTate276M24BrauerRuntimeReceipt.lean'
-      - 'Integration/OggSSP2BBrauerOuterInvolutionBoundary.lean'
-      - 'Integration/OggSSP2BMonster2LocalThree276Source.lean'
-      - 'Integration/OggSSP2BFi22d2NaturalTenSource.lean'
-      - 'Integration/OggSSP2BMonsterGF2RepresentationSource.lean'
-      - 'Integration/OggSSP2BIteratedTateDefectDetector.lean'
-      - 'Integration/OggSSP2BM22d2OuterClassDuadDefect.lean'
-      - 'Integration/OggSSP2BWeightTwoIntegralC2Decomposition.lean'
-      - 'Integration/OggSSP2BTatePlusMinusCokernel.lean'
-      - 'Integration/OggSSP2BCo1UntwistedSectorSplit.lean'
-      - 'Integration/OggSSP2BCo1ExteriorSquareTateCandidate.lean'
-      - 'Integration/OggSSP2BCo1AugmentationTrivialityCriterion.lean'
-      - 'Integration/OggSSP2BCo1FrobeniusHomRigidity.lean'
-      - 'Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean'
-      - 'Integration/OggSSP2BTateCokernelRankRigidity.lean'
-      - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
-      - 'Integration/OggSSP2BStableCompletionModelTransport.lean'
-      - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
-      - 'Integration/OggSSP2BCompletionAcquisitionFrontier.lean'
-      - '.github/workflows/twob-post-brauer-final.yml'
   pull_request:
     paths:
       - 'Integration/OggSSP2BTate276M24BrauerRuntimeReceipt.lean'
@@ -43,11 +19,16 @@ on:
       - 'Integration/OggSSP2BCo1FrobeniusHomRigidity.lean'
       - 'Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean'
       - 'Integration/OggSSP2BTateCokernelRankRigidity.lean'
+      - 'Integration/OggSSP2BNormWeldCompiler.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
       - 'Integration/OggSSP2BStableCompletionModelTransport.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
       - 'Integration/OggSSP2BCompletionAcquisitionFrontier.lean'
       - '.github/workflows/twob-post-brauer-final.yml'
+
+concurrency:
+  group: dashi-global-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -80,6 +61,7 @@ jobs:
           lake env lean Integration/OggSSP2BCo1FrobeniusHomRigidity.lean
           lake env lean Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean
           lake env lean Integration/OggSSP2BTateCokernelRankRigidity.lean
+          lake env lean Integration/OggSSP2BNormWeldCompiler.lean
           lake env lean Integration/OggSSP2BActualStableCompletionSubquotient.lean
           lake env lean Integration/OggSSP2BStableCompletionModelTransport.lean
           lake env lean Integration/OggSSP2BPostBrauerFinalCompiler.lean

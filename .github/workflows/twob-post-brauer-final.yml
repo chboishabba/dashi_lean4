@@ -13,8 +13,14 @@ on:
       - 'Integration/OggSSP2BMonsterGF2RepresentationSource.lean'
       - 'Integration/OggSSP2BIteratedTateDefectDetector.lean'
       - 'Integration/OggSSP2BM22d2OuterClassDuadDefect.lean'
+      - 'Integration/OggSSP2BWeightTwoIntegralC2Decomposition.lean'
+      - 'Integration/OggSSP2BTatePlusMinusCokernel.lean'
       - 'Integration/OggSSP2BCo1ExteriorSquareTateCandidate.lean'
+      - 'Integration/OggSSP2BCo1AugmentationTrivialityCriterion.lean'
+      - 'Integration/OggSSP2BCo1FrobeniusHomRigidity.lean'
+      - 'Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
+      - 'Integration/OggSSP2BStableCompletionModelTransport.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
       - 'Integration/OggSSP2BCompletionAcquisitionFrontier.lean'
       - '.github/workflows/twob-post-brauer-final.yml'
@@ -27,8 +33,14 @@ on:
       - 'Integration/OggSSP2BMonsterGF2RepresentationSource.lean'
       - 'Integration/OggSSP2BIteratedTateDefectDetector.lean'
       - 'Integration/OggSSP2BM22d2OuterClassDuadDefect.lean'
+      - 'Integration/OggSSP2BWeightTwoIntegralC2Decomposition.lean'
+      - 'Integration/OggSSP2BTatePlusMinusCokernel.lean'
       - 'Integration/OggSSP2BCo1ExteriorSquareTateCandidate.lean'
+      - 'Integration/OggSSP2BCo1AugmentationTrivialityCriterion.lean'
+      - 'Integration/OggSSP2BCo1FrobeniusHomRigidity.lean'
+      - 'Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
+      - 'Integration/OggSSP2BStableCompletionModelTransport.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
       - 'Integration/OggSSP2BCompletionAcquisitionFrontier.lean'
       - '.github/workflows/twob-post-brauer-final.yml'
@@ -56,7 +68,13 @@ jobs:
           lake env lean Integration/OggSSP2BMonsterGF2RepresentationSource.lean
           lake env lean Integration/OggSSP2BIteratedTateDefectDetector.lean
           lake env lean Integration/OggSSP2BM22d2OuterClassDuadDefect.lean
+          lake env lean Integration/OggSSP2BWeightTwoIntegralC2Decomposition.lean
+          lake env lean Integration/OggSSP2BTatePlusMinusCokernel.lean
           lake env lean Integration/OggSSP2BCo1ExteriorSquareTateCandidate.lean
+          lake env lean Integration/OggSSP2BCo1AugmentationTrivialityCriterion.lean
+          lake env lean Integration/OggSSP2BCo1FrobeniusHomRigidity.lean
+          lake env lean Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean
           lake env lean Integration/OggSSP2BActualStableCompletionSubquotient.lean
+          lake env lean Integration/OggSSP2BStableCompletionModelTransport.lean
           lake env lean Integration/OggSSP2BPostBrauerFinalCompiler.lean
           lake env lean Integration/OggSSP2BCompletionAcquisitionFrontier.lean

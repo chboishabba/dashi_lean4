@@ -28,3 +28,7 @@ import Integration.TetracodeE8MatrixIsometry
 import Integration.TetracodeE8MatrixIsometryRegression
 import Integration.E8ExceptionalBranchingBridge
 import Integration.E8ExceptionalBranchingRegression
+import Integration.ScopedVerifierArtifact
+import Integration.ScopedVerifierEvaluationProtocol
+import Integration.GAISArchitectureComparison
+import Integration.ScopedVerifierArtifactRegression

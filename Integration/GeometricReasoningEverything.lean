@@ -85,5 +85,8 @@ import Integration.F4RootWeylExact
 import Integration.F4AlbertDerivationRecognitionBoundary
 import Integration.F4AlbertCurrentMaxCut
 
+-- External Monster-3B normalizer source/intertwiner frontier.
+import Integration.Monster3BAtlasSymplectic12Receipt
+
 import Integration.LilaMonsterGeometricReasoningCrossPollination
 import Integration.GeometricReasoningSemanticInterventionRegression

@@ -27,6 +27,7 @@ on:
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
       - 'Integration/OggSSP2BStableCompletionModelTransport.lean'
       - 'Integration/OggSSP2BSelectedQ10TransportCompiler.lean'
+      - 'Integration/OggSSP2BAutomaticFinalCompiler.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
       - 'Integration/OggSSP2BCompletionAcquisitionFrontier.lean'
       - '.github/workflows/twob-post-brauer-final.yml'
@@ -74,5 +75,6 @@ jobs:
           lake env lean Integration/OggSSP2BActualStableCompletionSubquotient.lean
           lake env lean Integration/OggSSP2BStableCompletionModelTransport.lean
           lake env lean Integration/OggSSP2BSelectedQ10TransportCompiler.lean
+          lake env lean Integration/OggSSP2BAutomaticFinalCompiler.lean
           lake env lean Integration/OggSSP2BPostBrauerFinalCompiler.lean
           lake env lean Integration/OggSSP2BCompletionAcquisitionFrontier.lean

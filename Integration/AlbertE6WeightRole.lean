@@ -13,9 +13,13 @@ The current cross-prover state contains three mathematically different uses of
    27-weight orbit of the minuscule E6 representation.
 
 Cardinality alone cannot identify (1) or (3) with the representation space (2).
-The Agda branch additionally source-writes the universal Albert Jordan and cubic
-characteristic identities and constructs explicit C3/S3/C7 automorphism
-subgroups, but this Lean tranche does not duplicate the octonion/Albert algebra.
+The Agda branch source-writes the universal Albert Jordan and cubic
+characteristic identities and constructs explicit C3, S3, C7 and C7 semidirect
+C3 automorphism subgroups.  The commuting matrix-index S3 and octonion C21
+finite actions give 126 distinct product action labels in the exact executable
+audit.  This Lean tranche records that cross-prover grade without duplicating
+the octonion/Albert algebra and without promoting the finite subgroup to full
+F4 or E6.
 -/
 
 namespace Integration.AlbertE6WeightRole
@@ -34,6 +38,10 @@ structure Boundary where
   agdaConcreteC3AutomorphismSubgroup : Bool
   agdaConcreteS3AutomorphismSubgroup : Bool
   agdaConcreteC7OctonionAlbertSubgroup : Bool
+  agdaConcreteC21OctonionSubgroup : Bool
+  agdaConcreteFinite126AlbertSubgroup : Bool
+  agdaFinite126CountsAsLeanKernelProof : Bool
+  agdaFullG2Constructed : Bool
   agdaFullF4Constructed : Bool
   agdaFullE6Constructed : Bool
   crossProverFactsCountAsLeanKernelProof : Bool
@@ -53,6 +61,10 @@ def canonicalBoundary : Boundary where
   agdaConcreteC3AutomorphismSubgroup := true
   agdaConcreteS3AutomorphismSubgroup := true
   agdaConcreteC7OctonionAlbertSubgroup := true
+  agdaConcreteC21OctonionSubgroup := true
+  agdaConcreteFinite126AlbertSubgroup := true
+  agdaFinite126CountsAsLeanKernelProof := false
+  agdaFullG2Constructed := false
   agdaFullF4Constructed := false
   agdaFullE6Constructed := false
   crossProverFactsCountAsLeanKernelProof := false

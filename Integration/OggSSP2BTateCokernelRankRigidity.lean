@@ -14,16 +14,15 @@ projection `pi_S ∘ f` has rank at most 24.
 
 On the other hand, the kernel of that residual projection injects into the
 98280-dimensional common target `C`, hence has dimension at most 98280.
-Rank-nullity then leaves no slack:
+Rank-nullity leaves no slack:
 
   rank(pi_S ∘ f) = 24,
   dim ker(pi_S ∘ f) = 98280.
 
-Thus the common lane is covered automatically and the residual 24 map is
-nonzero/full-rank.  Once `Hom_Co1(24,Sym^2(24))` is runtime-proved to be
-one-dimensional, that residual map is forced to be the Frobenius-square
-embedding.  This file formalizes the dimension squeeze without pretending the
-runtime support-separation hypotheses are already paid.
+The original `RankRigidityReceipt` records the arithmetic squeeze.  The new
+`LinearRankRigidityReceipt` ties those integers to the range and kernel of an
+actual linear map, so rank 24 immediately proves that concrete residual map is
+nonzero and its concrete kernel has finrank 98280.
 -/
 
 namespace Integration.OggSSP2BTateCokernelRankRigidity
@@ -56,12 +55,55 @@ theorem kernel_dimension_eq_98280 :
     r.residualProjectionKernelDimension = 98280 := by
   omega
 
-/-- In particular the residual map cannot vanish. -/
+/-- In particular the numeric residual rank is positive. -/
 theorem residual_rank_positive : 0 < r.residualProjectionRank := by
   rw [r.residual_rank_eq_24]
   decide
 
 end RankRigidityReceipt
+
+/-- Proof-bearing attachment of the numeric rank squeeze to one actual residual
+linear map.  This is the preferred receipt downstream. -/
+structure LinearRankRigidityReceipt
+    {K M S : Type*}
+    [DivisionRing K]
+    [AddCommGroup M] [Module K M] [FiniteDimensional K M]
+    [AddCommGroup S] [Module K S] [FiniteDimensional K S]
+    (residual : M →ₗ[K] S) where
+  numeric : RankRigidityReceipt
+  residual_rank_matches :
+    Module.finrank K residual.range = numeric.residualProjectionRank
+  residual_kernel_matches :
+    Module.finrank K residual.ker = numeric.residualProjectionKernelDimension
+
+namespace LinearRankRigidityReceipt
+
+variable
+  {K M S : Type*}
+  [DivisionRing K]
+  [AddCommGroup M] [Module K M] [FiniteDimensional K M]
+  [AddCommGroup S] [Module K S] [FiniteDimensional K S]
+  {residual : M →ₗ[K] S}
+  (r : LinearRankRigidityReceipt residual)
+
+/-- The actual residual map has rank 24. -/
+theorem residual_finrank_eq_24 :
+    Module.finrank K residual.range = 24 := by
+  rw [r.residual_rank_matches, r.numeric.residual_rank_eq_24]
+
+/-- The actual residual kernel has finrank 98280. -/
+theorem kernel_finrank_eq_98280 :
+    Module.finrank K residual.ker = 98280 := by
+  rw [r.residual_kernel_matches, r.numeric.kernel_dimension_eq_98280]
+
+/-- Rank 24 rules out the zero map on the actual residual coordinate. -/
+theorem residual_ne_zero : residual ≠ 0 := by
+  intro hzero
+  have hr := r.residual_finrank_eq_24
+  rw [hzero] at hr
+  simp at hr
+
+end LinearRankRigidityReceipt
 
 structure PromotionBoundary where
   normMapInjectivitySourceNative : Bool
@@ -69,6 +111,7 @@ structure PromotionBoundary where
   residualRankUpperBoundPaid : Bool
   kernelCommonTargetUpperBoundPaid : Bool
   rankRigidityCompilerFormalized : Bool
+  mapCoupledRankReceiptFormalized : Bool
   residualRankTwentyFourPaid : Bool
   commonKernelDimension98280Paid : Bool
   residualMapForcedFrobenius : Bool
@@ -80,6 +123,7 @@ def canonicalBoundary : PromotionBoundary where
   residualRankUpperBoundPaid := false
   kernelCommonTargetUpperBoundPaid := true
   rankRigidityCompilerFormalized := true
+  mapCoupledRankReceiptFormalized := true
   residualRankTwentyFourPaid := false
   commonKernelDimension98280Paid := false
   residualMapForcedFrobenius := false

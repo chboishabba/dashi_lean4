@@ -1,6 +1,7 @@
 import Integration.OggSSP2BTateCokernelRankRigidity
 import Integration.OggSSP2BCo1FrobeniusHomRigidity
 import Integration.OggSSP2BCommonLaneKernelWeld
+import Integration.OggSSP2BCokernelCancellation
 
 /-!
 # Terminal norm-weld compiler for the weight-two 2B Tate quotient
@@ -11,17 +12,20 @@ The source-native weight-two norm map has the shape
 
 `OggSSP2BTateCokernelRankRigidity` proves that, once the runtime support-
 separation hypotheses hold, the residual projection has rank 24 and its kernel
-has dimension 98280.  `OggSSP2BCommonLaneKernelWeld` then removes the last
-spurious common-lane hypothesis: injectivity of the full norm map makes the
-common projection injective on that residual kernel, and equal finite
-dimensions force an isomorphism with the 98280-dimensional common target.
+has dimension 98280.  `OggSSP2BCommonLaneKernelWeld` removes the spurious
+common-lane hypothesis: injectivity of the full norm map makes the common
+projection injective on that residual kernel, and equal finite dimensions force
+an isomorphism with the 98280-dimensional common target.
 
-The GAP Hom screen is designed to prove that over GF(2) the explicit
-Frobenius-square embedding is the unique nonzero Co1-equivariant map
-24 -> Sym2(24).  Thus, once the runtime support/rank and Hom-uniqueness facts
-are promoted, both common and residual lanes are forced.  The remaining
-scientific acquisition is the actual source-native coordinate splitting / norm
-map data, not another abstract same-object proposition.
+`OggSSP2BCokernelCancellation` then proves on literal quotient modules that
+this common block cancels:
+
+  coker(norm) ≃ coker(residual).
+
+Thus, once the residual map is the unique nonzero Frobenius 24 -> Sym2(24)
+map, an equivalence from its residual cokernel to the exterior-square model
+automatically becomes the actual Tate-cokernel equivalence.  Neither the common
+lane nor the full Tate/exterior equivalence remains an independent assertion.
 -/
 
 namespace Integration.OggSSP2BNormWeldCompiler
@@ -66,9 +70,9 @@ theorem commonKernelForced98280
     r.residualProjectionKernelDimension = 98280 :=
   r.kernel_dimension_eq_98280
 
-/-- A proof-relevant terminal receipt.  The common-lane proposition is retained
-for compatibility with existing downstream code, but the preferred compiler
-below derives it from the actual residual-kernel geometry. -/
+/-- A proof-relevant terminal receipt.  The proposition fields are retained for
+compatibility, but the preferred compilers below construct both same-object
+statements from actual linear equivalences. -/
 structure NormWeldReceipt where
   commonLaneSameObject : Prop
   commonLaneSameObject_paid : commonLaneSameObject
@@ -102,9 +106,9 @@ def compileNormWeld
   tateCokernelIsExteriorSquare := tateCokernelIsExteriorSquare
   tateCokernelIsExteriorSquare_paid := hexterior
 
-/-- Preferred max-cut compiler: the common 98280 same-object statement is
-constructed from the actual common/residual projections and the residual-kernel
-finrank equality; callers no longer provide it as an independent hypothesis. -/
+/-- Preferred first-stage compiler: the common 98280 same-object statement is
+constructed from the actual common/residual projections and residual-kernel
+finrank equality. -/
 noncomputable def compileNormWeldFromKernel
     {K M C S : Type*}
     [DivisionRing K]
@@ -124,6 +128,45 @@ noncomputable def compileNormWeldFromKernel
     rankReceipt
     residualMapIsFrobenius hresidual
     tateCokernelIsExteriorSquare hexterior
+
+/-- Literal full-Tate cokernel equivalence obtained by cancelling the common
+lane and then applying a supplied equivalence for the residual cokernel. -/
+noncomputable def tateCokernelEquivFromResidual
+    {K M C S E : Type*}
+    [DivisionRing K]
+    [AddCommGroup M] [Module K M] [FiniteDimensional K M]
+    [AddCommGroup C] [Module K C] [FiniteDimensional K C]
+    [AddCommGroup S] [Module K S] [FiniteDimensional K S]
+    [AddCommGroup E] [Module K E]
+    (kernelData : Kernel.KernelWeldData (K := K) (M := M) (C := C) (S := S))
+    (residualExterior :
+      (S ⧸ kernelData.residualRange) ≃ₗ[K] E) :
+    ((C × S) ⧸ kernelData.normRange) ≃ₗ[K] E :=
+  kernelData.cokernelEquivResidualCokernel.trans residualExterior
+
+/-- Strongest compiler: callers supply actual norm coordinates plus the
+residual quotient equivalence.  The common-lane equivalence and the full Tate
+cokernel/exterior equivalence are both generated. -/
+noncomputable def compileNormWeldFromResidualEquiv
+    {K M C S E : Type*}
+    [DivisionRing K]
+    [AddCommGroup M] [Module K M] [FiniteDimensional K M]
+    [AddCommGroup C] [Module K C] [FiniteDimensional K C]
+    [AddCommGroup S] [Module K S] [FiniteDimensional K S]
+    [AddCommGroup E] [Module K E]
+    (kernelData : Kernel.KernelWeldData (K := K) (M := M) (C := C) (S := S))
+    (rankReceipt : Rank.RankRigidityReceipt)
+    (residualMapIsFrobenius : Prop)
+    (hresidual : residualMapIsFrobenius)
+    (residualExterior : (S ⧸ kernelData.residualRange) ≃ₗ[K] E) :
+    NormWeldReceipt :=
+  compileNormWeld
+    (Nonempty (kernelData.residualProjection.ker ≃ₗ[K] C))
+    kernelData.commonLaneSameObjectPaid
+    rankReceipt
+    residualMapIsFrobenius hresidual
+    (Nonempty (((C × S) ⧸ kernelData.normRange) ≃ₗ[K] E))
+    ⟨tateCokernelEquivFromResidual kernelData residualExterior⟩
 
 /-- Roadmap compression: once actual projections and the kernel-finrank theorem
 are supplied, the common lane is already a same-object linear equivalence. -/

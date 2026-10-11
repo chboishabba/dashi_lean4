@@ -4,57 +4,45 @@ namespace Integration.AlbertF4ExceptionalCapstoneRegression
 
 open Integration.AlbertF4ExceptionalCapstone
 
-example : currentFrontier.externalAlbertDonorPinned = true := rfl
-example : currentFrontier.externalH3OctonionicCarrierSourceWritten = true := rfl
-example : currentFrontier.externalJordanIdentityProducerSourceWritten = true := rfl
-example : currentFrontier.externalTraceSourceWritten = true := rfl
-example : currentFrontier.externalCubicCandidateSourceWritten = true := rfl
-example : currentFrontier.donorCubicComplexCounterexamplePaid = true := rfl
-example : currentFrontier.donorCurrentCubicPromotableAsAlbertNorm = false := rfl
-example : currentFrontier.donorOctonionTrialitySourceWritten = true := rfl
-example : currentFrontier.externalFullCubicIdentitiesSourceWritten = false := rfl
+example : currentFrontier.nativeRationalAlbertCarrierPaid = true := rfl
+example : currentFrontier.nativeStandardAlbertCubicPaid = true := rfl
+example : currentFrontier.nativeJordanProductPaid = true := rfl
+example : currentFrontier.nativeJordanIdentityPaid = true := rfl
+example : currentFrontier.nativeS3AlbertAutomorphismsPaid = true := rfl
 
-example : currentFrontier.nativeScalarTracelessEquivalencePaid = true := rfl
-example : currentFrontier.nativeFinrank27ImpliesTraceless26Paid = true := rfl
-example : currentFrontier.e6Minuscule27SameObjectPaidUpstream = true := rfl
-example : currentFrontier.canonicalMinusculeModule27Paid = true := rfl
-example : currentFrontier.canonicalMinusculeWeightLinesPaid = true := rfl
-example : currentFrontier.linearMinusculeTransportFromFinrank27Paid = true := rfl
-example : currentFrontier.fullAlbertStructureTransportTypedAndPaid = true := rfl
-example : currentFrontier.transportedJordanAutomorphismCompilerPaid = true := rfl
-example : currentFrontier.actualTernaryOriginPlus26SplitPaid = true := rfl
-example : currentFrontier.linearTernaryTracelessBasisTransportPaid = true := rfl
+example : currentFrontier.externalDonorCubicCounterexamplePaid = true := rfl
+example : currentFrontier.externalDonorRemovedFromCriticalPath = true := rfl
 
 example : currentFrontier.foldedWeylOrder1152Paid = true := rfl
-example : currentFrontier.foldedF4CoxeterSignaturePaid = true := rfl
-example : currentFrontier.foldedF4RootSet48Paid = true := rfl
-example : currentFrontier.minusculeRestriction24PlusZero3Paid = true := rfl
-example : currentFrontier.zeroWeightPermutationImageS3Paid = true := rfl
-example : currentFrontier.finiteWeylOnePlus26Paid = true := rfl
+example : currentFrontier.independentF4RootSet48Paid = true := rfl
+example : currentFrontier.independentF4Rank4Paid = true := rfl
 example : currentFrontier.d4KernelOrder192Paid = true := rfl
-example : currentFrontier.d4ThreeEightOrbitsPaid = true := rfl
-example : currentFrontier.finiteAlbertThreePlusEightPlusEightPlusEightShapePaid = true := rfl
+example : currentFrontier.d4ThreeEightSameActionPaid = true := rfl
 
-example : currentFrontier.finiteWeylQuadraticInvariantDimensionSevenPaid = true := rfl
-example : currentFrontier.finiteWeylCubicInvariantDimensionTwentyThreePaid = true := rfl
-example : currentFrontier.finiteWeylInvarianceDeterminesAlbertCubic = false := rfl
+example : currentFrontier.spinTitsFourLiftsPaid = true := rfl
+example : currentFrontier.spinCoverOrder384Paid = true := rfl
+example : currentFrontier.spinQuotientExactlyWD4Paid = true := rfl
+example : currentFrontier.fourSpinAlbertAutomorphismsPaid = true := rfl
 
-example : currentFrontier.trialityCubicCompilerPaid = true := rfl
-example : currentFrontier.cubicRigidityInterfaceTyped = true := rfl
-example : currentFrontier.reducedTerminalCompatibilityTyped = true := rfl
-example : currentFrontier.reducedTerminalCompilesJordanAutomorphisms = true := rfl
+example : currentFrontier.nativeSignedBasisClosure73728Paid = true := rfl
+example : currentFrontier.g05ProjectiveOuterLiftPaid = true := rfl
+example : currentFrontier.g24CurrentSignedBasisObstructionPaid = true := rfl
+example : currentFrontier.nonMonomialOuterLiftStillRequired = true := rfl
+
+example : currentFrontier.arbitraryInnerDerivationLawPaid = true := rfl
+example : currentFrontier.exactInnerDerivationRank52DiagnosticPaid = true := rfl
+example : currentFrontier.exactDiagonalStabilizer28DiagnosticPaid = true := rfl
+example : currentFrontier.exactMovingComplement24DiagnosticPaid = true := rfl
+example : currentFrontier.threeEightTrialityLieDiagnosticPaid = true := rfl
 
 example : currentFrontier.naturalRelative240E6InvarianceRefuted = true := rfl
-example : currentFrontier.naturalRelative240SameActionE8Blocked = true := rfl
+example : currentFrontier.structuredE8LaneIndependent = true := rfl
 
-example : currentFrontier.correctedAlbertCubicPaid = false := rfl
-example : currentFrontier.cubicRigidityPaid = false := rfl
-example : currentFrontier.actualOctonionTrialitySectorAlignmentPaid = false := rfl
-example : currentFrontier.fourFoldedCubicPreservationChecksPaid = false := rfl
-example : currentFrontier.terminalAlbertF4CompatibilityPaid = false := rfl
-example : currentFrontier.actualF4AutomorphismRecognitionPaid = false := rfl
-example : currentFrontier.actualE6UnitStabilizerRecognitionPaid = false := rfl
-example : currentFrontier.actualTernaryAlbertActionCompatibilityPaid = false := rfl
-example : currentFrontier.alternativeTernary240E8RecognitionPaid = false := rfl
+example : currentFrontier.formalComplexificationPaid = false := rfl
+example : currentFrontier.formalRootSpaceDecompositionPaid = false := rfl
+example : currentFrontier.sameLieAlgebraF4RecognitionPaid = false := rfl
+example : currentFrontier.fullFiniteWeylInsideAutJPaid = false := rfl
+example : currentFrontier.fullAutJordanEqualsF4Paid = false := rfl
+example : currentFrontier.e6UnitStabilizerEqualsF4Paid = false := rfl
 
 end Integration.AlbertF4ExceptionalCapstoneRegression

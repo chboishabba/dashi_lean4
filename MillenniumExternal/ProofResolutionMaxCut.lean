@@ -1,13 +1,14 @@
 import MillenniumExternal.SameObjectMaxCut
+import Synthesis.MillenniumBSDSelmerDefectClayEquivalence
 
 /-!
 # Proof-resolution-only completion board
 
 This is the operational interpretation of the project completion assumption for
-the external Millennium pass.  For P≠NP, RH, Navier--Stokes and BSD, adapter
+the external Millennium pass. For P≠NP, RH, Navier--Stokes and BSD, adapter
 work is restricted to theorem discovery/import, definitional reduction,
 existing equivalences, same-object transport, theorem composition and kernel
-checking.  A failed lookup is a reason to search the graph, not to manufacture a
+checking. A failed lookup is a reason to search the graph, not to manufacture a
 replacement Millennium hypothesis.
 
 The producer lists below are ordered by the latest cross-prover archaeology.
@@ -36,7 +37,7 @@ structure ProofResolutionLane where
   preferredOperations : List ResolutionOperation
   externalCompiler : String
   /-- A literal source-written exact target theorem already found on the graph,
-  if one has been resolved.  This is not a GREEN kernel receipt. -/
+  if one has been resolved. This is not a GREEN kernel receipt. -/
   resolvedSourceTerm : Option String
   newMathematicsPermitted : Bool
   deriving DecidableEq, Repr
@@ -103,7 +104,11 @@ def navierStokesResolution : ProofResolutionLane :=
 def bsdResolution : ProofResolutionLane :=
   { problem := .birchSwinnertonDyer
     producerSearch :=
-      [ "Synthesis.Millennium.BSD.universalBSDRankTheorem_of_background"
+      [ "Synthesis.Millennium.BSD.bsdClayCore_iff_universalSelmerDefectZero"
+      , "Synthesis.Millennium.BSD.bsdClayCore_of_selmerDefectBridge_and_zero"
+      , "Synthesis.Millennium.BSD.UniversalSelmerDefectAnalyticBridge"
+      , "Synthesis.Millennium.BSD.UniversalSelmerDefectZero"
+      , "Synthesis.Millennium.BSD.universalBSDRankTheorem_of_background"
       , "Synthesis.Millennium.BSD.universalBSDRankTheorem_of_producers"
       , "Synthesis.Millennium.BSD.universalBSDRankTheorem_of_bound"
       , "Synthesis.Millennium.BSD.BSDClayCoreObligation"
@@ -133,7 +138,7 @@ theorem navierStokes_source_term_is_resolved :
       some "DASHILiteralClayNS.dashiExactFeffermanC|D" := by
   decide
 
-/-- These three lanes are search/composition obligations only.  `none` means
+/-- These three lanes are search/composition obligations only. `none` means
 "the unconditional exact source term has not yet been located by this adapter
 branch"; it does not mean the mathematics is reopened. -/
 theorem pnp_rh_bsd_still_require_donor_resolution :
@@ -141,6 +146,18 @@ theorem pnp_rh_bsd_still_require_donor_resolution :
     rhResolution.resolvedSourceTerm = none ∧
     bsdResolution.resolvedSourceTerm = none := by
   decide
+
+/-- The latest main-branch BSD recut is physically imported here: under the
+same-curve analytic bridge, the Clay core is exactly universal zero Selmer
+defect. This theorem only pins the resolution target; it does not provide either
+inhabitant and therefore does not promote BSD to source-exact. -/
+theorem bsd_resolution_uses_zero_defect_equivalence :
+    bsdResolution.producerSearch.contains
+      "Synthesis.Millennium.BSD.bsdClayCore_iff_universalSelmerDefectZero" = true := by
+  decide
+
+#check Synthesis.Millennium.BSD.bsdClayCore_iff_universalSelmerDefectZero
+#check Synthesis.Millennium.BSD.bsdClayCore_of_selmerDefectBridge_and_zero
 
 theorem resolution_board_agrees_with_same_object_cut :
     pVersusNPSameObjectCut.remaining = .transportOnly ∧

@@ -30,57 +30,31 @@ variable {K M C S E : Type*}
   [AddCommGroup S] [Module K S] [FiniteDimensional K S]
   [AddCommGroup E] [Module K E]
 
-/-- The residual quotient theorem is carried by a literal linear equivalence.
-The provenance string records which concrete model supplies it (e.g. the
-explicit Frobenius-square quotient of Sym2(24)). -/
+/-- A literal residual-quotient equivalence to a fixed exterior model.  The
+provenance string records the concrete realization (for this programme:
+Sym2(24)/Frob(24) identified with the Co1 exterior-square / duad model). -/
 structure ResidualExteriorReceipt
     (kernelData : Kernel.KernelWeldData (K := K) (M := M) (C := C) (S := S)) where
-  exteriorModel : Type*
-  exteriorAddCommGroup : AddCommGroup exteriorModel
-  exteriorModule : Module K exteriorModel
-  residualQuotientEquiv :
-    (S ⧸ kernelData.residualRange) ≃ₗ[K] exteriorModel
+  residualQuotientEquiv : (S ⧸ kernelData.residualRange) ≃ₗ[K] E
   sourceProvenance : String
-
-attribute [instance] ResidualExteriorReceipt.exteriorAddCommGroup
-attribute [instance] ResidualExteriorReceipt.exteriorModule
 
 namespace ResidualExteriorReceipt
 
 variable
   (kernelData : Kernel.KernelWeldData (K := K) (M := M) (C := C) (S := S))
-  (r : ResidualExteriorReceipt kernelData)
+  (r : ResidualExteriorReceipt (E := E) kernelData)
 
-/-- Literal full Tate-cokernel equivalence obtained by composing the common-lane
-cancellation theorem with the residual exterior quotient. -/
-noncomputable def fullCokernelEquiv :
-    ((C × S) ⧸ kernelData.normRange) ≃ₗ[K] r.exteriorModel :=
-  Weld.tateCokernelEquivFromResidual kernelData r.residualQuotientEquiv
-
-/-- Downstream users consume an actual equivalence, not a status flag. -/
-theorem fullCokernelSameObjectPaid :
-    Nonempty (((C × S) ⧸ kernelData.normRange) ≃ₗ[K] r.exteriorModel) :=
-  ⟨r.fullCokernelEquiv kernelData⟩
-
-end ResidualExteriorReceipt
-
-/-- Simpler non-dependent packaging for callers that already fixed the exterior
-model type `E`. -/
-structure FixedResidualExteriorReceipt
-    (kernelData : Kernel.KernelWeldData (K := K) (M := M) (C := C) (S := S)) where
-  residualQuotientEquiv : (S ⧸ kernelData.residualRange) ≃ₗ[K] E
-  sourceProvenance : String
-
-namespace FixedResidualExteriorReceipt
-
-variable
-  (kernelData : Kernel.KernelWeldData (K := K) (M := M) (C := C) (S := S))
-  (r : FixedResidualExteriorReceipt (E := E) kernelData)
-
+/-- Literal full Tate-cokernel equivalence obtained by composing common-lane
+cancellation with the residual exterior quotient. -/
 noncomputable def fullCokernelEquiv :
     ((C × S) ⧸ kernelData.normRange) ≃ₗ[K] E :=
   Weld.tateCokernelEquivFromResidual kernelData r.residualQuotientEquiv
 
-end FixedResidualExteriorReceipt
+/-- Downstream users consume an actual equivalence, not a status flag. -/
+theorem fullCokernelSameObjectPaid :
+    Nonempty (((C × S) ⧸ kernelData.normRange) ≃ₗ[K] E) :=
+  ⟨r.fullCokernelEquiv kernelData⟩
+
+end ResidualExteriorReceipt
 
 end Integration.OggSSP2BResidualExteriorQuotient

@@ -12,6 +12,9 @@ theorem synchronyAttachmentStillNotDefinition :
     SynchronyDefinesAttachmentPermission → False :=
   synchronyAssociationDoesNotDefineAttachment
 
+example : canonicalGABAEvidenceInstantiationBoundary.synchronyDefinesAttachmentPaid = false := by
+  rfl
+
 def neuroimmuneBridgeIsPaid : NeurochemicalInflammationBridge crowley2016NeuroimmuneEvidence :=
   crowley2016NeuroimmuneBridge
 

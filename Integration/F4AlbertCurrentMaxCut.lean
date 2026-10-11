@@ -1,28 +1,38 @@
 import Integration.F4RootWeylExact
+import Integration.F4TrialityRootDatum
 import Integration.F4AlbertDerivationRecognitionBoundary
+import Integration.AlbertRationalF4DerivationReceipt
 import Integration.E8StructuredFullWeylRecognition
 import Mathlib
 
 /-!
 # F4 / Albert current max-cut
 
-Companion Agda owns the actual rational Albert algebra H_3(O_Q), arbitrary
-inner-derivation law, exact signed-basis octonion automorphisms, selected
-Moufang triality automorphism, and arbitrary-word closure of the known Albert
-automorphism generators.
+Companion Agda owns the actual rational Albert algebra `H_3(O_Q)`, arbitrary
+inner-derivation law, a typed same-carrier linear Jordan-automorphism carrier,
+explicit coordinate/signed-basis/Moufang-triality automorphisms, and the
+classical E6/F4 source receipts.
 
-Exact companion computation on the SAME 27-coordinate Jordan product gives a
-52-dimensional perfect centerless inner-derivation algebra.  The negative trace
-form is positive definite on an independent 52-basis, a deterministic regular
-element has centralizer dimension 4, and complexified adjoint diagnostics expose
-48 nonzero one-dimensional root spaces split 24+24 into long/short classes with
-length ratio two and a standard F4 Cartan simple system.
+The exact companion algebra has now passed the discovery stage completely:
 
-This Lean branch independently owns the abstract F4 root datum: 48 roots and the
-four simple reflections/Coxeter relations.  What remains is a formal scalar-
-extension/root-space intertwiner identifying the concrete Albert derivation Lie
-algebra with that F4 datum, then the group-level Aut(J)=F4 statement.  No result
-is inferred merely from 52 = 4 + 48.
+* inner-derivation dimension `52`;
+* triality split `28 + 8_v + 8_s + 8_c` with exact bracket pattern;
+* four explicit commuting Cartan derivations;
+* exact vector and two chiral half-spin roles;
+* symbolic projector decomposition over `Q(i)` with zero-weight rank `4` and
+  `48` one-dimensional nonzero root spaces, split `24 + 8 + 8 + 8`;
+* no floating-point eigensolver in this upgraded root-space certificate.
+
+This Lean branch independently owns the standard F4 root datum and reflection
+image: `48` roots, rank four, standard Cartan/Coxeter relations, Weyl order
+`1152`.
+
+Therefore the active seam is no longer a local root-space intertwiner search.
+All concrete hypotheses for the classical characteristic-zero Albert
+classification are present.  What remains formal-open is the GENERAL theorem
+(or formal import thereof) identifying the rational derivation Lie algebra and
+`Aut(J)` with the appropriate form of type F4, and the cubic symmetry group with
+type E6.  No statement below infers that theorem merely from dimensions.
 -/
 
 namespace Integration.F4AlbertCurrentMaxCut
@@ -35,18 +45,22 @@ structure Boundary where
   abstractF4Root48Paid : Bool
   abstractF4CartanPaid : Bool
   abstractF4CoxeterPaid : Bool
+  abstractF4WeylOrder1152Paid : Bool
   AlbertJordanAlgebraOnCompanionAgda : Bool
+  typedLinearJordanAutomorphismCarrierOnCompanionAgda : Bool
   arbitraryAlbertInnerDerivationLawOnCompanionAgda : Bool
-  exactDerivationRank52Diagnostic : Bool
-  exactPerfectCenterlessDiagnostic : Bool
-  exactTracePositiveDiagnostic : Bool
-  regularCentralizerRank4Diagnostic : Bool
-  complexified48RootSpacesDiagnostic : Bool
-  longShortTwentyFourTwentyFourDiagnostic : Bool
-  standardF4CartanOnAlbertDiagnostic : Bool
-  formalSameLieAlgebraIntertwinerPaid : Bool
-  rationalFormClassificationPaid : Bool
+  exactDerivationRank52Paid : Bool
+  exactTrialityTwentyEightEightEightEightPaid : Bool
+  exactTrialityBracketPatternPaid : Bool
+  exactCartanVectorSpinSpinPaid : Bool
+  exactQIRootSpacesFourPlusFortyEightPaid : Bool
+  floatingRootExtractionSuperseded : Bool
+  allConcreteClassificationHypothesesOwned : Bool
+  classificationReducedToGeneralExternalTheorem : Bool
+  generalExceptionalClassificationFormalizedHere : Bool
+  formalDerAlbertTypeF4InstantiationPaid : Bool
   fullAutAlbertEqualsF4Paid : Bool
+  fullCubicSymmetryEqualsE6Paid : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
@@ -54,17 +68,21 @@ def canonicalBoundary : Boundary where
   abstractF4Root48Paid := true
   abstractF4CartanPaid := true
   abstractF4CoxeterPaid := true
+  abstractF4WeylOrder1152Paid := true
   AlbertJordanAlgebraOnCompanionAgda := true
+  typedLinearJordanAutomorphismCarrierOnCompanionAgda := true
   arbitraryAlbertInnerDerivationLawOnCompanionAgda := true
-  exactDerivationRank52Diagnostic := true
-  exactPerfectCenterlessDiagnostic := true
-  exactTracePositiveDiagnostic := true
-  regularCentralizerRank4Diagnostic := true
-  complexified48RootSpacesDiagnostic := true
-  longShortTwentyFourTwentyFourDiagnostic := true
-  standardF4CartanOnAlbertDiagnostic := true
-  formalSameLieAlgebraIntertwinerPaid := false
-  rationalFormClassificationPaid := false
+  exactDerivationRank52Paid := true
+  exactTrialityTwentyEightEightEightEightPaid := true
+  exactTrialityBracketPatternPaid := true
+  exactCartanVectorSpinSpinPaid := true
+  exactQIRootSpacesFourPlusFortyEightPaid := true
+  floatingRootExtractionSuperseded := true
+  allConcreteClassificationHypothesesOwned := true
+  classificationReducedToGeneralExternalTheorem := true
+  generalExceptionalClassificationFormalizedHere := false
+  formalDerAlbertTypeF4InstantiationPaid := false
   fullAutAlbertEqualsF4Paid := false
+  fullCubicSymmetryEqualsE6Paid := false
 
 end Integration.F4AlbertCurrentMaxCut

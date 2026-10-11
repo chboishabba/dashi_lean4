@@ -14,6 +14,7 @@ EXACT = ROOT / "MillenniumExternal" / "ExactTargetSurface.lean"
 FRONTIER = ROOT / "MillenniumExternal" / "ExternalTargetFrontier.lean"
 SAME_OBJECT_CUT = ROOT / "MillenniumExternal" / "SameObjectMaxCut.lean"
 RESOLUTION = ROOT / "MillenniumExternal" / "ProofResolutionMaxCut.lean"
+BSD_DEFECT_EQUIV = ROOT / "Synthesis" / "MillenniumBSDSelmerDefectClayEquivalence.lean"
 
 
 class MillenniumSubmissionSurfaceTests(unittest.TestCase):
@@ -73,6 +74,26 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
 
         compiler = text[text.index("theorem clayBirchSwinnertonDyer_of_dashi"):]
         self.assertIn("leanDojoBSDFiniteRank_of_dashi bg.algebraic", compiler)
+
+    def test_bsd_resolution_consumes_latest_selmer_defect_equivalence(self):
+        self.assertTrue(BSD_DEFECT_EQUIV.exists(), "latest main BSD defect equivalence must be ported")
+        defect = BSD_DEFECT_EQUIV.read_text(encoding="utf-8")
+        resolution = RESOLUTION.read_text(encoding="utf-8")
+        self.assertIn("theorem bsdClayCore_iff_universalSelmerDefectZero", defect)
+        self.assertIn("UniversalSelmerDefectAnalyticBridge", defect)
+        self.assertIn("UniversalSelmerDefectZero", defect)
+        for donor in (
+            "Synthesis.Millennium.BSD.bsdClayCore_iff_universalSelmerDefectZero",
+            "Synthesis.Millennium.BSD.bsdClayCore_of_selmerDefectBridge_and_zero",
+            "Synthesis.Millennium.BSD.UniversalSelmerDefectAnalyticBridge",
+            "Synthesis.Millennium.BSD.UniversalSelmerDefectZero",
+        ):
+            self.assertIn(donor, resolution)
+        bsd_start = resolution.index("def bsdResolution")
+        bsd_end = resolution.index("def faithfulResolutionLanes", bsd_start)
+        bsd = resolution[bsd_start:bsd_end]
+        self.assertIn("resolvedSourceTerm := none", bsd)
+        self.assertIn("newMathematicsPermitted := false", bsd)
 
     def test_completion_pass_forbids_reopening_math_on_faithful_live_lanes(self):
         same = SAME_OBJECT_CUT.read_text(encoding="utf-8")

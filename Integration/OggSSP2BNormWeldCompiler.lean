@@ -10,22 +10,19 @@ The source-native weight-two norm map has the shape
 
   M_minus(98304) -> C_common(98280) ⊕ Sym2(24)(300).
 
-`OggSSP2BTateCokernelRankRigidity` proves that, once the runtime support-
-separation hypotheses hold, the residual projection has rank 24 and its kernel
-has dimension 98280.  `OggSSP2BCommonLaneKernelWeld` removes the spurious
-common-lane hypothesis: injectivity of the full norm map makes the common
-projection injective on that residual kernel, and equal finite dimensions force
-an isomorphism with the 98280-dimensional common target.
+The preferred proof path is now fully map-coupled:
 
-`OggSSP2BCokernelCancellation` then proves on literal quotient modules that
-this common block cancels:
+* actual common/residual projections plus injectivity of their paired norm map;
+* a `LinearRankRigidityReceipt` attaching the 24/98280 squeeze to the actual
+  residual map;
+* the actual common target finrank 98280;
+* uniqueness of the nonzero 24 -> Sym2(24) equivariant Hom line;
+* a literal equivalence from the residual cokernel to the exterior model.
 
-  coker(norm) ≃ coker(residual).
-
-Thus, once the residual map is the unique nonzero Frobenius 24 -> Sym2(24)
-map, an equivalence from its residual cokernel to the exterior-square model
-automatically becomes the actual Tate-cokernel equivalence.  Neither the common
-lane nor the full Tate/exterior equivalence remains an independent assertion.
+These data force the common kernel equivalence, force the actual residual map
+to be Frobenius, cancel the common block on literal cokernels, and generate the
+full Tate/exterior same-object equivalence.  No separate common-lane,
+nonzeroness, or full-cokernel identity hypothesis remains.
 -/
 
 namespace Integration.OggSSP2BNormWeldCompiler
@@ -34,8 +31,7 @@ namespace Rank := Integration.OggSSP2BTateCokernelRankRigidity
 namespace Kernel := Integration.OggSSP2BCommonLaneKernelWeld
 
 /-- Proof-bearing version of the runtime statement that `frobenius` is the
-unique nonzero equivariant map in the relevant Hom space.  The runtime screen
-must supply this theorem; a Boolean flag is not enough. -/
+unique nonzero equivariant map in the relevant Hom space. -/
 structure UniqueNonzeroMapReceipt
     {R V S : Type*} [Semiring R]
     [AddCommMonoid V] [Module R V]
@@ -44,9 +40,7 @@ structure UniqueNonzeroMapReceipt
   frobenius_ne_zero : frobenius ≠ 0
   unique_nonzero : ∀ f : V →ₗ[R] S, f ≠ 0 → f = frobenius
 
-/-- The actual residual norm projection is forced to be the Frobenius-square
-embedding once rank rigidity proves that it is nonzero and the Hom computation
-proves uniqueness of the nonzero equivariant map. -/
+/-- Compatibility theorem when nonzeroness is already supplied. -/
 theorem residualMapForcedFrobenius
     {R V S : Type*} [Semiring R]
     [AddCommMonoid V] [Module R V]
@@ -57,22 +51,54 @@ theorem residualMapForcedFrobenius
     residual = frobenius :=
   hunique.unique_nonzero residual hresidual
 
-/-- Numeric part of the same max-cut: the source-native total rank and common
-lane size force exactly a 24-dimensional residual image. -/
+/-- Preferred Frobenius compiler: rank 24 of the actual map already proves it
+is nonzero, so no separate nonzeroness input is needed. -/
+theorem residualMapForcedFrobeniusFromRank
+    {K V S : Type*}
+    [DivisionRing K]
+    [AddCommGroup V] [Module K V] [FiniteDimensional K V]
+    [AddCommGroup S] [Module K S] [FiniteDimensional K S]
+    (residual frobenius : V →ₗ[K] S)
+    (hunique : UniqueNonzeroMapReceipt frobenius)
+    (hrank : Rank.LinearRankRigidityReceipt residual) :
+    residual = frobenius :=
+  hunique.unique_nonzero residual hrank.residual_ne_zero
+
+/-- Numeric views retained for compatibility. -/
 theorem residualRankForcedTwentyFour
     (r : Rank.RankRigidityReceipt) :
     r.residualProjectionRank = 24 :=
   r.residual_rank_eq_24
 
-/-- The complementary kernel is exactly the common 98280 lane in dimension. -/
 theorem commonKernelForced98280
     (r : Rank.RankRigidityReceipt) :
     r.residualProjectionKernelDimension = 98280 :=
   r.kernel_dimension_eq_98280
 
-/-- A proof-relevant terminal receipt.  The proposition fields are retained for
-compatibility, but the preferred compilers below construct both same-object
-statements from actual linear equivalences. -/
+/-- Build the common-lane kernel weld directly from actual map coordinates and
+the map-coupled rank receipt. -/
+def kernelWeldDataFromActualMaps
+    {K M C S : Type*}
+    [DivisionRing K]
+    [AddCommGroup M] [Module K M] [FiniteDimensional K M]
+    [AddCommGroup C] [Module K C] [FiniteDimensional K C]
+    [AddCommGroup S] [Module K S] [FiniteDimensional K S]
+    (common : M →ₗ[K] C)
+    (residual : M →ₗ[K] S)
+    (paired_injective : Function.Injective (fun x : M => (common x, residual x)))
+    (hrank : Rank.LinearRankRigidityReceipt residual)
+    (hcommonFinrank : Module.finrank K C = 98280) :
+    Kernel.KernelWeldData (K := K) (M := M) (C := C) (S := S) where
+  commonProjection := common
+  residualProjection := residual
+  paired_injective := paired_injective
+  kernel_finrank_eq_common := by
+    calc
+      Module.finrank K residual.ker = 98280 := hrank.kernel_finrank_eq_98280
+      _ = Module.finrank K C := hcommonFinrank.symm
+
+/-- A proof-relevant terminal receipt.  Proposition fields are retained for
+compatibility; preferred compilers construct them from actual equivalences. -/
 structure NormWeldReceipt where
   commonLaneSameObject : Prop
   commonLaneSameObject_paid : commonLaneSameObject
@@ -106,9 +132,7 @@ def compileNormWeld
   tateCokernelIsExteriorSquare := tateCokernelIsExteriorSquare
   tateCokernelIsExteriorSquare_paid := hexterior
 
-/-- Preferred first-stage compiler: the common 98280 same-object statement is
-constructed from the actual common/residual projections and residual-kernel
-finrank equality. -/
+/-- Compatibility first-stage compiler from an already assembled kernel weld. -/
 noncomputable def compileNormWeldFromKernel
     {K M C S : Type*}
     [DivisionRing K]
@@ -139,14 +163,12 @@ noncomputable def tateCokernelEquivFromResidual
     [AddCommGroup S] [Module K S] [FiniteDimensional K S]
     [AddCommGroup E] [Module K E]
     (kernelData : Kernel.KernelWeldData (K := K) (M := M) (C := C) (S := S))
-    (residualExterior :
-      (S ⧸ kernelData.residualRange) ≃ₗ[K] E) :
+    (residualExterior : (S ⧸ kernelData.residualRange) ≃ₗ[K] E) :
     ((C × S) ⧸ kernelData.normRange) ≃ₗ[K] E :=
   kernelData.cokernelEquivResidualCokernel.trans residualExterior
 
-/-- Strongest compiler: callers supply actual norm coordinates plus the
-residual quotient equivalence.  The common-lane equivalence and the full Tate
-cokernel/exterior equivalence are both generated. -/
+/-- Compatibility compiler from a preassembled kernel weld and residual
+quotient equivalence. -/
 noncomputable def compileNormWeldFromResidualEquiv
     {K M C S E : Type*}
     [DivisionRing K]
@@ -167,6 +189,32 @@ noncomputable def compileNormWeldFromResidualEquiv
     residualMapIsFrobenius hresidual
     (Nonempty (((C × S) ⧸ kernelData.normRange) ≃ₗ[K] E))
     ⟨tateCokernelEquivFromResidual kernelData residualExterior⟩
+
+/-- Strongest map-level compiler.  From actual projections, map-coupled rank,
+Hom-line uniqueness and the residual quotient equivalence, it derives every
+previous norm-weld proposition automatically. -/
+noncomputable def compileNormWeldFromActualMaps
+    {K M C S E : Type*}
+    [DivisionRing K]
+    [AddCommGroup M] [Module K M] [FiniteDimensional K M]
+    [AddCommGroup C] [Module K C] [FiniteDimensional K C]
+    [AddCommGroup S] [Module K S] [FiniteDimensional K S]
+    [AddCommGroup E] [Module K E]
+    (common : M →ₗ[K] C)
+    (residual frobenius : M →ₗ[K] S)
+    (paired_injective : Function.Injective (fun x : M => (common x, residual x)))
+    (hrank : Rank.LinearRankRigidityReceipt residual)
+    (hcommonFinrank : Module.finrank K C = 98280)
+    (hunique : UniqueNonzeroMapReceipt frobenius)
+    (residualExterior :
+      (S ⧸ residual.range) ≃ₗ[K] E) :
+    NormWeldReceipt := by
+  let kd := kernelWeldDataFromActualMaps common residual paired_injective
+    hrank hcommonFinrank
+  have hresidual : residual = frobenius :=
+    residualMapForcedFrobeniusFromRank residual frobenius hunique hrank
+  exact compileNormWeldFromResidualEquiv
+    kd hrank.numeric (residual = frobenius) hresidual residualExterior
 
 /-- Roadmap compression: once actual projections and the kernel-finrank theorem
 are supplied, the common lane is already a same-object linear equivalence. -/

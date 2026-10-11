@@ -1,7 +1,8 @@
 from pathlib import Path
 
 p = Path("Dashi/Biology/GABAPhenotypeBridgeExact.lean")
-assert p.exists(), "missing GABAPhenotypeBridgeExact.lean"
+if not p.exists():
+    raise RuntimeError("missing GABAPhenotypeBridgeExact.lean")
 text = p.read_text(encoding="utf-8")
 
 required = [
@@ -11,16 +12,20 @@ required = [
     "structure AssociationToCausalBridge",
     "structure SynchronyAttachmentBridge",
     "structure NeurochemicalInflammationBridge",
+    "validationSourceMatchesEvidence",
+    "structure AssociationEstimandScopeWitness",
+    "estimandScopeMatchesAssociation",
     "inductive EvidenceFamily",
     "structure SensoryGABAInteractionCarrier",
     "structure GABARetrievalMemoryBridge",
     "structure ADHDEvidenceGap",
-    "causalPromotionRequiresExistingEstimand",
+    "causalPromotionEstimandReference",
     "sameGABAEvidenceDifferentContextCanChangeLoad",
     "schmitzEvidenceDoesNotByItselfChangeMemory",
 ]
 for needle in required:
-    assert needle in text, f"missing bridge surface: {needle}"
+    if needle not in text:
+        raise RuntimeError(f"missing bridge surface: {needle}")
 
 for forbidden in [
     "theorem autismCausedByLowGABA",
@@ -28,6 +33,7 @@ for forbidden in [
     "theorem synchronyMeansInsecureAttachment",
     "theorem gabaCausesNeuroinflammation",
 ]:
-    assert forbidden not in text, f"forbidden promotion present: {forbidden}"
+    if forbidden in text:
+        raise RuntimeError(f"forbidden promotion present: {forbidden}")
 
 print("Lean GABA phenotype bridge surface checks passed")

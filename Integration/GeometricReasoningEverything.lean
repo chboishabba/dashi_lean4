@@ -77,8 +77,13 @@ import Integration.E8ExceptionalLiftCapstoneRegression
 import Integration.E8StructuredExceptionalLiftFinalMaxCut
 import Integration.E8StructuredExceptionalLiftFinalMaxCutRegression
 import Integration.T5RelativeE6ActionRestrictionObstruction
+
+-- F4 / Albert exact cross-kernel and finite root-datum tranche.
+import Integration.AlbertRationalF4DerivationReceipt
+import Integration.F4TrialityRootDatum
 import Integration.F4RootWeylExact
 import Integration.F4AlbertDerivationRecognitionBoundary
 import Integration.F4AlbertCurrentMaxCut
+
 import Integration.LilaMonsterGeometricReasoningCrossPollination
 import Integration.GeometricReasoningSemanticInterventionRegression

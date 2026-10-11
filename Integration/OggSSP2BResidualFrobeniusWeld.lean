@@ -1,5 +1,4 @@
 import Integration.OggSSP2BResidualNaturalQuotient
-import Integration.OggSSP2BNormWeldCompiler
 
 /-!
 # Residual quotient -> Frobenius weld
@@ -25,13 +24,19 @@ namespace Integration.OggSSP2BResidualFrobeniusWeld
 
 namespace Q := Integration.OggSSP2BResidualNaturalQuotient
 namespace Rank := Integration.OggSSP2BTateCokernelRankRigidity
-namespace Weld := Integration.OggSSP2BNormWeldCompiler
 
 variable {K M S V : Type*}
   [DivisionRing K]
   [AddCommGroup M] [Module K M] [FiniteDimensional K M]
   [AddCommGroup S] [Module K S] [FiniteDimensional K S]
   [AddCommGroup V] [Module K V] [FiniteDimensional K V]
+
+/-- Local proof-bearing version of the runtime statement that `frobenius` is
+the unique nonzero equivariant map in the relevant Hom space. -/
+structure UniqueNonzeroMapReceipt
+    (frobenius : V →ₗ[K] S) : Prop where
+  frobenius_ne_zero : frobenius ≠ 0
+  unique_nonzero : ∀ f : V →ₗ[K] S, f ≠ 0 → f = frobenius
 
 namespace Q.ResidualNaturalQuotientReceipt
 
@@ -60,10 +65,9 @@ end Q.ResidualNaturalQuotientReceipt
 /-- Proof-bearing residual Frobenius identification on the correct 24d source. -/
 structure ResidualFrobeniusReceipt
     (residual : M →ₗ[K] S)
-    (V : Type*) [AddCommGroup V] [Module K V] [FiniteDimensional K V]
     (frobenius : V →ₗ[K] S) : Prop where
   quotientNatural : Q.ResidualNaturalQuotientReceipt residual V
-  uniqueNonzeroHom : Weld.UniqueNonzeroMapReceipt frobenius
+  uniqueNonzeroHom : UniqueNonzeroMapReceipt frobenius
   co1HomCompatibility : Prop
   co1HomCompatibility_paid : co1HomCompatibility
 
@@ -71,7 +75,7 @@ namespace ResidualFrobeniusReceipt
 
 variable {residual : M →ₗ[K] S}
 variable {frobenius : V →ₗ[K] S}
-variable (r : ResidualFrobeniusReceipt residual V frobenius)
+variable (r : ResidualFrobeniusReceipt residual frobenius)
 
 /-- Rank rigidity supplies nonzeroness of the induced 24 -> 300 map, so Hom
 uniqueness identifies it with Frobenius. -/

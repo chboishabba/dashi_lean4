@@ -1,5 +1,6 @@
 import Integration.OggSSP2BTateCokernelRankRigidity
 import Integration.OggSSP2BCo1FrobeniusHomRigidity
+import Integration.OggSSP2BCommonLaneKernelWeld
 
 /-!
 # Terminal norm-weld compiler for the weight-two 2B Tate quotient
@@ -9,20 +10,24 @@ The source-native weight-two norm map has the shape
   M_minus(98304) -> C_common(98280) ⊕ Sym2(24)(300).
 
 `OggSSP2BTateCokernelRankRigidity` proves that, once the runtime support-
-separation hypotheses hold, the residual projection has rank 24 and is
-therefore nonzero.  The GAP Hom screen is designed to prove that over GF(2)
-the explicit Frobenius-square embedding is the unique nonzero Co1-equivariant
-map 24 -> Sym2(24).
+separation hypotheses hold, the residual projection has rank 24 and its kernel
+has dimension 98280.  `OggSSP2BCommonLaneKernelWeld` then removes the last
+spurious common-lane hypothesis: injectivity of the full norm map makes the
+common projection injective on that residual kernel, and equal finite
+dimensions force an isomorphism with the 98280-dimensional common target.
 
-This file makes the map-level consequence literal: a nonzero actual residual
-map satisfying the runtime uniqueness theorem is the Frobenius map itself.
-Thus the residual lane is not an independent same-object obligation.  The only
-remaining map-level weld is the common 98280 cancellation/identification.
+The GAP Hom screen is designed to prove that over GF(2) the explicit
+Frobenius-square embedding is the unique nonzero Co1-equivariant map
+24 -> Sym2(24).  Thus, once the runtime support/rank and Hom-uniqueness facts
+are promoted, both common and residual lanes are forced.  The remaining
+scientific acquisition is the actual source-native coordinate splitting / norm
+map data, not another abstract same-object proposition.
 -/
 
 namespace Integration.OggSSP2BNormWeldCompiler
 
 namespace Rank := Integration.OggSSP2BTateCokernelRankRigidity
+namespace Kernel := Integration.OggSSP2BCommonLaneKernelWeld
 
 /-- Proof-bearing version of the runtime statement that `frobenius` is the
 unique nonzero equivariant map in the relevant Hom space.  The runtime screen
@@ -61,11 +66,9 @@ theorem commonKernelForced98280
     r.residualProjectionKernelDimension = 98280 :=
   r.kernel_dimension_eq_98280
 
-/-- A proof-relevant terminal receipt.  `commonLaneSameObject` is deliberately
-opaque: this is the one genuine same-object theorem still required after the
-runtime support-separation and Hom-uniqueness calculations.  Everything else
-in the vertical weld is compiled from it rather than advertised as another
-independent scientific leaf. -/
+/-- A proof-relevant terminal receipt.  The common-lane proposition is retained
+for compatibility with existing downstream code, but the preferred compiler
+below derives it from the actual residual-kernel geometry. -/
 structure NormWeldReceipt where
   commonLaneSameObject : Prop
   commonLaneSameObject_paid : commonLaneSameObject
@@ -78,11 +81,7 @@ structure NormWeldReceipt where
   tateCokernelIsExteriorSquare : Prop
   tateCokernelIsExteriorSquare_paid : tateCokernelIsExteriorSquare
 
-/-- Compiler packaging the already-forced residual lane together with the one
-remaining common-lane same-object theorem.  The exterior-square identification
-is supplied as the quotient theorem derived from common-lane cancellation plus
-`residual = Frobenius`; this structure prevents downstream code from treating
-those ingredients as separate open discovery problems. -/
+/-- Compatibility compiler for existing callers. -/
 def compileNormWeld
     (commonLaneSameObject : Prop)
     (hcommon : commonLaneSameObject)
@@ -103,10 +102,39 @@ def compileNormWeld
   tateCokernelIsExteriorSquare := tateCokernelIsExteriorSquare
   tateCokernelIsExteriorSquare_paid := hexterior
 
-/-- Roadmap compression theorem: after the runtime rank/Hom facts are promoted,
-the only independent same-object producer is the common 98280 norm-map weld. -/
-theorem onlyCommon98280MapRemains
-    (w : NormWeldReceipt) : w.commonLaneSameObject :=
-  w.commonLaneSameObject_paid
+/-- Preferred max-cut compiler: the common 98280 same-object statement is
+constructed from the actual common/residual projections and the residual-kernel
+finrank equality; callers no longer provide it as an independent hypothesis. -/
+noncomputable def compileNormWeldFromKernel
+    {K M C S : Type*}
+    [DivisionRing K]
+    [AddCommGroup M] [Module K M] [FiniteDimensional K M]
+    [AddCommGroup C] [Module K C] [FiniteDimensional K C]
+    [AddCommGroup S] [Module K S] [FiniteDimensional K S]
+    (kernelData : Kernel.KernelWeldData (K := K) (M := M) (C := C) (S := S))
+    (rankReceipt : Rank.RankRigidityReceipt)
+    (residualMapIsFrobenius : Prop)
+    (hresidual : residualMapIsFrobenius)
+    (tateCokernelIsExteriorSquare : Prop)
+    (hexterior : tateCokernelIsExteriorSquare) :
+    NormWeldReceipt :=
+  compileNormWeld
+    (Nonempty (kernelData.residualProjection.ker ≃ₗ[K] C))
+    kernelData.commonLaneSameObjectPaid
+    rankReceipt
+    residualMapIsFrobenius hresidual
+    tateCokernelIsExteriorSquare hexterior
+
+/-- Roadmap compression: once actual projections and the kernel-finrank theorem
+are supplied, the common lane is already a same-object linear equivalence. -/
+theorem commonLaneDerivedFromKernel
+    {K M C S : Type*}
+    [DivisionRing K]
+    [AddCommGroup M] [Module K M] [FiniteDimensional K M]
+    [AddCommGroup C] [Module K C] [FiniteDimensional K C]
+    [AddCommGroup S] [Module K S] [FiniteDimensional K S]
+    (kernelData : Kernel.KernelWeldData (K := K) (M := M) (C := C) (S := S)) :
+    Nonempty (kernelData.residualProjection.ker ≃ₗ[K] C) :=
+  kernelData.commonLaneSameObjectPaid
 
 end Integration.OggSSP2BNormWeldCompiler

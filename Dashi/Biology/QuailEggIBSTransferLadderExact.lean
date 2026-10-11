@@ -24,32 +24,41 @@ structure TransferStageReceipt where
   residual : String
   deriving Repr, DecidableEq
 
-def canonicalStages : List TransferStageReceipt := [
-  { stage := .biochemicalStabilityStage, status := .paidBounded,
-    ownerReference := "QuailEggGutTransferRound2Exact.quailOvomucoidStability1994Receipt",
-    paidReading := "biochemical ovomucoid survival plausibility",
-    residual := "post-digestion anti-mast-cell activity and human intestinal target engagement" },
-  { stage := .cellMastCellStage, status := .paidBounded,
-    ownerReference := "QuailEggHistamineGutSnowballExact.lianto2018QuailEggReceipt",
-    paidReading := "quail albumen anti-degranulation cell evidence",
-    residual := "dose/exposure/target and human IBS transfer" },
-  { stage := .oralGIAnimalStage, status := .paidBounded,
-    ownerReference := "QuailEggOralGIAnimalBridgeExact.lianto2018EoEReceipt",
-    paidReading := "oral whole-quail GI allergic mouse evidence",
-    residual := "species/disease-model transfer" },
-  { stage := .humanOralNonIBSStage, status := .paidBounded,
-    ownerReference := "QuailEggHumanOralTransferExact",
-    paidReading := "randomized human oral quail-product exposure in rhinitis/allergen challenge",
-    residual := "gut target engagement and IBS endpoint" },
-  { stage := .humanIBSMechanismStage, status := .paidAdjacent,
-    ownerReference := "GutMastCellMechanismRouteAtlasExact",
-    paidReading := "bounded human IBS histamine/mast-cell/barrier mechanisms",
-    residual := "no quail intervention in those IBS studies" },
-  { stage := .humanIBSQuailInterventionStage, status := .openTerminal,
-    ownerReference := "QuailEggGutTransferRound2Exact.canonicalSameObjectQuailGutExperiment",
-    paidReading := "terminal experiment specified",
-    residual := "quail-specific human IBS target-engagement and clinical evidence" }
-]
+def biochemicalStageReceipt : TransferStageReceipt := {
+  stage := .biochemicalStabilityStage, status := .paidBounded,
+  ownerReference := "QuailEggGutTransferRound2Exact.quailOvomucoidStability1994Receipt",
+  paidReading := "biochemical ovomucoid survival plausibility",
+  residual := "post-digestion anti-mast-cell activity and human intestinal target engagement" }
+
+def cellMastCellStageReceipt : TransferStageReceipt := {
+  stage := .cellMastCellStage, status := .paidBounded,
+  ownerReference := "QuailEggHistamineGutSnowballExact.lianto2018QuailEggReceipt",
+  paidReading := "quail albumen anti-degranulation cell evidence",
+  residual := "dose/exposure/target and human IBS transfer" }
+
+def oralGIAnimalStageReceipt : TransferStageReceipt := {
+  stage := .oralGIAnimalStage, status := .paidBounded,
+  ownerReference := "QuailEggOralGIAnimalBridgeExact.lianto2018EoEReceipt",
+  paidReading := "oral whole-quail-egg homogenate GI/allergic mouse evidence",
+  residual := "species/disease-model transfer" }
+
+def humanOralStageReceipt : TransferStageReceipt := {
+  stage := .humanOralNonIBSStage, status := .paidBounded,
+  ownerReference := "QuailEggHumanOralTransferExact",
+  paidReading := "randomized human oral quail-product exposure in rhinitis/allergen challenge",
+  residual := "gut target engagement and IBS endpoint" }
+
+def humanIBSMechanismStageReceipt : TransferStageReceipt := {
+  stage := .humanIBSMechanismStage, status := .paidAdjacent,
+  ownerReference := "GutMastCellMechanismRouteAtlasExact",
+  paidReading := "bounded human IBS histamine/mast-cell/barrier mechanisms",
+  residual := "no quail intervention in those IBS studies" }
+
+def humanIBSQuailStageReceipt : TransferStageReceipt := {
+  stage := .humanIBSQuailInterventionStage, status := .openTerminal,
+  ownerReference := "QuailEggGutTransferRound2Exact.canonicalSameObjectQuailGutExperiment",
+  paidReading := "terminal experiment specified",
+  residual := "quail-specific human IBS target-engagement and clinical evidence" }
 
 structure HumanIBSQuailTerminalReceipt where
   terminalClosed : Bool
@@ -71,18 +80,58 @@ inductive AdjacentEvidenceClosesHumanIBSPermission : Prop
 theorem adjacentEvidenceDoesNotCloseHumanIBS : AdjacentEvidenceClosesHumanIBSPermission → False := by intro h; cases h
 
 structure QuailEggIBSTransferLadder where
-  stages : List TransferStageReceipt
+  biochemicalStage : TransferStageReceipt
+  biochemicalStageIsCorrect : biochemicalStage.stage = .biochemicalStabilityStage
+  biochemicalStatusIsPaid : biochemicalStage.status = .paidBounded
+  mastCellStage : TransferStageReceipt
+  mastCellStageIsCorrect : mastCellStage.stage = .cellMastCellStage
+  mastCellStatusIsPaid : mastCellStage.status = .paidBounded
+  animalStage : TransferStageReceipt
+  animalStageIsCorrect : animalStage.stage = .oralGIAnimalStage
+  animalStatusIsPaid : animalStage.status = .paidBounded
+  humanOralStage : TransferStageReceipt
+  humanOralStageIsCorrect : humanOralStage.stage = .humanOralNonIBSStage
+  humanOralStatusIsPaid : humanOralStage.status = .paidBounded
+  ibsMechanismStage : TransferStageReceipt
+  ibsMechanismStageIsCorrect : ibsMechanismStage.stage = .humanIBSMechanismStage
+  ibsMechanismStatusIsAdjacent : ibsMechanismStage.status = .paidAdjacent
+  ibsQuailStage : TransferStageReceipt
+  ibsQuailStageIsCorrect : ibsQuailStage.stage = .humanIBSQuailInterventionStage
+  ibsQuailStatusIsOpen : ibsQuailStage.status = .openTerminal
   terminal : HumanIBSQuailTerminalReceipt
-  sourceRolesRetained : Bool
-  adjacentEvidenceRetainedWithoutPromotion : Bool
-  deriving Repr, DecidableEq
+  terminalRemainsOpen : terminal.terminalClosed = false
 
 def canonicalQuailEggIBSTransferLadder : QuailEggIBSTransferLadder := {
-  stages := canonicalStages
+  biochemicalStage := biochemicalStageReceipt
+  biochemicalStageIsCorrect := rfl
+  biochemicalStatusIsPaid := rfl
+  mastCellStage := cellMastCellStageReceipt
+  mastCellStageIsCorrect := rfl
+  mastCellStatusIsPaid := rfl
+  animalStage := oralGIAnimalStageReceipt
+  animalStageIsCorrect := rfl
+  animalStatusIsPaid := rfl
+  humanOralStage := humanOralStageReceipt
+  humanOralStageIsCorrect := rfl
+  humanOralStatusIsPaid := rfl
+  ibsMechanismStage := humanIBSMechanismStageReceipt
+  ibsMechanismStageIsCorrect := rfl
+  ibsMechanismStatusIsAdjacent := rfl
+  ibsQuailStage := humanIBSQuailStageReceipt
+  ibsQuailStageIsCorrect := rfl
+  ibsQuailStatusIsOpen := rfl
   terminal := canonicalHumanIBSQuailTerminalReceipt
-  sourceRolesRetained := true
-  adjacentEvidenceRetainedWithoutPromotion := true
+  terminalRemainsOpen := rfl
 }
+
+def canonicalStages : List TransferStageReceipt := [
+  canonicalQuailEggIBSTransferLadder.biochemicalStage,
+  canonicalQuailEggIBSTransferLadder.mastCellStage,
+  canonicalQuailEggIBSTransferLadder.animalStage,
+  canonicalQuailEggIBSTransferLadder.humanOralStage,
+  canonicalQuailEggIBSTransferLadder.ibsMechanismStage,
+  canonicalQuailEggIBSTransferLadder.ibsQuailStage
+]
 
 structure QuailEggIBSTransferLadderBoundary where
   biochemicalSurvivalPaid : Bool

@@ -7,10 +7,11 @@ open Dashi.Biology.GABAPhenotypeEvidenceExact
 /-!
 Structural Lean mirror of the GABA phenotype promotion boundary.
 
-The Agda repository already owns the concrete sensory-processing, memory-fibre,
-and causal-estimand objects. Those owners do not yet have native Lean mirrors,
-so this file does not invent replacement theorem authority. It records the
-same promotion obligations and names the Agda causal owner explicitly.
+The Agda repository owns the concrete causal-estimand object. Lean therefore
+keeps causal estimands structural/source-referential, but evidence-specific
+bridges still require exact source equality and an association/estimand-indexed
+scope witness. A reference projection is named as such and does not assert that
+an external Agda object has been independently verified from Lean.
 -/
 
 structure PromotionValidation where
@@ -19,19 +20,29 @@ structure PromotionValidation where
   validated : Bool
   deriving Repr, DecidableEq
 
+structure AssociationEstimandScopeWitness
+    (association : RegionalGABAEvidence)
+    (estimand : CausalEstimandReference) where
+  associationScopeReference : String
+  estimandScopeReference : String
+  populationAlignmentReference : String
+  interventionComparatorReference : String
+  outcomeTimeAlignmentReference : String
+  deriving Repr, DecidableEq
+
 structure RegionalToWholeBrainBridge
     (regional : RegionalGABAEvidence) where
   validation : PromotionValidation
+  validationSourceMatchesEvidence : validation.source = regional.source
   wholeBrainScopeReference : String
   transportReference : String
-  deriving Repr, DecidableEq
 
 structure GroupToIndividualBridge
     (groupEvidence : RegionalGABAEvidence) where
   validation : PromotionValidation
+  validationSourceMatchesEvidence : validation.source = groupEvidence.source
   individualSelectionReference : String
   calibrationReference : String
-  deriving Repr, DecidableEq
 
 structure CausalEstimandReference where
   agdaOwnerReference : String := "DASHI.Biology.CausalEffectEstimandExact.CausalEffectEstimand"
@@ -45,10 +56,11 @@ structure CausalEstimandReference where
 structure AssociationToCausalBridge
     (association : RegionalGABAEvidence) where
   validation : PromotionValidation
+  validationSourceMatchesEvidence : validation.source = association.source
   causalEstimand : CausalEstimandReference
+  estimandScopeMatchesAssociation : AssociationEstimandScopeWitness association causalEstimand
   identificationReference : String
   interventionReference : String
-  deriving Repr, DecidableEq
 
 structure SynchronyAttachmentBridge where
   validation : PromotionValidation
@@ -60,12 +72,13 @@ structure SynchronyAttachmentBridge where
 structure NeurochemicalInflammationBridge
     (neurochemicalEvidence : RegionalGABAEvidence) where
   validation : PromotionValidation
+  validationSourceMatchesEvidence : validation.source = neurochemicalEvidence.source
   inflammatoryReadoutReference : String
   mediatorReference : String
   temporalDirectionReference : String
-  deriving Repr, DecidableEq
 
-def causalPromotionRequiresExistingEstimand
+/-- Structural reference projection only; existence/verification remains owned externally. -/
+def causalPromotionEstimandReference
     {association : RegionalGABAEvidence}
     (bridge : AssociationToCausalBridge association) : CausalEstimandReference :=
   bridge.causalEstimand
@@ -92,7 +105,6 @@ structure EvidenceFamilyReceipt where
   promotionStillRequiresBridge : Bool
   deriving Repr, DecidableEq
 
-/- Sensory owner types remain Agda-owned, so the Lean carrier is parametric. -/
 structure SensoryGABAInteractionCarrier
     (Weight Context Geometry Load : Type) where
   evidence : RegionalGABAEvidence
@@ -111,8 +123,6 @@ theorem sameGABAEvidenceDifferentContextCanChangeLoad
     (hLoad : load₁ ≠ load₂) : load₁ ≠ load₂ := by
   exact hLoad
 
-/- Memory owner type remains Agda-owned, so this attachment is parametric and
-   explicitly states that no mutation follows from the evidence row. -/
 structure GABARetrievalMemoryBridge (Memory Geometry : Type) where
   evidence : RegionalGABAEvidence
   memory : Memory
@@ -161,6 +171,8 @@ structure GABAPhenotypeBridgeBoundary where
   regionalPromotionRequiresBridge : Bool
   groupToIndividualRequiresBridge : Bool
   causalPromotionRequiresEstimand : Bool
+  causalPromotionRequiresMatchedScope : Bool
+  validationSourceMustMatchEvidence : Bool
   sensoryContextRemainsExplicit : Bool
   memoryMutationIsNotInferred : Bool
   adhdEvidenceHoleRemainsOpen : Bool
@@ -171,6 +183,8 @@ def canonicalGABAPhenotypeBridgeBoundary : GABAPhenotypeBridgeBoundary := {
   regionalPromotionRequiresBridge := true
   groupToIndividualRequiresBridge := true
   causalPromotionRequiresEstimand := true
+  causalPromotionRequiresMatchedScope := true
+  validationSourceMustMatchEvidence := true
   sensoryContextRemainsExplicit := true
   memoryMutationIsNotInferred := true
   adhdEvidenceHoleRemainsOpen := true

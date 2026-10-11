@@ -8,26 +8,31 @@ import Mathlib
 
 Companion Agda owns the actual rational Albert Jordan algebra `H_3(O_Q)`, its
 arbitrary inner-derivation law, and a concrete linear Jordan-automorphism
-carrier.  Exact companion computation on the literal 27-coordinate product now
-supplies more than the earlier floating diagnostic:
+carrier. Exact companion computation on the literal 27-coordinate product now
+supplies an exact root-graded Lie-algebra certificate, not merely matching
+exceptional dimensions:
 
 * exact inner-derivation span rank `52`;
 * exact triality basis `52 = 28 + 8_v + 8_s + 8_c`;
 * exact triality bracket containment;
 * four explicit commuting Cartan derivations;
 * exact vector / two chiral half-spin roles;
-* exact symbolic spectral projectors over `Q(i)` giving
-  `4` zero-weight dimensions plus `48` one-dimensional nonzero root spaces,
-  split `24 + 8 + 8 + 8`;
-* no floating-point eigensolver in that upgraded root-space producer.
+* exact symbolic spectral projectors over `Q(i)` giving `4` zero-weight
+  dimensions plus `48` one-dimensional nonzero root spaces, split
+  `24 + 8 + 8 + 8`;
+* all `C(48,2)=1128` unordered nonzero-root pairs checked exactly:
+  - `408` root-sum pairs bracket nontrivially into `g_(alpha+beta)`;
+  - `24` opposite-root pairs bracket nontrivially into the Cartan;
+  - `696` forbidden root sums bracket exactly to zero;
+* no floating-point eigensolver in these upgraded certificates.
 
 This branch independently owns standard F4 root data: `48` roots, standard
 Cartan/Coxeter relations, and Weyl closure order `1152`.
 
-What remains is not a root-count search.  It is the formal same-Lie-algebra /
-classification theorem identifying the concrete rational Albert derivation
-algebra with the appropriate rational form of the independently owned F4 root
-datum, and then the stronger group statement `Aut(J)=F4`.
+What remains is therefore not a local root-graded-Lie-algebra search. It is the
+general characteristic-zero same-form/classification theorem identifying this
+concrete rational Albert derivation algebra and `Aut(J)` with type F4 (and the
+cubic symmetry group with type E6).
 -/
 
 namespace Integration.F4AlbertDerivationRecognitionBoundary
@@ -53,6 +58,11 @@ structure AlbertDerivationProbeReceipt where
   exactQINonzeroRootSpaces : Nat
   exactQIRootSpacesOneDimensional : Bool
   exactQIFloatingPointUsed : Bool
+  exactRootPairsChecked : Nat
+  exactRootSumNonzeroBrackets : Nat
+  exactOppositeRootCartanBrackets : Nat
+  exactForbiddenSumZeroBrackets : Nat
+  exactRootGradingPassed : Bool
   deriving Repr
 
 def canonicalAlbertDerivationProbeReceipt : AlbertDerivationProbeReceipt where
@@ -74,6 +84,11 @@ def canonicalAlbertDerivationProbeReceipt : AlbertDerivationProbeReceipt where
   exactQINonzeroRootSpaces := 48
   exactQIRootSpacesOneDimensional := true
   exactQIFloatingPointUsed := false
+  exactRootPairsChecked := 1128
+  exactRootSumNonzeroBrackets := 408
+  exactOppositeRootCartanBrackets := 24
+  exactForbiddenSumZeroBrackets := 696
+  exactRootGradingPassed := true
 
 theorem f4_dimension_checksum :
     canonicalAlbertDerivationProbeReceipt.exactQIZeroWeightDimension +
@@ -85,6 +100,13 @@ theorem triality_dimension_checksum :
       canonicalAlbertDerivationProbeReceipt.exactTrialityVectorDimension +
       canonicalAlbertDerivationProbeReceipt.exactTrialitySpinPlusDimension +
       canonicalAlbertDerivationProbeReceipt.exactTrialitySpinMinusDimension = 52 := by
+  decide
+
+theorem root_pair_partition_checksum :
+    canonicalAlbertDerivationProbeReceipt.exactRootSumNonzeroBrackets +
+      canonicalAlbertDerivationProbeReceipt.exactOppositeRootCartanBrackets +
+      canonicalAlbertDerivationProbeReceipt.exactForbiddenSumZeroBrackets =
+      canonicalAlbertDerivationProbeReceipt.exactRootPairsChecked := by
   decide
 
 theorem independent_f4_root_datum_paid :
@@ -117,6 +139,7 @@ structure Boundary where
   exactTrialityBracketPatternChecked : Bool
   exactCartanVectorSpinSpinChecked : Bool
   exactQIRootDecompositionFourPlusFortyEightChecked : Bool
+  exactRootGradingAll1128PairsChecked : Bool
   floatingRootExtractionSuperseded : Bool
   allConcreteClassificationHypothesesOwnedCrossKernel : Bool
   sameLieAlgebraIntertwinerPaid : Bool
@@ -136,6 +159,7 @@ def canonicalBoundary : Boundary where
   exactTrialityBracketPatternChecked := true
   exactCartanVectorSpinSpinChecked := true
   exactQIRootDecompositionFourPlusFortyEightChecked := true
+  exactRootGradingAll1128PairsChecked := true
   floatingRootExtractionSuperseded := true
   allConcreteClassificationHypothesesOwnedCrossKernel := true
   sameLieAlgebraIntertwinerPaid := false

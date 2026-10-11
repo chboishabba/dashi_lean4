@@ -252,7 +252,7 @@ def canonicalNeuroforecastExperimentRequirement : NeuroforecastExperimentRequire
 
 structure GABANeuroAIContextBoundary where
   metaNeuroAIKeptDistinctFromIndependentViralityResearch : Bool
-  fmriPredictionDoesNotBecomeMindReading : Bool
+  fmriPredictionBecomesMindReading : Bool
   dyadicSignalsDoNotCollapseObserverPlurality : Bool
   peripheralToCentralTransportAutomatic : Bool
   neuralinkWeeklyCalibrationUniversal : Bool
@@ -262,7 +262,7 @@ structure GABANeuroAIContextBoundary where
 
 def canonicalGABANeuroAIContextBoundary : GABANeuroAIContextBoundary := {
   metaNeuroAIKeptDistinctFromIndependentViralityResearch := true
-  fmriPredictionDoesNotBecomeMindReading := false
+  fmriPredictionBecomesMindReading := false
   dyadicSignalsDoNotCollapseObserverPlurality := true
   peripheralToCentralTransportAutomatic := false
   neuralinkWeeklyCalibrationUniversal := false

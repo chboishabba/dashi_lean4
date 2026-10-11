@@ -19,6 +19,8 @@ on:
       - 'Integration/OggSSP2BCo1FrobeniusHomRigidity.lean'
       - 'Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean'
       - 'Integration/OggSSP2BTateCokernelRankRigidity.lean'
+      - 'Integration/OggSSP2BResidualNaturalQuotient.lean'
+      - 'Integration/OggSSP2BResidualFrobeniusWeld.lean'
       - 'Integration/OggSSP2BCommonLaneKernelWeld.lean'
       - 'Integration/OggSSP2BCokernelCancellation.lean'
       - 'Integration/OggSSP2BNormWeldCompiler.lean'
@@ -26,6 +28,7 @@ on:
       - 'Integration/OggSSP2BNormToStableCompletion.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
       - 'Integration/OggSSP2BStableCompletionModelTransport.lean'
+      - 'Integration/ThreeC2TateFibreFromLinearGroupConjugacy.lean'
       - 'Integration/OggSSP2BSelectedQ10TransportCompiler.lean'
       - 'Integration/OggSSP2BAutomaticFinalCompiler.lean'
       - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
@@ -67,6 +70,8 @@ jobs:
           lake env lean Integration/OggSSP2BCo1FrobeniusHomRigidity.lean
           lake env lean Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean
           lake env lean Integration/OggSSP2BTateCokernelRankRigidity.lean
+          lake env lean Integration/OggSSP2BResidualNaturalQuotient.lean
+          lake env lean Integration/OggSSP2BResidualFrobeniusWeld.lean
           lake env lean Integration/OggSSP2BCommonLaneKernelWeld.lean
           lake env lean Integration/OggSSP2BCokernelCancellation.lean
           lake env lean Integration/OggSSP2BNormWeldCompiler.lean
@@ -74,6 +79,7 @@ jobs:
           lake env lean Integration/OggSSP2BNormToStableCompletion.lean
           lake env lean Integration/OggSSP2BActualStableCompletionSubquotient.lean
           lake env lean Integration/OggSSP2BStableCompletionModelTransport.lean
+          lake env lean Integration/ThreeC2TateFibreFromLinearGroupConjugacy.lean
           lake env lean Integration/OggSSP2BSelectedQ10TransportCompiler.lean
           lake env lean Integration/OggSSP2BAutomaticFinalCompiler.lean
           lake env lean Integration/OggSSP2BPostBrauerFinalCompiler.lean

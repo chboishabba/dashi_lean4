@@ -9,6 +9,8 @@ example : canonicalBoundary.finiteTernaryCarrierIsAlbertRepresentationSpace = fa
 example : canonicalBoundary.e8MixedFibreTargetsWeightOrbit = true := rfl
 example : canonicalBoundary.ternary27TargetsFiniteCodebook = true := rfl
 example : canonicalBoundary.agdaAlbertUniversalIdentitySourceWritten = true := rfl
+example : canonicalBoundary.agdaConcreteFinite126AlbertSubgroup = true := rfl
+example : canonicalBoundary.agdaFinite126CountsAsLeanKernelProof = false := rfl
 example : canonicalBoundary.agdaFullF4Constructed = false := rfl
 example : canonicalBoundary.agdaFullE6Constructed = false := rfl
 

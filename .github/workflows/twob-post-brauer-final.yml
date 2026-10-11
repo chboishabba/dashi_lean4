@@ -19,6 +19,8 @@ on:
       - 'Integration/OggSSP2BCo1FrobeniusHomRigidity.lean'
       - 'Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean'
       - 'Integration/OggSSP2BTateCokernelRankRigidity.lean'
+      - 'Integration/OggSSP2BCommonLaneKernelWeld.lean'
+      - 'Integration/OggSSP2BCokernelCancellation.lean'
       - 'Integration/OggSSP2BNormWeldCompiler.lean'
       - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
       - 'Integration/OggSSP2BStableCompletionModelTransport.lean'
@@ -61,6 +63,8 @@ jobs:
           lake env lean Integration/OggSSP2BCo1FrobeniusHomRigidity.lean
           lake env lean Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean
           lake env lean Integration/OggSSP2BTateCokernelRankRigidity.lean
+          lake env lean Integration/OggSSP2BCommonLaneKernelWeld.lean
+          lake env lean Integration/OggSSP2BCokernelCancellation.lean
           lake env lean Integration/OggSSP2BNormWeldCompiler.lean
           lake env lean Integration/OggSSP2BActualStableCompletionSubquotient.lean
           lake env lean Integration/OggSSP2BStableCompletionModelTransport.lean

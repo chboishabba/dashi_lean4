@@ -9,6 +9,7 @@ open Dashi.Biology.NeuralPredictionDirectionExact
 inductive PredictionAcquisitionStatus where
   | acquiredBounded
   | acquiredMechanismBoundary
+  | primaryValidationRequired
   | independentReplicationRequired
   | benchmarkExpansionRequired
   | crossModalValidationRequired
@@ -73,12 +74,12 @@ def neuralinkIndependentReplicationAcquisition : PredictionAcquisitionNode := {
 
 def crossParticipantBCIAcquisition : PredictionAcquisitionNode := {
   label := "held-out-participant BCI transfer"
-  status := .independentReplicationRequired
+  status := .primaryValidationRequired
   discoveryRoute := .experimentalDesign
   axis := .subjectTransferAxis
   currentReceiptReference := "Cross-participant superiority currently unpaid in acquired Neuralink evidence"
-  nextEvidenceShape := "Frozen encoder/decoder evaluated on held-out participants with matched calibration budget, same task definition, longitudinal drift endpoint and explicit failure distribution."
-  authorityBoundary := "Within-participant success cannot promote to cross-participant decoder universality."
+  nextEvidenceShape := "First establish the result prospectively: frozen encoder/decoder on held-out participants with matched calibration budget, same task definition, longitudinal drift endpoint and explicit failure distribution."
+  authorityBoundary := "Within-participant success cannot promote to cross-participant decoder universality; initial validation precedes any later replication claim."
 }
 
 def metaNeuralBenchExpansionAcquisition : PredictionAcquisitionNode := {
@@ -149,7 +150,7 @@ structure NeuralPredictionAcquisitionBoundary where
   deriving Repr, DecidableEq
 
 def canonicalNeuralPredictionAcquisitionBoundary : NeuralPredictionAcquisitionBoundary := {
-  inheritedParetoOwnerReference := "DASHI.Biology.GABANeuroAIContextParetoSnowballExact.canonicalGABANeuroAIParetoSnowballBoundary"
+  inheritedParetoOwnerReference := "Dashi.Biology.GABANeuroAIContextParetoSnowballExact.canonicalGABANeuroAIParetoSnowballBoundary"
   frontier := canonicalPredictionAcquisitionFrontier
   directionRemainsExplicit := true
   provenanceRemainsExplicit := true

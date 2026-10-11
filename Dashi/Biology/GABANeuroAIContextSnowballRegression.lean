@@ -12,4 +12,7 @@ open Dashi.Biology.GABANeuroAIContextSnowballExact
 #check canonicalNeuroforecastExperimentRequirement
 #check canonicalGABANeuroAIContextBoundary
 
+example : canonicalGABANeuroAIContextBoundary.fmriPredictionBecomesMindReading = false := by
+  rfl
+
 end Dashi.Biology.GABANeuroAIContextSnowballRegression

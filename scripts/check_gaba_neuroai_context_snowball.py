@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 files = [
@@ -12,6 +13,9 @@ files = [
     ROOT / "Dashi/Biology/NeuralPredictionAcquisitionParetoExact.lean",
     ROOT / "Dashi/Biology/NeuralPredictionAcquisitionParetoRegression.lean",
 ]
+for p in files:
+    if not p.exists():
+        raise RuntimeError(f"missing neuro-AI snowball source file: {p}")
 text = "\n".join(p.read_text(encoding="utf-8") for p in files)
 required = [
     "metaTRIBEv2Receipt",
@@ -36,16 +40,22 @@ required = [
 ]
 missing = [x for x in required if x not in text]
 if missing:
-    raise SystemExit("missing required neuro-AI snowball surface: " + ", ".join(missing))
-forbidden = [
-    "metaViralityIsMetaAuthored :",
-    "fMRIProvesMindReading :",
-    "serumGABAEqualsBrainGABA :",
-    "weeklyCalibrationUniversal :",
-    "encodingEqualsDecoding :",
-    "representationSimilarityEqualsMechanism :",
+    raise RuntimeError("missing required neuro-AI snowball surface: " + ", ".join(missing))
+
+# Match the forbidden declaration independent of spaces around ':' or ':='.
+forbidden_names = [
+    "metaViralityIsMetaAuthored",
+    "fMRIProvesMindReading",
+    "serumGABAEqualsBrainGABA",
+    "weeklyCalibrationUniversal",
+    "encodingEqualsDecoding",
+    "representationSimilarityEqualsMechanism",
 ]
-found = [x for x in forbidden if x in text]
+found = []
+for name in forbidden_names:
+    pattern = rf"(?m)^\s*(?:def|theorem|structure)?\s*{re.escape(name)}\s*:"
+    if re.search(pattern, text):
+        found.append(name)
 if found:
-    raise SystemExit("forbidden overclaim declaration found: " + ", ".join(found))
+    raise RuntimeError("forbidden overclaim declaration found: " + ", ".join(found))
 print("Lean GABA/neuro-AI Pareto snowball source surface: OK")

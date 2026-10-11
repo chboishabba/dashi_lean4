@@ -20,6 +20,15 @@ structure PromotionValidation where
   validated : Bool
   deriving Repr, DecidableEq
 
+structure CausalEstimandReference where
+  agdaOwnerReference : String := "DASHI.Biology.CausalEffectEstimandExact.CausalEffectEstimand"
+  populationReference : String
+  interventionReference : String
+  comparatorReference : String
+  outcomeReference : String
+  timeHorizonReference : String
+  deriving Repr, DecidableEq
+
 structure AssociationEstimandScopeWitness
     (association : RegionalGABAEvidence)
     (estimand : CausalEstimandReference) where
@@ -43,15 +52,6 @@ structure GroupToIndividualBridge
   validationSourceMatchesEvidence : validation.source = groupEvidence.source
   individualSelectionReference : String
   calibrationReference : String
-
-structure CausalEstimandReference where
-  agdaOwnerReference : String := "DASHI.Biology.CausalEffectEstimandExact.CausalEffectEstimand"
-  populationReference : String
-  interventionReference : String
-  comparatorReference : String
-  outcomeReference : String
-  timeHorizonReference : String
-  deriving Repr, DecidableEq
 
 structure AssociationToCausalBridge
     (association : RegionalGABAEvidence) where

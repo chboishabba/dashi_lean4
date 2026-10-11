@@ -2,6 +2,8 @@ import Integration.AntigravityOverlayZMirror
 import Integration.AntigravityOverlayZMirrorTest
 import Integration.AntigravitySourceNativeRouteFork
 import Integration.AntigravitySourceNativeRouteForkTest
+import Integration.AntigravitySingleVacuumPhysicalMaxCut
+import Integration.AntigravitySingleVacuumPhysicalMaxCutTest
 import AgdaMirror.AntigravityOverlayZMirror
 
 /-!

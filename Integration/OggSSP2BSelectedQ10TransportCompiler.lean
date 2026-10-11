@@ -1,4 +1,5 @@
 import Integration.OggSSP2BFinalSameObjectCompiler
+import Integration.ThreeC2TateFibreFromLinearGroupConjugacy
 
 /-!
 # Compile selected Q10 transport from linear refinements of the Tate fibre cycle
@@ -7,17 +8,23 @@ The generic three-fibre Tate compiler intentionally stores the source maps as
 additive equivalences.  That is enough for Hhat representative transport, but
 transporting an F2-linear subquotient requires the sourced maps to be linear.
 
-This owner adds exactly that missing datum: linear equivalences agreeing
-pointwise with the already-sourced additive fibre maps.  Once supplied, the
-selected source submodules in fibres 1 and 2 are canonical inverse-comaps of
-the fibre-0 source, their quotient maps are pullbacks of the original quotient,
-and no extra selected-Q transport maps have to be guessed.
+For a genuine linear Monster/module representation that scalar structure is
+not an extra hypothesis.  This owner therefore has two layers:
+
+1. `fromLinearGroupSource` converts one actual linear group representation plus
+   the order-three conjugacy relations directly into the full additive Tate
+   cycle and matching linear fibre maps;
+2. `compileSelectedTransport` canonically pulls a selected Q10 quotient through
+   those maps.
+
+No separate selected-Q fibre maps need to be invented.
 -/
 
 namespace Integration.OggSSP2BSelectedQ10TransportCompiler
 
 namespace F := Integration.OggSSP2BFinalSameObjectCompiler
 namespace R := Integration.OggSSP2BRevisedCompletionRecognition
+namespace G := Integration.ThreeC2TateFibreFromLinearGroupConjugacy
 
 abbrev Scalar := F.Scalar
 abbrev ActualTate276 := F.ActualTate276
@@ -32,6 +39,34 @@ structure LinearThreeFibreTransportReceipt
   phi12_agrees : ∀ x, full.cycle.phi12 x = phi12 x
   phi20_agrees : ∀ x, full.cycle.phi20 x = phi20 x
   sourceProvenance : String
+
+/-- The dependent pair produced from one source-native linear group action. -/
+structure CompiledLinearTransport where
+  full : F.ActualThreeFibreTateTransportReceipt
+  linear : LinearThreeFibreTransportReceipt full
+
+/-- A genuine linear group representation pays both the additive Tate cycle and
+its F2-linear refinements in one compiler call. -/
+def fromLinearGroupSource
+    {Γ : Type*} [Group Γ]
+    (ρ : Γ →* (ActualTate276 ≃ₗ[Scalar] ActualTate276))
+    (s : G.OrderThreeLinearConjugacyCycleSource ρ)
+    (sourceProvenance : String) : CompiledLinearTransport := by
+  let d := s.toLinearThreeFibreCycleData ρ
+  let full : F.ActualThreeFibreTateTransportReceipt :=
+    { cycle := d.additiveCycle
+      sourceProvenance := sourceProvenance }
+  refine
+    { full := full
+      linear := ?_ }
+  exact
+    { phi01 := d.phi01Linear
+      phi12 := d.phi12Linear
+      phi20 := d.phi20Linear
+      phi01_agrees := d.phi01_agrees
+      phi12_agrees := d.phi12_agrees
+      phi20_agrees := d.phi20_agrees
+      sourceProvenance := sourceProvenance }
 
 namespace LinearThreeFibreTransportReceipt
 

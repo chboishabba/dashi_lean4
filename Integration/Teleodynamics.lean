@@ -28,3 +28,7 @@ import Integration.TetracodeE8MatrixIsometry
 import Integration.TetracodeE8MatrixIsometryRegression
 import Integration.E8ExceptionalBranchingBridge
 import Integration.E8ExceptionalBranchingRegression
+import Integration.E6Minuscule27WeightAction
+import Integration.E6Minuscule27WeightActionRegression
+import Integration.AlbertE6WeightRole
+import Integration.AlbertE6WeightRoleRegression

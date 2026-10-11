@@ -11,8 +11,8 @@ through the first-isomorphism-theorem quotient
   Qr := M / ker(residual),   dim Qr = 24.
 
 This owner makes that quotient explicit.  The remaining source datum is a
-Co1-equivariant linear chart from `Qr` to the natural 24-dimensional module.
-Once supplied, the induced residual map has the correct domain for the
+Co1-equivariant linear chart from `Qr` to a fixed natural 24-dimensional model
+`V`.  Once supplied, the induced residual map has the correct domain for the
 Frobenius-Hom uniqueness theorem.
 -/
 
@@ -36,54 +36,34 @@ def inducedResidual (residual : M →ₗ[K] S) :
     inducedResidual residual (residual.ker.mkQ x) = residual x := by
   rfl
 
-/-- Source-native identification of the residual quotient with the natural
-24-dimensional Co1 module.  The equivariance proof is kept as a proposition
-because the concrete Co1 action types live in the runtime/model layer; the
-linear chart itself is the same-object datum consumed here. -/
+/-- Source-native identification of the residual quotient with a fixed natural
+24-dimensional Co1 model.  The equivariance proof remains explicit rather than
+being inferred from equal dimensions. -/
 structure ResidualNaturalQuotientReceipt
-    (residual : M →ₗ[K] S) where
-  naturalModel : Type*
-  naturalAddCommGroup : AddCommGroup naturalModel
-  naturalModule : Module K naturalModel
-  naturalFiniteDimensional : FiniteDimensional K naturalModel
-  quotientEquiv : (M ⧸ residual.ker) ≃ₗ[K] naturalModel
-  natural_finrank_eq_24 : Module.finrank K naturalModel = 24
+    (residual : M →ₗ[K] S) (V : Type*)
+    [AddCommGroup V] [Module K V] [FiniteDimensional K V] where
+  quotientEquiv : (M ⧸ residual.ker) ≃ₗ[K] V
+  natural_finrank_eq_24 : Module.finrank K V = 24
   co1Equivariant : Prop
   co1Equivariant_paid : co1Equivariant
   sourceProvenance : String
 
-attribute [instance] ResidualNaturalQuotientReceipt.naturalAddCommGroup
-attribute [instance] ResidualNaturalQuotientReceipt.naturalModule
-attribute [instance] ResidualNaturalQuotientReceipt.naturalFiniteDimensional
-
 namespace ResidualNaturalQuotientReceipt
 
 variable {residual : M →ₗ[K] S}
-variable (r : ResidualNaturalQuotientReceipt residual)
+variable (r : ResidualNaturalQuotientReceipt residual V)
 
 /-- The actual residual norm map rewritten on the natural 24-dimensional
-source.  This is the map to which the Co1 Hom-line uniqueness theorem applies. -/
-def onNatural : r.naturalModel →ₗ[K] S :=
+source.  This is the map to which Co1 Hom-line uniqueness applies. -/
+def onNatural : V →ₗ[K] S :=
   (inducedResidual residual).comp r.quotientEquiv.symm.toLinearMap
 
-/-- The residual quotient really has dimension 24. -/
-theorem quotient_finrank_eq_24
-    (hrank : Rank.LinearRankRigidityReceipt residual) :
-    Module.finrank K (M ⧸ residual.ker) = 24 := by
-  rw [Submodule.finrank_quotient]
-  have hM : Module.finrank K M = 98304 := by
-    have hnull := LinearMap.finrank_range_add_finrank_ker residual
-    rw [hrank.residual_finrank_eq_24, hrank.kernel_finrank_eq_98280] at hnull
-    omega
-  rw [hM, hrank.kernel_finrank_eq_98280]
-  decide
-
-/-- The natural chart has the intended dimension independently. -/
-theorem natural_finrank_is_24 : Module.finrank K r.naturalModel = 24 :=
+/-- The natural model is explicitly 24-dimensional. -/
+theorem natural_finrank_is_24 : Module.finrank K V = 24 :=
   r.natural_finrank_eq_24
 
 /-- If the induced natural-source map vanished, then the original residual map
-would vanish because every element is represented by its quotient class. -/
+would vanish because every source element maps through its quotient class. -/
 theorem onNatural_ne_zero
     (hresidual : residual ≠ 0) :
     r.onNatural ≠ 0 := by
@@ -92,6 +72,12 @@ theorem onNatural_ne_zero
   ext x
   have hx := LinearMap.congr_fun hzero (r.quotientEquiv (residual.ker.mkQ x))
   simpa [onNatural, inducedResidual] using hx
+
+/-- The map-coupled rank receipt supplies the required nonzeroness automatically. -/
+theorem onNatural_ne_zero_from_rank
+    (hrank : Rank.LinearRankRigidityReceipt residual) :
+    r.onNatural ≠ 0 :=
+  r.onNatural_ne_zero hrank.residual_ne_zero
 
 end ResidualNaturalQuotientReceipt
 

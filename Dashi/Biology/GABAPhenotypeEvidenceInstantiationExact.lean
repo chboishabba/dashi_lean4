@@ -130,6 +130,7 @@ def crowley2016NeuroimmuneBridge : NeurochemicalInflammationBridge crowley2016Ne
     validationReference := "Validated as a review-level mechanistic bridge between GABAergic signalling and neuroinflammatory processes only."
     validated := true
   }
+  validationSourceMatchesEvidence := rfl
   inflammatoryReadoutReference := "glial/microglial inflammatory signalling, cytokine/chemokine responses, and immune-cell GABA receptor pathways reviewed across cited studies"
   mediatorReference := "reciprocal neural-immune signalling; no single mediator universalised"
   temporalDirectionReference := "bidirectional interaction retained; not collapsed to GABA -> inflammation"
@@ -252,7 +253,7 @@ theorem adhdEvidenceDoesNotPayInverseSeverityLaw : ADHDHigherGABALowerSeverityPe
 
 structure GABAEvidenceInstantiationBoundary where
   synchronyAttachmentAssociationInstantiated : Bool
-  synchronyDoesNotDefineAttachment : Bool
+  synchronyDefinesAttachmentPaid : Bool
   neuroimmuneMechanisticBridgeInstantiated : Bool
   neuroimmuneReviewPaysDiagnosisCausation : Bool
   adhdHeterogeneityAtlasInstantiated : Bool
@@ -262,7 +263,7 @@ structure GABAEvidenceInstantiationBoundary where
 
 def canonicalGABAEvidenceInstantiationBoundary : GABAEvidenceInstantiationBoundary := {
   synchronyAttachmentAssociationInstantiated := true
-  synchronyDoesNotDefineAttachment := false
+  synchronyDefinesAttachmentPaid := false
   neuroimmuneMechanisticBridgeInstantiated := true
   neuroimmuneReviewPaysDiagnosisCausation := false
   adhdHeterogeneityAtlasInstantiated := true

@@ -4,10 +4,10 @@ namespace Dashi.Biology.NeuralPredictionDirectionRegression
 
 open Dashi.Biology.NeuralPredictionDirectionExact
 
-#check stimulusToBrainEncoding
-#check brainToLanguageDecoding
-#check brainToActionDecoding
-#check brainResponseToPopulationOutcome
+#check NeuralPredictionDirection.stimulusToBrainEncoding
+#check NeuralPredictionDirection.brainToLanguageDecoding
+#check NeuralPredictionDirection.brainToActionDecoding
+#check NeuralPredictionDirection.brainResponseToPopulationOutcome
 #check canonicalBrainModelMechanismBoundary
 #check canonicalNeuralinkProvenanceSplit
 #check canonicalPeripheralCentralPKDesignBridge

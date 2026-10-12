@@ -13,9 +13,10 @@ records the strongest external-facing producer found across the Lean/Agda
 repositories.
 
 The census is same-object first. A lane may therefore name a stronger producer
-that lives in a separate Lean/Agda kernel even when the root package can only
-`#check` an earlier theorem-bearing donor. Kernel separation is not mathematical
-closure and is not promoted to a GREEN external receipt.
+that lives in a separate Lean/Agda kernel or an open producer branch even when
+the root package can only `#check` an earlier theorem-bearing donor. Such names
+are routing/provenance metadata only: kernel separation and open-branch status
+are not mathematical closure and are never promoted to a GREEN external receipt.
 -/
 
 namespace MillenniumExternal
@@ -60,7 +61,7 @@ def pVersusNPLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .agdaSource
     dashiTerminalModule :=
-      "DASHI/Mathematics/Complexity/PNotEqualsNPClayCoreExact.agda + PNotEqualsNPDirectSATLowerBoundExact.agda"
+      "Agda PR #1129 PNotEqualsNPStandardMachineMaxCutClosureExact: StandardPolynomialCandidateCoverage + ResourceClosingCompiler -> UniversalPolynomialSATDecisionFailure -> SATNotInP -> PNotEqualsNP; fixed-standard opposite quotation and exact Cook budget below it"
     directCrossVersionAdapterKernelChecked := false }
 
 def riemannLane : TerminalLane :=
@@ -69,7 +70,7 @@ def riemannLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .leanAndAgda
     dashiTerminalModule :=
-      "Synthesis.RiemannSelectedRHMaxCutFrontier + Agda RH status/provenance mirror"
+      "Lean PR #50 Synthesis.RiemannSelectedRHMaxCutFrontier + Agda RH mirror; exact LeanDojo/Mathlib statement weld lives in MillenniumExternal, while A1/A2/Route-B analytic producers remain explicit"
     directCrossVersionAdapterKernelChecked := false }
 
 def navierStokesLane : TerminalLane :=
@@ -78,7 +79,7 @@ def navierStokesLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .leanAndAgda
     dashiTerminalModule :=
-      "ExternalClayNS/LiteralABCD.lean (literal independent C/D terminal, separate Lean kernel) + NSBControl.CombinedCurrentEndgame"
+      "PR #53 DASHILiteralClayNS.dashiExactFeffermanC/D in ExternalClayNS/LeanDojoExactTerminal.lean + NSBControl.CombinedCurrentEndgame; exact pinned external C/D terms source-written, kernel receipt pending"
     directCrossVersionAdapterKernelChecked := false }
 
 def hodgeLane : TerminalLane :=
@@ -87,7 +88,7 @@ def hodgeLane : TerminalLane :=
     upstreamStatus := .statementIncomplete
     dashiOwner := .leanAndAgda
     dashiTerminalModule :=
-      "Synthesis.MillenniumHodgeRealAlgebraicCycleMultiplicityExact + Agda HodgeAlgebraicCycleClayCoreExact"
+      "Merged Lean #40 Synthesis.MillenniumHodgeRulingCycleSwapMaxCutExact over genuine Mathlib AlgebraicCycle / actual P1_Q x P1_Q factor swap, plus Agda HodgeAlgebraicCycleClayCoreExact; cycle-class/naturality and universal primitive algebraic lift remain beyond the regression geometry"
     directCrossVersionAdapterKernelChecked := false }
 
 def bsdLane : TerminalLane :=
@@ -96,7 +97,7 @@ def bsdLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .leanAndAgda
     dashiTerminalModule :=
-      "Synthesis.MillenniumBSDUniversalRankWeld (literal L-series / Mordell-Weil same-curve rank weld; upstream Taylor-data packaging still separate)"
+      "Synthesis.MillenniumBSDUniversalRankWeld + MillenniumBSDSelmerDefectClayEquivalence (under same-curve analytic bridge, Clay core iff universal zero Selmer defect); merged MillenniumBSDActualE2ShaSameObjectMaxCut fixes the genuine E[2]/Sha[2] comparison boundary for the selected CM curve only, not the universal defect inhabitant"
     directCrossVersionAdapterKernelChecked := false }
 
 def yangMillsLane : TerminalLane :=
@@ -105,7 +106,7 @@ def yangMillsLane : TerminalLane :=
     upstreamStatus := .statementIncomplete
     dashiOwner := .leanAndAgda
     dashiTerminalModule :=
-      "YangMills.ContinuumWilsonCovariance + Agda OS/QFT/mass-gap physical same-object stack"
+      "Open Lean #7 conditional Welds.YMClayAssembly.massGapOfSourceCovariance / Welds.YMClayAssembly.massGapOfEnergyForms over retained bounded-form/BIDI assembly, plus YangMills.ContinuumWilsonCovariance and Agda OS/RP/QFT physical stack; actual physical cutoff/OS same-object inhabitants remain explicit"
     directCrossVersionAdapterKernelChecked := false }
 
 def poincareLane : TerminalLane :=
@@ -138,8 +139,8 @@ theorem yangMills_upstream_not_prize_target :
 /-! ## Existing root-package theorem-bearing surfaces
 
 These checks intentionally name declarations available to the root DASHI Lean
-package. Stronger terminals in nested projects are named above but are not
-silently imported across their independent package graphs.
+package. Stronger terminals in separate/open producer branches are named above
+but are not silently imported across their independent package graphs.
 -/
 
 #check Synthesis.QuarticFourSignedPolePair.RHMaxCutRoute.signedFifth_terminalPositive

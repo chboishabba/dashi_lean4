@@ -8,7 +8,7 @@ import Mathlib
 /-!
 # Teleodynamics / LILA exceptional-Weyl experiment adapter
 
-This module does not reconstruct any exceptional group.  It consumes theorem
+This module does not reconstruct any exceptional group. It consumes theorem
 owners physically present on the current Albert/F4 branch and separately records
 newer sibling-branch receipts when the live stack has not yet been restacked.
 
@@ -19,12 +19,13 @@ root/codebook use
   < generator action
   < Coxeter/composition law
   < same-object action intertwiner
+  < signed linear / Tits-extension action
   < held-out word equivariance
   < future/consumer sufficiency
   < empirical mechanism recognition.
 
 In particular, LILA using E8 roots is not itself evidence that the learned
-representation is W(E8)-equivariant.  The original punctured five-trit 240 is
+representation is W(E8)-equivariant. The original punctured five-trit 240 is
 also kept separate from the newer intrinsic structured E8 carrier: the paid E6
 action already obstructs the naive count-matched recognition route.
 -/
@@ -69,7 +70,7 @@ def canonicalE6Grade : SymmetryEvidenceGrade where
   modelEquivarianceEmpiricallyPaid := false
 
 /-- The folded finite W(F4) action and F4 root datum are physically present on
-this branch.  The concrete Albert derivation algebra is strong diagnostic
+this branch. The concrete Albert derivation algebra is strong diagnostic
 evidence, but the same-Lie-algebra/full Aut(Albert)=F4 theorem remains a
 distinct recognition leaf. -/
 def canonicalF4Grade : SymmetryEvidenceGrade where
@@ -85,7 +86,7 @@ def canonicalF4Grade : SymmetryEvidenceGrade where
   modelEquivarianceEmpiricallyPaid := false
 
 /-- Repo-wide, newer sibling PR #47 pays the intrinsic structured 240 E8
-Cartan/root datum and exact simple-reflection Coxeter relations.  This #52 stack
+Cartan/root datum and exact simple-reflection Coxeter relations. This #52 stack
 is based on an earlier #47 SHA, so that newest owner is deliberately a receipt
 here rather than an import. -/
 def canonicalE8Grade : SymmetryEvidenceGrade where
@@ -113,6 +114,30 @@ def structuredE8SiblingReceipt : StructuredE8SiblingReceipt where
   structuredRootCount := 240
   expectedWeylOrder := 696729600
   cartanCoxeterRootDatumReported := true
+  localKernelImportPresent := false
+
+/-- Agda sibling PR #1106 sharpens the E6 candidate beyond the finite 27-weight
+permutation action: six simple generators admit signed monomial cubic-preserving
+lifts on the first-Tits 27 carrier. Their square/Coxeter residuals generate a
+rank-six diagonal 2-torsion kernel, yielding an execution-grade monomial Tits
+extension of order 64*51840. This is deliberately a sibling receipt here. -/
+structure E6TitsExtensionSiblingReceipt where
+  sourcePR : Nat
+  finiteWeylOrder : Nat
+  diagonalKernelOrder : Nat
+  extensionOrder : Nat
+  signedCubicPreservingSimpleLiftsReported : Bool
+  strictWeylSectionReported : Bool
+  localKernelImportPresent : Bool
+  deriving Repr
+
+def e6TitsExtensionSiblingReceipt : E6TitsExtensionSiblingReceipt where
+  sourcePR := 1106
+  finiteWeylOrder := 51840
+  diagonalKernelOrder := 64
+  extensionOrder := 3317760
+  signedCubicPreservingSimpleLiftsReported := true
+  strictWeylSectionReported := false
   localKernelImportPresent := false
 
 /-- The original punctured five-trit carrier keeps its useful finite/action
@@ -152,7 +177,7 @@ universe u v w
 
 /-- A family of semantic interventions indexed by independently supplied
 symmetry generators, together with an exact representation-equivariance witness
-for every generator.  Nothing here says that a real model has such a witness. -/
+for every generator. Nothing here says that a real model has such a witness. -/
 structure GeneratorRepresentationEvidence
     {X : Type u} {Y : Type v} {Z : Type w}
     (model : X → Y) where
@@ -172,15 +197,18 @@ theorem generatorEvidenceImpliesModelEquivariance
   representationEquivarianceImpliesModelEquivariance (h.evidence g)
 
 /-- Approximate/empirical generator fits are intentionally kept apart from an
-exact group-action theorem.  Held-out words test whether fitted generators
+exact group-action theorem. Held-out words test whether fitted generators
 compose as the exceptional candidate predicts rather than merely fitting the
-training perturbations one at a time. -/
+training perturbations one at a time. For E6/first-Tits, the signed lift and
+2-torsion residual are measured separately from the 27-label permutation. -/
 structure HeldOutWeylWordReceipt where
   candidate : ExceptionalSymmetryCandidate
   trainingGeneratorCount : Nat
   heldOutWordCount : Nat
   generatorFitsMeasured : Bool
   coxeterResidualsMeasured : Bool
+  signedLinearLiftResidualsMeasured : Bool
+  titsKernelResidualsMeasured : Bool
   heldOutWordResidualsMeasured : Bool
   decoderCompatibilityMeasured : Bool
   futureConsumerMeasured : Bool
@@ -193,8 +221,11 @@ structure ExceptionalWeylExperimentBoundary where
   f4FoldedWeylOrder1152Reused : Bool
   e8IntrinsicRootDatumSiblingReceipt : Bool
   e8IntrinsicRootDatumLocalImport : Bool
+  firstTitsExtensionSiblingReceipt : Bool
+  firstTitsExtensionLocalImport : Bool
   originalT5ActionObstructionReused : Bool
   rootCodebookUseImpliesModelEquivariance : Bool
+  weightPermutationFitImpliesSignedLinearFit : Bool
   exactGeneratorFitEliminatesHeldOutEmpiricalTesting : Bool
   empiricalWeylFitCreatesMechanism : Bool
   empiricalWeylFitCreatesPhenomenology : Bool
@@ -207,19 +238,26 @@ def canonicalExperimentBoundary : ExceptionalWeylExperimentBoundary where
   f4FoldedWeylOrder1152Reused := true
   e8IntrinsicRootDatumSiblingReceipt := true
   e8IntrinsicRootDatumLocalImport := false
+  firstTitsExtensionSiblingReceipt := true
+  firstTitsExtensionLocalImport := false
   originalT5ActionObstructionReused := true
   rootCodebookUseImpliesModelEquivariance := false
+  weightPermutationFitImpliesSignedLinearFit := false
   exactGeneratorFitEliminatesHeldOutEmpiricalTesting := false
   empiricalWeylFitCreatesMechanism := false
   empiricalWeylFitCreatesPhenomenology := false
   empiricalWeylFitCreatesScientificAuthority := false
 
 inductive RootCodebookCreatesEquivariance : Prop
+inductive WeightPermutationFitCreatesSignedLinearFit : Prop
 inductive WeylFitCreatesMechanism : Prop
 inductive WeylFitCreatesPhenomenology : Prop
 
 theorem root_codebook_does_not_create_equivariance :
     ¬ RootCodebookCreatesEquivariance := by intro h; cases h
+
+theorem weight_permutation_fit_does_not_create_signed_linear_fit :
+    ¬ WeightPermutationFitCreatesSignedLinearFit := by intro h; cases h
 
 theorem weyl_fit_does_not_create_mechanism :
     ¬ WeylFitCreatesMechanism := by intro h; cases h

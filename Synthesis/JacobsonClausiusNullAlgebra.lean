@@ -68,9 +68,11 @@ theorem einsteinNullRelation_of_clausius_bekensteinHawking
       unruhTemperature ℏ κ *
         entropyVariationIntegrand (bekensteinHawkingAreaDensity ℏ G) Rkk) :
     Rkk = 8 * Real.pi * G * Tkk := by
+  have hden : (4 * ℏ * G : ℝ) ≠ 0 := by
+    exact mul_ne_zero (mul_ne_zero (by norm_num) hℏ) hG
   have hη : bekensteinHawkingAreaDensity ℏ G ≠ 0 := by
     unfold bekensteinHawkingAreaDensity
-    positivity
+    exact one_div_ne_zero hden
   have hrel := curvatureNullRelation_of_clausius
     ℏ κ (bekensteinHawkingAreaDensity ℏ G) Tkk Rkk hℏ hκ hη hC
   rw [jacobsonCoupling_eq_eightPiG ℏ G hℏ hG] at hrel

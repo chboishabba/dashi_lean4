@@ -6,6 +6,8 @@ import Integration.AntigravitySingleVacuumPhysicalMaxCut
 import Integration.AntigravitySingleVacuumPhysicalMaxCutTest
 import Integration.AntigravityVacuumControlCoordinateMaxCut
 import Integration.AntigravityVacuumControlCoordinateMaxCutTest
+import Integration.AntigravityPostScalarVacuumMaxCut
+import Integration.AntigravityPostScalarVacuumMaxCutTest
 import AgdaMirror.AntigravityOverlayZMirror
 
 /-!

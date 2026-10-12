@@ -23,16 +23,18 @@ to multiplication by the explicit primitive element
 
 The companion exact producer supplies literal T, M_gamma and an invertible Q
 with Q*T=M_gamma*Q.  This file moves the SAME-ACTION matrix identity into Lean
-on the literal six-dimensional F3 carrier, including an explicit two-sided
-inverse for Q.  The multiplicative-order 728 / punctured-orbit 728 / trivial
-stabilizer facts remain exact-producer authority in this owner unless separately
-reproved in Lean; no cardinality shortcut is used to create the matrix weld.
+on the literal six-dimensional F3 carrier and then independently kernel-checks
+the finite primitive action: M_gamma has exact order 728, and the orbit of the
+first standard basis vector has 728 distinct nonzero states with trivial
+stabilizer inside the 728 powers.  No group order/cardinality coincidence is
+used to create the same-action matrix weld.
 -/
 
 namespace Integration.Monster3BAtlasGF729SameObject
 
 abbrev F3 := ZMod 3
 abbrev Mat6 := Matrix (Fin 6) (Fin 6) F3
+abbrev Vec6 := Fin 6 → F3
 
 /-- Preferred primitive ATLAS-word X6 compression. -/
 def compressionT : Mat6 := ![
@@ -89,6 +91,44 @@ theorem compression_conjugate_to_selected_mul_gamma :
     compressionT = intertwinerQInv * selectedMulGamma * intertwinerQ := by
   native_decide
 
+------------------------------------------------------------------------
+-- Exact primitive cyclic action on the SAME F3^6 carrier.
+------------------------------------------------------------------------
+
+/-- Matrix action written directly to avoid introducing a second vector-space
+carrier. -/
+def matrixApply (M : Mat6) (x : Vec6) : Vec6 :=
+  fun i => ∑ j : Fin 6, M i j * x j
+
+/-- First standard basis vector; nonzero in the selected field chart. -/
+def primitiveSeed : Vec6 := fun i => if i = 0 then 1 else 0
+
+/-- The primitive matrix closes after exactly 728 powers. -/
+theorem selected_mul_gamma_pow_728 : selectedMulGamma ^ 728 = 1 := by
+  native_decide
+
+/-- No positive exponent below 728 is the identity. -/
+theorem selected_mul_gamma_no_positive_power_below_728 :
+    ∀ n : Fin 727, selectedMulGamma ^ (n.1 + 1) ≠ 1 := by
+  native_decide
+
+/-- Orbit of the chosen nonzero seed under one complete 728-power cycle. -/
+def primitiveOrbit : Finset Vec6 :=
+  (Finset.range 728).image fun n => matrixApply (selectedMulGamma ^ n) primitiveSeed
+
+/-- All 728 powers produce distinct states on this seed. -/
+theorem primitive_orbit_card : primitiveOrbit.card = 728 := by
+  native_decide
+
+/-- Powers in one full cycle that fix the selected nonzero seed. -/
+def canonicalSeedStabilizer : Finset Nat :=
+  (Finset.range 728).filter fun n =>
+    matrixApply (selectedMulGamma ^ n) primitiveSeed = primitiveSeed
+
+/-- Only the identity power fixes the seed. -/
+theorem canonical_seed_stabilizer_card : canonicalSeedStabilizer.card = 1 := by
+  native_decide
+
 /-- Source/executable metadata. -/
 def selectedSourceWord : String := "g2^-1 g1 g2^-1 g1 g2 g1 g2^-1"
 def selectedCompressionCharacteristicPolynomial : String :=
@@ -114,6 +154,8 @@ structure Boundary where
   puncturedOrbit728PaidByExactProducer : Bool
   puncturedStabilizerTrivialPaidByExactProducer : Bool
   primitiveOrderReprovedInLeanHere : Bool
+  puncturedOrbit728ReprovedInLeanHere : Bool
+  puncturedStabilizerTrivialReprovedInLeanHere : Bool
   fullMonsterOrbitSemanticsPaid : Bool
   physicalMonster3BRealizationPaid : Bool
   deriving Repr
@@ -129,7 +171,9 @@ def canonicalBoundary : Boundary where
   primitiveOrder728PaidByExactProducer := true
   puncturedOrbit728PaidByExactProducer := true
   puncturedStabilizerTrivialPaidByExactProducer := true
-  primitiveOrderReprovedInLeanHere := false
+  primitiveOrderReprovedInLeanHere := true
+  puncturedOrbit728ReprovedInLeanHere := true
+  puncturedStabilizerTrivialReprovedInLeanHere := true
   fullMonsterOrbitSemanticsPaid := false
   physicalMonster3BRealizationPaid := false
 

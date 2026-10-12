@@ -56,15 +56,23 @@ private def standardResolutionOps : List ResolutionOperation :=
 def pVersusNPResolution : ProofResolutionLane :=
   { problem := .pVersusNP
     producerSearch :=
-      [ "PNotEqualsNPQ1TerminalSemanticsDecisionFailureExact.universalQ1TerminalPackageGivesUniversalDecisionFailure"
-      , "PNotEqualsNPQ1TerminalSemanticsDecisionFailureExact.universalDecisionFailureGivesUniversalQ1TerminalPackage"
-      , "PNotEqualsNPQ1TerminalSemanticsDecisionFailureExact.universalQ1TerminalPackageClosesPNotEqualsNP"
-      , "PNotEqualsNPGeneratedClosedQ1DiscoveryExact.GeneratedExecutedQ1StateConstructor"
-      , "PNotEqualsNPQ1FiniteCodeClayClosureExact.q1FiniteCodeContradictsSATInP"
-      , "PNotEqualsNPDirectSATLowerBoundExact.universalDecisionFailureClosesPNotEqualsNP"
-      , "PNotEqualsNPClayCoreExact.satLowerBoundProducerClosesClayCore"
-      , "UniversalPolynomialSATDecisionFailure"
-      , "ConcreteTapeCookLevinCookFormulaExact"
+      [ "PNotEqualsNPStandardMachineMaxCutClosureExact.StandardPolynomialCandidateCoverage"
+      , "PNotEqualsNPStandardMachineMaxCutClosureExact.ResourceClosingCompiler"
+      , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesCandidateFailure"
+      , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesUniversalFailure"
+      , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesSATNotInP"
+      , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesPNotEqualsNP"
+      , "PNotEqualsNPFixedStandardOppositeQuotationExact.standardEndpointRealizationGivesDecisionFailure"
+      , "PNotEqualsNPFixedStandardOppositeQuotationExact.standardEndpointToFixedSemanticQuotation"
+      , "PNotEqualsNPResourceClosingBudgetNecessityExact.candidateOwnStepsFitCookBudget"
+      , "PNotEqualsNPResourceClosingBudgetNecessityExact.prefixFitsCookBudget"
+      , "PNotEqualsNPResourceClosingBudgetNecessityExact.suffixFitsCookBudget"
+      , "PNotEqualsNPStructuralResourceClosingCompilerExact.StructuralResourceClosingFixedProgramCompilation"
+      , "PNotEqualsNPResourceClosingStandardCompilerExact.ResourceClosingFixedProgramCompilation"
+      , "PNotEqualsNPPolynomiallyClockedStandardCandidateExact.PolynomiallyClockedStandardCandidate"
+      , "PNotEqualsNPDirectSATLowerBoundExact.UniversalPolynomialSATDecisionFailure"
+      , "PNotEqualsNPClayCoreExact.SATNotInP"
+      , "PNotEqualsNPClayCoreExact.PNotEqualsNP"
       , "LeanDojo finite-alphabet SAT language/machine transport" ]
     preferredOperations := standardResolutionOps
     externalCompiler := "MillenniumExternal.clayPNotEqualsNP_of_language_outside_p"
@@ -145,6 +153,15 @@ theorem pnp_rh_bsd_still_require_donor_resolution :
     pVersusNPResolution.resolvedSourceTerm = none ∧
     rhResolution.resolvedSourceTerm = none ∧
     bsdResolution.resolvedSourceTerm = none := by
+  decide
+
+/-- The latest Agda P-vs-NP recut reduces the ordinary standard-machine route to
+candidate-model coverage plus one finite resource-closing compiler.  Those are
+producer-search targets only: the external Lean adapter still has no unconditional
+source term until actual inhabitants are located and transported. -/
+theorem pnp_resolution_uses_standard_machine_maxcut :
+    pVersusNPResolution.producerSearch.contains
+      "PNotEqualsNPStandardMachineMaxCutClosureExact.ResourceClosingCompiler" = true := by
   decide
 
 /-- The latest main-branch BSD recut is physically imported here: under the

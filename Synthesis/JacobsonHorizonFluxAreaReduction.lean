@@ -53,9 +53,12 @@ def linearizedAreaDensity (λ Rkk : ℝ) : ℝ :=
 -/
 theorem linearizedAreaDensity_eq_factored (λ Rkk : ℝ) :
     linearizedAreaDensity λ Rkk = λ * areaVariationIntegrand Rkk := by
+  have hcoeff :
+      linearizedExpansionCoefficient Rkk = areaVariationIntegrand Rkk := by
+    simpa [factoredLinearizedAreaVariation] using
+      factoredLinearizedAreaVariation_eq_clausius Rkk
   unfold linearizedAreaDensity linearizedExpansion
-  rw [factoredLinearizedAreaVariation_eq_clausius]
-  rfl
+  rw [hcoeff]
 
 /-- The common affine factor on the heat and area sides is now explicit. If a
 same-object physical construction supplies equality of the two weighted

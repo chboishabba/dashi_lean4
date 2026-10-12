@@ -85,8 +85,11 @@ import Integration.F4RootWeylExact
 import Integration.F4AlbertDerivationRecognitionBoundary
 import Integration.F4AlbertCurrentMaxCut
 
--- External Monster-3B normalizer source/intertwiner frontier.
+-- External Monster-3B normalizer source/intertwiner frontier, now extended
+-- through the explicit selected-GF(729) 6x6 same-action weld.
 import Integration.Monster3BAtlasSymplectic12Receipt
+import Integration.Monster3BAtlasGF729SameObject
+import Integration.Monster3BAtlasGF729SameObjectRegression
 
 import Integration.LilaMonsterGeometricReasoningCrossPollination
 import Integration.GeometricReasoningSemanticInterventionRegression

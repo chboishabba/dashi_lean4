@@ -5,6 +5,8 @@ import Dashi.Biology.AutismVaccineClaimPromotionAuditRegression
 import Dashi.Biology.AutismVaccinePersuasionMediaExtensionExact
 import Dashi.Biology.AutismTranscriptHighAlphaCrossPollinationExact
 import Dashi.Biology.AutismTranscriptHighAlphaCrossPollinationRegression
+import Dashi.Biology.PersuasionTransmissionTruthBoundaryExact
+import Dashi.Biology.PersuasionTransmissionTruthBoundaryRegression
 
 namespace Dashi.Biology.AutismVaccineAuditEverything
 end Dashi.Biology.AutismVaccineAuditEverything

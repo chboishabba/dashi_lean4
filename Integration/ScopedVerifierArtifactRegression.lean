@@ -13,6 +13,8 @@ open Integration.GAISArchitectureComparison
 example : canonicalScopedVerifierArchitectureBoundary.universalFalsehoodDetectorClaimed = false := rfl
 example : canonicalScopedVerifierArchitectureBoundary.deterministicDecodeCreatesSemanticCorrectness = false := rfl
 example : canonicalEvaluationBoundary.architectureImpliesEmpiricalWin = false := rfl
+example : canonicalEvaluationBoundary.consumerMismatchAccepted = false := rfl
+example : canonicalEvaluationBoundary.validatorScopeMismatchAccepted = false := rfl
 example : canonicalEvaluationBoundary.coverageSeparatedFromAccuracy = true := rfl
 example : canonicalBoundary.validatorPassImpliesAllConsumerSufficiency = false := rfl
 example : canonicalGAISComparisonBoundary.empiricalHeadToHeadStillRequired = true := rfl

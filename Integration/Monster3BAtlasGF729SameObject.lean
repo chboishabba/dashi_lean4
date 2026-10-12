@@ -89,19 +89,10 @@ theorem intertwiner_left_inverse : intertwinerQInv * intertwinerQ = 1 := by
 theorem intertwiner_right_inverse : intertwinerQ * intertwinerQInv = 1 := by
   native_decide
 
-/-- Conjugacy in the more familiar solved form. -/
+/-- Solved conjugacy, checked again as a literal finite matrix identity. -/
 theorem compression_conjugate_to_selected_mul_beta :
     compressionT = intertwinerQInv * selectedMulBeta * intertwinerQ := by
-  calc
-    compressionT = 1 * compressionT := by simp
-    _ = (intertwinerQInv * intertwinerQ) * compressionT := by
-      rw [intertwiner_left_inverse]
-    _ = intertwinerQInv * (intertwinerQ * compressionT) := by
-      simp [Matrix.mul_assoc]
-    _ = intertwinerQInv * (selectedMulBeta * intertwinerQ) := by
-      rw [compression_selected_action_intertwines]
-    _ = intertwinerQInv * selectedMulBeta * intertwinerQ := by
-      simp [Matrix.mul_assoc]
+  native_decide
 
 /-- Exact producer metadata retained as data, not promoted to a kernel proof of
 polynomial irreducibility in this owner. -/

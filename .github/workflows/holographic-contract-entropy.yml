@@ -16,6 +16,8 @@ on:
       - 'Synthesis/JacobsonNullConeRigidityRegression.lean'
       - 'Synthesis/JacobsonFlat31RigidityAdapter.lean'
       - 'Synthesis/JacobsonFlat31RigidityAdapterRegression.lean'
+      - 'Synthesis/JacobsonNullConeRigidityTransport.lean'
+      - 'Synthesis/JacobsonNullConeRigidityTransportRegression.lean'
       - '.github/workflows/holographic-contract-entropy.yml'
   workflow_dispatch:
 
@@ -37,3 +39,5 @@ jobs:
           lake env lean Synthesis/JacobsonNullConeRigidityRegression.lean
           lake env lean Synthesis/JacobsonFlat31RigidityAdapter.lean
           lake env lean Synthesis/JacobsonFlat31RigidityAdapterRegression.lean
+          lake env lean Synthesis/JacobsonNullConeRigidityTransport.lean
+          lake env lean Synthesis/JacobsonNullConeRigidityTransportRegression.lean

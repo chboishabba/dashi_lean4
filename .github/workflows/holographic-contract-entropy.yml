@@ -8,6 +8,8 @@ on:
     paths:
       - 'Synthesis/HolographicContractEntropy.lean'
       - 'Synthesis/HolographicContractEntropyRegression.lean'
+      - 'Synthesis/HolographicMaxEntangledCutRT.lean'
+      - 'Synthesis/HolographicMaxEntangledCutRTRegression.lean'
       - '.github/workflows/holographic-contract-entropy.yml'
   workflow_dispatch:
 
@@ -17,7 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
-      - name: Build exact holographic contract entropy proof
+      - name: Build holographic entropy and corrected RT proofs
         run: |
           lake env lean Synthesis/HolographicContractEntropy.lean
           lake env lean Synthesis/HolographicContractEntropyRegression.lean
+          lake env lean Synthesis/HolographicMaxEntangledCutRT.lean
+          lake env lean Synthesis/HolographicMaxEntangledCutRTRegression.lean

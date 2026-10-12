@@ -58,6 +58,24 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         self.assertIn("Millennium.ClayPVersusNP.Formulations.NegativeBranch", text)
         self.assertIn("#print axioms clayPNotEqualsNP_of_language_outside_p", text)
 
+    def test_pnp_resolution_tracks_latest_standard_machine_maxcut(self):
+        resolution = RESOLUTION.read_text(encoding="utf-8")
+        for donor in (
+            "PNotEqualsNPStandardMachineMaxCutClosureExact.StandardPolynomialCandidateCoverage",
+            "PNotEqualsNPStandardMachineMaxCutClosureExact.ResourceClosingCompiler",
+            "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesUniversalFailure",
+            "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesSATNotInP",
+            "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesPNotEqualsNP",
+            "PNotEqualsNPFixedStandardOppositeQuotationExact.standardEndpointRealizationGivesDecisionFailure",
+            "PNotEqualsNPResourceClosingBudgetNecessityExact.candidateOwnStepsFitCookBudget",
+        ):
+            self.assertIn(donor, resolution)
+        start = resolution.index("def pVersusNPResolution")
+        end = resolution.index("def rhResolution", start)
+        pnp = resolution[start:end]
+        self.assertIn("resolvedSourceTerm := none", pnp)
+        self.assertIn("newMathematicsPermitted := false", pnp)
+
     def test_bsd_finite_rank_is_derived_not_an_adapter_field(self):
         text = EXACT.read_text(encoding="utf-8")
         self.assertIn("theorem leanDojoRank_finite_of_projective_fg", text)
@@ -150,6 +168,12 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
             self.assertIn("frontier := .proofResolution", block)
             self.assertNotIn("state := .redMath", block)
             self.assertNotIn("state := .greenExact", block)
+
+        pnp_start = frontier.index("problem := .pVersusNP")
+        pnp_end = frontier.index("problem := .riemann", pnp_start)
+        pnp = frontier[pnp_start:pnp_end]
+        self.assertIn("resource-closing", pnp)
+        self.assertIn("candidate coverage", pnp)
 
         bsd_start = frontier.index("problem := .birchSwinnertonDyer")
         bsd_end = frontier.index("problem := .yangMills", bsd_start)

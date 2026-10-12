@@ -11,7 +11,10 @@ example : canonicalE8Grade.localTheoremOwnerPresent = false := rfl
 example : canonicalT5Grade.sameActionRecognitionBlocked = true := rfl
 example : canonicalExperimentBoundary.e8IntrinsicRootDatumSiblingReceipt = true := rfl
 example : canonicalExperimentBoundary.e8IntrinsicRootDatumLocalImport = false := rfl
+example : canonicalExperimentBoundary.firstTitsExtensionSiblingReceipt = true := rfl
+example : canonicalExperimentBoundary.firstTitsExtensionLocalImport = false := rfl
 example : canonicalExperimentBoundary.rootCodebookUseImpliesModelEquivariance = false := rfl
+example : canonicalExperimentBoundary.weightPermutationFitImpliesSignedLinearFit = false := rfl
 example : canonicalExperimentBoundary.exactGeneratorFitEliminatesHeldOutEmpiricalTesting = false := rfl
 example : canonicalExperimentBoundary.empiricalWeylFitCreatesMechanism = false := rfl
 

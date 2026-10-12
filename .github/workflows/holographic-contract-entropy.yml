@@ -58,3 +58,5 @@ jobs:
           lake env lean Synthesis/JacobsonBianchiCosmologicalConstancyRegression.lean
           lake env lean Synthesis/JacobsonCosmologicalConstancyMathlib.lean
           lake env lean Synthesis/JacobsonCosmologicalConstancyMathlibRegression.lean
+          lake env lean Synthesis/JacobsonRecoveredLambdaConstancy.lean
+          lake env lean Synthesis/JacobsonRecoveredLambdaConstancyRegression.lean

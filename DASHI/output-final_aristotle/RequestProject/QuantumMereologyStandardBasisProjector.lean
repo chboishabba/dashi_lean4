@@ -157,7 +157,7 @@ is the unitary conjugate of the diagonal matrix of its real eigenvalues. -/
 theorem hermitian_spectral_theorem
     {A : Matrix I I ℂ} (hA : A.IsHermitian) :
     A =
-      Matrix.Unitary.conjStarAlgAut ℂ _ hA.eigenvectorUnitary
+      Unitary.conjStarAlgAut ℂ _ hA.eigenvectorUnitary
         (Matrix.diagonal (RCLike.ofReal ∘ hA.eigenvalues)) :=
   hA.spectral_theorem
 
@@ -195,7 +195,7 @@ noncomputable def eigenvectorUnitary
 theorem spectral_theorem
     (A : SelectedCPOHermitianMatrixAttachment (I := I)) :
     A.selectedCPOFactorMatrix =
-      Matrix.Unitary.conjStarAlgAut ℂ _ A.eigenvectorUnitary
+      Unitary.conjStarAlgAut ℂ _ A.eigenvectorUnitary
         (Matrix.diagonal (RCLike.ofReal ∘ A.eigenvalues)) :=
   A.selectedCPOFactorHermitian.spectral_theorem
 

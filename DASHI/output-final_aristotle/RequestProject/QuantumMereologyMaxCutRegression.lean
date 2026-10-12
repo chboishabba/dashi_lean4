@@ -1,4 +1,5 @@
 import RequestProject.QuantumMereologyMaxCut
+import RequestProject.QuantumMereologyStandardBasisProjector
 
 namespace QuantumMereology
 namespace MaxCutRegression
@@ -26,6 +27,14 @@ example :
 example :
     MaxCut.canonicalBoundary.holographicBoundaryAdequacyIsConsumerRelative = true :=
   MaxCut.holographic_boundary_adequacy_is_consumer_relative
+
+example :
+    StandardBasisProjector.canonicalBoundary.standardBasisProjectorFamilyPaid = true :=
+  StandardBasisProjector.standard_basis_projector_family_paid
+
+example :
+    StandardBasisProjector.canonicalBoundary.arbitrarySelectedCPOEigenbasisPaid = false :=
+  StandardBasisProjector.arbitrary_selected_cpo_eigenbasis_not_paid
 
 end MaxCutRegression
 end QuantumMereology

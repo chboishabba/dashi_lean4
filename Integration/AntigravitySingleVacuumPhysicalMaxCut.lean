@@ -81,7 +81,11 @@ def canonicalDifferentialVacuumRouteBoundary : DifferentialVacuumRouteBoundary w
 structure ContinuumStressRouteBoundary where
   finiteOnePointOrientationOwned : Bool
   sameR136StressPairingSurfaceOwned : Bool
-  directFiniteContinuumSameObjectPaymentRequired : Bool
+  concreteSameSequenceTailRouteOwned : Bool
+  exactFiniteContinuumEqualityRequiredOnPreferredRoute : Bool
+  pinnedFiniteExpectationEqualsDGammaRequired : Bool
+  concreteSameSequenceTailBoundRequired : Bool
+  strictFinitePlusTailMarginRequired : Bool
   euclideanLorentzianSameStateContinuationRequired : Bool
   localCWightmanTerminalCompilerOwnedAfterPhysicalProducers : Bool
   staticVacuumGeometryRequired : Bool
@@ -90,7 +94,11 @@ structure ContinuumStressRouteBoundary where
 def canonicalContinuumStressRouteBoundary : ContinuumStressRouteBoundary where
   finiteOnePointOrientationOwned := true
   sameR136StressPairingSurfaceOwned := true
-  directFiniteContinuumSameObjectPaymentRequired := true
+  concreteSameSequenceTailRouteOwned := true
+  exactFiniteContinuumEqualityRequiredOnPreferredRoute := false
+  pinnedFiniteExpectationEqualsDGammaRequired := true
+  concreteSameSequenceTailBoundRequired := true
+  strictFinitePlusTailMarginRequired := true
   euclideanLorentzianSameStateContinuationRequired := true
   localCWightmanTerminalCompilerOwnedAfterPhysicalProducers := true
   staticVacuumGeometryRequired := false
@@ -142,6 +150,11 @@ def physicalDeltaLambdaLockInAlgebraOwnedAfterReceipt : Bool := true
 def differentialReversalParityStillRequired : Bool := true
 def dynamicSpin2TTProducerStillRequired : Bool := true
 def staticRouteRequiresR136Weld : Bool := false
+def continuumConcreteSameSequenceTailRouteOwned : Bool := true
+def continuumExactFiniteEqualsR136Required : Bool := false
+def continuumPinnedFiniteExpectationEqualsDGammaRequired : Bool := true
+def continuumConcreteSameSequenceTailBoundRequired : Bool := true
+def continuumStrictFinitePlusTailMarginRequired : Bool := true
 def continuumRouteRequiresStaticVacuumGeometry : Bool := false
 def acceptedMeasuredGAuthorityReceiptStillRequired : Bool := true
 def sourceStressLengthSquaredProductStillRequired : Bool := true

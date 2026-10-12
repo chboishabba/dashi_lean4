@@ -25,6 +25,10 @@ jobs:
           lake env lean Synthesis/HolographicMaxEntangledCutRTRegression.lean
           lake env lean Synthesis/HolographicZModCarrierFactorization.lean
           lake env lean Synthesis/HolographicZModCarrierFactorizationRegression.lean
+          lake env lean Synthesis/HolographicCorrectedZModRT.lean
+          lake env lean Synthesis/HolographicCorrectedZModRTRegression.lean
+          lake env lean Synthesis/HolographicUnbalancedCorrectedRT.lean
+          lake env lean Synthesis/HolographicUnbalancedCorrectedRTRegression.lean
           lake env lean Synthesis/HolographicUpstreamStateContractNoGo.lean
           lake env lean Synthesis/HolographicUpstreamStateContractNoGoRegression.lean
           lake env lean Synthesis/JacobsonNullConeRecovery.lean

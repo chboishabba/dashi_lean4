@@ -12,6 +12,10 @@ on:
       - 'Synthesis/HolographicMaxEntangledCutRTRegression.lean'
       - 'Synthesis/JacobsonNullConeRecovery.lean'
       - 'Synthesis/JacobsonNullConeRecoveryRegression.lean'
+      - 'Synthesis/JacobsonNullConeRigidity.lean'
+      - 'Synthesis/JacobsonNullConeRigidityRegression.lean'
+      - 'Synthesis/JacobsonFlat31RigidityAdapter.lean'
+      - 'Synthesis/JacobsonFlat31RigidityAdapterRegression.lean'
       - '.github/workflows/holographic-contract-entropy.yml'
   workflow_dispatch:
 
@@ -29,3 +33,7 @@ jobs:
           lake env lean Synthesis/HolographicMaxEntangledCutRTRegression.lean
           lake env lean Synthesis/JacobsonNullConeRecovery.lean
           lake env lean Synthesis/JacobsonNullConeRecoveryRegression.lean
+          lake env lean Synthesis/JacobsonNullConeRigidity.lean
+          lake env lean Synthesis/JacobsonNullConeRigidityRegression.lean
+          lake env lean Synthesis/JacobsonFlat31RigidityAdapter.lean
+          lake env lean Synthesis/JacobsonFlat31RigidityAdapterRegression.lean

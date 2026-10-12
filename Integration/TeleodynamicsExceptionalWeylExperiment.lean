@@ -1,7 +1,6 @@
 import Integration.SemanticInterventionEquivariance
 import Integration.E6Minuscule27SameObject
 import Integration.E6F4WeylFold
-import Integration.E8StructuredFullWeylRecognition
 import Integration.E8TernaryBranchingActionObstruction
 import Integration.RationalAlbertF4LieMaxCut
 import Mathlib
@@ -9,9 +8,9 @@ import Mathlib
 /-!
 # Teleodynamics / LILA exceptional-Weyl experiment adapter
 
-This module does not reconstruct any exceptional group.  It consumes the
-stronger repository-native donors already paid on this branch and turns them
-into a model-facing intervention protocol.
+This module does not reconstruct any exceptional group.  It consumes theorem
+owners physically present on the current Albert/F4 branch and separately records
+newer sibling-branch receipts when the live stack has not yet been restacked.
 
 The evidence ladder is deliberately strict:
 
@@ -26,8 +25,8 @@ root/codebook use
 
 In particular, LILA using E8 roots is not itself evidence that the learned
 representation is W(E8)-equivariant.  The original punctured five-trit 240 is
-also kept separate from the intrinsic structured E8 carrier: the paid E6 action
-already obstructs the naive count-matched recognition route.
+also kept separate from the newer intrinsic structured E8 carrier: the paid E6
+action already obstructs the naive count-matched recognition route.
 -/
 
 namespace Integration.TeleodynamicsExceptionalWeylExperiment
@@ -48,14 +47,15 @@ structure SymmetryEvidenceGrade where
   finiteWeylActionPaid : Bool
   coxeterRelationsPaid : Bool
   sameObjectFiniteActionPaid : Bool
-  intrinsicRootDatumPaid : Bool
+  intrinsicRootDatumPaidRepoWide : Bool
+  localTheoremOwnerPresent : Bool
   continuousExceptionalGroupPaid : Bool
   modelEquivarianceEmpiricallyPaid : Bool
   deriving Repr
 
 /-- The literal E8 mixed fibre is already same-object recognized with the
-omega5 minuscule E6 orbit, including Schlaefli geometry and reflection-relation
-intertwining. -/
+omega5 minuscule E6 orbit on this branch, including Schlaefli geometry and
+reflection-relation intertwining. -/
 def canonicalE6Grade : SymmetryEvidenceGrade where
   candidate := .e6Minuscule27
   finiteCarrierPaid := true
@@ -63,13 +63,15 @@ def canonicalE6Grade : SymmetryEvidenceGrade where
   finiteWeylActionPaid := true
   coxeterRelationsPaid := true
   sameObjectFiniteActionPaid := true
-  intrinsicRootDatumPaid := true
+  intrinsicRootDatumPaidRepoWide := true
+  localTheoremOwnerPresent := true
   continuousExceptionalGroupPaid := false
   modelEquivarianceEmpiricallyPaid := false
 
-/-- The folded finite W(F4) action and F4 root datum are paid.  The concrete
-Albert derivation algebra is strong diagnostic evidence, but the same-Lie-
-algebra/full Aut(Albert)=F4 theorem remains a distinct recognition leaf. -/
+/-- The folded finite W(F4) action and F4 root datum are physically present on
+this branch.  The concrete Albert derivation algebra is strong diagnostic
+evidence, but the same-Lie-algebra/full Aut(Albert)=F4 theorem remains a
+distinct recognition leaf. -/
 def canonicalF4Grade : SymmetryEvidenceGrade where
   candidate := .f4FoldedAlbert
   finiteCarrierPaid := true
@@ -77,13 +79,15 @@ def canonicalF4Grade : SymmetryEvidenceGrade where
   finiteWeylActionPaid := true
   coxeterRelationsPaid := true
   sameObjectFiniteActionPaid := true
-  intrinsicRootDatumPaid := true
+  intrinsicRootDatumPaidRepoWide := true
+  localTheoremOwnerPresent := true
   continuousExceptionalGroupPaid := false
   modelEquivarianceEmpiricallyPaid := false
 
-/-- The structured 240 carrier has an intrinsic E8 Cartan/root datum and exact
-simple-reflection Coxeter relations.  The Python group-order diagnostic is not
-needed to call the finite root datum paid. -/
+/-- Repo-wide, newer sibling PR #47 pays the intrinsic structured 240 E8
+Cartan/root datum and exact simple-reflection Coxeter relations.  This #52 stack
+is based on an earlier #47 SHA, so that newest owner is deliberately a receipt
+here rather than an import. -/
 def canonicalE8Grade : SymmetryEvidenceGrade where
   candidate := .e8Structured240
   finiteCarrierPaid := true
@@ -91,9 +95,25 @@ def canonicalE8Grade : SymmetryEvidenceGrade where
   finiteWeylActionPaid := true
   coxeterRelationsPaid := true
   sameObjectFiniteActionPaid := true
-  intrinsicRootDatumPaid := true
+  intrinsicRootDatumPaidRepoWide := true
+  localTheoremOwnerPresent := false
   continuousExceptionalGroupPaid := false
   modelEquivarianceEmpiricallyPaid := false
+
+structure StructuredE8SiblingReceipt where
+  sourcePR : Nat
+  structuredRootCount : Nat
+  expectedWeylOrder : Nat
+  cartanCoxeterRootDatumReported : Bool
+  localKernelImportPresent : Bool
+  deriving Repr
+
+def structuredE8SiblingReceipt : StructuredE8SiblingReceipt where
+  sourcePR := 47
+  structuredRootCount := 240
+  expectedWeylOrder := 696729600
+  cartanCoxeterRootDatumReported := true
+  localKernelImportPresent := false
 
 /-- The original punctured five-trit carrier keeps its useful finite/action
 receipts, but the already-paid E6 action blocks the naive count-matched E8
@@ -109,8 +129,7 @@ def canonicalT5Grade : T5ObstructionGrade where
   sameActionRecognitionBlocked := true
   allPossibleRecognitionsBlocked := false
 
--- Exact donor pins: these make the adapter depend on theorem-bearing owners,
--- not on copied prose or coincident numbers.
+-- Exact donor pins physically present on THIS branch.
 theorem e6_same_object_donor_paid :
     Integration.E6Minuscule27SameObject.canonicalBoundary.e6Minuscule27SameObjectPaid = true :=
   rfl
@@ -118,10 +137,6 @@ theorem e6_same_object_donor_paid :
 theorem f4_weyl_order_donor_paid :
     Integration.E6F4WeylFold.foldedGeneratedSet.card = 1152 :=
   Integration.E6F4WeylFold.folded_generated_card_1152
-
-theorem e8_root_datum_donor_paid :
-    Integration.E8StructuredFullWeylRecognition.StructuredE8RootDatumRecognition :=
-  Integration.E8StructuredFullWeylRecognition.structured_e8_root_datum_recognition
 
 theorem t5_naive_same_action_route_blocked :
     ¬ Integration.E8TernaryBranchingActionObstruction.MixedAPlusSameActionRecognition :=
@@ -176,7 +191,8 @@ structure ExceptionalWeylExperimentBoundary where
   existingWeylOwnersReused : Bool
   e6SameObjectMinusculeActionReused : Bool
   f4FoldedWeylOrder1152Reused : Bool
-  e8IntrinsicRootDatumReused : Bool
+  e8IntrinsicRootDatumSiblingReceipt : Bool
+  e8IntrinsicRootDatumLocalImport : Bool
   originalT5ActionObstructionReused : Bool
   rootCodebookUseImpliesModelEquivariance : Bool
   exactGeneratorFitEliminatesHeldOutEmpiricalTesting : Bool
@@ -189,7 +205,8 @@ def canonicalExperimentBoundary : ExceptionalWeylExperimentBoundary where
   existingWeylOwnersReused := true
   e6SameObjectMinusculeActionReused := true
   f4FoldedWeylOrder1152Reused := true
-  e8IntrinsicRootDatumReused := true
+  e8IntrinsicRootDatumSiblingReceipt := true
+  e8IntrinsicRootDatumLocalImport := false
   originalT5ActionObstructionReused := true
   rootCodebookUseImpliesModelEquivariance := false
   exactGeneratorFitEliminatesHeldOutEmpiricalTesting := false

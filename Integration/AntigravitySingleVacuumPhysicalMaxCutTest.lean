@@ -12,6 +12,7 @@ example : renormalizedMetricResponseReceiptRequired = true := rfl
 example : normalizationToGravityCalibrationRequired = true := rfl
 example : cosmologicalRenormalizationConventionRequired = true := rfl
 example : positiveSourceNormalizedStaticGeometryOwned = true := rfl
+example : dimensionedRadiusSquaredTargetOwnedAfterPhysicalLambda = true := rfl
 example : rationalSquareDensityRequired = false := rfl
 example : staticRouteNeedsPositivePromotedVacuumSign = true := rfl
 example : normalizationDifferenceAlreadyPhysicalDeltaLambda = false := rfl
@@ -22,6 +23,8 @@ example : differentialRouteNeedsNonzeroSourceDifference = true := rfl
 example : differentialRouteRequiresStaticAdditiveZero = false := rfl
 example : differentialScalarMetricResponseOwnedWithoutReceipt = false := rfl
 example : differentialCandidateKottlerAlgebraOwned = true := rfl
+example : physicalDeltaLambdaLockInAlgebraOwnedAfterReceipt = true := rfl
+example : differentialReversalParityStillRequired = true := rfl
 example : dynamicSpin2TTProducerStillRequired = true := rfl
 example : staticRouteRequiresR136Weld = false := rfl
 example : continuumRouteRequiresStaticVacuumGeometry = false := rfl

@@ -7,14 +7,14 @@ No new rank carrier is introduced here.
 
 `UniversalSelmerDefectAnalyticBridge` already names the genuinely independent
 analytic comparison work between the same-curve Selmer rank and the canonical
-analytic rank. Conditional on that bridge, the remaining arithmetic statement
+analytic rank.  Conditional on that bridge, the remaining arithmetic statement
 is exactly zero defect:
 
   BSDClayCoreObligation bg
     <-> UniversalSelmerDefectZero bg bridge.arithmetic.
 
 Thus a Selmer route cannot hide the reverse BSD inequality inside a generic
-`selmer <= MW` premise. On the existing same-curve decomposition that premise
+`selmer <= MW` premise.  On the existing same-curve decomposition that premise
 is literally the zero-defect theorem.
 -/
 
@@ -37,7 +37,7 @@ theorem universalSelmerDefectZero_of_bsdClayCore
     (bridge.arithmetic.selmer_le_mordellWeil_iff_defect_zero E).1
       hSelmerLeMW
 
-/-- Exact max-cut equivalence for the Selmer route. The analytic bridge is not
+/-- Exact max-cut equivalence for the Selmer route.  The analytic bridge is not
 proved here and is not counted as arithmetic progress. -/
 theorem bsdClayCore_iff_universalSelmerDefectZero
     (bg : BSDEstablishedBackground)

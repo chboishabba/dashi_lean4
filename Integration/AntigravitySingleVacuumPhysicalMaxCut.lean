@@ -5,11 +5,12 @@ namespace Integration.AntigravitySingleVacuumPhysicalMaxCut
 /-!
 Structural Lean mirror of the current Agda antigravity post-normalization cut.
 
-This file deliberately mirrors scheduling/non-promotion, not Agda proof objects.
-The source-normalization/free-energy tranche is treated as paid for scheduling,
-but a normalization constant is NOT thereby a gravitational Lambda.  Physical
-promotion still requires the same-state renormalized metric/volume response and
-one cosmological renormalization convention.
+This file mirrors scheduling/non-promotion, not Agda proof objects.  The
+source-normalization/free-energy tranche is treated as paid for scheduling, but
+a normalization constant is NOT thereby a gravitational Lambda.  Physical
+promotion still requires same-state renormalized metric/volume response,
+normalization-to-gravity calibration, and a cosmological renormalization
+convention.
 -/
 
 structure SourceVacuumInformationBoundary where
@@ -28,6 +29,7 @@ structure StaticSingleVacuumRouteBoundary where
   sourceNormalizationAlreadyPhysicalLambda : Bool
   candidateVacuumStressRayOwned : Bool
   renormalizedMetricResponseReceiptRequired : Bool
+  normalizationToGravityCalibrationRequired : Bool
   cosmologicalRenormalizationConventionRequired : Bool
   vacuumEquationOfStateOwnedAfterReceipt : Bool
   positiveSourceNormalizedStaticGeometryOwned : Bool
@@ -41,6 +43,7 @@ def canonicalStaticSingleVacuumRouteBoundary : StaticSingleVacuumRouteBoundary w
   sourceNormalizationAlreadyPhysicalLambda := false
   candidateVacuumStressRayOwned := true
   renormalizedMetricResponseReceiptRequired := true
+  normalizationToGravityCalibrationRequired := true
   cosmologicalRenormalizationConventionRequired := true
   vacuumEquationOfStateOwnedAfterReceipt := true
   positiveSourceNormalizedStaticGeometryOwned := true
@@ -53,7 +56,9 @@ structure DifferentialVacuumRouteBoundary where
   commonAdditiveCountertermCancelsAtNormalizationLevel : Bool
   normalizationDifferenceAlreadyPhysicalDeltaLambda : Bool
   sameStateMetricResponseDifferenceRequired : Bool
-  twoStaticReceiptsUnderCommonConventionEliminateIndependentDifferentialWeld : Bool
+  twoStaticReceiptsAloneEliminateIndependentDifferentialWeld : Bool
+  commonAffineStaticPairEliminatesIndependentDifferentialWeld : Bool
+  commonRenormalizationConventionRequired : Bool
   candidateKottlerScalarAlgebraOwned : Bool
   physicalScalarMetricResponseOwnedWithoutReceipt : Bool
   scalarMetricResponseIsAlreadySchutzholdTTMode : Bool
@@ -65,7 +70,9 @@ def canonicalDifferentialVacuumRouteBoundary : DifferentialVacuumRouteBoundary w
   commonAdditiveCountertermCancelsAtNormalizationLevel := true
   normalizationDifferenceAlreadyPhysicalDeltaLambda := false
   sameStateMetricResponseDifferenceRequired := true
-  twoStaticReceiptsUnderCommonConventionEliminateIndependentDifferentialWeld := true
+  twoStaticReceiptsAloneEliminateIndependentDifferentialWeld := false
+  commonAffineStaticPairEliminatesIndependentDifferentialWeld := true
+  commonRenormalizationConventionRequired := true
   candidateKottlerScalarAlgebraOwned := true
   physicalScalarMetricResponseOwnedWithoutReceipt := false
   scalarMetricResponseIsAlreadySchutzholdTTMode := false
@@ -118,13 +125,15 @@ def sourceVacuumRequiresIndependentPhysicalPayment : Bool := false
 def sourceNormalizationRecoveredAssumed : Bool := true
 def sourceNormalizationAlreadyPhysicalLambda : Bool := false
 def renormalizedMetricResponseReceiptRequired : Bool := true
+def normalizationToGravityCalibrationRequired : Bool := true
 def cosmologicalRenormalizationConventionRequired : Bool := true
 def positiveSourceNormalizedStaticGeometryOwned : Bool := true
 def rationalSquareDensityRequired : Bool := false
 def staticRouteNeedsPositivePromotedVacuumSign : Bool := true
 def normalizationDifferenceAlreadyPhysicalDeltaLambda : Bool := false
 def sameStateMetricResponseDifferenceRequired : Bool := true
-def twoStaticReceiptsEliminateIndependentDifferentialWeld : Bool := true
+def twoStaticReceiptsEliminateIndependentDifferentialWeld : Bool := false
+def commonAffineStaticPairEliminatesIndependentDifferentialWeld : Bool := true
 def differentialRouteNeedsNonzeroSourceDifference : Bool := true
 def differentialRouteRequiresStaticAdditiveZero : Bool := false
 def differentialScalarMetricResponseOwnedWithoutReceipt : Bool := false

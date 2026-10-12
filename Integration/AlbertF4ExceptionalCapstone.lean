@@ -4,6 +4,8 @@ import Integration.RationalAlbertSpin8Automorphism
 import Integration.RationalAlbertF4OuterLiftMaxCut
 import Integration.RationalAlbertInnerDerivationNative
 import Integration.RationalAlbertF4LieMaxCut
+import Integration.RationalAlbertF4CartanNative
+import Integration.RationalAlbertF4SplitRootDatumReceipt
 import Integration.RationalAlbertF4NativeMaxCut
 import Integration.F4D4SpinLiftQuotientWeld
 import Integration.F4D4StandardTrialityRecognition
@@ -16,9 +18,10 @@ import Integration.AlbertDonorDeterminantAudit
 # Albert / F4 exceptional max-cut capstone
 
 Authoritative current boundary after replacing the external-donor critical path
-with the repository-native rational Albert algebra.
+with the repository-native rational Albert algebra and advancing the derivation
+lane through a native Cartan plus an exact split-root-datum producer receipt.
 
-Paid at source level in the native route:
+Paid at source/theorem level in the native Lean route:
 
 * exact rational Cayley-Dickson octonions;
 * actual H3(O_Q) carrier, standard cubic, Jordan product, unit and Jordan law;
@@ -38,20 +41,31 @@ Paid at source level in the native route:
   law in Lean;
 * exact-rational local computation on those same native coordinate formulas
   gives the algebra-generated diagnostic `52 = 28 + 24 = 28 + 8+8+8`;
-* independently, the repo owns the rank-four F4 Cartan/root datum with
-  24 short + 24 long roots.
+* four literal native Albert Cartan derivations are now paid on the same carrier,
+  including exact commutation, vector-plane rotation, spin-square and chirality
+  identities;
+* independently, Lean owns the rank-four F4 Cartan/root datum with 24 short +
+  24 long roots.
 
-The remaining promotion gate is consequently structural:
+Companion Agda exact-producer evidence now advances the SAME rational Albert
+programme further after scalar extension to Q(i): symbolic spectral projectors,
+`4 + 48` one-dimensional weight/root spaces, exact grading on all 1128 unordered
+root pairs, and split F4 root-datum recognition.  Lean records this through a
+fail-closed cross-kernel receipt: it does not manufacture Lean theorem authority.
 
-1. formal complexification/root-space decomposition of the concrete Albert
-   derivation algebra and same-object identification with the independent F4
-   root datum;
-2. the missing non-monomial outer `g24` lift if a complete finite Weyl subgroup
-   inside the chosen rational-coordinate automorphism subgroup is desired;
-3. full `Aut_Jordan(H3(O)) ~= F4` and `Stab_E6(1) ~= F4` recognition.
+The remaining exceptional promotion gate is therefore no longer discovery of
+the split F4 root datum.  It is classification over the original rational form
+and at algebraic-group level:
 
-Neither rank 52, root count 48, finite Weyl order 1152 nor source classification
-is allowed to manufacture the internal same-Lie-algebra intertwiner.
+1. instantiate the characteristic-zero Albert classification on this concrete
+   Q-form (classically Der(J) is central simple type F4);
+2. construct/identify `Aut_Jordan(H3(O_Q))` as the corresponding F4 group;
+3. identify that F4 as the unit stabilizer in the same-carrier E6 cubic group;
+4. independently, construct the missing non-monomial outer `g24` lift only if a
+   complete finite Weyl subgroup in the chosen coordinate chart is desired.
+
+Neither rank 52, root count 48, finite Weyl order 1152 nor cross-kernel receipts
+are allowed to manufacture the rational-form/group theorem.
 -/
 
 namespace Integration.AlbertF4ExceptionalCapstone
@@ -88,12 +102,19 @@ structure Frontier where
   exactMovingComplement24DiagnosticPaid : Bool
   threeEightTrialityLieDiagnosticPaid : Bool
 
+  nativeCartanFourPaid : Bool
+  nativeCartanCommutationPaid : Bool
+  nativeCartanVectorSpinTrialityPaid : Bool
+  companionExactQIRootSpacesPaid : Bool
+  companionExactRootGrading1128Paid : Bool
+  splitF4RootDatumRecognizedCrossKernel : Bool
+  crossKernelReceiptCreatesLeanTheorem : Bool
+  leanInternalQIRootProjectorsPaid : Bool
+
   naturalRelative240E6InvarianceRefuted : Bool
   structuredE8LaneIndependent : Bool
 
-  formalComplexificationPaid : Bool
-  formalRootSpaceDecompositionPaid : Bool
-  sameLieAlgebraF4RecognitionPaid : Bool
+  rationalFormF4ClassificationPaid : Bool
   fullFiniteWeylInsideAutJPaid : Bool
   fullAutJordanEqualsF4Paid : Bool
   e6UnitStabilizerEqualsF4Paid : Bool
@@ -132,12 +153,19 @@ def currentFrontier : Frontier where
   exactMovingComplement24DiagnosticPaid := true
   threeEightTrialityLieDiagnosticPaid := true
 
+  nativeCartanFourPaid := true
+  nativeCartanCommutationPaid := true
+  nativeCartanVectorSpinTrialityPaid := true
+  companionExactQIRootSpacesPaid := true
+  companionExactRootGrading1128Paid := true
+  splitF4RootDatumRecognizedCrossKernel := true
+  crossKernelReceiptCreatesLeanTheorem := false
+  leanInternalQIRootProjectorsPaid := false
+
   naturalRelative240E6InvarianceRefuted := true
   structuredE8LaneIndependent := true
 
-  formalComplexificationPaid := false
-  formalRootSpaceDecompositionPaid := false
-  sameLieAlgebraF4RecognitionPaid := false
+  rationalFormF4ClassificationPaid := false
   fullFiniteWeylInsideAutJPaid := false
   fullAutJordanEqualsF4Paid := false
   e6UnitStabilizerEqualsF4Paid := false
@@ -145,6 +173,8 @@ def currentFrontier : Frontier where
 inductive NativeAlbertCreatesF4 : Prop
 inductive Rank52CreatesF4 : Prop
 inductive RootCount48CreatesSameLieAlgebra : Prop
+inductive SplitRootDatumCreatesQFormClassification : Prop
+inductive CrossKernelReceiptCreatesLeanProof : Prop
 inductive FiniteWeylCreatesFullAutJordan : Prop
 inductive MissingG24BlocksF4Classification : Prop
 
@@ -156,6 +186,14 @@ theorem rank_52_does_not_create_f4 : ¬ Rank52CreatesF4 := by
 
 theorem root_count_48_does_not_create_same_lie_algebra :
     ¬ RootCount48CreatesSameLieAlgebra := by
+  intro h; cases h
+
+theorem split_root_datum_does_not_create_q_form_classification :
+    ¬ SplitRootDatumCreatesQFormClassification := by
+  intro h; cases h
+
+theorem cross_kernel_receipt_does_not_create_lean_proof :
+    ¬ CrossKernelReceiptCreatesLeanProof := by
   intro h; cases h
 
 theorem finite_weyl_does_not_create_full_aut_jordan :

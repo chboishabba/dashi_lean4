@@ -1,0 +1,23 @@
+name: Holographic Contract Entropy
+
+on:
+  push:
+    branches:
+      - agent/holographic-contract-entropy-20261012
+  pull_request:
+    paths:
+      - 'Synthesis/HolographicContractEntropy.lean'
+      - 'Synthesis/HolographicContractEntropyRegression.lean'
+      - '.github/workflows/holographic-contract-entropy.yml'
+  workflow_dispatch:
+
+jobs:
+  entropy-proof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Build exact holographic contract entropy proof
+        run: |
+          lake env lean Synthesis/HolographicContractEntropy.lean
+          lake env lean Synthesis/HolographicContractEntropyRegression.lean

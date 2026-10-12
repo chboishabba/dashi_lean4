@@ -24,8 +24,8 @@ that the first factor is the particular depth-k subtree, tensor factor, reduced
 state, or minimal cut intended by the inspected upstream holographic source. -/
 noncomputable def zmodBinaryFactorEquiv (k r : ℕ) :
     ZMod (2 ^ (k + r)) ≃ (Fin (2 ^ k) × Fin (2 ^ r)) :=
-  (ZMod.ringEquivCongr (binaryPowFactor k r)).toEquiv |>.trans
-    ((ZMod.finEquiv (2 ^ k * 2 ^ r)).symm.toEquiv |>.trans
+  ((ZMod.ringEquivCongr (binaryPowFactor k r)).toEquiv).trans
+    (((ZMod.finEquiv (2 ^ k * 2 ^ r)).symm.toEquiv).trans
       Equiv.finProdFinEquiv.symm)
 
 /-- First coordinate of the explicit carrier factorisation. -/

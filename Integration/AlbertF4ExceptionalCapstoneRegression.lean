@@ -9,7 +9,6 @@ example : currentFrontier.nativeStandardAlbertCubicPaid = true := rfl
 example : currentFrontier.nativeJordanProductPaid = true := rfl
 example : currentFrontier.nativeJordanIdentityPaid = true := rfl
 example : currentFrontier.nativeS3AlbertAutomorphismsPaid = true := rfl
-
 example : currentFrontier.externalDonorCubicCounterexamplePaid = true := rfl
 example : currentFrontier.externalDonorRemovedFromCriticalPath = true := rfl
 
@@ -35,12 +34,19 @@ example : currentFrontier.exactDiagonalStabilizer28DiagnosticPaid = true := rfl
 example : currentFrontier.exactMovingComplement24DiagnosticPaid = true := rfl
 example : currentFrontier.threeEightTrialityLieDiagnosticPaid = true := rfl
 
+example : currentFrontier.nativeCartanFourPaid = true := rfl
+example : currentFrontier.nativeCartanCommutationPaid = true := rfl
+example : currentFrontier.nativeCartanVectorSpinTrialityPaid = true := rfl
+example : currentFrontier.companionExactQIRootSpacesPaid = true := rfl
+example : currentFrontier.companionExactRootGrading1128Paid = true := rfl
+example : currentFrontier.splitF4RootDatumRecognizedCrossKernel = true := rfl
+example : currentFrontier.crossKernelReceiptCreatesLeanTheorem = false := rfl
+example : currentFrontier.leanInternalQIRootProjectorsPaid = false := rfl
+
 example : currentFrontier.naturalRelative240E6InvarianceRefuted = true := rfl
 example : currentFrontier.structuredE8LaneIndependent = true := rfl
 
-example : currentFrontier.formalComplexificationPaid = false := rfl
-example : currentFrontier.formalRootSpaceDecompositionPaid = false := rfl
-example : currentFrontier.sameLieAlgebraF4RecognitionPaid = false := rfl
+example : currentFrontier.rationalFormF4ClassificationPaid = false := rfl
 example : currentFrontier.fullFiniteWeylInsideAutJPaid = false := rfl
 example : currentFrontier.fullAutJordanEqualsF4Paid = false := rfl
 example : currentFrontier.e6UnitStabilizerEqualsF4Paid = false := rfl

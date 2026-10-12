@@ -1,5 +1,6 @@
 import RequestProject.QuantumMereologySchwingerObjective
 import RequestProject.QuantumMereologySelection
+import RequestProject.QuantumMereologyObserverBridge
 
 /-!
 # Quantum mereology selected-TPS max-cut
@@ -12,6 +13,12 @@ downstream geometry.  A criterion collision that changes a declared
 geometry-sensitive consumer is then an ordinary `CriterionCollision`, so the
 existing consumer-sufficiency, factorisation and mandatory-refinement-separation
 theorems apply directly.
+
+The least-sufficient observer lane is also reused for real-valued geometry
+consumers.  Thus any criterion, boundary encoding or compressed representation
+that is sufficient for such a geometry consumer must refine the canonical
+geometry outcome itself.  This is consumer-relative and does not make the
+geometry outcome a world-complete ontology.
 
 The Lean lane currently stops at spatial geometry.  The Agda lane has a typed
 spatial-geometry -> spacetime promotion owner; no such Lean owner is silently
@@ -127,6 +134,48 @@ theorem geometryCriterionCollisionForcesSeparationInEveryRepair
     refine collision.left ≠ refine collision.right :=
   criterionCollisionForcesSeparationInEveryRepair collision repair
 
+/-! ## Least-sufficient real geometry observer -/
+
+structure RealGeometryCriterionConsumer
+    {W : BareQuantumWorld}
+    {PointerInit : Type*}
+    [Fintype PointerInit] [Nonempty PointerInit]
+    (D : SchwingerObjective.SearchData W PointerInit) where
+  Surface : Type
+  observeCriterion : D.Candidate → Surface
+  geometryOutcome : D.Candidate → ℝ
+
+namespace RealGeometryCriterionConsumer
+
+def asSurface
+    {W : BareQuantumWorld}
+    {PointerInit : Type*}
+    [Fintype PointerInit] [Nonempty PointerInit]
+    {D : SchwingerObjective.SearchData W PointerInit}
+    (G : RealGeometryCriterionConsumer D) :
+    ObserverBridge.RealCriterionConsumerSurface D.selectionProblem where
+  Surface := G.Surface
+  observeCriterion := G.observeCriterion
+  consumer := G.geometryOutcome
+
+end RealGeometryCriterionConsumer
+
+/-- For a real-valued geometry consumer, every sufficient observation refines
+that consumer's canonical outcome observer.  This applies equally to a
+criterion score, boundary encoding or other compressed representation; the
+claim is only relative to the declared geometry consumer. -/
+theorem realGeometryAdequateObserverRefinesGeometryOutcome
+    {W : BareQuantumWorld}
+    {PointerInit : Type*}
+    [Fintype PointerInit] [Nonempty PointerInit]
+    {D : SchwingerObjective.SearchData W PointerInit}
+    (G : RealGeometryCriterionConsumer D)
+    (h : G.asSurface.Sufficient) :
+    Integration.LeastSufficient.Refines
+      G.observeCriterion G.geometryOutcome :=
+  ObserverBridge.sufficient_criterion_refines_canonical_consumer
+    G.asSurface h
+
 /-! ## Fail-closed terminal boundary -/
 
 structure Boundary where
@@ -135,6 +184,8 @@ structure Boundary where
   spatialGeometryCreatesSpacetime : Bool := false
   currentLeanOwnsTypedSpacetimePromotion : Bool := false
   geometryCriterionCollisionCreatesRefinementObligation : Bool := true
+  geometryConsumerObserverIsLeastSufficient : Bool := true
+  holographicBoundaryAdequacyIsConsumerRelative : Bool := true
 deriving Repr, DecidableEq
 
 def canonicalBoundary : Boundary := {}
@@ -154,10 +205,16 @@ theorem current_lean_has_no_typed_spacetime_promotion_owner :
 theorem geometry_collision_creates_refinement_obligation :
     canonicalBoundary.geometryCriterionCollisionCreatesRefinementObligation = true := rfl
 
+theorem geometry_consumer_observer_is_least_sufficient :
+    canonicalBoundary.geometryConsumerObserverIsLeastSufficient = true := rfl
+
+theorem holographic_boundary_adequacy_is_consumer_relative :
+    canonicalBoundary.holographicBoundaryAdequacyIsConsumerRelative = true := rfl
+
 def dashiQuantumMereologyMaxCutReceipt : AttributionReceipt where
   role := .crossModuleInference
   owner := "DASHI"
-  claim := "Composes the source-shaped Schwinger minimizer theorem, exact selected-TPS indexing, factor-relation geometry, and geometry-sensitive consumer collision/refinement theorems. It creates no minimizer, CPO eigenprojector, pair-relation law, spacetime promotion, Einstein dynamics, or empirical authority."
+  claim := "Composes the source-shaped Schwinger minimizer theorem, exact selected-TPS indexing, factor-relation geometry, geometry-sensitive consumer collision/refinement theorems, and the existing least-sufficient observer theorem for real-valued geometry consumers. Any criterion or boundary observer sufficient for the declared real geometry consumer must refine that consumer outcome. It creates no minimizer, CPO eigenprojector, pair-relation law, holographic dictionary, spacetime promotion, Einstein dynamics, or empirical authority."
 
 end MaxCut
 end QuantumMereology

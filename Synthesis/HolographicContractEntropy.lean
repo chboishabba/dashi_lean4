@@ -94,7 +94,7 @@ theorem uniformFactorizedMarginalEigenvalue (k r : ℕ) :
   have hr : (2 : ℝ) ^ r ≠ 0 := by positivity
   unfold factorizedMarginalEigenvalue uniformEigenvalue
   rw [pow_add]
-  field_simp [hk, hr]
+  field_simp [hk, hr] <;> ring
 
 /-- Spectral entropy of the factorised reduced state after tracing out `r`. -/
 def factorizedReducedVonNeumannEntropy (k r : ℕ) : ℝ :=
@@ -104,7 +104,8 @@ def factorizedReducedVonNeumannEntropy (k r : ℕ) : ℝ :=
 /-- Exact depth-`k` entropy in the factorised uniform model. -/
 theorem depthKReducedEntropyIsKLogTwo (k r : ℕ) :
     factorizedReducedVonNeumannEntropy k r = (k : ℝ) * Real.log 2 := by
-  rw [factorizedReducedVonNeumannEntropy, uniformFactorizedMarginalEigenvalue]
+  unfold factorizedReducedVonNeumannEntropy
+  rw [uniformFactorizedMarginalEigenvalue]
   exact fullContractVonNeumannEntropyIsNLogTwo k
 
 /-- The spectral/partial-trace RT statement is closed for the explicit product

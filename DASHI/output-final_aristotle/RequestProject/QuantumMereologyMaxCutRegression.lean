@@ -33,6 +33,10 @@ example :
   StandardBasisProjector.standard_basis_projector_family_paid
 
 example :
+    StandardBasisProjector.canonicalBoundary.finiteHermitianSpectralBasisPaid = true :=
+  StandardBasisProjector.finite_hermitian_spectral_basis_paid
+
+example :
     StandardBasisProjector.canonicalBoundary.arbitrarySelectedCPOEigenbasisPaid = false :=
   StandardBasisProjector.arbitrary_selected_cpo_eigenbasis_not_paid
 

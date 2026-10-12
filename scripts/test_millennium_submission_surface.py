@@ -12,6 +12,7 @@ REGRESSION = ROOT / "ExternalClayNS" / "LeanDojoSameObjectRegression.lean"
 OBSOLETE_NS = ROOT / "ExternalClayNS" / "LeanDojoCComparatorBridge.lean"
 EXACT = ROOT / "MillenniumExternal" / "ExactTargetSurface.lean"
 FRONTIER = ROOT / "MillenniumExternal" / "ExternalTargetFrontier.lean"
+CENSUS = ROOT / "MillenniumExternal" / "TerminalCensus.lean"
 SAME_OBJECT_CUT = ROOT / "MillenniumExternal" / "SameObjectMaxCut.lean"
 RESOLUTION = ROOT / "MillenniumExternal" / "ProofResolutionMaxCut.lean"
 BSD_DEFECT_EQUIV = ROOT / "Synthesis" / "MillenniumBSDSelmerDefectClayEquivalence.lean"
@@ -22,11 +23,9 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         for path in (EXACT_NS, FORCE, MOMENTUM, DIVERGENCE, ENERGY, REGRESSION):
             self.assertTrue(path.exists(), f"missing paid NS owner: {path.name}")
         self.assertFalse(OBSOLETE_NS.exists(), "obsolete conditional NS frontier must stay removed")
-
         terminal = EXACT_NS.read_text(encoding="utf-8")
         force = FORCE.read_text(encoding="utf-8")
         regression = REGRESSION.read_text(encoding="utf-8")
-
         for theorem in (
             "theorem leanDojoR3Solution_to_comparator",
             "theorem leanDojoPeriodicSolution_to_comparator",
@@ -36,7 +35,6 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
             "#print axioms dashiExactFeffermanD",
         ):
             self.assertIn(theorem, terminal)
-
         for paid in (
             "comparatorForceDecay_to_leanDojo",
             "comparatorPeriodicForceDecay_to_leanDojo",
@@ -44,7 +42,6 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
             "norm_targetJet_le_sourceJet",
         ):
             self.assertIn(paid, force)
-
         self.assertIn("#check dashiExactFeffermanC", regression)
         self.assertIn("#check dashiExactFeffermanD", regression)
         self.assertNotIn("sorry", terminal)
@@ -76,6 +73,21 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         self.assertIn("resolvedSourceTerm := none", pnp)
         self.assertIn("newMathematicsPermitted := false", pnp)
 
+    def test_terminal_census_tracks_strongest_current_owners(self):
+        census = CENSUS.read_text(encoding="utf-8")
+        for marker in (
+            "PNotEqualsNPStandardMachineMaxCutClosureExact",
+            "DASHILiteralClayNS.dashiExactFeffermanC/D",
+            "MillenniumHodgeRulingCycleSwapMaxCutExact",
+            "MillenniumBSDSelmerDefectClayEquivalence",
+            "MillenniumBSDActualE2ShaSameObjectMaxCut",
+            "Welds.YMClayAssembly.massGapOfSourceCovariance",
+            "Welds.YMClayAssembly.massGapOfEnergyForms",
+        ):
+            self.assertIn(marker, census)
+        self.assertIn("selected CM", census)
+        self.assertIn("conditional", census)
+
     def test_bsd_finite_rank_is_derived_not_an_adapter_field(self):
         text = EXACT.read_text(encoding="utf-8")
         self.assertIn("theorem leanDojoRank_finite_of_projective_fg", text)
@@ -83,13 +95,11 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         self.assertIn("Module.Finite.base_change", text)
         self.assertIn("Cardinal.toENat_ne_top", text)
         self.assertIn("projective_fg E", text)
-
         start = text.index("structure BSDLeanDojoSameObjectWeld")
         end = text.index("theorem clayBirchSwinnertonDyer_of_dashi", start)
         weld = text[start:end]
         self.assertIn("rankExistence_of_dashi", weld)
         self.assertNotIn("finiteRank :", weld)
-
         compiler = text[text.index("theorem clayBirchSwinnertonDyer_of_dashi"):]
         self.assertIn("leanDojoBSDFiniteRank_of_dashi bg.algebraic", compiler)
 
@@ -116,7 +126,6 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
     def test_completion_pass_forbids_reopening_math_on_faithful_live_lanes(self):
         same = SAME_OBJECT_CUT.read_text(encoding="utf-8")
         resolution = RESOLUTION.read_text(encoding="utf-8")
-
         for lane in (
             "pVersusNPSameObjectCut",
             "riemannSameObjectCut",
@@ -128,7 +137,6 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
             block = same[start:] if next_def == -1 else same[start:next_def]
             self.assertIn("remaining := .transportOnly", block)
             self.assertNotIn("remaining := .mathematics", block)
-
         for lane in (
             "pVersusNPResolution",
             "rhResolution",
@@ -139,14 +147,12 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
             next_def = resolution.find("\ndef ", start + 5)
             block = resolution[start:] if next_def == -1 else resolution[start:next_def]
             self.assertIn("newMathematicsPermitted := false", block)
-
         self.assertIn("navierStokes_source_term_is_resolved", resolution)
         self.assertIn('some "DASHILiteralClayNS.dashiExactFeffermanC|D"', resolution)
         self.assertIn("pnp_rh_bsd_still_require_donor_resolution", resolution)
 
     def test_fail_closed_frontier_uses_resolution_not_red_math(self):
         frontier = FRONTIER.read_text(encoding="utf-8")
-
         ns_start = frontier.index("problem := .navierStokes")
         ns_end = frontier.index("problem := .hodge", ns_start)
         ns = frontier[ns_start:ns_end]
@@ -155,7 +161,6 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         self.assertIn("dashiExactFeffermanC", ns)
         self.assertIn("dashiExactFeffermanD", ns)
         self.assertNotIn("state := .greenExact", ns)
-
         for problem, next_problem in (
             (".pVersusNP", ".riemann"),
             (".riemann", ".navierStokes"),
@@ -168,13 +173,11 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
             self.assertIn("frontier := .proofResolution", block)
             self.assertNotIn("state := .redMath", block)
             self.assertNotIn("state := .greenExact", block)
-
         pnp_start = frontier.index("problem := .pVersusNP")
         pnp_end = frontier.index("problem := .riemann", pnp_start)
         pnp = frontier[pnp_start:pnp_end]
         self.assertIn("resource-closing", pnp)
         self.assertIn("candidate coverage", pnp)
-
         bsd_start = frontier.index("problem := .birchSwinnertonDyer")
         bsd_end = frontier.index("problem := .yangMills", bsd_start)
         self.assertIn("Rank.Existence", frontier[bsd_start:bsd_end])

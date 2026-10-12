@@ -1,5 +1,6 @@
 import RequestProject.QuantumMereologyMaxCut
 import RequestProject.QuantumMereologyStandardBasisProjector
+import RequestProject.QuantumMereologyFiniteHermitianCPO
 
 namespace QuantumMereology
 namespace MaxCutRegression
@@ -39,6 +40,14 @@ example :
 example :
     StandardBasisProjector.canonicalBoundary.arbitrarySelectedCPOEigenbasisPaid = false :=
   StandardBasisProjector.arbitrary_selected_cpo_eigenbasis_not_paid
+
+example :
+    FiniteHermitianCPO.canonicalBoundary.typedSelectedCPORefinementCompilesHermitianMatrices = true :=
+  FiniteHermitianCPO.typed_selected_cpo_refinement_compiles_hermitian_matrices
+
+example :
+    FiniteHermitianCPO.canonicalBoundary.genericAdmissibilityConstructsTypedSymmetry = false :=
+  FiniteHermitianCPO.generic_admissibility_does_not_construct_typed_symmetry
 
 end MaxCutRegression
 end QuantumMereology

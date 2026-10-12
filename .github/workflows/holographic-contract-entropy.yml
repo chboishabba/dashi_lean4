@@ -10,14 +10,7 @@ on:
       - 'Synthesis/HolographicContractEntropyRegression.lean'
       - 'Synthesis/HolographicMaxEntangledCutRT.lean'
       - 'Synthesis/HolographicMaxEntangledCutRTRegression.lean'
-      - 'Synthesis/JacobsonNullConeRecovery.lean'
-      - 'Synthesis/JacobsonNullConeRecoveryRegression.lean'
-      - 'Synthesis/JacobsonNullConeRigidity.lean'
-      - 'Synthesis/JacobsonNullConeRigidityRegression.lean'
-      - 'Synthesis/JacobsonFlat31RigidityAdapter.lean'
-      - 'Synthesis/JacobsonFlat31RigidityAdapterRegression.lean'
-      - 'Synthesis/JacobsonNullConeRigidityTransport.lean'
-      - 'Synthesis/JacobsonNullConeRigidityTransportRegression.lean'
+      - 'Synthesis/Jacobson*.lean'
       - '.github/workflows/holographic-contract-entropy.yml'
   workflow_dispatch:
 
@@ -27,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
-      - name: Build holographic entropy, corrected RT, and Jacobson recovery proofs
+      - name: Build holographic entropy, corrected RT, and Jacobson max-cut proofs
         run: |
           lake env lean Synthesis/HolographicContractEntropy.lean
           lake env lean Synthesis/HolographicContractEntropyRegression.lean
@@ -41,3 +34,13 @@ jobs:
           lake env lean Synthesis/JacobsonFlat31RigidityAdapterRegression.lean
           lake env lean Synthesis/JacobsonNullConeRigidityTransport.lean
           lake env lean Synthesis/JacobsonNullConeRigidityTransportRegression.lean
+          lake env lean Synthesis/JacobsonCouplingNormalization.lean
+          lake env lean Synthesis/JacobsonCouplingNormalizationRegression.lean
+          lake env lean Synthesis/JacobsonClausiusNullAlgebra.lean
+          lake env lean Synthesis/JacobsonClausiusNullAlgebraRegression.lean
+          lake env lean Synthesis/JacobsonEinsteinTensorAlgebra.lean
+          lake env lean Synthesis/JacobsonEinsteinTensorAlgebraRegression.lean
+          lake env lean Synthesis/JacobsonBianchiCosmologicalConstancy.lean
+          lake env lean Synthesis/JacobsonBianchiCosmologicalConstancyRegression.lean
+          lake env lean Synthesis/JacobsonCosmologicalConstancyMathlib.lean
+          lake env lean Synthesis/JacobsonCosmologicalConstancyMathlibRegression.lean

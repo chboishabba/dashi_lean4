@@ -22,6 +22,9 @@ on:
       - 'Integration/OggSSP2BDirectResidualRankCompiler.lean'
       - 'Integration/OggSSP2BResidualSupportSqueeze.lean'
       - 'Integration/OggSSP2BResidualSupportFromFactorization.lean'
+      - 'Integration/OggSSP2BResidualBlockProjectorFactorization.lean'
+      - 'Integration/OggSSP2BBlockProjectorNaturality.lean'
+      - 'Integration/OggSSP2BCentralIdempotentNaturality.lean'
       - 'Integration/OggSSP2BBlockSeparatedNormCoordinates.lean'
       - 'Integration/OggSSP2BBlockSeparatedDirectRankWeld.lean'
       - 'Integration/OggSSP2BBlockSeparatedSupportNormWeld.lean'
@@ -79,6 +82,9 @@ jobs:
           lake env lean Integration/OggSSP2BDirectResidualRankCompiler.lean
           lake env lean Integration/OggSSP2BResidualSupportSqueeze.lean
           lake env lean Integration/OggSSP2BResidualSupportFromFactorization.lean
+          lake env lean Integration/OggSSP2BResidualBlockProjectorFactorization.lean
+          lake env lean Integration/OggSSP2BBlockProjectorNaturality.lean
+          lake env lean Integration/OggSSP2BCentralIdempotentNaturality.lean
           lake env lean Integration/OggSSP2BBlockSeparatedNormCoordinates.lean
           lake env lean Integration/OggSSP2BBlockSeparatedDirectRankWeld.lean
           lake env lean Integration/OggSSP2BBlockSeparatedSupportNormWeld.lean

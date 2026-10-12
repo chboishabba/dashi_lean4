@@ -3,6 +3,8 @@ import Dashi.Biology.StrictEvidencePromotionBindingExact
 import Dashi.Biology.AutismVaccineClaimPromotionAuditExact
 import Dashi.Biology.AutismVaccineClaimPromotionAuditRegression
 import Dashi.Biology.AutismVaccinePersuasionMediaExtensionExact
+import Dashi.Biology.AutismTranscriptHighAlphaCrossPollinationExact
+import Dashi.Biology.AutismTranscriptHighAlphaCrossPollinationRegression
 
 namespace Dashi.Biology.AutismVaccineAuditEverything
 end Dashi.Biology.AutismVaccineAuditEverything

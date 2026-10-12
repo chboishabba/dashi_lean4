@@ -6,10 +6,7 @@ on:
       - agent/holographic-contract-entropy-20261012
   pull_request:
     paths:
-      - 'Synthesis/HolographicContractEntropy.lean'
-      - 'Synthesis/HolographicContractEntropyRegression.lean'
-      - 'Synthesis/HolographicMaxEntangledCutRT.lean'
-      - 'Synthesis/HolographicMaxEntangledCutRTRegression.lean'
+      - 'Synthesis/Holographic*.lean'
       - 'Synthesis/Jacobson*.lean'
       - '.github/workflows/holographic-contract-entropy.yml'
   workflow_dispatch:
@@ -26,6 +23,10 @@ jobs:
           lake env lean Synthesis/HolographicContractEntropyRegression.lean
           lake env lean Synthesis/HolographicMaxEntangledCutRT.lean
           lake env lean Synthesis/HolographicMaxEntangledCutRTRegression.lean
+          lake env lean Synthesis/HolographicZModCarrierFactorization.lean
+          lake env lean Synthesis/HolographicZModCarrierFactorizationRegression.lean
+          lake env lean Synthesis/HolographicUpstreamStateContractNoGo.lean
+          lake env lean Synthesis/HolographicUpstreamStateContractNoGoRegression.lean
           lake env lean Synthesis/JacobsonNullConeRecovery.lean
           lake env lean Synthesis/JacobsonNullConeRecoveryRegression.lean
           lake env lean Synthesis/JacobsonNullConeRigidity.lean

@@ -50,6 +50,8 @@ jobs:
           lake env lean Synthesis/JacobsonFlat31EinsteinCompilerRegression.lean
           lake env lean Synthesis/JacobsonLocalFrameFieldCompiler.lean
           lake env lean Synthesis/JacobsonLocalFrameFieldCompilerRegression.lean
+          lake env lean Synthesis/JacobsonLocalFrameEinsteinLambda.lean
+          lake env lean Synthesis/JacobsonLocalFrameEinsteinLambdaRegression.lean
           lake env lean Synthesis/JacobsonEinsteinTensorAlgebra.lean
           lake env lean Synthesis/JacobsonEinsteinTensorAlgebraRegression.lean
           lake env lean Synthesis/JacobsonBianchiCosmologicalConstancy.lean

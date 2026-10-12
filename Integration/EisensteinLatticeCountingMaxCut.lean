@@ -57,9 +57,8 @@ theorem rotate_norm (a b : Int) :
 
 theorem rotate_six (p : Int × Int) :
     rotate (rotate (rotate (rotate (rotate (rotate p))))) = p := by
-  rcases p with ⟨a,b⟩
-  simp [rotate]
-  constructor <;> ring
+  rcases p with ⟨a, b⟩
+  ext <;> simp [rotate] <;> ring
 
 structure UniversalRepresentationSource where
   representation_formula :

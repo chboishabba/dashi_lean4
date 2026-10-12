@@ -42,6 +42,8 @@ jobs:
           lake env lean Synthesis/JacobsonUnruhNormalizationRegression.lean
           lake env lean Synthesis/JacobsonRaychaudhuriEquilibrium.lean
           lake env lean Synthesis/JacobsonRaychaudhuriEquilibriumRegression.lean
+          lake env lean Synthesis/JacobsonHorizonFluxAreaReduction.lean
+          lake env lean Synthesis/JacobsonHorizonFluxAreaReductionRegression.lean
           lake env lean Synthesis/JacobsonClausiusNullAlgebra.lean
           lake env lean Synthesis/JacobsonClausiusNullAlgebraRegression.lean
           lake env lean Synthesis/JacobsonFlat31EinsteinCompiler.lean

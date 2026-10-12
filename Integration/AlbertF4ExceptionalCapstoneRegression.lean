@@ -9,7 +9,6 @@ example : currentFrontier.nativeStandardAlbertCubicPaid = true := rfl
 example : currentFrontier.nativeJordanProductPaid = true := rfl
 example : currentFrontier.nativeJordanIdentityPaid = true := rfl
 example : currentFrontier.nativeS3AlbertAutomorphismsPaid = true := rfl
-example : currentFrontier.externalDonorCubicCounterexamplePaid = true := rfl
 example : currentFrontier.externalDonorRemovedFromCriticalPath = true := rfl
 
 example : currentFrontier.foldedWeylOrder1152Paid = true := rfl
@@ -17,7 +16,6 @@ example : currentFrontier.independentF4RootSet48Paid = true := rfl
 example : currentFrontier.independentF4Rank4Paid = true := rfl
 example : currentFrontier.d4KernelOrder192Paid = true := rfl
 example : currentFrontier.d4ThreeEightSameActionPaid = true := rfl
-
 example : currentFrontier.spinTitsFourLiftsPaid = true := rfl
 example : currentFrontier.spinCoverOrder384Paid = true := rfl
 example : currentFrontier.spinQuotientExactlyWD4Paid = true := rfl
@@ -30,10 +28,7 @@ example : currentFrontier.nonMonomialOuterLiftStillRequired = true := rfl
 
 example : currentFrontier.arbitraryInnerDerivationLawPaid = true := rfl
 example : currentFrontier.exactInnerDerivationRank52DiagnosticPaid = true := rfl
-example : currentFrontier.exactDiagonalStabilizer28DiagnosticPaid = true := rfl
-example : currentFrontier.exactMovingComplement24DiagnosticPaid = true := rfl
-example : currentFrontier.threeEightTrialityLieDiagnosticPaid = true := rfl
-
+example : currentFrontier.exactTrialityTwentyEightPlusEightEightEightPaid = true := rfl
 example : currentFrontier.nativeCartanFourPaid = true := rfl
 example : currentFrontier.nativeCartanCommutationPaid = true := rfl
 example : currentFrontier.nativeCartanVectorSpinTrialityPaid = true := rfl
@@ -42,6 +37,11 @@ example : currentFrontier.companionExactRootGrading1128Paid = true := rfl
 example : currentFrontier.splitF4RootDatumRecognizedCrossKernel = true := rfl
 example : currentFrontier.crossKernelReceiptCreatesLeanTheorem = false := rfl
 example : currentFrontier.leanInternalQIRootProjectorsPaid = false := rfl
+
+example : currentFrontier.preciseClassicalClassificationSourceReceiptPaid = true := rfl
+example : currentFrontier.allConcreteClassificationHypothesesOwned = true := rfl
+example : currentFrontier.terminalClassificationPremiseIsolated = true := rfl
+example : currentFrontier.sourceReceiptCreatesClassificationTheorem = false := rfl
 
 example : currentFrontier.naturalRelative240E6InvarianceRefuted = true := rfl
 example : currentFrontier.structuredE8LaneIndependent = true := rfl

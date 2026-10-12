@@ -1,12 +1,14 @@
 import AgdaMirror.Governance.IRISDenaSameObjectAcquisitionMaxCut
 import AgdaMirror.Governance.AUKUSEmbeddedAuthorityCommandNoncollapse
+import AgdaMirror.Governance.AUKUSPersonnelExchangeMOUExistence
 import AgdaMirror.Governance.IRISDenaMinisterialBriefingFOIBoundary
+import AgdaMirror.Governance.IRISDenaPublicRecordConsumerNonDescent
 
 namespace AgdaMirror.Governance.OriginalThreadParetoMaxCut20261008
 
 inductive LiveRequirement
   | irisCorrectionAwareHansardContent
-  | irisEmbeddingProtocolText
+  | irisEmbeddingProtocolOperativeText
   | irisExactOperationalRecord
   | iranMarginalRepressionIncrement
   | broadHistoricalExpansion
@@ -28,12 +30,12 @@ def hansardContentCell : ParetoCell :=
    "Read transcript 29619 pp. 49-52 plus applicable Chief-of-Navy correction before promoting duty-class content."⟩
 
 def embeddingProtocolCell : ParetoCell :=
-  ⟨.irisEmbeddingProtocolText, true, true, true, 2, 6, true,
-   "Acquire complete 2024 Chief-of-Navy directive and 2023 MOU/annexes; secondary reports already narrow the fibre to direction authority plus an explicit no-command clause."⟩
+  ⟨.irisEmbeddingProtocolOperativeText, true, true, true, 2, 6, true,
+   "Acquire complete 2024 Chief-of-Navy directive plus operative Australia-US personnel-exchange MOU text/annexes. Official sources already pay MOU existence and workforce purpose."⟩
 
 def exactOperationalCell : ParetoCell :=
   ⟨.irisExactOperationalRecord, true, true, true, 5, 8, true,
-   "Acquire watchbill/duty assignment, action log, debrief or equivalent same-episode record."⟩
+   "Acquire watchbill/duty assignment, action log, debrief or equivalent same-episode record; public-record non-descent shows the current surface cannot determine exact duty."⟩
 
 def iranMarginalCell : ParetoCell :=
   ⟨.iranMarginalRepressionIncrement, true, true, true, 5, 5, false,

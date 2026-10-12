@@ -100,14 +100,21 @@ spike exactly. -/
 theorem contrastSum_zero : contrastSum 0 = 0 := by
   norm_num [contrastSum, oggSum, nonOggSum, oggPrimes, nonOggPrimes, rotor]
 
+/-- The Ogg endpoint mirrors under reversal of winding direction. -/
+theorem oggSum_neg_eq_conj (ω : ℝ) :
+    oggSum (-ω) = Complex.conj (oggSum ω) := by
+  simp [oggSum, rotor_neg_eq_conj]
+
+/-- The non-Ogg control endpoint obeys the same conjugation law. -/
+theorem nonOggSum_neg_eq_conj (ω : ℝ) :
+    nonOggSum (-ω) = Complex.conj (nonOggSum ω) := by
+  simp [nonOggSum, rotor_neg_eq_conj]
+
 /-- Negative-frequency contrast is the conjugate of positive-frequency
 contrast, so the endpoint curve has the expected mirror/chirality symmetry. -/
 theorem contrastSum_neg_eq_conj (ω : ℝ) :
     contrastSum (-ω) = Complex.conj (contrastSum ω) := by
-  simp only [contrastSum, oggSum, nonOggSum]
-  rw [Finset.sum_congr rfl (fun p hp => rotor_neg_eq_conj ω p)]
-  rw [Finset.sum_congr rfl (fun p hp => rotor_neg_eq_conj ω p)]
-  simp
+  simp [contrastSum, oggSum_neg_eq_conj, nonOggSum_neg_eq_conj]
 
 /-! ## Rational winding / modular residue factorization -/
 
@@ -131,7 +138,7 @@ theorem rootRotor_depends_only_on_phaseIndex {m k p q : ℕ}
 
 /-- The C3 specialization uses exactly three phase bins. -/
 theorem c3_phaseIndex_lt_three (k p : ℕ) : phaseIndex 3 k p < 3 := by
-  simp [phaseIndex]
+  simpa [phaseIndex] using Nat.mod_lt (k * p) (by decide : 0 < 3)
 
 /-! ## Claim-strength firewall -/
 

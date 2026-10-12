@@ -19,5 +19,13 @@ example :
     MaxCut.canonicalBoundary.geometryCriterionCollisionCreatesRefinementObligation = true :=
   MaxCut.geometry_collision_creates_refinement_obligation
 
+example :
+    MaxCut.canonicalBoundary.geometryConsumerObserverIsLeastSufficient = true :=
+  MaxCut.geometry_consumer_observer_is_least_sufficient
+
+example :
+    MaxCut.canonicalBoundary.holographicBoundaryAdequacyIsConsumerRelative = true :=
+  MaxCut.holographic_boundary_adequacy_is_consumer_relative
+
 end MaxCutRegression
 end QuantumMereology

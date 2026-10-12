@@ -34,6 +34,8 @@ jobs:
           lake env lean Synthesis/JacobsonFlat31RigidityAdapterRegression.lean
           lake env lean Synthesis/JacobsonNullConeRigidityTransport.lean
           lake env lean Synthesis/JacobsonNullConeRigidityTransportRegression.lean
+          lake env lean Synthesis/JacobsonFibrewiseFrameAssembly.lean
+          lake env lean Synthesis/JacobsonFibrewiseFrameAssemblyRegression.lean
           lake env lean Synthesis/JacobsonCouplingNormalization.lean
           lake env lean Synthesis/JacobsonCouplingNormalizationRegression.lean
           lake env lean Synthesis/JacobsonUnruhNormalization.lean

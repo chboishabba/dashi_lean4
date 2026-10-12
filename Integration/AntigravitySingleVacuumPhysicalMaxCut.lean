@@ -4,13 +4,7 @@ namespace Integration.AntigravitySingleVacuumPhysicalMaxCut
 
 /-!
 Structural Lean mirror of the current Agda antigravity post-normalization cut.
-
-This file mirrors scheduling/non-promotion, not Agda proof objects.  The
-source-normalization/free-energy tranche is treated as paid for scheduling, but
-a normalization constant is NOT thereby a gravitational Lambda.  Physical
-promotion still requires same-state renormalized metric/volume response,
-normalization-to-gravity calibration, and a cosmological renormalization
-convention.
+It mirrors scheduling/non-promotion, not Agda proof objects.
 -/
 
 structure SourceVacuumInformationBoundary where
@@ -33,6 +27,7 @@ structure StaticSingleVacuumRouteBoundary where
   cosmologicalRenormalizationConventionRequired : Bool
   vacuumEquationOfStateOwnedAfterReceipt : Bool
   positiveSourceNormalizedStaticGeometryOwned : Bool
+  dimensionedRadiusSquaredTargetOwnedAfterPhysicalLambda : Bool
   physicalCalibrationValueStillExternal : Bool
   absoluteSIDeviceScaleStillExternal : Bool
   r136ResponseWeldRequiredForShortestStaticRoute : Bool
@@ -47,6 +42,7 @@ def canonicalStaticSingleVacuumRouteBoundary : StaticSingleVacuumRouteBoundary w
   cosmologicalRenormalizationConventionRequired := true
   vacuumEquationOfStateOwnedAfterReceipt := true
   positiveSourceNormalizedStaticGeometryOwned := true
+  dimensionedRadiusSquaredTargetOwnedAfterPhysicalLambda := true
   physicalCalibrationValueStillExternal := true
   absoluteSIDeviceScaleStillExternal := true
   r136ResponseWeldRequiredForShortestStaticRoute := false
@@ -60,6 +56,8 @@ structure DifferentialVacuumRouteBoundary where
   commonAffineStaticPairEliminatesIndependentDifferentialWeld : Bool
   commonRenormalizationConventionRequired : Bool
   candidateKottlerScalarAlgebraOwned : Bool
+  physicalDeltaLambdaLockInAlgebraOwnedAfterReceipt : Bool
+  reversalParityStillPhysicalReceipt : Bool
   physicalScalarMetricResponseOwnedWithoutReceipt : Bool
   scalarMetricResponseIsAlreadySchutzholdTTMode : Bool
   dynamicSpin2TTProducerStillRequired : Bool
@@ -74,6 +72,8 @@ def canonicalDifferentialVacuumRouteBoundary : DifferentialVacuumRouteBoundary w
   commonAffineStaticPairEliminatesIndependentDifferentialWeld := true
   commonRenormalizationConventionRequired := true
   candidateKottlerScalarAlgebraOwned := true
+  physicalDeltaLambdaLockInAlgebraOwnedAfterReceipt := true
+  reversalParityStillPhysicalReceipt := true
   physicalScalarMetricResponseOwnedWithoutReceipt := false
   scalarMetricResponseIsAlreadySchutzholdTTMode := false
   dynamicSpin2TTProducerStillRequired := true
@@ -112,7 +112,6 @@ def canonicalCalibrationBoundary : CalibrationBoundary where
   sourceStressLengthSquaredProductStillRequired := true
   separateStressAndLengthRequiredByGravityConsumer := false
 
-/-- Current three-way physical fork after source-normalization recovery. -/
 inductive SourceNativeRoute where
   | staticSingleVacuum
   | differentialVacuum
@@ -128,6 +127,7 @@ def renormalizedMetricResponseReceiptRequired : Bool := true
 def normalizationToGravityCalibrationRequired : Bool := true
 def cosmologicalRenormalizationConventionRequired : Bool := true
 def positiveSourceNormalizedStaticGeometryOwned : Bool := true
+def dimensionedRadiusSquaredTargetOwnedAfterPhysicalLambda : Bool := true
 def rationalSquareDensityRequired : Bool := false
 def staticRouteNeedsPositivePromotedVacuumSign : Bool := true
 def normalizationDifferenceAlreadyPhysicalDeltaLambda : Bool := false
@@ -138,14 +138,14 @@ def differentialRouteNeedsNonzeroSourceDifference : Bool := true
 def differentialRouteRequiresStaticAdditiveZero : Bool := false
 def differentialScalarMetricResponseOwnedWithoutReceipt : Bool := false
 def differentialCandidateKottlerAlgebraOwned : Bool := true
+def physicalDeltaLambdaLockInAlgebraOwnedAfterReceipt : Bool := true
+def differentialReversalParityStillRequired : Bool := true
 def dynamicSpin2TTProducerStillRequired : Bool := true
 def staticRouteRequiresR136Weld : Bool := false
 def continuumRouteRequiresStaticVacuumGeometry : Bool := false
 def acceptedMeasuredGAuthorityReceiptStillRequired : Bool := true
 def sourceStressLengthSquaredProductStillRequired : Bool := true
 
-/-- No physical normalization-to-gravity, E/L continuation, SI authority, or
-experiment is promoted merely by this structural mirror. -/
 def noPhysicalPaymentPromotedByMirror : Bool := true
 
 end Integration.AntigravitySingleVacuumPhysicalMaxCut

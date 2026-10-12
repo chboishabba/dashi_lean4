@@ -11,11 +11,14 @@ with dimensions 98304 -> 98580 -> 276.  The finite Co1 route isolates the
 candidate residual map 24 -> 300 = Sym^2(24).  The explicit Frobenius-square
 embedding has image dimension 24 and quotient wedge^2(24), dimension 276.
 
-The accompanying GAP screen computes `Hom_Co1(24, Sym^2(24))`.  If that Hom
-space is one-dimensional, then over GF(2) the explicit Frobenius-square map is
-the unique nonzero equivariant map.  This removes ambiguity from the residual
-24-dimensional lane; it does not identify the common 98280-dimensional part of
-the actual norm map.
+The executed runtime certificate now pays the finite representation theorem
+
+  dim Hom_Co1(24, Sym^2(24)) = 1
+
+and verifies that the explicit Frobenius-square map is nonzero of rank 24 and
+spans that unique equivariant Hom line.  What remains is not Hom-space
+ambiguity: it is the same-object theorem that the induced map from the actual
+Tate residual quotient is Co1-equivariant and lies on this paid line.
 -/
 
 namespace Integration.OggSSP2BCo1FrobeniusHomRigidity
@@ -38,19 +41,32 @@ structure Boundary where
   homUniquenessScreenImplemented : Bool
   homUniquenessRuntimePaid : Bool
   residual24LaneRigid : Bool
+  inducedActualResidualEquivariancePaid : Bool
   common98280MapIdentified : Bool
   actualTateExteriorSquareWeldPaid : Bool
 
 def canonicalBoundary : Boundary where
   explicitFrobeniusEmbeddingConstructed := true
   homUniquenessScreenImplemented := true
-  homUniquenessRuntimePaid := false
-  residual24LaneRigid := false
+  homUniquenessRuntimePaid := true
+  residual24LaneRigid := true
+  inducedActualResidualEquivariancePaid := false
   common98280MapIdentified := false
   actualTateExteriorSquareWeldPaid := false
 
-theorem runtime_still_open : canonicalBoundary.homUniquenessRuntimePaid = false := rfl
- theorem common_98280_map_still_open : canonicalBoundary.common98280MapIdentified = false := rfl
- theorem same_object_weld_still_open : canonicalBoundary.actualTateExteriorSquareWeldPaid = false := rfl
+theorem hom_uniqueness_runtime_paid :
+    canonicalBoundary.homUniquenessRuntimePaid = true := rfl
+
+theorem residual_24_hom_line_rigid :
+    canonicalBoundary.residual24LaneRigid = true := rfl
+
+theorem induced_actual_residual_equivariance_still_open :
+    canonicalBoundary.inducedActualResidualEquivariancePaid = false := rfl
+
+theorem common_98280_map_still_open :
+    canonicalBoundary.common98280MapIdentified = false := rfl
+
+theorem same_object_weld_still_open :
+    canonicalBoundary.actualTateExteriorSquareWeldPaid = false := rfl
 
 end Integration.OggSSP2BCo1FrobeniusHomRigidity

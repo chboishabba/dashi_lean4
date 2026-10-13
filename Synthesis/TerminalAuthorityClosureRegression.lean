@@ -6,6 +6,8 @@ open Synthesis.TerminalAuthorityClosure
 
 example : terminalAuthorityClosureCompilerOwned = true := rfl
 example : noFurtherFormalWeldDebt = true := rfl
-example : remainingWorkClassifiedAsAuthorityInstantiationOrEmpirical = true := rfl
+example : abstractSourceReplacementInputRequired = true := rfl
+example : abstractAuthorityInputRequired = true := rfl
+example : abstractCalibrationInputRequired = true := rfl
 
 end Synthesis.TerminalAuthorityClosureRegression

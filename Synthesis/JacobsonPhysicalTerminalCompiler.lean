@@ -8,7 +8,7 @@ open Synthesis.JacobsonLocalFrameFieldCompiler
 open Synthesis.JacobsonLocalFrameEinsteinLambda
 open Synthesis.JacobsonRecoveredLambdaConstancy
 
-/-- Terminal same-object receipt on the selected physical domain.
+/-- Terminal receipt on the selected domain.
 
 At this point all remaining information is carried by one `LocalFrameJacobsonData`
 object and one regularity/zero-derivative receipt for the exact Lambda field
@@ -24,10 +24,9 @@ structure TerminalEinsteinReceipt
     einsteinPlusLambda (D.ricci x) Lambda
       = scaledTensor (8 * Real.pi * D.G) (D.stress x)
 
-/-- Once the physical same-object horizon/QFT/geometric package has supplied
-`LocalFrameJacobsonData`, and physical Bianchi/conservation/regularity has
-supplied `RecoveredLambdaConstancyData`, the constant-Lambda Einstein equation
-follows on the very same selected domain. -/
+/-- Once the declared Jacobson authority/model data and the regularity/
+zero-derivative data for its exact recovered Lambda field are supplied, the
+constant-Lambda Einstein equation follows on that selected domain. -/
 noncomputable def compileTerminalEinsteinReceipt
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (D : LocalFrameJacobsonData E)
@@ -58,18 +57,21 @@ theorem terminalEinsteinEquation_exists
   let R := compileTerminalEinsteinReceipt D C
   exact ⟨R.Lambda, R.lambdaConstant, R.einsteinEquation⟩
 
-/-- Formal max-cut status.  There is no further scalar/tensor/constancy algebra
-between the declared physical same-object inputs and the constant-Lambda
-Einstein equation on the selected domain. -/
+/-- Formal max-cut status. There is no further scalar/tensor/constancy algebra
+between the declared authority/model inputs and the constant-Lambda Einstein
+equation on the selected domain. -/
 def terminalConditionalEinsteinCompilerOwned : Bool := true
 
 def noFurtherInternalJacobsonAlgebraDebt : Bool := true
 
-/-- What remains is not a theorem wrapper: it is construction/identification of
-`D` and `C` from an actual physical QFT spacetime/horizon, including BW/KMS,
-entropy-area (or relative-entropy/area), heat flux/stress energy, continuum
-Raychaudhuri, local Lorentz frames, Bianchi/conservation and regularity. -/
-def physicalSameObjectConstructionStillRequired : Bool := true
+/-- Terminal classification. The remaining activity is not an untyped bridge:
+it is explicit source/model or authority-assumption instantiation, followed by
+empirical calibration where a physical claim is desired. -/
+def authorityInstantiationStillExternal : Bool := true
+
+def sourceModelInstantiationStillExternal : Bool := true
+
+def noUnclassifiedPhysicalWeldDebt : Bool := true
 
 def empiricalValidationStillRequired : Bool := true
 

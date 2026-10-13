@@ -142,6 +142,16 @@ theorem geometricDivisorParityOneToTen :
        eisensteinDivisorShellCount 10] := by
   native_decide
 
+theorem geometricZeroIsOne : geometricNormShellCount 0 = 1 := by
+  native_decide
+
+theorem divisorZeroIsZero : eisensteinDivisorShellCount 0 = 0 := by
+  native_decide
+
+theorem zeroIsExceptional :
+    geometricNormShellCount 0 ≠ eisensteinDivisorShellCount 0 := by
+  native_decide
+
 theorem hexShell_ne_normShell_at_two :
     hexShellCount 2 ≠ eisensteinDivisorShellCount 2 := by
   native_decide
@@ -151,13 +161,13 @@ theorem wedgeTriangle_ne_binaryPathTotal_at_three :
   native_decide
 
 ------------------------------------------------------------------------
--- General same-object bridge obligation.
+-- General same-object bridge obligation, correctly scoped to n >= 1.
 ------------------------------------------------------------------------
 
 structure EisensteinNormRepresentationBridge where
   representationCount : Nat → Nat
-  representationCount_eq_divisorLaw :
-    ∀ n, representationCount n = eisensteinDivisorShellCount n
+  representationCount_eq_divisorLaw_positive :
+    ∀ n, representationCount (n + 1) = eisensteinDivisorShellCount (n + 1)
 
 structure CountingBoundary where
   triangularAndHexExecutable : Bool := true
@@ -166,7 +176,8 @@ structure CountingBoundary where
   independentFiniteNormEnumeratorExecutable : Bool := true
   graphRadiusShellEqualsNormShell : Bool := false
   wedgeTriangleEqualsPascalPathTotal : Bool := false
-  allNGeometricDivisorRepresentationPaid : Bool := false
+  positiveNGeometricDivisorRepresentationPaid : Bool := false
+  zeroNormHandledByPositiveDivisorLaw : Bool := false
   ternaryCountImpliesExceptionalGroupIdentification : Bool := false
   modularEisensteinSeriesIdentifiedWithIntegerShells : Bool := false
 

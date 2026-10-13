@@ -54,7 +54,9 @@ theorem legendre_neg_three_eq_chiMinus3Int
   have hmod_ne_zero : p % 3 ≠ 0 := by
     intro hzero
     have h3dvd : 3 ∣ p := Nat.dvd_iff_mod_eq_zero.mpr hzero
-    exact hp3 (hp.eq_of_dvd_of_natPrime (by norm_num) h3dvd)
+    rcases (Nat.dvd_prime hp).1 h3dvd with h31 | h3p
+    · norm_num at h31
+    · exact hp3 h3p.symm
   have hcases : p % 3 = 1 ∨ p % 3 = 2 := by
     omega
   rcases hcases with h1 | h2

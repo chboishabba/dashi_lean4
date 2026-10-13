@@ -5,20 +5,25 @@ import NobelChemistry.Iteration
 /-!
 # Source-paid quantitative weld for Kagan–Soai chemistry
 
-This file adds only numerical/mechanistic facts exposed by the cited source
-surfaces. Sparse source points are not promoted to a unique continuous kinetic
-law, and the 2003 amplification experiment is not identified with the distinct
-2025 kinetic-profiling experiments.
+Only numerical/mechanistic facts exposed by cited source surfaces are encoded.
+Sparse points are not promoted to a unique continuous law, and experiments from
+different years are not collapsed into one historical run.
 -/
 
 namespace NobelChemistry
 
+/-- Shibata et al. 1996: 8.9% -> 88.1% ee by a series of autocatalytic alkylations. -/
+def soai1996Initial : ℚ := 89 / 1000
+def soai1996Terminal : ℚ := 881 / 1000
+
+@[simp] theorem soai1996_direct_numeric_amplification :
+    soai1996Initial < soai1996Terminal := by
+  norm_num [soai1996Initial, soai1996Terminal]
+
 /-- Sato et al. 2003: about 0.00005% ee, normalized to full-scale ee = 1. -/
 def soai2003Initial : ℚ := 1 / 2000000
-
 /-- Sato et al. 2003 terminal lower threshold: >99.5% ee. -/
 def soai2003Threshold : ℚ := 199 / 200
-
 def soai2003Cycles : Nat := 3
 
 @[simp] theorem soai2003_initial_positive : 0 < soai2003Initial := by
@@ -28,8 +33,7 @@ def soai2003Cycles : Nat := 3
     soai2003Initial < soai2003Threshold := by
   norm_num [soai2003Initial, soai2003Threshold]
 
-@[simp] theorem soai2003_threshold_below_full_scale :
-    soai2003Threshold < 1 := by
+@[simp] theorem soai2003_threshold_below_full_scale : soai2003Threshold < 1 := by
   norm_num [soai2003Threshold]
 
 @[simp] theorem soai2003_cycle_count : soai2003Cycles = 3 := rfl
@@ -37,15 +41,12 @@ def soai2003Cycles : Nat := 3
 /-- Source identifiers are metadata, not imported theorem authority. -/
 def kagan1986DOI : String := "10.1021/ja00269a036"
 def soai1995DOI : String := "10.1038/378767a0"
+def soai1996DOI : String := "10.1039/CC9960001235"
 def soai2003DOI : String := "10.1002/anie.200390105"
 def mohler2025DOI : String := "10.1038/s41467-025-62591-3"
 
-/-- Four systems profiled by Möhler et al. 2025. -/
 inductive SoaiSystem where
-  | TMSPyr
-  | AdPyr
-  | TMSPym
-  | AdPym
+  | TMSPyr | AdPyr | TMSPym | AdPym
   deriving DecidableEq, Repr
 
 open SoaiSystem
@@ -81,8 +82,7 @@ inductive RateCoordinate where
   deriving DecidableEq, Repr
 
 inductive RateUnit where
-  | perMolarSecond
-  | perSecond
+  | perMolarSecond | perSecond
   deriving DecidableEq, Repr
 
 open RateCoordinate RateUnit
@@ -94,7 +94,6 @@ def rateUnit : RateCoordinate → RateUnit
 @[simp] theorem k4_rate_unit : rateUnit k4 = perMolarSecond := rfl
 @[simp] theorem k6_rate_unit : rateUnit k6 = perSecond := rfl
 
-/-- Source-exposed mechanistic flags, kept separate from equation bodies. -/
 structure MechanisticReceipt where
   mirrorCyclesSameRates : Bool
   aldehydeSecondOrder : Bool
@@ -103,24 +102,18 @@ structure MechanisticReceipt where
   hemiacetalatePathwaySupported : Bool
   deriving DecidableEq, Repr
 
-def mohler2025Receipt : MechanisticReceipt :=
-  ⟨true, true, true, true, true⟩
+def mohler2025Receipt : MechanisticReceipt := ⟨true, true, true, true, true⟩
 
 @[simp] theorem mohler_mirror_rates : mohler2025Receipt.mirrorCyclesSameRates = true := rfl
 @[simp] theorem mohler_k4_rate_determining : mohler2025Receipt.k4RateDetermining = true := rfl
 
 /-- Exact representation-level C3 reflection law, reusing the chemistry carrier. -/
 theorem mirror_phase_source_weld (x : ChiralBias) :
-    phase (mirror x) = Complex.conj (phase x) :=
-  phase_mirror_eq_conj x
+    phase (mirror x) = Complex.conj (phase x) := phase_mirror_eq_conj x
 
-/--
-The implemented source weld deliberately preserves provenance separation:
-2003 pays the extreme amplification endpoint; 2025 pays a later same-reaction-
-family mechanistic/kinetic surface.  They are not represented as one experiment.
--/
 structure SourceWeldBoundary where
-  extremeAmplificationPaid : Bool
+  direct1996AmplificationPaid : Bool
+  extreme2003AmplificationPaid : Bool
   kineticNetworkPaid : Bool
   activationBarrierTablePaid : Bool
   mirrorRateIdentityPaid : Bool
@@ -130,6 +123,6 @@ structure SourceWeldBoundary where
   deriving DecidableEq, Repr
 
 def sourceWeldBoundary : SourceWeldBoundary :=
-  ⟨true, true, true, true, true, false, false⟩
+  ⟨true, true, true, true, true, true, false, false⟩
 
 end NobelChemistry

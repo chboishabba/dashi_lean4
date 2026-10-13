@@ -9,12 +9,13 @@ One triangular/A₂-style carrier supports several different observables.  This
 owner keeps graph-radius counts, wedge counts, Pascal path multiplicities and
 quadratic-norm shell counts distinct.
 
-The arithmetic shell function is the constructive divisor-side formula
+The proof-facing arithmetic shell is the signed character identity
 
-`6 * ∑_{d ∣ n} χ₋₃(d)`
+`6 * ∑_{d ∣ n} χ₋₃(d)`.
 
-implemented as the difference between divisors congruent to `1` and `2`
-modulo `3`.
+A Nat-valued positive-minus-negative adapter is retained for executable
+regressions, but the universal theorem is not stated through truncated Nat
+subtraction.
 -/
 
 ------------------------------------------------------------------------
@@ -46,6 +47,19 @@ def binaryPathTotal : Nat → Nat
 def positiveDivisors (n : Nat) : Finset Nat :=
   (Finset.range (n + 1)).filter fun d => 0 < d ∧ d ∣ n
 
+/-- Literal signed quadratic character modulo 3. -/
+def chiMinus3Int (d : Nat) : Int :=
+  if d % 3 = 0 then 0 else if d % 3 = 1 then 1 else -1
+
+/-- Signed divisor-character sum, the canonical proof-facing arithmetic object. -/
+def signedChiMinus3DivisorSum (n : Nat) : Int :=
+  ∑ d ∈ positiveDivisors n, chiMinus3Int d
+
+/-- Signed representation-formula RHS. -/
+def signedEisensteinDivisorShellCount (n : Nat) : Int :=
+  6 * signedChiMinus3DivisorSum n
+
+-- Executable Nat adapter retained for finite regressions.
 def chiMinus3Positive (d : Nat) : Nat :=
   if d % 3 = 1 then 1 else 0
 
@@ -66,10 +80,6 @@ def eisensteinDivisorShellCount (n : Nat) : Nat :=
 
 ------------------------------------------------------------------------
 -- Independent finite geometric producer.
---
--- This literally counts integer pairs in the square [-n,n]^2 satisfying
--- Q(a,b)=a^2-a*b+b^2=n.  It is intentionally separate from the divisor
--- formula.  The first ten shells are then checked independently below.
 ------------------------------------------------------------------------
 
 def eisensteinNorm (a b : Int) : Int := a * a - a * b + b * b
@@ -90,6 +100,20 @@ theorem hexBallThree : hexBallCount 3 = 37 := by native_decide
 theorem wedgeThroughThree : wedgeTriangleCount 3 = 10 := by native_decide
 
 theorem pascalFourTwo : Nat.choose 4 2 = 6 := by native_decide
+
+theorem signedDivisorShellOneToTen :
+    [signedEisensteinDivisorShellCount 1,
+     signedEisensteinDivisorShellCount 2,
+     signedEisensteinDivisorShellCount 3,
+     signedEisensteinDivisorShellCount 4,
+     signedEisensteinDivisorShellCount 5,
+     signedEisensteinDivisorShellCount 6,
+     signedEisensteinDivisorShellCount 7,
+     signedEisensteinDivisorShellCount 8,
+     signedEisensteinDivisorShellCount 9,
+     signedEisensteinDivisorShellCount 10]
+    = [6, 0, 6, 6, 0, 0, 12, 0, 6, 0] := by
+  native_decide
 
 theorem divisorShellOneToTen :
     [eisensteinDivisorShellCount 1,
@@ -145,11 +169,14 @@ theorem geometricDivisorParityOneToTen :
 theorem geometricZeroIsOne : geometricNormShellCount 0 = 1 := by
   native_decide
 
+theorem signedDivisorZeroIsZero : signedEisensteinDivisorShellCount 0 = 0 := by
+  native_decide
+
 theorem divisorZeroIsZero : eisensteinDivisorShellCount 0 = 0 := by
   native_decide
 
 theorem zeroIsExceptional :
-    geometricNormShellCount 0 ≠ eisensteinDivisorShellCount 0 := by
+    (geometricNormShellCount 0 : Int) ≠ signedEisensteinDivisorShellCount 0 := by
   native_decide
 
 theorem hexShell_ne_normShell_at_two :
@@ -161,18 +188,29 @@ theorem wedgeTriangle_ne_binaryPathTotal_at_three :
   native_decide
 
 ------------------------------------------------------------------------
--- General same-object bridge obligation, correctly scoped to n >= 1.
+-- General same-object bridge obligations, correctly scoped to n >= 1.
 ------------------------------------------------------------------------
 
+/-- Executable Nat adapter bridge. -/
 structure EisensteinNormRepresentationBridge where
   representationCount : Nat → Nat
   representationCount_eq_divisorLaw_positive :
     ∀ n, representationCount (n + 1) = eisensteinDivisorShellCount (n + 1)
 
+/-- Canonical signed theorem surface:
+`#Q^{-1}(n) = 6 * ∑_{d|n} χ₋₃(d)` for positive `n`. -/
+structure SignedEisensteinNormRepresentationBridge where
+  representationCount : Nat → Nat
+  representationCount_eq_signed_divisorLaw_positive :
+    ∀ n,
+      (representationCount (n + 1) : Int)
+        = signedEisensteinDivisorShellCount (n + 1)
+
 structure CountingBoundary where
   triangularAndHexExecutable : Bool := true
   pascalPathExecutable : Bool := true
-  chiMinus3DivisorShellExecutable : Bool := true
+  signedChiMinus3DivisorShellExecutable : Bool := true
+  natDivisorAdapterExecutable : Bool := true
   independentFiniteNormEnumeratorExecutable : Bool := true
   graphRadiusShellEqualsNormShell : Bool := false
   wedgeTriangleEqualsPascalPathTotal : Bool := false

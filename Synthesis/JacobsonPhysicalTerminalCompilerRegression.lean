@@ -6,6 +6,8 @@ open Synthesis.JacobsonPhysicalTerminalCompiler
 
 example : terminalConditionalEinsteinCompilerOwned = true := rfl
 example : noFurtherInternalJacobsonAlgebraDebt = true := rfl
-example : physicalSameObjectConstructionStillRequired = true := rfl
+example : authorityInstantiationStillExternal = true := rfl
+example : sourceModelInstantiationStillExternal = true := rfl
+example : noUnclassifiedPhysicalWeldDebt = true := rfl
 
 end Synthesis.JacobsonPhysicalTerminalCompilerRegression

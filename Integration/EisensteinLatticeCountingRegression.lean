@@ -2,12 +2,16 @@ import Integration.EisensteinLatticeCounting
 import Integration.EisensteinLatticeCountingMaxCut
 import Integration.EisensteinQuadraticAlgebraExact
 import Integration.EisensteinInertPrimeLegendreExact
+import Integration.EisensteinCharacterLocalFactorsExact
+import Integration.EisensteinRamifiedThreeExact
 
 namespace Dashi.EisensteinLatticeCountingRegression
 
 open Dashi.EisensteinLatticeCounting
 open Dashi.EisensteinLatticeCountingMaxCut
 open Dashi.EisensteinQuadraticAlgebraExact
+open Dashi.EisensteinCharacterLocalFactorsExact
+open Dashi.EisensteinRamifiedThreeExact
 
 example : triangularNumber 10 = 55 := by native_decide
 example : hexBallCount 3 = 37 := by native_decide
@@ -35,8 +39,15 @@ example : eisensteinDivisorShellCount 10 = 0 := by native_decide
 example : geometricNormShellCount 0 = 1 := by native_decide
 example : signedEisensteinDivisorShellCount 0 = 0 := by native_decide
 
+example : localCharacterFactor 0 5 = 1 := by native_decide
+example : localCharacterFactor 1 5 = 6 := by native_decide
+example : localCharacterFactor (-1) 5 = 0 := by native_decide
+example : localCharacterFactor (-1) 6 = 1 := by native_decide
+
 example : eisensteinNorm 2 1 = 3 := by native_decide
 example : QuadraticAlgebra.norm (asQuadraticAlgebra 2 1) = 3 := by native_decide
+example : QuadraticAlgebra.norm ramifiedPrime = 3 := by native_decide
+example : ramifiedPrime * ramifiedPrime = minusThreeOmega := by native_decide
 example : rotate (2,1) = (1,2) := by native_decide
 example : rotate (rotate (rotate (rotate (rotate (rotate (2,1)))))) = (2,1) := by native_decide
 

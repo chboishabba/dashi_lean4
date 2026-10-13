@@ -60,16 +60,31 @@ theorem rotate_six (p : Int × Int) :
   rcases p with ⟨a, b⟩
   ext <;> simp [rotate] <;> ring
 
-/-- The universal representation theorem is correctly scoped to positive norms.
-At `n = 0`, the geometric fibre contains `(0,0)` while the positive-divisor
-formula contributes zero. -/
-structure UniversalRepresentationSource where
+/-- Canonical proof-facing source for the classical positive-n representation
+formula.  The right hand side is the signed Dirichlet-character sum, not a
+truncated Nat subtraction adapter. -/
+structure SignedUniversalRepresentationSource where
+  representation_formula_positive :
+    ∀ n : Nat,
+      (geometricNormShellCount (n + 1) : Int)
+        = signedEisensteinDivisorShellCount (n + 1)
+
+/-- Once the signed positive-n theorem is supplied, the canonical bridge is immediate. -/
+def signedBridgeOfUniversalSource (S : SignedUniversalRepresentationSource) :
+    SignedEisensteinNormRepresentationBridge where
+  representationCount := geometricNormShellCount
+  representationCount_eq_signed_divisorLaw_positive :=
+    S.representation_formula_positive
+
+/-- Secondary executable adapter boundary.  This remains separate because
+turning the signed theorem into Nat subtraction requires a nonnegativity/cast
+receipt rather than being definitional. -/
+structure NatAdapterRepresentationSource where
   representation_formula_positive :
     ∀ n : Nat,
       geometricNormShellCount (n + 1) = eisensteinDivisorShellCount (n + 1)
 
-/-- Once the positive-n representation theorem is supplied, the same-object bridge is immediate. -/
-def bridgeOfUniversalSource (S : UniversalRepresentationSource) :
+def natBridgeOfAdapterSource (S : NatAdapterRepresentationSource) :
     EisensteinNormRepresentationBridge where
   representationCount := geometricNormShellCount
   representationCount_eq_divisorLaw_positive := S.representation_formula_positive

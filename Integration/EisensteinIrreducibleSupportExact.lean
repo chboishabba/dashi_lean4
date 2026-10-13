@@ -36,15 +36,17 @@ theorem irreducible_dvd_natCast_lies_over_prime
   refine ⟨p, hpMem, ?_⟩
   exact (Prime.dvd_pow_iff_dvd hprime).1 hpow
 
-/-- Local classification of an irreducible factor above one rational prime. -/
+/-- Local classification of an irreducible factor above one rational prime.
+The split cases carry their residue-class proof explicitly to avoid hiding proof
+terms in the result type. -/
 theorem irreducible_above_rational_prime
     (q : EisensteinQA) (hq : Irreducible q)
     (p : Nat) (hp : p.Prime)
     (hqp : q ∣ (p : EisensteinQA)) :
     (p = 3 ∧ Associated q ramifiedPrime)
-      ∨ (p % 3 = 1 ∧
-          (Associated q (splitPi p hp (by omega))
-            ∨ Associated q (splitPiBar p hp (by omega))))
+      ∨ (∃ h1 : p % 3 = 1,
+          Associated q (splitPi p hp h1)
+            ∨ Associated q (splitPiBar p hp h1))
       ∨ (p % 3 = 2 ∧ Associated q (p : EisensteinQA)) := by
   by_cases h3 : p = 3
   · left
@@ -53,9 +55,9 @@ theorem irreducible_above_rational_prime
     have hdiv : q ∣ ramifiedPrime * ramifiedPrime * unitNegOmegaSquared := by
       simpa [three_eq_ramified_square_times_unit] using hqp
     rcases hq.prime.dvd_or_dvd hdiv with hsquare | hunit
-    · have hram : q ∣ ramifiedPrime := by
-        exact (Prime.dvd_mul hq.prime).1 hsquare |>.resolve_right ?_ -- same factor either side
-      exact hq.associated_of_dvd ramifiedPrime_irreducible hram
+    · rcases hq.prime.dvd_or_dvd hsquare with hram | hram
+      · exact hq.associated_of_dvd ramifiedPrime_irreducible hram
+      · exact hq.associated_of_dvd ramifiedPrime_irreducible hram
     · exact (hq.not_isUnit (isUnit_of_dvd_unit hunit ramifiedUnit_isUnit)).elim
   · have hmod_ne_zero : p % 3 ≠ 0 := by
       intro h0
@@ -86,9 +88,9 @@ theorem irreducible_factor_of_norm_classified
     (hqz : q ∣ z) :
     ∃ p ∈ n.primeFactors,
       (p = 3 ∧ Associated q ramifiedPrime)
-        ∨ (p % 3 = 1 ∧
-            (Associated q (splitPi p (Nat.prime_of_mem_primeFactors ‹p ∈ n.primeFactors›) (by omega))
-              ∨ Associated q (splitPiBar p (Nat.prime_of_mem_primeFactors ‹p ∈ n.primeFactors›) (by omega))))
+        ∨ (∃ h1 : p % 3 = 1,
+            Associated q (splitPi p (Nat.prime_of_mem_primeFactors ‹p ∈ n.primeFactors›) h1)
+              ∨ Associated q (splitPiBar p (Nat.prime_of_mem_primeFactors ‹p ∈ n.primeFactors›) h1))
         ∨ (p % 3 = 2 ∧ Associated q (p : EisensteinQA)) := by
   have hqn : q ∣ (n : EisensteinQA) := by
     have hprod : (n : EisensteinQA) = z * star z := by
@@ -98,9 +100,9 @@ theorem irreducible_factor_of_norm_classified
     exact hqz.mul_right (star z)
   obtain ⟨p, hpMem, hqp⟩ :=
     irreducible_dvd_natCast_lies_over_prime q hq n hn.ne' hqn
+  let hp : p.Prime := Nat.prime_of_mem_primeFactors hpMem
   refine ⟨p, hpMem, ?_⟩
-  exact irreducible_above_rational_prime q hq p
-    (Nat.prime_of_mem_primeFactors hpMem) hqp
+  simpa [hp] using irreducible_above_rational_prime q hq p hp hqp
 
 structure EisensteinIrreducibleSupportBoundary where
   embeddedNaturalFactorizationPaid : Bool := true

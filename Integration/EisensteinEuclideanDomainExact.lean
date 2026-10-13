@@ -1,6 +1,6 @@
 import Integration.EisensteinQuadraticAlgebraExact
 import Integration.EisensteinLatticeCountingMaxCut
-import Mathlib.Algebra.Order.Archimedean.Rat
+import Mathlib.Algebra.Order.Archimedean.Real.Basic
 import Mathlib.Algebra.Order.Round
 
 namespace Dashi.EisensteinEuclideanDomainExact

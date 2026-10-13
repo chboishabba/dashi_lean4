@@ -60,14 +60,18 @@ theorem rotate_six (p : Int × Int) :
   rcases p with ⟨a, b⟩
   ext <;> simp [rotate] <;> ring
 
+/-- The universal representation theorem is correctly scoped to positive norms.
+At `n = 0`, the geometric fibre contains `(0,0)` while the positive-divisor
+formula contributes zero. -/
 structure UniversalRepresentationSource where
-  representation_formula :
-    ∀ n : Nat, geometricNormShellCount n = eisensteinDivisorShellCount n
+  representation_formula_positive :
+    ∀ n : Nat,
+      geometricNormShellCount (n + 1) = eisensteinDivisorShellCount (n + 1)
 
-/-- The true remaining source-facing theorem: once supplied, the same-object bridge is immediate. -/
+/-- Once the positive-n representation theorem is supplied, the same-object bridge is immediate. -/
 def bridgeOfUniversalSource (S : UniversalRepresentationSource) :
     EisensteinNormRepresentationBridge where
   representationCount := geometricNormShellCount
-  representationCount_eq_divisorLaw := S.representation_formula
+  representationCount_eq_divisorLaw_positive := S.representation_formula_positive
 
 end Dashi.EisensteinLatticeCountingMaxCut

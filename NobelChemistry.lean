@@ -2,3 +2,5 @@ import NobelChemistry.AsymmetricAutocatalysis
 import NobelChemistry.AsymmetricAutocatalysisValidation
 import NobelChemistry.Iteration
 import NobelChemistry.IterationValidation
+import NobelChemistry.SourcePaidWeld
+import NobelChemistry.SourcePaidWeldValidation

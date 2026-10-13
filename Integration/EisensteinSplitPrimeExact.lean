@@ -100,9 +100,10 @@ theorem splitTestElement_not_dvd
     (p : Nat) (hp : p.Prime) (hp2 : p ≠ 2) (r : Int) :
     ¬ (p : EisensteinQA) ∣ splitTestElement r := by
   intro h
+  have hcoords :=
+    (natCast_dvd_iff_coordinates p (splitTestElement r)).1 h
   have h2int : (p : Int) ∣ (2 : Int) := by
-    simpa [splitTestElement, asQuadraticAlgebra] using
-      (natCast_dvd_iff_coordinates p (splitTestElement r)).1 h |>.2
+    simpa [splitTestElement, asQuadraticAlgebra] using hcoords.2
   have h2nat : p ∣ 2 := by
     exact_mod_cast h2int
   have peq : p = 2 :=
@@ -115,14 +116,14 @@ theorem splitTestElement_star_not_dvd
     (p : Nat) (hp : p.Prime) (hp2 : p ≠ 2) (r : Int) :
     ¬ (p : EisensteinQA) ∣ star (splitTestElement r) := by
   intro h
-  have h2int : (p : Int) ∣ (-2 : Int) := by
-    simpa [splitTestElement, asQuadraticAlgebra] using
-      (natCast_dvd_iff_coordinates p (star (splitTestElement r))).1 h |>.2
+  have hcoords :=
+    (natCast_dvd_iff_coordinates p (star (splitTestElement r))).1 h
+  have hneg2 : (p : Int) ∣ (-2 : Int) := by
+    simpa [splitTestElement, asQuadraticAlgebra] using hcoords.2
+  have h2int : (p : Int) ∣ (2 : Int) := by
+    simpa using (dvd_neg.mp hneg2)
   have h2nat : p ∣ 2 := by
-    have habs : p ∣ Int.natAbs (-2) := by
-      rw [← Int.natCast_dvd_natCast]
-      simpa using h2int
-    simpa using habs
+    exact_mod_cast h2int
   have peq : p = 2 :=
     (Nat.prime_dvd_prime_iff_eq hp (by norm_num)).1 h2nat
   exact hp2 peq
@@ -146,10 +147,6 @@ theorem split_prime_not_irreducible
     (p : Nat) (hp : p.Prime) (hmod : p % 3 = 1) :
     ¬ Irreducible (p : EisensteinQA) := by
   have hp2 : p ≠ 2 := by
-    intro h
-    subst p
-    norm_num at hmod
-  have hp3 : p ≠ 3 := by
     intro h
     subst p
     norm_num at hmod

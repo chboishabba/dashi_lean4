@@ -34,12 +34,11 @@ theorem irreducible_of_norm_nat_prime
     · exact Or.inl ((natAbs_norm_eq_one_iff_isUnit a).1 haOne)
     · have hbOne : (QuadraticAlgebra.norm b).natAbs = 1 := by
         rw [haPrime] at hnatProd
-        exact Nat.eq_one_of_dvd_one <| by
-          rw [← Nat.mul_dvd_mul_iff_left hp.pos]
-          simpa [hnatProd]
+        exact Nat.eq_of_mul_eq_mul_left hp.pos hnatProd
       exact Or.inr ((natAbs_norm_eq_one_iff_isUnit b).1 hbOne)
 
-/-- In particular the selected factor above every split prime is irreducible. -/
+/-- In particular every selected factor above a split rational prime is
+irreducible. -/
 theorem splitPrimeRepresentative_irreducible
     (p : Nat) (hp : p.Prime) (hmod : p % 3 = 1)
     (z : EisensteinQA)

@@ -36,9 +36,7 @@ theorem irreducible_dvd_natCast_lies_over_prime
   refine ⟨p, hpMem, ?_⟩
   exact (Prime.dvd_pow_iff_dvd hprime).1 hpow
 
-/-- Local classification of an irreducible factor above one rational prime.
-The split cases carry their residue-class proof explicitly to avoid hiding proof
-terms in the result type. -/
+/-- Local classification of an irreducible factor above one rational prime. -/
 theorem irreducible_above_rational_prime
     (q : EisensteinQA) (hq : Irreducible q)
     (p : Nat) (hp : p.Prime)
@@ -80,17 +78,19 @@ theorem irreducible_above_rational_prime
       exact hq.associated_of_dvd (inert_prime_irreducible p hp h2) hqp
 
 /-- Every irreducible factor occurring in a represented element lies in the
-explicit ramified/inert/split support over a prime dividing its norm. -/
+explicit ramified/inert/split support over a prime dividing its norm.  The
+primality proof is returned explicitly so downstream dependent terms do not
+rely on proof-search through nested existential binders. -/
 theorem irreducible_factor_of_norm_classified
     (z : EisensteinQA) (n : Nat) (hn : 0 < n)
     (hz : QuadraticAlgebra.norm z = n)
     (q : EisensteinQA) (hq : Irreducible q)
     (hqz : q ∣ z) :
-    ∃ p ∈ n.primeFactors,
+    ∃ p, ∃ hpMem : p ∈ n.primeFactors, ∃ hp : p.Prime,
       (p = 3 ∧ Associated q ramifiedPrime)
         ∨ (∃ h1 : p % 3 = 1,
-            Associated q (splitPi p (Nat.prime_of_mem_primeFactors ‹p ∈ n.primeFactors›) h1)
-              ∨ Associated q (splitPiBar p (Nat.prime_of_mem_primeFactors ‹p ∈ n.primeFactors›) h1))
+            Associated q (splitPi p hp h1)
+              ∨ Associated q (splitPiBar p hp h1))
         ∨ (p % 3 = 2 ∧ Associated q (p : EisensteinQA)) := by
   have hqn : q ∣ (n : EisensteinQA) := by
     have hprod : (n : EisensteinQA) = z * star z := by
@@ -101,8 +101,8 @@ theorem irreducible_factor_of_norm_classified
   obtain ⟨p, hpMem, hqp⟩ :=
     irreducible_dvd_natCast_lies_over_prime q hq n hn.ne' hqn
   let hp : p.Prime := Nat.prime_of_mem_primeFactors hpMem
-  refine ⟨p, hpMem, ?_⟩
-  simpa [hp] using irreducible_above_rational_prime q hq p hp hqp
+  refine ⟨p, hpMem, hp, ?_⟩
+  exact irreducible_above_rational_prime q hq p hp hqp
 
 structure EisensteinIrreducibleSupportBoundary where
   embeddedNaturalFactorizationPaid : Bool := true

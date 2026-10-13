@@ -4,10 +4,10 @@ import NobelChemistry.AsymmetricAutocatalysis
 /-!
 # Recoverable and consumer-relative observers for the finite chiral carrier
 
-This is the Lean companion to the Agda cross-PR observer x-pollination.  A
-three-valued phase label forgets seed-vs-amplified magnitude.  The residual
-magnitude reopens the complete five-state fixture.  The same coarse phase is
-sufficient for handed branch but insufficient for full identity.  A further
+This is the Lean companion to the Agda cross-PR observer x-pollination. A
+three-valued phase label forgets seed-vs-amplified magnitude. The residual
+magnitude reopens the complete five-state fixture. The same coarse phase is
+sufficient for handed branch but insufficient for full identity. A further
 fixed/transverse quotient answers only racemic-vs-nonracemic.
 -/
 
@@ -39,6 +39,23 @@ noncomputable def phaseValue : PhaseLabel → ℂ
     phase x = phaseValue (phaseLabel x) := by
   cases x <;> rfl
 
+/-- Label-level reflection corresponding to cyclotomic conjugation. -/
+def conjugatePhaseLabel : PhaseLabel → PhaseLabel
+  | one => one
+  | zeta => zetaSq
+  | zetaSq => zeta
+
+@[simp] theorem phaseLabel_mirror (x : ChiralBias) :
+    phaseLabel (mirror x) = conjugatePhaseLabel (phaseLabel x) := by
+  cases x <;> rfl
+
+@[simp] theorem phaseValue_conjugate (p : PhaseLabel) :
+    phaseValue (conjugatePhaseLabel p) = Complex.conj (phaseValue p) := by
+  cases p with
+  | one => simp [phaseValue, conjugatePhaseLabel]
+  | zeta => simpa [phaseValue, conjugatePhaseLabel] using Spine.conj_zeta.symm
+  | zetaSq => simpa [phaseValue, conjugatePhaseLabel] using Spine.conj_zeta_sq.symm
+
 /-- Reopen the exact finite state from phase plus the existing magnitude code. -/
 def reopenPhaseMagnitude : PhaseLabel → Nat → ChiralBias
   | one, _ => racemic
@@ -63,7 +80,7 @@ theorem no_identity_factor_through_phaseLabel :
       _ = leftAmplified := by simpa [phaseLabel] using ha.symm
   cases bad
 
-/-- Handed branch does factor exactly through the three-phase observer. -/
+/-- Handed branch factors exactly through the three-phase observer. -/
 def branchOfPhase : PhaseLabel → FutureBranch
   | one => FutureBranch.racemic
   | zeta => FutureBranch.left
@@ -73,7 +90,6 @@ def branchOfPhase : PhaseLabel → FutureBranch
     futureBranch x = branchOfPhase (phaseLabel x) := by
   cases x <;> rfl
 
-/-- Explicit factor-map receipt for the consumer-relative sufficiency claim. -/
 theorem futureBranch_factorization :
     ∃ f : PhaseLabel → FutureBranch, ∀ x, futureBranch x = f (phaseLabel x) := by
   exact ⟨branchOfPhase, futureBranch_factors_through_phaseLabel⟩
@@ -138,10 +154,6 @@ theorem racemicStatus_factorization :
     ∃ f : RealifiedSector → RacemicStatus,
       ∀ x, racemicStatus x = f (realifiedObserver x) := by
   exact ⟨statusOfRealified, racemicStatus_factors_through_realified⟩
-
-------------------------------------------------------------------------
--- Representation boundary.
-------------------------------------------------------------------------
 
 structure RecoverableObserverBoundary where
   phaseAloneRecoversIdentity : Bool

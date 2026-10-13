@@ -15,11 +15,11 @@ structure ConsumerParity {X L R C : Type}
 
 structure EligibleRepresentation {X O C : Type}
     (observe : X → O) (consumer : X → C) where
-  admissible : Prop
-  admissibilityReceipt : admissible
+  Admissible : Prop
+  admissibilityReceipt : Admissible
+  ConsumerAdequate : Prop
+  consumerAdequacyReceipt : ConsumerAdequate
   consumerFactorization : ConsumerFactorization observe consumer
-  consumerAdequate : Prop := True
-  consumerAdequacyReceipt : consumerAdequate := by trivial
 
 ------------------------------------------------------------------------
 -- Expressive complexity is an independent observer coordinate.

@@ -46,7 +46,10 @@ def soai2003DOI : String := "10.1002/anie.200390105"
 def mohler2025DOI : String := "10.1038/s41467-025-62591-3"
 
 inductive SoaiSystem where
-  | TMSPyr | AdPyr | TMSPym | AdPym
+  | TMSPyr
+  | AdPyr
+  | TMSPym
+  | AdPym
   deriving DecidableEq, Repr
 
 open SoaiSystem
@@ -78,18 +81,36 @@ def profilesPerIterationApprox : Nat := 24000000
 def alkoxideFormationRate : Nat := 150
 
 inductive RateCoordinate where
-  | k2 | k3 | k4 | k5 | k6 | k7 | k8 | km2 | km3 | km4
+  | k2
+  | k3
+  | k4
+  | k5
+  | k6
+  | k7
+  | k8
+  | km2
+  | km3
+  | km4
   deriving DecidableEq, Repr
 
 inductive RateUnit where
-  | perMolarSecond | perSecond
+  | perMolarSecond
+  | perSecond
   deriving DecidableEq, Repr
 
 open RateCoordinate RateUnit
 
 def rateUnit : RateCoordinate → RateUnit
-  | k2 | k3 | k4 | k5 | k7 => perMolarSecond
-  | k6 | k8 | km2 | km3 | km4 => perSecond
+  | k2 => perMolarSecond
+  | k3 => perMolarSecond
+  | k4 => perMolarSecond
+  | k5 => perMolarSecond
+  | k6 => perSecond
+  | k7 => perMolarSecond
+  | k8 => perSecond
+  | km2 => perSecond
+  | km3 => perSecond
+  | km4 => perSecond
 
 @[simp] theorem k4_rate_unit : rateUnit k4 = perMolarSecond := rfl
 @[simp] theorem k6_rate_unit : rateUnit k6 = perSecond := rfl

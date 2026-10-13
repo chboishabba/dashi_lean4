@@ -14,7 +14,7 @@ theorem conformalVolume_hasDerivAt (s : ℝ) :
     HasDerivAt conformalVolume (4 * Real.exp (4 * s)) s := by
   have hlin : HasDerivAt (fun x : ℝ => 4 * x) 4 s := by
     simpa using (hasDerivAt_id s).const_mul 4
-  simpa [conformalVolume, mul_assoc] using hlin.exp
+  simpa [conformalVolume, mul_assoc, mul_left_comm, mul_comm] using hlin.exp
 
 /-- The vacuum action derivative is -4 λ e^{4s}. -/
 theorem vacuumAction_hasDerivAt (λ s : ℝ) :

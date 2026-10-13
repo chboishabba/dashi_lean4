@@ -59,9 +59,9 @@ theorem prime_coordinate_divisibility_blocks_norm_p
       norm_nonneg (asQuadraticAlgebra A B)
   have hp_pos : (0 : Int) < p := by exact_mod_cast hp.pos
   have hp_gt_one : (1 : Int) < p := by exact_mod_cast hp.one_lt
+  rw [hfactor] at hnorm
   have heq :
-      (p : Int) = (p : Int) ^ 2 * eisensteinNorm A B := by
-    exact_mod_cast hnorm.trans hfactor
+      (p : Int) = (p : Int) ^ 2 * eisensteinNorm A B := hnorm.symm
   have hk_pos : 0 < eisensteinNorm A B := by
     nlinarith
   have hk_one : 1 ≤ eisensteinNorm A B := by omega

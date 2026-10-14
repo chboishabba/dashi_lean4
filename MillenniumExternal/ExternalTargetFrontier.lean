@@ -41,8 +41,8 @@ def externalTargetReceipts : List ExternalTargetReceipt :=
       upstreamDeclaration := "Millennium.ClayPVersusNP.Formulations.NegativeBranch"
       state := .proofResolutionPending
       frontier := .proofResolution
-      firstUnpaid := "compile the fixed-description costed streamed bit evaluator into a literal CodedFiniteStandardTM, prove its constant/polynomial simulation overhead and faithful same-target virtual simulation, then close the total run inside the same Cook budget"
-      note := "Agda PR #1129 now closes two earlier seams. First, literal full own-Cook-formula materialisation on the same tape is impossible at positive exact budget, so that route is retired. Second, ConcreteTapeGlobalCookLevinStreamingClauseCostedExact and ConcreteTapeGlobalCookLevinStreamingBitCostedExact instrument the actual transition/initial/accepting clause path and the token/three-bit cursor: the returned costed streamed bit and charged work come from the same recursion, with exact-result and work-bound theorems. The first unpaid implementation is therefore no longer semantic streaming cost: it is compilation of those finite recursive states/arithmetic into a literal CodedFiniteStandardTM with verified simulation overhead, followed by the already-defined faithful virtual self-quotation and same-Cook-budget closure. The existing SATDecisionFailure -> SATNotInP -> PNotEqualsNP compiler remains downstream." }
+      firstUnpaid := "realize the fixed-description costed streamed bit recursion as the same-target rule table in a literal CodedFiniteStandardTM, prove exact same-target run/decision correspondence, then use the generic clock receipt and close the arithmetic inside the same Cook budget"
+      note := "Agda PR #1129 closes the earlier representation and semantic-cost seams. Literal full own-Cook-formula materialisation on the same tape is impossible at positive exact budget, so that architecture is retired. ConcreteTapeGlobalCookLevinStreamingClauseCostedExact and ConcreteTapeGlobalCookLevinStreamingBitCostedExact instrument the actual global clause path and token/three-bit cursor: the returned costed streamed bit and charged work come from the same recursion. PNotEqualsNPCodedFixedOwnCookStreamingCostExact specializes that evaluator to the SAME coded opposite target and proves semantic equality, linear work and own-Cook same-object identity. After a concrete same-target rule table/run exists, ConcreteTapeStandardClockExact.concreteStandardClockReceipt is the generic clock receipt: it already pays exact step-clock preservation, dispatch work <= T*|rules| and guarded tape width = input width + 2T. Therefore bespoke work is now only the literal CodedFiniteStandardTM rule-table realization of the paid recursion, exact faithful same-target simulation/decision, and final same Cook budget arithmetic; generic interpreter overhead is not reopened." }
   , { problem := .riemann
       upstreamDeclaration := "Millennium.ClayRiemannHypothesis"
       state := .proofResolutionPending
@@ -90,8 +90,7 @@ theorem faithful_active_lanes_not_red_math :
     (externalTargetReceipts.filter (fun r =>
       r.problem == .pVersusNP || r.problem == .riemann ||
       r.problem == .navierStokes || r.problem == .birchSwinnertonDyer)).all
-        (fun r => r.state != .redMath) = true := by
-  decide
+        (fun r => r.state != .redMath) = true := by decide
 
 theorem pnp_is_proof_resolution_pending :
     (externalTargetReceipts.find? (fun r => r.problem == .pVersusNP)).map

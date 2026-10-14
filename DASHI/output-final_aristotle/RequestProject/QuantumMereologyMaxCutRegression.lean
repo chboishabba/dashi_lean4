@@ -4,6 +4,7 @@ import RequestProject.QuantumMereologyFiniteHermitianCPO
 import RequestProject.QuantumMereologyBornProbability
 import RequestProject.QuantumMereologyVonNeumannInformation
 import RequestProject.QuantumMereologyFiniteSchwingerSelection
+import RequestProject.QuantumMereologySOTA2026
 
 namespace QuantumMereology
 namespace MaxCutRegression
@@ -95,6 +96,14 @@ example :
 example :
     FiniteSchwingerSelection.canonicalBoundary.sourceSearchIsAutomaticallyFinite = false :=
   FiniteSchwingerSelection.source_search_not_automatically_finite
+
+example :
+    SOTA2026.canonicalBoundary.sourceCreatesUniquePreferredTPS = false :=
+  SOTA2026.source_does_not_create_unique_preferred_tps
+
+example :
+    SOTA2026.canonicalBoundary.sourceCreatesLocalNonuniquenessTheorem = false :=
+  SOTA2026.source_does_not_create_local_nonuniqueness_theorem
 
 end MaxCutRegression
 end QuantumMereology

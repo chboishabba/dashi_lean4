@@ -31,9 +31,10 @@ theorem ramified_count_three :
   let q : Associates EisensteinQA := Associates.mk ramifiedPrime
   have hq : Irreducible q :=
     Associates.irreducible_mk.mpr ramifiedPrime_irreducible
-  have hpi0 : q ≠ 0 := Associates.mk_ne_zero.mpr ramifiedPrime_irreducible.ne_zero
-  have hu0 : Associates.mk unitNegOmegaSquared ≠ 0 := by
-    exact Associates.mk_ne_zero.mpr ramifiedUnit_isUnit.ne_zero
+  have hpi0 : q ≠ 0 :=
+    Associates.mk_ne_zero.mpr ramifiedPrime_irreducible.ne_zero
+  have hu0 : Associates.mk unitNegOmegaSquared ≠ 0 :=
+    Associates.mk_ne_zero.mpr ramifiedUnit_isUnit.ne_zero
   have hucount :
       Associates.count q (Associates.mk unitNegOmegaSquared).factors = 0 := by
     by_contra hc
@@ -71,9 +72,11 @@ theorem ramified_count_other_natPrime_zero
       ramifiedPrime_norm_three hdvd
   simp only [QuadraticAlgebra.norm_natCast] at hnormDvd
   have h3nat : 3 ∣ p ^ 2 := by exact_mod_cast hnormDvd
-  have h3p : 3 ∣ p := (Prime.dvd_pow_iff_dvd (by norm_num : Nat.Prime 3)).1 h3nat
-  have : p = 3 := (Nat.dvd_prime hp).1 h3p |>.resolve_left (by norm_num)
-  exact hp3 this
+  have h3p : 3 ∣ p :=
+    (Prime.dvd_pow_iff_dvd (by norm_num : Nat.Prime 3)).1 h3nat
+  rcases (Nat.dvd_prime hp).1 h3p with h31 | h3eqp
+  · norm_num at h31
+  · exact hp3 h3eqp.symm
 
 /-- In an embedded positive natural, the ramified prime occurs with twice the
 ordinary 3-adic exponent. -/
@@ -98,8 +101,7 @@ theorem ramified_count_natCast
   · rw [Finset.sum_eq_single 3]
     · rw [Associates.mk_pow]
       rw [Associates.count_pow
-        (Associates.mk_ne_zero.mpr (by norm_num : (3 : EisensteinQA) ≠ 0))
-        hq]
+        (Associates.mk_ne_zero.mpr (by norm_num : (3 : EisensteinQA) ≠ 0)) hq]
       rw [ramified_count_three]
       omega
     · intro p hpMem hpne
@@ -118,7 +120,9 @@ theorem ramified_count_natCast
     apply Finset.sum_eq_zero
     intro p hpMem
     have hpne : p ≠ 3 := by
-      intro h; subst p; exact h3mem hpMem
+      intro h
+      subst p
+      exact h3mem hpMem
     rw [Associates.mk_pow]
     rw [Associates.count_pow
       (Associates.mk_ne_zero.mpr (by
@@ -136,7 +140,10 @@ theorem ramified_count_of_representation
       = n.factorization 3 := by
   classical
   have hz0 : z ≠ 0 := by
-    intro h; subst z; simp at hz; omega
+    intro h
+    subst z
+    simp at hz
+    omega
   have hq : Irreducible (Associates.mk ramifiedPrime) :=
     Associates.irreducible_mk.mpr ramifiedPrime_irreducible
   have hnorm := nat_norm_prime_count_eq_add z n hn hz
@@ -148,14 +155,16 @@ theorem ramified_count_of_representation
     refine ⟨ramifiedPrime * unitNegOmegaSquared, ?_⟩
     simpa [mul_assoc] using three_eq_ramified_square_times_unit
   have hstarDvd3 : star ramifiedPrime ∣ (3 : EisensteinQA) := by
-    have := (star_dvd_star_iff ramifiedPrime (3 : EisensteinQA)).2 hpiDvd3
-    simpa using this
+    have h := (star_dvd_star_iff ramifiedPrime (3 : EisensteinQA)).2 hpiDvd3
+    simpa using h
   have hstarAssoc : Associated (star ramifiedPrime) ramifiedPrime := by
     rcases irreducible_above_rational_prime
       (star ramifiedPrime) hstarPiI 3 (by norm_num) hstarDvd3 with h | h | h
     · exact h.2
-    · rcases h with ⟨hmod, _⟩; norm_num at hmod
-    · rcases h with ⟨hmod, _⟩; norm_num at hmod
+    · rcases h with ⟨hmod, _⟩
+      norm_num at hmod
+    · rcases h with ⟨hmod, _⟩
+      norm_num at hmod
   have hstarCount :
       Associates.count (Associates.mk ramifiedPrime)
           (Associates.mk (star z)).factors
@@ -183,7 +192,10 @@ theorem inert_count_of_representation
   have hqA : Irreducible (Associates.mk (p : EisensteinQA)) :=
     Associates.irreducible_mk.mpr hq
   have hz0 : z ≠ 0 := by
-    intro h; subst z; simp at hz; omega
+    intro h
+    subst z
+    simp at hz
+    omega
   have hnorm := nat_norm_prime_count_eq_add z n hn hz
     (Associates.mk (p : EisensteinQA)) hqA
   have hleft := rational_prime_count_eq_factorization n p hn hp hq
@@ -212,8 +224,13 @@ theorem count_zero_of_not_dvd_natNorm
     Associates.count (Associates.mk q) (Associates.mk z).factors = 0 := by
   classical
   have hz0 : z ≠ 0 := by
-    intro h; subst z; simp at hz
-  have hqA : Irreducible (Associates.mk q) := Associates.irreducible_mk.mpr hq
+    intro h
+    subst z
+    have hn0 : n = 0 := by simpa using hz.symm
+    subst n
+    exact hqn (dvd_zero q)
+  have hqA : Irreducible (Associates.mk q) :=
+    Associates.irreducible_mk.mpr hq
   by_contra hc
   have hle := Associates.le_of_count_ne_zero
     (Associates.mk_ne_zero.mpr hz0) hqA hc
@@ -228,8 +245,8 @@ theorem count_zero_of_not_dvd_natNorm
   exact dvd_mul_of_dvd_left hqz _
 
 /-- Every represented positive norm is associated to the canonical product
-selected by its split-exponent observer.  Thus the split choices are not only
-injective invariants; they are complete invariants for associate classes. -/
+selected by its split-exponent observer.  Thus the split choices are complete
+invariants for associate classes. -/
 theorem represented_element_associated_to_choiceRepresentative
     (z : EisensteinQA) (n : Nat) (hn : 0 < n)
     (hz : QuadraticAlgebra.norm z = n) :
@@ -242,13 +259,18 @@ theorem represented_element_associated_to_choiceRepresentative
     (norm_representable_iff_inert_even n hn).1 ⟨z, hz⟩
   let c : SplitChoice n := splitChoiceOfRepresentation z n hn hz
   let w : EisensteinQA := choiceRepresentative n H c
-  have hwNorm : QuadraticAlgebra.norm w = n := choiceRepresentative_norm n hn H c
+  have hwNorm : QuadraticAlgebra.norm w = n :=
+    choiceRepresentative_norm n hn H c
   have hz0 : Associates.mk z ≠ 0 := by
     apply Associates.mk_ne_zero.mpr
-    intro h; subst z; simp at hz; omega
+    intro h
+    subst z
+    simp at hz
+    omega
   have hw0 : Associates.mk w ≠ 0 := by
     apply Associates.mk_ne_zero.mpr
-    intro h; subst w
+    intro h
+    subst w
     simp at hwNorm
     omega
   have hmk : Associates.mk z = Associates.mk w := by
@@ -299,7 +321,8 @@ theorem represented_element_associated_to_choiceRepresentative
           have hwSum := split_exponent_sum w n p hn hwNorm hp h1
           have hzLeft :
               Associates.count (Associates.mk (splitPi p hp h1))
-                  (Associates.mk z).factors = (c idx).val := by rfl
+                  (Associates.mk z).factors = (c idx).val := by
+            rfl
           have hwLeft :
               Associates.count (Associates.mk (splitPi p hp h1))
                   (Associates.mk w).factors = (c idx).val := by

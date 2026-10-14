@@ -4,14 +4,23 @@ import Integration.EisensteinQuadraticAlgebraExact
 import Integration.EisensteinInertPrimeLegendreExact
 import Integration.EisensteinCharacterLocalFactorsExact
 import Integration.EisensteinRamifiedThreeExact
+import Integration.EisensteinChoiceRecoveryExact
+import Integration.EisensteinCanonicalAssociateExact
+import Integration.EisensteinAssociateClassCountExact
+import Integration.EisensteinSixUnitOrbitExact
+import Integration.EisensteinGeometricRepresentationFormulaExact
+import Integration.EisensteinDirichletSeriesExact
 
 namespace Dashi.EisensteinLatticeCountingRegression
 
+open Complex LSeries
 open Dashi.EisensteinLatticeCounting
 open Dashi.EisensteinLatticeCountingMaxCut
 open Dashi.EisensteinQuadraticAlgebraExact
 open Dashi.EisensteinCharacterLocalFactorsExact
 open Dashi.EisensteinRamifiedThreeExact
+open Dashi.EisensteinGeometricRepresentationFormulaExact
+open Dashi.EisensteinDirichletSeriesExact
 
 example : triangularNumber 10 = 55 := by native_decide
 example : hexBallCount 3 = 37 := by native_decide
@@ -50,5 +59,17 @@ example : QuadraticAlgebra.norm ramifiedPrime = 3 := by native_decide
 example : ramifiedPrime * ramifiedPrime = minusThreeOmega := by native_decide
 example : rotate (2,1) = (1,2) := by native_decide
 example : rotate (rotate (rotate (rotate (rotate (rotate (2,1)))))) = (2,1) := by native_decide
+
+/-- Universal coefficient theorem: no finite-bound qualifier remains. -/
+example (n : Nat) :
+    (geometricNormShellCount (n + 1) : Int)
+      = signedEisensteinDivisorShellCount (n + 1) :=
+  geometricNormShell_eq_signedDivisorShell_positive n
+
+/-- Analytic factorization on the common half-plane of absolute convergence. -/
+example (s : ℂ) (hs : 1 < s.re) :
+    LSeries eisensteinGeometricCoefficient s
+      = 6 * riemannZeta s * chiMinus3LSeries s :=
+  eisensteinGeometricLSeries_factorization s hs
 
 end Dashi.EisensteinLatticeCountingRegression

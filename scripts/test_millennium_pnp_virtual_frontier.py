@@ -9,17 +9,17 @@ CENSUS = ROOT / "MillenniumExternal" / "TerminalCensus.lean"
 
 
 class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
-    def test_resolution_retires_literal_materialisation_and_tracks_virtual_route(self):
+    def test_resolution_tracks_live_compiler_and_return_boundary(self):
         text = RESOLUTION.read_text(encoding="utf-8")
         for donor in (
             "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible",
-            "PNotEqualsNPVirtualQuotationFrontierExact.literalAnchoredRouteClosed",
-            "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedResultExact",
-            "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedWorkBound",
             "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedResultExact",
-            "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedWorkBound",
-            "PNotEqualsNPFixedDescriptionVirtualGeneratorExact.FixedDescriptionGuardedCookBitGenerator",
-            "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation",
+            "GuardedCookFixedDescriptionIndexABIExact.indexABIWorkBound",
+            "ConcreteTapeFixedLocalKernelTablesExact.transitionKernelFrozenSeekExact",
+            "CodedFiniteStandardLinkedStructuralSimulationExact.linkedStructuralSimulation",
+            "CodedFiniteStandardLinkedRunSimulationExact.simulateCodedCandidateExecution",
+            "CodedFiniteStandardLinkedRunSimulationExact.appendLinkedCandidatePhase",
+            "CodedFiniteStandardReturnLinkFreshnessExact.residentCandidateRuleBlocksReturnLink",
             "ConcreteTapeStandardClockExact.concreteStandardClockReceipt",
         ):
             self.assertIn(donor, text)
@@ -31,37 +31,36 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         self.assertIn("resolvedSourceTerm := none", lane)
         self.assertIn("newMathematicsPermitted := false", lane)
 
-    def test_frontier_names_same_target_rule_table_realization_as_first_unpaid(self):
+    def test_frontier_names_generator_and_quiescent_return_as_first_unpaid(self):
         text = FRONTIER.read_text(encoding="utf-8")
         start = text.index("problem := .pVersusNP")
         end = text.index("problem := .riemann", start)
         lane = text[start:end]
         for marker in (
-            "costed streamed bit",
-            "same recursion",
-            "literal CodedFiniteStandardTM",
-            "same-target rule table",
-            "generic clock receipt",
+            "index-only ABI",
+            "finite local kernel tables",
+            "exact linked candidate middle run",
+            "fresh dispatch key",
+            "clock/phase wrapper",
+            "quiescent",
             "same Cook budget",
-            "materialisation",
         ):
             self.assertIn(marker, lane)
         self.assertIn("state := .proofResolutionPending", lane)
         self.assertNotIn("state := .greenExact", lane)
 
-    def test_census_points_to_current_costed_virtual_streaming_owner(self):
+    def test_census_points_to_current_compiler_owners(self):
         text = CENSUS.read_text(encoding="utf-8")
         start = text.index("def pVersusNPLane")
         end = text.index("def riemannLane", start)
         lane = text[start:end]
         for marker in (
-            "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact",
-            "PNotEqualsNPFixedDescriptionVirtualGeneratorExact",
-            "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact",
-            "ConcreteTapeGlobalCookLevinStreamingBitCostedExact",
-            "PNotEqualsNPFaithfulVirtualSimulationExact",
+            "GuardedCookFixedDescriptionIndexABIExact",
+            "ConcreteTapeFixedLocalKernelTablesExact",
+            "CodedFiniteStandardLinkedStructuralSimulationExact",
+            "CodedFiniteStandardLinkedRunSimulationExact",
+            "CodedFiniteStandardReturnLinkFreshnessExact",
             "ConcreteTapeStandardClockExact",
-            "virtual/streaming",
         ):
             self.assertIn(marker, lane)
 

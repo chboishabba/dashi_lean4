@@ -5,11 +5,11 @@ import Mathlib
 # Projective Lagrangian / E6-null incidence duality over F3
 
 The raw punctured four-trit carrier has 80 vectors but is not the exceptional
-80-state object.  The exceptional source object is the set of nonzero primitive
-decomposable bivectors coming from isotropic two-planes in F3^4.  Projectivizing
+80-state object. The exceptional source object is the set of nonzero primitive
+decomposable bivectors coming from isotropic two-planes in F3^4. Projectivizing
 by ±1 gives 40 Lagrangian lines.
 
-This owner closes the projective geometric seam.  It chooses canonical
+This owner closes the projective geometric seam. It chooses canonical
 first-nonzero-coordinate-one representatives, transports them through the
 existing primitive-to-standard five-space isometry, and proves:
 
@@ -18,7 +18,8 @@ existing primitive-to-standard five-space isometry, and proves:
 * 40 canonical standard-E6 null representatives;
 * explicit two-sided projective transport to the standard E6 null quadric;
 * Plucker meet-incidence is equivalent to quadratic orthogonality after that
-  transport.
+  transport;
+* the resulting projective graph is SRG(40,12,2,4).
 
 No equality with raw `T4^×` is introduced.
 -/
@@ -36,7 +37,7 @@ def primitivePolar (p q : Primitive5) : F3 :=
   primitiveQuadratic (primitiveAdd p q) - primitiveQuadratic p - primitiveQuadratic q
 
 /-- Coefficient of the top exterior form in the wedge of two primitive
-2-vectors.  On decomposable bivectors its vanishing is the Plucker incidence
+2-vectors. On decomposable bivectors its vanishing is the Plucker incidence
 criterion for the corresponding projective lines to meet. -/
 def pluckerMeet (p q : Primitive5) : F3 :=
   let P := primitiveExpand p
@@ -50,7 +51,7 @@ theorem pluckerMeet_eq_primitivePolar :
   native_decide
 
 /-- Canonical projective sign convention over F3: the first nonzero coordinate
-is 1.  Since the only nonzero scalars are ±1, this chooses one representative
+is 1. Since the only nonzero scalars are ±1, this chooses one representative
 from every projective ± pair. -/
 def firstNonzeroOne (q : Primitive5) : Prop :=
   if q 0 ≠ 0 then q 0 = 1
@@ -221,6 +222,46 @@ theorem lagIncidence_iff_standardNullOrthogonal :
       lagIncidence p q ↔ standardNullOrthogonal (lagToStandardNull p) (lagToStandardNull q) := by
   native_decide
 
+/-! ## Exact projective association graph
+
+Remove the reflexive isotropic relation and use orthogonality as adjacency.
+The standard-E6 null-point graph has the exact strongly-regular parameters
+(40,12,2,4).  Through `lagEquivStandardNull`, the source Lagrangian incidence
+graph is the same graph.
+-/
+
+def standardAdjacent (x y : StandardProjectiveNullPoint) : Prop :=
+  x ≠ y ∧ standardNullOrthogonal x y
+
+def standardNeighbors (x : StandardProjectiveNullPoint) : Finset StandardProjectiveNullPoint :=
+  Finset.univ.filter (standardAdjacent x)
+
+def standardCommonNeighbors
+    (x y : StandardProjectiveNullPoint) : Finset StandardProjectiveNullPoint :=
+  Finset.univ.filter fun z => standardAdjacent x z ∧ standardAdjacent y z
+
+theorem standard_degree12 :
+    ∀ z : StandardProjectiveNullPoint, (standardNeighbors z).card = 12 := by
+  native_decide
+
+theorem standard_adjacent_common2 :
+    ∀ x y : StandardProjectiveNullPoint,
+      x ≠ y → standardAdjacent x y → (standardCommonNeighbors x y).card = 2 := by
+  native_decide
+
+theorem standard_nonadjacent_common4 :
+    ∀ x y : StandardProjectiveNullPoint,
+      x ≠ y → ¬ standardAdjacent x y → (standardCommonNeighbors x y).card = 4 := by
+  native_decide
+
+def lagAdjacent (x y : ProjectiveLagPoint) : Prop :=
+  x ≠ y ∧ lagIncidence x y
+
+theorem lagAdjacent_iff_standardAdjacent :
+    ∀ x y : ProjectiveLagPoint,
+      lagAdjacent x y ↔ standardAdjacent (lagToStandardNull x) (lagToStandardNull y) := by
+  native_decide
+
 structure IncidenceBoundary where
   projectiveLagCount40Paid : Bool
   projectiveNullCount40Paid : Bool
@@ -228,6 +269,8 @@ structure IncidenceBoundary where
   lagNullProjectiveSameObjectPaid : Bool
   standardE6ProjectiveEquivalencePaid : Bool
   incidenceOrthogonalityEquivalencePaid : Bool
+  projectiveSRG401224Paid : Bool
+  sourceTargetAdjacencyIntertwiningPaid : Bool
   rawPuncturedT4PromotedToLagCarrier : Bool
   cardinalityAlonePromotesProjectiveRecognition : Bool
   deriving Repr
@@ -239,6 +282,8 @@ def incidenceBoundary : IncidenceBoundary where
   lagNullProjectiveSameObjectPaid := true
   standardE6ProjectiveEquivalencePaid := true
   incidenceOrthogonalityEquivalencePaid := true
+  projectiveSRG401224Paid := true
+  sourceTargetAdjacencyIntertwiningPaid := true
   rawPuncturedT4PromotedToLagCarrier := false
   cardinalityAlonePromotesProjectiveRecognition := false
 

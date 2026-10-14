@@ -17,7 +17,10 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
             "PNotEqualsNPVirtualQuotationFrontierExact.VirtualSelfQuotationCompilation",
             "PNotEqualsNPFixedDescriptionVirtualGeneratorExact.FixedDescriptionGuardedCookBitGenerator",
             "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation",
-            "GuardedCookFixedDescriptionStreamingCostExact.fixedDescriptionLinearBudget",
+            "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedResultExact",
+            "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedWorkBound",
+            "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedResultExact",
+            "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedWorkBound",
         ):
             self.assertIn(donor, text)
         self.assertIn("pnp_resolution_uses_virtual_streaming_maxcut", text)
@@ -28,16 +31,17 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         self.assertIn("resolvedSourceTerm := none", lane)
         self.assertIn("newMathematicsPermitted := false", lane)
 
-    def test_frontier_names_finite_generator_simulation_and_same_budget(self):
+    def test_frontier_names_literal_finite_machine_compilation_as_first_unpaid(self):
         text = FRONTIER.read_text(encoding="utf-8")
         start = text.index("problem := .pVersusNP")
         end = text.index("problem := .riemann", start)
         lane = text[start:end]
         for marker in (
             "fixed-description",
-            "streamed",
-            "finite coded standard",
-            "faithful same-target virtual simulation",
+            "costed streamed bit",
+            "same recursion",
+            "literal CodedFiniteStandardTM",
+            "simulation overhead",
             "same Cook budget",
             "literal materialisation",
         ):
@@ -45,7 +49,7 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         self.assertIn("state := .proofResolutionPending", lane)
         self.assertNotIn("state := .greenExact", lane)
 
-    def test_census_points_to_current_virtual_streaming_owner(self):
+    def test_census_points_to_current_costed_virtual_streaming_owner(self):
         text = CENSUS.read_text(encoding="utf-8")
         start = text.index("def pVersusNPLane")
         end = text.index("def riemannLane", start)
@@ -53,6 +57,8 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         for marker in (
             "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact",
             "PNotEqualsNPFixedDescriptionVirtualGeneratorExact",
+            "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact",
+            "ConcreteTapeGlobalCookLevinStreamingBitCostedExact",
             "PNotEqualsNPFaithfulVirtualSimulationExact",
             "virtual/streaming",
         ):

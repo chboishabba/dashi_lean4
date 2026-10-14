@@ -8,6 +8,7 @@ import Integration.RationalAlbertSpin8Automorphism
 import Integration.F4D4SpinLiftQuotientWeld
 import Integration.RationalAlbertF4OuterLiftMaxCut
 import Integration.RationalAlbertInnerDerivationNative
+import Integration.RationalAlbertNormUnitRigidityExact
 import Integration.F4D4TrialityAlbertShape
 import Integration.E6F4WeylFold
 import Integration.E6F4ShortRootRecognition
@@ -18,12 +19,12 @@ import Mathlib
 /-!
 # Native rational Albert / F4 max-cut
 
-The critical path no longer runs through the external donor.  Repo-native exact
+The critical path no longer runs through the external donor. Repo-native exact
 rational Cayley-Dickson octonions and H3(O_Q) formulas provide the carrier,
 standard cubic, Jordan product/laws and explicit S3 automorphisms.
 
 The finite exceptional side independently provides W(F4)=1152, a 192-element D4
-kernel and three 8-weight triality sectors.  The native octonion side now goes
+kernel and three 8-weight triality sectors. The native octonion side now goes
 strictly further than the earlier refuted split-192 candidate:
 
 * four explicit Spin/Tits lifts preserve the literal octonion triality tensor;
@@ -33,17 +34,24 @@ strictly further than the earlier refuted split-192 candidate:
 * acting with those lifts on H3(O_Q) gives four genuine Jordan/cubic
   automorphisms of the same native Albert algebra.
 
-The outer-triality max-cut is asymmetric.  Inside the complete current 73728
+The outer-triality max-cut is asymmetric. Inside the complete current 73728
 signed-coordinate automorphism closure one projective lift of folded `g05`
-exists, but no projective lift of folded `g24` exists.  Hence the remaining
+exists, but no projective lift of folded `g24` exists. Hence the remaining
 finite F4 weld needs a genuinely non-monomial/Hadamard-Tits chart, not another
 basis relabelling.
 
-Independently, arbitrary Albert inner derivations `[L_a,L_b]` now satisfy the
-full derivation law in Lean.  Exact-rational local computation on the same
-coordinate formulas gives rank 52 and the triality-shaped `52 = 28 + 8+8+8`
-diagnostic.  Lie type F4 is still gated by an explicit same-Lie-algebra/root
-space recognition, not by dimension alone.
+Independently, arbitrary Albert inner derivations `[L_a,L_b]` satisfy the full
+derivation law. Exact-rational local computation gives rank 52 and the
+triality-shaped `52 = 28 + 8+8+8` diagnostic.
+
+The cubic-norm route has also advanced: trace and trace pairing are recovered
+from the native cubic and unit, the native trace pairing is nondegenerate, and
+cubic-gradient uniqueness recovers the adjoint. Consequently every Q-linear
+bijection preserving the same native cubic and distinguished unit preserves the
+Jordan product on the same literal carrier. This closes the local structural
+`unit stabilizer -> Jordan automorphism` seam. It does NOT identify the abstract
+Jordan automorphism group with algebraic group F4; that remains a genuine
+classification theorem.
 -/
 
 namespace Integration.RationalAlbertF4NativeMaxCut
@@ -92,6 +100,10 @@ structure Frontier where
   exactAlbertDerivationRank52DiagnosticPaid : Bool
   exactDiagonalStabilizer28DiagnosticPaid : Bool
   exactMovingComplement24DiagnosticPaid : Bool
+
+  nativeTracePairNondegeneratePaid : Bool
+  nativeNormUnitRigidityPaid : Bool
+  unitFixingCubicSymmetryIsJordanPaid : Bool
 
   actualD4OctonionWeightLineIntertwinerPaid : Bool
   fullFiniteWeylF4InsideAutJPaid : Bool
@@ -146,6 +158,10 @@ def currentFrontier : Frontier where
   exactDiagonalStabilizer28DiagnosticPaid := true
   exactMovingComplement24DiagnosticPaid := true
 
+  nativeTracePairNondegeneratePaid := true
+  nativeNormUnitRigidityPaid := true
+  unitFixingCubicSymmetryIsJordanPaid := true
+
   actualD4OctonionWeightLineIntertwinerPaid := false
   fullFiniteWeylF4InsideAutJPaid := false
   sameLieAlgebraF4RecognitionPaid := false
@@ -156,6 +172,7 @@ inductive FiniteTrialityShapeCreatesAlbertAutomorphism : Prop
 inductive SpinLiftCreatesFullF4 : Prop
 inductive DerivationRank52CreatesF4 : Prop
 inductive RationalAlbertPlusS3CreatesFullF4 : Prop
+inductive NormUnitRigidityCreatesF4Classification : Prop
 
 theorem finite_triality_shape_does_not_create_albert_automorphism :
     ¬ FiniteTrialityShapeCreatesAlbertAutomorphism := by
@@ -169,6 +186,10 @@ theorem derivation_rank_52_does_not_create_f4 : ¬ DerivationRank52CreatesF4 := 
 
 theorem rational_albert_plus_s3_does_not_create_full_f4 :
     ¬ RationalAlbertPlusS3CreatesFullF4 := by
+  intro h; cases h
+
+theorem norm_unit_rigidity_does_not_create_f4_classification :
+    ¬ NormUnitRigidityCreatesF4Classification := by
   intro h; cases h
 
 end Integration.RationalAlbertF4NativeMaxCut

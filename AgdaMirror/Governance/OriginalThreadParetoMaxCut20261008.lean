@@ -5,6 +5,7 @@ import AgdaMirror.Governance.AUKUSUSPersonnelExchangeAuthorityEnvelope
 import AgdaMirror.Governance.IRISDenaMinisterialBriefingFOIBoundary
 import AgdaMirror.Governance.IRISDenaBunkClaimRevisionConflict
 import AgdaMirror.Governance.IRISDenaPublicRecordConsumerNonDescent
+import AgdaMirror.Governance.IRISDenaCorrectionAwareReviewGate
 
 namespace AgdaMirror.Governance.OriginalThreadParetoMaxCut20261008
 
@@ -29,7 +30,7 @@ structure ParetoCell where
 
 def hansardContentCell : ParetoCell :=
   ⟨.irisCorrectionAwareHansardContent, true, true, true, 1, 5, true,
-   "Read transcript 29619 pp. 49-52 plus applicable Chief-of-Navy correction before promoting duty-class content."⟩
+   "Acquire transcript 29619 pp. 49-52 plus applicable Chief-of-Navy correction, resolve correction applicability, and bind exact review to the same duty-class proposition before promotion."⟩
 
 def embeddingProtocolCell : ParetoCell :=
   ⟨.irisEmbeddingProtocolOperativeText, true, true, true, 2, 6, true,
@@ -62,10 +63,15 @@ def usPEPAuthorityEnvelope :=
 def bunkClaimRevision :=
   AgdaMirror.Governance.IRISDenaBunkClaimRevisionConflict.canonicalRevision
 
+def correctionAwareReviewDemand :=
+  AgdaMirror.Governance.IRISDenaCorrectionAwareReviewGate.canonicalReviewDemand
+
 theorem paid_substructure_does_not_close_live_cells :
     usPEPAuthorityEnvelope.bilateralMOUOperativeTextPaid = false ∧
     usPEPAuthorityEnvelope.irisSameEpisodeDutyPaid = false ∧
-    bunkClaimRevision.exactDutyDisclosedByDenial = false := by
+    bunkClaimRevision.exactDutyDisclosedByDenial = false ∧
+    correctionAwareReviewDemand.exactReviewBindingPaid = false ∧
+    correctionAwareReviewDemand.dutyClassPromotionPaid = false := by
   decide
 
 end AgdaMirror.Governance.OriginalThreadParetoMaxCut20261008

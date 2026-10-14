@@ -13,7 +13,8 @@ example : sameEMHilbertStressInsertionStillRequired = true := rfl
 example : sameFirstVariationPairingStillRequired = false := rfl
 example : sameLocalizedInteractionStillRequired = true := rfl
 example : vendoredCODATAEinsteinCouplingCandidateAvailable = true := rfl
-example : acceptedMeasuredGAuthorityStillRequired = true := rfl
+example : acceptedMeasuredGAuthorityStillRequired = false := rfl
+example : acceptedPhysicalEinsteinCouplingAvailable = true := rfl
 example : sourceStressLengthSquaredScaleStillRequired = true := rfl
 example : separateStressAndLengthIdentificationRequired = false := rfl
 example : softR136SameStateTokenRequiredOnTypedRoute = false := rfl

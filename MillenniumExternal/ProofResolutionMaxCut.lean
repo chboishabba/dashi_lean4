@@ -38,37 +38,36 @@ private def standardResolutionOps : List ResolutionOperation :=
   , .kernelCheck
   ]
 
-/-- P≠NP search ordering follows live Agda #1129.
+/-- P≠NP follows the live Oct-14 Agda #1129 compiler recut.
 
-Literal own-Cook materialisation is closed at positive budget.  The actual global
-clause path and token/bit cursor now return semantics and charged work from the
-same recursion.  Once a concrete same-target rule table/run is supplied, the
-existing `ConcreteTapeStandardClockExact.concreteStandardClockReceipt` already
-pays exact step-clock identity, dispatch work bounded by `T * |rules|`, and the
-guarded tape-width bound.  Thus the bespoke residual is narrowed to realizing
-the streamed recursive evaluator inside the literal coded target, proving the
-same-target run correspondence, and closing the resulting arithmetic inside the
-same Cook budget; generic interpreter overhead is not a new premise. -/
+The streamed evaluator is now index-only at runtime, its local Boolean kernels
+are frozen finite tables, actual candidate rules embed into a summed/linked coded
+target, and exact candidate runs lift edge-for-edge with identical step count.
+Three-phase run composition is also paid.  A newly explicit determinism boundary
+matters: a direct return link cannot reuse a resident candidate dispatch key, so
+an arbitrary declared T-step `finish` is not automatically a legal return point.
+The remaining compiler must therefore supply the literal generator microcode and
+a genuine phase boundary (fresh/quiescent endpoint or clocked wrapper), then pay
+generator/suffix time inside the same Cook budget. -/
 def pVersusNPResolution : ProofResolutionLane :=
   { problem := .pVersusNP
     producerSearch :=
       [ "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible"
-      , "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationForcesZeroBudget"
       , "PNotEqualsNPVirtualQuotationFrontierExact.literalAnchoredRouteClosed"
       , "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedResultExact"
-      , "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedWorkBound"
       , "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedResultExact"
       , "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedWorkBound"
-      , "PNotEqualsNPCodedFixedOwnCookStreamingCostExact.ownCookBitCostedSemanticExact"
-      , "PNotEqualsNPCodedFixedOwnCookStreamingCostExact.ownCookBitCostedWorkLinear"
       , "PNotEqualsNPCodedFixedOwnCookStreamingCostExact.ownCookFormulaSameObject"
-      , "PNotEqualsNPFixedDescriptionVirtualGeneratorExact.FixedDescriptionGuardedCookBitGenerator"
-      , "PNotEqualsNPFaithfulVirtualGeneratorOutputExact.FaithfulGeneratorOutput"
-      , "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation"
+      , "GuardedCookFixedDescriptionIndexABIExact.indexABIWorkBound"
+      , "ConcreteTapeFixedLocalKernelTablesExact.transitionKernelFrozenSeekExact"
+      , "ConcreteTapeFixedLocalKernelTablesExact.acceptanceKernelFrozenSeekExact"
+      , "CodedFiniteStandardModeSumExact.sumFragments"
+      , "CodedFiniteStandardLinkedStructuralSimulationExact.linkedStructuralSimulation"
+      , "CodedFiniteStandardLinkedRunSimulationExact.simulateCodedCandidateExecution"
+      , "CodedFiniteStandardLinkedRunSimulationExact.appendLinkedCandidatePhase"
+      , "CodedFiniteStandardReturnLinkFreshnessExact.residentCandidateRuleBlocksReturnLink"
       , "ConcreteTapeStandardClockExact.concreteStandardClockReceipt"
-      , "PNotEqualsNPConcreteTapeRuleTableInterpreterExact.fetchConcreteRuleWorkBound"
-      , "PNotEqualsNPStandardMachineMaxCutClosureExact.StandardPolynomialCandidateCoverage"
-      , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesCandidateFailure"
+      , "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesUniversalFailure"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesSATNotInP"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesPNotEqualsNP"
@@ -121,13 +120,8 @@ def bsdResolution : ProofResolutionLane :=
       , "Synthesis.Millennium.BSD.UniversalSelmerDefectZero"
       , "Synthesis.Millennium.BSD.universalBSDRankTheorem_of_background"
       , "Synthesis.Millennium.BSD.universalBSDRankTheorem_of_producers"
-      , "Synthesis.Millennium.BSD.universalBSDRankTheorem_of_bound"
       , "Synthesis.Millennium.BSD.BSDClayCoreObligation"
-      , "Synthesis.Millennium.BSD.BSDEllipticLContinuation"
-      , "Synthesis.Millennium.BSD.universalBSDEstablishedBackgroundProducer_iff"
-      , "Synthesis.Millennium.BSD.universalBSDMordellWeilBindingProducer_iff"
       , "MillenniumBSDProjectiveRankWeld.projective_rank_carrier_paid"
-      , "Mathlib WeierstrassCurve.Projective.Point ≃+ WeierstrassCurve.Affine.Point"
       , "Hasse-Weil/LSeries bad-prime-correction same-object donor" ]
     preferredOperations := standardResolutionOps
     externalCompiler := "MillenniumExternal.clayBirchSwinnertonDyer_of_dashi"
@@ -153,15 +147,15 @@ theorem pnp_rh_bsd_still_require_donor_resolution :
 
 theorem pnp_resolution_uses_virtual_streaming_maxcut :
     pVersusNPResolution.producerSearch.contains
-      "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible" = true ∧
+      "GuardedCookFixedDescriptionIndexABIExact.indexABIWorkBound" = true ∧
     pVersusNPResolution.producerSearch.contains
-      "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedResultExact" = true ∧
+      "CodedFiniteStandardLinkedRunSimulationExact.simulateCodedCandidateExecution" = true ∧
     pVersusNPResolution.producerSearch.contains
-      "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedWorkBound" = true ∧
+      "CodedFiniteStandardLinkedRunSimulationExact.appendLinkedCandidatePhase" = true ∧
     pVersusNPResolution.producerSearch.contains
-      "ConcreteTapeStandardClockExact.concreteStandardClockReceipt" = true ∧
+      "CodedFiniteStandardReturnLinkFreshnessExact.residentCandidateRuleBlocksReturnLink" = true ∧
     pVersusNPResolution.producerSearch.contains
-      "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation" = true := by decide
+      "ConcreteTapeStandardClockExact.concreteStandardClockReceipt" = true := by decide
 
 theorem bsd_resolution_uses_zero_defect_equivalence :
     bsdResolution.producerSearch.contains

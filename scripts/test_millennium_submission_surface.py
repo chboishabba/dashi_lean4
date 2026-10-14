@@ -55,14 +55,15 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         self.assertIn("Millennium.ClayPVersusNP.Formulations.NegativeBranch", text)
         self.assertIn("#print axioms clayPNotEqualsNP_of_language_outside_p", text)
 
-    def test_pnp_resolution_tracks_latest_virtual_streaming_maxcut(self):
+    def test_pnp_resolution_tracks_latest_costed_virtual_streaming_maxcut(self):
         resolution = RESOLUTION.read_text(encoding="utf-8")
         for donor in (
             "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible",
             "PNotEqualsNPVirtualQuotationFrontierExact.literalAnchoredRouteClosed",
-            "PNotEqualsNPFixedDescriptionVirtualGeneratorExact.FixedDescriptionGuardedCookBitGenerator",
-            "GuardedCookFixedDescriptionStreamingCostExact.fixedDescriptionLinearBudget",
-            "PNotEqualsNPVirtualQuotationFrontierExact.VirtualSelfQuotationCompilation",
+            "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedResultExact",
+            "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedWorkBound",
+            "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedResultExact",
+            "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedWorkBound",
             "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation",
             "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesUniversalFailure",
             "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesSATNotInP",
@@ -80,6 +81,8 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         census = CENSUS.read_text(encoding="utf-8")
         for marker in (
             "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact",
+            "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact",
+            "ConcreteTapeGlobalCookLevinStreamingBitCostedExact",
             "PNotEqualsNPFixedDescriptionVirtualGeneratorExact",
             "PNotEqualsNPFaithfulVirtualSimulationExact",
             "DASHILiteralClayNS.dashiExactFeffermanC/D",
@@ -183,12 +186,12 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         pnp_end = frontier.index("problem := .riemann", pnp_start)
         pnp = frontier[pnp_start:pnp_end]
         for marker in (
-            "fixed-description",
-            "streamed",
-            "finite coded standard",
-            "faithful same-target virtual simulation",
+            "costed streamed bit",
+            "same recursion",
+            "literal CodedFiniteStandardTM",
+            "simulation overhead",
             "same Cook budget",
-            "literal materialisation",
+            "materialisation",
         ):
             self.assertIn(marker, pnp)
         bsd_start = frontier.index("problem := .birchSwinnertonDyer")

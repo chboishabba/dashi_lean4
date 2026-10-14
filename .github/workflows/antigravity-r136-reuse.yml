@@ -8,6 +8,8 @@ on:
     paths:
       - 'Integration/AntigravityR136StaticDifferentialReuse.lean'
       - 'Integration/AntigravityR136StaticDifferentialReuseTest.lean'
+      - 'Integration/AntigravityTerminalPhysicalPackageFrontier.lean'
+      - 'Integration/AntigravityTerminalPhysicalPackageFrontierTest.lean'
       - 'AntigravityOverlayZ.lean'
       - '.github/workflows/antigravity-r136-reuse.yml'
   workflow_dispatch:

@@ -1,6 +1,7 @@
 import RequestProject.QuantumMereologyMaxCut
 import RequestProject.QuantumMereologyStandardBasisProjector
 import RequestProject.QuantumMereologyFiniteHermitianCPO
+import RequestProject.QuantumMereologyBornProbability
 
 namespace QuantumMereology
 namespace MaxCutRegression
@@ -48,6 +49,18 @@ example :
 example :
     FiniteHermitianCPO.canonicalBoundary.genericAdmissibilityConstructsTypedSymmetry = false :=
   FiniteHermitianCPO.generic_admissibility_does_not_construct_typed_symmetry
+
+example :
+    BornProbability.canonicalBoundary.coordinateBornProbabilityNonnegativePaid = true :=
+  BornProbability.coordinate_born_probability_nonnegative_paid
+
+example :
+    BornProbability.canonicalBoundary.coordinateBornProbabilityNormalizedPaid = true :=
+  BornProbability.coordinate_born_probability_normalized_paid
+
+example :
+    BornProbability.canonicalBoundary.coordinateProbabilityCreatesPhysicalPointerIdentification = false :=
+  BornProbability.coordinate_probability_does_not_create_physical_pointer_identification
 
 end MaxCutRegression
 end QuantumMereology

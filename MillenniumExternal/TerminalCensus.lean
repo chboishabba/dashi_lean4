@@ -61,7 +61,7 @@ def pVersusNPLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .agdaSource
     dashiTerminalModule :=
-      "Agda PR #1129 PNotEqualsNPStandardMachineMaxCutClosureExact: StandardPolynomialCandidateCoverage + ResourceClosingCompiler -> UniversalPolynomialSATDecisionFailure -> SATNotInP -> PNotEqualsNP; fixed-standard opposite quotation and exact Cook budget below it"
+      "Agda PR #1129: PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact retires positive-budget literal own-Cook materialisation; PNotEqualsNPFixedDescriptionVirtualGeneratorExact + PNotEqualsNPFaithfulVirtualSimulationExact define the active fixed-description virtual/streaming route. Exact streamed semantics and linear fixed-description work are paid; finite coded machine execution, faithful same-target simulation and same-Cook-budget closure remain the live producer before the existing SATNotInP -> PNotEqualsNP terminal compiler."
     directCrossVersionAdapterKernelChecked := false }
 
 def riemannLane : TerminalLane :=
@@ -70,7 +70,7 @@ def riemannLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .leanAndAgda
     dashiTerminalModule :=
-      "Lean PR #50 Synthesis.RiemannSelectedRHMaxCutFrontier + Agda RH mirror; exact LeanDojo/Mathlib statement weld lives in MillenniumExternal, while A1/A2/Route-B analytic producers remain explicit"
+      "Lean PR #50 Synthesis.RiemannSelectedRHMaxCutFrontier + Agda RH mirror; exact LeanDojo/Mathlib statement weld lives in MillenniumExternal, while A1 shell partition, A2 selected allowance/curvature/compensation and Route-B boundary-gap-limit analytic producers remain explicit"
     directCrossVersionAdapterKernelChecked := false }
 
 def navierStokesLane : TerminalLane :=
@@ -97,7 +97,7 @@ def bsdLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .leanAndAgda
     dashiTerminalModule :=
-      "Synthesis.MillenniumBSDUniversalRankWeld + MillenniumBSDSelmerDefectClayEquivalence (under same-curve analytic bridge, Clay core iff universal zero Selmer defect); merged MillenniumBSDActualE2ShaSameObjectMaxCut fixes the genuine E[2]/Sha[2] comparison boundary for the selected CM curve only, not the universal defect inhabitant"
+      "Synthesis.MillenniumBSDUniversalRankWeld + MillenniumBSDSelmerDefectClayEquivalence (under same-curve analytic bridge, Clay core iff universal zero Selmer defect); merged MillenniumBSDActualE2ShaSameObjectMaxCut fixes the genuine E[2]/Sha[2] comparison boundary for the selected CM curve only. Agda #1145 j=0/Eisenstein C3 symmetry is a local selected-curve algebra donor and is not a universal analytic-rank/zero-defect inhabitant."
     directCrossVersionAdapterKernelChecked := false }
 
 def yangMillsLane : TerminalLane :=

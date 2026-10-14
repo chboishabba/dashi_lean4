@@ -1,0 +1,9 @@
+import Integration.RationalAlbertTracePairNondegenerate
+
+namespace Integration.RationalAlbertTracePairNondegenerateRegression
+open Integration.RationalAlbertTracePairNondegenerate
+
+example : canonicalBoundary.octonionPairingPositiveDefinite = true := rfl
+example : canonicalBoundary.albertTracePairNondegenerate = true := rfl
+
+end Integration.RationalAlbertTracePairNondegenerateRegression

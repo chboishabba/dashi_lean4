@@ -61,7 +61,7 @@ def pVersusNPLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .agdaSource
     dashiTerminalModule :=
-      "Agda PR #1129: PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact retires positive-budget literal own-Cook materialisation; PNotEqualsNPFixedDescriptionVirtualGeneratorExact + PNotEqualsNPFaithfulVirtualSimulationExact define the active fixed-description virtual/streaming route. Exact streamed semantics and linear fixed-description work are paid; finite coded machine execution, faithful same-target simulation and same-Cook-budget closure remain the live producer before the existing SATNotInP -> PNotEqualsNP terminal compiler."
+      "Agda PR #1129: PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact retires positive-budget literal own-Cook materialisation. ConcreteTapeGlobalCookLevinStreamingClauseCostedExact + ConcreteTapeGlobalCookLevinStreamingBitCostedExact now cost the actual global clause path and token/three-bit virtual/streaming recursion, with semantic result and work from the same recursion. PNotEqualsNPFixedDescriptionVirtualGeneratorExact + PNotEqualsNPFaithfulVirtualSimulationExact provide the downstream virtual interfaces. The first unpaid owner is literal CodedFiniteStandardTM compilation of those finite recursive states/arithmetic with proved simulation overhead and same-Cook-budget closure, before the existing SATNotInP -> PNotEqualsNP terminal compiler."
     directCrossVersionAdapterKernelChecked := false }
 
 def riemannLane : TerminalLane :=

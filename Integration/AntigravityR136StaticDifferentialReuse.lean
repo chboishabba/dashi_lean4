@@ -18,7 +18,10 @@ It mirrors only the consumer shape:
   first-variation pairing, and localized interaction same-object welds;
 * SI calibration is reduced to accepted measured-G authority/value promotion
   and the source stress*length^2 scale. Separate stress and length scales are
-  not independently required by the consumer.
+  not independently required by the consumer;
+* on the preferred Agda route the R136/Local-C source is the actual typed pinned
+  terminal producer, not an arbitrary proposition receipt. Lean mirrors that
+  scheduling fact without claiming the Agda terminal proof object.
 -/
 
 structure R136StaticVacuumPromotionInput where
@@ -62,6 +65,11 @@ def r136CommonPairCanProduceDifferentialPromotion : Bool := true
 def independentDeltaSameObjectTheoremRequiredAfterCommonR136Pair : Bool := false
 def sharedAffineCalibrationStillRequired : Bool := true
 def commonRenormalizationConventionStillRequired : Bool := true
+
+-- Preferred source typing parity: Agda now has a direct adapter from the actual
+-- `PinnedLocalCTerminalProducers` package. These flags record scheduling only.
+def softR136SameStateTokenRequiredOnTypedRoute : Bool := false
+def typedPinnedLocalCTerminalProducerRequired : Bool := true
 
 -- TT donor boundary cross-pollinated from the open Agda Schützhold/R144 lane.
 -- These booleans are scheduling mirrors only.

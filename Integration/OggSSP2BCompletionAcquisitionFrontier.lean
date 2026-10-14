@@ -10,16 +10,33 @@ import Integration.OggSSP2BCo1ExteriorSquareTateCandidate
 import Integration.OggSSP2BCo1AugmentationTrivialityCriterion
 import Integration.OggSSP2BCo1FrobeniusHomRigidity
 import Integration.OggSSP2BCentralizerMod2CancellationRigidity
+import Integration.OggSSP2BEquivariantResidualQuotient
+import Integration.OggSSP2BUniqueInvariant24Range
+import Integration.OggSSP2BUniqueRangeNormWeld
 import Integration.OggSSP2BPostBrauerFinalCompiler
 
 /-!
 # Canonical 2B completion acquisition frontier
 
-The post-Brauer programme is now a same-object extension problem.  The preferred
-route is no longer to reconstruct the whole Monster GF(2) representation first:
-the source-native integral C2 decomposition gives an actual plus/minus cokernel
-for Tate276.  The finite Co1 screens then reduce that vertical weld to the
-placement of the common 98280-dimensional norm-map lane.
+The post-Brauer programme is now a same-object map problem, not a representation
+discovery problem.
+
+Paid runtime/theorem structure:
+
+* actual Tate/duad 2-regular Brauer ingress;
+* finite M22 10a/10b factors and M22:2 outer J2^5 source;
+* source-native integral C2 decomposition and plus/minus Tate cokernel;
+* actual Tate Co1 Jordan-Hoelder profile and centralizer block/support split;
+* one unique residual degree-24 simple;
+* `dim Hom_Co1(24,Sym2(24)) = 1`, spanned by Frobenius;
+* quotient-map equivariance descends automatically from a surjective equivariant
+  quotient presentation and equivariance of the source residual map.
+
+Preferred max-cut now tests an even shorter target-side route: if Sym2(24) has a
+unique invariant/minimal 24-dimensional submodule, equal to the explicit
+Frobenius image, then any actual residual norm image that is Co1-stable and has
+the already-forced rank 24 must equal Frobenius literally.  The quotient-source
+chart is then unnecessary.
 
 Independent whole-276 defect-12, mod-4, Fi22 and explicit-Monster routes remain
 as falsifiers/fallbacks rather than competing ontologies.
@@ -36,10 +53,17 @@ structure Status where
   tatePlusMinusCokernelStructurePaid : Bool
   co1Sym2ExteriorCandidateConstructed : Bool
   co1AugmentationCriterionFormalized : Bool
+
   frobenius24HomUniquenessScreenImplemented : Bool
   frobenius24HomUniquenessRuntimePaid : Bool
   centralizerMod2CancellationScreenImplemented : Bool
   centralizerMod2CancellationRuntimePaid : Bool
+  common98280NoLongerIndependentGate : Bool
+
+  quotientEquivarianceDescentCompilerPaid : Bool
+  uniqueInvariant24TargetScreenImplemented : Bool
+  uniqueInvariant24TargetRuntimePaid : Bool
+  actualResidualImageInvariantPaid : Bool
   actualNormCommon98280IsomorphismPaid : Bool
   actualTateExteriorSquareWeldPaid : Bool
 
@@ -71,10 +95,17 @@ def canonicalStatus : Status where
   tatePlusMinusCokernelStructurePaid := true
   co1Sym2ExteriorCandidateConstructed := true
   co1AugmentationCriterionFormalized := true
+
   frobenius24HomUniquenessScreenImplemented := true
-  frobenius24HomUniquenessRuntimePaid := false
+  frobenius24HomUniquenessRuntimePaid := true
   centralizerMod2CancellationScreenImplemented := true
-  centralizerMod2CancellationRuntimePaid := false
+  centralizerMod2CancellationRuntimePaid := true
+  common98280NoLongerIndependentGate := true
+
+  quotientEquivarianceDescentCompilerPaid := true
+  uniqueInvariant24TargetScreenImplemented := true
+  uniqueInvariant24TargetRuntimePaid := false
+  actualResidualImageInvariantPaid := false
   actualNormCommon98280IsomorphismPaid := false
   actualTateExteriorSquareWeldPaid := false
 
@@ -124,9 +155,23 @@ theorem finite_mod4_rank_is_276 :
 theorem remaining_defect_source_bits_two :
     canonicalStatus.remainingDefectSourceBits = 2 := rfl
 
+/-- The two representation-discovery runtime gates are paid. -/
+theorem co1_runtime_rigidity_paid :
+    canonicalStatus.frobenius24HomUniquenessRuntimePaid = true ∧
+    canonicalStatus.centralizerMod2CancellationRuntimePaid = true ∧
+    canonicalStatus.common98280NoLongerIndependentGate = true := by
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Induced quotient-map equivariance is now a compiler theorem, not an
+independent acquisition. -/
+theorem quotient_equivariance_not_independent :
+    canonicalStatus.quotientEquivarianceDescentCompilerPaid = true := rfl
+
+/-- Preferred target-side uniqueness shortcut is implemented but runtime and
+same-object residual-image attachment remain open. -/
 theorem preferred_cokernel_gate_still_open :
-    canonicalStatus.frobenius24HomUniquenessRuntimePaid = false ∧
-    canonicalStatus.centralizerMod2CancellationRuntimePaid = false ∧
+    canonicalStatus.uniqueInvariant24TargetRuntimePaid = false ∧
+    canonicalStatus.actualResidualImageInvariantPaid = false ∧
     canonicalStatus.actualNormCommon98280IsomorphismPaid = false ∧
     canonicalStatus.actualTateExteriorSquareWeldPaid = false := by
   exact ⟨rfl, rfl, rfl, rfl⟩

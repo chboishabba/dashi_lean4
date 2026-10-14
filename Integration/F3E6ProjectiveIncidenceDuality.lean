@@ -52,7 +52,7 @@ theorem pluckerMeet_eq_primitivePolar :
 /-- Canonical projective sign convention over F3: the first nonzero coordinate
 is 1.  Since the only nonzero scalars are ±1, this chooses one representative
 from every projective ± pair. -/
-def firstNonzeroOne (q : Primitive5) : Bool :=
+def firstNonzeroOne (q : Primitive5) : Prop :=
   if q 0 ≠ 0 then q 0 = 1
   else if q 1 ≠ 0 then q 1 = 1
   else if q 2 ≠ 0 then q 2 = 1
@@ -125,7 +125,7 @@ The projective normalization below removes the possible output sign.
 private def standardNeg (z : E6Bridge.F3Five) : E6Bridge.F3Five :=
   ⟨-z.z0, -z.z1, -z.z2, -z.z3, -z.z4⟩
 
-private def standardFirstNonzeroOne (z : E6Bridge.F3Five) : Bool :=
+private def standardFirstNonzeroOne (z : E6Bridge.F3Five) : Prop :=
   if z.z0 ≠ 0 then z.z0 = 1
   else if z.z1 ≠ 0 then z.z1 = 1
   else if z.z2 ≠ 0 then z.z2 = 1
@@ -158,7 +158,7 @@ private def normalizeStandard (z : E6Bridge.F3Five) : E6Bridge.F3Five :=
 
 def standardProjectiveNullFinset : Finset E6Bridge.F3Five :=
   Finset.univ.filter fun z =>
-    E6Bridge.standardQuadratic z = 0 && standardFirstNonzeroOne z
+    E6Bridge.standardQuadratic z = 0 ∧ standardFirstNonzeroOne z
 
 theorem standardProjectiveNull_card : standardProjectiveNullFinset.card = 40 := by
   native_decide

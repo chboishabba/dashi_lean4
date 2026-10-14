@@ -1,0 +1,75 @@
+import Mathlib
+
+namespace Integration.AntigravityR136StaticDifferentialReuse
+
+/-!
+Structural Lean mirror of the current Agda post-normalization reuse cut.
+
+This file does not import Agda proof objects or assert physical source authority.
+It mirrors only the consumer shape:
+
+* one same-state R136/Local-C vacuum endpoint plus an affine V -> rho map can
+  discharge the static metric-response consumer;
+* two such endpoints under one shared affine calibration/common convention give
+  Delta Lambda = a (V_on - V_off), so no extra Delta same-object theorem is
+  scheduled;
+* scalar Kottler modulation is not a propagating TT mode;
+* the open TT donor leaves are the literal GW tangent, EM Hilbert stress,
+  first-variation pairing, and localized interaction same-object welds.
+-/
+
+structure R136StaticVacuumPromotionInput where
+  sourceNormalization : Rat
+  lorentzianVacuumRho : Rat
+  normalizationToGravityScale : Rat
+  additiveGravityRenormalization : Rat
+  vacuumRhoUsesAffineCalibration :
+    lorentzianVacuumRho =
+      normalizationToGravityScale * sourceNormalization
+        + additiveGravityRenormalization
+  sameStateR136LocalCReceipt : Prop
+  cosmologicalRenormalizationConvention : Prop
+
+structure CommonR136AffineVacuumPair where
+  sourceOff : Rat
+  sourceOn : Rat
+  rhoOff : Rat
+  rhoOn : Rat
+  scale : Rat
+  additive : Rat
+  offAffine : rhoOff = scale * sourceOff + additive
+  onAffine : rhoOn = scale * sourceOn + additive
+  offSameStateR136Receipt : Prop
+  onSameStateR136Receipt : Prop
+  commonCosmologicalRenormalizationConvention : Prop
+
+def physicalDeltaLambda (pair : CommonR136AffineVacuumPair) : Rat :=
+  pair.rhoOn - pair.rhoOff
+
+theorem r136_pair_delta_lambda_is_calibrated_source_difference
+    (pair : CommonR136AffineVacuumPair) :
+    physicalDeltaLambda pair = pair.scale * (pair.sourceOn - pair.sourceOff) := by
+  unfold physicalDeltaLambda
+  rw [pair.onAffine, pair.offAffine]
+  ring
+
+def r136VacuumReadoutCanProduceStaticPromotion : Bool := true
+def independentStaticMetricResponseReceiptRequiredAfterR136Promotion : Bool := false
+def r136CommonPairCanProduceDifferentialPromotion : Bool := true
+def independentDeltaSameObjectTheoremRequiredAfterCommonR136Pair : Bool := false
+def sharedAffineCalibrationStillRequired : Bool := true
+def commonRenormalizationConventionStillRequired : Bool := true
+
+-- TT donor boundary cross-pollinated from the open Agda Schützhold/R144 lane.
+-- These booleans are scheduling mirrors only.
+def newMaxwellTheoryRequired : Bool := false
+def newMetricDependentHodgeTheoryRequired : Bool := false
+def newR144FirstVariationFrameworkRequired : Bool := false
+def sameGWMetricTangentStillRequired : Bool := true
+def sameEMHilbertStressInsertionStillRequired : Bool := true
+def sameFirstVariationPairingStillRequired : Bool := true
+def sameLocalizedInteractionStillRequired : Bool := true
+def physicalReversalAndConservationReceiptsStillRequired : Bool := true
+def scalarKottlerDeltaGttAloneConstructsTTMode : Bool := false
+
+end Integration.AntigravityR136StaticDifferentialReuse

@@ -1,37 +1,38 @@
+import Integration.ScopedVerifierConsumerSufficiency
 import Integration.ClinicToStreetsConsumerNonDescent
 
 namespace Integration.ClinicToStreetsConsumerNonDescentRegression
 
 open Integration.ClinicToStreetsConsumerNonDescent
+namespace Generic := Integration.ScopedVerifierConsumerSufficiency
 
-example : atomisingObserver fullStructuralWorld = atomisingObserver sameSurfaceWithoutStructuralWorld := by
-  rfl
+example : Generic.ConsumerNonDescentWitness atomisingObserver structuralConsumer :=
+  canonicalAtomisingWitness
 
-example : structuralConsumer fullStructuralWorld ≠ structuralConsumer sameSurfaceWithoutStructuralWorld := by
-  decide
-
-example : ¬ ConsumerSufficient atomisingObserver structuralConsumer :=
-  atomisingObserverBlocksStructuralSufficiency
-
-example : ¬ FactorsThrough atomisingObserver structuralConsumer :=
+example : ¬ Generic.ConsumerFactorization atomisingObserver structuralConsumer :=
   atomisingObserverBlocksStructuralFactorisation
 
-example : ConsumerSufficient repairedObserver structuralConsumer :=
+example : Generic.ConsumerFactorization repairedObserver structuralConsumer :=
   structuralResidualRepairsAtomisation
 
 example :
     ∀ {Refinement : Type} {refine : CausalWorld → Refinement},
-      ConsumerSufficient (fun world => (atomisingObserver world, refine world)) structuralConsumer →
+      Generic.ConsumerFactorization
+        (fun world => (atomisingObserver world, refine world))
+        structuralConsumer →
       refine fullStructuralWorld ≠ refine sameSurfaceWithoutStructuralWorld :=
   anySufficientRepairSeparatesCanonicalCollision
 
-example : ConsumerSufficient contextObserver structuralConsumer :=
-  contextObserverIsStructurallySufficient
+example : Generic.ConsumerFactorization contextObserver structuralConsumer :=
+  contextObserverFactorsStructuralConsumer
 
-example : canonicalBoundary.finiteCollisionEstablishesEmpiricalCausality = false := by
+example : canonicalBoundary.reusesGenericConsumerSufficiency = true := by
   rfl
 
-example : canonicalBoundary.oneCollisionSeparationProvesGlobalConsumerSufficiency = false := by
+example : canonicalBoundary.reimplementsGenericFactorization = false := by
+  rfl
+
+example : canonicalBoundary.finiteCollisionEstablishesEmpiricalCausality = false := by
   rfl
 
 end Integration.ClinicToStreetsConsumerNonDescentRegression

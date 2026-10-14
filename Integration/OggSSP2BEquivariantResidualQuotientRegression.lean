@@ -1,3 +1,4 @@
+import Mathlib.Data.ZMod.Basic
 import Integration.OggSSP2BEquivariantResidualQuotient
 
 /-!

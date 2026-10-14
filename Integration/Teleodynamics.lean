@@ -14,3 +14,5 @@ import Integration.TeleodynamicsConsensus
 import Integration.TeleodynamicsConsensusRegression
 import Integration.TeleodynamicsConsensusSpectralGap
 import Integration.TeleodynamicsConsensusSpectralGapRegression
+import Integration.TeleodynamicsIITPhiBoundary
+import Integration.TeleodynamicsIITPhiBoundaryRegression

@@ -86,10 +86,14 @@ import Integration.F4AlbertDerivationRecognitionBoundary
 import Integration.F4AlbertCurrentMaxCut
 
 -- External Monster-3B normalizer source/intertwiner frontier, now extended
--- through the explicit selected-GF(729) 6x6 same-action weld.
+-- through the explicit selected-GF(729) 6x6 same-action weld and the generic
+-- equal-character/simple-representation theorem used by the finite
+-- Stone--von Neumann recognition lane.
 import Integration.Monster3BAtlasSymplectic12Receipt
 import Integration.Monster3BAtlasGF729SameObject
 import Integration.Monster3BAtlasGF729SameObjectRegression
+import Integration.FiniteCharacterDeterminesSimpleRep
+import Integration.FiniteCharacterDeterminesSimpleRepRegression
 
 import Integration.LilaMonsterGeometricReasoningCrossPollination
 import Integration.GeometricReasoningSemanticInterventionRegression

@@ -70,7 +70,9 @@ def projectiveNullFinset : Finset Primitive5 :=
 null cone are literally the same canonical 40 representatives. -/
 theorem projective_lagrangian_eq_null :
     projectiveLagrangianFinset = projectiveNullFinset := by
-  rw [projectiveLagrangianFinset, projectiveNullFinset, lagrangianWedgeSet_eq_nullCone]
+  simpa [projectiveLagrangianFinset, projectiveNullFinset] using
+    congrArg (fun s : Finset Primitive5 => s.filter firstNonzeroOne)
+      lagrangianWedgeSet_eq_nullCone
 
 theorem projectiveLagrangian_card : projectiveLagrangianFinset.card = 40 := by
   native_decide
@@ -226,7 +228,7 @@ theorem lagIncidence_iff_standardNullOrthogonal :
 
 Remove the reflexive isotropic relation and use orthogonality as adjacency.
 The standard-E6 null-point graph has the exact strongly-regular parameters
-(40,12,2,4).  Through `lagEquivStandardNull`, the source Lagrangian incidence
+(40,12,2,4). Through `lagEquivStandardNull`, the source Lagrangian incidence
 graph is the same graph.
 -/
 

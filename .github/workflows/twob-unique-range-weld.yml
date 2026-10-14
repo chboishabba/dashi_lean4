@@ -19,6 +19,7 @@ on:
       - 'Integration/OggSSP2BCentralizerNormEquivariance.lean'
       - 'Integration/OggSSP2BCentralizerNormEquivarianceRegression.lean'
       - 'Integration/OggSSP2BCompletionAcquisitionFrontier.lean'
+      - 'Integration/OggSSP2BPostSocleMaxCut.lean'
       - '.github/workflows/twob-unique-range-weld.yml'
 
 permissions:
@@ -52,3 +53,4 @@ jobs:
           lake env lean Integration/OggSSP2BUniqueRangeNormWeld.lean
           lake env lean Integration/OggSSP2BUniqueRangeNormWeldRegression.lean
           lake env lean Integration/OggSSP2BCompletionAcquisitionFrontier.lean
+          lake env lean Integration/OggSSP2BPostSocleMaxCut.lean

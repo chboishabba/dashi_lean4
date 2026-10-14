@@ -10,5 +10,9 @@ example : sharedAffineCalibrationStillRequired = true := rfl
 example : scalarKottlerDeltaGttAloneConstructsTTMode = false := rfl
 example : sameGWMetricTangentStillRequired = true := rfl
 example : sameEMHilbertStressInsertionStillRequired = true := rfl
+example : vendoredCODATAEinsteinCouplingCandidateAvailable = true := rfl
+example : acceptedMeasuredGAuthorityStillRequired = true := rfl
+example : sourceStressLengthSquaredScaleStillRequired = true := rfl
+example : separateStressAndLengthIdentificationRequired = false := rfl
 
 end Integration.AntigravityR136StaticDifferentialReuseTest

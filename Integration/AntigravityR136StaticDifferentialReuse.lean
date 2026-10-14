@@ -15,7 +15,10 @@ It mirrors only the consumer shape:
   scheduled;
 * scalar Kottler modulation is not a propagating TT mode;
 * the open TT donor leaves are the literal GW tangent, EM Hilbert stress,
-  first-variation pairing, and localized interaction same-object welds.
+  first-variation pairing, and localized interaction same-object welds;
+* SI calibration is reduced to accepted measured-G authority/value promotion
+  and the source stress*length^2 scale. Separate stress and length scales are
+  not independently required by the consumer.
 -/
 
 structure R136StaticVacuumPromotionInput where
@@ -71,5 +74,14 @@ def sameFirstVariationPairingStillRequired : Bool := true
 def sameLocalizedInteractionStillRequired : Bool := true
 def physicalReversalAndConservationReceiptsStillRequired : Bool := true
 def scalarKottlerDeltaGttAloneConstructsTTMode : Bool := false
+
+-- Least-privilege SI calibration mirror. The exact NIST/CODATA source authority
+-- remains on the Agda/source side; these are scheduler/parity facts only.
+def vendoredCODATAEinsteinCouplingCandidateAvailable : Bool := true
+def exactSpeedOfLightIsNotCalibrationBlocker : Bool := true
+def newEinsteinCouplingConventionRequired : Bool := false
+def acceptedMeasuredGAuthorityStillRequired : Bool := true
+def sourceStressLengthSquaredScaleStillRequired : Bool := true
+def separateStressAndLengthIdentificationRequired : Bool := false
 
 end Integration.AntigravityR136StaticDifferentialReuse

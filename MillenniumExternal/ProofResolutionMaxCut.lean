@@ -3,19 +3,6 @@ import Synthesis.MillenniumBSDSelmerDefectClayEquivalence
 
 /-!
 # Proof-resolution-only completion board
-
-This is the operational interpretation of the project completion assumption for
-the external Millennium pass. For P≠NP, RH, Navier--Stokes and BSD, adapter
-work is restricted to theorem discovery/import, definitional reduction,
-existing equivalences, same-object transport, theorem composition and kernel
-checking. A failed lookup is a reason to search the graph, not to manufacture a
-replacement Millennium hypothesis.
-
-The producer lists below are ordered by the latest cross-prover archaeology.
-They deliberately include exact equivalence/terminal constructors that tell us
-where *not* to reopen mathematics: when an existing package is equivalent to the
-final hard witness, resolution must find its inhabitant elsewhere rather than
-prove a duplicate formulation.
 -/
 
 namespace MillenniumExternal
@@ -36,8 +23,6 @@ structure ProofResolutionLane where
   producerSearch : List String
   preferredOperations : List ResolutionOperation
   externalCompiler : String
-  /-- A literal source-written exact target theorem already found on the graph,
-  if one has been resolved. This is not a GREEN kernel receipt. -/
   resolvedSourceTerm : Option String
   newMathematicsPermitted : Bool
   deriving DecidableEq, Repr
@@ -53,16 +38,17 @@ private def standardResolutionOps : List ResolutionOperation :=
   , .kernelCheck
   ]
 
-/-- P≠NP search ordering follows the live Agda #1129 recut.
+/-- P≠NP search ordering follows live Agda #1129.
 
-Literal same-tape own-Cook materialisation is now a proved no-go at positive
-budget.  The active route is fixed-description virtual/streamed quotation.  The
-actual global clause path is costed, and the same token/three-bit recursion now
-returns the semantic streamed Cook bit and its charged work with exact result
-and work-bound theorems.  Therefore the first implementation leaf is no longer
-semantic cost accounting: compile those finite recursive states/arithmetic into
-a literal `CodedFiniteStandardTM`, prove the faithful same-target simulation and
-constant/polynomial overhead, then close the exact same-Cook budget. -/
+Literal own-Cook materialisation is closed at positive budget.  The actual global
+clause path and token/bit cursor now return semantics and charged work from the
+same recursion.  Once a concrete same-target rule table/run is supplied, the
+existing `ConcreteTapeStandardClockExact.concreteStandardClockReceipt` already
+pays exact step-clock identity, dispatch work bounded by `T * |rules|`, and the
+guarded tape-width bound.  Thus the bespoke residual is narrowed to realizing
+the streamed recursive evaluator inside the literal coded target, proving the
+same-target run correspondence, and closing the resulting arithmetic inside the
+same Cook budget; generic interpreter overhead is not a new premise. -/
 def pVersusNPResolution : ProofResolutionLane :=
   { problem := .pVersusNP
     producerSearch :=
@@ -73,11 +59,14 @@ def pVersusNPResolution : ProofResolutionLane :=
       , "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedWorkBound"
       , "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedResultExact"
       , "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedWorkBound"
+      , "PNotEqualsNPCodedFixedOwnCookStreamingCostExact.ownCookBitCostedSemanticExact"
+      , "PNotEqualsNPCodedFixedOwnCookStreamingCostExact.ownCookBitCostedWorkLinear"
+      , "PNotEqualsNPCodedFixedOwnCookStreamingCostExact.ownCookFormulaSameObject"
       , "PNotEqualsNPFixedDescriptionVirtualGeneratorExact.FixedDescriptionGuardedCookBitGenerator"
-      , "PNotEqualsNPVirtualQuotationFrontierExact.VirtualSelfQuotationCompilation"
       , "PNotEqualsNPFaithfulVirtualGeneratorOutputExact.FaithfulGeneratorOutput"
       , "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation"
-      , "PNotEqualsNPVirtualQuotationFrontierExact.virtualRunToTargetRun"
+      , "ConcreteTapeStandardClockExact.concreteStandardClockReceipt"
+      , "PNotEqualsNPConcreteTapeRuleTableInterpreterExact.fetchConcreteRuleWorkBound"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.StandardPolynomialCandidateCoverage"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesCandidateFailure"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesUniversalFailure"
@@ -148,30 +137,20 @@ def bsdResolution : ProofResolutionLane :=
 def faithfulResolutionLanes : List ProofResolutionLane :=
   [pVersusNPResolution, rhResolution, navierStokesResolution, bsdResolution]
 
-theorem faithfulResolutionLanes_length : faithfulResolutionLanes.length = 4 := by
-  decide
+theorem faithfulResolutionLanes_length : faithfulResolutionLanes.length = 4 := by decide
 
 theorem no_faithful_resolution_lane_permits_new_mathematics :
-    faithfulResolutionLanes.all (fun lane => !lane.newMathematicsPermitted) = true := by
-  decide
+    faithfulResolutionLanes.all (fun lane => !lane.newMathematicsPermitted) = true := by decide
 
 theorem navierStokes_source_term_is_resolved :
     navierStokesResolution.resolvedSourceTerm =
-      some "DASHILiteralClayNS.dashiExactFeffermanC|D" := by
-  decide
+      some "DASHILiteralClayNS.dashiExactFeffermanC|D" := by decide
 
-/-- These three lanes are search/composition obligations only. `none` means
-"the unconditional exact source term has not yet been located by this adapter
-branch"; it does not mean the mathematics is reopened. -/
 theorem pnp_rh_bsd_still_require_donor_resolution :
     pVersusNPResolution.resolvedSourceTerm = none ∧
     rhResolution.resolvedSourceTerm = none ∧
-    bsdResolution.resolvedSourceTerm = none := by
-  decide
+    bsdResolution.resolvedSourceTerm = none := by decide
 
-/-- The active P≠NP route records the literal no-go and the strongest paid
-streaming-cost receipt.  Semantic bit production and charged work now share the
-same recursion; the next producer is literal finite-machine compilation. -/
 theorem pnp_resolution_uses_virtual_streaming_maxcut :
     pVersusNPResolution.producerSearch.contains
       "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible" = true ∧
@@ -180,17 +159,13 @@ theorem pnp_resolution_uses_virtual_streaming_maxcut :
     pVersusNPResolution.producerSearch.contains
       "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedWorkBound" = true ∧
     pVersusNPResolution.producerSearch.contains
-      "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation" = true := by
-  decide
+      "ConcreteTapeStandardClockExact.concreteStandardClockReceipt" = true ∧
+    pVersusNPResolution.producerSearch.contains
+      "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation" = true := by decide
 
-/-- The latest main-branch BSD recut is physically imported here: under the
-same-curve analytic bridge, the Clay core is exactly universal zero Selmer
-defect. This theorem only pins the resolution target; it does not provide either
-inhabitant and therefore does not promote BSD to source-exact. -/
 theorem bsd_resolution_uses_zero_defect_equivalence :
     bsdResolution.producerSearch.contains
-      "Synthesis.Millennium.BSD.bsdClayCore_iff_universalSelmerDefectZero" = true := by
-  decide
+      "Synthesis.Millennium.BSD.bsdClayCore_iff_universalSelmerDefectZero" = true := by decide
 
 #check Synthesis.Millennium.BSD.bsdClayCore_iff_universalSelmerDefectZero
 #check Synthesis.Millennium.BSD.bsdClayCore_of_selmerDefectBridge_and_zero
@@ -199,7 +174,6 @@ theorem resolution_board_agrees_with_same_object_cut :
     pVersusNPSameObjectCut.remaining = .transportOnly ∧
     riemannSameObjectCut.remaining = .transportOnly ∧
     navierStokesSameObjectCut.remaining = .transportOnly ∧
-    bsdSameObjectCut.remaining = .transportOnly := by
-  decide
+    bsdSameObjectCut.remaining = .transportOnly := by decide
 
 end MillenniumExternal

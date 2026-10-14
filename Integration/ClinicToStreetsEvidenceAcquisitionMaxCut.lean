@@ -1,81 +1,67 @@
 import Integration.ClinicToStreetsCausalProvenanceMaxCut
 
 /-!
-Final structural max-cut for the Clinic-to-Streets tranche.
+# Clinic-to-Streets evidence authority boundary
 
-The finite causal-DAG machinery is already present.  This file types the
-remaining empirical/source obligations and keeps illustrative model numbers
-role-indexed so scalar coincidence cannot turn them into measurements.
+Agda owns the repository's generic causal-estimand and causal-identification
+families.  This Lean branch currently has no native equivalent owner.  Rather
+than maintain a second, weaker checklist here, Lean mirrors only the structural
+status and explicitly fails closed on empirical causal promotion.
 -/
 
 namespace Integration.ClinicToStreetsEvidenceAcquisitionMaxCut
 
 open Integration.ClinicToStreetsCausalProvenanceMaxCut
 
-inductive EvidenceGrade
+inductive SourceEvidenceStatus
   | unacquired
   | attributedSource
   | sourceSupported
   | independentlyReplicated
   deriving DecidableEq, Repr
 
-structure EdgeEvidenceReceipt (e : Edge) where
-  grade : EvidenceGrade
-  sameObjectPopulation : Bool
-  temporallyOrdered : Bool
-  alternativeExplanationsAudited : Bool
-  interventionOrNaturalExperiment : Bool
-  deriving Repr
+structure CausalEdgeStatus where
+  edge : Edge
+  sourceStatus : SourceEvidenceStatus
+  agdaEstimandRequired : Bool
+  agdaIdentificationReceiptRequired : Bool
+  magnitudeCalibrationRequired : Bool
+  currentEmpiricalCausalPayment : Bool
+  deriving DecidableEq, Repr
 
-structure MagnitudeCalibrationReceipt (e : Edge) where
-  calibrated : Bool
-  uncertaintyRepresented : Bool
-  heldOutValidated : Bool
-  deriving Repr
+def structuralToFamilyStatus : CausalEdgeStatus :=
+  ⟨.structuralToFamily, .attributedSource, true, true, true, false⟩
 
-structure ResponsibilityMappingReceipt where
-  explanatoryOnly : Bool
+def familyToPsychicStatus : CausalEdgeStatus :=
+  ⟨.familyToPsychic, .attributedSource, true, true, true, false⟩
+
+def structuralToPsychicStatus : CausalEdgeStatus :=
+  ⟨.structuralToPsychic, .unacquired, true, true, true, false⟩
+
+structure ResponsibilityMappingStatus where
   independentlyMeasured : Bool
   moralFaultClaimed : Bool
   legalFaultClaimed : Bool
-  deriving Repr
+  deriving DecidableEq, Repr
 
-structure ActionConeEffectReceipt where
-  representedAvailabilityMeasured : Bool
-  behaviourMeasured : Bool
-  underlyingCarrierDeleted : Bool
-  intentEstablished : Bool
-  deriving Repr
-
-def structuralToFamilyCurrent : EdgeEvidenceReceipt .structuralToFamily :=
-  ⟨.attributedSource, false, false, false, false⟩
-
-def familyToPsychicCurrent : EdgeEvidenceReceipt .familyToPsychic :=
-  ⟨.attributedSource, false, false, false, false⟩
-
-def structuralToPsychicCurrent : EdgeEvidenceReceipt .structuralToPsychic :=
-  ⟨.unacquired, false, false, false, false⟩
-
-def structuralToFamilyMagnitudeCurrent : MagnitudeCalibrationReceipt .structuralToFamily :=
+def responsibilityMappingStatus : ResponsibilityMappingStatus :=
   ⟨false, false, false⟩
 
-def canonicalResponsibilityMappingBoundary : ResponsibilityMappingReceipt :=
-  ⟨true, false, false, false⟩
+structure ActionConeMeasurementStatus where
+  representedAvailabilityMeasured : Bool
+  behaviourMeasured : Bool
+  intentEstablished : Bool
+  deriving DecidableEq, Repr
 
-def canonicalActionConeEffectBoundary : ActionConeEffectReceipt :=
-  ⟨false, false, false, false⟩
+def actionConeMeasurementStatus : ActionConeMeasurementStatus :=
+  ⟨false, false, false⟩
 
-inductive AttributedEdgeImpliesEmpiricalCausality : Prop
-inductive ModelCoordinateImpliesCalibratedMagnitude : Prop
+inductive StructuralMirrorImpliesEmpiricalCausalClosure : Prop
 inductive ExplanatoryResponsibilityImpliesFault : Prop
 inductive RepresentedConeImpliesBehaviour : Prop
 
-theorem attributedEdgeDoesNotEstablishEmpiricalCausality :
-    ¬ AttributedEdgeImpliesEmpiricalCausality := by
-  intro h; cases h
-
-theorem modelCoordinateDoesNotEstablishCalibratedMagnitude :
-    ¬ ModelCoordinateImpliesCalibratedMagnitude := by
+theorem structuralMirrorDoesNotEstablishEmpiricalCausalClosure :
+    ¬ StructuralMirrorImpliesEmpiricalCausalClosure := by
   intro h; cases h
 
 theorem explanatoryResponsibilityDoesNotEstablishFault :
@@ -85,6 +71,8 @@ theorem explanatoryResponsibilityDoesNotEstablishFault :
 theorem representedConeDoesNotEstablishBehaviour :
     ¬ RepresentedConeImpliesBehaviour := by
   intro h; cases h
+
+/-! Illustrative formal coordinates remain role-indexed and non-empirical. -/
 
 inductive CoordinateRole
   | representedUpstreamSalience
@@ -98,7 +86,7 @@ structure ModelCoordinate where
   value : Nat
   role : CoordinateRole
   empirical : Bool
-  deriving Repr
+  deriving DecidableEq, Repr
 
 def fullSalienceCoordinate : ModelCoordinate :=
   ⟨9, .representedUpstreamSalience, false⟩
@@ -116,22 +104,26 @@ def atomisedActionConeCoordinate : ModelCoordinate :=
   ⟨1, .representedActionConeCardinality, false⟩
 
 inductive EqualScalarImpliesSameRole : Prop
+inductive ModelCoordinateImpliesCalibratedMagnitude : Prop
 
 theorem equalScalarDoesNotIdentifyRole : ¬ EqualScalarImpliesSameRole := by
   intro h; cases h
 
-structure FinalMaxCutBoundary where
-  finiteStructurePaid : Bool
-  edgeExistenceRequiresEvidence : Bool
-  magnitudeRequiresCalibration : Bool
-  responsibilityMappingRequiresIndependentReceipt : Bool
-  actionConeBehaviourRequiresMeasurement : Bool
-  modelNumbersRoleTyped : Bool
-  attributedClaimsAreEmpiricalCausalProof : Bool
-  moreAbstractStructureCountsAsEmpiricalProgress : Bool
-  deriving Repr
+theorem modelCoordinateDoesNotEstablishCalibratedMagnitude :
+    ¬ ModelCoordinateImpliesCalibratedMagnitude := by
+  intro h; cases h
 
-def canonicalFinalMaxCutBoundary : FinalMaxCutBoundary :=
-  ⟨true, true, true, true, true, true, false, false⟩
+structure Boundary where
+  agdaOwnsCausalEstimandSemantics : Bool
+  leanReimplementsCausalIdentificationChecklist : Bool
+  currentClinicCausalIdentificationPaid : Bool
+  structuralMirrorMayClaimEmpiricalCausalClosure : Bool
+  responsibilityRequiresIndependentMeasurement : Bool
+  actionConeBehaviourRequiresMeasurement : Bool
+  illustrativeNumbersAreEmpirical : Bool
+  deriving DecidableEq, Repr
+
+def canonicalBoundary : Boundary :=
+  ⟨true, false, false, false, true, true, false⟩
 
 end Integration.ClinicToStreetsEvidenceAcquisitionMaxCut

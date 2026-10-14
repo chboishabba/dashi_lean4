@@ -1,38 +1,39 @@
 import Integration.RationalAlbertCubicNormStructure
 import Integration.RationalAlbertCubicRigidity
+import Integration.RationalAlbertTracePairNondegenerate
+import Integration.RationalAlbertNormUnitRigidityProof
 import Integration.RationalAlbertF4ClassificationInstantiation
 import Integration.RationalAlbertF4SplitRootDatumReceipt
 
 /-!
-# Current Albert/F4 max-cut after native cubic-norm reconstruction
+# Current Albert/F4 max-cut after native cubic-norm rigidity
 
-This owner is the authoritative ledger for the post-split-root, post-cubic-norm
-state.  It supersedes earlier shorthand that treated `unit + cubic` rigidity as
-already automatic.
+This is the authoritative post-split-root ledger.
 
-Paid locally:
+Paid locally on the literal rational `H₃(O_Q)` carrier:
 
-* literal rational `H₃(O_Q)` Jordan algebra;
 * standard cubic, bilinear trace, quadratic adjoint and cross product;
 * `(x#)# = N(x)x`;
 * exact cubic polarization/gradient identity;
 * `1 × x = T(x)1 - x`;
-* exact recovery of the existing Jordan product from `(N,#,T,1)`;
-* cubic-norm-structure automorphism -> Jordan automorphism;
-* native Cartan and companion exact split-F4 root grading.
+* exact Jordan-product recovery from `(N,#,T,1)`;
+* positive-definite/nondegenerate trace pairing;
+* reconstruction of trace and bilinear trace from `N` and `1`;
+* Q-linear norm symmetry fixing `1` preserves the adjoint;
+* therefore every unit-fixing norm symmetry is a Jordan automorphism;
+* native Cartan plus companion exact split-F4 root grading.
 
-Still separate:
-
-* prove that a merely linear cubic symmetry fixing `1` preserves the adjoint
-  (equivalently finish the nondegenerate gradient-uniqueness compiler);
-* classify the resulting rational automorphism/structure groups as the desired
-  Q-form of F4/E6.
+The remaining theorem is no longer product recovery or a local root-space
+problem.  It is the characteristic-zero Q-form/algebraic-group classification:
+identify the concrete cubic symmetry group as type E6 and its unit stabilizer /
+Jordan automorphism group as the corresponding type-F4 group.
 -/
 
 namespace Integration.RationalAlbertF4CubicNormMaxCut
 
 open Integration.RationalAlbertCubicNormStructure
 open Integration.RationalAlbertCubicRigidity
+open Integration.RationalAlbertNormUnitRigidityProof
 open Integration.RationalAlbertF4ClassificationInstantiation
 open Integration.RationalAlbertF4SplitRootDatumReceipt
 
@@ -40,42 +41,41 @@ structure CurrentBoundary where
   nativeCubicNormTyped : Bool
   adjointIdentityPaid : Bool
   cubicPolarizationPaid : Bool
+  tracePairNondegenerate : Bool
   traceRecoveredFromNorm : Bool
   tracePairRecoveredFromNorm : Bool
   jordanRecoveredFromCubicData : Bool
-  cubicNormAutomorphismCompilesToJordan : Bool
   normUnitForcesAdjointPreservation : Bool
+  unitFixingNormSymmetryIsJordan : Bool
   splitF4RootDatumRecognized : Bool
   originalQFormClassified : Bool
   autJordanTypeF4 : Bool
   cubicStructureGroupTypeE6 : Bool
-  f4EqualsE6UnitStabilizer : Bool
+  f4EqualsE6UnitStabilizerAsNamedGroups : Bool
   deriving Repr
 
 def canonicalBoundary : CurrentBoundary where
   nativeCubicNormTyped := true
   adjointIdentityPaid := true
   cubicPolarizationPaid := true
+  tracePairNondegenerate := true
   traceRecoveredFromNorm := true
   tracePairRecoveredFromNorm := true
   jordanRecoveredFromCubicData := true
-  cubicNormAutomorphismCompilesToJordan := true
-  normUnitForcesAdjointPreservation := false
+  normUnitForcesAdjointPreservation := true
+  unitFixingNormSymmetryIsJordan := true
   splitF4RootDatumRecognized := true
   originalQFormClassified := false
   autJordanTypeF4 := false
   cubicStructureGroupTypeE6 := false
-  f4EqualsE6UnitStabilizer := false
+  f4EqualsE6UnitStabilizerAsNamedGroups := false
 
-/-- The next local theorem is now isolated independently of group naming. -/
-structure NativeNormUnitRigidityPayment where
-  rigidity : NormUnitRigidity
+/-- All local cubic-rigidity data is now inhabited explicitly. -/
+def nativeRigidityPayment : NormUnitRigidity := canonicalNormUnitRigidity
 
-/-- Once native norm/unit rigidity and the external characteristic-zero
-classification are both supplied, no carrier-level or root-level premise is
-left hidden in this lane. -/
-structure TerminalPayments where
-  nativeRigidity : NativeNormUnitRigidityPayment
+/-- Only the external/general characteristic-zero classification premise remains
+for the group/form naming layer. -/
+structure TerminalClassificationPayment where
   classification : CharacteristicZeroAlbertClassificationTheorem
   instantiation : ClassificationInstantiation classification
 

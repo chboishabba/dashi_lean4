@@ -6,17 +6,6 @@ import YangMills.ContinuumWilsonCovariance
 
 /-!
 # DASHI Millennium terminal-constructor census
-
-This module deliberately does not restate any Clay problem. It imports stable
-theorem-bearing surfaces already present in the root DASHI Lean package and
-records the strongest external-facing producer found across the Lean/Agda
-repositories.
-
-The census is same-object first. A lane may therefore name a stronger producer
-that lives in a separate Lean/Agda kernel or an open producer branch even when
-the root package can only `#check` an earlier theorem-bearing donor. Such names
-are routing/provenance metadata only: kernel separation and open-branch status
-are not mathematical closure and are never promoted to a GREEN external receipt.
 -/
 
 namespace MillenniumExternal
@@ -61,7 +50,7 @@ def pVersusNPLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .agdaSource
     dashiTerminalModule :=
-      "Agda PR #1129: PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact retires positive-budget literal own-Cook materialisation. ConcreteTapeGlobalCookLevinStreamingClauseCostedExact + ConcreteTapeGlobalCookLevinStreamingBitCostedExact now cost the actual global clause path and token/three-bit virtual/streaming recursion, with semantic result and charged work from the same recursion. PNotEqualsNPCodedFixedOwnCookStreamingCostExact specializes that costed evaluator to the SAME coded opposite target. PNotEqualsNPFixedDescriptionVirtualGeneratorExact + PNotEqualsNPFaithfulVirtualSimulationExact provide the downstream virtual interfaces. Productive cross-pollination with ConcreteTapeStandardClockExact pays generic post-construction clock transport: exact step count, dispatch work <= T*|rules| and guarded tape width. The first bespoke unpaid owner is therefore the same-target CodedFiniteStandardTM rule-table realization of the paid streamed recursion, exact semantic/run correspondence, and final same-Cook-budget arithmetic before the existing SATNotInP -> PNotEqualsNP terminal compiler."
+      "Live Agda PR #1129 compiler cut: GuardedCookFixedDescriptionIndexABIExact makes only unary index dynamic; ConcreteTapeFixedLocalKernelTablesExact freezes transition/acceptance Boolean kernels to finite data; CodedFiniteStandardModeSumExact + safe-link owners build literal disjoint finite modes; CodedFiniteStandardLinkedStructuralSimulationExact embeds the actual coded candidate; CodedFiniteStandardLinkedRunSimulationExact lifts the actual candidate execution edge-for-edge and composes prefix/candidate/suffix exact runs; CodedFiniteStandardReturnLinkFreshnessExact proves a direct return link is impossible on a dispatch key still occupied by a resident candidate rule. ConcreteTapeStandardClockExact remains the generic post-construction clock donor. The first live residual is therefore literal generator microcode plus a genuine exact-T phase boundary (fresh/quiescent endpoint or clock/phase wrapper), generator/suffix runs, and final same-Cook-budget arithmetic before the existing SATNotInP -> PNotEqualsNP terminal compiler."
     directCrossVersionAdapterKernelChecked := false }
 
 def riemannLane : TerminalLane :=
@@ -123,8 +112,6 @@ def terminalLanes : List TerminalLane :=
 
 theorem terminalLanes_length : terminalLanes.length = 7 := by decide
 
-/-- Known-incomplete upstream targets can never count as a GREEN prize target
-in this integration layer. -/
 def isValidPrizeAcceptanceTarget (lane : TerminalLane) : Bool :=
   match lane.upstreamStatus with
   | .statementIncomplete => false
@@ -135,8 +122,6 @@ theorem hodge_upstream_not_prize_target :
 
 theorem yangMills_upstream_not_prize_target :
     isValidPrizeAcceptanceTarget yangMillsLane = false := by decide
-
-/-! ## Existing root-package theorem-bearing surfaces -/
 
 #check Synthesis.QuarticFourSignedPolePair.RHMaxCutRoute.signedFifth_terminalPositive
 #check Synthesis.Millennium.BSD.universalBSDRankTheorem_of_background

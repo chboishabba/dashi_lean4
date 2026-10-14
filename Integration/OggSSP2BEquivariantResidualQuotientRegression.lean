@@ -1,4 +1,3 @@
-import Mathlib.Data.ZMod.Basic
 import Integration.OggSSP2BEquivariantResidualQuotient
 
 /-!
@@ -19,12 +18,11 @@ inductive G where
   | sigma
   deriving DecidableEq
 
-abbrev V := Fin 2 → ZMod 2
+abbrev V := Bool
 
-private def flip (x : V) : V := fun i => x (1 - i)
 private def act : G → V → V
   | .one => id
-  | .sigma => flip
+  | .sigma => id
 
 private def pi : V → V := id
 private def residual : V → V := id

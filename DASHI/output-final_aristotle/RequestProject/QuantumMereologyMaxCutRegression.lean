@@ -3,6 +3,7 @@ import RequestProject.QuantumMereologyStandardBasisProjector
 import RequestProject.QuantumMereologyFiniteHermitianCPO
 import RequestProject.QuantumMereologyBornProbability
 import RequestProject.QuantumMereologyVonNeumannInformation
+import RequestProject.QuantumMereologyTripartiteInformationAtlas
 import RequestProject.QuantumMereologyFiniteSchwingerSelection
 import RequestProject.QuantumMereologySOTA2026
 
@@ -84,6 +85,18 @@ example :
 example :
     VonNeumannInformation.canonicalBoundary.ccmDistanceAnsatzKeptSeparate = true :=
   VonNeumannInformation.ccm_distance_ansatz_kept_separate
+
+example :
+    TripartiteInformationAtlas.canonicalBoundary.sameGlobalStateThreePairMarginalsPaid = true :=
+  TripartiteInformationAtlas.same_global_state_three_pair_marginals_paid
+
+example :
+    TripartiteInformationAtlas.canonicalBoundary.overlappingOneFactorMarginalsAgree = true :=
+  TripartiteInformationAtlas.overlapping_one_factor_marginals_agree
+
+example :
+    TripartiteInformationAtlas.canonicalBoundary.tripartiteAtlasCreatesGeneralNFactorAtlas = false :=
+  TripartiteInformationAtlas.tripartite_atlas_does_not_create_general_n_factor_atlas
 
 example :
     FiniteSchwingerSelection.canonicalBoundary.finiteNonemptyAdmissibleSearchHasMinimizer = true :=

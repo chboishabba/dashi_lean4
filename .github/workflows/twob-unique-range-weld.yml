@@ -16,6 +16,8 @@ on:
       - 'Integration/OggSSP2BBlockIdempotentNaturality.lean'
       - 'Integration/OggSSP2BBlockIdempotentNaturalityRegression.lean'
       - 'Integration/OggSSP2BSocleForcesUnique24.lean'
+      - 'Integration/OggSSP2BCentralizerNormEquivariance.lean'
+      - 'Integration/OggSSP2BCentralizerNormEquivarianceRegression.lean'
       - 'Integration/OggSSP2BCompletionAcquisitionFrontier.lean'
       - '.github/workflows/twob-unique-range-weld.yml'
 
@@ -43,6 +45,8 @@ jobs:
           lake env lean Integration/OggSSP2BBlockIdempotentNaturality.lean
           lake env lean Integration/OggSSP2BSocleForcesUnique24.lean
           lake env lean Integration/OggSSP2BBlockIdempotentNaturalityRegression.lean
+          lake env lean Integration/OggSSP2BCentralizerNormEquivariance.lean
+          lake env lean Integration/OggSSP2BCentralizerNormEquivarianceRegression.lean
           lake env lean Integration/OggSSP2BUniqueInvariant24Range.lean
           lake env lean Integration/OggSSP2BUniqueInvariant24RangeRegression.lean
           lake env lean Integration/OggSSP2BUniqueRangeNormWeld.lean

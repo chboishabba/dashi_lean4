@@ -53,23 +53,35 @@ private def standardResolutionOps : List ResolutionOperation :=
   , .kernelCheck
   ]
 
+/-- P≠NP search ordering follows the live Agda #1129 recut.
+
+The older literal same-tape own-Cook materialisation route is now a proved no-go
+at positive budget in the coded anchored model.  The active constructive route
+is therefore one immutable guarded-Cook description with virtual/streamed bit
+queries.  The exact semantic evaluator and fixed-description linear work bound
+are already present; the unresolved producer is the finite coded standard
+machine/run implementation, faithful same-target simulation and final same-Cook-
+budget closure.  The older standard-machine terminal compilers remain listed
+only because they are the downstream consumers once that virtual producer is
+located. -/
 def pVersusNPResolution : ProofResolutionLane :=
   { problem := .pVersusNP
     producerSearch :=
-      [ "PNotEqualsNPStandardMachineMaxCutClosureExact.StandardPolynomialCandidateCoverage"
-      , "PNotEqualsNPStandardMachineMaxCutClosureExact.ResourceClosingCompiler"
+      [ "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible"
+      , "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationForcesZeroBudget"
+      , "PNotEqualsNPVirtualQuotationFrontierExact.literalAnchoredRouteClosed"
+      , "PNotEqualsNPFixedDescriptionVirtualGeneratorExact.FixedDescriptionGuardedCookBitGenerator"
+      , "GuardedCookFixedDescriptionStreamingCostExact.fixedDescriptionLinearBudget"
+      , "PNotEqualsNPVirtualQuotationFrontierExact.VirtualSelfQuotationCompilation"
+      , "PNotEqualsNPFaithfulVirtualGeneratorOutputExact.FaithfulGeneratorOutput"
+      , "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation"
+      , "PNotEqualsNPVirtualQuotationFrontierExact.virtualRunToTargetRun"
+      , "PNotEqualsNPStandardMachineMaxCutClosureExact.StandardPolynomialCandidateCoverage"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesCandidateFailure"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesUniversalFailure"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesSATNotInP"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesPNotEqualsNP"
       , "PNotEqualsNPFixedStandardOppositeQuotationExact.standardEndpointRealizationGivesDecisionFailure"
-      , "PNotEqualsNPFixedStandardOppositeQuotationExact.standardEndpointToFixedSemanticQuotation"
-      , "PNotEqualsNPResourceClosingBudgetNecessityExact.candidateOwnStepsFitCookBudget"
-      , "PNotEqualsNPResourceClosingBudgetNecessityExact.prefixFitsCookBudget"
-      , "PNotEqualsNPResourceClosingBudgetNecessityExact.suffixFitsCookBudget"
-      , "PNotEqualsNPStructuralResourceClosingCompilerExact.StructuralResourceClosingFixedProgramCompilation"
-      , "PNotEqualsNPResourceClosingStandardCompilerExact.ResourceClosingFixedProgramCompilation"
-      , "PNotEqualsNPPolynomiallyClockedStandardCandidateExact.PolynomiallyClockedStandardCandidate"
       , "PNotEqualsNPDirectSATLowerBoundExact.UniversalPolynomialSATDecisionFailure"
       , "PNotEqualsNPClayCoreExact.SATNotInP"
       , "PNotEqualsNPClayCoreExact.PNotEqualsNP"
@@ -155,13 +167,17 @@ theorem pnp_rh_bsd_still_require_donor_resolution :
     bsdResolution.resolvedSourceTerm = none := by
   decide
 
-/-- The latest Agda P-vs-NP recut reduces the ordinary standard-machine route to
-candidate-model coverage plus one finite resource-closing compiler.  Those are
-producer-search targets only: the external Lean adapter still has no unconditional
-source term until actual inhabitants are located and transported. -/
-theorem pnp_resolution_uses_standard_machine_maxcut :
+/-- The active P≠NP route explicitly records both halves of the latest recut:
+the literal materialisation architecture is closed, while the fixed-description
+virtual/streaming generator and faithful simulation are the live producer
+surface. -/
+theorem pnp_resolution_uses_virtual_streaming_maxcut :
     pVersusNPResolution.producerSearch.contains
-      "PNotEqualsNPStandardMachineMaxCutClosureExact.ResourceClosingCompiler" = true := by
+      "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible" = true ∧
+    pVersusNPResolution.producerSearch.contains
+      "PNotEqualsNPFixedDescriptionVirtualGeneratorExact.FixedDescriptionGuardedCookBitGenerator" = true ∧
+    pVersusNPResolution.producerSearch.contains
+      "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation" = true := by
   decide
 
 /-- The latest main-branch BSD recut is physically imported here: under the

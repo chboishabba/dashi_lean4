@@ -46,10 +46,11 @@ theorem isoOfEqualCharacters (V W : FDRep k G) [Simple V] [Simple W]
       Module.finrank k (V ⟶ W) = Module.finrank k (V ⟶ V) := by
     rw [← FDRep.scalar_product_char_eq_finrank_equivariant V W]
     rw [← FDRep.scalar_product_char_eq_finrank_equivariant V V]
-    rw [hchar]
+    rw [← hchar]
 
   have hcross : 0 < Module.finrank k (V ⟶ W) := by
-    simpa [hcrossEqSelf] using hself
+    rw [hcrossEqSelf]
+    exact hself
 
   obtain ⟨f, hf⟩ := Module.finrank_pos_iff_exists_ne_zero.mp hcross
   haveI : IsIso f := CategoryTheory.isIso_of_hom_simple hf

@@ -13,8 +13,8 @@ open Dashi.EisensteinSixUnitOrbitExact
 open Dashi.EisensteinDivisorCharacterProductExact
 
 ------------------------------------------------------------------------
--- Same-object weld: the bounded coordinate enumerator really is the full
--- positive norm fibre.
+-- Same-object weld: the bounded coordinate enumerator is the full positive
+-- norm fibre.
 ------------------------------------------------------------------------
 
 def geometricNormPointSet (n : Nat) : Finset (Int × Int) :=
@@ -22,9 +22,11 @@ def geometricNormPointSet (n : Nat) : Finset (Int × Int) :=
   let coords : Finset Int := Finset.Icc (-r) r
   (coords.product coords).filter fun p => eisensteinNorm p.1 p.2 = r
 
-def GeometricNormPoint (n : Nat) := {p : Int × Int // p ∈ geometricNormPointSet n}
+def GeometricNormPoint (n : Nat) :=
+  {p : Int × Int // p ∈ geometricNormPointSet n}
 
-instance (n : Nat) : Fintype (GeometricNormPoint n) := Fintype.ofFinite _
+instance (n : Nat) : Fintype (GeometricNormPoint n) :=
+  Finset.fintypeCoeSort (geometricNormPointSet n)
 
 /-- The coercivity identities force every coordinate of a positive norm-n
 point into the enumerator's literal box `[-n,n]`. -/
@@ -33,7 +35,6 @@ theorem norm_coordinate_abs_le
     (hQ : eisensteinNorm a b = n) : |a| ≤ (n : Int) := by
   have ha := eisensteinNorm_coercive_a a b
   rw [hQ] at ha
-  have hnI : (1 : Int) ≤ (n : Int) := by exact_mod_cast hn
   by_contra h
   have hgt : (n : Int) < |a| := lt_of_not_ge h
   have hstep : (n : Int) + 1 ≤ |a| := by omega
@@ -48,7 +49,6 @@ theorem norm_coordinate_b_abs_le
     (hQ : eisensteinNorm a b = n) : |b| ≤ (n : Int) := by
   have hb := eisensteinNorm_coercive_b a b
   rw [hQ] at hb
-  have hnI : (1 : Int) ≤ (n : Int) := by exact_mod_cast hn
   by_contra h
   have hgt : (n : Int) < |b| := lt_of_not_ge h
   have hstep : (n : Int) + 1 ≤ |b| := by omega
@@ -147,8 +147,8 @@ theorem chiMinus3PrimePowerFactor_nonneg
   · rw [chiMinus3PrimePowerFactor_inert hmod]
     split_ifs <;> norm_num
 
-/-- The signed character divisor sum is nevertheless globally nonnegative;
-its local factors are 1, e+1, or 0/1. -/
+/-- The signed character divisor sum is globally nonnegative; its local
+factors are `1`, `e+1`, or `0/1`. -/
 theorem chiMinus3DivisorSum_nonneg
     (n : Nat) (hn : n ≠ 0) : 0 ≤ chiMinus3DivisorSum n := by
   rw [chiMinus3DivisorSum_factorization n hn]
@@ -208,15 +208,18 @@ theorem geometricNormShell_eq_signedDivisorShell
     calc
       (geometricNormShellCount n : Int)
           = (6 * ∏ p ∈ splitPrimeFactors n,
-              (n.factorization p + 1) : Nat) := by exact_mod_cast hgeo
+              (n.factorization p + 1) : Nat) := by
+                exact_mod_cast hgeo
       _ = 6 * chiMinus3DivisorSum n := by
             rw [hchi]
             norm_num
       _ = signedEisensteinDivisorShellCount n := hsigned.symm
-  · rw [geometricNormShellCount_eq_zero_of_not_inertEven n hn H]
-    rw [chiMinus3DivisorSum_eq_zero_of_not_inertEven n hn H]
-    simp [signedEisensteinDivisorShellCount, chiMinus3DivisorSum,
-      signedChiMinus3DivisorSum]
+  · have hgeo := geometricNormShellCount_eq_zero_of_not_inertEven n hn H
+    have hchi := chiMinus3DivisorSum_eq_zero_of_not_inertEven n hn H
+    have hsigned := signedShell_eq_six_mul_character_sum n hn.ne'
+    rw [hgeo]
+    rw [hsigned, hchi]
+    norm_num
 
 /-- Canonical positive indexing used by the repository bridge. -/
 theorem geometricNormShell_eq_signedDivisorShell_positive (n : Nat) :

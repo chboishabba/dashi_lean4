@@ -55,18 +55,21 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         self.assertIn("Millennium.ClayPVersusNP.Formulations.NegativeBranch", text)
         self.assertIn("#print axioms clayPNotEqualsNP_of_language_outside_p", text)
 
-    def test_pnp_resolution_tracks_latest_standard_machine_maxcut(self):
+    def test_pnp_resolution_tracks_latest_virtual_streaming_maxcut(self):
         resolution = RESOLUTION.read_text(encoding="utf-8")
         for donor in (
-            "PNotEqualsNPStandardMachineMaxCutClosureExact.StandardPolynomialCandidateCoverage",
-            "PNotEqualsNPStandardMachineMaxCutClosureExact.ResourceClosingCompiler",
+            "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible",
+            "PNotEqualsNPVirtualQuotationFrontierExact.literalAnchoredRouteClosed",
+            "PNotEqualsNPFixedDescriptionVirtualGeneratorExact.FixedDescriptionGuardedCookBitGenerator",
+            "GuardedCookFixedDescriptionStreamingCostExact.fixedDescriptionLinearBudget",
+            "PNotEqualsNPVirtualQuotationFrontierExact.VirtualSelfQuotationCompilation",
+            "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation",
             "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesUniversalFailure",
             "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesSATNotInP",
             "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesPNotEqualsNP",
-            "PNotEqualsNPFixedStandardOppositeQuotationExact.standardEndpointRealizationGivesDecisionFailure",
-            "PNotEqualsNPResourceClosingBudgetNecessityExact.candidateOwnStepsFitCookBudget",
         ):
             self.assertIn(donor, resolution)
+        self.assertIn("pnp_resolution_uses_virtual_streaming_maxcut", resolution)
         start = resolution.index("def pVersusNPResolution")
         end = resolution.index("def rhResolution", start)
         pnp = resolution[start:end]
@@ -76,7 +79,9 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
     def test_terminal_census_tracks_strongest_current_owners(self):
         census = CENSUS.read_text(encoding="utf-8")
         for marker in (
-            "PNotEqualsNPStandardMachineMaxCutClosureExact",
+            "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact",
+            "PNotEqualsNPFixedDescriptionVirtualGeneratorExact",
+            "PNotEqualsNPFaithfulVirtualSimulationExact",
             "DASHILiteralClayNS.dashiExactFeffermanC/D",
             "MillenniumHodgeRulingCycleSwapMaxCutExact",
             "MillenniumBSDSelmerDefectClayEquivalence",
@@ -87,6 +92,7 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
             self.assertIn(marker, census)
         self.assertIn("selected CM", census)
         self.assertIn("conditional", census)
+        self.assertIn("virtual/streaming", census)
 
     def test_bsd_finite_rank_is_derived_not_an_adapter_field(self):
         text = EXACT.read_text(encoding="utf-8")
@@ -176,8 +182,15 @@ class MillenniumSubmissionSurfaceTests(unittest.TestCase):
         pnp_start = frontier.index("problem := .pVersusNP")
         pnp_end = frontier.index("problem := .riemann", pnp_start)
         pnp = frontier[pnp_start:pnp_end]
-        self.assertIn("resource-closing", pnp)
-        self.assertIn("candidate coverage", pnp)
+        for marker in (
+            "fixed-description",
+            "streamed",
+            "finite coded standard",
+            "faithful same-target virtual simulation",
+            "same Cook budget",
+            "literal materialisation",
+        ):
+            self.assertIn(marker, pnp)
         bsd_start = frontier.index("problem := .birchSwinnertonDyer")
         bsd_end = frontier.index("problem := .yangMills", bsd_start)
         self.assertIn("Rank.Existence", frontier[bsd_start:bsd_end])

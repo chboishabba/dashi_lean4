@@ -61,7 +61,7 @@ def pVersusNPLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .agdaSource
     dashiTerminalModule :=
-      "Agda PR #1129: PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact retires positive-budget literal own-Cook materialisation. ConcreteTapeGlobalCookLevinStreamingClauseCostedExact + ConcreteTapeGlobalCookLevinStreamingBitCostedExact now cost the actual global clause path and token/three-bit virtual/streaming recursion, with semantic result and work from the same recursion. PNotEqualsNPFixedDescriptionVirtualGeneratorExact + PNotEqualsNPFaithfulVirtualSimulationExact provide the downstream virtual interfaces. The first unpaid owner is literal CodedFiniteStandardTM compilation of those finite recursive states/arithmetic with proved simulation overhead and same-Cook-budget closure, before the existing SATNotInP -> PNotEqualsNP terminal compiler."
+      "Agda PR #1129: PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact retires positive-budget literal own-Cook materialisation. ConcreteTapeGlobalCookLevinStreamingClauseCostedExact + ConcreteTapeGlobalCookLevinStreamingBitCostedExact now cost the actual global clause path and token/three-bit virtual/streaming recursion, with semantic result and charged work from the same recursion. PNotEqualsNPCodedFixedOwnCookStreamingCostExact specializes that costed evaluator to the SAME coded opposite target. PNotEqualsNPFixedDescriptionVirtualGeneratorExact + PNotEqualsNPFaithfulVirtualSimulationExact provide the downstream virtual interfaces. Productive cross-pollination with ConcreteTapeStandardClockExact pays generic post-construction clock transport: exact step count, dispatch work <= T*|rules| and guarded tape width. The first bespoke unpaid owner is therefore the same-target CodedFiniteStandardTM rule-table realization of the paid streamed recursion, exact semantic/run correspondence, and final same-Cook-budget arithmetic before the existing SATNotInP -> PNotEqualsNP terminal compiler."
     directCrossVersionAdapterKernelChecked := false }
 
 def riemannLane : TerminalLane :=
@@ -136,12 +136,7 @@ theorem hodge_upstream_not_prize_target :
 theorem yangMills_upstream_not_prize_target :
     isValidPrizeAcceptanceTarget yangMillsLane = false := by decide
 
-/-! ## Existing root-package theorem-bearing surfaces
-
-These checks intentionally name declarations available to the root DASHI Lean
-package. Stronger terminals in separate/open producer branches are named above
-but are not silently imported across their independent package graphs.
--/
+/-! ## Existing root-package theorem-bearing surfaces -/
 
 #check Synthesis.QuarticFourSignedPolePair.RHMaxCutRoute.signedFifth_terminalPositive
 #check Synthesis.Millennium.BSD.universalBSDRankTheorem_of_background

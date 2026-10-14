@@ -9,16 +9,16 @@ This module supplies the concrete finite information producer that was previousl
 missing from the quantum-mereology -> geometry lane.
 
 For a finite PSD trace-one density matrix, mathlib's Hermitian spectral theorem
-provides real eigenvalues and positivity provides nonnegativity.  DASHI defines
+provides real eigenvalues and positivity provides nonnegativity. DASHI defines
 the finite spectral von Neumann entropy with the standard `0 log 0 = 0`
 convention and constructs both bipartite reduced density matrices by explicit
-partial trace.  Mutual information is then the same-object quantity
+partial trace. Mutual information is then the same-object quantity
 
   I(A:B) = S(A) + S(B) - S(AB).
 
-External attribution is kept separate below.  In particular, Cao--Carroll--
+External attribution is kept separate below. In particular, Cao--Carroll--
 Michalakis use mutual information as graph edge weight and then introduce a
-separate system-dependent decreasing distance ansatz.  This module does not
+separate system-dependent decreasing distance ansatz. This module does not
 promote mutual information by itself to a metric, an MDS embedding, curvature,
 or spacetime.
 -/
@@ -49,7 +49,7 @@ theorem densityEigenvalue_nonnegative
 
 /-- Trace one is exactly the statement that the spectral eigenvalues sum to one
 (after coercion to the complex scalar field). -/
-theorem densityEigenvalue_sum_eq_one
+theorem densityEigenvalue_sum_eq_one_complex
     (rho : ReducedState.DensityMatrix I) :
     (∑ i : I, (densityEigenvalue rho i : ℂ)) = 1 := by
   calc
@@ -58,6 +58,37 @@ theorem densityEigenvalue_sum_eq_one
       simpa [densityEigenvalue] using
         rho.positive.isHermitian.trace_eq_sum_eigenvalues
     _ = 1 := rho.traceOne
+
+/-- The same normalization statement on the real spectral probabilities. -/
+theorem densityEigenvalue_sum_eq_one
+    (rho : ReducedState.DensityMatrix I) :
+    (∑ i : I, densityEigenvalue rho i) = 1 := by
+  have h := congrArg Complex.re (densityEigenvalue_sum_eq_one_complex rho)
+  simpa using h
+
+/-- Every density eigenvalue lies in the unit interval. -/
+theorem densityEigenvalue_le_one
+    (rho : ReducedState.DensityMatrix I) (i : I) :
+    densityEigenvalue rho i ≤ 1 := by
+  calc
+    densityEigenvalue rho i ≤ ∑ j : I, densityEigenvalue rho j := by
+      exact Finset.single_le_sum
+        (fun j _ => densityEigenvalue_nonnegative rho j)
+        (Finset.mem_univ i)
+    _ = 1 := densityEigenvalue_sum_eq_one rho
+
+/-- The entropy summand is nonnegative on a genuine density eigenvalue. -/
+theorem entropyContribution_densityEigenvalue_nonnegative
+    (rho : ReducedState.DensityMatrix I) (i : I) :
+    0 ≤ entropyContribution (densityEigenvalue rho i) := by
+  by_cases hzero : densityEigenvalue rho i = 0
+  · simp [entropyContribution, hzero]
+  · rw [entropyContribution, if_neg hzero]
+    have hnonneg := densityEigenvalue_nonnegative rho i
+    have hle := densityEigenvalue_le_one rho i
+    have hlog : Real.log (densityEigenvalue rho i) ≤ 0 :=
+      Real.log_nonpos hnonneg hle
+    exact mul_nonneg_of_nonpos_of_nonpos (neg_nonpos.mpr hnonneg) hlog
 
 /-- Finite spectral von Neumann entropy `-sum_i lambda_i log lambda_i`, with
 `0 log 0 = 0`. -/
@@ -71,9 +102,16 @@ theorem vonNeumannEntropy_eq_spectral_sum
       ∑ i : I, entropyContribution (densityEigenvalue rho i) :=
   rfl
 
+/-- Finite von Neumann entropy is nonnegative for the concrete density carrier. -/
+theorem vonNeumannEntropy_nonnegative
+    (rho : ReducedState.DensityMatrix I) :
+    0 ≤ vonNeumannEntropy rho := by
+  exact Finset.sum_nonneg fun i _ =>
+    entropyContribution_densityEigenvalue_nonnegative rho i
+
 /-! ## The other bipartite partial trace
 
-`QuantumMereologyReducedState` already owns tracing out the right factor.  The
+`QuantumMereologyReducedState` already owns tracing out the right factor. The
 same finite matrix argument gives tracing out the left factor, so both marginals
 needed by mutual information are now concrete density matrices.
 -/
@@ -168,8 +206,8 @@ theorem mutualInformation_eq_entropy_formula
 /-! ## Cao--Carroll--Michalakis distance-ansatz boundary
 
 The source uses mutual information to weight a graph, then separately chooses a
-nonnegative decreasing function Phi of normalized mutual information.  Zero
-mutual information means no edge.  We encode that separation explicitly rather
+nonnegative decreasing function Phi of normalized mutual information. Zero
+mutual information means no edge. We encode that separation explicitly rather
 than claiming the mutual-information scalar is itself a metric.
 -/
 
@@ -184,27 +222,50 @@ structure CCMDistanceAnsatz where
   phiAntitoneOnUnit :
     ∀ x y, 0 ≤ x → x ≤ y → y ≤ 1 → phi y ≤ phi x
 
+/-- Source-shaped distance transform on one already-produced information scalar.
+`none` records the CCM convention that zero mutual information supplies no edge. -/
+noncomputable def ccmDistanceFromInformation
+    (D : CCMDistanceAnsatz) (information : ℝ) : Option ℝ :=
+  if information = 0 then none
+  else some (D.lengthScale * D.phi (information / D.informationScale))
+
+/-- On the declared normalized-information domain, every present CCM edge has a
+nonnegative length. This is not a triangle-inequality theorem. -/
+theorem ccmDistanceFromInformation_nonnegative
+    (D : CCMDistanceAnsatz) {information : ℝ}
+    (hInfo : information ≠ 0)
+    (h0 : 0 ≤ information / D.informationScale)
+    (h1 : information / D.informationScale ≤ 1) :
+    ∃ distance : ℝ,
+      ccmDistanceFromInformation D information = some distance ∧
+      0 ≤ distance := by
+  refine ⟨D.lengthScale * D.phi (information / D.informationScale), ?_, ?_⟩
+  · simp [ccmDistanceFromInformation, hInfo]
+  · exact mul_nonneg D.lengthScaleNonnegative
+      (D.phiNonnegativeOnUnit _ h0 h1)
+
 /-- Normalized pair information for the source distance ansatz. -/
 noncomputable def normalizedMutualInformation
     (D : CCMDistanceAnsatz)
     (rho : ReducedState.DensityMatrix (A × B)) : ℝ :=
   mutualInformation rho / D.informationScale
 
-/-- Source-shaped edge-distance output.  `none` records the CCM convention that
-no graph edge is drawn when the mutual information is zero. -/
+/-- Source-shaped edge-distance output for the concrete bipartite state. -/
 noncomputable def ccmEdgeDistance
     (D : CCMDistanceAnsatz)
     (rho : ReducedState.DensityMatrix (A × B)) : Option ℝ :=
-  if mutualInformation rho = 0 then none
-  else some (D.lengthScale * D.phi (normalizedMutualInformation D rho))
+  ccmDistanceFromInformation D (mutualInformation rho)
 
 structure Boundary where
   finiteVonNeumannEntropyDefined : Bool := true
+  finiteVonNeumannEntropyNonnegativePaid : Bool := true
   bothBipartiteMarginalsAreDensityMatrices : Bool := true
   bipartiteMutualInformationDefined : Bool := true
   ccmDistanceAnsatzKeptSeparate : Bool := true
+  normalizedCCMEdgeLengthNonnegativePaid : Bool := true
   mutualInformationAutomaticallyCreatesMetric : Bool := false
   mutualInformationAutomaticallyCreatesSpatialEmbedding : Bool := false
+  bipartiteMutualInformationAutomaticallyCreatesNFactorGraph : Bool := false
   mutualInformationCreatesSpacetimeOrEinsteinDynamics : Bool := false
 deriving Repr, DecidableEq
 
@@ -225,8 +286,8 @@ theorem mutual_information_does_not_automatically_create_metric :
 /-- Formal theorem-source attribution. -/
 def mathlibFiniteSpectralEntropySource : AttributionReceipt where
   role := .importedFormalTheoremSource
-  owner := "mathlib v4.28.0, Matrix.IsHermitian spectral theorem / Matrix.PosSemidef.eigenvalues_nonneg / Matrix.trace"
-  claim := "Supplies finite Hermitian eigenvalues, PSD eigenvalue nonnegativity, and the spectral trace identity used by DASHI's finite von Neumann entropy producer."
+  owner := "mathlib v4.28.0, Matrix.IsHermitian spectral theorem / Matrix.PosSemidef.eigenvalues_nonneg / Matrix.trace / Real.log_nonpos"
+  claim := "Supplies finite Hermitian eigenvalues, PSD eigenvalue nonnegativity, the spectral trace identity, and logarithm sign facts used by DASHI's finite von Neumann entropy producer."
 
 /-- External physics/source attribution, kept distinct from local implementation. -/
 def caoCarrollMichalakisMutualInformationClaim : AttributionReceipt where
@@ -238,7 +299,7 @@ def caoCarrollMichalakisMutualInformationClaim : AttributionReceipt where
 def dashiFiniteVonNeumannInformationReceipt : AttributionReceipt where
   role := .newDASHITheorem
   owner := "DASHI Lean"
-  claim := "Defines finite spectral von Neumann entropy, constructs both bipartite density-matrix marginals by explicit partial trace, and defines the same-object mutual information scalar. It does not prove CCM redundancy constraint, metric axioms, MDS realization, curvature, or Einstein dynamics."
+  claim := "Defines finite spectral von Neumann entropy, proves density eigenvalues form a nonnegative normalized finite spectrum and hence entropy is nonnegative, constructs both bipartite density-matrix marginals by explicit partial trace, defines same-object mutual information, and proves nonnegative CCM edge length on the declared normalized domain. It does not prove mutual-information nonnegativity/subadditivity, global N-factor marginal consistency, metric axioms, MDS realization, curvature, or Einstein dynamics."
 
 end VonNeumannInformation
 end QuantumMereology

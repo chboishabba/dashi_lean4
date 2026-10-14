@@ -7,6 +7,9 @@ open Integration.AntigravityTerminalPhysicalPackageFrontier
 example : typedLocalCTerminalPhysicalPackageStillRequired = true := rfl
 example : preferredSharedWightmanTerminalAvailable = true := rfl
 example : independentPinnedBoostTraceSplitRequired = false := rfl
+example : acceptedMeasuredGAuthorityStillOpen = false := rfl
+example : acceptedPhysicalEinsteinCouplingAvailable = true := rfl
+example : stressLengthSquaredScaleStillOpen = true := rfl
 example : commonGravityCalibrationPackageStillRequired = true := rfl
 example : matchedExperimentPackageStillRequired = true := rfl
 example : ttDevicePackageRequiredForStaticOrScalarDifferentialRoute = false := rfl

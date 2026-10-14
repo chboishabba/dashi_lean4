@@ -35,20 +35,14 @@ structure ExternalTargetReceipt where
   note : String
   deriving DecidableEq, Repr
 
-/-- Fail-closed receipts under the approved completion assumption.
-
-For P≠NP, RH and BSD, failure to have located the final donor is a proof-graph
-resolution state, not evidence that new mathematics is required. Navier--Stokes
-has already reached literal external `FeffermanC` and `FeffermanD` theorem terms;
-it remains non-GREEN solely until exact-head kernel/axiom verification is recorded.
-Hodge and Yang--Mills remain upstream specification defects. -/
+/-- Fail-closed receipts under the approved completion assumption. -/
 def externalTargetReceipts : List ExternalTargetReceipt :=
   [ { problem := .pVersusNP
       upstreamDeclaration := "Millennium.ClayPVersusNP.Formulations.NegativeBranch"
       state := .proofResolutionPending
       frontier := .proofResolution
-      firstUnpaid := "compile the exact fixed-description streamed Cook-bit evaluator into one finite coded standard target machine, prove faithful same-target virtual simulation, and close its total clock inside the same Cook budget"
-      note := "Agda PR #1129 has moved beyond the earlier literal ResourceClosingCompiler architecture. PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact proves that literal full own-Cook-formula materialisation on the same tape forces zero budget, so that route is retired for positive-time candidates. The active route keeps one immutable guarded-Cook description and varies only virtual/streamed bit indices. Exact streamed semantics and a fixed-description linear semantic-work envelope are paid. The remaining producer is the finite coded standard-machine implementation of that evaluator, its faithful same-target virtual simulation, and final exact clock closure; only after those receipts does the existing SATDecisionFailure -> SATNotInP -> PNotEqualsNP compiler apply." }
+      firstUnpaid := "compile the fixed-description costed streamed bit evaluator into a literal CodedFiniteStandardTM, prove its constant/polynomial simulation overhead and faithful same-target virtual simulation, then close the total run inside the same Cook budget"
+      note := "Agda PR #1129 now closes two earlier seams. First, literal full own-Cook-formula materialisation on the same tape is impossible at positive exact budget, so that route is retired. Second, ConcreteTapeGlobalCookLevinStreamingClauseCostedExact and ConcreteTapeGlobalCookLevinStreamingBitCostedExact instrument the actual transition/initial/accepting clause path and the token/three-bit cursor: the returned costed streamed bit and charged work come from the same recursion, with exact-result and work-bound theorems. The first unpaid implementation is therefore no longer semantic streaming cost: it is compilation of those finite recursive states/arithmetic into a literal CodedFiniteStandardTM with verified simulation overhead, followed by the already-defined faithful virtual self-quotation and same-Cook-budget closure. The existing SATDecisionFailure -> SATNotInP -> PNotEqualsNP compiler remains downstream." }
   , { problem := .riemann
       upstreamDeclaration := "Millennium.ClayRiemannHypothesis"
       state := .proofResolutionPending
@@ -72,7 +66,7 @@ def externalTargetReceipts : List ExternalTargetReceipt :=
       state := .proofResolutionPending
       frontier := .proofResolution
       firstUnpaid := "locate the existing same-curve analytic bridge and universal zero Selmer defect donors, compose BSDClayCoreObligation, then transport it into LeanDojo Rank.Existence"
-      note := "The main-branch recut remains exact: under UniversalSelmerDefectAnalyticBridge, BSDClayCoreObligation is equivalent to UniversalSelmerDefectZero. The selected-CM E[2]/Sha[2] and newer j=0/Eisenstein symmetry work are useful local donors but do not supply the universal defect or analytic bridge, so they are not promoted into this acceptance leaf." }
+      note := "Under UniversalSelmerDefectAnalyticBridge, BSDClayCoreObligation is equivalent to UniversalSelmerDefectZero. The selected-CM E[2]/Sha[2] and j=0/Eisenstein symmetry work remain useful local donors but do not supply the universal defect or analytic bridge." }
   , { problem := .yangMills
       upstreamDeclaration := "MillenniumYangMills.ClayYangMills"
       state := .upstreamIncomplete

@@ -14,13 +14,13 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         for donor in (
             "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible",
             "PNotEqualsNPVirtualQuotationFrontierExact.literalAnchoredRouteClosed",
-            "PNotEqualsNPVirtualQuotationFrontierExact.VirtualSelfQuotationCompilation",
-            "PNotEqualsNPFixedDescriptionVirtualGeneratorExact.FixedDescriptionGuardedCookBitGenerator",
-            "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation",
             "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedResultExact",
             "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedWorkBound",
             "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedResultExact",
             "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedWorkBound",
+            "PNotEqualsNPFixedDescriptionVirtualGeneratorExact.FixedDescriptionGuardedCookBitGenerator",
+            "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation",
+            "ConcreteTapeStandardClockExact.concreteStandardClockReceipt",
         ):
             self.assertIn(donor, text)
         self.assertIn("pnp_resolution_uses_virtual_streaming_maxcut", text)
@@ -31,19 +31,19 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         self.assertIn("resolvedSourceTerm := none", lane)
         self.assertIn("newMathematicsPermitted := false", lane)
 
-    def test_frontier_names_literal_finite_machine_compilation_as_first_unpaid(self):
+    def test_frontier_names_same_target_rule_table_realization_as_first_unpaid(self):
         text = FRONTIER.read_text(encoding="utf-8")
         start = text.index("problem := .pVersusNP")
         end = text.index("problem := .riemann", start)
         lane = text[start:end]
         for marker in (
-            "fixed-description",
             "costed streamed bit",
             "same recursion",
             "literal CodedFiniteStandardTM",
-            "simulation overhead",
+            "same-target rule table",
+            "generic clock receipt",
             "same Cook budget",
-            "literal materialisation",
+            "materialisation",
         ):
             self.assertIn(marker, lane)
         self.assertIn("state := .proofResolutionPending", lane)
@@ -60,6 +60,7 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
             "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact",
             "ConcreteTapeGlobalCookLevinStreamingBitCostedExact",
             "PNotEqualsNPFaithfulVirtualSimulationExact",
+            "ConcreteTapeStandardClockExact",
             "virtual/streaming",
         ):
             self.assertIn(marker, lane)

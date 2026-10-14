@@ -22,8 +22,24 @@ def fay2026Source : SourceReceipt := {
   paidReading := "Four controlled experiments (combined N=4,607) found truthful-intent messages more persuasive and more likely to be shared than false-intent messages. Perceived truth was the main driver of persuasion; transmission was primarily associated with positive emotion and social engagement. Real-world platform generalization remains bounded."
 }
 
+/- Provenance and result authority are separate.  A persuasion result receipt
+   consumes only a family-indexed admitted source; arbitrary SourceReceipt
+   values cannot be substituted into a completed-outcome receipt. -/
+inductive PersuasionOutcomeFamily where
+  | fay2026ControlledExperimentOutcome
+  deriving Repr, DecidableEq
+
+inductive AdmittedPersuasionSource : PersuasionOutcomeFamily → Type where
+  | fay2026PaysControlledExperimentOutcome :
+      AdmittedPersuasionSource .fay2026ControlledExperimentOutcome
+  deriving Repr, DecidableEq
+
+def admittedPersuasionSourceReceipt :
+    {family : PersuasionOutcomeFamily} → AdmittedPersuasionSource family → SourceReceipt
+  | _, .fay2026PaysControlledExperimentOutcome => fay2026Source
+
 structure PersuasionTransmissionReceipt where
-  source : SourceReceipt
+  sourceAdmission : AdmittedPersuasionSource .fay2026ControlledExperimentOutcome
   combinedSampleReference : String
   truthfulIntentPersuasionAdvantage : Bool
   truthfulIntentSharingAdvantage : Bool
@@ -34,8 +50,13 @@ structure PersuasionTransmissionReceipt where
   uncontrolledPlatformGeneralizationPaid : Bool
   deriving Repr, DecidableEq
 
+namespace PersuasionTransmissionReceipt
+def source (r : PersuasionTransmissionReceipt) : SourceReceipt :=
+  admittedPersuasionSourceReceipt r.sourceAdmission
+end PersuasionTransmissionReceipt
+
 def canonicalPersuasionTransmissionReceipt : PersuasionTransmissionReceipt := {
-  source := fay2026Source
+  sourceAdmission := .fay2026PaysControlledExperimentOutcome
   combinedSampleReference := "four experiments; combined N=4,607"
   truthfulIntentPersuasionAdvantage := true
   truthfulIntentSharingAdvantage := true

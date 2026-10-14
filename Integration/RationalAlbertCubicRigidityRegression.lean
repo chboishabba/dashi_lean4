@@ -1,7 +1,8 @@
-import Integration.RationalAlbertNormUnitRigidityExact
+import Integration.RationalAlbertNormUnitRigidityProof
 
 namespace Integration.RationalAlbertCubicRigidityRegression
 open Integration.RationalAlbertCubicRigidity
+open Integration.RationalAlbertNormUnitRigidityProof
 
 example : canonicalBoundary.traceRecoveredFromNorm = true := rfl
 example : canonicalBoundary.tracePairRecoveredFromNorm = true := rfl
@@ -13,6 +14,6 @@ example : NormUnitRigidity := canonicalNormUnitRigidity
 example (g : UnitFixingNormSymmetry) (X Y : A27) :
     g.forward (jordanProduct X Y) =
       jordanProduct (g.forward X) (g.forward Y) :=
-  unitFixingNormSymmetry_map_jordan g X Y
+  (jordanAutomorphismOfNormUnitSymmetry g).map_jordan X Y
 
 end Integration.RationalAlbertCubicRigidityRegression

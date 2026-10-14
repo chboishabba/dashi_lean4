@@ -21,7 +21,10 @@ It mirrors only the consumer shape:
   not independently required by the consumer;
 * on the preferred Agda route the R136/Local-C source is the actual typed pinned
   terminal producer, not an arbitrary proposition receipt. Lean mirrors that
-  scheduling fact without claiming the Agda terminal proof object.
+  scheduling fact without claiming the Agda terminal proof object;
+* experiment design uses synchronous source-state modulation with conventional
+  stress/geometry rematching, null/calibration channels and preregistration;
+  numerical systematics closure and a physical matched source switch remain.
 -/
 
 structure R136StaticVacuumPromotionInput where
@@ -91,5 +94,19 @@ def newEinsteinCouplingConventionRequired : Bool := false
 def acceptedMeasuredGAuthorityStillRequired : Bool := true
 def sourceStressLengthSquaredScaleStillRequired : Bool := true
 def separateStressAndLengthIdentificationRequired : Bool := false
+
+-- Generic matched-control laboratory discipline cross-pollinated from the open
+-- birthmark systematics lane without identifying birthmark history with CMP119.
+def sourceStateSwitchIsSynchronousModulationChannel : Bool := true
+def conventionalStressRematchingRequired : Bool := true
+def massGeometryPositionControlRequired : Bool := true
+def electromagneticControlRequired : Bool := true
+def thermalMechanicalOpticalVibrationControlRequired : Bool := true
+def nullPreparationChannelRequired : Bool := true
+def calibrationSignalRequired : Bool := true
+def preregisteredAnalysisRequired : Bool := true
+def numericalSystematicsBudgetStillRequired : Bool := true
+def physicalMatchedSourceSwitchStillRequired : Bool := true
+def birthmarkHistoryIdentifiedWithCMP119VacuumCoordinate : Bool := false
 
 end Integration.AntigravityR136StaticDifferentialReuse

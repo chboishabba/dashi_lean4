@@ -69,13 +69,12 @@ theorem projectiveFiveImage_eq_e6GeneratedClosure :
   native_decide
 
 /-- Typed carrier for the common literal matrix image. -/
-def CommonFiveImage := {m : M5 // m ∈ projectiveFiveImage}
-
-instance : Fintype CommonFiveImage := projectiveFiveImage.fintypeCoeSort
+def CommonFiveImage := ↥projectiveFiveImage
 
 /-- The common image has exactly the Weyl-E6 order. -/
 theorem commonFiveImage_card : Fintype.card CommonFiveImage = 51840 := by
-  simpa [CommonFiveImage] using projectiveFiveImage_card
+  change projectiveFiveImage.card = 51840
+  exact projectiveFiveImage_card
 
 /-- Every literal repo E6 simple generator belongs to the common image. -/
 theorem e6Generator_mem_commonImage (i : Fin 6) :
@@ -98,8 +97,8 @@ five-space, and equality of the transported actions.  Literal image equality
 lets us inhabit that socket without appealing to order or labels.
 -/
 
-def PGSpFiveImageActor := {m : M5 // m ∈ projectiveFiveImage}
-def WeylFiveImageActor := {m : M5 // m ∈ e6GeneratedClosure}
+def PGSpFiveImageActor := ↥projectiveFiveImage
+def WeylFiveImageActor := ↥e6GeneratedClosure
 
 def toWeylImageActor (g : PGSpFiveImageActor) : WeylFiveImageActor :=
   ⟨g.1, by

@@ -49,6 +49,10 @@ example :
   FiniteHermitianCPO.typed_selected_cpo_refinement_compiles_hermitian_matrices
 
 example :
+    FiniteHermitianCPO.canonicalBoundary.typedSelectedCPORefinementCompilesProductEigenbasis = true :=
+  FiniteHermitianCPO.typed_selected_cpo_refinement_compiles_product_eigenbasis
+
+example :
     FiniteHermitianCPO.canonicalBoundary.genericAdmissibilityConstructsTypedSymmetry = false :=
   FiniteHermitianCPO.generic_admissibility_does_not_construct_typed_symmetry
 

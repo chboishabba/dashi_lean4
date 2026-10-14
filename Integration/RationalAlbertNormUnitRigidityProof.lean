@@ -32,6 +32,31 @@ abbrev A27 := RationalAlbertNative.RationalAlbert
   ext <;> try { apply RationalOctonion.ext <;> apply RationalQuaternion.ext } <;>
     simp
 
+/-- Coordinate cancellation for the octonion carrier. -/
+theorem oct_add_neg_eq_zero_implies_eq
+    (x y : RationalOctonion) (h : x + (-y) = 0) : x = y := by
+  rcases x with ⟨xa,xb⟩; rcases y with ⟨ya,yb⟩
+  rcases xa with ⟨a0,a1,a2,a3⟩; rcases xb with ⟨b0,b1,b2,b3⟩
+  rcases ya with ⟨c0,c1,c2,c3⟩; rcases yb with ⟨d0,d1,d2,d3⟩
+  injection h with hfirst hsecond
+  injection hfirst with h0 h1 h2 h3
+  injection hsecond with h4 h5 h6 h7
+  apply RationalOctonion.ext <;> apply RationalQuaternion.ext <;>
+    simp at h0 h1 h2 h3 h4 h5 h6 h7 ⊢ <;> linarith
+
+/-- Coordinate cancellation for the literal Albert carrier. -/
+theorem albert_add_neg_eq_zero_implies_eq
+    (X Y : A27) (h : X + (-Y) = 0) : X = Y := by
+  rcases X with ⟨a,b,c,x,y,z⟩; rcases Y with ⟨d,e,f,u,v,w⟩
+  injection h with h0 h1 h2 hx hy hz
+  apply RationalAlbert.ext
+  · simp at h0; linarith
+  · simp at h1; linarith
+  · simp at h2; linarith
+  · exact oct_add_neg_eq_zero_implies_eq x u hx
+  · exact oct_add_neg_eq_zero_implies_eq y v hy
+  · exact oct_add_neg_eq_zero_implies_eq z w hz
+
 /-- The explicit trace pairing is additive in the first argument. -/
 theorem tracePair_add_left (X Y Z : A27) :
     tracePair (X + Y) Z = tracePair X Z + tracePair Y Z := by
@@ -95,6 +120,7 @@ theorem normSymmetry_map_tracePair (g : UnitFixingNormSymmetry) (X Y : A27) :
     tracePair (g.forward X) (g.forward Y) = tracePair X Y := by
   rw [← tracePairFromNorm_eq, ← tracePairFromNorm_eq]
   unfold tracePairFromNorm
+  rw [traceFromNorm_eq, traceFromNorm_eq, traceFromNorm_eq, traceFromNorm_eq]
   rw [normSymmetry_map_trace, normSymmetry_map_trace]
   rw [← g.map_add]
   rw [normSymmetry_map_quadraticTrace, normSymmetry_map_quadraticTrace,
@@ -134,12 +160,8 @@ theorem normSymmetry_map_adjoint (g : UnitFixingNormSymmetry) (X : A27) :
     linarith
   have hD : D = 0 := tracePair_nondegenerate D hzero
   unfold D at hD
-  rcases adjoint (g.forward X) with A
-  rcases g.forward (adjoint X) with B
-  -- Coordinate cancellation in the literal additive carrier.
-  rcases A with ⟨a,b,c,x,y,z⟩; rcases B with ⟨d,e,f,u,v,w⟩
-  simp at hD
-  exact hD
+  exact albert_add_neg_eq_zero_implies_eq
+    (adjoint (g.forward X)) (g.forward (adjoint X)) hD
 
 /-- The exact local rigidity payment. -/
 def canonicalNormUnitRigidity : NormUnitRigidity where

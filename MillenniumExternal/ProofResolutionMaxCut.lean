@@ -55,23 +55,25 @@ private def standardResolutionOps : List ResolutionOperation :=
 
 /-- P≠NP search ordering follows the live Agda #1129 recut.
 
-The older literal same-tape own-Cook materialisation route is now a proved no-go
-at positive budget in the coded anchored model.  The active constructive route
-is therefore one immutable guarded-Cook description with virtual/streamed bit
-queries.  The exact semantic evaluator and fixed-description linear work bound
-are already present; the unresolved producer is the finite coded standard
-machine/run implementation, faithful same-target simulation and final same-Cook-
-budget closure.  The older standard-machine terminal compilers remain listed
-only because they are the downstream consumers once that virtual producer is
-located. -/
+Literal same-tape own-Cook materialisation is now a proved no-go at positive
+budget.  The active route is fixed-description virtual/streamed quotation.  The
+actual global clause path is costed, and the same token/three-bit recursion now
+returns the semantic streamed Cook bit and its charged work with exact result
+and work-bound theorems.  Therefore the first implementation leaf is no longer
+semantic cost accounting: compile those finite recursive states/arithmetic into
+a literal `CodedFiniteStandardTM`, prove the faithful same-target simulation and
+constant/polynomial overhead, then close the exact same-Cook budget. -/
 def pVersusNPResolution : ProofResolutionLane :=
   { problem := .pVersusNP
     producerSearch :=
       [ "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible"
       , "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationForcesZeroBudget"
       , "PNotEqualsNPVirtualQuotationFrontierExact.literalAnchoredRouteClosed"
+      , "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedResultExact"
+      , "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedWorkBound"
+      , "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedResultExact"
+      , "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedWorkBound"
       , "PNotEqualsNPFixedDescriptionVirtualGeneratorExact.FixedDescriptionGuardedCookBitGenerator"
-      , "GuardedCookFixedDescriptionStreamingCostExact.fixedDescriptionLinearBudget"
       , "PNotEqualsNPVirtualQuotationFrontierExact.VirtualSelfQuotationCompilation"
       , "PNotEqualsNPFaithfulVirtualGeneratorOutputExact.FaithfulGeneratorOutput"
       , "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation"
@@ -167,15 +169,16 @@ theorem pnp_rh_bsd_still_require_donor_resolution :
     bsdResolution.resolvedSourceTerm = none := by
   decide
 
-/-- The active P≠NP route explicitly records both halves of the latest recut:
-the literal materialisation architecture is closed, while the fixed-description
-virtual/streaming generator and faithful simulation are the live producer
-surface. -/
+/-- The active P≠NP route records the literal no-go and the strongest paid
+streaming-cost receipt.  Semantic bit production and charged work now share the
+same recursion; the next producer is literal finite-machine compilation. -/
 theorem pnp_resolution_uses_virtual_streaming_maxcut :
     pVersusNPResolution.producerSearch.contains
       "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible" = true ∧
     pVersusNPResolution.producerSearch.contains
-      "PNotEqualsNPFixedDescriptionVirtualGeneratorExact.FixedDescriptionGuardedCookBitGenerator" = true ∧
+      "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedResultExact" = true ∧
+    pVersusNPResolution.producerSearch.contains
+      "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedWorkBound" = true ∧
     pVersusNPResolution.producerSearch.contains
       "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation" = true := by
   decide

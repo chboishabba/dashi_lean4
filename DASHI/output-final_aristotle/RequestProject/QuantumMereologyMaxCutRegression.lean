@@ -3,6 +3,7 @@ import RequestProject.QuantumMereologyStandardBasisProjector
 import RequestProject.QuantumMereologyFiniteHermitianCPO
 import RequestProject.QuantumMereologyBornProbability
 import RequestProject.QuantumMereologyVonNeumannInformation
+import RequestProject.QuantumMereologyFiniteSchwingerSelection
 
 namespace QuantumMereology
 namespace MaxCutRegression
@@ -78,6 +79,18 @@ example :
 example :
     VonNeumannInformation.canonicalBoundary.ccmDistanceAnsatzKeptSeparate = true :=
   VonNeumannInformation.ccm_distance_ansatz_kept_separate
+
+example :
+    FiniteSchwingerSelection.canonicalBoundary.finiteNonemptyAdmissibleSearchHasMinimizer = true :=
+  FiniteSchwingerSelection.finite_nonempty_admissible_search_has_minimizer
+
+example :
+    FiniteSchwingerSelection.canonicalBoundary.finiteMinimizerCreatesUniqueness = false :=
+  FiniteSchwingerSelection.finite_minimizer_does_not_create_uniqueness
+
+example :
+    FiniteSchwingerSelection.canonicalBoundary.sourceSearchIsAutomaticallyFinite = false :=
+  FiniteSchwingerSelection.source_search_not_automatically_finite
 
 end MaxCutRegression
 end QuantumMereology

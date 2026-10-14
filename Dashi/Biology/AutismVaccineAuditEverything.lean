@@ -7,6 +7,8 @@ import Dashi.Biology.AutismTranscriptHighAlphaCrossPollinationExact
 import Dashi.Biology.AutismTranscriptHighAlphaCrossPollinationRegression
 import Dashi.Biology.PersuasionTransmissionTruthBoundaryExact
 import Dashi.Biology.PersuasionTransmissionTruthBoundaryRegression
+import Dashi.Biology.SourceCueTruthNoncollapseExact
+import Dashi.Biology.SourceCueTruthNoncollapseRegression
 
 namespace Dashi.Biology.AutismVaccineAuditEverything
 end Dashi.Biology.AutismVaccineAuditEverything

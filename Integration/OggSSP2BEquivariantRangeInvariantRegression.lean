@@ -1,3 +1,4 @@
+import Mathlib.Data.ZMod.Basic
 import Integration.OggSSP2BEquivariantRangeInvariant
 
 /-! RED-first regression: range of an equivariant map is invariant. -/

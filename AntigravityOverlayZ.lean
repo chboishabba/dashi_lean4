@@ -8,8 +8,11 @@ import Integration.AntigravityVacuumControlCoordinateMaxCut
 import Integration.AntigravityVacuumControlCoordinateMaxCutTest
 import Integration.AntigravityPostScalarVacuumMaxCut
 import Integration.AntigravityPostScalarVacuumMaxCutTest
+import Integration.AntigravityR136StaticDifferentialReuse
+import Integration.AntigravityR136StaticDifferentialReuseTest
 import AgdaMirror.AntigravityOverlayZMirror
 
 /-!
-Focused compilation root for the antigravity Overlay-AA/source-native route mirror.
+Focused compilation root for the antigravity Overlay-AA/source-native route mirror,
+including the post-normalization R136 static/differential reuse and TT donor cut.
 -/

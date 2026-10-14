@@ -85,6 +85,41 @@ def linares2026Source : SourceReceipt := {
   scopeBoundary := "Identity/self-acceptance and high-quality supports/interventions are treated as compatible rather than mutually exclusive."
 }
 
+/- Attribution is provenance, not result authority.  Each result structure below
+   accepts only an admission inhabitant for its exact outcome family; the
+   underlying SourceReceipt is then recovered from that admission. -/
+inductive HighAlphaOutcomeFamily where
+  | normMediationOutcome
+  | platformInterventionOutcome
+  | pronounAssociationOutcome
+  | languageModelMetaOutcome
+  | fmtTrialOutcome
+  | fmtProtocolDesignOutcome
+  | muOpioidSocialOutcome
+  | neurodiversityQoLOutcome
+  deriving Repr, DecidableEq
+
+inductive AdmittedHighAlphaSource : HighAlphaOutcomeFamily → Type where
+  | shankerVlaevPaysNormMediationOutcome : AdmittedHighAlphaSource .normMediationOutcome
+  | cornelsonPaysPlatformInterventionOutcome : AdmittedHighAlphaSource .platformInterventionOutcome
+  | tuckZhuThompsonPaysPronounAssociationOutcome : AdmittedHighAlphaSource .pronounAssociationOutcome
+  | fisherPaysLanguageModelMetaOutcome : AdmittedHighAlphaSource .languageModelMetaOutcome
+  | wan2024PaysFMTTrialOutcome : AdmittedHighAlphaSource .fmtTrialOutcome
+  | zou2026PaysFMTProtocolDesign : AdmittedHighAlphaSource .fmtProtocolDesignOutcome
+  | losethPaysMuOpioidSocialOutcome : AdmittedHighAlphaSource .muOpioidSocialOutcome
+  | linaresPaysNeurodiversityQoLOutcome : AdmittedHighAlphaSource .neurodiversityQoLOutcome
+  deriving Repr, DecidableEq
+
+def admittedHighAlphaSourceReceipt : {family : HighAlphaOutcomeFamily} → AdmittedHighAlphaSource family → SourceReceipt
+  | _, .shankerVlaevPaysNormMediationOutcome => shankerVlaev2026Source
+  | _, .cornelsonPaysPlatformInterventionOutcome => cornelson2026Source
+  | _, .tuckZhuThompsonPaysPronounAssociationOutcome => tuckZhuThompson2026Source
+  | _, .fisherPaysLanguageModelMetaOutcome => fisher2026Source
+  | _, .wan2024PaysFMTTrialOutcome => wan2024FMTSource
+  | _, .zou2026PaysFMTProtocolDesign => zou2026FMTProtocolSource
+  | _, .losethPaysMuOpioidSocialOutcome => loseth2024Source
+  | _, .linaresPaysNeurodiversityQoLOutcome => linares2026Source
+
 inductive MediationCoordinate where
   | misinformationExposure
   | perceivedPeerSupport
@@ -92,7 +127,7 @@ inductive MediationCoordinate where
   deriving Repr, DecidableEq
 
 structure NormMediationReceipt where
-  source : SourceReceipt
+  sourceAdmission : AdmittedHighAlphaSource .normMediationOutcome
   upstream : MediationCoordinate
   mediator : MediationCoordinate
   downstream : MediationCoordinate
@@ -101,8 +136,12 @@ structure NormMediationReceipt where
   reading : String
   deriving Repr, DecidableEq
 
+namespace NormMediationReceipt
+def source (r : NormMediationReceipt) : SourceReceipt := admittedHighAlphaSourceReceipt r.sourceAdmission
+end NormMediationReceipt
+
 def canonicalNormMediationReceipt : NormMediationReceipt := {
-  source := shankerVlaev2026Source
+  sourceAdmission := .shankerVlaevPaysNormMediationOutcome
   upstream := .misinformationExposure
   mediator := .perceivedPeerSupport
   downstream := .vaccinationIntent
@@ -112,7 +151,7 @@ def canonicalNormMediationReceipt : NormMediationReceipt := {
 }
 
 structure PlatformInterventionReceipt where
-  source : SourceReceipt
+  sourceAdmission : AdmittedHighAlphaSource .platformInterventionOutcome
   commentsReduced : Bool
   someAffectiveResponseReduced : Bool
   sharingReductionPaid : Bool
@@ -120,8 +159,12 @@ structure PlatformInterventionReceipt where
   prevalenceReductionPaid : Bool
   deriving Repr, DecidableEq
 
+namespace PlatformInterventionReceipt
+def source (r : PlatformInterventionReceipt) : SourceReceipt := admittedHighAlphaSourceReceipt r.sourceAdmission
+end PlatformInterventionReceipt
+
 def canonicalPlatformInterventionReceipt : PlatformInterventionReceipt := {
-  source := cornelson2026Source
+  sourceAdmission := .cornelsonPaysPlatformInterventionOutcome
   commentsReduced := true
   someAffectiveResponseReduced := true
   sharingReductionPaid := false
@@ -129,8 +172,8 @@ def canonicalPlatformInterventionReceipt : PlatformInterventionReceipt := {
   prevalenceReductionPaid := false
 }
 
-structure LanguageMentalStateReceipt where
-  source : SourceReceipt
+structure LanguageMentalStateReceipt (family : HighAlphaOutcomeFamily) where
+  sourceAdmission : AdmittedHighAlphaSource family
   featureReference : String
   contextReference : String
   groupAssociationPaid : Bool
@@ -138,8 +181,13 @@ structure LanguageMentalStateReceipt where
   clinicalDeploymentAuthorityPaid : Bool
   deriving Repr, DecidableEq
 
-def pronounContextReceipt : LanguageMentalStateReceipt := {
-  source := tuckZhuThompson2026Source
+namespace LanguageMentalStateReceipt
+def source {family : HighAlphaOutcomeFamily} (r : LanguageMentalStateReceipt family) : SourceReceipt :=
+  admittedHighAlphaSourceReceipt r.sourceAdmission
+end LanguageMentalStateReceipt
+
+def pronounContextReceipt : LanguageMentalStateReceipt .pronounAssociationOutcome := {
+  sourceAdmission := .tuckZhuThompsonPaysPronounAssociationOutcome
   featureReference := "first-person pronoun frequency / self-focus"
   contextReference := "negative autobiographical narrative; association absent in positive narrative condition"
   groupAssociationPaid := true
@@ -147,8 +195,8 @@ def pronounContextReceipt : LanguageMentalStateReceipt := {
   clinicalDeploymentAuthorityPaid := false
 }
 
-def languageMLMetaReceipt : LanguageMentalStateReceipt := {
-  source := fisher2026Source
+def languageMLMetaReceipt : LanguageMentalStateReceipt .languageModelMetaOutcome := {
+  sourceAdmission := .fisherPaysLanguageModelMetaOutcome
   featureReference := "multi-feature language-only machine-learning models"
   contextReference := "heterogeneous datasets, text sources, languages, features and model families"
   groupAssociationPaid := true
@@ -157,7 +205,7 @@ def languageMLMetaReceipt : LanguageMentalStateReceipt := {
 }
 
 structure AutismFMTTrialReceipt where
-  source : SourceReceipt
+  sourceAdmission : AdmittedHighAlphaSource .fmtTrialOutcome
   randomizedDoubleBlindPlaceboControlled : Bool
   primarySRSBetweenGroupPaid : Bool
   secondaryVinelandSocialisationSignal : Bool
@@ -165,8 +213,12 @@ structure AutismFMTTrialReceipt where
   placeboResponseExplicit : Bool
   deriving Repr, DecidableEq
 
+namespace AutismFMTTrialReceipt
+def source (r : AutismFMTTrialReceipt) : SourceReceipt := admittedHighAlphaSourceReceipt r.sourceAdmission
+end AutismFMTTrialReceipt
+
 def canonicalAutismFMTTrialReceipt : AutismFMTTrialReceipt := {
-  source := wan2024FMTSource
+  sourceAdmission := .wan2024PaysFMTTrialOutcome
   randomizedDoubleBlindPlaceboControlled := true
   primarySRSBetweenGroupPaid := false
   secondaryVinelandSocialisationSignal := true
@@ -175,27 +227,35 @@ def canonicalAutismFMTTrialReceipt : AutismFMTTrialReceipt := {
 }
 
 structure AutismFMTProtocolReceipt where
-  source : SourceReceipt
+  sourceAdmission : AdmittedHighAlphaSource .fmtProtocolDesignOutcome
   randomizedTripleBlindDesignPlanned : Bool
   efficacyResultAlreadyPaid : Bool
   deriving Repr, DecidableEq
 
+namespace AutismFMTProtocolReceipt
+def source (r : AutismFMTProtocolReceipt) : SourceReceipt := admittedHighAlphaSourceReceipt r.sourceAdmission
+end AutismFMTProtocolReceipt
+
 def canonicalAutismFMTProtocolReceipt : AutismFMTProtocolReceipt := {
-  source := zou2026FMTProtocolSource
+  sourceAdmission := .zou2026PaysFMTProtocolDesign
   randomizedTripleBlindDesignPlanned := true
   efficacyResultAlreadyPaid := false
 }
 
 structure MuOpioidSocialReceipt where
-  source : SourceReceipt
+  sourceAdmission : AdmittedHighAlphaSource .muOpioidSocialOutcome
   socialConnectionModulationPaid : Bool
   socialConnectionRequiresIntactMuOpioidSignalling : Bool
   propositionTruthAuthorityPaid : Bool
   autismMechanismPaid : Bool
   deriving Repr, DecidableEq
 
+namespace MuOpioidSocialReceipt
+def source (r : MuOpioidSocialReceipt) : SourceReceipt := admittedHighAlphaSourceReceipt r.sourceAdmission
+end MuOpioidSocialReceipt
+
 def canonicalMuOpioidSocialReceipt : MuOpioidSocialReceipt := {
-  source := loseth2024Source
+  sourceAdmission := .losethPaysMuOpioidSocialOutcome
   socialConnectionModulationPaid := true
   socialConnectionRequiresIntactMuOpioidSignalling := false
   propositionTruthAuthorityPaid := false
@@ -203,15 +263,19 @@ def canonicalMuOpioidSocialReceipt : MuOpioidSocialReceipt := {
 }
 
 structure NeurodiversityQoLReceipt where
-  source : SourceReceipt
+  sourceAdmission : AdmittedHighAlphaSource .neurodiversityQoLOutcome
   selfAcceptanceRetained : Bool
   supportQualityRetained : Bool
   identityExcludesSupport : Bool
   interventionMustEnforceNormalization : Bool
   deriving Repr, DecidableEq
 
+namespace NeurodiversityQoLReceipt
+def source (r : NeurodiversityQoLReceipt) : SourceReceipt := admittedHighAlphaSourceReceipt r.sourceAdmission
+end NeurodiversityQoLReceipt
+
 def canonicalNeurodiversityQoLReceipt : NeurodiversityQoLReceipt := {
-  source := linares2026Source
+  sourceAdmission := .linaresPaysNeurodiversityQoLOutcome
   selfAcceptanceRetained := true
   supportQualityRetained := true
   identityExcludesSupport := false
@@ -238,8 +302,8 @@ structure HighAlphaCrossPollination where
   existingPropagationOwner : String
   normMediation : NormMediationReceipt
   platformIntervention : PlatformInterventionReceipt
-  pronounContext : LanguageMentalStateReceipt
-  languageMeta : LanguageMentalStateReceipt
+  pronounContext : LanguageMentalStateReceipt .pronounAssociationOutcome
+  languageMeta : LanguageMentalStateReceipt .languageModelMetaOutcome
   fmtTrial : AutismFMTTrialReceipt
   fmtProtocol : AutismFMTProtocolReceipt
   opioidSocial : MuOpioidSocialReceipt
@@ -257,7 +321,7 @@ def canonicalHighAlphaCrossPollination : HighAlphaCrossPollination := {
   fmtProtocol := canonicalAutismFMTProtocolReceipt
   opioidSocial := canonicalMuOpioidSocialReceipt
   neurodiversityQoL := canonicalNeurodiversityQoLReceipt
-  reading := "Norm mediation sharpens a propagation edge; engagement outcomes remain non-collapsed; language markers require contextual/calibrated inference; randomized FMT separates null primary from positive secondary outcomes; mu-opioids modulate social connection without truth authority; identity and support remain compatible coordinates."
+  reading := "Norm mediation sharpens a propagation edge; engagement outcomes remain non-collapsed; language markers require contextual/calibrated inference; randomized FMT separates null primary from positive secondary outcomes; mu-opioids modulate social connection without truth authority; identity and support remain compatible coordinates. Source identity remains provenance; every result family additionally requires a sealed source/outcome admission."
 }
 
 structure HighAlphaBoundary where

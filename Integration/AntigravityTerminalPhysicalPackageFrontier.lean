@@ -7,21 +7,30 @@ open Integration.AntigravityR136StaticDifferentialReuse
 /-!
 Package-level mirror of the terminal Agda antigravity frontier.
 
-This is scheduling/parity only.  Lean does not claim the Agda pinned Local-C
+This is scheduling/parity only. Lean does not claim the Agda Local-C/Wightman
 terminal proof objects, measured-G authority, physical source scale, TT device
 identity or laboratory receipts.
 
 Mandatory for static and scalar differential response:
-  P1 typed pinned Local-C terminal;
+  P1 one typed Local-C/Wightman terminal package;
   P2 common gravitational calibration/renormalization;
   P3 matched experimental package.
 
 Only a propagating Schuetzhold/GW claim adds:
   P4 TT/device same-object package.
+
+The preferred Agda terminal now shares one explicitly continued stress operator
+between covariance and E->L trace continuation, so a separate boost-record plus
+trace-record representation is not scheduled as another project.
 -/
 
 def typedLocalCTerminalPhysicalPackageStillRequired : Bool :=
   typedPinnedLocalCTerminalProducerRequired
+
+/-- Scheduling parity with Agda's shared Local-C -> Wightman terminal adapter. -/
+def preferredSharedWightmanTerminalAvailable : Bool := true
+
+def independentPinnedBoostTraceSplitRequired : Bool := false
 
 def commonGravityCalibrationPackageStillRequired : Bool := true
 
@@ -46,8 +55,8 @@ and stress same-object identifications; it is not a fourth TT project. -/
 def independentTTFirstVariationPairingProjectRequired : Bool :=
   sameFirstVariationPairingStillRequired
 
-/-- The terminal package still contains the two genuine Agda physical producers:
-boost covariance and same-object Euclidean/Lorentzian trace continuation. -/
+/-- The one terminal package still contains the genuinely physical covariance
+and same-object E->L trace continuation laws. -/
 def typedTerminalInternallyNeedsBoostAndTraceContinuation : Bool := true
 
 def gravityCalibrationInternallyNeedsAcceptedGAndStressLengthSquared : Bool :=
@@ -64,6 +73,8 @@ def mandatoryPropagatingGWPhysicalPackageCount : Nat := 4
 
 structure TerminalPhysicalPackageFrontier where
   typedLocalCTerminalOpen : Bool
+  sharedWightmanTerminalPreferred : Bool
+  splitBoostTraceRepresentationOpen : Bool
   commonGravityCalibrationOpen : Bool
   matchedExperimentOpen : Bool
   ttPackageOpenForScalarRoute : Bool
@@ -79,6 +90,8 @@ structure TerminalPhysicalPackageFrontier where
 
 def canonicalTerminalPhysicalPackageFrontier : TerminalPhysicalPackageFrontier where
   typedLocalCTerminalOpen := true
+  sharedWightmanTerminalPreferred := true
+  splitBoostTraceRepresentationOpen := false
   commonGravityCalibrationOpen := true
   matchedExperimentOpen := true
   ttPackageOpenForScalarRoute := false

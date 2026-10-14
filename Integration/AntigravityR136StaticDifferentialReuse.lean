@@ -17,9 +17,11 @@ It mirrors only the consumer shape:
 * the open TT donor leaves are the literal GW tangent, EM Hilbert stress, and
   localized interaction same-object welds; the first-variation pairing follows
   from the canonical metric-stress theorem after tangent/stress identification;
-* SI calibration is reduced to accepted measured-G authority/value promotion
-  and the source stress*length^2 scale. Separate stress and length scales are
-  not independently required by the consumer;
+* Agda now has a source-attributed NIST/CODATA-2022 measured-G admission and a
+  typed accepted physical Einstein-coupling receipt, so measured-G authority is
+  not an open SI leaf for this consumer;
+* the remaining SI leaf is the source/device stress*length^2 scale. Separate
+  stress and length scales are not independently required by the consumer;
 * on the preferred Agda route the R136/Local-C source is the actual typed pinned
   terminal producer, not an arbitrary proposition receipt. Lean mirrors that
   scheduling fact without claiming the Agda terminal proof object;
@@ -87,12 +89,13 @@ def sameLocalizedInteractionStillRequired : Bool := true
 def physicalReversalAndConservationReceiptsStillRequired : Bool := true
 def scalarKottlerDeltaGttAloneConstructsTTMode : Bool := false
 
--- Least-privilege SI calibration mirror. The exact NIST/CODATA source authority
--- remains on the Agda/source side; these are scheduler/parity facts only.
+-- Least-privilege SI calibration mirror. Agda now owns the explicit consumer
+-- admission of the CODATA/NIST measured-G value with uncertainty.
 def vendoredCODATAEinsteinCouplingCandidateAvailable : Bool := true
 def exactSpeedOfLightIsNotCalibrationBlocker : Bool := true
 def newEinsteinCouplingConventionRequired : Bool := false
-def acceptedMeasuredGAuthorityStillRequired : Bool := true
+def acceptedMeasuredGAuthorityStillRequired : Bool := false
+def acceptedPhysicalEinsteinCouplingAvailable : Bool := true
 def sourceStressLengthSquaredScaleStillRequired : Bool := true
 def separateStressAndLengthIdentificationRequired : Bool := false
 

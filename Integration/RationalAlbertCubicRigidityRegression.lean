@@ -1,4 +1,4 @@
-import Integration.RationalAlbertCubicRigidity
+import Integration.RationalAlbertNormUnitRigidityExact
 
 namespace Integration.RationalAlbertCubicRigidityRegression
 open Integration.RationalAlbertCubicRigidity
@@ -8,9 +8,6 @@ example : canonicalBoundary.tracePairRecoveredFromNorm = true := rfl
 example : canonicalBoundary.adjointRecoveredFromNorm = true := rfl
 example : canonicalBoundary.unitFixingNormSymmetryIsJordan = true := rfl
 
--- RED-first terminal local rigidity witness: the native trace pairing should
--- be strong enough to upgrade unit-fixing cubic symmetries without importing
--- the global F4 classification theorem.
 example : NormUnitRigidity := canonicalNormUnitRigidity
 
 example (g : UnitFixingNormSymmetry) (X Y : A27) :

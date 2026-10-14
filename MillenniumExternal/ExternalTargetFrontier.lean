@@ -2,11 +2,6 @@ import MillenniumExternal.TerminalCensus
 
 namespace MillenniumExternal
 
-/-- Acceptance state is deliberately independent from the mathematical roadmap.
-`proofResolutionPending` means this completion pass assumes the mathematics is
-already paid and is still locating/composing the exact donor. `sourceExactKernelPending`
-means a literal theorem term against the pinned external proposition is source-written,
-but no exact-head kernel/axiom receipt has yet been recorded. -/
 inductive AdapterState where
   | greenExact
   | proofResolutionPending
@@ -35,14 +30,13 @@ structure ExternalTargetReceipt where
   note : String
   deriving DecidableEq, Repr
 
-/-- Fail-closed receipts under the approved completion assumption. -/
 def externalTargetReceipts : List ExternalTargetReceipt :=
   [ { problem := .pVersusNP
       upstreamDeclaration := "Millennium.ClayPVersusNP.Formulations.NegativeBranch"
       state := .proofResolutionPending
       frontier := .proofResolution
-      firstUnpaid := "realize the fixed-description costed streamed bit recursion as the same-target rule table in a literal CodedFiniteStandardTM, prove exact same-target run/decision correspondence, then use the generic clock receipt and close the arithmetic inside the same Cook budget"
-      note := "Agda PR #1129 closes the earlier representation and semantic-cost seams. Literal full own-Cook-formula materialisation on the same tape is impossible at positive exact budget, so that architecture is retired. ConcreteTapeGlobalCookLevinStreamingClauseCostedExact and ConcreteTapeGlobalCookLevinStreamingBitCostedExact instrument the actual global clause path and token/three-bit cursor: the returned costed streamed bit and charged work come from the same recursion. PNotEqualsNPCodedFixedOwnCookStreamingCostExact specializes that evaluator to the SAME coded opposite target and proves semantic equality, linear work and own-Cook same-object identity. After a concrete same-target rule table/run exists, ConcreteTapeStandardClockExact.concreteStandardClockReceipt is the generic clock receipt: it already pays exact step-clock preservation, dispatch work <= T*|rules| and guarded tape width = input width + 2T. Therefore bespoke work is now only the literal CodedFiniteStandardTM rule-table realization of the paid recursion, exact faithful same-target simulation/decision, and final same Cook budget arithmetic; generic interpreter overhead is not reopened." }
+      firstUnpaid := "build literal generator microcode for the index-only ABI / finite local kernel tables, then provide a fresh-dispatch exact-T phase boundary (quiescent endpoint or clock/phase wrapper), concrete generator/suffix runs, and close their additive time inside the same Cook budget"
+      note := "Live Agda #1129 is now past generic finite-machine plumbing. The own-Cook streamed evaluator has an index-only ABI; transition/acceptance kernels are same-object finite tables; mode sum, safe links and resident transition preservation are paid; CodedFiniteStandardLinkedStructuralSimulationExact gives the actual candidate submachine simulation; CodedFiniteStandardLinkedRunSimulationExact lifts the actual coded polynomial candidate execution edge-for-edge with identical step count and composes prefix ; candidate ; suffix exact runs. The exact linked candidate middle run is therefore paid. A determinism obstruction is also explicit: CodedFiniteStandardReturnLinkFreshnessExact proves a safe return link cannot share a fresh dispatch key with a resident candidate rule. Since StandardFiniteCandidateCode does not state that its declared T-step finish is quiescent, direct return is not automatic. The live compiler residual is therefore the literal generator fragment plus a true exact-T phase boundary (fresh/quiescent endpoint or clock/phase wrapper), surrounding runs, and final same Cook budget closure. Generic ConcreteTapeStandardClockExact remains the post-construction clock receipt." }
   , { problem := .riemann
       upstreamDeclaration := "Millennium.ClayRiemannHypothesis"
       state := .proofResolutionPending

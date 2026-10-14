@@ -14,5 +14,7 @@ example : vendoredCODATAEinsteinCouplingCandidateAvailable = true := rfl
 example : acceptedMeasuredGAuthorityStillRequired = true := rfl
 example : sourceStressLengthSquaredScaleStillRequired = true := rfl
 example : separateStressAndLengthIdentificationRequired = false := rfl
+example : softR136SameStateTokenRequiredOnTypedRoute = false := rfl
+example : typedPinnedLocalCTerminalProducerRequired = true := rfl
 
 end Integration.AntigravityR136StaticDifferentialReuseTest

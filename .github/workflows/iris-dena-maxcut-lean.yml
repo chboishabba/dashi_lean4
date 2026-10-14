@@ -30,7 +30,11 @@ jobs:
         run: lake env lean AgdaMirror/Governance/IRISDenaBunkClaimRevisionConflict.lean
       - name: Check correction-aware review mirror
         run: lake env lean AgdaMirror/Governance/IRISDenaCorrectionAwareReviewGate.lean
+      - name: Check observer hierarchy mirror
+        run: lake env lean AgdaMirror/Governance/IRISDenaObserverHierarchyNonDescent.lean
       - name: Check current Pareto mirror
         run: lake env lean AgdaMirror/Governance/OriginalThreadParetoMaxCut20261008.lean
+      - name: Check certification regression mirror
+        run: lake env lean AgdaMirror/Governance/IRISDenaMaxCutCertificationRegression.lean
       - name: Check focused IRIS mirror rollup
         run: lake env lean AgdaMirror/Governance/IRISDenaMaxCut.lean

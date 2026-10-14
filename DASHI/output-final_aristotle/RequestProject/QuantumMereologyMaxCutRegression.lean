@@ -2,6 +2,7 @@ import RequestProject.QuantumMereologyMaxCut
 import RequestProject.QuantumMereologyStandardBasisProjector
 import RequestProject.QuantumMereologyFiniteHermitianCPO
 import RequestProject.QuantumMereologyBornProbability
+import RequestProject.QuantumMereologyVonNeumannInformation
 
 namespace QuantumMereology
 namespace MaxCutRegression
@@ -61,6 +62,22 @@ example :
 example :
     BornProbability.canonicalBoundary.coordinateProbabilityCreatesPhysicalPointerIdentification = false :=
   BornProbability.coordinate_probability_does_not_create_physical_pointer_identification
+
+example :
+    VonNeumannInformation.canonicalBoundary.finiteVonNeumannEntropyDefined = true :=
+  VonNeumannInformation.finite_von_neumann_entropy_defined
+
+example :
+    VonNeumannInformation.canonicalBoundary.bipartiteMutualInformationDefined = true :=
+  VonNeumannInformation.bipartite_mutual_information_defined
+
+example :
+    VonNeumannInformation.canonicalBoundary.mutualInformationAutomaticallyCreatesMetric = false :=
+  VonNeumannInformation.mutual_information_does_not_automatically_create_metric
+
+example :
+    VonNeumannInformation.canonicalBoundary.ccmDistanceAnsatzKeptSeparate = true :=
+  VonNeumannInformation.ccm_distance_ansatz_kept_separate
 
 end MaxCutRegression
 end QuantumMereology

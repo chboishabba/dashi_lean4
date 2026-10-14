@@ -8,6 +8,8 @@ import Integration.E6Mod3QuadraticBridge
 import Integration.E6Mod3QuadraticBridgeRegression
 import Integration.E6Mod3WeylAction
 import Integration.E6Mod3WeylActionRegression
+import Integration.E6ProjectiveRootLineSRG
+import Integration.E6ProjectiveRootLineSRGRegression
 import Integration.F3FourSymplecticExteriorSquare
 import Integration.F3FourSymplecticExteriorSquareRegression
 import Integration.F3E6PGSpGeneratorBridge

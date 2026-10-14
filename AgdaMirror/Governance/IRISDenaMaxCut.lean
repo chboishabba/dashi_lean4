@@ -10,3 +10,4 @@ import AgdaMirror.Governance.IRISDenaPublicRecordConsumerNonDescent
 import AgdaMirror.Governance.IRISDenaObserverHierarchyNonDescent
 import AgdaMirror.Governance.IRISDenaSameObjectAcquisitionMaxCut
 import AgdaMirror.Governance.OriginalThreadParetoMaxCut20261008
+import AgdaMirror.Governance.IRISDenaMaxCutCertificationRegression

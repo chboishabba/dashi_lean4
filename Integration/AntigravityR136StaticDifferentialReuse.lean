@@ -14,8 +14,9 @@ It mirrors only the consumer shape:
   Delta Lambda = a (V_on - V_off), so no extra Delta same-object theorem is
   scheduled;
 * scalar Kottler modulation is not a propagating TT mode;
-* the open TT donor leaves are the literal GW tangent, EM Hilbert stress,
-  first-variation pairing, and localized interaction same-object welds;
+* the open TT donor leaves are the literal GW tangent, EM Hilbert stress, and
+  localized interaction same-object welds; the first-variation pairing follows
+  from the canonical metric-stress theorem after tangent/stress identification;
 * SI calibration is reduced to accepted measured-G authority/value promotion
   and the source stress*length^2 scale. Separate stress and length scales are
   not independently required by the consumer;
@@ -81,7 +82,7 @@ def newMetricDependentHodgeTheoryRequired : Bool := false
 def newR144FirstVariationFrameworkRequired : Bool := false
 def sameGWMetricTangentStillRequired : Bool := true
 def sameEMHilbertStressInsertionStillRequired : Bool := true
-def sameFirstVariationPairingStillRequired : Bool := true
+def sameFirstVariationPairingStillRequired : Bool := false
 def sameLocalizedInteractionStillRequired : Bool := true
 def physicalReversalAndConservationReceiptsStillRequired : Bool := true
 def scalarKottlerDeltaGttAloneConstructsTTMode : Bool := false

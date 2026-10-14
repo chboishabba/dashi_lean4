@@ -16,11 +16,10 @@ matrix images and prove, by exact finite computation on the literal matrices,
 that they are the same 51,840-element subset of M5.
 
 This is strictly stronger than an order comparison: the two finite matrix
-images are equal.  It still does not manufacture an abstract group
-isomorphism named `PGSp4(3) ≅ W(E6)` without separately packaging the abstract
-quotient/group structures.  The actionable representation-level result is
-already paid: both constructions induce the same matrices on the same
-five-space carrier.
+images are equal.  It also inhabits the repository's existing same-action
+`PGSpWeylRecognition` contract at the concrete matrix-image level.  We still
+do not manufacture an abstract named group isomorphism `PGSp4(3) ≅ W(E6)`
+without separately packaging the abstract quotient/group structures.
 -/
 
 namespace DASHI.Integration.F3E6PGSpImageRecognition
@@ -92,6 +91,53 @@ theorem exterior_of_generated_mem_commonImage
   rw [← projectiveFiveImage_eq_e6GeneratedClosure]
   exact Finset.mem_image.mpr ⟨g, hg, rfl⟩
 
+/-! ## Concrete same-action recognition
+
+The old recognition socket asked for two actor carriers, inverse maps, a common
+five-space, and equality of the transported actions.  Literal image equality
+lets us inhabit that socket without appealing to order or labels.
+-/
+
+def PGSpFiveImageActor := {m : M5 // m ∈ projectiveFiveImage}
+def WeylFiveImageActor := {m : M5 // m ∈ e6GeneratedClosure}
+
+def toWeylImageActor (g : PGSpFiveImageActor) : WeylFiveImageActor :=
+  ⟨g.1, by
+    rw [← projectiveFiveImage_eq_e6GeneratedClosure]
+    exact g.2⟩
+
+def fromWeylImageActor (w : WeylFiveImageActor) : PGSpFiveImageActor :=
+  ⟨w.1, by
+    rw [projectiveFiveImage_eq_e6GeneratedClosure]
+    exact w.2⟩
+
+theorem actorFromAfterTo (g : PGSpFiveImageActor) :
+    fromWeylImageActor (toWeylImageActor g) = g := by
+  apply Subtype.ext
+  rfl
+
+theorem actorToAfterFrom (w : WeylFiveImageActor) :
+    toWeylImageActor (fromWeylImageActor w) = w := by
+  apply Subtype.ext
+  rfl
+
+/-- Concrete inhabitant of the pre-existing recognition interface.  Both actor
+carriers act by the same literal 5x5 matrix on the same repository F3^5
+carrier; the actor equivalence is induced by the proved matrix-image equality. -/
+def commonMatrixImageRecognition : PGSpWeylRecognition where
+  PGSpActor := PGSpFiveImageActor
+  WeylActor := WeylFiveImageActor
+  toWeyl := toWeylImageActor
+  fromWeyl := fromWeylImageActor
+  fromAfterTo := actorFromAfterTo
+  toAfterFrom := actorToAfterFrom
+  FiveSpace := E6Bridge.F3Five
+  pgspAct := fun g z => standardMatrixAct g.1 z
+  weylAct := fun w z => standardMatrixAct w.1 z
+  actionIntertwines := by
+    intro g z
+    rfl
+
 structure ImageRecognitionBoundary where
   sixGeneratorIntertwiningConsumed : Bool
   fourSpaceClosureOrder103680Consumed : Bool
@@ -100,6 +146,7 @@ structure ImageRecognitionBoundary where
   e6FiveImageCard51840Paid : Bool
   literalFiveMatrixImageEqualityPaid : Bool
   sameActionImageRecognitionPaid : Bool
+  pgspWeylRecognitionInhabitedAtMatrixImage : Bool
   rawPuncturedT4PromotedToNullCone : Bool
   abstractPGSp4QuotientWeylGroupIsomorphismPaid : Bool
   deriving Repr
@@ -112,6 +159,7 @@ def imageRecognitionBoundary : ImageRecognitionBoundary where
   e6FiveImageCard51840Paid := true
   literalFiveMatrixImageEqualityPaid := true
   sameActionImageRecognitionPaid := true
+  pgspWeylRecognitionInhabitedAtMatrixImage := true
   rawPuncturedT4PromotedToNullCone := false
   abstractPGSp4QuotientWeylGroupIsomorphismPaid := false
 

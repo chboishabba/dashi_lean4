@@ -10,6 +10,8 @@ example : sharedAffineCalibrationStillRequired = true := rfl
 example : scalarKottlerDeltaGttAloneConstructsTTMode = false := rfl
 example : sameGWMetricTangentStillRequired = true := rfl
 example : sameEMHilbertStressInsertionStillRequired = true := rfl
+example : sameFirstVariationPairingStillRequired = false := rfl
+example : sameLocalizedInteractionStillRequired = true := rfl
 example : vendoredCODATAEinsteinCouplingCandidateAvailable = true := rfl
 example : acceptedMeasuredGAuthorityStillRequired = true := rfl
 example : sourceStressLengthSquaredScaleStillRequired = true := rfl

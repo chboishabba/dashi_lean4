@@ -32,7 +32,8 @@ theorem norm_commutes
   ext x
   change g (x + a x) = g x + a (g x)
   rw [g.map_add]
-  have hx := LinearMap.congr_fun hcomm x
+  have hx : g (a x) = a (g x) :=
+    congrArg (fun f : V →ₗ[K] V => f x) hcomm
   exact congrArg (fun y => g x + y) hx
 
 end Integration.OggSSP2BCentralizerNormEquivariance

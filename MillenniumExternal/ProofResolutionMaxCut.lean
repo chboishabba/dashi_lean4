@@ -38,17 +38,23 @@ private def standardResolutionOps : List ResolutionOperation :=
   , .kernelCheck
   ]
 
-/-- P≠NP follows the live Oct-14 Agda #1129 compiler recut.
+/-- P≠NP follows the live Agda #1129 compiler recut.
 
-The streamed evaluator is now index-only at runtime, its local Boolean kernels
-are frozen finite tables, actual candidate rules embed into a summed/linked coded
+The streamed evaluator is index-only at runtime, its local Boolean kernels are
+frozen finite tables, actual candidate rules embed into a summed/linked coded
 target, and exact candidate runs lift edge-for-edge with identical step count.
-Three-phase run composition is also paid.  A newly explicit determinism boundary
-matters: a direct return link cannot reuse a resident candidate dispatch key, so
-an arbitrary declared T-step `finish` is not automatically a legal return point.
-The remaining compiler must therefore supply the literal generator microcode and
-a genuine phase boundary (fresh/quiescent endpoint or clocked wrapper), then pay
-generator/suffix time inside the same Cook budget. -/
+Three-phase run composition is paid.  The return-freshness theorem shows that a
+declared T-step `finish` is not automatically a legal return point when its
+resident dispatch key is still occupied.
+
+Recent XOR-grid work contributes one bounded compiler insight only.  The
+complexity branch reproves locally that a binary countdown data bit updates by
+XOR with the incoming borrow and that the XOR coordinate is recoverable, while
+the outgoing borrow is a separate nonlinear coordinate.  Equal XOR output can
+carry different borrow output, so parity alone is neither an exact-T clock nor
+complexity hardness evidence.  The next machine payment is therefore a literal
+bit+borrow tape counter which emits one exact handoff pulse, followed by a final
+self-consistent Cook budget T* charging generator + timer + candidate + suffix. -/
 def pVersusNPResolution : ProofResolutionLane :=
   { problem := .pVersusNP
     producerSearch :=
@@ -66,6 +72,10 @@ def pVersusNPResolution : ProofResolutionLane :=
       , "CodedFiniteStandardLinkedRunSimulationExact.simulateCodedCandidateExecution"
       , "CodedFiniteStandardLinkedRunSimulationExact.appendLinkedCandidatePhase"
       , "CodedFiniteStandardReturnLinkFreshnessExact.residentCandidateRuleBlocksReturnLink"
+      , "PNotEqualsNPXORCountdownMicrocodeExact.xorRecoverLeft"
+      , "PNotEqualsNPXORCountdownMicrocodeExact.xorRecoverRight"
+      , "PNotEqualsNPXORCountdownMicrocodeExact.sameXorOutputDifferentBorrow"
+      , "PNotEqualsNPXORCountdownMicrocodeExact.counterCompilationRemains"
       , "ConcreteTapeStandardClockExact.concreteStandardClockReceipt"
       , "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesUniversalFailure"
@@ -154,6 +164,8 @@ theorem pnp_resolution_uses_virtual_streaming_maxcut :
       "CodedFiniteStandardLinkedRunSimulationExact.appendLinkedCandidatePhase" = true ∧
     pVersusNPResolution.producerSearch.contains
       "CodedFiniteStandardReturnLinkFreshnessExact.residentCandidateRuleBlocksReturnLink" = true ∧
+    pVersusNPResolution.producerSearch.contains
+      "PNotEqualsNPXORCountdownMicrocodeExact.sameXorOutputDifferentBorrow" = true ∧
     pVersusNPResolution.producerSearch.contains
       "ConcreteTapeStandardClockExact.concreteStandardClockReceipt" = true := by decide
 

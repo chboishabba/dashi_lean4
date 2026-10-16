@@ -11,15 +11,24 @@ action compiler proves that, once this externally sourced action is represented
 on the formal mod-2 norm carrier, the already-paid rank-24 and Frobenius-socle
 receipts force the Tate cokernel to the exterior-square/duad model.
 
+A later compiler (`OggSSP2BIntegralCentralizerTateAction`) further shows that
+separate quotient-action instantiation is unnecessary: one centralizer
+representation commuting with the selected involution descends functorially to
+the Tate quotient.  `OggSSP2BEquivariantWeldKillsLastEquation` then removes the
+old terminal C' conjugation equality as an independent leaf once the literal
+Tate/exterior weld is proved equivariant.
+
 Thus there are no remaining representation-discovery leaves in this part of
-the programme.  One formal same-object implementation leaf remains: instantiate
-the sourced centralizer action on the actual formal norm carrier.  This file
-keeps that distinction explicit and does not claim the literal weld prematurely.
+the programme.  The remaining formal seam is one source-native action/
+equivariance instantiation; block-projector coordinates and a separately
+asserted outer-action equation are optional implementation routes, not new
+scientific acquisitions.
 
 Attribution:
 * Carnahan owns the Monster-stable self-dual integral form/external action.
 * ATLAS/CTblLib and standard modular representation theory own the local group
   and block data used by the runtime receipts.
+* Mathlib owns the generic quotient-representation construction.
 * DASHI owns the compiler/composition results in this namespace.
 -/
 
@@ -43,7 +52,10 @@ structure Status where
   downstream31Paid : Bool
   downstream279Paid : Bool
 
-/-- Current honest state after the direct invariant-range compiler. -/
+/-- Historical compatibility status for the pre-equivariance compression
+frontier.  The newer canonical frontier is
+`OggSSP2BPostEquivarianceMaxCut.canonicalStatus`, where the old outer-action
+operator equality has been compiled away. -/
 def canonicalStatus : Status where
   externalMonsterStableIntegralActionSourced := true
   centralizerActionExistsMathematicallyByRestriction := true

@@ -58,8 +58,7 @@ theorem normSq_eq_zero_iff (x : RationalOctonion) : normSq x = 0 ↔ x = 0 := by
     subst a0; subst a1; subst a2; subst a3
     subst b0; subst b1; subst b2; subst b3
     rfl
-  · intro h
-    subst h
+  · rintro rfl
     norm_num [normSq, RationalQuaternion.normSq]
 
 /-- A nonzero native rational octonion has nonzero norm. -/
@@ -72,7 +71,7 @@ theorem mul_eq_zero {x y : RationalOctonion} (hxy : x * y = 0) : x = 0 ∨ y = 0
   have hnorm : normSq x * normSq y = 0 := by
     rw [← normSq_mul x y, hxy]
     norm_num [normSq, RationalQuaternion.normSq]
-  rcases mul_eq_zero.mp hnorm with hx | hy
+  rcases _root_.mul_eq_zero.mp hnorm with hx | hy
   · exact Or.inl ((normSq_eq_zero_iff x).mp hx)
   · exact Or.inr ((normSq_eq_zero_iff y).mp hy)
 

@@ -8,6 +8,8 @@ import Synthesis.MonsterInvariantRestriction
 import Synthesis.MonsterInvariantRestrictionRegression
 import Synthesis.MonsterLinearEigenspaceRestriction
 import Synthesis.MonsterLinearEigenspaceRestrictionRegression
+import Synthesis.MonsterSchurFromSimpleFDRep
+import Synthesis.MonsterSchurFromSimpleFDRepRegression
 
 /-!
 # Monster representation post-recognition generic tail
@@ -21,6 +23,8 @@ Available in this tail:
   inclusion, including nested restrictions;
 * linear central operator + commuting action -> literal invariant eigenspace,
   restricted representation and inclusion intertwiner;
+* simple finite-dimensional representation over an algebraically closed field
+  -> one-dimensional/scalar self-intertwiner space by pinned mathlib Schur;
 * one-simple-type semisimple/isotypic assembly;
 * post-recognition finite-copy count cancellation (including the lawful 90);
 * complementary two-isotypic-block assembly and post-recognition 12+78 counts;
@@ -28,8 +32,9 @@ Available in this tail:
   `Hom_G(H,H^n) ~= (Fin n -> k)`;
 * exact finite-copy coordinate evaluation/recovery.
 
-Thus constituent/zeta restriction linearity is no longer an independent source
-leaf after the actual invariant subspace / central linear operator is paid.
+Thus constituent/zeta restriction linearity and the abstract Schur property are
+not independent Monster source leaves after the actual invariant subspace /
+central linear operator / simple FDRep attachment is paid.
 
 Not produced here: the actual weight-two Monster representation, actual 196883
 invariant subspace/direct summand, actual central linear operator and zeta
@@ -46,6 +51,9 @@ structure Boundary where
   linearEigenspaceCompilerAvailable : Bool
   commutingActionEigenspaceInvarianceAvailable : Bool
   restrictionLinearityIsCompilerOutput : Bool
+  simpleFDRepSchurRankOneAvailable : Bool
+  irreducibleSelfIntertwinersScalarAvailable : Bool
+  schurIsMonsterSpecificInput : Bool
   oneTypeIsotypicAssemblyAvailable : Bool
   postRecognitionCopyCountAvailable : Bool
   twoBlockAssemblyAvailable : Bool
@@ -67,6 +75,9 @@ def canonicalBoundary : Boundary where
   linearEigenspaceCompilerAvailable := true
   commutingActionEigenspaceInvarianceAvailable := true
   restrictionLinearityIsCompilerOutput := true
+  simpleFDRepSchurRankOneAvailable := true
+  irreducibleSelfIntertwinersScalarAvailable := true
+  schurIsMonsterSpecificInput := false
   oneTypeIsotypicAssemblyAvailable := true
   postRecognitionCopyCountAvailable := true
   twoBlockAssemblyAvailable := true

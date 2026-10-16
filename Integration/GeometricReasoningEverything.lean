@@ -10,6 +10,10 @@ import Integration.E6Mod3WeylAction
 import Integration.E6Mod3WeylActionRegression
 import Integration.E6ProjectiveRootLineSRG
 import Integration.E6ProjectiveRootLineSRGRegression
+import Integration.E6RootLineSameObject
+import Integration.E6F3ProjectiveStrataSRG
+import Integration.E6F3DepthQuadraticInteraction
+import Integration.E6F3FiniteGeometryMaxCutRegression
 import Integration.F3FourSymplecticExteriorSquare
 import Integration.F3FourSymplecticExteriorSquareRegression
 import Integration.F3E6PGSpGeneratorBridge

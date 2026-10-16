@@ -33,18 +33,18 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         self.assertIn("resolvedSourceTerm := none", lane)
         self.assertIn("newMathematicsPermitted := false", lane)
 
-    def test_frontier_names_behavioral_fixed_point_and_resource_closure(self):
+    def test_frontier_names_actual_halting_behavioral_fixed_point(self):
         text = FRONTIER.read_text(encoding="utf-8")
         start = text.index("problem := .pVersusNP")
         end = text.index("problem := .riemann", start)
         lane = text[start:end]
         for marker in (
-            "behavioural Kleene self-specialization",
-            "CodedFiniteStandardTM",
-            "raw-code growth",
-            "one-hot state-width",
-            "quoted program",
-            "resource fixed point T*",
+            "actual-halting CodedFiniteStandardTM",
+            "canonical input independent of T",
+            "GuardedExecutionReceipt",
+            "full table-baked own-Cook generator cannot be the machine it describes",
+            "behavioural equality",
+            "resource fixed point",
             "IIT phi is not complexity hardness evidence",
         ):
             self.assertIn(marker, lane)
@@ -57,16 +57,14 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         end = text.index("def riemannLane", start)
         lane = text[start:end]
         for marker in (
-            "PNotEqualsNPCodedCandidateExactPhaseBoundaryExact",
-            "CodedFiniteStandardExactPhaseSizeExact",
-            "CodedFiniteUnaryCursorExact",
-            "CodedFiniteBitStreamLookupExact",
-            "GuardedCookFiniteBitTableGeneratorExact",
-            "ConcreteTapeCookLevinStateWidthLowerExact",
+            "CodedStandardCanonicalInputExact",
+            "CodedStandardHaltingPolynomialDeciderExact",
+            "PNotEqualsNPHaltingCodedCandidateBridgeExact",
+            "GuardedExecutionReceipt",
+            "GuardedCookFiniteBitTableSelfCodeNoGoExact",
             "CandidateActualSelfInstantiationBoundaryExact",
             "PNotEqualsNPXORCountdownMicrocodeExact",
-            "behavioural fixed points",
-            "budget T*",
+            "behavioural",
         ):
             self.assertIn(marker, lane)
 

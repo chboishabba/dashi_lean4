@@ -1,4 +1,4 @@
-import Integration.OpenAIMath.FormalizationStatus
+import Integration.OpenAIMath.PriorityAtlas
 
 namespace Integration.OpenAIMath
 

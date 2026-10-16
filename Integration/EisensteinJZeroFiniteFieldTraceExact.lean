@@ -1,7 +1,7 @@
 import Mathlib.NumberTheory.LegendreSymbol.QuadraticChar.Basic
 
 /-!
-# Finite-field trace-zero compiler for the j=0 curve
+# Finite-field trace compiler for the j=0 curve
 
 For a finite field `F` of odd characteristic, consider
 
@@ -12,17 +12,17 @@ Mathlib already proves:
 * the number of square roots of `a` is `quadraticChar F a + 1`;
 * the total quadratic-character sum over `F` is zero.
 
+The first theorem below gives the general finite-field trace formula
+
+    a_q = - sum_x chi_2(x^3+1).
+
 If the cube map `x |-> x^3` is bijective, reindexing first by the cube map and
-then by translation `t |-> t+1` gives
+then by translation `t |-> t+1` makes that character sum vanish.  Therefore
+`#E(F)=#F+1` and the trace is zero.
 
-    sum_x chi(x^3+1) = 0.
-
-Therefore the affine equation has exactly `#F` solutions, the projective curve
-has `#F+1` points after adjoining infinity, and its Frobenius trace is zero.
-
-This theorem is deliberately stated from cube-map bijectivity.  The arithmetic
-specialisation `p = 2 mod 3 -> cube map bijective on F_p` is a separate bridge,
-so finite-field geometry is not allowed to infer prime splitting by name.
+The arithmetic specialisation `p = 2 mod 3 -> cube map bijective on F_p` is a
+separate bridge, so finite-field geometry is not allowed to infer prime
+splitting by name.
 -/
 
 namespace Integration.EisensteinJZeroFiniteFieldTraceExact
@@ -43,6 +43,29 @@ def jZeroProjectivePointCountInt : Int :=
 /-- `q+1-#E(F_q)` for the concrete j=0 model. -/
 def jZeroFrobeniusTraceInt : Int :=
   (Fintype.card F : Int) + 1 - jZeroProjectivePointCountInt F
+
+/-- General odd-characteristic trace formula for the concrete j=0 equation. -/
+theorem jZeroFrobeniusTrace_eq_neg_quadraticCharSum
+    (hchar : ringChar F ≠ 2) :
+    jZeroFrobeniusTraceInt F =
+      - ∑ x : F, quadraticChar F (x ^ 3 + 1) := by
+  have haff :
+      jZeroAffinePointCountInt F =
+        (Fintype.card F : Int) + ∑ x : F, quadraticChar F (x ^ 3 + 1) := by
+    unfold jZeroAffinePointCountInt
+    calc
+      (∑ x : F, ({y : F | y ^ 2 = x ^ 3 + 1}.toFinset.card : Int))
+          = ∑ x : F, (quadraticChar F (x ^ 3 + 1) + 1) := by
+            apply Finset.sum_congr rfl
+            intro x hx
+            exact quadraticChar_card_sqrts hchar (x ^ 3 + 1)
+      _ = (∑ x : F, quadraticChar F (x ^ 3 + 1)) + ∑ _x : F, (1 : Int) := by
+            rw [Finset.sum_add_distrib]
+      _ = (Fintype.card F : Int) + ∑ x : F, quadraticChar F (x ^ 3 + 1) := by
+            simp [add_comm]
+  unfold jZeroFrobeniusTraceInt jZeroProjectivePointCountInt
+  rw [haff]
+  ring
 
 private lemma translation_add_one_bijective :
     Function.Bijective (fun x : F => x + 1) := by
@@ -97,9 +120,9 @@ theorem jZeroFrobeniusTrace_eq_zero_of_cube_bijective
     (hchar : ringChar F ≠ 2)
     (hcube : Function.Bijective (fun x : F => x ^ 3)) :
     jZeroFrobeniusTraceInt F = 0 := by
-  unfold jZeroFrobeniusTraceInt
-  rw [jZeroProjectivePointCount_eq_card_add_one F hchar hcube]
-  ring
+  rw [jZeroFrobeniusTrace_eq_neg_quadraticCharSum F hchar,
+    quadraticChar_cubicShift_sum_zero F hchar hcube]
+  simp
 
 /-- The exact local Euler polynomial therefore has the trace-zero shape
 `1 + q*T^2`; identifying a particular prime as satisfying cube bijectivity is
@@ -109,6 +132,7 @@ def traceZeroLocalEulerPolynomial (q : Int) (T : Int) : Int :=
 
 structure JZeroFiniteFieldTraceBoundary : Prop where
   quadraticCharacterSquareRootCountUsed : True
+  generalQuadraticCharacterTraceFormulaPaid : True
   cubeReindexingUsed : True
   projectivePointAtInfinityAdded : True
   traceZeroFromCubeBijectionPaid : True

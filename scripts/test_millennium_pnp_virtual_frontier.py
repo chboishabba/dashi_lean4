@@ -12,8 +12,8 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
     def test_resolution_tracks_live_behavioral_self_fix_frontier(self):
         text = RESOLUTION.read_text(encoding="utf-8")
         for donor in (
+            "GuardedCookFiniteBitTableSelfCodeNoGoExact.tableBakedGeneratorCannotBeDescriptionCode",
             "PNotEqualsNPCodedLiteralResourceCompilerAnchoredNoGoExact.anchoredLiteralStructuralResourceImpossible",
-            "PNotEqualsNPLiteralSelfCodeGrowthNoGoExact.strictCodeGrowthKillsLiteralFixedPoint",
             "PNotEqualsNPKleeneSpecializationFixedPointExact.fixedPointProgramCorrect",
             "PNotEqualsNPCandidateActualSelfInstantiationBoundaryExact.q2PrimitiveExecutionErasesQuotedProgram",
             "PNotEqualsNPCodedCandidateExactPhaseBoundaryExact.candidatePhaseEndpointTransitionNothing",

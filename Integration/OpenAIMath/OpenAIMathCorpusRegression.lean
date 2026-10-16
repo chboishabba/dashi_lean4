@@ -16,9 +16,9 @@ example : upstreamLeanTheoremIsDASHIPort = false := rfl
 example : upstreamLeanTheoremIsAgdaTheorem = false := rfl
 example : topicalRelevanceIsSameObjectTransport = false := rfl
 
-example : RelevanceClass.directFrontier != RelevanceClass.backgroundOnly := by decide
-example : PromotionStatus.upstreamDeclared != PromotionStatus.dashiPorted := by decide
-example : PromotionStatus.upstreamKernelChecked != PromotionStatus.dashiKernelChecked := by decide
+example : RelevanceClass.directFrontier ≠ RelevanceClass.backgroundOnly := by decide
+example : PromotionStatus.upstreamDeclared ≠ PromotionStatus.dashiPorted := by decide
+example : PromotionStatus.upstreamKernelChecked ≠ PromotionStatus.dashiKernelChecked := by decide
 
 example : (priorityFor DASHIProgramme.riemannHypothesis).relevance = RelevanceClass.directFrontier := rfl
 example : (priorityFor DASHIProgramme.ellipticCM).relevance = RelevanceClass.directFrontier := rfl

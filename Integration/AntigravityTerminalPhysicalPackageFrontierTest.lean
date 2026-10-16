@@ -7,6 +7,16 @@ open Integration.AntigravityTerminalPhysicalPackageFrontier
 example : typedLocalCTerminalPhysicalPackageStillRequired = true := rfl
 example : preferredSharedWightmanTerminalAvailable = true := rfl
 example : independentPinnedBoostTraceSplitRequired = false := rfl
+example : p1OpaqueAnalyticEstimateCount = 0 := rfl
+example : p1RemainingSourceSubpackageCount = 2 := rfl
+example : p1Q1PathDerivativeSemanticsAndEquivarianceStillRequired = true := rfl
+example : p1PrimitiveE1DerivativeEquivarianceProjectRequired = false := rfl
+example : p1E24ObservableAndTwoAdmissibilityProofsStillRequired = true := rfl
+example : p1E24ArbitraryMeaningPredicateRequired = false := rfl
+example : p1AllStressCylinderEncodingRequired = false := rfl
+example : p1IndependentE4StressSelectionRequired = false := rfl
+example : p1IndependentE4DecayEstimateRequired = false := rfl
+example : p1IndependentTerminalLawProjectsRequired = false := rfl
 example : acceptedMeasuredGAuthorityStillOpen = false := rfl
 example : acceptedPhysicalEinsteinCouplingAvailable = true := rfl
 example : stressLengthSquaredScaleStillOpen = true := rfl

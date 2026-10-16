@@ -21,6 +21,10 @@ example : p1AllStressCylinderEncodingRequired = false := rfl
 example : p1IndependentE4StressSelectionRequired = false := rfl
 example : p1IndependentE4DecayEstimateRequired = false := rfl
 example : p1IndependentTerminalLawProjectsRequired = false := rfl
+example : preferredP2ConsumesTypedStressDirectly = true := rfl
+example : preferredP2AffineSourceNormalizationCalibrationRequired = false := rfl
+example : preferredP2CommonCosmologicalRenormalizationStillRequired = true := rfl
+example : preferredP2PhysicalLeafCount = 2 := rfl
 example : acceptedMeasuredGAuthorityStillOpen = false := rfl
 example : acceptedPhysicalEinsteinCouplingAvailable = true := rfl
 example : requiredStressLengthSquaredIntervalAlgebraOwned = true := rfl

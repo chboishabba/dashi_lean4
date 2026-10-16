@@ -6,6 +6,7 @@ import Integration.EisensteinJZeroSplitJacobiCyclotomicExact
 import Integration.EisensteinJZeroSplitPrimeEisensteinCarrierExact
 import Integration.EisensteinJZeroSplitPrimeUnitNormalizationExact
 import Integration.EisensteinJZeroAllGoodPrimeLocalExact
+import Integration.EisensteinJZeroBadPrimeThreeExact
 
 /-!
 # Eisenstein arithmetic -> CM terminal max-cut
@@ -32,8 +33,8 @@ On the SAME integral carrier the CM chain is
       -> Phi^2+Phi+1=0 on Mathlib's native point group
       -> Z[omega] -> End(E(Frac(Z[omega]))).
 
-The finite/local arithmetic branch is now source-written for every good prime
-`p > 3`:
+The finite/local arithmetic branch is source-written for every good prime
+`p > 3`.
 
 INERT (`p % 3 = 2`)
     chi_-3(p) = -1,
@@ -54,10 +55,16 @@ SPLIT (`p % 3 = 1`)
       -> P_p(T)=1+(2*a-b)T+p*T^2
       -> exact existing six-unit x split-choice normal form.
 
+At the bad prime 3 the literal reduced cubic is also inspected: `(2,0)` is an
+explicit singular point, both formal partials vanish there, and the affine /
+naive-projective counts are exact.  Those facts are NOT promoted to a
+bad-prime elliptic local factor: that requires reduction-type/conductor
+semantics (Neron/Kodaira or an equivalent owner), absent from pinned Mathlib.
+
 Thus the split finite-field/Frobenius branch is no longer a blocker.  The
-remaining global arithmetic promotion is to package these local data as the
-same curve's Groessencharacter/Hecke object, account honestly for the bad prime
-3, prove the Euler product identification, and only then derive the global
+remaining global arithmetic promotion is to pay the bad-prime local factor,
+package the same local data as a Groessencharacter/Hecke object, prove the
+same-curve Euler product identification, and only then derive global
 elliptic/Hecke L-function agreement.
 
 Independently, the geometric CM track still requires an elliptic
@@ -87,12 +94,13 @@ open Integration.EisensteinJZeroSplitJacobiCyclotomicExact
 open Integration.EisensteinJZeroSplitPrimeEisensteinCarrierExact
 open Integration.EisensteinJZeroSplitPrimeUnitNormalizationExact
 open Integration.EisensteinJZeroAllGoodPrimeLocalExact
+open Integration.EisensteinJZeroBadPrimeThreeExact
 
 inductive EisensteinArithmeticCMBlocker
   | missingGeometricIsogenyDegreeCarrier
   | missingFaithfulGeometricCMEmbedding
   | missingEndomorphismDegreeNormTheorem
-  | missingBadPrimeThreeLocalFactor
+  | missingBadPrimeReductionTypeAndLocalFactor
   | missingGroessencharacterGlobalization
   | missingSameCurveEulerProductAgreement
   | missingEllipticHeckeLSeriesAgreement
@@ -102,18 +110,15 @@ inductive EisensteinArithmeticCMBlocker
 open EisensteinArithmeticCMBlocker
 
 structure EisensteinArithmeticCMTerminalStatus where
-  -- Original observable discipline.
   finiteGraphRadiusSeparatedFromNormShell : Bool
   cantorRadixGeometryRetainedAsDistinctObservable : Bool
   cantorScaleSeriesIdentifiedWithNormShellSeries : Bool
 
-  -- Arithmetic shell lane.
   standardEisensteinIntegralCarrierPaid : Bool
   euclideanDomainAndUfdPaid : Bool
   universalNormShellFormulaPaid : Bool
   arithmeticDirichletFactorizationPaid : Bool
 
-  -- Same-carrier point-group CM lane.
   sameCarrierFractionFieldPaid : Bool
   nativeJZeroCurvePaid : Bool
   nativeJZeroPointGroupPaid : Bool
@@ -121,12 +126,10 @@ structure EisensteinArithmeticCMTerminalStatus where
   eisensteinQuadraticEndomorphismRelationPaid : Bool
   sameIntegralCarrierOrderActionPaid : Bool
 
-  -- Inert local lane.
   inertPrimeSamePrimeWeldPaid : Bool
   inertPrimeTraceZeroPaid : Bool
   inertPrimeLocalEulerShapePaid : Bool
 
-  -- Split finite-field/Jacobi lane.
   canonicalCubeFibreCharacterCertificatePaid : Bool
   genericCubicJacobiTraceCompilerPaid : Bool
   splitJacobiSixthCyclotomicIntegralityPaid : Bool
@@ -139,8 +142,12 @@ structure EisensteinArithmeticCMTerminalStatus where
   splitPrimeSixUnitNormalizationPaid : Bool
   allGoodPrimeSameCurveLocalClassificationPaid : Bool
 
-  -- Honest remaining global/geometric boundaries.
-  badPrimeThreeLocalFactorPaid : Bool
+  badPrimeThreeLiteralReductionPaid : Bool
+  badPrimeThreeSingularityPaid : Bool
+  badPrimeThreePointCountPaid : Bool
+  badPrimeReductionTypePaid : Bool
+  badPrimeEllipticLocalFactorPaid : Bool
+
   rationalPointActionFaithfulnessInferred : Bool
   faithfulGeometricCMEmbeddingPaid : Bool
   endomorphismDegreeEqualsNormPaid : Bool
@@ -148,7 +155,6 @@ structure EisensteinArithmeticCMTerminalStatus where
   sameCurveEulerProductAgreementPaid : Bool
   ellipticLSeriesAgreementPaid : Bool
 
-  -- Non-collapse firewalls.
   dirichletLocalFactorIdentifiedWithEllipticEulerFactor : Bool
   arithmeticShellLSeriesIdentifiedWithEllipticLSeries : Bool
   chemistryOrMonsterStateSpaceIdentityPromoted : Bool
@@ -193,7 +199,12 @@ def terminalStatus : EisensteinArithmeticCMTerminalStatus where
   splitPrimeSixUnitNormalizationPaid := true
   allGoodPrimeSameCurveLocalClassificationPaid := true
 
-  badPrimeThreeLocalFactorPaid := false
+  badPrimeThreeLiteralReductionPaid := true
+  badPrimeThreeSingularityPaid := true
+  badPrimeThreePointCountPaid := true
+  badPrimeReductionTypePaid := false
+  badPrimeEllipticLocalFactorPaid := false
+
   rationalPointActionFaithfulnessInferred := false
   faithfulGeometricCMEmbeddingPaid := false
   endomorphismDegreeEqualsNormPaid := false
@@ -209,50 +220,42 @@ def terminalStatus : EisensteinArithmeticCMTerminalStatus where
   physicalMechanismPromotedFromSharedC3 := false
 
   firstGeometricBlocker := missingGeometricIsogenyDegreeCarrier
-  firstGlobalArithmeticBlocker := missingBadPrimeThreeLocalFactor
+  firstGlobalArithmeticBlocker := missingBadPrimeReductionTypeAndLocalFactor
 
 ------------------------------------------------------------------------
 -- Exact donor surfaces.
 ------------------------------------------------------------------------
 
-/-- The same integral carrier counted by the shell theorem acts on the curve's
-native point group. -/
 def arithmeticToCMAction : EisensteinQA →+*
     AddMonoid.End eisensteinJZeroCurve.Point :=
   eisensteinOrderAction
 
-/-- The arithmetic generator is the concrete j=0 rotation. -/
 theorem arithmeticOmega_is_CMrotation :
     arithmeticToCMAction (QuadraticAlgebra.omega : EisensteinQA) =
       eisensteinCMEndomorphism :=
   eisensteinOrderAction_omega
 
-/-- Every lattice coordinate pair has its explicit point-group action. -/
 theorem coordinatePair_to_CMaction (a b : Int) :
     arithmeticToCMAction (asQuadraticAlgebra a b) =
       a • (1 : AddMonoid.End eisensteinJZeroCurve.Point) +
         b • eisensteinCMEndomorphism :=
   eisensteinOrderAction_coordinates a b
 
-/-- Same rational inert prime, two lawful consumers. -/
 def inertPrimeSameObjectWeld
     (p : Nat) [Fact p.Prime] (hp2 : 2 < p) (hp3 : p % 3 = 2) :
     InertPrimeArithmeticEllipticWeld p :=
   inertPrimeArithmeticEllipticWeld p hp2 hp3
 
-/-- Canonical split-prime Jacobi element in the literal repository carrier. -/
 def splitPrimeLiteralEisensteinElement
     (p : Nat) [Fact p.Prime] (hp2 : 2 < p) (hp3 : p % 3 = 1) :
     EisensteinQA :=
   splitJacobiEisensteinElement p hp2 hp3
 
-/-- The split Jacobi element has exactly the same rational-prime norm. -/
 theorem splitPrimeLiteralEisensteinElement_norm
     (p : Nat) [Fact p.Prime] (hp2 : 2 < p) (hp3 : p % 3 = 1) :
     QuadraticAlgebra.norm (splitPrimeLiteralEisensteinElement p hp2 hp3) = p :=
   splitJacobiEisensteinElement_norm p hp2 hp3
 
-/-- Closed split-prime local Frobenius trace. -/
 theorem splitPrimeLiteralEisenstein_trace
     (p : Nat) [Fact p.Prime] (hp2 : 2 < p) (hp3 : p % 3 = 1) :
     Integration.EisensteinJZeroFiniteFieldTraceExact.jZeroFrobeniusTraceInt (ZMod p)
@@ -260,7 +263,6 @@ theorem splitPrimeLiteralEisenstein_trace
           - (splitPrimeLiteralEisensteinElement p hp2 hp3).im) :=
   splitPrime_jZero_trace_formula p hp2 hp3
 
-/-- Every good prime now has exact local data on the same concrete curve. -/
 def localDataAtGoodPrime
     (p : Nat) [Fact p.Prime] (hp3 : 3 < p) :
     GoodPrimeLocalData p :=
@@ -278,7 +280,6 @@ structure C3DownstreamConsumerBoundary where
   sharedCardinalitySufficient : Bool := false
   sharedPhaseRowsSufficientForStateIdentity : Bool := false
 
-/-- Adjacent C3 lanes remain consumers/donors, not semantic identities. -/
 def canonicalC3DownstreamBoundary : C3DownstreamConsumerBoundary := {}
 
 end Integration.EisensteinArithmeticCMTerminalMaxCutExact

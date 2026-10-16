@@ -10,6 +10,15 @@ Monster 54/53 action onto those Albert-shaped carriers.
 This Lean owner mirrors only the generic evidence ladder. It does not import
 Agda theorem authority and does not identify the transported action with the
 classical F4 action.
+
+A crucial cross-pollination boundary is explicit here.  The sibling carrier is
+`CubeAlbertPair54`, a finite pair of 27-point Albert-SHAPE carriers.  It is not
+the literal rational 27-dimensional Albert vector algebra owned by this branch.
+Therefore `RationalAlbertNormUnitRigidityProof` cannot be applied directly to
+the sibling finite action.  First one needs a same-object realization/action
+lift into the literal linear Albert algebra.  After that lift, the already-paid
+cubic-norm + distinguished-unit rigidity theorem can compile Jordan
+compatibility and avoid a duplicate coordinate proof.
 -/
 
 namespace Integration.MonsterAlbertF4ActionDiscrimination
@@ -49,6 +58,9 @@ structure SameCarrierActionAssay where
   transportedMonsterActionReceipt : String
   candidateClassicalF4ActionReceipt : String
   monsterActorToF4ActorMapReceipt : String
+  finiteToLinearAlbertRealizationReceipt : String
+  cubicNormCompatibilityReceipt : String
+  distinguishedUnitCompatibilityReceipt : String
   heldOut54ActionReceipt : String
   heldOut53ActionReceipt : String
   jordanProductCompatibilityReceipt : String
@@ -60,9 +72,12 @@ structure SameCarrierActionAssay where
   monsterActionPinned : Bool
   classicalF4ActionPinned : Bool
   actorMapPinned : Bool
+  finiteToLinearAlbertRealizationPinned : Bool
+  cubicNormCompatibilityMeasured : Bool
+  distinguishedUnitCompatibilityMeasured : Bool
   heldOut54Measured : Bool
   heldOut53Measured : Bool
-  jordanCompatibilityMeasured : Bool
+  jordanCompatibilityMeasuredOrCompiled : Bool
   removedInvariantMeasured : Bool
   residualRestrictionMeasured : Bool
   decoderMeasured : Bool
@@ -74,6 +89,12 @@ structure Boundary where
   transportedMonsterActionPaidInSibling : Bool
   sameCarrierCreatesSameAction : Bool
   transportedMonsterActionCreatesClassicalF4Action : Bool
+
+  finite54CarrierIsLiteralRationalAlbertLinearCarrier : Bool
+  nativeRationalAlbertRigidityApplicableDirectly : Bool
+  finiteToLinearAlbertRealizationRequired : Bool
+  cubicUnitRigidityReusableAfterLinearRealization : Bool
+
   finiteActionAgreementCreatesJordanAutomorphism : Bool
   jordanCompatibilityRequired : Bool
   actorMapRequired : Bool
@@ -91,6 +112,12 @@ def canonicalBoundary : Boundary where
   transportedMonsterActionPaidInSibling := true
   sameCarrierCreatesSameAction := false
   transportedMonsterActionCreatesClassicalF4Action := false
+
+  finite54CarrierIsLiteralRationalAlbertLinearCarrier := false
+  nativeRationalAlbertRigidityApplicableDirectly := false
+  finiteToLinearAlbertRealizationRequired := true
+  cubicUnitRigidityReusableAfterLinearRealization := true
+
   finiteActionAgreementCreatesJordanAutomorphism := false
   jordanCompatibilityRequired := true
   actorMapRequired := true
@@ -103,12 +130,16 @@ def canonicalBoundary : Boundary where
   actionFitCreatesPhenomenology := false
 
 inductive SameAlbertCarrierCreatesSameAction : Prop
+inductive FiniteAlbertShapeCreatesLinearAlbertAlgebra : Prop
 inductive TransportedMonsterActionCreatesClassicalF4 : Prop
 inductive ActionAgreementCreatesMechanismIdentity : Prop
 inductive ActionAgreementCreatesPhenomenology : Prop
 
 theorem same_albert_carrier_does_not_create_same_action :
     ¬ SameAlbertCarrierCreatesSameAction := by intro h; cases h
+
+theorem finite_albert_shape_does_not_create_linear_albert_algebra :
+    ¬ FiniteAlbertShapeCreatesLinearAlbertAlgebra := by intro h; cases h
 
 theorem transported_monster_action_does_not_create_classical_f4 :
     ¬ TransportedMonsterActionCreatesClassicalF4 := by intro h; cases h

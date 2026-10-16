@@ -6,21 +6,20 @@ import Synthesis.RiemannG21WeightedHyperbolicCarrier
 /-!
 # G21 positive-plateau continuum moment compiler
 
-The companion taper audit reports exactly the structure needed here: a
-nonnegative compactly supported taper with a nontrivial central plateau where
-`phi = 1`.  This file proves the generic real-analysis statement that such a
-plateau is enough to turn the pointwise strict sinh/cosh TP2 carriers into
-strict continuum moment cross-products.
+A nonnegative taper with a nontrivial positive plateau turns the pointwise
+strict hyperbolic TP2 carriers into strict continuum moment cross-products.
 
-We deliberately clip the abstract weight to `[0,R]`.  Outside that interval the
-weight is zero, so the global symmetrized carrier is nonnegative even though the
-score `u^2` is only monotone on the nonnegative half-line.  Inside any plateau
-`(l,r)` choose `l<m<r`; the rectangle `(l,m) × (m,r)` has positive product
-Lebesgue measure and every point satisfies `0<u<v` with positive weights.
+For the ODD sector this file now uses the literal historical moments
 
-Thus, modulo literal taper integrability/attachment, the continuum strictness
-problem is paid by the exact symmetrization theorem and positive-measure
-geometry rather than by an additional number-theoretic estimate.
+  N1(y) = ∫ u phi(u) sinh(yu) du,
+  N3(y) = ∫ u^3 phi(u) sinh(yu) du,
+
+so the low response is `u*phi(u)*sinh(yu)` and the score is `u^2`.
+The EVEN/cosh lane keeps its M0/M2 carrier.
+
+The weight is clipped to `[0,R]`; inside a plateau `(l,r)` choose `l<m<r`.
+The rectangle `(l,m) × (m,r)` has positive product Lebesgue measure and every
+point has `0<u<v`, giving strict carrier positivity.
 -/
 
 noncomputable section
@@ -48,25 +47,28 @@ private theorem plateauRectangle_posMeasure
     0 < (volume.prod volume) (Ioo l m ×ˢ Ioo m r) := by
   simp [Real.volume_Ioo, ENNReal.ofReal_pos, sub_pos, hlm, hmr]
 
-/-- Strict odd/sinh moment cross-product from a nonnegative taper with a
-positive plateau. -/
+/-- Literal positive-half odd N1 response weight. -/
+def g21OddMomentWeight (R : ℝ) (w : ℝ → ℝ) (y x : ℝ) : ℝ :=
+  x * g21ClippedWeight R w x * Real.sinh (y*x)
+
+/-- Strict literal N1/N3 odd moment cross-product. -/
 theorem oddMomentCrossProduct_pos_of_positivePlateau
     {w : ℝ → ℝ} {a p R l m r : ℝ}
     (ha : 0 < a) (hap : a < p)
     (hl : 0 < l) (hlm : l < m) (hmr : m < r) (hrR : r < R)
     (hwNonneg : ∀ x ∈ Icc (0 : ℝ) R, 0 <= w x)
     (hwPos : ∀ x ∈ Ioo l r, 0 < w x)
-    (hA : Integrable (fun x => g21ClippedWeight R w x * Real.sinh (a*x)) volume)
-    (hP : Integrable (fun x => g21ClippedWeight R w x * Real.sinh (p*x)) volume)
-    (hqA : Integrable (fun x => x^2 * (g21ClippedWeight R w x * Real.sinh (a*x))) volume)
-    (hqP : Integrable (fun x => x^2 * (g21ClippedWeight R w x * Real.sinh (p*x))) volume) :
-    0 < moment0 (fun x => g21ClippedWeight R w x * Real.sinh (a*x)) volume
-          * momentQ (fun x => x^2) (fun x => g21ClippedWeight R w x * Real.sinh (p*x)) volume
-        - momentQ (fun x => x^2) (fun x => g21ClippedWeight R w x * Real.sinh (a*x)) volume
-          * moment0 (fun x => g21ClippedWeight R w x * Real.sinh (p*x)) volume := by
+    (hA : Integrable (g21OddMomentWeight R w a) volume)
+    (hP : Integrable (g21OddMomentWeight R w p) volume)
+    (hqA : Integrable (fun x => x^2 * g21OddMomentWeight R w a x) volume)
+    (hqP : Integrable (fun x => x^2 * g21OddMomentWeight R w p x) volume) :
+    0 < moment0 (g21OddMomentWeight R w a) volume
+          * momentQ (fun x => x^2) (g21OddMomentWeight R w p) volume
+        - momentQ (fun x => x^2) (g21OddMomentWeight R w a) volume
+          * moment0 (g21OddMomentWeight R w p) volume := by
   let wc : ℝ → ℝ := g21ClippedWeight R w
-  let A : ℝ → ℝ := fun x => wc x * Real.sinh (a*x)
-  let P : ℝ → ℝ := fun x => wc x * Real.sinh (p*x)
+  let A : ℝ → ℝ := fun x => x * wc x * Real.sinh (a*x)
+  let P : ℝ → ℝ := fun x => x * wc x * Real.sinh (p*x)
   let q : ℝ → ℝ := fun x => x^2
   let s : Set (ℝ × ℝ) := Ioo l m ×ˢ Ioo m r
   have hFnonneg : ∀ z : ℝ × ℝ, 0 <= symmetrizedMomentIntegrand A P q z := by
@@ -98,7 +100,7 @@ theorem oddMomentCrossProduct_pos_of_positivePlateau
   change 0 < moment0 A volume * momentQ q P volume - momentQ q A volume * moment0 P volume
   exact strictMomentCrossProduct_of_symmetrizedCarrier hA hP hqA hqP hFnonneg hs hFpos
 
-/-- Even/cosh companion. -/
+/-- Even/cosh M0/M2 companion. -/
 theorem evenMomentCrossProduct_pos_of_positivePlateau
     {w : ℝ → ℝ} {a p R l m r : ℝ}
     (ha : 0 < a) (hap : a < p)

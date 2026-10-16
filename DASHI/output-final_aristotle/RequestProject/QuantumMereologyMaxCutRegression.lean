@@ -4,8 +4,11 @@ import RequestProject.QuantumMereologyFiniteHermitianCPO
 import RequestProject.QuantumMereologyBornProbability
 import RequestProject.QuantumMereologyVonNeumannInformation
 import RequestProject.QuantumMereologyTripartiteInformationAtlas
+import RequestProject.QuantumMereologyFiniteNChartedAtlas
 import RequestProject.QuantumMereologyFiniteSchwingerSelection
 import RequestProject.QuantumMereologySOTA2026
+import RequestProject.QuantumMereologyPointerObjectivity2026
+import RequestProject.QuantumMereologySelectionConvergence2026
 
 namespace QuantumMereology
 namespace MaxCutRegression
@@ -99,6 +102,18 @@ example :
   TripartiteInformationAtlas.tripartite_atlas_does_not_create_general_n_factor_atlas
 
 example :
+    FiniteNChartedAtlas.canonicalBoundary.chartedFiniteNPairExtractionPaid = true :=
+  FiniteNChartedAtlas.charted_finite_n_pair_extraction_paid
+
+example :
+    FiniteNChartedAtlas.canonicalBoundary.chartedPairMarginalIsDensityMatrix = true :=
+  FiniteNChartedAtlas.charted_pair_marginal_is_density_matrix
+
+example :
+    FiniteNChartedAtlas.canonicalBoundary.chartedAtlasCreatesHeterogeneousSelectedTPSAtlas = false :=
+  FiniteNChartedAtlas.charted_atlas_does_not_create_heterogeneous_selected_tps_atlas
+
+example :
     FiniteSchwingerSelection.canonicalBoundary.finiteNonemptyAdmissibleSearchHasMinimizer = true :=
   FiniteSchwingerSelection.finite_nonempty_admissible_search_has_minimizer
 
@@ -117,6 +132,22 @@ example :
 example :
     SOTA2026.canonicalBoundary.sourceCreatesLocalNonuniquenessTheorem = false :=
   SOTA2026.source_does_not_create_local_nonuniqueness_theorem
+
+example :
+    PointerObjectivity2026.canonicalBoundary.commutingSourceReportsCriterionAgreement = true :=
+  PointerObjectivity2026.commuting_source_reports_criterion_agreement
+
+example :
+    PointerObjectivity2026.canonicalBoundary.noncommutingDynamicsCreatesAutomaticPointerIdentification = false :=
+  PointerObjectivity2026.noncommuting_dynamics_does_not_create_automatic_pointer_identification
+
+example :
+    SelectionConvergence2026.canonicalBoundary.crossObjectiveAgreementRequiresExplicitWitness = true :=
+  SelectionConvergence2026.cross_objective_agreement_requires_explicit_witness
+
+example :
+    SelectionConvergence2026.canonicalBoundary.sharedCandidateCarrierCreatesSamePreferredTPS = false :=
+  SelectionConvergence2026.shared_candidate_carrier_does_not_create_same_preferred_tps
 
 end MaxCutRegression
 end QuantumMereology

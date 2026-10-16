@@ -1,5 +1,6 @@
 import Integration.EisensteinLatticeCountingRegression
 import Integration.EisensteinCMOrderActionExact
+import Integration.EisensteinJZeroInertPrimeLocalFactorExact
 
 /-!
 # Eisenstein arithmetic -> CM terminal max-cut
@@ -26,17 +27,29 @@ and, independently but on the SAME Eisenstein integral carrier,
       -> Phi^2+Phi+1=0 on the native point group
       -> Z[ω] -> End(E(Frac(Z[ω]))).
 
-The first missing mathematical promotion is now geometric rather than
-combinatorial: an elliptic curve morphism/isogeny-degree carrier on which the
-CM action is faithful and on which degree can be proved equal to the
-Eisenstein norm.  Pinned Mathlib v4.28 supplies the point group but no elliptic
-isogeny/degree API, so that payment is not manufactured here.
+The local arithmetic/elliptic seam has also advanced on the SAME rational
+prime.  For `p > 2`, `p % 3 = 2`:
 
-Once that geometric payment exists, the honest analytic continuation is
+    chi_-3(p) = -1             (Eisenstein-inert consumer)
+    #E(F_p) = p+1              (same j=0 curve)
+    a_p = 0
+    L_p(T) denominator = 1 + p*T^2.
+
+This is a same-prime correspondence, not an identification of the degree-one
+Dirichlet local factor with the degree-two elliptic Euler factor.
+
+The first missing global CM promotion is geometric rather than combinatorial:
+an elliptic curve morphism/isogeny-degree carrier on which the CM action is
+faithful and on which degree can be proved equal to the Eisenstein norm.
+Pinned Mathlib v4.28 supplies the point group but no elliptic isogeny/degree API,
+so that payment is not manufactured here.
+
+The honest remaining analytic continuation is
 
     geometric CM order
-      -> Hecke/Groessencharacter
-      -> same-curve local Euler factors
+      -> degree = Eisenstein norm
+      -> split-prime Frobenius / Hecke character
+      -> all-good-prime local Euler-factor agreement
       -> elliptic/Hecke L-function agreement.
 
 The existing arithmetic `6*zeta*L(chi_-3)` theorem is not silently relabelled
@@ -48,13 +61,15 @@ namespace Integration.EisensteinArithmeticCMTerminalMaxCutExact
 open Dashi.EisensteinQuadraticAlgebraExact
 open Integration.EisensteinJZeroCMConcreteExact
 open Integration.EisensteinCMOrderActionExact
+open Integration.EisensteinJZeroInertPrimeLocalFactorExact
 
 inductive EisensteinArithmeticCMBlocker
   | missingGeometricIsogenyDegreeCarrier
   | missingFaithfulGeometricCMEmbedding
   | missingEndomorphismDegreeNormTheorem
+  | missingSplitPrimeFrobeniusFormula
   | missingHeckeCharacter
-  | missingSameCurveLocalEulerFactorAgreement
+  | missingSameCurveAllGoodPrimeLocalEulerFactorAgreement
   | missingEllipticHeckeLSeriesAgreement
   | missingExactHeadKernelReceipt
   deriving DecidableEq, Repr
@@ -78,13 +93,19 @@ structure EisensteinArithmeticCMTerminalStatus where
   eisensteinQuadraticEndomorphismRelationPaid : Bool
   sameIntegralCarrierOrderActionPaid : Bool
 
+  inertPrimeSamePrimeWeldPaid : Bool
+  inertPrimeTraceZeroPaid : Bool
+  inertPrimeLocalEulerShapePaid : Bool
+
   rationalPointActionFaithfulnessInferred : Bool
   faithfulGeometricCMEmbeddingPaid : Bool
   endomorphismDegreeEqualsNormPaid : Bool
+  splitPrimeFrobeniusFormulaPaid : Bool
   heckeCharacterPaid : Bool
-  localEulerFactorAgreementPaid : Bool
+  allGoodPrimeLocalEulerFactorAgreementPaid : Bool
   ellipticLSeriesAgreementPaid : Bool
 
+  dirichletLocalFactorIdentifiedWithEllipticEulerFactor : Bool
   chemistryOrMonsterStateSpaceIdentityPromoted : Bool
   oggOrMoonshineSemanticsPromoted : Bool
   e6F3IdentityPromoted : Bool
@@ -110,13 +131,19 @@ def terminalStatus : EisensteinArithmeticCMTerminalStatus where
   eisensteinQuadraticEndomorphismRelationPaid := true
   sameIntegralCarrierOrderActionPaid := true
 
+  inertPrimeSamePrimeWeldPaid := true
+  inertPrimeTraceZeroPaid := true
+  inertPrimeLocalEulerShapePaid := true
+
   rationalPointActionFaithfulnessInferred := false
   faithfulGeometricCMEmbeddingPaid := false
   endomorphismDegreeEqualsNormPaid := false
+  splitPrimeFrobeniusFormulaPaid := false
   heckeCharacterPaid := false
-  localEulerFactorAgreementPaid := false
+  allGoodPrimeLocalEulerFactorAgreementPaid := false
   ellipticLSeriesAgreementPaid := false
 
+  dirichletLocalFactorIdentifiedWithEllipticEulerFactor := false
   chemistryOrMonsterStateSpaceIdentityPromoted := false
   oggOrMoonshineSemanticsPromoted := false
   e6F3IdentityPromoted := false
@@ -145,6 +172,12 @@ theorem coordinatePair_to_CMaction (a b : Int) :
       a • (1 : AddMonoid.End eisensteinJZeroCurve.Point) +
         b • eisensteinCMEndomorphism :=
   eisensteinOrderAction_coordinates a b
+
+/-- Same rational prime, two lawful consumers: inert character and j=0 trace. -/
+def inertPrimeSameObjectWeld
+    (p : Nat) [Fact p.Prime] (hp2 : 2 < p) (hp3 : p % 3 = 2) :
+    InertPrimeArithmeticEllipticWeld p :=
+  inertPrimeArithmeticEllipticWeld p hp2 hp3
 
 ------------------------------------------------------------------------
 -- Productive cross-pollination firewall.

@@ -1,0 +1,11 @@
+import Dashi.Biology.IBSTrialDesignDonorAtlasExact
+
+namespace Dashi.Biology.IBSTrialDesignDonorAtlasRegression
+open Dashi.Biology.IBSTrialDesignDonorAtlasExact
+
+theorem atlasRegression : canonicalIBSTrialDesignDonorAtlas = canonicalIBSTrialDesignDonorAtlas := rfl
+theorem smartNotIBSEvidenceRegression : SMARTDesignProvesIBSEfficacyPermission → False := smartDesignDoesNotProveIBSEfficacy
+theorem nOf1NotUniversalRegression : NOf1ResultAutomaticallyGeneralizesPermission → False := nOf1DoesNotAutomaticallyGeneralize
+theorem cleNotTargetingRegression : CLEReactionIsValidatedFoodTargetPermission → False := cleReactionDoesNotValidateFoodTarget
+
+end Dashi.Biology.IBSTrialDesignDonorAtlasRegression

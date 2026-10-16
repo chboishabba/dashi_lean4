@@ -1,0 +1,17 @@
+import Dashi.Biology.NeuralPredictionDirectionExact
+
+namespace Dashi.Biology.NeuralPredictionDirectionRegression
+
+open Dashi.Biology.NeuralPredictionDirectionExact
+
+#check NeuralPredictionDirection.stimulusToBrainEncoding
+#check NeuralPredictionDirection.brainToLanguageDecoding
+#check NeuralPredictionDirection.brainToActionDecoding
+#check NeuralPredictionDirection.brainResponseToPopulationOutcome
+#check canonicalBrainModelMechanismBoundary
+#check canonicalNeuralinkProvenanceSplit
+#check canonicalPeripheralCentralPKDesignBridge
+#check canonicalCrossParticipantBCIDesignMap
+#check canonicalNeuralPredictionDirectionBoundary
+
+end Dashi.Biology.NeuralPredictionDirectionRegression

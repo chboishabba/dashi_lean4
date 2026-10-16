@@ -14,9 +14,10 @@ with `H` simple.  Then every simple `U` admitting a nonzero equivariant map into
 `V` is forced to have the same representation type as `H`.
 
 This eliminates an arbitrary per-subobject Monster classifier as an independent
-research input.  It does not create the actual whole-character identity, the
-FDRep/group-algebra adapter used by module-level isotypic assembly, or the
-literal Monster same-object attachment.
+research input.  The companion live owner
+`MonsterWholeCharacterModuleAdapterLive` also pays the generic FDRep/group-
+algebra same-action adapter.  What remains actual is the Monster same-object
+FDRep attachment and the whole-character identity on that actual carrier.
 -/
 
 namespace Synthesis.MonsterWholeCharacterSimpleSource
@@ -74,7 +75,8 @@ theorem simpleSourceIsoOfWholeCharacter
 structure Boundary where
   simpleSourceClassifierSourceWritten : Bool
   wholeCharacterIdentityIsActualInput : Bool
-  fdrepToModuleAdapterStillNeededForModuleIsotypicTail : Bool
+  fdrepToModuleAdapterSourceWrittenOnLiveTail : Bool
+  fdrepToModuleAdapterStillNeededAsResearchLeaf : Bool
   arbitrarySimpleTypeClassifierStillIndependentInput : Bool
   actualMonsterWholeCharacterIdentityPaidHere : Bool
   actualMonsterSameObjectAttachmentPaidHere : Bool
@@ -83,7 +85,8 @@ structure Boundary where
 def canonicalBoundary : Boundary where
   simpleSourceClassifierSourceWritten := true
   wholeCharacterIdentityIsActualInput := true
-  fdrepToModuleAdapterStillNeededForModuleIsotypicTail := true
+  fdrepToModuleAdapterSourceWrittenOnLiveTail := true
+  fdrepToModuleAdapterStillNeededAsResearchLeaf := false
   arbitrarySimpleTypeClassifierStillIndependentInput := false
   actualMonsterWholeCharacterIdentityPaidHere := false
   actualMonsterSameObjectAttachmentPaidHere := false

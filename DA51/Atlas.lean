@@ -211,7 +211,7 @@ theorem decode_address (c : Coord) : decode c.address = some c := by
 theorem address_injective : Function.Injective address := fun c c' h => by
   have hc := decode_address c
   rw [h, decode_address] at hc
-  exact Option.some.inj hc
+  exact (Option.some.inj hc).symm
 
 theorem address_isValid (c : Coord) : DA51.IsValid c.address := DA51.mk_isValid _ _
 

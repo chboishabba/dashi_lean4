@@ -6,10 +6,12 @@ open Integration.MonsterAlbertF4ActionDiscrimination
 
 example : canonicalSiblingReceipt.sourcePR = 1179 := rfl
 example : canonicalSiblingReceipt.proofRelevantDeletionWeldPaid = true := rfl
-example : canonicalSiblingReceipt.transportedMonsterActionPaid = true := rfl
+example : canonicalSiblingReceipt.transportCompilerPaid = true := rfl
+example : canonicalSiblingReceipt.actualMonster54RecognitionPaid = false := rfl
+example : canonicalSiblingReceipt.actualTransportedMonsterActionInhabited = false := rfl
 example : canonicalSiblingReceipt.classicalF4SameActionRecognitionPaid = false := rfl
 
--- Agda sibling/current teleodynamics stack now source-writes an injective finite
+-- Agda sibling/current teleodynamics stack source-writes an injective finite
 -- 54/53 state embedding into two literal rational-Albert state copies.  This is
 -- a cross-prover receipt here, not imported Lean theorem authority.
 example : canonicalSiblingReceipt.agdaFiniteStateEmbeddingReported = true := rfl
@@ -19,7 +21,10 @@ example : canonicalSiblingReceipt.agdaRemovedShapeScalarMapsToAlbertZeroReported
 example : canonicalSiblingReceipt.agdaPositiveCornerMapsToAlbertUnitReported = true := rfl
 
 example : canonicalBoundary.sameCarrierCreatesSameAction = false := rfl
+example : canonicalBoundary.transportCompilerCreatesActualMonsterAction = false := rfl
 example : canonicalBoundary.transportedMonsterActionCreatesClassicalF4Action = false := rfl
+example : canonicalBoundary.transportCompilerAvailableAsSiblingReceipt = true := rfl
+example : canonicalBoundary.actualTransportedMonsterActionAvailableAsSiblingReceipt = false := rfl
 example : canonicalBoundary.finite54CarrierIsLiteralRationalAlbertLinearCarrier = false := rfl
 example : canonicalBoundary.nativeRationalAlbertRigidityApplicableDirectly = false := rfl
 

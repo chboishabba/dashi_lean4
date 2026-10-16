@@ -3,6 +3,7 @@ import Integration.RationalAlbertF4ScalarExtensionFormBoundary
 import Integration.RationalAlbertTauCetiF4DonorAudit
 import Integration.RationalAlbertClassicalF4SourceReceipt
 import Integration.RationalAlbertF4ClassificationInstantiation
+import Integration.RationalAlbertF4E6DescentClassification
 
 /-!
 # Terminal Albert / F4 / E6 group-classification max-cut
@@ -20,7 +21,10 @@ DASHI-owned/source-written on the literal rational Albert/octonion carrier:
   automorphisms;
 * native Cartan / derivation infrastructure;
 * explicit firewall that the exact `Q(i)` root-space splitting chart is
-  scalar-extension data, not an original-Q-form classification.
+  scalar-extension data, not an original-Q-form classification;
+* a proof-relevant descent/classification adapter shape tying the native Q
+  object, Q(i) split chart and real-place diagnostic to one external/formal
+  classification theorem on the SAME Albert object.
 
 External theorem authority, retained as source receipts:
 
@@ -33,7 +37,8 @@ External theorem authority, retained as source receipts:
 The structural equation `Stab_Isom(N)(1) = Aut(J)` is already paid on the native
 carrier.  It is therefore not part of the surviving external classification
 payment.  What remains is the original-Q-form/type naming of the native
-`Der(J)`, `Aut(J)` and cubic norm-isometry/structure group.
+`Der(J)`, `Aut(J)` and cubic norm-isometry/structure group, together with a
+proof-relevant same-object descent adapter.
 -/
 
 namespace Integration.RationalAlbertF4E6GroupClassificationMaxCut
@@ -43,6 +48,7 @@ open Integration.RationalAlbertF4ScalarExtensionFormBoundary
 open Integration.RationalAlbertTauCetiF4DonorAudit
 open Integration.RationalAlbertClassicalF4SourceReceipt
 open Integration.RationalAlbertF4ClassificationInstantiation
+open Integration.RationalAlbertF4E6DescentClassification
 
 structure Boundary where
   nativeAlbertPaid : Bool
@@ -53,6 +59,8 @@ structure Boundary where
   qiScalarExtensionBoundaryPaid : Bool
   exactQIRootGradingReceiptPresent : Bool
   realPlaceDiagnosticPresent : Bool
+  sameObjectDescentAdapterTyped : Bool
+  sameObjectDescentAdapterInhabited : Bool
   externalF4ClassificationSourceLocated : Bool
   externalE6ClassificationSourceLocated : Bool
   tauCetiFormalDonorInventoryLocated : Bool
@@ -72,6 +80,8 @@ def canonicalBoundary : Boundary where
   qiScalarExtensionBoundaryPaid := true
   exactQIRootGradingReceiptPresent := true
   realPlaceDiagnosticPresent := true
+  sameObjectDescentAdapterTyped := true
+  sameObjectDescentAdapterInhabited := false
   externalF4ClassificationSourceLocated := true
   externalE6ClassificationSourceLocated := true
   tauCetiFormalDonorInventoryLocated := true
@@ -88,17 +98,28 @@ theorem native_unit_stabilizer_iff_jordan_automorphism
     NormUnitMembership g ↔ JordanMembership g :=
   normUnitMembership_iff_jordanMembership g
 
-/-- Final external theorem socket.  An inhabitant must supply a genuine
-same-object characteristic-zero/original-Q-form classification instantiated on
-the native Albert object. -/
+/-- Historical terminal socket retained for downstream compatibility.  New work
+should prefer `OriginalQAlbertDescentPayment`, which additionally carries the
+same-object local/base-change/descent data. -/
 structure OriginalQFormClassificationPayment where
   classification : CharacteristicZeroAlbertClassificationTheorem
   adapter : ExternalFormalClassificationAdapter classification
+
+/-- A proof-relevant descent payment compiles to the historical terminal socket
+without recharging the already-paid structural stabilizer theorem. -/
+def classificationPaymentOfDescent
+    {classification : CharacteristicZeroAlbertClassificationTheorem}
+    (payment : OriginalQAlbertDescentPayment classification) :
+    OriginalQFormClassificationPayment :=
+  { classification := classification
+  , adapter := payment.formalClassificationAdapter
+  }
 
 inductive SourceReceiptCreatesClassification : Prop
 inductive QISplitRootReceiptCreatesQFormClassification : Prop
 inductive RealPlaceReceiptCreatesQFormClassification : Prop
 inductive DonorInventoryCreatesQFormClassification : Prop
+inductive LocalFormDataCreatesDescentAdapter : Prop
 
 theorem source_receipt_does_not_create_classification :
     ¬ SourceReceiptCreatesClassification := by intro h; cases h
@@ -111,5 +132,8 @@ theorem real_place_receipt_does_not_create_q_form_classification :
 
 theorem donor_inventory_does_not_create_q_form_classification :
     ¬ DonorInventoryCreatesQFormClassification := by intro h; cases h
+
+theorem local_form_data_does_not_create_descent_adapter :
+    ¬ LocalFormDataCreatesDescentAdapter := by intro h; cases h
 
 end Integration.RationalAlbertF4E6GroupClassificationMaxCut

@@ -7,18 +7,23 @@ Agda sibling PR #1179 reports a proof-relevant Base/Zeta/Albert 54 -> 53
 carrier/deletion weld and a compiler transporting an already-owned actual
 Monster 54/53 action onto those Albert-shaped carriers.
 
-This Lean owner mirrors only the generic evidence ladder. It does not import
-Agda theorem authority and does not identify the transported action with the
-classical F4 action.
+The current Agda teleodynamics stack additionally source-writes an injective
+state realization of that finite 54/53 shape into two copies of the literal
+rational Albert state carrier by composing the ternary shape chart with the
+canonical diagonal codebook.  It also reports exact finite-image product/cubic
+compatibility.  Those are cross-prover receipts here, not Lean theorem imports.
 
-A crucial cross-pollination boundary is explicit here.  The sibling carrier is
-`CubeAlbertPair54`, a finite pair of 27-point Albert-SHAPE carriers.  It is not
-the literal rational 27-dimensional Albert vector algebra owned by this branch.
-Therefore `RationalAlbertNormUnitRigidityProof` cannot be applied directly to
-the sibling finite action.  First one needs a same-object realization/action
-lift into the literal linear Albert algebra.  After that lift, the already-paid
-cubic-norm + distinguished-unit rigidity theorem can compile Jordan
-compatibility and avoid a duplicate coordinate proof.
+A crucial boundary remains.  The finite `CubeAlbertPair54` shape is not itself
+the rational 27-dimensional Albert vector algebra owned by this branch, and the
+finite transported action has not been lifted to a rational-linear Albert
+automorphism.  Moreover the finite shape's named `ScalarLine` is the ternary
+origin: under the diagonal realization it maps to Albert zero, while the actual
+Albert unit is the positive ternary corner.  The removed-point stabilizer cannot
+therefore substitute for the native unit-stabilizer theorem.
+
+Once a SAME-OBJECT rational-linear action lift is supplied and shown to preserve
+the native cubic norm and actual unit, this branch's already-paid
+`RationalAlbertNormUnitRigidityProof` can compile Jordan compatibility.
 -/
 
 namespace Integration.MonsterAlbertF4ActionDiscrimination
@@ -31,6 +36,13 @@ structure SiblingReceipt where
   removedPointInclusionSquaresPaid : Bool
   transportedMonsterActionPaid : Bool
   classicalF4SameActionRecognitionPaid : Bool
+
+  agdaFiniteStateEmbeddingReported : Bool
+  agdaFiniteStateEmbeddingImportedAsLeanTheorem : Bool
+  agdaFiniteProductCubicCompatibilityReported : Bool
+  agdaRemovedShapeScalarMapsToAlbertZeroReported : Bool
+  agdaPositiveCornerMapsToAlbertUnitReported : Bool
+
   physicalEnsemblePaymentPaid : Bool
   monsterAlbertStateIntertwinerPaid : Bool
   stressHandoffPaid : Bool
@@ -46,6 +58,13 @@ def canonicalSiblingReceipt : SiblingReceipt where
   removedPointInclusionSquaresPaid := true
   transportedMonsterActionPaid := true
   classicalF4SameActionRecognitionPaid := false
+
+  agdaFiniteStateEmbeddingReported := true
+  agdaFiniteStateEmbeddingImportedAsLeanTheorem := false
+  agdaFiniteProductCubicCompatibilityReported := true
+  agdaRemovedShapeScalarMapsToAlbertZeroReported := true
+  agdaPositiveCornerMapsToAlbertUnitReported := true
+
   physicalEnsemblePaymentPaid := false
   monsterAlbertStateIntertwinerPaid := false
   stressHandoffPaid := false
@@ -56,9 +75,11 @@ structure SameCarrierActionAssay where
   carrier54Receipt : String
   residual53Receipt : String
   transportedMonsterActionReceipt : String
+  finiteStateEmbeddingReceipt : String
   candidateClassicalF4ActionReceipt : String
   monsterActorToF4ActorMapReceipt : String
-  finiteToLinearAlbertRealizationReceipt : String
+  sheetActionReceipt : String
+  linearActionLiftReceipt : String
   cubicNormCompatibilityReceipt : String
   distinguishedUnitCompatibilityReceipt : String
   heldOut54ActionReceipt : String
@@ -70,9 +91,11 @@ structure SameCarrierActionAssay where
   futureConsumerReceipt : String
   sameCarrierPinned : Bool
   monsterActionPinned : Bool
+  finiteStateEmbeddingReceiptPinned : Bool
   classicalF4ActionPinned : Bool
   actorMapPinned : Bool
-  finiteToLinearAlbertRealizationPinned : Bool
+  sheetActionPinned : Bool
+  linearActionLiftPinned : Bool
   cubicNormCompatibilityMeasured : Bool
   distinguishedUnitCompatibilityMeasured : Bool
   heldOut54Measured : Bool
@@ -92,12 +115,24 @@ structure Boundary where
 
   finite54CarrierIsLiteralRationalAlbertLinearCarrier : Bool
   nativeRationalAlbertRigidityApplicableDirectly : Bool
-  finiteToLinearAlbertRealizationRequired : Bool
-  cubicUnitRigidityReusableAfterLinearRealization : Bool
+
+  finiteStateEmbeddingAvailableAsSiblingReceipt : Bool
+  leanFiniteStateEmbeddingTheoremPaid : Bool
+  finiteActionLiftToLinearAlbertRequired : Bool
+  finiteActionLiftToLinearAlbertPaid : Bool
+
+  removedShapeScalarMapsToAlbertZero : Bool
+  removedShapeScalarMapsToAlbertUnit : Bool
+  positiveCornerMapsToAlbertUnit : Bool
+  finiteShapeScalarLabelMatchesNativeAlbertUnitLine : Bool
+
+  cubicUnitRigidityReusableAfterLinearActionLift : Bool
+  cubicUnitRigidityApplicableToCurrentTransportedFiniteAction : Bool
 
   finiteActionAgreementCreatesJordanAutomorphism : Bool
   jordanCompatibilityRequired : Bool
   actorMapRequired : Bool
+  sheetActionReceiptRequired : Bool
   heldOutActionDiscriminationRequired : Bool
   removedInvariantCompatibilityRequired : Bool
   residualRestrictionCompatibilityRequired : Bool
@@ -115,12 +150,24 @@ def canonicalBoundary : Boundary where
 
   finite54CarrierIsLiteralRationalAlbertLinearCarrier := false
   nativeRationalAlbertRigidityApplicableDirectly := false
-  finiteToLinearAlbertRealizationRequired := true
-  cubicUnitRigidityReusableAfterLinearRealization := true
+
+  finiteStateEmbeddingAvailableAsSiblingReceipt := true
+  leanFiniteStateEmbeddingTheoremPaid := false
+  finiteActionLiftToLinearAlbertRequired := true
+  finiteActionLiftToLinearAlbertPaid := false
+
+  removedShapeScalarMapsToAlbertZero := true
+  removedShapeScalarMapsToAlbertUnit := false
+  positiveCornerMapsToAlbertUnit := true
+  finiteShapeScalarLabelMatchesNativeAlbertUnitLine := false
+
+  cubicUnitRigidityReusableAfterLinearActionLift := true
+  cubicUnitRigidityApplicableToCurrentTransportedFiniteAction := false
 
   finiteActionAgreementCreatesJordanAutomorphism := false
   jordanCompatibilityRequired := true
   actorMapRequired := true
+  sheetActionReceiptRequired := true
   heldOutActionDiscriminationRequired := true
   removedInvariantCompatibilityRequired := true
   residualRestrictionCompatibilityRequired := true
@@ -130,7 +177,10 @@ def canonicalBoundary : Boundary where
   actionFitCreatesPhenomenology := false
 
 inductive SameAlbertCarrierCreatesSameAction : Prop
-inductive FiniteAlbertShapeCreatesLinearAlbertAlgebra : Prop
+inductive FiniteAlbertShapeCreatesWholeLinearAlbertAlgebra : Prop
+inductive FiniteStateReceiptCreatesLeanTheorem : Prop
+inductive FiniteStateEmbeddingCreatesLinearActionLift : Prop
+inductive RemovedShapeScalarCreatesAlbertUnit : Prop
 inductive TransportedMonsterActionCreatesClassicalF4 : Prop
 inductive ActionAgreementCreatesMechanismIdentity : Prop
 inductive ActionAgreementCreatesPhenomenology : Prop
@@ -138,8 +188,17 @@ inductive ActionAgreementCreatesPhenomenology : Prop
 theorem same_albert_carrier_does_not_create_same_action :
     ¬ SameAlbertCarrierCreatesSameAction := by intro h; cases h
 
-theorem finite_albert_shape_does_not_create_linear_albert_algebra :
-    ¬ FiniteAlbertShapeCreatesLinearAlbertAlgebra := by intro h; cases h
+theorem finite_albert_shape_does_not_create_whole_linear_albert :
+    ¬ FiniteAlbertShapeCreatesWholeLinearAlbertAlgebra := by intro h; cases h
+
+theorem agda_state_receipt_does_not_create_lean_theorem :
+    ¬ FiniteStateReceiptCreatesLeanTheorem := by intro h; cases h
+
+theorem state_embedding_does_not_create_linear_action_lift :
+    ¬ FiniteStateEmbeddingCreatesLinearActionLift := by intro h; cases h
+
+theorem removed_shape_scalar_does_not_create_albert_unit :
+    ¬ RemovedShapeScalarCreatesAlbertUnit := by intro h; cases h
 
 theorem transported_monster_action_does_not_create_classical_f4 :
     ¬ TransportedMonsterActionCreatesClassicalF4 := by intro h; cases h

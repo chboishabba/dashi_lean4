@@ -28,32 +28,16 @@ structure ProofResolutionLane where
   deriving DecidableEq, Repr
 
 private def standardResolutionOps : List ResolutionOperation :=
-  [ .locateExistingTheorem
-  , .importExistingTheorem
-  , .definitionalEquality
-  , .simplifyExistingEquality
-  , .applyExistingEquivalence
-  , .sameObjectTransport
-  , .composeExistingTheorems
-  , .kernelCheck
-  ]
+  [ .locateExistingTheorem, .importExistingTheorem, .definitionalEquality
+  , .simplifyExistingEquality, .applyExistingEquivalence, .sameObjectTransport
+  , .composeExistingTheorems, .kernelCheck ]
 
-/-- P≠NP follows the live Agda #1129 compiler/resource recut.
-
-Paid now includes literal costed streaming, finite local tables, actual candidate
-run transport, exact-T quiescent phase wrapping, exact phase-wrapper size
-accounting, a literal unary cursor, and a fixed guarded-Cook bitstream lookup TM.
-The full-table baseline is deliberately not promoted to a self-fixed target:
-existing literal-materialisation no-go results and the new state-width lower
-bound make static self-description feedback explicit.  Existing Kleene machinery
-shows the correct target is behavioural self-reference rather than raw code
-identity.  XOR-grid work is attribution-safely reused only as a compact local
-control donor: XOR is the recoverable data update of a ripple-borrow counter;
-borrow is separate, and IIT phi is not complexity hardness evidence. -/
+/-- P≠NP follows the live Agda #1129 compiler/resource recut. -/
 def pVersusNPResolution : ProofResolutionLane :=
   { problem := .pVersusNP
     producerSearch :=
-      [ "PNotEqualsNPCodedLiteralResourceCompilerAnchoredNoGoExact.anchoredLiteralStructuralResourceImpossible"
+      [ "GuardedCookFiniteBitTableSelfCodeNoGoExact.tableBakedGeneratorCannotBeDescriptionCode"
+      , "PNotEqualsNPCodedLiteralResourceCompilerAnchoredNoGoExact.anchoredLiteralStructuralResourceImpossible"
       , "PNotEqualsNPLiteralSelfCodeGrowthNoGoExact.strictCodeGrowthKillsLiteralFixedPoint"
       , "PNotEqualsNPKleeneSpecializationFixedPointExact.fixedPointProgramCorrect"
       , "PNotEqualsNPCandidateActualSelfInstantiationBoundaryExact.q2PrimitiveExecutionErasesQuotedProgram"
@@ -151,6 +135,8 @@ theorem pnp_rh_bsd_still_require_donor_resolution :
     bsdResolution.resolvedSourceTerm = none := by decide
 
 theorem pnp_resolution_uses_behavioral_self_fix_maxcut :
+    pVersusNPResolution.producerSearch.contains
+      "GuardedCookFiniteBitTableSelfCodeNoGoExact.tableBakedGeneratorCannotBeDescriptionCode" = true ∧
     pVersusNPResolution.producerSearch.contains
       "PNotEqualsNPKleeneSpecializationFixedPointExact.fixedPointProgramCorrect" = true ∧
     pVersusNPResolution.producerSearch.contains

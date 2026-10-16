@@ -2,6 +2,8 @@ import RequestProject.QuantumMereologyHeterogeneousFiniteAtlas
 import RequestProject.QuantumMereologyFiniteSubsetMarginal
 import RequestProject.QuantumMereologyPartialTraceCoherence
 import RequestProject.QuantumMereologyPartialTraceCoherenceRegression
+import RequestProject.QuantumMereologyEnvironmentReindex
+import RequestProject.QuantumMereologyEnvironmentReindexRegression
 import RequestProject.QuantumMereologyGTPSShortTime2026
 import RequestProject.QuantumMereologyPointerObjectivity2026
 import RequestProject.QuantumMereologySelectionConvergence2026
@@ -30,6 +32,7 @@ structure Boundary where
   arbitraryFiniteSubsetMarginalsPaid : Bool := true
   pairAndSubsetDensityPreservationPaid : Bool := true
   iteratedProductPartialTraceAssociativityPaid : Bool := true
+  environmentRelabelingInvariancePaid : Bool := true
 
   -- Source-facing g-TPS recut/formulas.
   sourceGeneralGTPSCarrierPaid : Bool := true
@@ -41,7 +44,8 @@ structure Boundary where
   arbitrarySelectedHilbertTPSToCoordinateAtlasPaid : Bool := false
   arbitrarySelectedGTPSToCoordinateAtlasPaid : Bool := false
   nestedMarginalCoherencePaid : Bool := false
-  chartIndependencePaid : Bool := false
+  arbitraryRetainedCoordinateChartIndependencePaid : Bool := false
+  retainedEnvironmentMixingChartIndependencePaid : Bool := false
 
   -- Physical pointer/selection leaves.
   selectedCPOPhysicalSelfAdjointnessPaid : Bool := false
@@ -78,6 +82,9 @@ theorem arbitrary_subset_marginals_paid :
 theorem partial_trace_associativity_paid :
     canonicalBoundary.iteratedProductPartialTraceAssociativityPaid = true := rfl
 
+theorem environment_relabeling_invariance_paid :
+    canonicalBoundary.environmentRelabelingInvariancePaid = true := rfl
+
 theorem source_gtps_short_time_formula_paid :
     canonicalBoundary.sourceGTPSShortTimeFormulaPaid = true := rfl
 
@@ -91,7 +98,7 @@ theorem same_state_holographic_weld_open :
 def dashiSelectedAtlasTerminalReceipt : AttributionReceipt where
   role := .crossModuleInference
   owner := "DASHI Lean"
-  claim := "Records that heterogeneous finite coordinate pair charts, arbitrary finite-subset same-state marginals, ordinary finite product partial-trace associativity, the corrected source-facing operator-algebra g-TPS carrier, squared short-time scrambling formula, squared algebra-distance formula, and finite score minimization are source-written in their dedicated owners. It keeps arbitrary selected Hilbert/g-TPS attachment, dependent nested marginal coherence, physical pointer identification, source projector production, algebra susceptibility, MI metric geometry, holography and spacetime dynamics explicitly unpaid."
+  claim := "Records that heterogeneous finite coordinate pair charts, arbitrary finite-subset same-state marginals, ordinary finite product partial-trace associativity, environment-relabeling invariance, the corrected source-facing operator-algebra g-TPS carrier, squared short-time scrambling formula, squared algebra-distance formula, and finite score minimization are source-written in their dedicated owners. It keeps arbitrary selected Hilbert/g-TPS attachment, dependent nested marginal coherence, retained-coordinate/mixing chart independence, physical pointer identification, source projector production, algebra susceptibility, MI metric geometry, holography and spacetime dynamics explicitly unpaid."
 
 end SelectedAtlasTerminalMaxCut
 end QuantumMereology

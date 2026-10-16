@@ -40,3 +40,4 @@ jobs:
           lake env lean Integration/EisensteinJZeroInertPrimeEulerValidation.lean
           lake env lean Integration/EisensteinJZeroSplitSevenValidation.lean
           lake env lean Integration/EisensteinJZeroPrimaryNormalizationValidation.lean
+          lake env lean Integration/EisensteinJZeroQuadraticCharacterTraceValidation.lean

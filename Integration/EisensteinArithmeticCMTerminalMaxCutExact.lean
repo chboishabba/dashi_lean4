@@ -6,17 +6,21 @@ import Integration.EisensteinJZeroSplitJacobiCyclotomicExact
 import Integration.EisensteinJZeroSplitPrimeEisensteinCarrierExact
 import Integration.EisensteinJZeroSplitPrimeUnitNormalizationExact
 import Integration.EisensteinJZeroAllGoodPrimeLocalExact
+import Integration.EisensteinJZeroBadPrimeTwoExact
 import Integration.EisensteinJZeroBadPrimeThreeExact
+import Integration.EisensteinJZero36a1ExternalSourceReceipt
 
 /-!
 # Eisenstein arithmetic -> CM terminal max-cut
 
 This is the machine-readable terminal owner for the original Eisenstein
-programme.  The old visual target
+programme.  The obsolete visual target
 
     Cantor/radix scale series ?= Eisenstein norm-shell series
 
-remains retired.  The exact arithmetic chain is
+remains retired.
+
+ARITHMETIC SHELL LANE
 
     (a,b) in Z^2
       -> a+b*omega in Z[omega]
@@ -24,7 +28,7 @@ remains retired.  The exact arithmetic chain is
       -> universal norm-shell / chi_-3 divisor formula
       -> 6*zeta*L(chi_-3) on Re(s)>1.
 
-On the SAME integral carrier the CM chain is
+SAME-CARRIER POINT-GROUP CM LANE
 
     Z[omega]
       -> Frac(Z[omega])
@@ -33,8 +37,7 @@ On the SAME integral carrier the CM chain is
       -> Phi^2+Phi+1=0 on Mathlib's native point group
       -> Z[omega] -> End(E(Frac(Z[omega]))).
 
-The finite/local arithmetic branch is source-written for every good prime
-`p > 3`.
+GOOD-PRIME LOCAL LANE (`p > 3`)
 
 INERT (`p % 3 = 2`)
     chi_-3(p) = -1,
@@ -43,7 +46,8 @@ INERT (`p % 3 = 2`)
     P_p(T)=1+p*T^2.
 
 SPLIT (`p % 3 = 1`)
-    canonical order-three character
+    exact order-three character
+      -> cube subgroup = character kernel
       -> literal cube-fibre certificate
       -> Mathlib Jacobi trace
       -> J in Z[zeta_6]
@@ -53,33 +57,47 @@ SPLIT (`p % 3 = 1`)
       -> N(z_p)=p
       -> a_p=-(2*a-b)
       -> P_p(T)=1+(2*a-b)T+p*T^2
-      -> exact existing six-unit x split-choice normal form.
+      -> existing six-unit x split-choice normal form.
 
-At the bad prime 3 the literal reduced cubic is also inspected: `(2,0)` is an
-explicit singular point, both formal partials vanish there, and the affine /
-naive-projective counts are exact.  Those facts are NOT promoted to a
-bad-prime elliptic local factor: that requires reduction-type/conductor
-semantics (Neron/Kodaira or an equivalent owner), absent from pinned Mathlib.
+BAD-PRIME REDUCTION LANE
 
-Thus the split finite-field/Frobenius branch is no longer a blocker.  The
-remaining global arithmetic promotion is to pay the bad-prime local factor,
-package the same local data as a Groessencharacter/Hecke object, prove the
-same-curve Euler product identification, and only then derive global
-elliptic/Hecke L-function agreement.
+External provenance identifies the concrete rational curve as Cremona 36a1
+and records conductor 36 / short-model discriminant -432; those metadata stay
+external-source attributed and are not used as kernel proof authority.
 
-Independently, the geometric CM track still requires an elliptic
-morphism/isogeny-degree carrier, faithfulness of the geometric Eisenstein-order
-embedding, and degree(a+b*omega)=N(a+b*omega).  A point-group action alone does
-not pay those geometric statements.
+The repository independently proves literal singular reductions over BOTH
+`F_2` and `F_3`, explicit singular points, formal derivative vanishing, and
+finite affine/naive-projective counts.  Those literal facts are not promoted
+to elliptic local L-factors: reduction-type/conductor semantics (Neron/Kodaira
+or an equivalent formal owner) are still missing from pinned Mathlib.
+
+GLOBAL ARITHMETIC FRONTIER
+
+The finite good-prime branch is no longer a blocker.  Remaining payments are:
+
+    bad-prime 2/3 reduction types + elliptic local factors
+      -> same-curve Groessencharacter/Hecke globalization
+      -> Euler-product agreement
+      -> global elliptic/Hecke L-function agreement.
+
+GEOMETRIC CM FRONTIER
+
+Independently, the point-group ring action does not yet give a faithful
+geometric CM embedding.  The remaining geometric chain is
+
+    elliptic morphism/isogeny-degree carrier
+      -> faithful geometric Z[omega] embedding
+      -> degree(a+b*omega)=N(a+b*omega).
 
 Attribution boundary:
-* Mathlib owns its generic affine elliptic point group, quadratic algebra,
+* Mathlib owns generic affine elliptic point-group, quadratic-algebra,
   finite-field, multiplicative-character, primitive-root, Jacobi-sum,
   conjugation and complex-norm infrastructure.
-* DASHI/Lean owns the specialisations/compositions and same-object welds in
-  this repository.
-* No external scientific source authority is manufactured by library imports.
-* The arithmetic `6*zeta*L(chi_-3)` series is not relabelled as `L(E,s)`.
+* DASHI/Lean owns the specialisations/compositions and same-object welds.
+* Stein/Cremona-derived table and PARI/GP manual metadata remain externally
+  attributed in `EisensteinJZero36a1ExternalSourceReceipt`.
+* No external source is promoted into a kernel proof object.
+* `6*zeta*L(chi_-3)` is not silently relabelled as `L(E,s)`.
 -/
 
 namespace Integration.EisensteinArithmeticCMTerminalMaxCutExact
@@ -88,19 +106,17 @@ open Dashi.EisensteinQuadraticAlgebraExact
 open Integration.EisensteinJZeroCMConcreteExact
 open Integration.EisensteinCMOrderActionExact
 open Integration.EisensteinJZeroInertPrimeLocalFactorExact
-open Integration.EisensteinJZeroCubicJacobiExact
 open Integration.EisensteinJZeroCanonicalCubicCharacterExact
 open Integration.EisensteinJZeroSplitJacobiCyclotomicExact
 open Integration.EisensteinJZeroSplitPrimeEisensteinCarrierExact
 open Integration.EisensteinJZeroSplitPrimeUnitNormalizationExact
 open Integration.EisensteinJZeroAllGoodPrimeLocalExact
-open Integration.EisensteinJZeroBadPrimeThreeExact
 
 inductive EisensteinArithmeticCMBlocker
   | missingGeometricIsogenyDegreeCarrier
   | missingFaithfulGeometricCMEmbedding
   | missingEndomorphismDegreeNormTheorem
-  | missingBadPrimeReductionTypeAndLocalFactor
+  | missingBadPrimeReductionTypesAndLocalFactors
   | missingGroessencharacterGlobalization
   | missingSameCurveEulerProductAgreement
   | missingEllipticHeckeLSeriesAgreement
@@ -130,6 +146,7 @@ structure EisensteinArithmeticCMTerminalStatus where
   inertPrimeTraceZeroPaid : Bool
   inertPrimeLocalEulerShapePaid : Bool
 
+  arbitraryOrderThreeKernelEqualsCubesPaid : Bool
   canonicalCubeFibreCharacterCertificatePaid : Bool
   genericCubicJacobiTraceCompilerPaid : Bool
   splitJacobiSixthCyclotomicIntegralityPaid : Bool
@@ -142,11 +159,15 @@ structure EisensteinArithmeticCMTerminalStatus where
   splitPrimeSixUnitNormalizationPaid : Bool
   allGoodPrimeSameCurveLocalClassificationPaid : Bool
 
+  external36a1MetadataReceiptRecorded : Bool
+  badPrimeTwoLiteralReductionPaid : Bool
+  badPrimeTwoSingularityPaid : Bool
+  badPrimeTwoPointCountPaid : Bool
   badPrimeThreeLiteralReductionPaid : Bool
   badPrimeThreeSingularityPaid : Bool
   badPrimeThreePointCountPaid : Bool
-  badPrimeReductionTypePaid : Bool
-  badPrimeEllipticLocalFactorPaid : Bool
+  badPrimeReductionTypesPaid : Bool
+  badPrimeEllipticLocalFactorsPaid : Bool
 
   rationalPointActionFaithfulnessInferred : Bool
   faithfulGeometricCMEmbeddingPaid : Bool
@@ -165,7 +186,7 @@ structure EisensteinArithmeticCMTerminalStatus where
   firstGeometricBlocker : EisensteinArithmeticCMBlocker
   firstGlobalArithmeticBlocker : EisensteinArithmeticCMBlocker
 
-/-- Machine-readable terminal status after the local split-prime max-cut. -/
+/-- Machine-readable terminal status after the finite/local max-cut. -/
 def terminalStatus : EisensteinArithmeticCMTerminalStatus where
   finiteGraphRadiusSeparatedFromNormShell := true
   cantorRadixGeometryRetainedAsDistinctObservable := true
@@ -187,6 +208,7 @@ def terminalStatus : EisensteinArithmeticCMTerminalStatus where
   inertPrimeTraceZeroPaid := true
   inertPrimeLocalEulerShapePaid := true
 
+  arbitraryOrderThreeKernelEqualsCubesPaid := true
   canonicalCubeFibreCharacterCertificatePaid := true
   genericCubicJacobiTraceCompilerPaid := true
   splitJacobiSixthCyclotomicIntegralityPaid := true
@@ -199,11 +221,15 @@ def terminalStatus : EisensteinArithmeticCMTerminalStatus where
   splitPrimeSixUnitNormalizationPaid := true
   allGoodPrimeSameCurveLocalClassificationPaid := true
 
+  external36a1MetadataReceiptRecorded := true
+  badPrimeTwoLiteralReductionPaid := true
+  badPrimeTwoSingularityPaid := true
+  badPrimeTwoPointCountPaid := true
   badPrimeThreeLiteralReductionPaid := true
   badPrimeThreeSingularityPaid := true
   badPrimeThreePointCountPaid := true
-  badPrimeReductionTypePaid := false
-  badPrimeEllipticLocalFactorPaid := false
+  badPrimeReductionTypesPaid := false
+  badPrimeEllipticLocalFactorsPaid := false
 
   rationalPointActionFaithfulnessInferred := false
   faithfulGeometricCMEmbeddingPaid := false
@@ -220,7 +246,7 @@ def terminalStatus : EisensteinArithmeticCMTerminalStatus where
   physicalMechanismPromotedFromSharedC3 := false
 
   firstGeometricBlocker := missingGeometricIsogenyDegreeCarrier
-  firstGlobalArithmeticBlocker := missingBadPrimeReductionTypeAndLocalFactor
+  firstGlobalArithmeticBlocker := missingBadPrimeReductionTypesAndLocalFactors
 
 ------------------------------------------------------------------------
 -- Exact donor surfaces.

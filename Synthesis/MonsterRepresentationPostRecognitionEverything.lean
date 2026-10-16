@@ -10,6 +10,8 @@ import Synthesis.MonsterTwoIsotypicBlockAssembly
 import Synthesis.MonsterTwoIsotypicBlockAssemblyRegression
 import Synthesis.MonsterMultiplicitySchurCoordinates
 import Synthesis.MonsterMultiplicitySchurCoordinatesRegression
+import Synthesis.MonsterTensorEvaluationFiniteCopies
+import Synthesis.MonsterTensorEvaluationFiniteCopiesRegression
 import Synthesis.MonsterInvariantRestriction
 import Synthesis.MonsterInvariantRestrictionRegression
 import Synthesis.MonsterLinearEigenspaceRestriction
@@ -42,19 +44,23 @@ Available in this tail:
 * complementary two-isotypic-block assembly and post-recognition 12+78 counts;
 * proof-relevant Schur multiplicity coordinates
   `Hom_G(H,H^n) ~= (Fin n -> k)`;
-* exact finite-copy coordinate evaluation/recovery.
+* exact finite-copy coordinate evaluation/recovery;
+* canonical tensor finite-copy equivalence
+  `H tensor (Fin n -> k) ~= (Fin n -> H)`, hence a post-isotypy tensor
+  equivalence with the recognized sector.
 
 Consequently restriction linearity, Schur, Maschke semisimplicity, an arbitrary
-simple-type classifier, the FDRep/module bridge and a separate finrank-ratio
-witness are no longer Monster-specific leaves.  The character/isotypy seam has
-collapsed to attaching the actual W_zeta|E and H_zeta linear carriers to the
-same FDRep theory and transporting the already-owned actual-kernel ninety-copy
-character identity onto those SAME carriers.
+simple-type classifier, the FDRep/module bridge, a separate finrank-ratio
+witness, and the abstract tensor finite-copy equivalence are no longer
+Monster-specific leaves.  The character/isotypy seam has collapsed to attaching
+the actual W_zeta|E and H_zeta linear carriers to the same FDRep theory and
+transporting the already-owned actual-kernel ninety-copy character identity onto
+those SAME carriers.
 
 Not produced here: the actual weight-two Monster representation, actual 196883
 invariant subspace/direct summand, actual central linear operator and zeta
 orientation, the actual same-object FDRep attachments/whole-character transport,
-6.Suz/normalizer action, or an actual tensor same-object equivalence.
+or the actual 6.Suz/normalizer action and 12+78 action orientation.
 -/
 
 namespace Synthesis.MonsterRepresentationPostRecognitionEverything
@@ -82,13 +88,15 @@ structure Boundary where
   schurMultiplicityCoordinatesAvailable : Bool
   ninetyMultiplicityCoordinatesAvailable : Bool
   coordinateEvaluationRecoveryAvailable : Bool
+  tensorFiniteCopiesCompilerAvailable : Bool
+  postIsotypyTensorEquivalenceAvailable : Bool
+  tensorEquivalenceIsMonsterSpecificInput : Bool
   actualMonsterSameObjectInputsProducedHere : Bool
   actualMonsterInvariantSubspaceProducedHere : Bool
   actualCentralLinearOperatorProducedHere : Bool
   actualWholeCharacterTransportProducedHere : Bool
   actualSuzukiNormalizerActionProducedHere : Bool
   absoluteZetaOrientationProducedHere : Bool
-  actualTensorEvaluationEquivalenceProducedHere : Bool
   deriving Repr
 
 def canonicalBoundary : Boundary where
@@ -114,12 +122,14 @@ def canonicalBoundary : Boundary where
   schurMultiplicityCoordinatesAvailable := true
   ninetyMultiplicityCoordinatesAvailable := true
   coordinateEvaluationRecoveryAvailable := true
+  tensorFiniteCopiesCompilerAvailable := true
+  postIsotypyTensorEquivalenceAvailable := true
+  tensorEquivalenceIsMonsterSpecificInput := false
   actualMonsterSameObjectInputsProducedHere := false
   actualMonsterInvariantSubspaceProducedHere := false
   actualCentralLinearOperatorProducedHere := false
   actualWholeCharacterTransportProducedHere := false
   actualSuzukiNormalizerActionProducedHere := false
   absoluteZetaOrientationProducedHere := false
-  actualTensorEvaluationEquivalenceProducedHere := false
 
 end Synthesis.MonsterRepresentationPostRecognitionEverything

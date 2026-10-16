@@ -48,6 +48,9 @@ def pVersusNPResolution : ProofResolutionLane :=
       , "CodedFiniteStandardSelfDelimitingCodeExact.selfDelimitingRoundTrip"
       , "CodedFiniteStandardRawInterpreterExact.runActualCodeReducesToRawView"
       , "CodedFiniteStandardRawInterpreterFidelityExact.selfDelimitedInterpreterFollowsStandardRun"
+      , "CodedFiniteUnaryDelimiterScannerExact.scannerCode"
+      , "CodedFiniteUnaryFieldEqualityDeterminismExact.equalityCode"
+      , "CodedFiniteUnaryFieldEqualityClosureExact.equalSinkQuiescent"
       , "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedResultExact"
       , "GuardedCookFixedDescriptionIndexABIExact.indexABIWorkBound"
       , "ConcreteTapeFixedLocalKernelTablesExact.transitionKernelFrozenSeekExact"
@@ -161,6 +164,10 @@ theorem pnp_resolution_uses_behavioral_self_fix_maxcut :
       "CodedFiniteStandardRawInterpreterExact.runActualCodeReducesToRawView" = true ∧
     pVersusNPResolution.producerSearch.contains
       "CodedFiniteStandardRawInterpreterFidelityExact.selfDelimitedInterpreterFollowsStandardRun" = true ∧
+    pVersusNPResolution.producerSearch.contains
+      "CodedFiniteUnaryDelimiterScannerExact.scannerCode" = true ∧
+    pVersusNPResolution.producerSearch.contains
+      "CodedFiniteUnaryFieldEqualityDeterminismExact.equalityCode" = true ∧
     pVersusNPResolution.producerSearch.contains
       "PNotEqualsNPBinaryCountdownExactRunExact.countdownExactRun" = true ∧
     pVersusNPResolution.producerSearch.contains

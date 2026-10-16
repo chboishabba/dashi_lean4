@@ -4,9 +4,8 @@ import Integration.EisensteinArithmeticCMTerminalMaxCutExact
 Terminal regression after the split/local max-cut.
 
 It pins both the newly paid local chain and the still-unpaid global/geometric
-promotions.  In particular it prevents the old Cantor-series equality,
-Dirichlet/elliptic local-factor collapse, or arithmetic-shell/elliptic-L
-collapse from re-entering by simplification of terminology.
+promotions.  The bad-prime-three literal reduction is paid, while its
+reduction-type/local-L-factor interpretation remains explicitly unpaid.
 -/
 
 namespace Integration.EisensteinArithmeticCMTerminalMaxCutRegression
@@ -35,7 +34,12 @@ example : splitPrimeLocalEulerPolynomialPaid terminalStatus = true := rfl
 example : splitPrimeSixUnitNormalizationPaid terminalStatus = true := rfl
 example : allGoodPrimeSameCurveLocalClassificationPaid terminalStatus = true := rfl
 
-example : badPrimeThreeLocalFactorPaid terminalStatus = false := rfl
+example : badPrimeThreeLiteralReductionPaid terminalStatus = true := rfl
+example : badPrimeThreeSingularityPaid terminalStatus = true := rfl
+example : badPrimeThreePointCountPaid terminalStatus = true := rfl
+example : badPrimeReductionTypePaid terminalStatus = false := rfl
+example : badPrimeEllipticLocalFactorPaid terminalStatus = false := rfl
+
 example : faithfulGeometricCMEmbeddingPaid terminalStatus = false := rfl
 example : endomorphismDegreeEqualsNormPaid terminalStatus = false := rfl
 example : groessencharacterPaid terminalStatus = false := rfl
@@ -47,6 +51,6 @@ example : dirichletLocalFactorIdentifiedWithEllipticEulerFactor terminalStatus =
 example : arithmeticShellLSeriesIdentifiedWithEllipticLSeries terminalStatus = false := rfl
 
 example : firstGeometricBlocker terminalStatus = missingGeometricIsogenyDegreeCarrier := rfl
-example : firstGlobalArithmeticBlocker terminalStatus = missingBadPrimeThreeLocalFactor := rfl
+example : firstGlobalArithmeticBlocker terminalStatus = missingBadPrimeReductionTypeAndLocalFactor := rfl
 
 end Integration.EisensteinArithmeticCMTerminalMaxCutRegression

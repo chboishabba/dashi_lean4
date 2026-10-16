@@ -9,6 +9,8 @@ import Integration.RationalAlbertTauCetiF4DonorAudit
 import Integration.RationalAlbertTauCetiF4DonorAuditRegression
 import Integration.RationalAlbertF4ClassificationInstantiation
 import Integration.RationalAlbertF4ClassificationInstantiationRegression
+import Integration.RationalAlbertF4E6DescentClassification
+import Integration.RationalAlbertF4E6DescentClassificationRegression
 import Integration.RationalAlbertF4E6GroupClassificationMaxCut
 import Integration.RationalAlbertF4E6GroupClassificationMaxCutRegression
 import Integration.RationalAlbertClassicalF4SourceReceipt
@@ -25,6 +27,7 @@ native Q-octonion anisotropy/no-zero-divisors
   -> Q(i) root-space splitting with explicit scalar-extension firewall
   -> real-place diagnostic receipt
   -> pinned TauCeti formal-donor audit
+  -> proof-relevant same-object descent/classification adapter
   -> three-leaf original-Q F4/E6 classification interface.
 
 External source/donor attribution and theorem authority remain separate from

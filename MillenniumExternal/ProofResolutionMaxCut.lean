@@ -38,46 +38,41 @@ private def standardResolutionOps : List ResolutionOperation :=
   , .kernelCheck
   ]
 
-/-- P≠NP follows the live Agda #1129 compiler recut.
+/-- P≠NP follows the live Agda #1129 compiler/resource recut.
 
-The streamed evaluator is index-only at runtime, its local Boolean kernels are
-frozen finite tables, actual candidate rules embed into a summed/linked coded
-target, and exact candidate runs lift edge-for-edge with identical step count.
-Three-phase run composition is paid.  The return-freshness theorem shows that a
-declared T-step `finish` is not automatically a legal return point when its
-resident dispatch key is still occupied.
-
-Recent XOR-grid work contributes one bounded compiler insight only.  The
-complexity branch reproves locally that a binary countdown data bit updates by
-XOR with the incoming borrow and that the XOR coordinate is recoverable, while
-the outgoing borrow is a separate nonlinear coordinate.  Equal XOR output can
-carry different borrow output, so parity alone is neither an exact-T clock nor
-complexity hardness evidence.  The next machine payment is therefore a literal
-bit+borrow tape counter which emits one exact handoff pulse, followed by a final
-self-consistent Cook budget T* charging generator + timer + candidate + suffix. -/
+Paid now includes literal costed streaming, finite local tables, actual candidate
+run transport, exact-T quiescent phase wrapping, exact phase-wrapper size
+accounting, a literal unary cursor, and a fixed guarded-Cook bitstream lookup TM.
+The full-table baseline is deliberately not promoted to a self-fixed target:
+existing literal-materialisation no-go results and the new state-width lower
+bound make static self-description feedback explicit.  Existing Kleene machinery
+shows the correct target is behavioural self-reference rather than raw code
+identity.  XOR-grid work is attribution-safely reused only as a compact local
+control donor: XOR is the recoverable data update of a ripple-borrow counter;
+borrow is separate, and IIT phi is not complexity hardness evidence. -/
 def pVersusNPResolution : ProofResolutionLane :=
   { problem := .pVersusNP
     producerSearch :=
-      [ "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible"
-      , "PNotEqualsNPVirtualQuotationFrontierExact.literalAnchoredRouteClosed"
-      , "ConcreteTapeGlobalCookLevinStreamingClauseCostedExact.globalClauseSeekCostedResultExact"
+      [ "PNotEqualsNPCodedLiteralResourceCompilerAnchoredNoGoExact.anchoredLiteralStructuralResourceImpossible"
+      , "PNotEqualsNPLiteralSelfCodeGrowthNoGoExact.strictCodeGrowthKillsLiteralFixedPoint"
+      , "PNotEqualsNPKleeneSpecializationFixedPointExact.fixedPointProgramCorrect"
+      , "PNotEqualsNPCandidateActualSelfInstantiationBoundaryExact.q2PrimitiveExecutionErasesQuotedProgram"
       , "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedResultExact"
-      , "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedWorkBound"
-      , "PNotEqualsNPCodedFixedOwnCookStreamingCostExact.ownCookFormulaSameObject"
       , "GuardedCookFixedDescriptionIndexABIExact.indexABIWorkBound"
       , "ConcreteTapeFixedLocalKernelTablesExact.transitionKernelFrozenSeekExact"
-      , "ConcreteTapeFixedLocalKernelTablesExact.acceptanceKernelFrozenSeekExact"
-      , "CodedFiniteStandardModeSumExact.sumFragments"
-      , "CodedFiniteStandardLinkedStructuralSimulationExact.linkedStructuralSimulation"
       , "CodedFiniteStandardLinkedRunSimulationExact.simulateCodedCandidateExecution"
-      , "CodedFiniteStandardLinkedRunSimulationExact.appendLinkedCandidatePhase"
-      , "CodedFiniteStandardReturnLinkFreshnessExact.residentCandidateRuleBlocksReturnLink"
-      , "PNotEqualsNPXORCountdownMicrocodeExact.xorRecoverLeft"
-      , "PNotEqualsNPXORCountdownMicrocodeExact.xorRecoverRight"
+      , "PNotEqualsNPCodedCandidateExactPhaseBoundaryExact.candidatePhaseEndpointTransitionNothing"
+      , "CodedFiniteStandardExactPhaseSizeExact.phaseLiftStateCountExact"
+      , "CodedFiniteStandardExactPhaseSizeExact.phaseLiftRuleCountExact"
+      , "CodedFiniteUnaryCursorExact.cursorStopKeyFresh"
+      , "CodedFiniteBitStreamLookupExact.lookupCode"
+      , "GuardedCookFiniteBitTableGeneratorExact.cookBitAtQueryAnswerExact"
+      , "GuardedCookFiniteBitTableGeneratorExact.fixedCookValidStopTransition"
+      , "ConcreteTapeCookLevinStateWidthLowerExact.stateWidthBelowGuardedCookBitCode"
+      , "PNotEqualsNPConcreteTapeProgramCodeExact.encodeStaticProgram"
+      , "PNotEqualsNPCodedStandardCandidateBridgeExact.codedWitnessToStandardCandidate"
       , "PNotEqualsNPXORCountdownMicrocodeExact.sameXorOutputDifferentBorrow"
-      , "PNotEqualsNPXORCountdownMicrocodeExact.counterCompilationRemains"
-      , "ConcreteTapeStandardClockExact.concreteStandardClockReceipt"
-      , "PNotEqualsNPFaithfulVirtualSimulationExact.FaithfulVirtualSelfQuotationCompilation"
+      , "PNotEqualsNPBinaryCountdownRuleFragmentExact.countdownFragment"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesUniversalFailure"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesSATNotInP"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesPNotEqualsNP"
@@ -155,19 +150,15 @@ theorem pnp_rh_bsd_still_require_donor_resolution :
     rhResolution.resolvedSourceTerm = none ∧
     bsdResolution.resolvedSourceTerm = none := by decide
 
-theorem pnp_resolution_uses_virtual_streaming_maxcut :
+theorem pnp_resolution_uses_behavioral_self_fix_maxcut :
     pVersusNPResolution.producerSearch.contains
-      "GuardedCookFixedDescriptionIndexABIExact.indexABIWorkBound" = true ∧
+      "PNotEqualsNPKleeneSpecializationFixedPointExact.fixedPointProgramCorrect" = true ∧
     pVersusNPResolution.producerSearch.contains
-      "CodedFiniteStandardLinkedRunSimulationExact.simulateCodedCandidateExecution" = true ∧
+      "GuardedCookFiniteBitTableGeneratorExact.cookBitAtQueryAnswerExact" = true ∧
     pVersusNPResolution.producerSearch.contains
-      "CodedFiniteStandardLinkedRunSimulationExact.appendLinkedCandidatePhase" = true ∧
+      "ConcreteTapeCookLevinStateWidthLowerExact.stateWidthBelowGuardedCookBitCode" = true ∧
     pVersusNPResolution.producerSearch.contains
-      "CodedFiniteStandardReturnLinkFreshnessExact.residentCandidateRuleBlocksReturnLink" = true ∧
-    pVersusNPResolution.producerSearch.contains
-      "PNotEqualsNPXORCountdownMicrocodeExact.sameXorOutputDifferentBorrow" = true ∧
-    pVersusNPResolution.producerSearch.contains
-      "ConcreteTapeStandardClockExact.concreteStandardClockReceipt" = true := by decide
+      "PNotEqualsNPXORCountdownMicrocodeExact.sameXorOutputDifferentBorrow" = true := by decide
 
 theorem bsd_resolution_uses_zero_defect_equivalence :
     bsdResolution.producerSearch.contains

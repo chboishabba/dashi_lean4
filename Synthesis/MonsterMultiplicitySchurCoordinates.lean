@@ -164,6 +164,40 @@ def ninetyMultiplicityCoordinates
     EquivariantHom A (piRepresentation A 90) ≃ (Fin 90 -> k) :=
   equivariantHomFiniteCopiesEquivScalars A cert 90
 
+/-! ## Coordinate evaluation / recovery
+
+Before introducing a tensor product, the finite-copy carrier already has a
+literal evaluation/recovery formula.  This is the exact algebraic content needed
+for a future `H tensor S -> W` theorem: every finite-copy vector is a sum of
+rank-one evaluations against the scalar coordinate basis.
+-/
+
+/-- Kronecker scalar basis on the multiplicity coordinate space. -/
+def scalarBasis {n : ℕ} (i : Fin n) : Fin n -> k :=
+  fun j => if i = j then 1 else 0
+
+/-- Rank-one evaluation of one constituent vector against one multiplicity
+coordinate vector. -/
+def coordinateEvaluation {n : ℕ} (x : V) (a : Fin n -> k) : Fin n -> V :=
+  fun j => a j • x
+
+/-- Every vector in `H^n` is recovered exactly as the sum of its coordinate
+rank-one evaluations.  No Monster-specific source input is used. -/
+theorem coordinateEvaluation_recovery {n : ℕ} (w : Fin n -> V) :
+    (fun j => ∑ i : Fin n, coordinateEvaluation (w i) (scalarBasis i) j) = w := by
+  funext j
+  simp [coordinateEvaluation, scalarBasis]
+
+/-- After the Schur identification, an equivariant Hom coordinate vector acts by
+the same rank-one evaluation formula on the diagonal finite-copy model. -/
+theorem schurCoordinateEvaluation_agrees
+    (A : Representation G k V) (cert : SchurScalarCertificate A) {n : ℕ}
+    (f : EquivariantHom A (piRepresentation A n)) (x : V) :
+    coordinateEvaluation x (homToScalars A cert f) = f.toLinearMap x := by
+  funext i
+  change cert.scalarOf (coordinateHom A f i) • x = f.toLinearMap x i
+  exact (cert.scalar_spec (coordinateHom A f i) x).symm
+
 inductive BareNinetyCreatesMonsterMultiplicity : Prop
 inductive CharacterFamilyCreatesSuzukiAction : Prop
 
@@ -178,6 +212,7 @@ structure Boundary where
   proofRelevantSchurCertificateTyped : Bool
   genericSchurCoordinateCompilerSourceWritten : Bool
   ninetyCoordinateSpecializationSourceWritten : Bool
+  coordinateEvaluationRecoverySourceWritten : Bool
   actualMonsterHZetaAttachmentPaidHere : Bool
   actualSuzukiActionPaidHere : Bool
   absoluteZetaOrientationPaidHere : Bool
@@ -189,6 +224,7 @@ def canonicalBoundary : Boundary where
   proofRelevantSchurCertificateTyped := true
   genericSchurCoordinateCompilerSourceWritten := true
   ninetyCoordinateSpecializationSourceWritten := true
+  coordinateEvaluationRecoverySourceWritten := true
   actualMonsterHZetaAttachmentPaidHere := false
   actualSuzukiActionPaidHere := false
   absoluteZetaOrientationPaidHere := false

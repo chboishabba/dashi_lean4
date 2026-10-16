@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'agent/eisenstein-lattice-counting-maxcut-20261012'
+      - 'agent/eisenstein-cm-point-endomorphism-maxcut-20261016'
     paths:
       - 'Integration/Eisenstein*.lean'
       - '.github/workflows/eisenstein-representation-maxcut.yml'
@@ -34,3 +35,4 @@ jobs:
           lake env lean Integration/EisensteinSixUnitOrbitValidation.lean
           lake env lean Integration/EisensteinGeometricRepresentationFormulaValidation.lean
           lake env lean Integration/EisensteinDirichletSeriesValidation.lean
+          lake env lean Integration/EisensteinJZeroPointCMValidation.lean

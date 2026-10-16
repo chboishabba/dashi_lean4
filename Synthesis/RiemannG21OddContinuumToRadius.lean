@@ -5,18 +5,17 @@ import Synthesis.RiemannG21OddRatioGapRadiusGate
 /-!
 # G21 odd continuum-to-radius compiler
 
-This welds the continuum strict moment theorem to the existing normalized
-small-radius gate.  Once the literal taper supplies a nonnegative positive
+This welds the literal N1/N3 continuum strict moment theorem to the existing
+normalized small-radius gate.  Once the taper supplies a nonnegative positive
 plateau and the four required integrability facts, the odd G21 lane gets:
 
 * N1(a)>0 and N1(p)>0;
 * Delta_odd = N1(a)N3(p)-N3(a)N1(p) > 0;
 * q_p=N3(p)/N1(p) > q_a=N3(a)/N1(a);
-* an explicit existential `0<r<=1` satisfying the support-only radius gate.
+* an existential `0<r<=1` satisfying the support-only radius gate.
 
-Thus the existence of a sufficiently small finite sampling radius is not an
-independent analytic hypothesis after continuum strictness.  The next true
-analytic leaf is the determinant remainder inequality at that radius.
+The literal odd low response is `u*phi(u)*sinh(yu)`; this `u` factor is part of
+the same-object contract and must not be dropped.
 -/
 
 noncomputable section
@@ -25,9 +24,9 @@ open MeasureTheory Set
 
 namespace Synthesis
 
-/-- Positive-half odd response weight. -/
+/-- Positive-half literal N1 response weight. -/
 def oddHeightWeight (R : ℝ) (w : ℝ → ℝ) (y x : ℝ) : ℝ :=
-  g21ClippedWeight R w x * Real.sinh (y*x)
+  x * g21ClippedWeight R w x * Real.sinh (y*x)
 
 /-- First odd moment. -/
 def oddN1 (R : ℝ) (w : ℝ → ℝ) (y : ℝ) : ℝ :=
@@ -37,12 +36,12 @@ def oddN1 (R : ℝ) (w : ℝ → ℝ) (y : ℝ) : ℝ :=
 def oddN3 (R : ℝ) (w : ℝ → ℝ) (y : ℝ) : ℝ :=
   momentQ (fun x : ℝ => x^2) (oddHeightWeight R w y) volume
 
-/-- Normalized odd second-support coordinate. -/
+/-- Normalized odd support coordinate. -/
 def oddRatio (R : ℝ) (w : ℝ → ℝ) (y : ℝ) : ℝ :=
   oddN3 R w y / oddN1 R w y
 
-/-- The first odd moment is strictly positive under the same positive-plateau
-hypotheses used by the continuum TP2 compiler. -/
+/-- The first literal odd moment is strictly positive under the same positive
+plateau hypotheses used by the continuum TP2 compiler. -/
 theorem oddN1_pos_of_positivePlateau
     {w : ℝ → ℝ} {y R l r : ℝ}
     (hy : 0 < y) (hl : 0 < l) (hlr : l < r) (hrR : r < R)
@@ -59,7 +58,8 @@ theorem oddN1_pos_of_positivePlateau
       · simpa [g21ClippedWeight, hx] using hwNonneg x hx
       · simp [g21ClippedWeight, hx]
     by_cases hx0 : 0 <= x
-    · exact mul_nonneg hwc ((Real.sinh_nonneg_iff).2 (mul_nonneg hy.le hx0))
+    · exact mul_nonneg (mul_nonneg hx0 hwc)
+        ((Real.sinh_nonneg_iff).2 (mul_nonneg hy.le hx0))
     · have hxnot : x ∉ Icc (0:ℝ) R := by
         intro hx
         exact hx0 hx.1
@@ -75,9 +75,10 @@ theorem oddN1_pos_of_positivePlateau
     have hwc : g21ClippedWeight R w x = w x := by
       simp [g21ClippedWeight, hxI]
     rw [hwc]
-    exact mul_pos (hwPos x hx) ((Real.sinh_pos_iff).2 (mul_pos hy hx0))
+    exact mul_pos (mul_pos hx0 (hwPos x hx))
+      ((Real.sinh_pos_iff).2 (mul_pos hy hx0))
 
-/-- End-to-end odd continuum compiler through normalized-gap and radius
+/-- End-to-end literal odd continuum compiler through normalized-gap and radius
 existence. -/
 theorem exists_unit_oddRadiusGate_of_positivePlateau
     {w : ℝ → ℝ} {a p R l m r : ℝ}
@@ -98,7 +99,8 @@ theorem exists_unit_oddRadiusGate_of_positivePlateau
     oddN1_pos_of_positivePlateau (ha.trans hap) hl (hlm.trans hmr) hrR hwNonneg hwPos hAp
   have hcross :
       0 < oddN1 R w a * oddN3 R w p - oddN3 R w a * oddN1 R w p := by
-    simpa [oddN1, oddN3, oddHeightWeight] using
+    simpa [oddN1, oddN3, oddHeightWeight, g21OddMomentWeight,
+      mul_assoc, mul_left_comm, mul_comm] using
       (oddMomentCrossProduct_pos_of_positivePlateau
         ha hap hl hlm hmr hrR hwNonneg hwPos hAa hAp hQa hQp)
   have hratio : oddRatio R w a < oddRatio R w p := by

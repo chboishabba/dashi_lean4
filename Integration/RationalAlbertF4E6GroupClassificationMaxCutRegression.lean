@@ -8,6 +8,8 @@ example : canonicalBoundary.nativeQOctonionAnisotropyPaid = true := rfl
 example : canonicalBoundary.normUnitEqualsJordanSameActionPaid = true := rfl
 example : canonicalBoundary.qiScalarExtensionBoundaryPaid = true := rfl
 example : canonicalBoundary.sameObjectDescentAdapterTyped = true := rfl
+example : canonicalBoundary.terminalResidualReducedToSingleDependentWitness = true := rfl
+example : canonicalBoundary.finalClassificationInputInhabited = false := rfl
 example : canonicalBoundary.sameObjectDescentAdapterInhabited = false := rfl
 example : canonicalBoundary.externalF4ClassificationSourceLocated = true := rfl
 example : canonicalBoundary.externalE6ClassificationSourceLocated = true := rfl

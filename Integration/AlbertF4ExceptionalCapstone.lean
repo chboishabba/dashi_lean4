@@ -5,7 +5,12 @@ import Integration.RationalAlbertF4OuterLiftMaxCut
 import Integration.RationalAlbertInnerDerivationNative
 import Integration.RationalAlbertF4LieMaxCut
 import Integration.RationalAlbertF4CartanNative
+import Integration.RationalOctonionDivisionNorm
+import Integration.RationalAlbertNormStabilizerJordanSameObject
 import Integration.RationalAlbertF4SplitRootDatumReceipt
+import Integration.RationalAlbertF4ScalarExtensionFormBoundary
+import Integration.RationalAlbertF4RealPlaceCompactnessReceipt
+import Integration.RationalAlbertTauCetiF4DonorAudit
 import Integration.RationalAlbertClassicalF4SourceReceipt
 import Integration.RationalAlbertF4ClassificationInstantiation
 import Integration.RationalAlbertF4NativeMaxCut
@@ -22,31 +27,36 @@ import Integration.AlbertDonorDeterminantAudit
 Authoritative current boundary for the repository-native rational Albert/F4
 programme.
 
-The local construction/discovery layer is now paid through:
+The local construction/discovery layer is paid through the native rational
+Albert algebra, exact positive-eight-square octonion norm anisotropy/no-zero-
+divisor theorem, finite triality/Weyl structure, arbitrary inner derivations,
+rank-4 Cartan, cubic/adjoint/Jordan rigidity, and the exact same-action weld
 
-* actual H3(O_Q), standard cubic, Jordan product/unit/Jordan identity;
-* native S3 and four Spin/Tits same-carrier Jordan/cubic automorphisms;
-* exact synchronized Spin double cover `384 -> W(D4)_192`;
-* folded finite W(F4) order 1152 and independent 48-root rank-four datum;
-* arbitrary-element Albert inner-derivation theorem;
-* exact-rational 52-dimensional / `28+8+8+8` derivation diagnostics;
-* four literal native Cartan derivations with exact commuting/vector/spin action;
-* companion exact Q(i) symbolic projectors, `4+48` one-dimensional weight/root
-  spaces and grading of all 1128 unordered root pairs;
-* split F4 root-datum recognition after base change, recorded in Lean without
-  transferring Agda kernel authority.
+`Stab_Isom(N)(1) = Aut_J(J)`
 
-The classical terminal theorem is now precisely sourced: Petersson 2.10 gives
-`Der(J)` type F4 in characteristic zero, 2.12 gives the structure algebra type
-E6, and 2.13 gives the Albert/Aut(J)-F4 correspondence.  Those citations remain
-source receipts rather than Lean theorems.
+on the literal carrier.
 
-Therefore the remaining exceptional wall is a single stronger layer:
-classification of the ORIGINAL rational form and construction/identification of
-the full algebraic groups `Aut_Jordan(J)` and the same-carrier E6 cubic group,
-including `F4 = Stab_E6(1)`.  The missing non-monomial finite `g24` outer lift is
-an independent coordinate-level refinement and does not block this group/form
-classification route.
+The exact `4+48` root-space grading is a companion `Q(i)` splitting chart.  It
+is therefore scalar-extension data, not evidence that the original Q-form is
+split.  The exact positive trace-form receipt is likewise a real-place
+diagnostic, not a global rational-form classification.
+
+External source authority is kept separate.  Petersson and modern Albert-group
+sources locate the characteristic-zero F4/E6 classification theorems.  TauCeti
+is pinned as a substantial formal donor candidate with Albert and canonical-F4
+stacks, but the audited commit did not expose a same-object Albert-derivation to
+canonical-F4 equivalence or an Albert-aut/F4 group theorem.
+
+The remaining exceptional wall has exactly three named-form/group conclusions:
+
+* native `Der(J)` is the appropriate rational form of type F4;
+* native `Aut_J(J)` is the corresponding F4 algebraic group;
+* native cubic norm-isometry/structure group is of type E6.
+
+The old external `F4 = Stab_E6(1)` structural obligation is retired: its native
+same-action content is already paid.  The missing non-monomial finite `g24`
+outer lift remains an optional coordinate-level refinement and does not block
+the group/form classification route.
 -/
 
 namespace Integration.AlbertF4ExceptionalCapstone
@@ -56,6 +66,8 @@ structure Frontier where
   nativeStandardAlbertCubicPaid : Bool
   nativeJordanProductPaid : Bool
   nativeJordanIdentityPaid : Bool
+  nativeQOctonionNormAnisotropyPaid : Bool
+  nativeQOctonionNoZeroDivisorsPaid : Bool
   nativeS3AlbertAutomorphismsPaid : Bool
   externalDonorRemovedFromCriticalPath : Bool
 
@@ -80,13 +92,19 @@ structure Frontier where
   nativeCartanFourPaid : Bool
   nativeCartanCommutationPaid : Bool
   nativeCartanVectorSpinTrialityPaid : Bool
+
   companionExactQIRootSpacesPaid : Bool
   companionExactRootGrading1128Paid : Bool
-  splitF4RootDatumRecognizedCrossKernel : Bool
+  qiRootDataIsScalarExtensionData : Bool
+  qiRootDataClassifiesOriginalQForm : Bool
+  realPlacePositiveTraceDiagnosticPaid : Bool
+  realPlaceDiagnosticClassifiesOriginalQForm : Bool
   crossKernelReceiptCreatesLeanTheorem : Bool
-  leanInternalQIRootProjectorsPaid : Bool
 
+  normUnitJordanSameActionPaid : Bool
   preciseClassicalClassificationSourceReceiptPaid : Bool
+  tauCetiFormalDonorInventoryLocated : Bool
+  tauCetiSameObjectClassificationLocated : Bool
   allConcreteClassificationHypothesesOwned : Bool
   terminalClassificationPremiseIsolated : Bool
   sourceReceiptCreatesClassificationTheorem : Bool
@@ -94,10 +112,10 @@ structure Frontier where
   naturalRelative240E6InvarianceRefuted : Bool
   structuredE8LaneIndependent : Bool
 
-  rationalFormF4ClassificationPaid : Bool
   fullFiniteWeylInsideAutJPaid : Bool
-  fullAutJordanEqualsF4Paid : Bool
-  e6UnitStabilizerEqualsF4Paid : Bool
+  nativeDerivationNamedF4FormPaid : Bool
+  nativeAutJordanNamedF4GroupPaid : Bool
+  nativeCubicSymmetryNamedE6GroupPaid : Bool
   deriving Repr
 
 
@@ -106,6 +124,8 @@ def currentFrontier : Frontier where
   nativeStandardAlbertCubicPaid := true
   nativeJordanProductPaid := true
   nativeJordanIdentityPaid := true
+  nativeQOctonionNormAnisotropyPaid := true
+  nativeQOctonionNoZeroDivisorsPaid := true
   nativeS3AlbertAutomorphismsPaid := true
   externalDonorRemovedFromCriticalPath := true
 
@@ -130,13 +150,19 @@ def currentFrontier : Frontier where
   nativeCartanFourPaid := true
   nativeCartanCommutationPaid := true
   nativeCartanVectorSpinTrialityPaid := true
+
   companionExactQIRootSpacesPaid := true
   companionExactRootGrading1128Paid := true
-  splitF4RootDatumRecognizedCrossKernel := true
+  qiRootDataIsScalarExtensionData := true
+  qiRootDataClassifiesOriginalQForm := false
+  realPlacePositiveTraceDiagnosticPaid := true
+  realPlaceDiagnosticClassifiesOriginalQForm := false
   crossKernelReceiptCreatesLeanTheorem := false
-  leanInternalQIRootProjectorsPaid := false
 
+  normUnitJordanSameActionPaid := true
   preciseClassicalClassificationSourceReceiptPaid := true
+  tauCetiFormalDonorInventoryLocated := true
+  tauCetiSameObjectClassificationLocated := false
   allConcreteClassificationHypothesesOwned := true
   terminalClassificationPremiseIsolated := true
   sourceReceiptCreatesClassificationTheorem := false
@@ -144,29 +170,37 @@ def currentFrontier : Frontier where
   naturalRelative240E6InvarianceRefuted := true
   structuredE8LaneIndependent := true
 
-  rationalFormF4ClassificationPaid := false
   fullFiniteWeylInsideAutJPaid := false
-  fullAutJordanEqualsF4Paid := false
-  e6UnitStabilizerEqualsF4Paid := false
+  nativeDerivationNamedF4FormPaid := false
+  nativeAutJordanNamedF4GroupPaid := false
+  nativeCubicSymmetryNamedE6GroupPaid := false
 
 inductive NativeAlbertCreatesF4 : Prop
-inductive SplitRootDatumCreatesQFormClassification : Prop
+inductive QISplitRootDatumCreatesQFormClassification : Prop
+inductive RealPlaceReceiptCreatesQFormClassification : Prop
 inductive CrossKernelReceiptCreatesLeanProof : Prop
 inductive SourceReceiptCreatesClassificationTheorem : Prop
+inductive DonorInventoryCreatesNativeClassification : Prop
 inductive FiniteWeylCreatesFullAutJordan : Prop
 inductive MissingG24BlocksF4Classification : Prop
 
 theorem native_albert_does_not_create_f4 : ¬ NativeAlbertCreatesF4 := by
   intro h; cases h
 
-theorem split_root_datum_does_not_create_q_form_classification :
-    ¬ SplitRootDatumCreatesQFormClassification := by intro h; cases h
+theorem qi_split_root_datum_does_not_create_q_form_classification :
+    ¬ QISplitRootDatumCreatesQFormClassification := by intro h; cases h
+
+theorem real_place_receipt_does_not_create_q_form_classification :
+    ¬ RealPlaceReceiptCreatesQFormClassification := by intro h; cases h
 
 theorem cross_kernel_receipt_does_not_create_lean_proof :
     ¬ CrossKernelReceiptCreatesLeanProof := by intro h; cases h
 
 theorem source_receipt_does_not_create_classification_theorem :
     ¬ SourceReceiptCreatesClassificationTheorem := by intro h; cases h
+
+theorem donor_inventory_does_not_create_native_classification :
+    ¬ DonorInventoryCreatesNativeClassification := by intro h; cases h
 
 theorem finite_weyl_does_not_create_full_aut_jordan :
     ¬ FiniteWeylCreatesFullAutJordan := by intro h; cases h

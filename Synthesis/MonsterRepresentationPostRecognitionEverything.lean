@@ -14,6 +14,8 @@ import Synthesis.MonsterMultiplicitySchurCoordinates
 import Synthesis.MonsterMultiplicitySchurCoordinatesRegression
 import Synthesis.MonsterTensorEvaluationFiniteCopies
 import Synthesis.MonsterTensorEvaluationFiniteCopiesRegression
+import Synthesis.MonsterNormalizerHomAction
+import Synthesis.MonsterNormalizerHomActionRegression
 import Synthesis.MonsterInvariantRestriction
 import Synthesis.MonsterInvariantRestrictionRegression
 import Synthesis.MonsterLinearEigenspaceRestriction
@@ -29,37 +31,23 @@ actual same-object Monster inputs.
 
 Available in this tail:
 
-* actual invariant subspace -> restricted linear representation + equivariant
-  inclusion, including nested restrictions;
-* linear central operator + commuting action -> literal invariant eigenspace,
-  restricted representation and inclusion intertwiner;
-* canonical FDRep <-> group-algebra same-action/submodule adapter;
-* SAME whole-character identity `chi(V)=a chi(H)` -> every occurring simple
-  source has H's type;
-* Maschke semisimplicity and character-at-identity -> finrank ratio;
-* simple FDRep -> scalar self-intertwiners by pinned mathlib Schur;
-* one-simple-type isotypic assembly and post-recognition copy count;
-* two-simple character `chi(V)=chi(T)+chi(S)` -> one-copy Hom multiplicities
-  for T,S and zero for every other simple type;
-* complementary two-isotypic-block assembly / post-recognition 12+78 counts;
-* Schur multiplicity coordinates `Hom_G(H,H^n) ~= (Fin n -> k)` and exact
-  coordinate evaluation/recovery;
-* canonical tensor finite-copy equivalence
-  `H tensor (Fin n -> k) ~= (Fin n -> H)`.
+* invariant-subspace and central-eigenspace restricted representations;
+* FDRep <-> group-algebra same-action/submodule adapter;
+* whole-character simple-source classification;
+* Maschke semisimplicity and character-at-identity dimension ratios;
+* Schur scalar self-intertwiners;
+* one-simple isotypic assembly / copy count;
+* two-simple character multiplicity determination and 12+78 assembly;
+* `Hom_G(H,H^n) ~= k^n` coordinates with evaluation/recovery;
+* `H tensor k^n ~= H^n` finite-copy tensor equivalence;
+* canonical induced normalizer action on `Hom_E(H,W)` from actual normalizer
+  lifts on H and W that implement the same conjugation action on E.
 
-Consequently restriction linearity, Schur, Maschke semisimplicity, arbitrary
-simple-type classifiers, the FDRep/module bridge, separate finrank-ratio data,
-the abstract tensor finite-copy equivalence, and an abstract 12+78 decomposition
-intertwiner are not independent Monster-specific leaves.  For both the H_zeta
-isotypy and the later 12+78 multiplicity decomposition, the live scientific seam
-is SAME-object transport of source/class character information onto the actual
-linear representations.
-
-Not produced here: the actual weight-two Monster representation, actual 196883
-invariant subspace/direct summand, actual central linear operator and absolute
-zeta orientation, actual W_zeta/H_zeta FDRep attachments and ninety-character
-transport, or the actual 6.Suz/normalizer multiplicity action plus its selected-
-phase 12+78 character transport.
+Consequently the multiplicity-space normalizer action itself is not independent
+third-carrier data: after the actual normalizer lifts/conjugation laws on H and W
+are supplied, the Hom action is canonical.  Projective cocycle laws, absolute
+zeta orientation and same-object selected-phase character transport remain
+actual Monster inputs.
 -/
 
 namespace Synthesis.MonsterRepresentationPostRecognitionEverything
@@ -93,11 +81,14 @@ structure Boundary where
   tensorFiniteCopiesCompilerAvailable : Bool
   postIsotypyTensorEquivalenceAvailable : Bool
   tensorEquivalenceIsMonsterSpecificInput : Bool
+  inducedHomNormalizerActionAvailable : Bool
+  independentMultiplicityNormalizerActionIsMonsterSpecificInput : Bool
   actualMonsterSameObjectInputsProducedHere : Bool
   actualMonsterInvariantSubspaceProducedHere : Bool
   actualCentralLinearOperatorProducedHere : Bool
   actualWholeCharacterTransportProducedHere : Bool
-  actualSuzukiNormalizerActionProducedHere : Bool
+  actualNormalizerLiftsOnHandWProducedHere : Bool
+  actualProjectiveCocycleLawsProducedHere : Bool
   actualSuzukiMultiplicityCharacterTransportProducedHere : Bool
   absoluteZetaOrientationProducedHere : Bool
   deriving Repr
@@ -131,11 +122,14 @@ def canonicalBoundary : Boundary where
   tensorFiniteCopiesCompilerAvailable := true
   postIsotypyTensorEquivalenceAvailable := true
   tensorEquivalenceIsMonsterSpecificInput := false
+  inducedHomNormalizerActionAvailable := true
+  independentMultiplicityNormalizerActionIsMonsterSpecificInput := false
   actualMonsterSameObjectInputsProducedHere := false
   actualMonsterInvariantSubspaceProducedHere := false
   actualCentralLinearOperatorProducedHere := false
   actualWholeCharacterTransportProducedHere := false
-  actualSuzukiNormalizerActionProducedHere := false
+  actualNormalizerLiftsOnHandWProducedHere := false
+  actualProjectiveCocycleLawsProducedHere := false
   actualSuzukiMultiplicityCharacterTransportProducedHere := false
   absoluteZetaOrientationProducedHere := false
 

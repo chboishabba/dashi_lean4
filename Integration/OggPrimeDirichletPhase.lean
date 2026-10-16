@@ -83,24 +83,17 @@ and
 
 `K_pq = mean p^(i gamma) * conj(q^(i gamma))`.
 
-No empirical values are hard-coded here.
+No empirical values are hard-coded here.  The unnormalised sums are primitive
+so no nonempty/division side condition is hidden in this structural mirror.
 -/
 
-/-- Unnormalised finite first moment.  The empirical producer normalises by
-sample cardinality; keeping the sum primitive avoids a nonempty/division side
-condition in the structural mirror. -/
+/-- Unnormalised finite first moment. -/
 def phaseMomentSum (samples : Finset ℝ) (p : ℕ) : ℂ :=
   ∑ t in samples, dirichletRotor t p
 
-/-- Unnormalised Hermitian pair kernel. -/
+/-- Unnormalised Hermitian pair-kernel expression. -/
 def phasePairKernelSum (samples : Finset ℝ) (p q : ℕ) : ℂ :=
   ∑ t in samples, dirichletRotor t p * Complex.conj (dirichletRotor t q)
-
-/-- Diagonal pair-kernel sum equals sample cardinality because every rotor has
-unit modulus. -/
-theorem phasePairKernelSum_diag (samples : Finset ℝ) (p : ℕ) :
-    phasePairKernelSum samples p p = (samples.card : ℂ) := by
-  simp [phasePairKernelSum, dirichletRotor, Complex.ext_iff, Real.cos_sq_add_sin_sq]
 
 /-! ## Claim-strength / attribution firewall -/
 

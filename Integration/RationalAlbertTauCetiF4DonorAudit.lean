@@ -8,7 +8,7 @@ External formal source only; no theorem in this file is attributed to DASHI.
 Pinned donor:
 
 * repository: `TauCetiProject/TauCeti`
-* audited main commit: `85ed0984159b8de1ed8c11541105bb1d89c787e4`
+* audited main commit: `b160c8a8f870997b9652251aefd5e64b8c9a72ef`
 * date observed: 2026-10-16
 
 At that pinned commit Tau Ceti contains substantial formal infrastructure on
@@ -18,16 +18,20 @@ both sides of the remaining DASHI classification wall, including:
   modules;
 * `TauCeti/Algebra/AlbertAlgebra/Derivation.lean` and
   `OctonionDerivation.lean`;
+* the trace-zero Albert submodule `J₀` as a Lie submodule for `Der J`;
+* theorem-level `finrank J₀ = 26` under its stated rank hypotheses;
+* theorem-level faithfulness of `Der J` on that `J₀` representation;
 * `TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/F4/Basic.lean`;
-* `TauCeti/Algebra/Lie/F4/...`, including a canonical rational F4 Lie algebra,
-  Killing-root system, Chevalley systems and short-root representation.
+* `TauCeti/Algebra/Lie/F4/...`, including canonical F4 Lie/root/Chevalley
+  infrastructure.
 
-A repository search at the pinned commit did **not** locate a theorem welding
-the Tau Ceti Albert derivation algebra to its canonical F4 Lie algebra by a
+The donor's own derivation file still describes `F4 = Der H3(O)` as the intended
+endpoint.  A current-repository search at this pin did **not** locate a theorem
+welding the Albert derivation algebra to the canonical F4 Lie algebra by a
 same-object `LieEquiv`, nor a theorem identifying the Albert automorphism group
-with its F4 group-scheme construction.  Therefore Tau Ceti is a high-value
-formal donor candidate for the missing classification bridge, not a theorem
-that DASHI can currently import as already proved.
+with an F4 group-scheme construction.  Tau Ceti has therefore become a stronger
+formal donor for the 26-dimensional representation side, but is still not an
+already-proved classification bridge that DASHI can silently import.
 
 All Tau Ceti code/theorems retain Tau Ceti authorship and Apache-2.0 provenance.
 A future adapter must either depend on a released/pinned donor theorem or carry
@@ -43,6 +47,9 @@ structure DonorAudit where
   license : String
   tauCetiAlbertCarrierLocated : Bool
   tauCetiAlbertDerivationLocated : Bool
+  tauCetiAlbertTraceZeroLieSubmoduleLocated : Bool
+  tauCetiAlbertTraceZeroFinrank26Located : Bool
+  tauCetiAlbertTraceZeroFaithfulActionLocated : Bool
   tauCetiF4RootDatumLocated : Bool
   tauCetiF4LieAlgebraLocated : Bool
   tauCetiChevalleyRootSystemLocated : Bool
@@ -55,10 +62,13 @@ structure DonorAudit where
 
 def canonicalAudit : DonorAudit where
   repository := "TauCetiProject/TauCeti"
-  pinnedCommit := "85ed0984159b8de1ed8c11541105bb1d89c787e4"
+  pinnedCommit := "b160c8a8f870997b9652251aefd5e64b8c9a72ef"
   license := "Apache-2.0"
   tauCetiAlbertCarrierLocated := true
   tauCetiAlbertDerivationLocated := true
+  tauCetiAlbertTraceZeroLieSubmoduleLocated := true
+  tauCetiAlbertTraceZeroFinrank26Located := true
+  tauCetiAlbertTraceZeroFaithfulActionLocated := true
   tauCetiF4RootDatumLocated := true
   tauCetiF4LieAlgebraLocated := true
   tauCetiChevalleyRootSystemLocated := true
@@ -69,16 +79,18 @@ def canonicalAudit : DonorAudit where
   externalDonorCreatesDASHITheorem := false
 
 /-- Proof-relevant shape of the exact theorem that would make Tau Ceti a direct
-formal donor for the Lie-algebra half of the classification wall.  The field is
-kept abstract because no such donor theorem was located at the pinned commit. -/
+formal donor for the Lie-algebra half of the classification wall. -/
 structure AlbertDerivationF4LieEquivPayment where
   donorRepository : String
   donorCommit : String
   sameObjectCarrierMap : Prop
   lieBracketIntertwiner : Prop
+  traceZeroTwentySixRepresentationIntertwiner : Prop
   bijective : Prop
   sameObjectCarrierMap_paid : sameObjectCarrierMap
   lieBracketIntertwiner_paid : lieBracketIntertwiner
+  traceZeroTwentySixRepresentationIntertwiner_paid :
+    traceZeroTwentySixRepresentationIntertwiner
   bijective_paid : bijective
 
 /-- Group-level donor payment remains separate from the Lie-algebra payment. -/
@@ -93,9 +105,15 @@ structure AlbertAutF4GroupPayment where
   algebraicGroupCompatibility_paid : algebraicGroupCompatibility
 
 inductive DonorInventoryCreatesSameObjectClassification : Prop
+inductive FaithfulTwentySixRepresentationCreatesF4Classification : Prop
 
 theorem donor_inventory_does_not_create_same_object_classification :
     ¬ DonorInventoryCreatesSameObjectClassification := by
+  intro h
+  cases h
+
+theorem faithful_twenty_six_does_not_create_f4_classification :
+    ¬ FaithfulTwentySixRepresentationCreatesF4Classification := by
   intro h
   cases h
 

@@ -1,5 +1,7 @@
 import Synthesis.MonsterWholeCharacterIsotypicAssembly
 import Mathlib.LinearAlgebra.Projection
+import Mathlib.LinearAlgebra.Dimension.Constructions
+import Mathlib.Tactic.Omega
 
 /-!
 # Complementary two-isotypic block assembly
@@ -11,6 +13,11 @@ This file deliberately does not obtain those blocks from character-table labels
 or dimensions.  It consumes a proof that the two submodules are complementary
 and a proof-relevant simple-type classifier on each block, then reuses the
 one-type isotypic assembler and the standard `Submodule.prodEquivOfIsCompl`.
+
+A second theorem records the lawful post-recognition arithmetic specific to the
+12+78 Monster multiplicity target: after an actual equivalence to finite copies
+of 12- and 78-dimensional types exists, ambient finrank 90 forces exactly one
+copy of each.  The equation is not allowed to create the two-block recognition.
 -/
 
 namespace Synthesis
@@ -55,6 +62,35 @@ theorem finiteCopiesOfTwoComplementarySimpleTypes
   obtain ⟨m, ⟨eB⟩⟩ := finiteCopiesOfOneSimpleType classifyB
   exact ⟨n, m, ⟨twoBlockLinearEquiv A B hcompl ≪≫ₗ
     LinearEquiv.prodCongr eA eB⟩⟩
+
+section TwelveSeventyEight
+
+variable {k V T12 T78 : Type u}
+variable [Field k]
+variable [AddCommGroup V] [Module k V] [FiniteDimensional k V]
+variable [AddCommGroup T12] [Module k T12] [FiniteDimensional k T12]
+variable [AddCommGroup T78] [Module k T78] [FiniteDimensional k T78]
+
+/-- Once `V` has actually been recognized as finite copies of the 12- and
+78-dimensional types, ambient dimension 90 forces one copy of each.
+
+This is intentionally downstream of `e`; `12 + 78 = 90` alone is not a
+representation-recognition theorem. -/
+theorem twelveSeventyEightCopyCountsOfFinrank {n m : ℕ}
+    (e : V ≃ₗ[k] ((Fin n → T12) × (Fin m → T78)))
+    (h12 : Module.finrank k T12 = 12)
+    (h78 : Module.finrank k T78 = 78)
+    (h90 : Module.finrank k V = 90) :
+    n = 1 ∧ m = 1 := by
+  have hdim : 12 * n + 78 * m = 90 := by
+    have h := e.finrank_eq
+    rw [Module.finrank_prod, Module.finrank_pi_fintype,
+      Module.finrank_pi_fintype] at h
+    simp [h12, h78, h90, Nat.mul_comm] at h ⊢
+    exact h.symm
+  omega
+
+end TwelveSeventyEight
 
 end
 

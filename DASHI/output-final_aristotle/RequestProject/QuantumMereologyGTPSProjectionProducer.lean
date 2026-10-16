@@ -28,11 +28,9 @@ open scoped BigOperators
 
 abbrev HSSpace (n : Nat) := EuclideanSpace Complex (Fin n × Fin n)
 
-/-- Flatten a matrix into the canonical finite L2/Euclidean carrier. -/
 def toHS {n : Nat} (X : GTPSShortTime2026.MatrixSpace n) : HSSpace n :=
   WithLp.toLp 2 (fun p : Fin n × Fin n => X p.1 p.2)
 
-/-- Unflatten the Euclidean carrier back to a matrix. -/
 def fromHS {n : Nat} (x : HSSpace n) : GTPSShortTime2026.MatrixSpace n :=
   fun i j => WithLp.ofLp x (i, j)
 
@@ -94,7 +92,8 @@ def localPlusCommutantSubmodule {n : Nat}
     ext i j
     have hxij := congrFun (congrFun hx i) j
     have hyij := congrFun (congrFun hy i) j
-    simpa [fromHS, add_assoc, add_left_comm, add_comm] using congrArg₂ (· + ·) hxij hyij
+    simpa [fromHS, add_assoc, add_left_comm, add_comm] using
+      congrArg₂ (· + ·) hxij hyij
   smul_mem' := by
     rintro c x ⟨A, hA, B, hB, hx⟩
     refine ⟨c • A, T.algebra.smul_mem c hA,
@@ -122,9 +121,11 @@ noncomputable def localPlusCommutantProjection {n : Nat}
     GTPSShortTime2026.LocalPlusCommutantProjection T := by
   classical
   let U := localPlusCommutantSubmodule T
-  letI : FiniteDimensional Complex U := Submodule.finiteDimensional_of_le (show U ≤ ⊤ from le_top)
+  letI : FiniteDimensional Complex U :=
+    Submodule.finiteDimensional_of_le (show U ≤ ⊤ from le_top)
   letI : CompleteSpace U := FiniteDimensional.complete Complex U
-  letI : U.HasOrthogonalProjection := Submodule.HasOrthogonalProjection.ofCompleteSpace U
+  letI : U.HasOrthogonalProjection :=
+    Submodule.HasOrthogonalProjection.ofCompleteSpace U
   refine
     { project := fun X => fromHS (U.starProjection (toHS X))
       imageLocalPlusCommutant := ?_
@@ -138,7 +139,7 @@ noncomputable def localPlusCommutantProjection {n : Nat}
     have hmem : toHS (A + B) ∈ U := by
       exact ⟨A, hA, B, hB, fromHS_toHS (A + B)⟩
     have hfix := U.starProjection_mem_subspace_eq_self ⟨toHS (A + B), hmem⟩
-    exact congrArg fromHS hfix
+    simpa using congrArg fromHS hfix
   · intro X A hA B hB
     rw [hsInner_eq_inner_toHS]
     have hmem : toHS (A + B) ∈ U := by
@@ -153,9 +154,11 @@ noncomputable def algebraProjection {n : Nat}
     GTPSShortTime2026.AlgebraProjection T := by
   classical
   let U := algebraSubmodule T
-  letI : FiniteDimensional Complex U := Submodule.finiteDimensional_of_le (show U ≤ ⊤ from le_top)
+  letI : FiniteDimensional Complex U :=
+    Submodule.finiteDimensional_of_le (show U ≤ ⊤ from le_top)
   letI : CompleteSpace U := FiniteDimensional.complete Complex U
-  letI : U.HasOrthogonalProjection := Submodule.HasOrthogonalProjection.ofCompleteSpace U
+  letI : U.HasOrthogonalProjection :=
+    Submodule.HasOrthogonalProjection.ofCompleteSpace U
   refine
     { project := fun X => fromHS (U.starProjection (toHS X))
       imageAlgebra := ?_
@@ -166,9 +169,9 @@ noncomputable def algebraProjection {n : Nat}
   · intro A hA
     have hmem : toHS A ∈ U := by simpa using hA
     have hfix := U.starProjection_mem_subspace_eq_self ⟨toHS A, hmem⟩
-    exact congrArg fromHS hfix
+    simpa using congrArg fromHS hfix
   · intro X A hA
-    rw [GTPSShortTime2026.hsInner_eq_inner_toHS]
+    rw [hsInner_eq_inner_toHS]
     have hmem : toHS A ∈ U := by simpa using hA
     have horth := Submodule.starProjection_inner_eq_zero
       (K := U) (toHS X) (toHS A) hmem
@@ -184,7 +187,8 @@ noncomputable def canonicalShortTimeScramblingSq {n : Nat}
 /-- Fully instantiated finite algebra distance between two source g-TPSs. -/
 noncomputable def canonicalAlgebraDistanceSq {n : Nat} (hn : 0 < n)
     (A B : GTPSShortTime2026.SourceGTPS n) : Real :=
-  GTPSShortTime2026.algebraDistanceSq hn (algebraProjection A) (algebraProjection B)
+  GTPSShortTime2026.algebraDistanceSq hn
+    (algebraProjection A) (algebraProjection B)
 
 structure Boundary where
   hilbertSchmidtEuclideanCarrierPaid : Bool := true

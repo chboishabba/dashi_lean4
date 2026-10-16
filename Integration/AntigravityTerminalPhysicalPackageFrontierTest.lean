@@ -19,6 +19,8 @@ example : p1IndependentE4DecayEstimateRequired = false := rfl
 example : p1IndependentTerminalLawProjectsRequired = false := rfl
 example : acceptedMeasuredGAuthorityStillOpen = false := rfl
 example : acceptedPhysicalEinsteinCouplingAvailable = true := rfl
+example : requiredStressLengthSquaredIntervalAlgebraOwned = true := rfl
+example : rationalPointDiagnosticPromotesMeasuredKappaToExact = false := rfl
 example : stressLengthSquaredScaleStillOpen = true := rfl
 example : commonGravityCalibrationPackageStillRequired = true := rfl
 example : matchedExperimentPackageStillRequired = true := rfl

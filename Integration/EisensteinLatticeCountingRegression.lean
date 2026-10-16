@@ -10,6 +10,9 @@ import Integration.EisensteinAssociateClassCountExact
 import Integration.EisensteinSixUnitOrbitExact
 import Integration.EisensteinGeometricRepresentationFormulaExact
 import Integration.EisensteinDirichletSeriesExact
+import Integration.EisensteinJZeroCMEndomorphismExact
+import Integration.EisensteinJZeroCMConcreteExact
+import Integration.EisensteinCMOrderActionExact
 
 namespace Dashi.EisensteinLatticeCountingRegression
 
@@ -71,5 +74,33 @@ example (s : ℂ) (hs : 1 < s.re) :
     LSeries eisensteinGeometricCoefficient s
       = 6 * riemannZeta s * chiMinus3LSeries s :=
   eisensteinGeometricLSeries_factorization s hs
+
+------------------------------------------------------------------------
+-- Same-carrier arithmetic -> j=0 CM action regression.
+------------------------------------------------------------------------
+
+example :
+    Integration.EisensteinJZeroCMConcreteExact.eisensteinOmega ^ 3 = 1 :=
+  Integration.EisensteinJZeroCMConcreteExact.eisensteinOmega_cube
+
+example :
+    Integration.EisensteinJZeroCMConcreteExact.eisensteinJZeroCurve.j = 0 :=
+  Integration.EisensteinJZeroCMConcreteExact.eisensteinJZeroCurve_j_eq_zero
+
+example : EisensteinQA →+*
+    AddMonoid.End
+      Integration.EisensteinJZeroCMConcreteExact.eisensteinJZeroCurve.Point :=
+  Integration.EisensteinCMOrderActionExact.eisensteinOrderAction
+
+example :
+    Integration.EisensteinCMOrderActionExact.eisensteinOrderAction
+        (QuadraticAlgebra.omega : EisensteinQA) =
+      Integration.EisensteinJZeroCMConcreteExact.eisensteinCMEndomorphism :=
+  Integration.EisensteinCMOrderActionExact.eisensteinOrderAction_omega
+
+/-- The new arithmetic/CM bridge does not manufacture Hecke or elliptic-L authority. -/
+example : Integration.EisensteinCMOrderActionExact.heckeCharacterPaid = false := rfl
+example : Integration.EisensteinCMOrderActionExact.localEulerFactorAgreementPaid = false := rfl
+example : Integration.EisensteinCMOrderActionExact.ellipticLSeriesAgreementPaid = false := rfl
 
 end Dashi.EisensteinLatticeCountingRegression

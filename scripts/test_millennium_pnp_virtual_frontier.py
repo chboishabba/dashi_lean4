@@ -9,7 +9,7 @@ CENSUS = ROOT / "MillenniumExternal" / "TerminalCensus.lean"
 
 
 class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
-    def test_resolution_tracks_live_compiler_and_return_boundary(self):
+    def test_resolution_tracks_live_compiler_counter_and_return_boundary(self):
         text = RESOLUTION.read_text(encoding="utf-8")
         for donor in (
             "PNotEqualsNPCodedLiteralSelfQuotationPositiveBudgetNoGoExact.literalStructuralSelfQuotationPositiveBudgetImpossible",
@@ -20,6 +20,9 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
             "CodedFiniteStandardLinkedRunSimulationExact.simulateCodedCandidateExecution",
             "CodedFiniteStandardLinkedRunSimulationExact.appendLinkedCandidatePhase",
             "CodedFiniteStandardReturnLinkFreshnessExact.residentCandidateRuleBlocksReturnLink",
+            "PNotEqualsNPXORCountdownMicrocodeExact.xorRecoverLeft",
+            "PNotEqualsNPXORCountdownMicrocodeExact.sameXorOutputDifferentBorrow",
+            "PNotEqualsNPXORCountdownMicrocodeExact.counterCompilationRemains",
             "ConcreteTapeStandardClockExact.concreteStandardClockReceipt",
         ):
             self.assertIn(donor, text)
@@ -31,19 +34,19 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         self.assertIn("resolvedSourceTerm := none", lane)
         self.assertIn("newMathematicsPermitted := false", lane)
 
-    def test_frontier_names_generator_and_quiescent_return_as_first_unpaid(self):
+    def test_frontier_names_counter_handoff_and_final_budget(self):
         text = FRONTIER.read_text(encoding="utf-8")
         start = text.index("problem := .pVersusNP")
         end = text.index("problem := .riemann", start)
         lane = text[start:end]
         for marker in (
-            "index-only ABI",
-            "finite local kernel tables",
-            "exact linked candidate middle run",
-            "fresh dispatch key",
-            "clock/phase wrapper",
-            "quiescent",
-            "same Cook budget",
+            "binary countdown microcode",
+            "XOR data update",
+            "borrow propagation",
+            "unique exact-budget handoff pulse",
+            "fresh phase namespace",
+            "self-consistent Cook budget T*",
+            "IIT phi is not hardness evidence",
         ):
             self.assertIn(marker, lane)
         self.assertIn("state := .proofResolutionPending", lane)
@@ -60,7 +63,9 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
             "CodedFiniteStandardLinkedStructuralSimulationExact",
             "CodedFiniteStandardLinkedRunSimulationExact",
             "CodedFiniteStandardReturnLinkFreshnessExact",
-            "ConcreteTapeStandardClockExact",
+            "PNotEqualsNPXORCountdownMicrocodeExact",
+            "bit+borrow tape-counter",
+            "final self-consistent Cook budget T*",
         ):
             self.assertIn(marker, lane)
 

@@ -32,11 +32,15 @@ private def standardResolutionOps : List ResolutionOperation :=
   , .simplifyExistingEquality, .applyExistingEquivalence, .sameObjectTransport
   , .composeExistingTheorems, .kernelCheck ]
 
-/-- P≠NP follows the live Agda #1129 compiler/resource recut. -/
 def pVersusNPResolution : ProofResolutionLane :=
   { problem := .pVersusNP
     producerSearch :=
-      [ "GuardedCookFiniteBitTableSelfCodeNoGoExact.tableBakedGeneratorCannotBeDescriptionCode"
+      [ "CodedStandardCanonicalInputExact.canonicalStandardStart"
+      , "CodedStandardHaltingPolynomialDeciderExact.CodedStandardHaltingPolynomialDecider"
+      , "CodedStandardHaltingPolynomialDeciderExact.actualStepsOperationallyUnique"
+      , "CodedStandardHaltingPolynomialDeciderExact.GuardedExecutionReceipt"
+      , "PNotEqualsNPHaltingCodedCandidateBridgeExact.haltingWitnessToPolynomiallyClockedCandidate"
+      , "GuardedCookFiniteBitTableSelfCodeNoGoExact.tableBakedGeneratorCannotBeDescriptionCode"
       , "PNotEqualsNPCodedLiteralResourceCompilerAnchoredNoGoExact.anchoredLiteralStructuralResourceImpossible"
       , "PNotEqualsNPLiteralSelfCodeGrowthNoGoExact.strictCodeGrowthKillsLiteralFixedPoint"
       , "PNotEqualsNPKleeneSpecializationFixedPointExact.fixedPointProgramCorrect"
@@ -136,11 +140,11 @@ theorem pnp_rh_bsd_still_require_donor_resolution :
 
 theorem pnp_resolution_uses_behavioral_self_fix_maxcut :
     pVersusNPResolution.producerSearch.contains
+      "CodedStandardHaltingPolynomialDeciderExact.GuardedExecutionReceipt" = true ∧
+    pVersusNPResolution.producerSearch.contains
       "GuardedCookFiniteBitTableSelfCodeNoGoExact.tableBakedGeneratorCannotBeDescriptionCode" = true ∧
     pVersusNPResolution.producerSearch.contains
       "PNotEqualsNPKleeneSpecializationFixedPointExact.fixedPointProgramCorrect" = true ∧
-    pVersusNPResolution.producerSearch.contains
-      "GuardedCookFiniteBitTableGeneratorExact.cookBitAtQueryAnswerExact" = true ∧
     pVersusNPResolution.producerSearch.contains
       "ConcreteTapeCookLevinStateWidthLowerExact.stateWidthBelowGuardedCookBitCode" = true ∧
     pVersusNPResolution.producerSearch.contains

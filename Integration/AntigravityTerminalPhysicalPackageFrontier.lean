@@ -29,10 +29,11 @@ all-stress cylinder encodings, independent E4 observable selection/decay,
 B0/B3 antigravity-specific bridges, and the downstream rest/boost/trace laws
 are not separately scheduled.
 
-Agda has also paid the measured-G authority subleaf with an attributed
-NIST/CODATA-2022 admission and an accepted physical Einstein-coupling receipt.
-The remaining calibration subleaf is the same-state source/device
-stress*length^2 scale plus the affine/common renormalization mapping.
+P2 is likewise algebraically reduced: accepted measured G is paid, and Agda now
+owns the rational diagnostic endpoint algebra for the required stress*length^2
+product over a kappa enclosure.  That diagnostic does not exactify measured
+kappa.  The remaining P2 physical datum is the same-apparatus source/device
+stress*length^2 product plus the affine/common renormalization mapping.
 -/
 
 def typedLocalCTerminalPhysicalPackageStillRequired : Bool :=
@@ -68,6 +69,12 @@ def acceptedMeasuredGAuthorityStillOpen : Bool :=
 
 def acceptedPhysicalEinsteinCouplingAvailable : Bool :=
   Integration.AntigravityR136StaticDifferentialReuse.acceptedPhysicalEinsteinCouplingAvailable
+
+/-- Scheduling parity with the Agda interval theorem; not a Lean re-proof of the
+Agda rational enclosure theorem. -/
+def requiredStressLengthSquaredIntervalAlgebraOwned : Bool := true
+
+def rationalPointDiagnosticPromotesMeasuredKappaToExact : Bool := false
 
 def stressLengthSquaredScaleStillOpen : Bool :=
   sourceStressLengthSquaredScaleStillRequired

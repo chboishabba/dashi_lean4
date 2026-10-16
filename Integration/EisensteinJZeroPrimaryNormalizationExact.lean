@@ -230,7 +230,7 @@ theorem splitPrime_primary_unit_unique
       V = (V * U⁻¹) * U := by simp
       _ = w * U := by rfl
       _ = U := by rw [hwUnit]; simp
-  exact congrArg Units.val hVU
+  exact (congrArg Units.val hVU).symm
 
 /-- Existence and uniqueness packaged as one exact six-unit normalization
 statement. -/

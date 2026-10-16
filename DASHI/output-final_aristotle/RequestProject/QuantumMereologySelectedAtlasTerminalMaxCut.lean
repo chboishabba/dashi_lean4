@@ -1,5 +1,7 @@
 import RequestProject.QuantumMereologyHeterogeneousFiniteAtlas
 import RequestProject.QuantumMereologyFiniteSubsetMarginal
+import RequestProject.QuantumMereologyPartialTraceCoherence
+import RequestProject.QuantumMereologyPartialTraceCoherenceRegression
 import RequestProject.QuantumMereologyGTPSShortTime2026
 import RequestProject.QuantumMereologyPointerObjectivity2026
 import RequestProject.QuantumMereologySelectionConvergence2026
@@ -27,6 +29,7 @@ structure Boundary where
   heterogeneousCanonicalPairChartsPaid : Bool := true
   arbitraryFiniteSubsetMarginalsPaid : Bool := true
   pairAndSubsetDensityPreservationPaid : Bool := true
+  iteratedProductPartialTraceAssociativityPaid : Bool := true
 
   -- Source-facing g-TPS recut/formulas.
   sourceGeneralGTPSCarrierPaid : Bool := true
@@ -72,6 +75,9 @@ theorem heterogeneous_pair_charts_paid :
 theorem arbitrary_subset_marginals_paid :
     canonicalBoundary.arbitraryFiniteSubsetMarginalsPaid = true := rfl
 
+theorem partial_trace_associativity_paid :
+    canonicalBoundary.iteratedProductPartialTraceAssociativityPaid = true := rfl
+
 theorem source_gtps_short_time_formula_paid :
     canonicalBoundary.sourceGTPSShortTimeFormulaPaid = true := rfl
 
@@ -85,7 +91,7 @@ theorem same_state_holographic_weld_open :
 def dashiSelectedAtlasTerminalReceipt : AttributionReceipt where
   role := .crossModuleInference
   owner := "DASHI Lean"
-  claim := "Records that heterogeneous finite coordinate pair charts, arbitrary finite-subset same-state marginals, the corrected source-facing operator-algebra g-TPS carrier, squared short-time scrambling formula, squared algebra-distance formula, and finite score minimization are source-written in their dedicated owners. It keeps arbitrary selected Hilbert/g-TPS attachment, nested marginal coherence, physical pointer identification, source projector production, algebra susceptibility, MI metric geometry, holography and spacetime dynamics explicitly unpaid."
+  claim := "Records that heterogeneous finite coordinate pair charts, arbitrary finite-subset same-state marginals, ordinary finite product partial-trace associativity, the corrected source-facing operator-algebra g-TPS carrier, squared short-time scrambling formula, squared algebra-distance formula, and finite score minimization are source-written in their dedicated owners. It keeps arbitrary selected Hilbert/g-TPS attachment, dependent nested marginal coherence, physical pointer identification, source projector production, algebra susceptibility, MI metric geometry, holography and spacetime dynamics explicitly unpaid."
 
 end SelectedAtlasTerminalMaxCut
 end QuantumMereology

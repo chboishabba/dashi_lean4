@@ -100,7 +100,7 @@ inductive QISplitRootReceiptCreatesQFormClassification : Prop
 inductive RealPlaceReceiptCreatesQFormClassification : Prop
 inductive DonorInventoryCreatesQFormClassification : Prop
 
- theorem source_receipt_does_not_create_classification :
+theorem source_receipt_does_not_create_classification :
     ¬ SourceReceiptCreatesClassification := by intro h; cases h
 
 theorem qi_split_root_receipt_does_not_create_q_form_classification :

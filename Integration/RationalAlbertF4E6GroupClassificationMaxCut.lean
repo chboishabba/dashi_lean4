@@ -4,41 +4,28 @@ import Integration.RationalAlbertTauCetiF4DonorAudit
 import Integration.RationalAlbertClassicalF4SourceReceipt
 import Integration.RationalAlbertF4ClassificationInstantiation
 import Integration.RationalAlbertF4E6DescentClassification
+import Integration.RationalAlbertF4E6IrreducibleFrontier
 
 /-!
 # Terminal Albert / F4 / E6 group-classification max-cut
 
-This owner consolidates the strongest current endpoint while preserving theorem
-and attribution boundaries.
+The native rational-Albert programme has exhausted its internal algebraic leafs
+before global form/type naming.  On the literal `H₃(O_Q)` carrier the repository
+already owns the Jordan/cubic structure, positive rational octonion anisotropy,
+norm+unit rigidity, the same-action unit-stabilizer/Jordan-automorphism theorem,
+native Cartan/derivation structure, a Q(i) split-root chart, and an independent
+real-place compactness diagnostic.
 
-DASHI-owned/source-written on the literal rational Albert/octonion carrier:
+Those local/base-change facts do not themselves classify the original Q-form.
+The surviving endpoint has therefore been reduced to one dependent formal input:
+`FinalOriginalQClassificationInput`, consisting of an actual characteristic-zero
+Albert/F4/E6 classification theorem plus the proof-relevant SAME-object descent
+payment instantiating it on this native rational Albert object and actions.
 
-* native `H₃(O_Q)` Jordan algebra and cubic norm;
-* exact positive-eight-square octonion norm anisotropy over `Q` and resulting
-  no-zero-divisor theorem;
-* exact norm/unit rigidity;
-* same-action equivalence between unit-fixing cubic-norm symmetries and Jordan
-  automorphisms;
-* native Cartan / derivation infrastructure;
-* explicit firewall that the exact `Q(i)` root-space splitting chart is
-  scalar-extension data, not an original-Q-form classification;
-* a proof-relevant descent/classification adapter shape tying the native Q
-  object, Q(i) split chart and real-place diagnostic to one external/formal
-  classification theorem on the SAME Albert object.
-
-External theorem authority, retained as source receipts:
-
-* Petersson, "A Survey on Albert Algebras" (2017), Theorems 2.10, 2.12, 2.13;
-* Alsaody and Garibaldi--Petersson--Racine for modern group-scheme formulations;
-* Tau Ceti as a pinned external formal donor candidate with both Albert and
-  canonical-F4 infrastructure, but no located same-object Albert/F4 theorem at
-  the audited commit.
-
-The structural equation `Stab_Isom(N)(1) = Aut(J)` is already paid on the native
-carrier.  It is therefore not part of the surviving external classification
-payment.  What remains is the original-Q-form/type naming of the native
-`Der(J)`, `Aut(J)` and cubic norm-isometry/structure group, together with a
-proof-relevant same-object descent adapter.
+Petersson, Alsaody and Garibaldi--Petersson--Racine retain external theorem
+authority.  Tau Ceti remains an audited formal-donor inventory; no same-object
+classification theorem was located at the audited pin.  Source receipts and
+matching local invariants cannot inhabit the final input.
 -/
 
 namespace Integration.RationalAlbertF4E6GroupClassificationMaxCut
@@ -49,6 +36,7 @@ open Integration.RationalAlbertTauCetiF4DonorAudit
 open Integration.RationalAlbertClassicalF4SourceReceipt
 open Integration.RationalAlbertF4ClassificationInstantiation
 open Integration.RationalAlbertF4E6DescentClassification
+open Integration.RationalAlbertF4E6IrreducibleFrontier
 
 structure Boundary where
   nativeAlbertPaid : Bool
@@ -60,6 +48,8 @@ structure Boundary where
   exactQIRootGradingReceiptPresent : Bool
   realPlaceDiagnosticPresent : Bool
   sameObjectDescentAdapterTyped : Bool
+  terminalResidualReducedToSingleDependentWitness : Bool
+  finalClassificationInputInhabited : Bool
   sameObjectDescentAdapterInhabited : Bool
   externalF4ClassificationSourceLocated : Bool
   externalE6ClassificationSourceLocated : Bool
@@ -81,6 +71,8 @@ def canonicalBoundary : Boundary where
   exactQIRootGradingReceiptPresent := true
   realPlaceDiagnosticPresent := true
   sameObjectDescentAdapterTyped := true
+  terminalResidualReducedToSingleDependentWitness := true
+  finalClassificationInputInhabited := false
   sameObjectDescentAdapterInhabited := false
   externalF4ClassificationSourceLocated := true
   externalE6ClassificationSourceLocated := true
@@ -98,9 +90,7 @@ theorem native_unit_stabilizer_iff_jordan_automorphism
     NormUnitMembership g ↔ JordanMembership g :=
   normUnitMembership_iff_jordanMembership g
 
-/-- Historical terminal socket retained for downstream compatibility.  New work
-should prefer `OriginalQAlbertDescentPayment`, which additionally carries the
-same-object local/base-change/descent data. -/
+/-- Historical terminal socket retained for downstream compatibility. -/
 structure OriginalQFormClassificationPayment where
   classification : CharacteristicZeroAlbertClassificationTheorem
   adapter : ExternalFormalClassificationAdapter classification
@@ -114,6 +104,30 @@ def classificationPaymentOfDescent
   { classification := classification
   , adapter := payment.formalClassificationAdapter
   }
+
+/-- The single final dependent witness compiles directly to the historical
+terminal socket.  Thus no second independent classification payment remains
+after `FinalOriginalQClassificationInput` is inhabited. -/
+def classificationPaymentOfFinalInput
+    (input : FinalOriginalQClassificationInput) :
+    OriginalQFormClassificationPayment :=
+  classificationPaymentOfDescent input.payment
+
+/-- The same one witness simultaneously exposes all three terminal conclusions. -/
+theorem final_input_pays_f4_derivation
+    (input : FinalOriginalQClassificationInput) :
+    input.classification.RationalDerivationFormOfF4 :=
+  final_derivation_f4 input
+
+theorem final_input_pays_f4_automorphism
+    (input : FinalOriginalQClassificationInput) :
+    input.classification.AutomorphismGroupTypeF4 :=
+  final_automorphism_f4 input
+
+theorem final_input_pays_e6_cubic_structure
+    (input : FinalOriginalQClassificationInput) :
+    input.classification.CubicStructureGroupTypeE6 :=
+  final_cubic_structure_e6 input
 
 inductive SourceReceiptCreatesClassification : Prop
 inductive QISplitRootReceiptCreatesQFormClassification : Prop

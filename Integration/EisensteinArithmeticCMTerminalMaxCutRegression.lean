@@ -1,11 +1,11 @@
 import Integration.EisensteinArithmeticCMTerminalMaxCutExact
 
 /-!
-Terminal regression after the split/local max-cut.
+Terminal regression after the finite/local max-cut.
 
-It pins both the newly paid local chain and the still-unpaid global/geometric
-promotions.  The bad-prime-three literal reduction is paid, while its
-reduction-type/local-L-factor interpretation remains explicitly unpaid.
+It pins paid good-prime closure, both literal bad-prime reductions, and the
+remaining global/geometric promotions.  External 36a1 metadata is provenance,
+not proof authority.
 -/
 
 namespace Integration.EisensteinArithmeticCMTerminalMaxCutRegression
@@ -22,6 +22,7 @@ example : inertPrimeSamePrimeWeldPaid terminalStatus = true := rfl
 example : inertPrimeTraceZeroPaid terminalStatus = true := rfl
 example : inertPrimeLocalEulerShapePaid terminalStatus = true := rfl
 
+example : arbitraryOrderThreeKernelEqualsCubesPaid terminalStatus = true := rfl
 example : canonicalCubeFibreCharacterCertificatePaid terminalStatus = true := rfl
 example : genericCubicJacobiTraceCompilerPaid terminalStatus = true := rfl
 example : splitJacobiSixthCyclotomicIntegralityPaid terminalStatus = true := rfl
@@ -34,11 +35,15 @@ example : splitPrimeLocalEulerPolynomialPaid terminalStatus = true := rfl
 example : splitPrimeSixUnitNormalizationPaid terminalStatus = true := rfl
 example : allGoodPrimeSameCurveLocalClassificationPaid terminalStatus = true := rfl
 
+example : external36a1MetadataReceiptRecorded terminalStatus = true := rfl
+example : badPrimeTwoLiteralReductionPaid terminalStatus = true := rfl
+example : badPrimeTwoSingularityPaid terminalStatus = true := rfl
+example : badPrimeTwoPointCountPaid terminalStatus = true := rfl
 example : badPrimeThreeLiteralReductionPaid terminalStatus = true := rfl
 example : badPrimeThreeSingularityPaid terminalStatus = true := rfl
 example : badPrimeThreePointCountPaid terminalStatus = true := rfl
-example : badPrimeReductionTypePaid terminalStatus = false := rfl
-example : badPrimeEllipticLocalFactorPaid terminalStatus = false := rfl
+example : badPrimeReductionTypesPaid terminalStatus = false := rfl
+example : badPrimeEllipticLocalFactorsPaid terminalStatus = false := rfl
 
 example : faithfulGeometricCMEmbeddingPaid terminalStatus = false := rfl
 example : endomorphismDegreeEqualsNormPaid terminalStatus = false := rfl
@@ -51,6 +56,6 @@ example : dirichletLocalFactorIdentifiedWithEllipticEulerFactor terminalStatus =
 example : arithmeticShellLSeriesIdentifiedWithEllipticLSeries terminalStatus = false := rfl
 
 example : firstGeometricBlocker terminalStatus = missingGeometricIsogenyDegreeCarrier := rfl
-example : firstGlobalArithmeticBlocker terminalStatus = missingBadPrimeReductionTypeAndLocalFactor := rfl
+example : firstGlobalArithmeticBlocker terminalStatus = missingBadPrimeReductionTypesAndLocalFactors := rfl
 
 end Integration.EisensteinArithmeticCMTerminalMaxCutRegression

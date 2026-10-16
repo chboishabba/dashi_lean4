@@ -25,21 +25,16 @@ Current Agda Pareto cut inside P1 has exactly TWO source-facing subpackages:
       encoded Wilson-admissible stress cylinder observable.
 
 Agda master already chooses that observable and supplies its positive-time and
-gauge-invariance proofs from the published Wilson application.  Those three
-presentation items are compiler-owned and are not independent P1 leaves.
-The bare Round109 pair has no observable evaluator, so A2 remains a genuine
-source-semantic same-object payment.
+gauge-invariance proofs from the published Wilson application. Those three
+presentation items are compiler-owned. The bare Round109 pair has no observable
+evaluator, so A2 remains a genuine source-semantic same-object payment.
 
-Primitive E1 derivative equivariance, arbitrary E24 meaning predicates,
-all-stress cylinder encodings, independent E4 observable selection/decay,
-B0/B3 antigravity-specific bridges, and the downstream rest/boost/trace laws
-are not separately scheduled.
-
-P2 is likewise algebraically reduced: accepted measured G is paid, and Agda now
-owns the rational diagnostic endpoint algebra for the required stress*length^2
-product over a kappa enclosure.  That diagnostic does not exactify measured
-kappa.  The remaining P2 physical datum is the same-apparatus source/device
-stress*length^2 product plus the affine/common renormalization mapping.
+P2 is sharper too. On the preferred typed-stress route the continued
+Local-C/Wightman vacuum rho feeds normalized static/differential geometry
+directly. The affine scalar source-normalization -> rho map is optional rather
+than mandatory. Accepted measured G is paid. The two remaining P2 physical
+leaves are a common cosmological renormalization convention and the
+same-apparatus stress*length^2 scale.
 -/
 
 def typedLocalCTerminalPhysicalPackageStillRequired : Bool :=
@@ -49,7 +44,6 @@ def preferredSharedWightmanTerminalAvailable : Bool := true
 
 def independentPinnedBoostTraceSplitRequired : Bool := false
 
-/-- Mirror only: Agda master owns the analysis; Lean records the scheduling cut. -/
 def p1OpaqueAnalyticEstimateCount : Nat := 0
 
 def p1RemainingSourceSubpackageCount : Nat := 2
@@ -58,7 +52,6 @@ def p1Q1PathDerivativeSemanticsAndEquivarianceStillRequired : Bool := true
 
 def p1PrimitiveE1DerivativeEquivarianceProjectRequired : Bool := false
 
-/-- Compatibility flag for the superseded E24 three-item schedule. -/
 def p1E24ObservableAndTwoAdmissibilityProofsStillRequired : Bool := false
 
 def p1E24SelectedObservableChoiceStillRequired : Bool := false
@@ -79,14 +72,21 @@ def p1IndependentE4DecayEstimateRequired : Bool := false
 
 def p1IndependentTerminalLawProjectsRequired : Bool := false
 
+/-- Scheduling mirror of the Agda direct-stress P2 reduction. -/
+def preferredP2ConsumesTypedStressDirectly : Bool := true
+
+def preferredP2AffineSourceNormalizationCalibrationRequired : Bool := false
+
+def preferredP2CommonCosmologicalRenormalizationStillRequired : Bool := true
+
+def preferredP2PhysicalLeafCount : Nat := 2
+
 def acceptedMeasuredGAuthorityStillOpen : Bool :=
   acceptedMeasuredGAuthorityStillRequired
 
 def acceptedPhysicalEinsteinCouplingAvailable : Bool :=
   Integration.AntigravityR136StaticDifferentialReuse.acceptedPhysicalEinsteinCouplingAvailable
 
-/-- Scheduling parity with the Agda interval theorem; not a Lean re-proof of the
-Agda rational enclosure theorem. -/
 def requiredStressLengthSquaredIntervalAlgebraOwned : Bool := true
 
 def rationalPointDiagnosticPromotesMeasuredKappaToExact : Bool := false
@@ -117,8 +117,6 @@ def independentTTFirstVariationPairingProjectRequired : Bool :=
 
 def typedTerminalInternallyNeedsBoostAndTraceContinuation : Bool := true
 
-/-- Compatibility export: the old combined accepted-G AND stress-length wording
-is no longer open because accepted-G is paid. -/
 def gravityCalibrationInternallyNeedsAcceptedGAndStressLengthSquared : Bool := false
 
 def gravityCalibrationInternallyNeedsStressLengthSquared : Bool :=

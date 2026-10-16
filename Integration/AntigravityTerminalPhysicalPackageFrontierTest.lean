@@ -11,7 +11,11 @@ example : p1OpaqueAnalyticEstimateCount = 0 := rfl
 example : p1RemainingSourceSubpackageCount = 2 := rfl
 example : p1Q1PathDerivativeSemanticsAndEquivarianceStillRequired = true := rfl
 example : p1PrimitiveE1DerivativeEquivarianceProjectRequired = false := rfl
-example : p1E24ObservableAndTwoAdmissibilityProofsStillRequired = true := rfl
+example : p1E24ObservableAndTwoAdmissibilityProofsStillRequired = false := rfl
+example : p1E24SelectedObservableChoiceStillRequired = false := rfl
+example : p1E24PositiveTimeAdmissibilityStillRequired = false := rfl
+example : p1E24GaugeInvariantAdmissibilityStillRequired = false := rfl
+example : p1E24PairToCanonicalObservableSemanticsStillRequired = true := rfl
 example : p1E24ArbitraryMeaningPredicateRequired = false := rfl
 example : p1AllStressCylinderEncodingRequired = false := rfl
 example : p1IndependentE4StressSelectionRequired = false := rfl

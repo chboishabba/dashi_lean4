@@ -1,0 +1,11 @@
+name = "LeanMillenniumPrizeProblems"
+source = "https://github.com/lean-dojo/LeanMillenniumPrizeProblems.git"
+commit = "603053dc267cf3efe422f438eb78098c0ececd6f"
+tree = "b7c2004c0e8cb192d3dc7d740551a2de04068b61"
+license = "Apache-2.0"
+upstream_lean_toolchain = "leanprover/lean4:v4.31.0"
+upstream_mathlib = "v4.31.0"
+mode = "immutable-source-vendor"
+
+# Hodge and Yang--Mills are statement_incomplete at this exact pin.
+# They are specification/audit inputs, not valid prize acceptance targets.

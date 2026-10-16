@@ -8,7 +8,7 @@ open Integration.AntigravityR136StaticDifferentialReuse
 Package-level mirror of the terminal Agda antigravity frontier.
 
 This is scheduling/parity only. Lean does not claim the Agda Local-C/Wightman
-terminal proof objects, Q1 source-path theorem, literal R109 cylinder observable,
+terminal proof objects, Q1 source-path theorem, A2 Round109-pair semantics,
 physical source scale, TT device identity or laboratory receipts.
 
 Mandatory for static and scalar differential response:
@@ -21,8 +21,14 @@ Only a propagating Schuetzhold/GW claim adds:
 
 Current Agda Pareto cut inside P1 has exactly TWO source-facing subpackages:
   Q1  actual BC2 path-derivative semantics + B4-equivariant source path;
-  E24 one literal selected R109 real cylinder observable plus positive-time and
-      gauge-invariance proofs.
+  A2  opaque Round109 source-native stress pair denotes the canonical Local-C
+      encoded Wilson-admissible stress cylinder observable.
+
+Agda master already chooses that observable and supplies its positive-time and
+gauge-invariance proofs from the published Wilson application.  Those three
+presentation items are compiler-owned and are not independent P1 leaves.
+The bare Round109 pair has no observable evaluator, so A2 remains a genuine
+source-semantic same-object payment.
 
 Primitive E1 derivative equivariance, arbitrary E24 meaning predicates,
 all-stress cylinder encodings, independent E4 observable selection/decay,
@@ -52,7 +58,16 @@ def p1Q1PathDerivativeSemanticsAndEquivarianceStillRequired : Bool := true
 
 def p1PrimitiveE1DerivativeEquivarianceProjectRequired : Bool := false
 
-def p1E24ObservableAndTwoAdmissibilityProofsStillRequired : Bool := true
+/-- Compatibility flag for the superseded E24 three-item schedule. -/
+def p1E24ObservableAndTwoAdmissibilityProofsStillRequired : Bool := false
+
+def p1E24SelectedObservableChoiceStillRequired : Bool := false
+
+def p1E24PositiveTimeAdmissibilityStillRequired : Bool := false
+
+def p1E24GaugeInvariantAdmissibilityStillRequired : Bool := false
+
+def p1E24PairToCanonicalObservableSemanticsStillRequired : Bool := true
 
 def p1E24ArbitraryMeaningPredicateRequired : Bool := false
 

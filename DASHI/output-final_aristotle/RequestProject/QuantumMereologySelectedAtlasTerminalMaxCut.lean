@@ -7,6 +7,8 @@ import RequestProject.QuantumMereologyEnvironmentReindexRegression
 import RequestProject.QuantumMereologyGTPSShortTime2026
 import RequestProject.QuantumMereologyGTPSProjectionProducer
 import RequestProject.QuantumMereologyGTPSProjectionProducerRegression
+import RequestProject.QuantumMereologyGTPSUnitaryMetric2026
+import RequestProject.QuantumMereologyGTPSUnitaryMetric2026Regression
 import RequestProject.QuantumMereologyPointerObjectivity2026
 import RequestProject.QuantumMereologySelectionConvergence2026
 
@@ -18,10 +20,12 @@ source-facing g-TPS tranches. It deliberately distinguishes:
 
 * finite coordinate theorems now paid by DASHI;
 * exact external-source formulas reconstructed over explicit source objects;
-* finite Hilbert--Schmidt projectors now derived from pinned mathlib rather
-  than treated as physical/source inputs;
+* finite Hilbert--Schmidt projectors derived from pinned mathlib rather than
+  treated as physical/source inputs;
+* the exact source unitary-family infinitesimal metric formula;
 * remaining same-object physical/Hilbert/operator-algebra attachments;
-* downstream information-geometry, holography and spacetime promotions.
+* downstream minimizer-pullback susceptibility, information geometry,
+  holography and spacetime promotions.
 
 No status flag below upgrades an external paper into local theorem authority.
 -/
@@ -45,6 +49,7 @@ structure Boundary where
   finiteSourceGTPSShortTimeScoreFullyInstantiated : Bool := true
   finiteSourceGTPSAlgebraDistanceFullyInstantiated : Bool := true
   finiteShortTimeSelectionCompilerPaid : Bool := true
+  sourceUnitaryFamilyMetricFormulaPaid : Bool := true
 
   -- Exact next state/TPS coherence leaves.
   arbitrarySelectedHilbertTPSToCoordinateAtlasPaid : Bool := false
@@ -62,8 +67,9 @@ structure Boundary where
   crossObjectivePhysicalConvergencePaid : Bool := false
 
   -- g-TPS source geometry still missing.
-  sourceRiemannianPullbackPaid : Bool := false
-  sourceAlgebraSusceptibilityPaid : Bool := false
+  minimizerMapPullbackDifferentiated : Bool := false
+  HamiltonianParameterMetricPaid : Bool := false
+  sourceAlgebraSusceptibilitySingularityPaid : Bool := false
   thermodynamicLimitMQPTPaid : Bool := false
 
   -- Information geometry.
@@ -98,6 +104,9 @@ theorem source_gtps_short_time_formula_paid :
 theorem finite_source_gtps_projectors_paid :
     canonicalBoundary.orthogonalProjectionProducerForFiniteSourceAlgebrasPaid = true := rfl
 
+theorem source_unitary_family_metric_formula_paid :
+    canonicalBoundary.sourceUnitaryFamilyMetricFormulaPaid = true := rfl
+
 theorem nested_marginal_coherence_open :
     canonicalBoundary.nestedMarginalCoherencePaid = false := rfl
 
@@ -108,7 +117,7 @@ theorem same_state_holographic_weld_open :
 def dashiSelectedAtlasTerminalReceipt : AttributionReceipt where
   role := .crossModuleInference
   owner := "DASHI Lean"
-  claim := "Records that heterogeneous finite coordinate pair charts, arbitrary finite-subset same-state marginals, ordinary finite product partial-trace associativity, environment-relabeling invariance, the corrected source-facing operator-algebra g-TPS carrier, squared short-time scrambling and algebra-distance formulas, canonical finite Hilbert--Schmidt projectors, and finite score minimization are source-written in their dedicated owners. It keeps arbitrary selected Hilbert/g-TPS attachment, dependent nested marginal coherence, retained-coordinate/mixing chart independence, physical pointer and physical source-algebra/Hamiltonian identification, algebra susceptibility, MI metric geometry, holography and spacetime dynamics explicitly unpaid."
+  claim := "Records that heterogeneous finite coordinate pair charts, arbitrary finite-subset same-state marginals, ordinary finite product partial-trace associativity, environment-relabeling invariance, the corrected source-facing operator-algebra g-TPS carrier, squared short-time scrambling and algebra-distance formulas, canonical finite Hilbert--Schmidt projectors, finite score minimization, and the source unitary-family infinitesimal metric formula are source-written in their dedicated owners. It keeps arbitrary selected Hilbert/g-TPS attachment, dependent nested marginal coherence, retained-coordinate/mixing chart independence, physical pointer and physical source-algebra/Hamiltonian identification, minimizer-map pullback/susceptibility, MI metric geometry, holography and spacetime dynamics explicitly unpaid."
 
 end SelectedAtlasTerminalMaxCut
 end QuantumMereology

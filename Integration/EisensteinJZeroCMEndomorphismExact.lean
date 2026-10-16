@@ -20,6 +20,14 @@ x-coordinate scales by `ω`, and the y-coordinate is fixed.  Therefore the
 coordinate action preserves Mathlib's actual affine point-group law and is an
 additive endomorphism whose third iterate is the identity.
 
+The final theorem strengthens order three to the actual Eisenstein quadratic
+relation on the point group:
+
+    Phi^2(P) + Phi(P) + P = 0.
+
+This is the relation required to map `ℤ[ω]` into the endomorphism ring; order
+three alone would not be enough in an arbitrary endomorphism ring.
+
 Mathlib owns the affine Weierstrass point carrier and group law (following
 Silverman); DASHI owns the specialization/composition below.  No Hecke
 character, Frobenius coefficient formula, or L-function identification is
@@ -49,6 +57,13 @@ private lemma omega_four : ω ^ 4 = ω := by
   calc
     ω ^ 4 = ω * ω ^ 3 := by ring
     _ = ω := by rw [hω3, mul_one]
+
+private lemma omega_quadratic : ω ^ 2 + ω + 1 = 0 := by
+  have hfactor : (ω - 1) * (ω ^ 2 + ω + 1) = 0 := by
+    calc
+      (ω - 1) * (ω ^ 2 + ω + 1) = ω ^ 3 - 1 := by ring
+      _ = 0 := by rw [hω3]; ring
+  exact (mul_eq_zero.mp hfactor).resolve_left (sub_ne_zero.mpr hω1)
 
 private lemma rotate_equation {x y : K} (h : W.Equation x y) :
     W.Equation (ω * x) y := by
@@ -219,12 +234,80 @@ theorem jZeroRotationEndomorphism_orderThree (P : W.Point) :
         ((jZeroRotationEndomorphism W ω ha1 ha2 ha3 ha4 hω3 hω1) P)) = P :=
   rotate_point_three W ω ha1 ha2 ha3 ha4 hω3 P
 
-/-- Promotion boundary: this pays a literal point-group endomorphism, not a Hecke/L-series theorem. -/
+private lemma rotated_twice_plus_once_eq_neg {x y : K} (h : W.Nonsingular x y) :
+    jZeroRotatePoint W ω ha1 ha2 ha3 ha4 hω3
+        (jZeroRotatePoint W ω ha1 ha2 ha3 ha4 hω3 (.some h)) +
+      jZeroRotatePoint W ω ha1 ha2 ha3 ha4 hω3 (.some h) =
+      -(.some h : W.Point) := by
+  let h₁ : W.Nonsingular (ω * x) y :=
+    rotate_nonsingular W ω ha1 ha2 ha3 ha4 hω3 h
+  let h₂ : W.Nonsingular (ω * (ω * x)) y :=
+    rotate_nonsingular W ω ha1 ha2 ha3 ha4 hω3 h₁
+  have hnonvertical :
+      ¬ (ω * (ω * x) = ω * x ∧ y = W.negY (ω * x) y) := by
+    rintro ⟨hxeq, hyeq⟩
+    have hωx : ω * x = x :=
+      (mul_left_cancel₀ (omega_ne_zero ω hω3)) hxeq
+    have hxprod : (ω - 1) * x = 0 := by
+      linear_combination hωx
+    have hx0 : x = 0 :=
+      (mul_eq_zero.mp hxprod).resolve_left (sub_ne_zero.mpr hω1)
+    have hyself : y = W.negY x y := by
+      rw [← negY_rotate W ω ha1 ha3 x y]
+      simpa [hx0] using hyeq
+    have hn := (W.nonsingular_iff x y).mp h
+    exact hn.2.elim
+      (fun hdx => hdx (by simp [ha1, ha2, ha4, hx0]))
+      (fun hdy => hdy hyself)
+  have hslope :
+      W.slope (ω * (ω * x)) (ω * x) y y = 0 := by
+    by_cases hxeq : ω * (ω * x) = ω * x
+    · have hyne : y ≠ W.negY (ω * x) y := fun hy => hnonvertical ⟨hxeq, hy⟩
+      rw [W.slope_of_Y_ne hxeq hyne]
+      have hx0 : x = 0 := by
+        have hωx : ω * x = x :=
+          (mul_left_cancel₀ (omega_ne_zero ω hω3)) hxeq
+        have hxprod : (ω - 1) * x = 0 := by linear_combination hωx
+        exact (mul_eq_zero.mp hxprod).resolve_left (sub_ne_zero.mpr hω1)
+      simp [ha1, ha2, ha4, hx0]
+    · rw [W.slope_of_X_ne hxeq]
+      simp
+  have hxsum :
+      W.addX (ω * (ω * x)) (ω * x) 0 = x := by
+    simp only [WeierstrassCurve.Affine.addX, ha1, ha2, zero_pow, zero_mul,
+      zero_add, sub_zero]
+    have hq := omega_quadratic ω hω3 hω1
+    linear_combination hq * x
+  have hysum :
+      W.addY (ω * (ω * x)) (ω * x) y 0 = W.negY x y := by
+    simp [WeierstrassCurve.Affine.addY, WeierstrassCurve.Affine.negAddY,
+      hxsum]
+  simp only [jZeroRotatePoint]
+  rw [WeierstrassCurve.Affine.Point.add_some hnonvertical,
+    WeierstrassCurve.Affine.Point.neg_some,
+    WeierstrassCurve.Affine.Point.some.injEq]
+  constructor
+  · simpa [hslope] using hxsum
+  · simpa [hslope] using hysum
+
+/-- The actual Eisenstein quadratic relation `Phi^2 + Phi + 1 = 0` on points. -/
+theorem jZeroRotationEndomorphism_quadraticRelation (P : W.Point) :
+    (jZeroRotationEndomorphism W ω ha1 ha2 ha3 ha4 hω3 hω1)
+        ((jZeroRotationEndomorphism W ω ha1 ha2 ha3 ha4 hω3 hω1) P) +
+      (jZeroRotationEndomorphism W ω ha1 ha2 ha3 ha4 hω3 hω1) P + P = 0 := by
+  cases P with
+  | zero => simp
+  | @some x y h =>
+    have hpair := rotated_twice_plus_once_eq_neg W ω ha1 ha2 ha3 ha4 hω3 hω1 h
+    simpa [jZeroRotationEndomorphism] using congrArg (fun Q => Q + (.some h : W.Point)) hpair
+
+/-- Promotion boundary: CM quadratic algebra is paid at the point-group level; Hecke/L remains open. -/
 structure JZeroCMEndomorphismBoundary : Prop where
   nativePointGroup : True
   equationPreservation : True
   additiveEndomorphism : True
   orderThree : True
+  eisensteinQuadraticRelation : True
   heckeCharacterConstructed : False
   ellipticLSeriesIdentified : False
 

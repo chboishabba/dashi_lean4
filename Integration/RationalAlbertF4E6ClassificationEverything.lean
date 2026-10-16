@@ -11,6 +11,8 @@ import Integration.RationalAlbertF4ClassificationInstantiation
 import Integration.RationalAlbertF4ClassificationInstantiationRegression
 import Integration.RationalAlbertF4E6DescentClassification
 import Integration.RationalAlbertF4E6DescentClassificationRegression
+import Integration.RationalAlbertF4E6IrreducibleFrontier
+import Integration.RationalAlbertF4E6IrreducibleFrontierRegression
 import Integration.RationalAlbertF4E6GroupClassificationMaxCut
 import Integration.RationalAlbertF4E6GroupClassificationMaxCutRegression
 import Integration.RationalAlbertClassicalF4SourceReceipt
@@ -19,17 +21,18 @@ import Integration.RationalAlbertModernGroupSourceReceipt
 /-!
 Focused rollup for the current rational Albert / F4 / E6 classification endpoint.
 
-The rollup now exposes the complete narrowed chain:
+The narrowed chain is now:
 
 native Q-octonion anisotropy/no-zero-divisors
   -> native Albert cubic/Jordan rigidity
   -> same-action norm-unit stabilizer = Jordan automorphism
   -> Q(i) root-space splitting with explicit scalar-extension firewall
   -> real-place diagnostic receipt
-  -> pinned TauCeti formal-donor audit
-  -> proof-relevant same-object descent/classification adapter
-  -> three-leaf original-Q F4/E6 classification interface.
+  -> pinned formal-donor/source audits
+  -> proof-relevant same-object descent/classification interface
+  -> one dependent `FinalOriginalQClassificationInput`
+  -> the F4 derivation, F4 automorphism-group and E6 cubic-structure conclusions.
 
-External source/donor attribution and theorem authority remain separate from
-DASHI-owned same-object proofs and adapters.
+The final dependent witness is deliberately uninhabited here.  Local invariants,
+source citations, matching root data and donor inventory do not create it.
 -/

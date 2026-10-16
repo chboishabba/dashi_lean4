@@ -3,27 +3,29 @@ import Mathlib
 /-!
 # Monster / Albert / F4 same-carrier action discrimination
 
-Agda sibling PR #1179 reports a proof-relevant Base/Zeta/Albert 54 -> 53
-carrier/deletion weld and a compiler transporting an already-owned actual
-Monster 54/53 action onto those Albert-shaped carriers.
+Agda sibling PR #1179 pays a proof-relevant Base/Zeta/Albert 54 -> 53 carrier
+weld and a CONDITIONAL compiler from an actual Monster 54/53 recognition to a
+transported action on that finite Albert-shaped carrier.  Current Agda master
+does not inhabit the source-facing actual Monster recognition input.  Hence the
+compiler is paid while the actual transported Monster action remains open.
 
 The current Agda teleodynamics stack additionally source-writes an injective
-state realization of that finite 54/53 shape into two copies of the literal
+state realization of the finite 54/53 shape into two copies of the literal
 rational Albert state carrier by composing the ternary shape chart with the
-canonical diagonal codebook.  It also reports exact finite-image product/cubic
+canonical diagonal codebook.  It reports exact finite-image product/cubic
 compatibility.  Those are cross-prover receipts here, not Lean theorem imports.
 
-A crucial boundary remains.  The finite `CubeAlbertPair54` shape is not itself
-the rational 27-dimensional Albert vector algebra owned by this branch, and the
-finite transported action has not been lifted to a rational-linear Albert
-automorphism.  Moreover the finite shape's named `ScalarLine` is the ternary
-origin: under the diagonal realization it maps to Albert zero, while the actual
-Albert unit is the positive ternary corner.  The removed-point stabilizer cannot
-therefore substitute for the native unit-stabilizer theorem.
+The finite `CubeAlbertPair54` shape is not itself the rational 27-dimensional
+Albert vector algebra owned by this branch, and no finite action has been lifted
+to a rational-linear Albert automorphism.  The finite shape's named `ScalarLine`
+is the ternary origin: under the diagonal realization it maps to Albert zero,
+while the actual Albert unit is the positive ternary corner.  The removed-point
+stabilizer therefore cannot substitute for the native unit-stabilizer theorem.
 
-Once a SAME-OBJECT rational-linear action lift is supplied and shown to preserve
-the native cubic norm and actual unit, this branch's already-paid
-`RationalAlbertNormUnitRigidityProof` can compile Jordan compatibility.
+Once an actual Monster action is supplied, transported, and then lifted on the
+same literal Albert carrier with cubic-norm preservation and actual-unit
+fixation, this branch's already-paid `RationalAlbertNormUnitRigidityProof` can
+compile Jordan compatibility.
 -/
 
 namespace Integration.MonsterAlbertF4ActionDiscrimination
@@ -34,7 +36,10 @@ structure SiblingReceipt where
   baseZetaAlbert54RoundTripsPaid : Bool
   baseZetaAlbert53RoundTripsPaid : Bool
   removedPointInclusionSquaresPaid : Bool
-  transportedMonsterActionPaid : Bool
+
+  transportCompilerPaid : Bool
+  actualMonster54RecognitionPaid : Bool
+  actualTransportedMonsterActionInhabited : Bool
   classicalF4SameActionRecognitionPaid : Bool
 
   agdaFiniteStateEmbeddingReported : Bool
@@ -56,7 +61,10 @@ def canonicalSiblingReceipt : SiblingReceipt where
   baseZetaAlbert54RoundTripsPaid := true
   baseZetaAlbert53RoundTripsPaid := true
   removedPointInclusionSquaresPaid := true
-  transportedMonsterActionPaid := true
+
+  transportCompilerPaid := true
+  actualMonster54RecognitionPaid := false
+  actualTransportedMonsterActionInhabited := false
   classicalF4SameActionRecognitionPaid := false
 
   agdaFiniteStateEmbeddingReported := true
@@ -74,7 +82,9 @@ def canonicalSiblingReceipt : SiblingReceipt where
 structure SameCarrierActionAssay where
   carrier54Receipt : String
   residual53Receipt : String
-  transportedMonsterActionReceipt : String
+  transportCompilerReceipt : String
+  actualMonsterActionRecognitionReceipt : String
+  actualTransportedMonsterActionReceipt : String
   finiteStateEmbeddingReceipt : String
   candidateClassicalF4ActionReceipt : String
   monsterActorToF4ActorMapReceipt : String
@@ -90,7 +100,8 @@ structure SameCarrierActionAssay where
   decoderCompatibilityReceipt : String
   futureConsumerReceipt : String
   sameCarrierPinned : Bool
-  monsterActionPinned : Bool
+  transportCompilerPinned : Bool
+  actualMonsterActionPinned : Bool
   finiteStateEmbeddingReceiptPinned : Bool
   classicalF4ActionPinned : Bool
   actorMapPinned : Bool
@@ -109,8 +120,10 @@ structure SameCarrierActionAssay where
 
 structure Boundary where
   proofRelevantCarrierIdentityPaidInSibling : Bool
-  transportedMonsterActionPaidInSibling : Bool
+  transportCompilerAvailableAsSiblingReceipt : Bool
+  actualTransportedMonsterActionAvailableAsSiblingReceipt : Bool
   sameCarrierCreatesSameAction : Bool
+  transportCompilerCreatesActualMonsterAction : Bool
   transportedMonsterActionCreatesClassicalF4Action : Bool
 
   finite54CarrierIsLiteralRationalAlbertLinearCarrier : Bool
@@ -144,8 +157,10 @@ structure Boundary where
 
 def canonicalBoundary : Boundary where
   proofRelevantCarrierIdentityPaidInSibling := true
-  transportedMonsterActionPaidInSibling := true
+  transportCompilerAvailableAsSiblingReceipt := true
+  actualTransportedMonsterActionAvailableAsSiblingReceipt := false
   sameCarrierCreatesSameAction := false
+  transportCompilerCreatesActualMonsterAction := false
   transportedMonsterActionCreatesClassicalF4Action := false
 
   finite54CarrierIsLiteralRationalAlbertLinearCarrier := false
@@ -177,6 +192,7 @@ def canonicalBoundary : Boundary where
   actionFitCreatesPhenomenology := false
 
 inductive SameAlbertCarrierCreatesSameAction : Prop
+inductive TransportCompilerCreatesActualMonsterAction : Prop
 inductive FiniteAlbertShapeCreatesWholeLinearAlbertAlgebra : Prop
 inductive FiniteStateReceiptCreatesLeanTheorem : Prop
 inductive FiniteStateEmbeddingCreatesLinearActionLift : Prop
@@ -187,6 +203,9 @@ inductive ActionAgreementCreatesPhenomenology : Prop
 
 theorem same_albert_carrier_does_not_create_same_action :
     ¬ SameAlbertCarrierCreatesSameAction := by intro h; cases h
+
+theorem transport_compiler_does_not_create_actual_monster_action :
+    ¬ TransportCompilerCreatesActualMonsterAction := by intro h; cases h
 
 theorem finite_albert_shape_does_not_create_whole_linear_albert :
     ¬ FiniteAlbertShapeCreatesWholeLinearAlbertAlgebra := by intro h; cases h

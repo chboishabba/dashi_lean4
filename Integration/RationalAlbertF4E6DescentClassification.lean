@@ -80,16 +80,14 @@ structure OriginalQAlbertDescentPayment
   donorAutConclusionIsNative_paid : donorAutConclusionIsNative
   donorCubicConclusionIsNative_paid : donorCubicConclusionIsNative
 
-/-- A descent payment compiles to the already-existing terminal classification
-payment.  No source receipt or local invariant is used to synthesize the
-classification theorem itself. -/
-def toOriginalQFormClassificationPayment
+/-- A descent payment reaches the existing lower-level classification
+instantiation carried by its formal adapter.  The terminal capstone may consume
+this result without creating a circular dependency. -/
+def toClassificationInstantiation
     {classification : CharacteristicZeroAlbertClassificationTheorem}
     (payment : OriginalQAlbertDescentPayment classification) :
-    Integration.RationalAlbertF4E6GroupClassificationMaxCut.OriginalQFormClassificationPayment :=
-  { classification := classification
-  , adapter := payment.formalClassificationAdapter
-  }
+    ClassificationInstantiation classification :=
+  payment.formalClassificationAdapter.classificationInstantiation
 
 /-- The concrete structural unit-stabilizer theorem stays local and paid; it is
 not recharged to the external classification theorem. -/
@@ -133,7 +131,7 @@ inductive LocalDataAloneCreatesGlobalClassification : Prop
 inductive SourceReceiptCreatesDescentAdapter : Prop
 inductive MatchingRootDatumCreatesSameObjectDescent : Prop
 
- theorem local_data_alone_does_not_create_global_classification :
+theorem local_data_alone_does_not_create_global_classification :
     ¬ LocalDataAloneCreatesGlobalClassification := by
   intro h
   cases h

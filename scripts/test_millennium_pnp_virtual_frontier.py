@@ -72,8 +72,12 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         for marker in (
             "CodedStandardCanonicalInputExact",
             "CodedFiniteStandardSelfDelimitingCodeExact",
+            "FiniteSelfSpecializingProgramQuoteSizeExact",
+            "CodedFiniteStandardUniversalQuotedInputExact",
+            "PNotEqualsNPKleeneQuotedBodyCookDescriptionExact",
             "CodedFiniteStandardRawInterpreterExact",
             "CodedFiniteStandardRawInterpreterFidelityExact",
+            "CodedFiniteStandardRawInterpreterCostExact",
             "CodedFiniteUnaryDelimiterScannerExact",
             "CodedFiniteUnaryFieldEqualityDeterminismExact",
             "PNotEqualsNPKleeneSpecializationFixedPointExact",

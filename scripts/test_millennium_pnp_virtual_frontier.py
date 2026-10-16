@@ -20,8 +20,12 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
             "PNotEqualsNPKleeneSpecializationFixedPointExact.fixedPointProgramCorrect",
             "PNotEqualsNPCandidateActualSelfInstantiationBoundaryExact.q2PrimitiveExecutionErasesQuotedProgram",
             "CodedFiniteStandardSelfDelimitingCodeExact.selfDelimitingRoundTrip",
+            "FiniteSelfSpecializingProgramQuoteSizeExact.fixedPointQuoteLengthExact",
+            "CodedFiniteStandardUniversalQuotedInputExact.universalQuotedInputRoundTrip",
+            "PNotEqualsNPKleeneQuotedBodyCookDescriptionExact.kleeneBodyDescriptionCodeExact",
             "CodedFiniteStandardRawInterpreterExact.runActualCodeReducesToRawView",
             "CodedFiniteStandardRawInterpreterFidelityExact.selfDelimitedInterpreterFollowsStandardRun",
+            "CodedFiniteStandardRawInterpreterCostExact.iterateRawWorkBound",
             "CodedFiniteUnaryDelimiterScannerExact.scannerCode",
             "CodedFiniteUnaryFieldEqualityDeterminismExact.equalityCode",
             "PNotEqualsNPCodedCandidateExactPhaseBoundaryExact.candidatePhaseEndpointTransitionNothing",
@@ -41,21 +45,20 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         self.assertIn("resolvedSourceTerm := none", lane)
         self.assertIn("newMathematicsPermitted := false", lane)
 
-    def test_frontier_names_self_delimiting_behavioral_fixed_point(self):
+    def test_frontier_names_literal_universal_machine_and_resource_fixed_point(self):
         text = FRONTIER.read_text(encoding="utf-8")
         start = text.index("problem := .pVersusNP")
         end = text.index("problem := .riemann", start)
         lane = text[start:end]
         for marker in (
-            "actual-halting CodedFiniteStandardTM",
+            "fixed universal CodedFiniteStandardTM U",
             "self-delimiting",
-            "raw interpreter",
-            "typed-standard fidelity",
-            "behavioural specializer",
-            "phase-expanded",
-            "compact XOR/ripple counter",
+            "typed-faithful",
+            "10 + 2*machineCodeLength(p)",
+            "T*(|rules|+1)",
+            "compact XOR/ripple timer",
             "resource fixed point",
-            "IIT phi is not complexity hardness evidence",
+            "IIT phi is not hardness evidence",
         ):
             self.assertIn(marker, lane)
         self.assertIn("state := .proofResolutionPending", lane)

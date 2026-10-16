@@ -59,7 +59,7 @@ theorem affinePointCount_eq_card_add_characterSum
     (Fintype.card (JZeroAffinePoint p) : Int)
       = (p : Int) + jZeroQuadraticCharacterSum p := by
   letI : NeZero p := ⟨Fact.out.ne_zero⟩
-  have hsigma :
+  have hsigmaNat :
       Fintype.card (JZeroAffinePoint p)
         = ∑ x : ZMod p, Fintype.card (SquareFiber p (x ^ 3 + 1)) := by
     calc
@@ -68,8 +68,11 @@ theorem affinePointCount_eq_card_add_characterSum
             Fintype.card_congr (affinePointSigmaEquiv p)
       _ = ∑ x : ZMod p, Fintype.card (SquareFiber p (x ^ 3 + 1)) :=
             Fintype.card_sigma
-  exact_mod_cast hsigma at hsigma
-  rw [hsigma]
+  have hsigmaInt :
+      (Fintype.card (JZeroAffinePoint p) : Int)
+        = ∑ x : ZMod p, (Fintype.card (SquareFiber p (x ^ 3 + 1)) : Int) := by
+    exact_mod_cast hsigmaNat
+  rw [hsigmaInt]
   simp_rw [squareFiberCard_eq_one_add_quadraticChar p hp2]
   simp only [sum_add_distrib, sum_const, card_univ, nsmul_eq_mul, mul_one,
     ZMod.card, jZeroQuadraticCharacterSum]

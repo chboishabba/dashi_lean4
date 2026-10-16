@@ -10,22 +10,22 @@ generator modulo `2*sqrt(-3)`: among the six roots of unity there is a unique
 unit congruent to the generator modulo this conductor, and the character value
 is the correspondingly normalized generator.
 
-External provenance for that statement remains EXTERNAL.  In particular this
-file does not present the literature statement as a DASHI theorem.  What this
+External provenance for that statement remains EXTERNAL. In particular this
+file does not present the literature statement as a DASHI theorem. What this
 file owns is the exact same-carrier realization of that modulus inside the
 repository's already-declared
 
     EisensteinQA = QuadraticAlgebra Int (-1) (-1),
 
-where `sqrt(-3)=1+2*omega`.  Thus
+where `sqrt(-3)=1+2*omega`. Thus
 
     f = 2*sqrt(-3) = 2+4*omega,
     N(f)=12.
 
 Since the quadratic-field discriminant has absolute value 3, the familiar
 conductor-norm product is `12*3=36`, matching the externally recorded rational
-curve conductor.  This numerical match is a consistency bridge, not a proof
-of the external conductor theorem.
+curve conductor. This numerical match is a consistency bridge, not a proof of
+the external conductor theorem.
 
 The file also gives the exact proof-relevant seam needed for globalization:
 `HeckeUnitNormalizable z` means there is a UNIQUE one of the repository's six
@@ -44,6 +44,7 @@ namespace Integration.EisensteinJZeroHeckeConductorExact
 
 open Dashi.EisensteinLatticeCounting
 open Dashi.EisensteinQuadraticAlgebraExact
+open Dashi.EisensteinSixUnitsExact
 open Dashi.EisensteinSixUnitOrbitExact
 
 /-- The literal Eisenstein integer corresponding to `sqrt(-3)=1+2*omega`. -/
@@ -126,12 +127,27 @@ theorem normalizedHeckeUnit_unique
     u = normalizedHeckeUnit z h := by
   exact ((Classical.choose_spec h).2 u hu).symm
 
+/-- The selected listed Eisenstein integer, bundled as an actual unit of the
+ring.  This is the correct carrier on which inversion is defined. -/
+noncomputable def normalizedHeckeUnitAsUnit
+    (z : EisensteinQA) (h : HeckeUnitNormalizable z) : EisensteinQAˣ :=
+  (all_listed_units_are_units
+    (normalizedHeckeUnit z h).1 (normalizedHeckeUnit z h).2).unit
+
+@[simp]
+theorem normalizedHeckeUnitAsUnit_val
+    (z : EisensteinQA) (h : HeckeUnitNormalizable z) :
+    (normalizedHeckeUnitAsUnit z h : EisensteinQA) =
+      (normalizedHeckeUnit z h).1 := by
+  exact IsUnit.unit_spec _
+
 /-- Multiplying by the inverse selected unit gives the normalized generator.
-This is intentionally an element-level operation; descent to principal ideals
-and proof of multiplicativity are separate global payments. -/
+The inverse is taken in `EisensteinQAˣ`, not via an accidental ring-level
+inverse.  This is intentionally an element-level operation; descent to
+principal ideals and proof of multiplicativity are separate global payments. -/
 noncomputable def heckeNormalizedElement
     (z : EisensteinQA) (h : HeckeUnitNormalizable z) : EisensteinQA :=
-  (normalizedHeckeUnit z h).1⁻¹ * z
+  ((normalizedHeckeUnitAsUnit z h)⁻¹ : EisensteinQAˣ) * z
 
 structure HeckeConductorBoundary where
   externalNormalizationRuleRecordedAsExternal : Bool := true

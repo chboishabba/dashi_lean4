@@ -1,6 +1,7 @@
 import Integration.EisensteinLatticeCountingRegression
 import Integration.EisensteinCMOrderActionExact
 import Integration.EisensteinJZeroInertPrimeLocalFactorExact
+import Integration.EisensteinJZeroCubicJacobiExact
 
 /-!
 # Eisenstein arithmetic -> CM terminal max-cut
@@ -27,33 +28,37 @@ and, independently but on the SAME Eisenstein integral carrier,
       -> Phi^2+Phi+1=0 on the native point group
       -> Z[ω] -> End(E(Frac(Z[ω]))).
 
-The local arithmetic/elliptic seam has also advanced on the SAME rational
-prime.  For `p > 2`, `p % 3 = 2`:
+The local arithmetic/elliptic seam has advanced on the SAME rational prime.
+For `p > 2`, `p % 3 = 2`:
 
-    chi_-3(p) = -1             (Eisenstein-inert consumer)
-    #E(F_p) = p+1              (same j=0 curve)
+    chi_-3(p) = -1
+    #E(F_p) = p+1
     a_p = 0
     L_p(T) denominator = 1 + p*T^2.
 
-This is a same-prime correspondence, not an identification of the degree-one
-Dirichlet local factor with the degree-two elliptic Euler factor.
+On the split/cubic side, a generic compiler is also paid: any certified cubic
+multiplicative character whose weights genuinely reindex the cube fibres
+compiles the same j=0 trace into two Mathlib Jacobi sums.  Mathlib v4.28 can
+construct order-three multiplicative characters when `3 | (#F-1)`, but the
+stronger cube-fibre certificate is not packaged and is not inferred merely
+from order three.
 
-The first missing global CM promotion is geometric rather than combinatorial:
-an elliptic curve morphism/isogeny-degree carrier on which the CM action is
-faithful and on which degree can be proved equal to the Eisenstein norm.
-Pinned Mathlib v4.28 supplies the point group but no elliptic isogeny/degree API,
-so that payment is not manufactured here.
+Thus the frontier now has two honest parallel tracks:
 
-The honest remaining analytic continuation is
+GEOMETRIC CM:
+  geometric elliptic morphism/isogeny degree
+    -> faithful Z[ω] embedding
+    -> degree(a+bω)=a^2-ab+b^2.
 
-    geometric CM order
-      -> degree = Eisenstein norm
-      -> split-prime Frobenius / Hecke character
-      -> all-good-prime local Euler-factor agreement
-      -> elliptic/Hecke L-function agreement.
+SPLIT LOCAL ARITHMETIC:
+  canonical cubic-character cube-fibre certificate
+    -> Jacobi compiler (already paid)
+    -> evaluate Jacobi sum as selected Eisenstein-prime data
+    -> all-good-prime Euler factors.
 
-The existing arithmetic `6*zeta*L(chi_-3)` theorem is not silently relabelled
-as the elliptic L-function.
+Only after those local/geometric payments does the global Hecke/L-function
+route become appropriate.  The arithmetic `6*zeta*L(chi_-3)` theorem is never
+silently relabelled as the elliptic L-function.
 -/
 
 namespace Integration.EisensteinArithmeticCMTerminalMaxCutExact
@@ -62,11 +67,14 @@ open Dashi.EisensteinQuadraticAlgebraExact
 open Integration.EisensteinJZeroCMConcreteExact
 open Integration.EisensteinCMOrderActionExact
 open Integration.EisensteinJZeroInertPrimeLocalFactorExact
+open Integration.EisensteinJZeroCubicJacobiExact
 
 inductive EisensteinArithmeticCMBlocker
   | missingGeometricIsogenyDegreeCarrier
   | missingFaithfulGeometricCMEmbedding
   | missingEndomorphismDegreeNormTheorem
+  | missingCanonicalCubicCharacterCertificate
+  | missingJacobiSumEisensteinPrimeEvaluation
   | missingSplitPrimeFrobeniusFormula
   | missingHeckeCharacter
   | missingSameCurveAllGoodPrimeLocalEulerFactorAgreement
@@ -97,6 +105,11 @@ structure EisensteinArithmeticCMTerminalStatus where
   inertPrimeTraceZeroPaid : Bool
   inertPrimeLocalEulerShapePaid : Bool
 
+  genericCubicJacobiTraceCompilerPaid : Bool
+  orderThreeMulCharExistenceAvailableInMathlib : Bool
+  canonicalCubeFibreCharacterCertificatePaid : Bool
+  jacobiSumEvaluatedAsEisensteinPrimePaid : Bool
+
   rationalPointActionFaithfulnessInferred : Bool
   faithfulGeometricCMEmbeddingPaid : Bool
   endomorphismDegreeEqualsNormPaid : Bool
@@ -111,7 +124,8 @@ structure EisensteinArithmeticCMTerminalStatus where
   e6F3IdentityPromoted : Bool
   physicalMechanismPromotedFromSharedC3 : Bool
 
-  firstSubstantiveBlocker : EisensteinArithmeticCMBlocker
+  firstGeometricBlocker : EisensteinArithmeticCMBlocker
+  firstSplitArithmeticBlocker : EisensteinArithmeticCMBlocker
 
 /-- Machine-readable terminal status of the current source-written programme. -/
 def terminalStatus : EisensteinArithmeticCMTerminalStatus where
@@ -135,6 +149,11 @@ def terminalStatus : EisensteinArithmeticCMTerminalStatus where
   inertPrimeTraceZeroPaid := true
   inertPrimeLocalEulerShapePaid := true
 
+  genericCubicJacobiTraceCompilerPaid := true
+  orderThreeMulCharExistenceAvailableInMathlib := true
+  canonicalCubeFibreCharacterCertificatePaid := false
+  jacobiSumEvaluatedAsEisensteinPrimePaid := false
+
   rationalPointActionFaithfulnessInferred := false
   faithfulGeometricCMEmbeddingPaid := false
   endomorphismDegreeEqualsNormPaid := false
@@ -149,7 +168,8 @@ def terminalStatus : EisensteinArithmeticCMTerminalStatus where
   e6F3IdentityPromoted := false
   physicalMechanismPromotedFromSharedC3 := false
 
-  firstSubstantiveBlocker := missingGeometricIsogenyDegreeCarrier
+  firstGeometricBlocker := missingGeometricIsogenyDegreeCarrier
+  firstSplitArithmeticBlocker := missingCanonicalCubicCharacterCertificate
 
 ------------------------------------------------------------------------
 -- Exact same-carrier donor surface.
@@ -178,6 +198,15 @@ def inertPrimeSameObjectWeld
     (p : Nat) [Fact p.Prime] (hp2 : 2 < p) (hp3 : p % 3 = 2) :
     InertPrimeArithmeticEllipticWeld p :=
   inertPrimeArithmeticEllipticWeld p hp2 hp3
+
+/-- A supplied finite-field cube-fibre certificate compiles to the same curve's
+Jacobi trace; this is not yet a Hecke character. -/
+theorem certifiedCubicCharacter_to_jZeroJacobiTrace
+    {F : Type*} [Field F] [Fintype F] [DecidableEq F]
+    (hchar : ringChar F ≠ 2) (cert : CubicCharacterCertificate F) :
+    ((Integration.EisensteinJZeroFiniteFieldTraceExact.jZeroFrobeniusTraceInt F : Int) : ℂ)
+      = cubicJacobiTrace cert :=
+  jZeroTrace_cast_eq_cubicJacobiTrace hchar cert
 
 ------------------------------------------------------------------------
 -- Productive cross-pollination firewall.

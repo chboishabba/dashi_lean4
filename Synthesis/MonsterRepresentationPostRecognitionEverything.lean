@@ -4,6 +4,8 @@ import Synthesis.MonsterWholeCharacterSimpleSource
 import Synthesis.MonsterWholeCharacterSimpleSourceRegression
 import Synthesis.MonsterMaschkeAndCharacterDimension
 import Synthesis.MonsterMaschkeAndCharacterDimensionRegression
+import Synthesis.MonsterCharacterDeterminationLive
+import Synthesis.MonsterCharacterDeterminationLiveRegression
 import Synthesis.MonsterWholeCharacterIsotypicAssembly
 import Synthesis.MonsterWholeCharacterIsotypicAssemblyRegression
 import Synthesis.MonsterTwoIsotypicBlockAssembly
@@ -34,33 +36,30 @@ Available in this tail:
 * canonical FDRep <-> group-algebra same-action/submodule adapter;
 * SAME whole-character identity `chi(V)=a chi(H)` -> every occurring simple
   source has H's type;
-* Maschke semisimplicity for the finite nonmodular group representation;
-* whole-character identity evaluated at the identity -> corresponding finrank
-  ratio, including coefficient 90;
-* simple finite-dimensional representation over an algebraically closed field
-  -> one-dimensional/scalar self-intertwiner space by pinned mathlib Schur;
-* one-simple-type semisimple/isotypic assembly;
-* post-recognition finite-copy count cancellation;
-* complementary two-isotypic-block assembly and post-recognition 12+78 counts;
-* proof-relevant Schur multiplicity coordinates
-  `Hom_G(H,H^n) ~= (Fin n -> k)`;
-* exact finite-copy coordinate evaluation/recovery;
+* Maschke semisimplicity and character-at-identity -> finrank ratio;
+* simple FDRep -> scalar self-intertwiners by pinned mathlib Schur;
+* one-simple-type isotypic assembly and post-recognition copy count;
+* two-simple character `chi(V)=chi(T)+chi(S)` -> one-copy Hom multiplicities
+  for T,S and zero for every other simple type;
+* complementary two-isotypic-block assembly / post-recognition 12+78 counts;
+* Schur multiplicity coordinates `Hom_G(H,H^n) ~= (Fin n -> k)` and exact
+  coordinate evaluation/recovery;
 * canonical tensor finite-copy equivalence
-  `H tensor (Fin n -> k) ~= (Fin n -> H)`, hence a post-isotypy tensor
-  equivalence with the recognized sector.
+  `H tensor (Fin n -> k) ~= (Fin n -> H)`.
 
-Consequently restriction linearity, Schur, Maschke semisimplicity, an arbitrary
-simple-type classifier, the FDRep/module bridge, a separate finrank-ratio
-witness, and the abstract tensor finite-copy equivalence are no longer
-Monster-specific leaves.  The character/isotypy seam has collapsed to attaching
-the actual W_zeta|E and H_zeta linear carriers to the same FDRep theory and
-transporting the already-owned actual-kernel ninety-copy character identity onto
-those SAME carriers.
+Consequently restriction linearity, Schur, Maschke semisimplicity, arbitrary
+simple-type classifiers, the FDRep/module bridge, separate finrank-ratio data,
+the abstract tensor finite-copy equivalence, and an abstract 12+78 decomposition
+intertwiner are not independent Monster-specific leaves.  For both the H_zeta
+isotypy and the later 12+78 multiplicity decomposition, the live scientific seam
+is SAME-object transport of source/class character information onto the actual
+linear representations.
 
 Not produced here: the actual weight-two Monster representation, actual 196883
-invariant subspace/direct summand, actual central linear operator and zeta
-orientation, the actual same-object FDRep attachments/whole-character transport,
-or the actual 6.Suz/normalizer action and 12+78 action orientation.
+invariant subspace/direct summand, actual central linear operator and absolute
+zeta orientation, actual W_zeta/H_zeta FDRep attachments and ninety-character
+transport, or the actual 6.Suz/normalizer multiplicity action plus its selected-
+phase 12+78 character transport.
 -/
 
 namespace Synthesis.MonsterRepresentationPostRecognitionEverything
@@ -83,6 +82,9 @@ structure Boundary where
   schurIsMonsterSpecificInput : Bool
   oneTypeIsotypicAssemblyAvailable : Bool
   postRecognitionCopyCountAvailable : Bool
+  twoSimpleCharacterMultiplicityAvailable : Bool
+  otherSimpleMultiplicityZeroAvailable : Bool
+  twelveSeventyEightIntertwinerIsIndependentMonsterInput : Bool
   twoBlockAssemblyAvailable : Bool
   postRecognitionTwelveSeventyEightCountsAvailable : Bool
   schurMultiplicityCoordinatesAvailable : Bool
@@ -96,6 +98,7 @@ structure Boundary where
   actualCentralLinearOperatorProducedHere : Bool
   actualWholeCharacterTransportProducedHere : Bool
   actualSuzukiNormalizerActionProducedHere : Bool
+  actualSuzukiMultiplicityCharacterTransportProducedHere : Bool
   absoluteZetaOrientationProducedHere : Bool
   deriving Repr
 
@@ -117,6 +120,9 @@ def canonicalBoundary : Boundary where
   schurIsMonsterSpecificInput := false
   oneTypeIsotypicAssemblyAvailable := true
   postRecognitionCopyCountAvailable := true
+  twoSimpleCharacterMultiplicityAvailable := true
+  otherSimpleMultiplicityZeroAvailable := true
+  twelveSeventyEightIntertwinerIsIndependentMonsterInput := false
   twoBlockAssemblyAvailable := true
   postRecognitionTwelveSeventyEightCountsAvailable := true
   schurMultiplicityCoordinatesAvailable := true
@@ -130,6 +136,7 @@ def canonicalBoundary : Boundary where
   actualCentralLinearOperatorProducedHere := false
   actualWholeCharacterTransportProducedHere := false
   actualSuzukiNormalizerActionProducedHere := false
+  actualSuzukiMultiplicityCharacterTransportProducedHere := false
   absoluteZetaOrientationProducedHere := false
 
 end Synthesis.MonsterRepresentationPostRecognitionEverything

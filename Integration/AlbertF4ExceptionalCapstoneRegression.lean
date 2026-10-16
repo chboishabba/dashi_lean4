@@ -8,6 +8,8 @@ example : currentFrontier.nativeRationalAlbertCarrierPaid = true := rfl
 example : currentFrontier.nativeStandardAlbertCubicPaid = true := rfl
 example : currentFrontier.nativeJordanProductPaid = true := rfl
 example : currentFrontier.nativeJordanIdentityPaid = true := rfl
+example : currentFrontier.nativeQOctonionNormAnisotropyPaid = true := rfl
+example : currentFrontier.nativeQOctonionNoZeroDivisorsPaid = true := rfl
 example : currentFrontier.nativeS3AlbertAutomorphismsPaid = true := rfl
 example : currentFrontier.externalDonorRemovedFromCriticalPath = true := rfl
 
@@ -32,13 +34,19 @@ example : currentFrontier.exactTrialityTwentyEightPlusEightEightEightPaid = true
 example : currentFrontier.nativeCartanFourPaid = true := rfl
 example : currentFrontier.nativeCartanCommutationPaid = true := rfl
 example : currentFrontier.nativeCartanVectorSpinTrialityPaid = true := rfl
+
 example : currentFrontier.companionExactQIRootSpacesPaid = true := rfl
 example : currentFrontier.companionExactRootGrading1128Paid = true := rfl
-example : currentFrontier.splitF4RootDatumRecognizedCrossKernel = true := rfl
+example : currentFrontier.qiRootDataIsScalarExtensionData = true := rfl
+example : currentFrontier.qiRootDataClassifiesOriginalQForm = false := rfl
+example : currentFrontier.realPlacePositiveTraceDiagnosticPaid = true := rfl
+example : currentFrontier.realPlaceDiagnosticClassifiesOriginalQForm = false := rfl
 example : currentFrontier.crossKernelReceiptCreatesLeanTheorem = false := rfl
-example : currentFrontier.leanInternalQIRootProjectorsPaid = false := rfl
 
+example : currentFrontier.normUnitJordanSameActionPaid = true := rfl
 example : currentFrontier.preciseClassicalClassificationSourceReceiptPaid = true := rfl
+example : currentFrontier.tauCetiFormalDonorInventoryLocated = true := rfl
+example : currentFrontier.tauCetiSameObjectClassificationLocated = false := rfl
 example : currentFrontier.allConcreteClassificationHypothesesOwned = true := rfl
 example : currentFrontier.terminalClassificationPremiseIsolated = true := rfl
 example : currentFrontier.sourceReceiptCreatesClassificationTheorem = false := rfl
@@ -46,9 +54,9 @@ example : currentFrontier.sourceReceiptCreatesClassificationTheorem = false := r
 example : currentFrontier.naturalRelative240E6InvarianceRefuted = true := rfl
 example : currentFrontier.structuredE8LaneIndependent = true := rfl
 
-example : currentFrontier.rationalFormF4ClassificationPaid = false := rfl
 example : currentFrontier.fullFiniteWeylInsideAutJPaid = false := rfl
-example : currentFrontier.fullAutJordanEqualsF4Paid = false := rfl
-example : currentFrontier.e6UnitStabilizerEqualsF4Paid = false := rfl
+example : currentFrontier.nativeDerivationNamedF4FormPaid = false := rfl
+example : currentFrontier.nativeAutJordanNamedF4GroupPaid = false := rfl
+example : currentFrontier.nativeCubicSymmetryNamedE6GroupPaid = false := rfl
 
 end Integration.AlbertF4ExceptionalCapstoneRegression

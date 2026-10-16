@@ -1,0 +1,9 @@
+import Integration.OggSSP2BEquivariantFullWeld
+
+namespace Integration.OggSSP2BEquivariantFullWeldRegression
+
+open Integration.OggSSP2BEquivariantFullWeld
+
+example : fullWeldEquivarianceIsCompilerOutput = true := rfl
+
+end Integration.OggSSP2BEquivariantFullWeldRegression

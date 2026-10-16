@@ -8,8 +8,8 @@ open Integration.AntigravityR136StaticDifferentialReuse
 Package-level mirror of the terminal Agda antigravity frontier.
 
 This is scheduling/parity only. Lean does not claim the Agda Local-C/Wightman
-terminal proof objects, physical source scale, TT device identity or laboratory
-receipts.
+terminal proof objects, Q1 source-path theorem, literal R109 cylinder observable,
+physical source scale, TT device identity or laboratory receipts.
 
 Mandatory for static and scalar differential response:
   P1 one typed Local-C/Wightman terminal package;
@@ -19,14 +19,20 @@ Mandatory for static and scalar differential response:
 Only a propagating Schuetzhold/GW claim adds:
   P4 TT/device same-object package.
 
-Agda has now paid the measured-G authority subleaf with an attributed
+Current Agda Pareto cut inside P1 has exactly TWO source-facing subpackages:
+  Q1  actual BC2 path-derivative semantics + B4-equivariant source path;
+  E24 one literal selected R109 real cylinder observable plus positive-time and
+      gauge-invariance proofs.
+
+Primitive E1 derivative equivariance, arbitrary E24 meaning predicates,
+all-stress cylinder encodings, independent E4 observable selection/decay,
+B0/B3 antigravity-specific bridges, and the downstream rest/boost/trace laws
+are not separately scheduled.
+
+Agda has also paid the measured-G authority subleaf with an attributed
 NIST/CODATA-2022 admission and an accepted physical Einstein-coupling receipt.
 The remaining calibration subleaf is the same-state source/device
 stress*length^2 scale plus the affine/common renormalization mapping.
-
-The preferred Agda terminal shares one explicitly continued stress operator
-between covariance and E->L trace continuation, so a separate boost-record plus
-trace-record representation is not scheduled as another project.
 -/
 
 def typedLocalCTerminalPhysicalPackageStillRequired : Bool :=
@@ -35,6 +41,27 @@ def typedLocalCTerminalPhysicalPackageStillRequired : Bool :=
 def preferredSharedWightmanTerminalAvailable : Bool := true
 
 def independentPinnedBoostTraceSplitRequired : Bool := false
+
+/-- Mirror only: Agda master owns the analysis; Lean records the scheduling cut. -/
+def p1OpaqueAnalyticEstimateCount : Nat := 0
+
+def p1RemainingSourceSubpackageCount : Nat := 2
+
+def p1Q1PathDerivativeSemanticsAndEquivarianceStillRequired : Bool := true
+
+def p1PrimitiveE1DerivativeEquivarianceProjectRequired : Bool := false
+
+def p1E24ObservableAndTwoAdmissibilityProofsStillRequired : Bool := true
+
+def p1E24ArbitraryMeaningPredicateRequired : Bool := false
+
+def p1AllStressCylinderEncodingRequired : Bool := false
+
+def p1IndependentE4StressSelectionRequired : Bool := false
+
+def p1IndependentE4DecayEstimateRequired : Bool := false
+
+def p1IndependentTerminalLawProjectsRequired : Bool := false
 
 def acceptedMeasuredGAuthorityStillOpen : Bool :=
   acceptedMeasuredGAuthorityStillRequired

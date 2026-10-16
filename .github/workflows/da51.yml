@@ -1,0 +1,26 @@
+name: DA51
+
+on:
+  pull_request:
+    paths:
+      - 'DA51.lean'
+      - 'DA51/**'
+      - '.github/workflows/da51.yml'
+  workflow_dispatch:
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          build: false
+      - name: Check DA51 core
+        run: lake env lean DA51/Core.lean
+      - name: Check DA51 atlas codec
+        run: lake env lean DA51/Atlas.lean
+      - name: Check DA51 golden fixtures
+        run: lake env lean DA51/Fixtures.lean
+      - name: Check DA51 aggregate
+        run: lake env lean DA51.lean

@@ -46,8 +46,14 @@ def pVersusNPResolution : ProofResolutionLane :=
       , "PNotEqualsNPKleeneSpecializationFixedPointExact.fixedPointProgramCorrect"
       , "PNotEqualsNPCandidateActualSelfInstantiationBoundaryExact.q2PrimitiveExecutionErasesQuotedProgram"
       , "CodedFiniteStandardSelfDelimitingCodeExact.selfDelimitingRoundTrip"
+      , "FiniteSelfSpecializingProgramQuoteSizeExact.fixedPointQuoteLengthExact"
+      , "CodedFiniteStandardUniversalQuotedInputExact.universalQuotedInputRoundTrip"
+      , "PNotEqualsNPKleeneQuotedBodyCookDescriptionExact.kleeneBodyDescriptionCodeExact"
+      , "PNotEqualsNPKleeneQuotedBodyCookDescriptionExact.kleeneBodyDescriptionInputExact"
+      , "PNotEqualsNPKleeneQuotedBodyCookDescriptionExact.kleeneBodyStreamedBitExact"
       , "CodedFiniteStandardRawInterpreterExact.runActualCodeReducesToRawView"
       , "CodedFiniteStandardRawInterpreterFidelityExact.selfDelimitedInterpreterFollowsStandardRun"
+      , "CodedFiniteStandardRawInterpreterCostExact.iterateRawWorkBound"
       , "CodedFiniteUnaryDelimiterScannerExact.scannerCode"
       , "CodedFiniteUnaryFieldEqualityDeterminismExact.equalityCode"
       , "CodedFiniteUnaryFieldEqualityClosureExact.equalSinkQuiescent"
@@ -161,9 +167,13 @@ theorem pnp_resolution_uses_behavioral_self_fix_maxcut :
     pVersusNPResolution.producerSearch.contains
       "CodedFiniteStandardSelfDelimitingCodeExact.selfDelimitingRoundTrip" = true ∧
     pVersusNPResolution.producerSearch.contains
+      "CodedFiniteStandardUniversalQuotedInputExact.universalQuotedInputRoundTrip" = true ∧
+    pVersusNPResolution.producerSearch.contains
       "CodedFiniteStandardRawInterpreterExact.runActualCodeReducesToRawView" = true ∧
     pVersusNPResolution.producerSearch.contains
       "CodedFiniteStandardRawInterpreterFidelityExact.selfDelimitedInterpreterFollowsStandardRun" = true ∧
+    pVersusNPResolution.producerSearch.contains
+      "CodedFiniteStandardRawInterpreterCostExact.iterateRawWorkBound" = true ∧
     pVersusNPResolution.producerSearch.contains
       "CodedFiniteUnaryDelimiterScannerExact.scannerCode" = true ∧
     pVersusNPResolution.producerSearch.contains

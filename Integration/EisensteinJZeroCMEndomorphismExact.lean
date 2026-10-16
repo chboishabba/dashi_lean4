@@ -14,9 +14,11 @@ and a nontrivial cube root `ω`, the coordinate action
 
     (x,y) |-> (ω*x,y)
 
-preserves the equation.  Here we additionally prove that it preserves
-Mathlib's actual affine elliptic group law, hence is an additive endomorphism,
-and that its third iterate is the identity.
+preserves the equation.  Here we additionally compare Mathlib's literal
+secant/tangent formulas: nonvertical slopes scale by `ω^2`, the resulting
+x-coordinate scales by `ω`, and the y-coordinate is fixed.  Therefore the
+coordinate action preserves Mathlib's actual affine point-group law and is an
+additive endomorphism whose third iterate is the identity.
 
 Mathlib owns the affine Weierstrass point carrier and group law (following
 Silverman); DASHI owns the specialization/composition below.  No Hecke
@@ -41,9 +43,6 @@ private lemma omega_ne_zero : ω ≠ 0 := by
   exact zero_ne_one hω3
 
 private lemma omega_sq_mul_omega : ω ^ 2 * ω = 1 := by
-  simpa [pow_succ, mul_assoc] using hω3
-
-private lemma omega_mul_sq : ω * ω ^ 2 = 1 := by
   simpa [pow_succ, mul_assoc] using hω3
 
 private lemma omega_four : ω ^ 4 = ω := by
@@ -75,9 +74,9 @@ private lemma rotate_nonsingular {x y : K} (h : W.Nonsingular x y) :
       apply hx
       have hscale : 3 * (ω * x) ^ 2 = ω ^ 2 * (3 * x ^ 2) := by ring
       rw [hscale] at hz
-      have : 3 * x ^ 2 = 0 :=
+      have hright : 3 * x ^ 2 = 0 :=
         (mul_eq_zero.mp hz.symm).resolve_left (pow_ne_zero _ (omega_ne_zero ω hω3))
-      exact this.symm
+      exact hright.symm
     · exact Or.inr hy
 
 /-- Coordinate rotation on the actual Mathlib affine point carrier. -/
@@ -95,6 +94,7 @@ def jZeroRotatePoint : W.Point → W.Point
 private lemma negY_rotate (x y : K) : W.negY (ω * x) y = W.negY x y := by
   simp [WeierstrassCurve.Affine.negY, ha1, ha3]
 
+/-- On every nonvertical secant/tangent, the j=0 rotation scales slope by `ω^2`. -/
 private lemma slope_rotate_nonvertical {x₁ x₂ y₁ y₂ : K}
     (hxy : ¬ (x₁ = x₂ ∧ y₁ = W.negY x₂ y₂)) :
     W.slope (ω * x₁) (ω * x₂) y₁ y₂ =
@@ -103,7 +103,8 @@ private lemma slope_rotate_nonvertical {x₁ x₂ y₁ y₂ : K}
   · have hy : y₁ ≠ W.negY x₂ y₂ := fun h => hxy ⟨hx, h⟩
     have hx' : ω * x₁ = ω * x₂ := congrArg (fun z => ω * z) hx
     have hy' : y₁ ≠ W.negY (ω * x₂) y₂ := by
-      simpa [negY_rotate W ω ha1 ha3 x₂ y₂] using hy
+      rw [negY_rotate W ω ha1 ha3 x₂ y₂]
+      exact hy
     rw [W.slope_of_Y_ne hx hy, W.slope_of_Y_ne hx' hy']
     rw [ha1, ha2, ha3, ha4]
     simp only [zero_mul, zero_add, add_zero]
@@ -113,9 +114,15 @@ private lemma slope_rotate_nonvertical {x₁ x₂ y₁ y₂ : K}
       apply hx
       exact (mul_left_cancel₀ (omega_ne_zero ω hω3)) h
     rw [W.slope_of_X_ne hx, W.slope_of_X_ne hx']
-    field_simp [omega_ne_zero ω hω3]
-    linear_combination (omega_sq_mul_omega ω hω3) * (y₁ - y₂) * (x₁ - x₂)
+    have hb : x₁ - x₂ ≠ 0 := sub_ne_zero.mpr hx
+    have hωb : ω * (x₁ - x₂) ≠ 0 := mul_ne_zero (omega_ne_zero ω hω3) hb
+    have hden : ω * x₁ - ω * x₂ = ω * (x₁ - x₂) := by ring
+    rw [hden]
+    field_simp [hb, hωb]
+    linear_combination
+      (omega_sq_mul_omega ω hω3) * (y₁ - y₂) * (x₁ - x₂)
 
+/-- The x-coordinate of the group sum is equivariant with weight one. -/
 private lemma addX_rotate {x₁ x₂ y₁ y₂ : K}
     (hxy : ¬ (x₁ = x₂ ∧ y₁ = W.negY x₂ y₂)) :
     W.addX (ω * x₁) (ω * x₂)
@@ -123,10 +130,14 @@ private lemma addX_rotate {x₁ x₂ y₁ y₂ : K}
     ω * W.addX x₁ x₂ (W.slope x₁ x₂ y₁ y₂) := by
   rw [slope_rotate_nonvertical W ω ha1 ha2 ha3 ha4 hω3 hxy]
   simp only [WeierstrassCurve.Affine.addX, ha1, ha2, zero_mul, zero_add, sub_zero]
-  have h4 := omega_four ω hω3
-  linear_combination
-    (h4 - rfl : ω ^ 4 - ω = 0) * (W.slope x₁ x₂ y₁ y₂) ^ 2
+  have hsq : (ω ^ 2) ^ 2 = ω := by
+    calc
+      (ω ^ 2) ^ 2 = ω ^ 4 := by ring
+      _ = ω := omega_four ω hω3
+  rw [mul_pow, hsq]
+  ring
 
+/-- The y-coordinate of the group sum is invariant under the j=0 rotation. -/
 private lemma addY_rotate {x₁ x₂ y₁ y₂ : K}
     (hxy : ¬ (x₁ = x₂ ∧ y₁ = W.negY x₂ y₂)) :
     W.addY (ω * x₁) (ω * x₂) y₁
@@ -134,12 +145,18 @@ private lemma addY_rotate {x₁ x₂ y₁ y₂ : K}
     W.addY x₁ x₂ y₁ (W.slope x₁ x₂ y₁ y₂) := by
   rw [slope_rotate_nonvertical W ω ha1 ha2 ha3 ha4 hω3 hxy]
   simp only [WeierstrassCurve.Affine.addY, WeierstrassCurve.Affine.negAddY,
-    WeierstrassCurve.Affine.negY, ha1, ha2, ha3, zero_mul, zero_add, add_zero, sub_zero]
+    WeierstrassCurve.Affine.negY, ha1, ha3, zero_mul, zero_add, add_zero, sub_zero]
   rw [addX_rotate W ω ha1 ha2 ha3 ha4 hω3 hxy]
-  have h3 := omega_sq_mul_omega ω hω3
-  linear_combination
-    (h3 - rfl : ω ^ 2 * ω - 1 = 0) *
-      (W.slope x₁ x₂ y₁ y₂) * (W.addX x₁ x₂ (W.slope x₁ x₂ y₁ y₂) - x₁)
+  have hprod :
+      ω ^ 2 * W.slope x₁ x₂ y₁ y₂ *
+          (ω * W.addX x₁ x₂ (W.slope x₁ x₂ y₁ y₂) - ω * x₁) =
+        W.slope x₁ x₂ y₁ y₂ *
+          (W.addX x₁ x₂ (W.slope x₁ x₂ y₁ y₂) - x₁) := by
+    calc
+      _ = (ω ^ 2 * ω) * W.slope x₁ x₂ y₁ y₂ *
+          (W.addX x₁ x₂ (W.slope x₁ x₂ y₁ y₂) - x₁) := by ring
+      _ = _ := by rw [omega_sq_mul_omega ω hω3, one_mul]
+  rw [hprod]
 
 private theorem jZeroRotatePoint_add (P Q : W.Point) :
     jZeroRotatePoint W ω ha1 ha2 ha3 ha4 hω3 (P + Q) =
@@ -155,7 +172,8 @@ private theorem jZeroRotatePoint_add (P Q : W.Point) :
       · rcases hv with ⟨hx, hy⟩
         have hx' : ω * x₁ = ω * x₂ := congrArg (fun z => ω * z) hx
         have hy' : y₁ = W.negY (ω * x₂) y₂ := by
-          simpa [negY_rotate W ω ha1 ha3 x₂ y₂] using hy
+          rw [negY_rotate W ω ha1 ha3 x₂ y₂]
+          exact hy
         rw [WeierstrassCurve.Affine.Point.add_of_Y_eq hx hy,
           WeierstrassCurve.Affine.Point.add_of_Y_eq hx' hy']
         rfl
@@ -164,11 +182,14 @@ private theorem jZeroRotatePoint_add (P Q : W.Point) :
           apply hv
           constructor
           · exact (mul_left_cancel₀ (omega_ne_zero ω hω3)) hx'
-          · simpa [negY_rotate W ω ha1 ha3 x₂ y₂] using hy'
+          · rw [negY_rotate W ω ha1 ha3 x₂ y₂] at hy'
+            exact hy'
         rw [WeierstrassCurve.Affine.Point.add_some hv,
           WeierstrassCurve.Affine.Point.add_some hv']
-        apply congrArg WeierstrassCurve.Affine.Point.some
-        apply proof_irrel_heq
+        simp only [jZeroRotatePoint]
+        have hxsum := addX_rotate W ω ha1 ha2 ha3 ha4 hω3 hv
+        have hysum := addY_rotate W ω ha1 ha2 ha3 ha4 hω3 hv
+        rw [hxsum, hysum]
 
 /-- The actual order-three additive endomorphism of Mathlib's point group. -/
 noncomputable def jZeroRotationEndomorphism : W.Point →+ W.Point where

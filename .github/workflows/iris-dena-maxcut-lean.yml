@@ -1,0 +1,40 @@
+name: IRIS Dena max-cut Lean
+
+on:
+  pull_request:
+    paths:
+      - 'AgdaMirror/Governance/IRISDena*.lean'
+      - 'AgdaMirror/Governance/AUKUS*.lean'
+      - 'AgdaMirror/Governance/OriginalThreadParetoMaxCut20261008.lean'
+      - 'lakefile.lean'
+      - 'lean-toolchain'
+      - '.github/workflows/iris-dena-maxcut-lean.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: iris-dena-maxcut-lean-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  focused-lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Check US PEP authority envelope mirror
+        run: lake env lean AgdaMirror/Governance/AUKUSUSPersonnelExchangeAuthorityEnvelope.lean
+      - name: Check bunk-claim revision mirror
+        run: lake env lean AgdaMirror/Governance/IRISDenaBunkClaimRevisionConflict.lean
+      - name: Check correction-aware review mirror
+        run: lake env lean AgdaMirror/Governance/IRISDenaCorrectionAwareReviewGate.lean
+      - name: Check observer hierarchy mirror
+        run: lake env lean AgdaMirror/Governance/IRISDenaObserverHierarchyNonDescent.lean
+      - name: Check current Pareto mirror
+        run: lake env lean AgdaMirror/Governance/OriginalThreadParetoMaxCut20261008.lean
+      - name: Check certification regression mirror
+        run: lake env lean AgdaMirror/Governance/IRISDenaMaxCutCertificationRegression.lean
+      - name: Check focused IRIS mirror rollup
+        run: lake env lean AgdaMirror/Governance/IRISDenaMaxCut.lean

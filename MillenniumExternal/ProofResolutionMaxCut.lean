@@ -45,6 +45,8 @@ def pVersusNPResolution : ProofResolutionLane :=
       , "PNotEqualsNPLiteralSelfCodeGrowthNoGoExact.strictCodeGrowthKillsLiteralFixedPoint"
       , "PNotEqualsNPKleeneSpecializationFixedPointExact.fixedPointProgramCorrect"
       , "PNotEqualsNPCandidateActualSelfInstantiationBoundaryExact.q2PrimitiveExecutionErasesQuotedProgram"
+      , "CodedFiniteStandardSelfDelimitingCodeExact.selfDelimitingRoundTrip"
+      , "CodedFiniteStandardRawInterpreterExact.runActualCodeReducesToRawView"
       , "ConcreteTapeGlobalCookLevinStreamingBitCostedExact.streamedCookBitCostedResultExact"
       , "GuardedCookFixedDescriptionIndexABIExact.indexABIWorkBound"
       , "ConcreteTapeFixedLocalKernelTablesExact.transitionKernelFrozenSeekExact"
@@ -52,6 +54,15 @@ def pVersusNPResolution : ProofResolutionLane :=
       , "PNotEqualsNPCodedCandidateExactPhaseBoundaryExact.candidatePhaseEndpointTransitionNothing"
       , "CodedFiniteStandardExactPhaseSizeExact.phaseLiftStateCountExact"
       , "CodedFiniteStandardExactPhaseSizeExact.phaseLiftRuleCountExact"
+      , "PNotEqualsNPXORCountdownMicrocodeExact.sameXorOutputDifferentBorrow"
+      , "PNotEqualsNPBinaryCountdownRuleFragmentExact.countdownFragment"
+      , "PNotEqualsNPBinaryCountdownCostExact.countdownWorkBound"
+      , "PNotEqualsNPBinaryCountdownCostExact.allZeroWorkExact"
+      , "PNotEqualsNPBinaryCountdownExactRunExact.countdownExactRun"
+      , "PNotEqualsNPBinaryCountdownExactRunExact.countdownFinishQuiescent"
+      , "PNotEqualsNPPhaseCounterParetoExact.compactCounterSingleDecrementBound"
+      , "PNotEqualsNPPhaseCounterParetoExact.phaseExpandedStateCountExact"
+      , "PNotEqualsNPPhaseCounterParetoExact.phaseExpandedRuleCountExact"
       , "CodedFiniteUnaryCursorExact.cursorStopKeyFresh"
       , "CodedFiniteBitStreamLookupExact.lookupCode"
       , "GuardedCookFiniteBitTableGeneratorExact.cookBitAtQueryAnswerExact"
@@ -59,8 +70,6 @@ def pVersusNPResolution : ProofResolutionLane :=
       , "ConcreteTapeCookLevinStateWidthLowerExact.stateWidthBelowGuardedCookBitCode"
       , "PNotEqualsNPConcreteTapeProgramCodeExact.encodeStaticProgram"
       , "PNotEqualsNPCodedStandardCandidateBridgeExact.codedWitnessToStandardCandidate"
-      , "PNotEqualsNPXORCountdownMicrocodeExact.sameXorOutputDifferentBorrow"
-      , "PNotEqualsNPBinaryCountdownRuleFragmentExact.countdownFragment"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesUniversalFailure"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesSATNotInP"
       , "PNotEqualsNPStandardMachineMaxCutClosureExact.standardMaxCutGivesPNotEqualsNP"
@@ -146,7 +155,13 @@ theorem pnp_resolution_uses_behavioral_self_fix_maxcut :
     pVersusNPResolution.producerSearch.contains
       "PNotEqualsNPKleeneSpecializationFixedPointExact.fixedPointProgramCorrect" = true ∧
     pVersusNPResolution.producerSearch.contains
-      "ConcreteTapeCookLevinStateWidthLowerExact.stateWidthBelowGuardedCookBitCode" = true ∧
+      "CodedFiniteStandardSelfDelimitingCodeExact.selfDelimitingRoundTrip" = true ∧
+    pVersusNPResolution.producerSearch.contains
+      "CodedFiniteStandardRawInterpreterExact.runActualCodeReducesToRawView" = true ∧
+    pVersusNPResolution.producerSearch.contains
+      "PNotEqualsNPBinaryCountdownExactRunExact.countdownExactRun" = true ∧
+    pVersusNPResolution.producerSearch.contains
+      "PNotEqualsNPPhaseCounterParetoExact.compactCounterSingleDecrementBound" = true ∧
     pVersusNPResolution.producerSearch.contains
       "PNotEqualsNPXORCountdownMicrocodeExact.sameXorOutputDifferentBorrow" = true := by decide
 

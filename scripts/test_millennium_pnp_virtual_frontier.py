@@ -19,12 +19,14 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
             "PNotEqualsNPCodedLiteralResourceCompilerAnchoredNoGoExact.anchoredLiteralStructuralResourceImpossible",
             "PNotEqualsNPKleeneSpecializationFixedPointExact.fixedPointProgramCorrect",
             "PNotEqualsNPCandidateActualSelfInstantiationBoundaryExact.q2PrimitiveExecutionErasesQuotedProgram",
+            "CodedFiniteStandardSelfDelimitingCodeExact.selfDelimitingRoundTrip",
+            "CodedFiniteStandardRawInterpreterExact.runActualCodeReducesToRawView",
             "PNotEqualsNPCodedCandidateExactPhaseBoundaryExact.candidatePhaseEndpointTransitionNothing",
             "CodedFiniteStandardExactPhaseSizeExact.phaseLiftRuleCountExact",
-            "CodedFiniteUnaryCursorExact.cursorStopKeyFresh",
-            "CodedFiniteBitStreamLookupExact.lookupCode",
-            "GuardedCookFiniteBitTableGeneratorExact.cookBitAtQueryAnswerExact",
-            "ConcreteTapeCookLevinStateWidthLowerExact.stateWidthBelowGuardedCookBitCode",
+            "PNotEqualsNPBinaryCountdownCostExact.countdownWorkBound",
+            "PNotEqualsNPBinaryCountdownExactRunExact.countdownExactRun",
+            "PNotEqualsNPPhaseCounterParetoExact.compactCounterSingleDecrementBound",
+            "PNotEqualsNPPhaseCounterParetoExact.phaseExpandedRuleCountExact",
             "PNotEqualsNPXORCountdownMicrocodeExact.sameXorOutputDifferentBorrow",
         ):
             self.assertIn(donor, text)
@@ -36,17 +38,18 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         self.assertIn("resolvedSourceTerm := none", lane)
         self.assertIn("newMathematicsPermitted := false", lane)
 
-    def test_frontier_names_actual_halting_behavioral_fixed_point(self):
+    def test_frontier_names_self_delimiting_behavioral_fixed_point(self):
         text = FRONTIER.read_text(encoding="utf-8")
         start = text.index("problem := .pVersusNP")
         end = text.index("problem := .riemann", start)
         lane = text[start:end]
         for marker in (
             "actual-halting CodedFiniteStandardTM",
-            "canonical input independent of T",
-            "GuardedExecutionReceipt",
-            "full table-baked own-Cook generator cannot be the machine it describes",
-            "behavioural equality",
+            "self-delimiting",
+            "raw interpreter",
+            "behavioural specializer",
+            "phase-expanded",
+            "compact XOR/ripple counter",
             "resource fixed point",
             "IIT phi is not complexity hardness evidence",
         ):
@@ -61,12 +64,11 @@ class MillenniumPNPVirtualFrontierTests(unittest.TestCase):
         lane = text[start:end]
         for marker in (
             "CodedStandardCanonicalInputExact",
-            "CodedStandardHaltingPolynomialDeciderExact",
-            "PNotEqualsNPHaltingCodedCandidateBridgeExact",
-            "GuardedExecutionReceipt",
-            "GuardedCookFiniteBitTableSelfCodeNoGoExact",
-            "CandidateActualSelfInstantiationBoundaryExact",
-            "PNotEqualsNPXORCountdownMicrocodeExact",
+            "CodedFiniteStandardSelfDelimitingCodeExact",
+            "CodedFiniteStandardRawInterpreterExact",
+            "PNotEqualsNPKleeneSpecializationFixedPointExact",
+            "PNotEqualsNPBinaryCountdownExactRunExact",
+            "PNotEqualsNPPhaseCounterParetoExact",
             "behavioural",
         ):
             self.assertIn(marker, lane)

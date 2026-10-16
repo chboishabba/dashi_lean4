@@ -40,7 +40,9 @@ theorem operator_eq_conjugate_of_intertwining
     gx = e.symm.toLinearMap.comp (gy.comp e.toLinearMap) := by
   ext x
   apply e.injective
-  simp [h]
+  change e (gx x) = e (e.symm (gy (e x)))
+  rw [h x]
+  exact (e.apply_symm_apply (gy (e x))).symm
 
 variable {M C S E Q : Type*}
   [AddCommGroup M] [Module O.Scalar M] [FiniteDimensional O.Scalar M]

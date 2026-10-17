@@ -62,19 +62,28 @@ theorem transport_commutes_rotateTri_twice
     (w : C3TransportWitness) (x : TriTruth) :
     w.transportPhase (rotateTri (rotateTri x)) =
       rotateTri (rotateTri (w.transportPhase x)) := by
-  rw [w.equivariantGenerator]
-  exact w.equivariantGenerator (rotateTri x)
+  calc
+    w.transportPhase (rotateTri (rotateTri x)) =
+        rotateTri (w.transportPhase (rotateTri x)) :=
+      w.equivariantGenerator (rotateTri x)
+    _ = rotateTri (rotateTri (w.transportPhase x)) :=
+      congrArg rotateTri (w.equivariantGenerator x)
 
 /-- And therefore with the full three-step C3 cycle. -/
 theorem transport_commutes_rotateTri_cubed
     (w : C3TransportWitness) (x : TriTruth) :
     w.transportPhase (rotateTri (rotateTri (rotateTri x))) =
       rotateTri (rotateTri (rotateTri (w.transportPhase x))) := by
-  rw [w.equivariantGenerator]
-  rw [w.equivariantGenerator]
-  exact w.equivariantGenerator (rotateTri (rotateTri x))
+  calc
+    w.transportPhase (rotateTri (rotateTri (rotateTri x))) =
+        rotateTri (w.transportPhase (rotateTri (rotateTri x))) :=
+      w.equivariantGenerator (rotateTri (rotateTri x))
+    _ = rotateTri (rotateTri (w.transportPhase (rotateTri x))) :=
+      congrArg rotateTri (w.equivariantGenerator (rotateTri x))
+    _ = rotateTri (rotateTri (rotateTri (w.transportPhase x))) :=
+      congrArg (fun y => rotateTri (rotateTri y)) (w.equivariantGenerator x)
 
-/-- The right side of the three-step transport law closes by the existing
+/-- The three-step source cycle closes by the existing
 `Base369.rotateTri_cubed` theorem. -/
 theorem transport_c3_cycle_closes
     (w : C3TransportWitness) (x : TriTruth) :

@@ -1,6 +1,7 @@
 import Integration.DASHITOE.C3Graph
 import Integration.DASHITOE.ConcreteInhabitants
 import Integration.DASHITOE.QuantumInhabitants
+import Integration.DASHITOE.GaugeInhabitants
 
 namespace DASHITOE
 
@@ -72,9 +73,15 @@ noncomputable def currentArithmeticCMFrontier : ArithmeticCMFrontier :=
 def arithmeticCMGrade : ValidationGrade := representationIntertwiner
 
 structure GaugeQFTGRFrontier where
+  hodgeCrossFormalInhabitant : FormalInhabitantReceipt
+  u1SU2TorusFormalInhabitant : FormalInhabitantReceipt
+  brownMaclayStressFormalInhabitant : FormalInhabitantReceipt
   rtFormalInhabitant : FormalInhabitantReceipt
   jacobsonVacuumFormalInhabitant : FormalInhabitantReceipt
   spatialSU2U1RepresentationPaid : Bool
+  hodgeCrossInhabited : Bool
+  groupLevelU1InsideSU2Inhabited : Bool
+  brownMaclayStressBenchmarkInhabited : Bool
   round131SharedEndpointPaid : Bool
   strictGRQuantumSubstratePaid : Bool
   concreteRTBenchmarkInhabited : Bool
@@ -84,9 +91,15 @@ structure GaugeQFTGRFrontier where
   calibratedObservablePaid : Bool
 
 def currentGaugeQFTGRFrontier : GaugeQFTGRFrontier :=
-  { rtFormalInhabitant := lean68RTInhabitant
+  { hodgeCrossFormalInhabitant := agda1164HodgeCrossInhabitant
+    u1SU2TorusFormalInhabitant := agda1164U1SU2TorusInhabitant
+    brownMaclayStressFormalInhabitant := agda1165BrownMaclayStressInhabitant
+    rtFormalInhabitant := lean68RTInhabitant
     jacobsonVacuumFormalInhabitant := lean68JacobsonInhabitant
     spatialSU2U1RepresentationPaid := true
+    hodgeCrossInhabited := true
+    groupLevelU1InsideSU2Inhabited := true
+    brownMaclayStressBenchmarkInhabited := true
     round131SharedEndpointPaid := true
     strictGRQuantumSubstratePaid := true
     concreteRTBenchmarkInhabited := true
@@ -157,6 +170,9 @@ before the genuinely cross-sector physical weld. -/
 structure PartialPhysicalClosureInhabitant where
   candidate : TOECandidate
   selectedMatterHamiltonian : AtomicP2HamiltonianInhabitant
+  hodgeCrossGeometry : FormalInhabitantReceipt
+  u1InsideSU2 : FormalInhabitantReceipt
+  brownMaclayStress : FormalInhabitantReceipt
   arithmeticC3 : EisensteinC3Inhabitant
   cmPointGroup : FormalInhabitantReceipt
   cmPrimaryNormalization : FormalInhabitantReceipt
@@ -169,6 +185,9 @@ structure PartialPhysicalClosureInhabitant where
 noncomputable def currentPartialPhysicalClosureInhabitant : PartialPhysicalClosureInhabitant :=
   { candidate := currentTOECandidate
     selectedMatterHamiltonian := canonicalAtomicP2HamiltonianInhabitant
+    hodgeCrossGeometry := agda1164HodgeCrossInhabitant
+    u1InsideSU2 := agda1164U1SU2TorusInhabitant
+    brownMaclayStress := agda1165BrownMaclayStressInhabitant
     arithmeticC3 := canonicalEisensteinC3Inhabitant
     cmPointGroup := lean73CMInhabitant
     cmPrimaryNormalization := lean73PrimaryNormalizationInhabitant

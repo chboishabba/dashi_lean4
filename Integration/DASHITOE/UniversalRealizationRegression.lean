@@ -27,5 +27,3 @@ example : currentPartialPhysicalClosureInhabitant.cmPrimaryNormalization.authori
     .importedFormalInhabitant := rfl
 example : currentPartialPhysicalClosureInhabitant.cmFrobeniusTrace.authority =
     .importedFormalInhabitant := rfl
-
-end DASHITOE

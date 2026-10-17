@@ -17,31 +17,45 @@ structure TheoremRoute where
   sameObjectTransportPaid : Bool
   deriving Repr
 
+
+def quasiRiemannRoute : TheoremRoute :=
+  { family := "003"
+    upstreamModule := "OAI.NumberTheory.DirichletL.Nonvanishing"
+    upstreamDeclaration := "OAI.riemannZeta_ne_zero_of_seven_eighths_lt_re"
+    targetLeaf := "RH analytic leaf; finite-order Hecke/Q(sqrt(-3)) donor for arithmetic-CM continuation"
+    classification := .lemmaDonor
+    sameObjectTransportPaid := false }
+
+
+def optimalMaxCutRoute : TheoremRoute :=
+  { family := "102"
+    upstreamModule := "OAI.Computability.MaxCut.Main"
+    upstreamDeclaration := "OAI.OptimalMaxCut.main"
+    targetLeaf := "complexity/P-vs-NP reduction infrastructure"
+    classification := .structuralDonor
+    sameObjectTransportPaid := false }
+
+
+def vlasovMaxwellRoute : TheoremRoute :=
+  { family := "362"
+    upstreamModule := "OAI.Analysis.VlasovMaxwell.Main"
+    upstreamDeclaration := "OAI.RVM.global_classical_solution"
+    targetLeaf := "electromagnetic/gauge continuum effective dynamics"
+    classification := .lemmaDonor
+    sameObjectTransportPaid := false }
+
+
+def forcedNavierStokesRoute : TheoremRoute :=
+  { family := "376"
+    upstreamModule := "OAI.MathematicalPhysics.NavierStokes.BalancedTransport.MainResult"
+    upstreamDeclaration := "OAI.BalancedTransport.balanced_three_stack_realization"
+    targetLeaf := "forced Navier-Stokes computation/effective dynamics"
+    classification := .structuralDonor
+    sameObjectTransportPaid := false }
+
+
 def openAITheoremRoutes : List TheoremRoute :=
-  [ { family := "003"
-      upstreamModule := "OAI.NumberTheory.DirichletL.Nonvanishing"
-      upstreamDeclaration := "OAI.riemannZeta_ne_zero_of_seven_eighths_lt_re"
-      targetLeaf := "RH analytic leaf; finite-order Hecke/Q(sqrt(-3)) donor for arithmetic-CM continuation"
-      classification := .lemmaDonor
-      sameObjectTransportPaid := false },
-    { family := "102"
-      upstreamModule := "OAI.Computability.MaxCut.Main"
-      upstreamDeclaration := "OAI.OptimalMaxCut.main"
-      targetLeaf := "complexity/P-vs-NP reduction infrastructure"
-      classification := .structuralDonor
-      sameObjectTransportPaid := false },
-    { family := "362"
-      upstreamModule := "OAI.Analysis.VlasovMaxwell.Main"
-      upstreamDeclaration := "OAI.RVM.global_classical_solution"
-      targetLeaf := "electromagnetic/gauge continuum effective dynamics"
-      classification := .lemmaDonor
-      sameObjectTransportPaid := false },
-    { family := "376"
-      upstreamModule := "OAI.MathematicalPhysics.NavierStokes.BalancedTransport.MainResult"
-      upstreamDeclaration := "OAI.BalancedTransport.balanced_three_stack_realization"
-      targetLeaf := "forced Navier-Stokes computation/effective dynamics"
-      classification := .structuralDonor
-      sameObjectTransportPaid := false } ]
+  [quasiRiemannRoute, optimalMaxCutRoute, vlasovMaxwellRoute, forcedNavierStokesRoute]
 
 inductive ExternalFormalAuthority where
   | importedFormalSource
@@ -73,19 +87,19 @@ def theoremInhabitantFromRoute (r : TheoremRoute) : ExternalTheoremInhabitant :=
 
 
 def quasiRiemannFormalInhabitant : ExternalTheoremInhabitant :=
-  theoremInhabitantFromRoute openAITheoremRoutes[0]!
+  theoremInhabitantFromRoute quasiRiemannRoute
 
 
 def optimalMaxCutFormalInhabitant : ExternalTheoremInhabitant :=
-  theoremInhabitantFromRoute openAITheoremRoutes[1]!
+  theoremInhabitantFromRoute optimalMaxCutRoute
 
 
 def vlasovMaxwellFormalInhabitant : ExternalTheoremInhabitant :=
-  theoremInhabitantFromRoute openAITheoremRoutes[2]!
+  theoremInhabitantFromRoute vlasovMaxwellRoute
 
 
 def forcedNavierStokesFormalInhabitant : ExternalTheoremInhabitant :=
-  theoremInhabitantFromRoute openAITheoremRoutes[3]!
+  theoremInhabitantFromRoute forcedNavierStokesRoute
 
 
 def canonicalOpenAITheoremInhabitants : List ExternalTheoremInhabitant :=

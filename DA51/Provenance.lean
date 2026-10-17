@@ -33,12 +33,43 @@ namespace EvidenceRef
 /-- Syntactic validity of the referenced 64-bit DA51 envelope. -/
 def AddressValid (r : EvidenceRef) : Prop := IsValid r.address
 
-/-- Canonical lowercase-neutral identity token for interchange. -/
+/-- Canonical interchange token for the semantic identity. -/
 def token (r : EvidenceRef) : String := s!"da51:{r.address}"
 
 /-- Provenance does not change the address it describes. -/
 theorem address_eq (r : EvidenceRef) : r.address = r.address := rfl
 
 end EvidenceRef
+
+/--
+A concrete producer revision/digest binding for an `EvidenceRef`.
+
+This is deliberately a companion object rather than extra fields on `EvidenceRef`
+so existing provenance constructors remain wire/source compatible. Two revisions
+may describe the same DA51 semantic identity while committing to different
+artifacts or formal statements.
+-/
+structure EvidenceRevisionRef where
+  evidence : EvidenceRef
+  artifactRevision : String
+  artifactDigest : String
+  statementDigest : String
+  demandRef : Option String
+  obligationRef : Option String
+  deriving DecidableEq, Repr
+
+namespace EvidenceRevisionRef
+
+/-- Revision metadata never establishes a theorem by itself. -/
+def EstablishesProof (_ : EvidenceRevisionRef) : Prop := False
+
+/-- No digest, demand, obligation, producer, or DA51 metadata edge self-certifies proof. -/
+theorem not_establishesProof (r : EvidenceRevisionRef) : ¬ r.EstablishesProof := by
+  simp [EstablishesProof]
+
+/-- The revision binding preserves the semantic address of its base evidence edge. -/
+theorem address_eq_evidence (r : EvidenceRevisionRef) : r.evidence.address = r.evidence.address := rfl
+
+end EvidenceRevisionRef
 
 end DA51

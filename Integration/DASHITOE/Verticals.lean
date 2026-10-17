@@ -2,6 +2,7 @@ import Integration.DASHITOE.C3Graph
 import Integration.DASHITOE.ConcreteInhabitants
 import Integration.DASHITOE.QuantumInhabitants
 import Integration.DASHITOE.GaugeInhabitants
+import Integration.DASHITOE.OpenAIMathAccelerator
 
 namespace DASHITOE
 
@@ -147,6 +148,7 @@ inductive PhysicalClosureStatus where
 
 structure TOECandidate where
   concreteInhabitants : ConcreteInhabitantBundle
+  theoremDonorInhabitants : List ExternalTheoremInhabitant
   c3Edges : List C3Edge
   monster : MonsterRecognitionFrontier
   arithmeticCM : ArithmeticCMFrontier
@@ -157,6 +159,7 @@ structure TOECandidate where
 
 noncomputable def currentTOECandidate : TOECandidate :=
   { concreteInhabitants := canonicalConcreteInhabitantBundle
+    theoremDonorInhabitants := canonicalOpenAITheoremInhabitants
     c3Edges := canonicalC3Edges
     monster := currentMonsterFrontier
     arithmeticCM := currentArithmeticCMFrontier
@@ -165,8 +168,6 @@ noncomputable def currentTOECandidate : TOECandidate :=
     retainsConjecturalSockets := true
     retainsNonDescent := true }
 
-/-- All currently available downstream mathematical/formal inhabitants bundled
-before the genuinely cross-sector physical weld. -/
 structure PartialPhysicalClosureInhabitant where
   candidate : TOECandidate
   selectedMatterHamiltonian : AtomicP2HamiltonianInhabitant

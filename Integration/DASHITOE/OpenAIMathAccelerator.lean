@@ -43,4 +43,53 @@ def openAITheoremRoutes : List TheoremRoute :=
       classification := .structuralDonor
       sameObjectTransportPaid := false } ]
 
+inductive ExternalFormalAuthority where
+  | importedFormalSource
+  | localLeanPort
+  | localKernelReceipt
+  deriving Repr, DecidableEq
+
+structure ExternalTheoremInhabitant where
+  repository : String
+  pinnedCommit : String
+  family : String
+  moduleName : String
+  declarationName : String
+  authority : ExternalFormalAuthority
+  localLeanProofTerm : Bool
+  sameObjectTOETransport : Bool
+  deriving Repr
+
+
+def theoremInhabitantFromRoute (r : TheoremRoute) : ExternalTheoremInhabitant :=
+  { repository := "openai/math"
+    pinnedCommit := "1581d4cbdd69a0faf34b2089614fe2a814316a6a"
+    family := r.family
+    moduleName := r.upstreamModule
+    declarationName := r.upstreamDeclaration
+    authority := .importedFormalSource
+    localLeanProofTerm := false
+    sameObjectTOETransport := false }
+
+
+def quasiRiemannFormalInhabitant : ExternalTheoremInhabitant :=
+  theoremInhabitantFromRoute openAITheoremRoutes[0]!
+
+
+def optimalMaxCutFormalInhabitant : ExternalTheoremInhabitant :=
+  theoremInhabitantFromRoute openAITheoremRoutes[1]!
+
+
+def vlasovMaxwellFormalInhabitant : ExternalTheoremInhabitant :=
+  theoremInhabitantFromRoute openAITheoremRoutes[2]!
+
+
+def forcedNavierStokesFormalInhabitant : ExternalTheoremInhabitant :=
+  theoremInhabitantFromRoute openAITheoremRoutes[3]!
+
+
+def canonicalOpenAITheoremInhabitants : List ExternalTheoremInhabitant :=
+  [quasiRiemannFormalInhabitant, optimalMaxCutFormalInhabitant,
+   vlasovMaxwellFormalInhabitant, forcedNavierStokesFormalInhabitant]
+
 end DASHITOE

@@ -41,22 +41,30 @@ def monsterPhysicalObligations : List RealizationObligation :=
 structure ArithmeticCMFrontier where
   nativeEisensteinC3 : EisensteinC3Inhabitant
   pointGroupFormalInhabitant : FormalInhabitantReceipt
+  primaryNormalizationFormalInhabitant : FormalInhabitantReceipt
+  frobeniusTraceFormalInhabitant : FormalInhabitantReceipt
   sameCarrierJZeroActionPaid : Bool
   inertSamePrimeEulerPaid : Bool
   primarySplitNormalizationPaid : Bool
+  frobeniusCharacterTracePaid : Bool
   genericCubicJacobiCompilerPaid : Bool
   splitCubeFibreCertificatePaid : Bool
+  cubicJacobiEvaluationPaid : Bool
   splitPrimeFrobeniusPaid : Bool
   sameCurveHeckePaid : Bool
 
 noncomputable def currentArithmeticCMFrontier : ArithmeticCMFrontier :=
   { nativeEisensteinC3 := canonicalEisensteinC3Inhabitant
     pointGroupFormalInhabitant := lean73CMInhabitant
+    primaryNormalizationFormalInhabitant := lean73PrimaryNormalizationInhabitant
+    frobeniusTraceFormalInhabitant := lean73FrobeniusCharacterTraceInhabitant
     sameCarrierJZeroActionPaid := true
     inertSamePrimeEulerPaid := true
     primarySplitNormalizationPaid := true
+    frobeniusCharacterTracePaid := true
     genericCubicJacobiCompilerPaid := true
     splitCubeFibreCertificatePaid := false
+    cubicJacobiEvaluationPaid := false
     splitPrimeFrobeniusPaid := false
     sameCurveHeckePaid := false }
 
@@ -133,12 +141,35 @@ noncomputable def currentTOECandidate : TOECandidate :=
     retainsConjecturalSockets := true
     retainsNonDescent := true }
 
+/-- Everything below is genuinely inhabited at mathematical/formal-source scope.
+The purpose of this package is to distinguish "the downstream contracts have
+examples" from the much stronger "they are one calibrated physical object". -/
+structure PartialPhysicalClosureInhabitant where
+  candidate : TOECandidate
+  selectedMatterHamiltonian : AtomicP2HamiltonianInhabitant
+  arithmeticC3 : EisensteinC3Inhabitant
+  cmPointGroup : FormalInhabitantReceipt
+  cmPrimaryNormalization : FormalInhabitantReceipt
+  cmFrobeniusTrace : FormalInhabitantReceipt
+  rtBenchmark : FormalInhabitantReceipt
+  vacuumEinsteinBenchmark : FormalInhabitantReceipt
+
+noncomputable def currentPartialPhysicalClosureInhabitant : PartialPhysicalClosureInhabitant :=
+  { candidate := currentTOECandidate
+    selectedMatterHamiltonian := canonicalAtomicP2HamiltonianInhabitant
+    arithmeticC3 := canonicalEisensteinC3Inhabitant
+    cmPointGroup := lean73CMInhabitant
+    cmPrimaryNormalization := lean73PrimaryNormalizationInhabitant
+    cmFrobeniusTrace := lean73FrobeniusCharacterTraceInhabitant
+    rtBenchmark := lean68RTInhabitant
+    vacuumEinsteinBenchmark := lean68JacobsonInhabitant }
+
 def currentTOEStatus : TOEStatus := .candidateConstructed
 
 def currentPhysicalClosureStatus : PhysicalClosureStatus := .physicalClosureOpen
 
 structure PhysicallyClosedTOE where
-  candidate : TOECandidate
+  partial : PartialPhysicalClosureInhabitant
   universalState : Prop
   universalDynamicsAction : Prop
   controlledSectorReductions : Prop

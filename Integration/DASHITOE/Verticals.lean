@@ -1,5 +1,6 @@
 import Integration.DASHITOE.C3Graph
 import Integration.DASHITOE.ConcreteInhabitants
+import Integration.DASHITOE.QuantumInhabitants
 
 namespace DASHITOE
 
@@ -96,20 +97,30 @@ def currentGaugeQFTGRFrontier : GaugeQFTGRFrontier :=
 
 structure QuantumMatterFrontier where
   selectedAtomicHamiltonian : AtomicP2HamiltonianInhabitant
+  finiteGTPSProjector : FormalInhabitantReceipt
+  finiteGTPSUnitaryMetric : FormalInhabitantReceipt
   finiteTPSAtlasPaid : Bool
   gTPSStructurePaid : Bool
+  finiteProjectorInhabited : Bool
+  finiteMetricInhabited : Bool
   interactingAtomicC3HamiltonianInhabited : Bool
   samePhysicalTPSHamiltonianPaid : Bool
   continuumProjectionPaid : Bool
+  minimizerPullbackPaid : Bool
   empiricalMatterPredictionPaid : Bool
 
 noncomputable def currentQuantumMatterFrontier : QuantumMatterFrontier :=
   { selectedAtomicHamiltonian := canonicalAtomicP2HamiltonianInhabitant
+    finiteGTPSProjector := lean76GTPSProjectionInhabitant
+    finiteGTPSUnitaryMetric := lean76GTPSMetricInhabitant
     finiteTPSAtlasPaid := true
     gTPSStructurePaid := true
+    finiteProjectorInhabited := true
+    finiteMetricInhabited := true
     interactingAtomicC3HamiltonianInhabited := true
     samePhysicalTPSHamiltonianPaid := false
     continuumProjectionPaid := false
+    minimizerPullbackPaid := false
     empiricalMatterPredictionPaid := false }
 
 inductive TOEStatus where
@@ -141,9 +152,8 @@ noncomputable def currentTOECandidate : TOECandidate :=
     retainsConjecturalSockets := true
     retainsNonDescent := true }
 
-/-- Everything below is genuinely inhabited at mathematical/formal-source scope.
-The purpose of this package is to distinguish "the downstream contracts have
-examples" from the much stronger "they are one calibrated physical object". -/
+/-- All currently available downstream mathematical/formal inhabitants bundled
+before the genuinely cross-sector physical weld. -/
 structure PartialPhysicalClosureInhabitant where
   candidate : TOECandidate
   selectedMatterHamiltonian : AtomicP2HamiltonianInhabitant
@@ -151,6 +161,8 @@ structure PartialPhysicalClosureInhabitant where
   cmPointGroup : FormalInhabitantReceipt
   cmPrimaryNormalization : FormalInhabitantReceipt
   cmFrobeniusTrace : FormalInhabitantReceipt
+  finiteGTPSProjector : FormalInhabitantReceipt
+  finiteGTPSUnitaryMetric : FormalInhabitantReceipt
   rtBenchmark : FormalInhabitantReceipt
   vacuumEinsteinBenchmark : FormalInhabitantReceipt
 
@@ -161,6 +173,8 @@ noncomputable def currentPartialPhysicalClosureInhabitant : PartialPhysicalClosu
     cmPointGroup := lean73CMInhabitant
     cmPrimaryNormalization := lean73PrimaryNormalizationInhabitant
     cmFrobeniusTrace := lean73FrobeniusCharacterTraceInhabitant
+    finiteGTPSProjector := lean76GTPSProjectionInhabitant
+    finiteGTPSUnitaryMetric := lean76GTPSMetricInhabitant
     rtBenchmark := lean68RTInhabitant
     vacuumEinsteinBenchmark := lean68JacobsonInhabitant }
 

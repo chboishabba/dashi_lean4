@@ -164,3 +164,10 @@ globs = ["YangMills.*"]
 [[lean_lib]]
 name = "NSBCyclicOrbit"
 globs = ["NSBCyclicOrbit", "NSBControl.CyclicHelicalVectorTransform", "NSBControl.SelfOrbitCommutatorCarrier", "NSBControl.SingleSelfCommutatorOrbit", "NSBControl.SpectatorFibreLegTransport", "NSBControl.CompleteSelfOrbitCollapse", "NSBControl.OutputPairingCollapse", "NSBControl.OutputRealityNoGo", "NSBControl.SelectedSelfResolvedRecombination", "NSBControl.CombinedSpacetimePayment", "NSBControl.CombinedPaymentToWeightedWork", "NSBControl.CombinedCurrentEndgame", "NSBControl.DirectCombinedCut", "NSBControl.SharedWeightedCut", "NSBControl.AugmentedDerivativeCancellation", "NSBControl.DyadicDifferenceResidual", "NSBControl.GlobalProductRuleLoop", "NSBControl.Rational345ReserveWitness", "NSBControl.Rational345ShortTime", "NSBControl.Rational345LocalODE", "NSBControl.Rational345QuadraticODE"]
+
+# TPS-grounded quantum mereology. Restored after the merged source files
+# remained on main while the opt-in Lake target was lost from the live config.
+[[lean_lib]]
+name = "QuantumMereology"
+srcDir = "DASHI/output-final_aristotle"
+globs = ["RequestProject.Mereology", "RequestProject.QuantumMereology", "RequestProject.QuantumMereologySelection", "RequestProject.QuantumMereologySelectionRegression", "RequestProject.QuantumMereologyObserverBridge", "RequestProject.QuantumMereologyFiniteLinearTPS", "RequestProject.QuantumMereologyInnerProductTPS", "RequestProject.QuantumMereologyOperatorLocality", "RequestProject.QuantumMereologyHamiltonianTransport", "RequestProject.QuantumMereologySchwingerObjective", "RequestProject.QuantumMereologyCandidatePointerObservable", "RequestProject.QuantumMereologyReducedState", "RequestProject.QuantumMereologyPointerProbability", "RequestProject.QuantumMereologyDensityEvolution", "RequestProject.QuantumMereologyEntropyAcceleration", "RequestProject.QuantumMereologySchwingerProducer", "RequestProject.QuantumMereologyHamiltonianExponential", "RequestProject.QuantumMereologyExponentialDerivative", "RequestProject.QuantumMereologyMaxCut", "RequestProject.QuantumMereologyMaxCutRegression"]

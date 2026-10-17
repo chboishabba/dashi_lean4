@@ -22,6 +22,8 @@ import Synthesis.MonsterLinearEigenspaceRestriction
 import Synthesis.MonsterLinearEigenspaceRestrictionRegression
 import Synthesis.MonsterSchurFromSimpleFDRep
 import Synthesis.MonsterSchurFromSimpleFDRepRegression
+import Synthesis.MonsterGriessMaschkeComplement
+import Synthesis.MonsterGriessMaschkeComplementRegression
 
 /-!
 # Monster representation post-recognition generic tail
@@ -32,6 +34,9 @@ actual same-object Monster inputs.
 Available in this tail:
 
 * invariant-subspace and central-eigenspace restricted representations;
+* Maschke splitting of a nonzero fixed conformal line, including the generic
+  derivation of a 196883-dimensional invariant complement from a 196884-dimensional
+  characteristic-zero grade-two representation;
 * FDRep <-> group-algebra same-action/submodule adapter;
 * whole-character simple-source classification;
 * Maschke semisimplicity and character-at-identity dimension ratios;
@@ -43,7 +48,12 @@ Available in this tail:
 * canonical induced normalizer action on `Hom_E(H,W)` from actual normalizer
   lifts on H and W that implement the same conjugation action on E.
 
-Consequently the multiplicity-space normalizer action itself is not independent
+Consequently an independent 196883 Monster matrix model is not a required input
+after the SAME literal grade-two action has been transported into a genuine
+finite-dimensional characteristic-zero representation with its nonzero fixed
+conformal vector: the Griess complement is then a Maschke compiler output.
+
+Likewise the multiplicity-space normalizer action itself is not independent
 third-carrier data: after the actual normalizer lifts/conjugation laws on H and W
 are supplied, the Hom action is canonical.  Projective cocycle laws, absolute
 zeta orientation and same-object selected-phase character transport remain
@@ -58,6 +68,10 @@ structure Boundary where
   linearEigenspaceCompilerAvailable : Bool
   commutingActionEigenspaceInvarianceAvailable : Bool
   restrictionLinearityIsCompilerOutput : Bool
+  griessFixedLineCompilerAvailable : Bool
+  griessMaschkeComplementAvailable : Bool
+  griess196883FinrankDerivedAfterGradeTwoAttachment : Bool
+  independent196883MatrixModelStillRequired : Bool
   fdrepModuleAdapterAvailable : Bool
   wholeCharacterSimpleSourceClassifierAvailable : Bool
   maschkeSemisimplicityAvailable : Bool
@@ -84,6 +98,8 @@ structure Boundary where
   inducedHomNormalizerActionAvailable : Bool
   independentMultiplicityNormalizerActionIsMonsterSpecificInput : Bool
   actualMonsterSameObjectInputsProducedHere : Bool
+  actualMonsterGradeTwoFDRepProducedHere : Bool
+  actualConformalVectorAttachmentProducedHere : Bool
   actualMonsterInvariantSubspaceProducedHere : Bool
   actualCentralLinearOperatorProducedHere : Bool
   actualWholeCharacterTransportProducedHere : Bool
@@ -99,6 +115,10 @@ def canonicalBoundary : Boundary where
   linearEigenspaceCompilerAvailable := true
   commutingActionEigenspaceInvarianceAvailable := true
   restrictionLinearityIsCompilerOutput := true
+  griessFixedLineCompilerAvailable := true
+  griessMaschkeComplementAvailable := true
+  griess196883FinrankDerivedAfterGradeTwoAttachment := true
+  independent196883MatrixModelStillRequired := false
   fdrepModuleAdapterAvailable := true
   wholeCharacterSimpleSourceClassifierAvailable := true
   maschkeSemisimplicityAvailable := true
@@ -125,6 +145,8 @@ def canonicalBoundary : Boundary where
   inducedHomNormalizerActionAvailable := true
   independentMultiplicityNormalizerActionIsMonsterSpecificInput := false
   actualMonsterSameObjectInputsProducedHere := false
+  actualMonsterGradeTwoFDRepProducedHere := false
+  actualConformalVectorAttachmentProducedHere := false
   actualMonsterInvariantSubspaceProducedHere := false
   actualCentralLinearOperatorProducedHere := false
   actualWholeCharacterTransportProducedHere := false

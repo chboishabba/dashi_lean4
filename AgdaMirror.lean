@@ -57,6 +57,8 @@ import AgdaMirror.SignatureDerivation
 import AgdaMirror.PhysicsConformance
 import AgdaMirror.QuotientSetoidSurface
 import AgdaMirror.AuthorityBoundary
+import AgdaMirror.SeaMeInItPhysicalSuitClosure
+import AgdaMirror.SeaMeInItAdaptiveSuitClosure
 import AgdaMirror.IntersectionalNonFactorability
 import AgdaMirror.GodelLattice
 import AgdaMirror.Vec15Order

@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+from pathlib import Path
+
+required = {
+    "MillenniumExternal/TerminalCensus.lean": [
+        "PNotEqualsNPClayCoreExact.agda",
+        "PNotEqualsNPDirectSATLowerBoundExact.agda",
+        "Synthesis.RiemannSelectedRHMaxCutFrontier",
+        "ExternalClayNS/LiteralABCD.lean",
+        "Synthesis.MillenniumBSDUniversalRankWeld",
+        "MillenniumHodge.ClayHodge",
+        "MillenniumYangMills.ClayYangMills",
+    ],
+    "MillenniumExternal/ExactTargetSurface.lean": [
+        "import Problems.PVersusNP.Millennium",
+        "import Problems.RiemannHypothesis.Millennium",
+        "import Problems.NavierStokes.Millennium",
+        "import Problems.Hodge.Millennium",
+        "import Problems.BirchSwinnertonDyer.Millennium",
+        "import Problems.YangMills.Millennium",
+        "import Problems.Poincare.Millennium",
+        "Millennium.ClayPVersusNP.Formulations.NegativeBranch",
+        "Millennium.ClayRiemannHypothesis",
+        "MillenniumNavierStokes.FeffermanA",
+        "MillenniumNavierStokes.FeffermanB",
+        "MillenniumNavierStokes.FeffermanC",
+        "MillenniumNavierStokes.FeffermanD",
+        "MillenniumHodge.ClayHodge",
+        "MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer",
+        "MillenniumYangMills.ClayYangMills",
+        "MillenniumPoincare.ClayPoincareConjecture",
+        "ClayRiemannHypothesis.of_mathlib",
+        "ClayRiemannHypothesis.mathlib",
+        "clayRiemannHypothesis_iff_mathlib",
+        "BSDLeanDojoSameObjectWeld",
+        "rankExistence_of_dashi",
+        "LeanDojoBSDFiniteRank",
+        "ClayBirchSwinnertonDyer.of_rank_existence_and_finite_rank",
+        "clayBirchSwinnertonDyer_of_dashi",
+    ],
+    "ExternalClayNS/LeanDojoForceDecayQuantitative.lean": [
+        "spacetimeDerivativeVector_eq_fullJet_apply",
+        "norm_spacetimeDerivativeVector_le_fullJet",
+        "norm_targetJet_le_sourceJet",
+        "comparatorForceDecay_to_leanDojo",
+        "comparatorPeriodicForceDecay_to_leanDojo",
+    ],
+    "ExternalClayNS/LeanDojoExactTerminal.lean": [
+        "leanDojoR3Solution_to_comparator",
+        "leanDojoPeriodicSolution_to_comparator",
+        "theorem dashiExactFeffermanC : MillenniumNavierStokes.FeffermanC",
+        "theorem dashiExactFeffermanD : MillenniumNavierStokes.FeffermanD",
+        "#print axioms dashiExactFeffermanC",
+        "#print axioms dashiExactFeffermanD",
+    ],
+    "ExternalClayNS/LeanDojoMaxCut.lean": [
+        "import LeanDojoExactTerminal",
+        "ComparatorForceDecayTransportR3",
+        "ComparatorForceDecayTransportPeriodic",
+        "comparatorForceDecayTransportR3_paid",
+        "comparatorForceDecayTransportPeriodic_paid",
+        "#check dashiExactFeffermanC",
+        "#check dashiExactFeffermanD",
+    ],
+    "ExternalClayNS/LeanDojoTargetBridge.lean": [
+        "import LeanDojoMaxCut",
+        "import LiteralABCD",
+        "import Problems.NavierStokes.Millennium",
+        "LeanDojoCDStatementWeld",
+        "c_iff : ClayOptionC ↔ MillenniumNavierStokes.FeffermanC",
+        "d_iff : ClayOptionD ↔ MillenniumNavierStokes.FeffermanD",
+        "leanDojoFeffermanC_of_statementWeld",
+        "leanDojoFeffermanD_of_statementWeld",
+        "leanDojoFeffermanCD_of_statementWeld",
+    ],
+    "MillenniumExternal/ExternalTargetFrontier.lean": [
+        "inductive FrontierClass",
+        ".proved",
+        ".analytic",
+        ".upstreamDefect",
+        ".solvedUnformalized",
+        "firstUnpaid",
+        "UniversalPolynomialSATDecisionFailure",
+        "quarticSignedPoleFloorFourthLipschitzThreshold",
+        "dashiExactFeffermanC",
+        "dashiExactFeffermanD",
+        "Synthesis.Millennium.BSD.BSDClayCoreObligation bg",
+        "riemann_frontier_is_analytic",
+        "navierStokes_frontier_is_proved",
+        "navierStokes_not_green_before_kernel_receipt",
+        "birchSwinnertonDyer_frontier_is_analytic",
+        "hodge_not_green_exact",
+        "yangMills_not_green_exact",
+        "poincare_not_green_exact",
+    ],
+    "scripts/export_millennium_frontier.py": [
+        '"PROVED"',
+        '"TYPE-WELD"',
+        '"ANALYTIC"',
+        '"UPSTREAM-DEFECT"',
+        '"SOLVED-UNFORMALIZED"',
+        "RH_WELD_TOKENS",
+        "expected seven unique Millennium receipts",
+    ],
+    "vendor/LeanMillenniumPrizeProblems.VENDOR": [
+        "603053dc267cf3efe422f438eb78098c0ececd6f",
+        "Apache-2.0",
+        "leanprover/lean4:v4.31.0",
+    ],
+}
+
+for filename, needles in required.items():
+    text = Path(filename).read_text(encoding="utf-8")
+    for needle in needles:
+        if needle not in text:
+            raise SystemExit(f"{filename}: missing {needle!r}")
+
+for filename in (
+    "MillenniumExternal/ExactTargetSurface.lean",
+    "ExternalClayNS/LeanDojoForceDecayQuantitative.lean",
+    "ExternalClayNS/LeanDojoExactTerminal.lean",
+    "ExternalClayNS/LeanDojoMaxCut.lean",
+    "ExternalClayNS/LeanDojoTargetBridge.lean",
+):
+    text = Path(filename).read_text(encoding="utf-8")
+    for forbidden in ("sorry", "axiom ", "unsafe "):
+        if forbidden in text:
+            raise SystemExit(f"{filename}: forbidden token {forbidden!r}")
+
+print("millennium external source audit: PASS")

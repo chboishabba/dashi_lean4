@@ -1,4 +1,5 @@
 import Integration.DASHITOE.C3Graph
+import Integration.DASHITOE.ConcreteInhabitants
 
 namespace DASHITOE
 
@@ -38,17 +39,22 @@ def monsterPhysicalObligations : List RealizationObligation :=
    independentReplicationReceipt]
 
 structure ArithmeticCMFrontier where
+  nativeEisensteinC3 : EisensteinC3Inhabitant
+  pointGroupFormalInhabitant : FormalInhabitantReceipt
   sameCarrierJZeroActionPaid : Bool
   inertSamePrimeEulerPaid : Bool
+  primarySplitNormalizationPaid : Bool
   genericCubicJacobiCompilerPaid : Bool
   splitCubeFibreCertificatePaid : Bool
   splitPrimeFrobeniusPaid : Bool
   sameCurveHeckePaid : Bool
-  deriving Repr
 
-def currentArithmeticCMFrontier : ArithmeticCMFrontier :=
-  { sameCarrierJZeroActionPaid := true
+noncomputable def currentArithmeticCMFrontier : ArithmeticCMFrontier :=
+  { nativeEisensteinC3 := canonicalEisensteinC3Inhabitant
+    pointGroupFormalInhabitant := lean73CMInhabitant
+    sameCarrierJZeroActionPaid := true
     inertSamePrimeEulerPaid := true
+    primarySplitNormalizationPaid := true
     genericCubicJacobiCompilerPaid := true
     splitCubeFibreCertificatePaid := false
     splitPrimeFrobeniusPaid := false
@@ -57,21 +63,46 @@ def currentArithmeticCMFrontier : ArithmeticCMFrontier :=
 def arithmeticCMGrade : ValidationGrade := representationIntertwiner
 
 structure GaugeQFTGRFrontier where
+  rtFormalInhabitant : FormalInhabitantReceipt
+  jacobsonVacuumFormalInhabitant : FormalInhabitantReceipt
   spatialSU2U1RepresentationPaid : Bool
   round131SharedEndpointPaid : Bool
   strictGRQuantumSubstratePaid : Bool
+  concreteRTBenchmarkInhabited : Bool
+  concreteVacuumEinsteinBenchmarkInhabited : Bool
   universalActionRestrictionPaid : Bool
   metricVariationStressPaid : Bool
   calibratedObservablePaid : Bool
-  deriving Repr
 
 def currentGaugeQFTGRFrontier : GaugeQFTGRFrontier :=
-  { spatialSU2U1RepresentationPaid := true
+  { rtFormalInhabitant := lean68RTInhabitant
+    jacobsonVacuumFormalInhabitant := lean68JacobsonInhabitant
+    spatialSU2U1RepresentationPaid := true
     round131SharedEndpointPaid := true
     strictGRQuantumSubstratePaid := true
+    concreteRTBenchmarkInhabited := true
+    concreteVacuumEinsteinBenchmarkInhabited := true
     universalActionRestrictionPaid := false
     metricVariationStressPaid := false
     calibratedObservablePaid := false }
+
+structure QuantumMatterFrontier where
+  selectedAtomicHamiltonian : AtomicP2HamiltonianInhabitant
+  finiteTPSAtlasPaid : Bool
+  gTPSStructurePaid : Bool
+  interactingAtomicC3HamiltonianInhabited : Bool
+  samePhysicalTPSHamiltonianPaid : Bool
+  continuumProjectionPaid : Bool
+  empiricalMatterPredictionPaid : Bool
+
+noncomputable def currentQuantumMatterFrontier : QuantumMatterFrontier :=
+  { selectedAtomicHamiltonian := canonicalAtomicP2HamiltonianInhabitant
+    finiteTPSAtlasPaid := true
+    gTPSStructurePaid := true
+    interactingAtomicC3HamiltonianInhabited := true
+    samePhysicalTPSHamiltonianPaid := false
+    continuumProjectionPaid := false
+    empiricalMatterPredictionPaid := false }
 
 inductive TOEStatus where
   | candidateConstructed
@@ -82,11 +113,32 @@ inductive PhysicalClosureStatus where
   | physicallyClosed
   deriving Repr, DecidableEq
 
+structure TOECandidate where
+  concreteInhabitants : ConcreteInhabitantBundle
+  c3Edges : List C3Edge
+  monster : MonsterRecognitionFrontier
+  arithmeticCM : ArithmeticCMFrontier
+  gaugeQFTGR : GaugeQFTGRFrontier
+  quantumMatter : QuantumMatterFrontier
+  retainsConjecturalSockets : Bool
+  retainsNonDescent : Bool
+
+noncomputable def currentTOECandidate : TOECandidate :=
+  { concreteInhabitants := canonicalConcreteInhabitantBundle
+    c3Edges := canonicalC3Edges
+    monster := currentMonsterFrontier
+    arithmeticCM := currentArithmeticCMFrontier
+    gaugeQFTGR := currentGaugeQFTGRFrontier
+    quantumMatter := currentQuantumMatterFrontier
+    retainsConjecturalSockets := true
+    retainsNonDescent := true }
+
 def currentTOEStatus : TOEStatus := .candidateConstructed
 
 def currentPhysicalClosureStatus : PhysicalClosureStatus := .physicalClosureOpen
 
 structure PhysicallyClosedTOE where
+  candidate : TOECandidate
   universalState : Prop
   universalDynamicsAction : Prop
   controlledSectorReductions : Prop

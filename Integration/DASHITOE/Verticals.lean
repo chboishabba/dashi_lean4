@@ -3,6 +3,7 @@ import Integration.DASHITOE.ConcreteInhabitants
 import Integration.DASHITOE.QuantumInhabitants
 import Integration.DASHITOE.GaugeInhabitants
 import Integration.DASHITOE.OpenAIMathAccelerator
+import Integration.DASHITOE.PrimitiveMaxCut
 
 namespace DASHITOE
 
@@ -149,6 +150,7 @@ inductive PhysicalClosureStatus where
 structure TOECandidate where
   concreteInhabitants : ConcreteInhabitantBundle
   theoremDonorInhabitants : List ExternalTheoremInhabitant
+  primitiveMaxCut : CurrentPrimitiveMaxCut
   c3Edges : List C3Edge
   monster : MonsterRecognitionFrontier
   arithmeticCM : ArithmeticCMFrontier
@@ -160,6 +162,7 @@ structure TOECandidate where
 noncomputable def currentTOECandidate : TOECandidate :=
   { concreteInhabitants := canonicalConcreteInhabitantBundle
     theoremDonorInhabitants := canonicalOpenAITheoremInhabitants
+    primitiveMaxCut := currentPrimitiveMaxCut
     c3Edges := canonicalC3Edges
     monster := currentMonsterFrontier
     arithmeticCM := currentArithmeticCMFrontier

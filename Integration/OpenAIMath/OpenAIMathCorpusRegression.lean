@@ -9,6 +9,7 @@ example : upstreamLeanToolchain = "leanprover/lean4:v4.34.1" := rfl
 example : upstreamRepository = "https://github.com/openai/math" := rfl
 example : upstreamLicense = "Apache-2.0" := rfl
 example : upstreamFormalizationCatalogue = "lean/formalization.yaml" := rfl
+example : upstreamVendorPath = "vendor/openai-math-src" := rfl
 
 example : manuscriptClaimIsLeanTheorem = false := rfl
 example : catalogueEntryIsKernelReceipt = false := rfl

@@ -5,16 +5,11 @@ namespace DASHITOE
 /-!
 Concrete inhabitants for the TOE integration layer.
 
-The distinction is deliberate:
-* native theorem inhabitants below are proved directly in this branch;
-* imported formal inhabitants point to actual theorem values on sibling DASHI
-  branches, but are not re-labelled as proof terms here;
-* none of these by itself is a calibrated same-physical-object inhabitant.
+Native theorem inhabitants are proved directly in this branch. Imported formal
+inhabitants point to actual theorem values on sibling DASHI branches without
+pretending those declarations are local proof terms. Neither authority level is
+a calibrated same-physical-object inhabitant.
 -/
-
-------------------------------------------------------------------------
--- Native interacting atomic inhabitant.
-------------------------------------------------------------------------
 
 inductive AtomicP2Basis where
   | negZero
@@ -51,7 +46,7 @@ def atomicP2CoulombMatrix : AtomicP2Basis → AtomicP2Basis → ℚ
   cases a <;> cases b <;> rfl
 
 structure AtomicP2HamiltonianInhabitant where
-  basis : Type := AtomicP2Basis
+  basis : Type
   c3 : basis → basis
   orderThree : ∀ x, c3 (c3 (c3 x)) = x
   matrixElement : basis → basis → ℚ
@@ -65,10 +60,6 @@ noncomputable def canonicalAtomicP2HamiltonianInhabitant : AtomicP2HamiltonianIn
   matrixElement := atomicP2CoulombMatrix
   c3HamiltonianInvariant := atomicP2Coulomb_c3_invariant
   sourceOwner := "Agda PR #1194: selected common-spin hydrogenic 2p^2 Coulomb carrier, Vee=(21/128) I3"
-
-------------------------------------------------------------------------
--- Native Eisenstein C3 inhabitant.
-------------------------------------------------------------------------
 
 abbrev EisensteinField := QuadraticAlgebra ℚ (-1) (-1)
 
@@ -89,18 +80,12 @@ def eisensteinOmega : EisensteinField := QuadraticAlgebra.omega
       ring
 
 structure EisensteinC3Inhabitant where
-  carrier : Type := EisensteinField
-  omega : carrier
+  omega : EisensteinField
   orderThree : omega ^ 3 = 1
 
 noncomputable def canonicalEisensteinC3Inhabitant : EisensteinC3Inhabitant where
-  carrier := EisensteinField
   omega := eisensteinOmega
   orderThree := eisensteinOmega_cube
-
-------------------------------------------------------------------------
--- Exact cross-branch formal inhabitants.
-------------------------------------------------------------------------
 
 inductive InhabitantAuthority where
   | nativeLeanInhabitant
@@ -150,12 +135,34 @@ def lean73CMInhabitant : FormalInhabitantReceipt :=
     propositionScope := "Actual order-three additive endomorphism of the nonsingular j=0 elliptic point group over Q(omega)."
     authority := .importedFormalInhabitant }
 
+def lean73PrimaryNormalizationInhabitant : FormalInhabitantReceipt :=
+  { prover := "Lean4"
+    repository := "chboishabba/dashi_lean4"
+    pullRequest := 73
+    headCommit := "4dde2b77cbdb76bdb21db852966db2ffa0ca88d3"
+    moduleName := "Dashi.EisensteinJZeroPrimaryNormalizationExact"
+    declaration := "splitPrime_primary_associate_existsUnique"
+    propositionScope := "Every split-prime norm factor has a unique primary associate in the explicit six-unit orbit."
+    authority := .importedFormalInhabitant }
+
+def lean73FrobeniusCharacterTraceInhabitant : FormalInhabitantReceipt :=
+  { prover := "Lean4"
+    repository := "chboishabba/dashi_lean4"
+    pullRequest := 73
+    headCommit := "4dde2b77cbdb76bdb21db852966db2ffa0ca88d3"
+    moduleName := "Dashi.EisensteinJZeroQuadraticCharacterTraceExact"
+    declaration := "frobeniusTrace_eq_neg_characterSum"
+    propositionScope := "For every odd prime, the same j=0 curve Frobenius trace equals minus the standard quadratic-character sum over x^3+1."
+    authority := .importedFormalInhabitant }
+
 structure ConcreteInhabitantBundle where
   atomicHamiltonian : AtomicP2HamiltonianInhabitant
   eisensteinC3 : EisensteinC3Inhabitant
   rtFormal : FormalInhabitantReceipt
   jacobsonFormal : FormalInhabitantReceipt
   cmPointFormal : FormalInhabitantReceipt
+  cmPrimaryNormalizationFormal : FormalInhabitantReceipt
+  cmFrobeniusTraceFormal : FormalInhabitantReceipt
 
 noncomputable def canonicalConcreteInhabitantBundle : ConcreteInhabitantBundle where
   atomicHamiltonian := canonicalAtomicP2HamiltonianInhabitant
@@ -163,5 +170,7 @@ noncomputable def canonicalConcreteInhabitantBundle : ConcreteInhabitantBundle w
   rtFormal := lean68RTInhabitant
   jacobsonFormal := lean68JacobsonInhabitant
   cmPointFormal := lean73CMInhabitant
+  cmPrimaryNormalizationFormal := lean73PrimaryNormalizationInhabitant
+  cmFrobeniusTraceFormal := lean73FrobeniusCharacterTraceInhabitant
 
 end DASHITOE

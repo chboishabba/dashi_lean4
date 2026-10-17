@@ -70,31 +70,35 @@ def SuitDeploymentBoundary.promotable (r : SuitDeploymentBoundary) : Prop :=
 cannot promote while external review remains diagnostic. -/
 theorem diagnostic_external_review_blocks_deployment
     (r : SuitDeploymentBoundary)
-    (hcontroller : r.controllerPromoted = true)
-    (hprofile : r.deploymentProfileGate = .admissible)
-    (hevidence : r.deploymentEvidenceGate = .admissible)
+    (_hcontroller : r.controllerPromoted = true)
+    (_hprofile : r.deploymentProfileGate = .admissible)
+    (_hevidence : r.deploymentEvidenceGate = .admissible)
     (hreview : r.externalAuthorityReviewGate = .diagnostic)
-    (hclaim : r.claimBoundaryGate = .admissible) :
+    (_hclaim : r.claimBoundaryGate = .admissible) :
     ¬ r.promotable := by
   intro h
   rcases h with ⟨_, _, _, hreviewAdmissible, _⟩
   rw [hreview] at hreviewAdmissible
   cases hreviewAdmissible
 
-/-- The theorem above does not depend on the local controller/profile evidence;
-those hypotheses are intentionally present to make the authority separation
-explicit at the call site. -/
+/-- A constructor with diagnostic external review makes the non-derivability
+of field authority explicit even when every local value is caller-selected. -/
+def diagnosticReviewBoundary
+    (controllerPromoted : Bool)
+    (profileGate evidenceGate claimGate : TriGate) : SuitDeploymentBoundary :=
+  { controllerPromoted := controllerPromoted
+    deploymentProfileGate := profileGate
+    deploymentEvidenceGate := evidenceGate
+    externalAuthorityReviewGate := .diagnostic
+    claimBoundaryGate := claimGate }
+
+/-- Local controller/profile/evidence choices cannot synthesize an admissible
+external review gate. -/
 theorem local_success_cannot_synthesize_external_review
     (controllerPromoted : Bool)
     (profileGate evidenceGate claimGate : TriGate) :
-    let boundary : SuitDeploymentBoundary :=
-      { controllerPromoted := controllerPromoted
-        deploymentProfileGate := profileGate
-        deploymentEvidenceGate := evidenceGate
-        externalAuthorityReviewGate := .diagnostic
-        claimBoundaryGate := claimGate }
-    ¬ boundary.promotable := by
-  intro boundary
+    ¬ (diagnosticReviewBoundary
+        controllerPromoted profileGate evidenceGate claimGate).promotable := by
   intro h
   rcases h with ⟨_, _, _, hreview, _⟩
   cases hreview

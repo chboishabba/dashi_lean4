@@ -18,8 +18,8 @@ def upstreamFormalizationCatalogue : String := "lean/formalization.yaml"
 /-- Upstream Lean umbrella module. -/
 def upstreamLeanRoot : String := "lean/OAI.lean"
 
-/-- Intended hermetic checkout location relative to the DASHI Lean repository. -/
-def upstreamVendorPath : String := "vendor/openai-math"
+/-- Hermetic upstream gitlink checkout relative to the DASHI Lean repository. -/
+def upstreamVendorPath : String := "vendor/openai-math-src"
 
 /-- Metadata never turns a manuscript claim into a Lean theorem. -/
 def manuscriptClaimIsLeanTheorem : Bool := false

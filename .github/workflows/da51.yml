@@ -6,6 +6,7 @@ on:
       - 'DA51.lean'
       - 'DA51/**'
       - 'fixtures/da51_v1.json'
+      - 'lakefile.toml'
       - '.github/workflows/da51.yml'
   workflow_dispatch:
 
@@ -24,6 +25,8 @@ jobs:
       - uses: leanprover/lean-action@v1
         with:
           build: false
+      - name: Build DA51 library
+        run: lake build DA51
       - name: Check DA51 core
         run: lake env lean DA51/Core.lean
       - name: Check DA51 atlas codec

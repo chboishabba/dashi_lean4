@@ -18,3 +18,14 @@ example : monsterPhysicalGrade = .conjecturalStructural := rfl
 example : arithmeticCMGrade = .representationIntertwiner := rfl
 example : currentTOEStatus = .candidateConstructed := rfl
 example : currentPhysicalClosureStatus = .physicalClosureOpen := rfl
+
+example : currentPartialPhysicalClosureInhabitant.finiteGTPSProjector.authority =
+    .importedFormalInhabitant := rfl
+example : currentPartialPhysicalClosureInhabitant.finiteGTPSUnitaryMetric.authority =
+    .importedFormalInhabitant := rfl
+example : currentPartialPhysicalClosureInhabitant.cmPrimaryNormalization.authority =
+    .importedFormalInhabitant := rfl
+example : currentPartialPhysicalClosureInhabitant.cmFrobeniusTrace.authority =
+    .importedFormalInhabitant := rfl
+
+end DASHITOE

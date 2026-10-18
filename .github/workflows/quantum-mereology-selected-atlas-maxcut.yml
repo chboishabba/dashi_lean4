@@ -1,0 +1,36 @@
+name: Quantum Mereology Selected Atlas Max-Cut
+
+on:
+  push:
+    branches:
+      - 'agent/quantum-mereology-selected-atlas-maxcut-20261016'
+    paths:
+      - 'DASHI/output-final_aristotle/RequestProject/QuantumMereologyGTPSUnitaryMetric2026.lean'
+      - 'DASHI/output-final_aristotle/RequestProject/QuantumMereologyGTPSUnitaryMetric2026Regression.lean'
+      - 'DASHI/output-final_aristotle/RequestProject/QuantumMereologySelectedAtlasTerminalMaxCut.lean'
+      - 'DASHI/output-final_aristotle/RequestProject/QuantumMereologySelectedAtlasTerminalRegression.lean'
+      - '.github/workflows/quantum-mereology-selected-atlas-maxcut.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pinned-lean-428:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Set up pinned Lean project
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: DASHI/output-final_aristotle
+      - name: Build unitary metric and terminal max-cut regressions
+        working-directory: DASHI/output-final_aristotle
+        run: |
+          lake build RequestProject.QuantumMereologyGTPSUnitaryMetric2026
+          lake build RequestProject.QuantumMereologyGTPSUnitaryMetric2026Regression
+          lake build RequestProject.QuantumMereologySelectedAtlasTerminalMaxCut
+          lake build RequestProject.QuantumMereologySelectedAtlasTerminalRegression

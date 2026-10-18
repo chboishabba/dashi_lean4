@@ -42,7 +42,7 @@ structure UnitaryFamilyTangent (n : Nat) where
 
 /-- Source normalization `kappa = 2 / dim(A'_0)`. -/
 noncomputable def kappa {n : Nat} (X : UnitaryFamilyTangent n) : Real :=
-  2 / X.referenceCommutantDimension
+  (2 : Real) / (X.referenceCommutantDimension : Real)
 
 /-- Exact finite reconstruction of Eq. (8):
 `ds_Theta^2 = kappa^2 ||Q_theta(dK)||_2^2`. -/

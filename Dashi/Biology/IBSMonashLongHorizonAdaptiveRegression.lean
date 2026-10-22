@@ -1,0 +1,10 @@
+import Dashi.Biology.IBSMonashLongHorizonAdaptiveExact
+
+namespace Dashi.Biology.IBSMonashLongHorizonAdaptiveRegression
+open Dashi.Biology.IBSMonashLongHorizonAdaptiveExact
+
+theorem longHorizonAtlasRegression : canonicalMonashLongHorizonAtlas = canonicalMonashLongHorizonAtlas := rfl
+theorem siNotPredictorRegression : SingleSIHypomorphPredictsFODMAPOutcomePermission → False := singleSIHypomorphDoesNotPredictFODMAPOutcome
+theorem strictRestrictionNotGoalRegression : MoreRestrictionAlwaysBetterPermission → False := moreRestrictionIsNotAlwaysBetter
+
+end Dashi.Biology.IBSMonashLongHorizonAdaptiveRegression

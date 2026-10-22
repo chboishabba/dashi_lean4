@@ -1,0 +1,7 @@
+import Dashi.Biology.QuailHistamineMicrobiomeHostBridgeExact
+
+namespace Dashi.Biology.QuailHistamineMicrobiomeHostBridgeRegression
+open Dashi.Biology.QuailHistamineMicrobiomeHostBridgeExact
+example : QuailHistamineMicrobiomeHostBridge := canonicalQuailHistamineMicrobiomeHostBridge
+example : QuailHistamineMicrobiomeHostBoundary := canonicalQuailHistamineMicrobiomeHostBoundary
+end Dashi.Biology.QuailHistamineMicrobiomeHostBridgeRegression

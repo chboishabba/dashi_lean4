@@ -1,0 +1,11 @@
+import Dashi.Biology.IBSPersonalizationValidationExact
+
+namespace Dashi.Biology.IBSPersonalizationValidationRegression
+open Dashi.Biology.IBSPersonalizationValidationExact
+
+theorem atlasRegression : canonicalIBSPersonalizationValidationAtlas = canonicalIBSPersonalizationValidationAtlas := rfl
+theorem personalizedNotSuperiorRegression : PersonalizedLabelImpliesSuperiorOutcomePermission → False := personalizedLabelDoesNotImplySuperiorOutcome
+theorem biomarkerNotSelectorRegression : MechanisticBiomarkerIsValidatedSelectorPermission → False := mechanisticBiomarkerDoesNotBecomeValidatedSelector
+theorem algorithmNotTransportRegression : InternalPersonalizationModelAutomaticallyTransportsPermission → False := internalPersonalizationModelDoesNotAutomaticallyTransport
+
+end Dashi.Biology.IBSPersonalizationValidationRegression

@@ -56,10 +56,9 @@ theorem literalPhysicalReserveIntegralCounterexample :
           (∫ t in (0 : ℝ)..T,
             Rational345R823RealSemanticProvenance.r823ReserveRate
               literalPhysicalReserveSource (u t))) := by
-  open Rational345R831ReserveDecision in
-    obtain ⟨u, T, hT, hu0, huContinuous, hReality, hTransverse,
-      hZero, hPointwiseNeg, hIntegratedNeg⟩ :=
-        Rational345R830PhysicalPacketSegment.r830_physical_packet_negative_segment
+  obtain ⟨u, T, hT, hu0, huContinuous, hReality, hTransverse,
+    hZero, hPointwiseNeg, hIntegratedNeg⟩ :=
+      Rational345R830PhysicalPacketSegment.r830_physical_packet_negative_segment
   have hPhysical :
       ∀ t ∈ Set.Icc (0 : ℝ) T,
         Rational345R831ReserveDecision.IsR823PhysicalState (u t) := by

@@ -287,8 +287,8 @@ abbrev PhysicalEightModeState := Fin 8 → FourierVector345
 def selected345ModeAt (j : Fin 8) : Mode345 :=
   let x : ℤ := if j.val < 3 then -3 else if j.val < 5 then 0 else 3
   let y : ℤ :=
-    if j.val = 0 || j.val = 3 || j.val = 5 then -4
-    else if j.val = 1 || j.val = 6 then 0 else 4
+    if j.val = 0 ∨ j.val = 3 ∨ j.val = 5 then -4
+    else if j.val = 1 ∨ j.val = 6 then 0 else 4
   ![x, y, 0]
 
 def selected345ModeFinset : Finset Mode345 :=
@@ -312,8 +312,7 @@ def physicalEightModeField (u : PhysicalEightModeState) :
 /-- Every one of the eight chart modes is a member of S. -/
 theorem selected345ModeAt_mem (j : Fin 8) :
     Selected345Mode (selected345ModeAt j) := by
-  fin_cases j <;>
-    norm_num [selected345ModeAt, Selected345Mode, Function.funext_iff]
+  fin_cases j <;> decide
 
 /-- The sparse extension is zero on every nonselected physical output. -/
 theorem extendPhysicalEight_off_support

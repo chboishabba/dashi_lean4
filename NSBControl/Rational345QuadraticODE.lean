@@ -1,3 +1,4 @@
+import Mathlib
 import Mathlib.Tactic.Omega
 import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Analysis.Calculus.ContDiff.Comp
@@ -164,6 +165,107 @@ theorem selected345_physical_squared_norm
   rcases hx with hx | hx | hx <;>
     rcases hy with hy | hy | hy <;>
       simp_all [pow_two] <;> omega
+
+end Rational345QuadraticODE
+end NSBControl
+
+
+namespace NSBControl
+namespace Rational345QuadraticODE
+
+/-!
+## Literal complex-vector finite Fourier right-hand side
+
+Unlike the earlier term-filtering statement, these are the actual algebraic
+operators of the physical projected quadratic Galerkin RHS (viscosity ν=1).
+They work on arbitrary complex 3-vector mode coefficients, not only on
+the specially chosen initial seed. Finite sums use the full supplied mode
+set. No helical-mode defaults or irrational square roots enter the RHS.
+-/
+
+abbrev FourierVector345 := Fin 3 → ℂ
+
+/-- Sum over q dotted into the velocity at p, multiplied by velocity at q. -/
+def rawFourierTriad345 (q : Mode345)
+    (atP atQ : FourierVector345) : FourierVector345 :=
+  fun j => (∑ i : Fin 3, (q i : ℂ) * atP i) * atQ j
+
+/-- Literal positive-viscosity ν=1 Fourier Laplacian multiplier. -/
+def viscousFourierMode345 (k : Mode345)
+    (v : FourierVector345) : FourierVector345 :=
+  fun j => -(∑ i : Fin 3, (k i : ℂ) * (k i : ℂ)) * v j
+
+/-- Leray projection followed by the physical factor -i. -/
+def projectedNonlinearMode345 (k : Mode345)
+    (v : FourierVector345) : FourierVector345 :=
+  fun j => -Complex.I * (v j -
+    (k j : ℂ) * (∑ i : Fin 3, (k i : ℂ) * v i) /
+      (∑ i : Fin 3, (k i : ℂ) * (k i : ℂ)))
+
+/-- Truncated, same-source physical Fourier right-hand side:
+    F_k(u) = -|k|² u_k - i P_k Σ_(p+q=k) (q · u_p)u_q. -/
+def literalProjectedGalerkinRHS345
+    (modes : Finset Mode345)
+    (u : Mode345 → FourierVector345)
+    (k : Mode345) : FourierVector345 :=
+  viscousFourierMode345 k (u k) +
+    projectedNonlinearMode345 k
+      ((modes.product modes).sum (fun pq =>
+        if pq.1 + pq.2 = k then
+          rawFourierTriad345 pq.2 (u pq.1) (u pq.2)
+        else 0))
+
+theorem rawFourierTriad345_zero_left (q : Mode345)
+    (v : FourierVector345) :
+    rawFourierTriad345 q 0 v = 0 := by
+  funext j
+  simp [rawFourierTriad345]
+
+theorem rawFourierTriad345_zero_right (q : Mode345)
+    (v : FourierVector345) :
+    rawFourierTriad345 q v 0 = 0 := by
+  funext j
+  simp [rawFourierTriad345]
+
+theorem viscousFourierMode345_zero (k : Mode345) :
+    viscousFourierMode345 k 0 = 0 := by
+  funext j
+  simp [viscousFourierMode345]
+
+theorem projectedNonlinearMode345_zero (k : Mode345) :
+    projectedNonlinearMode345 k 0 = 0 := by
+  funext j
+  simp [projectedNonlinearMode345]
+
+/-- Literal radius-four physical RHS preserves the selected eight-mode
+    support. It uses the REAL Leray coefficient via a complex cast, both
+    velocity factors and the full ungated pair sum, not an artificial
+    active-support-filtered interaction. -/
+theorem literalProjectedGalerkinRHS345_preserves_selected_support
+    (modes : Finset Mode345)
+    (u : Mode345 → FourierVector345)
+    (hu : ∀ p, ¬ Selected345Mode p → u p = 0)
+    (k : Mode345)
+    (hk : InRadiusFour k)
+    (hinactive : ¬ Selected345Mode k) :
+    literalProjectedGalerkinRHS345 modes u k = 0 := by
+  have hsum :
+      (modes.product modes).sum (fun pq =>
+        if pq.1 + pq.2 = k then
+          rawFourierTriad345 pq.2 (u pq.1) (u pq.2)
+        else 0) = 0 := by
+    apply Finset.sum_eq_zero
+    intro pq hpq
+    by_cases heq : pq.1 + pq.2 = k
+    · by_cases hp : Selected345Mode pq.1
+      · by_cases hq : Selected345Mode pq.2
+        · exact False.elim
+            (hinactive (selected345_add_closed_inside_cutoff hp hq heq hk))
+        · simp [heq, hu pq.2 hq, rawFourierTriad345_zero_right]
+      · simp [heq, hu pq.1 hp, rawFourierTriad345_zero_left]
+    · simp [heq]
+  simp only [literalProjectedGalerkinRHS345, hu k hinactive, hsum,
+    viscousFourierMode345_zero, projectedNonlinearMode345_zero, add_zero]
 
 end Rational345QuadraticODE
 end NSBControl

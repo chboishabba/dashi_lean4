@@ -20,13 +20,6 @@ namespace Rational345R823DecisionFreeze
 
 open Rational345R823RealR749R760
 
-/-- Concrete source-level counterexample to the universal R823 integrated
-reserve inequality, obtained from the literal real R760 carrier. -/
-theorem r823UniversalReserveCounterexample :
-    ∃ reserve demand : ℝ, ¬ demand ≤ reserve :=
-  literalR760DecisionContradiction
-
-
 /-- Original-multiplicity R760/R822 same-object source, not a selected
     reserve/demand pair chosen after seeing a negative integral. -/
 noncomputable def literalPhysicalReserveSource :
@@ -89,6 +82,23 @@ theorem literalPhysicalReserveIntegralCounterexample :
       Rational345R823RealSemanticProvenance.r823ReserveRate
         literalPhysicalReserveSource (u t))) at hContradiction
   exact hContradiction
+
+
+/-- Legacy existential form now PROVED FROM the stronger genuine physical
+    trajectory and literal original-cell reserve integrals above, not from
+    a second untracked abstraction. -/
+theorem r823UniversalReserveCounterexample :
+    ∃ reserve demand : ℝ, ¬ demand ≤ reserve := by
+  rcases literalPhysicalReserveIntegralCounterexample with
+    ⟨u, T, _hT, _hu0, _hphys, hnot⟩
+  exact ⟨
+    (∫ t in (0 : ℝ)..T,
+      Rational345R823RealSemanticProvenance.r823ReserveRate
+        literalPhysicalReserveSource (u t)),
+    (∫ t in (0 : ℝ)..T,
+      Rational345R823RealSemanticProvenance.r823DemandRate
+        literalPhysicalReserveSource (u t)),
+    hnot⟩
 
 /-- The source theorem chain reaches the route-selection contradiction. -/
 def r823DecisionSourceClosed : Bool := true

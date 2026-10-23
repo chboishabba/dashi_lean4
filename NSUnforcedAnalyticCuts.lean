@@ -118,6 +118,29 @@ theorem signedDefect_le_pair_oscillation
   nlinarith [sq_nonneg
     ((rate i - rate j) + (work i - work j))]
 
+/-- Tunable signed Young payment. Choosing 0 < ε < 1 leaves a
+    STRICTLY SUB-HALF coefficient ε/2 for the pairwise work oscillation.
+    The remaining frequency-rate oscillation budget 1/(2ε) is the
+    genuinely physical R440-to-local-ED estimate still to establish.
+    The theorem never assumes that missing uniform estimate. -/
+theorem signedDefect_le_tunable_pair_oscillation
+    (noncore core : Finset ι) (rate work : ι → ℝ)
+    (ε : ℝ) (hε : 0 < ε) :
+    signedNoncoreCoreDefect noncore core rate work
+      ≤ ∑ i ∈ noncore, ∑ j ∈ core,
+        (ε * (work i - work j) ^ 2 +
+          (rate i - rate j) ^ 2 / ε) / 2 := by
+  unfold signedNoncoreCoreDefect
+  apply Finset.sum_le_sum
+  intro i hi
+  apply Finset.sum_le_sum
+  intro j hj
+  have htwo : (0 : ℝ) < 2 := by norm_num
+  apply (le_div_iff₀ htwo).2
+  apply (le_div_iff₀ hε).2
+  nlinarith [sq_nonneg
+    (ε * (work i - work j) + (rate i - rate j))]
+
 /-- Any cross-partition with equal physical input-Laplacian multipliers
     has *zero* B4 defect, without appealing to an absolute-value estimate. -/
 theorem signedDefect_zero_of_flat_cross_rates

@@ -345,3 +345,37 @@ theorem physicalEightModeField_off_support
 
 end Rational345QuadraticODE
 end NSBControl
+
+
+namespace NSBControl
+namespace Rational345QuadraticODE
+
+/-!
+## Real physical eight-mode Galerkin flow
+
+The concrete field defined above is the literal viscosity-one,
+Leray-projected quadratic finite Fourier field restricted to the eight
+closed modes. Every sum is finite and every projector denominator
+is independent of the state. It is therefore real C1 and has a
+genuine local real-time trajectory through each finite state.
+-/
+
+theorem physicalEightModeField_contDiff :
+    ContDiff ℝ 1 physicalEightModeField := by
+  unfold physicalEightModeField literalProjectedGalerkinRHS345
+    extendPhysicalEight viscousFourierMode345
+    projectedNonlinearMode345 rawFourierTriad345
+  fun_prop
+
+theorem physicalEightModeField_real_local_solution
+    (seed : PhysicalEightModeState) :
+    ∃ (u : ℝ → PhysicalEightModeState),
+      u 0 = seed ∧
+      ∃ ε > 0,
+        ∀ t ∈ Set.Ioo (-ε) ε,
+          HasDerivAt u (physicalEightModeField (u t)) t := by
+  apply Rational345LocalODE.exists_local_solution
+  exact physicalEightModeField_contDiff.contDiffAt
+
+end Rational345QuadraticODE
+end NSBControl

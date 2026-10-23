@@ -462,3 +462,138 @@ theorem exists_negative_integral_from_R850_components
 
 end Rational345RealSource
 end NSBControl
+
+
+namespace NSBControl
+namespace Rational345RealSource
+
+/-!
+R853/R823 SAME-STATE REAL INTEGRATION.
+The Agda R853 theorem already proves the finite signed-orbit identity on
+its rational packet. In the REAL codomain, the *only* source-specific premise
+below is that the identical physical Fourier finite-sum identity holds for
+the real Galerkin state's coherent, production, dissipation, nested, quotient
+and core terms. It must not be inferred from a Q-valued trajectory.
+-/
+
+def realSignedReserveRate {E : Type*}
+    (core dissipation : E → ℝ) (x : E) : ℝ :=
+  core x + 6 * dissipation x
+
+def realSignedDemandRate {E : Type*}
+    (nested quotient : E → ℝ) (x : E) : ℝ :=
+  2 * (quotient x - 9 * nested x)
+
+/-- Pointwise R853 is precisely the missing source equation, not a new
+    inequality or a second independent signed observable. -/
+theorem realR823_from_R853_pointwise
+    {E : Type*}
+    (coherent production dissipation nested quotient core : E → ℝ)
+    (hR853 : ∀ x : E,
+      2 * (9 * nested x - quotient x) + core x =
+        6 * (12 * coherent x - production x))
+    (x : E) :
+    realSignedReserveRate core dissipation x -
+      realSignedDemandRate nested quotient x =
+      physicalSelectedRate coherent production dissipation x := by
+  unfold realSignedReserveRate realSignedDemandRate physicalSelectedRate
+  have h := hR853 x
+  linarith
+
+/-- Real interval integrals of the reserve and demand agree with the SAME
+    selected R853 signed-rate integral, using actual integral linearity. -/
+theorem realR823_R853_integral_on_same_flow
+    {E : Type*}
+    (u : ℝ → E) (T : ℝ)
+    (coherent production dissipation nested quotient core : E → ℝ)
+    (hR853 : ∀ x : E,
+      2 * (9 * nested x - quotient x) + core x =
+        6 * (12 * coherent x - production x))
+    (hreserve : IntervalIntegrable
+      (fun t : ℝ => realSignedReserveRate core dissipation (u t))
+      MeasureTheory.volume 0 T)
+    (hdemand : IntervalIntegrable
+      (fun t : ℝ => realSignedDemandRate nested quotient (u t))
+      MeasureTheory.volume 0 T) :
+    (∫ t in (0 : ℝ)..T,
+      physicalSelectedRate coherent production dissipation (u t)) =
+    (∫ t in (0 : ℝ)..T, realSignedReserveRate core dissipation (u t)) -
+    (∫ t in (0 : ℝ)..T, realSignedDemandRate nested quotient (u t)) := by
+  have hfunctions :
+      (fun t : ℝ => physicalSelectedRate coherent production dissipation (u t)) =
+      (fun t : ℝ => realSignedReserveRate core dissipation (u t) -
+        realSignedDemandRate nested quotient (u t)) := by
+    funext t
+    exact (realR823_from_R853_pointwise
+      coherent production dissipation nested quotient core hR853 (u t)).symm
+  rw [hfunctions]
+  exact intervalIntegral.integral_sub hreserve hdemand
+
+/-- This theorem is the complete REAL analytic + integrated signed-reserve
+    max-cut, with the source-specific R853 same-real-Fourier-operator law
+    represented as ONE explicit input (the literal geometric lift).
+    The three seed components are exactly R850, not arbitrary rate data. -/
+theorem exists_negative_real_R823_reserve_difference
+    {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    (linear : E →L[ℝ] E)
+    (bilinear : E × E → E)
+    (hbilinear : IsBoundedBilinearMap ℝ bilinear)
+    (seed : E)
+    (coherent production dissipation nested quotient core : E → ℝ)
+    (hcoherentCont : Continuous coherent)
+    (hproductionCont : Continuous production)
+    (hdissipationCont : Continuous dissipation)
+    (hnestedCont : Continuous nested)
+    (hquotientCont : Continuous quotient)
+    (hcoreCont : Continuous core)
+    (hcoherentSeed :
+      coherent seed = Rational345ReserveWitness.realCoherentWork)
+    (hproductionSeed :
+      production seed = Rational345ReserveWitness.realCriticalProduction)
+    (hdissipationSeed :
+      dissipation seed = Rational345ReserveWitness.realCriticalDissipation)
+    (hR853 : ∀ x : E,
+      2 * (9 * nested x - quotient x) + core x =
+        6 * (12 * coherent x - production x)) :
+    ∃ (u : ℝ → E) (T : ℝ),
+      0 < T ∧ u 0 = seed ∧
+      (∀ t ∈ Set.Icc (0 : ℝ) T,
+        HasDerivAt u (linear (u t) + bilinear (u t, u t)) t) ∧
+      ¬ ((∫ t in (0 : ℝ)..T, realSignedDemandRate nested quotient (u t)) ≤
+          (∫ t in (0 : ℝ)..T, realSignedReserveRate core dissipation (u t))) := by
+  obtain ⟨u, T, hT, hu0, hODE, hnegative⟩ :=
+    exists_negative_integral_from_R850_components
+      linear bilinear hbilinear seed coherent production dissipation
+      hcoherentCont hproductionCont hdissipationCont
+      hcoherentSeed hproductionSeed hdissipationSeed
+  have huCont : ContinuousOn u (Set.Icc (0 : ℝ) T) := by
+    intro t ht
+    exact (hODE t ht).continuousAt.continuousWithinAt
+  have hrcont : ContinuousOn
+      (fun t : ℝ => realSignedReserveRate core dissipation (u t))
+      (Set.Icc (0 : ℝ) T) := by
+    change ContinuousOn (fun t : ℝ => core (u t) + 6 * dissipation (u t)) _
+    exact (hcoreCont.comp_continuousOn huCont).add
+      ((hdissipationCont.comp_continuousOn huCont).const_mul _)
+  have hdcont : ContinuousOn
+      (fun t : ℝ => realSignedDemandRate nested quotient (u t))
+      (Set.Icc (0 : ℝ) T) := by
+    change ContinuousOn (fun t : ℝ => 2 * (quotient (u t) - 9 * nested (u t))) _
+    exact ((hquotientCont.comp_continuousOn huCont).sub
+      ((hnestedCont.comp_continuousOn huCont).const_mul _)).const_mul _
+  have hrint : IntervalIntegrable
+      (fun t : ℝ => realSignedReserveRate core dissipation (u t))
+      MeasureTheory.volume 0 T :=
+    hrcont.intervalIntegrable_of_Icc (le_of_lt hT)
+  have hdint : IntervalIntegrable
+      (fun t : ℝ => realSignedDemandRate nested quotient (u t))
+      MeasureTheory.volume 0 T :=
+    hdcont.intervalIntegrable_of_Icc (le_of_lt hT)
+  have hsame := realR823_R853_integral_on_same_flow u T
+    coherent production dissipation nested quotient core hR853 hrint hdint
+  refine ⟨u, T, hT, hu0, hODE, ?_⟩
+  exact negative_real_integral_refutes_reserve hnegative hsame
+
+end Rational345RealSource
+end NSBControl

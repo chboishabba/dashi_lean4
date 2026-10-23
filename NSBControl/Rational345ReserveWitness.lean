@@ -142,3 +142,33 @@ theorem selectedRealRateFromSourceRows_negative :
 
 end Rational345ReserveWitness
 end NSBControl
+
+
+namespace NSBControl
+namespace Rational345ReserveWitness
+
+/--
+The actual REAL helical-projector denominators on the selected active
+3-4-5 seed modes agree with the rational R835 reciprocals. The statement
+does NOT assert rational norms on inactive lattice modes or at later times.
+-/
+theorem selected_three_four_five_real_norms :
+    Real.sqrt (9 : ℝ) = (3 : ℝ) ∧
+    Real.sqrt (16 : ℝ) = (4 : ℝ) ∧
+    Real.sqrt (25 : ℝ) = (5 : ℝ) := by
+  constructor
+  · norm_num
+  constructor <;> norm_num
+
+theorem selected_three_four_five_real_inverse_norms :
+    (Real.sqrt (9 : ℝ))⁻¹ = ((1 / 3 : ℚ) : ℝ) ∧
+    (Real.sqrt (16 : ℝ))⁻¹ = ((1 / 4 : ℚ) : ℝ) ∧
+    (Real.sqrt (25 : ℝ))⁻¹ = ((1 / 5 : ℚ) : ℝ) := by
+  rcases selected_three_four_five_real_norms with ⟨h3, h4, h5⟩
+  rw [h3, h4, h5]
+  constructor
+  · norm_num
+  constructor <;> norm_num
+
+end Rational345ReserveWitness
+end NSBControl

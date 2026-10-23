@@ -269,3 +269,80 @@ theorem literalProjectedGalerkinRHS345_preserves_selected_support
 
 end Rational345QuadraticODE
 end NSBControl
+
+
+namespace NSBControl
+namespace Rational345QuadraticODE
+
+/-!
+## Actual eight-mode chart of the literal physical Fourier field
+The chart is Fin 8 -> (Fin 3 -> Complex), hence a genuine finite
+real vector space. It embeds as a sparse 728-mode coefficient field.
+No "RNNN" re-encoding of the analytic problem is introduced.
+-/
+
+abbrev PhysicalEightModeState := Fin 8 → FourierVector345
+
+/-- Ordered exactly as the R829/R850 eight coherent-work outputs. -/
+def selected345ModeAt (j : Fin 8) : Mode345 :=
+  let x : ℤ := if j.val < 3 then -3 else if j.val < 5 then 0 else 3
+  let y : ℤ :=
+    if j.val = 0 || j.val = 3 || j.val = 5 then -4
+    else if j.val = 1 || j.val = 6 then 0 else 4
+  ![x, y, 0]
+
+def selected345ModeFinset : Finset Mode345 :=
+  Finset.univ.image selected345ModeAt
+
+/-- Sparse extension to actual (infinitely indexed, finitely supported)
+    physical Fourier modes. Its nonzero support lies in the eight selected
+    physical modes, independently of amplitudes and polarization. -/
+def extendPhysicalEight
+    (u : PhysicalEightModeState) (k : Mode345) : FourierVector345 :=
+  ∑ j : Fin 8, if selected345ModeAt j = k then u j else 0
+
+/-- The actual projected viscosity + convection field restricted to the
+    invariant eight-mode chart, using the SAME literal RHS definition. -/
+def physicalEightModeField (u : PhysicalEightModeState) :
+    PhysicalEightModeState :=
+  fun j =>
+    literalProjectedGalerkinRHS345 selected345ModeFinset
+      (extendPhysicalEight u) (selected345ModeAt j)
+
+/-- Every one of the eight chart modes is a member of S. -/
+theorem selected345ModeAt_mem (j : Fin 8) :
+    Selected345Mode (selected345ModeAt j) := by
+  fin_cases j <;>
+    norm_num [selected345ModeAt, Selected345Mode, Function.funext_iff]
+
+/-- The sparse extension is zero on every nonselected physical output. -/
+theorem extendPhysicalEight_off_support
+    (u : PhysicalEightModeState)
+    (k : Mode345)
+    (hk : ¬ Selected345Mode k) :
+    extendPhysicalEight u k = 0 := by
+  unfold extendPhysicalEight
+  apply Finset.sum_eq_zero
+  intro j hj
+  have hneq : selected345ModeAt j ≠ k := by
+    intro h
+    exact hk (h ▸ selected345ModeAt_mem j)
+  simp [hneq]
+
+/-- At EVERY admissible radius-four off-support Fourier output, the
+    literal physical Galerkin RHS of the extended eight-mode field is zero.
+    This is the explicit source-level invariant-subspace certificate. -/
+theorem physicalEightModeField_off_support
+    (u : PhysicalEightModeState)
+    (k : Mode345)
+    (hk : InRadiusFour k)
+    (hnot : ¬ Selected345Mode k) :
+    literalProjectedGalerkinRHS345 selected345ModeFinset
+      (extendPhysicalEight u) k = 0 := by
+  exact literalProjectedGalerkinRHS345_preserves_selected_support
+    selected345ModeFinset (extendPhysicalEight u)
+    (fun p hp => extendPhysicalEight_off_support u p hp)
+    k hk hnot
+
+end Rational345QuadraticODE
+end NSBControl

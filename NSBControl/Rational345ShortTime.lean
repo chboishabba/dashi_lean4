@@ -376,3 +376,89 @@ theorem negative_real_integral_refutes_reserve
 
 end Rational345RealSource
 end NSBControl
+
+
+namespace NSBControl
+namespace Rational345RealSource
+
+/-!
+## Direct physical-component acceptance theorem for the R850 seed
+
+The actual selected physical rate is the R853 normal form
+  6*(12*C-P+D) at nu=delta=1.
+R850 proves the individual Q seed quantities; the REAL Fourier evaluator
+must preserve their values under the Q-to-R seed embedding. A generic
+scalar matching premise is replaced by the three concrete component
+equations, exactly corresponding to the Agda theorem owners.
+-/
+
+/-- Real normal-form rate on the SAME physical state. -/
+def physicalSelectedRate {E : Type*}
+    (coherent production dissipation : E → ℝ) (u : E) : ℝ :=
+  6 * (12 * coherent u - production u + dissipation u)
+
+/-- The three real source components determine the exact R850 initial rate. -/
+theorem physicalSelectedRate_seed_exact
+    {E : Type*}
+    (coherent production dissipation : E → ℝ)
+    (seed : E)
+    (hcoherent :
+      coherent seed = Rational345ReserveWitness.realCoherentWork)
+    (hproduction :
+      production seed = Rational345ReserveWitness.realCriticalProduction)
+    (hdissipation :
+      dissipation seed = Rational345ReserveWitness.realCriticalDissipation) :
+    physicalSelectedRate coherent production dissipation seed =
+      Rational345ReserveWitness.selectedRealRateFromSourceRows := by
+  simp only [physicalSelectedRate, hcoherent, hproduction, hdissipation,
+    Rational345ReserveWitness.selectedRealRateFromSourceRows]
+
+/--
+Combines precisely the existing real quadratic local-flow theorem, R850's
+THREE physical initial components after exact row casting, and the R853
+normal-form scalar on the SAME finite state. No artificial rational-time
+trajectory or fixed horizon.
+
+The physical-input proof that remains is to construct the three concrete
+REAL Fourier observables and match the actual radius-four seed to them.
+The R823 signed reserve identity along this REAL flow remains an additional
+source-semantics requirement for promotion of the auxiliary refutation.
+-/
+theorem exists_negative_integral_from_R850_components
+    {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    (linear : E →L[ℝ] E)
+    (bilinear : E × E → E)
+    (hbilinear : IsBoundedBilinearMap ℝ bilinear)
+    (seed : E)
+    (coherent production dissipation : E → ℝ)
+    (hcoherentCont : Continuous coherent)
+    (hproductionCont : Continuous production)
+    (hdissipationCont : Continuous dissipation)
+    (hcoherentSeed :
+      coherent seed = Rational345ReserveWitness.realCoherentWork)
+    (hproductionSeed :
+      production seed = Rational345ReserveWitness.realCriticalProduction)
+    (hdissipationSeed :
+      dissipation seed = Rational345ReserveWitness.realCriticalDissipation) :
+    ∃ (u : ℝ → E) (T : ℝ),
+      0 < T ∧
+      u 0 = seed ∧
+      (∀ t ∈ Set.Icc (0 : ℝ) T,
+        HasDerivAt u (linear (u t) + bilinear (u t, u t)) t) ∧
+      (∫ t in (0 : ℝ)..T,
+        physicalSelectedRate coherent production dissipation (u t)) < 0 := by
+  have hcont :
+      Continuous (physicalSelectedRate coherent production dissipation) := by
+    unfold physicalSelectedRate
+    fun_prop
+  have hseed :=
+    physicalSelectedRate_seed_exact coherent production dissipation seed
+      hcoherentSeed hproductionSeed hdissipationSeed
+  exact exists_real_negative_signed_integral
+    linear bilinear hbilinear seed
+    (physicalSelectedRate coherent production dissipation)
+    hcont hseed
+
+end Rational345RealSource
+end NSBControl

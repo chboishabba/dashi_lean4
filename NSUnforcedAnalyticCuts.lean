@@ -120,9 +120,10 @@ theorem signedDefect_le_pair_oscillation
 
 /-- Tunable signed Young payment. Choosing 0 < ε < 1 leaves a
     STRICTLY SUB-HALF coefficient ε/2 for the pairwise work oscillation.
-    The remaining frequency-rate oscillation budget 1/(2ε) is the
-    genuinely physical R440-to-local-ED estimate still to establish.
-    The theorem never assumes that missing uniform estimate. -/
+    WARNING: the raw rate-oscillation term here is independent of velocity
+    amplitude, so it CANNOT by itself be charged to homogeneous local ED.
+    A useful physical theorem needs amplitude-weighted R440 rate differences,
+    not a scalar variance floor. This is a mathematical audit bound, NOT B4. -/
 theorem signedDefect_le_tunable_pair_oscillation
     (noncore core : Finset ι) (rate work : ι → ℝ)
     (ε : ℝ) (hε : 0 < ε) :

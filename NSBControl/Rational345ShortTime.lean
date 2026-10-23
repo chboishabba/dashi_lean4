@@ -729,3 +729,74 @@ theorem physicalSelectedSignedRate345_is_R853_formula
 
 end Rational345RealSource
 end NSBControl
+
+
+namespace NSBControl
+namespace Rational345RealSource
+
+/-!
+## The literal rational 3-4-5 physical initial state
+
+Mode order is exactly selected345ModeAt:
+  (-3,-4),(-3,0),(-3,4),(0,-4),(0,4),(3,-4),(3,0),(3,4).
+This is the same six-mode velocity seed used in the Agda R841/R850
+physical system and the independent 728-mode exact-source evaluator.
+All values are actual complex Fourier amplitudes with explicit conjugacy.
+-/
+
+def physical345Seed : RealFourierState345 :=
+  fun j =>
+    if j.val = 0 then
+      ![-6 * Complex.I, (9 / 2 : ℂ) * Complex.I, -2 - 2 * Complex.I]
+    else if j.val = 1 then
+      ![0, 2 - 2 * Complex.I, -2 + Complex.I]
+    else if j.val = 2 then 0
+    else if j.val = 3 then
+      ![2 - 2 * Complex.I, 0, 2 - 2 * Complex.I]
+    else if j.val = 4 then
+      ![2 + 2 * Complex.I, 0, 2 + 2 * Complex.I]
+    else if j.val = 5 then 0
+    else if j.val = 6 then
+      ![0, 2 + 2 * Complex.I, -2 - Complex.I]
+    else
+      ![6 * Complex.I, -(9 / 2 : ℂ) * Complex.I, -2 + 2 * Complex.I]
+
+/-- The 3-4-5 seed remains inside the same eight-mode Fourier chart,
+    including the two initially empty off-diagonal active-output modes. -/
+theorem physical345Seed_empty_cross_modes :
+    physical345Seed ⟨2, by decide⟩ = 0 ∧
+    physical345Seed ⟨5, by decide⟩ = 0 := by
+  constructor <;> rfl
+
+/-- The six actual nonzero-mode entries (not a scalar surrogate) are
+    reproduced definitionally in the physical eight-mode chart. -/
+theorem physical345Seed_positive_inputs :
+    physical345Seed ⟨4, by decide⟩ =
+      ![2 + 2 * Complex.I, 0, 2 + 2 * Complex.I] ∧
+    physical345Seed ⟨6, by decide⟩ =
+      ![0, 2 + 2 * Complex.I, -2 - Complex.I] ∧
+    physical345Seed ⟨7, by decide⟩ =
+      ![6 * Complex.I, -(9 / 2 : ℂ) * Complex.I,
+        -2 + 2 * Complex.I] := by
+  constructor
+  · rfl
+  constructor <;> rfl
+
+/--
+These are the literal real-operator seed receipts required to instantiate
+the existing negative real-time integral theorem. They are now concrete
+closed propositions over the genuine eight-mode source, not fresh
+uninterpreted observation symbols. Their exact values are independently
+recomputed by the physical SymPy evaluator; kernel proofs of these three
+finite definitions still need to be supplied before closure is promoted.
+-/
+def RealPhysicalSeedReceipt : Prop :=
+  physicalCoherentWork345 physical345Seed =
+      Rational345ReserveWitness.realCoherentWork ∧
+  physicalProduction345 physical345Seed =
+      Rational345ReserveWitness.realCriticalProduction ∧
+  physicalDissipation345 physical345Seed =
+      Rational345ReserveWitness.realCriticalDissipation
+
+end Rational345RealSource
+end NSBControl

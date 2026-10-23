@@ -140,3 +140,30 @@ theorem inactive_real_fourier_quadratic_sum_zero
 
 end Rational345QuadraticODE
 end NSBControl
+
+
+namespace NSBControl
+namespace Rational345QuadraticODE
+
+/-- Every nonzero mode of the selected invariant eight-mode subsystem has
+    squared physical Euclidean norm 9, 16 or 25. Hence all normalized
+    helical projectors *on that subsystem* have exact rational 3-4-5
+    denominators. This does not claim anything about all cutoff modes. -/
+theorem selected345_physical_squared_norm
+    {k : Mode345} (hk : Selected345Mode k) :
+    (k 0)^2 + (k 1)^2 + (k 2)^2 = 9 ∨
+    (k 0)^2 + (k 1)^2 + (k 2)^2 = 16 ∨
+    (k 0)^2 + (k 1)^2 + (k 2)^2 = 25 := by
+  rcases hk with ⟨hx, hy, hz, hnonzero⟩
+  have hxy : k 0 ≠ 0 ∨ k 1 ≠ 0 := by
+    by_contra h
+    push_neg at h
+    apply hnonzero
+    funext i
+    fin_cases i <;> simp [h.1, h.2, hz]
+  rcases hx with hx | hx | hx <;>
+    rcases hy with hy | hy | hy <;>
+      simp_all [pow_two] <;> omega
+
+end Rational345QuadraticODE
+end NSBControl

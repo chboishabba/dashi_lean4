@@ -597,3 +597,135 @@ theorem exists_negative_real_R823_reserve_difference
 
 end Rational345RealSource
 end NSBControl
+
+
+namespace NSBControl
+namespace Rational345RealSource
+
+/-!
+## Literal real-helical signed-rate observables on the eight-mode chart
+
+These are the actual finite Fourier definitions used by the independent
+full-physical 728-mode snapshot evaluator. They are now bound to precisely
+the SAME eight-complex-vector state and RHS as the Lean Galerkin ODE,
+not to unrelated real functions. This is the concrete source of C, P, D
+in the R853 normal form.
+-/
+
+private abbrev Q345 := Rational345QuadraticODE
+
+abbrev RealFourierState345 := Q345.PhysicalEightModeState
+abbrev RealFourierVector345 := Q345.FourierVector345
+abbrev FourierMode345 := Q345.Mode345
+
+/-- Euclidean square length of the physical Fourier mode. -/
+def physicalModeNormSq345 (k : FourierMode345) : ℝ :=
+  ∑ i : Fin 3, (k i : ℝ) ^ 2
+
+/-- Physical three-dimensional Fourier cross product k cross v. -/
+def physicalModeCross345
+    (k : FourierMode345) (v : RealFourierVector345) :
+    RealFourierVector345 :=
+  ![(k 1 : ℂ) * v 2 - (k 2 : ℂ) * v 1,
+    (k 2 : ℂ) * v 0 - (k 0 : ℂ) * v 2,
+    (k 0 : ℂ) * v 1 - (k 1 : ℂ) * v 0]
+
+/-- Genuine real-mode Leray projection on each physical Fourier vector. -/
+def physicalLeray345
+    (k : FourierMode345) (v : RealFourierVector345) :
+    RealFourierVector345 :=
+  fun j => v j - (k j : ℂ) *
+    (∑ i : Fin 3, (k i : ℂ) * v i) /
+    (∑ i : Fin 3, (k i : ℂ) * (k i : ℂ))
+
+/-- Real physical helical modes H± = (Pv ± i k×v / |k|)/2. -/
+def physicalHelical345
+    (positive : Bool)
+    (k : FourierMode345) (v : RealFourierVector345) :
+    RealFourierVector345 :=
+  let norm : ℝ := Real.sqrt (physicalModeNormSq345 k)
+  let dir : ℂ := if positive then Complex.I else -Complex.I
+  fun j => (physicalLeray345 k v j +
+    dir * physicalModeCross345 k v j / (norm : ℂ)) / 2
+
+/-- Non-viscous physical projected quadratic forcing at an arbitrary mode. -/
+def physicalProjectedForce345
+    (u : RealFourierState345) (k : FourierMode345) :
+    RealFourierVector345 :=
+  Q345.projectedNonlinearMode345 k
+    ((Q345.selected345ModeFinset.product Q345.selected345ModeFinset).sum
+      (fun pq =>
+        if pq.1 + pq.2 = k then
+          Q345.rawFourierTriad345 pq.2
+            (Q345.extendPhysicalEight u pq.1)
+            (Q345.extendPhysicalEight u pq.2)
+        else 0))
+
+/-- Complex-vector cross product. -/
+def physicalCrossVec345
+    (a b : RealFourierVector345) : RealFourierVector345 :=
+  ![a 1 * b 2 - a 2 * b 1,
+    a 2 * b 0 - a 0 * b 2,
+    a 0 * b 1 - a 1 * b 0]
+
+/-- Complete actual mixed helical output from supported pairs. -/
+def physicalMixedOutput345
+    (u : RealFourierState345) (k : FourierMode345) :
+    RealFourierVector345 :=
+  (Q345.selected345ModeFinset.product Q345.selected345ModeFinset).sum
+    (fun pq => if pq.1 + pq.2 = k then
+      physicalCrossVec345
+        (physicalHelical345 true pq.1
+          (Q345.extendPhysicalEight u pq.1))
+        (physicalHelical345 false pq.2
+          (Q345.extendPhysicalEight u pq.2))
+      else 0)
+
+/-- Complete actual R230 forcing commutator at a fixed output. -/
+def physicalCommutatorOutput345
+    (u : RealFourierState345) (k : FourierMode345) :
+    RealFourierVector345 :=
+  (Q345.selected345ModeFinset.product Q345.selected345ModeFinset).sum
+    (fun pq => if pq.1 + pq.2 = k then
+      physicalCrossVec345
+        (physicalHelical345 true pq.1 (physicalProjectedForce345 u pq.1))
+        (physicalHelical345 false pq.2 (Q345.extendPhysicalEight u pq.2))
+      -
+      physicalCrossVec345
+        (physicalHelical345 false pq.1 (physicalProjectedForce345 u pq.1))
+        (physicalHelical345 true pq.2 (Q345.extendPhysicalEight u pq.2))
+      else 0)
+
+/-- The same physical coherent Hermitian real work as the Agda R692 owner. -/
+def physicalCoherentWork345 (u : RealFourierState345) : ℝ :=
+  ∑ k ∈ Q345.selected345ModeFinset,
+    2 * (∑ j : Fin 3,
+      (Complex.conj (physicalMixedOutput345 u k j) *
+        physicalCommutatorOutput345 u k j).re)
+
+/-- All selected modes have dyadic critical weight four. -/
+def physicalProduction345 (u : RealFourierState345) : ℝ :=
+  ∑ k ∈ Q345.selected345ModeFinset,
+    8 * (∑ j : Fin 3,
+      (Complex.conj (Q345.extendPhysicalEight u k j) *
+        physicalProjectedForce345 u k j).re)
+
+def physicalDissipation345 (u : RealFourierState345) : ℝ :=
+  ∑ k ∈ Q345.selected345ModeFinset,
+    4 * physicalModeNormSq345 k *
+      (∑ j : Fin 3, Complex.normSq (Q345.extendPhysicalEight u k j))
+
+/-- The *literal real Fourier* R853 selected rate, not a free rate argument. -/
+def physicalSelectedSignedRate345 (u : RealFourierState345) : ℝ :=
+  physicalSelectedRate physicalCoherentWork345
+    physicalProduction345 physicalDissipation345 u
+
+theorem physicalSelectedSignedRate345_is_R853_formula
+    (u : RealFourierState345) :
+    physicalSelectedSignedRate345 u =
+      6 * (12 * physicalCoherentWork345 u -
+        physicalProduction345 u + physicalDissipation345 u) := by
+  rfl
+
+end Rational345RealSource
+end NSBControl

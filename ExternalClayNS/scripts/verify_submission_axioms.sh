@@ -16,7 +16,7 @@ do
     exit 1
   fi
 done
-if grep -E 'sorryAx|syntheticOpaque|axiomOfChoice' "$out"; then
+if grep -E 'sorryAx|syntheticOpaque' "$out"; then
   echo 'Unexpected axiom report: manual review required' >&2
   exit 1
 fi

@@ -255,6 +255,18 @@ theorem snapshot_rate_real_negative :
   rw [snapshot_rate_real_exact]
   norm_num [Rational345ShortTime.initialRate]
 
+/-- Native source-row calculation agrees with the real initial-rate constant. -/
+theorem physical_rows_real_initial_rate :
+    Rational345ReserveWitness.selectedRealRateFromSourceRows =
+      Rational345ShortTime.initialRate := by
+  rw [Rational345ReserveWitness.selectedRealRateFromSourceRows_eq_cast,
+      snapshot_rate_real_exact]
+
+theorem physical_rows_real_initial_rate_negative :
+    Rational345ReserveWitness.selectedRealRateFromSourceRows < 0 := by
+  rw [physical_rows_real_initial_rate]
+  norm_num [Rational345ShortTime.initialRate]
+
 /--
 One analytic transport for the existing R828 witness:
 * the flow is the REAL local ODE of a linear+bounded-bilinear field;
@@ -276,7 +288,7 @@ theorem exists_real_negative_signed_integral
     (rate : E → ℝ)
     (hrate : Continuous rate)
     (hseed :
-      rate seed = (Rational345ReserveWitness.canonicalSignedRate : ℝ)) :
+      rate seed = Rational345ReserveWitness.selectedRealRateFromSourceRows) :
     ∃ (u : ℝ → E) (T : ℝ),
       0 < T ∧
       u 0 = seed ∧
@@ -292,7 +304,7 @@ theorem exists_real_negative_signed_integral
     (huODE 0 hzero).continuousAt
   have hRateAtZero : rate (u 0) < 0 := by
     rw [hu0, hseed]
-    exact snapshot_rate_real_negative
+    exact physical_rows_real_initial_rate_negative
   have hnear : {t : ℝ | rate (u t) < 0} ∈ nhds (0 : ℝ) := by
     exact (hrate.continuousAt.comp huCont0).preimage_mem_nhds
       (isOpen_Iio.mem_nhds hRateAtZero)

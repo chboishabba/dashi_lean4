@@ -79,3 +79,66 @@ theorem noNonnegativeMatchingRate
 
 end Rational345ReserveWitness
 end NSBControl
+
+
+namespace NSBControl
+namespace Rational345ReserveWitness
+
+/-!
+## Same physical row data, real scalar
+
+R847/R849/R850 identify the literal Agda finite Fourier work,
+production and dissipation with workRows, productionRows and
+dissipationRows over Q. Cast the WHOLE row lists, not just their
+aggregates, to the real scalar codomain of a genuine real-time flow.
+This is the exact seed-data cast, not an arbitrary-mode real helical
+projector proof.
+-/
+
+def realWorkRows : List ℝ := workRows.map (fun q : ℚ => (q : ℝ))
+def realProductionRows : List ℝ :=
+  productionRows.map (fun q : ℚ => (q : ℝ))
+def realDissipationRows : List ℝ :=
+  dissipationRows.map (fun q : ℚ => (q : ℝ))
+
+def realCoherentWork : ℝ := realWorkRows.sum
+def realCriticalProduction : ℝ := realProductionRows.sum
+def realCriticalDissipation : ℝ := realDissipationRows.sum
+
+theorem realCoherentWork_same_rows :
+    realCoherentWork = (commutatorWork : ℝ) := by
+  simp [realCoherentWork, realWorkRows, commutatorWork]
+
+theorem realCriticalProduction_same_rows :
+    realCriticalProduction = (criticalProduction : ℝ) := by
+  simp [realCriticalProduction, realProductionRows, criticalProduction]
+
+theorem realCriticalDissipation_same_rows :
+    realCriticalDissipation = (criticalDissipation : ℝ) := by
+  simp [realCriticalDissipation, realDissipationRows, criticalDissipation]
+
+/-- Real selected R815/R853 pointwise normal form on identical seed rows. -/
+def selectedRealRateFromSourceRows : ℝ :=
+  6 * (12 * realCoherentWork -
+    realCriticalProduction + realCriticalDissipation)
+
+theorem selectedRealRateFromSourceRows_eq_cast :
+    selectedRealRateFromSourceRows = (canonicalSignedRate : ℝ) := by
+  rw [selectedRealRateFromSourceRows,
+    realCoherentWork_same_rows,
+    realCriticalProduction_same_rows,
+    realCriticalDissipation_same_rows]
+  norm_num [canonicalSignedRate]
+
+theorem selectedRealRateFromSourceRows_exact :
+    selectedRealRateFromSourceRows = -(28273644 : ℝ) / 125 := by
+  rw [selectedRealRateFromSourceRows_eq_cast, canonicalSignedRate_exact]
+  norm_num
+
+theorem selectedRealRateFromSourceRows_negative :
+    selectedRealRateFromSourceRows < 0 := by
+  rw [selectedRealRateFromSourceRows_exact]
+  norm_num
+
+end Rational345ReserveWitness
+end NSBControl

@@ -341,3 +341,26 @@ theorem signed_reserve_sub_demand_real
 
 end Rational345RealSource
 end NSBControl
+
+
+namespace NSBControl
+namespace Rational345RealSource
+
+/--
+The R823 reserve-vs-demand logical endpoint, now over the genuine real
+integral. This uses exactly the same selected real rate/terminal: an
+unrelated signed witness cannot be substituted.
+-/
+theorem negative_real_integral_refutes_reserve
+    {actualIntegral signedReserve integratedDemand : ℝ}
+    (hnegative : actualIntegral < 0)
+    (hsame : actualIntegral = signedReserve - integratedDemand) :
+    ¬ (integratedDemand ≤ signedReserve) := by
+  intro hpays
+  have hnonneg : 0 ≤ actualIntegral := by
+    rw [hsame]
+    linarith
+  exact (not_le_of_gt hnegative) hnonneg
+
+end Rational345RealSource
+end NSBControl

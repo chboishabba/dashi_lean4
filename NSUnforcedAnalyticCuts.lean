@@ -128,16 +128,15 @@ theorem signedDefect_le_tunable_pair_oscillation
     (ε : ℝ) (hε : 0 < ε) :
     signedNoncoreCoreDefect noncore core rate work
       ≤ ∑ i ∈ noncore, ∑ j ∈ core,
-        (ε * (work i - work j) ^ 2 +
-          (rate i - rate j) ^ 2 / ε) / 2 := by
+        (ε ^ 2 * (work i - work j) ^ 2 +
+          (rate i - rate j) ^ 2) / (2 * ε) := by
   unfold signedNoncoreCoreDefect
   apply Finset.sum_le_sum
   intro i hi
   apply Finset.sum_le_sum
   intro j hj
-  have htwo : (0 : ℝ) < 2 := by norm_num
-  apply (le_div_iff₀ htwo).2
-  apply (le_div_iff₀ hε).2
+  have hden : 0 < 2 * ε := mul_pos (by norm_num) hε
+  apply (le_div_iff₀ hden).2
   nlinarith [sq_nonneg
     (ε * (work i - work j) + (rate i - rate j))]
 

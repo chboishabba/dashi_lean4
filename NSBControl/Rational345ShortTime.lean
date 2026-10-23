@@ -893,3 +893,114 @@ theorem physical345_real_negative_integral_of_seed_receipt
 
 end Rational345RealSource
 end NSBControl
+
+
+namespace NSBControl
+namespace Rational345RealSource
+
+/-!
+## Max-cut: physical R823 needs ONLY the same-seed signed rate
+
+The historical all-trajectory real R853 identity is stronger than needed
+to falsify a purported UNIVERSAL integrated reserve inequality. If the
+literal signed reserve-minus-demand function is continuous on the real
+eight-mode Fourier state and matches R850 at the single rational initial
+seed, then the real projected finite Galerkin flow carries this negative
+sign over a small positive interval. No full real R853 polynomial
+identity is necessary for this AUXILIARY witness.
+
+The one remaining nontrivial input must still be a genuine evaluation
+of the physically defined signed reserve and demand at physical345Seed,
+not a definition arranged to force the desired value.
+-/
+
+/-- Explicit physical-field statement: NO generic ODE existence premise and
+    NO assumption that R853 holds at all real Fourier states.
+    The only seed-matching premise is the genuine real finite-source
+    reserve-minus-demand evaluation at the six-mode physical seed. -/
+theorem actualEightModeR823_refuted_of_seed_only
+    (reserve demand : RealFourierState345 → ℝ)
+    (hreserveCont : Continuous reserve)
+    (hdemandCont : Continuous demand)
+    (hphysicalSeed :
+      reserve physical345Seed - demand physical345Seed =
+        Rational345ReserveWitness.selectedRealRateFromSourceRows) :
+    ∃ (u : ℝ → RealFourierState345) (T : ℝ),
+      0 < T ∧
+      u 0 = physical345Seed ∧
+      (∀ t ∈ Set.Icc (0 : ℝ) T,
+        HasDerivAt u
+          (Rational345QuadraticODE.physicalEightModeField (u t)) t) ∧
+      ¬ ((∫ t in (0 : ℝ)..T, demand (u t)) ≤
+          (∫ t in (0 : ℝ)..T, reserve (u t))) := by
+  obtain ⟨u, hu0, ε, hε, hODE⟩ :=
+    Rational345QuadraticODE.physicalEightModeField_real_local_solution
+      physical345Seed
+  have hnegativeSeed : reserve physical345Seed - demand physical345Seed < 0 := by
+    rw [hphysicalSeed]
+    exact Rational345ReserveWitness.selectedRealRateFromSourceRows_negative
+  have hzero : (0 : ℝ) ∈ Set.Ioo (-ε) ε := by
+    constructor <;> linarith
+  have huCont0 : ContinuousAt u 0 := (hODE 0 hzero).continuousAt
+  have hrateCont : Continuous (fun x : RealFourierState345 =>
+      reserve x - demand x) := hreserveCont.sub hdemandCont
+  have hRateAtZero : reserve (u 0) - demand (u 0) < 0 := by
+    rw [hu0]
+    exact hnegativeSeed
+  have hnear :
+      {t : ℝ | reserve (u t) - demand (u t) < 0} ∈ nhds (0 : ℝ) := by
+    exact (hrateCont.continuousAt.comp huCont0).preimage_mem_nhds
+      (isOpen_Iio.mem_nhds hRateAtZero)
+  obtain ⟨δ, hδ, hδball⟩ := Metric.mem_nhds_iff.mp hnear
+  let T : ℝ := min (ε / 2) (δ / 2)
+  have hTpos : 0 < T := by
+    dsimp [T]
+    apply lt_min <;> linarith
+  have htODE : ∀ t ∈ Set.Icc (0 : ℝ) T, t ∈ Set.Ioo (-ε) ε := by
+    intro t ht
+    constructor
+    · linarith [ht.1]
+    · have hupper : t ≤ ε / 2 := le_trans ht.2 (min_le_left _ _)
+      linarith
+  have hnegative : ∀ t ∈ Set.Icc (0 : ℝ) T,
+      reserve (u t) - demand (u t) < 0 := by
+    intro t ht
+    apply hδball
+    rw [Metric.mem_ball, Real.dist_0_eq_abs, abs_of_nonneg ht.1]
+    have hupper : t ≤ δ / 2 := le_trans ht.2 (min_le_right _ _)
+    linarith
+  have huCont : ContinuousOn u (Set.Icc (0 : ℝ) T) := by
+    intro t ht
+    exact (hODE t (htODE t ht)).continuousAt.continuousWithinAt
+  have hrCont : ContinuousOn (fun t : ℝ => reserve (u t))
+      (Set.Icc (0 : ℝ) T) :=
+    hreserveCont.comp_continuousOn huCont
+  have hdCont : ContinuousOn (fun t : ℝ => demand (u t))
+      (Set.Icc (0 : ℝ) T) :=
+    hdemandCont.comp_continuousOn huCont
+  have hrInt : IntervalIntegrable (fun t : ℝ => reserve (u t))
+      MeasureTheory.volume 0 T :=
+    hrCont.intervalIntegrable_of_Icc (le_of_lt hTpos)
+  have hdInt : IntervalIntegrable (fun t : ℝ => demand (u t))
+      MeasureTheory.volume 0 T :=
+    hdCont.intervalIntegrable_of_Icc (le_of_lt hTpos)
+  have hrateContI : ContinuousOn (fun t : ℝ =>
+      reserve (u t) - demand (u t)) (Set.Icc (0 : ℝ) T) :=
+    hrCont.sub hdCont
+  have hnegativeIntegral :
+      (∫ t in (0 : ℝ)..T, reserve (u t) - demand (u t)) < 0 :=
+    Rational345ShortTime.intervalIntegral_strictlyNegative
+      hTpos hrateContI hnegative
+  have hsame :
+      (∫ t in (0 : ℝ)..T, reserve (u t) - demand (u t)) =
+      (∫ t in (0 : ℝ)..T, reserve (u t)) -
+      (∫ t in (0 : ℝ)..T, demand (u t)) := by
+    exact intervalIntegral.integral_sub hrInt hdInt
+  refine ⟨u, T, hTpos, hu0, ?_, ?_⟩
+  · intro t ht
+    exact hODE t (htODE t ht)
+  · exact negative_real_integral_refutes_reserve
+      hnegativeIntegral hsame
+
+end Rational345RealSource
+end NSBControl

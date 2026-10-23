@@ -1,6 +1,8 @@
 import Mathlib.Tactic
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import NSBControl.Rational345QuadraticODE
+import NSBControl.Rational345ReserveWitness
 
 /-!
 # Rational 3-4-5 reserve witness: real short-time transport
@@ -142,6 +144,8 @@ end NSBControl
 
 namespace ConcreteConstants
 
+open NSBControl.Rational345ShortTime
+
 /-- R828's exact constants discharge the generic short-time budget
 definitionally/arithmeticly.  A concrete Galerkin trajectory only has to supply
 the displacement, one-sided rate Lipschitz, and continuity hypotheses. -/
@@ -227,3 +231,113 @@ theorem negativeIntegral_from_R828_bounds_up_to
   · exact hcont
 
 end ConcreteConstants
+
+
+namespace NSBControl
+namespace Rational345RealSource
+
+open Set
+open scoped Interval
+
+/--
+The exact rational eight-output snapshot is transported to the REAL scalar
+used by the real-time Galerkin flow. This is a theorem about the original
+rational rate, not an invented rational-valued time trajectory.
+-/
+theorem snapshot_rate_real_exact :
+    (Rational345ReserveWitness.canonicalSignedRate : ℝ) =
+      Rational345ShortTime.initialRate := by
+  rw [Rational345ReserveWitness.canonicalSignedRate_exact]
+  norm_num [Rational345ShortTime.initialRate]
+
+theorem snapshot_rate_real_negative :
+    (Rational345ReserveWitness.canonicalSignedRate : ℝ) < 0 := by
+  rw [snapshot_rate_real_exact]
+  norm_num [Rational345ShortTime.initialRate]
+
+/--
+One analytic transport for the existing R828 witness:
+* the flow is the REAL local ODE of a linear+bounded-bilinear field;
+* rate is a continuous REAL observable on precisely that same state;
+* its initial value is identified with the EXACT rational R829/R850 seed.
+
+No quantitative Lipschitz/rate-budget premise and no prescribed interval:
+the positive interval comes directly from local Picard and continuity.
+The physical bridge still required is to identify the linear/quadratic
+field and real rate with the literal R408/R823 Fourier definitions.
+-/
+theorem exists_real_negative_signed_integral
+    {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    (linear : E →L[ℝ] E)
+    (bilinear : E × E → E)
+    (hbilinear : IsBoundedBilinearMap ℝ bilinear)
+    (seed : E)
+    (rate : E → ℝ)
+    (hrate : Continuous rate)
+    (hseed :
+      rate seed = (Rational345ReserveWitness.canonicalSignedRate : ℝ)) :
+    ∃ (u : ℝ → E) (T : ℝ),
+      0 < T ∧
+      u 0 = seed ∧
+      (∀ t ∈ Set.Icc (0 : ℝ) T,
+        HasDerivAt u (linear (u t) + bilinear (u t, u t)) t) ∧
+      (∫ t in (0 : ℝ)..T, rate (u t)) < 0 := by
+  obtain ⟨u, hu0, ε, hε, huODE⟩ :=
+    Rational345QuadraticODE.exists_local_solution_quadraticField
+      linear bilinear hbilinear seed
+  have hzero : (0 : ℝ) ∈ Set.Ioo (-ε) ε := by
+    constructor <;> linarith
+  have huCont0 : ContinuousAt u 0 :=
+    (huODE 0 hzero).continuousAt
+  have hRateAtZero : rate (u 0) < 0 := by
+    rw [hu0, hseed]
+    exact snapshot_rate_real_negative
+  have hnear : {t : ℝ | rate (u t) < 0} ∈ nhds (0 : ℝ) := by
+    exact (hrate.continuousAt.comp huCont0).preimage_mem_nhds
+      (isOpen_Iio.mem_nhds hRateAtZero)
+  obtain ⟨δ, hδ, hδball⟩ := Metric.mem_nhds_iff.mp hnear
+  let T : ℝ := min (ε / 2) (δ / 2)
+  have hTpos : 0 < T := by
+    dsimp [T]
+    apply lt_min <;> linarith
+  have htODE : ∀ t ∈ Set.Icc (0 : ℝ) T, t ∈ Set.Ioo (-ε) ε := by
+    intro t ht
+    dsimp [T] at ht
+    constructor
+    · linarith [ht.1]
+    · have hupper : t ≤ ε / 2 :=
+        le_trans ht.2 (min_le_left _ _)
+      linarith
+  have hrateNeg : ∀ t ∈ Set.Icc (0 : ℝ) T, rate (u t) < 0 := by
+    intro t ht
+    apply hδball
+    rw [Metric.mem_ball, Real.dist_0_eq_abs, abs_of_nonneg ht.1]
+    have hupper : t ≤ δ / 2 :=
+      le_trans ht.2 (min_le_right _ _)
+    linarith
+  have hcont : ContinuousOn (fun t : ℝ => rate (u t))
+      (Set.Icc (0 : ℝ) T) := by
+    intro t ht
+    exact (hrate.continuousAt.comp (huODE t (htODE t ht)).continuousAt)
+      .continuousWithinAt
+  refine ⟨u, T, hTpos, hu0, ?_, ?_⟩
+  · intro t ht
+    exact huODE t (htODE t ht)
+  · exact Rational345ShortTime.intervalIntegral_strictlyNegative
+      hTpos hcont hrateNeg
+
+/--
+R823's finite signed reserve-minus-demand algebra is valid over the REAL
+codomain. This is not the R815-to-R823 physical source-identification
+theorem; that equality needs the same real Fourier state on both sides.
+-/
+theorem signed_reserve_sub_demand_real
+    (nonlinear quintic core dissipation : ℝ) :
+    2 * (9 * nonlinear - quintic) + core + 6 * dissipation
+      = (core + 6 * dissipation) -
+        2 * (quintic - 9 * nonlinear) := by
+  ring
+
+end Rational345RealSource
+end NSBControl

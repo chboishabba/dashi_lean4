@@ -800,3 +800,96 @@ def RealPhysicalSeedReceipt : Prop :=
 
 end Rational345RealSource
 end NSBControl
+
+
+namespace NSBControl
+namespace Rational345RealSource
+
+/-!
+## Real negative integral for the LITERAL eight-mode Fourier Galerkin flow
+
+No arbitrary field or rate is supplied: both are the concrete selected
+physical Leray/Galerkin finite-source definitions above. This theorem
+requires only the remaining exact rational-to-real finite seed-evaluation
+receipt; the physical real R853 signed-orbit identity is a separate
+pointwise finite-source equality needed only to refute R823.
+-/
+
+theorem physicalSelectedSignedRate345_continuous :
+    Continuous physicalSelectedSignedRate345 := by
+  unfold physicalSelectedSignedRate345 physicalSelectedRate
+    physicalCoherentWork345 physicalProduction345 physicalDissipation345
+    physicalMixedOutput345 physicalCommutatorOutput345
+    physicalProjectedForce345 physicalHelical345 physicalLeray345
+    physicalModeCross345 physicalCrossVec345 physicalModeNormSq345
+    Rational345QuadraticODE.extendPhysicalEight
+    Rational345QuadraticODE.rawFourierTriad345
+    Rational345QuadraticODE.projectedNonlinearMode345
+  fun_prop
+
+/-- A local real solution of the ACTUAL eight-mode Galerkin equation has
+    strictly negative physical R853 selected-rate integral, conditional
+    solely on the finite actual seed Fourier evaluation receipt. -/
+theorem physical345_real_negative_integral_of_seed_receipt
+    (hseed : RealPhysicalSeedReceipt) :
+    ∃ (u : ℝ → RealFourierState345) (T : ℝ),
+      0 < T ∧
+      u 0 = physical345Seed ∧
+      (∀ t ∈ Set.Icc (0 : ℝ) T,
+        HasDerivAt u
+          (Rational345QuadraticODE.physicalEightModeField (u t)) t) ∧
+      (∫ t in (0 : ℝ)..T, physicalSelectedSignedRate345 (u t)) < 0 := by
+  obtain ⟨u, hu0, ε, hε, hODE⟩ :=
+    Rational345QuadraticODE.physicalEightModeField_real_local_solution
+      physical345Seed
+  rcases hseed with ⟨hcoherent, hproduction, hdissipation⟩
+  have hnegativeSeed : physicalSelectedSignedRate345 physical345Seed < 0 := by
+    have hsame := physicalSelectedRate_seed_exact
+      physicalCoherentWork345 physicalProduction345 physicalDissipation345
+      physical345Seed hcoherent hproduction hdissipation
+    rw [physicalSelectedSignedRate345, hsame]
+    exact Rational345ReserveWitness.selectedRealRateFromSourceRows_negative
+  have hzero : (0 : ℝ) ∈ Set.Ioo (-ε) ε := by
+    constructor <;> linarith
+  have huCont0 : ContinuousAt u 0 :=
+    (hODE 0 hzero).continuousAt
+  have hRateAtZero : physicalSelectedSignedRate345 (u 0) < 0 := by
+    rw [hu0]
+    exact hnegativeSeed
+  have hnear :
+      {t : ℝ | physicalSelectedSignedRate345 (u t) < 0} ∈ nhds (0 : ℝ) := by
+    exact (physicalSelectedSignedRate345_continuous.continuousAt.comp huCont0)
+      .preimage_mem_nhds (isOpen_Iio.mem_nhds hRateAtZero)
+  obtain ⟨δ, hδ, hδball⟩ := Metric.mem_nhds_iff.mp hnear
+  let T : ℝ := min (ε / 2) (δ / 2)
+  have hTpos : 0 < T := by
+    dsimp [T]
+    apply lt_min <;> linarith
+  have htODE : ∀ t ∈ Set.Icc (0 : ℝ) T, t ∈ Set.Ioo (-ε) ε := by
+    intro t ht
+    constructor
+    · linarith [ht.1]
+    · have hupper : t ≤ ε / 2 := le_trans ht.2 (min_le_left _ _)
+      linarith
+  have hrateNeg :
+      ∀ t ∈ Set.Icc (0 : ℝ) T,
+        physicalSelectedSignedRate345 (u t) < 0 := by
+    intro t ht
+    apply hδball
+    rw [Metric.mem_ball, Real.dist_0_eq_abs, abs_of_nonneg ht.1]
+    have hupper : t ≤ δ / 2 := le_trans ht.2 (min_le_right _ _)
+    linarith
+  have hcont : ContinuousOn
+      (fun t : ℝ => physicalSelectedSignedRate345 (u t))
+      (Set.Icc (0 : ℝ) T) := by
+    intro t ht
+    exact (physicalSelectedSignedRate345_continuous.continuousAt.comp
+      (hODE t (htODE t ht)).continuousAt).continuousWithinAt
+  refine ⟨u, T, hTpos, hu0, ?_, ?_⟩
+  · intro t ht
+    exact hODE t (htODE t ht)
+  · exact Rational345ShortTime.intervalIntegral_strictlyNegative
+      hTpos hcont hrateNeg
+
+end Rational345RealSource
+end NSBControl

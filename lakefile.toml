@@ -161,6 +161,12 @@ globs = ["YangMills.*"]
 # Independent mirror of the live Agda R702/R703 cyclic-helical max-cut.
 # This proves only exact leg/coefficient bookkeeping; it makes no Clay or
 # analytic-closure claim.
+# Standalone exact A/B analytic refinements: no historical Round index.
+# Opt-in; no authority or Clay promotion implied by building this library.
+[[lean_lib]]
+name = "NSUnforcedAnalyticCuts"
+globs = ["NSUnforcedAnalyticCuts"]
+
 [[lean_lib]]
 name = "NSBCyclicOrbit"
 globs = ["NSBCyclicOrbit", "NSBControl.CyclicHelicalVectorTransform", "NSBControl.SelfOrbitCommutatorCarrier", "NSBControl.SingleSelfCommutatorOrbit", "NSBControl.SpectatorFibreLegTransport", "NSBControl.CompleteSelfOrbitCollapse", "NSBControl.OutputPairingCollapse", "NSBControl.OutputRealityNoGo", "NSBControl.SelectedSelfResolvedRecombination", "NSBControl.CombinedSpacetimePayment", "NSBControl.CombinedPaymentToWeightedWork", "NSBControl.CombinedCurrentEndgame", "NSBControl.DirectCombinedCut", "NSBControl.SharedWeightedCut", "NSBControl.AugmentedDerivativeCancellation", "NSBControl.DyadicDifferenceResidual", "NSBControl.GlobalProductRuleLoop", "NSBControl.Rational345ReserveWitness", "NSBControl.Rational345ShortTime", "NSBControl.Rational345LocalODE", "NSBControl.Rational345QuadraticODE", "NSBControl.Rational345R823DecisionFreeze"]

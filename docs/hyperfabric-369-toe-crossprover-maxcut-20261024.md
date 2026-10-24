@@ -431,3 +431,62 @@ The original 27D unmodified action 125/121
 no-go, M24 p276-vs-oriented B2 character
 no-go and Albert/path-L irreducibility
 mismatch remain independent hard controls.
+
+
+## Final 2026-10-24 exact global SU2-WZW/Gerbe/C22 and group-action gap closure
+
+The canonical Agda #1249 SU2 worldsheet dossier
+`docs/hyperfabric-k27-26d-su2-nsflux-linear-dilaton-worldsheet-maxcut-20261024.md`
+now includes a **source-normalized S3 gerbe**
+`B_N=r²(chi-sin(2chi)/2)omega2`,
+`B_S=B_N-pi*r²omega2`,
+`dB_N=dB_S=H`, `∫S3H=4pi²r²`,
+integer flux k under standard `r²=k alpha'`.
+On the SAME existing leading 26D NSNS solution,
+`C22=-e^(-2Phi) dt^dx²^...^dx²²`
+gives `dC22=e^-2Phi *26 H3` with the
+stated Lorentzian orientation convention.
+The global H B gerbe has no global B2,
+but C22 is globally available on the noncompact factor.
+This is a selected actual **form potential**,
+NOT an actual K27/E27 Lie generator.
+
+The NEW Lean theorem source
+`Integration/DASHITOE/K27GerbeWZWC3OrientationCut.lean`
+gives source-conditional exact flux-normalization
+algebra, Sugawara primary weights, c26 equality,
+`8/[k(k+2)]` unshifted-classical target dilaton
+residual and a GENERAL group result: element of
+both order ≤3 and ≤2 is the identity.
+Consequently the existing **C3 signed-zero rotation**
+cannot **equivariantly** produce a nontrivial
+**Z2 oriented-duad sign** by a group homomorphism.
+U1 gerbe cocycle remains THIRD independent object.
+No Lean/Lake kernel receipt. Local precise
+symbolic / 50-digit SU2 modular source tests
+passed, but the numerical SU2 S/T identities
+are NOT an exact kernel proof. Full noncompact
+worldsheet modular invariant/BRST remains open.
+
+Agda source theorem
+`HyperfabricK27SU2LevelFourOriginalSourceCutExact.agda`
+now imports **pre-existing**
+`SU2Level4Spin1RepReceipt.agda` rather than
+creating SU2_4 representations from cardinality:
+k4, j2 weight1, `22 + 2 + 2=26` CFT charge.
+The underlying external SU2_k model is established
+published WZW science, not a new DASHI original
+string solution. The flat-worldsheet SO24
+299/276/1 decomposition is not a GLOBAL SO24
+symmetry of the selected flux+linear-dilaton target.
+
+Primary source (Schulz 2012):
+https://arxiv.org/html/1106.6291v4 .
+April 2026 Biswas DDF paper
+https://doi.org/10.1007/JHEP04(2026)076
+is restricted to **lightlike** linear dilaton and
+cannot be used as a proof for this spacelike source.
+True next physical cut: exact 2D WZW sigma
+Hamiltonian in doubled `TM⊕T*M` and patchwise
+B action against source g/H/Phi, then BRST,
+K27 generator/dual form and physical calibration.

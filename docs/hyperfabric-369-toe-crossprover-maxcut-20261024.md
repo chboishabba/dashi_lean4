@@ -389,3 +389,45 @@ on their actual original owners.
 
 The detailed source and finite test DAG is at Agda
 `docs/hyperfabric-k27-26d-bfield-22dual-m24-signed-duad-maxcut-20261024.md`.
+
+
+## Nonflat full leading 26D NS–NS EOM source (2026-10-24)
+
+Lean PR #84 now contains
+`Integration/DASHITOE/K27NonflatNSNSLinearDilatonCut.lean`,
+a source-written general rational-parameter derivation of
+sphere Ricci/H-stress cancellation, the full leading
+string-frame dilaton coefficient balance, a timelike-gradient
+negative control, and WZW SU2_k exact Sugawara
+finite-level central-charge identity. The actual
+SU2 geometric frame/metric/beta source is reproduced in
+Agda #1249
+`scripts/check_k27_26d_su2_flux_linear_dilaton.py`:
+R^(1,22)×S3_r, H=(2/r)vol, Phi=x_spacelike/r;
+torsion-free metric-compatible SU2 frame, Ricci
+2/r², scalar 6/r², Hnorm² 24/r², gradient²1/r²,
+covariant H and **all leading NSNS EOM PASS**.
+Exact rational local execution six radii PASS.
+This is older WZW/linear-dilaton theory, now a
+SELECTED source-real 26D continuum example, not
+a new string physical discovery. Agda/Lean
+kernel runs NOT performed.
+
+For WZW k≥1, `c=3k/(k+2)`; add
+23 noncompact bosons including one spacelike
+linear dilaton, `c_matter=23+6alpha'V²+c_SU2`.
+Corrected `alpha' V²=1/(k+2)` closes
+worldsheet c26; uncorrected classical
+`V²=1/(k alpha')` leaves positive
+`12/[k(k+2)]` residual. Exact 30-level checks
+PASS. This locates the next literal physical
+operator matching obligation (quantum CFT
+level shift, global B gerbe and brane/coupled
+stress), rather than duplicating generic TOE
+carriers or treating c arithmetic as physical
+BRST/Monster/Clay proofs.
+
+The original 27D unmodified action 125/121
+no-go, M24 p276-vs-oriented B2 character
+no-go and Albert/path-L irreducibility
+mismatch remain independent hard controls.

@@ -134,15 +134,22 @@ print('OPEN full product-compatible 8x8x8 triality map; no Monster VOA or RH res
 # Frobenius-invariant Peirce fusion and the paid within-slot products,
 # to ONE 8x8x8 trilinear triality tensor comparison (512 scalars).
 # The chosen A2/E8 slot isometries need not preserve this tensor.
+
 S01=slots[0,1];S12=slots[1,2];S02=slots[0,2]
-def triple_source(a,b,c):return F(3*B(prod(a,b),c)[0])
-def triple_native(a,b,c):
-  x=mapped(a);y=mapped(b);w=mapped(c)
-  return F((jordanNative(x,y).T*nativeGram*w)[0])
+# One crossslot coefficient is <X01*X12,X02>. In the NATIVE
+# Hermitian octonionic model this is dot(octmul(u,v),w) without
+# rebuilding the full 3x3 matrix for every one of 512 components.
+X01=[tuple(F(v) for v in mapped(x)[3:11]) for x in S01]
+X12=[tuple(F(v) for v in mapped(x)[19:27]) for x in S12]
+X02=[tuple(F(v) for v in mapped(x)[11:19]) for x in S02]
 delta2=F(0);neq=0
-for a,b,c in product(S01,S12,S02):
-  s0=triple_source(a,b,c);n0=triple_native(a,b,c)
-  if s0!=n0:neq+=1
-  delta2+=(s0-n0)**2
-assert neq>0 and delta2>0
-print('TRIALITY exact 8x8x8 mismatch scalar count',neq,'of 512; coefficient residual sum squares',delta2)
+for i in range(8):
+  for j in range(8):
+    ab=prod(S01[i],S12[j]);uv=octmul(X01[i],X12[j])
+    for k in range(8):
+      source=F(3*B(ab,S02[k])[0])
+      target=sum((u*v for u,v in zip(uv,X02[k])),F(0))
+      if source!=target:neq+=1
+      delta2+=(source-target)**2
+assert neq==341 and delta2==F(883,8),(neq,delta2)
+print('TRIALITY exact 8x8x8 mismatch count',neq,'of 512; residual sumsq',delta2)

@@ -212,3 +212,11 @@ Sources: https://arxiv.org/abs/hep-th/0012037 ;
 https://arxiv.org/abs/hep-th/0107209 ;
 https://arxiv.org/abs/2409.08649 ;
 https://arxiv.org/abs/2501.03000 .
+
+## 240/243 physically typed cross-prover discrimination (2026-10-24)
+
+Cross-PR actual code: [Lean TOE #80](https://github.com/chboishabba/dashi_lean4/pull/80) now contains finite local `KK240RoleDiscrimination.lean`, while [Agda KK #1241](https://github.com/chboishabba/dashi_agda/pull/1241) provides `KK240243PortalCasimirConsumerBIDIExact.agda` and `scripts/check_kk_240_243_e8_portal_casimir_bidi.py`. Both are sibling **SOURCE-WRITTEN** proof surfaces, not jointly kernel-verified imports.
+
+The original source `T5E8RelativeComplementCandidateExact` [Agda #1094](https://github.com/chboishabba/dashi_agda/pull/1094) already distinguishes the 243=3^5 ternary carrier, three diagonal points and remaining 240 states from actual E8 roots. The new selected graph test gives ternary non-diagonal path degrees 5–8, periodic degrees 9–10 versus E8 norm-two/inner-product-one root graph degree 56: no same-ADJACENCY isomorphism, while a different action/embedding remains an open research candidate. In unrelated original physical calculations, 240 is the plate pressure denominator (Agda #701), and about 240 the selected 5D quark/gluon Casimir stationary residual (Agda #1241). A single free periodic scalar Higgs portal changes that deficit by at most 5; the 48-real-boson bound belongs ONLY to the fixed-radius free additive model.
+
+This is a precise source-role graph/stress consumer gate, not another theorem that '240 means E8' or any physical 369 mechanism. Nonlinear 5D quantum SM/QCD, physical portal, global Higgs/radion matter action, and LARES-2 remain open.

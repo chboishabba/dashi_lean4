@@ -1,4 +1,4 @@
-import Integration.T5RelativeE6ActionRestrictionObstruction
+import Integration.E6Mod3WeylAction
 import Integration.Griess1990Moufang81Determinant
 import Integration.E6F3ExteriorSquare
 import Mathlib
@@ -30,11 +30,26 @@ All native_decide theorems SOURCE-WRITTEN, NOT kernel checked here.
 namespace Integration.Griess1990OriginalT5Moufang243240Chart
 
 open Integration.E6Mod3QuadraticBridge
-open Integration.T5RelativeE6ActionRestrictionObstruction
+open Integration.E6Mod3WeylAction
 open Integration.Griess1990Moufang81Determinant
 
 /-- The original F3^5 coordinates, not a newly invented 243 carrier. -/
 abbrev Five := F3Five
+
+/-- The existing PR #43 literal constant-diagonal cut translated into the
+same standardized F3^5 coordinates; the PR #47 obstruction module is not
+present on this branch. This predicate matches its OldDiagonal definition. -/
+def OldDiagonal (z : Five) : Prop :=
+  z.z0 = z.z1 ∧ z.z1 = z.z2 ∧ z.z2 = z.z3 ∧ z.z3 = z.z4
+
+instance (z : Five) : Decidable (OldDiagonal z) := inferInstance
+
+/-- Original 240, the selected 3-point diagonal excluded. -/
+def OldRelativeT5 := {z : Five // ¬ OldDiagonal z}
+instance : Fintype OldRelativeT5 := inferInstance
+
+theorem old_relative_t5_card : Fintype.card OldRelativeT5 = 240 := by
+  native_decide
 
 /-- The source M81 *set*: original grade coordinates plus central
 phase. The extra F3 parameter belongs to the original fifth-trit
@@ -133,11 +148,23 @@ theorem old_deleted_diagonal_qprofile :
       OldDiagonal z ∧ standardQuadratic z = 2).card = 2 := by
   native_decide
 
-/-- The OLD relative complement already has an exact E6
-non-invariance counterexample; consuming it rather than reopening
-a false same-Weyl-action identification. -/
+/-- Source-identical explicit witness from PR #47: E6 simple s3
+takes the non-diagonal vector (2,2,1,1,1) to a deleted diagonal
+vector. This uses the ACTUAL original E6 action, not a fake action
+on a 240-point cardinality proxy. -/
+def e6EscapedDiagonal : Five := ⟨2,2,1,1,1⟩
+
+theorem e6_escaped_is_in_old240 : ¬ OldDiagonal e6EscapedDiagonal := by
+  native_decide
+
+theorem e6_s3_returns_to_old_diagonal :
+    OldDiagonal (reflectStandard .s3 e6EscapedDiagonal) := by
+  native_decide
+
 theorem original240_inherited_E6_action_blocked :
-    ¬ OldRelativeInvariantUnderE6 :=
-  old_relative_not_e6_invariant
+    ¬ (∀ s (z : Old240), ¬ OldDiagonal (reflectStandard s z.1)) := by
+  intro h
+  exact (h .s3 ⟨e6EscapedDiagonal, e6_escaped_is_in_old240⟩)
+    e6_s3_returns_to_old_diagonal
 
 end Integration.Griess1990OriginalT5Moufang243240Chart

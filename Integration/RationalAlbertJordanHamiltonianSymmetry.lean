@@ -25,6 +25,7 @@ product/unit proof and native S₃ automorphism proof remain the owners.
 
 namespace Integration.RationalAlbertJordanHamiltonianSymmetry
 
+open Integration.RationalCayleyDicksonOctonion
 open Integration.RationalAlbertNative
 open Integration.RationalAlbertNative.RationalAlbert
 open Integration.RationalAlbertS3Native

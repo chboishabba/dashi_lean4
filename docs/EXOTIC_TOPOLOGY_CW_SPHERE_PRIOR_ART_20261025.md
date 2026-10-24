@@ -402,3 +402,39 @@ homeomorphism. They do NOT yet prove:
 New Lean source and revised Python tests have not been kernel
 or exact-head executed in this turn. Do not retroactively call
 earlier symbolic and finite receipts validation of the repair.
+
+
+## 2026-10-25 Richards conditional direct-limit theorem and lineage blocker payment
+
+The companion Agda PR #1254 now has
+`Docs/topology/ExoticInfiniteSurfaceEndSpaceConditionalTheorem20261025.md`.
+It states the explicit five hypotheses H1–H5 for an **actual
+collared nested PL surface exhaustion** and gives the mathematical
+proof obligations yielding connected orientable second-countable
+boundaryless manifolds, compact cofinal exhaustions, and decorated
+Richards end spaces:
+
+- Cantor: compatible (p\mapsto p0,p1) frontier labels, homeomorphic
+  ideal boundary `{0,1}^N`, every end planar, genus zero.
+- Loch Ness: one outgoing end with genus-one collars arbitrarily far out.
+- Jacob: two independent labelled outgoing ends, both with
+  genus-one collars arbitrarily far out.
+
+The finite PL builder is corrected to explicitly preserve
+**the old boundary vertex embeddings** and exact lineage,
+rather than relying on counts alone. Its stronger new tests
+are not yet executed at the exact pushed GitHub head.
+
+Native Lean source `ExoticTopologyCantorInverseLimit.lean`
+defines a precise compatible tower of **the existing**
+`Integration.Address.Addr n Bool` and constructs a two-sided
+equivalence to infinite binary streams. This is the genuine
+combinatorial inverse-limit half of the end argument. It is
+NOT the homeomorphism to the **actual topological space
+of ends of the geometric union**, which needs kernel-level
+collar/cofinality and end-basis proofs.
+
+The attribution chain remains Brahana 1921 ->
+Kerékjártó 1923 -> Richards 1963, retaining separate
+original compact theorem, noncompact predecessor and
+later complete theorem/realization authorship.

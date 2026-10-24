@@ -259,4 +259,43 @@ theorem equalEvenCountCannotProveFiveDEquations
 -- 5D b0=1e-24m requires coefficient scaling and 18-field
 -- functional Hessian, global anomalies and Israel/metric junctions.
 
+
+/-!
+2026-10-25 physical scalar source owner #1241 further computes full 18
+parity-even INTERVAL Hessian including gradient stiffness, bulk
+original E6 V6 and actual fixed-plane W'' on a NONCONSTANT classical
+3-field BVP. 32/64 element FEM gives 7 gauge near-zero eigenvalues
+converging ~h² and 11 positive modes, first massive eigen ~2.08.
+Source labels below are NOT Lean proofs of the numerical/continuum
+eigenvalue operator. Earlier homogeneous 18 Hessian and latter
+functional interval Sturm-Liouville operator are DISTINCT consumers.
+-/
+inductive KKEvenScalarOperator where
+  | homogeneousMatrix
+  | nonconstantIntervalFEM
+  deriving DecidableEq, Repr
+
+def evenScalarCount (_ : KKEvenScalarOperator) : Nat := 18
+
+def includesIntervalGradientAndRobinHessian : KKEvenScalarOperator → Bool
+  | .homogeneousMatrix => false
+  | .nonconstantIntervalFEM => true
+
+theorem sameEighteenDoesNotDeterminePhysicalOperator
+    (readout : Nat → Bool)
+    (h : ∀ s, readout (evenScalarCount s) =
+      includesIntervalGradientAndRobinHessian s) : False := by
+  have old : readout 18 = false := by
+    simpa [evenScalarCount,includesIntervalGradientAndRobinHessian] using
+      h KKEvenScalarOperator.homogeneousMatrix
+  have current : readout 18 = true := by
+    simpa [evenScalarCount,includesIntervalGradientAndRobinHessian] using
+      h KKEvenScalarOperator.nonconstantIntervalFEM
+  cases old.symm.trans current
+
+theorem sourceSevenGaugeElevenMassive : 7 + 11 = 18 := by decide
+
+def fullContinuumIntervalSpectrumCertified : Bool := false
+def anomalyFreeFiveDPhysicalQuantumVacuumCertified : Bool := false
+
 end DASHITOE

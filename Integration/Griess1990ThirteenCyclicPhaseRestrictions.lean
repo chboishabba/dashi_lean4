@@ -103,7 +103,7 @@ theorem three_axis_common_fixed_is_unit_projection :
     sourceLineFixedProjector 4 *
       sourceLineFixedProjector 1 *
         sourceLineFixedProjector 0 =
-      Matrix.of (fun i j : Fin 27 =>
+      (fun (i : Fin 27) (j : Fin 27) =>
         if i = 0 ∧ j = 0 then (1 : ℚ) else 0) := by
   native_decide
 

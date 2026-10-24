@@ -150,3 +150,65 @@ All proposals have separate ORIGINAL roots; no evidence is imported from repeate
 New Agda #1249 script check_hyperfabric_27_26_wrapped_membrane.py executes 135 exact rational 1+1 Lorentzian induced metrics with positive circle radii and 3 selected compatible KK shifts per sample: for a product wrapped 2+1 membrane metric det h3=R² det h2 and the classical conditional action gives T_string=2*pi*R*T_membrane. An unmatched KK cross term fails; the physical horizontal square-completion restores the determinant. This is a legitimate conditional CLASSICAL worldvolume reduction and positive/negative discriminator, not quantum bosonic M/BRST or an actual 27D target map. Independent equivalent local Python tests PASS; actual Agda kernel unverified, exact Git-blob execution not claimed.
 
 REVISED PRIORITY: (1) kernel certify existing-source antipode and qLr rank-one reduction, (2) select Horowitz-Susskind literal 27D action and the Lambert-West 125/121 and symmetry consumer, (3) compare to the existing Nambu membrane surface source via an actual wrapped embedding and common metric, (4) separately source the Borcherds c24+2 physical BRST construction or 10D RNS worldsheet, (5) only then test an F4/Jordan and original hyperfabric representation against physically identified 26D fields. Do not create another TOE ontology or attach unrelated NS/YM/RH operators by dimensional analogy.
+
+
+## 2026-10-24 literal 27D physical action source-selected max-cut (supersedes A3 open wording)
+
+Lean PR #84 now has an ACTUAL arithmetic theorem file
+`Integration/DASHITOE/BosonicM27CoefficientCut.lean` importing
+`Mathlib`, source blob `e3377919e2e3557a6e2bb47f25d7998696a9d98f`.
+Its source-written statements include:
+`commonPrefactor_forces_radius`,
+`reducedEinsteinKinetic_closed`,
+`stringKineticGap`,
+`tenDimensionalCoefficientMatches`,
+`twentySixDimensionalLambertWestRatio`,
+`twentySixDimensionalCoefficientNoGo`, and
+`fourFormToThreeFormCoefficient`.
+**Lean kernel not run**; distinguish the theorem source from certified
+`lake env lean` at this head.
+
+The EXTERNALLY SPECIFIED 27D metric ansatz
+`ds²_(d+1)=e^(2aσ)g_d+e^(2bσ)dy²`
+has reduced gravitational prefactor `(d-2)a+b` and y-legged
+four-form/H3 prefactor `(d-6)a-b`. Their equality fixes
+`b=-2a`, and after the standard Ricci conformal identity/
+integration by parts the actual scalar coefficient is
+`(d-1)(d-6)a²`. String-frame target requires
+`(d-4)²a²`; difference `(d-10)a²`.
+At d=26 the exact ratio `500/484=125/121`
+reproduces Lambert/West's original 2001 obstruction and blocks the
+**unchanged simple Horowitz–Susskind** 27D EH + 3-form reduction
+as the precise standard 26D bosonic string action. At d=10
+the mismatch vanishes. It does not prove a universal 27D theorem
+or the 2025 Glennon K27-algebra obstruction.
+
+Original Agda PR #1249 commits executed reference scripts:
+`check_27d_bosonic_m_dilaton_125_121.py` exact blob
+`96f2f1eb91d487b3ddc18acd785ade4261132801` (102 PASS);
+`check_27d_3form_26d_string_sector.py` exact blob
+`b40fa7889866ff843ff3343a1bb1aeb48cf26c68`
+(162 positive constant-r H3 contractions and variable-r no-go);
+`check_hyperfabric_27_26_action_obstruction.py` exact blob
+`97472debda8443394c09f94b2229396570a481b1`
+(676 self-adjoint pairings, origin-scalar leakage, 26 spectral
+non-scalar F4 irreducibility obstruction).
+Agda theorem `Hyperfabric27MinusOneOriginalPathInvariantNoGoExact`
+consumes actual path adjacency to refute closure of non-origin sites,
+source-written/kernel unverified. Finite algebra not a real 26D
+Lorentz target or physics ontology.
+
+**Priority after this cut**: (1) certify the new Lean polynomial
+identities if exact pinned mathlib/Lean environment becomes accessible;
+(2) pick an externally defensible alternative full 27D action
+and explicitly test every `K27=D24+++` symmetry, H/radion/dilaton
+coefficient, stress/metric and physical target observable; (3)
+retain the existing worldsheet BRST and Monster VOAs on their original
+authority routes. The selected original simple action fails and
+should not consume more formal wrappers. YM/NS analytic work remains
+independent.
+
+Sources: https://arxiv.org/abs/hep-th/0012037 ;
+https://arxiv.org/abs/hep-th/0107209 ;
+https://arxiv.org/abs/2409.08649 ;
+https://arxiv.org/abs/2501.03000 .

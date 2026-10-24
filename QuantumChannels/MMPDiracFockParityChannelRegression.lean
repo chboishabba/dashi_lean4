@@ -1,5 +1,6 @@
 import QuantumChannels.MMPDiracFockParityChannel
 import QuantumChannels.MMPDiracChargeSuperselection
+import QuantumChannels.MMPMonopoleLLLDualRailCapacity
 
 /-!
 BIDI regression for physical-channel source selection.
@@ -24,6 +25,20 @@ theorem regression_doubleLoss_is_exact_excess
         (a.s1 * a.s2) ^ 2 / 2 := by
   rw [evenParity_eq_noLoss_add_doubleLoss]
   ring
+
+/-- q=2 is the first index with two labelled LLL candidates, conditional
+on the external spin-c S² zero-mode count as a mathematical premise. -/
+def twoLLLRails : SphericalLLLCount :=
+  ⟨2, by norm_num⟩
+
+theorem regression_q2_two_distinct_rails :
+    firstLLLRail twoLLLRails ≠ secondLLLRail twoLLLRails :=
+  distinctLLLRails twoLLLRails
+
+theorem regression_erasure_threshold :
+    0 < equalRailErasureCoherentInfo (4 / 5 : ℝ) ∧
+    equalRailErasureCoherentInfo (1 / 5 : ℝ) < 0 := by
+  norm_num [equalRailErasureCoherentInfo]
 
 end MMPQuantumChannel
 

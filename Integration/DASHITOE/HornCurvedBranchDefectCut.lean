@@ -63,28 +63,6 @@ theorem oneBranchWithCurvatureDefects
                       List.append_assoc]
   simpa using haux path []
 
-/-- Source-selected W has a previously certified strict norm-gap >1.
-If a TRUE geometric/curvature defect and leaf length budget force
-the weighted envelope <=1, the proposed physical connection is
-incompatible with that W. The actual eta is NOT inferred from pi1. -/
-theorem curvedSourceGeometricRejection
-    {G : Type*} (U : List Bool → G) (d : G → ℚ)
-    (eta : List Bool → ℚ)
-    (hstep : ∀ (base : List Bool) (b : Bool),
-      d (U base) ≤ eta base + 2 * d (U (b :: base)))
-    (path : List Bool) (leafBound : ℚ)
-    (hroot : 1 < d (U []))
-    (hLeaf : d (U path.reverse) ≤ leafBound)
-    (hEnvelopeMono : ∀ (base p : List Bool) (a b : ℚ),
-      a ≤ b → branchErrorEnvelope eta p base a ≤
-        branchErrorEnvelope eta p base b)
-    (hCap : branchErrorEnvelope eta path [] leafBound ≤ 1) :
-    False := by
-  have hp := oneBranchWithCurvatureDefects U d eta hstep path
-  have hb := hEnvelopeMono [] path _ _ hLeaf
-  have hc : d (U []) ≤ 1 := le_trans hp (le_trans hb hCap)
-  exact (not_lt_of_ge hc hroot)
-
 /-- Heterogeneous defect envelope monotonicity, with no extra
 postulate; the proof relies only on nonnegative factor 2. -/
 theorem envelopeMonotone (eta : List Bool → ℚ)
@@ -97,6 +75,26 @@ theorem envelopeMonotone (eta : List Bool → ℚ)
       simp only [branchErrorEnvelope]
       have h := ih (b :: base)
       linarith
+
+
+/-- Source-selected W has a previously certified strict norm-gap >1.
+If a TRUE geometric/curvature defect and leaf length budget force
+the weighted envelope <=1, the proposed physical connection is
+incompatible with that W. The actual eta is NOT inferred from pi1. -/
+theorem curvedSourceGeometricRejection
+    {G : Type*} (U : List Bool → G) (d : G → ℚ)
+    (eta : List Bool → ℚ)
+    (hstep : ∀ (base : List Bool) (b : Bool),
+      d (U base) ≤ eta base + 2 * d (U (b :: base)))
+    (path : List Bool) (leafBound : ℚ)
+    (hroot : 1 < d (U []))
+    (hLeaf : d (U path.reverse) ≤ leafBound)
+    (hCap : branchErrorEnvelope eta path [] leafBound ≤ 1) :
+    False := by
+  have hp := oneBranchWithCurvatureDefects U d eta hstep path
+  have hb := envelopeMonotone eta path [] _ _ hLeaf
+  have hc : d (U []) ≤ 1 := le_trans hp (le_trans hb hCap)
+  exact (not_lt_of_ge hc hroot)
 
 /-- Pure exact rational regression for the curved-source acceptance
 fixture eta_k=(1/100)*(1/3)^k, length_n=(1/3)^n and M=100 at depth12

@@ -78,4 +78,49 @@ theorem sixDiracQuarksAndThreeVectorOctetsCount :
     6 * 3 * 4 = 3 * 8 * 3 := by decide
 
 
+
+/-! 2026-10-24 physical-source BACKWARD consumer.
+These Bool values LABEL calculated results in Agda KK #1241's
+`check_kk_soft_split_su3_holonomy_maxcut.py`. They do NOT prove
+the 5D periodic quantum determinant inside Lean or construct SUSY.
+-/
+
+inductive KKPairedColourModel where
+  | sixQuarkHyperlikePairs
+  | eightWithTwoHeavyFundamentals
+  deriving DecidableEq, Repr
+
+def localRadionAndWilsonHessianPositive (_ : KKPairedColourModel) : Bool :=
+  true
+
+def fixedRadiusGlobalColourIdentityPreferred : KKPairedColourModel → Bool
+  | .sixQuarkHyperlikePairs => false
+  | .eightWithTwoHeavyFundamentals => true
+
+theorem localHessianDoesNotDetermineGlobalColourIdentity
+    (f : Bool → Bool)
+    (h : ∀ model, f (localRadionAndWilsonHessianPositive model) =
+      fixedRadiusGlobalColourIdentityPreferred model) : False := by
+  have a : f true = false := by
+    simpa [localRadionAndWilsonHessianPositive,
+      fixedRadiusGlobalColourIdentityPreferred] using
+      h KKPairedColourModel.sixQuarkHyperlikePairs
+  have b : f true = true := by
+    simpa [localRadionAndWilsonHessianPositive,
+      fixedRadiusGlobalColourIdentityPreferred] using
+      h KKPairedColourModel.eightWithTwoHeavyFundamentals
+  cases a.symm.trans b
+
+theorem eightFundamentalFlavoursEven : (6 + 2) % 2 = 0 := by decide
+
+theorem vectorMultipletCasimirCancellation : 3 + 1 = 4 := by decide
+
+theorem hyperMultipletCasimirCancellation : 4 = 2 * 2 := by decide
+
+/-!
+External SUSY field-content prior art; eight flavours is necessary for
+one simple parity-CS counting condition, not a proof of full 5D
+SU3×U1 gauge invariance, chiral EW, full action, or experiment.
+-/
+
 end DASHITOE

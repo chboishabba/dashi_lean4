@@ -112,9 +112,11 @@ theorem twoSmallSiblingC :
     envelope [(2, 0), (1/4, 0), (1/4, 0)] (2 : ℚ) = 1 := by
   norm_num [envelope, amp]
 
-/-- NEGATIVE CONTROL: only one small sibling does not force <=1
-under the universal worst-case unitary gap cap. -/
-theorem onlyOneShortSiblingInsufficient :
+/-- DEPTH-THREE PRODUCT-ONLY negative control: this bound equals 4.
+The shorter-prefix direct linear sibling criterion may STILL reject
+from this same input (in particular root sibling gap 1/4 gives 1/2).
+Do not infer that a single small sibling cannot suffice. -/
+theorem oneShortDepthThreeProductIsLoose :
     envelope [(1/4, 0), (2, 0), (2, 0)] (2 : ℚ) = 4 := by
   norm_num [envelope, amp]
 

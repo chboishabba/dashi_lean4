@@ -993,3 +993,67 @@ If a REAL flat source has one marked branch with sibling-local lengths `L_sib(k)
 `d(root) <= 2*(2*M*L0)^n*q^(n*(n-1)/2) ->0`; the root must be I. This strictly improves the former sufficient q<1/2 *leaf*-shrink obstruction while requiring a different specific geometric datum. **No actual linked horn sibling metric or clearance certificate has been produced.** For a curved source the branch needs honest based Stokes homotopies with `eta_k<=integral ||F(H_s,H_t)||dsdt`; this bound is only a source contract, not a receipt.
 
 **Pareto next cut:** Hatcher source-marked 3D linked sibling meridians and clearance first; analytic based homotopy/curvature bounds second; physical selected action and observed multi-scale distinction third. No Lean/Lake kernel run this session, no promotion to neutrino/Monster/Witten/TOE or Clay proof.
+
+
+## 2026-10-25: finite two-short-siblings, sparse-density and inverse gauge necessity
+
+Original Hatcher AT Example 2B.2, printed pp.171–172 (checked
+directly in the original PDF), supplies the **marked injection**
+`F_(2^n)->F_(2^(n+1))`, with each parent meridian mapped to the
+commutator of the two linked-handle meridians. Gotô 1949 supplies
+compact semisimple commutator surjectivity; prior positive selected-W
+representation is owned by the neutrino Agda **#1247**. The genuinely
+three-satellite C3 paper-level construction and existing Van Kampen
+collar adapters are owned by Agda **#1244**. Neither source claims
+numerical metric lengths or Stokes area for an actual linked horn.
+
+**New conditional finite rejection (analytic premise still external):**
+in the sibling-adaptive branch inequality with leaf gap <=2 and
+no curved defects, if any TWO of the FIRST THREE sibling gaps are
+<=1/4, the third may be uncontrolled (<=2), yet `d(root)<=1`.
+All three finite positions yield an exact rational envelope of 1.
+A single short sibling alone yields upper bound 4 and cannot
+reject selected W. Among the first 3m siblings, >=2m with gap<=1/4
+suffice for `d(root)<=2^(1-m)`. This is a *prefix* count: an
+isolated deep 3-block does not license rejection when ancestors
+are uncontrolled. The selected W strict root gap >1 is from
+the independent trace certificate in original Agda #1247 /
+#1249, not a new physical prediction.
+
+**New necessary connection-norm growth gate:** if source provides
+actual marked sibling lengths `L_k<=L0*q^k` (0<q<1) and the
+connection's source-compatible local coefficient norm is bounded
+on their first n members by `M_n`, then `d(root)>1` forces
+
+```
+(2*M_n*L0)^n * q^[n(n-1)/2] > 1/2
+M_n > 2^(-1-1/n) * L0^(-1) * q^(-(n-1)/2).
+```
+
+This proves the necessity of UNBOUNDED prefix sup norms if
+the premise holds for all n. It does **not** identify an individual
+singular point, imply a precise pointwise exponent, or contradict
+existence of a smooth flat connection on the *open* complement.
+
+**New explicit curved-source gate:** with source-verified based
+homotopy/transport curvature defect `eta_k<=K A0 r^k`,
+`P_j=prod_(k<j)[2 min(1,d(sibling_k))]`, require
+
+```
+2*P_n + K*A0*sum_(j<n) P_j*r^j <= 1.
+```
+
+For the purely illustrative `d(B_k)=(3/4)^k`, `A0=1`,
+`r=1/2`, `n=7`, the exact maximal allowed bound is
+`Kcrit=6719515981/58747086512`. No real horn curvature
+or homotopy area is claimed.
+
+**Implementation:** `Integration/DASHITOE/HornAdaptiveSiblingStokesCut.lean`
+now source-writes all 3 placements, a negative control, the inverse
+gauge growth scalar lemma and the rational depth-7 fixture.
+Agda #1249 exact Python sibling-density/singularity audit was
+independently tested locally and passed; committed-source byte-execution
+and Lean/Agda kernel checks are not claimed. The mathematical
+P0 donor remains the **actual #1244 same-object** 3-satellite collar
+and Hatcher-linked local meridian geometry, not yet inhabited as
+length+area source certificates.

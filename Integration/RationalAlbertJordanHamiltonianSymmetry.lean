@@ -1,5 +1,6 @@
 import Integration.RationalAlbertNative
 import Integration.RationalAlbertS3Native
+import Integration.RationalAlbertCubicNormStructure
 import Mathlib
 
 /-!
@@ -66,6 +67,24 @@ theorem selectedH_nonzero : selectedH ≠ (0 : A) := by
   intro heq
   have h0 := congrArg (fun x : A => x.diagonal0) heq
   norm_num [selectedH] at h0
+
+
+/-- Nonzero native rational-Albert trace-pair amplitude. This is a
+Jordan algebra matrix element, not a calibrated physical transition. -/
+theorem selectedH_tracePair_norm :
+    Integration.RationalAlbertCubicNormStructure.tracePair selectedH selectedH = 2 := by
+  norm_num [Integration.RationalAlbertCubicNormStructure.tracePair,
+    selectedH, innerO, RationalOctonion.mul, RationalOctonion.conj,
+    RationalOctonion.realPart, RationalQuaternion.mul,
+    RationalQuaternion.conj]
+
+/-- Concrete scalar-to-traceless coupling of the source-native
+Jordan Hamiltonian, measured by the source-native trace form. -/
+theorem selectedH_scalar_traceless_amplitude :
+    Integration.RationalAlbertCubicNormStructure.tracePair
+      (leftJordan selectedH unit) selectedH = 2 := by
+  rw [selectedH_unit_image]
+  exact selectedH_tracePair_norm
 
 /-- The *existing genuine* order-three Albert automorphism changes the
 selected Hamiltonian generator. -/

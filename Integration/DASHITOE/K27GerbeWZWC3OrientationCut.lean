@@ -76,4 +76,37 @@ theorem threeCycleCannotBeOrientationFlip
     _ = x ^ 3 := by group
     _ = 1 := three
 
+
+/-- Selected WZW gerbe patch: the theta/varphi tangent 2-plane
+    has metric diag(g1,g2) and skew B_12=b. The source worldsheet
+    phase-space Hamiltonian has p+Bv with canonical momentum p.
+    This is classical local O(2,2) generalized geometry. -/
+def localWZWHamiltonian (g1 g2 b v1 v2 p1 p2 : ℚ) : ℚ :=
+  g1 * v1 ^ 2 + g2 * v2 ^ 2 +
+    (p1 + b * v2) ^ 2 / g1 + (p2 - b * v1) ^ 2 / g2
+
+/-- The actual B change between two overlapping WZW gerbe patches
+    is cancelled by a *momentum* shift, keeping the same physical
+    worldsheet Hamiltonian on the same local tangent/cotangent pair.
+    This is not a global one-form gauge identification: the overlap
+    B_N-B_S has a nonzero integral over the equatorial S². -/
+theorem localGerbeHamiltonianPatchInvariant
+    (g1 g2 bN bS v1 v2 p1 p2 : ℚ)
+    (hg1 : g1 ≠ 0) (hg2 : g2 ≠ 0) :
+    localWZWHamiltonian g1 g2 bN v1 v2
+      (p1 - (bN - bS) * v2)
+      (p2 + (bN - bS) * v1) =
+    localWZWHamiltonian g1 g2 bS v1 v2 p1 p2 := by
+  dsimp [localWZWHamiltonian]
+  ring
+
+/-- The same antisymmetric B-shift preserves the O(2,2)
+    natural pairing of tangent and cotangent. -/
+theorem localGerbePairingPatchInvariant
+    (bN bS v1 v2 p1 p2 : ℚ) :
+    (p1 - (bN - bS) * v2) * v1 +
+    (p2 + (bN - bS) * v1) * v2 =
+    p1 * v1 + p2 * v2 := by
+  ring
+
 end DASHIK27GerbeWZW

@@ -138,6 +138,15 @@ def test_repository():
         assert (got.T*g2[:,k])[0]==S[i][j][k]
     print('PASS 512/512 Griess1990 source triality coefficients')
 
+    # Source Peirce orientation is not native Lean's upper-slot orientation:
+    # g02 compares upper (02); Lean stores OFF20=conj(upper02), det(conj)=-1.
+    # After that required slot conversion all three orthogonal chart maps are SO8.
+    relative_det=tuple(sp.factor(g.det()/W.det()) for g in (g0,g1,g2))
+    assert relative_det==(1,1,-1),relative_det
+    conj8=sp.diag(1,*([-1]*7))
+    assert (conj8*g2*W.inv()).det()==1
+    print('PASS chart determinant orientations (+,+,-); Lean off20 conjugation repairs to (+,+,+)')
+
     # Transfer on ALL THREE source Peirce slots, not just the selected pair.
     change=sp.eye(27)
     Winv=W.inv()

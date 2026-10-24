@@ -1,94 +1,88 @@
 import Mathlib
 
 /-!
-# Sibling-adaptive Hatcher holonomy budget (conditional rational carrier)
+# Conditional sibling-adaptive Hatcher holonomy budget
+Attribution: Hatcher (AT Example 2B.2), Gotô (JMSJ 1949);
+existing Agda PR #1247 already supplies positive selected SU3 representation,
+#1244 owns geometric horn/C3, #1249 and Lean #84 own earlier sharp 2^n
+and curved eta bounds. The new theorem here is a rational conditional envelope.
 
-Original group marking: Hatcher, Algebraic Topology, Ex. 2B.2.
-Original commutator surjectivity: Morikuni Gotô, JMSJ 1 (1949), 270-272.
-Already selected SU(3) W and positive group representation: Agda PR #1247.
-Original sharp 2^n branch and curved eta: Agda #1249 / Lean #84.
-
-New conditional step coefficient:
-  d([A,B]) ≤ 2*d(A)*min(1,d(B))
-  c_k=2*min(1,d(sibling_k))
-  d(parent) ≤ eta_k+c_k*d(chosen child).
-The analytic operator norm/Stokes source must supply each hstep.
-This file does not construct a horn embedding, a physical gauge field or
-a kernel-verified SU(3) operator-norm theorem.
+Analytic source step d(parent) <= eta+2*min(1,d(sibling))*d(child)
+requires genuine marked based loops and normed unitary commutator physics;
+for a curved connection eta needs a REAL based Stokes homotopy.
+No topological marking, physical gauge field or kernel receipt claimed.
 -/
-
 namespace DASHIHornAdaptiveSibling
 
-/-- Rational upper multiplier for a source-certified unitary sibling gap. -/
-def amp (siblingGap : ℚ) : ℚ := 2 * min (1 : ℚ) siblingGap
+/-- Sibling-sensitive commutator coefficient, applied ONLY when the
+source supplies a nonnegative upper bound on the sibling's norm gap. -/
+def amp (s : ℚ) : ℚ := 2 * min (1 : ℚ) s
 
 theorem amp_nonneg (s : ℚ) (hs : 0 ≤ s) : 0 ≤ amp s := by
   unfold amp
-  have hmin : 0 ≤ min (1 : ℚ) s := le_min (by norm_num) hs
+  have h : 0 ≤ min (1 : ℚ) s := le_min (by norm_num) hs
   linarith
 
 theorem amp_le_two (s : ℚ) : amp s ≤ 2 := by
   unfold amp
-  have hmin : min (1 : ℚ) s ≤ 1 := min_le_left _ _
+  have h : min (1 : ℚ) s ≤ 1 := min_le_left _ _
   linarith
 
-/-- Each entry carries (sibling holonomy gap, based curvature defect).
-The list runs from the root towards a selected descendant. -/
+/-- Ordered root-first list: (sibling gap, based holonomy defect). -/
 def envelope : List (ℚ × ℚ) → ℚ → ℚ
   | [], leaf => leaf
-  | (sibling, defect) :: tail, leaf =>
-      defect + amp sibling * envelope tail leaf
+  | (s, e) :: tail, leaf => e + amp s * envelope tail leaf
 
-/-- Genuinely SOURCE-SUPPLIED local chain. We do not infer its
-one-step estimates from mere homotopy for curved Wilson loops. -/
+/-- This is a CERTIFIED source gate; arbitrary pi1 homotopy does
+not supply hstep for curved Wilson matrices. -/
 inductive CertifiedChain : List (ℚ × ℚ) → ℚ → ℚ → Prop where
   | nil (x : ℚ) : CertifiedChain [] x x
-  | cons (sibling defect root child leaf : ℚ) (tail : List (ℚ × ℚ))
-      (hstep : root ≤ defect + amp sibling * child)
+  | cons (s e root child leaf : ℚ) (tail : List (ℚ × ℚ))
+      (hs : 0 ≤ s)
+      (hstep : root ≤ e + amp s * child)
       (hchild : CertifiedChain tail child leaf) :
-      CertifiedChain ((sibling, defect) :: tail) root leaf
+      CertifiedChain ((s, e) :: tail) root leaf
 
-/-- General heterogeneous product/sum envelope with NO 2^n
-relaxation. No hypothesis requiring the chosen leaf to be short. -/
+/-- No uniform sibling bounds, fast-shrinking leaf or flatness is assumed;
+every curvature defect is an explicitly supplied number. -/
 theorem chain_envelope
     {entries : List (ℚ × ℚ)} {root leaf : ℚ}
-    (hchain : CertifiedChain entries root leaf)
-    (hgap : ∀ p ∈ entries, 0 ≤ p.1) :
+    (h : CertifiedChain entries root leaf) :
     root ≤ envelope entries leaf := by
-  induction hchain with
-  | nil x =>
-      simp [envelope]
-  | cons sibling defect root child leaf tail hstep hchild ih =>
-      have hs : 0 ≤ sibling := hgap (sibling, defect) (by simp)
-      have htail : ∀ p ∈ tail, 0 ≤ p.1 := by
-        intro p hp
-        apply hgap p
-        simp [hp]
-      have hc : child ≤ envelope tail leaf := ih htail
-      have hm : 0 ≤ amp sibling := amp_nonneg sibling hs
-      have hmul := mul_le_mul_of_nonneg_left hc hm
-      change root ≤ defect + amp sibling * envelope tail leaf
+  induction h with
+  | nil x => simp [envelope]
+  | cons s e root child leaf tail hs hstep hchild ih =>
+      have hm : 0 ≤ amp s := amp_nonneg s hs
+      have hmul := mul_le_mul_of_nonneg_left ih hm
+      change root ≤ e + amp s * envelope tail leaf
       linarith
 
+/-- A cap on the leaf gap transports through every nonnegative multiplier,
+without requiring that the chosen leaf has a short geometric representative. -/
+theorem chain_envelope_cap
+    {entries : List (ℚ × ℚ)} {root leaf : ℚ}
+    (h : CertifiedChain entries root leaf)
+    (cap : ℚ) (hleaf : leaf ≤ cap) :
+    root ≤ envelope entries cap := by
+  induction h with
+  | nil x => simpa [envelope] using hleaf
+  | cons s e root child leaf tail hs hstep hchild ih =>
+      have hm : 0 ≤ amp s := amp_nonneg s hs
+      have ht : child ≤ envelope tail cap := ih
+      have hmul := mul_le_mul_of_nonneg_left ht hm
+      change root ≤ e + amp s * envelope tail cap
+      linarith
+
+/-- Previously certified selected source W has norm gap strictly >1.
+Reject a real source realization only once actual sibling/defect caps
+force the root bound <=1. -/
 theorem selectedRootAdaptiveRejection
     {entries : List (ℚ × ℚ)} {root leaf leafCap : ℚ}
-    (hchain : CertifiedChain entries root leaf)
-    (hgap : ∀ p ∈ entries, 0 ≤ p.1)
+    (h : CertifiedChain entries root leaf)
     (hroot : 1 < root)
     (hleaf : leaf ≤ leafCap)
-    (hleafGap : 0 ≤ leafCap)
     (hcap : envelope entries leafCap ≤ 1) : False := by
-  have hrootBudget := chain_envelope hchain hgap
-  have hmono : envelope entries leaf ≤ envelope entries leafCap := by
-    induction entries with
-    | nil => simpa [envelope] using hleaf
-    | cons hd tail ih =>
-        have hs : 0 ≤ hd.1 := hgap hd (by simp)
-        have hm : 0 ≤ amp hd.1 := amp_nonneg hd.1 hs
-        simp only [envelope]
-        have hmul := mul_le_mul_of_nonneg_left ih hm
-        linarith
-  have hrootLe : root ≤ 1 := le_trans hrootBudget (le_trans hmono hcap)
-  exact (not_lt_of_ge hrootLe hroot)
+  have bound := chain_envelope_cap h leafCap hleaf
+  exact (not_lt_of_ge (le_trans bound hcap) hroot)
 
 end DASHIHornAdaptiveSibling

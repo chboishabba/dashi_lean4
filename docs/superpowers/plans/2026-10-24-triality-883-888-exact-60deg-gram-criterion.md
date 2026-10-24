@@ -63,3 +63,28 @@ New local independently executed `/mnt/data/audit_triality_A2_best_metric_alignm
 
 ## Direct fixed-norm version of user's question (stronger test, not the same as hitting 888 by 60°)
 The 60° example **changes** raw target norm `507/8 → (509+√3)/8`, hence does NOT realize the specific counterfactual `T²=507/8` and `<S,T>=121/16` simultaneously. To test that condition independently, write an SO8 coordinate-plane rotation via rational tangent-half-angle `c=(1−t²)/(1+t²)`, `s=2t/(1+t²)`; for each of 28 coordinate pairs form exact polynomial equations `T'(t)²−507/8=0`, `<S,T'(t)>−121/16=0`. Exact polynomial GCD computations over Q for ALL 28 cases find **no common root**, including algebraic half-angle parameters, for any single coordinate-plane rotation. This is a narrowly scoped rigorous no-go for the selected one-plane family, NOT for all 2-plane rotations or SO8. Actually executed exact local Python `/mnt/data/audit_888_fixed_norm_oneplane.py` PASS; committed portable owner `scripts/check_griess1990_triality_888_frozen_norm_oneplane_no_go.py`. Any claim that source-root Griess1990/Spin8 **forces** 121/16 remains unsupported.
+
+
+## 2026-10-24 NEW MAX-CUT: explicit rational related triple closes the selected full-product seam (Python exact, Lean open)
+
+**Supersedes the earlier "A3 open" status IN THE LOCAL EXACT PYTHON LANE.** New executable owner:
+\`scripts/check_griess1990_triality_rational_related_triple_recovery.py\`
+(commit \`56607795a65e9a0d70931f8aae306eab974d6a30\`).
+Source provenance: Griess (1990), *J. Algebra* 131:281–293, DOI 10.1016/0021-8693(90)90176-O; standard Hurwitz octonion coordinatization; Alsaody–Gille (2019), *Isotopes of Octonion Algebras, G2-Torsors and Triality*, DOI 10.1016/j.aim.2018.12.003; Barry–Tignol (2023), *Trialitarian triples*, DOI 10.4171/DM/926. These are the **original source authors**, not DASHI discovery claims.
+
+**Actual source-object construction**, not just a dimension match or arbitrary norm isometry:
+1. Read the SAME Griess1990 \`S01, S12, S02\` source slots and original product. Form \`S_ijk = 3 B(S01_i ∘ S12_j,S02_k)\`. Set \`q=G/2\` with the repository's rational \`G=A2^4\`; recover source composition \`mu(x,y)=q^{-1}S(x,y,-)\`.
+2. Verify the complete polarization \`L_i^T q L_k + L_k^T q L_i=2q_ik q\` for all \`i,k\`. This is the full **bilinear norm-composition identity**, not a set of selected numerical examples.
+3. Select \`a=b=W^{-1}e0\`, \`c=mu(a,b)\`, \`R_b(x)=mu(x,b)\`, \`L_a(y)=mu(a,y)\`. They are rational norm isometries. The unital isotope on the same third slot is \`x*y=mu(R_b^{-1}x,L_a^{-1}y)\` with unit \`c\`.
+4. Two exact rational Householder reflections build a Cayley basis \`(c,u,v,uv,w,uw,vw,(uv)w)\`. Exhaustively check its 64 products equal **the same** rational Cayley–Dickson octonion basis used by \`RationalAlbertNative\`. With \`Phi=D^{-1}\`, the explicit maps are \`g01=Phi R_b\`, \`g12=Phi L_a\`, \`g02=Phi\`. Each satisfies \`g^T g=q\` in the native coordinate norm and \`g02(mu(x,y))=g01(x)*g12(y)\` on all 64 basis products.
+5. Verify all 512 source/target trilinear coefficients **exactly equal** and then assemble the full rational 27x27 linear map, fixing the three frame idempotents and applying each matching 8x8 map to its correct native slot. Exhaustive exact check: **729/729 Jordan products**, the actual unit and all 729 full-basis trace pairings match. The new selected-map Gram residual is exactly **ZERO**, \`<S,T>_G=8\`, rather than the old 29/2 or optimized single-slot-subgroup 14.
+
+**Execution receipt:** independent source-equivalent local Python/SymPy in \`/mnt/data/triality_related_triple_recovery.py\` executed **PASS** for a synthetic rotated octonion tensor and the reconstructed Griess1990/Peirce/native-source equations: 512/512 cubic comparisons, 729/729 actual Jordan product table, unit and trace metric. The GitHub script has been committed but its exact uploaded bytes have NOT been independently replayed, and neither Lean/Lake nor Agda kernel was run. The local source copies were reconstructed from the PR equations, so the exact HEAD still needs replay.
+
+**Roadmap gates after this advance:**
+- **A3 local exact:** PASS on reconstructed source-equivalent equations, explicit rational same-object 27D product isomorphism. Execute newly committed script at exact GitHub HEAD to upgrade to exact-head Python receipt.
+- **A4 Lean:** OPEN. Export the three explicit 8x8 rational matrices (script prints them), native 27x27 block transport, prove all 64 mixed bilinear identities plus frame/trace/unit in the existing Lean rational carrier, then compile the full product through existing \`AlbertTrialityCubicCompiler\` / \`AlbertStructureTransport\`. Kernel green is still a separate claim.
+- **Original-Q F4/E6 classification:** the pre-existing separate same-object external classification witness remains OPEN; source-level product equivalence is not by itself a classification of a rational algebraic group.
+- **Monster VOA, C27, 369 physical grid, KK/AdS3, RH/zeta:** all retain their independent operator/action and empirical/analytic gates. No physical inference is made from this algebraic certificate.
+
+**888 arithmetic remains a map-dependent curiosity:** the previous 60° one-plane raw-residual identity, the one-plane frozen-norm no-go, and the 1296-element subgroup optimum are correct *for their explicitly chosen families*; none obstructs the constructed rational three-slot product isomorphism, and none canonically forces the unweighted overlap 121/16.

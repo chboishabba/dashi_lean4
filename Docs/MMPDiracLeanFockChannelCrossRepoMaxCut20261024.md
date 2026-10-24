@@ -53,3 +53,24 @@ The source is committed to this branch, but **Lean/Lake is unavailable in the pr
 - Physical claims for the three plasma regions need Maxwell–MHD boundary currents, global Wilson phase and a state-dependent `δ<T>`; a finite Gaussian magnetic-drive toy or horned-sphere C3 quotient is not sufficient.
 
 **Pareto conclusion:** The Lean **finite-subsystem-state / fermionic parity** machinery genuinely tightens the quantum-channel model now, but the full four-dimensional Hadamard-Dirac/Maxwell–Einstein source remains the primary unsolved physical mathematical task. No additional generic 369/TOE carrier is needed.
+
+
+## Stronger physical cross-pollination: ordinary electromagnetic U(1) superselection
+
+The merged Lean #37 four-Majorana even-parity carrier is an **abstract algebraic parity code**, and in a superconducting BdG system its physical implementation can exploit a condensate/charge reservoir. If it is instead attached to **two ordinary number-conserving charged complex Dirac modes in an Einstein–Maxwell state**, the logical occupations |00> and |11> differ in electromagnetic charge by two units. Fermion parity alone does not license a coherent gauge-invariant superposition.
+
+Under selected charge rotation `theta=pi/2`, the code action is `diag(1,-1)`. `QuantumChannels/MMPDiracChargeSuperselection.lean` reuses the existing **concrete Lean complex 2×2 Clifford matrix** `CondensedMatter.CMatrix2` and proves that invariance of a two-dimensional logical density matrix under its conjugation forces the offdiagonal charge-0/charge-2 coherence to zero. By contrast a dual-rail **one-particle** `|10>,|01>` carrier has equal charge on both amplitudes: a common gauge phase cancels in their coherence. The exact theorem assumes no separately supplied phase reference/compensating charged subsystem. It is not a global superselection theorem for all configurations or a claim superconducting Majorana codes are impossible.
+
+Original sources for reference-frame/particle-number-superselection operations:
+- Stephen D. Bartlett, Terry Rudolph, Robert W. Spekkens, *Reference frames, superselection rules, and quantum information*, Rev. Mod. Phys. **79**, 555 (2007), DOI **10.1103/RevModPhys.79.555**;
+- Norbert Schuch, Frank Verstraete, J. Ignacio Cirac, *Nonlocal Resources in the Presence of Superselection Rules*, PRL **92**, 087904 (2004), DOI **10.1103/PhysRevLett.92.087904**.
+
+A locally executed independent 2×2 complex-density numerical gate confirms: twirling the `|00>+|11>` pure code state over the selected two charge phases gives `I/2` (purity falls 1→1/2), while the same-charge one-particle dual-rail state remains pure. New Agda source `scripts/check_mmp_charge_sector_coherence_20261024.py` mirrors this finite fact.
+
+**Pareto revised physical choice:** use a **fixed-charge one-particle dual-rail angular-mode encoding** for MMP's ordinary U1 charged Dirac theory unless a physical charge reference, superconducting pairing sector, or gauge-invariant relational encoding is independently constructed from the SAME 4D quantum state. The algebraic four-Majorana parity carrier is useful as an adversarial alternative, NOT automatically the physical qubit.
+
+Additional Lean acceptance:
+```sh
+lake env lean QuantumChannels/MMPDiracChargeSuperselection.lean
+```
+No Lean 4 compiler is installed here, so proofs in this PR remain **source-written, not kernel checked**. Original theorem authors and physical source distinctions preserved.

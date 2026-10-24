@@ -97,3 +97,12 @@ Lean/source acceptance (not kernel executed):
 lake env lean QuantumChannels/MMPMonopoleLLLDualRailCapacity.lean
 lake env lean QuantumChannels/MMPDiracFockParityChannelRegression.lean
 ```
+
+
+## 2026-10-25: new 2+1D magnetic-plaquette donor is NOT the spherical LLL source
+
+The sibling draft [dashi_agda #1248](https://github.com/chboishabba/dashi_agda/pull/1248) now owns [a finite 3×3 compact-U(1) magnetic plaquette / Dirac backreaction checker](https://github.com/chboishabba/dashi_agda/blob/research/mmp-s2-fermion-three-plasma-maxcut-20261024/scripts/check_mmp_three_port_2d_compact_u1_20261025.py) plus [causal three-port tangent/dynamic gauge checks](https://github.com/chboishabba/dashi_agda/blob/research/mmp-s2-fermion-three-plasma-maxcut-20261024/scripts/check_mmp_three_port_2d_tangent_20261025.py), source-audited [here](https://github.com/chboishabba/dashi_agda/blob/research/mmp-s2-fermion-three-plasma-maxcut-20261024/Docs/physics/MMP2DMagneticPlaquetteThreePortRepoPriorArtMaxCut20261025.md). Three separately timed external link currents acquire locally magnetic and fermionic feedback while discrete Gauss, CAR and energy-work pass local numerical checks. This is a **2+1D torus in a trivial gauge bundle with zero total oriented plaquette flux**, not the physical S² spin-c operator carrying flux index q used by `MMPMonopoleLLLDualRailCapacity.lean`.
+
+**Actual same-object bridge required:** (1) choose a true quantized 4D S² magnetic bundle with spin-c Dirac zero modes and closed same-universe field lines; (2) identify two normalizable, equal-charge physical rail functions and their asymptotic detector/scattering algebra; (3) couple the same gauge/fermion state and counterterm-renormalized 4D metric/current/stress into Maxwell/Einstein; (4) only then compute a CPTP physical channel and coherent information. Neither local 2D magnetic energy nor a (3\times3) site count pays the spherical `q≥2` source-index obligation.
+
+**Relevant independent recent science:** S. Bharadwaj et al., `arXiv:2603.05616`, PRD accepted 10 September 2026 (DOI `10.1103/kc9m-xv9h`) on Wilson-fermion Hamiltonian **QED3** topological Chern diagnostics. Their quantum Gauss-law gauge/matter sector is not instantiated by our classical electric-link implementation; no Chern number or physical Hall/teleportation capacity has been extracted here. Lean #85 source remains unchanged at theorem level and still requires exact-head kernel certification.

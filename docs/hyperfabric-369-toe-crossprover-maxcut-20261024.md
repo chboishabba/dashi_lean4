@@ -1087,3 +1087,45 @@ The user explicitly reminded us of PRE-EXISTING 240/243 prior art. Original owne
 Lean #52 **source-written** new owners: \`Integration/Griess1990OriginalT5Moufang243240Chart.lean\`; \`Integration/Griess1990Moufang81ElementaryLift.lean\`; \`Integration/Griess1990MoufangOriginal240Action.lean\`. Branch-specific missing PR47 \`T5RelativeE6ActionRestrictionObstruction\` import corrected by consuming already available real \`E6Mod3WeylAction.reflectStandard\` and reproducing selected s3 counterexample. Agda #1239 **source-written** original Kernel5/actual Griess M81 chart: \`DASHI/Moonshine/Griess1990OriginalKernel5M81243240ChartExact.agda\`; dependent two-sided Agda proof record still uninhabited; #1094 relative owner is on another unmerged branch. Independent portable no-helper test \`scripts/check_griess_m81_t5_243240_actual_cocycle_action.py\` committed to BOTH repos (remote bytes not replayed). Local counterpart \`/mnt/data/check_griess_M81_243_240_cocycle_full_maxcut.py\` executed all acceptance cases PASS; receipt \`/mnt/data/griess_M81_243_240_cocycle_receipt.json\`. No Lean/Agda executables installed, so **NOT kernel-certified**.
 
 **Source-role snowball and original authorship:** Robert L. Griess Jr. (1990), J Algebra 131:281–293, DOI 10.1016/0021-8693(90)90176-O original M81 g phase, Albert Jordan and local finite normalizer. For general commutative Moufang-loop automorphism theory **Lucien Bénéteau and J. Lacaze (1980)** European J Combinatorics 1:299–309 DOI 10.1016/S0195-6698(80)80029-1; **Lucien Bénéteau (1981)** 81-loop classification DOI 10.5802/afst.561; separately Alsaody–Gille, Barry–Tignol octonion donors; Chen–Lam–Shimakura independent Monster VOA source; original Ibrahim/OEIS contributor attribution retained. New code and specific finite checks are DASHI formalisation; not original mathematics, not literature theorem imported into a kernel. A source-written \`native_decide\` theorem is still just a proof target until independently run and accepted. No physics, RH, original T5=W(E8), or selected Monster 3B same-object promotion.
+
+
+## 2026-10-25 final correction: direct stops and qualitative tail supersede naive finite novelty
+
+The previous finite 2-of-3 certificate is VALID but is NOT independent
+of the older one-fast-descendant theorem: in any two-of-three pattern
+at least one short sibling occurs at depth k=0 or k=1; the old direct
+sibling bound `d(root)<=2^(k+1)*d(B_k)` already rejects W>1.
+A single root sibling gap=1/4 directly gives root<=1/2, despite a
+LOOSE depth-three product-only envelope of 4. Previous one-short
+negative controls were restricted to that fixed-depth PRODUCT, not
+general no-go statements. Their corrected names reflect this.
+
+NEW source-written typed proof carrier:
+`Integration/DASHITOE/HornAdaptiveSiblingStokesCut.lean` now also
+declares `SharpCertifiedChain`, `sharpEnvelope` and
+`sharpEnvelopeBound`: every stage has universal gap<=2, a direct
+sibling stop `<=eta+2*d(sibling)`, and the sibling-adaptive
+multiplicative child continuation. The minimum is paid at each prefix
+with its actual curved source defects. This requires a genuine
+source-supplied analytic holonomy step, not just the group relation.
+Exact rational one-short at root versus deep one-short negative
+fixtures are source-written. Lean/Lake kernel NOT RUN.
+
+The analytical infinite consequence is strictly stronger than a
+geometric q<1 hypothesis: if in a FLAT source there is an infinite
+genuinely marked branch with all siblings eventually satisfying
+`d(B_k)<=epsilon<1/2`, then the prefix products contract
+geometrically and `d(root)=0`. Equivalently every nontrivial
+abstract selected root forces `limsup_k d(B_k)>=1/2`
+along every fully compatible marked branch. Actual sibling lengths
+tending merely to zero are enough under a compatible uniform M.
+No fixed metric decay rate, pointwise physical blow-up exponent,
+Stokes area or horn topological embedding certificate is provided.
+
+The exact independent Python optimal-stopping/tail audit on Agda
+#1249 demonstrates an early five-level uncontrolled prefix and a
+constant subsequent sibling gap 2/5: the optimized rejection first
+occurs at depth 21, yet NO individual sibling passes the pre-existing
+one-fast-descendant threshold. This distinguishes the genuine new
+tail effect from the redundant finite two-short example. All
+claims remain conditional until source geometric marking is paid.

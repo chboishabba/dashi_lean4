@@ -12,3 +12,13 @@ Plan: `docs/superpowers/plans/2026-10-16-dashi-toe-universal-realization.md`
 - `PhysicallyClosedTOE` is a proof-bearing structure; no canonical inhabitant is supplied.
 
 Verification boundary: local environment has no `lean` or `lake`, and shell network cannot resolve GitHub, so no local kernel run was possible. GitHub compare confirms the branch is ahead of main with only intended additions. Status is SOURCE-WRITTEN / SOURCE-REVIEWED / KERNEL-UNVERIFIED.
+
+## 2026-10-24 240/243 role-sensitive Casimir and portal handoff
+
+The canonical Lean TOE rollup now imports `Integration/DASHITOE/KK240RoleDiscrimination.lean`. This is a local finite ROLE theorem: 240 as E8 root count, ideal-plate pressure denominator, and approximately the KK/QCD source-stationarity magnitude are distinct consumers, so no function of bare numeral 240 can recover which physical source was meant. It also carries 243=3+240, 720=3*240 and selected (72-24)=48 arithmetic as **typed finite facts**, not physics or a cross-kernel imported Agda proof.
+
+Underlying sources: Agda [#1094](https://github.com/chboishabba/dashi_agda/pull/1094) owns the trialectic 243 diagonal split and explicitly withholds E8 intertwining; Agda [#701](https://github.com/chboishabba/dashi_agda/pull/701) owns ideal-plate 720→240 and four original analytic producer obligations; Agda [#1241](https://github.com/chboishabba/dashi_agda/pull/1241) owns the separate 5D QED+QCD Casimir source. The last physically finds an uncancelled 5D internal pressure when its QED-only vacuum is extended by six free periodic light quarks and SU3 gluons. A single uncondensed real scalar Higgs portal contributes at most five stationarity units under the declared mass-independent-radius free-field model, insufficient for ~240. The full alternative portal/SM theory is OPEN.
+
+The strongest new original **operator** negative control in #1241 enumerates all 240 non-diagonal ternary states and classical E8 roots; neither natural P3^5 nor C3^5 adjacency can be the E8 inner-product-1 root graph (ternary degrees 5–8 or 9–10, versus E8 degree56). No selected physical representation/root-intertwiner thereby exists or is globally excluded. Other 240s are numerical coincidences only. The recent wormhole optical-circle Casimir [#1248](https://github.com/chboishabba/dashi_agda/pull/1248) has a different global state, dimension and energy functional, not a transferable 5D radius stabilizer.
+
+Lean new module SOURCE-WRITTEN, compiler UNVERIFIED; do not promote sibling Agda or external classical claims into local Lean proof terms.

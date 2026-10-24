@@ -345,4 +345,38 @@ def fullSpinQuotientCSAndAPSComplete : Bool := false
 theorem integerNaiveTraceWZCannotCertifyGlobalAnomaly :
     fullSpinQuotientCSAndAPSComplete = false := rfl
 
+
+/-!
+Original source E6 #1106 first-Tits M3³ norm-preserving action:
+central SU3³ exponents (a,b,c) act on 27 by
+(a-b,c-a,b-c) mod3. Kernel is exactly diagonal Z3.
+Faithful gauge group is (SU3c×SU3L×SU3R)/Z3_diag.
+The 3x3 clock/shift pair has nontrivial (ω,ω,ω) central
+commutator in the cover, but commutes in the quotient; therefore
+nonliftable quotient gauge bundles are NOT tested by CP3 liftable
+index parity receipts. Original E6 subgroup authorship retained.
+The following is FINITE literal centre-kernel arithmetic only.
+-/
+def firstTitsCentral27Trivial
+    (a b c : Fin 3) : Bool :=
+  ((a.val + 3 - b.val) % 3 == 0) &&
+  ((c.val + 3 - a.val) % 3 == 0) &&
+  ((b.val + 3 - c.val) % 3 == 0)
+
+def firstTitsDiagonalZThree
+    (a b c : Fin 3) : Bool := a == b && b == c
+
+theorem firstTitsCentreKernelExactlyDiagonal :
+    ∀ a b c : Fin 3,
+      firstTitsCentral27Trivial a b c =
+        firstTitsDiagonalZThree a b c := by decide
+
+theorem diagonalZThreeClockShiftInvisibleOn27 :
+    firstTitsCentral27Trivial 1 1 1 = true := by decide
+
+def allFaithfulQuotientBundlesGlobalCSCertified : Bool := false
+
+theorem liftableSpinIndexNotFullQuotientGaugeProof :
+    allFaithfulQuotientBundlesGlobalCSCertified = false := rfl
+
 end DASHITOE

@@ -1,0 +1,4 @@
+[submodule "vendor/openai-math-src"]
+	path = vendor/openai-math-src
+	url = https://github.com/openai/math.git
+	branch = main

@@ -68,3 +68,10 @@ python3 scripts/check_hyperfabric_27_729_19683_refinement.py
 4. **Direct Clay**: YM and NS remain mathematically higher priority than the optional string branch until their literal source physical estimates or explicit counterexamples are paid. RH/BSD/Hodge/P!=NP are consumers only where an actual same-object theorem is produced.
 
 **Certification**: no Lean/Lake executable was used here; all cross-PR references are *source-reported and inspected*, not newly verified local Lean or Agda kernel receipts. Exact source-head branch drift must be rechecked before merge/rebase. Keep this ledger adjacent to #80's `Integration/DASHITOE/PrimitiveMaxCut.lean`, not in a competing theory ontology.
+
+
+## 2026-10-24 gauge correction from Agda #1249
+
+The earlier `4/3` defect arises from taking an **ordinary average in a pure-gauge sign-twisted background**. It cannot be called a nontrivial physical flux. The Agda donor now constructs `Z2` site signs `g` and exactly compatible covariant maps `I_A=G I` and `R_A=R G`, so `L_A I_A=I_A L` and `R_A L_A=L R_A`. A *distinct* square with exactly one negative `Z2` edge has gauge-invariant Wilson holonomy `-1`, and an exhaustive four-vertex check rules out a global nonzero parallel `±1` section. This supplies a genuine finite gauge curvature negative control. It does **not** establish SU(2) YM, any continuum mass gap, or a string anomaly.
+
+The exact committed Agda donor `scripts/check_hyperfabric_27_729_19683_refinement.py` (Git blob `e9c2e52af6d986b8aa584ea3f3f5f875a7e14a0b`) was executed locally and all 5 finite checks passed. Lean theorem extraction should target the existing mathlib graph Laplacian, gauge-compatible restrictions and Wilson plaquette product where appropriate; **do not** merely copy boolean test flags as new Lean proofs.

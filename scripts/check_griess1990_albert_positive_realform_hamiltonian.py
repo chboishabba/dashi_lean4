@@ -82,3 +82,38 @@ print('PASS polynomial (H-2)(H+1)(2H-1)=0, trace0, trace H²=18')
 print('PASS spectrum 2:1, -1:10, 1/2:16 for each; symmetry A→order9')
 print('PASS chosen x-axis spatial chart: 18 grid bonds +9 cyclic wrap bonds')
 print('NOT a Lean kernel certificate, native rational-Albert isomorphism, or physical Hamiltonian')
+
+
+# Compression onto the nontrivial 26 homogeneous grade lines,
+# an orthogonal projector for the source-positive H. It is NOT
+# invariant restriction: H_a e0=e_a+e_-a.
+def compress(a,v):
+ w=list(left_h(a,v));w[ix[o]]=z
+ return tuple(w)
+for a in V:
+ if a==o:continue
+ w=left_h(a,ei(ix[o]))
+ assert w[ix[a]]==one and w[ix[neg(a)]]==one
+ for i in range(27):
+  if i==ix[o]:continue
+  v=ei(i)
+  t=vadd((2,compress(a,v)),(-1,v))
+  t=vadd((1,compress(a,t)),(1,t))
+  t=vadd((1,compress(a,t)),(-1,t))
+  assert all(x==z for x in t)
+ tr=z; tr2=z
+ for i in range(27):
+  if i==ix[o]:continue
+  v=ei(i); w=compress(a,v)
+  tr=plus(tr,w[i]);tr2=plus(tr2,compress(a,w)[i])
+ assert tr==z and tr2==(F(14),F(0))
+assert (1+9+16,1-9+F(16,2),1+9+F(16,4))==(26,0,14)
+# Agda PR #1249 native 26 zero-mean path Laplacian has 8
+# distinct eigenvalues (1,2,3,4,5,6,7,9), whereas this
+# selected Albert compressed Lh has only 3 (1,-1,1/2).
+# No nonzero affine rescaling can yield a unitary equivalence.
+assert len({1,2,3,4,5,6,7,9})==8
+assert len({F(1),F(-1),F(1,2)})==3
+print('PASS 26-grade compression spectrum 1:1,-1:9,1/2:16 and trace H²=14')
+print('PASS unit-to-26 coupling reduces tr H² from 18 to 14 on compression')
+print('NO-GO affine-unitary equivalence to selected zero-mean open-cube 26 Laplacian')

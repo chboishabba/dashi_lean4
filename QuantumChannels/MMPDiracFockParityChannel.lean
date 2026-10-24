@@ -108,10 +108,14 @@ transmission and correlated double-transmission probabilities. -/
 theorem evenParity_closed_formula (a : IndependentFermionLoss) :
     evenParityAcceptanceProbability a =
       1 - singleParticleSuccess a + (a.t1 * a.t2) ^ 2 := by
+  have h1 : a.s1 ^ 2 = 1 - a.t1 ^ 2 := by
+    linarith [a.firstComplete]
+  have h2 : a.s2 ^ 2 = 1 - a.t2 ^ 2 := by
+    linarith [a.secondComplete]
   unfold evenParityAcceptanceProbability singleParticleSuccess
-  have h1 := a.firstComplete
-  have h2 := a.secondComplete
-  nlinarith [sq_nonneg (a.t1 * a.t2), sq_nonneg (a.s1 * a.s2)]
+  rw [show (a.s1 * a.s2) ^ 2 = a.s1 ^ 2 * a.s2 ^ 2 by ring]
+  rw [h1, h2]
+  ring
 
 /-- Extreme counterexample: both particles are perfectly lost.
 A single-particle qubit has zero transmission; output parity is always EVEN,

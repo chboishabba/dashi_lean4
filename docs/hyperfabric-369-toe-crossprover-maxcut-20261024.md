@@ -249,3 +249,81 @@ The most useful source-specific progress on sibling [Lean #52](https://github.co
 The independent, full local exact `Q(ω)` checker `/mnt/data/check_griess1990_albert_homogeneous_exact.py` executed PASS **729/729 basis products nonzero, all 19,683 Frobenius triple invariance checks, all 98,658 independent polarized cubic-X/linear-Y Jordan identity monomials, true identity, explicit cubic tensor (-1/2) and nonassociator (-1/2 vs +1/4)**. For each of 26 nonzero homogeneous e_a, left Jordan multiplication consists of 9 monomial 3-cycles, one with `L_a³=1` and eight with `L_a³=-1/8`. Spectral polynomial `(t³-1)(t³+1/8)^8`: generally NONREAL eigenvalues. These source homogeneous operators are thus not self-adjoint on an ordinary positive complex Hilbert space (no physical Hamiltonian promotion). This is structurally different from the earlier compact rational native diagonal L_h, with real eigenvalues and observed S3-commutator norm.
 
 The external complex Albert fine grading is exponent-3 **A=(Z/3)^3**, NOT Monster cyclic order27. The Agda spatial Cube27 graph is a 54-bond nearest-neighbour **P3³**, but the 729 source homogeneous products all are nonzero: the Jordan product is nonlocal relative to that graph without a separately chosen projection/coupling. A full isomorphism between the specific Griess 1990 Q(ω)-form and Lean #52's native rational compact octonionic form after scalar extension remains OPEN; being both 27D exceptional does not by itself supply the same-basis product/trace/cubic intertwiner. This also does NOT identify the 26 traceless Albert modes with Agda #1249's 26 mean-zero graph waves or bosonic string target. Portable GitHub checker is COMMITTED on #52 but has not been replayed on current GitHub blob; long-form equivalent local Python PASS; Lean/Lake still UNVERIFIED. The #84 branch remains a provenance atlas, not a duplicate theorem library.
+
+
+## 2026-10-24 updated physically selected 27D scalar repair and cross-repo Griess product
+
+The source-specific physical detailed owner is Agda PR #1249
+`docs/hyperfabric-27-minus-1-physical-action-k27-source-maxcut-20261024.md`;
+this Lean file should only record cross-prover theorem and handoff status.
+
+**New in actual Lean #84 source**,
+`Integration/DASHITOE/BosonicM27CoefficientCut.lean`:
+`supplementalScalarSlopeSquared`,
+`scalarRepairFormalCoefficient`,
+`scalarSlopeSquaredAtTwentySix`,
+`scalarSlopeSquaredAtTen`,
+`freeScalarOffShellResidualNonzero`. The intended
+required supplementary free-scalar slope is
+`k²=2(d−10)a²`; at d26, `k²=32a²`, formally
+repairing original coefficient `500a²→484a²`.
+However scalar `χ=kσ` does NOT automatically solve
+`Box_Gχ=0` on all backgrounds; with `σ=t`,
+flat base and b=−2a, its source wave operator is
+`−22 a k exp(−2aσ)`. Extra scalar kinetics alone
+are not an inhabited K27-invariant 27D physical theory.
+**Kernel/lake unverified**, not a green Lean build.
+
+**Agda new source/executable:**
+`scripts/check_27d_scalar_repair_consistency.py`
+(510 exact rational source-matched coefficient checks;
+wave-EOM obstruction; natural B=C_y vs radius-rescaled B
+chart correction), equivalent local run PASS.
+
+**Lean #52 ownership** (inspected head
+`9478679475bd7bb91af287cedb580470296433f1`):
+actual Griess 1990 `Q(omega)[(F3)^3]` 27D
+homogeneous exceptional Jordan algebra from
+`scripts/check_griess1990_albert_f3cubed_homogeneous_product.py`.
+For each 26 nonzero homogeneous index `a`,
+`e_a ∘ e_(-a)=e0`, `e_a∘e0=e_a`; therefore
+a 1+26 vector decomposition does NOT mean the 26
+non-unit subspace is a Jordan ideal or subalgebra.
+The separate native rational Albert
+`Integration/RationalAlbertJordanHamiltonianSymmetry.lean`
+also supplies a nontrivial genuine `L_h` / trace-pair
+operator witness with an S3 symmetry-breaking diagnostic.
+Agda #1249 new
+`scripts/check_27_origin_albert_griess_product_cut.py`
+independently checks unit/opposite products on all
+26 nonzero homogeneous indices, equivalent local PASS.
+Do NOT replace the already-constructed Jordan algebra
+or pretend the 54-edge Cube27 path Laplacian is its product.
+
+**Strongest source-physical obstruction**: Glennon
+https://arxiv.org/abs/2501.03000 §§VII–VIII:
+the candidate 27D `E27` field content is argued to lack
+the required dual 22-form parent for 27D 3-form,
+and the relevant dual graviton. The proposed
+`[R^2,R_22]` mismatch at E27 level-eight
+was *not explicitly computed* in Glennon's work,
+so retain source-argument, not local kernel theorem,
+status. A scalar kinetic patch does not repair
+K27 dual-generator absence. This is independent of
+the 125/121 scalar no-go and the finite F4-vs-graph
+Hamiltonian spectral no-go.
+
+**New suggested proof focus**: Lean certify the already
+source-written scalar polynomial identities, then
+apply the actual native Albert multiplication/Hamiltonian
+theorem owner #52 to SAME-OBJECT operation/trace constraints,
+without imposing a made-up E27 or physical Lorentzian
+intertwiner. Physical source priority is direct 26D K27
+CBS effective theory; no warranted full 27D repair
+has been located.
+
+Source roots: Horowitz/Susskind 2000
+https://arxiv.org/abs/hep-th/0012037;
+Lambert/West 2001 https://arxiv.org/abs/hep-th/0107209;
+Glennon 2025 https://arxiv.org/abs/2501.03000;
+Griess 1990 DOI 10.1016/0021-8693(90)90176-O.

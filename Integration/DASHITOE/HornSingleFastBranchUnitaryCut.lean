@@ -132,4 +132,30 @@ theorem heterogeneousCommutatorEnvelope (t : GapTree) :
           (2 * gapEnvelope a) * (2 * gapEnvelope b) := by ring
         _ = twiceLeafProduct a * twiceLeafProduct b := by rw [ha,hb]
 
+
+/-- Rational squared commutator/child-gap ratio for the source
+explicit SU3 family A_n=diag(z,z⁻¹,1), z=(n+i)/(n-i);
+B rotates first two basis vectors by 90 degrees.
+Then [A_n,B]=A_n², so the ratio squared is 4n²/(n²+1).
+The MATRIX/SU3 premise is verified by direct mathematical
+calculation and independent local numerical matrices,
+not constructed inside this rational-coefficient Lean file. -/
+def optimalityRatioSquared (n : ℚ) : ℚ :=
+  4 * n ^ 2 / (n ^ 2 + 1)
+
+/-- The deficit below factor-two-squared goes to zero
+along the natural-number sequence n→∞; its exact value
+here is algebraic, not a topology/horn proof. -/
+theorem optimalityDeficit (n : ℚ) :
+    4 - optimalityRatioSquared n = 4 / (n ^ 2 + 1) := by
+  have hden : n ^ 2 + 1 ≠ 0 := by nlinarith [sq_nonneg n]
+  unfold optimalityRatioSquared
+  field_simp
+  ring
+
+theorem selectedSharpnessWitnessHundred :
+    optimalityRatioSquared 100 = 40000 / 10001 := by
+  norm_num [optimalityRatioSquared]
+
+
 end DASHIHornFastBranch

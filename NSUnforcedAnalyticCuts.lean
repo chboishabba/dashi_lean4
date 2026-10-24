@@ -170,4 +170,50 @@ theorem signedDefect_zero_of_flat_cross_rates
 
 end PeriodicNoncoreCore
 
+
+section PhysicalR440PaddingAudit
+
+/-!
+The actual Agda R440 signed noncore/core defect is -W(M, residual),
+where residual = nC*R_N+nN*R_C-rN*M_C-rC*M_N and R_X is the
+input-Laplacian weighted amplitude fold. Write V_X=W(M,M_X),
+W_X=W(M,R_X). Adding an amplitude-ZERO noncore triad at rate s
+does not change the weighted/unweighted amplitude folds, but increments
+nN by one and rN by s. Thus the actual signed defect changes by
+s*V_C-W_C. In the physical shear source V_C=1, W_C=2, producing
+the positive (s-2) rate excess of the exact adversary.
+
+This is a precise algebraic padding diagnostic, not the new physical
+uniform estimate. A substitute B4 target must preserve the original
+unforced-NS critical-production semantics and be padding-invariant.
+-/
+
+/-- The literal four-moment scalar form of negative signed R440 work. -/
+def physicalR440FusedDefect
+    (nN nC rN rC vN vC wN wC : ℝ) : ℝ :=
+  -(nC * wN + nN * wC - rN * vC - rC * vN)
+
+/-- Adding a zero-amplitude noncore incidence contributes its count and
+    scalar input rate, even though its modal amplitude is zero. -/
+theorem physicalR440_zero_padding_increment
+    (nN nC rN rC vN vC wN wC s : ℝ) :
+    physicalR440FusedDefect (nN + 1) nC (rN + s) rC vN vC wN wC
+      - physicalR440FusedDefect nN nC rN rC vN vC wN wC =
+    s * vC - wC := by
+  unfold physicalR440FusedDefect
+  ring
+
+/-- Actual shear values: V_C= W(M,M)=1 and
+    W_C=W(M,2M)=2, hence positive rate excess for s>2. -/
+theorem physicalR440_shear_padding_increment
+    (nN nC rN rC vN wN s : ℝ) :
+    physicalR440FusedDefect (nN + 1) nC (rN + s) rC vN 1 wN 2
+      - physicalR440FusedDefect nN nC rN rC vN 1 wN 2 =
+    s - 2 := by
+  simpa using
+    physicalR440_zero_padding_increment
+      nN nC rN rC vN (1 : ℝ) wN (2 : ℝ) s
+
+end PhysicalR440PaddingAudit
+
 end NSUnforcedAnalyticCuts

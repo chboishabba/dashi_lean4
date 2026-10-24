@@ -124,3 +124,12 @@ Agda draft [PR #1248](https://github.com/chboishabba/dashi_agda/pull/1248) now c
 For *constant-radius ultrastatic* circle × round sphere, only monopole Maxwell + ideal q massless charged-Dirac LLL, the one stationary energy `E=(2 pi |q|/L)B2(alpha)` yields `p_x=rho`, `J_x∝B2'(alpha)`. Einstein radial-null requires `B2(alpha)=0` but static purely magnetic Maxwell requires `B2'(alpha)=0`. These two equations have no common solution for q>0. This is a **bounded geometry/source rejection**, not a proof of no traversable MMP wormhole: its nonconstant curved throat and physical 4D spin-c Dirac state are separate.
 
 **Lean #85 remains unchanged at theorem level**: its `Fin q` LLL labels and conditional `2T-1` erasure algebra do not promote to physical channels without a globally solved nonconstant background, source-selected charged Dirac state, smooth quantum matching, and actual detector/scattering maps. The 2018/2023 MMP source and standard QFT/Maxwell/GR authors retain attribution; external 4D Hadamard and Einstein promotion remains open, Lean kernel for this draft not run.
+
+
+## October 25 formal follow-on — actual conditional Bernoulli no-common-zero theorem
+
+NEW Lean SOURCE: [`QuantumChannels/MMPOpticalProductNullCurrentNoGo.lean`](../QuantumChannels/MMPOpticalProductNullCurrentNoGo.lean) models the *ideal LLL optical-circle* smooth-branch Bernoulli `B2(alpha)=alpha²-alpha+1/6` and its Wilson-phase derivative `2alpha-1`. It proves by elementary real-ring algebra that the two necessary homogeneous-product Einstein-null/Maxwell-current equations **cannot both hold** when the selected monopole multiplicity and species coefficient are nonzero. This reuses external optical-circle Casimir physics and Agda #1248's derived reduction, rather than relabeling the existing Cauchy, Hadamard or Maxwell theorem authority.
+
+Proofs are SOURCE-WRITTEN and not yet Lean-kernel checked here (no `lake`/Lean compiler in this environment). **Scope is a restricted compact, constant-radius, ultrastatic `S1×S2` state, not the actual one-ended MMP handle with nonconstant radius/lapse or a full covariantly renormalized charged-Dirac determinant.** `OpticalProductPhysicalBoundary` explicitly leaves actual state and coupled geometry false/unpaid.
+
+Acceptance: `lake env lean QuantumChannels/MMPOpticalProductNullCurrentNoGo.lean`. P1 and P2 physical proof gates stay open.

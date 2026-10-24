@@ -10,12 +10,15 @@ already proves
   physicalCapInterior = Credit - Debt.
 
 This file substitutes that identity into the exact max-cut scalar
-`signedFifthCorrelationGapAt`.  Consequently the only Route-B theorem is the
-direct eventual sign of
+`signedFifthCorrelationGapAt`.  Consequently the genuinely signed Route-B
+producer is the direct eventual sign of
 
   physicalCapInterior + OuterBudget - 3 eps.
 
-No new representation or analytic hypothesis is introduced.
+The finite-cutoff ownership condition is not an analytic premise: for fixed
+`t`, natural cutoffs tend to infinity.  It is discharged below once and for all.
+Boundary decay and outer-terminal convergence remain independent analytic
+obligations.
 -/
 
 noncomputable section
@@ -58,22 +61,71 @@ theorem QuarticFourSignedPolePair.signedFifthCorrelationGapAt_nonneg_iff_cap
   rw [W.signedFifthCorrelationGapAt_eq_cap ht rho n hn]
   constructor <;> intro h <;> linarith
 
+/-- The physical lower cutoff is automatically owned eventually.  This is
+Archimedean bookkeeping, not part of the Route-B analytic frontier. -/
+theorem eventually_quarticSignedPoleCanonicalPhysicalHalfWidth_le_natCast
+    (t : ℝ) :
+    ∀ᶠ n : ℕ in atTop,
+      quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ) := by
+  obtain ⟨N,hN⟩ :=
+    exists_nat_gt (quarticSignedPoleCanonicalPhysicalHalfWidth t)
+  filter_upwards [eventually_ge_atTop N] with n hn
+  have hcast : (N : ℝ) <= (n : ℝ) := by
+    exact_mod_cast hn
+  exact hN.le.trans hcast
+
 /-- Direct eventual cap inequality is sufficient for the terminal Route-B
-producer. -/
+interior producer; no separate large-cutoff hypothesis is required. -/
 theorem QuarticFourSignedPolePair.signedFifthInteriorTarget_of_eventual_cap_gap
     {t EV eps : ℝ}
-    (ht : 0 < t)
     (W : QuarticFourSignedPolePair t)
     (rho : Zeros)
-    (hlarge :
-      ∀ᶠ n : ℕ in atTop,
-        quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n : ℝ))
     (hcap :
       ∀ᶠ n : ℕ in atTop,
         -W.outerVerticalAbsoluteBudget rho EV + 3*eps
           <= W.signedFifthPhysicalCapInteriorAt n) :
     W.SignedFifthInteriorTarget rho EV eps := by
-  filter_upwards [hlarge,hcap] with n hn hc
-  exact hc
+  exact hcap
+
+/-- Eventual direct gap nonnegativity gives the same interior target with the
+large-cutoff ownership supplied mechanically. -/
+theorem QuarticFourSignedPolePair.signedFifthInteriorTarget_of_eventual_direct_gap
+    {t EV eps : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (hgap :
+      ∀ᶠ n : ℕ in atTop,
+        0 <= W.signedFifthCorrelationGapAt rho EV eps n) :
+    W.SignedFifthInteriorTarget rho EV eps := by
+  have hlarge :=
+    eventually_quarticSignedPoleCanonicalPhysicalHalfWidth_le_natCast t
+  filter_upwards [hlarge,hgap] with n hn hg
+  exact (W.signedFifthCorrelationGapAt_nonneg_iff_cap
+    ht rho n hn).mp hg
+
+/-- Honest Route-B compiler after removing the purely Archimedean cutoff
+premise.  Exactly three analytic producers remain visible: boundary decay,
+direct signed-gap nonnegativity, and outer-terminal convergence. -/
+theorem QuarticFourSignedPolePair.signedFifthAnalyticInput_of_three_producers
+    {t EV eps : ℝ}
+    (ht : 0 < t)
+    (W : QuarticFourSignedPolePair t)
+    (rho : Zeros)
+    (heps : 0 < eps)
+    (hboundary :
+      ∀ᶠ n : ℕ in atTop,
+        |W.signedFifthCapUpperBoundaryAt n| <= eps)
+    (hgap :
+      ∀ᶠ n : ℕ in atTop,
+        0 <= W.signedFifthCorrelationGapAt rho EV eps n)
+    (hlim :
+      Tendsto W.quarticScaleOuterTerminalAt atTop
+        (𝓝 ((t/16)^6 * W.canonicalSignedHighResidual))) :
+    W.SignedFifthAnalyticInput rho EV eps := by
+  exact W.signedFifthAnalyticInput_of_interiorTarget
+    rho heps hboundary
+    (W.signedFifthInteriorTarget_of_eventual_direct_gap ht rho hgap)
+    hlim
 
 end Synthesis

@@ -200,6 +200,41 @@ def test_repository():
         assert lhs==rhs, ('LEAN COORDINATES',i,j)
     print('PASS 729/729 Jordan products using literal Lean RationalAlbertNative coordinate formula')
     print('PASS orientation convention: off20=conj(upper02)')
+    # Optional deterministic machine-readable receipt for direct Lean data import.
+    # Basis rb is the literal Q-basis of the source tau-fixed homogeneous algebra.
+    import sys
+    if '--certificate' in sys.argv:
+        k=sys.argv.index('--certificate')
+        assert k+1<len(sys.argv), '--certificate requires output filename'
+        import json
+        def upper_to_lean(v):
+            return sp.Matrix(list(v[:3])+list(v[19:27])+
+                             list(p['octconj'](tuple(v[11:19])))+list(v[3:11]))
+        rb=p['rb']
+        A=sp.Matrix.hstack(*[upper_to_lean(newmap(v)) for v in rb])
+        assert A.det()!=0
+        for i,j in product(range(27),repeat=2):
+            assert A*p['co'](sourceprod(rb[i],rb[j]))==(
+                upper_to_lean(newmap(sourceprod(rb[i],rb[j]))))
+        as_strings=lambda M:[[str(M[i,j]) for j in range(M.cols)]
+                             for i in range(M.rows)]
+        receipt={
+            'verification':'source-equivalent exact rational SymPy; no Lean kernel proof',
+            'original_owner':'Griess (1990), J. Algebra 131:281-293',
+            'native_owner':'Integration/RationalAlbertNative.lean',
+            'source_basis':'tau-real rb: e0; e_a+e_-a; omega e_a+omega² e_-a; lexicographic antipodal reps',
+            'native_coordinate_order':'d0,d1,d2,off12[8],off20[8],off01[8]',
+            'A2_4_gram':as_strings(p['G']),
+            'slot_maps_01_12_upper02':{
+                '01':as_strings(g0),'12':as_strings(g1),'02_upper':as_strings(g2)},
+            'native_27x27_map':as_strings(A),
+            'cross_slot_tensor_checks':512,'full_jordan_basis_product_checks':729,
+            'Gram_corrected_residual':'0',
+            'relative_orientation_01_12_upper02':[1,1,-1],
+            'native_off20_conjugation_orientation':-1,
+        }
+        with open(sys.argv[k+1],'w') as handle:json.dump(receipt,handle,indent=2)
+        print('PASS exact Q-matrix Lean-coordinate certificate emitted:',sys.argv[k+1])
     print('PASS 729/729 full Griess1990 -> native rational H3(O) Jordan products')
     print('PASS unit and trace-pair preservation on 27D basis')
     print('Q-rational Peirce-slot matrices, order (01,12,02):')

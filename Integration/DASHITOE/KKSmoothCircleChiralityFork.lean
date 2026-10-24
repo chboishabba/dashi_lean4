@@ -85,4 +85,52 @@ theorem branchSelectionDoesNotCertifyStandardModel
     exactPhysicalStandardModelConstructed model = false := by
   cases model <;> rfl
 
+
+/-! Later source-specific E6-derived SU3^3 orbifold candidate:
+P_L=(-,-,+) fixes the original SU2L. The four diagonal SU3R
+involutions exhaust the determinant-one order-two choices.
+Original loop-anomaly computations are in Agda KK #1241's exact
+rational Python. The Boolean outcomes below are FINITE LABELS
+of those calculations, not native Lean proofs of QFT anomalies.
+-/
+
+inductive KKRightDiagonalParity where
+  | identity | minusMinusPlus | minusPlusMinus | plusMinusMinus
+  deriving DecidableEq, Repr
+
+def colourCubicAnomalyZero : KKRightDiagonalParity → Bool
+  | .identity => false
+  | .minusMinusPlus => true
+  | .minusPlusMinus => true
+  | .plusMinusMinus => true
+
+def uvAbelianCubicAnomalyZero : KKRightDiagonalParity → Bool
+  | .identity => true
+  | .minusMinusPlus => false
+  | .minusPlusMinus => false
+  | .plusMinusMinus => false
+
+theorem noDiagonalRightParityRemovesBothSourceAnomalies
+    (choice : KKRightDiagonalParity) :
+    ¬ (colourCubicAnomalyZero choice = true ∧
+       uvAbelianCubicAnomalyZero choice = true) := by
+  cases choice <;> decide
+
+theorem firstTitsOrbifoldMatterZeroModes : 6 + 6 + 4 = 16 := by decide
+
+theorem firstTitsOrbifoldVectorlikeAndSinglet :
+    3 + 3 + 2 + 2 + 1 = 11 := by decide
+
+theorem fullE6GaugeEvenHasThirtyMoreThanTrinification :
+    16 + 30 = 46 := by decide
+
+/-!
+Source results: one candidate has IR chiral16 and vectorlike10+1
+with vanishing tested SM subgroup anomalies and E32/E33 source
+parity, yet BEFORE the VEVs nonzero UV U1L/U1R anomalies. A
+constant 5D bulk Dirac mass is odd under gamma5 orbifold reflection.
+No full quantum orbifold, global spin CS, SM mass source, one photon,
+orbifold Casimir, or physical full-E6 gauge field is certified.
+-/
+
 end DASHITOE

@@ -59,6 +59,16 @@ abbrev PinchedTorus := Quotient pinchedTorusSetoid
 def torusPinch (p : TopologicalTorus) : PinchedTorus :=
   Quotient.mk pinchedTorusSetoid p
 
+/-- The collapse is a continuous quotient map to the actual
+    coinduced quotient topology, not just an equivalence class relabelling. -/
+theorem torusPinch_continuous : Continuous torusPinch := by
+  change Continuous (@Quotient.mk' TopologicalTorus pinchedTorusSetoid)
+  exact continuous_quotient_mk'
+
+theorem torusPinch_isQuotientMap : IsQuotientMap torusPinch := by
+  change IsQuotientMap (@Quotient.mk' TopologicalTorus pinchedTorusSetoid)
+  exact isQuotientMap_quotient_mk'
+
 /-- Any two points on the selected meridian become identical. -/
 theorem meridian_collapses (a b : TopologicalUnitCircle) :
     torusPinch (markedCirclePoint, a) =

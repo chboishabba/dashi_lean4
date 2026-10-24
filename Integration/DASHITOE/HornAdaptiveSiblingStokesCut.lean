@@ -85,4 +85,59 @@ theorem selectedRootAdaptiveRejection
   have bound := chain_envelope_cap h leafCap hleaf
   exact (not_lt_of_ge (le_trans bound hcap) hroot)
 
+
+/-!
+## 2026-10-25 finite 3-stage and inverse-gauge-cost max-cut
+
+The original norm inequality is analytic (not proved here); the three-stage
+conditional rational cap is exact. A source-selected root with gap >1
+cannot satisfy a real three-stage chain having any two siblings <=1/4,
+third sibling <=2, zero curvature defects, and leaf gap <=2.
+Original mathematical owner of marked commutators: Hatcher.
+Original compact Lie group commutator theorem: Gotô (1949).
+Previous SU3 positive bridge: Agda neutrino PR #1247.
+-/
+
+/-- Two short siblings can appear in any positions. All leaf estimates
+remain the universal unitary d(U)<=2: no geometric leaf bound assumed. -/
+theorem twoSmallSiblingA :
+    envelope [(1/4, 0), (1/4, 0), (2, 0)] (2 : ℚ) = 1 := by
+  norm_num [envelope, amp]
+
+theorem twoSmallSiblingB :
+    envelope [(1/4, 0), (2, 0), (1/4, 0)] (2 : ℚ) = 1 := by
+  norm_num [envelope, amp]
+
+theorem twoSmallSiblingC :
+    envelope [(2, 0), (1/4, 0), (1/4, 0)] (2 : ℚ) = 1 := by
+  norm_num [envelope, amp]
+
+/-- NEGATIVE CONTROL: only one small sibling does not force <=1
+under the universal worst-case unitary gap cap. -/
+theorem onlyOneShortSiblingInsufficient :
+    envelope [(1/4, 0), (2, 0), (2, 0)] (2 : ℚ) = 4 := by
+  norm_num [envelope, amp]
+
+/-- The inverse regularity acceptance interface. Its bounded-gauge
+source must supply an actual length law and the analytical root-bound
+hypothesis. It does NOT construct any such horn metric. -/
+theorem necessaryGaugeCoefficientGrowth
+    (n : ℕ) (root M L0 q : ℚ)
+    (hroot : 1 < root)
+    (hsource : root ≤
+      2 * (2 * M * L0) ^ n * q ^ (n * (n - 1) / 2)) :
+    (1/2 : ℚ) <
+      (2 * M * L0) ^ n * q ^ (n * (n - 1) / 2) := by
+  have h := lt_of_lt_of_le hroot hsource
+  linarith
+
+/-- Precise finite threshold at a synthetic depth 7, q=3/4,
+M=3, L0=1/3. A hypothetical genuine marked flat source with
+these bounds could not have the previously selected root gap >1. -/
+theorem syntheticDepthSevenNoGo :
+    2 * (2 * (3 : ℚ) * (1/3)) ^ 7 *
+      (3/4 : ℚ) ^ (7 * (7 - 1) / 2) ≤ 1 := by
+  norm_num
+
+
 end DASHIHornAdaptiveSibling

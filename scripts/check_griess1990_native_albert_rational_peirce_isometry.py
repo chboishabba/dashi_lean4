@@ -153,3 +153,21 @@ for i in range(8):
       delta2+=(source-target)**2
 assert neq==341 and delta2==F(883,8),(neq,delta2)
 print('TRIALITY exact 8x8x8 mismatch count',neq,'of 512; residual sumsq',delta2)
+
+
+# BASIS-CHOICE AUDIT: flip ONE Peirce slot by -identity (an exact
+# rational isometry preserving its positive metric and self-products).
+# This changes the selected tensor residual, proving 883/8 is NOT
+# an invariant of the two Albert-algebra forms.
+flipped_residual=F(0)
+for i in range(8):
+  for j in range(8):
+    uv=octmul(X01[i],X12[j])
+    ab=prod(S01[i],S12[j])
+    for k in range(8):
+      src=F(3*B(ab,S02[k])[0])
+      tgt=sum((u*v for u,v in zip(uv,X02[k])),F(0))
+      flipped_residual+=(src+tgt)**2
+assert flipped_residual==F(1135,8),(delta2,flipped_residual)
+assert flipped_residual!=delta2
+print('NONINVARIANCE: same-slot metric isometry sign flip moves triality residual 883/8 -> 1135/8')

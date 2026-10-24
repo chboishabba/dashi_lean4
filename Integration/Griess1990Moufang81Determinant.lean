@@ -59,7 +59,7 @@ theorem phase_is_symmetric (x y : Grade) : g x y = g y x := by
 structure Loop81 where
   grade : Grade
   central : ZMod 3
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 def multiply (a b : Loop81) : Loop81 :=
   ⟨a.grade + b.grade, a.central + b.central + g a.grade b.grade⟩

@@ -150,3 +150,36 @@ finite H₂ is one-dimensional, finite rational pairing determinant one,
 Whitney polynomial vanishing / negative-real-image discriminator,
 Simons unit-link radii, and C3 boundary-incidence Wada negative control.
 These are independent algebraic audits, NOT Lean kernel checks.
+
+
+## Completion after first source cut
+
+`Synthesis/ExoticTopologyWhitneyRealImage.lean` now source-writes
+the full point-set algebraic biconditional
+
+```
+(∃ u v : ℝ, whitneyParam u v = p)
+  ↔ whitneyPolynomial p = 0 ∧ 0 ≤ p.z
+```
+
+The constructive reverse witness uses `(u,v)=(y,x/y)` when `y≠0`,
+and `(u,v)=(0,sqrt(z))` when `y=0` (where the equation forces
+`x=0`). It reuses the original single `whitneyParam` and
+`whitneyPolynomial` declarations from `ExoticTopologyWhitneySimons`,
+not new duplicate polynomial carriers. **Lean kernel typecheck remains
+unverified**. The independent `scripts/exotic_topology_lean_donor_audit.py`
+now passes 225 exact rational-grid inverse checks alongside the
+tetrahedron, perfect-pairing, Simons and C3/Wada negative controls.
+
+This completes the algebraic real-image model as a source-written proof
+attempt, not a claim of a globally immersed regular surface. The canonical
+Whitney umbrella has a rank singularity and must not be rebranded a
+smooth embedding.
+
+## Current numerical/structural cut
+
+Native Lean draft #86 contains seven source-written Lean modules, one
+reproducible independent SymPy exact audit and this source review.
+In Agda, companion draft #1254 is stacked on horned sphere #1244
+and retains separate geometric limit, wildness, Wada existence,
+noncompact-surface and other classification obligations.

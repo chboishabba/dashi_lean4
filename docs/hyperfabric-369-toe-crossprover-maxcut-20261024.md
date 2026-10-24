@@ -92,3 +92,44 @@ The earlier audit undercounted the **nonflat finite** GR owner and existing memb
 ## Source-written Agda typed donor integration
 
 [Agda #1249](https://github.com/chboishabba/dashi_agda/pull/1249) now contains `DASHI/Unified/HyperfabricGRStringExistingDonorWeldExact.agda`, a thin theorem-level consumer of **original** finite nonflat curvature, 16-component Einstein–matter matching, nonzero source, positive-tension Nambu membrane equation of state, and CY spacetime-dimension `10`. This avoids duplicating Lean #68's different flat-vacuum model or silently treating structural CY and membrane data as string quantum dynamics. New Agda file is source-written, exact-head Agda kernel-unverified. Cross-prover binding requires a separately certified term/serialization bridge, not just a source filename.
+
+
+## Exact 2D worldsheet/conformal prior-art max-cut — 2026-10-24
+
+**Earlier claim corrected**: original Agda master already owns a substantial finite/conditional 2D chiral CFT, VOA, twisted modularity, Monster Lie *string no-ghost*, and compactification programme. It is not enough to list “worldsheet missing” without acknowledging and reusing these source owners.
+
+- `DASHI/Moonshine/VertexOperatorAlgebraCore.agda`: source-level vacuum, locality, Jacobi, Virasoro/modes **contracts**.
+- `DASHI/Moonshine/TrivialRationalGradedVertexAlgebraExact.agda`: actual c=0 rational vertex algebra seed with proved finite modes/creation/translation/zero stress. A model, but not `V^natural`.
+- `DASHI/Moonshine/VNaturalOrbifoldConstruction.agda`: FLM Leech involution fixed + twisted summands and type of c24 conformal VOA authority; actual selected `V^natural` proof data remain externally supplied.
+- `DASHI/Moonshine/TwistedModuleModularity.agda`: twisted commuting pair `S/T` and conditional projective analytic trace modularity.
+- `DASHI/Biology/MoonshineMonsterLieStringBigradingExact.agda`: exact finite `c(mn)` root-multiplicity prefix, with BRST/no-ghost/denominator distinctly open as internal reconstruction; Borcherds' theorem is prior published mathematics.
+- `DASHI/Moonshine/RankOneHeisenbergFockWindowExact.agda`: finite creation/annihilation window with exact commutator. Does not grant the required full normal-ordered mode/OPE or Fock Hilbert completion.
+- `DASHI/Physics/QFT/VOAMoonshineBridgeReceiptSurface.agda`: target-only VOA→chiral net/holomorphic factorization→K3 SCFT/sigma model→4D; contains postulates and no physically inhabited bridge. Do not import into trusted Lean theorem status.
+- Agda #1239 `docs/monster-c24-virasoro-primary-ads3-maxcut.md`: exact J primary/descendant finite-series tests and distinguished proposed AdS3 CFT bulk dual. **AdS3 boundary CFT ≠ the string worldsheet CFT without a proved duality/map.**
+- Agda `GRQFTNambuGotoSurfaceActionExact.agda` gives a positive-tension **2+1 membrane**, not 1+1 string. `CalabiYau369CompactFibreBridge.agda` gives **10D candidate target** and conditional CY fibre, not a quantum superstring worldsheet.
+
+**The correct TWO different critical-charge mechanisms** from older literature:
+
+```
+MONSTER / BORCHERDS BOSONIC CHIRAL:   c_m = c(Vnatural) + c(II_1,1) = 24+2=26
+                                     c_ghost_bc=-26; total = 0
+
+SEPARATE 10D RNS SUPERSTRING:          c_m = c(X^10)+c(psi^10) = 10+5=15
+                                     c_ghost_bc=-26, c_superghost_beta_gamma=+11
+                                     total=10+5-26+11=0
+
+NAIVE UNSOURCED AMALGAM:               24+10-26 = 8 !=0
+```
+
+This is only algebraic central-charge *necessary* bookkeeping, **not** BRST nilpotence, quantum Weyl/gauge anomaly closure, modular-invariant full partition functions, physical state positivity, or selected target-space Einstein equations. 10D RNS still requires worldsheet supercurrent, spin sectors, GSO, selected CY compactification, and low-energy spectrum. The 24+2 Monster Lie string machinery has no automatic equivalence to the proposed 27-position hyperfabric particle Hamiltonian or to 10D RNS.
+
+**New exact source mathematics in Agda hyperfabric PR #1249**:
+
+1. `DASHI/Unified/HyperfabricMonsterBosonicWorldsheetExistingOwnerCutExact.agda` imports actual original `VNaturalOrbifoldConstruction`, `MoonshineMonsterLieStringBigradingExact` and `CalabiYau369CompactFibreBridge`, proves 24+2=26 and 10+5+11=26, 24+10≠26, and recovers the original selected Monster root-multiplicity theorem terms; the selected c24 source remains an explicit prerequisite. **SOURCE-WRITTEN, kernel unverified**.
+2. `scripts/check_monster_bosonic_worldsheet_conformal_cut.py` uses the existing 3×3 periodic sheet as a finite **2D worldsheet site carrier**, maps it to the *original* 3×3×3 spatial Cube27, and checks pointwise a conformal-gauge Polyakov-type **kinetic density** under independent local positive Weyl scalings `h=w(x)^2 diag(4,9)` using exact rational arithmetic. Equivalent local execution verified **nonzero action 78** and all cancellations; finite mathematical step only. 2D **classical density invariance** is not a quantum CFT path integral, Virasoro constraint, BRST cohomology or continuum sigma model.
+
+**Pareto handoff to existing Lean #80 rather than expanding its ontology**: offer the two existing concrete Agda donor interfaces as source-backed candidate integration data; if actual selected `V^natural⊗V_{II1,1}` BRST/no-ghost is formally reconstructed, attach THAT same Lie/VOA representation before any claim about Monster/729 charge operators or field theory. For 10D RNS/CY, do separate selected source model; don't identify its 10 target coordinates with 27 spatial sites or make c24 Monster additive to it. Keep YM/NS Clay limits on their own physical operators.
+
+**Theorem acceptance**: run branch `python3 scripts/check_monster_bosonic_worldsheet_conformal_cut.py`; Agda pinned typecheck of `DASHI/Unified/HyperfabricMonsterBosonicWorldsheetExistingOwnerCutExact.agda`; then for any actual promotion require source-specific OPE/Virasoro, BRST nilpotence/cohomology, worldsheet anomaly, modular sewing, physical spectrum and same-object observables. No Lean/Lake exact-head run in this environment.
+
+Attribution: FLM, *Vertex Operator Algebras and the Monster* (1988); Richard Borcherds, *Monstrous moonshine and monstrous Lie superalgebras* (1992) DOI 10.1007/BF01232032; standard covariant/RNS ghost CFT theory. DASHI owns only the explicitly new finite toy, semantic source-adapters and targeted falsification/provenance.

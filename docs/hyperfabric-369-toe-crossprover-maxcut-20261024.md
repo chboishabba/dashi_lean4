@@ -594,3 +594,77 @@ O(3,3) gerbe patch dynamics was handled
 in the prior max-cut. The CS bulk is
 different from the chosen full worldsheet
 and from the speculative Witten gravity bulk.
+
+
+## 2026-10-24 latest-PR audit and ACTUAL Witten SU2_4⊂SU3_1 D4 conformal extension
+
+Owner/primary publication: J. Lacki/Ph. Zaugg,
+Phys Lett B228 (1989) 223-227,
+DOI 10.1016/0370-2693(89)90662-X;
+Cappelli/Itzykson/Zuber ADE modular
+partition classifications. This is an original
+published WZW/Chern-Simons theorem, not
+a new hyperfabric theory.
+
+New in this PR:
+`Integration/DASHITOE/WittenSU2FourSU3OneD4EmbeddingCut.lean`
+uses native `Fin5/Fin3` to represent
+actual branching
+`vac→0⊕4`, `3,3bar→2`;
+D4 matrix `Bᵀ B`,
+fixed point multiplicity2, the
+SU3_1 pointed `C3` fusion
+and its 81 finite associativity clauses,
+`c(SU2_4)=c(SU3_1)=2`,
+and explicit `Fin27→Fin3` noninjectivity.
+`Integration/DASHITOE/WittenPrincipalSU2SU3MatrixCut.lean`
+writes native 3×3 rational sl2 generators,
+Lie commutators and index4 trace theorem.
+**SOURCE-WRITTEN, Lean/Lake kernel unverified.**
+
+Companion Agda #1249 scripts
+`check_witten_su2_4_su3_1_d4_embedding_exact.py`
+and `check_witten_principal_sl2_su3_index4_currents.py`
+independently checked locally in exact
+SymPy: genuine principal sl2↪sl3
+index4 and 8=3+5, original
+SU2_4 five-sector modular S,
+SU3_1 three-sector modular S,
+`B S2=S3 B`,
+`[S2,Bᵀ B]=0`,
+T phases compatible, and all
+27 extended Z3 Verlinde coefficients
+with 81 associativity checks.
+The published conformal extension
+induces the new C3 lines by a bosonic
+Z2 simple-current extension
+`0⊕4` and fixed point resolution.
+It is NOT a nontrivial C3 group of
+invertible simples BEFORE the extension.
+
+Latest adjacent sibling PRs:
+Lean #52 actual Albert 27 product,
+8+8+8 Peirce and residual 341/512
+triality mismatches; Lean #80 full
+selected physical TOE primitives, #85
+Dirac charge superselection; Agda
+#1239 Monster C27/729-call projectors,
+#1244 C3 Maschke / char3 Jordan,
+#1217/#1241 physical 5D E6/CS
+source-stress no-go, #1106 E6/Higgs.
+These are cross-PR **source evidence**,
+not imported theorem objects across
+unmerged branches.
+
+Real acceptance: exact source-specific
+affine current VOA/OPE/Q-system
+extension, 26D WZW sigma target gerbe
+and BRST, K27 source Lie action if
+claimed, and explicitly justified
+geometry/Monster/Albert same-operator
+intertwiners. Finite modular extension
+DOES NOT pay 4D SM colour,
+5D CS or Clay analytic estimates.
+The full source and W0-W6 phase roadmap:
+Agda #1249
+`docs/hyperfabric-witten-d4-conformal-su2-4-su3-1-current-embedding-maxcut-20261024.md`.

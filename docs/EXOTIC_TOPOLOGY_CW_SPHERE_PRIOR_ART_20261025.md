@@ -115,3 +115,38 @@ cycle-class map.
   validate finite identities but cannot certify Lean theorem statements.
 - Before merging: pin-consistent Lean build, `#print axioms` for the
   new theorems, and import compatibility with the actual current stack.
+
+
+## Final literal sphere-H₂ acceptance cut
+
+`Synthesis/ExoticTopologyCP1SphereH2Acceptance.lean` uses the
+new actual `CP1 ≃ₜ TopCat.sphere 2` bridge and asks for one
+source-native, correctly typed datum:
+
+```lean
+SourceSphereH2Q :
+  Prop :=
+  Nonempty (LiteralSphere2RationalH2 ≅ rationalCoefficientObject)
+```
+
+From this input the file derives, by the already-proved same-object
+singular-H₂ functor isomorphism,
+
+```lean
+Nonempty (cp1SingularH2 ≅ rationalCoefficientObject)
+```
+
+without postulating that the finite tetrahedral normalized chain complex
+is the singular chain complex or silently invoking reduced-to-ordinary
+homology. This is a conditional supplier-facing theorem and does
+NOT inhabit its `SourceSphereH2Q` prerequisite. It isolates the
+shortest correctly typed next external donor rather than creating
+another surrogate sphere.
+
+`scripts/exotic_topology_lean_donor_audit.py` was run locally using
+SymPy; result PASS. It checks the EXACT tetrahedral boundary matrix has
+rank three and kills the chosen fundamental cycle; the corresponding
+finite H₂ is one-dimensional, finite rational pairing determinant one,
+Whitney polynomial vanishing / negative-real-image discriminator,
+Simons unit-link radii, and C3 boundary-incidence Wada negative control.
+These are independent algebraic audits, NOT Lean kernel checks.

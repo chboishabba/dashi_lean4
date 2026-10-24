@@ -274,3 +274,55 @@ graph. Hatcher/McCarthy and Mathlib retain original credit.
 None of (b)--(f) is claimed complete by the source-written
 tranche. No additional physical wild-embedding or space-propulsion
 claim is inferred.
+
+
+## Source-genealogy / PL surface proof cross-pollination (2026-10-25)
+
+New typed Ibrahim/Pareto/snowball genealogy, reusing
+`DASHI.Core.AttributedSourceCore` and the canonical snowball
+attribution receipt, rather than cloning an identity ontology:
+
+- https://github.com/chboishabba/dashi_agda/blob/topology-exotic-spaces-prior-art-maxcut-20261025/DASHI/Mathematics/Topology/ExoticSourceGenealogyParetoExact.agda
+- https://github.com/chboishabba/dashi_agda/blob/topology-exotic-spaces-prior-art-maxcut-20261025/Docs/topology/ExoticTopologyIbrahimSnowballPareto20261025.md
+- https://github.com/chboishabba/dashi_agda/blob/topology-exotic-spaces-prior-art-maxcut-20261025/scripts/exotic_topology_pl_surface_gluings.py
+
+**Source-owner correction from the actual originals:** Richards (1963)
+quotes *H. R. Brahana*, *Systems of Circuits on Two-Dimensional
+Manifolds* (1921), DOI 10.2307/1968030, as the owner of the
+compact bordered-surface classification. He credits *B. Kerékjártó*,
+*Vorlesungen über Topologie I* (1923), for an earlier ideal-boundary
+classification, describing gaps he corrects; the linked book DOI
+10.1007/978-3-642-50825-7 identifies its much later electronic edition,
+not a 1923 DOI. Richards 1963 DOI 10.2307/1993768 remains the
+primary modern end-classification and existence source.
+
+**Constructive geometrical improvement:** Agda companion #1254
+now contains a Python PL mesh builder. It literally triangulates
+a cube-boundary sphere with separated triangular holes (annulus/pants),
+a periodic triangulated torus with two holes (genus-one collar)
+and a disk, and performs boundary-circle gluings via orientation
+reversing vertex identifications. It verifies every vertex link
+is a connected circle or interval, globally consistent
+orientation, boundary loops, connectedness and actual
+`V-E+F=2-2g-b`. Through depth 4, it recovers 16 outgoing
+Cantor boundaries, Loch genus 4, and Jacob genus 8 with both ends.
+The local independently implemented algorithm PASSed all stages
+and rejected a two-triangle same-oriented-edge counterexample.
+This is much stronger than numerical stage bookkeeping but is
+NOT a kernel proof, an infinite direct-limit theorem, or
+Richards' end-space application.
+
+Pareto next cut remains the **locally finite collared infinite union**
+and decorated end-space homeomorphism, once the native Lean
+topological surface construction is implemented. Do not duplicate
+the Agda script's combinatorial operations in Lean merely to
+re-test their numeric output. The native `Integration.Address`
+is still the exact owner for finite prefix labels.
+
+Additional sources retained in the typed atlas: Fox--Artin (1948),
+DOI 10.2307/1969408; Yoneyama (1917), J-STAGE source (no DOI
+verified); Bombieri--De Giorgi--Giusti (1969),
+DOI 10.1007/BF01404309; Mardešić's 1978 shape-theory survey;
+Hatcher's book; Jack McCarthy's separate Hatcher-at
+`reducedHomology_sphere` Lean implementation. Neither citations
+nor QIDs/DDC nor Pareto ranks make a theorem executable.
